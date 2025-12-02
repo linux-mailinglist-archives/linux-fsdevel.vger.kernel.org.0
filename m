@@ -1,351 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-70438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4488C9A696
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 08:21:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B85CC9A91D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 02 Dec 2025 08:53:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 793824E28E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 07:21:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58B9C3A5DE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Dec 2025 07:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C868F2FD7AE;
-	Tue,  2 Dec 2025 07:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713B23043A1;
+	Tue,  2 Dec 2025 07:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="UchE0JZg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9U+2+6i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEF6220F2A;
-	Tue,  2 Dec 2025 07:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF45303A0B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 07:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764660060; cv=none; b=mui1gKPcaQP6j53Z4S8vAPmLcHbKmPM7UPt9irpyTN8gpQK266LnQZKeuri8A+veMRmCrVkZCJ3mieEGz8jh1715N8KJ/FqWZOPl5u9IPKISA0+GALKQWrdwuiJKaxFIfau3zMLhBInkI+3sT32RpcIlABQpjYzQvmr9oWiDYk8=
+	t=1764661994; cv=none; b=LovQLoWOS5oHx3Ed27qgJj3PKwzJdRmgoKmM2PHqISSdxkYt+lebBklpgowrQWqhErfc5CHfA/9kGy5xWcaKOdBoLrofjZY8fMqPfsoRCDsnBeob/b4gD26kGCzdiSpjZT2EsppSLMNqlC9Mbb+f987OVNsNCKoabNL/jDbIr7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764660060; c=relaxed/simple;
-	bh=Dlt9nWsocxHHQveNF3QmetO7kHpSln0GJPYPQ11NkUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fTF222XAnR8eHP9z0/SRkxLElwhqFNOfaYJM/DwjMYscPAbSc3MCs/3w2+CdwCZ+LHUSLcPQ0oN8Otx7lnJaLpqfC0dOJRaHnHeotugEHS0vp+7WSntbPcOefNrKP2Cuhva1/1sQCOkqFjy0E0ECSuW0razvedqCNnDCcaCpdco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=UchE0JZg; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=E6qlhrwFwU3oa8B9oGRG4kgejN6hrKAl34jxR7zahjc=; b=UchE0JZgGLgTgyv6DPUBe2KqJo
-	hhqjc6uWk9w8MlLvDfKBramw8Gyx/TZrxOify0vvadBvm/CJNyru5QspMnsDmUGciZBA2H1q7Yc9V
-	kTOHve5qPycK4Me+RjhAFbEXyLmeUnsIYmt7HOPyBEZFtaf+VciG4L8CL4pYZUaSXBrVM0Idd6IVr
-	B8xvwP0tttAU27baMt2Rv0cGoMkPrEuEGmJfvcPqzyfD8qPt+V5ZT63PvbQ0SQjCMfG4KN7/mc7lO
-	773pNm0tPWKwrZncjaBla1/Nj5O0P9c3wPf/7aGpzswXOKv4TiFrFtdz1sCstwMvJR3NGIeUb0lcK
-	gYEXMaRw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vQKhB-00000004KqQ-2Wvr;
-	Tue, 02 Dec 2025 07:21:09 +0000
-Date: Tue, 2 Dec 2025 07:21:09 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: hide names_cache behind runtime const machinery
-Message-ID: <20251202072109.GE1712166@ZenIV>
-References: <20251201083226.268846-1-mjguzik@gmail.com>
- <20251201085117.GB3538@ZenIV>
- <20251202023147.GA1712166@ZenIV>
- <CAGudoHGbYvSAq=eJySxsf-AqkQ+ne_1gzuaojidA-GH+znw2hw@mail.gmail.com>
- <20251202055258.GB1712166@ZenIV>
- <CAGudoHFD6bWhp-8821Pb6cDAEnR9N8UFEj9qT7G-_v0FOS+_vg@mail.gmail.com>
- <20251202063228.GD1712166@ZenIV>
+	s=arc-20240116; t=1764661994; c=relaxed/simple;
+	bh=jtoOIsAb4N/aQPXYiDOsT0mLcSZuaW9KJU71fSWdaWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VuqnaaKbOWQ1pjlx+wSheLsb5yUSHHbq6OJoRsvGphfUxWs1ArDBkfnL4Dhqg9EcrWzyb1BJB2bJiGJFEU7tEdAgHR+I3cDyqyVHUar+iVKl2MR/IbTz+AmTIgQq/Y7A83hpCvYd4HbnDmjOSmHWiFWNT365g9RDbUXc57pwgko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9U+2+6i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA5A3C116D0
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Dec 2025 07:53:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764661994;
+	bh=jtoOIsAb4N/aQPXYiDOsT0mLcSZuaW9KJU71fSWdaWY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=A9U+2+6iQaXmDD9B3/CFCJ5WxKxfsbS+dXNck6qkeSI/tuRWQCpS6bBzb49WrWYIp
+	 vMjqZFbmQCgH6MbdAMD0ncSask1yhSOiT9yawg7Eho7Lhn/Wm0Xa3PPb32Pi7ojBfx
+	 +A3kepJAom2iPulz7V1irZt2HCSW7foYrlUNOr/CXcAVl8hBUl0JVLDGJVvto5DxcY
+	 pa1K3ew0uGPqjNW1W01hWgX41RiDvF1/uWDQrlY1Yz79I6xnMU30FxUocIY5KVhish
+	 gvpJ8byn0HvvE9o9toCfxowdhSHrKUGVm+cQBgoQIbTB60kcWEZOpI+nEP5zdDjWV2
+	 ch5llnCA1BRyg==
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b7373fba6d1so807104366b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Dec 2025 23:53:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUR4fNsgmkDr3tph5k218yUfj6VVztge+ext2xxN0nRyBk3EqKm9MDGiZKupGssNvl8O7DJJGww60LCvsML@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2XX29gFAVkxvXFQnp8paZPmQBpQqZZhqsOx7kukqQvu/z0znV
+	JPLwDeMQ5JlrmvSSHI/5xhdTbV9+IWvBYGFxvW/bO+ENOCnyBb5It3XyXn+V0y5Dl55UfsvVhdn
+	PVWpLcAtGoZD4Ro++RSj3gOUjqumh20Q=
+X-Google-Smtp-Source: AGHT+IGaPtA3Z6AB2Jgji5GVEjzrKRXy2RpvjIBJ0Wi3BAfm592z/mltlVN6ytVUdj1A/qS1JnixBMidJPW0qyIAFtQ=
+X-Received: by 2002:a17:906:9fc9:b0:b76:4426:3a3a with SMTP id
+ a640c23a62f3a-b7671b1b585mr4967887266b.58.1764661993030; Mon, 01 Dec 2025
+ 23:53:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251202063228.GD1712166@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20251127045944.26009-1-linkinjeon@kernel.org> <20251127045944.26009-7-linkinjeon@kernel.org>
+ <aS1FVIfE0Ntgbr5I@infradead.org> <CAKYAXd9YW_UL2uA8anoVCw+a818y5dwtn3xAJJQc=_p32GA=Zw@mail.gmail.com>
+ <20251202054524.GB15524@lst.de>
+In-Reply-To: <20251202054524.GB15524@lst.de>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 2 Dec 2025 16:52:59 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-Gzk+7Gwh1GTVbeNUygNWVnmNu458F67Y5fhcpapEFBg@mail.gmail.com>
+X-Gm-Features: AWmQ_bmGJ-KfRwoEGGS2y_M3WqNq9-yp4h_I_7fTwIsF-mKDYOHzxQxEEx4MKmU
+Message-ID: <CAKYAXd-Gzk+7Gwh1GTVbeNUygNWVnmNu458F67Y5fhcpapEFBg@mail.gmail.com>
+Subject: Re: [PATCH v2 06/11] ntfsplus: add iomap and address space operations
+To: Christoph Hellwig <hch@lst.de>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu, 
+	willy@infradead.org, jack@suse.cz, djwong@kernel.org, josef@toxicpanda.com, 
+	sandeen@sandeen.net, rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com, 
+	pali@kernel.org, ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com, 
+	Hyunchul Lee <hyc.lee@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 02, 2025 at 06:32:28AM +0000, Al Viro wrote:
-> On Tue, Dec 02, 2025 at 07:18:16AM +0100, Mateusz Guzik wrote:
-> 
-> > The claim was not that your idea results in insurmountable churn. The
-> > claim was *both* your idea and runtime const require churn on per kmem
-> > cache basis. Then the question is if one is going to churn it
-> > regardless, why this way over runtime const. I do think the runtime
-> > thing is a little bit less churn and less work on the mm side to get
-> > it going, but then the runtime thing *itself* needs productizing
-> > (which I'm not signing up to do).
-> 
-> Umm...  runtime thing is lovely for shifts, but for pointers it's
-> going to be a headache on a bunch of architectures; for something
-> like dentry_hashtable it's either that or the cost of dereference,
-> but for kmem_cache I'd try it - if architecture has a good way for
-> "load a 64bit constant into a register staying within I$", I'd
-> expect the code generated for &global_variable to be not worse than
-> that, after all.
-> 
-> Churn is pretty much negligible in case of core kernel caches either
-> way.
-> 
-> As for the amount of churn in mm/*...  Turns out to be fairly minor;
-> kmem_cache_args allows to propagate it without any calling convention
-> changes.
-> 
-> I'll post when I get it to reasonable shape - so far it looks easy...
-
-OK, I'm going to grab some sleep; current (completely untested) delta
-below, with conversion of mnt_cache as an example of use.
-
-Uses of to_kmem_cache can be reduced with some use of _Generic
-for kmem_cache_...alloc() and kmem_cache_free().  Even as it is,
-the churn in fs/namespace.c is pretty minor...
-
-Anyway, this is an intermediate variant:
-
-diff --git a/Kbuild b/Kbuild
-index 13324b4bbe23..eb985a6614eb 100644
---- a/Kbuild
-+++ b/Kbuild
-@@ -45,13 +45,24 @@ kernel/sched/rq-offsets.s: $(offsets-file)
- $(rq-offsets-file): kernel/sched/rq-offsets.s FORCE
- 	$(call filechk,offsets,__RQ_OFFSETS_H__)
- 
-+# generate kmem_cache_size.h
-+
-+kmem_cache_size-file := include/generated/kmem_cache_size.h
-+
-+targets += mm/kmem_cache_size.s
-+
-+mm/kmem_cache_size.s: $(rq-offsets-file)
-+
-+$(kmem_cache_size-file): mm/kmem_cache_size.s FORCE
-+	$(call filechk,offsets,__KMEM_CACHE_SIZE_H__)
-+
- # Check for missing system calls
- 
- quiet_cmd_syscalls = CALL    $<
-       cmd_syscalls = $(CONFIG_SHELL) $< $(CC) $(c_flags) $(missing_syscalls_flags)
- 
- PHONY += missing-syscalls
--missing-syscalls: scripts/checksyscalls.sh $(rq-offsets-file)
-+missing-syscalls: scripts/checksyscalls.sh $(kmem_cache_size-file)
- 	$(call cmd,syscalls)
- 
- # Check the manual modification of atomic headers
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d766e08e0736..08c7870de413 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -34,6 +34,7 @@
- #include <linux/mnt_idmapping.h>
- #include <linux/pidfs.h>
- #include <linux/nstree.h>
-+#include <linux/kmem_cache_static.h>
- 
- #include "pnode.h"
- #include "internal.h"
-@@ -85,7 +86,7 @@ static u64 mnt_id_ctr = MNT_UNIQUE_ID_OFFSET;
- 
- static struct hlist_head *mount_hashtable __ro_after_init;
- static struct hlist_head *mountpoint_hashtable __ro_after_init;
--static struct kmem_cache *mnt_cache __ro_after_init;
-+static struct kmem_cache_store mnt_cache;
- static DECLARE_RWSEM(namespace_sem);
- static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
- static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-@@ -290,7 +291,8 @@ int mnt_get_count(struct mount *mnt)
- 
- static struct mount *alloc_vfsmnt(const char *name)
- {
--	struct mount *mnt = kmem_cache_zalloc(mnt_cache, GFP_KERNEL);
-+	struct mount *mnt = kmem_cache_zalloc(to_kmem_cache(&mnt_cache),
-+					      GFP_KERNEL);
- 	if (mnt) {
- 		int err;
- 
-@@ -339,7 +341,7 @@ static struct mount *alloc_vfsmnt(const char *name)
- out_free_id:
- 	mnt_free_id(mnt);
- out_free_cache:
--	kmem_cache_free(mnt_cache, mnt);
-+	kmem_cache_free(to_kmem_cache(&mnt_cache), mnt);
- 	return NULL;
- }
- 
-@@ -734,7 +736,7 @@ static void free_vfsmnt(struct mount *mnt)
- #ifdef CONFIG_SMP
- 	free_percpu(mnt->mnt_pcp);
- #endif
--	kmem_cache_free(mnt_cache, mnt);
-+	kmem_cache_free(to_kmem_cache(&mnt_cache), mnt);
- }
- 
- static void delayed_free_vfsmnt(struct rcu_head *head)
-@@ -6013,8 +6015,9 @@ void __init mnt_init(void)
- {
- 	int err;
- 
--	mnt_cache = kmem_cache_create("mnt_cache", sizeof(struct mount),
--			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT, NULL);
-+	kmem_cache_setup("mnt_cache", sizeof(struct mount),
-+			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
-+			NULL, &mnt_cache);
- 
- 	mount_hashtable = alloc_large_system_hash("Mount-cache",
- 				sizeof(struct hlist_head),
-diff --git a/include/linux/kmem_cache_static.h b/include/linux/kmem_cache_static.h
-new file mode 100644
-index 000000000000..f007c3bf3e88
---- /dev/null
-+++ b/include/linux/kmem_cache_static.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __LINUX_KMEM_CACHE_STATIC_H
-+#define __LINUX_KMEM_CACHE_STATIC_H
-+
-+#include <generated/kmem_cache_size.h>
-+#include <linux/slab.h>
-+
-+/* same size and alignment as struct kmem_cache */
-+struct kmem_cache_store {
-+	unsigned char opaque[KMEM_CACHE_SIZE];
-+} __attribute__((__aligned__(KMEM_CACHE_ALIGN)));
-+
-+struct kmem_cache;
-+
-+static inline struct kmem_cache *to_kmem_cache(struct kmem_cache_store *p)
-+{
-+	return (struct kmem_cache *)p;
-+}
-+
-+static inline int
-+kmem_cache_setup(const char *name, unsigned int size, unsigned int align,
-+		 slab_flags_t flags, void (*ctor)(void *),
-+		 struct kmem_cache_store *s)
-+{
-+	struct kmem_cache *res;
-+
-+	res = __kmem_cache_create_args(name, size,
-+					&(struct kmem_cache_args){
-+						.align	= align,
-+						.ctor	= ctor,
-+						.preallocated = s},
-+					flags);
-+	return PTR_ERR_OR_ZERO(res);
-+}
-+
-+#endif
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index cf443f064a66..a016aa817139 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -266,6 +266,8 @@ struct mem_cgroup;
-  */
- bool slab_is_available(void);
- 
-+struct kmem_cache_store;
-+
- /**
-  * struct kmem_cache_args - Less common arguments for kmem_cache_create()
-  *
-@@ -366,6 +368,7 @@ struct kmem_cache_args {
- 	 * %0 means no sheaves will be created.
- 	 */
- 	unsigned int sheaf_capacity;
-+	struct kmem_cache_store *preallocated;
- };
- 
- struct kmem_cache *__kmem_cache_create_args(const char *name,
-diff --git a/mm/kmem_cache_size.c b/mm/kmem_cache_size.c
-new file mode 100644
-index 000000000000..52395b225aa1
---- /dev/null
-+++ b/mm/kmem_cache_size.c
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Generate definitions needed by the preprocessor.
-+ * This code generates raw asm output which is post-processed
-+ * to extract and format the required data.
-+ */
-+
-+#define __GENERATING_KMEM_CACHE_SIZE_H
-+/* Include headers that define the enum constants of interest */
-+#include <linux/kbuild.h>
-+#include "slab.h"
-+
-+int main(void)
-+{
-+	/* The enum constants to put into include/generated/bounds.h */
-+	DEFINE(KMEM_CACHE_SIZE, sizeof(struct kmem_cache));
-+	DEFINE(KMEM_CACHE_ALIGN, __alignof(struct kmem_cache));
-+	/* End of constants */
-+
-+	return 0;
-+}
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 932d13ada36c..e48775475097 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -29,6 +29,7 @@
- #include <linux/memcontrol.h>
- #include <linux/stackdepot.h>
- #include <trace/events/rcu.h>
-+#include <linux/kmem_cache_static.h>
- 
- #include "../kernel/rcu/rcu.h"
- #include "internal.h"
-@@ -224,21 +225,21 @@ static struct kmem_cache *create_cache(const char *name,
- 				       struct kmem_cache_args *args,
- 				       slab_flags_t flags)
- {
--	struct kmem_cache *s;
-+	struct kmem_cache *s = to_kmem_cache(args->preallocated);
- 	int err;
- 
- 	/* If a custom freelist pointer is requested make sure it's sane. */
--	err = -EINVAL;
- 	if (args->use_freeptr_offset &&
- 	    (args->freeptr_offset >= object_size ||
- 	     !(flags & SLAB_TYPESAFE_BY_RCU) ||
- 	     !IS_ALIGNED(args->freeptr_offset, __alignof__(freeptr_t))))
--		goto out;
-+		return ERR_PTR(-EINVAL);
- 
--	err = -ENOMEM;
--	s = kmem_cache_zalloc(kmem_cache, GFP_KERNEL);
--	if (!s)
--		goto out;
-+	if (!s) {
-+		s = kmem_cache_zalloc(kmem_cache, GFP_KERNEL);
-+		if (!s)
-+			return ERR_PTR(-ENOMEM);
-+	}
- 	err = do_kmem_cache_create(s, name, object_size, args, flags);
- 	if (err)
- 		goto out_free_cache;
-@@ -248,8 +249,8 @@ static struct kmem_cache *create_cache(const char *name,
- 	return s;
- 
- out_free_cache:
--	kmem_cache_free(kmem_cache, s);
--out:
-+	if (!args->preallocated)
-+		kmem_cache_free(kmem_cache, s);
- 	return ERR_PTR(err);
- }
- 
-@@ -324,7 +325,7 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
- 		    object_size - args->usersize < args->useroffset))
- 		args->usersize = args->useroffset = 0;
- 
--	if (!args->usersize && !args->sheaf_capacity)
-+	if (!args->usersize && !args->sheaf_capacity && !args->preallocated)
- 		s = __kmem_cache_alias(name, object_size, args->align, flags,
- 				       args->ctor);
- 	if (s)
+On Tue, Dec 2, 2025 at 2:45=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrote=
+:
+>
+> On Tue, Dec 02, 2025 at 09:47:17AM +0900, Namjae Jeon wrote:
+> > Nothing special reason, It was to use existing ones instead of new,
+> > complex implementations. NTFS metadata is treated as a file, and
+> > handling it via the folio(page) API allows the driver to easily gain
+> > performance benefits, such as readahead.
+>
+> On the one hand it does, on the other hand at least our experience
+> is that the user data file algorithm for things like readahead and
+> cache eviction policies worked pretty poorly for metadata in XFS.
+> Of course I don't actually know if the same applies to ntfs.
+We have observed performance improvements from readahead for NTFS
+metadata since we are able to identify the continuous cluster ranges
+of metadata files.
+>
+> > > From code in other patches is looks like ntfs never switches between
+> > > compressed and non-compressed for live inodes?  In that case the
+> > > separate aops should be fine, as switching between them at runtime
+> > > would involve races.  Is the compression policy per-directory?
+> > Non-compressed files can actually be switched to compressed files and
+> > vice versa via setxattr at runtime. I will check the race handling
+> > around aop switching again. And the compression policy is per-file,
+> > not per-directory.
+>
+> In that case you probably want to use the same set of address space
+> (and other operations) and do runtime switching inside the method.
+Right, I will change it.
+>
+> > >
+> > > Again curious why we need special zeroing code in the file system.
+> > To prevent reading garbage data after a new cluster allocation, we
+> > must zero out the cluster. The cluster size can be up to 2MB, I will
+> > check if that's possible through iomap.
+>
+> Ouch, that's a lot of zeroing.  But yeah, now that you mention it
+> XFS actually has the same issue with large RT extents.  Although we
+> create them as unwritten extents, i.e. disk allocations that always
+> return zeroes.  I guess ntfs doesn't have that.  For DAX access
+> there actually is zeroing in the allocator, which is probably
+> similar to what is done here, just always using the iomap-based
+> code (check for xfs_zero_range and callers).
+Right, ntfs does not have a direct equivalent to the unwritten extent mecha=
+nism.
+I will check xfs codes. Thank you very much for the detailed review!
 
