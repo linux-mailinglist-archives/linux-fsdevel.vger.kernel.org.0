@@ -1,92 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-70547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B04AC9EA44
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 11:07:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0889C9EA60
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 11:11:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAF993A1459
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 10:07:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 710F63A2124
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 10:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401C02E7641;
-	Wed,  3 Dec 2025 10:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2C92E7657;
+	Wed,  3 Dec 2025 10:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EO7KiwLQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJoNkUiV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EDD23EA97;
-	Wed,  3 Dec 2025 10:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3B82853F1;
+	Wed,  3 Dec 2025 10:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764756462; cv=none; b=GurjjBo0wu/7laWgMvrj9RGC/H4lGQFsc4Uv4qoQYp/ZAhAK4vPaWeDPaEWBonkP+IzGNaVvFc9KI9lA5cxDAm8vo/UQquT65MiihdszkKyVxi83GDq5Z12JeaHih5lVNj4KwcCr8Ui4GYspULNPRggxuyq/47QcHIl9U1IsXNc=
+	t=1764756680; cv=none; b=FwejBCQ8jo9p0xc3lvwkssB2qAdRp+KvFF9zRCqdYM78SlP7PutaEebVTpti1uQpv/xmvHOk9CjT9aFOQjaso7y/GGkSOxx5M6yhVn4WERykEqW5KcDKh1ltW4CDcnpClB40wj0tczaOaqRXSrPjdiOYmZGChsWpT3t//WSUm4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764756462; c=relaxed/simple;
-	bh=W6GJrzF8QFFTEt+wP1e4fBwAnQy6jbMZvsPFvrg914c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Re16jfcir96AwRkwU1MXb20uKDrQb5KZZ0F4VcwCt7PWIAFISg+78yBOqMELVRy5u5/766RaXFN7Bb3yAyuO7yqCRX0JJ3HmRVoMgNAg2FQU7SKO587PFS72whQNGtcX626NaQ+BCTvDWnscocE3LhzcsrfBYvakvVInhprj1ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EO7KiwLQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9C74C4CEFB;
-	Wed,  3 Dec 2025 10:07:40 +0000 (UTC)
+	s=arc-20240116; t=1764756680; c=relaxed/simple;
+	bh=dw4TiZn8xxcrO2mUbONBSyQ7Uq01fFPlIO8nwtYEWGk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oPBsOjD1wMy/KbjQn1Zr3CvfQae1zpiZ7dCBHKqvsv2Gb3LzPv6CuIgeg5/ZJZ3S9HCknn32uVNJvlzZ0V7cwFOhDhLA4TmQ3wWNqtvUxt+9XWHe+a+cyOVmEydlSFWCsGHP9ifR9wBHF9ApLcrkvbkhN1DXSl8Yqdyzk7znZzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJoNkUiV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C6E8C4CEFB;
+	Wed,  3 Dec 2025 10:11:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764756462;
-	bh=W6GJrzF8QFFTEt+wP1e4fBwAnQy6jbMZvsPFvrg914c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EO7KiwLQLVt1z7souf+Qlcl1tZvCBs7s4kSXG/cx1BDIiprULVn92MeWaBgDbsC5C
-	 fn5oPv+SRGmkuaHs4/ce3scb6VHns+a4qlJWT+G2CRxLeTPHDDGai+HXqZ21sXsXUz
-	 uxibz+HuV8EPh87NNMsTkaszRTUpVMLDO+/pGV7PJnANxXe0/5fUvS1Re67Pv2yLSa
-	 7gZOun8+HNkxa32VZp2ZxXL+T5OVdP7Vwfs9HZQRJKiDey60zgoJ61dE0W3caT0zwF
-	 gZGAae/inw5q8mpm0EGYPFM7ZCKogxaDPimeBoDgodJghrIctCuEhFFRxwZvIIIW1e
-	 9L2/Sn/qArnmw==
-Date: Wed, 3 Dec 2025 11:07:37 +0100
+	s=k20201202; t=1764756679;
+	bh=dw4TiZn8xxcrO2mUbONBSyQ7Uq01fFPlIO8nwtYEWGk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YJoNkUiV7BJdPVfWDjdXEyTo290QuUwRS1gps4omZ9teErV8nllpfPyWLd7CwhMxM
+	 tqV0vjM5QA7iRY8XZ2NnYc3nppdwzSo8yTjSZm/R4lrJP0IqPgDg4wtU/fP60spJ6V
+	 qsnWL9CwzxYgObRwZcJfHF2MBTswjLfPGdbkzZ+FiCpreSLp78sr3TIX6Zj01U/74R
+	 3F6gzVFdpW8QNOhf9OW8A1+E2iweDkbdv9UDFezbBPCXAAa6FCSA8Sq8AHV+aPzY8f
+	 l0ekK/ZYZ7G3TubuLdavtHegDjQFYKr7JJSQmrKgceYLeu/yEKxsuGWESVw2i386Qu
+	 G+tT5bMqAahSg==
 From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Linux Containers <containers@lists.linux.dev>
-Subject: Re: [GIT PULL 05/17 for v6.19] namespaces
-Message-ID: <20251203-aussaat-anreden-1df55ee85463@brauner>
-References: <20251128-vfs-v619-77cd88166806@brauner>
- <20251128-kernel-namespaces-v619-28629f3fc911@brauner>
- <87ecperpid.fsf@email.froward.int.ebiederm.org>
- <CAHk-=whPpVs67fAYWo4=SeD20cxjYoAE3d5RXgeHpXZ81uM7Lg@mail.gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v1] fs: PM: Fix reverse check in filesystems_freeze_callback()
+Date: Wed,  3 Dec 2025 11:10:32 +0100
+Message-ID: <20251203-harmonie-wirft-7c23dab0f888@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <12788397.O9o76ZdvQC@rafael.j.wysocki>
+References: <12788397.O9o76ZdvQC@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whPpVs67fAYWo4=SeD20cxjYoAE3d5RXgeHpXZ81uM7Lg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1317; i=brauner@kernel.org; h=from:subject:message-id; bh=I9rQxRBS7UdWhIBo6tS1PDm3YufWgZ4UlioSglS5ZpM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQa8Kyp0GuW8IjVfLnKq/pIguSP7deC7+ypnp/q6WKh9 ZqX7WNRRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESm7GD4H+j6UmHe35aOT4kf K7h2HRMX9nvXknm5NMWVt3vrpTim4wz/3TJmCs9awBJ3ZW/p23wRxcCzk2yPh858aPTv+9re90c 3cQMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 02, 2025 at 09:00:57AM -0800, Linus Torvalds wrote:
-> On Mon, 1 Dec 2025 at 11:06, Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >
-> > The reason such as system call has not been introduced in the past
-> > is because it introduces the namespace of namespace problem.
-> >
-> > How have you solved the namespace of namespaces problem?
+On Tue, 02 Dec 2025 19:27:29 +0100, Rafael J. Wysocki wrote:
+> The freeze_all_ptr check in filesystems_freeze_callback() introduced by
+> commit a3f8f8662771 ("power: always freeze efivarfs") is reverse which
+> quite confusingly causes all file systems to be frozen when
+> filesystem_freeze_enabled is false.
 > 
-> So I think Christian would be better at answering this, but to a first
-> approximation I think the explanation from commit 76b6f5dfb3fd
-> ("nstree: add listns()") gives some high-level rules:
+> On my systems it causes the WARN_ON_ONCE() in __set_task_frozen() to
+> trigger, most likely due to an attempt to freeze a file system that is
+> not ready for that.
+> 
+> [...]
 
-After last year's round I've caught another lung infection so I'm a bit
-incapacitated and not working. Visibility is currently based on the user
-namespace. It's possible to list all namespaces that are owned by a
-given user namespaces. So a caller in an unprivileged container is only
-able to list namespaces that they directly own or namespaces owned by
-descendant namespaces. That's tracked in the namespace tree. The
-self-tests verify this as well. So it is not possible to break out of
-that hierarchy. As this is expressily an introspection system call it
-allows to list sibling namespaces owned by the same user namespace ofc
-as its tailored for container managers. This will be used in
-high-privileged container managers and in systemd for service
-supervision so if there's any concerns that the current standard access
-regulation and seccomp() isn't enough I'm more than happy to require
-global CAP_SYS_ADMIN.
+Ah, thanks for catching that.
+
+---
+
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] fs: PM: Fix reverse check in filesystems_freeze_callback()
+      https://git.kernel.org/vfs/vfs/c/222047f68e85
 
