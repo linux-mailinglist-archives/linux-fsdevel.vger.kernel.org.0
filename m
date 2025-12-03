@@ -1,197 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-70564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA67C9F8B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 16:39:31 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2727C9F9A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 16:44:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 378A5300A6EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 15:35:53 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 20E8D3006E36
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 15:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157A82DA769;
-	Wed,  3 Dec 2025 15:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4088731812E;
+	Wed,  3 Dec 2025 15:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ACDBrCvr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvxJvT/E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F364311C15
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 15:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804DA3168E8;
+	Wed,  3 Dec 2025 15:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764776142; cv=none; b=i34tr9JXHWvhxOEyh/5QgkzIi3rV/aPh95I1i8qJWIvztA4/dW8BOXpDwUsgfIM7fLaVYR55vYICUVsp8p3f+McYyrUKC/6HsTmrQdKdfDU6uZXieZA6k62fYzpnKAgRV8zpHXgmYzs7gfJ35/jsdj8VspCYzjTj9LJ+SvqilNM=
+	t=1764776605; cv=none; b=sMfvt2JZzwym43sykVg2HL/dcSTUEMima/5Ut1bYzWOkofa9o8B7NAf90KUbYkPnh2UJiFpsJRUOUlkP6CkLyIlu9PD4uZ6T/CSsoyIA6am4xvQy8YV4i2ApomQAXfIt+69c/4hFJkt+eQwFWjqC9LUvUR+gU+l9yp7Mw2qANzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764776142; c=relaxed/simple;
-	bh=w4A2UegXwtOrwBEh5yC+6bOraNmFEGQzXJlFijVxv7k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XeNC4nDPUe9P1xGtKfORWTez6EHtJsD/WjuFJ740zn5vZ60ow4qipLbyWCXWj5YYrUQ6q4AAmQJUSUiHKU4IQPy/dOKNE3G5qzBaDFsYWukJaFI9y5s4POJ4yh6NJWe3Milaz/AjlwRpSgX+mADsAJa9uqNHMGvaw9HDW0xehLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ACDBrCvr; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3438231df5fso8056114a91.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 07:35:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764776140; x=1765380940; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QGbO2/2t1gFhYYme3zOuFfWPsTzKJnXlmoRT6R7R7HQ=;
-        b=ACDBrCvrdOub/paqt3Lhc2vov+K9R1lUYZN3tqC+Cdw668Opp/8Xzdxo2QRO9Tlhaj
-         JPbsmmXEfOrWuasIoR/U+/gsXqMLRoRzdY7McjkeQlrsPlKCQ+hQBf5Ip4ILCMY3qk9C
-         AB6Sjf55UZcC6TAVZtm/ZJqEVEhoY6nmICfaULXsEjePQTDAB0x8qQFVsaOpPomnI70r
-         iS0TPerUKqu+URC1Jr+CUVSzavw8T3oNR6ULLWO2bfED9m/LlqRRvUtAVMrpuRyYjW9U
-         d7uhzgOYVn7YfKGtvjwwW5aoAilGZ9exAg5suTjdapATv700dADSP3d1rqGWJXZdIUq2
-         rKhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764776140; x=1765380940;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=QGbO2/2t1gFhYYme3zOuFfWPsTzKJnXlmoRT6R7R7HQ=;
-        b=dEDmaIfBQs08Af06XpxYhgcNt8WvU35C7uIuAJ3hZPFY7B+XsaFwZ6eqLHyIGDkDhn
-         IuRpstxx0O+0/DdJhrE2xKYZgpO3H0Q1eLS2rRjgANqqEWWnyMUXhW3qq8Dgo05rr+zt
-         YHYeGthiM/mVZo+0GBoViUKBAfUCXLi8+8lCVrOjchazhXhSfZPlrKiRfaLPoHnXtjA1
-         3AGgILCDs9BiLNCSvor+mL9oZK9CiydU9kPzwAg52QFqtIelTiZCIZ1J+rqDK8H5s1vY
-         RmEmmLM/yloke02aeIbNg7/rdtcfTSL9nsP4uZPCyw1eKC0b89MzJ02qrMOWQNStnWfb
-         RfQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfPaQ+JRW3BGNKUeDxJXGurvmurPQhW/PKl2Vzd7zz61v25gr0DsiBKSXidxIsxBs1xes6ggHPHHElN3AH@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLgs8cQN0CX26cnLBNyjqyynISrWriPeyF0KhwtZJt7tQsyoWE
-	uQdFzEQ41i2aiPFq4eUOdaa8POJKu9HlAAGqx//qF3vgPSqMi93tiH4vM6nOMBScliBaMltmX8m
-	1Qx9ITDUiKhfj0owUddV3IIbiO3x2kqs=
-X-Gm-Gg: ASbGncuWIr+CytvwyOkhV4/DqtLZnEHjzAE6y+KgKp+7OH5zImZGxROq5R7tg01XWLX
-	qtZtYPlRDb5WId2CtYYmw6gn+NhpwgfFwcf+0dceWKO7mOAFdJfnNUzDgutAf8lMFVMvxO5qSsW
-	X1z2OL59NdzKp86JCgmB4l6wfxVZkl143BJq4TiFss4H/5adfMVLcT8wNWPsQljsUZ5MBuBU9Je
-	33xdz/nY63mgswse3O+X7lVtwILd0gwMy4p/NFgtBlRzuMk3H30jRXluiEQ3tHVhYoqzVk=
-X-Google-Smtp-Source: AGHT+IEn9vxknosINeRwqaUkMbRpVbYZ9rAaqqFNWjUkmEIFHUcEtIIP4pCogGv3nNhRP3bv8J9Bo8pWrUn/qzHHVX0=
-X-Received: by 2002:a17:90b:1c09:b0:336:9dcf:ed14 with SMTP id
- 98e67ed59e1d1-349127f9576mr3362218a91.23.1764776139904; Wed, 03 Dec 2025
- 07:35:39 -0800 (PST)
+	s=arc-20240116; t=1764776605; c=relaxed/simple;
+	bh=xUUFN25vdNbdu2trCW7X7Rfr5nSpd90Zw9B852J2q60=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YmPJUYhIIu6U2r3Sye02Bu/2AyvFgBMQRBd3RzyhdZT7LBaRPN0JZwvMKAaBVfXmV9E26bm5et1r7X7FliPbncHCLQu39N9IkYnwVImcws4D8tvuLEl3js9Jg1t59aURaT1INj445KFm7m/tktvl5vNcpjvxejzUn0g3fzZJq08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvxJvT/E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DDC7C16AAE;
+	Wed,  3 Dec 2025 15:43:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764776605;
+	bh=xUUFN25vdNbdu2trCW7X7Rfr5nSpd90Zw9B852J2q60=;
+	h=From:Subject:Date:To:Cc:From;
+	b=SvxJvT/EE4avVzD15h0OlYeuPUqlW5afvHlGejR14vthQPNshFBGEWqYY6BSIE1i2
+	 RQ5jRGCEzTwFYlZ631UqszozWHoFpt3v2lUbGEnR9Usy5ZDmakxUejm7lf75cZ+aoF
+	 u+/m31JvDMpqfY58iEx7aTdoSFafg3ROEodwtrPUxcia6tCxUZF+njtd+hKK52XdJF
+	 3oIxGImHwbLP/wj256MKz7lJusJ3I/gl0ZVog64DamydJBdF8AYz5mC6kqbQGjFnU3
+	 qNTTrRNVt6Pwf31MYVQmPaXQ3TZfByNDCHnnYFTPrvV/haE/RGouZgJjw9trfyKt5+
+	 S/Rsb1flMEKmA==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH fstests v3 0/3] generic: new testcases for delegation
+ support
+Date: Wed, 03 Dec 2025 10:43:06 -0500
+Message-Id: <20251203-dir-deleg-v3-0-be55fbf2ad53@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
- <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
- <CAHC9VhQyDX+NgWipgm5DGMewfVTBe3DkLbe_AANRiuAj40bA1w@mail.gmail.com>
- <6797b694-6c40-4806-9541-05ce6a0b07fc@oracle.com> <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
- <CAHC9VhQnR6TKzzzpE9XQqiFivV0ECbVx7GH+1fQmz917-MAhsw@mail.gmail.com>
-In-Reply-To: <CAHC9VhQnR6TKzzzpE9XQqiFivV0ECbVx7GH+1fQmz917-MAhsw@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Wed, 3 Dec 2025 10:35:28 -0500
-X-Gm-Features: AWmQ_bkzJ94ne_NaS9DdGj-0rfpzDplsxIIA51owmAroNoWGHAQbs9nJIizmk5w
-Message-ID: <CAEjxPJ7_7_Uru3dwXzNLSj5GdBTzdPDQr5RwXtdjvDv9GjmVAQ@mail.gmail.com>
-Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
- interface
-To: Paul Moore <paul@paul-moore.com>
-Cc: Anna Schumaker <anna.schumaker@oracle.com>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/22NywqDMBBFf0Vm3SnJaGrtqv9RuvAx0aGikkhoE
+ f+9ISsLnd3h3nNnA89O2MMt28BxEC/zFCE/ZdAO9dQzShcZSJHR8bAThx2P3KO1yiidt7UpFMT
+ +4tjKO209wPqV/erhGYNB/Dq7T/oRdIr/zAWNEYvywqppNbO5v9hNPJ5n16eZQEe1OqqECm1lq
+ KmppPxa/Kj7vn8Br3JMKOcAAAA=
+X-Change-ID: 20251111-dir-deleg-ff05013ca540
+To: fstests@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, Zorro Lang <zlang@redhat.com>, 
+ Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1695; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=xUUFN25vdNbdu2trCW7X7Rfr5nSpd90Zw9B852J2q60=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpMFqbeQd572/vq7b4VdMUKbu1BgiGs3ENZBN7U
+ Xqnw2NoMeeJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaTBamwAKCRAADmhBGVaC
+ Fa/9EADEsXLioJmyUudk0dvmzBZwFcMmMljkQTdMEi5KxnmMK2/V0Wc6DjnDyEL5pIQQl7HSlP2
+ qLpdP/6Qn2iKyVpO0cVMTEPqNvndtKkWr9hgNROKGkiNzM6+mW5S7JCBvpRVGpB+iyvE8U/pmoa
+ C2CvMzlzMjYO2a/XT3Hhhgl7+0X9fbbxtiFtMfasYrONUw8T+RRPWhP5ZE3oAwuv16RJlmOb8Dd
+ aXbHRGnHsniSThE+C0tDYf2UvWqB/MrrxjC2HKm2ha8iw4M0RFeVyLuL7DfgNGalZtJb3aQcqDH
+ gxWy5KMt9C3VnWtR+MUPcGLnwEy0H2bo7kJIV5ZOZoOhUHaYJCasOyXLcBGqt2Sf+EpbNvpmWYY
+ 8CXOwWFEPTe1bTQ9lEcce4jOEBOa7A8HU481/XDE/8WQutOJAQxC40zmpkaNjH5BcAHHqy7AoMN
+ eTUFQ5EQcdR493HEunp4JcMMsPcDg6/+vzhXGVRdARpwgQqxfMErWrcX6XrWTHW7nALKpzVVGlH
+ 5oX0LzwvdPhhOFgu2KW5H4CY9J9CrWNxdMccf9vDQ/QT0pqzjjm4iFUME4j2pDtBRjX54qct+Fp
+ LglySbhfijnuJuvA/YeBIk8+z/3/k/xUEmjWQ67Q3iMivmjp43Pjdb6aOicAPGkxJW+1mV0Ahom
+ G2zMSZ2A+w7aOCQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Wed, Jul 23, 2025 at 10:10=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> On Thu, Jun 19, 2025 at 5:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Tue, May 27, 2025 at 5:03=E2=80=AFPM Anna Schumaker
-> > <anna.schumaker@oracle.com> wrote:
-> > > On 5/20/25 5:31 PM, Paul Moore wrote:
-> > > > On Tue, Apr 29, 2025 at 7:34=E2=80=AFPM Paul Moore <paul@paul-moore=
-.com> wrote:
-> > > >> On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
-> > > >> <stephen.smalley.work@gmail.com> wrote:
-> > > >>>
-> > > >>> Update the security_inode_listsecurity() interface to allow
-> > > >>> use of the xattr_list_one() helper and update the hook
-> > > >>> implementations.
-> > > >>>
-> > > >>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-steph=
-en.smalley.work@gmail.com/
-> > > >>>
-> > > >>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > >>> ---
-> > > >>> This patch is relative to the one linked above, which in theory i=
-s on
-> > > >>> vfs.fixes but doesn't appear to have been pushed when I looked.
-> > > >>>
-> > > >>>  fs/nfs/nfs4proc.c             | 10 ++++++----
-> > > >>>  fs/xattr.c                    | 19 +++++++------------
-> > > >>>  include/linux/lsm_hook_defs.h |  4 ++--
-> > > >>>  include/linux/security.h      |  5 +++--
-> > > >>>  net/socket.c                  | 17 +++++++----------
-> > > >>>  security/security.c           | 16 ++++++++--------
-> > > >>>  security/selinux/hooks.c      | 10 +++-------
-> > > >>>  security/smack/smack_lsm.c    | 13 ++++---------
-> > > >>>  8 files changed, 40 insertions(+), 54 deletions(-)
-> > > >>
-> > > >> Thanks Stephen.  Once we get ACKs from the NFS, netdev, and Smack
-> > > >> folks I can pull this into the LSM tree.
-> > > >
-> > > > Gentle ping for Trond, Anna, Jakub, and Casey ... can I get some AC=
-Ks
-> > > > on this patch?  It's a little late for the upcoming merge window, b=
-ut
-> > > > I'd like to merge this via the LSM tree after the merge window clos=
-es.
-> > >
-> > > For the NFS change:
-> > >     Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
-> >
-> > Hi Anna,
-> >
-> > Thanks for reviewing the patch.  Unfortunately when merging the patch
-> > today and fixing up some merge conflicts I bumped into an odd case in
-> > the NFS space and I wanted to check with you on how you would like to
-> > resolve it.
-> >
-> > Commit 243fea134633 ("NFSv4.2: fix listxattr to return selinux
-> > security label")[1] adds a direct call to
-> > security_inode_listsecurity() in nfs4_listxattr(), despite the
-> > existing nfs4_listxattr_nfs4_label() call which calls into the same
-> > LSM hook, although that call is conditional on the server supporting
-> > NFS_CAP_SECURITY_LABEL.  Based on a quick search, it appears the only
-> > caller for nfs4_listxattr_nfs4_label() is nfs4_listxattr() so I'm
-> > wondering if there isn't some room for improvement here.
-> >
-> > I think there are two obvious options, and I'm curious about your
-> > thoughts on which of these you would prefer, or if there is another
-> > third option that you would like to see merged.
-> >
-> > Option #1:
-> > Essentially back out commit 243fea134633, removing the direct LSM call
-> > in nfs4_listxattr() and relying on the nfs4_listxattr_nfs4_label() for
-> > the LSM/SELinux xattrs.  I think we would want to remove the
-> > NFS_CAP_SECURITY_LABEL check and build nfs4_listxattr_nfs4_label()
-> > regardless of CONFIG_NFS_V4_SECURITY_LABEL.
-> >
-> > Option #2:
-> > Remove nfs4_listxattr_nfs4_label() entirely and keep the direct LSM
-> > call in nfs4_listxattr(), with the required changes for this patch.
-> >
-> > Thoughts?
-> >
-> > [1] https://lore.kernel.org/all/20250425180921.86702-1-okorniev@redhat.=
-com/
->
-> A gentle ping on the question above for the NFS folks.  If I don't
-> hear anything I'll hack up something and send it out for review, but I
-> thought it would nice if we could sort out the proper fix first.
+The main difference from the last set are just changes to address
+Zorro's review comments.
 
-Raising this thread back up again to see if the NFS folks have a
-preference on option #1 or #2 above, or
-something else altogether. Should returning of the security.selinux
-xattr name from listxattr() be dependent on
-NFS_CAP_SECURITY_LABEL being set by the server and should it be
-dependent on CONFIG_NFS_V4_SECURITY_LABEL?
+Support for delegations has been merged into mainline, but there is
+still an outstanding bugfix [1] that will need to be merged before the
+file delegation test passes properly.
+
+To: fstests@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Zorro Lang <zlang@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+
+[1]: https://lore.kernel.org/linux-fsdevel/20251201-dir-deleg-ro-v1-0-2e32cf2df9b7@kernel.org/
+
+---
+Changes in v3:
+- Clean up per Zorro's comments
+- Use ./new to generate boilerplate test scripts
+- Add both tests to "locks" and "quick" groups
+- Link to v2: https://lore.kernel.org/r/20251119-dir-deleg-v2-0-f952ba272384@kernel.org
+
+Changes in v2:
+- Add tests for file delegations
+- Clean up after testing whether leases are supported
+- Link to v1: https://lore.kernel.org/r/20251111-dir-deleg-v1-1-d476e0bc1ee5@kernel.org
+
+---
+Jeff Layton (3):
+      common/rc: clean up after the _require_test_fcntl_setlease() test
+      generic: add tests for directory delegations
+      generic: add tests for file delegations
+
+ common/locktest       |  19 +-
+ common/rc             |  11 +
+ src/locktest.c        | 621 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ tests/generic/783     |  19 ++
+ tests/generic/783.out |   2 +
+ tests/generic/784     |  20 ++
+ tests/generic/784.out |   2 +
+ 7 files changed, 679 insertions(+), 15 deletions(-)
+---
+base-commit: 5b75444bc9123f261e0aa95f72328af4c827786a
+change-id: 20251111-dir-deleg-ff05013ca540
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
