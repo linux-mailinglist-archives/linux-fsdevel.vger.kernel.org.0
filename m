@@ -1,77 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-70544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8130EC9E93C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 10:48:59 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5435FC9E93F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 10:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C90D3A891F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 09:48:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 41442349937
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 09:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534B72E0413;
-	Wed,  3 Dec 2025 09:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A752E11C7;
+	Wed,  3 Dec 2025 09:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHkbEXTq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZpftLkTR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4273D24A051
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 09:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0842E0924
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 09:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764755326; cv=none; b=hEzc2pMrb9hrEnpOIG+AbXHeOidyeVHeH6CaBa1yl88LhEeIU+MXC+VUwI1A1VruYuspgFOyi1fY/u5ld6cZ/WTttTmQdoLRlBtM2KuE34/cbvJx9CwFQMKu5AEuUVQJHWI2GmmBtpRT1k0nc5t8VXxg2ymxtOGQ9gJZPprl9WA=
+	t=1764755331; cv=none; b=Feq3mTPX1TAE4W5tcrTSkFWZGW4smcvXQsWKQJIQNtGO4Y/iHCr3A4Xdp+taBxB0iBPsVivjm2f1lGv8su4+tLUViEYeUCvoYMwyAITRKfw6VmVOfkxv5BSddBJt3pfADROQhKMqC+1KHBtHsJnwj1oz9rEew7A/y9YHhsDQHiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764755326; c=relaxed/simple;
-	bh=tzAHs/NW8hzxVyE7YgViwF3ICFGUKDmj3FMEsxS6U1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mlfFtJkToqDcDWW0zAzgNAwzZFuJemrsIEegBOYF0lVnK8WsXvw2lko40N02jaeRJZCNRHB4qV0k9yu8duYtl/1ixDgQRkNLm5oua2xsm3T2JrRUhnIp8dwxDaHotHTL5p2IUFZ/exZx5C2gYeDGE86TjD6uWNgL8V5xCOQGTj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHkbEXTq; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1764755331; c=relaxed/simple;
+	bh=vHSgsHxd+j0S3DehVoM3Pol/Lt8pmnytid2IwqfB6YA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=f0KNhRKymyjC+gbsMZvPgfPFlx+Q5Iw4lKLL3o1zRnOyLCuI8EmhPVgv7m5BdspcF38ITqvwZWn0ef0O3tFY/7J5FwEKEpqFqA1pyWo1i6nrIjftsOA/+V2uYpDwdFteY+XbkpLw7MW+qyurZsF/Tc5JlfFB73CLoPolSkaqKS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZpftLkTR; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b735487129fso940270066b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 01:48:43 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b7633027cb2so988985266b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 01:48:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764755322; x=1765360122; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ONlXezZ8rYOFy9RaN+13wK2rQQVa66Pyx3TL3D7WvBY=;
-        b=IHkbEXTqZWGO4y1eS3wdAH/RabhJgM0KyF7Egw2P1x8kgbmB2eKS1pjaGlZ1RT4AE+
-         KayVNhMVbTzN9K6bWJH+wUCWmVGzqJtnNZTplH2w0kkBkpHkFL9hs57eW4v+2XFrAr8i
-         4hLgMQWvrIVzcdGepQOMpjJYjwqUmE2sadtV+AUDgYfwTXlkY5Eh7rxLSam8rdXW7xpa
-         oiD2usFMe77lV8DCAlI/yFz0+/ldHqioF1k8gdF/LTGddxmcz76Yoo9gWcFgqAA6rh24
-         ZeTOeuyXZG2y7VwLidaD+080uEMqBK42Q4lweoJjx/ZYRs/BqCig4Z9MGf68gxbquCo5
-         ea9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764755322; x=1765360122;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1764755325; x=1765360125; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ONlXezZ8rYOFy9RaN+13wK2rQQVa66Pyx3TL3D7WvBY=;
-        b=Z467eS+Lzb2D5GjzIOyGVAJDIITPqcLIvzP5+9rdgLGD1pJ2mPKDH1tOWOqoTY4GKA
-         TC+9RGgS3P7dt+auJpyLub1HYaI/h9tfgM9U2l6QkVMBIgMRqtRjDlqEd42FxssQK/NZ
-         XopJybTaqx/uv6Wnf+/PiZUWlSNN5jZWz41IYN0YlwQCABoNwYzw+8V0Eeb/HDRSqjN4
-         RfhNgNPvigO9Uz/k4FeAY7WbjgDFkVw2Ngm9qqG3iew47ovxiImU9EaLhijFYukK2Iwh
-         K97RF8csj1OBdNh9nStNisvwIi/JlkFgknb6xWYZ4AIRKzpOV7VJkCtH33ePRBWMWcbS
-         68OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLMS0SMfRaexQQ9vhuAECVpfyDMdoXCaZPc3IkKHc3IAC+ukWsmJ3Fz6U0yyZYPcCc0sDejKRp+6JwEj70@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaIdgoR8MMnOLD4jXYQIi6ydjyRJEOVixOZi+2ymkMulqtdtGc
-	PjtiEdcUsk1/FErszad9gy3miOpNJF/NaCoVNjQdQdFCnx5ze9Wuu3Nq
-X-Gm-Gg: ASbGncsBqHVp/6jjlCoMrJ8ae9DhFfnF9uowcp6GynWD8yHFWRHgpWYI/ugjeOF21vx
-	x2Tio1CSuPw5e67rj8m/jxu3Nlwwdq3bp2EdZ8ibgf2/8lVvycDM0GSop1wTJRG3wNkhI6stk0R
-	3L9BMJGTBuT/IBKnC5FQuDa+lKAA9ZTFm4ggRxyquKwLEpStFzPo5kOon0plkVzLcgk4t3TypBH
-	F/CsKrGJybeNpQT4OTlwapBgCT4F35KDKMj9Wda2qOnWTb3kMxC8UAd2bKg0gFjgfrBo5X6hJ2+
-	OC2PSCRPbdtREMsZHdFPrv40Lwmm88CuRdNZTbHsHm+lrUlmNIf9KJ0n8GBr3q8H9ZmofDnYowN
-	DASXzc80jqm+Dko1rJk0rqvHVheNKKUi8364/V1JRuB4YcyOP2EL5nTiDYuRRBduvwAcqGH4Gdx
-	b9WgCJgQ7XrsFuEH5JEBit/CT80MojneX5iJpk9mPKle8vL7Po1SVvLh0IbINgf4BiQDCiEw==
-X-Google-Smtp-Source: AGHT+IFsXTiMvUyafaQ2YhhwQoLf9qgKC9IhU98mZGdwCNH1FN/zxbSo4VZZ0NE8Zun8h1TzC2anGA==
-X-Received: by 2002:a17:907:7e99:b0:b71:edef:b1e0 with SMTP id a640c23a62f3a-b79dbe71b9emr158544266b.1.1764755322213;
-        Wed, 03 Dec 2025 01:48:42 -0800 (PST)
+        bh=ZWEe6E7kY036NNeOydAjfClB9oAoxEJ+UkZpb0fwzDw=;
+        b=ZpftLkTRb8pAqWIGvNK88Y2hbW1ChSoalPw6kBRZCQrnLO+J5kyVnK1JBbY+HF9og0
+         oUtjNHXhTEAqJZELvyrxju1qhWJEu/BxiQ7R2tZmdULs9B3U/hwsFH6N2k6uvhNgnsBX
+         +Jd3DorOekDFhD36bbfvBflJwZUxFE63mu5BuEnL/MhZBLdtGlKLzgbNdHX2t25OLhjV
+         FSTYUCSeXhyukM6+pb6Om812wpJozMrqIqh1mMj3ecSBdwOoyzhQF1JETGf/2gT+DI9V
+         Yam+9eqn2luAYLJBkVfWIAxsJj/mZF2FSW9FGUNwo0IigcN6CHqBJiomz9lNAOsRc3Rm
+         2pmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764755325; x=1765360125;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ZWEe6E7kY036NNeOydAjfClB9oAoxEJ+UkZpb0fwzDw=;
+        b=HTTJwrl9G7luBVVyexP21Wf8rf6FZ/MKjVdbMbZHNEOf6LiaSi5zXWsq29JhzfUrj/
+         UmSg+S49otPJtEv/dUqQ6HgAbtabfbtQeNo3qWOAXPbE6r3rlXLrG3z+vww7Ks2RHwIp
+         aXFZc+w4y6Hi5KjTlRt3YfRtczbVHqpWUxoadnzS0dPnkWAjWjT5oBJW5wdTFgVuPBOw
+         0+BZ0i12oKqEIYSUkZBgDTQVjXiL31tuMhgwqLJQe/UkqflwNNiuh3VKFzgyl7Uw48NX
+         wM+o730F4fBQfXl74E4z1vwskJATwHK6LqD69k80C60tSWy/3SfsPg/ctifcNtNGjjW/
+         t9/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXRJTVsQqJpDWi2XYICMQErY5P5bvpdvCdWArlR7gwuTHcn7s+tutcbFenYotjZrymxyV+Itf7IF1M/k1Hm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqhSHCBVove1HvQYW98/7/1hdvTaDf1E1/H+0A3uNzck+2Y/tM
+	feIUmvxfTTh+luqc+tLKAEqupsaaORDwNBy5KnUOUT8Al4CsNEOUIi48
+X-Gm-Gg: ASbGncsDfnn38CR/x2lHR2mx4zmFZ1WGZ7cmSR9W5BevZndkj5IDHS6ecteh7jVvAGj
+	U/H4nAtk1FaF4wDTxyQQrarLIuyHbUJ9DGvH2p4IeiR7dv8dVPRJf37df1YRy87d9wMvOiUvVbf
+	fWdUzsU1uFtQzWvqAB85XtYQd5VdEXJBl1MK3pfN+seEOYPLAXnf+yXaZhNaiAzCcua43yqFoja
+	RnyPPfbPzxyEnFnLSXlqvHl0aUzOVxZvkrhOfgXZiDNP7g8CPpXrnWuV/eJA00/BAE2p1jt4V0B
+	puD8E6KPliUlmNA8pvSDYk0IniH6BFT3OhNWbVMo1gvMpBxJQjydqZQWjnXQBwZgYeObQFlRSt+
+	wbY/Vylo/bo5XLBQr43JENStV5hYXk1v9crXR+xRZPryMqJcTMMGmqBlQBzMN+y3G7Ui1lNdpOf
+	73NfLiD9PWZXYH5ly0iqp5OnUjbhF3ugQnG0cyXfqFreXxU15HTPirTREiuyA=
+X-Google-Smtp-Source: AGHT+IENmccYJBAs3VEPI5Kdejm4ZodPqOPyP4J6UpUjSv3xkEttJriw6FgQYZ4MjjNJWSoQCzLYTA==
+X-Received: by 2002:a17:907:6ea1:b0:b76:7b85:f630 with SMTP id a640c23a62f3a-b79dc51a4c1mr152463566b.34.1764755324873;
+        Wed, 03 Dec 2025 01:48:44 -0800 (PST)
 Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f5a4a652sm1779148366b.65.2025.12.03.01.48.41
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f5a4a652sm1779148366b.65.2025.12.03.01.48.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Dec 2025 01:48:41 -0800 (PST)
+        Wed, 03 Dec 2025 01:48:44 -0800 (PST)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -80,10 +82,12 @@ Cc: viro@zeniv.linux.org.uk,
 	linux-fsdevel@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>,
 	Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v4 1/2] filelock: use a consume fence in locks_inode_context()
-Date: Wed,  3 Dec 2025 10:48:36 +0100
-Message-ID: <20251203094837.290654-1-mjguzik@gmail.com>
+Subject: [PATCH v4 2/2] fs: track the inode having file locks with a flag in ->i_opflags
+Date: Wed,  3 Dec 2025 10:48:37 +0100
+Message-ID: <20251203094837.290654-2-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251203094837.290654-1-mjguzik@gmail.com>
+References: <20251203094837.290654-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,33 +96,141 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Matches the idiom of storing a pointer with a release fence and safely
-getting the content with a consume fence after.
+Opening and closing an inode dirties the ->i_readcount field.
 
-Eliminates an actual fence on some archs.
+Depending on the alignment of the inode, it may happen to false-share
+with other fields loaded both for both operations to various extent.
+
+This notably concerns the ->i_flctx field.
+
+Since most inodes don't have the field populated, this bit can be managed
+with a flag in ->i_opflags instead which bypasses the problem.
+
+Here are results I obtained while opening a file read-only in a loop
+with 24 cores doing the work on Sapphire Rapids. Utilizing the flag as
+opposed to reading ->i_flctx field was toggled at runtime as the benchmark
+was running, to make sure both results come from the same alignment.
+
+before: 3233740
+after:  3373346 (+4%)
+
+before: 3284313
+after:  3518711 (+7%)
+
+before: 3505545
+after:  4092806 (+16%)
+
+Or to put it differently, this varies wildly depending on how (un)lucky
+you get.
+
+The primary bottleneck before and after is the avoidable lockref trip in
+do_dentry_open().
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- include/linux/filelock.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
+- no changes, this is a resend of v3, which is already rebased on
+  everything
+
+ fs/locks.c               | 14 ++++++++++++--
+ include/linux/filelock.h | 15 +++++++++++----
+ include/linux/fs.h       |  1 +
+ 3 files changed, 24 insertions(+), 6 deletions(-)
+
+diff --git a/fs/locks.c b/fs/locks.c
+index 9f565802a88c..7a63fa3ca9b4 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -178,7 +178,6 @@ locks_get_lock_context(struct inode *inode, int type)
+ {
+ 	struct file_lock_context *ctx;
+ 
+-	/* paired with cmpxchg() below */
+ 	ctx = locks_inode_context(inode);
+ 	if (likely(ctx) || type == F_UNLCK)
+ 		goto out;
+@@ -196,7 +195,18 @@ locks_get_lock_context(struct inode *inode, int type)
+ 	 * Assign the pointer if it's not already assigned. If it is, then
+ 	 * free the context we just allocated.
+ 	 */
+-	if (cmpxchg(&inode->i_flctx, NULL, ctx)) {
++	spin_lock(&inode->i_lock);
++	if (!(inode->i_opflags & IOP_FLCTX)) {
++		VFS_BUG_ON_INODE(inode->i_flctx, inode);
++		WRITE_ONCE(inode->i_flctx, ctx);
++		/*
++		 * Paired with locks_inode_context().
++		 */
++		smp_store_release(&inode->i_opflags, inode->i_opflags | IOP_FLCTX);
++		spin_unlock(&inode->i_lock);
++	} else {
++		VFS_BUG_ON_INODE(!inode->i_flctx, inode);
++		spin_unlock(&inode->i_lock);
+ 		kmem_cache_free(flctx_cache, ctx);
+ 		ctx = locks_inode_context(inode);
+ 	}
 diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-index 54b824c05299..dc15f5427680 100644
+index dc15f5427680..4a8912b9653e 100644
 --- a/include/linux/filelock.h
 +++ b/include/linux/filelock.h
-@@ -241,7 +241,10 @@ bool locks_owner_has_blockers(struct file_lock_context *flctx,
- static inline struct file_lock_context *
+@@ -242,8 +242,12 @@ static inline struct file_lock_context *
  locks_inode_context(const struct inode *inode)
  {
--	return smp_load_acquire(&inode->i_flctx);
-+	/*
-+	 * Paired with the fence in locks_get_lock_context().
-+	 */
-+	return READ_ONCE(inode->i_flctx);
+ 	/*
+-	 * Paired with the fence in locks_get_lock_context().
++	 * Paired with smp_store_release in locks_get_lock_context().
++	 *
++	 * Ensures ->i_flctx will be visible if we spotted the flag.
+ 	 */
++	if (likely(!(smp_load_acquire(&inode->i_opflags) & IOP_FLCTX)))
++		return NULL;
+ 	return READ_ONCE(inode->i_flctx);
  }
  
- #else /* !CONFIG_FILE_LOCKING */
+@@ -471,7 +475,7 @@ static inline int break_lease(struct inode *inode, unsigned int mode)
+ 	 * could end up racing with tasks trying to set a new lease on this
+ 	 * file.
+ 	 */
+-	flctx = READ_ONCE(inode->i_flctx);
++	flctx = locks_inode_context(inode);
+ 	if (!flctx)
+ 		return 0;
+ 	smp_mb();
+@@ -490,7 +494,7 @@ static inline int break_deleg(struct inode *inode, unsigned int flags)
+ 	 * could end up racing with tasks trying to set a new lease on this
+ 	 * file.
+ 	 */
+-	flctx = READ_ONCE(inode->i_flctx);
++	flctx = locks_inode_context(inode);
+ 	if (!flctx)
+ 		return 0;
+ 	smp_mb();
+@@ -535,8 +539,11 @@ static inline int break_deleg_wait(struct delegated_inode *di)
+ 
+ static inline int break_layout(struct inode *inode, bool wait)
+ {
++	struct file_lock_context *flctx;
++
+ 	smp_mb();
+-	if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease)) {
++	flctx = locks_inode_context(inode);
++	if (flctx && !list_empty_careful(&flctx->flc_lease)) {
+ 		unsigned int flags = LEASE_BREAK_LAYOUT;
+ 
+ 		if (!wait)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 04ceeca12a0d..094b0adcb035 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -631,6 +631,7 @@ is_uncached_acl(struct posix_acl *acl)
+ #define IOP_MGTIME		0x0020
+ #define IOP_CACHED_LINK		0x0040
+ #define IOP_FASTPERM_MAY_EXEC	0x0080
++#define IOP_FLCTX		0x0100
+ 
+ /*
+  * Inode state bits.  Protected by inode->i_lock
 -- 
 2.48.1
 
