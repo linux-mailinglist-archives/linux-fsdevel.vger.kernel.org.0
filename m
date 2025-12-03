@@ -1,108 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-70581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08645CA0BB9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 19:01:53 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9ECCA0D7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 19:14:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 19A7030014D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 18:01:50 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 70CB430094B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 18:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7057B34104C;
-	Wed,  3 Dec 2025 18:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BDE398F86;
+	Wed,  3 Dec 2025 18:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="3AHelxj8"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="m6HaoR9X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B9533D6D6;
-	Wed,  3 Dec 2025 18:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56952FB962;
+	Wed,  3 Dec 2025 18:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764784896; cv=none; b=aULGpu0nMSeVnmty6KlxAITnVZ8BCgQh3arHcCjjYSG7rVROzwgEUfmkoTsgVxYHdGQWyd6aQBs8iuzBsw+zj5ldzDcWWaqtJuCWV7nzndkNKBpijhGb0lEYpVZ0P94a8+FcbxRsOmaZo6FmlMr2LZV9TfdCPmTAfrW24LP5zoI=
+	t=1764785079; cv=none; b=MtrpeOt+JH/GeJwAaUfmyJL27iCH5IpE7B9s4ZoDbJ7NlQYegZJLTalJDwd/24RcjPz1d3Q8NnjpfdPXn6a6W/vCUKgKcbRQRUTOD2GxfwguEi6+D84SsaeQ4oWGTtEolcrxJuOXUaMMJmlk3riz/Jymz0uZXwVri0nir/NS1pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764784896; c=relaxed/simple;
-	bh=5CZz+n0aCk1jZ0uAfCJdvWrN/YpI/Q+QwQ0ju9Y11DA=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=eeufvXzPavRNWsPowq5KOuZ4ywfLJQTXxAbOb13pnQGbyK+kOseow0cWqb3Caf7pxhkM8oMB2zWKLZ7jqXf0IDif5RIAQi1VVDHkKkmXEs8fkAVg/Y92I/0sfh2NGsToz4iN/vWDdXdzjS1YpmwdGsGUX3sFltzE0uxxfFHCHXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=3AHelxj8; arc=none smtp.client-ip=143.255.12.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
+	s=arc-20240116; t=1764785079; c=relaxed/simple;
+	bh=Se2PfxGlMP2oRTa5rQHeRfD2j2fYjzcv//v6ox5mTys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dYpcXPt6GjeCGqfhllfguUzy/ifOAJO/nXAPkjm5hS/RHwmoLqCKppxBctyfunj/9wSo+mdYnBHfaZ9jhWq0Xp1N/DbpNCSC5lYr9lP2QrSAZ2k54mcCDddNq9rVQ8EnIioQ1i8+bc9aI4aSCQAh/xq2B3Rit8Zl6A5tsakq99U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=m6HaoR9X; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RNfC7607WF0KF17s16Qmh7V79C7DQ4hFq4c7IgzWdMI=; b=3AHelxj8i0TKVsm+sK3MoVmGBB
-	ZsoguvJ1rtqnWEY01Vk/fgTZ8TVNi5nCb70oNIicrbMw1Znrw1Z2NIQXKbIsnhb/aS7LN+z++IXWC
-	xlCC+C2UIKFCa2wX+UCRliIoy1hFhNlSmKrjIW/IKkgzVE5nlSZBmcBkcCRNg4FQKWhskLVIXwgpK
-	VERTTHTgEeJ+BjNocUreRfKX9umKASlU4Gjy/xTo2auiu7cK39JM/T0MXR8SeZoVegNJG7o+4+ObM
-	JoRN0ohFw3KbVjA9Whd32tnElwR0R6EcDNRwLKFLIBtuGdJsBZNNsRcmUcSPYuowwrvz95JIDqaTD
-	wHRG2mdw==;
-Received: from pc by mx1.manguebit.org with local (Exim 4.99)
-	id 1vQrAJ-00000000AHO-0sbi;
-	Wed, 03 Dec 2025 15:01:23 -0300
-Message-ID: <0cf36b63a8f7c807a785f3cbee41beb2@manguebit.org>
-From: Paulo Alcantara <pc@manguebit.org>
-To: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>
-Cc: dhowells@redhat.com, Shyam Prasad N <sprasad@microsoft.com>,
- linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: Fix handling of a beyond-EOF DIO/unbuffered read
- over SMB1
-In-Reply-To: <1597479.1764697506@warthog.procyon.org.uk>
-References: <1597479.1764697506@warthog.procyon.org.uk>
-Date: Wed, 03 Dec 2025 15:01:22 -0300
+	bh=BiiCmM83gj8nnJg+Q05lk7LGEvwJXQOD7Xzr4jYNyao=; b=m6HaoR9X2nkIwoWIrWXb37Miiz
+	F/2it5/akUUd0a+saZ4vxzTp6syli3LaRdiML/kv1ziH6todL8mdl13EEqeSq+hQaS55qayIMy9xM
+	3iudv3BxzJOkZpuH7SZmzkDYMjc0LlgEj3Ps1GoMDYMbhqzCRRw22Q33EPuW1y56kuOa+UJ4o6L1L
+	0kv8VYGgCsdNt9ED/hftIBBAy0afA4Yo8AnQEBW84lTbOs9rQhgoQvDE8uqPFoMFmnqZ9IaXmKKYG
+	IkzHNm+xdOI+lp396gtbx2ERkW2+ix+EccOmN6D+GpBzOqRHod3kuoqoQFaO7v7Rhj3yOvlnNthgo
+	vmxdiKXg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vQrDY-0000000BsuX-0efU;
+	Wed, 03 Dec 2025 18:04:44 +0000
+Date: Wed, 3 Dec 2025 18:04:44 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Eric Sandeen <sandeen@redhat.com>, v9fs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
+	eadavis@qq.com, Remi Pommarel <repk@triplefau.lt>
+Subject: Re: [PATCH V3 5/4] 9p: fix cache option printing in v9fs_show_options
+Message-ID: <20251203180444.GG1712166@ZenIV>
+References: <20251010214222.1347785-1-sandeen@redhat.com>
+ <20251010214222.1347785-5-sandeen@redhat.com>
+ <54b93378-dcf1-4b04-922d-c8b4393da299@redhat.com>
+ <20251202231352.GF1712166@ZenIV>
+ <c1d0a33e-768a-45ee-b870-e84c25b04896@redhat.com>
+ <aTBRdeUvqF4rX778@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aTBRdeUvqF4rX778@codewreck.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-David Howells <dhowells@redhat.com> writes:
+On Thu, Dec 04, 2025 at 12:04:21AM +0900, Dominique Martinet wrote:
+> Eric Sandeen wrote on Tue, Dec 02, 2025 at 07:09:42PM -0600:
+> > >> -		seq_printf(m, ",cache=%x", v9ses->cache);
+> > >> +		seq_printf(m, ",cache=0x%x", v9ses->cache);
+> > > 
+> > > What's wrong with "cache=%#x"?
+> > 
+> > Nothing, presumably - I did not know this existed TBH.
+> > 
+> > (looks like that usage is about 1/10 of 0x%x currently)
+> 
+> I don't have any preference here, but I've folded in %#x when applying
+> because why not -- I've been seeing it slightly more often lately so I
+> guess it's the "modern way" of doing this.
 
->     
-> If a DIO read or an unbuffered read request extends beyond the EOF, the
-> server will return a short read and a status code indicating that EOF was
-> hit, which gets translated to -ENODATA.  Note that the client does not cap
-> the request at i_size, but asks for the amount requested in case there's a
-> race on the server with a third party.
->
-> Now, on the client side, the request will get split into multiple
-> subrequests if rsize is smaller than the full request size.  A subrequest
-> that starts before or at the EOF and returns short data up to the EOF will
-> be correctly handled, with the NETFS_SREQ_HIT_EOF flag being set,
-> indicating to netfslib that we can't read more.
->
-> If a subrequest, however, starts after the EOF and not at it, HIT_EOF will
-> not be flagged, its error will be set to -ENODATA and it will be abandoned.
-> This will cause the request as a whole to fail with -ENODATA.
->
-> Fix this by setting NETFS_SREQ_HIT_EOF on any subrequest that lies beyond
-> the EOF marker.
->
-> This can be reproduced by mounting with "cache=none,sign,vers=1.0" and
-> doing a read of a file that's significantly bigger than the size of the
-> file (e.g. attempting to read 64KiB from a 16KiB file).
->
-> Fixes: a68c74865f51 ("cifs: Fix SMB1 readv/writev callback in the same way as SMB2/3")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <sfrench@samba.org>
-> cc: Paulo Alcantara <pc@manguebit.org>
-> cc: Shyam Prasad N <sprasad@microsoft.com>
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
+In 4BSD libc by October 1980, part of ANSI C variants all way back to C89.
+Covered in K&R 2nd edition ('88); 3BSD didn't have it, neither did v7,
+so I'd guess that it was done at some point in 1980, possibly late 1979.
 
-Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
-
-Dave, looks like we're missing a similar fix for smb2_readv_callback()
-as well.
-
-Can you handle it?
-
-Thanks.
+So it's hardly something newfangled...
 
