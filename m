@@ -1,61 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-70548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0889C9EA60
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 11:11:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B307C9EAB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 11:15:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 710F63A2124
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 10:11:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F9AF4E047D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 10:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2C92E7657;
-	Wed,  3 Dec 2025 10:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3B22E92C3;
+	Wed,  3 Dec 2025 10:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJoNkUiV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYESD3Pg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3B82853F1;
-	Wed,  3 Dec 2025 10:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484A22E8DFA;
+	Wed,  3 Dec 2025 10:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764756680; cv=none; b=FwejBCQ8jo9p0xc3lvwkssB2qAdRp+KvFF9zRCqdYM78SlP7PutaEebVTpti1uQpv/xmvHOk9CjT9aFOQjaso7y/GGkSOxx5M6yhVn4WERykEqW5KcDKh1ltW4CDcnpClB40wj0tczaOaqRXSrPjdiOYmZGChsWpT3t//WSUm4E=
+	t=1764756910; cv=none; b=UmTfJjCflp4IdVGLLp1M7JzsQZ9t2RlqdVyDlXWFCKXCBduRX2vi1mUeRiAAJlGOF/CyNNkF0znVGabyoLp3UkJAxqBVl4u/oXFuyvQzYuwstFwgxpYScKSkRILx58s1i7/uNYPDBzQ0Qmbq9f1xVTZpA59wNxJ4WvsQC4RTzZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764756680; c=relaxed/simple;
-	bh=dw4TiZn8xxcrO2mUbONBSyQ7Uq01fFPlIO8nwtYEWGk=;
+	s=arc-20240116; t=1764756910; c=relaxed/simple;
+	bh=4o5KzcrgR7wCves+21Wu1u0dZ3xcZjAnI1rWHUx2mIg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oPBsOjD1wMy/KbjQn1Zr3CvfQae1zpiZ7dCBHKqvsv2Gb3LzPv6CuIgeg5/ZJZ3S9HCknn32uVNJvlzZ0V7cwFOhDhLA4TmQ3wWNqtvUxt+9XWHe+a+cyOVmEydlSFWCsGHP9ifR9wBHF9ApLcrkvbkhN1DXSl8Yqdyzk7znZzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJoNkUiV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C6E8C4CEFB;
-	Wed,  3 Dec 2025 10:11:17 +0000 (UTC)
+	 MIME-Version:Content-Type; b=C2zFy+oUZ3XX6YtJbRKJ1DenMuF/EY52F8K3hr4kGPVaToRWaaHKSAyvP+kl5AbdfVOJ/bFMPxW4fMGhWA1kWxjouxRAXBJbc8iINPLldDhXbfJMBhWc+ybTFxr4HwrqMPqwypdYUIE1sukaxTFTUyZtlVsI0/+ZpYDEi0yq5pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYESD3Pg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19FD1C113D0;
+	Wed,  3 Dec 2025 10:15:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764756679;
-	bh=dw4TiZn8xxcrO2mUbONBSyQ7Uq01fFPlIO8nwtYEWGk=;
+	s=k20201202; t=1764756909;
+	bh=4o5KzcrgR7wCves+21Wu1u0dZ3xcZjAnI1rWHUx2mIg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YJoNkUiV7BJdPVfWDjdXEyTo290QuUwRS1gps4omZ9teErV8nllpfPyWLd7CwhMxM
-	 tqV0vjM5QA7iRY8XZ2NnYc3nppdwzSo8yTjSZm/R4lrJP0IqPgDg4wtU/fP60spJ6V
-	 qsnWL9CwzxYgObRwZcJfHF2MBTswjLfPGdbkzZ+FiCpreSLp78sr3TIX6Zj01U/74R
-	 3F6gzVFdpW8QNOhf9OW8A1+E2iweDkbdv9UDFezbBPCXAAa6FCSA8Sq8AHV+aPzY8f
-	 l0ekK/ZYZ7G3TubuLdavtHegDjQFYKr7JJSQmrKgceYLeu/yEKxsuGWESVw2i386Qu
-	 G+tT5bMqAahSg==
+	b=dYESD3PgAJ5QCJK5JXngwoPSNz2NyUnAhU0C9AMDaDpv0tIScD89R+Pr+/lZhTjjy
+	 Qpx5rYrFVCw4FrpPshhrdVrJCe3kMprtdcZyK/GJyRb+ezER02bqfS2bzpSqJz+jgj
+	 y/wobs4GItambY4hVbFjhDTfl42eQn6heEWE5xHJ5nE9L14XlHlRDMkOD/cVw/RecC
+	 PScUyHrQZicAg5WBGyhIjJCmcnwCxbGYRdCye3HNHEAXS4tjjNOHR0PsRRJelDrvVM
+	 HnPsQUFYNOJlaSPvLCNdd13YWzeMSmBarNhU+YgoQe7RpVFrI1UsNjbOdiDMpCAZwy
+	 tjhBH4lrQY/xw==
 From: Christian Brauner <brauner@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux PM <linux-pm@vger.kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v1] fs: PM: Fix reverse check in filesystems_freeze_callback()
-Date: Wed,  3 Dec 2025 11:10:32 +0100
-Message-ID: <20251203-harmonie-wirft-7c23dab0f888@brauner>
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: assert on I_FREEING not being set in iput() and iput_not_last()
+Date: Wed,  3 Dec 2025 11:15:03 +0100
+Message-ID: <20251203-zeitig-zapfhahn-fe29a9944d47@brauner>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <12788397.O9o76ZdvQC@rafael.j.wysocki>
-References: <12788397.O9o76ZdvQC@rafael.j.wysocki>
+In-Reply-To: <20251201132037.22835-1-mjguzik@gmail.com>
+References: <20251201132037.22835-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,25 +61,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1317; i=brauner@kernel.org; h=from:subject:message-id; bh=I9rQxRBS7UdWhIBo6tS1PDm3YufWgZ4UlioSglS5ZpM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQa8Kyp0GuW8IjVfLnKq/pIguSP7deC7+ypnp/q6WKh9 ZqX7WNRRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESm7GD4H+j6UmHe35aOT4kf K7h2HRMX9nvXknm5NMWVt3vrpTim4wz/3TJmCs9awBJ3ZW/p23wRxcCzk2yPh858aPTv+9re90c 3cQMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=846; i=brauner@kernel.org; h=from:subject:message-id; bh=4o5KzcrgR7wCves+21Wu1u0dZ3xcZjAnI1rWHUx2mIg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQa8K4IteZzupbn4pfnU/u1qEY+W61F78s3QabjLMxPD 2bWOP/rKGVhEONikBVTZHFoNwmXW85TsdkoUwNmDisTyBAGLk4BmMijnYwM16d1dPnv6tOWEdZ8 0TqT5QdPSMyD5/FHVD58nvFs7Wu7aYwMK0SdOBh7a2ZcXDXbqSPJ/UPVrL7eblH1SlulKbN4d/f yAgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Tue, 02 Dec 2025 19:27:29 +0100, Rafael J. Wysocki wrote:
-> The freeze_all_ptr check in filesystems_freeze_callback() introduced by
-> commit a3f8f8662771 ("power: always freeze efivarfs") is reverse which
-> quite confusingly causes all file systems to be frozen when
-> filesystem_freeze_enabled is false.
+On Mon, 01 Dec 2025 14:20:37 +0100, Mateusz Guzik wrote:
 > 
-> On my systems it causes the WARN_ON_ONCE() in __set_task_frozen() to
-> trigger, most likely due to an attempt to freeze a file system that is
-> not ready for that.
-> 
-> [...]
 
-Ah, thanks for catching that.
-
----
 
 Applied to the vfs.fixes branch of the vfs/vfs.git tree.
 Patches in the vfs.fixes branch should appear in linux-next soon.
@@ -98,6 +84,6 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs.fixes
 
-[1/1] fs: PM: Fix reverse check in filesystems_freeze_callback()
-      https://git.kernel.org/vfs/vfs/c/222047f68e85
+[1/1] fs: assert on I_FREEING not being set in iput() and iput_not_last()
+      https://git.kernel.org/vfs/vfs/c/aa8aba61d4e1
 
