@@ -1,245 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-70599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D0BCA1B4C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 22:44:19 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4B0CA1C39
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 23:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DA411301D64D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 21:44:13 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id DF3B2301C0AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 22:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD252C21D0;
-	Wed,  3 Dec 2025 21:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEA73128D8;
+	Wed,  3 Dec 2025 21:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="RyXLNLdC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LCV916I+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC19F2D9784
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 21:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B8C308F08
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 21:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764798252; cv=none; b=WBn3co7sNWrKV6jimdL2dE/he0Kr2xNBL11gkDbZvmTax3q3IhB/qYj1LGkKYCHVqz+koON/QY/xi2UG5yDtF+1fvNWKNHDeW2oFQh8RHq6nEcxhJMiUZr4fbsptqhSrgCBBKBmnDXuxCNN9KM7NrN4RkY3NGqWE5kSJssJ5MJI=
+	t=1764798834; cv=none; b=ZyLO9Hw6e7sPR5j0cMoKBGapGcHInsQp7mMu6REFxcoZszTrZuB/mEiWoPxcHWweEEl9zqtbEq1j0ZzIESjTFG+sEHJXuhNX/upQ8TuYgNewq45+l9UJwR8OY85ETH0x2B/cCszD6N4mumR1ZkzJqOFcbhGaf8aznLVewMaYbv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764798252; c=relaxed/simple;
-	bh=78WDTHPziqgIAar/wHrHN1w3bbfBF3IBRQ79sIJ/AXc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=brFkWI0Z5e2gw9+FG9Yg1r4mbV21tW7Ko6w77q2X7yX24/QiAJI+EJF9cciEdOwsxpLZWEOxsGzXvy9FV9aXxi6D8pCn7kiCnTAaOyp/s/C4IdiKevP+H62cDBuchxWVCoq+4rlBkhtZIaDouNL6hWEmwxMVsz6OOd14wUowq1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=RyXLNLdC; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7baa5787440so35569b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 13:44:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1764798246; x=1765403046; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jSQ2B+EvgOAZgpUFpH97jmB2MRKv2wrPc2kdi9xRuF0=;
-        b=RyXLNLdCEnsMlg+UgjXT2bKsH+8VrmcnsQuTosnMjVmtBqgJix/9ixE8R5Z/lXvfP/
-         5rpGxjqW1An0svUIl2eaMIMDWQ6wxKit65iIb+JiHD9D7Rs+9PpcZLhd2OgM/6KEqPxN
-         20VZX4KY5/4/tCiy7+u5h8mSmsm3GE3h/ZvPi0LU5f3cR3Qhs41qrm94QUK/N+/SpVjO
-         wTDv/3n7z+MXpb0jRdEhFRO/+PbNSuaAXs8YW0prlogsjwshxUZ6GXC6i4u36VupRr+E
-         JBufIm/mIL2KZsYj+BZ1Em/gafepNjaX95FTYeeQfCk+RWNi7Km3jW6YrQxJjunyB8MX
-         8OFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764798246; x=1765403046;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jSQ2B+EvgOAZgpUFpH97jmB2MRKv2wrPc2kdi9xRuF0=;
-        b=iXQ58aT7OxL2cr/DS1mC5fW7+Sj9V2+47xUnivRrL1jHLDr6PZsql/oBlSpKE2vQW7
-         434Zql+1zCy87Z4papVdn89keqOnSm/B6l8dr1BgH2xDANI8CGT45x4s0Z2dxAQZGHXU
-         ti/Sef1fFkDUPEpZJtpcqrVyUWp+LjpAUI46nIgef41o3MXWx5uS8Dm1HzHtWOxgG3+v
-         cHGBEFRwJYbV6xRTMRF7HnjJ5pItcmvYc4T2I0ufe9zj/ewh40KVInf+a6urVeaykcdS
-         nlzF//ETrIaLWcMHHcbbcVLP71aXElXyMTqu9etBRDLvtA5D4wYybkNWmw+ioCCnXEqf
-         ClBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyGiTseyUA55lQUxwRvgw0K34+PLON9bRjSTUH5Y//qOZ85nzLS1E8+DrIMiFoEjtpFg2+lhsXllY+T6uq@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQZEqrNFgfI0ncTB06wj73AofYhpAHtDHJg08KvOJ0zavF2dfs
-	M5zurMcQJJzFvmqxBmbDLBzlHLvoLKGq7HSmdwkzfDgHEOdmyIF9Jli5/qcfEmtgq8JiTuCxENo
-	d3upZXAKxGyeN3nOMcZUO2xCbQPosq1CZ9HXPyxyZtA==
-X-Gm-Gg: ASbGnctb5QrtyyrhP8/cQaszR1G0MIp2fW6qb0ucyVk6ClsCfRnUMM9Tuo/zjEPlxYT
-	CVXTWAqqIstx/KsPNwQMONgPtAVl0RuNdfUX82KxgLTaIFUYwoXfiZCkEQ6+u7QDOC8c0nlvuuQ
-	ZkAv+x4tiB1Gqc4xw9UR7e+DlBz2OiHX+4XyhybQFKfL8ba+4Zf+CZcyJ6bBk18wr++4Gpplpcp
-	kdUAhGZUUxitnR0FgCZhwjNqRxNzxRsFvFd1kuYAHHyrar+ums6W1wX4yrAp20xNe09kgRe
-X-Google-Smtp-Source: AGHT+IE20CYyGAR5v0h/yQFIdx4Qx3ZP/MUwY9b4OGw/7t2vSH7pKBOaWaDIZLGDaP+QFHr/pNQt3wMx1YD2wCTs8Yo=
-X-Received: by 2002:a05:7022:60e:b0:119:e55a:95a0 with SMTP id
- a92af1059eb24-11df253961amr2193775c88.2.1764798246052; Wed, 03 Dec 2025
- 13:44:06 -0800 (PST)
+	s=arc-20240116; t=1764798834; c=relaxed/simple;
+	bh=FFHKi9Im5BxmBxxjGUPxBN+w0nKUjbtj+132MOA4zJk=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=D0Q4yqX8GukJHaMFlRwoim2zuBNp/ONnk+88skK7/+Fn+0g316FLCUzYKjX/CXIJ3idRSCckbyIL8QFDqNqDtPft1IH4V1JBxXe0KBtcmsmvMyrp/ivWi1vOA03Xrql/+nvydJp33FpkarsU7ZvDgOojYsTu6rbiG5g+qF9biJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LCV916I+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764798831;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FFHKi9Im5BxmBxxjGUPxBN+w0nKUjbtj+132MOA4zJk=;
+	b=LCV916I+RsCuPGsNyW4RDXR1Edc8Rs+pXN5POj6pDfXq6t7CzpM/IggRbB7QAtGCpLLliv
+	Ri1izXln/989FSc6trmjlL+5qyYaSc16gf3KeBQ8MxA+2cGRad31qMaCF6FsAAJjngSlmA
+	zHGrNku4cVl9iU+1//A+HoQjt4+AMgY=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-59-HdvppySeP9yspwQ-uUk38w-1; Wed,
+ 03 Dec 2025 16:53:47 -0500
+X-MC-Unique: HdvppySeP9yspwQ-uUk38w-1
+X-Mimecast-MFC-AGG-ID: HdvppySeP9yspwQ-uUk38w_1764798825
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9A10B1800378;
+	Wed,  3 Dec 2025 21:53:45 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 43A4019560A7;
+	Wed,  3 Dec 2025 21:53:43 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <0cf36b63a8f7c807a785f3cbee41beb2@manguebit.org>
+References: <0cf36b63a8f7c807a785f3cbee41beb2@manguebit.org> <1597479.1764697506@warthog.procyon.org.uk>
+To: Paulo Alcantara <pc@manguebit.org>
+Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>,
+    Shyam Prasad N <sprasad@microsoft.com>, linux-cifs@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Fix handling of a beyond-EOF DIO/unbuffered read over SMB1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251203003526.2889477-1-joannelkoong@gmail.com> <20251203003526.2889477-10-joannelkoong@gmail.com>
-In-Reply-To: <20251203003526.2889477-10-joannelkoong@gmail.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Wed, 3 Dec 2025 13:43:54 -0800
-X-Gm-Features: AWmQ_bnsHZMq_qwEDoEGIyPnjyE0jifVT3RWQd1upIX0Hm5uLcNgqmdyo6aqb-0
-Message-ID: <CADUfDZoUMRu=t3ELJ6yGt2FbcgW=WzHa_=xc4BNtEmPpA67VHw@mail.gmail.com>
-Subject: Re: [PATCH v1 09/30] io_uring: add io_uring_cmd_import_fixed_index()
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1961751.1764798821.1@warthog.procyon.org.uk>
+Date: Wed, 03 Dec 2025 21:53:41 +0000
+Message-ID: <1961752.1764798821@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> Add a new helper, io_uring_cmd_import_fixed_index(). This takes in a
-> buffer index. This requires the buffer table to have been pinned
-> beforehand. The caller is responsible for ensuring it does not use the
-> returned iter after the buffer table has been unpinned.
->
-> This is a preparatory patch needed for fuse-over-io-uring support, as
-> the metadata for fuse requests will be stored at the last index, which
-> will be different from the sqe's buffer index.
->
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->  include/linux/io_uring/cmd.h | 10 ++++++++++
->  io_uring/rsrc.c              | 31 +++++++++++++++++++++++++++++++
->  io_uring/rsrc.h              |  2 ++
->  io_uring/uring_cmd.c         | 11 +++++++++++
->  4 files changed, 54 insertions(+)
->
-> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-> index 375fd048c4cb..a4b5eae2e5d1 100644
-> --- a/include/linux/io_uring/cmd.h
-> +++ b/include/linux/io_uring/cmd.h
-> @@ -44,6 +44,9 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *=
-ioucmd,
->                                   size_t uvec_segs,
->                                   int ddir, struct iov_iter *iter,
->                                   unsigned issue_flags);
-> +int io_uring_cmd_import_fixed_index(struct io_uring_cmd *ioucmd, u16 buf=
-_index,
-> +                                   int ddir, struct iov_iter *iter,
-> +                                   unsigned int issue_flags);
->
->  /*
->   * Completes the request, i.e. posts an io_uring CQE and deallocates @io=
-ucmd
-> @@ -100,6 +103,13 @@ static inline int io_uring_cmd_import_fixed_vec(stru=
-ct io_uring_cmd *ioucmd,
->  {
->         return -EOPNOTSUPP;
->  }
-> +static inline int io_uring_cmd_import_fixed_index(struct io_uring_cmd *i=
-oucmd,
-> +                                                 u16 buf_index, int ddir=
-,
-> +                                                 struct iov_iter *iter,
-> +                                                 unsigned int issue_flag=
-s)
-> +{
-> +       return -EOPNOTSUPP;
-> +}
->  static inline void __io_uring_cmd_done(struct io_uring_cmd *cmd, s32 ret=
-,
->                 u64 ret2, unsigned issue_flags, bool is_cqe32)
->  {
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 67331cae0a5a..b6dd62118311 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -1156,6 +1156,37 @@ int io_import_reg_buf(struct io_kiocb *req, struct=
- iov_iter *iter,
->         return io_import_fixed(ddir, iter, node->buf, buf_addr, len);
->  }
->
-> +int io_import_reg_buf_index(struct io_kiocb *req, struct iov_iter *iter,
-> +                           u16 buf_index, int ddir, unsigned issue_flags=
-)
-> +{
-> +       struct io_ring_ctx *ctx =3D req->ctx;
-> +       struct io_rsrc_node *node;
-> +       struct io_mapped_ubuf *imu;
-> +
-> +       io_ring_submit_lock(ctx, issue_flags);
-> +
-> +       if (buf_index >=3D req->ctx->buf_table.nr ||
+Paulo Alcantara <pc@manguebit.org> wrote:
 
-This condition is already checked in io_rsrc_node_lookup() below.
+> Dave, looks like we're missing a similar fix for smb2_readv_callback()
+> as well.
 
-> +           !(ctx->buf_table.flags & IO_RSRC_DATA_PINNED)) {
-> +               io_ring_submit_unlock(ctx, issue_flags);
-> +               return -EINVAL;
-> +       }
-> +
-> +       /*
-> +        * We don't have to grab the reference on the node because the bu=
-ffer
-> +        * table is pinned. The caller is responsible for ensuring the it=
-er
-> +        * isn't used after the buffer table has been unpinned.
-> +        */
-> +       node =3D io_rsrc_node_lookup(&ctx->buf_table, buf_index);
-> +       io_ring_submit_unlock(ctx, issue_flags);
-> +
-> +       if (!node || !node->buf)
-> +               return -EFAULT;
-> +
-> +       imu =3D node->buf;
-> +
-> +       return io_import_fixed(ddir, iter, imu, imu->ubuf, imu->len);
-> +}
-> +
->  /* Lock two rings at once. The rings must be different! */
->  static void lock_two_rings(struct io_ring_ctx *ctx1, struct io_ring_ctx =
-*ctx2)
->  {
-> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-> index d603f6a47f5e..658934f4d3ff 100644
-> --- a/io_uring/rsrc.h
-> +++ b/io_uring/rsrc.h
-> @@ -64,6 +64,8 @@ struct io_rsrc_node *io_find_buf_node(struct io_kiocb *=
-req,
->  int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
->                         u64 buf_addr, size_t len, int ddir,
->                         unsigned issue_flags);
-> +int io_import_reg_buf_index(struct io_kiocb *req, struct iov_iter *iter,
-> +                           u16 buf_index, int ddir, unsigned issue_flags=
-);
->  int io_import_reg_vec(int ddir, struct iov_iter *iter,
->                         struct io_kiocb *req, struct iou_vec *vec,
->                         unsigned nr_iovs, unsigned issue_flags);
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index 197474911f04..e077eba00efe 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -314,6 +314,17 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cm=
-d *ioucmd,
->  }
->  EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed_vec);
->
-> +int io_uring_cmd_import_fixed_index(struct io_uring_cmd *ioucmd, u16 buf=
-_index,
-> +                                   int ddir, struct iov_iter *iter,
-> +                                   unsigned int issue_flags)
-> +{
-> +       struct io_kiocb *req =3D cmd_to_io_kiocb(ioucmd);
-> +
-> +       return io_import_reg_buf_index(req, iter, buf_index, ddir,
-> +                                      issue_flags);
-> +}
+I couldn't reproduce the problem with smb2/3, but it's probably worth fixing
+by analogy.
 
-Probably would make sense to make this an inline function, since it
-immediately defers to io_import_reg_buf_index().
+David
 
-Best,
-Caleb
-
-> +EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed_index);
-> +
->  void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd)
->  {
->         struct io_kiocb *req =3D cmd_to_io_kiocb(ioucmd);
-> --
-> 2.47.3
->
 
