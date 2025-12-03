@@ -1,203 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-70604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2790ECA1D12
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 23:26:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66220CA1D87
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 23:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4FD9A300BBB9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 22:26:00 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C7F8330361FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 22:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7D92C0278;
-	Wed,  3 Dec 2025 22:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7744C2E8B80;
+	Wed,  3 Dec 2025 22:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="SUAImkyS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U5ufsYc3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBB52DEA83
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 22:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5973C2E1C7C
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 22:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764800757; cv=none; b=ZSKhRGGI9IrA6G1iD1n86KYl+c/qIiuLwE7IHonJll5PqPHqKMC1JwAkydjVYXJH0tDfSxkKxQ7XTanYnOvSw5oCrBwMxWJ29u0BEntj/zF06BNMJtV42DQZleDIdEWscHSR2W2VJYME4PBrMhbXMCqoie2oXXqFaJErVhaRy0M=
+	t=1764801485; cv=none; b=NdjIVVVdCGKXm/OhCMSC+1C8cNz6qbCZcgOrErFXvaIKwXx8F3QNvk1ZIxMoSWh1SbzxgV3y5/VgHVlnuz3SYruLs6wx26VlXnTvURxO84jBg/jO2wNW5L//MWd0q0fVc7nASpVv3I4EiGI5yAISvPJcwgqqZxOtpWAT4qH4Y+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764800757; c=relaxed/simple;
-	bh=YQXhVUe0L+tOA4fu/XHgr+fHu/T/dlj76fmdZd1du3Y=;
+	s=arc-20240116; t=1764801485; c=relaxed/simple;
+	bh=TMPU0xrGWiZwINZkiG/dk9MKBkGkBQOX2ye2cUmVIjA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V+Si6lMVTi4lvDIXFgkXHMcWE+Z9dxSDku+hoYzp3mVEyTEuawpKwpZ3ZHO2s9XMT0VLVNwgBpuLBNbcinWKxiFaC8KKn2sV4ammYgUCQsGgI0wkDlBIFhmPqHzfpJCJqVWkzFr0f25QM+Cwj+TYmeO7MjpkG0uvFUGWQvKx0bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=SUAImkyS; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-348f43e20e6so26906a91.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 14:25:55 -0800 (PST)
+	 To:Cc:Content-Type; b=c8jFqAnxmRz7Pd/5Ze63pVrg5Ao2ag0/p7L6cNQEamsitBJD+7IoRnuqDDZfNgPq6XN+4inpmpEkDHyP2wVeoa0RepbgaAqBj2o+rSfeuYkR8KvwtLNqin1oaBUwuzB50jksukvdzKlHt3i5AfW8BzRfqw6tAqLsoNYOuFfciqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U5ufsYc3; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-8b2ea5a44a9so28534585a.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 14:38:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1764800755; x=1765405555; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1764801482; x=1765406282; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kDH7My4rx/In3/xcnH/dcDsYWgPdffGLcWo5ws0ruf4=;
-        b=SUAImkySoXi+jOduWdlMH/JXyF+3+aauli459cvV4XM6/yKy+IXs1YRs3J6/k9puJk
-         K7rViy8R3wq6FdA//HVTWMSzXqAd1DaB7UUdOY/5x4DhRnK8hatd/dEyNeYvE3FDvxpC
-         zNWw3ov6AERiGhox7nzep0wYUgsmUVKc0T6gAk40z9VHsTKa6Kg3ia8OMNc9jDKA/+8h
-         /AGAUpwBdCR5+VHNMkHSNtRuFuQn6x0yOGjCzNPrNu7lRcrXhFBK0ibSha9UYZE1kN96
-         0i5i4BFLUxiIchdAfhPof+dUXOApj0cyF7PPs2Y1BuMVdQM84cfaD+7LY2N5Wl8vzVjV
-         07Kg==
+        bh=Andm1ZX43Hu18AjXpwZtY2kfGZSXKYycpsTeFL8sOYs=;
+        b=U5ufsYc3fSRFZYYyo7PZaniSiq8qwizeAnnojW1DLQb3b+jEJookSt6+q8uTVIhmad
+         xlTDnkh+tz0QJDYRinBIwkqeKj2lYddXdlVJOD9Pr50utq1GsYF/P4VoiPXAyY8cHO4v
+         uc+kccjTai6Xa9eBzYlfj6JhSXI5vmdXBvNb1w5FVjsKbGnZTErjqGNFbd+HSIhCaQHF
+         nqn1HMexqAZ8E7SMtGIIBVzQgLNgOhDsYfZpilYN42mtzfppSmyGTyOOBrwBWOqFbE+4
+         D0zG/QdYJMwz3J7IpJA+aNFHBjnfboKgpBi19ITdDmF8HcMmGnufLHcaRDgwrhZzMs61
+         J4tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764800755; x=1765405555;
+        d=1e100.net; s=20230601; t=1764801482; x=1765406282;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=kDH7My4rx/In3/xcnH/dcDsYWgPdffGLcWo5ws0ruf4=;
-        b=a0TMhhThTn0hL69vV3/5RFelZDhqrvhrNbECOoGZcLpa3uigdfzdu4XFDgapdDgoMT
-         F3EzF9QSkG1XQuY7qogKdnl7W3Z1ZChCGssccuYnjFdMrwxdHduUVerYRF2zFNQ+VFS7
-         FxBqJP9wptLBPJpsATBIEqLMwavZ9teywhLOCeMptTkhA7TSEW2S5buWdDab57gCmdgn
-         ERQ8ggqUuC50WTA054J7WKfbOjeIb7KPKrl6wuZja3NVND+SKrV8IcKz3VKKri+3h0eY
-         La2M/5lNmZhRJ6gbURNezJjgd0tgmI0aQERJUlhzdooDahYETrX7ynFJ7hSukaMfz7pW
-         BWVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuLurtrETYsGDmVpRLyVcQKJcSh+X4a0gri1f0wCNXj0BWs/W56W4aY0ldvO1vuCfrmr8x+9nKSeDhUM+/@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy9z258DkmL0awtcQlBv5MMe2auVGClnFFRAWjosn0jg456F/t
-	3wHBtRGBte+0JsH6XdYuY6NW5MVUZFM89LRj2BycyKIm6qEPuxqGhiAGzQWxMdxPrOX5Fh0RSja
-	fSUUSDt0JBXyLJNLP0mp1WN2uMoBZJbd2UgR3sPnmyQ==
-X-Gm-Gg: ASbGnct0bokEILzTvNvn8Ct8XMTql9VPmQ07r8H0jR8L+gBhNne9lbub4wmPm9sSvcj
-	vkxAeI0np2LNB5Zfy1hxDDtO8MuTuX0DHmJ2YoNFWhIlWAy2qYV9V5HqVRIRyWQPDq/VikQQpZ0
-	3FruB4TUcLAA7jya6yyjv/9R+2a7ZtwllXnfuzoGcQ0+8+Gx97Ispsh0xRTD1AFCiO3IGTeSJ1H
-	IvWzQZ/SgYrrF64DhGwqkO4auDlrg==
-X-Google-Smtp-Source: AGHT+IFTZg7E037XkY4/Z59jB0U1cVulY8GObWp+OgzRutX1bjO2xkkoVYL9OHI6fkvcxe9nFGXyWWJksuEl3/6SHR0=
-X-Received: by 2002:a05:7022:405:b0:119:e56a:4fff with SMTP id
- a92af1059eb24-11df25c1a60mr2166637c88.4.1764800754757; Wed, 03 Dec 2025
- 14:25:54 -0800 (PST)
+        bh=Andm1ZX43Hu18AjXpwZtY2kfGZSXKYycpsTeFL8sOYs=;
+        b=eXX+xviFfAqxZu/T+vjUFwxqtHz2Nej5fLsXtinEZ4/fTVIbnNNAh/tc7garYSgYdx
+         kNnD/viHokwW4tKudDpwIKkUq3m+H+huYM2VQmOHVMjMZ6LwzxCE0Lc/dJXD8nQTlmAc
+         zXsLrmtINz7jrBKTJj+KRfuUUi+jZYYR1Fo0EkwYPK/2aOMJYArkaP3LVNOncSHoPyxB
+         ugiD33C6+WHmINvgVEzpQRKsXHEcjdjEbvsgPN2hSZ3CikVEP7MIKmyug+oWUezJCQe3
+         YhVE0LYpbFFzYNvH2C49asLpeqZCUP1akzTQnekJ+3OeXrjVxDhlie+aLYPdFwZoqK3t
+         ivkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkwcMy0B+JLU+nMAhVZTRtB1k3g31iIGKOi7Rx4FPhjIDt1QAtksQ/s6JsbRUngDFiJ6xS7glcu5D7j874@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3DetS4Ntw+9dLjdXFHXVLSFCuUX630VoNhxqxsZ4QH7nZ83lq
+	HHbaiuPu+25tCB5bSTv9vXM2+Ed0RTfw0QEpJEUOoHleyR52022pm5LIWO780rXylI7BxWDxOPN
+	K4ZcoN1lgSOkelKdJ7O1/acFDoqO0W80=
+X-Gm-Gg: ASbGncuqPwT3Y+G2heNPRv3459NawxWOO5AkhDDLvgbFGWEd3EMgv0efiq08WoJCnQd
+	f3IO6CHWEicc9tipEpOXm13h3Y5WUKgG3VDRRGmqR0of6g1F/dbish/c1CVi6uvRdLaMFOK9rMO
+	N09SD8t4DdnBXiteBSgd7eVSK8spZ5wz5E9kdHDfVR93pbYcNmPqVdDJDqslOM1TLpdqGpmaWyh
+	K1+2Kk/TWMWfD9YBbptL/zBJrJA8+2xiWn/UuFY8MxZuSvr14cbMI4GFcMcQ414lt/9f8zpk8Sz
+	0YH3WqGZKjMDJlMUPGiGvQHgCt91Ez514jcUNa5El2GZh5kvJLm2VsZxOoGddO7BUR/olhnyJ/I
+	qxf/daiCNMOt1Y2gFc9lrvFhcQDKSRLADUHxSa7umgw==
+X-Google-Smtp-Source: AGHT+IFytlRyeXS1uo6MPquKUsZiOY2RJ5VrFZffuPwZSJBbbxqOfStW/5ly+RkBCfgIJEDGSlsmPnv0qNRl59F2Dh0=
+X-Received: by 2002:a05:620a:28c2:b0:7e8:46ff:baac with SMTP id
+ af79cd13be357-8b61812b33emr126161185a.1.1764801481992; Wed, 03 Dec 2025
+ 14:38:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251203003526.2889477-1-joannelkoong@gmail.com> <20251203003526.2889477-15-joannelkoong@gmail.com>
-In-Reply-To: <20251203003526.2889477-15-joannelkoong@gmail.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Wed, 3 Dec 2025 14:25:43 -0800
-X-Gm-Features: AWmQ_bktfVnfFBluf136XJ2r6CNl6nOGDxx5_Pf26zEJoTMJf486lYme7ljRMAA
-Message-ID: <CADUfDZrtOdabnxd5x70gN5ZLWj=nQNhwezTfs_0XN9kuDAVsQg@mail.gmail.com>
-Subject: Re: [PATCH v1 14/30] io_uring: add release callback for ring death
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
-	linux-fsdevel@vger.kernel.org
+References: <1597479.1764697506@warthog.procyon.org.uk> <0cf36b63a8f7c807a785f3cbee41beb2@manguebit.org>
+In-Reply-To: <0cf36b63a8f7c807a785f3cbee41beb2@manguebit.org>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 3 Dec 2025 16:37:49 -0600
+X-Gm-Features: AWmQ_blWPzWa-cXgJhnkMvErK2UGojdZhtDpX5kWgWoq-BIPUg0a3Kl05PfYHXs
+Message-ID: <CAH2r5mvYVZRayo_dJGbSKYuL73kpBM+PwSiNm39Pr0mt37vx9g@mail.gmail.com>
+Subject: Re: [PATCH] cifs: Fix handling of a beyond-EOF DIO/unbuffered read
+ over SMB1
+To: Paulo Alcantara <pc@manguebit.org>
+Cc: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>, 
+	Shyam Prasad N <sprasad@microsoft.com>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> Allow registering a release callback on a ring context that will be
-> called when the ring is about to be destroyed.
->
-> This is a preparatory patch for fuse. Fuse will be pinning buffers and
-> registering bvecs, which requires cleanup whenever a server
-> disconnects. It needs to know if the ring is alive when the server has
-> disconnected, to avoid double-freeing or accessing invalid memory.
->
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->  include/linux/io_uring.h       |  9 +++++++++
->  include/linux/io_uring_types.h |  2 ++
->  io_uring/io_uring.c            | 15 +++++++++++++++
->  3 files changed, 26 insertions(+)
->
-> diff --git a/include/linux/io_uring.h b/include/linux/io_uring.h
-> index 85fe4e6b275c..327fd8ac6e42 100644
-> --- a/include/linux/io_uring.h
-> +++ b/include/linux/io_uring.h
-> @@ -2,6 +2,7 @@
->  #ifndef _LINUX_IO_URING_H
->  #define _LINUX_IO_URING_H
->
-> +#include <linux/io_uring_types.h>
->  #include <linux/sched.h>
->  #include <linux/xarray.h>
->  #include <uapi/linux/io_uring.h>
-> @@ -28,6 +29,9 @@ static inline void io_uring_free(struct task_struct *ts=
-k)
->         if (tsk->io_uring)
->                 __io_uring_free(tsk);
->  }
-> +void io_uring_set_release_callback(struct io_ring_ctx *ctx,
-> +                                  void (*release)(void *), void *priv,
-> +                                  unsigned int issue_flags);
->  #else
->  static inline void io_uring_task_cancel(void)
->  {
-> @@ -46,6 +50,11 @@ static inline bool io_is_uring_fops(struct file *file)
->  {
->         return false;
->  }
-> +static inline void
-> +io_uring_set_release_callback(struct io_ring_ctx *ctx, void (*release)(v=
-oid *),
-> +                             void *priv, unsigned int issue_flags)
-> +{
-> +}
->  #endif
->
->  #endif
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
-s.h
-> index dcc95e73f12f..67c66658e3ec 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -441,6 +441,8 @@ struct io_ring_ctx {
->         struct work_struct              exit_work;
->         struct list_head                tctx_list;
->         struct completion               ref_comp;
-> +       void                            (*release)(void *);
-> +       void                            *priv;
->
->         /* io-wq management, e.g. thread count */
->         u32                             iowq_limits[2];
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 1e58fc1d5667..04ffcfa6f2d6 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -2952,6 +2952,19 @@ static __poll_t io_uring_poll(struct file *file, p=
-oll_table *wait)
->         return mask;
->  }
->
-> +void io_uring_set_release_callback(struct io_ring_ctx *ctx,
-> +                                  void (*release)(void *), void *priv,
-> +                                  unsigned int issue_flags)
-> +{
-> +       io_ring_submit_lock(ctx, issue_flags);
-> +
-> +       ctx->release =3D release;
-> +       ctx->priv =3D priv;
+Paulo,
+Added your reviewed by to David's patches but wanted to doublecheck
+that I didn't apply it to too many of them since I couldn't find one
+of your notes
 
-Looks like this doesn't support the registration of multiple release
-callbacks. Should there be a WARN_ON() to that effect?
+Does this look ok for your RB on all 14 of these - or just the SMB1 one one=
+?
 
-Best,
-Caleb
+a6fd899da60f (HEAD -> for-next, origin/for-next, origin/HEAD) cifs:
+Remove dead function prototypes
+1b7270c879f5 smb: server: defer the initial recv completion logic to
+smb_direct_negotiate_recv_work()
+9d095775a0cb smb: server: initialize recv_io->cqe.done =3D recv_done just o=
+nce
+667246dbce2d smb: smbdirect: introduce smbdirect_socket.connect.{lock,work}
+2b4e375e4006 cifs: Do some preparation prior to organising the
+function declarations
+c3bdaf3afd87 cifs: Add a tracepoint to log EIO errors
+cb416ff96b83 cifs: Don't need state locking in smb2_get_mid_entry()
+a64fa1835237 cifs: Remove the server pointer from smb_message
+960cd2e1e28a cifs: Fix specification of function pointers
+2fdd780130d1 cifs: Replace SendReceiveBlockingLock() with
+SendReceive() plus flags
+bb8172e800b3 cifs: Clean up some places where an extra kvec[] was
+required for rfc1002
+41daa3d4a238 cifs: Make smb1's SendReceive() wrap cifs_send_recv()
+3ed72b50d276 cifs: Remove the RFC1002 header from smb_hdr
+271b1138e8b4 cifs: Fix handling of a beyond-EOF DIO/unbuffered read over SM=
+B1
 
-> +
-> +       io_ring_submit_unlock(ctx, issue_flags);
-> +}
-> +EXPORT_SYMBOL_GPL(io_uring_set_release_callback);
-> +
->  struct io_tctx_exit {
->         struct callback_head            task_work;
->         struct completion               completion;
-> @@ -3099,6 +3112,8 @@ static int io_uring_release(struct inode *inode, st=
-ruct file *file)
->         struct io_ring_ctx *ctx =3D file->private_data;
+On Wed, Dec 3, 2025 at 12:03=E2=80=AFPM Paulo Alcantara <pc@manguebit.org> =
+wrote:
 >
->         file->private_data =3D NULL;
-> +       if (ctx->release)
-> +               ctx->release(ctx->priv);
->         io_ring_ctx_wait_and_kill(ctx);
->         return 0;
->  }
-> --
-> 2.47.3
+> David Howells <dhowells@redhat.com> writes:
 >
+> >
+> > If a DIO read or an unbuffered read request extends beyond the EOF, the
+> > server will return a short read and a status code indicating that EOF w=
+as
+> > hit, which gets translated to -ENODATA.  Note that the client does not =
+cap
+> > the request at i_size, but asks for the amount requested in case there'=
+s a
+> > race on the server with a third party.
+> >
+> > Now, on the client side, the request will get split into multiple
+> > subrequests if rsize is smaller than the full request size.  A subreque=
+st
+> > that starts before or at the EOF and returns short data up to the EOF w=
+ill
+> > be correctly handled, with the NETFS_SREQ_HIT_EOF flag being set,
+> > indicating to netfslib that we can't read more.
+> >
+> > If a subrequest, however, starts after the EOF and not at it, HIT_EOF w=
+ill
+> > not be flagged, its error will be set to -ENODATA and it will be abando=
+ned.
+> > This will cause the request as a whole to fail with -ENODATA.
+> >
+> > Fix this by setting NETFS_SREQ_HIT_EOF on any subrequest that lies beyo=
+nd
+> > the EOF marker.
+> >
+> > This can be reproduced by mounting with "cache=3Dnone,sign,vers=3D1.0" =
+and
+> > doing a read of a file that's significantly bigger than the size of the
+> > file (e.g. attempting to read 64KiB from a 16KiB file).
+> >
+> > Fixes: a68c74865f51 ("cifs: Fix SMB1 readv/writev callback in the same =
+way as SMB2/3")
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: Steve French <sfrench@samba.org>
+> > cc: Paulo Alcantara <pc@manguebit.org>
+> > cc: Shyam Prasad N <sprasad@microsoft.com>
+> > cc: linux-cifs@vger.kernel.org
+> > cc: netfs@lists.linux.dev
+> > cc: linux-fsdevel@vger.kernel.org
+>
+> Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+>
+> Dave, looks like we're missing a similar fix for smb2_readv_callback()
+> as well.
+>
+> Can you handle it?
+>
+> Thanks.
+>
+
+
+--
+Thanks,
+
+Steve
 
