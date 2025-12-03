@@ -1,156 +1,245 @@
-Return-Path: <linux-fsdevel+bounces-70598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076D8CA1B0A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 22:40:21 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D0BCA1B4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 22:44:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 084D23009FF0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 21:40:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DA411301D64D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 21:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144432D8396;
-	Wed,  3 Dec 2025 21:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD252C21D0;
+	Wed,  3 Dec 2025 21:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JopjRNVf"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="RyXLNLdC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57882BE7B4
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 21:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC19F2D9784
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 21:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764798018; cv=none; b=raZkmrxyWi+tFz1/oaRRjxj34FnAjnGuFRI7WFGocK8nr5bHLV3s78qyI5k25rMJzhpkkSCCngfZAu5tFbCdO1WptGTEO91E3IOA8NWVJn2v2/VIE7tzXYd0zj67fVKa92Q08nwPKVDaLFz1VblAUo/VH2lBDqP+LXYAOdV7zKk=
+	t=1764798252; cv=none; b=WBn3co7sNWrKV6jimdL2dE/he0Kr2xNBL11gkDbZvmTax3q3IhB/qYj1LGkKYCHVqz+koON/QY/xi2UG5yDtF+1fvNWKNHDeW2oFQh8RHq6nEcxhJMiUZr4fbsptqhSrgCBBKBmnDXuxCNN9KM7NrN4RkY3NGqWE5kSJssJ5MJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764798018; c=relaxed/simple;
-	bh=4mv07ydDIBDY+yYYyDcrBWUbY7+M8hTG8ElX+6UDZ0M=;
+	s=arc-20240116; t=1764798252; c=relaxed/simple;
+	bh=78WDTHPziqgIAar/wHrHN1w3bbfBF3IBRQ79sIJ/AXc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QpQ0sg3a8qRcwdjReOrm578pfgcX8KeOHAiaTBzBnduAA6REQ7UdViWR+A4AxA32E/xY9gj5JsYhB7x+F8JV7UOKONlpKUK5TdEfa2kxm/ViCZqXSXdSezJ6nonHSbZ4R9/1xT/MBRxff+3r4A+k1/3KHClSOsrrFkalfidCNqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JopjRNVf; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4ee05b2b1beso2379591cf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 13:40:16 -0800 (PST)
+	 To:Cc:Content-Type; b=brFkWI0Z5e2gw9+FG9Yg1r4mbV21tW7Ko6w77q2X7yX24/QiAJI+EJF9cciEdOwsxpLZWEOxsGzXvy9FV9aXxi6D8pCn7kiCnTAaOyp/s/C4IdiKevP+H62cDBuchxWVCoq+4rlBkhtZIaDouNL6hWEmwxMVsz6OOd14wUowq1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=RyXLNLdC; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7baa5787440so35569b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 13:44:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764798016; x=1765402816; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1764798246; x=1765403046; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q4dm3yP8EhvjXM7HY/9hUsT4foK9V8lDuxE0CKRUWT0=;
-        b=JopjRNVfU98l9It7LMYoUhECOIZCRNVLf0qZlNdpSwpW5jgp0T66PjPIXbWyNoPj++
-         3SRcvNaHbMhd9kwusY/dUlBn8TC9ba7eAsfXVOI3qceQQJHvbOCFy/gq913qo+/ewSb+
-         RGaF66b1947U5FPdmNczKYBuMREq7O6Sqq+ja3EokwUNNVE1xQOcrehoouzmKMJhj5Gu
-         T3z2VluD5UyRB7LdBzOwQlGFlZT0bivIkXWtnJ2s74Ik4tUlm+la5i4S+XN4FpKiylhK
-         x70cgbsdtTJvSjd+jzS6OEU5bFS9B9ejKTcTBuzzG/V6T2fdyEFcrezEWyjd2eAfiq9g
-         Ifcg==
+        bh=jSQ2B+EvgOAZgpUFpH97jmB2MRKv2wrPc2kdi9xRuF0=;
+        b=RyXLNLdCEnsMlg+UgjXT2bKsH+8VrmcnsQuTosnMjVmtBqgJix/9ixE8R5Z/lXvfP/
+         5rpGxjqW1An0svUIl2eaMIMDWQ6wxKit65iIb+JiHD9D7Rs+9PpcZLhd2OgM/6KEqPxN
+         20VZX4KY5/4/tCiy7+u5h8mSmsm3GE3h/ZvPi0LU5f3cR3Qhs41qrm94QUK/N+/SpVjO
+         wTDv/3n7z+MXpb0jRdEhFRO/+PbNSuaAXs8YW0prlogsjwshxUZ6GXC6i4u36VupRr+E
+         JBufIm/mIL2KZsYj+BZ1Em/gafepNjaX95FTYeeQfCk+RWNi7Km3jW6YrQxJjunyB8MX
+         8OFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764798016; x=1765402816;
+        d=1e100.net; s=20230601; t=1764798246; x=1765403046;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=q4dm3yP8EhvjXM7HY/9hUsT4foK9V8lDuxE0CKRUWT0=;
-        b=XfbLhQlU9zzVA4Y5Ovr5KbnRCDQaxgbXdVfhYqwfyfVv/DYOOR7foVbjR1w7LBOD6P
-         +z2OFN2Ds7k03AIw6xptJVhHljxN9nVDDkqaydBZcsq50NA7fso9+rFAharHWX+D4htB
-         lyfwFTSeu5CR8tZOb1gbN++VTlIEb8RUmA8LgKiG8tVVRsGMvusRETgvKZAv3bIzxa9g
-         EkNfJtCwNhq5coh/tLtfm8cxgK7eongPUw7fxAGPHIeDazFAd0BDZi6eaCRU8wfUxfXy
-         Nd16rZwTtfsjjdTWhEYNZ8CDE/KdIr3cCSkNKUqbNurwZdGcRbWdoxWsYq/HUl0QhJ1F
-         Lauw==
-X-Forwarded-Encrypted: i=1; AJvYcCUo5MZqX76maETCAAPlzR9FHEfmXkF2OBBXTRWWqOdqtmbwrsfvukK5C6bO8zTpjxMEpp0nsmsCRKgp0pXA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2csEbN0Vb+TaVdCZT7D9fJD2Lr1vkZaU+fbVc+VfEHR6GYncv
-	/IMnx4ZMIiJ/6+U2C6q00ia+bmew1dt9NtLgnldSEFlWd2AP4OLyvx37GhP6qfWQxqov74w+6w3
-	bQIXJMyJ+sL+IPMoC5GU5OoCaKCPEohw=
-X-Gm-Gg: ASbGncvUY9BFADZRk9ECZApwVAy4Xj999OAhC+efYnPDEWHW5yV0wh59DZgBRFf4ywt
-	7dM/Wi7NbtCSQl9fXwHoE5xELh4DH3Iy6uYRzVs6+veX8EzmcHsaIYNzZlYQ4iXSmioDk9a2K16
-	zzs0K0YlmPtkmzvkH0AcVuidF6ybbYuugTUJByysXuTep4wBvGED/ln0qDYa+0/rTh/TTtnKt5p
-	JfFOUY12yAAx20NfvH8tFsG+y/OxVIrSXBECaZzxPwWFZWYKQbisMMVcPzV5kDpZ0ugO4l7QfO5
-	hPu36tePhJXBSuMDPUepxIj9DvtN07jb5XPtZh0NSY2nggzRzQY5Qc+3zg3Z+g071WL2XdOt7qH
-	A19NkpXsf68XpGxCVtq89O8JgRGF9YbEwR4ZpgQ0qpdIy3/wOGtt8g2uIP7ay0YAQai6RVcIt9K
-	mS9VJr4l4fKQ==
-X-Google-Smtp-Source: AGHT+IG1RqtM4CjFZIoV9HQ/AGJf69t++XxRfMRR9/KEWXX168CW0sh0DFIGvs6Sts+Nzs+IjWJ+CH1r+PDY8raGX3I=
-X-Received: by 2002:a05:622a:188e:b0:4ee:4a3a:bd10 with SMTP id
- d75a77b69052e-4f017691727mr61297771cf.60.1764798015667; Wed, 03 Dec 2025
- 13:40:15 -0800 (PST)
+        bh=jSQ2B+EvgOAZgpUFpH97jmB2MRKv2wrPc2kdi9xRuF0=;
+        b=iXQ58aT7OxL2cr/DS1mC5fW7+Sj9V2+47xUnivRrL1jHLDr6PZsql/oBlSpKE2vQW7
+         434Zql+1zCy87Z4papVdn89keqOnSm/B6l8dr1BgH2xDANI8CGT45x4s0Z2dxAQZGHXU
+         ti/Sef1fFkDUPEpZJtpcqrVyUWp+LjpAUI46nIgef41o3MXWx5uS8Dm1HzHtWOxgG3+v
+         cHGBEFRwJYbV6xRTMRF7HnjJ5pItcmvYc4T2I0ufe9zj/ewh40KVInf+a6urVeaykcdS
+         nlzF//ETrIaLWcMHHcbbcVLP71aXElXyMTqu9etBRDLvtA5D4wYybkNWmw+ioCCnXEqf
+         ClBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyGiTseyUA55lQUxwRvgw0K34+PLON9bRjSTUH5Y//qOZ85nzLS1E8+DrIMiFoEjtpFg2+lhsXllY+T6uq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQZEqrNFgfI0ncTB06wj73AofYhpAHtDHJg08KvOJ0zavF2dfs
+	M5zurMcQJJzFvmqxBmbDLBzlHLvoLKGq7HSmdwkzfDgHEOdmyIF9Jli5/qcfEmtgq8JiTuCxENo
+	d3upZXAKxGyeN3nOMcZUO2xCbQPosq1CZ9HXPyxyZtA==
+X-Gm-Gg: ASbGnctb5QrtyyrhP8/cQaszR1G0MIp2fW6qb0ucyVk6ClsCfRnUMM9Tuo/zjEPlxYT
+	CVXTWAqqIstx/KsPNwQMONgPtAVl0RuNdfUX82KxgLTaIFUYwoXfiZCkEQ6+u7QDOC8c0nlvuuQ
+	ZkAv+x4tiB1Gqc4xw9UR7e+DlBz2OiHX+4XyhybQFKfL8ba+4Zf+CZcyJ6bBk18wr++4Gpplpcp
+	kdUAhGZUUxitnR0FgCZhwjNqRxNzxRsFvFd1kuYAHHyrar+ums6W1wX4yrAp20xNe09kgRe
+X-Google-Smtp-Source: AGHT+IE20CYyGAR5v0h/yQFIdx4Qx3ZP/MUwY9b4OGw/7t2vSH7pKBOaWaDIZLGDaP+QFHr/pNQt3wMx1YD2wCTs8Yo=
+X-Received: by 2002:a05:7022:60e:b0:119:e55a:95a0 with SMTP id
+ a92af1059eb24-11df253961amr2193775c88.2.1764798246052; Wed, 03 Dec 2025
+ 13:44:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1597479.1764697506@warthog.procyon.org.uk> <0cf36b63a8f7c807a785f3cbee41beb2@manguebit.org>
-In-Reply-To: <0cf36b63a8f7c807a785f3cbee41beb2@manguebit.org>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 3 Dec 2025 15:40:04 -0600
-X-Gm-Features: AWmQ_bmPZtnFFmlM888CIxDrVHAGDo88ZyE8SdWbeAXL99pNPNJhCXfBTmmIgG4
-Message-ID: <CAH2r5msAgsWfnCt171TcmhvCw39GtQ8nU8SwzrVpP=xw2vGypg@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Fix handling of a beyond-EOF DIO/unbuffered read
- over SMB1
-To: Paulo Alcantara <pc@manguebit.org>
-Cc: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>, 
-	Shyam Prasad N <sprasad@microsoft.com>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20251203003526.2889477-1-joannelkoong@gmail.com> <20251203003526.2889477-10-joannelkoong@gmail.com>
+In-Reply-To: <20251203003526.2889477-10-joannelkoong@gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Wed, 3 Dec 2025 13:43:54 -0800
+X-Gm-Features: AWmQ_bnsHZMq_qwEDoEGIyPnjyE0jifVT3RWQd1upIX0Hm5uLcNgqmdyo6aqb-0
+Message-ID: <CADUfDZoUMRu=t3ELJ6yGt2FbcgW=WzHa_=xc4BNtEmPpA67VHw@mail.gmail.com>
+Subject: Re: [PATCH v1 09/30] io_uring: add io_uring_cmd_import_fixed_index()
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 3, 2025 at 12:03=E2=80=AFPM Paulo Alcantara <pc@manguebit.org> =
-wrote:
+On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
+> wrote:
 >
-> David Howells <dhowells@redhat.com> writes:
+> Add a new helper, io_uring_cmd_import_fixed_index(). This takes in a
+> buffer index. This requires the buffer table to have been pinned
+> beforehand. The caller is responsible for ensuring it does not use the
+> returned iter after the buffer table has been unpinned.
 >
-> >
-> > If a DIO read or an unbuffered read request extends beyond the EOF, the
-> > server will return a short read and a status code indicating that EOF w=
-as
-> > hit, which gets translated to -ENODATA.  Note that the client does not =
-cap
-> > the request at i_size, but asks for the amount requested in case there'=
-s a
-> > race on the server with a third party.
-> >
-> > Now, on the client side, the request will get split into multiple
-> > subrequests if rsize is smaller than the full request size.  A subreque=
-st
-> > that starts before or at the EOF and returns short data up to the EOF w=
-ill
-> > be correctly handled, with the NETFS_SREQ_HIT_EOF flag being set,
-> > indicating to netfslib that we can't read more.
-> >
-> > If a subrequest, however, starts after the EOF and not at it, HIT_EOF w=
-ill
-> > not be flagged, its error will be set to -ENODATA and it will be abando=
-ned.
-> > This will cause the request as a whole to fail with -ENODATA.
-> >
-> > Fix this by setting NETFS_SREQ_HIT_EOF on any subrequest that lies beyo=
-nd
-> > the EOF marker.
-> >
-> > This can be reproduced by mounting with "cache=3Dnone,sign,vers=3D1.0" =
-and
-> > doing a read of a file that's significantly bigger than the size of the
-> > file (e.g. attempting to read 64KiB from a 16KiB file).
-> >
-> > Fixes: a68c74865f51 ("cifs: Fix SMB1 readv/writev callback in the same =
-way as SMB2/3")
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > cc: Steve French <sfrench@samba.org>
-> > cc: Paulo Alcantara <pc@manguebit.org>
-> > cc: Shyam Prasad N <sprasad@microsoft.com>
-> > cc: linux-cifs@vger.kernel.org
-> > cc: netfs@lists.linux.dev
-> > cc: linux-fsdevel@vger.kernel.org
+> This is a preparatory patch needed for fuse-over-io-uring support, as
+> the metadata for fuse requests will be stored at the last index, which
+> will be different from the sqe's buffer index.
 >
-> Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  include/linux/io_uring/cmd.h | 10 ++++++++++
+>  io_uring/rsrc.c              | 31 +++++++++++++++++++++++++++++++
+>  io_uring/rsrc.h              |  2 ++
+>  io_uring/uring_cmd.c         | 11 +++++++++++
+>  4 files changed, 54 insertions(+)
 >
-> Dave, looks like we're missing a similar fix for smb2_readv_callback()
-> as well.
+> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+> index 375fd048c4cb..a4b5eae2e5d1 100644
+> --- a/include/linux/io_uring/cmd.h
+> +++ b/include/linux/io_uring/cmd.h
+> @@ -44,6 +44,9 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *=
+ioucmd,
+>                                   size_t uvec_segs,
+>                                   int ddir, struct iov_iter *iter,
+>                                   unsigned issue_flags);
+> +int io_uring_cmd_import_fixed_index(struct io_uring_cmd *ioucmd, u16 buf=
+_index,
+> +                                   int ddir, struct iov_iter *iter,
+> +                                   unsigned int issue_flags);
 >
-> Can you handle it?
+>  /*
+>   * Completes the request, i.e. posts an io_uring CQE and deallocates @io=
+ucmd
+> @@ -100,6 +103,13 @@ static inline int io_uring_cmd_import_fixed_vec(stru=
+ct io_uring_cmd *ioucmd,
+>  {
+>         return -EOPNOTSUPP;
+>  }
+> +static inline int io_uring_cmd_import_fixed_index(struct io_uring_cmd *i=
+oucmd,
+> +                                                 u16 buf_index, int ddir=
+,
+> +                                                 struct iov_iter *iter,
+> +                                                 unsigned int issue_flag=
+s)
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+>  static inline void __io_uring_cmd_done(struct io_uring_cmd *cmd, s32 ret=
+,
+>                 u64 ret2, unsigned issue_flags, bool is_cqe32)
+>  {
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index 67331cae0a5a..b6dd62118311 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -1156,6 +1156,37 @@ int io_import_reg_buf(struct io_kiocb *req, struct=
+ iov_iter *iter,
+>         return io_import_fixed(ddir, iter, node->buf, buf_addr, len);
+>  }
+>
+> +int io_import_reg_buf_index(struct io_kiocb *req, struct iov_iter *iter,
+> +                           u16 buf_index, int ddir, unsigned issue_flags=
+)
+> +{
+> +       struct io_ring_ctx *ctx =3D req->ctx;
+> +       struct io_rsrc_node *node;
+> +       struct io_mapped_ubuf *imu;
+> +
+> +       io_ring_submit_lock(ctx, issue_flags);
+> +
+> +       if (buf_index >=3D req->ctx->buf_table.nr ||
 
-Any luck reproducing it for smb2/smb3/smb3.1.1?
+This condition is already checked in io_rsrc_node_lookup() below.
 
---=20
-Thanks,
+> +           !(ctx->buf_table.flags & IO_RSRC_DATA_PINNED)) {
+> +               io_ring_submit_unlock(ctx, issue_flags);
+> +               return -EINVAL;
+> +       }
+> +
+> +       /*
+> +        * We don't have to grab the reference on the node because the bu=
+ffer
+> +        * table is pinned. The caller is responsible for ensuring the it=
+er
+> +        * isn't used after the buffer table has been unpinned.
+> +        */
+> +       node =3D io_rsrc_node_lookup(&ctx->buf_table, buf_index);
+> +       io_ring_submit_unlock(ctx, issue_flags);
+> +
+> +       if (!node || !node->buf)
+> +               return -EFAULT;
+> +
+> +       imu =3D node->buf;
+> +
+> +       return io_import_fixed(ddir, iter, imu, imu->ubuf, imu->len);
+> +}
+> +
+>  /* Lock two rings at once. The rings must be different! */
+>  static void lock_two_rings(struct io_ring_ctx *ctx1, struct io_ring_ctx =
+*ctx2)
+>  {
+> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+> index d603f6a47f5e..658934f4d3ff 100644
+> --- a/io_uring/rsrc.h
+> +++ b/io_uring/rsrc.h
+> @@ -64,6 +64,8 @@ struct io_rsrc_node *io_find_buf_node(struct io_kiocb *=
+req,
+>  int io_import_reg_buf(struct io_kiocb *req, struct iov_iter *iter,
+>                         u64 buf_addr, size_t len, int ddir,
+>                         unsigned issue_flags);
+> +int io_import_reg_buf_index(struct io_kiocb *req, struct iov_iter *iter,
+> +                           u16 buf_index, int ddir, unsigned issue_flags=
+);
+>  int io_import_reg_vec(int ddir, struct iov_iter *iter,
+>                         struct io_kiocb *req, struct iou_vec *vec,
+>                         unsigned nr_iovs, unsigned issue_flags);
+> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> index 197474911f04..e077eba00efe 100644
+> --- a/io_uring/uring_cmd.c
+> +++ b/io_uring/uring_cmd.c
+> @@ -314,6 +314,17 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cm=
+d *ioucmd,
+>  }
+>  EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed_vec);
+>
+> +int io_uring_cmd_import_fixed_index(struct io_uring_cmd *ioucmd, u16 buf=
+_index,
+> +                                   int ddir, struct iov_iter *iter,
+> +                                   unsigned int issue_flags)
+> +{
+> +       struct io_kiocb *req =3D cmd_to_io_kiocb(ioucmd);
+> +
+> +       return io_import_reg_buf_index(req, iter, buf_index, ddir,
+> +                                      issue_flags);
+> +}
 
-Steve
+Probably would make sense to make this an inline function, since it
+immediately defers to io_import_reg_buf_index().
+
+Best,
+Caleb
+
+> +EXPORT_SYMBOL_GPL(io_uring_cmd_import_fixed_index);
+> +
+>  void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd)
+>  {
+>         struct io_kiocb *req =3D cmd_to_io_kiocb(ioucmd);
+> --
+> 2.47.3
+>
 
