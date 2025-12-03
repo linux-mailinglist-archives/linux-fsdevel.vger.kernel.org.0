@@ -1,422 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-70568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB76C9F974
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 16:43:49 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A73C9FB1E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 16:54:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0DCFA30052CD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 15:43:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 551BE308BD93
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 15:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76523191CA;
-	Wed,  3 Dec 2025 15:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0EB3148D5;
+	Wed,  3 Dec 2025 15:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KeJEksz/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ivFOiGfr";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="QxDA+QCj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F111317706;
-	Wed,  3 Dec 2025 15:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB5E308F13
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 15:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764776607; cv=none; b=BcImtwnhXKYIm9SPZEp17bGpCmPt5dfqemVdwbrShe8brTqn4qA/8+dwX9vdePz0CP/fwl5INYNnjx4TRcBlPFQRu9aR+ccAuJ+NEwKjor5ZavjdGnQpAtJQXFSD0E1aOcex4XBuiCpL3t0lrWj2uYhE7bH0KoFd3OwxpPwvUXQ=
+	t=1764776796; cv=none; b=graEUG9dG3VseGH/8SMbaW8y8dBu/esCB99g3FNCChJFzs++IRgLj02MBsrTuOE0Cl+otKCG2ckoYcJuqsShHehjJKpihuBWSTmCfUxgDoPuUlYMql/AM44AhGaJzigasro5j74tucC5/NNTAeW5mMDcL/D3Roa9lMNBteeWFLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764776607; c=relaxed/simple;
-	bh=+OTzyRXwiLvIrWwlon4BEbFksQlQ2zkRfT5ZmRH3HvA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fm2/+gyG3ISLRQWxGpTFIy+9ic4+c8i15dKTcRqcQcC/S/fFrwADvdMkCPsy9o6wvS9QH90ZwDRbGNSgAoQ8fSL2sT/ACGNOA3n8M0CVOlN0GE6mJ4tPLMMubYH893td74sLTJjjVi2u2wprw8PVHJIgJqWLTMPcRXAod5dsblU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KeJEksz/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924DAC116C6;
-	Wed,  3 Dec 2025 15:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764776607;
-	bh=+OTzyRXwiLvIrWwlon4BEbFksQlQ2zkRfT5ZmRH3HvA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=KeJEksz/dBTLTg8ky97REA77h1RfNF23I6H3NK9p6l0DlvyPxqWP1/cvQuvrKzB+p
-	 d3hpnfapibze0FxAZp+FINpPyXmAErdh5QKU5hlqWhyUR01yTzsbgOqj1ep4VkElC4
-	 C/rGkAdYMqOoTZPz6pIMjVScUu8eAyCZ/SciuoMGJPmnZPaWMQwcZpn1jnvyvfyh9x
-	 glIfGfghKKexXDLiDf+izY2FnNPAKqA0jW0+oz9lx6zMVvLOO0EnZezdtkym7Fedjb
-	 oqWz2rIWaJjILeZ6nUYWkKJD05HXvz3n4p6lVlQ0F3M0nX/FWmvTgZaJRSheh+CGMd
-	 F3GjXKDKa/5Cw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 03 Dec 2025 10:43:09 -0500
-Subject: [PATCH fstests v3 3/3] generic: add tests for file delegations
+	s=arc-20240116; t=1764776796; c=relaxed/simple;
+	bh=bj2EwI61n9F2t+9IZTIICRBO44EJkPlt8/0ivYbXTho=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LmdtXbfSv/hYqZGrKumyr9tSwRn902dik3QuYTz0psRJud0hVNbK3sDuvi9h4TfppkxQ+XiXqehQZR+5j0wTyNR/zpA/LceX/duFVN/dXkjuWnma3OsZ6hlhGiXt5HJTa8OnR82M7Dfm/PSV6CEYtwlPTSCxBd02d6yhOMft9W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ivFOiGfr; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=QxDA+QCj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764776791;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0iQO31qcw4QjDG40PDHPDzMgTgEG3pxt6R/E9VpcD+I=;
+	b=ivFOiGfr4zAIiR2N1R9T2OsEtjSsk9OfQl+1X5OlNqFTNk2LE7Cykl0tBcxglNxzXytxbp
+	1+Eta1L4blTZMc24r9itqnIXNKQkDy2UbwRDNSpJ/rgdcTkGPhS5UkjMwSavsWxOcuQunj
+	qDjVada0LcAf+6aHbDrNaAtkLxjqlpo=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-541-x7FJODsdMhaczwoRt14FRQ-1; Wed, 03 Dec 2025 10:46:30 -0500
+X-MC-Unique: x7FJODsdMhaczwoRt14FRQ-1
+X-Mimecast-MFC-AGG-ID: x7FJODsdMhaczwoRt14FRQ_1764776789
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-64537824851so6482900a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 07:46:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1764776789; x=1765381589; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0iQO31qcw4QjDG40PDHPDzMgTgEG3pxt6R/E9VpcD+I=;
+        b=QxDA+QCjvdXsR2lfKz9jpfEyk9vYhS2/2SsvDwS4K+HLYmWInMGTv2pH1ZuzcUS6J9
+         +17flZVqmVDpk5LMqvSCIbgYyZajrC2GURco9I4f1OkURtc/GuHC+2gkGzruuqtg7n0g
+         E/LxtIgWpFT0voCi3pms5WPjJJIJ+RVi6XTXcNaJqseJKnp8F8BCF8v7mDiQRuwRCmjl
+         L6hNmPMXGgMMQDSOru8zbxyJz6uXL5iqZ1Q/rcArnqSn3AaCkmKM9sHG905MF3l5LC52
+         mYqdK9VwE/c+fPwaeZaHSNCZ8R4DusWOJMp8KB6HdGSSuOdleLcGzsqlcET7yvlsg22A
+         wv/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764776789; x=1765381589;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0iQO31qcw4QjDG40PDHPDzMgTgEG3pxt6R/E9VpcD+I=;
+        b=e/HQaiBtAgp6Lt9Q1C/rh8Rr/PnSvy7Sc4LQQQycCZgVaRPNy+mei1eg02NZPLivRY
+         AOd5wKJLwHq/nks3HKKl6bkQ4SPmTaEnIza0EgL6jL04inaQIBNX9XrrgKWfwUJJD7u9
+         jrg1ci1D7tk1RG9PhgizcZhnEnKs348aGU+65i6wCoTVL2p+gyasU7lrSBimJncBbd9b
+         PYIPR0wEmNGVNV1XOog+B3B5gK5RFSAuIQU474gOqRbLJ6i5ik2yqtE6ZVxaxRDrcd9r
+         g2x8dX0o8EsigjNfPTgjdj7ZJYTDvQsvD0qzbYrtvSBDrCNdY4CIRJcXTB1gbhMaXNu5
+         zaTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbero9Bnvyvd6QBufQqSuwykOGxRvKT6mX1VnDiOf0s3dc2/dJqYqxuTnE1Fp0LzUSnrLV6JkR6Je81Kdf@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrWlPXLEPjOJ0/DVZH49yhG6PnoaRj7UyuwmoIZxLRCJWrBL2J
+	Uh/wFsq9E9IdPtxAvDxWiYED4ilDFtidU9kyG3LdCsBn7BqY+Vo0fYIMyWHk9n0hLgARuBO4vjV
+	2f1E2aZa/cjDRX1YdSbjUpXtngAH+wh7LmG6xQzd48b9hJ49x2tULfgiQEFU3yCfjrMQ=
+X-Gm-Gg: ASbGncsGXYvtnfoIYLI3m8I07gYahPhYTTZ1VfrHd0GGAccBRS8oczuyLdSyoEZQ7O0
+	A4GjvT/JqcML/qVzzLXQQN8XZ3sjOR9EadBLGZ9TF7lQCa1PAmTvbtR/qgwmAy3fYUZSAPijYsh
+	R3134fMV1ivZiABsT7J3Jnvo186kxDhqPviAEH0aKlfAnrEwE8b7MYFV84wugI98zw+xCj0qYkg
+	DSVN49JhuBg2Xu782H6cmao9tRrtg04v15OF8XFuZsHpFJBc4b8WN+jMTz9l6bId/2pWIz07pTP
+	SfDcElA8O81sEkEE1yFiy4Y8GVX8VrUoyRkflqs0SQ8yy1YXL95ih2nyrA3ZGKare7vPPUpodEG
+	eF9cgThl/9Ka/RNB1e4C+gg4/fAIPBEyNlwabYmc/nVw=
+X-Received: by 2002:a05:6402:440a:b0:640:6512:b9f with SMTP id 4fb4d7f45d1cf-6479c4ac547mr2708115a12.28.1764776788879;
+        Wed, 03 Dec 2025 07:46:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGMSQLz8/Ubp/hYcJgzQ5VVZewzvGKT01GpbwIIoYF/hCaDdY3/w0FT9wYq464vlfi31yebjg==
+X-Received: by 2002:a05:6402:440a:b0:640:6512:b9f with SMTP id 4fb4d7f45d1cf-6479c4ac547mr2708081a12.28.1764776788483;
+        Wed, 03 Dec 2025 07:46:28 -0800 (PST)
+Received: from cluster.. (4f.55.790d.ip4.static.sl-reverse.com. [13.121.85.79])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-647510519efsm18529786a12.29.2025.12.03.07.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Dec 2025 07:46:28 -0800 (PST)
+From: Alex Markuze <amarkuze@redhat.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	amarkuze@redhat.com,
+	vdubeyko@redhat.com
+Subject: [PATCH v3 0/4] ceph: add subvolume metrics reporting support
+Date: Wed,  3 Dec 2025 15:46:21 +0000
+Message-Id: <20251203154625.2779153-1-amarkuze@redhat.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251203-dir-deleg-v3-3-be55fbf2ad53@kernel.org>
-References: <20251203-dir-deleg-v3-0-be55fbf2ad53@kernel.org>
-In-Reply-To: <20251203-dir-deleg-v3-0-be55fbf2ad53@kernel.org>
-To: fstests@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, Zorro Lang <zlang@redhat.com>, 
- Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11336; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=+OTzyRXwiLvIrWwlon4BEbFksQlQ2zkRfT5ZmRH3HvA=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpMFqcJgP6RtXdrGzPEQpT+Vsbk4av8itQ5QZGt
- o7vLTLSpvWJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaTBanAAKCRAADmhBGVaC
- Fc/fD/4/30ze3Kty5gVlIc9gq4wW0ctbYtmoqt1ydXfinXm4zVaSaeEYWI7s1/Z/LkxFRkPZFp8
- gf9KBGhmw+pSPLuIB/LNewas2yg5J1MlZpGSqMd3MNV+N3SquQByOhc8i5RqD06tKDIlrmZmw7/
- DhpOZcZ7exuSFEfvX8axuBaUWmJAIy2K6a7YZ5XeoxYd1N/dAbeTpMXDTL+fnf+ga+JPNlD2+FK
- 1kLdNQZWJDscDXrxqt70I7QxjlwHrkTk/XbXjl4cDVGqADu3y7TKAuyKfSZ/p0dT8ZEjYx4Z/kI
- tBA00gsGObH16zSBiY+6Le4gdN7z2rV+CEOYASY97KJxZRUxGr4oNjCzII+3wZMR4xQ3oQJAad/
- g/4+HIDIbnEOKJOI3V+v3OXhmXm0xHzDnvpCJRqi+gTYLgOaGPR49YJZLpYDXiMYTNfXzZbJLOd
- qCpQ7dErPfkvoESPR3knaD41WdRmOQu+gVaNoz83GLhcz7MaeSFI8I8ci8hD6coCe+BG00bbq/O
- wDW8QIrP4I5GgEOV2yA2gpunuMhwaZdB6jSX+V3V6Ti/HpaKv5zWV9xyZ2uvldebyJU45BgvqN4
- 2s22R0DOSxIruOakljSWfRhK5NQ9wR0cj7ICnrjr7+PGnANhovI9OrxCqVI6a7wwp0QojOdZqFA
- on6oFFIoOBzrkUg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Transfer-Encoding: 8bit
 
-Mostly the same ones as leases, but some additional tests to validate
-that they are broken on metadata changes.
+This patch series adds support for per-subvolume I/O metrics collection
+and reporting to the MDS. This enables administrators to monitor I/O
+patterns at the subvolume granularity, which is useful for multi-tenant
+CephFS deployments where different subvolumes may be allocated to
+different users or applications.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- common/locktest       |   5 ++
- src/locktest.c        | 202 +++++++++++++++++++++++++++++++++++++++++++++++++-
- tests/generic/784     |  20 +++++
- tests/generic/784.out |   2 +
- 4 files changed, 227 insertions(+), 2 deletions(-)
+The implementation requires protocol changes to receive the subvolume_id
+from the MDS (InodeStat v9), and introduces a new metrics type
+(CLIENT_METRIC_TYPE_SUBVOLUME_METRICS) for reporting aggregated I/O
+statistics back to the MDS.
 
-diff --git a/common/locktest b/common/locktest
-index 12b5c27e0c03ad4c60985e3882026fce04e7330e..9344c43d8ee97679b49357b4e75de89ad56221ff 100644
---- a/common/locktest
-+++ b/common/locktest
-@@ -101,3 +101,8 @@ _run_dirdelegtest() {
- 	TESTFILE=$DELEGDIR
- 	_run_generic "-D"
- }
-+
-+_run_filedelegtest() {
-+	TESTFILE=$DELEGDIR
-+	_run_generic "-F"
-+}
-diff --git a/src/locktest.c b/src/locktest.c
-index eb40dce3f1b28ef34752518808ec2f3999cd4257..54ee1f07539ef08e768d2c809c40327f315d43e7 100644
---- a/src/locktest.c
-+++ b/src/locktest.c
-@@ -126,6 +126,8 @@ static char *child[] = { "child0", "child1" };
- #define		CMD_CHMOD	19
- #define		CMD_MKDIR	20
- #define		CMD_RMDIR	21
-+#define		CMD_UNLINK_S	22
-+#define		CMD_RENAME_S	23
- 
- #define		PASS 	0
- #define		FAIL	1
-@@ -169,6 +171,8 @@ static char *get_cmd_str(int cmd)
- 		case CMD_CHMOD: return "Chmod"; break;
- 		case CMD_MKDIR: return "Mkdir"; break;
- 		case CMD_RMDIR: return "Rmdir"; break;
-+		case CMD_UNLINK_S: return "Remove Self"; break;
-+		case CMD_RENAME_S: return "Rename Self"; break;
- 	}
- 	return "unknown";
- }
-@@ -716,6 +720,150 @@ static int64_t lease_tests[][6] =
- 		{0,0,0,0,0,CLIENT}
- 	};
- 
-+char *filedeleg_descriptions[] = {
-+    /*  1 */"Take Read Deleg",
-+    /*  2 */"Take Write Deleg",
-+    /*  3 */"Fail Write Deleg if file is open somewhere else",
-+    /*  4 */"Fail Read Deleg if opened with write permissions",
-+    /*  5 */"Read deleg gets SIGIO on write open",
-+    /*  6 */"Write deleg gets SIGIO on read open",
-+    /*  7 */"Read deleg does _not_ get SIGIO on read open",
-+    /*  8 */"Read deleg gets SIGIO on write open",
-+    /*  9 */"Write deleg gets SIGIO on truncate",
-+    /* 10 */"Read deleg gets SIGIO on truncate",
-+    /* 11 */"Read deleg gets SIGIO on chmod",
-+    /* 12 */"Read deleg gets SIGIO on unlink",
-+    /* 13 */"Read deleg gets SIGIO on rename",
-+};
-+
-+static int64_t filedeleg_tests[][6] =
-+	/*	test #	Action	[offset|flags|arg]	length		expected	server/client */
-+	/*			[sigio_wait_time]						*/
-+	{
-+	/* Various tests to exercise delegs */
-+
-+	/* SECTION 1: Simple verification of being able to take delegs */
-+	/* Take Read Deleg */
-+	{1,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+	{1,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
-+	{1,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{1,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
-+	{1,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{1,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{1,	CMD_SETDELEG,	F_UNLCK,	0,	PASS,		SERVER	},
-+	{1,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{1,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Take Write Deleg */
-+	{2,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
-+	{2,	CMD_SETDELEG,	F_WRLCK,	0,	PASS,		SERVER	},
-+	{2,	CMD_GETDELEG,	F_WRLCK,	0,	PASS,		SERVER	},
-+	{2,	CMD_SETDELEG,	F_UNLCK,	0,	PASS,		SERVER	},
-+	{2,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	/* Fail Write Deleg with other users */
-+	{3,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT  },
-+	{3,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
-+	{3,	CMD_SETDELEG,	F_WRLCK,	0,	FAIL,		SERVER	},
-+	{3,	CMD_GETDELEG,	F_WRLCK,	0,	FAIL,		SERVER	},
-+	{3,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{3,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+	/* Fail Read Deleg if opened for write */
-+	{4,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
-+	{4,	CMD_SETDELEG,	F_RDLCK,	0,	FAIL,		SERVER	},
-+	{4,	CMD_GETDELEG,	F_RDLCK,	0,	FAIL,		SERVER	},
-+	{4,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+
-+	/* SECTION 2: Proper SIGIO notifications */
-+	/* Get SIGIO when read deleg is broken by write */
-+	{5,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
-+	{5,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{5,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{5,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
-+	{5,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
-+	{5,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
-+	{5,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{5,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Get SIGIO when write deleg is broken by read */
-+	{6,	CMD_OPEN,	O_RDWR,		0,	PASS,		CLIENT	},
-+	{6,	CMD_SETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
-+	{6,	CMD_GETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
-+	{6,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
-+	{6,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
-+	{6,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
-+	{6,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{6,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Don't get SIGIO when read deleg is taken by read */
-+	{7,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
-+	{7,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{7,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{7,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
-+	{7,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
-+	{7,	CMD_WAIT_SIGIO,	5,		0,	FAIL,		CLIENT	},
-+	{7,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{7,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Get SIGIO when Read deleg is broken by Write */
-+	{8,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
-+	{8,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{8,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{8,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
-+	{8,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
-+	{8,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
-+	{8,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+	{8,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Get SIGIO when Write deleg is broken by Truncate */
-+	{9,	CMD_OPEN,	O_RDWR,		0,	PASS,		CLIENT	},
-+	{9,	CMD_SETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
-+	{9,	CMD_GETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
-+	{9,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
-+	{9,	CMD_TRUNCATE,	FILE_SIZE/2,	0,	PASS,		CLIENT	},
-+	{9,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
-+	{9,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Get SIGIO when Read deleg is broken by Truncate */
-+	{10,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
-+	{10,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{10,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
-+	{10,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
-+	{10,	CMD_TRUNCATE,	FILE_SIZE/2,	0,	PASS,		SERVER	},
-+	{10,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
-+	{10,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
-+
-+	/* Get SIGIO when Read deleg is broken by Chmod */
-+	{11,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
-+	{11,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{11,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{11,	CMD_SIGIO,	0,		0,	PASS,		SERVER	},
-+	{11,	CMD_CHMOD,	0644,		0,	PASS,		CLIENT	},
-+	{11,	CMD_WAIT_SIGIO,	5,		0,	PASS,		SERVER	},
-+	{11,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+
-+	/* Get SIGIO when file is unlinked */
-+	{12,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
-+	{12,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{12,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{12,	CMD_SIGIO,	0,		0,	PASS,		SERVER	},
-+	{12,	CMD_UNLINK_S,	0,		0,	PASS,		CLIENT	},
-+	{12,	CMD_WAIT_SIGIO,	5,		0,	PASS,		SERVER	},
-+	{12,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+
-+	/* Get SIGIO when file is renamed */
-+	{13,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
-+	{13,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{13,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
-+	{13,	CMD_SIGIO,	0,		0,	PASS,		SERVER	},
-+	{13,	CMD_RENAME_S,	0,		0,	PASS,		CLIENT	},
-+	{13,	CMD_WAIT_SIGIO,	5,		0,	PASS,		SERVER	},
-+	{13,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
-+
-+	/* indicate end of array */
-+	{0,0,0,0,0,SERVER},
-+	{0,0,0,0,0,CLIENT}
-+};
-+
- char *dirdeleg_descriptions[] = {
-     /*  1 */"Take Read Lease",
-     /*  2 */"Write Lease Should Fail",
-@@ -1124,6 +1272,37 @@ int do_chmod(int mode)
- 	return PASS;
- }
- 
-+int do_unlink_self(void)
-+{
-+	int ret;
-+
-+	ret = unlink(filename);
-+	if (ret < 0) {
-+		perror("unlink");
-+		return FAIL;
-+	}
-+	return PASS;
-+}
-+
-+int do_rename_self(void)
-+{
-+	int ret;
-+	char target[PATH_MAX];
-+
-+	ret = snprintf(target, sizeof(target), "%s2", filename);
-+	if (ret >= sizeof(target)) {
-+		perror("snprintf");
-+		return FAIL;
-+	}
-+
-+	ret = rename(filename, target);
-+	if (ret < 0) {
-+		perror("unlink");
-+		return FAIL;
-+	}
-+	return PASS;
-+}
-+
- static int do_lock(int cmd, int type, int start, int length)
- {
-     int ret;
-@@ -1347,6 +1526,7 @@ main(int argc, char *argv[])
-     int fail_count = 0;
-     int run_leases = 0;
-     int run_dirdelegs = 0;
-+    int run_filedelegs = 0;
-     int test_setlease = 0;
-     
-     atexit(cleanup);
-@@ -1360,7 +1540,7 @@ main(int argc, char *argv[])
- 	    prog = p+1;
-     }
- 
--    while ((c = getopt(argc, argv, "dDLn:h:p:t?")) != EOF) {
-+    while ((c = getopt(argc, argv, "dDFLn:h:p:t?")) != EOF) {
- 	switch (c) {
- 
- 	case 'd':	/* debug flag */
-@@ -1371,6 +1551,10 @@ main(int argc, char *argv[])
- 	    run_dirdelegs = 1;
- 	    break;
- 
-+	case 'F':
-+	    run_filedelegs = 1;
-+	    break;
-+
- 	case 'L':	/* Lease testing */
- 	    run_leases = 1;
- 	    break;
-@@ -1430,7 +1614,7 @@ main(int argc, char *argv[])
-     if (test_setlease == 1) {
- 	struct delegation deleg = { .d_type = F_UNLCK };
- 
--	if (run_dirdelegs)
-+	if (run_dirdelegs || run_filedelegs)
- 		fcntl(f_fd, F_SETDELEG, &deleg);
- 	else
- 		fcntl(f_fd, F_SETLEASE, F_UNLCK);
-@@ -1568,6 +1752,8 @@ main(int argc, char *argv[])
-      */
-     if (run_dirdelegs)
- 	fail_count = run(dirdeleg_tests, dirdeleg_descriptions);
-+    else if (run_filedelegs)
-+	fail_count = run(filedeleg_tests, filedeleg_descriptions);
-     else if (run_leases)
- 	fail_count = run(lease_tests, lease_descriptions);
-     else
-@@ -1673,6 +1859,12 @@ int run(int64_t tests[][6], char *descriptions[])
- 			case CMD_RMDIR:
- 			    result = do_rmdir(tests[index][ARG]);
- 			    break;
-+			case CMD_UNLINK_S:
-+			    result = do_unlink_self();
-+			    break;
-+			case CMD_RENAME_S:
-+			    result = do_rename_self();
-+			    break;
- 		    }
- 		    if( result != tests[index][RESULT]) {
- 			fail_flag++;
-@@ -1817,6 +2009,12 @@ int run(int64_t tests[][6], char *descriptions[])
- 		case CMD_RMDIR:
- 		    result = do_rmdir(ctl.offset);
- 		    break;
-+		case CMD_UNLINK_S:
-+		    result = do_unlink_self();
-+		    break;
-+		case CMD_RENAME_S:
-+		    result = do_rename_self();
-+		    break;
- 	    }
- 	    if( result != ctl.result ) {
- 		fprintf(stderr,"Failure in %d:%s\n",
-diff --git a/tests/generic/784 b/tests/generic/784
-new file mode 100755
-index 0000000000000000000000000000000000000000..6c20bac9b7fb719af05afd507849213359f9ca0f
---- /dev/null
-+++ b/tests/generic/784
-@@ -0,0 +1,20 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2025 Jeff Layton <jlayton@kernel.org>.  All Rights Reserved.
-+#
-+# FS QA Test 784
-+#
-+# Test file delegation support
-+#
-+. ./common/preamble
-+_begin_fstest auto quick locks
-+
-+# Import common functions.
-+. ./common/filter
-+. ./common/locktest
-+
-+_require_test
-+_require_test_fcntl_setdeleg
-+
-+_run_filedelegtest
-+_exit 0
-diff --git a/tests/generic/784.out b/tests/generic/784.out
-new file mode 100644
-index 0000000000000000000000000000000000000000..7b499e08fed85d0430ecad03c824f745cb42ec44
---- /dev/null
-+++ b/tests/generic/784.out
-@@ -0,0 +1,2 @@
-+QA output created by 784
-+success!
+Patch 1 adds forward-compatible handling for InodeStat v8. The MDS v8
+encoding added a versioned optmetadata field containing optional inode
+metadata such as charmap (for case-insensitive/case-preserving file
+systems). The kernel client does not currently support case-insensitive
+lookups, so this field is skipped rather than parsed. This ensures
+forward compatibility with newer MDS servers without requiring the
+full case-insensitivity feature implementation.
+
+Patch 2 adds support for parsing the subvolume_id field from InodeStat
+v9 and storing it in the inode structure for later use.
+
+Patch 3 adds the complete subvolume metrics infrastructure:
+- CEPHFS_FEATURE_SUBVOLUME_METRICS feature flag for MDS negotiation
+- Red-black tree based metrics tracker for efficient per-subvolume
+  aggregation with kmem_cache for entry allocations
+- Wire format encoding matching the MDS C++ AggregatedIOMetrics struct
+- Integration with the existing CLIENT_METRICS message
+- Recording of I/O operations from file read/write and writeback paths
+- Debugfs interfaces for monitoring
+
+Metrics tracked per subvolume include:
+- Read/write operation counts
+- Read/write byte counts
+- Read/write latency sums (for average calculation)
+
+The metrics are periodically sent to the MDS as part of the existing
+metrics reporting infrastructure when the MDS advertises support for
+the SUBVOLUME_METRICS feature.
+
+Debugfs additions in Patch 3:
+- metrics/subvolumes: displays last sent and pending subvolume metrics
+- metrics/metric_features: displays MDS session feature negotiation
+  status, showing which metric-related features are enabled (including
+  METRIC_COLLECT and SUBVOLUME_METRICS)
+
+Patch 4 introduces CEPH_SUBVOLUME_ID_NONE constant and enforces
+subvolume_id immutability. Following the FUSE client convention,
+0 means unknown/unset. Once an inode has a valid (non-zero) subvolume_id,
+it should not change during the inode's lifetime.
+
+Changes since v2:
+- Add CEPH_SUBVOLUME_ID_NONE constant (value 0) for unknown/unset state
+- Add WARN_ON_ONCE if attempting to change already-set subvolume_id
+- Add documentation for struct ceph_session_feature_desc ('bit' field)
+- Change pr_err() to pr_info() for "metrics disabled" message
+- Use pr_warn_ratelimited() instead of manual __ratelimit()
+- Add documentation comments to ceph_subvol_metric_snapshot and
+  ceph_subvolume_metrics_tracker structs
+- Use kmemdup_array() instead of kmemdup() for overflow checking
+- Add comments explaining ret > 0 checks for read metrics (EOF handling)
+- Use kmem_cache for struct ceph_subvol_metric_rb_entry allocations
+- Add comment explaining seq_file error handling in dump function
+
+Changes since v1:
+- Fixed unused variable warnings (v8_struct_v, v8_struct_compat) by
+  using ceph_decode_skip_8() instead of ceph_decode_8_safe()
+- Added detailed comment explaining InodeStat encoding versions v1-v9
+- Clarified that "optmetadata" is the actual field name in MDS C++ code
+- Aligned subvolume_id handling with FUSE client convention (0 = unknown)
+
+Alex Markuze (4):
+  ceph: handle InodeStat v8 versioned field in reply parsing
+  ceph: parse subvolume_id from InodeStat v9 and store in inode
+  ceph: add subvolume metrics collection and reporting
+  ceph: adding CEPH_SUBVOLUME_ID_NONE
+
+ fs/ceph/Makefile            |   2 +-
+ fs/ceph/addr.c              |  10 +
+ fs/ceph/debugfs.c           | 159 +++++++++++++
+ fs/ceph/file.c              |  68 +++++-
+ fs/ceph/inode.c             |  41 ++++
+ fs/ceph/mds_client.c        |  94 ++++++--
+ fs/ceph/mds_client.h        |  14 +-
+ fs/ceph/metric.c            | 173 ++++++++++++++-
+ fs/ceph/metric.h            |  27 ++-
+ fs/ceph/subvolume_metrics.c | 432 ++++++++++++++++++++++++++++++++++++
+ fs/ceph/subvolume_metrics.h |  97 ++++++++
+ fs/ceph/super.c             |   8 +
+ fs/ceph/super.h             |  11 +
+ 13 files changed, 1108 insertions(+), 28 deletions(-)
+ create mode 100644 fs/ceph/subvolume_metrics.c
+ create mode 100644 fs/ceph/subvolume_metrics.h
 
 -- 
-2.52.0
+2.34.1
 
 
