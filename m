@@ -1,83 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-70527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB02C9D7D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 02:16:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FEAC9D812
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 02:34:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5398B4E4FEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 01:16:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0AAB434AD10
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 01:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E1F22CBC0;
-	Wed,  3 Dec 2025 01:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A13C221265;
+	Wed,  3 Dec 2025 01:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="JkH6seBa"
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="e1kkBpM0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outbound.st.icloud.com (p-east2-cluster5-host10-snip4-10.eps.apple.com [57.103.79.123])
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com [113.46.200.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E3C4C98
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 01:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.79.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384422116F4
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 01:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764724563; cv=none; b=idSYST6NidPzPc7T8DwCrCGqRoKqDnU33KBKKbtkr2Xbndj5oLBdZt5kpXNec86/6siB1PuXXaVB8Y5uFK+HaRXHorQW2b+Ff6O23NQEVqhKlnNAlDyK0+ErwMnP+Gd62cB59D6wC+sRO/Km0wKHIWrHT3GYZos35e5ydD4XL9k=
+	t=1764725672; cv=none; b=iECjIbO5s72zWVF5FNc75ATMkgljC8Z30CiVjT+3I5up/nbFywuRuBQBDJzxctFlvk90cOWwgWsdpJXcW+4RWbxW6kPkjtfC0x6S2VzEMJ+CXuBQ58RHrAv6lzXntylFYhTwwYAgSnrDg7TrIOu7Bfu0IqdcsEp09cVL363nZ4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764724563; c=relaxed/simple;
-	bh=5tWJUJG6SnYBuBZeZZq8cJ7glHx18gRawtEfzjWMsRI=;
-	h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:Cc:To; b=ZCoHpZXDo2stdbKh4MjueUPe4xmOOlDuQTphemiAtN1k/zF9IJhZh61Tg7Wl/FDzWFsWIgg382/BI0DSDb+v0fpNc9hY2GSDqgO7c5hPoqmvHQpSPRXji6ziHysWP3oSwFNQDp3t+8xk2ftkwa1xIuqvjOw6MHwkhKiWfMnIKOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=JkH6seBa; arc=none smtp.client-ip=57.103.79.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-Received: from outbound.st.icloud.com (unknown [127.0.0.2])
-	by p00-icloudmta-asmtp-us-east-1a-100-percent-15 (Postfix) with ESMTPS id 3818218001BD;
-	Wed,  3 Dec 2025 01:16:00 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=5tWJUJG6SnYBuBZeZZq8cJ7glHx18gRawtEfzjWMsRI=; h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:To:x-icloud-hme; b=JkH6seBafZxmRVUdqc3Y+w/lZStjRgzre3CmqC5FHW7oU2xRXWeyjA7HZd6I0qd6Ewa+kwC6VjyH0rOEXwZ9HihSzTRDDCb0o0ox53/njNu3gwO1drb8Xk3WysoxUNfRzwIORbMru9cAUTAi/VuQHez/h4xji/rsLsuLC6YYzjtB7PqKCZIMcjkt2bvoHpkHhRkioVBXKgCy+Hv0kqs72RSk383rBZyckO1OOBZB6i5c9NBTaC2nf3IjxBQrO6on7dBfoV6hEmWaJrfLW9nHQZzw/5A4JVjE289m/OkoAPZEkP42w1b4Y5lm/ycr9cIew7iu8CPLRBvj4/vIR6WrPQ==
-Received: from smtpclient.apple (unknown [17.42.251.67])
-	by p00-icloudmta-asmtp-us-east-1a-100-percent-15 (Postfix) with ESMTPSA id 742FF18002A2;
-	Wed,  3 Dec 2025 01:15:59 +0000 (UTC)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-From: Abdullah Alamri <alboodalamri13@icloud.com>
+	s=arc-20240116; t=1764725672; c=relaxed/simple;
+	bh=4l4HRrZv/pHNFBVBY/w7Hka3R8B+2aGGj/MUOdFhS8M=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JSaMP5Aw6WsvY3H0oPw7zeXMm62xsz1DeGxuBmLbhGytxwRNpZGrFGQML20jI66ou8HJ30j69jHm6jgFLZaaz7aCRem9celCjVotIYYpk2JhN5w5g+NnV8mc93KqL5pEcTJhRmcNoRpo9cy2vC7w+KdokcTho520EUG79IqTtTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=e1kkBpM0; arc=none smtp.client-ip=113.46.200.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=1aGyEnui9o3Fstmdwdvy6jnUj0Lc6/D9At/KYnsCRZM=;
+	b=e1kkBpM082lalfxP1NPJkmuNCrrd6P4W6VLYNsuYjNxyE7LnO493by+L5B9+yrhpoAgBNt5ei
+	5reWfX/jZxeeRPN5Og4T4Yr52eXIPN6xs3rPv/Z1rdZji22YNiX+MlBnahi7/hbyWDG0SFaBRD9
+	HDyGWGd97x0sSFlq4BeXYUo=
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4dLg9J51vqznTVP;
+	Wed,  3 Dec 2025 09:32:04 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 660DF1A016C;
+	Wed,  3 Dec 2025 09:34:26 +0800 (CST)
+Received: from kwepemn100013.china.huawei.com (7.202.194.116) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 3 Dec 2025 09:34:26 +0800
+Received: from localhost (10.50.85.155) by kwepemn100013.china.huawei.com
+ (7.202.194.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Wed, 3 Dec
+ 2025 09:34:25 +0800
+Date: Wed, 3 Dec 2025 09:31:48 +0800
+From: Long Li <leo.lilong@huawei.com>
+To: Bernd Schubert <bernd@bsbernd.com>, <miklos@szeredi.hu>
+CC: <linux-fsdevel@vger.kernel.org>, <bschubert@ddn.com>,
+	<yangerkun@huawei.com>, <lonuxli.64@gmail.com>
+Subject: Re: [PATCH] fuse: limit debug log output during ring teardown
+Message-ID: <aS-SpUnw4AVCLrSS@localhost.localdomain>
+References: <20251129110653.1881984-1-leo.lilong@huawei.com>
+ <71e2ccaa-325b-4dd4-b5b7-fd470924c104@bsbernd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Date: Wed, 3 Dec 2025 04:15:46 +0300
-Subject: Re: Maintainers / Kernel Summit 2021 planning kick-off
-Message-Id: <FE7FB0D0-6CD8-4D1A-90B5-DE5487E378B3@icloud.com>
-Cc: James.Bottomley@hansenpartnership.com, cl@gentwo.de, david@redhat.com,
- greg@kroah.com, jikos@kernel.org, ksummit@lists.linux.dev,
- linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, lkml@metux.net,
- netdev@vger.kernel.org, tytso@mit.edu
-To: torvalds@linux-foundation.org
-X-Mailer: iPhone Mail (22G100)
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjAzMDAwNyBTYWx0ZWRfX0CBsIh7m/AhI
- FhNy9OzFBRQ6lTdilYWlw4niVyHgZMB7p7sqUjhg7sYgMXFbCpcuXUkxXQP7bUNVhQT5A4mVhGL
- aTDsXoMI94SJ3kbKufVDAQSNfd29YBw1+3dDV72x2UvvDWI7Ii+VvoDbwpi3/xF9TvBId2l4+Rc
- 32t58DeXW9SSJ/VpkJSZ9cWKen7G0nJ/b0JoTZmImWFe+ITLPO5d3CRz/3zcAlEc2e6DJvOhwl5
- MaIfAqOUxAn65qV7sN9zyYXhUDARNcdYdedPQSS8PGC5F7HKkc9GAaXBjcYDRN2IumQS9Dvdnb4
- Enc7JD+t8mfq2shPGrT
-X-Proofpoint-GUID: es_qhwUAhhCMzL-D7iYTN7TCo308goSO
-X-Proofpoint-ORIG-GUID: es_qhwUAhhCMzL-D7iYTN7TCo308goSO
-X-Authority-Info: v=2.4 cv=J5ynLQnS c=1 sm=1 tr=0 ts=692f8f50 cx=c_apl:c_pps
- a=YrL12D//S6tul8v/L+6tKg==:117 a=YrL12D//S6tul8v/L+6tKg==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=x7bEGLp0ZPQA:10 a=-KdL-90ardkA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=HyzYxv5D6p1NO4_E8OwA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-01_01,2025-11-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0
- adultscore=0 mlxlogscore=666 spamscore=0 bulkscore=0 malwarescore=0
- phishscore=0 suspectscore=0 clxscore=1011 classifier=spam authscore=0
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2512030007
-X-JNJ: AAAAAAABcBUMmKYEjepPQWO9oz0fKF0xJR4oEUJJJhwb5ynuO3cAT5TqKmi5gvBxr6b+Pia+G2rXYHxNYB3vI9ZpznaL1pqVzmaGJF23x5psdUMBBcAWXvbSTGq/VJOIzbNDcy8vftXrsq5zR0BUygpb0/6VN3p871Ph1ut7tgYelUYZQbdXnFdO25/QKR20Quhjct26nmPnzwIIBPH1w/WgvRsl8hpGxnZu2szp3h9brZwli5v/9Il4K80B/3AtevYJChN/GIgKGNHAwMG1f9THHkrw2Y4+BIofgjwEtO46FHwMqkKmnmOyzHlJZIH/3WTRw5IjXHu9sGIClaXy0ViVT7lKpO2qytvQ9oRNaL4nwfFlRyS4jJOXayBnbv4WOizprxRrfZRg38cFMgKpEpdv/Vy7radCRRgdmGUcT3/tK3QDaf/H3CretHZ8k6yzLy3nhe20SzqVdzLDgSbwGeNN1JXJEJyC6uy/mQZ8xUOHGyWCnotv0w+abcoO8WMeTx8UJcl7HVhlxcqVwqpFcQqOzf66fBBzfoljzvrzMMlGk40i0bfOaU+xJgUZUvcgZ39/Bdq/rgCqzDsX+cNteNdYu8GASjdLKYaWgQ7HGzuP4BT/BwYgsyCAKh5eBgaALzV4CWUO2Fq/fu41Ha/Un+hrqWh9uETR7L5XM7++iFVl/jqr6WBvVXgbpEgzltgVgUeUxkmmb4cnFuz3BIaFNao4OoW9Fvuyu+tw9rHyb8qCGWmrNuPdEr8jmBn1wDyexpk4Lbo7ENAdhWx9phpMfvTyBpIgW4WFtso=
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <71e2ccaa-325b-4dd4-b5b7-fd470924c104@bsbernd.com>
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemn100013.china.huawei.com (7.202.194.116)
 
-DQrigKvYo9mP2LHYs9mE2Kog2YXZhiDYp9mE2YAgaVBob25l4oCs
+On Tue, Dec 02, 2025 at 06:40:10PM +0100, Bernd Schubert wrote:
+> Hi Long,
+> 
+> On 11/29/25 12:06, Long Li wrote:
+> > Currently, if there are pending entries in the queue after the teardown
+> > timeout, the system keeps printing entry state information at very short
+> > intervals (FUSE_URING_TEARDOWN_INTERVAL). This can flood the system logs.
+> > Additionally, ring->stop_debug_log is set but not used.
+> > 
+> > Use ring->stop_debug_log as a control flag to only print entry state
+> > information once after teardown timeout, preventing excessive debug
+> > output. Also add a final message when all queues have stopped.
+> > 
+> > Signed-off-by: Long Li <leo.lilong@huawei.com>
+> > ---
+> >  fs/fuse/dev_uring.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> > index 5ceb217ced1b..d71ccdf78887 100644
+> > --- a/fs/fuse/dev_uring.c
+> > +++ b/fs/fuse/dev_uring.c
+> > @@ -453,13 +453,15 @@ static void fuse_uring_async_stop_queues(struct work_struct *work)
+> >  	 * If there are still queue references left
+> >  	 */
+> >  	if (atomic_read(&ring->queue_refs) > 0) {
+> > -		if (time_after(jiffies,
+> > +		if (!ring->stop_debug_log && time_after(jiffies,
+> >  			       ring->teardown_time + FUSE_URING_TEARDOWN_TIMEOUT))
+> >  			fuse_uring_log_ent_state(ring);
+> >  
+> >  		schedule_delayed_work(&ring->async_teardown_work,
+> >  				      FUSE_URING_TEARDOWN_INTERVAL);
+> >  	} else {
+> > +		if (ring->stop_debug_log)
+> > +			pr_info("All queues in the ring=%p have stopped\n", ring);
+> >  		wake_up_all(&ring->stop_waitq);
+> >  	}
+> >  }
+> 
+> 
+> how about like this?
+> 
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index f6b12aebb8bb..a527e58b404a 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -452,9 +452,11 @@ static void fuse_uring_async_stop_queues(struct work_struct *work)
+>          * If there are still queue references left
+>          */
+>         if (atomic_read(&ring->queue_refs) > 0) {
+> -               if (time_after(jiffies,
+> -                              ring->teardown_time + FUSE_URING_TEARDOWN_TIMEOUT))
+> +               if (time_after(jiffies, ring->teardown_time +
+> +                                       FUSE_URING_TEARDOWN_TIMEOUT)) {
+>                         fuse_uring_log_ent_state(ring);
+> +                       ring->teardown_time = jiffies;
+> +               }
+>  
+>                 schedule_delayed_work(&ring->async_teardown_work,
+>                                       FUSE_URING_TEARDOWN_INTERVAL);
+> 
+> Most of it is formatting, it just updates  "ring->teardown_time = jiffies",
+> idea is that is logs the remaining entries. If you run into it there is
+> probably a bug - io-uring will also start to spill warnings.
+> 
+> 
+> Thanks,
+> Bernd
+> 
+
+Hi, Bernd
+
+Thanks for your reply, if we want to continuously log entries that have
+not been stopped, the change to update teardown_time looks good to me,
+and ring->stop_debug_log can be deleted if it is not used.
+
+Long Li
+Thanks
+
 
