@@ -1,341 +1,296 @@
-Return-Path: <linux-fsdevel+bounces-70596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B25CA18EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 21:28:52 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0704BCA1AB9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 22:23:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 17C2B30052F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 20:28:47 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 7522B3002FC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 21:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB4B313E21;
-	Wed,  3 Dec 2025 20:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795BC2C1581;
+	Wed,  3 Dec 2025 21:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BoHeMvJ7"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NMe+nnuz";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="cKlyBPHO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B896312810;
-	Wed,  3 Dec 2025 20:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15B07DA66
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 21:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764793723; cv=none; b=jsgsUAkZQjAVTVMHHzIjSnBdYT2PxiUc5G840QJeXCIkmYUx6AwIScXw0h4hLzqOwqpEs01x7ZuPPrnau4GT2a3GOAZL772ZEjVIy99Qn5VIvnIjz1SZOBch88vrfIFl2s6PEBkdgRgqUl2kjmg3rGr0/JUN/+nt4r0aek40ll0=
+	t=1764796995; cv=none; b=QpPgPLx3o+T4gKIyze6uS3EElVf5dbP0ZkCPvQrHIKpHua38wEdhE13Mv/xlf1IRweMSbGtbMub3wI7paZRj/gxHUjlgLNsCIgwnVlnvf8M4R4CnaeSXq4Z8ZRdSyo0OaRv1MsF8zkSyZJRguZe8vkhrLH1e5lYKEGJD7aEpzuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764793723; c=relaxed/simple;
-	bh=EQjsHMGdKmIGw29kAODr0IsEEyMyRjBoCfAPrhdPGX4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C6ZO/W1ZmVvukmFXyl4yooRnqlqfY3Q6tpyEek6mHd1jhUvwU2U26VbUeCVfOLrPczVm6dgJwmK6Sca/krckubN9MnQQ9WgVilHDIwkwbnl9nWcla2OOkdO6eJV+e1ckbGgs8RJeKoGT5RG9kEm2eaagN0wLS0Ix2y78TqpaXUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BoHeMvJ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C3ECC4CEFB;
-	Wed,  3 Dec 2025 20:28:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764793723;
-	bh=EQjsHMGdKmIGw29kAODr0IsEEyMyRjBoCfAPrhdPGX4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=BoHeMvJ7GGbYld7icBuGMMrOQnl/FWElLBXfK9Z15B1o4sS8yYAoSQJ8rOL5rNDKv
-	 /ju+nMIgTnoF4+0Uadd4nraeFedjIA1Mei73PA8DL43arg3/ZQwTefCaf4Ja43MrE/
-	 v5ZcIV7bjnxC0jik9nmYXl0YJasD/vTNTTBiJLhHIOJHpv4K7KJ0pbJCEbvMPyN8ck
-	 Up3o8rdSaYMITC+CWHbMKwks7z72DLe1eYoWBbM2kE8r0+yXHSD1CILYR3g7uOYdYn
-	 gVv2zOtXQ51mYl4g+E29Fulq/HHle41uXwqu7giFy7svSOkJVAElaWZyyQnpTgcd+u
-	 t2uSuM0e7aSHg==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Joanne Koong <joannelkoong@gmail.com>,
-	syzbot@syzkaller.appspotmail.com,
-	Brian Foster <bfoster@redhat.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-6.6] iomap: adjust read range correctly for non-block-aligned positions
-Date: Wed,  3 Dec 2025 15:28:38 -0500
-Message-ID: <20251203202839.819850-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1764796995; c=relaxed/simple;
+	bh=PG/WNrudOdrF8wwMeRpn6H2LRLkwhzZDwEfVAg32SwU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AKtvWnuSjwKOruXazn6ZX8Rg9Gg9APQBUdN3bh+mEDDbx0g0VkZh6fnZxXxBsVAxKFFO65o5CyPid0bVBPIKKpKLdKXba4ZHdX5pWA8Cw1rot+HHGjmqcL3vuK2sr47fgZMVwV0QkvWaqJkGeDxv+CpAsJ/IMdizwjeAwD9UUtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NMe+nnuz; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=cKlyBPHO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764796992;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v/l/KTu/HnV7nNudrLpofZvlkgentj2/IKmTB3+sXvY=;
+	b=NMe+nnuzaLIaPY0qXBEy5+kAVIq8BvVQs1U9JhG0SrgH0juvWhet1JMFl+NYDzLp8y4gIx
+	qGooy2+/MKX0wXsCEXHLQHa38FPhQrVz+XU/aIZJNQW5Tq5ODjDf3+Q2T4FczOb/3N3qPu
+	ZkouCEh8k0LMMrddMnrcO1Kpkn5u8gU=
+Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
+ [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-52-nxwN75CONW-jRK18JqnrvA-1; Wed, 03 Dec 2025 16:23:11 -0500
+X-MC-Unique: nxwN75CONW-jRK18JqnrvA-1
+X-Mimecast-MFC-AGG-ID: nxwN75CONW-jRK18JqnrvA_1764796991
+Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-5dfaa434109so373776137.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 13:23:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1764796991; x=1765401791; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v/l/KTu/HnV7nNudrLpofZvlkgentj2/IKmTB3+sXvY=;
+        b=cKlyBPHOvjCgJUwvMp6zOl9dxoJPEkA5CaYQURWw3RVKggPFVqw8GCmYh81NgqPef/
+         8iNAJBEyU6k+vMbzComA9VdLqIdjVE65Quukr6V0iG/Jqstui/jet8G4P9j9kUGWElht
+         0ZhSA1eYRJgVPQN5+B0IXGfT0p1WFNUytnG2KtP4WvWdyUlTiAfu99t2VpG48wRtT4su
+         pIj2yC00Ni7UiwSTeBX7W9WSbqFm9n9/jxKG/FfsWA8jadMzepXJJp60oTIWkYp8HkuR
+         Tg77CfgVmOphuZj/ajMYT63PDyN+f4o/676aHOQjkiObSTc5PZcAVi13f190KHZBZq5I
+         ACEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764796991; x=1765401791;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=v/l/KTu/HnV7nNudrLpofZvlkgentj2/IKmTB3+sXvY=;
+        b=mtgNTYOHviRU2631k8/ksqOOqfEbcct/Dwf6i4bytUT2Aip0C71HxAftkji91ft3+K
+         VWaCBvxlWbtzZ1D08uq09wDJZufMLiBKECGXWfdXc7uduKJJXZARgwuZffT/JOu3iqlB
+         CB32ezVE7Ar/pN81W2cRluLDOtSCz5o7qjwVbPhwTX1GTJakXCWqGPEKx8z/wuEfh0YZ
+         O2zX73ZwgHyyRlLd9ZeTyTOzG75o4Eqr/OaUvN+QKUwo5uafbECjYywJp2SB5Mp549gE
+         B40D1k+k6QksGxD9YC7KcrX4zdSMCBSsLz253wKd9QVHgWRMTbeFmQJpxRS7sLIr6ZKi
+         QLWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEPS/Wwixu8kFFSm+VQYW6anYoVDsbOoW3mzOsMr+1kSlLCOVh5QU938/W8PJJD2S17WZaZOVZiqdNLd/7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA7vsLVCvKvDYtOIYuAoR4Sq0oiZ6mPJey6tgSn9Y2Jha8jSO3
+	IXCXY5hhmw0IVtvFF1XiOZ+puaUC30PcAp4jhlSw1/OqB6G6BsWuh/rPedDYOuT66xAZSRKv1lF
+	xXm7GzKsaTMqqprhj8afiagZHEqae8DBwuacxYNHz5H2itcYA2UKvi++YA9BuiNXjU/ZgZUW3JG
+	g9c2DDQiZzJwQpYsUHrjmXG8e/sF9PP/kNTc92kksxEQ==
+X-Gm-Gg: ASbGncsIYLPoGC0k3dOMjV3SUUYrm2697qP/kcnyDmG3m8qo4GEitd7gjP62rrHocg6
+	nxqg3aWhRE/zAh9PqRToKPt4ewY9dE1Y3tJh1IgvDwSPIQ0Mdq2H0oeS/BuNQjA6Qsbw/61P5Sg
+	Bb+bDFlACL+ZwFVfq3R076RBfwvTdjGayRK2gvgr6QqRQzfrAoGoxO2p3HjDLximmlbRMMZ/AvL
+	3GioSKPj6Fw
+X-Received: by 2002:a05:6102:4a8b:b0:5dd:8953:4c39 with SMTP id ada2fe7eead31-5e4f63d5fd7mr637574137.4.1764796991057;
+        Wed, 03 Dec 2025 13:23:11 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFeBH452075dZUyazl8eYT/UzyJ9yFkDbi8VNlxJEcSHSUk7OAj+mWrx0XSlN/lf/ntUkq2fmdnoyADdV50/oQ=
+X-Received: by 2002:a05:6102:4a8b:b0:5dd:8953:4c39 with SMTP id
+ ada2fe7eead31-5e4f63d5fd7mr637567137.4.1764796990653; Wed, 03 Dec 2025
+ 13:23:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.18
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251203154625.2779153-1-amarkuze@redhat.com> <20251203154625.2779153-5-amarkuze@redhat.com>
+ <361062ac3b2caf3262b319003c7b4aa2cf0f6a6e.camel@ibm.com>
+In-Reply-To: <361062ac3b2caf3262b319003c7b4aa2cf0f6a6e.camel@ibm.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Wed, 3 Dec 2025 23:22:59 +0200
+X-Gm-Features: AWmQ_bntUST6lQV6ekOD5FmQyjPGwyiG3cHq-BuY0wG_aLL8kU_f90L9smxQwbg
+Message-ID: <CAO8a2SjQDC2qaVV6_jsQbzOtUUdxStx2jEMYkG3VVkSCPbiH_Q@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] ceph: adding CEPH_SUBVOLUME_ID_NONE
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Viacheslav Dubeyko <vdubeyko@redhat.com>, 
+	"idryomov@gmail.com" <idryomov@gmail.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Joanne Koong <joannelkoong@gmail.com>
+The latest ceph code supports subvolume metrics.
+The test is simple:
+1. Deploy a ceph cluster
+2. Create and mount a subvolume
+3. run some I/O
+4. I used debugfs to see that subvolume metrics were collected on the
+client side and checked for subvolume metrics being reported on the
+mds.
 
-[ Upstream commit 7aa6bc3e8766990824f66ca76c19596ce10daf3e ]
+Nothing more to it.
 
-iomap_adjust_read_range() assumes that the position and length passed in
-are block-aligned. This is not always the case however, as shown in the
-syzbot generated case for erofs. This causes too many bytes to be
-skipped for uptodate blocks, which results in returning the incorrect
-position and length to read in. If all the blocks are uptodate, this
-underflows length and returns a position beyond the folio.
-
-Fix the calculation to also take into account the block offset when
-calculating how many bytes can be skipped for uptodate blocks.
-
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Tested-by: syzbot@syzkaller.appspotmail.com
-Reviewed-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-LLM Generated explanations, may be completely bogus:
-
-Now I have all the information needed for a comprehensive analysis. Let
-me compile my findings.
-
----
-
-## COMPREHENSIVE ANALYSIS: iomap_adjust_read_range() Bug Fix
-
-### 1. COMMIT MESSAGE ANALYSIS
-
-**Subject:** `iomap: adjust read range correctly for non-block-aligned
-positions`
-
-**Key Points from Message:**
-- The function `iomap_adjust_read_range()` **assumes block-aligned
-  positions**, but this assumption is violated
-- Bug was discovered via **syzbot testing with erofs** filesystem
-- Causes "too many bytes to be skipped for uptodate blocks"
-- Results in **incorrect position and length to read**
-- If all blocks are uptodate: **underflows length** and **returns
-  position beyond the folio**
-
-**Tags Analysis:**
-- ✅ `Tested-by: syzbot@syzkaller.appspotmail.com` - Automated testing
-  confirmed
-- ✅ `Reviewed-by: Brian Foster <bfoster@redhat.com>` - Red Hat
-  filesystem expert
-- ✅ `Reviewed-by: Christoph Hellwig <hch@lst.de>` - Major iomap author
-- ✅ `Signed-off-by: Christian Brauner <brauner@kernel.org>` - VFS
-  maintainer
-- ❌ **No `Cc: stable@vger.kernel.org`** tag
-- ❌ **No `Fixes:` tag** pointing to original buggy commit
-
-### 2. CODE CHANGE ANALYSIS
-
-**Bug Location:** `fs/iomap/buffered-io.c`, function
-`iomap_adjust_read_range()`
-
-**The Buggy Code (lines 246-253 before fix):**
-```c
-for (i = first; i <= last; i++) {
-    if (!ifs_block_is_uptodate(ifs, i))
-        break;
-    *pos += block_size;      // Bug: assumes pos is block-aligned
-    poff += block_size;
-    plen -= block_size;
-    first++;
-}
-```
-
-**Technical Root Cause:**
-When `*pos` has a sub-block offset (e.g., `pos = 512` in a 1024-byte
-block):
-- `first = poff >> block_bits` computes the block index correctly (block
-  0)
-- But the loop skips a full `block_size` per block, ignoring the offset
-
-**Example demonstrating the bug:**
-- Block size: 1024 bytes
-- Position: 512 (half-way into block 0)
-- Block 0 is uptodate
-
-**Old buggy calculation:**
-- Skip full 1024 bytes → `pos = 1536`, overshoots by 512 bytes
-- `plen -= 1024` → underflows if `plen < 1024`
-
-**Fixed calculation:**
-```c
-blocks_skipped = i - first;
-if (blocks_skipped) {
-    unsigned long block_offset = *pos & (block_size - 1);  // = 512
-    unsigned bytes_skipped =
-        (blocks_skipped << block_bits) - block_offset;      // = 1024 -
-512 = 512
-    *pos += bytes_skipped;   // Correct: pos = 1024
-    poff += bytes_skipped;
-    plen -= bytes_skipped;
-}
-```
-
-**Consequences of the Bug:**
-1. **Integer underflow**: `plen` becomes huge (wraps around as unsigned)
-2. **Position beyond folio**: `*pos` can point past the folio boundary
-3. **Incorrect read ranges**: Wrong data read, potential corruption
-4. **Potential crashes**: Invalid memory access from bad ranges
-
-### 3. CLASSIFICATION
-
-- **Type:** BUG FIX (arithmetic/logic error causing incorrect
-  calculations)
-- **NOT:** Feature addition, cleanup, or optimization
-- **Severity:** HIGH - affects filesystem data integrity
-- **Scope:** Core iomap buffered I/O infrastructure
-
-### 4. SCOPE AND RISK ASSESSMENT
-
-**Change Size:**
-- 13 insertions, 6 deletions
-- Single file: `fs/iomap/buffered-io.c`
-- Localized to one function
-
-**Risk Level:** LOW
-- Fix is mathematically straightforward
-- Does not change control flow significantly
-- Well-reviewed by iomap experts
-- Tested by syzbot
-
-**Affected Subsystem:** `fs/iomap/` - mature, widely-used infrastructure
-
-**Affected Filesystems:** Multiple major filesystems use iomap:
-- **XFS** - Primary enterprise Linux filesystem
-- **GFS2** - Cluster filesystem
-- **erofs** - Read-only filesystem (Android)
-- **zonefs** - Zoned storage filesystem
-- **fuse** - User-space filesystems
-
-### 5. USER IMPACT
-
-**Who is affected?**
-- ALL users of XFS, GFS2, erofs, zonefs, and fuse filesystems
-- Particularly affects systems with:
-  - Block sizes smaller than page size
-  - Partial folio reads/writes at non-block-aligned offsets
-
-**How severe?**
-- Can cause **incorrect data reads**
-- Potential **data corruption** in read paths
-- Possible **kernel crashes** from invalid memory access
-- **Data integrity** issues for critical filesystems
-
-**Triggered by:** syzbot (automated fuzzing) - confirms this is a real
-triggerable bug
-
-### 6. STABILITY INDICATORS
-
-- ✅ `Tested-by: syzbot` - Confirmed fix works
-- ✅ Two expert reviewers (Brian Foster, Christoph Hellwig)
-- ✅ Merged by VFS maintainer (Christian Brauner)
-- ⚠️ Relatively new commit (September 2025)
-
-### 7. DEPENDENCY CHECK
-
-**Bug Origin:** Commit `9dc55f1389f95` ("iomap: add support for sub-
-pagesize buffered I/O without buffer heads") from **v4.19-rc1** (2018)
-
-**Dependencies for backport:**
-- The fix is self-contained
-- May need minor adaptation for older kernels:
-  - v5.x: Uses `struct iomap_page` and pages (not folios)
-  - v6.x: Uses `struct iomap_folio_state` and folios
-- Core logic remains the same across versions
-
-**Related commits:**
-- `8e3c15ee0d292` - Minor loop syntax change (`for` → `while`), NOT a
-  dependency
-- `9d875e0eef8ec` - Related fix for unaligned END offsets (separate
-  issue)
-
-### 8. HISTORICAL CONTEXT
-
-The bug has existed for **~6 years** (since v4.19). It was latent
-because:
-- Most callers pass block-aligned positions
-- erofs triggered an edge case with non-aligned positions
-- syzbot's extensive testing exposed it
-
-The original code assumed callers would always pass block-aligned
-positions, which is a reasonable assumption violated in specific edge
-cases.
-
----
-
-## BACKPORT RECOMMENDATION
-
-### Arguments FOR backporting:
-
-1. **Fixes a real bug** discovered by automated testing (syzbot)
-2. **Affects critical filesystems** (XFS, GFS2) used in production
-3. **Small, surgical fix** - 13 lines added, 6 removed
-4. **Low regression risk** - mathematically correct fix
-5. **Expert-reviewed** by iomap maintainers
-6. **Bug existed since v4.19** - all stable trees are affected
-7. **Can cause data integrity issues** - serious for a filesystem bug
-
-### Arguments AGAINST backporting:
-
-1. **No `Cc: stable` tag** - maintainers didn't explicitly request
-   backport
-2. **No `Fixes:` tag** - doesn't identify the buggy commit
-3. **Relatively new commit** - hasn't had extensive mainline testing yet
-4. **Needs adaptation** for older kernels (page vs folio APIs)
-
-### Conclusion:
-
-Despite the missing stable tags, this commit should be backported
-because:
-- It fixes a **real, triggerable bug** found by syzbot
-- The bug can cause **incorrect data reads and potential corruption**
-- It affects **major filesystems** (XFS, GFS2) used in production
-  environments
-- The fix is **small, contained, and well-reviewed**
-- The **risk of NOT fixing** (data corruption) outweighs the risk of the
-  fix (minimal)
-
-The absence of `Cc: stable` may be an oversight, as this clearly meets
-stable criteria.
-
-**YES**
-
- fs/iomap/buffered-io.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 8b847a1e27f13..1c95a0a7b302d 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -240,17 +240,24 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
- 	 * to avoid reading in already uptodate ranges.
- 	 */
- 	if (ifs) {
--		unsigned int i;
-+		unsigned int i, blocks_skipped;
- 
- 		/* move forward for each leading block marked uptodate */
--		for (i = first; i <= last; i++) {
-+		for (i = first; i <= last; i++)
- 			if (!ifs_block_is_uptodate(ifs, i))
- 				break;
--			*pos += block_size;
--			poff += block_size;
--			plen -= block_size;
--			first++;
-+
-+		blocks_skipped = i - first;
-+		if (blocks_skipped) {
-+			unsigned long block_offset = *pos & (block_size - 1);
-+			unsigned bytes_skipped =
-+				(blocks_skipped << block_bits) - block_offset;
-+
-+			*pos += bytes_skipped;
-+			poff += bytes_skipped;
-+			plen -= bytes_skipped;
- 		}
-+		first = i;
- 
- 		/* truncate len if we find any trailing uptodate block(s) */
- 		while (++i <= last) {
--- 
-2.51.0
+On Wed, Dec 3, 2025 at 10:15=E2=80=AFPM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> On Wed, 2025-12-03 at 15:46 +0000, Alex Markuze wrote:
+> > 1. Introduce CEPH_SUBVOLUME_ID_NONE constant (value 0) to make the
+> >    unknown/unset state explicit and self-documenting.
+> >
+> > 2. Add WARN_ON_ONCE if attempting to change an already-set subvolume_id=
+.
+> >    An inode's subvolume membership is immutable - once created in a
+> >    subvolume, it stays there. Attempting to change it indicates a bug.
+> > ---
+> >  fs/ceph/inode.c             | 32 +++++++++++++++++++++++++-------
+> >  fs/ceph/mds_client.c        |  5 +----
+> >  fs/ceph/subvolume_metrics.c |  7 ++++---
+> >  fs/ceph/super.h             | 10 +++++++++-
+> >  4 files changed, 39 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > index 835049004047..257b3e27b741 100644
+> > --- a/fs/ceph/inode.c
+> > +++ b/fs/ceph/inode.c
+> > @@ -638,7 +638,7 @@ struct inode *ceph_alloc_inode(struct super_block *=
+sb)
+> >
+> >       ci->i_max_bytes =3D 0;
+> >       ci->i_max_files =3D 0;
+> > -     ci->i_subvolume_id =3D 0;
+> > +     ci->i_subvolume_id =3D CEPH_SUBVOLUME_ID_NONE;
+>
+> I was expected to see the code of this patch in the second and third ones=
+. And
+> it looks really confusing. Why have you introduced another one patch?
+>
+> So, how I can test this patchset? I assume that xfstests run will be not =
+enough.
+> Do we have special test environment or test-cases for this?
+>
+> Thanks,
+> Slava.
+>
+> >
+> >       memset(&ci->i_dir_layout, 0, sizeof(ci->i_dir_layout));
+> >       memset(&ci->i_cached_layout, 0, sizeof(ci->i_cached_layout));
+> > @@ -743,7 +743,7 @@ void ceph_evict_inode(struct inode *inode)
+> >
+> >       percpu_counter_dec(&mdsc->metric.total_inodes);
+> >
+> > -     ci->i_subvolume_id =3D 0;
+> > +     ci->i_subvolume_id =3D CEPH_SUBVOLUME_ID_NONE;
+> >
+> >       netfs_wait_for_outstanding_io(inode);
+> >       truncate_inode_pages_final(&inode->i_data);
+> > @@ -877,19 +877,37 @@ int ceph_fill_file_size(struct inode *inode, int =
+issued,
+> >  }
+> >
+> >  /*
+> > - * Set the subvolume ID for an inode. Following the FUSE client conven=
+tion,
+> > - * 0 means unknown/unset (MDS only sends non-zero IDs for subvolume in=
+odes).
+> > + * Set the subvolume ID for an inode.
+> > + *
+> > + * The subvolume_id identifies which CephFS subvolume this inode belon=
+gs to.
+> > + * CEPH_SUBVOLUME_ID_NONE (0) means unknown/unset - the MDS only sends
+> > + * non-zero IDs for inodes within subvolumes.
+> > + *
+> > + * An inode's subvolume membership is immutable - once an inode is cre=
+ated
+> > + * in a subvolume, it stays there. Therefore, if we already have a val=
+id
+> > + * (non-zero) subvolume_id and receive a different one, that indicates=
+ a bug.
+> >   */
+> >  void ceph_inode_set_subvolume(struct inode *inode, u64 subvolume_id)
+> >  {
+> >       struct ceph_inode_info *ci;
+> > +     u64 old;
+> >
+> > -     if (!inode || !subvolume_id)
+> > +     if (!inode || subvolume_id =3D=3D CEPH_SUBVOLUME_ID_NONE)
+> >               return;
+> >
+> >       ci =3D ceph_inode(inode);
+> > -     if (READ_ONCE(ci->i_subvolume_id) !=3D subvolume_id)
+> > -             WRITE_ONCE(ci->i_subvolume_id, subvolume_id);
+> > +     old =3D READ_ONCE(ci->i_subvolume_id);
+> > +
+> > +     if (old =3D=3D subvolume_id)
+> > +             return;
+> > +
+> > +     if (old !=3D CEPH_SUBVOLUME_ID_NONE) {
+> > +             /* subvolume_id should not change once set */
+> > +             WARN_ON_ONCE(1);
+> > +             return;
+> > +     }
+> > +
+> > +     WRITE_ONCE(ci->i_subvolume_id, subvolume_id);
+> >  }
+> >
+> >  void ceph_fill_file_time(struct inode *inode, int issued,
+> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > index 2b831f48c844..f2a17e11fcef 100644
+> > --- a/fs/ceph/mds_client.c
+> > +++ b/fs/ceph/mds_client.c
+> > @@ -122,10 +122,7 @@ static int parse_reply_info_in(void **p, void *end=
+,
+> >       u32 struct_len =3D 0;
+> >       struct ceph_client *cl =3D mdsc ? mdsc->fsc->client : NULL;
+> >
+> > -     info->subvolume_id =3D 0;
+> > -     doutc(cl, "subv_metric parse start features=3D0x%llx\n", features=
+);
+> > -
+> > -     info->subvolume_id =3D 0;
+> > +     info->subvolume_id =3D CEPH_SUBVOLUME_ID_NONE;
+> >
+> >       if (features =3D=3D (u64)-1) {
+> >               ceph_decode_8_safe(p, end, struct_v, bad);
+> > diff --git a/fs/ceph/subvolume_metrics.c b/fs/ceph/subvolume_metrics.c
+> > index 111f6754e609..37cbed5b52c3 100644
+> > --- a/fs/ceph/subvolume_metrics.c
+> > +++ b/fs/ceph/subvolume_metrics.c
+> > @@ -136,8 +136,9 @@ void ceph_subvolume_metrics_record(struct ceph_subv=
+olume_metrics_tracker *tracke
+> >       struct ceph_subvol_metric_rb_entry *entry, *new_entry =3D NULL;
+> >       bool retry =3D false;
+> >
+> > -     /* 0 means unknown/unset subvolume (matches FUSE client conventio=
+n) */
+> > -     if (!READ_ONCE(tracker->enabled) || !subvol_id || !size || !laten=
+cy_us)
+> > +     /* CEPH_SUBVOLUME_ID_NONE (0) means unknown/unset subvolume */
+> > +     if (!READ_ONCE(tracker->enabled) ||
+> > +         subvol_id =3D=3D CEPH_SUBVOLUME_ID_NONE || !size || !latency_=
+us)
+> >               return;
+> >
+> >       do {
+> > @@ -403,7 +404,7 @@ void ceph_subvolume_metrics_record_io(struct ceph_m=
+ds_client *mdsc,
+> >       }
+> >
+> >       subvol_id =3D READ_ONCE(ci->i_subvolume_id);
+> > -     if (!subvol_id) {
+> > +     if (subvol_id =3D=3D CEPH_SUBVOLUME_ID_NONE) {
+> >               atomic64_inc(&tracker->record_no_subvol);
+> >               return;
+> >       }
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index a03c373efd52..731df0fcbcc8 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -386,7 +386,15 @@ struct ceph_inode_info {
+> >
+> >       /* quotas */
+> >       u64 i_max_bytes, i_max_files;
+> > -     u64 i_subvolume_id;     /* 0 =3D unknown/unset, matches FUSE clie=
+nt */
+> > +
+> > +     /*
+> > +      * Subvolume ID this inode belongs to. CEPH_SUBVOLUME_ID_NONE (0)
+> > +      * means unknown/unset, matching the FUSE client convention.
+> > +      * Once set to a valid (non-zero) value, it should not change
+> > +      * during the inode's lifetime.
+> > +      */
+> > +#define CEPH_SUBVOLUME_ID_NONE 0
+> > +     u64 i_subvolume_id;
+> >
+> >       s32 i_dir_pin;
+> >
 
 
