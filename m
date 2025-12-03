@@ -1,335 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-70574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0F8CA10CB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 19:39:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 565CACA0F30
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 03 Dec 2025 19:26:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id CB45D33F2050
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 17:45:16 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id EA4A232DCFBA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 17:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056E2316194;
-	Wed,  3 Dec 2025 15:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1E0306D58;
+	Wed,  3 Dec 2025 15:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RLKlm+ZZ";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="aGCNznX5"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MOhshlP2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD01730FC1C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 15:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988AC33F8A3
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 15:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764776921; cv=none; b=iWBE1RgRn304OmjXJeHCzfpi8ICNMi1n1rXdbkiOAfshFfk8sK+I5tqydRRu2NREGqqNRREaZvGwX1zH327DSbdB+CjwQrCH/ec5xjNKaU42WjzECid55if+6rgpQKq9gecpcgH2DedRts6swkbP6P5lTgqoKYllQ6iHGBF/uD0=
+	t=1764777318; cv=none; b=DFgwtRFzg+RFgxwE4Kzt8A0hRGmPYUVA7x8gxJ6f+BldhchU3ZC3jAF7qfYHJ4tf1BXxGaG8nx/yCn5tJrvXcf/ZSbUL3UStfOghB5B3Bzae/GPvxncnd1hPDUNk8gocYptvd3euZzFWnS+y48vke2U5wh4ZU+oNN3/D0ZsfIA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764776921; c=relaxed/simple;
-	bh=aIBGphgzhXUaZAk2/5WLGnGnPKSfrVonY0aSeETgTH0=;
+	s=arc-20240116; t=1764777318; c=relaxed/simple;
+	bh=u3Dy2G3WRTyFesbvCVKYgejnMDOxq7tkjLs3uSapkfQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aAjansimfwG54zcgsaJjSA5uZS5MQxkrHWAHE9JryFWwEPuIn3DvLoV+aOaIfQz2bWAQAFk6yJ+DT0oMBFjhptff8NxYe8qwaZ0RhGf4R/cWxmgAtWhjN4MAilw0LWseAq9aOpyJYGi5oYA8FiZPSwclHoDfoTgezShiCTlQTUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=fail smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RLKlm+ZZ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=aGCNznX5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764776918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R5NehO+FQRW1r4UMp3vb40IEuBMxJiCnyJz7p6o1+P0=;
-	b=RLKlm+ZZf4W4Ye34q29kazw83SI7aME+BbJscJ1MVrjnsSO33xsQi55ujOHhqEQ6JP7l5f
-	72oqOvTFiS5MBI7RWsDfIB2e17dIdaO9FxTu7eCj39/uKQTU/wrr46EeGANxzjGvNP/Mfh
-	wAsbrYWZnXIUbwk+SdcSU59pxoMbLSg=
-Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
- [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-179-iY28yVPmPrG_-zBKlNwzqQ-1; Wed, 03 Dec 2025 10:48:36 -0500
-X-MC-Unique: iY28yVPmPrG_-zBKlNwzqQ-1
-X-Mimecast-MFC-AGG-ID: iY28yVPmPrG_-zBKlNwzqQ_1764776916
-Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-9375f8d5f1cso2598369241.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 07:48:36 -0800 (PST)
+	 To:Cc:Content-Type; b=I9Gy33mbND2l75EJQKs1hnue7a5f2QauSaSnfUn9s9KK6ACd4lLoGMoQ4b0K/ba2ru5kQdlANQd9vG7o2nvuTXE8qt+WR4ToBzk5RDIGFFyKKqAkWu9okNPczY0PNd9D+S5SzTX6ED+o9NiFCEZGMYtAeRZKxwYbDnvPR1RNfUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MOhshlP2; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-340bcc92c7dso632110a91.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 07:55:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1764776916; x=1765381716; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1764777316; x=1765382116; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R5NehO+FQRW1r4UMp3vb40IEuBMxJiCnyJz7p6o1+P0=;
-        b=aGCNznX5pbT7x7xap8ZiCSSlEvdJAHBny8H2IFzuXZKttJVZcpI4bfLOwZTfhR1pMv
-         DQVo/mI923qav5UpMsYi+ry2WecWTQO5GBulbRgMT8QNTlf7UPYqjgXnNtb77UeTKH1t
-         CMOZCnTHnc0LP8goUVMYpTmJXW7wqGYvyE3bS913rfJvaLX03BMDpRq0bPD7uUye/+Mj
-         HyP09svnSogfipkVI9MM1Yjh51yWfakHPS+0EL2dsW8IEXp4/yecN0yOz9u3y+canNTh
-         6LypVL5lSNAAD22QbocorqTEZSK3etenS/o9PqBbS7FocpvudjzCwnq4WxbpqlWLo4cF
-         q4aQ==
+        bh=/p/Pi5AWZHYDPsiAr+hwgDoJDjponKbr9dQ4aVc/nMQ=;
+        b=MOhshlP2iwKgV6mqQ9uU1z08WtQGIGmY554H3UBMXEUdWqoYheVwV+Cu7HFMW+P6PD
+         FPBoR+sDs7FUTlo22RmQut8CEtXCVBf6za6xlFmhAbYjPKZ1qpXixUMfoEnnpKV4LkTe
+         H2SniOzX7L04ifLK+PB+p+U61BN5yWxZjQKBALxwpy/8PkpKb6XooXUQILaD8TJhvf96
+         GQgsZMrx6WDOEVbiP+4L56uVTVWe4Mq6KaLM6J/x4FB/RvJkDl4icuAn7Fus2cvN+IUP
+         MDOb+S5ANpQLb7ptx/wpOJasjusw1dMCx4mkV56a5nRSBgqq4QDiZcIMZheNVorQqZKS
+         WvBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764776916; x=1765381716;
+        d=1e100.net; s=20230601; t=1764777316; x=1765382116;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=R5NehO+FQRW1r4UMp3vb40IEuBMxJiCnyJz7p6o1+P0=;
-        b=MTT0FDwu964CauX2g4tGksGGgjqBkUZ4usKlvnlzL4x4bMhJq4N6ZDCAcIcvlbe0dJ
-         YAe41WjS9yd9aXp56hXIVBdfYZn9gm1crp7Rg1kGOmKYAr4fc66vtG4QE80wxJC2+XyM
-         k1bAAJDmwhEMPjbbxKZLjQ5E3iHvWW13zbYqpd4ANhdSKRyMs1kUc+q5UZJHHIfMUObm
-         TYdweiYNzc/zkbfGhT5X9zHwyZkZO/M3iNC5nWwRSkFIlTkWkHjliQfPkq+Jw963csSs
-         MBQ7HB6vccVqiDE2GIlVpYACEKr/YMjA8O4AmqHFl3FPxTsMjYHVrZfHZQYhOCqtT1F+
-         XsmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyS92aLTWMHqXZuP4Ol04XMUUEpodhx/sjwJ4EySpQ8tlg7VqvaMNqKGp+dk31WHlMCHPPe19SOp/LcSSm@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQdSINcH6WK+6BoFMg0gcxRtSPAxgNBvb4PNv80F/2X/XRdxKZ
-	ryon1EI15ushmHi56Mj4QjPdxpXBfboGTzf62/SedvQXJ8O4Gd68Wfjgc7lMYaYOWOLUE8ZVLxn
-	6icRnGRtp/dfWmPktypNzBmPs79tkOUYw/F/4dROzd10NqNFowsyZyBEATMDtHkOp5zMqMGIUQc
-	+/yIm5dgrfTPdM1MLgdVO/hulJ6fFQ/Yaw726Jw0VdoA==
-X-Gm-Gg: ASbGncvf9RvNBZjeBCUZHGZx39Nf2doA1NhARdRHO3rJNjmlzdaQIT97dtfdpXizTir
-	SD3VvOCF3rJS4yv94JRR+eUMe2K4snUBewOXL2mrbsUUlxZ21wDdElQXOexGSJyhOfNPsj9zs7/
-	VbSqIi0btoHfu1RWuOYF34w9RKh6gCw7391tCEZrWNItu+QkGRp2a2DR1hIAwroIQUlF0BamDQ4
-	t9uQXq4KaoQ
-X-Received: by 2002:a05:6102:3753:b0:535:2f14:ea5e with SMTP id ada2fe7eead31-5e48e2824eamr717591137.8.1764776915963;
-        Wed, 03 Dec 2025 07:48:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGySNhutiBYFLf2Pw7nlBwRJE7vpGcU6Y6OdS9tLpm8LznqaNDceiaPzsviFUDlKRSGc8dEemxRbv38q0tnOsY=
-X-Received: by 2002:a05:6102:3753:b0:535:2f14:ea5e with SMTP id
- ada2fe7eead31-5e48e2824eamr717582137.8.1764776915526; Wed, 03 Dec 2025
- 07:48:35 -0800 (PST)
+        bh=/p/Pi5AWZHYDPsiAr+hwgDoJDjponKbr9dQ4aVc/nMQ=;
+        b=SsJfL9WMmQttm4Ew5BuKaMhOfRIQ8cAqXKOFTEPDfFAFDIcKA5IwFrcE/tWQbt3vND
+         isySx+Vhat9ZOSiKLt6NNbu1VBtxonpYzecvYGZQDbTpzDbNOUMlKrS2+lTJEpqVENl4
+         AChITrQWoFkGdFy72Nho2n/cRwQQrnV80c0XFfhVvu65+anr8Yyj2i2E0x0fcH93H/fS
+         y5KPIVCxP6SWxGLfJwICTvoKcMt2a9Zmbm92NzMe1n1IDP8jzB8OUcthUTdqUxyTsZs9
+         oFPdHYQ0cGbUQlywirAV2AtUJxMS9/Jd60aaL0e/DDtjHzRewKn6GyMca0It3tvzkSJj
+         GZRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGGBFQrerSTnf5Td05XT/ohWjWX2TomMOSW+/UH4jty3oXl6vbEWxIJ5+oiJ6x2S7XSnvcWn9/ukraJ4iE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGMY8yq0MOQ3yj1nj4JyZLAoYU9B3d5CFzpDKu62181/v8yEpu
+	xQ/hwNoujDPULFWiJQFOLHQAWXNLOLooBlJc30qHKtshq1ad923O4oTV3NhJn3UPLclNeY8PAm9
+	4kqY0IAecRYDVoaFn7eolY38XKtBTHGwZRx16nGh3EKb6HVeRHPo=
+X-Gm-Gg: ASbGncseNxmRZiVP0P5tGKNLMOPlnyXlV3lKgnahgueLxPFNFMJRtQJBgylvQdlTwym
+	NGtiTGp6ufCgM3njekKHS6AplXevryB84q2F9IOUM8XifAyP2L74/X3cxookb7Tjj0SwHl+XkUC
+	pBeYlRTNYsdUs6aiWBGhOFEaiW4mnFKTqCoDXIiwHa7HlRRvMYhljSxy4yy0ckUIJ4UDhcDN7oA
+	J/gWvdVWQZO4a4QXv7cvyUfjJGMjcfvPTAsw0QmFzGxMH39FRPP/cFj0QkklazEUBBbAtc=
+X-Google-Smtp-Source: AGHT+IFqrCGVBw0W6skiqMchfp9P0aCB9lQB6KewuBkAjCizkiC6upTGzicvdWl58VewJl0Dw2tgBc6JaUZoagFsGFM=
+X-Received: by 2002:a17:90b:5610:b0:349:162d:ae0c with SMTP id
+ 98e67ed59e1d1-349162daf89mr2486825a91.4.1764777315815; Wed, 03 Dec 2025
+ 07:55:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251202155750.2565696-1-amarkuze@redhat.com> <20251202155750.2565696-3-amarkuze@redhat.com>
- <c41cdb3ac27d04bf79d6b22705ec045c11df4798.camel@ibm.com>
-In-Reply-To: <c41cdb3ac27d04bf79d6b22705ec045c11df4798.camel@ibm.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Wed, 3 Dec 2025 17:48:24 +0200
-X-Gm-Features: AWmQ_blGP93nZz6T4edWBT8pQTqh5m397kCIlwTBteRz-BlrmdbDWDo8M68H9sk
-Message-ID: <CAO8a2SjFeuLBbYwBE7AUQziVPonquz80u=6DCKAhRrqy_Fi6kQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] ceph: parse subvolume_id from InodeStat v9 and
- store in inode
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Viacheslav Dubeyko <vdubeyko@redhat.com>, 
-	"idryomov@gmail.com" <idryomov@gmail.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
+ <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
+ <CAHC9VhQyDX+NgWipgm5DGMewfVTBe3DkLbe_AANRiuAj40bA1w@mail.gmail.com>
+ <6797b694-6c40-4806-9541-05ce6a0b07fc@oracle.com> <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
+ <CAHC9VhQnR6TKzzzpE9XQqiFivV0ECbVx7GH+1fQmz917-MAhsw@mail.gmail.com> <CAEjxPJ7_7_Uru3dwXzNLSj5GdBTzdPDQr5RwXtdjvDv9GjmVAQ@mail.gmail.com>
+In-Reply-To: <CAEjxPJ7_7_Uru3dwXzNLSj5GdBTzdPDQr5RwXtdjvDv9GjmVAQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 3 Dec 2025 10:55:01 -0500
+X-Gm-Features: AWmQ_bmh5eHBqsgQJybJ_-JtI6h64GzWSkh4DPBnzoJo8LXqkNENNTHyNoV6hjI
+Message-ID: <CAHC9VhQDHTNkrB4YuNoafM0bhAav=CP5Ux6ZZGY9+WF0+0_9ww@mail.gmail.com>
+Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
+ interface
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Anna Schumaker <anna.schumaker@oracle.com>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-SUBVOLUME MEMBERSHIP IS IMMUTABLE. Once an inode is created in a subvolume,
-   it stays there forever. The MDS will always send the same subvolume_id f=
-or
-   the same inode.
-
-   The ceph_inode_set_subvolume() function is called multiple times because=
-:
-   - fill_inode() is called whenever we get fresh inode info from MDS
-   - The MDS sends subvolume_id with every reply containing inode info
-
-   Expected behavior:
-   - First call: sets the value (from 0 to actual subvolume_id)
-   - Subsequent calls: should see the SAME value (no-op, early return)
-   - If we ever get a DIFFERENT non-zero value: that's a BUG
-
-   The current code handles this correctly:
-   - We check if old =3D=3D subvolume_id and return early (no-op case)
-   - We check if old !=3D CEPH_SUBVOLUME_ID_NONE and WARN_ON_ONCE + return
-     (this catches the bug case where subvolume_id would change)
-
-   CEPH_SUBVOLUME_ID_NONE (0) is already defined in super.h and used
-   throughout the code. This follows the FUSE client convention where
-   0 means "unknown/unset".
-
-On Tue, Dec 2, 2025 at 10:50=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
+On Wed, Dec 3, 2025 at 10:35=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Wed, Jul 23, 2025 at 10:10=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
+ wrote:
+> > On Thu, Jun 19, 2025 at 5:18=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > > On Tue, May 27, 2025 at 5:03=E2=80=AFPM Anna Schumaker
+> > > <anna.schumaker@oracle.com> wrote:
+> > > > On 5/20/25 5:31 PM, Paul Moore wrote:
+> > > > > On Tue, Apr 29, 2025 at 7:34=E2=80=AFPM Paul Moore <paul@paul-moo=
+re.com> wrote:
+> > > > >> On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
+> > > > >> <stephen.smalley.work@gmail.com> wrote:
+> > > > >>>
+> > > > >>> Update the security_inode_listsecurity() interface to allow
+> > > > >>> use of the xattr_list_one() helper and update the hook
+> > > > >>> implementations.
+> > > > >>>
+> > > > >>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-ste=
+phen.smalley.work@gmail.com/
+> > > > >>>
+> > > > >>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > > > >>> ---
+> > > > >>> This patch is relative to the one linked above, which in theory=
+ is on
+> > > > >>> vfs.fixes but doesn't appear to have been pushed when I looked.
+> > > > >>>
+> > > > >>>  fs/nfs/nfs4proc.c             | 10 ++++++----
+> > > > >>>  fs/xattr.c                    | 19 +++++++------------
+> > > > >>>  include/linux/lsm_hook_defs.h |  4 ++--
+> > > > >>>  include/linux/security.h      |  5 +++--
+> > > > >>>  net/socket.c                  | 17 +++++++----------
+> > > > >>>  security/security.c           | 16 ++++++++--------
+> > > > >>>  security/selinux/hooks.c      | 10 +++-------
+> > > > >>>  security/smack/smack_lsm.c    | 13 ++++---------
+> > > > >>>  8 files changed, 40 insertions(+), 54 deletions(-)
+> > > > >>
+> > > > >> Thanks Stephen.  Once we get ACKs from the NFS, netdev, and Smac=
+k
+> > > > >> folks I can pull this into the LSM tree.
+> > > > >
+> > > > > Gentle ping for Trond, Anna, Jakub, and Casey ... can I get some =
+ACKs
+> > > > > on this patch?  It's a little late for the upcoming merge window,=
+ but
+> > > > > I'd like to merge this via the LSM tree after the merge window cl=
+oses.
+> > > >
+> > > > For the NFS change:
+> > > >     Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
+> > >
+> > > Hi Anna,
+> > >
+> > > Thanks for reviewing the patch.  Unfortunately when merging the patch
+> > > today and fixing up some merge conflicts I bumped into an odd case in
+> > > the NFS space and I wanted to check with you on how you would like to
+> > > resolve it.
+> > >
+> > > Commit 243fea134633 ("NFSv4.2: fix listxattr to return selinux
+> > > security label")[1] adds a direct call to
+> > > security_inode_listsecurity() in nfs4_listxattr(), despite the
+> > > existing nfs4_listxattr_nfs4_label() call which calls into the same
+> > > LSM hook, although that call is conditional on the server supporting
+> > > NFS_CAP_SECURITY_LABEL.  Based on a quick search, it appears the only
+> > > caller for nfs4_listxattr_nfs4_label() is nfs4_listxattr() so I'm
+> > > wondering if there isn't some room for improvement here.
+> > >
+> > > I think there are two obvious options, and I'm curious about your
+> > > thoughts on which of these you would prefer, or if there is another
+> > > third option that you would like to see merged.
+> > >
+> > > Option #1:
+> > > Essentially back out commit 243fea134633, removing the direct LSM cal=
+l
+> > > in nfs4_listxattr() and relying on the nfs4_listxattr_nfs4_label() fo=
+r
+> > > the LSM/SELinux xattrs.  I think we would want to remove the
+> > > NFS_CAP_SECURITY_LABEL check and build nfs4_listxattr_nfs4_label()
+> > > regardless of CONFIG_NFS_V4_SECURITY_LABEL.
+> > >
+> > > Option #2:
+> > > Remove nfs4_listxattr_nfs4_label() entirely and keep the direct LSM
+> > > call in nfs4_listxattr(), with the required changes for this patch.
+> > >
+> > > Thoughts?
+> > >
+> > > [1] https://lore.kernel.org/all/20250425180921.86702-1-okorniev@redha=
+t.com/
+> >
+> > A gentle ping on the question above for the NFS folks.  If I don't
+> > hear anything I'll hack up something and send it out for review, but I
+> > thought it would nice if we could sort out the proper fix first.
 >
-> On Tue, 2025-12-02 at 15:57 +0000, Alex Markuze wrote:
-> > Add support for parsing the subvolume_id field from InodeStat v9 and
-> > storing it in the inode for later use by subvolume metrics tracking.
-> >
-> > The subvolume_id identifies which CephFS subvolume an inode belongs to,
-> > enabling per-subvolume I/O metrics collection and reporting.
-> >
-> > This patch:
-> > - Adds subvolume_id field to struct ceph_mds_reply_info_in
-> > - Adds i_subvolume_id field to struct ceph_inode_info
-> > - Parses subvolume_id from v9 InodeStat in parse_reply_info_in()
-> > - Adds ceph_inode_set_subvolume() helper to propagate the ID to inodes
-> > - Initializes i_subvolume_id in inode allocation and clears on destroy
-> >
-> > Signed-off-by: Alex Markuze <amarkuze@redhat.com>
-> > ---
-> >  fs/ceph/inode.c      | 23 +++++++++++++++++++++++
-> >  fs/ceph/mds_client.c |  7 +++++++
-> >  fs/ceph/mds_client.h |  1 +
-> >  fs/ceph/super.h      |  2 ++
-> >  4 files changed, 33 insertions(+)
-> >
-> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > index a6e260d9e420..835049004047 100644
-> > --- a/fs/ceph/inode.c
-> > +++ b/fs/ceph/inode.c
-> > @@ -638,6 +638,7 @@ struct inode *ceph_alloc_inode(struct super_block *=
-sb)
-> >
-> >       ci->i_max_bytes =3D 0;
-> >       ci->i_max_files =3D 0;
-> > +     ci->i_subvolume_id =3D 0;
-> >
-> >       memset(&ci->i_dir_layout, 0, sizeof(ci->i_dir_layout));
-> >       memset(&ci->i_cached_layout, 0, sizeof(ci->i_cached_layout));
-> > @@ -742,6 +743,8 @@ void ceph_evict_inode(struct inode *inode)
-> >
-> >       percpu_counter_dec(&mdsc->metric.total_inodes);
-> >
-> > +     ci->i_subvolume_id =3D 0;
-> > +
-> >       netfs_wait_for_outstanding_io(inode);
-> >       truncate_inode_pages_final(&inode->i_data);
-> >       if (inode->i_state & I_PINNING_NETFS_WB)
-> > @@ -873,6 +876,22 @@ int ceph_fill_file_size(struct inode *inode, int i=
-ssued,
-> >       return queue_trunc;
-> >  }
-> >
-> > +/*
-> > + * Set the subvolume ID for an inode. Following the FUSE client conven=
-tion,
-> > + * 0 means unknown/unset (MDS only sends non-zero IDs for subvolume in=
-odes).
-> > + */
-> > +void ceph_inode_set_subvolume(struct inode *inode, u64 subvolume_id)
-> > +{
-> > +     struct ceph_inode_info *ci;
-> > +
-> > +     if (!inode || !subvolume_id)
-> > +             return;
-> > +
-> > +     ci =3D ceph_inode(inode);
-> > +     if (READ_ONCE(ci->i_subvolume_id) !=3D subvolume_id)
-> > +             WRITE_ONCE(ci->i_subvolume_id, subvolume_id);
-> > +}
-> > +
-> >  void ceph_fill_file_time(struct inode *inode, int issued,
-> >                        u64 time_warp_seq, struct timespec64 *ctime,
-> >                        struct timespec64 *mtime, struct timespec64 *ati=
-me)
-> > @@ -1087,6 +1106,7 @@ int ceph_fill_inode(struct inode *inode, struct p=
-age *locked_page,
-> >       new_issued =3D ~issued & info_caps;
-> >
-> >       __ceph_update_quota(ci, iinfo->max_bytes, iinfo->max_files);
-> > +     ceph_inode_set_subvolume(inode, iinfo->subvolume_id);
->
-> I still don't quite follow. Is it normal or not to reset the subvolume_id=
-? If we
-> already had the subvolume_id, then how valid is reset operation? Could we=
- have
-> bugs here?
->
-> >
-> >  #ifdef CONFIG_FS_ENCRYPTION
-> >       if (iinfo->fscrypt_auth_len &&
-> > @@ -1594,6 +1614,8 @@ int ceph_fill_trace(struct super_block *sb, struc=
-t ceph_mds_request *req)
-> >                       goto done;
-> >               }
-> >               if (parent_dir) {
-> > +                     ceph_inode_set_subvolume(parent_dir,
-> > +                                              rinfo->diri.subvolume_id=
-);
-> >                       err =3D ceph_fill_inode(parent_dir, NULL, &rinfo-=
->diri,
-> >                                             rinfo->dirfrag, session, -1=
-,
-> >                                             &req->r_caps_reservation);
-> > @@ -1682,6 +1704,7 @@ int ceph_fill_trace(struct super_block *sb, struc=
-t ceph_mds_request *req)
-> >               BUG_ON(!req->r_target_inode);
-> >
-> >               in =3D req->r_target_inode;
-> > +             ceph_inode_set_subvolume(in, rinfo->targeti.subvolume_id)=
-;
-> >               err =3D ceph_fill_inode(in, req->r_locked_page, &rinfo->t=
-argeti,
-> >                               NULL, session,
-> >                               (!test_bit(CEPH_MDS_R_ABORTED, &req->r_re=
-q_flags) &&
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index d7d8178e1f9a..099b8f22683b 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -105,6 +105,8 @@ static int parse_reply_info_in(void **p, void *end,
-> >       int err =3D 0;
-> >       u8 struct_v =3D 0;
-> >
-> > +     info->subvolume_id =3D 0;
-> > +
-> >       if (features =3D=3D (u64)-1) {
-> >               u32 struct_len;
-> >               u8 struct_compat;
-> > @@ -251,6 +253,10 @@ static int parse_reply_info_in(void **p, void *end=
-,
-> >                       ceph_decode_skip_n(p, end, v8_struct_len, bad);
-> >               }
-> >
-> > +             /* struct_v 9 added subvolume_id */
-> > +             if (struct_v >=3D 9)
-> > +                     ceph_decode_64_safe(p, end, info->subvolume_id, b=
-ad);
-> > +
-> >               *p =3D end;
-> >       } else {
-> >               /* legacy (unversioned) struct */
-> > @@ -3970,6 +3976,7 @@ static void handle_reply(struct ceph_mds_session =
-*session, struct ceph_msg *msg)
-> >                       goto out_err;
-> >               }
-> >               req->r_target_inode =3D in;
-> > +             ceph_inode_set_subvolume(in, rinfo->targeti.subvolume_id)=
-;
-> >       }
-> >
-> >       mutex_lock(&session->s_mutex);
-> > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> > index 0428a5eaf28c..bd3690baa65c 100644
-> > --- a/fs/ceph/mds_client.h
-> > +++ b/fs/ceph/mds_client.h
-> > @@ -118,6 +118,7 @@ struct ceph_mds_reply_info_in {
-> >       u32 fscrypt_file_len;
-> >       u64 rsnaps;
-> >       u64 change_attr;
-> > +     u64 subvolume_id;
-> >  };
-> >
-> >  struct ceph_mds_reply_dir_entry {
-> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> > index a1f781c46b41..c0372a725960 100644
-> > --- a/fs/ceph/super.h
-> > +++ b/fs/ceph/super.h
-> > @@ -385,6 +385,7 @@ struct ceph_inode_info {
-> >
-> >       /* quotas */
-> >       u64 i_max_bytes, i_max_files;
-> > +     u64 i_subvolume_id;     /* 0 =3D unknown/unset, matches FUSE clie=
-nt */
->
-> I still believe that it makes sense to introduce the named constant with =
-the
-> goal not to make confused by zero value and not to guess if it is correct=
- value
-> or not.
->
-> Thanks,
-> Slava.
->
-> >
-> >       s32 i_dir_pin;
-> >
-> > @@ -1057,6 +1058,7 @@ extern struct inode *ceph_get_inode(struct super_=
-block *sb,
-> >  extern struct inode *ceph_get_snapdir(struct inode *parent);
-> >  extern int ceph_fill_file_size(struct inode *inode, int issued,
-> >                              u32 truncate_seq, u64 truncate_size, u64 s=
-ize);
-> > +extern void ceph_inode_set_subvolume(struct inode *inode, u64 subvolum=
-e_id);
-> >  extern void ceph_fill_file_time(struct inode *inode, int issued,
-> >                               u64 time_warp_seq, struct timespec64 *cti=
-me,
-> >                               struct timespec64 *mtime,
+> Raising this thread back up again to see if the NFS folks have a
+> preference on option #1 or #2 above, or
+> something else altogether. Should returning of the security.selinux
+> xattr name from listxattr() be dependent on
+> NFS_CAP_SECURITY_LABEL being set by the server and should it be
+> dependent on CONFIG_NFS_V4_SECURITY_LABEL?
 
+Thanks for bringing this back up Stephen, it would be good to get this reso=
+lved.
+
+--=20
+paul-moore.com
 
