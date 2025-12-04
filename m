@@ -1,139 +1,308 @@
-Return-Path: <linux-fsdevel+bounces-70620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245F0CA2175
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 02:21:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8665BCA218D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 02:25:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 122B030213FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 01:21:11 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B6CB430285F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 01:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77BB1FAC34;
-	Thu,  4 Dec 2025 01:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F3F220F38;
+	Thu,  4 Dec 2025 01:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="QFT4A8o2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com [209.85.210.71])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66EB18027
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 01:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A4C21ADB7
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 01:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764811268; cv=none; b=OXzceP8v+N1x1aRpg6p4vXVb6eet8cSp7O43EZ2qt6OrxFZAQvVfc7KWKNue5inUddBGe4tYn13GRZBFWj7hZVaYM7oqIYgLlnAJtyYOlgG55Lod0qYahyOoV3CsUOfVlaysRJurzR08lqAb04zAuc7yP3eszPon4KJE3vQ1Id8=
+	t=1764811501; cv=none; b=jbK7L/lVLiDf/BLQMgtGIdma512pktlcmbPQjaPOr/+/m1kCMlrX6145SROOLy6hg5hEBXIgpjfkvLwRLKuOAFL/25VRuD2HJ1JcAl2ebIABS3JeTruTYMUvz6lVxM3Dm7oXpJ8L522Xn6//m0SBVgo3qnNgdlxsn2yRYbFNnZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764811268; c=relaxed/simple;
-	bh=/5scZ/eC107Phge51Zoi2mfL0kncJfhraiodin6jWsY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jBW0IzNO1zLtqUqlutiAR0f/XZWrm6OHPrrBfMabDs6NxPiQOkNDe7PWxn9loJaiDcfomTd/KDOTk8ozJS+QzfkSs9a9hUKKW8u5UuwKeZ8MZyaRv46kaUo23S8yqT24urYHwyxvGwyGLc6+oF0AsXzl5QLQlzk2wthsjLRZWs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-7c6d3685fadso406341a34.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 17:21:05 -0800 (PST)
+	s=arc-20240116; t=1764811501; c=relaxed/simple;
+	bh=RKttnroyRy93FVhpyS9RK+n/P4PNhdGehK6Mu+dt5mo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jkmgzxoLrgjEZuZPDhuOAw88ZKkY7+iW1wc4vBgziM/gQbCLQDg1C/iNwYju742GumNAj0WDMBhpxmklaqEnYU9L/5CexFJ7uBJgYq/WrIuSZqgkQSe1coKBugaFRXNJLfCZ6dUvU9FiW0fTB/lIy8Ogi0I4JXht+3x8A50pVU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=QFT4A8o2; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-297f6ccc890so501435ad.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 17:24:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1764811498; x=1765416298; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zZaVKELLuLVcmjlXCUl5k4A4mFIkKw5vH++/0YQ/cr8=;
+        b=QFT4A8o2G03kAhyPsMi7bEgdF1uBv/zzLgwz+VdN5AXiRZ0Kh/H6CyawFnmFpERNrH
+         I0fO+Aif+YxwVSZKsPKHSfBvIfWT4sQgUf5ybs1QxAkYQTtz7Px0qR9/gcWrTkSEfMBS
+         Rls7M6tL4F3lnSJ91OBY61P06Ac65wW1R8xMD//FpBQRc4ZKsP8o6yWpFJkulkq4c3cn
+         4HONIZgF7cFE8U0CinJLhtm7RSwfrwIfIpdeYbTkNLDcggJhOcrDOjZziYGrBVB91Fwr
+         0/6KQPGcggYK9cOhHLWjIx1iKJkySX1ke8cY3rmBvBEI6yUjAtyMyLiDUxRbEVR21a0R
+         rzEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764811265; x=1765416065;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CiyA4BsvKpdDe/wb+UstNj8L9RhhCP0Ealq39FLJ2X4=;
-        b=jtwRnis+KyUVkasJwdmibnEG3D4eCtSeLFr8uu3ENNyCqSDHkQWnBns4tCesDIFA5t
-         ifMwMX7Pb/UpSmt3k22a+YmvH8jBhUnwuE+Ahi+tABQWygTbQqEgZHL+02ehcDR4j4+J
-         v1ry6c0MaoYgsjSfjRzspHPiD2lnR6tEE6KI0hKirkkYe0ZWksdxC4fSjEt30gP+x9Go
-         NiYwlf08AbxahppfPyoi+r3HL2Is6IAgIsYw7LoxDbCsNuKCeDFNfKsY6vNr7G4hoy4e
-         LSa8/U3QhmOeiRVo1+imyKRf85sQe+ljpDu/zKMMrsNKL+yVkVGCzcFjX0OiCUBcJcyw
-         b3wg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6xys4jIDjhMJu2/jDkON05YYDeNjmVbp4+NSgJWAQyO26qGggVCgItLW3P6t4kn13VuKoopjwVpsOumck@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA+Qu0KgrkIfrJEZfrzQwroYxoaYB30PSisjxyWd9O8QUcVvLp
-	L5WgDmC8jFbmsgfeZQZGdxaGNfT0RRs30Kbl8rk2LH+HSwHmAJKDI0U+oEWCgd7YVP0jqYNJqHr
-	V8ZZHCM0nosk3o46M01TW7xb/mmBIlRWz5S15gp5zCc/nKgNN10McUE9KW/k=
-X-Google-Smtp-Source: AGHT+IGR6yzN8/gTaXDLHIZCWPMzJY+8/LoYxKW5pQ87fDfFBQvXhn8k6gO3O1NINCmYw1AcqzMIc2QLuA5jADlGeMLkm4t6Jhtj
+        d=1e100.net; s=20230601; t=1764811498; x=1765416298;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=zZaVKELLuLVcmjlXCUl5k4A4mFIkKw5vH++/0YQ/cr8=;
+        b=aqMv2gJZjb2c1B9VTmcvG5DCsPzwMHzZrHA29DjfQhsSquwGL16jCk+6nLd53mASne
+         jmrfDTye3lfFbHnWXRNq2PFm0kt3+ab0QBFAZ9KlcGYh+Qu5G4zjnNObnLLDZ5q/aQHV
+         ba4Q24Yp5G3ylEy7atgRKBsAlWJUqhgrS7uSUc05bpC475d12jG7PB2IA6e30NLxt0yW
+         NOEe/gLxGGxs6dUZz2qbIWpGXPQGbDNJqf4T9deftUbUMiqIjDQO4zaS4zpVP+UhEM6Y
+         59zQT3QoGt0x6yroXVokxQh+C8/uxdY82wQhk6k9B3P3VJsbrC3BVKE4xt8OiPQOgy3J
+         ycow==
+X-Forwarded-Encrypted: i=1; AJvYcCX09ywWkQXrREqFEBvQcIojOgwfLbyAJR4RoLif3w2Df/UQ39t2aHnDBtNvcf7+6T01kEO5CM9B5WCnI7oZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqvMHndln+HlBBYMMWIzuOlgvgRWbGrXLZDXht6tWPv6apMK6B
+	YJdkVPw5EmByEsZtPcxqkQ/4Du7XfdYSPCIOj4lPAJXt0DWc+1nXecwWkMK3g2PMPQ9nSPgl6Vy
+	M5KVmLvlU9ycUpOL2S/qaUu5VlqcfJMp6Qjt8Zlgfsg==
+X-Gm-Gg: ASbGnct2v38iQ9bs7X9XydPVZAO+a41uz7hVR0ETJdx+ePx4Y4qIKASkSHEzJEyhmLG
+	oIFIr5Q1SafO02CPzGizERBUSaZqeXF2UhB5pgDZdg1Zxx8opxo4vaB6W23auRJ3y5mQ0A05HyV
+	xSNOvNNNccHpFN7JA9cb67mfV4nMBIyCWwyX+5u1NXMKZruGhvOCo3bi9Vmha1oZ6iVEElpTlrv
+	kS149Cp6136djsGvtzBd5/wG3EayV9MgArAFA7drvPd2/65XQECbffzJAW0Kk0iT2tktIK7hN7A
+	MhU6lio=
+X-Google-Smtp-Source: AGHT+IHICHQPFcBj6QynH53qNyjidLtszbv4obWsI+Gcekp43kOLy1bpm5w6SbafMM9CJYPTst3yZebjt40LOVYOC6g=
+X-Received: by 2002:a05:7022:49a:b0:11b:98e8:624e with SMTP id
+ a92af1059eb24-11df25f6eb3mr2420243c88.4.1764811498175; Wed, 03 Dec 2025
+ 17:24:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:1b07:b0:453:50af:c463 with SMTP id
- 5614622812f47-4536e51a345mr2347095b6e.41.1764811264789; Wed, 03 Dec 2025
- 17:21:04 -0800 (PST)
-Date: Wed, 03 Dec 2025 17:21:04 -0800
-In-Reply-To: <6w4u7ysv6yxdqu3c5ug7pjbbwxlmczwgewukqyrap3ltpazp4s@ozir7zbfyvfj>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6930e200.a70a0220.d98e3.01bd.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] [ocfs2?] kernel BUG in link_path_walk
-From: syzbot <syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, jlbec@evilplan.org, 
-	joseph.qi@linux.alibaba.com, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mark@fasheh.com, 
-	mjguzik@gmail.com, ocfs2-devel@lists.linux.dev, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <20251203003526.2889477-1-joannelkoong@gmail.com>
+ <20251203003526.2889477-8-joannelkoong@gmail.com> <CADUfDZosVLf4vGm4_kNFReaNH3wSi2RoLXwZBc6TN0Jw__s1OQ@mail.gmail.com>
+ <CAJnrk1Z_UZxmppmXXQr3joGzMSdU4ycnnGt=SacQT+6DbALDmA@mail.gmail.com>
+In-Reply-To: <CAJnrk1Z_UZxmppmXXQr3joGzMSdU4ycnnGt=SacQT+6DbALDmA@mail.gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Wed, 3 Dec 2025 17:24:46 -0800
+X-Gm-Features: AWmQ_bkRLC-KCE4g-zImgK3Mmwe0GWHt3524jeUGag5uMZDmIqDqXiiZ6tkBEZE
+Message-ID: <CADUfDZov3Nk81k8cvdz1ZoXrbTDJfJryHjNza3ZUJyXtfE5YgQ@mail.gmail.com>
+Subject: Re: [PATCH v1 07/30] io_uring/rsrc: add fixed buffer table pinning/unpinning
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Dec 3, 2025 at 2:52=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
+> wrote:
+>
+> On Tue, Dec 2, 2025 at 8:49=E2=80=AFPM Caleb Sander Mateos
+> <csander@purestorage.com> wrote:
+> >
+> > On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmail=
+.com> wrote:
+> > >
+> > > Add kernel APIs to pin and unpin the buffer table for fixed buffers,
+> > > preventing userspace from unregistering or updating the fixed buffers
+> > > table while it is pinned by the kernel.
+> > >
+> > > This has two advantages:
+> > > a) Eliminating the overhead of having to fetch and construct an iter =
+for
+> > > a fixed buffer per every cmd. Instead, the caller can pin the buffer
+> > > table, fetch/construct the iter once, and use that across cmds for
+> > > however long it needs to until it is ready to unpin the buffer table.
+> > >
+> > > b) Allowing a fixed buffer lookup at any index. The buffer table must=
+ be
+> > > pinned in order to allow this, otherwise we would have to keep track =
+of
+> > > all the nodes that have been looked up by the io_kiocb so that we can
+> > > properly adjust the refcounts for those nodes. Ensuring that the buff=
+er
+> > > table must first be pinned before being able to fetch a buffer at any
+> > > index makes things logistically a lot neater.
+> >
+> > Why is it necessary to pin the entire buffer table rather than
+> > specific entries? That's the purpose of the existing io_rsrc_node refs
+> > field.
+>
+> How would this work with userspace buffer unregistration (which works
+> at the table level)? If buffer unregistration should still succeed
+> then fuse would need a way to be notified that the buffer has been
+> unregistered since the buffer belongs to userspace (eg it would be
+> wrong if fuse continues using it even though fuse retains a refcount
+> on it). If buffer unregistration should fail, then we would need to
+> track this pinned state inside the node instead of relying just on the
+> refs field, as buffers can be unregistered even if there are in-flight
+> refs (eg we would need to differentiate the ref being from a pin vs
+> from not a pin), and I think this would make unregistration more
+> cumbersome as well (eg we would have to iterate through all the
+> entries looking to see if any are pinned before iterating through them
+> again to do the actual unregistration).
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in link_path_walk
+Not sure I would say buffer unregistration operates on the table as a
+whole. Each registered buffer node is unregistered individually and
+stores its own reference count. io_put_rsrc_node() will be called on
+each buffer node in the table. However, io_put_rsrc_node() just
+removes the one reference from the buffer node. If there are other
+references on the buffer node (such as an inflight io_uring request
+using it), io_free_rsrc_node() won't be called to free the buffer node
+until all those references are dropped too. So fuse holding a
+reference on the buffer node would allow it to be unregistered, but
+prevent it from being freed until fuse dropped its reference.
+I'm not sure I understand the problem with fuse continuing to hold
+onto a registered buffer node after userspace has unregistered it from
+the buffer table. (It looks like the buffer node in question is the
+one at FUSE_URING_FIXED_HEADERS_INDEX?) Wouldn't pinning the buffer
+table present similar issues? How would userspace get fuse to drop its
+pin if it wants to modify the buffer registrations? I would imagine
+the code path that calls io_uring_buf_table_unpin() currently could
+instead call into io_put_rsrc_node() (maybe by completing an io_uring
+request that has imported the registered buffer) to release its
+reference on the buffer node. For ublk, userspace can request to stop
+a ublk device or the kernel will do so automatically if userspace
+drops its file handle (e.g. if the process exits), which will release
+any io_uring resources the ublk device is using.
 
-(syz.0.73,6964,1):ocfs2_find_entry_id:420 ERROR: status = -30
-------------[ cut here ]------------
-kernel BUG at fs/namei.c:2532!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 6964 Comm: syz.0.73 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
-RIP: 0010:link_path_walk+0x1a57/0x1a90 fs/namei.c:2532
-Code: 89 e9 80 e1 07 fe c1 38 c1 0f 8c be fd ff ff 4c 89 ef e8 2c e5 e9 ff e9 b1 fd ff ff e8 62 90 83 ff 90 0f 0b e8 5a 90 83 ff 90 <0f> 0b e8 52 90 83 ff 90 0f 0b e8 4a 90 83 ff 4c 89 ff 48 c7 c6 40
-RSP: 0018:ffffc9000491f8a0 EFLAGS: 00010293
-RAX: ffffffff823e22d6 RBX: dffffc0000000000 RCX: ffff8880250f3d00
-RDX: 0000000000000000 RSI: 0000000000008000 RDI: 0000000000004000
-RBP: ffff888079181120 R08: ffff8880299ef520 R09: ffff88807acd2000
-R10: ffff8880299ef520 R11: ffff88807acd2000 R12: ffffc9000491fc58
-R13: ffffc9000491fc28 R14: 0000000000008000 R15: 0000000000100000
-FS:  00007ff92e2e36c0(0000) GS:ffff888125f49000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555575344808 CR3: 0000000025c92000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- path_openat+0x2b3/0x3dd0 fs/namei.c:4787
- do_filp_open+0x1fa/0x410 fs/namei.c:4818
- do_sys_openat2+0x121/0x200 fs/open.c:1430
- do_sys_open fs/open.c:1436 [inline]
- __do_sys_open fs/open.c:1444 [inline]
- __se_sys_open fs/open.c:1440 [inline]
- __x64_sys_open+0x11e/0x150 fs/open.c:1440
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff92d38f749
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ff92e2e3038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007ff92d5e5fa0 RCX: 00007ff92d38f749
-RDX: 0000000000000000 RSI: 0000000000145142 RDI: 0000200000000240
-RBP: 00007ff92d413f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ff92d5e6038 R14: 00007ff92d5e5fa0 R15: 00007ffda4bd0278
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:link_path_walk+0x1a57/0x1a90 fs/namei.c:2532
-Code: 89 e9 80 e1 07 fe c1 38 c1 0f 8c be fd ff ff 4c 89 ef e8 2c e5 e9 ff e9 b1 fd ff ff e8 62 90 83 ff 90 0f 0b e8 5a 90 83 ff 90 <0f> 0b e8 52 90 83 ff 90 0f 0b e8 4a 90 83 ff 4c 89 ff 48 c7 c6 40
-RSP: 0018:ffffc9000491f8a0 EFLAGS: 00010293
-RAX: ffffffff823e22d6 RBX: dffffc0000000000 RCX: ffff8880250f3d00
-RDX: 0000000000000000 RSI: 0000000000008000 RDI: 0000000000004000
-RBP: ffff888079181120 R08: ffff8880299ef520 R09: ffff88807acd2000
-R10: ffff8880299ef520 R11: ffff88807acd2000 R12: ffffc9000491fc58
-R13: ffffc9000491fc28 R14: 0000000000008000 R15: 0000000000100000
-FS:  00007ff92e2e36c0(0000) GS:ffff888125e49000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1310116e9c CR3: 0000000025c92000 CR4: 00000000003526f0
+>
+> >
+> > >
+> > > This is a preparatory patch for fuse io-uring's usage of fixed buffer=
+s.
+> > >
+> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > ---
+> > >  include/linux/io_uring/buf.h   | 13 +++++++++++
+> > >  include/linux/io_uring_types.h |  9 ++++++++
+> > >  io_uring/rsrc.c                | 42 ++++++++++++++++++++++++++++++++=
+++
+> > >  3 files changed, 64 insertions(+)
+> > >
+> > > diff --git a/include/linux/io_uring/buf.h b/include/linux/io_uring/bu=
+f.h
+> > > index 7a1cf197434d..c997c01c24c4 100644
+> > > --- a/include/linux/io_uring/buf.h
+> > > +++ b/include/linux/io_uring/buf.h
+> > > @@ -9,6 +9,9 @@ int io_uring_buf_ring_pin(struct io_ring_ctx *ctx, un=
+signed buf_group,
+> > >                           unsigned issue_flags, struct io_buffer_list=
+ **bl);
+> > >  int io_uring_buf_ring_unpin(struct io_ring_ctx *ctx, unsigned buf_gr=
+oup,
+> > >                             unsigned issue_flags);
+> > > +
+> > > +int io_uring_buf_table_pin(struct io_ring_ctx *ctx, unsigned issue_f=
+lags);
+> > > +int io_uring_buf_table_unpin(struct io_ring_ctx *ctx, unsigned issue=
+_flags);
+> > >  #else
+> > >  static inline int io_uring_buf_ring_pin(struct io_ring_ctx *ctx,
+> > >                                         unsigned buf_group,
+> > > @@ -23,6 +26,16 @@ static inline int io_uring_buf_ring_unpin(struct i=
+o_ring_ctx *ctx,
+> > >  {
+> > >         return -EOPNOTSUPP;
+> > >  }
+> > > +static inline int io_uring_buf_table_pin(struct io_ring_ctx *ctx,
+> > > +                                        unsigned issue_flags)
+> > > +{
+> > > +       return -EOPNOTSUPP;
+> > > +}
+> > > +static inline int io_uring_buf_table_unpin(struct io_ring_ctx *ctx,
+> > > +                                          unsigned issue_flags)
+> > > +{
+> > > +       return -EOPNOTSUPP;
+> > > +}
+> > >  #endif /* CONFIG_IO_URING */
+> > >
+> > >  #endif /* _LINUX_IO_URING_BUF_H */
+> > > diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_=
+types.h
+> > > index 36fac08db636..e1a75cfe57d9 100644
+> > > --- a/include/linux/io_uring_types.h
+> > > +++ b/include/linux/io_uring_types.h
+> > > @@ -57,8 +57,17 @@ struct io_wq_work {
+> > >         int cancel_seq;
+> > >  };
+> > >
+> > > +/*
+> > > + * struct io_rsrc_data flag values:
+> > > + *
+> > > + * IO_RSRC_DATA_PINNED: data is pinned and cannot be unregistered by=
+ userspace
+> > > + * until it has been unpinned. Currently this is only possible on bu=
+ffer tables.
+> > > + */
+> > > +#define IO_RSRC_DATA_PINNED            BIT(0)
+> > > +
+> > >  struct io_rsrc_data {
+> > >         unsigned int                    nr;
+> > > +       u8                              flags;
+> > >         struct io_rsrc_node             **nodes;
+> > >  };
+> > >
+> > > diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> > > index 3765a50329a8..67331cae0a5a 100644
+> > > --- a/io_uring/rsrc.c
+> > > +++ b/io_uring/rsrc.c
+> > > @@ -9,6 +9,7 @@
+> > >  #include <linux/hugetlb.h>
+> > >  #include <linux/compat.h>
+> > >  #include <linux/io_uring.h>
+> > > +#include <linux/io_uring/buf.h>
+> > >  #include <linux/io_uring/cmd.h>
+> > >
+> > >  #include <uapi/linux/io_uring.h>
+> > > @@ -304,6 +305,8 @@ static int __io_sqe_buffers_update(struct io_ring=
+_ctx *ctx,
+> > >                 return -ENXIO;
+> > >         if (up->offset + nr_args > ctx->buf_table.nr)
+> > >                 return -EINVAL;
+> > > +       if (ctx->buf_table.flags & IO_RSRC_DATA_PINNED)
+> > > +               return -EBUSY;
+> >
+> > IORING_REGISTER_CLONE_BUFFERS can also be used to unregister existing
+> > buffers, so it may need the check too?
+>
+> Ah I didn't realize this existed, thanks. imo I think it's okay to
+> clone the buffers in a source ring's pinned buffer table to the
+> destination ring (where the destination ring's buffer table is
+> unpinned) since the clone acquires its own refcounts on the underlying
+> nodes and the clone is its own entity. Do you think this makes sense
+> or do you think it's better to just not allow this?
+
+I think cloning buffers to unused buffer table slots on another ring
+is fine (analogous to registering new buffers in unused slots). But
+with IORING_REGISTER_DST_REPLACE set, it can also be used to
+unregister whatever existing buffers happen to be registered in those
+slots.
+
+Best,
+Caleb
 
 
-Tested on:
-
-commit:         b2c27842 Add linux-next specific files for 20251203
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15d7801a580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=caadf525b0ab8d17
-dashboard link: https://syzkaller.appspot.com/bug?extid=d222f4b7129379c3d5bc
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1281d4c2580000
-
+>
+> >
+> > >
+> > >         for (done =3D 0; done < nr_args; done++) {
+> > >                 struct io_rsrc_node *node;
+> > > @@ -615,6 +618,8 @@ int io_sqe_buffers_unregister(struct io_ring_ctx =
+*ctx)
+> > >  {
+> > >         if (!ctx->buf_table.nr)
+> > >                 return -ENXIO;
+> > > +       if (ctx->buf_table.flags & IO_RSRC_DATA_PINNED)
+> > > +               return -EBUSY;
+> >
+> > io_buffer_unregister_bvec() can also be used to unregister ublk
+> > zero-copy buffers (also under control of userspace), so it may need
+> > the check too? But maybe fuse ensures that it never uses a ublk
+> > zero-copy buffer?
+>
+> fuse doesn't expose a way for userspace to unregister a zero-copy
+> buffer, but thanks for considering this possibility.
+>
+> Thanks,
+> Joanne
+> >
+> > Best,
+> > Caleb
 
