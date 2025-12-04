@@ -1,169 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-70640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4030CA3037
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 10:34:44 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11DFACA314B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 10:49:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EBD1D307C19B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 09:32:19 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 6116E300BADA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 09:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300DA33508D;
-	Thu,  4 Dec 2025 09:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KiErZhOh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E93337BA3;
+	Thu,  4 Dec 2025 09:49:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-ot1-f80.google.com (mail-ot1-f80.google.com [209.85.210.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DCB308F19
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 09:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1224C230BDF
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 09:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764840737; cv=none; b=InktB9Kvso1xSgg7TX23Bj5Kc+vlKNrDCn6kiqI0aIlHzSti9TgXLof12/OPL8mMxgoyISCRpt1CuBdEgbc3J+Y9Kr2b6yaLPOewJQZO2aZIK/n7Gn6OP3ujPVsXC3eqQmA5tjxPclS6brLWlXc/6yoH8AXthEdyQbXnt+CqOQA=
+	t=1764841773; cv=none; b=d7Ss2YiQv9a3Abja2S3nh6LdIjugtCUbX1LBkRL0AUTLVerfzFO3PazoqHo17k/D5U4mgiFYrdPO6cd5B/cxJJX5FEd2AGgImUX5cagOtvDqcCWnhjWCz/lQ89Pjhwue3M/zFMH4g1X/bID3hZAQ+jiKxPO6SVwSzGA7HFexazA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764840737; c=relaxed/simple;
-	bh=7KDSP+eJnIgbODlTxSo2m0C89a6pRbVbkfcbCzde8G8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cFESXaIMrbYBZgLSsC/jnbI/tOThlugUJQW2nAEQwsm6krYx3BCFhuo81YU3x9/pZzWnnd9hGeQdbwdNT4SXKrpOeJ5LEpWO8gPLjkx9NE8jPScvLypzhqX7gCddWpp443Ysivxpc4omhokrtPi6LhIRmYcP2PyEKKjqO4bCbnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KiErZhOh; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42e2e628f8aso302099f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 01:32:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764840734; x=1765445534; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P9pe+wJENeZc5IcOvHk937NmwKikq+O3BvHjwpbysZ0=;
-        b=KiErZhOhZY8yDuUXrrd4zP5DgXNsChXXR8AEJ5y0LV2jtZM2sJ+GgXZxIHDSLJ8kqv
-         t44/5lQBDSqO1nzX1gXjajizaf9DBRiBc4XkHgIgKH+Xja0RyniP3P61D8gVRTSiLt+6
-         8Z7/WeZqNU2wuaBxW/cUiUScO/UwTSuwzGMNpQLEUMcdAXzEv35UUekmSeJHLB9V+jKt
-         fowJSb/fb0YCwM8/cTvus4tpzgzrIs3NCZix7EnxiyB75sW/tZGp5Dbg3c/WKf2g6LMs
-         RLWLTfrZMikaP1W1EOHIRYkvwupCRhiBZrQhZ4toQBCEr2kiXWIwNNcI8e0F0dSNEuqr
-         RQkw==
+	s=arc-20240116; t=1764841773; c=relaxed/simple;
+	bh=w2EuvL7M8qcsXaA7mq7HY43KhRFgpVzKxzxaXxL+Dn4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WhBQ6vz2efD2GBjfZff6IjXFqyk0x+Vy7oJHuQ4DOE9k7SZRYD2xE1CgGSHQGlIo3VeZdq3WvADEHBOi7X/sjprL/8fnkcnHIkciUNJIxY7Dd0SYtbRzn7uNjeJovrnd6VsDZ+5P5N4hKD8hioeNT62T4Y/V4MKC0Bsg3BsUk/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-ot1-f80.google.com with SMTP id 46e09a7af769-7c6ce3b9fa0so769247a34.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 01:49:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764840734; x=1765445534;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=P9pe+wJENeZc5IcOvHk937NmwKikq+O3BvHjwpbysZ0=;
-        b=c1YYwzaNVbKgeIsio552OZ+vdfkGjfzJnm/56d3yLkxfJ5F49qedfNwwAtTSqYHFep
-         76j8QKdlkdoRr2RgIhcut/x9TsMFLj8L5LGZkZKYB0d0i1p23nwO4Dskk++R5rKk5LYJ
-         pGJq1UJDiJzGQHF2Q3jHqzNUMP/qtkIyQx6bofErW48of/FdqlbxkU3Y3zyWvk3f7EAC
-         Kc9dSbCrMkJ4jdtVaBek7zoe/3ZuLorpdQQT1FcwJ0EhMQsOFZTifTdzHB/ARWTfiIqU
-         t0zpGQLjTLIUagHa2yLrTKJ5PwBAs0NIfuwPejypXHuEUxo+JO41zDwXOH0/dF5Xw2wc
-         QIFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwOXhqix1Y3pqrYvAfxN45UaQ+CjrwGOcRYKMmtwj/sBbFuQBWiwf62p4iAFyvc8r5+ETKV3n+tth+sVlZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvGklFCkrmUTrlxEAfK+zM3h3mEC2wlhp3iLhayXAtK8NpdV35
-	VgCy6G/C4c84PYiJJO4/Wmn/oHBSaoRtWmNtE6pM8BAonGLJhBtslvvG
-X-Gm-Gg: ASbGncuYd7GPDCMhDVkxu6OvckTR8O9PiSLfbtuWdzO20eT3OcVcuy1lY6M0+epQRRe
-	tAr4hP4Rj6FjdPmnmAmtkyvUH7MGIXcvOnEVAF8Cns6ISiWhELcwVSTWCjVnxGQTZLPqF16ZyF6
-	Ds2ebdCFkgL8LmppJTWLicKPr16aO5DTQJaDtUHg0YnsMRXwbFpmPBfHOGownNlkhC9/2esIPrR
-	Jo/zSq0Divi+pEtJVokcUJjTnk88RmZLH/lhX/yjNSrBEnMJjF+Oj+R96YDLMAw0eWkmWHxkFun
-	BcN9FG+CElJs8A1GUVVwyNL8NvuInekC5aNYvN4DXTE1LOjU5eESrwfL+rtz39rwe/QAqyak8mr
-	4DaFrPmjvK11IuozoITwZiL2IBSQHf5M0I582m3+I20C0D+B6OflzrCJJ5v8nwglOh9UeDAuIaA
-	PUvri6lPY5Simz/I//D/yRKP8tNARJD6wk/OniBzueb8M0zt9Vdncs
-X-Google-Smtp-Source: AGHT+IEpeLb5DzDFyyRRjLJBycEA8/oon798RLVjm4cwDE2uj2+226ExQ98mf5m0TZ5rx0eulXU/Nw==
-X-Received: by 2002:a05:6000:2dc4:b0:429:d725:4125 with SMTP id ffacd0b85a97d-42f7987519fmr2415263f8f.54.1764840733805;
-        Thu, 04 Dec 2025 01:32:13 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42f7d2226e7sm2182928f8f.27.2025.12.04.01.32.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 01:32:12 -0800 (PST)
-Date: Thu, 4 Dec 2025 09:32:09 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Bernd Edlinger <bernd.edlinger@hotmail.de>, "Eric W. Biederman"
- <ebiederm@xmission.com>, Roberto Sassu <roberto.sassu@huaweicloud.com>,
- Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
- Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>, Will
- Drewry <wad@chromium.org>, Christian Brauner <brauner@kernel.org>, Andrew
- Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>, Serge
- Hallyn <serge@hallyn.com>, James Morris <jamorris@linux.microsoft.com>,
- Randy Dunlap <rdunlap@infradead.org>, Suren Baghdasaryan
- <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>, Helge Deller
- <deller@gmx.de>, Adrian Reber <areber@redhat.com>, Thomas Gleixner
- <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>, Alexei Starovoitov
- <ast@kernel.org>, "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, linux-security-module@vger.kernel.org, tiozhang
- <tiozhang@didiglobal.com>, Luis Chamberlain <mcgrof@kernel.org>, "Paulo
- Alcantara (SUSE)" <pc@manguebit.com>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Frederic Weisbecker <frederic@kernel.org>,
- YueHaibing <yuehaibing@huawei.com>, Paul Moore <paul@paul-moore.com>,
- Aleksa Sarai <cyphar@cyphar.com>, Stefan Roesch <shr@devkernel.io>, Chao Yu
- <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>, Jeff Layton
- <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, David Hildenbrand
- <david@redhat.com>, Dave Chinner <dchinner@redhat.com>, Shuah Khan
- <shuah@kernel.org>, Elena Reshetova <elena.reshetova@intel.com>, David
- Windsor <dwindsor@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, Ard
- Biesheuvel <ardb@kernel.org>, "Joel Fernandes (Google)"
- <joel@joelfernandes.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Hans Liljestrand <ishkamiel@gmail.com>, Penglei Jiang
- <superman.xpt@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Adrian Ratiu <adrian.ratiu@collabora.com>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, Cyrill Gorcunov
- <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>,
- zohar@linux.ibm.com, linux-integrity@vger.kernel.org, Ryan Lee
- <ryan.lee@canonical.com>, apparmor <apparmor@lists.ubuntu.com>
-Subject: Re: Are setuid shell scripts safe? (Implied by
- security_bprm_creds_for_exec)
-Message-ID: <20251204093209.706f30a6@pumpkin>
-In-Reply-To: <20251204054915.GI1712166@ZenIV>
-References: <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<87tsyozqdu.fsf@email.froward.int.ebiederm.org>
-	<87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
-	<87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
-	<6dc556a0a93c18fffec71322bf97441c74b3134e.camel@huaweicloud.com>
-	<87v7iqtcev.fsf_-_@email.froward.int.ebiederm.org>
-	<dca0f01500f9d6705dccf3b3ef616468b1f53f57.camel@huaweicloud.com>
-	<87ms42rq3t.fsf@email.froward.int.ebiederm.org>
-	<GV2PPF74270EBEE90CDCD964F69E806EF58E4D9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-	<20251204054915.GI1712166@ZenIV>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1764841769; x=1765446569;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=owWvP/T/PddnTdJJSmAeIPDNzdMFBeWkzi/pWhzCSgg=;
+        b=ZvGGdj+j/mUpNoRlYCvV2afPa+eJCiPw+SQZymuA4kvAUYCv2cxJMhwlwv+JRsO6F5
+         J+m9AU0QFC/tdTwmQxaNkwZJEn9Yv92xzKFFJWaBnuNhfvhk6Fmal9XsBWWWIzJ1DDMA
+         w28nvvRSX0T/dIt4CsKgxpAzNgQ6RsetrDteCoyT4fdjBMW0WrHQ0bW6HhX/gPoZu7Gi
+         GhTYIRRKkmigm6VpJyJ70oFqhRPxOO+qv+9uw/QPWg5uoy+8JhIyGvJ/Yyu3bHX1OFn/
+         tdhsRviR55gCaXefmSa4VwJRX+78xgzvi1keyLM+jP5SRjkcziq+fBtRD/IIMlU6h3gw
+         nuhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyGiJeF7PMn5xwzX3u1tL/+K9njRIznYSBz4a5RoNnF9t2zI+btRCxWfLuIAacCp6JE2aOUz0RXJcdIt4g@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7CnXaeqUfcBWp1yCVVTZB6TJHDwTwGkSldihtNsyLpyg/LPAf
+	dzbPhaO/W/0SSML6PNPVZE/qxNpMZpSCvtTXtzanHL+HXMvDyqTRu4Jp3FqI40ckNxo3w7XI0JQ
+	UR2Q5wFxyfU0jZbNwzshDxjzxVv2kAqDzt8iao/KGubUy8yXVHgqkPtyaKig=
+X-Google-Smtp-Source: AGHT+IHNtXP22LZDc/YN2tZgFXBXqFukaiSuqWpONhBuW7/WfbI7BMLZ/uNaI00Ai4CAVKzXSG8p8++zcHbKNco2tJ0jtl4V/Bj8
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6808:124e:b0:451:4c7e:4657 with SMTP id
+ 5614622812f47-4536e41cf4amr3120710b6e.26.1764841769296; Thu, 04 Dec 2025
+ 01:49:29 -0800 (PST)
+Date: Thu, 04 Dec 2025 01:49:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69315929.a70a0220.2ea503.00d8.GAE@google.com>
+Subject: [syzbot] [fs?] general protection fault in fd_install
+From: syzbot <syzbot+40f42779048f7476e2e0@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 4 Dec 2025 05:49:15 +0000
-Al Viro <viro@zeniv.linux.org.uk> wrote:
+Hello,
 
-> On Wed, Dec 03, 2025 at 02:16:29PM +0100, Bernd Edlinger wrote:
-> 
-> > Hmm, yes, that looks like an issue.
-> > 
-> > I would have expected the security engine to look at bprm->filenanme
-> > especially in the case, when bprm->interp != bprm->filename,
-> > and check that it is not a sym-link with write-access for the
-> > current user and of course also that the bprm->file is not a regular file
-> > which is writable by the current user, if that is the case I would have expected
-> > the secuity engine to enforce non-new-privs on a SUID executable somehow.  
-> 
-> Check that _what_ is not a symlink?  And while we are at it, what do write
-> permissions to any symlinks have to do with anything whatsoever?
-> 
+syzbot found the following issue on:
 
-You'd need to check for write permissions to all the directories in the
-full path of the symlink and in all the directories traversed by the symlink.
-(and that may not be enough....)
+HEAD commit:    4a26e7032d7d Merge tag 'core-bugs-2025-12-01' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15321512580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=553f3db6410d5a82
+dashboard link: https://syzkaller.appspot.com/bug?extid=40f42779048f7476e2e0
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d76192580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16bfb8c2580000
 
-Passing the shell (or whatever) /dev/fd/n doesn't seem (to me) any different
-from what happens when the elf interpreter runs a suid program.
-You might want to check for non-owner write permissions to the /dev/fd/n entry,
-but that is true for any suid executable, not just scripts.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-4a26e703.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bf3025099b65/vmlinux-4a26e703.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9e022e7e7365/bzImage-4a26e703.xz
 
-FWIW the SYSV shells normally set the effective uid back the real uid.
-So making a script suid didn't work unless the script started "#!/bin/sh -p".
-Whether that improved security (rather than being annoying) is another matter.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+40f42779048f7476e2e0@syzkaller.appspotmail.com
 
-	David
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000008: 0000 [#1] SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000040-0x0000000000000047]
+CPU: 0 UID: 0 PID: 5517 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:fd_install+0x57/0x3d0 fs/file.c:685
+Code: 48 81 c3 48 09 00 00 48 89 d8 48 c1 e8 03 80 3c 28 00 74 08 48 89 df e8 c7 4c e6 ff 4c 8b 3b 49 8d 5e 40 48 89 d8 48 c1 e8 03 <0f> b6 04 28 84 c0 0f 85 29 03 00 00 8b 1b 89 de 81 e6 00 00 00 01
+RSP: 0018:ffffc9000cb27ca0 EFLAGS: 00010202
+RAX: 0000000000000008 RBX: 0000000000000041 RCX: ffff888035b14980
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000006
+RBP: dffffc0000000000 R08: ffff88801c0af0e3 R09: 1ffff11003815e1c
+R10: dffffc0000000000 R11: ffffed1003815e1d R12: 0000000000000006
+R13: 0000000000000006 R14: 0000000000000001 R15: ffff88801f408f00
+FS:  000055557b0dc500(0000) GS:ffff88808d6ba000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe4967bb43c CR3: 000000001c158000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ do_mq_open+0x5a0/0x770 ipc/mqueue.c:932
+ __do_sys_mq_open ipc/mqueue.c:945 [inline]
+ __se_sys_mq_open ipc/mqueue.c:938 [inline]
+ __x64_sys_mq_open+0x16a/0x1c0 ipc/mqueue.c:938
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7cfa38f7c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd8f2c3568 EFLAGS: 00000246 ORIG_RAX: 00000000000000f0
+RAX: ffffffffffffffda RBX: 00007f7cfa5e5fa0 RCX: 00007f7cfa38f7c9
+RDX: 0000000000000110 RSI: 0000000000000040 RDI: 00002000000004c0
+RBP: 00007f7cfa413f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f7cfa5e5fa0 R14: 00007f7cfa5e5fa0 R15: 0000000000000004
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:fd_install+0x57/0x3d0 fs/file.c:685
+Code: 48 81 c3 48 09 00 00 48 89 d8 48 c1 e8 03 80 3c 28 00 74 08 48 89 df e8 c7 4c e6 ff 4c 8b 3b 49 8d 5e 40 48 89 d8 48 c1 e8 03 <0f> b6 04 28 84 c0 0f 85 29 03 00 00 8b 1b 89 de 81 e6 00 00 00 01
+RSP: 0018:ffffc9000cb27ca0 EFLAGS: 00010202
+RAX: 0000000000000008 RBX: 0000000000000041 RCX: ffff888035b14980
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000006
+RBP: dffffc0000000000 R08: ffff88801c0af0e3 R09: 1ffff11003815e1c
+R10: dffffc0000000000 R11: ffffed1003815e1d R12: 0000000000000006
+R13: 0000000000000006 R14: 0000000000000001 R15: ffff88801f408f00
+FS:  000055557b0dc500(0000) GS:ffff88808d6ba000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f0a4abe2fe8 CR3: 000000001c158000 CR4: 0000000000352ef0
+----------------
+Code disassembly (best guess):
+   0:	48 81 c3 48 09 00 00 	add    $0x948,%rbx
+   7:	48 89 d8             	mov    %rbx,%rax
+   a:	48 c1 e8 03          	shr    $0x3,%rax
+   e:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1)
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 c7 4c e6 ff       	call   0xffe64ce3
+  1c:	4c 8b 3b             	mov    (%rbx),%r15
+  1f:	49 8d 5e 40          	lea    0x40(%r14),%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	0f b6 04 28          	movzbl (%rax,%rbp,1),%eax <-- trapping instruction
+  2e:	84 c0                	test   %al,%al
+  30:	0f 85 29 03 00 00    	jne    0x35f
+  36:	8b 1b                	mov    (%rbx),%ebx
+  38:	89 de                	mov    %ebx,%esi
+  3a:	81 e6 00 00 00 01    	and    $0x1000000,%esi
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
