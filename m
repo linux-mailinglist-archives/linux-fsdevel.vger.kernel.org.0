@@ -1,301 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-70692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621EECA4407
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 16:27:47 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F24DCA454B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 16:46:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EEE8D304DED3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 15:19:55 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 91C9A30BCAE0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 15:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D1E2D3A6A;
-	Thu,  4 Dec 2025 15:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906532D7DE4;
+	Thu,  4 Dec 2025 15:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D1bL5yyE";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="YaQGBM9b"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0Eed214"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FCB21D3F2
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 15:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FEB2D8398
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 15:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764861593; cv=none; b=G21BkLrOqh3SRA0gTet05gaMlnT1qYj9ULcs7rF8lGu5ouqOuShcAT+yDx3V1i+yfkFMl/JwulmzklZaYlor8M9MUemvdEArmoVZG7F2qdoAr5AcOYgR5ahqKZMUZTgoIO+rfJ88Xq5IOlk6s+mN3kT0MA0UAz0iINRq2w7DbT8=
+	t=1764863014; cv=none; b=O8ppf3B5mNonyt6UurW1gHWA+JrkZE6QG7HsAkMOzx7Tnpvkk6tcS8NshzWoejpr5k/DDG8i0N5J7tzy+xSXZww7jJgkylRDUHQVPGe5HkRBxRkaIMuzgJI8Efu/c1VaRNhcXai/t/XsgqszD5w1A//Wj+HocWb6KAkixPSE2eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764861593; c=relaxed/simple;
-	bh=rONpveAiXkJi8CgvoIrkJrwMKiFhZefbNLyemOBsYng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DXtltoez1E0GyzDs0z+ApvO9t5VgkFMGjSHTVk29sA2022LUYZo4zcKRHQhYHCgx+Xvx4zqKqePFoSpQjEyev2hrW8xB5WcljLA3k5NlBEMLWdJx2oq9yMy2oXoJYvPQdqNZemd8O9p63hw94tuUwUtR+eT4HqUksUiMrQic/g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D1bL5yyE; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=YaQGBM9b; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764861589;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wiOfEEXvCCotAmgC8KaiTgZUJrgAulq2O8EihiUvjps=;
-	b=D1bL5yyEWbRP+30z7cQriR+Zcv02q/yRofLDCDbi+yVT+1EuXP07Y76S7UGLHgoR9AyyTM
-	TlDP7jeHAoWfiOULArqiHiYM7RPa0p4jqtWgKrJs1jWOndpr/3/XAozasNw3bEvtcnm3Cm
-	dBORwhZ4GUYZvQayg48DBiV5c389boQ=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-477-u6buiaJpOIm5DuOjnRPcdA-1; Thu, 04 Dec 2025 10:19:48 -0500
-X-MC-Unique: u6buiaJpOIm5DuOjnRPcdA-1
-X-Mimecast-MFC-AGG-ID: u6buiaJpOIm5DuOjnRPcdA_1764861588
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ee3296e984so20307701cf.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 07:19:48 -0800 (PST)
+	s=arc-20240116; t=1764863014; c=relaxed/simple;
+	bh=iKUJIm2WGMEBpZ5Nv3OHKAdudbcM2UVOMkylidNxVPA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CBeCoxg9G7IxLKACRzENgGnslFSdCSOZLk1CwEtWiot3BIVHIe+gZpH+E0L4r8m7eQOMmqjnGCrck6n9TfI1ouIF0yx3mlD03gu7L2VDgthc9Ng97D4S0MDQOAuLVRljQtzPaflJjKV23SHG/cFVQFtqdDMFYeUhfUgp+uPbDgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b0Eed214; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3414de5b27eso750943a91.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 07:43:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1764861588; x=1765466388; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wiOfEEXvCCotAmgC8KaiTgZUJrgAulq2O8EihiUvjps=;
-        b=YaQGBM9bcpY/naMuM0RZ0qjz0Kz+4xgEfOJhkjdzLI5Eo0h7eu1UNgFxrJSkaWYv27
-         +ej4DuGZoFsxHC0m0HCzdH7xc6Cc52gm6msY9PISSTZU9TOf+IXiPQYVrn1LzHosc4Sq
-         j2/2t6ciC3BlsM/6BS2kOUTK1lO8oJVwHOaFgu+1kABNQnUJozwTkh2mDhTY08JH1S/8
-         Mqjc0lig5QJM9QD7vt7PxfCTCyX5WSb5DpXFjOx24Vwunw2Sbjv/W7QhQ4TCfppAxpcu
-         00WoGdAf19KjVFEPbDHkb3sT2oMLggTiGDLMlQMTjFMVbcm92gtTMDqkkjcV8sLUs+yC
-         gDsg==
+        d=gmail.com; s=20230601; t=1764863011; x=1765467811; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xcULqT1gBZ4JnBLfYhNZO/NSXxFxQuxnawJT72KsaCg=;
+        b=b0Eed214jEfrU4eS3gnOoBcbOwGZ50ScGj+40v7Qa/mpjDyne6IjvFxQe58klC0jG7
+         x7w7kCxEt+e5RnFeH8Xk7kKR5GllsyBpXLwYLqiP3wc3BiYjcBSy9F7I+B2VVwE8hWJg
+         xiz3k/J76iwYa8Hoa5zyTrcGxGhkG0O6FfjmMr+P5q0DmV5zJwfyLB/UwgnvFrAG9Nl3
+         jN20VALypVvlmPZqEojlO4uJXdENjtBNT9fMmezm4mtUuxgRzbRN1r5JhS49ei2veskp
+         f3ge4DuYduvqll9mS/8FT6NeFMQNoG6PHhVevcE5bREYUZ5n9f7SSj4J2gZg5tZytUHM
+         B/wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764861588; x=1765466388;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wiOfEEXvCCotAmgC8KaiTgZUJrgAulq2O8EihiUvjps=;
-        b=T75NfHdlEMAMIgkNtXZDVlAzFzxzMdr5bywyiP7oA6Vh9+ZH2qUCbUQnrIe0E6R4Zy
-         B0byQXONGqtJWJv3OQg+wQHbFZ+nrb8WgIgQ+lLaSEa1HVFDSiosEsCVSM1nxriDuWCN
-         fxr9RMVhghYI+2VT8mBcB7+IXiA841qk3Ct+IAcQP1lSnc2V57VuuPysSWIyCQncjmru
-         AuhKq5sj+CXCerrVvB6AeTQF3LdCm4D5pmhFLjJmEk12GPGVB8bKQxO25YYJwdH5LrdR
-         K4gesVjn7/4kvXRJ3pesq5nncSryq2rXcrxoBmPtmq9M1HYMJ07h8nlMc+5gXh3ODhMs
-         TRbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvIr9ttdBqVdlpt90Lvi4r3zIMc9DXyit9fTXGmKRHRRkb7KZ5J9f0BnAAvb82pJYV4UvV4AhdQ3PCR16M@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVUu8N+7WG9xJAHqpPtpohxgYcqthb2CaKfUW3x7ezixkfNv14
-	w9IffvikFEkSvdJ4Rx03gdjncA4kuCM3m3hhoMHpmBnNAWFqBkgGgqyspoWWpDcGvKRw8KWuxTa
-	yhmSkKubxK65HPLNTWXzc+n2f5/jaNPfYiBJtvqSfwhnmtwCmaLWyWx40dcibQD2g5ls=
-X-Gm-Gg: ASbGncvhlNAKU4r/mTQPOsSNmIoaHVD91Cf48hjft8hYNKBLqqUFaofNc4hy78D8U8v
-	p1ZDy0SNaa0a+FznkeXT/Nwzbugm8YKztHYS4sxcbtJZJB1Hld5nA/CfXc/G2Oega/bkxvK0B58
-	+iUmzIv83Bz0AqD0pxaI/sjNOuCio8EHghm0P4S7qeS1n8aUJnmOlRIgOmxpF0qF7wel+e1nnGz
-	yq0FZgzi59P4t1BNBuqGd/yHlXa1vExWMEe44zDWl5kjsuaxUYB5nJAhHLIWFpW7J5QLhK4yuKa
-	guOcK6L/crkjOYUYQULIVJL8yopomRl1Z86VT+G/mW8Ywl7xzkxdXYxbtpXwBEsqaGQkxQCLXfR
-	Z/Wg=
-X-Received: by 2002:a05:622a:19a7:b0:4ed:6831:56bf with SMTP id d75a77b69052e-4f017506180mr83114971cf.13.1764861587834;
-        Thu, 04 Dec 2025 07:19:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGDTQQzmp0P2GzLYzoOuzd5XiTJUMbQ9wDiRy2GwNjmSgFIr2k4OGOJR0lcg/JspoRQXCmtBg==
-X-Received: by 2002:a05:622a:19a7:b0:4ed:6831:56bf with SMTP id d75a77b69052e-4f017506180mr83114131cf.13.1764861587171;
-        Thu, 04 Dec 2025 07:19:47 -0800 (PST)
-Received: from x1.local ([142.188.210.156])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4f0276b04b8sm10255141cf.11.2025.12.04.07.19.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 07:19:46 -0800 (PST)
-Date: Thu, 4 Dec 2025 10:19:44 -0500
-From: Peter Xu <peterx@redhat.com>
-To: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Nico Pache <npache@redhat.com>,
-	Zi Yan <ziy@nvidia.com>, Alex Mastro <amastro@fb.com>,
-	David Hildenbrand <david@redhat.com>,
-	Alex Williamson <alex@shazbot.org>, Zhi Wang <zhiw@nvidia.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Yi Liu <yi.l.liu@intel.com>, Ankit Agrawal <ankita@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v2 2/4] mm: Add file_operations.get_mapping_order()
-Message-ID: <aTGmkHsRSsnneW0G@x1.local>
-References: <20251204151003.171039-1-peterx@redhat.com>
- <20251204151003.171039-3-peterx@redhat.com>
+        d=1e100.net; s=20230601; t=1764863011; x=1765467811;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xcULqT1gBZ4JnBLfYhNZO/NSXxFxQuxnawJT72KsaCg=;
+        b=sOkVP85Nb8eD+Ehmg45FMJNv6ptRTujPjzVZ6oUA8O+VozOesEIAtsT3s5EgKpyJhV
+         vr6ifVfisXePao3Y31P/Z4Q4Ms9x0wsJcfQiOWnozZ+7ptWgVyEtaw0pwy/NLnjwMGNR
+         c0q5DGmmvL7n7ni2Q/9TQhiJqzTvsZ1WHTbWeWI1wmwtZ5XCZ4d+wpXyul8uO9wNQa9I
+         faBXkpI3DDv1+oihqcix4q9klvnnCeGKJiJqRRlI03wQ3fc5w8XWFYbnMlPO+E0jTaAk
+         FLgLgvDduSjl7dXyPpEHUazL96k1x/fHRWabY7dt1rTL8SVX/NjO5b+B6ipAGRuT2nt9
+         lkGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnnJcOOglYk1yp6unhRm124cW89cLbIkz3ze0+6zyaqGG8ePqyR6I+IJzFK/6ee7DOI8f0PbgzGVduRg/8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx38860nb/9GjhcMbREshAO9xYMrxk5Ui7XdUYhGh3WGhDj4iWE
+	bghzTPanAUFuV/QAsgRLx7chYo1+71LkJXbIxy3p0teokSxikaeHNivrUIO3yfp2VIGQhEoNUF4
+	qb7CTEedMEiSmGiOaNQvNjYhCtWtXmaU=
+X-Gm-Gg: ASbGnct1JIVIni356asWMRBEQrodV1q42aBEKKkInQJdDwMgjfm0QLS1/lwqkQEThfE
+	fXTrHPivF+VpSUSID1Rqxharq+MPjjIkalo5IepsCRsPszAwfATyK1gNFjHahejfFDxi90aRRYF
+	OYsyvZwhs9DMwznp4aNoBedN+BiCVdz29OyeKTwd7/otDN5t5zBXTm0w77bT5H7kuaxNhRPnz6/
+	efgYahqCGGl6eo5oGIN8qTqxTM+p/19/9q0kENYUL/3P5xDPX0DmqsTWebJJvwCukQ7TiIgs0dF
+	f++KqQ==
+X-Google-Smtp-Source: AGHT+IGPP0xbr8ijlvBCGceLouNPETyq6yt+2wUuDhEptf1TXNXkd61Kk0839gQ/19JRkHkqwlnGsXbepfF7hCbJxRQ=
+X-Received: by 2002:a17:90a:c883:b0:33b:d74b:179 with SMTP id
+ 98e67ed59e1d1-349126e0e1cmr7801599a91.27.1764863011360; Thu, 04 Dec 2025
+ 07:43:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251204151003.171039-3-peterx@redhat.com>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEE807D016A79FE7A2F463E4D6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <87tsyozqdu.fsf@email.froward.int.ebiederm.org> <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
+ <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org> <6dc556a0a93c18fffec71322bf97441c74b3134e.camel@huaweicloud.com>
+ <87v7iqtcev.fsf_-_@email.froward.int.ebiederm.org>
+In-Reply-To: <87v7iqtcev.fsf_-_@email.froward.int.ebiederm.org>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Thu, 4 Dec 2025 10:43:20 -0500
+X-Gm-Features: AWmQ_bmUfrO0mY15dNq3SP9hR0Gn5EatRKdJVj7voKpq3-tHkT_aD9YVC4fN8UE
+Message-ID: <CAEjxPJ61OHDxmc2fgBp=hq27OoEhkO+Wwbb+rYAf2F9fM7gdLg@mail.gmail.com>
+Subject: Re: Are setuid shell scripts safe? (Implied by security_bprm_creds_for_exec)
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
+	Bernd Edlinger <bernd.edlinger@hotmail.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Kees Cook <kees@kernel.org>, 
+	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
+	Christian Brauner <brauner@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>, 
+	James Morris <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>, 
+	Adrian Reber <areber@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>, 
+	Alexei Starovoitov <ast@kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	tiozhang <tiozhang@didiglobal.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Frederic Weisbecker <frederic@kernel.org>, YueHaibing <yuehaibing@huawei.com>, 
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>, 
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>, 
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Elena Reshetova <elena.reshetova@intel.com>, David Windsor <dwindsor@gmail.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Hans Liljestrand <ishkamiel@gmail.com>, Penglei Jiang <superman.xpt@gmail.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Adrian Ratiu <adrian.ratiu@collabora.com>, 
+	Ingo Molnar <mingo@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
+	Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>, zohar@linux.ibm.com, 
+	linux-integrity@vger.kernel.org, Ryan Lee <ryan.lee@canonical.com>, 
+	apparmor <apparmor@lists.ubuntu.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I forgot to copy mm/fs maintainers for the 1st/2nd patches in this series,
-my apologies.  Whole series can be found here:
+On Mon, Dec 1, 2025 at 11:34=E2=80=AFAM Eric W. Biederman <ebiederm@xmissio=
+n.com> wrote:
+>
+> Roberto Sassu <roberto.sassu@huaweicloud.com> writes:
+>
+> > + Mimi, linux-integrity (would be nice if we are in CC when linux-
+> > security-module is in CC).
+> >
+> > Apologies for not answering earlier, it seems I don't receive the
+> > emails from the linux-security-module mailing list (thanks Serge for
+> > letting me know!).
+> >
+> > I see two main effects of this patch. First, the bprm_check_security
+> > hook implementations will not see bprm->cred populated. That was a
+> > problem before we made this patch:
+> >
+> > https://patchew.org/linux/20251008113503.2433343-1-roberto.sassu@huawei=
+cloud.com/
+>
+> Thanks, that is definitely needed.
+>
+> Does calling process_measurement(CREDS_CHECK) on only the final file
+> pass review?  Do you know of any cases where that will break things?
+>
+> As it stands I don't think it should be assumed that any LSM has
+> computed it's final creds until bprm_creds_from_file.  Not just the
+> uid and gid.
+>
+> If the patch you posted for review works that helps sort that mess out.
+>
+> > to work around the problem of not calculating the final DAC credentials
+> > early enough (well, we actually had to change our CREDS_CHECK hook
+> > behavior).
+> >
+> > The second, I could not check. If I remember well, unlike the
+> > capability LSM, SELinux/Apparmor/SMACK calculate the final credentials
+> > based on the first file being executed (thus the script, not the
+> > interpreter). Is this patch keeping the same behavior despite preparing
+> > the credentials when the final binary is found?
+>
+> The patch I posted was.
+>
+> My brain is still reeling from the realization that our security modules
+> have the implicit assumption that it is safe to calculate their security
+> information from shell scripts.
+>
+> In the first half of the 90's I remember there was lots of effort to try
+> and make setuid shell scripts and setuid perl scripts work, and the
+> final conclusion was it was a lost cause.
+>
+> Now I look at security_bprm_creds_for_exec and security_bprm_check which
+> both have the implicit assumption that it is indeed safe to compute the
+> credentials from a shell script.
+>
+> When passing a file descriptor to execat we have
+> BINPRM_FLAGS_PATH_INACCESSIBLE and use /dev/fd/NNN as the filename
+> which reduces some of the races.
+>
+> However when just plain executing a shell script we pass the filename of
+> the shell script as a command line argument, and expect the shell to
+> open the filename again.  This has been a time of check to time of use
+> race for decades, and one of the reasons we don't have setuid shell
+> scripts.
+>
+> Yet the IMA implementation (without the above mentioned patch) assumes
+> the final creds will be calculated before security_bprm_check is called,
+> and security_bprm_creds_for_exec busily calculate the final creds.
+>
+> For some of the security modules I believe anyone can set any label they
+> want on a file and they remain secure (At which point I don't understand
+> the point of having labels on files).  I don't believe that is the case
+> for selinux, or in general.
+>
+> So just to remove the TOCTOU race the security_bprm_creds_for_exec
+> and security_bprm_check hooks need to be removed, after moving their
+> code into something like security_bprm_creds_from_file.
+>
+> Or am I missing something and even with the TOCTOU race are setuid shell
+> scripts somehow safe now?
 
-https://lore.kernel.org/r/20251204151003.171039-1-peterx@redhat.com
-
-I'll modify the cc list when repost.
-
-Thanks,
-
-On Thu, Dec 04, 2025 at 10:10:01AM -0500, Peter Xu wrote:
-> Add one new file operation, get_mapping_order().  It can be used by file
-> backends to report mapping order hints.
-> 
-> By default, Linux assumed we will map in PAGE_SIZE chunks.  With this hint,
-> the driver can report the possibility of mapping chunks that are larger
-> than PAGE_SIZE.  Then, the VA allocator will try to use that as alignment
-> when allocating the VA ranges.
-> 
-> This is useful because when chunks to be mapped are larger than PAGE_SIZE,
-> VA alignment matters and it needs to be aligned with the size of the chunk
-> to be mapped.
-> 
-> Said that, no matter what is the alignment used for the VA allocation, the
-> driver can still decide which size to map the chunks.  It is also not an
-> issue if it keeps mapping in PAGE_SIZE.
-> 
-> get_mapping_order() is defined to take three parameters.  Besides the 1st
-> parameter which will be the file object pointer, the 2nd + 3rd parameters
-> being the pgoff + size of the mmap() request.  Its retval is defined as the
-> order, which must be non-negative to enable the alignment.  When zero is
-> returned, it should behave like when the hint is not provided, IOW,
-> alignment will still be PAGE_SIZE.
-> 
-> When the order is too big, ignore the hint.  Normally drivers are trusted,
-> so it's more of an extra layer of safety measure.
-> 
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->  Documentation/filesystems/vfs.rst |  4 +++
->  include/linux/fs.h                |  1 +
->  mm/mmap.c                         | 59 +++++++++++++++++++++++++++----
->  3 files changed, 57 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 4f13b01e42eb5..b707ddbebbf52 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -1069,6 +1069,7 @@ This describes how the VFS can manipulate an open file.  As of kernel
->  		int (*fasync) (int, struct file *, int);
->  		int (*lock) (struct file *, int, struct file_lock *);
->  		unsigned long (*get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
-> +		int (*get_mapping_order)(struct file *, unsigned long, size_t);
->  		int (*check_flags)(int);
->  		int (*flock) (struct file *, int, struct file_lock *);
->  		ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int);
-> @@ -1165,6 +1166,9 @@ otherwise noted.
->  ``get_unmapped_area``
->  	called by the mmap(2) system call
->  
-> +``get_mapping_order``
-> +	called by the mmap(2) system call to get mapping order hint
-> +
->  ``check_flags``
->  	called by the fcntl(2) system call for F_SETFL command
->  
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index dd3b57cfadeeb..5ba373576bfe5 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2287,6 +2287,7 @@ struct file_operations {
->  	int (*fasync) (int, struct file *, int);
->  	int (*lock) (struct file *, int, struct file_lock *);
->  	unsigned long (*get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
-> +	int (*get_mapping_order)(struct file *file, unsigned long pgoff, size_t len);
->  	int (*check_flags)(int);
->  	int (*flock) (struct file *, int, struct file_lock *);
->  	ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int);
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 8fa397a18252e..be3dd0623f00c 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -808,6 +808,33 @@ unsigned long mm_get_unmapped_area_vmflags(struct mm_struct *mm, struct file *fi
->  	return arch_get_unmapped_area(filp, addr, len, pgoff, flags, vm_flags);
->  }
->  
-> +static inline bool file_has_mmap_order_hint(struct file *file)
-> +{
-> +	return file && file->f_op && file->f_op->get_mapping_order;
-> +}
-> +
-> +static inline bool
-> +mmap_should_align(struct file *file, unsigned long addr, unsigned long len)
-> +{
-> +	/* When THP not enabled at all, skip */
-> +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> +		return false;
-> +
-> +	/* Never try any alignment if the mmap() address hint is provided */
-> +	if (addr)
-> +		return false;
-> +
-> +	/* Anonymous THP could use some better alignment when len aligned */
-> +	if (!file)
-> +		return IS_ALIGNED(len, PMD_SIZE);
-> +
-> +	/*
-> +	 * It's a file mapping, no address hint provided by caller, try any
-> +	 * alignment if the file backend would provide a hint
-> +	 */
-> +	return file_has_mmap_order_hint(file);
-> +}
-> +
->  unsigned long
->  __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
->  		unsigned long pgoff, unsigned long flags, vm_flags_t vm_flags)
-> @@ -815,8 +842,9 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
->  	unsigned long (*get_area)(struct file *, unsigned long,
->  				  unsigned long, unsigned long, unsigned long)
->  				  = NULL;
-> -
->  	unsigned long error = arch_mmap_check(addr, len, flags);
-> +	unsigned long align;
-> +
->  	if (error)
->  		return error;
->  
-> @@ -841,13 +869,30 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
->  
->  	if (get_area) {
->  		addr = get_area(file, addr, len, pgoff, flags);
-> -	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && !file
-> -		   && !addr /* no hint */
-> -		   && IS_ALIGNED(len, PMD_SIZE)) {
-> -		/* Ensures that larger anonymous mappings are THP aligned. */
-> +	} else if (mmap_should_align(file, addr, len)) {
-> +		if (file_has_mmap_order_hint(file)) {
-> +			int order;
-> +			/*
-> +			 * Allow driver to opt-in on the order hint.
-> +			 *
-> +			 * Sanity check on the order returned. Treating
-> +			 * either negative or too big order to be invalid,
-> +			 * where alignment will be skipped.
-> +			 */
-> +			order = file->f_op->get_mapping_order(file, pgoff, len);
-> +			if (order < 0)
-> +				order = 0;
-> +			if (check_shl_overflow(PAGE_SIZE, order, &align))
-> +				/* No alignment applied */
-> +				align = PAGE_SIZE;
-> +		} else {
-> +			/* Default alignment for anonymous THPs */
-> +			align = PMD_SIZE;
-> +		}
-> +
->  		addr = thp_get_unmapped_area_vmflags(file, addr, len,
-> -						     pgoff, flags, PMD_SIZE,
-> -						     vm_flags);
-> +						     pgoff, flags,
-> +						     align, vm_flags);
->  	} else {
->  		addr = mm_get_unmapped_area_vmflags(current->mm, file, addr, len,
->  						    pgoff, flags, vm_flags);
-> -- 
-> 2.50.1
-> 
-
--- 
-Peter Xu
-
+setuid shell scripts are not safe. But SELinux (and likely AppArmor
+and others) have long relied on the ability to transition on shell
+scripts to _shed_ permissions. That's a matter of writing your policy
+sensibly.
+Changing it would break existing userspace and policies.
 
