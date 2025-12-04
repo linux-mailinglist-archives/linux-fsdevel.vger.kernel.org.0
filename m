@@ -1,405 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-70614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5706CA1EE3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 00:24:02 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E80CA205C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 01:07:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 1D2513004455
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Dec 2025 23:24:02 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 4D6A130025BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 00:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AD12DF13B;
-	Wed,  3 Dec 2025 23:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="B8349ss5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA8726ACC;
+	Thu,  4 Dec 2025 00:07:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f80.google.com (mail-oo1-f80.google.com [209.85.161.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644972D94AF
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Dec 2025 23:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82631DA23
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 00:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764804238; cv=none; b=GZTvYjkSCB/Z2JMlBMKyWBAbbB5tTEX+crmpijJaKqlV+0KrnRReXytn5jpIc0S6kGmPdBwBdrNn/isSyiuSCmvb9Pl05IsInGorT8LXY8WSP+vouwZ8KiZ9u/4NFg3N+7t1585DWZksGx5Fi4ifwCmA+n0LH8gKfS4a/NkA03c=
+	t=1764806849; cv=none; b=Gb3VC/fS4nimHJuCQGA4p7+lNq4EgGF1iQ22UtFqzg7iyp8gkfBkrKTTP03pLog0D4gyqzo1xE16Y6Hu6XI6eI88wVXCoK1wfkf9oqOqtPvBGmzLFVR/HYaal/xmoOBZ+8XdJvIfSme/3nOr3kdFSCB+Auq99TM6b7X9kT27OBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764804238; c=relaxed/simple;
-	bh=FNna4aDf052+2z5kOvUw8cJoW5wbT0Q+6+R58S0btU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FcQ2E0PIhx+BQKkOlqmKbfzT/vn3rkhDdjqE8VWcSD6R4Pxdea1k4VEhb9rHdkgQbDS1HXgpFiIkL2yK9N5NJrbIs4KokOoTxGcHpJiY2LQIwVCFY90fgq/qRCfbiUxWJ1ma1on8+IYL9I3a/hXnOxIoiu5E3YZPxNI5xll6scs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=B8349ss5; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=vBvkSuFDgJD3CUJ+IXbZLR1pyMERqJBhIZl55Uq7cUo=; b=B8349ss5wp7bRyLmDKwTglBcoY
-	WoEpAiPcVXehN49DqsFj+4YVFWdRD7XlGs4bmJMN9x7UbtygYtlJ0GBP5UtKxTd2QMLRe/6UpRgpL
-	OubHQx3i1pcT0c2KUc9JKJagp/HUK9vB3Z5DnAeXVp7UXekCnkc4vuOiqj4MjUF1+WCr/Ewk4g0as
-	KUT0DvGjXj5madgB8Njyga1PMqkRcifmScI0sg3f+iaTgn77X1UnjwvEhIJBl8t/9EUl4fI6n/mVy
-	jtxHRK80ZwuPiYmg9bSAnPE0uPMxdQkOe4GE81XQRkdZqykCNlg/b/olwB4fdmVG8RHRbVTWiKBUx
-	mkCXbMgw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vQwCc-00000000rpQ-0WeQ;
-	Wed, 03 Dec 2025 23:24:06 +0000
-Date: Wed, 3 Dec 2025 23:24:06 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH][RFC][slab] static kmem_cache instances for core caches
-Message-ID: <20251203232406.GH1712166@ZenIV>
+	s=arc-20240116; t=1764806849; c=relaxed/simple;
+	bh=Hhd6qhkMOFtRMXOzjXXtMjMCWZmum2+dHFo4ltC2eYY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZQv+YopSKu+b1eEPBbZPCCfxlGKBZ1vEyJRwTttDlpKknlY5hiY7YhpYdwK32Sibv4G9qgKWh354ODxo2u8E4UTxhsl1cYm5l70uKyFQOxtd94sOK96HPKwhErKGxJe5DWZvhxl3UVSgKzKTt68xwgsHslUrMaLcM2/0Adcfd1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f80.google.com with SMTP id 006d021491bc7-6597c6a8be9so289913eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Dec 2025 16:07:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764806847; x=1765411647;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2/KvjPqGywNLBRRIaOhbTeNXmoX6F9bkpWUvYQerGq0=;
+        b=ZbAzwwDPsRxg2cSdX31JfoGN++eXZGt47U/fc+T5zmun3VTAkHaanpaIcfcZCDEM33
+         K5pXzBJxyYEbtbEfgZuHX/gL5bxEOLkD+uZkVxyN/xqFYCRSudIq9PzuTt2ft4/jzkfM
+         E4xrWcTU5X9o4T3Iwtc22pscQ2MgIVEywKQniFb+5WkwH//GJ/XcMeq2CCpLXtxcqCs8
+         6RXpU6q83C1MW+bFfSDEnhywb6qFYIKbOuHtjXVBXYrvyOKFNBfiBRlsV12wKMdLwhIN
+         2afZ0XyDQYt4GLOcXqJJ+rfNMFsGRFtGNVjAtLf8fkDgLezXd0n0rJFhGk0dgtYNtCLz
+         otUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUa3F9SlqZKAI3pbsnDm3cz7WWFPskxKeNSIie+jx5LRbgvCsgFrY9Dfp4xalihMqVpTR6/ZFUBvY3v3ZqR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq0AbN1PUBYxrQE8PVfwP2iCJALH/8Bns0kYJyYvO/pZOs+pXa
+	XsuKHLTxBOsuCeNNi2xoricpIAnEnH6/xuTWN+NWHu6MsFAUIAVzTp+tUeYHtXfcd3ukeG9O4Ie
+	rtseBxwVaUwhnAuDTk+LJtyBoa2/B7iGMIYETc4NkiBs2oD7XohrDUywVHr8=
+X-Google-Smtp-Source: AGHT+IFv+LovpJmCMQ/zMe5E4XAOHRmdHZC1CJkJwhTp69v6ThfqdhShBTis4wqippMu1YhlMpjr4HJ4vTP8o/Gcn1Mcl20dLfoV
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6808:211c:b0:451:4d80:5ab1 with SMTP id
+ 5614622812f47-45378fd5919mr767993b6e.33.1764806847030; Wed, 03 Dec 2025
+ 16:07:27 -0800 (PST)
+Date: Wed, 03 Dec 2025 16:07:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6930d0bf.a70a0220.2ea503.00d4.GAE@google.com>
+Subject: [syzbot] [exfat?] [ocfs2?] kernel BUG in link_path_walk
+From: syzbot <syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, jlbec@evilplan.org, 
+	joseph.qi@linux.alibaba.com, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mark@fasheh.com, 
+	ocfs2-devel@lists.linux.dev, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-	kmem_cache_create() and friends create new instances of
-struct kmem_cache and return pointers to those.  Quite a few things in
-core kernel are allocated from such caches; each allocation involves
-dereferencing an assign-once pointer and for sufficiently hot ones that
-dereferencing does show in profiles.
+Hello,
 
-	There had been patches floating around switching some of those
-to runtime_constant infrastructure.  Unfortunately, it's arch-specific
-and most of the architectures lack it.
+syzbot found the following issue on:
 
-	There's an alternative approach applicable to the caches that
-are never destroyed, which covers a lot of them.  No matter what,
-runtime_constant for pointers is not going to be faster than plain &,
-so if we had struct kmem_cache instances with static storage duration, we
-would be at least no worse off than we are with runtime_constant variants.
+HEAD commit:    7d31f578f323 Add linux-next specific files for 20251128
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1612b912580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6336d8e94a7c517d
+dashboard link: https://syzkaller.appspot.com/bug?extid=d222f4b7129379c3d5bc
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172c8192580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c3b0c2580000
 
-	There are obstacles to doing that, but they turn out to be easy
-to deal with.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6b49d8ad90de/disk-7d31f578.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dbe2d4988ca7/vmlinux-7d31f578.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fc0448ab2411/bzImage-7d31f578.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/ec39deb2cf11/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=12c3b0c2580000)
 
-1) as it is, struct kmem_cache is opaque for anything outside of a few
-files in mm/*; that avoids serious headache with header dependencies,
-etc., and it's not something we want to lose.  Solution: struct
-kmem_cache_static, with the size and alignment identical to struct
-kmem_cache.  Calculation of size and alignment can be done via the same
-mechanism we use for asm-offsets.h and rq-offsets.h, with build-time
-check for mismatches.  With that done, we get an opaque type defined in
-linux/slab.h that can be used for declaring those caches.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com
 
-2) real constructor of kmem_cache needs to be taught to deal with
-preallocated instances.  That turns out to be easy - we already pass an
-obscene amount of optional arguments via struct kmem_cache_args, so we
-can stash the pointer to preallocated instance in there.  Changes in
-mm/slab_common.c are very minor - we should treat preallocated caches
-as unmergable, use the instance passed to us instead of allocating a
-new one and we should not free them on failure.  That's it.
+VFS_BUG_ON_INODE(!S_ISDIR(inode->i_mode)) encountered for inode ffff88805618b338
+fs ocfs2 mode 100000 opflags 0x2 flags 0x20 state 0x0 count 2
+------------[ cut here ]------------
+kernel BUG at fs/namei.c:630!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 6303 Comm: syz.0.92 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
+RIP: 0010:lookup_inode_permission_may_exec fs/namei.c:630 [inline]
+RIP: 0010:may_lookup fs/namei.c:1900 [inline]
+RIP: 0010:link_path_walk+0x18cb/0x18d0 fs/namei.c:2537
+Code: e8 5a 1f ea fe 90 0f 0b e8 b2 96 83 ff 44 89 fd e9 6a fd ff ff e8 a5 96 83 ff 48 89 ef 48 c7 c6 40 d8 79 8b e8 36 1f ea fe 90 <0f> 0b 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55
+RSP: 0018:ffffc900046ef8a0 EFLAGS: 00010282
+RAX: 000000000000008e RBX: ffffc900046efc58 RCX: f91f6529a96d0200
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffff88805618b338 R08: ffffc900046ef567 R09: 1ffff920008ddeac
+R10: dffffc0000000000 R11: fffff520008ddead R12: 0000000000008000
+R13: ffffc900046efc20 R14: 0000000000008000 R15: ffff88802509b320
+FS:  000055555cffa500(0000) GS:ffff888125e4f000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc32730f000 CR3: 0000000072f4e000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ path_openat+0x2b3/0x3dd0 fs/namei.c:4783
+ do_filp_open+0x1fa/0x410 fs/namei.c:4814
+ do_sys_openat2+0x121/0x200 fs/open.c:1430
+ do_sys_open fs/open.c:1436 [inline]
+ __do_sys_open fs/open.c:1444 [inline]
+ __se_sys_open fs/open.c:1440 [inline]
+ __x64_sys_open+0x11e/0x150 fs/open.c:1440
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4644d8f749
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe02ccf2f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f4644fe5fa0 RCX: 00007f4644d8f749
+RDX: 0000000000000000 RSI: 0000000000145142 RDI: 0000200000000240
+RBP: 00007f4644e13f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f4644fe5fa0 R14: 00007f4644fe5fa0 R15: 0000000000000003
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:lookup_inode_permission_may_exec fs/namei.c:630 [inline]
+RIP: 0010:may_lookup fs/namei.c:1900 [inline]
+RIP: 0010:link_path_walk+0x18cb/0x18d0 fs/namei.c:2537
+Code: e8 5a 1f ea fe 90 0f 0b e8 b2 96 83 ff 44 89 fd e9 6a fd ff ff e8 a5 96 83 ff 48 89 ef 48 c7 c6 40 d8 79 8b e8 36 1f ea fe 90 <0f> 0b 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55
+RSP: 0018:ffffc900046ef8a0 EFLAGS: 00010282
+RAX: 000000000000008e RBX: ffffc900046efc58 RCX: f91f6529a96d0200
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffff88805618b338 R08: ffffc900046ef567 R09: 1ffff920008ddeac
+R10: dffffc0000000000 R11: fffff520008ddead R12: 0000000000008000
+R13: ffffc900046efc20 R14: 0000000000008000 R15: ffff88802509b320
+FS:  000055555cffa500(0000) GS:ffff888125e4f000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc32730f000 CR3: 0000000072f4e000 CR4: 00000000003526f0
 
-Patch below implements that and converts several caches (mnt_cache,
-signal_cache and thread_stack_cache) to static allocation to demonstrate
-the uses.  If we use that in mainline, these would obviously get
-split into separate commits.
 
-It seems to work.  There's only one real limitation at the moment
-- we should never use kmem_cache_destroy() for such caches; unlike
-runtime_constant, we can *use* those caches from modules - there's no
-problem with that, as long as the cache itself is in the kernel proper.
-The obstacle to use of kmem_cache_destroy() might be possible to lift -
-the only tricky part is sysfs-related logics in kmem_cache_release().
-I hadn't looked into that; there's a plenty of never-destroyed core
-caches, so that thing doesn't lack applications as it is.
-
-Review and comments would be very welcome.
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
-diff --git a/Kbuild b/Kbuild
-index 13324b4bbe23..eb985a6614eb 100644
---- a/Kbuild
-+++ b/Kbuild
-@@ -45,13 +45,24 @@ kernel/sched/rq-offsets.s: $(offsets-file)
- $(rq-offsets-file): kernel/sched/rq-offsets.s FORCE
- 	$(call filechk,offsets,__RQ_OFFSETS_H__)
- 
-+# generate kmem_cache_size.h
-+
-+kmem_cache_size-file := include/generated/kmem_cache_size.h
-+
-+targets += mm/kmem_cache_size.s
-+
-+mm/kmem_cache_size.s: $(rq-offsets-file)
-+
-+$(kmem_cache_size-file): mm/kmem_cache_size.s FORCE
-+	$(call filechk,offsets,__KMEM_CACHE_SIZE_H__)
-+
- # Check for missing system calls
- 
- quiet_cmd_syscalls = CALL    $<
-       cmd_syscalls = $(CONFIG_SHELL) $< $(CC) $(c_flags) $(missing_syscalls_flags)
- 
- PHONY += missing-syscalls
--missing-syscalls: scripts/checksyscalls.sh $(rq-offsets-file)
-+missing-syscalls: scripts/checksyscalls.sh $(kmem_cache_size-file)
- 	$(call cmd,syscalls)
- 
- # Check the manual modification of atomic headers
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 4272349650b1..53610ebbe3f5 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -85,7 +85,8 @@ static u64 mnt_id_ctr = MNT_UNIQUE_ID_OFFSET;
- 
- static struct hlist_head *mount_hashtable __ro_after_init;
- static struct hlist_head *mountpoint_hashtable __ro_after_init;
--static struct kmem_cache *mnt_cache __ro_after_init;
-+static struct kmem_cache_opaque __mnt_cache;
-+#define mnt_cache to_kmem_cache(&__mnt_cache)
- static DECLARE_RWSEM(namespace_sem);
- static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
- static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-@@ -6016,8 +6017,9 @@ void __init mnt_init(void)
- {
- 	int err;
- 
--	mnt_cache = kmem_cache_create("mnt_cache", sizeof(struct mount),
--			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT, NULL);
-+	kmem_cache_setup("mnt_cache", sizeof(struct mount),
-+			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
-+			NULL, mnt_cache);
- 
- 	mount_hashtable = alloc_large_system_hash("Mount-cache",
- 				sizeof(struct hlist_head),
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index cf443f064a66..89de72bf2e99 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -22,6 +22,15 @@
- #include <linux/cleanup.h>
- #include <linux/hash.h>
- 
-+#ifndef COMPILE_OFFSETS
-+#include <generated/kmem_cache_size.h>
-+
-+/* same size and alignment as struct kmem_cache: */
-+struct kmem_cache_opaque {
-+	unsigned char opaque[KMEM_CACHE_SIZE];
-+} __aligned(KMEM_CACHE_ALIGN);
-+#endif
-+
- enum _slab_flag_bits {
- 	_SLAB_CONSISTENCY_CHECKS,
- 	_SLAB_RED_ZONE,
-@@ -261,11 +270,17 @@ enum _slab_flag_bits {
- 
- struct list_lru;
- struct mem_cgroup;
-+struct kmem_cache_opaque;
- /*
-  * struct kmem_cache related prototypes
-  */
- bool slab_is_available(void);
- 
-+static inline struct kmem_cache *to_kmem_cache(struct kmem_cache_opaque *p)
-+{
-+	return (struct kmem_cache *)p;
-+}
-+
- /**
-  * struct kmem_cache_args - Less common arguments for kmem_cache_create()
-  *
-@@ -366,6 +381,7 @@ struct kmem_cache_args {
- 	 * %0 means no sheaves will be created.
- 	 */
- 	unsigned int sheaf_capacity;
-+	struct kmem_cache *preallocated;
- };
- 
- struct kmem_cache *__kmem_cache_create_args(const char *name,
-@@ -493,6 +509,34 @@ int kmem_cache_shrink(struct kmem_cache *s);
- 				.usersize	= sizeof_field(struct __struct, __field),	\
- 			}, (__flags))
- 
-+static inline int
-+kmem_cache_setup_usercopy(const char *name, unsigned int size,
-+			  unsigned int align, slab_flags_t flags,
-+			  unsigned int useroffset, unsigned int usersize,
-+			  void (*ctor)(void *), struct kmem_cache *s)
-+{
-+	struct kmem_cache *res;
-+
-+	res = __kmem_cache_create_args(name, size,
-+				       &(struct kmem_cache_args) {
-+						.align		= align,
-+						.ctor		= ctor,
-+						.useroffset	= useroffset,
-+						.usersize	= usersize,
-+						.preallocated	= s},
-+				       flags);
-+	return PTR_ERR_OR_ZERO(res);
-+}
-+
-+static inline int
-+kmem_cache_setup(const char *name, unsigned int size,
-+		 unsigned int align, slab_flags_t flags,
-+		 void (*ctor)(void *), struct kmem_cache *s)
-+{
-+	return kmem_cache_setup_usercopy(name, size, align, flags,
-+					 0, 0, ctor, s);
-+}
-+
- /*
-  * Common kmalloc functions provided by all allocators
-  */
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 3da0f08615a9..e9fcbb55f2f6 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -379,7 +379,8 @@ static void free_thread_stack(struct task_struct *tsk)
- 
- #else /* !(THREAD_SIZE >= PAGE_SIZE) */
- 
--static struct kmem_cache *thread_stack_cache;
-+static struct kmem_cache_opaque __thread_stack_cache;
-+#define thread_stack_cache to_kmem_cache(&__thread_stack_cache)
- 
- static void thread_stack_free_rcu(struct rcu_head *rh)
- {
-@@ -410,17 +411,17 @@ static void free_thread_stack(struct task_struct *tsk)
- 
- void thread_stack_cache_init(void)
- {
--	thread_stack_cache = kmem_cache_create_usercopy("thread_stack",
--					THREAD_SIZE, THREAD_SIZE, 0, 0,
--					THREAD_SIZE, NULL);
--	BUG_ON(thread_stack_cache == NULL);
-+	kmem_cache_setup_usercopy("thread_stack", THREAD_SIZE, THREAD_SIZE,
-+				  SLAB_PANIC, 0, THREAD_SIZE, NULL,
-+				  thread_stack_cache);
- }
- 
- #endif /* THREAD_SIZE >= PAGE_SIZE */
- #endif /* CONFIG_VMAP_STACK */
- 
- /* SLAB cache for signal_struct structures (tsk->signal) */
--static struct kmem_cache *signal_cachep;
-+static struct kmem_cache_opaque signal_cache;
-+#define signal_cachep to_kmem_cache(&signal_cache)
- 
- /* SLAB cache for sighand_struct structures (tsk->sighand) */
- struct kmem_cache *sighand_cachep;
-@@ -2980,10 +2981,10 @@ void __init proc_caches_init(void)
- 			sizeof(struct sighand_struct), 0,
- 			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_TYPESAFE_BY_RCU|
- 			SLAB_ACCOUNT, sighand_ctor);
--	signal_cachep = kmem_cache_create("signal_cache",
-+	kmem_cache_setup("signal_cache",
- 			sizeof(struct signal_struct), 0,
- 			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
--			NULL);
-+			NULL, signal_cachep);
- 	files_cachep = kmem_cache_create("files_cache",
- 			sizeof(struct files_struct), 0,
- 			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
-diff --git a/mm/kmem_cache_size.c b/mm/kmem_cache_size.c
-new file mode 100644
-index 000000000000..1ddbfa41a507
---- /dev/null
-+++ b/mm/kmem_cache_size.c
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Generate definitions needed by the preprocessor.
-+ * This code generates raw asm output which is post-processed
-+ * to extract and format the required data.
-+ */
-+
-+#define COMPILE_OFFSETS
-+#include <linux/kbuild.h>
-+#include "slab.h"
-+
-+int main(void)
-+{
-+	/* The constants to put into include/generated/kmem_cache_size.h */
-+	DEFINE(KMEM_CACHE_SIZE, sizeof(struct kmem_cache));
-+	DEFINE(KMEM_CACHE_ALIGN, __alignof(struct kmem_cache));
-+	/* End of constants */
-+
-+	return 0;
-+}
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 932d13ada36c..fc6c2864fe8a 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -224,33 +224,30 @@ static struct kmem_cache *create_cache(const char *name,
- 				       struct kmem_cache_args *args,
- 				       slab_flags_t flags)
- {
--	struct kmem_cache *s;
-+	struct kmem_cache *s = args->preallocated;
- 	int err;
- 
- 	/* If a custom freelist pointer is requested make sure it's sane. */
--	err = -EINVAL;
- 	if (args->use_freeptr_offset &&
- 	    (args->freeptr_offset >= object_size ||
- 	     !(flags & SLAB_TYPESAFE_BY_RCU) ||
- 	     !IS_ALIGNED(args->freeptr_offset, __alignof__(freeptr_t))))
--		goto out;
-+		return ERR_PTR(-EINVAL);
- 
--	err = -ENOMEM;
--	s = kmem_cache_zalloc(kmem_cache, GFP_KERNEL);
--	if (!s)
--		goto out;
-+	if (!s) {
-+		s = kmem_cache_zalloc(kmem_cache, GFP_KERNEL);
-+		if (!s)
-+			return ERR_PTR(-ENOMEM);
-+	}
- 	err = do_kmem_cache_create(s, name, object_size, args, flags);
--	if (err)
--		goto out_free_cache;
--
-+	if (unlikely(err)) {
-+		if (!args->preallocated)
-+			kmem_cache_free(kmem_cache, s);
-+		return ERR_PTR(err);
-+	}
- 	s->refcount = 1;
- 	list_add(&s->list, &slab_caches);
- 	return s;
--
--out_free_cache:
--	kmem_cache_free(kmem_cache, s);
--out:
--	return ERR_PTR(err);
- }
- 
- /**
-@@ -324,6 +321,9 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
- 		    object_size - args->usersize < args->useroffset))
- 		args->usersize = args->useroffset = 0;
- 
-+	if (args->preallocated)
-+		flags |= SLAB_NO_MERGE;
-+
- 	if (!args->usersize && !args->sheaf_capacity)
- 		s = __kmem_cache_alias(name, object_size, args->align, flags,
- 				       args->ctor);
-diff --git a/mm/slub.c b/mm/slub.c
-index a0b905c2a557..faab13c6aaf9 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -8465,6 +8465,12 @@ void __init kmem_cache_init(void)
- 		boot_kmem_cache_node;
- 	int node;
- 
-+	/* verify that kmem_cache_opaque is correct */
-+	BUILD_BUG_ON(sizeof(struct kmem_cache) !=
-+		     sizeof(struct kmem_cache_opaque));
-+	BUILD_BUG_ON(__alignof(struct kmem_cache) !=
-+		     __alignof(struct kmem_cache_opaque));
-+
- 	if (debug_guardpage_minorder())
- 		slub_max_order = 0;
- 
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
