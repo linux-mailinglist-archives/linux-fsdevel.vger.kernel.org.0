@@ -1,125 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-70735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82998CA56D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 22:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CEC9CA5939
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 22:58:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3B525306CA1D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 21:15:35 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C284C309C3F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 21:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC98330301;
-	Thu,  4 Dec 2025 21:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E97D2E974D;
+	Thu,  4 Dec 2025 21:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q3wf04Kn"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="NPPa0g4d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837A726E706;
-	Thu,  4 Dec 2025 21:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1EE2D1916
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 21:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764882932; cv=none; b=qA4ARdnQPAnQCeC0WVFVacrr1z5NVBmec4N4vHiqbEImFovwMJJcBXMgf99FB4UGjMpCZ83V6RReSSGXYcXxrkamRL6EDq2CZuLiRy0NbxORiVu90Lx54jxoWawSdtR4vkcGoL83DhnQnbsq9HfJ3DJaCthJTNZhUPKpmxDH5wg=
+	t=1764885468; cv=none; b=K3Ew41xQVrJAdJD0ufjBoWtUHccHeeqRf4xHxJonGJlBqGw5htmDAEEFCfbZNx0I0zuxmGSoPhFQvQTPwlB0p0HSVW4FpC25Ug7Gjzm701+KGI0iIFxybKm9w2LKgnqpIOyp7P+BXd+6ey0qH9XMXQUutz72OGtbukHh4QbeNkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764882932; c=relaxed/simple;
-	bh=6k2GRQBqjw6t/2Bq8gihyaMJPqlUwySvgrCW4cFAx6o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S2bFXLEtakd8jAxRfIBQ8YdPmHLl4xFiiwtPcdirGFrAlkbDEOvKOApH4y69I2YyoHR0Y9JvU84f8JLUZTzYmwIr/3HwrmuM1z6QgUoMyWE8PpfPoqyI4mHPYzSmWjQoLiCgTWDOPoKJJ7nOmIiQkHif+R1P1VxylzoBIiBnIcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q3wf04Kn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83279C4CEFB;
-	Thu,  4 Dec 2025 21:15:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764882932;
-	bh=6k2GRQBqjw6t/2Bq8gihyaMJPqlUwySvgrCW4cFAx6o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=q3wf04KnbAkEHgWC+A33jjSzlZb8qEPLEkgwP7PI+FQ8KEvhTEw8OYkRJNLwKH18z
-	 lgdSCA+EMDz4TY4uqMvcQ8abxPe877MxDXPmHgRAS7vX6tuvvL3QKj4xHoKOz05Gfn
-	 Z9d3WL7m+Vv6vZ/LaCCKgPXsnSRbtmWhiM8ASk90zVNcg2Hm97YYCQ6jxe6T0mrPtx
-	 ecn5VKBeURBkElVh/va7higgF4X/VGeIyPYsmBhOP2aAzWWkllpzyQFVeWo87hiLIV
-	 9HdRRfFd9kEGnr+f8IBkKCe1fNlVZSX4IxlZylExgtC+CKpuFGLVmXfI0HQvE0T9eW
-	 zKnmnmjryd/Cw==
-Message-ID: <992028c4-dff1-49a5-9cef-42484783da8e@kernel.org>
-Date: Thu, 4 Dec 2025 22:15:27 +0100
+	s=arc-20240116; t=1764885468; c=relaxed/simple;
+	bh=hAao6Sspg0ZMi5IKMspwWPWxSyoBWlZMl0yhfTQsDk0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IyLEYdwLKyGkH0CwRKExpE8LVK4ZnjQgi3stMsUIwzptSMEd6p06tceUf7ucwqh+FIdEcctdt/RScCZc23O+Xg2HJZtkY86Mi/NzxAssR+CBdrZ6eb/iapoUpSbNn3ZRbCyndRjuFirlXFklClcjqf2cXRnkoaCfzhGwAi+gQmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=NPPa0g4d; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b9da0ae5763so110582a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 13:57:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1764885466; x=1765490266; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tsDCtE6tLRUGhRF1z1YiG6/esLImTKD99wVGP83kaqE=;
+        b=NPPa0g4d92g8LLYk1mO/4Xw6PenkV7nShYAkOuB0CeNIYPH8Khpt/kuOnm3e1x+OjX
+         OED6Us42LomfUFZoVgclicI4KmVnPA/2edQ7IaHpnfbLhg9uctRs2K4sU9rqgcxDwHoR
+         mNxtlKViPeYCEEQSKTE5Bj8YhFIVWOo6TaJy6dC7L3sjR56SRx5zhGO1glBlZIYVLclh
+         AOuIJepVzEowX06byvrtgXKh4B7Ljae2dkjZQC9chtvx0I35caBCCd89yg0BZhCnONCB
+         IgjRubSfXIacI93GLxtsHPgV3YbMzoK2wxc65LKKt+KlK3Tp4E27P8S6geq85JLUIO/q
+         cbAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764885466; x=1765490266;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=tsDCtE6tLRUGhRF1z1YiG6/esLImTKD99wVGP83kaqE=;
+        b=adnEvY1m9SInNCERg6abXu52RhmtwWfVUsPww0+b9OgYRMxNWVOHwOif8MS8aF9ebJ
+         zkJEbESYV98ARuYkoLlNYacCZRx0tm9mAwT9jEPtfaCruSgFlyJBuGyYJhiuM/w74SGy
+         3KygrGgnjkm8qXFAf1i8a9PPXBGzlsmdkwekd5K6mUd5ffqh5LvEB1BOzHRDWlGV3ZgT
+         8F50pYuVkkbuRS1r2XU+rh8by67+OYhvzRyXeGawM86ihi1FPkW30KyTTLYiV3apFVgW
+         TC9OrI2j2eFPijVNDV59lMtToXCLhb5CCd91eWT7LSucBjbIkbT/5cEOvI3sJiUjn+wo
+         ZFAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlZRnTg21WUTli0TU8vQ5uwc2vwkunmRgEUGvMJBYzhHYI0CkrJD45UR//HGmIF2anAHOlMXT/jnG7wU+0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/yzy9jbPGIuJRbknfpkrEnWlF7wFqLwjtIjP4z45A3So08yJt
+	JHBR6QJrNTrdrAtm5FTsmbaaDS7PdIccGauJrMav1gjZhY5/DU6SQZdVTbyBdXChS7ztDj4hYIN
+	NfwLiVJCH/q3hO4rqOKw4E9q+oS4WFn863h9GXdnAfA==
+X-Gm-Gg: ASbGncsn1+hxsbsoLxCovsBPfdDLgdyKSYEIg312zqwJHpO1zyu+8r1jziMZZGFBZq4
+	o2ywwAz+gKANVpSxzVfvSSIupEPmnWML72kVkqSMeAjnuth14hBZkrjtR0G/9SkOq9uMQjIQgK9
+	6Ws3GcfnvJ3Oa/OfG/8aQ8YL4qcsQrT7ilZ2UQcxx8DNtKWOKlTrDyNoP7Kp6F0u9ETbbOTX2Uz
+	MhHUGD6zSe+8zCJFueoV6nDCw4guHI2anbn4gpCO50zDx/Zr5taDhFbb5jD1eyfcinPQBFI
+X-Google-Smtp-Source: AGHT+IHzGh6ue1ISmfYVg1KvRCTjeVzzqsUEaYVmmzXIh45bwpQvBLxx3ZekqXYXiVSywJCD8aWgrvTId6zobtUbuY0=
+X-Received: by 2002:a05:7022:405:b0:119:e56a:4fff with SMTP id
+ a92af1059eb24-11df25c1a60mr4691237c88.4.1764885465413; Thu, 04 Dec 2025
+ 13:57:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] lib: xarray: free unused spare node in
- xas_create_range()
-To: Shardul Bankar <shardul.b@mpiricsoftware.com>, willy@infradead.org,
- linux-mm@kvack.org, akpm@linux-foundation.org
-Cc: dev.jain@arm.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, janak@mpiricsoftware.com, shardulsb08@gmail.com
-References: <7a31f01ac0d63788e5fbac15192c35229e1f980a.camel@mpiricsoftware.com>
- <20251201074540.3576327-1-shardul.b@mpiricsoftware.com>
- <57d5793d-2343-49b3-a30c-cd12dc40460d@kernel.org>
- <78c9b5eeb10051dd9791ed3cb0ce7a18eedc5e7f.camel@mpiricsoftware.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <78c9b5eeb10051dd9791ed3cb0ce7a18eedc5e7f.camel@mpiricsoftware.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251203003526.2889477-1-joannelkoong@gmail.com>
+ <20251203003526.2889477-12-joannelkoong@gmail.com> <CADUfDZoHCf4qHE1i7S4-Ya9WgGY0q6SmN4NVRgeGu347oZ6zJA@mail.gmail.com>
+ <CAJnrk1YPyfPXCggssz3qei3FBzbooSZP_VGZKJBDxxQdPZftwQ@mail.gmail.com>
+In-Reply-To: <CAJnrk1YPyfPXCggssz3qei3FBzbooSZP_VGZKJBDxxQdPZftwQ@mail.gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Thu, 4 Dec 2025 13:57:33 -0800
+X-Gm-Features: AWmQ_bmVsQfr98MJTzER5nv05FsSy9yVW7Bd0uco2mD75RiLvzc27D1OE-CydQ4
+Message-ID: <CADUfDZr4CzmRe6q88Bh3rzfwWhF=snkqvEZuok9t9Ohwji-y0w@mail.gmail.com>
+Subject: Re: [PATCH v1 11/30] io_uring/kbuf: return buffer id in buffer selection
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/4/25 15:15, Shardul Bankar wrote:
-> On Mon, 2025-12-01 at 09:39 +0100, David Hildenbrand (Red Hat) wrote:
->> Please don't post new versions as reply to old versions.
->> ...
->>
->> ...
->> The first thing xas_destroy() does is check whether xa_alloc is set.
->>
->> I'd assume that the compiler is smart enough to inline xas_destroy()
->> completely here, so likely the xa_alloc check here can just be
->> dropped.
-> 
-> Got it, will share a v4 of the patch on a new chain with redundant
-> xas_destroy() removed.
-> 
->> Staring at xas_destroy() callers, we only have a single one outside
->> of
->> lib: mm/huge_memory.c:__folio_split()
->>
->> Is that one still required?
-> 
-> I checked the callers of xas_destroy(). Apart from the internal uses in
-> lib/xarray.c and the unit tests in lib/test_xarray.c, the only external
-> user is indeed mm/huge_memory.c:__folio_split().
-> 
-> That path is slightly different from the xas_nomem() retry loop I fixed
-> in xas_create_range():
-> 
-> 	__folio_split() goes through xas_split_alloc() and then
-> xas_split() / xas_try_split(), which allocate and consume nodes via
-> xas->xa_alloc.
-> 
-> 	The final xas_destroy(&xas) in __folio_split() is there to
-> drop any leftover split-allocation nodes, not the xas_nomem() spare
-> node I handled in xas_create_range().
-> 
-> So with the current code I don’t think I can safely declare that
-> xas_destroy() in __folio_split() is redundant- it still acts as the
-> last cleanup for the split helpers.
-> 
-> For v4 I’d therefore like to keep the scope focused on the syzkaller
-> leak and just drop the redundant "if (xa_alloc)" around xas_destroy()
-> in xas_create_range() as you suggested.
-> 
-> Separately, I agree it would be cleaner if the split helpers guaranteed
-> that xa_alloc is always cleared on return, so callers never have to
-> think about xas_destroy(). I can take a closer look at xas_split() /
-> xas_try_split() and, if it looks sound, propose a small follow-up
-> series that makes their cleanup behaviour explicit and then removes the
-> xas_destroy() from __folio_split().
+On Thu, Dec 4, 2025 at 11:22=E2=80=AFAM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> On Wed, Dec 3, 2025 at 1:54=E2=80=AFPM Caleb Sander Mateos
+> <csander@purestorage.com> wrote:
+> >
+> > On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmail=
+.com> wrote:
+> > >
+> > > Return the id of the selected buffer in io_buffer_select(). This is
+> > > needed for kernel-managed buffer rings to later recycle the selected
+> > > buffer.
+> > >
+> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > ---
+> > >  include/linux/io_uring/cmd.h   | 2 +-
+> > >  include/linux/io_uring_types.h | 2 ++
+> > >  io_uring/kbuf.c                | 7 +++++--
+> > >  3 files changed, 8 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_=
+types.h
+> > > index e1a75cfe57d9..dcc95e73f12f 100644
+> > > --- a/include/linux/io_uring_types.h
+> > > +++ b/include/linux/io_uring_types.h
+> > > @@ -109,6 +109,8 @@ struct io_br_sel {
+> > >                 void *kaddr;
+> > >         };
+> > >         ssize_t val;
+> > > +       /* id of the selected buffer */
+> > > +       unsigned buf_id;
+> >
+> > Looks like this could be unioned with val? I think val's size can be
+> > reduced to an int since only int values are assigned to it.
+> >
+>
+> I'm not sure I see the advantage of this. imo I think it makes the
+> interface a bit more confusing, as val also represents the error code
+> and is logically its own separate entity from buf_id. I don't see the
+> struct io_br_sel being stored anywhere where it seems important to
+> save a few bytes, but maybe I'm missing something here.
 
-That makes sense, thanks. Handling it internally is certainly harder to 
-mess up by callers ...
+Yeah, fair enough. Looks like it's only stored on the stack and
+returned from functions. Splitting ssize_t val out of the union has
+already increased its size beyond 16 bytes, so it was already too
+large to fit in a register.
 
--- 
-Cheers
+>
+> > >  };
+> > >
+> > >
+> > > diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> > > index 8a94de6e530f..3ecb6494adea 100644
+> > > --- a/io_uring/kbuf.c
+> > > +++ b/io_uring/kbuf.c
+> > > @@ -239,6 +239,7 @@ static struct io_br_sel io_ring_buffer_select(str=
+uct io_kiocb *req, size_t *len,
+> > >         req->flags |=3D REQ_F_BUFFER_RING | REQ_F_BUFFERS_COMMIT;
+> > >         req->buf_index =3D buf->bid;
+> > >         sel.buf_list =3D bl;
+> > > +       sel.buf_id =3D buf->bid;
+> >
+> > This is userspace mapped, so probably should be using READ_ONCE() and
+> > reusing the value between req->buf_index and buf->bid? Looks like an
+> > existing bug that the reads of buf->bid and buf->addr aren't using
+> > READ_ONCE().
+>
+> Agreed. I think that existing bug should be its own patch. Are you
+> planning to submit that fix? since you found that bug, I think you
+> should get the authorship for it, but if it's annoying for whatever
+> reason and you prefer not to, I can roll that up into this patchset.
+> EIther way, I'll rebase v2 on top of that and change this line to
+> "sel.buf_id =3D req->buf_index".
 
-David
+Sure, happy to send a patch.
+
+>
+> >
+> > >         if (bl->flags & IOBL_KERNEL_MANAGED)
+> > >                 sel.kaddr =3D (void *)buf->addr;
+> > >         else
+> > > @@ -262,10 +263,12 @@ struct io_br_sel io_buffer_select(struct io_kio=
+cb *req, size_t *len,
+> > >
+> > >         bl =3D io_buffer_get_list(ctx, buf_group);
+> > >         if (likely(bl)) {
+> > > -               if (bl->flags & IOBL_BUF_RING)
+> > > +               if (bl->flags & IOBL_BUF_RING) {
+> > >                         sel =3D io_ring_buffer_select(req, len, bl, i=
+ssue_flags);
+> > > -               else
+> > > +               } else {
+> > >                         sel.addr =3D io_provided_buffer_select(req, l=
+en, bl);
+> > > +                       sel.buf_id =3D req->buf_index;
+> >
+> > Could this cover both IOBL_BUF_RING and !IOBL_BUF_RING cases to avoid
+> > the additional logic in io_ring_buffer_select()?
+>
+> Ah the next patch (patch 12/30: io_uring/kbuf: export
+> io_ring_buffer_select() [1]) exports io_ring_buffer_select() to be
+> directly called, so that was my motivation for having that sel.buf_id
+> assignment logic in io_ring_buffer_select(). I should have swapped the
+> ordering of those 2 patches to make that more clear, I'll do that for
+> v2.
+
+Makes sense. No need to switch the order of the patches.
+
+Best,
+Caleb
 
