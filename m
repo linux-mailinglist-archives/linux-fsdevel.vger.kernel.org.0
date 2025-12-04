@@ -1,135 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-70632-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07882CA2D95
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 09:41:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC92CA2E41
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 10:03:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 22FE2301E15C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 08:40:19 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4C36C3091A05
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 09:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391BB330D28;
-	Thu,  4 Dec 2025 08:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759F5333727;
+	Thu,  4 Dec 2025 09:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U55/RsT8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="giWTfCRN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC63B326930
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 08:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF5531329D;
+	Thu,  4 Dec 2025 09:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764837617; cv=none; b=QYUlw6OhYq2T/nYZ9b8iOWDQsyniojJJyvtnkZUT9GlfFtzPq0f+W32Rj/D2iGozS1NjTolh+dpAYhSZXx90s8e72DWubfzBg+MEUEsaJsT/2bheE8WD+adl0O+Np2RwWcE8DCUi9FZGcW9nhxhNMqP2f/KlmgpTBiGmU0JFesQ=
+	t=1764838943; cv=none; b=SKo3pQknqNGD0d+o7BkmyEVnsZ0x9+iphHQ9aE1vx43DfqwI+43E+GX5tdbMeLg0aI0DT5DbDHzFC7nyPgiZP+SVIixNvMJ6Pl1lRHbp31YvQ9zu5uq/RUa3wv1d/J8JKCFD+Eo7v7H/7++rWij4C9TVatCcHPBbNAhoRLInr5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764837617; c=relaxed/simple;
-	bh=FroCwkTNZSbRQ7TU99YyvaiIjh/ta9/hGMaO6hX8Pms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e/uj/q79qxcubCARCwoUtkLz7mAhz2f4NxFJj9NAxKU0n2sPWAqM3GGSEiLSdklgdjl5Nh/5BGXMKv8CSs1sdMu2QBftYB4P0jxDVSRoLvr4bSpT3hEzDl+ycUWejoTINwh/stWyeqMEIheOHWz1AsvYM7lXaj6yAfheC/HP5ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U55/RsT8; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-644fcafdce9so1058927a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 00:40:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764837614; x=1765442414; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gRRLPG76m6Du1ADzYb/YIlc2W//pdAMonfFY/36m1Uc=;
-        b=U55/RsT8X8Rodbd14P6Gwp1cQ0/NlnP1tOasTfKEd0VWjFNPawRIWV03MbPNXL6ijY
-         QQ+Wo+3aRejPxmZVQpq1qVmTqvKm0jUJecHtZ33yf78Bj74u0VxxB0nU4ouL8yz+jM4N
-         k1Wua+bzWP2xZruNXGdA41LCkSPNltmitYLUKS+x9RElz83YVzBkCJK2trfJHNC9ziuV
-         RzSI5SP/TSa3PyEcaRUMJbn6vWeyDrbCXey530J9rm6Ff2ftgEo5DWTIThP/51oizQL7
-         UEwxxwW6790Asujno52QYk22Dr4OHbUw61LC15gPl6crM8V0H8m6xyH48KXpWj/xqomV
-         oqMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764837614; x=1765442414;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gRRLPG76m6Du1ADzYb/YIlc2W//pdAMonfFY/36m1Uc=;
-        b=PL8RYspn3DbsvQLsgur2zdt8QMdoalB8ccepnuV+3W6Ngh8t8F0IDlYhjcomX/HV1C
-         ZGPSgPtih8FDn+C3Da31wGt1ZVbS0aVn92MlQCOEnzdj7LLh+N4/Rd/HA0Pyy5Dsmldm
-         EVPSiA+9cXEMXKmveVaDZF0+oCEcHZxVVUXMGdgUyLmpxQ8suFTw5JhWp4M/C4DP5vXq
-         5ueJn+dIKAwi1tBs6Eie2gcgi3XnuZMTX6K83QYI2YPk2gnIarIqXAqediAW3+8n1V6B
-         X/FrxrIhm1ahw0GaIZdM0/Q3Ds3nmBuuAselc4d8Q3gS8v0yux+0oVJIOYFzz6E7zIW/
-         v8zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPxnnH60dONXn+/w2xi2eaVGFw0QLKVtG0Zh90CGKLLImI/A7lmTxCX19R9oJU88b0d9GTtgHzk4Gj10+d@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7Zxb+oQfe+2yjmeoOAn6S3UTGOOlLF2ajV2hbzKVy0DxYXdNL
-	akzVM1Fbqnulrw1bzIL+FVQLy6pvLOubQd237TA1Uc8kBraBi3OiUx9WdEGWYVNQqZp5zYHWpj2
-	JcY9sdFtdnEXEdU2cB5AFb6KjQcZwVCk=
-X-Gm-Gg: ASbGncsv1EO3gnNhTDO7kXsUdf63ERCsohO32Vip+nkVOayredDC0R4OAV59HRj1VyV
-	Bn33mLWlw3QopAeKFNpEKbCXfXCO0P0cTRiBqo2k742obMNs3sYnF4Y0KmFUs3RB7jEEPBWqbNZ
-	3DMh8Kkvu4SNyWujJEnYtoMmMyI+3NyDec204vYa9i3Yu9VG68YS9xNF40sCs5tPs5k/DZfLiW0
-	n9eBN3ayqusAtbwda+Bdq3l1fm8v/2CsPHfalPPuPaSFJerhovDm7nQ5t2ARi+wsJU3V2oOZDE/
-	oG0nlIHWfoXCetPLBlx4elnZyr1LvwPTsqzL
-X-Google-Smtp-Source: AGHT+IGlFWje4U/u/Ih/ONo6YwiZd7raWA7THK9IcGYx+25tDvWlw2E3FAkL0bv0Df4dVPXNv3OSYE+s0HYI7vSQfuo=
-X-Received: by 2002:a05:6402:234a:b0:634:ce70:7c5 with SMTP id
- 4fb4d7f45d1cf-647abdcf6camr1736379a12.17.1764837613800; Thu, 04 Dec 2025
- 00:40:13 -0800 (PST)
+	s=arc-20240116; t=1764838943; c=relaxed/simple;
+	bh=tlijTN0WqVPKyE8pAOoAFPBzxnjWCiVy/N6C14hSgGc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KtQ+1ci2rWl2wlz75w2FwNY41ZJJrR3OJqS8uB3hv5y4gmL+OKcyAPx429HG0VuAZZJD4wrMZTolcFJI+4jLb6+Ii2toFUtEUdBzOAnYf/Fb+AXJaKFKYT5fWOKwrNmK3BmfW0uGoj07pJvACrUWGFHvX8YgXWBzL0deIwn0Pfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=giWTfCRN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4917DC4CEFB;
+	Thu,  4 Dec 2025 09:02:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764838943;
+	bh=tlijTN0WqVPKyE8pAOoAFPBzxnjWCiVy/N6C14hSgGc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=giWTfCRNw3OXIrYyH6ZBuYfuUBwLl5Q2dxgIZ6Sf2QelZvfpIEPyeTXgsb7YCajuZ
+	 xBNOaI8X+FJyWsCsN9+c46Bczuf7GnMHBV9/QfaQuhQ/Uen3yjcwNGtn9G6S7dgHO2
+	 Bya7eDNN2WsUjUctomo3fkGLnIPKYSF2TDb8//TMg1YAEsnY/wXKV22yGetCW5DXXy
+	 AdXpqE0Wxz+Dh0xwzKPkvRjszDY0OIUN2zQhXtn2Pny9W3M8pB9m3Ta6GRdmE+qbQG
+	 OBk8B8YtlMsSWKNjFJgnYDZcU8QlU6O9+9CpO74l7UOvUWPYpijTtNAavm3kBx+eK9
+	 k5RN4SO9Av9dA==
+From: Christian Brauner <brauner@kernel.org>
+To: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] vfs: use UAPI types for new struct delegation definition
+Date: Thu,  4 Dec 2025 10:02:05 +0100
+Message-ID: <20251204-haargenau-hauen-6d778614c295@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251203-uapi-fcntl-v1-1-490c67bf3425@linutronix.de>
+References: <20251203-uapi-fcntl-v1-1-490c67bf3425@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6w4u7ysv6yxdqu3c5ug7pjbbwxlmczwgewukqyrap3ltpazp4s@ozir7zbfyvfj>
- <6930e200.a70a0220.d98e3.01bd.GAE@google.com> <CAGudoHE0Q-Loi_rsbk5rnzgtGfbvY+Fpo9g=NPJHqLP5G_AaUg@mail.gmail.com>
- <20251204082156.GK1712166@ZenIV>
-In-Reply-To: <20251204082156.GK1712166@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 4 Dec 2025 09:40:01 +0100
-X-Gm-Features: AWmQ_bmNCQYBKlBK115x3hqZe8lwJ60rwoZL8UAGeBOKbtZYBd__aUpRO-CzYk8
-Message-ID: <CAGudoHGLFBq2Fg5ksJeVkn=S2pv6XzxenjVFrQYScA7QV9kwJw@mail.gmail.com>
-Subject: Re: [syzbot] [exfat?] [ocfs2?] kernel BUG in link_path_walk
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: syzbot <syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com>, 
-	brauner@kernel.org, jack@suse.cz, jlbec@evilplan.org, 
-	joseph.qi@linux.alibaba.com, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mark@fasheh.com, 
-	ocfs2-devel@lists.linux.dev, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1057; i=brauner@kernel.org; h=from:subject:message-id; bh=tlijTN0WqVPKyE8pAOoAFPBzxnjWCiVy/N6C14hSgGc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQa+onUSrd+i07ncKrbymywf0rXy2l+DsfPs3Dbv2D6U h/+8nJcRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwE02Yvjv/mjC3yAPE83TNswT +myMO9f4HFx67aeN4Jq3GxkcvONzGf4psnu0sX5dcX5T5e4ZGRn9poeqSnV4eLhf+/SkR8w6p8c GAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 4, 2025 at 9:21=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->
-> On Thu, Dec 04, 2025 at 08:45:08AM +0100, Mateusz Guzik wrote:
->
-> > Or to put it differently, lookup got entered with a bogus state of a
-> > dentry claiming it is a directory, with an inode which is not. Per the
-> > i_mode reported in the opening mail it is a regular file instead.
-> >
-> > While I don't see how this can happen,
->
-> ->i_op set to something with ->lookup !=3D NULL, ->i_mode - to regular.
-> Which is to say, bogus ->i_mode change somewhere.
->
-> Theoretically it should bail out, having detected the type change
-> (on inode_wrong_type()).  I'd suggest slapping
->         BUG_ON(inode_wrong_type(inode, new_i_mode_value));
-> in front of all reassignments (ocfs2_populate_inode() is the initializati=
-on
-> and thus exempt; all other stores to ->i_mode of struct inode in there
-> are, in principle, suspect.  Something like inode->i_mode &=3D ~S_ISUID
-> doesn't need checking - we obviously can't change the type there.
-> Unpleasant part is that struct ocfs2_dinode also has a member called
-> i_mode (__le16, that one), so stores to that clutter the grep results...
+On Wed, 03 Dec 2025 14:57:57 +0100, Thomas Weißschuh wrote:
+> Using libc types and headers from the UAPI headers is problematic as it
+> introduces a dependency on a full C toolchain.
+> 
+> Use the fixed-width integer types provided by the UAPI headers instead.
+> 
+> 
 
-Now that I wrote this I suspect there is at least one way, regardless
-of whether ocfs2 is culprit.
+Applied to the vfs-6.20.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.20.misc branch should appear in linux-next soon.
 
-Suppose you are in rcu-walk and someone continuously issues mkdir,
-rmdir, creat, unlink on the same pathname. Affected dentry will keep
-flipping between directory, negative entry and regular.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-While such fuckery will be caught with seq changes, perhaps the
-intermediate state can indeed result in finding such a mismatch but
-only because of a race.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-I'm going to have to chew on it, I don't know if I';ll have time today
-to deal with it. Worst case the fix will be to check if this is a dir
-in lookup_inode_permission_may_exec instead of merely asserting on it.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.20.misc
+
+[1/1] vfs: use UAPI types for new struct delegation definition
+      https://git.kernel.org/vfs/vfs/c/b496744de0d0
 
