@@ -1,199 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-70699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50940CA4EFF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 19:28:42 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40DC8CA4FA4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 19:45:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1FA4E318209A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 18:23:30 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C5A0531731F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 18:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5092328D82F;
-	Thu,  4 Dec 2025 18:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B481198E91;
+	Thu,  4 Dec 2025 18:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="KNz5yGZ1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eJY9BPV4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A3C1DE894;
-	Thu,  4 Dec 2025 18:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6FA86337
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 18:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764872519; cv=none; b=HkZGXFP3XZYIigYfbDlJVHUwopPsdUfhnGEA8W9iKVH8LMftjrWzqfavZsR41/afDF3cf6ofAA6/T6yg1GcWVlPmTvJXq00WfyRxa4R5O1zdgpvcUw1OtTfaI0zhYThgs1txG2dMGECJEBrURvu5oM3NmU0n5B5vTHKAbx3KcY0=
+	t=1764873709; cv=none; b=DWvFFHiXKmfttzvrbzIDCW9ptz9u/F08U3x/BiqXEr1/mMV6EN842AMPqfssi2U5dq0uwCHazroDw4S4oOB759SaoeQGXXAFxCQifY17RvF7gJaaLoP8hXLoAiDN2isUQppLcBQta9ocFtW1BZcddI1hKCyDfhgroe5MBiaaysM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764872519; c=relaxed/simple;
-	bh=iBs8oqNylS20BNIma8UQOztYSzouNkvhiyuPEdaXm5I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rx6CCqSymjo0Z2tE0Vq8xvUHfO6SV9rpg347TPxYdWDMFYl7vrR2HZXZ5+xP3Q5sz+ncpep51zdk9e/tlaRHbQlvtmJedRaVqA8IQwUmKjPOoTENnPOq6vHSdhJvzeAPZmDDKHxCORtHQOMipfi3ntLgANBptPk8lP3eDOwgD+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=KNz5yGZ1; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Mh
-	wdKbyds6+IQJbw5pYLFT3OJ2yNIIBki/DuDL13smY=; b=KNz5yGZ1Vz6R043kBP
-	ON1z12+I6GC1RxrL8oMX01glgs9nDfRpMcMa5hWmeIE6vY/EuCgD7TTmrxlYt+Av
-	N4m5dIpaL3/G2qenn6vqJG+cnKUF09okoQCMEj+z6RQQbU7PM4lNdP7vHdhvIpoQ
-	JmbimgoYLDsq0Kc/Adl1ojBhk=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3XzUZ0TFpfsQREw--.21082S2;
-	Fri, 05 Dec 2025 02:21:13 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: mingo@kernel.org
-Cc: anna-maria@linutronix.de,
-	frederic@kernel.org,
-	jackzxcui1989@163.com,
-	kuba@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tglx@linutronix.de
-Subject: Re: [PATCH 2/2] timers/nohz: Avoid /proc/stat idle/iowait fluctuation when cpu hotplug
-Date: Fri,  5 Dec 2025 02:21:13 +0800
-Message-Id: <20251204182113.1518271-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <aS4FztjNAwVNfoUk@gmail.com>
-References: <aS4FztjNAwVNfoUk@gmail.com>
+	s=arc-20240116; t=1764873709; c=relaxed/simple;
+	bh=oMxtseEHZHa9YPb72NIgSljc1Ghrok0Q/j2CLZ8SOwM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=reNUVb4siAmkPdmKRvzn5R7xiILWC0WaFkaBFXLd0TSSNRGWCE6nRbj3+7RpHEN6WYQeFYwSyY5XrSJFh7ZoE99H4/sXKbqj4N0mBHUZQbB60rgWIaWjL0CI5KAgzGFC3mVXp/NmJ4YaTtMVPonGTNQUF1D0my3mbl3YlHtgAjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eJY9BPV4; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4ed9c19248bso10721611cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 10:41:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764873707; x=1765478507; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xHUuZbyhOsjTm6zi6UjvRRrq0uw47xR4EWsXhEDK7YA=;
+        b=eJY9BPV4MMQ4u73bVzr3ZG7umpc3SE9dOxfAEkHUoA4BTQ/lJOyywbra8fdZtABvbm
+         EPcBRPftz/MoKPwXLc8l+1Xahy9CZo/50NqVCKCS+X59vVEtySxxZ4K/CSmhVp+LwRiQ
+         3q+lCLw5NG6r6GmAhBGI/0s+vi4l0WkYGTNhESE46svvCHW2Z5uh3eoCaLqgEdnDhhC9
+         20Yi5IYPRpnq10azRdjcVuf7RMNeU6yDnOkEPP1am90HyHEcUyUtM/42ta492Jt20iLA
+         s7hbc16zmAJHRnNPbFLltzXhQE66CC1fkHQ08ZoZY04VqPMMxoGkLKD1vp4tIndO6rN6
+         IL9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764873707; x=1765478507;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xHUuZbyhOsjTm6zi6UjvRRrq0uw47xR4EWsXhEDK7YA=;
+        b=jHAfz2nOP9iO0CLqwTE/5A6TGR0jb2BLa1CQKaqs0UgXEfPeFsHI8lGIhS8WzjEaFT
+         E5EldV0hDyAEpUrUOohpYrNvvtdC3+IkKw0pOEJs1imJlfcMwnFf8/sll9068vzUyjEh
+         pRdgHDhJh142I96DjOmZiFhftxaUfGs2LCeeNHM//HgQAPqzv2BcPY0kvV0Hyjx2k3BF
+         f+wlsMGuaq7P/V33f2rNmonOPNOUTrxtcZAOoAwgGrfmu0PWz8hfKvBkfotx76lCrvtN
+         1NyTu7V02gc+HS5YeTuW4TQ9faHC1M5koENBXa8UTe1P7SK5xuCJOi2z2lEIoOYi0+4A
+         X8Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVppxQtRg+jEALnrWMqI2w1ulknP7lM/yxvR3pF3i07h/jza13uPMqHAcCi5QoW9xcRmBWw+b9MRb2BiRnm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+ka1HsFXhf86NRqcmQrp9n3H5IKRPL9l+O9GO9P81AJgUhJJX
+	/BF/DEsnE087OAKh01jAtfQXhpAiMjmmIbVQQwK11r5Z7wedwWAh3mvDis0q96wS9a++AfoeApI
+	hon0Z+6wTWqxHsLvebshbt4D5BftYK18=
+X-Gm-Gg: ASbGncvZDo67aFPFAsKhScg1M9baia/JJPiklblZzwBs5fCZNbGDgJH4Ug6knBrk/Rf
+	9XtAeE4etXJD6s7t7weiEkz0aNb2X3PILkP/Ni8JYAS2VHs+gAIS+EY/+Ncjs4E4GvgmAfHiP9B
+	kCRCpUF+iuPe24VzdCVeCCSoL/rEpdEV19hmMs+juH4wB6ugrgHEhGpvhmW8wTLjyJxXruT35Tj
+	LcsguEKuvVdqxd7KTCiVBDy8EeOD9UIjmmX/BmZD9ZrKEpBIUzQiatSdujyq4+R+HE+Xw==
+X-Google-Smtp-Source: AGHT+IEXqmdYq7NWbh0lEr3OP77o/zq7hwCM7BW2t0yMD4BoTcUEH86kyL1ZuT11ypXZ6uf7smMqiiOGZjm6B2OqvIM=
+X-Received: by 2002:a05:622a:1a11:b0:4ef:bd18:e20f with SMTP id
+ d75a77b69052e-4f0176cf76cmr90222301cf.82.1764873706906; Thu, 04 Dec 2025
+ 10:41:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3XzUZ0TFpfsQREw--.21082S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3JF17Cr1DtrW7ArW5Gr4xXrb_yoW7Cw4UpF
-	W7tw40qr4DWFyjg3yIkw1jqrySgrs7AF9xKwn7KFZYyF45Xr1xGr48tryUuFyxuas7Zr1a
-	v3y2gryxA398KaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pKg4agUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiGQYaCmkxzNpdXgAAsC
+References: <20251203003526.2889477-1-joannelkoong@gmail.com>
+ <20251203003526.2889477-7-joannelkoong@gmail.com> <CADUfDZqzpfnq8zfYNT7qQdauMmQQ=z6xi9Am-KyQc148oxwAxA@mail.gmail.com>
+In-Reply-To: <CADUfDZqzpfnq8zfYNT7qQdauMmQQ=z6xi9Am-KyQc148oxwAxA@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 4 Dec 2025 10:41:35 -0800
+X-Gm-Features: AWmQ_blFgkVmktTumcbh6U6UTiyBFhMQS1VT4QDoCvoJxMOw5ECuYMNLnDE3VQ8
+Message-ID: <CAJnrk1aNWCNJw9C0TpNysnfg64fQjg06OSE+GYy6Eh0BMfiPDA@mail.gmail.com>
+Subject: Re: [PATCH v1 06/30] io_uring/kbuf: add buffer ring pinning/unpinning
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear Ingo,
-    Sorry for reply late, working on another urgent task recently.
+On Tue, Dec 2, 2025 at 8:13=E2=80=AFPM Caleb Sander Mateos
+<csander@purestorage.com> wrote:
+>
+> On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmail.c=
+om> wrote:
+> >
+> > Add kernel APIs to pin and unpin buffer rings, preventing userspace fro=
+m
+> > unregistering a buffer ring while it is pinned by the kernel.
+> >
+> > This provides a mechanism for kernel subsystems to safely access buffer
+> > ring contents while ensuring the buffer ring remains valid. A pinned
+> > buffer ring cannot be unregistered until explicitly unpinned. On the
+> > userspace side, trying to unregister a pinned buffer will return -EBUSY=
+.
+> > Pinning an already-pinned bufring is acceptable and returns 0.
+> >
+> > The API accepts a "struct io_ring_ctx *ctx" rather than a cmd pointer,
+> > as the buffer ring may need to be unpinned in contexts where a cmd is
+> > not readily available.
+> >
+> > This is a preparatory change for upcoming fuse usage of kernel-managed
+> > buffer rings. It is necessary for fuse to pin the buffer ring because
+> > fuse may need to select a buffer in atomic contexts, which it can only
+> > do so by using the underlying buffer list pointer.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  include/linux/io_uring/buf.h | 28 +++++++++++++++++++++++
+> >  io_uring/kbuf.c              | 43 ++++++++++++++++++++++++++++++++++++
+> >  io_uring/kbuf.h              |  5 +++++
+> >  3 files changed, 76 insertions(+)
+> >  create mode 100644 include/linux/io_uring/buf.h
+> >
+> > diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> > index 00ab17a034b5..ddda1338e652 100644
+> > --- a/io_uring/kbuf.c
+> > +++ b/io_uring/kbuf.c
+> > @@ -9,6 +9,7 @@
+> >  #include <linux/poll.h>
+> >  #include <linux/vmalloc.h>
+> >  #include <linux/io_uring.h>
+> > +#include <linux/io_uring/buf.h>
+> >
+> >  #include <uapi/linux/io_uring.h>
+> >
+> > @@ -237,6 +238,46 @@ struct io_br_sel io_buffer_select(struct io_kiocb =
+*req, size_t *len,
+> >         return sel;
+> >  }
+> >
+> > +int io_uring_buf_ring_pin(struct io_ring_ctx *ctx, unsigned buf_group,
+> > +                         unsigned issue_flags, struct io_buffer_list *=
+*bl)
+> > +{
+> > +       struct io_buffer_list *buffer_list;
+> > +       int ret =3D -EINVAL;
+> > +
+> > +       io_ring_submit_lock(ctx, issue_flags);
+> > +
+> > +       buffer_list =3D io_buffer_get_list(ctx, buf_group);
+> > +       if (likely(buffer_list) && (buffer_list->flags & IOBL_BUF_RING)=
+) {
+>
+> Since there's no reference-counting of pins, I think it might make
+> more sense to fail io_uring_buf_ring_pin() if the buffer ring is
+> already pinned. Otherwise, the buffer ring will be unpinned in the
+> first call to io_uring_buf_ring_unpin(), when it might still be in use
+> by another caller of io_uring_buf_ring_pin().
 
+That makes sense, I'll change this to return -EALREADY then if it's
+already pinned.
 
-On Mon, 1 Dec 2025 22:17:02 +0100 Ingo Molnar <mingo@kernel.org> wrote:
-
-> > The idle and iowait statistics in /proc/stat are obtained through
-> > get_idle_time and get_iowait_time. Assuming CONFIG_NO_HZ_COMMON is
-> > enabled, when CPU is online, the idle and iowait values use the
-> > idle_sleeptime and iowait_sleeptime statistics from tick_cpu_sched, but
-> > use CPUTIME_IDLE and CPUTIME_IOWAIT items from kernel_cpustat when CPU
-> > is offline. Although /proc/stat do not print statistics of offline CPU,
-> > it still print aggregated statistics for all possible CPUs.
-> > tick_cpu_sched and kernel_cpustat are maintained by different logic,
-> > leading to a significant gap. The first line of the data below shows the
-> > /proc/stat output when only one CPU remains after CPU offline, the second
-> > line shows the /proc/stat output after all CPUs are brought back online:
-> > 
-> > cpu  2408558 2 916619 4275883 5403 123758 64685 0 0 0
-> > cpu  2408588 2 916693 4200737 4184 123762 64686 0 0 0
-> 
-> Yeah, that outlier indeed looks suboptimal, and there's 
-> very little user-space tooling can do to detect it. I 
-> think your suggestion, to use the 'frozen' values of an 
-> offline CPU, might as well be the right approach.
-
-Thanks.
-
-> What value is printed if the CPU was never online, is 
-> it properly initialized to zero?
-
-I've done the experiment printing the values of tick_sched in secondary_start_kernel
-just before executing set_cpu_online. It is confirmed that variables in tick_sched
-structure, such as idle_active and idle_entrytime, are all 0, tick_sched variable is
-a per-CPU variable defined at the beginning of tick-sched.c, named tick_cpu_sched.
-Like other global variables, if per-CPU variables are not explicitly initialized to
-specific value, they will be set to 0 by default.
-
-
-
-> So why not just use the get_cpu_idle_time_us() and 
-> get_cpu_iowait_time_us() values unconditionally, for 
-> all possible_cpus?
-> 
-> The raw/non-raw distinction makes very little sense in 
-> this context, the read_seqlock_retry loop will always 
-> succeed after a single step (because there are no 
-> writers), so the behavior of the full get_cpu_idle/iowait_time_us()
-> functions should be close to the _raw() variants.
-> 
-> Patch would be much simpler that way.
-
-Perhaps I didn't choose a good name; using the word "raw" indeed evokes thoughts of
-preventing deadlocks in sequential locking. My original intention was to differentiate
-from the logic of calculating:
-
-delta = ktime_sub(now, ts->idle_entrytime);
-
-in get_cpu_sleep_time_us, which adds this delta to the returned idle time.
-
-
-If we use the original get_cpu_sleep_time_us interface directly, the calculation logic
-still run even when the CPU is offline. The following four lines show the tick_sched
-corresponding to CPU 3 during its offline period:
-
-[  897.136535] zhaoxin:get_cpu_idle_time_us_raw(3)=823703591,get_cpu_idle_time_us(3)=842938736
-[  897.136540] zhaoxin:cpu[3]tick_sched info:[idle_active:1][idle_entrytime:877900502450]
-[  935.501687] zhaoxin:get_cpu_idle_time_us_raw(3)=823703591,get_cpu_idle_time_us(3)=881303888
-[  935.501694] zhaoxin:cpu[3]tick_sched info:[idle_active:1][idle_entrytime:877900502450]
-
-As above, values obtained from get_cpu_idle_time_us_raw remain constant, while values
-from get_cpu_idle_time_us continue to increase.
-
-Since the CPU is already offline, the statistics for any CPU might stop increasing as well?
-
-The following /proc/stat statistics are 'just before the CPU went offline' and 'just after
-bringing all CPUs back online', all CPUs are offline except CPU0:
-
-'just before the CPU went offline':
-cpu  444829 5 254942 6833361 782 49798 20514 0 0 0
-cpu0 68788 1 54126 636019 202 10827 3059 0 0 0
-cpu1 58191 0 30832 303281 24 6896 1677 0 0 0
-cpu2 7770 0 8268 380039 31 1826 1022 0 0 0
-cpu3 7954 0 7476 381024 30 1776 976 0 0 0
-cpu4 8319 0 6557 382425 48 1713 805 0 0 0
-cpu5 8526 0 5791 383103 37 1681 811 0 0 0
-cpu6 22202 0 10746 361746 37 1872 729 0 0 0
-cpu7 35019 0 23848 330534 32 3873 1757 0 0 0
-cpu8 35065 1 23654 330980 16 3859 1690 0 0 0
-cpu9 1065 0 4302 395611 48 1290 861 0 0 0
-cpu10 38462 0 12500 362772 19 1879 801 0 0 0
-cpu11 37863 0 11913 363654 26 1843 567 0 0 0
-cpu12 37717 0 10885 364177 25 1792 845 0 0 0
-cpu13 37338 0 10219 365103 32 1763 646 0 0 0
-cpu14 14212 0 10272 370534 34 1818 1384 0 0 0
-cpu15 1677 0 7933 391188 51 1501 1557 0 0 0
-cpu16 9744 0 5015 375124 21 1687 708 0 0 0
-cpu17 14908 0 10597 356039 61 1894 611 0 0 0
-
-'just after bringing all CPUs back online':
-cpu  447782 5 257163 6861054 797 50101 20624 0 0 0
-cpu0 70102 1 55738 661461 215 11111 3163 0 0 0
-cpu1 58283 0 30873 303386 26 6897 1677 0 0 0
-cpu2 7869 0 8301 380147 31 1828 1022 0 0 0
-cpu3 8063 0 7510 381130 30 1777 976 0 0 0
-cpu4 8417 0 6594 382540 48 1714 805 0 0 0
-cpu5 8605 0 5849 383217 37 1682 811 0 0 0
-cpu6 22300 0 10779 361869 37 1874 730 0 0 0
-cpu7 35105 0 23897 330659 32 3874 1757 0 0 0
-cpu8 35168 1 23694 331102 16 3860 1690 0 0 0
-cpu9 1154 0 4338 395750 48 1291 862 0 0 0
-cpu10 38565 0 12527 362908 19 1880 801 0 0 0
-cpu11 37956 0 11943 363799 26 1844 567 0 0 0
-cpu12 37835 0 10901 364316 25 1793 845 0 0 0
-cpu13 37410 0 10278 365250 32 1764 646 0 0 0
-cpu14 14326 0 10291 370686 34 1819 1385 0 0 0
-cpu15 1767 0 7964 391349 51 1502 1560 0 0 0
-cpu16 9860 0 5036 375275 21 1688 708 0 0 0
-cpu17 14989 0 10641 356203 61 1895 611 0 0 0
-
-As we can see, current implementation of cpu statistics come to a halt when cpu offline.
-
-
-So, can we keep the current patch as it is, or use a different name, such as get_cpu_idle_time_us_halt?
-
-
---
-Xin Zhao
-
+Thanks,
+Joanne
+>
+> Best,
+> Caleb
+>
 
