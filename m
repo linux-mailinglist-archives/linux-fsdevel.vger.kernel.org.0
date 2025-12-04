@@ -1,306 +1,342 @@
-Return-Path: <linux-fsdevel+bounces-70669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 061F2CA3F36
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 15:11:34 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD59CA3FD6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 15:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 07B5D301B12F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 14:11:32 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 740A3302DF33
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 14:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A00341AAE;
-	Thu,  4 Dec 2025 14:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F5134A3BC;
+	Thu,  4 Dec 2025 14:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tm70lfgF"
+	dkim=pass (2048-bit key) header.d=aisec.fraunhofer.de header.i=@aisec.fraunhofer.de header.b="WX0vUoK8";
+	dkim=pass (1024-bit key) header.d=fraunhofer.onmicrosoft.com header.i=@fraunhofer.onmicrosoft.com header.b="ZsCe5Xpk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-edgeka30.fraunhofer.de (mail-edgeka30.fraunhofer.de [153.96.1.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053F633F8A8;
-	Thu,  4 Dec 2025 14:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764857488; cv=none; b=ao8U/SHUaEJMvH28qrc1TERp6jZ6rb78aPwQpY7m42mdj648B0ilCZ+K7Z3BYnhwBWbyo49Ursw5QW0yKB1+dwCU2c89uLsqQHltdLn/qi29oR5Cyo+hR/yxBbquBUP3O+9KXaeaSa4d4OdCIMzhTJhrt2PfhVTd4touo6l5nSg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764857488; c=relaxed/simple;
-	bh=m3H/3ioNp9U4j7DEHrzqol59bKijaqgK49gOb72xL0M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZuQeDGl/gA+LTa1ZsFU/DjuMWeKUPT5sR62hfNp9/sif9t0ykBqVXwzt4tkKd+5UUi/QwxuwjgY7kZ8GFIiWvTE/NXk6UQC09GieFcVg9deuh8+iyvevedcd6+tIDvp/13IxMMsmFrtBnrBDgRC4oAv1R5W3XIYLYQP7edzUvTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tm70lfgF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1572EC116D0;
-	Thu,  4 Dec 2025 14:11:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764857487;
-	bh=m3H/3ioNp9U4j7DEHrzqol59bKijaqgK49gOb72xL0M=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=tm70lfgFyib2UED/ePDToCcQsDnLXjzfwjRX99vC2YxT5gzG/ZLZj4cPGybJXqrId
-	 iSWaNx9HfMsvNN32luCQh6Si5GuSr2OU0q4+KGNtyaZEPasaolyMWRRL6FHDS1er8d
-	 mApW7+4L6zWRv0pNVTqT1iM3IklHtMBPgznpvij8n0QoU15RjHFw45lYl8ZpFkfUaF
-	 wNU6kuH19ha45AhKDKp3UZ6jIYZOQFWD1Ck8rnUcHhpPfVNh6heVST1W2zHaYYutdT
-	 eiABNhMO2t0av1i0rXL6yq1cdRYmm9T5ninVzrbZMoTOBztvQe8wBcrTNwa3pxqmnw
-	 rHnr5TXZRG5jw==
-Message-ID: <37d39ff38dfef8bae73c5bc6a8593784bb2d3774.camel@kernel.org>
-Subject: Re: [PATCH v7 0/3] statmount: accept fd as a parameter
-From: Jeff Layton <jlayton@kernel.org>
-To: Bhavik Sachdev <b.sachdev1904@gmail.com>, Alexander Viro	
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Shuah
- Khan	 <shuah@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, criu@lists.linux.dev, Jan Kara
- <jack@suse.cz>,  Aleksa Sarai <cyphar@cyphar.com>, Miklos Szeredi
- <miklos@szeredi.hu>, Pavel Tikhomirov	 <ptikhomirov@virtuozzo.com>, Andrei
- Vagin <avagin@gmail.com>, Alexander Mikhalitsyn <alexander@mihalicyn.com>,
- John Hubbard <jhubbard@nvidia.com>, Amir Goldstein	 <amir73il@gmail.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,  Andrew Donnellan	
- <ajd@linux.ibm.com>
-Date: Thu, 04 Dec 2025 09:11:24 -0500
-In-Reply-To: <20251129091455.757724-1-b.sachdev1904@gmail.com>
-References: <20251129091455.757724-1-b.sachdev1904@gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B07D34321D;
+	Thu,  4 Dec 2025 14:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=153.96.1.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764857791; cv=fail; b=UFghvoe/upodv3a982K7TRTwqp5/N2Dny8weU+dNOff7FVtQFC5zQR2DO0W0/R8L2PWOLRE7LwvVHoS42H9WQFTD0XfSDfy+TiXjbLElj6LC5oIK25/ept1BVcePzPcxXgghWmoBSEy5BbLRaIHvoYCXF0bKQYPJPEH4RzURZVI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764857791; c=relaxed/simple;
+	bh=RLMriuCadsnJtGQYE3HzU9vrXSvvNC0CshUqifJncdw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=C8EXnCEjW1maqD9uuUh4lax2hPQtQCMZbuC876BMcJ5UNRbpAKpvPT+XA8eZZpO3yEtEj6vHKlXb3xRim6hcRK3O0KMM2DBABQJxER7XKUGroiOf/H48M2kRGNo/8KJMzDwMrlB6MsLI7Iso7JD+XkIvWsspxP25q2AhYWWiJfQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aisec.fraunhofer.de; spf=pass smtp.mailfrom=aisec.fraunhofer.de; dkim=pass (2048-bit key) header.d=aisec.fraunhofer.de header.i=@aisec.fraunhofer.de header.b=WX0vUoK8; dkim=pass (1024-bit key) header.d=fraunhofer.onmicrosoft.com header.i=@fraunhofer.onmicrosoft.com header.b=ZsCe5Xpk; arc=fail smtp.client-ip=153.96.1.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aisec.fraunhofer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aisec.fraunhofer.de
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=aisec.fraunhofer.de; i=@aisec.fraunhofer.de;
+  q=dns/txt; s=emailbd1; t=1764857788; x=1796393788;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=RLMriuCadsnJtGQYE3HzU9vrXSvvNC0CshUqifJncdw=;
+  b=WX0vUoK8HFGBRfHoXzvnJTn3lAb7Npl91427Z9tnyMTmh2v6WGxlkhXY
+   fiSyf1FEt52CXWrgQUylokqd5OXHcXFgHmbo346U+mFS0O8XPzgCW7Jod
+   rlgbAq57qj+dvcDewzzi918tPkO8FeZrlbdwWKq5KFFbdn55V+JbSMxuC
+   gJ46mnwyp/IqMjx5jY70UxhE74gUs7GNWBoGwR4nFq8+PJijOlp2Ni5n8
+   4cNJLpL/sqqVJ7Ptoxo4yEEKWOkXXten4K3Nzs4etMNOlxpVIhZ7SW4OT
+   y0ouwR0594c1LoHHXSkAx9y3LvF+6LX5noJc4q7w2I0qvtX7a7YFGOsu5
+   Q==;
+X-CSE-ConnectionGUID: nVPtR+FgRk25L5HAMruvVw==
+X-CSE-MsgGUID: EFhERNdvTOCACoEpLXk9IA==
+Authentication-Results: mail-edgeka30.fraunhofer.de; dkim=pass (signature verified) header.i=@fraunhofer.onmicrosoft.com
+X-ThreatScanner-Verdict: Negative
+X-IPAS-Result: =?us-ascii?q?A2F8BAA4Va1o/x0BYJlaglyCQEABgiWzOIJQA1cPAQEBA?=
+ =?us-ascii?q?QEBAQEBCAFRBAEBAwSFAAKMJyc3Bg4BAQEBAwEBAQEBAgUBAQEBAQEBAQEBA?=
+ =?us-ascii?q?QsBAQYBAgEBAQQIAQKBHYYJRg2CW4EsgSYBAQEBAQEBAQEBAQEdAjVWBjIBD?=
+ =?us-ascii?q?QEBNwEPC0YxJQYOBYMCgiUEEgM1u1aBAYIMAQEG2ykYY4FkCQkBgT+DfIFwg?=
+ =?us-ascii?q?mQBhHxwhHc2gVVEgUqCdT6EWDiFd4M8ml1ICngcA1ksAVUTDQoLBwWBIEMDN?=
+ =?us-ascii?q?QwLLhUjSwUtHYEneYQVhB8rT4IbcoF1QRk/g1MeBmsPBoEVGUkCAgIFAkM+g?=
+ =?us-ascii?q?XEGHgYfEgIDAQICgRAQAm5AAwsYDUgRLDcUG0RuB5N3nXYBr2s0B4I4gWeBX?=
+ =?us-ascii?q?gYMn2caM4NxAZNukwsuh2WQc6kWAgQCBAUCEAiBfoIAMxokgzZSGQ+SIbold?=
+ =?us-ascii?q?wI6AgcLAQEDCZIegUsBAQ?=
+IronPort-PHdr: A9a23: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
+X-Talos-CUID: =?us-ascii?q?9a23=3A8oOng2okaEvdVSmTc8Cr9p3mUcYbSmHnj1nfGUz?=
+ =?us-ascii?q?iVEI0aJSwU0KOxrwxxg=3D=3D?=
+X-Talos-MUID: 9a23:aJG9TAthdmC4On26C82nqR9iGf1O77qSL2skupIro+20Nn1REmLI
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.18,214,1751234400"; 
+   d="scan'208";a="26277307"
+Received: from mail-mtaka29.fraunhofer.de ([153.96.1.29])
+  by mail-edgeka30.fraunhofer.de with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 04 Dec 2025 15:15:09 +0100
+X-CSE-ConnectionGUID: vJ5egvlqTgyMwVRYeXYSVA==
+X-CSE-MsgGUID: we11IKIvS62OBviAaZ0zLw==
+IronPort-SDR: 6931976a_pBdQNj1Xwy8TRpAMjCx9gnjYcQXpKXYsrNN7jQ4RZ/J/mQg
+ /aF4v583Qv6nCJ9RbjfDrZzEt9s/Bl7tmTaWaJw==
+X-IPAS-Result: =?us-ascii?q?A0BBBQChRJ5o/3+zYZlagS6BLoFuUkABgRuBCYghAQGFL?=
+ =?us-ascii?q?KVoglADVw8BAwEBAQEBCAFRBAEBhQcCjCQnNwYOAQIBAQIBAQEBAwIDAQEBA?=
+ =?us-ascii?q?QEBAQEBAQELAQEFAQEBAgEBBgWBDhOGTw2GWwIBAxIgAQ0BATcBDwtGMSUGD?=
+ =?us-ascii?q?gUigmCCJAQSAzICAgKlBAGBQAKMV4EBggwBAQYEBNshGGOBZAkJAYE/g32Bc?=
+ =?us-ascii?q?IJkAYR8cIR3NoFVRIFKgnU+hRCFd4M8mjtICngcA1ksAVUTDQoLBwWBIEMDN?=
+ =?us-ascii?q?QwLLhUjSwUtHYEnfYQbhCgrT4IidYF3QRk/g1MeBmsPBoEVGR4tAgICBQJDP?=
+ =?us-ascii?q?oFdFwYeBiASAgICAgKBA0ADCxgNSBEsNxQbRG4HkzadcgGvazQHgjiBZ4FeB?=
+ =?us-ascii?q?gyfZxozg3EBk26TCy6HZZBzqRYCBAIEBQIQAQEGgX4mgVkzGiSDNk8DGQ+SI?=
+ =?us-ascii?q?bMgRDMCOgIHCwEBAwmTZwEB?=
+IronPort-PHdr: A9a23:s0UKBxHVLshCX8vRQF2Zlp1Gf29NhN3EVzX9l7I53usdOq325Y/re
+ Vff7K8w0gyBVtDB5vZNm+fa9LrtXWUQ7JrS1RJKfMlCTRYYj8URkQE6RsmDDEzwNvnxaCImW
+ s9FUQwt5CSgPExYE9r5fQeXrGe78DgSHRvyL09yIOH0EZTVlMO5y6W5/JiABmcAhG+Te7R3f
+ jm/sQiDjdQcg4ZpNvQUxwDSq3RFPsV6l0hvI06emQq52tao8cxG0gF9/sws7dVBVqOoT+Edd
+ vl1HD8mOmY66YjQuB/PQBGmylAcX24VwX8qSwLFuSvee43wrwDzuvF7+jW1BPzbFpAmZGW89
+ ZdQVgHOo38sLD4E6WDZqMp7gL0O83fD7xYq8ZX/bdylLPl6RvLvY/wzXHR7W+l2TDZ6PaGjN
+ ZIBMrYiFN5/srS6oWMi/DuaWwz0GKD292BMj0P63qNkyrVmNSfX8QMvMvMAkC/3puXIb79MA
+ ODu1Kjz5w7ca7RtghLiuLWZaDN+keGMTJ5iLZHN5kghR1KClXeqkp21HROF8ro9lEyA3+tGb
+ r2C1UobjiItvmX0z/8tyYv3gN0nk1LN9ztcm6cbesTlFmonNI3sAN5RrSacL4xsXoY4Tnp1v
+ Dpv0rQdos3TlEkizZ0mw1vad/WkWtLZpBz5XfuXITB2iWgjdL/szxqx8E310uTnTYH0y1dFq
+ CNZj8PB/m4AzR3d68WLC7N9806t1CzJ1lX75PtNPEY0kqTWMdgmxLsxnYAUqkPNAmn9n0Ces
+ Q==
+IronPort-Data: A9a23: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
+ Vzng/CQYivKzymrvDjXXoW5GuRK4KE=
+IronPort-HdrOrdr: A9a23:CcCrDK+10m7Njf0tQPRuk+AmI+orL9Y04lQ7vn2ZKCYlEfBx9a
+ iV9sjzsCWYtN9/Yh0dcLy7V5VoI0m8yXcd2+B4VotKNzOHhILHFu9fxLqn6ybhECW72/JH3a
+ xkf4R7AN30SWVghcz57BKZHr8bsb262ZHtrfzfxH8oaxprZaFm5xp4DQjeOlRuQQlNDYc4Ep
+ 303LsjmxOQPVwNbs+yQl8fX+bCoNXXlJXpJSULDxsigTP+7w+V1A==
+X-Talos-CUID: 9a23:5Jcpo23hB+WWE8GLxatUubxfBOJ4f3LDyG7sLF6dFlhTebCleGSu0fYx
+X-Talos-MUID: =?us-ascii?q?9a23=3ARv4WOAxEJu2GGnR57140cCevkkOaqLujURkssrQ?=
+ =?us-ascii?q?YgJfeEgZuOh6UvmylZpByfw=3D=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.17,290,1747692000"; 
+   d="scan'208";a="46757529"
+Received: from exo-hybrid-bi.ads.fraunhofer.de (HELO smtp.exch.fraunhofer.de) ([153.97.179.127])
+  by mail-mtaKA29.fraunhofer.de with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2025 15:15:04 +0100
+Received: from XCH-HYBRID-04.ads.fraunhofer.de (10.225.9.46) by
+ XCH-HYBRID-03.ads.fraunhofer.de (10.225.9.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Thu, 4 Dec 2025 15:14:39 +0100
+Received: from BEUP281CU002.outbound.protection.outlook.com (40.93.77.7) by
+ XCH-HYBRID-04.ads.fraunhofer.de (10.225.9.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29 via Frontend Transport; Thu, 4 Dec 2025 15:14:39 +0100
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a21J/gAJ9K4SzSh8K9ZSsXRxgQMTbE1xW8W9bs8VO3OJdSDk/rhzqqjkbnexO5yfkb7s6y+uoDH7tqcSD5hDVozoxXssPEgTVnZQXq8FmIH4GXyLvhjGgXDRCq50SEOXNFdIuygSYqIByDZ2+PVex+AkA9sSbclY+9g+zDJYTYtqDyYYr1QskUSnuBYKcfLSDKYITB7SoQM4nFpyejKVmQA5BbLgmHEYxsrYXgORO7ifekBcuA56mHRwoBBOotQ/Dgry25oO535ZC/OdAFwJcBdPqkgeBYvRuhDhizQ4TzJViDdtsxGKRPghroLdl/O/v9ECAaZF8q/oCMYi0inCjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RLMriuCadsnJtGQYE3HzU9vrXSvvNC0CshUqifJncdw=;
+ b=tfKG2U1HJl+CfwEdSgzrkGeTx+6+ISr7PWnPltne5xL6EcsH4rCkJxBqCdLvQQuEBbwVMpmqMx2efJ/ICcpzOOF62r+uAMULB0u1PVeU11nZjM4mDqfC8r5/CiAk3yu3kCVumrrfBz4658aWANJpopw1vytV3zAGNaYSQVUI8ai4sUXHWaSmX5Fz6rl0dUoN03uEU+qtnWxfdzZtl+BHSnasIDxrDHBkyHpBgI+WQ+dYAWp3mp3lZY2awXiEFp45ebs+qZOk7gNa+3tGAkDhy2W4ecjnea2BvhhkE36TFUHZPpMz3iALlc/zwfPh5Tb0YB6WbtabraBN3wsoytKgSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aisec.fraunhofer.de; dmarc=pass action=none
+ header.from=aisec.fraunhofer.de; dkim=pass header.d=aisec.fraunhofer.de;
+ arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fraunhofer.onmicrosoft.com; s=selector2-fraunhofer-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RLMriuCadsnJtGQYE3HzU9vrXSvvNC0CshUqifJncdw=;
+ b=ZsCe5XpklP9ZvGAqvRmGOsrSWJw2qfU4KAPOuU/nPD9HL6m0t+qU7laTdkf6q9/LNyEggEIfH3KbXU3p69h3piSBSwl/S3Mw8U9rK7XxhyDz43tGif89/sJRSy8JHxL6XOLsXiNS7E6LTMK4t53aPi+jVn7Z1jajvM3IF7q56L4=
+Received: from BE1P281MB2435.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b10:43::5) by
+ BE1PPFAF969BE78.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b18::68f) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9388.9; Thu, 4 Dec 2025 14:14:37 +0000
+Received: from BE1P281MB2435.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::ae34:1ec2:9d34:a9fb]) by BE1P281MB2435.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::ae34:1ec2:9d34:a9fb%5]) with mapi id 15.20.9388.009; Thu, 4 Dec 2025
+ 14:14:37 +0000
+From: Andreas Korb <andreas.korb@aisec.fraunhofer.de>
+To: <devnull+debug.rivosinc.com@kernel.org>
+CC: <Liam.Howlett@oracle.com>, <a.hindborg@kernel.org>,
+	<akpm@linux-foundation.org>, <alex.gaynor@gmail.com>,
+	<alexghiti@rivosinc.com>, <aliceryhl@google.com>, <alistair.francis@wdc.com>,
+	<andybnac@gmail.com>, <aou@eecs.berkeley.edu>, <arnd@arndb.de>,
+	<atishp@rivosinc.com>, <bjorn3_gh@protonmail.com>, <boqun.feng@gmail.com>,
+	<bp@alien8.de>, <brauner@kernel.org>, <broonie@kernel.org>,
+	<charlie@rivosinc.com>, <cleger@rivosinc.com>, <conor+dt@kernel.org>,
+	<conor@kernel.org>, <corbet@lwn.net>, <dave.hansen@linux.intel.com>,
+	<david@redhat.com>, <debug@rivosinc.com>, <devicetree@vger.kernel.org>,
+	<ebiederm@xmission.com>, <evan@rivosinc.com>, <gary@garyguo.net>,
+	<hpa@zytor.com>, <jannh@google.com>, <jim.shu@sifive.com>, <kees@kernel.org>,
+	<kito.cheng@sifive.com>, <krzk+dt@kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+	<lorenzo.stoakes@oracle.com>, <lossin@kernel.org>, <mingo@redhat.com>,
+	<ojeda@kernel.org>, <oleg@redhat.com>, <palmer@dabbelt.com>,
+	<paul.walmsley@sifive.com>, <peterz@infradead.org>,
+	<richard.henderson@linaro.org>, <rick.p.edgecombe@intel.com>,
+	<robh@kernel.org>, <rust-for-linux@vger.kernel.org>,
+	<samitolvanen@google.com>, <shuah@kernel.org>, <tglx@linutronix.de>,
+	<tmgross@umich.edu>, <vbabka@suse.cz>, <x86@kernel.org>,
+	<zong.li@sifive.com>, Andreas Korb <andreas.korb@aisec.fraunhofer.de>
+Subject: Re: [PATCH v23 01/28] mm: VM_SHADOW_STACK definition for riscv
+Date: Thu,  4 Dec 2025 15:14:12 +0100
+Message-ID: <20251204141412.5895-1-andreas.korb@aisec.fraunhofer.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251112-v5_user_cfi_series-v23-1-b55691eacf4f@rivosinc.com>
+References: <20251112-v5_user_cfi_series-v23-1-b55691eacf4f@rivosinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: FR0P281CA0179.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b4::19) To BE1P281MB2435.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:43::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BE1P281MB2435:EE_|BE1PPFAF969BE78:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4cf358d9-8cd9-4ca9-b8e3-08de333f74d4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?wBqHGbAxiXdTinu1IvkzQgHEABqVNY4e5VhLYxPM7zFc3yvyrxvUY26ey+hl?=
+ =?us-ascii?Q?IYXQTpcTqsUmPSo0xE5MriXj0sjYRxc2abzOdhUvOgOov46OErpZPjadTGzV?=
+ =?us-ascii?Q?5CuitSeYgdsrTEgXQhx0T1m1QveeIE7jzL1LKOvPBy01R+T00yQmvkikMlKs?=
+ =?us-ascii?Q?keZ+6uIXN/Tsv0kejbi5QB6cStcxca3obH8WsOZgxG1dP+JYGialrocHtbvG?=
+ =?us-ascii?Q?5roQIK+1wJPXaorv962ivmli1MGIpUDljP8R1nEUD5gWJ2hkn3IcS3W6VogG?=
+ =?us-ascii?Q?sixdgFKyN9Uu/assdHcyedZhxwBidGlGqfjT0GSmtd26Ryk4eJUmdZ7IpyKb?=
+ =?us-ascii?Q?C4dR77Tf33/FXjZpv7Eyts5YyHGKW/XUtt4I/vma8mlSolQUYLKnL4CiDBWB?=
+ =?us-ascii?Q?Xxucvx91wNSOUOmu4O8Pg1qHaiLmrdipx38Q3MihNNKAiKI/H+R4q2EfArp8?=
+ =?us-ascii?Q?vnRpIyAStrH0lfPF24tMMc8IyL/hoFmyJ+Rlgb+XbKbsZLDGJjXaXFeeVyWl?=
+ =?us-ascii?Q?hGfdJmPAfhtjF4GuTiCVxZdJxiBxb6sIvic8RWMkhD3+dN/B4HEvvrccsRkG?=
+ =?us-ascii?Q?dAYKMCNWKdCgMvr6CPfOSVbtCOjiEkohfA5sykPxbZWmDOeMPjlIHJK0jcnp?=
+ =?us-ascii?Q?zmixDjiKdzpma0fll3t+l4+BGVaxepJKK9Nl+bfBWAU+HmbacMJegRK1zYqI?=
+ =?us-ascii?Q?sjoF+yanZUbc67DbeU/YFkod8xYDhy5EvlO8DVu3vZoYTNJucftaeXO4kXuJ?=
+ =?us-ascii?Q?tTQrKZx1EX8ZBqT9dDQPWQ/U/wJy6u625TjwmEseQg7+dTMSid5gIg5SIdo4?=
+ =?us-ascii?Q?qmlkOzIjGt9ObxYImVJhatlh3NEbYLevscmNKt0spP2X7zjO7r8z9iGslvOv?=
+ =?us-ascii?Q?ahpELjvpNoAaLem2d5hXQuAipf65E/6el3+9QFgejigPnMLyfRFn9PJoj+Mu?=
+ =?us-ascii?Q?E1vemq7L6H2jx3Wtxtmwp/aIDF7rVPTIEKHOmOhf3wXolpOZNgHoxQOk9Zlz?=
+ =?us-ascii?Q?r1SiiX9k1F/D9mTlJ7H6Ta9cg+lD4BkdfHBTmtgH+KGkPji50d/g53Ry5M0z?=
+ =?us-ascii?Q?xfoyjDVg+nD5fdNfCvZy+u1Ny7iD47iwyhcUACbRm8Tf9nYlbZhcUdIWhckC?=
+ =?us-ascii?Q?bv2Lvve6h5xEezooHk+/zs9YnZugIX4atVFX61ssC/qqXDPmgmNfVfjIZ8+R?=
+ =?us-ascii?Q?P1L7ak9QBGvn+xIoyRdp5Vz7maRP4r31vtu8CsvSQ5C+k7iYiIkR9448d9Za?=
+ =?us-ascii?Q?j8Lw/B/5XcFc5t9aBa9Y8DKTPWW+fTR56pC1s0PFxmglS3VPhvqI6ikqIRTO?=
+ =?us-ascii?Q?mCRy0S/EWxOQMEb+i1A9nbI7cX8spZyjyzHdj2X8xFfai7Ho7LuCtKmhFG7s?=
+ =?us-ascii?Q?Cqh41qZJgGo94nYZIxn5nRaKnTaXsOPRfs+LqcDbE47MB372xKuA7Z3LiUdk?=
+ =?us-ascii?Q?/AbyfeDpTQfoMmnBe2hIeqn7kfRpk0is?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BE1P281MB2435.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?wYCFmRLzy7QGz5PPKZYzAqnCBT+sPBbjZ1WRUNsMOoDs1eBuC9AnTFGVUVyJ?=
+ =?us-ascii?Q?xINzDAWzrzIdwgQ371OisruIiMmtFwatTVO47nIU6/wSyIpe/ja/i0cZtjgU?=
+ =?us-ascii?Q?KYr4cShYhaWPym8l9qCvpc3s3lrlz3fJXX2XgoDCHKB1PcacZuUZnO/+jyF1?=
+ =?us-ascii?Q?ZaSHGFVBasrhqEjtUB3MR4kAc7YcD+pggjZUIhEKDutXps3qTgB0jXEUELi8?=
+ =?us-ascii?Q?OKMuAMJ7EEJsn6qCoWaoLHykTiS92luksJSszxTVcs63uR5RhE3hxQvQ4cOa?=
+ =?us-ascii?Q?rN9VEt+hDNoOtLRsLg66baeE9xrXYaEG/qw6ig4mHhELMQBbdhV7SAEjTui8?=
+ =?us-ascii?Q?xm/c77A+qShbalZcf8S4iBldoFdWhL4SVK55b8BDz7LeTnWQBPwqFWADUul6?=
+ =?us-ascii?Q?b/NYCfXALGC62edXgt0pnlIw0ha1YM3o+UA8d7rTrcQaJQRZmUFFTtVhBCDc?=
+ =?us-ascii?Q?81xPH7t2f/Byg/eZwNcM7mKy2W6q9/Uzq/GPI60lxr1Q2LaVvhF+c7PpSpIW?=
+ =?us-ascii?Q?OACg9NpkbUxvXj9gIKa4zW2ZGjfORPFBTIjZEH7ffeRM/4aBqeDXGechvcCw?=
+ =?us-ascii?Q?Z8d7Gul8ApYxy/Z4xa8x6bbFkN6OQtkNBE+TqgaRAkeI0van1SilYJT9AL1V?=
+ =?us-ascii?Q?M1eu32Yer0Wv7I6CJMb2gHJ1GT+GssK5cqo78RkKVbd85HDvpUstJz/jOeg1?=
+ =?us-ascii?Q?BzTBk+QAniV5XI6+JDG5olo5zACLsOtzZQJP4dAxc3PnBoM8RlYxDbTh5lds?=
+ =?us-ascii?Q?Zf6q26i82AKouunWM/OUq0T6BoRhmEYCDnrC2p0SM2H/bc9xBPSibkHvhVjj?=
+ =?us-ascii?Q?SP52vl7wNy3RyrAQCMPWXjr4v4H19HNZbk6/bTkHTLA4oFWB0ah8967yl7oz?=
+ =?us-ascii?Q?U2B1Ve/NZMGUhehkbAF6eJIVxlFZvMEx5zeWnq4zTw0Yihwj/h4E0gUjZ/+/?=
+ =?us-ascii?Q?quC7y6nePiOdX73Id8jANvpFPojn6u/zxjMa5wpJ8Qs+i5GHPBSrpUVhr6fc?=
+ =?us-ascii?Q?nceiN/uXFhsITwhx+36vVw7GrOAOeq1tmQuoIk/E8IjSynrXDTfFCX5XFojk?=
+ =?us-ascii?Q?HnYgAoh7f3rrz1jgz6CET8fZcaQvSXEvcvFGhLrp3/WN9ElIVrk2ieqcdVlQ?=
+ =?us-ascii?Q?9rqNBa7nAFMUz4dMbSrqABouNJD3jl7C49DNgPMDV/pSUFPkKZJNU7UX23Tk?=
+ =?us-ascii?Q?wZpTU6afG0DmhqUdp2rFkYmioMlotT8qifPSOEbyf8PReGB5qmK09UVJbqSw?=
+ =?us-ascii?Q?fbrw+oTVW4xFCMPW67hP0aP4PKNQULsRAXag3VPmOqsqhcCiT+7YMCcoZ4mh?=
+ =?us-ascii?Q?AfftTCZgE90XQWmeX3s0QJNYOUJK/vK9PDk/xuditI6KPfBVq7WBI5SIRvwG?=
+ =?us-ascii?Q?ceHI/c9HtEKn+6I3/1aO3K7Z+BC7LxfLJ7Y58CRdUxhiPtorTLI7l+opfhg6?=
+ =?us-ascii?Q?AolRd9V/xVohAQOssZhH7g8XzfNxHa+symkfnEFA0aBMzsqoeeFmyo4yDstE?=
+ =?us-ascii?Q?OXrgwwKTOv3tMTKmt4fa6u5GFnw0jrp88cU9JAvLKY9oFgWMJKRaRVXd6GFa?=
+ =?us-ascii?Q?XiNNj+OQUukuoZNkMurHvONvPn4KxNPAQIE2ZrnOETT+MFD5xBTVjL1JL2l3?=
+ =?us-ascii?Q?PgTIBY/gD11OVET6BnYoZbA=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cf358d9-8cd9-4ca9-b8e3-08de333f74d4
+X-MS-Exchange-CrossTenant-AuthSource: BE1P281MB2435.DEUP281.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2025 14:14:37.1683
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f930300c-c97d-4019-be03-add650a171c4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Dy5q9gXQwP8FW3GRJuCXGW53vYwx1DPnMRaFwuUuX911FsLMbuNrnrrxsk7409/1aT0R6bJz+kACHL4mwOPpkZAwr+EZ+2cJzCCRkU2vVVqT/uC41/Z6E/uvcZyhm7lL
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BE1PPFAF969BE78
+X-OriginatorOrg: aisec.fraunhofer.de
 
-On Sat, 2025-11-29 at 14:41 +0530, Bhavik Sachdev wrote:
-> We would like to add support for checkpoint/restoring file descriptors
-> open on these "unmounted" mounts to CRIU (Checkpoint/Restore in
-> Userspace) [1].
->=20
-> Currently, we have no way to get mount info for these "unmounted" mounts
-> since they do appear in /proc/<pid>/mountinfo and statmount does not
-> work on them, since they do not belong to any mount namespace.
->=20
-> This patch helps us by providing a way to get mountinfo for these
-> "unmounted" mounts by using a fd on the mount.
->=20
-> Changes from v6 [2] to v7:
-> * Add kselftests for STATMOUNT_BY_FD flag.
->=20
-> * Instead of renaming mnt_id_req.mnt_ns_fd to mnt_id_req.fd introduce a
-> union so struct mnt_id_req looks like this:
->=20
->     struct mnt_id_req {
->             __u32 size;
->             union {
->                     __u32 mnt_ns_fd;
->                     __u32 mnt_fd;
->             };
->             __u64 mnt_id;
->             __u64 param;
->             __u64 mnt_ns_id;
->     };
->=20
-> * In case of STATMOUNT_BY_FD grab mnt_ns inside of do_statmount(),
-> since we get mnt_ns from mnt, which should happen under namespace lock.
->=20
-> * Remove the modifications made to grab_requested_mnt_ns, those were
-> never needed.
->=20
-> Changes from v5 [3] to v6:
-> * Instead of returning "[unmounted]" as the mount point for "unmounted"
-> mounts, we unset the STATMOUNT_MNT_POINT flag in statmount.mask.
->=20
-> * Instead of returning 0 as the mnt_ns_id for "unmounted" mounts, we
-> unset the STATMOUNT_MNT_NS_ID flag in statmount.mask.
->=20
-> * Added comment in `do_statmount` clarifying that the caller sets s->mnt
-> in case of STATMOUNT_BY_FD.
->=20
-> * In `do_statmount` move the mnt_ns_id and mnt_ns_empty() check just
-> before lookup_mnt_in_ns().
->=20
-> * We took another look at the capability checks for getting information
-> for "unmounted" mounts using an fd and decided to remove them for the
-> following reasons:
->=20
->   - All fs related information is available via fstatfs() without any
->     capability check.
->=20
->   - Mount information is also available via /proc/pid/mountinfo (without
->     any capability check).
->=20
->   - Given that we have access to a fd on the mount which tells us that
->     we had access to the mount at some point (or someone that had access
->     gave us the fd). So, we should be able to access mount info.
->=20
-> Changes from v4 [4] to v5:
-> Check only for s->root.mnt to be NULL instead of checking for both
-> s->root.mnt and s->root.dentry (I did not find a case where only one of
-> them would be NULL).
->=20
-> * Only allow system root (CAP_SYS_ADMIN in init_user_ns) to call
-> statmount() on fd's on "unmounted" mounts. We (mostly Pavel) spent some
-> time thinking about how our previous approach (of checking the opener's
-> file credentials) caused problems.
->=20
-> Please take a look at the linked pictures they describe everything more
-> clearly.
->=20
-> Case 1: A fd is on a normal mount (Link to Picture: [5])
-> Consider, a situation where we have two processes P1 and P2 and a file
-> F1. F1 is opened on mount ns M1 by P1. P1 is nested inside user
-> namespace U1 and U2. P2 is also in U1. P2 is also in a pid namespace and
-> mount namespace separate from M1.
->=20
-> P1 sends F1 to P2 (using a unix socket). But, P2 is unable to call
-> statmount() on F1 because since it is a separate pid and mount
-> namespace. This is good and expected.
->=20
-> Case 2: A fd is on a "unmounted" mount (Link to Picture: [6])
-> Consider a similar situation as Case 1. But now F1 is on a mounted that
-> has been "unmounted". Now, since we used openers credentials to check
-> for permissions P2 ends up having the ability call statmount() and get
-> mount info for this "unmounted" mount.
->=20
-> Hence, It is better to restrict the ability to call statmount() on fds
-> on "unmounted" mounts to system root only (There could also be other
-> cases than the one described above).
->=20
-> Changes from v3 [7] to v4:
-> * Change the string returned when there is no mountpoint to be
-> "[unmounted]" instead of "[detached]".
-> * Remove the new DEFINE_FREE put_file and use the one already present in
-> include/linux/file.h (fput) [8].
-> * Inside listmount consistently pass 0 in flags to copy_mnt_id_req and
-> prepare_klistmount()->grab_requested_mnt_ns() and remove flags from the
-> prepare_klistmount prototype.
-> * If STATMOUNT_BY_FD is set, check for mnt_ns_id =3D=3D 0 && mnt_id =3D=
-=3D 0.
->=20
-> Changes from v2 [9] to v3:
-> * Rename STATMOUNT_FD flag to STATMOUNT_BY_FD.
-> * Fixed UAF bug caused by the reference to fd_mount being bound by scope
-> of CLASS(fd_raw, f)(kreq.fd) by using fget_raw instead.
-> * Reused @spare parameter in mnt_id_req instead of adding new fields to
-> the struct.
->=20
-> Changes from v1 [10] to v2:
-> v1 of this patchset, took a different approach and introduced a new
-> umount_mnt_ns, to which "unmounted" mounts would be moved to (instead of
-> their namespace being NULL) thus allowing them to be still available via
-> statmount.
->=20
-> Introducing umount_mnt_ns complicated namespace locking and modified
-> performance sensitive code [11] and it was agreed upon that fd-based
-> statmount would be better.
->=20
-> This code is also available on github [12].
->=20
-> [1]: https://github.com/checkpoint-restore/criu/pull/2754
-> [2]: https://lore.kernel.org/all/20251118084836.2114503-1-b.sachdev1904@g=
-mail.com/
-> [3]: https://lore.kernel.org/criu/20251109053921.1320977-2-b.sachdev1904@=
-gmail.com/T/#u
-> [4]: https://lore.kernel.org/all/20251029052037.506273-2-b.sachdev1904@gm=
-ail.com/
-> [5]: https://github.com/bsach64/linux/blob/statmount-fd-v5/fd_on_normal_m=
-ount.png
-> [6]: https://github.com/bsach64/linux/blob/statmount-fd-v5/file_on_unmoun=
-ted_mount.png
-> [7]: https://lore.kernel.org/all/20251024181443.786363-1-b.sachdev1904@gm=
-ail.com/
-> [8]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
-ree/include/linux/file.h#n97
-> [9]: https://lore.kernel.org/linux-fsdevel/20251011124753.1820802-1-b.sac=
-hdev1904@gmail.com/
-> [10]: https://lore.kernel.org/linux-fsdevel/20251002125422.203598-1-b.sac=
-hdev1904@gmail.com/
-> [11]: https://lore.kernel.org/linux-fsdevel/7e4d9eb5-6dde-4c59-8ee3-35823=
-3f082d0@virtuozzo.com/
-> [12]: https://github.com/bsach64/linux/tree/statmount-fd-v7
->=20
-> Bhavik Sachdev (3):
->   statmount: permission check should return EPERM
->   statmount: accept fd as a parameter
->   selftests: statmount: tests for STATMOUNT_BY_FD
->=20
->  fs/namespace.c                                | 102 ++++---
->  include/uapi/linux/mount.h                    |  10 +-
->  .../filesystems/statmount/statmount.h         |  15 +-
->  .../filesystems/statmount/statmount_test.c    | 261 +++++++++++++++++-
->  .../filesystems/statmount/statmount_test_ns.c | 101 ++++++-
->  5 files changed, 430 insertions(+), 59 deletions(-)
+Tested on qemu and on a custom hardware implementation of zicfiss and zicfilp in the CVA6 core
 
-This looks useful.
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Tested-by: Andreas Korb <andreas.korb@aisec.fraunhofer.de>
 
