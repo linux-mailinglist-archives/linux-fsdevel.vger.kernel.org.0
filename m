@@ -1,94 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-70634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC92CA2E41
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 10:03:52 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E38CA2ED4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 10:14:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4C36C3091A05
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 09:02:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E6CC530A8B22
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 09:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759F5333727;
-	Thu,  4 Dec 2025 09:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D3E33469A;
+	Thu,  4 Dec 2025 09:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="giWTfCRN"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="lMWkYbkQ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="T0bYVEPJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF5531329D;
-	Thu,  4 Dec 2025 09:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0202F7AD4;
+	Thu,  4 Dec 2025 09:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764838943; cv=none; b=SKo3pQknqNGD0d+o7BkmyEVnsZ0x9+iphHQ9aE1vx43DfqwI+43E+GX5tdbMeLg0aI0DT5DbDHzFC7nyPgiZP+SVIixNvMJ6Pl1lRHbp31YvQ9zu5uq/RUa3wv1d/J8JKCFD+Eo7v7H/7++rWij4C9TVatCcHPBbNAhoRLInr5s=
+	t=1764839376; cv=none; b=t2T3eMm/U9buhT74tawLqCwWtW9jz+uwpug26I/bpWov8zk1jroKNLztLPryAUkcwcDOGrSXb4uv/xlrATJhZrNVmdtJLWAyGifutGSHsr8yp4QVmq1+xxYkX1pxpjgHKmGIML9mmulOErAefz6h99zBwQGv1e1dY0OSaC6f2nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764838943; c=relaxed/simple;
-	bh=tlijTN0WqVPKyE8pAOoAFPBzxnjWCiVy/N6C14hSgGc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KtQ+1ci2rWl2wlz75w2FwNY41ZJJrR3OJqS8uB3hv5y4gmL+OKcyAPx429HG0VuAZZJD4wrMZTolcFJI+4jLb6+Ii2toFUtEUdBzOAnYf/Fb+AXJaKFKYT5fWOKwrNmK3BmfW0uGoj07pJvACrUWGFHvX8YgXWBzL0deIwn0Pfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=giWTfCRN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4917DC4CEFB;
-	Thu,  4 Dec 2025 09:02:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764838943;
-	bh=tlijTN0WqVPKyE8pAOoAFPBzxnjWCiVy/N6C14hSgGc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=giWTfCRNw3OXIrYyH6ZBuYfuUBwLl5Q2dxgIZ6Sf2QelZvfpIEPyeTXgsb7YCajuZ
-	 xBNOaI8X+FJyWsCsN9+c46Bczuf7GnMHBV9/QfaQuhQ/Uen3yjcwNGtn9G6S7dgHO2
-	 Bya7eDNN2WsUjUctomo3fkGLnIPKYSF2TDb8//TMg1YAEsnY/wXKV22yGetCW5DXXy
-	 AdXpqE0Wxz+Dh0xwzKPkvRjszDY0OIUN2zQhXtn2Pny9W3M8pB9m3Ta6GRdmE+qbQG
-	 OBk8B8YtlMsSWKNjFJgnYDZcU8QlU6O9+9CpO74l7UOvUWPYpijTtNAavm3kBx+eK9
-	 k5RN4SO9Av9dA==
-From: Christian Brauner <brauner@kernel.org>
-To: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] vfs: use UAPI types for new struct delegation definition
-Date: Thu,  4 Dec 2025 10:02:05 +0100
-Message-ID: <20251204-haargenau-hauen-6d778614c295@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251203-uapi-fcntl-v1-1-490c67bf3425@linutronix.de>
-References: <20251203-uapi-fcntl-v1-1-490c67bf3425@linutronix.de>
+	s=arc-20240116; t=1764839376; c=relaxed/simple;
+	bh=WkoKtlmdpwYo75LaXVuNNodQLvjx2w5vFrAp579r9Qw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=by/lKQr2qcQXjXGClW+qgbmyBg+Cztxv0UeTc1HOlsjB93zSEgN1uVrJuHYlP7amfKHssZeinAeR3Jw41mOcVHlro0SogAaT1FBN8mLRqXEP/WsdXoob3h9gNew61OvK+wg/jKDrEG8+/TJz5iAZUwmefb6ML2byCoYmYF93kNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=lMWkYbkQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=T0bYVEPJ; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 9BBA51D000E0;
+	Thu,  4 Dec 2025 04:09:32 -0500 (EST)
+Received: from phl-imap-17 ([10.202.2.105])
+  by phl-compute-04.internal (MEProxy); Thu, 04 Dec 2025 04:09:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1764839372;
+	 x=1764925772; bh=/ztwZ2LCncPz/9Lf6JmOR9KE45SbTlD4TEBMpqz4fag=; b=
+	lMWkYbkQ1hkjsenpt08bCj78PNszMlhR1V0AsfBF3LikUk4LJT3QlP/OrXHjKOIU
+	pCpyhm4YFQ6qCqie16CECI7ZBZYO3Y/lk9UnOrH5ogzjvaUSDHUrEmRLeHICHfgX
+	XTESKCWSLsFMk7ERLXD3TSWJP0VNT0LOcTzqm/YEO2ssQ7SoM4k4GViWDahwC60g
+	5vwuylCzc+1Hut2p4ogMrTj2+W/rF6VPxAZnqtDE3lCcWJMcZ3aTC1RoMfMZkPsv
+	5fP8Xi/FxvoYgP9P+3W9zh6//GDnELwkZa8pT0ve+vOJkItFjiT+eoajcST0bK9q
+	yC0RSu0k6CyWoPDQUq8RIg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1764839372; x=
+	1764925772; bh=/ztwZ2LCncPz/9Lf6JmOR9KE45SbTlD4TEBMpqz4fag=; b=T
+	0bYVEPJnmrL4y0a6BOCZl7iPYe96cOQSld2QVp7obaxK3crJojmr2+jO9mZ/rDdQ
+	iVbpoSWyfbw1rubvwcvPx95/e5ktlfTKNzj1+cgOECPpcxOC3B/04g78T0Nd9aKQ
+	RM1yhj5/c6u+ml+8BsB1TsIY0Pyy7lKD4ogFrGZbMVclUdv7tSu7A7gd0QCA6tXv
+	Byp5HM+3SEjxcxr720lQB3K9MZ9IK4wFcJyAOL3y05QA44AMmG6vvyJJ7X30xNcU
+	Es7/YdeUYGYLWWsK+l1Hgk1679Ktoxp17Bw/BexUnEoPK7momNt9CzKwNIruiwfH
+	SaVbddHKN8ntZjcAHH60g==
+X-ME-Sender: <xms:y08xad0E0P7XZ3LLIRWXsGnFeuOPy51Rx0KiQ6WXE9OuSAulAiimmg>
+    <xme:y08xae5zO2ABy5jAcIkXtJWEITZFqHAsIyHr6rKFj0IrT_IJG-Gbdt3FvW9eOgyy4
+    V_pti8bZ4GbABl3eUD9z8NCt8JiYuxorQbeyGwH41_WL8yQg8HS-w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdehudekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhguuceu
+    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
+    epvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhguse
+    grrhhnuggsrdguvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhr
+    tghpthhtoheprghlvgigrdgrrhhinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsg
+    hrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdifvghishhsshgthhhuhheslh
+    hinhhuthhrohhnihigrdguvgdprhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgr
+    tghlvgdrtghomhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhope
+    hlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:y08xaYW7JMKrmf7fzz_JD-mBoOZHzxLAb0eA2of3gKoqL_r2ll9qOg>
+    <xmx:y08xaYlTcb_M88NQvkSc_IR7AWQuNah2rvJjniS6MrZPV0I2xIF1-Q>
+    <xmx:y08xaen3XKd5t_BSGYR0Q6juEKyYoQcwk5gJXTYVEOzo7-Myipw5tA>
+    <xmx:y08xaYbE0JS3PWlbdlIRLkerzR0_feq52yvfYVV8lC1l7aUjy21EeA>
+    <xmx:zE8xadprFUgKdQSdNU8x8XwasNK18z8ar7i2OdPEZmwpnags6oB0nLTK>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id CB74AC40054; Thu,  4 Dec 2025 04:09:31 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1057; i=brauner@kernel.org; h=from:subject:message-id; bh=tlijTN0WqVPKyE8pAOoAFPBzxnjWCiVy/N6C14hSgGc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQa+onUSrd+i07ncKrbymywf0rXy2l+DsfPs3Dbv2D6U h/+8nJcRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwE02Yvjv/mjC3yAPE83TNswT +myMO9f4HFx67aeN4Jq3GxkcvONzGf4psnu0sX5dcX5T5e4ZGRn9poeqSnV4eLhf+/SkR8w6p8c GAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+X-ThreadId: AdXoxbahDSgB
+Date: Thu, 04 Dec 2025 10:09:01 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: "Jeff Layton" <jlayton@kernel.org>,
+ "Chuck Lever" <chuck.lever@oracle.com>,
+ "Alexander Aring" <alex.aring@gmail.com>, "Jan Kara" <jack@suse.cz>,
+ "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <f6ad9bf5-6010-4974-8b37-eedd3bcc4b66@app.fastmail.com>
+In-Reply-To: 
+ <20251204075422-78bae8db-0be5-4053-b0b9-33fc4c7125ae@linutronix.de>
+References: <20251203-uapi-fcntl-v1-1-490c67bf3425@linutronix.de>
+ <75186ab2-8fc8-4ac1-aebe-a616ba75388e@app.fastmail.com>
+ <20251204075422-78bae8db-0be5-4053-b0b9-33fc4c7125ae@linutronix.de>
+Subject: Re: [PATCH] vfs: use UAPI types for new struct delegation definition
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 03 Dec 2025 14:57:57 +0100, Thomas Weißschuh wrote:
-> Using libc types and headers from the UAPI headers is problematic as it
-> introduces a dependency on a full C toolchain.
-> 
-> Use the fixed-width integer types provided by the UAPI headers instead.
-> 
-> 
+On Thu, Dec 4, 2025, at 07:58, Thomas Wei=C3=9Fschuh wrote:
+> On Wed, Dec 03, 2025 at 03:14:31PM +0100, Arnd Bergmann wrote:
+>> > --- a/include/uapi/linux/fcntl.h
+>> > +++ b/include/uapi/linux/fcntl.h
+>> > @@ -4,11 +4,7 @@
+>> >=20
+>> >  #include <asm/fcntl.h>
+>> >  #include <linux/openat2.h>
+>> > -#ifdef __KERNEL__
+>> >  #include <linux/types.h>
+>> > -#else
+>> > -#include <stdint.h>
+>> > -#endif
+>>=20
+>> I think we have a couple more files that could use similar changes,
+>> but they tend to be at a larger scale:
+>
+> To start, let's extend the UAPI header tests to detect such dependenci=
+es [0].
+> Then we can clean them up without new ones popping up.
 
-Applied to the vfs-6.20.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.20.misc branch should appear in linux-next soon.
+Sounds good to me. This also caused some problems when I did some
+validation to find implicit padding in uapi data structures (using -Wpad=
+ded).
+I eventually figured out how to build all uapi headers against nolibc
+on all architectures with my cross-compilers and clang.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Specifically, I needed some macro definitions for architecture specific
+padding in linux/types.h.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+I'll have to rebase my patches after -rc1, and we can see if it's
+worth upstreaming, either the bits improve the test coverage or
+the actual padding annotations I added.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+>> include/uapi/xen/privcmd.h
+>
+> I have no idea how that header is supposed to work at all, as it depen=
+ds on
+> non-UAPI headers. It is also ignored in the UAPI header tests.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.20.misc
+This is the hack I'm using to test-build the header, but I don't
+think that is what we want upstream:
 
-[1/1] vfs: use UAPI types for new struct delegation definition
-      https://git.kernel.org/vfs/vfs/c/b496744de0d0
+--- a/include/uapi/xen/privcmd.h
++++ b/include/uapi/xen/privcmd.h
+@@ -36,7 +36,12 @@
+=20
+ #include <linux/types.h>
+ #include <linux/compiler.h>
++#ifdef __KERNEL__
+ #include <xen/interface/xen.h>
++#else
++typedef __u16 domid_t;
++typedef __u64 xen_pfn_t;
++#endif
+=20
+ struct privcmd_hypercall {
+        __u64 op;
+
+     Arnd
 
