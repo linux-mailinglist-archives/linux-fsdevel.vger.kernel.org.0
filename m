@@ -1,122 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-70659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7B3CA3843
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 13:00:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 536A7CA3837
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 12:59:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B18653089E38
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 11:58:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 86EDF3047647
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 11:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334202BD001;
-	Thu,  4 Dec 2025 11:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBFD2F1FF4;
+	Thu,  4 Dec 2025 11:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sg8ahjBQ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YjJ/oomv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3463D33CEBC
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 11:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA919334C0B
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 11:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764849526; cv=none; b=Qnv/ndVSylsHdgYUW/dOjcYXB3JMi1jtRBLJ4MNUdlKCEQHDCUy+CFypcixLm/5u66T3EiXU9hvWO/Bj0dJ2iveCJZwRS/zhaYvnYYvWYwmlCkUDW7dQb4itWrtOcKTZcWQEJozmfTci1ISg2arz0uM3TAThHdElH6Y87zj2KX4=
+	t=1764849522; cv=none; b=CqriPtUw3NpYL+GeTLXx/u84Xa5eS5YZS1w0dvPfDMkTYbMkKJkBLQjSySiVWIuG8KVvkz84o8H61WstgmNFEjQNICkb1l3zzwa3MR8wVDdQl8Y30BVZ1X0VA2wSu9HowpCE2AR4LPu7xBYH6qYCSCd1+KAiuv5EeH9C0KJmsB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764849526; c=relaxed/simple;
-	bh=G0P/BjEQyt89BmOUGn/wcDWujkDYsVOGhHTJqZN9U3c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vnbl12gXLU/DbrWRZO1JBitttsnfRD0B8iWLlsg8s6+rAh4Flxoe0bkWiDL+2purK+t3MO5REOYUSoN9l0ae22Eiqx6n+HTtsq/1YZnY7I2+adgtnMqQBacWzs9fBkx00nfl/veuI7AXeWppCTczMLnUpwRgx447bq47LOl+0yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sg8ahjBQ; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b7697e8b01aso150784866b.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 03:58:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764849521; x=1765454321; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kdRxtjV4AYaI8LinC3rLYWwY9We5uYRQ7iuB0whbJMw=;
-        b=Sg8ahjBQdLiugsUsxIN3wXWjV1IQjAZsMJZyMsa+xiaa7kPpDhhe26+kXtB6iqs655
-         w59StQXlYR8tYB1ksKDqm+1WSHLBtPZEsAlUyDTP9lseOTz0M4gjh2tlOWg7LQLypTjO
-         Tr4apvP/4WVoMXPtjfo+0JTpQjn/ZpFAkAQxO+f7rvgfCdc0KeNGOfSeGrWqG1G6joV1
-         hHvENml0ob/8HB5nrjAao8oUavQBL09QZBUpn/xFdD0DzXhMr+zwVaTBZARQIUNatb+N
-         iUO9Ncbq0e+o/darxLD72szbxhOi3y5DbrbuacyuyytsVjt42Ctib9K/dVImejqPVM0I
-         IgfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764849521; x=1765454321;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kdRxtjV4AYaI8LinC3rLYWwY9We5uYRQ7iuB0whbJMw=;
-        b=syG2IRUF3ELipqAaerXNWl30YdJP7rLMcMCAnbdEssCJxLIjQq08Ponw6E22RJ+Ev7
-         kmJsoT2psreWGUcP79/scYk9c7+iHI4g/bWqk8Y7+wxykENE59s/6Wl0zP0/ws09EQoP
-         Nlw497cr1ivahaptmUZ/dzH1pbHvxrFDF8PlP5zWoTw725r7u8TKCf7ltbSIud9IKFP5
-         7C0Roqb7l1gjfzru2DPb5dmF5956op8yEvDRCWbBY+k5NYMTDp2GCacT6pH4amVJdGJ6
-         RMk1w2a7EVo7r745WWRJOupzkQjNkl+XxFCIDNF0IsC3mDCFqqGri/pDvb/UeXQJBkD/
-         lM+A==
-X-Forwarded-Encrypted: i=1; AJvYcCW2dPM2qLapga4YeftZCCnl6uv47dlEh0IFz/mDpVyjwUEUSsB63Gt8Qvgp5VHT+KbBssLl1Vr/zYQnQrj6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyiyg7z3hcgN5TwoxBWaaDi7i2NcZT3DZAgANZoEk4A9g82mBtw
-	lwUuzAOrX/KN5xVLcCdDObXWJ9S1iXGzjqKvoNL7QTnxOUHn6moE3V/GChiEzIG3r5ra5iOKEin
-	ECgPYxXUEmw5mg1NW4TgwfOAM8VqrzYY=
-X-Gm-Gg: ASbGncseVJqIs7BIiQWA4E3GR0VEcT7L/WzqoxPnOuF0HqnXXv77M3st8QA3nULBGMF
-	SS0hEaT48C6Ca3+p/XMrcZIZ4QpjOaoCanIWsrPCdDO405DY1Uj0TAfEuOTyc9plSKjmnXz0QWL
-	6qikMpasO+/QlthN75P4wu6F8OimrXIBFF0Twv3rG11kHcONMZf9xBetrndN0d1GQvrmjXULryk
-	PwlLZkFm47LGyxKoTgrYMfFhaE3hMtfLjHj40ttr73aZeu0EODfc8ItyL4yhqOHn1dgjd4PO7Wx
-	aiGIyJhPT0hBRkbpxVdtVX7m9Lym3cbId19g
-X-Google-Smtp-Source: AGHT+IEZAg/XFTe1Ny7kp3td3ZFktfRztIAEYhqqLPG+NV2hEX+i0dMxJNlWGlVMUPP51XWp+MDN09fnafSDZDrxxXo=
-X-Received: by 2002:a17:907:3f24:b0:b73:b05c:38fd with SMTP id
- a640c23a62f3a-b79dc77dfbfmr569759366b.50.1764849520449; Thu, 04 Dec 2025
- 03:58:40 -0800 (PST)
+	s=arc-20240116; t=1764849522; c=relaxed/simple;
+	bh=JuANSFxh/VPKXqNFnxDApb13qGnzHZ/SFN9viaspbcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=OLlocOggmWyCG/gD35t+A/3UKPOvKnmkAV8pdnN+yj7rmRqlLImWfZU9Qf+P9vyUa2+iVsvZNsfK2vdUJQlFTSRAjicqSqEvIABsSkiu/uZj913/O4104RcWT0TWZ610xjkBmgPfdKERYcBHBEqhJvx7ZR/niwELMZ2ABfskDuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YjJ/oomv; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20251204115835epoutp03085b906713c5ed979560c8b051ac91f5~_AUi_t_Zb1273012730epoutp03P
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 11:58:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20251204115835epoutp03085b906713c5ed979560c8b051ac91f5~_AUi_t_Zb1273012730epoutp03P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1764849515;
+	bh=3wWMy2I7L9W3gKbAO25UJJg2lWlRN6z4rpA14p0f+88=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=YjJ/oomv4uD9PWq6jvjSQXjKbIs8MYMLZCrWBRQjWMCL3hDYARphNWSrX2hwuqI7s
+	 HhBtfoXPmbFNQyGlhLhlzj2rw1QF6IZnSQLE+OGqIHzsU1rER33vabdJ/0W5fWnYRJ
+	 TGjAzBbeaZvIskAbD2Fm7puCfmlG1S+zwNJaCw7g=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPS id
+	20251204115835epcas1p359682f63231cd07bf5fe4c8982386cda~_AUiwccCA1471414714epcas1p3S;
+	Thu,  4 Dec 2025 11:58:35 +0000 (GMT)
+Received: from epcas1p4.samsung.com (unknown [182.195.38.120]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4dMY1l3KdPz6B9m6; Thu,  4 Dec
+	2025 11:58:35 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251204115834epcas1p2ff5123e0d43fe249ace1c71c81feada5~_AUiGP2Rm2315023150epcas1p2R;
+	Thu,  4 Dec 2025 11:58:34 +0000 (GMT)
+Received: from [172.25.92.0] (unknown [10.246.9.208]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251204115834epsmtip104577396810b1eaf592de68c2c16c99d~_AUiBWoWu1461814618epsmtip1a;
+	Thu,  4 Dec 2025 11:58:34 +0000 (GMT)
+Message-ID: <5fa3c9d2-e77b-4cf9-95d2-f1fc0eb7292e@samsung.com>
+Date: Thu, 4 Dec 2025 20:58:34 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <y3ucyzxisq6hcrhynzyhmb7h4vpzkyuueqesw547cx5zmzrvl4@offzqo327t4w> <693176d2.a70a0220.d98e3.01ce.GAE@google.com>
-In-Reply-To: <693176d2.a70a0220.d98e3.01ce.GAE@google.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 4 Dec 2025 12:58:28 +0100
-X-Gm-Features: AWmQ_bkIM7DKIOzDV3ZsYcLI4dGCflwhm-WCUoJ2WXb1p2GWU6R9B8YfTmEKDK4
-Message-ID: <CAGudoHG-16TCj3+nMseN9RVeybEPm4WTHn2Xqmek6Hc6k+=e0Q@mail.gmail.com>
-Subject: Re: [syzbot] [exfat?] [ocfs2?] kernel BUG in link_path_walk
-To: syzbot <syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, jlbec@evilplan.org, 
-	joseph.qi@linux.alibaba.com, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mark@fasheh.com, 
-	ocfs2-devel@lists.linux.dev, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: exfat: Fix corrupted error code handling in
+ exfat_find_empty_entry()
+To: Haotian Zhang <vulab@iscas.ac.cn>, linkinjeon@kernel.org,
+	yuezhang.mo@sony.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Sungjong Seo <sj1557.seo@samsung.com>
+In-Reply-To: <20251203070813.1448-1-vulab@iscas.ac.cn>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20251204115834epcas1p2ff5123e0d43fe249ace1c71c81feada5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-711,N
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251203070828epcas1p219623b1095d4f34a5af5adada269b14f
+References: <CGME20251203070828epcas1p219623b1095d4f34a5af5adada269b14f@epcas1p2.samsung.com>
+	<20251203070813.1448-1-vulab@iscas.ac.cn>
 
-On Thu, Dec 4, 2025 at 12:56=E2=80=AFPM syzbot
-<syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot has tested the proposed patch but the reproducer is still triggeri=
-ng an issue:
-> kernel BUG in link_path_walk
->
-> VFS_BUG_ON_INODE(d_can_lookup(_dentry) && !S_ISDIR(_dentry->d_inode->i_mo=
-de)) encountered for inode ffff888074eca4f8
-> fs ocfs2 mode 100000 opflags 0x2 flags 0x20 state 0x0 count 2
+Hi, Haotian,
 
-note the patch at hand made sure to avoid transient states by taking a
-lock on the dentry:
-+       struct dentry *_dentry =3D nd->path.dentry;
-+       struct inode *_inode =3D READ_ONCE(_dentry->d_inode);
-+       if (!d_can_lookup(_dentry) || !_inode || !S_ISDIR(_inode->i_mode)) =
-{
-+               spin_lock(&_dentry->d_lock);
-+               VFS_BUG_ON_INODE(d_can_lookup(_dentry) &&
-!S_ISDIR(_dentry->d_inode->i_mode), _dentry->d_inode);
-+               spin_unlock(&_dentry->d_lock);
-+       }
+On 25. 12. 3. 16:08, Haotian Zhang wrote:
+> exfat_find_empty_entry() stores the return value of
+> exfat_alloc_cluster() in an unsigned int. When
+> exfat_alloc_cluster() returns a negative errno, it is
+> converted to a large positive value, which corrupts
+> error propagation to the caller.
+Have you ever encountered an actual error?
+IMO, due to implicit type conversion, it should work as follows,
+so, I don't think there will be any real issues.
 
-So the state *is* indeed bogus and this is most likely something ocfs2-inte=
-rnal.
+int -> unsigned int -> int
 
-I'm buggering off this report.
+Anyway, it makes sense to modify the type of ret from unsigned int to int.
+What about changing the title and comment?
+
+Thanks.
+SJ
+
+> 
+> Change the type of ret to int so that negative errno
+> values are preserved.
+> 
+> Fixes: 5f2aa075070c ("exfat: add inode operations")
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+> ---
+>  fs/exfat/namei.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+> index f5f1c4e8a29f..f2a87ecd79f9 100644
+> --- a/fs/exfat/namei.c
+> +++ b/fs/exfat/namei.c
+> @@ -304,8 +304,8 @@ static int exfat_find_empty_entry(struct inode *inode,
+>  		struct exfat_chain *p_dir, int num_entries,
+>  		struct exfat_entry_set_cache *es)
+>  {
+> -	int dentry;
+> -	unsigned int ret, last_clu;
+> +	int dentry, ret;
+> +	unsigned int last_clu;
+>  	loff_t size = 0;
+>  	struct exfat_chain clu;
+>  	struct super_block *sb = inode->i_sb;
+
 
