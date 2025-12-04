@@ -1,161 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-70738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61707CA59AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 23:18:05 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B70CA5A2E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 23:38:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id C248B3035182
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 22:18:04 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 94E5A3124AA4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 22:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BDD330334;
-	Thu,  4 Dec 2025 22:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C84331221;
+	Thu,  4 Dec 2025 22:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pOEb2Ri0"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oe19tkon"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9094032F76C;
-	Thu,  4 Dec 2025 22:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776B1311599;
+	Thu,  4 Dec 2025 22:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764886679; cv=none; b=XOFwrYH/DAKg98e755nmh1Cal1Qd22sqtPEZ8aNqF6Cr19toC2HW7bE5B9a6m3ZJXAWfPvUoPjzcBSTc4nhy6dw6+kKnNDPX2KWqyLUcVly1p8IsanKZlCqILzbqWqxJGnf/qc+tiZXLSprBVODmKjbuM4AupkU1ZRxTW4D4UmY=
+	t=1764887864; cv=none; b=VeAB+zKLpC6nuQlyVZGGlF5RNCYMBTsch3EyBQTOcK6dk4zyg6UR/CEF1XaLUrq5PialxMAy40fGAOLWsvD/1LMDmUMrIlO8idLjuBxmQBoQcEfDi3GaxzxFBQSlQuqu1CiaxNj9jEG/6sc3/wfqG0PlQhaOAAad1rc3+Dr1xOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764886679; c=relaxed/simple;
-	bh=3QKwgDCuTEqLZTKJBXju+ayuc0pIM0+i0cJ+6vew634=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LSV6JAdU1B9HNf2mpsRx5rJLXmbOen1fqyTzoN/X0wcuLUc3qWsavk9LyUTtNwOJNSIyYi+G9wN33R5ffclhHS49hzGGbBPC8c1e8GJRa3NcrP0851Ul+838o0Lzv5jRkOT5iOvmVoxTbZCIplVBKo/PU6kulj3eriEXpiLZXrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pOEb2Ri0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=k6QVH/SWdP5H8bXIHeIZZPkQwVxQdNZJmtX24mN9i90=; b=pOEb2Ri0+biaDj8R76FKt8db8+
-	gNL4On3s42n2VRZLuJ70zlejVBo2mDgEk/EYYRx/Yt6E52rWb2buoeFpKyiPguCD0G5syhjXcXBeU
-	ze8d4CiTnMu2hAUWOfHD86DLXyVg/QKtpmBx4m0/vbRsPbjLQpe1akjW3F7V2zP6njlBxdpOguU4j
-	0FcrSKxHcCoKKFK4udrdX7Rn0v/C5CI+Z+ck3F3guEDNZ8VW0MRBqjbP2vKfZa5ixuhKpyMsGsRBk
-	Ut7N2ENViN/YTYVaQce/7brCDDoNtk5mhj0U25jHEnkusKsVLvJxUrtBZEPmPok1jgN5WvqEg5/PM
-	hiEYREbA==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vRHdh-00000008ihQ-23Ud;
-	Thu, 04 Dec 2025 22:17:31 +0000
-Message-ID: <b5feba48-7e7c-4ab9-a193-072f3980f525@infradead.org>
-Date: Thu, 4 Dec 2025 14:17:27 -0800
+	s=arc-20240116; t=1764887864; c=relaxed/simple;
+	bh=yKHCvRNpJH7xPDYiNZurxGHI6SlycvPNboVI3w0Vgh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqKsX11UbG/Un2jRdnX1xT9Bl67JPDi9w6mO6z47CTnf31DV5MGGCwWleX0k5PHw7gIpD0RbKr5nFf1REvsVltJEfXi3lAPrruqWk9ZZZpwlR+eddP30znEcuN14JFXRCeP+PlgdhapAUxE+fXvdYlZXIZXpaRyfdL+8vUJpJvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oe19tkon; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1764887862; x=1796423862;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yKHCvRNpJH7xPDYiNZurxGHI6SlycvPNboVI3w0Vgh0=;
+  b=Oe19tkonnEHawYbmO0h+bHENXHWrf6P5XAlFGA6Y7DPhZ5bPlFZMbMvw
+   Ti772v39KNxMH0ARPeC9gFIr30loDNhcl8oNXNDaNjtaD5i3zIy321yXu
+   2qITgnEpJUn8Y4Uf/EfZeTUhceRgDLq3tkvt//MDCIwmom+SNijAvoYIf
+   s/QTtjLxNGk62qU+rm2TI1332h1Em8ph4FdmTSEc57Ft6fChGlo07sR4/
+   nvF42LAqynJ5ERmcWB6O3XOZ7unrE9cz/nx+h7xf/giwt4MsRiRbRJ370
+   s6OTxAK2xtuoj2nrmPt14DL2j+wm/OaNdlgAhmYDddhq8WmGu8WgMFg4J
+   Q==;
+X-CSE-ConnectionGUID: rDcEvur1QbqP9jq67NKuLg==
+X-CSE-MsgGUID: HJYI3r4EQwWslTFmJD4q1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11632"; a="78030964"
+X-IronPort-AV: E=Sophos;i="6.20,250,1758610800"; 
+   d="scan'208";a="78030964"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2025 14:37:42 -0800
+X-CSE-ConnectionGUID: 0XB2ewAhRMqjG8vPOR0UUQ==
+X-CSE-MsgGUID: t+p3J7fTSmmIWqw8jxoczQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,250,1758610800"; 
+   d="scan'208";a="200232956"
+Received: from lkp-server01.sh.intel.com (HELO 4664bbef4914) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 04 Dec 2025 14:37:38 -0800
+Received: from kbuild by 4664bbef4914 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vRHxA-00000000EJR-10WK;
+	Thu, 04 Dec 2025 22:37:36 +0000
+Date: Fri, 5 Dec 2025 06:37:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Xiaobing Li <xiaobing.li@samsung.com>, miklos@szeredi.hu,
+	axboe@kernel.dk
+Cc: oe-kbuild-all@lists.linux.dev, io-uring@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, bschubert@ddn.com,
+	asml.silence@gmail.com, joannelkoong@gmail.com, dw@davidwei.uk,
+	josef@toxicpanda.com, kbusch@kernel.org, peiwei.li@samsung.com,
+	joshi.k@samsung.com, Xiaobing Li <xiaobing.li@samsung.com>
+Subject: Re: [PATCH] fuse: add zero-copy to fuse-over-io_uring
+Message-ID: <202512050506.gwZpnWio-lkp@intel.com>
+References: <20251204082536.17349-1-xiaobing.li@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 25/28] riscv: create a config for shadow stack and
- landing pad instr support
-To: Deepak Gupta <debug@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Christian Brauner <brauner@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
- Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
- alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com,
- andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
- atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
- alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org,
- rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org,
- Zong Li <zong.li@sifive.com>, Andreas Korb
- <andreas.korb@aisec.fraunhofer.de>,
- Valentin Haudiquet <valentin.haudiquet@canonical.com>
-References: <20251204-v5_user_cfi_series-v24-0-ada7a3ba14dc@rivosinc.com>
- <20251204-v5_user_cfi_series-v24-25-ada7a3ba14dc@rivosinc.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251204-v5_user_cfi_series-v24-25-ada7a3ba14dc@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251204082536.17349-1-xiaobing.li@samsung.com>
+
+Hi Xiaobing,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on mszeredi-fuse/for-next]
+[also build test WARNING on linus/master v6.18 next-20251204]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Xiaobing-Li/fuse-add-zero-copy-to-fuse-over-io_uring/20251204-165924
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-next
+patch link:    https://lore.kernel.org/r/20251204082536.17349-1-xiaobing.li%40samsung.com
+patch subject: [PATCH] fuse: add zero-copy to fuse-over-io_uring
+config: um-randconfig-r052-20251205 (https://download.01.org/0day-ci/archive/20251205/202512050506.gwZpnWio-lkp@intel.com/config)
+compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251205/202512050506.gwZpnWio-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512050506.gwZpnWio-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from fs/fuse/dev_uring.c:8:
+   fs/fuse/dev_uring_i.h:43:25: error: field 'payload_iter' has incomplete type
+      43 |         struct iov_iter payload_iter;
+         |                         ^~~~~~~~~~~~
+   fs/fuse/dev_uring.c: In function 'fuse_uring_create_ring_ent':
+>> fs/fuse/dev_uring.c:1086:49: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    1086 |                 err = io_uring_cmd_import_fixed((u64)ent->payload, payload_size, ITER_DEST,
+         |                                                 ^
 
 
+vim +1086 fs/fuse/dev_uring.c
 
-On 12/4/25 12:04 PM, Deepak Gupta wrote:
-> This patch creates a config for shadow stack support and landing pad instr
-> support. Shadow stack support and landing instr support can be enabled by
-> selecting `CONFIG_RISCV_USER_CFI`. Selecting `CONFIG_RISCV_USER_CFI` wires
-> up path to enumerate CPU support and if cpu support exists, kernel will
-> support cpu assisted user mode cfi.
-> 
-> If CONFIG_RISCV_USER_CFI is selected, select `ARCH_USES_HIGH_VMA_FLAGS`,
-> `ARCH_HAS_USER_SHADOW_STACK` and DYNAMIC_SIGFRAME for riscv.
-> 
-> Reviewed-by: Zong Li <zong.li@sifive.com>
-> Tested-by: Andreas Korb <andreas.korb@aisec.fraunhofer.de>
-> Tested-by: Valentin Haudiquet <valentin.haudiquet@canonical.com>
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  arch/riscv/Kconfig                  | 22 ++++++++++++++++++++++
->  arch/riscv/configs/hardening.config |  4 ++++
->  2 files changed, 26 insertions(+)
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 0c6038dc5dfd..f5574c6f66d8 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -1146,6 +1146,28 @@ config RANDOMIZE_BASE
->  
->            If unsure, say N.
->  
-> +config RISCV_USER_CFI
-> +	def_bool y
-> +	bool "riscv userspace control flow integrity"
-> +	depends on 64BIT && \
-> +		$(cc-option,-mabi=lp64 -march=rv64ima_zicfiss_zicfilp -fcf-protection=full)
-> +	depends on RISCV_ALTERNATIVE
-> +	select RISCV_SBI
-> +	select ARCH_HAS_USER_SHADOW_STACK
-> +	select ARCH_USES_HIGH_VMA_FLAGS
-> +	select DYNAMIC_SIGFRAME
-> +	help
-> +	  Provides CPU assisted control flow integrity to userspace tasks.
-
-	           CPU-assisted
-
-> +	  Control flow integrity is provided by implementing shadow stack for
-> +	  backward edge and indirect branch tracking for forward edge in program.
-> +	  Shadow stack protection is a hardware feature that detects function
-> +	  return address corruption. This helps mitigate ROP attacks.
-> +	  Indirect branch tracking enforces that all indirect branches must land
-> +	  on a landing pad instruction else CPU will fault. This mitigates against
-> +	  JOP / COP attacks. Applications must be enabled to use it, and old user-
-> +	  space does not get protection "for free".
-> +	  default y.
-
-	  Default is y if hardware supports it.
-?
-
-> +
->  endmenu # "Kernel features"
-
+  1042	
+  1043	static struct fuse_ring_ent *
+  1044	fuse_uring_create_ring_ent(struct io_uring_cmd *cmd,
+  1045				   struct fuse_ring_queue *queue)
+  1046	{
+  1047		struct fuse_ring *ring = queue->ring;
+  1048		struct fuse_ring_ent *ent;
+  1049		size_t payload_size;
+  1050		struct iovec iov[FUSE_URING_IOV_SEGS];
+  1051		int err;
+  1052	
+  1053		err = fuse_uring_get_iovec_from_sqe(cmd->sqe, iov);
+  1054		if (err) {
+  1055			pr_info_ratelimited("Failed to get iovec from sqe, err=%d\n",
+  1056					    err);
+  1057			return ERR_PTR(err);
+  1058		}
+  1059	
+  1060		err = -EINVAL;
+  1061		if (iov[0].iov_len < sizeof(struct fuse_uring_req_header)) {
+  1062			pr_info_ratelimited("Invalid header len %zu\n", iov[0].iov_len);
+  1063			return ERR_PTR(err);
+  1064		}
+  1065	
+  1066		payload_size = iov[1].iov_len;
+  1067		if (payload_size < ring->max_payload_sz) {
+  1068			pr_info_ratelimited("Invalid req payload len %zu\n",
+  1069					    payload_size);
+  1070			return ERR_PTR(err);
+  1071		}
+  1072	
+  1073		err = -ENOMEM;
+  1074		ent = kzalloc(sizeof(*ent), GFP_KERNEL_ACCOUNT);
+  1075		if (!ent)
+  1076			return ERR_PTR(err);
+  1077	
+  1078		INIT_LIST_HEAD(&ent->list);
+  1079	
+  1080		ent->queue = queue;
+  1081		ent->headers = iov[0].iov_base;
+  1082		ent->payload = iov[1].iov_base;
+  1083	
+  1084		if (READ_ONCE(cmd->sqe->uring_cmd_flags) & IORING_URING_CMD_FIXED) {
+  1085			ent->zero_copy = true;
+> 1086			err = io_uring_cmd_import_fixed((u64)ent->payload, payload_size, ITER_DEST,
+  1087							&ent->payload_iter, cmd, 0);
+  1088	
+  1089			if (err) {
+  1090				kfree(ent);
+  1091				return ERR_PTR(err);
+  1092			}
+  1093		}
+  1094	
+  1095		atomic_inc(&ring->queue_refs);
+  1096		return ent;
+  1097	}
+  1098	
 
 -- 
-~Randy
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
