@@ -1,213 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-70734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4B3CA5565
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 21:32:45 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82998CA56D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 04 Dec 2025 22:15:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id F013C30B4B88
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 20:32:11 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3B525306CA1D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Dec 2025 21:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A519935E549;
-	Thu,  4 Dec 2025 20:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC98330301;
+	Thu,  4 Dec 2025 21:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hV7dZ/Hq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q3wf04Kn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F6D35CBD6
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Dec 2025 20:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837A726E706;
+	Thu,  4 Dec 2025 21:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764878856; cv=none; b=WbYUFG8Z79O9Q2bI8G6WVGA7OHYGpMR5xElwfstbfQQRw2cM1bWYPiMgJqTTiMIuGnXbjdiZ6eJzOzBSX0gfWuGoFqv0sinYFQwqBeDwv7zmE+TFoJCaK80ezYOc6k5EZnI5FL5+XE4Byt1KGvL0v1oFTEqrZO7/EegTOQrvZp4=
+	t=1764882932; cv=none; b=qA4ARdnQPAnQCeC0WVFVacrr1z5NVBmec4N4vHiqbEImFovwMJJcBXMgf99FB4UGjMpCZ83V6RReSSGXYcXxrkamRL6EDq2CZuLiRy0NbxORiVu90Lx54jxoWawSdtR4vkcGoL83DhnQnbsq9HfJ3DJaCthJTNZhUPKpmxDH5wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764878856; c=relaxed/simple;
-	bh=kvi7FCnVZBJHiZFCI56K+4gEMINy97n0zL3WTC+sf0U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bjBpz3OQv5j7eKHBEkhbKz/dpzb34Mm1Lt8Qm4h3XSNV9QEKiUfaA2mIIYhOseGFeoTuMuEBXYviLGPBL7k/brkK3omJHP+rasBguWObD7I1JwNfYlRRLQbSWh9aiNEND56XDXEKUYHOWVULT/wsnlveIoWb0XUZJg/0Qk4yi8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hV7dZ/Hq; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4eddfb8c7f5so14987491cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 12:07:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764878853; x=1765483653; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kvi7FCnVZBJHiZFCI56K+4gEMINy97n0zL3WTC+sf0U=;
-        b=hV7dZ/HqdoLt8abmvJq5OBhsXNdbo3DNfrL4JFl74F0Tnnx++Njxz3dUlIWlaijio+
-         Z6WMwTpBgm80GJwrrO+F/YYqeRuRz16s2lymRZRj8joX7KKHet4PSNgbnlOOnNdLxkSQ
-         TP5I/UmD9fPwms8QV4R0ghyFcaVLaO3Ayn/ijIguef3UHZ0AkBykG38D79NUuBA8pJjb
-         qD+yunC2JRf9RtMiFknWbJO1oR0yM4IDfOZD+yX6Z2lShyY7pAgfbNFEdd6OeV/0a1M3
-         rGkcGXgDuNSY3XY9aEq/Qq4YFvvkqR/ukPdQGx4Oic5GHdT1T3g0/XD/DVM6eVQkyIkY
-         itjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764878853; x=1765483653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kvi7FCnVZBJHiZFCI56K+4gEMINy97n0zL3WTC+sf0U=;
-        b=asyc6asX+uXRUsRnZjFcnQeGkUcpNwbCQJgpcDckkzqzDNyK/auk7EqpKNeIILzo6N
-         NUT8zH7GQ442A1oYclSeVJHJroLxlj+J6s+l1JyBbbY4ra9jCKB9e6XuP52+qkGykfJC
-         IR5Zj2cAgNKzhScCjaGo5WvH4wCPd/nAHeok6lCpPR0sEy1u0Q/cNrvaebNp4o6Vf/li
-         vt7csvjxQPKz4oGcpjJTuZHSViMgrkeCaYH/rw+E2FmZBAnBSK4fCHntaZeCJovTKoPS
-         8wQ2DEPnS/3D+131yaS5Wmo6SnZ+Ez9cAG1EcluDQSa6lHnY7OjX7lxyEtGDIQylWgHX
-         xmvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUg3BCZQELo1k+b6Dg3R5zbAkXnHtE2QY773WaMz0QbEn/TDuLlSB5YjgTyB4gok07ffT6VSF4xsxR65pRE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlQHGVnR/2jGX/PKwVLD6AtayYVjb7CTN3KyZZ9C8Dyj7D7CDS
-	D7bcntAj/iUvrJ1G29SSn6JP5g8UyfL1rorNRgGDJH/Z/9cegwwD+U+QN3kYf7XRNZdejeCrFOx
-	14kZhn40C4sSwrtrXZb415wgZe8K4ea0=
-X-Gm-Gg: ASbGncu92mI85VFSbVdAEnioWPy30Pd+d7gTXCHO1D81tMBhstSdH1YVmanA2X180QL
-	KcNZvq6ECPPFxW3Pz02kZESSr20lJaVqGLzYIkhXiXYWyRSA1evLCkTHoYNzEoGvGkuiRFGAvnL
-	K0bu1je3UnsDYTsWXFy11ZYU+FZxLD9hJ8vSlr9jmwv2OdWqUt0jKIOrG9tuuq8KDS1wfXLzEPY
-	Yl2oIwQysiIY+C6L2UG2Ni31TtdXx9N0k7CJIYx8UU2Y9mg0CE51xuJeo7MZgvozYHauw==
-X-Google-Smtp-Source: AGHT+IEBHkBXVSPZAh8Xy8Ci7UlUKESOBShoCazEYWOR3elyKtXi0tGoaZbnV8Zc8tjWmGcHB0hyPurNz+6Ph4fhLzs=
-X-Received: by 2002:a05:622a:1b8d:b0:4ed:5f45:42c0 with SMTP id
- d75a77b69052e-4f023aad79fmr70943781cf.62.1764878853293; Thu, 04 Dec 2025
- 12:07:33 -0800 (PST)
+	s=arc-20240116; t=1764882932; c=relaxed/simple;
+	bh=6k2GRQBqjw6t/2Bq8gihyaMJPqlUwySvgrCW4cFAx6o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S2bFXLEtakd8jAxRfIBQ8YdPmHLl4xFiiwtPcdirGFrAlkbDEOvKOApH4y69I2YyoHR0Y9JvU84f8JLUZTzYmwIr/3HwrmuM1z6QgUoMyWE8PpfPoqyI4mHPYzSmWjQoLiCgTWDOPoKJJ7nOmIiQkHif+R1P1VxylzoBIiBnIcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q3wf04Kn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83279C4CEFB;
+	Thu,  4 Dec 2025 21:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764882932;
+	bh=6k2GRQBqjw6t/2Bq8gihyaMJPqlUwySvgrCW4cFAx6o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=q3wf04KnbAkEHgWC+A33jjSzlZb8qEPLEkgwP7PI+FQ8KEvhTEw8OYkRJNLwKH18z
+	 lgdSCA+EMDz4TY4uqMvcQ8abxPe877MxDXPmHgRAS7vX6tuvvL3QKj4xHoKOz05Gfn
+	 Z9d3WL7m+Vv6vZ/LaCCKgPXsnSRbtmWhiM8ASk90zVNcg2Hm97YYCQ6jxe6T0mrPtx
+	 ecn5VKBeURBkElVh/va7higgF4X/VGeIyPYsmBhOP2aAzWWkllpzyQFVeWo87hiLIV
+	 9HdRRfFd9kEGnr+f8IBkKCe1fNlVZSX4IxlZylExgtC+CKpuFGLVmXfI0HQvE0T9eW
+	 zKnmnmjryd/Cw==
+Message-ID: <992028c4-dff1-49a5-9cef-42484783da8e@kernel.org>
+Date: Thu, 4 Dec 2025 22:15:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251203003526.2889477-1-joannelkoong@gmail.com>
- <20251203003526.2889477-8-joannelkoong@gmail.com> <CADUfDZosVLf4vGm4_kNFReaNH3wSi2RoLXwZBc6TN0Jw__s1OQ@mail.gmail.com>
- <CAJnrk1Z_UZxmppmXXQr3joGzMSdU4ycnnGt=SacQT+6DbALDmA@mail.gmail.com> <CADUfDZov3Nk81k8cvdz1ZoXrbTDJfJryHjNza3ZUJyXtfE5YgQ@mail.gmail.com>
-In-Reply-To: <CADUfDZov3Nk81k8cvdz1ZoXrbTDJfJryHjNza3ZUJyXtfE5YgQ@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 4 Dec 2025 12:07:22 -0800
-X-Gm-Features: AWmQ_blccX-H9e4ecrJGu4Ex3cEXJQIduCiGV8IDwXQtQCH6M9fEVphQj2NjKNo
-Message-ID: <CAJnrk1ZmJ8V3MOpcEYks5i3dG431C7PmB14J7N2k22rn41ROuw@mail.gmail.com>
-Subject: Re: [PATCH v1 07/30] io_uring/rsrc: add fixed buffer table pinning/unpinning
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] lib: xarray: free unused spare node in
+ xas_create_range()
+To: Shardul Bankar <shardul.b@mpiricsoftware.com>, willy@infradead.org,
+ linux-mm@kvack.org, akpm@linux-foundation.org
+Cc: dev.jain@arm.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, janak@mpiricsoftware.com, shardulsb08@gmail.com
+References: <7a31f01ac0d63788e5fbac15192c35229e1f980a.camel@mpiricsoftware.com>
+ <20251201074540.3576327-1-shardul.b@mpiricsoftware.com>
+ <57d5793d-2343-49b3-a30c-cd12dc40460d@kernel.org>
+ <78c9b5eeb10051dd9791ed3cb0ce7a18eedc5e7f.camel@mpiricsoftware.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <78c9b5eeb10051dd9791ed3cb0ce7a18eedc5e7f.camel@mpiricsoftware.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 3, 2025 at 5:24=E2=80=AFPM Caleb Sander Mateos
-<csander@purestorage.com> wrote:
->
-> On Wed, Dec 3, 2025 at 2:52=E2=80=AFPM Joanne Koong <joannelkoong@gmail.c=
-om> wrote:
-> >
-> > On Tue, Dec 2, 2025 at 8:49=E2=80=AFPM Caleb Sander Mateos
-> > <csander@purestorage.com> wrote:
-> > >
-> > > On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gma=
-il.com> wrote:
-> > > >
-> > > > Add kernel APIs to pin and unpin the buffer table for fixed buffers=
-,
-> > > > preventing userspace from unregistering or updating the fixed buffe=
-rs
-> > > > table while it is pinned by the kernel.
-> > > >
-> > > > This has two advantages:
-> > > > a) Eliminating the overhead of having to fetch and construct an ite=
-r for
-> > > > a fixed buffer per every cmd. Instead, the caller can pin the buffe=
-r
-> > > > table, fetch/construct the iter once, and use that across cmds for
-> > > > however long it needs to until it is ready to unpin the buffer tabl=
-e.
-> > > >
-> > > > b) Allowing a fixed buffer lookup at any index. The buffer table mu=
-st be
-> > > > pinned in order to allow this, otherwise we would have to keep trac=
-k of
-> > > > all the nodes that have been looked up by the io_kiocb so that we c=
-an
-> > > > properly adjust the refcounts for those nodes. Ensuring that the bu=
-ffer
-> > > > table must first be pinned before being able to fetch a buffer at a=
-ny
-> > > > index makes things logistically a lot neater.
-> > >
-> > > Why is it necessary to pin the entire buffer table rather than
-> > > specific entries? That's the purpose of the existing io_rsrc_node ref=
-s
-> > > field.
-> >
-> > How would this work with userspace buffer unregistration (which works
-> > at the table level)? If buffer unregistration should still succeed
-> > then fuse would need a way to be notified that the buffer has been
-> > unregistered since the buffer belongs to userspace (eg it would be
-> > wrong if fuse continues using it even though fuse retains a refcount
-> > on it). If buffer unregistration should fail, then we would need to
-> > track this pinned state inside the node instead of relying just on the
-> > refs field, as buffers can be unregistered even if there are in-flight
-> > refs (eg we would need to differentiate the ref being from a pin vs
-> > from not a pin), and I think this would make unregistration more
-> > cumbersome as well (eg we would have to iterate through all the
-> > entries looking to see if any are pinned before iterating through them
-> > again to do the actual unregistration).
->
-> Not sure I would say buffer unregistration operates on the table as a
-> whole. Each registered buffer node is unregistered individually and
+On 12/4/25 15:15, Shardul Bankar wrote:
+> On Mon, 2025-12-01 at 09:39 +0100, David Hildenbrand (Red Hat) wrote:
+>> Please don't post new versions as reply to old versions.
+>> ...
+>>
+>> ...
+>> The first thing xas_destroy() does is check whether xa_alloc is set.
+>>
+>> I'd assume that the compiler is smart enough to inline xas_destroy()
+>> completely here, so likely the xa_alloc check here can just be
+>> dropped.
+> 
+> Got it, will share a v4 of the patch on a new chain with redundant
+> xas_destroy() removed.
+> 
+>> Staring at xas_destroy() callers, we only have a single one outside
+>> of
+>> lib: mm/huge_memory.c:__folio_split()
+>>
+>> Is that one still required?
+> 
+> I checked the callers of xas_destroy(). Apart from the internal uses in
+> lib/xarray.c and the unit tests in lib/test_xarray.c, the only external
+> user is indeed mm/huge_memory.c:__folio_split().
+> 
+> That path is slightly different from the xas_nomem() retry loop I fixed
+> in xas_create_range():
+> 
+> 	__folio_split() goes through xas_split_alloc() and then
+> xas_split() / xas_try_split(), which allocate and consume nodes via
+> xas->xa_alloc.
+> 
+> 	The final xas_destroy(&xas) in __folio_split() is there to
+> drop any leftover split-allocation nodes, not the xas_nomem() spare
+> node I handled in xas_create_range().
+> 
+> So with the current code I don’t think I can safely declare that
+> xas_destroy() in __folio_split() is redundant- it still acts as the
+> last cleanup for the split helpers.
+> 
+> For v4 I’d therefore like to keep the scope focused on the syzkaller
+> leak and just drop the redundant "if (xa_alloc)" around xas_destroy()
+> in xas_create_range() as you suggested.
+> 
+> Separately, I agree it would be cleaner if the split helpers guaranteed
+> that xa_alloc is always cleared on return, so callers never have to
+> think about xas_destroy(). I can take a closer look at xas_split() /
+> xas_try_split() and, if it looks sound, propose a small follow-up
+> series that makes their cleanup behaviour explicit and then removes the
+> xas_destroy() from __folio_split().
 
-I'm looking at the liburing interface for it and I'm only seeing
-io_uring_unregister_buffers() / IORING_UNREGISTER_BUFFERS which works
-on the entire table, so I'm wondering how that interface would work if
-pinning/unpinning was at the entry level?
+That makes sense, thanks. Handling it internally is certainly harder to 
+mess up by callers ...
 
-> stores its own reference count. io_put_rsrc_node() will be called on
-> each buffer node in the table. However, io_put_rsrc_node() just
-> removes the one reference from the buffer node. If there are other
-> references on the buffer node (such as an inflight io_uring request
-> using it), io_free_rsrc_node() won't be called to free the buffer node
-> until all those references are dropped too. So fuse holding a
-> reference on the buffer node would allow it to be unregistered, but
-> prevent it from being freed until fuse dropped its reference.
-> I'm not sure I understand the problem with fuse continuing to hold
-> onto a registered buffer node after userspace has unregistered it from
-> the buffer table. (It looks like the buffer node in question is the
+-- 
+Cheers
 
-For fuse, it holds the reference to the buffer for the lifetime of the
-connection, which could be a very long time. I'm not seeing how we
-could let userspace succeed in unregistering with fuse continuing to
-hold that reference, since as I understand it conceptually,
-unregistering the buffer should give ownership of the buffer
-completely back to userspace.
-
-> one at FUSE_URING_FIXED_HEADERS_INDEX?) Wouldn't pinning the buffer
-
-Yep you have that right, the buffer node in question is the one at
-FUSE_URING_FIXED_HEADERS_INDEX which is where all the headers for
-requests are placed.
-
-> table present similar issues? How would userspace get fuse to drop its
-
-I don't think pinning the buffer table has a similar issue because we
-disallow unregistration if it's pinned.
-
-> pin if it wants to modify the buffer registrations? I would imagine
-
-For the fuse use case, the server never really modifies its buffer
-registrations as it sets up everything before initiating the
-connection. But if it wanted to in the future, the server could send a
-fuse notification to the kernel to unpin the buf table.
-
-> the code path that calls io_uring_buf_table_unpin() currently could
-> instead call into io_put_rsrc_node() (maybe by completing an io_uring
-> request that has imported the registered buffer) to release its
-> reference on the buffer node. For ublk, userspace can request to stop
-> a ublk device or the kernel will do so automatically if userspace
-> drops its file handle (e.g. if the process exits), which will release
-> any io_uring resources the ublk device is using.
-
-Fuse has something similar where the server can abort the connection,
-and that will release the pin / other io uring resources.
-
-Thanks,
-Joanne
-
->
-> >
-> > >
-> > > >
+David
 
