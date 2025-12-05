@@ -1,141 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-70811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F822CA7426
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 11:52:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82BC2CA76EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 12:37:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C049D303D321
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 10:51:44 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 980213091CD1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 11:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B659F329C52;
-	Fri,  5 Dec 2025 10:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7CC324700;
+	Fri,  5 Dec 2025 11:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b="pvHP9auW"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VvwgPsbL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender3-of-o55.zoho.com (sender3-of-o55.zoho.com [136.143.184.55])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C32A30CD8A;
-	Fri,  5 Dec 2025 10:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764931899; cv=pass; b=GbF+SW7IsLIqBok7cDemxdaccLCFnU4fCRdccSgKcYmcMHzoqMNqwZWAyNQWjkmnT/swmbMALtwPa/lbKTUqQemFZHKtL38yQBnP9P6I2GOXER64PpN4KPqNpyQ8SHhsblOeO16HmregOrL/1mgXnb6HONqhrlDxxeXeXF0SFmI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764931899; c=relaxed/simple;
-	bh=d0aNk6WgoSVmyUthi2xxqzMYT6K50Z030FubRRIwIgo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uwTD0xI0Oy3XteLO49h/rgYfxjubjHt6+18aStbvg9MsUvMe+4NE2RNNdGGD9z119Ynr08memCWwIgx7t4e6Qxqs8Lz3CgGozBe+TbpHqy1d1JvV3MbJLuZkrjTGH6mVdGe23J/mnIVWEwMFNZaAwFPLXE+Oj2kJQ3tTNJeJc2I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com; spf=pass smtp.mailfrom=mpiricsoftware.com; dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b=pvHP9auW; arc=pass smtp.client-ip=136.143.184.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mpiricsoftware.com
-ARC-Seal: i=1; a=rsa-sha256; t=1764931881; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=lMp9ROJj1zjWnxOhXzpKhNn9HERNCqxwdL91vd4BzrcionxXi4l55ln13r6l+wyeMAyo75i+gs7lez2vc3bQez3dvfTcrIb2QPy3BgS42Z6f7QsJUmI6wxi+Z7v+4HkpYHYGrUVHQAF7w1n8psAIJ2UzosdFCGBmUY1u+Dmw/wE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1764931881; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=d0aNk6WgoSVmyUthi2xxqzMYT6K50Z030FubRRIwIgo=; 
-	b=li0emkERwFpCxP8Ig1JE48Tr3sld6IGCkZJW6FJlq+kIdccmYQy5LfRBmqtIWQncPBAsq3pm1heBGRp5ssGhAkzbBQRlSYDUTI4aXarL5V7pnjaE70KVg2HwUH4zzFY0LrLKI6UXPtlwuAav70aQAXb8DXl3kOfcbZJTkWO3RdE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=mpiricsoftware.com;
-	spf=pass  smtp.mailfrom=shardul.b@mpiricsoftware.com;
-	dmarc=pass header.from=<shardul.b@mpiricsoftware.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1764931881;
-	s=mpiric; d=mpiricsoftware.com; i=shardul.b@mpiricsoftware.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=d0aNk6WgoSVmyUthi2xxqzMYT6K50Z030FubRRIwIgo=;
-	b=pvHP9auWvRir8+fatMnLF3Zf1ggo6NQ9l/Ny3Bp7QUzkGgVEqJLckxkKEmS4+Lj4
-	TiBO+tZgRiSBhWOgysXynijtDizlqxriOBUfOoMaTrZ4K56QPwFb/euBnWPndweaU/9
-	ATS087e33VTJl7Fco0Who5I1d4+aO86oTaAqEuB0=
-Received: by mx.zohomail.com with SMTPS id 1764931879412666.8539055240332;
-	Fri, 5 Dec 2025 02:51:19 -0800 (PST)
-Message-ID: <edc1773d7d2e36682f607549a1f69b1bc503f72e.camel@mpiricsoftware.com>
-Subject: Re: [PATCH v4] lib: xarray: free unused spare node in
- xas_create_range()
-From: Shardul Bankar <shardul.b@mpiricsoftware.com>
-To: "David Hildenbrand (Red Hat)" <david@kernel.org>, willy@infradead.org, 
-	akpm@linux-foundation.org, linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dev.jain@arm.com, janak@mpiricsoftware.com, shardulsb08@gmail.com
-Date: Fri, 05 Dec 2025 16:21:13 +0530
-In-Reply-To: <d651e943-99f5-431e-a67d-e4e6784e720e@kernel.org>
-References: <20251204142625.1763372-1-shardul.b@mpiricsoftware.com>
-	 <d651e943-99f5-431e-a67d-e4e6784e720e@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4-0ubuntu2.1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF5F31B110;
+	Fri,  5 Dec 2025 11:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764934659; cv=none; b=IdtOlUyF9qnHEd7ojV798W7Qd5+CrPr6+ILZEpznDXCU3cWtoeoGO0RNXpIYPwGb6dcPhdb6CZZoJOeUYtT3VZlLEQdu1w86tBbuJPKSWrYJCfY5eO814N3MF6iSrNTc68pMvbi6alxEI7yyjYXXZhAVP5u3SRm5DnvfOJE1nK0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764934659; c=relaxed/simple;
+	bh=bszxkIM0Y2bpV2uB8D8d+ARs6gG/53a41Mat3khk3ro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WpVmgwfCaiQmHehIf3Q9kcA+UKFsGvWRK1aw4Lwbms1YsI9opwBcaiX5vR0eQWB62Mu3Ij7wBR9iKGv4qJQk3o4fzfFpA0X+qSazRcfV9NcTU/ZeJy5HQBdJHzUQoleDfO4CiPLgCcw4fgCIjeu64incRUubpXHFGyUCW8sr6Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VvwgPsbL; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=4LlKaFzbXsCdvMw4znE9eDALeS29H81GByWEY1fjI0M=;
+	b=VvwgPsbLIw0KHZpEZpMnmOzwKxw3AU3SdYi8lZs0hYKK9/1F8VrI3AZWXyM4Xz
+	TvX0vRpzT9oiFS66CY4aQzZzeVkNKIk1f66XoEbhWh0l1PzBF1fzhCHtJ+1uZ0cT
+	OIqsJ20LOMm0ER+cmup563AzmjUt7aA3piG7BNwed6vYc=
+Received: from [10.42.20.201] (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD336DAwzJpS+0BAA--.1034S2;
+	Fri, 05 Dec 2025 19:36:34 +0800 (CST)
+Message-ID: <a19281dc-4b8a-4a86-a2e4-64da2a499015@163.com>
+Date: Fri, 5 Dec 2025 19:36:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 7/7] exfat: get mutil-clusters in exfat_get_block
+To: Sungjong Seo <sj1557.seo@samsung.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Matthew Wilcox <willy@infradead.org>, Namjae Jeon <linkinjeon@kernel.org>,
+ Yuezhang Mo <yuezhang.mo@sony.com>, Chi Zhiling <chizhiling@kylinos.cn>
+References: <20251118082208.1034186-1-chizhiling@163.com>
+ <CGME20251118082625epcas1p44374f21201c10f1bb9084d2280e64e6d@epcas1p4.samsung.com>
+ <20251118082208.1034186-8-chizhiling@163.com>
+ <5db1b061-56ef-4013-9d1e-aac04175aa8d@samsung.com>
+ <96f9d95b-c93f-4637-9c3b-a186d967beee@163.com>
+ <9c47afea-a211-4848-bde7-b29f27466e43@samsung.com>
+Content-Language: en-US
+From: Chi Zhiling <chizhiling@163.com>
+In-Reply-To: <9c47afea-a211-4848-bde7-b29f27466e43@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD336DAwzJpS+0BAA--.1034S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXw18uryfCr1DZryUCw45ZFb_yoW5KFWkpr
+	W8t3WrKr4UXr9rGr4Iqr1vqF1S9348GF1UXr1xJa47KryqvFn3tFWqyr98uFy8K3Z8XF1q
+	qF15Ka43urnxua7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRjLvNUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC2wIIpWkyw8KCkwAA3-
 
-T24gRnJpLCAyMDI1LTEyLTA1IGF0IDA4OjIyICswMTAwLCBEYXZpZCBIaWxkZW5icmFuZCAoUmVk
-IEhhdCkgd3JvdGU6Cj4gPiBMaW5rOgo+ID4gaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20v
-YnVnP2lkPWEyNzRkNjVmYzczMzQ0OGVkNTE4YWQxNTQ4MWVkNTc1NjY5ZGQ5OGMKPiAuLi4KPiBS
-ZXZpZXdlZC1ieTogRGF2aWQgSGlsZGVuYnJhbmQgKFJlZCBIYXQpIDxkYXZpZEBrZXJuZWwub3Jn
-Pgo+IAo+IAo+IEJUVywgZG8gd2UgaGF2ZSBhIHdheSB0byB0ZXN0IHRoaXMgaW4gYSB0ZXN0IGNh
-c2U/CkhpIERhdmlkLAoKVGhhbmtzIGZvciB0aGUgcmV2aWV3IGFuZCB0aGUgUmV2aWV3ZWQtYnku
-CgpSZWdhcmRpbmcgYSB0ZXN0IGNhc2U6IEkgZG9u4oCZdCBoYXZlIGEgZm9jdXNlZCBzZWxmdGVz
-dCBvciBmYXVsdC0KaW5qZWN0aW9uIHNldHVwIHlldCB0aGF0IHJlbGlhYmx5IGhpdHMgdGhpcyB4
-YXNfbm9tZW0oKSArCnhhc19jcmVhdGVfcmFuZ2UoKSBjb3JuZXIgY2FzZS4gCkkgbm90aWNlZCB0
-aGlzIHNwYXJlLW5vZGUgbGVhayB3aGlsZSBhbmFseXppbmcgdGhlIFN5emJvdCByZXBvcnQgSQpy
-ZWZlcmVuY2VkIGluIHRoZSBMaW5rOiB0YWcsIGJ1dCB0aGUgcmVwcm9kdWNlciBJIHNlZSB0aGVy
-ZSBkb2VzbuKAmXQKaXNvbGF0ZSB0aGlzIHBhdGggYW5kIHJlcG9ydHMgb3RoZXIga21lbWxlYWtz
-LgoKRm9yIG5vdyBJ4oCZZCBwcmVmZXIgdG8gdHJlYXQgdGhpcyBhcyBhIHNtYWxsIGNvcnJlY3Ru
-ZXNzIGZpeCBpbiB4YXJyYXkKaXRzZWxmLiBJZiBJIG1hbmFnZSB0byBjb21lIHVwIHdpdGggYSBy
-b2J1c3Qgd2F5IHRvIGV4ZXJjaXNlIHRoaXMgcGF0aAppbiBhIHNlbGZ0ZXN0IChlLmcuIHZpYSB0
-YXJnZXRlZCBmYXVsdCBpbmplY3Rpb24gaW4gbGliL3Rlc3RfeGFycmF5LmMpLApJIGNhbiBmb2xs
-b3cgdXAgd2l0aCBhIHNlcGFyYXRlIHBhdGNoLCBidXQgSSBkb27igJl0IGhhdmUgYW55dGhpbmcg
-c29saWQKdG8gcHJvcG9zZSB0b2RheS4KCj4gCj4gCj4gQSBmb2xsb3ctdXAgY2xlYW51cCB0aGF0
-IGF2b2lkcyBsYWJlbHMgY291bGQgYmUgc29tZXRoaW5nIGxpa2UKPiAodW50ZXN0ZWQpOgo+IAo+
-IAo+IGRpZmYgLS1naXQgYS9saWIveGFycmF5LmMgYi9saWIveGFycmF5LmMKPiBpbmRleCA5YThi
-NDkxNjU0MGNmLi4zMjVmMjY0NTMwZmIyIDEwMDY0NAo+IC0tLSBhL2xpYi94YXJyYXkuYwo+ICsr
-KyBiL2xpYi94YXJyYXkuYwo+IEBAIC03MTQsNiArNzE0LDcgQEAgdm9pZCB4YXNfY3JlYXRlX3Jh
-bmdlKHN0cnVjdCB4YV9zdGF0ZSAqeGFzKQo+IMKgwqDCoMKgwqDCoMKgwqAgdW5zaWduZWQgbG9u
-ZyBpbmRleCA9IHhhcy0+eGFfaW5kZXg7Cj4gwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBjaGFy
-IHNoaWZ0ID0geGFzLT54YV9zaGlmdDsKPiDCoMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVkIGNoYXIg
-c2licyA9IHhhcy0+eGFfc2liczsKPiArwqDCoMKgwqDCoMKgIGJvb2wgc3VjY2VzcyA9IGZhbHNl
-Owo+IMKgIAo+IMKgwqDCoMKgwqDCoMKgwqAgeGFzLT54YV9pbmRleCB8PSAoKHNpYnMgKyAxVUwp
-IDw8IHNoaWZ0KSAtIDE7Cj4gwqDCoMKgwqDCoMKgwqDCoCBpZiAoeGFzX2lzX25vZGUoeGFzKSAm
-JiB4YXMtPnhhX25vZGUtPnNoaWZ0ID09IHhhcy0KPiA+eGFfc2hpZnQpCj4gQEAgLTcyNCw5ICs3
-MjUsMTEgQEAgdm9pZCB4YXNfY3JlYXRlX3JhbmdlKHN0cnVjdCB4YV9zdGF0ZSAqeGFzKQo+IMKg
-wqDCoMKgwqDCoMKgwqAgZm9yICg7Oykgewo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIHhhc19jcmVhdGUoeGFzLCB0cnVlKTsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCBpZiAoeGFzX2Vycm9yKHhhcykpCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIGdvdG8gcmVzdG9yZTsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCBpZiAoeGFzLT54YV9pbmRleCA8PSAoaW5kZXggfCBYQV9DSFVOS19NQVNLKSkKPiAtwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZ290byBzdWNjZXNzOwo+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBicmVhawo+ICvC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmICh4YXMtPnhhX2luZGV4IDw9IChpbmRleCB8
-IFhBX0NIVU5LX01BU0spKSB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIHN1Y2NlZXNzID0gdHJ1ZTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-fQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHhhcy0+eGFfaW5kZXggLT0gWEFf
-Q0hVTktfU0laRTsKPiDCoCAKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmb3Ig
-KDs7KSB7Cj4gQEAgLTc0MCwxNSArNzQzLDE3IEBAIHZvaWQgeGFzX2NyZWF0ZV9yYW5nZShzdHJ1
-Y3QgeGFfc3RhdGUgKnhhcykKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9Cj4g
-wqDCoMKgwqDCoMKgwqDCoCB9Cj4gwqAgCj4gLXJlc3RvcmU6Cj4gLcKgwqDCoMKgwqDCoCB4YXMt
-PnhhX3NoaWZ0ID0gc2hpZnQ7Cj4gLcKgwqDCoMKgwqDCoCB4YXMtPnhhX3NpYnMgPSBzaWJzOwo+
-IC3CoMKgwqDCoMKgwqAgeGFzLT54YV9pbmRleCA9IGluZGV4Owo+IC3CoMKgwqDCoMKgwqAgcmV0
-dXJuOwo+IC1zdWNjZXNzOgo+IC3CoMKgwqDCoMKgwqAgeGFzLT54YV9pbmRleCA9IGluZGV4Owo+
-IC3CoMKgwqDCoMKgwqAgaWYgKHhhcy0+eGFfbm9kZSkKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCB4YXNfc2V0X29mZnNldCh4YXMpOwo+ICvCoMKgwqDCoMKgwqAgaWYgKHN1Y2Nlc3Mp
-IHsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB4YXMtPnhhX2luZGV4ID0gaW5kZXg7
-Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKHhhcy0+eGFfbm9kZSkKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgeGFzX3NldF9vZmZzZXQo
-eGFzKTsKPiArwqDCoMKgwqDCoMKgIH0gZWxzZSB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgeGFzLT54YV9zaGlmdCA9IHNoaWZ0Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIHhhcy0+eGFfc2licyA9IHNpYnM7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-eGFzLT54YV9pbmRleCA9IGluZGV4Owo+ICvCoMKgwqDCoMKgwqAgfQo+ICvCoMKgwqDCoMKgwqAg
-LyogRnJlZSBhbnkgdW51c2VkIHNwYXJlIG5vZGUgZnJvbSB4YXNfbm9tZW0oKSAqLwo+ICvCoMKg
-wqDCoMKgwqAgeGFzX2Rlc3Ryb3koeGFzKTsKPiDCoCB9Cj4gwqAgRVhQT1JUX1NZTUJPTF9HUEwo
-eGFzX2NyZWF0ZV9yYW5nZSk7Cj4gCj4gCllvdXIgYm9vbC1iYXNlZCB2ZXJzaW9uIHJlYWRzIG5p
-Y2VyOyBJ4oCZbSBoYXBweSB0byBmb2xsb3cgdXAgd2l0aCBhCnNtYWxsIGNsZWFudXAgcGF0Y2gg
-b24gdG9wIHRoYXQgc3dpdGNoZXMgeGFzX2NyZWF0ZV9yYW5nZSgpIG92ZXIgdG8KdGhhdCBzdHls
-ZSAod2l0aCBhIFN1Z2dlc3RlZC1ieSB0YWcpLgoKVGhhbmtzIGFuZCBSZWdhcmRzLApTaGFyZHVs
-Cgo=
+On 12/4/25 20:18, Sungjong Seo wrote:
+> 
+> 
+> On 25. 11. 28. 15:18, Chi Zhiling wrote:
+>> On 11/28/25 10:48, Sungjong Seo wrote:
+>>>
+>>> Hi, Chi,
+>>> On 25. 11. 18. 17:22, Chi Zhiling wrote:
+>>>> From: Chi Zhiling <chizhiling@kylinos.cn>
+>>>>
+>>>> mpage uses the get_block of the file system to obtain the mapping of a
+>>>> file or allocate blocks for writes. Currently exfat only supports
+>>>> obtaining one cluster in each get_block call.
+>>>>
+>>>> Since exfat_count_contig_clusters can obtain multiple consecutive clusters,
+>>>> it can be used to improve exfat_get_block when page size is larger than
+>>>> cluster size.
+>>>
+>>> I think reusing buffer_head is a good approach!
+>>> However, for obtaining multiple clusters, it would be better to handle
+>>> them in exfat_map_cluster.
+>>
+>> Hi, Sungjong
+>>
+>> I agree.
+>>
+>> My original plan was to support multiple clusters for exfat_map_cluster and exfat_get_cluster. since the changes required were quite extensive, I put that plan on hold. This would likely involve refactoring exfat_map_clusterand introducing iterators to reduce the number of parameters it needs
+>>
+>> I will take some time to consider the signature of the new exfat_map_clusters. Do you have any thoughts about this?
+> Apologies, I missed your email.
+> IMO, we don't need to rush, so I think expanding exfat_map_cluster(s) would be better.
+
+Okay.
+
+> 
+> Thanks.
+>>
+>>>
+>>>>
+>>>> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+>>>> ---
+>>>>    fs/exfat/inode.c | 14 +++++++++++++-
+>>>>    1 file changed, 13 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+>>>> index f9501c3a3666..256ba2af34eb 100644
+>>>> --- a/fs/exfat/inode.c
+>>>> +++ b/fs/exfat/inode.c
+>>>> @@ -264,13 +264,14 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
+>>>>    static int exfat_get_block(struct inode *inode, sector_t iblock,
+>>>>            struct buffer_head *bh_result, int create)
+>>>>    {
+>>>> +    struct exfat_chain chain;
+>>>>        struct exfat_inode_info *ei = EXFAT_I(inode);
+>>>>        struct super_block *sb = inode->i_sb;
+>>>>        struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>>>>        unsigned long max_blocks = bh_result->b_size >> inode->i_blkbits;
+>>>>        int err = 0;
+>>>>        unsigned long mapped_blocks = 0;
+>>>> -    unsigned int cluster, sec_offset;
+>>>> +    unsigned int cluster, sec_offset, count;
+>>>>        sector_t last_block;
+>>>>        sector_t phys = 0;
+>>>>        sector_t valid_blks;
+>>>> @@ -301,6 +302,17 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
+>>>>          phys = exfat_cluster_to_sector(sbi, cluster) + sec_offset;
+>>>>        mapped_blocks = sbi->sect_per_clus - sec_offset;
+>>>> +
+>>>> +    if (max_blocks > mapped_blocks && !create) {
+>>>> +        chain.dir = cluster;
+>>>> +        chain.size = (max_blocks >> sbi->sect_per_clus_bits) + 1;
+>>>
+>>> There seems to be an issue where the code sets chain.size to be one greater than the actual cluster count.
+>>>
+>>> For example, assuming a 16KiB page, 512B sector, and 4KiB cluster,
+>>> for a 16KiB file, chain.size becomes 5 instead of 4.
+>>> Is this the intended behavior?
+>>
+>> This is not the expected behavior. It's a serious bug. Thank you very much for pointing this out.
+>>
+>>>
+>>>> +        chain.flags = ei->flags;
+>>>> +
+>>>> +        err = exfat_count_contig_clusters(sb, &chain, &count);
+>>>> +        if (err)
+>>>> +            return err;
+>>>> +        max_blocks = (count << sbi->sect_per_clus_bits) - sec_offset;
+>>>
+>>> You already said mapped_blocks is correct.
+>>>
+>>>> +    }
+>>>>        max_blocks = min(mapped_blocks, max_blocks);
+>>>>          map_bh(bh_result, sb, phys);
+>>
+>>
 
 
