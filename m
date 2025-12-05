@@ -1,50 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-70884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBFECA9523
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 21:58:38 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7CE1CA9306
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 21:01:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id CA2BA3020056
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 20:58:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 224F03115BC6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 19:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F25E35CBD7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A6735CBDB;
 	Fri,  5 Dec 2025 18:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6M5ZvQh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJRZHyzJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B1B359FB4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E27F35A934;
 	Fri,  5 Dec 2025 18:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764960111; cv=none; b=Z0Po14qRD5MgOGeig60IMAfiyMWF4jvgLDHScmfMu8odsQBR1ZzoHhvTWmETbEsOjCz+AJ/B0X78nwNFF2k4VKYSvIX0YM9YDuAjhKe7slLR9eNWZvjPnaCjwIuWjFHhfgXE4EGkXD3J7K+Sa/KEkC2vjIwP17ZAv5vMaeUQ+nk=
+	t=1764960111; cv=none; b=SVEcdNNCaYvM6MQmtcF0bajofKkuA79MOUK5XQNq2B+Qmmovrjqeu5m89sNaZiQfF7wpaR9WKSIaA8IhfXQ5JsOoKpmVhrZMANGU4n+oZ6gFH3LxcieAoP0G3RUed/HXRgu+Ar6EA47V/+2qSYQHrYM8LvYCPE2Q97I2z8XNTnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1764960111; c=relaxed/simple;
-	bh=LAJf90nF+g60beJiG5QYxHSIluys/8oDXRemvNQeYOw=;
+	bh=04gVJXOYw7Ju2c/7DpEHB2s0kbuucyi2foZBfgP2tHg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KnaGCZ0mW5rFFck3FQNer/5nnhKnjUWmZStFUF0Qm1FebrhPREEdLfsuATxtjblOsX7IPCFaJEHDVWrJ9RJFye4SpWzhBn7W+w/WF9Z8YXZqKFWcIHrc/wkZfywxwBD1SnCLIa/1ssTdgBhgiCVt52BUOMod7UBFUFANRHbdrbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6M5ZvQh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 893E2C4AF0D;
+	 In-Reply-To:To:Cc; b=pwsA7YGArYE1Te6lCsMKG3hUtc+3ZXapN21+YCenwqJ1twfXTuPeL7Nz5+nBezZXPXpiWUXsVEYhZit64yEOPL2Ks4mL3PJkOOAvBEs9dt6jdc1oTeAFhwGoqmKp4GiVS8BhNhFULIAknzHfq8RwR7pS3vZNfRfNeg4gwRkY/rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJRZHyzJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A7FDCC4AF54;
 	Fri,  5 Dec 2025 18:41:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1764960110;
-	bh=LAJf90nF+g60beJiG5QYxHSIluys/8oDXRemvNQeYOw=;
+	bh=04gVJXOYw7Ju2c/7DpEHB2s0kbuucyi2foZBfgP2tHg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=S6M5ZvQhqvVD5F0QS2ZsaZqG9/Ff5CHSPgQYbRJ23AOcs62IDM8EZVU568dQOzSkt
-	 dhiL2Vg39hqQp9mGZhr21Mn5+gr39BQVBtVELnstCb2utX1rYE+k3IsrUUrnvTI6n0
-	 CaoWiTREC7hvqdxcV1QvqEw/Sk2ROdORtByyQJk+J4Rv68dGEiMMaIytRVUwQlyOZM
-	 /nJSderYf+Ueu8aUTw2bNmLtDyBp8AKClEvxQAAw9Ez/GwxOV51oktQysEW2I5EKXd
-	 u0vgDMnGr+iNevHiAzwdOILAevpdFcbQKd15Z/c21W9JUPCm+WZpPx2yh8g3SRuzFA
-	 y3XbLxCjo5XeA==
+	b=qJRZHyzJu2ng2T7+QcnxvUuW5qFDRntvNoU36U7lMP+q/wrd2WS9ZeHiZxa8jj/CG
+	 yMc6rnNdnNdXXtul9iIlTLORZngNPwglpavErhXvImT5OCQ50LWmfI3q92wSOYH0xD
+	 maWCJJk95yX+Dgd8GCroB4kj7xs8IWDTDMKbbQerZ63h7dqdspRWNUAg2pfE2aBDsJ
+	 WtBrC8XvTCJ6ZE1NP7UuzfzSzvA744bG8FSPvLB2PMSCtULPhAMH1/5jaN9YtSBnoa
+	 rAX9v5trUwIvEFcDVWGHpCI5GktP//+8mKsnsB+16mjaDZyIZtfirPZTAEv42qytwh
+	 9KKwlmKR5D/SA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CA4D2F7F6;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 940D5D339B7;
 	Fri,  5 Dec 2025 18:41:50 +0000 (UTC)
 From: Deepak Gupta via B4 Relay <devnull+debug.rivosinc.com@kernel.org>
-Date: Fri, 05 Dec 2025 10:41:45 -0800
-Subject: [PATCH v25 07/28] riscv/mm: manufacture shadow stack pte
+Date: Fri, 05 Dec 2025 10:41:46 -0800
+Subject: [PATCH v25 08/28] riscv/mm: teach pte_mkwrite to manufacture
+ shadow stack PTEs
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +54,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251205-v5_user_cfi_series-v25-7-1a07c0127361@rivosinc.com>
+Message-Id: <20251205-v5_user_cfi_series-v25-8-1a07c0127361@rivosinc.com>
 References: <20251205-v5_user_cfi_series-v25-0-1a07c0127361@rivosinc.com>
 In-Reply-To: <20251205-v5_user_cfi_series-v25-0-1a07c0127361@rivosinc.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
@@ -91,11 +92,11 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  Valentin Haudiquet <valentin.haudiquet@canonical.com>, 
  Deepak Gupta <debug@rivosinc.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1764960107; l=1430;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1764960107; l=2371;
  i=debug@rivosinc.com; s=20251023; h=from:subject:message-id;
- bh=xg60sqaex1DpMRqlc6kxZaEeka4CnULn8wlCIX4f9Wk=;
- b=FeUvykLJrfx/Bx62YVwLSBRd4tiOMI1wQodP4x5CTmbkL5Ei2JxUy9gzi6n8H67+hQBt/aKLb
- vRuIFYVQ7I6DPsrGaXuPK9GKzxZw3Ry38RV+cpNV9qneCbZdDnsoUhr
+ bh=t88tD6h5jGJWywn6Tz9bzXAVcX1Z5iY6bKQeGfJKelY=;
+ b=N4xtbVOv6lrVA6wKy86XWTPRYm7wr/n+y0/kgtebmS9buXcDZzbf/D6MfqGEe1Bu3tcMMb54a
+ Ld6+7x5sDGnCUsJLpuBvs/MBw8Z5DkzSxijh9Av60LC4Pll0qAgDXRl
 X-Developer-Key: i=debug@rivosinc.com; a=ed25519;
  pk=O37GQv1thBhZToXyQKdecPDhtWVbEDRQ0RIndijvpjk=
 X-Endpoint-Received: by B4 Relay for debug@rivosinc.com/20251023 with
@@ -105,8 +106,12 @@ Reply-To: debug@rivosinc.com
 
 From: Deepak Gupta <debug@rivosinc.com>
 
-This patch implements creating shadow stack pte (on riscv). Creating
-shadow stack PTE on riscv means that clearing RWX and then setting W=1.
+pte_mkwrite creates PTEs with WRITE encodings for underlying arch.
+Underlying arch can have two types of writeable mappings. One that can be
+written using regular store instructions. Another one that can only be
+written using specialized store instructions (like shadow stack stores).
+pte_mkwrite can select write PTE encoding based on VMA range (i.e.
+VM_SHADOW_STACK)
 
 Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 Reviewed-by: Zong Li <zong.li@sifive.com>
@@ -114,37 +119,59 @@ Tested-by: Andreas Korb <andreas.korb@aisec.fraunhofer.de>
 Tested-by: Valentin Haudiquet <valentin.haudiquet@canonical.com>
 Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 ---
- arch/riscv/include/asm/pgtable.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/riscv/include/asm/pgtable.h |  7 +++++++
+ arch/riscv/mm/pgtable.c          | 16 ++++++++++++++++
+ 2 files changed, 23 insertions(+)
 
 diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 4c4057a2550e..e4eb4657e1b6 100644
+index e4eb4657e1b6..b03e8f85221f 100644
 --- a/arch/riscv/include/asm/pgtable.h
 +++ b/arch/riscv/include/asm/pgtable.h
-@@ -425,6 +425,11 @@ static inline pte_t pte_mkwrite_novma(pte_t pte)
- 	return __pte(pte_val(pte) | _PAGE_WRITE);
- }
+@@ -420,6 +420,10 @@ static inline pte_t pte_wrprotect(pte_t pte)
  
-+static inline pte_t pte_mkwrite_shstk(pte_t pte)
-+{
-+	return __pte((pte_val(pte) & ~(_PAGE_LEAF)) | _PAGE_WRITE);
-+}
+ /* static inline pte_t pte_mkread(pte_t pte) */
+ 
++struct vm_area_struct;
++pte_t pte_mkwrite(pte_t pte, struct vm_area_struct *vma);
++#define pte_mkwrite pte_mkwrite
 +
- /* static inline pte_t pte_mkexec(pte_t pte) */
- 
- static inline pte_t pte_mkdirty(pte_t pte)
-@@ -765,6 +770,11 @@ static inline pmd_t pmd_mkwrite_novma(pmd_t pmd)
- 	return pte_pmd(pte_mkwrite_novma(pmd_pte(pmd)));
- }
- 
-+static inline pmd_t pmd_mkwrite_shstk(pmd_t pte)
-+{
-+	return __pmd((pmd_val(pte) & ~(_PAGE_LEAF)) | _PAGE_WRITE);
-+}
-+
- static inline pmd_t pmd_wrprotect(pmd_t pmd)
+ static inline pte_t pte_mkwrite_novma(pte_t pte)
  {
- 	return pte_pmd(pte_wrprotect(pmd_pte(pmd)));
+ 	return __pte(pte_val(pte) | _PAGE_WRITE);
+@@ -765,6 +769,9 @@ static inline pmd_t pmd_mkyoung(pmd_t pmd)
+ 	return pte_pmd(pte_mkyoung(pmd_pte(pmd)));
+ }
+ 
++pmd_t pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma);
++#define pmd_mkwrite pmd_mkwrite
++
+ static inline pmd_t pmd_mkwrite_novma(pmd_t pmd)
+ {
+ 	return pte_pmd(pte_mkwrite_novma(pmd_pte(pmd)));
+diff --git a/arch/riscv/mm/pgtable.c b/arch/riscv/mm/pgtable.c
+index 8b6c0a112a8d..17a4bd05a02f 100644
+--- a/arch/riscv/mm/pgtable.c
++++ b/arch/riscv/mm/pgtable.c
+@@ -165,3 +165,19 @@ pud_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
+ 	return old;
+ }
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
++
++pte_t pte_mkwrite(pte_t pte, struct vm_area_struct *vma)
++{
++	if (vma->vm_flags & VM_SHADOW_STACK)
++		return pte_mkwrite_shstk(pte);
++
++	return pte_mkwrite_novma(pte);
++}
++
++pmd_t pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
++{
++	if (vma->vm_flags & VM_SHADOW_STACK)
++		return pmd_mkwrite_shstk(pmd);
++
++	return pmd_mkwrite_novma(pmd);
++}
 
 -- 
 2.43.0
