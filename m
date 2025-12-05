@@ -1,175 +1,240 @@
-Return-Path: <linux-fsdevel+bounces-70910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD03CA921C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 20:46:12 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD550CA9318
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 21:03:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 360CB3045F5C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 19:42:34 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id C44923018413
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 20:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF20322B74;
-	Fri,  5 Dec 2025 19:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48DF2EC55C;
+	Fri,  5 Dec 2025 20:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a/bdHesi"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="UkKWJPfI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197D923957D;
-	Fri,  5 Dec 2025 19:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D637F2DEA8C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 20:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764963749; cv=none; b=JixxQdme50sYwIsO05L3XQnYb9/FssZza42QIygruu8uKXn0qUfOTvPSBLX+fT+SOwLybd3xCMcTAewoBgjziF4mTlIaBSEDVVLUDQ3xJ2TJycIudGdMXVe8QbxdgWhrqhledJVl4JNg4UW4cIhTLnVFm5T0+tAVeTKMEQsn6Sc=
+	t=1764964971; cv=none; b=CQFJrgrsbY9ffmIGGQjUmY75Z9wKHt5ErGdZDK4MRo6YYsW8DMfnZifXMddbPQMwFUzcD66mYr69h6+Ol5b/c3pNtbowWFXKt5DxnHsUc3Zx7+GJoALSnaEsGmGXnZ/fctY/FVp9Yzk6dFEvdNW9LS55CQwGLDqGvCz6lFuE0ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764963749; c=relaxed/simple;
-	bh=vUEQfFLArJqRXieg64Trw9f6nQK2lpl/JLVzJLe8ibk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wc7QwFMWk6b5loMNlhuoxyC6LEBFjj+XQ4B3WjpuUG0y979EDGh62K4dXaNRTtBlBpxqoriTnzvBDk46Bw/IIXBX1VHfBE4/31ySTJafRwuoCRnIpNlpivdvzh5bs5t91rV4miNWB/IvZAJGCcoRtO6/9nrUbxivuPspsf8nuUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=a/bdHesi; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=Mgm/FMtyke96+ZxY7cquZNmO3PwSewNHSLs9FqvP1Zw=; b=a/bdHesi5AkSwr4bQh57WNPXRe
-	W2wtAQOpBBAlcZei2JB8AuobRhAdof+Qt5iT4owdX6N6cKp4zyn9WbDfOpYDzT6a4wbMcbjERRy12
-	McbStsV5v73E52GB9/rc7S90e6eUxLj64tT9+irQrOTaQqWZC/e24LUKJPnvZBFZ6HvkTS9kfLgk4
-	Pft2YbM1xe5fEaecIe9i1HJXvh21A4BCViEf/hLCVvRBGqzj+HUfRCyR4xP1fBOPLQV+0o6tbuEqE
-	xZi5nZP2QCYLNLhZyw+9MD/Hgr3yKlIa1Am5XQ4AxoIaqDMNKJHO+dzWI+21eiR+BiXKZooCBdUzn
-	3TV/HJlQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vRbgm-00000009yBh-3a3v;
-	Fri, 05 Dec 2025 19:42:00 +0000
-Message-ID: <14afa916-565e-4c25-8e19-ddb87644ae8b@infradead.org>
-Date: Fri, 5 Dec 2025 11:41:58 -0800
+	s=arc-20240116; t=1764964971; c=relaxed/simple;
+	bh=qcydgZj4b8V9jEa7jueYVrct7nrSjCV4PEqRDHFNwEM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CFA6R7R6T3EQeMcWjiQaAkMmCeOlJwsrTycUf3kyFdhMfffaEe1zzvRHY5yzVLaTtqK9J+YJ+63t8GzUOcIt6j4gHdjDkq6ZGgWm93GlEoQXMeUSsqUPb8fIf/10C6ibVPkVB6AnlZCA/0PVHZ6vQ/v+HV8/wkRILKmhs9aPrRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=UkKWJPfI; arc=none smtp.client-ip=74.125.224.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-640d790d444so2190517d50.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Dec 2025 12:02:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1764964963; x=1765569763; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bSyeT6/GbNhN7xVKemsLrw+Uoi9s6FunOgP5u56JtJU=;
+        b=UkKWJPfI+DmlnI6el6CmHvgMN4fxLSWI4VUuNRNW/RDirjHIPJVof0GUL3C8iYmxkh
+         /C7Ps9IPMa/1DlhQtu86A7ZJmuZf1GhIUEypAjhTQsBjwAQwW1PntgrMEQbhpoENXeHN
+         VTMHL73sR4BzJ03fUctEaRBw8HpQsFSakLJmMqbET6EEWFCNKYTtF6Kml2lxKgFsmg/k
+         XRVAnOpVr7dF56zaPLzuTizGEbFaa/bVdbESmCraoSJO5Hs36gaih7wghzvg3iFd0vom
+         E0vZhzks6ZtV5OwmoK0JAYnv6MGNrQ9blyJP13I3S5+rS76bTDXXcLDlD6rdY4yzDxlJ
+         1qMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764964963; x=1765569763;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bSyeT6/GbNhN7xVKemsLrw+Uoi9s6FunOgP5u56JtJU=;
+        b=Jdsnyo1TFiEfokHIk+5kofub7jxKNeUfj124aaGAVrmsFocet994FGh936Nj+cPoHX
+         eG73HCGeIanLfPg+B57V2cvvDUuInL7SkmlUVIQexY5KNOxb9orxcdxIB6LV/DGv+a3c
+         EXYct4thDE1we6oZsJqb/4idD9181f9kKBVm8eWUadHoclDPvmBHS8mcKttyUtroIKO/
+         q2e82FcC4KErFndqJ5iAYyaCe0A6CNurxboH5UY3U2+K/MLUGdIH9n6fViohALDqXN6a
+         6jEXRUM9r70QcmEgL0g9rnEvcxR4nuhg7QicFrwswp4u1Q6uXIAR6eXu19faHTUqf7fB
+         AZOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVIxX1HLb9uvxIgmpORiguy6D1Irv8V6R/iSydik27pnbLCp8kpnQW4/EN2j/fQsi367Fs5VnU4u23s7F9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIuVzHJrtSLy0pySLLp8IvcyFs//2YcVX21AjPdDHBh9S20jAO
+	+E3UEo0SFzND2VZArms9yPTnfSvi8JK9skqadgkWdzMBaMOHDWOfycZxeWcziCTtOiU=
+X-Gm-Gg: ASbGnctEQamXDamiK51yswGYXDnPMLGRMkA2hKM+TWBZLMvmH6ceZygL6k2q/FiDfdT
+	MDYVdswSPW2ziY67fu1YTC9pXQulPi6ixPlgujOWeiuoab+TrzbKRKUHWUUa6acHBxy8Aj6r68c
+	RxcKfZaJ+cSjfqe5Ve2fZnm5+YqRdefWYr3RjJqb/xkfXzE9/zFd/rtsIccVjK+fSC3fKRKu/q+
+	yIjLvkA+cwN8VdrS+VZM1KQGEGNxczK/kkthtGrzjpAhirrAK9EDlIR1jZgzQGxKvHUuyl3vYy7
+	25LgHv7MX4ffES2PfYhkUVCw9yKdXVCpNG+0dfdHJwBzI2mJ8aSpIUTOFPWICrz7175htHqWHwD
+	bAVqa2NDqeHNK9KPW3ziCZd88DeYBVBLbaBJMG1vm/uYyHN5oFtrN1aBXcROeJ7E2IXTRDThp+G
+	IFiFV/EVUILNDpTa593iIC198=
+X-Google-Smtp-Source: AGHT+IHkQFoyYTI/CgnVuJTvIWVlarpWNlSzy+9Hi0lj7OunJvwiUGM0HeXibuz7YuHAqGQbNQdSkw==
+X-Received: by 2002:a05:690e:158e:10b0:63f:a89c:46f9 with SMTP id 956f58d0204a3-6444e7a7360mr114496d50.40.1764964963024;
+        Fri, 05 Dec 2025 12:02:43 -0800 (PST)
+Received: from pop-os.attlocal.net ([2600:1700:6476:1430:828a:4678:b49d:bcef])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6443f2c404asm2147958d50.11.2025.12.05.12.02.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Dec 2025 12:02:42 -0800 (PST)
+Message-ID: <a325f0d3778f3d7c0974d558587cddbc0077072c.camel@dubeyko.com>
+Subject: Re: [PATCH v1] hfsplus: fix memory leak on mount failure
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>, 
+	syzbot+99f6ed51479b86ac4c41@syzkaller.appspotmail.com
+Cc: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Date: Fri, 05 Dec 2025 12:02:40 -0800
+In-Reply-To: <20251206000902.71178-1-swarajgaikwad1925@gmail.com>
+References: <69326fcf.a70a0220.d98e3.01e5.GAE@google.com>
+	 <20251206000902.71178-1-swarajgaikwad1925@gmail.com>
+Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 25/28] riscv: create a config for shadow stack and
- landing pad instr support
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Christian Brauner <brauner@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
- Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
- alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com,
- andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
- atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
- alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org,
- rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org,
- Zong Li <zong.li@sifive.com>, Andreas Korb
- <andreas.korb@aisec.fraunhofer.de>,
- Valentin Haudiquet <valentin.haudiquet@canonical.com>
-References: <20251204-v5_user_cfi_series-v24-0-ada7a3ba14dc@rivosinc.com>
- <20251204-v5_user_cfi_series-v24-25-ada7a3ba14dc@rivosinc.com>
- <b5feba48-7e7c-4ab9-a193-072f3980f525@infradead.org>
- <aTMjS-Ok-DrJJjQY@debug.ba.rivosinc.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aTMjS-Ok-DrJJjQY@debug.ba.rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
+On Sat, 2025-12-06 at 00:09 +0000, Swaraj Gaikwad wrote:
+> syzbot reported a memory leak in the hfsplus mount path when the
+> mount
+> fails, which occurs because the fs_context API moves ownership of
+> fc->s_fs_info to sb->s_fs_info early in sget_fc().
+>=20
+> When filesystems are mounted using the new API, the VFS (specifically
+> sget_fc) transfers the ownership of the context's s_fs_info (the
+> 'sbi'
+> struct) to the superblock (sb->s_fs_info) and clears the context
+> pointer.
+>=20
+> If the mount fails after this transfer the VFS calls
+> deactivate_locked_super, which invokes the filesystem's kill_sb
+> callback. Previously, hfsplus used the generic kill_block_super,
+> which
+> does not free sb->s_fs_info, resulting in the 'sbi' structure and its
+> loaded NLS tables being leaked.
+>=20
+> Fix this by implementing a filesystem-specific ->kill_sb() that frees
+> sb->s_fs_info and its NLS resources before calling
+> kill_block_super().
+> Also remove the early kfree(sbi) from hfsplus_fill_super()=E2=80=99s erro=
+r
+> path,
+> because the superblock unconditionally owns s_fs_info when using the
+> fs_context API.
+>=20
+> Testing:
+> This fix was verified by building the kernel with the .config
+> provided
+> by the syzkaller reporter and running the reproducer. The reproducer
+> now runs successfully without triggering any memory leaks or kernel
+> errors.
+>=20
+> #syz test:
+> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> e69c7c175115
+>=20
+> Reported-by: syzbot+99f6ed51479b86ac4c41@syzkaller.appspotmail.com
+> Signed-off-by: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
+> ---
+> =C2=A0fs/hfsplus/super.c | 16 ++++++++++++++--
+> =C2=A01 file changed, 14 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+> index 16bc4abc67e0..fa7420d08da1 100644
+> --- a/fs/hfsplus/super.c
+> +++ b/fs/hfsplus/super.c
+> @@ -629,7 +629,6 @@ static int hfsplus_fill_super(struct super_block
+> *sb, struct fs_context *fc)
+> =C2=A0out_unload_nls:
+> =C2=A0	unload_nls(sbi->nls);
+> =C2=A0	unload_nls(nls);
+> -	kfree(sbi);
+> =C2=A0	return err;
+> =C2=A0}
+>=20
+> @@ -688,10 +687,23 @@ static int hfsplus_init_fs_context(struct
+> fs_context *fc)
+> =C2=A0	return 0;
+> =C2=A0}
+>=20
+> +static void hfsplus_kill_sb(struct super_block *sb)
+> +{
+> +=C2=A0=C2=A0=C2=A0 struct hfsplus_sb_info *sbi =3D HFSPLUS_SB(sb);
+> +
+> +=C2=A0=C2=A0=C2=A0 if (sbi) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unload_nls(sbi->nls);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kfree(sbi);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sb->s_fs_info =3D NULL;
+> +=C2=A0=C2=A0=C2=A0 }
+> +
+> +=C2=A0=C2=A0=C2=A0 kill_block_super(sb);
+> +}
+> +
+> =C2=A0static struct file_system_type hfsplus_fs_type =3D {
+> =C2=A0	.owner		=3D THIS_MODULE,
+> =C2=A0	.name		=3D "hfsplus",
+> -	.kill_sb	=3D kill_block_super,
+> +	.kill_sb	=3D hfsplus_kill_sb,
+> =C2=A0	.fs_flags	=3D FS_REQUIRES_DEV,
+> =C2=A0	.init_fs_context =3D hfsplus_init_fs_context,
+> =C2=A0};
+>=20
+> base-commit: 6bda50f4333fa61c07f04f790fdd4e2c9f4ca610
+> --
+> 2.52.0
 
+Sorry, but this patch [1] already fixes the issue.
 
-On 12/5/25 10:24 AM, Deepak Gupta wrote:
-> On Thu, Dec 04, 2025 at 02:17:27PM -0800, Randy Dunlap wrote:
->>
->>
->> On 12/4/25 12:04 PM, Deepak Gupta wrote:
->>> This patch creates a config for shadow stack support and landing pad instr
->>> support. Shadow stack support and landing instr support can be enabled by
->>> selecting `CONFIG_RISCV_USER_CFI`. Selecting `CONFIG_RISCV_USER_CFI` wires
->>> up path to enumerate CPU support and if cpu support exists, kernel will
->>> support cpu assisted user mode cfi.
->>>
->>> If CONFIG_RISCV_USER_CFI is selected, select `ARCH_USES_HIGH_VMA_FLAGS`,
->>> `ARCH_HAS_USER_SHADOW_STACK` and DYNAMIC_SIGFRAME for riscv.
->>>
->>> Reviewed-by: Zong Li <zong.li@sifive.com>
->>> Tested-by: Andreas Korb <andreas.korb@aisec.fraunhofer.de>
->>> Tested-by: Valentin Haudiquet <valentin.haudiquet@canonical.com>
->>> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->>> ---
->>>  arch/riscv/Kconfig                  | 22 ++++++++++++++++++++++
->>>  arch/riscv/configs/hardening.config |  4 ++++
->>>  2 files changed, 26 insertions(+)
->>>
->>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->>> index 0c6038dc5dfd..f5574c6f66d8 100644
->>> --- a/arch/riscv/Kconfig
->>> +++ b/arch/riscv/Kconfig
->>> @@ -1146,6 +1146,28 @@ config RANDOMIZE_BASE
->>>
->>>            If unsure, say N.
->>>
->>> +config RISCV_USER_CFI
->>> +    def_bool y
->>> +    bool "riscv userspace control flow integrity"
->>> +    depends on 64BIT && \
->>> +        $(cc-option,-mabi=lp64 -march=rv64ima_zicfiss_zicfilp -fcf-protection=full)
->>> +    depends on RISCV_ALTERNATIVE
->>> +    select RISCV_SBI
->>> +    select ARCH_HAS_USER_SHADOW_STACK
->>> +    select ARCH_USES_HIGH_VMA_FLAGS
->>> +    select DYNAMIC_SIGFRAME
->>> +    help
->>> +      Provides CPU assisted control flow integrity to userspace tasks.
->>
->>                CPU-assisted
->>
->>> +      Control flow integrity is provided by implementing shadow stack for
->>> +      backward edge and indirect branch tracking for forward edge in program.
->>> +      Shadow stack protection is a hardware feature that detects function
->>> +      return address corruption. This helps mitigate ROP attacks.
->>> +      Indirect branch tracking enforces that all indirect branches must land
->>> +      on a landing pad instruction else CPU will fault. This mitigates against
->>> +      JOP / COP attacks. Applications must be enabled to use it, and old user-
->>> +      space does not get protection "for free".
->>> +      default y.
->>
->>       Default is y if hardware supports it.
->> ?
-> 
-> No default Y means support is built in the kernel for cfi.
+Thanks,
+Slava.
 
-  (if the compiler supports it?)
-
-> If hardware doesn't support CFI instructions, then kernel will do following
-> 
-> - prctls to manage shadow stack/landing pad enable/disable will fail.
-> - vDSO will not have shadow stack instructions in it.
-
-Thanks for the info.
-
--- 
-~Randy
+[1]
+https://lore.kernel.org/linux-fsdevel/20251201222843.82310-3-mehdi.benhadjk=
+helifa@gmail.com/
 
 
