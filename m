@@ -1,68 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-70745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE00CA5C41
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 01:58:55 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09DE7CA5C56
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 01:59:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0D791307A972
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 00:58:53 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 5C736319509D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 00:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BD820458A;
-	Fri,  5 Dec 2025 00:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0439F1F7580;
+	Fri,  5 Dec 2025 00:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gv9lFCd+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eNZEsLmA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f73.google.com (mail-oa1-f73.google.com [209.85.160.73])
+Received: from mail-oi1-f202.google.com (mail-oi1-f202.google.com [209.85.167.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A74158857
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114851F5435
 	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 00:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.73
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764896329; cv=none; b=uu6MB4wWZxe3NtyjtA5RHQXnt2c0SnWcsD8rkLauThdxqHKcg2L+2bqpHPDa5ig3pA4bOwf9scQmgpir4U6mV/6UtEocXdCI94uzJV6ige9TKcUCjgRtdolO4ZzB61FUQDlGyA4Qonpowc3jy+RDaEOrJEMiWsmjXoEi74Yi7+4=
+	t=1764896330; cv=none; b=A80muf9HNA9EHDP3Dds6jGvgDDDiVOqD4MsoHkJRjIAJmfZjYqg7PGyBVTRBywR6N4HeMSr/HJ0kymIQ5rhUlYt2BED6L82A9qHl+E8e7ZJ9vFLWRxDLmdR3FqKXX8pNlBk6n1fR/n7hItEVJYy+pvZjDM7I3kn/g+0morhzotM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764896329; c=relaxed/simple;
+	s=arc-20240116; t=1764896330; c=relaxed/simple;
 	bh=nyHWTFoGvASer3toat4ImRw6FmdnkyEWU7Xu2iHxdEk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DXQmVRvGf91D8LzU+9gTmZQTIuhcb2ujNRlBpYpaq2hRQzXG7juVGRWo1Cgt/cW+dKtbVDM1naK0ZfOyE2xMW53kPSQL90ms+ASsRpowU3ITrjKdVmwCmlVcCqvihdKOlW8u+C8gtwCGjqWG04s9W3cE3DHYM+yEqJRNl+zpHoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gv9lFCd+; arc=none smtp.client-ip=209.85.160.73
+	 To:Cc:Content-Type; b=UWVRCo6dGBjCVrYpRLke1o0c6eUylUul7fIQiEELIrpRCccix2UEdHf0dXGh++13Rlh3Qi8sMTSr9OPgCNiTihqqP+lBcx7l7bjOZabUZ0JjbqL1aSCw6xiTWn2lqmUPTtOiNd/FCMOciIltnSEyFz77n5Jxxkk2rWj0bWSrhDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eNZEsLmA; arc=none smtp.client-ip=209.85.167.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com
-Received: by mail-oa1-f73.google.com with SMTP id 586e51a60fabf-3e890e6be00so2717597fac.3
+Received: by mail-oi1-f202.google.com with SMTP id 5614622812f47-450b5afd932so1140186b6e.2
         for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 16:58:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764896326; x=1765501126; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1764896327; x=1765501127; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
         bh=l1Ka/G7ByT2+kY8UIiF65zUCvkc5PFIL+KWxYDYgrVo=;
-        b=gv9lFCd+GtEiz92KLbQSnh8G42/pYerV62qYQ9N3AshItE6xE21WY9HEQtg0lNLuEs
-         z5B8ny+6MwviPpmtRUTHe1qJttrrqi0FiBRzFo9Khs3emOxfGTm85vwVWdi8uJ7Ha9BN
-         /GGzc955p/cz4XRYEvn4eA2YU8biHNDYYOgBaJxzGHY0XrGmMcoek5RLcxZqktsDRPeH
-         xB6ZCfpscjkWUKZDXf97b6OSVQPwgo/g3gNet2eLmwfDVFo7IuaMsSv1FZoHxw8oQgWt
-         ExoTTY9W7y5sCi5Tnata6GDm41gkKLzlgbKE+QVdsH8kVB5jdckuBkmLOaqzDl/TPTUu
-         On7g==
+        b=eNZEsLmAdpb0BU2UpV5lhEny7gj5K5inc2LLvEIbLCq3aW6Wl8RuKrlK16q0FbPdDY
+         cF6VTXRH+Q2yFbiCH9jUTQKHpfaBFNUtzYrqjcBu3fD1Z8i1NXxLk+wf7QQKQ9BnrzJi
+         6YZLicRaWzMU/MzBBy8odRJR3jPUSd2nji/PacrYeaakDSDUxvWjY5fy0f6kRD0B6NrC
+         jwzMeD6E+1UtawogGpdAQZr7Ir30WRkNlJhKprd8DX81gWIp4QZ8GWO1r4f9z0xjEVv2
+         ivmF3q7sQrG1YRJfijmK2DKI37V8MC9j5HLM5zx4RzNntOlvx8vJFy+nrKkStaqeZeXp
+         vXsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764896326; x=1765501126;
+        d=1e100.net; s=20230601; t=1764896327; x=1765501127;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
         bh=l1Ka/G7ByT2+kY8UIiF65zUCvkc5PFIL+KWxYDYgrVo=;
-        b=FykcVMoEed67NiE4X+1Lx2xCBLkylyqwzdjDGs8Xc7U7PEuR9K/RpoilXYmsJGrOfk
-         580XL0sb1nrwCumtnX1c19mPktbiuQaNvnFq9KQFxalrVS4tw2KfNljG9siNKDLwk3xA
-         z62i+sJrjyTpq82wO7/7QbGEKkPUMnvt2wRaQogr098OkBQD897C6oH/j7L9BfE2YHSH
-         WB+KOcRWIo+tqvqZ1LNOkU2IdPGqjjmZ9CqYRmZAMxwy2/gPKexTYGOxafWn/qbs6zfA
-         i2Q4436RCY7VPjZ14ZeefZDwhGERX3jawu9dU4BXVAUv1xSirqo6iGvooPxDNapNaqAq
-         NgZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/ZGTv03jZL0hytjDoTL/X2JrhaKP7So9wRkjdMdeXkrTYuCWYMB/zv0cfjkpgoSjbSyd0hcQaUGQG7MEp@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQFOuv/LQvAvd8GIzj/IjEhegpM6sTXyfxOu+GibrbgGXRV1CD
-	vNoFy2M4oVKdWsrG34Vw+8tn4kmZ6Ce7NrZtUnVsF/NVteP49f6DF3Ak5JpGkIEyuntALaFTuSd
-	3XED4Tg==
-X-Google-Smtp-Source: AGHT+IEwsKSsZMSp6xx5UIj2r6LD+T7cD7UXVYxQ9IkaQIcbU4lDaPVqZhMj+NwIGSDCYm3tG6SS17DBIEk=
-X-Received: from oacnz12.prod.google.com ([2002:a05:6871:758c:b0:3e7:db6c:48b])
- (user=avagin job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:888f:b0:3e8:8e57:a7a1
- with SMTP id 586e51a60fabf-3f5067dfc56mr2969051fac.52.1764896326246; Thu, 04
- Dec 2025 16:58:46 -0800 (PST)
-Date: Fri,  5 Dec 2025 00:58:29 +0000
+        b=e9u4X0x2r6+oMxzvTG9WGWK9vc8tfui3FNaLO3ZzR6Ig2Ga9ftELc2goF2BO0XW6xJ
+         5hhz/HepCR6+wu95whBO/pqD1ExZR27zdKJWhYKNeD3XEXeXjLn+8qUwNnSr6pNtkyZA
+         1nrv5LXERhzzBQGlNX0J6YWSrgGYer6Z0tfyKsoRyivyg4wZmZQSZMc1OQ1Y6oygx2Fl
+         IbGBmiLVhKwJ1662cKs3JCv+CdnMlh9Okx62A2a3vTYzJ+c+eck+I+WSxlK3sV2Xk18r
+         o/Nz6bCzhuxsw9fkUz2PaY4+5WxwvfqElaQvsBr5zlgDoq5ENMNgsD7r6VDTTrc/7NnV
+         YP9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUS7PBSiOXSHWAFFtvkABQbKHoq2bB3Ko7v1H1ENBpwtwyhzjhH3l2UCQcJ1m1N0lzha/CJxM2/WtZ3cchM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4zIryTjygUineIW9etQW8vX4qeVIRl2dkfVhxOcVRArvvmQvN
+	gzifGNI/NWJ2K/6oagBsIp2dFNRx66Tayeml914vQvOS0G+8v2LH0OMVCr+skXsv0xzJuhaVS4a
+	v+EV8Uw==
+X-Google-Smtp-Source: AGHT+IGmtosd8xmps/oV4TZgOUFGtK1BT8mv/MmkumMBnl/inyl5u1+B5QcUb//XVfD1YOf+RZc7lMo25M0=
+X-Received: from iobgp24.prod.google.com ([2002:a05:6602:e18:b0:949:60d:4912])
+ (user=avagin job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6808:1185:b0:44f:e61d:189f
+ with SMTP id 5614622812f47-4536e3dcc04mr4462771b6e.13.1764896327255; Thu, 04
+ Dec 2025 16:58:47 -0800 (PST)
+Date: Fri,  5 Dec 2025 00:58:30 +0000
 In-Reply-To: <20251205005841.3942668-1-avagin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -72,7 +72,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251205005841.3942668-1-avagin@google.com>
 X-Mailer: git-send-email 2.52.0.223.gf5cc29aaa4-goog
-Message-ID: <20251205005841.3942668-2-avagin@google.com>
+Message-ID: <20251205005841.3942668-3-avagin@google.com>
 Subject: [PATCH 1/3] cgroup, binfmt_elf: Add hwcap masks to the misc controller
 From: Andrei Vagin <avagin@google.com>
 To: Kees Cook <kees@kernel.org>
