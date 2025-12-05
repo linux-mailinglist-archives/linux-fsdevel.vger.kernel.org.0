@@ -1,237 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-70839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA39CA88E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 18:21:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6119CA8A4D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 18:39:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2F03730BC969
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 17:05:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 380E830BEA45
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 17:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7263234D3AE;
-	Fri,  5 Dec 2025 17:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FEA34679D;
+	Fri,  5 Dec 2025 17:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="Lzn5FLGC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jHT8GwCv";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Smlf3LTg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fra-out-006.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-006.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.197.217.180])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD6D2FD1C5;
-	Fri,  5 Dec 2025 17:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.197.217.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D4833F8B1
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 17:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764954024; cv=none; b=EPNZPR/HWyPer2ui1rQVngzC5T42acIwoQHiTIdejjtDhBuaoIJY+PlTDEJ/E+ufznXkN0H5Wht5vqThY67p9FUmkOQoBK1VAEDyhB0mIpf3J8iMMT3ES0EgzE0rUO6X5ff9FJtNB62UiUPVcWW18AQaHDYtG8q9Y8tzgIxh69s=
+	t=1764954882; cv=none; b=COjV0l0dgUl9FqarVej52BDHRPHPNVCcCbsEKrtT2b6gYz4gtD9MVLhLYQX5QXAnv8bCBRZNY1FzSIJFba05DQEK2KYa1zR3rh6QYkNxGHVA6xVzT8wHrk6LFmcxqzPhxNJVpZFSa+zk0rU7QirX6Kolhiiz01KxGop9X1h5O+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764954024; c=relaxed/simple;
-	bh=5UpnxnEVgU0Oy/yU6lakZ+7I/hP5dkdcXUkzHcJlwzI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aLH30B/+AeIcEgwnU6Z9LucdqDjIop2o+SrTeuHKeq/4g0CTgQznXwIeuozmbPrpn6baXC6WVl/P1Wqmtn4qba2PmScKqkudUmhePxVCEgtyb5Y6ZF9/rsNam8oJwBoFLGs9fcFH+xwfiaqVHu4mVhNV9Z7wNbsNDsrTjPa6QWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=Lzn5FLGC; arc=none smtp.client-ip=18.197.217.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1764954882; c=relaxed/simple;
+	bh=h1Z+BVnBoVaSCJl0VcIXxwMnC9zg05UdlhBoero1z5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WGOt1Hb+FqrvUA2S70edYjDpkWhpDaUASZUwTO/VD8DXM+e05wtqDNNN0vHO9+WCnShS038YVbALfKVHQ+en1ruwJnLArgRmXyBQ1nwL9aQfsupX0fvDFOvHO0n+BKJYCbi46NL9jrXVoh1WYHafM0sFotpGgDjzE5zlxLyCfVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jHT8GwCv; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Smlf3LTg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764954871;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c3c7pkg0/S/agmiAthrU1L2DahU9Xrden1+WebcUd8U=;
+	b=jHT8GwCv9C2CZ0tsR/n7tpydLI1T7Wuf8TRsdTmArveAx7X5fDw89wk3oScSeXSjYd3LO+
+	lc8wSprQbshk+WjZxUW9rDXmS8Zu0NurcepYY+dlnfYgGI+zBc+5X3jMsQ4tq/SYqPPkDR
+	u41M+t1vhzuFAo7BcuDX1b2G2drR9Zw=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-445-VWKEhnZaPsKoBOvi15Jsgw-1; Fri, 05 Dec 2025 12:14:28 -0500
+X-MC-Unique: VWKEhnZaPsKoBOvi15Jsgw-1
+X-Mimecast-MFC-AGG-ID: VWKEhnZaPsKoBOvi15Jsgw_1764954868
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7bad1cef9bcso4459886b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Dec 2025 09:14:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazoncorp2; t=1764954020; x=1796490020;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=sUXffJ10pcwposVmC9vM2kcbCnj2+0WuRal0d/tv1pE=;
-  b=Lzn5FLGC6ghtL8M3CSFradccijxjrsRnwlzD231N5unmDCDd3edABjzU
-   b9WA+8CaZPLXFw9lrcJDdhWY4NkPGBmOV62Lf7qipimQjC7VwhLTYkn2U
-   KkK2zkodVlnqk2CSiTI5zM9go4ZpTOcbXbtc9ChJMuhmgTV7JOEz3Mhz3
-   AxtrRq5Pr347+Xd438zbB2M4Wym2miQnwQqp8s38qu9u4kQ/eisxoh3S2
-   R/VARxM6IA5Qknbt/Il5RfW0OGklj5i4nFEOdkKtTi+mJ5VBwd5Dr90x3
-   kRwkX6H00t7fA+xtD5mn1gQF1rRzJnpdwYRArwSVt47+MwvGOIzlQ0iWF
-   A==;
-X-CSE-ConnectionGUID: P9803+feTBiSUBA+N8ttpw==
-X-CSE-MsgGUID: Pg8pNwcjQpCugjo7oQu4Vw==
-X-IronPort-AV: E=Sophos;i="6.20,252,1758585600"; 
-   d="scan'208";a="6301836"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-006.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2025 17:00:15 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.236:1229]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.34.107:2525] with esmtp (Farcaster)
- id bb13a913-5eca-4334-b10b-a564cc743b40; Fri, 5 Dec 2025 17:00:14 +0000 (UTC)
-X-Farcaster-Flow-ID: bb13a913-5eca-4334-b10b-a564cc743b40
-Received: from EX19D005EUB002.ant.amazon.com (10.252.51.103) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Fri, 5 Dec 2025 17:00:14 +0000
-Received: from EX19D005EUB003.ant.amazon.com (10.252.51.31) by
- EX19D005EUB002.ant.amazon.com (10.252.51.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Fri, 5 Dec 2025 17:00:14 +0000
-Received: from EX19D005EUB003.ant.amazon.com ([fe80::b825:becb:4b38:da0c]) by
- EX19D005EUB003.ant.amazon.com ([fe80::b825:becb:4b38:da0c%3]) with mapi id
- 15.02.2562.029; Fri, 5 Dec 2025 17:00:14 +0000
-From: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
-To: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-CC: "pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net"
-	<corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>, "oupton@kernel.org"
-	<oupton@kernel.org>, "joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "yuzenghui@huawei.com"
-	<yuzenghui@huawei.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
-	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "luto@kernel.org"
-	<luto@kernel.org>, "peterz@infradead.org" <peterz@infradead.org>,
-	"willy@infradead.org" <willy@infradead.org>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "david@kernel.org" <david@kernel.org>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz"
-	<vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com"
-	<surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, "ast@kernel.org"
-	<ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"andrii@kernel.org" <andrii@kernel.org>, "martin.lau@linux.dev"
-	<martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>,
-	"song@kernel.org" <song@kernel.org>, "yonghong.song@linux.dev"
-	<yonghong.song@linux.dev>, "john.fastabend@gmail.com"
-	<john.fastabend@gmail.com>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
-	"sdf@fomichev.me" <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>,
-	"jolsa@kernel.org" <jolsa@kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com"
-	<peterx@redhat.com>, "jannh@google.com" <jannh@google.com>,
-	"pfalcato@suse.de" <pfalcato@suse.de>, "shuah@kernel.org" <shuah@kernel.org>,
-	"riel@surriel.com" <riel@surriel.com>, "baohua@kernel.org"
-	<baohua@kernel.org>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"jgross@suse.com" <jgross@suse.com>, "yu-cheng.yu@intel.com"
-	<yu-cheng.yu@intel.com>, "kas@kernel.org" <kas@kernel.org>, "coxu@redhat.com"
-	<coxu@redhat.com>, "kevin.brodsky@arm.com" <kevin.brodsky@arm.com>,
-	"ackerleytng@google.com" <ackerleytng@google.com>, "maobibo@loongson.cn"
-	<maobibo@loongson.cn>, "prsampat@amd.com" <prsampat@amd.com>,
-	"mlevitsk@redhat.com" <mlevitsk@redhat.com>, "isaku.yamahata@intel.com"
-	<isaku.yamahata@intel.com>, "jmattson@google.com" <jmattson@google.com>,
-	"jthoughton@google.com" <jthoughton@google.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "vannapurve@google.com"
-	<vannapurve@google.com>, "jackmanb@google.com" <jackmanb@google.com>,
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>, "patrick.roy@linux.dev"
-	<patrick.roy@linux.dev>, "Thomson, Jack" <jackabt@amazon.co.uk>, "Itazuri,
- Takahiro" <itazur@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>,
-	"Cali, Marco" <xmarcalx@amazon.co.uk>, "Kalyazin, Nikita"
-	<kalyazin@amazon.co.uk>
-Subject: [PATCH v8 13/13] KVM: selftests: Test guest execution from direct map
- removed gmem
-Thread-Topic: [PATCH v8 13/13] KVM: selftests: Test guest execution from
- direct map removed gmem
-Thread-Index: AQHcZgifgxQmXVCcFkmA//3xLcHAXw==
-Date: Fri, 5 Dec 2025 17:00:14 +0000
-Message-ID: <20251205165743.9341-14-kalyazin@amazon.com>
-References: <20251205165743.9341-1-kalyazin@amazon.com>
-In-Reply-To: <20251205165743.9341-1-kalyazin@amazon.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=redhat.com; s=google; t=1764954868; x=1765559668; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=c3c7pkg0/S/agmiAthrU1L2DahU9Xrden1+WebcUd8U=;
+        b=Smlf3LTgRNPtTGg0238/qvV6VXoaQRbavEvP+PGVEKNZ8EWrOL4Yl4wfVnULUpznxO
+         haxiwffd02ElDPx1NhAQz2NbxryUJ/krkaCSPUcVySiJCtaMVIIviZlybvtr/Vefo8G+
+         TMDf4azv5ec2VwExP28TuMJdndccU3qSv9DrqZiaLEHSNJoLnuEXU4im41vZQPBNNeNN
+         0LXI0m25MogB2PEAXth2PHp8jysOks9e1dAFP4Y19o9SNrYNnL4mZAcKmcBO/orCB6zI
+         FvlFLuuJyKgoYxrtZNCFBhAO7zWjB7PvivUnHo+EslBr0jAMERmQTxXl4R7dZnyyJzQa
+         5KPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764954868; x=1765559668;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c3c7pkg0/S/agmiAthrU1L2DahU9Xrden1+WebcUd8U=;
+        b=r4JcA+sqRftMxjAFmEQHVgBE7fodHNVbRyk+PbKcXM5o+dkV/PQY+pat2am4KsQ9Ve
+         IFMgLYqUg+QPaKHvpmWncPL2u06mqRX1OIx9/qxNi+oHbhAHbmvMBMHc/JRVN5YQSHEx
+         DRWeDdPD6Ojw2iG/eq9YU6IxZO8qNsnYQ0u1NTUPV216G/7pQkE1hpTOtCIbNsBa2a6p
+         SttOBu1H5g/QP+VqgHmLUwItnjgSLblFD3s4mDAkkzhUXBffNULf9Mjrdkg8m5Cu+96I
+         V5WCTAcnOLLJf42IzE45dqoBSVAGK06jp2ehoZ3hLJK/d+Q065IbUf5cTTY6auKcC8eS
+         aXcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHUtu5rdk3jzEGRkCemCVdirg8gzb/E+/F7FTVnRaoxpMAb1haQ4+0Kqs8pcMznaJrHPZ5w5OSRcM7yGvQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwweK4lf67Ez3M52uXiwuCxKcj6QxcNU663qzVulUgdZuAvzt5/
+	FVtjazvn5ARS5YCO+oVoVSePtH0gwvB64Df8Sizj9/UyrPWCfKUAPRyyJgCpKvokmnkbgGY3G/E
+	Dez445qpY6T5KZKW7o3BDlKH+joRsx/s5ddArySOxbXkfnWTxQkWJl8ZCbN6VZPq3U7U=
+X-Gm-Gg: ASbGnctJzLMcFkLoVxXXuMCqNv7/M8He/NMzaWQ2J0j6Jz8gF03EjYH4WejcBf/ujd5
+	GSLr+I8DaqbXlqNMjqanS2tNO6wo+DoZNYMGGXmWnXbT0o/ZX8H/zNUDcs+5lOU/3N6Bj4elkGD
+	oKy04OeNgIWjHKTL+oO5L8+xNHOrOe8IBNB7Zc+KGaj5hALPmeiOz3NwrQotmzRVpBjt5Opej7F
+	bU8YRqPyIdjjGMI8IE7rOMHbdeHffFfkfBvxBR5Q9uoXiRgZj9iYwBoFzBuis2icrPjDu8JKqgE
+	VgQ0Cm4aEJGdGWFYp0pTPDqcZu7KZx8KndnHUYTvnitFgQVtuHuVdt6Xgw4utCc9w25s/Cj6xlP
+	T506/9kkgLhOeQA7OV1wBU6E9hRpQYTh2SvuFIkSE9wwbOUXHng==
+X-Received: by 2002:a05:6a00:2283:b0:7e8:4433:8f99 with SMTP id d2e1a72fcca58-7e8443391b8mr583957b3a.33.1764954867798;
+        Fri, 05 Dec 2025 09:14:27 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHTlg6can+HvA+4fi3e6HCk+YQednzlBI3QtVrdw1y9Yfq4QdKTK3ndJwtYc5QarvY8VO9kow==
+X-Received: by 2002:a05:6a00:2283:b0:7e8:4433:8f99 with SMTP id d2e1a72fcca58-7e8443391b8mr583934b3a.33.1764954867346;
+        Fri, 05 Dec 2025 09:14:27 -0800 (PST)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7e2ae03513fsm5765462b3a.43.2025.12.05.09.14.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Dec 2025 09:14:26 -0800 (PST)
+Date: Sat, 6 Dec 2025 01:14:22 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH fstests v3 1/3] common/rc: clean up after the
+ _require_test_fcntl_setlease() test
+Message-ID: <20251205171422.u357tlxsc5ufl3ka@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20251203-dir-deleg-v3-0-be55fbf2ad53@kernel.org>
+ <20251203-dir-deleg-v3-1-be55fbf2ad53@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251203-dir-deleg-v3-1-be55fbf2ad53@kernel.org>
 
-From: Patrick Roy <patrick.roy@linux.dev>=0A=
-=0A=
-Add a selftest that loads itself into guest_memfd (via=0A=
-GUEST_MEMFD_FLAG_MMAP) and triggers an MMIO exit when executed. This=0A=
-exercises x86 MMIO emulation code inside KVM for guest_memfd-backed=0A=
-memslots where the guest_memfd folios are direct map removed.=0A=
-Particularly, it validates that x86 MMIO emulation code (guest page=0A=
-table walks + instruction fetch) correctly accesses gmem through the VMA=0A=
-that's been reflected into the memslot's userspace_addr field (instead=0A=
-of trying to do direct map accesses).=0A=
-=0A=
-Signed-off-by: Patrick Roy <patrick.roy@linux.dev>=0A=
-Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>=0A=
----=0A=
- .../selftests/kvm/set_memory_region_test.c    | 52 +++++++++++++++++--=0A=
- 1 file changed, 48 insertions(+), 4 deletions(-)=0A=
-=0A=
-diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/t=
-esting/selftests/kvm/set_memory_region_test.c=0A=
-index 7fe427ff9b38..6c57fb036b20 100644=0A=
---- a/tools/testing/selftests/kvm/set_memory_region_test.c=0A=
-+++ b/tools/testing/selftests/kvm/set_memory_region_test.c=0A=
-@@ -602,6 +602,41 @@ static void test_mmio_during_vectoring(void)=0A=
- =0A=
- 	kvm_vm_free(vm);=0A=
- }=0A=
-+=0A=
-+static void guest_code_trigger_mmio(void)=0A=
-+{=0A=
-+	/*=0A=
-+	 * Read some GPA that is not backed by a memslot. KVM consider this=0A=
-+	 * as MMIO and tell userspace to emulate the read.=0A=
-+	 */=0A=
-+	READ_ONCE(*((uint64_t *)MEM_REGION_GPA));=0A=
-+=0A=
-+	GUEST_DONE();=0A=
-+}=0A=
-+=0A=
-+static void test_guest_memfd_mmio(void)=0A=
-+{=0A=
-+	struct kvm_vm *vm;=0A=
-+	struct kvm_vcpu *vcpu;=0A=
-+	struct vm_shape shape =3D {=0A=
-+		.mode =3D VM_MODE_DEFAULT,=0A=
-+		.src_type =3D VM_MEM_SRC_GUEST_MEMFD_NO_DIRECT_MAP,=0A=
-+	};=0A=
-+	pthread_t vcpu_thread;=0A=
-+=0A=
-+	pr_info("Testing MMIO emulation for instructions in gmem\n");=0A=
-+=0A=
-+	vm =3D __vm_create_shape_with_one_vcpu(shape, &vcpu, 0, guest_code_trigge=
-r_mmio);=0A=
-+=0A=
-+	virt_map(vm, MEM_REGION_GPA, MEM_REGION_GPA, 1);=0A=
-+=0A=
-+	pthread_create(&vcpu_thread, NULL, vcpu_worker, vcpu);=0A=
-+=0A=
-+	/* If the MMIO read was successfully emulated, the vcpu thread will exit =
-*/=0A=
-+	pthread_join(vcpu_thread, NULL);=0A=
-+=0A=
-+	kvm_vm_free(vm);=0A=
-+}=0A=
- #endif=0A=
- =0A=
- int main(int argc, char *argv[])=0A=
-@@ -625,10 +660,19 @@ int main(int argc, char *argv[])=0A=
- 	test_add_max_memory_regions();=0A=
- =0A=
- #ifdef __x86_64__=0A=
--	if (kvm_has_cap(KVM_CAP_GUEST_MEMFD) &&=0A=
--	    (kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_SW_PROTECTED_VM))) {=
-=0A=
--		test_add_private_memory_region();=0A=
--		test_add_overlapping_private_memory_regions();=0A=
-+	if (kvm_has_cap(KVM_CAP_GUEST_MEMFD)) {=0A=
-+		uint64_t valid_flags =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_FLAGS);=0A=
-+=0A=
-+		if (kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_SW_PROTECTED_VM)) {=0A=
-+			test_add_private_memory_region();=0A=
-+			test_add_overlapping_private_memory_regions();=0A=
-+		}=0A=
-+=0A=
-+		if ((valid_flags & GUEST_MEMFD_FLAG_MMAP)=0A=
-+			&& (valid_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP))=0A=
-+			test_guest_memfd_mmio();=0A=
-+		else=0A=
-+			pr_info("Skipping tests requiring GUEST_MEMFD_FLAG_MMAP | GUEST_MEMFD_F=
-LAG_NO_DIRECT_MAP");=0A=
- 	} else {=0A=
- 		pr_info("Skipping tests for KVM_MEM_GUEST_MEMFD memory regions\n");=0A=
- 	}=0A=
--- =0A=
-2.50.1=0A=
-=0A=
+On Wed, Dec 03, 2025 at 10:43:07AM -0500, Jeff Layton wrote:
+> Remove setlease_testfile after validating whether a lease can be set.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+
+Thanks Jeff, this version is good to me. As this feature has been in mainline
+linux, I'd like to merge this patchset in next fstests release to get this
+coverage.
+
+Reviewed-by: Zorro Lang <zlang@redhat.com>
+
+>  common/rc | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/common/rc b/common/rc
+> index a10ac17746a3ca4d9aca1d4ce434ccd6f39838b9..116216ca8aeb4e53f3e0d741cc99a050cb3a7462 100644
+> --- a/common/rc
+> +++ b/common/rc
+> @@ -4656,6 +4656,7 @@ _require_test_fcntl_setlease()
+>  	touch $TEST_DIR/setlease_testfile
+>  	$here/src/locktest -t $TEST_DIR/setlease_testfile >/dev/null 2>&1
+>  	local ret=$?
+> +	rm -f $TEST_DIR/setlease_testfile
+>  	[ $ret -eq 22 ] && _notrun "Require fcntl setlease support"
+>  	[ "$FSTYP" == "nfs" -a $ret -eq 11 ] && \
+>  		_notrun "NFS requires delegation before setlease"
+> 
+> -- 
+> 2.52.0
+> 
+
 
