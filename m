@@ -1,126 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-70756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B686DCA6346
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 07:06:18 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7195FCA6401
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 07:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 74F5930F1F7F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 06:05:44 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 25CCF31A1F92
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 06:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1E126D4DF;
-	Fri,  5 Dec 2025 06:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC902EC553;
+	Fri,  5 Dec 2025 06:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="J/rDLmCS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OsFzn+sk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F8B2EBDDE
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 06:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3E72BE639
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 06:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764914743; cv=none; b=QeK56xCfavfPjOEAUGMynznF9IOcX3N38wjTk+P2FQbu3T2QZdNmBpbD+f2Bi672q8LKWWCr7Yjkgjvt1JpabQBIbzGTAUpLw2J1LKUbXyDFdGxupQ3/6ugPZNsUw354HMIO41crtT3JITtX0i1CC4hHwozMphQAZu9k/5GtvxU=
+	t=1764916787; cv=none; b=oUQgwN/LoVtn5ZvOeKE0wAvN9uLuDrgyO5+Vgv/vKGMDDNudyX+zP1T3/qUvqwEhyEbNuIhlgcHhd2KmzkRMkVXLhhwiTUwYGqmIxpcSyPRJKqGp/2s0Id4hdw9S3sviWWU9vnRJ2zHd8ji/eTf3oQrBPhUdFauvrlinZOrKxn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764914743; c=relaxed/simple;
-	bh=iQqT1YfnSF+PVAsarfa8K/sQRgiyZyp4zAU8AafzvxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=IRTgfek/t+FKgiafWrCZ2qC/bPPOebQnMrcWi+hollNCrwge+qaP9wftVFGrqg4kilUgDlKZzQ43hkDjVQpbwjdRN2eK6N4fCP17Ai98Pjx54ywj07eG3fc70ylvG5EIhv3Z8MOYjzQRkrItd/Tk2FH/u7+pZamRf7G7pQOfero=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=J/rDLmCS; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251205060538epoutp0284fe18e7be5e90e295106e4e3ae59d50~_PJp132tS2839928399epoutp02x
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 06:05:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251205060538epoutp0284fe18e7be5e90e295106e4e3ae59d50~_PJp132tS2839928399epoutp02x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1764914738;
-	bh=0HCYnBvoqZ92l1CX8dpzhYVCv+vR4hZNunzee5qrVzE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=J/rDLmCS78+BAi9MzFSyVITHd+4zTX9dwg/3d5H5Ykn89SYn7cpmCoYzRwObCvGyF
-	 yemgPsNt77yUhmf4zkEdvoUnbvHUEY6JrDEUeHUTQUgxoZv/kCMxcgGDASF1SzUl7x
-	 PjtOq+S8PSg9Ax3M11eJsaqpbnFd5sSDu8RfgQdM=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251205060537epcas1p136e32aa3ea9a95e31812c4d47a8367b0~_PJpfqfOW1981719817epcas1p1-;
-	Fri,  5 Dec 2025 06:05:37 +0000 (GMT)
-Received: from epcas1p1.samsung.com (unknown [182.195.38.114]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4dN1814K7Dz6B9mR; Fri,  5 Dec
-	2025 06:05:37 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251205060537epcas1p1b0ddc2ccd96071cbec445c34497c88ae~_PJo8Jn1U2451924519epcas1p1T;
-	Fri,  5 Dec 2025 06:05:37 +0000 (GMT)
-Received: from [172.25.92.0] (unknown [10.246.9.208]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251205060536epsmtip2722ec08310b04d04d2e887f10499b937~_PJo0CU3R0291202912epsmtip2M;
-	Fri,  5 Dec 2025 06:05:36 +0000 (GMT)
-Message-ID: <3f846d9a-72b7-49bf-922e-b75938ddbf8b@samsung.com>
-Date: Fri, 5 Dec 2025 15:05:36 +0900
+	s=arc-20240116; t=1764916787; c=relaxed/simple;
+	bh=3WBGjchHIhqGl3f6UUJQZOvG9cnxXcS8EToPfFW66Wc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tf2PCYKOKkxNI/X8oiVsXocL/AkCGeSjfe8qrNjzCxd/xRRc9XMvbECLYv+w0TaXr2WB06Fe/rS/jmqZ/YH4yCMQlK/k9RB2VTEmKxtnaoLjssRlHCmiAN0HAeCHpLDXtIAPyCTIRjcMpYbPp7g6GSltWOjP8Kbzv8TdetzpcCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OsFzn+sk; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-6597455d07aso900694eaf.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 22:39:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764916785; x=1765521585; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xos3/gKqsqARg566cAUpDT+mdSxuLsIU5NrhIm44L6M=;
+        b=OsFzn+skYubCa8P93OtYuVT9/1OPBYxdZtZUGPG1XxVG/yw8owtamU2vniKoHoSsXu
+         XtFjDyUNNPfOqZCcLD5/MhdCK+XSG+789lvXYXPcxd/bswUq1OyekSvIiUN5naRaVdYn
+         V7FDkEt95y+9/6flS8dnkvMF5AOCsQ844riOg1vCpJfRcoo9soirMPpHFzLp5td7Robs
+         jRrlbbxul2RneDRQDoH4vvlnK9WjRAdPVA/EA8ZdvoStaskoymGaSs7lYgI2nDsnFT8L
+         k06hzRgJrKbqM1jzhndWxvnEA6exZGwKXOVGFaVrf6On4i/jsKmIpqqCH6rVBdpkSbos
+         yOfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764916785; x=1765521585;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xos3/gKqsqARg566cAUpDT+mdSxuLsIU5NrhIm44L6M=;
+        b=qbxM0kwaHzP0X4z/KsyCd9yYnvy8Ct3pWdHeqvMPivTiLIoNZavTi/PyBMVz4MRSP3
+         1ja5OrVdXid1JLpw3oH76Pr5CdUGDJo8CZlFSdrapK0jh4WB2+kPaRtCH39qpg490h+y
+         j4GD3rRqRECW/B0QvlAKU2SqG7qQfdZwV4KJlQX6FTB7hMM564zz4f7y2sJvAkRrQCz8
+         QMbGddqVNtsoRZov4MF/e+FEAkss8apxQfNs9B0L59wEWvQOHNl3FTgsmpnXP1dYehBQ
+         PFpTCHiOv03z2G4Uk9Lky6aTgsFYfRCgwWF4Q8CFCAHxz7GptC7W28M4I1ENYZhrNWDH
+         ZKxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXATgAocTlVs5jBOtkxdU7zprHCvdKZ2VX97hUoLaK2Bk02sZF8Ii0ILjcEbhPHiUFZ2D+KTO40ryAqglA6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhAVKkazo8/Q/suc2UsLbazHIY4qAKsAjGhpIoqMMWWJ0JYZ1D
+	Zrt+9qbiVcqsQj6pC/2ERUkunQGHRJ0ms4Tj4JE+br7KSdG37hgUu0W8EY9qV2Qd3iu6ud3xLQ7
+	g07KH7srz8t5Ad7Exyo0yTnISsa1QISNyslDw2O0=
+X-Gm-Gg: ASbGncuAPv6J7ZparQVFmgDu2PWlhGLMwYrEhad97gUzxpcFVEsS1WPCiUf0TZJeZ2D
+	JlD3ZXjCSMRLZJXe4zdvAY+0PjkTuIG06RqM+3wMF0LwiKIFC5CLjQTAKhPbpXiOR3nJjNQuuS/
+	YmKXsL2G6RUVS3fO4G/EQTQnESNxUWpwr/1/4sVUliJK51bcb40xqIaLIhzBpeiMHC2WXgpbQl8
+	hvs5bFEIgjzkbogGnfGIALV66mjIQYEesyutQcag3kaQ/kAXzHzE6Pqa47BUVpL/zcsnKWR
+X-Google-Smtp-Source: AGHT+IHbvPZzUKtzKOwSB0dGiwkv726da9NNiQT6QaR1QMK1BNnACaPRk9hA/hPZpkFIaQtQU42Cp1O5EiqTIF9MfqU=
+X-Received: by 2002:a05:6808:6f87:b0:44f:fc93:f612 with SMTP id
+ 5614622812f47-45379dad9e6mr3120038b6e.32.1764916785070; Thu, 04 Dec 2025
+ 22:39:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs: exfat: improve error code handling in
- exfat_find_empty_entry()
-To: Haotian Zhang <vulab@iscas.ac.cn>, linkinjeon@kernel.org,
-	yuezhang.mo@sony.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Sungjong Seo <sj1557.seo@samsung.com>
-In-Reply-To: <20251205015904.1186-1-vulab@iscas.ac.cn>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251205060537epcas1p1b0ddc2ccd96071cbec445c34497c88ae
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-CPGSPASS: Y
-cpgsPolicy: CPGSC10-711,N
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251205015927epcas1p4b0d227e69d121ea76df6ac97a9754c5f
-References: <20251203070813.1448-1-vulab@iscas.ac.cn>
-	<CGME20251205015927epcas1p4b0d227e69d121ea76df6ac97a9754c5f@epcas1p4.samsung.com>
-	<20251205015904.1186-1-vulab@iscas.ac.cn>
+References: <20251205005841.3942668-1-avagin@google.com> <57a7d8c3-a911-4729-bc39-ba3a1d810990@huaweicloud.com>
+In-Reply-To: <57a7d8c3-a911-4729-bc39-ba3a1d810990@huaweicloud.com>
+From: Andrei Vagin <avagin@gmail.com>
+Date: Thu, 4 Dec 2025 22:39:33 -0800
+X-Gm-Features: AWmQ_bmnaGxfuYW3uI63fXs7wkN5Gs-TsqIbCFxvBK_--CTpOzbn9u2q1u0Kpoo
+Message-ID: <CANaxB-x5qVv_yYR7aYYdrd26uFRk=Zsd243+TeBWMn47wi++eA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] cgroup/misc: Add hwcap masks to the misc controller
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: Andrei Vagin <avagin@google.com>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	criu@lists.linux.dev, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Vipin Sharma <vipinsh@google.com>, Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Dec 4, 2025 at 6:52=E2=80=AFPM Chen Ridong <chenridong@huaweicloud.=
+com> wrote:
+>
+>
+>
+> On 2025/12/5 8:58, Andrei Vagin wrote:
+> > This patch series introduces a mechanism to mask hardware capabilities
+> > (AT_HWCAP) reported to user-space processes via the misc cgroup
+> > controller.
+> >
+> > To support C/R operations (snapshots, live migration) in heterogeneous
+> > clusters, we must ensure that processes utilize CPU features available
+> > on all potential target nodes. To solve this, we need to advertise a
+> > common feature set across the cluster. This patchset allows users to
+> > configure a mask for AT_HWCAP, AT_HWCAP2. This ensures that application=
+s
+> > within a container only detect and use features guaranteed to be
+> > available on all potential target hosts.
+> >
+>
+> Could you elaborate on how this mask mechanism would be used in practice?
+>
+> Based on my understanding of the implementation, the parent=E2=80=99s mas=
+k is effectively a subset of the
+> child=E2=80=99s mask, meaning the parent does not impose any additional r=
+estrictions on its children. This
+> behavior appears to differ from typical cgroup controllers, where childre=
+n are further constrained
+> by their parent=E2=80=99s settings. This raises the question: is the cgro=
+up model an appropriate fit for
+> this functionality?
 
+Chen,
 
-On 25. 12. 5. 10:59, Haotian Zhang wrote:
-> Change the type of 'ret' from unsigned int to int in
-> exfat_find_empty_entry(). Although the implicit type conversion
-> (int -> unsigned int -> int) does not cause actual bugs in
-> practice, using int directly is more appropriate for storing
-> error codes returned by exfat_alloc_cluster().
-> 
-> This improves code clarity and consistency with standard error
-> handling practices.
-> 
-> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
-> ---
->  fs/exfat/namei.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-> index f5f1c4e8a29f..f2a87ecd79f9 100644
-> --- a/fs/exfat/namei.c
-> +++ b/fs/exfat/namei.c
-> @@ -304,8 +304,8 @@ static int exfat_find_empty_entry(struct inode *inode,
->  		struct exfat_chain *p_dir, int num_entries,
->  		struct exfat_entry_set_cache *es)
->  {
-> -	int dentry;
-> -	unsigned int ret, last_clu;
-> +	int dentry, ret;
-> +	unsigned int last_clu;
+Thank you for the question. I think I was not clear enough in the
+description.
 
-The patch looks good to me:
+The misc.mask file works by masking out available features; any feature
+bit set in the mask will not be advertised to processes within that
+cgroup. When a child cgroup is created, its effective mask is  a
+combination of its own mask and its parent's effective mask. This means
+any feature masked by either the parent or the child will be hidden from
+processes in the child cgroup.
 
-Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+For example:
+- If a parent cgroup masks out feature A (mask=3D0b001), processes in it
+  won't see feature A.
+- If we create a child cgroup under it and set its mask to hide feature
+  B (mask=3D0b010), the effective mask for processes in the child cgroup
+  becomes 0b011. They will see neither feature A nor B.
 
->  	loff_t size = 0;
->  	struct exfat_chain clu;
->  	struct super_block *sb = inode->i_sb;
+This ensures that a feature hidden by a parent cannot be re-enabled by a
+child. A child can only impose further restrictions by masking out
+additional features. I think this behaviour is well aligned with the cgroup
+model.
 
+Thanks,
+Andrei
 
