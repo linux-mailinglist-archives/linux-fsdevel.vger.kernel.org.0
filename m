@@ -1,905 +1,449 @@
-Return-Path: <linux-fsdevel+bounces-70905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF63CA9300
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 21:00:39 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42515CA9120
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 20:29:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BD7543142D89
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 19:55:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8743A31EFBAB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 19:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9926E364032;
-	Fri,  5 Dec 2025 18:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBOZY39p"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9078034DCCF;
+	Fri,  5 Dec 2025 19:06:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com [209.85.210.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D916635FF41;
-	Fri,  5 Dec 2025 18:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A5934C9AE
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 19:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764960113; cv=none; b=pPpMJ11v+FwLoI4fHvKpKsFTNUfdeMAMAG2HeYxa3ScOBOvsSMQnBnu6oH9Lg61DhwtcNIUs469gpmYu7OF22pX9jRLP0QUZbrUlSS+fnFeE+243ZjjtDrVRuyye6Wf/RWu0fWr2oNcIldERE/IVYjtVu5urPN7KQKpEV7GYKJE=
+	t=1764961570; cv=none; b=iNTt/dEYS3xF+hDIswdPCaWdgH9jQyYWldTfH6kIhkXXEBwP9B1DVpALUzghPFdsoIeqv2jLNy2iTNQGK87D1d/EDG37AhKihZhcpWSaNhaSOfkaU1LRNibW2zkNDPqFsumGrd3ZA5Ii1FOV3ZzZLIFGeuLuXw+/tUhcSwbJP4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764960113; c=relaxed/simple;
-	bh=sXnOXskFE3mMoUp4gRYKDNzzSNNktolN7CIwCcIkwe0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ieVBIEafLUvxPh/zybBtlef8hDJOdhf/64b640+fjCcYWm+cREq0CqbIiHTC9wJhPpiwgISCBQ5YoBk1j0IsSssDCFbLUdKZYAzRnbxvrI57jwkAXJlSd5bBncKxY2tHB2u4Ua6pgISZ5RqMrqQMj+IK7PoVmcqUNzTrdjbk4Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBOZY39p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B56BAC2BCB7;
-	Fri,  5 Dec 2025 18:41:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764960112;
-	bh=sXnOXskFE3mMoUp4gRYKDNzzSNNktolN7CIwCcIkwe0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=uBOZY39pyCQuyvoLfH2AvrL14YRJQOwwZS2Yv8Xh7BDKtF5PyXWmWlOWt8O7wlglu
-	 RdvdiaUKFrDaU8NjpyZ3K1hEYSmf8iZ8Joi6vRtorUJnNrF0aEzKNNFxNyNyXHsu7B
-	 c1t0LH4huKfrb0L4GjFrhh5WjU0NPbJkpApbd5uAJsz0fGMhTsS/XuEx9SHZ0/vgrb
-	 zhXkcFESAklJdrb/CnWMIGGrli57cvOZmyYnfSIA5G6IidFAWR1s8nEklRo1mGURYY
-	 2pzM8ufCE3yzkXfJPfG+s9WmgQJ9qcmJd2pQoLWiWOvOquwcVOLRWCRa+oPN9hLoPA
-	 xmVqU11T1UNlA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A75D3D339BA;
-	Fri,  5 Dec 2025 18:41:52 +0000 (UTC)
-From: Deepak Gupta via B4 Relay <devnull+debug.rivosinc.com@kernel.org>
-Date: Fri, 05 Dec 2025 10:42:06 -0800
-Subject: [PATCH v25 28/28] kselftest/riscv: kselftest for user mode cfi
+	s=arc-20240116; t=1764961570; c=relaxed/simple;
+	bh=PO155ba4a20qVQX2XY849ECBEW/Z8ek4upl4fGENsxg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RhqscjTbo8xMeR3dWEJAir2BglvrzYBlEktDh4m0YmSbmkLuGEg/8+I1NKY/XA380nT1aDfYoEesmOoCi5WetU97AjE6ULrzYOVpSwCLcdsmm6xBjRNhtDI3r/LOce1KE4L+18Xx4tXvm0u+6ol/QBSgMFNr6kXjG/LkxrXiJ+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-7c754daf77fso5419679a34.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Dec 2025 11:06:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764961563; x=1765566363;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XNXncR0jOGlh7BUJG35tpCD5YhIVNSyub9h+ojnCadM=;
+        b=pKBjV9DTKdMaMjyx2viL3N2OQFhYHFSK7W3j3KqbkNRFvQe2XIXPYnauEwGrGhIzG4
+         2m069wCVgZHjViSKkjSsC9MABwvlleWhX+c8AL5Aiy74qRMuqPoTdw1/+uKVKUzVTKDg
+         YZsC0T2B7P53V+5fNGUu3se9THS1xrISoFMOHqRUUHpndaRok1wIt6TRlwTO9rLc1s86
+         CI++KslWe6zKPSdaYDYjoon+mD46RZ6/XKGU75Tddd/bl3MWMiXIz4FhlshHxomRuv66
+         QCcVSYEyrGUbzEi/DJLv2h67Lo2DORVcF/qoffbIY7uUUUViU414474QXu3WDIbcy7ea
+         cXnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFB78pSF8KxciG0eaaixYZDRwSwjcF7I3s6C8G1nqRk6E8+rEd7kPOEMgrq6iV9C/oQ5pfzmV1YpWW75EG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1uVESiWFoCuXQsqH7MjSoDa4M5w06GSMI6YmU9yZkEyCVMO8g
+	flaKWWdPD1mZSPkWpwOvUS5zYqr74a9DGSwY2gRTvVVWM+g49jtqnbO/VVNUk4J7i4HyI0kOjGr
+	WXROiqfx1CLxRaJBKnSX5LhMJQnVkvdjBpDtrTxoQIIXjaiZ7F/MR9m+EFLA=
+X-Google-Smtp-Source: AGHT+IEnsvjuuFRgKaEmwHv4/1nGPez3fgTZ8H/0ICECHgmId/zpwV3/PLwYsk6GuCnbAkaFXlsQYrbwcdzRSWXWpu1XZxiRLl8/
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251205-v5_user_cfi_series-v25-28-1a07c0127361@rivosinc.com>
-References: <20251205-v5_user_cfi_series-v25-0-1a07c0127361@rivosinc.com>
-In-Reply-To: <20251205-v5_user_cfi_series-v25-0-1a07c0127361@rivosinc.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Christian Brauner <brauner@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
- Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-arch@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com, 
- andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
- atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
- alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
- rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
- Valentin Haudiquet <valentin.haudiquet@canonical.com>, 
- Deepak Gupta <debug@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1764960107; l=22854;
- i=debug@rivosinc.com; s=20251023; h=from:subject:message-id;
- bh=l/M8t0eKvxHa3+qtp71MqutgXhdeZK3O6ZUOe4K4Qrc=;
- b=gVQUNLWVq5JaLEvSV0Liv2T/ous+nbHQghZvCRVKvak/BYsa4O/G1eYtCgTSdD49rXeioHd0m
- iC1AG4l+rO5CZzHeqz5Hz+nM/LcwD5aGGpCG3xjCGrZKHMHXfsHsmM6
-X-Developer-Key: i=debug@rivosinc.com; a=ed25519;
- pk=O37GQv1thBhZToXyQKdecPDhtWVbEDRQ0RIndijvpjk=
-X-Endpoint-Received: by B4 Relay for debug@rivosinc.com/20251023 with
- auth_id=553
-X-Original-From: Deepak Gupta <debug@rivosinc.com>
-Reply-To: debug@rivosinc.com
+X-Received: by 2002:a05:6820:4718:b0:659:9a49:8e18 with SMTP id
+ 006d021491bc7-6599a499b68mr163043eaf.10.1764961563626; Fri, 05 Dec 2025
+ 11:06:03 -0800 (PST)
+Date: Fri, 05 Dec 2025 11:06:03 -0800
+In-Reply-To: <20251206000902.71178-1-swarajgaikwad1925@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69332d1b.a70a0220.38f243.0008.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] memory leak in hfsplus_init_fs_context
+From: syzbot <syzbot+99f6ed51479b86ac4c41@syzkaller.appspotmail.com>
+To: david.hunter.linux@gmail.com, frank.li@vivo.com, 
+	glaubitz@physik.fu-berlin.de, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, slava@dubeyko.com, 
+	swarajgaikwad1925@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Deepak Gupta <debug@rivosinc.com>
+Hello,
 
-Adds kselftest for RISC-V control flow integrity implementation for user
-mode. There is not a lot going on in kernel for enabling landing pad for
-user mode. cfi selftest are intended to be compiled with zicfilp and
-zicfiss enabled compiler. Thus kselftest simply checks if landing pad /
-shadow stack for the process are enabled or not and executes ptrace
-selftests on cfi. selftest then register a signal handler for SIGSEGV.
-Any control flow violation are reported as SIGSEGV with si_code =
-SEGV_CPERR. Test will fail on receiving any SEGV_CPERR. Shadow stack part
-has more changes in kernel and thus there are separate tests for that
+syzbot tried to test the proposed patch but the build/boot failed:
 
-- Exercise `map_shadow_stack` syscall
-- `fork` test to make sure COW works for shadow stack pages
-- gup tests
-  Kernel uses FOLL_FORCE when access happens to memory via
-  /proc/<pid>/mem. Not breaking that for shadow stack.
-- signal test. Make sure signal delivery results in token creation on
-  shadow stack and consumes (and verifies) token on sigreturn
-- shadow stack protection test. attempts to write using regular store
-  instruction on shadow stack memory must result in access faults
-- ptrace test: adds landing pad violation, clears ELP and continues
+SYZFAIL: failed to recv rpc
 
-In case toolchain doesn't support cfi extension, cfi kselftest wont
-get built.
+SYZFAIL: failed to recv rpc
+fd=3D3 want=3D4 recv=3D0 n=3D0 (errno 9: Bad file descriptor)
 
-Test outut
-==========
 
-"""
-TAP version 13
-1..5
-  This is to ensure shadow stack is indeed enabled and working
-  This is to ensure shadow stack is indeed enabled and working
-ok 1 shstk fork test
-ok 2 map shadow stack syscall
-ok 3 shadow stack gup tests
-ok 4 shadow stack signal tests
-ok 5 memory protections of shadow stack memory
-"""
+Warning: Permanently added '10.128.0.245' (ED25519) to the list of known ho=
+sts.
+2025/12/05 19:05:15 parsed 1 programs
+[   55.119214][ T5818] cgroup: Unknown subsys name 'net'
+[   55.259974][ T5818] cgroup: Unknown subsys name 'cpuset'
+[   55.266582][ T5818] cgroup: Unknown subsys name 'rlimit'
+Setting up swapspace version 1, size =3D 127995904 bytes
+[   63.696572][ T5818] Adding 124996k swap on ./swap-file.  Priority:0 exte=
+nts:1 across:124996k=20
+[   65.016628][ T5828] soft_limit_in_bytes is deprecated and will be remove=
+d. Please report your usecase to linux-mm@kvack.org if you depend on this f=
+unctionality.
+[   65.422993][ T5880] Bluetooth: hci0: unexpected cc 0x0c03 length: 249 > =
+1
+[   65.430458][ T5880] Bluetooth: hci0: unexpected cc 0x1003 length: 249 > =
+9
+[   65.437558][ T5880] Bluetooth: hci0: unexpected cc 0x1001 length: 249 > =
+9
+[   65.445167][ T5880] Bluetooth: hci0: unexpected cc 0x0c23 length: 249 > =
+4
+[   65.452744][ T5880] Bluetooth: hci0: unexpected cc 0x0c38 length: 249 > =
+2
+[   65.561974][ T5890] chnl_net:caif_netlink_parms(): no params data found
+[   65.584453][ T5890] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   65.591882][ T5890] bridge0: port 1(bridge_slave_0) entered disabled sta=
+te
+[   65.599824][ T5890] bridge_slave_0: entered allmulticast mode
+[   65.606225][ T5890] bridge_slave_0: entered promiscuous mode
+[   65.612881][ T5890] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   65.619978][ T5890] bridge0: port 2(bridge_slave_1) entered disabled sta=
+te
+[   65.627492][ T5890] bridge_slave_1: entered allmulticast mode
+[   65.634027][ T5890] bridge_slave_1: entered promiscuous mode
+[   65.645743][ T5890] bond0: (slave bond_slave_0): Enslaving as an active =
+interface with an up link
+[   65.655760][ T5890] bond0: (slave bond_slave_1): Enslaving as an active =
+interface with an up link
+[   65.669914][ T5890] team0: Port device team_slave_0 added
+[   65.676301][ T5890] team0: Port device team_slave_1 added
+[   65.686571][ T5890] batman_adv: batadv0: Adding interface: batadv_slave_=
+0
+[   65.693917][ T5890] batman_adv: batadv0: The MTU of interface batadv_sla=
+ve_0 is too small (1500) to handle the transport of batman-adv packets. Pac=
+kets going over this interface will be fragmented on layer2 which could imp=
+act the performance. Setting the MTU to 1532 would solve the problem.
+[   65.720230][ T5890] batman_adv: batadv0: Not using interface batadv_slav=
+e_0 (retrying later): interface not active
+[   65.731988][ T5890] batman_adv: batadv0: Adding interface: batadv_slave_=
+1
+[   65.739356][ T5890] batman_adv: batadv0: The MTU of interface batadv_sla=
+ve_1 is too small (1500) to handle the transport of batman-adv packets. Pac=
+kets going over this interface will be fragmented on layer2 which could imp=
+act the performance. Setting the MTU to 1532 would solve the problem.
+[   65.766444][ T5890] batman_adv: batadv0: Not using interface batadv_slav=
+e_1 (retrying later): interface not active
+[   65.787487][ T5890] hsr_slave_0: entered promiscuous mode
+[   65.793267][ T5890] hsr_slave_1: entered promiscuous mode
+[   65.822570][ T5890] netdevsim netdevsim0 netdevsim0: renamed from eth0
+[   65.830459][ T5890] netdevsim netdevsim0 netdevsim1: renamed from eth1
+[   65.838351][ T5890] netdevsim netdevsim0 netdevsim2: renamed from eth2
+[   65.846563][ T5890] netdevsim netdevsim0 netdevsim3: renamed from eth3
+[   65.860377][ T5890] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   65.867973][ T5890] bridge0: port 2(bridge_slave_1) entered forwarding s=
+tate
+[   65.875564][ T5890] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   65.882626][ T5890] bridge0: port 1(bridge_slave_0) entered forwarding s=
+tate
+[   65.899327][ T5890] 8021q: adding VLAN 0 to HW filter on device bond0
+[   65.908810][   T65] bridge0: port 1(bridge_slave_0) entered disabled sta=
+te
+[   65.916368][   T65] bridge0: port 2(bridge_slave_1) entered disabled sta=
+te
+[   65.926332][ T5890] 8021q: adding VLAN 0 to HW filter on device team0
+[   65.935247][   T55] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   65.942415][   T55] bridge0: port 1(bridge_slave_0) entered forwarding s=
+tate
+[   65.952498][   T55] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   65.959571][   T55] bridge0: port 2(bridge_slave_1) entered forwarding s=
+tate
+[   66.001572][ T5890] 8021q: adding VLAN 0 to HW filter on device batadv0
+[   66.016258][ T5890] veth0_vlan: entered promiscuous mode
+[   66.023938][ T5890] veth1_vlan: entered promiscuous mode
+[   66.035919][ T5890] veth0_macvtap: entered promiscuous mode
+[   66.043178][ T5890] veth1_macvtap: entered promiscuous mode
+[   66.052173][ T5890] batman_adv: batadv0: Interface activated: batadv_sla=
+ve_0
+[   66.061801][ T5890] batman_adv: batadv0: Interface activated: batadv_sla=
+ve_1
+[   66.071356][   T55] netdevsim netdevsim0 netdevsim0: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   66.081780][   T55] netdevsim netdevsim0 netdevsim1: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   66.091070][   T55] netdevsim netdevsim0 netdevsim2: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   66.100260][   T55] netdevsim netdevsim0 netdevsim3: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   66.142913][   T55] netdevsim netdevsim0 netdevsim3 (unregistering): uns=
+et [1, 0] type 2 family 0 port 6081 - 0
+[   66.164181][   T31] wlan0: Created IBSS using preconfigured BSSID 50:50:=
+50:50:50:50
+[   66.172643][   T31] wlan0: Creating new IBSS network, BSSID 50:50:50:50:=
+50:50
+[   66.182052][   T55] netdevsim netdevsim0 netdevsim2 (unregistering): uns=
+et [1, 0] type 2 family 0 port 6081 - 0
+[   66.195368][   T31] wlan1: Created IBSS using preconfigured BSSID 50:50:=
+50:50:50:50
+[   66.203729][   T31] wlan1: Creating new IBSS network, BSSID 50:50:50:50:=
+50:50
+[   66.230379][   T55] netdevsim netdevsim0 netdevsim1 (unregistering): uns=
+et [1, 0] type 2 family 0 port 6081 - 0
+[   66.280211][   T55] netdevsim netdevsim0 netdevsim0 (unregistering): uns=
+et [1, 0] type 2 family 0 port 6081 - 0
+2025/12/05 19:05:28 executed programs: 0
+[   69.506006][   T55] bridge_slave_1: left allmulticast mode
+[   69.511800][   T55] bridge_slave_1: left promiscuous mode
+[   69.517491][   T55] bridge0: port 2(bridge_slave_1) entered disabled sta=
+te
+[   69.525504][   T55] bridge_slave_0: left allmulticast mode
+[   69.531369][   T55] bridge_slave_0: left promiscuous mode
+[   69.537068][   T55] bridge0: port 1(bridge_slave_0) entered disabled sta=
+te
+[   69.601288][   T55] bond0 (unregistering): (slave bond_slave_0): Releasi=
+ng backup interface
+[   69.611079][   T55] bond0 (unregistering): (slave bond_slave_1): Releasi=
+ng backup interface
+[   69.620253][   T55] bond0 (unregistering): Released all slaves
+[   69.670943][   T55] hsr_slave_0: left promiscuous mode
+[   69.676955][   T55] hsr_slave_1: left promiscuous mode
+[   69.682958][   T55] batman_adv: batadv0: Interface deactivated: batadv_s=
+lave_0
+[   69.691003][   T55] batman_adv: batadv0: Removing interface: batadv_slav=
+e_0
+[   69.698476][   T55] batman_adv: batadv0: Interface deactivated: batadv_s=
+lave_1
+[   69.706532][   T55] batman_adv: batadv0: Removing interface: batadv_slav=
+e_1
+[   69.715577][   T55] veth1_macvtap: left promiscuous mode
+[   69.721203][   T55] veth0_macvtap: left promiscuous mode
+[   69.726728][   T55] veth1_vlan: left promiscuous mode
+[   69.732096][   T55] veth0_vlan: left promiscuous mode
+[   69.757386][   T55] team0 (unregistering): Port device team_slave_1 remo=
+ved
+[   69.766234][   T55] team0 (unregistering): Port device team_slave_0 remo=
+ved
+[   70.169404][ T1309] ieee802154 phy0 wpan0: encryption failed: -22
+[   70.175683][ T1309] ieee802154 phy1 wpan1: encryption failed: -22
+[   72.047051][ T5134] Bluetooth: hci0: unexpected cc 0x0c03 length: 249 > =
+1
+[   72.054869][ T5134] Bluetooth: hci0: unexpected cc 0x1003 length: 249 > =
+9
+[   72.062046][ T5134] Bluetooth: hci0: unexpected cc 0x1001 length: 249 > =
+9
+[   72.070042][ T5134] Bluetooth: hci0: unexpected cc 0x0c23 length: 249 > =
+4
+[   72.077520][ T5134] Bluetooth: hci0: unexpected cc 0x0c38 length: 249 > =
+2
+[   72.113196][ T5989] chnl_net:caif_netlink_parms(): no params data found
+[   72.132758][ T5989] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   72.140022][ T5989] bridge0: port 1(bridge_slave_0) entered disabled sta=
+te
+[   72.147223][ T5989] bridge_slave_0: entered allmulticast mode
+[   72.153712][ T5989] bridge_slave_0: entered promiscuous mode
+[   72.160489][ T5989] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   72.167745][ T5989] bridge0: port 2(bridge_slave_1) entered disabled sta=
+te
+[   72.174993][ T5989] bridge_slave_1: entered allmulticast mode
+[   72.181245][ T5989] bridge_slave_1: entered promiscuous mode
+[   72.192621][ T5989] bond0: (slave bond_slave_0): Enslaving as an active =
+interface with an up link
+[   72.202629][ T5989] bond0: (slave bond_slave_1): Enslaving as an active =
+interface with an up link
+[   72.217391][ T5989] team0: Port device team_slave_0 added
+[   72.224120][ T5989] team0: Port device team_slave_1 added
+[   72.234181][ T5989] batman_adv: batadv0: Adding interface: batadv_slave_=
+0
+[   72.241867][ T5989] batman_adv: batadv0: The MTU of interface batadv_sla=
+ve_0 is too small (1500) to handle the transport of batman-adv packets. Pac=
+kets going over this interface will be fragmented on layer2 which could imp=
+act the performance. Setting the MTU to 1532 would solve the problem.
+[   72.268532][ T5989] batman_adv: batadv0: Not using interface batadv_slav=
+e_0 (retrying later): interface not active
+[   72.280051][ T5989] batman_adv: batadv0: Adding interface: batadv_slave_=
+1
+[   72.287416][ T5989] batman_adv: batadv0: The MTU of interface batadv_sla=
+ve_1 is too small (1500) to handle the transport of batman-adv packets. Pac=
+kets going over this interface will be fragmented on layer2 which could imp=
+act the performance. Setting the MTU to 1532 would solve the problem.
+[   72.314180][ T5989] batman_adv: batadv0: Not using interface batadv_slav=
+e_1 (retrying later): interface not active
+[   72.331466][ T5989] hsr_slave_0: entered promiscuous mode
+[   72.337615][ T5989] hsr_slave_1: entered promiscuous mode
+[   72.513584][ T5989] netdevsim netdevsim0 netdevsim0: renamed from eth0
+[   72.521437][ T5989] netdevsim netdevsim0 netdevsim1: renamed from eth1
+[   72.529452][ T5989] netdevsim netdevsim0 netdevsim2: renamed from eth2
+[   72.537435][ T5989] netdevsim netdevsim0 netdevsim3: renamed from eth3
+[   72.551368][ T5989] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   72.558478][ T5989] bridge0: port 2(bridge_slave_1) entered forwarding s=
+tate
+[   72.565936][ T5989] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   72.573710][ T5989] bridge0: port 1(bridge_slave_0) entered forwarding s=
+tate
+[   72.596776][ T5989] 8021q: adding VLAN 0 to HW filter on device bond0
+[   72.606884][   T31] bridge0: port 1(bridge_slave_0) entered disabled sta=
+te
+[   72.615077][   T31] bridge0: port 2(bridge_slave_1) entered disabled sta=
+te
+[   72.625976][ T5989] 8021q: adding VLAN 0 to HW filter on device team0
+[   72.634865][   T31] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   72.642139][   T31] bridge0: port 1(bridge_slave_0) entered forwarding s=
+tate
+[   72.660348][   T31] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   72.667635][   T31] bridge0: port 2(bridge_slave_1) entered forwarding s=
+tate
+[   72.717525][ T5989] 8021q: adding VLAN 0 to HW filter on device batadv0
+[   72.736386][ T5989] veth0_vlan: entered promiscuous mode
+[   72.743922][ T5989] veth1_vlan: entered promiscuous mode
+[   72.757219][ T5989] veth0_macvtap: entered promiscuous mode
+[   72.764388][ T5989] veth1_macvtap: entered promiscuous mode
+[   72.774941][ T5989] batman_adv: batadv0: Interface activated: batadv_sla=
+ve_0
+[   72.784711][ T5989] batman_adv: batadv0: Interface activated: batadv_sla=
+ve_1
+[   72.794630][   T35] netdevsim netdevsim0 netdevsim0: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   72.807307][   T35] netdevsim netdevsim0 netdevsim1: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   72.816371][  T723] netdevsim netdevsim0 netdevsim2: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   72.828572][  T723] netdevsim netdevsim0 netdevsim3: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   72.847366][   T35] wlan0: Created IBSS using preconfigured BSSID 50:50:=
+50:50:50:50
+[   72.856762][   T35] wlan0: Creating new IBSS network, BSSID 50:50:50:50:=
+50:50
+SYZFAIL: failed to recv rpc
+fd=3D3 want=3D4 recv=3D0 n=3D0 (errno 9: Bad file descriptor)
+[   72.870318][  T723] wlan1: Created IBSS using preconfigured BSSID 50:50:=
+50:50:50:50
+[   72.878614][  T723] wlan1: Creating new IBSS network, BSSID 50:50:50:50:=
+50:50
 
-Suggested-by: Charlie Jenkins <charlie@rivosinc.com>
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-Tested-by: Valentin Haudiquet <valentin.haudiquet@canonical.com>
-Signed-off-by: Deepak Gupta <debug@rivosinc.com>
----
- tools/testing/selftests/riscv/Makefile          |   2 +-
- tools/testing/selftests/riscv/cfi/.gitignore    |   2 +
- tools/testing/selftests/riscv/cfi/Makefile      |  23 ++
- tools/testing/selftests/riscv/cfi/cfi_rv_test.h |  82 +++++
- tools/testing/selftests/riscv/cfi/cfitests.c    | 173 +++++++++++
- tools/testing/selftests/riscv/cfi/shadowstack.c | 385 ++++++++++++++++++++++++
- tools/testing/selftests/riscv/cfi/shadowstack.h |  27 ++
- 7 files changed, 693 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/riscv/Makefile b/tools/testing/selftests/riscv/Makefile
-index 099b8c1f46f8..5671b4405a12 100644
---- a/tools/testing/selftests/riscv/Makefile
-+++ b/tools/testing/selftests/riscv/Makefile
-@@ -5,7 +5,7 @@
- ARCH ?= $(shell uname -m 2>/dev/null || echo not)
- 
- ifneq (,$(filter $(ARCH),riscv))
--RISCV_SUBTARGETS ?= abi hwprobe mm sigreturn vector
-+RISCV_SUBTARGETS ?= abi hwprobe mm sigreturn vector cfi
- else
- RISCV_SUBTARGETS :=
- endif
-diff --git a/tools/testing/selftests/riscv/cfi/.gitignore b/tools/testing/selftests/riscv/cfi/.gitignore
-new file mode 100644
-index 000000000000..c1faf7ca4346
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/.gitignore
-@@ -0,0 +1,2 @@
-+cfitests
-+shadowstack
-diff --git a/tools/testing/selftests/riscv/cfi/Makefile b/tools/testing/selftests/riscv/cfi/Makefile
-new file mode 100644
-index 000000000000..96a4dc4b69c3
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/Makefile
-@@ -0,0 +1,23 @@
-+CFLAGS += $(KHDR_INCLUDES)
-+CFLAGS += -I$(top_srcdir)/tools/include
-+
-+CFLAGS += -march=rv64gc_zicfilp_zicfiss -fcf-protection=full
-+
-+# Check for zicfi* extensions needs cross compiler
-+# which is not set until lib.mk is included
-+ifeq ($(LLVM)$(CC),cc)
-+CC := $(CROSS_COMPILE)gcc
-+endif
-+
-+
-+ifeq ($(shell $(CC) $(CFLAGS) -nostdlib -xc /dev/null -o /dev/null > /dev/null 2>&1; echo $$?),0)
-+TEST_GEN_PROGS := cfitests
-+
-+$(OUTPUT)/cfitests: cfitests.c shadowstack.c
-+	$(CC) -o$@ $(CFLAGS) $(LDFLAGS) $^
-+else
-+
-+$(shell echo "Toolchain doesn't support CFI, skipping CFI kselftest." >&2)
-+endif
-+
-+include ../../lib.mk
-diff --git a/tools/testing/selftests/riscv/cfi/cfi_rv_test.h b/tools/testing/selftests/riscv/cfi/cfi_rv_test.h
-new file mode 100644
-index 000000000000..1c8043f2b778
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/cfi_rv_test.h
-@@ -0,0 +1,82 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef SELFTEST_RISCV_CFI_H
-+#define SELFTEST_RISCV_CFI_H
-+#include <stddef.h>
-+#include <sys/types.h>
-+#include "shadowstack.h"
-+
-+#define CHILD_EXIT_CODE_SSWRITE		10
-+#define CHILD_EXIT_CODE_SIG_TEST	11
-+
-+#define my_syscall5(num, arg1, arg2, arg3, arg4, arg5)			\
-+({									\
-+	register long _num  __asm__ ("a7") = (num);			\
-+	register long _arg1 __asm__ ("a0") = (long)(arg1);		\
-+	register long _arg2 __asm__ ("a1") = (long)(arg2);		\
-+	register long _arg3 __asm__ ("a2") = (long)(arg3);		\
-+	register long _arg4 __asm__ ("a3") = (long)(arg4);		\
-+	register long _arg5 __asm__ ("a4") = (long)(arg5);		\
-+									\
-+	__asm__ volatile(						\
-+		"ecall\n"						\
-+		: "+r"							\
-+		(_arg1)							\
-+		: "r"(_arg2), "r"(_arg3), "r"(_arg4), "r"(_arg5),	\
-+		  "r"(_num)						\
-+		: "memory", "cc"					\
-+	);								\
-+	_arg1;								\
-+})
-+
-+#define my_syscall3(num, arg1, arg2, arg3)				\
-+({									\
-+	register long _num  __asm__ ("a7") = (num);			\
-+	register long _arg1 __asm__ ("a0") = (long)(arg1);		\
-+	register long _arg2 __asm__ ("a1") = (long)(arg2);		\
-+	register long _arg3 __asm__ ("a2") = (long)(arg3);		\
-+									\
-+	__asm__ volatile(						\
-+		"ecall\n"						\
-+		: "+r" (_arg1)						\
-+		: "r"(_arg2), "r"(_arg3),				\
-+		  "r"(_num)						\
-+		: "memory", "cc"					\
-+	);								\
-+	_arg1;								\
-+})
-+
-+#ifndef __NR_prctl
-+#define __NR_prctl 167
-+#endif
-+
-+#ifndef __NR_map_shadow_stack
-+#define __NR_map_shadow_stack 453
-+#endif
-+
-+#define CSR_SSP 0x011
-+
-+#ifdef __ASSEMBLY__
-+#define __ASM_STR(x)    x
-+#else
-+#define __ASM_STR(x)    #x
-+#endif
-+
-+#define csr_read(csr)							\
-+({									\
-+	register unsigned long __v;					\
-+	__asm__ __volatile__ ("csrr %0, " __ASM_STR(csr)		\
-+				: "=r" (__v) :				\
-+				: "memory");				\
-+	__v;								\
-+})
-+
-+#define csr_write(csr, val)						\
-+({									\
-+	unsigned long __v = (unsigned long)(val);			\
-+	__asm__ __volatile__ ("csrw " __ASM_STR(csr) ", %0"		\
-+				: : "rK" (__v)				\
-+				: "memory");				\
-+})
-+
-+#endif
-diff --git a/tools/testing/selftests/riscv/cfi/cfitests.c b/tools/testing/selftests/riscv/cfi/cfitests.c
-new file mode 100644
-index 000000000000..79aaa75f25d4
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/cfitests.c
-@@ -0,0 +1,173 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include "../../kselftest.h"
-+#include <sys/signal.h>
-+#include <asm/ucontext.h>
-+#include <linux/prctl.h>
-+#include <errno.h>
-+#include <linux/ptrace.h>
-+#include <sys/wait.h>
-+#include <linux/elf.h>
-+#include <sys/uio.h>
-+#include <asm-generic/unistd.h>
-+
-+#include "cfi_rv_test.h"
-+
-+/* do not optimize cfi related test functions */
-+#pragma GCC push_options
-+#pragma GCC optimize("O0")
-+
-+void sigsegv_handler(int signum, siginfo_t *si, void *uc)
-+{
-+	struct ucontext *ctx = (struct ucontext *)uc;
-+
-+	if (si->si_code == SEGV_CPERR) {
-+		ksft_print_msg("Control flow violation happened somewhere\n");
-+		ksft_print_msg("PC where violation happened %lx\n", ctx->uc_mcontext.gregs[0]);
-+		exit(-1);
-+	}
-+
-+	/* all other cases are expected to be of shadow stack write case */
-+	exit(CHILD_EXIT_CODE_SSWRITE);
-+}
-+
-+bool register_signal_handler(void)
-+{
-+	struct sigaction sa = {};
-+
-+	sa.sa_sigaction = sigsegv_handler;
-+	sa.sa_flags = SA_SIGINFO;
-+	if (sigaction(SIGSEGV, &sa, NULL)) {
-+		ksft_print_msg("Registering signal handler for landing pad violation failed\n");
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+long ptrace(int request, pid_t pid, void *addr, void *data);
-+
-+bool cfi_ptrace_test(void)
-+{
-+	pid_t pid;
-+	int status, ret = 0;
-+	unsigned long ptrace_test_num = 0, total_ptrace_tests = 2;
-+
-+	struct user_cfi_state cfi_reg;
-+	struct iovec iov;
-+
-+	pid = fork();
-+
-+	if (pid == -1) {
-+		ksft_exit_fail_msg("%s: fork failed\n", __func__);
-+		exit(1);
-+	}
-+
-+	if (pid == 0) {
-+		/* allow to be traced */
-+		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-+		raise(SIGSTOP);
-+		asm volatile ("la a5, 1f\n"
-+			      "jalr a5\n"
-+			      "nop\n"
-+			      "nop\n"
-+			      "1: nop\n"
-+			      : : : "a5");
-+		exit(11);
-+		/* child shouldn't go beyond here */
-+	}
-+
-+	/* parent's code goes here */
-+	iov.iov_base = &cfi_reg;
-+	iov.iov_len = sizeof(cfi_reg);
-+
-+	while (ptrace_test_num < total_ptrace_tests) {
-+		memset(&cfi_reg, 0, sizeof(cfi_reg));
-+		waitpid(pid, &status, 0);
-+		if (WIFSTOPPED(status)) {
-+			errno = 0;
-+			ret = ptrace(PTRACE_GETREGSET, pid, (void *)NT_RISCV_USER_CFI, &iov);
-+			if (ret == -1 && errno)
-+				ksft_exit_fail_msg("%s: PTRACE_GETREGSET failed\n", __func__);
-+		} else {
-+			ksft_exit_fail_msg("%s: child didn't stop, failed\n", __func__);
-+		}
-+
-+		switch (ptrace_test_num) {
-+#define CFI_ENABLE_MASK (PTRACE_CFI_LP_EN_STATE |	\
-+			PTRACE_CFI_SS_EN_STATE |	\
-+			PTRACE_CFI_SS_PTR_STATE)
-+		case 0:
-+			if ((cfi_reg.cfi_status.cfi_state & CFI_ENABLE_MASK) != CFI_ENABLE_MASK)
-+				ksft_exit_fail_msg("%s: ptrace_getregset failed, %llu\n", __func__,
-+						   cfi_reg.cfi_status.cfi_state);
-+			if (!cfi_reg.shstk_ptr)
-+				ksft_exit_fail_msg("%s: NULL shadow stack pointer, test failed\n",
-+						   __func__);
-+			break;
-+		case 1:
-+			if (!(cfi_reg.cfi_status.cfi_state & PTRACE_CFI_ELP_STATE))
-+				ksft_exit_fail_msg("%s: elp must have been set\n", __func__);
-+			/* clear elp state. not interested in anything else */
-+			cfi_reg.cfi_status.cfi_state = 0;
-+
-+			ret = ptrace(PTRACE_SETREGSET, pid, (void *)NT_RISCV_USER_CFI, &iov);
-+			if (ret == -1 && errno)
-+				ksft_exit_fail_msg("%s: PTRACE_GETREGSET failed\n", __func__);
-+			break;
-+		default:
-+			ksft_exit_fail_msg("%s: unreachable switch case\n", __func__);
-+			break;
-+		}
-+		ptrace(PTRACE_CONT, pid, NULL, NULL);
-+		ptrace_test_num++;
-+	}
-+
-+	waitpid(pid, &status, 0);
-+	if (WEXITSTATUS(status) != 11)
-+		ksft_print_msg("%s, bad return code from child\n", __func__);
-+
-+	ksft_print_msg("%s, ptrace test succeeded\n", __func__);
-+	return true;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int ret = 0;
-+	unsigned long lpad_status = 0, ss_status = 0;
-+
-+	ksft_print_header();
-+
-+	ksft_print_msg("Starting risc-v tests\n");
-+
-+	/*
-+	 * Landing pad test. Not a lot of kernel changes to support landing
-+	 * pad for user mode except lighting up a bit in senvcfg via a prctl
-+	 * Enable landing pad through out the execution of test binary
-+	 */
-+	ret = my_syscall5(__NR_prctl, PR_GET_INDIR_BR_LP_STATUS, &lpad_status, 0, 0, 0);
-+	if (ret)
-+		ksft_exit_fail_msg("Get landing pad status failed with %d\n", ret);
-+
-+	if (!(lpad_status & PR_INDIR_BR_LP_ENABLE))
-+		ksft_exit_fail_msg("Landing pad is not enabled, should be enabled via glibc\n");
-+
-+	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &ss_status, 0, 0, 0);
-+	if (ret)
-+		ksft_exit_fail_msg("Get shadow stack failed with %d\n", ret);
-+
-+	if (!(ss_status & PR_SHADOW_STACK_ENABLE))
-+		ksft_exit_fail_msg("Shadow stack is not enabled, should be enabled via glibc\n");
-+
-+	if (!register_signal_handler())
-+		ksft_exit_fail_msg("Registering signal handler for SIGSEGV failed\n");
-+
-+	ksft_print_msg("Landing pad and shadow stack are enabled for binary\n");
-+	cfi_ptrace_test();
-+
-+	execute_shadow_stack_tests();
-+
-+	return 0;
-+}
-+
-+#pragma GCC pop_options
-diff --git a/tools/testing/selftests/riscv/cfi/shadowstack.c b/tools/testing/selftests/riscv/cfi/shadowstack.c
-new file mode 100644
-index 000000000000..53387dbd9cf5
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/shadowstack.c
-@@ -0,0 +1,385 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include "../../kselftest.h"
-+#include <sys/wait.h>
-+#include <signal.h>
-+#include <fcntl.h>
-+#include <asm-generic/unistd.h>
-+#include <sys/mman.h>
-+#include "shadowstack.h"
-+#include "cfi_rv_test.h"
-+
-+static struct shadow_stack_tests shstk_tests[] = {
-+	{ "shstk fork test\n", shadow_stack_fork_test },
-+	{ "map shadow stack syscall\n", shadow_stack_map_test },
-+	{ "shadow stack gup tests\n", shadow_stack_gup_tests },
-+	{ "shadow stack signal tests\n", shadow_stack_signal_test},
-+	{ "memory protections of shadow stack memory\n", shadow_stack_protection_test }
-+};
-+
-+#define RISCV_SHADOW_STACK_TESTS ARRAY_SIZE(shstk_tests)
-+
-+/* do not optimize shadow stack related test functions */
-+#pragma GCC push_options
-+#pragma GCC optimize("O0")
-+
-+void zar(void)
-+{
-+	unsigned long ssp = 0;
-+
-+	ssp = csr_read(CSR_SSP);
-+	ksft_print_msg("Spewing out shadow stack ptr: %lx\n"
-+			"  This is to ensure shadow stack is indeed enabled and working\n",
-+			ssp);
-+}
-+
-+void bar(void)
-+{
-+	zar();
-+}
-+
-+void foo(void)
-+{
-+	bar();
-+}
-+
-+void zar_child(void)
-+{
-+	unsigned long ssp = 0;
-+
-+	ssp = csr_read(CSR_SSP);
-+	ksft_print_msg("Spewing out shadow stack ptr: %lx\n"
-+			"  This is to ensure shadow stack is indeed enabled and working\n",
-+			ssp);
-+}
-+
-+void bar_child(void)
-+{
-+	zar_child();
-+}
-+
-+void foo_child(void)
-+{
-+	bar_child();
-+}
-+
-+typedef void (call_func_ptr)(void);
-+/*
-+ * call couple of functions to test push pop.
-+ */
-+int shadow_stack_call_tests(call_func_ptr fn_ptr, bool parent)
-+{
-+	ksft_print_msg("dummy calls for sspush and sspopchk in context of %s\n",
-+		       parent ? "parent" : "child");
-+
-+	(fn_ptr)();
-+
-+	return 0;
-+}
-+
-+/* forks a thread, and ensure shadow stacks fork out */
-+bool shadow_stack_fork_test(unsigned long test_num, void *ctx)
-+{
-+	int pid = 0, child_status = 0, parent_pid = 0, ret = 0;
-+	unsigned long ss_status = 0;
-+
-+	ksft_print_msg("Exercising shadow stack fork test\n");
-+
-+	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &ss_status, 0, 0, 0);
-+	if (ret) {
-+		ksft_exit_skip("Shadow stack get status prctl failed with errorcode %d\n", ret);
-+		return false;
-+	}
-+
-+	if (!(ss_status & PR_SHADOW_STACK_ENABLE))
-+		ksft_exit_skip("Shadow stack is not enabled, should be enabled via glibc\n");
-+
-+	parent_pid = getpid();
-+	pid = fork();
-+
-+	if (pid) {
-+		ksft_print_msg("Parent pid %d and child pid %d\n", parent_pid, pid);
-+		shadow_stack_call_tests(&foo, true);
-+	} else {
-+		shadow_stack_call_tests(&foo_child, false);
-+	}
-+
-+	if (pid) {
-+		ksft_print_msg("Waiting on child to finish\n");
-+		wait(&child_status);
-+	} else {
-+		/* exit child gracefully */
-+		exit(0);
-+	}
-+
-+	if (pid && WIFSIGNALED(child_status)) {
-+		ksft_print_msg("Child faulted, fork test failed\n");
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/* exercise `map_shadow_stack`, pivot to it and call some functions to ensure it works */
-+#define SHADOW_STACK_ALLOC_SIZE 4096
-+bool shadow_stack_map_test(unsigned long test_num, void *ctx)
-+{
-+	unsigned long shdw_addr;
-+	int ret = 0;
-+
-+	ksft_print_msg("Exercising shadow stack map test\n");
-+
-+	shdw_addr = my_syscall3(__NR_map_shadow_stack, NULL, SHADOW_STACK_ALLOC_SIZE, 0);
-+
-+	if (((long)shdw_addr) <= 0) {
-+		ksft_print_msg("map_shadow_stack failed with error code %d\n",
-+			       (int)shdw_addr);
-+		return false;
-+	}
-+
-+	ret = munmap((void *)shdw_addr, SHADOW_STACK_ALLOC_SIZE);
-+
-+	if (ret) {
-+		ksft_print_msg("munmap failed with error code %d\n", ret);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/*
-+ * shadow stack protection tests. map a shadow stack and
-+ * validate all memory protections work on it
-+ */
-+bool shadow_stack_protection_test(unsigned long test_num, void *ctx)
-+{
-+	unsigned long shdw_addr;
-+	unsigned long *write_addr = NULL;
-+	int ret = 0, pid = 0, child_status = 0;
-+
-+	ksft_print_msg("Exercising shadow stack protection test (WPT)\n");
-+
-+	shdw_addr = my_syscall3(__NR_map_shadow_stack, NULL, SHADOW_STACK_ALLOC_SIZE, 0);
-+
-+	if (((long)shdw_addr) <= 0) {
-+		ksft_print_msg("map_shadow_stack failed with error code %d\n",
-+			       (int)shdw_addr);
-+		return false;
-+	}
-+
-+	write_addr = (unsigned long *)shdw_addr;
-+	pid = fork();
-+
-+	/* no child was created, return false */
-+	if (pid == -1)
-+		return false;
-+
-+	/*
-+	 * try to perform a store from child on shadow stack memory
-+	 * it should result in SIGSEGV
-+	 */
-+	if (!pid) {
-+		/* below write must lead to SIGSEGV */
-+		*write_addr = 0xdeadbeef;
-+	} else {
-+		wait(&child_status);
-+	}
-+
-+	/* test fail, if 0xdeadbeef present on shadow stack address */
-+	if (*write_addr == 0xdeadbeef) {
-+		ksft_print_msg("Shadow stack WPT failed\n");
-+		return false;
-+	}
-+
-+	/* if child reached here, then fail */
-+	if (!pid) {
-+		ksft_print_msg("Shadow stack WPT failed: child reached unreachable state\n");
-+		return false;
-+	}
-+
-+	/* if child exited via signal handler but not for write on ss */
-+	if (WIFEXITED(child_status) &&
-+	    WEXITSTATUS(child_status) != CHILD_EXIT_CODE_SSWRITE) {
-+		ksft_print_msg("Shadow stack WPT failed: child wasn't signaled for write\n");
-+		return false;
-+	}
-+
-+	ret = munmap(write_addr, SHADOW_STACK_ALLOC_SIZE);
-+	if (ret) {
-+		ksft_print_msg("Shadow stack WPT failed: munmap failed, error code %d\n",
-+			       ret);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+#define SS_MAGIC_WRITE_VAL 0xbeefdead
-+
-+int gup_tests(int mem_fd, unsigned long *shdw_addr)
-+{
-+	unsigned long val = 0;
-+
-+	lseek(mem_fd, (unsigned long)shdw_addr, SEEK_SET);
-+	if (read(mem_fd, &val, sizeof(val)) < 0) {
-+		ksft_print_msg("Reading shadow stack mem via gup failed\n");
-+		return 1;
-+	}
-+
-+	val = SS_MAGIC_WRITE_VAL;
-+	lseek(mem_fd, (unsigned long)shdw_addr, SEEK_SET);
-+	if (write(mem_fd, &val, sizeof(val)) < 0) {
-+		ksft_print_msg("Writing shadow stack mem via gup failed\n");
-+		return 1;
-+	}
-+
-+	if (*shdw_addr != SS_MAGIC_WRITE_VAL) {
-+		ksft_print_msg("GUP write to shadow stack memory failed\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+bool shadow_stack_gup_tests(unsigned long test_num, void *ctx)
-+{
-+	unsigned long shdw_addr = 0;
-+	unsigned long *write_addr = NULL;
-+	int fd = 0;
-+	bool ret = false;
-+
-+	ksft_print_msg("Exercising shadow stack gup tests\n");
-+	shdw_addr = my_syscall3(__NR_map_shadow_stack, NULL, SHADOW_STACK_ALLOC_SIZE, 0);
-+
-+	if (((long)shdw_addr) <= 0) {
-+		ksft_print_msg("map_shadow_stack failed with error code %d\n", (int)shdw_addr);
-+		return false;
-+	}
-+
-+	write_addr = (unsigned long *)shdw_addr;
-+
-+	fd = open("/proc/self/mem", O_RDWR);
-+	if (fd == -1)
-+		return false;
-+
-+	if (gup_tests(fd, write_addr)) {
-+		ksft_print_msg("gup tests failed\n");
-+		goto out;
-+	}
-+
-+	ret = true;
-+out:
-+	if (shdw_addr && munmap(write_addr, SHADOW_STACK_ALLOC_SIZE)) {
-+		ksft_print_msg("munmap failed with error code %d\n", ret);
-+		ret = false;
-+	}
-+
-+	return ret;
-+}
-+
-+volatile bool break_loop;
-+
-+void sigusr1_handler(int signo)
-+{
-+	break_loop = true;
-+}
-+
-+bool sigusr1_signal_test(void)
-+{
-+	struct sigaction sa = {};
-+
-+	sa.sa_handler = sigusr1_handler;
-+	sa.sa_flags = 0;
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(SIGUSR1, &sa, NULL)) {
-+		ksft_print_msg("Registering signal handler for SIGUSR1 failed\n");
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/*
-+ * shadow stack signal test. shadow stack must be enabled.
-+ * register a signal, fork another thread which is waiting
-+ * on signal. Send a signal from parent to child, verify
-+ * that signal was received by child. If not test fails
-+ */
-+bool shadow_stack_signal_test(unsigned long test_num, void *ctx)
-+{
-+	int pid = 0, child_status = 0, ret = 0;
-+	unsigned long ss_status = 0;
-+
-+	ksft_print_msg("Exercising shadow stack signal test\n");
-+
-+	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &ss_status, 0, 0, 0);
-+	if (ret) {
-+		ksft_print_msg("Shadow stack get status prctl failed with errorcode %d\n", ret);
-+		return false;
-+	}
-+
-+	if (!(ss_status & PR_SHADOW_STACK_ENABLE))
-+		ksft_print_msg("Shadow stack is not enabled, should be enabled via glibc\n");
-+
-+	/* this should be caught by signal handler and do an exit */
-+	if (!sigusr1_signal_test()) {
-+		ksft_print_msg("Registering sigusr1 handler failed\n");
-+		exit(-1);
-+	}
-+
-+	pid = fork();
-+
-+	if (pid == -1) {
-+		ksft_print_msg("Signal test: fork failed\n");
-+		goto out;
-+	}
-+
-+	if (pid == 0) {
-+		while (!break_loop)
-+			sleep(1);
-+
-+		exit(11);
-+		/* child shouldn't go beyond here */
-+	}
-+
-+	/* send SIGUSR1 to child */
-+	kill(pid, SIGUSR1);
-+	wait(&child_status);
-+
-+out:
-+
-+	return (WIFEXITED(child_status) &&
-+		WEXITSTATUS(child_status) == 11);
-+}
-+
-+int execute_shadow_stack_tests(void)
-+{
-+	int ret = 0;
-+	unsigned long test_count = 0;
-+	unsigned long shstk_status = 0;
-+	bool test_pass = false;
-+
-+	ksft_print_msg("Executing RISC-V shadow stack self tests\n");
-+	ksft_set_plan(RISCV_SHADOW_STACK_TESTS);
-+
-+	ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS, &shstk_status, 0, 0, 0);
-+
-+	if (ret != 0)
-+		ksft_exit_fail_msg("Get shadow stack status failed with %d\n", ret);
-+
-+	/*
-+	 * If we are here that means get shadow stack status succeeded and
-+	 * thus shadow stack support is baked in the kernel.
-+	 */
-+	while (test_count < RISCV_SHADOW_STACK_TESTS) {
-+		test_pass = (*shstk_tests[test_count].t_func)(test_count, NULL);
-+		ksft_test_result(test_pass, shstk_tests[test_count].name);
-+		test_count++;
-+	}
-+
-+	ksft_finished();
-+
-+	return 0;
-+}
-+
-+#pragma GCC pop_options
-diff --git a/tools/testing/selftests/riscv/cfi/shadowstack.h b/tools/testing/selftests/riscv/cfi/shadowstack.h
-new file mode 100644
-index 000000000000..0be510167de3
---- /dev/null
-+++ b/tools/testing/selftests/riscv/cfi/shadowstack.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef SELFTEST_SHADOWSTACK_TEST_H
-+#define SELFTEST_SHADOWSTACK_TEST_H
-+#include <stddef.h>
-+#include <linux/prctl.h>
-+
-+/*
-+ * a cfi test returns true for success or false for fail
-+ * takes a number for test number to index into array and void pointer.
-+ */
-+typedef bool (*shstk_test_func)(unsigned long test_num, void *);
-+
-+struct shadow_stack_tests {
-+	char *name;
-+	shstk_test_func t_func;
-+};
-+
-+bool shadow_stack_fork_test(unsigned long test_num, void *ctx);
-+bool shadow_stack_map_test(unsigned long test_num, void *ctx);
-+bool shadow_stack_protection_test(unsigned long test_num, void *ctx);
-+bool shadow_stack_gup_tests(unsigned long test_num, void *ctx);
-+bool shadow_stack_signal_test(unsigned long test_num, void *ctx);
-+
-+int execute_shadow_stack_tests(void);
-+
-+#endif
+syzkaller build log:
+go env (err=3D<nil>)
+AR=3D'ar'
+CC=3D'gcc'
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_ENABLED=3D'1'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+CXX=3D'g++'
+GCCGO=3D'gccgo'
+GO111MODULE=3D'auto'
+GOAMD64=3D'v1'
+GOARCH=3D'amd64'
+GOAUTH=3D'netrc'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOCACHEPROG=3D''
+GODEBUG=3D''
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFIPS140=3D'off'
+GOFLAGS=3D''
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build1479309889=3D/tmp/go-build -gno-record-gc=
+c-switches'
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.24.4'
+GOWORK=3D''
+PKG_CONFIG=3D'pkg-config'
 
--- 
-2.43.0
+git status (err=3D<nil>)
+HEAD detached at d6526ea3e
+nothing to commit, working tree clean
 
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' -ldflags=3D"-s -w -X github.com/google/syzkaller/pr=
+og.GitRevision=3Dd6526ea3e6ad9081c902859bbb80f9f840377cb4 -X github.com/goo=
+gle/syzkaller/prog.gitRevisionDate=3D20251126-113115"  ./sys/syz-sysgen | g=
+rep -q false || go install -ldflags=3D"-s -w -X github.com/google/syzkaller=
+/prog.GitRevision=3Dd6526ea3e6ad9081c902859bbb80f9f840377cb4 -X github.com/=
+google/syzkaller/prog.gitRevisionDate=3D20251126-113115"  ./sys/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build -ldflags=3D"-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3Dd6526ea3e6ad9081c902859bbb80f9f840377cb4 -X g=
+ithub.com/google/syzkaller/prog.gitRevisionDate=3D20251126-113115"  -o ./bi=
+n/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
+_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"d6526ea3e6ad9081c902859bbb80f9f840=
+377cb4\"
+/usr/bin/ld: /tmp/ccXWETje.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
+./tools/check-syzos.sh 2>/dev/null
+
+
+
+Tested on:
+
+commit:         e69c7c17 Merge tag 'timers_urgent_for_v6.18_rc8' of gi..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu=
+x.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Df30cc590c4f6da4=
+4
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D99f6ed51479b86ac4=
+c41
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils=
+ for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D14477cc25800=
+00
 
 
