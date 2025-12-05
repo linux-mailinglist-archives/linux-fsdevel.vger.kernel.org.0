@@ -1,236 +1,475 @@
-Return-Path: <linux-fsdevel+bounces-70844-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 781B7CA894F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 18:26:44 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E624CA8A02
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 18:33:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E3AFE30658F3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 17:24:36 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 884F130E92DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 17:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A777435A959;
-	Fri,  5 Dec 2025 17:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD3C35A92B;
+	Fri,  5 Dec 2025 17:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="o6+Ljyfr"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P7uvYngT";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="YNlrBZUv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fra-out-010.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-010.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.178.143.178])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D4D359FB7;
-	Fri,  5 Dec 2025 17:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.178.143.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BD5327C16
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 17:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764955453; cv=none; b=oq9/50OPm9NrJ2+y/CoFotby/ofatnBEp+pRkZEjFt88MRCutY2kEjdO+VSJ2mAxFug+FFt9PJ0L+LIf6XmOeEFPWiZJ+dlJHCHW/m9HnyfWCEX4/qLLGP1uMeX5dXqPEu+iSSDjaRoD1cx7qXtRCRVePXaf++us6SfitTH8kZw=
+	t=1764955566; cv=none; b=HG2lcK4bQ66RmtQDicMfF52b2SvpMwOb9CCVC9bBqDZWzRx3AVACxrmP7AJ7/qKvJLaIe6X0DL4DDSQU2/aTgf6AOpB4C2nl2yuVOH4UK+Nwm3yQKBk+xjFJZx79omqWlgageenkeU3CmLzN3CDD7g6nRF1ACgGaJKfWWaz0+Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764955453; c=relaxed/simple;
-	bh=VP09C2UJW+dtoiSy9nxfA21fJ8XvlYAq9HNrnEuDVWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=h/vwksfmhUYIn6/4AU9uGrMyECoV7GuMG2A2acIk5eNuvMhy7Ddm4vNGYvWytxwdRS+GXbz52x8zo3ZHlhVK4TAK8U7fsPff9fs6aPknhmjaZP9NDy8IprsMToKiiS/P0sgtdFO2mdd1iFN1vbciPi5Cvh0Ab8HpboJPvq9tqQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=o6+Ljyfr; arc=none smtp.client-ip=63.178.143.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1764955566; c=relaxed/simple;
+	bh=3gB6ZiHyUEQCw49IQksu27s7lYXRNxD9491qDl5iZRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mprz+lZjhF9V3/4a9ft9ULwvSL6npLyrW7KyvnWYtehw5jdqcdMGDBxg0mH8SYbqyCGf/biDtfMprgJNxHj0Qx21k/fbUHA4s+37RiLb2SxCWDiueRw5Ox/YP2Ae/PKDBSiqiAqdsFAFtk07LWpwOYHlJHAvwVtuXNOe0qCtbek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P7uvYngT; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=YNlrBZUv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764955563;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nizd43vafz8AJJREFByleh9tHgBqbitMHQ1IeHGNNBI=;
+	b=P7uvYngTW/a8dCsslkIVorWMW7BE2vL5JegzWWJwRgdN/pp6IMTWkXPbIZZTTRLEAfyLNQ
+	hx9rAaZRGWoKet5owrZUzqwJAVjHeu/JPVn3xutUBmQXSZPxvS9/JzkmPQXTKOoV3hAntK
+	7C6l0rEymAV1tXWajrJW7g5/HFVA2OU=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-639-OnKVTdMTPOKF_8eA5O-Dqg-1; Fri, 05 Dec 2025 12:26:01 -0500
+X-MC-Unique: OnKVTdMTPOKF_8eA5O-Dqg-1
+X-Mimecast-MFC-AGG-ID: OnKVTdMTPOKF_8eA5O-Dqg_1764955560
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3438744f11bso4380545a91.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Dec 2025 09:26:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1764955450; x=1796491450;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=DnhB+PvK+wkKdNvTrP/dFYEJueius5f77QIgV9qQQYw=;
-  b=o6+Ljyfrd+cYtaN0p9IIZZDVyYu4U6bGn4202v3GWoVq9DTRhqKx1o2i
-   lVOr02lT9ZM2oQeuRnkm5n65t8MHslZaqn3PCn9ZUuW8Ce4pwMVcaYl/T
-   Ilhw8Abs7YFMunumELcxh+XUk0TtGGLloZAVRQgPAb49gebqSJTf502ho
-   IqKhm+2nmx2Xx80VqnLTxrOiU3oIEo0OIRSNqk2Hn2h8N7306NmKkCR8p
-   +sxXvn64qwu7pTcJt4JC0f3IzDKYRMlwqe/urkJbIHR5/trgKvERaWD2z
-   M2m4Nm19PRvO5iiYec66dHiKnyRFii6vqrgyeTiVaBfP9212tOl4mTGLY
-   w==;
-X-CSE-ConnectionGUID: ui1OxgzNTLeAgy/kgfWZcQ==
-X-CSE-MsgGUID: 0QAryot6QayZ+88faD+iVA==
-X-IronPort-AV: E=Sophos;i="6.20,252,1758585600"; 
-   d="scan'208";a="6200858"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-010.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2025 17:24:07 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [54.240.197.225:5625]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.44.106:2525] with esmtp (Farcaster)
- id 59f2028b-9252-4cab-b235-d8859489381a; Fri, 5 Dec 2025 17:24:06 +0000 (UTC)
-X-Farcaster-Flow-ID: 59f2028b-9252-4cab-b235-d8859489381a
-Received: from EX19D005EUB003.ant.amazon.com (10.252.51.31) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Fri, 5 Dec 2025 17:24:06 +0000
-Received: from [192.168.14.68] (10.106.83.5) by EX19D005EUB003.ant.amazon.com
- (10.252.51.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29; Fri, 5 Dec 2025
- 17:24:03 +0000
-Message-ID: <359e292c-4173-49c8-8088-257b4c301300@amazon.com>
-Date: Fri, 5 Dec 2025 17:24:02 +0000
+        d=redhat.com; s=google; t=1764955560; x=1765560360; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nizd43vafz8AJJREFByleh9tHgBqbitMHQ1IeHGNNBI=;
+        b=YNlrBZUvuWjlZ3zWLqRm5vDImCsHyaH0D6FGBPyvznl9yDp9BnUKxgRBCAyO2yIMxl
+         1xIHSFG7/9RgKj0WSpUTp1F3Bp6/Vvz9Yj6TDWW5eLEtvop64j2HFx/49rw8le8R9eEg
+         BIrTaYpWujWv5qJwNVMFgU1kPG3VcmTAhoAX1lYC9Opdcn+1lnOstldiD/52BI7axJ9s
+         mlEb7s6coKQkaVHi3UqTMTMj0sT7BWreFs0pDaYuzHibRNM3/WdA/+m/68mrsz2aABld
+         jHfOYs6Tq9XwI1fQVd8ReG+plFNxRR3KnEm/55eeMGnZnZj+3+0kfNleln8eCc9jMsqe
+         g/Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764955560; x=1765560360;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nizd43vafz8AJJREFByleh9tHgBqbitMHQ1IeHGNNBI=;
+        b=AUDloDPtMVVT9bMqPv/kFUk79rH06TJP57zjNoF80tOTMkUV84ToukLLQqPoTVm/cZ
+         i448J9L7LDfUfOUQkurGMvb/OEnSQURseT1pno1x4broG7T3UwYg5jviz/9AtgDji0U8
+         knhybGXZjpjymRcmPKZjNgG7A83Ez3vYu/EtrODFT7vZFZjy8+2QRPJHmSfjNn2WnZss
+         tkXPqi4chAe3FR8DmlWR7KorpcutvcfNOt8Ki6sgGsLXkvmv3WWruRmd0DY/hWDu+xi4
+         hr0+eMe52KrNoVrUl3izdu9yV3a/cEwfJjtNv90Z8YNWD8t+Z+r0xQzJhfHwhS2P2lSF
+         yC8A==
+X-Forwarded-Encrypted: i=1; AJvYcCX2oP3SOCO32n/FGlkw5eMAL1AXna9rXe+V0KDbH39XumCnWuq4kR+oJK5JPGzu+zkcfrhrDmyhK3wQDTvH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLJ0Kf8CGbeY2h0dQ4zJicmy1KukIZpp1iCSIElQVsWNJ4fjn2
+	gIVz+4OTSNzsuPTCRv4xG8ZQaUcIWgQ7oUbcitwq6CY2H4GZYc94cs3EK3x4kBhp+GVCiVtDNX1
+	6f9AQb2SB1vZ2WZCu5SzJz/+B65lB/hbKikoO1Gyx+U6SE1NQSC5FMAwA0/8UbZp4Z/c=
+X-Gm-Gg: ASbGnctqf2SihKgx8x/Wd6TJs0koFykD5a9JKIuwZ23sr/RwNJleASUsg+JFZzYmkAf
+	XnYBQIC6O3uoe1jkOqrWkixhMFwPXBbykTdn0xj+vD0TIAhIbLvc5rjld0EqLvJvwpOrI5kMX3r
+	cmgSxvAjEe7OXchW/PC3wvLnPTHyMzHFknVkctRiTCpmVCdliXJKCEagiAwJweaIamkmjBYvgaQ
+	ge49vCzga2NpJML1plIhmVjy/jeoj3h85VQMg/dxRnGMBJiz11qs4qgUu9iO8dh5wix1xJDtOU8
+	auzT/rbzpvLN1S/UO9kuCHT+IFWBL93ZnJBnPkjELpPCqAi4ueNiYrOywAOVtwEAoQ37GOFK/QR
+	W40NHxyWY5JKONACQuOsaRDnUSSVuJi7/eHBWwekVoILgBbVvFA==
+X-Received: by 2002:a17:90b:4f4c:b0:340:b06f:7134 with SMTP id 98e67ed59e1d1-34912689118mr11170389a91.20.1764955559940;
+        Fri, 05 Dec 2025 09:25:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGlqY+kJbcA2M9kW3V7LeJzPXzGuf1eehTaDYTTAZXunn0kStE5X1VS8kMQTFuRy9B1BcDbMQ==
+X-Received: by 2002:a17:90b:4f4c:b0:340:b06f:7134 with SMTP id 98e67ed59e1d1-34912689118mr11170369a91.20.1764955559343;
+        Fri, 05 Dec 2025 09:25:59 -0800 (PST)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3494f398f80sm5103517a91.6.2025.12.05.09.25.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Dec 2025 09:25:58 -0800 (PST)
+Date: Sat, 6 Dec 2025 01:25:54 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH fstests v3 3/3] generic: add tests for file delegations
+Message-ID: <20251205172554.pmzqzdmwpmflh5bi@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20251203-dir-deleg-v3-0-be55fbf2ad53@kernel.org>
+ <20251203-dir-deleg-v3-3-be55fbf2ad53@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH v7 12/12] KVM: selftests: Test guest execution from direct
- map removed gmem
-To: Brendan Jackman <jackmanb@google.com>
-CC: "pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net"
-	<corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>, "oliver.upton@linux.dev"
-	<oliver.upton@linux.dev>, "joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "yuzenghui@huawei.com"
-	<yuzenghui@huawei.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
-	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"luto@kernel.org" <luto@kernel.org>, "peterz@infradead.org"
-	<peterz@infradead.org>, "willy@infradead.org" <willy@infradead.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz"
-	<vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com"
-	<surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, "song@kernel.org"
-	<song@kernel.org>, "jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org"
-	<ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"andrii@kernel.org" <andrii@kernel.org>, "martin.lau@linux.dev"
-	<martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>,
-	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org"
-	<kpsingh@kernel.org>, "sdf@fomichev.me" <sdf@fomichev.me>,
-	"haoluo@google.com" <haoluo@google.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com"
-	<peterx@redhat.com>, "jannh@google.com" <jannh@google.com>,
-	"pfalcato@suse.de" <pfalcato@suse.de>, "shuah@kernel.org" <shuah@kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "Cali,
- Marco" <xmarcalx@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
-	"Thomson, Jack" <jackabt@amazon.co.uk>, "derekmn@amazon.co.uk"
-	<derekmn@amazon.co.uk>, "tabba@google.com" <tabba@google.com>,
-	"ackerleytng@google.com" <ackerleytng@google.com>, "david@kernel.org"
-	<david@kernel.org>, "patrick.roy@linux.dev" <patrick.roy@linux.dev>
-References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
- <20250924152214.7292-1-roypat@amazon.co.uk>
- <20250924152214.7292-9-roypat@amazon.co.uk>
- <DDVTTQZBJXAK.1OC7BTWCVCP9U@google.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
- CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
- i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <DDVTTQZBJXAK.1OC7BTWCVCP9U@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D004EUA004.ant.amazon.com (10.252.50.183) To
- EX19D005EUB003.ant.amazon.com (10.252.51.31)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251203-dir-deleg-v3-3-be55fbf2ad53@kernel.org>
 
-
-
-On 30/10/2025 17:18, Brendan Jackman wrote:
-> On Wed Sep 24, 2025 at 3:22 PM UTC, Patrick Roy wrote:
->> Add a selftest that loads itself into guest_memfd (via
->> GUEST_MEMFD_FLAG_MMAP) and triggers an MMIO exit when executed. This
->> exercises x86 MMIO emulation code inside KVM for guest_memfd-backed
->> memslots where the guest_memfd folios are direct map removed.
->> Particularly, it validates that x86 MMIO emulation code (guest page
->> table walks + instruction fetch) correctly accesses gmem through the VMA
->> that's been reflected into the memslot's userspace_addr field (instead
->> of trying to do direct map accesses).
->>
->> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
->> ---
->>   .../selftests/kvm/set_memory_region_test.c    | 50 +++++++++++++++++--
->>   1 file changed, 46 insertions(+), 4 deletions(-)
->>
->> diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/testing/selftests/kvm/set_memory_region_test.c
->> index ce3ac0fd6dfb..cb3bc642d376 100644
->> --- a/tools/testing/selftests/kvm/set_memory_region_test.c
->> +++ b/tools/testing/selftests/kvm/set_memory_region_test.c
->> @@ -603,6 +603,41 @@ static void test_mmio_during_vectoring(void)
->>
->>        kvm_vm_free(vm);
->>   }
->> +
->> +static void guest_code_trigger_mmio(void)
->> +{
->> +     /*
->> +      * Read some GPA that is not backed by a memslot. KVM consider this
->> +      * as MMIO and tell userspace to emulate the read.
->> +      */
->> +     READ_ONCE(*((uint64_t *)MEM_REGION_GPA));
->> +
->> +     GUEST_DONE();
->> +}
->> +
->> +static void test_guest_memfd_mmio(void)
->> +{
->> +     struct kvm_vm *vm;
->> +     struct kvm_vcpu *vcpu;
->> +     struct vm_shape shape = {
->> +             .mode = VM_MODE_DEFAULT,
->> +             .src_type = VM_MEM_SRC_GUEST_MEMFD_NO_DIRECT_MAP,
->> +     };
->> +     pthread_t vcpu_thread;
->> +
->> +     pr_info("Testing MMIO emulation for instructions in gmem\n");
->> +
->> +     vm = __vm_create_shape_with_one_vcpu(shape, &vcpu, 0, guest_code_trigger_mmio);
+On Wed, Dec 03, 2025 at 10:43:09AM -0500, Jeff Layton wrote:
+> Mostly the same ones as leases, but some additional tests to validate
+> that they are broken on metadata changes.
 > 
-> When I run this test on my minimal config in a nested VM I get:
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+
+This version is good to me. But this test fails without the:
+https://lore.kernel.org/linux-fsdevel/20251201-dir-deleg-ro-v1-1-2e32cf2df9b7@kernel.org/
+
+So maybe we can mark that:
+
+  _fixed_by_kernel_commit xxxxxxxxxxxx ...
+
+or
+
+  _wants_kernel_commit xxxxxxxxxxxx ...
+
+Anyway, we can add that after the patchset get merged. I'll merge this patchset
+at first.
+
+Reviewed-by: Zorro Lang <zlang@redhat.com>
+
+>  common/locktest       |   5 ++
+>  src/locktest.c        | 202 +++++++++++++++++++++++++++++++++++++++++++++++++-
+>  tests/generic/784     |  20 +++++
+>  tests/generic/784.out |   2 +
+>  4 files changed, 227 insertions(+), 2 deletions(-)
 > 
-> [root@testvm:~]# /nix/store/xlxd60n7v1qfr6s5zxda410zrzdd0xc2-kselftests/bin/run_kselftest.sh -t kvm:set_memory_region_test
-> TAP version 13
-> 1..1
-> # timeout set to 120
-> # selftests: kvm: set_memory_region_test
-> # Random seed: 0x6b8b4567
-> # Testing KVM_RUN with zero added memory regions
-> # Testing MMIO during vectoring error handling
-> # Allowed number of memory slots: 32764
-> # Adding slots 0..32763, each memory region with 2048K size
-> # Testing MMIO emulation for instructions in gmem
-> # ==== Test Assertion Failure ====
-> #   lib/kvm_util.c:1118: region->mmap_start != MAP_FAILED
-> #   pid=614 tid=614 errno=19 - No such device
-> #      1        0x0000000000407b02: vm_mem_add at ??:?
-> #      2        0x000000000040a924: __vm_create at ??:?
-> #      3        0x000000000040ab16: __vm_create_shape_with_one_vcpu at ??:?
-> #      4        0x00000000004042cf: main at ??:?
-> #      5        0x00007faa6b08a47d: ?? ??:0
-> #      6        0x00007faa6b08a538: ?? ??:0
-> #      7        0x0000000000404384: _start at ??:?
-> #   mmap() failed, rc: -1 errno: 19 (No such device)
+> diff --git a/common/locktest b/common/locktest
+> index 12b5c27e0c03ad4c60985e3882026fce04e7330e..9344c43d8ee97679b49357b4e75de89ad56221ff 100644
+> --- a/common/locktest
+> +++ b/common/locktest
+> @@ -101,3 +101,8 @@ _run_dirdelegtest() {
+>  	TESTFILE=$DELEGDIR
+>  	_run_generic "-D"
+>  }
+> +
+> +_run_filedelegtest() {
+> +	TESTFILE=$DELEGDIR
+> +	_run_generic "-F"
+> +}
+> diff --git a/src/locktest.c b/src/locktest.c
+> index eb40dce3f1b28ef34752518808ec2f3999cd4257..54ee1f07539ef08e768d2c809c40327f315d43e7 100644
+> --- a/src/locktest.c
+> +++ b/src/locktest.c
+> @@ -126,6 +126,8 @@ static char *child[] = { "child0", "child1" };
+>  #define		CMD_CHMOD	19
+>  #define		CMD_MKDIR	20
+>  #define		CMD_RMDIR	21
+> +#define		CMD_UNLINK_S	22
+> +#define		CMD_RENAME_S	23
+>  
+>  #define		PASS 	0
+>  #define		FAIL	1
+> @@ -169,6 +171,8 @@ static char *get_cmd_str(int cmd)
+>  		case CMD_CHMOD: return "Chmod"; break;
+>  		case CMD_MKDIR: return "Mkdir"; break;
+>  		case CMD_RMDIR: return "Rmdir"; break;
+> +		case CMD_UNLINK_S: return "Remove Self"; break;
+> +		case CMD_RENAME_S: return "Rename Self"; break;
+>  	}
+>  	return "unknown";
+>  }
+> @@ -716,6 +720,150 @@ static int64_t lease_tests[][6] =
+>  		{0,0,0,0,0,CLIENT}
+>  	};
+>  
+> +char *filedeleg_descriptions[] = {
+> +    /*  1 */"Take Read Deleg",
+> +    /*  2 */"Take Write Deleg",
+> +    /*  3 */"Fail Write Deleg if file is open somewhere else",
+> +    /*  4 */"Fail Read Deleg if opened with write permissions",
+> +    /*  5 */"Read deleg gets SIGIO on write open",
+> +    /*  6 */"Write deleg gets SIGIO on read open",
+> +    /*  7 */"Read deleg does _not_ get SIGIO on read open",
+> +    /*  8 */"Read deleg gets SIGIO on write open",
+> +    /*  9 */"Write deleg gets SIGIO on truncate",
+> +    /* 10 */"Read deleg gets SIGIO on truncate",
+> +    /* 11 */"Read deleg gets SIGIO on chmod",
+> +    /* 12 */"Read deleg gets SIGIO on unlink",
+> +    /* 13 */"Read deleg gets SIGIO on rename",
+> +};
+> +
+> +static int64_t filedeleg_tests[][6] =
+> +	/*	test #	Action	[offset|flags|arg]	length		expected	server/client */
+> +	/*			[sigio_wait_time]						*/
+> +	{
+> +	/* Various tests to exercise delegs */
+> +
+> +	/* SECTION 1: Simple verification of being able to take delegs */
+> +	/* Take Read Deleg */
+> +	{1,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
+> +	{1,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
+> +	{1,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
+> +	{1,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
+> +	{1,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
+> +	{1,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
+> +	{1,	CMD_SETDELEG,	F_UNLCK,	0,	PASS,		SERVER	},
+> +	{1,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
+> +	{1,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
+> +
+> +	/* Take Write Deleg */
+> +	{2,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
+> +	{2,	CMD_SETDELEG,	F_WRLCK,	0,	PASS,		SERVER	},
+> +	{2,	CMD_GETDELEG,	F_WRLCK,	0,	PASS,		SERVER	},
+> +	{2,	CMD_SETDELEG,	F_UNLCK,	0,	PASS,		SERVER	},
+> +	{2,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
+> +	/* Fail Write Deleg with other users */
+> +	{3,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT  },
+> +	{3,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
+> +	{3,	CMD_SETDELEG,	F_WRLCK,	0,	FAIL,		SERVER	},
+> +	{3,	CMD_GETDELEG,	F_WRLCK,	0,	FAIL,		SERVER	},
+> +	{3,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
+> +	{3,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
+> +	/* Fail Read Deleg if opened for write */
+> +	{4,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
+> +	{4,	CMD_SETDELEG,	F_RDLCK,	0,	FAIL,		SERVER	},
+> +	{4,	CMD_GETDELEG,	F_RDLCK,	0,	FAIL,		SERVER	},
+> +	{4,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
+> +
+> +	/* SECTION 2: Proper SIGIO notifications */
+> +	/* Get SIGIO when read deleg is broken by write */
+> +	{5,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
+> +	{5,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
+> +	{5,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
+> +	{5,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
+> +	{5,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
+> +	{5,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
+> +	{5,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
+> +	{5,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
+> +
+> +	/* Get SIGIO when write deleg is broken by read */
+> +	{6,	CMD_OPEN,	O_RDWR,		0,	PASS,		CLIENT	},
+> +	{6,	CMD_SETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
+> +	{6,	CMD_GETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
+> +	{6,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
+> +	{6,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
+> +	{6,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
+> +	{6,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
+> +	{6,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
+> +
+> +	/* Don't get SIGIO when read deleg is taken by read */
+> +	{7,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
+> +	{7,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
+> +	{7,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
+> +	{7,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
+> +	{7,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
+> +	{7,	CMD_WAIT_SIGIO,	5,		0,	FAIL,		CLIENT	},
+> +	{7,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
+> +	{7,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
+> +
+> +	/* Get SIGIO when Read deleg is broken by Write */
+> +	{8,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
+> +	{8,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
+> +	{8,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
+> +	{8,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
+> +	{8,	CMD_OPEN,	O_RDWR,		0,	PASS,		SERVER	},
+> +	{8,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
+> +	{8,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
+> +	{8,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
+> +
+> +	/* Get SIGIO when Write deleg is broken by Truncate */
+> +	{9,	CMD_OPEN,	O_RDWR,		0,	PASS,		CLIENT	},
+> +	{9,	CMD_SETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
+> +	{9,	CMD_GETDELEG,	F_WRLCK,	0,	PASS,		CLIENT	},
+> +	{9,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
+> +	{9,	CMD_TRUNCATE,	FILE_SIZE/2,	0,	PASS,		CLIENT	},
+> +	{9,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
+> +	{9,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
+> +
+> +	/* Get SIGIO when Read deleg is broken by Truncate */
+> +	{10,	CMD_OPEN,	O_RDONLY,	0,	PASS,		CLIENT	},
+> +	{10,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
+> +	{10,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		CLIENT	},
+> +	{10,	CMD_SIGIO,	0,		0,	PASS,		CLIENT	},
+> +	{10,	CMD_TRUNCATE,	FILE_SIZE/2,	0,	PASS,		SERVER	},
+> +	{10,	CMD_WAIT_SIGIO,	5,		0,	PASS,		CLIENT	},
+> +	{10,	CMD_CLOSE,	0,		0,	PASS,		CLIENT	},
+> +
+> +	/* Get SIGIO when Read deleg is broken by Chmod */
+> +	{11,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
+> +	{11,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
+> +	{11,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
+> +	{11,	CMD_SIGIO,	0,		0,	PASS,		SERVER	},
+> +	{11,	CMD_CHMOD,	0644,		0,	PASS,		CLIENT	},
+> +	{11,	CMD_WAIT_SIGIO,	5,		0,	PASS,		SERVER	},
+> +	{11,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
+> +
+> +	/* Get SIGIO when file is unlinked */
+> +	{12,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
+> +	{12,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
+> +	{12,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
+> +	{12,	CMD_SIGIO,	0,		0,	PASS,		SERVER	},
+> +	{12,	CMD_UNLINK_S,	0,		0,	PASS,		CLIENT	},
+> +	{12,	CMD_WAIT_SIGIO,	5,		0,	PASS,		SERVER	},
+> +	{12,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
+> +
+> +	/* Get SIGIO when file is renamed */
+> +	{13,	CMD_OPEN,	O_RDONLY,	0,	PASS,		SERVER	},
+> +	{13,	CMD_SETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
+> +	{13,	CMD_GETDELEG,	F_RDLCK,	0,	PASS,		SERVER	},
+> +	{13,	CMD_SIGIO,	0,		0,	PASS,		SERVER	},
+> +	{13,	CMD_RENAME_S,	0,		0,	PASS,		CLIENT	},
+> +	{13,	CMD_WAIT_SIGIO,	5,		0,	PASS,		SERVER	},
+> +	{13,	CMD_CLOSE,	0,		0,	PASS,		SERVER	},
+> +
+> +	/* indicate end of array */
+> +	{0,0,0,0,0,SERVER},
+> +	{0,0,0,0,0,CLIENT}
+> +};
+> +
+>  char *dirdeleg_descriptions[] = {
+>      /*  1 */"Take Read Lease",
+>      /*  2 */"Write Lease Should Fail",
+> @@ -1124,6 +1272,37 @@ int do_chmod(int mode)
+>  	return PASS;
+>  }
+>  
+> +int do_unlink_self(void)
+> +{
+> +	int ret;
+> +
+> +	ret = unlink(filename);
+> +	if (ret < 0) {
+> +		perror("unlink");
+> +		return FAIL;
+> +	}
+> +	return PASS;
+> +}
+> +
+> +int do_rename_self(void)
+> +{
+> +	int ret;
+> +	char target[PATH_MAX];
+> +
+> +	ret = snprintf(target, sizeof(target), "%s2", filename);
+> +	if (ret >= sizeof(target)) {
+> +		perror("snprintf");
+> +		return FAIL;
+> +	}
+> +
+> +	ret = rename(filename, target);
+> +	if (ret < 0) {
+> +		perror("unlink");
+> +		return FAIL;
+> +	}
+> +	return PASS;
+> +}
+> +
+>  static int do_lock(int cmd, int type, int start, int length)
+>  {
+>      int ret;
+> @@ -1347,6 +1526,7 @@ main(int argc, char *argv[])
+>      int fail_count = 0;
+>      int run_leases = 0;
+>      int run_dirdelegs = 0;
+> +    int run_filedelegs = 0;
+>      int test_setlease = 0;
+>      
+>      atexit(cleanup);
+> @@ -1360,7 +1540,7 @@ main(int argc, char *argv[])
+>  	    prog = p+1;
+>      }
+>  
+> -    while ((c = getopt(argc, argv, "dDLn:h:p:t?")) != EOF) {
+> +    while ((c = getopt(argc, argv, "dDFLn:h:p:t?")) != EOF) {
+>  	switch (c) {
+>  
+>  	case 'd':	/* debug flag */
+> @@ -1371,6 +1551,10 @@ main(int argc, char *argv[])
+>  	    run_dirdelegs = 1;
+>  	    break;
+>  
+> +	case 'F':
+> +	    run_filedelegs = 1;
+> +	    break;
+> +
+>  	case 'L':	/* Lease testing */
+>  	    run_leases = 1;
+>  	    break;
+> @@ -1430,7 +1614,7 @@ main(int argc, char *argv[])
+>      if (test_setlease == 1) {
+>  	struct delegation deleg = { .d_type = F_UNLCK };
+>  
+> -	if (run_dirdelegs)
+> +	if (run_dirdelegs || run_filedelegs)
+>  		fcntl(f_fd, F_SETDELEG, &deleg);
+>  	else
+>  		fcntl(f_fd, F_SETLEASE, F_UNLCK);
+> @@ -1568,6 +1752,8 @@ main(int argc, char *argv[])
+>       */
+>      if (run_dirdelegs)
+>  	fail_count = run(dirdeleg_tests, dirdeleg_descriptions);
+> +    else if (run_filedelegs)
+> +	fail_count = run(filedeleg_tests, filedeleg_descriptions);
+>      else if (run_leases)
+>  	fail_count = run(lease_tests, lease_descriptions);
+>      else
+> @@ -1673,6 +1859,12 @@ int run(int64_t tests[][6], char *descriptions[])
+>  			case CMD_RMDIR:
+>  			    result = do_rmdir(tests[index][ARG]);
+>  			    break;
+> +			case CMD_UNLINK_S:
+> +			    result = do_unlink_self();
+> +			    break;
+> +			case CMD_RENAME_S:
+> +			    result = do_rename_self();
+> +			    break;
+>  		    }
+>  		    if( result != tests[index][RESULT]) {
+>  			fail_flag++;
+> @@ -1817,6 +2009,12 @@ int run(int64_t tests[][6], char *descriptions[])
+>  		case CMD_RMDIR:
+>  		    result = do_rmdir(ctl.offset);
+>  		    break;
+> +		case CMD_UNLINK_S:
+> +		    result = do_unlink_self();
+> +		    break;
+> +		case CMD_RENAME_S:
+> +		    result = do_rename_self();
+> +		    break;
+>  	    }
+>  	    if( result != ctl.result ) {
+>  		fprintf(stderr,"Failure in %d:%s\n",
+> diff --git a/tests/generic/784 b/tests/generic/784
+> new file mode 100755
+> index 0000000000000000000000000000000000000000..6c20bac9b7fb719af05afd507849213359f9ca0f
+> --- /dev/null
+> +++ b/tests/generic/784
+> @@ -0,0 +1,20 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2025 Jeff Layton <jlayton@kernel.org>.  All Rights Reserved.
+> +#
+> +# FS QA Test 784
+> +#
+> +# Test file delegation support
+> +#
+> +. ./common/preamble
+> +_begin_fstest auto quick locks
+> +
+> +# Import common functions.
+> +. ./common/filter
+> +. ./common/locktest
+> +
+> +_require_test
+> +_require_test_fcntl_setdeleg
+> +
+> +_run_filedelegtest
+> +_exit 0
+> diff --git a/tests/generic/784.out b/tests/generic/784.out
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..7b499e08fed85d0430ecad03c824f745cb42ec44
+> --- /dev/null
+> +++ b/tests/generic/784.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 784
+> +success!
 > 
-> Here's the kconfig I'm using (basically defconfig+KVM):
-> 
-> https://gist.githubusercontent.com/bjackman/4ea941ef5072606769211f3b000c8ed7/raw/73808882ddae6ff2ae8a0be85ac977b2980f7292/kconfig.txt
-> 
-> Sorry I'm too ignorant about KVM to know what I'm missing here but I
-> guess it's a missing TEST_REQUIRE()?
-
-Hi Brendan,
-
-I ran the set_memory_region_test on the v8 [1] with your config with 
-minor modifications (I had to enable XFS to be able to mount my rootfs 
-and THP as the test appeared to depend on it), and was not able to 
-reproduce the failure.  Please let me know whether the v8 still fails 
-for you if you have time to try it.
-
-[1] https://lore.kernel.org/kvm/20251205165743.9341-1-kalyazin@amazon.com
-
-Nikita
-
+> -- 
+> 2.52.0
 > 
 
 
