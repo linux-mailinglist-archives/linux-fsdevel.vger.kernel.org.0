@@ -1,171 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-70812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82BC2CA76EE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 12:37:52 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B231CA7860
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 13:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 980213091CD1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 11:37:43 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 8FB0230299DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 12:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7CC324700;
-	Fri,  5 Dec 2025 11:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5DB32E6BF;
+	Fri,  5 Dec 2025 12:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VvwgPsbL"
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="XL72UuDv";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="DGPX8Nhp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF5F31B110;
-	Fri,  5 Dec 2025 11:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B42A313E05
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 12:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764934659; cv=none; b=IdtOlUyF9qnHEd7ojV798W7Qd5+CrPr6+ILZEpznDXCU3cWtoeoGO0RNXpIYPwGb6dcPhdb6CZZoJOeUYtT3VZlLEQdu1w86tBbuJPKSWrYJCfY5eO814N3MF6iSrNTc68pMvbi6alxEI7yyjYXXZhAVP5u3SRm5DnvfOJE1nK0=
+	t=1764936552; cv=none; b=M/G0pBMKjI2U6TmLJEHC7hjhZiJPqfhjKqyOmgkg6Im6QgvH9ZaKuP+aDjQDHZkBImhoFkqVlFSAikx0Cw07OQEOLuF1RB7WFwDzZM8QAQozIzxT82MOj3BIFfasb1tCHi2VGvoo/u6vw3VZmWvp9Y4L3jAIAMuHkUbwJY4GHX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764934659; c=relaxed/simple;
-	bh=bszxkIM0Y2bpV2uB8D8d+ARs6gG/53a41Mat3khk3ro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WpVmgwfCaiQmHehIf3Q9kcA+UKFsGvWRK1aw4Lwbms1YsI9opwBcaiX5vR0eQWB62Mu3Ij7wBR9iKGv4qJQk3o4fzfFpA0X+qSazRcfV9NcTU/ZeJy5HQBdJHzUQoleDfO4CiPLgCcw4fgCIjeu64incRUubpXHFGyUCW8sr6Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VvwgPsbL; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=4LlKaFzbXsCdvMw4znE9eDALeS29H81GByWEY1fjI0M=;
-	b=VvwgPsbLIw0KHZpEZpMnmOzwKxw3AU3SdYi8lZs0hYKK9/1F8VrI3AZWXyM4Xz
-	TvX0vRpzT9oiFS66CY4aQzZzeVkNKIk1f66XoEbhWh0l1PzBF1fzhCHtJ+1uZ0cT
-	OIqsJ20LOMm0ER+cmup563AzmjUt7aA3piG7BNwed6vYc=
-Received: from [10.42.20.201] (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD336DAwzJpS+0BAA--.1034S2;
-	Fri, 05 Dec 2025 19:36:34 +0800 (CST)
-Message-ID: <a19281dc-4b8a-4a86-a2e4-64da2a499015@163.com>
-Date: Fri, 5 Dec 2025 19:36:32 +0800
+	s=arc-20240116; t=1764936552; c=relaxed/simple;
+	bh=LaOiU5bWnuebDcDGPmZl4kS1pqOs9u+qoKUghe2ucy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fy/OdbiPhOLzqPrRrRc43HwPY8/iUwrTLuDDGFsjigahSUGTXXmboMoLLI3BRfD/YK6yyyTXU4JqnrUblDItqg6Ar1kHkHK2xK9HO0BJsG1hdTq0KThsKiE83eh0tKP20yfpFLMVXU/dnce1iS1DPW4go8o3RYzlbUcYWDpKa+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=XL72UuDv reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=DGPX8Nhp; arc=none smtp.client-ip=103.2.141.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1764937449; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=nDQbuCR0xlv5qS7HgYyT3GoyUmABzZVoQRnEZkWUh3E=; b=XL72UuDvrjc4+s3dnPfFDnhos/
+	xfeMHNB9EM4SUMg7AJ09Z1iilfFFrktcdNBwbQ1p79E+TH9V7XklFW4/cVtCEekdRNVMmJnwe+Nu3
+	Vw6/4jODAqlRJkDjogbYxJmX+q/I+50v5U+hQ2ecufJNfFIAumZEq6up8wGZERerOlzTZepZ+fgre
+	e6Eal6YbPXmNn2MP/N4c2TIJKjCWaZtWglvpL6FrtmAxKoae7n9F1JbsoSL4xH1zl3GEQ/5DSUDKS
+	l/QCrv2+IzeIt+cQ8WmggGSI4IJTOL9cXf5pDR/gzJr6BmxC5pmRA2WmAiWpf2RkHJboCCWvGAya3
+	mmE1sbrQ==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1764936549; h=from : subject
+ : to : message-id : date;
+ bh=nDQbuCR0xlv5qS7HgYyT3GoyUmABzZVoQRnEZkWUh3E=;
+ b=DGPX8Nhp+hjyaROAcTAle079W7supvqWuk1SL0tEkjubOVP5531R/cJUJL0E7nStyx2aD
+ 91djG45BOesqYIOrmDV2Bwi2feXhLyz5+Xt68H2mmwZBi/FK7EU2gLugJ91cAgQZChXoHcQ
+ lcVx1nk5rBx8AHsagtUr8AvJ1FOr0srQIjw+AGb1maMFBpJ+q7LqzLGN/kkQMfzenLRJ8hK
+ BP+g2mgFJ5yP/yVmnivcGyQaqQRXmI9msA0DgjtVOQGB3v/CWbi3kUbNaR045fUBPCKSgxs
+ QXixudrVVZQOx/sUsLmFO+yRPv0YamxUL+dbwpjaJf7G1b5pV307pTs+uSOw==
+Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1vRUcA-TRk4wX-Kz; Fri, 05 Dec 2025 12:08:46 +0000
+Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.98.1-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1vRUcA-4o5NDgrjBW5-lSAe; Fri, 05 Dec 2025 12:08:46 +0000
+Date: Fri, 5 Dec 2025 12:53:04 +0100
+From: Remi Pommarel <repk@triplefau.lt>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Eric Sandeen <sandeen@redhat.com>, v9fs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
+ eadavis@qq.com
+Subject: Re: [PATCH V3 4/4] 9p: convert to the new mount API
+Message-ID: <aTLHoPiC93HTc-VM@pilgrim>
+References: <20251010214222.1347785-1-sandeen@redhat.com>
+ <20251010214222.1347785-5-sandeen@redhat.com>
+ <aOzT2-e8_p92WfP-@codewreck.org> <aSdgDkbVe5xAT291@pilgrim>
+ <aSeCdir21ZkvXJxr@codewreck.org>
+ <b7b203c4-6e4b-4eeb-a23e-e6314342f288@redhat.com>
+ <aS47OBYiF1PBeVSv@codewreck.org>
+ <13d4a021-908e-4dff-874d-d4cbdcdd71d4@redhat.com>
+ <aTBTndsQaLAv0sHP@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 7/7] exfat: get mutil-clusters in exfat_get_block
-To: Sungjong Seo <sj1557.seo@samsung.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matthew Wilcox <willy@infradead.org>, Namjae Jeon <linkinjeon@kernel.org>,
- Yuezhang Mo <yuezhang.mo@sony.com>, Chi Zhiling <chizhiling@kylinos.cn>
-References: <20251118082208.1034186-1-chizhiling@163.com>
- <CGME20251118082625epcas1p44374f21201c10f1bb9084d2280e64e6d@epcas1p4.samsung.com>
- <20251118082208.1034186-8-chizhiling@163.com>
- <5db1b061-56ef-4013-9d1e-aac04175aa8d@samsung.com>
- <96f9d95b-c93f-4637-9c3b-a186d967beee@163.com>
- <9c47afea-a211-4848-bde7-b29f27466e43@samsung.com>
-Content-Language: en-US
-From: Chi Zhiling <chizhiling@163.com>
-In-Reply-To: <9c47afea-a211-4848-bde7-b29f27466e43@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD336DAwzJpS+0BAA--.1034S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXw18uryfCr1DZryUCw45ZFb_yoW5KFWkpr
-	W8t3WrKr4UXr9rGr4Iqr1vqF1S9348GF1UXr1xJa47KryqvFn3tFWqyr98uFy8K3Z8XF1q
-	qF15Ka43urnxua7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRjLvNUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC2wIIpWkyw8KCkwAA3-
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aTBTndsQaLAv0sHP@codewreck.org>
+X-Smtpcorp-Track: 5rxZ8ULxq7tK.k3wksMRbOUlC.McHEmwzT3Wk
+Feedback-ID: 510616m:510616apGKSTK:510616sykM-zowXn
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
-On 12/4/25 20:18, Sungjong Seo wrote:
+On Thu, Dec 04, 2025 at 12:13:33AM +0900, Dominique Martinet wrote:
+> Eric Sandeen wrote on Tue, Dec 02, 2025 at 04:12:36PM -0600:
+> > Working on this, but something that confuses me about the current
+> > (not for-next) code:
+> > 
+> > If I mount with "cache=loose" I see this in /proc/mounts:
+> > 
+> > 127.0.0.1 /mnt 9p rw,relatime,uname=fsgqa,aname=/tmp/9,cache=f,access=user,trans=tcp 0 0
+> > 
+> > note the "cache=f" thanks to show_options printing "cache=%x"
+> > 
+> > "mount -o cache=f" is rejected, though, because "f" is not a parseable
+> > number.
+> > 
+> > Shouldn't it be printing "cache=0xf" instead of "cache=f?"
+> 
+> Definitely should be!
+> 
+> > (for some reason, though, in my test "remount -o,ro" does still work even with
+> > "cache=f" in /proc/mounts but that seems to be a side effect of mount.9p trying
+> > to use the new mount API when it shouldn't, or ...???)
+> 
+> ... and Remi explicitly had cache=loose in his command line, so I'm also
+> surprised it worked...
+> 
+> > I'll send my fix-up patch with a (maybe?) extra bugfix of printing
+> > "cache=0x%x" in show_options, and you can see what you think... it could
+> > be moved into a pure bugfix patch first if you agree.
+> 
+> Thank you! I would have been happy to see both together but it does make
+> more sense separately, I've just tested and pushed both your patches to
+> -next
 > 
 > 
-> On 25. 11. 28. 15:18, Chi Zhiling wrote:
->> On 11/28/25 10:48, Sungjong Seo wrote:
->>>
->>> Hi, Chi,
->>> On 25. 11. 18. 17:22, Chi Zhiling wrote:
->>>> From: Chi Zhiling <chizhiling@kylinos.cn>
->>>>
->>>> mpage uses the get_block of the file system to obtain the mapping of a
->>>> file or allocate blocks for writes. Currently exfat only supports
->>>> obtaining one cluster in each get_block call.
->>>>
->>>> Since exfat_count_contig_clusters can obtain multiple consecutive clusters,
->>>> it can be used to improve exfat_get_block when page size is larger than
->>>> cluster size.
->>>
->>> I think reusing buffer_head is a good approach!
->>> However, for obtaining multiple clusters, it would be better to handle
->>> them in exfat_map_cluster.
->>
->> Hi, Sungjong
->>
->> I agree.
->>
->> My original plan was to support multiple clusters for exfat_map_cluster and exfat_get_cluster. since the changes required were quite extensive, I put that plan on hold. This would likely involve refactoring exfat_map_clusterand introducing iterators to reduce the number of parameters it needs
->>
->> I will take some time to consider the signature of the new exfat_map_clusters. Do you have any thoughts about this?
-> Apologies, I missed your email.
-> IMO, we don't need to rush, so I think expanding exfat_map_cluster(s) would be better.
-
-Okay.
-
+> I also agree the other show_options look safe enough as they either
+> print a string or int. . . .
+> Ah, actually I spotted another one:
+>         if (v9ses->debug)
+>                 seq_printf(m, ",debug=%x", v9ses->debug);
+> This needs to be prefixed by 0x as well -- Eric, do you mind if I amend
+> your patch 5 with that as well?
 > 
-> Thanks.
->>
->>>
->>>>
->>>> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
->>>> ---
->>>>    fs/exfat/inode.c | 14 +++++++++++++-
->>>>    1 file changed, 13 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
->>>> index f9501c3a3666..256ba2af34eb 100644
->>>> --- a/fs/exfat/inode.c
->>>> +++ b/fs/exfat/inode.c
->>>> @@ -264,13 +264,14 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
->>>>    static int exfat_get_block(struct inode *inode, sector_t iblock,
->>>>            struct buffer_head *bh_result, int create)
->>>>    {
->>>> +    struct exfat_chain chain;
->>>>        struct exfat_inode_info *ei = EXFAT_I(inode);
->>>>        struct super_block *sb = inode->i_sb;
->>>>        struct exfat_sb_info *sbi = EXFAT_SB(sb);
->>>>        unsigned long max_blocks = bh_result->b_size >> inode->i_blkbits;
->>>>        int err = 0;
->>>>        unsigned long mapped_blocks = 0;
->>>> -    unsigned int cluster, sec_offset;
->>>> +    unsigned int cluster, sec_offset, count;
->>>>        sector_t last_block;
->>>>        sector_t phys = 0;
->>>>        sector_t valid_blks;
->>>> @@ -301,6 +302,17 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
->>>>          phys = exfat_cluster_to_sector(sbi, cluster) + sec_offset;
->>>>        mapped_blocks = sbi->sect_per_clus - sec_offset;
->>>> +
->>>> +    if (max_blocks > mapped_blocks && !create) {
->>>> +        chain.dir = cluster;
->>>> +        chain.size = (max_blocks >> sbi->sect_per_clus_bits) + 1;
->>>
->>> There seems to be an issue where the code sets chain.size to be one greater than the actual cluster count.
->>>
->>> For example, assuming a 16KiB page, 512B sector, and 4KiB cluster,
->>> for a 16KiB file, chain.size becomes 5 instead of 4.
->>> Is this the intended behavior?
->>
->> This is not the expected behavior. It's a serious bug. Thank you very much for pointing this out.
->>
->>>
->>>> +        chain.flags = ei->flags;
->>>> +
->>>> +        err = exfat_count_contig_clusters(sb, &chain, &count);
->>>> +        if (err)
->>>> +            return err;
->>>> +        max_blocks = (count << sbi->sect_per_clus_bits) - sec_offset;
->>>
->>> You already said mapped_blocks is correct.
->>>
->>>> +    }
->>>>        max_blocks = min(mapped_blocks, max_blocks);
->>>>          map_bh(bh_result, sb, phys);
->>
->>
+> 
+> Remi - I did check rootfstype=9p as well and all seems fine but I'd
+> appreciate if you could test as well
 
+I just tried your 9p-next branch and the issue is gone for rootfstype=9p
+using cache=loose (I've also made sure that I reproduce the issue without
+the last two commits of your branch).
+
+So yes for me that fixes it, thanks for the patches.
+
+-- 
+Remi
 
