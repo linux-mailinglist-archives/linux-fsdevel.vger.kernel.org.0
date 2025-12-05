@@ -1,50 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-70878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A155ACA91E6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 20:44:29 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CB2CA9059
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 20:12:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id EEF0F302A1E2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 19:44:01 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0DD133205D0E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 19:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E4335A93F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB0735B143;
 	Fri,  5 Dec 2025 18:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dC/TljCe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9/TlKd1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4CA359702;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8548635970D;
 	Fri,  5 Dec 2025 18:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764960110; cv=none; b=qbdA6Z2qxvd3gy4WydMML+TgLNaOufoOgpLK8K0VHOLZ9SGDBTAsGQMCzRasDu5DGn4jecyHA/TrEI9c2r11a0AFjWx9ng+Z9yHUDw//B3uOP3hXtQF4x0Bzb+/LQqdS6nuu15Itbl1zqXqB+mWjcbONUsPfIjfPVG0LWg1vB3A=
+	t=1764960110; cv=none; b=pV84Jzrw4ryk0uetyUijNMiy38Zb+wIiLgZ0x8lk+eKdYdmu+4EV4KKP+rJISB1mEY85gQFPEuVC8BLCIUOf3CgatuollM/AI8X93tAqwzSaaXjcj6LEnKHn4YBsMwcqcKEdm/w66qf+x3sGo7Qtvbwhmf14J50lbKXgAXlzpqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1764960110; c=relaxed/simple;
-	bh=s9Nd8OrIdmTzTe15BEE4fAoU+yUwpq+wRGim3URhRCA=;
+	bh=SwvYyMJ8jltPo6WPCQrainmSZ0rXsiaYOsy+DlyS5P4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t213bdvOLdMiinPGkB4MWBK+fK0Sjd5gPtts9cjzcnHPDr0UOqSqU5om15u2zOcFxD1vMLKiMdQKsldGdRzFM6bM8yYQ+FA7w3L5fN/zq1qJa3Pri6ZOFyS9yL43+Vxgy25C6O71lOqX/zzCyLdxKnuUlFIK50QEBTCN1QycddI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dC/TljCe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 073BBC2BCB9;
+	 In-Reply-To:To:Cc; b=UZHKpLn8yQ57cavCeCbOzR6V7fsRm0JoS+Sc/lUwgViVd8xiB/A2bHZjDwX1mLb3rVUV643UnNBRsaVeHQnb3d5ifbE2ZkiUsL7ppBCrb8cwhrKu14c6u9fSTU5nhAd0CeMr7an3dHZf9/CQrYxV+unpWwgoOwF/9wtq7Y7NhMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9/TlKd1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 15A70C2BCC7;
 	Fri,  5 Dec 2025 18:41:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1764960110;
-	bh=s9Nd8OrIdmTzTe15BEE4fAoU+yUwpq+wRGim3URhRCA=;
+	bh=SwvYyMJ8jltPo6WPCQrainmSZ0rXsiaYOsy+DlyS5P4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=dC/TljCeQTmM9QyTTClRVnyhHyedBNDcIxptohaOTqiV8LlbLmPwB+gLXYwx/NJMQ
-	 0ozNHbgWR1CIEoieVP+Ycu0cD8Pn2tUtZq+MI2StKE/Bk2edlegkfwxfoWr+3Z4LYz
-	 h7hTKSY2xbi3gyIV9+4F7qoZBgmOBHvbme0Rd/7Q4j85tvV5wcYzcCYCz1vJULO+cy
-	 EnovN3HVYNHRGCsDYjV3KHhep9zDQ/ZEUVXILaKmvFc66ZsH/W620lz8tAReypXVJz
-	 RhKebo4jqKHXTyRE2D8U8+80o+ggvfJp4BwSXkknoRq+aeOJVDH7jkFLTaAbbNpHc/
-	 rkkxMiWRWxtyg==
+	b=f9/TlKd1uFYQdrtu3cWKGPbQXo+NmShHvvMGO0+221b1Rw4bQHC0mroUyYlGAsHmI
+	 wkwhNpqPXbwCZPo+asfnv4czah57f8mbGJ8/Ju+GIved3sRZuRYbz7W0QRVP44pA7a
+	 p/rUyb2SJwNQFSXqUKi2XKfLs69C4wdio90XfkvcD7SykJ3tQi/+rALnZX4OM3uMaL
+	 JzRdXx5G6Mq2YaanZO5omT1FeZG8cC4cQU0JKUSCRgp/rPR9xTosQg/345rh3KoF9K
+	 by+BtlW7e1IclhzaBrxc6B+xjsLA3bLVa0m8gP8h/0K8DLb3V6InS4a7GCbHLMyb7D
+	 uY/bWFYpbIzfg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE98D339AE;
-	Fri,  5 Dec 2025 18:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AF1D339B5;
+	Fri,  5 Dec 2025 18:41:50 +0000 (UTC)
 From: Deepak Gupta via B4 Relay <devnull+debug.rivosinc.com@kernel.org>
-Date: Fri, 05 Dec 2025 10:41:39 -0800
-Subject: [PATCH v25 01/28] mm: VM_SHADOW_STACK definition for riscv
+Date: Fri, 05 Dec 2025 10:41:40 -0800
+Subject: [PATCH v25 02/28] dt-bindings: riscv: zicfilp and zicfiss in
+ dt-bindings (extensions.yaml)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +54,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251205-v5_user_cfi_series-v25-1-1a07c0127361@rivosinc.com>
+Message-Id: <20251205-v5_user_cfi_series-v25-2-1a07c0127361@rivosinc.com>
 References: <20251205-v5_user_cfi_series-v25-0-1a07c0127361@rivosinc.com>
 In-Reply-To: <20251205-v5_user_cfi_series-v25-0-1a07c0127361@rivosinc.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
@@ -86,16 +87,14 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
  alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
  rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
- Zong Li <zong.li@sifive.com>, David Hildenbrand <david@redhat.com>, 
- Andreas Korb <andreas.korb@aisec.fraunhofer.de>, 
  Valentin Haudiquet <valentin.haudiquet@canonical.com>, 
  Deepak Gupta <debug@rivosinc.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1764960107; l=941;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1764960107; l=1566;
  i=debug@rivosinc.com; s=20251023; h=from:subject:message-id;
- bh=DXRwVlzwdoQZD1P4AgHLEInq/8iOZjrgGgTHzLAJMYU=;
- b=YaFqIGVEEgAinBOcot+5GK/TIE1JWkV3ZOIjMlei3bYV2a4/QHRD40EpwGyWa44u9/gPioyqW
- EZmD3ziaznUCm1eIKcb6LCqGrPqgkz8sk0QS63UwyhgoGqEP8uYLx36
+ bh=xVWLAEPepydYQ6s7EeRUY8AnaJIHlB02MFurLGKlnxI=;
+ b=oeSwSzZPPKDskSnzZOYr7uKMP96dMcUeWODFvOaY56CpqDgs4GTuWyeYeiWLwblSnVxrcKcuI
+ ctwaU2KvGrOAwscNB1mCWNoYFXmPy2+R+oDV9bywqCaiWLH+qFkuk1X
 X-Developer-Key: i=debug@rivosinc.com; a=ed25519;
  pk=O37GQv1thBhZToXyQKdecPDhtWVbEDRQ0RIndijvpjk=
 X-Endpoint-Received: by B4 Relay for debug@rivosinc.com/20251023 with
@@ -105,36 +104,40 @@ Reply-To: debug@rivosinc.com
 
 From: Deepak Gupta <debug@rivosinc.com>
 
-VM_HIGH_ARCH_5 is used for riscv
+Make an entry for cfi extensions in extensions.yaml.
 
-Reviewed-by: Zong Li <zong.li@sifive.com>
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Tested-by: Andreas Korb <andreas.korb@aisec.fraunhofer.de>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Tested-by: Valentin Haudiquet <valentin.haudiquet@canonical.com>
 Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 ---
- include/linux/mm.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/devicetree/bindings/riscv/extensions.yaml | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index d16b33bacc32..2032d3f195f1 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -380,6 +380,13 @@ extern unsigned int kobjsize(const void *objp);
- # define VM_SHADOW_STACK	VM_HIGH_ARCH_6
- #endif
+diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
+index 543ac94718e8..3222326e32eb 100644
+--- a/Documentation/devicetree/bindings/riscv/extensions.yaml
++++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+@@ -444,6 +444,20 @@ properties:
+             The standard Zicboz extension for cache-block zeroing as ratified
+             in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
  
-+#if defined(CONFIG_RISCV_USER_CFI)
-+/*
-+ * Following x86 and picking up the same bitpos.
-+ */
-+# define VM_SHADOW_STACK	VM_HIGH_ARCH_5
-+#endif
++        - const: zicfilp
++          description: |
++            The standard Zicfilp extension for enforcing forward edge
++            control-flow integrity as ratified in commit 3f8e450 ("merge
++            pull request #227 from ved-rivos/0709") of riscv-cfi
++            github repo.
 +
- #ifndef VM_SHADOW_STACK
- # define VM_SHADOW_STACK	VM_NONE
- #endif
++        - const: zicfiss
++          description: |
++            The standard Zicfiss extension for enforcing backward edge
++            control-flow integrity as ratified in commit 3f8e450 ("merge
++            pull request #227 from ved-rivos/0709") of riscv-cfi
++            github repo.
++
+         - const: zicntr
+           description:
+             The standard Zicntr extension for base counters and timers, as
 
 -- 
 2.43.0
