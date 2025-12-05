@@ -1,166 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-70748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03BCACA5C4A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 01:59:06 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD2F4CA5E17
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 03:07:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 4DB8F307B583
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 00:58:59 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id E225D30C24E6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 02:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13516215F42;
-	Fri,  5 Dec 2025 00:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pu0MNb0e"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166DB2F2916;
+	Fri,  5 Dec 2025 01:59:37 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f201.google.com (mail-oi1-f201.google.com [209.85.167.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5125420CCDC
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 00:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED912E7624;
+	Fri,  5 Dec 2025 01:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764896332; cv=none; b=B4DXHuKul1pPzEUnbEkhAAGFZjqyTPUgzqi0RDhrazFkwfbHSEsgzlgcBpYs9Y/BoXsVKDNGc4Sa2rk/WURANwUo58tXAKhb1NsM1xNuHOQwD9HBrRrL7y1rwHAkfYdNSipRNPhPrItsDgElTA6NgxVMQE3rbVxL6Oto4UbGbWs=
+	t=1764899975; cv=none; b=lteohwj7Vy3y1NQxMMD0Akg/wcrQZp0l/bUN78oCgNVK0rbTvhKMNJh4BaMM/5/bal/lMBmrRFin1ZwwnnLeLTU4ux55p2aW2Xoire2bggE6qp8twemgvcKbEr2IP8kdhM1rX26HsWf1/UgXWyd+p56wOCL/Y0QWceO+0DUI33E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764896332; c=relaxed/simple;
-	bh=LLwOjwJb3krQOl35pm6jPUBFIvmN0U0U/HlVN35oQmQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=G60hTKNnjxQ7ifyklk5KCrT2iOg8o56+l70Unk+k+flX3vtdXsSxLNSgZkE7bMf1Rne97TwNxms0dS3Jc6+qAEIyVEhQxpB+rRAvXlaWefLRy+MA3OpPahWekVz6Cig398Efeb9pYk9UoEWBkdgcBt/3vP5vKjhOm7tIfpLKY9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pu0MNb0e; arc=none smtp.client-ip=209.85.167.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com
-Received: by mail-oi1-f201.google.com with SMTP id 5614622812f47-45033344baeso3576617b6e.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 16:58:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764896329; x=1765501129; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bVE0N0KUpY0wO1fMUhmyg8I9ioeDz1sYwcQ5NNPx/VI=;
-        b=pu0MNb0eIh3SqZbOq8ShY0wCZTmi6kG5Fo+kqHqdMby0LhQ3z+iEUltuPHsoyv0LQy
-         fwNU8V+BdXuVHMV0FC5VS5Wrq4zbswIvW2yqmn17wNbw22u5636fw+XvBw65gn0TZIZ4
-         GM/Lf9pJDB56AGui08QYRJyE+R3640z1buFm30bWjhd3zj6ilz3PocA2/k3iB4pPaNu0
-         Yn6Rj8Ws1pmVuvi7R25p/VnjAdD45pnTlRL8ZRp8aWV6IiICymL9gRRxWfFSYcGLiDi2
-         lQ+Y1oDAlT0rzRomDdGKqtyB+R3OsHUZnudA9IRT3EgCWq0D1URDUX6QnVu49rr605o2
-         zVUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764896329; x=1765501129;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bVE0N0KUpY0wO1fMUhmyg8I9ioeDz1sYwcQ5NNPx/VI=;
-        b=hRDSQk4ahvV7otTwvo5r3eq4F2BxjCCZjI/fKVaEtVwJ19Np52VC59ykugOrp4XJwT
-         JXDgNVEYuzefw8kUGgZS+NjdZEXKhyS1r7bHzjutMLfVp4i3DHcACV/YqNWVn649xquj
-         27WqN8+/KFy0p1CqtRWIgoZbchikrpKRExf+PprNqj9S9f/w1h2m+TOhJUiK+QT+KXY2
-         +6+IK+913KmSBLT1K6SXpw/DFFufhhRvYEQC4uYALVUrhw9O/cKA3c/oahkIFRRP9WYN
-         S9btpgWm05sMN966icL7sBm0iIbnkK6X9htKryuZJ5rX4N5lYITvdAfrQ0J45LqXEFvn
-         q+Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5EevXdLLu3JAJLaBds7CfsK1zsYv2JR8w2D2aVGkghzg8bD7h2SKbcrLFYX0Z5t4kn0X8MzCTytNq3Zwd@vger.kernel.org
-X-Gm-Message-State: AOJu0YysBiU2i+vZyJQY6++B1NgGEUynEQOuWcyJAEtt6uWRfw+kURG0
-	lQ3Hz4eaP61CCIlmksvAiOMyFddpQ+aGEQ2+iQc6Pkw7joQHckAgN6BFglUj+4Hyb2f/8SAWiE7
-	pb+0hnQ==
-X-Google-Smtp-Source: AGHT+IFifApyQ81uqcVNp3ozqjh2VV5F+exYOtd6RAsz1O9td1lhZ/L2nTazk9kUzTzPa/vDQgHRCZrkH4g=
-X-Received: from iobfb16.prod.google.com ([2002:a05:6602:3f90:b0:949:11f9:31f7])
- (user=avagin job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6808:11c4:b0:450:b3ec:c154
- with SMTP id 5614622812f47-4536e3de299mr4587772b6e.25.1764896329505; Thu, 04
- Dec 2025 16:58:49 -0800 (PST)
-Date: Fri,  5 Dec 2025 00:58:32 +0000
-In-Reply-To: <20251205005841.3942668-1-avagin@google.com>
+	s=arc-20240116; t=1764899975; c=relaxed/simple;
+	bh=igXnTLTOSQsUl9e1Qa0eSB8nTOZYBJx3dheVeC6HltY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oaIrl4A5jhRX9Ah9+sXwig8uvwtPob7P03XXzfG7HzVebH2SOR3XF9F6lOYr2nZCB4boqzjkvPdifHGO+9CezXwkEQXhDAQs1xWq76oriA6ObN9jJQ89xfF/jwlNFPY/khKwU3sV9Y3C9nMoEqB6hhqGafg5x8FYlvkJPJCutlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-01 (Coremail) with SMTP id qwCowAD3i8t5PDJpV14eAw--.241S2;
+	Fri, 05 Dec 2025 09:59:23 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com,
+	yuezhang.mo@sony.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH v2] fs: exfat: improve error code handling in exfat_find_empty_entry()
+Date: Fri,  5 Dec 2025 09:59:04 +0800
+Message-ID: <20251205015904.1186-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
+In-Reply-To: <20251203070813.1448-1-vulab@iscas.ac.cn>
+References: <20251203070813.1448-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251205005841.3942668-1-avagin@google.com>
-X-Mailer: git-send-email 2.52.0.223.gf5cc29aaa4-goog
-Message-ID: <20251205005841.3942668-5-avagin@google.com>
-Subject: [PATCH 3/3] Documentation: cgroup-v2: Document misc.mask interface
-From: Andrei Vagin <avagin@google.com>
-To: Kees Cook <kees@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, cgroups@vger.kernel.org, criu@lists.linux.dev, 
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	"=?UTF-8?q?Michal=20Koutn=C3=BD?=" <mkoutny@suse.com>, Vipin Sharma <vipinsh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrei Vagin <avagin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAD3i8t5PDJpV14eAw--.241S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKF45AFW8CFW8JF1DCFyxuFg_yoWDArgEkr
+	40qr1UWrW2vr1fArsrCr4ayF9I9a1rZw1UWFy3tFnrXF98trZ3XFyDXryDZF10kr1fAF1D
+	ur1kZr1fKa4I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4kFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUehL0UU
+	UUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ8GA2kxoxnAEwACsw
 
-Updates the cgroup-v2 documentation to include details about the newly
-introduced 'misc.mask' interface. This interface, part of the 'misc'
-cgroup controller, allows masking out hardware capabilities (AT_HWCAP,
-AT_HWCAP2, AT_HWCAP3, AT_HWCAP4) reported to user-space processes within
-a cgroup.
+Change the type of 'ret' from unsigned int to int in
+exfat_find_empty_entry(). Although the implicit type conversion
+(int -> unsigned int -> int) does not cause actual bugs in
+practice, using int directly is more appropriate for storing
+error codes returned by exfat_alloc_cluster().
 
-Signed-off-by: Andrei Vagin <avagin@google.com>
+This improves code clarity and consistency with standard error
+handling practices.
+
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 ---
- Documentation/admin-guide/cgroup-v2.rst | 25 +++++++++++++++++++++++++
- Documentation/arch/arm64/elf_hwcaps.rst | 21 +++++++++++++++++++++
- 2 files changed, 46 insertions(+)
+ fs/exfat/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 4c072e85acdf..9d9d923e0d4e 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -2924,6 +2924,31 @@ Miscellaneous controller provides 3 interface files. If two misc resources (res_
-         cgroup i.e. not hierarchical. The file modified event generated on
-         this file reflects only the local events.
- 
-+Miscellaneous controller provides one interface file to control masks.
-+
-+  misc.mask
-+	A read-write flat-keyed file shown in all cgroups. It allows
-+	setting/reading the masks.  The file format is a series of lines, each
-+	describing a mask of a specific mask type.
-+
-+	The file has the following format for each line::
-+
-+	  $NAME\t$LOCAL_MASK\t$EFFECTIVE_MASK
-+
-+	Where $NAME is the mask type name, $LOCAL_MASK is the mask for the
-+	current cgroup, and $EFFECTIVE_MASK is the effective mask for the
-+	current cgroup, which is a combination of the masks from the current
-+	cgroup and all its ancestors.
-+
-+	To set a mask, write a string in the following format to the file::
-+
-+	  $NAME $MASK
-+
-+	For example, to set a mask for the mask_a type, you would write the
-+	following to the file::
-+
-+	  # echo "mask_a 0x3000" > misc.mask
-+
- Migration and Ownership
- ~~~~~~~~~~~~~~~~~~~~~~~
- 
-diff --git a/Documentation/arch/arm64/elf_hwcaps.rst b/Documentation/arch/arm64/elf_hwcaps.rst
-index a15df4956849..5526daff5d30 100644
---- a/Documentation/arch/arm64/elf_hwcaps.rst
-+++ b/Documentation/arch/arm64/elf_hwcaps.rst
-@@ -450,3 +450,24 @@ HWCAP3_LSFE
- 
- For interoperation with userspace, the kernel guarantees that bits 62
- and 63 of AT_HWCAP will always be returned as 0.
-+
-+5. Masking hwcaps for a group of processes
-+--------------------------------
-+
-+The misc cgroup controller provides a mechanism to mask hwcaps for a specific
-+workload. This can be useful for limiting the features available to a
-+containerized application.
-+
-+To mask hwcaps, you can write a mask to the ``misc.mask`` file in the cgroup
-+directory. The mask is specified per AT_HWCAP entry (AT_HWCAP, AT_HWCAP2,
-+AT_HWCAP3) in the format ``<HWCAP_ENTRY_NAME> <BITMASK>``.
-+
-+For example, to mask ``HWCAP_FP`` and ``HWCAP_ASIMD`` (which are represented by
-+bits 0 and 1 of AT_HWCAP, so a mask of 0x3) for a workload, you would write the
-+mask for AT_HWCAP to the ``misc.mask`` file in the new cgroup directory::
-+
-+    # echo "AT_HWCAP 0x3" > /sys/fs/cgroup/misc/my-workload/misc.mask
-+
-+Any new processes started in this cgroup will have the specified hwcaps
-+masked. You can verify this by reading the ``misc.mask`` file, which will
-+show the effective mask for the cgroup.
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index f5f1c4e8a29f..f2a87ecd79f9 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -304,8 +304,8 @@ static int exfat_find_empty_entry(struct inode *inode,
+ 		struct exfat_chain *p_dir, int num_entries,
+ 		struct exfat_entry_set_cache *es)
+ {
+-	int dentry;
+-	unsigned int ret, last_clu;
++	int dentry, ret;
++	unsigned int last_clu;
+ 	loff_t size = 0;
+ 	struct exfat_chain clu;
+ 	struct super_block *sb = inode->i_sb;
 -- 
-2.52.0.223.gf5cc29aaa4-goog
+2.50.1.windows.1
 
 
