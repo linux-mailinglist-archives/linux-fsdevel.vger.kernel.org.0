@@ -1,207 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-70820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9331FCA7BA2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 14:17:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B684CA7C80
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 14:37:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DC5AA327CBB9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 13:10:47 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 512C230AD6B1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 13:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF2A3148C8;
-	Fri,  5 Dec 2025 13:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50906330311;
+	Fri,  5 Dec 2025 13:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jANnTY5C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwgPtfZT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BA62FD693
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 13:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C3A281504;
+	Fri,  5 Dec 2025 13:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764940240; cv=none; b=Uy1OeOswT++iUOg5GCJz7kZActFumOS5rFnxGX6ez+gttqZmL2HrNEqnhHCP94HJY6k6epgWaP24FFfPMrN8XjbjV2jwNkL5zZoh2EBvGdCK9V8kIjS6BAN3c20aZMaxt3/IDi298cLnZ+hwe77gIDBljsNRMOGiXSli0XENE2Q=
+	t=1764941811; cv=none; b=MIaOAtdSStdMyeqs2J2HjZyu1u+U2d3BK/oylddyK0mMxWB1YK2mrpaxDTRVovgTqXJX4qDmK+XrwfmM0tMWC+zp0+6fvNip6mw6grWetGkiqKYvkonhK0gH+nm+LAXn0oEBweBhfqtbMa3iGmRy32NVjs8veJlfZqYjLFcSlFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764940240; c=relaxed/simple;
-	bh=4xT4/pFJO58+sUQqy+VKD18mXqMmuLjv58AdpSWrsqo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KQUPSqRI5ZKi1eyTay9v2m3WcDAzb9edtemX14KO3QhSokBkekXSzdcLlkWcF38LQ9TDPkbxF0QFq4vwMcwlqj0X+fd3+BmI4IHudlimE2OxIYlNeKCOihxzP0RZoJLOBdrcfXyBB2cVidZqNIWSSBwDPWzlAMzA2roVaezUmXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jANnTY5C; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-640a3317b89so2678213a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Dec 2025 05:10:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764940232; x=1765545032; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BcX4laLHRubdDtehon4atANvt8XPKg8C/L9HFHj0XXM=;
-        b=jANnTY5CKI/iWOxZj4Gux9ylngOhasqpEi7Y2aPgB49Ej4PZXGQ15SMJcCHVeUoOvr
-         pGZr5drc4iyc5013evVuE+vNh2HyHJ3KneaTHkjbzaAyBrk5R5F/aMrcLS3coTPsResl
-         GflWxCOAx/qv28K9JIaAUYXQPge4vFeg3bbgYq5BpNDbUz7OaepXCyWVbR3Rk1PJg0yn
-         +nTTl7B/1Pe5FSW3VWCJPDthkembivvx07s58kMo/vMFMlP8Yysm1mKc1em/o8MNmR25
-         efaeko1falL8SAcMhD3seEES/V6IeWoQ5QRbCCf0H0rfFAF3QE8XfPVNiryinxKq/5Y0
-         FDdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764940232; x=1765545032;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=BcX4laLHRubdDtehon4atANvt8XPKg8C/L9HFHj0XXM=;
-        b=DGHIoi3iHEV3SJMqkQlvZJE8exQ9sQ5FbmDOjKD5BvVQRA6VziSi4QkocKsCummnSX
-         P8N0K5O7f3pwPTyVdmco+rfAJ9Vm44UhLKNHL5ls+WGc3/0CbZhjft0aUFjROj5CTjb6
-         QTyJpiRl3tvpvEWW9GBbSYOX/X4ylWbjTzx4B1Gasj6wbbcWS7z1fCwKfT6QjulRh+SM
-         MfAy8BuLJyjTEBnxR1GRjXl4yXSJrRbtE3HZ19PPgE6owj2OTClQvNrPfIQ1icbUqW1g
-         6O+0qqjgsn3R2iHTtaxI3/4ggV4nM0bSUFbJ5QL1N9IxitTpkPhO8MvcaswpM1EQcS2D
-         +RmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYv1nJY3lyeBSRAYeq2gobNBDdK3tsziQ2pVaKz4Db3tDhO8GZ2XsVfNlLZ3Z7lYXdHNzYENfU8ogMK6aS@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGtyGBX0Dl/roM8ta/caghy5sNUnL3FbBL2mEMUtuJyW6Zg98h
-	W5uV4EAFixz40TN1y9+gPnLhbpsmB/Vz8nMYSgyozdgTWrNckiJqDE5MWmXPeQS75w3cyD0qCeQ
-	R2oNCXRqKK9RyDPlNvQllSKbDRj4Bqz4=
-X-Gm-Gg: ASbGnctu2M2xroH4EAWIfzvHruOz4UTfvP78j2R2I6Y4+Q5TwfTZ7fcRC48sRUEcGea
-	U6wMK8PaefUBPdSZTrNVXYFhewBQ0jHMdj5q5X/dcnPqNfcktlRoI7pUJPDqWQVX16zyd0Eo1fh
-	8ASDv6gZr9y4iE4LAJuB/mK5EPzTGcaQy10nDaQSuHMgrB3X15vqMNcTYH6x2oQv0RKBLmeStPe
-	N4vMmyFTuTOcov5+qv3wQZql0OJZL1FLBduMpNIbkuOt2o54Y+SD5xIJqLwbEqXXWpoRxKjWsa5
-	MSCW5r/tWNHX9gXWhXpmvvfqgZEAGw==
-X-Google-Smtp-Source: AGHT+IH+bjqgyF4OybLZ1CaPOMTtMUxyQI+oBWVuVFxhRMeYZbs+FAfFHkppRjihAVO8Xel8hzJQI9GT1FDKtcuBEeM=
-X-Received: by 2002:a17:907:3d89:b0:b73:5e4d:fae0 with SMTP id
- a640c23a62f3a-b79ec472670mr615900466b.23.1764940232062; Fri, 05 Dec 2025
- 05:10:32 -0800 (PST)
+	s=arc-20240116; t=1764941811; c=relaxed/simple;
+	bh=p3T1ulfSLPL03s2NnroT2XsKoZTK2w4K4wqpqJsbhLY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UzMtV5CN2IQ+BUzMk2im1gquQjGFIH/cZjDqtIzoT2zfQPkUwT8U9OkU5lfkqaJJSQ6hDy/+qi0cZo/YBA9kQBoAWjA0sR9HC2Aor1XIWbLq7Ovb7PteRMDmrTyCxEVycTtX4YYpp99dQsoYxYTM+2ERpd3kHm0owV1dkA8do1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwgPtfZT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B751C4CEF1;
+	Fri,  5 Dec 2025 13:36:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764941810;
+	bh=p3T1ulfSLPL03s2NnroT2XsKoZTK2w4K4wqpqJsbhLY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XwgPtfZT5LWHmr2dmxZlWN4/1S9ebstaiz5Qf4chkjQnG/qtdUTQ/U7t9PQAJ9UUC
+	 oMFlC36GQqo5YnfGC9Jd8eVMfkdvVeJb87mwYMNhny0/vqcHkWuzM46YxTrY6RyADy
+	 y7JlIcnf8QsQdJYTX7owqdM+BoW2ot6O30UUJ4mtJw6pypubUjIPtCbT68IC3ev+fy
+	 F7iGctqziL56vAFeDroYwZwoyLM+1CzeCIrzW/Ctc9X87yUdlnZUggR4ME0drHE/Zm
+	 /JEvlY9g7hFZTMzlwQy4bEaZ2GScp1yrSlODxz8PSd+BW5XL4LFZrD8YXHxVn0Qiyy
+	 an5y5lQpfXjPA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Fri,  5 Dec 2025 14:36:15 +0100
+Message-ID: <20251205-vfs-fixes-23ea52006d69@brauner>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251205-tortur-amtieren-1273b2eef469@brauner>
-In-Reply-To: <20251205-tortur-amtieren-1273b2eef469@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 5 Dec 2025 14:10:20 +0100
-X-Gm-Features: AQt7F2o5_v64pqrTjhaGm5Wj_Gk-rT48H5Sc9ihWo997QO_hAZaF5Fa4k5_WQKw
-Message-ID: <CAOQ4uxjxcNW174cdJzjPErPkKarpM=zyXhexXWc3YRJLB1mSHg@mail.gmail.com>
-Subject: Re: [PATCH] ovl: pass original credentials, not mounter credentials
- during create
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2596; i=brauner@kernel.org; h=from:subject:message-id; bh=p3T1ulfSLPL03s2NnroT2XsKoZTK2w4K4wqpqJsbhLY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQa3b/5ad5LbVMPHY1yN/spCerTTRbrxlc5rL5yo+PUh huOUhfKO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYibMjwV/DVChfltpvcyn7t L9JNrp++Otv8i63OyrOPrv+pznO6FcXIsK4wjeFPltX3+1dOOihI3DosO+nBqVxuraOvNfzfnI3 V4AIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 5, 2025 at 1:11=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> When creating new files the security layer expects the original
-> credentials to be passed. When cleaning up the code this was accidently
-> changed to pass the mounter's credentials by relying on current->cred
-> which is already overriden at this point. Pass the original credentials
-> directly.
->
-> Reported-by: Ondrej Mosnacek <omosnace@redhat.com>
-> Reported-by: Paul Moore <paul@paul-moore.com>
-> Fixes: e566bff96322 ("ovl: port ovl_create_or_link() to new ovl_override_=
-creator_creds")
-> Link: https://lore.kernel.org/CAFqZXNvL1ciLXMhHrnoyBmQu1PAApH41LkSWEhrcvz=
-AAbFij8Q@mail.gmail.com
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+Hey Linus,
 
-Looks sane
-Thanks,
+/* Summary */
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+This contains a few fixes for this cycle:
 
-> ---
->  fs/overlayfs/dir.c | 20 ++++++++++++--------
->  1 file changed, 12 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 06b860b9ded6..ff3dbd1ca61f 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -581,7 +581,8 @@ static int ovl_create_over_whiteout(struct dentry *de=
-ntry, struct inode *inode,
->         goto out_dput;
->  }
->
-> -static const struct cred *ovl_override_creator_creds(struct dentry *dent=
-ry, struct inode *inode, umode_t mode)
-> +static const struct cred *ovl_override_creator_creds(const struct cred *=
-original_creds,
-> +                                                    struct dentry *dentr=
-y, struct inode *inode, umode_t mode)
->  {
->         int err;
->
-> @@ -596,7 +597,7 @@ static const struct cred *ovl_override_creator_creds(=
-struct dentry *dentry, stru
->         override_cred->fsgid =3D inode->i_gid;
->
->         err =3D security_dentry_create_files_as(dentry, mode, &dentry->d_=
-name,
-> -                                             current->cred, override_cre=
-d);
-> +                                             original_creds, override_cr=
-ed);
->         if (err)
->                 return ERR_PTR(err);
->
-> @@ -614,8 +615,11 @@ static void ovl_revert_creator_creds(const struct cr=
-ed *old_cred)
->  DEFINE_CLASS(ovl_override_creator_creds,
->              const struct cred *,
->              if (!IS_ERR_OR_NULL(_T)) ovl_revert_creator_creds(_T),
-> -            ovl_override_creator_creds(dentry, inode, mode),
-> -            struct dentry *dentry, struct inode *inode, umode_t mode)
-> +            ovl_override_creator_creds(original_creds, dentry, inode, mo=
-de),
-> +            const struct cred *original_creds,
-> +            struct dentry *dentry,
-> +            struct inode *inode,
-> +            umode_t mode)
->
->  static int ovl_create_handle_whiteouts(struct dentry *dentry,
->                                        struct inode *inode,
-> @@ -633,7 +637,7 @@ static int ovl_create_or_link(struct dentry *dentry, =
-struct inode *inode,
->         int err;
->         struct dentry *parent =3D dentry->d_parent;
->
-> -       with_ovl_creds(dentry->d_sb) {
-> +       scoped_class(override_creds_ovl, original_creds, dentry->d_sb) {
->                 /*
->                  * When linking a file with copy up origin into a new par=
-ent, mark the
->                  * new parent dir "impure".
-> @@ -661,7 +665,7 @@ static int ovl_create_or_link(struct dentry *dentry, =
-struct inode *inode,
->                 if (attr->hardlink)
->                         return ovl_create_handle_whiteouts(dentry, inode,=
- attr);
->
-> -               scoped_class(ovl_override_creator_creds, cred, dentry, in=
-ode, attr->mode) {
-> +               scoped_class(ovl_override_creator_creds, cred, original_c=
-reds, dentry, inode, attr->mode) {
->                         if (IS_ERR(cred))
->                                 return PTR_ERR(cred);
->                         return ovl_create_handle_whiteouts(dentry, inode,=
- attr);
-> @@ -1364,8 +1368,8 @@ static int ovl_create_tmpfile(struct file *file, st=
-ruct dentry *dentry,
->         int flags =3D file->f_flags | OVL_OPEN_FLAGS;
->         int err;
->
-> -       with_ovl_creds(dentry->d_sb) {
-> -               scoped_class(ovl_override_creator_creds, cred, dentry, in=
-ode, mode) {
-> +       scoped_class(override_creds_ovl, original_creds, dentry->d_sb) {
-> +               scoped_class(ovl_override_creator_creds, cred, original_c=
-reds, dentry, inode, mode) {
->                         if (IS_ERR(cred))
->                                 return PTR_ERR(cred);
->
-> --
-> 2.47.3
->
+- Fix a type conversion bug in the ipc subsystem.
+
+- Fix per-dentry timeout warning in autofs.
+
+- Drop the fd conversion from sockets.
+
+- Move assert from iput_not_last() to iput().
+
+- Fix reversed check in filesystems_freeze_callback().
+
+- Use proper uapi types for new struct delegation definitions.
+
+- There's an overlayfs fix waiting as well but it's waiting for testing
+  confirmation from the reporter. By the time you're up this might
+  already have happened so if this isn't asking too much you could
+  choose to apply the fix in [1] directly. Otherwise this will be
+  delayed because of upcoming travel
+  (Finger's crossed I'll recover well enough.):
+  [1]: https://lore.kernel.org/20251205-tortur-amtieren-1273b2eef469@brauner
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+The following changes since commit 3f9f0252130e7dd60d41be0802bf58f6471c691d:
+
+  Merge tag 'random-6.19-rc1-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/crng/random (2025-12-02 19:00:26 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.19-rc1.fixes
+
+for you to fetch changes up to fe93446b5ebdaa89a8f97b15668c077921a65140:
+
+  vfs: use UAPI types for new struct delegation definition (2025-12-05 13:57:39 +0100)
+
+Please consider pulling these changes from the signed vfs-6.19-rc1.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.19-rc1.fixes
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Revert "net/socket: convert sock_map_fd() to FD_ADD()"
+
+Edward Adam Davis (1):
+      mqueue: correct the type of ro to int
+
+Ian Kent (1):
+      autofs: fix per-dentry timeout warning
+
+Mateusz Guzik (1):
+      fs: assert on I_FREEING not being set in iput() and iput_not_last()
+
+Rafael J. Wysocki (1):
+      fs: PM: Fix reverse check in filesystems_freeze_callback()
+
+Thomas Weißschuh (1):
+      vfs: use UAPI types for new struct delegation definition
+
+ fs/autofs/dev-ioctl.c      | 22 ++++++++++++----------
+ fs/inode.c                 |  3 ++-
+ fs/super.c                 |  2 +-
+ include/uapi/linux/fcntl.h | 10 +++-------
+ ipc/mqueue.c               |  2 +-
+ net/socket.c               | 19 ++++++++++++++-----
+ 6 files changed, 33 insertions(+), 25 deletions(-)
 
