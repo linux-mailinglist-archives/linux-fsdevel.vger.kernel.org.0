@@ -1,143 +1,423 @@
-Return-Path: <linux-fsdevel+bounces-70821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B684CA7C80
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 14:37:50 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F14CA80A9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 15:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 512C230AD6B1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 13:36:55 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id DEEC7318F1F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 13:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50906330311;
-	Fri,  5 Dec 2025 13:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345103016E3;
+	Fri,  5 Dec 2025 13:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwgPtfZT"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aAq5RMWr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C3A281504;
-	Fri,  5 Dec 2025 13:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682443002A3
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 13:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764941811; cv=none; b=MIaOAtdSStdMyeqs2J2HjZyu1u+U2d3BK/oylddyK0mMxWB1YK2mrpaxDTRVovgTqXJX4qDmK+XrwfmM0tMWC+zp0+6fvNip6mw6grWetGkiqKYvkonhK0gH+nm+LAXn0oEBweBhfqtbMa3iGmRy32NVjs8veJlfZqYjLFcSlFM=
+	t=1764943052; cv=none; b=Ok9bXP58ApmngrY/FkQCt6PfZkZcM4MDLHC1g8rjCsQ+qBqHMt75pghHpa0aPlHsraayNwDXiXNjMGearm0KKQeIEC2HHJ3RuuNmrSnWqz2hbuLBPLQyTO6Ci0WBsKQfkQfvjcueBVw5d9I6YtatV2OA3HoTHLKz9iZXxTR+phA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764941811; c=relaxed/simple;
-	bh=p3T1ulfSLPL03s2NnroT2XsKoZTK2w4K4wqpqJsbhLY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UzMtV5CN2IQ+BUzMk2im1gquQjGFIH/cZjDqtIzoT2zfQPkUwT8U9OkU5lfkqaJJSQ6hDy/+qi0cZo/YBA9kQBoAWjA0sR9HC2Aor1XIWbLq7Ovb7PteRMDmrTyCxEVycTtX4YYpp99dQsoYxYTM+2ERpd3kHm0owV1dkA8do1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwgPtfZT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B751C4CEF1;
-	Fri,  5 Dec 2025 13:36:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764941810;
-	bh=p3T1ulfSLPL03s2NnroT2XsKoZTK2w4K4wqpqJsbhLY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XwgPtfZT5LWHmr2dmxZlWN4/1S9ebstaiz5Qf4chkjQnG/qtdUTQ/U7t9PQAJ9UUC
-	 oMFlC36GQqo5YnfGC9Jd8eVMfkdvVeJb87mwYMNhny0/vqcHkWuzM46YxTrY6RyADy
-	 y7JlIcnf8QsQdJYTX7owqdM+BoW2ot6O30UUJ4mtJw6pypubUjIPtCbT68IC3ev+fy
-	 F7iGctqziL56vAFeDroYwZwoyLM+1CzeCIrzW/Ctc9X87yUdlnZUggR4ME0drHE/Zm
-	 /JEvlY9g7hFZTMzlwQy4bEaZ2GScp1yrSlODxz8PSd+BW5XL4LFZrD8YXHxVn0Qiyy
-	 an5y5lQpfXjPA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Fri,  5 Dec 2025 14:36:15 +0100
-Message-ID: <20251205-vfs-fixes-23ea52006d69@brauner>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1764943052; c=relaxed/simple;
+	bh=LrJmYtpg2xPB5Hxs0oMzD5z6JpC8gvULVARA4QhobsQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=REq+rAaSlPj6M9+FHVZINPKhveBjUd6iJ+OuM8hfKJTNORIWt7GX3YeQPCMd12g0D0c9Xhy15+nJqK0+fqYGrIZhGgnytdiHjWzU3RT6hLn+/17rD05H6h56F2kygLRGT4I104rZnswUrF4nNnR2BI9D8Y+Fy1K4GwwL1l5oEmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aAq5RMWr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764943046;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=liJHLKbz1j2ROPRAStqhXkhB8qWkSnMyUfDdaGA907U=;
+	b=aAq5RMWrJGEEEehNViXE3z0VVaXMz/Q1D3Tgv4PRwYlzOeJgnT8Pn3tHUoUd4vP31kDHqm
+	hQZ3mAI36DgACjYVwT1olhOKWcdjjG46B5KYxg/KbzbUozGppMK2Zk13FmZTbHDyG2oh9x
+	OJ5iXtiuOyh5KFLUXRcjGG7WfIXFJrU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-584-5DKoJafoO8GMTcWseVQY7w-1; Fri,
+ 05 Dec 2025 08:57:22 -0500
+X-MC-Unique: 5DKoJafoO8GMTcWseVQY7w-1
+X-Mimecast-MFC-AGG-ID: 5DKoJafoO8GMTcWseVQY7w_1764943041
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4966218011FB;
+	Fri,  5 Dec 2025 13:57:20 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.100])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 424C3180044F;
+	Fri,  5 Dec 2025 13:57:15 +0000 (UTC)
+Date: Fri, 5 Dec 2025 08:57:13 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: "Lai, Yi" <yi1.lai@linux.intel.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, hch@infradead.org, djwong@kernel.org,
+	willy@infradead.org, brauner@kernel.org, yi1.lai@intel.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v5 5/7] xfs: fill dirty folios on zero range of unwritten
+ mappings
+Message-ID: <aTLkuabg_fP49Gjv@bfoster>
+References: <20251003134642.604736-1-bfoster@redhat.com>
+ <20251003134642.604736-6-bfoster@redhat.com>
+ <aTJLAFyYBtW47r5Q@ly-workstation>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2596; i=brauner@kernel.org; h=from:subject:message-id; bh=p3T1ulfSLPL03s2NnroT2XsKoZTK2w4K4wqpqJsbhLY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQa3b/5ad5LbVMPHY1yN/spCerTTRbrxlc5rL5yo+PUh huOUhfKO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYibMjwV/DVChfltpvcyn7t L9JNrp++Otv8i63OyrOPrv+pznO6FcXIsK4wjeFPltX3+1dOOihI3DosO+nBqVxuraOvNfzfnI3 V4AIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aTJLAFyYBtW47r5Q@ly-workstation>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Hey Linus,
+On Fri, Dec 05, 2025 at 11:01:20AM +0800, Lai, Yi wrote:
+> On Fri, Oct 03, 2025 at 09:46:39AM -0400, Brian Foster wrote:
+> > Use the iomap folio batch mechanism to select folios to zero on zero
+> > range of unwritten mappings. Trim the resulting mapping if the batch
+> > is filled (unlikely for current use cases) to distinguish between a
+> > range to skip and one that requires another iteration due to a full
+> > batch.
+> > 
+> > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+> > ---
+> >  fs/xfs/xfs_iomap.c | 23 +++++++++++++++++++++++
+> >  1 file changed, 23 insertions(+)
+> > 
+> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> > index 6a05e04ad5ba..535bf3b8705d 100644
+> > --- a/fs/xfs/xfs_iomap.c
+> > +++ b/fs/xfs/xfs_iomap.c
+> > @@ -1702,6 +1702,8 @@ xfs_buffered_write_iomap_begin(
+> >  	struct iomap		*iomap,
+> >  	struct iomap		*srcmap)
+> >  {
+> > +	struct iomap_iter	*iter = container_of(iomap, struct iomap_iter,
+> > +						     iomap);
+> >  	struct xfs_inode	*ip = XFS_I(inode);
+> >  	struct xfs_mount	*mp = ip->i_mount;
+> >  	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
+> > @@ -1773,6 +1775,7 @@ xfs_buffered_write_iomap_begin(
+> >  	 */
+> >  	if (flags & IOMAP_ZERO) {
+> >  		xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
+> > +		u64 end;
+> >  
+> >  		if (isnullstartblock(imap.br_startblock) &&
+> >  		    offset_fsb >= eof_fsb)
+> > @@ -1780,6 +1783,26 @@ xfs_buffered_write_iomap_begin(
+> >  		if (offset_fsb < eof_fsb && end_fsb > eof_fsb)
+> >  			end_fsb = eof_fsb;
+> >  
+> > +		/*
+> > +		 * Look up dirty folios for unwritten mappings within EOF.
+> > +		 * Providing this bypasses the flush iomap uses to trigger
+> > +		 * extent conversion when unwritten mappings have dirty
+> > +		 * pagecache in need of zeroing.
+> > +		 *
+> > +		 * Trim the mapping to the end pos of the lookup, which in turn
+> > +		 * was trimmed to the end of the batch if it became full before
+> > +		 * the end of the mapping.
+> > +		 */
+> > +		if (imap.br_state == XFS_EXT_UNWRITTEN &&
+> > +		    offset_fsb < eof_fsb) {
+> > +			loff_t len = min(count,
+> > +					 XFS_FSB_TO_B(mp, imap.br_blockcount));
+> > +
+> > +			end = iomap_fill_dirty_folios(iter, offset, len);
+> > +			end_fsb = min_t(xfs_fileoff_t, end_fsb,
+> > +					XFS_B_TO_FSB(mp, end));
+> > +		}
+> > +
+> >  		xfs_trim_extent(&imap, offset_fsb, end_fsb - offset_fsb);
+> >  	}
+> >  
+> > -- 
+> > 2.51.0
+> >
+>  
+> Hi Brian Foster,
+> 
+> Greetings!
+> 
+> I used Syzkaller and found that there is possible deadlock in xfs_ilock in linux-next next-20251203.
+> 
+> After bisection and the first bad commit is:
+> "
+> 77c475692c5e xfs: fill dirty folios on zero range of unwritten mappings
+> "
+> 
 
-/* Summary */
+The referenced reproducer doesn't throw anything for me, but if you want
+to test the following:
 
-This contains a few fixes for this cycle:
+https://lore.kernel.org/linux-fsdevel/20251113135404.553339-1-bfoster@redhat.com/
 
-- Fix a type conversion bug in the ipc subsystem.
+... that removes the allocation associated with this splat. Thanks.
 
-- Fix per-dentry timeout warning in autofs.
+Brian
 
-- Drop the fd conversion from sockets.
+> All detailed into can be found at:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/251204_221645_xfs_ilock
+> Syzkaller repro code:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/251204_221645_xfs_ilock/repro.c
+> Syzkaller repro syscall steps:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/251204_221645_xfs_ilock/repro.prog
+> Syzkaller report:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/251204_221645_xfs_ilock/repro.report
+> Kconfig(make olddefconfig):
+> https://github.com/laifryiee/syzkaller_logs/tree/main/251204_221645_xfs_ilock/kconfig_origin
+> Bisect info:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/251204_221645_xfs_ilock/bisect_info.log
+> bzImage:
+> https://github.com/laifryiee/syzkaller_logs/raw/refs/heads/main/251204_221645_xfs_ilock/bzImage_b2c27842ba853508b0da00187a7508eb3a96c8f7
+> Issue dmesg:
+> https://github.com/laifryiee/syzkaller_logs/blob/main/251204_221645_xfs_ilock/b2c27842ba853508b0da00187a7508eb3a96c8f7_dmesg.log
+> 
+> "
+> [   21.088994] ======================================================
+> [   21.089362] WARNING: possible circular locking dependency detected
+> [   21.089726] 6.18.0-next-20251203-b2c27842ba85 #1 Not tainted
+> [   21.090060] ------------------------------------------------------
+> [   21.090417] kswapd0/58 is trying to acquire lock:
+> [   21.090697] ffff888028ff1f18 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_ilock+0x30f/0x390
+> [   21.091235]
+> [   21.091235] but task is already holding lock:
+> [   21.091575] ffffffff8784b580 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0xb7e/0x15c0
+> [   21.092058]
+> [   21.092058] which lock already depends on the new lock.
+> [   21.092058]
+> [   21.092524]
+> [   21.092524] the existing dependency chain (in reverse order) is:
+> [   21.092949]
+> [   21.092949] -> #1 (fs_reclaim){+.+.}-{0:0}:
+> [   21.093290]        fs_reclaim_acquire+0x116/0x160
+> [   21.093579]        __kmalloc_cache_noprof+0x53/0x7e0
+> [   21.093886]        iomap_fill_dirty_folios+0x118/0x2c0
+> [   21.094204]        xfs_buffered_write_iomap_begin+0xf18/0x2150
+> [   21.094552]        iomap_iter+0x551/0xf40
+> [   21.094798]        iomap_zero_range+0x20b/0xa90
+> [   21.095075]        xfs_zero_range+0xb5/0x100
+> [   21.095335]        xfs_reflink_remap_prep+0x3d3/0xa90
+> [   21.095643]        xfs_file_remap_range+0x23c/0xdc0
+> [   21.095944]        vfs_clone_file_range+0x2b1/0xda0
+> [   21.096243]        ioctl_file_clone+0x6e/0x110
+> [   21.096521]        do_vfs_ioctl+0xcab/0x14d0
+> [   21.096786]        __x64_sys_ioctl+0x127/0x220
+> [   21.097057]        x64_sys_call+0x1280/0x21b0
+> [   21.097331]        do_syscall_64+0x6d/0x1180
+> [   21.097607]        entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   21.097936]
+> [   21.097936] -> #0 (&xfs_nondir_ilock_class){++++}-{4:4}:
+> [   21.098334]        __lock_acquire+0x14d1/0x2210
+> [   21.098615]        lock_acquire+0x170/0x2f0
+> [   21.098869]        down_write_nested+0x9a/0x210
+> [   21.099145]        xfs_ilock+0x30f/0x390
+> [   21.099385]        xfs_icwalk_ag+0xaec/0x1b60
+> [   21.099652]        xfs_icwalk+0x56/0xc0
+> [   21.099892]        xfs_reclaim_inodes_nr+0x1d3/0x2d0
+> [   21.100192]        xfs_fs_free_cached_objects+0x6a/0x90
+> [   21.100506]        super_cache_scan+0x415/0x570
+> [   21.100794]        do_shrink_slab+0x408/0x1030
+> [   21.101069]        shrink_slab+0x348/0x12f0
+> [   21.101329]        shrink_node+0xacc/0x2670
+> [   21.101587]        balance_pgdat+0xa2d/0x15c0
+> [   21.101860]        kswapd+0x5b9/0xab0
+> [   21.102093]        kthread+0x464/0x980
+> [   21.102329]        ret_from_fork+0x780/0x8f0
+> [   21.102596]        ret_from_fork_asm+0x1a/0x30
+> [   21.102873]
+> [   21.102873] other info that might help us debug this:
+> [   21.102873]
+> [   21.103335]  Possible unsafe locking scenario:
+> [   21.103335]
+> [   21.103683]        CPU0                    CPU1
+> [   21.103955]        ----                    ----
+> [   21.104225]   lock(fs_reclaim);
+> [   21.104428]                                lock(&xfs_nondir_ilock_class);
+> [   21.104823]                                lock(fs_reclaim);
+> [   21.105158]   lock(&xfs_nondir_ilock_class);
+> [   21.105416]
+> [   21.105416]  *** DEADLOCK ***
+> [   21.105416]
+> [   21.105762] 2 locks held by kswapd0/58:
+> [   21.105993]  #0: ffffffff8784b580 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat+0xb7e/0x15c0
+> [   21.106487]  #1: ffff88800fd580e0 (&type->s_umount_key#53){.+.+}-{4:4}, at: super_cache_scan+0x9f/0x570
+> [   21.107047]
+> [   21.107047] stack backtrace:
+> [   21.107307] CPU: 1 UID: 0 PID: 58 Comm: kswapd0 Not tainted 6.18.0-next-20251203-b2c27842ba85 #1 PREEMPT(volu
+> [   21.107319] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.q4
+> [   21.107326] Call Trace:
+> [   21.107335]  <TASK>
+> [   21.107338]  dump_stack_lvl+0xea/0x150
+> [   21.107352]  dump_stack+0x19/0x20
+> [   21.107359]  print_circular_bug+0x283/0x350
+> [   21.107370]  check_noncircular+0x12d/0x150
+> [   21.107383]  __lock_acquire+0x14d1/0x2210
+> [   21.107398]  lock_acquire+0x170/0x2f0
+> [   21.107407]  ? xfs_ilock+0x30f/0x390
+> [   21.107420]  ? __cond_resched+0x37/0x50
+> [   21.107434]  down_write_nested+0x9a/0x210
+> [   21.107445]  ? xfs_ilock+0x30f/0x390
+> [   21.107456]  ? __pfx_down_write_nested+0x10/0x10
+> [   21.107468]  ? xfs_icwalk_ag+0xadf/0x1b60
+> [   21.107482]  ? xfs_icwalk_ag+0xaec/0x1b60
+> [   21.107497]  ? xfs_icwalk_ag+0xaec/0x1b60
+> [   21.107510]  xfs_ilock+0x30f/0x390
+> [   21.107523]  xfs_icwalk_ag+0xaec/0x1b60
+> [   21.107542]  ? __pfx_xfs_icwalk_ag+0x10/0x10
+> [   21.107561]  ? __pfx_xa_find+0x10/0x10
+> [   21.107581]  ? xfs_group_grab_next_mark+0x26a/0x520
+> [   21.107605]  ? __this_cpu_preempt_check+0x21/0x30
+> [   21.107616]  ? lock_release+0x14f/0x2a0
+> [   21.107628]  ? xfs_group_grab_next_mark+0x274/0x520
+> [   21.107643]  ? __pfx_xfs_group_grab_next_mark+0x10/0x10
+> [   21.107662]  ? __pfx_try_to_wake_up+0x10/0x10
+> [   21.107678]  ? lock_release+0x14f/0x2a0
+> [   21.107689]  xfs_icwalk+0x56/0xc0
+> [   21.107704]  xfs_reclaim_inodes_nr+0x1d3/0x2d0
+> [   21.107718]  ? __pfx_xfs_reclaim_inodes_nr+0x10/0x10
+> [   21.107734]  ? __this_cpu_preempt_check+0x21/0x30
+> [   21.107744]  ? __pfx_prune_icache_sb+0x10/0x10
+> [   21.107762]  xfs_fs_free_cached_objects+0x6a/0x90
+> [   21.107777]  super_cache_scan+0x415/0x570
+> [   21.107794]  do_shrink_slab+0x408/0x1030
+> [   21.107813]  shrink_slab+0x348/0x12f0
+> [   21.107831]  ? shrink_slab+0x160/0x12f0
+> [   21.107845]  ? __pfx_shrink_slab+0x10/0x10
+> [   21.107866]  shrink_node+0xacc/0x2670
+> [   21.107888]  ? __pfx_shrink_node+0x10/0x10
+> [   21.107900]  ? preempt_schedule_common+0x49/0xd0
+> [   21.107913]  balance_pgdat+0xa2d/0x15c0
+> [   21.107929]  ? __pfx_balance_pgdat+0x10/0x10
+> [   21.107941]  ? rcu_watching_snap_stopped_since+0x20/0xf0
+> [   21.107975]  kswapd+0x5b9/0xab0
+> [   21.107990]  ? __pfx_kswapd+0x10/0x10
+> [   21.108002]  ? _raw_spin_unlock_irqrestore+0x35/0x70
+> [   21.108017]  ? trace_hardirqs_on+0x26/0x130
+> [   21.108040]  ? __pfx_autoremove_wake_function+0x10/0x10
+> [   21.108060]  ? __sanitizer_cov_trace_const_cmp1+0x1e/0x30
+> [   21.108080]  ? __kthread_parkme+0x1bc/0x260
+> [   21.108094]  ? __pfx_kswapd+0x10/0x10
+> [   21.108107]  ? __pfx_kswapd+0x10/0x10
+> [   21.108120]  kthread+0x464/0x980
+> [   21.108128]  ? __pfx_kthread+0x10/0x10
+> [   21.108135]  ? trace_hardirqs_on+0x26/0x130
+> [   21.108149]  ? _raw_spin_unlock_irq+0x3c/0x60
+> [   21.108158]  ? __pfx_kthread+0x10/0x10
+> [   21.108167]  ret_from_fork+0x780/0x8f0
+> [   21.108177]  ? __pfx_ret_from_fork+0x10/0x10
+> [   21.108186]  ? native_load_tls+0x16/0x50
+> [   21.108199]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
+> [   21.108213]  ? __switch_to+0x823/0x10b0
+> [   21.108232]  ? __pfx_kthread+0x10/0x10
+> [   21.108240]  ret_from_fork_asm+0x1a/0x30
+> [   21.108257]  </TASK>
+> [   21.592826] repro: page allocation failure: order:0, mode:0x10cc0(GFP_KERNEL|__GFP_NORETRY), nodemask=(null),0
+> [   21.593533] CPU: 1 UID: 0 PID: 727 Comm: repro Not tainted 6.18.0-next-20251203-b2c27842ba85 #1 PREEMPT(volun
+> [   21.593545] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.q4
+> [   21.593551] Call Trace:
+> [   21.593554]  <TASK>
+> [   21.593557]  dump_stack_lvl+0x121/0x150
+> [   21.593572]  dump_stack+0x19/0x20
+> [   21.593582]  warn_alloc+0x216/0x360
+> [   21.593595]  ? __pfx_warn_alloc+0x10/0x10
+> [   21.593607]  ? __pfx___alloc_pages_direct_compact+0x10/0x10
+> [   21.593618]  ? __drain_all_pages+0x27d/0x480
+> [   21.593628]  __alloc_pages_slowpath.constprop.0+0x1340/0x2230
+> [   21.593644]  ? __pfx___alloc_pages_slowpath.constprop.0+0x10/0x10
+> [   21.593657]  ? __might_sleep+0x108/0x160
+> [   21.593680]  __alloc_frozen_pages_noprof+0x47f/0x550
+> [   21.593690]  ? asm_sysvec_apic_timer_interrupt+0x1f/0x30
+> [   21.593702]  ? __pfx___alloc_frozen_pages_noprof+0x10/0x10
+> [   21.593716]  ? policy_nodemask+0xf9/0x450
+> [   21.593734]  alloc_pages_mpol+0x236/0x4c0
+> [   21.593746]  ? __pfx_alloc_pages_mpol+0x10/0x10
+> [   21.593758]  ? alloc_frozen_pages_noprof+0x48/0x180
+> [   21.593766]  ? alloc_frozen_pages_noprof+0x51/0x180
+> [   21.593775]  alloc_frozen_pages_noprof+0xa9/0x180
+> [   21.593783]  alloc_pages_noprof+0x27/0xa0
+> [   21.593791]  kimage_alloc_pages+0x78/0x240
+> [   21.593809]  kimage_alloc_control_pages+0x1ca/0xa60
+> [   21.593819]  ? __pfx_kimage_alloc_control_pages+0x10/0x10
+> [   21.593827]  ? __sanitizer_cov_trace_cmp8+0x1c/0x30
+> [   21.593844]  do_kexec_load+0x39b/0x8c0
+> [   21.593851]  ? __might_fault+0xf1/0x1b0
+> [   21.593868]  ? __pfx_do_kexec_load+0x10/0x10
+> [   21.593876]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
+> [   21.593887]  ? _copy_from_user+0x75/0xa0
+> [   21.593904]  __x64_sys_kexec_load+0x1cc/0x240
+> [   21.593913]  x64_sys_call+0x1c90/0x21b0
+> [   21.593922]  do_syscall_64+0x6d/0x1180
+> [   21.593930]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   21.593938] RIP: 0033:0x7f347b83ee5d
+> [   21.593952] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 88
+> [   21.593959] RSP: 002b:00007ffc6cb1d938 EFLAGS: 00000207 ORIG_RAX: 00000000000000f6
+> [   21.593972] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f347b83ee5d
+> [   21.593977] RDX: 0000200000000180 RSI: 0000000000000003 RDI: 0000000000000000
+> [   21.593982] RBP: 00007ffc6cb1d950 R08: 00007ffc6cb1d3c0 R09: 00007ffc6cb1d950
+> [   21.593986] R10: 0000000000000000 R11: 0000000000000207 R12: 00007ffc6cb1daa8
+> [   21.593991] R13: 00000000004030f5 R14: 000000000040ee08 R15: 00007f347bb26000
+> [   21.594000]  </TASK>
+> "
+> 
+> Hope this cound be insightful to you.
+> 
+> Regards,
+> Yi Lai
+> 
+> ---
+> 
+> If you don't need the following environment to reproduce the problem or if you
+> already have one reproduced environment, please ignore the following information.
+> 
+> How to reproduce:
+> git clone https://gitlab.com/xupengfe/repro_vm_env.git
+> cd repro_vm_env
+> tar -xvf repro_vm_env.tar.gz
+> cd repro_vm_env; ./start3.sh  // it needs qemu-system-x86_64 and I used v7.1.0
+>   // start3.sh will load bzImage_2241ab53cbb5cdb08a6b2d4688feb13971058f65 v6.2-rc5 kernel
+>   // You could change the bzImage_xxx as you want
+>   // Maybe you need to remove line "-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \" for different qemu version
+> You could use below command to log in, there is no password for root.
+> ssh -p 10023 root@localhost
+> 
+> After login vm(virtual machine) successfully, you could transfer reproduced
+> binary to the vm by below way, and reproduce the problem in vm:
+> gcc -pthread -o repro repro.c
+> scp -P 10023 repro root@localhost:/root/
+> 
+> Get the bzImage for target kernel:
+> Please use target kconfig and copy it to kernel_src/.config
+> make olddefconfig
+> make -jx bzImage           //x should equal or less than cpu num your pc has
+> 
+> Fill the bzImage file into above start3.sh to load the target kernel in vm.
+> 
+> 
+> Tips:
+> If you already have qemu-system-x86_64, please ignore below info.
+> If you want to install qemu v7.1.0 version:
+> git clone https://github.com/qemu/qemu.git
+> cd qemu
+> git checkout -f v7.1.0
+> mkdir build
+> cd build
+> yum install -y ninja-build.x86_64
+> yum -y install libslirp-devel.x86_64
+> ../configure --target-list=x86_64-softmmu --enable-kvm --enable-vnc --enable-gtk --enable-sdl --enable-usb-redir --enable-slirp
+> make
+> make install 
+> 
+> 
 
-- Move assert from iput_not_last() to iput().
-
-- Fix reversed check in filesystems_freeze_callback().
-
-- Use proper uapi types for new struct delegation definitions.
-
-- There's an overlayfs fix waiting as well but it's waiting for testing
-  confirmation from the reporter. By the time you're up this might
-  already have happened so if this isn't asking too much you could
-  choose to apply the fix in [1] directly. Otherwise this will be
-  delayed because of upcoming travel
-  (Finger's crossed I'll recover well enough.):
-  [1]: https://lore.kernel.org/20251205-tortur-amtieren-1273b2eef469@brauner
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-The following changes since commit 3f9f0252130e7dd60d41be0802bf58f6471c691d:
-
-  Merge tag 'random-6.19-rc1-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/crng/random (2025-12-02 19:00:26 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.19-rc1.fixes
-
-for you to fetch changes up to fe93446b5ebdaa89a8f97b15668c077921a65140:
-
-  vfs: use UAPI types for new struct delegation definition (2025-12-05 13:57:39 +0100)
-
-Please consider pulling these changes from the signed vfs-6.19-rc1.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.19-rc1.fixes
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      Revert "net/socket: convert sock_map_fd() to FD_ADD()"
-
-Edward Adam Davis (1):
-      mqueue: correct the type of ro to int
-
-Ian Kent (1):
-      autofs: fix per-dentry timeout warning
-
-Mateusz Guzik (1):
-      fs: assert on I_FREEING not being set in iput() and iput_not_last()
-
-Rafael J. Wysocki (1):
-      fs: PM: Fix reverse check in filesystems_freeze_callback()
-
-Thomas Weißschuh (1):
-      vfs: use UAPI types for new struct delegation definition
-
- fs/autofs/dev-ioctl.c      | 22 ++++++++++++----------
- fs/inode.c                 |  3 ++-
- fs/super.c                 |  2 +-
- include/uapi/linux/fcntl.h | 10 +++-------
- ipc/mqueue.c               |  2 +-
- net/socket.c               | 19 ++++++++++++++-----
- 6 files changed, 33 insertions(+), 25 deletions(-)
 
