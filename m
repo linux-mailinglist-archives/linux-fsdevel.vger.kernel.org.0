@@ -1,335 +1,247 @@
-Return-Path: <linux-fsdevel+bounces-70741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55EA2CA5B86
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 01:01:35 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF738CA5BF6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 01:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E067E3106D29
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 00:01:30 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6BABE311BA12
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 00:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8537517C77;
-	Fri,  5 Dec 2025 00:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC8A1EFFB4;
+	Fri,  5 Dec 2025 00:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="KRNpgN55"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jkP6Mfo+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFE838D
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 00:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFEB19006B
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 00:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764892889; cv=none; b=jsf5vgYaKfbxbpsD3O2wz02WILcu//8zqo+ziWH38qPjS3MfHx2soF1YJ2N3gEBQqt7FwW3rCxuWJeycsyEC7jTxJ2c54I8rf4QAyBYW9fkqqoeOWGwLc31zloYU/1GFZWMvt77u0sl4W+KXpr+aRdXCHlg7p41+FzthdcpTgiU=
+	t=1764894395; cv=none; b=Pp8chiYaXJT2KkWKDQYXtF1dBB/JClH3jGmXRcsDtnmqeLV7JsXO9o4B63fBv5iNY3lwQZ+5xzhqyhKdhMYTgGJTtb1594c0MRXs/b8QHBnsff+30Vy0dcloiQIOF8qJ65OCaP2qd/ALJHCnb1umzApOTeE2ZDX1xRGFSHP1x94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764892889; c=relaxed/simple;
-	bh=BViJYyVwDG9kNE4HjO6WE0aJ247Tf5rgKjVbppZW704=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NOtccoX9fEdoAZnW7vn+9L9BeO608DT9SwE5tCJifzq5j4OsWCJh3IlfpC3xCq/J4hkLHH74chTaDCeOUdYNyQav1Pxk0ECN4LkqAf5uSVUZIeFDhrcvprK5e6F2r+PmSe9aVFE2xqN2PxkgmnNxzqhsaNj83ABrCfH+CLopANc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=KRNpgN55; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-787e84ceaf7so14479617b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 16:01:26 -0800 (PST)
+	s=arc-20240116; t=1764894395; c=relaxed/simple;
+	bh=WiIYP9y/tMJy5RszXug/7TOPOWKN8C/8TwqAYELzFkY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DpDgLqAoAHMV9hF4nh3zSmR+PnIjw5R8jmrYDZeXp1r7vsiVeKens1CthBxgar7zpyGxkr+qtfKZGsS7ql0ME6HsJlvRiC50UD+/if2dlwhWxaDaORNHPy9FCYIvPjwy4IfpmXoUIS0ohKdKl2jENU25G0s0CvfJo6JeyUy8gvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jkP6Mfo+; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4edb7c8232aso19214851cf.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 16:26:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1764892886; x=1765497686; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ScTaYnEyM1EdNLw3QuLsIZvBzFCYZb8c+npB/BVZ9/M=;
-        b=KRNpgN55ACLsDKr9jTEIXFtiyeW3yPEkU/hTBrdhqePNlwRrGy2m5IH8uefTjTpIyZ
-         PPek7X3tViVmc29XH4NlLOaQ/PPW5xSsiYphimMfEEt57w9G4563uNXxDjxnfW5T6Mh+
-         N7dSGnFGg6ejzCSOnyuX1AyKBVxpkSjtshGmdKI1zCiPa0Xwsi36fV3TBWerFbPei1vA
-         nOQNn+faKrRlUz8ua9vJtaNidQrQoNGPGGN5QCP2TH3oFGr4okNHMz4RuR8RZbLXMro0
-         vNMzzk9rEv0C01Na/FDhTqRfWbjcLfdfJAlGhJuhRgqIQ/FtKW74sm6eAX99HcRfKEe4
-         fVcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764892886; x=1765497686;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1764894392; x=1765499192; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ScTaYnEyM1EdNLw3QuLsIZvBzFCYZb8c+npB/BVZ9/M=;
-        b=JqmJpcxs1MVtpnvCCDGqJr1vXT2XTfCmyInW9MYdZGJEu6vZvysp+Y4Z6Aob/CQ7YX
-         km4qrQwUW1yGTMv4zwDkCXHOoR3O9gzpcTrHQzjfF05tqfvDkULifOGhguMmxD8pNFlY
-         3asq7gPeIjcwpOYnqR268OAYHB9SMADALpZxCLdYgCXGZdL/OZNZihpDQr/jBvvCA7aM
-         AjsJkKHvFz0OiZ3uAGyDeNHECE4691WE2RkVfQNK7dLa9zOwc8bnQ/PfKirxqcpGGwP/
-         QRoNuxo3au8gRf9Br8wBt/5nPac9r7tDLLLZgxuLVBLJrc50IH3YRkrjR6Vh+P1l8aJO
-         +5JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+tFDOYV2Zt+13AZDdmb50qCj1wA8hvBE7qJfR6F5kEqWZGYAKzBhDrey9i6NxgRT7QWZk2irOLnCCVHev@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGlwMEZ1m0DseYlaBQQWuVYBsUibBFoJio1ZkdAe6mhm8QipJG
-	M8+SAjEjP5Li9boNC1T7nIwjoucrqt6c/IxIfkGHoPA/j92hwLbnv2xwnBSwNwol1rY=
-X-Gm-Gg: ASbGnct2r2s2aBB115sXmvO01jpA3/OrNyLhyKgFDkZhSGso25DKC6jxkvUqPt0s90q
-	TAK+Injf78pxDrEJI07OstckZLGw1ZFZK0Uj8zQkf2XKsNvY9wJbz3GFwfCh5z6KGAHn3NLAIY5
-	j/m0eNJq4SvY+Q6OE5Qrli0DJUUTSm57OgFZ2pVBZJIUn4e/Ys5M/okijFigJ0u/PpMDwKJH2yu
-	+038i0Wsn96+cqdZkC0/tF+Uv8S+cBV1b2kM902MztelsnCTkXhfLbSf79Gpm6KoqAMaizP+B36
-	TRI8yQym7p8zYAvMf7gPebnDGNkK5ApGwkxlT9WfMsovs6K7fu7hr5RuAeXiyits3IqYv2qcYoV
-	QDeSI5Hr6olP2VrVO0p80yyRT5ZlD1LiGwEC06GU4+pzJrF+svLBP/xJf1HJcBhHsdMCuVS3rcz
-	+Qhf8WOHS9/cIngVqL72DpuYuRWGj7lTuDpw==
-X-Google-Smtp-Source: AGHT+IFnE2ZDTsXwHdgMuBPPWij4w5BWqzJNRMZvxOP3dZRe3JM3tmtfS6VYf4kL7RF4FrGWLq87OA==
-X-Received: by 2002:a05:690c:4b87:b0:787:e117:9508 with SMTP id 00721157ae682-78c0c0222d9mr60746147b3.38.1764892885727;
-        Thu, 04 Dec 2025 16:01:25 -0800 (PST)
-Received: from pop-os.attlocal.net ([2600:1700:6476:1430:8b60:bc11:905f:46d4])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78c1b78de56sm11019977b3.38.2025.12.04.16.01.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 16:01:25 -0800 (PST)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: glaubitz@physik.fu-berlin.de,
-	linux-fsdevel@vger.kernel.org,
-	frank.li@vivo.com
-Cc: Slava.Dubeyko@ibm.com,
-	Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [PATCH] hfsplus: fix volume corruption issue for generic/480
-Date: Thu,  4 Dec 2025 16:00:55 -0800
-Message-Id: <20251205000054.3670326-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.34.1
+        bh=LBiu8bh2NMu9RquOd9C64Em1EyJ/vlaZUWpKiAuzn9c=;
+        b=jkP6Mfo+aQltofcq8ct2rGuRXxHx5jiFbCFQEC28qZsHhlzywWZplcck+oqmaCzOie
+         JkHlFkotewYpZ2gZMw2QyzqRmGj5Or0N4Q5sH06GwmgW9PlH6halxNROXphGjO6bml6Z
+         XaedL75d9JcvqDwSWRfyGAbvph66oPXlbVU31+AF3ph88Vy03AGCGu47U0geBODQmv3S
+         2t9Yzl2bu16VUSjx31c8hxSWD3tO1cjb89iSYLHUUJZkE5zJlhm4EjODfrhYNUyaEPol
+         DLh/i4T44jfXx+ADilbxrDRKUNpqPf1aPDAaZdR7T44fY2iuqiBbBL6oGekroZ2Bthtg
+         IMDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764894392; x=1765499192;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=LBiu8bh2NMu9RquOd9C64Em1EyJ/vlaZUWpKiAuzn9c=;
+        b=n6Eotg/9l5F7ehNJdmnucRur1jP8QdXERzajV/5C9GqxPP72t8nMTX6dJFvAkfwg3X
+         5fYo9vb6P5XYWz8cNum9ZYB9cGyBaQtkR4U+602CCxcJFCBZey22cmPbrsUJ55MZx/Vw
+         C7c+aNyXjRjDfX4D4ZBgtJGNI/KtC79gkHDpUtmmNtXwFNDEk4dhITVpz1GbjZoyeBXp
+         ODmmeT9XVlDl0mMeq0G/dUGxbzZZxpQhC8cNwV5cmFwl49tNzJlN5bPalhwKO3Jnd9mP
+         L+1PwwNEjKlvyLWAplgR/FWdoygWwxrAu3afb8WnbSb+9PoHBL7fkqY5JG0lXxQNPVjW
+         MKfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXsx2TAk3ncj08qWOL2Sq8sd/kdzKejLOGTy75Z51qXqGOVjVuBR/xaWHqVh8hEgnX/1J3dfMvzc4rY+ACk@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXxh6ZPKS9PnyfOAqYJwPZIYJWc63eS1T9K++2eXhUUpkB+fY8
+	gEODRPjOPudt1ZvIf7QbAwvGorA6BNMV6iRYkNMKRyZKJxcWKrgSX4kg5uqAlcwXEe91RBvXill
+	Rzt7YS/infgSyPcqvQjRudZDAtRVi/08=
+X-Gm-Gg: ASbGncv/uFwhSy6ySs+PA+HB4XZjS9KI/M3MI6HiBEWZG1bku6Q6RlmeY7PiEI1PrHa
+	Ss2S2g6GJJz8zgxex1rTafJUQ87Q7X9PLmbWHYnfIIIRusDATFQnXNpskrULYUv3ElcOGAQvUxT
+	aw5pSDCLP+sEH+5bTPonpC60Ar6xb6P8sJ/kYmpDotmTOnNew/jihg4k2co0nDcHfb8V7uNJMTg
+	8GXrFgC11SPcsPJB4eVEuFG1uyqWPJVUC/XZGfrKHrni7DDC4qjD2LSHPNsh2cU60qXNXl5v29h
+	rC/jxGQqz1w=
+X-Google-Smtp-Source: AGHT+IHPDETwvshawZzZfiRtZb+42gaUC+rid3WOgFdOIN1x5w69rRypHWzKOMCFQJhL6Ha/9uRApG/iHoZtvq0fyjI=
+X-Received: by 2002:ac8:5812:0:b0:4ee:26ef:7f4c with SMTP id
+ d75a77b69052e-4f01757c740mr116784221cf.17.1764894392494; Thu, 04 Dec 2025
+ 16:26:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CGME20251204083010epcas5p2735e829064ff592b67e88c41fb1e44b3@epcas5p2.samsung.com>
+ <20251204082536.17349-1-xiaobing.li@samsung.com>
+In-Reply-To: <20251204082536.17349-1-xiaobing.li@samsung.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 4 Dec 2025 16:26:21 -0800
+X-Gm-Features: AWmQ_bleKty1Eunnw_O2YLaKlj-z6LQ2dskUv9qAJrhndmMIlG326iwvvudv2D0
+Message-ID: <CAJnrk1ZH9wJmdXBKjRnFEPhyocwdX=v=7tsrFjfqN1+FZqRDeQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: add zero-copy to fuse-over-io_uring
+To: Xiaobing Li <xiaobing.li@samsung.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, bschubert@ddn.com, asml.silence@gmail.com, 
+	dw@davidwei.uk, josef@toxicpanda.com, kbusch@kernel.org, 
+	peiwei.li@samsung.com, joshi.k@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The xfstests' test-case generic/480 leaves HFS+ volume
-in corrupted state:
+On Thu, Dec 4, 2025 at 12:57=E2=80=AFAM Xiaobing Li <xiaobing.li@samsung.co=
+m> wrote:
+>
+> Joanne has submitted a patch for adding a zero-copy solution.
+>
+> We have also done some research and testing before, and
+> the test data shows improved performance. This patch is
+> submitted for discussion.
 
-sudo ./check generic/480
-FSTYP -- hfsplus
-PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.17.0-rc1+ #4 SMP PREEMPT_DYNAMIC Wed Oct 1 15:02:44 PDT 2025
-MKFS_OPTIONS -- /dev/loop51
-MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+Hi Xiaobing,
 
-generic/480 _check_generic_filesystem: filesystem on /dev/loop51 is inconsistent
-(see XFSTESTS-2/xfstests-dev/results//generic/480.full for details)
+I think the logic in this patch uses fixed buffers for the request
+payloads to reduce the per-I/O overhead of pinning/unpinning the user
+pages for the payload but I don't think this helps with zero-copying,
+as the pages still need to get copied from the registered buffer the
+server provided back to the client's pages (or vice versa). In the
+implementation in [1], the client's pages are registered into the
+sparse buffer by the kernel such that the server reads/writes to those
+client pages directly.
 
-Ran: generic/480
-Failures: generic/480
-Failed 1 of 1 tests
+I think your patch is doing a similar thing to what the patch from
+last month for registered buffers [2] did, except [2] also implemented
+fixed buffers for the headers to eliminate that per-I/O overhead too.
+However, when I thought about this design some more, I realized if we
+used kernel-managed ring buffers instead, we pretty much get the same
+wins on reducing I/O overhead but also can significantly reduce the
+memory footprint used by each queue, by allowing the buffers to be
+incrementally consumed and thus sharable across requests, as well as
+allowing more flexibility in the future if we want to do things like
+add multiple ring-pools for different categories of requests, etc.
+Some more thoughts on this can be found on this thread here [3].
 
-sudo fsck.hfsplus -d /dev/loop51
-** /dev/loop51
-Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
-Executing fsck_hfs (version 540.1-Linux).
-** Checking non-journaled HFS Plus Volume.
-The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-** Checking multi-linked files.
-CheckHardLinks: found 1 pre-Leopard file inodes.
-Incorrect number of file hard links
-** Checking catalog hierarchy.
-** Checking extended attributes file.
-** Checking volume bitmap.
-** Checking volume information.
-invalid VHB nextCatalogID
-Volume header needs minor repair
-(2, 0)
-Verify Status: VIStat = 0x8000, ABTStat = 0x0000 EBTStat = 0x0000
-CBTStat = 0x0000 CatStat = 0x00000002
-** Repairing volume.
-Incorrect flags for file hard link (id = 19)
-(It should be 0x22 instead of 0x2)
-Incorrect flags for file inode (id = 18)
-(It should be 0x22 instead of 0x2)
-first link ID=0 is < 16 for fileinode=18
-Error getting first link ID for inode = 18 (result=2)
-Invalid first link in hard link chain (id = 18)
-(It should be 19 instead of 0)
-Indirect node 18 needs link count adjustment
-(It should be 1 instead of 2)
-** Rechecking volume.
-** Checking non-journaled HFS Plus Volume.
-The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-** Checking multi-linked files.
-** Checking catalog hierarchy.
-** Checking extended attributes file.
-** Checking volume bitmap.
-** Checking volume information.
-** The volume untitled was repaired successfully.
+Thanks,
+Joanne
 
-The generic/480 test executes such steps on final phase:
+[1] https://lore.kernel.org/linux-fsdevel/20251203003526.2889477-1-joannelk=
+oong@gmail.com/
+[2] https://lore.kernel.org/linux-fsdevel/20251027222808.2332692-9-joannelk=
+oong@gmail.com/
+[3] https://lore.kernel.org/linux-fsdevel/CAJnrk1bG7fAX8MfwJL_D2jzMNv5Rj9=
+=3D1cgQvVpqC1=3DmGaeAwOg@mail.gmail.com/
 
-"Now remove of the links of our file and create
-a new file with the same name and in the same
-parent directory, and finally fsync this new file."
-
-unlink $SCRATCH_MNT/testdir/bar
-touch $SCRATCH_MNT/testdir/bar
-$XFS_IO_PROG -c "fsync" $SCRATCH_MNT/testdir/bar
-
-"Simulate a power failure and mount the filesystem
-to check that replaying the fsync log/journal
-succeeds, that is the mount operation does not fail."
-
-_flakey_drop_and_remount
-
-The key issue in HFS+ logic is that hfsplus_link(),
-hfsplus_unlink(), hfsplus_rmdir(), hfsplus_symlink(),
-and hfsplus_mknod() methods don't call
-hfsplus_cat_write_inode() for the case of modified
-inode objects. As a result, even if hfsplus_file_fsync()
-is trying to flush the dirty Catalog File, but because of
-not calling hfsplus_cat_write_inode() not all modified
-inodes save the new state into Catalog File's records.
-Finally, simulation of power failure results in inconsistent
-state of Catalog File and FSCK tool reports about
-volume corruption.
-
-This patch adds calling of hfsplus_cat_write_inode()
-method for modified inodes in hfsplus_link(),
-hfsplus_unlink(), hfsplus_rmdir(), hfsplus_symlink(),
-and hfsplus_mknod() methods. Also, it adds debug output
-in several methods.
-
-sudo ./check generic/480
-FSTYP         -- hfsplus
-PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc1+ #18 SMP PREEMPT_DYNAMIC Thu Dec  4 12:24:45 PST 2025
-MKFS_OPTIONS  -- /dev/loop51
-MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-
-generic/480 16s ...  16s
-Ran: generic/480
-Passed all 1 tests
-
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Yangtao Li <frank.li@vivo.com>
-cc: linux-fsdevel@vger.kernel.org
----
- fs/hfsplus/dir.c   | 46 +++++++++++++++++++++++++++++++++++++++++++++-
- fs/hfsplus/inode.c |  5 +++++
- 2 files changed, 50 insertions(+), 1 deletion(-)
-
-diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-index cadf0b5f9342..ca5f74a140ec 100644
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -313,6 +313,9 @@ static int hfsplus_link(struct dentry *src_dentry, struct inode *dst_dir,
- 	if (!S_ISREG(inode->i_mode))
- 		return -EPERM;
- 
-+	hfs_dbg("src_dir->i_ino %lu, dst_dir->i_ino %lu, inode->i_ino %lu\n",
-+		src_dir->i_ino, dst_dir->i_ino, inode->i_ino);
-+
- 	mutex_lock(&sbi->vh_mutex);
- 	if (inode->i_ino == (u32)(unsigned long)src_dentry->d_fsdata) {
- 		for (;;) {
-@@ -332,7 +335,7 @@ static int hfsplus_link(struct dentry *src_dentry, struct inode *dst_dir,
- 		cnid = sbi->next_cnid++;
- 		src_dentry->d_fsdata = (void *)(unsigned long)cnid;
- 		res = hfsplus_create_cat(cnid, src_dir,
--			&src_dentry->d_name, inode);
-+					 &src_dentry->d_name, inode);
- 		if (res)
- 			/* panic? */
- 			goto out;
-@@ -350,6 +353,21 @@ static int hfsplus_link(struct dentry *src_dentry, struct inode *dst_dir,
- 	mark_inode_dirty(inode);
- 	sbi->file_count++;
- 	hfsplus_mark_mdb_dirty(dst_dir->i_sb);
-+
-+	res = hfsplus_cat_write_inode(src_dir);
-+	if (res)
-+		goto out;
-+
-+	res = hfsplus_cat_write_inode(dst_dir);
-+	if (res)
-+		goto out;
-+
-+	res = hfsplus_cat_write_inode(sbi->hidden_dir);
-+	if (res)
-+		goto out;
-+
-+	res = hfsplus_cat_write_inode(inode);
-+
- out:
- 	mutex_unlock(&sbi->vh_mutex);
- 	return res;
-@@ -367,6 +385,9 @@ static int hfsplus_unlink(struct inode *dir, struct dentry *dentry)
- 	if (HFSPLUS_IS_RSRC(inode))
- 		return -EPERM;
- 
-+	hfs_dbg("dir->i_ino %lu, inode->i_ino %lu\n",
-+		dir->i_ino, inode->i_ino);
-+
- 	mutex_lock(&sbi->vh_mutex);
- 	cnid = (u32)(unsigned long)dentry->d_fsdata;
- 	if (inode->i_ino == cnid &&
-@@ -408,6 +429,15 @@ static int hfsplus_unlink(struct inode *dir, struct dentry *dentry)
- 	inode_set_ctime_current(inode);
- 	mark_inode_dirty(inode);
- out:
-+	if (!res) {
-+		res = hfsplus_cat_write_inode(dir);
-+		if (!res) {
-+			res = hfsplus_cat_write_inode(sbi->hidden_dir);
-+			if (!res)
-+				res = hfsplus_cat_write_inode(inode);
-+		}
-+	}
-+
- 	mutex_unlock(&sbi->vh_mutex);
- 	return res;
- }
-@@ -429,6 +459,8 @@ static int hfsplus_rmdir(struct inode *dir, struct dentry *dentry)
- 	inode_set_ctime_current(inode);
- 	hfsplus_delete_inode(inode);
- 	mark_inode_dirty(inode);
-+
-+	res = hfsplus_cat_write_inode(dir);
- out:
- 	mutex_unlock(&sbi->vh_mutex);
- 	return res;
-@@ -465,6 +497,12 @@ static int hfsplus_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 
- 	hfsplus_instantiate(dentry, inode, inode->i_ino);
- 	mark_inode_dirty(inode);
-+
-+	res = hfsplus_cat_write_inode(dir);
-+	if (res)
-+		goto out;
-+
-+	res = hfsplus_cat_write_inode(inode);
- 	goto out;
- 
- out_err:
-@@ -506,6 +544,12 @@ static int hfsplus_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 
- 	hfsplus_instantiate(dentry, inode, inode->i_ino);
- 	mark_inode_dirty(inode);
-+
-+	res = hfsplus_cat_write_inode(dir);
-+	if (res)
-+		goto out;
-+
-+	res = hfsplus_cat_write_inode(inode);
- 	goto out;
- 
- failed_mknod:
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index 7ae6745ca7ae..c762bf909d1a 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -328,6 +328,9 @@ int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
- 	struct hfsplus_vh *vhdr = sbi->s_vhdr;
- 	int error = 0, error2;
- 
-+	hfs_dbg("inode->i_ino %lu, start %llu, end %llu\n",
-+		inode->i_ino, start, end);
-+
- 	error = file_write_and_wait_range(file, start, end);
- 	if (error)
- 		return error;
-@@ -616,6 +619,8 @@ int hfsplus_cat_write_inode(struct inode *inode)
- 	hfsplus_cat_entry entry;
- 	int res = 0;
- 
-+	hfs_dbg("inode->i_ino %lu\n", inode->i_ino);
-+
- 	if (HFSPLUS_IS_RSRC(inode))
- 		main_inode = HFSPLUS_I(inode)->rsrc_inode;
- 
--- 
-2.43.0
-
+>
+> libfuse section:
+> https://github.com/lreeze123/libfuse/tree/zero-copy
+>
+> Signed-off-by: Xiaobing Li <xiaobing.li@samsung.com>
+> ---
+>  fs/fuse/dev_uring.c   | 44 +++++++++++++++++++++++++++++++------------
+>  fs/fuse/dev_uring_i.h |  4 ++++
+>  2 files changed, 36 insertions(+), 12 deletions(-)
+>
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index f6b12aebb8bb..23790ae78853 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -584,15 +584,20 @@ static int fuse_uring_copy_from_ring(struct fuse_ri=
+ng *ring,
+>         int err;
+>         struct fuse_uring_ent_in_out ring_in_out;
+>
+> -       err =3D copy_from_user(&ring_in_out, &ent->headers->ring_ent_in_o=
+ut,
+> -                            sizeof(ring_in_out));
+> -       if (err)
+> -               return -EFAULT;
+> +       if (ent->zero_copy) {
+> +               iter =3D ent->payload_iter;
+> +               ring_in_out.payload_sz =3D ent->cmd->sqe->len;
+> +       } else {
+> +               err =3D copy_from_user(&ring_in_out, &ent->headers->ring_=
+ent_in_out,
+> +                                       sizeof(ring_in_out));
+> +               if (err)
+> +                       return -EFAULT;
+>
+> -       err =3D import_ubuf(ITER_SOURCE, ent->payload, ring->max_payload_=
+sz,
+> -                         &iter);
+> -       if (err)
+> -               return err;
+> +               err =3D import_ubuf(ITER_SOURCE, ent->payload, ring->max_=
+payload_sz,
+> +                                &iter);
+> +               if (err)
+> +                       return err;
+> +       }
+>
+>         fuse_copy_init(&cs, false, &iter);
+>         cs.is_uring =3D true;
+> @@ -618,10 +623,14 @@ static int fuse_uring_args_to_ring(struct fuse_ring=
+ *ring, struct fuse_req *req,
+>                 .commit_id =3D req->in.h.unique,
+>         };
+>
+> -       err =3D import_ubuf(ITER_DEST, ent->payload, ring->max_payload_sz=
+, &iter);
+> -       if (err) {
+> -               pr_info_ratelimited("fuse: Import of user buffer failed\n=
+");
+> -               return err;
+> +       if (ent->zero_copy) {
+> +               iter =3D ent->payload_iter;
+> +       } else {
+> +               err =3D import_ubuf(ITER_DEST, ent->payload, ring->max_pa=
+yload_sz, &iter);
+> +               if (err) {
+> +                       pr_info_ratelimited("fuse: Import of user buffer =
+failed\n");
+> +                       return err;
+> +               }
+>         }
+>
+>         fuse_copy_init(&cs, true, &iter);
+> @@ -1068,6 +1077,17 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cm=
+d,
+>         ent->headers =3D iov[0].iov_base;
+>         ent->payload =3D iov[1].iov_base;
+>
+> +       if (READ_ONCE(cmd->sqe->uring_cmd_flags) & IORING_URING_CMD_FIXED=
+) {
+> +               ent->zero_copy =3D true;
+> +               err =3D io_uring_cmd_import_fixed((u64)ent->payload, payl=
+oad_size, ITER_DEST,
+> +                                               &ent->payload_iter, cmd, =
+0);
+> +
+> +               if (err) {
+> +                       kfree(ent);
+> +                       return ERR_PTR(err);
+> +               }
+> +       }
+> +
+>         atomic_inc(&ring->queue_refs);
+>         return ent;
+>  }
+> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
+> index 51a563922ce1..cb5de6e7a262 100644
+> --- a/fs/fuse/dev_uring_i.h
+> +++ b/fs/fuse/dev_uring_i.h
+> @@ -38,6 +38,10 @@ enum fuse_ring_req_state {
+>
+>  /** A fuse ring entry, part of the ring queue */
+>  struct fuse_ring_ent {
+> +       bool zero_copy;
+> +
+> +       struct iov_iter payload_iter;
+> +
+>         /* userspace buffer */
+>         struct fuse_uring_req_header __user *headers;
+>         void __user *payload;
+> --
+> 2.34.1
+>
 
