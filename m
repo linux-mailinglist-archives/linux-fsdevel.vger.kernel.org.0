@@ -1,79 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-70814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B231CA7860
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 13:09:17 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D307CA7F65
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 15:31:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 8FB0230299DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 12:09:16 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 082EB318CA32
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 12:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5DB32E6BF;
-	Fri,  5 Dec 2025 12:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8B229AB15;
+	Fri,  5 Dec 2025 12:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="XL72UuDv";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="DGPX8Nhp"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="JrZon1c+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B42A313E05
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 12:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2233274B23;
+	Fri,  5 Dec 2025 12:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764936552; cv=none; b=M/G0pBMKjI2U6TmLJEHC7hjhZiJPqfhjKqyOmgkg6Im6QgvH9ZaKuP+aDjQDHZkBImhoFkqVlFSAikx0Cw07OQEOLuF1RB7WFwDzZM8QAQozIzxT82MOj3BIFfasb1tCHi2VGvoo/u6vw3VZmWvp9Y4L3jAIAMuHkUbwJY4GHX4=
+	t=1764936518; cv=none; b=ijWPFRTkn/2jgU1XZyAjUCQrJBs6iRKPwW5e3f+r9mTEkzjdoZ/1xMHmsYoeyPES8LU8DA1y++o2pi3jsZrFtqKoPqhTI4QPoo0aNSvNlXYOZNgSLg1QfB4bDYJLh6U/lWB45lCsCNaXdu5zYlTmz1oIoaBUenFHwCy0SPwWMWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764936552; c=relaxed/simple;
-	bh=LaOiU5bWnuebDcDGPmZl4kS1pqOs9u+qoKUghe2ucy4=;
+	s=arc-20240116; t=1764936518; c=relaxed/simple;
+	bh=WdXn2u/Gx4lmmbm6ovntTtvLKANucrEh6lJrHbOVr5k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fy/OdbiPhOLzqPrRrRc43HwPY8/iUwrTLuDDGFsjigahSUGTXXmboMoLLI3BRfD/YK6yyyTXU4JqnrUblDItqg6Ar1kHkHK2xK9HO0BJsG1hdTq0KThsKiE83eh0tKP20yfpFLMVXU/dnce1iS1DPW4go8o3RYzlbUcYWDpKa+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=XL72UuDv reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=DGPX8Nhp; arc=none smtp.client-ip=103.2.141.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tw5VNwBdCEVSvFYfdxs82CmAlLOBKhBPqk/BMkm0xjgkXYnXdnraDuWKgDk5FddAImRme9/r7rhiGLDD8O1TzWWFQVQins+0kSTKq8qxT6yF+gYxWCv7zDpnqphKVFo9GAPezCiJT1tIf8UR4Y3kWvI+pCPQ33+pT/drJ73lm/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=JrZon1c+; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1764937449; h=Feedback-ID:
-	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
-	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=nDQbuCR0xlv5qS7HgYyT3GoyUmABzZVoQRnEZkWUh3E=; b=XL72UuDvrjc4+s3dnPfFDnhos/
-	xfeMHNB9EM4SUMg7AJ09Z1iilfFFrktcdNBwbQ1p79E+TH9V7XklFW4/cVtCEekdRNVMmJnwe+Nu3
-	Vw6/4jODAqlRJkDjogbYxJmX+q/I+50v5U+hQ2ecufJNfFIAumZEq6up8wGZERerOlzTZepZ+fgre
-	e6Eal6YbPXmNn2MP/N4c2TIJKjCWaZtWglvpL6FrtmAxKoae7n9F1JbsoSL4xH1zl3GEQ/5DSUDKS
-	l/QCrv2+IzeIt+cQ8WmggGSI4IJTOL9cXf5pDR/gzJr6BmxC5pmRA2WmAiWpf2RkHJboCCWvGAya3
-	mmE1sbrQ==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1764936549; h=from : subject
- : to : message-id : date;
- bh=nDQbuCR0xlv5qS7HgYyT3GoyUmABzZVoQRnEZkWUh3E=;
- b=DGPX8Nhp+hjyaROAcTAle079W7supvqWuk1SL0tEkjubOVP5531R/cJUJL0E7nStyx2aD
- 91djG45BOesqYIOrmDV2Bwi2feXhLyz5+Xt68H2mmwZBi/FK7EU2gLugJ91cAgQZChXoHcQ
- lcVx1nk5rBx8AHsagtUr8AvJ1FOr0srQIjw+AGb1maMFBpJ+q7LqzLGN/kkQMfzenLRJ8hK
- BP+g2mgFJ5yP/yVmnivcGyQaqQRXmI9msA0DgjtVOQGB3v/CWbi3kUbNaR045fUBPCKSgxs
- QXixudrVVZQOx/sUsLmFO+yRPv0YamxUL+dbwpjaJf7G1b5pV307pTs+uSOw==
-Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
- id 1vRUcA-TRk4wX-Kz; Fri, 05 Dec 2025 12:08:46 +0000
-Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.98.1-S2G) (envelope-from <repk@triplefau.lt>)
- id 1vRUcA-4o5NDgrjBW5-lSAe; Fri, 05 Dec 2025 12:08:46 +0000
-Date: Fri, 5 Dec 2025 12:53:04 +0100
-From: Remi Pommarel <repk@triplefau.lt>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Eric Sandeen <sandeen@redhat.com>, v9fs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
- eadavis@qq.com
-Subject: Re: [PATCH V3 4/4] 9p: convert to the new mount API
-Message-ID: <aTLHoPiC93HTc-VM@pilgrim>
-References: <20251010214222.1347785-1-sandeen@redhat.com>
- <20251010214222.1347785-5-sandeen@redhat.com>
- <aOzT2-e8_p92WfP-@codewreck.org> <aSdgDkbVe5xAT291@pilgrim>
- <aSeCdir21ZkvXJxr@codewreck.org>
- <b7b203c4-6e4b-4eeb-a23e-e6314342f288@redhat.com>
- <aS47OBYiF1PBeVSv@codewreck.org>
- <13d4a021-908e-4dff-874d-d4cbdcdd71d4@redhat.com>
- <aTBTndsQaLAv0sHP@codewreck.org>
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=qOqOO1RkHv+TL4sHO2I/M94wigINI1Cn0aqofm8+DJM=; b=JrZon1c+goGZ/cvJPITZz+HQAG
+	H8Glqh4GmzB4ynFJAlqotxWYu/at+K2gILu3ugTSYfgyyA9nlgkYCOH9DsRXqv3mk+Id9XnDEeOyo
+	KPPF7riTyhWttscjHg/UmGw+FFzHJ+L3PDkBoL47BA7n8mYjoZSHW/H/o341Ym97v+olzn/mai3wg
+	jtud26oX+CTo/9jlt8VAMQYI2a5VHeGTe/kcmC2pGu8768drFMpPega2QiNq3vkswcBw485F65wHM
+	TiWeqs1otv1R5KDD6QrYP4z85DZ5jaJokaX/uCSIHMgPaKqDiJ87vv2t31h78rMOxahMYDXcOxl2s
+	+bhzADnQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:53922)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vRUbi-000000004aX-0Y8R;
+	Fri, 05 Dec 2025 12:08:18 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vRUbe-0000000025R-1Eju;
+	Fri, 05 Dec 2025 12:08:14 +0000
+Date: Fri, 5 Dec 2025 12:08:14 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Xie Yuanbin <xieyuanbin1@huawei.com>
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	brauner@kernel.org, catalin.marinas@arm.com, hch@lst.de,
+	jack@suse.com, linux-arm-kernel@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, pangliyuan1@huawei.com,
+	wangkefeng.wang@huawei.com, will@kernel.org,
+	wozizhi@huaweicloud.com, yangerkun@huawei.com
+Subject: Re: [Bug report] hash_name() may cross page boundary and trigger
+ sleep in RCU context
+Message-ID: <aTLLLuup7TeAqFVL@shell.armlinux.org.uk>
+References: <CAHk-=wg4ZnsfpgXYL5qhjYDYo1Gnssz+VxnKZzHXMEmE7qrnQQ@mail.gmail.com>
+ <20251203014800.4988-1-xieyuanbin1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,64 +74,156 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aTBTndsQaLAv0sHP@codewreck.org>
-X-Smtpcorp-Track: 5rxZ8ULxq7tK.k3wksMRbOUlC.McHEmwzT3Wk
-Feedback-ID: 510616m:510616apGKSTK:510616sykM-zowXn
-X-Report-Abuse: Please forward a copy of this message, including all headers,
- to <abuse-report@smtp2go.com>
+In-Reply-To: <20251203014800.4988-1-xieyuanbin1@huawei.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Dec 04, 2025 at 12:13:33AM +0900, Dominique Martinet wrote:
-> Eric Sandeen wrote on Tue, Dec 02, 2025 at 04:12:36PM -0600:
-> > Working on this, but something that confuses me about the current
-> > (not for-next) code:
-> > 
-> > If I mount with "cache=loose" I see this in /proc/mounts:
-> > 
-> > 127.0.0.1 /mnt 9p rw,relatime,uname=fsgqa,aname=/tmp/9,cache=f,access=user,trans=tcp 0 0
-> > 
-> > note the "cache=f" thanks to show_options printing "cache=%x"
-> > 
-> > "mount -o cache=f" is rejected, though, because "f" is not a parseable
-> > number.
-> > 
-> > Shouldn't it be printing "cache=0xf" instead of "cache=f?"
+On Wed, Dec 03, 2025 at 09:48:00AM +0800, Xie Yuanbin wrote:
+> On Tue, 2 Dec 2025 14:07:25 -0800, Linus Torvalds wrote:
+> > On Tue, 2 Dec 2025 at 04:43, Russell King (Oracle)
+> > <linux@armlinux.org.uk> wrote:
+> >>
+> >> What I'm thinking is to address both of these by handling kernel space
+> >> page faults (which will be permission or PTE-not-present) separately
+> >> (not even build tested):
+> >
+> > That patch looks sane to me.
+> >
+> > But I also didn't build test it, just scanned it visually ;)
 > 
-> Definitely should be!
+> That patch removes harden_branch_predictor() from __do_user_fault(), and
+> moves it to do_page_fault()->do_kernel_address_page_fault(). 
+> This resolves previously mentioned kernel warning issue. However,
+> __do_user_fault() is not only called by do_page_fault(), it is
+> alse called by do_bad_area(), do_sect_fault() and do_translation_fault().
 > 
-> > (for some reason, though, in my test "remount -o,ro" does still work even with
-> > "cache=f" in /proc/mounts but that seems to be a side effect of mount.9p trying
-> > to use the new mount API when it shouldn't, or ...???)
+> So I think that some harden_branch_predictor() is missing on other paths.
+> According to my tests, when CONFIG_ARM_LPAE=n, harden_branch_predictor()
+> will never be called anymore, even if a user program trys to access the
+> kernel address.
 > 
-> ... and Remi explicitly had cache=loose in his command line, so I'm also
-> surprised it worked...
-> 
-> > I'll send my fix-up patch with a (maybe?) extra bugfix of printing
-> > "cache=0x%x" in show_options, and you can see what you think... it could
-> > be moved into a pure bugfix patch first if you agree.
-> 
-> Thank you! I would have been happy to see both together but it does make
-> more sense separately, I've just tested and pushed both your patches to
-> -next
-> 
-> 
-> I also agree the other show_options look safe enough as they either
-> print a string or int. . . .
-> Ah, actually I spotted another one:
->         if (v9ses->debug)
->                 seq_printf(m, ",debug=%x", v9ses->debug);
-> This needs to be prefixed by 0x as well -- Eric, do you mind if I amend
-> your patch 5 with that as well?
-> 
-> 
-> Remi - I did check rootfstype=9p as well and all seems fine but I'd
-> appreciate if you could test as well
+> Or perhaps I've misunderstood something, could you please point it out?
+> Thank you very much.
 
-I just tried your 9p-next branch and the issue is gone for rootfstype=9p
-using cache=loose (I've also made sure that I reproduce the issue without
-the last two commits of your branch).
+Right, let's split these issues into separate patches. Please test this
+patch, which should address only the hash_name() fault issue, and
+provides the basis for fixing the branch predictor issue.
 
-So yes for me that fixes it, thanks for the patches.
+Yes, at the moment, do_kernel_address_page_fault() looks very much like
+do_bad_area(), but with the addition of the IRQ-enable if the parent
+context was enabled, but the following patch to address the branch
+predictor hardening will show why its different.
+
+In my opinion, this approach makes the handling for kernel address
+page faults (non-present pages and page permission faults) much easier
+to understand.
+
+Note that this will call __do_user_fault() with interrupts disabled.
+
+Build tested, and remotely boot tested on Cortex-A5 hardware but
+without kfence enabled. Also tested usermode access to kernel space
+which fails with SEGV:
+- read from 0xc0000000 (section permission fault, do_sect_fault)
+- read from 0xffff2000 (page translation fault, do_page_fault)
+- read from 0xffff0000 (vectors page - read possible as expected)
+- write to 0xffff0000 (page permission fault, do_page_fault)
+
+8<===
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH] ARM: fix hash_name() fault
+
+Zizhi Wo reports:
+
+"During the execution of hash_name()->load_unaligned_zeropad(), a
+ potential memory access beyond the PAGE boundary may occur. For
+ example, when the filename length is near the PAGE_SIZE boundary.
+ This triggers a page fault, which leads to a call to
+ do_page_fault()->mmap_read_trylock(). If we can't acquire the lock,
+ we have to fall back to the mmap_read_lock() path, which calls
+ might_sleep(). This breaks RCU semantics because path lookup occurs
+ under an RCU read-side critical section."
+
+This is seen with CONFIG_DEBUG_ATOMIC_SLEEP=y and CONFIG_KFENCE=y.
+
+Kernel addresses (with the exception of the vectors/kuser helper
+page) do not have VMAs associated with them. If the vectors/kuser
+helper page faults, then there are two possibilities:
+
+1. if the fault happened while in kernel mode, then we're basically
+   dead, because the CPU won't be able to vector through this page
+   to handle the fault.
+2. if the fault happened while in user mode, that means the page was
+   protected from user access, and we want to fault anyway.
+
+Thus, we can handle kernel addresses from any context entirely
+separately without going anywhere near the mmap lock. This gives us
+an entirely non-sleeping path for all kernel mode kernel address
+faults.
+
+Reported-by: Zizhi Wo <wozizhi@huaweicloud.com>
+Reported-by: Xie Yuanbin <xieyuanbin1@huawei.com>
+Link: https://lore.kernel.org/r/20251126090505.3057219-1-wozizhi@huaweicloud.com
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+---
+ arch/arm/mm/fault.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+
+diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+index 46169fe42c61..2bbec38ced97 100644
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@ -260,6 +260,35 @@ static inline bool ttbr0_usermode_access_allowed(struct pt_regs *regs)
+ }
+ #endif
+ 
++static int __kprobes
++do_kernel_address_page_fault(struct mm_struct *mm, unsigned long addr,
++			     unsigned int fsr, struct pt_regs *regs)
++{
++	if (user_mode(regs)) {
++		/*
++		 * Fault from user mode for a kernel space address. User mode
++		 * should not be faulting in kernel space, which includes the
++		 * vector/khelper page. Send a SIGSEGV.
++		 */
++		__do_user_fault(addr, fsr, SIGSEGV, SEGV_MAPERR, regs);
++	} else {
++		/*
++		 * Fault from kernel mode. Enable interrupts if they were
++		 * enabled in the parent context. Section (upper page table)
++		 * translation faults are handled via do_translation_fault(),
++		 * so we will only get here for a non-present kernel space
++		 * PTE or PTE permission fault. This may happen in exceptional
++		 * circumstances and need the fixup tables to be walked.
++		 */
++		if (interrupts_enabled(regs))
++			local_irq_enable();
++
++		__do_kernel_fault(mm, addr, fsr, regs);
++	}
++
++	return 0;
++}
++
+ static int __kprobes
+ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ {
+@@ -273,6 +302,12 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 	if (kprobe_page_fault(regs, fsr))
+ 		return 0;
+ 
++	/*
++	 * Handle kernel addresses faults separately, which avoids touching
++	 * the mmap lock from contexts that are not able to sleep.
++	 */
++	if (addr >= TASK_SIZE)
++		return do_kernel_address_page_fault(mm, addr, fsr, regs);
+ 
+ 	/* Enable interrupts if they were enabled in the parent context. */
+ 	if (interrupts_enabled(regs))
+-- 
+2.47.3
 
 -- 
-Remi
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
