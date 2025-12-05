@@ -1,233 +1,492 @@
-Return-Path: <linux-fsdevel+bounces-70823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B958CA80B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 15:59:02 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60529CA868E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 17:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B3E81318C73D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 13:57:59 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id BD7ED301C7AA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 16:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6598E313523;
-	Fri,  5 Dec 2025 13:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63D52BD5A1;
+	Fri,  5 Dec 2025 16:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sm9ILzB1";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="WukgQx1L"
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="J8Q0vB6w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F693126AC
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 13:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC10A1397;
+	Fri,  5 Dec 2025 16:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764943077; cv=none; b=KRQjfFRSEGvHvtH15W16r7e9QftI9SGU8z0qvSQIqbWwaHNSSPoLexBalbDCLnbnfCOq9+xc/BF3h+aPFwU+0GTLHVxuyyojpW/qbLKdaPxtAhW9RW8w7x2xeBreVabV64lQ8+dV+pgOA8w5lchRxCMItiyYVc92bXaUWD+IZFM=
+	t=1764952801; cv=none; b=c2MRhow9nAjGLqDkXHdj0YUUY2zjgIPFbpqMIR+cZivm+jvH3BZja1mDKi/dw7TvchtLc7oISTY28HzC6avf7ZbGM6saZ69jZzUiruODcq0kXngvL5RNYFBOJwtrr74DC9i6m/TNcnzut19oxbn87z1xakO8BdXOdxRi27LrLvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764943077; c=relaxed/simple;
-	bh=+BXdtm4tyTi/wKYv5NAtpRXBLiD0v6xAF2vGz4Lxo1M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kNEbVUrJuHKJCqNzzu1Dk45ja5J7bYKWrasIRLSodI6TXTRwxEPKKEGP+nK0zI6BwSLW1+V4/IcgOOGoM7poMl+H+L+67jhXakCZffKPtz/9QgzzHnjMLXjY0lO5Rrmws3p+D5+zoRYpu2AkomnzZojUOaJAnoZyeoZ/LNYHE5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sm9ILzB1; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=WukgQx1L; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764943073;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PnVj39dJvqvU+lgRXhMvk2k6Z6VI84+sYStT3+jYej8=;
-	b=Sm9ILzB1mAPBRJsRLQz3SadR9CFdy7hoM5fheZIkMP0PR5/S6MMr2qpzWKrY7CAfI8w1p4
-	1pnQ7N0DM4Btt36QRPrx1l/ykHvPCVkV0sKn3derS6E+wJyMy4IDccbt+ll+NmsmdO5VQs
-	M1foUP+TpXeJpBrgm+rWZjINE57oHPc=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-484-1_RRVED4Oze0AUI5NziDZQ-1; Fri, 05 Dec 2025 08:57:51 -0500
-X-MC-Unique: 1_RRVED4Oze0AUI5NziDZQ-1
-X-Mimecast-MFC-AGG-ID: 1_RRVED4Oze0AUI5NziDZQ_1764943071
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-341aec498fdso2761991a91.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Dec 2025 05:57:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1764943071; x=1765547871; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PnVj39dJvqvU+lgRXhMvk2k6Z6VI84+sYStT3+jYej8=;
-        b=WukgQx1LP4eYudlBtRMavKQmUuSdsxELiNTVx6D7nnHcAaFAxqfFSR2qWIpmGnfYQN
-         Vs1Jbwh73wWoPoGttF+Yj4bx+URlqDEJ/cA7tnREBDTsOBIfdgIwhS9wAMJsvDprAIy2
-         0d7BmSI86P6y9gKFPrSIErq8VwZfGVNtCozVoRwDrgwdhGdFrtgYpDfDerMpXfiy/K8U
-         Q+dCWgrt9O/YOSToOfxK464FPFkJdVed4A1dSYFI2Ek3Ltiuct2FAP50o1fts8LNmoe/
-         YfuTcKVDjlnEt60fL1YABzKjFAOmqN8OBwG4RFxjjhZrvXSr6EUC6uW7m0DJT6/m01qK
-         vfrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764943071; x=1765547871;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PnVj39dJvqvU+lgRXhMvk2k6Z6VI84+sYStT3+jYej8=;
-        b=e38f7XiQa+Cthh82bMD/6hdWzkgMTXFEJD1urq7OWaTtI2LZ75jKZzqQcPNq3qdkYc
-         zoXH+xIZ4zaZKtC+SeFtMiJxFdxahce5zkh/ngpFIKRiQExEFeApufwYTjkPEpQMFfm/
-         blsazulGPS9xudM9gDk6Tz58U0Ytns5etKqW2Rz5BoM3anmkn85g2rjKN69kySzGI+3X
-         an1wVzkABhmFz9vdyWNISfWPfrja65pCK+UZylU+wcpo2p0l+jB2xXdFDEfm1Ila1zMc
-         QvylX5Jao5aE2+Ju3Dz5cb3nugcyk0toGAm1oCZJU6B45JHuvGnYAx92qfBd1HhCkzKe
-         Vpmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSgAa8gndNBSQuyCjvVI6m5WtbCUYBFDZw+VDEMcbjNQ7lSFIUxM3Exwx7IVsfh8Zn+HeMsHEHhpbhTCMy@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGRa6A+TySpnbUKhBO7f1c7HmwQnzKokKLhSXohUZx1RKyZpKA
-	3qYs4Ak4bINNH9JRUYfmZFVIGQXYUHURmEcW6ztmUvY1SoxvnFLFvz1FyFDSDI4Z9SYqhlHiExC
-	APw9EGSVH96zdNs2+tVuxKXWb4mPT8Dj5iGf/Fxp46UJvP/OBLfxeqYGuZxhKuyMAk7y6up46LL
-	IdTmRVAgbz7rX50v4hRkY+bvCkCtzP27u9PuMdiDGbAw==
-X-Gm-Gg: ASbGncvvu3rSv4FC5GGsOQWDteXAS89o6bfzYVDE3nUb03TlymO0X98nCQ7tkxchcbW
-	hDIdnaWQ/7LD3UzosJX4U6HlGZIXA1IY1rgMYP75GdxnLzYWUfhyAupeTtXCYR18fZbPwhIabMc
-	REsmju5MiCAWn6hRqC0+oLE3M7my5/PX3uLRuVRWT+RcjZjM+VxI7FObRISk4iI4fzgFiv/ufo2
-	0v/VcID0C3Z6U4Gm0JY33wFipA=
-X-Received: by 2002:a17:90b:3b81:b0:313:1c7b:fc62 with SMTP id 98e67ed59e1d1-349126c86a6mr9808410a91.22.1764943070770;
-        Fri, 05 Dec 2025 05:57:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFoegNfFc0zc9ROKiTg2YCb+eE5Eqjtu9ZhU5KIKpBraoQUMnUObucMeGtxUpF0wL0KtvcdLzYGduYPZ0Al4iQ=
-X-Received: by 2002:a17:90b:3b81:b0:313:1c7b:fc62 with SMTP id
- 98e67ed59e1d1-349126c86a6mr9808393a91.22.1764943070367; Fri, 05 Dec 2025
- 05:57:50 -0800 (PST)
+	s=arc-20240116; t=1764952801; c=relaxed/simple;
+	bh=6w28E7ainKujFwd66eIL3EljHzx3KE/Li7q3fyuQugk=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GIZGVbIE5zso/cr6quc8h+t//Cu86iq/DqZ3ykXf0SJWNrGhjEFRF0Vmli5uBLnvTE9tREsW3Txd6yCakCKghsIZuRokggkTiLbtQ4ndeExv1+t2F+3u6xrGhUvfRLTH/6SJ/39yYVL3uW5OoYi+2JtT0eq5CDHnst52IaNktUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=J8Q0vB6w; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:To:From:Date:Reply-To:Cc:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vSjA3LsvzRnVJv7HESY2bgCSLnmFxximUy5O0wMCEh4=; b=J8Q0vB6wcQq80bpncvaXQpD2qh
+	cFCP6J49RaBg56lLPcsfDdkrkbOYDbOD8kwMiiNvmH69S169YhbUAN2rGx/BVwxoaN+s9iAn+59Zx
+	wWs9NbJ4MeLD/UHpIQweStkpOlZ4jQNVBSfXIGlPFESH9De3P7g4zCWj+WS4EMKeVuZxSdEpVtBIf
+	NT1nGtqIgWmnLCeSDTi+wkJkE3k11g7uPnYg9SLGZuGRoF+fvEKwAH3Qs4zwb57Bnyw7uI7SRj+Ft
+	dt10dosI5z15Uo/J3ZaHTSO4i2YxkheoCyghosjEy84ORnwv7ZYr8CLKa64VG/0QmHgnnkDt9xowc
+	UoKVF9Ag==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <leitao@debian.org>)
+	id 1vRYqA-00412q-LQ; Fri, 05 Dec 2025 16:39:31 +0000
+Date: Fri, 5 Dec 2025 08:39:25 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, hch@infradead.org, 
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, gustavold@gmail.com, asantostc@gmail.com, 
+	calvin@wbinvd.org, kernel-team@meta.com
+Subject: Re: [PATCH RFC 1/2] configfs: add kernel-space item registration API
+Message-ID: <ecmqj4utxhgaq5pp2mwb7g6kx6lmc4wx2dtsiusrsij5fihkw5@ptp55nqquget>
+References: <20251202-configfs_netcon-v1-0-b4738ead8ee8@debian.org>
+ <20251202-configfs_netcon-v1-1-b4738ead8ee8@debian.org>
+ <aTCTAqEh0qppzVPn@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251205-tortur-amtieren-1273b2eef469@brauner>
-In-Reply-To: <20251205-tortur-amtieren-1273b2eef469@brauner>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Fri, 5 Dec 2025 14:57:39 +0100
-X-Gm-Features: AWmQ_bk3sPfst03CQ4S4jHGlmem27hNP2Zk_oCcIzARsjmMEO4vTJou6icyRekk
-Message-ID: <CAFqZXNvMxoTk1MQq96r=QQGjLqWwLrbdUVJ+nkSD3dzB2yTEYA@mail.gmail.com>
-Subject: Re: [PATCH] ovl: pass original credentials, not mounter credentials
- during create
-To: Christian Brauner <brauner@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aTCTAqEh0qppzVPn@google.com>
+X-Debian-User: leitao
 
-On Fri, Dec 5, 2025 at 1:11=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> When creating new files the security layer expects the original
-> credentials to be passed. When cleaning up the code this was accidently
-> changed to pass the mounter's credentials by relying on current->cred
-> which is already overriden at this point. Pass the original credentials
-> directly.
->
-> Reported-by: Ondrej Mosnacek <omosnace@redhat.com>
-> Reported-by: Paul Moore <paul@paul-moore.com>
-> Fixes: e566bff96322 ("ovl: port ovl_create_or_link() to new ovl_override_=
-creator_creds")
-> Link: https://lore.kernel.org/CAFqZXNvL1ciLXMhHrnoyBmQu1PAApH41LkSWEhrcvz=
-AAbFij8Q@mail.gmail.com
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+Hello Joel,
 
-Fixes the issue according to my testing.
+First of all, thanks for thre review,
 
-Tested-by: Ondrej Mosnacek <omosnace@redhat.com>
+On Wed, Dec 03, 2025 at 11:44:02AM -0800, Joel Becker wrote:
+> On Tue, Dec 02, 2025 at 07:29:01AM -0800, Breno Leitao wrote:
+> > Add configfs_register_item() and configfs_unregister_item() functions
+> > to allow kernel modules to register configfs items whose lifecycle is
+> > controlled by kernel space rather than userspace.
+> > 
+> > This is useful for subsystems that need to expose configuration items
+> > that are created based on kernel events (like boot parameters) rather
+> > than explicit userspace mkdir operations. The items registered this
+> > way are marked as default items (CONFIGFS_USET_DEFAULT) and cannot be
+> > removed via rmdir.
+> > 
+> > The API follows the same pattern as configfs_register_group() but for
+> > individual items:
+> > - configfs_register_item() links the item into the parent group's
+> >   hierarchy and creates the filesystem representation
+> > - configfs_unregister_item() reverses the registration, removing the
+> >   item from configfs
+> > 
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > ---
+> >  fs/configfs/dir.c        | 134 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/configfs.h |   4 +++
+> >  2 files changed, 138 insertions(+)
+> > 
+> > diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
+> > index 81f4f06bc87e..f7224bc51826 100644
+> > --- a/fs/configfs/dir.c
+> > +++ b/fs/configfs/dir.c
+> > @@ -1866,6 +1866,140 @@ void configfs_unregister_default_group(struct config_group *group)
+> >  }
+> >  EXPORT_SYMBOL(configfs_unregister_default_group);
+> >  
+> > +/**
+> > + * configfs_register_item() - registers a kernel-created item with a parent group
+> > + * @parent_group: parent group for the new item
+> > + * @item: item to be registered
+> > + *
+> > + * This function allows kernel code to register configfs items whose lifecycle
+> > + * is controlled by kernel space rather than userspace (via mkdir/rmdir).
+> > + * The item must be already initialized with config_item_init_type_name().
+> > + *
+> > + * Return: 0 on success, negative errno on failure
+> > + */
+> > +int configfs_register_item(struct config_group *parent_group,
+> > +			   struct config_item *item)
+> > +{
+> > +	struct configfs_subsystem *subsys = parent_group->cg_subsys;
+> > +	struct configfs_fragment *frag;
+> > +	struct dentry *parent, *child;
+> > +	struct configfs_dirent *sd;
+> > +	int ret;
+> > +
+> > +	if (!subsys || !item->ci_name)
+> > +		return -EINVAL;
+> > +
+> > +	frag = new_fragment();
+> > +	if (!frag)
+> > +		return -ENOMEM;
+> > +
+> > +	parent = parent_group->cg_item.ci_dentry;
+> > +	/* Allocate dentry for the item */
+> > +	child = d_alloc_name(parent, item->ci_name);
+> > +	if (!child) {
+> > +		put_fragment(frag);
+> > +		return -ENOMEM;
+> > +	}
+> > +
+> > +	mutex_lock(&subsys->su_mutex);
+> > +	link_obj(&parent_group->cg_item, item);
+> > +	mutex_unlock(&subsys->su_mutex);
+> > +
+> > +	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
+> > +	d_add(child, NULL);
+> > +
+> > +	/* Attach the item to the filesystem */
+> > +	ret = configfs_attach_item(&parent_group->cg_item, item, child, frag);
+> > +	if (ret)
+> > +		goto err_out;
+> 
+> The behavior here is significantly different than the flow in
+> configfs_mkdir().  How do we a) ensure we're getting the right outcome
+> b) make sure that commensurate changes in one are propagated to the
+> other?
+> 
+> For example, we take pains to get module pinning right in
+> configfs_mkdir(), both for the parent_item and the child item.  I see no
+> pinning here.
 
-Thanks!
+You're absolutely right about the missing module pinning and race
+protection. 
 
-> ---
->  fs/overlayfs/dir.c | 20 ++++++++++++--------
->  1 file changed, 12 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 06b860b9ded6..ff3dbd1ca61f 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -581,7 +581,8 @@ static int ovl_create_over_whiteout(struct dentry *de=
-ntry, struct inode *inode,
->         goto out_dput;
->  }
->
-> -static const struct cred *ovl_override_creator_creds(struct dentry *dent=
-ry, struct inode *inode, umode_t mode)
-> +static const struct cred *ovl_override_creator_creds(const struct cred *=
-original_creds,
-> +                                                    struct dentry *dentr=
-y, struct inode *inode, umode_t mode)
->  {
->         int err;
->
-> @@ -596,7 +597,7 @@ static const struct cred *ovl_override_creator_creds(=
-struct dentry *dentry, stru
->         override_cred->fsgid =3D inode->i_gid;
->
->         err =3D security_dentry_create_files_as(dentry, mode, &dentry->d_=
-name,
-> -                                             current->cred, override_cre=
-d);
-> +                                             original_creds, override_cr=
-ed);
->         if (err)
->                 return ERR_PTR(err);
->
-> @@ -614,8 +615,11 @@ static void ovl_revert_creator_creds(const struct cr=
-ed *old_cred)
->  DEFINE_CLASS(ovl_override_creator_creds,
->              const struct cred *,
->              if (!IS_ERR_OR_NULL(_T)) ovl_revert_creator_creds(_T),
-> -            ovl_override_creator_creds(dentry, inode, mode),
-> -            struct dentry *dentry, struct inode *inode, umode_t mode)
-> +            ovl_override_creator_creds(original_creds, dentry, inode, mo=
-de),
-> +            const struct cred *original_creds,
-> +            struct dentry *dentry,
-> +            struct inode *inode,
-> +            umode_t mode)
->
->  static int ovl_create_handle_whiteouts(struct dentry *dentry,
->                                        struct inode *inode,
-> @@ -633,7 +637,7 @@ static int ovl_create_or_link(struct dentry *dentry, =
-struct inode *inode,
->         int err;
->         struct dentry *parent =3D dentry->d_parent;
->
-> -       with_ovl_creds(dentry->d_sb) {
-> +       scoped_class(override_creds_ovl, original_creds, dentry->d_sb) {
->                 /*
->                  * When linking a file with copy up origin into a new par=
-ent, mark the
->                  * new parent dir "impure".
-> @@ -661,7 +665,7 @@ static int ovl_create_or_link(struct dentry *dentry, =
-struct inode *inode,
->                 if (attr->hardlink)
->                         return ovl_create_handle_whiteouts(dentry, inode,=
- attr);
->
-> -               scoped_class(ovl_override_creator_creds, cred, dentry, in=
-ode, attr->mode) {
-> +               scoped_class(ovl_override_creator_creds, cred, original_c=
-reds, dentry, inode, attr->mode) {
->                         if (IS_ERR(cred))
->                                 return PTR_ERR(cred);
->                         return ovl_create_handle_whiteouts(dentry, inode,=
- attr);
-> @@ -1364,8 +1368,8 @@ static int ovl_create_tmpfile(struct file *file, st=
-ruct dentry *dentry,
->         int flags =3D file->f_flags | OVL_OPEN_FLAGS;
->         int err;
->
-> -       with_ovl_creds(dentry->d_sb) {
-> -               scoped_class(ovl_override_creator_creds, cred, dentry, in=
-ode, mode) {
-> +       scoped_class(override_creds_ovl, original_creds, dentry->d_sb) {
-> +               scoped_class(ovl_override_creator_creds, cred, original_c=
-reds, dentry, inode, mode) {
->                         if (IS_ERR(cred))
->                                 return PTR_ERR(cred);
->
-> --
-> 2.47.3
->
+On my example (netconsole), the items were added during module
+initialization and removed during device tear down, which is not an
+excuse, given the interface should be generic enough.
 
---
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+I suppose I want to try_module_get(subsys_owner) and
+try_module_get(type->ct_owner) at the beginning of
+configfs_register_item(), and then put them back in
+configfs_unregister_item(). Would it be enough?
 
+
+  int configfs_register_item(struct config_group *parent_group,
+                             struct config_item *item)
+	...
+         /*
+           * Pin the subsystem module first. The subsystem may belong to a
+           * different module than the item being registered. We need to pin
+           * both to prevent the subsystem from being unloaded while the item
+           * exists.
+           */
+          if (!subsys->su_group.cg_item.ci_type) {
+                  ret = -EINVAL;
+                  goto out;
+          }
+          subsys_owner = subsys->su_group.cg_item.ci_type->ct_owner;
+          if (!try_module_get(subsys_owner)) {
+                  ret = -EINVAL;
+                  goto out;
+          }
+
+          /*
+           * Pin the item's module. This prevents the module providing the
+           * item's type (and its operations) from being unloaded.
+           */
+          item_owner = type->ct_owner;
+          if (!try_module_get(item_owner)) {
+                  ret = -EINVAL;
+                  goto out_subsys_put;
+          }
+
+> I see no handling of races with unregister (like the
+> teardown races with rmdir).
+> Some of these things are just different with kernel-registered items.
+
+Would CONFIGFS_USET_IN_MKDIR be enought in this case?
+
+> I presume you are declaring the child item must be fully created, which is
+> why this code doesn't call ->make_item().  But there is no documentation
+> of that requirement.
+
+Right, do you think a kdoc would be enough in this case?
+
+This is the new functions I am coming up with, in case you want to read the full functions.
+
+Thanks for the review!!
+
+-- 
+
+diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
+index 81f4f06bc87e..73aa4e4a0966 100644
+--- a/fs/configfs/dir.c
++++ b/fs/configfs/dir.c
+@@ -1866,6 +1866,248 @@ void configfs_unregister_default_group(struct config_group *group)
+ }
+ EXPORT_SYMBOL(configfs_unregister_default_group);
+ 
++/**
++ * configfs_register_item() - registers a kernel-created item with a parent group
++ * @parent_group: parent group for the new item
++ * @item: item to be registered
++ *
++ * This function allows kernel code to register configfs items whose lifecycle
++ * is controlled by kernel space rather than userspace (via mkdir/rmdir).
++ *
++ * Unlike configfs_mkdir(), which creates the item via ->make_item() callback,
++ * this function expects the item to be FULLY INITIALIZED by the caller before
++ * registration. This means:
++ *  - The item must be initialized with config_item_init_type_name()
++ *  - The item->ci_type must be set and valid
++ *  - The item->ci_type->ct_owner (module) must be valid
++ *  - Any item-specific initialization must be complete
++ *
++ * This function follows the same module pinning and locking semantics as
++ * configfs_mkdir() to ensure proper synchronization with rmdir and module
++ * unloading.
++ *
++ * Return: 0 on success, negative errno on failure
++ */
++int configfs_register_item(struct config_group *parent_group,
++			   struct config_item *item)
++{
++	struct configfs_subsystem *subsys = parent_group->cg_subsys;
++	struct module *subsys_owner = NULL, *item_owner = NULL;
++	const struct config_item_type *type;
++	struct configfs_fragment *frag;
++	struct dentry *parent, *child;
++	struct configfs_dirent *sd;
++	int ret;
++
++	if (!subsys || !item->ci_name)
++		return -EINVAL;
++
++	/*
++	 * Validate that the item is fully initialized. Unlike configfs_mkdir(),
++	 * we don't call ->make_item(), so the caller must provide a complete
++	 * item with a valid type.
++	 */
++	type = item->ci_type;
++	if (!type) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/*
++	 * Pin the subsystem module first. The subsystem may belong to a
++	 * different module than the item being registered. We need to pin
++	 * both to prevent the subsystem from being unloaded while the item
++	 * exists.
++	 */
++	if (!subsys->su_group.cg_item.ci_type) {
++		ret = -EINVAL;
++		goto out;
++	}
++	subsys_owner = subsys->su_group.cg_item.ci_type->ct_owner;
++	if (!try_module_get(subsys_owner)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/*
++	 * Pin the item's module. This prevents the module providing the
++	 * item's type (and its operations) from being unloaded.
++	 */
++	item_owner = type->ct_owner;
++	if (!try_module_get(item_owner)) {
++		ret = -EINVAL;
++		goto out_subsys_put;
++	}
++
++	frag = new_fragment();
++	if (!frag) {
++		ret = -ENOMEM;
++		goto out_item_put;
++	}
++
++	parent = parent_group->cg_item.ci_dentry;
++	/* Allocate dentry for the item */
++	child = d_alloc_name(parent, item->ci_name);
++	if (!child) {
++		ret = -ENOMEM;
++		put_fragment(frag);
++		goto out_item_put;
++	}
++
++	/*
++	 * Link the item into the parent group's hierarchy under the subsystem
++	 * mutex. This must be done before attaching to the filesystem.
++	 */
++	mutex_lock(&subsys->su_mutex);
++	link_obj(&parent_group->cg_item, item);
++	mutex_unlock(&subsys->su_mutex);
++
++	/*
++	 * From here on, errors must unlink the item since link_obj() has
++	 * been called.
++	 */
++	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
++
++	/*
++	 * Protect against racing with configfs_unregister_item() or rmdir.
++	 * The CONFIGFS_USET_IN_MKDIR flag will cause configfs_detach_prep()
++	 * to fail, preventing concurrent teardown.
++	 */
++	sd = parent->d_fsdata;
++	spin_lock(&configfs_dirent_lock);
++	sd->s_type |= CONFIGFS_USET_IN_MKDIR;
++	spin_unlock(&configfs_dirent_lock);
++
++	d_add(child, NULL);
++
++	/* Attach the item to the filesystem */
++	ret = configfs_attach_item(&parent_group->cg_item, item, child, frag);
++	/* if ret > 0, it will end up in err_unlink after unlocking everything */
++
++	spin_lock(&configfs_dirent_lock);
++	sd->s_type &= ~CONFIGFS_USET_IN_MKDIR;
++	if (!ret) {
++		struct configfs_dirent *child_sd = child->d_fsdata;
++		/*
++		 * Mark as CONFIGFS_USET_DEFAULT to indicate this is a
++		 * kernel-created item that cannot be removed via rmdir.
++		 */
++		child_sd->s_type |= CONFIGFS_USET_DEFAULT;
++		configfs_dir_set_ready(child_sd);
++	}
++	spin_unlock(&configfs_dirent_lock);
++	inode_unlock(d_inode(parent));
++
++	/* in case configfs_attach_item() has failed */
++	if (ret)
++		goto err_unlink;
++
++	put_fragment(frag);
++	return 0;
++
++err_unlink:
++	/* Tear down everything we built up */
++	d_drop(child);
++	dput(child);
++	mutex_lock(&subsys->su_mutex);
++	unlink_obj(item);
++	mutex_unlock(&subsys->su_mutex);
++	put_fragment(frag);
++
++out_item_put:
++	module_put(item_owner);
++out_subsys_put:
++	module_put(subsys_owner);
++out:
++	return ret;
++}
++EXPORT_SYMBOL(configfs_register_item);
++
++/**
++ * configfs_unregister_item() - unregisters a kernel-created item
++ * @item: item to be unregistered
++ *
++ * This function reverses the effect of configfs_register_item(), removing
++ * the item from the configfs filesystem and releasing associated resources.
++ * The item must have been previously registered with configfs_register_item().
++ *
++ * This function releases the module references acquired during registration,
++ * following the same teardown semantics as configfs_rmdir().
++ */
++void configfs_unregister_item(struct config_item *item)
++{
++	struct config_group *group = item->ci_group;
++	struct dentry *dentry = item->ci_dentry;
++	struct configfs_subsystem *subsys;
++	struct configfs_fragment *frag;
++	struct configfs_dirent *sd;
++	struct dentry *parent;
++	struct module *subsys_owner = NULL, *item_owner = NULL;
++
++	if (!group || !dentry)
++		return;
++
++	subsys = group->cg_subsys;
++	if (!subsys)
++		return;
++
++	parent = item->ci_parent->ci_dentry;
++	sd = dentry->d_fsdata;
++	frag = get_fragment(sd->s_frag);
++
++	if (WARN_ON(!(sd->s_type & CONFIGFS_USET_DEFAULT))) {
++		put_fragment(frag);
++		return;
++	}
++
++	/*
++	 * Retrieve module owners before detaching. These were pinned during
++	 * configfs_register_item() and must be released.
++	 */
++	if (subsys->su_group.cg_item.ci_type)
++		subsys_owner = subsys->su_group.cg_item.ci_type->ct_owner;
++	if (item->ci_type)
++		item_owner = item->ci_type->ct_owner;
++
++	/* Mark fragment as dead */
++	down_write(&frag->frag_sem);
++	frag->frag_dead = true;
++	up_write(&frag->frag_sem);
++
++	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
++	/*
++	 * Take configfs_symlink_mutex to prevent racing with symlink
++	 * creation/removal, matching the locking in configfs_rmdir().
++	 */
++	mutex_lock(&configfs_symlink_mutex);
++	spin_lock(&configfs_dirent_lock);
++	configfs_detach_prep(dentry, NULL);
++	spin_unlock(&configfs_dirent_lock);
++	mutex_unlock(&configfs_symlink_mutex);
++
++	configfs_detach_item(item);
++	d_inode(dentry)->i_flags |= S_DEAD;
++	dont_mount(dentry);
++	d_drop(dentry);
++	fsnotify_rmdir(d_inode(parent), dentry);
++	dput(dentry);
++	inode_unlock(d_inode(parent));
++
++	mutex_lock(&subsys->su_mutex);
++	unlink_obj(item);
++	mutex_unlock(&subsys->su_mutex);
++
++	put_fragment(frag);
++
++	/*
++	 * Release module references that were acquired during registration.
++	 * This mirrors the cleanup in configfs_rmdir().
++	 */
++	module_put(item_owner);
++	module_put(subsys_owner);
++}
++EXPORT_SYMBOL(configfs_unregister_item);
++
+ int configfs_register_subsystem(struct configfs_subsystem *subsys)
+ {
+ 	int err;
+diff --git a/include/linux/configfs.h b/include/linux/configfs.h
+index 698520b1bfdb..70f2d113b4b3 100644
+--- a/include/linux/configfs.h
++++ b/include/linux/configfs.h
+@@ -244,6 +244,10 @@ int configfs_register_group(struct config_group *parent_group,
+ 			    struct config_group *group);
+ void configfs_unregister_group(struct config_group *group);
+ 
++int configfs_register_item(struct config_group *parent_group,
++			   struct config_item *item);
++void configfs_unregister_item(struct config_item *item);
++
+ void configfs_remove_default_groups(struct config_group *group);
+ 
+ struct config_group *
 
