@@ -1,54 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-70817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B06ACA794E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 13:36:17 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6094FCA7FFB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 15:44:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8BD993130287
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 12:34:50 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6BB843222A53
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 12:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870FF30DD31;
-	Fri,  5 Dec 2025 12:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7363F32E752;
+	Fri,  5 Dec 2025 12:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0L9d4RD"
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="ZrSnYuT/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9949D23EA81;
-	Fri,  5 Dec 2025 12:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D420325721;
+	Fri,  5 Dec 2025 12:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764938087; cv=none; b=b1o8ppfYz29aNsctsYuFO7ofnrPmjD4eb1EFdJvqEbbYXyhew/OsReUBRCupM2n98mO8iBiT7CQUjsO6UvVT1d89qMrxyvgfSVxkrF9Tnr++SBL1gkZrn/J72ht89cv83UVbBeUgm7n/x+/F4/ZigA4OtxBzLgiE+xSbna6HYpo=
+	t=1764939443; cv=none; b=dWzS2mgPsk9HRn/oKyZ2OuTO8N8Pm3/QRpIeIYCtuL5asADcVADrdGmfOg8z0Jt2cPxNcx+s5lbY1Po0WphpPtv+RqUIdJScKNT/9ZT+DTwy8kBF+fMrCh7+t2Ay+RA7ThAyi9b3ae5IzoZxhdTKjuS0txr6Qki/ap27WdozIH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764938087; c=relaxed/simple;
-	bh=xHBhMlGkGdamCxTxSLV9OJsqVUcY7tHSnWJifkwPs6c=;
+	s=arc-20240116; t=1764939443; c=relaxed/simple;
+	bh=IZ9AioMDV2hbSbJftYZbWSoJ0XqPG2Sf5u2fNUuLXkA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NY5Tn5hGLgYQJQn2XDNqO5mGWzxF6bcda3j3QBKcBHc/x1KI3Hrf7mjyMl1Ee/Z7tGxm1RdDSuO7DyTvLok5hsVza1gGdShT4wo7QOsOgOzsROlYymX0ZiLU1bHgCQjCbVMjReAnz4HpRZjd7UhqkPCCqaXPGyxQpLabGAA/JQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0L9d4RD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4320EC4CEF1;
-	Fri,  5 Dec 2025 12:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764938087;
-	bh=xHBhMlGkGdamCxTxSLV9OJsqVUcY7tHSnWJifkwPs6c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i0L9d4RDz4xK1pYgTFEXKF5K5iW2PCnDFFFxhvaN7dZ7RHYjbvPJyRiwFG1QVgKrV
-	 tJSx3P96gckHw+WFlTl5su8Ny4FgzoiFkH2Eiq6LKOEawzqLJGYixMC+MetTwDJ8HZ
-	 udqu7thsSC2m6Crhv8ie8OnYtE+3Lp/5Pg7Q2VRgn3c5m8dmqRf3KMdKouY4ROxTax
-	 2eV4Sn0ijce1rXwWbwOi3YcJbcMDZK6bhAb0Rz7xnwgI/PytQxuV8BwP5CvbagGxaU
-	 2nr7InQeNI9eMOukE12e/tqhF82qCY5kkXzi4G1tikQukgF1bmmmYWKGQfTm+0kGAN
-	 Roty6X6yexmxA==
-Date: Fri, 5 Dec 2025 13:34:42 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, linux-unionfs@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: overlayfs test failures on kernels post v6.18
-Message-ID: <20251205-kapern-pechvogel-06c3125c3809@brauner>
-References: <CAHC9VhSaM6Hkbe+VHpRXir9OJd1=S=e1BB3zLkSTD+CXwXaqHg@mail.gmail.com>
- <CAFqZXNvL1ciLXMhHrnoyBmQu1PAApH41LkSWEhrcvzAAbFij8Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GatFUP9R7Ih/HERMkLWTK19IE6m5N5mA5qW+O8Ov55CkqvKTqNIfkylDiM/CiZxl+T0/Hv6KCQux3yZkYd51PWB00DvHB33CoyssJHPuIySuh+8s6b/AsgbNk9uE6Tm184RWRKyGFfgvHT6UTZ51MBJwiCslUC4aEWbhi7vvV9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=ZrSnYuT/; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id E019714C2D6;
+	Fri,  5 Dec 2025 13:57:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1764939430;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UyggHV2TuZn3sZG4L/FPwISUjRvCO8P7c60l6aEhf3M=;
+	b=ZrSnYuT/AUbqO4Dsk7WUYK9VZvpw/xbMpKodLaaVgdihEhtT/pSPe8Nx7jrQ3r8D8/CPxJ
+	3byaVyxQ8FeUvgH91ps3s5v/2eV7T0o3lFa/kT5SYx/eGVM9UXD2WKvp6bfe21lTLLsE7h
+	DUtNwj26q0HNP0dPV1e+mfnIYQedo83/PUsjFkwB4/RqIj1YmV+YVAstmA3Xvidkt4wZPj
+	o4J8yBW6Eg5tDwD2I1/aXpqrMfaYk4oTRL7W7X/4dRDw2O0GbcB/sHlu34iU90j1zZUBLP
+	Kl+PiXgAPCKVGcBklF2SW9nUrGtmoeAUvZapL17hoCMY+lDaNor7QYDvLOkIsQ==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 84e362b2;
+	Fri, 5 Dec 2025 12:57:06 +0000 (UTC)
+Date: Fri, 5 Dec 2025 21:56:51 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Remi Pommarel <repk@triplefau.lt>
+Cc: Eric Sandeen <sandeen@redhat.com>, v9fs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
+	eadavis@qq.com
+Subject: Re: [PATCH V3 4/4] 9p: convert to the new mount API
+Message-ID: <aTLWkzb8ttU22FZ8@codewreck.org>
+References: <20251010214222.1347785-1-sandeen@redhat.com>
+ <20251010214222.1347785-5-sandeen@redhat.com>
+ <aOzT2-e8_p92WfP-@codewreck.org>
+ <aSdgDkbVe5xAT291@pilgrim>
+ <aSeCdir21ZkvXJxr@codewreck.org>
+ <b7b203c4-6e4b-4eeb-a23e-e6314342f288@redhat.com>
+ <aS47OBYiF1PBeVSv@codewreck.org>
+ <13d4a021-908e-4dff-874d-d4cbdcdd71d4@redhat.com>
+ <aTBTndsQaLAv0sHP@codewreck.org>
+ <aTLHoPiC93HTc-VM@pilgrim>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,10 +73,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAFqZXNvL1ciLXMhHrnoyBmQu1PAApH41LkSWEhrcvzAAbFij8Q@mail.gmail.com>
+In-Reply-To: <aTLHoPiC93HTc-VM@pilgrim>
 
-> I can't see anything obviously wrong with that commit, though. Perhaps
-> the author/maintainers will be able to spot the bug.
+Remi Pommarel wrote on Fri, Dec 05, 2025 at 12:53:04PM +0100:
+> > Remi - I did check rootfstype=9p as well and all seems fine but I'd
+> > appreciate if you could test as well
+> 
+> I just tried your 9p-next branch and the issue is gone for rootfstype=9p
+> using cache=loose (I've also made sure that I reproduce the issue without
+> the last two commits of your branch).
+> 
+> So yes for me that fixes it, thanks for the patches.
 
-Hey, thanks for bisecting this. I just sent a fix for this issue.
+Thanks for testing! I've added your Tested-by to both patches.
+
+And I'll submit this all to Linus on Sunday, hopefully won't get much
+more breakage... :)
+
+-- 
+Dominique Martinet | Asmadeus
 
