@@ -1,247 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-70742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF738CA5BF6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 01:26:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85AB8CA5C1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 01:39:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6BABE311BA12
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 00:26:37 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CF176316E35A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 00:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC8A1EFFB4;
-	Fri,  5 Dec 2025 00:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33BE1E376C;
+	Fri,  5 Dec 2025 00:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jkP6Mfo+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="34DqmuTQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFEB19006B
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 00:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C818D1448E0
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 00:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764894395; cv=none; b=Pp8chiYaXJT2KkWKDQYXtF1dBB/JClH3jGmXRcsDtnmqeLV7JsXO9o4B63fBv5iNY3lwQZ+5xzhqyhKdhMYTgGJTtb1594c0MRXs/b8QHBnsff+30Vy0dcloiQIOF8qJ65OCaP2qd/ALJHCnb1umzApOTeE2ZDX1xRGFSHP1x94=
+	t=1764895137; cv=none; b=Ehq0+WwCmBjhSAta7Hi46bDA/gPyMdmg/J/FayA3J1xLY6kx2KTV/YhyOzPXIiNpyH1kLD+q4gvHZL9SJ8qjxOOFcUyK69UKmk/Mq2AdKLKbtdxVYw9krS6f2yAyPz84Q9Fc3Hf2rpPuqBYimqxrFAi890LKkLYsVbkn6e8BgzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764894395; c=relaxed/simple;
-	bh=WiIYP9y/tMJy5RszXug/7TOPOWKN8C/8TwqAYELzFkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DpDgLqAoAHMV9hF4nh3zSmR+PnIjw5R8jmrYDZeXp1r7vsiVeKens1CthBxgar7zpyGxkr+qtfKZGsS7ql0ME6HsJlvRiC50UD+/if2dlwhWxaDaORNHPy9FCYIvPjwy4IfpmXoUIS0ohKdKl2jENU25G0s0CvfJo6JeyUy8gvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jkP6Mfo+; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4edb7c8232aso19214851cf.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 16:26:33 -0800 (PST)
+	s=arc-20240116; t=1764895137; c=relaxed/simple;
+	bh=jRGGucjhuVnCsCWM106TPSms/6ZdG6m5JJbmww1ag3Y=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lxHwTdNjcgihsyR5xJUj0Fu7OzWKUTpIM0CIIrLDZijaaypsVSqZgQ7fHCW5W8YZIqxyJguyegOmnkrF9BoAg5VChtQaFmvNNTEO4lL0qnICRPV8rpLPjOgG1HGE8WjIVSbudqO/E489C6kocHRmxdIz9uj9Ei1GVOmy+FegPnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=34DqmuTQ; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2958c80fcabso35511575ad.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 16:38:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764894392; x=1765499192; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LBiu8bh2NMu9RquOd9C64Em1EyJ/vlaZUWpKiAuzn9c=;
-        b=jkP6Mfo+aQltofcq8ct2rGuRXxHx5jiFbCFQEC28qZsHhlzywWZplcck+oqmaCzOie
-         JkHlFkotewYpZ2gZMw2QyzqRmGj5Or0N4Q5sH06GwmgW9PlH6halxNROXphGjO6bml6Z
-         XaedL75d9JcvqDwSWRfyGAbvph66oPXlbVU31+AF3ph88Vy03AGCGu47U0geBODQmv3S
-         2t9Yzl2bu16VUSjx31c8hxSWD3tO1cjb89iSYLHUUJZkE5zJlhm4EjODfrhYNUyaEPol
-         DLh/i4T44jfXx+ADilbxrDRKUNpqPf1aPDAaZdR7T44fY2iuqiBbBL6oGekroZ2Bthtg
-         IMDA==
+        d=google.com; s=20230601; t=1764895135; x=1765499935; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jRGGucjhuVnCsCWM106TPSms/6ZdG6m5JJbmww1ag3Y=;
+        b=34DqmuTQAOYTwBw4QGQbiZFFYau25ZdxDBIuUKPDl29jr5DbkOdflQD5MBNBv7VJlh
+         LBkUde0mBfwk1WIY3gP+ApUPEcyhQrk4rakNiMVY2tvSIc1LxNv336I8s4V9iHKsh7x6
+         c6gzxPs7zfmCkdVejY5cQwgI4RECFXVMCaUUF1zTX0qlkOT9Di3UCnBcecgwbRkbMQFj
+         TzwFNn+xYmBoH8lcbExrgfW7U3t7N6OtRpFW/fZMRuTNavsSoVcRSXdTt8SA+kZy+t6J
+         bjmZGF+UZ0oVwx1eK69MA0YVIQyF/YECJPqlU8RCi3a/Jpj/F09+SMYzubJ9zcYX5JAC
+         Ch/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764894392; x=1765499192;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=LBiu8bh2NMu9RquOd9C64Em1EyJ/vlaZUWpKiAuzn9c=;
-        b=n6Eotg/9l5F7ehNJdmnucRur1jP8QdXERzajV/5C9GqxPP72t8nMTX6dJFvAkfwg3X
-         5fYo9vb6P5XYWz8cNum9ZYB9cGyBaQtkR4U+602CCxcJFCBZey22cmPbrsUJ55MZx/Vw
-         C7c+aNyXjRjDfX4D4ZBgtJGNI/KtC79gkHDpUtmmNtXwFNDEk4dhITVpz1GbjZoyeBXp
-         ODmmeT9XVlDl0mMeq0G/dUGxbzZZxpQhC8cNwV5cmFwl49tNzJlN5bPalhwKO3Jnd9mP
-         L+1PwwNEjKlvyLWAplgR/FWdoygWwxrAu3afb8WnbSb+9PoHBL7fkqY5JG0lXxQNPVjW
-         MKfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsx2TAk3ncj08qWOL2Sq8sd/kdzKejLOGTy75Z51qXqGOVjVuBR/xaWHqVh8hEgnX/1J3dfMvzc4rY+ACk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXxh6ZPKS9PnyfOAqYJwPZIYJWc63eS1T9K++2eXhUUpkB+fY8
-	gEODRPjOPudt1ZvIf7QbAwvGorA6BNMV6iRYkNMKRyZKJxcWKrgSX4kg5uqAlcwXEe91RBvXill
-	Rzt7YS/infgSyPcqvQjRudZDAtRVi/08=
-X-Gm-Gg: ASbGncv/uFwhSy6ySs+PA+HB4XZjS9KI/M3MI6HiBEWZG1bku6Q6RlmeY7PiEI1PrHa
-	Ss2S2g6GJJz8zgxex1rTafJUQ87Q7X9PLmbWHYnfIIIRusDATFQnXNpskrULYUv3ElcOGAQvUxT
-	aw5pSDCLP+sEH+5bTPonpC60Ar6xb6P8sJ/kYmpDotmTOnNew/jihg4k2co0nDcHfb8V7uNJMTg
-	8GXrFgC11SPcsPJB4eVEuFG1uyqWPJVUC/XZGfrKHrni7DDC4qjD2LSHPNsh2cU60qXNXl5v29h
-	rC/jxGQqz1w=
-X-Google-Smtp-Source: AGHT+IHPDETwvshawZzZfiRtZb+42gaUC+rid3WOgFdOIN1x5w69rRypHWzKOMCFQJhL6Ha/9uRApG/iHoZtvq0fyjI=
-X-Received: by 2002:ac8:5812:0:b0:4ee:26ef:7f4c with SMTP id
- d75a77b69052e-4f01757c740mr116784221cf.17.1764894392494; Thu, 04 Dec 2025
- 16:26:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764895135; x=1765499935;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jRGGucjhuVnCsCWM106TPSms/6ZdG6m5JJbmww1ag3Y=;
+        b=X9M9VV8MwhfTHihvEPbSvSZfmi3HnRRK808de9QB6ocbV7+u3IFJvKr5FnoyRE8jnZ
+         5aPZ+SzcNLhVoBui/WWLtt8rPB2fFn6ZsEctYMq20i8Ze+m9olkcx8FfqNl0jeJw38UX
+         CP294/YX0NPeGpXYbjqMH5EWg+Xj/iOWcV4/8aFK1q2HcgSmvb42XY+t8uifOLs2YoZq
+         Xzs43Oki2S0479KWgaXelyCzxALfVQJ5wJCVYCC/ng6x/99KeZkTulQnHNZANPuiwufl
+         Cudn41rWqpKAvXNFR+d6bSREe28igBm7ACtcQpZ2ImUuNyp7mP9tDSnKgyzOmrzJV/Ir
+         2mCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVybkJINt11iwqAcmBwEPD9LnFCg4z42zUeNqv6bN1X2WRVJTgXom7nX8bMrgPMRaycp3g0fo9F4eASIX4H@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTxMpIBssBp4qm+YvfCOcoA8t6hAZIJMrCRCtCTxE0uuLAb3sb
+	A4VcHnCYbHn6c/rd3BkDTDDYIt8k6co79hIEuxgcaKkX2tu7JxCek2+s35/6RqR5DfeJ0LSeqz8
+	ZvtN5bPvWF0XwSQFx4WT7R0/v/A==
+X-Google-Smtp-Source: AGHT+IEI+4QWSaT65yNp/2TgxcZCaFaqgv6I/9Ib9/x1qCnTFXLErIvauCddCu2q9NT77PNc/mruEXOJV7Fmqs3GVw==
+X-Received: from pgjr9.prod.google.com ([2002:a63:ec49:0:b0:bac:a20:5f05])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a21:3387:b0:342:352c:77e5 with SMTP id adf61e73a8af0-363f5ea890bmr9279671637.54.1764895135064;
+ Thu, 04 Dec 2025 16:38:55 -0800 (PST)
+Date: Thu, 04 Dec 2025 16:38:53 -0800
+In-Reply-To: <diqztsysb4zc.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CGME20251204083010epcas5p2735e829064ff592b67e88c41fb1e44b3@epcas5p2.samsung.com>
- <20251204082536.17349-1-xiaobing.li@samsung.com>
-In-Reply-To: <20251204082536.17349-1-xiaobing.li@samsung.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 4 Dec 2025 16:26:21 -0800
-X-Gm-Features: AWmQ_bleKty1Eunnw_O2YLaKlj-z6LQ2dskUv9qAJrhndmMIlG326iwvvudv2D0
-Message-ID: <CAJnrk1ZH9wJmdXBKjRnFEPhyocwdX=v=7tsrFjfqN1+FZqRDeQ@mail.gmail.com>
-Subject: Re: [PATCH] fuse: add zero-copy to fuse-over-io_uring
-To: Xiaobing Li <xiaobing.li@samsung.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, bschubert@ddn.com, asml.silence@gmail.com, 
-	dw@davidwei.uk, josef@toxicpanda.com, kbusch@kernel.org, 
-	peiwei.li@samsung.com, joshi.k@samsung.com
+Mime-Version: 1.0
+References: <20251117224701.1279139-1-ackerleytng@google.com>
+ <aRuuRGxw2vuXcVv6@casper.infradead.org> <diqztsysb4zc.fsf@google.com>
+Message-ID: <diqz8qfh69uq.fsf@google.com>
+Subject: Re: [RFC PATCH 0/4] Extend xas_split* to support splitting
+ arbitrarily large entries
+From: Ackerley Tng <ackerleytng@google.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, david@redhat.com, 
+	michael.roth@amd.com, vannapurve@google.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 4, 2025 at 12:57=E2=80=AFAM Xiaobing Li <xiaobing.li@samsung.co=
-m> wrote:
->
-> Joanne has submitted a patch for adding a zero-copy solution.
->
-> We have also done some research and testing before, and
-> the test data shows improved performance. This patch is
-> submitted for discussion.
+Ackerley Tng <ackerleytng@google.com> writes:
 
-Hi Xiaobing,
+> Matthew Wilcox <willy@infradead.org> writes:
+>
+>> On Mon, Nov 17, 2025 at 02:46:57PM -0800, Ackerley Tng wrote:
+>>> guest_memfd is planning to store huge pages in the filemap, and
+>>> guest_memfd's use of huge pages involves splitting of huge pages into
+>>> individual pages. Splitting of huge pages also involves splitting of
+>>> the filemap entries for the pages being split.
+>
+>>
+>> Hm, I'm not most concerned about the number of nodes you're allocating.
+>
+> Thanks for reminding me, I left this out of the original message.
+>
+> Splitting the xarray entry for a 1G folio (in a shift-18 node for
+> order=18 on x86), assuming XA_CHUNK_SHIFT is 6, would involve
+>
+> + shift-18 node (the original node will be reused - no new allocations)
+> + shift-12 node: 1 node allocated
+> + shift-6 node : 64 nodes allocated
+> + shift-0 node : 64 * 64 = 4096 nodes allocated
+>
+> This brings the total number of allocated nodes to 4161 nodes. struct
+> xa_node is 576 bytes, so that's 2396736 bytes or 2.28 MB, so splitting a
+> 1G folio to 4K pages costs ~2.5 MB just in filemap (XArray) entry
+> splitting. The other large memory cost would be from undoing HVO for the
+> HugeTLB folio.
+>
 
-I think the logic in this patch uses fixed buffers for the request
-payloads to reduce the per-I/O overhead of pinning/unpinning the user
-pages for the payload but I don't think this helps with zero-copying,
-as the pages still need to get copied from the registered buffer the
-server provided back to the client's pages (or vice versa). In the
-implementation in [1], the client's pages are registered into the
-sparse buffer by the kernel such that the server reads/writes to those
-client pages directly.
+At the guest_memfd biweekly call this morning, we touched on this topic
+again. David pointed out that the ~2MB overhead to store a 1G folio in
+the filemap seems a little high.
 
-I think your patch is doing a similar thing to what the patch from
-last month for registered buffers [2] did, except [2] also implemented
-fixed buffers for the headers to eliminate that per-I/O overhead too.
-However, when I thought about this design some more, I realized if we
-used kernel-managed ring buffers instead, we pretty much get the same
-wins on reducing I/O overhead but also can significantly reduce the
-memory footprint used by each queue, by allowing the buffers to be
-incrementally consumed and thus sharable across requests, as well as
-allowing more flexibility in the future if we want to do things like
-add multiple ring-pools for different categories of requests, etc.
-Some more thoughts on this can be found on this thread here [3].
+IIUC the above is correct, so even if we put aside splitting, without
+multi-index XArrays, storing a 1G folio in the filemap would incur this
+number of nodes in overheads. (Hence multi-index XArrays are great :))
 
-Thanks,
-Joanne
+>> I'm most concerned that, once we have memdescs, splitting a 1GB page
+>> into 512 * 512 4kB pages is going to involve allocating about 20MB
+>> of memory (80 bytes * 512 * 512).
+>
+> I definitely need to catch up on memdescs. What's the best place for me
+> to learn/get an overview of how memdescs will describe memory/replace
+> struct folios?
+>
+> I think there might be a better way to solve the original problem of
+> usage tracking with memdesc support, but this was intended to make
+> progress before memdescs.
+>
+>> Is this necessary to do all at once?
+>
+> The plan for guest_memfd was to first split from 1G to 4K, then optimize
+> on that by splitting in stages, from 1G to 2M as much as possible, then
+> to 4K only for the page ranges that the guest shared with the host.
 
-[1] https://lore.kernel.org/linux-fsdevel/20251203003526.2889477-1-joannelk=
-oong@gmail.com/
-[2] https://lore.kernel.org/linux-fsdevel/20251027222808.2332692-9-joannelk=
-oong@gmail.com/
-[3] https://lore.kernel.org/linux-fsdevel/CAJnrk1bG7fAX8MfwJL_D2jzMNv5Rj9=
-=3D1cgQvVpqC1=3DmGaeAwOg@mail.gmail.com/
+David asked if splitting from 1G to 2M would remove the need for this
+extension patch series. On the call, I wrongly agreed - looking at the
+code again, even though the existing code kind of takes input for the
+target order of the split though xas, it actually still does not split
+to the requested order.
 
->
-> libfuse section:
-> https://github.com/lreeze123/libfuse/tree/zero-copy
->
-> Signed-off-by: Xiaobing Li <xiaobing.li@samsung.com>
-> ---
->  fs/fuse/dev_uring.c   | 44 +++++++++++++++++++++++++++++++------------
->  fs/fuse/dev_uring_i.h |  4 ++++
->  2 files changed, 36 insertions(+), 12 deletions(-)
->
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index f6b12aebb8bb..23790ae78853 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -584,15 +584,20 @@ static int fuse_uring_copy_from_ring(struct fuse_ri=
-ng *ring,
->         int err;
->         struct fuse_uring_ent_in_out ring_in_out;
->
-> -       err =3D copy_from_user(&ring_in_out, &ent->headers->ring_ent_in_o=
-ut,
-> -                            sizeof(ring_in_out));
-> -       if (err)
-> -               return -EFAULT;
-> +       if (ent->zero_copy) {
-> +               iter =3D ent->payload_iter;
-> +               ring_in_out.payload_sz =3D ent->cmd->sqe->len;
-> +       } else {
-> +               err =3D copy_from_user(&ring_in_out, &ent->headers->ring_=
-ent_in_out,
-> +                                       sizeof(ring_in_out));
-> +               if (err)
-> +                       return -EFAULT;
->
-> -       err =3D import_ubuf(ITER_SOURCE, ent->payload, ring->max_payload_=
-sz,
-> -                         &iter);
-> -       if (err)
-> -               return err;
-> +               err =3D import_ubuf(ITER_SOURCE, ent->payload, ring->max_=
-payload_sz,
-> +                                &iter);
-> +               if (err)
-> +                       return err;
-> +       }
->
->         fuse_copy_init(&cs, false, &iter);
->         cs.is_uring =3D true;
-> @@ -618,10 +623,14 @@ static int fuse_uring_args_to_ring(struct fuse_ring=
- *ring, struct fuse_req *req,
->                 .commit_id =3D req->in.h.unique,
->         };
->
-> -       err =3D import_ubuf(ITER_DEST, ent->payload, ring->max_payload_sz=
-, &iter);
-> -       if (err) {
-> -               pr_info_ratelimited("fuse: Import of user buffer failed\n=
-");
-> -               return err;
-> +       if (ent->zero_copy) {
-> +               iter =3D ent->payload_iter;
-> +       } else {
-> +               err =3D import_ubuf(ITER_DEST, ent->payload, ring->max_pa=
-yload_sz, &iter);
-> +               if (err) {
-> +                       pr_info_ratelimited("fuse: Import of user buffer =
-failed\n");
-> +                       return err;
-> +               }
->         }
->
->         fuse_copy_init(&cs, true, &iter);
-> @@ -1068,6 +1077,17 @@ fuse_uring_create_ring_ent(struct io_uring_cmd *cm=
-d,
->         ent->headers =3D iov[0].iov_base;
->         ent->payload =3D iov[1].iov_base;
->
-> +       if (READ_ONCE(cmd->sqe->uring_cmd_flags) & IORING_URING_CMD_FIXED=
-) {
-> +               ent->zero_copy =3D true;
-> +               err =3D io_uring_cmd_import_fixed((u64)ent->payload, payl=
-oad_size, ITER_DEST,
-> +                                               &ent->payload_iter, cmd, =
-0);
-> +
-> +               if (err) {
-> +                       kfree(ent);
-> +                       return ERR_PTR(err);
-> +               }
-> +       }
-> +
->         atomic_inc(&ring->queue_refs);
->         return ent;
->  }
-> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
-> index 51a563922ce1..cb5de6e7a262 100644
-> --- a/fs/fuse/dev_uring_i.h
-> +++ b/fs/fuse/dev_uring_i.h
-> @@ -38,6 +38,10 @@ enum fuse_ring_req_state {
->
->  /** A fuse ring entry, part of the ring queue */
->  struct fuse_ring_ent {
-> +       bool zero_copy;
-> +
-> +       struct iov_iter payload_iter;
-> +
->         /* userspace buffer */
->         struct fuse_uring_req_header __user *headers;
->         void __user *payload;
-> --
-> 2.34.1
->
+I think some workarounds could be possible, but for the introduction of
+guest_memfd HugeTLB with folio restructuring, taking a dependency on
+non-uniform splits (splitting 1G to 511 2M folios and 512 4K folios) is
+significant complexity for a single series. It is significant because in
+addition to having to deal with non-uniform splits of the folios, we'd
+also have to deal with non-uniform HugeTLB vmemmap optimization.
+
+Hence I'm hoping that I could get help reviewing these changes, so that
+guest_memfd HugeTLB with non-uniform splits could be handled in a later
+stage as an optimization. Besides, David says generalizing this could
+help unblock other things (I forgot the detail, maybe David can chime in
+here) :)
+
+Thanks!
 
