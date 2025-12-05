@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-70846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DBF7CA8A29
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 18:35:38 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68ACDCA8A35
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 18:36:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1D06D3026295
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 17:27:09 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 8A9EA30913B9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 17:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04A035A940;
-	Fri,  5 Dec 2025 17:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1395D352928;
+	Fri,  5 Dec 2025 17:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BxQh9VmO"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jxZnOWg8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8541A2D5A14;
-	Fri,  5 Dec 2025 17:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E41309DA5;
+	Fri,  5 Dec 2025 17:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764955621; cv=none; b=AmR3elNVbyeV9zatEaGp47Wh1iCzCJHIXw7Y5pAqIVWQyBxKbkv2/yvC0qWrtUyWUEMrzoec9AxUczwcecsPzSHryFjnfETPjlngCvsDbATAY11dmx2/XeBcnJpEN93N4reRhLTm9CIf9yGn7c5isdOZhrs0y53eVRO1E30MXl4=
+	t=1764955818; cv=none; b=An4pShQube0dzamUJDiO/tEuIFbiySApw9nNe8s3bMAaHp16ZcbdDtQBP1u6HUMspYuOGwZOr/NosVYFAUzuI+iEf1KTtyFY9xYog/bNraBLX3q4vMJCAKgW7LuHYyrn+qY1xyi28cP2woWcx7Eg635R6g6gSzPOB78LqNHMppA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764955621; c=relaxed/simple;
-	bh=TmM8G4lNHaUxZQSRyqB2EBkn6Cn3E5Bi3cEB/xO+pjM=;
+	s=arc-20240116; t=1764955818; c=relaxed/simple;
+	bh=+ffseYP4FsqtlkEAydL2rHyJW7f5NEUUyD1ipfBMGZA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m7E/TjAQie2Xz8FVYJTh3RL3LiU/zrQjWRkARWVKJUeUYzQWl0JIFxkvRo4H/YpP3ho5BuImCZpz8hQTJ8tbz5deJ3Gy/fVI4TbZ6ygU2i/JFp8faLR5K00nTFORJCNeVimQQ3EiPkPsXg4r+IVrb6opnVQG5h5hIZeHTFo0vdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BxQh9VmO; arc=none smtp.client-ip=192.198.163.11
+	 In-Reply-To:Content-Type; b=NMt6O8dcd8UvmuZ0QqIrmcvkSjWcVr7YOdNkijAA2iqPidyychkcJfua1mwCfsdS3mGYMKSCduAVeETRKpLYZ4OjlM+w4O5HzEzdDGv90uY/7MHEnjInXpCm0juML1Mwq7Pw8Txp5RHc8gKbUHkFRekeJ3XJ6eM3pPLHvU9pLrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jxZnOWg8; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1764955620; x=1796491620;
+  t=1764955816; x=1796491816;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=TmM8G4lNHaUxZQSRyqB2EBkn6Cn3E5Bi3cEB/xO+pjM=;
-  b=BxQh9VmOMSFH+v447AoNk7cwu2vq0oQQOXiC/YGASkvpA61H+e0sAUs9
-   3er16w7oWUCALB86utszR4CKswKtY1hNl2iFtjb0MGCGAFD1ru3IIYFcM
-   LFTsEVq8+6iBEO/PRJAeboXTQ+WAwR+ID0OLpx+3umeexhQCkn2Gpk7P+
-   S3JgkXoNZOtB8HSec8xO5Ewnm4ftq031svQq4UDOdRtoHPFSkffu9i9wm
-   +WEpDik6QC/YKD/uk+9mrqqzteAH+yrOTZyT+60EoW6Yr9B0fuR/ldQVV
-   ykQE2LKqawC6aFZqwzQuPVhspPeQGToLLoEOD7rxVqaldW06SXqR32O5F
-   A==;
-X-CSE-ConnectionGUID: 6nY8BPMfRD+gUUyjO4gS8Q==
-X-CSE-MsgGUID: /M9e4AW7Tnq+niNtBUZyWQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11633"; a="77612336"
+  bh=+ffseYP4FsqtlkEAydL2rHyJW7f5NEUUyD1ipfBMGZA=;
+  b=jxZnOWg8/UBHhSrqePVzUMnIJsUkcqpfta0J15htzJR6hMgh4DtZ0XEz
+   yFzpWHwfpubLOlPt4PK1RVInxzzo0DyINbbbTy62S8J2QwJXji+Npugoe
+   Gf7Nhbo2fPCvj7tAi8BFyqtwPoAkbSdI+0T/IRsyy9PBSmLLMyKjEehfl
+   6f4Ldo5WKvDtY+/gVnsHRVuQv3EcsBzRtIOIcPB3zlqOw91tYW/rlodh8
+   iV1vmDfpUWnYlBDjVTYW1BJYsLPIC5oMV2texw1SEDEeWz+KNFgqPSbTj
+   6366xoFJywbDVeAwPpc9NnAid693bW+HlS+T/GX8c3O6m2DYWkqxeI2nS
+   w==;
+X-CSE-ConnectionGUID: /sD8iGQfSgSVn7His97m2w==
+X-CSE-MsgGUID: thxXek9eQo6j2MEfNEt7FQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11633"; a="92471070"
 X-IronPort-AV: E=Sophos;i="6.20,252,1758610800"; 
-   d="scan'208";a="77612336"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2025 09:26:58 -0800
-X-CSE-ConnectionGUID: F9P4sbSUS1agtmmb/ST5Xg==
-X-CSE-MsgGUID: RM8P4RCTRyq268Qov786Aw==
+   d="scan'208";a="92471070"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2025 09:30:13 -0800
+X-CSE-ConnectionGUID: 0zVgGn7kRryd4YRQDDxvpw==
+X-CSE-MsgGUID: JpgCbNWPR9SJGQ2HiyIx1Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.20,252,1758610800"; 
-   d="scan'208";a="194646785"
+   d="scan'208";a="232715651"
 Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.108.173]) ([10.125.108.173])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2025 09:26:57 -0800
-Message-ID: <9409531b-589b-4a54-b122-06a3cf0846f3@intel.com>
-Date: Fri, 5 Dec 2025 09:26:56 -0800
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2025 09:30:11 -0800
+Message-ID: <51a059a1-f03a-4b43-8df6-d31fca09cce7@intel.com>
+Date: Fri, 5 Dec 2025 09:30:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,8 +65,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 01/13] x86: export set_direct_map_valid_noflush to KVM
- module
+Subject: Re: [PATCH v8 05/13] KVM: guest_memfd: Add flag to remove from direct
+ map
 To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
  "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
  "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
@@ -135,7 +135,7 @@ Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
  "Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco"
  <xmarcalx@amazon.co.uk>
 References: <20251205165743.9341-1-kalyazin@amazon.com>
- <20251205165743.9341-2-kalyazin@amazon.com>
+ <20251205165743.9341-6-kalyazin@amazon.com>
 From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -181,23 +181,30 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20251205165743.9341-2-kalyazin@amazon.com>
+In-Reply-To: <20251205165743.9341-6-kalyazin@amazon.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/5/25 08:57, Kalyazin, Nikita wrote:
-...
-> +EXPORT_SYMBOL_FOR_MODULES(set_direct_map_valid_noflush, "kvm");
+On 12/5/25 08:58, Kalyazin, Nikita wrote:
+> +static void kvm_gmem_folio_restore_direct_map(struct folio *folio)
+> +{
+> +	/*
+> +	 * Direct map restoration cannot fail, as the only error condition
+> +	 * for direct map manipulation is failure to allocate page tables
+> +	 * when splitting huge pages, but this split would have already
+> +	 * happened in set_direct_map_invalid_noflush() in kvm_gmem_folio_zap_direct_map().
+> +	 * Thus set_direct_map_valid_noflush() here only updates prot bits.
+> +	 */
+> +	if (kvm_gmem_folio_no_direct_map(folio))
+> +		set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio),
+> +					 true);
+> +}
 
-I think this export is a bad idea. The interface is abhorrent enough,
-but exporting it just invites abuse and bugs.
+This is rather hopeful programming.
 
-I think what this really needs is a pair of helpers that are just:
+I can think of a number of ways that this assumption might become invalid.
+This at *least* check for set_direct_map_valid_noflush() failures (or
+whatever interface you end up using)?
 
-	folio_zap_direct_map()
-and
-	folio_restore_direct_map()
-
-that take a folio. *Those* can get exported to modules and those should
-internally flush the TLB and not expect callers to do it.
+A WARN_ON_ONCE() would be fine.
 
