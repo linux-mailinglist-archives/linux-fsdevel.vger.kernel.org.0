@@ -1,191 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-70755-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACFE4CA6288
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 06:38:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B686DCA6346
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 07:06:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DAF833132977
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 05:38:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 74F5930F1F7F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 06:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32A82EB5A6;
-	Fri,  5 Dec 2025 05:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1E126D4DF;
+	Fri,  5 Dec 2025 06:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="J/rDLmCS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f208.google.com (mail-oi1-f208.google.com [209.85.167.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CA22E9EB5
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 05:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F8B2EBDDE
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 06:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764913106; cv=none; b=XzUCpCf7WPqxeUI93D3ldBXqO0Htf7I4DCIhYYi1kdzNI9yoysDhg2vydIh1ZXRWuaszGPUk5IQtwGcnsU1h8k8dGCKnLsIDf0uIkZd1aaoKyZQyja264y17GHa8QkuDEiVxFsFxKwmyJ32wH7RXH5UxlD77Z9jei4rDYYngQx4=
+	t=1764914743; cv=none; b=QeK56xCfavfPjOEAUGMynznF9IOcX3N38wjTk+P2FQbu3T2QZdNmBpbD+f2Bi672q8LKWWCr7Yjkgjvt1JpabQBIbzGTAUpLw2J1LKUbXyDFdGxupQ3/6ugPZNsUw354HMIO41crtT3JITtX0i1CC4hHwozMphQAZu9k/5GtvxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764913106; c=relaxed/simple;
-	bh=gX5s9InP4CaxkjTUQnFtfVjpqhWdyL8e7Gu83tuJ2r8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JJraS2Y9T16WkXLGtweWMHmU8BmDY0dhy91uldQ5qUhQ9UXHxEGZOOTvsh+f6EpDk0WTM9fm0ihl/BR/qcATPdzB+Iwh9GA3V4KmK30ombECqPckpKb7Od7vCmHAcdDv3xhxeAFIZHkj2l2xEydrAC1r2pa0o0am64dAlr8RI2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi1-f208.google.com with SMTP id 5614622812f47-450aff06525so1886349b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Dec 2025 21:38:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764913103; x=1765517903;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RKNu+EyLP3ZC3mG1qmS+d+QJ4bbxooVYEaLLuBmdjRA=;
-        b=S2TOl3TsgrYiXu57VtVof7Y83OQfsuk4Stvc3MeQsWoNHvHVFc62NL4wf+YCYfAZZJ
-         i809+a2exUG2f4TA6ZHypRAT9KtavXF01mejpF7+2pw870XkhJfabkAdu2KlgvwJuUva
-         UV47J/u5NtEFo07WJP6cuHRN1EhkXp6IQoT/KP/Zt1oQfr8Txwi9jS5rU+6Q8FPizLxi
-         XGkejBw0jlXVWSrGWrt0AYB2Tx323pE+4Detpwpfg5e03X36S7+MNzgz++HLkG/Mf7g4
-         CAoc8//ZIQHlrXChzJGWjTA+y7aMIt7uV8UYt7ln+sRowtsSR0LQ/S31JxHiCb1xyEKB
-         d58g==
-X-Forwarded-Encrypted: i=1; AJvYcCUj3bMZ/ZK01ZIkq4/NuixQCeDzzrL0Qhn41pq1cZPfOPmNN0Fmsc6MM+3CeSYDTj1jXf03+79fTcaM53Bi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKWxExSXZaiJ7rENiZiOHdmUhQPItBOR/VynxvhggdLefW4uyj
-	HqH6wlb0YGgCEqu9UOBb5VyjMwcO7yshWAncQwY9leUYvyxfOnXP8eZjKetAKv70vDfLr7YeAb6
-	c+168NDob/gt6ujW3F6KNtjHEMzjkwL3sRWIiAtg8rikjaMTzFfLVp22vd+I=
-X-Google-Smtp-Source: AGHT+IFKaFSjNA4Bbp+B5QxA0MKUZ2YayGf9kzjLEatuCLUHLZx6pTe7H3LSC8OAf/kkvjP8PDmOxRmbadT60OW42/6RI08A20ag
+	s=arc-20240116; t=1764914743; c=relaxed/simple;
+	bh=iQqT1YfnSF+PVAsarfa8K/sQRgiyZyp4zAU8AafzvxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=IRTgfek/t+FKgiafWrCZ2qC/bPPOebQnMrcWi+hollNCrwge+qaP9wftVFGrqg4kilUgDlKZzQ43hkDjVQpbwjdRN2eK6N4fCP17Ai98Pjx54ywj07eG3fc70ylvG5EIhv3Z8MOYjzQRkrItd/Tk2FH/u7+pZamRf7G7pQOfero=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=J/rDLmCS; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251205060538epoutp0284fe18e7be5e90e295106e4e3ae59d50~_PJp132tS2839928399epoutp02x
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 06:05:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251205060538epoutp0284fe18e7be5e90e295106e4e3ae59d50~_PJp132tS2839928399epoutp02x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1764914738;
+	bh=0HCYnBvoqZ92l1CX8dpzhYVCv+vR4hZNunzee5qrVzE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=J/rDLmCS78+BAi9MzFSyVITHd+4zTX9dwg/3d5H5Ykn89SYn7cpmCoYzRwObCvGyF
+	 yemgPsNt77yUhmf4zkEdvoUnbvHUEY6JrDEUeHUTQUgxoZv/kCMxcgGDASF1SzUl7x
+	 PjtOq+S8PSg9Ax3M11eJsaqpbnFd5sSDu8RfgQdM=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251205060537epcas1p136e32aa3ea9a95e31812c4d47a8367b0~_PJpfqfOW1981719817epcas1p1-;
+	Fri,  5 Dec 2025 06:05:37 +0000 (GMT)
+Received: from epcas1p1.samsung.com (unknown [182.195.38.114]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4dN1814K7Dz6B9mR; Fri,  5 Dec
+	2025 06:05:37 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251205060537epcas1p1b0ddc2ccd96071cbec445c34497c88ae~_PJo8Jn1U2451924519epcas1p1T;
+	Fri,  5 Dec 2025 06:05:37 +0000 (GMT)
+Received: from [172.25.92.0] (unknown [10.246.9.208]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251205060536epsmtip2722ec08310b04d04d2e887f10499b937~_PJo0CU3R0291202912epsmtip2M;
+	Fri,  5 Dec 2025 06:05:36 +0000 (GMT)
+Message-ID: <3f846d9a-72b7-49bf-922e-b75938ddbf8b@samsung.com>
+Date: Fri, 5 Dec 2025 15:05:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:ecf:b0:43f:1d72:592 with SMTP id
- 5614622812f47-4536e44b686mr4836441b6e.23.1764913103618; Thu, 04 Dec 2025
- 21:38:23 -0800 (PST)
-Date: Thu, 04 Dec 2025 21:38:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69326fcf.a70a0220.d98e3.01e5.GAE@google.com>
-Subject: [syzbot] [hfs?] memory leak in hfsplus_init_fs_context
-From: syzbot <syzbot+99f6ed51479b86ac4c41@syzkaller.appspotmail.com>
-To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	slava@dubeyko.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    e69c7c175115 Merge tag 'timers_urgent_for_v6.18_rc8' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=116ffcb4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f30cc590c4f6da44
-dashboard link: https://syzkaller.appspot.com/bug?extid=99f6ed51479b86ac4c41
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10eef912580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1534c192580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e1758d9b5b79/disk-e69c7c17.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/772ec0d0a545/vmlinux-e69c7c17.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d905337ef02b/bzImage-e69c7c17.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/65bc76439748/mount_4.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+99f6ed51479b86ac4c41@syzkaller.appspotmail.com
-
-BUG: memory leak
-unreferenced object 0xffff8881287f8a00 (size 512):
-  comm "syz.0.17", pid 6072, jiffies 4294944858
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace (crc aaf4239b):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4983 [inline]
-    slab_alloc_node mm/slub.c:5288 [inline]
-    __kmalloc_cache_noprof+0x3a6/0x5b0 mm/slub.c:5766
-    kmalloc_noprof include/linux/slab.h:957 [inline]
-    kzalloc_noprof include/linux/slab.h:1094 [inline]
-    hfsplus_init_fs_context+0x26/0x90 fs/hfsplus/super.c:678
-    alloc_fs_context+0x214/0x430 fs/fs_context.c:315
-    do_new_mount fs/namespace.c:3698 [inline]
-    path_mount+0x93c/0x12e0 fs/namespace.c:4028
-    do_mount fs/namespace.c:4041 [inline]
-    __do_sys_mount fs/namespace.c:4229 [inline]
-    __se_sys_mount fs/namespace.c:4206 [inline]
-    __x64_sys_mount+0x1a2/0x1e0 fs/namespace.c:4206
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-BUG: memory leak
-unreferenced object 0xffff8881287f9a00 (size 512):
-  comm "syz.0.18", pid 6078, jiffies 4294944862
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace (crc aaf4239b):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4983 [inline]
-    slab_alloc_node mm/slub.c:5288 [inline]
-    __kmalloc_cache_noprof+0x3a6/0x5b0 mm/slub.c:5766
-    kmalloc_noprof include/linux/slab.h:957 [inline]
-    kzalloc_noprof include/linux/slab.h:1094 [inline]
-    hfsplus_init_fs_context+0x26/0x90 fs/hfsplus/super.c:678
-    alloc_fs_context+0x214/0x430 fs/fs_context.c:315
-    do_new_mount fs/namespace.c:3698 [inline]
-    path_mount+0x93c/0x12e0 fs/namespace.c:4028
-    do_mount fs/namespace.c:4041 [inline]
-    __do_sys_mount fs/namespace.c:4229 [inline]
-    __se_sys_mount fs/namespace.c:4206 [inline]
-    __x64_sys_mount+0x1a2/0x1e0 fs/namespace.c:4206
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-BUG: memory leak
-unreferenced object 0xffff8881287f9c00 (size 512):
-  comm "syz.0.19", pid 6079, jiffies 4294944864
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace (crc aaf4239b):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4983 [inline]
-    slab_alloc_node mm/slub.c:5288 [inline]
-    __kmalloc_cache_noprof+0x3a6/0x5b0 mm/slub.c:5766
-    kmalloc_noprof include/linux/slab.h:957 [inline]
-    kzalloc_noprof include/linux/slab.h:1094 [inline]
-    hfsplus_init_fs_context+0x26/0x90 fs/hfsplus/super.c:678
-    alloc_fs_context+0x214/0x430 fs/fs_context.c:315
-    do_new_mount fs/namespace.c:3698 [inline]
-    path_mount+0x93c/0x12e0 fs/namespace.c:4028
-    do_mount fs/namespace.c:4041 [inline]
-    __do_sys_mount fs/namespace.c:4229 [inline]
-    __se_sys_mount fs/namespace.c:4206 [inline]
-    __x64_sys_mount+0x1a2/0x1e0 fs/namespace.c:4206
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fs: exfat: improve error code handling in
+ exfat_find_empty_entry()
+To: Haotian Zhang <vulab@iscas.ac.cn>, linkinjeon@kernel.org,
+	yuezhang.mo@sony.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Sungjong Seo <sj1557.seo@samsung.com>
+In-Reply-To: <20251205015904.1186-1-vulab@iscas.ac.cn>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20251205060537epcas1p1b0ddc2ccd96071cbec445c34497c88ae
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-711,N
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251205015927epcas1p4b0d227e69d121ea76df6ac97a9754c5f
+References: <20251203070813.1448-1-vulab@iscas.ac.cn>
+	<CGME20251205015927epcas1p4b0d227e69d121ea76df6ac97a9754c5f@epcas1p4.samsung.com>
+	<20251205015904.1186-1-vulab@iscas.ac.cn>
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 25. 12. 5. 10:59, Haotian Zhang wrote:
+> Change the type of 'ret' from unsigned int to int in
+> exfat_find_empty_entry(). Although the implicit type conversion
+> (int -> unsigned int -> int) does not cause actual bugs in
+> practice, using int directly is more appropriate for storing
+> error codes returned by exfat_alloc_cluster().
+> 
+> This improves code clarity and consistency with standard error
+> handling practices.
+> 
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+> ---
+>  fs/exfat/namei.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+> index f5f1c4e8a29f..f2a87ecd79f9 100644
+> --- a/fs/exfat/namei.c
+> +++ b/fs/exfat/namei.c
+> @@ -304,8 +304,8 @@ static int exfat_find_empty_entry(struct inode *inode,
+>  		struct exfat_chain *p_dir, int num_entries,
+>  		struct exfat_entry_set_cache *es)
+>  {
+> -	int dentry;
+> -	unsigned int ret, last_clu;
+> +	int dentry, ret;
+> +	unsigned int last_clu;
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+The patch looks good to me:
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>  	loff_t size = 0;
+>  	struct exfat_chain clu;
+>  	struct super_block *sb = inode->i_sb;
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
