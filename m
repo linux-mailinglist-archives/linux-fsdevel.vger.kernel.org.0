@@ -1,99 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-70931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED6ECA9F79
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 06 Dec 2025 04:13:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3728CA9FA1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 06 Dec 2025 04:29:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B6DE230AD6AE
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Dec 2025 03:10:26 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 60DB5316FD10
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Dec 2025 03:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A8E296BCD;
-	Sat,  6 Dec 2025 03:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC81229B799;
+	Sat,  6 Dec 2025 03:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pGLoFvrt"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hU6VFt3c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02C825C809;
-	Sat,  6 Dec 2025 03:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4426813790B
+	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Dec 2025 03:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764990625; cv=none; b=ldZC9mFySZjHpA4wBEQZsQ4QaFasGa2vN3AgJn0HuX5M915b7PdyuRkIl6WSPRTuXV2nwYSnJHlAf9evjTmsEj+XYbfxogF+eZspCPKbbxC/nVuzHFdY7DkyPMsaB2Keu92/l1vZLNouk0aieXteqfGY9X+c+J8HLoFRkXGp5M8=
+	t=1764991776; cv=none; b=m1xjitZEnWsLAwCzkIMjzJm8/s74J2r8Om8+PT18qEd0WdPexH5cfq9HOhbBKK6unml7oIvkomC6mOe+DBCWIABJXOWLu19G7tdM7a0xYa8V/k14PfbMNn6jvKe7zZ4NlRkwKuS/rfyN0IqZdlGGjF6BlaAy/s2PF0j0oHxrnTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764990625; c=relaxed/simple;
-	bh=P16d0O5MHnthzEBH207y0zYurodEqmEbhGuyCTinR/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gzOOTKMm7PIDEQJuRorjg7m8gzhpBJCghmjF6kPyTIDQXQFdzzU0UqRAsBIpEv5CJxoW933L0O55kbqGP/K+4wJq94QgsGNRRyKsapAdPpdZ7L14vXNTCTMvcLuZk0Wyk3V9GQOk9Fot40uu6D7uWnglZWrkuUDk1ZNUOko1XQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=pGLoFvrt; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RJ9hhFfjO2TAFpC58us8Dx8MqMT1C2R+KM2QmzUCCbY=; b=pGLoFvrt/wFFEOIuP4M/+I5evp
-	7YG40zb4TcPli1xSlbFrRwKrTs7gB85wC87YAJAzJh8+qvWvPou9OuA28xYzTm2sAhs9CC8S+MlE+
-	z8hbSGXI4A6o42k+Fv0yIF/OX8YR87TZH2SIxeghN73anihC0TX7Qijyt8zG260lm8eQ3Yp1l9+Io
-	pNNTk7zQ1NEDRdoX75eouTHW9f5AsgvTPgMLgMte+CYkKJmhONwUPWuD3wABz856mK/oI6erVkGDu
-	sv/2O4Ciy0EEX7XXgcYoDp9rM6ns/rLYB5MidmX4E8bJf5W1ItxbQhpdqtastxXZbCNwtrbX0YeXy
-	ydNcOzGQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vRigz-00000005X3i-1dSj;
-	Sat, 06 Dec 2025 03:10:41 +0000
-Date: Sat, 6 Dec 2025 03:10:41 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] fuse update for 6.19
-Message-ID: <20251206031041.GQ1712166@ZenIV>
-References: <CAJfpegunwB28WKqxNWCQyd5zrMfSif_YmBFp+_m-ZsDap9+G7Q@mail.gmail.com>
- <CAHk-=wht097GMgEuH870PU4dMfBCinZ5_qvxpqK2Q9PP=QRdTA@mail.gmail.com>
- <20251206014242.GO1712166@ZenIV>
- <CAHk-=wg8KJbcPuoRBFmD9c42awaeb4anXsC4evEOj0_QVKg0QQ@mail.gmail.com>
- <20251206022826.GP1712166@ZenIV>
+	s=arc-20240116; t=1764991776; c=relaxed/simple;
+	bh=sSUoJ4jJ/gjhl/k3WbdQeml9Aj9UFrDPCTK0+fCUaJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pOCe6NOQKF4T7i9aC7o27qZcYEGqdzMn+Av7dKI24VF+AkrWj5WJEbWx3EW+pwDsFDEHdaW5XGZnmVvhpJpuI52bZWwSQhXiExIPSxHdBQ4/hBGOW5Nclnd3Jb1hsukLc4j2LS2FAgNv4vUkmTAmxVTeFOpyiJjx/T3cZJNpE88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hU6VFt3c; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b713c7096f9so423847466b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Dec 2025 19:29:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1764991771; x=1765596571; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9rDMdbOZeHeRA1HNsLadcwrVejqh1fXDe4muFQaGK/s=;
+        b=hU6VFt3c2ysFzNkVQMxspJnZT9sohaJOGOKKEvxDBbC6FGK4nG641nVk8EMPnCeNYO
+         FHCLzgQy656ZZflzxcZ4oY2WqebeA3lbZE0OrAYjex9z+Y4gdrcc/UTJqcPQob0xuXM9
+         q6QgMFaVQ7PNfbYrSkmA8zH2zzVx4A6I79Ywo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764991771; x=1765596571;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9rDMdbOZeHeRA1HNsLadcwrVejqh1fXDe4muFQaGK/s=;
+        b=ad71oKcFlrIuOfPsrf0sFSgXGKePpMRNnGfJNhXc6HxzCiOPm0NZO11RX+gXy2iU4K
+         Zk27x+3vI7Ec6Q+PKFoKlf4vLmBX9avitb3x43UsIqI7lGl2PtXoPwgM9/44+fBVrRf4
+         PmKGca66ukJSclyKQlSOSGccYUmDRlchXPVAJ9LrfEFN9LEnZ9J5t4Fx12JzylDxyfMK
+         ivHNioNmQCMn22wAde+7lXkxaFf9Buexrzx7iw7oOK9S6unxoZKbzeBHBh0hEDqRV3l+
+         hmJaau9odZDgBIC/G5QLsksqXGgNAqJhfk8CkPBNz0IYzHmTXxHnqEKY2s14icOj5P4W
+         TANA==
+X-Forwarded-Encrypted: i=1; AJvYcCW03wVW7H+8yc/OcFlVr7bd7z7fs6GDM6NcRy+62m+mivWzdIUT9YGMPHueMyNgN7zKUXWR4u7rCVFH0pz1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7q+4s2dHUao74vtEbCtcSX3ZdmTNmTBnoKafGisYqTEy8tvc0
+	y+NEHB+XQHDdvJa16YsRcDYZPDlb5Z3qNJ7eQoArB/v6VB90GLjpYKzk2Gp/xNJtEv5qggg8vi4
+	xrZq2krnYUw==
+X-Gm-Gg: ASbGncsTMTCx9QjiNnLDOl2ely3gZ3pBuqybkLkNP3jsXvnjbBmMWbZTVPr2Q2xMtk8
+	+YhGAZiyepegu7BwrDxnCyFUuOW1L37dTAy88Sn6obLOqJwyW7my0ddkN/9eBIRIsKMbsPQlgIx
+	Z68A0SwFPDtE59Shsv9NXNdYJfU3qJgTlxnRrY+bc+TdE8KfslijqMTZ0Q9+uCNSqbJBYYLRjfe
+	6x3fPl2ySxpllc6wXf+UiP1/zlWaUGBRPoFdhG76YaJh45m5xoXavBKuWUsa7hWz/HjgD9tFb4C
+	r3G8F13fxuUnCr9ME4vGhLtXs+L5wya0kvln/4p3coCs0DhIx/MtgYFphRqv5+ftFtgqc23zEV6
+	RTGzQ4sg9XRYUTCVdU+L7lL26/o63aAGBx8NGsHSwfkCt/8RSMltOl1WzTzIvqkBmLdpuRoMVX1
+	geN3aP5psD+ir+8fWGDeDIUMp8P6S4adrMzzCGXo06FS37br3ctqQ2TMrN/7gD
+X-Google-Smtp-Source: AGHT+IGNUZoVCLc8J/lfGzD6Duisg87Kfbick5J2v/CkirgPw0ZS48d1+z2fMrGn+CuG4/DKgvExKA==
+X-Received: by 2002:a17:906:eec5:b0:b73:9792:9199 with SMTP id a640c23a62f3a-b7a247f4220mr123182466b.37.1764991771303;
+        Fri, 05 Dec 2025 19:29:31 -0800 (PST)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b79f4a15660sm524949466b.63.2025.12.05.19.29.30
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Dec 2025 19:29:30 -0800 (PST)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-640aa1445c3so4097247a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Dec 2025 19:29:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXTDiBi3XieOd601v+hQNNSGdnlvV9NkIX/8Se/cbUJePaL4Wu4wYSuB6fNLgyk/Sg+2uD44jNFU7F2Re8n@vger.kernel.org
+X-Received: by 2002:a05:6402:2812:b0:639:ffb5:3606 with SMTP id
+ 4fb4d7f45d1cf-6491ae36920mr913745a12.33.1764991770305; Fri, 05 Dec 2025
+ 19:29:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <CAJfpegunwB28WKqxNWCQyd5zrMfSif_YmBFp+_m-ZsDap9+G7Q@mail.gmail.com>
+ <CAHk-=wht097GMgEuH870PU4dMfBCinZ5_qvxpqK2Q9PP=QRdTA@mail.gmail.com>
+ <20251206014242.GO1712166@ZenIV> <CAHk-=wg8KJbcPuoRBFmD9c42awaeb4anXsC4evEOj0_QVKg0QQ@mail.gmail.com>
+ <20251206022826.GP1712166@ZenIV>
 In-Reply-To: <20251206022826.GP1712166@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 5 Dec 2025 19:29:13 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgBU3MQniRBmbKi2yj0fRrWQjViViNvNJ6sqjEB-3r4XA@mail.gmail.com>
+X-Gm-Features: AQt7F2rHiQRDyUvrJTfVxksoZ3VYbBvONyF2g8PMKDYqdoRr7weqE2kjeVvWVdM
+Message-ID: <CAHk-=wgBU3MQniRBmbKi2yj0fRrWQjViViNvNJ6sqjEB-3r4XA@mail.gmail.com>
+Subject: Re: [GIT PULL] fuse update for 6.19
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Dec 06, 2025 at 02:28:26AM +0000, Al Viro wrote:
-> On Fri, Dec 05, 2025 at 05:52:51PM -0800, Linus Torvalds wrote:
-> > On Fri, 5 Dec 2025 at 17:42, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > Far more interesting question, IMO, is what's to prevent memory
-> > > pressure from evicting the damn argument right under us.
-> > 
-> > That was my first reaction, but look at the 'fuse_dentry_prune()' logic.
-> > 
-> > So if the dentry is removed by the VFS layer, it should be removed here too.
-> 
+On Fri, 5 Dec 2025 at 18:28, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
 > Sure, ->d_prune() would take it out of the rbtree, but what if it hits
->                                 rb_erase(&fd->node, &dentry_hash[i].tree);
->                                 RB_CLEAR_NODE(&fd->node);
->                                 spin_unlock(&dentry_hash[i].lock);
-> ... right here, when we are not holding any locks anymore?
->                                 d_dispose_if_unused(fd->dentry, &dispose);
->                                 cond_resched();
->                                 spin_lock(&dentry_hash[i].lock);
 
-... and with what fuse_dentry_prune() is doing, we can't grab ->d_lock
-or bump ->d_count before dropping dentry_hash[...].lock.  ->d_release()
-is the one called outside of ->d_lock; ->d_prune() is under it, so we'd
-get AB-BA deadlock if we tried to do that kind of stuff.
+Ahh.
 
-Moving the eviction to ->d_release() might be doable; then we'd have
-fuse locks outside of ->d_lock and could call that thing under those.
+Maybe increase the d_count before releasing that rbtree lock?
 
-I'll need to poke around some more, but TBH I don't like that primitive -
-it's really easy to fuck up and conditions for its safe use are, AFAICS,
-never spelled out.
+Or yeah, maybe moving it to d_release. Miklos?
+
+           Linus
 
