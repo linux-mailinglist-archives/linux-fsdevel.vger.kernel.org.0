@@ -1,56 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-70940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE990CAA7BF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 06 Dec 2025 15:03:29 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C58E5CAA80A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 06 Dec 2025 15:07:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 9ACC2300EDE5
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Dec 2025 14:03:28 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8FAC9325163D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Dec 2025 14:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795462566D3;
-	Sat,  6 Dec 2025 14:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3292FE570;
+	Sat,  6 Dec 2025 14:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7++xVIU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7PkqcHD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29031F30A9;
-	Sat,  6 Dec 2025 14:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7CF1A5B8A;
+	Sat,  6 Dec 2025 14:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765029805; cv=none; b=WOjbMzT1fQrkz7gqIh5vxRrW0DGUUevTbRSiSzVGsBMeBpdoTMUnkJRjy8P6DHj2JMszny8nCz5Dl/U0aDCFDqrUG6lf7PhIEldDB0ALjE4lKxvi1/mfC2KMjJOiSWX6FTREp4fwevVybu9Zp9meqsi1pNjsl1Rtw71NOiI8h/c=
+	t=1765029811; cv=none; b=Rqo27UQuYcu3GQNsEGcwX9GCiZWa7VS8mmRufpQFFQeERt7GQja1XOAyzdLbWa4zvWvUwpvutXER6IPMVgJpE2ofuhaT1XTV3HUbbRt9JGBeHVTTn3/j6Jhr7LI/NpuwXuFeRupHcCSocjIc4ET+wDdFX7c+qa57jyMs3ERXyBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765029805; c=relaxed/simple;
-	bh=Lelg716SCuCBRQsIrBzYR0/pjER/M5f4vAd3JX5ZAFA=;
+	s=arc-20240116; t=1765029811; c=relaxed/simple;
+	bh=XGPJYqxUFqO/U/JTqW3lsm5cTXHU11sJp/S0wMSI4e8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K0tuWrnF2DwBMxkCoW3tOxPAOlLVOX+OT3WHgMZ8uz+rEMX7xPIOhwJ3e3rwAKuVnzCYi7/JsobF/vyWFQ4aolnHbfPrwjbp456Ig5qlrge5CG9qWGlw7Tbi6jB1qUY+NzRcPEvRCcWOAkfmMhFwoPKcptbhTenOznIOogjoJZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q7++xVIU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0EE9C113D0;
-	Sat,  6 Dec 2025 14:03:23 +0000 (UTC)
+	 MIME-Version; b=FQjprTLrvlx6d87bWcogCkh/cEsr57dM7gfjSewNdFs+yRsDfzzmuvOQiI1H1Qoxe9WWG6I5wn3BCez3lRDBKDXuDDQ8xJsXLGrRHbLUFwbvDdR5+077GY+AvR5H/4TO8JdWgU8gKTaN5Ig21E4n60zcc5YI5WfEvmMjRc/Gtbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7PkqcHD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910ACC4CEF5;
+	Sat,  6 Dec 2025 14:03:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765029805;
-	bh=Lelg716SCuCBRQsIrBzYR0/pjER/M5f4vAd3JX5ZAFA=;
+	s=k20201202; t=1765029810;
+	bh=XGPJYqxUFqO/U/JTqW3lsm5cTXHU11sJp/S0wMSI4e8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q7++xVIUfvzo63s2fpIcGn6cfaqfR019TIeCVTS0qY8mi6Rgo+duyjx5xrlHuhzpJ
-	 BYBVHOVRrSkaE4i+PtRp9aCGA/i+GRfVE8o9ss3ZtopXWHjZ1c9YfJwcWU/mQVMz7Y
-	 eSFzdf/ho+0Us5Eywx90mwvYPFkVXL/89TsbFg9QdX6F2iwTzmH2Fzk6uMPPj8aheQ
-	 ZKvtpQXNmPEZQGep6CoPTH84tRug4jLxW1aa3lB92MqDtUHdws5vVivvQc4vE+XMZs
-	 kyBWhuPps5shcFwHcLQ8aClmeQJZy/5Q3MUA93dOWJXazKHwo6kpf2f55ESyoNn/So
-	 brEkmh6RK2mdA==
+	b=M7PkqcHDePyDoX9PkOKLqz896dU1iSXPlMFHhnzq0xMGfoNCcq37PWTaFkL5E4XPn
+	 +FNUy4dtWG55gwo0ArUYFlV5CbH3aww6r5jaBQ5XO+dPcJx0wtX5q/uTMch4FlldEi
+	 BXxlXg9njk1FmhkjyKPtJEgmEoDMSjI0+dB+jtUcZyWL6Iafs/1IoisnMb6okqZ0jB
+	 JCFAhckB9IaaM14d2IlR0f1uWtWFXhkAkJ2q9fMSlwbrobbpgVXS/iwkJ9HJPU6u0h
+	 bXZ6W3tKyRn1INRvkd/1KW6IvTvR5leB/OSnf0edWZr3nUHRg0lWWfsGwiFP4uP8jx
+	 foYRs38wAfhTQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	Sasha Levin <sashal@kernel.org>,
-	frank.li@vivo.com,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] hfsplus: Verify inode mode when loading from disk
-Date: Sat,  6 Dec 2025 09:02:19 -0500
-Message-ID: <20251206140252.645973-14-sashal@kernel.org>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Yangtao Li <frank.li@vivo.com>,
+	linux-fsdevel@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18] hfsplus: fix volume corruption issue for generic/101
+Date: Sat,  6 Dec 2025 09:02:22 -0500
+Message-ID: <20251206140252.645973-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251206140252.645973-1-sashal@kernel.org>
 References: <20251206140252.645973-1-sashal@kernel.org>
@@ -63,244 +62,286 @@ MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.18
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Viacheslav Dubeyko <slava@dubeyko.com>
 
-[ Upstream commit 005d4b0d33f6b4a23d382b7930f7a96b95b01f39 ]
+[ Upstream commit 3f04ee216bc1406cb6214ceaa7e544114108e0fa ]
 
-syzbot is reporting that S_IFMT bits of inode->i_mode can become bogus when
-the S_IFMT bits of the 16bits "mode" field loaded from disk are corrupted.
+The xfstests' test-case generic/101 leaves HFS+ volume
+in corrupted state:
 
-According to [1], the permissions field was treated as reserved in Mac OS
-8 and 9. According to [2], the reserved field was explicitly initialized
-with 0, and that field must remain 0 as long as reserved. Therefore, when
-the "mode" field is not 0 (i.e. no longer reserved), the file must be
-S_IFDIR if dir == 1, and the file must be one of S_IFREG/S_IFLNK/S_IFCHR/
-S_IFBLK/S_IFIFO/S_IFSOCK if dir == 0.
+sudo ./check generic/101
+FSTYP -- hfsplus
+PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.17.0-rc1+ #4 SMP PREEMPT_DYNAMIC Wed Oct 1 15:02:44 PDT 2025
+MKFS_OPTIONS -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
 
-Reported-by: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-Link: https://developer.apple.com/library/archive/technotes/tn/tn1150.html#HFSPlusPermissions [1]
-Link: https://developer.apple.com/library/archive/technotes/tn/tn1150.html#ReservedAndPadFields [2]
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
+generic/101 _check_generic_filesystem: filesystem on /dev/loop51 is inconsistent
+(see XFSTESTS-2/xfstests-dev/results//generic/101.full for details)
+
+Ran: generic/101
+Failures: generic/101
+Failed 1 of 1 tests
+
+sudo fsck.hfsplus -d /dev/loop51
+** /dev/loop51
+Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
+Executing fsck_hfs (version 540.1-Linux).
+** Checking non-journaled HFS Plus Volume.
+The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+Invalid volume free block count
+(It should be 2614350 instead of 2614382)
+Verify Status: VIStat = 0x8000, ABTStat = 0x0000 EBTStat = 0x0000
+CBTStat = 0x0000 CatStat = 0x00000000
+** Repairing volume.
+** Rechecking volume.
+** Checking non-journaled HFS Plus Volume.
+The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+** The volume untitled was repaired successfully.
+
+This test executes such steps: "Test that if we truncate a file
+to a smaller size, then truncate it to its original size or
+a larger size, then fsyncing it and a power failure happens,
+the file will have the range [first_truncate_size, last_size[ with
+all bytes having a value of 0x00 if we read it the next time
+the filesystem is mounted.".
+
+HFS+ keeps volume's free block count in the superblock.
+However, hfsplus_file_fsync() doesn't store superblock's
+content. As a result, superblock contains not correct
+value of free blocks if a power failure happens.
+
+This patch adds functionality of saving superblock's
+content during hfsplus_file_fsync() call.
+
+sudo ./check generic/101
+FSTYP         -- hfsplus
+PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc3+ #96 SMP PREEMPT_DYNAMIC Wed Nov 19 12:47:37 PST 2025
+MKFS_OPTIONS  -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+
+generic/101 32s ...  30s
+Ran: generic/101
+Passed all 1 tests
+
+sudo fsck.hfsplus -d /dev/loop51
+** /dev/loop51
+	Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
+   Executing fsck_hfs (version 540.1-Linux).
+** Checking non-journaled HFS Plus Volume.
+   The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+** The volume untitled appears to be OK.
+
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Link: https://lore.kernel.org/r/04ded9f9-73fb-496c-bfa5-89c4f5d1d7bb@I-love.SAKURA.ne.jp
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/20251119223219.1824434-1-slava@dubeyko.com
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## Analysis of hfsplus: Verify inode mode when loading from disk
 
-### 1. COMMIT MESSAGE ANALYSIS
 
-**Key indicators:**
-- **Reported-by: syzbot** - This is a real bug found by automated
-  fuzzing
-- **Closes:** link to syzkaller bug report confirms this is a genuine
-  issue
-- **Reviewed-by:** present from the HFS+ maintainer (Viacheslav Dubeyko)
-- **No "Cc: stable@vger.kernel.org"** tag
-- **No "Fixes:" tag** - bug appears to exist since original HFS+
-  implementation
+ fs/hfsplus/hfsplus_fs.h |  2 +
+ fs/hfsplus/inode.c      |  9 +++++
+ fs/hfsplus/super.c      | 87 +++++++++++++++++++++++++----------------
+ 3 files changed, 65 insertions(+), 33 deletions(-)
 
-The commit describes that corrupted S_IFMT bits in the on-disk "mode"
-field can cause inode->i_mode to become bogus when loaded from disk. The
-commit message references Apple technical documentation explaining the
-expected values for the mode field.
-
-### 2. CODE CHANGE ANALYSIS
-
-The fix modifies `hfsplus_get_perms()` in two ways:
-
-**a) Adds validation logic (the core fix):**
-```c
-if (dir) {
-    if (mode && !S_ISDIR(mode))
-        goto bad_type;
-} else if (mode) {
-    switch (mode & S_IFMT) {
-    case S_IFREG:
-    case S_IFLNK:
-    case S_IFCHR:
-    case S_IFBLK:
-    case S_IFIFO:
-    case S_IFSOCK:
-        break;
-    default:
-        goto bad_type;
-    }
-}
-```
-This validates that:
-- For directories (`dir=1`): mode must be 0 or actually be a directory
-  type
-- For files (`dir=0`): mode must be 0 or one of the valid file types
-  (regular, symlink, char/block device, FIFO, socket)
-
-**b) Changes return type from `void` to `int`:**
-- Returns -EIO on invalid mode with an error message
-- Callers (`hfsplus_cat_read_inode`) now check the return value and
-  propagate errors
-
-**Root cause:** The original code blindly trusted the mode field from
-disk without validating that the S_IFMT bits are consistent with the
-directory flag.
-
-### 3. CLASSIFICATION
-
-- **Type:** Bug fix (input validation)
-- **Security relevance:** Yes - crafted filesystem images could trigger
-  this
-- **Category:** Filesystem robustness/hardening against corrupted data
-
-### 4. SCOPE AND RISK ASSESSMENT
-
-| Aspect | Assessment |
-|--------|------------|
-| Lines changed | ~30+ additions, moderate size |
-| Files touched | 1 file (fs/hfsplus/inode.c) |
-| Complexity | Low - straightforward validation logic |
-| Regression risk | **LOW** - only rejects clearly invalid data |
-
-The validation is conservative and follows Apple's official HFS+
-specification. It only rejects modes that are definitively wrong.
-
-### 5. USER IMPACT
-
-- **Affected users:** Those mounting HFS+ filesystems (macOS external
-  drives, dual-boot setups)
-- **Trigger:** Mounting a corrupted or maliciously crafted HFS+
-  filesystem image
-- **Impact of bug:** Bogus inode mode can lead to undefined kernel
-  behavior when processing the inode
-- **Impact of fix:** Graceful rejection with -EIO instead of corrupted
-  internal state
-
-### 6. STABILITY INDICATORS
-
-- Reviewed by subsystem maintainer ✓
-- Clean, standalone fix with no dependencies ✓
-- The modified functions exist in older stable kernels ✓
-- No unusual code patterns or risky constructs ✓
-
-### 7. DEPENDENCY CHECK
-
-This is a standalone fix. The `hfsplus_get_perms` and
-`hfsplus_cat_read_inode` functions exist in all stable trees where HFS+
-is supported.
-
----
-
-## Summary
-
-**What it fixes:** Prevents corrupted or maliciously crafted HFS+
-filesystem images from causing bogus inode modes to be loaded into the
-kernel.
-
-**Why it matters for stable:** This is a defensive fix that prevents
-accepting corrupted data, which could lead to undefined behavior. syzbot
-found this bug, indicating it can be triggered by crafted input - a
-potential security concern.
-
-**Meets stable criteria:**
-- ✓ Obviously correct (validates according to Apple's HFS+
-  specification)
-- ✓ Fixes a real bug that affects users (syzbot found it with crafted
-  images)
-- ✓ Small and contained (single file, ~30 lines of validation)
-- ✓ Low regression risk (only rejects clearly invalid data)
-- ✗ No explicit stable tag (author didn't request it)
-
-**Risk vs Benefit:**
-- **Risk:** Very low - adds validation that only rejects invalid data
-- **Benefit:** Prevents kernel from operating on corrupted inode modes
-  from crafted/corrupted filesystems
-
-The lack of explicit stable tags suggests the author may not have
-intended this for stable, but the fix clearly meets stable criteria as a
-filesystem robustness fix against corrupted input. Filesystem fixes for
-handling crafted/corrupted data are generally appropriate for stable
-trees.
-
-**YES**
-
- fs/hfsplus/inode.c | 32 ++++++++++++++++++++++++++++----
- 1 file changed, 28 insertions(+), 4 deletions(-)
-
+diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+index 89e8b19c127b0..de801942ae471 100644
+--- a/fs/hfsplus/hfsplus_fs.h
++++ b/fs/hfsplus/hfsplus_fs.h
+@@ -477,6 +477,8 @@ int hfs_part_find(struct super_block *sb, sector_t *part_start,
+ /* super.c */
+ struct inode *hfsplus_iget(struct super_block *sb, unsigned long ino);
+ void hfsplus_mark_mdb_dirty(struct super_block *sb);
++void hfsplus_prepare_volume_header_for_commit(struct hfsplus_vh *vhdr);
++int hfsplus_commit_superblock(struct super_block *sb);
+ 
+ /* tables.c */
+ extern u16 hfsplus_case_fold_table[];
 diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index b51a411ecd237..e290e417ed3a7 100644
+index e290e417ed3a7..7ae6745ca7ae1 100644
 --- a/fs/hfsplus/inode.c
 +++ b/fs/hfsplus/inode.c
-@@ -180,13 +180,29 @@ const struct dentry_operations hfsplus_dentry_operations = {
- 	.d_compare    = hfsplus_compare_dentry,
- };
- 
--static void hfsplus_get_perms(struct inode *inode,
--		struct hfsplus_perm *perms, int dir)
-+static int hfsplus_get_perms(struct inode *inode,
-+			     struct hfsplus_perm *perms, int dir)
- {
+@@ -325,6 +325,7 @@ int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
+ 	struct inode *inode = file->f_mapping->host;
+ 	struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
  	struct hfsplus_sb_info *sbi = HFSPLUS_SB(inode->i_sb);
- 	u16 mode;
++	struct hfsplus_vh *vhdr = sbi->s_vhdr;
+ 	int error = 0, error2;
  
- 	mode = be16_to_cpu(perms->mode);
-+	if (dir) {
-+		if (mode && !S_ISDIR(mode))
-+			goto bad_type;
-+	} else if (mode) {
-+		switch (mode & S_IFMT) {
-+		case S_IFREG:
-+		case S_IFLNK:
-+		case S_IFCHR:
-+		case S_IFBLK:
-+		case S_IFIFO:
-+		case S_IFSOCK:
-+			break;
-+		default:
-+			goto bad_type;
-+		}
-+	}
+ 	error = file_write_and_wait_range(file, start, end);
+@@ -368,6 +369,14 @@ int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
+ 			error = error2;
+ 	}
  
- 	i_uid_write(inode, be32_to_cpu(perms->owner));
- 	if ((test_bit(HFSPLUS_SB_UID, &sbi->flags)) || (!i_uid_read(inode) && !mode))
-@@ -212,6 +228,10 @@ static void hfsplus_get_perms(struct inode *inode,
- 		inode->i_flags |= S_APPEND;
- 	else
- 		inode->i_flags &= ~S_APPEND;
-+	return 0;
-+bad_type:
-+	pr_err("invalid file type 0%04o for inode %lu\n", mode, inode->i_ino);
-+	return -EIO;
++	mutex_lock(&sbi->vh_mutex);
++	hfsplus_prepare_volume_header_for_commit(vhdr);
++	mutex_unlock(&sbi->vh_mutex);
++
++	error2 = hfsplus_commit_superblock(inode->i_sb);
++	if (!error)
++		error = error2;
++
+ 	if (!test_bit(HFSPLUS_SB_NOBARRIER, &sbi->flags))
+ 		blkdev_issue_flush(inode->i_sb->s_bdev);
+ 
+diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+index 16bc4abc67e08..67a7a2a093476 100644
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -187,40 +187,15 @@ static void hfsplus_evict_inode(struct inode *inode)
+ 	}
  }
  
- static int hfsplus_file_open(struct inode *inode, struct file *file)
-@@ -516,7 +536,9 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
- 		}
- 		hfs_bnode_read(fd->bnode, &entry, fd->entryoffset,
- 					sizeof(struct hfsplus_cat_folder));
--		hfsplus_get_perms(inode, &folder->permissions, 1);
-+		res = hfsplus_get_perms(inode, &folder->permissions, 1);
-+		if (res)
-+			goto out;
- 		set_nlink(inode, 1);
- 		inode->i_size = 2 + be32_to_cpu(folder->valence);
- 		inode_set_atime_to_ts(inode, hfsp_mt2ut(folder->access_date));
-@@ -545,7 +567,9 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
+-static int hfsplus_sync_fs(struct super_block *sb, int wait)
++int hfsplus_commit_superblock(struct super_block *sb)
+ {
+ 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
+ 	struct hfsplus_vh *vhdr = sbi->s_vhdr;
+ 	int write_backup = 0;
+-	int error, error2;
+-
+-	if (!wait)
+-		return 0;
++	int error = 0, error2;
  
- 		hfsplus_inode_read_fork(inode, HFSPLUS_IS_RSRC(inode) ?
- 					&file->rsrc_fork : &file->data_fork);
--		hfsplus_get_perms(inode, &file->permissions, 0);
-+		res = hfsplus_get_perms(inode, &file->permissions, 0);
-+		if (res)
-+			goto out;
- 		set_nlink(inode, 1);
- 		if (S_ISREG(inode->i_mode)) {
- 			if (file->permissions.dev)
+ 	hfs_dbg("starting...\n");
+ 
+-	/*
+-	 * Explicitly write out the special metadata inodes.
+-	 *
+-	 * While these special inodes are marked as hashed and written
+-	 * out peridocically by the flusher threads we redirty them
+-	 * during writeout of normal inodes, and thus the life lock
+-	 * prevents us from getting the latest state to disk.
+-	 */
+-	error = filemap_write_and_wait(sbi->cat_tree->inode->i_mapping);
+-	error2 = filemap_write_and_wait(sbi->ext_tree->inode->i_mapping);
+-	if (!error)
+-		error = error2;
+-	if (sbi->attr_tree) {
+-		error2 =
+-		    filemap_write_and_wait(sbi->attr_tree->inode->i_mapping);
+-		if (!error)
+-			error = error2;
+-	}
+-	error2 = filemap_write_and_wait(sbi->alloc_file->i_mapping);
+-	if (!error)
+-		error = error2;
+-
+ 	mutex_lock(&sbi->vh_mutex);
+ 	mutex_lock(&sbi->alloc_mutex);
+ 	vhdr->free_blocks = cpu_to_be32(sbi->free_blocks);
+@@ -249,11 +224,52 @@ static int hfsplus_sync_fs(struct super_block *sb, int wait)
+ 				  sbi->part_start + sbi->sect_count - 2,
+ 				  sbi->s_backup_vhdr_buf, NULL, REQ_OP_WRITE);
+ 	if (!error)
+-		error2 = error;
++		error = error2;
+ out:
+ 	mutex_unlock(&sbi->alloc_mutex);
+ 	mutex_unlock(&sbi->vh_mutex);
+ 
++	hfs_dbg("finished: err %d\n", error);
++
++	return error;
++}
++
++static int hfsplus_sync_fs(struct super_block *sb, int wait)
++{
++	struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
++	int error, error2;
++
++	if (!wait)
++		return 0;
++
++	hfs_dbg("starting...\n");
++
++	/*
++	 * Explicitly write out the special metadata inodes.
++	 *
++	 * While these special inodes are marked as hashed and written
++	 * out peridocically by the flusher threads we redirty them
++	 * during writeout of normal inodes, and thus the life lock
++	 * prevents us from getting the latest state to disk.
++	 */
++	error = filemap_write_and_wait(sbi->cat_tree->inode->i_mapping);
++	error2 = filemap_write_and_wait(sbi->ext_tree->inode->i_mapping);
++	if (!error)
++		error = error2;
++	if (sbi->attr_tree) {
++		error2 =
++		    filemap_write_and_wait(sbi->attr_tree->inode->i_mapping);
++		if (!error)
++			error = error2;
++	}
++	error2 = filemap_write_and_wait(sbi->alloc_file->i_mapping);
++	if (!error)
++		error = error2;
++
++	error2 = hfsplus_commit_superblock(sb);
++	if (!error)
++		error = error2;
++
+ 	if (!test_bit(HFSPLUS_SB_NOBARRIER, &sbi->flags))
+ 		blkdev_issue_flush(sb->s_bdev);
+ 
+@@ -395,6 +411,15 @@ static const struct super_operations hfsplus_sops = {
+ 	.show_options	= hfsplus_show_options,
+ };
+ 
++void hfsplus_prepare_volume_header_for_commit(struct hfsplus_vh *vhdr)
++{
++	vhdr->last_mount_vers = cpu_to_be32(HFSP_MOUNT_VERSION);
++	vhdr->modify_date = hfsp_now2mt();
++	be32_add_cpu(&vhdr->write_count, 1);
++	vhdr->attributes &= cpu_to_be32(~HFSPLUS_VOL_UNMNT);
++	vhdr->attributes |= cpu_to_be32(HFSPLUS_VOL_INCNSTNT);
++}
++
+ static int hfsplus_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
+ 	struct hfsplus_vh *vhdr;
+@@ -562,11 +587,7 @@ static int hfsplus_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		 * H+LX == hfsplusutils, H+Lx == this driver, H+lx is unused
+ 		 * all three are registered with Apple for our use
+ 		 */
+-		vhdr->last_mount_vers = cpu_to_be32(HFSP_MOUNT_VERSION);
+-		vhdr->modify_date = hfsp_now2mt();
+-		be32_add_cpu(&vhdr->write_count, 1);
+-		vhdr->attributes &= cpu_to_be32(~HFSPLUS_VOL_UNMNT);
+-		vhdr->attributes |= cpu_to_be32(HFSPLUS_VOL_INCNSTNT);
++		hfsplus_prepare_volume_header_for_commit(vhdr);
+ 		hfsplus_sync_fs(sb, 1);
+ 
+ 		if (!sbi->hidden_dir) {
 -- 
 2.51.0
 
