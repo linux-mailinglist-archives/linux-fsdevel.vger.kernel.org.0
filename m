@@ -1,120 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-70918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDD5CA9A88
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 06 Dec 2025 00:48:21 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D0ECA903B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 05 Dec 2025 20:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 1AAB73034CF3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 23:48:14 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CE3BD3220DC9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Dec 2025 19:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431011C84BB;
-	Fri,  5 Dec 2025 23:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB0C357A41;
+	Fri,  5 Dec 2025 18:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TKDViLJP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCehPqhH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB13625
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 23:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B6D357A30
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Dec 2025 18:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764978491; cv=none; b=T/0JE/4+62b0AlpwuqpM8MytFeWwODpJO29HAEjXQ3Y7k5cW+k/opz/m28Grpm8Brd2M1TmGyoYpcMlW4rdGD/Z8HFNnmODxHm/i6EequnW5oaEIjnwdPXQ/Gq8Slmg3l+tzQIsA+IcsFCv7CLpaidqO7T6MvHQHmNqWYj1CClo=
+	t=1764959966; cv=none; b=exbpAufIGU3K3v2WcAmST+h15hREYDNJW27iF34xJJG2vxfaHo4eOVXwUNg6riMiKA2BulqNWOKnM95Zk2rbQsxSQNwAUKGzwdtX5+alNI3ydO/nkmxWWWHFw4XcPCXwXnUjDCZA17XIKWNEEOrciyFYWlG+yqAzol71XJUhoJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764978491; c=relaxed/simple;
-	bh=hrPJLg76bB4ouRqf3LRLY1sC3T8ACDvEaITt2kDvyUo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RHzoync8On8fONYL49guwa2TYDQq01ism4WELcqj9T7nM17sNHOAJ8HRNRVOSoConEp841hxhTsFLnGI4roI60gmw2MRqezodrCgnrIMhZKXNlZQ6u8BEIVuh3pUUUpLTyyfOvrHCLDoHA9afNKD99fbGlo9FI+zrQ/Y7GKFipI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TKDViLJP; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b79d6a70fc8so432302466b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Dec 2025 15:48:08 -0800 (PST)
+	s=arc-20240116; t=1764959966; c=relaxed/simple;
+	bh=cjNKHrQrnXLTUtPo/NH2OLDEK0teLVgujXCxRj1xbCc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GDyV6/0N7+s+OujGrWCfvThqoexnT1ocd/xq3R6I8zuxE0J2sbFLbWdiKFRqg4bMNMyPmf3UNbbICtgBrg0w79wRPo+tNu+HK/C99asHEcGLQawklJcfT6bl4lCNdrp52mUolGWPQRSvf3SU7NiqU6d5i6I5z22KKHuRxwEzsq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LCehPqhH; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-bbf2c3eccc9so1659461a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Dec 2025 10:39:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1764978487; x=1765583287; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XLNk7q29SYCfgF2/5hVny548Lm2318M2rsMLcMyZyqI=;
-        b=TKDViLJPZG+ghM5ZbpmVkdxyMw0sZo3wrsD3MKpDcbV5/uKjkm2F8zBSrs3fpxvgHG
-         +Jrb7dwD6QDebjcoA/byMVqDoKXieSJtFHDVRmjxtu9nq1ZZPZTheb3omiJXP0z+Ta5a
-         Pm0IADiSF3jM0o8nluLxAZGKzD/0mihDBHQ94=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764978487; x=1765583287;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1764959962; x=1765564762; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XLNk7q29SYCfgF2/5hVny548Lm2318M2rsMLcMyZyqI=;
-        b=JpTTczrAoOQ9AG1GtdVeGEI3F4632WgQvmSr1Giz1F90OYxqCBDuvR/ZDGTE7Icrxm
-         Jq9aszBYU2PMvaSwh+uKj9z3X/kIj9+s3oOXLNXEqrW3avh4X7EKm09IYaLXQ9wHWhwl
-         MpbNvA9KuJGzWy3b4cGVtTmpz0l7gGjuqBWQTBX/7qT4WBmjIs2XmcPAAAPzLtZ7KRof
-         biNt92acZ01sPr3GPJxWieK3BuaU264qWaVdOu+f81taGjY0oBEsXFZMLLK64ztHRYLc
-         RAFxPRggYvICQ/Q/QYEs4EPyob+niNqkqOj8bn39KCMHHaCHMv+GTFO70GsRpJQWekIK
-         Gwbw==
-X-Gm-Message-State: AOJu0YyPkBmmmPJPu0nMdnDLzwkVoY/FOWX1HsoLEnZeUX8yyH8qZsXr
-	vmRZparuRq4BBbskIo0SOpjQEQOBZom/HsKNOyU+KE+WxbXwyx0FJ0gryFC+h7+97o/orz4KjCo
-	GNNjpIazcyw==
-X-Gm-Gg: ASbGncvpIm19dpoe2Ho/s5lNUh9LlCkJAROWSZ9SgohxnyNBtu2EPMSHRPN8OOGvAkZ
-	wqfffxJsY4pVJouXeyDOLobJdJxJhukIC5+3JhkBpDGCpSUsBO3LdNdMate3dFAFV9UGxBvw3aB
-	38kqQ+ViVHxyidjFtx541zei4pEGPyvcttSYAPfWCCAtKa4zsD+jQBH4EPdop7wDz79uiRedLiI
-	1Gp6sepd91QSDrP79+zuO8UOhwdxT7c0xVJv/ClUs27iJHbh9n7oXzCJVn3k7NTPOKK3WOPxY5U
-	q4zMmwNsdYtw5wfT2rS8UHoYRGITPCA15/XFvgfEYW8oV3GD0JJkNaLruD7a+YabtfWxpSIw9+y
-	ArrZo5kkBL5Gz3BMd1cSolpSC66Z3OygRJJtfAVtOR5PhkTduwGRAsSa6WQ1Ta9rm6TURuVm/bz
-	Hqo7IQURYcxHpfxQIbqq2kWsHVAgyCuhTFTESgTL6V5DcBK8qcR74FilQSgO5J6MTur1StOlI=
-X-Google-Smtp-Source: AGHT+IE9GpWgi8VbS080GC1DAwqBvku7JlBC1T0ylz3vtacEa974nfWqdHGMG2UurlPav6zS6xrOCA==
-X-Received: by 2002:a17:907:c22:b0:b71:cec2:d54 with SMTP id a640c23a62f3a-b7a2481e6d5mr92316166b.57.1764978487298;
-        Fri, 05 Dec 2025 15:48:07 -0800 (PST)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b79f4975c56sm470802366b.33.2025.12.05.15.48.06
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Dec 2025 15:48:06 -0800 (PST)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-641677916b5so4106573a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Dec 2025 15:48:06 -0800 (PST)
-X-Received: by 2002:a05:6402:2747:b0:640:6653:65c1 with SMTP id
- 4fb4d7f45d1cf-6491a1dc146mr539978a12.5.1764978486068; Fri, 05 Dec 2025
- 15:48:06 -0800 (PST)
+        bh=F3b2MXk7/01ozYqBLq6Lp8YCFWTmwEngfJtvZiESMsc=;
+        b=LCehPqhHYlPhn091Z6OkrTl1AN1hYG4bEU13wH0hEI3YAxO7Q3K1AbXnphUdpwekNL
+         ztXjpPsnuYjtMUxDVXPZmERNL37pQ0SafdgdPjJ5J/tcXD/amfqnBD/FO1mavAMXKroU
+         XIudvjucBfXXpHew6B3nENEBJ67GT9ojSPM8F3pBpF9ZegNiWcm1kG3GTY0aua0Dzrt/
+         gWtFuIJfGzLROUzVCuKGo0wnwjZSsvNO9Dji1IGCLha9+i47H68IQUmx7Npn+R2A2dUN
+         FqOTP0mvelyd+PS5iH80PoaiN6pJ0W9VAu2ZAmKnaHa2o2Al4qXOFjijuJVOTlWdKic/
+         kiEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764959962; x=1765564762;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=F3b2MXk7/01ozYqBLq6Lp8YCFWTmwEngfJtvZiESMsc=;
+        b=IsCkDsDLTLkshrZwMk5/WeAw8uicfoiGJiAkOWwq+vAgRftpCcVUSfNVlicoJ61HLn
+         5g7563eFjVanykAFSlBiTd82jShwh3TbReOzjknH3lB54LnjhVKd7mBQEvwoHGpYrwt7
+         3MVAkqtFQSf+FVo07Py1Nx+tC/v4Qicxhm2qNYYrzmgE8s6o18YBqVqlJvkKZQzcVYXB
+         2YmZq7la7gPzRGBDDjO+bbg7lxcgcAsQuHKFxl0yc/xTAyNDHzzPQMEgVzwJruMDkN8H
+         TAP9tWpA52yaFlbNlGV58+oHodYGW/rvL6SgSTRCFbwrC9JBF8SdIwDVQTONvy8PRneJ
+         d6SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhVPw3xFZwC7slnLOPPVtvSQ0DtIjkyAUb68mo5cEt/sh+ILU3Rolo+hP+S6rzHxlmgsqORf5c65C4wsB/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7N/9eLZoqYVxNFbe9zUPqAFpZ2g7MRWWvragvOg94lVddmExr
+	Hz4KBU76LZMLYwvi4HmW+aHpGiRNBcj/sPjfynxKjuPrVO2Mk4pFtdbj
+X-Gm-Gg: ASbGncuFqSXpjBfrbS5jWA7bISmLzPHuXg5TtETLfB2WFhBC5UvjIyDwaSuSkc+vbMF
+	DT29rsDLiqCOp8YHy1JZRonGXb/BE1+wNROBh/He75VakPqpsDeBhDk9wBL33SH/79VcyCBC0hq
+	1NQP7x8MGivL6u1zzkCgSBmgd1VkV8PGE7Qz1Txv2npDZL8DADc8KRcVYwL43jqrDAuy3GjjUVc
+	iZgbZY8zF8ZlUzuVIUT7xPPyLtSDEl0MHWWdPmfDHbK9V7a+qzG5wORgz2zH5q/O0D0DkyC3bGj
+	xjppLMtEQhWzWU0KUpGtvyZKIB2BjEEGlc77+IgBBw22si5SD/NLrReEg1eBDq7AljTOAJ8jcAh
+	Wkdc1+MOgGLnAKW3bGt3M7q36kJhOsgX/PRY7DEPIUoht5SOANWhfLA9fvZf3DDGvxgscemiM2S
+	hI9YNGNJtZAtkcYDvLO1z6ppcpP114ZA==
+X-Google-Smtp-Source: AGHT+IGp/pD+55VxfNaGNlZMHcVDyCZzwtjcXLNX3ZsgvJQlW5QwGHduUe4BhdJ+a4kKFe7mkksxqg==
+X-Received: by 2002:a17:90b:2e8c:b0:343:3898:e7c7 with SMTP id 98e67ed59e1d1-349a1c84d90mr160863a91.12.1764959961918;
+        Fri, 05 Dec 2025 10:39:21 -0800 (PST)
+Received: from LilGuy ([2409:40c2:102b:bda0:cf8c:6055:172b:8eed])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3494ea899desm5326165a91.17.2025.12.05.10.39.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Dec 2025 10:39:21 -0800 (PST)
+From: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
+To: syzbot+99f6ed51479b86ac4c41@syzkaller.appspotmail.com
+Cc: frank.li@vivo.com,
+	glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	slava@dubeyko.com,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	syzkaller-bugs@googlegroups.com,
+	Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
+Subject: [PATCH v1] hfsplus: fix memory leak on mount failure
+Date: Sat,  6 Dec 2025 00:09:02 +0000
+Message-ID: <20251206000902.71178-1-swarajgaikwad1925@gmail.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <69326fcf.a70a0220.d98e3.01e5.GAE@google.com>
+References: <69326fcf.a70a0220.d98e3.01e5.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJfpegunwB28WKqxNWCQyd5zrMfSif_YmBFp+_m-ZsDap9+G7Q@mail.gmail.com>
-In-Reply-To: <CAJfpegunwB28WKqxNWCQyd5zrMfSif_YmBFp+_m-ZsDap9+G7Q@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 5 Dec 2025 15:47:50 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wht097GMgEuH870PU4dMfBCinZ5_qvxpqK2Q9PP=QRdTA@mail.gmail.com>
-X-Gm-Features: AQt7F2rNSr-kbkrT0_CRzNcHhQvwG4PA0LhNMpz-VKdVZF4eCEfZEG9zYVGYqLU
-Message-ID: <CAHk-=wht097GMgEuH870PU4dMfBCinZ5_qvxpqK2Q9PP=QRdTA@mail.gmail.com>
-Subject: Re: [GIT PULL] fuse update for 6.19
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 4 Dec 2025 at 00:25, Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> The stale dentry cleanup has a patch touching dcache.c: this extracts
-> a helper from d_prune_aliases() that puts the unused dentry on a
-> dispose list.  Export this and shrink_dentry_list() to modules.
+syzbot reported a memory leak in the hfsplus mount path when the mount
+fails, which occurs because the fs_context API moves ownership of
+fc->s_fs_info to sb->s_fs_info early in sget_fc().
 
-Is that
+When filesystems are mounted using the new API, the VFS (specifically
+sget_fc) transfers the ownership of the context's s_fs_info (the 'sbi'
+struct) to the superblock (sb->s_fs_info) and clears the context
+pointer.
 
-        spin_lock(&dentry->d_lock);
-        if (!dentry->d_lockref.count)
-                to_shrink_list(dentry, dispose);
-        spin_unlock(&dentry->d_lock);
+If the mount fails after this transfer the VFS calls
+deactivate_locked_super, which invokes the filesystem's kill_sb
+callback. Previously, hfsplus used the generic kill_block_super, which
+does not free sb->s_fs_info, resulting in the 'sbi' structure and its
+loaded NLS tables being leaked.
 
-thing possibly hot, and count might be commonly non-zero?
+Fix this by implementing a filesystem-specific ->kill_sb() that frees
+sb->s_fs_info and its NLS resources before calling kill_block_super().
+Also remove the early kfree(sbi) from hfsplus_fill_super()’s error path,
+because the superblock unconditionally owns s_fs_info when using the
+fs_context API.
 
-Because it's possible that we could just make it a lockref operation
-where we atomically don't take the lock if the count is non-zero so
-that we don't unnecessarily move cachelines around...
+Testing:
+This fix was verified by building the kernel with the .config provided
+by the syzkaller reporter and running the reproducer. The reproducer
+now runs successfully without triggering any memory leaks or kernel errors.
 
-IOW, some kind of "lockref_lock_if_zero()" pattern?
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git e69c7c175115
 
-I have no idea what the fuse dentry lifetime patterns might be, maybe
-this is a complete non-issue...
+Reported-by: syzbot+99f6ed51479b86ac4c41@syzkaller.appspotmail.com
+Signed-off-by: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
+---
+ fs/hfsplus/super.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-         Linus
+diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+index 16bc4abc67e0..fa7420d08da1 100644
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -629,7 +629,6 @@ static int hfsplus_fill_super(struct super_block *sb, struct fs_context *fc)
+ out_unload_nls:
+ 	unload_nls(sbi->nls);
+ 	unload_nls(nls);
+-	kfree(sbi);
+ 	return err;
+ }
+
+@@ -688,10 +687,23 @@ static int hfsplus_init_fs_context(struct fs_context *fc)
+ 	return 0;
+ }
+
++static void hfsplus_kill_sb(struct super_block *sb)
++{
++    struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
++
++    if (sbi) {
++        unload_nls(sbi->nls);
++        kfree(sbi);
++        sb->s_fs_info = NULL;
++    }
++
++    kill_block_super(sb);
++}
++
+ static struct file_system_type hfsplus_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "hfsplus",
+-	.kill_sb	= kill_block_super,
++	.kill_sb	= hfsplus_kill_sb,
+ 	.fs_flags	= FS_REQUIRES_DEV,
+ 	.init_fs_context = hfsplus_init_fs_context,
+ };
+
+base-commit: 6bda50f4333fa61c07f04f790fdd4e2c9f4ca610
+--
+2.52.0
+
 
