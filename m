@@ -1,382 +1,383 @@
-Return-Path: <linux-fsdevel+bounces-70949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F6ACAB1F5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 07 Dec 2025 07:17:05 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F1BCAB2C4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 07 Dec 2025 09:33:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4E7293097BBA
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Dec 2025 06:16:51 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4B40B306317D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Dec 2025 08:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B51284B25;
-	Sun,  7 Dec 2025 06:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FE924EF8C;
+	Sun,  7 Dec 2025 08:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDdBX+HG"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="HZpBVIgR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C168E3D6F
-	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Dec 2025 06:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC541EDA03
+	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Dec 2025 08:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765088209; cv=none; b=YXcCV3ht8GNl/eDvqCGDy16ixOj11TQoz6ZyyLSFAXtnjH/Y2pA4a4ozT/sMCrTuQ/r95dyTFyst7t8E1Ro2hULPu6Mi9bezRY+9gia8j6sj5gFDabwplkKQvndOYHlx6hZV72pqjOiCl2L99X/egkl/niq/3lp7v7zvKq6NpMQ=
+	t=1765096401; cv=none; b=ZWd1sVw0qvMn6j/YPjRr+LI1frzCVSCoGFZKLn/b/M/2NLQ78qHb3io21an1rIukY6nOUdKgtX8Pwp0Qiss8epnW3G30/TeFLjqBmCR+K6gOXheabPWfA15Q6cVBc9Iwxe+4VG2FfaNa1H7Kz4dO1dn5UlRdDNgNutcHv0+UnDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765088209; c=relaxed/simple;
-	bh=Vf6nRuZPEba+Oifq2sGnvE2wxBWCAWdIIwjomCWz4yI=;
+	s=arc-20240116; t=1765096401; c=relaxed/simple;
+	bh=gOzNzgXpRTSLdKSBDidNVXiIUCbeT+qiE0MWs3tTRfk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TD8+gpBR2ccazljek7cpRuSE4ioMXSXvq2g6lOpiUqsGxKBI2T3KxQbtutfwUHaum3CDyAnUKG2mznciC2Os2HZPcVaaU3rxPUK1FrBsFLvvEgRlEUNHPBqT3wBilIrxkGnfWM7h5FrN0fAfC66ycc8ALmz7nKmxisr+tiX4ITQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDdBX+HG; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7c6cc366884so1783421a34.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 06 Dec 2025 22:16:46 -0800 (PST)
+	 To:Cc:Content-Type; b=MLXKgZOTffPgLSDsl2TkXi3Rb3Q03U1ML4UihdMF2tKwqY7n2CjXI74vh+l696DLz1lmeFVFYwNyaYO05DNophRUIpgc2DNwO9QXyW2bmPZAlPGm1VqF99bIbFVfiWFvMz9hL/RQibZDhz6nuFFlZFENJK/odAhJLZ80ncfLTQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=HZpBVIgR; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-349bb0a901fso228779a91.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Dec 2025 00:33:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765088206; x=1765693006; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1765096399; x=1765701199; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Un5sUc5Cx47cq3O9cSCtpokOGHVUQEIffWJ4oCrfNps=;
-        b=lDdBX+HGMAEKYE60gxbiMVUnBtKI/10NEoaBpGBYnl5C7k8NmQC995SmOoVEtC3MZ5
-         PUfZHoKxQ3py/lTQpDS6EGov1KvXCee6LMSMmBLpZVZixE3DtUCZtaYfIRbNQaf4nlp8
-         +Cya8PjYKgX/BN+V9zb1qdX38//qLkKHX5JdrKF/rFiwywU+fDb0zgUy2yq5AmqwlOQM
-         uCZF/9ASqajNQsYgefovqw+I5H/U4aMT+K/oAISB0XvqD/FEJDZkWy9zOAEqkBGb2DRi
-         t7kQ2X/5rDmy5vXqlLgWb8YficBxXH+c65t5+3Ay5UQ2kPTQoMhva1lq3JaexVpuMHIK
-         4CPw==
+        bh=frrtB4aAb7NsShg++hYbQm0IHS3+62tzOY/Lj8ulfr4=;
+        b=HZpBVIgRScVuvoo7CQoX8UGP/1z82a/TW+4U44IrqVH5ZHK03QPkTqCSdhT7HgDGz3
+         LRe+a/zeZ8xnBlfhoCBwC7UBuf5P1QFSAE6byIeT9EoDHxJIcUX3TuwQG7xMAd01T+nb
+         WDDyaJ43bS63NF5ct2hXvvgGAo6whDylh3oj0RBqz+G7V4rJgySokCKRKXb7mSbc1Aa3
+         WOQ+51hUbtkMU+F0Oon9yCgE5/58jUL4MP+k9RVFV5DszFVwH5sAd0d1Z5Faq6+iVthC
+         /z9ed/JafJOUuSlmNrbctODHJoqPQEdlad5K7X0XM8v5lMgAU1tDBLAhDuyBtnmIALWG
+         Q1Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765088206; x=1765693006;
+        d=1e100.net; s=20230601; t=1765096399; x=1765701199;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Un5sUc5Cx47cq3O9cSCtpokOGHVUQEIffWJ4oCrfNps=;
-        b=XPnhJAWh3BAHFCXuBlmknC9qvV12uCOkWq6vL1q2BekYdGgA9n7z62oM/teEyTl4xw
-         gsIUn9dUGL+1PVjGYU8HFTKzoMVzeC+Xqs9+XwbOO6sJ90aA0xBLvQntwN2BM6NwWzcf
-         qYPjjDB9zOcNbZzicHOykOOyxUTA+hGwjtMFxeSYiSd92KCS9QIHUa7ix+spDQSdPi4p
-         V65p1a7rUfK6TKvFu4rYf6JfJVzeM2wuGaEEpRoiZDqVtftQ8qWPt3K6N7+m8iQoWrN1
-         /9hfezqNBixL3Zvvn3s69fKmuKzV98qRldqGxsTP+UNjp8TF4r0mDgjG7RRp6QxCI+OC
-         nSuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvLx7kKDGsr1W4ESS02FKFpX7Lay3rrlrBZ+bADY3tS7JX/mZSaKaLlIQ9kUzmGhFyCbu619cslOha+qNI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzScjgT7som4/VYyYyCT8IJ3vV0tRRUBwcHUhtHR+Linv9Vgb3m
-	QFZc1XDcYSeMD5c/pJtAJI3ild3TZRrtlsklLfn3VbtpMqRImSxtpX4Pg7521DaIOSDYd7ddsQl
-	T5ZSQWGtQDuJGMG4Bru2M3w6MsC9gsY8=
-X-Gm-Gg: ASbGncvvZTR7TV0/duHznhObCLU99heJGwW969CKhChnW79Xy4QSYQTDx++6x9RVJt4
-	uhZV4X3D8XZ3fh8fCs5fMvtztI2D0opukPkXRRjYPBUgZuihDNHRR7LhugX9zvM1w0OJFGo2Szh
-	Yj5uAYulcHiI+pCtnrGd/a0XalyC+bzrTuxXrTVULZOhNkYWeA6FxjgvPdbiCEighSlXSiw8tr9
-	8wMp9FHewW3dTn46kUu1KAoHn9dRy/99Ekdoaq/50sOIusiIZqyV2ScZBRZTbO4nuyPiqZO
-X-Google-Smtp-Source: AGHT+IGTU11em87jeAo6kbD6dSOQffzi00PVFHQ+kjvwjKAEFHYJNasF5rV2kwcoj4CItjdfPWuUhV4Bdq+BX91kfOI=
-X-Received: by 2002:a05:6830:3153:b0:7c7:5385:9ac2 with SMTP id
- 46e09a7af769-7c97078be65mr3441356a34.8.1765088205704; Sat, 06 Dec 2025
- 22:16:45 -0800 (PST)
+        bh=frrtB4aAb7NsShg++hYbQm0IHS3+62tzOY/Lj8ulfr4=;
+        b=PsTTmTS3iAU5rzG/0AbX31XqEMTSevGwuhimDB2eljYCsJHxDTI/WHF4J71CZ1mpuX
+         I+/AkkqoMuRg/qqf5JxYzwdx0A+81X32Msbv1EGi4mg4pTmuBEA8mvVESdKSVU0eFZso
+         cOvslUkqNPnWUuZ6J0AaF2Mf8qAiCZ1+GKks9lgxK3O1Sgda8UX65x79uOmvFoGepTyX
+         O9Q6VxJL8dW1y1SNAFw0qLzvTaF+f8+fNwI/JKvjEtVjGgFntvOmsWxLCpoldNR7F/dS
+         CqyLtZVNt9X2HtNCW75yt50gNPuKaKyxGrxsmUlobeTrn8KX8uyvbtIQie4x3WWGTdHm
+         bHvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMO9X1Fae1fin/k5mDV2PJSaD+70qp36Ih3x/IjyTNM3dDuPLCVi25S/0s5XVfECM4mhCJZX+ML0GK/nrE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq8Z+vM2KJ9hOQI5CAYeb+Sr5djtzb22hzaMZSUIlHarlMpfs/
+	HamebMyO5g0u0sPa2IsIJK+7muoGDnbPbMKfWRkYOa4hHe13Ro5sLzof4QG1cX7Gk7psduhhCPE
+	IMTmsejR6NHQ4M6Bp8DE/OepEA5oUFArKBVWma3ugxQ==
+X-Gm-Gg: ASbGncs5N3l/7fvOVAfK0wNEiPm30SZhUglRfAsyxSbc4oDeStEus8oBJ0/OcIkUNlk
+	hrZ6Yjk8ltUFDM7+/Fg4opR5jP2coiJQzus7XfVokADjL1d6kXpDzG7TBBqrD/lDrSVdnrSJMWb
+	U4pZCPrShooEjQGw4XXCMu2JwCLdGgNh/b3ZXqQ4R1K7MFKYi4i9+a9YiBE1G7vhM2VYuEVtrk+
+	LKbWT5h8Z7OTma+eWohW3UKfOeOQZRXvOYDO1k/unLNPZVChl8w2tJP6VV6oDyEUP5gZzdD
+X-Google-Smtp-Source: AGHT+IHsaQZEE2CSOfYk3wTRc0UH4MN1vjMMncEKesFnLiaWCCy9aB3sjAxcnWJCMPLu6rbSGzQwZdpYjPnY+7zTXkc=
+X-Received: by 2002:a05:7022:6624:b0:119:e55a:95a0 with SMTP id
+ a92af1059eb24-11e0326c0bdmr2132371c88.2.1765096398680; Sun, 07 Dec 2025
+ 00:33:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251205005841.3942668-1-avagin@google.com> <20251205005841.3942668-2-avagin@google.com>
- <25cac682-e6a5-4ab2-bae2-fb4df2d33626@huaweicloud.com>
-In-Reply-To: <25cac682-e6a5-4ab2-bae2-fb4df2d33626@huaweicloud.com>
-From: Andrei Vagin <avagin@gmail.com>
-Date: Sat, 6 Dec 2025 22:16:34 -0800
-X-Gm-Features: AQt7F2p7RekYLuKI-hKafG4DE8Ti31OsLl4BdXgEl5swhlVsRR3s_ZW5SSZKSRw
-Message-ID: <CANaxB-w+j89zVRpwVErT8JdrmKZqw+D7ANZBzk2pA2WCj75XPA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] cgroup, binfmt_elf: Add hwcap masks to the misc controller
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: Andrei Vagin <avagin@google.com>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	criu@lists.linux.dev, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Vipin Sharma <vipinsh@google.com>, Jonathan Corbet <corbet@lwn.net>
+References: <20251203003526.2889477-1-joannelkoong@gmail.com> <20251203003526.2889477-23-joannelkoong@gmail.com>
+In-Reply-To: <20251203003526.2889477-23-joannelkoong@gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Sun, 7 Dec 2025 00:33:07 -0800
+X-Gm-Features: AQt7F2qDn8yX6VwGKjZ5m7Y1OFJcgshRl5DLIIJ4JqieP8mvptUQOBYa3TBR0Hw
+Message-ID: <CADUfDZp3NCnJ7-dAmFo2VbApez9ni+zR7Z-iGsudDrTN4qw1Xg@mail.gmail.com>
+Subject: Re: [PATCH v1 22/30] io_uring/rsrc: refactor io_buffer_register_bvec()/io_buffer_unregister_bvec()
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 5, 2025 at 2:11=E2=80=AFAM Chen Ridong <chenridong@huaweicloud.=
-com> wrote:
+On Tue, Dec 2, 2025 at 4:37=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
+> wrote:
 >
+> Changes:
+> - Rename io_buffer_register_bvec() to io_buffer_register_request()
+> - Rename io_buffer_unregister_bvec() to io_buffer_unregister()
+> - Add cmd wrappers for io_buffer_register_request() and
+>   io_buffer_unregister() for ublk to use
+
+I agree these names seem clearer.
+
 >
+> This is in preparation for supporting kernel-populated buffers in fuse
+> io-uring, which will need to register bvecs directly (not through a
+> block-based request) and will need to do unregistration through an
+> io_ring_ctx directly.
 >
-> On 2025/12/5 8:58, Andrei Vagin wrote:
-> > Add an interface to the misc cgroup controller that allows masking out
-> > hardware capabilities (AT_HWCAP) reported to user-space processes. This
-> > provides a mechanism to restrict the features a containerized
-> > application can see.
-> >
-> > The new "misc.mask" cgroup file allows users to specify masks for
-> > AT_HWCAP, AT_HWCAP2, AT_HWCAP3, and AT_HWCAP4.
-> >
-> > The output of "misc.mask" is extended to display the effective mask,
-> > which is a combination of the masks from the current cgroup and all its
-> > ancestors.
-> >
-> > Signed-off-by: Andrei Vagin <avagin@google.com>
-> > ---
-> >  fs/binfmt_elf.c             |  24 +++++--
-> >  include/linux/misc_cgroup.h |  25 +++++++
-> >  kernel/cgroup/misc.c        | 126 ++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 171 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> > index 3eb734c192e9..59137784e81d 100644
-> > --- a/fs/binfmt_elf.c
-> > +++ b/fs/binfmt_elf.c
-> > @@ -47,6 +47,7 @@
-> >  #include <linux/dax.h>
-> >  #include <linux/uaccess.h>
-> >  #include <uapi/linux/rseq.h>
-> > +#include <linux/misc_cgroup.h>
-> >  #include <asm/param.h>
-> >  #include <asm/page.h>
-> >
-> > @@ -182,6 +183,21 @@ create_elf_tables(struct linux_binprm *bprm, const=
- struct elfhdr *exec,
-> >       int ei_index;
-> >       const struct cred *cred =3D current_cred();
-> >       struct vm_area_struct *vma;
-> > +     struct misc_cg *misc_cg;
-> > +     u64 hwcap_mask[4] =3D {0, 0, 0, 0};
-> > +
-> > +     misc_cg =3D get_current_misc_cg();
-> > +     misc_cg_get_mask(MISC_CG_MASK_HWCAP, misc_cg, &hwcap_mask[0]);
-> > +#ifdef ELF_HWCAP2
-> > +     misc_cg_get_mask(MISC_CG_MASK_HWCAP2, misc_cg, &hwcap_mask[1]);
-> > +#endif
-> > +#ifdef ELF_HWCAP3
-> > +     misc_cg_get_mask(MISC_CG_MASK_HWCAP3, misc_cg, &hwcap_mask[2]);
-> > +#endif
-> > +#ifdef ELF_HWCAP4
-> > +     misc_cg_get_mask(MISC_CG_MASK_HWCAP4, misc_cg, &hwcap_mask[3]);
-> > +#endif
-> > +     put_misc_cg(misc_cg);
-> >
-> >       /*
-> >        * In some cases (e.g. Hyper-Threading), we want to avoid L1
-> > @@ -246,7 +262,7 @@ create_elf_tables(struct linux_binprm *bprm, const =
-struct elfhdr *exec,
-> >        */
-> >       ARCH_DLINFO;
-> >  #endif
-> > -     NEW_AUX_ENT(AT_HWCAP, ELF_HWCAP);
-> > +     NEW_AUX_ENT(AT_HWCAP, ELF_HWCAP & ~hwcap_mask[0]);
-> >       NEW_AUX_ENT(AT_PAGESZ, ELF_EXEC_PAGESIZE);
-> >       NEW_AUX_ENT(AT_CLKTCK, CLOCKS_PER_SEC);
-> >       NEW_AUX_ENT(AT_PHDR, phdr_addr);
-> > @@ -264,13 +280,13 @@ create_elf_tables(struct linux_binprm *bprm, cons=
-t struct elfhdr *exec,
-> >       NEW_AUX_ENT(AT_SECURE, bprm->secureexec);
-> >       NEW_AUX_ENT(AT_RANDOM, (elf_addr_t)(unsigned long)u_rand_bytes);
-> >  #ifdef ELF_HWCAP2
-> > -     NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
-> > +     NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2 & ~hwcap_mask[1]);
-> >  #endif
-> >  #ifdef ELF_HWCAP3
-> > -     NEW_AUX_ENT(AT_HWCAP3, ELF_HWCAP3);
-> > +     NEW_AUX_ENT(AT_HWCAP3, ELF_HWCAP3 & ~hwcap_mask[2]);
-> >  #endif
-> >  #ifdef ELF_HWCAP4
-> > -     NEW_AUX_ENT(AT_HWCAP4, ELF_HWCAP4);
-> > +     NEW_AUX_ENT(AT_HWCAP4, ELF_HWCAP4 & ~hwcap_mask[3]);
-> >  #endif
-> >       NEW_AUX_ENT(AT_EXECFN, bprm->exec);
-> >       if (k_platform) {
-> > diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
-> > index 0cb36a3ffc47..cff830c238fb 100644
-> > --- a/include/linux/misc_cgroup.h
-> > +++ b/include/linux/misc_cgroup.h
-> > @@ -8,6 +8,8 @@
-> >  #ifndef _MISC_CGROUP_H_
-> >  #define _MISC_CGROUP_H_
-> >
-> > +#include <linux/elf.h>
-> > +
-> >  /**
-> >   * enum misc_res_type - Types of misc cgroup entries supported by the =
-host.
-> >   */
-> > @@ -26,6 +28,20 @@ enum misc_res_type {
-> >       MISC_CG_RES_TYPES
-> >  };
-> >
-> > +enum misc_mask_type {
-> > +     MISC_CG_MASK_HWCAP,
-> > +#ifdef ELF_HWCAP2
-> > +     MISC_CG_MASK_HWCAP2,
-> > +#endif
-> > +#ifdef ELF_HWCAP3
-> > +     MISC_CG_MASK_HWCAP3,
-> > +#endif
-> > +#ifdef ELF_HWCAP4
-> > +     MISC_CG_MASK_HWCAP4,
-> > +#endif
-> > +     MISC_CG_MASK_TYPES
-> > +};
-> > +
-> >  struct misc_cg;
-> >
-> >  #ifdef CONFIG_CGROUP_MISC
-> > @@ -62,12 +78,15 @@ struct misc_cg {
-> >       struct cgroup_file events_local_file;
-> >
-> >       struct misc_res res[MISC_CG_RES_TYPES];
-> > +     u64 mask[MISC_CG_MASK_TYPES];
-> >  };
-> >
-> >  int misc_cg_set_capacity(enum misc_res_type type, u64 capacity);
-> >  int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg, u6=
-4 amount);
-> >  void misc_cg_uncharge(enum misc_res_type type, struct misc_cg *cg, u64=
- amount);
-> >
-> > +int misc_cg_get_mask(enum misc_mask_type type, struct misc_cg *cg, u64=
- *pmask);
-> > +
-> >  /**
-> >   * css_misc() - Get misc cgroup from the css.
-> >   * @css: cgroup subsys state object.
-> > @@ -134,5 +153,11 @@ static inline void put_misc_cg(struct misc_cg *cg)
-> >  {
-> >  }
-> >
-> > +static inline int misc_cg_get_mask(enum misc_mask_type type, struct mi=
-sc_cg *cg, u64 *pmask)
-> > +{
-> > +     *pmask =3D 0;
-> > +     return 0;
-> > +}
-> > +
-> >  #endif /* CONFIG_CGROUP_MISC */
-> >  #endif /* _MISC_CGROUP_H_ */
-> > diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-> > index 6a01d91ea4cb..d1386d86060f 100644
-> > --- a/kernel/cgroup/misc.c
-> > +++ b/kernel/cgroup/misc.c
-> > @@ -30,6 +30,19 @@ static const char *const misc_res_name[] =3D {
-> >  #endif
-> >  };
-> >
-> > +static const char *const misc_mask_name[] =3D {
-> > +     "AT_HWCAP",
-> > +#ifdef ELF_HWCAP2
-> > +     "AT_HWCAP2",
-> > +#endif
-> > +#ifdef ELF_HWCAP3
-> > +     "AT_HWCAP3",
-> > +#endif
-> > +#ifdef ELF_HWCAP4
-> > +     "AT_HWCAP4",
-> > +#endif
-> > +};
-> > +
-> >  /* Root misc cgroup */
-> >  static struct misc_cg root_cg;
-> >
-> > @@ -71,6 +84,11 @@ static inline bool valid_type(enum misc_res_type typ=
-e)
-> >       return type >=3D 0 && type < MISC_CG_RES_TYPES;
-> >  }
-> >
-> > +static inline bool valid_mask_type(enum misc_mask_type type)
-> > +{
-> > +     return type >=3D 0 && type < MISC_CG_MASK_TYPES;
-> > +}
-> > +
-> >  /**
-> >   * misc_cg_set_capacity() - Set the capacity of the misc cgroup res.
-> >   * @type: Type of the misc res.
-> > @@ -391,6 +409,109 @@ static int misc_events_local_show(struct seq_file=
- *sf, void *v)
-> >       return __misc_events_show(sf, true);
-> >  }
-> >
-> > +/**
-> > + * misc_cg_get_mask() - Get the mask of the specified type.
-> > + * @type: The misc mask type.
-> > + * @cg: The misc cgroup.
-> > + * @pmask: Pointer to the resulting mask.
-> > + *
-> > + * This function calculates the effective mask for a given cgroup by w=
-alking up
-> > + * the hierarchy and ORing the masks from all parent cgroupfs. The fin=
-al result
-> > + * is stored in the location pointed to by @pmask.
-> > + *
-> > + * Context: Any context.
-> > + * Return: 0 on success, -EINVAL if @type is invalid.
-> > + */
-> > +int misc_cg_get_mask(enum misc_mask_type type, struct misc_cg *cg, u64=
- *pmask)
-> > +{
-> > +     struct misc_cg *i;
-> > +     u64 mask =3D 0;
-> > +
-> > +     if (!(valid_mask_type(type)))
-> > +             return -EINVAL;
-> > +
-> > +     for (i =3D cg; i; i =3D parent_misc(i))
-> > +             mask |=3D READ_ONCE(i->mask[type]);
-> > +
-> > +     *pmask =3D mask;
-> > +     return 0;
-> > +}
-> > +
-> > +/**
-> > + * misc_cg_mask_show() - Show the misc cgroup masks.
-> > + * @sf: Interface file
-> > + * @v: Arguments passed
-> > + *
-> > + * Context: Any context.
-> > + * Return: 0 to denote successful print.
-> > + */
-> > +static int misc_cg_mask_show(struct seq_file *sf, void *v)
-> > +{
-> > +     struct misc_cg *cg =3D css_misc(seq_css(sf));
-> > +     int i;
-> > +
-> > +     for (i =3D 0; i < MISC_CG_MASK_TYPES; i++) {
-> > +             u64 rval, val =3D READ_ONCE(cg->mask[i]);
-> > +
-> > +             misc_cg_get_mask(i, cg, &rval);
-> > +             seq_printf(sf, "%s\t%#016llx\t%#016llx\n", misc_mask_name=
-[i], val, rval);
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  Documentation/block/ublk.rst | 15 ++++++++-------
+>  drivers/block/ublk_drv.c     | 20 +++++++++++---------
+>  include/linux/io_uring/cmd.h | 13 ++++++++-----
+>  io_uring/rsrc.c              | 14 +++++---------
+>  io_uring/rsrc.h              |  7 +++++++
+>  io_uring/uring_cmd.c         | 21 +++++++++++++++++++++
+>  6 files changed, 60 insertions(+), 30 deletions(-)
 >
-> I'm concerned about the performance impact of the bottom-up traversal in =
-deeply nested cgroup
-> hierarchies. Could this approach introduce noticeable latency in such sce=
-narios?
+> diff --git a/Documentation/block/ublk.rst b/Documentation/block/ublk.rst
+> index 8c4030bcabb6..1546477e768b 100644
+> --- a/Documentation/block/ublk.rst
+> +++ b/Documentation/block/ublk.rst
+> @@ -326,16 +326,17 @@ Zero copy
+>  ---------
 >
+>  ublk zero copy relies on io_uring's fixed kernel buffer, which provides
+> -two APIs: `io_buffer_register_bvec()` and `io_buffer_unregister_bvec`.
+> +two APIs: `io_uring_cmd_buffer_register_request()` and
+> +`io_uring_cmd_buffer_unregister`.
+>
+>  ublk adds IO command of `UBLK_IO_REGISTER_IO_BUF` to call
+> -`io_buffer_register_bvec()` for ublk server to register client request
+> -buffer into io_uring buffer table, then ublk server can submit io_uring
+> +`io_uring_cmd_buffer_register_request()` for ublk server to register cli=
+ent
+> +request buffer into io_uring buffer table, then ublk server can submit i=
+o_uring
+>  IOs with the registered buffer index. IO command of `UBLK_IO_UNREGISTER_=
+IO_BUF`
+> -calls `io_buffer_unregister_bvec()` to unregister the buffer, which is
+> -guaranteed to be live between calling `io_buffer_register_bvec()` and
+> -`io_buffer_unregister_bvec()`. Any io_uring operation which supports thi=
+s
+> -kind of kernel buffer will grab one reference of the buffer until the
+> +calls `io_uring_cmd_buffer_unregister()` to unregister the buffer, which=
+ is
+> +guaranteed to be live between calling `io_uring_cmd_buffer_register_requ=
+est()`
+> +and `io_uring_cmd_buffer_unregister()`. Any io_uring operation which sup=
+ports
+> +this kind of kernel buffer will grab one reference of the buffer until t=
+he
+>  operation is completed.
+>
+>  ublk server implementing zero copy or user copy has to be CAP_SYS_ADMIN =
+and
+> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+> index e0c601128efa..d671d08533c9 100644
+> --- a/drivers/block/ublk_drv.c
+> +++ b/drivers/block/ublk_drv.c
+> @@ -1246,8 +1246,9 @@ static bool ublk_auto_buf_reg(const struct ublk_que=
+ue *ubq, struct request *req,
+>  {
+>         int ret;
+>
+> -       ret =3D io_buffer_register_bvec(io->cmd, req, ublk_io_release,
+> -                                     io->buf.index, issue_flags);
+> +       ret =3D io_uring_cmd_buffer_register_request(io->cmd, req,
+> +                                                  ublk_io_release,
+> +                                                  io->buf.index, issue_f=
+lags);
+>         if (ret) {
+>                 if (io->buf.flags & UBLK_AUTO_BUF_REG_FALLBACK) {
+>                         ublk_auto_buf_reg_fallback(ubq, io);
+> @@ -2204,8 +2205,8 @@ static int ublk_register_io_buf(struct io_uring_cmd=
+ *cmd,
+>         if (!req)
+>                 return -EINVAL;
+>
+> -       ret =3D io_buffer_register_bvec(cmd, req, ublk_io_release, index,
+> -                                     issue_flags);
+> +       ret =3D io_uring_cmd_buffer_register_request(cmd, req, ublk_io_re=
+lease,
+> +                                                  index, issue_flags);
+>         if (ret) {
+>                 ublk_put_req_ref(io, req);
+>                 return ret;
+> @@ -2236,8 +2237,8 @@ ublk_daemon_register_io_buf(struct io_uring_cmd *cm=
+d,
+>         if (!ublk_dev_support_zero_copy(ub) || !ublk_rq_has_data(req))
+>                 return -EINVAL;
+>
+> -       ret =3D io_buffer_register_bvec(cmd, req, ublk_io_release, index,
+> -                                     issue_flags);
+> +       ret =3D io_uring_cmd_buffer_register_request(cmd, req, ublk_io_re=
+lease,
+> +                                                  index, issue_flags);
+>         if (ret)
+>                 return ret;
+>
+> @@ -2252,7 +2253,7 @@ static int ublk_unregister_io_buf(struct io_uring_c=
+md *cmd,
+>         if (!(ub->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY))
+>                 return -EINVAL;
+>
+> -       return io_buffer_unregister_bvec(cmd, index, issue_flags);
+> +       return io_uring_cmd_buffer_unregister(cmd, index, issue_flags);
+>  }
+>
+>  static int ublk_check_fetch_buf(const struct ublk_device *ub, __u64 buf_=
+addr)
+> @@ -2386,7 +2387,7 @@ static int ublk_ch_uring_cmd_local(struct io_uring_=
+cmd *cmd,
+>                 goto out;
+>
+>         /*
+> -        * io_buffer_unregister_bvec() doesn't access the ubq or io,
+> +        * io_uring_cmd_buffer_unregister() doesn't access the ubq or io,
+>          * so no need to validate the q_id, tag, or task
+>          */
+>         if (_IOC_NR(cmd_op) =3D=3D UBLK_IO_UNREGISTER_IO_BUF)
+> @@ -2456,7 +2457,8 @@ static int ublk_ch_uring_cmd_local(struct io_uring_=
+cmd *cmd,
+>
+>                 /* can't touch 'ublk_io' any more */
+>                 if (buf_idx !=3D UBLK_INVALID_BUF_IDX)
+> -                       io_buffer_unregister_bvec(cmd, buf_idx, issue_fla=
+gs);
+> +                       io_uring_cmd_buffer_unregister(cmd, buf_idx,
+> +                                                      issue_flags);
+>                 if (req_op(req) =3D=3D REQ_OP_ZONE_APPEND)
+>                         req->__sector =3D addr;
+>                 if (compl)
+> diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+> index 795b846d1e11..fc956f8f7ed2 100644
+> --- a/include/linux/io_uring/cmd.h
+> +++ b/include/linux/io_uring/cmd.h
+> @@ -185,10 +185,13 @@ static inline void io_uring_cmd_done32(struct io_ur=
+ing_cmd *ioucmd, s32 ret,
+>         return __io_uring_cmd_done(ioucmd, ret, res2, issue_flags, true);
+>  }
+>
+> -int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq=
+,
+> -                           void (*release)(void *), unsigned int index,
+> -                           unsigned int issue_flags);
+> -int io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int ind=
+ex,
+> -                             unsigned int issue_flags);
+> +int io_uring_cmd_buffer_register_request(struct io_uring_cmd *cmd,
+> +                                        struct request *rq,
+> +                                        void (*release)(void *),
+> +                                        unsigned int index,
+> +                                        unsigned int issue_flags);
+> +
+> +int io_uring_cmd_buffer_unregister(struct io_uring_cmd *cmd, unsigned in=
+t index,
+> +                                  unsigned int issue_flags);
+>
+>  #endif /* _LINUX_IO_URING_CMD_H */
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index b6dd62118311..59cafe63d187 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -941,11 +941,10 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx=
+, void __user *arg,
+>         return ret;
+>  }
+>
+> -int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq=
+,
+> -                           void (*release)(void *), unsigned int index,
+> -                           unsigned int issue_flags)
+> +int io_buffer_register_request(struct io_ring_ctx *ctx, struct request *=
+rq,
+> +                              void (*release)(void *), unsigned int inde=
+x,
+> +                              unsigned int issue_flags)
+>  {
+> -       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+>         struct io_rsrc_data *data =3D &ctx->buf_table;
+>         struct req_iterator rq_iter;
+>         struct io_mapped_ubuf *imu;
+> @@ -1003,12 +1002,10 @@ int io_buffer_register_bvec(struct io_uring_cmd *=
+cmd, struct request *rq,
+>         io_ring_submit_unlock(ctx, issue_flags);
+>         return ret;
+>  }
+> -EXPORT_SYMBOL_GPL(io_buffer_register_bvec);
+>
+> -int io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int ind=
+ex,
+> -                             unsigned int issue_flags)
+> +int io_buffer_unregister(struct io_ring_ctx *ctx, unsigned int index,
+> +                        unsigned int issue_flags)
+>  {
+> -       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+>         struct io_rsrc_data *data =3D &ctx->buf_table;
+>         struct io_rsrc_node *node;
+>         int ret =3D 0;
+> @@ -1036,7 +1033,6 @@ int io_buffer_unregister_bvec(struct io_uring_cmd *=
+cmd, unsigned int index,
+>         io_ring_submit_unlock(ctx, issue_flags);
+>         return ret;
+>  }
+> -EXPORT_SYMBOL_GPL(io_buffer_unregister_bvec);
+>
+>  static int validate_fixed_range(u64 buf_addr, size_t len,
+>                                 const struct io_mapped_ubuf *imu)
+> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+> index 658934f4d3ff..d1ca33f3319a 100644
+> --- a/io_uring/rsrc.h
+> +++ b/io_uring/rsrc.h
+> @@ -91,6 +91,13 @@ int io_validate_user_buf_range(u64 uaddr, u64 ulen);
+>  bool io_check_coalesce_buffer(struct page **page_array, int nr_pages,
+>                               struct io_imu_folio_data *data);
+>
+> +int io_buffer_register_request(struct io_ring_ctx *ctx, struct request *=
+rq,
+> +                              void (*release)(void *), unsigned int inde=
+x,
+> +                              unsigned int issue_flags);
+> +
+> +int io_buffer_unregister(struct io_ring_ctx *ctx, unsigned int index,
+> +                        unsigned int issue_flags);
+> +
+>  static inline struct io_rsrc_node *io_rsrc_node_lookup(struct io_rsrc_da=
+ta *data,
+>                                                        int index)
+>  {
+> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> index 3eb10bbba177..3922ac86b481 100644
+> --- a/io_uring/uring_cmd.c
+> +++ b/io_uring/uring_cmd.c
+> @@ -383,6 +383,27 @@ struct io_br_sel io_uring_cmd_buffer_select(struct i=
+o_uring_cmd *ioucmd,
+>  }
+>  EXPORT_SYMBOL_GPL(io_uring_cmd_buffer_select);
+>
+> +int io_uring_cmd_buffer_register_request(struct io_uring_cmd *cmd,
+> +                                        struct request *rq,
+> +                                        void (*release)(void *),
+> +                                        unsigned int index,
+> +                                        unsigned int issue_flags)
+> +{
+> +       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+> +
+> +       return io_buffer_register_request(ctx, rq, release, index, issue_=
+flags);
+> +}
+> +EXPORT_SYMBOL_GPL(io_uring_cmd_buffer_register_request);
+> +
+> +int io_uring_cmd_buffer_unregister(struct io_uring_cmd *cmd, unsigned in=
+t index,
+> +                                  unsigned int issue_flags)
+> +{
+> +       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
+> +
+> +       return io_buffer_unregister(ctx, index, issue_flags);
+> +}
+> +EXPORT_SYMBOL_GPL(io_uring_cmd_buffer_unregister);
 
-I wrote an execve benchmark to measure the impact of this change
-(https://github.com/avagin/execve_vs_misccg).
+It would be nice to avoid these additional function calls that can't
+be inlined. I guess we probably don't want to include the
+io_uring-internal header io_uring/rsrc.h in the external header
+linux/io_uring/cmd.h, which is probably why the functions were
+declared in linux/io_uring/cmd.h but defined in io_uring/rsrc.c
+previously. Maybe it would make sense to move the definitions of
+io_uring_cmd_buffer_register_request() and
+io_uring_cmd_buffer_unregister() to io_uring/rsrc.c so
+io_buffer_register_request()/io_buffer_unregister() can be inlined
+into them?
 
-The benchmark results are as follows:
+Best,
+Caleb
 
-depth | before (ops/sec)| after (ops/sec)| ratio %| perf
-------------------------------------------------------
-0     | 4813.06 =C2=B1 11.01 | 4826.78 =C2=B1 19.33| 100.28 |
-2     | 4752.75 =C2=B1 11.28 | 4754.38 =C2=B1 21.93| 100.03 |
-4     | 4767.41 =C2=B1 8.35  | 4729.81 =C2=B1 29.56|  99.21 |
-8     | 4768.01 =C2=B1 10.42 | 4745.23 =C2=B1 27.68|  99.52 |
-16    | 4749.34 =C2=B1 21.03 | 4723.63 =C2=B1 23.57|  99.45 |
-32    | 4758.67 =C2=B1 10.94 | 4728.49 =C2=B1 13.9 |  99.36 |
-64    | 4749.85 =C2=B1 12.33 | 4686.3  =C2=B1 13.06|  98.66 | 0.11%
-128   | 4707.22 =C2=B1 12.01 | 4668.22 =C2=B1 16.9 |  99.17 | 0.33%
-256   | 4725.75 =C2=B1 6.07  | 4629.09 =C2=B1 27.02|  97.95 | 1.61%
-
-Columns:
-* depth: The nesting level of the cgroup.
-* before: without this patch.
-* after: with this patch applied.
-* ratio: performance of after relative to before.
-* perf: profiling data from perf showing execution time spent in the
-        misc_cg_get_mask function.
-
-The performance impact is almost negligible for cgroup depths up to 64.
-Even at a depth of 128, the overhead is less than 1%.
-
-Thanks,
-Andrei
+> +
+>  /*
+>   * Return true if this multishot uring_cmd needs to be completed, otherw=
+ise
+>   * the event CQE is posted successfully.
+> --
+> 2.47.3
+>
 
