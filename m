@@ -1,229 +1,382 @@
-Return-Path: <linux-fsdevel+bounces-70948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C23CAB100
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 07 Dec 2025 04:58:45 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F6ACAB1F5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 07 Dec 2025 07:17:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id D2E583006D9E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Dec 2025 03:58:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4E7293097BBA
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Dec 2025 06:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDB425DB0D;
-	Sun,  7 Dec 2025 03:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B51284B25;
+	Sun,  7 Dec 2025 06:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="JSsG+vG6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDdBX+HG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D7716CD33
-	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Dec 2025 03:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C168E3D6F
+	for <linux-fsdevel@vger.kernel.org>; Sun,  7 Dec 2025 06:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765079921; cv=none; b=CtWIq6FbxBpNx5BTcZ+zILErRmbChYHmG39ftYtp/hXDdlybId20K4JeHzmMxwhW2imjEV7vZrurkyn5SzxsiqjQkWLlI9xsE3ijkUF7OysC+LoWso3b2VB13q+ZLrhWs7Hzw5hytFjA0vFMO7BnSwDde0wZ5HS5YC9r2MyvSTw=
+	t=1765088209; cv=none; b=YXcCV3ht8GNl/eDvqCGDy16ixOj11TQoz6ZyyLSFAXtnjH/Y2pA4a4ozT/sMCrTuQ/r95dyTFyst7t8E1Ro2hULPu6Mi9bezRY+9gia8j6sj5gFDabwplkKQvndOYHlx6hZV72pqjOiCl2L99X/egkl/niq/3lp7v7zvKq6NpMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765079921; c=relaxed/simple;
-	bh=MW1IBt7tj5u7SAYIiSAFFifjUwvjDbPW0VLc8JcXH60=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JkRf+m6iz9V8EOxYsDcc7J8aleSniMI2Z/qwPRYM7Argz8ZxR7eZvams2E2m2Ozs5sKTPeQxUOfPV8NSdWsjZX3wY6VQ9vd4OeRPEXJr/Ftu+AeBJEH0Eo0rHetWQubYfhDhku8t24CD7mOjZ/G04v22R709brpLaI9+cWII9lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=JSsG+vG6; arc=none smtp.client-ip=74.125.224.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-6432842cafdso3084497d50.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 06 Dec 2025 19:58:38 -0800 (PST)
+	s=arc-20240116; t=1765088209; c=relaxed/simple;
+	bh=Vf6nRuZPEba+Oifq2sGnvE2wxBWCAWdIIwjomCWz4yI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TD8+gpBR2ccazljek7cpRuSE4ioMXSXvq2g6lOpiUqsGxKBI2T3KxQbtutfwUHaum3CDyAnUKG2mznciC2Os2HZPcVaaU3rxPUK1FrBsFLvvEgRlEUNHPBqT3wBilIrxkGnfWM7h5FrN0fAfC66ycc8ALmz7nKmxisr+tiX4ITQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDdBX+HG; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7c6cc366884so1783421a34.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 06 Dec 2025 22:16:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1765079918; x=1765684718; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w8Dhj7HqJsYQH3UAafMyWPGKGLGv5GqqtjsclhIZcjE=;
-        b=JSsG+vG6V/hI/QEKlrteDddsbpljentdfLIy19B+v2itrQ9AY4Vz2pbO1mUoPSaq5Q
-         xlErSdylossVCg5EfMlm6RCvevwQbR9KBaCCa6e4L/pohzHczqVAL2tAwReS/WNX96+d
-         zVxYO3Jal/nGmidI5fJzJvga/ewpQKNVKf8FQAN9F/EwG33Lq5yc/HFWU16ygeW4RdPH
-         ewMyWB++QGAV+E10hnv3xfByQnNOeP4XOMuow7YgWgjJgc6JxxEtkelvZZB8d4H9lD1+
-         TIYArQZ3R37xHpthGADjgLepkQUSPc2CHYkBHdIUKBl+3M93b8p6LokS3DH/AA7xVzkz
-         YSBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765079918; x=1765684718;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1765088206; x=1765693006; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w8Dhj7HqJsYQH3UAafMyWPGKGLGv5GqqtjsclhIZcjE=;
-        b=IgKrqilMXt1dWilXYe/es21NhtBhpYnj5NzE4hnGcE4U+zsCcWk660fNPdnkPi7hfR
-         5gw9udymHKFdIKThNGnDwHWRpBjOqqeJqPjWk8Goljt2meyb1UZyXfA4u11AS96agRC/
-         qZLDHmUcB9o4XYXFja9fEQma4nfOz13bBH9++vermcXwILmSi4ChA0DeC1AGQEQrsjeO
-         liWAt+/7Ost27qH6Zn3pvBdKeFmFsjIeUd5SbW/oe82jg4d6ARriE17Wnn9d82i1aSIC
-         zarge7lL5PYgmBQUFyDYoLwISc5t6gdR++SirXOyR3c2elXxZfyJBLDuIalD3KBzxjko
-         03LA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+atOJQhi1/TmJpLVpoLNVAApKavxYIHLEM+SVS1Lwsjinono0XmfJpU26+OMONUgwxZinVi3ffKucbDoD@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL7/d3E19UPR2verMddpibHKDAvX64oFD/P0s1+zJipTaPnEVG
-	1ktn2521p8HUvQZeg5Ffc7pBRyH+VKJAdC7Qkn9ICrJwBZpGVwpUYJaF/MWPB/dDWJ8=
-X-Gm-Gg: ASbGncunGxYHL5EgHbrjqoTGFSN+igTIFkD2K4OumhD1yN9IEKQTRQM74D4NzdhHpQ0
-	GLilkoESmhbJahOILaCrRHLB2vu6VAGttwblNvWyW7+jcmnv/DYGgXlX3N8cxhwOgJXgL4x0EYi
-	8V2r+84PnS4BppZpmB9PuJ9B+kWe8HV9K7JdtE7G/UTaTlrZDsDKlQJRaT/ogMtOKXuiPEydYev
-	90zbB5feyzyyZBpubKx/C+JC3v2LRW+KkRm4z2TsegK+92xVdqG+m35+mrWfjBEiefUJdX0KQFP
-	mo6GfoaXl+9b+PJgwKXxOdETagbJs7hJ9DzevkaGxE2LE2nM6a1COPwAAkZ9vjr2Z9RLJ9NybqU
-	JimIPFhV8iYLLue80lCE+xKQcx7i+mFe3sU/aT3PD9iCQ013FltCHq53DpdZYK4g0brW8Gwgeve
-	Fpoyv4Zk9EzL/5GUCW2F2tyMs=
-X-Google-Smtp-Source: AGHT+IF7IMPlGiWu+BIl+fSR5dTgu+L3aG1wLJfiqath2rj1T81EjX52oxD5AsB399iILGT3OrlYxw==
-X-Received: by 2002:a05:690e:4362:b0:642:f9a9:74eb with SMTP id 956f58d0204a3-6444e7cae4amr2480094d50.71.1765079917800;
-        Sat, 06 Dec 2025 19:58:37 -0800 (PST)
-Received: from pop-os.attlocal.net ([2600:1700:6476:1430:e180:3200:8343:50ac])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6443f2abcf8sm3707339d50.4.2025.12.06.19.58.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Dec 2025 19:58:37 -0800 (PST)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: glaubitz@physik.fu-berlin.de,
-	linux-fsdevel@vger.kernel.org,
-	frank.li@vivo.com
-Cc: Slava.Dubeyko@ibm.com,
-	Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [PATCH] hfsplus: fix volume corruption issue for generic/498
-Date: Sat,  6 Dec 2025 19:58:22 -0800
-Message-Id: <20251207035821.3863657-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.34.1
+        bh=Un5sUc5Cx47cq3O9cSCtpokOGHVUQEIffWJ4oCrfNps=;
+        b=lDdBX+HGMAEKYE60gxbiMVUnBtKI/10NEoaBpGBYnl5C7k8NmQC995SmOoVEtC3MZ5
+         PUfZHoKxQ3py/lTQpDS6EGov1KvXCee6LMSMmBLpZVZixE3DtUCZtaYfIRbNQaf4nlp8
+         +Cya8PjYKgX/BN+V9zb1qdX38//qLkKHX5JdrKF/rFiwywU+fDb0zgUy2yq5AmqwlOQM
+         uCZF/9ASqajNQsYgefovqw+I5H/U4aMT+K/oAISB0XvqD/FEJDZkWy9zOAEqkBGb2DRi
+         t7kQ2X/5rDmy5vXqlLgWb8YficBxXH+c65t5+3Ay5UQ2kPTQoMhva1lq3JaexVpuMHIK
+         4CPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765088206; x=1765693006;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Un5sUc5Cx47cq3O9cSCtpokOGHVUQEIffWJ4oCrfNps=;
+        b=XPnhJAWh3BAHFCXuBlmknC9qvV12uCOkWq6vL1q2BekYdGgA9n7z62oM/teEyTl4xw
+         gsIUn9dUGL+1PVjGYU8HFTKzoMVzeC+Xqs9+XwbOO6sJ90aA0xBLvQntwN2BM6NwWzcf
+         qYPjjDB9zOcNbZzicHOykOOyxUTA+hGwjtMFxeSYiSd92KCS9QIHUa7ix+spDQSdPi4p
+         V65p1a7rUfK6TKvFu4rYf6JfJVzeM2wuGaEEpRoiZDqVtftQ8qWPt3K6N7+m8iQoWrN1
+         /9hfezqNBixL3Zvvn3s69fKmuKzV98qRldqGxsTP+UNjp8TF4r0mDgjG7RRp6QxCI+OC
+         nSuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvLx7kKDGsr1W4ESS02FKFpX7Lay3rrlrBZ+bADY3tS7JX/mZSaKaLlIQ9kUzmGhFyCbu619cslOha+qNI@vger.kernel.org
+X-Gm-Message-State: AOJu0YzScjgT7som4/VYyYyCT8IJ3vV0tRRUBwcHUhtHR+Linv9Vgb3m
+	QFZc1XDcYSeMD5c/pJtAJI3ild3TZRrtlsklLfn3VbtpMqRImSxtpX4Pg7521DaIOSDYd7ddsQl
+	T5ZSQWGtQDuJGMG4Bru2M3w6MsC9gsY8=
+X-Gm-Gg: ASbGncvvZTR7TV0/duHznhObCLU99heJGwW969CKhChnW79Xy4QSYQTDx++6x9RVJt4
+	uhZV4X3D8XZ3fh8fCs5fMvtztI2D0opukPkXRRjYPBUgZuihDNHRR7LhugX9zvM1w0OJFGo2Szh
+	Yj5uAYulcHiI+pCtnrGd/a0XalyC+bzrTuxXrTVULZOhNkYWeA6FxjgvPdbiCEighSlXSiw8tr9
+	8wMp9FHewW3dTn46kUu1KAoHn9dRy/99Ekdoaq/50sOIusiIZqyV2ScZBRZTbO4nuyPiqZO
+X-Google-Smtp-Source: AGHT+IGTU11em87jeAo6kbD6dSOQffzi00PVFHQ+kjvwjKAEFHYJNasF5rV2kwcoj4CItjdfPWuUhV4Bdq+BX91kfOI=
+X-Received: by 2002:a05:6830:3153:b0:7c7:5385:9ac2 with SMTP id
+ 46e09a7af769-7c97078be65mr3441356a34.8.1765088205704; Sat, 06 Dec 2025
+ 22:16:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251205005841.3942668-1-avagin@google.com> <20251205005841.3942668-2-avagin@google.com>
+ <25cac682-e6a5-4ab2-bae2-fb4df2d33626@huaweicloud.com>
+In-Reply-To: <25cac682-e6a5-4ab2-bae2-fb4df2d33626@huaweicloud.com>
+From: Andrei Vagin <avagin@gmail.com>
+Date: Sat, 6 Dec 2025 22:16:34 -0800
+X-Gm-Features: AQt7F2p7RekYLuKI-hKafG4DE8Ti31OsLl4BdXgEl5swhlVsRR3s_ZW5SSZKSRw
+Message-ID: <CANaxB-w+j89zVRpwVErT8JdrmKZqw+D7ANZBzk2pA2WCj75XPA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] cgroup, binfmt_elf: Add hwcap masks to the misc controller
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: Andrei Vagin <avagin@google.com>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	criu@lists.linux.dev, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Vipin Sharma <vipinsh@google.com>, Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The xfstests' test-case generic/498 leaves HFS+ volume
-in corrupted state:
+On Fri, Dec 5, 2025 at 2:11=E2=80=AFAM Chen Ridong <chenridong@huaweicloud.=
+com> wrote:
+>
+>
+>
+> On 2025/12/5 8:58, Andrei Vagin wrote:
+> > Add an interface to the misc cgroup controller that allows masking out
+> > hardware capabilities (AT_HWCAP) reported to user-space processes. This
+> > provides a mechanism to restrict the features a containerized
+> > application can see.
+> >
+> > The new "misc.mask" cgroup file allows users to specify masks for
+> > AT_HWCAP, AT_HWCAP2, AT_HWCAP3, and AT_HWCAP4.
+> >
+> > The output of "misc.mask" is extended to display the effective mask,
+> > which is a combination of the masks from the current cgroup and all its
+> > ancestors.
+> >
+> > Signed-off-by: Andrei Vagin <avagin@google.com>
+> > ---
+> >  fs/binfmt_elf.c             |  24 +++++--
+> >  include/linux/misc_cgroup.h |  25 +++++++
+> >  kernel/cgroup/misc.c        | 126 ++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 171 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > index 3eb734c192e9..59137784e81d 100644
+> > --- a/fs/binfmt_elf.c
+> > +++ b/fs/binfmt_elf.c
+> > @@ -47,6 +47,7 @@
+> >  #include <linux/dax.h>
+> >  #include <linux/uaccess.h>
+> >  #include <uapi/linux/rseq.h>
+> > +#include <linux/misc_cgroup.h>
+> >  #include <asm/param.h>
+> >  #include <asm/page.h>
+> >
+> > @@ -182,6 +183,21 @@ create_elf_tables(struct linux_binprm *bprm, const=
+ struct elfhdr *exec,
+> >       int ei_index;
+> >       const struct cred *cred =3D current_cred();
+> >       struct vm_area_struct *vma;
+> > +     struct misc_cg *misc_cg;
+> > +     u64 hwcap_mask[4] =3D {0, 0, 0, 0};
+> > +
+> > +     misc_cg =3D get_current_misc_cg();
+> > +     misc_cg_get_mask(MISC_CG_MASK_HWCAP, misc_cg, &hwcap_mask[0]);
+> > +#ifdef ELF_HWCAP2
+> > +     misc_cg_get_mask(MISC_CG_MASK_HWCAP2, misc_cg, &hwcap_mask[1]);
+> > +#endif
+> > +#ifdef ELF_HWCAP3
+> > +     misc_cg_get_mask(MISC_CG_MASK_HWCAP3, misc_cg, &hwcap_mask[2]);
+> > +#endif
+> > +#ifdef ELF_HWCAP4
+> > +     misc_cg_get_mask(MISC_CG_MASK_HWCAP4, misc_cg, &hwcap_mask[3]);
+> > +#endif
+> > +     put_misc_cg(misc_cg);
+> >
+> >       /*
+> >        * In some cases (e.g. Hyper-Threading), we want to avoid L1
+> > @@ -246,7 +262,7 @@ create_elf_tables(struct linux_binprm *bprm, const =
+struct elfhdr *exec,
+> >        */
+> >       ARCH_DLINFO;
+> >  #endif
+> > -     NEW_AUX_ENT(AT_HWCAP, ELF_HWCAP);
+> > +     NEW_AUX_ENT(AT_HWCAP, ELF_HWCAP & ~hwcap_mask[0]);
+> >       NEW_AUX_ENT(AT_PAGESZ, ELF_EXEC_PAGESIZE);
+> >       NEW_AUX_ENT(AT_CLKTCK, CLOCKS_PER_SEC);
+> >       NEW_AUX_ENT(AT_PHDR, phdr_addr);
+> > @@ -264,13 +280,13 @@ create_elf_tables(struct linux_binprm *bprm, cons=
+t struct elfhdr *exec,
+> >       NEW_AUX_ENT(AT_SECURE, bprm->secureexec);
+> >       NEW_AUX_ENT(AT_RANDOM, (elf_addr_t)(unsigned long)u_rand_bytes);
+> >  #ifdef ELF_HWCAP2
+> > -     NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
+> > +     NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2 & ~hwcap_mask[1]);
+> >  #endif
+> >  #ifdef ELF_HWCAP3
+> > -     NEW_AUX_ENT(AT_HWCAP3, ELF_HWCAP3);
+> > +     NEW_AUX_ENT(AT_HWCAP3, ELF_HWCAP3 & ~hwcap_mask[2]);
+> >  #endif
+> >  #ifdef ELF_HWCAP4
+> > -     NEW_AUX_ENT(AT_HWCAP4, ELF_HWCAP4);
+> > +     NEW_AUX_ENT(AT_HWCAP4, ELF_HWCAP4 & ~hwcap_mask[3]);
+> >  #endif
+> >       NEW_AUX_ENT(AT_EXECFN, bprm->exec);
+> >       if (k_platform) {
+> > diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
+> > index 0cb36a3ffc47..cff830c238fb 100644
+> > --- a/include/linux/misc_cgroup.h
+> > +++ b/include/linux/misc_cgroup.h
+> > @@ -8,6 +8,8 @@
+> >  #ifndef _MISC_CGROUP_H_
+> >  #define _MISC_CGROUP_H_
+> >
+> > +#include <linux/elf.h>
+> > +
+> >  /**
+> >   * enum misc_res_type - Types of misc cgroup entries supported by the =
+host.
+> >   */
+> > @@ -26,6 +28,20 @@ enum misc_res_type {
+> >       MISC_CG_RES_TYPES
+> >  };
+> >
+> > +enum misc_mask_type {
+> > +     MISC_CG_MASK_HWCAP,
+> > +#ifdef ELF_HWCAP2
+> > +     MISC_CG_MASK_HWCAP2,
+> > +#endif
+> > +#ifdef ELF_HWCAP3
+> > +     MISC_CG_MASK_HWCAP3,
+> > +#endif
+> > +#ifdef ELF_HWCAP4
+> > +     MISC_CG_MASK_HWCAP4,
+> > +#endif
+> > +     MISC_CG_MASK_TYPES
+> > +};
+> > +
+> >  struct misc_cg;
+> >
+> >  #ifdef CONFIG_CGROUP_MISC
+> > @@ -62,12 +78,15 @@ struct misc_cg {
+> >       struct cgroup_file events_local_file;
+> >
+> >       struct misc_res res[MISC_CG_RES_TYPES];
+> > +     u64 mask[MISC_CG_MASK_TYPES];
+> >  };
+> >
+> >  int misc_cg_set_capacity(enum misc_res_type type, u64 capacity);
+> >  int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg, u6=
+4 amount);
+> >  void misc_cg_uncharge(enum misc_res_type type, struct misc_cg *cg, u64=
+ amount);
+> >
+> > +int misc_cg_get_mask(enum misc_mask_type type, struct misc_cg *cg, u64=
+ *pmask);
+> > +
+> >  /**
+> >   * css_misc() - Get misc cgroup from the css.
+> >   * @css: cgroup subsys state object.
+> > @@ -134,5 +153,11 @@ static inline void put_misc_cg(struct misc_cg *cg)
+> >  {
+> >  }
+> >
+> > +static inline int misc_cg_get_mask(enum misc_mask_type type, struct mi=
+sc_cg *cg, u64 *pmask)
+> > +{
+> > +     *pmask =3D 0;
+> > +     return 0;
+> > +}
+> > +
+> >  #endif /* CONFIG_CGROUP_MISC */
+> >  #endif /* _MISC_CGROUP_H_ */
+> > diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
+> > index 6a01d91ea4cb..d1386d86060f 100644
+> > --- a/kernel/cgroup/misc.c
+> > +++ b/kernel/cgroup/misc.c
+> > @@ -30,6 +30,19 @@ static const char *const misc_res_name[] =3D {
+> >  #endif
+> >  };
+> >
+> > +static const char *const misc_mask_name[] =3D {
+> > +     "AT_HWCAP",
+> > +#ifdef ELF_HWCAP2
+> > +     "AT_HWCAP2",
+> > +#endif
+> > +#ifdef ELF_HWCAP3
+> > +     "AT_HWCAP3",
+> > +#endif
+> > +#ifdef ELF_HWCAP4
+> > +     "AT_HWCAP4",
+> > +#endif
+> > +};
+> > +
+> >  /* Root misc cgroup */
+> >  static struct misc_cg root_cg;
+> >
+> > @@ -71,6 +84,11 @@ static inline bool valid_type(enum misc_res_type typ=
+e)
+> >       return type >=3D 0 && type < MISC_CG_RES_TYPES;
+> >  }
+> >
+> > +static inline bool valid_mask_type(enum misc_mask_type type)
+> > +{
+> > +     return type >=3D 0 && type < MISC_CG_MASK_TYPES;
+> > +}
+> > +
+> >  /**
+> >   * misc_cg_set_capacity() - Set the capacity of the misc cgroup res.
+> >   * @type: Type of the misc res.
+> > @@ -391,6 +409,109 @@ static int misc_events_local_show(struct seq_file=
+ *sf, void *v)
+> >       return __misc_events_show(sf, true);
+> >  }
+> >
+> > +/**
+> > + * misc_cg_get_mask() - Get the mask of the specified type.
+> > + * @type: The misc mask type.
+> > + * @cg: The misc cgroup.
+> > + * @pmask: Pointer to the resulting mask.
+> > + *
+> > + * This function calculates the effective mask for a given cgroup by w=
+alking up
+> > + * the hierarchy and ORing the masks from all parent cgroupfs. The fin=
+al result
+> > + * is stored in the location pointed to by @pmask.
+> > + *
+> > + * Context: Any context.
+> > + * Return: 0 on success, -EINVAL if @type is invalid.
+> > + */
+> > +int misc_cg_get_mask(enum misc_mask_type type, struct misc_cg *cg, u64=
+ *pmask)
+> > +{
+> > +     struct misc_cg *i;
+> > +     u64 mask =3D 0;
+> > +
+> > +     if (!(valid_mask_type(type)))
+> > +             return -EINVAL;
+> > +
+> > +     for (i =3D cg; i; i =3D parent_misc(i))
+> > +             mask |=3D READ_ONCE(i->mask[type]);
+> > +
+> > +     *pmask =3D mask;
+> > +     return 0;
+> > +}
+> > +
+> > +/**
+> > + * misc_cg_mask_show() - Show the misc cgroup masks.
+> > + * @sf: Interface file
+> > + * @v: Arguments passed
+> > + *
+> > + * Context: Any context.
+> > + * Return: 0 to denote successful print.
+> > + */
+> > +static int misc_cg_mask_show(struct seq_file *sf, void *v)
+> > +{
+> > +     struct misc_cg *cg =3D css_misc(seq_css(sf));
+> > +     int i;
+> > +
+> > +     for (i =3D 0; i < MISC_CG_MASK_TYPES; i++) {
+> > +             u64 rval, val =3D READ_ONCE(cg->mask[i]);
+> > +
+> > +             misc_cg_get_mask(i, cg, &rval);
+> > +             seq_printf(sf, "%s\t%#016llx\t%#016llx\n", misc_mask_name=
+[i], val, rval);
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+>
+> I'm concerned about the performance impact of the bottom-up traversal in =
+deeply nested cgroup
+> hierarchies. Could this approach introduce noticeable latency in such sce=
+narios?
+>
 
-sudo ./check generic/498
-FSTYP -- hfsplus
-PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc1+ #18 SMP PREEMPT_DYNAMIC Thu Dec 4 12:24:45 PST 2025
-MKFS_OPTIONS -- /dev/loop51
-MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+I wrote an execve benchmark to measure the impact of this change
+(https://github.com/avagin/execve_vs_misccg).
 
-generic/498 _check_generic_filesystem: filesystem on /dev/loop51 is inconsistent
-(see XFSTESTS-2/xfstests-dev/results//generic/498.full for details)
+The benchmark results are as follows:
 
-Ran: generic/498
-Failures: generic/498
-Failed 1 of 1 tests
+depth | before (ops/sec)| after (ops/sec)| ratio %| perf
+------------------------------------------------------
+0     | 4813.06 =C2=B1 11.01 | 4826.78 =C2=B1 19.33| 100.28 |
+2     | 4752.75 =C2=B1 11.28 | 4754.38 =C2=B1 21.93| 100.03 |
+4     | 4767.41 =C2=B1 8.35  | 4729.81 =C2=B1 29.56|  99.21 |
+8     | 4768.01 =C2=B1 10.42 | 4745.23 =C2=B1 27.68|  99.52 |
+16    | 4749.34 =C2=B1 21.03 | 4723.63 =C2=B1 23.57|  99.45 |
+32    | 4758.67 =C2=B1 10.94 | 4728.49 =C2=B1 13.9 |  99.36 |
+64    | 4749.85 =C2=B1 12.33 | 4686.3  =C2=B1 13.06|  98.66 | 0.11%
+128   | 4707.22 =C2=B1 12.01 | 4668.22 =C2=B1 16.9 |  99.17 | 0.33%
+256   | 4725.75 =C2=B1 6.07  | 4629.09 =C2=B1 27.02|  97.95 | 1.61%
 
-sudo fsck.hfsplus -d /dev/loop51
-** /dev/loop51
-Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
-Executing fsck_hfs (version 540.1-Linux).
-** Checking non-journaled HFS Plus Volume.
-The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-Invalid leaf record count
-(It should be 16 instead of 2)
-** Checking multi-linked files.
-CheckHardLinks: found 1 pre-Leopard file inodes.
-** Checking catalog hierarchy.
-** Checking extended attributes file.
-** Checking volume bitmap.
-** Checking volume information.
-Verify Status: VIStat = 0x0000, ABTStat = 0x0000 EBTStat = 0x0000
-CBTStat = 0x8000 CatStat = 0x00000000
-** Repairing volume.
-** Rechecking volume.
-** Checking non-journaled HFS Plus Volume.
-The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-** Checking multi-linked files.
-CheckHardLinks: found 1 pre-Leopard file inodes.
-** Checking catalog hierarchy.
-** Checking extended attributes file.
-** Checking volume bitmap.
-** Checking volume information.
-** The volume untitled was repaired successfully.
+Columns:
+* depth: The nesting level of the cgroup.
+* before: without this patch.
+* after: with this patch applied.
+* ratio: performance of after relative to before.
+* perf: profiling data from perf showing execution time spent in the
+        misc_cg_get_mask function.
 
-The generic/498 test executes such steps on final phase:
+The performance impact is almost negligible for cgroup depths up to 64.
+Even at a depth of 128, the overhead is less than 1%.
 
-mkdir $SCRATCH_MNT/A
-mkdir $SCRATCH_MNT/B
-mkdir $SCRATCH_MNT/A/C
-touch $SCRATCH_MNT/B/foo
-$XFS_IO_PROG -c "fsync" $SCRATCH_MNT/B/foo
-
-ln $SCRATCH_MNT/B/foo $SCRATCH_MNT/A/C/foo
-$XFS_IO_PROG -c "fsync" $SCRATCH_MNT/A
-
-"Simulate a power failure and mount the filesystem
-to check that what we explicitly fsync'ed exists."
-
-_flakey_drop_and_remount
-
-The FSCK tool complains about "Invalid leaf record count".
-HFS+ b-tree header contains leaf_count field is updated
-by hfs_brec_insert() and hfs_brec_remove(). The hfs_brec_insert()
-is involved into hard link creation process. However,
-modified in-core leaf_count field is stored into HFS+
-b-tree header by hfs_btree_write() method. But,
-unfortunately, hfs_btree_write() hasn't been called
-by hfsplus_cat_write_inode() and hfsplus_file_fsync()
-stores not fully consistent state of the Catalog File's
-b-tree.
-
-This patch adds calling hfs_btree_write() method in
-the hfsplus_cat_write_inode() with the goal of
-storing consistent state of Catalog File's b-tree.
-Finally, it makes FSCK tool happy.
-
-sudo ./check generic/498
-FSTYP         -- hfsplus
-PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc1+ #22 SMP PREEMPT_DYNAMIC Sat Dec  6 17:01:31 PST 2025
-MKFS_OPTIONS  -- /dev/loop51
-MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-
-generic/498 33s ...  31s
-Ran: generic/498
-Passed all 1 tests
-
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Yangtao Li <frank.li@vivo.com>
-cc: linux-fsdevel@vger.kernel.org
----
- fs/hfsplus/inode.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index 7ae6745ca7ae..cc03d3beaaa1 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -612,6 +612,7 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
- int hfsplus_cat_write_inode(struct inode *inode)
- {
- 	struct inode *main_inode = inode;
-+	struct hfs_btree *tree = HFSPLUS_SB(inode->i_sb)->cat_tree;
- 	struct hfs_find_data fd;
- 	hfsplus_cat_entry entry;
- 	int res = 0;
-@@ -622,7 +623,7 @@ int hfsplus_cat_write_inode(struct inode *inode)
- 	if (!main_inode->i_nlink)
- 		return 0;
- 
--	if (hfs_find_init(HFSPLUS_SB(main_inode->i_sb)->cat_tree, &fd))
-+	if (hfs_find_init(tree, &fd))
- 		/* panic? */
- 		return -EIO;
- 
-@@ -687,6 +688,15 @@ int hfsplus_cat_write_inode(struct inode *inode)
- 	set_bit(HFSPLUS_I_CAT_DIRTY, &HFSPLUS_I(inode)->flags);
- out:
- 	hfs_find_exit(&fd);
-+
-+	if (!res) {
-+		res = hfs_btree_write(tree);
-+		if (res) {
-+			pr_err("b-tree write err: %d, ino %lu\n",
-+			       res, inode->i_ino);
-+		}
-+	}
-+
- 	return res;
- }
- 
--- 
-2.43.0
-
+Thanks,
+Andrei
 
