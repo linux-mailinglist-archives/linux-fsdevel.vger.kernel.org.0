@@ -1,166 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-70983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89EDCAE513
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 08 Dec 2025 23:21:23 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6802BCAE5D3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 08 Dec 2025 23:51:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EEC6930640EC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Dec 2025 22:20:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3B8493014614
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Dec 2025 22:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909F02E8E1F;
-	Mon,  8 Dec 2025 22:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A67929B795;
+	Mon,  8 Dec 2025 22:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b="aqFQfSeu"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="2SliMHUi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tRXAwjfs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from tarta.nabijaczleweli.xyz (tarta.nabijaczleweli.xyz [139.28.40.42])
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C174022A7E4;
-	Mon,  8 Dec 2025 22:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.28.40.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C671EA84
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Dec 2025 22:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765232430; cv=none; b=Ew9k34hsB5H5v9hYuLhri3JgQuIXF/tiAbJ0sAy5JQQk9CZp3HjvJgAonDBTehGRpsenGEPRiaBMjqHPOVapGZCcXVClW9jeiXbtggZ3snxCDyCcB050V4YDht6y/76JoKqJd8C3dcPRUiIfdmOn54yg8kw4/FdPviA/lWvj/Bw=
+	t=1765234218; cv=none; b=HQ1LJE1T+cvJOyassPxDGSQBrb4TuU8NURnIQ8sJ2BWozDY59GuaUNUTQ7NGDRK6Lq2EkbXl9jMjQM/ii8+VTTTk9rufELN+Jrog1nolNBV/bkKIxmcGvJfQt3xORAB0ncLmDF3ZDJRKiWURkvZhHKe7qN4YBKnb7iAwyu/ZW6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765232430; c=relaxed/simple;
-	bh=9p6wlGm8hM2GxaqyatBdV+R4t489utEAgE9fEsfKe/s=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QS7o8MHDAkiZcWPOM/ArgOa9iBDFRfU3HzXtPEs4Rj7MwjRO7FFDrAfX/08IWhpfN4dSHxT5omTGKvyzgMTVYEtJx80vE5XarNoUt5nVYFHZKfBGs0/NehOR06EHIgh4YY42xxRja34CkK4QVShbThGs4xelJU2+DBgrdOmqwv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz; spf=pass smtp.mailfrom=nabijaczleweli.xyz; dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b=aqFQfSeu; arc=none smtp.client-ip=139.28.40.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabijaczleweli.xyz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-	s=202505; t=1765232424;
-	bh=9p6wlGm8hM2GxaqyatBdV+R4t489utEAgE9fEsfKe/s=;
-	h=Date:From:To:Subject:From;
-	b=aqFQfSeuqwDdiVHSDyt7zRvNYoCXsXw0HBA+pwvFtB6LZsnB0ypAhENpSUKBdx/yU
-	 jX7Bat2Bfnxkbjpf/iUP6CzWQ+S/cfRH1IGaYNQ1x00SryXDhrtnhlo+pbGYrqoOzC
-	 ZDZN6j0WlY0lZbAmBXGqi4qD6IbZStBv4wG/U4iQbfm29ZjBH4bUv0rXgxSOq0Ivim
-	 n/KOdTMKCOTx1xSFZSwQjnHLuLw+MprI+/35AO+Wxfc+eq84pV+ilr5hB9z6OK7PZb
-	 UJka7ARkNRUSlo0IoYw/lhqzmUKJnMHfYs3XEyDaW48zCDN9LrZ+VfR+8UejBn7wdp
-	 jqz0qwCk2Dxjw==
-Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-	by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 930E2EFC6;
-	Mon,  8 Dec 2025 23:20:24 +0100 (CET)
-Date: Mon, 8 Dec 2025 23:20:24 +0100
-From: 
-	Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: send fsnotify_xattr()/IN_ATTRIB from
- vfs_fileattr_set()/chattr(1)
-Message-ID: <iyvn6qjotpu6cei5jdtsoibfcp6l6rgvn47cwgaucgtucpfy2s@tarta.nabijaczleweli.xyz>
+	s=arc-20240116; t=1765234218; c=relaxed/simple;
+	bh=KvTSu5K+G7/bwJZIr3Wgxm8Y2UxeDY/IGOjh6bO8jvI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tYXnnC7wZ8BK9vWOv2VRBHD/ietB20Wu7as5AQa1AzzJQznhkCPSbOExOMU5RmmyYRV90vlZzbVTkOa+0butURyKuTkbbRNCetN68A/kSgTIqrT/2U/8pDvu7vCEeQ9YMsHzg6MVj4CBSQ48pDv0ji9LcrlcbETG7AYLpTRJDcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=2SliMHUi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tRXAwjfs; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 35B57140020F;
+	Mon,  8 Dec 2025 17:50:14 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Mon, 08 Dec 2025 17:50:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1765234214;
+	 x=1765320614; bh=lLXmXDpRnhzfWaE3XISz3MOd9E8rJyTsfepw3TQVaRc=; b=
+	2SliMHUitCoQKcoP3PLImyIbj6FidZaORZfXG3DgwwSdZ7moyD7pOKN4LRPyvmhV
+	ZqPaCij2rO5rY0l4c8fl2gpbagXok8N80fkfbiH0gVAIe5wqLbPD65SNUX1o9GdU
+	rd8sxOOJyj/SsIrbMeYgseEfDu713gWMf6bOhhNlNhkzsB5Lr0ImEvY4OPw+PfGj
+	Z6QVsjm8j7viv6kgHSv8TCMoPFN9YC61llYj66eU8L7PUD1F/f7ZH6TfR49n1TRl
+	zkLcItBIcRnFUqeLiaKVDX1tptjMaMwo/Pxd3ziqH/DrTvgJlFtILs/bdRVZZ5UM
+	FJsdZ/DlPgSFZX26XfIQIQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1765234214; x=
+	1765320614; bh=lLXmXDpRnhzfWaE3XISz3MOd9E8rJyTsfepw3TQVaRc=; b=t
+	RXAwjfsoX9qFbRMkbOoyzPpe3fAECj17K4FNnnFQfXDgOfAetH/IoW3I/rKq+fYL
+	IdoIIgdvtul4ZtBCavwn6NVnHZqh21bZH1Is8vP4JX1P0YmBZuqVmqld++3I4hgn
+	Wm10KTKCaBWmqsEZ/ygyqkNV0fQwoi6EppHVHTEo3wUKbEH0U3cwUreqBcjfygqS
+	VFv1IjexUI1nuxkfQ23VAG+dfl04JdRAIUP0N6VuxAwzwOFZMe094bR12nnz0PyH
+	BSzIHyIxfD05GRNgmXgCZrLo9wBtBEqGXgntFpuxnev/2pWe55xgxXa6f4CW9mtp
+	E8eJH24ZVs7ZVMach2RpQ==
+X-ME-Sender: <xms:JVY3aTMuqWzVigPbTySD_AYS8VfMOEIz8w6y1MbW_6FmC2a2EjqJ1w>
+    <xme:JVY3aRq__wsGewTehJTWkWMqpMOtbstJMeLjAXIUqwAslAsVkdR8QZ4c7RiM_yxuX
+    juKNDxJ3HczSDq5bSfW0ZIAXxzg9OigvZ9kN5NMxL4yx_rz77E>
+X-ME-Received: <xmr:JVY3acEUUeL78x1hxFxmXeAJ2-vq_r4sOvuvwVWYZ-Xk-o81k9HFPlL4LByxf6rGBkBqPKUn6WneIvo8plLQMBQlAWPfmWv2sPbNSTB59y_VWOR9e829>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddujeelvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertd
+    dtvdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgusegsshgs
+    vghrnhgurdgtohhmqeenucggtffrrghtthgvrhhnpeehhfejueejleehtdehteefvdfgtd
+    elffeuudejhfehgedufedvhfehueevudeugeenucevlhhushhtvghrufhiiigvpedtnecu
+    rfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsg
+    gprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlvghordhl
+    ihhlohhngheshhhurgifvghirdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrh
+    gvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdprh
+    gtphhtthhopeihrghnghgvrhhkuhhnsehhuhgrfigvihdrtghomhdprhgtphhtthhopehl
+    ohhnuhiglhhirdeigeesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:JVY3aeqrBJmXc-cobE9jQTTiKOq6o8T-IY_chrTgnZ_rQ4M8WjS52w>
+    <xmx:JVY3adY9nyf22PyChk0y8aeEg1r8x5roOUinLkDPPqIpmmnxsz195w>
+    <xmx:JVY3afW20xRl4jz-RbOJz3X7q9YL6zdzjnfD1LkSRZhugTtZs4UxJQ>
+    <xmx:JVY3ae96aUIp8R_l_B1Bu2qs1e72znoi1W0ThlLlBtYe5warB2J6kA>
+    <xmx:JlY3aRfSa9zNnmEw9fg6yVU4nEaB22sIfoJ2LZDeK0RaUAB49fHGMVMz>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 8 Dec 2025 17:50:12 -0500 (EST)
+Message-ID: <c486d34f-8b41-4a5e-84eb-dd37b0a63703@bsbernd.com>
+Date: Mon, 8 Dec 2025 23:50:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="apr664clce33v46y"
-Content-Disposition: inline
-User-Agent: NeoMutt/20231221-2-4202cf-dirty
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fuse: limit debug log output during ring teardown
+To: Long Li <leo.lilong@huawei.com>, miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org, bschubert@ddn.com, yangerkun@huawei.com,
+ lonuxli.64@gmail.com
+References: <20251204023219.1249542-1-leo.lilong@huawei.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20251204023219.1249542-1-leo.lilong@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---apr664clce33v46y
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Currently it seems impossible to observe these changes to the file's
-attributes. It's useful to be able to do this to see when the file
-becomes immutable, for example, so emit IN_ATTRIB via fsnotify_xattr(),
-like when changing other inode attributes.
+On 12/4/25 03:32, Long Li wrote:
+> Currently, if there are pending entries in the queue after the teardown
+> timeout, the system keeps printing entry state information at very short
+> intervals (FUSE_URING_TEARDOWN_INTERVAL). This can flood the system logs.
+> Additionally, ring->stop_debug_log is set but not used.
+> 
+> Clean up unused ring->stop_debug_log, update teardown time after each
+> log entry state, and change the log entry state interval to
+> FUSE_URING_TEARDOWN_TIMEOUT.
+> 
+> Signed-off-by: Long Li <leo.lilong@huawei.com>
+> ---
+> v1->v2: Update teardown time to limit entry state output interval
+>  fs/fuse/dev_uring.c   | 7 ++++---
+>  fs/fuse/dev_uring_i.h | 5 -----
+>  2 files changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index 5ceb217ced1b..68d2fbdc3a7c 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -426,7 +426,6 @@ static void fuse_uring_log_ent_state(struct fuse_ring *ring)
+>  		}
+>  		spin_unlock(&queue->lock);
+>  	}
+> -	ring->stop_debug_log = 1;
+>  }
+>  
+>  static void fuse_uring_async_stop_queues(struct work_struct *work)
+> @@ -453,9 +452,11 @@ static void fuse_uring_async_stop_queues(struct work_struct *work)
+>  	 * If there are still queue references left
+>  	 */
+>  	if (atomic_read(&ring->queue_refs) > 0) {
+> -		if (time_after(jiffies,
+> -			       ring->teardown_time + FUSE_URING_TEARDOWN_TIMEOUT))
+> +		if (time_after(jiffies, ring->teardown_time +
+> +					FUSE_URING_TEARDOWN_TIMEOUT)) {
+>  			fuse_uring_log_ent_state(ring);
+> +			ring->teardown_time = jiffies;
+> +		}
+>  
+>  		schedule_delayed_work(&ring->async_teardown_work,
+>  				      FUSE_URING_TEARDOWN_INTERVAL);
+> diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
+> index 51a563922ce1..4cd3cbd51c7a 100644
+> --- a/fs/fuse/dev_uring_i.h
+> +++ b/fs/fuse/dev_uring_i.h
+> @@ -117,11 +117,6 @@ struct fuse_ring {
+>  
+>  	struct fuse_ring_queue **queues;
+>  
+> -	/*
+> -	 * Log ring entry states on stop when entries cannot be released
+> -	 */
+> -	unsigned int stop_debug_log : 1;
+> -
+>  	wait_queue_head_t stop_waitq;
+>  
+>  	/* async tear down */
 
-Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz>
----
-Given:
-	#include <sys/inotify.h>
-	#include <unistd.h>
-	#include <stdio.h>
-	#include <limits.h>
-	int main() {
-		int fd =3D inotify_init();
-		inotify_add_watch(fd, ".", IN_ATTRIB);
-		char buf[sizeof(struct inotify_event) + NAME_MAX + 1];
-		for (;;) {
-			ssize_t rd =3D read(fd, buf, sizeof(buf));
-			struct inotify_event *ev =3D buf, *end =3D buf + rd;
-			while (ev < end) {
-				printf("%x\t%s\n", ev->mask, ev->name);
-				ev =3D (char *)(ev + 1) + ev->len;
-			}
-		}
-	}
 
-Before:
-	sh-5.2# ./test &
-	[1] 255
-	sh-5.2# chmod -x test
-	4       test
-	sh-5.2# setfattr -n user.name -v value test
-	4       test
-	sh-5.2# chattr -i test
-	sh-5.2#
+Thank you! I'm still interested in, if you get repeated warning messages.
 
-After:
-	sh-5.2# ./test &
-	[1] 280
-	sh-5.2# chmod -x test
-	4       test
-	sh-5.2# setfattr -n user.name -v value test
-	4       test
-	sh-5.2# chattr -i test
-	4       test
-	sh-5.2#
-
- fs/file_attr.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/file_attr.c b/fs/file_attr.c
-index 4c4916632f11..13cdb31a3e94 100644
---- a/fs/file_attr.c
-+++ b/fs/file_attr.c
-@@ -2,6 +2,7 @@
- #include <linux/fs.h>
- #include <linux/security.h>
- #include <linux/fscrypt.h>
-+#include <linux/fsnotify.h>
- #include <linux/fileattr.h>
- #include <linux/export.h>
- #include <linux/syscalls.h>
-@@ -298,6 +299,7 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct de=
-ntry *dentry,
- 		err =3D inode->i_op->fileattr_set(idmap, dentry, fa);
- 		if (err)
- 			goto out;
-+		fsnotify_xattr(dentry);
- 	}
-=20
- out:
---=20
-2.39.5
-
---apr664clce33v46y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmk3TygACgkQvP0LAY0m
-WPFrZw/+MCsACKsWjC4mr9aVyQvhr4QZ4UzFRDREeQDMEVIweCJBfYKmwJtD+JXF
-b1GGY4YtC3h6l8FSAcewY502e66zV21LdEmjxFBmIEJBU456+jiX0wukFdu4fkxi
-bnIAiEmKnKpwu53M6lEsMEhXSFosefye/cVk5/npvzSMerdqSRaGmxhDZO05E5bE
-VeOLj2FXiIqkeetHb09qYUT3ITH28ZpHRH6gFXltYqD+z9dNzq82kDkyVQGj/X1D
-1Yl2JN5/uHIvg7ngsp4jHQtWUsULo4sNR2iypVBCEely4q3mjUTPaqy7TAjnGC+B
-pDkxWwUKUhcAV241B8p80uqPfPkqibLN+aV7ZOQFtFoESH+KSpEgXTA91wJ+8h2C
-75w3PXcM8Yb5gylUKefhCxlHunZGn2j2Szy64I3kEoozXj4yCo87VSflZbw7Z/kk
-wPEV3DVgbnUI1lpo9RP3Li8Z+v4z2M3xwF211m6HfCiBY1yC8iRW2plBWRSMA7+0
-f6F4M5RSpQfvrWUZpQrWGTjunDmaTvuV6LlVtucWA5BLHiAzbRbJk/qJyoinR41k
-OnxypyrbucIqlBwGlnpzRdaGWiCl/NhE++V6SjgBmQ3WIppjd2asTVVQKqd1l86o
-4FIqYGXcJ7ShQeOnRtfJMWFyWn5Vyu53k7qlT1ej0UjiH6GRcQA=
-=kOjb
------END PGP SIGNATURE-----
-
---apr664clce33v46y--
+Reviewed-by: Bernd Schubert <bschubert@ddn.com>
 
