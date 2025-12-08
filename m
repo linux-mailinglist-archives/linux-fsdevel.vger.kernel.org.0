@@ -1,300 +1,426 @@
-Return-Path: <linux-fsdevel+bounces-70985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2FC7CAE5E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 08 Dec 2025 23:57:14 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E1CCAE6F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 00:58:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id ABE9C301AD2A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Dec 2025 22:57:03 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 516F7305F7F1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Dec 2025 23:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9572882A9;
-	Mon,  8 Dec 2025 22:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C82E2FDC26;
+	Mon,  8 Dec 2025 23:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="UiktAdiK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="svWBTjC8"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="eVoFGxxt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D2617C9E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Dec 2025 22:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779762BE630;
+	Mon,  8 Dec 2025 23:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765234622; cv=none; b=bAwfuwO4jbs/ioAuhU2k4XxBKV61u3PEr/aIIJrvxsLhC3AdKM05P5eemdGmkDkQHktKaOLZHiC6GLGdhdArDefLRDmb+TTB/3npoGHWn3qIxB80sah0AYsYDu+pnKPZQdm4pmy/kAUGQB+rPDpSfGnztSO0pWjeu7eCBg9Yk54=
+	t=1765238266; cv=none; b=JFLwiHOfXhpuZflsWxcVJ4/JmIY6H5wxriXTeQGcDP4hNlbvawlpECqUg8uLkZ0VHXTVxeFms8r2ya4mBKgJJ3JPo+Pr+opJ+983FhwhURV0qFLJEhtFTSLrqinSeqtkTGidzsWAA96DlE1tLflMdEnzzuglbquBuoTnNfKy0Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765234622; c=relaxed/simple;
-	bh=KJw50zsUCuAkLJiVi5yGF7SPx/1x8rk9p6NnzuZmkvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cL1ACApK0cSpkS1Enk9VifjwHzZnF9pysKuhjbAfGjfod5qLH8tFKzYe2PHqlL250JwIoKxc+rpf/h4DFcpSkuVQJrYaAT0YA7R0rce2vMlvLGjTX+D2cMdj1gkBTHtcTkD/h2MXI9nbhqwNsF4iBsnQTcBywTcXiYM7dG9QcxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=UiktAdiK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=svWBTjC8; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 59D9614001D1;
-	Mon,  8 Dec 2025 17:56:59 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Mon, 08 Dec 2025 17:56:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1765234619;
-	 x=1765321019; bh=O7IBayEbtRg+6/BlCOwLNBM+c0TN5fUo9EOW48IPSmI=; b=
-	UiktAdiKbUc5hmW1EqzNags40xwLI3Uk01E5WWB7KiOC9izJl8M9apR0n814RejM
-	nn2aQWhvWE7SYEDEWM6fVX4+IQIRmyr/96sl36UPLJ9xKHHT3mT0E+/Jn05rgbWH
-	tY2DQ4kl3p6oGkDwJgYFeqzy34iTqWbPfS1Ps6R/anQl9un1dtsfAq0Nwi+akY/G
-	S6inEzv0siZjwE0/kWVOu1BzWp9NLLTOcLuberrvyXy9Md18T04rTc8MSrpAWfJT
-	8hS1eYERlmQceeKcqOkq3UxOeoBzpKIsDC7NYLybscD9eLp2kJdIQ6ZgdwTOIjzN
-	0IGeujLqpZiS7X6uGqMaeQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1765234619; x=
-	1765321019; bh=O7IBayEbtRg+6/BlCOwLNBM+c0TN5fUo9EOW48IPSmI=; b=s
-	vWBTjC8sl1NeIWNrwuGIBddfWo0Zqmnb+46gZCn0dKdO5a5i6T9r5F7qmR1IXsXg
-	8bmGFpJXfNto74Po+cdQZCLK4RUBodPj+g6DHBZCfoymBE2VKmD3VeJflnkFSp9i
-	G4NCWAd+wVlPXZS/O/AkAvNxXeIYHEeL7u/kXXMPaNBSqq6WWzlggIwBuFwu8JJv
-	Rc9R9hUDAibhLd78BfpNt7yYSfLXc2Qwnjx1qnmfr+OzIJ9CxNaSlO0glnK/4jhX
-	X/5dPNIKvOW3Rm5PRz+Xs7hRlie4Wesfr7RzEQvSuThjs4cIFfpeZ0HOJVy6m5zO
-	fixQwr2DLLo7DRBz85c7Q==
-X-ME-Sender: <xms:u1c3afl5Y9LZmBlqVsqLi6gpar5Kwn82upADClS0gcdGLnfABo2AxQ>
-    <xme:u1c3aZuLqW4Wk0Kr55qvfmPbL95SqQq_FkoqEftsMg7p348LIKuMRPx1W0bElQ2Lo
-    UOpGiks3H2usnuajphmr1D45r_hPuA42F8-5UVjyhGBDkKQSU0>
-X-ME-Received: <xmr:u1c3ad9FlDHciAsAdUnZp_A8C9PjzzYcSqDA4GjXzcZWC8Cm_2VE5UETV4jopE1K2Sc1wZoCLJiZ0gb90U5zU9IIFhFSqWmKZugDlTx-ZpqrQj6t6PbD>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddujeelgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepuegvrhhnugcu
-    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
-    htvghrnhepteeigfekgfetgeelvdejieeuheffhfejkeejgfehjeejjeegueduhefgleeg
-    vedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnuges
-    sghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouh
-    htpdhrtghpthhtohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgtphhtthhopegr
-    sghhihhshhgvkhhmghhuphhtrgesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhinh
-    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehm
-    ihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohepshifvghthhhvsehgohhogh
-    hlvgdrtghomh
-X-ME-Proxy: <xmx:u1c3aTNEHaSjE_2ugScEvWzbruv2Ucxb2KCFB-MqjMzrUYUYWbYkag>
-    <xmx:u1c3abGY1Xkxr0gKqcSv5fayq5ueLP6vxLr6aKU_ujF-btGCJG2zqg>
-    <xmx:u1c3aRRjSQyJXQBUMYga09vDTghwAhQMOD_JRIZEjT8X53GAXd7pGg>
-    <xmx:u1c3aYtv7C5iCArjDIz4R1jZWztlV6HjY_vW5OrbBbcP2ViRCu5NRQ>
-    <xmx:u1c3aSRAZvnKXMntD0dv6w6GAfvRs7NIdfer858OxgPXyd1TOp9J9xs4>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Dec 2025 17:56:58 -0500 (EST)
-Message-ID: <06ab8a37-530d-488f-abaf-6f0b636b3322@bsbernd.com>
-Date: Mon, 8 Dec 2025 23:56:57 +0100
+	s=arc-20240116; t=1765238266; c=relaxed/simple;
+	bh=OFQ+9EV2ql4+pkj57eoeYj9wkaqN/DTHclo1t1ZGbnE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gzMQkKMhks3rdvzZbO6zXqmH6S+0kxq1U3Hh14Iwu6lGOsUDx2PHgSj78J41n9VswTWFeCj/Q4MiNiY7Z+80tYdrAmVb8U7FDQJxfFPMfXTVGFtl0EB6MeJHvsIbc+0RIp1PLzfKpFBnXa4cu8AO7h3Dr80ttemebdXjHBxOvnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=eVoFGxxt; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from mail.zytor.com ([IPv6:2601:646:8081:9483:a28:93fb:4548:76d8])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5B8NtZrE2659554
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Mon, 8 Dec 2025 15:55:37 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5B8NtZrE2659554
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025112201; t=1765238145;
+	bh=soXAh6Cdh1wIq0+vJmWz4UEmWfkfaPYCK7y4yalc2G8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eVoFGxxtRvPjz95ahbrb9nKbVpTti/Ji83vr1n9R2TuHzqa3HQgAmkWHQCKLXiNA8
+	 eI+cCokme1uBN+uq06I8lOhx59vvSr1pC2WDL21T2DkuAC4tU+2uasOxEtP9ysD14x
+	 XdtDQdV/UigHxRtOgF0m5MA+4YLmUuN6YGTI5AOvmVPQOuTE8JaR2QzZqrbEP9cpca
+	 TeInFjghMA02bRmiwjqm805q4bpJ5GDJgk/A90IXb9Yg75OwkJ1UbLeh0Bo0JfCS7X
+	 3DTbnfXhQ1d2Fd82ixUNNodBylR+5s4x2aq42ESqzrWbD5IGV5Z3kxhya8PF+Cai41
+	 s51WMfur8upXA==
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "H . Peter Anvin" <hpa@zytor.com>,
+        =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Alexei Starovoitov <ast@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrii Nakryiko <andrii@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        David Lechner <dlechner@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Eduard Zingerman <eddyz87@gmail.com>,
+        Gatlin Newhouse <gatlin.newhouse@gmail.com>,
+        Hao Luo <haoluo@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Jan Hendrik Farr <kernel@jfarr.cc>, Jason Wang <jasowang@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, KP Singh <kpsingh@kernel.org>,
+        Kees Cook <kees@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Marc Herbert <Marc.Herbert@linux.intel.com>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>,
+        Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+        NeilBrown <neil@brown.name>, Peter Zijlstra <peterz@infradead.org>,
+        Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+        Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>,
+        Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thorsten Blum <thorsten.blum@linux.dev>,
+        Uros Bizjak <ubizjak@gmail.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Yafang Shao <laoar.shao@gmail.com>, Ye Bin <yebin10@huawei.com>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        Yufeng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org,
+        virtualization@lists.linux.dev, x86@kernel.org
+Subject: [GIT PULL] __auto_type conversion for v6.19-rc1
+Date: Mon,  8 Dec 2025 15:55:26 -0800
+Message-ID: <20251208235528.3670800-1-hpa@zytor.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: FUSE: [Regression] Fuse legacy path performance scaling lost in
- v6.14 vs v6.8/6.11 (iodepth scaling with io_uring)
-To: Bernd Schubert <bschubert@ddn.com>,
- Abhishek Gupta <abhishekmgupta@google.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "miklos@szeredi.hu" <miklos@szeredi.hu>,
- Swetha Vadlakonda <swethv@google.com>
-References: <CAPr64AJFZVFTHnuY=AH3aMXb2-g1ypzheNbLtfu5RxyZztKFZg@mail.gmail.com>
- <e6a41630-c2e6-4bd9-aea9-df38238f6359@ddn.com>
- <CAPr64AJXg9nr_xG_wpy3sDtWmy2cR+HhqphCGgWSoYs2+OjQUQ@mail.gmail.com>
- <ea9193cd-dbff-4398-8f6a-2b5be89b1fa4@bsbernd.com>
- <CAPr64A+=63MQoa6RR4SeVOb49Pqqpr8enP7NmXeZ=8YtF8D1Pg@mail.gmail.com>
- <CAPr64AKYisa=_X5fAB1ozgb3SoarKm19TD3hgwhX9csD92iBzA@mail.gmail.com>
- <bcb930c5-d526-42c9-a538-e645510bb944@ddn.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <bcb930c5-d526-42c9-a538-e645510bb944@ddn.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Abishek,
+Hi Linus,
 
-really sorry for the delay. I can see the same as you do, no improvement
-with --iodepth. Although increasing the number of fio threads/jobs helps.
+The following changes since commit c2f2b01b74be8b40a2173372bcd770723f87e7b2:
 
-Interesting is that this is not what I'm seeing with passthrough_hp,
-at least I think so
+  Merge tag 'i3c/for-6.19' of git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux (2025-12-08 11:25:14 +0900)
 
-I had run quite some tests here
-https://lore.kernel.org/r/20251003-reduced-nr-ring-queues_3-v2-6-742ff1a8fc58@ddn.com
-focused on io-uring, but I had also done some tests with legacy
-fuse. I was hoping I would managed to re-run today before sending
-the mail, but much too late right. Will try in the morning.
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/hpa/linux-auto.git
 
+for you to fetch changes up to branch auto-type-for-6.19
+(4ecc26fa585216f98d71411ce182f9e823d94c8c):
 
-Thanks,
-Bernd
+  tools/virtio: replace "__auto_type" with "auto" (2025-12-08 15:32:15 -0800)
 
+----------------------------------------------------------------
+H. Peter Anvin (7):
+      compiler_types.h: add "auto" as a macro for "__auto_type"
+      include/linux: change "__auto_type" to "auto"
+      fs/proc: replace "__auto_type" with "const auto"
+      arch/nios2: replace "__auto_type" and adjacent equivalent with "auto"
+      arch/x86: replace "__auto_type" with "auto"
+      selftests/bpf: replace "__auto_type" with "auto"
+      tools/virtio: replace "__auto_type" with "auto"
 
-On 12/8/25 18:52, Bernd Schubert wrote:
-> Hi Abhishek,
-> 
-> yes I was able to run it today, will send out a mail later. Sorry,
-> rather busy with other work.
-> 
-> 
-> Best,
-> Bernd
-> 
-> On 12/8/25 18:43, Abhishek Gupta wrote:
->> Hi Bernd,
->>
->> Were you able to reproduce the issue locally using the steps I provided?
->> Please let me know if you require any further information or assistance.
->>
->> Thanks,
->> Abhishek
->>
->>
->> On Tue, Dec 2, 2025 at 4:12 PM Abhishek Gupta <abhishekmgupta@google.com
->> <mailto:abhishekmgupta@google.com>> wrote:
->>
->>     Hi Bernd,
->>
->>     Apologies for the delay in responding.
->>
->>     Here are the steps to reproduce the FUSE performance issue locally
->>     using a simple read-bench FUSE filesystem:
->>
->>     1. Set up the FUSE Filesystem:
->>     git clone https://github.com/jacobsa/fuse.git <https://github.com/
->>     jacobsa/fuse.git> jacobsa-fuse
->>     cd jacobsa-fuse/samples/mount_readbenchfs
->>     # Replace <mnt_dir> with your desired mount point
->>     go run mount.go --mount_point <mnt_dir>
->>
->>     2. Run Fio Benchmark (iodepth 1):
->>     fio  --name=randread --rw=randread --ioengine=io_uring --thread
->>     --filename=<mnt_dir>/test --filesize=1G --time_based=1 --runtime=5s
->>     --bs=4K --numjobs=1 --iodepth=1 --direct=1 --group_reporting=1
->>
->>     3. Run Fio Benchmark (iodepth 4):
->>     fio --name=randread --rw=randread --ioengine=io_uring --thread
->>     --filename=<mnt_dir>/test --filesize=1G --time_based=1 --runtime=5s
->>     --bs=4K --numjobs=1 --iodepth=4 --direct=1 --group_reporting=1
->>
->>
->>     Example Results on Kernel 6.14 (Regression Observed)
->>
->>     The following output shows the lack of scaling on my machine with
->>     Kernel 6.14:
->>
->>     Kernel:
->>     Linux abhishek-west4a-2504 6.14.0-1019-gcp #20-Ubuntu SMP Wed Oct 15
->>     00:41:12 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
->>
->>     Iodepth = 1:
->>     READ: bw=74.3MiB/s (77.9MB/s), ... io=372MiB (390MB), run=5001-5001msec
->>
->>     Iodepth = 4:
->>     READ: bw=87.6MiB/s (91.9MB/s), ... io=438MiB (459MB), run=5000-5000msec
->>
->>     Thanks,
->>     Abhishek
->>
->>
->>     On Fri, Nov 28, 2025 at 4:35 AM Bernd Schubert <bernd@bsbernd.com
->>     <mailto:bernd@bsbernd.com>> wrote:
->>     >
->>     > Hi Abhishek,
->>     >
->>     > On 11/27/25 14:37, Abhishek Gupta wrote:
->>     > > Hi Bernd,
->>     > >
->>     > > Thanks for looking into this.
->>     > > Please find below the fio output on 6.11 & 6.14 kernel versions.
->>     > >
->>     > >
->>     > > On kernel 6.11
->>     > >
->>     > > ~/gcsfuse$ uname -a
->>     > > Linux abhishek-c4-192-west4a 6.11.0-1016-gcp #16~24.04.1-Ubuntu SMP
->>     > > Wed May 28 02:40:52 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
->>     > >
->>     > > iodepth = 1
->>     > > :~/fio-fio-3.38$ ./fio --name=randread --rw=randread
->>     > > --ioengine=io_uring --thread
->>     > > --filename_format='/home/abhishekmgupta_google_com/bucket/$jobnum'
->>     > > --filesize=1G --time_based=1 --runtime=15s --bs=4K --numjobs=1
->>     > > --iodepth=1 --group_reporting=1 --direct=1
->>     > > randread: (g=0): rw=randread, bs=(R) 4096B-4096B, (W)
->>     4096B-4096B, (T)
->>     > > 4096B-4096B, ioengine=io_uring, iodepth=1
->>     > > fio-3.38
->>     > > Starting 1 thread
->>     > > ...
->>     > > Run status group 0 (all jobs):
->>     > >    READ: bw=3311KiB/s (3391kB/s), 3311KiB/s-3311KiB/s
->>     > > (3391kB/s-3391kB/s), io=48.5MiB (50.9MB), run=15001-15001msec
->>     > >
->>     > > iodepth=4
->>     > > :~/fio-fio-3.38$ ./fio --name=randread --rw=randread
->>     > > --ioengine=io_uring --thread
->>     > > --filename_format='/home/abhishekmgupta_google_com/bucket/$jobnum'
->>     > > --filesize=1G --time_based=1 --runtime=15s --bs=4K --numjobs=1
->>     > > --iodepth=4 --group_reporting=1 --direct=1
->>     > > randread: (g=0): rw=randread, bs=(R) 4096B-4096B, (W)
->>     4096B-4096B, (T)
->>     > > 4096B-4096B, ioengine=io_uring, iodepth=4
->>     > > fio-3.38
->>     > > Starting 1 thread
->>     > > ...
->>     > > Run status group 0 (all jobs):
->>     > >    READ: bw=11.0MiB/s (11.6MB/s), 11.0MiB/s-11.0MiB/s
->>     > > (11.6MB/s-11.6MB/s), io=166MiB (174MB), run=15002-15002msec
->>     > >
->>     > >
->>     > > On kernel 6.14
->>     > >
->>     > > :~$ uname -a
->>     > > Linux abhishek-west4a-2504 6.14.0-1019-gcp #20-Ubuntu SMP Wed Oct 15
->>     > > 00:41:12 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
->>     > >
->>     > > iodepth=1
->>     > > :~$ fio --name=randread --rw=randread --ioengine=io_uring --thread
->>     > > --filename_format='/home/abhishekmgupta_google_com/bucket/$jobnum'
->>     > > --filesize=1G --time_based=1 --runtime=15s --bs=4K --numjobs=1
->>     > > --iodepth=1 --group_reporting=1 --direct=1
->>     > > randread: (g=0): rw=randread, bs=(R) 4096B-4096B, (W)
->>     4096B-4096B, (T)
->>     > > 4096B-4096B, ioengine=io_uring, iodepth=1
->>     > > fio-3.38
->>     > > Starting 1 thread
->>     > > ...
->>     > > Run status group 0 (all jobs):
->>     > >    READ: bw=3576KiB/s (3662kB/s), 3576KiB/s-3576KiB/s
->>     > > (3662kB/s-3662kB/s), io=52.4MiB (54.9MB), run=15001-15001msec
->>     > >
->>     > > iodepth=4
->>     > > :~$ fio --name=randread --rw=randread --ioengine=io_uring --thread
->>     > > --filename_format='/home/abhishekmgupta_google_com/bucket/$jobnum'
->>     > > --filesize=1G --time_based=1 --runtime=15s --bs=4K --numjobs=1
->>     > > --iodepth=4 --group_reporting=1 --direct=1
->>     > > randread: (g=0): rw=randread, bs=(R) 4096B-4096B, (W)
->>     4096B-4096B, (T)
->>     > > 4096B-4096B, ioengine=io_uring, iodepth=4
->>     > > fio-3.38
->>     > > ...
->>     > > Run status group 0 (all jobs):
->>     > >    READ: bw=3863KiB/s (3956kB/s), 3863KiB/s-3863KiB/s
->>     > > (3956kB/s-3956kB/s), io=56.6MiB (59.3MB), run=15001-15001msec
->>     >
->>     > assuming I would find some time over the weekend and with the fact
->>     that
->>     > I don't know anything about google cloud, how can I reproduce this?
->>     >
->>     >
->>     > Thanks,
->>     > Bernd
->>
-> 
+ arch/nios2/include/asm/uaccess.h                      |  8 ++++----
+ arch/x86/include/asm/bug.h                            |  2 +-
+ arch/x86/include/asm/string_64.h                      |  6 +++---
+ arch/x86/include/asm/uaccess_64.h                     |  2 +-
+ fs/proc/inode.c                                       | 19 +++++++++----------
+ include/linux/cleanup.h                               |  6 +++---
+ include/linux/compiler.h                              |  2 +-
+ include/linux/compiler_types.h                        | 13 +++++++++++++
+ include/linux/minmax.h                                |  6 +++---
+ .../testing/selftests/bpf/prog_tests/socket_helpers.h |  9 +++++++--
+ tools/virtio/linux/compiler.h                         |  2 +-
+ 11 files changed, 46 insertions(+), 29 deletions(-)
 
+diff --git a/arch/nios2/include/asm/uaccess.h b/arch/nios2/include/asm/uaccess.h
+index b8299082adbe..6ccc9a232c23 100644
+--- a/arch/nios2/include/asm/uaccess.h
++++ b/arch/nios2/include/asm/uaccess.h
+@@ -172,15 +172,15 @@ do {									\
+ 
+ #define __put_user(x, ptr)						\
+ ({									\
+-	__auto_type __pu_ptr = (ptr);					\
+-	typeof(*__pu_ptr) __pu_val = (typeof(*__pu_ptr))(x);		\
++	auto __pu_ptr = (ptr);						\
++	auto __pu_val = (typeof(*__pu_ptr))(x);				\
+ 	__put_user_common(__pu_val, __pu_ptr);				\
+ })
+ 
+ #define put_user(x, ptr)						\
+ ({									\
+-	__auto_type __pu_ptr = (ptr);					\
+-	typeof(*__pu_ptr) __pu_val = (typeof(*__pu_ptr))(x);		\
++	auto __pu_ptr = (ptr);						\
++	auto __pu_val = (typeof(*__pu_ptr))(x);				\
+ 	access_ok(__pu_ptr, sizeof(*__pu_ptr)) ?			\
+ 		__put_user_common(__pu_val, __pu_ptr) :			\
+ 		-EFAULT;						\
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index ee23b98353d7..d561a8443c13 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -129,7 +129,7 @@ do {								\
+ 
+ #define __WARN_FLAGS(cond_str, flags)					\
+ do {									\
+-	__auto_type __flags = BUGFLAG_WARNING|(flags);			\
++	auto __flags = BUGFLAG_WARNING|(flags);				\
+ 	instrumentation_begin();					\
+ 	_BUG_FLAGS(cond_str, ASM_UD2, __flags, ARCH_WARN_REACHABLE);	\
+ 	instrumentation_end();						\
+diff --git a/arch/x86/include/asm/string_64.h b/arch/x86/include/asm/string_64.h
+index 79e9695dc13e..4635616863f5 100644
+--- a/arch/x86/include/asm/string_64.h
++++ b/arch/x86/include/asm/string_64.h
+@@ -31,7 +31,7 @@ KCFI_REFERENCE(__memset);
+ #define __HAVE_ARCH_MEMSET16
+ static inline void *memset16(uint16_t *s, uint16_t v, size_t n)
+ {
+-	const __auto_type s0 = s;
++	const auto s0 = s;
+ 	asm volatile (
+ 		"rep stosw"
+ 		: "+D" (s), "+c" (n)
+@@ -44,7 +44,7 @@ static inline void *memset16(uint16_t *s, uint16_t v, size_t n)
+ #define __HAVE_ARCH_MEMSET32
+ static inline void *memset32(uint32_t *s, uint32_t v, size_t n)
+ {
+-	const __auto_type s0 = s;
++	const auto s0 = s;
+ 	asm volatile (
+ 		"rep stosl"
+ 		: "+D" (s), "+c" (n)
+@@ -57,7 +57,7 @@ static inline void *memset32(uint32_t *s, uint32_t v, size_t n)
+ #define __HAVE_ARCH_MEMSET64
+ static inline void *memset64(uint64_t *s, uint64_t v, size_t n)
+ {
+-	const __auto_type s0 = s;
++	const auto s0 = s;
+ 	asm volatile (
+ 		"rep stosq"
+ 		: "+D" (s), "+c" (n)
+diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
+index 641f45c22f9d..915124011c27 100644
+--- a/arch/x86/include/asm/uaccess_64.h
++++ b/arch/x86/include/asm/uaccess_64.h
+@@ -72,7 +72,7 @@ static inline void __user *mask_user_address(const void __user *ptr)
+ 	return ret;
+ }
+ #define masked_user_access_begin(x) ({				\
+-	__auto_type __masked_ptr = (x);				\
++	auto __masked_ptr = (x);				\
+ 	__masked_ptr = mask_user_address(__masked_ptr);		\
+ 	__uaccess_begin(); __masked_ptr; })
+ 
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index 2d3425cfa94b..b7634f975d98 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -303,7 +303,7 @@ static ssize_t proc_reg_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 
+ static ssize_t pde_read(struct proc_dir_entry *pde, struct file *file, char __user *buf, size_t count, loff_t *ppos)
+ {
+-	__auto_type read = pde->proc_ops->proc_read;
++	const auto read = pde->proc_ops->proc_read;
+ 	if (read)
+ 		return read(file, buf, count, ppos);
+ 	return -EIO;
+@@ -325,7 +325,7 @@ static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count,
+ 
+ static ssize_t pde_write(struct proc_dir_entry *pde, struct file *file, const char __user *buf, size_t count, loff_t *ppos)
+ {
+-	__auto_type write = pde->proc_ops->proc_write;
++	const auto write = pde->proc_ops->proc_write;
+ 	if (write)
+ 		return write(file, buf, count, ppos);
+ 	return -EIO;
+@@ -347,7 +347,7 @@ static ssize_t proc_reg_write(struct file *file, const char __user *buf, size_t
+ 
+ static __poll_t pde_poll(struct proc_dir_entry *pde, struct file *file, struct poll_table_struct *pts)
+ {
+-	__auto_type poll = pde->proc_ops->proc_poll;
++	const auto poll = pde->proc_ops->proc_poll;
+ 	if (poll)
+ 		return poll(file, pts);
+ 	return DEFAULT_POLLMASK;
+@@ -369,7 +369,7 @@ static __poll_t proc_reg_poll(struct file *file, struct poll_table_struct *pts)
+ 
+ static long pde_ioctl(struct proc_dir_entry *pde, struct file *file, unsigned int cmd, unsigned long arg)
+ {
+-	__auto_type ioctl = pde->proc_ops->proc_ioctl;
++	const auto ioctl = pde->proc_ops->proc_ioctl;
+ 	if (ioctl)
+ 		return ioctl(file, cmd, arg);
+ 	return -ENOTTY;
+@@ -392,7 +392,7 @@ static long proc_reg_unlocked_ioctl(struct file *file, unsigned int cmd, unsigne
+ #ifdef CONFIG_COMPAT
+ static long pde_compat_ioctl(struct proc_dir_entry *pde, struct file *file, unsigned int cmd, unsigned long arg)
+ {
+-	__auto_type compat_ioctl = pde->proc_ops->proc_compat_ioctl;
++	const auto compat_ioctl = pde->proc_ops->proc_compat_ioctl;
+ 	if (compat_ioctl)
+ 		return compat_ioctl(file, cmd, arg);
+ 	return -ENOTTY;
+@@ -414,7 +414,7 @@ static long proc_reg_compat_ioctl(struct file *file, unsigned int cmd, unsigned
+ 
+ static int pde_mmap(struct proc_dir_entry *pde, struct file *file, struct vm_area_struct *vma)
+ {
+-	__auto_type mmap = pde->proc_ops->proc_mmap;
++	const auto mmap = pde->proc_ops->proc_mmap;
+ 	if (mmap)
+ 		return mmap(file, vma);
+ 	return -EIO;
+@@ -497,7 +497,7 @@ static int proc_reg_open(struct inode *inode, struct file *file)
+ 	if (!use_pde(pde))
+ 		return -ENOENT;
+ 
+-	__auto_type release = pde->proc_ops->proc_release;
++	const auto release = pde->proc_ops->proc_release;
+ 	if (release) {
+ 		pdeo = kmem_cache_alloc(pde_opener_cache, GFP_KERNEL);
+ 		if (!pdeo) {
+@@ -534,10 +534,9 @@ static int proc_reg_release(struct inode *inode, struct file *file)
+ 	struct pde_opener *pdeo;
+ 
+ 	if (pde_is_permanent(pde)) {
+-		__auto_type release = pde->proc_ops->proc_release;
+-		if (release) {
++		const auto release = pde->proc_ops->proc_release;
++		if (release)
+ 			return release(inode, file);
+-		}
+ 		return 0;
+ 	}
+ 
+diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+index 0b55a8f6c59e..8d41b917c77d 100644
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -212,10 +212,10 @@
+ 
+ #define __free(_name)	__cleanup(__free_##_name)
+ 
+-#define __get_and_null(p, nullvalue)   \
++#define __get_and_null(p, nullvalue)	    \
+ 	({                                  \
+-		__auto_type __ptr = &(p);   \
+-		__auto_type __val = *__ptr; \
++		auto __ptr = &(p);	    \
++		auto __val = *__ptr;	    \
+ 		*__ptr = nullvalue;         \
+ 		__val;                      \
+ 	})
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index ff71bebe56f5..04487c9bd751 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -190,7 +190,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ #define data_race(expr)							\
+ ({									\
+ 	__kcsan_disable_current();					\
+-	__auto_type __v = (expr);					\
++	auto __v = (expr);						\
+ 	__kcsan_enable_current();					\
+ 	__v;								\
+ })
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 3eac51d68426..41172a28ce76 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -13,6 +13,19 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
++/*
++ * C23 introduces "auto" as a standard way to define type-inferred
++ * variables, but "auto" has been a (useless) keyword even since K&R C,
++ * so it has always been "namespace reserved."
++ *
++ * Until at some future time we require C23 support, we need the gcc
++ * extension __auto_type, but there is no reason to put that elsewhere
++ * in the source code.
++ */
++#if __STDC_VERSION__ < 202311L
++# define auto __auto_type
++#endif
++
+ /*
+  * Skipped when running bindgen due to a libclang issue;
+  * see https://github.com/rust-lang/rust-bindgen/issues/2244.
+diff --git a/include/linux/minmax.h b/include/linux/minmax.h
+index eaaf5c008e4d..a0158db54a04 100644
+--- a/include/linux/minmax.h
++++ b/include/linux/minmax.h
+@@ -89,7 +89,7 @@
+ 	__cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+ 
+ #define __careful_cmp_once(op, x, y, ux, uy) ({		\
+-	__auto_type ux = (x); __auto_type uy = (y);	\
++	auto ux = (x); auto uy = (y);			\
+ 	BUILD_BUG_ON_MSG(!__types_ok(ux, uy),		\
+ 		#op"("#x", "#y") signedness error");	\
+ 	__cmp(op, ux, uy); })
+@@ -129,7 +129,7 @@
+ 	__careful_cmp(max, (x) + 0u + 0ul + 0ull, (y) + 0u + 0ul + 0ull)
+ 
+ #define __careful_op3(op, x, y, z, ux, uy, uz) ({			\
+-	__auto_type ux = (x); __auto_type uy = (y);__auto_type uz = (z);\
++	auto ux = (x); auto uy = (y); auto uz = (z);			\
+ 	BUILD_BUG_ON_MSG(!__types_ok3(ux, uy, uz),			\
+ 		#op"3("#x", "#y", "#z") signedness error");		\
+ 	__cmp(op, ux, __cmp(op, uy, uz)); })
+@@ -203,7 +203,7 @@
+  * This macro checks @val/@lo/@hi to make sure they have compatible
+  * signedness.
+  */
+-#define clamp(val, lo, hi) __careful_clamp(__auto_type, val, lo, hi)
++#define clamp(val, lo, hi) __careful_clamp(auto, val, lo, hi)
+ 
+ /**
+  * clamp_t - return a value clamped to a given range using a given type
+diff --git a/tools/testing/selftests/bpf/prog_tests/socket_helpers.h b/tools/testing/selftests/bpf/prog_tests/socket_helpers.h
+index e02cabcc814e..0d59503a0c73 100644
+--- a/tools/testing/selftests/bpf/prog_tests/socket_helpers.h
++++ b/tools/testing/selftests/bpf/prog_tests/socket_helpers.h
+@@ -17,11 +17,16 @@
+ #define VMADDR_CID_LOCAL 1
+ #endif
+ 
++/* include/linux/compiler_types.h */
++#if __STDC_VERSION__ < 202311L && !defined(auto)
++# define auto __auto_type
++#endif
++
+ /* include/linux/cleanup.h */
+ #define __get_and_null(p, nullvalue)                                           \
+ 	({                                                                     \
+-		__auto_type __ptr = &(p);                                      \
+-		__auto_type __val = *__ptr;                                    \
++		auto __ptr = &(p);					       \
++		auto __val = *__ptr;                                           \
+ 		*__ptr = nullvalue;                                            \
+ 		__val;                                                         \
+ 	})
+diff --git a/tools/virtio/linux/compiler.h b/tools/virtio/linux/compiler.h
+index 204ef0e9f542..725b93bfeee1 100644
+--- a/tools/virtio/linux/compiler.h
++++ b/tools/virtio/linux/compiler.h
+@@ -31,7 +31,7 @@
+  */
+ #define data_race(expr)							\
+ ({									\
+-	__auto_type __v = (expr);					\
++	auto __v = (expr);						\
+ 	__v;								\
+ })
+ 
 
