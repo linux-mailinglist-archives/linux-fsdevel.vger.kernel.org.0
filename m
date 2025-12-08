@@ -1,146 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-70975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2CCCADC7C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 08 Dec 2025 17:47:14 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97CA9CADC85
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 08 Dec 2025 17:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id A70FD3014BE3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Dec 2025 16:47:12 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 241B93032FEC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Dec 2025 16:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F87B1EB5E3;
-	Mon,  8 Dec 2025 16:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1C521CFF6;
+	Mon,  8 Dec 2025 16:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AgYLjQN3"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="M1xzyeNg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F77520322
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Dec 2025 16:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1F3757EA
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Dec 2025 16:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765212429; cv=none; b=nAEDxExwkXCwBA8if7xXXtyOvDv43aaPg+vIxTOQJj4Sia1wBfW+yeXmkFdLxvjdW3hQMlzZFWaQjEPpfwaM4BBWzNBIk64NqHoTl9jcxK6WCj3o0aXQpMLTEZbWyKEwJnLo/Av0RTGJu0WXSZRHKXAuKQ6U/VaBef+3JiL9jUs=
+	t=1765212532; cv=none; b=TnZQaXmP8qvfrYQv5+Yrz2GMzpfo0J0AwSZfsRUz7x3RqErQ3SSw4qI3Ye9S54v6/0QGbk7Q2hh0fOM3t7D19Qo4dYRsk4EQY8T0oNpOMRKNqSJ9i8Jp61bLas1N6bJW+mUMU+7N+UUub/xB65seF3iReS9vpYdWZnPa9hrLR98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765212429; c=relaxed/simple;
-	bh=yTq0LKrarkdXvIO0tZ1H6xJySqjSUdTNygcNC164iwY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pUcB/ohx89rik7zRNQfy0Lyf3VR+uSaB0FAOGKFpOBLKbavGQsG1SAiPI5uf+O20HamrqCXh0A2VtTQq+hKkPkXIRdQHRDmmGnnEwxmrWulCWpTLyEP07jwZq49BnO2k7b90EuNe32wSmKoQMHF428jMskI+gk6Qv7RuAAc4e9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AgYLjQN3; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7b6b194cf71so7866840b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Dec 2025 08:47:07 -0800 (PST)
+	s=arc-20240116; t=1765212532; c=relaxed/simple;
+	bh=NGTtmc49qGm8JmqTcihsC/mRcolGTztLq1MYlXidkeo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tss8ea1A4TrW4rob0v4lr2mIUZ17BcWhyVRPZgEZJH61/cMaF0WMROmSePLD58p7uFG5GH5o4lwTC4jbMr0kRzQuKBcL+KOm3CDm8UCyFAJrKm/fzQUhDSy1xs0V4AOe87dT8Tjumn3CC3FUF16CloDP5Eb5cJOv8MSMBNZnW40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=M1xzyeNg; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4779adb38d3so43955625e9.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Dec 2025 08:48:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1765212427; x=1765817227; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y21xYnymZNnyNmi/HtnuQMz5IMpcwyYducXo/2wK1DU=;
-        b=AgYLjQN3GFcE4C9S0coiJnGB0WfSHAFLD7Y8c0/toiRNfww1BJV+uNuuXuR0bK8UyF
-         h46usM0ERN4tJIlEF3+J2sMEyNy2EtIheR7a6gAFLqNzBER17EfqT/Y/EzDLXQyJEG4V
-         yWHejEXWCbTBfLIzS4SsEIBodRbuXKhCyEkH9wY3dmO0sHgLRBLl3DGytuoRRe/BsurN
-         /OtpaidtiTjAN+Zjk/i0fdA56b1/hPNZAmtsyJB+LH5GEQmKylZPaRnoz4wXmKgwHuqu
-         A3y2EFjwxF96awOv4piyfszi3+rsARnRNOAaX67Qit/Y/GTc7uyGKDPN7ihK8pkwzyzN
-         UITg==
+        d=suse.com; s=google; t=1765212529; x=1765817329; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NGTtmc49qGm8JmqTcihsC/mRcolGTztLq1MYlXidkeo=;
+        b=M1xzyeNg1qdBDLmQSIcJW/0LctwD5atkNCH+PY3SZYzBB9GPEugIcVSSW9U/YGoPol
+         xE/VYOreEATv98Fixgoc0bffXVTRt2jeIRNbRVA8u3yAdsbag2hjPO5YNDjU12j+B3Dn
+         kVrPyoNq9UII0pVZ8X8IAO/eqRmia3re0S3ajad/pLj8UKZaX8HdXgjaNovcIlo3gGiY
+         A+4W3ZAtQFPLNhkp13hmi3uHJWDZL+MLYULrwJ14LC4eBxi8thT68CSlWxF+UJV9PlMh
+         StKLBzqrLvrRB9zrko+ZOnvzvymldYW3hMY1SYTCxDkWP7RX1Tc04iOVtjTgwBV3YtmG
+         acvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765212427; x=1765817227;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y21xYnymZNnyNmi/HtnuQMz5IMpcwyYducXo/2wK1DU=;
-        b=OcaLVQu759R6YNfJhHPsnAv2GYdmW1m2a5brqrHRoEua1gRChP5UyVugT8i8BDSbDy
-         DFV+TuXBY/5Y0681tozS+2f5ILdgYjitk+hZS/1dECfL1eOuU6hqG3ppRjDyaVMSOjiz
-         A6kpZEZj54tf2Ay8qkdIRIhK23CSp1Ioc2/MeHGuPJEd5OBdW+ZqtsY9E2wITFTB/YUe
-         yHo/rZFkyZLxt3tOVG87lqbF1IMvaAD/MLnKx73u3pv5aBtksTm3k0I+P4MB8Pc0Ykav
-         XrV0/IiKtu9HiFKp4RuP5R/6Flosf4EgXv7pakaNgBcrFOeTv4nJ0Zfhbujt2LwRPUBx
-         YQSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeiwQtyEYGd329UPmvVmRVs9BRWBbkN/NdA7c9pCtgJB/E7ghZL+VkAyUkLuzo71ewX83UXffPRgC6VIJf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzmd4vlDmGoCRoCA39Dlju42EfA8jsBHOMbNzpIwnODh3vrOSrO
-	DEvvZTn+r9x9InIMThBOLphfM+dp/deltcQlBQLHHd+bnB0uxJq4/xnjd3hA9PD6dnvar1PYI4e
-	eIViYLdKzdYDdlJnriMq4905dYg==
-X-Google-Smtp-Source: AGHT+IE5FQZIbtJOztigBOS9Avg82hSfSlcy7E3hwkLPHM/P7YdR0xqCIo+8j17gC4LIdPH64C7KVQUZllrbHiWF8g==
-X-Received: from pghx12.prod.google.com ([2002:a63:f70c:0:b0:bac:a20:5ee0])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:3d85:b0:35e:d74:e4b6 with SMTP id adf61e73a8af0-36617e37d65mr8176588637.7.1765212427234;
- Mon, 08 Dec 2025 08:47:07 -0800 (PST)
-Date: Mon, 08 Dec 2025 08:47:05 -0800
-In-Reply-To: <E3AB23B6-9B6C-432C-BD92-27520ADA0739@nvidia.com>
+        d=1e100.net; s=20230601; t=1765212529; x=1765817329;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NGTtmc49qGm8JmqTcihsC/mRcolGTztLq1MYlXidkeo=;
+        b=s54xute8KXqA7PD+oUCeltASA9THo/HAVmy5bBG6mDXyb/vQ3WqLzyWpjlZWJxCpQm
+         ftIPHhBDDx+VyrJiu8abTJFEA4SFvj4gYYKqAT4XgSP+cKu4z/ErAUxfERLAJncXLDkM
+         vm11XtXdoF3fGUBbyV/YrgSG695IQ4BnzlfOKcwcBbppYfb4tlCS7Ycihj9ZUraxg40/
+         zQaIxkEIqDY6evJxFrH2Q1SwPd4PLsaeUdYRRRu7FmrPgxkUqWYd5WhtL4FlOuXucg64
+         AxE/ldu1WdQoRoLKtuksOXvMLNjGKDI5GCNYL41brFByOK/TglKJRYl9GLjbkBHos1g1
+         OPYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX67YFM4ZEhllsoEfo4WEwO7ReoCVIACYexWs7oP9yel9JszwY6Tuxy7+fIAEGH9cESDlumUraRdy1v93ne@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQaChjCbyLJmNrRFjBPqCMOVxF1u5gqxRZnmEkPPTf2Mq4P2pe
+	GLvHMaeN/mE5TqAU+f+gaE3Pa/BbQF18S2Mun3TOGQ9QeFNaDkUlAsUp/HvN7GSfiYQ=
+X-Gm-Gg: ASbGnctqjda1CBtRgEHr+QMCHmShMscEOhhH47Lyif5lEMjkrkwdF4QRqtPKBCBHqz7
+	1fzRFKLhXVraVKbiIFEHgPEeGNpC595/XNe8Xri79BqExhfsaijLu2P0GX5VTxROTJROPJtjUa5
+	4DpSPAJlj9J7yDLNLNyK490eMkI1Ia1zEUOie5lJEcJz0orNInspWrrnG3MxqFmY1mIbc9PJsH1
+	/Xfruj0GfUXIIKq2OZJxglsB3DFatr6UvErtqVoVSWrW4dOJdzcvhkiDeoJ+ydwWxEP54VJoZQh
+	Ca8EB4fIH1l5Epawxl0QFfibpU0aQS++7Eph4QoTmIsg6f2yaQwPhVM7F7B47yg6GkWUt4Yi4FA
+	SwGI8lJltOFxTQBDdaLS24A3XszlyIaOOqgIVavofWgcDdx8bU0UUQiVyDJly7K4X7z+tFhHNAR
+	NsmHzWz+ovqxP2UK1SjM35Xf1TeR4u+igKs1DekotWVQ==
+X-Google-Smtp-Source: AGHT+IEsJ/iSaDvwNh18lu2wFHnkomxJ8Hvg1XZtgMMg6hpjOz1LIBWnTk3op1li+CYOfSPEkMphCw==
+X-Received: by 2002:a05:600c:1552:b0:477:73cc:82c2 with SMTP id 5b1f17b1804b1-47939dfbb50mr84510895e9.9.1765212529294;
+        Mon, 08 Dec 2025 08:48:49 -0800 (PST)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42f7d331e62sm26750068f8f.35.2025.12.08.08.48.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Dec 2025 08:48:48 -0800 (PST)
+Date: Mon, 8 Dec 2025 17:48:47 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Andrei Vagin <avagin@gmail.com>
+Cc: Chen Ridong <chenridong@huaweicloud.com>, 
+	Andrei Vagin <avagin@google.com>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	criu@lists.linux.dev, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Vipin Sharma <vipinsh@google.com>, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 0/3] cgroup/misc: Add hwcap masks to the misc controller
+Message-ID: <6dmgfe5vbbuqw7ycsm4l2ecpv4eppdsau4t22kitjcjglg2gna@dyjlwhfhviif>
+References: <20251205005841.3942668-1-avagin@google.com>
+ <57a7d8c3-a911-4729-bc39-ba3a1d810990@huaweicloud.com>
+ <CANaxB-x5qVv_yYR7aYYdrd26uFRk=Zsd243+TeBWMn47wi++eA@mail.gmail.com>
+ <bc10cdcb-840f-400e-85b8-3e8ae904f763@huaweicloud.com>
+ <CANaxB-yOfS1KPZaZJ_4WG8XeZnB9M_shtWOOONTXQ2CW4mqsSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251117224701.1279139-1-ackerleytng@google.com>
- <20251117224701.1279139-5-ackerleytng@google.com> <E3AB23B6-9B6C-432C-BD92-27520ADA0739@nvidia.com>
-Message-ID: <diqzy0nc53au.fsf@google.com>
-Subject: Re: [RFC PATCH 4/4] XArray: test: Increase split order test range in check_split()
-From: Ackerley Tng <ackerleytng@google.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, david@redhat.com, michael.roth@amd.com, 
-	vannapurve@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qhatuyfusoefghqk"
+Content-Disposition: inline
+In-Reply-To: <CANaxB-yOfS1KPZaZJ_4WG8XeZnB9M_shtWOOONTXQ2CW4mqsSA@mail.gmail.com>
 
-Zi Yan <ziy@nvidia.com> writes:
 
-> On 17 Nov 2025, at 17:47, Ackerley Tng wrote:
->
->> Expand the range of order values for check_split_1() from 2 *
->> XA_CHUNK_SHIFT to 4 * XA_CHUNK_SHIFT to test splitting beyond 2 levels.
->>
->> Separate the loops for check_split_1() and check_split_2() calls, since
->> xas_try_split() does not yet support splitting beyond 2 levels.
->
-> xas_try_split() is designed to only split at most 1 level. It is used
-> for non-uniform split, which always splits a folio from order N to order N-1.
->
+--qhatuyfusoefghqk
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH 0/3] cgroup/misc: Add hwcap masks to the misc controller
+MIME-Version: 1.0
 
-Thanks for explaining! In the next revision, I'll rename
+Hello Andrei.
 
-  + check_split_1() to check_split_uniform() and
-  + check_split_2() to check_split_non_uniform()
+On Fri, Dec 05, 2025 at 12:19:04PM -0800, Andrei Vagin <avagin@gmail.com> wrote:
+> If we are talking about C/R use cases, it should be configured when
+> container is started. It can be adjusted dynamically, but all changes
+> will affect only new processes. The auxiliary vectors are set on execve.
 
-in an earlier patch before, fixing the wording, in this patch, to be
+The questions by Ridong are getting at the reasons why cgroup API
+doesn't sound like a good match for these values.
+I understand it's tempting to implement this by simply copying some
+masks from the enclosing cgroup but since there's little to be done upon
+(dynamic) change or a process migration it's overkill.
 
-  Separate the loops for check_split_uniform() and
-  check_split_non_uniform() calls. Expanding the range of order values
-  only applies for uniform splits, since non-uniform splits always split
-  a folio from order N to order N-1.
+So I'd look at how other [1] adjustments between fork-exec are done and
+fit it with them. I guess prctl would be an option as a substitute for
+non-existent setauxval().
 
->>
->> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
->> ---
->>  lib/test_xarray.c | 6 +++++-
->>  1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/lib/test_xarray.c b/lib/test_xarray.c
->> index 42626fb4dc0e..fbdf647e4ef8 100644
->> --- a/lib/test_xarray.c
->> +++ b/lib/test_xarray.c
->> @@ -1905,12 +1905,16 @@ static noinline void check_split(struct xarray *xa)
->>
->>  	XA_BUG_ON(xa, !xa_empty(xa));
->>
->> -	for (order = 1; order < 2 * XA_CHUNK_SHIFT; order++) {
->> +	for (order = 1; order < 4 * XA_CHUNK_SHIFT; order++) {
->>  		for (new_order = 0; new_order < order; new_order++) {
->>  			check_split_1(xa, 0, order, new_order);
->>  			check_split_1(xa, 1UL << order, order, new_order);
->>  			check_split_1(xa, 3UL << order, order, new_order);
->> +		}
->> +	}
->>
->> +	for (order = 1; order < 2 * XA_CHUNK_SHIFT; order++) {
->> +		for (new_order = 0; new_order < order; new_order++) {
->>  			check_split_2(xa, 0, order, new_order);
->>  			check_split_2(xa, 1UL << order, order, new_order);
->>  			check_split_2(xa, 3UL << order, order, new_order);
->> --
->> 2.52.0.rc1.455.g30608eb744-goog
->
->
-> --
-> Best Regards,
-> Yan, Zi
+Thanks,
+Michal
+
+[1] Yes, I admit cgroup migration is among them too. Another one is
+setns(2) which is IMO a closer concept for this modified view of HW, I'm
+not sure whether hardware namespaces had been brought up (and rejected)
+in the past.
+
+
+--qhatuyfusoefghqk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaTcBbBsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+Ai8MAEAyeSN6KCarnIABEa5QMqm
+oISbZ1p14CvmHATzKA1bOyEBALyv5+on7iSaLxmoTq8ygkMxgB3VKwZP81DcFFDB
+DEQF
+=v5da
+-----END PGP SIGNATURE-----
+
+--qhatuyfusoefghqk--
 
