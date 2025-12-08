@@ -1,147 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-70966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76C4CACC5B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 08 Dec 2025 10:58:33 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88183CACD0B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 08 Dec 2025 11:10:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id ABC5130C2BBB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Dec 2025 09:53:49 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6391F308DAF9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Dec 2025 10:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6AB31A570;
-	Mon,  8 Dec 2025 09:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7A52D739D;
+	Mon,  8 Dec 2025 10:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Yq1FcK78"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f78.google.com (mail-ot1-f78.google.com [209.85.210.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C37E3191D7
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Dec 2025 09:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAEE2144C7;
+	Mon,  8 Dec 2025 10:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765186949; cv=none; b=PpDTYA2Opab7lYvhWj4HMNiwRmwvmqIK9RNVXtJy1rdkUNpDtEMHgdOr41AWkGaOOilyaGnbszIaoe10beCmClk6/1o5kvEbdoOEy8az9ykP6mrLycvgNO7s4egdTbE3KatwZBsCLN+pF9UX+0lDQuqQyoknMFTQa3kaRH4r6Wg=
+	t=1765188460; cv=none; b=sx746ZWRuG1XSunwjKcgSof4m5tmrmGiZq4d9OT7UUaRHMKwzYh1Q4kdcTBkXr3YBbqfeYj1ZiKtvitU9RCYDrvPjm7Ys7j72oVV+3Spy9+ce2UeVIeqMhMoq0D2lWI6B7z14Fetes0cLIQGd95InwUYnIbRGwPqbg7+VbKU08I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765186949; c=relaxed/simple;
-	bh=0iI55M+sBM4ese6DTuYRJRhlvxKMm6iVwG/YuY+p790=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hmscRMK/wRg9h8m+X2/BEu26iCzJIiOjQyKo/2IGOhUX5QUDMH/1so52ml+rdukwCo7sEPFleHn5Rsa6jyVYtANZOe9hx6OSE3j4TTqcwCMksx8pk9HyY7JIX+6i4kUqzgd4zyNDgkRk5VDKRkRHaYr7zG5Dk+JyKgjSxVps2lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-ot1-f78.google.com with SMTP id 46e09a7af769-7c75663feaeso4914635a34.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Dec 2025 01:42:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765186946; x=1765791746;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jH8CNd4DXN02lRhCXm2HKO0Vf/vVi/kx+lNSKoK74q4=;
-        b=JKK3zxygGVq8HmQht9cWG7aNaoix/3+RgPo6BHn5xXeGdKkyiGBe7RnXqKUONHM5hV
-         JRS4SEqnzofU1k2+bESvXRuuM8Qp4KLhIBlcE8fk2bd9zinwxJdeItz5U6Hbsq5+RqIQ
-         aaJUph2FCxae1ZWebpkET7S4YwpgAYYtmAwaf/obNzb/C5dZml7pGMSPYLgF/KWOK5BU
-         6pvUrZSmJdUH+4jf4sDK5dzEw71N5I3LKN6keztixwOVTGZ/IJk5nRKaB5zg5oK+FEsg
-         EkYaFLYDiex+kbZGhWJ+nT1VH0JNhBLWzoH6y6fVYuzY2/4NGWX2ogdla+c5Mm2cK3fR
-         VFKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoCf9H6ikGaK4C+QPLZ0tRLsmVlGjALHTh9UtRlfJpwtvR327NVSswMlRVj1eTPQBtvI/we4LgQ7TSEFca@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy42MC6KIunMv9WvMNXmYoiVXqEtVG5sUHtAg08bWaeZKyM7XQH
-	dBWpGc2qiWz6r9LSrNB5LHz46ZugTPFl8OnS1zdT2MeFkLONsn0UOMuOHsxO7WN162y6OJaJvKj
-	V65aQvYUFPVjw7d7ttYZw2tcMZx626FRL/61Lpc5r06nLs5oLkvR+qEuGd1o=
-X-Google-Smtp-Source: AGHT+IEsYAEyW+9pnvfjzU/dxOR7KiOv+b5tRe6u2/ZpZA3d4JqJcaGPvV98xhxHKIwftFwCeEi2csICmjehe0rdL1UNTPiMFPwv
+	s=arc-20240116; t=1765188460; c=relaxed/simple;
+	bh=zzoPaZTOchC0rfeZyXPZrjhQIa0OL/Xj8WihiQjr7T0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hePMSTADUreT9v3nhNEksOUzw3kbVtBPT4tZbyCqAJlJMG2NmD7Q206Lplo9LFwfYw1hpN9/Pa5ju2kP4W20ER2GTU0MdxhYuSO9cdvgAf73GZ3QNOKypQdgwXsIylntPGVFGtbaPt4FokmlCKa8kkRapBJS2xpz2SVv/KQEdFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Yq1FcK78; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=T2q3qIpB2rZdmxgNfQrdMX7fXgjlUn1FNnbk0gfok3I=; b=Yq1FcK78y3w6nkgHfG8T/MDxrk
+	IxPuchTO5iIOBoYJahU8xB/t/TBjpRAjm/4AFYdSRl6UIeQ11DcKzstMyYC6itiWWr6tdIPLP5Y7H
+	oqkVhHPMfM+F4oWLKsC9B0VaLXpMAwRhWiAV1s4LEV2C3JSjEkHE7Kgc003Hh1bBk4X6AkWRoEpVW
+	oT+77Xz6SycoycRX1c0LeynFqnbm7G1n5TtAHY42t4W9I1dP7Iese3Pe5JIL2yvuHdlvtUE0NKd53
+	Oe9oqVQJa7G5XePlJlodhUKIs/7elRd9CSi08xcHHqeO66+yWWWAe3BmmTNtZmFjbpOl1VDVCQCzB
+	svgD+L+w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48358)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vSY9S-000000007bR-0fW9;
+	Mon, 08 Dec 2025 10:07:30 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vSY9N-000000004vY-2kGQ;
+	Mon, 08 Dec 2025 10:07:25 +0000
+Date: Mon, 8 Dec 2025 10:07:25 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Xie Yuanbin <xieyuanbin1@huawei.com>
+Cc: viro@zeniv.linux.org.uk, akpm@linux-foundation.org, brauner@kernel.org,
+	catalin.marinas@arm.com, hch@lst.de, jack@suse.com,
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	pangliyuan1@huawei.com, torvalds@linux-foundation.org,
+	wangkefeng.wang@huawei.com, will@kernel.org,
+	wozizhi@huaweicloud.com, yangerkun@huawei.com
+Subject: Re: [Bug report] hash_name() may cross page boundary and trigger
+ sleep in RCU context
+Message-ID: <aTajXdAVYh9qJI6B@shell.armlinux.org.uk>
+References: <aTLLLuup7TeAqFVL@shell.armlinux.org.uk>
+ <20251208023206.44238-1-xieyuanbin1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:61c:b0:659:9a49:90b5 with SMTP id
- 006d021491bc7-6599a957819mr2718821eaf.52.1765186946533; Mon, 08 Dec 2025
- 01:42:26 -0800 (PST)
-Date: Mon, 08 Dec 2025 01:42:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69369d82.a70a0220.38f243.009f.GAE@google.com>
-Subject: [syzbot] [fs?] memory leak in debugfs_change_name
-From: syzbot <syzbot+3d7ca9c802c547f8550a@syzkaller.appspotmail.com>
-To: dakr@kernel.org, gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rafael@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251208023206.44238-1-xieyuanbin1@huawei.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hello,
+On Mon, Dec 08, 2025 at 10:32:06AM +0800, Xie Yuanbin wrote:
+> On Fri, 5 Dec 2025 12:08:14 +0000, Russell King wrote:
+> > Right, let's split these issues into separate patches. Please test this
+> > patch, which should address only the hash_name() fault issue, and
+> > provides the basis for fixing the branch predictor issue.
+> 
+> I conducted a simple test, and it seems that both the hash_name()
+> might sleep issue and the branch predictor issue have been fixed.
 
-syzbot found the following issue on:
+This isn't entirely fixed. A data abort for an alignment fault (thus
+calling do_alignment()) will enable interrupts, and then may call
+do_bad_area(). We can't short-circuit this path like we can with
+do_page_fault() as alignment faults from userspace can be valid for
+the vectors page - not that we should see them, but that doesn't mean
+that there isn't something in userspace that does.
 
-HEAD commit:    8f7aa3d3c732 Merge tag 'net-next-6.19' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1350c01a580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3bdbe6509b080086
-dashboard link: https://syzkaller.appspot.com/bug?extid=3d7ca9c802c547f8550a
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13b9d192580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10aceab4580000
+> BTW, even with this patch, test cases may still fail. There is another
+> bug in hash_name() will also be triggered by the testcase, which will be
+> fixed in this patch:
+> Link: https://lore.kernel.org/20251127025848.363992-1-pangliyuan1@huawei.com
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/75704c8ef83a/disk-8f7aa3d3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fc039c7b45ea/vmlinux-8f7aa3d3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/80c77928126a/bzImage-8f7aa3d3.xz
+That patch got missed - I'm notoriously bad at catching every email.
+There's just way too much email coming in.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3d7ca9c802c547f8550a@syzkaller.appspotmail.com
+> Test case is from:
+> Link: https://lore.kernel.org/20251127140109.191657-1-xieyuanbin1@huawei.com
+> 
+> Test in commit 6987d58a9cbc5bd57c98 ("Add linux-next specific files for
+> 20251205") from linux-next branch.
+> 
+> I still have a question about this patch: Is 
+> ```patch
+> +		if (interrupts_enabled(regs))
+> +			local_irq_enable();
+> ```
+> necessary? Although this implementation is closer to the original code,
+> which can reduce side effects, do_bad_area(), do_sect_fault(),
+> and do_translation_fault() all call __do_kernel_fault() with interrupts
+> disabled.
 
-BUG: memory leak
-unreferenced object 0xffff8881110bb308 (size 8):
-  comm "syz.0.17", pid 6090, jiffies 4294942958
-  hex dump (first 8 bytes):
-    2e 00 00 00 00 00 00 00                          ........
-  backtrace (crc ecfc7064):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4953 [inline]
-    slab_alloc_node mm/slub.c:5258 [inline]
-    __do_kmalloc_node mm/slub.c:5651 [inline]
-    __kmalloc_node_track_caller_noprof+0x3b2/0x670 mm/slub.c:5759
-    __kmemdup_nul mm/util.c:64 [inline]
-    kstrdup+0x3c/0x80 mm/util.c:84
-    kstrdup_const+0x63/0x80 mm/util.c:104
-    kvasprintf_const+0xca/0x110 lib/kasprintf.c:48
-    debugfs_change_name+0xf6/0x5d0 fs/debugfs/inode.c:854
-    cfg80211_dev_rename+0xd8/0x110 net/wireless/core.c:149
-    nl80211_set_wiphy+0x102/0x1770 net/wireless/nl80211.c:3844
-    genl_family_rcv_msg_doit+0x11e/0x190 net/netlink/genetlink.c:1115
-    genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
-    genl_rcv_msg+0x2fd/0x440 net/netlink/genetlink.c:1210
-    netlink_rcv_skb+0x93/0x1d0 net/netlink/af_netlink.c:2550
-    genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
-    netlink_unicast_kernel net/netlink/af_netlink.c:1318 [inline]
-    netlink_unicast+0x3a3/0x4f0 net/netlink/af_netlink.c:1344
-    netlink_sendmsg+0x335/0x6b0 net/netlink/af_netlink.c:1894
-    sock_sendmsg_nosec net/socket.c:718 [inline]
-    __sock_sendmsg net/socket.c:733 [inline]
-    ____sys_sendmsg+0x562/0x5a0 net/socket.c:2608
-    ___sys_sendmsg+0xc8/0x130 net/socket.c:2662
-    __sys_sendmsg+0xc7/0x140 net/socket.c:2694
+It's to keep the behaviour closer to the original as possible, on the
+principle of avoiding unnecessary behavioural changes to the code. As
+noted above, do_bad_area() can be called with interrupts enabled.
 
-connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
+Whether RT folk would be happy removing that is a different question,
+given that they want as much of the kernel to be preemptable.
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
