@@ -1,130 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-70967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88183CACD0B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 08 Dec 2025 11:10:56 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23309CACE5D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 08 Dec 2025 11:38:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6391F308DAF9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Dec 2025 10:07:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A35883058A7E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Dec 2025 10:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7A52D739D;
-	Mon,  8 Dec 2025 10:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4B63112BB;
+	Mon,  8 Dec 2025 10:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Yq1FcK78"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="LYvaMf7Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAEE2144C7;
-	Mon,  8 Dec 2025 10:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3812C3245
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Dec 2025 10:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765188460; cv=none; b=sx746ZWRuG1XSunwjKcgSof4m5tmrmGiZq4d9OT7UUaRHMKwzYh1Q4kdcTBkXr3YBbqfeYj1ZiKtvitU9RCYDrvPjm7Ys7j72oVV+3Spy9+ce2UeVIeqMhMoq0D2lWI6B7z14Fetes0cLIQGd95InwUYnIbRGwPqbg7+VbKU08I=
+	t=1765190285; cv=none; b=h7/dyEWVCu3JXMY5LlWglrscJ18KhaWKztdEy9DnNT0RqFDA/iLR/QWhIoiSSPRSed/N6u7747NDDTeSuXbtrOw01nuvvrpIjPSFZxjrN4xCvk5p6cei9qpfEEI7vvrzoRzEZr3iPZO/paZSFA+HXOF18JkpgHrAcIxBVOjDbsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765188460; c=relaxed/simple;
-	bh=zzoPaZTOchC0rfeZyXPZrjhQIa0OL/Xj8WihiQjr7T0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hePMSTADUreT9v3nhNEksOUzw3kbVtBPT4tZbyCqAJlJMG2NmD7Q206Lplo9LFwfYw1hpN9/Pa5ju2kP4W20ER2GTU0MdxhYuSO9cdvgAf73GZ3QNOKypQdgwXsIylntPGVFGtbaPt4FokmlCKa8kkRapBJS2xpz2SVv/KQEdFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Yq1FcK78; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=T2q3qIpB2rZdmxgNfQrdMX7fXgjlUn1FNnbk0gfok3I=; b=Yq1FcK78y3w6nkgHfG8T/MDxrk
-	IxPuchTO5iIOBoYJahU8xB/t/TBjpRAjm/4AFYdSRl6UIeQ11DcKzstMyYC6itiWWr6tdIPLP5Y7H
-	oqkVhHPMfM+F4oWLKsC9B0VaLXpMAwRhWiAV1s4LEV2C3JSjEkHE7Kgc003Hh1bBk4X6AkWRoEpVW
-	oT+77Xz6SycoycRX1c0LeynFqnbm7G1n5TtAHY42t4W9I1dP7Iese3Pe5JIL2yvuHdlvtUE0NKd53
-	Oe9oqVQJa7G5XePlJlodhUKIs/7elRd9CSi08xcHHqeO66+yWWWAe3BmmTNtZmFjbpOl1VDVCQCzB
-	svgD+L+w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48358)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vSY9S-000000007bR-0fW9;
-	Mon, 08 Dec 2025 10:07:30 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vSY9N-000000004vY-2kGQ;
-	Mon, 08 Dec 2025 10:07:25 +0000
-Date: Mon, 8 Dec 2025 10:07:25 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Xie Yuanbin <xieyuanbin1@huawei.com>
-Cc: viro@zeniv.linux.org.uk, akpm@linux-foundation.org, brauner@kernel.org,
-	catalin.marinas@arm.com, hch@lst.de, jack@suse.com,
-	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	pangliyuan1@huawei.com, torvalds@linux-foundation.org,
-	wangkefeng.wang@huawei.com, will@kernel.org,
-	wozizhi@huaweicloud.com, yangerkun@huawei.com
-Subject: Re: [Bug report] hash_name() may cross page boundary and trigger
- sleep in RCU context
-Message-ID: <aTajXdAVYh9qJI6B@shell.armlinux.org.uk>
-References: <aTLLLuup7TeAqFVL@shell.armlinux.org.uk>
- <20251208023206.44238-1-xieyuanbin1@huawei.com>
+	s=arc-20240116; t=1765190285; c=relaxed/simple;
+	bh=Xvvt8aKdidrti/qa89kFkr6EkHjNN1pen1zb3pQqB4Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZJtpC1BsU3JEBaVPp1IXluplKvhYKGQwf31P9nL1yfHKcmOUJPEWTAbNuAwLEX5lFOhPJy6WFV9fn986xGS2H55k52L/F9bXC8HW2/LhRPVv2fBx3VDysbrk3wnsDIw9pi1+uGyPXS1mV44X1SXa5Fzk9RdsnGreD43a/NAUAXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=LYvaMf7Y; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-882475d8851so47302986d6.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Dec 2025 02:38:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1765190280; x=1765795080; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lZo8B9ULqod5NnS4ElHd54HKG220+4mWWIm9CYg8r2g=;
+        b=LYvaMf7YFYcJjcKerC2SgATcM/W1v5sUEWvasiB6eMrHPLaebDFk1NBUUi4JZEN3as
+         VUw0xNpHxleCtWrktI5CUAKsFRshLOcBpxRF2DwW2CWoCmdaWc6TV4pGhCYFa5Cxd+pn
+         W+uVvMYZBFiSZfvuQ8aasVswRxtIVYecqVrbg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765190280; x=1765795080;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lZo8B9ULqod5NnS4ElHd54HKG220+4mWWIm9CYg8r2g=;
+        b=OtqCXQ6V5eVt1/srHBQGyLwtrqO2CcfZH8VStazBFRKLceybTVexpBxNfvgz80OAiQ
+         UxstmfAJgKZk/JDdy/g3Uamej9knStKFKm+29ro4jPkRIFdYUnbrCTFhJWl6AOXW0F4V
+         O23sJXW8sfZQ+3HxuJozNn7kvHdq6a227RK0xE5UeJRGEq9C5qBNuo+eccBEusPAL4Qq
+         U3kILHxcDf1EZsmQPS0U7mjTDKxJMqZ+hYT9TLERScSHUgm3whVI46Xfund5V7SOAsiR
+         6X0nYLq56tbfgL4djxV5h9JCMcl2mxkAFIAj7LbL9baV4oL9A+rYqFC8jDsqwepQEiE2
+         YhUA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7bxn86iV9Nbkl18pWKxkOjAe46YGmUHS4Qp/9NQe1dwd22f4aA7a0pHeP68wg9hp9oMWCQA1ZJHuNPYQA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4VfZyV5w8ee01rhmFPQqN/LVul2YHuuYUU26fTfC4epjITDfG
+	qozcyDnrwiTzCQv88APHEzLH2WQ+Jsl190Ur/2mGuusFG6vU6IJnrToHqpsEA0aDKNxXE8/Ld8a
+	ZQbAr7FhqFjmGwVDdf+Wv+kO844XH3QeoOT653a+IyhfB0D7UsZbzhqQ=
+X-Gm-Gg: ASbGncvR1w7PPbJvQhVSp63dEFKhcV2mJ4hS91o8BBTCj4Qw6NHJYT7VFRIMq8phBEK
+	UDSH5YRw6+VIlnnfv9ND2XaBZBSGWpMLQZbXglBCcnp9MYedpQFncZp7bbtb6kaAh2kr+OGHZzt
+	h4zAr+/uDH7pxyEtmUMJ7aNY6+rfKSQlXKiwB6TFNeOv2sPdkziFgrL16l1gsjY2SdFVdl30B+I
+	/hJp8iGT6QPrS1t1EKo2Dc5jDgE9jSZ862t+lTaDSik1A4jYg0XVOVBH1hz23+GrqevtwZchPTY
+	Nvx3HA==
+X-Google-Smtp-Source: AGHT+IH94LlwYr2MFSyVR0eLC2QTrQehcD5Z16OdTi2V0mzUQn+OPTF2in3P8sEYNasRzJm8yaxBrg/HmF+L9dcLGeA=
+X-Received: by 2002:ac8:7f92:0:b0:4ee:18e7:c4de with SMTP id
+ d75a77b69052e-4f03ff21864mr111081001cf.78.1765190280241; Mon, 08 Dec 2025
+ 02:38:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251208023206.44238-1-xieyuanbin1@huawei.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <CAJfpegunwB28WKqxNWCQyd5zrMfSif_YmBFp+_m-ZsDap9+G7Q@mail.gmail.com>
+ <CAHk-=wht097GMgEuH870PU4dMfBCinZ5_qvxpqK2Q9PP=QRdTA@mail.gmail.com>
+ <20251206014242.GO1712166@ZenIV> <CAHk-=wg8KJbcPuoRBFmD9c42awaeb4anXsC4evEOj0_QVKg0QQ@mail.gmail.com>
+ <20251206022826.GP1712166@ZenIV> <CAHk-=wgBU3MQniRBmbKi2yj0fRrWQjViViNvNJ6sqjEB-3r4XA@mail.gmail.com>
+ <20251206035403.GR1712166@ZenIV> <20251206042242.GS1712166@ZenIV>
+In-Reply-To: <20251206042242.GS1712166@ZenIV>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 8 Dec 2025 11:37:48 +0100
+X-Gm-Features: AQt7F2pJ6xxoGZFzQN2bUbCjl7yWmAbff_gnzdrNr9tIYZ5RK3rHaUcbj67WI7c
+Message-ID: <CAJfpegvpy+6PR36LNFJ7rEmXQugJZ3U=gjERbXnGjFvjUCfdPA@mail.gmail.com>
+Subject: Re: [GIT PULL] fuse update for 6.19
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Dec 08, 2025 at 10:32:06AM +0800, Xie Yuanbin wrote:
-> On Fri, 5 Dec 2025 12:08:14 +0000, Russell King wrote:
-> > Right, let's split these issues into separate patches. Please test this
-> > patch, which should address only the hash_name() fault issue, and
-> > provides the basis for fixing the branch predictor issue.
-> 
-> I conducted a simple test, and it seems that both the hash_name()
-> might sleep issue and the branch predictor issue have been fixed.
+On Sat, 6 Dec 2025 at 05:22, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Sat, Dec 06, 2025 at 03:54:03AM +0000, Al Viro wrote:
+> > On Fri, Dec 05, 2025 at 07:29:13PM -0800, Linus Torvalds wrote:
+> > > On Fri, 5 Dec 2025 at 18:28, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > > >
+> > > > Sure, ->d_prune() would take it out of the rbtree, but what if it hits
+> > >
+> > > Ahh.
+> > >
+> > > Maybe increase the d_count before releasing that rbtree lock?
+> > >
+> > > Or yeah, maybe moving it to d_release. Miklos?
+> >
+> > Moving it to ->d_release() would be my preference, TBH.  Then
+> > we could simply dget() the sucker under the lock and follow
+> > that with existing dput_to_list() after dropping the lock...
+>
+> s/dget/grab ->d_lock, increment ->d_count if not negative,
+> drop ->d_lock/ - we need to deal with the possibility of
+> the victim just going into __dentry_kill() as we find it.
+>
+> And yes, it would be better off with something like
+> lockref_get_if_zero(struct lockref *lockref)
+> {
+>         bool retval = false;
+>         CMPXCHG_LOOP(
+>                 new.count++;
+>                 if (old_count != 0)
+>                         return false;
+>         ,
+>                 return true;
+>         );
+>         spin_lock(&lockref->lock);
+>         if (lockref->count == 0)
+>                 lockref->count = 1;
+>                 retval = true;
+>         }
+>         spin_unlock(&lockref->lock);
+>         return retval;
+> }
+>
+> with
+>                 while (node) {
+>                         fd = rb_entry(node, struct fuse_dentry, node);
+>                         if (!time_after64(get_jiffies_64(), fd->time))
+>                                 break;
+>                         rb_erase(&fd->node, &dentry_hash[i].tree);
+>                         RB_CLEAR_NODE(&fd->node);
+>                         if (lockref_get_if_zero(&dentry->d_lockref))
+>                                 dput_to_list(dentry);
+>                         if (need_resched()) {
+>                                 spin_unlock(&dentry_hash[i].lock);
+>                                 schedule();
+>                                 spin_lock(&dentry_hash[i].lock);
+>                         }
+>                         node = rb_first(&dentry_hash[i].tree);
+>                 }
+> in that loop.  Actually... a couple of questions:
 
-This isn't entirely fixed. A data abort for an alignment fault (thus
-calling do_alignment()) will enable interrupts, and then may call
-do_bad_area(). We can't short-circuit this path like we can with
-do_page_fault() as alignment faults from userspace can be valid for
-the vectors page - not that we should see them, but that doesn't mean
-that there isn't something in userspace that does.
+Looks good.  Do you want me to submit a proper patch?
 
-> BTW, even with this patch, test cases may still fail. There is another
-> bug in hash_name() will also be triggered by the testcase, which will be
-> fixed in this patch:
-> Link: https://lore.kernel.org/20251127025848.363992-1-pangliyuan1@huawei.com
+>         * why do we call shrink_dentry_list() separately for each hash
+> bucket?  Easier to gather everything and call it once...
 
-That patch got missed - I'm notoriously bad at catching every email.
-There's just way too much email coming in.
+No good reason.
 
-> Test case is from:
-> Link: https://lore.kernel.org/20251127140109.191657-1-xieyuanbin1@huawei.com
-> 
-> Test in commit 6987d58a9cbc5bd57c98 ("Add linux-next specific files for
-> 20251205") from linux-next branch.
-> 
-> I still have a question about this patch: Is 
-> ```patch
-> +		if (interrupts_enabled(regs))
-> +			local_irq_enable();
-> ```
-> necessary? Although this implementation is closer to the original code,
-> which can reduce side effects, do_bad_area(), do_sect_fault(),
-> and do_translation_fault() all call __do_kernel_fault() with interrupts
-> disabled.
+>         * what's the point of rbtree there?  What's wrong with plain
+> hlist?  Folks?
 
-It's to keep the behaviour closer to the original as possible, on the
-principle of avoiding unnecessary behavioural changes to the code. As
-noted above, do_bad_area() can be called with interrupts enabled.
+The list needs to be ordered wrt. end of validity time.  The timeout
+can be different from one dentry to another even within a fuse fs, but
+more likely to be varied between different fuse filesystems, so
+insertion time itself doesn't determine the validity end time.
 
-Whether RT folk would be happy removing that is a different question,
-given that they want as much of the kernel to be preemptable.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks,
+Miklos
 
