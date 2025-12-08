@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-70962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F34BCAC9CF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 08 Dec 2025 10:14:43 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B85CAC9BA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 08 Dec 2025 10:13:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3E10B3073A28
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Dec 2025 09:12:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4CB1B305D86C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Dec 2025 09:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A003191D4;
-	Mon,  8 Dec 2025 09:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5632DA77D;
+	Mon,  8 Dec 2025 09:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JZYfHOZP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wGqxsgRx";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PUQYhYVj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="i6npeldE"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qbFQo5VB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q1xhIigm";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qbFQo5VB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q1xhIigm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A052E6CDF
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Dec 2025 09:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD0A238C33
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Dec 2025 09:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765184541; cv=none; b=a6pLHBDSc+DDhsHFtRReGJ6y+Fhv5XOGTRd9CFYZ/5fdZX5++a8AhzukzoLmcpXhout+99uWKBDzyntI+KnB5ODP1192v4ZXKVjHFZXWIyqVMhqqSG9TgBW/hQvCjAODBiPP1WGxeoTVUsdy0ayez/AAzX8lL9YiDpkv85pLs+w=
+	t=1765185017; cv=none; b=rF943F0I48fdJWOJ5eSCJFXtiSrbKoOEMGDCaxmVm7GkQU7MwrhfIrcbcql2ECWBOArSfwe+RZtV3+L7FqA//vRxhwpUnATM+S59ouOYNVzimb8/42Ru3jflcAVDKIOkUCvrraBflsJEoAS5DFGToBRp63on4hdNic0fqtOU7ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765184541; c=relaxed/simple;
-	bh=8oOrdzlwKvlSCCapkj4IWsqunz/XWb06yEb/D9ScBL8=;
+	s=arc-20240116; t=1765185017; c=relaxed/simple;
+	bh=2s7kZp0yIjSMS+Go1GrCEPLznvnwEFZbSOdp+Rw9G6o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ljAtZEkp29dd9cKU1or+FkRRb5mPfovb3Fj12vfCOoCkDF9ta8MbplhzBZlRspOiU4OMbCv7611PdsfpbVj+u56TD4YLvSYZqU0tOWc0PsynBvdG98mVyvPrCaH0O7zpS6vpu8tYjzjM1hMSYqLyGVPmQW/ZIxg2XiEfvEECdH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JZYfHOZP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wGqxsgRx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PUQYhYVj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=i6npeldE; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:Content-Type; b=LtbHlWbTSlW1vOgpy+9zT4wtF475FLriJwVrU3U3xlIyhx4BxlCt+c7zsGX/3dnSulHLSxvAJfUk8VslxVmQM9GfvZT/iMPwzMUKW/GpUpg/lbwE87pE0VIH6bV84QNYryLGLacW9X8N4SqIpIPI8kDnIDHt/RcyhT1DswLt7bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qbFQo5VB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q1xhIigm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qbFQo5VB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q1xhIigm; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E98EE5BEA3;
-	Mon,  8 Dec 2025 09:02:16 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 972705BE9F;
+	Mon,  8 Dec 2025 09:10:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765184538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1765185013; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=l43ZE4Xy8aFmolhlk6dLxu7ZrVCecFJdofea5EdHUu8=;
-	b=JZYfHOZPDddX4h2kOIhHrw84UTWCqzLpT4p6SMBDa1A4g9/tMtA6QSzyBLjiE8Xj5i22on
-	bVFFoMbSITzh8keTBBY4H5KIg28E84XHu0Rg/Lam6NKebekF1nngBSY5tpG/HX5oG0PWjN
-	1cPRhwDMhE7JiYnjwxTt+01HhnK01x4=
+	bh=r3C5jOe1fBLhDSskapJBKq38cWJCsbg+0IkowPX/JG8=;
+	b=qbFQo5VB0Iul7UVh2ZyZuyOxVM5KlTpv4skLywclN0SxSnke7ngeM66KO4zA2TxcJlq7wD
+	WVR9H6El58W5byQHKEvr6xJrXO8d2rGbKazD0ZsB46ohpoVpFdY5Z36F9+zJOHRxTBpvvj
+	cNxw8dNv89Dpc/DI+HekMKd0W/wcDx4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765184538;
+	s=susede2_ed25519; t=1765185013;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=l43ZE4Xy8aFmolhlk6dLxu7ZrVCecFJdofea5EdHUu8=;
-	b=wGqxsgRx/TSn/jQyhTseKJkMHCdf8HJnpbqgp2EMKyty5fmA6U9I+yoiN0kJA79lzDsU2J
-	sCXxVw6zW08Vr4Bg==
+	bh=r3C5jOe1fBLhDSskapJBKq38cWJCsbg+0IkowPX/JG8=;
+	b=q1xhIigmYLviznowQZOuwEJsrEMdUqD5Y5HMelkhRZdg1vTOExqbFO+9e26NAG98oGxHSs
+	bnpMEjeOAdGyJuBw==
 Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765184536; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1765185013; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=l43ZE4Xy8aFmolhlk6dLxu7ZrVCecFJdofea5EdHUu8=;
-	b=PUQYhYVjZ9P3rTqkenJReRsDhx8Gp71CrUP6hf51eJoK6vuE0baq0PpJ1DAMloat0bv8Q2
-	873m9HdKTrPn0TX3jxAIz8c3tiwUAEmod5u6U3kaSFjCq551MZNNrZbPJ/Xon4BqVFT1fO
-	3itLZvMJnTI+LQtQs7Tld543M46V/w8=
+	bh=r3C5jOe1fBLhDSskapJBKq38cWJCsbg+0IkowPX/JG8=;
+	b=qbFQo5VB0Iul7UVh2ZyZuyOxVM5KlTpv4skLywclN0SxSnke7ngeM66KO4zA2TxcJlq7wD
+	WVR9H6El58W5byQHKEvr6xJrXO8d2rGbKazD0ZsB46ohpoVpFdY5Z36F9+zJOHRxTBpvvj
+	cNxw8dNv89Dpc/DI+HekMKd0W/wcDx4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765184536;
+	s=susede2_ed25519; t=1765185013;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=l43ZE4Xy8aFmolhlk6dLxu7ZrVCecFJdofea5EdHUu8=;
-	b=i6npeldEMPfgVebYlxnHuWJDuydcblE8YhinC8OENODCX2zA52ashEdKd3iNnjRuoMJElQ
-	cbl86cPk9gpb77Cg==
+	bh=r3C5jOe1fBLhDSskapJBKq38cWJCsbg+0IkowPX/JG8=;
+	b=q1xhIigmYLviznowQZOuwEJsrEMdUqD5Y5HMelkhRZdg1vTOExqbFO+9e26NAG98oGxHSs
+	bnpMEjeOAdGyJuBw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6ABB83EA63;
-	Mon,  8 Dec 2025 09:02:16 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 284B03EA63;
+	Mon,  8 Dec 2025 09:10:13 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vluqGRiUNml/AgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 08 Dec 2025 09:02:16 +0000
-Message-ID: <8828d51f-bbcf-4d08-b99f-a2cf64fe4b75@suse.cz>
-Date: Mon, 8 Dec 2025 10:02:15 +0100
+	id eDCHCfWVNmk2CgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 08 Dec 2025 09:10:13 +0000
+Message-ID: <b9f0889c-597a-4a6c-8d32-606e948f7916@suse.cz>
+Date: Mon, 8 Dec 2025 10:10:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,10 +95,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 03/13] mm: introduce AS_NO_DIRECT_MAP
+Subject: Re: [PATCH v8 04/13] KVM: guest_memfd: Add stub for
+ kvm_arch_gmem_invalidate
 Content-Language: en-US
-To: John Hubbard <jhubbard@nvidia.com>,
- "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
  "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
  "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -138,6 +138,7 @@ Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
  "kpsingh@kernel.org" <kpsingh@kernel.org>, "sdf@fomichev.me"
  <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>,
  "jolsa@kernel.org" <jolsa@kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+ "jhubbard@nvidia.com" <jhubbard@nvidia.com>,
  "peterx@redhat.com" <peterx@redhat.com>, "jannh@google.com"
  <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>,
  "shuah@kernel.org" <shuah@kernel.org>, "riel@surriel.com"
@@ -165,8 +166,7 @@ Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
  "Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco"
  <xmarcalx@amazon.co.uk>
 References: <20251205165743.9341-1-kalyazin@amazon.com>
- <20251205165743.9341-4-kalyazin@amazon.com>
- <3d26bfb2-2c82-4625-a371-96879ff43c3d@nvidia.com>
+ <20251205165743.9341-5-kalyazin@amazon.com>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -207,17 +207,14 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
  dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
  m6M14QORSWTLRg==
-In-Reply-To: <3d26bfb2-2c82-4625-a371-96879ff43c3d@nvidia.com>
+In-Reply-To: <20251205165743.9341-5-kalyazin@amazon.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
 X-Spamd-Result: default: False [-2.80 / 50.00];
 	BAYES_HAM(-3.00)[99.99%];
 	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	NEURAL_HAM_SHORT(-0.20)[-0.995];
 	MIME_GOOD(-0.10)[text/plain];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
@@ -225,51 +222,36 @@ X-Spamd-Result: default: False [-2.80 / 50.00];
 	RCVD_TLS_ALL(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_EQ_ADDR_SOME(0.00)[];
-	URIBL_BLOCKED(0.00)[linux.dev:email,imap1.dmz-prg2.suse.org:helo,suse.cz:mid];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,linux.dev:email,suse.cz:mid,suse.cz:email];
 	TO_DN_SOME(0.00)[];
 	TAGGED_RCPT(0.00)[];
 	MID_RHS_MATCH_FROM(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,lwn.net,kernel.org,arm.com,huawei.com,google.com,linutronix.de,alien8.de,linux.intel.com,zytor.com,infradead.org,linux-foundation.org,oracle.com,suse.com,iogearbox.net,linux.dev,gmail.com,fomichev.me,ziepe.ca,suse.de,surriel.com,intel.com,loongson.cn,amd.com,lists.infradead.org,amazon.co.uk,amazon.com];
+	FREEMAIL_CC(0.00)[redhat.com,lwn.net,kernel.org,arm.com,huawei.com,google.com,linutronix.de,alien8.de,linux.intel.com,zytor.com,infradead.org,linux-foundation.org,oracle.com,suse.com,iogearbox.net,linux.dev,gmail.com,fomichev.me,ziepe.ca,nvidia.com,suse.de,surriel.com,intel.com,loongson.cn,amd.com,lists.infradead.org,amazon.co.uk,amazon.com];
 	R_RATELIMIT(0.00)[to_ip_from(RLwob6p4ge6yi5tbqokujz9zu4)];
 	FROM_EQ_ENVFROM(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_SOME(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[77];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid,linux.dev:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:email,linux.dev:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-On 12/5/25 19:35, John Hubbard wrote:
-> On 12/5/25 8:58 AM, Kalyazin, Nikita wrote:
->> From: Patrick Roy <patrick.roy@linux.dev>
->> 
->> Add AS_NO_DIRECT_MAP for mappings where direct map entries of folios are
->> set to not present. Currently, mappings that match this description are
->> secretmem mappings (memfd_secret()). Later, some guest_memfd
->> configurations will also fall into this category.
->> 
->> Reject this new type of mappings in all locations that currently reject
->> secretmem mappings, on the assumption that if secretmem mappings are
->> rejected somewhere, it is precisely because of an inability to deal with
->> folios without direct map entries, and then make memfd_secret() use
->> AS_NO_DIRECT_MAP on its address_space to drop its special
->> vma_is_secretmem()/secretmem_mapping() checks.
->> 
->> This drops a optimization in gup_fast_folio_allowed() where
->> secretmem_mapping() was only called if CONFIG_SECRETMEM=y. secretmem is
->> enabled by default since commit b758fe6df50d ("mm/secretmem: make it on
->> by default"), so the secretmem check did not actually end up elided in
->> most cases anymore anyway.
+On 12/5/25 17:58, Kalyazin, Nikita wrote:
+> From: Patrick Roy <patrick.roy@linux.dev>
 > 
-> The above paragraph can be part (most) of a commit description for
-> a separate patch for the gup aspects. Let's split it out that way,
-> because it is a distinct change, and the diffs can stand alone
-> from this patch here.
+> Add a no-op stub for kvm_arch_gmem_invalidate if
+> CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE=n. This allows defining
+> kvm_gmem_free_folio without ifdef-ery, which allows more cleanly using
+> guest_memfd's free_folio callback for non-arch-invalidation related
+> code.
+> 
+> Acked-by: David Hildenbrand (Red Hat)" <david@kernel.org
+> Signed-off-by: Patrick Roy <patrick.roy@linux.dev>
+> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
 
-I assume the separated gup change will be ordered as the earlier one,
-because keeping "check_secretmem" together with newly checking
-mapping_no_direct_map() would be incorrect. Make sense.
-
-> thanks,
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
 
