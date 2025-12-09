@@ -1,124 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-70996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D82CAE988
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 02:14:44 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239BCCAE9CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 02:24:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id A8FD6300FEB6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 01:14:41 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 08BC8301CE47
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 01:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F3527703A;
-	Tue,  9 Dec 2025 01:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB302750ED;
+	Tue,  9 Dec 2025 01:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="JOBTs1wK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com [113.46.200.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D916271468;
-	Tue,  9 Dec 2025 01:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4918F4A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 01:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765242878; cv=none; b=vCoQrkPybhaSr1tU0OhjuwOUv+Vh+gMetr9u9+8UjOyeJ/O/i/xD49gXp95BVoqX3Bt6zl0Bg40FUtgCmIOhSeaGmKqzZqEwWuw97WVTXY1gzBvzyJWrB7rnLgY2QJACB5D27J1K96w75Egec3uE4+qqhG8QWyy9y8IUp84nDpY=
+	t=1765243492; cv=none; b=W67w57DyOWyX3/P+aXhfDVm9j6Qb39FNsqGqh4VaTkzTf/ue9gU2vd3RRj7bs6IftyB38+2edxVrRWvPMjDLu2+qcxdYq8GRrTnPGm6sV4B0i41dAFoH/s9VUSTr08RyRVhNG8C77Cofzy+BTym1NIQJl3vQWJcJgu2dnbRdiTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765242878; c=relaxed/simple;
-	bh=aX8V7idETexZpGgf8tvxn2ukSJ5VSRQBjo5sL5Fn5zs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u7MKgSytM93XkQzYKQ4IBmpyWJXbX23MAwFeKRRjCnkZGH064VUHOc5m/erpEgOWwitithOP0tnyXO6pFQiFWxwalx9Tgf5eC0cpRFIuEYtqnAzCY0PMP2hvOxWsJE65D6nl9Sm0CVqK5OkqpdiPJf6QDP9Xh89hRzpz6IMjn/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dQL7l4z2xzYQtgf;
-	Tue,  9 Dec 2025 08:58:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 4E8FF1A175C;
-	Tue,  9 Dec 2025 08:58:40 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgBHJlA+dDdpiONbBA--.18208S2;
-	Tue, 09 Dec 2025 08:58:40 +0800 (CST)
-Message-ID: <075ad534-9a76-4067-97a1-a3219fa4c60e@huaweicloud.com>
-Date: Tue, 9 Dec 2025 08:58:37 +0800
+	s=arc-20240116; t=1765243492; c=relaxed/simple;
+	bh=TgE5UcLzP0h0Cq5g8mY40FY1HHFqEuK9iZ0SAX5lb+4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SuYZ4MVWkNdfamIQ2hotagqa3sFj6JIFPPXdDYG/IiT1TNKhTV+p8yDYQ24il0JOI8RWRLiyj/VUC7jt+kkq2PdHDu5PezPyNwkJojijDEWov8kd5GDiZL+UN7NXcSpWYQYLHE1Q3s7BjqADymih4HxrWtTzwwzCIPU+qYYjYPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=JOBTs1wK; arc=none smtp.client-ip=113.46.200.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=+85qu9oEnwpQbG8npTSBnWjUFRyFRQEeOOWH+z73dTo=;
+	b=JOBTs1wKPQflmWC0WNzIJ9kG7bcQRzqL1iYHMdvSGKrGJUpf+BTYUZpsY6YwtXpDvkL1oTCAh
+	x01niIovkDxjkSVyGyrqyya9s+qtHEbzJjclOccaisxeIfDLFwHBjyLlX7NQXfz+18VMNXgyS3G
+	UTA5xHYrRszyqNXhBso3Si8=
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4dQLgQ57QyznTVd;
+	Tue,  9 Dec 2025 09:22:26 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id F00A21402CA;
+	Tue,  9 Dec 2025 09:24:44 +0800 (CST)
+Received: from kwepemn100013.china.huawei.com (7.202.194.116) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 9 Dec 2025 09:24:35 +0800
+Received: from localhost (10.50.85.155) by kwepemn100013.china.huawei.com
+ (7.202.194.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Tue, 9 Dec
+ 2025 09:24:35 +0800
+Date: Tue, 9 Dec 2025 09:21:37 +0800
+From: Long Li <leo.lilong@huawei.com>
+To: Bernd Schubert <bernd@bsbernd.com>, <miklos@szeredi.hu>
+CC: <linux-fsdevel@vger.kernel.org>, <bschubert@ddn.com>,
+	<yangerkun@huawei.com>, <lonuxli.64@gmail.com>
+Subject: Re: [PATCH v2] fuse: limit debug log output during ring teardown
+Message-ID: <aTd5oXkKL8oP1CEw@localhost.localdomain>
+References: <20251204023219.1249542-1-leo.lilong@huawei.com>
+ <c486d34f-8b41-4a5e-84eb-dd37b0a63703@bsbernd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] cgroup/misc: Add hwcap masks to the misc controller
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Andrei Vagin <avagin@gmail.com>
-Cc: Andrei Vagin <avagin@google.com>, Kees Cook <kees@kernel.org>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, cgroups@vger.kernel.org, criu@lists.linux.dev,
- Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- Vipin Sharma <vipinsh@google.com>, Jonathan Corbet <corbet@lwn.net>
-References: <20251205005841.3942668-1-avagin@google.com>
- <57a7d8c3-a911-4729-bc39-ba3a1d810990@huaweicloud.com>
- <CANaxB-x5qVv_yYR7aYYdrd26uFRk=Zsd243+TeBWMn47wi++eA@mail.gmail.com>
- <bc10cdcb-840f-400e-85b8-3e8ae904f763@huaweicloud.com>
- <CANaxB-yOfS1KPZaZJ_4WG8XeZnB9M_shtWOOONTXQ2CW4mqsSA@mail.gmail.com>
- <6dmgfe5vbbuqw7ycsm4l2ecpv4eppdsau4t22kitjcjglg2gna@dyjlwhfhviif>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <6dmgfe5vbbuqw7ycsm4l2ecpv4eppdsau4t22kitjcjglg2gna@dyjlwhfhviif>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBHJlA+dDdpiONbBA--.18208S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw4rAr1fJr4DAr1fGrykZrb_yoW8GF1xpF
-	WkC3W7Gw4kJ347ZaykZ392qF4FvFW8AFy7Jr15K3s3AFW7u3W8Ar4ftrW5WFsxXr9xC3W2
-	vw1YvrWfuan0vaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <c486d34f-8b41-4a5e-84eb-dd37b0a63703@bsbernd.com>
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemn100013.china.huawei.com (7.202.194.116)
 
-
-
-On 2025/12/9 0:48, Michal Koutný wrote:
-> Hello Andrei.
+On Mon, Dec 08, 2025 at 11:50:11PM +0100, Bernd Schubert wrote:
 > 
-> On Fri, Dec 05, 2025 at 12:19:04PM -0800, Andrei Vagin <avagin@gmail.com> wrote:
->> If we are talking about C/R use cases, it should be configured when
->> container is started. It can be adjusted dynamically, but all changes
->> will affect only new processes. The auxiliary vectors are set on execve.
 > 
-> The questions by Ridong are getting at the reasons why cgroup API
-> doesn't sound like a good match for these values.
+> On 12/4/25 03:32, Long Li wrote:
+> > Currently, if there are pending entries in the queue after the teardown
+> > timeout, the system keeps printing entry state information at very short
+> > intervals (FUSE_URING_TEARDOWN_INTERVAL). This can flood the system logs.
+> > Additionally, ring->stop_debug_log is set but not used.
+> > 
+> > Clean up unused ring->stop_debug_log, update teardown time after each
+> > log entry state, and change the log entry state interval to
+> > FUSE_URING_TEARDOWN_TIMEOUT.
+> > 
+> > Signed-off-by: Long Li <leo.lilong@huawei.com>
+> > ---
+> > v1->v2: Update teardown time to limit entry state output interval
+> >  fs/fuse/dev_uring.c   | 7 ++++---
+> >  fs/fuse/dev_uring_i.h | 5 -----
+> >  2 files changed, 4 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> > index 5ceb217ced1b..68d2fbdc3a7c 100644
+> > --- a/fs/fuse/dev_uring.c
+> > +++ b/fs/fuse/dev_uring.c
+> > @@ -426,7 +426,6 @@ static void fuse_uring_log_ent_state(struct fuse_ring *ring)
+> >  		}
+> >  		spin_unlock(&queue->lock);
+> >  	}
+> > -	ring->stop_debug_log = 1;
+> >  }
+> >  
+> >  static void fuse_uring_async_stop_queues(struct work_struct *work)
+> > @@ -453,9 +452,11 @@ static void fuse_uring_async_stop_queues(struct work_struct *work)
+> >  	 * If there are still queue references left
+> >  	 */
+> >  	if (atomic_read(&ring->queue_refs) > 0) {
+> > -		if (time_after(jiffies,
+> > -			       ring->teardown_time + FUSE_URING_TEARDOWN_TIMEOUT))
+> > +		if (time_after(jiffies, ring->teardown_time +
+> > +					FUSE_URING_TEARDOWN_TIMEOUT)) {
+> >  			fuse_uring_log_ent_state(ring);
+> > +			ring->teardown_time = jiffies;
+> > +		}
+> >  
+> >  		schedule_delayed_work(&ring->async_teardown_work,
+> >  				      FUSE_URING_TEARDOWN_INTERVAL);
+> > diff --git a/fs/fuse/dev_uring_i.h b/fs/fuse/dev_uring_i.h
+> > index 51a563922ce1..4cd3cbd51c7a 100644
+> > --- a/fs/fuse/dev_uring_i.h
+> > +++ b/fs/fuse/dev_uring_i.h
+> > @@ -117,11 +117,6 @@ struct fuse_ring {
+> >  
+> >  	struct fuse_ring_queue **queues;
+> >  
+> > -	/*
+> > -	 * Log ring entry states on stop when entries cannot be released
+> > -	 */
+> > -	unsigned int stop_debug_log : 1;
+> > -
+> >  	wait_queue_head_t stop_waitq;
+> >  
+> >  	/* async tear down */
+> 
+> 
+> Thank you! I'm still interested in, if you get repeated warning messages.
+> 
 
-Eh, The statement "it can be adjusted dynamically, but all changes will affect only new processes"
-means that processes created within the same cgroup could end up with different capabilities. This
-does not sound like how cgroups typically operate;
+I've been testing the fuse over uring functionality recently, but I haven't
+encountered many repeated warning messages in actual testing, so there's no
+need to worry. :)
 
-> I understand it's tempting to implement this by simply copying some
-> masks from the enclosing cgroup but since there's little to be done upon
-> (dynamic) change or a process migration it's overkill.
-> 
-> So I'd look at how other [1] adjustments between fork-exec are done and
-> fit it with them. I guess prctl would be an option as a substitute for
-> non-existent setauxval().
-> 
-> Thanks,
-> Michal
-> 
-> [1] Yes, I admit cgroup migration is among them too. Another one is
-> setns(2) which is IMO a closer concept for this modified view of HW, I'm
-> not sure whether hardware namespaces had been brought up (and rejected)
-> in the past.
-> 
-
--- 
-Best regards,
-Ridong
-
+Thanks,
+Long Li
 
