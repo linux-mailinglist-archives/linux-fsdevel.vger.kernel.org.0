@@ -1,82 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-71011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB6ACAF69D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 10:13:41 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D9FCAF70D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 10:26:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 6A6873009F2C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 09:13:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 70F1E3061A45
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 09:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0792D6E62;
-	Tue,  9 Dec 2025 09:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974542D9496;
+	Tue,  9 Dec 2025 09:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="C/BjZ1xB"
+	dkim=pass (2048-bit key) header.d=nexaro24.pl header.i=@nexaro24.pl header.b="BZ94BF4B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from mail.nexaro24.pl (mail.nexaro24.pl [51.75.71.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8832C2AA2;
-	Tue,  9 Dec 2025 09:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113D914F9D6
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 09:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.75.71.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765271617; cv=none; b=JE7oZqAU0o4nWFq2OZOn9l/VnYJlRbHCcKg6iT/a4LSszM1frIGaYe0pVbHZe+jC7hX1Zf4tloIMkyejkIaIVG6QJb9rEPL+s+h6y8vPFNmW2h727SpcTKUgP4qG7KdYEokwBNWBZPVsm/vP3faNd/IXuqBuAq1E/YpTwXwmUJs=
+	t=1765272358; cv=none; b=u6LPPMLf4ekpfHdapS2IQOknjkZKt669zuezm5WbQuAxTElHkzrKFLfitIL26mTfJdGC6Pct/9yys9DfsSAMz6n18Hm1IrQS/qMfLpLt5zy8n7YqAQGllYmK/wBk512DIb7Vs0cxCaHgRIiBux+KMC4mOppSyxTFR8OgtXf7B3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765271617; c=relaxed/simple;
-	bh=WUyRxeHG2tQEC+LD1/5TFV7dFFzwWZ0Xe/eRbtMW1ac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eWhPXGXvAZ4eBYJ5XdEzWk5W9M7qRkdJcN7d6mPV4yFghJVSMHhKhr2LiI13OXVpuASJuGeT4hmEBVr3rV8wkqnj6Xx9fYJnBUzSLI0Dl36ZQk+CotXx/2LRBQm86KqmLnkGOHbeqShXe7Vjjqu2Oyf1CNn/L955FxGCN8Fx3ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=C/BjZ1xB; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=obStIBMpIt3uo/fyyEYbs0AzFByesLQjTm1626CXOxE=; b=C/BjZ1xBoFEjMyU1bEWNDSakYj
-	6hl4h3FOSNvFJQtr/6EI7p6jyXhdS9uwUJ0piVxx7eosZNbT0Oc/cPdaWXiqnwGzYWBcfZHlFntq/
-	KKxkxXlgNYRmrc1nU+E4wC6UFqMttmpWXHVe2TR6F1LLeYziJ71FhbfdshnjSE04Nf2QJ6ZVbGyYV
-	YATczgrvIWEuEyXuaFNecrGN6VQ/xyaw+glQPL1dsz+kDdy8eCPGfG9H3dS3saU00HzFsBG1hAqmf
-	xYeZrN6BysjpH3EwsmFqNlpLqCkQavBhzZnJ9cNVA1G/Bfe6h+y3CscjwGQbR7hN80LORabNHcyk7
-	gXaeQFBg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vStnD-00000004XWD-1cmf;
-	Tue, 09 Dec 2025 09:13:59 +0000
-Date: Tue, 9 Dec 2025 09:13:59 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] file: Call security_file_alloc() after initializing the
- filp
-Message-ID: <20251209091359.GW1712166@ZenIV>
-References: <20251209075347.31161-1-tianjia.zhang@linux.alibaba.com>
+	s=arc-20240116; t=1765272358; c=relaxed/simple;
+	bh=ZC5JV21fWFTo+uXJYW+dr6G1mneZxc9rdVRgBpPDkO4=;
+	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type; b=sgngTX2ogSeGAgft1+uyXogudD7NeeRcdsbDu721wHNkFEPxfK78iafXSpwUjSkNi5SlkkWWeI4whNs2EwrFoFDCs+JOAcky4upodC0DQJcLC745qqm2rHdCX+Q3X7TCsq4//XaknbofkOLLGr8i8X0gE9hMlNL3p1bfY13neFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nexaro24.pl; spf=pass smtp.mailfrom=nexaro24.pl; dkim=pass (2048-bit key) header.d=nexaro24.pl header.i=@nexaro24.pl header.b=BZ94BF4B; arc=none smtp.client-ip=51.75.71.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nexaro24.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nexaro24.pl
+Received: by mail.nexaro24.pl (Postfix, from userid 1002)
+	id 07C7DA7948; Tue,  9 Dec 2025 10:16:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nexaro24.pl; s=mail;
+	t=1765271816; bh=ZC5JV21fWFTo+uXJYW+dr6G1mneZxc9rdVRgBpPDkO4=;
+	h=Date:From:To:Subject:From;
+	b=BZ94BF4B0nsQgtYkyzWUw1fuV3T+JxsqHN0tHWcJqlqenlaQvdKJkT4F1UZqFuNiz
+	 e5TpNA7HedjiNxlBiVARUdxpJvIxAn1DN2OvTIb+h7FZ8rlZzm5rjioOLZ2wpVeMK6
+	 kTW/Ae7iU9H0NeWVvjTCIm9KHfEqYeipEqjuOgpqq1F7pw9OVfxS7Lt5w7tBkBsfNs
+	 xIkoP6Y+D8/Cg39PUPlYdoemX6qxMuizV4HO7lhwN5jEaxU9otV4S5auKnPt2OzC3a
+	 +iCtXbVJLptKjbt2feFIQ108EXR+zCEUOtCk/r5DK0J2uYM/6/eNJBZcAp48oB9TfA
+	 V3EO+GAAOBawQ==
+Received: by mail.nexaro24.pl for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 09:16:08 GMT
+Message-ID: <20251209084500-0.1.qk.5p03d.0.3os4lpf82f@nexaro24.pl>
+Date: Tue,  9 Dec 2025 09:16:08 GMT
+From: "Tomasz Chabierski" <tomasz.chabierski@nexaro24.pl>
+To: <linux-fsdevel@vger.kernel.org>
+Subject: =?UTF-8?Q?Dostawa_sprz=C4=99tu?=
+X-Mailer: mail.nexaro24.pl
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251209075347.31161-1-tianjia.zhang@linux.alibaba.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 09, 2025 at 03:53:47PM +0800, Tianjia Zhang wrote:
-> When developing a dedicated LSM module, we need to operate on the
-> file object within the LSM function, such as retrieving the path.
-> However, in `security_file_alloc()`, the passed-in `filp` is
-> only a valid pointer; the content of `filp` is completely
-> uninitialized and entirely random, which confuses the LSM function.
-> 
-> Therefore, it is necessary to call `security_file_alloc()` only
-> after the main fields of the `filp` object have been initialized.
-> This patch only moves the call to `security_file_alloc()` to the
-> end of the `init_file()` function.
+Dzie=C5=84 dobry,
 
-Which fields would those be and why would ->file_alloc(), which is
-not called anywhere else, depend on any values being stored there?
-And how would init_file() know which path we are going to use
-that struct file for, anyway, considering that file is allocated
-and init_file() called *before* we get around to resolving the pathname?
+reprezentuj=C4=99 dystrybutora sprz=C4=99tu elektronicznego i IT, oferuj=C4=
+=85cego ponad 90 000 produkt=C3=B3w od 1 100 marek z mo=C5=BCliwo=C5=9Bci=
+=C4=85 wysy=C5=82ki tego samego dnia.
+
+Wspieramy firmy w doborze odpowiednich rozwi=C4=85za=C5=84 =E2=80=93 od a=
+kcesori=C3=B3w po nowoczesne technologie zwi=C4=99kszaj=C4=85ce efektywno=
+=C5=9B=C4=87 operacyjn=C4=85. Zapewniamy pe=C5=82ne wsparcie ekspert=C3=B3=
+w oraz mo=C5=BCliwo=C5=9B=C4=87 przetestowania produkt=C3=B3w przed wi=C4=
+=99kszym zam=C3=B3wieniem.
+
+Ch=C4=99tnie porozmawiam o tym, jak mo=C5=BCemy wspiera=C4=87 Pa=C5=84stw=
+a cele biznesowe.=20
+
+Kiedy mogliby=C5=9Bmy um=C3=B3wi=C4=87 si=C4=99 na rozmow=C4=99?
+
+
+Pozdrawiam
+Tomasz Chabierski
 
