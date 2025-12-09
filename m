@@ -1,152 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-71005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2974CAF24A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 08:32:31 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20067CAF205
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 08:27:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3DBE03012DE7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 07:32:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9ED76305F7FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 07:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE377221F24;
-	Tue,  9 Dec 2025 07:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57365287246;
+	Tue,  9 Dec 2025 07:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bLwkTlHc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650992139C9
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 07:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCE0279355
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 07:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765265539; cv=none; b=ikSG2XIfmwqLMhaWNZDgpTxEU0UFRyl59r7XT2W8U34ATNBE5WcufhvmEhjNvFlWOiP0WzYRZZcywxDWNp4bAdD6OIO0wD0KjfWTqWdIYQ8lGLVfb41eqga0NrkGb2jQvXERFSvjqTExVZW9limA4cCt5dqjdD4/6xI4puxikls=
+	t=1765265183; cv=none; b=BLUPKkKBYlY1ulVFdnDZEm8NiubDP3yg8L38YYk2dy9+CO5bu42Pz/lco6Fod5cM/Vb+lvd/VpjdZi99pqxtl+Zcipb8F9QchlVIzYzIKBB+ZyxPOxRUq97RZFuLCuo5xlUyRyChNnZZh7VW/TM8hLDX0dtgjVV0CiTfCxjYuj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765265539; c=relaxed/simple;
-	bh=J/4JYCvk/+LRKhxkmSyM7lbHTbMLPWcKEB/jDN51shI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=soijkVoRxIiveyT8VelJFFjHdRk7/BmV7nK+Kviwn6UzSz+h2tPLjjorXxALlMRiV09N6s72050HoQVTBm0yWQLM2CxaPt2KrbLokruJ9tgE1TRcWzdIuP0JvNmNcbN3Zw+yJ9rKMFdiUFQ7YrwinajpQNdsI8d3hLbtDQXtjV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4dQVrz3RYnzKHLyG
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 15:31:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id A56C21A06DD
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 15:32:13 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.87.129])
-	by APP2 (Coremail) with SMTP id Syh0CgDH80150DdpHC18BA--.12048S4;
-	Tue, 09 Dec 2025 15:32:10 +0800 (CST)
-From: libaokun@huaweicloud.com
-To: ntfs3@lists.linux.dev
-Cc: almaz.alexandrovich@paragon-software.com,
-	linux-fsdevel@vger.kernel.org,
-	yangerkun@huawei.com,
-	libaokun1@huawei.com,
-	syzbot+23aee7afc440fe803545@syzkaller.appspotmail.com
-Subject: [PATCH] fs/ntfs3: fix ntfs_mount_options leak in ntfs_fill_super()
-Date: Tue,  9 Dec 2025 15:21:41 +0800
-Message-Id: <20251209072141.2936193-1-libaokun@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1765265183; c=relaxed/simple;
+	bh=8nT8939qWUoJYlT2R7sKtRouAfpezWZVT5T0CEHq2FI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pbv+xXPOqRCGI0N8cmViKVX8X+Vq1TgltkvjHNLSMQwj6oas231NxN+86ahf2PutOWT8oTqGofzI+nj6POdxRz2qHb9a6scdwHab4WqJHBOSTihyjAx/QsZX9K/z6e4AA2g2E8CbT/11ZBIdQUnXZcCQzy7zsOQhC7G12gPHcuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bLwkTlHc; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-64951939e1eso1881425a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Dec 2025 23:26:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1765265180; x=1765869980; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7QhMUSo0zLDlINi8GAqDQeQHdxTHsyz1r33NHLku5hM=;
+        b=bLwkTlHcWQMBb8tY5U8TY+BoyY1bQaAgjOvn5Pb2tufZIWtWZX1vMsOlhsRD46FJui
+         EbvQVXbNFzRR01zBOazf07qk/Z4GMDHRTd4Hz3K3qCHL3jVQg0WJ+cJzrNwa0OumUK5Y
+         FpFusuE/Nm/EUhL1IdkhusVg94AygieSmpSbQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765265180; x=1765869980;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7QhMUSo0zLDlINi8GAqDQeQHdxTHsyz1r33NHLku5hM=;
+        b=XsVTBuRcIXgAxOqTDPs955TEdvhP+6nNxr10WKeebpBmw0cB1jnYdnu9SJpjLgrjmq
+         OeBqrxfzZSI7H9L12DmzNIkRjjUI3ICEAeh+vawREjTV79NYUoBQyc8wdAWyYDzy0w9Y
+         QgJ4oTNtgJV0Lhm+8L6Ts1IGl7ceK8o/xmH7YIYENOyu5yf1btN50c6TSYTcoTpZm0Sc
+         iU6jKUaY1BQhCHj4hPAcMT2mPo3U/cdBn2ORT+hRbBzhpUYwDu9SxjCeX+IGrju3L5Bv
+         kQvhAh6UZ98n/ve2oZeK7beGJZ76ANHKA1NONltX35cdZTaTgpvJ24ZPudV4A7OR6n19
+         0YEw==
+X-Forwarded-Encrypted: i=1; AJvYcCXaLDNl5dMO5HM/SfvcARQ7Yh4/RlQEfv6tpeVqJHc28w7p8BfolBdc+key4jIQs/NbGxWYof/qTIsxTS09@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw15l+XXPyMlsD9pA94J3Z3s4pehbXJ2ngV3li2lYTXwI9FlhYn
+	EwBwOSSnw4NfFOnv976oklY0dmUw3KcB+yahis/JJlkkUQEvGmbefwfmtwWglzVx2zJLxycDErg
+	xl2PBJK+Kow==
+X-Gm-Gg: ASbGncsOM/C70rYyUGllBkuSX2js8nvqXUqvcwbreKSAjHi4ao84R3Gr0ZpqgSBPy0X
+	Ilwr3Sx8u2ClPg2VhUnm7gdGmWmDMq8A8BtPu5Yt7zuZFKylHYdZ2BhQBdS1jH9PdS7sF3jJTPD
+	V0S7nDctxtU0XFI2wUzrLpnTdbQXWDsoK36r1woa2gqG0E/wB39/iVaXSJPQoLvpi904jJQpexo
+	TNnRcVeBcvoq9lumg/wCXcVXtWdy22GOimGjwaoykEF4AJirEYXf3dKkJ3Gvde7PrpMnU9UyS/b
+	y17CruQi+4VulH89QJpT7OY4DW8ee0NcSgQb/AqXni6wNvNX2lsAA02/n5uNG7h7Nd+TZLEWw1t
+	Hdrb3rhWzTOiyMECqbxcPHptWunq6WsCVod1UWkAqPW16W9+MNwq8W18DhVwe7pmPcKb9BkpraJ
+	GZzioAOGJeDOJ147gTbnsLHiDurD/qNW2YiWkql0drm9G6ilXvcHvdADkXA4jn
+X-Google-Smtp-Source: AGHT+IEEgxo+cJO0HpQOzGjbDOCIVk/S/Rw+Yl/T7DaLesx6w6WcWRvlajA6GzMvAGpEBVliQF5KVg==
+X-Received: by 2002:a05:6402:5248:b0:640:a50b:609 with SMTP id 4fb4d7f45d1cf-6491a42f7ecmr8666990a12.16.1765265180061;
+        Mon, 08 Dec 2025 23:26:20 -0800 (PST)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-647b2c5575fsm13385718a12.0.2025.12.08.23.26.17
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Dec 2025 23:26:18 -0800 (PST)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-645a13e2b17so7320580a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Dec 2025 23:26:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUEUL/mCeAoS5gjhkPvG5RdI9oA0UG8w2iJew8xkf8oYxXXKeV84RRK3apJ3s+XAS9Ng06vsEGNAS5UhEt9@vger.kernel.org
+X-Received: by 2002:a05:6402:350b:b0:643:883a:2668 with SMTP id
+ 4fb4d7f45d1cf-6491a430019mr7384754a12.21.1765265177527; Mon, 08 Dec 2025
+ 23:26:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgDH80150DdpHC18BA--.12048S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw15Jw48Zw13JF47ZrWUArb_yoW5Gw1kpr
-	y3ur18Kr48tF10qanFqFs5Xw1fCayDCFWjgryfXw13Aw1Dt3W7Ka4vy3s5KrZrZrWkJr1F
-	vr4qyrWagryjyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkCb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4I
-	kC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v2
-	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUFXo7DU
-	UUU
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAJBWkthuQYCAABs6
+References: <20251208235528.3670800-1-hpa@zytor.com>
+In-Reply-To: <20251208235528.3670800-1-hpa@zytor.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 9 Dec 2025 16:26:00 +0900
+X-Gmail-Original-Message-ID: <CAHk-=wiNMD7tCkYvVQMs1=omU9=J=zw_ryvtZ+A-sNR7MN2iuw@mail.gmail.com>
+X-Gm-Features: AQt7F2pU3mtSVlk8xXoOHi4ywQ2NpA8rkmyzrskk-X7c-Gbp__mUx8NnR72v7NM
+Message-ID: <CAHk-=wiNMD7tCkYvVQMs1=omU9=J=zw_ryvtZ+A-sNR7MN2iuw@mail.gmail.com>
+Subject: Re: [GIT PULL] __auto_type conversion for v6.19-rc1
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Alexei Starovoitov <ast@kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Arnd Bergmann <arnd@kernel.org>, Borislav Petkov <bp@alien8.de>, Dan Williams <dan.j.williams@intel.com>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	David Laight <David.Laight@aculab.com>, David Lechner <dlechner@baylibre.com>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Gatlin Newhouse <gatlin.newhouse@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jakub Sitnicki <jakub@cloudflare.com>, 
+	Jan Hendrik Farr <kernel@jfarr.cc>, Jason Wang <jasowang@redhat.com>, Jiri Olsa <jolsa@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, KP Singh <kpsingh@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Marc Herbert <Marc.Herbert@linux.intel.com>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>, 
+	Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>, NeilBrown <neil@brown.name>, 
+	Peter Zijlstra <peterz@infradead.org>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>, Song Liu <song@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thorsten Blum <thorsten.blum@linux.dev>, Uros Bizjak <ubizjak@gmail.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Yafang Shao <laoar.shao@gmail.com>, 
+	Ye Bin <yebin10@huawei.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	Yufeng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-sparse@vger.kernel.org, virtualization@lists.linux.dev, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Baokun Li <libaokun1@huawei.com>
+On Tue, 9 Dec 2025 at 08:57, H. Peter Anvin <hpa@zytor.com> wrote:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/hpa/linux-auto.git
+>
+> for you to fetch changes up to branch auto-type-for-6.19
 
-In ntfs_fill_super(), the fc->fs_private pointer is set to NULL without
-first freeing the memory it points to. This causes the subsequent call to
-ntfs_fs_free() to skip freeing the ntfs_mount_options structure.
+Oh, and as I was going to merge this, I noticed it's not signed.
 
-This results in a kmemleak report:
+Let's not break our perfect recent record of using proper signed tags.
+when I know you have a pgp key and I even have it on my keyring.
 
-  unreferenced object 0xff1100015378b800 (size 32):
-    comm "mount", pid 582, jiffies 4294890685
-    hex dump (first 32 bytes):
-      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-      00 00 00 00 00 00 00 00 ed ff ed ff 00 04 00 00  ................
-    backtrace (crc ed541d8c):
-      __kmalloc_cache_noprof+0x424/0x5a0
-      __ntfs_init_fs_context+0x47/0x590
-      alloc_fs_context+0x5d8/0x960
-      __x64_sys_fsopen+0xb1/0x190
-      do_syscall_64+0x50/0x1f0
-      entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Please?
 
-This issue can be reproduced using the following commands:
-        fallocate -l 100M test.file
-        mount test.file /tmp/test
-
-Since sbi->options is duplicated from fc->fs_private and does not
-directly use the memory allocated for fs_private, it is unnecessary to
-set fc->fs_private to NULL.
-
-Additionally, this patch simplifies the code by utilizing the helper
-function put_mount_options() instead of open-coding the cleanup logic.
-
-Reported-by: syzbot+23aee7afc440fe803545@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=23aee7afc440fe803545
-Fixes: aee4d5a521e9 ("ntfs3: fix double free of sbi->options->nls and clarify ownership of fc->fs_private")
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
- fs/ntfs3/super.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index 8b0cf0ed4f72..0567a3b224ed 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -705,9 +705,7 @@ static void ntfs_put_super(struct super_block *sb)
- 	ntfs_set_state(sbi, NTFS_DIRTY_CLEAR);
- 
- 	if (sbi->options) {
--		unload_nls(sbi->options->nls);
--		kfree(sbi->options->nls_name);
--		kfree(sbi->options);
-+		put_mount_options(sbi->options);
- 		sbi->options = NULL;
- 	}
- 
-@@ -1253,7 +1251,6 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 		}
- 	}
- 	sbi->options = options;
--	fc->fs_private = NULL;
- 	sb->s_flags |= SB_NODIRATIME;
- 	sb->s_magic = 0x7366746e; // "ntfs"
- 	sb->s_op = &ntfs_sops;
-@@ -1679,9 +1676,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- out:
- 	/* sbi->options == options */
- 	if (options) {
--		unload_nls(options->nls);
--		kfree(options->nls_name);
--		kfree(options);
-+		put_mount_options(sbi->options);
- 		sbi->options = NULL;
- 	}
- 
--- 
-2.39.2
-
+              Linus
 
