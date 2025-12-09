@@ -1,137 +1,277 @@
-Return-Path: <linux-fsdevel+bounces-71002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4735CAED25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 04:39:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 610CECAED88
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 05:15:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BFDF9302CB96
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 03:38:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2057330184C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 04:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E89301012;
-	Tue,  9 Dec 2025 03:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D26A2C237F;
+	Tue,  9 Dec 2025 04:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Jwon6Qvj"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mxuFtw54"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43D92253EE
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 03:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0211C84D7
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 04:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765251531; cv=none; b=SVsGmHTOWa6+BqcwFsQcffMXjRUCbRsnX8kZNutc3BOfmTK/rHzLNIbBt30XPK5dKGCvxasaGpG6VAFsx2Jf+EjqaIScNBQYI12fiEYtEYpvs5TjhqCaXBjJo4Le7XAoymYyMOTP0oRtljx32oapCR6Gpc+QcQHHQOBOaGcCl2w=
+	t=1765253700; cv=none; b=fqJULoPUPuFhCgS3KrL/IqbXhMjBZq7ON9SgeZH6/zTllWFvqOQ6HAV5SChkVTz8YzgLyLsYU4h/IpAKyCuNUcXNRm9hqpNArBs5Cmtl7kdhenNHHS3Sw7u0c253xI3s8yzTAa1bGxikIN53CcS0vZzTUcmt820WlRi2P9LmoLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765251531; c=relaxed/simple;
-	bh=mArw2vAL0D2NHk8zLQ2Ijxxx1bFuIg9r7rH/hnyrq/A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lFMDalG5/NL4GThXkwDqMI85kMa49hA41fVKk8uD830WrLnuLuQkGL7EC1/9wyDf3z1PzH+Z1Ux3JSrnJgKYESZGC9EL3suSEzF6KwXBGhOYgRLfFavJYuPLt7sMAN1S1Mo4j09QZYg8V73RaCtDekIFiML8jTwQTudtQ30eMLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Jwon6Qvj; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b79d0a0537bso663731966b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Dec 2025 19:38:49 -0800 (PST)
+	s=arc-20240116; t=1765253700; c=relaxed/simple;
+	bh=fxZrupnWzYXjC19sIxG0F03qERQwP8yqprJoPwhCsvM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=DKrtESugWaC7OuAjzpmDW6xoc4Zo5qeb1goid1MSoMbhB7qiHfZDgT7nxyLoH4BSY41A2mKaTLpEwjuVQIJNi/Cqd6dUtzNLWMGcdUYyetkBDIatocBVuBAbVPWYiT4D09OxI3P2FAlgbOTTTRKSfIlbFyZ122KdPXjC0x8Offg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mxuFtw54; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-78c5b5c1eccso6500077b3.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Dec 2025 20:14:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1765251528; x=1765856328; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ve41G5hMhFJfqXtFvhXu3GnjjOI5g5mevMdggrYlYVI=;
-        b=Jwon6QvjqNk+k8ihfNdlwW17GtlBj98lBU6rNk/7ZbfAQ+jgqBGgmsAdWxrsHqniZF
-         pcEjZ1WwjXyI8nFC5na6KRIbBUXMGc7VN2fAqrjXUSFxFIzoXY2KUbmmJZ4u6MYi05B/
-         +wBMvWOGc7xreXHHPFqfLJ0XY5l8kKzMW7RkI=
+        d=google.com; s=20230601; t=1765253698; x=1765858498; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kxOZQiVrIOkc6jsPHDGEQgDqVs4gmHDUYWM8/3JKHtc=;
+        b=mxuFtw54Ze9wARIYSdNkhL2VICOwi45Bl3Kij+SeWD3M3VT0pgeTXdPnK+McC8AnZS
+         iLySi2mVHnNvtIh/guZtRI+z2NzbCgutnZvFordysY8bcdOKZXkhQc5baZrAXcS8W6n4
+         XogVp5olv1UjAty+ajijb9Y/z8+o60XOKN/v+8mtZgcSsrI5a/DbGGl92P+iK2+Csf5e
+         6t5t8TzYpuoXXLzVe+FFlrm7MqdlUumRtvnXnSHefCvFCF16hmKkyU8SnXd3qPiC02E6
+         M/8VMCni8TaFY4m96+ms1Jdqbs5sif/aHnoLRcIc92oMZ+WUX+6IwCzeAyeq5MgWmSAi
+         vGcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765251528; x=1765856328;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ve41G5hMhFJfqXtFvhXu3GnjjOI5g5mevMdggrYlYVI=;
-        b=TfNc2PogbCLbHF2L3VJ0w589b6u/ZVAYuuqd4RapGI7Nkgs/MQgyyET2nFaGaeJDQQ
-         Xw1hdyS+j8HnmTHVlF7Me5H75m/wfxORrC/s4zUrxySHr8ETV0l7iOFHJO3XXY/flssV
-         DsiQcXfyklngTI74Uw/L8s75n2FGXAnJxGJ+H0+cLzZnLjBRrQtx606S1kjAzH5ki46e
-         NxYaoveVqmtGmYGuGU87UQFne2P3Lp6O17Oq7xvcZK5Oi64Wjx6N+zeQta+9cBjMAMb0
-         R6Z1eHyfWTkK7PUrAHZVOQ4HKaW5hzOdwcOhMuOQxTJXGw4jM/w9DJMA3geXg53OOSxr
-         Qy/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXw0/w87bq436Szp96JViQGUY+UgTqDxxN8SpqR9bYmctxNIQf0IRs31FCrZI4mG8mGQFIkDInDyys27gws@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKppYd5zzxNFx9rBqdYMjBAlybx5d5gXyY4oaWtOrZwqdf6eyH
-	987l56o+4sjRAngKuCD0evPJFroGhD207XvWYevd6pJ15BSG9WnV0UEoUFoc2x/qWpmxnXcB2eu
-	+IUOlrRSx5g==
-X-Gm-Gg: ASbGncsM4uANUwmCCbFRpzXnQHYcY0eos3Wwd7tIihn35K+91/d4fOipsN3w07/zar/
-	NabVkA/K6hik6ddLfigBNzHAZh/Aj5KH/71YcIrOugTRRQ9Jl3ZVzqzNgw9A9NGK1TaN1vWDXVp
-	mgk5iFe5DR8Kp7+MLX4qQRx6ioDIlcKvQtqDi0vPHutvIOvkoVykQUVLdf6qrq3ORhBWL+0ovF4
-	Tt3+MckH/4q5Y0xx5xAFg3ZcugIUr4AMXr/zgDZL1ZrfuVyNuTmnljPvfwYqBn751bLKs25ySoG
-	jkJvY0g1+K/8siJndO00hvW7dg/WTQBNJnI4xZTr4Syrfq60TAOoxB7SinvM9doGSysO6qoN7yv
-	uaCMpxN4wiOJsJrD3auSnMTlFcQ3ScSZn6wuX7zx+pGFddATiF8BAisrQ3qIHGeaDzj0IXQhaQR
-	Huh9iK8RGzhZWiqSSVpLicCJDjIK7BcEdNq5JcPGWKz+SNDKNOGmMLlXw9+m1T
-X-Google-Smtp-Source: AGHT+IFzQLhdab/gofsIM+K0CdTXqFSfvehwZPLTiJrGYHLDst5dCGg1IGtXMPReNPqS/BL1sLNt/w==
-X-Received: by 2002:a17:907:982:b0:b73:7184:b7d3 with SMTP id a640c23a62f3a-b7a248b229fmr940133266b.58.1765251527771;
-        Mon, 08 Dec 2025 19:38:47 -0800 (PST)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b79f4976003sm1221150166b.36.2025.12.08.19.38.47
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Dec 2025 19:38:47 -0800 (PST)
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-42e2e3c0dccso2771828f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Dec 2025 19:38:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU87BlLKCgnwrZyWAmypv3aRXiGtxzUzvek1uNI0Lfe3U9srC6Itma2KY1Zctvx8e59zSCEFO6Y3knUkge/@vger.kernel.org
-X-Received: by 2002:a05:6402:d0d:b0:647:5e6c:3220 with SMTP id
- 4fb4d7f45d1cf-6491aded554mr6980906a12.21.1765251222388; Mon, 08 Dec 2025
- 19:33:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1765253698; x=1765858498;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kxOZQiVrIOkc6jsPHDGEQgDqVs4gmHDUYWM8/3JKHtc=;
+        b=eWV6kmzaUUGuLkqrKPCv9Ow4kHvg0kpxsSlg3ZudD668NE7G0eCdlSuwJEB5oo17Dn
+         ltDZbbNTdM/BgNjWaE5CFZnSSorBnyj9O5bqzM8hs2uJOElavoAp7XlvH+brG9I64VF/
+         0AinCzKTRuSOWovt9JbROblWB1T5oKxg993R34aqqySouZf05eb1tWxA8rZ6eEGODxM5
+         LcuOwZctWsDBgrg/DH9dQQ0yGPrV+T1ZTSbSeMziD9y+Lb61hrqHVSX/21M21rJYRxW0
+         qpTGWvFR0oUdFLKrbQi2rQxSILJYl70DX5TeFqWGfO/GXEN6SDxDlupPgQROWQhZKHjT
+         ZcKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLND7uXDiw/gKnRgFTBBQ33m+PU6z/UPgTUjbYVrolU7BqKBmDxUTBm1wEvsSF/AB7BHL+UEgeSH9tKPHw@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJZx5Nfn1YTFq43lxBNAZP3diXmAwdpYL3pVK6/TJ7OXaW5dv7
+	HyozIIX1uwDYZPi5PZRDT4lWaAy94EzVovpHmovnUgaGEOo6af6GBGvzVosTPHFXrg==
+X-Gm-Gg: AY/fxX65P//vFnVae095VPcYS4vtsD39w7bzY5QpN8/5Ge0GRvR+hL+6Xfaev3y2n1t
+	T9JbhEifQWk05NPT9FUR03Phbz/fU/tTHe9D5Lclo11iy+h68GXUXCUPawKsgM66rgwcptMQeXj
+	E/G+u4CN9frLHOwtvIy9jZdVU+Us68PjWX+f/jtnUcSndUCTBSEeU4ueBJAviC2/Sq3/SXmGq8W
+	Mc0E1v/DjPd9ptgUPSe1kZdBREua6z215/6thJjCbOi2hjkNcUdceFVVG+jm23eBrq/81SBL3cF
+	wLpTTeAaEZIJ6bXoJhhEzYkI6gFMyrw3MOe96lFqaArZ6TATQm09pu5Ou+T4Ua8r4N8sFU8nDxK
+	dKZ3GXDUslA52AnIqNky+kb2RZUhmKi5B7dUN6gvncG90qHTjSkCSj65iYnbkeX9eupiBQFQmhT
+	tJo7VWfZeoIz+dUkpJbbKP7gq78xXy6MTlN/NuK9CYvHr/dkq3pga8cbp22ZIAjsW1rKFfwFc=
+X-Google-Smtp-Source: AGHT+IGStD3RTu8T+BCQkOHYtvAsKKgITO3CHa6arajrItSoFji6PAjkptYVeArSqR06eFO3YkONcA==
+X-Received: by 2002:a05:690c:ec4:b0:78c:1213:58da with SMTP id 00721157ae682-78c60772f4fmr1081207b3.18.1765253697550;
+        Mon, 08 Dec 2025 20:14:57 -0800 (PST)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78c1b4c9e43sm55152797b3.16.2025.12.08.20.14.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Dec 2025 20:14:56 -0800 (PST)
+Date: Mon, 8 Dec 2025 20:14:44 -0800 (PST)
+From: Hugh Dickins <hughd@google.com>
+To: =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
+cc: Hugh Dickins <hughd@google.com>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Matthew Wilcox <willy@infradead.org>, 
+    Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tmpfs: enforce the immutable flag on open files
+In-Reply-To: <toyfbuhwbqa4zfgnojghr4v7k2ra6uh3g3sikbuwata3iozi3m@tarta.nabijaczleweli.xyz>
+Message-ID: <be986c18-3db2-38a1-8401-f0035ab71e7a@google.com>
+References: <toyfbuhwbqa4zfgnojghr4v7k2ra6uh3g3sikbuwata3iozi3m@tarta.nabijaczleweli.xyz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251208235528.3670800-1-hpa@zytor.com> <176523908321.3343091.17738363732550848005.pr-tracker-bot@kernel.org>
- <CAHk-=wi0RqQPHME0xgrAZBQijKuos97cQO05N4f176DkH7msbg@mail.gmail.com> <ee693efe-5b7b-4d38-a12c-3cea6681f610@zytor.com>
-In-Reply-To: <ee693efe-5b7b-4d38-a12c-3cea6681f610@zytor.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 9 Dec 2025 12:33:26 +0900
-X-Gmail-Original-Message-ID: <CAHk-=wghm5NFZQcfObuNQHMMsNQ_Of+H7jpoMTZJDrFscxrSCw@mail.gmail.com>
-X-Gm-Features: AQt7F2ofRIAXVmCzZb3EAMnphwigz_H3r18InwGDDrhalL1GL85PEFWZ4uBTknk
-Message-ID: <CAHk-=wghm5NFZQcfObuNQHMMsNQ_Of+H7jpoMTZJDrFscxrSCw@mail.gmail.com>
-Subject: Re: [GIT PULL] __auto_type conversion for v6.19-rc1
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: pr-tracker-bot@kernel.org, 
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Alexei Starovoitov <ast@kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Arnd Bergmann <arnd@kernel.org>, Borislav Petkov <bp@alien8.de>, Dan Williams <dan.j.williams@intel.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	David Laight <David.Laight@aculab.com>, David Lechner <dlechner@baylibre.com>, 
-	Dinh Nguyen <dinguyen@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Gatlin Newhouse <gatlin.newhouse@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Ingo Molnar <mingo@redhat.com>, Jakub Sitnicki <jakub@cloudflare.com>, 
-	Jan Hendrik Farr <kernel@jfarr.cc>, Jason Wang <jasowang@redhat.com>, Jir i Olsa <jolsa@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, KP Singh <kpsingh@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Marc Herbert <Marc.Herbert@linux.intel.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>, 
-	Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>, NeilBrown <neil@brown.name>, 
-	Peter Zijlstra <peterz@infradead.org>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>, Song Liu <song@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Thomas Gleixner <tglx@linutronix.de>, 
-	Thorsten Blum <thorsten.blum@linux.dev>, Uros Bizjak <ubizjak@gmail.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Yafang Shao <laoar.shao@gmail.com>, 
-	Ye Bin <yebin10@huawei.com>, Yonghong Song <yonghong.song@linux.dev>, 
-	Yu feng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-sparse@vger.kernel.org, virtualization@lists.linux.dev, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="-1463770367-921943916-1765253696=:4936"
 
-On Tue, 9 Dec 2025 at 09:24, H. Peter Anvin <hpa@zytor.com> wrote:
->
-> Yeah, it commented on the master branch, which is of course ... yours.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Ahh. It's because you didn't use the standard pull request format, and
-instead did the branch name elsewhere.
+---1463770367-921943916-1765253696=:4936
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Which btw also messes with my "just cut and paste the address" thing,
-because now I'll cut-and-paste two different things.
+On Mon, 8 Dec 2025, Ahelenia Ziemia=C5=84ska wrote:
 
-"Poor Linus - all the pain he has to go through".
+> This useful behaviour is implemented for most filesystems,
+> and wants to be implemented for every filesystem, quoth ref:
+>   There is general agreement that we should standardize all file systems
+>   to prevent modifications even for files that were opened at the time
+>   the immutable flag is set.  Eventually, a change to enforce this at
+>   the VFS layer should be landing in mainline.
+>=20
+> References: commit 02b016ca7f99 ("ext4: enforce the immutable flag on
+>  open files")
+> Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xy=
+z>
 
-          Linus "think of all those extra clicks" Torvalds
+Sorry: thanks, but no thanks.
+
+Supporting page_mkwrite() comes at a cost (an additional fault on first
+write to a folio in a shared mmap).  It's important for space allocation
+(and more) in the case of persistent writeback filesystems, but unwelcome
+overhead in the case of tmpfs (and ramfs and hugetlbfs - others?).
+
+tmpfs has always preferred not to support page_mkwrite(), and just fail
+fstests generic/080: we shall not slow down to change that, without a
+much stronger justification than "useful behaviour" which we've got
+along well enough without.
+
+But it is interesting that tmpfs supports IMMUTABLE, and passes all
+the chattr fstests, without this patch.  Perhaps you should be adding
+a new fstest, for tmpfs to fail: I won't thank you for that, but it
+would be a fair response!
+
+Hugh
+
+> ---
+> v1: https://lore.kernel.org/linux-fsdevel/znhu3eyffewvvhleewehuvod2wrf4tz=
+6vxrouoakiarjtxt5uy@tarta.nabijaczleweli.xyz/t/#u
+>=20
+> shmem_page_mkwrite()'s return 0; falls straight into do_page_mkwrite()'s
+> =09if (unlikely(!(ret & VM_FAULT_LOCKED))) {
+> =09=09folio_lock(folio);
+> Given the unlikely, is it better to folio_lock(folio); return VM_FAULT_LO=
+CKED; instead?
+>=20
+> /ext4# uname -a
+> Linux tarta 6.18.0-10912-g416f99c3b16f-dirty #1 SMP PREEMPT_DYNAMIC Sat D=
+ec  6 12:14:41 CET 2025 x86_64 GNU/Linux
+> /ext4# while sleep 1; do echo $$; done > file &
+> [1] 262
+> /ext4# chattr +i file
+> /ext4# sh: line 25: echo: write error: Operation not permitted
+> sh: line 25: echo: write error: Operation not permitted
+> sh: line 25: echo: write error: Operation not permitted
+> sh: line 25: echo: write error: Operation not permitted
+> fg
+> while sleep 1; do
+>     echo $$;
+> done > file
+> ^C
+> /ext4# mount -t tmpfs tmpfs /tmp
+> /ext4# cd /tmp
+> /tmp# while sleep 1; do echo $$; done > file &
+> [1] 284
+> /tmp# chattr +i file
+> /tmp# sh: line 35: echo: write error: Operation not permitted
+> sh: line 35: echo: write error: Operation not permitted
+> sh: line 35: echo: write error: Operation not permitted
+>=20
+> $ cat test.c
+> #include <unistd.h>
+> #include <fcntl.h>
+> #include <sys/ioctl.h>
+> #include <linux/fs.h>
+> #include <sys/mman.h>
+> int main(int, char **argv) {
+> =09int fd =3D open(argv[1], O_RDWR | O_CREAT | O_TRUNC, 0666);
+> =09ftruncate(fd, 1024 * 1024);
+> =09char *addr =3D mmap(NULL, 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHA=
+RED, fd, 0);
+> =09addr[0] =3D 0x69;
+> =09int attrs =3D FS_IMMUTABLE_FL;
+> =09ioctl(3, FS_IOC_SETFLAGS, &attrs);
+> =09addr[1024 * 1024 - 1] =3D 0x69;
+> }
+>=20
+> # strace ./test /tmp/file
+> execve("./test", ["./test", "/tmp/file"], 0x7ffc720bead8 /* 22 vars */) =
+=3D 0
+> ...
+> openat(AT_FDCWD, "/tmp/file", O_RDWR|O_CREAT|O_TRUNC, 0666) =3D 3
+> ftruncate(3, 1048576)                   =3D 0
+> mmap(NULL, 1048576, PROT_READ|PROT_WRITE, MAP_SHARED, 3, 0) =3D 0x7f09bbf=
+2a000
+> ioctl(3, FS_IOC_SETFLAGS, [FS_IMMUTABLE_FL]) =3D 0
+> --- SIGBUS {si_signo=3DSIGBUS, si_code=3DBUS_ADRERR, si_addr=3D0x7f09bc02=
+9fff} ---
+> +++ killed by SIGBUS +++
+> Bus error
+> # tr -d \\0 < /tmp/file; echo
+> i
+>=20
+>  mm/shmem.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>=20
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index d578d8e765d7..432935f79f35 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1294,6 +1294,14 @@ static int shmem_setattr(struct mnt_idmap *idmap,
+>  =09bool update_mtime =3D false;
+>  =09bool update_ctime =3D true;
+> =20
+> +=09if (unlikely(IS_IMMUTABLE(inode)))
+> +=09=09return -EPERM;
+> +
+> +=09if (unlikely(IS_APPEND(inode) &&
+> +=09=09     (attr->ia_valid & (ATTR_MODE | ATTR_UID |
+> +=09=09=09=09=09ATTR_GID | ATTR_TIMES_SET))))
+> +=09=09return -EPERM;
+> +
+>  =09error =3D setattr_prepare(idmap, dentry, attr);
+>  =09if (error)
+>  =09=09return error;
+> @@ -2763,6 +2771,17 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf=
+)
+>  =09return ret;
+>  }
+> =20
+> +static vm_fault_t shmem_page_mkwrite(struct vm_fault *vmf)
+> +{
+> +=09struct file *file =3D vmf->vma->vm_file;
+> +
+> +=09if (unlikely(IS_IMMUTABLE(file_inode(file))))
+> +=09=09return VM_FAULT_SIGBUS;
+> +
+> +=09file_update_time(file);
+> +=09return 0;
+> +}
+> +
+>  unsigned long shmem_get_unmapped_area(struct file *file,
+>  =09=09=09=09      unsigned long uaddr, unsigned long len,
+>  =09=09=09=09      unsigned long pgoff, unsigned long flags)
+> @@ -3475,6 +3494,10 @@ static ssize_t shmem_file_write_iter(struct kiocb =
+*iocb, struct iov_iter *from)
+>  =09ret =3D generic_write_checks(iocb, from);
+>  =09if (ret <=3D 0)
+>  =09=09goto unlock;
+> +=09if (unlikely(IS_IMMUTABLE(inode))) {
+> +=09=09ret =3D -EPERM;
+> +=09=09goto unlock;
+> +=09}
+>  =09ret =3D file_remove_privs(file);
+>  =09if (ret)
+>  =09=09goto unlock;
+> @@ -5286,6 +5309,7 @@ static const struct super_operations shmem_ops =3D =
+{
+>  static const struct vm_operations_struct shmem_vm_ops =3D {
+>  =09.fault=09=09=3D shmem_fault,
+>  =09.map_pages=09=3D filemap_map_pages,
+> +=09.page_mkwrite=09=3D shmem_page_mkwrite,
+>  #ifdef CONFIG_NUMA
+>  =09.set_policy     =3D shmem_set_policy,
+>  =09.get_policy     =3D shmem_get_policy,
+> @@ -5295,6 +5319,7 @@ static const struct vm_operations_struct shmem_vm_o=
+ps =3D {
+>  static const struct vm_operations_struct shmem_anon_vm_ops =3D {
+>  =09.fault=09=09=3D shmem_fault,
+>  =09.map_pages=09=3D filemap_map_pages,
+> +=09.page_mkwrite=09=3D shmem_page_mkwrite,
+>  #ifdef CONFIG_NUMA
+>  =09.set_policy     =3D shmem_set_policy,
+>  =09.get_policy     =3D shmem_get_policy,
+> --=20
+> 2.39.5
+---1463770367-921943916-1765253696=:4936--
 
