@@ -1,79 +1,307 @@
-Return-Path: <linux-fsdevel+bounces-70987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18413CAE755
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 01:14:43 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E496CAE876
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 01:30:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id ABDBD302699C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 00:14:34 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id EA11A30E33B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 00:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6351F3FEC;
-	Tue,  9 Dec 2025 00:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC4523EABA;
+	Tue,  9 Dec 2025 00:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mGpFEWA+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEaOhwwg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED291DF72C;
-	Tue,  9 Dec 2025 00:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81EE23C8C7;
+	Tue,  9 Dec 2025 00:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765239268; cv=none; b=O1VAilftsYbbHxM7RwpnG33eABtTSx5hRvcCI9rL5Xi6TD4XQj24Lb2u7eXhG7/i3IEbQz1/IATsDvHI0ajyz9Kq0SI2obyagSAEakidJuEhPZCH1rqkbDoRJqKJqTTnNQSG5aNJtLZqDmIwsYABdSb4nuxRpDphpPZEE6L6aBg=
+	t=1765239443; cv=none; b=OUveOBMNzcdOdvHKXHhcBXthFeVmdF/bLmnbg9C78EMSazpHalXfLFe4Act8kp8icfy6zihfOiR1DasVKCxHHn//ntLRsRZkTJR3SuZQGSH7ZkS/AAqZD68i7rUeF8oDbC7AU9EAhccWQ5S+CiEZBgRzm1aAT0rJPTW1sYdaoFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765239268; c=relaxed/simple;
-	bh=BDBWPYz+wbEugLXjqj/8cZS+h2YQAn5YDKIIuNwl6I4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=bIHKqhrs38wFy/IN3oEVOK/1sMUKxWyGoDFQFlCHVLLzKo7aNuhNNOcL8BZG+hDj6STHNRbK9yWHxrPdZo/+1B+TGaCKK7Mk7aw2H0HZcnJa14TALQlYZsezcAedCcM4+Ia7tr8y5Y1LaLkwcj5a+i5pTkXfe6qF+a5xe07aQ+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mGpFEWA+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2955C4CEF1;
-	Tue,  9 Dec 2025 00:14:27 +0000 (UTC)
+	s=arc-20240116; t=1765239443; c=relaxed/simple;
+	bh=Lelg716SCuCBRQsIrBzYR0/pjER/M5f4vAd3JX5ZAFA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WPiQEwUk34va2E5THGDCDRzlIba/3YZQyd4WmRSNb/yw9kvZTKZ9/dpNlcq2Ch2mQmkI1MJpunm3bF06OX6tJcpuqdpsyaKrgpA48CxFEq+w9tVUvKX4qD9NuAzwGAQdLBdm8ZsqkTlJGUhKsHn2NxE8fM5Xrde+MvPsyB1mWHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEaOhwwg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B87DCC4CEF1;
+	Tue,  9 Dec 2025 00:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765239268;
-	bh=BDBWPYz+wbEugLXjqj/8cZS+h2YQAn5YDKIIuNwl6I4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=mGpFEWA+l7SRI3J/w3JPeac16WtEhvlka44a7lh/JQmqwtPyCD4R0bEUZgCq04O7m
-	 HmHVU7QzSvb682mkNJQIYnbkatejkPlXhTHEm7YU921xhjtAvcrimX2t+Slhlum6wW
-	 qminLMFHdW5ZsXz+kcg7DYGF0U2TNNykVczfnYBJ8ZOgkDCGT7ko6MD6eTTTmlpKJ/
-	 Arzi7t700t1zFAIzuK0jhuAUTTboiWPcYpywgiK+8AS0PlZLl0QxYnnpXi3RcQVr5i
-	 FrnldsHyhVEXoqsFlldF2k0jBENPI6LvrrPtaArMzMwZt8Rqz7XbI9EzqCpnGsVzUT
-	 acJD+Qwnh0s5Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B63503808200;
-	Tue,  9 Dec 2025 00:11:24 +0000 (UTC)
-Subject: Re: [GIT PULL] __auto_type conversion for v6.19-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20251208235528.3670800-1-hpa@zytor.com>
-References: <20251208235528.3670800-1-hpa@zytor.com>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20251208235528.3670800-1-hpa@zytor.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hpa/linux-auto.git refs/heads/master
-X-PR-Tracked-Commit-Id: a110f942672c8995dc1cacb5a44c6730856743aa
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b88b2f82fab45521cb32c0b737266d90a66a748f
-Message-Id: <176523908321.3343091.17738363732550848005.pr-tracker-bot@kernel.org>
-Date: Tue, 09 Dec 2025 00:11:23 +0000
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "H . Peter Anvin" <hpa@zytor.com>, =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>, =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Michael S. Tsirkin" <mst@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, Alexei Starovoitov <ast@kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>, Arnd Bergmann <arnd@kernel.org>, Borislav Petkov <bp@alien8.de>, Dan Williams <dan.j.williams@intel.com>, Daniel Borkmann <daniel@iogearbox.net>, Dave Hansen <dave.hansen@linux.intel.com>, David Laight <David.Laight@ACULAB.COM>, David Lechner <dlechner@baylibre.com>, Dinh Nguyen <dinguyen@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, Gatlin Newhouse <gatlin.newhouse@gmail.com>, Hao Luo <haoluo@google.com>, Ingo Molnar <mingo@redhat.com>, Jakub Sitnicki <jakub@cloudflare.com>, Jan Hendrik Farr <kernel@jfarr.cc>, Jason Wang <jasowang@redhat.com>, Jir
- i Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Josh Poimboeuf <jpoimboe@kernel.org>, KP Singh <kpsingh@kernel.org>, Kees Cook <kees@kernel.org>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Marc Herbert <Marc.Herbert@linux.intel.com>, Martin KaFai Lau <martin.lau@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>, Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>, NeilBrown <neil@brown.name>, Peter Zijlstra <peterz@infradead.org>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>, Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Thomas Gleixner <tglx@linutronix.de>, Thorsten Blum <thorsten.blum@linux.dev>, Uros Bizjak <ubizjak@gmail.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Yafang Shao <laoar.shao@gmail.com>, Ye Bin <yebin10@huawei.com>, Yonghong Song <yonghong.song@linux.dev>, Yu
- feng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org, virtualization@lists.linux.dev, x86@kernel.org
+	s=k20201202; t=1765239443;
+	bh=Lelg716SCuCBRQsIrBzYR0/pjER/M5f4vAd3JX5ZAFA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZEaOhwwgeORzGhDVMKzC7F9iHJ3wOtrZgcjclzlGh+4KHCxRqhlx8jj0EjVEttwGL
+	 UpK13aMef6J7xSxwdBisiEtrrIi3AxmyJBuyYuLwyi+mKptDLFUbuyiX8TeWExRzY4
+	 fMMSTL1v707mj/eEVVE/lm3ztAhHI7aGSH1UBbhBKi9LgxDGjSqT/RXQarM9lQ5VhN
+	 2rNKSulLhtQ4EvkSYwiXXj1EkCmHu8deoW0S3U+K794kXTUhbnItXDD6saeJ8QZbjl
+	 +T7UuiTIIHmAmYjDlYcIxYrk5Ce5+ur4luraczhV6lUPXBtOMP1erq71CHYhIg0Cl0
+	 uqf3K+l6XOGhw==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	Sasha Levin <sashal@kernel.org>,
+	frank.li@vivo.com,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.18-5.10] hfsplus: Verify inode mode when loading from disk
+Date: Mon,  8 Dec 2025 19:15:14 -0500
+Message-ID: <20251209001610.611575-22-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251209001610.611575-1-sashal@kernel.org>
+References: <20251209001610.611575-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.18
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Mon,  8 Dec 2025 15:55:26 -0800:
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hpa/linux-auto.git refs/heads/master
+[ Upstream commit 005d4b0d33f6b4a23d382b7930f7a96b95b01f39 ]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b88b2f82fab45521cb32c0b737266d90a66a748f
+syzbot is reporting that S_IFMT bits of inode->i_mode can become bogus when
+the S_IFMT bits of the 16bits "mode" field loaded from disk are corrupted.
 
-Thank you!
+According to [1], the permissions field was treated as reserved in Mac OS
+8 and 9. According to [2], the reserved field was explicitly initialized
+with 0, and that field must remain 0 as long as reserved. Therefore, when
+the "mode" field is not 0 (i.e. no longer reserved), the file must be
+S_IFDIR if dir == 1, and the file must be one of S_IFREG/S_IFLNK/S_IFCHR/
+S_IFBLK/S_IFIFO/S_IFSOCK if dir == 0.
 
+Reported-by: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
+Link: https://developer.apple.com/library/archive/technotes/tn/tn1150.html#HFSPlusPermissions [1]
+Link: https://developer.apple.com/library/archive/technotes/tn/tn1150.html#ReservedAndPadFields [2]
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Link: https://lore.kernel.org/r/04ded9f9-73fb-496c-bfa5-89c4f5d1d7bb@I-love.SAKURA.ne.jp
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+
+LLM Generated explanations, may be completely bogus:
+
+## Analysis of hfsplus: Verify inode mode when loading from disk
+
+### 1. COMMIT MESSAGE ANALYSIS
+
+**Key indicators:**
+- **Reported-by: syzbot** - This is a real bug found by automated
+  fuzzing
+- **Closes:** link to syzkaller bug report confirms this is a genuine
+  issue
+- **Reviewed-by:** present from the HFS+ maintainer (Viacheslav Dubeyko)
+- **No "Cc: stable@vger.kernel.org"** tag
+- **No "Fixes:" tag** - bug appears to exist since original HFS+
+  implementation
+
+The commit describes that corrupted S_IFMT bits in the on-disk "mode"
+field can cause inode->i_mode to become bogus when loaded from disk. The
+commit message references Apple technical documentation explaining the
+expected values for the mode field.
+
+### 2. CODE CHANGE ANALYSIS
+
+The fix modifies `hfsplus_get_perms()` in two ways:
+
+**a) Adds validation logic (the core fix):**
+```c
+if (dir) {
+    if (mode && !S_ISDIR(mode))
+        goto bad_type;
+} else if (mode) {
+    switch (mode & S_IFMT) {
+    case S_IFREG:
+    case S_IFLNK:
+    case S_IFCHR:
+    case S_IFBLK:
+    case S_IFIFO:
+    case S_IFSOCK:
+        break;
+    default:
+        goto bad_type;
+    }
+}
+```
+This validates that:
+- For directories (`dir=1`): mode must be 0 or actually be a directory
+  type
+- For files (`dir=0`): mode must be 0 or one of the valid file types
+  (regular, symlink, char/block device, FIFO, socket)
+
+**b) Changes return type from `void` to `int`:**
+- Returns -EIO on invalid mode with an error message
+- Callers (`hfsplus_cat_read_inode`) now check the return value and
+  propagate errors
+
+**Root cause:** The original code blindly trusted the mode field from
+disk without validating that the S_IFMT bits are consistent with the
+directory flag.
+
+### 3. CLASSIFICATION
+
+- **Type:** Bug fix (input validation)
+- **Security relevance:** Yes - crafted filesystem images could trigger
+  this
+- **Category:** Filesystem robustness/hardening against corrupted data
+
+### 4. SCOPE AND RISK ASSESSMENT
+
+| Aspect | Assessment |
+|--------|------------|
+| Lines changed | ~30+ additions, moderate size |
+| Files touched | 1 file (fs/hfsplus/inode.c) |
+| Complexity | Low - straightforward validation logic |
+| Regression risk | **LOW** - only rejects clearly invalid data |
+
+The validation is conservative and follows Apple's official HFS+
+specification. It only rejects modes that are definitively wrong.
+
+### 5. USER IMPACT
+
+- **Affected users:** Those mounting HFS+ filesystems (macOS external
+  drives, dual-boot setups)
+- **Trigger:** Mounting a corrupted or maliciously crafted HFS+
+  filesystem image
+- **Impact of bug:** Bogus inode mode can lead to undefined kernel
+  behavior when processing the inode
+- **Impact of fix:** Graceful rejection with -EIO instead of corrupted
+  internal state
+
+### 6. STABILITY INDICATORS
+
+- Reviewed by subsystem maintainer ✓
+- Clean, standalone fix with no dependencies ✓
+- The modified functions exist in older stable kernels ✓
+- No unusual code patterns or risky constructs ✓
+
+### 7. DEPENDENCY CHECK
+
+This is a standalone fix. The `hfsplus_get_perms` and
+`hfsplus_cat_read_inode` functions exist in all stable trees where HFS+
+is supported.
+
+---
+
+## Summary
+
+**What it fixes:** Prevents corrupted or maliciously crafted HFS+
+filesystem images from causing bogus inode modes to be loaded into the
+kernel.
+
+**Why it matters for stable:** This is a defensive fix that prevents
+accepting corrupted data, which could lead to undefined behavior. syzbot
+found this bug, indicating it can be triggered by crafted input - a
+potential security concern.
+
+**Meets stable criteria:**
+- ✓ Obviously correct (validates according to Apple's HFS+
+  specification)
+- ✓ Fixes a real bug that affects users (syzbot found it with crafted
+  images)
+- ✓ Small and contained (single file, ~30 lines of validation)
+- ✓ Low regression risk (only rejects clearly invalid data)
+- ✗ No explicit stable tag (author didn't request it)
+
+**Risk vs Benefit:**
+- **Risk:** Very low - adds validation that only rejects invalid data
+- **Benefit:** Prevents kernel from operating on corrupted inode modes
+  from crafted/corrupted filesystems
+
+The lack of explicit stable tags suggests the author may not have
+intended this for stable, but the fix clearly meets stable criteria as a
+filesystem robustness fix against corrupted input. Filesystem fixes for
+handling crafted/corrupted data are generally appropriate for stable
+trees.
+
+**YES**
+
+ fs/hfsplus/inode.c | 32 ++++++++++++++++++++++++++++----
+ 1 file changed, 28 insertions(+), 4 deletions(-)
+
+diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+index b51a411ecd237..e290e417ed3a7 100644
+--- a/fs/hfsplus/inode.c
++++ b/fs/hfsplus/inode.c
+@@ -180,13 +180,29 @@ const struct dentry_operations hfsplus_dentry_operations = {
+ 	.d_compare    = hfsplus_compare_dentry,
+ };
+ 
+-static void hfsplus_get_perms(struct inode *inode,
+-		struct hfsplus_perm *perms, int dir)
++static int hfsplus_get_perms(struct inode *inode,
++			     struct hfsplus_perm *perms, int dir)
+ {
+ 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(inode->i_sb);
+ 	u16 mode;
+ 
+ 	mode = be16_to_cpu(perms->mode);
++	if (dir) {
++		if (mode && !S_ISDIR(mode))
++			goto bad_type;
++	} else if (mode) {
++		switch (mode & S_IFMT) {
++		case S_IFREG:
++		case S_IFLNK:
++		case S_IFCHR:
++		case S_IFBLK:
++		case S_IFIFO:
++		case S_IFSOCK:
++			break;
++		default:
++			goto bad_type;
++		}
++	}
+ 
+ 	i_uid_write(inode, be32_to_cpu(perms->owner));
+ 	if ((test_bit(HFSPLUS_SB_UID, &sbi->flags)) || (!i_uid_read(inode) && !mode))
+@@ -212,6 +228,10 @@ static void hfsplus_get_perms(struct inode *inode,
+ 		inode->i_flags |= S_APPEND;
+ 	else
+ 		inode->i_flags &= ~S_APPEND;
++	return 0;
++bad_type:
++	pr_err("invalid file type 0%04o for inode %lu\n", mode, inode->i_ino);
++	return -EIO;
+ }
+ 
+ static int hfsplus_file_open(struct inode *inode, struct file *file)
+@@ -516,7 +536,9 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
+ 		}
+ 		hfs_bnode_read(fd->bnode, &entry, fd->entryoffset,
+ 					sizeof(struct hfsplus_cat_folder));
+-		hfsplus_get_perms(inode, &folder->permissions, 1);
++		res = hfsplus_get_perms(inode, &folder->permissions, 1);
++		if (res)
++			goto out;
+ 		set_nlink(inode, 1);
+ 		inode->i_size = 2 + be32_to_cpu(folder->valence);
+ 		inode_set_atime_to_ts(inode, hfsp_mt2ut(folder->access_date));
+@@ -545,7 +567,9 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
+ 
+ 		hfsplus_inode_read_fork(inode, HFSPLUS_IS_RSRC(inode) ?
+ 					&file->rsrc_fork : &file->data_fork);
+-		hfsplus_get_perms(inode, &file->permissions, 0);
++		res = hfsplus_get_perms(inode, &file->permissions, 0);
++		if (res)
++			goto out;
+ 		set_nlink(inode, 1);
+ 		if (S_ISREG(inode->i_mode)) {
+ 			if (file->permissions.dev)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.51.0
+
 
