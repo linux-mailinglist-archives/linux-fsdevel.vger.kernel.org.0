@@ -1,221 +1,289 @@
-Return-Path: <linux-fsdevel+bounces-71015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA65CAFEDF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 13:29:36 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE042CB02BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 15:05:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 717B73015AF5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 12:29:22 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DECBA30F74CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 14:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF363246EA;
-	Tue,  9 Dec 2025 12:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32996263F5D;
+	Tue,  9 Dec 2025 14:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FLRSCzPJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hbf8qhkj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VJlXEdXF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7U2McOFD"
+	dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b="c9gnRav4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from tarta.nabijaczleweli.xyz (tarta.nabijaczleweli.xyz [139.28.40.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572963246EB
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 12:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F8215B0EC;
+	Tue,  9 Dec 2025 14:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.28.40.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765283352; cv=none; b=niA5NJO7M5Bc/JaAFvog1MMD1zRSdlhJfEes+kVCyDBtxL/pexDyK/ysRaOuz6yFy1M6BXloMDoT/Byz1RhOrTjPyxfqKMrELCExwd6IMNaMo5Y9i1WSDX5xrFCwOxySMSl4rhpfZCNgwa4NANHyd8hKpxl2TZrvPQ2m9+9Ncw4=
+	t=1765288843; cv=none; b=pYpEHCmrpAgsF6fStL8ohIKQSfX5/I8IK1/01+O5vrWIINFM4HuLzR3d83qUB43TZCRl7M21ZDL8uAsA2NiFFcx/W9SPQ57G9yINRd/7/Z2HrzLw6XInrFp6bOk1RnTd7jw+72pcqtOCUREAZf7hvq6984J70LuCSlwz8dfXsmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765283352; c=relaxed/simple;
-	bh=1zv96AQDDBhIUB4SFjGPpc0lMwQj0fEVtOdQfSFFiS4=;
+	s=arc-20240116; t=1765288843; c=relaxed/simple;
+	bh=7aJcdC7gJFpMHBsFFI7dYqx6C/DH+AdeopjEcNfJG9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R8b93XuGCRh1ikTYFu5XdBRGoYT4y+6OwQ1QVpj0mJt1yYl05fbSefHGh68dE/DQs9fLXLfyH5rdE8GgJqVNqlifK4dlXJvjtDczrXTSC50kfutvlo8243mSOUI0AVmkGS+xY+TDThKt6TaCb6NFRCx52tUcQF+Pl5K7BZe3amU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FLRSCzPJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hbf8qhkj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VJlXEdXF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7U2McOFD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DBDDC3376A;
-	Tue,  9 Dec 2025 12:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765283333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ygaHW8o5EWTBSXhXnK7ekdPvbFwd/VSzrB9zkhVTLRQ=;
-	b=FLRSCzPJDhDdvQBy6p9ZobCmyv/OBX5mdkpgv9YpCqbX4VYeXoLguaXTTt/4hB56KyccR3
-	nf6j3BOH3yRK5qh3cMAhUeYflgxmzqZIAAWr7UEx2q9QNXPIkryChFyALpi19LajiUsYK/
-	w54xqTZihwFGArwdrmUESFAEfw7lRhQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765283333;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ygaHW8o5EWTBSXhXnK7ekdPvbFwd/VSzrB9zkhVTLRQ=;
-	b=hbf8qhkj9AN8CNYDunpaBDH5eRvnqnbwWvSf1aitvsKjxZvZHQuV3PFneX2ZGBk18Krav0
-	lfB9W/ldGjK5+6DA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=VJlXEdXF;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=7U2McOFD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765283332; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ygaHW8o5EWTBSXhXnK7ekdPvbFwd/VSzrB9zkhVTLRQ=;
-	b=VJlXEdXFL5fd4Sem3MzdBi6M+Hr11U7VtVbf3ME1dk5aSuhjv3O/iSL8Yd/XI8EpEFKwGn
-	qt5OE3BhUWleFUONVE7NBCIrv8ySHriCLSY0zQvS97diMAG7hRy1P55heddbwQqqP5orwx
-	zke8vzmd4c6IaLFBZbk/OIH2tq5XjmE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765283332;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ygaHW8o5EWTBSXhXnK7ekdPvbFwd/VSzrB9zkhVTLRQ=;
-	b=7U2McOFDYb7YMgNpJuCJtvWZaYZMflyH94JOMxO/WJFjXPjjRW/ONo04eFBGZ6oK+Zhnh3
-	bJ4+1uZfHqHgl3Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA4F63EA65;
-	Tue,  9 Dec 2025 12:28:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 09RfMQQWOGn0YgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 09 Dec 2025 12:28:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4850FA08E4; Tue,  9 Dec 2025 13:28:48 +0100 (CET)
-Date: Tue, 9 Dec 2025 13:28:48 +0100
-From: Jan Kara <jack@suse.cz>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, Roberto Sassu <roberto.sassu@huaweicloud.com>, 
-	Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Kees Cook <kees@kernel.org>, 
-	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
-	Christian Brauner <brauner@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>, 
-	James Morris <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>, 
-	Adrian Reber <areber@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Jens Axboe <axboe@kernel.dk>, Alexei Starovoitov <ast@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	tiozhang <tiozhang@didiglobal.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Frederic Weisbecker <frederic@kernel.org>, YueHaibing <yuehaibing@huawei.com>, 
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>, 
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Elena Reshetova <elena.reshetova@intel.com>, David Windsor <dwindsor@gmail.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Hans Liljestrand <ishkamiel@gmail.com>, Penglei Jiang <superman.xpt@gmail.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Adrian Ratiu <adrian.ratiu@collabora.com>, 
-	Ingo Molnar <mingo@kernel.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
-	Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>, zohar@linux.ibm.com, 
-	linux-integrity@vger.kernel.org, Ryan Lee <ryan.lee@canonical.com>, 
-	apparmor <apparmor@lists.ubuntu.com>
-Subject: Re: Are setuid shell scripts safe? (Implied by
- security_bprm_creds_for_exec)
-Message-ID: <722m42dxrfxao7y6ul5cb26orxoinsrozwqlf7ts52lpbfzgxs@gm6kakrzlhkz>
-References: <87tsyozqdu.fsf@email.froward.int.ebiederm.org>
- <87wm3ky5n9.fsf@email.froward.int.ebiederm.org>
- <87h5uoxw06.fsf_-_@email.froward.int.ebiederm.org>
- <6dc556a0a93c18fffec71322bf97441c74b3134e.camel@huaweicloud.com>
- <87v7iqtcev.fsf_-_@email.froward.int.ebiederm.org>
- <dca0f01500f9d6705dccf3b3ef616468b1f53f57.camel@huaweicloud.com>
- <87ms42rq3t.fsf@email.froward.int.ebiederm.org>
- <GV2PPF74270EBEE90CDCD964F69E806EF58E4D9A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <20251204054915.GI1712166@ZenIV>
- <GV2PPF74270EBEE0AAAE2EB22B668EE21A7E4A6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YiDuOSJVDh5158hLLkeMGtcsnkA6MUPh2xjqF7/7qlZRuwJIEa7DYwYnT9ttKwfIBqINK2Tt7puKPN6cXZHVCxYcP9sAgSD8GgI7Iq5FTMEdjbJSB1IqPiHreLtn4ZhKLg36O0wx8NWnu089cLy35bN6GyzTbf/YAeqRD6lBfmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz; spf=pass smtp.mailfrom=nabijaczleweli.xyz; dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b=c9gnRav4; arc=none smtp.client-ip=139.28.40.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabijaczleweli.xyz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
+	s=202505; t=1765288835;
+	bh=7aJcdC7gJFpMHBsFFI7dYqx6C/DH+AdeopjEcNfJG9k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c9gnRav46sO4Zvpjnq87F9oIWKtzB4WS0XYVeEy5gY0kDJyFM9a5alMgT0Bv0Elo6
+	 85Ok+KUGWqvrR8FfWuntuf9SSGZEfXN12smBlLyiYYPJztMJgUMBG3vbiufVGyHE0K
+	 5e6rpqoDY4PceOc7LiQ1BgUq0izp7uhNckUsSdUpl7AoSeogwFptl53y87UNSzlvlD
+	 ecnhk0Ad3kFXcx188s+Cq1JPYBzDfLWsJPeD4bEWJUDsg6IWj02mytILBNNQR6qrZi
+	 khRjrnHt/DoSEu75w4gb1FIShUjZsIdHdVoF6WKIM9NZXmbY7oVQFqNGaaK9nsmyIg
+	 IENXkA84dLhRw==
+Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
+	by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 8D684EE42;
+	Tue,  9 Dec 2025 15:00:35 +0100 (CET)
+Date: Tue, 9 Dec 2025 15:00:35 +0100
+From: 
+	Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
+To: Hugh Dickins <hughd@google.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tmpfs: enforce the immutable flag on open files
+Message-ID: <mmfrclxjf2mmmohiwdbgqhyyrlab33tpnmtuzatk2xsuyiglrp@tarta.nabijaczleweli.xyz>
+References: <toyfbuhwbqa4zfgnojghr4v7k2ra6uh3g3sikbuwata3iozi3m@tarta.nabijaczleweli.xyz>
+ <be986c18-3db2-38a1-8401-f0035ab71e7a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="odzmi4uh2rsyvvsv"
 Content-Disposition: inline
-In-Reply-To: <GV2PPF74270EBEE0AAAE2EB22B668EE21A7E4A6A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-X-Spam-Flag: NO
-X-Spam-Score: -2.51
-X-Rspamd-Queue-Id: DBDDC3376A
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[hotmail.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,xmission.com,huaweicloud.com,gmail.com,redhat.com,kernel.org,amacapital.net,chromium.org,linux-foundation.org,suse.com,hallyn.com,linux.microsoft.com,infradead.org,google.com,gmx.de,linutronix.de,kernel.dk,vger.kernel.org,kvack.org,didiglobal.com,manguebit.com,huawei.com,paul-moore.com,cyphar.com,devkernel.io,zte.com.cn,suse.cz,intel.com,joelfernandes.org,oracle.com,collabora.com,linux.ibm.com,canonical.com,lists.ubuntu.com];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_GT_50(0.00)[61];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Level: 
+In-Reply-To: <be986c18-3db2-38a1-8401-f0035ab71e7a@google.com>
+User-Agent: NeoMutt/20231221-2-4202cf-dirty
 
-On Thu 04-12-25 14:03:27, Bernd Edlinger wrote:
-> On 12/4/25 06:49, Al Viro wrote:
-> > On Wed, Dec 03, 2025 at 02:16:29PM +0100, Bernd Edlinger wrote:
-> > 
-> >> Hmm, yes, that looks like an issue.
-> >>
-> >> I would have expected the security engine to look at bprm->filenanme
-> >> especially in the case, when bprm->interp != bprm->filename,
-> >> and check that it is not a sym-link with write-access for the
-> >> current user and of course also that the bprm->file is not a regular file
-> >> which is writable by the current user, if that is the case I would have expected
-> >> the secuity engine to enforce non-new-privs on a SUID executable somehow.
-> > 
-> > Check that _what_ is not a symlink?  And while we are at it, what do write
-> > permissions to any symlinks have to do with anything whatsoever?
-> 
-> When we execve a normal executable, we do open the binary file with
-> deny_write_access so this might allow the security engine to inspaect the
-> binary, before it is used.
 
-That would be seriously flawed IMO because there are lot of cases where
-code is executed without deny_write_access() - like shared libraries, code
-loaded by interpreter, and probably more.
+--odzmi4uh2rsyvvsv
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> However this behavior has changed recently,
-> now it has some exceptions, where even this behavior is no longer
-> guaranteed for binary executables, due to commit
-> 0357ef03c94ef835bd44a0658b8edb672a9dbf51, but why?  I have no idea...
+On Mon, Dec 08, 2025 at 08:14:44PM -0800, Hugh Dickins wrote:
+> On Mon, 8 Dec 2025, Ahelenia Ziemia=C5=84ska wrote:
+> > This useful behaviour is implemented for most filesystems,
+> > and wants to be implemented for every filesystem, quoth ref:
+> >   There is general agreement that we should standardize all file systems
+> >   to prevent modifications even for files that were opened at the time
+> >   the immutable flag is set.  Eventually, a change to enforce this at
+> >   the VFS layer should be landing in mainline.
+> >=20
+> > References: commit 02b016ca7f99 ("ext4: enforce the immutable flag on
+> >  open files")
+> > Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.=
+xyz>
+> Sorry: thanks, but no thanks.
+>=20
+> Supporting page_mkwrite() comes at a cost (an additional fault on first
+> write to a folio in a shared mmap).  It's important for space allocation
+> (and more) in the case of persistent writeback filesystems, but unwelcome
+> overhead in the case of tmpfs (and ramfs and hugetlbfs - others?).
 
-Because for hierarchical storage implementation you may need to fill in the
-executable data from remote storage on demand and the deny_write_access
-logic was making this impossible. We even tried to completely remove the
-deny_write_access logic exactly because it has very limited use and
-complicates things (commit 2a010c412853 ("fs: don't block i_writecount
-during exec")) but that had to be reverted because some userspace depends
-on the ETXTBUSY behavior.
+Yeah, from the way page_mkwrite() was implemented it looked like
+enough of a pessimisation to be significant, and with how common
+an operation this is, I kinda expected this result.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+(I was also gonna post the same for ramfs,
+ but it doesn't support FS_IOC_SETFLAGS attributes at all.)
+
+> tmpfs has always preferred not to support page_mkwrite(), and just fail
+> fstests generic/080: we shall not slow down to change that, without a
+> much stronger justification than "useful behaviour" which we've got
+> along well enough without.
+
+How do we feel about just the VFS half of this,
+i.e. open(WR)/chattr +i/write() =3D -EPERM?
+That shouldn't have a performance impact.
+
+(I'll admit that this is the behaviour I find to be useful,
+ and I was surprised that the ext4 implementation also made mappings
+ SIGBUS, but I implemented both out of an undue sense of completionism.)
+
+> But it is interesting that tmpfs supports IMMUTABLE, and passes all
+> the chattr fstests, without this patch.  Perhaps you should be adding
+> a new fstest, for tmpfs to fail: I won't thank you for that, but it
+> would be a fair response!
+
+I rather think having IMMUTABLE but not atomically perfusing it
+to file descriptions is worthy of a test failure.
+The mmap behaviour, not so much.
+
+> Hugh
+>=20
+> > ---
+> > v1: https://lore.kernel.org/linux-fsdevel/znhu3eyffewvvhleewehuvod2wrf4=
+tz6vxrouoakiarjtxt5uy@tarta.nabijaczleweli.xyz/t/#u
+> >=20
+> > shmem_page_mkwrite()'s return 0; falls straight into do_page_mkwrite()'s
+> > 	if (unlikely(!(ret & VM_FAULT_LOCKED))) {
+> > 		folio_lock(folio);
+> > Given the unlikely, is it better to folio_lock(folio); return VM_FAULT_=
+LOCKED; instead?
+> >=20
+> > /ext4# uname -a
+> > Linux tarta 6.18.0-10912-g416f99c3b16f-dirty #1 SMP PREEMPT_DYNAMIC Sat=
+ Dec  6 12:14:41 CET 2025 x86_64 GNU/Linux
+> > /ext4# while sleep 1; do echo $$; done > file &
+> > [1] 262
+> > /ext4# chattr +i file
+> > /ext4# sh: line 25: echo: write error: Operation not permitted
+> > sh: line 25: echo: write error: Operation not permitted
+> > sh: line 25: echo: write error: Operation not permitted
+> > sh: line 25: echo: write error: Operation not permitted
+> > fg
+> > while sleep 1; do
+> >     echo $$;
+> > done > file
+> > ^C
+> > /ext4# mount -t tmpfs tmpfs /tmp
+> > /ext4# cd /tmp
+> > /tmp# while sleep 1; do echo $$; done > file &
+> > [1] 284
+> > /tmp# chattr +i file
+> > /tmp# sh: line 35: echo: write error: Operation not permitted
+> > sh: line 35: echo: write error: Operation not permitted
+> > sh: line 35: echo: write error: Operation not permitted
+> >=20
+> > $ cat test.c
+> > #include <unistd.h>
+> > #include <fcntl.h>
+> > #include <sys/ioctl.h>
+> > #include <linux/fs.h>
+> > #include <sys/mman.h>
+> > int main(int, char **argv) {
+> > 	int fd =3D open(argv[1], O_RDWR | O_CREAT | O_TRUNC, 0666);
+> > 	ftruncate(fd, 1024 * 1024);
+> > 	char *addr =3D mmap(NULL, 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHA=
+RED, fd, 0);
+> > 	addr[0] =3D 0x69;
+> > 	int attrs =3D FS_IMMUTABLE_FL;
+> > 	ioctl(3, FS_IOC_SETFLAGS, &attrs);
+> > 	addr[1024 * 1024 - 1] =3D 0x69;
+> > }
+> >=20
+> > # strace ./test /tmp/file
+> > execve("./test", ["./test", "/tmp/file"], 0x7ffc720bead8 /* 22 vars */)=
+ =3D 0
+> > ...
+> > openat(AT_FDCWD, "/tmp/file", O_RDWR|O_CREAT|O_TRUNC, 0666) =3D 3
+> > ftruncate(3, 1048576)                   =3D 0
+> > mmap(NULL, 1048576, PROT_READ|PROT_WRITE, MAP_SHARED, 3, 0) =3D 0x7f09b=
+bf2a000
+> > ioctl(3, FS_IOC_SETFLAGS, [FS_IMMUTABLE_FL]) =3D 0
+> > --- SIGBUS {si_signo=3DSIGBUS, si_code=3DBUS_ADRERR, si_addr=3D0x7f09bc=
+029fff} ---
+> > +++ killed by SIGBUS +++
+> > Bus error
+> > # tr -d \\0 < /tmp/file; echo
+> > i
+> >=20
+> >  mm/shmem.c | 25 +++++++++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
+> >=20
+> > diff --git a/mm/shmem.c b/mm/shmem.c
+> > index d578d8e765d7..432935f79f35 100644
+> > --- a/mm/shmem.c
+> > +++ b/mm/shmem.c
+> > @@ -1294,6 +1294,14 @@ static int shmem_setattr(struct mnt_idmap *idmap,
+> >  	bool update_mtime =3D false;
+> >  	bool update_ctime =3D true;
+> > =20
+> > +	if (unlikely(IS_IMMUTABLE(inode)))
+> > +		return -EPERM;
+> > +
+> > +	if (unlikely(IS_APPEND(inode) &&
+> > +		     (attr->ia_valid & (ATTR_MODE | ATTR_UID |
+> > +					ATTR_GID | ATTR_TIMES_SET))))
+> > +		return -EPERM;
+> > +
+> >  	error =3D setattr_prepare(idmap, dentry, attr);
+> >  	if (error)
+> >  		return error;
+> > @@ -2763,6 +2771,17 @@ static vm_fault_t shmem_fault(struct vm_fault *v=
+mf)
+> >  	return ret;
+> >  }
+> > =20
+> > +static vm_fault_t shmem_page_mkwrite(struct vm_fault *vmf)
+> > +{
+> > +	struct file *file =3D vmf->vma->vm_file;
+> > +
+> > +	if (unlikely(IS_IMMUTABLE(file_inode(file))))
+> > +		return VM_FAULT_SIGBUS;
+> > +
+> > +	file_update_time(file);
+> > +	return 0;
+> > +}
+> > +
+> >  unsigned long shmem_get_unmapped_area(struct file *file,
+> >  				      unsigned long uaddr, unsigned long len,
+> >  				      unsigned long pgoff, unsigned long flags)
+> > @@ -3475,6 +3494,10 @@ static ssize_t shmem_file_write_iter(struct kioc=
+b *iocb, struct iov_iter *from)
+> >  	ret =3D generic_write_checks(iocb, from);
+> >  	if (ret <=3D 0)
+> >  		goto unlock;
+> > +	if (unlikely(IS_IMMUTABLE(inode))) {
+> > +		ret =3D -EPERM;
+> > +		goto unlock;
+> > +	}
+> >  	ret =3D file_remove_privs(file);
+> >  	if (ret)
+> >  		goto unlock;
+> > @@ -5286,6 +5309,7 @@ static const struct super_operations shmem_ops =
+=3D {
+> >  static const struct vm_operations_struct shmem_vm_ops =3D {
+> >  	.fault		=3D shmem_fault,
+> >  	.map_pages	=3D filemap_map_pages,
+> > +	.page_mkwrite	=3D shmem_page_mkwrite,
+> >  #ifdef CONFIG_NUMA
+> >  	.set_policy     =3D shmem_set_policy,
+> >  	.get_policy     =3D shmem_get_policy,
+> > @@ -5295,6 +5319,7 @@ static const struct vm_operations_struct shmem_vm=
+_ops =3D {
+> >  static const struct vm_operations_struct shmem_anon_vm_ops =3D {
+> >  	.fault		=3D shmem_fault,
+> >  	.map_pages	=3D filemap_map_pages,
+> > +	.page_mkwrite	=3D shmem_page_mkwrite,
+> >  #ifdef CONFIG_NUMA
+> >  	.set_policy     =3D shmem_set_policy,
+> >  	.get_policy     =3D shmem_get_policy,
+> > --=20
+> > 2.39.5
+
+
+--odzmi4uh2rsyvvsv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmk4K4AACgkQvP0LAY0m
+WPHX8w/+LF/sRkV9GkZuIiCTm3dARfQYYA5sEFRR/SAK44U4sWNpR5fS2NgVBvk+
+wr+2CyVTTNHauBm0GpUuKKyYQtrhof8pQKYyC2i8Jz0Ty1azn/Dvm2Y9D3rVUa8B
+Oo7w+7kQr1ON8MdTPiV0ekjO2ru/YqIUMvsaNSuxyqALjlZ+oDTlpOCGnj9fb2Jf
+Nd83pErmVChI/cg7kACHXiJmrUNJd1QeNmkbu2uGnAKq5+n9kjsfKaYOCTiOr+ex
+HAhCKk2yRvDaZ7vtSAlOUBB7ZD4dXFe187Vqms8Wyw3q21ztAvWCLwEPkzWYdnS7
+6O5Y9IHmwmW3ESFVl0fJcaSb4nVL2LZTtNYUecB88lV+LiMaBOeeDA8yeqcinMnP
+yYkgw8EfI5qYrdsDjYAXC0L8FY3IMXgWXIKpf8rhCMp0fDp5IwID6ujma0lu2TaU
+eQgBTD/y8seAQykOJ/+ORoCR0zMVdeA4qeaJkwWANExCX+jjjucsUtoZ1ADu0mu4
+4Ir8WdHqEQaxdo+rxdgD/M4kU5zBd9fBcI0+OhFywEHD5R4+Au2wKbwaKlYRleKG
+Bq1U4Az183uceHRMeVEigRYfYmpCqSkhQTcrq+JfxkFbr72JSogt5CKcu21QQgXI
+rWRQThCmT8heUpjiWNEI8B5eOL5TJkmeyPCaK2qU59E/K5oviXc=
+=IeM0
+-----END PGP SIGNATURE-----
+
+--odzmi4uh2rsyvvsv--
 
