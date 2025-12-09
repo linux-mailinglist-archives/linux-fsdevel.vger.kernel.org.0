@@ -1,77 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-71008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89CDDCAF3BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 09:01:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AAAECAF453
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 09:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 523AB302D29E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 08:00:23 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 55A55302BA81
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 08:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4E92877DE;
-	Tue,  9 Dec 2025 08:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD59B241663;
+	Tue,  9 Dec 2025 08:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mV6ziBx/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NelE4Ik/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676021F3BA2;
-	Tue,  9 Dec 2025 08:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B0F223DD4
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 08:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765267219; cv=none; b=Q1ahvLK7E3OdBOcUBswBWZLMHyMn1esi3deWDQG5V+Vd6yyMxS1UreCT8Npk3H4UCKinbxdq9xW2A00WOu912TcX7ZTeDzNak1LthKnDQolFfUcBEPB6xc/PqRwbk6eAqLNPc0pTycrf/faxLkizwoydym6/YK+AHo/Qep8NC2o=
+	t=1765268547; cv=none; b=HdEmroCJl1BbVAMvOCtiLhFL7RT0OJe1W4m19Zv2Raqk8/CaKdSFaDKGQxOdf9ZahVBDatvmdsDPt1dmKx+taTbSXA25qhWTvrQpmmG7sP3h544LA94Temk1z4yebQ8jnne74yNBNruabJeX28YtEUSosYwz1WnuqYBn8rTTU9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765267219; c=relaxed/simple;
-	bh=YO9+v82+HuMr+3h1x4u5rdw725E4tRb8gTUYSqFl4/8=;
+	s=arc-20240116; t=1765268547; c=relaxed/simple;
+	bh=m8rAK2sGLKSUfcikExD+0h/G3ii59vVBq316dCqsPBE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lPpO9qR86zHdjdGIOWEOfe7pojMb0RRZSi+3IYD4yjN/G6CJqmWd4sSmF8Gk3GF0Kogvr4oZgICbUSByHEOs3qKVdxBehJiq3SYJEPVV2s2tRNkCtZMmBnMEPWmZrIMkOjgaUKgpHxnbuZfgzX0hGF6FyhBoKgpHD189oCTfrSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mV6ziBx/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1125EC4CEF5;
-	Tue,  9 Dec 2025 08:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1765267218;
-	bh=YO9+v82+HuMr+3h1x4u5rdw725E4tRb8gTUYSqFl4/8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mV6ziBx/fbCZteXmx8DH2TpsDCBsgaaQ4Y+hqPT6wG6Fub5TBmy/dhDW6PkGA4WxG
-	 0B0NlhNIjN4PfXcCScn/Oe5ZsssivZw+oNGE9QYXrf/9ZRzI11a91lc/OxFxUyUS49
-	 s+11IHF5J699a/WJ+/nuB92z3rBlvUF1Gd7k0Oxk=
-Date: Tue, 9 Dec 2025 03:00:16 -0500
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, pr-tracker-bot@kernel.org, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Alexei Starovoitov <ast@kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Arnd Bergmann <arnd@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Dan Williams <dan.j.williams@intel.com>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Laight <David.Laight@aculab.com>, 
-	David Lechner <dlechner@baylibre.com>, Dinh Nguyen <dinguyen@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Gatlin Newhouse <gatlin.newhouse@gmail.com>, 
-	Hao Luo <haoluo@google.com>, Ingo Molnar <mingo@redhat.com>, 
-	Jakub Sitnicki <jakub@cloudflare.com>, Jan Hendrik Farr <kernel@jfarr.cc>, 
-	Jason Wang <jasowang@redhat.com>, Jir i Olsa <jolsa@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, KP Singh <kpsingh@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Marc Herbert <Marc.Herbert@linux.intel.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>, 
-	Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>, NeilBrown <neil@brown.name>, 
-	Peter Zijlstra <peterz@infradead.org>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>, Song Liu <song@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Thomas Gleixner <tglx@linutronix.de>, 
-	Thorsten Blum <thorsten.blum@linux.dev>, Uros Bizjak <ubizjak@gmail.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Yafang Shao <laoar.shao@gmail.com>, Ye Bin <yebin10@huawei.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, Yu feng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-sparse@vger.kernel.org, virtualization@lists.linux.dev, x86@kernel.org
-Subject: Re: [GIT PULL] __auto_type conversion for v6.19-rc1
-Message-ID: <20251209-kickass-analytic-eagle-f9e910@lemur>
-References: <20251208235528.3670800-1-hpa@zytor.com>
- <176523908321.3343091.17738363732550848005.pr-tracker-bot@kernel.org>
- <CAHk-=wi0RqQPHME0xgrAZBQijKuos97cQO05N4f176DkH7msbg@mail.gmail.com>
- <ee693efe-5b7b-4d38-a12c-3cea6681f610@zytor.com>
- <CAHk-=wghm5NFZQcfObuNQHMMsNQ_Of+H7jpoMTZJDrFscxrSCw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jLd6KPF0dbpzSvDVgxgt8597jE7biZM1i7XgNnxvUbJTBWgj0vVJXOn3d4OhCHPSwRqwuwHi393yKgwf13rjRXodn1iwnixU4DS61GM1einhcuFht2kKwUrk4+MUz2RCvfxeO7sMM1XRgob14ryvIr9c6SkR6zX0aEnB/91XdUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NelE4Ik/; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b735e278fa1so902845766b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Dec 2025 00:22:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765268544; x=1765873344; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fimG7EUbly/WUwljyphW/JFdJh4kklZTK2GR/3AFZ2I=;
+        b=NelE4Ik/y72V0Jpyji0hYE0VgP461unGstXGUr81Lx2px4SD5aFpKemPfVHVJVPXwI
+         CvatqfkhsANQyCCA6lojk46Et/N++bUuNX+2S4Fvjk9eJBmKnIIpqzmSXyyLNSKm5+6k
+         8BwX3mKG64JFyDevO/IOGic6VrRH8kbIpEXqX1zkIFqX5XieaFAgiKfIc3X/q/gULVMx
+         d/mdXquUdKVJAtH+bpjme0a0LfciuFLEspjOLQhcXFkAwWniLrjW++TteW6ncHcj0aSq
+         Ax8B4NgNJXowVOKvCK1fgfuPAFZUO1er+WuJhifyQ4vmQ1KqYFV7driRS2ypv5CVSkRk
+         cunw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765268544; x=1765873344;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fimG7EUbly/WUwljyphW/JFdJh4kklZTK2GR/3AFZ2I=;
+        b=m9CbiXXH+MgA/kSjcBgM9pD+/D32/bQ75u1Xhyy9fjBG9TXt8QTIvek4ptzb3Dg8eZ
+         dmnkTtH2o5eNWsJTOuwwSVqR4Np8BfeiQ4W2tm/I4XABR+4nw7Q6BNNysgGLXNUda86E
+         1sGpjA2ZC+twfzMb0t3Jg1Rvq0LNIw0p8GFqja1TrQVMnwQ+G2VYfwi4UBTtidj06Ceu
+         QmSc3N395Q19wPnaol1baP7kmCpumuacqN61/hoOF2LqXtlsZkAVlCWKhFIMJv4Qlq/y
+         RkvXkCCISRKxwM7ULMQBxDjSUI0Y+5U3bMSfh9OG5tTjDTTEEr3ocRo4ZK7dpC+ZxTY6
+         vQpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUID7Sqjy3wbdWg90RP0gCVY1ILycecDQ//ATY8yi9TvJM2pwohbeaixqqrf7mgZk0dtbiVcoxO7hclOiWh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCe3qzNlnZ5R2fCkA8193gGz/n/zOSuRlOuuCQvufJ9FCmSatE
+	4ddeFNM+Hv3Z1YNqLTJJrmbFprmUMLb0CkA6KRrfpH3qX9t9mkgI5hgs
+X-Gm-Gg: ASbGncs4F8ZXvBVu40291irbyTjhGNtV0U4Du/UdfBlrhoi/P2E+/OXMdt7Ab6zrvKi
+	7qKTDV4irCdKf9mYmCqH5/mi2Eby+EONRHZ1uINAJk50XSKJK0X+MTlicUukCTQRIoUt375V1qX
+	FvAJjeC0QyU7ogSVjwXiepKR6uxr/uf+Yl4WZzLlBnU8CUVRj0LqRRlkvJkkB9rxFh/rKAIFuaZ
+	fRjytHVzCE5uC/NQ/9W36I/AxvNXcoJ7M/WJA5lSdfz3UE4eZjRekE4Jn8gFN7DB8s8zVNtiUbf
+	XhZDAkyWd9VvmAuemA2ohNcRR4VSwsEjYTquA8sEkKL5KOg3NE0eSku7nb86ANW6qNbr2cH2ETO
+	h7IocDQ5ncIsAcDX/dkR563NuEmXJTCUKF6o5r3+7kQx6rKpHsQjg/PBaYVLn377uUHRt0CvdK/
+	kJLgr0OKLcWu8aChJNjT+UEtXYWIjDax0FZ9sjjoNEGmRclWVOnwGjAB/m
+X-Google-Smtp-Source: AGHT+IGyEYt6MFLpPBTDrhxQ34rHeZ/+6rnj0Pplvp+x9ISQW6UcbtjrIYah0DXraN2FohVIK4at3g==
+X-Received: by 2002:a17:907:3c93:b0:b73:5936:77fc with SMTP id a640c23a62f3a-b7a242d4a9dmr1031948466b.13.1765268543652;
+        Tue, 09 Dec 2025 00:22:23 -0800 (PST)
+Received: from f (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b79f44d3db6sm1333051766b.29.2025.12.09.00.22.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Dec 2025 00:22:22 -0800 (PST)
+Date: Tue, 9 Dec 2025 09:22:10 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] file: Call security_file_alloc() after initializing the
+ filp
+Message-ID: <dpuld3qyyl6kan2jsigftmuhrqee2htjfmlytvnr55x37wy3eb@jkutc2k4zkfm>
+References: <20251209075347.31161-1-tianjia.zhang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,21 +89,66 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wghm5NFZQcfObuNQHMMsNQ_Of+H7jpoMTZJDrFscxrSCw@mail.gmail.com>
+In-Reply-To: <20251209075347.31161-1-tianjia.zhang@linux.alibaba.com>
 
-On Tue, Dec 09, 2025 at 12:33:26PM +0900, Linus Torvalds wrote:
-> > Yeah, it commented on the master branch, which is of course ... yours.
+On Tue, Dec 09, 2025 at 03:53:47PM +0800, Tianjia Zhang wrote:
+> When developing a dedicated LSM module, we need to operate on the
+> file object within the LSM function, such as retrieving the path.
+> However, in `security_file_alloc()`, the passed-in `filp` is
+> only a valid pointer; the content of `filp` is completely
+> uninitialized and entirely random, which confuses the LSM function.
 > 
-> Ahh. It's because you didn't use the standard pull request format, and
-> instead did the branch name elsewhere.
 
-It seems almost every maintainer has their own script to send a pull request,
-even if many of them are wrapping git-request-pull.
+I take it you have some underlying routine called by other hooks as well
+which ends up looking at ->f_path.
 
-I was just talking to Steve Rostedt earlier today about maybe teaching b4 how
-to do that so that at least any new incoming maintainers have a more
-streamlined way of sending a standard pull request in a format that is easy on
-both Linus and the pr-tracker-bot.
+Given that f_path *is not valid* to begin with, memsetted or not, your
+file_alloc_security hoook should not be looking at it to begin with.
 
--K
+So I don't think this patch has merit.
+
+> Therefore, it is necessary to call `security_file_alloc()` only
+> after the main fields of the `filp` object have been initialized.
+> This patch only moves the call to `security_file_alloc()` to the
+> end of the `init_file()` function.
+> 
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> ---
+>  fs/file_table.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index 81c72576e548..e66531a629aa 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -156,11 +156,6 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
+>  	int error;
+>  
+>  	f->f_cred = get_cred(cred);
+> -	error = security_file_alloc(f);
+> -	if (unlikely(error)) {
+> -		put_cred(f->f_cred);
+> -		return error;
+> -	}
+>  
+>  	spin_lock_init(&f->f_lock);
+>  	/*
+> @@ -202,6 +197,14 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
+>  	 * They may be enabled later by fsnotify_open_perm_and_set_mode().
+>  	 */
+>  	file_set_fsnotify_mode(f, FMODE_NONOTIFY_PERM);
+> +
+> +	error = security_file_alloc(f);
+> +	if (unlikely(error)) {
+> +		mutex_destroy(&f->f_pos_lock);
+> +		put_cred(f->f_cred);
+> +		return error;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.39.5 (Apple Git-154)
+> 
 
