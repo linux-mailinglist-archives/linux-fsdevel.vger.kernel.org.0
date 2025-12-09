@@ -1,277 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-71003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610CECAED88
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 05:15:05 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2974CAF24A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 08:32:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2057330184C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 04:15:02 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3DBE03012DE7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 07:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D26A2C237F;
-	Tue,  9 Dec 2025 04:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mxuFtw54"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE377221F24;
+	Tue,  9 Dec 2025 07:32:19 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0211C84D7
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 04:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650992139C9
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 07:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765253700; cv=none; b=fqJULoPUPuFhCgS3KrL/IqbXhMjBZq7ON9SgeZH6/zTllWFvqOQ6HAV5SChkVTz8YzgLyLsYU4h/IpAKyCuNUcXNRm9hqpNArBs5Cmtl7kdhenNHHS3Sw7u0c253xI3s8yzTAa1bGxikIN53CcS0vZzTUcmt820WlRi2P9LmoLc=
+	t=1765265539; cv=none; b=ikSG2XIfmwqLMhaWNZDgpTxEU0UFRyl59r7XT2W8U34ATNBE5WcufhvmEhjNvFlWOiP0WzYRZZcywxDWNp4bAdD6OIO0wD0KjfWTqWdIYQ8lGLVfb41eqga0NrkGb2jQvXERFSvjqTExVZW9limA4cCt5dqjdD4/6xI4puxikls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765253700; c=relaxed/simple;
-	bh=fxZrupnWzYXjC19sIxG0F03qERQwP8yqprJoPwhCsvM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DKrtESugWaC7OuAjzpmDW6xoc4Zo5qeb1goid1MSoMbhB7qiHfZDgT7nxyLoH4BSY41A2mKaTLpEwjuVQIJNi/Cqd6dUtzNLWMGcdUYyetkBDIatocBVuBAbVPWYiT4D09OxI3P2FAlgbOTTTRKSfIlbFyZ122KdPXjC0x8Offg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mxuFtw54; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-78c5b5c1eccso6500077b3.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Dec 2025 20:14:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1765253698; x=1765858498; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kxOZQiVrIOkc6jsPHDGEQgDqVs4gmHDUYWM8/3JKHtc=;
-        b=mxuFtw54Ze9wARIYSdNkhL2VICOwi45Bl3Kij+SeWD3M3VT0pgeTXdPnK+McC8AnZS
-         iLySi2mVHnNvtIh/guZtRI+z2NzbCgutnZvFordysY8bcdOKZXkhQc5baZrAXcS8W6n4
-         XogVp5olv1UjAty+ajijb9Y/z8+o60XOKN/v+8mtZgcSsrI5a/DbGGl92P+iK2+Csf5e
-         6t5t8TzYpuoXXLzVe+FFlrm7MqdlUumRtvnXnSHefCvFCF16hmKkyU8SnXd3qPiC02E6
-         M/8VMCni8TaFY4m96+ms1Jdqbs5sif/aHnoLRcIc92oMZ+WUX+6IwCzeAyeq5MgWmSAi
-         vGcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765253698; x=1765858498;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kxOZQiVrIOkc6jsPHDGEQgDqVs4gmHDUYWM8/3JKHtc=;
-        b=eWV6kmzaUUGuLkqrKPCv9Ow4kHvg0kpxsSlg3ZudD668NE7G0eCdlSuwJEB5oo17Dn
-         ltDZbbNTdM/BgNjWaE5CFZnSSorBnyj9O5bqzM8hs2uJOElavoAp7XlvH+brG9I64VF/
-         0AinCzKTRuSOWovt9JbROblWB1T5oKxg993R34aqqySouZf05eb1tWxA8rZ6eEGODxM5
-         LcuOwZctWsDBgrg/DH9dQQ0yGPrV+T1ZTSbSeMziD9y+Lb61hrqHVSX/21M21rJYRxW0
-         qpTGWvFR0oUdFLKrbQi2rQxSILJYl70DX5TeFqWGfO/GXEN6SDxDlupPgQROWQhZKHjT
-         ZcKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLND7uXDiw/gKnRgFTBBQ33m+PU6z/UPgTUjbYVrolU7BqKBmDxUTBm1wEvsSF/AB7BHL+UEgeSH9tKPHw@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJZx5Nfn1YTFq43lxBNAZP3diXmAwdpYL3pVK6/TJ7OXaW5dv7
-	HyozIIX1uwDYZPi5PZRDT4lWaAy94EzVovpHmovnUgaGEOo6af6GBGvzVosTPHFXrg==
-X-Gm-Gg: AY/fxX65P//vFnVae095VPcYS4vtsD39w7bzY5QpN8/5Ge0GRvR+hL+6Xfaev3y2n1t
-	T9JbhEifQWk05NPT9FUR03Phbz/fU/tTHe9D5Lclo11iy+h68GXUXCUPawKsgM66rgwcptMQeXj
-	E/G+u4CN9frLHOwtvIy9jZdVU+Us68PjWX+f/jtnUcSndUCTBSEeU4ueBJAviC2/Sq3/SXmGq8W
-	Mc0E1v/DjPd9ptgUPSe1kZdBREua6z215/6thJjCbOi2hjkNcUdceFVVG+jm23eBrq/81SBL3cF
-	wLpTTeAaEZIJ6bXoJhhEzYkI6gFMyrw3MOe96lFqaArZ6TATQm09pu5Ou+T4Ua8r4N8sFU8nDxK
-	dKZ3GXDUslA52AnIqNky+kb2RZUhmKi5B7dUN6gvncG90qHTjSkCSj65iYnbkeX9eupiBQFQmhT
-	tJo7VWfZeoIz+dUkpJbbKP7gq78xXy6MTlN/NuK9CYvHr/dkq3pga8cbp22ZIAjsW1rKFfwFc=
-X-Google-Smtp-Source: AGHT+IGStD3RTu8T+BCQkOHYtvAsKKgITO3CHa6arajrItSoFji6PAjkptYVeArSqR06eFO3YkONcA==
-X-Received: by 2002:a05:690c:ec4:b0:78c:1213:58da with SMTP id 00721157ae682-78c60772f4fmr1081207b3.18.1765253697550;
-        Mon, 08 Dec 2025 20:14:57 -0800 (PST)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78c1b4c9e43sm55152797b3.16.2025.12.08.20.14.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Dec 2025 20:14:56 -0800 (PST)
-Date: Mon, 8 Dec 2025 20:14:44 -0800 (PST)
-From: Hugh Dickins <hughd@google.com>
-To: =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
-cc: Hugh Dickins <hughd@google.com>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Matthew Wilcox <willy@infradead.org>, 
-    Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tmpfs: enforce the immutable flag on open files
-In-Reply-To: <toyfbuhwbqa4zfgnojghr4v7k2ra6uh3g3sikbuwata3iozi3m@tarta.nabijaczleweli.xyz>
-Message-ID: <be986c18-3db2-38a1-8401-f0035ab71e7a@google.com>
-References: <toyfbuhwbqa4zfgnojghr4v7k2ra6uh3g3sikbuwata3iozi3m@tarta.nabijaczleweli.xyz>
+	s=arc-20240116; t=1765265539; c=relaxed/simple;
+	bh=J/4JYCvk/+LRKhxkmSyM7lbHTbMLPWcKEB/jDN51shI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=soijkVoRxIiveyT8VelJFFjHdRk7/BmV7nK+Kviwn6UzSz+h2tPLjjorXxALlMRiV09N6s72050HoQVTBm0yWQLM2CxaPt2KrbLokruJ9tgE1TRcWzdIuP0JvNmNcbN3Zw+yJ9rKMFdiUFQ7YrwinajpQNdsI8d3hLbtDQXtjV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4dQVrz3RYnzKHLyG
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 15:31:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id A56C21A06DD
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 15:32:13 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.87.129])
+	by APP2 (Coremail) with SMTP id Syh0CgDH80150DdpHC18BA--.12048S4;
+	Tue, 09 Dec 2025 15:32:10 +0800 (CST)
+From: libaokun@huaweicloud.com
+To: ntfs3@lists.linux.dev
+Cc: almaz.alexandrovich@paragon-software.com,
+	linux-fsdevel@vger.kernel.org,
+	yangerkun@huawei.com,
+	libaokun1@huawei.com,
+	syzbot+23aee7afc440fe803545@syzkaller.appspotmail.com
+Subject: [PATCH] fs/ntfs3: fix ntfs_mount_options leak in ntfs_fill_super()
+Date: Tue,  9 Dec 2025 15:21:41 +0800
+Message-Id: <20251209072141.2936193-1-libaokun@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463770367-921943916-1765253696=:4936"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgDH80150DdpHC18BA--.12048S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZw15Jw48Zw13JF47ZrWUArb_yoW5Gw1kpr
+	y3ur18Kr48tF10qanFqFs5Xw1fCayDCFWjgryfXw13Aw1Dt3W7Ka4vy3s5KrZrZrWkJr1F
+	vr4qyrWagryjyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkCb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4I
+	kC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v2
+	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUFXo7DU
+	UUU
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAJBWkthuQYCAABs6
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Baokun Li <libaokun1@huawei.com>
 
----1463770367-921943916-1765253696=:4936
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+In ntfs_fill_super(), the fc->fs_private pointer is set to NULL without
+first freeing the memory it points to. This causes the subsequent call to
+ntfs_fs_free() to skip freeing the ntfs_mount_options structure.
 
-On Mon, 8 Dec 2025, Ahelenia Ziemia=C5=84ska wrote:
+This results in a kmemleak report:
 
-> This useful behaviour is implemented for most filesystems,
-> and wants to be implemented for every filesystem, quoth ref:
->   There is general agreement that we should standardize all file systems
->   to prevent modifications even for files that were opened at the time
->   the immutable flag is set.  Eventually, a change to enforce this at
->   the VFS layer should be landing in mainline.
->=20
-> References: commit 02b016ca7f99 ("ext4: enforce the immutable flag on
->  open files")
-> Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xy=
-z>
+  unreferenced object 0xff1100015378b800 (size 32):
+    comm "mount", pid 582, jiffies 4294890685
+    hex dump (first 32 bytes):
+      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+      00 00 00 00 00 00 00 00 ed ff ed ff 00 04 00 00  ................
+    backtrace (crc ed541d8c):
+      __kmalloc_cache_noprof+0x424/0x5a0
+      __ntfs_init_fs_context+0x47/0x590
+      alloc_fs_context+0x5d8/0x960
+      __x64_sys_fsopen+0xb1/0x190
+      do_syscall_64+0x50/0x1f0
+      entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Sorry: thanks, but no thanks.
+This issue can be reproduced using the following commands:
+        fallocate -l 100M test.file
+        mount test.file /tmp/test
 
-Supporting page_mkwrite() comes at a cost (an additional fault on first
-write to a folio in a shared mmap).  It's important for space allocation
-(and more) in the case of persistent writeback filesystems, but unwelcome
-overhead in the case of tmpfs (and ramfs and hugetlbfs - others?).
+Since sbi->options is duplicated from fc->fs_private and does not
+directly use the memory allocated for fs_private, it is unnecessary to
+set fc->fs_private to NULL.
 
-tmpfs has always preferred not to support page_mkwrite(), and just fail
-fstests generic/080: we shall not slow down to change that, without a
-much stronger justification than "useful behaviour" which we've got
-along well enough without.
+Additionally, this patch simplifies the code by utilizing the helper
+function put_mount_options() instead of open-coding the cleanup logic.
 
-But it is interesting that tmpfs supports IMMUTABLE, and passes all
-the chattr fstests, without this patch.  Perhaps you should be adding
-a new fstest, for tmpfs to fail: I won't thank you for that, but it
-would be a fair response!
+Reported-by: syzbot+23aee7afc440fe803545@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=23aee7afc440fe803545
+Fixes: aee4d5a521e9 ("ntfs3: fix double free of sbi->options->nls and clarify ownership of fc->fs_private")
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+ fs/ntfs3/super.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-Hugh
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 8b0cf0ed4f72..0567a3b224ed 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -705,9 +705,7 @@ static void ntfs_put_super(struct super_block *sb)
+ 	ntfs_set_state(sbi, NTFS_DIRTY_CLEAR);
+ 
+ 	if (sbi->options) {
+-		unload_nls(sbi->options->nls);
+-		kfree(sbi->options->nls_name);
+-		kfree(sbi->options);
++		put_mount_options(sbi->options);
+ 		sbi->options = NULL;
+ 	}
+ 
+@@ -1253,7 +1251,6 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		}
+ 	}
+ 	sbi->options = options;
+-	fc->fs_private = NULL;
+ 	sb->s_flags |= SB_NODIRATIME;
+ 	sb->s_magic = 0x7366746e; // "ntfs"
+ 	sb->s_op = &ntfs_sops;
+@@ -1679,9 +1676,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ out:
+ 	/* sbi->options == options */
+ 	if (options) {
+-		unload_nls(options->nls);
+-		kfree(options->nls_name);
+-		kfree(options);
++		put_mount_options(sbi->options);
+ 		sbi->options = NULL;
+ 	}
+ 
+-- 
+2.39.2
 
-> ---
-> v1: https://lore.kernel.org/linux-fsdevel/znhu3eyffewvvhleewehuvod2wrf4tz=
-6vxrouoakiarjtxt5uy@tarta.nabijaczleweli.xyz/t/#u
->=20
-> shmem_page_mkwrite()'s return 0; falls straight into do_page_mkwrite()'s
-> =09if (unlikely(!(ret & VM_FAULT_LOCKED))) {
-> =09=09folio_lock(folio);
-> Given the unlikely, is it better to folio_lock(folio); return VM_FAULT_LO=
-CKED; instead?
->=20
-> /ext4# uname -a
-> Linux tarta 6.18.0-10912-g416f99c3b16f-dirty #1 SMP PREEMPT_DYNAMIC Sat D=
-ec  6 12:14:41 CET 2025 x86_64 GNU/Linux
-> /ext4# while sleep 1; do echo $$; done > file &
-> [1] 262
-> /ext4# chattr +i file
-> /ext4# sh: line 25: echo: write error: Operation not permitted
-> sh: line 25: echo: write error: Operation not permitted
-> sh: line 25: echo: write error: Operation not permitted
-> sh: line 25: echo: write error: Operation not permitted
-> fg
-> while sleep 1; do
->     echo $$;
-> done > file
-> ^C
-> /ext4# mount -t tmpfs tmpfs /tmp
-> /ext4# cd /tmp
-> /tmp# while sleep 1; do echo $$; done > file &
-> [1] 284
-> /tmp# chattr +i file
-> /tmp# sh: line 35: echo: write error: Operation not permitted
-> sh: line 35: echo: write error: Operation not permitted
-> sh: line 35: echo: write error: Operation not permitted
->=20
-> $ cat test.c
-> #include <unistd.h>
-> #include <fcntl.h>
-> #include <sys/ioctl.h>
-> #include <linux/fs.h>
-> #include <sys/mman.h>
-> int main(int, char **argv) {
-> =09int fd =3D open(argv[1], O_RDWR | O_CREAT | O_TRUNC, 0666);
-> =09ftruncate(fd, 1024 * 1024);
-> =09char *addr =3D mmap(NULL, 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHA=
-RED, fd, 0);
-> =09addr[0] =3D 0x69;
-> =09int attrs =3D FS_IMMUTABLE_FL;
-> =09ioctl(3, FS_IOC_SETFLAGS, &attrs);
-> =09addr[1024 * 1024 - 1] =3D 0x69;
-> }
->=20
-> # strace ./test /tmp/file
-> execve("./test", ["./test", "/tmp/file"], 0x7ffc720bead8 /* 22 vars */) =
-=3D 0
-> ...
-> openat(AT_FDCWD, "/tmp/file", O_RDWR|O_CREAT|O_TRUNC, 0666) =3D 3
-> ftruncate(3, 1048576)                   =3D 0
-> mmap(NULL, 1048576, PROT_READ|PROT_WRITE, MAP_SHARED, 3, 0) =3D 0x7f09bbf=
-2a000
-> ioctl(3, FS_IOC_SETFLAGS, [FS_IMMUTABLE_FL]) =3D 0
-> --- SIGBUS {si_signo=3DSIGBUS, si_code=3DBUS_ADRERR, si_addr=3D0x7f09bc02=
-9fff} ---
-> +++ killed by SIGBUS +++
-> Bus error
-> # tr -d \\0 < /tmp/file; echo
-> i
->=20
->  mm/shmem.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->=20
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index d578d8e765d7..432935f79f35 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1294,6 +1294,14 @@ static int shmem_setattr(struct mnt_idmap *idmap,
->  =09bool update_mtime =3D false;
->  =09bool update_ctime =3D true;
-> =20
-> +=09if (unlikely(IS_IMMUTABLE(inode)))
-> +=09=09return -EPERM;
-> +
-> +=09if (unlikely(IS_APPEND(inode) &&
-> +=09=09     (attr->ia_valid & (ATTR_MODE | ATTR_UID |
-> +=09=09=09=09=09ATTR_GID | ATTR_TIMES_SET))))
-> +=09=09return -EPERM;
-> +
->  =09error =3D setattr_prepare(idmap, dentry, attr);
->  =09if (error)
->  =09=09return error;
-> @@ -2763,6 +2771,17 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf=
-)
->  =09return ret;
->  }
-> =20
-> +static vm_fault_t shmem_page_mkwrite(struct vm_fault *vmf)
-> +{
-> +=09struct file *file =3D vmf->vma->vm_file;
-> +
-> +=09if (unlikely(IS_IMMUTABLE(file_inode(file))))
-> +=09=09return VM_FAULT_SIGBUS;
-> +
-> +=09file_update_time(file);
-> +=09return 0;
-> +}
-> +
->  unsigned long shmem_get_unmapped_area(struct file *file,
->  =09=09=09=09      unsigned long uaddr, unsigned long len,
->  =09=09=09=09      unsigned long pgoff, unsigned long flags)
-> @@ -3475,6 +3494,10 @@ static ssize_t shmem_file_write_iter(struct kiocb =
-*iocb, struct iov_iter *from)
->  =09ret =3D generic_write_checks(iocb, from);
->  =09if (ret <=3D 0)
->  =09=09goto unlock;
-> +=09if (unlikely(IS_IMMUTABLE(inode))) {
-> +=09=09ret =3D -EPERM;
-> +=09=09goto unlock;
-> +=09}
->  =09ret =3D file_remove_privs(file);
->  =09if (ret)
->  =09=09goto unlock;
-> @@ -5286,6 +5309,7 @@ static const struct super_operations shmem_ops =3D =
-{
->  static const struct vm_operations_struct shmem_vm_ops =3D {
->  =09.fault=09=09=3D shmem_fault,
->  =09.map_pages=09=3D filemap_map_pages,
-> +=09.page_mkwrite=09=3D shmem_page_mkwrite,
->  #ifdef CONFIG_NUMA
->  =09.set_policy     =3D shmem_set_policy,
->  =09.get_policy     =3D shmem_get_policy,
-> @@ -5295,6 +5319,7 @@ static const struct vm_operations_struct shmem_vm_o=
-ps =3D {
->  static const struct vm_operations_struct shmem_anon_vm_ops =3D {
->  =09.fault=09=09=3D shmem_fault,
->  =09.map_pages=09=3D filemap_map_pages,
-> +=09.page_mkwrite=09=3D shmem_page_mkwrite,
->  #ifdef CONFIG_NUMA
->  =09.set_policy     =3D shmem_set_policy,
->  =09.get_policy     =3D shmem_get_policy,
-> --=20
-> 2.39.5
----1463770367-921943916-1765253696=:4936--
 
