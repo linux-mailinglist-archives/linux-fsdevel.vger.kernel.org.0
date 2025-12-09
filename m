@@ -1,154 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-71009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AAAECAF453
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 09:22:36 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6959FCAF649
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 10:07:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 55A55302BA81
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 08:22:28 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 528CC304A8E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 09:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD59B241663;
-	Tue,  9 Dec 2025 08:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EC62BEC45;
+	Tue,  9 Dec 2025 09:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NelE4Ik/"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="FYC8GaOo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B0F223DD4
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 08:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BF9279346;
+	Tue,  9 Dec 2025 09:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765268547; cv=none; b=HdEmroCJl1BbVAMvOCtiLhFL7RT0OJe1W4m19Zv2Raqk8/CaKdSFaDKGQxOdf9ZahVBDatvmdsDPt1dmKx+taTbSXA25qhWTvrQpmmG7sP3h544LA94Temk1z4yebQ8jnne74yNBNruabJeX28YtEUSosYwz1WnuqYBn8rTTU9M=
+	t=1765271238; cv=none; b=PlbzFAH+BgbZa3VMASdyoojQY1NyRR/avLZT0GVK+2EabQDvy68+76IGSVrE/aTwDAP0/wR35BbbCUsan+MTF6rlXVh879p+4yHbH5dt3giTY9ioKsdE1S33upbRISuOSv18sh9OJCYGN1q8sVpT491ZHX0d87HUWhipLc8L558=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765268547; c=relaxed/simple;
-	bh=m8rAK2sGLKSUfcikExD+0h/G3ii59vVBq316dCqsPBE=;
+	s=arc-20240116; t=1765271238; c=relaxed/simple;
+	bh=+vvS6uB9qILJpmRoFLknOzf02bILDrbVIvhNyZVXE98=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jLd6KPF0dbpzSvDVgxgt8597jE7biZM1i7XgNnxvUbJTBWgj0vVJXOn3d4OhCHPSwRqwuwHi393yKgwf13rjRXodn1iwnixU4DS61GM1einhcuFht2kKwUrk4+MUz2RCvfxeO7sMM1XRgob14ryvIr9c6SkR6zX0aEnB/91XdUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NelE4Ik/; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b735e278fa1so902845766b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Dec 2025 00:22:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765268544; x=1765873344; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fimG7EUbly/WUwljyphW/JFdJh4kklZTK2GR/3AFZ2I=;
-        b=NelE4Ik/y72V0Jpyji0hYE0VgP461unGstXGUr81Lx2px4SD5aFpKemPfVHVJVPXwI
-         CvatqfkhsANQyCCA6lojk46Et/N++bUuNX+2S4Fvjk9eJBmKnIIpqzmSXyyLNSKm5+6k
-         8BwX3mKG64JFyDevO/IOGic6VrRH8kbIpEXqX1zkIFqX5XieaFAgiKfIc3X/q/gULVMx
-         d/mdXquUdKVJAtH+bpjme0a0LfciuFLEspjOLQhcXFkAwWniLrjW++TteW6ncHcj0aSq
-         Ax8B4NgNJXowVOKvCK1fgfuPAFZUO1er+WuJhifyQ4vmQ1KqYFV7driRS2ypv5CVSkRk
-         cunw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765268544; x=1765873344;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fimG7EUbly/WUwljyphW/JFdJh4kklZTK2GR/3AFZ2I=;
-        b=m9CbiXXH+MgA/kSjcBgM9pD+/D32/bQ75u1Xhyy9fjBG9TXt8QTIvek4ptzb3Dg8eZ
-         dmnkTtH2o5eNWsJTOuwwSVqR4Np8BfeiQ4W2tm/I4XABR+4nw7Q6BNNysgGLXNUda86E
-         1sGpjA2ZC+twfzMb0t3Jg1Rvq0LNIw0p8GFqja1TrQVMnwQ+G2VYfwi4UBTtidj06Ceu
-         QmSc3N395Q19wPnaol1baP7kmCpumuacqN61/hoOF2LqXtlsZkAVlCWKhFIMJv4Qlq/y
-         RkvXkCCISRKxwM7ULMQBxDjSUI0Y+5U3bMSfh9OG5tTjDTTEEr3ocRo4ZK7dpC+ZxTY6
-         vQpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUID7Sqjy3wbdWg90RP0gCVY1ILycecDQ//ATY8yi9TvJM2pwohbeaixqqrf7mgZk0dtbiVcoxO7hclOiWh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCe3qzNlnZ5R2fCkA8193gGz/n/zOSuRlOuuCQvufJ9FCmSatE
-	4ddeFNM+Hv3Z1YNqLTJJrmbFprmUMLb0CkA6KRrfpH3qX9t9mkgI5hgs
-X-Gm-Gg: ASbGncs4F8ZXvBVu40291irbyTjhGNtV0U4Du/UdfBlrhoi/P2E+/OXMdt7Ab6zrvKi
-	7qKTDV4irCdKf9mYmCqH5/mi2Eby+EONRHZ1uINAJk50XSKJK0X+MTlicUukCTQRIoUt375V1qX
-	FvAJjeC0QyU7ogSVjwXiepKR6uxr/uf+Yl4WZzLlBnU8CUVRj0LqRRlkvJkkB9rxFh/rKAIFuaZ
-	fRjytHVzCE5uC/NQ/9W36I/AxvNXcoJ7M/WJA5lSdfz3UE4eZjRekE4Jn8gFN7DB8s8zVNtiUbf
-	XhZDAkyWd9VvmAuemA2ohNcRR4VSwsEjYTquA8sEkKL5KOg3NE0eSku7nb86ANW6qNbr2cH2ETO
-	h7IocDQ5ncIsAcDX/dkR563NuEmXJTCUKF6o5r3+7kQx6rKpHsQjg/PBaYVLn377uUHRt0CvdK/
-	kJLgr0OKLcWu8aChJNjT+UEtXYWIjDax0FZ9sjjoNEGmRclWVOnwGjAB/m
-X-Google-Smtp-Source: AGHT+IGyEYt6MFLpPBTDrhxQ34rHeZ/+6rnj0Pplvp+x9ISQW6UcbtjrIYah0DXraN2FohVIK4at3g==
-X-Received: by 2002:a17:907:3c93:b0:b73:5936:77fc with SMTP id a640c23a62f3a-b7a242d4a9dmr1031948466b.13.1765268543652;
-        Tue, 09 Dec 2025 00:22:23 -0800 (PST)
-Received: from f (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b79f44d3db6sm1333051766b.29.2025.12.09.00.22.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Dec 2025 00:22:22 -0800 (PST)
-Date: Tue, 9 Dec 2025 09:22:10 +0100
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] file: Call security_file_alloc() after initializing the
- filp
-Message-ID: <dpuld3qyyl6kan2jsigftmuhrqee2htjfmlytvnr55x37wy3eb@jkutc2k4zkfm>
-References: <20251209075347.31161-1-tianjia.zhang@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U3xTzpD93CKg/uXkse/fLwXmrICkuuELTmDcHQpA0j7wPGbC2H61Fcna9Xut67nEuQza8xwjlEMjtF18VchHKv2aqGjQY0p0w8d1kPhOy6Ae8bd5nHInWRqUaPv9ZvZiXKLwQrTLaPVqd6dwlNVngEyVmrVh4SaNvzvwOPnA9uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=FYC8GaOo; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fizB+0yNY0BnePfD/xX8vlrzcfWK6BoKAu35ymnUdP4=; b=FYC8GaOoGs4/UorsgZWpRyEFN3
+	vRg6Iki2lf8B7RCaspbHtDR0iK/SYl53JI/KvvSNMyK+UV13DFRwlWySW37kWeth8FmMclHtWEU6Y
+	MUWftN/dWCo87jHk0BUXKqOQdX4w/FjMqSL/oBnsCKAqOhG+Ji6dmm2Oz4uYashm8R0Z4tcoMXLu+
+	StrzWCzkiLnuzncscyONt+7WoJnKd6dvfuOTC80/i4PRipQGdC0PBWr4CVdGwd7s5NU9zyW6ElAzR
+	Q7MHaGv5gyEw5s2ZHWQb2uFp2H7SUg7k1Hrfbd5NddtFi7ctrh9O6lhFc7iPmCs7FxqQtvGPG7dGU
+	hpknsSTA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vStgZ-00000004ReG-2Nl6;
+	Tue, 09 Dec 2025 09:07:07 +0000
+Date: Tue, 9 Dec 2025 09:07:07 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Arnd Bergmann <arnd@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Gatlin Newhouse <gatlin.newhouse@gmail.com>,
+	Hao Luo <haoluo@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Jakub Sitnicki <jakub@cloudflare.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Jason Wang <jasowang@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, KP Singh <kpsingh@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Marc Herbert <Marc.Herbert@linux.intel.com>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>,
+	Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+	NeilBrown <neil@brown.name>, Peter Zijlstra <peterz@infradead.org>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Shuah Khan <shuah@kernel.org>, Song Liu <song@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Ye Bin <yebin10@huawei.com>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Yufeng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org,
+	virtualization@lists.linux.dev, x86@kernel.org
+Subject: Re: [GIT PULL] __auto_type conversion for v6.19-rc1
+Message-ID: <20251209090707.GV1712166@ZenIV>
+References: <20251208235528.3670800-1-hpa@zytor.com>
+ <20251209002519.GT1712166@ZenIV>
+ <43CDF85F-800F-449C-8CA6-F35BEC88E18E@zytor.com>
+ <20251209032206.GU1712166@ZenIV>
+ <87F4003B-5011-49EF-A807-CEA094EA0DAC@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251209075347.31161-1-tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <87F4003B-5011-49EF-A807-CEA094EA0DAC@zytor.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Dec 09, 2025 at 03:53:47PM +0800, Tianjia Zhang wrote:
-> When developing a dedicated LSM module, we need to operate on the
-> file object within the LSM function, such as retrieving the path.
-> However, in `security_file_alloc()`, the passed-in `filp` is
-> only a valid pointer; the content of `filp` is completely
-> uninitialized and entirely random, which confuses the LSM function.
-> 
+On Mon, Dec 08, 2025 at 07:28:53PM -0800, H. Peter Anvin wrote:
 
-I take it you have some underlying routine called by other hooks as well
-which ends up looking at ->f_path.
+> Yeah... the C committee even admitted they botched the spec; the intent was for it to work "exactly like gcc __auto_type"...
 
-Given that f_path *is not valid* to begin with, memsetted or not, your
-file_alloc_security hoook should not be looking at it to begin with.
+BTW, speaking of C23 fun that is supported by gcc 8, but not by sparse:
+__has_include().
 
-So I don't think this patch has merit.
+Do we want it?  At the moment nothing in the kernel is using that thing.
+The main case for that would be <asm/something_optional.h>, and mostly
+it's dealt with by dummy asm-generic/something_optional.h and mandatory-y
+in asm-generic/Kbuild, but there are at least some cases where we have
+it guarded by ifdef, a-la
+#ifdef CONFIG_ARCH_HAS_ELFCORE_COMPAT
+#include <asm/elfcore-compat.h>
+#endif
 
-> Therefore, it is necessary to call `security_file_alloc()` only
-> after the main fields of the `filp` object have been initialized.
-> This patch only moves the call to `security_file_alloc()` to the
-> end of the `init_file()` function.
-> 
-> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> ---
->  fs/file_table.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index 81c72576e548..e66531a629aa 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -156,11 +156,6 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
->  	int error;
->  
->  	f->f_cred = get_cred(cred);
-> -	error = security_file_alloc(f);
-> -	if (unlikely(error)) {
-> -		put_cred(f->f_cred);
-> -		return error;
-> -	}
->  
->  	spin_lock_init(&f->f_lock);
->  	/*
-> @@ -202,6 +197,14 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
->  	 * They may be enabled later by fsnotify_open_perm_and_set_mode().
->  	 */
->  	file_set_fsnotify_mode(f, FMODE_NONOTIFY_PERM);
-> +
-> +	error = security_file_alloc(f);
-> +	if (unlikely(error)) {
-> +		mutex_destroy(&f->f_pos_lock);
-> +		put_cred(f->f_cred);
-> +		return error;
-> +	}
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.39.5 (Apple Git-154)
-> 
+Linus?  Seeing that I'm touching pre-process.c anyway for the sake of
+__VA_OPT__, adding that thing ought to be reasonably easy - a bit of
+work in expression_value(), the tricky part being where to stop the
+scan: __has_include(< => scan to > and demand ) after it,
+__has_include(string literal => demand ) after it,
+__has_include(anything else => scan to matching ), and expand the
+collected tokens.  The same dodge we use for #include ("anything
+potentially fishy in header-name and it's an UB, so one can
+simulate it with other pp-tokens") works here...
 
