@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-70988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E496CAE876
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 01:30:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC6E6CAE8B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 01:33:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EA11A30E33B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 00:27:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 811FD308D59E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 00:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC4523EABA;
-	Tue,  9 Dec 2025 00:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769DD2798E6;
+	Tue,  9 Dec 2025 00:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEaOhwwg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUFD0ToG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81EE23C8C7;
-	Tue,  9 Dec 2025 00:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE703278779;
+	Tue,  9 Dec 2025 00:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765239443; cv=none; b=OUveOBMNzcdOdvHKXHhcBXthFeVmdF/bLmnbg9C78EMSazpHalXfLFe4Act8kp8icfy6zihfOiR1DasVKCxHHn//ntLRsRZkTJR3SuZQGSH7ZkS/AAqZD68i7rUeF8oDbC7AU9EAhccWQ5S+CiEZBgRzm1aAT0rJPTW1sYdaoFc=
+	t=1765239456; cv=none; b=KVw48/e1GmZRiVMHHyLn8yJHPvcOsTYmhGmIcJ8VhnwqLqEbZQkml4rSk7R3seZf1vKClEP3LSQhojIXMXzdAhfLG7RWDDMtw5lgonWeoRAGVEWLuWg+mhFS6fKvgr5yN+ajWQG/spWhwZ4dDeaZ9LixVGog2NrNj9rLGEUsyNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765239443; c=relaxed/simple;
-	bh=Lelg716SCuCBRQsIrBzYR0/pjER/M5f4vAd3JX5ZAFA=;
+	s=arc-20240116; t=1765239456; c=relaxed/simple;
+	bh=admMQtYCVz6g90Ou1lb7Q8ggJA+uThCwY4OsdYTSnH0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WPiQEwUk34va2E5THGDCDRzlIba/3YZQyd4WmRSNb/yw9kvZTKZ9/dpNlcq2Ch2mQmkI1MJpunm3bF06OX6tJcpuqdpsyaKrgpA48CxFEq+w9tVUvKX4qD9NuAzwGAQdLBdm8ZsqkTlJGUhKsHn2NxE8fM5Xrde+MvPsyB1mWHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEaOhwwg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B87DCC4CEF1;
-	Tue,  9 Dec 2025 00:17:21 +0000 (UTC)
+	 MIME-Version; b=s7grMA70QuBqzD0F+9lAOFgiaee+G53HuiUP0AOFhYH5gikYbqx9Kah9Kq3BZYf4Bodye+t/yE9/WJjWW/WOkJaJYbpue+cnWNjDgohgKfYEX83HRX7Z6DfK0jhn5oQg89r8t7WeJwd47jfgoJoZ5lj/nifEIe0abfoe0PcmEbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUFD0ToG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065F0C4CEF1;
+	Tue,  9 Dec 2025 00:17:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765239443;
-	bh=Lelg716SCuCBRQsIrBzYR0/pjER/M5f4vAd3JX5ZAFA=;
+	s=k20201202; t=1765239456;
+	bh=admMQtYCVz6g90Ou1lb7Q8ggJA+uThCwY4OsdYTSnH0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZEaOhwwgeORzGhDVMKzC7F9iHJ3wOtrZgcjclzlGh+4KHCxRqhlx8jj0EjVEttwGL
-	 UpK13aMef6J7xSxwdBisiEtrrIi3AxmyJBuyYuLwyi+mKptDLFUbuyiX8TeWExRzY4
-	 fMMSTL1v707mj/eEVVE/lm3ztAhHI7aGSH1UBbhBKi9LgxDGjSqT/RXQarM9lQ5VhN
-	 2rNKSulLhtQ4EvkSYwiXXj1EkCmHu8deoW0S3U+K794kXTUhbnItXDD6saeJ8QZbjl
-	 +T7UuiTIIHmAmYjDlYcIxYrk5Ce5+ur4luraczhV6lUPXBtOMP1erq71CHYhIg0Cl0
-	 uqf3K+l6XOGhw==
+	b=eUFD0ToGqW1o/lm6So+fpjskd9jhA8/dUkOqzV23LT2yhtNi2dga2TokR+WbRx/ls
+	 XGtBhGDrauhOB6au+l5ZyCGZZIwPniDs6WxmAk5uw1JX9jBGL8OTgkOnJZwdZsEZwI
+	 xsAIQMwXJrhdDeoWnUWPP7ovCPWFcN5/+yiKnU/s/ZVU4mpGyDaYf4Ow5idoFTYwIL
+	 Uk2/APEpw/y0snaWjJa+cNFunn3RoOIPROOJKfg0Fup/1haw1ShGrdHXrGRF0s+4Rv
+	 dR49JMIjv96yBquZeh7JxdyY11Vs519P07FGVDXb2EyAWw70hrbmEeT9DOC4suO9D7
+	 /gXIJVM4lAtuA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>,
+Cc: Yang Chenzhi <yang.chenzhi@vivo.com>,
+	syzbot+005d2a9ecd9fbf525f6a@syzkaller.appspotmail.com,
 	Viacheslav Dubeyko <slava@dubeyko.com>,
 	Sasha Levin <sashal@kernel.org>,
 	frank.li@vivo.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] hfsplus: Verify inode mode when loading from disk
-Date: Mon,  8 Dec 2025 19:15:14 -0500
-Message-ID: <20251209001610.611575-22-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.10] hfsplus: fix missing hfs_bnode_get() in __hfs_bnode_create
+Date: Mon,  8 Dec 2025 19:15:19 -0500
+Message-ID: <20251209001610.611575-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251209001610.611575-1-sashal@kernel.org>
 References: <20251209001610.611575-1-sashal@kernel.org>
@@ -63,244 +63,198 @@ MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.18
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Yang Chenzhi <yang.chenzhi@vivo.com>
 
-[ Upstream commit 005d4b0d33f6b4a23d382b7930f7a96b95b01f39 ]
+[ Upstream commit 152af114287851583cf7e0abc10129941f19466a ]
 
-syzbot is reporting that S_IFMT bits of inode->i_mode can become bogus when
-the S_IFMT bits of the 16bits "mode" field loaded from disk are corrupted.
+When sync() and link() are called concurrently, both threads may
+enter hfs_bnode_find() without finding the node in the hash table
+and proceed to create it.
 
-According to [1], the permissions field was treated as reserved in Mac OS
-8 and 9. According to [2], the reserved field was explicitly initialized
-with 0, and that field must remain 0 as long as reserved. Therefore, when
-the "mode" field is not 0 (i.e. no longer reserved), the file must be
-S_IFDIR if dir == 1, and the file must be one of S_IFREG/S_IFLNK/S_IFCHR/
-S_IFBLK/S_IFIFO/S_IFSOCK if dir == 0.
+Thread A:
+  hfsplus_write_inode()
+    -> hfsplus_write_system_inode()
+      -> hfs_btree_write()
+        -> hfs_bnode_find(tree, 0)
+          -> __hfs_bnode_create(tree, 0)
 
-Reported-by: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-Link: https://developer.apple.com/library/archive/technotes/tn/tn1150.html#HFSPlusPermissions [1]
-Link: https://developer.apple.com/library/archive/technotes/tn/tn1150.html#ReservedAndPadFields [2]
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Thread B:
+  hfsplus_create_cat()
+    -> hfs_brec_insert()
+      -> hfs_bnode_split()
+        -> hfs_bmap_alloc()
+          -> hfs_bnode_find(tree, 0)
+            -> __hfs_bnode_create(tree, 0)
+
+In this case, thread A creates the bnode, sets refcnt=1, and hashes it.
+Thread B also tries to create the same bnode, notices it has already
+been inserted, drops its own instance, and uses the hashed one without
+getting the node.
+
+```
+
+	node2 = hfs_bnode_findhash(tree, cnid);
+	if (!node2) {                                 <- Thread A
+		hash = hfs_bnode_hash(cnid);
+		node->next_hash = tree->node_hash[hash];
+		tree->node_hash[hash] = node;
+		tree->node_hash_cnt++;
+	} else {                                      <- Thread B
+		spin_unlock(&tree->hash_lock);
+		kfree(node);
+		wait_event(node2->lock_wq,
+			!test_bit(HFS_BNODE_NEW, &node2->flags));
+		return node2;
+	}
+```
+
+However, hfs_bnode_find() requires each call to take a reference.
+Here both threads end up setting refcnt=1. When they later put the node,
+this triggers:
+
+BUG_ON(!atomic_read(&node->refcnt))
+
+In this scenario, Thread B in fact finds the node in the hash table
+rather than creating a new one, and thus must take a reference.
+
+Fix this by calling hfs_bnode_get() when reusing a bnode newly created by
+another thread to ensure the refcount is updated correctly.
+
+A similar bug was fixed in HFS long ago in commit
+a9dc087fd3c4 ("fix missing hfs_bnode_get() in __hfs_bnode_create")
+but the same issue remained in HFS+ until now.
+
+Reported-by: syzbot+005d2a9ecd9fbf525f6a@syzkaller.appspotmail.com
+Signed-off-by: Yang Chenzhi <yang.chenzhi@vivo.com>
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Link: https://lore.kernel.org/r/04ded9f9-73fb-496c-bfa5-89c4f5d1d7bb@I-love.SAKURA.ne.jp
+Link: https://lore.kernel.org/r/20250829093912.611853-1-yang.chenzhi@vivo.com
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## Analysis of hfsplus: Verify inode mode when loading from disk
+## Analysis Summary
 
 ### 1. COMMIT MESSAGE ANALYSIS
 
-**Key indicators:**
-- **Reported-by: syzbot** - This is a real bug found by automated
-  fuzzing
-- **Closes:** link to syzkaller bug report confirms this is a genuine
-  issue
-- **Reviewed-by:** present from the HFS+ maintainer (Viacheslav Dubeyko)
-- **No "Cc: stable@vger.kernel.org"** tag
-- **No "Fixes:" tag** - bug appears to exist since original HFS+
-  implementation
+**Subject:** "hfsplus: fix missing hfs_bnode_get() in
+__hfs_bnode_create"
 
-The commit describes that corrupted S_IFMT bits in the on-disk "mode"
-field can cause inode->i_mode to become bogus when loaded from disk. The
-commit message references Apple technical documentation explaining the
-expected values for the mode field.
+**Key signals:**
+- Clear "fix" keyword indicating bug fix
+- Reported-by syzbot - reproducible crash bug
+- Detailed race condition explanation with call stacks
+- References identical HFS fix from 2022 (commit a9dc087fd3c4)
+- No explicit `Cc: stable` tag, but no `Fixes:` tag either since the bug
+  exists from the file's creation
 
 ### 2. CODE CHANGE ANALYSIS
 
-The fix modifies `hfsplus_get_perms()` in two ways:
+**The Bug:** When `sync()` and `link()` are called concurrently, both
+threads may race into `__hfs_bnode_create()`:
+- Thread A creates a bnode with `refcnt=1` and inserts it into the hash
+  table
+- Thread B finds the hash table entry, but returns the node **without
+  incrementing refcnt**
+- Both threads believe they own a reference, but only one reference
+  exists
+- When both call `hfs_bnode_put()`, the second call triggers:
+  `BUG_ON(!atomic_read(&node->refcnt))`
 
-**a) Adds validation logic (the core fix):**
+**The Fix:** Single line addition at `fs/hfsplus/bnode.c:484`:
 ```c
-if (dir) {
-    if (mode && !S_ISDIR(mode))
-        goto bad_type;
-} else if (mode) {
-    switch (mode & S_IFMT) {
-    case S_IFREG:
-    case S_IFLNK:
-    case S_IFCHR:
-    case S_IFBLK:
-    case S_IFIFO:
-    case S_IFSOCK:
-        break;
-    default:
-        goto bad_type;
-    }
-}
+} else {
++    hfs_bnode_get(node2);   // <-- Missing refcount increment added
+     spin_unlock(&tree->hash_lock);
+     kfree(node);
 ```
-This validates that:
-- For directories (`dir=1`): mode must be 0 or actually be a directory
-  type
-- For files (`dir=0`): mode must be 0 or one of the valid file types
-  (regular, symlink, char/block device, FIFO, socket)
 
-**b) Changes return type from `void` to `int`:**
-- Returns -EIO on invalid mode with an error message
-- Callers (`hfsplus_cat_read_inode`) now check the return value and
-  propagate errors
-
-**Root cause:** The original code blindly trusted the mode field from
-disk without validating that the S_IFMT bits are consistent with the
-directory flag.
+**Why it's correct:** `hfs_bnode_get()` simply does
+`atomic_inc(&node->refcnt)` (line 658), ensuring correct reference
+counting when reusing a shared bnode.
 
 ### 3. CLASSIFICATION
 
-- **Type:** Bug fix (input validation)
-- **Security relevance:** Yes - crafted filesystem images could trigger
-  this
-- **Category:** Filesystem robustness/hardening against corrupted data
+- **Bug fix:** YES - fixes a crash (BUG_ON kernel panic)
+- **Feature addition:** NO
+- **Security consideration:** Crash can be triggered by normal
+  operations - potential DoS vector
 
 ### 4. SCOPE AND RISK ASSESSMENT
 
-| Aspect | Assessment |
-|--------|------------|
-| Lines changed | ~30+ additions, moderate size |
-| Files touched | 1 file (fs/hfsplus/inode.c) |
-| Complexity | Low - straightforward validation logic |
-| Regression risk | **LOW** - only rejects clearly invalid data |
+| Metric | Value |
+|--------|-------|
+| Lines changed | 1 |
+| Files touched | 1 |
+| Complexity | Very low |
+| Subsystem | HFS+ filesystem |
+| Regression risk | Very low |
 
-The validation is conservative and follows Apple's official HFS+
-specification. It only rejects modes that are definitively wrong.
+The fix is a **single function call** that mirrors a proven fix from HFS
+(commit a9dc087fd3c4) that has been stable since December 2022.
 
 ### 5. USER IMPACT
 
-- **Affected users:** Those mounting HFS+ filesystems (macOS external
-  drives, dual-boot setups)
-- **Trigger:** Mounting a corrupted or maliciously crafted HFS+
-  filesystem image
-- **Impact of bug:** Bogus inode mode can lead to undefined kernel
-  behavior when processing the inode
-- **Impact of fix:** Graceful rejection with -EIO instead of corrupted
-  internal state
+- **Affected users:** Anyone using HFS+ filesystems (common for Mac disk
+  compatibility, external drives, dual-boot systems)
+- **Trigger condition:** Concurrent sync() and link() operations - can
+  occur in normal workloads
+- **Severity:** **KERNEL CRASH** (BUG_ON triggers panic)
 
 ### 6. STABILITY INDICATORS
 
-- Reviewed by subsystem maintainer ✓
-- Clean, standalone fix with no dependencies ✓
-- The modified functions exist in older stable kernels ✓
-- No unusual code patterns or risky constructs ✓
+- **syzbot reported:** Bug is reproducible
+- **Maintainer signed:** Yes (Viacheslav Dubeyko, HFS+ maintainer)
+- **LKML link:** Present
+- **Precedent:** Identical fix applied to HFS in 2022 with no
+  regressions
 
 ### 7. DEPENDENCY CHECK
 
-This is a standalone fix. The `hfsplus_get_perms` and
-`hfsplus_cat_read_inode` functions exist in all stable trees where HFS+
-is supported.
+- **Dependencies:** None - completely self-contained
+- **Applies to stable:** The affected code pattern has existed unchanged
+  for many years in stable trees
 
----
+## Final Assessment
 
-## Summary
+**This commit should be backported to stable kernels.**
 
-**What it fixes:** Prevents corrupted or maliciously crafted HFS+
-filesystem images from causing bogus inode modes to be loaded into the
-kernel.
+**Rationale:**
+1. **Fixes a real crash** - BUG_ON triggers kernel panic in a
+   reproducible race condition
+2. **Minimal and surgical** - Single line change adding one function
+   call
+3. **Obviously correct** - Adds missing reference count increment,
+   matching HFS pattern
+4. **Proven safe** - Identical fix in HFS has been stable for 2+ years
+5. **No dependencies** - Will apply cleanly to all stable kernels
+6. **Real user impact** - HFS+ is commonly used for Mac disk
+   compatibility
 
-**Why it matters for stable:** This is a defensive fix that prevents
-accepting corrupted data, which could lead to undefined behavior. syzbot
-found this bug, indicating it can be triggered by crafted input - a
-potential security concern.
-
-**Meets stable criteria:**
-- ✓ Obviously correct (validates according to Apple's HFS+
-  specification)
-- ✓ Fixes a real bug that affects users (syzbot found it with crafted
-  images)
-- ✓ Small and contained (single file, ~30 lines of validation)
-- ✓ Low regression risk (only rejects clearly invalid data)
-- ✗ No explicit stable tag (author didn't request it)
-
-**Risk vs Benefit:**
-- **Risk:** Very low - adds validation that only rejects invalid data
-- **Benefit:** Prevents kernel from operating on corrupted inode modes
-  from crafted/corrupted filesystems
-
-The lack of explicit stable tags suggests the author may not have
-intended this for stable, but the fix clearly meets stable criteria as a
-filesystem robustness fix against corrupted input. Filesystem fixes for
-handling crafted/corrupted data are generally appropriate for stable
-trees.
+The lack of explicit `Cc: stable` tag does not preclude backporting when
+all other stable criteria are clearly met. This is a textbook case of a
+small, obviously correct fix for a real crash bug.
 
 **YES**
 
- fs/hfsplus/inode.c | 32 ++++++++++++++++++++++++++++----
- 1 file changed, 28 insertions(+), 4 deletions(-)
+ fs/hfsplus/bnode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index b51a411ecd237..e290e417ed3a7 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -180,13 +180,29 @@ const struct dentry_operations hfsplus_dentry_operations = {
- 	.d_compare    = hfsplus_compare_dentry,
- };
- 
--static void hfsplus_get_perms(struct inode *inode,
--		struct hfsplus_perm *perms, int dir)
-+static int hfsplus_get_perms(struct inode *inode,
-+			     struct hfsplus_perm *perms, int dir)
- {
- 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(inode->i_sb);
- 	u16 mode;
- 
- 	mode = be16_to_cpu(perms->mode);
-+	if (dir) {
-+		if (mode && !S_ISDIR(mode))
-+			goto bad_type;
-+	} else if (mode) {
-+		switch (mode & S_IFMT) {
-+		case S_IFREG:
-+		case S_IFLNK:
-+		case S_IFCHR:
-+		case S_IFBLK:
-+		case S_IFIFO:
-+		case S_IFSOCK:
-+			break;
-+		default:
-+			goto bad_type;
-+		}
-+	}
- 
- 	i_uid_write(inode, be32_to_cpu(perms->owner));
- 	if ((test_bit(HFSPLUS_SB_UID, &sbi->flags)) || (!i_uid_read(inode) && !mode))
-@@ -212,6 +228,10 @@ static void hfsplus_get_perms(struct inode *inode,
- 		inode->i_flags |= S_APPEND;
- 	else
- 		inode->i_flags &= ~S_APPEND;
-+	return 0;
-+bad_type:
-+	pr_err("invalid file type 0%04o for inode %lu\n", mode, inode->i_ino);
-+	return -EIO;
- }
- 
- static int hfsplus_file_open(struct inode *inode, struct file *file)
-@@ -516,7 +536,9 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
- 		}
- 		hfs_bnode_read(fd->bnode, &entry, fd->entryoffset,
- 					sizeof(struct hfsplus_cat_folder));
--		hfsplus_get_perms(inode, &folder->permissions, 1);
-+		res = hfsplus_get_perms(inode, &folder->permissions, 1);
-+		if (res)
-+			goto out;
- 		set_nlink(inode, 1);
- 		inode->i_size = 2 + be32_to_cpu(folder->valence);
- 		inode_set_atime_to_ts(inode, hfsp_mt2ut(folder->access_date));
-@@ -545,7 +567,9 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
- 
- 		hfsplus_inode_read_fork(inode, HFSPLUS_IS_RSRC(inode) ?
- 					&file->rsrc_fork : &file->data_fork);
--		hfsplus_get_perms(inode, &file->permissions, 0);
-+		res = hfsplus_get_perms(inode, &file->permissions, 0);
-+		if (res)
-+			goto out;
- 		set_nlink(inode, 1);
- 		if (S_ISREG(inode->i_mode)) {
- 			if (file->permissions.dev)
+diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
+index 63e652ad1e0de..63768cf0cb1ba 100644
+--- a/fs/hfsplus/bnode.c
++++ b/fs/hfsplus/bnode.c
+@@ -481,6 +481,7 @@ static struct hfs_bnode *__hfs_bnode_create(struct hfs_btree *tree, u32 cnid)
+ 		tree->node_hash[hash] = node;
+ 		tree->node_hash_cnt++;
+ 	} else {
++		hfs_bnode_get(node2);
+ 		spin_unlock(&tree->hash_lock);
+ 		kfree(node);
+ 		wait_event(node2->lock_wq,
 -- 
 2.51.0
 
