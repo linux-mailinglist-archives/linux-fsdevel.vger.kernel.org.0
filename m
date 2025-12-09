@@ -1,157 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-71013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC763CAFBE7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 12:18:11 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 249E6CAFC08
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 12:23:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D03A530146E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 11:18:10 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3BBB1301AD31
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 11:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5145B2F9DB0;
-	Tue,  9 Dec 2025 11:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C5D312813;
+	Tue,  9 Dec 2025 11:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Zdr/So3P";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sjXMggqj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Zdr/So3P";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sjXMggqj"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Sr97gI/Q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XAQRfhEo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FWY7cIit";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xV8BsoR+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1949C270EC1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 11:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765503016F4
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 11:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765279089; cv=none; b=rUBa0FXJ/vWMCfQId2ks1wTpZVSQCrwd0pzQW4/1Lp5rEJ4WIOE6+vyReQNCrC/8OwL4ZdZ/BzldIKEuyT8HT74Gcz73nuzP1OO1suzhbLya8jYcwMX2p7PQYQAXW+yUQ4KNGcIU7XaAX9y8aHMQ1VRIBq7lYz7gdvFo4qRdDkY=
+	t=1765279402; cv=none; b=S17IdrPbwn/ywh73hBygms+2kk4LG4uPtGK+hbyb0Fch7BO6seGXmgvgKFMGUWv18GyTLC3usHvc1y+tGk6dLhJGhHuJ0/Coi6ZEcXDZyQia1wPL4NW84l0VpHidiX2ggiSSJn3oRzSIl13XqWafbxNMEqozuBaEZHRSjPlmXuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765279089; c=relaxed/simple;
-	bh=yCJiACRnyIPQQWDzQnMwgqJXsScAMy4pWZZYPrPonIQ=;
+	s=arc-20240116; t=1765279402; c=relaxed/simple;
+	bh=kfs23jTHuW89ilzPwuGY+V1SlF21/Pwdqr6+D24Gn4s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fsNidgrqs4oKwhyVgXOXVRu4XpQYJCDMPwfzevy+0OQgCNDen9kHC2xZBZUtgqoK79DMPWQYNEyDNWq7MTYmXEkHypdQqRvLTX/uBAQprMwjd76Uf6GX0/MlJ4QhQlDK0/s1FxDZJ6V2nafdLFbU5ZouBkqgRPgvpiCdSv5XEB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Zdr/So3P; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sjXMggqj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Zdr/So3P; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sjXMggqj; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=lxCxVen/ftCOF6pLWxws/N50H79wjAcbzVJ5YAdYf1lmLRB6v7nlKe+1Ka369JVdZEVusSbuqfbl3wJb0XUdCXvm8tsZv5cGrTx2K5E2IRG38b5W4B8Rrvlw467ShTS+b3hzDaDR3QksM8QJgIJtx8V8QLBRbgAaXhrWADMhfy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Sr97gI/Q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XAQRfhEo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FWY7cIit; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xV8BsoR+; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2DAFC5BD61;
-	Tue,  9 Dec 2025 11:18:06 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5027C337FD;
+	Tue,  9 Dec 2025 11:23:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765279086; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1765279397; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=a/IZ5yZBq6NhgU/7G6PZUJUqO+ErcbhOwLl4/QW4uKY=;
-	b=Zdr/So3P0iqxm+A6kJPVkypWx4QDHpLIrhcJEXH0rTefDif/y9wJpN435vMIBU2lNsEys9
-	/jCk+23xguroiRJ93PL0TVDmf9biXsqrH5WdDxCv75q0w7+Ocu5G5XaV8clC0armK1lTh9
-	BowE6tsfeid0SP6BQq7lle4bCHlk9QY=
+	bh=SnfWfbnxOA8jDoy4c1A37JRnqeADOSuWRpEm/SMpLIA=;
+	b=Sr97gI/QqNaOA/hrorptUM89pDVvB6iYzAel1iv6sdvYUknlXr8iApN20uGaF+CmU2VnFZ
+	3ZlGUaRAlG6cUeZScgB4roY4cfi8dwAenbmfe8AxBKRbYVsr0CMyEiSIG69YKjGoPXhk8d
+	kHaHCbfbM7tdr4Zpc68ybR1V0hp0K6g=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765279086;
+	s=susede2_ed25519; t=1765279397;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=a/IZ5yZBq6NhgU/7G6PZUJUqO+ErcbhOwLl4/QW4uKY=;
-	b=sjXMggqjgE3cvvOLNAHBZka7bdsRVshUh5iFbHrpf0vQUhqGxnNDZxveIcBGhvmdqx3IQ0
-	rNlrybFSNpJohMAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
+	bh=SnfWfbnxOA8jDoy4c1A37JRnqeADOSuWRpEm/SMpLIA=;
+	b=XAQRfhEo+BBljojzcmSIPXhLS8wix+zCwJQD+eHO++5B6cRkfGh4UWqeqnDMVpMKbzLoIC
+	T/GLRABB1eTEFDDg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=FWY7cIit;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=xV8BsoR+
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765279086; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1765279396; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=a/IZ5yZBq6NhgU/7G6PZUJUqO+ErcbhOwLl4/QW4uKY=;
-	b=Zdr/So3P0iqxm+A6kJPVkypWx4QDHpLIrhcJEXH0rTefDif/y9wJpN435vMIBU2lNsEys9
-	/jCk+23xguroiRJ93PL0TVDmf9biXsqrH5WdDxCv75q0w7+Ocu5G5XaV8clC0armK1lTh9
-	BowE6tsfeid0SP6BQq7lle4bCHlk9QY=
+	bh=SnfWfbnxOA8jDoy4c1A37JRnqeADOSuWRpEm/SMpLIA=;
+	b=FWY7cIitUFzH0zGDLz/7xDHRiH8pxfyQ851jxLmEoygd+RDyPb3ghh9tT58KywHU+eWdHO
+	hPZMnVrPMO9ZfvA9X7pZb80A3pWzRPwI1MPNds/Kh2ncD7awbJ+xqQ7KpqgviZPL3NdLrX
+	ny+e0aP9KcPc2EdFUwAvPZFRqxJ725Q=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765279086;
+	s=susede2_ed25519; t=1765279396;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=a/IZ5yZBq6NhgU/7G6PZUJUqO+ErcbhOwLl4/QW4uKY=;
-	b=sjXMggqjgE3cvvOLNAHBZka7bdsRVshUh5iFbHrpf0vQUhqGxnNDZxveIcBGhvmdqx3IQ0
-	rNlrybFSNpJohMAg==
+	bh=SnfWfbnxOA8jDoy4c1A37JRnqeADOSuWRpEm/SMpLIA=;
+	b=xV8BsoR+77xYOQtrwo1QTeML+fc+FVIG16lgQv6MbEaTtDlNOBm4XtLiffFrOG6O6s/pUu
+	rikA2Zfe5hWTvuBA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 211F53EA63;
-	Tue,  9 Dec 2025 11:18:06 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3C8BB3EA63;
+	Tue,  9 Dec 2025 11:23:16 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jX0NCG4FOGmgIAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 09 Dec 2025 11:18:06 +0000
+	id +L7BDqQGOGmhJQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 09 Dec 2025 11:23:16 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D0481A0A04; Tue,  9 Dec 2025 12:18:05 +0100 (CET)
-Date: Tue, 9 Dec 2025 12:18:05 +0100
+	id E4B12A0A04; Tue,  9 Dec 2025 12:23:11 +0100 (CET)
+Date: Tue, 9 Dec 2025 12:23:11 +0100
 From: Jan Kara <jack@suse.cz>
-To: Deepakkumar Karn <dkarn@redhat.com>
-Cc: djwong@kernel.org, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+e07658f51ca22ab65b4e@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, 
-	David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org
-Subject: Re: [PATCH v2] fs: add NULL check in drop_buffers() to prevent
- null-ptr-deref
-Message-ID: <enzq67rnekrh7gycgvgjc4g5ryt7qvuamaqj3ndpmns5svosa4@ozcepp4lpyls>
-References: <20251208193024.GA89444@frogsfrogsfrogs>
- <20251208201333.528909-1-dkarn@redhat.com>
+To: 
+	Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: send fsnotify_xattr()/IN_ATTRIB from
+ vfs_fileattr_set()/chattr(1)
+Message-ID: <n4xg7ncsvtey5wn6macx6nwt7x463uc4xqqcjaskvtpm227bzc@536xrtegrdq7>
+References: <iyvn6qjotpu6cei5jdtsoibfcp6l6rgvn47cwgaucgtucpfy2s@tarta.nabijaczleweli.xyz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251208201333.528909-1-dkarn@redhat.com>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <iyvn6qjotpu6cei5jdtsoibfcp6l6rgvn47cwgaucgtucpfy2s@tarta.nabijaczleweli.xyz>
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: 5027C337FD
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	MX_GOOD(-0.01)[];
 	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TAGGED_RCPT(0.00)[e07658f51ca22ab65b4e];
-	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim];
+	RCPT_COUNT_FIVE(0.00)[6];
 	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
 X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
 
-On Tue 09-12-25 01:43:33, Deepakkumar Karn wrote:
-> On Mon, 8 Dec 2025 11:30:24 -0800, Darrick J. Wong wrote:
-> > > drop_buffers() dereferences the buffer_head pointer returned by
-> > > folio_buffers() without checking for NULL. This leads to a null pointer
-> > > dereference when called from try_to_free_buffers() on a folio with no
-> > > buffers attached. This happens when filemap_release_folio() is called on
-> > > a folio belonging to a mapping with AS_RELEASE_ALWAYS set but without
-> > > release_folio address_space operation defined. In such case,
+On Mon 08-12-25 23:20:24, Ahelenia Ziemiańska wrote:
+> Currently it seems impossible to observe these changes to the file's
+> attributes. It's useful to be able to do this to see when the file
+> becomes immutable, for example, so emit IN_ATTRIB via fsnotify_xattr(),
+> like when changing other inode attributes.
 > 
-> > What user is that?  All the users of AS_RELEASE_ALWAYS in 6.18 appear to
-> > supply a ->release_folio.  Is this some new thing in 6.19?
-> 
-> AFS directories SET AS_RELEASE_ALWAYS but have not .release_folio.
+> Signed-off-by: Ahelenia Ziemiańska <nabijaczleweli@nabijaczleweli.xyz>
 
-AFAICS AFS sets AS_RELEASE_ALWAYS only for symlinks but not for
-directories? Anyway I agree AFS symlinks will have AS_RELEASE_ALWAYS but no
-.release_folio callback. And this looks like a bug in AFS because AFAICT
-there's no point in setting AS_RELEASE_ALWAYS when you don't have
-.release_folio callback. Added relevant people to CC.
+Thanks. Yes, I guess this makes sense. I've picked up the patch to my tree.
 
 								Honza
+
+> ---
+> Given:
+> 	#include <sys/inotify.h>
+> 	#include <unistd.h>
+> 	#include <stdio.h>
+> 	#include <limits.h>
+> 	int main() {
+> 		int fd = inotify_init();
+> 		inotify_add_watch(fd, ".", IN_ATTRIB);
+> 		char buf[sizeof(struct inotify_event) + NAME_MAX + 1];
+> 		for (;;) {
+> 			ssize_t rd = read(fd, buf, sizeof(buf));
+> 			struct inotify_event *ev = buf, *end = buf + rd;
+> 			while (ev < end) {
+> 				printf("%x\t%s\n", ev->mask, ev->name);
+> 				ev = (char *)(ev + 1) + ev->len;
+> 			}
+> 		}
+> 	}
+> 
+> Before:
+> 	sh-5.2# ./test &
+> 	[1] 255
+> 	sh-5.2# chmod -x test
+> 	4       test
+> 	sh-5.2# setfattr -n user.name -v value test
+> 	4       test
+> 	sh-5.2# chattr -i test
+> 	sh-5.2#
+> 
+> After:
+> 	sh-5.2# ./test &
+> 	[1] 280
+> 	sh-5.2# chmod -x test
+> 	4       test
+> 	sh-5.2# setfattr -n user.name -v value test
+> 	4       test
+> 	sh-5.2# chattr -i test
+> 	4       test
+> 	sh-5.2#
+> 
+>  fs/file_attr.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/file_attr.c b/fs/file_attr.c
+> index 4c4916632f11..13cdb31a3e94 100644
+> --- a/fs/file_attr.c
+> +++ b/fs/file_attr.c
+> @@ -2,6 +2,7 @@
+>  #include <linux/fs.h>
+>  #include <linux/security.h>
+>  #include <linux/fscrypt.h>
+> +#include <linux/fsnotify.h>
+>  #include <linux/fileattr.h>
+>  #include <linux/export.h>
+>  #include <linux/syscalls.h>
+> @@ -298,6 +299,7 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+>  		err = inode->i_op->fileattr_set(idmap, dentry, fa);
+>  		if (err)
+>  			goto out;
+> +		fsnotify_xattr(dentry);
+>  	}
+>  
+>  out:
+> -- 
+> 2.39.5
+
+
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
