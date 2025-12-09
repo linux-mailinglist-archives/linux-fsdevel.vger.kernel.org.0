@@ -1,311 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-70991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279DBCAE85E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 01:29:30 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1AC5CAE84C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 01:28:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id ED07D30C6A76
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 00:27:24 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B3C5430364A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 00:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82E72EC541;
-	Tue,  9 Dec 2025 00:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08FD1F0995;
+	Tue,  9 Dec 2025 00:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivizh1HU"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RUq74yGn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D52E2E9EC1;
-	Tue,  9 Dec 2025 00:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296AF221290
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Dec 2025 00:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765239491; cv=none; b=Gbr9u8/AvHaTPNgBNnEu57bQVaL/doERBvlu/w7jB0CMp2QswmggW9P1H2IETMKb4qzcueRgz7tnbau5l8EAEgEGi8P6HJtc70RuVNx1HBw/YKTF1z5mPt3vrlU2zhC5jbIjtSvtiW5k4h6zear+2UVqX5gGajHAyvTVLD2uIVM=
+	t=1765240053; cv=none; b=mLVwoktCAjZK092BGlEimyhP9AI4zA/9/IPVZo/8CAkd9MTDEvFn7g/ipcp6YbYgWpsowRWuud4yi2ZbWaRCMH0ENuRpuvShi5bM8qckhEuEdRI7BEzq0/Y7+L/cK5Z+9iDc5y9kcGxHl4CJa+k5w9A0xxGR05GxpNOs0EGsr9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765239491; c=relaxed/simple;
-	bh=Tz8gkfZfbuDdQFaxz8Xaau2EfIYA4RF5sGA4a+5kLvM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eEyujg04dGy0f3Z83PmTK8T6ddHs0aMlJPEJo/RZyegg+p6CVsHRjKPVYlZHFZUYaSxwxqa3qth3tmN7dHDg4l+Rtlr4wTs9MKLnxhiqqg9mCeE6cKM6QHjelx356PxYhNL0o74lKZVSOUgjgSkF/ANA3dfqjUzZYn1D7d3ibMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivizh1HU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7733C4AF09;
-	Tue,  9 Dec 2025 00:18:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765239491;
-	bh=Tz8gkfZfbuDdQFaxz8Xaau2EfIYA4RF5sGA4a+5kLvM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ivizh1HUWZruYLwLkqbHTF9gWIL+uj/wThJIdMNnpCNwMexYsgGIjqQhrckIckqls
-	 cPE/g4qw1zvbHn0SG7oLg0dJIjmzR0uiVW6ySa6XQxAXdYivaXq4amPM/7C03/xCK1
-	 eTheb6Ah4qJ+7oPiJ2i51btlfh8ALKVECPdZYnPfsHKB1s06mLgVhdy0pXyxgOLSua
-	 sGfViwar4atuBI8LIi4GMPLKSvBJFaHuA7UH5mIO2gAwJp8FBkioRQQ/umMc2UbpRc
-	 BpvhP+b4hb7StDyJfS+om0mLqukTs6/I4CpmFJkbRJRqVToD7xMpX1CgpmViEG2OOr
-	 +5LcxCQJ5hQlw==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>,
-	linux-fsdevel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 6.18-5.10] hfsplus: fix volume corruption issue for generic/073
-Date: Mon,  8 Dec 2025 19:15:32 -0500
-Message-ID: <20251209001610.611575-40-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251209001610.611575-1-sashal@kernel.org>
-References: <20251209001610.611575-1-sashal@kernel.org>
+	s=arc-20240116; t=1765240053; c=relaxed/simple;
+	bh=JEk3Jb3o2V3Ykrxdybm6wJkA8vNlfxfi4dCZ5w/NQfA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EjMklCTKqCuySG5x/EJYgDc4Tv54LfagD69mcHGtrGj5vb1cnPVvu58XfVWbW+At//J9a5Eglnm6NMHBDTxuRO7N31lKEZvkT5DPqSmvbVVwYOgTtP9SZqvSHij5HrVfc2NTZpjdma+lFIwEs8W7AQeYF2hR3rw7fGBZDrv2Qw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RUq74yGn; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5958931c9c7so6280417e87.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Dec 2025 16:27:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1765240049; x=1765844849; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FonhJLVNH15zuQuznSG0KVWWqOZ78Kr7QO87AtDDYSQ=;
+        b=RUq74yGnYyKvbn/8TSQ4zTFHiVCHY7Zorr1k362xEd+tys0P5Ok/P/YQylyeuDUcCo
+         ZSSt17HKjIqUmudpXE5RTdAX9A1zOB433KaiaolYiXh1MA7CklrJ3F8HqCdQIhNAgNpF
+         PVN/GOIMzN0Jj2J9j18pGgbavHi2j0d8mtcWY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765240049; x=1765844849;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FonhJLVNH15zuQuznSG0KVWWqOZ78Kr7QO87AtDDYSQ=;
+        b=eFFYiin29BUwLqxejInmgPz9yeCZCoPSt0EDIa6C9hoJAooFKTR9YJwx8HsTjbEZh0
+         TPVuTPK8Av/A0WpnTHvb/DIiopM0jI5RsyFT7ANmdzc0EVccoeX4QBWM9jlibnlkU3FD
+         GH8/Fdez/oFl3icuccP3MJX41MeNWc+VEn+tp5fapPhXjs3leYtk1pZjN+gJ01mOQ62E
+         WcF3aBa2drbTyfCa8xn8JpBWX52Cdxf6vqf5Fo5Sx/1OCRRknIGTKypFhEDRu21doPdh
+         4k3z7LYQ8sgQbCvX8AR7UFG/dXGIF6x93URiK1dqF3/mTxz8qGJ7TRe2ljaFL9y6vrro
+         6tLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyuE2FyHtCgzLUHRB3SuHDpSgI81IG1YEwTR4kIGyfjCBztcsADrZH0jH+LfSCF3+zgStU9iMv32NJd+Nm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yysw4JDApULApdG+WIh3nD+WVKeT2paRcgSnf4Sz4YwPUUYmBPk
+	wR3uqtlGNgXA2h/38G29+m3YkgBaHDD/wnrZDykr7HwPGm2vFknUsuY6me4Zydh4odrU5rkLadl
+	LcR3ZGdcYhw==
+X-Gm-Gg: ASbGnctgtFeg3bYBoa2tZc1Fde5KZzKcWByrK8cKVrFoSKzXafRxK+uc8hOAQz+Yt4b
+	4Kld9gREO2+1qoD6u1Z1aQ0ppJmDCUUQfLeTl8LHNX5uhTDezElmXGuCniAofsAJm1FYJmpXj8i
+	Hln3E1BOYZluXEkyXD+CCwXJwQWiK7cXWgk4kKz99zrXZ/KGA+bYpv+vavm+Wq2+JVsI6UxW0+v
+	s3htzVOnQ7sQGJGpGkvFKKRLMI3oWBOTg4o5YeKL+PSRZS0u+HdND/NWa4dE4p6uDyGF4jiM6KN
+	SfXboWBZOEeOowywSrgDX7z12C/s4/t6Va9Z7KaATbUGBaqZo1B8EXEqUHz8rtZc9IbYg7cforO
+	QlmmfczH/lI6Aq+zhzLehRpDRXD7WfvCvm9yYBJK9yRNXbzG2DHwnpchrpb4z00gDJq3diyVN2R
+	Y5sRhdNBGJDZiJUceNyaO+NWO7sVxziyMCwZWEEPo8OpP8tEEqUNvSz3DnmigbM57VMQhsoj7L8
+	zw=
+X-Google-Smtp-Source: AGHT+IFWq+rDjhE/QKNKsXjFGK+TwWDeLWaUnz7Vnfq0v1nUnldXaW9dCHpp1wReC85aVieSpPRHzg==
+X-Received: by 2002:a05:6512:31c1:b0:595:8200:9f79 with SMTP id 2adb3069b0e04-598853df8a6mr3499254e87.43.1765240048870;
+        Mon, 08 Dec 2025 16:27:28 -0800 (PST)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-597d7b24a06sm4627991e87.32.2025.12.08.16.27.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Dec 2025 16:27:28 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-37a875e3418so38001441fa.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Dec 2025 16:27:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVNMTZs4AWlMWJ4SJNFlWWqmWbuDPsFC2B9Wfp94VXq8nJMGdQfwuIlNLud/Z/9xRD8Kr81QOLVljBfrkqT@vger.kernel.org
+X-Received: by 2002:a05:6402:4403:b0:647:8538:fcf4 with SMTP id
+ 4fb4d7f45d1cf-64919c10408mr8423201a12.10.1765239641812; Mon, 08 Dec 2025
+ 16:20:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.18
-Content-Transfer-Encoding: 8bit
+References: <20251208235528.3670800-1-hpa@zytor.com> <176523908321.3343091.17738363732550848005.pr-tracker-bot@kernel.org>
+In-Reply-To: <176523908321.3343091.17738363732550848005.pr-tracker-bot@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 9 Dec 2025 09:20:25 +0900
+X-Gmail-Original-Message-ID: <CAHk-=wi0RqQPHME0xgrAZBQijKuos97cQO05N4f176DkH7msbg@mail.gmail.com>
+X-Gm-Features: AQt7F2roobmnBFxkxCTs46omVLlLQvijaEzayZmWK0Hwr8qZTgYHcUtxshIhuTk
+Message-ID: <CAHk-=wi0RqQPHME0xgrAZBQijKuos97cQO05N4f176DkH7msbg@mail.gmail.com>
+Subject: Re: [GIT PULL] __auto_type conversion for v6.19-rc1
+To: pr-tracker-bot@kernel.org, 
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Alexei Starovoitov <ast@kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Arnd Bergmann <arnd@kernel.org>, Borislav Petkov <bp@alien8.de>, Dan Williams <dan.j.williams@intel.com>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	David Laight <David.Laight@aculab.com>, David Lechner <dlechner@baylibre.com>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Gatlin Newhouse <gatlin.newhouse@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jakub Sitnicki <jakub@cloudflare.com>, 
+	Jan Hendrik Farr <kernel@jfarr.cc>, Jason Wang <jasowang@redhat.com>, Jir i Olsa <jolsa@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, KP Singh <kpsingh@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Marc Herbert <Marc.Herbert@linux.intel.com>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>, 
+	Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>, NeilBrown <neil@brown.name>, 
+	Peter Zijlstra <peterz@infradead.org>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>, Song Liu <song@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thorsten Blum <thorsten.blum@linux.dev>, Uros Bizjak <ubizjak@gmail.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Yafang Shao <laoar.shao@gmail.com>, 
+	Ye Bin <yebin10@huawei.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	Yu feng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-sparse@vger.kernel.org, virtualization@lists.linux.dev, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Viacheslav Dubeyko <slava@dubeyko.com>
+Hmm. I think pr-tracker-bot is being confused. This one just came in,
+and hasn't been merged yet.
 
-[ Upstream commit 24e17a29cf7537f0947f26a50f85319abd723c6c ]
+That merge commit link is for the hwmon pull.
 
-The xfstests' test-case generic/073 leaves HFS+ volume
-in corrupted state:
+                 Linus
 
-sudo ./check generic/073
-FSTYP -- hfsplus
-PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.17.0-rc1+ #4 SMP PREEMPT_DYNAMIC Wed Oct 1 15:02:44 PDT 2025
-MKFS_OPTIONS -- /dev/loop51
-MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-
-generic/073 _check_generic_filesystem: filesystem on /dev/loop51 is inconsistent
-(see XFSTESTS-2/xfstests-dev/results//generic/073.full for details)
-
-Ran: generic/073
-Failures: generic/073
-Failed 1 of 1 tests
-
-sudo fsck.hfsplus -d /dev/loop51
-** /dev/loop51
-Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
-Executing fsck_hfs (version 540.1-Linux).
-** Checking non-journaled HFS Plus Volume.
-The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-** Checking multi-linked files.
-** Checking catalog hierarchy.
-Invalid directory item count
-(It should be 1 instead of 0)
-** Checking extended attributes file.
-** Checking volume bitmap.
-** Checking volume information.
-Verify Status: VIStat = 0x0000, ABTStat = 0x0000 EBTStat = 0x0000
-CBTStat = 0x0000 CatStat = 0x00004000
-** Repairing volume.
-** Rechecking volume.
-** Checking non-journaled HFS Plus Volume.
-The volume name is untitled
-** Checking extents overflow file.
-** Checking catalog file.
-** Checking multi-linked files.
-** Checking catalog hierarchy.
-** Checking extended attributes file.
-** Checking volume bitmap.
-** Checking volume information.
-** The volume untitled was repaired successfully.
-
-The test is doing these steps on final phase:
-
-mv $SCRATCH_MNT/testdir_1/bar $SCRATCH_MNT/testdir_2/bar
-$XFS_IO_PROG -c "fsync" $SCRATCH_MNT/testdir_1
-$XFS_IO_PROG -c "fsync" $SCRATCH_MNT/foo
-
-So, we move file bar from testdir_1 into testdir_2 folder. It means that HFS+
-logic decrements the number of entries in testdir_1 and increments number of
-entries in testdir_2. Finally, we do fsync only for testdir_1 and foo but not
-for testdir_2. As a result, this is the reason why fsck.hfsplus detects the
-volume corruption afterwards.
-
-This patch fixes the issue by means of adding the
-hfsplus_cat_write_inode() call for old_dir and new_dir in
-hfsplus_rename() after the successful ending of
-hfsplus_rename_cat(). This method makes modification of in-core
-inode objects for old_dir and new_dir but it doesn't save these
-modifications in Catalog File's entries. It was expected that
-hfsplus_write_inode() will save these modifications afterwards.
-However, because generic/073 does fsync only for testdir_1 and foo
-then testdir_2 modification hasn't beed saved into Catalog File's
-entry and it was flushed without this modification. And it was
-detected by fsck.hfsplus. Now, hfsplus_rename() stores in Catalog
-File all modified entries and correct state of Catalog File will
-be flushed during hfsplus_file_fsync() call. Finally, it makes
-fsck.hfsplus happy.
-
-sudo ./check generic/073
-FSTYP         -- hfsplus
-PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc3+ #93 SMP PREEMPT_DYNAMIC Wed Nov 12 14:37:49 PST 2025
-MKFS_OPTIONS  -- /dev/loop51
-MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-
-generic/073 32s ...  32s
-Ran: generic/073
-Passed all 1 tests
-
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Yangtao Li <frank.li@vivo.com>
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/20251112232522.814038-1-slava@dubeyko.com
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-LLM Generated explanations, may be completely bogus:
-
-Based on my thorough analysis, here is my assessment:
-
----
-
-## COMMIT ANALYSIS
-
-### 1. PROBLEM DESCRIPTION
-This commit fixes a **volume corruption issue** in HFS+ where renaming a
-file between directories can lead to an inconsistent catalog file if
-only one of the directories is subsequently fsync'd.
-
-**The bug mechanism:**
-1. When `hfsplus_rename()` moves a file from `old_dir` to `new_dir`, it
-   calls `hfsplus_rename_cat()`
-2. `hfsplus_rename_cat()` modifies both directories in memory:
-   - `dst_dir->i_size++` (destination gains an entry)
-   - `src_dir->i_size--` (source loses an entry)
-   - Marks both dirty with `hfsplus_mark_inode_dirty()`
-3. Marking dirty does NOT write to disk - it just flags for later
-   writeback
-4. If only one directory is fsync'd (as in xfstests generic/073), the
-   other's changes may be lost
-5. This creates a mismatch: the catalog file shows incorrect directory
-   entry counts
-
-**User-visible symptom:** `fsck.hfsplus` reports "Invalid directory item
-count"
-
-### 2. CODE CHANGE ANALYSIS
-
-The fix is **extremely small and surgical** - only 5 lines added:
-
-```c
-- if (!res)
-+   if (!res) {
-        new_dentry->d_fsdata = old_dentry->d_fsdata;
-+
-+       res = hfsplus_cat_write_inode(old_dir);
-+       if (!res)
-+           res = hfsplus_cat_write_inode(new_dir);
-+   }
-```
-
-**What it does:** After a successful rename, explicitly calls
-`hfsplus_cat_write_inode()` for both directories, which writes their
-catalog entries (including the valence/entry count) to the catalog file
-immediately.
-
-**Why it's correct:** `hfsplus_cat_write_inode()` is the established
-function for writing directory catalog entries in HFS+. The fix ensures
-both directories' updated entry counts are persisted immediately after
-the rename operation.
-
-### 3. CLASSIFICATION
-
-| Criteria | Assessment |
-|----------|------------|
-| Bug type | **Filesystem corruption** - data integrity issue |
-| Security | Not a CVE, but data corruption is serious |
-| Cc: stable tag | **No** - maintainer didn't explicitly request
-backport |
-| Fixes: tag | **No** - no specific commit cited |
-| User impact | HIGH for HFS+ users - volume corruption can cause data
-loss |
-
-### 4. SCOPE AND RISK ASSESSMENT
-
-- **Lines changed:** 5 lines added
-- **Files touched:** 1 file (`fs/hfsplus/dir.c`)
-- **Complexity:** Very low - adds two well-established function calls
-- **Bug age:** Since 2013 (commit `892f6668f3a70` introduced
-  `hfsplus_rename`)
-- **Risk of regression:** **LOW** - the function being called is already
-  used throughout HFS+ codebase
-
-### 5. USER IMPACT
-
-- **Who uses HFS+?** Mac users dual-booting, legacy Apple volumes, some
-  embedded systems
-- **Severity:** HIGH - filesystem corruption affects data integrity
-- **Reproducibility:** Easily triggered by xfstests generic/073
-
-### 6. DEPENDENCY CHECK
-
-- `hfsplus_cat_write_inode()` has existed since the early days of
-  hfsplus
-- No dependency on other recent commits
-- Should apply cleanly to all stable trees that include hfsplus
-
----
-
-## VERDICT
-
-**This commit SHOULD be backported** because:
-
-1. **Fixes a real, serious bug:** Volume corruption is a significant
-   data integrity issue
-2. **Obviously correct:** The fix ensures both directories are written
-   after rename - this is fundamental filesystem consistency
-3. **Small and contained:** Only 5 lines in a single file, using
-   existing functions
-4. **Low regression risk:** Uses well-established
-   `hfsplus_cat_write_inode()` function
-5. **Long-standing bug:** Has affected users since 2013
-6. **Reproducible:** Standard xfstests test case triggers the bug
-7. **Follows established patterns:** Similar to how other filesystems
-   handle rename consistency
-
-While the commit lacks explicit "Cc: stable" and "Fixes:" tags, the
-stable kernel rules clearly allow important bug fixes for data
-corruption issues to be backported. The fix is minimal, well-understood,
-and addresses a real problem that affects HFS+ users.
-
-Sources:
-- [xfstests generic test for fsync after renaming
-  directory](https://patchwork.kernel.org/project/linux-
-  btrfs/patch/1459330722-3227-1-git-send-email-fdmanana@kernel.org/)
-- [xfstests GitHub repository](https://github.com/kdave/xfstests)
-
-**YES**
-
- fs/hfsplus/dir.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-index 1b3e27a0d5e03..cadf0b5f93422 100644
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -552,8 +552,13 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
- 	res = hfsplus_rename_cat((u32)(unsigned long)old_dentry->d_fsdata,
- 				 old_dir, &old_dentry->d_name,
- 				 new_dir, &new_dentry->d_name);
--	if (!res)
-+	if (!res) {
- 		new_dentry->d_fsdata = old_dentry->d_fsdata;
-+
-+		res = hfsplus_cat_write_inode(old_dir);
-+		if (!res)
-+			res = hfsplus_cat_write_inode(new_dir);
-+	}
- 	return res;
- }
- 
--- 
-2.51.0
-
+On Tue, 9 Dec 2025 at 09:14, <pr-tracker-bot@kernel.org> wrote:
+>
+> The pull request you sent on Mon,  8 Dec 2025 15:55:26 -0800:
+>
+> > git://git.kernel.org/pub/scm/linux/kernel/git/hpa/linux-auto.git refs/heads/master
+>
+> has been merged into torvalds/linux.git:
+> https://git.kernel.org/torvalds/c/b88b2f82fab45521cb32c0b737266d90a66a748f
 
