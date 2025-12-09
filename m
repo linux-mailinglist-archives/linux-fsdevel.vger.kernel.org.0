@@ -1,56 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-70989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-70990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC6E6CAE8B5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 01:33:03 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729D8CAE891
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 01:32:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 811FD308D59E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 00:27:44 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4544C30FF023
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 00:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769DD2798E6;
-	Tue,  9 Dec 2025 00:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BFC285061;
+	Tue,  9 Dec 2025 00:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUFD0ToG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smGA6bCq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE703278779;
-	Tue,  9 Dec 2025 00:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B41C283683;
+	Tue,  9 Dec 2025 00:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765239456; cv=none; b=KVw48/e1GmZRiVMHHyLn8yJHPvcOsTYmhGmIcJ8VhnwqLqEbZQkml4rSk7R3seZf1vKClEP3LSQhojIXMXzdAhfLG7RWDDMtw5lgonWeoRAGVEWLuWg+mhFS6fKvgr5yN+ajWQG/spWhwZ4dDeaZ9LixVGog2NrNj9rLGEUsyNc=
+	t=1765239469; cv=none; b=mswMfssVo4Jw9Go7o8sjLUmcVfPeczD5SEguaPluuQyVxKaWKQdPytFMEu8hpdeyHU8IneSrmOgotOliBP0tFaBHeR/eOk7qwxc1jIuuu+30PqQhwJERlbgZDKJMh4SCH547hkDMSLgyl9EIc4hBIgmfkrhqmzl4jrwFhQcvGa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765239456; c=relaxed/simple;
-	bh=admMQtYCVz6g90Ou1lb7Q8ggJA+uThCwY4OsdYTSnH0=;
+	s=arc-20240116; t=1765239469; c=relaxed/simple;
+	bh=gud9IkW3b4vImZq0AZvIY1/XYW3RXkcue78EKo1eToc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s7grMA70QuBqzD0F+9lAOFgiaee+G53HuiUP0AOFhYH5gikYbqx9Kah9Kq3BZYf4Bodye+t/yE9/WJjWW/WOkJaJYbpue+cnWNjDgohgKfYEX83HRX7Z6DfK0jhn5oQg89r8t7WeJwd47jfgoJoZ5lj/nifEIe0abfoe0PcmEbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUFD0ToG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065F0C4CEF1;
-	Tue,  9 Dec 2025 00:17:34 +0000 (UTC)
+	 MIME-Version:Content-Type; b=JMLL9ig9yma7W7jUGPGUtUjUtRBtrQXiaNGwEdqyYm+tW92caJU/3bma8/wYH18q9hekFEqq/W1RdeTMnZ5G+XYhH0O4Ylopk+RQdqDmvNB/C6FwhBcXRvPo71fkXEZ4Eq3uqHXbNPvtO6GFbRPc7R/blYHlsD8f0L91xxNpLMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smGA6bCq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33D41C113D0;
+	Tue,  9 Dec 2025 00:17:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765239456;
-	bh=admMQtYCVz6g90Ou1lb7Q8ggJA+uThCwY4OsdYTSnH0=;
+	s=k20201202; t=1765239469;
+	bh=gud9IkW3b4vImZq0AZvIY1/XYW3RXkcue78EKo1eToc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eUFD0ToGqW1o/lm6So+fpjskd9jhA8/dUkOqzV23LT2yhtNi2dga2TokR+WbRx/ls
-	 XGtBhGDrauhOB6au+l5ZyCGZZIwPniDs6WxmAk5uw1JX9jBGL8OTgkOnJZwdZsEZwI
-	 xsAIQMwXJrhdDeoWnUWPP7ovCPWFcN5/+yiKnU/s/ZVU4mpGyDaYf4Ow5idoFTYwIL
-	 Uk2/APEpw/y0snaWjJa+cNFunn3RoOIPROOJKfg0Fup/1haw1ShGrdHXrGRF0s+4Rv
-	 dR49JMIjv96yBquZeh7JxdyY11Vs519P07FGVDXb2EyAWw70hrbmEeT9DOC4suO9D7
-	 /gXIJVM4lAtuA==
+	b=smGA6bCqf0jLGtpHGnl8cvQUiJCVfAi3vUqN6XAeMcQcKZm0Cr5LLEXRkP43IfG1g
+	 jh/6PGdhsOJwLoW5qwLi8DB9T+Hd1dXUlaUfvlw1Ba8eLCxGMRVtP8wihCgm+c5hU7
+	 1Dl9oPgGua8JZ1QPaynfXGq36aZOaxLYimBXm0tc1WYTm7pb8SYu2KirNJJIWqxE+P
+	 FvVqe2L+6sbg21JSTCeox9X1W2UidQki5jv/1zqam9n1ZPqrowM7CA9uWtIX6hag2d
+	 kVgPvxRnewHcOp/5ZakGc76g+5Q2tRcG33M+8PB+T/2dzeTZQm5hUE0QUHuqoGjE1j
+	 7/XrsJ0Dd8cHg==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Yang Chenzhi <yang.chenzhi@vivo.com>,
-	syzbot+005d2a9ecd9fbf525f6a@syzkaller.appspotmail.com,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	Sasha Levin <sashal@kernel.org>,
-	frank.li@vivo.com,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] hfsplus: fix missing hfs_bnode_get() in __hfs_bnode_create
-Date: Mon,  8 Dec 2025 19:15:19 -0500
-Message-ID: <20251209001610.611575-27-sashal@kernel.org>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Yangtao Li <frank.li@vivo.com>,
+	linux-fsdevel@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.10] hfsplus: fix volume corruption issue for generic/070
+Date: Mon,  8 Dec 2025 19:15:22 -0500
+Message-ID: <20251209001610.611575-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251209001610.611575-1-sashal@kernel.org>
 References: <20251209001610.611575-1-sashal@kernel.org>
@@ -63,198 +62,192 @@ MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.18
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Yang Chenzhi <yang.chenzhi@vivo.com>
+From: Viacheslav Dubeyko <slava@dubeyko.com>
 
-[ Upstream commit 152af114287851583cf7e0abc10129941f19466a ]
+[ Upstream commit ed490f36f439b877393c12a2113601e4145a5a56 ]
 
-When sync() and link() are called concurrently, both threads may
-enter hfs_bnode_find() without finding the node in the hash table
-and proceed to create it.
+The xfstests' test-case generic/070 leaves HFS+ volume
+in corrupted state:
 
-Thread A:
-  hfsplus_write_inode()
-    -> hfsplus_write_system_inode()
-      -> hfs_btree_write()
-        -> hfs_bnode_find(tree, 0)
-          -> __hfs_bnode_create(tree, 0)
+sudo ./check generic/070
+FSTYP -- hfsplus
+PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.17.0-rc1+ #4 SMP PREEMPT_DYNAMIC Wed Oct 1 15:02:44 PDT 2025
+MKFS_OPTIONS -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
 
-Thread B:
-  hfsplus_create_cat()
-    -> hfs_brec_insert()
-      -> hfs_bnode_split()
-        -> hfs_bmap_alloc()
-          -> hfs_bnode_find(tree, 0)
-            -> __hfs_bnode_create(tree, 0)
+generic/070 _check_generic_filesystem: filesystem on /dev/loop50 is inconsistent
+(see xfstests-dev/results//generic/070.full for details)
 
-In this case, thread A creates the bnode, sets refcnt=1, and hashes it.
-Thread B also tries to create the same bnode, notices it has already
-been inserted, drops its own instance, and uses the hashed one without
-getting the node.
+Ran: generic/070
+Failures: generic/070
+Failed 1 of 1 tests
 
-```
+sudo fsck.hfsplus -d /dev/loop50
+** /dev/loop50
+Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
+Executing fsck_hfs (version 540.1-Linux).
+** Checking non-journaled HFS Plus Volume.
+The volume name is test
+** Checking extents overflow file.
+Unused node is not erased (node = 1)
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+Verify Status: VIStat = 0x0000, ABTStat = 0x0000 EBTStat = 0x0004
+CBTStat = 0x0000 CatStat = 0x00000000
+** Repairing volume.
+** Rechecking volume.
+** Checking non-journaled HFS Plus Volume.
+The volume name is test
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+** The volume test was repaired successfully.
 
-	node2 = hfs_bnode_findhash(tree, cnid);
-	if (!node2) {                                 <- Thread A
-		hash = hfs_bnode_hash(cnid);
-		node->next_hash = tree->node_hash[hash];
-		tree->node_hash[hash] = node;
-		tree->node_hash_cnt++;
-	} else {                                      <- Thread B
-		spin_unlock(&tree->hash_lock);
-		kfree(node);
-		wait_event(node2->lock_wq,
-			!test_bit(HFS_BNODE_NEW, &node2->flags));
-		return node2;
-	}
-```
+It is possible to see that fsck.hfsplus detected not
+erased and unused node for the case of extents overflow file.
+The HFS+ logic has special method that defines if the node
+should be erased:
 
-However, hfs_bnode_find() requires each call to take a reference.
-Here both threads end up setting refcnt=1. When they later put the node,
-this triggers:
+bool hfs_bnode_need_zeroout(struct hfs_btree *tree)
+{
+	struct super_block *sb = tree->inode->i_sb;
+	struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
+	const u32 volume_attr = be32_to_cpu(sbi->s_vhdr->attributes);
 
-BUG_ON(!atomic_read(&node->refcnt))
+	return tree->cnid == HFSPLUS_CAT_CNID &&
+		volume_attr & HFSPLUS_VOL_UNUSED_NODE_FIX;
+}
 
-In this scenario, Thread B in fact finds the node in the hash table
-rather than creating a new one, and thus must take a reference.
+However, it is possible to see that this method works
+only for the case of catalog file. But debugging of the issue
+has shown that HFSPLUS_VOL_UNUSED_NODE_FIX attribute has been
+requested for the extents overflow file too:
 
-Fix this by calling hfs_bnode_get() when reusing a bnode newly created by
-another thread to ensure the refcount is updated correctly.
+catalog file
+kernel: hfsplus: node 4, num_recs 0, flags 0x10
+kernel: hfsplus: tree->cnid 4, volume_attr 0x80000800
 
-A similar bug was fixed in HFS long ago in commit
-a9dc087fd3c4 ("fix missing hfs_bnode_get() in __hfs_bnode_create")
-but the same issue remained in HFS+ until now.
+extents overflow file
+kernel: hfsplus: node 1, num_recs 0, flags 0x10
+kernel: hfsplus: tree->cnid 3, volume_attr 0x80000800
 
-Reported-by: syzbot+005d2a9ecd9fbf525f6a@syzkaller.appspotmail.com
-Signed-off-by: Yang Chenzhi <yang.chenzhi@vivo.com>
+This patch modifies the hfs_bnode_need_zeroout() by checking
+only volume_attr but not the b-tree ID because node zeroing
+can be requested for all HFS+ b-tree types.
+
+sudo ./check generic/070
+FSTYP         -- hfsplus
+PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc3+ #79 SMP PREEMPT_DYNAMIC Fri Oct 31 16:07:42 PDT 2025
+MKFS_OPTIONS  -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+
+generic/070 33s ...  34s
+Ran: generic/070
+Passed all 1 tests
+
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Link: https://lore.kernel.org/r/20250829093912.611853-1-yang.chenzhi@vivo.com
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/20251101001229.247432-1-slava@dubeyko.com
 Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## Analysis Summary
-
-### 1. COMMIT MESSAGE ANALYSIS
-
-**Subject:** "hfsplus: fix missing hfs_bnode_get() in
-__hfs_bnode_create"
-
-**Key signals:**
-- Clear "fix" keyword indicating bug fix
-- Reported-by syzbot - reproducible crash bug
-- Detailed race condition explanation with call stacks
-- References identical HFS fix from 2022 (commit a9dc087fd3c4)
-- No explicit `Cc: stable` tag, but no `Fixes:` tag either since the bug
-  exists from the file's creation
-
-### 2. CODE CHANGE ANALYSIS
-
-**The Bug:** When `sync()` and `link()` are called concurrently, both
-threads may race into `__hfs_bnode_create()`:
-- Thread A creates a bnode with `refcnt=1` and inserts it into the hash
-  table
-- Thread B finds the hash table entry, but returns the node **without
-  incrementing refcnt**
-- Both threads believe they own a reference, but only one reference
-  exists
-- When both call `hfs_bnode_put()`, the second call triggers:
-  `BUG_ON(!atomic_read(&node->refcnt))`
-
-**The Fix:** Single line addition at `fs/hfsplus/bnode.c:484`:
-```c
-} else {
-+    hfs_bnode_get(node2);   // <-- Missing refcount increment added
-     spin_unlock(&tree->hash_lock);
-     kfree(node);
-```
-
-**Why it's correct:** `hfs_bnode_get()` simply does
-`atomic_inc(&node->refcnt)` (line 658), ensuring correct reference
-counting when reusing a shared bnode.
-
-### 3. CLASSIFICATION
-
-- **Bug fix:** YES - fixes a crash (BUG_ON kernel panic)
-- **Feature addition:** NO
-- **Security consideration:** Crash can be triggered by normal
-  operations - potential DoS vector
-
-### 4. SCOPE AND RISK ASSESSMENT
-
-| Metric | Value |
-|--------|-------|
-| Lines changed | 1 |
-| Files touched | 1 |
-| Complexity | Very low |
-| Subsystem | HFS+ filesystem |
-| Regression risk | Very low |
-
-The fix is a **single function call** that mirrors a proven fix from HFS
-(commit a9dc087fd3c4) that has been stable since December 2022.
-
-### 5. USER IMPACT
-
-- **Affected users:** Anyone using HFS+ filesystems (common for Mac disk
-  compatibility, external drives, dual-boot systems)
-- **Trigger condition:** Concurrent sync() and link() operations - can
-  occur in normal workloads
-- **Severity:** **KERNEL CRASH** (BUG_ON triggers panic)
-
-### 6. STABILITY INDICATORS
-
-- **syzbot reported:** Bug is reproducible
-- **Maintainer signed:** Yes (Viacheslav Dubeyko, HFS+ maintainer)
-- **LKML link:** Present
-- **Precedent:** Identical fix applied to HFS in 2022 with no
-  regressions
-
-### 7. DEPENDENCY CHECK
-
-- **Dependencies:** None - completely self-contained
-- **Applies to stable:** The affected code pattern has existed unchanged
-  for many years in stable trees
-
 ## Final Assessment
 
-**This commit should be backported to stable kernels.**
+### Summary of Findings
 
-**Rationale:**
-1. **Fixes a real crash** - BUG_ON triggers kernel panic in a
-   reproducible race condition
-2. **Minimal and surgical** - Single line change adding one function
-   call
-3. **Obviously correct** - Adds missing reference count increment,
-   matching HFS pattern
-4. **Proven safe** - Identical fix in HFS has been stable for 2+ years
-5. **No dependencies** - Will apply cleanly to all stable kernels
-6. **Real user impact** - HFS+ is commonly used for Mac disk
-   compatibility
+**Bug Type**: Filesystem corruption (data integrity issue)
 
-The lack of explicit `Cc: stable` tag does not preclude backporting when
-all other stable criteria are clearly met. This is a textbook case of a
-small, obviously correct fix for a real crash bug.
+**Technical Root Cause**: The `hfs_bnode_need_zeroout()` function
+incorrectly restricts unused node zeroing to only the catalog B-tree
+(HFSPLUS_CAT_CNID). However, when the volume attribute
+`HFSPLUS_VOL_UNUSED_NODE_FIX` is set, it applies to ALL HFS+ B-tree
+types including the extents overflow file. This causes fsck.hfsplus to
+detect corruption: "Unused node is not erased (node = 1)".
+
+**The Fix**: Removes the catalog-only check, allowing node zeroing for
+all B-tree types when the volume attribute is set.
+
+### Stable Kernel Criteria Evaluation
+
+| Criterion | Status |
+|-----------|--------|
+| Fixes real bug | ✅ Filesystem corruption verified by fsck |
+| Obviously correct | ✅ Simple condition removal, matches Apple spec |
+| Small and contained | ✅ 1 line change, single file |
+| No new features | ✅ No new functionality added |
+| Tested | ✅ xfstests generic/070 passes |
+| Exists in stable | ✅ Function introduced in kernel 3.16 (2014) |
+
+### Risk vs Benefit
+
+**Risk**: Very LOW
+- The change makes code more conservative (zeros more nodes, not fewer)
+- Only two call sites, both appropriately handle the result
+- No new code paths, just relaxing an incorrect restriction
+
+**Benefit**: HIGH
+- Fixes filesystem corruption that users can actually hit
+- Reproducible with standard xfstests suite
+- Prevents data integrity issues on HFS+ volumes
+
+### Concerns
+
+1. **No explicit stable tags**: Missing "Cc: stable" and "Fixes:" tags.
+   However, filesystem corruption fixes are exactly what stable is for.
+
+2. **Stale comment**: The comment still says "if this is the catalog
+   tree" but this is documentation debt, not a functional issue.
+
+3. **Limited user base**: HFS+ is less commonly used on Linux than other
+   filesystems, but users who do use it deserve working support.
+
+### Conclusion
+
+This commit fixes a real, reproducible filesystem corruption issue with
+an extremely small, safe change. The fix is obviously correct - it
+aligns behavior with the HFS+ specification where
+`HFSPLUS_VOL_UNUSED_NODE_FIX` applies to all B-trees, not just the
+catalog. The change is conservative (does more work, not less)
+minimizing regression risk. The affected code has existed since kernel
+3.16, making it applicable to all active stable trees.
+
+Despite the missing explicit stable tags, this is clearly appropriate
+stable material - a surgical fix for data corruption that meets all the
+technical criteria.
 
 **YES**
 
- fs/hfsplus/bnode.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/hfsplus/bnode.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
-index 63e652ad1e0de..63768cf0cb1ba 100644
+index 63768cf0cb1ba..482a6c5faa197 100644
 --- a/fs/hfsplus/bnode.c
 +++ b/fs/hfsplus/bnode.c
-@@ -481,6 +481,7 @@ static struct hfs_bnode *__hfs_bnode_create(struct hfs_btree *tree, u32 cnid)
- 		tree->node_hash[hash] = node;
- 		tree->node_hash_cnt++;
- 	} else {
-+		hfs_bnode_get(node2);
- 		spin_unlock(&tree->hash_lock);
- 		kfree(node);
- 		wait_event(node2->lock_wq,
+@@ -705,6 +705,5 @@ bool hfs_bnode_need_zeroout(struct hfs_btree *tree)
+ 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
+ 	const u32 volume_attr = be32_to_cpu(sbi->s_vhdr->attributes);
+ 
+-	return tree->cnid == HFSPLUS_CAT_CNID &&
+-		volume_attr & HFSPLUS_VOL_UNUSED_NODE_FIX;
++	return volume_attr & HFSPLUS_VOL_UNUSED_NODE_FIX;
+ }
 -- 
 2.51.0
 
