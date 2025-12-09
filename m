@@ -1,289 +1,249 @@
-Return-Path: <linux-fsdevel+bounces-71016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE042CB02BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 15:05:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D3BCB07F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 09 Dec 2025 17:05:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DECBA30F74CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 14:00:44 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 39AF430EE836
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Dec 2025 16:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32996263F5D;
-	Tue,  9 Dec 2025 14:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC38A3002C8;
+	Tue,  9 Dec 2025 16:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b="c9gnRav4"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="S/vhPHA3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from tarta.nabijaczleweli.xyz (tarta.nabijaczleweli.xyz [139.28.40.42])
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010037.outbound.protection.outlook.com [52.101.201.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F8215B0EC;
-	Tue,  9 Dec 2025 14:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.28.40.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765288843; cv=none; b=pYpEHCmrpAgsF6fStL8ohIKQSfX5/I8IK1/01+O5vrWIINFM4HuLzR3d83qUB43TZCRl7M21ZDL8uAsA2NiFFcx/W9SPQ57G9yINRd/7/Z2HrzLw6XInrFp6bOk1RnTd7jw+72pcqtOCUREAZf7hvq6984J70LuCSlwz8dfXsmw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765288843; c=relaxed/simple;
-	bh=7aJcdC7gJFpMHBsFFI7dYqx6C/DH+AdeopjEcNfJG9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YiDuOSJVDh5158hLLkeMGtcsnkA6MUPh2xjqF7/7qlZRuwJIEa7DYwYnT9ttKwfIBqINK2Tt7puKPN6cXZHVCxYcP9sAgSD8GgI7Iq5FTMEdjbJSB1IqPiHreLtn4ZhKLg36O0wx8NWnu089cLy35bN6GyzTbf/YAeqRD6lBfmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz; spf=pass smtp.mailfrom=nabijaczleweli.xyz; dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b=c9gnRav4; arc=none smtp.client-ip=139.28.40.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabijaczleweli.xyz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-	s=202505; t=1765288835;
-	bh=7aJcdC7gJFpMHBsFFI7dYqx6C/DH+AdeopjEcNfJG9k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c9gnRav46sO4Zvpjnq87F9oIWKtzB4WS0XYVeEy5gY0kDJyFM9a5alMgT0Bv0Elo6
-	 85Ok+KUGWqvrR8FfWuntuf9SSGZEfXN12smBlLyiYYPJztMJgUMBG3vbiufVGyHE0K
-	 5e6rpqoDY4PceOc7LiQ1BgUq0izp7uhNckUsSdUpl7AoSeogwFptl53y87UNSzlvlD
-	 ecnhk0Ad3kFXcx188s+Cq1JPYBzDfLWsJPeD4bEWJUDsg6IWj02mytILBNNQR6qrZi
-	 khRjrnHt/DoSEu75w4gb1FIShUjZsIdHdVoF6WKIM9NZXmbY7oVQFqNGaaK9nsmyIg
-	 IENXkA84dLhRw==
-Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-	by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 8D684EE42;
-	Tue,  9 Dec 2025 15:00:35 +0100 (CET)
-Date: Tue, 9 Dec 2025 15:00:35 +0100
-From: 
-	Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
-To: Hugh Dickins <hughd@google.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tmpfs: enforce the immutable flag on open files
-Message-ID: <mmfrclxjf2mmmohiwdbgqhyyrlab33tpnmtuzatk2xsuyiglrp@tarta.nabijaczleweli.xyz>
-References: <toyfbuhwbqa4zfgnojghr4v7k2ra6uh3g3sikbuwata3iozi3m@tarta.nabijaczleweli.xyz>
- <be986c18-3db2-38a1-8401-f0035ab71e7a@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73072C11E4;
+	Tue,  9 Dec 2025 16:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765296217; cv=fail; b=TBOJzbEYT4av8JdNQYM3nCOmiwEnlW9ZTgOWSmd9uecRybp7d90xhXA/SKJl5uwpfYq1u9motXq9KFZHS5bU5r+KQBYdwLY/UirPFcIgPLbNXtiHFaPEYhFw7bg3yVAUpvq4tBlLBihLbzBo/QNrgNPlcNaH4D1qAaaADKr4ILg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765296217; c=relaxed/simple;
+	bh=kBbKitmPBSAj91+Mx+HNtsbA+IsE9V7GopdHbszWbfE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EUsc+63RjINuzRbSUmwsfggmJALG1oWLK0bYNBk94+sKWifI1ihbTQJ5QTArm1OZ/6lq1U8ZFVzMiWPiidcNFqca6sYKkc45lC7wLtHN2fgrtFUb4YF7uJ6n7TzG9JIRjuNfL6mPyg3qfjh1prUTO+mxym4fwW5B9DV683Zgvyo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=S/vhPHA3; arc=fail smtp.client-ip=52.101.201.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rAhpcT72kWb1IF1dKmD8Tcvu1YEL28MKuZOrhy+/WRcNsZYHMs4Ss2VPjwDZ3zuVV4ezv1zulrlPVWo6LY89B5JmyCgYisjE+PI/ePoQ/TsAztZrvocXFxCcE3XhYBL4Z7cmaxHNyg67eAaAOmKqN5T7oo3ipTVybaHbSTTYq7JG0U/EF3qRpy1xRQNP7jkgX6b2479HAKGKx3kUpQu7Dsx2rA0B6NJhOcuuUcmA6SMZT1mH1mcTC74uDNAQFmjRlI3i7wvxMGiI5vVnRRqdH+q31+MLtKBNxWSW4BOc9l8CQ7fNFA0JyPlBZnbjUXWTrjC/rQwZdaoH4P/2iinFQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wspgFzM4ZRTbDwwh0B5/9TnFzY9xi56Dw8PJD91K4K0=;
+ b=fEa3JwVweWEPqsmHV8XUfrRUL7HA8gqHC9IZ8bGbDoNB4VOmITDTWhYQpDNHdiX5c+qx59KlpL8mRkqt2hyvMZWjiq899RY9XAfkCajSer03tRu2/zwKHeANoY0XStayJ9gUMseHVB1vSkFZJzGZh+sYkuYB5X3IcM0EAKklr74ogVXaqLjeh1G75tIaWd1C0aEQDA6RsFuL12fw3jfjW2pTGw1b+ImLJmVIAq8pBuGIv0c4C+ntjjwsFUfMXsWNmEWoed6+3uC6ZMf7j/v4hmcccMAQjOfYCAsjL7laC8JBN07eja4RgLlGp2nWfvS9b2aDueYDrKRHyvLO9pBz+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wspgFzM4ZRTbDwwh0B5/9TnFzY9xi56Dw8PJD91K4K0=;
+ b=S/vhPHA3Lejnc3jRwB6fcgtHdmyx6x8iHYw8lSxtpMaIOaYMhLvZvFm1rhXBqqelkHTiiAP4bwEsDXCrdnWzw+ff47pjAfRRQyhnBuG/roblOwIbMKvJw4DmNrTAucAkUCL6fe57Wh5POn2RcxcXD9Qosvm/OC7TJCd2NKw+v5wh09E9O/KZ/P7GK1GKc4MkFv7B/O8SfYvdAjzXXF7YGEgM1JAsZFXeaHRzL24pzbId+IpQejCFcMAwnNHO5tWlMRiydrUy3pc9k0DiTDg1sa8Cfh1H3wmfRqOJD1qR3hbqO93hpThf4adW7yRNRNhAacsi53CBkSddkz9tBN5mGw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ LV3PR12MB9141.namprd12.prod.outlook.com (2603:10b6:408:1a7::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.6; Tue, 9 Dec
+ 2025 16:03:28 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9412.005; Tue, 9 Dec 2025
+ 16:03:27 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Pankaj Raghav <p.raghav@samsung.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, Mike Rapoport <rppt@kernel.org>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Michal Hocko <mhocko@suse.com>, Lance Yang <lance.yang@linux.dev>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Nico Pache <npache@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ mcgrof@kernel.org, gost.dev@samsung.com, kernel@pankajraghav.com,
+ tytso@mit.edu
+Subject: Re: [RFC v2 0/3] Decoupling large folios dependency on THP
+Date: Tue, 09 Dec 2025 11:03:23 -0500
+X-Mailer: MailMate (2.0r6290)
+Message-ID: <64291696-C808-49D0-9F89-6B3B97F58717@nvidia.com>
+In-Reply-To: <20251206030858.1418814-1-p.raghav@samsung.com>
+References: <20251206030858.1418814-1-p.raghav@samsung.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BN0PR08CA0010.namprd08.prod.outlook.com
+ (2603:10b6:408:142::11) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="odzmi4uh2rsyvvsv"
-Content-Disposition: inline
-In-Reply-To: <be986c18-3db2-38a1-8401-f0035ab71e7a@google.com>
-User-Agent: NeoMutt/20231221-2-4202cf-dirty
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|LV3PR12MB9141:EE_
+X-MS-Office365-Filtering-Correlation-Id: 48966b2d-c1ba-4799-094e-08de373c7d5e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XcprXJBkK0T4J83syX5+TtfymEvGIpvdrLALuD7DEYHcfWHMXezmwYKtB+wH?=
+ =?us-ascii?Q?74eKTgj0n1BXcS25cUvKnCTZjSGlDi4hqD/37Giox0Knpj7OmE6YmeTUUY1E?=
+ =?us-ascii?Q?7a96QWhacIJajyFWVmoumvqiaQiiiuWnFDlp6uwe81gy4+LsvnzqSL3SF1Om?=
+ =?us-ascii?Q?PeAlLvMKVSiDbQXHS8f2p6gav6CAHzM8s6hCMvBcKNvLaPQgTxR8K6YEzG2q?=
+ =?us-ascii?Q?m/MSxfDvoYJm9q79JBlCclyCLJ74o6LGVuYdJ+YazGuPvYNv73RfdDEgqSh+?=
+ =?us-ascii?Q?ynVVWRlTYRIE7fR7MiGsUvEKiLJL+uqaunh6vNj7Ed10vXfDc2PkSNY9qnM+?=
+ =?us-ascii?Q?1am0+x+ZW0KtHb2ZDRHQtcyMUk2g9t1d4G5+ocVC5ZiKiYVxaFRg2mRTs8X1?=
+ =?us-ascii?Q?8ZFa/WKZm0ynOKOmLEdhTLs2XhDv6dk0oeOV8vZFAoGUo+GehQFl2ys4LtgV?=
+ =?us-ascii?Q?TJkzhKdVlqcXsP1V1oapQBbgFpwg0mBqJzWQuQgfSZ9xuFWCV2R27tPHGfOO?=
+ =?us-ascii?Q?o+aNsLb9KyaRDuVvMBkrmfNOT8bhyj7dcYPb8WNmDMPBcmuUAeB77FAhm6H8?=
+ =?us-ascii?Q?6g/T0p520k+5l8fBzDkpW5XffbnNSf7cxvyg7S+hUua1QL70C9Bw5yjl+YOu?=
+ =?us-ascii?Q?9NsSWUDETkUGZYpKLmqdeF3bB1WH/YoPYHLbX+6txjimjIZtXvU+9GNFZ4j2?=
+ =?us-ascii?Q?nGTEbpLvhB0EO7aYusspTEEh5yNB33olIrpIwIYOtO9Hdt89SmkeHGhnU/re?=
+ =?us-ascii?Q?Ez1ox8YcTFAar7tYrsjbh/kMYqL9qsnQOYVUUbFexFSzWfEgqA3c9YQa6mM/?=
+ =?us-ascii?Q?FM5on0DB/rYnU3TPnsL1CTSd91LmkqM2CZ0GxLiyglmabRui5gwiPmlIKieq?=
+ =?us-ascii?Q?qBNwNoSwkl3GpKeaeQ+bmbfqW8SagkAG9E1YQXF1o8GxpzljUud4DbNRidDF?=
+ =?us-ascii?Q?gWDCAuu+VCwamnrOIwx8ufMTNT5RrMJLl1T8jGHNbBZ7Bq/1SzsUWI5MQiN7?=
+ =?us-ascii?Q?2IspMzlA+B1tWz4wbZ1zniAUebBslyRoiAGn9NcMGDkoqhutTSyM0ZVtQV9Z?=
+ =?us-ascii?Q?Yrp0NcINinMCyQ4ada+iqqn9Qt2NhNxtjMJcB14mRgznJ7ZZKgYwlgOX2Nb3?=
+ =?us-ascii?Q?STT1NWArVGe6HOl2hJ0BfE+d2DxUC6tkB1+QVX3A4k5ETWCFBonGzt1iLBW0?=
+ =?us-ascii?Q?9PwHumXvDDPUekwt8GlOodbWZ0x1fK5YtZA7Xf4Vr4hGGEbaLGXko6zmWATq?=
+ =?us-ascii?Q?jIYrVr86TE7f9utoevGwxBEbg9qLD4iUEP3hxZM/a7xhfwH1xrdc0VHuJGbR?=
+ =?us-ascii?Q?Ysbazuz4AuPQN8K7o/nXeO8avxjPqeeaU8DstQo+D6bE3Mxs0l/d811e9lvH?=
+ =?us-ascii?Q?gpTsC7TFGX4DB+eQB2lE1jpr80W784eQrcucEItz6GfOPcMnW69YZAwT4Asr?=
+ =?us-ascii?Q?iVzHZRYz3V9gwlXfNHPAUBOkIN7kNAYh/2HYonS7usHQWyZqLsfxYg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ieqS716bS0u9gBo9zeur88qYKgIAfRmpxwOff1Ue9YuQBDx6Xuvig7wRl5h7?=
+ =?us-ascii?Q?R411n4QbA1STp+yJQPuDrbz1dmwShfXn4hYBjLR42fVTa4CZzkMtv0iJXCVF?=
+ =?us-ascii?Q?UKCxnXGy2EEfXa1u2mEsIq/S+ZusN4sulgloHi3I+d+Ky95M2Q7h2bI5N+U4?=
+ =?us-ascii?Q?ppdAZ9cQAZ1GVmHj0JbtTbJk40qh0NuYlSJlz0yooZJt4n6hpeYuC6LbosfK?=
+ =?us-ascii?Q?MNYNTsTL28EI3I6Ojae4iWqKUx5h4lfqIg9odFko0yBalCpma5rFLB3wjZR5?=
+ =?us-ascii?Q?V4kVZsYlTAmimJHmnLXq5uxCohsNYkfUB/oVku+j4QZABYj5Ix8pqnXoztj+?=
+ =?us-ascii?Q?x9kGegh9RdaDczcdVBLadU2MtQX7/oq28aR1dbDEHbb/GH9fq8JZCCrnt6Yz?=
+ =?us-ascii?Q?wKI9InM929SEj2aw559mNgUkqYkhx4iewEHsn+6Sr2lCrJ0vYr1IyCSvm2uO?=
+ =?us-ascii?Q?f/B5BrhVit1UW4mRsfub5sITOMABlpG0ZTWDtj+bxwZp/W6HnQIETya3Ufut?=
+ =?us-ascii?Q?Vx7T+Wgm/120DgQnapkPt9/2Mhj2cgHoUBfD2OaSQLtmO6BMPGcOVGi9/X1M?=
+ =?us-ascii?Q?ws3twNVFwvjJMB/ktHRZjS4RhQM8yvHVHip0sR8Txf1Gvfq5mYHRBZGNAbz5?=
+ =?us-ascii?Q?m6LigM/jclEjGzuO4oy2ptaKA4c8M3X0Rxc1oLIdR5hA0HjeX3dY12RUgGtM?=
+ =?us-ascii?Q?GggcmZ3QsuugrCO1nyDA0ZYTZrpXKxMNL+kKmZNlSXV3waaJ/ONCkMZQPsAD?=
+ =?us-ascii?Q?a1SRNyP57cDduSCAuGpS4fjW5P0OCeMlWvjSNX3VagM/5AoijWjon667I9sP?=
+ =?us-ascii?Q?GYqckkrCbNPCGcFQKJaUsn5Kj3xUkLfYSri8xRRlDaTNrFOfwhonk/0fr6qC?=
+ =?us-ascii?Q?t2vNfIEnKj2kOEtv5Tfg6hXKRUQ+q2iE9Tr5LnTRPGn02PxcIuSTIIiszRv0?=
+ =?us-ascii?Q?Q8ClFluoOtlGNf3el4NNJhqMpuThRfv1BWHyjXr8TiTDCCLhvMW9AQWiejWu?=
+ =?us-ascii?Q?pNy4L2CDZuqyqFhFzTq+TnSOGVctkdQPQxAzm2fOCYo57VlrOO5OPnUKvw3O?=
+ =?us-ascii?Q?hsWz5H1xh4D5YQSg56LPVAbu/NeziO+xg3IcmxxXIjyGpSOTTB8sFbZA+hGd?=
+ =?us-ascii?Q?GcJOvm8F0LRRJ+TjBrXpbyEzn4XbwBPWO8kdxcbn8csX/7q0e/S7IHYF6jdo?=
+ =?us-ascii?Q?iz/+nbMd2u6x0Glj4t/LpJz2IkqG8naQ2VSLkIh7SGYke7P4Ww9yP/iOnJFM?=
+ =?us-ascii?Q?6S9MU2DNbadi/lap1vn58/I4i1OGoZ3m5nSv6p1ldrZ61tzCJWQQcPsnLb3E?=
+ =?us-ascii?Q?aRjb/5yMOkAcaJrgVdMwEhQRtPNOWtmBMQ4vT/g1FTF4h2xQ8yK/H93MqJQW?=
+ =?us-ascii?Q?Keuor98DoKLg79z08DVmZa+WDh97BpH8dGXB561vZa21xVj2w2jbsVkyXVGF?=
+ =?us-ascii?Q?NKVsih1qS1WuCV5iPv1NKZP/j3dpgWqmO3oddQ88iYjQWjFZjtVg/QDY/no1?=
+ =?us-ascii?Q?cm9frV+pyMMQqXy6tsRWeM+UwvjTKj4X2Mo/UV61Eo7RA7ZfYBo/YwQarISS?=
+ =?us-ascii?Q?bCPHxHRvEVlLAFKcE6VcKAGT2OcwjRqAjZvx2E2I?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48966b2d-c1ba-4799-094e-08de373c7d5e
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2025 16:03:27.5429
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KcHsL0Ddz81aC2Ah94ilaCgbmYseHCy4KZjFWdK4byhwKA+NdrPmbX1x5tXvio99
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9141
+
+On 5 Dec 2025, at 22:08, Pankaj Raghav wrote:
+
+> File-backed Large folios were initially implemented with dependencies o=
+n Transparent
+> Huge Pages (THP) infrastructure. As large folio adoption expanded acros=
+s
+> the kernel, CONFIG_TRANSPARENT_HUGEPAGE has become an overloaded
+> configuration option, sometimes used as a proxy for large folio support=
+
+> [1][2][3].
+>
+> This series is a part of the LPC talk[4], and I am sending the RFC
+> series to start the discussion.
+>
+> There are multiple solutions to solve this problem and this is one of
+> them with minimal changes. I plan on discussing possible other solution=
+s
+> at the talk.
+>
+> Based on my investigation, the only feature large folios depend on is
+> the THP splitting infrastructure. Either during truncation or memory
+> pressure when the large folio has to be split, then THP's splitting
+> infrastructure is used to split them into min order folio chunks.
+>
+> In this approach, we restrict the maximum order of the large folio to
+> minimum order to ensure we never use the splitting infrastructure when
+> THP is disabled.
+>
+> I disabled THP, and ran xfstests on XFS with 16k, 32k and 64k blocksize=
+s
+> and the changes seems to survive the test without any issues.
+
+But are large folios really created?
+
+IIUC, in do_sync_mmap_readahead(), when THP is disabled, force_thp_readah=
+ead
+is never set to true and later ra->order is set to 0. Oh, page_cache_ra_o=
+rder()
+later bumps new_order to mapping_min_folio_order(). So large folios are
+created there.
+
+I wonder if core-mm should move mTHP code out of CONFIG_TRANSPARENT_HUGEP=
+AGE
+and mTHP might just work. Hmm, folio split might need to be moved out of
+mm/huge_memory.c in that case. khugepaged should work for mTHP without
+CONFIG_TRANSPARENT_HUGEPAGE as well. OK, for anon folios, the changes mig=
+ht
+be more involved.
+
+>
+> Looking forward to some productive discussion.
+>
+> P.S: Thanks to Zi, David and willy for all the ideas they provided to
+> solve this problem.
+>
+> [1] https://lore.kernel.org/linux-mm/731d8b44-1a45-40bc-a274-8f39a7ae0f=
+7f@lucifer.local/
+> [2] https://lore.kernel.org/all/aGfNKGBz9lhuK1AF@casper.infradead.org/
+> [3] https://lore.kernel.org/linux-ext4/20251110043226.GD2988753@mit.edu=
+/
+> [4] https://lpc.events/event/19/contributions/2139/
+>
+> Pankaj Raghav (3):
+>   filemap: set max order to be min order if THP is disabled
+>   huge_memory: skip warning if min order and folio order are same in
+>     split
+>   blkdev: remove CONFIG_TRANSPARENT_HUGEPAGES dependency for LBS device=
+s
+>
+>  include/linux/blkdev.h  |  5 -----
+>  include/linux/huge_mm.h | 40 ++++++++--------------------------------
+>  include/linux/pagemap.h | 17 ++++++-----------
+>  mm/memory.c             | 41 +++++++++++++++++++++++++++++++++++++++++=
+
+>  4 files changed, 55 insertions(+), 48 deletions(-)
+>
+>
+> base-commit: e4c4d9892021888be6d874ec1be307e80382f431
+> -- =
+
+> 2.50.1
 
 
---odzmi4uh2rsyvvsv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Dec 08, 2025 at 08:14:44PM -0800, Hugh Dickins wrote:
-> On Mon, 8 Dec 2025, Ahelenia Ziemia=C5=84ska wrote:
-> > This useful behaviour is implemented for most filesystems,
-> > and wants to be implemented for every filesystem, quoth ref:
-> >   There is general agreement that we should standardize all file systems
-> >   to prevent modifications even for files that were opened at the time
-> >   the immutable flag is set.  Eventually, a change to enforce this at
-> >   the VFS layer should be landing in mainline.
-> >=20
-> > References: commit 02b016ca7f99 ("ext4: enforce the immutable flag on
-> >  open files")
-> > Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.=
-xyz>
-> Sorry: thanks, but no thanks.
->=20
-> Supporting page_mkwrite() comes at a cost (an additional fault on first
-> write to a folio in a shared mmap).  It's important for space allocation
-> (and more) in the case of persistent writeback filesystems, but unwelcome
-> overhead in the case of tmpfs (and ramfs and hugetlbfs - others?).
-
-Yeah, from the way page_mkwrite() was implemented it looked like
-enough of a pessimisation to be significant, and with how common
-an operation this is, I kinda expected this result.
-
-(I was also gonna post the same for ramfs,
- but it doesn't support FS_IOC_SETFLAGS attributes at all.)
-
-> tmpfs has always preferred not to support page_mkwrite(), and just fail
-> fstests generic/080: we shall not slow down to change that, without a
-> much stronger justification than "useful behaviour" which we've got
-> along well enough without.
-
-How do we feel about just the VFS half of this,
-i.e. open(WR)/chattr +i/write() =3D -EPERM?
-That shouldn't have a performance impact.
-
-(I'll admit that this is the behaviour I find to be useful,
- and I was surprised that the ext4 implementation also made mappings
- SIGBUS, but I implemented both out of an undue sense of completionism.)
-
-> But it is interesting that tmpfs supports IMMUTABLE, and passes all
-> the chattr fstests, without this patch.  Perhaps you should be adding
-> a new fstest, for tmpfs to fail: I won't thank you for that, but it
-> would be a fair response!
-
-I rather think having IMMUTABLE but not atomically perfusing it
-to file descriptions is worthy of a test failure.
-The mmap behaviour, not so much.
-
-> Hugh
->=20
-> > ---
-> > v1: https://lore.kernel.org/linux-fsdevel/znhu3eyffewvvhleewehuvod2wrf4=
-tz6vxrouoakiarjtxt5uy@tarta.nabijaczleweli.xyz/t/#u
-> >=20
-> > shmem_page_mkwrite()'s return 0; falls straight into do_page_mkwrite()'s
-> > 	if (unlikely(!(ret & VM_FAULT_LOCKED))) {
-> > 		folio_lock(folio);
-> > Given the unlikely, is it better to folio_lock(folio); return VM_FAULT_=
-LOCKED; instead?
-> >=20
-> > /ext4# uname -a
-> > Linux tarta 6.18.0-10912-g416f99c3b16f-dirty #1 SMP PREEMPT_DYNAMIC Sat=
- Dec  6 12:14:41 CET 2025 x86_64 GNU/Linux
-> > /ext4# while sleep 1; do echo $$; done > file &
-> > [1] 262
-> > /ext4# chattr +i file
-> > /ext4# sh: line 25: echo: write error: Operation not permitted
-> > sh: line 25: echo: write error: Operation not permitted
-> > sh: line 25: echo: write error: Operation not permitted
-> > sh: line 25: echo: write error: Operation not permitted
-> > fg
-> > while sleep 1; do
-> >     echo $$;
-> > done > file
-> > ^C
-> > /ext4# mount -t tmpfs tmpfs /tmp
-> > /ext4# cd /tmp
-> > /tmp# while sleep 1; do echo $$; done > file &
-> > [1] 284
-> > /tmp# chattr +i file
-> > /tmp# sh: line 35: echo: write error: Operation not permitted
-> > sh: line 35: echo: write error: Operation not permitted
-> > sh: line 35: echo: write error: Operation not permitted
-> >=20
-> > $ cat test.c
-> > #include <unistd.h>
-> > #include <fcntl.h>
-> > #include <sys/ioctl.h>
-> > #include <linux/fs.h>
-> > #include <sys/mman.h>
-> > int main(int, char **argv) {
-> > 	int fd =3D open(argv[1], O_RDWR | O_CREAT | O_TRUNC, 0666);
-> > 	ftruncate(fd, 1024 * 1024);
-> > 	char *addr =3D mmap(NULL, 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHA=
-RED, fd, 0);
-> > 	addr[0] =3D 0x69;
-> > 	int attrs =3D FS_IMMUTABLE_FL;
-> > 	ioctl(3, FS_IOC_SETFLAGS, &attrs);
-> > 	addr[1024 * 1024 - 1] =3D 0x69;
-> > }
-> >=20
-> > # strace ./test /tmp/file
-> > execve("./test", ["./test", "/tmp/file"], 0x7ffc720bead8 /* 22 vars */)=
- =3D 0
-> > ...
-> > openat(AT_FDCWD, "/tmp/file", O_RDWR|O_CREAT|O_TRUNC, 0666) =3D 3
-> > ftruncate(3, 1048576)                   =3D 0
-> > mmap(NULL, 1048576, PROT_READ|PROT_WRITE, MAP_SHARED, 3, 0) =3D 0x7f09b=
-bf2a000
-> > ioctl(3, FS_IOC_SETFLAGS, [FS_IMMUTABLE_FL]) =3D 0
-> > --- SIGBUS {si_signo=3DSIGBUS, si_code=3DBUS_ADRERR, si_addr=3D0x7f09bc=
-029fff} ---
-> > +++ killed by SIGBUS +++
-> > Bus error
-> > # tr -d \\0 < /tmp/file; echo
-> > i
-> >=20
-> >  mm/shmem.c | 25 +++++++++++++++++++++++++
-> >  1 file changed, 25 insertions(+)
-> >=20
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index d578d8e765d7..432935f79f35 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -1294,6 +1294,14 @@ static int shmem_setattr(struct mnt_idmap *idmap,
-> >  	bool update_mtime =3D false;
-> >  	bool update_ctime =3D true;
-> > =20
-> > +	if (unlikely(IS_IMMUTABLE(inode)))
-> > +		return -EPERM;
-> > +
-> > +	if (unlikely(IS_APPEND(inode) &&
-> > +		     (attr->ia_valid & (ATTR_MODE | ATTR_UID |
-> > +					ATTR_GID | ATTR_TIMES_SET))))
-> > +		return -EPERM;
-> > +
-> >  	error =3D setattr_prepare(idmap, dentry, attr);
-> >  	if (error)
-> >  		return error;
-> > @@ -2763,6 +2771,17 @@ static vm_fault_t shmem_fault(struct vm_fault *v=
-mf)
-> >  	return ret;
-> >  }
-> > =20
-> > +static vm_fault_t shmem_page_mkwrite(struct vm_fault *vmf)
-> > +{
-> > +	struct file *file =3D vmf->vma->vm_file;
-> > +
-> > +	if (unlikely(IS_IMMUTABLE(file_inode(file))))
-> > +		return VM_FAULT_SIGBUS;
-> > +
-> > +	file_update_time(file);
-> > +	return 0;
-> > +}
-> > +
-> >  unsigned long shmem_get_unmapped_area(struct file *file,
-> >  				      unsigned long uaddr, unsigned long len,
-> >  				      unsigned long pgoff, unsigned long flags)
-> > @@ -3475,6 +3494,10 @@ static ssize_t shmem_file_write_iter(struct kioc=
-b *iocb, struct iov_iter *from)
-> >  	ret =3D generic_write_checks(iocb, from);
-> >  	if (ret <=3D 0)
-> >  		goto unlock;
-> > +	if (unlikely(IS_IMMUTABLE(inode))) {
-> > +		ret =3D -EPERM;
-> > +		goto unlock;
-> > +	}
-> >  	ret =3D file_remove_privs(file);
-> >  	if (ret)
-> >  		goto unlock;
-> > @@ -5286,6 +5309,7 @@ static const struct super_operations shmem_ops =
-=3D {
-> >  static const struct vm_operations_struct shmem_vm_ops =3D {
-> >  	.fault		=3D shmem_fault,
-> >  	.map_pages	=3D filemap_map_pages,
-> > +	.page_mkwrite	=3D shmem_page_mkwrite,
-> >  #ifdef CONFIG_NUMA
-> >  	.set_policy     =3D shmem_set_policy,
-> >  	.get_policy     =3D shmem_get_policy,
-> > @@ -5295,6 +5319,7 @@ static const struct vm_operations_struct shmem_vm=
-_ops =3D {
-> >  static const struct vm_operations_struct shmem_anon_vm_ops =3D {
-> >  	.fault		=3D shmem_fault,
-> >  	.map_pages	=3D filemap_map_pages,
-> > +	.page_mkwrite	=3D shmem_page_mkwrite,
-> >  #ifdef CONFIG_NUMA
-> >  	.set_policy     =3D shmem_set_policy,
-> >  	.get_policy     =3D shmem_get_policy,
-> > --=20
-> > 2.39.5
-
-
---odzmi4uh2rsyvvsv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmk4K4AACgkQvP0LAY0m
-WPHX8w/+LF/sRkV9GkZuIiCTm3dARfQYYA5sEFRR/SAK44U4sWNpR5fS2NgVBvk+
-wr+2CyVTTNHauBm0GpUuKKyYQtrhof8pQKYyC2i8Jz0Ty1azn/Dvm2Y9D3rVUa8B
-Oo7w+7kQr1ON8MdTPiV0ekjO2ru/YqIUMvsaNSuxyqALjlZ+oDTlpOCGnj9fb2Jf
-Nd83pErmVChI/cg7kACHXiJmrUNJd1QeNmkbu2uGnAKq5+n9kjsfKaYOCTiOr+ex
-HAhCKk2yRvDaZ7vtSAlOUBB7ZD4dXFe187Vqms8Wyw3q21ztAvWCLwEPkzWYdnS7
-6O5Y9IHmwmW3ESFVl0fJcaSb4nVL2LZTtNYUecB88lV+LiMaBOeeDA8yeqcinMnP
-yYkgw8EfI5qYrdsDjYAXC0L8FY3IMXgWXIKpf8rhCMp0fDp5IwID6ujma0lu2TaU
-eQgBTD/y8seAQykOJ/+ORoCR0zMVdeA4qeaJkwWANExCX+jjjucsUtoZ1ADu0mu4
-4Ir8WdHqEQaxdo+rxdgD/M4kU5zBd9fBcI0+OhFywEHD5R4+Au2wKbwaKlYRleKG
-Bq1U4Az183uceHRMeVEigRYfYmpCqSkhQTcrq+JfxkFbr72JSogt5CKcu21QQgXI
-rWRQThCmT8heUpjiWNEI8B5eOL5TJkmeyPCaK2qU59E/K5oviXc=
-=IeM0
------END PGP SIGNATURE-----
-
---odzmi4uh2rsyvvsv--
+Best Regards,
+Yan, Zi
 
