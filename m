@@ -1,125 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-71053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDAA7CB2D3B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 12:29:59 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76BFCB3093
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 14:34:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7DA6F305B590
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 11:28:25 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B712F30052D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 13:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFA330BF5C;
-	Wed, 10 Dec 2025 11:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC32325498;
+	Wed, 10 Dec 2025 13:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="agRU7ec4"
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="YGs52B8O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30A62D6E6A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 11:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9804645948;
+	Wed, 10 Dec 2025 13:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765366103; cv=none; b=uIDc3LNh8gKFtFypttKWl1HdE6wdZIhyV6wGY7iLE0PJPtI8tLiX6CBm8OfhLC6X81oLbxjVUuMSTB6qWMoKxvB5Qkt18q6fbnPrfdFNLRKlpFf1CtPwQOUBPBv9EKzRi7qUo/UobTHow5N/bakfqIGPQMSYOcz9IfzT74gktYg=
+	t=1765373656; cv=none; b=Fm6ckSZVSRLjZtvQtaU/Sc2nkDY7rFsuchQiTJ/Z7toqcH34lFOQPaZi9fdKYAQn40kTWmCXqFdVF37FZ/Jvk2ML9vbtCsFZt/T3n+kVSFyWTUBkbE68/nw8u6lnmUfid0V6NiKxF+dKUimSnihIUkc7Vb3vY1JZ4vWvWzXuM20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765366103; c=relaxed/simple;
-	bh=XAXYptBcDX2fvYO//82dlDUOddwhzfae/Zs/jle65rc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fXraOvrkU+Mf54UpnQt1wip8dVUTS1UGGz7GMx8fErEQBO3HtIS9Fm2v7vo6YOgMpSg1f6whLYBC5NpfIYq5TbJUhS8mM+q6AbF+XKMjNAbV7FwlR1wsjUtzTWYm9hjL9y5e9QQ1mBdM0bVdcxo5f10hruvPBJ3yNgYUICmEIcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=agRU7ec4; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64198771a9bso12154937a12.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 03:28:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765366100; x=1765970900; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3/OlIs4fA7vyKE19uOvZgraqstFeGDQidWxB59d9RmY=;
-        b=agRU7ec4D1hvkt+pkcI0OCutV0bn5Pfe3K40vFwGaHl4CKfiLBZD1EtiNBvsQLXc5R
-         Ebi4kToCI3Fj/RFuAe603cb2agaL+XNgwK/2rExVr3P/T6yAFave+b21FWBPrBQ91w3V
-         Wym/7TGLOxULNmsnaMCwitR4B0sZHWmL31hwh7H9Ieu4e2nUo9joEUmk9SrZRBXVyO48
-         KqtIvqwDQndWOfil9c3ZzPBepkbkblY8y1VDlIb8aHNYIbbWzil3dZIMQJE8q4CI88oY
-         qmFbNox0Qu2nsDded/bO1nZVy5ofKQ15PwkVkrvFDZtyhj68VgIi96Jhp/dYSoDrChWx
-         pEUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765366100; x=1765970900;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=3/OlIs4fA7vyKE19uOvZgraqstFeGDQidWxB59d9RmY=;
-        b=of1EPiUJs6s1u0G5wMZsEvqfr70YdD/N1ES8eV+bjVwMTL6U129vMLG82z6K7oOQtZ
-         oNRLDuvcUjcOcYtNZV+/FO9GybeCTav53ZfrLCoj86/pd5zMEdmvnSXKsuq0LhQs37R8
-         HiQd0k4rOv1xjJ0POK1Q2l0sd5NQFBuCJ6PX4DIZZ6iQ+FQip0cN08Lo5fVVFHpigeF6
-         Uvqs2mn94vZ2rToJnUiKJ9An7lR2jjqJee+aJVK5J/Zg0e8zDsMcs4NZjFnvHqP0DIUU
-         nlM3qJaKNkr2cfzy7derWqh+KtpxP2Dq8v78VisqAIj3+n//Tc96H4w8e+YPTYHC3AMz
-         rA3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXJb+6EKrdMEeLUGTpfC/CrHuq8Jws7NdqdthVgPU65ly960QokMUolx2QJvnyLl0UQUwedZXbWcmrixsxY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJUbFnVAwWtQdb/22Gl2BBxaWXhC3eDiLVje3hZ+huf5kHH4rK
-	WVi82zyVa7kdSy4kpDPHaLY06dRKJV/QLiC6AGj0JqSJ0jRN3UyjNdOdKbH0aS/juodsOM/tr5x
-	eOk2HLbcY02yrKLcEwo4kVJbu1gpMJOM=
-X-Gm-Gg: AY/fxX47WNF4XK+WDvW9wwoWkD+MGnwKgfP0qzpBzvB14axHTZ1EiVhuR6YEOufDwKp
-	cDcUNy8npAnIxhG5KitaqFg2HzB9lBZAdHIknbvLDAcL+cAt6QBWS2FoqoPTP8OhX574rI3J2Vk
-	jRHeWpA8lap99YW/thVUmWl41hcnbcuvHknAl2DAlwLJbWomsUImV1mOviC6uNzC227KKoInAel
-	HdWClHSn6dKXY53xGxCy6JcXDoBLcecPA85d4MailbndaR+b/t8kfTPEjx2GIGBp+I8b81nVz3Z
-	pqP9OqDkKWrQ2xeAqtHJRxCLFD4=
-X-Google-Smtp-Source: AGHT+IGI9z2LZl2WibgGATCYde2aL+JH7VhrQQY/TMvTfGol8TxjwJQZ+8ocqbRLU4TLms/TZMLHiCAIyDj9wQZG4H8=
-X-Received: by 2002:a05:6402:27cc:b0:640:c640:98c5 with SMTP id
- 4fb4d7f45d1cf-6496d5e5fc8mr1967549a12.34.1765366100233; Wed, 10 Dec 2025
- 03:28:20 -0800 (PST)
+	s=arc-20240116; t=1765373656; c=relaxed/simple;
+	bh=9In1NsxkWtLDv8pCbfUEj22suatG6WoAPTQDneAYSyk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dKmjs/TzKFhZTuxa8QLvnPyDQT+8yK44qbqxoU/O8vsF1EL2h3aE/6K1rgsMcqSRsbeP2FCNjR6tv7/TjY9M/brRU8hiSsDxfLwn8TiCupgpJijWTszPuRIxPCoQFnsayfeZeoOWXl2g3AUkXXRS2z/rDNI0aMOZFtjHQOTKzpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=YGs52B8O; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=z4rVeB5KmFkVF4IbrkNZFDmV4plSREzVqZi6Tlz/vg8=; b=YGs52B8OHsW81numTFHU9CjSDV
+	AdfGeQ/ZQTpJxiG9wonOez26enUqmRrBUdSFpeZIB84N6kEkX9fxuHfVbZ/p2uXBL6STo1bmwtvVJ
+	o0L1sJqVu7xAd3ZXBExjKRHSvo7Vh3K8t8JJ3hUgETzZJVhQyKwi5bDwek31PDG922WYwipfF/0xy
+	hiQpuIXzw/vtn3W6U5to5KSc+RJSJ2xovbuIa7MDRQIkNpt/J7kKhQYkEna0MgWXP3Y0ZSNqx6iMI
+	HvvuCKgtlj51x6mkfrCZFMmnhZ1X1MFgPaAh+vjbBQQyp/i+RlD2PzFiD7oGdelid9pR+MuH8fcom
+	TEemcehtk2M0ybKGBpGErftHxOqJ/1LKYWLN1iLNe672oNuHTLjdgYAe0xQpcLsyewtFStIG3nc2T
+	3o+v4tavhNwPc5PyRaGI00drCngnRPR+Jvl1v77DwXjri397fDBxd5T7vsFEdpghsEfA3oVFOlWri
+	Blxk5iCXxV1fpdLNLHlSKDQfrSxC5Nfe61oyXLFNAIac8KPfClR5MzfO0MxLUPxH6LN59h0wvh5hH
+	DLY2jAhASzLjRzLg6HEo7dD4F2gFc6K1ZEj1HQu6JpLAmVenAwUd7tHKjBQ37z4H/BJjdObOZWHlt
+	Q8zLduVAoYOnmp1gsStNAK5QBnvAAuWX0vhAHiH9E=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: asmadeus@codewreck.org, Christoph Hellwig <hch@infradead.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
+ linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+ Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+ Chris Arges <carges@cloudflare.com>
+Subject:
+ Re: [PATCH] 9p/virtio: restrict page pinning to user_backed_iter() iovec
+Date: Wed, 10 Dec 2025 14:33:56 +0100
+Message-ID: <3385064.aeNJFYEL58@weasel>
+In-Reply-To: <aTkNbptI5stvpBPn@infradead.org>
+References:
+ <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org>
+ <aTkNbptI5stvpBPn@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f2ui7rofuos4vcuj7t7pa5tcyq5m3agm44ouk7hcdl7opiwmwd@dyctf7rrsuqw> <69395726.a70a0220.33cd7b.0006.GAE@google.com>
-In-Reply-To: <69395726.a70a0220.33cd7b.0006.GAE@google.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 10 Dec 2025 12:28:07 +0100
-X-Gm-Features: AQt7F2oNOko-4QXcehKn_iA5o50dm0UpHnz99JthCcbiFS8x7mF9mDdJg9Jb8S8
-Message-ID: <CAGudoHH5KvF4aJiLSiEqu_UkHrqoCKt2XXRozDDh-Bub_usuSg@mail.gmail.com>
-Subject: Re: [syzbot] [exfat?] [ocfs2?] kernel BUG in link_path_walk
-To: syzbot <syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, jlbec@evilplan.org, 
-	joseph.qi@linux.alibaba.com, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, mark@fasheh.com, 
-	ocfs2-devel@lists.linux.dev, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Dec 10, 2025 at 12:25=E2=80=AFPM syzbot
-<syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot has tested the proposed patch but the reproducer is still triggeri=
-ng an issue:
-> kernel BUG in ocfs2_journal_toggle_dirty
->
-> (syz.0.554,7359,0):ocfs2_assign_bh:2417 ERROR: status =3D -30
-> (syz.0.554,7359,0):ocfs2_inode_lock_full_nested:2512 ERROR: status =3D -3=
-0
-> (syz.0.554,7359,0):ocfs2_shutdown_local_alloc:412 ERROR: status =3D -30
-> ------------[ cut here ]------------
-> kernel BUG at fs/ocfs2/journal.c:1027!
->  <TASK>
->  ocfs2_journal_shutdown+0x524/0xab0 fs/ocfs2/journal.c:1109
->  ocfs2_mount_volume fs/ocfs2/super.c:1785 [inline]
->  ocfs2_fill_super+0x5574/0x63a0 fs/ocfs2/super.c:1083
->  get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1691
->  vfs_get_tree+0x92/0x2a0 fs/super.c:1751
->  fc_mount fs/namespace.c:1199 [inline]
->  do_new_mount_fc fs/namespace.c:3636 [inline]
->  do_new_mount+0x302/0xa10 fs/namespace.c:3712
->  do_mount fs/namespace.c:4035 [inline]
->  __do_sys_mount fs/namespace.c:4224 [inline]
->  __se_sys_mount+0x313/0x410 fs/namespace.c:4201
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0xf80 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+On Wednesday, 10 December 2025 07:04:30 CET Christoph Hellwig wrote:
+> On Wed, Dec 10, 2025 at 06:04:23AM +0900, Dominique Martinet via B4 Relay
+> wrote:
+[...]
+> > The problem is that iov_iter_get_pages_alloc2() apparently cannot be
+> > called on folios (as illustrated by the backtrace below), so limit what
+> > iov we can pin from !iov_iter_is_kvec() to user_backed_iter()
+> 
+> As willy pointed out this is a kmalloc.
+> 
+> And 9p (just like NFS) really needs to switch away from
+> iov_iter_get_pages_alloc2 to iov_iter_extract_pages, which handles not
+> just this perfectly fine but also fixes various other issues.
+> 
+> Note that the networking code still wants special treatment for kmalloc
+> pages, so you might have more work there.
 
-That's a different bug.
+But couldn't this patch be used as a preliminary solution for this issue 
+before switching to iov_iter_extract_pages(), as the latter does not look like 
+a trivial change?
+
+Maybe I'm still missing something important here, not sure.
+
+/Christian
+
+
 
