@@ -1,423 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-71065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id F20F7CB3510
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 16:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B16CB3525
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 16:31:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 686893183CFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 15:24:23 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4EE4D303C287
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 15:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F4C322C77;
-	Wed, 10 Dec 2025 15:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D7732471C;
+	Wed, 10 Dec 2025 15:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WQ8yF50P"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XhR807au";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="TRvZetjl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047E026FA5B;
-	Wed, 10 Dec 2025 15:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0380430AD05
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 15:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765380261; cv=none; b=fJMOumpaG6n9+qMhkmVjMY2ntHCLQHYF8x7xll/nEXM1ibIeI0fEem6N4DUA6eMbKmITwhCX9COC+MdF/EOAdbK9+CAFhP+RkYhoxGh1WwiPEW4VuFmeskrcw8vSnELXAMHkfdcW5GqiZoN70a0BhlfhWlSSRMIruJX4QyCPKEo=
+	t=1765380558; cv=none; b=CS0+07EtGmL7f3bx9JYHtIFZEJQEx3rA5zNe9U+WpwkyCpqTlznmtas5LQjEf4qlmrHZ/kYh2vub9I6olkZCblas3wsOphXSKPn6JlLfyZW9ARJQGSgllXyYvqAsYQZFgSOHUVbvgzWr32g6m/ycmoEDsIFd5HXwEFf51XEo/9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765380261; c=relaxed/simple;
-	bh=S/jBJL5lZpU5Pg3Ty5UvArbaTWmx/CsOvmfwFLmGkaA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g7oqyXv6yKfOhA7bHu0LF/RlY9bkwwIUzwU+CNUrIKCSeQ1Pr93vbDelfNhslJROoLW1vtIHlM4UQ4jfxuLpC0Kol10mnAxIOhJklGV0P/OsAUUID/jgmdIWjEkq23Rt4xYapHK5nnUZZ7Npubra3zG5hPWgReE6dbwEKk6sFEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WQ8yF50P; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=FQUphoLl+CSl7BzULuCCRXcVoz0pb/MDauqP2iOaV7E=; b=WQ8yF50PVZtz+v2UxDw/R277Yt
-	NroPhVZ3zhpFWJssIqglQijPfTxJK4kG5gstJqVJJwpNZwFya+smrHN3Aepq59BMXDZyFrXntPz+P
-	XB2+kjH797NSdWeeDaY++KbhQNf3SeAqHEGhmxvbofel7OlSZOv8OnXiC0MsdmMrfNPrGu48c1bgV
-	uQrhrE4p4Bp7yAj4nJGq9Wqb2/AWPWGQ0mTYHiB8DX3LuSJG9UD2/g4vfumzN8JcK9mywLnojpdDR
-	4fxE/j93RuVbu/oRHGeC2TYt/5xMdECLQ6TY7azh1BxxThFj8awaYOtGSMvNSuxBkBzVOOcujFpTF
-	yrU4kmFw==;
-Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vTM39-0000000FZ3h-0KVT;
-	Wed, 10 Dec 2025 15:24:19 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Jens Axboe <axboe@kernel.dk>,
-	Eric Biggers <ebiggers@kernel.org>
-Cc: linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org
-Subject: [PATCH 9/9] blk-crypto: handle the fallback above the block layer
-Date: Wed, 10 Dec 2025 16:23:38 +0100
-Message-ID: <20251210152343.3666103-10-hch@lst.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251210152343.3666103-1-hch@lst.de>
-References: <20251210152343.3666103-1-hch@lst.de>
+	s=arc-20240116; t=1765380558; c=relaxed/simple;
+	bh=lDvUkIt4DfXBy5oCSUUSe8t2srbBSGC4+Je7Xv6vk4w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hhcST9WbQ8RrzAzTiDT3Upb8Xr5+unrdMMlRWdFA3PO+OCm5CL9N1M0WOh5Rjh2+dBVjyyuY7ReVhM2QEP/DzOu2VDnugcjmgQj0j3RlhiMKRwie8nK6pwBfd89dC0GrLwG0z/kRSYsWqX+qcgDi5yu62ZL4NOFGqlmbTLJXz70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XhR807au; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=TRvZetjl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1765380556;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Db0TkqKtXHy5gSEgDOa1+ty9n2WhCMHIyw820W5VaX4=;
+	b=XhR807auCT8RQmsTC3Io1WiwBvtc5SRaBGP+jGAvqV7j80Yksxm93EoK0uZAAp8espR05b
+	ay0PF/5mjNXCFu17mzhd2Csp3bOcmaVWmzTmWsEgqmJfqo+h3hPFtKSrZGJUHwSrK3Ikbn
+	nWOmxZYegSuCSd62a5xfF3g96cGzFE0=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-86-Uwwfc6KmN2WCzU88qukpaA-1; Wed, 10 Dec 2025 10:29:14 -0500
+X-MC-Unique: Uwwfc6KmN2WCzU88qukpaA-1
+X-Mimecast-MFC-AGG-ID: Uwwfc6KmN2WCzU88qukpaA_1765380553
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-64097bef0e2so9699241a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 07:29:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1765380553; x=1765985353; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Db0TkqKtXHy5gSEgDOa1+ty9n2WhCMHIyw820W5VaX4=;
+        b=TRvZetjleRVWW/kp1+OO5/c4CWMsva6SiJuyuG0lPvHffNe4Wbiqqb59YLnKt43vVR
+         qlSkyMPn6GRwsGrQw5Y+JKm4VPMTqmb+RKSbGV3OkSftxEVsIe1ZkZu6C4IAjj5GRjI2
+         dgm8qqRjcA3wUl9x6SPYdE+6pJJsdFq37OxNvuPqVTubhZgIsmz2mO+R7qX9S84v7zy4
+         9pRfmJZ+lvfjXP2vCRn2HF2wrip7joTrY6dBjFletCwsCL/LIr8wLXQiM+aHtQ1qSGQE
+         CCsNxRuDctO8mhEQZ36hkc9/KptfNO8wJdLP4dRkldtteXO5NFqHaWB3jo+SshDjobPG
+         VJAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765380553; x=1765985353;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Db0TkqKtXHy5gSEgDOa1+ty9n2WhCMHIyw820W5VaX4=;
+        b=ENe2ETapVruSACpwH5MTvgsxNdIi1fNP1+HRI3lhw/vd3eESNg7sTXYnLYxwiimn7Y
+         rQA8gv9Rc4MKMoGw1p4rtlSh+9NzBbgoN/OGH5WRh2L3ATwYP45itwvzehe7VOZGIWQa
+         /63BdLBp03b4Qgna+qEmKpmD2auC0PcGmVgGo16efQ+p86m6f7raSFZtOYhsQN7yoTYb
+         cvuljZgr6p0tsKWaxOm+IWrUNWCaGYADFZQv9KgvRpuQojGMxrHRyxIoFO7P0+M22UVr
+         S3UCTcUSs/pagzCbuBkUkcb//4ww/di0odFLUaK3HWdy4GWYboVDksCEJf1K4nZfeC8C
+         PAQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWG8WYv5yILk8kv3XVdeTXTmo0Z8XXrFBb0UE0WzQMur9e1SxxRLmuCAkNj8rn685pYhtsx0yxnxFl0ocHR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9ApIK2XtXr6gtDXDJrc9M65hJmO6PFW2PokTMrFjsJyZrItw+
+	YYoL90OiAnabjsL3NctIV9Rw8Zo0PEJJWrFj10T8puJ8bd3jjwgC12DEYshNKQfQDZFwcZXCavc
+	JcWOSZHrnqYwdVmdsbXMtOQjde7aVLOHvbFVi4TLtKKm+V8j/MyZ0J3uoYKwhZ89hsREecemPa+
+	xVs3ES3pwP6hu21xLHNlFoHKodmnFVwBxeKG/pHndI
+X-Gm-Gg: AY/fxX55KKrYu7XXmlB1ruHInGUkfLUTdqcL0JGQlc8wac/NdjUYvj/MrTtG9zHn7Ca
+	rIMG61jit50L5zuIgTBlsp7bT4p1YsgdvItscbWEjUvIwr0GyOm+twxHhelqn5wBVEehGTSJb4N
+	LXkMwzzlhMFomluBI8iwtnRP7KUBgoU3EQWt2QpcllwlJi8Idw/rMaKXR5pinzBvgJ8q4VNtZfz
+	co2nd0oDKC9rIebQ+1AfM1xzg==
+X-Received: by 2002:a05:6402:2109:b0:640:7402:4782 with SMTP id 4fb4d7f45d1cf-6496cb20ffemr2811553a12.0.1765380553199;
+        Wed, 10 Dec 2025 07:29:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF9YQW1fMNzDjIEN0tojiTx5VObmByqqth9/i5m0s2c5ydl7UI1PeyqPdaoonuaZP2+WkVQ1lOgVywt6K4cCQA=
+X-Received: by 2002:a05:6402:2109:b0:640:7402:4782 with SMTP id
+ 4fb4d7f45d1cf-6496cb20ffemr2811527a12.0.1765380552821; Wed, 10 Dec 2025
+ 07:29:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20251208193024.GA89444@frogsfrogsfrogs> <20251208201333.528909-1-dkarn@redhat.com>
+ <enzq67rnekrh7gycgvgjc4g5ryt7qvuamaqj3ndpmns5svosa4@ozcepp4lpyls>
+ <CAO4qAqK-6jpiFXTdpoB-e144N=Ux0Hs+NOouM6cmVDzV8V-Dcw@mail.gmail.com> <ujd4c2sadpu3fsux2t667ef3zz2i2nyiqvhes4ahbtpay4ba3f@unn3uh57fxdk>
+In-Reply-To: <ujd4c2sadpu3fsux2t667ef3zz2i2nyiqvhes4ahbtpay4ba3f@unn3uh57fxdk>
+From: Deepak Karn <dkarn@redhat.com>
+Date: Wed, 10 Dec 2025 20:59:00 +0530
+X-Gm-Features: AQt7F2pyplQsFO_VtwTRBVMFRkJbJ4jXnszuw_KTLOlaB1IAPKfYb_LkPJFIU34
+Message-ID: <CAO4qAqLwo+K4qFgWxs6qJ2yKvc+su=SPXS6LC7gJLgfw0aNeyA@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: add NULL check in drop_buffers() to prevent null-ptr-deref
+To: Jan Kara <jack@suse.cz>
+Cc: djwong@kernel.org, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+e07658f51ca22ab65b4e@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, 
+	David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a blk_crypto_submit_bio helper that either submits the bio when
-it is not encrypted or inline encryption is provided, but otherwise
-handles the encryption before going down into the low-level driver.
-This reduces the risk from bio reordering and keeps memory allocation
-as high up in the stack as possible.
+On Wed, Dec 10, 2025 at 3:25=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 09-12-25 22:00:04, Deepak Karn wrote:
+> > On Tue, Dec 9, 2025 at 4:48=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Tue 09-12-25 01:43:33, Deepakkumar Karn wrote:
+> > > > On Mon, 8 Dec 2025 11:30:24 -0800, Darrick J. Wong wrote:
+> > > > > > drop_buffers() dereferences the buffer_head pointer returned by
+> > > > > > folio_buffers() without checking for NULL. This leads to a null=
+ pointer
+> > > > > > dereference when called from try_to_free_buffers() on a folio w=
+ith no
+> > > > > > buffers attached. This happens when filemap_release_folio() is =
+called on
+> > > > > > a folio belonging to a mapping with AS_RELEASE_ALWAYS set but w=
+ithout
+> > > > > > release_folio address_space operation defined. In such case,
+> > > >
+> > > > > What user is that?  All the users of AS_RELEASE_ALWAYS in 6.18 ap=
+pear to
+> > > > > supply a ->release_folio.  Is this some new thing in 6.19?
+> > > >
+> > > > AFS directories SET AS_RELEASE_ALWAYS but have not .release_folio.
+> > >
+> > > AFAICS AFS sets AS_RELEASE_ALWAYS only for symlinks but not for
+> > > directories? Anyway I agree AFS symlinks will have AS_RELEASE_ALWAYS =
+but no
+> > > .release_folio callback. And this looks like a bug in AFS because AFA=
+ICT
+> > > there's no point in setting AS_RELEASE_ALWAYS when you don't have
+> > > .release_folio callback. Added relevant people to CC.
+> > >
+> > >                                                                 Honza
+> >
+> > Thank you for your response Jan. As you suggested, the bug is in AFS.
+> > Can we include this current defensive check in drop_buffers() and I can=
+ submit
+> > another patch to handle that bug of AFS we discussed?
+>
+> I'm not strongly opposed to that (although try_to_free_buffers() would se=
+em
+> like a tad bit better place) but overall I don't think it's a great idea =
+as
+> it would hide bugs. But perhaps with WARN_ON_ONCE() (to catch sloppy
+> programming) it would be a sensible hardening.
+>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- Documentation/block/inline-encryption.rst |  6 ++++++
- block/blk-core.c                          | 10 +++++++---
- block/blk-crypto-internal.h               | 19 +++++++++++--------
- block/blk-crypto.c                        | 23 ++++++-----------------
- fs/buffer.c                               |  3 ++-
- fs/crypto/bio.c                           |  2 +-
- fs/ext4/page-io.c                         |  3 ++-
- fs/ext4/readpage.c                        |  9 +++++----
- fs/f2fs/data.c                            |  4 ++--
- fs/f2fs/file.c                            |  3 ++-
- fs/iomap/direct-io.c                      |  3 ++-
- include/linux/blk-crypto.h                | 22 ++++++++++++++++++++++
- 12 files changed, 68 insertions(+), 39 deletions(-)
+Thanks Jan for your response. As suggested, adding WARN_ON_ONCE()
+will be more sensible.
+I just wanted to clarify my understanding, you are suggesting adding
+WARN_ON_ONCE()
+in try_to_free_buffers() as this highlights the issue and also solves
+the concern. If my
+understanding is wrong please let me know, I will share the updated patch.
 
-diff --git a/Documentation/block/inline-encryption.rst b/Documentation/block/inline-encryption.rst
-index 6380e6ab492b..7e0703a12dfb 100644
---- a/Documentation/block/inline-encryption.rst
-+++ b/Documentation/block/inline-encryption.rst
-@@ -206,6 +206,12 @@ it to a bio, given the blk_crypto_key and the data unit number that will be used
- for en/decryption.  Users don't need to worry about freeing the bio_crypt_ctx
- later, as that happens automatically when the bio is freed or reset.
- 
-+To submit a bio that uses inline encryption, users must call
-+``blk_crypto_submit_bio()`` instead of the usual ``submit_bio()``.  This will
-+submit the bio to the underlying driver if it supports inline crypto, or else
-+call the blk-crypto fallback routines before submitting normal bios to the
-+underlying drivers.
-+
- Finally, when done using inline encryption with a blk_crypto_key on a
- block_device, users must call ``blk_crypto_evict_key()``.  This ensures that
- the key is evicted from all keyslots it may be programmed into and unlinked from
-diff --git a/block/blk-core.c b/block/blk-core.c
-index f87e5f1a101f..a0bf5174e9e9 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -628,9 +628,6 @@ static void __submit_bio(struct bio *bio)
- 	/* If plug is not used, add new plug here to cache nsecs time. */
- 	struct blk_plug plug;
- 
--	if (unlikely(!blk_crypto_bio_prep(bio)))
--		return;
--
- 	blk_start_plug(&plug);
- 
- 	if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO)) {
-@@ -794,6 +791,13 @@ void submit_bio_noacct(struct bio *bio)
- 	if ((bio->bi_opf & REQ_NOWAIT) && !bdev_nowait(bdev))
- 		goto not_supported;
- 
-+	if (bio_has_crypt_ctx(bio)) {
-+		if (WARN_ON_ONCE(!bio_has_data(bio)))
-+			goto end_io;
-+		if (!blk_crypto_supported(bio))
-+			goto not_supported;
-+	}
-+
- 	if (should_fail_bio(bio))
- 		goto end_io;
- 	bio_check_ro(bio);
-diff --git a/block/blk-crypto-internal.h b/block/blk-crypto-internal.h
-index d65023120341..742694213529 100644
---- a/block/blk-crypto-internal.h
-+++ b/block/blk-crypto-internal.h
-@@ -86,6 +86,12 @@ bool __blk_crypto_cfg_supported(struct blk_crypto_profile *profile,
- int blk_crypto_ioctl(struct block_device *bdev, unsigned int cmd,
- 		     void __user *argp);
- 
-+static inline bool blk_crypto_supported(struct bio *bio)
-+{
-+	return blk_crypto_config_supported_natively(bio->bi_bdev,
-+			&bio->bi_crypt_context->bc_key->crypto_cfg);
-+}
-+
- #else /* CONFIG_BLK_INLINE_ENCRYPTION */
- 
- static inline int blk_crypto_sysfs_register(struct gendisk *disk)
-@@ -139,6 +145,11 @@ static inline int blk_crypto_ioctl(struct block_device *bdev, unsigned int cmd,
- 	return -ENOTTY;
- }
- 
-+static inline bool blk_crypto_supported(struct bio *bio)
-+{
-+	return false;
-+}
-+
- #endif /* CONFIG_BLK_INLINE_ENCRYPTION */
- 
- void __bio_crypt_advance(struct bio *bio, unsigned int bytes);
-@@ -165,14 +176,6 @@ static inline void bio_crypt_do_front_merge(struct request *rq,
- #endif
- }
- 
--bool __blk_crypto_bio_prep(struct bio *bio);
--static inline bool blk_crypto_bio_prep(struct bio *bio)
--{
--	if (bio_has_crypt_ctx(bio))
--		return __blk_crypto_bio_prep(bio);
--	return true;
--}
--
- blk_status_t __blk_crypto_rq_get_keyslot(struct request *rq);
- static inline blk_status_t blk_crypto_rq_get_keyslot(struct request *rq)
- {
-diff --git a/block/blk-crypto.c b/block/blk-crypto.c
-index 0b2535d8dbcc..856d3c5b1fa0 100644
---- a/block/blk-crypto.c
-+++ b/block/blk-crypto.c
-@@ -242,25 +242,13 @@ void __blk_crypto_free_request(struct request *rq)
- 	rq->crypt_ctx = NULL;
- }
- 
--/**
-- * __blk_crypto_bio_prep - Prepare bio for inline encryption
-- * @bio: bio to prepare
-- *
-- * If the bio crypt context provided for the bio is supported by the underlying
-- * device's inline encryption hardware, do nothing.
-- *
-- * Otherwise, try to perform en/decryption for this bio by falling back to the
-- * kernel crypto API.  For encryption this means submitting newly allocated
-- * bios for the encrypted payload while keeping back the source bio until they
-- * complete, while for reads the decryption happens in-place by a hooked in
-- * completion handler.
-- *
-- * Caller must ensure bio has bio_crypt_ctx.
-+/*
-+ * Process a bio with a crypto context.  Returns true if the caller should
-+ * submit the passed in bio, false if the bio is consumed.
-  *
-- * Return: true if @bio should be submitted to the driver by the caller, else
-- * false.  Sets bio->bi_status, calls bio_endio and returns false on error.
-+ * See the kerneldoc comment for blk_crypto_submit_bio for further details.
-  */
--bool __blk_crypto_bio_prep(struct bio *bio)
-+bool __blk_crypto_submit_bio(struct bio *bio)
- {
- 	const struct blk_crypto_key *bc_key = bio->bi_crypt_context->bc_key;
- 	struct block_device *bdev = bio->bi_bdev;
-@@ -288,6 +276,7 @@ bool __blk_crypto_bio_prep(struct bio *bio)
- 
- 	return true;
- }
-+EXPORT_SYMBOL_GPL(__blk_crypto_submit_bio);
- 
- int __blk_crypto_rq_bio_prep(struct request *rq, struct bio *bio,
- 			     gfp_t gfp_mask)
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 838c0c571022..da18053f66e8 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -29,6 +29,7 @@
- #include <linux/slab.h>
- #include <linux/capability.h>
- #include <linux/blkdev.h>
-+#include <linux/blk-crypto.h>
- #include <linux/file.h>
- #include <linux/quotaops.h>
- #include <linux/highmem.h>
-@@ -2821,7 +2822,7 @@ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
- 		wbc_account_cgroup_owner(wbc, bh->b_folio, bh->b_size);
- 	}
- 
--	submit_bio(bio);
-+	blk_crypto_submit_bio(bio);
- }
- 
- void submit_bh(blk_opf_t opf, struct buffer_head *bh)
-diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-index c2b3ca100f8d..6da683ea69dc 100644
---- a/fs/crypto/bio.c
-+++ b/fs/crypto/bio.c
-@@ -105,7 +105,7 @@ static int fscrypt_zeroout_range_inline_crypt(const struct inode *inode,
- 		}
- 
- 		atomic_inc(&done.pending);
--		submit_bio(bio);
-+		blk_crypto_submit_bio(bio);
- 	}
- 
- 	fscrypt_zeroout_range_done(&done);
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index 39abfeec5f36..a8c95eee91b7 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -7,6 +7,7 @@
-  * Written by Theodore Ts'o, 2010.
-  */
- 
-+#include <linux/blk-crypto.h>
- #include <linux/fs.h>
- #include <linux/time.h>
- #include <linux/highuid.h>
-@@ -401,7 +402,7 @@ void ext4_io_submit(struct ext4_io_submit *io)
- 	if (bio) {
- 		if (io->io_wbc->sync_mode == WB_SYNC_ALL)
- 			io->io_bio->bi_opf |= REQ_SYNC;
--		submit_bio(io->io_bio);
-+		blk_crypto_submit_bio(io->io_bio);
- 	}
- 	io->io_bio = NULL;
- }
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index e7f2350c725b..49a6d36a8dba 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -36,6 +36,7 @@
- #include <linux/bio.h>
- #include <linux/fs.h>
- #include <linux/buffer_head.h>
-+#include <linux/blk-crypto.h>
- #include <linux/blkdev.h>
- #include <linux/highmem.h>
- #include <linux/prefetch.h>
-@@ -345,7 +346,7 @@ int ext4_mpage_readpages(struct inode *inode,
- 		if (bio && (last_block_in_bio != first_block - 1 ||
- 			    !fscrypt_mergeable_bio(bio, inode, next_block))) {
- 		submit_and_realloc:
--			submit_bio(bio);
-+			blk_crypto_submit_bio(bio);
- 			bio = NULL;
- 		}
- 		if (bio == NULL) {
-@@ -371,14 +372,14 @@ int ext4_mpage_readpages(struct inode *inode,
- 		if (((map.m_flags & EXT4_MAP_BOUNDARY) &&
- 		     (relative_block == map.m_len)) ||
- 		    (first_hole != blocks_per_folio)) {
--			submit_bio(bio);
-+			blk_crypto_submit_bio(bio);
- 			bio = NULL;
- 		} else
- 			last_block_in_bio = first_block + blocks_per_folio - 1;
- 		continue;
- 	confused:
- 		if (bio) {
--			submit_bio(bio);
-+			blk_crypto_submit_bio(bio);
- 			bio = NULL;
- 		}
- 		if (!folio_test_uptodate(folio))
-@@ -389,7 +390,7 @@ int ext4_mpage_readpages(struct inode *inode,
- 		; /* A label shall be followed by a statement until C23 */
- 	}
- 	if (bio)
--		submit_bio(bio);
-+		blk_crypto_submit_bio(bio);
- 	return 0;
- }
- 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index c30e69392a62..c3dd8a5c8589 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -513,7 +513,7 @@ void f2fs_submit_read_bio(struct f2fs_sb_info *sbi, struct bio *bio,
- 	trace_f2fs_submit_read_bio(sbi->sb, type, bio);
- 
- 	iostat_update_submit_ctx(bio, type);
--	submit_bio(bio);
-+	blk_crypto_submit_bio(bio);
- }
- 
- static void f2fs_submit_write_bio(struct f2fs_sb_info *sbi, struct bio *bio,
-@@ -522,7 +522,7 @@ static void f2fs_submit_write_bio(struct f2fs_sb_info *sbi, struct bio *bio,
- 	WARN_ON_ONCE(is_read_io(bio_op(bio)));
- 	trace_f2fs_submit_write_bio(sbi->sb, type, bio);
- 	iostat_update_submit_ctx(bio, type);
--	submit_bio(bio);
-+	blk_crypto_submit_bio(bio);
- }
- 
- static void __submit_merged_bio(struct f2fs_bio_info *io)
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index d7047ca6b98d..914790f37915 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-  */
-+#include <linux/blk-crypto.h>
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
- #include <linux/stat.h>
-@@ -5046,7 +5047,7 @@ static void f2fs_dio_write_submit_io(const struct iomap_iter *iter,
- 	enum temp_type temp = f2fs_get_segment_temp(sbi, type);
- 
- 	bio->bi_write_hint = f2fs_io_type_to_rw_hint(sbi, DATA, temp);
--	submit_bio(bio);
-+	blk_crypto_submit_bio(bio);
- }
- 
- static const struct iomap_dio_ops f2fs_iomap_dio_write_ops = {
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 8e273408453a..4000c8596d9b 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2010 Red Hat, Inc.
-  * Copyright (c) 2016-2025 Christoph Hellwig.
-  */
-+#include <linux/blk-crypto.h>
- #include <linux/fscrypt.h>
- #include <linux/pagemap.h>
- #include <linux/iomap.h>
-@@ -74,7 +75,7 @@ static void iomap_dio_submit_bio(const struct iomap_iter *iter,
- 		dio->dops->submit_io(iter, bio, pos);
- 	} else {
- 		WARN_ON_ONCE(iter->iomap.flags & IOMAP_F_ANON_WRITE);
--		submit_bio(bio);
-+		blk_crypto_submit_bio(bio);
- 	}
- }
- 
-diff --git a/include/linux/blk-crypto.h b/include/linux/blk-crypto.h
-index 58b0c5254a67..887169f8feb0 100644
---- a/include/linux/blk-crypto.h
-+++ b/include/linux/blk-crypto.h
-@@ -171,6 +171,28 @@ static inline bool bio_has_crypt_ctx(struct bio *bio)
- 
- #endif /* CONFIG_BLK_INLINE_ENCRYPTION */
- 
-+bool __blk_crypto_submit_bio(struct bio *bio);
-+
-+/**
-+ * blk_crypto_submit_bio - Submit a bio using inline encryption
-+ * @bio: bio to submit
-+ *
-+ * If @bio has not crypto context, or the crypt context attached to @bio is
-+ * supported by the underlying device's inline encryption hardware, just submit
-+ * @bio.
-+ *
-+ * Otherwise, try to perform en/decryption for this bio by falling back to the
-+ * kernel crypto API. For encryption this means submitting newly allocated
-+ * bios for the encrypted payload while keeping back the source bio until they
-+ * complete, while for reads the decryption happens in-place by a hooked in
-+ * completion handler.
-+ */
-+static inline void blk_crypto_submit_bio(struct bio *bio)
-+{
-+	if (!bio_has_crypt_ctx(bio) || __blk_crypto_submit_bio(bio))
-+		submit_bio(bio);
-+}
-+
- int __bio_crypt_clone(struct bio *dst, struct bio *src, gfp_t gfp_mask);
- /**
-  * bio_crypt_clone - clone bio encryption context
--- 
-2.47.3
+> Also I think mapping_set_release_always() should assert that
+> mapping->a_ops->release_folio is non-NULL to catch the problem early (onc=
+e
+> you fix the AFS bug).
+>
+
+I will address this in another patch for AFS.
+
+Regards,
+Deepakkumar Karn
 
 
