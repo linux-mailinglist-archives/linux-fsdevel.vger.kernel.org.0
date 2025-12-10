@@ -1,108 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-71080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3899FCB4117
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 22:33:30 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4B92CB411A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 22:36:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 121D430F5ADC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 21:32:46 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 0FC88301132A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 21:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09575308F05;
-	Wed, 10 Dec 2025 21:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD33301498;
+	Wed, 10 Dec 2025 21:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OijvUVMU"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sFMzM11v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AC0223DFB;
-	Wed, 10 Dec 2025 21:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA34519C54F;
+	Wed, 10 Dec 2025 21:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765402364; cv=none; b=cyw1Zys6gH8sQ5asgHwvyKwM6yR6tD3zKUN5ZV7Rr+UYogSmAnbxfCFovKjJZXOkh8dUf1v0NlzDk5Yj+sWtEZ85JzClZptzwM2tOQ7zGGzc21+jQAZgoqfdByW2o/9uV9pn/1UceqnfFzhdlHVabS85WfGPhrkbFm+jJZd2dc8=
+	t=1765402615; cv=none; b=s102ijxxFI5ivc0/ZvgHiN0Ekzy8KfILgB7K93thd+ACTnHaDG6pyQLdOZP1FyB+B+D/eNUtfEHkSW4X0QbGWy9HF0ShpWjL5ayRZ2r/3PTizctOWco2f1U+hKOVnUPAotGBjAn6RWycn+L4DMrzo1V349l5ayzswQlZkrYAtac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765402364; c=relaxed/simple;
-	bh=XZu6u6ngjvlOROX6GawkvchI0qYfFJdcz7oDy9MI64c=;
+	s=arc-20240116; t=1765402615; c=relaxed/simple;
+	bh=Gi2BOb09W8JSZh9A6n+pX6gTM6J3M7EHlMbCa7pIJOM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1X+zMuAoEbrsL/TwzXBQCYXr/VrK7IKpINCsRAPsvOvttzKxomoJ9MZRM47RRzFWn+lfR/XTjqsmEmm4G2aZ7YmSCuUOWQHQePNMrMoI5bcJIc0dOet/3LTqo05N76Yuc4v4KkFJBvH3i8DOK4eKmHarJKUL6ir+LU5eZwvcMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OijvUVMU; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=orrn4rNPRktuiL24GPwgZdMXWt8yHVCb7uUJ/aQeXZqP34O+pXSo9+adV0/rdzYCNZbjbGs3R3NiE1HbGcW51xQpOwS9e4Em1Mdfo9slYao5fXSyT+o6XGSndMYXkr5cd0IEu5Tm7y5Yz7ZZsY2X7lvQ5qCt1pPyXocBqBC8Zd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sFMzM11v; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=xMi26RM1JTbyV8dPQyqL1hcn9sFl2wv+LsDUh9lxDQg=; b=OijvUVMUeLtkQ/gqitC37kIllr
-	GD1KMDRjKRXHlQ7bnJwQ8h4iTYSk+PfJ8fLsK5DciNkXUYyeMc6gKE8aOld3AaOlxqAOIGetc5WmL
-	fhdnE2/bIOVxYyxBtWl8oBVOGAjEm0O5QmwVMrn2C3thLdwEFyXcsLuApKItRfs9FU6jZyugtdpkf
-	sm2CgWrYBzWFBj7evpv1GsCuUiSBe+u322cAhfkzX16lON3eimiD+scUMu92KWkGGSViAZr9gH2+R
-	uU8EmFlOqTV/sIfjSCB/zViADa15I12mvDeRb+3XtHN1x2fLtXTqG44Od+JF1PN0d7LHk8uDwqlah
-	XiWselTQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vTRnz-00000007uL3-1RY4;
-	Wed, 10 Dec 2025 21:33:03 +0000
-Date: Wed, 10 Dec 2025 21:33:03 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	syzbot <syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com>,
-	brauner@kernel.org, jack@suse.cz, jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com, linkinjeon@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mark@fasheh.com, ocfs2-devel@lists.linux.dev,
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: Re: [PATCH for 6.19-rc1] fs: preserve file type in make_bad_inode()
- unless invalid
-Message-ID: <20251210213303.GB1712166@ZenIV>
-References: <6w4u7ysv6yxdqu3c5ug7pjbbwxlmczwgewukqyrap3ltpazp4s@ozir7zbfyvfj>
- <6930e200.a70a0220.d98e3.01bd.GAE@google.com>
- <CAGudoHE0Q-Loi_rsbk5rnzgtGfbvY+Fpo9g=NPJHqLP5G_AaUg@mail.gmail.com>
- <20251204082156.GK1712166@ZenIV>
- <CAGudoHGLFBq2Fg5ksJeVkn=S2pv6XzxenjVFrQYScA7QV9kwJw@mail.gmail.com>
- <7e2bd36e-3347-4781-a6fd-96a41b6c538d@I-love.SAKURA.ne.jp>
- <CAGudoHF7jPw347kqcDW2mFLzcJcYqiFLsbFtd-ngYG=vWUz8xQ@mail.gmail.com>
- <20251210153531.GX1712166@ZenIV>
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xlOZX50xQnNhB5PiCw1+XOn2uJxjLtZ+AKBHh/CL+V8=; b=sFMzM11vJrI4ZVJ1l5sjMWw1Tm
+	+0404zmyBebadt6fVmJfywgZuccDmE0IzMrk9r0iKPC30jFHWaSdPHD9NH3mlAF/bHn6AMoYUhLkv
+	i7pvm0VnlkKW1EYAqpzAIekZdx8kwIitn75Tt9A0qgPIP1B0X8NGBuVrYqbyp6D+7GS4i5//dTy1g
+	h/6N3oy/iXfZM7/NOXF6azHxiZAX9PE/J54FIOOsGCIrlxwjr9geLbtxxhhd2KelMMZu+TxEHxJmh
+	f/9g4uBQDUBw/LWWwnEiYI/p5I2gF09hVqXdT2BK8mrGYEmNxXcqu75CX/eeSn1SYvBMkRsMFLf8z
+	FQBdWV/g==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vTRrX-0000000DN8l-1uUR;
+	Wed, 10 Dec 2025 21:36:44 +0000
+Date: Wed, 10 Dec 2025 21:36:43 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Deepakkumar Karn <dkarn@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Liam.Howlett@oracle.com, Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pagemap: Add alert to mapping_set_release_always() for
+ mapping with no release_folio
+Message-ID: <aTnn68vLGxFxO8kv@casper.infradead.org>
+References: <20251210200104.262523-1-dkarn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251210153531.GX1712166@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20251210200104.262523-1-dkarn@redhat.com>
 
-On Wed, Dec 10, 2025 at 03:35:31PM +0000, Al Viro wrote:
-> On Wed, Dec 10, 2025 at 11:09:24AM +0100, Mateusz Guzik wrote:
-> > On Wed, Dec 10, 2025 at 10:45 AM Tetsuo Handa
-> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> > >
-> > > syzbot is hitting VFS_BUG_ON_INODE(!S_ISDIR(inode->i_mode)) check
-> > > introduced by commit e631df89cd5d ("fs: speed up path lookup with cheaper
-> > > handling of MAY_EXEC"), for make_bad_inode() is blindly changing file type
-> > > to S_IFREG. Since make_bad_inode() might be called after an inode is fully
-> > > constructed, make_bad_inode() should not needlessly change file type.
-> > >
-> > 
-> > ouch
-> > 
-> > So let's say calls to make_bad_inode *after* d_instantiate are unavoidable.
+On Thu, Dec 11, 2025 at 01:31:04AM +0530, Deepakkumar Karn wrote:
+>  static inline void mapping_set_release_always(struct address_space *mapping)
+>  {
+> +	/* Alert while setting the flag with no release_folio callback */
+
+The comment is superfluous.
+
+> +	VM_WARN_ONCE(!mapping->a_ops->release_folio,
+> +		     "Setting AS_RELEASE_ALWAYS with no release_folio");
+
+But you haven't said why we need to do this.  Surely the NULL pointer
+splat is enough to tell you that you did something stupid?
+
+>  	set_bit(AS_RELEASE_ALWAYS, &mapping->flags);
+>  }
+>  
+> -- 
+> 2.52.0
 > 
-> ... and each one is a bug.
-
-In this case I strongly suspect that it had been introduced in
-
-commit 58b6fcd2ab34399258dc509f701d0986a8e0bcaa
-Author: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-Date:   Tue Nov 18 03:18:34 2025 +0300
- 
-     ocfs2: mark inode bad upon validation failure during read
-
-Folks, make_bad_inode() is *NOT* magic and having it anywhere in "hardening"
-patch is a major red flag.  Please, don't do it, and I would recommend
-reverting that commit, possibly along with the rest of the series.
+> 
 
