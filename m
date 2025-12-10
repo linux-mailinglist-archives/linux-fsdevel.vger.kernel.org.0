@@ -1,93 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-71029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71030-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F58BCB1838
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 01:38:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E76CB199B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 02:31:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id EEB8130072A6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 00:38:35 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id E3964301B804
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 01:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C4C1DC985;
-	Wed, 10 Dec 2025 00:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341C0222560;
+	Wed, 10 Dec 2025 01:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NSDvUYM1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rHHBaVK2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NSDvUYM1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rHHBaVK2"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vcWO697F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2591A9FB4
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 00:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB8813B584
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 01:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765327112; cv=none; b=TtuA83E3v9Yro6on5QZt+TIQ1cgiUNExTIjo6oxGvTMUNwyEmeXVJCYgUGU+g6RAs1nkeJCfDoWslYH+/Yk0Vlgtklar+So6oPjEwUDZNygrBi3MYjF6Tt0WCKXzQxaFT8IhjL9migIYzzoo8lm7XlIOMjEE5z92QpWIAAgadTU=
+	t=1765330317; cv=none; b=OSRGmz0/E2B6D9gDQ8KQng9gaoCKXJCdOr9gbauejzMLoKmWTLMCgayUQ3i892lNKQoM1pngqTsQNKr8KelpUhm58noawjwsTi3TZ+IFYuK/P0uGkEhzJhCY6tGgA9hsqOa5C1gVDouWRapIN106bEc4flMpgEZYsW9wHalkIHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765327112; c=relaxed/simple;
-	bh=c65hds9zAFnoDayj832FEWgPGyLkvJkfBVHl8GLQypI=;
+	s=arc-20240116; t=1765330317; c=relaxed/simple;
+	bh=Qzl2+G26+egzW7NDywgHIPdgsSaruQbcND52dODf3n8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RzzCPLvMMRnK3bdtTQK7CKW+a63La6g2YDnMLC2wMPGLLhcugzCWlLbiYK+LK0j4bKLkDp9M24ov8uF3LR4aW2wT0Tm9nTC083WuXoPcgGWSudOMvg/NpsuVfllZd71BPoq1KMdQKDEhQGs+uCv/jUll8whLYJ04fla7HDGbsac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NSDvUYM1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rHHBaVK2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NSDvUYM1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rHHBaVK2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 974F7338B4;
-	Wed, 10 Dec 2025 00:38:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1765327108; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sZNiUJuG3TeKZsNDlVrI19mlrKWSweIT9h/omtBTHB8=;
-	b=NSDvUYM1HDtqM6oPFiwMjjuKWt4EqZKJymRYKTh7+EzbnTgM8NgnBjhnDhEjH2fAkho4i5
-	Tt/7gFFhQ50Qp0DqvIcM0fGxIgnBLATl2OJmaTMwtq9K8BsLPKR6Y4f479SGw9c0fn8kBQ
-	YFRJzly+foIx/GASnxveaEDorM0zhZk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1765327108;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sZNiUJuG3TeKZsNDlVrI19mlrKWSweIT9h/omtBTHB8=;
-	b=rHHBaVK2YDKlGAiXwsxjk4Zl6UntY3f/wo8LTvZ6U52z2ltaHfrD/w/u4Xc6paFySFxx55
-	e1GPfKAztuHd1UAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1765327108; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sZNiUJuG3TeKZsNDlVrI19mlrKWSweIT9h/omtBTHB8=;
-	b=NSDvUYM1HDtqM6oPFiwMjjuKWt4EqZKJymRYKTh7+EzbnTgM8NgnBjhnDhEjH2fAkho4i5
-	Tt/7gFFhQ50Qp0DqvIcM0fGxIgnBLATl2OJmaTMwtq9K8BsLPKR6Y4f479SGw9c0fn8kBQ
-	YFRJzly+foIx/GASnxveaEDorM0zhZk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1765327108;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sZNiUJuG3TeKZsNDlVrI19mlrKWSweIT9h/omtBTHB8=;
-	b=rHHBaVK2YDKlGAiXwsxjk4Zl6UntY3f/wo8LTvZ6U52z2ltaHfrD/w/u4Xc6paFySFxx55
-	e1GPfKAztuHd1UAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C59DF3EA63;
-	Wed, 10 Dec 2025 00:38:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +gEjEPjAOGl2dwAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 10 Dec 2025 00:38:16 +0000
-Message-ID: <b23da846-ff6e-4b73-9691-beb14ceb0fa5@suse.de>
-Date: Wed, 10 Dec 2025 01:38:09 +0100
+	 In-Reply-To:Content-Type; b=TBM+npaqJthGuQ2KFnJ7IicffwJSeF/HNj5EZin4C8NQSss2RKr8YZZOBElgvKH+AduTev9CrpfhQ644Fc12I7hz3jSBPtBkBJ0tSs95e+rr0xkXZ2owPD1D4PtkNuG8wzyzSZRikpA93aorq53UekWjuEueb4fll1yjhjM1Heg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vcWO697F; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-297f35be2ffso91823885ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Dec 2025 17:31:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1765330314; x=1765935114; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bADCVXBmULrDifzRYGxN5q5EnP7XKBVKqffCRORME+8=;
+        b=vcWO697FfeR9XP3IZLye2h5kDXCOy8u4uaEwWUapyEix6y7jfTcVCAiwDu0gQU/tCx
+         n6eKFfZWTp7jEz5ZDIDKdDXUb/tABDWOpV8+KdbA65q9EDo0gxovTwFO44A85J3sYWt6
+         mngtreF1nRG3mQ/WGiWI3cXpv8Kjmks4AJNPMjUNDuvGz4Pz7n6ClW3sdv8G3XsJjEbr
+         9GPXJH1nkd6qtRraL2jRm9hU59fkLMk2Rd+YYOE4+MCjC6xklg3bPg1YFyD1qNkQbUEm
+         zDW/lwDX5wQZEIThCubD8U6HW4JPb3nCLTJulvvgbvwYuYciseZI+UkCgeVg0KXOhsbk
+         rplw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765330314; x=1765935114;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bADCVXBmULrDifzRYGxN5q5EnP7XKBVKqffCRORME+8=;
+        b=FyHtLpx5YFhtvSnIvdwMcYyANBaerUjszivjLDe0bMTthjdASc6aj1j1Q4J6LhIU/J
+         HQ1hsGJB6Oq3aqpY1A8Fx4B57UJaomDG7S1rspPJDcc+TtuauRqqfCSr97ykTyQRpA4p
+         pUSgSIJbu2ov/biozPdEfImqPRVek8BYUl6O7+O3VOc8e/KhjLy3iPn6ixovR3f2SrfE
+         904WUgm09CXQg7un7nGOg7BrJVqqsGjxCDSX3qU2oSRZlf3l5CAvJfgJcsyXE0XSGB8L
+         p8i2uBPYAS9lqczyc4ghr34vyo1C0zKwoyNMV0cct27vsr9L64KDoRcS9TuS8KqbUOMj
+         +qBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRE8CVY1CEbyVSxiXkXJsD5234f7TbVfRxHpDwK8jLLx3VVq0nzhVeurIDDDE6EHtIuoYu0xJjKPB/jIPz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo0YTVpTH5qswKD5FxeiPPhKn6FWqt1A67fliCCXOzgl3/TRQb
+	e71mEufRWlZ59vOqq0xfC5+L3fldMwfn2eo9ZIgdxwwWASMEGh3cLTTzAPUdN6ZXxVM=
+X-Gm-Gg: AY/fxX7Xhf3VEdl/l4W2M34563avKfXIWRFE4zW0ph/QErDNdOD1Szk9syCrb93+fFt
+	T6tmYLFDHNZU6vMzPqdUMN0Zewb5GGKGVcinODGSlBwyXXoUJaGV7VcazkiUTNt6SQVepxryt1i
+	vexgOLcf2WJHshNox9ocCE+t7an5snOEZp82h0aspEUdKzhj2jy6P9zcVeGnjojC/v1KeMKCmZZ
+	vu5hW2VEQtsqVlC9s6XtEHaV/tfD+Zk8ySAdSydGMtpHbP83Af61hEkB8NZ/6toL13FQYTlaXPr
+	VPOO4wfGnt67950JYtG+JZyvSwHdMEKro13KZK1CWe6vJKzZqis4oiF/ZREvrpTmthbzC0fhbe/
+	cLe6cSgdjtLqws2eisa+F5SBJBNHbGJyHmpLDzgMT97J54FaFadXJdFl/DjWMG38AwOzpJXTtj1
+	DzpLfBiNTYZG0G+iFadEPIuL2z/tv9oBfZ9gaG1vob
+X-Google-Smtp-Source: AGHT+IF6FoYEiOVVDWUPpLU3jDJvqNCzpKzqnbeVvQnDEvwsoJDLeiTjGFb0z18Vy2LTN2AqGWN2Hw==
+X-Received: by 2002:a17:902:da82:b0:298:595d:3d3a with SMTP id d9443c01a7336-29ec27d74f8mr6124455ad.50.1765330313644;
+        Tue, 09 Dec 2025 17:31:53 -0800 (PST)
+Received: from [172.21.1.37] (fs76eed293.tkyc007.ap.nuro.jp. [118.238.210.147])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29dae99ea20sm163067015ad.49.2025.12.09.17.31.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Dec 2025 17:31:53 -0800 (PST)
+Message-ID: <3c535b4d-6eaa-4c33-83fd-8cce3f62c020@kernel.dk>
+Date: Tue, 9 Dec 2025 18:31:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,107 +82,36 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 1/3] filemap: set max order to be min order if THP is
- disabled
-To: Pankaj Raghav <kernel@pankajraghav.com>,
- Pankaj Raghav <p.raghav@samsung.com>, Suren Baghdasaryan
- <surenb@google.com>, Mike Rapoport <rppt@kernel.org>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Michal Hocko <mhocko@suse.com>, Lance Yang <lance.yang@linux.dev>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Nico Pache <npache@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Vlastimil Babka <vbabka@suse.cz>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- mcgrof@kernel.org, gost.dev@samsung.com, tytso@mit.edu
-References: <20251206030858.1418814-1-p.raghav@samsung.com>
- <20251206030858.1418814-2-p.raghav@samsung.com>
- <d395cf62-2066-4965-87e6-823a7bbde775@suse.de>
- <3ced3736-81e8-4bc3-b5a3-50ac4af3536c@pankajraghav.com>
+Subject: Re: [RFC PATCH v2 00/18] io_uring, struct filename and audit
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, brauner@kernel.org, jack@suse.cz,
+ mjguzik@gmail.com, paul@paul-moore.com, audit@vger.kernel.org,
+ io-uring@vger.kernel.org
+References: <20251129170142.150639-1-viro@zeniv.linux.org.uk>
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <3ced3736-81e8-4bc3-b5a3-50ac4af3536c@pankajraghav.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.27
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.27 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.17)[-0.856];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20251129170142.150639-1-viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 12/9/25 17:33, Pankaj Raghav wrote:
-> On 12/9/25 13:15, Hannes Reinecke wrote:
->> On 12/6/25 04:08, Pankaj Raghav wrote:
->>> Large folios in the page cache depend on the splitting infrastructure from
->>> THP. To remove the dependency between large folios and
->>> CONFIG_TRANSPARENT_HUGEPAGE, set the min order == max order if THP is
->>> disabled. This will make sure the splitting code will not be required
->>> when THP is disabled, therefore, removing the dependency between large
->>> folios and THP.
->>>
->> The description is actually misleading.
->> It's not that you remove the dependency from THP for large folios
->> _in general_ (the CONFIG_THP is retained in this patch).
->> Rather you remove the dependency for large folios _for the block layer_.
->> And that should be make explicit in the description, otherwise the
->> description and the patch doesn't match.
->>
+On 11/29/25 10:01 AM, Al Viro wrote:
+> Changes compared to v1:
+> 	* putname_to_delayed(): new primitive, hopefully solving the
+> io_openat2() breakage spotted by Jens
+> 	* Linus' suggestion re saner allocation for struct filename
+> implemented and carved up [##11--15]
 > 
-> Hmm, that is not what I am doing. This has nothing to do with the block layer directly.
-> I mentioned this in the cover letter but I can reiterate it again.
+> It's obviously doing to slip to the next cycle at this point - I'm not
+> proposing to merge it in the coming window.
 > 
-> Large folios depended on THP infrastructure when it was introduced. When we added added LBS support
-> to the block layer, we introduced an indirect dependency on CONFIG_THP. When we disabled config_THP
-> and had a block device logical block size > page size, we ran into a panic.
-> 
-> That was fixed here[1].
-> 
-Yes, and no. That patch limited the maximum blocksize without THP to 4k,
-so effectively disabling LBS.
+> Please, review.  Branch in
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.filename-refcnt
+> individual patches in followups.
 
-> If this patch is upstreamed, then we can disable THP but still have a LBS drive attached without any
-> issues.
-> 
-But this is what I meant. We do _not_ disable the dependency on THP for
-LBS, we just remove checks for the config option itself in the block 
-layer code. The actual dependency on THP will remain as LBS will only
-be supported if THP is enabled.
+Sorry slow to look at this - from the io_uring POV, this looks good to
+me.
 
-> Baolin added another CONFIG_THP block in ext4 [2]. With this support, we don't need to sprinkle THP
-> where file backed large folios are used.
-> 
-> Happy to discuss this in LPC (if you are attending)!
-> 
-The very first presentation on the first day in the CXL track. Yes :-)
-Let's discuss there; would love to figure out if we cannot remove the
-actual dependency on THP, too.
-
-Cheers,
-
-Hannes
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Jens Axboe
+
 
