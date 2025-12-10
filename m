@@ -1,55 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-71034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E74B2CB1D62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 04:51:56 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B6DCCB1D6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 04:52:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C45263102946
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 03:49:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 76B62310C39C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 03:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AB130F554;
-	Wed, 10 Dec 2025 03:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145FF30F92A;
+	Wed, 10 Dec 2025 03:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="luC57BGx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p6HQufDj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5281030E84B;
-	Wed, 10 Dec 2025 03:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E2630F7EA;
+	Wed, 10 Dec 2025 03:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765338593; cv=none; b=X6ijVZW161RvLMUNtsPly9S2i4OfRQvnUGrUwVktvza2yp5+WEGP+q7AWfD0+VcTbaaEvIX0OsRJ2c3xxSYIf8MkvwQeJzaaZQubMnnorKAHyACGCtC/juL+6zocOdQl5y+Mmx0NLpFxBIUv/cduiRgl6R36l/APPYUXQDnNh9Q=
+	t=1765338601; cv=none; b=mkRYhDEDpNYwgx7Yl8xw2CX38y0Lo4MgkiKzillhgTRiJdGe1F9xks49t1Naf/u9GLyYErJNGJeWv+t1pMxBs0jX06w54EjiFwFB2PCLureAbcZX3dUCxh8OS9e3XQdbqNJ/8nBrQM4N4S9+k9fBfYBo5rWSl4p88N8f0e2Ro9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765338593; c=relaxed/simple;
-	bh=S2b/0V83PcUCe+l4IeH8xwKHovi3aSC1bPqe/UxbLl8=;
+	s=arc-20240116; t=1765338601; c=relaxed/simple;
+	bh=dtBe4ZIWbdUoOjPy9kYiz1klL3x1V5OPTh9KCCye5sc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UL2IIoyrv5IA7o2hST8cA6TyBqNtR0Jrg8Tc3kCGaVRe6KtsJoUGXfSXhzeUxYO48XrN/xIdOEJWIkUB5U5jgXyYrTfwtZwhEw0LouUMGk5k2CscTCZ3ixe2Y4+JFaNVBMWVLD1EvyjIiveU48NSIgzakiqfUSwH7+pTJclXwRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=luC57BGx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09103C16AAE;
-	Wed, 10 Dec 2025 03:49:51 +0000 (UTC)
+	 MIME-Version:Content-Type; b=sWc7VwqOGej9EBRkFF/rtVSoPss7jrxSC050v4z4v+FdDCyoVnBZuwHgbMivxlIDrLjzl3gLSMG2kYx8rqiTT/ryns1ZVBvslyyW4z5klTA5DAbMJEZQtWMnAy2qy54EQaSpFZ4IsPgWh484z5Vcoc8fxDs2fXv7GZ/sEzsDcrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p6HQufDj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59F65C4CEF1;
+	Wed, 10 Dec 2025 03:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765338593;
-	bh=S2b/0V83PcUCe+l4IeH8xwKHovi3aSC1bPqe/UxbLl8=;
+	s=k20201202; t=1765338601;
+	bh=dtBe4ZIWbdUoOjPy9kYiz1klL3x1V5OPTh9KCCye5sc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=luC57BGxQlWAo03uFLwG3jb4IOF4x0oKKRuXSY65Mvtp2P+GU0j18GDZZHhzU3rWP
-	 x7ihwRsuWryDmbnJ7Hqsg0xFoTkj7UIp49EstvkZneasRN8Bw0YprjaKQrn2fYwV0w
-	 QtFBw4VOiVaocOTjlXZni6o5L+4o1jk/G/hYkffDhsHnzSRzfFqfgATsVMiaEEfdfC
-	 At/VqG5URklD6sX/hR3CV+0QXam317jBWXIk2kqKysTuwxe1Qkkf4ch9irsYbjzQdV
-	 QWYN3qNJF9YxTq/B0I8fIMaFPk2ppG6PbY2UJXzb1J0tNKhzqm80WAT/dqy6L9bbLY
-	 neIimzYkUKTHw==
+	b=p6HQufDjvfHY6fBuFO6bymPEm8S6QZSqBKvBmgw/7nkfr3jeidckFP0t0BKT7INYh
+	 AJuPGgTcD1029ufTbl244MuyjoI57wE82ekWGlMqC2yXgjsPj67t7flVkGAhx/+mqG
+	 fyZMHEsiVDX6AxZLthmJ0U0E784C52U87uhdAuXATMSp96AD2pNou+vEu26a6w1sQu
+	 UWBkMDFVW3nPohGSRE+L1/UdcR4ofsuOr/o6Nt4HvKf6YYMwaZLe/naElQa/rbjjJ4
+	 E8oozIBJi0+B3n830TlpP46FEkMctB5BlUZb4iS3G3JcJRc2Vxd7X6q1a97Bhu6b6m
+	 A12SoLoxrmF2g==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Bernd Schubert <bschubert@ddn.com>,
-	Miklos Szeredi <mszeredi@redhat.com>,
+Cc: Yuezhang Mo <Yuezhang.Mo@sony.com>,
+	kernel test robot <oliver.sang@intel.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	miklos@szeredi.hu,
+	sj1557.seo@samsung.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-6.6] fuse: Always flush the page cache before FOPEN_DIRECT_IO write
-Date: Tue,  9 Dec 2025 22:48:57 -0500
-Message-ID: <20251210034915.2268617-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.10] exfat: fix remount failure in different process environments
+Date: Tue,  9 Dec 2025 22:49:00 -0500
+Message-ID: <20251210034915.2268617-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251210034915.2268617-1-sashal@kernel.org>
 References: <20251210034915.2268617-1-sashal@kernel.org>
@@ -65,140 +66,197 @@ X-stable-base: Linux 6.18
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Bernd Schubert <bschubert@ddn.com>
+From: Yuezhang Mo <Yuezhang.Mo@sony.com>
 
-[ Upstream commit 1ce120dcefc056ce8af2486cebbb77a458aad4c3 ]
+[ Upstream commit 51fc7b4ce10ccab8ea5e4876bcdc42cf5202a0ef ]
 
-This was done as condition on direct_io_allow_mmap, but I believe
-this is not right, as a file might be open two times - once with
-write-back enabled another time with FOPEN_DIRECT_IO.
+The kernel test robot reported that the exFAT remount operation
+failed. The reason for the failure was that the process's umask
+is different between mount and remount, causing fs_fmask and
+fs_dmask are changed.
 
-Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Potentially, both gid and uid may also be changed. Therefore, when
+initializing fs_context for remount, inherit these mount options
+from the options used during mount.
+
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202511251637.81670f5c-lkp@intel.com
+Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## Analysis Summary
+## Commit Analysis: exfat: fix remount failure in different process
+environments
 
-### 1. WHAT THE COMMIT FIXES
+### 1. COMMIT MESSAGE ANALYSIS
 
-This commit addresses a **data coherency bug** in FUSE when a file can
-be opened twice with different modes:
-- **File descriptor A**: opened normally with page cache (write-back
-  caching enabled)
-- **File descriptor B**: opened with `FOPEN_DIRECT_IO` flag
+**Subject**: Contains "fix" keyword indicating a bug fix for remount
+failures.
 
-**The Bug:**
-The original code only flushed dirty pages before direct I/O when
-`fc->direct_io_allow_mmap` was enabled. However, dirty pages can exist
-regardless of this flag - they can come from a write-back cached file
-handle to the same file.
+**Key details from message**:
+- Reported by kernel test robot - this is a real, reproducible issue
+- Root cause: When remounting, the process's umask may differ from the
+  original mount, causing `fs_fmask` and `fs_dmask` to unexpectedly
+  change
+- The same issue applies to `gid` and `uid`
+- Has `Closes:` link to the bug report
 
-**Data corruption scenario:**
-1. Write data via normal cached file handle → creates dirty pages in
-   page cache
-2. Write to same location via FOPEN_DIRECT_IO handle → goes directly to
-   backend storage
-3. Later, dirty pages from step 1 flush to disk → **OVERWRITE** the
-   direct IO data
-
-This causes **data loss/corruption** where writes via direct I/O are
-silently overwritten.
+**Missing tags**:
+- No `Cc: stable@vger.kernel.org`
+- No `Fixes:` tag indicating when the bug was introduced
 
 ### 2. CODE CHANGE ANALYSIS
 
-The change is minimal:
+**The Bug**:
 ```c
-- if (fopen_direct_io && fc->direct_io_allow_mmap) {
-+       if (fopen_direct_io) {
+// BEFORE: Always uses current process values
+sbi->options.fs_uid = current_uid();
+sbi->options.fs_gid = current_gid();
+sbi->options.fs_fmask = current->fs->umask;
+sbi->options.fs_dmask = current->fs->umask;
 ```
 
-Simply removes the `&& fc->direct_io_allow_mmap` condition, making the
-`filemap_write_and_wait_range()` call happen for **all**
-`FOPEN_DIRECT_IO` operations, not just when `direct_io_allow_mmap` is
-enabled.
+When `exfat_init_fs_context()` is called for a remount operation, it was
+incorrectly initializing uid/gid/fmask/dmask from the **current
+process** rather than preserving the existing mount options. If the
+process performing the remount has a different umask (or runs as a
+different user), the options change unexpectedly, causing remount
+validation failures.
 
-### 3. STABLE CRITERIA CHECK
+**The Fix**:
+```c
+// AFTER: Check if this is a remount and inherit existing options
+if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE && fc->root) {
+    struct super_block *sb = fc->root->d_sb;
+    struct exfat_mount_options *cur_opts = &EXFAT_SB(sb)->options;
 
-| Criterion | Assessment |
-|-----------|------------|
-| Obviously correct | ✅ The fix is logically sound - always flush dirty
-pages before direct IO |
-| Fixes real bug | ✅ Data corruption/loss in specific multi-fd scenarios
-|
-| Important issue | ✅ Data corruption is severe |
-| Small and contained | ✅ Single condition removal, one file |
-| No new features | ✅ Pure correctness fix |
-| Clean application | ✅ Should apply cleanly |
+    sbi->options.fs_uid = cur_opts->fs_uid;
+    sbi->options.fs_gid = cur_opts->fs_gid;
+    sbi->options.fs_fmask = cur_opts->fs_fmask;
+    sbi->options.fs_dmask = cur_opts->fs_dmask;
+} else {
+    // Original behavior for initial mount
+    ...
+}
+```
 
-### 4. RISK ASSESSMENT
+This is the correct behavior - remount should preserve existing mount
+options unless explicitly overridden by the user.
 
-**Risk: LOW**
-- The change is **conservative** - it flushes *more* often, not less
-- Worst case: slight performance regression from additional sync
-  operations
-- Best case: prevents data corruption in mixed cached/direct IO
-  scenarios
-- The affected code path (`fuse_direct_io`) is well-established
+### 3. CLASSIFICATION
 
-### 5. BACKPORT CONCERNS
+- **Type**: Bug fix (not a feature)
+- **Category**: Filesystem correctness issue
+- **Security**: Not a security issue
 
-**Negative signals:**
-- No `Cc: stable@vger.kernel.org` tag
-- No `Fixes:` tag pointing to `b5a2a3a0b7766` (which introduced the
-  incomplete logic)
+### 4. SCOPE AND RISK ASSESSMENT
 
-**Positive signals:**
-- Small, surgical fix
-- Fixes data corruption (high severity)
-- Maintainer-reviewed (signed off by Miklos Szeredi, FUSE maintainer)
-- Safe direction of change
+| Metric | Value |
+|--------|-------|
+| Lines changed | ~15 (net +11) |
+| Files touched | 1 (fs/exfat/super.c) |
+| Complexity | Low - simple conditional logic |
+| Risk | Low - uses well-established fs_context patterns |
 
-### 6. VERSION APPLICABILITY
+The fix is surgically targeted at `exfat_init_fs_context()` and uses
+standard fs_context APIs (`fc->purpose`, `fc->root`,
+`FS_CONTEXT_FOR_RECONFIGURE`) that other filesystems use identically.
 
-The original buggy commit (`b5a2a3a0b7766`) was merged in v6.10, so this
-fix applies to:
-- v6.10.y through current stable trees
+### 5. USER IMPACT
 
-### 7. USER IMPACT
+- **Affected users**: Anyone using exFAT filesystems who performs
+  remount operations
+- **Scenario**: Common when system scripts, systemd units, or root user
+  (with different umask) remount a filesystem
+- **Severity**: Medium - causes remount failures, but not data
+  corruption
+- **Real-world impact**: Yes - kernel test robot found this in automated
+  testing
 
-Affects FUSE users who:
-- Use FOPEN_DIRECT_IO feature
-- Have the same file opened through multiple file descriptors with
-  different caching modes
-- This is not a theoretical scenario - FUSE servers like libfuse can
-  legitimately have files accessed this way
+### 6. STABILITY INDICATORS
 
-### CONCLUSION
+- Signed-off by exFAT maintainer (Namjae Jeon)
+- Triggered by automated kernel testing
+- Logic is straightforward and follows established patterns used by
+  other filesystems
 
-Despite the absence of explicit `Cc: stable` tags, this commit **should
-be backported**. It fixes a real data corruption bug with a minimal,
-obviously correct change. The fix is safe (more synchronization, not
-less), small, and addresses a serious issue. The lack of stable tags
-appears to be an oversight rather than an indication the fix isn't
-needed in stable. Data corruption bugs in filesystems are exactly the
-type of issue stable trees exist to fix.
+### 7. DEPENDENCY CHECK
+
+The fix relies on:
+- `fc->purpose` and `fc->root` - standard fs_context fields available
+  since the fs_context API conversion
+- `EXFAT_SB()` macro - existing exFAT infrastructure
+- `FS_CONTEXT_FOR_RECONFIGURE` - standard kernel constant
+
+No additional dependencies required. The fix applies to any kernel with
+exFAT's fs_context implementation.
+
+### STABLE KERNEL CRITERIA EVALUATION
+
+| Criterion | Met? |
+|-----------|------|
+| Obviously correct | ✅ Yes - straightforward logic |
+| Fixes real bug | ✅ Yes - reported by kernel test robot |
+| Small and contained | ✅ Yes - single function, ~15 lines |
+| No new features | ✅ Yes - corrects existing behavior |
+| No new APIs | ✅ Yes - uses existing fs_context APIs |
+
+### VERDICT
+
+This commit fixes a genuine bug where exFAT remount operations fail when
+the remounting process has a different umask than the original mounting
+process. The fix is:
+
+1. **Small and localized** - modifies one function in one file
+2. **Obviously correct** - follows the same pattern other filesystems
+   use for handling remount context initialization
+3. **Low risk** - no architectural changes, just proper option
+   inheritance
+4. **User-impacting** - remount failures are a real usability issue
+
+While the commit lacks explicit `Cc: stable` and `Fixes:` tags, the
+nature of the fix (correcting filesystem remount behavior) and its
+minimal footprint make it appropriate for stable backporting. The risk-
+benefit ratio strongly favors inclusion.
 
 **YES**
 
- fs/fuse/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/exfat/super.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index f1ef77a0be05b..c5c82b3807911 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1607,7 +1607,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
- 	if (!ia)
- 		return -ENOMEM;
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 74d451f732c73..581754001128b 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -813,10 +813,21 @@ static int exfat_init_fs_context(struct fs_context *fc)
+ 	ratelimit_state_init(&sbi->ratelimit, DEFAULT_RATELIMIT_INTERVAL,
+ 			DEFAULT_RATELIMIT_BURST);
  
--	if (fopen_direct_io && fc->direct_io_allow_mmap) {
-+	if (fopen_direct_io) {
- 		res = filemap_write_and_wait_range(mapping, pos, pos + count - 1);
- 		if (res) {
- 			fuse_io_free(ia);
+-	sbi->options.fs_uid = current_uid();
+-	sbi->options.fs_gid = current_gid();
+-	sbi->options.fs_fmask = current->fs->umask;
+-	sbi->options.fs_dmask = current->fs->umask;
++	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE && fc->root) {
++		struct super_block *sb = fc->root->d_sb;
++		struct exfat_mount_options *cur_opts = &EXFAT_SB(sb)->options;
++
++		sbi->options.fs_uid = cur_opts->fs_uid;
++		sbi->options.fs_gid = cur_opts->fs_gid;
++		sbi->options.fs_fmask = cur_opts->fs_fmask;
++		sbi->options.fs_dmask = cur_opts->fs_dmask;
++	} else {
++		sbi->options.fs_uid = current_uid();
++		sbi->options.fs_gid = current_gid();
++		sbi->options.fs_fmask = current->fs->umask;
++		sbi->options.fs_dmask = current->fs->umask;
++	}
++
+ 	sbi->options.allow_utime = -1;
+ 	sbi->options.errors = EXFAT_ERRORS_RO;
+ 	exfat_set_iocharset(&sbi->options, exfat_default_iocharset);
 -- 
 2.51.0
 
