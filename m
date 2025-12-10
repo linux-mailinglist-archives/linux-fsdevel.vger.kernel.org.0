@@ -1,86 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-71055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B04CB30E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 14:43:25 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AC5CB34CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 16:26:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D2576305E355
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 13:43:16 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8E7A83101E8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 15:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7144631A808;
-	Wed, 10 Dec 2025 13:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E811318151;
+	Wed, 10 Dec 2025 15:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BW5/1ldB"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VNlimyqZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4616A1E89C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 13:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0C126738D;
+	Wed, 10 Dec 2025 15:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765374194; cv=none; b=tOWanWz7Wq2DTorad+9bsgy4CbiBiu2IXPOuWQD4+QxkhyXSsNNdULE+WRn0O3qaUowD75ca9GHK+Meye+YYjO6W3Sjq74CYR2wnA1Gaekrpb5V9ooEIWoqnQyUk1xG2KYo+tTe6xLJTo3fulvAUJvgpF0r+EKR8mE2GajyIECU=
+	t=1765380230; cv=none; b=paY6cAeSgHaavkSA05dIN0OhQctMydiE9/w6DazXmGoNwablkIzuH78GleE97ndfbp1KfAvC4RRpayOVPkCsuV0Z4vZJJA3FZrYbsqFHG9gFOfAGuD0cOp8+ohalk3OiYHjrTekEmc9ocXl9N6QdkOrggPL/uD0SqmIReeSE81g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765374194; c=relaxed/simple;
-	bh=WBVzNZSkFrPdrq1t3LhLwQejTw9l6uxpCc63//V3HxI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EjKkjFNzAg9KX4diC7JcNVJLEYPTK5E+p/+SSaQ1zHzuWRTE1yxGzO2VMY4GiGjbV1RgYNDKkQ23b+H+B7kciTnqAgGc7+WSKVZVWbfAynSH7KE80NOlKhEjKJ7/VnKcr1lRgaXN6TYaDDAH6XkmETALYpen/irTUmsZLmSGomk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BW5/1ldB; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b79ea617f55so73799766b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 05:43:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765374191; x=1765978991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CB3h2UzBEn/Z99lfjG1z98T32qhuvflmEMn49O36gNk=;
-        b=BW5/1ldBE2tUUSGXXqQGWYIEonHULjUC5ZQzV2hsZqn9FQRLyDd4SHVJfOpKanjTGT
-         rpBhsPjYAweaQB12IyA0ROEHiiLHkIoMMwj0hoxEP+l9isg/Iotq6D3J1bPDzOA9MiAJ
-         DybORhgo59W2yAz/sWhqXus69Tj3QCmkM5QuRyRNbxw2c3peI4Ieykp1DW1yaWCSFnH8
-         4nbVCnRM8EX+C+Qa3a5wGTry6NGY9tS6sp6s90mbdWIEwrYxiwenh+ZB75c+RjxtXdPi
-         xtdssnzUZwsiYNZ5M7nQWxQSz6W0wBMRt1Qu34JIuSPy0o/u52tsiiZGjNmRdFfJmir+
-         SUyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765374191; x=1765978991;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CB3h2UzBEn/Z99lfjG1z98T32qhuvflmEMn49O36gNk=;
-        b=YbXgQKu1SGlU2Tg87f2jozVtCw9i3LD+CNWkfA4p2FCf/wVdZdlZG/stxPanS6Jfpc
-         8eO00890oWbd2Eso9DHGM2IOE/sqIHFI+OmFOI+hb14JzxzdY3vi+6C5zJDSyt21aFAJ
-         z2ds/4YFr8oGzSdKKlrCHgUSdkuIMf1YJiPp6H4hd43rtB4WKTs1LAaky205GaYrJxyV
-         OwcC38itrjHH1V8WzSnot75KBFsTO2i9PvC5xc8yu0GRYN3ac8H0YEyJrTzLgYRsRhaR
-         o29U+vrBvdJ9NT4WdXcE/+KYZF2fJtZas4HFUC07LpYDCsg7lfMvlL4wcUMBd4EkZhBE
-         jziw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPhwhHdAyOUXoaxRtlL7QIfiJIh6Bk2hhcUfubR5t2B0sc+vtIh5ApF8JO/URRuU09tJwCoMCgBfTQaCZ4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0+54pxBnW1DKMHGr7LEJyqYItwCkxLNvs7E0+VQQD0BWfPyX9
-	K2I9h0AJjJYDMJwEiT2fIOETLFYoMP9l9ZEsg5+/t1KMfJMkMRQwpfQz
-X-Gm-Gg: ASbGncuuB4lFMx+5FDBtSSFIKWg2VnGyTyEx6T0kuGioHc+nLzuITlbtq5uRBQ3M7uo
-	dobV1BTZDW3LbR5XiQJpBtCOdjdL1QHyd17JGTzw89cNtfFMPx4c209syD58OpiqfU4vXheqP1C
-	A1GpWZQk7pMePcolPksknT1uXc7PFeBflz/8k6fF459wiazq1PXCdukSP7H9BzdZhyHUBBfp/sI
-	SG7kbZUtgSjBGGIu0UWTExL6VQg8TldQIy1Zp82KqOPloc9/ViyW+p4yI38IIutCYVrLmjLsdAj
-	MuOGBaquO9qEEq+3r/oW+G+2knEbJxGsrIsXiMA+zmPDJB8sbRdOojmILEO5qXrIhh1Jrx4RZUS
-	M2Po9p0qpQkalZ67BD0UYrd0NyOZnUUoBuKsSeSUGt1MBatIY525IeL25QbiU22fZiRFqXFB/aY
-	mW8w6tgbKVXTEGzvkNqQgEh6qLGToM1xRZ4T0E1qZWSyFrGOwCLfdWVspsn2IQMg==
-X-Google-Smtp-Source: AGHT+IGfLIZNIl91wGIMZKM69+1B9Op2jeoSk5aDS49uNUvvdJZUvvRKus3RTW+FHawmFa7F40c+mQ==
-X-Received: by 2002:a17:907:3f99:b0:b73:8f33:eee2 with SMTP id a640c23a62f3a-b7ce84c5127mr282123166b.48.1765374190319;
-        Wed, 10 Dec 2025 05:43:10 -0800 (PST)
-Received: from f.. (cst-prg-23-145.cust.vodafone.cz. [46.135.23.145])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b79f449992csm1695493866b.18.2025.12.10.05.43.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Dec 2025 05:43:09 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1765380230; c=relaxed/simple;
+	bh=amcwwXQ5Dc69tTZHE7WTuJUNEDuMfLJwAAGxewrAiS0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jbzt7016M1z5edW3b2MW1n1vjX7indxZ2Ylh5eEoJSKJK3QqS8lG6Q8+d3Ui+m35H/m9PNczFrAZCIPCNxqDMu5uXhm7E0JIgiVK+lvWZj0qslot+pQzPnxHRkutN+sUgC3IaWh/gsIbRRMa1yJ9q3pWnE8oH0NTqFN7ZLrXBeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VNlimyqZ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=lItwUDV96BZQRw3gIhWS+WYgL9SDWpyUQbRDIJHp+ZM=; b=VNlimyqZJcknRD/QwbHw5fgk6y
+	qpWSALa5ABny23ST1Xd2ITbB5yPFsFG8A82gIvYjk0xiAjoXMOVlnYfBwEAktw1HV6Xd4NkxUzsMc
+	ohVf63Nne9KsVEpwa7xa+QC0cJ5QOLlW/rrBYNUKV7MZrMf++fic8fsT6qOyYUr/AuNXKBGHoxM7U
+	zyBxAk+uoOF28VYicG2mzpgjzYuVbyOgDR6RyOqENdLmcOn4l5x9nQOEe7ihvMHnQ49Q6WlYgsA9m
+	3rEi79JJQ4JCilvej8CjUFnlwqVCSCDJs6Y0aNK1AnrjK1BiO+yEr6+JJ9LeTTtjYo0fV3T7SKuD5
+	2De7MpcA==;
+Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vTM2d-0000000FZ1H-2kJN;
+	Wed, 10 Dec 2025 15:23:48 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>,
+	Eric Biggers <ebiggers@kernel.org>
+Cc: linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: warn on dirty inode in writeback paired with I_WILL_FREE
-Date: Wed, 10 Dec 2025 14:43:03 +0100
-Message-ID: <20251210134303.1310039-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	linux-fscrypt@vger.kernel.org
+Subject: move blk-crypto-fallback to sit above the block layer v2
+Date: Wed, 10 Dec 2025 16:23:29 +0100
+Message-ID: <20251210152343.3666103-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,28 +59,68 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-This is in preparation for removing the flag down the road.
+Hi all,
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/fs-writeback.c | 2 ++
- 1 file changed, 2 insertions(+)
+in the past we had various discussions that doing the blk-crypto fallback
+below the block layer causes all kinds of problems due to very late
+splitting and communicating up features.
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 6800886c4d10..633537003b88 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1866,6 +1866,8 @@ static int writeback_single_inode(struct inode *inode,
- 	 * as it can be finally deleted at this moment.
- 	 */
- 	if (!(inode_state_read(inode) & I_FREEING)) {
-+		if (inode_state_read(inode) & I_WILL_FREE)
-+			WARN_ON_ONCE(inode_state_read(inode) & I_DIRTY_ALL);
- 		/*
- 		 * If the inode is now fully clean, then it can be safely
- 		 * removed from its writeback list (if any). Otherwise the
--- 
-2.48.1
+This series turns that call chain upside down by requiring the caller to
+call into blk-crypto using a new submit_bio wrapper instead so that only
+hardware encryption bios are passed through the block layer as such.
 
+While doings this I also noticed that the existing blk-crypto-fallback
+code does various unprotected memory allocations which this converts to
+mempools, or from loops of mempool allocations to the new safe batch
+mempool allocator.
+
+There might be future avenues for optimization by using high order
+folio allocations that match the file systems preferred folio size,
+but for that'd probably want a batch folio allocator first, in addition
+to deferring it to avoid scope creep.
+
+Changes since v1: 
+ - drop the mempool bulk allocator that was merged upstream
+ - keep call bio_crypt_check_alignment for the hardware crypto case
+ - rework the way bios are submitted earlier and reorder the series
+   a bit to suit this
+ - use struct initializers for struct fscrypt_zero_done in
+   fscrypt_zeroout_range_inline_crypt
+ - use cmpxchg to make the bi_status update in
+   blk_crypto_fallback_encrypt_endio safe
+ - rename the bio_set matching it's new purpose
+ - remove usage of DECLARE_CRYPTO_WAIT()
+ - use consistent GFP flags / scope
+ - optimize data unit alignment checking
+ - update Documentation/block/inline-encryption.rst for the new
+   blk_crypto_submit_bio API
+ - optimize alignment checking and ensure it still happens for
+   hardware encryption
+ - reorder the series a bit
+ - improve various comments
+
+Diffstat:
+ Documentation/block/inline-encryption.rst |    6 
+ block/blk-core.c                          |   10 
+ block/blk-crypto-fallback.c               |  424 ++++++++++++++----------------
+ block/blk-crypto-internal.h               |   30 --
+ block/blk-crypto.c                        |   78 +----
+ block/blk-map.c                           |    2 
+ block/blk-merge.c                         |   19 -
+ fs/btrfs/bio.c                            |    2 
+ fs/buffer.c                               |    3 
+ fs/crypto/bio.c                           |   91 +++---
+ fs/ext4/page-io.c                         |    3 
+ fs/ext4/readpage.c                        |    9 
+ fs/f2fs/data.c                            |    4 
+ fs/f2fs/file.c                            |    3 
+ fs/iomap/direct-io.c                      |    3 
+ fs/iomap/ioend.c                          |    2 
+ fs/xfs/xfs_zone_gc.c                      |    2 
+ include/linux/bio.h                       |    2 
+ include/linux/blk-crypto.h                |   22 +
+ include/linux/blkdev.h                    |    7 
+ 20 files changed, 367 insertions(+), 355 deletions(-)
 
