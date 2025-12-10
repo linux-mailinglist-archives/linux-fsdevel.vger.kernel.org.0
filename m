@@ -1,90 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-71037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83AE8CB1E84
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 05:28:03 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78538CB20A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 06:59:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id F030D30A7A24
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 04:27:42 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id AC68E30180AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 05:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A152930EF86;
-	Wed, 10 Dec 2025 04:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3DA311964;
+	Wed, 10 Dec 2025 05:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YoEtHsGu"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oqvK6JdJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D65F17A30A;
-	Wed, 10 Dec 2025 04:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82605224AF9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 05:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765340861; cv=none; b=ZyIbUK94CykYJ5LKooI33GTDJJ9dHgMDUfn75A2bmV4+k36AJUTRh0eFZkxGkEW83lMMlK8u/2rALT8bJKvi2i3MkwOeQ3KYzskl8yA/8x5001S/gczHXTNor11QA2OD8QkQGDrj9s31JJXytVAIJwmQ9qGroLkdsvfKlnhyC+o=
+	t=1765346374; cv=none; b=o8n38Ss0OaICwOZi3vmx/nbrRmi91ZistMz5ub5NMVTCOcASPh5Nlbdds2z8Fj2+5GXQokkqsgPp6ZUmDjCaSwye1JnwajwGCC2SwDwDnM/kz2ZZ+pnVPqcU4zJEhUxFeBvRjqmrH+kQ6NUofqjyArcNKNsFFTFrsw5/esrQNqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765340861; c=relaxed/simple;
-	bh=WTv0v70vaWxCnm9avv/0y5HO3iK9XjOP1DDjXjwugZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q8YPvegUQ5kd23U8c76MpF5WYGIO3h9+xvTrBLZFKn7wzu+yBlSQSyHBSM6WVZtODTM/nDhwfpRTJt+D6VE9FapFu3XcCpmeq8eDwIL+zd3egExm5nHJFkbK4mXaTl0nlozuUtQxUHT6KUAsH8GTj7vKdXr4px3WtarwH18ojf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YoEtHsGu; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XQZTyVY5EI22OfoG+6/Jw+yO17GgHGjfzONX+f4GGdA=; b=YoEtHsGuQbLbUOQDdHALmnfwAY
-	tNqObB8kUEP4Gy80sUh6a6H3/Nr0AbajRKuSYoR78lcNgmUVQq6R5pU3F43oxeaOzBqymfrpbwlsl
-	cewMwuciIcEhRpC7dPshg6Y32cTaC78zq8lGz4gNi0bnkaca2Iaq1beqJzJinqtKiyBt7shpUUL+t
-	D2u3r6TCbz3yxZH6CnusT0Z9Ocaniazn+dSz0vWuJRlHTH7mSLqVpLOFOc26sI0wx5RWxlBz8ekyx
-	5Eyyjcz8lV7qjG9j0yy4um3BWtHJEIocISpWzduMS6rBVQ8xyNV9Psb7wKqB91GwfGalaY84SbD60
-	vpvfQdFA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vTBnJ-0000000CJG5-1xCy;
-	Wed, 10 Dec 2025 04:27:17 +0000
-Date: Wed, 10 Dec 2025 04:27:17 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Pankaj Raghav <p.raghav@samsung.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, Michal Hocko <mhocko@suse.com>,
-	Lance Yang <lance.yang@linux.dev>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nico Pache <npache@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, mcgrof@kernel.org,
-	gost.dev@samsung.com, kernel@pankajraghav.com, tytso@mit.edu
-Subject: Re: [RFC v2 0/3] Decoupling large folios dependency on THP
-Message-ID: <aTj2pZqwx5xJVavb@casper.infradead.org>
-References: <20251206030858.1418814-1-p.raghav@samsung.com>
- <64291696-C808-49D0-9F89-6B3B97F58717@nvidia.com>
+	s=arc-20240116; t=1765346374; c=relaxed/simple;
+	bh=GTRCtGEyCPeIDAEAsYjvD8gFAZcZN/SMX8UD5Q3ZU7g=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cmi+iS5890Vf1eozLwG+Kj6p/FmnOYTsyrNS6+gZrcSxXKmYX/+O5pQHLS90inRiK7IKh+hV7D+c+tWbrz6scT5TfUZrmI3coJUn31lVeouexfgriI2hXRdCInHIj5SHGV+nvPq5RwTtLLj8LgOBEm4zsQiDtLEGUvNfhkhJFIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oqvK6JdJ; arc=none smtp.client-ip=74.125.224.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-64471fcdef0so60754d50.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Dec 2025 21:59:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1765346371; x=1765951171; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AkKmEmlmy8ELaJoQUHf2BKQunA/3LKCRjsVDxaDzqrg=;
+        b=oqvK6JdJFcG6MMgKCrtELZ1klGDw+kOoASSqR8Lb6xhVf7QYDkhbsDzLjHKCdcKmAu
+         DG1Ylt948CufhY3YJO4lUhrgLZbAL+v43yg5fNadlfqVJ5LwJUrANax8QczEE6kf2OhR
+         cu/3NTTpaBX0Dbn5OxLNfZdFVyPqioIfzYzHK8iVgct7mli9dapcW2leVuxNG23Sprt9
+         oLGiJ8i06f5S0VXVwRypTsj89R6mBVce+sz0hJ/dTX+7FU20EpStGpvRhGahauKXuJP2
+         cTbiFG/+IBDQZJkwF7MY2dOaNyw/T6RGzToaxamSHXAsfCavpLwZGDC3pI8vTp+4YkxS
+         CXsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765346371; x=1765951171;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AkKmEmlmy8ELaJoQUHf2BKQunA/3LKCRjsVDxaDzqrg=;
+        b=QWc16bcvK542j7INRspzIN/9wWw3M1X77TaUq5pxJ1p8HuUXzFqfL/JA5yc0cxP5pp
+         0c0cXSklE8iYBaDZFTqngVYae6jw7n90OBiRwU804qBa56f2/Yrdq2kwkqLY4CSZCxvj
+         XCc8R+lmlGtkp3QhHbfRTALLUW52aatvT/NEtSWQ4LSmdZ2iquodiMxTf9YWweYoRFLp
+         fksJY8RptnQ/ENnpeZneqG6yec26SzCjRnD0QDF6qDrVwCyoryvhtHuRCKt0+u9xV5Ut
+         b525qkck5v4y0J4NOHX8KzdCqkF1DRAmWObeZR+1xffUBg5UWvMS64WvUBsfGxihTOEO
+         XI1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXiwo6oOnO0VlNjONYy5xzea/KUnzPixEbzaZorSvuOmAT0qBnoFnFdmdc1OSbR9viW5Y7Cd9A7dR0Fxb+s@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo81bxyhiyfYsBhm7keFU99gNfkn+rx7SznNrJ4KeuK+h5P3+X
+	M63tvHniM+zPTVJ2RonsNU11R2OzFl8UQe/OJyHmDpVYRXXnccM5m5D/phUxVHPGWQ==
+X-Gm-Gg: AY/fxX7K5Y7AP3I1QBlDDQCsAkj1ahQr0/UmEMpu6PG+FiXH9j+Zi6j1OBRVD2GlfVO
+	dwui1Q56Qb4uWuFL5BZgc3wHyzVbbVXV7ltrM5IRgUgjiTsRfCnmaZ03mo6gJELw+5LOH/Ccp7S
+	wWzgHH6lFfUpJU0+/koRnAQ1iT+KXNPuAcCdbYrB3Sb+Ofspttvt3DHtYkf600IaqkJ2QLE4MaI
+	CxM7ZUc4IL0j2IFIIzwGB82+bwiuBPB2baEX/K65u0oeZJ3GLnDkszfqOASy+0pvdzyM0moqgin
+	YDrkkUOPCrLcBdBuMG/w5KTAzUMGtA99QJq5Ny1kmXmnbcz6BcqEA5DPNdQlv4YvueB/MP2l25x
+	2ZKg8eo79BahA3+zCe9xyJYJZmZGxUBxr3XYwiUg6BKgL5Vx7mB2a8WAM2N9kmG0nfZlBArPQd1
+	aP55UwpQFx4rY59PCw5bRd8rAvlpFIlU2Dl+TlUvwWbF0Me+QAr03aV4gRelR9TJfgvoM0XGoLZ
+	ws6OPp3HQ==
+X-Google-Smtp-Source: AGHT+IHnYfs/FNwfsBlpEOywYrB4YmggQz7ScEEsHZ6ji5edm/7oBhWYVx7J+CQpa4h3kxU6P5oVKw==
+X-Received: by 2002:a05:690c:3382:b0:78c:7b51:bdf4 with SMTP id 00721157ae682-78c95a4faacmr21928597b3.13.1765346371280;
+        Tue, 09 Dec 2025 21:59:31 -0800 (PST)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78c1b779458sm67535757b3.35.2025.12.09.21.59.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Dec 2025 21:59:30 -0800 (PST)
+Date: Tue, 9 Dec 2025 21:59:16 -0800 (PST)
+From: Hugh Dickins <hughd@google.com>
+To: =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
+cc: Hugh Dickins <hughd@google.com>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Matthew Wilcox <willy@infradead.org>, 
+    Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tmpfs: enforce the immutable flag on open files
+In-Reply-To: <mmfrclxjf2mmmohiwdbgqhyyrlab33tpnmtuzatk2xsuyiglrp@tarta.nabijaczleweli.xyz>
+Message-ID: <57e2e227-e464-bd7f-f69e-573a772cd4c5@google.com>
+References: <toyfbuhwbqa4zfgnojghr4v7k2ra6uh3g3sikbuwata3iozi3m@tarta.nabijaczleweli.xyz> <be986c18-3db2-38a1-8401-f0035ab71e7a@google.com> <mmfrclxjf2mmmohiwdbgqhyyrlab33tpnmtuzatk2xsuyiglrp@tarta.nabijaczleweli.xyz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64291696-C808-49D0-9F89-6B3B97F58717@nvidia.com>
+Content-Type: multipart/mixed; boundary="-1463770367-805250018-1765346370=:9638"
 
-On Tue, Dec 09, 2025 at 11:03:23AM -0500, Zi Yan wrote:
-> I wonder if core-mm should move mTHP code out of CONFIG_TRANSPARENT_HUGEPAGE
-> and mTHP might just work. Hmm, folio split might need to be moved out of
-> mm/huge_memory.c in that case. khugepaged should work for mTHP without
-> CONFIG_TRANSPARENT_HUGEPAGE as well. OK, for anon folios, the changes might
-> be more involved.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I think this is the key question to be discussed at LPC.  How much of
-the current THP code should we say "OK, this is large folio support
-and everybody needs it" and how much is "This is PMD (or mTHP) support;
-this architecture doesn't have it, we don't need to compile it in".
+---1463770367-805250018-1765346370=:9638
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
+On Tue, 9 Dec 2025, Ahelenia Ziemia=C5=84ska wrote:
+> On Mon, Dec 08, 2025 at 08:14:44PM -0800, Hugh Dickins wrote:
+> > On Mon, 8 Dec 2025, Ahelenia Ziemia=C5=84ska wrote:
+> > > This useful behaviour is implemented for most filesystems,
+> > > and wants to be implemented for every filesystem, quoth ref:
+> > >   There is general agreement that we should standardize all file syst=
+ems
+> > >   to prevent modifications even for files that were opened at the tim=
+e
+> > >   the immutable flag is set.  Eventually, a change to enforce this at
+> > >   the VFS layer should be landing in mainline.
+> > >=20
+> > > References: commit 02b016ca7f99 ("ext4: enforce the immutable flag on
+> > >  open files")
+> > > Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczlewel=
+i.xyz>
+> > Sorry: thanks, but no thanks.
+> >=20
+> > Supporting page_mkwrite() comes at a cost (an additional fault on first
+> > write to a folio in a shared mmap).  It's important for space allocatio=
+n
+> > (and more) in the case of persistent writeback filesystems, but unwelco=
+me
+> > overhead in the case of tmpfs (and ramfs and hugetlbfs - others?).
+>=20
+> Yeah, from the way page_mkwrite() was implemented it looked like
+> enough of a pessimisation to be significant, and with how common
+> an operation this is, I kinda expected this result.
+>=20
+> (I was also gonna post the same for ramfs,
+>  but it doesn't support FS_IOC_SETFLAGS attributes at all.)
+>=20
+> > tmpfs has always preferred not to support page_mkwrite(), and just fail
+> > fstests generic/080: we shall not slow down to change that, without a
+> > much stronger justification than "useful behaviour" which we've got
+> > along well enough without.
+>=20
+> How do we feel about just the VFS half of this,
+> i.e. open(WR)/chattr +i/write() =3D -EPERM?
+> That shouldn't have a performance impact.
+
+I don't think tmpfs should implement half of the ext4 behaviour (at
+write time) and not the other half (at page_mkwrite time): it would
+leave IMMUTABLE on tmpfs as neither guaranteeing immutabiity, nor
+behaving in the way IMMUTABLE was traditionally supported.
+
+I do think it's surprisingly asymmetic, that IMMUTABLE should forbid
+opening for write, but holding open for write should not forbid
+setting IMMUTABLE.  But that's the traditional behaviour, which
+surprised you, and which those ext4 mods improve upon for ext4.
+
+But I couldn't find any filesystem other than ext4 and f2fs
+implementing it that way.  If the VFS and other filesystems agreed
+to implement the stricter IMMUTABLE (I imagine relying on i_writecount),
+then tmpfs would probably be glad to participate; but not go its own way.
+
+Hugh
+---1463770367-805250018-1765346370=:9638--
 
