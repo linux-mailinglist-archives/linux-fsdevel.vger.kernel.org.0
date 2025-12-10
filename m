@@ -1,138 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-71046-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CA8CB298B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 10:46:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A406CB29C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 10:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2BB7730329D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 09:46:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1646E302532A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 09:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FE1277011;
-	Wed, 10 Dec 2025 09:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221B6302168;
+	Wed, 10 Dec 2025 09:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CO2WntF1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kpbXqxou";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CO2WntF1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kpbXqxou"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1114972602;
-	Wed, 10 Dec 2025 09:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000752FE041
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 09:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765359990; cv=none; b=WiT0UhQ95DsFkrnKeLo/BPYHYgqgJ2QN7GQwHCkF9tmN5SZeiRDng35jGVuVeffjou0UvDRZkQhqwW96hE/3WxYjzx42pCekjUxEesvOyBx8KUVdA7q/Rha4dcMC5DzaLd2i2Uv3s9KxOtIfPhv6wx+FCtjnKjQaMyKSOrKrk0o=
+	t=1765360552; cv=none; b=WsMIdAr7VC/i27F6vUdF0rkF4Zsvj1l+hKKjAM3VuB2DQDCGzPCPDDb/dj/IBRLSjbsvy+ivzfKxc+OgOiOW+xeW9xoh5hF1VgOIJxgEESb74SgFmhc39NOSPRecPzJUnZKdoC88fa2a7C4QMvf4yKadq29yQsjhVPWkHv8C80U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765359990; c=relaxed/simple;
-	bh=yyV6kHZpBnLDwvokLfhAByZkAywvKZmV/6cKL4Jla0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rxb8Ps+ce8LXPIggCCci1z5L3FcxLiDI/Zh916tK86OmcSABGpI7DYJ0tP0/f07ntU8tOCQSeMtH5E8vwCg2QInTPgEOTHowJX3ttSuODmojUZOYlE1CIFWqPgx4RZDzt9zpJEPQVvlMIRlz5JLMa2j4afg9q0jObTyQq9Ay53Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 5BA9jRcj045018;
-	Wed, 10 Dec 2025 18:45:27 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 5BA9jQGA045015
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 10 Dec 2025 18:45:26 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <7e2bd36e-3347-4781-a6fd-96a41b6c538d@I-love.SAKURA.ne.jp>
-Date: Wed, 10 Dec 2025 18:45:26 +0900
+	s=arc-20240116; t=1765360552; c=relaxed/simple;
+	bh=AF0yC49fOFQCrKHokjRIPRZTQYb6wu4/QnCPnNSRrXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EfDd4R5EpRIOoh2lmisUqNH2bpeUArpTkEyUG+R4IUWcL4FZDy5fvWOL1S0VhrECGJL6jxqEOLIPi0TgzvDt4Is35iSf37gnk3oye+EY7r7NPsMj0v8ayAXGN+HrdDQMFOvuZgQe7Nef9ilcp2GdyW/8r+OXXXqlasM8Wx0UiJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CO2WntF1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kpbXqxou; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CO2WntF1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kpbXqxou; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 316BF338AD;
+	Wed, 10 Dec 2025 09:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1765360543; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XMeR+6F3WeucAMPqM0tjvM4fOhznr3OcpRNVrvovJfk=;
+	b=CO2WntF1Ch9fgZuCcBJh4n6vUF7imDzex2gvpOW0sogSPiUsKchR7xZ7phQN7k8b+N8HJN
+	dttvsduDoT3GUsiKx0DKYSQH405sahPM7/8l3dhQ3s6k3l0F/7mf79D4RGhzUd8GH8voQ+
+	gtiZR+Iu3dVCE9d3CyPe3Wt2KYLIpwU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1765360543;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XMeR+6F3WeucAMPqM0tjvM4fOhznr3OcpRNVrvovJfk=;
+	b=kpbXqxouFpnfhAtKv4s2f/+yF35O/zeCnrmXwSLiAZQlmecRv+9YhYzjpPzxuvUaaJ04Zx
+	peTu+z9ENAvDP8BA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1765360543; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XMeR+6F3WeucAMPqM0tjvM4fOhznr3OcpRNVrvovJfk=;
+	b=CO2WntF1Ch9fgZuCcBJh4n6vUF7imDzex2gvpOW0sogSPiUsKchR7xZ7phQN7k8b+N8HJN
+	dttvsduDoT3GUsiKx0DKYSQH405sahPM7/8l3dhQ3s6k3l0F/7mf79D4RGhzUd8GH8voQ+
+	gtiZR+Iu3dVCE9d3CyPe3Wt2KYLIpwU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1765360543;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XMeR+6F3WeucAMPqM0tjvM4fOhznr3OcpRNVrvovJfk=;
+	b=kpbXqxouFpnfhAtKv4s2f/+yF35O/zeCnrmXwSLiAZQlmecRv+9YhYzjpPzxuvUaaJ04Zx
+	peTu+z9ENAvDP8BA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0477A3EA65;
+	Wed, 10 Dec 2025 09:55:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wILRAJ9DOWllaQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 10 Dec 2025 09:55:43 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id AFC9DA0A61; Wed, 10 Dec 2025 10:55:42 +0100 (CET)
+Date: Wed, 10 Dec 2025 10:55:42 +0100
+From: Jan Kara <jack@suse.cz>
+To: Deepak Karn <dkarn@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, djwong@kernel.org, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+e07658f51ca22ab65b4e@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, 
+	David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org
+Subject: Re: [PATCH v2] fs: add NULL check in drop_buffers() to prevent
+ null-ptr-deref
+Message-ID: <ujd4c2sadpu3fsux2t667ef3zz2i2nyiqvhes4ahbtpay4ba3f@unn3uh57fxdk>
+References: <20251208193024.GA89444@frogsfrogsfrogs>
+ <20251208201333.528909-1-dkarn@redhat.com>
+ <enzq67rnekrh7gycgvgjc4g5ryt7qvuamaqj3ndpmns5svosa4@ozcepp4lpyls>
+ <CAO4qAqK-6jpiFXTdpoB-e144N=Ux0Hs+NOouM6cmVDzV8V-Dcw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH for 6.19-rc1] fs: preserve file type in make_bad_inode()
- unless invalid
-To: Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: syzbot <syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com>,
-        brauner@kernel.org, jack@suse.cz, jlbec@evilplan.org,
-        joseph.qi@linux.alibaba.com, linkinjeon@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mark@fasheh.com, ocfs2-devel@lists.linux.dev, sj1557.seo@samsung.com,
-        syzkaller-bugs@googlegroups.com, Chuck Lever <chuck.lever@oracle.com>
-References: <6w4u7ysv6yxdqu3c5ug7pjbbwxlmczwgewukqyrap3ltpazp4s@ozir7zbfyvfj>
- <6930e200.a70a0220.d98e3.01bd.GAE@google.com>
- <CAGudoHE0Q-Loi_rsbk5rnzgtGfbvY+Fpo9g=NPJHqLP5G_AaUg@mail.gmail.com>
- <20251204082156.GK1712166@ZenIV>
- <CAGudoHGLFBq2Fg5ksJeVkn=S2pv6XzxenjVFrQYScA7QV9kwJw@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAGudoHGLFBq2Fg5ksJeVkn=S2pv6XzxenjVFrQYScA7QV9kwJw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav303.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAO4qAqK-6jpiFXTdpoB-e144N=Ux0Hs+NOouM6cmVDzV8V-Dcw@mail.gmail.com>
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TAGGED_RCPT(0.00)[e07658f51ca22ab65b4e];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
 
-syzbot is hitting VFS_BUG_ON_INODE(!S_ISDIR(inode->i_mode)) check
-introduced by commit e631df89cd5d ("fs: speed up path lookup with cheaper
-handling of MAY_EXEC"), for make_bad_inode() is blindly changing file type
-to S_IFREG. Since make_bad_inode() might be called after an inode is fully
-constructed, make_bad_inode() should not needlessly change file type.
+On Tue 09-12-25 22:00:04, Deepak Karn wrote:
+> On Tue, Dec 9, 2025 at 4:48 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Tue 09-12-25 01:43:33, Deepakkumar Karn wrote:
+> > > On Mon, 8 Dec 2025 11:30:24 -0800, Darrick J. Wong wrote:
+> > > > > drop_buffers() dereferences the buffer_head pointer returned by
+> > > > > folio_buffers() without checking for NULL. This leads to a null pointer
+> > > > > dereference when called from try_to_free_buffers() on a folio with no
+> > > > > buffers attached. This happens when filemap_release_folio() is called on
+> > > > > a folio belonging to a mapping with AS_RELEASE_ALWAYS set but without
+> > > > > release_folio address_space operation defined. In such case,
+> > >
+> > > > What user is that?  All the users of AS_RELEASE_ALWAYS in 6.18 appear to
+> > > > supply a ->release_folio.  Is this some new thing in 6.19?
+> > >
+> > > AFS directories SET AS_RELEASE_ALWAYS but have not .release_folio.
+> >
+> > AFAICS AFS sets AS_RELEASE_ALWAYS only for symlinks but not for
+> > directories? Anyway I agree AFS symlinks will have AS_RELEASE_ALWAYS but no
+> > .release_folio callback. And this looks like a bug in AFS because AFAICT
+> > there's no point in setting AS_RELEASE_ALWAYS when you don't have
+> > .release_folio callback. Added relevant people to CC.
+> >
+> >                                                                 Honza
+> 
+> Thank you for your response Jan. As you suggested, the bug is in AFS.
+> Can we include this current defensive check in drop_buffers() and I can submit
+> another patch to handle that bug of AFS we discussed?
 
-Reported-by: syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=d222f4b7129379c3d5bc
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
-Should we implement all callbacks (except get_offset_ctx callback which is
-currently used by only tmpfs which does not call make_bad_inode()) within
-bad_inode_ops, for there might be a callback which is expected to be non-NULL
-for !S_IFREG types? Implementing missing callbacks is good for eliminating
-possibility of NULL function pointer call. Since VFS is using
+I'm not strongly opposed to that (although try_to_free_buffers() would seem
+like a tad bit better place) but overall I don't think it's a great idea as
+it would hide bugs. But perhaps with WARN_ON_ONCE() (to catch sloppy
+programming) it would be a sensible hardening.
 
-    if (!inode->i_op->foo)
-        return error;
-    inode->i_op->foo();
+Also I think mapping_set_release_always() should assert that
+mapping->a_ops->release_folio is non-NULL to catch the problem early (once
+you fix the AFS bug).
 
-pattern instead of
+								Honza
 
-    pFoo = READ_ONCE(inode->i_op->foo)
-    if (!pFoo)
-        return error;
-    pFoo();
-
-pattern, suddenly replacing "one i_op with i_op->foo != NULL" with "another
-i_op with i_op->foo == NULL" has possibility of NULL pointer function call
-(e.g. https://lkml.kernel.org/r/18a58415-4aa9-4cba-97d2-b70384407313@I-love.SAKURA.ne.jp ).
-If we implement missing callbacks, e.g. vfs_fileattr_get() will start
-calling security_inode_file_getattr() on bad inode, but we can eliminate
-possibility of inode->i_op->fileattr_get == NULL when make_bad_inode() is
-called from security_inode_file_getattr() for some reason.
-
- fs/bad_inode.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/fs/bad_inode.c b/fs/bad_inode.c
-index 0ef9bcb744dd..ff6c2daecd1c 100644
---- a/fs/bad_inode.c
-+++ b/fs/bad_inode.c
-@@ -207,7 +207,19 @@ void make_bad_inode(struct inode *inode)
- {
- 	remove_inode_hash(inode);
- 
--	inode->i_mode = S_IFREG;
-+	switch (inode->i_mode & S_IFMT) {
-+	case S_IFREG:
-+	case S_IFDIR:
-+	case S_IFLNK:
-+	case S_IFCHR:
-+	case S_IFBLK:
-+	case S_IFIFO:
-+	case S_IFSOCK:
-+		inode->i_mode &= S_IFMT;
-+		break;
-+	default:
-+		inode->i_mode = S_IFREG;
-+	}
- 	simple_inode_init_ts(inode);
- 	inode->i_op = &bad_inode_ops;	
- 	inode->i_opflags &= ~IOP_XATTR;
 -- 
-2.47.3
-
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
