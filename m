@@ -1,162 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-71038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71039-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78538CB20A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 06:59:39 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F12CB20C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 07:04:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id AC68E30180AD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 05:59:36 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AD2CD3086EAA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 06:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3DA311964;
-	Wed, 10 Dec 2025 05:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FCD2C15B0;
+	Wed, 10 Dec 2025 06:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oqvK6JdJ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lTpfCNNp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82605224AF9
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 05:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C972621CC44;
+	Wed, 10 Dec 2025 06:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765346374; cv=none; b=o8n38Ss0OaICwOZi3vmx/nbrRmi91ZistMz5ub5NMVTCOcASPh5Nlbdds2z8Fj2+5GXQokkqsgPp6ZUmDjCaSwye1JnwajwGCC2SwDwDnM/kz2ZZ+pnVPqcU4zJEhUxFeBvRjqmrH+kQ6NUofqjyArcNKNsFFTFrsw5/esrQNqQ=
+	t=1765346676; cv=none; b=AzXoWaTwBgQVdZYk5zxybk4F5zIdGEXXitQe+GFGwUTSLWWv8ReGuqD+yx3Hu+HbKAa6XZavy60A0RcxP6yZ5xBO28clwiX64skfv3cCjeUvjqIRp9G8qGTES4OCv21X4gLcqOKlCYR6sgq9YU7iA858vecCweQc0dP6WhVw0o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765346374; c=relaxed/simple;
-	bh=GTRCtGEyCPeIDAEAsYjvD8gFAZcZN/SMX8UD5Q3ZU7g=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=cmi+iS5890Vf1eozLwG+Kj6p/FmnOYTsyrNS6+gZrcSxXKmYX/+O5pQHLS90inRiK7IKh+hV7D+c+tWbrz6scT5TfUZrmI3coJUn31lVeouexfgriI2hXRdCInHIj5SHGV+nvPq5RwTtLLj8LgOBEm4zsQiDtLEGUvNfhkhJFIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oqvK6JdJ; arc=none smtp.client-ip=74.125.224.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-64471fcdef0so60754d50.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Dec 2025 21:59:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1765346371; x=1765951171; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AkKmEmlmy8ELaJoQUHf2BKQunA/3LKCRjsVDxaDzqrg=;
-        b=oqvK6JdJFcG6MMgKCrtELZ1klGDw+kOoASSqR8Lb6xhVf7QYDkhbsDzLjHKCdcKmAu
-         DG1Ylt948CufhY3YJO4lUhrgLZbAL+v43yg5fNadlfqVJ5LwJUrANax8QczEE6kf2OhR
-         cu/3NTTpaBX0Dbn5OxLNfZdFVyPqioIfzYzHK8iVgct7mli9dapcW2leVuxNG23Sprt9
-         oLGiJ8i06f5S0VXVwRypTsj89R6mBVce+sz0hJ/dTX+7FU20EpStGpvRhGahauKXuJP2
-         cTbiFG/+IBDQZJkwF7MY2dOaNyw/T6RGzToaxamSHXAsfCavpLwZGDC3pI8vTp+4YkxS
-         CXsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765346371; x=1765951171;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AkKmEmlmy8ELaJoQUHf2BKQunA/3LKCRjsVDxaDzqrg=;
-        b=QWc16bcvK542j7INRspzIN/9wWw3M1X77TaUq5pxJ1p8HuUXzFqfL/JA5yc0cxP5pp
-         0c0cXSklE8iYBaDZFTqngVYae6jw7n90OBiRwU804qBa56f2/Yrdq2kwkqLY4CSZCxvj
-         XCc8R+lmlGtkp3QhHbfRTALLUW52aatvT/NEtSWQ4LSmdZ2iquodiMxTf9YWweYoRFLp
-         fksJY8RptnQ/ENnpeZneqG6yec26SzCjRnD0QDF6qDrVwCyoryvhtHuRCKt0+u9xV5Ut
-         b525qkck5v4y0J4NOHX8KzdCqkF1DRAmWObeZR+1xffUBg5UWvMS64WvUBsfGxihTOEO
-         XI1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXiwo6oOnO0VlNjONYy5xzea/KUnzPixEbzaZorSvuOmAT0qBnoFnFdmdc1OSbR9viW5Y7Cd9A7dR0Fxb+s@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo81bxyhiyfYsBhm7keFU99gNfkn+rx7SznNrJ4KeuK+h5P3+X
-	M63tvHniM+zPTVJ2RonsNU11R2OzFl8UQe/OJyHmDpVYRXXnccM5m5D/phUxVHPGWQ==
-X-Gm-Gg: AY/fxX7K5Y7AP3I1QBlDDQCsAkj1ahQr0/UmEMpu6PG+FiXH9j+Zi6j1OBRVD2GlfVO
-	dwui1Q56Qb4uWuFL5BZgc3wHyzVbbVXV7ltrM5IRgUgjiTsRfCnmaZ03mo6gJELw+5LOH/Ccp7S
-	wWzgHH6lFfUpJU0+/koRnAQ1iT+KXNPuAcCdbYrB3Sb+Ofspttvt3DHtYkf600IaqkJ2QLE4MaI
-	CxM7ZUc4IL0j2IFIIzwGB82+bwiuBPB2baEX/K65u0oeZJ3GLnDkszfqOASy+0pvdzyM0moqgin
-	YDrkkUOPCrLcBdBuMG/w5KTAzUMGtA99QJq5Ny1kmXmnbcz6BcqEA5DPNdQlv4YvueB/MP2l25x
-	2ZKg8eo79BahA3+zCe9xyJYJZmZGxUBxr3XYwiUg6BKgL5Vx7mB2a8WAM2N9kmG0nfZlBArPQd1
-	aP55UwpQFx4rY59PCw5bRd8rAvlpFIlU2Dl+TlUvwWbF0Me+QAr03aV4gRelR9TJfgvoM0XGoLZ
-	ws6OPp3HQ==
-X-Google-Smtp-Source: AGHT+IHnYfs/FNwfsBlpEOywYrB4YmggQz7ScEEsHZ6ji5edm/7oBhWYVx7J+CQpa4h3kxU6P5oVKw==
-X-Received: by 2002:a05:690c:3382:b0:78c:7b51:bdf4 with SMTP id 00721157ae682-78c95a4faacmr21928597b3.13.1765346371280;
-        Tue, 09 Dec 2025 21:59:31 -0800 (PST)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78c1b779458sm67535757b3.35.2025.12.09.21.59.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Dec 2025 21:59:30 -0800 (PST)
-Date: Tue, 9 Dec 2025 21:59:16 -0800 (PST)
-From: Hugh Dickins <hughd@google.com>
-To: =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
-cc: Hugh Dickins <hughd@google.com>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Matthew Wilcox <willy@infradead.org>, 
-    Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tmpfs: enforce the immutable flag on open files
-In-Reply-To: <mmfrclxjf2mmmohiwdbgqhyyrlab33tpnmtuzatk2xsuyiglrp@tarta.nabijaczleweli.xyz>
-Message-ID: <57e2e227-e464-bd7f-f69e-573a772cd4c5@google.com>
-References: <toyfbuhwbqa4zfgnojghr4v7k2ra6uh3g3sikbuwata3iozi3m@tarta.nabijaczleweli.xyz> <be986c18-3db2-38a1-8401-f0035ab71e7a@google.com> <mmfrclxjf2mmmohiwdbgqhyyrlab33tpnmtuzatk2xsuyiglrp@tarta.nabijaczleweli.xyz>
+	s=arc-20240116; t=1765346676; c=relaxed/simple;
+	bh=jNkMpSBANNWHKuEjybrUnhVPJ7HJykrjnIixvNfexiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z8tZ4MC5dNZWESY3KmPGAanQKQBHprz1U40qCEdCwcY11pNqX/hb1f3wmqQ4RKHPxNWjuv5WfWXr6WNYyjIoyWJVdHK5hvuTn7LGffUUElcH4hm2KHJ21tIW88BGVMKpd/8X5GxFGOnhSMtNIz5wvZwQQmy6P0wpDFtM3BBWZxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lTpfCNNp; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZiFROAkHBJCB2v6ixbOIv0n0FEKpV73FVa0R0Tq7R8Q=; b=lTpfCNNpMhjjWeXhgYeBmyIHiO
+	sf6ti+Rr5+mozQyCjgQy3fAWOmM0TrDtKu0Nyk0Y5z9aceLjuMfoMJ4/5sIDOMaPsmhe/Q4qD/6ke
+	96wZr15qrZmdX/98eRhBB4Ht4ML+b/3SYwE0eRE8KiDwbfPNxYybh68pHZ6+zUfcW1TJbaWKz3Rvq
+	uRtXyNJ1L/1n+B1SCCmI+ZwAo+zIs9lHURsZ313jCkFa4QByyRyfDdqP9Fi2h/2Fe6J5v4Getv4OP
+	rnLIZ+OqODKsoPl9JSxSbtpUYtljUh6yFBgqTh+b11r6uXkpfgQa8HHT3bzwT6fmwBSWEuW44ECKd
+	Hn//txew==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vTDJO-0000000F9od-0Zks;
+	Wed, 10 Dec 2025 06:04:30 +0000
+Date: Tue, 9 Dec 2025 22:04:30 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: asmadeus@codewreck.org
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+	Chris Arges <carges@cloudflare.com>
+Subject: Re: [PATCH] 9p/virtio: restrict page pinning to user_backed_iter()
+ iovec
+Message-ID: <aTkNbptI5stvpBPn@infradead.org>
+References: <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463770367-805250018-1765346370=:9638"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Dec 10, 2025 at 06:04:23AM +0900, Dominique Martinet via B4 Relay wrote:
+> From: Dominique Martinet <asmadeus@codewreck.org>
+> 
+> When doing a loop mount of a filesystem over 9p, read requests can come
+> from unexpected places and blow up as reported by Chris Arges with this
+> reproducer:
+> ```
+> dd if=/dev/zero of=./xfs.img bs=1M count=300
+> yes | mkfs.xfs -b size=8192 ./xfs.img
+> rm -rf ./mount && mkdir -p ./mount
+> mount -o loop ./xfs.img ./mount
 
----1463770367-805250018-1765346370=:9638
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+We should really wire this up to xfstests so that all file systems
+see the pattern of kmalloc allocations passed into the block layer
+and then on to the direct I/O code.
 
-On Tue, 9 Dec 2025, Ahelenia Ziemia=C5=84ska wrote:
-> On Mon, Dec 08, 2025 at 08:14:44PM -0800, Hugh Dickins wrote:
-> > On Mon, 8 Dec 2025, Ahelenia Ziemia=C5=84ska wrote:
-> > > This useful behaviour is implemented for most filesystems,
-> > > and wants to be implemented for every filesystem, quoth ref:
-> > >   There is general agreement that we should standardize all file syst=
-ems
-> > >   to prevent modifications even for files that were opened at the tim=
-e
-> > >   the immutable flag is set.  Eventually, a change to enforce this at
-> > >   the VFS layer should be landing in mainline.
-> > >=20
-> > > References: commit 02b016ca7f99 ("ext4: enforce the immutable flag on
-> > >  open files")
-> > > Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczlewel=
-i.xyz>
-> > Sorry: thanks, but no thanks.
-> >=20
-> > Supporting page_mkwrite() comes at a cost (an additional fault on first
-> > write to a folio in a shared mmap).  It's important for space allocatio=
-n
-> > (and more) in the case of persistent writeback filesystems, but unwelco=
-me
-> > overhead in the case of tmpfs (and ramfs and hugetlbfs - others?).
->=20
-> Yeah, from the way page_mkwrite() was implemented it looked like
-> enough of a pessimisation to be significant, and with how common
-> an operation this is, I kinda expected this result.
->=20
-> (I was also gonna post the same for ramfs,
->  but it doesn't support FS_IOC_SETFLAGS attributes at all.)
->=20
-> > tmpfs has always preferred not to support page_mkwrite(), and just fail
-> > fstests generic/080: we shall not slow down to change that, without a
-> > much stronger justification than "useful behaviour" which we've got
-> > along well enough without.
->=20
-> How do we feel about just the VFS half of this,
-> i.e. open(WR)/chattr +i/write() =3D -EPERM?
-> That shouldn't have a performance impact.
+> The problem is that iov_iter_get_pages_alloc2() apparently cannot be
+> called on folios (as illustrated by the backtrace below), so limit what
+> iov we can pin from !iov_iter_is_kvec() to user_backed_iter()
 
-I don't think tmpfs should implement half of the ext4 behaviour (at
-write time) and not the other half (at page_mkwrite time): it would
-leave IMMUTABLE on tmpfs as neither guaranteeing immutabiity, nor
-behaving in the way IMMUTABLE was traditionally supported.
+As willy pointed out this is a kmalloc.
 
-I do think it's surprisingly asymmetic, that IMMUTABLE should forbid
-opening for write, but holding open for write should not forbid
-setting IMMUTABLE.  But that's the traditional behaviour, which
-surprised you, and which those ext4 mods improve upon for ext4.
+And 9p (just like NFS) really needs to switch away from
+iov_iter_get_pages_alloc2 to iov_iter_extract_pages, which handles not
+just this perfectly fine but also fixes various other issues.
 
-But I couldn't find any filesystem other than ext4 and f2fs
-implementing it that way.  If the VFS and other filesystems agreed
-to implement the stricter IMMUTABLE (I imagine relying on i_writecount),
-then tmpfs would probably be glad to participate; but not go its own way.
+Note that the networking code still wants special treatment for kmalloc
+pages, so you might have more work there.
 
-Hugh
----1463770367-805250018-1765346370=:9638--
 
