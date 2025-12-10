@@ -1,124 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-71076-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C46CB3F47
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 21:26:23 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B567BCB3FC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 21:43:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1072E308B3FC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 20:24:17 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 655EC307E5BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 20:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFCA32BF41;
-	Wed, 10 Dec 2025 20:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9004832B9BE;
+	Wed, 10 Dec 2025 20:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N9OJp2Ej";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MkPgBCEj"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="URIisB4u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9C0306B21
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 20:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644612D063F;
+	Wed, 10 Dec 2025 20:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765398255; cv=none; b=ot0bWdkfNYhFtYSN0zu4hbSKEbB1WEXt2HH1iRDUsbZvRaMpzBdv5QG7tpwPb4JYZ87GnocdZzXPn0RQ9qSIp59Hv/iFAJVX1GragwaNtPST1MyINQxc1f+HaMPNrKFCjuT3HhhfkkJky3SpkUgWY7SX/sl1bLfFZtq5t8r16Cc=
+	t=1765399403; cv=none; b=TBXuMM5Ox85/QVB9shV00/wnJ49o9RwACeFlBWMMiuE9OAoPMj4LrUKGI0yxZfmg8ZdrTMNIIBqcqo63fKsxm1ZBOJthv4ydGeEQQh3barrFI0NI+/uNINfPd93TpSCtd2YBO+/9MfW+/snPlRgstiutjBtmUjzrNBQuw0rPZVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765398255; c=relaxed/simple;
-	bh=qZSauzG0BQxKFnQ99YFS7kpsbt8dX9n5BdSFJ8Uce0M=;
+	s=arc-20240116; t=1765399403; c=relaxed/simple;
+	bh=w+5BUhqwnbpKjWLGR/KNRAzvVLfQAFQgPYhFZRTFWOU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Az5DDSCzblnZg/Dse+R0C2B10xQN57NhzZopAl0iLiqWF7tGA6y/XRWjCBNOamfAN42FsxxRtxpTLFh3STD8dOeTGz6dZZZ/2zcXnckc7mj106yPTQRPPqBoEWEveA5LjDWeSvnNnn//LM5uU0FocI6gYajroHkFmmEooru3n4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N9OJp2Ej; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MkPgBCEj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1765398253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KxnQ/iEQ1sK58mDVjsOZpAu/QgTIX6mC6WKI+mp0l1A=;
-	b=N9OJp2EjGOQNopngZILTcDRiGs7Dd5AXHq7dC8TtbGW6/Nze6RTuAgpYSbKYy3mpiCkEtJ
-	6AFGhhFhXCIHtM/Q4AWoh4P5UU5SmBG0e5ZI3ZWGsPaZ+jjIb/MXFCi5Tzr3hRUXxNnDA4
-	hMU1dAx0w0oEBGJ5AU8BVstQv6RyZtY=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-611-wJu2l5p2OPOy6lBCAdEcgw-1; Wed, 10 Dec 2025 15:24:12 -0500
-X-MC-Unique: wJu2l5p2OPOy6lBCAdEcgw-1
-X-Mimecast-MFC-AGG-ID: wJu2l5p2OPOy6lBCAdEcgw_1765398251
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-8823f71756dso3202596d6.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 12:24:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1765398251; x=1766003051; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KxnQ/iEQ1sK58mDVjsOZpAu/QgTIX6mC6WKI+mp0l1A=;
-        b=MkPgBCEj5eEmztZqMJg9JwFCdl6+HVX4R9hJfsIyu0LE6mkKUxINQwAu1d/X1/PokH
-         D+YqcVYeQjdFCCW5+VeRnLfvvmBjnPa2eSn3iqdWpryiXVxPDyvnFwS3X5jQsvqMpO8E
-         H0VAO1Y7hp/tWTXX0hPaX8XBM49AKJC+2/6GbZQQvDvPBYviyKYsIzWtKt4NWRw+YCLE
-         NQ5EA+gHK7Ph9a9eD49norBLNomfOTLJw59Hd3ufeql3S2a86sTf2qVdcPYusc/EmB68
-         0EMspFn3JKRemgr3yRtL2AxV0P2wgNqHf/aKL3k9Fo31lpyoQT6y6GwOeUZEOyMhnfwK
-         GLJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765398251; x=1766003051;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KxnQ/iEQ1sK58mDVjsOZpAu/QgTIX6mC6WKI+mp0l1A=;
-        b=bzVmUIqYywaOIFtV0uxxI7NB7jK8t9T0TK++98CMLX6eO2ZTDUkls1VIqKtlvZCRxc
-         bZqhyvKkayCCgxfbUCKpgUBqqn4gHJcKJq9qo68S+3+qa21fk4TSbQswX1Pey/VWTyS/
-         7lQkzv72HYTMw//eHAiIJEKT2drOxngJGmE5k9hwnXs0sVtd8Futnopb6vt+7qsObInJ
-         1AlBabUtD5lpqRA1v4+oSGDwSTIkIzsSUYn/PF9YtfwdMRARK7Vj4TokpwfmXmA6TTAY
-         BsH3z/LJUtObgxxCD6QxenmsqjmkjTYuZP+FxAHiCM5mMIDlEOv8ug7acKuNSg0wOoo8
-         15dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDj6gWkbFxWNBh8v68kK5Y9TvM6fKmfFVF39Y57QdbpdYock2tJ0/eIlcuHWFILJ3yxlQnRyvlrTHSSjqC@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS1+yzvGeO6zRsa/KHYnbeqd8g/CVHOaEo8EY0AiB+miQsTqrf
-	zYmgwrzLB80NFUfK4L7fgmABLlM8Lx8xZDtA0bqeAwQmLV7JOAR+inFmmMYcf9BR6z4F5Ct5QVt
-	iQFV2yN2ijDyuxpkzHfB1lqgEpAIQvNdekfwJ/4MRGiaFffJuQWvieSJl7jJcn6byDFQ=
-X-Gm-Gg: AY/fxX5ie6Lr6o9Z9SS5H7/p7T8CxYmc1Vqcn/Vu1l2RdmSrCj5tSI9OQtHGbRuqHXg
-	8A9t8GOjX+E/GHbmG6K+vsEBtHUK+Qri72u+1J5WFrCPg+WiXgcrz1+vPDfWKI1VCrIdjPbqyup
-	pdTHWib6sh2YV1D6u9FyEnIUG+UofYRFUGqv8RiN7/BxGQOWfSRaiv3zldiVWiCwBQUBPS1FIv1
-	NAo0b9jSBCxU27sAbYvE/DlH3TJPfpXqcaVm2TeVgj9ML2bK0cs45gL1JjC7h8wCaGxwKKDAJr3
-	SzzvY3KC0jVdwmObVdGKhWbNNqwF8Itl4Yi3o5DI/zJBn4/Sw0wN2QVce7wQC9AWnNHc3P17Z9z
-	zkuQ=
-X-Received: by 2002:a05:6214:768:b0:880:501f:5e8 with SMTP id 6a1803df08f44-88863a2ab3amr50896676d6.13.1765398251198;
-        Wed, 10 Dec 2025 12:24:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEp/TCjQkjo9IXEU5scwVWKecCDQSTmMb8hfAZZ6nq5cmvChNS/S1r8YuGRQNN9gNusvbUp7Q==
-X-Received: by 2002:a05:6214:768:b0:880:501f:5e8 with SMTP id 6a1803df08f44-88863a2ab3amr50896356d6.13.1765398250715;
-        Wed, 10 Dec 2025 12:24:10 -0800 (PST)
-Received: from x1.local ([142.188.210.156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8886ef0d241sm5052596d6.42.2025.12.10.12.24.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Dec 2025 12:24:10 -0800 (PST)
-Date: Wed, 10 Dec 2025 15:24:08 -0500
-From: Peter Xu <peterx@redhat.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Jason Gunthorpe <jgg@nvidia.com>, Nico Pache <npache@redhat.com>,
-	Zi Yan <ziy@nvidia.com>, Alex Mastro <amastro@fb.com>,
-	David Hildenbrand <david@redhat.com>,
-	Alex Williamson <alex@shazbot.org>, Zhi Wang <zhiw@nvidia.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Yi Liu <yi.l.liu@intel.com>, Ankit Agrawal <ankita@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v2 2/4] mm: Add file_operations.get_mapping_order()
-Message-ID: <aTnW6OorSRmn1SqI@x1.local>
-References: <20251204151003.171039-1-peterx@redhat.com>
- <20251204151003.171039-3-peterx@redhat.com>
- <aTGmkHsRSsnneW0G@x1.local>
- <aTaYtlTdhxKx2R24@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iIZIFoSnDyHFrSnLasCjG7rBcCmXa7nP3tz5HfSlXLmwYcxPFBTRoGadyTRnsbJXw44GlxiqlKPCi6YacvETwDBf6rfvm5l+/auaIohj0RDTrshrrvNVbFl5RoXBkKEr5pTB3Pu1RgvY6uimZrNSVe31Rm/FaPmj8sLmemp+C8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=URIisB4u; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=ynvoEItOYACbGez6/0HZQbIM1/079C5Q82KEw98aWRI=; b=URIisB4uWWnjmUElS2NBz2Uq4m
+	Iy4NIoUoroRPT15FfeLKSxdaroDPAuGqSjFJRCFwYuPc8iPWLVFpB+Mpb296l5cWUIuLQ+EFf7+wx
+	mkdnKo07ftiZpDbNsTIw9vzVMK+6fYRO+OMgbywJorAeYZGL7ShnViMINbOGjrd+ZB2pBtxl6k9Og
+	Ofh8JU4zc9JMvEvziNdyh9fna+hVjFJAgkVg6GDzwuB4Stbar69F790QaG3Gdq1nZb962Ys19XpRq
+	ULPuSbcwoezCSXN38h7dabmGgCfHLG+XJ2PS+c7zQugR3n+OWbJDsIGlGPng9eFpeWFVxWudjNq5Y
+	eRvK8DqQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vTR2A-00000007RxZ-0CyK;
+	Wed, 10 Dec 2025 20:43:38 +0000
+Date: Wed, 10 Dec 2025 20:43:38 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	syzbot <syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com>,
+	brauner@kernel.org, jack@suse.cz, jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com, linkinjeon@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mark@fasheh.com, ocfs2-devel@lists.linux.dev,
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com,
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [PATCH for 6.19-rc1] fs: preserve file type in make_bad_inode()
+ unless invalid
+Message-ID: <20251210204338.GY1712166@ZenIV>
+References: <6w4u7ysv6yxdqu3c5ug7pjbbwxlmczwgewukqyrap3ltpazp4s@ozir7zbfyvfj>
+ <6930e200.a70a0220.d98e3.01bd.GAE@google.com>
+ <CAGudoHE0Q-Loi_rsbk5rnzgtGfbvY+Fpo9g=NPJHqLP5G_AaUg@mail.gmail.com>
+ <20251204082156.GK1712166@ZenIV>
+ <CAGudoHGLFBq2Fg5ksJeVkn=S2pv6XzxenjVFrQYScA7QV9kwJw@mail.gmail.com>
+ <7e2bd36e-3347-4781-a6fd-96a41b6c538d@I-love.SAKURA.ne.jp>
+ <CAGudoHF7jPw347kqcDW2mFLzcJcYqiFLsbFtd-ngYG=vWUz8xQ@mail.gmail.com>
+ <20251210153531.GX1712166@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -127,21 +72,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aTaYtlTdhxKx2R24@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251210153531.GX1712166@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Dec 08, 2025 at 09:21:58AM +0000, Matthew Wilcox wrote:
-> On Thu, Dec 04, 2025 at 10:19:44AM -0500, Peter Xu wrote:
-> > > Add one new file operation, get_mapping_order().  It can be used by file
-> > > backends to report mapping order hints.
+On Wed, Dec 10, 2025 at 03:35:31PM +0000, Al Viro wrote:
+> On Wed, Dec 10, 2025 at 11:09:24AM +0100, Mateusz Guzik wrote:
+> > On Wed, Dec 10, 2025 at 10:45 AM Tetsuo Handa
+> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> > >
+> > > syzbot is hitting VFS_BUG_ON_INODE(!S_ISDIR(inode->i_mode)) check
+> > > introduced by commit e631df89cd5d ("fs: speed up path lookup with cheaper
+> > > handling of MAY_EXEC"), for make_bad_inode() is blindly changing file type
+> > > to S_IFREG. Since make_bad_inode() might be called after an inode is fully
+> > > constructed, make_bad_inode() should not needlessly change file type.
+> > >
+> > 
+> > ouch
+> > 
+> > So let's say calls to make_bad_inode *after* d_instantiate are unavoidable.
 > 
-> This seems like a terrible idea.  I'll look at it after Plumbers.
+> ... and each one is a bug.
 
-Sure, no rush, please feel free to go through discussion in v1 when it
-comes, that's where we landed to this API based on suggestions from Jason.
+FWIW, I'm very tempted to fold make_bad_inode() into iget_failed().  Other
+callers tend to be either pointless (e.g. ext2_new_inode() after reaching
+fail: label - we only get there if inode has never reached inode hash
+table; make_bad_inode() in there should've been gone for a long time)
+or outright broken.
 
-I'm open to other suggestions.
-
--- 
-Peter Xu
-
+There's not a lot of callers, thankfully; I'm going through those at the
+moment, but so far the impression is that we should be able to simply bury
+the damn thing.
 
