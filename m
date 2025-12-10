@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-71032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5687CB1D32
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 04:50:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE490CB1D4D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 04:51:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 68B8C308A382
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 03:49:32 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 268AF30F61DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Dec 2025 03:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522BE30F533;
-	Wed, 10 Dec 2025 03:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90DB226CF1;
+	Wed, 10 Dec 2025 03:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBthoe7L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZG2fyxO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BB372618;
-	Wed, 10 Dec 2025 03:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A7621D3F4;
+	Wed, 10 Dec 2025 03:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765338569; cv=none; b=nJFQgD7PPeDEgmM289pDkousDUaE4Cd0UevUR6TJjOgwnG/DAhcNqJW9eNejQ0rcJhUN2r5JMVN8Re7BOCzZeHtvEL2vqA0OB3d/niI+8OS4CexG/12+Aam64vmkplGPI8d8sLZKAHnXFoMtMaWu3w3LmMok5w6wNJALMcLzWpo=
+	t=1765338579; cv=none; b=nISWt83qN2Gx3mv5TtNh7KViRSfisDt242wX40ctj7DWSPice2+aOhiKPqv5Ri+3JzQy2J9q6AL5VKJoCCNpVZPULb5g0ouGQxBoE7pjEVO+HWpk+vKbTfxYTpYciRttpB7UUbksR3orQlnC9WloIpSMT/zdxdeWgDyWRhLny7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765338569; c=relaxed/simple;
-	bh=FpaJnbQklqI3YBJxr2vDUXzx9Wo/xx4nLvXABCDXie8=;
+	s=arc-20240116; t=1765338579; c=relaxed/simple;
+	bh=4u10GokmAsXviKaDqzZ7iDhdmjSN3KW+vW7yoWbPtWI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lnDbTi5MREGZhOLI7YshY2EKs2iXCYcMKt0fFTadR2r4+bYPeu36aJ2lJEtBwAd4Iy6YcnSNyDUJaqZTzz/eXfGTkX09VWQbVU6lw/rHxZWo4MFbJ/tqsKRv2L1yFXs41gCMdpAfTwJph7GMxuW2xz8dksOi1h2Hl9EWZ04uoS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBthoe7L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CE41C16AAE;
-	Wed, 10 Dec 2025 03:49:27 +0000 (UTC)
+	 MIME-Version:Content-Type; b=mcNjJfdbrTVGmRoP/GFgbmSqvjcMCeD1Nx/AWi4Ke8YlRs+7kfhylKB9hkrCBJcKt9Nll+VfDs+jpwd8nMtAren8vsIbU1SzmQuOQd8Ti4jGUYRpTWc4PVQw1OeibGPTIYHpIZdxV3qSS68BEmhlmfWI71vXMi4YrdwTMv9Pqs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZG2fyxO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EB64C19423;
+	Wed, 10 Dec 2025 03:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765338569;
-	bh=FpaJnbQklqI3YBJxr2vDUXzx9Wo/xx4nLvXABCDXie8=;
+	s=k20201202; t=1765338578;
+	bh=4u10GokmAsXviKaDqzZ7iDhdmjSN3KW+vW7yoWbPtWI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TBthoe7L+RpvrbSXJUNqZKoBbdvIiZdn1nHUG7ZGtn7cr1LD93JszCuBZUa8KjK0y
-	 HX5cd0Tebsqcw78UrbxL/QfjFZhME3wa+rwCauxC11mB/2hxyDHAeNQoBIgKOHqerK
-	 1MQab8X4R7gvVLnhfl+pBVSbgsCC45Mlt760H5mcTeXmfPVvoWszYAG3jm3PVr4X0Z
-	 Y1i24lyNBSxckLBNaYeio+TXAg8ncUt6UhLM03irEfUS9sq8tNC4mSxH9cW2NPSeJw
-	 NxAsvIuboqKmOtr9u5sEwGLiKJa+XERcqdVLdhHM9z/07JJWXR2CRYxr+yVl/Heb4L
-	 kxnqA01eVKAQw==
+	b=eZG2fyxODSGaQXAmiMv1fBrsrY+7QKqriFyY9h/+Ug7n8Zs/SYFCbwrH7LbEyyMOZ
+	 E0wS/2kK7Umao5dt1WEYOJg+0YUsyZ0857r6QI5a8KpPrZcSYEmU20dnElrk2HtzQO
+	 tMN3QNZmoYHz9CYWiUviSU5uDb7s3FICn/OrrWXYmHX3tazZ4R9ifVqSaBU6Oe5lfq
+	 1NeWoqEkbpJmL88vcrJkaXJewsPU69soK66ijMDwjRy0bvlDzIJboruOdL/cPHlSsg
+	 2KmwNzAHc8OqsQWuABQp5WkrJCO6+TIppVctD2OHJodlOpgR8dLVKGOHLnRN71ieXo
+	 ymn4CX/LD3Gdg==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Yuezhang Mo <Yuezhang.Mo@sony.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
+Cc: Bernd Schubert <bschubert@ddn.com>,
+	Miklos Szeredi <mszeredi@redhat.com>,
 	Sasha Levin <sashal@kernel.org>,
-	sj1557.seo@samsung.com,
+	miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-6.12] exfat: zero out post-EOF page cache on file extension
-Date: Tue,  9 Dec 2025 22:48:47 -0500
-Message-ID: <20251210034915.2268617-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-6.6] fuse: Invalidate the page cache after FOPEN_DIRECT_IO write
+Date: Tue,  9 Dec 2025 22:48:51 -0500
+Message-ID: <20251210034915.2268617-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251210034915.2268617-1-sashal@kernel.org>
 References: <20251210034915.2268617-1-sashal@kernel.org>
@@ -65,192 +65,135 @@ X-stable-base: Linux 6.18
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Yuezhang Mo <Yuezhang.Mo@sony.com>
+From: Bernd Schubert <bschubert@ddn.com>
 
-[ Upstream commit 4e163c39dd4e70fcdce948b8774d96e0482b4a11 ]
+[ Upstream commit b359af8275a982a458e8df6c6beab1415be1f795 ]
 
-xfstests generic/363 was failing due to unzeroed post-EOF page
-cache that allowed mmap writes beyond EOF to become visible
-after file extension.
+generic_file_direct_write() also does this and has a large
+comment about.
 
-For example, in following xfs_io sequence, 0x22 should not be
-written to the file but would become visible after the extension:
+Reproducer here is xfstest's generic/209, which is exactly to
+have competing DIO write and cached IO read.
 
-  xfs_io -f -t -c "pwrite -S 0x11 0 8" \
-    -c "mmap 0 4096" \
-    -c "mwrite -S 0x22 32 32" \
-    -c "munmap" \
-    -c "pwrite -S 0x33 512 32" \
-    $testfile
-
-This violates the expected behavior where writes beyond EOF via
-mmap should not persist after the file is extended. Instead, the
-extended region should contain zeros.
-
-Fix this by using truncate_pagecache() to truncate the page cache
-after the current EOF when extending the file.
-
-Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## Commit Analysis: exfat: zero out post-EOF page cache on file
-extension
+## Analysis Summary
 
-### 1. COMMIT MESSAGE ANALYSIS
+### The Bug
 
-**Problem Description**:
-- xfstests generic/363 failing due to unzeroed post-EOF page cache
-- mmap writes beyond EOF become visible after file extension
-- This violates expected POSIX behavior where extended regions should
-  contain zeros
+This commit fixes a **data coherency bug** in FUSE when using
+`FOPEN_DIRECT_IO`. The problem occurs when:
+1. A direct I/O write completes on a FUSE filesystem
+2. A concurrent buffered read has populated the page cache with (now
+   stale) data
+3. Without invalidation, the cached read returns **stale data**
 
-**Keywords**: "failing", "fix" - indicates this fixes a real bug
+The VFS layer handles this in `generic_file_direct_write()`
+(mm/filemap.c:4172-4224) by calling
+`kiocb_invalidate_post_direct_write()` after direct writes. The comment
+in VFS explicitly mentions this is needed to "invalidate clean pages
+which might have been cached by non-direct readahead."
 
-**Tags**:
-- No `Cc: stable@vger.kernel.org` tag
-- No `Fixes:` tag
-- Signed-off-by from exfat maintainer (Namjae Jeon)
+### The Fix
 
-### 2. CODE CHANGE ANALYSIS
+The fix adds the same post-write invalidation pattern to FUSE's
+`fuse_direct_io()` function:
+- After a successful write (`res > 0 && write && fopen_direct_io`)
+- Call `invalidate_inode_pages2_range(mapping, idx_from, idx_to)`
+- This ensures stale read-ahead pages are invalidated
 
-The fix adds `truncate_pagecache()` calls in two locations:
+**Code size:** +9 lines, single function, single file
 
-**Change 1 - `exfat_cont_expand()` (~line 30)**:
-```c
-+       truncate_pagecache(inode, i_size_read(inode));
-```
-This truncates page cache to current EOF when expanding a file,
-invalidating any stale data that may have been written beyond EOF via
-mmap.
+### Stable Kernel Criteria Assessment
 
-**Change 2 - `exfat_file_write_iter()` (~line 645)**:
-```c
-+       if (pos > i_size_read(inode))
-+               truncate_pagecache(inode, i_size_read(inode));
-```
-This truncates page cache before writes that extend the file, with a
-conditional check to only run when write position exceeds current file
-size.
+| Criterion | Assessment |
+|-----------|------------|
+| Obviously correct | ✅ Yes - follows established VFS pattern |
+| Fixes real bug | ✅ Yes - stale data reads (data integrity) |
+| Has reproducer | ✅ Yes - xfstest generic/209 |
+| Small and contained | ✅ Yes - 9 lines in one function |
+| No new features | ✅ Correct - pure bug fix |
+| Cc: stable tag | ❌ Not present |
+| Fixes: tag | ❌ Not present |
 
-**Technical mechanism of the bug**:
-- User mmaps a file and writes beyond EOF into page cache
-- These writes don't persist (they're beyond EOF)
-- Later, when the file is extended, the stale page cache with those
-  beyond-EOF writes becomes part of the valid file content
-- Result: data that should never have persisted becomes visible
+### Dependencies and Backport Concerns
 
-**Why the fix works**: `truncate_pagecache()` invalidates all page cache
-beyond the specified position, ensuring any stale post-EOF data is
-discarded before extending the file.
+**Critical dependency:** This commit requires commit `80e4f25262f9f`
+("fuse: invalidate page cache pages before direct write") which
+introduced the `fopen_direct_io` variable and `idx_from`/`idx_to`
+calculations. That commit was merged in **v6.6-rc1**.
 
-### 3. CLASSIFICATION
+**Backportable to:**
+- stable/linux-6.6.y ✅
+- stable/linux-6.11.y ✅
+- stable/linux-6.12.y ✅
 
-- **Type**: Bug fix for **data integrity issue**
-- **Category**: Filesystem semantics violation
-- **Not an exception case**: Not a device ID, quirk, DT update, or build
-  fix
+**NOT backportable to:**
+- stable/linux-6.1.y ❌ (missing prerequisite code)
+- Earlier LTS kernels ❌
 
-### 4. SCOPE AND RISK ASSESSMENT
+### Risk Assessment
 
-- **Lines changed**: +3 lines (very small)
-- **Files touched**: 1 file (fs/exfat/file.c)
-- **Complexity**: Low - uses standard kernel APIs
-- **Subsystem maturity**: exfat is relatively mature (in mainline since
-  5.7)
-- **Regression risk**: LOW - `truncate_pagecache()` is a well-tested
-  standard API used by many filesystems for this exact purpose
+**LOW RISK:**
+- Very small change (+9 lines)
+- Uses existing, well-tested API (`invalidate_inode_pages2_range`)
+- Follows the same pattern as the VFS layer
+- Error return from invalidation is silently ignored (same as VFS
+  behavior - "if this invalidation fails, tough, the write still
+  worked...")
+- Only affects FUSE filesystems using `FOPEN_DIRECT_IO` with concurrent
+  cached reads
 
-### 5. USER IMPACT
+### User Impact
 
-- **Who is affected**: Users of exfat filesystem (common on SD cards,
-  USB drives, camera media)
-- **Severity**: Moderate to high - data integrity violation
-- **Reproducibility**: Reproducible via xfstests generic/363, specific
-  mmap usage patterns
-- **Real-world impact**: Could cause unexpected data appearing in files,
-  data corruption scenarios
+- **Severity:** Medium-High - stale data reads are a data integrity
+  issue
+- **Affected users:** FUSE filesystem users enabling `FOPEN_DIRECT_IO`
+  (including some high-performance storage systems)
+- **Reproducer:** Clear, well-known xfstest (generic/209)
 
-### 6. STABILITY INDICATORS
+### Verdict
 
-- **Tested**: Yes - via xfstests generic/363 (standard filesystem test
-  suite)
-- **Reviewed**: Has maintainer sign-off (Namjae Jeon)
-- **Pattern**: Fix follows the same approach used by other mature
-  filesystems (ext4, xfs, etc.) for handling post-EOF page cache
+Despite lacking explicit stable tags, this is a legitimate data
+integrity fix. The bug causes **real user-visible corruption** (stale
+data reads), the fix is small and surgical, follows an established VFS
+pattern, and has low regression risk. The lack of `Cc: stable` doesn't
+disqualify it - many important fixes arrive without explicit tags.
 
-### 7. DEPENDENCY CHECK
-
-- Uses only existing kernel APIs (`truncate_pagecache()`,
-  `i_size_read()`)
-- No dependencies on other commits
-- Functions being modified (`exfat_cont_expand`,
-  `exfat_file_write_iter`) exist in stable kernels
-
----
-
-## Summary
-
-**What problem does this solve?**
-Data integrity bug where mmap writes beyond EOF incorrectly persist
-after file extension, violating filesystem semantics.
-
-**Does it meet stable kernel rules?**
-- ✅ Obviously correct - uses standard pattern from other filesystems
-- ✅ Fixes real bug - detected by xfstests, affects real users
-- ✅ Important issue - data integrity is critical for filesystems
-- ✅ Small and contained - 3 lines, 1 file
-- ✅ No new features - pure bug fix
-- ✅ Should apply cleanly - no dependencies
-
-**Risk vs Benefit:**
-- **Risk**: Very low - small change using well-tested APIs
-- **Benefit**: Fixes data integrity issue on widely-used filesystem
-  (exfat used on removable media)
-
-**Concerns:**
-- No explicit `Cc: stable` tag, but maintainer may not have considered
-  it necessary
-- No `Fixes:` tag, so unclear when bug was introduced (likely present
-  since exfat's initial inclusion)
-
-This is a clear-cut data integrity bug fix with minimal risk. The fix is
-small, surgical, uses standard kernel APIs, and follows the same pattern
-used by mature filesystems like ext4 and xfs. Data integrity issues in
-filesystems should be fixed in stable trees to protect users from silent
-data corruption.
+For kernels 6.6+, this should be backported. For earlier kernels, the
+prerequisite code doesn't exist, so backporting would require additional
+work.
 
 **YES**
 
- fs/exfat/file.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/fuse/file.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index adc37b4d7fc2d..536c8078f0c19 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -25,6 +25,8 @@ static int exfat_cont_expand(struct inode *inode, loff_t size)
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	struct exfat_chain clu;
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index c5c82b3807911..bb4ecfd469a5e 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1681,6 +1681,15 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+ 	if (res > 0)
+ 		*ppos = pos;
  
-+	truncate_pagecache(inode, i_size_read(inode));
++	if (res > 0 && write && fopen_direct_io) {
++		/*
++		 * As in generic_file_direct_write(), invalidate after the
++		 * write, to invalidate read-ahead cache that may have competed
++		 * with the write.
++		 */
++		invalidate_inode_pages2_range(mapping, idx_from, idx_to);
++	}
 +
- 	ret = inode_newsize_ok(inode, size);
- 	if (ret)
- 		return ret;
-@@ -639,6 +641,9 @@ static ssize_t exfat_file_write_iter(struct kiocb *iocb, struct iov_iter *iter)
- 
- 	inode_lock(inode);
- 
-+	if (pos > i_size_read(inode))
-+		truncate_pagecache(inode, i_size_read(inode));
-+
- 	valid_size = ei->valid_size;
- 
- 	ret = generic_write_checks(iocb, iter);
+ 	return res > 0 ? res : err;
+ }
+ EXPORT_SYMBOL_GPL(fuse_direct_io);
 -- 
 2.51.0
 
