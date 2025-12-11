@@ -1,72 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-71088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A12A1CB4FEF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 08:38:34 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A822ACB51B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 09:30:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 56534300D16E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 07:38:18 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DC9EA300C297
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 08:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD872D374F;
-	Thu, 11 Dec 2025 07:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C31A215F7D;
+	Thu, 11 Dec 2025 08:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RXb7Y72Z"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EjGdG+yn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE7326981E;
-	Thu, 11 Dec 2025 07:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EDD248F5A;
+	Thu, 11 Dec 2025 08:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765438696; cv=none; b=MRFbFxsrIwU6HNgD/rPyGjyYhnScirE/nkxHXB3f8zqvk5VHHZxMYy91ZOY5RSWmgn4HPlWVkbjpqI0ml2x48RC+YBvUfAnCd8qCK0NMOCgo+AFMUEqBx8iZ4UgiDFJQZaJ/zLpE+pYg9vytvGsI6ku/mqoYTtNcc7Pfba5fyTU=
+	t=1765441794; cv=none; b=iZPggORVypZBzfrBjj173QrHNcmzdyk3ULSj4TbpflA53xQA2V7IPa/Oy5M8YJi7/nckAO8qMuvl/YcUnvryCHmti9ys5b8wLMm3e3oEBtuB2R1gsQgcqVkHdaA6VHBKkveNHIhvF/e3uLc8UhfXWCLiHTWUrtaw6Xt+X3xv8nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765438696; c=relaxed/simple;
-	bh=rTqOpg7n9JAE/DziGqxqB0zYUu70EqKn/5a8DdMwhuw=;
+	s=arc-20240116; t=1765441794; c=relaxed/simple;
+	bh=oZk62VQRQiT5+0VX7ZHg9OxApmN3iEZ3qWothA1myos=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EGN5e2sOIr3LdMTmT+jC3eLULBRoKxyE53I/iyYDg+lqn802suV9x1FTd+gN8Ab8JBUC2EDeKKi8FQMRqZUSLSH/tDn+GU0dLYMwJT9+icXm3Mx2oGecCUkplzXGPemgr5Gc6wKsb9GmDnKx04x5EyVREHkzXRB/QQsgAMlX+Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RXb7Y72Z; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LvL+wWM9xb9eGh0ewmBu/qTlopS6rqYvC3V8y4f6Lis=; b=RXb7Y72ZDLDYLNGzvUQCElZAeD
-	BL66pjYC7rbK0+X6ld6Xm7Hz94GG/G0qAauo8mZLNeI+zAmxu0fJEwJL99vnwasCVj5N5tj3KLh1t
-	KhmtPmtNh9raTTYvuZrRa9MfmLABrsVANz0JeRpO1kZ+RbTVWI6EucsQk9cHL3n7DJJ+elSNVErlX
-	DZvbx3t2+JeBopt+WZXzlLqNyERmxqLJ6u2rU3ZaEhQ10Wa4EXHTUArwL+HDPmP/sxLD0U7zcwnV/
-	LwdBXGmOhTWf/qEGpq8xoU3IcKTF+jxv10EAHQeCoQ9xAg7gDy0X89VseKqgTBQ7pI9yUOFpb22i4
-	AYWUwNDQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vTbFN-0000000DwGk-1G4j;
-	Thu, 11 Dec 2025 07:37:57 +0000
-Date: Thu, 11 Dec 2025 07:37:57 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Pankaj Raghav <p.raghav@samsung.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, Michal Hocko <mhocko@suse.com>,
-	Lance Yang <lance.yang@linux.dev>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nico Pache <npache@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, mcgrof@kernel.org,
-	gost.dev@samsung.com, kernel@pankajraghav.com, tytso@mit.edu
-Subject: Re: [RFC v2 0/3] Decoupling large folios dependency on THP
-Message-ID: <aTp01WOPU0dYT7yx@casper.infradead.org>
-References: <20251206030858.1418814-1-p.raghav@samsung.com>
- <64291696-C808-49D0-9F89-6B3B97F58717@nvidia.com>
- <aTj2pZqwx5xJVavb@casper.infradead.org>
- <D498FB7E-1C57-47A6-BAF4-EA1BAAE75526@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmIzzGhUWQbEUInMpP7KkC2Qj96st27AgLuMuRft5dqQPs/uOz4BCwXWIEv+7tbZNM9lTpvhYIYRWBguhBbDf64OLqpyb5nJ5Pv1/P5y8EBYGyJY+/pEVABO3Ntd92V2EP5aWlAEaKbGw5A/KJucubhMmMoPSsMcyQ5csOxm3t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EjGdG+yn; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1765441792; x=1796977792;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oZk62VQRQiT5+0VX7ZHg9OxApmN3iEZ3qWothA1myos=;
+  b=EjGdG+ynAlmT4Vh79VsnsZtNiz3ztpVXZ3FScTj9xhx3PcXMjqElXM+j
+   H6ZTa2SLR/eoenE7a1Io4pPK2yo6HFFbeX3BJnyn/fsiMSSVoQtEaQ88l
+   yxKA/A0ySd/9CsRnMLT+G1o+92cq0HvdS2BIkYoxEwjyxWWua17QNXRSc
+   +UN5rMqk6hYTT4QmGQFR1fTgm6pHVkRuAsW/Vg5TwitbYv8BNYWa/WL3Q
+   Dy25InFLn8XCg8vImxVqFm5ZML5e3la8x4i7jGsQE/fvdl8ZOLRAXheBo
+   bfMivxw034VdnOZlBfxK2vjF4mVumKyososWXRNVsLKezIk2pazPiC4H6
+   A==;
+X-CSE-ConnectionGUID: NwArkhlWSDG4bzaTxSJdbw==
+X-CSE-MsgGUID: Xoz+yZJsQUeG32l3v1Vjqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11638"; a="67305597"
+X-IronPort-AV: E=Sophos;i="6.20,265,1758610800"; 
+   d="scan'208";a="67305597"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2025 00:29:51 -0800
+X-CSE-ConnectionGUID: 3O2abcG3S4u1FyeKWKOjPQ==
+X-CSE-MsgGUID: 0bXA4y8vRLSLU557QTbnnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,265,1758610800"; 
+   d="scan'208";a="201220538"
+Received: from lkp-server01.sh.intel.com (HELO d335e3c6db51) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 11 Dec 2025 00:29:49 -0800
+Received: from kbuild by d335e3c6db51 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vTc3W-000000004PN-2OZw;
+	Thu, 11 Dec 2025 08:29:46 +0000
+Date: Thu, 11 Dec 2025 16:28:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Eric Biggers <ebiggers@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org
+Subject: Re: [PATCH 8/9] blk-crypto: optimize data unit alignment checking
+Message-ID: <202512111625.7vv9PN6b-lkp@intel.com>
+References: <20251210152343.3666103-9-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,37 +78,142 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <D498FB7E-1C57-47A6-BAF4-EA1BAAE75526@nvidia.com>
+In-Reply-To: <20251210152343.3666103-9-hch@lst.de>
 
-On Wed, Dec 10, 2025 at 11:37:51AM -0500, Zi Yan wrote:
-> On 9 Dec 2025, at 23:27, Matthew Wilcox wrote:
-> 
-> > On Tue, Dec 09, 2025 at 11:03:23AM -0500, Zi Yan wrote:
-> >> I wonder if core-mm should move mTHP code out of CONFIG_TRANSPARENT_HUGEPAGE
-> >> and mTHP might just work. Hmm, folio split might need to be moved out of
-> >> mm/huge_memory.c in that case. khugepaged should work for mTHP without
-> >> CONFIG_TRANSPARENT_HUGEPAGE as well. OK, for anon folios, the changes might
-> >> be more involved.
-> >
-> > I think this is the key question to be discussed at LPC.  How much of
-> 
-> I am not going, so would like to get a summary afterwards. :)
+Hi Christoph,
 
-You can join the fun at meet.lpc.events, or there's apparently a youtube
-stream.
+kernel test robot noticed the following build errors:
 
-> > the current THP code should we say "OK, this is large folio support
-> > and everybody needs it" and how much is "This is PMD (or mTHP) support;
-> > this architecture doesn't have it, we don't need to compile it in".
-> 
-> I agree with most of it, except mTHP part. mTHP should be part of large
-> folio, since I see mTHP is anon equivalent to file backed large folio.
-> Both are a >0 order folio mapped by PTEs (ignoring to-be-implemented
-> multi-PMD mapped large folios for now).
+[auto build test ERROR on axboe/for-next]
+[also build test ERROR on jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev linus/master next-20251211]
+[cannot apply to tytso-ext4/dev v6.18]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Maybe we disagree about what words mean ;-)  When I said "mTHP" what
-I meant was "support for TLB entries which cover more than one page".
-I have no objection to supporting large folio allocation for anon memory
-because I think that's beneficial even if there's no hardware support
-for TLB entries that cover intermediate sizes between PMD and PTE.
+url:    https://github.com/intel-lab-lkp/linux/commits/Christoph-Hellwig/fscrypt-keep-multiple-bios-in-flight-in-fscrypt_zeroout_range_inline_crypt/20251211-002354
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git for-next
+patch link:    https://lore.kernel.org/r/20251210152343.3666103-9-hch%40lst.de
+patch subject: [PATCH 8/9] blk-crypto: optimize data unit alignment checking
+config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20251211/202512111625.7vv9PN6b-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251211/202512111625.7vv9PN6b-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512111625.7vv9PN6b-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> block/blk-merge.c:332:35: error: no member named 'bi_crypt_context' in 'struct bio'
+     332 |                 struct bio_crypt_ctx *bc = bio->bi_crypt_context;
+         |                                            ~~~  ^
+   1 error generated.
+
+
+vim +332 block/blk-merge.c
+
+   310	
+   311	/**
+   312	 * bio_split_io_at - check if and where to split a bio
+   313	 * @bio:  [in] bio to be split
+   314	 * @lim:  [in] queue limits to split based on
+   315	 * @segs: [out] number of segments in the bio with the first half of the sectors
+   316	 * @max_bytes: [in] maximum number of bytes per bio
+   317	 *
+   318	 * Find out if @bio needs to be split to fit the queue limits in @lim and a
+   319	 * maximum size of @max_bytes.  Returns a negative error number if @bio can't be
+   320	 * split, 0 if the bio doesn't have to be split, or a positive sector offset if
+   321	 * @bio needs to be split.
+   322	 */
+   323	int bio_split_io_at(struct bio *bio, const struct queue_limits *lim,
+   324			unsigned *segs, unsigned max_bytes)
+   325	{
+   326		struct bio_vec bv, bvprv, *bvprvp = NULL;
+   327		unsigned nsegs = 0, bytes = 0, gaps = 0;
+   328		struct bvec_iter iter;
+   329		unsigned len_align_mask = lim->dma_alignment;
+   330	
+   331		if (bio_has_crypt_ctx(bio)) {
+ > 332			struct bio_crypt_ctx *bc = bio->bi_crypt_context;
+   333	
+   334			len_align_mask |= (bc->bc_key->crypto_cfg.data_unit_size - 1);
+   335		}
+   336	
+   337		bio_for_each_bvec(bv, bio, iter) {
+   338			if (bv.bv_offset & len_align_mask)
+   339				return -EINVAL;
+   340	
+   341			/*
+   342			 * If the queue doesn't support SG gaps and adding this
+   343			 * offset would create a gap, disallow it.
+   344			 */
+   345			if (bvprvp) {
+   346				if (bvec_gap_to_prev(lim, bvprvp, bv.bv_offset))
+   347					goto split;
+   348				gaps |= bvec_seg_gap(bvprvp, &bv);
+   349			}
+   350	
+   351			if (nsegs < lim->max_segments &&
+   352			    bytes + bv.bv_len <= max_bytes &&
+   353			    bv.bv_offset + bv.bv_len <= lim->max_fast_segment_size) {
+   354				nsegs++;
+   355				bytes += bv.bv_len;
+   356			} else {
+   357				if (bvec_split_segs(lim, &bv, &nsegs, &bytes,
+   358						lim->max_segments, max_bytes))
+   359					goto split;
+   360			}
+   361	
+   362			bvprv = bv;
+   363			bvprvp = &bvprv;
+   364		}
+   365	
+   366		*segs = nsegs;
+   367		bio->bi_bvec_gap_bit = ffs(gaps);
+   368		return 0;
+   369	split:
+   370		if (bio->bi_opf & REQ_ATOMIC)
+   371			return -EINVAL;
+   372	
+   373		/*
+   374		 * We can't sanely support splitting for a REQ_NOWAIT bio. End it
+   375		 * with EAGAIN if splitting is required and return an error pointer.
+   376		 */
+   377		if (bio->bi_opf & REQ_NOWAIT)
+   378			return -EAGAIN;
+   379	
+   380		*segs = nsegs;
+   381	
+   382		/*
+   383		 * Individual bvecs might not be logical block aligned. Round down the
+   384		 * split size so that each bio is properly block size aligned, even if
+   385		 * we do not use the full hardware limits.
+   386		 *
+   387		 * It is possible to submit a bio that can't be split into a valid io:
+   388		 * there may either be too many discontiguous vectors for the max
+   389		 * segments limit, or contain virtual boundary gaps without having a
+   390		 * valid block sized split. A zero byte result means one of those
+   391		 * conditions occured.
+   392		 */
+   393		bytes = ALIGN_DOWN(bytes, bio_split_alignment(bio, lim));
+   394		if (!bytes)
+   395			return -EINVAL;
+   396	
+   397		/*
+   398		 * Bio splitting may cause subtle trouble such as hang when doing sync
+   399		 * iopoll in direct IO routine. Given performance gain of iopoll for
+   400		 * big IO can be trival, disable iopoll when split needed.
+   401		 */
+   402		bio_clear_polled(bio);
+   403		bio->bi_bvec_gap_bit = ffs(gaps);
+   404		return bytes >> SECTOR_SHIFT;
+   405	}
+   406	EXPORT_SYMBOL_GPL(bio_split_io_at);
+   407	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
