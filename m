@@ -1,240 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-71133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65AFBCB6792
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 17:34:25 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id D668CCB6A1A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 18:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id F2B803001C31
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 16:34:22 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id CFD093018BA2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 17:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDE62820A0;
-	Thu, 11 Dec 2025 16:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC17314A8D;
+	Thu, 11 Dec 2025 17:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtF/otju"
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="e6f64MLd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com [74.125.224.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674A21EB19B;
-	Thu, 11 Dec 2025 16:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CB7288C2D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Dec 2025 17:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765470859; cv=none; b=t1FXiDgmgDODWL05FSrnu335HjdPf7QOxaSnlA1xNtBA7hT9940FKepiRDNSNx6LgfXLoBm0HyzDVlO7C9sXcN0k2Wm8wTMSmYSYLggh1Qf7/Ac7SjNUN095jmMQtEpCShl+WGQo1g5wBIERxIc6C6q6EQDZHfin/kCSOQ7+PWM=
+	t=1765473204; cv=none; b=bMxxhsHxtGnqq/f6GhxDlSETxLXjxuSAS6WwSV0skePn2FlWlhJ1B+rfqSP7rBh6IYNnnRyLUQhOY9Z59HRwrSxzBsGJ7iuTSHFUFDU2mawbnvmEJaA0kSzB88YG6oBRhN5Zv4IE73xM2aClop+Qr8I+Q6nYrUigs6mIfmhy9X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765470859; c=relaxed/simple;
-	bh=cPRukpfjgKKdgPyBBWgAUHMv+z27naMDpWQ3l72BCFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eLsgEdLtrd3gUIIsWDYxJXn+sZje5tqCk8Q9JtkPlYAYMuXAoLxEcj6yWaJmmnXG8RYRh8xv4qosmR+wFRi/nr7KuKUvxjpahmRGVsHAqpTgltBYTmpCQTN9CQ0GeGJkvyzF5DicphTbffPXNL6qiCzYQDKJCPrM2fNXjYoDw/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtF/otju; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E148C4CEF7;
-	Thu, 11 Dec 2025 16:34:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765470859;
-	bh=cPRukpfjgKKdgPyBBWgAUHMv+z27naMDpWQ3l72BCFw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dtF/otjunMnhCXPFwRxyww0u+pLbGv6VEkSM3daEoDt39DsKUuYk8Kic5Z7jjC9mU
-	 oS8oTVUHEindPOckMUv+ZDiFcKfPEZQtlYo3Kc1ifRSn+5ngtPB9XzuAehWqSUHGlk
-	 yRpmzrB7ZUicbs1DeH5wrqcAQzMSQ25EVi1Mw2/iBkqxid+DJ94jfi4iK/HSSvcoay
-	 G+QiPINhoWKiStuudS+on7ex0z511L00YKx7opOcjtpCENWpqJ0n9zqwxrHrYsxK0c
-	 Bir5BZz2hAPB/uyZiIxkquUVdsPmX5pCruy2un1I2yKJhMpcl7+q/87DsQ8CE/0JJO
-	 jXIVhnWVVCFDQ==
-Date: Thu, 11 Dec 2025 17:34:16 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Xin Zhao <jackzxcui1989@163.com>
-Cc: anna-maria@linutronix.de, mingo@kernel.org, tglx@linutronix.de,
-	kuba@kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] timers/nohz: Avoid /proc/stat idle/iowait
- fluctuation when cpu hotplug
-Message-ID: <aTryiIrwL4WJZKPt@localhost.localdomain>
-References: <20251210083135.3993562-1-jackzxcui1989@163.com>
- <20251210083135.3993562-3-jackzxcui1989@163.com>
+	s=arc-20240116; t=1765473204; c=relaxed/simple;
+	bh=8eJeVSDMC2OXA8/c1hedw2Ay8kqSusEdqdEXbNb4yss=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KWTq1W4/IMdgdemy10bzmlgI16WWE4Z0qnzGsMlvjBBlVCTPUP2yFB4UIOcMyY0y6pA+HHuWohpchL+fVKmrCBFKfakVk73qNESNc8NLfOqEUWm8+cb05DdctLdJVFwPJrtwGCtUZvJDRs7z2pICHhSq8zXMOFWH5/LJmzP8HiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=e6f64MLd; arc=none smtp.client-ip=74.125.224.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-64475c16a11so405366d50.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Dec 2025 09:13:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1765473200; x=1766078000; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XgsqjP5OdKf2pfViq8wHSszLchDHEA8k2q0YnXN+A5g=;
+        b=e6f64MLd2MbEBff4BHorsHzanEbrMQAu8wJXMFvB5usQtYutEDcxhEAG9rFaanAo7M
+         SlIMSfbi/CvsCZpN0IkOUEwAv5EuWNPrrc7z2HrxxnTThwWz13oqN9+fwU6QQkCawE9v
+         KIn2GIqp2ruyHGxMV6X4q/JDLzQimoMsHz+1+RoPuAvTNSSJAayZEEbhrD1YFctw12VL
+         hyuU4oZ0W3A2PKZa6TaacLnq43A1Du6F8AMlyw0IQyCcYEtMaJL7cCz+aoCTGOziUpqg
+         O8bxAFT2rvuq47dSG93/Hw5wgQH/PXNZx73lJAb8zDzj3nrInoQj0ZCuvngwDEglabuE
+         ZyMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765473200; x=1766078000;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=XgsqjP5OdKf2pfViq8wHSszLchDHEA8k2q0YnXN+A5g=;
+        b=oijGW4k8Qy/i3uqA7FDdu9kw2vTPNqwYwYmfaA5YztGQq3uxFYJryTh4y42h0skm6R
+         CTLrC9oOyZTHafCQhay8KS1Hi0aiMxveWOlThrcUsvlJfZq4SV0gr7bcUxelnMUiUbs7
+         ZY+1SUIFMMvATKL9zc9ZqUPJhlSzfapFVJmBUKfSUtvO0YH5Sl9y8wFsQygiFkdjIQRd
+         uxivZ1wcVNdJN9n8UAjX2Z4+b2N1MQHvz5ZdMpX9y/JU8Ev4fX4ikvS5d5iLPJ9Vhczc
+         KZeQgtqimipNDb9hLUzdM+ZZcSDrVAyEWI6x709JNTlltY5OL5nZUZvHnAM/5F9FKopP
+         MNhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVR6ZOWCtEJrh3yUu3fG9+iwil5Cd4XVjRS3BT2lkt3JnfbVq5ijaMOgupJN7HFmpLEZVgYU+0iSyxoBiU9@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeWiO2x+kK5AbkJetjYKb/taKsK//7AgDZaLovtJ+fClFRfGJG
+	Fw4WYQsRr0zGs2YOHvKDw610aPlZzEOu5DfhO3nANTJP/KYSFB8dRGc4QxxkeetQam/roRjdq0U
+	/Cj5FcssdBuaTn28nTv2qgu+H7TbJCgT4HUvVI8kvBw==
+X-Gm-Gg: AY/fxX6Zz3AHR/18fFZY58Gm+NW4/f8i8/LdCgVI9sATVTA3r8vUHn+q3VvJjl/vymj
+	Ly8A+7dJjjdjsrjnQNY0i0nQD4SbY7U/oPPxAVviSIej6FHx3rGuowOWosD0Z5VicuzjHvKAbNv
+	FbzNOSamuMY1NVUscxR8kTd5DRbYjNb8TSTuU52XhsJxrqAW8ifIW686w27boa1fTYKmkDCsAik
+	lxDYYgfOKRWlMiAMjnsazbYm4ptT22u4Td45KNAaN1t26rLMyixf9obGLn49L0OngBonyLm
+X-Google-Smtp-Source: AGHT+IEDvxO44/POz7bnaB+zrKXCNOOS/WPSTW3GIVXm1upC0YATz2kq4R7kn6XsCe0YNeacKDOWMUqKTxb574ExUiM=
+X-Received: by 2002:a05:690e:2514:20b0:63b:8e09:7a47 with SMTP id
+ 956f58d0204a3-6446e97b295mr4684556d50.19.1765473200251; Thu, 11 Dec 2025
+ 09:13:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251210083135.3993562-3-jackzxcui1989@163.com>
+References: <20251205-v5_user_cfi_series-v25-0-1a07c0127361@rivosinc.com>
+ <20251205-v5_user_cfi_series-v25-6-1a07c0127361@rivosinc.com> <b2acb9ca-1320-ab42-3937-2ea17153fac2@kernel.org>
+In-Reply-To: <b2acb9ca-1320-ab42-3937-2ea17153fac2@kernel.org>
+From: Deepak Gupta <debug@rivosinc.com>
+Date: Thu, 11 Dec 2025 09:13:01 -0800
+X-Gm-Features: AQt7F2rXBhYBRubaxsEthZTktAJEjMnbT8BXdFrJ84aaWwsz26es8ubAplXa-kc
+Message-ID: <CAKC1njTfn-5ZeAV7x5819kXUqitVgO0HkKQi1S6UvZyiuroxvg@mail.gmail.com>
+Subject: Re: [PATCH v25 06/28] riscv/mm : ensure PROT_WRITE leads to VM_READ | VM_WRITE
+To: Paul Walmsley <pjw@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com, 
+	rust-for-linux@vger.kernel.org, Zong Li <zong.li@sifive.com>, 
+	Andreas Korb <andreas.korb@aisec.fraunhofer.de>, 
+	Valentin Haudiquet <valentin.haudiquet@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Xin,
+On Thu, Dec 11, 2025 at 12:47=E2=80=AFAM Paul Walmsley <pjw@kernel.org> wro=
+te:
+>
+> On Fri, 5 Dec 2025, Deepak Gupta via B4 Relay wrote:
+>
+> > From: Deepak Gupta <debug@rivosinc.com>
+> >
+> > `arch_calc_vm_prot_bits` is implemented on risc-v to return VM_READ |
+> > VM_WRITE if PROT_WRITE is specified. Similarly `riscv_sys_mmap` is
+> > updated to convert all incoming PROT_WRITE to (PROT_WRITE | PROT_READ).
+> > This is to make sure that any existing apps using PROT_WRITE still work=
+.
+> >
+> > Earlier `protection_map[VM_WRITE]` used to pick read-write PTE encoding=
+s.
+> > Now `protection_map[VM_WRITE]` will always pick PAGE_SHADOWSTACK PTE
+> > encodings for shadow stack. Above changes ensure that existing apps
+> > continue to work because underneath kernel will be picking
+> > `protection_map[VM_WRITE|VM_READ]` PTE encodings.
+> >
+> > Reviewed-by: Zong Li <zong.li@sifive.com>
+> > Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> This Signed-off-by: doesn't look right.  It doesn't look like Arnd
+> developed this patch, and it doesn't appear that he replied with a
+> Signed-off-by: to the list regarding a patch that you wrote.  Did I miss
+> it?  Did you mean Co-developed-by: or some other tag?
+>
 
-Le Wed, Dec 10, 2025 at 04:31:35PM +0800, Xin Zhao a écrit :
-> The idle and iowait statistics in /proc/stat are obtained through
-> get_idle_time() and get_iowait_time(). Assuming CONFIG_NO_HZ_COMMON is
-> enabled, when CPU is online, the idle and iowait values use the
-> idle_sleeptime and iowait_sleeptime statistics from tick_cpu_sched, but
-> use CPUTIME_IDLE and CPUTIME_IOWAIT items from kernel_cpustat when CPU
-> is offline. Although /proc/stat do not print statistics of offline CPU,
-> it still print aggregated statistics of all possible CPUs.
-> 
-> tick_cpu_sched and kernel_cpustat are maintained by different logic,
-> leading to a significant gap. The first line of the data below shows the
-> /proc/stat output when only one CPU remains after CPU offline, the second
-> line shows the /proc/stat output after all CPUs are brought back online:
-> 
-> cpu  2408558 2 916619 4275883 5403 123758 64685 0 0 0
-> cpu  2408588 2 916693 4200737 4184 123762 64686 0 0 0
-> 
-> Obviously, other values do not experience significant fluctuations, while
-> idle/iowait statistics show a substantial decrease, which make system CPU
-> monitoring troublesome.
-> 
-> get_cpu_idle_time_us() calculates the latest cpu idle time based on
-> idle_entrytime and current time. When CPU is idle when offline, the value
-> return by get_cpu_idle_time_us() will continue to increase, which is
-> unexpected. get_cpu_iowait_time_us() has the similar calculation logic.
-> When CPU is in the iowait state when offline, the value return by
-> get_cpu_iowait_time_us() will continue to increase.
-> 
-> Introduce get_cpu_idle_time_us_offline() as the _offline variants of
-> get_cpu_idle_time_us(). get_cpu_idle_time_us_offline() just return the
-> same value of idle_sleeptime without any calculation. In this way,
-> /proc/stat logic can use it to get a correct CPU idle time, which remains
-> unchanged during CPU offline period. Also, the aggregated statistics of
-> all possible CPUs printed by /proc/stat will not experience significant
-> fluctuation when CPU hotplug.
-> So as the newly added get_cpu_iowait_time_us_offline().
-> 
-> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
-
-So the problem is a bit deeper (warning: lots of bullets)
-
-First of all you shouldn't need get_cpu_iowait_time_us_offline().
-get_cpu_idle_time_us() is supposed to stop advancing after
-tick_sched_timer_dying().
-
-But since this code:
-
-	if (cpu_is_offline(cpu)) {
-		cpuhp_report_idle_dead();
-		arch_cpu_idle_dead();
-	}
-
-is placed after tick_nohz_idle_enter() in do_idle(), the idle time
-moves forward as long as the CPU is offline.
-
-In fact offline handling in idle should happen at the very beginning
-of do_idle because:
-
-* There is no tick handling to do
-* There is no nohz idle balancing to do
-* And polling to TIF_RESCHED is useless
-* No need to check if need_resched() before offline handling since
-  stop_machine is done and all per-cpu kthread should be done with
-  their job.
-
-So:
-
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index c174afe1dd17..35d79af3286d 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -260,6 +260,12 @@ static void do_idle(void)
- {
- 	int cpu = smp_processor_id();
- 
-+	if (cpu_is_offline(cpu)) {
-+		local_irq_disable();
-+		cpuhp_report_idle_dead();
-+		arch_cpu_idle_dead();
-+	}
-+
- 	/*
- 	 * Check if we need to update blocked load
- 	 */
-@@ -311,11 +317,6 @@ static void do_idle(void)
- 		 */
- 		local_irq_disable();
- 
--		if (cpu_is_offline(cpu)) {
--			cpuhp_report_idle_dead();
--			arch_cpu_idle_dead();
--		}
--
- 		arch_cpu_idle_enter();
- 		rcu_nocb_flush_deferred_wakeup();
- 
-
-But tick_sched_timer_dying() temporarily clears the idle/iowait time.
-It's fixable but that's not all. We still have two idle time accounting
-with each having their shortcomings:
-
-* The accounting for online CPUs which is based on delta between
-  tick_nohz_start_idle() and tick_nohz_stop_idle().
-
-  Pros:
-       - Works when the tick is off
-
-       - Has nsecs granularity
-  Cons:
-       - Ignore steal time and possibly spuriously substract it from later
-         system accounting.
-
-       - Assumes CONFIG_IRQ_TIME_ACCOUNTING by not accounting IRQs but the
-         idle irqtime is possibly spuriously substracted from later system
-         accounting.
-
-       - Is not accurate when CONFIG_IRQ_TIME_ACCOUNTING=n
-
-       - The windows between 1) idle task scheduling and the first call to
-         tick_nohz_start_idle() and 2) idle task between the last
-         tick_nohz_stop_idle() and the rest of the idle time are blindspots
-	 wrt. cputime accounting.
-
-* The accounting for offline CPUs which is based on ticks and the
-  jiffies delta during which the tick was stopped.
-
-  Pros:
-       - Handles steal time correctly
-
-       - Handle CONFIG_IRQ_TIME_ACCOUNTING=y and CONFIG_IRQ_TIME_ACCOUNTING=n
-         correctly.
-
-       - Handles the whole idle task
-
-   Cons:
-       - Doesn't elapse when the tick is off
-
-       - Has TICK_NSEC granularity (jiffies)
-
-       - Needs to track the idle ticks that were accounted and substract
-         them from the total jiffies time spent while the tick was stopped.
-	 This is ugly.
-	 
-
-So what I think we should do is having a single one solution always applying
-to cpustat which does a hybrid approach with better support:
-
-* Tick based accounting whenever the tick isn't stopped.
-
-* When the tick is stopped, account like we do between tick_nohz_start_idle()
-  and tick_nohz_stop_idle() (but only when the tick is actually stopped) and
-  handle CONFIG_IRQ_TIME_ACCOUNTING correctly such that:
-
-  - If y, stop on IRQ entry and restart on IRQ exit like we used to. It means
-    we must flush cpu_irqtime::tick_delta upon tick restart so that it's not
-    substracted later from system accounting.
-
-  - If n, keep accounting on IRQs (remove calls to tick_nohz_start_idle()
-    and tick_nohz_stop_idle() during IRQs)
-
-  During that tick stopped time, tick based accounting must be ignored.
-
-  Idle steal delta time must be recorded at tick stop/tick restart boundaries
-  and substracted from later idle time accounting.
-
-  This logic should be moved to vtime and we still need the offlining fix above.
-
-Just give me a few days to work on that patchset.
-
-Thanks.
-
--- 
-Frederic Weisbecker
-SUSE Labs
+Seems like b4 messed it up. I'll fix it up.
 
