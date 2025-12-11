@@ -1,168 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-71086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 347A4CB474B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 02:45:31 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC8BCB4953
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 03:58:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 84CBF3026AFC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 01:45:19 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 686423015D36
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 02:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DD023EAB3;
-	Thu, 11 Dec 2025 01:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B93293C4E;
+	Thu, 11 Dec 2025 02:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="F1MMEZ9d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com [209.85.210.70])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB101DE8BE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Dec 2025 01:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E4E15B998
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Dec 2025 02:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765417518; cv=none; b=qo8JSsfxQ8gMXcQvkn+CXjKUo6d0jdcC1UGq/fuTGExqv7mYPCtB4ouhBN9GMbq+Yaul+R/KpKqAIILtDiOYkopfOAReZOVEVIeONXr0n7htczRSlP4KPZx4clq5yjrgjxDjfQaI4Vfvcpeg71X3e2VzGf3SAtYf2Kl1lDNbTdY=
+	t=1765421884; cv=none; b=CqFNn3DRPJCN2T/qHhw2PvCAjtaFwNt/tBrqGsH5z0/aKwJ3ruKy22P6pg8WSXtbAMPVrqWbGA+Z3bz6Gs9OrGG3XbghzebURGZtPv0ID5HA5zB+HVAN4kS3Go46HzTQtH4Ev1T9fw+FDgIAqWBKKwmzPqGxwTQO8mMPq4C/4NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765417518; c=relaxed/simple;
-	bh=sFfevH47nAA3uNZoIIinb48dl3PbNcWJRW/nIrNz2iQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=Mzx9WvsSer3n1P9znNx+F973NB+fGM2r5coqYLDW0IEMlFZ/MkdttWU0m7J9gCBG6hPLvkuj+BJnZXEqW2/MrRpWuHgTYqtLmEGMQqKyYlaywKFLtsAWEPaOQusz3JoMK3o1GeNDaFDMnnEgbSYg2K1Epe6b4FdXCp5/SpIUxu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7cacaa675feso1055830a34.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 17:45:16 -0800 (PST)
+	s=arc-20240116; t=1765421884; c=relaxed/simple;
+	bh=Q2Tz54xcXfKNhOl1jEEl+EPX++hlD7Wr0xdYX70vtz8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AUmPZRf2/JWaaTFs22StdSbqG0lty8s+jZxTtsQh7Yp1xyb96/0HBatXtWCpNZRrqRZLnNlPZAAcLunst1NcP9f9xs6Q17PNC7mviKj5xKWaXVL50dqlqcqH7SU0YCNolHmb6GNG8409ISc6n8kgLUPANyDLtISmYxeR1nLdkew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=F1MMEZ9d; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7bac5b906bcso79553b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 18:58:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1765421882; x=1766026682; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jS6Ier0wKLBde7ZWAUZx+lTRrTdrR6E+/ZstXOFBoOg=;
+        b=F1MMEZ9ds1exVBscUDzAqi8EXIS69XHe49MjfFeiqXtqROxFGJM5xcvPTldEswfAOd
+         4O6GlI9wiJAUrk+X8Tw4sXphDUkymtwSIb2Xsui2nvSlNaVxonyPyz1OpczB3l3TXhJ6
+         GnkoCmVTfbcDOBw0owQo+cjx6vkv+rZlppxjMUxqfPubuC2CnV4q3T0wyGhJLq5PmYpK
+         ti/k34ohIh/FYA6zUrNmz3m5g1Ob9uTZmuNiAKlWx4CmQKcUco1CUOGkkCi2HqxlebQo
+         0zqhUY2PKYPJymHcn06oR+6L4KVcqk738vsTClCdihhdZiTFkAL98retYMPPh/CmFndc
+         wGbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765417515; x=1766022315;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=twbHvsNIdd4vriB4dwGKg2ADXOEGZn75T8QacUdy8c8=;
-        b=muK3k5RPZb3IKsd8Eb7lHBKKYVp++bnsjsRvNzgd5Mw4Jikaa1D3PDy2jtYUUgqZex
-         OXTg1ldEU8jbNd992nHqFMN8JEJqCuOZ0Hdw6yDrKNVAgvez0ymz/uyEmJbzRdmInJoT
-         M6NbyFzS7hEpEzk+3N1AW+t91pIIkeV+89ndBxvIZ5MgUMrhgg+LwUvrRts4qb3ieYYC
-         BbF0qAk6klM4UrebcecCD3tAa4WVg7p+w7UYMAQ2d0T0wFO6K6YkxnRf6SOpRB+JdxMi
-         EWrm2mA0Nyc7OmE7YlGaTj7hguWRSe/Qt5GKwjBfLZHc6K7xHz+KBC/LlJEoC7i9sUjz
-         gaKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmd1p+mYUAuvsghxFINgWnCVbjp/coex99K9HRqX22PjEHdWBFWTPnZl+pyKTgz2bzV2Ca6LyZfrnYj7Em@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDs9Ft2mEy3jgsMYc983uT2B3ZRY2oqeKlum8rH0RLYTzGTuis
-	sldV7aBaRDoWkUxHNOgvqs6rl3aPdGVkk7dj7+XG9DP6UPKg9jekWOigI51q06vODlgfi+V0ZKs
-	lxttZuwL55cah6xDX7fmX/atMiS3sIgwv0adg1l7108HjeBWcRTLWRRZLFiw=
-X-Google-Smtp-Source: AGHT+IGjvE+c5ibRffIRusCy9NOq+64mwwxJRF0VY89Rmte288kQPNDMvUJK6pewgKDocYDifGSDr2Szn6PT+/Dt973O0vQ0c8Zb
+        d=1e100.net; s=20230601; t=1765421882; x=1766026682;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=jS6Ier0wKLBde7ZWAUZx+lTRrTdrR6E+/ZstXOFBoOg=;
+        b=WmbamGmrgOBDXr44weHDmTurana39lq74GxYiGU69WswUQOE/Fx8hJOL0coSpzgnVv
+         EV5DIuZFWoaT156Tjmfm6YttJGMAu5PIFaMqBueQP2TaDHda+/UyIAPUVsXmFSnnvtL4
+         jqklH4e9MN8EYwgrFYrFzcjTDYjN1KVHyWByC9uUy9BxlXMC/FwKkCDxQgoIKNzbfQxJ
+         wSr5QKlQ+XYTSkGEq4enTra13mtMGRO16NqoJHCm2C/6j/MMr9olKSBliTnfreL+bcZC
+         L/ZewmkleKNuUxKamwoM2qhyMDbQTcpKAL19MBbqx4nSi0cOClc+QC6mF+jO1jB9jPdE
+         7Tyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXJYKaJ0mQlWOEQIAR4Ioow2eGrO3au/obj0bGHmcoGAMUC/dCwlo0nBkgxE7kbRN42vkuYjv/fvji4l2m@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRuxPgSTuqkfUK4MlDhpWN84XcpXYwIc2jQoJOCgTiRDVlDO8a
+	FdkIiCLekywWEpkBi+jS3nqSYCADg3PKFp+lRmwym03zqrEaw5dU/hTZPhtM1NiEZ3LCcx64tcC
+	Ivp00pli9MAU3a7rc51NUis2Tepg2fq3M1TaDMoc9Vw==
+X-Gm-Gg: ASbGncsZx0+FaFV1qQEWF8pEkSHpAs8f4ej/GXebyRjzvYJJZD/RyRNM1S2E+reMIXs
+	WTeN1Q+azf3OmbP9H936UcDUR4IuZiFWyw1MaCZVl2ilttck/TXwdDLkaKZJC2oGH/ULcm9j26/
+	X2nwnjl8pcAyN8m6nQn+IzEZ5pjV0x7nQYvUYYcJoyeKKcRN8eC2WU4+Turt94Mm6RJnV4Qc5Ot
+	DemhDvdcKu8Y7NFtzFeOMdml/lffvpq+IbiHmUnzPhu8PUUo3Jq9z47uvMHyxUTVGMB1akn
+X-Google-Smtp-Source: AGHT+IFrPM5oGw+4ASKhyJhC7y9kDQROUrxQf55/hzv5FGD1A9xVpzd3S/wT/Xk0jtl6dLdcU8Kuyn1pjkJowAhoKUk=
+X-Received: by 2002:a05:7022:aaa:b0:119:e56b:46b6 with SMTP id
+ a92af1059eb24-11f2e6abc15mr531934c88.0.1765421881924; Wed, 10 Dec 2025
+ 18:58:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:5056:b0:65b:33a3:7c8 with SMTP id
- 006d021491bc7-65b33a3095cmr844677eaf.30.1765417515744; Wed, 10 Dec 2025
- 17:45:15 -0800 (PST)
-Date: Wed, 10 Dec 2025 17:45:15 -0800
-In-Reply-To: <20251210134303.1310039-1-mjguzik@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <693a222b.a70a0220.33cd7b.0020.GAE@google.com>
-Subject: [syzbot ci] Re: fs: warn on dirty inode in writeback paired with I_WILL_FREE
-From: syzbot ci <syzbot+ci622fcbc9c29bc2f6@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mjguzik@gmail.com, viro@zeniv.linux.org.uk
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+References: <20251203003526.2889477-1-joannelkoong@gmail.com>
+ <20251203003526.2889477-10-joannelkoong@gmail.com> <CADUfDZoUMRu=t3ELJ6yGt2FbcgW=WzHa_=xc4BNtEmPpA67VHw@mail.gmail.com>
+ <CAJnrk1a9oifzg+7gtzxux+A0smUE-Hi3sfWU-VpnXZgvKg1ymQ@mail.gmail.com>
+ <CADUfDZoMNiJMoHJpKzF2E_xZ7U-2jitSfQJd=SZD57AxqN6O_Q@mail.gmail.com> <CAJnrk1Z2dTPbWeTxZT2Nh0XZSBHnPopK9qcKVFnyzkcMckhVuw@mail.gmail.com>
+In-Reply-To: <CAJnrk1Z2dTPbWeTxZT2Nh0XZSBHnPopK9qcKVFnyzkcMckhVuw@mail.gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Wed, 10 Dec 2025 18:57:50 -0800
+X-Gm-Features: AQt7F2qoyJItnFWk8VYnalJqtP6lWmqWUhELRdmN5LRNLZCD4x91EDK1yGjlXbg
+Message-ID: <CADUfDZraQqEMZ=UAwbvSfPXZTF5hx7i7DLZ=UzQNA+YZOTxD7Q@mail.gmail.com>
+Subject: Re: [PATCH v1 09/30] io_uring: add io_uring_cmd_import_fixed_index()
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot ci has tested the following series
+On Fri, Dec 5, 2025 at 3:28=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
+> wrote:
+>
+> On Fri, Dec 5, 2025 at 8:56=E2=80=AFAM Caleb Sander Mateos
+> <csander@purestorage.com> wrote:
+> >
+> > On Thu, Dec 4, 2025 at 10:56=E2=80=AFAM Joanne Koong <joannelkoong@gmai=
+l.com> wrote:
+> > >
+> > > On Wed, Dec 3, 2025 at 1:44=E2=80=AFPM Caleb Sander Mateos
+> > > <csander@purestorage.com> wrote:
+> > > >
+> > > > On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@g=
+mail.com> wrote:
+> > > > >
+> > > > > Add a new helper, io_uring_cmd_import_fixed_index(). This takes i=
+n a
+> > > > > buffer index. This requires the buffer table to have been pinned
+> > > > > beforehand. The caller is responsible for ensuring it does not us=
+e the
+> > > > > returned iter after the buffer table has been unpinned.
+> > > > >
+> > > > > This is a preparatory patch needed for fuse-over-io-uring support=
+, as
+> > > > > the metadata for fuse requests will be stored at the last index, =
+which
+> > > > > will be different from the sqe's buffer index.
+> > > > >
+> > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > > > ---
+> > > > >  include/linux/io_uring/cmd.h | 10 ++++++++++
+> > > > >  io_uring/rsrc.c              | 31 ++++++++++++++++++++++++++++++=
++
+> > > > >  io_uring/rsrc.h              |  2 ++
+> > > > >  io_uring/uring_cmd.c         | 11 +++++++++++
+> > > > >  4 files changed, 54 insertions(+)
+> > > > >
+> > > > > diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> > > > > index 67331cae0a5a..b6dd62118311 100644
+> > > > > --- a/io_uring/rsrc.c
+> > > > > +++ b/io_uring/rsrc.c
+> > > > > @@ -1156,6 +1156,37 @@ int io_import_reg_buf(struct io_kiocb *req=
+, struct iov_iter *iter,
+> > > > >         return io_import_fixed(ddir, iter, node->buf, buf_addr, l=
+en);
+> > > > >  }
+> > > > >
+> > > > > +int io_import_reg_buf_index(struct io_kiocb *req, struct iov_ite=
+r *iter,
+> > > > > +                           u16 buf_index, int ddir, unsigned iss=
+ue_flags)
+> > > > > +{
+> > > > > +       struct io_ring_ctx *ctx =3D req->ctx;
+> > > > > +       struct io_rsrc_node *node;
+> > > > > +       struct io_mapped_ubuf *imu;
+> > > > > +
+> > > > > +       io_ring_submit_lock(ctx, issue_flags);
+> > > > > +
+> > > > > +       if (buf_index >=3D req->ctx->buf_table.nr ||
+> > > >
+> > > > This condition is already checked in io_rsrc_node_lookup() below.
+> > >
+> > > I think we still need this check here to differentiate between -EINVA=
+L
+> > > if buf_index is out of bounds and -EFAULT if the buf index was not ou=
+t
+> > > of bounds but the lookup returned NULL.
+> >
+> > Is there a reason you prefer EINVAL over EFAULT? EFAULT seems
+> > consistent with the errors returned from registered buffer lookups in
+> > other cases.
+>
+> To me -EINVAL makes sense because the error stems from the user
+> passing in an invalid argument (eg a buffer index that exceeds the
+> number of buffers registered to the table). The comment in
+> errno-base.h for EINVAL is "Invalid argument". The EFAULT use for the
+> other cases (eg io_import_reg_buf) makes sense because it might be the
+> case that for whatever reason the req->buf_index isn't found in the
+> table but isn't attributable to having passed in an invalid index.
 
-[v1] fs: warn on dirty inode in writeback paired with I_WILL_FREE
-https://lore.kernel.org/all/20251210134303.1310039-1-mjguzik@gmail.com
-* [PATCH] fs: warn on dirty inode in writeback paired with I_WILL_FREE
+req->buf_index generally comes from the buf_index field of the
+io_uring SQE, so you could make the same argument about EINVAL making
+sense for other failed buffer lookups. I don't feel strongly either
+way, but it seems a bit more consistent (and less code) to just
+propagate EFAULT from io_rsrc_node_lookup().
 
-and found the following issues:
-* SYZFAIL: failed to recv rpc
-* WARNING in writeback_single_inode
-
-Full report is available here:
-https://ci.syzbot.org/series/c3a011ac-952a-4fbf-867d-b7f98dcaaf3a
-
-***
-
-SYZFAIL: failed to recv rpc
-
-tree:      torvalds
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
-base:      67a454e6b1c604555c04501c77b7fedc5d98a779
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/5b151469-2ba7-47b6-bf4b-00ea2f6df1d8/config
-C repro:   https://ci.syzbot.org/findings/9adaaed3-7016-4f9d-9b65-1a4aa9a7a127/c_repro
-syz repro: https://ci.syzbot.org/findings/9adaaed3-7016-4f9d-9b65-1a4aa9a7a127/syz_repro
-
-SYZFAIL: failed to recv rpc
-
-
-***
-
-WARNING in writeback_single_inode
-
-tree:      torvalds
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
-base:      67a454e6b1c604555c04501c77b7fedc5d98a779
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/5b151469-2ba7-47b6-bf4b-00ea2f6df1d8/config
-C repro:   https://ci.syzbot.org/findings/6a7382a1-4230-4aa8-8594-a23b2365ee14/c_repro
-syz repro: https://ci.syzbot.org/findings/6a7382a1-4230-4aa8-8594-a23b2365ee14/syz_repro
-
-EXT4-fs error (device loop0): ext4_clear_blocks:876: inode #13: comm syz.0.17: attempt to clear invalid blocks 2 len 1
-EXT4-fs (loop0): Remounting filesystem read-only
-------------[ cut here ]------------
-WARNING: fs/fs-writeback.c:1870 at writeback_single_inode+0xa39/0xe40 fs/fs-writeback.c:1870, CPU#1: syz.0.17/5986
-Modules linked in:
-CPU: 1 UID: 0 PID: 5986 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:writeback_single_inode+0xa39/0xe40 fs/fs-writeback.c:1870
-Code: 0f 0b 90 e9 25 f7 ff ff e8 64 8d 79 ff 90 0f 0b 90 e9 9c fb ff ff e8 56 8d 79 ff 90 0f 0b 90 e9 c1 fc ff ff e8 48 8d 79 ff 90 <0f> 0b 90 e9 54 fc ff ff e8 3a 8d 79 ff 90 0f 0b 90 e9 47 fd ff ff
-RSP: 0018:ffffc900037c7558 EFLAGS: 00010293
-RAX: ffffffff824823a8 RBX: dffffc0000000000 RCX: ffff8881113657c0
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000000
-RBP: ffff888108eb4068 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffff520006f8e9c R12: ffff8881b1810d08
-R13: 0000000000000040 R14: ffff8881b1810c38 R15: 1ffff110363021a1
-FS:  00005555567e1500(0000) GS:ffff8882a9e44000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f67c0f73ea0 CR3: 000000017655e000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- write_inode_now+0x160/0x1d0 fs/fs-writeback.c:2926
- iput_final fs/inode.c:1941 [inline]
- iput+0xa77/0x1030 fs/inode.c:2003
- ext4_orphan_cleanup+0xc20/0x1460 fs/ext4/orphan.c:472
- __ext4_fill_super fs/ext4/super.c:5658 [inline]
- ext4_fill_super+0x58a1/0x6160 fs/ext4/super.c:5777
- get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1691
- vfs_get_tree+0x92/0x2a0 fs/super.c:1751
- fc_mount fs/namespace.c:1199 [inline]
- do_new_mount_fc fs/namespace.c:3636 [inline]
- do_new_mount+0x302/0xa10 fs/namespace.c:3712
- do_mount fs/namespace.c:4035 [inline]
- __do_sys_mount fs/namespace.c:4224 [inline]
- __se_sys_mount+0x313/0x410 fs/namespace.c:4201
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f67c0f90f6a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc812989c8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffc81298a50 RCX: 00007f67c0f90f6a
-RDX: 0000200000000440 RSI: 0000200000000040 RDI: 00007ffc81298a10
-RBP: 0000200000000440 R08: 00007ffc81298a50 R09: 0000000000000001
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000200000000040
-R13: 00007ffc81298a10 R14: 0000000000000450 R15: 000000000000002c
- </TASK>
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+Best,
+Caleb
 
