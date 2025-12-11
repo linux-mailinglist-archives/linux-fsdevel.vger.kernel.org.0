@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-71127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DAF7CB650A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 16:22:34 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C89BCB6507
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 16:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C6EDF30210C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 15:22:03 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 7A2E630024A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 15:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70F730ACF1;
-	Thu, 11 Dec 2025 15:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E8830FF3B;
+	Thu, 11 Dec 2025 15:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mehz8o2k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pV8/8K1O"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E001305045;
-	Thu, 11 Dec 2025 15:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2ED30C375;
+	Thu, 11 Dec 2025 15:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765466513; cv=none; b=B4Hdg4w2Jjnr6gxideFTnV2QzGvuLlP+nigrzS0MT90oDGBt5r0OV8BZE3tG/Ze0DwWioIko8QS6gPwleZo6meWucEnP4JQPhDyORs36fOEYDgwkX79jYxb+o8I7+3/YoJ3pLtxsE5MLxFPbLuCg994AMX2vhb6drJESjuhbers=
+	t=1765466514; cv=none; b=sN2E4k4xMQhukV2Sp2QQrf+2c0YYp+ZQIpRU5Wmu0F5WRvQDV864bQRQX3ZfjiSIifpPlhfcD54hMpbUF9CtaPWckMoPF3K/ztSjQWSXXVsHq9lKMj+dK3l+jHQiEwEXpCrquKTb8rEjn5Zt/zJXTv0Bz1nPiqBoeNAsmjykp7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765466513; c=relaxed/simple;
-	bh=ft1yumL/UkaBBj1cS/NCcXPiVJR2SF6VLxtN7WaKeTc=;
+	s=arc-20240116; t=1765466514; c=relaxed/simple;
+	bh=K1wmSwwV16UCXsb+WMuc89ImO4HAvc1BlSZXGBLXsJI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bnp3gY5KknIJVwaim6BOtRq4tJdA7ysUqaG72OE7OusRuuWi7gnsM5RifmPe8zZhTWBiWD03BBhGgOH0CzUQNn24agg7RaIirwlc1DO4AP3vZs286AhcAwu+YIhptOpcrkL/lr3T3C/7svRITsWMfHqrUzITvPidbisTyQgpLJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mehz8o2k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4213EC19421;
-	Thu, 11 Dec 2025 15:21:52 +0000 (UTC)
+	 MIME-Version; b=X1LeDCXA3QfoVP/+SVXZcqxfYDzEoI/Ge0aedP8z6l1Tc7qMyG7B5F7PqKwNBajwOr0a+o+wOPFQ+nRKGRsLOl0bdoNm8jP6/TKDulDYgd32laVKF7IcKF806yF11X+8l4Ie+B2HO7FF1vplprI3a15rdiFwbQbmoWxv0LfGyNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pV8/8K1O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47EDFC113D0;
+	Thu, 11 Dec 2025 15:21:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765466513;
-	bh=ft1yumL/UkaBBj1cS/NCcXPiVJR2SF6VLxtN7WaKeTc=;
+	s=k20201202; t=1765466514;
+	bh=K1wmSwwV16UCXsb+WMuc89ImO4HAvc1BlSZXGBLXsJI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Mehz8o2kBU6vMgGJuuHn+eGoQQS90Rfjka5NEBL1VX1BkBl5C6TPvCN6eJ8ZpZN9Q
-	 uRHTagEO0pQg8mHAzi4nGA7RxCvdLIh3nkgwNxpmBdiGX1zzg9wDzO/935sPZamssa
-	 1X3GhUBLxEAf38kWrGLMGdtLyAyrc+4MVYJB06k9chBivfCf/YjImcjflNf1RpuXOf
-	 UqcEHKB8Ms0oMlNlHDsugtCh/YYSwaFDjh3XVCXmAkTqb79CDJ3QnDdBrx4IVhERct
-	 S21JK2gaqq+5JEARBHJaPzmGN3/pSTzLcgP4y1nvo/JpCEy+Z8iKizA3YoKGRMMkUc
-	 b/okq6Wrm6Xeg==
+	b=pV8/8K1Og3qagDhBNXc30nTBODvLIkbwkXBr7rnTBqFxf8VExwjg6xSt6fhHlUHz6
+	 7+pArY4cDEvTXcPic7jBgNrcESwmmBp2/ex4nEYisoValbTusRIcsOO7/tVVM91RrW
+	 K0DzyodDCq4IumgbrBXCPAgbQRMVTdtyGIzR5ikdMofYhy+CNo1dta5pPb5gPfR7Un
+	 7xg7lWMZeYkO0EPQiWRrjHdcVXn26EMMV9UZJgYS43uzDQ2tUpipKgFsxEh3YGUjWH
+	 fk/OeigJQhTjwrL/xU2V/UExbjzjtG0CymxTr1M7AZrIp+qwPDdVcCvKjCv1BLP/iZ
+	 MLiphy9qs+qwg==
 From: Chuck Lever <cel@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>
@@ -52,9 +52,9 @@ Cc: <linux-fsdevel@vger.kernel.org>,
 	adilger.kernel@dilger.ca,
 	Volker.Lendecke@sernet.de,
 	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH v2 1/6] fs: Add case sensitivity info to file_kattr
-Date: Thu, 11 Dec 2025 10:21:11 -0500
-Message-ID: <20251211152116.480799-2-cel@kernel.org>
+Subject: [PATCH v2 2/6] fat: Implement fileattr_get for case sensitivity
+Date: Thu, 11 Dec 2025 10:21:12 -0500
+Message-ID: <20251211152116.480799-3-cel@kernel.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20251211152116.480799-1-cel@kernel.org>
 References: <20251211152116.480799-1-cel@kernel.org>
@@ -68,110 +68,108 @@ Content-Transfer-Encoding: 8bit
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-Enable upper layers such as NFSD to retrieve case sensitivity
-information from file systems by adding a case_info field to struct
-file_kattr.
+Report FAT's case sensitivity behavior via the new file_kattr
+case_info field. FAT filesystems are case-insensitive and do not
+preserve case at rest (stored names are uppercased).
 
-Add vfs_get_case_info() as a convenience helper for kernel
-consumers. If a filesystem does not provide a fileattr_get hook, it
-returns the default POSIX behavior (case-sensitive,
-case-preserving), which is correct for the majority of Linux
-file systems implementations.
+The case folding type depends on the mount options: when utf8 is
+enabled, Unicode case folding is used; otherwise ASCII case folding.
 
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/file_attr.c           | 31 +++++++++++++++++++++++++++++++
- include/linux/fileattr.h | 23 +++++++++++++++++++++++
- 2 files changed, 54 insertions(+)
+ fs/fat/fat.h         |  3 +++
+ fs/fat/file.c        | 18 ++++++++++++++++++
+ fs/fat/namei_msdos.c |  1 +
+ fs/fat/namei_vfat.c  |  1 +
+ 4 files changed, 23 insertions(+)
 
-diff --git a/fs/file_attr.c b/fs/file_attr.c
-index 1dcec88c0680..609e890b5101 100644
---- a/fs/file_attr.c
-+++ b/fs/file_attr.c
-@@ -94,6 +94,37 @@ int vfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
- }
- EXPORT_SYMBOL(vfs_fileattr_get);
+diff --git a/fs/fat/fat.h b/fs/fat/fat.h
+index d3e426de5f01..38da08d8fec4 100644
+--- a/fs/fat/fat.h
++++ b/fs/fat/fat.h
+@@ -10,6 +10,8 @@
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
  
-+/**
-+ * vfs_get_case_info - retrieve case sensitivity info for a filesystem
-+ * @dentry:	the object to retrieve from
-+ * @case_info:	pointer to store result
-+ *
-+ * Call i_op->fileattr_get() to retrieve case sensitivity information.
-+ * If the filesystem does not provide a fileattr_get hook, return
-+ * the default POSIX behavior (case-sensitive, case-preserving).
-+ *
-+ * Return: 0 on success, or a negative error on failure.
-+ */
-+int vfs_get_case_info(struct dentry *dentry, u32 *case_info)
++struct file_kattr;
++
+ /*
+  * vfat shortname flags
+  */
+@@ -407,6 +409,7 @@ extern void fat_truncate_blocks(struct inode *inode, loff_t offset);
+ extern int fat_getattr(struct mnt_idmap *idmap,
+ 		       const struct path *path, struct kstat *stat,
+ 		       u32 request_mask, unsigned int flags);
++extern int fat_fileattr_get(struct dentry *dentry, struct file_kattr *fa);
+ extern int fat_file_fsync(struct file *file, loff_t start, loff_t end,
+ 			  int datasync);
+ 
+diff --git a/fs/fat/file.c b/fs/fat/file.c
+index 4fc49a614fb8..123f4c1efdf4 100644
+--- a/fs/fat/file.c
++++ b/fs/fat/file.c
+@@ -16,6 +16,7 @@
+ #include <linux/fsnotify.h>
+ #include <linux/security.h>
+ #include <linux/falloc.h>
++#include <linux/fileattr.h>
+ #include "fat.h"
+ 
+ static long fat_fallocate(struct file *file, int mode,
+@@ -395,6 +396,22 @@ void fat_truncate_blocks(struct inode *inode, loff_t offset)
+ 	fat_flush_inodes(inode->i_sb, inode, NULL);
+ }
+ 
++int fat_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
 +{
-+	struct file_kattr fa = {};
-+	int error;
++	struct inode *inode = d_inode(dentry);
++	struct msdos_sb_info *sbi = MSDOS_SB(inode->i_sb);
 +
-+	/* Default: POSIX semantics (case-sensitive, case-preserving) */
-+	*case_info = FILEATTR_CASEFOLD_NONE | FILEATTR_CASE_PRESERVING;
-+
-+	error = vfs_fileattr_get(dentry, &fa);
-+	if (error == -ENOIOCTLCMD)
-+		return 0;
-+	if (error)
-+		return error;
-+
-+	if (fa.case_info)
-+		*case_info = fa.case_info;
++	/*
++	 * FAT filesystems do not preserve case: stored names are
++	 * uppercased. They are case-insensitive, using either ASCII
++	 * or Unicode comparison depending on mount options.
++	 */
++	fa->case_info = sbi->options.utf8 ?
++		FILEATTR_CASEFOLD_UNICODE : FILEATTR_CASEFOLD_ASCII;
 +	return 0;
 +}
-+EXPORT_SYMBOL(vfs_get_case_info);
++EXPORT_SYMBOL_GPL(fat_fileattr_get);
 +
- static void fileattr_to_file_attr(const struct file_kattr *fa,
- 				  struct file_attr *fattr)
+ int fat_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 		struct kstat *stat, u32 request_mask, unsigned int flags)
  {
-diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
-index f89dcfad3f8f..55674d14f697 100644
---- a/include/linux/fileattr.h
-+++ b/include/linux/fileattr.h
-@@ -48,11 +48,33 @@ struct file_kattr {
- 	u32	fsx_nextents;	/* nextents field value (get)	*/
- 	u32	fsx_projid;	/* project identifier (get/set) */
- 	u32	fsx_cowextsize;	/* CoW extsize field value (get/set)*/
-+	u32	case_info;	/* case sensitivity behavior */
- 	/* selectors: */
- 	bool	flags_valid:1;
- 	bool	fsx_valid:1;
+@@ -574,5 +591,6 @@ EXPORT_SYMBOL_GPL(fat_setattr);
+ const struct inode_operations fat_file_inode_operations = {
+ 	.setattr	= fat_setattr,
+ 	.getattr	= fat_getattr,
++	.fileattr_get	= fat_fileattr_get,
+ 	.update_time	= fat_update_time,
+ };
+diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
+index 0b920ee40a7f..380add5c6c66 100644
+--- a/fs/fat/namei_msdos.c
++++ b/fs/fat/namei_msdos.c
+@@ -640,6 +640,7 @@ static const struct inode_operations msdos_dir_inode_operations = {
+ 	.rename		= msdos_rename,
+ 	.setattr	= fat_setattr,
+ 	.getattr	= fat_getattr,
++	.fileattr_get	= fat_fileattr_get,
+ 	.update_time	= fat_update_time,
  };
  
-+/*
-+ * Values for file_kattr.case_info.
-+ */
-+
-+/* File name case is preserved at rest. */
-+#define FILEATTR_CASE_PRESERVING	0x80000000
-+
-+/* Values stored in the low-order byte */
-+enum fileattr_case_folding {
-+	/* Code points are compared directly with no case folding. */
-+	FILEATTR_CASEFOLD_NONE = 0,
-+
-+	/* ASCII case-insensitive: A-Z are treated as a-z. */
-+	FILEATTR_CASEFOLD_ASCII,
-+
-+	/* Unicode case-insensitive matching. */
-+	FILEATTR_CASEFOLD_UNICODE,
-+};
-+
-+#define FILEATTR_CASEFOLD_TYPE		0x000000ff
-+
- int copy_fsxattr_to_user(const struct file_kattr *fa, struct fsxattr __user *ufa);
+diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+index 5dbc4cbb8fce..6cf513f97afa 100644
+--- a/fs/fat/namei_vfat.c
++++ b/fs/fat/namei_vfat.c
+@@ -1180,6 +1180,7 @@ static const struct inode_operations vfat_dir_inode_operations = {
+ 	.rename		= vfat_rename2,
+ 	.setattr	= fat_setattr,
+ 	.getattr	= fat_getattr,
++	.fileattr_get	= fat_fileattr_get,
+ 	.update_time	= fat_update_time,
+ };
  
- void fileattr_fill_xflags(struct file_kattr *fa, u32 xflags);
-@@ -75,6 +97,7 @@ static inline bool fileattr_has_fsx(const struct file_kattr *fa)
- int vfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa);
- int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
- 		     struct file_kattr *fa);
-+int vfs_get_case_info(struct dentry *dentry, u32 *case_info);
- int ioctl_getflags(struct file *file, unsigned int __user *argp);
- int ioctl_setflags(struct file *file, unsigned int __user *argp);
- int ioctl_fsgetxattr(struct file *file, void __user *argp);
 -- 
 2.52.0
 
