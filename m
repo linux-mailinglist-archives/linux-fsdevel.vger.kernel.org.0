@@ -1,181 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-71087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC8BCB4953
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 03:58:10 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id A12A1CB4FEF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 08:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 686423015D36
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 02:58:08 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 56534300D16E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 07:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B93293C4E;
-	Thu, 11 Dec 2025 02:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD872D374F;
+	Thu, 11 Dec 2025 07:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="F1MMEZ9d"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RXb7Y72Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E4E15B998
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Dec 2025 02:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE7326981E;
+	Thu, 11 Dec 2025 07:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765421884; cv=none; b=CqFNn3DRPJCN2T/qHhw2PvCAjtaFwNt/tBrqGsH5z0/aKwJ3ruKy22P6pg8WSXtbAMPVrqWbGA+Z3bz6Gs9OrGG3XbghzebURGZtPv0ID5HA5zB+HVAN4kS3Go46HzTQtH4Ev1T9fw+FDgIAqWBKKwmzPqGxwTQO8mMPq4C/4NM=
+	t=1765438696; cv=none; b=MRFbFxsrIwU6HNgD/rPyGjyYhnScirE/nkxHXB3f8zqvk5VHHZxMYy91ZOY5RSWmgn4HPlWVkbjpqI0ml2x48RC+YBvUfAnCd8qCK0NMOCgo+AFMUEqBx8iZ4UgiDFJQZaJ/zLpE+pYg9vytvGsI6ku/mqoYTtNcc7Pfba5fyTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765421884; c=relaxed/simple;
-	bh=Q2Tz54xcXfKNhOl1jEEl+EPX++hlD7Wr0xdYX70vtz8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AUmPZRf2/JWaaTFs22StdSbqG0lty8s+jZxTtsQh7Yp1xyb96/0HBatXtWCpNZRrqRZLnNlPZAAcLunst1NcP9f9xs6Q17PNC7mviKj5xKWaXVL50dqlqcqH7SU0YCNolHmb6GNG8409ISc6n8kgLUPANyDLtISmYxeR1nLdkew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=F1MMEZ9d; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7bac5b906bcso79553b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Dec 2025 18:58:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1765421882; x=1766026682; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jS6Ier0wKLBde7ZWAUZx+lTRrTdrR6E+/ZstXOFBoOg=;
-        b=F1MMEZ9ds1exVBscUDzAqi8EXIS69XHe49MjfFeiqXtqROxFGJM5xcvPTldEswfAOd
-         4O6GlI9wiJAUrk+X8Tw4sXphDUkymtwSIb2Xsui2nvSlNaVxonyPyz1OpczB3l3TXhJ6
-         GnkoCmVTfbcDOBw0owQo+cjx6vkv+rZlppxjMUxqfPubuC2CnV4q3T0wyGhJLq5PmYpK
-         ti/k34ohIh/FYA6zUrNmz3m5g1Ob9uTZmuNiAKlWx4CmQKcUco1CUOGkkCi2HqxlebQo
-         0zqhUY2PKYPJymHcn06oR+6L4KVcqk738vsTClCdihhdZiTFkAL98retYMPPh/CmFndc
-         wGbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765421882; x=1766026682;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jS6Ier0wKLBde7ZWAUZx+lTRrTdrR6E+/ZstXOFBoOg=;
-        b=WmbamGmrgOBDXr44weHDmTurana39lq74GxYiGU69WswUQOE/Fx8hJOL0coSpzgnVv
-         EV5DIuZFWoaT156Tjmfm6YttJGMAu5PIFaMqBueQP2TaDHda+/UyIAPUVsXmFSnnvtL4
-         jqklH4e9MN8EYwgrFYrFzcjTDYjN1KVHyWByC9uUy9BxlXMC/FwKkCDxQgoIKNzbfQxJ
-         wSr5QKlQ+XYTSkGEq4enTra13mtMGRO16NqoJHCm2C/6j/MMr9olKSBliTnfreL+bcZC
-         L/ZewmkleKNuUxKamwoM2qhyMDbQTcpKAL19MBbqx4nSi0cOClc+QC6mF+jO1jB9jPdE
-         7Tyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXJYKaJ0mQlWOEQIAR4Ioow2eGrO3au/obj0bGHmcoGAMUC/dCwlo0nBkgxE7kbRN42vkuYjv/fvji4l2m@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRuxPgSTuqkfUK4MlDhpWN84XcpXYwIc2jQoJOCgTiRDVlDO8a
-	FdkIiCLekywWEpkBi+jS3nqSYCADg3PKFp+lRmwym03zqrEaw5dU/hTZPhtM1NiEZ3LCcx64tcC
-	Ivp00pli9MAU3a7rc51NUis2Tepg2fq3M1TaDMoc9Vw==
-X-Gm-Gg: ASbGncsZx0+FaFV1qQEWF8pEkSHpAs8f4ej/GXebyRjzvYJJZD/RyRNM1S2E+reMIXs
-	WTeN1Q+azf3OmbP9H936UcDUR4IuZiFWyw1MaCZVl2ilttck/TXwdDLkaKZJC2oGH/ULcm9j26/
-	X2nwnjl8pcAyN8m6nQn+IzEZ5pjV0x7nQYvUYYcJoyeKKcRN8eC2WU4+Turt94Mm6RJnV4Qc5Ot
-	DemhDvdcKu8Y7NFtzFeOMdml/lffvpq+IbiHmUnzPhu8PUUo3Jq9z47uvMHyxUTVGMB1akn
-X-Google-Smtp-Source: AGHT+IFrPM5oGw+4ASKhyJhC7y9kDQROUrxQf55/hzv5FGD1A9xVpzd3S/wT/Xk0jtl6dLdcU8Kuyn1pjkJowAhoKUk=
-X-Received: by 2002:a05:7022:aaa:b0:119:e56b:46b6 with SMTP id
- a92af1059eb24-11f2e6abc15mr531934c88.0.1765421881924; Wed, 10 Dec 2025
- 18:58:01 -0800 (PST)
+	s=arc-20240116; t=1765438696; c=relaxed/simple;
+	bh=rTqOpg7n9JAE/DziGqxqB0zYUu70EqKn/5a8DdMwhuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EGN5e2sOIr3LdMTmT+jC3eLULBRoKxyE53I/iyYDg+lqn802suV9x1FTd+gN8Ab8JBUC2EDeKKi8FQMRqZUSLSH/tDn+GU0dLYMwJT9+icXm3Mx2oGecCUkplzXGPemgr5Gc6wKsb9GmDnKx04x5EyVREHkzXRB/QQsgAMlX+Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RXb7Y72Z; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LvL+wWM9xb9eGh0ewmBu/qTlopS6rqYvC3V8y4f6Lis=; b=RXb7Y72ZDLDYLNGzvUQCElZAeD
+	BL66pjYC7rbK0+X6ld6Xm7Hz94GG/G0qAauo8mZLNeI+zAmxu0fJEwJL99vnwasCVj5N5tj3KLh1t
+	KhmtPmtNh9raTTYvuZrRa9MfmLABrsVANz0JeRpO1kZ+RbTVWI6EucsQk9cHL3n7DJJ+elSNVErlX
+	DZvbx3t2+JeBopt+WZXzlLqNyERmxqLJ6u2rU3ZaEhQ10Wa4EXHTUArwL+HDPmP/sxLD0U7zcwnV/
+	LwdBXGmOhTWf/qEGpq8xoU3IcKTF+jxv10EAHQeCoQ9xAg7gDy0X89VseKqgTBQ7pI9yUOFpb22i4
+	AYWUwNDQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vTbFN-0000000DwGk-1G4j;
+	Thu, 11 Dec 2025 07:37:57 +0000
+Date: Thu, 11 Dec 2025 07:37:57 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: Pankaj Raghav <p.raghav@samsung.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Michal Hocko <mhocko@suse.com>,
+	Lance Yang <lance.yang@linux.dev>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Nico Pache <npache@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, mcgrof@kernel.org,
+	gost.dev@samsung.com, kernel@pankajraghav.com, tytso@mit.edu
+Subject: Re: [RFC v2 0/3] Decoupling large folios dependency on THP
+Message-ID: <aTp01WOPU0dYT7yx@casper.infradead.org>
+References: <20251206030858.1418814-1-p.raghav@samsung.com>
+ <64291696-C808-49D0-9F89-6B3B97F58717@nvidia.com>
+ <aTj2pZqwx5xJVavb@casper.infradead.org>
+ <D498FB7E-1C57-47A6-BAF4-EA1BAAE75526@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251203003526.2889477-1-joannelkoong@gmail.com>
- <20251203003526.2889477-10-joannelkoong@gmail.com> <CADUfDZoUMRu=t3ELJ6yGt2FbcgW=WzHa_=xc4BNtEmPpA67VHw@mail.gmail.com>
- <CAJnrk1a9oifzg+7gtzxux+A0smUE-Hi3sfWU-VpnXZgvKg1ymQ@mail.gmail.com>
- <CADUfDZoMNiJMoHJpKzF2E_xZ7U-2jitSfQJd=SZD57AxqN6O_Q@mail.gmail.com> <CAJnrk1Z2dTPbWeTxZT2Nh0XZSBHnPopK9qcKVFnyzkcMckhVuw@mail.gmail.com>
-In-Reply-To: <CAJnrk1Z2dTPbWeTxZT2Nh0XZSBHnPopK9qcKVFnyzkcMckhVuw@mail.gmail.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Wed, 10 Dec 2025 18:57:50 -0800
-X-Gm-Features: AQt7F2qoyJItnFWk8VYnalJqtP6lWmqWUhELRdmN5LRNLZCD4x91EDK1yGjlXbg
-Message-ID: <CADUfDZraQqEMZ=UAwbvSfPXZTF5hx7i7DLZ=UzQNA+YZOTxD7Q@mail.gmail.com>
-Subject: Re: [PATCH v1 09/30] io_uring: add io_uring_cmd_import_fixed_index()
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D498FB7E-1C57-47A6-BAF4-EA1BAAE75526@nvidia.com>
 
-On Fri, Dec 5, 2025 at 3:28=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> On Fri, Dec 5, 2025 at 8:56=E2=80=AFAM Caleb Sander Mateos
-> <csander@purestorage.com> wrote:
+On Wed, Dec 10, 2025 at 11:37:51AM -0500, Zi Yan wrote:
+> On 9 Dec 2025, at 23:27, Matthew Wilcox wrote:
+> 
+> > On Tue, Dec 09, 2025 at 11:03:23AM -0500, Zi Yan wrote:
+> >> I wonder if core-mm should move mTHP code out of CONFIG_TRANSPARENT_HUGEPAGE
+> >> and mTHP might just work. Hmm, folio split might need to be moved out of
+> >> mm/huge_memory.c in that case. khugepaged should work for mTHP without
+> >> CONFIG_TRANSPARENT_HUGEPAGE as well. OK, for anon folios, the changes might
+> >> be more involved.
 > >
-> > On Thu, Dec 4, 2025 at 10:56=E2=80=AFAM Joanne Koong <joannelkoong@gmai=
-l.com> wrote:
-> > >
-> > > On Wed, Dec 3, 2025 at 1:44=E2=80=AFPM Caleb Sander Mateos
-> > > <csander@purestorage.com> wrote:
-> > > >
-> > > > On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@g=
-mail.com> wrote:
-> > > > >
-> > > > > Add a new helper, io_uring_cmd_import_fixed_index(). This takes i=
-n a
-> > > > > buffer index. This requires the buffer table to have been pinned
-> > > > > beforehand. The caller is responsible for ensuring it does not us=
-e the
-> > > > > returned iter after the buffer table has been unpinned.
-> > > > >
-> > > > > This is a preparatory patch needed for fuse-over-io-uring support=
-, as
-> > > > > the metadata for fuse requests will be stored at the last index, =
-which
-> > > > > will be different from the sqe's buffer index.
-> > > > >
-> > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > > > ---
-> > > > >  include/linux/io_uring/cmd.h | 10 ++++++++++
-> > > > >  io_uring/rsrc.c              | 31 ++++++++++++++++++++++++++++++=
-+
-> > > > >  io_uring/rsrc.h              |  2 ++
-> > > > >  io_uring/uring_cmd.c         | 11 +++++++++++
-> > > > >  4 files changed, 54 insertions(+)
-> > > > >
-> > > > > diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> > > > > index 67331cae0a5a..b6dd62118311 100644
-> > > > > --- a/io_uring/rsrc.c
-> > > > > +++ b/io_uring/rsrc.c
-> > > > > @@ -1156,6 +1156,37 @@ int io_import_reg_buf(struct io_kiocb *req=
-, struct iov_iter *iter,
-> > > > >         return io_import_fixed(ddir, iter, node->buf, buf_addr, l=
-en);
-> > > > >  }
-> > > > >
-> > > > > +int io_import_reg_buf_index(struct io_kiocb *req, struct iov_ite=
-r *iter,
-> > > > > +                           u16 buf_index, int ddir, unsigned iss=
-ue_flags)
-> > > > > +{
-> > > > > +       struct io_ring_ctx *ctx =3D req->ctx;
-> > > > > +       struct io_rsrc_node *node;
-> > > > > +       struct io_mapped_ubuf *imu;
-> > > > > +
-> > > > > +       io_ring_submit_lock(ctx, issue_flags);
-> > > > > +
-> > > > > +       if (buf_index >=3D req->ctx->buf_table.nr ||
-> > > >
-> > > > This condition is already checked in io_rsrc_node_lookup() below.
-> > >
-> > > I think we still need this check here to differentiate between -EINVA=
-L
-> > > if buf_index is out of bounds and -EFAULT if the buf index was not ou=
-t
-> > > of bounds but the lookup returned NULL.
-> >
-> > Is there a reason you prefer EINVAL over EFAULT? EFAULT seems
-> > consistent with the errors returned from registered buffer lookups in
-> > other cases.
->
-> To me -EINVAL makes sense because the error stems from the user
-> passing in an invalid argument (eg a buffer index that exceeds the
-> number of buffers registered to the table). The comment in
-> errno-base.h for EINVAL is "Invalid argument". The EFAULT use for the
-> other cases (eg io_import_reg_buf) makes sense because it might be the
-> case that for whatever reason the req->buf_index isn't found in the
-> table but isn't attributable to having passed in an invalid index.
+> > I think this is the key question to be discussed at LPC.  How much of
+> 
+> I am not going, so would like to get a summary afterwards. :)
 
-req->buf_index generally comes from the buf_index field of the
-io_uring SQE, so you could make the same argument about EINVAL making
-sense for other failed buffer lookups. I don't feel strongly either
-way, but it seems a bit more consistent (and less code) to just
-propagate EFAULT from io_rsrc_node_lookup().
+You can join the fun at meet.lpc.events, or there's apparently a youtube
+stream.
 
-Best,
-Caleb
+> > the current THP code should we say "OK, this is large folio support
+> > and everybody needs it" and how much is "This is PMD (or mTHP) support;
+> > this architecture doesn't have it, we don't need to compile it in".
+> 
+> I agree with most of it, except mTHP part. mTHP should be part of large
+> folio, since I see mTHP is anon equivalent to file backed large folio.
+> Both are a >0 order folio mapped by PTEs (ignoring to-be-implemented
+> multi-PMD mapped large folios for now).
+
+Maybe we disagree about what words mean ;-)  When I said "mTHP" what
+I meant was "support for TLB entries which cover more than one page".
+I have no objection to supporting large folio allocation for anon memory
+because I think that's beneficial even if there's no hardware support
+for TLB entries that cover intermediate sizes between PMD and PTE.
 
