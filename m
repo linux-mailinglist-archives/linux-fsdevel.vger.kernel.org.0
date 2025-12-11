@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-71144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 483AACB6D3C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 18:57:51 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F907CB6B35
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 18:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D48B530A5E87
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 17:52:28 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 1A44E3045F00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 17:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9700131D38B;
-	Thu, 11 Dec 2025 17:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCA931A07C;
+	Thu, 11 Dec 2025 17:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/PSkJyW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrFx8mAc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A138A3168EC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E05D316180;
 	Thu, 11 Dec 2025 17:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765473667; cv=none; b=QCH/vuetgCbZmoBRmhSui7nFwHhesF14X2ZbKPZOJam+4Dk1oUYUnZUwMNU5HL5R6+bOtAf4u2yNopiBQg4Gf2Ra+5TCrmB5bvj4B5jMVoeavTxkLl/S+4bK+jezBfdpcoAyjc3vdVtBdX3/hMMfZdjI9LJ3J7Zo/T+JEsS9+P0=
+	t=1765473667; cv=none; b=anvVGaiePUEAVIdr/TKSZit7LY8gI81CSWcjqu+Yb1Lo6ZJyOzpAw1P7W1qA9WgUXVBJK8Ysyx2xQZgBfPwpjg33RYAzYrf9FfrGKEcGK+i+tt1U4A8WP2+hziYBLNXc5TdyCVSgsZMXGgkFIdyf5eGn47jZh4ttNbszhpQZpeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1765473667; c=relaxed/simple;
-	bh=RoLXunQkUD3GkpFVEtA9EVI1x173h9+oOTkpPb8AiyA=;
+	bh=vGt6In+217AGJUZ3daQuh5/lKq7QCYpyZ3cg9p1d1Mc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pgK13VHj4LlpZTCRmCJaChrWDhaIw55R2tlFlsx5chASx0yvT6CRCbySE7+fNVN+XDRkqlibdJCBdjFHMj1E5cliZBmTUL3+E4AiuymzduD2zxUdWYE5QCCglY2OS7a4zOpZfWkMEFojwuLZ0l/EgKXzZ2aeIK+myVOedoEJtH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/PSkJyW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C46D4C19425;
+	 In-Reply-To:To:Cc; b=bdyf4DVUYtsMRuiGtSPvRhHjYpDB94Po1nyI7nQN4eABbwT8WTxEAXcDQelVBqZfYPDx8Y9GEy6sQcJj7sNyS/g+AzFYicTvLMeaiTXN0+AiDK2D6Q3NJkEa2goI8jUtOCPYehgi92v5seL/7jLx5gl0CQI7zH1bsUBRnhzb/Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrFx8mAc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DF368C2BCFB;
 	Thu, 11 Dec 2025 17:21:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1765473666;
-	bh=RoLXunQkUD3GkpFVEtA9EVI1x173h9+oOTkpPb8AiyA=;
+	bh=vGt6In+217AGJUZ3daQuh5/lKq7QCYpyZ3cg9p1d1Mc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=h/PSkJyWA3Fc5T+o9VAyTxeov6ptW4d0rF4/cNN5idX53lMFF2ZqexxxPNmAOix1N
-	 G4sEiNusXReeF/aLbW8Nky+YAfTwl3uJ0NQ+tnHYz4ph735Pb+8m9PX+yyxcR+cILA
-	 +WxLQXPdlcM2g5bPpqtjoqqIAVzk1XpPhhZ4JFEKrB1SWd00f1lAMuhxw3IQNLw5QM
-	 q1QoVCOKr7E/318Y9Ceiao+3KExRqzU4ec+/yzxn9TMjMATHQ3eav9QWcCLiMZ9kHn
-	 L/eTCQerBKGpi4MEsXNkYHtZfe9LXi8dhK6l78tc94VsCMbv/CXy3Own2W2DamilxO
-	 OSLkk8WVUyTUw==
+	b=LrFx8mAc+p/qX27UaTfRLqZhO70koYuppV//15cx09HnG3z35YPcSTl6U0cEg7lKu
+	 KJQeqZ68swmPQKkjDcHLbIN/7BlFDQ15IHAOIUwXgfi04CdiLQOU0i4JF/06FztoVc
+	 jjOiN0S0ZuJ5pCWtq0ET9lbFMDDPHlsnQBsY/fBcFh6L2Rj42lqb4niscGHuPtPR7d
+	 hoJr6bgpPv5AOVgPJdbtFYlokNEbknqMU0Jx+RhtHoyrIO6MUizXONVVnTxmB4efUW
+	 EBvPN38OyQKfhPMXYNN05Mn0j4VsDDRhsS4TYkeuKjvLZzQBcOW1dr1NPbLFU//DYv
+	 FexelT5zqUuTQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E0FD41D6D;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD56D41C15;
 	Thu, 11 Dec 2025 17:21:06 +0000 (UTC)
 From: Deepak Gupta via B4 Relay <devnull+debug.rivosinc.com@kernel.org>
-Date: Thu, 11 Dec 2025 09:20:37 -0800
-Subject: [PATCH v26 04/28] riscv: zicfiss / zicfilp extension csr and bit
- definitions
+Date: Thu, 11 Dec 2025 09:20:38 -0800
+Subject: [PATCH v26 05/28] riscv: usercfi state for task and save/restore
+ of CSR_SSP on trap entry/exit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251211-v5_user_cfi_series-v26-4-f0f419e81ac0@rivosinc.com>
+Message-Id: <20251211-v5_user_cfi_series-v26-5-f0f419e81ac0@rivosinc.com>
 References: <20251211-v5_user_cfi_series-v26-0-f0f419e81ac0@rivosinc.com>
 In-Reply-To: <20251211-v5_user_cfi_series-v26-0-f0f419e81ac0@rivosinc.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
@@ -87,15 +87,15 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
  alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
  rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
- Andreas Korb <andreas.korb@aisec.fraunhofer.de>, 
+ Zong Li <zong.li@sifive.com>, 
  Valentin Haudiquet <valentin.haudiquet@canonical.com>, 
  Deepak Gupta <debug@rivosinc.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1765473664; l=2422;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1765473664; l=5639;
  i=debug@rivosinc.com; s=20251023; h=from:subject:message-id;
- bh=bX3DT0H8/Cf0WOd9ExAzvQuoOWT5xK5PI+asRJPlwXE=;
- b=7vL5S6tr9ip8gbe0kr+CUiPbFC+rIyqsA3QNT3c8IH+v5A1V5OXBdbcBAHN9xjU0+XAV4S+wQ
- OFK/5L7qhmwCPBuowQpOrg8wMNlhsz/vj8qWnzuCNuTqg6SVyi107C/
+ bh=mAV3hY87u/VPuMTejtLxOd8WgAb63pEhw7mYXdwweG4=;
+ b=AAQ4wJso7SYTBtbMOMPHx0SUABDNp55Me4hDl/ssX/sOaicMQcTgXe+S6zc4Ia7IwEXugRBhh
+ dXxjKQigt+uCIrH6rlhF/U4L9/ciIkgVlOLbK70DJpr9YridJh870nT
 X-Developer-Key: i=debug@rivosinc.com; a=ed25519;
  pk=O37GQv1thBhZToXyQKdecPDhtWVbEDRQ0RIndijvpjk=
 X-Endpoint-Received: by B4 Relay for debug@rivosinc.com/20251023 with
@@ -105,68 +105,165 @@ Reply-To: debug@rivosinc.com
 
 From: Deepak Gupta <debug@rivosinc.com>
 
-zicfiss and zicfilp extension gets enabled via b3 and b2 in *envcfg CSR.
-menvcfg controls enabling for S/HS mode. henvcfg control enabling for VS
-while senvcfg controls enabling for U/VU mode.
+Carves out space in arch specific thread struct for cfi status and shadow
+stack in usermode on riscv.
 
-zicfilp extension extends *status CSR to hold `expected landing pad` bit.
-A trap or interrupt can occur between an indirect jmp/call and target
-instr. `expected landing pad` bit from CPU is recorded into xstatus CSR so
-that when supervisor performs xret, `expected landing pad` state of CPU can
-be restored.
+This patch does following
+- defines a new structure cfi_status with status bit for cfi feature
+- defines shadow stack pointer, base and size in cfi_status structure
+- defines offsets to new member fields in thread in asm-offsets.c
+- Saves and restore shadow stack pointer on trap entry (U --> S) and exit
+  (S --> U)
 
-zicfiss adds one new CSR
-- CSR_SSP: CSR_SSP contains current shadow stack pointer.
+Shadow stack save/restore is gated on feature availiblity and implemented
+using alternative. CSR can be context switched in `switch_to` as well but
+soon as kernel shadow stack support gets rolled in, shadow stack pointer
+will need to be switched at trap entry/exit point (much like `sp`). It can
+be argued that kernel using shadow stack deployment scenario may not be as
+prevalant as user mode using this feature. But even if there is some
+minimal deployment of kernel shadow stack, that means that it needs to be
+supported. And thus save/restore of shadow stack pointer in entry.S instead
+of in `switch_to.h`.
 
 Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-Tested-by: Andreas Korb <andreas.korb@aisec.fraunhofer.de>
+Reviewed-by: Zong Li <zong.li@sifive.com>
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 Tested-by: Valentin Haudiquet <valentin.haudiquet@canonical.com>
 Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 ---
- arch/riscv/include/asm/csr.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/riscv/include/asm/processor.h   |  1 +
+ arch/riscv/include/asm/thread_info.h |  3 +++
+ arch/riscv/include/asm/usercfi.h     | 23 +++++++++++++++++++++++
+ arch/riscv/kernel/asm-offsets.c      |  4 ++++
+ arch/riscv/kernel/entry.S            | 31 +++++++++++++++++++++++++++++++
+ 5 files changed, 62 insertions(+)
 
-diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-index 4a37a98398ad..78f573ab4c53 100644
---- a/arch/riscv/include/asm/csr.h
-+++ b/arch/riscv/include/asm/csr.h
-@@ -18,6 +18,15 @@
- #define SR_MPP		_AC(0x00001800, UL) /* Previously Machine */
- #define SR_SUM		_AC(0x00040000, UL) /* Supervisor User Memory Access */
+diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
+index da5426122d28..4c3dd94d0f63 100644
+--- a/arch/riscv/include/asm/processor.h
++++ b/arch/riscv/include/asm/processor.h
+@@ -16,6 +16,7 @@
+ #include <asm/insn-def.h>
+ #include <asm/alternative-macros.h>
+ #include <asm/hwcap.h>
++#include <asm/usercfi.h>
  
-+/* zicfilp landing pad status bit */
-+#define SR_SPELP	_AC(0x00800000, UL)
-+#define SR_MPELP	_AC(0x020000000000, UL)
-+#ifdef CONFIG_RISCV_M_MODE
-+#define SR_ELP		SR_MPELP
-+#else
-+#define SR_ELP		SR_SPELP
+ #define arch_get_mmap_end(addr, len, flags)			\
+ ({								\
+diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
+index 836d80dd2921..36918c9200c9 100644
+--- a/arch/riscv/include/asm/thread_info.h
++++ b/arch/riscv/include/asm/thread_info.h
+@@ -73,6 +73,9 @@ struct thread_info {
+ 	 */
+ 	unsigned long		a0, a1, a2;
+ #endif
++#ifdef CONFIG_RISCV_USER_CFI
++	struct cfi_state	user_cfi_state;
 +#endif
-+
- #define SR_FS		_AC(0x00006000, UL) /* Floating-point Status */
- #define SR_FS_OFF	_AC(0x00000000, UL)
- #define SR_FS_INITIAL	_AC(0x00002000, UL)
-@@ -212,6 +221,8 @@
- #define ENVCFG_PMM_PMLEN_16		(_AC(0x3, ULL) << 32)
- #define ENVCFG_CBZE			(_AC(1, UL) << 7)
- #define ENVCFG_CBCFE			(_AC(1, UL) << 6)
-+#define ENVCFG_LPE			(_AC(1, UL) << 2)
-+#define ENVCFG_SSE			(_AC(1, UL) << 3)
- #define ENVCFG_CBIE_SHIFT		4
- #define ENVCFG_CBIE			(_AC(0x3, UL) << ENVCFG_CBIE_SHIFT)
- #define ENVCFG_CBIE_ILL			_AC(0x0, UL)
-@@ -230,6 +241,11 @@
- #define SMSTATEEN0_HSENVCFG		(_ULL(1) << SMSTATEEN0_HSENVCFG_SHIFT)
- #define SMSTATEEN0_SSTATEEN0_SHIFT	63
- #define SMSTATEEN0_SSTATEEN0		(_ULL(1) << SMSTATEEN0_SSTATEEN0_SHIFT)
-+/*
-+ * zicfiss user mode csr
-+ * CSR_SSP holds current shadow stack pointer.
-+ */
-+#define CSR_SSP                 0x011
+ };
  
- /* mseccfg bits */
- #define MSECCFG_PMM			ENVCFG_PMM
+ #ifdef CONFIG_SHADOW_CALL_STACK
+diff --git a/arch/riscv/include/asm/usercfi.h b/arch/riscv/include/asm/usercfi.h
+new file mode 100644
+index 000000000000..4c5233e8f3f9
+--- /dev/null
++++ b/arch/riscv/include/asm/usercfi.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0
++ * Copyright (C) 2024 Rivos, Inc.
++ * Deepak Gupta <debug@rivosinc.com>
++ */
++#ifndef _ASM_RISCV_USERCFI_H
++#define _ASM_RISCV_USERCFI_H
++
++#ifndef __ASSEMBLER__
++#include <linux/types.h>
++
++#ifdef CONFIG_RISCV_USER_CFI
++struct cfi_state {
++	unsigned long ubcfi_en : 1; /* Enable for backward cfi. */
++	unsigned long user_shdw_stk; /* Current user shadow stack pointer */
++	unsigned long shdw_stk_base; /* Base address of shadow stack */
++	unsigned long shdw_stk_size; /* size of shadow stack */
++};
++
++#endif /* CONFIG_RISCV_USER_CFI */
++
++#endif /* __ASSEMBLER__ */
++
++#endif /* _ASM_RISCV_USERCFI_H */
+diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
+index 7d42d3b8a32a..8a2b2656cb2f 100644
+--- a/arch/riscv/kernel/asm-offsets.c
++++ b/arch/riscv/kernel/asm-offsets.c
+@@ -51,6 +51,10 @@ void asm_offsets(void)
+ #endif
+ 
+ 	OFFSET(TASK_TI_CPU_NUM, task_struct, thread_info.cpu);
++#ifdef CONFIG_RISCV_USER_CFI
++	OFFSET(TASK_TI_CFI_STATE, task_struct, thread_info.user_cfi_state);
++	OFFSET(TASK_TI_USER_SSP, task_struct, thread_info.user_cfi_state.user_shdw_stk);
++#endif
+ 	OFFSET(TASK_THREAD_F0,  task_struct, thread.fstate.f[0]);
+ 	OFFSET(TASK_THREAD_F1,  task_struct, thread.fstate.f[1]);
+ 	OFFSET(TASK_THREAD_F2,  task_struct, thread.fstate.f[2]);
+diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+index d3d92a4becc7..8410850953d6 100644
+--- a/arch/riscv/kernel/entry.S
++++ b/arch/riscv/kernel/entry.S
+@@ -92,6 +92,35 @@
+ 	REG_L	a0, TASK_TI_A0(tp)
+ .endm
+ 
++/*
++ * If previous mode was U, capture shadow stack pointer and save it away
++ * Zero CSR_SSP at the same time for sanitization.
++ */
++.macro save_userssp tmp, status
++	ALTERNATIVE("nops(4)",
++		__stringify(				\
++		andi \tmp, \status, SR_SPP;		\
++		bnez \tmp, skip_ssp_save;		\
++		csrrw \tmp, CSR_SSP, x0;		\
++		REG_S \tmp, TASK_TI_USER_SSP(tp);	\
++		skip_ssp_save:),
++		0,
++		RISCV_ISA_EXT_ZICFISS,
++		CONFIG_RISCV_USER_CFI)
++.endm
++
++.macro restore_userssp tmp, status
++	ALTERNATIVE("nops(4)",
++		__stringify(				\
++		andi \tmp, \status, SR_SPP;		\
++		bnez \tmp, skip_ssp_restore;		\
++		REG_L \tmp, TASK_TI_USER_SSP(tp);	\
++		csrw CSR_SSP, \tmp;			\
++		skip_ssp_restore:),
++		0,
++		RISCV_ISA_EXT_ZICFISS,
++		CONFIG_RISCV_USER_CFI)
++.endm
+ 
+ SYM_CODE_START(handle_exception)
+ 	/*
+@@ -148,6 +177,7 @@ SYM_CODE_START(handle_exception)
+ 
+ 	REG_L s0, TASK_TI_USER_SP(tp)
+ 	csrrc s1, CSR_STATUS, t0
++	save_userssp s2, s1
+ 	csrr s2, CSR_EPC
+ 	csrr s3, CSR_TVAL
+ 	csrr s4, CSR_CAUSE
+@@ -243,6 +273,7 @@ SYM_CODE_START_NOALIGN(ret_from_exception)
+ 	call riscv_v_context_nesting_end
+ #endif
+ 	REG_L a0, PT_STATUS(sp)
++	restore_userssp s3, a0
+ 	/*
+ 	 * The current load reservation is effectively part of the processor's
+ 	 * state, in the sense that load reservations cannot be shared between
 
 -- 
 2.43.0
