@@ -1,185 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-71117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD0FCB605C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 14:29:23 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C921ACB60EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 14:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EA642300D42A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 13:27:32 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 476323001BE4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 13:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1762313E13;
-	Thu, 11 Dec 2025 13:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D02431352B;
+	Thu, 11 Dec 2025 13:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NOei2yqZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ndLA8Tw3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="G+XQEgZz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rNqmroqx"
+	dkim=pass (1024-bit key) header.d=stu.pku.edu.cn header.i=@stu.pku.edu.cn header.b="VE5Xb0N5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m21470.qiye.163.com (mail-m21470.qiye.163.com [117.135.214.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A42E31353D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Dec 2025 13:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0510231328F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Dec 2025 13:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765459651; cv=none; b=uyWuIphEcb8fWsjPP4Qa9cmNZuD3R6IPpiesmj2acmytL2Xc876/d4HTDMtVJMFIqz6tbUylGG8Oh2i3YMcSzNxJZEkpyB/8ut1aLcqq9xoFlxwvYM7r+kBPtTsx7iLZqT7Kj4ecXTKJ0p4J7hALJeEWtGs2oSpvMai9ioyzY/M=
+	t=1765460433; cv=none; b=OPGTgz6p7TT8mhhRYGlRFRpUmYlfBIcYzB/da16RITd0fB3H8jdbr71e35fOoKOykYhxn7Q4nd9Miwp4f5qpeg06vcxkZZ3epzFeaKiQIdXhYz4ujOuZ7mbjX1paLWm8jKv+Ay+vlkqsYGtLGP6mhqIqvk54GcNnkeIsalm5ORs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765459651; c=relaxed/simple;
-	bh=2pTYAFEt+B0DcYmbSaZVLmxawafvdoyuw5DpYz5NqAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rm29uTndtoQEVFRKPo9oAD+xVnCOMm+dYUwOHBdFOFOIKNBeWdGaQqQbhTA0ZkgIgWvueXjyPXKmlU9hTFvFOQ2fd1QjVnQNt3/gweRx61yIMQJwVGunsRNrskuttsYpwO4VPqMpjTeYLVMBl51NQrvIQ9R9c9H/VCIvKE+Lkgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NOei2yqZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ndLA8Tw3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=G+XQEgZz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rNqmroqx; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 456D05BDFE;
-	Thu, 11 Dec 2025 13:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765459647; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K+keSGeEWOoy0PdiqJY0zO8+gkfFPclclf4TPYgaqr8=;
-	b=NOei2yqZbWN9WCW4gF3WCZWcjMeMhDraBJvxST3uTiq0hwQCqc8OPmOn164aAs2tVZw8O4
-	N3Z5cTtMSRp+aVWkxGqq7smol/77MNwXz1BKbXa49FtNJ9cVu4oeIT45GadT0E2aitarn5
-	UNgAf+k2hylqgtN5zkoMrjrx14h1IVc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765459647;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K+keSGeEWOoy0PdiqJY0zO8+gkfFPclclf4TPYgaqr8=;
-	b=ndLA8Tw3eClko+Kgvyguflo6ozefiAPsPdRFdtkkDaeAY8miABSkCcMw6qpP+mQVnOcnfN
-	3Q3uW4ZYHOxxKWCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=G+XQEgZz;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=rNqmroqx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765459646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K+keSGeEWOoy0PdiqJY0zO8+gkfFPclclf4TPYgaqr8=;
-	b=G+XQEgZzYlMfFDskpX/2QCsCK6x7ci5rn/j/f/G/uYHT4QYwzZXMQhbAKAAts08tJkxRqP
-	ISiRPxlk6YPVAfsEQQu54/JI7Kp6nH8jwazN/T9BbcMgk6Xkb12PY0NwmxdDBNFm+UIlYA
-	vmuE9hfz83s3T05eLEHe3em4ueaJRmE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765459646;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K+keSGeEWOoy0PdiqJY0zO8+gkfFPclclf4TPYgaqr8=;
-	b=rNqmroqxu4goavZ2FBzxkWijZ06MM+XyffF8S62CNKgMD76kRH1z/c+oWXmN4LBebrrXdL
-	PazmAC6Dq8TbdBCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2FEE23EA63;
-	Thu, 11 Dec 2025 13:27:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HVytC77GOmmbWAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 11 Dec 2025 13:27:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C44D6A0837; Thu, 11 Dec 2025 14:27:21 +0100 (CET)
-Date: Thu, 11 Dec 2025 14:27:21 +0100
-From: Jan Kara <jack@suse.cz>
-To: Deepakkumar Karn <dkarn@redhat.com>
-Cc: jack@suse.cz, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2] fs/buffer: add alert in try_to_free_buffers() for
- folios without buffers
-Message-ID: <z5ohx53pjtwc3jtcebp777i4t4jxczoie2hkcsg75enzojsurz@4pwb4pxb244n>
-References: <pt6xr3w5ne22gqvgxzbdhwfm45wiiwqmycajofgnnzlrzowmeh@iek3vsmkvs5j>
- <20251211131211.308021-1-dkarn@redhat.com>
+	s=arc-20240116; t=1765460433; c=relaxed/simple;
+	bh=Sp4Fe1dJUGP9wJoLc92dWzO3BUN2bJkPT9GQyOlZwCc=;
+	h=Content-Type:Message-ID:To:Cc:Subject:MIME-Version:From:Date; b=oMpxP5rU4UsJlYUmQxGAVNnt9o+xGNn5x/YQmZpQjISovb+MOFVOAc/aTG9IMAQj6itFXz1dtlIKjmVDxHoYkyoGrlCkhbfvnkOIftV0Hhws0/VB+JMDRy4fqf6+J9jvXgenFqQYLv8k2iASQyyc2vFEV8D95K9RKvg3jxaaaCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stu.pku.edu.cn; spf=pass smtp.mailfrom=stu.pku.edu.cn; dkim=pass (1024-bit key) header.d=stu.pku.edu.cn header.i=@stu.pku.edu.cn header.b=VE5Xb0N5; arc=none smtp.client-ip=117.135.214.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stu.pku.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stu.pku.edu.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <AA*AfQAzJ9UTkMPQtLhvWaq3.1.1765460422030.Hmail.2200013188@stu.pku.edu.cn>
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	viro <viro@zeniv.linux.org.uk>, brauner <brauner@kernel.org>
+Subject: =?UTF-8?B?W0JVR10gSHVuZyB0YXNrIGluIHBhdGhfb3BlbmF0IChwb3NzaWJsZSByd3NlbSBsb2NrIGludmVyc2lvbik=?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com Sirius_WEB_MAC_1.56.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251211131211.308021-1-dkarn@redhat.com>
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Rspamd-Queue-Id: 456D05BDFE
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Level: 
+Received: from 2200013188@stu.pku.edu.cn( [210.73.43.101] ) by ajax-webmail ( [127.0.0.1] ) ; Thu, 11 Dec 2025 21:40:22 +0800 (GMT+08:00)
+From: Tianyu Li <2200013188@stu.pku.edu.cn>
+Date: Thu, 11 Dec 2025 21:40:22 +0800 (GMT+08:00)
+X-HM-Tid: 0a9b0d7f5c4009b6kunmd0b925ba6938
+X-HM-MType: 1
+X-HM-NTES-SC: AL0_4z5B86Wr4Tz9jdMF+bhXMTv2670zqzAM+7RIKOqUHUUyjnjpPRHs8I0th+
+	pfToBLAHHPQiSvzTUYtFIRevI3h0H/rL8uiegUHR6ncan8g2rCDfuN4NnB7NuCz/pEOsh0h06tY6
+	DNg6VLCaERPHZUYBx5sFyk7R3o0B88Kdr218k=
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaGU5JVkpDGExJQx1JGUoeGlYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlJSktVTEhVT0hVSktKWVdZFhoPEhUdFFlBWU9LSFVKS0hLT0NIVUpLS1
+	VKQlkG
+DKIM-Signature: a=rsa-sha256;
+	b=VE5Xb0N5Iv/97+A/uNCYT6vb58KhuJsouw0RHID6Od0oM19HJPT84tI758xsi3gXhwWIqp7Avg80k6emiOTLgkZvGVAGuM+jf/utqkI2l8PuFmHVl/Yi+wcZs/g6P5BnxlBEWYP0W2BGdtWpYM52b6X/XLSt42aIU4AItu27c48=; c=relaxed/relaxed; s=default; d=stu.pku.edu.cn; v=1;
+	bh=Sp4Fe1dJUGP9wJoLc92dWzO3BUN2bJkPT9GQyOlZwCc=;
+	h=date:mime-version:subject:message-id:from;
 
-On Thu 11-12-25 18:42:11, Deepakkumar Karn wrote:
-> try_to_free_buffers() can be called on folios with no buffers attached
-> when filemap_release_folio() is invoked on a folio belonging to a mapping
-> with AS_RELEASE_ALWAYS set but no release_folio operation defined.
-> 
-> In such cases, folio_needs_release() returns true because of the
-> AS_RELEASE_ALWAYS flag, but the folio has no private buffer data. This
-> causes try_to_free_buffers() to call drop_buffers() on a folio with no
-> buffers, leading to a null pointer dereference.
-> 
-> Adding a check in try_to_free_buffers() to return early if the folio has no
-> buffers attached, with WARN_ON_ONCE() to alert about the misconfiguration.
-> This provides defensive hardening.
-> 
-> Signed-off-by: Deepakkumar Karn <dkarn@redhat.com>
-
-Looks good to me now. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/buffer.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 838c0c571022..28e4d53f1717 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -2948,6 +2948,10 @@ bool try_to_free_buffers(struct folio *folio)
->  	if (folio_test_writeback(folio))
->  		return false;
->  
-> +	/* Misconfigured folio check */
-> +	if (WARN_ON_ONCE(!folio_buffers(folio)))
-> +		return true;
-> +
->  	if (mapping == NULL) {		/* can this still happen? */
->  		ret = drop_buffers(folio, &buffers_to_free);
->  		goto out;
-> -- 
-> 2.52.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+SGksCgpJJ20gZW5jb3VudGVyaW5nIGEgaGFuZyBpbiBwYXRoX29wZW5hdCgpIHRoYXQgYXBwZWFy
+cyB0byBpbnZvbHZlIGFuIHJ3c2VtIHJlYWRlciBiZWluZyBibG9ja2VkIGJ5IGEgd3JpdGVyIGlu
+IHRoZSBzYW1lIHRnaWQuIFRoZSBpc3N1ZSB3YXMgZmlyc3QgZGV0ZWN0ZWQgYnkgYSBmdXp6aW5n
+IGZyYW1ld29yayBvbiBMaW51eCA2LjE4LXJjNiwgYW5kIEkgaGF2ZSBjb25maXJtZWQgdGhhdCBp
+dCBpcyByZXByb2R1Y2libGUgb24gTGludXggNi4xOC4KClRoZSB0YXNrIGdldHMgc3R1Y2sgaW4g
+dGhlIGZvbGxvd2luZyBjYWxsIGNoYWluOgoKICAgIG9wZW5hdCAtJmd0OyBwYXRoX29wZW5hdCAt
+Jmd0OyBvcGVuX2xhc3RfbG9va3VwcyAtJmd0OyBpbm9kZV9sb2NrX3NoYXJlZAoKVGhlIGtlcm5l
+bCBsb2dzIGluZGljYXRlIHRoYXQgdGhlIHJlYWQtc2lkZSByd3NlbSBpcyBsaWtlbHkgb3duZWQg
+YnkgYSBzaWJsaW5nIHRocmVhZCAod3JpdGVyKSwgd2hpY2ggc3VnZ2VzdHMgYSBwb3RlbnRpYWwg
+VkZTL25hbWVpIGxvY2tpbmcgaW50ZXJhY3Rpb24uIFdoZW4gcmVwcm9kdWNlZCBvbiBhIHRlc3Qg
+bWFjaGluZSwgdGhlIGNvZGUgd291bGQgc3RhYmx5IHRyaWdnZXIgYSBzZXZlcmFsLW1pbnV0ZSBo
+YW5nLgoKQWRkaXRpb25hbCBpbmZvcm1hdGlvbiBpcyBwcm92aWRlZCBiZWxvdzoKCk1vcmUgaW5m
+b3JtYXRpb24gaXMgcHJvdmlkZWQgYmVsb3c6CgogICAgS2VybmVsIHNvdXJjZTogaHR0cHM6Ly9j
+ZG4ua2VybmVsLm9yZy9wdWIvbGludXgva2VybmVsL3Y2LngvbGludXgtNi4xOC50YXIueHoKICAg
+IEtlcm5lbCBjb25maWd1cmF0aW9uOiBodHRwczovL2dpdGh1Yi5jb20vajFha2FpL0tDb25maWdG
+dXp6X2J1Zy9yYXcvcmVmcy9oZWFkcy9tYWluL3g4Ni9tYWlubGluZS1jb25maWcKICAgIEtlcm5l
+bCBsb2coZnV6eik6IGh0dHBzOi8vZ2l0aHViLmNvbS9XeG0tMjMzL0tDb25maWdGdXp6X2NyYXNo
+ZXMvcmF3L3JlZnMvaGVhZHMvbWFpbi81ZDlkNjg0ZTEwMTg0YzBlODNkNjE1NDEyYWJlYTVmNTk1
+MzdmZjE4L3JlcG9ydDAKICAgIEtlcm5lbCBsb2cocmVwcm8pOiBodHRwczovL2dpdGh1Yi5jb20v
+V3htLTIzMy9LQ29uZmlnRnV6el9jcmFzaGVzL3Jhdy9yZWZzL2hlYWRzL21haW4vNWQ5ZDY4NGUx
+MDE4NGMwZTgzZDYxNTQxMmFiZWE1ZjU5NTM3ZmYxOC9yZXByb19yZXBvcnQwCiAgICBSZXByb2R1
+Y3Rpb24gQyBDb2RlOiBodHRwczovL2dpdGh1Yi5jb20vV3htLTIzMy9LQ29uZmlnRnV6el9jcmFz
+aGVzL3Jhdy9yZWZzL2hlYWRzL21haW4vNWQ5ZDY4NGUxMDE4NGMwZTgzZDYxNTQxMmFiZWE1ZjU5
+NTM3ZmYxOC9yZXByby5jcHJvZwogICAgU3lzY2FsbCBzZXF1ZW5jZSBmb3IgcmVwcm9kdWN0aW9u
+IChtb3JlIHByZWNpc2UpOiBodHRwczovL2dpdGh1Yi5jb20vV3htLTIzMy9LQ29uZmlnRnV6el9j
+cmFzaGVzL3Jhdy9yZWZzL2hlYWRzL21haW4vNWQ5ZDY4NGUxMDE4NGMwZTgzZDYxNTQxMmFiZWE1
+ZjU5NTM3ZmYxOC9yZXByby5wcm9nCiAgICBHQ0MgaW5mbzogaHR0cHM6Ly9naXRodWIuY29tL1d4
+bS0yMzMvS0NvbmZpZ0Z1enpfY3Jhc2hlcy9yYXcvcmVmcy9oZWFkcy9tYWluLzBmODVmYzY2MWFm
+MWUzYzY5YjI2Yjk3ZWFhYWE0M2Q2MjlkZTQ0OWMvZ2NjaW5mbwoKSSBob3BlIHRoaXMgcmVwb3J0
+IGhlbHBzIGluIGlkZW50aWZ5aW5nIGFuZCByZXNvbHZpbmcgdGhlIGlzc3VlLiBUaGFua3MgZm9y
+IHlvdXIgdGltZSBhbmQgYXR0ZW50aW9uLgoKQmVzdCByZWdhcmRzLApUaWFueXUgTGk=
 
