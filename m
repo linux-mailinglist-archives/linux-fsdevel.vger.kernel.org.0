@@ -1,147 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-71193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37A7CB8BDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 12:45:22 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id D608ECB8C01
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 12:56:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5CA0630562E6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 11:45:04 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 513E7301EC47
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 11:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF472D0283;
-	Fri, 12 Dec 2025 11:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05B0320A00;
+	Fri, 12 Dec 2025 11:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOjUUd6j"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cUmpHMXH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866C62877E6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 11:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7212331ED8B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 11:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765539903; cv=none; b=EvNFmPGWnRs2xb1ppfzh/Ce5NIWc6NaSkxOu6dstMp/N+Gl9+sw5X/UZHfagT6lGY0cOLngTWfqTzQSqs2Oqeu96alxUaXKpBBjRXgLa33yrRq8wne+GPS7Rfro/Z9sZEkgmxb8es8bfQDnjpPZmt+XVuciz6GdId6zk7oJHWtk=
+	t=1765540544; cv=none; b=d0tvlnO5fZFwYEaYvNs+7YnWfK5DQ/IWb2Vyb31ktvhf41csWdt0pO3rD0RWUepqvIJolvXPnH41cS8pdrnR+/8jTIYodlem6+CZCQySdc+w735WS3hveOwb60hK4fAb2qe/EVCd3r0WwnaQ66SDLOriOyOF0EPdgYcB5Gy2bVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765539903; c=relaxed/simple;
-	bh=QV83dHXXsBkhiscI9yTpQIJ6O4fN2KeR0ILbU0KVUa8=;
+	s=arc-20240116; t=1765540544; c=relaxed/simple;
+	bh=pU5j96LHCOt6a1LputoKggwOob/5HYs1D1MEBGhPW6Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LcQKkmCsCrWBBy8khxI2CcDJPmfhP6ArGWcCVgunFS5khc41nEwF8ZL9wsJyFLtxrBW68Zv0istlKlHMXiEsRyTwBlj7KauYkfp+COY5M+faFItz3sjnLl77WTCmAgeQzqtexL18x2rJReET0pcAQ8bCmVbSx3st/XWw/P4hM88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOjUUd6j; arc=none smtp.client-ip=209.85.208.43
+	 To:Cc:Content-Type; b=LN09OthLA7HItfogh359W35oKm7tubqx7xZHUMyAhK++SBfQWIpzpWmWDnshlzGJ1L2EGhFqGe++2rP7EnEvJsARR8lU6Ba3OandNYVW5UOswq9wEOBaxtQaqbfR22cxTu5P0rEE0pcTFro9zH9LeXLmphh4FBspTHrQqXapyK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cUmpHMXH; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-647a3bca834so1641683a12.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 03:45:01 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b73a9592fb8so252738566b.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 03:55:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765539900; x=1766144700; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1765540540; x=1766145340; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QV83dHXXsBkhiscI9yTpQIJ6O4fN2KeR0ILbU0KVUa8=;
-        b=DOjUUd6jjmBMERovmTQ8kJnNB2sLF0ZR0k4bKOFymqKXBmaK6WxURzrrM6KhnP5B+6
-         56TRSY2mNBeZXR2/WILe0wyNwTda7x3WUaEdTkW1xVecfHFdGEiHgDxRbEFbxcVvEg0V
-         8sGMu4LsRRcMPbCfovtblSBT6AcIYVFNFpQn0EixEu9PjazC9gP3amftMRN7M1UzU9Kj
-         CFstPxSfIvCHAptm6T1KU6I2LHIGwWQJpJAz8MEQOFGSrVSAQYYjhswbhaDZPJs7umlm
-         J9se7XPvtZjFyv3wcSiU7zyL8hb5HUDvBsIL+zzv6wKqsran214+kP1B0jCddVULh/K7
-         JxOA==
+        bh=LBBZ+/iP1D6xDO/Pt/Eg6ETEUrv0lEs7/AoDiNTg5wA=;
+        b=cUmpHMXH0Lkbi7J81DwCDlM/ZWyl4L9RLhIMraWS3EKxdHd3Hv/R0n9K26PzjtWvPs
+         EcL6LaHFJVt4I+bOSP1NWFmXMsM+rwkg0ujZZYy3EajioDoQHlXoIHzpabGiqkWyA4/u
+         diAfi9CHPSg+qqBWep5IxeFV5eiEd/LD3xkeRN3QleSqsfibHrMAoZYUalmndJ6i4vXF
+         pY4U2Rm+wanZqI7qJ4S/xQqe0SWNi/IzUm01A0ex05cQUHOnMwe4T85nJa+O7WILRyLP
+         zxA7P1D7I0SWIL38TMqBoZPvGh3hnW6/Wo1FKo/j4Tf0QV84hFZJyrJLnSz6tXO26gzs
+         qrmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765539900; x=1766144700;
+        d=1e100.net; s=20230601; t=1765540540; x=1766145340;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=QV83dHXXsBkhiscI9yTpQIJ6O4fN2KeR0ILbU0KVUa8=;
-        b=aBOFaOEUCEjHJy8osyX18jys3Tg94kGgkYpWCfzunYihx+UgPt9sJgce2yTG1g1lMb
-         acHzepO8OKuspFVaEqETlhJemHxiFb7UW6EFhPHdUJAh1d9FpCtapDJ32smetfeiJnRb
-         hGn5PuHwKn8TXrRdUIKquzDuJWtha47YHLFVLvVsTZi55S9ajql26c08IPH7tGEcdlFp
-         RAdqAhxqpwd8pLgX8tKJBkrRSHCpj20ZkMIvnx5dc35sNiw6rzLvKuQE7F5f6yoBPgZD
-         ILNtzRyW1ilnINnOP8WKIWBUPsTZ0jp183YDfa3srmuhbfe2fweRas9q8uWnHo0CM1Aj
-         g4ag==
-X-Forwarded-Encrypted: i=1; AJvYcCURF6KwHoLzsVwRmJnoLDQXZfGg2np9u+n9kG4r7vbYjDUxj/kaCc5ldbReg/H4suYJouLGEa/qQTOLoa8a@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLEI5SNZNwJHXhlPD+5LiZF0Rr/6M0x1b586orc5wq+gzIupc7
-	NRkrr06BCov9nhhzZRQtNUgLp6QcY2rorPJNNmkyAwXXIOt6B6ng9dFAV/o6JXsrf5iHbA3PlD9
-	j18ySqPScbnAXZj91sYqbnNyUzwkDbCU=
-X-Gm-Gg: AY/fxX7nbSfIFeHaTDbwgEVg/+TYrdfgpJJZ+88XicFSgcK5lo44VQ2v6LKzmhsZoT1
-	69hhGjv1GuZTN1j+eaNgUiowqlQzhW6hfhdAAaVYMzz7bTGa3TIGt6I/96MjXgCV+MotYNLHj1+
-	osfFswhrfuYP5xfQA5sUHLVcawvqzpcwsurreNImhXPlZvDdxcJTUwwT6ZnkMm/Egkbx6TpONcI
-	KyzAsDXGG/bhvwp97ar/7s860NgzyxhdjpSTNtGbsCzdX/n88gdT1wQAUQFxgDVHI59XgY0MyZw
-	ct7ne5NWWFuhEtOribjDL20525U=
-X-Google-Smtp-Source: AGHT+IHch8jgRFFgYhCOhfqTD3mp4Gf1xTO8c6j64YajEsIYIcv7McQHhqZ3IyXoUhUPJSsN5RJzXnmyK646gJh5rxM=
-X-Received: by 2002:aa7:da4e:0:b0:649:aa32:7c0a with SMTP id
- 4fb4d7f45d1cf-649aa32a55fmr235337a12.13.1765539899674; Fri, 12 Dec 2025
- 03:44:59 -0800 (PST)
+        bh=LBBZ+/iP1D6xDO/Pt/Eg6ETEUrv0lEs7/AoDiNTg5wA=;
+        b=u489Sl4xrNp9YbqA8Z36CtU+ucv4xErcpVvvd4DicZK/+K741p+Iv4DzD3iLBMFtKi
+         WOhqEm6zT/WwHfBoz/nm/h6AQvfLalltAiO4RQl4nMrvPIV6MreI9Hsxwa6vZFvJywTT
+         5eQT7h9OWMrHGxNwdyhMZsnQrvR9Lvo6+VH9nighOSGuY0RIQp+tY1FNMQIpMgIxYo4D
+         /KnbeN2BL8z4AbBSPXK5qhmwaIZR3KmRJCDqKLgZrephaoR/9iN0Zl+E+i5U90xKbcPq
+         /pwSFzyGfj/6tKkVWgZJb1He0J1DwKKmAjMYl3bDIZ97IaA3c8Dlx6Kyz6aUXXGtlX1K
+         TKXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWE0Tckg6so6Wl38sRBZVa0gzN0lblAfgObkbsVFzpP633bz/M67WIWnw5TwxvWNiXF6kI1i+xbHoe8KPZ8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0IB05Zpen4itFgpfeiwiGIhn6vv7M5dPSEE3XffPaswGKigZu
+	qnmfAxuOocqQd0K2nIX8uxHw9dhlG6smsTBfmbZk+JAk3ejHW3q9oct6OVjxIu71jnaZ0Q/RDdi
+	vfSE8ufPHrIy9QE+WYSC8EgOZuouUyW0=
+X-Gm-Gg: AY/fxX6QLAqSXwyxQbsd3f+k69pWfWkC6b0HTApi63hBYc+B9JLjrLiyYrDWKG8v9Px
+	QRN8e+9865ZuWCRz+kMzKas8p456UJCyJzlQ1jJi3jt48HTdwjaebcdOxaKOGn1ZF2oQoUzZldk
+	SyKBXMZh6r1hAcnCgiRMooGMF7uTh7FvdONZnJ3lsWxks72RF1ZRUOlQo3b4RexXIDqhssh7FYT
+	Y1CVy17dL+FieDFFspmFSTb81T5KSLIC81XXa2eXPQc0aYcc7/nhNyfh1ap25KVYiVT4eEZqsA6
+	197yO475TNJC59aw5UmYtoPpxLM=
+X-Google-Smtp-Source: AGHT+IEAuFsza2aEEtVI9ny/XFJ0ouAL6+vxgMMG/dQiaHrFfmNcSt2PBUUisslbWrx1+l0dmvbklQ4+ZkqTuTuMlNQ=
+X-Received: by 2002:a17:907:7f9e:b0:b72:dcda:fe5a with SMTP id
+ a640c23a62f3a-b7d02137051mr519204866b.5.1765540540180; Fri, 12 Dec 2025
+ 03:55:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251209075347.31161-1-tianjia.zhang@linux.alibaba.com>
- <dpuld3qyyl6kan2jsigftmuhrqee2htjfmlytvnr55x37wy3eb@jkutc2k4zkfm> <038af1cc-a0f1-46a6-8382-5bca44161aee@linux.alibaba.com>
-In-Reply-To: <038af1cc-a0f1-46a6-8382-5bca44161aee@linux.alibaba.com>
+References: <20251119142954.2909394-1-mjguzik@gmail.com> <20251212012236.3231369-1-clm@meta.com>
+In-Reply-To: <20251212012236.3231369-1-clm@meta.com>
 From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 12 Dec 2025 12:44:47 +0100
-X-Gm-Features: AQt7F2r3VMyyK5p-_ZMmTrPlXfaRxkUPJYgU4M1-m5irAJmv-HOxFCuipIj12PY
-Message-ID: <CAGudoHH7PGSPiBkpyzJFS_BcPN_tvp7H5d-pdrGn=ueBUW_Nsg@mail.gmail.com>
-Subject: Re: [PATCH] file: Call security_file_alloc() after initializing the filp
-To: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 12 Dec 2025 12:55:28 +0100
+X-Gm-Features: AQt7F2r6Gx71eHg8R6SFUgJ0ymGXM2GtvEa-Mrbkjy6ppKP1xdt9sC_i5z5OPp0
+Message-ID: <CAGudoHFus8zBCmF=vS_HNQimQfTUwqUqohZ-gNzZ2T7TOfNbPw@mail.gmail.com>
+Subject: Re: [PATCH v5] fs: add predicts based on nd->depth
+To: Chris Mason <clm@meta.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 12, 2025 at 11:01=E2=80=AFAM tianjia.zhang
-<tianjia.zhang@linux.alibaba.com> wrote:
+On Fri, Dec 12, 2025 at 2:22=E2=80=AFAM Chris Mason <clm@meta.com> wrote:
 >
+> On Wed, 19 Nov 2025 15:29:54 +0100 Mateusz Guzik <mjguzik@gmail.com> wrot=
+e:
 >
+> Hi everyone,
 >
-> On 12/9/25 4:22 PM, Mateusz Guzik wrote:
-> > On Tue, Dec 09, 2025 at 03:53:47PM +0800, Tianjia Zhang wrote:
-> >> When developing a dedicated LSM module, we need to operate on the
-> >> file object within the LSM function, such as retrieving the path.
-> >> However, in `security_file_alloc()`, the passed-in `filp` is
-> >> only a valid pointer; the content of `filp` is completely
-> >> uninitialized and entirely random, which confuses the LSM function.
-> >>
+> I ran some of the recent commits through the AI review prompts and it
+> flagged this one.  The comments look right to me:
+>
+> [ ... ]
+>
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index a5bffc2a29f6c..5fbb05fb96b75 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+>
+> [ ... ]
+>
+> > @@ -882,7 +883,7 @@ static bool try_to_unlazy(struct nameidata *nd)
 > >
-> > I take it you have some underlying routine called by other hooks as wel=
-l
-> > which ends up looking at ->f_path.
+> >       BUG_ON(!(nd->flags & LOOKUP_RCU));
 > >
-> > Given that f_path *is not valid* to begin with, memsetted or not, your
-> > file_alloc_security hoook should not be looking at it to begin with.
-> >
-> > So I don't think this patch has merit.
-> >
+> > -     if (unlikely(!legitimize_links(nd)))
+> > +     if (unlikely(nd->depth && !legitimize_links(nd)))
+> >               goto out1;
 >
-> The scenario is as follows: I have hooked all LSM functions and
-> abstracted struct file into an object using higher-level logic. In my
-> handler functions, I need to print the file path of this object for
-> debugging purposes. However, doing so will cause a crash unless I
-> explicitly know that handler in the file_alloc_security context=E2=80=94w=
-hich,
-> in my case, I don't.
+> When nd->depth is 0, this short-circuits and never calls legitimize_links=
+().
+> However, legitimize_links() contains a LOOKUP_CACHED check that was moved
+> there in commit b93a6e389bdc7 ("fix handling of nd->depth on LOOKUP_CACHE=
+D
+> failures in try_to_unlazy*"):
+>
+>     static bool legitimize_links(struct nameidata *nd)
+>     {
+>         if (unlikely(nd->flags & LOOKUP_CACHED)) {
+>             drop_links(nd);
+>             nd->depth =3D 0;
+>             return false;
+>         }
+>         ...
+>     }
+>
+> Before that commit, the LOOKUP_CACHED check was done directly in
+> try_to_unlazy() before calling legitimize_links(). It was moved into
+> legitimize_links() for consolidation, not because it's semantically
+> related to having links.
+>
+> With LOOKUP_CACHED set (used by io_uring for non-blocking opens) and
+> nd->depth =3D=3D 0, try_to_unlazy() now proceeds to legitimize_path() and=
+ may
+> succeed, when previously it would have failed. This can cause
+> lookup_fast()->try_to_unlazy() to succeed, leading the caller to call
+> lookup_slow() which takes inode_lock_shared() and blocks - violating
+> LOOKUP_CACHED semantics.
+>
+> Should the LOOKUP_CACHED check be moved back to try_to_unlazy() before
+> the depth check, like:
+>
+>     if (unlikely(nd->flags & LOOKUP_CACHED))
+>         goto out1;
+>     if (unlikely(nd->depth && !legitimize_links(nd)))
+>         goto out1;
 >
 
-Per my previous e-mail the real bug is that you are accessing a field
-which at the time does not have a legitimate value.
+Thanks for the report. This is indeed a bug on my end, in my defense
+the current behavior is... interesting -- why would it the routine
+fail when it had nothing to do?
 
-> Of course, obtaining the path isn't strictly required; I understand that
-> in certain situations=E2=80=94such as during initialization=E2=80=94there=
- may be no
-> valid path at all. Even so, it would be acceptable if I could reliably
-> determine from filp->f_path that fetching the path is inappropriate. The
-> problem is that, without knowing whether I'm in the file_alloc_security
-> context, I have no reliable way to decide whether it's safe to attempt
-> retrieving the path.
+The commit hash you referenced does not exist in master, I found this
+instead: eacd9aa8cedeb412842c7b339adbaa0477fdd5ad
 
-For the sake of argument let's say the patch or an equivalent went in
-and you no longer crash on f_path.
+That said, the proposed patch does not do the trick as it fails to
+clean up links if nd->depth && nd->flags & LOOKUP_CACHED. The check
+however can be planted *after* if (unlikely(nd->depth &&
+!legitimize_links(nd)))
 
-The only legally populated field at the time is f_cred.
-
-Later someone might get an idea to look at other fields and instead of
-crashing get bogus results.
-
-Or to put it differently, it's a design issue in your code. When
-called from a hook where mucking with 'file' is illegal, it needs to
-know to refrain from doing it.
+This would clean up the bug but retain the weird (for me anyway)
+state. Perhaps this is good enough as a fixup for the release and some
+clean up is -next material
 
