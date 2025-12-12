@@ -1,120 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-71170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC23CB7732
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 01:25:33 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96962CB77FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 02:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 69B3E300253B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 00:25:30 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 00E4C303D31F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 01:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F5621CC60;
-	Fri, 12 Dec 2025 00:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5124A15B998;
+	Fri, 12 Dec 2025 01:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mIe0zEWO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f80.google.com (mail-oo1-f80.google.com [209.85.161.80])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EB421773F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 00:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F48270557
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 01:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765499127; cv=none; b=twSYksNPCQKAcALKrkylAd1UN7kPH4rB7LPSu1ksqV2fZBZBHuRF+0OzcUbBSvO8ghp4YbgyQyzPB6V59FKOfXRFe3TTu6WW47OHiWe8SUeME+a+dY/OXt2ZmZLjktlskFiGyYa8GaQdsWJaofJvfqtOe3quVzyBlaAPatU2E4E=
+	t=1765501324; cv=none; b=i7QVbhWdxGo9h9HmP3yHj3j3TWEfVYp5RXH0EOFAtDtzT53XD4xe5JGmdOPcrZYHxzKQniDoM4uLYaY6w5yYSfYZKJB/5MygpdXnuCvpAyyhdFeGb0gMG2e7rYV7ichG8+PPGwC4s5inMNJahCElKYWyU4C7Mg88l7jVoe2Xr5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765499127; c=relaxed/simple;
-	bh=8jUrUuw5gKi2s0Zl/IdHKAHAtaEFNHSf3/1sKyDndXU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dAGl235pYu7p/8f7YyBfW+AAT7xAVzW9vA5J6jmFHNCv94TToA+8fqqafbVlOwKsMtqBqs6D1Uz41blFcAt8lagsu9BE1kBmlI/oVZr8RQxWJhP1PP7aspRNWdzVvtjF41FrEb7JsSng41Dt1sBTYqgxgPraCinVgcNkyus0jFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f80.google.com with SMTP id 006d021491bc7-65b3208d4deso1116633eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Dec 2025 16:25:26 -0800 (PST)
+	s=arc-20240116; t=1765501324; c=relaxed/simple;
+	bh=yjTz9N1XnY76DvE5bcGPlvLqbXen/pl4og5ZynCkays=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AYTz46brIa4AO6HGLPqXrvgaG8J+aFpsECQyzsGDUmuGV6XefoJDCOMjaTQT4NZXDzu2axmNmDk7CwNMRASAB9+qq8xTk7TDl2X2BCq/mPy426BST4kJ65xZS95DuWNmUzZOJ+dvKS/VtKR8TRioVqQX6Unqa6zV3K2YT3yCsMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIe0zEWO; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7baf61be569so801721b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Dec 2025 17:02:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765501320; x=1766106120; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PiqT1y0DQKTCKplE+X4RtztJVQKRqPD52kbRIZIB4Kc=;
+        b=mIe0zEWOhKI4U9y7ZGHmoHnn9HlPYwG1u3dzSpG27lFusenPgMQaop0WsHh82S9K32
+         ibTUsc7Tqo0HBmmHetIvsFh8C4moGVobhEDzFgXL+e+qJ7UGnCaHPQQkZw3NHSZGeKOt
+         OdqkbWC4mq3AMmTu+1ZmEutP3AWH1qYgGOGhS/gcEc+RGtMbDegyLHkZbq5GGcsCNI6d
+         Q+DUai5SxF5/eKeIGhwbRZlFy0M1YFSYBIGEdvDbQogDgD+qbQEvlJRcNnzUDezwAdc7
+         1le/zBt2FNQey8IoPMHjkRXwEkgjmY2tpMppumGngsaHpEqwxU5yKjE/EPdOYqO0Wt4e
+         icbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765499125; x=1766103925;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p/NrCdqDUZtACZsrvy+EiQLkTmBHiqI3EaCw4Sv1I0g=;
-        b=XiYIxN+JETnif4eMbYSvW0HIIzb+mOF/Uoi3bemGN9IH9tC/JPUODoiqdBntW1+a8f
-         vzq2/FbePqtZzNaKq0WQqF5PWdEH1JN2Xk9e5zz0Zq8BfhY1cp576QykplVHp/uJ86U5
-         obqgGU8UfVHSC39vI32IFWSo+svmcOvmZAqXPjDlK2U/9yedGsy0pbFuq2a3tPZowWlW
-         AzysLq7D2Q6EzsoXvHGk3IcPTHJJkF5THWxAkUaDZHtPStZSfOJ73BjsEuE9E4MpAQPJ
-         Lrx3jf7z/L0dyQyUmPkyIE5LcvgecpDKlCujHDjBEbvHSYrZ5Ti7aIHxpzt9j2OMRRcX
-         TZlw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9iwy7isQoAdw2GS1ZuZqpMcSlnxE9kZb/ASikPzHANT4ru+yDwweyV0SrAHh1Vxp9+RD9obGDW5OxTgJD@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTgZEcdevkOb1xB3Il1nD6G3x8R1VMn4yYI1273pVzVNjVw4ZO
-	o/Uur4wS/JlQ2eSnStLQAvbF7wWKT3cRWEfpZdOvP25gPyoCwPl2UbXaL24C9CsnowZ4DKEmiFn
-	CSQ1/MfdhPMiMOdUvpGzFDReNMKnPGgMQ+yILXsTHcSJIf7GDQb1rGittoro=
-X-Google-Smtp-Source: AGHT+IE96IZQqt2rK1+9HkR+Ou2xxjyLstdmoZGNVd8+7uYY2fEtqwNOquuUPK1gB4Vk2Mh2EXmKXYoB8Y4oWDL4EL06ZGd+32wA
+        d=1e100.net; s=20230601; t=1765501320; x=1766106120;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PiqT1y0DQKTCKplE+X4RtztJVQKRqPD52kbRIZIB4Kc=;
+        b=gzkLgaOaqQAZ9NjLU85dmrqPChvk1pmi87dW1ejxuHxqN7+cA1Jz/I7SQmP0jdfLNm
+         NthJZG5l98zHFpM7M12gOapLUEB2RDQM6w+5E4S1PiPVIGNGp/vsBPdSf118ycxy1ccS
+         5Th9+YL+puibwkgp/khQCiSpwA1ij6EyZtEktpGoCojEBZCLY/8ugD4S7rld/ksBtT6o
+         kIaFLDeQxKwR4nU9tZ1pBqVJE24j4XgCWBwTToBCmquK5SbsCImC3OLOOvQnwAmJORg4
+         efdA4zEpZvXtc+goLQjqJ4RUCSPNDb0bhTHyYco+Y9SuEi4m8uEmn46i8zAKC3+/TkgX
+         ffkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXl9HjxXGRbpJ3ClSE/MR7hFRJYIVax+X5aALyBFTCG1sHqrBoBl5xE2L8wktLv9H7yTmmjdNs83VlJq4/d@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqVXiv2qLj7FoChp34z6UUkfkw7VHLI20Or70OO8nw8Tdb7gvj
+	GoNV45GPfYg8PU0Z4YTza4zMdziOQs1A7MQa1L1BfPHpw83BwbD+mANQ
+X-Gm-Gg: AY/fxX75dFXRlv5RimtTa6Of4RtdrvBlvFR6GF2F/NagqIMMG/5wJFEca6nHg3FZetK
+	GM5/q0j85dhYR085elnBMBTebWBCKURgxpHrvcrsRO//KqkJw+TmKdbv6LWFuSUlmDKkAO9WBW3
+	PrHZroUdADeWm2FAdOGWBIYS6q/HalXOK1AGZtPYhY165J5gwku3cUL1X1HYP3eKjum1h9nByHp
+	vNEIJWII21BFAKOFnPTCo+hxPJpOEzIPpLwt4LtLbOUxo6m4cPgj3UH+DVsqhIIb85zTDmGWPjX
+	sTO6e/a7BK6jsUDgBlKET1MclFefR5KU6kfcdB4w8A+YVipqhBQIY2G9n7mwr8vpAU8KaIJIPi4
+	5ly/pK2d1vpAiTOUCkFprPiAzhUNVKFlDID28NaS5jminYUM0hjTswVKHSsPjQfffNoEhgQArAx
+	jC7R8KQca8mIeSKvPsS190EswbeeNDTtgmX9ts+DBkCGtCUMW1g21IRcwvH7L1XZ4OfMi6UR+tX
+	Y73pFctTJyWVqOLH6fxkW7zlBD+gHmXIHxG7WTqC+bFrmZbBrrNLtg+Td6MIA==
+X-Google-Smtp-Source: AGHT+IG0+NAokoVmG4o76ltchxh72cgR5S6czK8w8NPqiA4lCkRSaBrc+e6H5PWtVLyiGmX8KUNYIA==
+X-Received: by 2002:a05:6a20:1584:b0:35d:7f7:4aac with SMTP id adf61e73a8af0-369afa01e9emr370191637.47.1765501320420;
+        Thu, 11 Dec 2025 17:02:00 -0800 (PST)
+Received: from [10.200.8.97] (fs98a57d9c.tkyc007.ap.nuro.jp. [152.165.125.156])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c0c2b9d8a2bsm3358325a12.27.2025.12.11.17.01.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Dec 2025 17:01:59 -0800 (PST)
+Message-ID: <fb1abb05-ac8a-4130-a6a9-1a1089df441d@gmail.com>
+Date: Fri, 12 Dec 2025 01:02:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:2905:b0:659:9a49:8f74 with SMTP id
- 006d021491bc7-65b45736683mr126458eaf.57.1765499125456; Thu, 11 Dec 2025
- 16:25:25 -0800 (PST)
-Date: Thu, 11 Dec 2025 16:25:25 -0800
-In-Reply-To: <692fc776.a70a0220.2ea503.00cb.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <693b60f5.050a0220.4004e.04c5.GAE@google.com>
-Subject: Re: [syzbot] [fs?] [mm?] WARNING in sched_mm_cid_fork
-From: syzbot <syzbot+9ca2c6e6b098bf5ae60a@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, kees@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 01/11] file: add callback for pre-mapping dmabuf
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+ Vishal Verma <vishal1.verma@intel.com>, tushar.gohad@intel.com,
+ Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+References: <cover.1763725387.git.asml.silence@gmail.com>
+ <74d689540fa200fe37f1a930165357a92fe9e68c.1763725387.git.asml.silence@gmail.com>
+ <aTFllxgsNCzGdzKB@infradead.org>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <aTFllxgsNCzGdzKB@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot has found a reproducer for the following issue on:
+On 12/4/25 10:42, Christoph Hellwig wrote:
+> On Sun, Nov 23, 2025 at 10:51:21PM +0000, Pavel Begunkov wrote:
+>> +static inline struct dma_token *
+>> +dma_token_create(struct file *file, struct dma_token_params *params)
+>> +{
+>> +	struct dma_token *res;
+>> +
+>> +	if (!file->f_op->dma_map)
+>> +		return ERR_PTR(-EOPNOTSUPP);
+>> +	res = file->f_op->dma_map(file, params);
+> 
+> Calling the file operation ->dmap_map feels really misleading.
 
-HEAD commit:    d358e5254674 Merge tag 'for-6.19/dm-changes' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11c0d1c2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=de48dccdf203ea90
-dashboard link: https://syzkaller.appspot.com/bug?extid=9ca2c6e6b098bf5ae60a
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=144621b4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124621b4580000
+agreed
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-d358e525.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3fa1d04c1a85/vmlinux-d358e525.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a9b253146e36/bzImage-d358e525.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/4a5df3575982/mount_1.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=11119592580000)
+> create_token as in the function name is already much better, but
+> it really is not just dma, but dmabuf related, and that should really
+> be encoded in the name.
+> 
+> Also why not pass the dmabuf and direction directly instead of wrapping
+> it in the odd params struct making the whole thing hard to follow?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9ca2c6e6b098bf5ae60a@syzkaller.appspotmail.com
+I added it after I forgot about the direction and had to plumb
+it through all the layers. In a draft of v3 I had I already
+removed it as dmabuf is passed with the token to drivers.
 
-------------[ cut here ]------------
-WARNING: kernel/sched/core.c:10569 at sched_mm_cid_fork+0x66/0xc30 kernel/sched/core.c:10569, CPU#0: kworker/u4:4/5674
-Modules linked in:
-CPU: 0 UID: 0 PID: 5674 Comm: kworker/u4:4 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:sched_mm_cid_fork+0x66/0xc30 kernel/sched/core.c:10569
-Code: 4c 8b 3b 4d 85 ff 74 21 49 8d 9d d4 15 00 00 48 89 d8 48 c1 e8 03 42 0f b6 04 30 84 c0 0f 85 13 0a 00 00 31 c0 3b 03 70 04 90 <0f> 0b 90 49 8d 9f 00 01 00 00 49 8d bf c0 01 00 00 48 89 7c 24 20
-RSP: 0000:ffffc900036cfbd8 EFLAGS: 00010246
-RAX: 1ffff110067b79e3 RBX: ffff888033dbcf18 RCX: ffff888033dbc980
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888033dbc980
-RBP: ffffc900036cfd68 R08: ffffffff8e295e83 R09: 1ffffffff1c52bd0
-R10: dffffc0000000000 R11: fffffbfff1c52bd1 R12: ffff888033dbc980
-R13: ffff888033dbc980 R14: dffffc0000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88808d22f000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6ad913e000 CR3: 0000000041a50000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- bprm_execve+0xd88/0x1400 fs/exec.c:1776
- kernel_execve+0x8f0/0x9f0 fs/exec.c:1919
- call_usermodehelper_exec_async+0x210/0x360 kernel/umh.c:109
- ret_from_fork+0x599/0xb30 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:246
- </TASK>
+-- 
+Pavel Begunkov
 
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
