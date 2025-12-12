@@ -1,165 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-71192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB6ACB8974
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 11:13:49 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A37A7CB8BDD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 12:45:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 6E2D5302083B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 10:12:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 5CA0630562E6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 11:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CD22EBB96;
-	Fri, 12 Dec 2025 10:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF472D0283;
+	Fri, 12 Dec 2025 11:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ddzcjvSN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOjUUd6j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67F9315D28
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 10:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866C62877E6
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 11:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765534359; cv=none; b=ZcqNre0AqGBMm7nPGbasZrRsyriy3cOOFLObspNo8kGsQ+0E2MzxM/YrRgabiAoAef0cq5LPio+SisRnBz7nEEfzA4VVk3yX6rVt9XY9nLcuKPCbG7a73nQg0hS9/fLjh7mfp14ePsbzDyIY3sRCug3bqJDxUK7Moj23+byer2k=
+	t=1765539903; cv=none; b=EvNFmPGWnRs2xb1ppfzh/Ce5NIWc6NaSkxOu6dstMp/N+Gl9+sw5X/UZHfagT6lGY0cOLngTWfqTzQSqs2Oqeu96alxUaXKpBBjRXgLa33yrRq8wne+GPS7Rfro/Z9sZEkgmxb8es8bfQDnjpPZmt+XVuciz6GdId6zk7oJHWtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765534359; c=relaxed/simple;
-	bh=gzQjeuzK8OvsG95sV2x0e18zLLQ1/JQTFC2nyRSpltE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=OjXYQeVZNG1FF8qI9l9YpaZIsI8mC+q02jAtVgX7laD3Dx6hXMBAfwUpkyokFPBNyZI9pDtV6Se8aDc+TPH2/pnCW+Z/1jDWSyrDGJJgHWUdiVHYD/E2cxvc13Cm73FTJ0+Xa/uZprCL2LBATDr9a7RQ24JflARaT2gjtxEgUjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ddzcjvSN; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-787df0d729dso8849747b3.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 02:12:37 -0800 (PST)
+	s=arc-20240116; t=1765539903; c=relaxed/simple;
+	bh=QV83dHXXsBkhiscI9yTpQIJ6O4fN2KeR0ILbU0KVUa8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LcQKkmCsCrWBBy8khxI2CcDJPmfhP6ArGWcCVgunFS5khc41nEwF8ZL9wsJyFLtxrBW68Zv0istlKlHMXiEsRyTwBlj7KauYkfp+COY5M+faFItz3sjnLl77WTCmAgeQzqtexL18x2rJReET0pcAQ8bCmVbSx3st/XWw/P4hM88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOjUUd6j; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-647a3bca834so1641683a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 03:45:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1765534356; x=1766139156; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tyiWj+teLSvOcemqfQ8kWGe8XZlNZ+qzMwX7g7wGHpA=;
-        b=ddzcjvSNzCDvK3aJt9L2zOcCD6TCcs5Gk7aEzAcVX2Asvo6Bk7vG4EKRLCr1AVLrlT
-         uGbaO87d6bWQtq2a//UzHdN1B+Ct7YeFAuICF73hlOF7yP+cQbutYtbCUScu8LmX44ra
-         NkgfKuLgQWTlA1ciG34Tph9Yua1OapgDG3iI6I5I2wsuuwzcU+R/yf5sGAKCP6k6VnC1
-         qepH0m6MqgpscwM316GEqSe/n75rrGF4RT9t2Wlf+ISGDJ1pHYlsRmi85wc4CkS0ATTX
-         tdYoP97095UtTpn36MxCw3RVlFcq3IfLUqPRhd6rMiIoDQlKxqSyM0RKJsRd61Q/MQWg
-         +4+w==
+        d=gmail.com; s=20230601; t=1765539900; x=1766144700; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QV83dHXXsBkhiscI9yTpQIJ6O4fN2KeR0ILbU0KVUa8=;
+        b=DOjUUd6jjmBMERovmTQ8kJnNB2sLF0ZR0k4bKOFymqKXBmaK6WxURzrrM6KhnP5B+6
+         56TRSY2mNBeZXR2/WILe0wyNwTda7x3WUaEdTkW1xVecfHFdGEiHgDxRbEFbxcVvEg0V
+         8sGMu4LsRRcMPbCfovtblSBT6AcIYVFNFpQn0EixEu9PjazC9gP3amftMRN7M1UzU9Kj
+         CFstPxSfIvCHAptm6T1KU6I2LHIGwWQJpJAz8MEQOFGSrVSAQYYjhswbhaDZPJs7umlm
+         J9se7XPvtZjFyv3wcSiU7zyL8hb5HUDvBsIL+zzv6wKqsran214+kP1B0jCddVULh/K7
+         JxOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765534356; x=1766139156;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tyiWj+teLSvOcemqfQ8kWGe8XZlNZ+qzMwX7g7wGHpA=;
-        b=iroJd6+MTRofAZ2HaqFz9t10uWtyUAy+6oHvc9mr7R+RFV98exblLTbKA8yEB5XJm9
-         te97GmnZ/WqjHI6WK4Ev4ldYweOtWbv50r0/FV5jMKYJtjFlu183Ovldv7H8XWpj1R07
-         0ORfTTUFAqOldDy6A0PNrYTmGHUr8BMSA6eB4h8BDQI1qxacpDlZ4Di2GvhlIt9t47ix
-         fjyTMLQJpIq129ePfIUx0Zj6MvNp22dRdQiT54pMdIOqLopxC/BUQeIxLqQMy7+ddrC2
-         7+HrDDXZHSp9bf95T3jOxvV/KuLQNeSe9kdrEIpE8Jc95IUedkC8CGtBilbq59rEolOD
-         PMLA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5hJ9iXxqZCgh9CJBn9qqu84LYcKpgM77Vx8GicSTx/QttMJ1Akt1vF8BzxiLF/tq/ApupZEg0Jlm3Nt7s@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZMkGFzM0bwkKd0Wi0CUia/rXjDgzAjvw6OdI+Cv/rJTEdYSyt
-	qW4/QuqQQU8gYcj47UaK4hF+3bxbdumhnxrnBxz2KsPXIOhJO0RVLT3XDke5h1zYKw==
-X-Gm-Gg: AY/fxX6AV3uuGvQQxa6yh6S/dOe3XsU+zDO+AqaxuyZXEHlJLMj+QalTMdMzVd4mQiT
-	YbSN2phjxQMPvaXpljZmEQpzmU/SWIHDFToJCr4jr0tyWlqGwJZjWlh9tb7dFQbypCK6ebTx5vM
-	8b6kUC69bIo5ErQrX8hM5KKa4Riz3agx3I672g8S8B4n/gBy3W7FUTd2KGb/wvExkW20cEmvlvn
-	u98+AcAEYeZltMRYcR0TBBCpQ1E8olr5tlmqjBJYPTtB0TpRgvO2gqIUSVtFQJHiEEOXCaSSDE4
-	CUarJSGTCYWvpdY+SVVqX7ob4HRWwXK3Y5P3VnWZXzTW46F/kaIgxnhjDq6JTjZ41MEx/ueyxmy
-	Zo2SjAg7fFPntfVrj+8v7RvfuZxmrt/+pEmzdJmR13f4Z0Yvtu3u3QLI8Va6z/K+6fkcclFJqEI
-	tLI0/otpE13MhcbZFL3OFo6q8hxqNF76jc48e4QtnJrhhQbOxLHMtHQrMfn+oIerFM1DyIypm43
-	HAE6zDT4A==
-X-Google-Smtp-Source: AGHT+IGKtXEzcTRKcustuNEfSG9GQgq2I5s1vamHi1Jm95rHy6d13FrXiicoayqFzE3hF90bPUJ+gA==
-X-Received: by 2002:a05:690e:4105:b0:645:591a:cb5e with SMTP id 956f58d0204a3-645591accdfmr267163d50.5.1765534356223;
-        Fri, 12 Dec 2025 02:12:36 -0800 (PST)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78e6a46397csm3097617b3.53.2025.12.12.02.12.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Dec 2025 02:12:34 -0800 (PST)
-Date: Fri, 12 Dec 2025 02:12:17 -0800 (PST)
-From: Hugh Dickins <hughd@google.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-cc: Hugh Dickins <hughd@google.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-    Christian Brauner <brauner@kernel.org>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, linux-fsdevel@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: 6.19 tmpfs __d_lookup() lockup
-In-Reply-To: <2a102c6d-82d9-2751-cd31-c836b5c739b7@google.com>
-Message-ID: <bed18e79-ab2b-2a8f-0c32-77e6d27e2a05@google.com>
-References: <47e9d03c-7a50-2c7d-247d-36f95a5329ed@google.com> <20251212050225.GD1712166@ZenIV> <20251212053452.GE1712166@ZenIV> <8ab63110-38b2-2188-91c5-909addfc9b23@google.com> <20251212063026.GF1712166@ZenIV>
- <2a102c6d-82d9-2751-cd31-c836b5c739b7@google.com>
+        d=1e100.net; s=20230601; t=1765539900; x=1766144700;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=QV83dHXXsBkhiscI9yTpQIJ6O4fN2KeR0ILbU0KVUa8=;
+        b=aBOFaOEUCEjHJy8osyX18jys3Tg94kGgkYpWCfzunYihx+UgPt9sJgce2yTG1g1lMb
+         acHzepO8OKuspFVaEqETlhJemHxiFb7UW6EFhPHdUJAh1d9FpCtapDJ32smetfeiJnRb
+         hGn5PuHwKn8TXrRdUIKquzDuJWtha47YHLFVLvVsTZi55S9ajql26c08IPH7tGEcdlFp
+         RAdqAhxqpwd8pLgX8tKJBkrRSHCpj20ZkMIvnx5dc35sNiw6rzLvKuQE7F5f6yoBPgZD
+         ILNtzRyW1ilnINnOP8WKIWBUPsTZ0jp183YDfa3srmuhbfe2fweRas9q8uWnHo0CM1Aj
+         g4ag==
+X-Forwarded-Encrypted: i=1; AJvYcCURF6KwHoLzsVwRmJnoLDQXZfGg2np9u+n9kG4r7vbYjDUxj/kaCc5ldbReg/H4suYJouLGEa/qQTOLoa8a@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLEI5SNZNwJHXhlPD+5LiZF0Rr/6M0x1b586orc5wq+gzIupc7
+	NRkrr06BCov9nhhzZRQtNUgLp6QcY2rorPJNNmkyAwXXIOt6B6ng9dFAV/o6JXsrf5iHbA3PlD9
+	j18ySqPScbnAXZj91sYqbnNyUzwkDbCU=
+X-Gm-Gg: AY/fxX7nbSfIFeHaTDbwgEVg/+TYrdfgpJJZ+88XicFSgcK5lo44VQ2v6LKzmhsZoT1
+	69hhGjv1GuZTN1j+eaNgUiowqlQzhW6hfhdAAaVYMzz7bTGa3TIGt6I/96MjXgCV+MotYNLHj1+
+	osfFswhrfuYP5xfQA5sUHLVcawvqzpcwsurreNImhXPlZvDdxcJTUwwT6ZnkMm/Egkbx6TpONcI
+	KyzAsDXGG/bhvwp97ar/7s860NgzyxhdjpSTNtGbsCzdX/n88gdT1wQAUQFxgDVHI59XgY0MyZw
+	ct7ne5NWWFuhEtOribjDL20525U=
+X-Google-Smtp-Source: AGHT+IHch8jgRFFgYhCOhfqTD3mp4Gf1xTO8c6j64YajEsIYIcv7McQHhqZ3IyXoUhUPJSsN5RJzXnmyK646gJh5rxM=
+X-Received: by 2002:aa7:da4e:0:b0:649:aa32:7c0a with SMTP id
+ 4fb4d7f45d1cf-649aa32a55fmr235337a12.13.1765539899674; Fri, 12 Dec 2025
+ 03:44:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20251209075347.31161-1-tianjia.zhang@linux.alibaba.com>
+ <dpuld3qyyl6kan2jsigftmuhrqee2htjfmlytvnr55x37wy3eb@jkutc2k4zkfm> <038af1cc-a0f1-46a6-8382-5bca44161aee@linux.alibaba.com>
+In-Reply-To: <038af1cc-a0f1-46a6-8382-5bca44161aee@linux.alibaba.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Fri, 12 Dec 2025 12:44:47 +0100
+X-Gm-Features: AQt7F2r3VMyyK5p-_ZMmTrPlXfaRxkUPJYgU4M1-m5irAJmv-HOxFCuipIj12PY
+Message-ID: <CAGudoHH7PGSPiBkpyzJFS_BcPN_tvp7H5d-pdrGn=ueBUW_Nsg@mail.gmail.com>
+Subject: Re: [PATCH] file: Call security_file_alloc() after initializing the filp
+To: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 11 Dec 2025, Hugh Dickins wrote:
-> On Fri, 12 Dec 2025, Al Viro wrote:
-> > 
-> > A few more things to check:
-> > 
-> > 1) do we, by any chance, ever see dentry_free() called with
-> > dentry->d_flags & DCACHE_PERSISTENT?
-> 
-> No.
-> 
-> > 
-> > 2) does d_make_persistent() ever call __d_rehash() when called with
-> > dentry->d_sb->s_magic == TMPFS_MAGIC?
-> 
-> Yes, both if shmem_whiteout() does its d_rehash() and if it does not.
-> 
-> > 
-> > 3) is shmem_whiteout() ever called?  If that's the case, could you try
-> > to remove that d_rehash() call in it and see what happens?  Because
-> > that's another place where shmem is playing odd games...
-> 
-> Yes, shmem_whiteout() does get called.
-> 
-> And when I remove that d_rehash() call from it, 269 476 650 and 750
-> complete without locking up.  And when I remove the WARN_ON()s
-> inserted for 2) and 3), then they pass.
-> 
-> You are very much on the right lines!
+On Fri, Dec 12, 2025 at 11:01=E2=80=AFAM tianjia.zhang
+<tianjia.zhang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 12/9/25 4:22 PM, Mateusz Guzik wrote:
+> > On Tue, Dec 09, 2025 at 03:53:47PM +0800, Tianjia Zhang wrote:
+> >> When developing a dedicated LSM module, we need to operate on the
+> >> file object within the LSM function, such as retrieving the path.
+> >> However, in `security_file_alloc()`, the passed-in `filp` is
+> >> only a valid pointer; the content of `filp` is completely
+> >> uninitialized and entirely random, which confuses the LSM function.
+> >>
+> >
+> > I take it you have some underlying routine called by other hooks as wel=
+l
+> > which ends up looking at ->f_path.
+> >
+> > Given that f_path *is not valid* to begin with, memsetted or not, your
+> > file_alloc_security hoook should not be looking at it to begin with.
+> >
+> > So I don't think this patch has merit.
+> >
+>
+> The scenario is as follows: I have hooked all LSM functions and
+> abstracted struct file into an object using higher-level logic. In my
+> handler functions, I need to print the file path of this object for
+> debugging purposes. However, doing so will cause a crash unless I
+> explicitly know that handler in the file_alloc_security context=E2=80=94w=
+hich,
+> in my case, I don't.
+>
 
-Well, more than that: it's exactly the right thing to do, isn't it?
-shmem_mknod() already called d_make_peristent() which called __d_rehash(),
-calling it a second time naturally leads to the __d_lookup() lockup seen.
-And I can't see a place now for shmem_whiteout()'s "Cheat and hash" comment.
+Per my previous e-mail the real bug is that you are accessing a field
+which at the time does not have a legitimate value.
 
-Al, may I please leave you to send in the fix to Christian and/or Linus?
-You may have noticed other things on the way, that you might want to add.
+> Of course, obtaining the path isn't strictly required; I understand that
+> in certain situations=E2=80=94such as during initialization=E2=80=94there=
+ may be no
+> valid path at all. Even so, it would be acceptable if I could reliably
+> determine from filp->f_path that fetching the path is inappropriate. The
+> problem is that, without knowing whether I'm in the file_alloc_security
+> context, I have no reliable way to decide whether it's safe to attempt
+> retrieving the path.
 
-But if your patch resembles the below (which has now passed xfstests
-auto runs on tmpfs), please feel free to add or omit any or all of
+For the sake of argument let's say the patch or an equivalent went in
+and you no longer crash on f_path.
 
-Reported-by: Hugh Dickins <hughd@google.com>
-Acked-by: Hugh Dickins <hughd@google.com>
-Tested-by: Hugh Dickins <hughd@google.com>
+The only legally populated field at the time is f_cred.
 
-Thanks a lot for your very quick resolution!
-Hugh
+Later someone might get an idea to look at other fields and instead of
+crashing get bogus results.
 
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -4023,18 +4023,7 @@ static int shmem_whiteout(struct mnt_idmap *idmap,
- 	error = shmem_mknod(idmap, old_dir, whiteout,
- 			    S_IFCHR | WHITEOUT_MODE, WHITEOUT_DEV);
- 	dput(whiteout);
--	if (error)
--		return error;
--
--	/*
--	 * Cheat and hash the whiteout while the old dentry is still in
--	 * place, instead of playing games with FS_RENAME_DOES_D_MOVE.
--	 *
--	 * d_lookup() will consistently find one of them at this point,
--	 * not sure which one, but that isn't even important.
--	 */
--	d_rehash(whiteout);
--	return 0;
-+	return error;
- }
- 
- /*
+Or to put it differently, it's a design issue in your code. When
+called from a hook where mucking with 'file' is illegal, it needs to
+know to refrain from doing it.
 
