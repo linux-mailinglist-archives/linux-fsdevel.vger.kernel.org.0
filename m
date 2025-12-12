@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-71205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97983CB986D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 19:13:45 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A96CB9864
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 19:13:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 76103308CB63
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 18:13:21 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id AA9873019646
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 18:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3F92F7449;
-	Fri, 12 Dec 2025 18:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC78C2F7ADD;
+	Fri, 12 Dec 2025 18:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AvTD13PT"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="peMHZ0z6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EF42F6579;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE7B2F6587;
 	Fri, 12 Dec 2025 18:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765563196; cv=none; b=nvcwvpBr5RRHO1w904LUt0SyX4JyEN5r6K9FpV9eFrvugMCuRM8Q9XzmE2LpJOroGCQ4Cv30nrM1Zo/57WixLoz6Y9xQfjnrqqga3SM3YOOqmSdZdjup3TEn0KK005OyUTEl4WZ14cwju34Ridtm965rD8wmFLkHOIrB1SGhJnI=
+	t=1765563197; cv=none; b=UI2SEJeA1p6qj8f3JPJMQbv9nzSrD9VR8SlRdI1WCh/r4heVkcaVBknsEJAIk3yKDhSkPZkdyYqoggTLRiM8FTE1FFalv8Pj7lIiQE36/BGE1f87LJFKuPMI7K258DlX7cL59UU3a/xqHNC4sPXQzQ2Qr3MewKZ8ph+FnsnKShU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765563196; c=relaxed/simple;
-	bh=sE1U2JT29IIyaZXGY4gYUCAGTYj8W24heMfIOeCkHnA=;
+	s=arc-20240116; t=1765563197; c=relaxed/simple;
+	bh=HCZNSk0iYumkjmv9C9O/jj9YQkVOTpLW4OoYCTdohds=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nxR0gRQfksG/04AURm4AEL8GhxIlHraO3krU35Yj9U+D0weRl1CSPnG/aWKYJ0mqJZJ5wl6zOHsB1hTV+EBqKSk5qS991LDtLvVgGjQkry6S1t1EBVAxc/hGvRRLxcVGMy65zz7JX0Ij4SDH6DWl+Ph+zht5IMPvYs3xt0/EJiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AvTD13PT; arc=none smtp.client-ip=213.97.179.56
+	 MIME-Version; b=lenLM7P+FUR4b8+gNEXTpbA8uszNGRKRjBqB+KdnKAUQQaPOyBQqbpO8x45a1Er+s8MCWDFrENnFxfXHsarAG+kxXeTXVP7uM/TrzEzFf2qwDGwxYtOKqOYg7+UdOOLw7kmzieBOQqApV2RSk42M2N61TNEA7wewF7/Sn38SGSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=peMHZ0z6; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -35,16 +35,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=Wh/bmeeiRnR220UJ6v12aSATo70mRqQdcfMFQLSOHB4=; b=AvTD13PTmVny7+UU1gZsU0ZPrI
-	1M4yvngLeCzAFkimDh/Wh+mT4zavqujlgPoMdo2zjeDKfMD5LGzLTexNxftu1gyF/P+sdxdTgGhMl
-	Hf1q7FG+uqGzP5+mfk21MEg5Mnl28+UKdodL58LzHvWXNM1SaiI2HhLuB+vUF/lUoI57WONm2oJiC
-	TC2AjAcQPtWtU8je++Q1l65iBIzboyUxcdaPd6/eM389sAeZ0HoELhTx9lZaVkXY/C1FwButns7th
-	oqJMz3Wtlh8eZBa2RF1cPY6s40q0ly3oXYZ8p2hTFwzBiMBwiRCqFdMEMuWAeqFqBjZqf8DqRUVzf
-	oupWD65A==;
+	bh=cJ2i33yjmDs56CHIlM6R8optmQ8CmHwvdBSdgk3g7No=; b=peMHZ0z6+mfSnrYOGuQ13bR6PV
+	XSBTuTL9tTAovPBEYIkYWz7o4QDqU2iVjLXong5bIDgFqc+6uKzwpDJbCq29sMq2qZF3kXNXyvw8c
+	r/qs1oF9yVAy/5rPepvKhjUstqG+TrSLLDIWnAm4ptLvb11kMDEFvsleRkeIs+kXQCsU+su1oC6wA
+	OfTeI4KLY69ZsGth/MkDDwvzCYWwQ+KSe+w87isEzWDag4knbacohEMyxfzgmFowuX+RTyocEBYwm
+	1yKue+tcArDy0Yx6TRUdcyYdgcr32/si59yonrO7LZiyHmauHZIo4sfATmyNVpzWw7kQhx930Ykq1
+	LFTEUOmA==;
 Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
 	by fanzine2.igalia.com with utf8esmtpsa 
 	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vU7dR-00C798-40; Fri, 12 Dec 2025 19:12:57 +0100
+	id 1vU7dR-00C79A-Oa; Fri, 12 Dec 2025 19:12:57 +0100
 From: Luis Henriques <luis@igalia.com>
 To: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Amir Goldstein <amir73il@gmail.com>,
@@ -57,9 +57,9 @@ Cc: Amir Goldstein <amir73il@gmail.com>,
 	Matt Harvey <mharvey@jumptrading.com>,
 	kernel-dev@igalia.com,
 	Luis Henriques <luis@igalia.com>
-Subject: [RFC PATCH v2 1/6] fuse: store index of the variable length argument
-Date: Fri, 12 Dec 2025 18:12:49 +0000
-Message-ID: <20251212181254.59365-2-luis@igalia.com>
+Subject: [RFC PATCH v2 2/6] fuse: move fuse_entry_out structs out of the stack
+Date: Fri, 12 Dec 2025 18:12:50 +0000
+Message-ID: <20251212181254.59365-3-luis@igalia.com>
 In-Reply-To: <20251212181254.59365-1-luis@igalia.com>
 References: <20251212181254.59365-1-luis@igalia.com>
 Precedence: bulk
@@ -70,165 +70,415 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Operations that have a variable length argument assume that it will always
-be the last argument on the list.  This patch allows this assumption to be
-removed by keeping track of the index of variable length argument.
+This patch simply turns all struct fuse_entry_out instances that are
+allocated in the stack into dynamically allocated structs.  This is a
+preparation patch for further changes, including the extra helper function
+used to actually allocate the memory.
+
+Also, remove all the memset()s that are used to zero-out these structures,
+as kzalloc() is being used.
 
 Signed-off-by: Luis Henriques <luis@igalia.com>
 ---
- fs/fuse/cuse.c      | 1 +
- fs/fuse/dev.c       | 4 ++--
- fs/fuse/dir.c       | 1 +
- fs/fuse/file.c      | 1 +
- fs/fuse/fuse_i.h    | 2 ++
- fs/fuse/inode.c     | 1 +
- fs/fuse/ioctl.c     | 1 +
- fs/fuse/virtio_fs.c | 6 +++---
- fs/fuse/xattr.c     | 2 ++
- 9 files changed, 14 insertions(+), 5 deletions(-)
+ fs/fuse/dir.c    | 139 ++++++++++++++++++++++++++++++-----------------
+ fs/fuse/fuse_i.h |   9 +++
+ fs/fuse/inode.c  |  20 +++++--
+ 3 files changed, 114 insertions(+), 54 deletions(-)
 
-diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
-index 28c96961e85d..9d93a3023b19 100644
---- a/fs/fuse/cuse.c
-+++ b/fs/fuse/cuse.c
-@@ -460,6 +460,7 @@ static int cuse_send_init(struct cuse_conn *cc)
- 	ap->args.out_args[0].value = &ia->out;
- 	ap->args.out_args[1].size = CUSE_INIT_INFO_MAX;
- 	ap->args.out_argvar = true;
-+	ap->args.out_argvar = 1;
- 	ap->args.out_pages = true;
- 	ap->num_folios = 1;
- 	ap->folios = &ia->folio;
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 132f38619d70..629e8a043079 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -694,7 +694,7 @@ ssize_t __fuse_simple_request(struct mnt_idmap *idmap,
- 	ret = req->out.h.error;
- 	if (!ret && args->out_argvar) {
- 		BUG_ON(args->out_numargs == 0);
--		ret = args->out_args[args->out_numargs - 1].size;
-+		ret = args->out_args[args->out_argvar_idx].size;
- 	}
- 	fuse_put_request(req);
- 
-@@ -2157,7 +2157,7 @@ int fuse_copy_out_args(struct fuse_copy_state *cs, struct fuse_args *args,
- 	if (reqsize < nbytes || (reqsize > nbytes && !args->out_argvar))
- 		return -EINVAL;
- 	else if (reqsize > nbytes) {
--		struct fuse_arg *lastarg = &args->out_args[args->out_numargs-1];
-+		struct fuse_arg *lastarg = &args->out_args[args->out_argvar_idx];
- 		unsigned diffsize = reqsize - nbytes;
- 
- 		if (diffsize > lastarg->size)
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index ecaec0fea3a1..4dfe964a491c 100644
+index 4dfe964a491c..e3fd5d148741 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -1629,6 +1629,7 @@ static int fuse_readlink_folio(struct inode *inode, struct folio *folio)
- 	ap.args.nodeid = get_node_id(inode);
- 	ap.args.out_pages = true;
- 	ap.args.out_argvar = true;
-+	ap.args.out_argvar_idx = 0;
- 	ap.args.page_zeroing = true;
- 	ap.args.out_numargs = 1;
- 	ap.args.out_args[0].size = desc.length;
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index f1ef77a0be05..0fef3da1585c 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -581,6 +581,7 @@ void fuse_read_args_fill(struct fuse_io_args *ia, struct file *file, loff_t pos,
- 	args->in_args[0].size = sizeof(ia->read.in);
- 	args->in_args[0].value = &ia->read.in;
- 	args->out_argvar = true;
-+	args->out_argvar_idx = 0;
- 	args->out_numargs = 1;
- 	args->out_args[0].size = count;
- }
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index c2f2a48156d6..a5714bae4c45 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -319,6 +319,8 @@ struct fuse_args {
- 	uint32_t opcode;
- 	uint8_t in_numargs;
- 	uint8_t out_numargs;
-+	/* The index of the variable lenght out arg */
-+	uint8_t out_argvar_idx;
- 	uint8_t ext_idx;
- 	bool force:1;
- 	bool noreply:1;
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index d1babf56f254..8917e5b7a009 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1534,6 +1534,7 @@ static struct fuse_init_args *fuse_new_init(struct fuse_mount *fm)
- 	   with interface version < 7.5.  Rest of init_out is zeroed
- 	   by do_get_request(), so a short reply is not a problem */
- 	ia->args.out_argvar = true;
-+	ia->args.out_argvar_idx = 0;
- 	ia->args.out_args[0].size = sizeof(ia->out);
- 	ia->args.out_args[0].value = &ia->out;
- 	ia->args.force = true;
-diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
-index fdc175e93f74..03a2b321e611 100644
---- a/fs/fuse/ioctl.c
-+++ b/fs/fuse/ioctl.c
-@@ -337,6 +337,7 @@ long fuse_do_ioctl(struct file *file, unsigned int cmd, unsigned long arg,
- 	ap.args.out_args[1].size = out_size;
- 	ap.args.out_pages = true;
- 	ap.args.out_argvar = true;
-+	ap.args.out_argvar_idx = 1;
+@@ -172,7 +172,6 @@ static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
+ 			     u64 nodeid, const struct qstr *name,
+ 			     struct fuse_entry_out *outarg)
+ {
+-	memset(outarg, 0, sizeof(struct fuse_entry_out));
+ 	args->opcode = FUSE_LOOKUP;
+ 	args->nodeid = nodeid;
+ 	args->in_numargs = 3;
+@@ -213,7 +212,7 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
+ 		goto invalid;
+ 	else if (time_before64(fuse_dentry_time(entry), get_jiffies_64()) ||
+ 		 (flags & (LOOKUP_EXCL | LOOKUP_REVAL | LOOKUP_RENAME_TARGET))) {
+-		struct fuse_entry_out outarg;
++		struct fuse_entry_out *outarg;
+ 		FUSE_ARGS(args);
+ 		struct fuse_forget_link *forget;
+ 		u64 attr_version;
+@@ -233,20 +232,27 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
+ 		if (!forget)
+ 			goto out;
  
- 	transferred = fuse_send_ioctl(fm, &ap.args, &outarg);
- 	err = transferred;
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index b2f6486fe1d5..26fb9c29f935 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -738,7 +738,7 @@ static void copy_args_from_argbuf(struct fuse_args *args, struct fuse_req *req)
- 		unsigned int argsize = args->out_args[i].size;
++		outarg = fuse_entry_out_alloc(fc);
++		if (!outarg) {
++			kfree(forget);
++			goto out;
++		}
++
+ 		attr_version = fuse_get_attr_version(fm->fc);
  
- 		if (args->out_argvar &&
--		    i == args->out_numargs - 1 &&
-+		    i == args->out_argvar_idx &&
- 		    argsize > remaining) {
- 			argsize = remaining;
+ 		fuse_lookup_init(fm->fc, &args, get_node_id(dir),
+-				 name, &outarg);
++				 name, outarg);
+ 		ret = fuse_simple_request(fm, &args);
+ 		/* Zero nodeid is same as -ENOENT */
+-		if (!ret && !outarg.nodeid)
++		if (!ret && !outarg->nodeid)
+ 			ret = -ENOENT;
+ 		if (!ret) {
+ 			fi = get_fuse_inode(inode);
+-			if (outarg.nodeid != get_node_id(inode) ||
+-			    (bool) IS_AUTOMOUNT(inode) != (bool) (outarg.attr.flags & FUSE_ATTR_SUBMOUNT)) {
++			if (outarg->nodeid != get_node_id(inode) ||
++			    (bool) IS_AUTOMOUNT(inode) != (bool) (outarg->attr.flags & FUSE_ATTR_SUBMOUNT)) {
+ 				fuse_queue_forget(fm->fc, forget,
+-						  outarg.nodeid, 1);
++						  outarg->nodeid, 1);
++				kfree(outarg);
+ 				goto invalid;
+ 			}
+ 			spin_lock(&fi->lock);
+@@ -254,17 +260,22 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
+ 			spin_unlock(&fi->lock);
  		}
-@@ -746,13 +746,13 @@ static void copy_args_from_argbuf(struct fuse_args *args, struct fuse_req *req)
- 		memcpy(args->out_args[i].value, req->argbuf + offset, argsize);
- 		offset += argsize;
+ 		kfree(forget);
+-		if (ret == -ENOMEM || ret == -EINTR)
++		if (ret == -ENOMEM || ret == -EINTR) {
++			kfree(outarg);
+ 			goto out;
+-		if (ret || fuse_invalid_attr(&outarg.attr) ||
+-		    fuse_stale_inode(inode, outarg.generation, &outarg.attr))
++		}
++		if (ret || fuse_invalid_attr(&outarg->attr) ||
++		    fuse_stale_inode(inode, outarg->generation, &outarg->attr)) {
++			kfree(outarg);
+ 			goto invalid;
++		}
  
--		if (i != args->out_numargs - 1)
-+		if (i != args->out_argvar_idx)
- 			remaining -= argsize;
+ 		forget_all_cached_acls(inode);
+-		fuse_change_attributes(inode, &outarg.attr, NULL,
+-				       ATTR_TIMEOUT(&outarg),
++		fuse_change_attributes(inode, &outarg->attr, NULL,
++				       ATTR_TIMEOUT(outarg),
+ 				       attr_version);
+-		fuse_change_entry_timeout(entry, &outarg);
++		fuse_change_entry_timeout(entry, outarg);
++		kfree(outarg);
+ 	} else if (inode) {
+ 		fi = get_fuse_inode(inode);
+ 		if (flags & LOOKUP_RCU) {
+@@ -410,7 +421,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
+ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
+ 				  unsigned int flags)
+ {
+-	struct fuse_entry_out outarg;
++	struct fuse_entry_out *outarg;
+ 	struct fuse_conn *fc;
+ 	struct inode *inode;
+ 	struct dentry *newent;
+@@ -424,9 +435,13 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
+ 	fc = get_fuse_conn_super(dir->i_sb);
+ 	epoch = atomic_read(&fc->epoch);
+ 
++	outarg = fuse_entry_out_alloc(fc);
++	if (!outarg)
++		return ERR_PTR(-ENOMEM);
++
+ 	locked = fuse_lock_inode(dir);
+ 	err = fuse_lookup_name(dir->i_sb, get_node_id(dir), &entry->d_name,
+-			       &outarg, &inode);
++			       outarg, &inode);
+ 	fuse_unlock_inode(dir, locked);
+ 	if (err == -ENOENT) {
+ 		outarg_valid = false;
+@@ -447,17 +462,21 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
+ 	entry = newent ? newent : entry;
+ 	entry->d_time = epoch;
+ 	if (outarg_valid)
+-		fuse_change_entry_timeout(entry, &outarg);
++		fuse_change_entry_timeout(entry, outarg);
+ 	else
+ 		fuse_invalidate_entry_cache(entry);
+ 
+ 	if (inode)
+ 		fuse_advise_use_readdirplus(dir);
++
++	kfree(outarg);
++
+ 	return newent;
+ 
+- out_iput:
++out_iput:
+ 	iput(inode);
+- out_err:
++out_err:
++	kfree(outarg);
+ 	return ERR_PTR(err);
+ }
+ 
+@@ -625,7 +644,7 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
+ 	struct fuse_forget_link *forget;
+ 	struct fuse_create_in inarg;
+ 	struct fuse_open_out *outopenp;
+-	struct fuse_entry_out outentry;
++	struct fuse_entry_out *outentry;
+ 	struct fuse_inode *fi;
+ 	struct fuse_file *ff;
+ 	int epoch, err;
+@@ -640,17 +659,19 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (!forget)
+ 		goto out_err;
+ 
+-	err = -ENOMEM;
+ 	ff = fuse_file_alloc(fm, true);
+ 	if (!ff)
+ 		goto out_put_forget_req;
+ 
++	outentry = fuse_entry_out_alloc(fm->fc);
++	if (!outentry)
++		goto out_free_ff;
++
+ 	if (!fm->fc->dont_mask)
+ 		mode &= ~current_umask();
+ 
+ 	flags &= ~O_NOCTTY;
+ 	memset(&inarg, 0, sizeof(inarg));
+-	memset(&outentry, 0, sizeof(outentry));
+ 	inarg.flags = flags;
+ 	inarg.mode = mode;
+ 	inarg.umask = current_umask();
+@@ -668,8 +689,8 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
+ 	args.in_args[1].size = entry->d_name.len + 1;
+ 	args.in_args[1].value = entry->d_name.name;
+ 	args.out_numargs = 2;
+-	args.out_args[0].size = sizeof(outentry);
+-	args.out_args[0].value = &outentry;
++	args.out_args[0].size = sizeof(*outentry);
++	args.out_args[0].value = outentry;
+ 	/* Store outarg for fuse_finish_open() */
+ 	outopenp = &ff->args->open_outarg;
+ 	args.out_args[1].size = sizeof(*outopenp);
+@@ -677,34 +698,35 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
+ 
+ 	err = get_create_ext(idmap, &args, dir, entry, mode);
+ 	if (err)
+-		goto out_free_ff;
++		goto out_free_outentry;
+ 
+ 	err = fuse_simple_idmap_request(idmap, fm, &args);
+ 	free_ext_value(&args);
+ 	if (err)
+-		goto out_free_ff;
++		goto out_free_outentry;
+ 
+ 	err = -EIO;
+-	if (!S_ISREG(outentry.attr.mode) || invalid_nodeid(outentry.nodeid) ||
+-	    fuse_invalid_attr(&outentry.attr))
+-		goto out_free_ff;
++	if (!S_ISREG(outentry->attr.mode) || invalid_nodeid(outentry->nodeid) ||
++	    fuse_invalid_attr(&outentry->attr))
++		goto out_free_outentry;
+ 
+ 	ff->fh = outopenp->fh;
+-	ff->nodeid = outentry.nodeid;
++	ff->nodeid = outentry->nodeid;
+ 	ff->open_flags = outopenp->open_flags;
+-	inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
+-			  &outentry.attr, ATTR_TIMEOUT(&outentry), 0, 0);
++	inode = fuse_iget(dir->i_sb, outentry->nodeid, outentry->generation,
++			  &outentry->attr, ATTR_TIMEOUT(outentry), 0, 0);
+ 	if (!inode) {
+ 		flags &= ~(O_CREAT | O_EXCL | O_TRUNC);
+ 		fuse_sync_release(NULL, ff, flags);
+-		fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
++		fuse_queue_forget(fm->fc, forget, outentry->nodeid, 1);
+ 		err = -ENOMEM;
++		kfree(outentry);
+ 		goto out_err;
+ 	}
+ 	kfree(forget);
+ 	d_instantiate(entry, inode);
+ 	entry->d_time = epoch;
+-	fuse_change_entry_timeout(entry, &outentry);
++	fuse_change_entry_timeout(entry, outentry);
+ 	fuse_dir_changed(dir);
+ 	err = generic_file_open(inode, file);
+ 	if (!err) {
+@@ -720,8 +742,13 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
+ 		else if (!(ff->open_flags & FOPEN_KEEP_CACHE))
+ 			invalidate_inode_pages2(inode->i_mapping);
+ 	}
++
++	kfree(outentry);
++
+ 	return err;
+ 
++out_free_outentry:
++	kfree(outentry);
+ out_free_ff:
+ 	fuse_file_free(ff);
+ out_put_forget_req:
+@@ -780,7 +807,7 @@ static struct dentry *create_new_entry(struct mnt_idmap *idmap, struct fuse_moun
+ 				       struct fuse_args *args, struct inode *dir,
+ 				       struct dentry *entry, umode_t mode)
+ {
+-	struct fuse_entry_out outarg;
++	struct fuse_entry_out *outarg;
+ 	struct inode *inode;
+ 	struct dentry *d;
+ 	struct fuse_forget_link *forget;
+@@ -795,54 +822,66 @@ static struct dentry *create_new_entry(struct mnt_idmap *idmap, struct fuse_moun
+ 	if (!forget)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	memset(&outarg, 0, sizeof(outarg));
++	outarg = fuse_entry_out_alloc(fm->fc);
++	if (!outarg) {
++		err = -ENOMEM;
++		goto out_put_forget_req;
++	}
++
+ 	args->nodeid = get_node_id(dir);
+ 	args->out_numargs = 1;
+-	args->out_args[0].size = sizeof(outarg);
+-	args->out_args[0].value = &outarg;
++	args->out_args[0].size = sizeof(*outarg);
++	args->out_args[0].value = outarg;
+ 
+ 	if (args->opcode != FUSE_LINK) {
+ 		err = get_create_ext(idmap, args, dir, entry, mode);
+ 		if (err)
+-			goto out_put_forget_req;
++			goto out_free_outarg;
  	}
  
- 	/* Store the actual size of the variable-length arg */
- 	if (args->out_argvar)
--		args->out_args[args->out_numargs - 1].size = remaining;
-+		args->out_args[args->out_argvar_idx].size = remaining;
+ 	err = fuse_simple_idmap_request(idmap, fm, args);
+ 	free_ext_value(args);
+ 	if (err)
+-		goto out_put_forget_req;
++		goto out_free_outarg;
  
- 	kfree(req->argbuf);
- 	req->argbuf = NULL;
-diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
-index 93dfb06b6cea..f123446fe537 100644
---- a/fs/fuse/xattr.c
-+++ b/fs/fuse/xattr.c
-@@ -73,6 +73,7 @@ ssize_t fuse_getxattr(struct inode *inode, const char *name, void *value,
- 	args.out_numargs = 1;
- 	if (size) {
- 		args.out_argvar = true;
-+		args.out_argvar_idx = 0;
- 		args.out_args[0].size = size;
- 		args.out_args[0].value = value;
+ 	err = -EIO;
+-	if (invalid_nodeid(outarg.nodeid) || fuse_invalid_attr(&outarg.attr))
+-		goto out_put_forget_req;
++	if (invalid_nodeid(outarg->nodeid) || fuse_invalid_attr(&outarg->attr))
++		goto out_free_outarg;
+ 
+-	if ((outarg.attr.mode ^ mode) & S_IFMT)
+-		goto out_put_forget_req;
++	if ((outarg->attr.mode ^ mode) & S_IFMT)
++		goto out_free_outarg;
+ 
+-	inode = fuse_iget(dir->i_sb, outarg.nodeid, outarg.generation,
+-			  &outarg.attr, ATTR_TIMEOUT(&outarg), 0, 0);
++	inode = fuse_iget(dir->i_sb, outarg->nodeid, outarg->generation,
++			  &outarg->attr, ATTR_TIMEOUT(outarg), 0, 0);
+ 	if (!inode) {
+-		fuse_queue_forget(fm->fc, forget, outarg.nodeid, 1);
++		fuse_queue_forget(fm->fc, forget, outarg->nodeid, 1);
++		kfree(outarg);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 	kfree(forget);
+ 
+ 	d_drop(entry);
+ 	d = d_splice_alias(inode, entry);
+-	if (IS_ERR(d))
++	if (IS_ERR(d)) {
++		kfree(outarg);
+ 		return d;
++	}
+ 
+ 	if (d) {
+ 		d->d_time = epoch;
+-		fuse_change_entry_timeout(d, &outarg);
++		fuse_change_entry_timeout(d, outarg);
  	} else {
-@@ -135,6 +136,7 @@ ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size)
- 	args.out_numargs = 1;
- 	if (size) {
- 		args.out_argvar = true;
-+		args.out_argvar_idx = 0;
- 		args.out_args[0].size = size;
- 		args.out_args[0].value = list;
- 	} else {
+ 		entry->d_time = epoch;
+-		fuse_change_entry_timeout(entry, &outarg);
++		fuse_change_entry_timeout(entry, outarg);
+ 	}
+ 	fuse_dir_changed(dir);
++	kfree(outarg);
++
+ 	return d;
+ 
+- out_put_forget_req:
++out_free_outarg:
++	kfree(outarg);
++out_put_forget_req:
+ 	if (err == -EEXIST)
+ 		fuse_invalidate_entry(entry);
+ 	kfree(forget);
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index a5714bae4c45..1792ee6f5da6 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -1090,6 +1090,15 @@ static inline bool fuse_is_bad(struct inode *inode)
+ 	return unlikely(test_bit(FUSE_I_BAD, &get_fuse_inode(inode)->state));
+ }
+ 
++static inline struct fuse_entry_out *fuse_entry_out_alloc(struct fuse_conn *fc)
++{
++	struct fuse_entry_out *entryout;
++
++	entryout = kzalloc(sizeof(*entryout), GFP_KERNEL_ACCOUNT);
++
++	return entryout;
++}
++
+ static inline struct folio **fuse_folios_alloc(unsigned int nfolios, gfp_t flags,
+ 					       struct fuse_folio_desc **desc)
+ {
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 8917e5b7a009..ef63300c634f 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1080,14 +1080,21 @@ static struct dentry *fuse_get_dentry(struct super_block *sb,
+ 
+ 	inode = ilookup5(sb, handle->nodeid, fuse_inode_eq, &handle->nodeid);
+ 	if (!inode) {
+-		struct fuse_entry_out outarg;
++		struct fuse_entry_out *outarg;
+ 		const struct qstr name = QSTR_INIT(".", 1);
+ 
+ 		if (!fc->export_support)
+ 			goto out_err;
+ 
+-		err = fuse_lookup_name(sb, handle->nodeid, &name, &outarg,
++		outarg = fuse_entry_out_alloc(fc);
++		if (!outarg) {
++			err = -ENOMEM;
++			goto out_err;
++		}
++
++		err = fuse_lookup_name(sb, handle->nodeid, &name, outarg,
+ 				       &inode);
++		kfree(outarg);
+ 		if (err && err != -ENOENT)
+ 			goto out_err;
+ 		if (err || !inode) {
+@@ -1181,14 +1188,19 @@ static struct dentry *fuse_get_parent(struct dentry *child)
+ 	struct fuse_conn *fc = get_fuse_conn(child_inode);
+ 	struct inode *inode;
+ 	struct dentry *parent;
+-	struct fuse_entry_out outarg;
++	struct fuse_entry_out *outarg;
+ 	int err;
+ 
+ 	if (!fc->export_support)
+ 		return ERR_PTR(-ESTALE);
+ 
++	outarg = fuse_entry_out_alloc(fc);
++	if (!outarg)
++		return ERR_PTR(-ENOMEM);
++
+ 	err = fuse_lookup_name(child_inode->i_sb, get_node_id(child_inode),
+-			       &dotdot_name, &outarg, &inode);
++			       &dotdot_name, outarg, &inode);
++	kfree(outarg);
+ 	if (err) {
+ 		if (err == -ENOENT)
+ 			return ERR_PTR(-ESTALE);
 
