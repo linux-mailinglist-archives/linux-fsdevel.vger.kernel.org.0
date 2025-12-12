@@ -1,323 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-71203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A3B5CB9856
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 19:13:20 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8ACCB992E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 19:33:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D94793009126
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 18:13:18 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 686593086EA2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 18:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8762F6902;
-	Fri, 12 Dec 2025 18:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D553093A8;
+	Fri, 12 Dec 2025 18:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="scpjwKKT"
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="FSKlyM7e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013E11C860B;
-	Fri, 12 Dec 2025 18:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68543090CA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 18:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765563195; cv=none; b=d6bO++LOTjixgxWC7wBIFjzQMBLdBcRe9n38p1M+PJQDnavuKjM7oaLV1tKIXQFtxNyQ2JJhc4kNV8PTzdSDfGlHRRlLHFEqMCaRn4ra7x9/x9G/7G56B6TX5vkVByzdYSVfX0HuHR89SxDnY8AlZzm5I8PFR5cm5oZn22k4SpI=
+	t=1765564403; cv=none; b=cZ4/9mdyyznY39C1YAB4iVHdvsn6wZjUJPhOC/kAQe8Ot2RJjYz+FqhDVQRDzE//SaFgYmVGE6fIGFR0RdZ0IqPrEQ108dG3WLagXPMsdYmaSX0Olh3cNB0Krti7IZ0/tuflpgtNYeWSVS6B230YyuLH5peTpM+vnturVhEkxvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765563195; c=relaxed/simple;
-	bh=QgPc7rTiFtExsyCw6e54RWJk8iRZfxNb4KhYrBVHGXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HTgmSSfqKxnwY+5KOxBebhQKqcwDr69lyrXYB3x5envlY25c3Anufn0fSkk16a/w2HIiPhcLpsAXhUUC20cZ9wugjmTEZZD2+or4JiH+3jACMfSGFB24k6Zzyictwtxlcb7nFu6/XCzyvO15Qn35mLUkkohGDqmyG4bHJFmaRyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=scpjwKKT; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=bzHcDz2DUIi7I/EbwBbO3JlJ8/P5L8jnGcFP6eoP2ug=; b=scpjwKKTSzBjQ/i1xsHvQnUQEW
-	q03/af846pzOfF602y6O/y74+1LEHSx0LUZpNJwT4LXMK9AL+YEXy2YvU0a4NFz9CPiV4pgAWBGWM
-	pm+7voaKlQ2OzevL9o7eUwXyBmGTMqPPBVFO8DtXw4Qcs7NoDiZCImaoab65+6xFoHUtWKGDjz3J7
-	GVSjplRFjAmC8C1EQEghFlXuX6EC5p+P4ES348z1gsWgIVa9B8uFT+9IyXgdfp27G+cmeu3Lv/apC
-	r5byNOaCKDtnAJt9pXvopgRlIaVAwqkDQF4nhpjGJnZDUhd58fxd61XDV1ZQYBKY+Jy5/cgI9MPuF
-	3ulRn6Bg==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vU7dU-00C79U-4N; Fri, 12 Dec 2025 19:13:00 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Bernd Schubert <bschubert@ddn.com>,
-	Kevin Chen <kchen@ddn.com>,
-	Horst Birthelmer <hbirthelmer@ddn.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Matt Harvey <mharvey@jumptrading.com>,
-	kernel-dev@igalia.com,
-	Luis Henriques <luis@igalia.com>
-Subject: [RFC PATCH v2 6/6] fuse: implementation of export_operations with FUSE_LOOKUP_HANDLE
-Date: Fri, 12 Dec 2025 18:12:54 +0000
-Message-ID: <20251212181254.59365-7-luis@igalia.com>
-In-Reply-To: <20251212181254.59365-1-luis@igalia.com>
-References: <20251212181254.59365-1-luis@igalia.com>
+	s=arc-20240116; t=1765564403; c=relaxed/simple;
+	bh=v8LGo5rep+oNiHljlHrcb1/qPP3q5ouQwFXofTc8V8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZL71uPss7tTGOJDHAmCymjXqbiSwM3ZmyA0OA0/lIPa5ZOLwdGd6e48SR5u3ZtJbu6HoJAOl99dMoR6GX1VmVplLfq8xd6qBDnqEXXT0gDof6yREAbtyrfrYoAMOAmkDa5mfI8aWck0rPgopf5QIHUFWlXlp+iOGHBUdaLw8/uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=FSKlyM7e; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-29f1bc40b35so17297835ad.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 10:33:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1765564401; x=1766169201; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eUSGmEJqTzYByGnUlGU1GkRTgZG6xNYZQ+XlXEoFmO0=;
+        b=FSKlyM7eSovvmr5cj3Hu93OFhDLQSJZWqkQ3xqj/yrR8BnMb4QZW8ArYGL+QIEeDLa
+         meBncfDWtcrvqRkgIYrSzSAnW4JcmFxZnuuCZuysf2HN5I63zIFyy5mUQGIPsJ7qOcjM
+         5Oi1AFHY8QS+1yGNUzFcR1k0oXNA1hjSu3RbCdG6d0XHg1Z7LYCWmB+fCWDA10KVMyzF
+         JvTS5XbYQZ8qdZEu4mQqoo6mBGvuKZ/M6eWiCRd8h5xG/mDVZMyvJ+wRF1LAkmnqq3xI
+         GCoFNKwjXxXdqUgutKTzFoBpsK3oDgdyriyYdIa2dTmqMucgVcvy2qeySSy/xL2EsNJ4
+         kGKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765564401; x=1766169201;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eUSGmEJqTzYByGnUlGU1GkRTgZG6xNYZQ+XlXEoFmO0=;
+        b=qd+2jA5qXBjJHSJrQFKHFFykPTEDEIINY9iQA5I7jr+P8OVCgGE01fOzYWXkuQLKrg
+         V2rmRzuaAgxeJZpBUI09nrD0qhaOQo17ZcNwuvi9PMy60ClU5PuNLdP/dfuQ/vG61vR6
+         sXmYu8cTgAhC5/tUdW2LqBwPr2nJUrm259D20Sn+TemU8BN1xjpaXzzmSfGYWMJkh0Zt
+         XqbtlWcuI6IMqhySN7n71Wl6W4n31nHrCBUOrOxVdEfthxx8qhej7DixXYTe2nGuFdpM
+         ggeleu6HemestXjc9FtfkuiXuW/qmdabJNYM266dQ/d3PboBoHBNpnq9Hi3XEmmfnqnY
+         NB2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXMGLw+QvwQkxTjq9SJ34lgpuJhc3NkbDhsEi5zL4mX3utNBPQNrpSJKfkVkGxAN3XJs7tS8vA4tTj8ONf8@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgBu+AW7YKZaYjVVo3T7ULd0w+OsaCp4FvhF+TAvNFD6ewc6mG
+	Ek05LbspsnFvgR2rHSPFysWatVhhj96s2GYL+1t6y9oy1hB1uGh/GbtXUoNR2HV9AMA=
+X-Gm-Gg: AY/fxX4kMk5alZEoELV2Fc0HZ7hEU6L5rz9CtF9DwLKiMr9fhsJXicZUV5Z+uhfPl3m
+	l6YbIJAXeAsIqfxZH+22hZVBu9l4sRSvn4eP+NvY921SoKAD2/fT4lIni4cSB+qQr6i2I90rC0+
+	BuZZJYRsnFsYl0JrmjndgGjgHvZEhB7QFGGggngl3P6m5tYCArFcj7PPQ1edmVL1xIB7K5CdaLo
+	wY4GHi27pMITZDI8uaBhtf2xKjsLRE41rj2Seh8k5aupZzUhNJJXY5AEsKbHFqqdQY/ceqQdJLM
+	BMgBWGSJHvays70uOaxtc0UTjFvkLBW7ueqGNz1o+Ke9g3pyahRpr/L/TmfjgceW8B+LSwK8iyz
+	nPp/OlbQIn0djm4Lj6nwE/6y1mGeQOpe2U3GiuadJVYj8tjurg7wMzaqZ+IUfFJ2KXaxxAvMo/W
+	OLBZ+CLYXl/Qz/XJ+TZwao
+X-Google-Smtp-Source: AGHT+IFtnl41QfJeu3IJ/uV+L4EiFBX8zP0ux5EampS/J9pJIP4sBjIMESLAF9z1UPcxbBQKr8xzaw==
+X-Received: by 2002:a17:903:22cc:b0:29f:2456:8cde with SMTP id d9443c01a7336-29f245690bdmr29337135ad.4.1765564400511;
+        Fri, 12 Dec 2025 10:33:20 -0800 (PST)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29eea04b7bdsm59970265ad.85.2025.12.12.10.33.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Dec 2025 10:33:20 -0800 (PST)
+Date: Fri, 12 Dec 2025 10:33:16 -0800
+From: Deepak Gupta <debug@rivosinc.com>
+To: Paul Walmsley <pjw@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com,
+	richard.henderson@linaro.org, jim.shu@sifive.com,
+	Andy Chiu <andybnac@gmail.com>, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, broonie@kernel.org,
+	rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org,
+	Zong Li <zong.li@sifive.com>, David Hildenbrand <david@redhat.com>,
+	Andreas Korb <andreas.korb@aisec.fraunhofer.de>,
+	Valentin Haudiquet <valentin.haudiquet@canonical.com>,
+	Charles Mirabile <cmirabil@redhat.com>
+Subject: Re: [PATCH v26 00/28] riscv control-flow integrity for usermode
+Message-ID: <aTxf7IGlkGLgHgI2@debug.ba.rivosinc.com>
+References: <20251211-v5_user_cfi_series-v26-0-f0f419e81ac0@rivosinc.com>
+ <e052745b-6bf0-c2a3-21b2-5ecd8b04ec70@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <e052745b-6bf0-c2a3-21b2-5ecd8b04ec70@kernel.org>
 
-This patch allows the NFS handle to use the new file handle provided by the
-LOOKUP_HANDLE operation.  It still allows the usage of nodeid+generation as
-an handle if this operation is not supported by the FUSE server or if no
-handle is available for a specific inode.  I.e. it can mix both file handle
-types FILEID_INO64_GEN{_PARENT} and FILEID_FUSE_WITH{OUT}_PARENT.
+On Fri, Dec 12, 2025 at 01:30:29AM -0700, Paul Walmsley wrote:
+>On Thu, 11 Dec 2025, Deepak Gupta via B4 Relay wrote:
+>
+>> v26: CONFIG_RISCV_USER_CFI depends on CONFIG_MMU (dependency of shadow stack
+>> on MMU). Used b4 to pick tags, apparantly it messed up some tag picks. Fixing it
+>
+>Deepak: I'm now (at least) the third person to tell you to stop resending
+>this entire series over and over again.
 
-Signed-off-by: Luis Henriques <luis@igalia.com>
----
- fs/fuse/export.c         | 162 ++++++++++++++++++++++++++++++++++++---
- include/linux/exportfs.h |   7 ++
- 2 files changed, 160 insertions(+), 9 deletions(-)
+To be very honest I also feel very bad doing and DOSing the lists. Sorry to you
+and everyone else.
 
-diff --git a/fs/fuse/export.c b/fs/fuse/export.c
-index 4a9c95fe578e..b40d146a32f2 100644
---- a/fs/fuse/export.c
-+++ b/fs/fuse/export.c
-@@ -3,6 +3,7 @@
-  * FUSE NFS export support.
-  *
-  * Copyright (C) 2001-2008  Miklos Szeredi <miklos@szeredi.hu>
-+ * Copyright (C) 2025 Jump Trading LLC, author: Luis Henriques <luis@igalia.com>
-  */
- 
- #include "fuse_i.h"
-@@ -10,7 +11,8 @@
- 
- struct fuse_inode_handle {
- 	u64 nodeid;
--	u32 generation;
-+	u32 generation; /* XXX change to u64, and use fid->i64.ino in encode/decode? */
-+	struct fuse_file_handle fh;
- };
- 
- static struct dentry *fuse_get_dentry(struct super_block *sb,
-@@ -67,8 +69,8 @@ static struct dentry *fuse_get_dentry(struct super_block *sb,
- 	return ERR_PTR(err);
- }
- 
--static int fuse_encode_fh(struct inode *inode, u32 *fh, int *max_len,
--			   struct inode *parent)
-+static int fuse_encode_gen_fh(struct inode *inode, u32 *fh, int *max_len,
-+			      struct inode *parent)
- {
- 	int len = parent ? 6 : 3;
- 	u64 nodeid;
-@@ -96,38 +98,180 @@ static int fuse_encode_fh(struct inode *inode, u32 *fh, int *max_len,
- 	}
- 
- 	*max_len = len;
-+
- 	return parent ? FILEID_INO64_GEN_PARENT : FILEID_INO64_GEN;
- }
- 
--static struct dentry *fuse_fh_to_dentry(struct super_block *sb,
--		struct fid *fid, int fh_len, int fh_type)
-+static int fuse_encode_fuse_fh(struct inode *inode, u32 *fh, int *max_len,
-+			       struct inode *parent)
-+{
-+	struct fuse_inode *fi = get_fuse_inode(inode);
-+	struct fuse_inode *fip = NULL;
-+	struct fuse_inode_handle *handle = (void *)fh;
-+	int type = FILEID_FUSE_WITHOUT_PARENT;
-+	int len, lenp = 0;
-+	int buflen = *max_len << 2; /* max_len: number of words */
-+
-+	len = sizeof(struct fuse_inode_handle) + fi->fh->size;
-+	if (parent) {
-+		fip = get_fuse_inode(parent);
-+		if (fip->fh && fip->fh->size) {
-+			lenp = sizeof(struct fuse_inode_handle) +
-+				fip->fh->size;
-+			type = FILEID_FUSE_WITH_PARENT;
-+		}
-+	}
-+
-+	if (buflen < (len + lenp)) {
-+		*max_len = (len + lenp) >> 2;
-+		return  FILEID_INVALID;
-+	}
-+
-+	handle[0].nodeid = fi->nodeid;
-+	handle[0].generation = inode->i_generation;
-+	memcpy(&handle[0].fh, fi->fh, len);
-+	if (lenp) {
-+		handle[1].nodeid = fip->nodeid;
-+		handle[1].generation = parent->i_generation;
-+		memcpy(&handle[1].fh, fip->fh, lenp);
-+	}
-+
-+	*max_len = (len + lenp) >> 2;
-+
-+	return type;
-+}
-+
-+static int fuse_encode_fh(struct inode *inode, u32 *fh, int *max_len,
-+			   struct inode *parent)
-+{
-+	struct fuse_conn *fc = get_fuse_conn(inode);
-+	struct fuse_inode *fi = get_fuse_inode(inode);
-+
-+	if (fc->lookup_handle && fi->fh && fi->fh->size)
-+		return fuse_encode_fuse_fh(inode, fh, max_len, parent);
-+
-+	return fuse_encode_gen_fh(inode, fh, max_len, parent);
-+}
-+
-+static struct dentry *fuse_fh_gen_to_dentry(struct super_block *sb,
-+					    struct fid *fid, int fh_len)
- {
- 	struct fuse_inode_handle handle;
- 
--	if ((fh_type != FILEID_INO64_GEN &&
--	     fh_type != FILEID_INO64_GEN_PARENT) || fh_len < 3)
-+	if (fh_len < 3)
- 		return NULL;
- 
- 	handle.nodeid = (u64) fid->raw[0] << 32;
- 	handle.nodeid |= (u64) fid->raw[1];
- 	handle.generation = fid->raw[2];
-+
- 	return fuse_get_dentry(sb, &handle);
- }
- 
--static struct dentry *fuse_fh_to_parent(struct super_block *sb,
-+static struct dentry *fuse_fh_fuse_to_dentry(struct super_block *sb,
-+					     struct fid *fid, int fh_len)
-+{
-+	struct fuse_inode_handle *handle;
-+	struct dentry *dentry;
-+	int len = sizeof(struct fuse_file_handle);
-+
-+	handle = (void *)fid;
-+	len += handle->fh.size;
-+
-+	if ((fh_len << 2) < len)
-+		return NULL;
-+
-+	handle = kzalloc(len, GFP_KERNEL);
-+	if (!handle)
-+		return NULL;
-+
-+	memcpy(handle, fid, len);
-+
-+	dentry = fuse_get_dentry(sb, handle);
-+	kfree(handle);
-+
-+	return dentry;
-+}
-+
-+static struct dentry *fuse_fh_to_dentry(struct super_block *sb,
- 		struct fid *fid, int fh_len, int fh_type)
-+{
-+	switch (fh_type) {
-+	case FILEID_INO64_GEN:
-+	case FILEID_INO64_GEN_PARENT:
-+		return fuse_fh_gen_to_dentry(sb, fid, fh_len);
-+	case FILEID_FUSE_WITHOUT_PARENT:
-+	case FILEID_FUSE_WITH_PARENT:
-+		return fuse_fh_fuse_to_dentry(sb, fid, fh_len);
-+	}
-+
-+	return NULL;
-+
-+}
-+
-+static struct dentry *fuse_fh_gen_to_parent(struct super_block *sb,
-+					    struct fid *fid, int fh_len)
- {
- 	struct fuse_inode_handle parent;
- 
--	if (fh_type != FILEID_INO64_GEN_PARENT || fh_len < 6)
-+	if (fh_len < 6)
- 		return NULL;
- 
- 	parent.nodeid = (u64) fid->raw[3] << 32;
- 	parent.nodeid |= (u64) fid->raw[4];
- 	parent.generation = fid->raw[5];
-+
- 	return fuse_get_dentry(sb, &parent);
- }
- 
-+static struct dentry *fuse_fh_fuse_to_parent(struct super_block *sb,
-+					     struct fid *fid, int fh_len)
-+{
-+	struct fuse_inode_handle *handle;
-+	struct dentry *dentry;
-+	int total_len;
-+	int len;
-+
-+	handle = (void *)fid;
-+	total_len = len = sizeof(struct fuse_inode_handle) + handle->fh.size;
-+
-+	if ((fh_len << 2) < total_len)
-+		return NULL;
-+
-+	handle = (void *)(fid + len);
-+	len = sizeof(struct fuse_file_handle) + handle->fh.size;
-+	total_len += len;
-+
-+	if ((fh_len << 2) < total_len)
-+		return NULL;
-+	
-+	handle = kzalloc(len, GFP_KERNEL);
-+	if (!handle)
-+		return NULL;
-+
-+	memcpy(handle, fid, len);
-+
-+	dentry = fuse_get_dentry(sb, handle);
-+	kfree(handle);
-+
-+	return dentry;
-+}
-+
-+static struct dentry *fuse_fh_to_parent(struct super_block *sb,
-+		struct fid *fid, int fh_len, int fh_type)
-+{
-+	switch (fh_type) {
-+	case FILEID_INO64_GEN:
-+	case FILEID_INO64_GEN_PARENT:
-+		return fuse_fh_gen_to_parent(sb, fid, fh_len);
-+	case FILEID_FUSE_WITHOUT_PARENT:
-+	case FILEID_FUSE_WITH_PARENT:
-+		return fuse_fh_fuse_to_parent(sb, fid, fh_len);
-+	}
-+
-+	return NULL;
-+}
-+
- static struct dentry *fuse_get_parent(struct dentry *child)
- {
- 	struct inode *child_inode = d_inode(child);
-diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-index f0cf2714ec52..db783f6b28bc 100644
---- a/include/linux/exportfs.h
-+++ b/include/linux/exportfs.h
-@@ -110,6 +110,13 @@ enum fid_type {
- 	 */
- 	FILEID_INO64_GEN_PARENT = 0x82,
- 
-+	/*
-+	 * 64 bit nodeid number, 32 bit generation number,
-+	 * variable length handle.
-+	 */
-+	FILEID_FUSE_WITHOUT_PARENT = 0x91,
-+	FILEID_FUSE_WITH_PARENT = 0x92,
-+
- 	/*
- 	 * 128 bit child FID (struct lu_fid)
- 	 * 128 bit parent FID (struct lu_fid)
+But I have been sitting on this patch series for last 3-4 merge windows with
+patches being exactly same/similar. So I have been a little more than desperate
+to get it in.
+
+I really haven't had any meaningful feedback on patch series except stalling
+just before each merge window for reasons which really shouldn't stall its
+merge. Sure that's the nature of open source development and it's maintainer's
+call at the end of the day. And I am new to this. I'll improve.
+
+>
+>First, a modified version of the CFI v23 series was ALREADY SITTING IN
+>LINUX-NEXT.  So there's no reason you should be resending the entire
+>series, UNLESS your intention for me is to drop the entire existing series
+>and wait for another merge window.
+>
+>Second: when someone asks you questions about an individual patch, and you
+>want to answer those questions, it's NOT GOOD for you to resend the entire
+>28 series as the response!  You are DDOSing a bunch of lists and E-mail
+>inboxes.  Just answer the question in a single E-mail.  If you want to
+>update a single patch, just send that one patch.
+
+Noted. I wasn't sure about it. I'll explicitly ask next time if you want me to
+send another one.
+
+>
+>If you don't start paying attention to these rules then people are going
+>to start ignoring you -- at best! -- and it's going to give the entire
+>community a bad reputation.
+
+Even before this, this patch series has been ignored largely. I don't know
+how to get attention. All I wanted was either feedback or get it in. And as I
+said I've been desparate to get it in. Also as I said, I'll improve.
+
+>
+>Please acknowledge that you understand this,
+
+ACKed.
+
+>
+>
+>- Paul
 
