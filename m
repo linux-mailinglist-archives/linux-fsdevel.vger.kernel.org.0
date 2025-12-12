@@ -1,302 +1,328 @@
-Return-Path: <linux-fsdevel+bounces-71168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9057CB767C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 00:43:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC7FCB76FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 01:15:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EF4EE302B759
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Dec 2025 23:42:30 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AF6F3301C97A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 00:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FD8296BC5;
-	Thu, 11 Dec 2025 23:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35458145FE0;
+	Fri, 12 Dec 2025 00:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eTQTouxW"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zcs1yJq3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010041.outbound.protection.outlook.com [52.101.85.41])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885CA265621;
-	Thu, 11 Dec 2025 23:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765496545; cv=fail; b=Q019eI4hR9C74QthQCQW8DxmdYtaJSCJXI+gG7CiJnTp2U04RoG0CA8/FpBvK7/NX1rrBZzWs3UbL8hM2b5aNlAmb7P2zBwX0XgER5sSkZrVDmV5TmgA4shZccm7G46vtyIXD8XQocBiRGs+oJC1lisgVbWrVlSIzLTTjY2cjig=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765496545; c=relaxed/simple;
-	bh=UtJrOdFewvUHvRZFY2LaWkpmJSszTuntHAebCmDUoYE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mYxI2GosCQgAIqSs2VSABX435aec3ING25CFWsViJUcPWQr9h0LAhl1M/zpN6l4+mi8ncMw+nQgXIvoXxR2ULvjKbPDRyv7mP8hB696Ov364IK+51jbyUMsu7fN0+0jbGd4oaUZDOu7YI/gsqM78wTVv3WB1Nm1QlCsS//jlUks=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eTQTouxW; arc=fail smtp.client-ip=52.101.85.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L1VnPqzc5I+YEd6oMW5AUEEbr/mnem1o4CoETi4+Wj4I3exItZ8ZCuGn7knq3DP6p+RnWy46UYDZaobLsgRiSGaM93KReIeJavf6lUQKmFxpd9UdE8AYx0g0cIyQR6B2iYZcF7vliTrp7a6qDHx2WUm9FMdv7AmpYItsZkwVUZEps2s2SdTbNcvXZWxV1n7GoTPSp2Ts8lh7YUvQkKXr2mTMW8R75A8cLKS3LMAwnBSLTLK7WnoMAUTD/tGwMJt4eJNc/c7FsJmZKabO58ZpMZbYWfsIFDTbQh7ixBnodvarpubHaGKNNKOfgTKw3HksLluI5TsWFy+LZ74/pbzztg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t7alWP0pC5DoGy3nXOXcpejy/1P2YfLh1PXADuo9vC0=;
- b=sz1d+T3JPA/CzEmR5PUoZea2Axu+Gz7t3MJEaWIsxmNZMYqp32XEjugEnTfM9rqmJJ8dD8Fx0rOd7ZYDGhbiMqOCCLRF+WCerwKvXx1QJmxnAsKHH3BugXcZ05uqiSPcOkb5AzkoYmSrTmN3OCvrfL+gBk+jkNf+wC04P3rhS6vwPHWvkngj4sMR4rGNxyRulxRcn1Gnytsde5ve5ojvQKLvDiU4jYdkxQsJQpKr7mEntumWzTbRrEAp/pwljoydlfVWcvCQS7RxzShsMUr2GFwud+IaJtQJ63vtDyEA1oGei1fXVMdVCn1GUniYEeVnjfoPFlGCUsMYjIldu6SJQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t7alWP0pC5DoGy3nXOXcpejy/1P2YfLh1PXADuo9vC0=;
- b=eTQTouxWUXLDo1GdN+U3zGXK7Six2IfTw4VmIGrjQZzlcUOWvAO9FbtEOm/Dt5XAkufVNKPSAWH43cyPwPkZsj3U1dldH+wDKlwnRkp25nc+W05oxgGsg8JflaOYgCvGEaU7I+sh9vALkbKH+uXZqEt7kw+xAGh3hyjXw1FQs1Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS4PR12MB9707.namprd12.prod.outlook.com (2603:10b6:8:278::9) by
- DS7PR12MB8321.namprd12.prod.outlook.com (2603:10b6:8:ec::17) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9412.10; Thu, 11 Dec 2025 23:42:19 +0000
-Received: from DS4PR12MB9707.namprd12.prod.outlook.com
- ([fe80::5c6a:7b27:8163:da54]) by DS4PR12MB9707.namprd12.prod.outlook.com
- ([fe80::5c6a:7b27:8163:da54%5]) with mapi id 15.20.9412.005; Thu, 11 Dec 2025
- 23:42:19 +0000
-Message-ID: <c1ddae30-688f-425e-abb0-b0fa55b5f37c@amd.com>
-Date: Thu, 11 Dec 2025 15:42:12 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/9] cxl/region, dax/hmem: Arbitrate Soft Reserved
- ownership with cxl_regions_fully_map()
-To: dan.j.williams@intel.com,
- Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Cc: Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Yazen Ghannam <yazen.ghannam@amd.com>, Dave Jiang <dave.jiang@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>, Matthew Wilcox <willy@infradead.org>,
- Jan Kara <jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>,
- Li Ming <ming.li@zohomail.com>, Jeff Johnson
- <jeff.johnson@oss.qualcomm.com>, Ying Huang <huang.ying.caritas@gmail.com>,
- Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
- Greg KH <gregkh@linuxfoundation.org>,
- Nathan Fontenot <nathan.fontenot@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
- Benjamin Cheatham <benjamin.cheatham@amd.com>,
- Zhijian Li <lizhijian@fujitsu.com>, Borislav Petkov <bp@alien8.de>,
- Ard Biesheuvel <ardb@kernel.org>
-References: <20251120031925.87762-1-Smita.KoralahalliChannabasappa@amd.com>
- <20251120031925.87762-6-Smita.KoralahalliChannabasappa@amd.com>
- <692fb37395f3e_261c11002e@dwillia2-mobl4.notmuch>
-Content-Language: en-US
-From: "Koralahalli Channabasappa, Smita" <skoralah@amd.com>
-In-Reply-To: <692fb37395f3e_261c11002e@dwillia2-mobl4.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BYAPR06CA0032.namprd06.prod.outlook.com
- (2603:10b6:a03:d4::45) To DS4PR12MB9707.namprd12.prod.outlook.com
- (2603:10b6:8:278::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B75C4F5E0;
+	Fri, 12 Dec 2025 00:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765498500; cv=none; b=EvzZT3mVT8N1sJNnYno9uYvdK+tJH7s+4P8mfaOKHbfmdlmVVjAX5LTGZ7KyfDVCbmAxCH78KmOrGCEF/tBKNpAPD333thrQNqHTLida0c+4D0eb2cq+OBjaxnQVD6+HQPvuKYSGKGZzQGXRUkquRoXsxPQdxmDKgCpFGyUQQcU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765498500; c=relaxed/simple;
+	bh=kuQqKQkaE8GaEKgdJ1tHmUhedZmO3yLm5NEIZrBTN2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TgAeOykhrQ0f0WjCDJ/wNATMKItuQ+pX40ytLiEi6xObQu6geItcDfHauqgMwasM8V+TWSHlXLM1FGDk72COAYwdMCxNfg898x3NmfqVQEUhUw+tM3bBege7WiXu77aq6YIME+yEX07ENjxntKPf+UkMbDF6alBA9cOKcAZODxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zcs1yJq3; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1765498499; x=1797034499;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kuQqKQkaE8GaEKgdJ1tHmUhedZmO3yLm5NEIZrBTN2k=;
+  b=Zcs1yJq3DfnLIgvaqL4HWawLRFdqo/Yok0VE6JrwX6dWAdlm4FB+yDvi
+   7/aMYhbDj1JpaO5iejry2gvjvIC+INpXXm+MIlAl1jBQfsokRVFP7xBOc
+   FeGPKnMYZCxs6N3gU4nLAxjd+lDrcVtsw0Xl90fluhVX9F3Uix6g4Lq2G
+   GLriBe2OpJRA7Zq1kqKTw3ZQvNYrQmUHrQ3ku8i0ULcaFhq8gVIj2Slgz
+   7wblhSDYofXufR5T+Di01hWlS7CF1yWEKC2Bry8AquXE7h3qmKLi1PjiH
+   6KP3LV1pYc727UEDYAuZuQ6bpQy2DlXgiIbWboob6KMSmgSYIMYJduIcX
+   g==;
+X-CSE-ConnectionGUID: rqsPa3OzRweN4dVoOX80TA==
+X-CSE-MsgGUID: oNsIVphBRHOO4ifW8x/1zQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11639"; a="78954372"
+X-IronPort-AV: E=Sophos;i="6.21,141,1763452800"; 
+   d="scan'208";a="78954372"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2025 16:14:58 -0800
+X-CSE-ConnectionGUID: xKzEw5dbRP6/L7p9ygBuaQ==
+X-CSE-MsgGUID: 2tz2Szz4TvywrCnqCXsXsQ==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO d335e3c6db51) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 11 Dec 2025 16:14:55 -0800
+Received: from kbuild by d335e3c6db51 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vTqo9-000000005Dd-0aF5;
+	Fri, 12 Dec 2025 00:14:53 +0000
+Date: Fri, 12 Dec 2025 08:14:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alex Markuze <amarkuze@redhat.com>, ceph-devel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org, amarkuze@redhat.com,
+	vdubeyko@redhat.com
+Subject: Re: [PATCH v3 4/4] ceph: adding CEPH_SUBVOLUME_ID_NONE
+Message-ID: <202512120708.d8OjMmgQ-lkp@intel.com>
+References: <20251203154625.2779153-5-amarkuze@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS4PR12MB9707:EE_|DS7PR12MB8321:EE_
-X-MS-Office365-Filtering-Correlation-Id: 69d8c81d-1c57-4a70-9af2-08de390eec41
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bi9hK3ExQk4zbkl0Q0NzNkE0eVpnbzVrcjAzT0plZ1FSVjJwRE82TDhUN0lV?=
- =?utf-8?B?bG9WV29NOHhVd0ZrcE16TENER3RtZUJLbjNaMXkrYU05OVRGVDMyN3l3M1Z5?=
- =?utf-8?B?VVJDa3hmWXQ5UzBlOFE4TXhuM1R6ZTh3a1NYTHVDRzdQU0RWNUZ4VllFVlA1?=
- =?utf-8?B?bzRqb0xma29RUDRCSDNZRldDN08xZjB2c0JEdnhrY0pkTE0vNDVSaXh2aEpH?=
- =?utf-8?B?a3dJRWRlN3Z4dzEvRnk1ekU1dklFZm5mYm9GQ2Q3UUYvTUV0TFZEMTluVnRk?=
- =?utf-8?B?bXZPVWkwZnN0YkJQbG4xNlBrOGptaDdMTEpyaGZLU3VSVGQrdE5wRzJBb1N1?=
- =?utf-8?B?ejBiWEFZSGJqUlhGMmUvMXZWckloRXRrWUlNWWFFZWp4OFdxNkdYdnErdEZI?=
- =?utf-8?B?U0RZVThoakJmTFFMMmVuN3ltd052T3k4VktSR2xieXZsQVNzcU9hTThHT2cz?=
- =?utf-8?B?MWNFc1EzdGF0clFMdWV1NWU1ZXIxZitUZFY1NzJtT3VULytGd1U3NnpaL205?=
- =?utf-8?B?MzRHb2t2VURBejdLaFpyaUV1WFhuQmxYdmg0aGp2NUZnSzJnU045NThiUEpy?=
- =?utf-8?B?dVJ5YW5ueFRvMDVIbEFySk9vbno5YlZXR1Q1NE9jTndiODdyaHRTcU1CV0hy?=
- =?utf-8?B?NllWNmp2YkNOU2JyY3NmZFF5YXAxMnpJdU1OQU5lUmVZbWxPQ2JibnhxRXdi?=
- =?utf-8?B?QnkzQy9qSTZ3T3dENTZGNC8zNHU0VWlEdlVkYTJKZFdWdUpHZ2FhQWFkTmMw?=
- =?utf-8?B?dEh1YmNzL0RidU4rd01aekJwZnM2cWxkUVNQNlZycHhSbERxSWxHK1hSK0dR?=
- =?utf-8?B?Q242NEtTWXVJTDhmQ2RGNVFSRUNLU1hxdnVUUVlpbjlZelFNMVJ6S2dOVXNY?=
- =?utf-8?B?U2VESktiOE11d0pmTzM2aXRiT1BBOHgyemJUNUJiZTAyVlBhWGpKd2lYajRl?=
- =?utf-8?B?RG8wamNnbGFhbE1JTldmTGlGYkRjU1kvYTM0RGlWdnlXOENCc0VwdC9BS0tt?=
- =?utf-8?B?NTNYa3ZvaEViZkduZFlyc3F2YUJueVJ3RmYwc1dQNFNneTNBZUdXaWQ0WHgr?=
- =?utf-8?B?Mjl2aW54ZHVhaVFBRDdKNk5ZUjRYMDdYVlU5eFpvemNlMzVUOGxndzlOeE55?=
- =?utf-8?B?OWJLR0N3NDNVbWZ4OWRaUUlTZzkvS1RTakQxMzg4YVoydE5ZZCsrM3FlZDFQ?=
- =?utf-8?B?N2luNkM2d2tWNWoweDNCemE4M2FhMDZhT1NaYmhUY0dZRkdTcENnZ1hncmEx?=
- =?utf-8?B?U3UzNG5oN2Z1RGxRZG4wM3MxM2wyS0JPaDA0OW0vTkgycXZzQ1JHK1NsdEpO?=
- =?utf-8?B?aU5mbjhNTFFYbTJIdkwyVTllVFlya2M2V0xHVFB5VXZ4bUpjNWdueCtBMlUx?=
- =?utf-8?B?dGdJM2wvQVRiSEc3dk9lYUlsQ0MxV3B3UFlVZUVnNGdMMmJBRWNFc0hmWkxT?=
- =?utf-8?B?WmZkejRpbTQ4NWkwa3NtWCtMM1Jyck5LRk03V1pYSWdZQnBtUys2NmhJT2NK?=
- =?utf-8?B?OStERmpPK2NranZxbGlDVXpoNmtYRlpCNklpY3BhV3R4NDFrdC91c1R2dks3?=
- =?utf-8?B?YlhkR1dsak1zWXdHUHNRcjkyMlg1amJxY1RKSnBXcEk0UGNhMkVrSmtQQ1NI?=
- =?utf-8?B?YTloLzdabUNkaEpuMjFlbDdwK2RvOUdGYnFLK243MVUvbnk3R1RvZlFkY0Rv?=
- =?utf-8?B?UGJ5MVJZUVQ2VURmNEJvdTExVzF1TE1FWkN1VE94cndVbUNpUzgzZDBUcGhY?=
- =?utf-8?B?K2VDbGFLNmo5cHBaa0xsaVZhdGY0bmRVeTZzM1I0RzFwWXJ4T1FjSTFHVGlJ?=
- =?utf-8?B?UHdXSDA3VzR2QUNiVTBIQ2VEbE9raU9RMnlBYXhPSGoxb2pYZytiVVk4MVNM?=
- =?utf-8?B?eW45aFVndHZKM1dhSEZYZjh5Y2VNa24xRDBpUmJwbyt1M2lVZkV0eDByWVMr?=
- =?utf-8?Q?qmr6LGtsXYl2uojAsNbJp9qF54hHAtjm?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PR12MB9707.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MDVVMTRNUWpCUFRMYWtPUEREblpkeXhUaXE1ZndMNXg0WlRFTVdxQitWbFdk?=
- =?utf-8?B?VDUybXFOQ3h1U2wvSVpRUFRjd0YrMmpyZjRQV0VyWCtIWmwxME5oVkt3SjJK?=
- =?utf-8?B?UHQ0VGovaGpqU1dRbndqMDZaVG0veVJRbE5aemloUE1TUmFaWlRTcWRuSXVQ?=
- =?utf-8?B?bllQb1hKOEZpYXVHcGpsTU9iRG9pT0tENnZ1bnFia00wQUM3ZTlZT2VVOFpv?=
- =?utf-8?B?WnUrMVZtUmNaL3diNjI0UUJWK25VYmEwU0g3VGNVSkVwSGx4ZkJaOTZlS3p5?=
- =?utf-8?B?M294WE5haGxNbmJiMTYvd3dwMHhXeFQ3VndCalBpZ3B0N05OZlhDM0xoN0JG?=
- =?utf-8?B?R1d0MVR2QjdIb3VtcFB0QmdQNldCS3NaZFlnYlZoRGxFK1ppTDZYVHNJSDg3?=
- =?utf-8?B?RWcyUURBNU9aTlFkQU1SZXluQk5maGpsYlNic094RkFWd2FzQXkwbFNTeGpH?=
- =?utf-8?B?ZENPMXdBSE1PaWVTemV2c3k3WDAwQmJsWG9sdFZ4L2VySVlVK1MzWmN2TS9J?=
- =?utf-8?B?ald5bjZWOGJTTlU2Q0lEeFpkSlFFQTZ5bU03NEhuTWNHQXczWndRMXU1UDFB?=
- =?utf-8?B?WFB1TnA5ZGx6Sksxd000QmVBa2pXeG1hN3lHcVA4M3JnNExVem5QZHJhb2Zl?=
- =?utf-8?B?NmFkUlhjSXQxemowNWh1QlhZRVhYUUxzcVp1cmNNYTIweSt6ZHRpSG5xVEJh?=
- =?utf-8?B?NnY4Y0Y5WHVkRjlyQnJoc0FMRWZzdXRIK1EyaVQrc0Z1d3U3U0FCOFNpMTdO?=
- =?utf-8?B?MDNkOUE0S2FMU256NHVyOWpGYlN6dy84RGdLeW9mTkczY1dGdU9XT21KWG9w?=
- =?utf-8?B?eFRFaHEwdzZNK0lxc1A0dXQ5VWdrOEdGck5xbDZrc29PNWpFQVFLYzJwUzVC?=
- =?utf-8?B?SzFtQ0VvRHBSZllFWFBCYnQ0UXBhdmNVTTNyc0ljaCtPdi9RTFE5L0ltVzcz?=
- =?utf-8?B?S0twbEwrV3N1VmRFQlliZkZsMWNOeTVIMWI3SUQ3bnNwYitvTllrUjg4ZHRh?=
- =?utf-8?B?ZGZYWjRnbHZ3YXI3Q0RlOVV1VjRwYWN2M2JiUlZUNkVqa05aNFR3YzNZN2c4?=
- =?utf-8?B?enZVaFZTZHB5S0xwSE42ZEpZekJwOGxFSllvVGtGVnV0aEFmV1NESGFzOCtT?=
- =?utf-8?B?a2ZLT3JzVEFSUFhTbFMybFJ5dnc5SFNnTHRBL3FjVnNydTUrcXRLTkNpS0h3?=
- =?utf-8?B?RVBCcGd4dXlOdTB2UE1SS1NnNk5SLytyRGtaOUdrZ1B6aTZWVTZndDJROC9M?=
- =?utf-8?B?RWhPWG1Lc1BqZXdsalJwTUVINmY4TVBNTlFuTGt4U0Z4dXBuK0RldzlMUXJD?=
- =?utf-8?B?R1FoVVdvYmlTWWhlYnNtOFlpanBJdmRTVEVyYXRvbkFKQnEvQVJYTjZKa2Rk?=
- =?utf-8?B?c1k0SHArb2cwZFZ0VjVxeUxqSW9LUHdMM2ErcUt0cGg0MHpZOU9nNFh1cEZ1?=
- =?utf-8?B?OHhrTmN3TUtCbzc2MzVBYTQyS1kwZDA0REw4SUcrZU5rSXFoaXI0bGlTRi96?=
- =?utf-8?B?dW1naTU1R01DbW5sZVVodW11QSt0bTJtWnF4Uys4cTNmb3RFRlJIMGFobUZL?=
- =?utf-8?B?OTFDVUs3bnU3M1R5YkxmYnA0L0NScnRkTnR6eEE0Nk12WCtsTnZzT3pZTit5?=
- =?utf-8?B?aGlzTVg3dThtUVR4YXRwa2F2cmQ5eFZaQmFHZk9zMTJUTG4rVnJrdUh4NUVu?=
- =?utf-8?B?S3RvTG9HSVkxYWQ0b0VUUDF1VENLcHFSN0hTNGhyQmplVlJiVFZEMWNmVVNJ?=
- =?utf-8?B?Nk1hcjJoZk16ZUF5YXNiNGZtTXlaSXNNNGNvZzNXL0pEbkVDbjNOejI0R0xK?=
- =?utf-8?B?M3F2NGQ2aGdPZHBtdWMrTG5SazhFZW9MeDJrYzBaWEtneXZWSGtTcStsNkRV?=
- =?utf-8?B?MWlCMVY2UFdOdC9QV09ucnZiZDFRT3JVSXFvSFhKNzBwbjJhM2pzcGFPM0tv?=
- =?utf-8?B?NkxOMFpiNDk5MWdJSEp6Q1MyQ0poYWZUK01JYTR2OXJHaDd5eHZiZTNqWjB6?=
- =?utf-8?B?R0dhZlFuZWhMYWVTNUg0T0tMNllEcXloa05wbVVteGxOTEhlOXUwb0hHUFA0?=
- =?utf-8?B?VG1qOFVQb0kxY2JZRDN3TjBSNlVXbW8wQlh5YkJHcHAzdGRmS1RIZU04eWlz?=
- =?utf-8?Q?p5n/OiBqnJ/jEA0KVUMiiziyY?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69d8c81d-1c57-4a70-9af2-08de390eec41
-X-MS-Exchange-CrossTenant-AuthSource: DS4PR12MB9707.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2025 23:42:19.0625
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dyWJqkTSizizobPUiWsxBEAStouEYA3eLDQGhHfavdNpnbPExaDRFGdqqZ8u/fO2dnJ9S93QY03TUu+x4N6pKw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8321
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251203154625.2779153-5-amarkuze@redhat.com>
 
-On 12/2/2025 7:50 PM, dan.j.williams@intel.com wrote:
-> Smita Koralahalli wrote:
->> Introduce cxl_regions_fully_map() to check whether CXL regions form a
->> single contiguous, non-overlapping cover of a given Soft Reserved range.
->>
->> Use this helper to decide whether Soft Reserved memory overlapping CXL
->> regions should be owned by CXL or registered by HMEM.
->>
->> If the span is fully covered by CXL regions, treat the Soft Reserved
->> range as owned by CXL and have HMEM skip registration. Else, let HMEM
->> claim the range and register the corresponding devdax for it.
-> 
-> This all feels a bit too custom when helpers like resource_contains()
-> exist.
-> 
-> Also remember that the default list of soft-reserved ranges that dax
-> grabs is filtered by the ACPI HMAT. So while there is a chance that one
-> EFI memory map entry spans multiple CXL regions, there is a lower chance
-> that a single ACPI HMAT range spans multiple CXL regions.
-> 
-> I think it is fair for Linux to be simple and require that an algorithm
-> of:
-> 
-> cxl_contains_soft_reserve()
->      for_each_cxl_intersecting_hmem_resource()
->          found = false
->          for_each_region()
->             if (resource_contains(cxl_region_resource, hmem_resource))
->                 found = true
->          if (!found)
->              return false
->      return true
-> 
-> ...should be good enough, otherwise fallback to pure hmem operation, and
-> do not worry about the corner cases.
-> 
-> If Linux really needs to understand that ACPI HMAT ranges may span
-> multiple CXL regions then I would want to understand more what is
-> driving that configuration.
+Hi Alex,
 
-I was trying to handle a case like Tomasz's setup in [2], where a single 
-Soft Reserved span and CFMWS cover two CXL regions:
+kernel test robot noticed the following build warnings:
 
-kernel: [    0.000000][    T0] BIOS-e820: [mem 
-0x0000000a90000000-0x0000000c8fffffff] soft reserved
+[auto build test WARNING on ceph-client/for-linus]
+[also build test WARNING on linus/master v6.18 next-20251211]
+[cannot apply to ceph-client/testing]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-a90000000-c8fffffff : CXL Window 0
-   a90000000-b8fffffff : region1
-   b90000000-c8fffffff : region0
+url:    https://github.com/intel-lab-lkp/linux/commits/Alex-Markuze/ceph-handle-InodeStat-v8-versioned-field-in-reply-parsing/20251204-035756
+base:   https://github.com/ceph/ceph-client.git for-linus
+patch link:    https://lore.kernel.org/r/20251203154625.2779153-5-amarkuze%40redhat.com
+patch subject: [PATCH v3 4/4] ceph: adding CEPH_SUBVOLUME_ID_NONE
+config: x86_64-randconfig-101-20251210 (https://download.01.org/0day-ci/archive/20251212/202512120708.d8OjMmgQ-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251212/202512120708.d8OjMmgQ-lkp@intel.com/reproduce)
 
-…so I ended up with the more generic cxl_regions_fully_map() walker. I 
-missed the detail that the HMAT filtered Soft reserved ranges we 
-actually act on are much less likely to span multiple regions, and on 
-AMD platforms we effectively have a 1:1 mapping. Im fine with 
-simplifying this per your suggestion.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512120708.d8OjMmgQ-lkp@intel.com/
 
-> 
-> Btw, I do not see a:
-> 
->      guard(rwsem_read)(&cxl_rwsem.region)
-> 
-> ...anywhere in the proposed patch. That needs to be held be sure the
-> region's resource settings are not changed out from underneath you. This
-> should probably also be checking that the region is in the commit state
-> because it may still be racing regions under creation post
-> wait_for_device_probe().
+All warnings (new ones prefixed by >>):
 
-Sure, I will add this.
+>> fs/ceph/mds_client.c:123:22: warning: unused variable 'cl' [-Wunused-variable]
+     123 |         struct ceph_client *cl = mdsc ? mdsc->fsc->client : NULL;
+         |                             ^~
+   1 warning generated.
 
-> 
->>   void cxl_endpoint_parse_cdat(struct cxl_port *port);
->> diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
->> index f70a0688bd11..db4c46337ac3 100644
->> --- a/drivers/dax/hmem/hmem.c
->> +++ b/drivers/dax/hmem/hmem.c
->> @@ -3,6 +3,8 @@
->>   #include <linux/memregion.h>
->>   #include <linux/module.h>
->>   #include <linux/dax.h>
->> +
->> +#include "../../cxl/cxl.h"
->>   #include "../bus.h"
->>   
->>   static bool region_idle;
->> @@ -150,7 +152,17 @@ static int hmem_register_device(struct device *host, int target_nid,
->>   static int handle_deferred_cxl(struct device *host, int target_nid,
->>   			       const struct resource *res)
->>   {
->> -	/* TODO: Handle region assembly failures */
->> +	if (region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
->> +			      IORES_DESC_CXL) != REGION_DISJOINT) {
->> +
->> +		if (cxl_regions_fully_map(res->start, res->end))
->> +			dax_cxl_mode = DAX_CXL_MODE_DROP;
->> +		else
->> +			dax_cxl_mode = DAX_CXL_MODE_REGISTER;
->> +
->> +		hmem_register_device(host, target_nid, res);
->> +	}
->> +
-> 
-> I think there is enough content to just create the new
-> cxl_contains_soft_reserve() ABI, and then hookup handle_deferred_cxl in
-> a follow-on patch.
 
-Okay.
+vim +/cl +123 fs/ceph/mds_client.c
 
-Thanks
-Smita
+b37fe1f923fb4b Yan, Zheng       2019-01-09  113  
+2f2dc053404feb Sage Weil        2009-10-06  114  static int parse_reply_info_in(void **p, void *end,
+14303d20f3ae3e Sage Weil        2010-12-14  115  			       struct ceph_mds_reply_info_in *info,
+48a90cabed1e21 Alex Markuze     2025-12-03  116  			       u64 features,
+48a90cabed1e21 Alex Markuze     2025-12-03  117  			       struct ceph_mds_client *mdsc)
+2f2dc053404feb Sage Weil        2009-10-06  118  {
+b37fe1f923fb4b Yan, Zheng       2019-01-09  119  	int err = 0;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  120  	u8 struct_v = 0;
+48a90cabed1e21 Alex Markuze     2025-12-03  121  	u8 struct_compat = 0;
+48a90cabed1e21 Alex Markuze     2025-12-03  122  	u32 struct_len = 0;
+48a90cabed1e21 Alex Markuze     2025-12-03 @123  	struct ceph_client *cl = mdsc ? mdsc->fsc->client : NULL;
+48a90cabed1e21 Alex Markuze     2025-12-03  124  
+b5cda3b778d7c2 Alex Markuze     2025-12-03  125  	info->subvolume_id = CEPH_SUBVOLUME_ID_NONE;
+7361b2801d4572 Alex Markuze     2025-12-03  126  
+b37fe1f923fb4b Yan, Zheng       2019-01-09  127  	if (features == (u64)-1) {
+b37fe1f923fb4b Yan, Zheng       2019-01-09  128  		ceph_decode_8_safe(p, end, struct_v, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  129  		ceph_decode_8_safe(p, end, struct_compat, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  130  		/* struct_v is expected to be >= 1. we only understand
+b37fe1f923fb4b Yan, Zheng       2019-01-09  131  		 * encoding with struct_compat == 1. */
+b37fe1f923fb4b Yan, Zheng       2019-01-09  132  		if (!struct_v || struct_compat != 1)
+b37fe1f923fb4b Yan, Zheng       2019-01-09  133  			goto bad;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  134  		ceph_decode_32_safe(p, end, struct_len, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  135  		ceph_decode_need(p, end, struct_len, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  136  		end = *p + struct_len;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  137  	}
+2f2dc053404feb Sage Weil        2009-10-06  138  
+b37fe1f923fb4b Yan, Zheng       2019-01-09  139  	ceph_decode_need(p, end, sizeof(struct ceph_mds_reply_inode), bad);
+2f2dc053404feb Sage Weil        2009-10-06  140  	info->in = *p;
+2f2dc053404feb Sage Weil        2009-10-06  141  	*p += sizeof(struct ceph_mds_reply_inode) +
+2f2dc053404feb Sage Weil        2009-10-06  142  		sizeof(*info->in->fragtree.splits) *
+2f2dc053404feb Sage Weil        2009-10-06  143  		le32_to_cpu(info->in->fragtree.nsplits);
+2f2dc053404feb Sage Weil        2009-10-06  144  
+2f2dc053404feb Sage Weil        2009-10-06  145  	ceph_decode_32_safe(p, end, info->symlink_len, bad);
+2f2dc053404feb Sage Weil        2009-10-06  146  	ceph_decode_need(p, end, info->symlink_len, bad);
+2f2dc053404feb Sage Weil        2009-10-06  147  	info->symlink = *p;
+2f2dc053404feb Sage Weil        2009-10-06  148  	*p += info->symlink_len;
+2f2dc053404feb Sage Weil        2009-10-06  149  
+14303d20f3ae3e Sage Weil        2010-12-14  150  	ceph_decode_copy_safe(p, end, &info->dir_layout,
+14303d20f3ae3e Sage Weil        2010-12-14  151  			      sizeof(info->dir_layout), bad);
+2f2dc053404feb Sage Weil        2009-10-06  152  	ceph_decode_32_safe(p, end, info->xattr_len, bad);
+2f2dc053404feb Sage Weil        2009-10-06  153  	ceph_decode_need(p, end, info->xattr_len, bad);
+2f2dc053404feb Sage Weil        2009-10-06  154  	info->xattr_data = *p;
+2f2dc053404feb Sage Weil        2009-10-06  155  	*p += info->xattr_len;
+fb01d1f8b0343f Yan, Zheng       2014-11-14  156  
+b37fe1f923fb4b Yan, Zheng       2019-01-09  157  	if (features == (u64)-1) {
+b37fe1f923fb4b Yan, Zheng       2019-01-09  158  		/* inline data */
+b37fe1f923fb4b Yan, Zheng       2019-01-09  159  		ceph_decode_64_safe(p, end, info->inline_version, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  160  		ceph_decode_32_safe(p, end, info->inline_len, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  161  		ceph_decode_need(p, end, info->inline_len, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  162  		info->inline_data = *p;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  163  		*p += info->inline_len;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  164  		/* quota */
+b37fe1f923fb4b Yan, Zheng       2019-01-09  165  		err = parse_reply_info_quota(p, end, info);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  166  		if (err < 0)
+b37fe1f923fb4b Yan, Zheng       2019-01-09  167  			goto out_bad;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  168  		/* pool namespace */
+b37fe1f923fb4b Yan, Zheng       2019-01-09  169  		ceph_decode_32_safe(p, end, info->pool_ns_len, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  170  		if (info->pool_ns_len > 0) {
+b37fe1f923fb4b Yan, Zheng       2019-01-09  171  			ceph_decode_need(p, end, info->pool_ns_len, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  172  			info->pool_ns_data = *p;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  173  			*p += info->pool_ns_len;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  174  		}
+245ce991cca55e Jeff Layton      2019-05-29  175  
+245ce991cca55e Jeff Layton      2019-05-29  176  		/* btime */
+245ce991cca55e Jeff Layton      2019-05-29  177  		ceph_decode_need(p, end, sizeof(info->btime), bad);
+245ce991cca55e Jeff Layton      2019-05-29  178  		ceph_decode_copy(p, &info->btime, sizeof(info->btime));
+245ce991cca55e Jeff Layton      2019-05-29  179  
+245ce991cca55e Jeff Layton      2019-05-29  180  		/* change attribute */
+a35ead314e0b92 Jeff Layton      2019-06-06  181  		ceph_decode_64_safe(p, end, info->change_attr, bad);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  182  
+08796873a5183b Yan, Zheng       2019-01-09  183  		/* dir pin */
+08796873a5183b Yan, Zheng       2019-01-09  184  		if (struct_v >= 2) {
+08796873a5183b Yan, Zheng       2019-01-09  185  			ceph_decode_32_safe(p, end, info->dir_pin, bad);
+08796873a5183b Yan, Zheng       2019-01-09  186  		} else {
+08796873a5183b Yan, Zheng       2019-01-09  187  			info->dir_pin = -ENODATA;
+08796873a5183b Yan, Zheng       2019-01-09  188  		}
+08796873a5183b Yan, Zheng       2019-01-09  189  
+193e7b37628e97 David Disseldorp 2019-04-18  190  		/* snapshot birth time, remains zero for v<=2 */
+193e7b37628e97 David Disseldorp 2019-04-18  191  		if (struct_v >= 3) {
+193e7b37628e97 David Disseldorp 2019-04-18  192  			ceph_decode_need(p, end, sizeof(info->snap_btime), bad);
+193e7b37628e97 David Disseldorp 2019-04-18  193  			ceph_decode_copy(p, &info->snap_btime,
+193e7b37628e97 David Disseldorp 2019-04-18  194  					 sizeof(info->snap_btime));
+193e7b37628e97 David Disseldorp 2019-04-18  195  		} else {
+193e7b37628e97 David Disseldorp 2019-04-18  196  			memset(&info->snap_btime, 0, sizeof(info->snap_btime));
+193e7b37628e97 David Disseldorp 2019-04-18  197  		}
+193e7b37628e97 David Disseldorp 2019-04-18  198  
+e7f72952508ac4 Yanhu Cao        2020-08-28  199  		/* snapshot count, remains zero for v<=3 */
+e7f72952508ac4 Yanhu Cao        2020-08-28  200  		if (struct_v >= 4) {
+e7f72952508ac4 Yanhu Cao        2020-08-28  201  			ceph_decode_64_safe(p, end, info->rsnaps, bad);
+e7f72952508ac4 Yanhu Cao        2020-08-28  202  		} else {
+e7f72952508ac4 Yanhu Cao        2020-08-28  203  			info->rsnaps = 0;
+e7f72952508ac4 Yanhu Cao        2020-08-28  204  		}
+e7f72952508ac4 Yanhu Cao        2020-08-28  205  
+2d332d5bc42440 Jeff Layton      2020-07-27  206  		if (struct_v >= 5) {
+2d332d5bc42440 Jeff Layton      2020-07-27  207  			u32 alen;
+2d332d5bc42440 Jeff Layton      2020-07-27  208  
+2d332d5bc42440 Jeff Layton      2020-07-27  209  			ceph_decode_32_safe(p, end, alen, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  210  
+2d332d5bc42440 Jeff Layton      2020-07-27  211  			while (alen--) {
+2d332d5bc42440 Jeff Layton      2020-07-27  212  				u32 len;
+2d332d5bc42440 Jeff Layton      2020-07-27  213  
+2d332d5bc42440 Jeff Layton      2020-07-27  214  				/* key */
+2d332d5bc42440 Jeff Layton      2020-07-27  215  				ceph_decode_32_safe(p, end, len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  216  				ceph_decode_skip_n(p, end, len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  217  				/* value */
+2d332d5bc42440 Jeff Layton      2020-07-27  218  				ceph_decode_32_safe(p, end, len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  219  				ceph_decode_skip_n(p, end, len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  220  			}
+2d332d5bc42440 Jeff Layton      2020-07-27  221  		}
+2d332d5bc42440 Jeff Layton      2020-07-27  222  
+2d332d5bc42440 Jeff Layton      2020-07-27  223  		/* fscrypt flag -- ignore */
+2d332d5bc42440 Jeff Layton      2020-07-27  224  		if (struct_v >= 6)
+2d332d5bc42440 Jeff Layton      2020-07-27  225  			ceph_decode_skip_8(p, end, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  226  
+2d332d5bc42440 Jeff Layton      2020-07-27  227  		info->fscrypt_auth = NULL;
+2d332d5bc42440 Jeff Layton      2020-07-27  228  		info->fscrypt_auth_len = 0;
+2d332d5bc42440 Jeff Layton      2020-07-27  229  		info->fscrypt_file = NULL;
+2d332d5bc42440 Jeff Layton      2020-07-27  230  		info->fscrypt_file_len = 0;
+2d332d5bc42440 Jeff Layton      2020-07-27  231  		if (struct_v >= 7) {
+2d332d5bc42440 Jeff Layton      2020-07-27  232  			ceph_decode_32_safe(p, end, info->fscrypt_auth_len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  233  			if (info->fscrypt_auth_len) {
+2d332d5bc42440 Jeff Layton      2020-07-27  234  				info->fscrypt_auth = kmalloc(info->fscrypt_auth_len,
+2d332d5bc42440 Jeff Layton      2020-07-27  235  							     GFP_KERNEL);
+2d332d5bc42440 Jeff Layton      2020-07-27  236  				if (!info->fscrypt_auth)
+2d332d5bc42440 Jeff Layton      2020-07-27  237  					return -ENOMEM;
+2d332d5bc42440 Jeff Layton      2020-07-27  238  				ceph_decode_copy_safe(p, end, info->fscrypt_auth,
+2d332d5bc42440 Jeff Layton      2020-07-27  239  						      info->fscrypt_auth_len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  240  			}
+2d332d5bc42440 Jeff Layton      2020-07-27  241  			ceph_decode_32_safe(p, end, info->fscrypt_file_len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  242  			if (info->fscrypt_file_len) {
+2d332d5bc42440 Jeff Layton      2020-07-27  243  				info->fscrypt_file = kmalloc(info->fscrypt_file_len,
+2d332d5bc42440 Jeff Layton      2020-07-27  244  							     GFP_KERNEL);
+2d332d5bc42440 Jeff Layton      2020-07-27  245  				if (!info->fscrypt_file)
+2d332d5bc42440 Jeff Layton      2020-07-27  246  					return -ENOMEM;
+2d332d5bc42440 Jeff Layton      2020-07-27  247  				ceph_decode_copy_safe(p, end, info->fscrypt_file,
+2d332d5bc42440 Jeff Layton      2020-07-27  248  						      info->fscrypt_file_len, bad);
+2d332d5bc42440 Jeff Layton      2020-07-27  249  			}
+2d332d5bc42440 Jeff Layton      2020-07-27  250  		}
+e3d0dedf78abdf Alex Markuze     2025-12-03  251  
+e3d0dedf78abdf Alex Markuze     2025-12-03  252  		/*
+e3d0dedf78abdf Alex Markuze     2025-12-03  253  		 * InodeStat encoding versions:
+e3d0dedf78abdf Alex Markuze     2025-12-03  254  		 *   v1-v7: various fields added over time
+e3d0dedf78abdf Alex Markuze     2025-12-03  255  		 *   v8: added optmetadata (versioned sub-structure containing
+e3d0dedf78abdf Alex Markuze     2025-12-03  256  		 *       optional inode metadata like charmap for case-insensitive
+e3d0dedf78abdf Alex Markuze     2025-12-03  257  		 *       filesystems). The kernel client doesn't support
+e3d0dedf78abdf Alex Markuze     2025-12-03  258  		 *       case-insensitive lookups, so we skip this field.
+e3d0dedf78abdf Alex Markuze     2025-12-03  259  		 *   v9: added subvolume_id (parsed below)
+e3d0dedf78abdf Alex Markuze     2025-12-03  260  		 */
+e3d0dedf78abdf Alex Markuze     2025-12-03  261  		if (struct_v >= 8) {
+e3d0dedf78abdf Alex Markuze     2025-12-03  262  			u32 v8_struct_len;
+e3d0dedf78abdf Alex Markuze     2025-12-03  263  
+e3d0dedf78abdf Alex Markuze     2025-12-03  264  			/* skip optmetadata versioned sub-structure */
+e3d0dedf78abdf Alex Markuze     2025-12-03  265  			ceph_decode_skip_8(p, end, bad);  /* struct_v */
+e3d0dedf78abdf Alex Markuze     2025-12-03  266  			ceph_decode_skip_8(p, end, bad);  /* struct_compat */
+e3d0dedf78abdf Alex Markuze     2025-12-03  267  			ceph_decode_32_safe(p, end, v8_struct_len, bad);
+e3d0dedf78abdf Alex Markuze     2025-12-03  268  			ceph_decode_skip_n(p, end, v8_struct_len, bad);
+e3d0dedf78abdf Alex Markuze     2025-12-03  269  		}
+e3d0dedf78abdf Alex Markuze     2025-12-03  270  
+7361b2801d4572 Alex Markuze     2025-12-03  271  		/* struct_v 9 added subvolume_id */
+7361b2801d4572 Alex Markuze     2025-12-03  272  		if (struct_v >= 9)
+7361b2801d4572 Alex Markuze     2025-12-03  273  			ceph_decode_64_safe(p, end, info->subvolume_id, bad);
+7361b2801d4572 Alex Markuze     2025-12-03  274  
+b37fe1f923fb4b Yan, Zheng       2019-01-09  275  		*p = end;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  276  	} else {
+2d332d5bc42440 Jeff Layton      2020-07-27  277  		/* legacy (unversioned) struct */
+fb01d1f8b0343f Yan, Zheng       2014-11-14  278  		if (features & CEPH_FEATURE_MDS_INLINE_DATA) {
+fb01d1f8b0343f Yan, Zheng       2014-11-14  279  			ceph_decode_64_safe(p, end, info->inline_version, bad);
+fb01d1f8b0343f Yan, Zheng       2014-11-14  280  			ceph_decode_32_safe(p, end, info->inline_len, bad);
+fb01d1f8b0343f Yan, Zheng       2014-11-14  281  			ceph_decode_need(p, end, info->inline_len, bad);
+fb01d1f8b0343f Yan, Zheng       2014-11-14  282  			info->inline_data = *p;
+fb01d1f8b0343f Yan, Zheng       2014-11-14  283  			*p += info->inline_len;
+fb01d1f8b0343f Yan, Zheng       2014-11-14  284  		} else
+fb01d1f8b0343f Yan, Zheng       2014-11-14  285  			info->inline_version = CEPH_INLINE_NONE;
+fb01d1f8b0343f Yan, Zheng       2014-11-14  286  
+fb18a57568c2b8 Luis Henriques   2018-01-05  287  		if (features & CEPH_FEATURE_MDS_QUOTA) {
+b37fe1f923fb4b Yan, Zheng       2019-01-09  288  			err = parse_reply_info_quota(p, end, info);
+b37fe1f923fb4b Yan, Zheng       2019-01-09  289  			if (err < 0)
+b37fe1f923fb4b Yan, Zheng       2019-01-09  290  				goto out_bad;
+fb18a57568c2b8 Luis Henriques   2018-01-05  291  		} else {
+fb18a57568c2b8 Luis Henriques   2018-01-05  292  			info->max_bytes = 0;
+fb18a57568c2b8 Luis Henriques   2018-01-05  293  			info->max_files = 0;
+fb18a57568c2b8 Luis Henriques   2018-01-05  294  		}
+fb18a57568c2b8 Luis Henriques   2018-01-05  295  
+779fe0fb8e1883 Yan, Zheng       2016-03-07  296  		info->pool_ns_len = 0;
+779fe0fb8e1883 Yan, Zheng       2016-03-07  297  		info->pool_ns_data = NULL;
+5ea5c5e0a7f70b Yan, Zheng       2016-02-14  298  		if (features & CEPH_FEATURE_FS_FILE_LAYOUT_V2) {
+5ea5c5e0a7f70b Yan, Zheng       2016-02-14  299  			ceph_decode_32_safe(p, end, info->pool_ns_len, bad);
+779fe0fb8e1883 Yan, Zheng       2016-03-07  300  			if (info->pool_ns_len > 0) {
+5ea5c5e0a7f70b Yan, Zheng       2016-02-14  301  				ceph_decode_need(p, end, info->pool_ns_len, bad);
+779fe0fb8e1883 Yan, Zheng       2016-03-07  302  				info->pool_ns_data = *p;
+5ea5c5e0a7f70b Yan, Zheng       2016-02-14  303  				*p += info->pool_ns_len;
+779fe0fb8e1883 Yan, Zheng       2016-03-07  304  			}
+5ea5c5e0a7f70b Yan, Zheng       2016-02-14  305  		}
+08796873a5183b Yan, Zheng       2019-01-09  306  
+245ce991cca55e Jeff Layton      2019-05-29  307  		if (features & CEPH_FEATURE_FS_BTIME) {
+245ce991cca55e Jeff Layton      2019-05-29  308  			ceph_decode_need(p, end, sizeof(info->btime), bad);
+245ce991cca55e Jeff Layton      2019-05-29  309  			ceph_decode_copy(p, &info->btime, sizeof(info->btime));
+a35ead314e0b92 Jeff Layton      2019-06-06  310  			ceph_decode_64_safe(p, end, info->change_attr, bad);
+245ce991cca55e Jeff Layton      2019-05-29  311  		}
+245ce991cca55e Jeff Layton      2019-05-29  312  
+08796873a5183b Yan, Zheng       2019-01-09  313  		info->dir_pin = -ENODATA;
+e7f72952508ac4 Yanhu Cao        2020-08-28  314  		/* info->snap_btime and info->rsnaps remain zero */
+b37fe1f923fb4b Yan, Zheng       2019-01-09  315  	}
+2f2dc053404feb Sage Weil        2009-10-06  316  	return 0;
+2f2dc053404feb Sage Weil        2009-10-06  317  bad:
+b37fe1f923fb4b Yan, Zheng       2019-01-09  318  	err = -EIO;
+b37fe1f923fb4b Yan, Zheng       2019-01-09  319  out_bad:
+2f2dc053404feb Sage Weil        2009-10-06  320  	return err;
+2f2dc053404feb Sage Weil        2009-10-06  321  }
+2f2dc053404feb Sage Weil        2009-10-06  322  
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
