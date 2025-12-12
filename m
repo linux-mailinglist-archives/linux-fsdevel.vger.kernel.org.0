@@ -1,216 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-71220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9544CB9F64
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 23:39:25 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C48CB9FCA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 23:50:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 6B1D73016CAB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 22:39:23 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A6D1B30977CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 22:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825E32D839B;
-	Fri, 12 Dec 2025 22:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD532F25E4;
+	Fri, 12 Dec 2025 22:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYk3CjK7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mv1v4DiC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C407221F0A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 22:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130DE25F96D;
+	Fri, 12 Dec 2025 22:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765579161; cv=none; b=lRmDrZTfTpnWOI2JbMiqadeUPbGjL1rsT0FxviCeHYQgX0BuLzwKCOZRfZQrScR/OtDDJ2DMd2YpIm2wgVwgc9SliGNmTmO6TiP6xGAZ9zOqFTfvTZ3Kku3w5RxrJngAt7XtagGD3pw06kHtB4AyeubsEl25VumN4z9nkMbgZm4=
+	t=1765579792; cv=none; b=H6L1t5rtDiyO3JWCbXv4vPB1fOH/00f9C6bcXvVVxLU/SDZGRH7x3Uv4sPjZSBS+qpZt7wogt1OYapKZ/GGjElfHfXm0evIzoYWJ1U4DctZNsQLnOIk3h+DPRxlEsH3wUDiWe8ytF/ov5HndXlLqFj02jzYPCfYNBI042zk3Ok8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765579161; c=relaxed/simple;
-	bh=n20JYF6/eBwYGZn/N97nVpFuSiTvw1/kmetrbgEWG2k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MNGIp3Afbvdq6eoRooYcuOIZrDd3dohxI8Laq1H+jmSzhZB5agyd1RkyPIFUxCa4DLHrmwqrc7YQef2W1+lpfVjq/QZ+xND/5vPu3eLcZcAto9UrHEy0bOJXS1JHIRzDftJbhk9UyzJlH4143VDxF2njx864zsIN7u47fDpIIgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYk3CjK7; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6496a094ae1so2519986a12.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 14:39:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765579157; x=1766183957; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2zqI8BUSeQJJzwWOoIp2WbVZfrDCzoVl0j8b0A0wB0U=;
-        b=gYk3CjK70d7fpQY9cikQPh148auxBmiCRfCZeWX+8wwWEjCJ89s+AQbEit5Ejo9rHH
-         ibCliR6kW6hMhBDg9MojRjy4HfZFeARrbHce3d8tAqmwo9SqPjx96pGIJkzUmFPKiTQw
-         Bm+OayShyTO86kX3GuvDm4Zw8fqAXkNlgsP2ss6qTOzExHUifkCpuFjKUu1g2VbSdW+a
-         tQbDKTKec1v2qWc0l2SymjSK/R/3HgIwh28cZ6CdN94HCr2qKy0rPQkLhcNF3ZRlJC0o
-         Q9Ryk+BsbBba0/CTcsMdciYccOQpIFZRGaWXDLYQr6EaQ/JXSUtqLGsD7zKGidKHywkz
-         ngzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765579157; x=1766183957;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2zqI8BUSeQJJzwWOoIp2WbVZfrDCzoVl0j8b0A0wB0U=;
-        b=BnOrWMt2fH/+8AIdRGxU846a43GLXiTP45iYiuUsCdQPjD9lzwg/AcrJlKNDL/DaSp
-         nIotHpeCyIs4RLzDWz2HnCrjJZXLRrtJLCrswdaqewB8tNw4Qj7TmNDz/ac1j7ChHlk8
-         TjcWqe7gEYpba4wYfq93xf8CD+yNN/anKSiO8fEbo9IgPIOudEkE+LPHwCafWUodV98Q
-         8OteBt6QOJ8fmcMK+jplqFCGaVTYGhJmZJVpmnoyD+sQFrPpvQDtG2CWv1j1V3OcK9Jf
-         pEmydGIHGGhk9gI7l3wY7cyGmwkXNF4E3FUlBMzvZgzwPOj0erjohIwdbTYmQ83pBOUB
-         NOLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGHkdW6T9aMvu2LXmG3QGRWJ08W5ky2RphQAzy/6V8VAy56F+BtXOPaNjVeToNl9AHXA7WVTjhnM8O8Fo9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwtCgUrAObfRw0TWveNsjVGGgYVlCyUcCXm/nlvh4DZuD58y9F
-	9tNA75MbLPKM+1vsCRklw2XX9mHcT3/3VUEquRWQrz633bLxVa0QTO9hJ8X/L7RDwn/094TNMHT
-	qFdCYAjPL4l2nIf0+2MKDLm1kIrUQ8W4=
-X-Gm-Gg: AY/fxX5WfgqiqblIpRbuHdP2rmw8rk2i9xGXNXAGiEUWShsF114J4acFP1LrOKr0jhD
-	ZZhEZyPZU9LkELKW6R3uLPShRwbctk9rRlKVcRP0bfmRop3tvniVMbopmLlDjG1B25ewF/gHJkG
-	nc+FahJrXvdcPUrbUuxqD0QEfi/9jwTceqRgj9z75Y51jtk7FRH3jJi7dSzUscokRO72H6lyq/p
-	VE1+v4AooeWfatbBQxwLIZDqrPIOWuOjxWNvaxwn6YTat/NZs/Dz9JcrjTHCVvU4gfEnzvXriKo
-	LvOd7snyV29bOIk8D5DasnbY3Pk=
-X-Google-Smtp-Source: AGHT+IHf3hz+LEO8Sw7KXgIgtpuuOpp1C/H3lXUAnTAbT1wSmOUIJCS9Q2Np1hptQYvCrpVnl0e1Odht3v1OzKVVUNE=
-X-Received: by 2002:a17:907:6eac:b0:b73:9792:918b with SMTP id
- a640c23a62f3a-b7d236b50bamr403806266b.27.1765579157222; Fri, 12 Dec 2025
- 14:39:17 -0800 (PST)
+	s=arc-20240116; t=1765579792; c=relaxed/simple;
+	bh=P0Y5TK9Wu/ozC2MD5RKZ6z2mbfz20Rzqskxyj6gGZ+E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VIv6EUaBTTbAdf8cO/VdOLNiK7C/39Eujrwvun1czV+IXi3hiBJw9skZ+rRUZwefYIsUH25UXXbHSspplt5C09feYmqQMiiUDNJ0LPt4DR424WUbWcMLCWijcTe4Z4c5WpnIfENl1jQWoZuJKLvApXkM9ZIBRBd+gnb8IhXvDWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mv1v4DiC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75D4AC4CEF1;
+	Fri, 12 Dec 2025 22:49:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765579791;
+	bh=P0Y5TK9Wu/ozC2MD5RKZ6z2mbfz20Rzqskxyj6gGZ+E=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=mv1v4DiCvSBWS9Zlo6kVTU7RMeu/9jF1ESpXPyUskTmslv/8Y131LZ4piYe9+85WQ
+	 s5NU0845NZApXlbTDQXECc4fgCmxNnKod8hQuLpPgfgI4qHdjgQezSpYoqnacO9gMt
+	 /cZ45dFvpvIJIV/CIu9YRQoWjT0wNPGDY1tvwkFS/rFnT9LDIIrdYofWHoN8x8HSKs
+	 rgtZd2gKzGaY3QvqQEiX8Gbv/EywMCrgPNiiOscuEHbMr4g6xrHCIl4x3n2jxms5y+
+	 xA1i+LOVqouFupKbVZOOdu1n+mUN4eBRXPZXYitDm3hYy6oPKPVTSme3WUFLAgyaM/
+	 AyJv4WtzdiVnA==
+Message-ID: <19c25641f3915007ce7ec00746d31325945a137d.camel@kernel.org>
+Subject: Re: [PATCH v2 1/6] fs: Add case sensitivity info to file_kattr
+From: Trond Myklebust <trondmy@kernel.org>
+To: Theodore Tso <tytso@mit.edu>, Chuck Lever <cel@kernel.org>
+Cc: Eric Biggers <ebiggers@kernel.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Christian Brauner	 <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	hirofumi@mail.parknet.co.jp, almaz.alexandrovich@paragon-software.com, 
+	adilger.kernel@dilger.ca, Volker.Lendecke@sernet.de, Chuck Lever	
+ <chuck.lever@oracle.com>
+Date: Fri, 12 Dec 2025 17:49:48 -0500
+In-Reply-To: <20251212212354.GA88311@macsyma.local>
+References: <20251211152116.480799-1-cel@kernel.org>
+	 <20251211152116.480799-2-cel@kernel.org>
+	 <20251211234152.GA460739@google.com>
+	 <9f30d902-2407-4388-805b-b3f928193269@app.fastmail.com>
+	 <20251212021834.GB65406@macsyma.local>
+	 <ed9d790a-fea8-4f3e-8118-d3a59d31107b@app.fastmail.com>
+	 <20251212212354.GA88311@macsyma.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251212121119.1577170-1-mjguzik@gmail.com> <daf45c76-65e3-4db7-8b2f-a1fe0dee98ab@meta.com>
-In-Reply-To: <daf45c76-65e3-4db7-8b2f-a1fe0dee98ab@meta.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 12 Dec 2025 23:39:05 +0100
-X-Gm-Features: AQt7F2rqlqJYuiTXrlRBX0uj3Izh_nxTpKyy2bSAjurhEgmOjv2s9v1rFUYjYF8
-Message-ID: <CAGudoHH=c7OMBXXtsJzytGiE9stcGpsXGdX4g_9yWQDLB-Wv+Q@mail.gmail.com>
-Subject: Re: [PATCH] fs: make sure to fail try_to_unlazy() and try_to_unlazy()
- for LOOKUP_CACHED
-To: Chris Mason <clm@meta.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 12, 2025 at 10:26=E2=80=AFPM Chris Mason <clm@meta.com> wrote:
->
-> On 12/12/25 7:11 AM, Mateusz Guzik wrote:
-> > Otherwise the slowpath can be taken by the caller, defeating the flag.
-> >
-> > This regressed after calls to legitimize_links() started being
-> > conditionally elided and stems from the routine always failing
-> > after seeing the flag, regardless if there were any links.
-> >
-> > In order to address both the bug and the weird semantics make it illega=
-l
-> > to call legitimize_links() with LOOKUP_CACHED and handle the problem at
-> > the two callsites.
-> >
-> > While here another tiny tidyp: ->depth =3D 0 can be moved into
-> > drop_links().
-> >
-> AI flagged that last ->depth =3D 0 in drop_links().  I made it list
-> out the ways it thinks this can happen to make it easier to
-> call BS if it's wrong, but I think you can judge this a lot faster
-> than me:
->
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -774,6 +774,7 @@ static void drop_links(struct nameidata *nd)
-> >               do_delayed_call(&last->done);
-> >               clear_delayed_call(&last->done);
-> >       }
-> > +     nd->depth =3D 0;
-> >  }
-> >
-> >  static void leave_rcu(struct nameidata *nd)
-> > @@ -799,7 +800,7 @@ static void terminate_walk(struct nameidata *nd)
-> >       } else {
-> >               leave_rcu(nd);
-> >       }
-> > -     nd->depth =3D 0;
-> > +     VFS_BUG_ON(nd->depth);
-> >       nd->path.mnt =3D NULL;
-> >       nd->path.dentry =3D NULL;
-> >  }
->
-> Moving nd->depth =3D 0 into drop_links() appears to break terminate_walk(=
-)
-> in non-RCU mode. The function reads:
->
->     static void terminate_walk(struct nameidata *nd)
->     {
->         if (unlikely(nd->depth))
->             drop_links(nd);              // <-- now sets nd->depth =3D 0
->         if (!(nd->flags & LOOKUP_RCU)) {
->             int i;
->             path_put(&nd->path);
->             for (i =3D 0; i < nd->depth; i++)   // <-- nd->depth is 0 her=
-e
->                 path_put(&nd->stack[i].link); // <-- loop never executes
->             ...
->         }
->         ...
->     }
->
-> When terminate_walk() is called in non-RCU mode with nd->depth > 0 (after
-> following symlinks), the path_put() loop for nd->stack[i].link will run
-> zero iterations because drop_links() has already zeroed nd->depth. Can
-> this leak references on the symlink paths stored in nd->stack[]?
->
-> Concrete paths where this can occur:
->
-> 1. Retry after RCU-walk failure (non-RCU from the start):
->
->    filename_lookup()
->      -> path_lookupat(&nd, flags | LOOKUP_RCU, path)
->      -> returns -ECHILD
->      -> path_lookupat(&nd, flags, path)   // retry WITHOUT LOOKUP_RCU
->          -> path_init() in non-RCU mode
->          -> link_path_walk() follows symlinks
->              -> pick_link() calls mntget() and increments nd->depth
->          -> terminate_walk()              // nd->depth > 0, refs held
->
-> 2. Mid-walk transition via try_to_unlazy():
->
->    path_lookupat() in RCU mode
->      -> link_path_walk() follows symlinks, nd->depth > 0
->          -> pick_link()
->              -> atime_needs_update() returns true
->              -> try_to_unlazy()
->                  -> legitimize_links() takes refs on nd->stack[].link
->                  -> leave_rcu() clears LOOKUP_RCU
->      -> error occurs later
->      -> terminate_walk()                  // nd->depth > 0, refs held
->
-> 3. Transition via complete_walk():
->
->    path_lookupat() in RCU mode
->      -> link_path_walk() follows symlinks, nd->depth > 0
->      -> complete_walk()
->          -> try_to_unlazy()
->              -> legitimize_links() takes refs
->              -> leave_rcu()
->      -> later check fails (e.g., -ENOTDIR)
->      -> terminate_walk()                  // nd->depth > 0, refs held
->
-> In all these paths, nd->stack[i].link holds references that should be
-> released by the path_put() loop in terminate_walk(), but the loop runs
-> zero iterations because drop_links() has already zeroed nd->depth.
->
-> [ ... ]
->
-> -chris
+On Sat, 2025-12-13 at 06:23 +0900, Theodore Tso wrote:
+> On Fri, Dec 12, 2025 at 10:08:18AM -0500, Chuck Lever wrote:
+> > The unicode v. ascii case folding information was included just as
+> > an example. I don't have any use case for that, and as I told Eric,
+> > those specifics can be removed from the API.
+> >=20
+> > The case-insensitivity and case-preserving booleans can be consumed
+> > immediately by NFSD. These two booleans have been part of the NFSv3
+> > and NFSv4 protocols for decades, in order to support NFS clients on
+> > non-POSIX systems.
+>=20
+> I was worried that some clients might be using this information so
+> they could do informed caching --- i,e., if they have "makefile"
+> cached locally because the user typed "more < makefile" into their
+> Windows Command.exe window, and then later on some program tries to
+> access "Makefile" the client OS might decide that they "know" that
+> "makefile" and "Makefile" are the same file.=C2=A0 But if that's the case=
+,
+> then it needs to have more details about whether it's ASCII versus
+> Unicode 1.0 vs Unicode 17.0 case folding that be in use, or there
+> might be "interesting" corner cases.
 
-Quite verbose. :)
+The Linux NFSv4 client has no clue about how to fold cases so, as Chuck
+indicated, it uses the case insensitivity flag only to know when to be
+more aggressive about revalidating cached positive dentries and/or
+evicting cached negative dentries after the directory contents are seen
+to change.
 
-I thought I patched all of these.
+As of now, I'm aware of no plans to try to implement anything like the
+"informed caching" you describe above.
 
-But ye, the value needs to get read prior.
+> Which is why I've gotten increasingly more sympathetic to Linus's
+> position that case folding is Hot Trash.=C2=A0 If it weren't for the fact
+> that I really wanted to get Android out of using wrapfs (which is an
+> even greater trash fire), I'd be regretting the fact that I helped to
+> add insensitive file name support to Linux...
+>=20
+> 						- Ted
 
-Again weird semantics, why is any work on symlink stack being done
-after drop_links got called.
-
-What this really wants is some form of variable poisoning so that
-instead of zeroing depth I mark it as indeterminate and have kasan
-trap on access.
-
-Will send a v2 later, thanks.
+--=20
+Trond Myklebust
+Linux NFS client maintainer, Hammerspace
+trondmy@kernel.org, trond.myklebust@hammerspace.com
 
