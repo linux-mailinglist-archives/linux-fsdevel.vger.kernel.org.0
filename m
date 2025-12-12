@@ -1,114 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-71196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF721CB8C74
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 13:18:38 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683DECB915E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 16:19:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2CEB3306456B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 12:18:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4401630CB03B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 15:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BA4275AF0;
-	Fri, 12 Dec 2025 12:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDC83246FE;
+	Fri, 12 Dec 2025 15:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cfKnlzfV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFlc2zw2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D8CDDA9;
-	Fri, 12 Dec 2025 12:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657AD3242AD;
+	Fri, 12 Dec 2025 15:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765541909; cv=none; b=LkH4YWLTBetQS6qxcXCcgBzLpNAtJewH1ARVwCyOhcyufaGjYfOAwD0VeA/UeDJVmfP5JB8uBXVJqsQ46zfW1Hv5v9SY/gNYVyvm7FV7dtYmUxlvs8fCe2nSDdaZKcaAksD8O1UNSwLGSNMmNxKEOo2Zjac9BmcJgFb1TnvcETo=
+	t=1765552195; cv=none; b=NDrr1TcqW+YgWBF+mZZabGb5zVKtdxCv+vi6qc77r+yIUe9LdcjDoudG5Re+TRhAx+wwVdibzx1U/a/PEdbSNaAupoCJS3OrvKBFQx+EkcCF4zMM07VPK27jdxk4BRptPoqH4qwLhCi3AAnk1nfxxl4UjO1bATETifuglotyF6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765541909; c=relaxed/simple;
-	bh=mw0h/t3fuglas+ceLEgIu5K7B8qMABG0wCzi/XZVZE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jnGH78fxvkeRScu6RqwAoYkQELW+jhHFwn15jKDTjPKwSx2DVDtp0ZyA9WbeHYUgtbU7rvcX7ETuqygwFyWH9grYE3HOF73sScxQ/jr59SL29dKkG50SrbTQFu35qguVwMCYCOthBVITokU6e22pc7sk2yCwgjuw1e32pzdHRic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cfKnlzfV; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=w4e7B+E8LkBy1p188ZJwv5Wln/swonn5oRIyMMDWppE=; b=cfKnlzfV9QrsH5hMOhmPUAJhXy
-	XjEPNpRNJpEyUWUD58b2u3CldeYoF3Yxr90xzhUkPWmFS1Icv8hUVhfORCvWwE7UHE+RlwbWt7xVO
-	vUeggPll8nmxfPGQsbuyfrPGqVqU41vL0lNYf7j8jUjLggJ8BRxZWITJ3vVe51BDVUW0hqkQupPc+
-	f7WZx7HJjp4C3PcTjQnbWyuhUOFOYenRuQWMtitcijzVGhxR915iboxfs7Ee1vZy32cOADi1nX5gw
-	D3x1yPOOSDbg/a0QcNlh5HrUrMb5n1ze3FR3M6LvMSEFYshjNaC35qw1f9xyIoqiBFvyMG1c8MC0u
-	uyKZfm9A==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vU267-0000000FfEK-2ukU;
-	Fri, 12 Dec 2025 12:18:11 +0000
-Date: Fri, 12 Dec 2025 12:18:11 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Deepakkumar Karn <dkarn@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Liam.Howlett@oracle.com, Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pagemap: Add alert to mapping_set_release_always() for
- mapping with no release_folio
-Message-ID: <aTwIAwjeSrALbVww@casper.infradead.org>
-References: <20251210200104.262523-1-dkarn@redhat.com>
- <aTnn68vLGxFxO8kv@casper.infradead.org>
- <5edukhcwwr6foo67isfum3az6ds6tcmgrifgthwtivho6ffjmw@qrxmadbaib3l>
+	s=arc-20240116; t=1765552195; c=relaxed/simple;
+	bh=I+qP5oa35NoOJF+73V6wWh4dwUAPHcAldfi38uS5WuI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=p/cgn9p7vyAx4QRS3J8owd0OFesNVbkPkFZT6zV6znm9Znykl060L0fZFOKEvpw/zbtpUTQpJSiM2+VZlc4cwB2bURzTbzMJogNycOeOtZ/qJNqin7Orq5VDXcDWuT26ncw1BC2MlNJ2jPt07HcTegul4hriFcH6pDo4IA/ZkkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFlc2zw2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE56AC16AAE;
+	Fri, 12 Dec 2025 15:09:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765552195;
+	bh=I+qP5oa35NoOJF+73V6wWh4dwUAPHcAldfi38uS5WuI=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=AFlc2zw2uucDYEetJfKb6XBj8TBwXASwMN9MPet0HvEcaanSlE7CFITn56A2NG0Ib
+	 LoFG8vndRYLcbM6ivj35ZyuHl7Dl54SPU/dPhAUv42Ksl60fVNzCJWVkYgGoy11s5a
+	 BNeo17SWZ+umGGp+2ixepMykt5a7BX77QjWbvy1e+qdonW9nhvOUmgbXP+WJ2nVNcS
+	 EOVSjJ0g6UgRwf9qWwNqdT6EQiQQLovDE/JAddbONBvYdNp8XhzC8/Odi5NNcm/NIs
+	 AT14mwe9DRWACSzFApxhaVxE0ZtWoeXsR7GlK6bQqbCiNqPlp0oafNMs4Mr8HXvwZg
+	 9rLYAhv6iKaig==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id BADCEF40072;
+	Fri, 12 Dec 2025 10:09:53 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-10.internal (MEProxy); Fri, 12 Dec 2025 10:09:53 -0500
+X-ME-Sender: <xms:QTA8aUytefFxC2oGXmrPtewnnJ6B8_Or61aOCnsFzrIgWOZaKeHBOA>
+    <xme:QTA8aTHlH6idpJ3_pm2MM2vNdMOk7tsA_MDPy9qIC5yQ5j62W55fqoGHxwv3x5hF7
+    K-_fJsB__U7SHGzU8Gpu7NAabDJ3UZXbAY8w1ID2m5cbN8YI2i41es>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvkeehtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdevhhhutghk
+    ucfnvghvvghrfdcuoegtvghlsehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvghrnh
+    epleehteekvefhhfeuvdekuefftdffvdeufeekleehheekvdekjedviefghedtieelnecu
+    ffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgnecuvehluhhsth
+    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheptghhuhgtkhhlvghvvghr
+    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieefgeelleelheelqdefvd
+    elkeeggedvfedqtggvlheppehkvghrnhgvlhdrohhrghesfhgrshhtmhgrihhlrdgtohhm
+    pdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprg
+    guihhlghgvrhdrkhgvrhhnvghlseguihhlghgvrhdrtggrpdhrtghpthhtohepsghrrghu
+    nhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvggsihhgghgvrhhssehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehhihhrohhfuhhmihesmhgrihhlrdhprghrkhhnvght
+    rdgtohdrjhhppdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhope
+    gthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopegrlhhmrgii
+    rdgrlhgvgigrnhgurhhovhhitghhsehprghrrghgohhnqdhsohhfthifrghrvgdrtghomh
+    dprhgtphhtthhopehvohhlkhgvrhdrlhgvnhguvggtkhgvsehsvghrnhgvthdruggvpdhr
+    tghpthhtoheplhhinhhugidqvgigthegsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:QTA8aQsK8J2qgZIVIQpL0IU2tvEgcoBNSS-pcYB9aCNDNpVCS146Kw>
+    <xmx:QTA8ac5Mxc9sC45MtvaVibuxvWHI83VyDcjf9hRiQBsxg605Qok5Xw>
+    <xmx:QTA8ac3MFcDhqctl04FQyJ2MH7yxkLZd6RZUvPr3Cw8K79zESiXcMw>
+    <xmx:QTA8aXjU7iWTbB8X2lQ8yM-rKYJ_vdqfhAdyjfiHmkvXweptVtUpOw>
+    <xmx:QTA8aUq3Fwm0jIi3alstO43Q6A3IbUQhI-ALtJm_H-yLy2cjWJj3yYsN>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 9480578006C; Fri, 12 Dec 2025 10:09:53 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5edukhcwwr6foo67isfum3az6ds6tcmgrifgthwtivho6ffjmw@qrxmadbaib3l>
+X-ThreadId: AG4gnELdBCjJ
+Date: Fri, 12 Dec 2025 10:08:18 -0500
+From: "Chuck Lever" <cel@kernel.org>
+To: "Theodore Tso" <tytso@mit.edu>
+Cc: "Eric Biggers" <ebiggers@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, hirofumi@mail.parknet.co.jp,
+ almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
+ Volker.Lendecke@sernet.de, "Chuck Lever" <chuck.lever@oracle.com>
+Message-Id: <ed9d790a-fea8-4f3e-8118-d3a59d31107b@app.fastmail.com>
+In-Reply-To: <20251212021834.GB65406@macsyma.local>
+References: <20251211152116.480799-1-cel@kernel.org>
+ <20251211152116.480799-2-cel@kernel.org> <20251211234152.GA460739@google.com>
+ <9f30d902-2407-4388-805b-b3f928193269@app.fastmail.com>
+ <20251212021834.GB65406@macsyma.local>
+Subject: Re: [PATCH v2 1/6] fs: Add case sensitivity info to file_kattr
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 11, 2025 at 10:23:13AM +0100, Jan Kara wrote:
-> On Wed 10-12-25 21:36:43, Matthew Wilcox wrote:
-> > On Thu, Dec 11, 2025 at 01:31:04AM +0530, Deepakkumar Karn wrote:
-> > >  static inline void mapping_set_release_always(struct address_space *mapping)
-> > >  {
-> > > +	/* Alert while setting the flag with no release_folio callback */
-> > 
-> > The comment is superfluous.
-> 
-> Agreed.
-> 
-> > > +	VM_WARN_ONCE(!mapping->a_ops->release_folio,
-> > > +		     "Setting AS_RELEASE_ALWAYS with no release_folio");
-> > 
-> > But you haven't said why we need to do this.  Surely the NULL pointer
-> > splat is enough to tell you that you did something stupid?
-> 
-> Well, but this will tell it much earlier and it will directly point to the
-> place were you've done the mistake (instead of having to figure out why
-> drop_buffers() is crashing on you). So I think this assert makes sense to
-> ease debugging and as kind of self-reminding documentation :).
 
-Oh.  So the real problem here is this:
 
-        if (mapping && mapping->a_ops->release_folio)
-                return mapping->a_ops->release_folio(folio, gfp);
-        return try_to_free_buffers(folio);
+On Thu, Dec 11, 2025, at 9:18 PM, Theodore Tso wrote:
+> On Thu, Dec 11, 2025 at 08:16:45PM -0500, Chuck Lever wrote:
+>> 
+>> > I see you're proposing that ext4, fat, and ntfs3 all set
+>> > FILEATTR_CASEFOLD_UNICODE, at least in some cases.
+>> >
+>> > That seems odd, since they don't do the matching the same way.
+>> 
+>> The purpose of this series is to design the VFS infrastructure. Exactly what
+>> it reports is up to folks who actually understand i18n.
+>
+> Do we know who would be receiving this information and what their needs 
+> might be?
 
-We should have a block_release_folio(), change all the BH-based
-filesystems to add it to their aops, and then change
-filemap_release_folio() to do:
+The unicode v. ascii case folding information was included just as
+an example. I don't have any use case for that, and as I told Eric,
+those specifics can be removed from the API.
 
-	if (mapping)
-		return mapping->a_ops->release_folio(folio, gfp);
-	return true;
+The case-insensitivity and case-preserving booleans can be consumed
+immediately by NFSD. These two booleans have been part of the NFSv3
+and NFSv4 protocols for decades, in order to support NFS clients on
+non-POSIX systems.
 
-(actually, can the !mapping case be hit?  surely this can't be called
-for folios which have already been truncated?)
+I'm told that Samba has to detect and expose file system case folding
+behavior to its clients as well. Supporting Samba and other user
+space file servers is why this series exposes case folding information
+via a local user-space API. I don't know of any other category of
+user-space application that requires access to case folding info.
 
-Then you get a nice NULL pointer dereference instead of calling into
-try_to_free_buffers() which is as confusing as hell.
+
+The Linux NFS community has a growing interest in supporting NFS
+clients on Windows and MacOS platforms, where file name behavior does
+not align with traditional POSIX semantics.
+
+One example of a Windows-based NFS client is [1]. This client
+implementation explicitly requires servers to report
+FATTR4_WORD0_CASE_INSENSITIVE = TRUE for proper operation, a hard
+requirement for Windows client interoperability because Windows
+applications expect case-insensitive behavior. When an NFS client
+knows the server is case-insensitive, it can avoid issuing multiple
+LOOKUP/READDIR requests to search for case variants, and applications
+like Win32 programs work correctly without manual workarounds or
+code changes.
+
+Even the Linux client can take advantage of this information. Trond
+merged patches 4 years ago [2] that introduce support for case
+insensitivity, in support of the Hammerspace NFS server. In
+particular, when a client detects a case-insensitive NFS share,
+negative dentry caching must be disabled (a lookup for "FILE.TXT"
+failing shouldn't cache a negative entry when "file.txt" exists)
+and directory change invalidation must clear all cached case-folded
+file name variants.
+
+Hammerspace servers and several other NFS server implementations
+operate in multi-protocol environments, where a single file service
+instance caters to both NFS and SMB clients. In those cases, things
+work more smoothly for everyone when the NFS client can see and adapt
+to the case folding behavior that SMB users rely on and expect. NFSD
+needs to support the case-insensitivity and case-preserving booleans
+properly in order to participate as a first-class citizen in such
+environments.
+
+As a side note: I assumed these details were already well-known in
+this community; otherwise I would have included it in the series
+cover letter. I can include it when posting subsequent revisions.
+
+-- 
+Chuck Lever
+
+[1] https://github.com/kofemann/ms-nfs41-client
+
+[2] https://patchwork.kernel.org/project/linux-nfs/cover/20211217203658.439352-1-trondmy@kernel.org/
 
