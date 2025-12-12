@@ -1,131 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-71173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 908FFCB7848
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 02:10:19 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20C7CB787D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 02:17:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8D86D30443FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 01:08:40 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 275ED30039E1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Dec 2025 01:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C4C26FDA8;
-	Fri, 12 Dec 2025 01:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2658924DCE3;
+	Fri, 12 Dec 2025 01:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKxg3U0L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5jzf8qo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDD827280C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 01:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A91219FC;
+	Fri, 12 Dec 2025 01:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765501716; cv=none; b=oCLQNzOm59eULojfwpvjt20wlzBHJnRT/Gx5/LLr2paIj6OU+48u/NWaUhRLLp59aTdGFTbIVylhRU5iFX3Am7RUhFX0FcU8HphsHi++ArU7jhJX0PYxREuoOiYaA0G6FdxLVCOw5cOaR9b1yHUojf8ZwmmpRezJwIUfXDgv+Ok=
+	t=1765502228; cv=none; b=iyo+aNWr9mIDHxgCwvF0QVXkmr1TOXwq78L6OHAVxUuCJtkehglW7YJziSNc6EYjOq5L/I8LEHLA5jdperz4aT3Zjm3z2UK+uDiPIQjn16EMc7NXkuvZkBWR8bho1V4gUkoh0xRW7jjrYR31wxp7E6qX6EuyoRrTxvuIQI/2Wsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765501716; c=relaxed/simple;
-	bh=T/uGYT0SJe840sWccGe0oOkDVXgjgves/JkBSYKKuaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rv0LZ/peafbblAVHReCga9oywH5uuDOIdXTbM5P4DI2ncx00yk38lwnqZf+ETcz3h93iIWKuH/0pZozI9TcY4WM5GVZ2fqCAqh1il60pfBqZ8JSFK49QHusvrfiUWyZ6ZrEjzJo+53nlHoQkTkrTbk87HuAlQ7Q9ZX6+bcr5+s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RKxg3U0L; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-343ee44d89aso712575a91.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Dec 2025 17:08:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765501715; x=1766106515; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pBdi/oDzvSWIXA9titZw8xt1yZ2pS2N9m++Fybej/Mo=;
-        b=RKxg3U0L+gQDfA/UF/katxt26B8A3RWZV2awt7e75CtiQy7DttKXsbemS4xsAHv/oI
-         gTTV/ibbVqkVG84zGcSgPqvAzdPb3oXJLKq3VEirgcaG5TrVYFIyp2xtcjBYov4ZS93p
-         y5FpDoqFiUNvoP15rZ2LONn9BI3e8cwrzKujMlzx8WwW97mSXrOD5tFNS1fH3cXgw6Xp
-         5gHSC16dcycMNlj8t4kzNhanvGj+01P0FZbOPrzGRlpoHxRvM3Hrrv2GbUSQSznJBzMC
-         wigBgu8KX6O1YuTgc+xkGxoUX0jABJXpwquL5l8Wgr+FvawvqHlOvCNBrkFA/rg94Pdz
-         WoYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765501715; x=1766106515;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pBdi/oDzvSWIXA9titZw8xt1yZ2pS2N9m++Fybej/Mo=;
-        b=t6Ik+0eO0/XZ9++qzr+aZehbUrrYMk7UyVvuJP5AlcISYkYvYSReoWQBFuhZULMB8u
-         nS9HWnXWPoMEsBWxYMSYduff0a9U69auPKT3PkI6qoW3wpqtOUO9aFsZt+tpja6ZU8LH
-         k2EfaxPNsIw6ghHQH4OcRPNaUyGD814wbWiNEHXjOIUgt0JcPMeTj0WMEdjkpAMUJ/0j
-         bXXUWqAzc19OjMR6hEJ0xbiu6Xy5UhZrZbm7yalWcLzvDcknlzasgeZ27C5R3iFm4JV2
-         QgUfy+8ZwgxSZe4oyTSq86jk/XW9nfNaoTy20BHgsJk/7Zj/ZULCMxyqt9XFgLsNmnQ6
-         wlgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpPnakn6NUQxYiTAEANtUtRAPx37ZEoMsdawm+hA+WyVVwr4qxHh1j4XghivTiJJizOJBjCz0cefEIdIWY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJHErY0Tuhl/hgw+3gtwpiaJLMjELnWR/7WchEnEJ5KVX0ifKC
-	X/mj8q5HOYoHWuPPTmYNakWV6p9MjO2vukfLbdyIwCUN/JCbC7MW6oxK
-X-Gm-Gg: AY/fxX7EABVcXI/x6pom1VGbIh9C0Nj8MbkJPyRk/K5M4OUvTMCei+xcYrfQydnzZzY
-	p/Su/Np/6cNZE9/DcduLi6JEMTY33LN/CV0csRw84N1FaMgPsuSf4uisOLxBeBjuGlGU40jC3oQ
-	HEZvGiHxuf/3vnLJ3XFGBcML3sPUEwU6ZQlKLRhWOXXB3MyTPMgQH/gVj4fDr8nCB8NoE/1stYr
-	RQS9FqMeJf2gxdPyu1F+nnX3wodmRuVDRFFRbeUBiZA6Y94MDda0E75bo1OEMgocFtcNA0i3zhN
-	9z4RK1/jUB1em+0n2/GHLq5PYDXGTrxXIyCaghWy8w2k0WzGrboZ8OS45RwOVn6Q1yKYx8wqqFE
-	k+ohzVZf5s/WXym4KjIikxHYMWTiRblJxK6vKogvVIQvbIlEaIpN1Hj70iyBVwsLHqb9bfs/iJY
-	gMzAwOwGd1+xFKNp7Mky3hhUVM+8fU+F6LqJ0dpdHvbStNwtr3NEkDldEw+21z8+O7KnY16zv1F
-	FRN5mLLBeSkK+XeDeDomKH6x0CV5kLKh8MZ5Osl2BuY49UPrnU=
-X-Google-Smtp-Source: AGHT+IGFHKJf8QGiqR5uvpYaapCUZkmkibIutIZLTj7GFDM1IGCQKgJEzHKd26M9n65r0qbsOVsfhw==
-X-Received: by 2002:a17:90b:4c:b0:340:c64d:38d3 with SMTP id 98e67ed59e1d1-34abd6e0220mr546380a91.12.1765501714653;
-        Thu, 11 Dec 2025 17:08:34 -0800 (PST)
-Received: from [10.200.8.97] (fs98a57d9c.tkyc007.ap.nuro.jp. [152.165.125.156])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34abe3ba59bsm167302a91.7.2025.12.11.17.08.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Dec 2025 17:08:29 -0800 (PST)
-Message-ID: <4ed581b6-af0f-49e6-8782-63f85e02503c@gmail.com>
-Date: Fri, 12 Dec 2025 01:08:34 +0000
+	s=arc-20240116; t=1765502228; c=relaxed/simple;
+	bh=9TYcESrho76VKCg838GHOj8IUeqDDF8vAva70L9A6Vk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Fqhh1V3RtY6kdNF3teIwsPno2YJUE/DOZLwKOgfhW4J177a0tha9Q637RbRx2XiPDTkCaM5pmNNmkXR+esIRBZsmh80DBgp6cuFYJaW92XMVvWBIt1XsiFQhInPx4UwcjqiUFBViAIDHhYF2+aoIXy/pwVoAWn04LJFN2OHEuL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5jzf8qo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7443BC16AAE;
+	Fri, 12 Dec 2025 01:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765502228;
+	bh=9TYcESrho76VKCg838GHOj8IUeqDDF8vAva70L9A6Vk=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=e5jzf8qo3oMz8H+RHNI6SvEyguI3wkI+NPdMCNpBInkeqI+4THhhHJ88gBzZqS2TF
+	 o0DdH854/hz8sDb3VGnxPJ7fgzMuWmpl9E2R7lvbcltGt7AjPNSdyzS6pIeEWJ4nyK
+	 4yopRtan4P0DoIMIgaskwR43Sv5wnkv2fwswO9HkM0s8dmSc6aNaMak1cYkcEWPcWv
+	 lgOIq2uYlGxn0kFx306CvrHdfvWSzu33SzPJMFCm5ap3/vUeEIZ399UsGahJw+pc+Z
+	 TWWaNdHHotpz/s463tNVbi4RlMjgh0DqsCSl7HjPF5eyrO87VJOlxVU9MMZYBrE+iI
+	 IMTQ1OwTF9XwA==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 9D260F40074;
+	Thu, 11 Dec 2025 20:17:06 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-10.internal (MEProxy); Thu, 11 Dec 2025 20:17:06 -0500
+X-ME-Sender: <xms:Em07aXXru7VRw27WV74wnpbmHTxNgqddovrGVuMBqnEN4ymBGMirqQ>
+    <xme:Em07aaYy-Zd1hV2IJZ-Ds0WxvL5j_0jXS93mzzOf-RYzDZpFL230v1XhgDN0NBrpB
+    7NvIkpjmkWqU71wSkoYmlWoA5vle2CfQnUgAU20XXOt3fEGsHzkKqs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvieekgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdevhhhutghk
+    ucfnvghvvghrfdcuoegtvghlsehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvghrnh
+    ephfffkefffedtgfehieevkeduuefhvdejvdefvdeuuddvgeelkeegtefgudfhfeelnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheptghhuhgtkh
+    hlvghvvghrodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieefgeelleel
+    heelqdefvdelkeeggedvfedqtggvlheppehkvghrnhgvlhdrohhrghesfhgrshhtmhgrih
+    hlrdgtohhmpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtoheprgguihhlghgvrhdrkhgvrhhnvghlseguihhlghgvrhdrtggrpdhrtghpthhtoh
+    epsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvggsihhgghgvrhhs
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhihhrohhfuhhmihesmhgrihhlrdhprg
+    hrkhhnvghtrdgtohdrjhhppdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgt
+    phhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhope
+    grlhhmrgiirdgrlhgvgigrnhgurhhovhhitghhsehprghrrghgohhnqdhsohhfthifrghr
+    vgdrtghomhdprhgtphhtthhopehvohhlkhgvrhdrlhgvnhguvggtkhgvsehsvghrnhgvth
+    druggvpdhrtghpthhtoheplhhinhhugidqvgigthegsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhg
+X-ME-Proxy: <xmx:Em07abThipl_qzI3JjqYlaFSEYKA9WxgtgQddbS6Ju-cKrupRIXYnQ>
+    <xmx:Em07acP1QGx5L7a7mhBx8FaplQHJm51P79Gm3P67YEX_V-Mwz_m6_A>
+    <xmx:Em07aR7bZLLkqiBQ_VijPqanLdWKDVQtUf24f6NjIOKZP0sWIX9egQ>
+    <xmx:Em07afWyIMl4axoBXBbfTf8t1Nmxi_BtaYpGWgbEuZPSs19xggesDg>
+    <xmx:Em07aYPAc9RI8JlKKUxUfGPsSQ2T9ldrcAdXPkvG9GqC67rE9i0mB2a9>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 7834B780054; Thu, 11 Dec 2025 20:17:06 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 03/11] block: move around bio flagging helpers
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-block@vger.kernel.org, io-uring@vger.kernel.org,
- Vishal Verma <vishal1.verma@intel.com>, tushar.gohad@intel.com,
- Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-References: <cover.1763725387.git.asml.silence@gmail.com>
- <6cb3193d3249ab5ca54e8aecbfc24086db09b753.1763725387.git.asml.silence@gmail.com>
- <aTFl290ou0_RIT6-@infradead.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <aTFl290ou0_RIT6-@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ThreadId: AG4gnELdBCjJ
+Date: Thu, 11 Dec 2025 20:16:45 -0500
+From: "Chuck Lever" <cel@kernel.org>
+To: "Eric Biggers" <ebiggers@kernel.org>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, hirofumi@mail.parknet.co.jp,
+ almaz.alexandrovich@paragon-software.com, tytso@mit.edu,
+ adilger.kernel@dilger.ca, Volker.Lendecke@sernet.de,
+ "Chuck Lever" <chuck.lever@oracle.com>
+Message-Id: <9f30d902-2407-4388-805b-b3f928193269@app.fastmail.com>
+In-Reply-To: <20251211234152.GA460739@google.com>
+References: <20251211152116.480799-1-cel@kernel.org>
+ <20251211152116.480799-2-cel@kernel.org> <20251211234152.GA460739@google.com>
+Subject: Re: [PATCH v2 1/6] fs: Add case sensitivity info to file_kattr
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 12/4/25 10:43, Christoph Hellwig wrote:
-> On Sun, Nov 23, 2025 at 10:51:23PM +0000, Pavel Begunkov wrote:
->> We'll need bio_flagged() earlier in bio.h in the next patch, move it
->> together with all related helpers, and mark the bio_flagged()'s bio
->> argument as const.
->>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> 
-> Looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-> Maybe ask Jens to queue it up ASAP to get it out of the way?
 
-I was away, so a bit late for that. I definitely wouldn't
-mind if Jens pulls it in, but for a separate patch I'd need
-to justify it, and I don't think it brings anything
-meaningful in itself.
+
+On Thu, Dec 11, 2025, at 6:41 PM, Eric Biggers wrote:
+> On Thu, Dec 11, 2025 at 10:21:11AM -0500, Chuck Lever wrote:
+>> +/* Values stored in the low-order byte */
+>> +enum fileattr_case_folding {
+>> +	/* Code points are compared directly with no case folding. */
+>> +	FILEATTR_CASEFOLD_NONE = 0,
+>> +
+>> +	/* ASCII case-insensitive: A-Z are treated as a-z. */
+>> +	FILEATTR_CASEFOLD_ASCII,
+>> +
+>> +	/* Unicode case-insensitive matching. */
+>> +	FILEATTR_CASEFOLD_UNICODE,
+>> +};
+>
+> What does "Unicode case-insensitive matching" mean?  There are many
+> different things it could mean: there are multiple types of Unicode
+> normalization, Unicode case-folding, NTFS's upper case table, etc.
+> There are also multiple versions of each.
+
+This is left over from the RFC version of the series, and can be removed.
+
+
+> I see you're proposing that ext4, fat, and ntfs3 all set
+> FILEATTR_CASEFOLD_UNICODE, at least in some cases.
+>
+> That seems odd, since they don't do the matching the same way.
+
+The purpose of this series is to design the VFS infrastructure. Exactly what
+it reports is up to folks who actually understand i18n.
+
 
 -- 
-Pavel Begunkov
-
+Chuck Lever
 
