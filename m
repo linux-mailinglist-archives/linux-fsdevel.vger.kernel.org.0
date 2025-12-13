@@ -1,92 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-71229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4222CBA2B9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 02:46:51 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43AA0CBA31E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 03:24:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id A77B2300EDFF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 01:46:50 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E15D130E97C5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 02:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E1B214204;
-	Sat, 13 Dec 2025 01:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WT5GVKv2"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908D2258EC3;
+	Sat, 13 Dec 2025 02:22:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3264E155326;
-	Sat, 13 Dec 2025 01:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E89248F57;
+	Sat, 13 Dec 2025 02:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765590408; cv=none; b=hKBDEHjlNXlJicTv5GNlG1ULHp6Vj1Xq0JdcM2OQSvACxwX0SOG0KsogP6CkH6bz6ZlsyOFkH7sKPsbI52pXLc5o8Qd0K2MmS4CA018JYVE6t1zR/uVKKA8AU7+SGVa2o7BllVps4h0VnuNmjISqNFYaCf10fQqOucZrNIN9xv8=
+	t=1765592562; cv=none; b=KeVSfhn0CFG9gJCm2SZMwJRQRNQBO9GABkcX6NxxhzsMZmBd7uy86Vx2kfX+RrRxioWuNAys1YOhZEdMnbhgDvTBRVrG+reDh/l2RjUjx533oQyftNtGfE+1p4XSgTjtLJu6DqbJH18xXGZxc3+h7nb9/Jq1CIqtGj0u6FczTCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765590408; c=relaxed/simple;
-	bh=cq2jqSwHOBkBnsupwq+q/lJGv1DhYNFx9N3b6Y8YSYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i52D+AZn4y/irzZmcpJb+7rWw80iPiVgyYdHwLvRYDUJQj3Y3R/oDjRcBaADtG/BR+foOwgXgRA96Pm7InDjUa4gYONn5YXM7O09MCJepETwrmUtelEy3Zr5vKqrLiWPiL2Pt5W+U8Sbv00oU5UsiB/ROMKRcTxUXgU2OIbLqCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WT5GVKv2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EA5CC4CEF1;
-	Sat, 13 Dec 2025 01:46:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765590405;
-	bh=cq2jqSwHOBkBnsupwq+q/lJGv1DhYNFx9N3b6Y8YSYs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WT5GVKv2eu9cpbUOIG88QiVPHd/5qdm6Z/7CR34kiiXqWxvPqRbfBB7kTcyoZngL+
-	 /d8jCURIlbnqgcuvyTaReLnABncTaLiqQj1xmChtInpnevlxtRSfBussKWDGKn/kiM
-	 XoxqV5WcRNYnoCFp0IRV80G6FydaRMSOOD0FEtDsL5/wjtUnViUBjB4gSnS8XQpoJ9
-	 AqJ7RAwZrBp86XcsZjxBs1EpSn6dyfeeLEaB8MV/W/1VUau6XOVx58cTG49674HFwX
-	 q4carvZxqKa86XcNr4dXOuF73FjCvepB3Db4zq8RukT7MbiyH6CGl95cDAJeAPeZpr
-	 DFf7DGzrPdrVw==
-Date: Fri, 12 Dec 2025 17:46:43 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org
-Subject: Re: [PATCH 9/9] blk-crypto: handle the fallback above the block layer
-Message-ID: <20251213014643.GG2696@quark>
-References: <20251210152343.3666103-1-hch@lst.de>
- <20251210152343.3666103-10-hch@lst.de>
+	s=arc-20240116; t=1765592562; c=relaxed/simple;
+	bh=9Fh+wnXa7RWRzm6Xw6UefjCoM266FzSd8Ylt+FWL3Kg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mArBXbfwY1IS7XnTUiQ3NUDQtGXBl8XjPYxXlvl+0Kfgt5a5MePt8dIVEaY+uaPs6ZE/1bobtzv1TBSW2ZedHn2yrCJUr8FoSgXdUE/Si9HaOjATvX2Sg+YfZ/Il2jKHgB878ItJpXZuy07t/YssLe69S7LMIMvCZKsyv2rHpnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dSqpf54QKzYQtwN;
+	Sat, 13 Dec 2025 10:22:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id B62C71A084E;
+	Sat, 13 Dec 2025 10:22:28 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP2 (Coremail) with SMTP id Syh0CgA3F1HTzTxpFXQ7Bg--.63968S4;
+	Sat, 13 Dec 2025 10:22:28 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	yizhang089@gmail.com,
+	libaokun1@huawei.com,
+	yangerkun@huawei.com,
+	yukuai@fnnas.com
+Subject: [PATCH -next 0/7] ext4: defer unwritten splitting until I/O completion
+Date: Sat, 13 Dec 2025 10:20:01 +0800
+Message-ID: <20251213022008.1766912-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251210152343.3666103-10-hch@lst.de>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgA3F1HTzTxpFXQ7Bg--.63968S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw4UKrykWFy7CryxKF1kAFb_yoWrWw4fpr
+	WS9w17Jr4kta4jk3s7Za1jqr1F9w1fAr47ur1rG348AF15CF12gr42q3WrXa45t395W3WY
+	vr4Yqw1UC3WUCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Wed, Dec 10, 2025 at 04:23:38PM +0100, Christoph Hellwig wrote:
-> +To submit a bio that uses inline encryption, users must call
-> +``blk_crypto_submit_bio()`` instead of the usual ``submit_bio()``.  This will
-> +submit the bio to the underlying driver if it supports inline crypto, or else
-> +call the blk-crypto fallback routines before submitting normal bios to the
-> +underlying drivers.
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Maybe worth mentioning that submit_bio() still works if
-blk-crypto-fallback support isn't needed?  I think device-mapper relies
-on that when using targets with DM_TARGET_PASSES_CRYPTO on block devices
-with hardware inline encryption support.  The original submitter uses
-blk_crypto_submit_bio(), but the device-mapper layer doesn't, which is
-okay because the fallback (if needed) would have been done already.
+Hello!
 
-> +/**
-> + * blk_crypto_submit_bio - Submit a bio using inline encryption
+This series proposes deferring the splitting of unwritten extents from
+the point of I/O submission until I/O completion when partially writing
+to a preallocated file.
 
-"bio using inline encryption" => "bio that may have a crypto context"
-(or "bio that may be using inline encryption")
+This change primarily needs to address whether it will increase the
+likelihood of extent conversion failure due to the inability to split
+extents in scenarios with insufficient space, which could result in I/O
+write failures and data loss. After analysis, it has been confirmed that
+two existing mechanisms ensure I/O operations do not fail.
 
-> + * @bio: bio to submit
-> + *
-> + * If @bio has not crypto context, or the crypt context attached to @bio is
+The first is the EXT4_GET_BLOCKS_METADATA_NOFAIL flag, which is a best
+effort, it permits the use of 2% of the reserved space or 4,096 blocks
+in the file system when splitting extents. This flag covers most
+scenarios where extent splitting might fail. The second is the
+EXT4_EXT_MAY_ZEROOUT flag, which is also set during extent splitting. If
+the reserved space is insufficient and splitting fails, it does not
+retry the allocation. Instead, it directly zeros out the extra part of
+the extent, thereby avoiding splitting and directly converting the
+entire extent to the written type.
 
-not => no
+These two mechanisms currently have no difference before I/O submission
+or after I/O completion. Therefore, Although deferring extent splitting
+will add pressure on reserved space after I/O completion, but it won't
+increase the risk of I/O failure and data loss. On the contrary, if some
+I/Os can be merged when I/O completion during writeback, it can also
+reduce unnecessary splitting operations, thereby alleviating the
+pressure on reserved space. 
 
-Besides these documentation issues it looks okay though.
+In addition, deferring extent splitting until I/O completion can also
+simplify the I/O submission process and avoid initiating unnecessary
+journal handles when writing unwritten extents.
 
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+Patch 01-03: defer splitting extent until I/O completion.
+Patch 04-07: do some cleanup of the DIO path and remove
+             EXT4_GET_BLOCKS_IO_CREATE_EXT.
 
-- Eric
+Tests:
+
+ - Run xfstests with the -g enospc option approximately 50 times. Before
+   applying this series, the reserved blocks were used over 6000/7000
+   times on a 1 GB filesystem with a 4 KB / 1 KB block size. After
+   applying this series, the counts remain nearly the same. In both
+   cases, there were no splitting failures.
+ - Run xfstests with the -g enospc option about one day, no regressions
+   occurred.
+ - Intentionally create a scenario in which reserved blocks are
+   exhausted. Before applying the patch, zero out the extent before I/O
+   submission; after applying the patch, zero out the extent after I/O
+   completion. There are no other differences.
+ - xfstests-bld shows no regression.
+
+Performance:
+
+This can improve the write performance of concurrent DIO for multiple
+files. The fio tests below show a ~25% performance improvement when
+wirting to unwritten files on my VM with a 100G memory backed disk.
+
+  [unwritten]
+  direct=1
+  ioengine=psync
+  numjobs=16
+  rw=write     # write/randwrite
+  bs=4K
+  iodepth=1
+  directory=/mnt
+  size=5G
+  runtime=30s
+  overwrite=0
+  norandommap=1
+  fallocate=native
+  ramp_time=5s
+  group_reporting=1
+
+ [w/o]
+  w:  IOPS=62.5k, BW=244MiB/s
+  rw: IOPS=56.7k, BW=221MiB/s
+
+ [w]
+  w:  IOPS=79.6k, BW=311MiB/s
+  rw: IOPS=70.2k, BW=274MiB/s
+
+TODO:
+
+Next, we can investigate whether, during the buffer I/O write-back
+process, writing an unwritten extent can also avoid initiating a journal
+handle.
+
+Thank,
+Yi.
+
+Zhang Yi (7):
+  ext4: use reserved metadata blocks when splitting extent on endio
+  ext4: don't split extent before submitting I/O
+  ext4: avoid starting handle when dio writing an unwritten extent
+  ext4: remove useless ext4_iomap_overwrite_ops
+  ext4: remove unused unwritten parameter in ext4_dio_write_iter()
+  ext4: simply the mapping query logic in ext4_iomap_begin()
+  ext4: remove EXT4_GET_BLOCKS_IO_CREATE_EXT
+
+ fs/ext4/ext4.h    | 10 ---------
+ fs/ext4/extents.c | 46 ++++-----------------------------------
+ fs/ext4/file.c    | 23 ++++++++------------
+ fs/ext4/inode.c   | 55 ++++++++++-------------------------------------
+ 4 files changed, 24 insertions(+), 110 deletions(-)
+
+-- 
+2.46.1
+
 
