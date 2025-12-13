@@ -1,307 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-71241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9238CBA5F6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 07:08:20 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C664CBA683
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 08:22:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id AF72230A603A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 06:08:13 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4E8B830BFD50
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 07:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E498219E8;
-	Sat, 13 Dec 2025 06:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDEF26CE05;
+	Sat, 13 Dec 2025 07:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JCMqEvRg"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fltvT9Uk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FDCF9D9
-	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Dec 2025 06:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AFF212B0A;
+	Sat, 13 Dec 2025 07:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765606091; cv=none; b=oYJoFldwH9FSowNZaW4rfCWHyY7WglmTWTPeOu+uMZtvxr735e0kYG4zO0p4bEpaLfHnzLNBAKll3n9NqtUeBlDmakdSlxH4A3f67OKpR9BmYHmLYD84LPeoB7e/au9wY6UIEBr3x8XWeED9ia67FRWIxcErSbxDvEcuxnDulaw=
+	t=1765610537; cv=none; b=k4M8QvYBFxq2vqTkOvLHFp/0OFJ1MGDT+cIIiHI0e1ntqxlD/k7IiIz5trxog6W2vp+xg2+RsmwMYkANNOdQeR3j3S38R6XCRBYDYA8qOrRvoyqJkYtphCHsYY18H3hQTCF8cr91+g3ZJrJovQTPCEgh6zEfLbb8Y7oFCXzv8i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765606091; c=relaxed/simple;
-	bh=zRKFnu0NmmDnPi9SemF4++R7e3d1FEbjOyULSQGxrpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qv0AppBk4Y6DGMT2PNN+X+YUP0Haham5qaMyjOi4k7LRyxPaWGXeDZCzV7Gcz1nkleHctDIWfQb3loFWGb5DnMrR0uetxln+sb00cfp+yyWTfjARjG9yyMYyuTWwkEf/Ubxz4Q1N1UWmwWOgK6YLOADGsv1A5SV60OyDk6qdsPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JCMqEvRg; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ee0084fd98so16467111cf.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 22:08:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765606089; x=1766210889; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zRKFnu0NmmDnPi9SemF4++R7e3d1FEbjOyULSQGxrpI=;
-        b=JCMqEvRg1AwPvhb9SrllGYHC3+KsgL7Djf/zd+FjJNnzqFuqGQkbCldKMsFzJXy38d
-         YlKKKXXLY52cjevJwo9DTCG9ZhBF4maA0T2AHOpvVvOKEee7tBLDkmC0GsdGG+R7p4ct
-         BglQ+g/jWwKgnDpbNQSxpBuIkJDSRuEqUtWxEPN5FZlBuj8RFPIGROX3pQG0cwA9x74W
-         qxTQ7+pIBxY7JLcbjx7K0q2td3mvXBiXC+gqs7oXf3hzaoiSCh4oUzn2j7Wb3wolfzj9
-         AS0nRPSd3onqUIwCynuRCNJdV2oiqbnai56Ztdiq+IeB6lPotsg+TARrwoz6gZn1Yrv9
-         iY+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765606089; x=1766210889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zRKFnu0NmmDnPi9SemF4++R7e3d1FEbjOyULSQGxrpI=;
-        b=IHq+oTO9kLVMQJA9uBg6t/D1s4vBmo19tTj6nZLoEmK1uMbwLOhDxoNfCnkacey2e3
-         daJXA753gGm9B/tswNsbOapRYHlT+EcgjifKbcb9Y6GwjaJktEcCpFUZ8eBYA6xeprFY
-         UFaNtbZJOrcvMU7ZAnpf9kuaW0iHSLMupyYahVurhjPJhrg5Bir2l7XQ/nZuRAs5RI3k
-         PWEcyu9wKkM/3+HXuIFEN/y7S2b4NMfhy6/PWM8jIVAYsCM9cnNUssGL8PybONa2nNRE
-         3qfun1hTrWm6WBbT1pxHmx/OsUQcOk4GP4ByBHEzuSClgcA9jWFk45O8UAplIJnlLKGP
-         K8oA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSbkepf04I0vyYZM4PpboyVTc4C8/yGqv7IjFTRIKeWSO6qYLwyLo7/24FmMrzKUFev/lLw6rZNk7+FWjJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YztnClZSnf+Z2lOG3xgtGnttkJ9EuY5OSezx3yCOEhCJeu7MZHT
-	jXvBkcHk7PTahf5UFEe6Y4EJ4J6dgP8Aq/CC96FLxvXjl018obHQVwLiaqLBKAtI1CrQDdbjWZS
-	JAZGuvKVMEKpLniD3PEQo78ICODwGN5M=
-X-Gm-Gg: AY/fxX5xOelDYbz6o/JCnisehfUXhDVCFGcL44szODlGsi7lKEgskTyAIRlKDpLKUrK
-	qjoELjlClV/YVjvCdoduFNlLgQFOkCuzS0inR4FQzIhT9/u7Q3E4T8SkJ212XmHz4IxUJHuoIup
-	KmD/jV/GoarGtm48VVkFgaDo9RKKGuc+M4/B6Fnb9WfPgjSixC2Q9OZH8qdvdaByO1pU69teD9W
-	rh4FDcMYGXE/kXD7p1SGal1+1eE8yEt67zxRrUwgSe4GgHF59v3P/J2RHKVuRgxXZ6hDztM
-X-Google-Smtp-Source: AGHT+IHJ0txwnPsAht3VxboI8v76IVHsJulav2N27Jvg+a8js1xcDal6jC13qaK4/DRtaZTWQ21olCu8SAG0QmBpovg=
-X-Received: by 2002:a05:622a:40ce:b0:4ee:1b37:c9da with SMTP id
- d75a77b69052e-4f1d049ff57mr52002411cf.17.1765606088551; Fri, 12 Dec 2025
- 22:08:08 -0800 (PST)
+	s=arc-20240116; t=1765610537; c=relaxed/simple;
+	bh=GMHyMAIUlxlDdjq/tAYkUYRYukprZK9ZZdct46MLFMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W9slukPOWthUAb534/u0sqvscTlFIrf3aDlnbfZv2N88rmhBRFkLbR2+ToS02CG2uX/D7rFp8tkebubGepVofvqH3SpW7U4lCEk0hMMnwoM5wx4FBeGOKjd5VU7WUaaiAP4lLT2+Txr79PLORob7u3r6YltEoFo3vw+cs4WDceU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fltvT9Uk; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jzmbE0f51Wo+UCICFtoAAZFgv4mhRqnt1ZueZdlnSx8=; b=fltvT9UkLNu+8PoclHWABfa/2f
+	HP7Y3G5hzMe/WHcqxamYDg8kJ0d3IuyU9ekBnCTzQBP6BmdhMKublw09N20RR2NEmZXzC+eLd5sWY
+	+3FlgMt4mNa27kf1NTAZV+l4EUZ4Gqs5OEPT5A0pRWZY8ixYIIgzRY9CwlXkfJS9+wT4+eW+TXrsw
+	MhMmUSyQjihqU+BTcdmwh5g5t4OCjvdacEHw0q3B+mJq2ugjQIiDrNkzL3AxOev0NlCZppRM+quJk
+	StIjY6kJpegJZ9kwR2xgIc6HGXff6HhARQAdJ2Sz0gO0BYwacMRTvKE4n6acrOMis4b7Yy4wb55Tq
+	Hl9JbqiQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vUJxh-00000008Axs-1dGQ;
+	Sat, 13 Dec 2025 07:22:41 +0000
+Date: Sat, 13 Dec 2025 07:22:41 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Hugh Dickins <hughd@google.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: 6.19 tmpfs __d_lookup() lockup
+Message-ID: <20251213072241.GH1712166@ZenIV>
+References: <47e9d03c-7a50-2c7d-247d-36f95a5329ed@google.com>
+ <20251212050225.GD1712166@ZenIV>
+ <20251212053452.GE1712166@ZenIV>
+ <8ab63110-38b2-2188-91c5-909addfc9b23@google.com>
+ <20251212063026.GF1712166@ZenIV>
+ <2a102c6d-82d9-2751-cd31-c836b5c739b7@google.com>
+ <bed18e79-ab2b-2a8f-0c32-77e6d27e2a05@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251203003526.2889477-1-joannelkoong@gmail.com>
- <20251203003526.2889477-8-joannelkoong@gmail.com> <CADUfDZosVLf4vGm4_kNFReaNH3wSi2RoLXwZBc6TN0Jw__s1OQ@mail.gmail.com>
- <CAJnrk1Z_UZxmppmXXQr3joGzMSdU4ycnnGt=SacQT+6DbALDmA@mail.gmail.com>
- <CADUfDZov3Nk81k8cvdz1ZoXrbTDJfJryHjNza3ZUJyXtfE5YgQ@mail.gmail.com>
- <CAJnrk1ZmJ8V3MOpcEYks5i3dG431C7PmB14J7N2k22rn41ROuw@mail.gmail.com> <CADUfDZqmj0X0e+DzFG-8W7cOkjj1emNzovitCL4E8SyLHmR4Ag@mail.gmail.com>
-In-Reply-To: <CADUfDZqmj0X0e+DzFG-8W7cOkjj1emNzovitCL4E8SyLHmR4Ag@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Sat, 13 Dec 2025 15:07:57 +0900
-X-Gm-Features: AQt7F2qzMwag5i8xnGgtiMEd9IUOAjhjS5w_iZhuc6q1hdfDaVTTCSZp3mPtv-c
-Message-ID: <CAJnrk1ZorOeUkUkCsZ6xYj8CKFPEa5WbACTNgm7_kZ4LLvLoCA@mail.gmail.com>
-Subject: Re: [PATCH v1 07/30] io_uring/rsrc: add fixed buffer table pinning/unpinning
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bed18e79-ab2b-2a8f-0c32-77e6d27e2a05@google.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Dec 10, 2025 at 12:35=E2=80=AFPM Caleb Sander Mateos
-<csander@purestorage.com> wrote:
->
-> On Thu, Dec 4, 2025 at 12:07=E2=80=AFPM Joanne Koong <joannelkoong@gmail.=
-com> wrote:
-> >
-> > On Wed, Dec 3, 2025 at 5:24=E2=80=AFPM Caleb Sander Mateos
-> > <csander@purestorage.com> wrote:
-> > >
-> > > On Wed, Dec 3, 2025 at 2:52=E2=80=AFPM Joanne Koong <joannelkoong@gma=
-il.com> wrote:
-> > > >
-> > > > On Tue, Dec 2, 2025 at 8:49=E2=80=AFPM Caleb Sander Mateos
-> > > > <csander@purestorage.com> wrote:
-> > > > >
-> > > > > On Tue, Dec 2, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong=
-@gmail.com> wrote:
-> > > > > >
-> > > > > > Add kernel APIs to pin and unpin the buffer table for fixed buf=
-fers,
-> > > > > > preventing userspace from unregistering or updating the fixed b=
-uffers
-> > > > > > table while it is pinned by the kernel.
+On Fri, Dec 12, 2025 at 02:12:17AM -0800, Hugh Dickins wrote:
 
-After discussing this a bit with Jens at lpc, he's not a fan of the
-pinning idea for fixed buffers, so for v2 I am going to abandon this
-and instead just do the lookup every time.
+> Well, more than that: it's exactly the right thing to do, isn't it?
+> shmem_mknod() already called d_make_peristent() which called __d_rehash(),
+> calling it a second time naturally leads to the __d_lookup() lockup seen.
+> And I can't see a place now for shmem_whiteout()'s "Cheat and hash" comment.
+> 
+> Al, may I please leave you to send in the fix to Christian and/or Linus?
+> You may have noticed other things on the way, that you might want to add.
+> 
+> But if your patch resembles the below (which has now passed xfstests
+> auto runs on tmpfs), please feel free to add or omit any or all of
+> 
+> Reported-by: Hugh Dickins <hughd@google.com>
+> Acked-by: Hugh Dickins <hughd@google.com>
+> Tested-by: Hugh Dickins <hughd@google.com>
 
-This ends up making the discussion below irrelevant, but adding my
-comments below anyways for completeness.
+	The problem is that the comment is not quite accurate ;-)
+What it's trying to say is that we get whiteout and old_dentry
+sharing parent, name and both hashed, but that won't last for
+long - as soon as we get to d_move(), old_dentry will change
+name and/or parent.
 
-> > > > > >
-> > > > > > This has two advantages:
-> > > > > > a) Eliminating the overhead of having to fetch and construct an=
- iter for
-> > > > > > a fixed buffer per every cmd. Instead, the caller can pin the b=
-uffer
-> > > > > > table, fetch/construct the iter once, and use that across cmds =
-for
-> > > > > > however long it needs to until it is ready to unpin the buffer =
-table.
-> > > > > >
-> > > > > > b) Allowing a fixed buffer lookup at any index. The buffer tabl=
-e must be
-> > > > > > pinned in order to allow this, otherwise we would have to keep =
-track of
-> > > > > > all the nodes that have been looked up by the io_kiocb so that =
-we can
-> > > > > > properly adjust the refcounts for those nodes. Ensuring that th=
-e buffer
-> > > > > > table must first be pinned before being able to fetch a buffer =
-at any
-> > > > > > index makes things logistically a lot neater.
-> > > > >
-> > > > > Why is it necessary to pin the entire buffer table rather than
-> > > > > specific entries? That's the purpose of the existing io_rsrc_node=
- refs
-> > > > > field.
-> > > >
-> > > > How would this work with userspace buffer unregistration (which wor=
-ks
-> > > > at the table level)? If buffer unregistration should still succeed
-> > > > then fuse would need a way to be notified that the buffer has been
-> > > > unregistered since the buffer belongs to userspace (eg it would be
-> > > > wrong if fuse continues using it even though fuse retains a refcoun=
-t
-> > > > on it). If buffer unregistration should fail, then we would need to
-> > > > track this pinned state inside the node instead of relying just on =
-the
-> > > > refs field, as buffers can be unregistered even if there are in-fli=
-ght
-> > > > refs (eg we would need to differentiate the ref being from a pin vs
-> > > > from not a pin), and I think this would make unregistration more
-> > > > cumbersome as well (eg we would have to iterate through all the
-> > > > entries looking to see if any are pinned before iterating through t=
-hem
-> > > > again to do the actual unregistration).
-> > >
-> > > Not sure I would say buffer unregistration operates on the table as a
-> > > whole. Each registered buffer node is unregistered individually and
-> >
-> > I'm looking at the liburing interface for it and I'm only seeing
-> > io_uring_unregister_buffers() / IORING_UNREGISTER_BUFFERS which works
-> > on the entire table, so I'm wondering how that interface would work if
-> > pinning/unpinning was at the entry level?
->
-> IORING_REGISTER_BUFFERS_UPDATE can be used to update individual
-> registered buffers. For each updated slot, if there is an existing
-> buffer, it will be unregistered (decrementing the buffer node's
-> reference count). A new buffer may or may not be registered in its
-> place; it can be skipped by specifying a struct iovec with a NULL
-> iov_base.
->
+	The trouble is, it might not _get_ to that d_move() at
+all.  It used to be guaranteed back when shmem_whiteout() had
+been introduced (shmem_renameat2() used to have no failure
+exits past shmem_whiteout() returning success), but it's no longer
+true - not since a2e459555c5f "shmem: stable directory offsets"
+two years ago.
 
-I think we would still need to account for the
-IORING_UNREGISTER_BUFFERS path since that is callable by users.
+	Failure, AFAICS, requires severe a OOM, but it's still
+a bug.  What's more, simple_offset_rename() itself does not recover
+from a failure, without any whiteouts being involved.
 
-> >
-> > > stores its own reference count. io_put_rsrc_node() will be called on
-> > > each buffer node in the table. However, io_put_rsrc_node() just
-> > > removes the one reference from the buffer node. If there are other
-> > > references on the buffer node (such as an inflight io_uring request
-> > > using it), io_free_rsrc_node() won't be called to free the buffer nod=
-e
-> > > until all those references are dropped too. So fuse holding a
-> > > reference on the buffer node would allow it to be unregistered, but
-> > > prevent it from being freed until fuse dropped its reference.
-> > > I'm not sure I understand the problem with fuse continuing to hold
-> > > onto a registered buffer node after userspace has unregistered it fro=
-m
-> > > the buffer table. (It looks like the buffer node in question is the
-> >
-> > For fuse, it holds the reference to the buffer for the lifetime of the
-> > connection, which could be a very long time. I'm not seeing how we
-> > could let userspace succeed in unregistering with fuse continuing to
-> > hold that reference, since as I understand it conceptually,
-> > unregistering the buffer should give ownership of the buffer
-> > completely back to userspace.
->
-> I'm not quite sure what you mean by "give ownership of the buffer
-> completely back to userspace". My understanding is that registering a
-> buffer with io_uring just pins the physical pages as a perf
-> optimization. I'm not aware of a way for userspace to observe directly
-> whether or not certain physical pages are pinned. There's already no
-> guarantee that the physical pages are unpinned as soon as a buffer is
-> unregistered; if there are any inflight io_uring requests using the
-> registered buffer, they will continue to hold a reference count on the
-> buffer, preventing it from being released. The only guarantee is that
-> the unregistered slot in the buffer table is now empty.
->
-> Presumably fuse must release its reference count (or pin) eventually,
-> or otherwise there would be a resource leak? I don't see an issue with
-> holding references to registered buffers for the lifetime of a fuse
-> connection. As long as there's a way for the fuse server to tell the
-> kernel to release those resources if they are no longer needed (which
-> it sounds like already exists from your description of aborting a fuse
-> connection).
+	What I'm going to do is a couple of patches - one fixing
+the regression in this cycle (pretty much what you'd been testing),
+then a separate fix for stable offsets failure handling (present
+since 2023).  I'll feed them to Linus; I hoped to do that with
+old regression fixed first, to reduce the PITA for backports,
+but if I don't have that debugged tomorrow, I'll send the recent
+regression fix first.
 
-The way I view it is that conceptually, userspace "owns" the buffer.
-Userspace allocated the buffer and is later responsible for freeing it
-when it's done using it. When userspace registers the buffer to the
-ring, it can expect the buffer to be written to / read from by the
-kernel code, but it should also be able to expect that when it
-unregisters the buffer from the ring and any of the concurrent
-inflight requests are fulfilled, the kernel will not be accessing that
-buffer anymore and userspace has complete sovereignty over the buffer.
-
-With fuse continuing to hold the reference on the buffer (for the
-lifetime of the connection) and continuing to read to / write from it
-after unregistration, that violates that contract.
-
->
-> >
-> > > one at FUSE_URING_FIXED_HEADERS_INDEX?) Wouldn't pinning the buffer
-> >
-> > Yep you have that right, the buffer node in question is the one at
-> > FUSE_URING_FIXED_HEADERS_INDEX which is where all the headers for
-> > requests are placed.
-> >
-> > > table present similar issues? How would userspace get fuse to drop it=
-s
-> >
-> > I don't think pinning the buffer table has a similar issue because we
-> > disallow unregistration if it's pinned.
->
-> It sounds like you're saying that buffer unregistration just isn't
-> expected to work together with fuse's use of registered buffers, is
-> that accurate? Does it matter then whether the buffer unregistration
-> returns -EBUSY because the buffer table is pinned vs. succeeding but
-> not actually releasing the buffer resource because fuse still holds a
-> reference on it? My preference would be to just use the existing
-
-Yes, I think the difference is that returning -EBUSY signals to the
-caller that the buffer cannot be unregistered and will still be used.
-Whereas succeeding but not actually releasing the buffer resource and
-still continuing to use it beyond the inflight cmds is
-contrary/deceptive behavior to what the user should be able to expect.
-
-> reference counting mechanism rather than introducing another mechanism
-> if both provide safety equally well.
->
-> >
-> > > pin if it wants to modify the buffer registrations? I would imagine
-> >
-> > For the fuse use case, the server never really modifies its buffer
-> > registrations as it sets up everything before initiating the
-> > connection. But if it wanted to in the future, the server could send a
-> > fuse notification to the kernel to unpin the buf table.
->
-> This seems to assume that all the registered buffers are used
-> exclusively for fuse purposes. But it seems plausible that a fuse
-> server might want to use io_uring for other non-fuse purposes and want
-> to use registered buffers there too as a perf optimization? Then it
-> would be nice for the process to be able to update the other
-> registered buffers even while the kernel pins (or holds a reference
-> count on) the ones used for fuse.
-
-I don't think this is likely. I think it's more likely that a
-high-performance fuse server would use a separate ring for
-non-fuse-related I/O, as doing it on the same ring it's using to
-communicate with the fuse kernel would lead to more contention for
-ring entries which would result in higher latency for servicing
-incoming/outgoing fuse requests. I guess the caller could make the
-ring very big to accommodate for that, but then that leads to more
-memory overhead (eg allocating the headers buffers for all the
-potential entries).
-
->
-> Best,
-> Caleb
-
-Thanks,
-Joanne
 
