@@ -1,62 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-71230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE33CBA2FA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 03:22:38 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D92ECBA4FA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 06:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 6EF0A3002B92
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 02:22:37 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9D64C30A7561
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 05:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5419248F69;
-	Sat, 13 Dec 2025 02:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71680220F37;
+	Sat, 13 Dec 2025 05:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USOXOh7u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC7D242D6A;
-	Sat, 13 Dec 2025 02:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6033E182D2
+	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Dec 2025 05:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765592554; cv=none; b=FjlbOWh++T9+h7T19zxST1pi8vmkOvN5LZqaf1tHouNTUpXbcbaK5b6Iz9M1EJ7dS7KQGnYyFlOxoOdlFvtbRwdsxRFnkdFlRZ4pWwTz75+ke9dkZzqkCDySMhLSgr5LCnPTq1iArmylT/G07HCvzlnBMSVa7ToNp0VEaYexwas=
+	t=1765602409; cv=none; b=VdtFxG/vOHO5YsOTpKIPIkiDkgprDwZztXO6OojLRI5mU3/LNUNQC616BRmMF9DgfNzlEevVeU9G32N0S3nekbD7TZuEBGjKKrA3hECYk4hrXJZoYQyPTSyVVHvVLXZoSFfcRTq1I+fQsy4b9D+7Y2pxghujND7Fwg8+JObh3XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765592554; c=relaxed/simple;
-	bh=7Cs1pr7wAo/xMoCnHKq12fNe9CDnAQGWhwmIwaIGDq0=;
+	s=arc-20240116; t=1765602409; c=relaxed/simple;
+	bh=t449w8dxUFgPONNcxJEWe21UM9wpgKy8HnqMapgW5DA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MwInMMdo2oQ9OWS+Ud5lK1t5OS0LfUanePqhE2fzOOt7Ocr8WiCCXzhepwsUHwB4IQPqTTCgpDkwWcl2oYmKX1Ve59WRbupKmhHcC3Yrk0qixuPcGgcfBU8WyepGsxmINRQmgDnA5lLewtD8W4dJCnrt0Z0ZoqfUGHpSZrU76Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dSqpT5pzBzYQtvd;
-	Sat, 13 Dec 2025 10:22:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 3D40C1A0A29;
-	Sat, 13 Dec 2025 10:22:29 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP2 (Coremail) with SMTP id Syh0CgA3F1HTzTxpFXQ7Bg--.63968S11;
-	Sat, 13 Dec 2025 10:22:29 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	yizhang089@gmail.com,
-	libaokun1@huawei.com,
-	yangerkun@huawei.com,
-	yukuai@fnnas.com
-Subject: [PATCH -next 7/7] ext4: remove EXT4_GET_BLOCKS_IO_CREATE_EXT
-Date: Sat, 13 Dec 2025 10:20:08 +0800
-Message-ID: <20251213022008.1766912-8-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20251213022008.1766912-1-yi.zhang@huaweicloud.com>
-References: <20251213022008.1766912-1-yi.zhang@huaweicloud.com>
+	 MIME-Version; b=Yse2XJREw3yW0O56amhv48YttkzgEuY4LA0gEIswt9q7U3xC3ULQnBvx1p4XR8iuK5Kp5qfVxT587yOxSr1xXZQlUriIBqxGgk4iqMF9sQSSkN5ydDN0qP72qSRJjAwtv+nWM9z2OF1EdY9yGGysAagJfznqnnea6wbP9omSF14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=USOXOh7u; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-88051279e87so22217206d6.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 21:06:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765602407; x=1766207207; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t449w8dxUFgPONNcxJEWe21UM9wpgKy8HnqMapgW5DA=;
+        b=USOXOh7uAyInCYRGAPrU5XNDShHnApjHlGJnN9vSI7zqSjJWgCMW0tIeYi5MER2etX
+         UHxJScvJInBNntSW/FM5++HQUlq/ilVHVNznRa4+0v4rkaark0/tRCuGoskboxudPUlJ
+         Bd/WSIT5lQM3Z1sdCHIR5d2y++ycbj6uBWQygfpw78VZMzbeJwy4KiHN3Yq+rRFgTusx
+         KDnS5coHOaHEUKuxEDzr99Ru9qZaqGz6NISC/ueEHPGX096sN24fCKnKIu6wDVz5ZpE8
+         lLK8P6OG47HT5SAepUe98PBp9BdfH4+QEd37OyEjS6P+77sGc3ZKk3U6NmfZqaEtLXzI
+         KusQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765602407; x=1766207207;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=t449w8dxUFgPONNcxJEWe21UM9wpgKy8HnqMapgW5DA=;
+        b=eHsCm8UZahKfhTupqt2VPnWaokv4iTWf05P9LXpF2rYH96uNZMXZFHRbrDfeJEZ8pT
+         z9Cu254kDhkrnF1N5Z2BRKyQ8saHIESmq+5XeY5q3fG4s1mjPg/wXKY0DdSiRW4cQlwS
+         OdOzqzlCvVQ6ZqBg+wGSDcV9PuWRd4ty2W5+/cPTZhHgdZif64wVyg5I0WiLyRZfAApA
+         CAAhusSM/fSLTOZo28LuFX8VbFIvEXZhKquBc66GIalXLhmqEiF7SWH3FGzwxWbbktqH
+         IWWm4NfYdPesyr7H+BfC0g4L5eJMnmr0FMnzXq4WYEy+l0W1ab61IjV7kzvO+Qxv565G
+         UbrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUIXdpQibDxrY+qfZjp7EGGtWR21NvdbMmuZ8WVk+BcGz6zXwpAL8YE2CQUA7KXDebwl3xjN+tmsEhzLFr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ32drbyI6ZsFEpEyPo5d4284xpLPCsahw22UBiinZCcf+TYTw
+	hwBYHFN8TZLmnZPCZxwJJziShc90eqKryBhB9iKjR0ehoamhRm0/y7AH
+X-Gm-Gg: AY/fxX5zH3ulgwLwAuYvXnns8AgFLDgnIeN/LVIPtvz5f2rgiqchiPPjYQNCpwb2B+3
+	+Tb36a6cPqHmYBmySJheodhGxhk0h8yeumgdq6YsmuyCQMdUK+7LvD9S/H1jtVmeEAuV2pvQJDc
+	3DzgxgJrpJqzg3mecuyFtbEdnn5xafyGNYsVpcX+4ZsVITGfGsrfFguubA0kWfMkQSYmzEdogdB
+	xN/ejiN+pjKHSfQiaD2ZQZqbOx4TJP61nV5+vjZvTmQURlklRW7NmJOnVnZSB03VJv9SPmboaml
+	gVrD3s/B4pLI61d5tol7oNwrgXbLeL4NYcZkYfkv84s/bNFNB3Fz/WmpSdP75jYCGActMwg8O9l
+	fPDWw4AZMm7ZvtG9cNYKQ2IhAIn3UlmJBGghu1GG5GyXf7RsBQCMTSBCuYHSgFcaludICly9VZD
+	Jw8DV0YUqpBXZ/Nz/mu587VgRLO++KW6TsurJEmZfcZYcO+w==
+X-Google-Smtp-Source: AGHT+IH7gV+IFAvDDK2OhuNhl2PfBranKC++AHSP8eqD619xjakmIuxA5CfBjDjZJehhciCalhL9zQ==
+X-Received: by 2002:a05:6214:2b9d:b0:882:49f4:da25 with SMTP id 6a1803df08f44-8887e132f86mr64018476d6.39.1765602407115;
+        Fri, 12 Dec 2025 21:06:47 -0800 (PST)
+Received: from dans-laptop.miyazaki.mit.edu ([18.10.130.49])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88993b6a80fsm7622486d6.18.2025.12.12.21.06.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Dec 2025 21:06:46 -0800 (PST)
+From: Dan Klishch <danilklishch@gmail.com>
+To: legion@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ebiederm@xmission.com,
+	viro@zeniv.linux.org.uk,
+	keescook@chromium.org,
+	containers@lists.linux-foundation.org,
+	linux-fsdevel@vger.kernel.org,
+	Dan Klishch <danilklishch@gmail.com>
+Subject: Re: [RESEND PATCH v6 0/5] proc: subset=pid: Relax check of mount visibility
+Date: Sat, 13 Dec 2025 00:06:38 -0500
+Message-ID: <20251213050639.735940-1-danilklishch@gmail.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <cover.1626432185.git.legion@kernel.org>
+References: <cover.1626432185.git.legion@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,135 +94,23 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgA3F1HTzTxpFXQ7Bg--.63968S11
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFWUGw1UGF1xAryfXr1UJrb_yoWrGrW5p3
-	sxAF1xGr4jq34j93yxCa1UXr12k3W8KF47ur4rJrWF9a43Ar1fKF10ya4FyFWFgFW8Za1Y
-	qFWrK34UJa93GrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0JUQFxUUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Hello Alexey,
 
-We do not use EXT4_GET_BLOCKS_IO_CREATE_EXT or split extents before
-submitting I/O; therefore, remove the related code.
+Would it be possible to revive this patch series?
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/ext4.h    |  9 ---------
- fs/ext4/extents.c | 29 -----------------------------
- fs/ext4/inode.c   | 11 -----------
- 3 files changed, 49 deletions(-)
+I wanted to add an additional downstream use case that would benefit
+from this work. In particular, I am trying to run the sandbox
+sunwalker-box [1] without root privileges and/or inside a container.
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 9a71357f192d..174c51402864 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -707,15 +707,6 @@ enum {
- 	 * found an unwritten extent, we need to split it.
- 	 */
- #define EXT4_GET_BLOCKS_SPLIT_NOMERGE		0x0008
--	/*
--	 * Caller is from the dio or dioread_nolock buffered IO, reqest to
--	 * create an unwritten extent if it does not exist or split the
--	 * found unwritten extent. Also do not merge the newly created
--	 * unwritten extent, io end will convert unwritten to written,
--	 * and try to merge the written extent.
--	 */
--#define EXT4_GET_BLOCKS_IO_CREATE_EXT		(EXT4_GET_BLOCKS_SPLIT_NOMERGE|\
--					 EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT)
- 	/* Convert unwritten extent to initialized. */
- #define EXT4_GET_BLOCKS_CONVERT			0x0010
- 	/* Eventual metadata allocation (due to growing extent tree)
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index c98f7c5482b4..c7c66ab825e7 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -3925,34 +3925,6 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
- 	trace_ext4_ext_handle_unwritten_extents(inode, map, flags,
- 						*allocated, newblock);
- 
--	/* get_block() before submitting IO, split the extent */
--	if (flags & EXT4_GET_BLOCKS_SPLIT_NOMERGE) {
--		int depth;
--
--		path = ext4_split_convert_extents(handle, inode, map, path,
--						  flags, allocated);
--		if (IS_ERR(path))
--			return path;
--		/*
--		 * shouldn't get a 0 allocated when splitting an extent unless
--		 * m_len is 0 (bug) or extent has been corrupted
--		 */
--		if (unlikely(*allocated == 0)) {
--			EXT4_ERROR_INODE(inode,
--					 "unexpected allocated == 0, m_len = %u",
--					 map->m_len);
--			err = -EFSCORRUPTED;
--			goto errout;
--		}
--		/* Don't mark unwritten if the extent has been zeroed out. */
--		path = ext4_find_extent(inode, map->m_lblk, path, flags);
--		if (IS_ERR(path))
--			return path;
--		depth = ext_depth(inode);
--		if (ext4_ext_is_unwritten(path[depth].p_ext))
--			map->m_flags |= EXT4_MAP_UNWRITTEN;
--		goto out;
--	}
- 	/* IO end_io complete, convert the filled extent to written */
- 	if (flags & EXT4_GET_BLOCKS_CONVERT) {
- 		path = ext4_convert_unwritten_extents_endio(handle, inode,
-@@ -4006,7 +3978,6 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
- 		goto errout;
- 	}
- 
--out:
- 	map->m_flags |= EXT4_MAP_NEW;
- map_out:
- 	map->m_flags |= EXT4_MAP_MAPPED;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 39348ee46e5c..fa579e857baf 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -588,7 +588,6 @@ static int ext4_map_query_blocks(handle_t *handle, struct inode *inode,
- static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
- 				  struct ext4_map_blocks *map, int flags)
- {
--	struct extent_status es;
- 	unsigned int status;
- 	int err, retval = 0;
- 
-@@ -649,16 +648,6 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
- 			return err;
- 	}
- 
--	/*
--	 * If the extent has been zeroed out, we don't need to update
--	 * extent status tree.
--	 */
--	if (flags & EXT4_GET_BLOCKS_SPLIT_NOMERGE &&
--	    ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, &map->m_seq)) {
--		if (ext4_es_is_written(&es))
--			return retval;
--	}
--
- 	status = map->m_flags & EXT4_MAP_UNWRITTEN ?
- 			EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
- 	ext4_es_insert_extent(inode, map->m_lblk, map->m_len, map->m_pblk,
--- 
-2.46.1
+The sandbox aims to prevent cross-run communication via side channels,
+and PID allocation is one such channel. Therefore, it creates a new PID
+namespace and mounts the corresponding procfs instance inside of the
+sandbox. This currently works without a real root when procfs is fully
+accessible, but obviously fails otherwise.
 
+Thanks,
+Dan Klishch
+
+[1] https://github.com/purplesyringa/sunwalker-box/
 
