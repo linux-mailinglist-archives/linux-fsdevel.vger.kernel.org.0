@@ -1,117 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-71243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFF4CBA6D1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 08:46:40 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A98CCBA6E0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 08:52:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5BF4B30BC1C6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 07:46:36 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id EB32C300A295
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Dec 2025 07:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FE521D59B;
-	Sat, 13 Dec 2025 07:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74133FCC;
+	Sat, 13 Dec 2025 07:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BnUZAwOP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QyRuyN0n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00B13FCC
-	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Dec 2025 07:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6EC126BF1
+	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Dec 2025 07:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765611995; cv=none; b=fcshs3okjEzcKW2a8f6M/uTkkzOn5m78QuzHC6cC+qzX/smdbVF5giyZGWJdVz92oCiTpGdHALJU9wvUBSMl75vP1cN6BMlfM4yadWf2hdjR3TbJ8dWvDavqZgfKOVzMEE5Qjyy9XwoGUGad4XNa7FX6s8gY7dzKpOzibKck8RE=
+	t=1765612373; cv=none; b=jFKpkL9BWRLdFDNdNeJQQcTiNctrGznh7FsB3hjUFqiyWJuih6and5+faBm8vwC/Zvyq2+8vvMdISLcRDMHRk42/HkghzfBADkuLIx7qHjtrYF7pc+dTzi+I9EZgk6v/YZfyPdwnsYAWcVedk2IpEQ58OcCKWpFtUZi+59AovgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765611995; c=relaxed/simple;
-	bh=OkNCr+W9+iXcJEIfRVmsFa2dfGw99v9lWLhyDEYaaks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tj/bEi3tvttD3FEIp4pDJKuXpzSg97QdrUTlXfAczeP1bGFSnh979MEHJ0CbN0Vy5WAh2hsM/ZG4NVBvIJD9jZXEN7C3jFXU/8J+CWVZ0V10jmnN1yGzk/WzTkPaGxBaOJ93+VWXKRoQwonXAGU/N5Pr/HrKXhhh5lZFPpJfyVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BnUZAwOP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 714D4C4CEF7;
-	Sat, 13 Dec 2025 07:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765611994;
-	bh=OkNCr+W9+iXcJEIfRVmsFa2dfGw99v9lWLhyDEYaaks=;
-	h=From:To:Cc:Subject:Date:From;
-	b=BnUZAwOPEA4q90izP48X4REr9/BmkRb4W9UbvUeqHmD/KjIGgk4lQcSoCGIqDQAzH
-	 QrULfbW/I4RNGdJhzxmP//GFy+Zewj0kPx7rnphXLFm+c+0PSF/EYqRjwDOp1H81ZA
-	 Uw45Zee0/eak5oMCVEEEFF6rY66sJwklBXq/HHfPYKtkXw5EQ7EZT6hMS0S/5SWamp
-	 C3QfG4CmwqrFWENKfdvXGST99lZ4yV/ztSGcEl3OOp0ZYebB91zpdnJWrOL9Z1tV9D
-	 EEvkIji5GnMfXBWhuhDJHPzfi/dJuYTDg8WgCq9Q44WjTO8JzkbUquW0RziQhpAx/l
-	 aZqk2KyBHdCoA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
+	s=arc-20240116; t=1765612373; c=relaxed/simple;
+	bh=blQ0dFBxPxBJ0xPaI1fuKF80stJgtlWWkahEZdpvlgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Onjrt9vQg8KgnPJpIe3tdjeKNRjhLvkWKqLaOH5DyVxWEADYQ99DLlaef7d14Z5uC/sfQUIz0WyK+s6UsizQ6aIbfDNnwdBrmgCnlOBNyBcIZhoqOoSMxrAcNgaCDZDPV321p3KEnXAusdbIfDy09eiUlz76zzwDRI5a6s2/uM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QyRuyN0n; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5957db5bdedso2447404e87.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Dec 2025 23:52:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765612370; x=1766217170; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RX1eqZdD+QdTK0VLe9sMoHAFi5N2Je1usLLZsuCNaCI=;
+        b=QyRuyN0n41j8ypeLKiZk1+0f8UzNsxs/lISeIpX1PwVoNPo7GC5y3QWArrbhB1kSTp
+         IUmCMD4gaLMfZ04Wh+B5jh43iLVLYllF6yHOpSMsJiu0hmpzf5XTyDj3TsogPFpZkYRK
+         ciL/LDxHtNfcGRl4zK+/pq8S49mxtPKBnbCdjWXfBaQRTDLmzTko76zfWiR06oRU9Dgr
+         Fq2MMk/h+gU3F0UCS7vCSgjOnS+2KqQ3ukfX8VpK4RSWCcL9rCgqhZeek8lcRMluAOw3
+         CAzATwKHsgyJILly6OI9iwNI81GLPxt9MBacFPcE3XrGUreVEghxbx7NNDXkpQ1qJ7pZ
+         NxyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765612370; x=1766217170;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RX1eqZdD+QdTK0VLe9sMoHAFi5N2Je1usLLZsuCNaCI=;
+        b=J5HLahAzHRwjV5s2kK60OKBSIKsn5GS5UB29bHoQTdJ1zmjy5KLhcnO4AJDDgV/O3G
+         Flkvv/Sje6CnzijxCEXG1bSWjJ0c+P0lETzq4J1Ha8Oqs1frKSbVN7wJVpsENUG4Ty3Q
+         YVDbSDwAoCJ6zzqzDlc7k36UNZdj/aQ3iOpEdlAAyHl7xUZQgddCGeQCR2xokBMDeo8Z
+         agtCxwKK+sbtcAhWv+iU5sDqQDYhqS0+55MkOxMs+H2Q6O+KKBLDBifgt4I4Iq8QaQr5
+         i3SHOYfq+hxRKoY1hFQd4gQgLqg4Ax/4CZ+wZuCczwMklF+6SzOWQDdDPM0EHG185P2h
+         tZow==
+X-Forwarded-Encrypted: i=1; AJvYcCWjFz8hB3LCVixlFmvNs9FLFUPL0YEDQNv5hnwl6rFH9MnZVBhlbMAiwk2A6LsPVO0tTQSDY6Ds53RtE1PA@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjfA//DXV9M+ZaR9NEiTHrGQjqfgG30tkSTLmILvZfwfxnB4UD
+	q30fIMxOKDdZTaxHqgsP2ECtKUoMrXYiz06TCfdKYEC7+RCjeo1z4Ej+
+X-Gm-Gg: AY/fxX7TexOdfHPgAPqh273Lp8/rTK68RpXO0wiuDGpl+Wg5C0A+zXdtTgV3Cp2UDSm
+	Y2OUS87ycw/bAPuKjDEaSZwHwoFb/As2VtqTmfEdd9HilBNFVEdzyY4ejv67296170DCBQW2dLl
+	YD/uIzCKlzZhohiWBZHvlAyZWJSnF2ThhgLf/IdkLmFKx80qp1oUDg7OOAQ9vQKrngQU95aDgum
+	emIWAPKRPrXSrlX81m8lieAmnm8SYQZ3yUHSJ2ZHvPAivlErt8R8QU54f0HuVXejah7hk/tqxJJ
+	xY5zRrz5roHLaiNGkrq7PE/7L18Lm4sTpc6ECkZYewitZFc2M78D05orKpJe2Ma0DWTkwBlZLmY
+	3v10kG9li9jN60MoEiFo7OMwGYYNIaUo04flvPJTO8fJ1F6NjibycsovMIPBaDd2wDnN4ZwLDPI
+	KtOJ3IKWxk
+X-Google-Smtp-Source: AGHT+IGLUTBvJyYmnDp7a3kK5YSVbxFWtC2bfhu9Ek7QMpiXrPdlK9l+BGA8MOzZApXTp+I0lS0nMA==
+X-Received: by 2002:a05:6512:1154:b0:598:8f92:c33f with SMTP id 2adb3069b0e04-598faa81508mr1747835e87.51.1765612369308;
+        Fri, 12 Dec 2025 23:52:49 -0800 (PST)
+Received: from localhost ([194.190.17.114])
+        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-37fdebe5e71sm4485881fa.1.2025.12.12.23.52.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Dec 2025 23:52:48 -0800 (PST)
+From: Askar Safin <safinaskar@gmail.com>
+To: joannelkoong@gmail.com
+Cc: asml.silence@gmail.com,
+	axboe@kernel.dk,
+	bschubert@ddn.com,
+	csander@purestorage.com,
+	io-uring@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	Chris Mason <clm@fb.com>,
-	Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH] file: ensure cleanup
-Date: Sat, 13 Dec 2025 08:45:23 +0100
-Message-ID: <20251213-distanz-umgewandelt-c6179aac18d7@brauner>
+	miklos@szeredi.hu,
+	xiaobing.li@samsung.com
+Subject: Re: [PATCH v1 30/30] docs: fuse: add io-uring bufring and zero-copy documentation
+Date: Sat, 13 Dec 2025 10:52:46 +0300
+Message-ID: <20251213075246.164290-1-safinaskar@gmail.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251203003526.2889477-31-joannelkoong@gmail.com>
+References: <20251203003526.2889477-31-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1898; i=brauner@kernel.org; h=from:subject:message-id; bh=OkNCr+W9+iXcJEIfRVmsFa2dfGw99v9lWLhyDEYaaks=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTaSs5JDThjwLnUQLjly/e2OCfDb+cNljrzJ4iySy77P Du61+hURykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESy4xkZ1t418Lik0KpwtoQ3 yaInXX0a24NniV7HXh/xk1fd7vdkKcP/3McKpX72IayWGuVKCpGhzU91509XiNAyWTzdo3vX23v cAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Brown paper bag time. This is a silly oversight where I missed to drop
-the error condition checking to ensure we clean up on early error
-returns. I have an internal unit testset coming up for this which will
-catch all such issues going forward.
+Joanne Koong <joannelkoong@gmail.com>:
+> +  virtual addresses for evey server-kernel interaction
 
-Reported-by: Chris Mason <clm@fb.com>
-Reported-by: Jeff Layton <jlayton@kernel.org>
-Fixes: 011703a9acd7 ("file: add FD_{ADD,PREPARE}()")
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
-Linus,
+I think you meant "every"
 
-I didn't take my second hardware key to Tokyo so I have no access to any
-mail or relevant servers right now. I get back to work on Monday. Can
-you please apply this directly?
-
-Thanks!
-Christian
----
- include/linux/file.h | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
-
-diff --git a/include/linux/file.h b/include/linux/file.h
-index cf389fde9bc2..27484b444d31 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -161,12 +161,10 @@ typedef struct fd_prepare class_fd_prepare_t;
- /* Do not use directly. */
- static inline void class_fd_prepare_destructor(const struct fd_prepare *fdf)
- {
--	if (unlikely(fdf->err)) {
--		if (likely(fdf->__fd >= 0))
--			put_unused_fd(fdf->__fd);
--		if (unlikely(!IS_ERR_OR_NULL(fdf->__file)))
--			fput(fdf->__file);
--	}
-+	if (unlikely(fdf->__fd >= 0))
-+		put_unused_fd(fdf->__fd);
-+	if (unlikely(!IS_ERR_OR_NULL(fdf->__file)))
-+		fput(fdf->__file);
- }
- 
- /* Do not use directly. */
-@@ -230,7 +228,8 @@ static inline int class_fd_prepare_lock_err(const struct fd_prepare *fdf)
- 		VFS_WARN_ON_ONCE(fdp->__fd < 0);               \
- 		VFS_WARN_ON_ONCE(IS_ERR_OR_NULL(fdp->__file)); \
- 		fd_install(fdp->__fd, fdp->__file);            \
--		fdp->__fd;                                     \
-+		retain_and_null_ptr(fdp->__file);              \
-+		take_fd(fdp->__fd);                            \
- 	})
- 
- /* Do not use directly. */
 -- 
-2.47.3
-
+Askar Safin
 
