@@ -1,244 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-71265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A88CBB676
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Dec 2025 04:30:32 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C52CBBB8E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Dec 2025 15:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 46285300F33B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Dec 2025 03:30:23 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id EE9D33001E19
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Dec 2025 14:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C39261B8D;
-	Sun, 14 Dec 2025 03:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15BB2701DA;
+	Sun, 14 Dec 2025 14:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aMsawhgh"
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="XSpmqRRn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304AF2550D7;
-	Sun, 14 Dec 2025 03:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586A1239085;
+	Sun, 14 Dec 2025 14:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765683019; cv=none; b=dMHDqcr2nMxAgEIKEqUyTK75uRApHOc1yV4oNKOZ6KMuDVVlA8ruYdgx4RikO1BZhyU771oBYi6PzdjoZDdCAjSIH5RDDXlOpLz1BC073TxaLPw27jLxVurAroxSQd5DTf+K1ayNtqEdtI2wTQjN9BEzzkuUEyDBUNaWo91a5EI=
+	t=1765723260; cv=none; b=YVWY+gcrQRE5bCGq0DSPjg8RzlayT3ob0gvJpM4BctDIq/E3g1PSk3+OvcUO/j5SJBkvv5s/A3n6FQK/db3bDIae+DKAgmqWOYPyj/1AuSkTTK9f5oegMva3TmP1BxNQt/Xpx1CVoo85kvVWSUawEFOmX5LYqYZuxcwIHcDgB+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765683019; c=relaxed/simple;
-	bh=QgE6R0Oc/UN2zEIgyAS5qTWPI7aLZgm2RuG9HAFk2N0=;
+	s=arc-20240116; t=1765723260; c=relaxed/simple;
+	bh=146KBGCg7o3/dc/tflI3pPdn0VUNBeI4RTnRKhfkP2Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e5qVn8hnybILmPKMIK1mEDLD/XNN2wcm5eN35CG8O3Yya5T3OrA5xVRLuYP6eGGu0IOARTZ3KVfBoVMOhr85OW86zn28NSHmt/JFVRzdFipYjsLMGq+pbNqGZSvjCjqtrxQKE3Kp+W/ayax4hizqTGX9kscQV4nBjhrWgbQsIdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aMsawhgh; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KGi9KZh4n2dTU/mRqjBgfYapN1MvgzZFugI9Jrcbsco=; b=aMsawhgh9BwqrryYqi+W+63jCO
-	/Uuz/A7YCu8QXbC/ErbOjU6LOwABRhf3q5lgdCSt0GA2xwcjXHUjz6f6lzEnVkGBMK/R08zXRR4Yh
-	fikqIljLdNfWREWEJAb7ekS2vjlWfgzgH1ACqZI+/oEkmi9sb8e+o7ft8vgMyRAtW/BiicIJa1xa9
-	8LPsI6nhMxZqyT4frifavmMcSGJkP6k68sldjPM+BCKrRwP2OG6Xt132Fw3K5rfqu8Pd8s4y2XGpg
-	DGqdbiTbqwgH4uuR8BCZHo3K2Tjhi0b3IhKmMlP0sV2IIYNvViOgWQ/PTvnB5FCLeTqV12GBPlV1I
-	u9GRaM+w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vUcor-00000001yMh-3YW7;
-	Sun, 14 Dec 2025 03:30:49 +0000
-Date: Sun, 14 Dec 2025 03:30:49 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Hugh Dickins <hughd@google.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Linus Torvalds <torvalds@linux-foundation.org>,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: [RFC][PATCH 2/2] shmem: fix recovery on rename failures
-Message-ID: <20251214033049.GB460900@ZenIV>
-References: <47e9d03c-7a50-2c7d-247d-36f95a5329ed@google.com>
- <20251212050225.GD1712166@ZenIV>
- <20251212053452.GE1712166@ZenIV>
- <8ab63110-38b2-2188-91c5-909addfc9b23@google.com>
- <20251212063026.GF1712166@ZenIV>
- <2a102c6d-82d9-2751-cd31-c836b5c739b7@google.com>
- <bed18e79-ab2b-2a8f-0c32-77e6d27e2a05@google.com>
- <20251213072241.GH1712166@ZenIV>
- <20251214032734.GL1712166@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eaeDrf1fFqjg7AFGESZurQOfHGWWJkAMQsQQZG/c9mKRPrgUUrAc8R6HolGk2ZuJToA/YB2JLJ6f/IfCGng7tUjISOb+KMOvVMG/um7Jjf9pMYUes2/wq96dmQ51g7Kt1LWbdY9MPnqwr5LFgiMv0zXiCSa7IWcZ3Qd1RSiNZDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=XSpmqRRn; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Reply-To:Content-ID:Content-Description;
+	bh=XKAespUOYboTSfbngcUd09WwtT+EjDuDc++HUrhPKVc=; b=XSpmqRRnm5Tt26iwkoZn47CYXN
+	AIa5Z0g0hM26XwJqDHYF3x8SQwM4bI8Iyj+lXlybcSVkNfwwvvcTVx1SKzS04NTYMyaOglD4bn1eE
+	k/tmD5dD6TY4d5XnRj/IQs5mwKE5FStrmugYDXesP5Sp0xrUNkZ9umxY1Uj0XDb4iX2QkCKpb1Jwe
+	37WVFbr2Sa7UcU3cxfVWEvcKACxsUefrmRNbWUJZWR+uUmCCGFG5Tx3P/fwm179hxqmF/6RUWHJMN
+	yDzA22kvijLb2EfROXxQvWaS/V8jM0ic4BLR1ecSjKYLaNt4d5HyIG5Ot4RqQJbBYYfU5kNjBKhuc
+	2UhAawmQ==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <carnil@debian.org>)
+	id 1vUn4B-00BFJn-2y; Sun, 14 Dec 2025 14:27:19 +0000
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 190F6BE2EE7; Sun, 14 Dec 2025 15:27:18 +0100 (CET)
+Date: Sun, 14 Dec 2025 15:27:18 +0100
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+	1120058@bugs.debian.org, Joanne Koong <joannelkoong@gmail.com>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
+Subject: [regression] 0c58a97f919c ("fuse: remove tmp folio for writebacks
+ and internal rb tree") results in suspend-to-RAM hang on AMD Ryzen 5 5625U
+ on test scenario involving podman containers, x2go and openjdk workload
+Message-ID: <aT7JRqhUvZvfUQlV@eldamar.lan>
+References: <176227232774.2636.13973205036417925311.reportbug@probook>
+ <aQrcFyO7tlFF0TyD@lorien.valinor.li>
+ <176227232774.2636.13973205036417925311.reportbug@probook>
+ <aSl-iAefeJJfjPJB@probook>
+ <aSoBsX5MZXYCq2qZ@eldamar.lan>
+ <176227232774.2636.13973205036417925311.reportbug@probook>
+ <aSxCcapas1biHwBk@probook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251214032734.GL1712166@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aSxCcapas1biHwBk@probook>
+X-Debian-User: carnil
 
-maple_tree insertions can fail if we are seriously short on memory;
-simple_offset_rename() does not recover well if it runs into that.
-The same goes for simple_offset_rename_exchange().
+Hi Joanne,
 
-Moreover, shmem_whiteout() expects that if it succeeds, the caller will
-progress to d_move(), i.e. that shmem_rename2() won't fail past the
-successful call of shmem_whiteout().
+In Debian J. Neuschäfer reported an issue where after 0c58a97f919c
+("fuse: remove tmp folio for writebacks and internal rb tree") a
+specific, but admittely not very minimal workload, involving podman
+contains, x2goserver and a openjdk application restults in
+suspend-to-ram hang.
 
-Not hard to fix, fortunately - mtree_store() can't fail if the index we
-are trying to store into is already present in the tree as a singleton.
+The report is at https://bugs.debian.org/1120058 and information on
+bisection and the test setup follows:
 
-For simple_offset_rename_exchange() that's enough - we just need to be
-careful about the order of operations.
+On Sun, Nov 30, 2025 at 02:11:13PM +0100, J. Neuschäfer wrote:
+> On Fri, Nov 28, 2025 at 09:10:25PM +0100, Salvatore Bonaccorso wrote:
+> > Control: found -1 6.17.8-1
+> > 
+> > Hi,
+> > 
+> > On Fri, Nov 28, 2025 at 11:50:48AM +0100, J. Neuschäfer wrote:
+> > > On Wed, Nov 05, 2025 at 06:09:43AM +0100, Salvatore Bonaccorso wrote:
+> [...]
+> > > I can reproduce the bug fairly reliably on 6.16/17 by running a specific
+> > > podman container plus x2go (not entirely sure which parts of this is
+> > > necessary).
+> > 
+> > Okay if you have a very reliable way to reproduce it, would you be
+> > open to make "your hands bit dirty" and do some bisecting on the
+> > issue?
+> 
+> Thank you for your detailed instructions! I've already started and completed
+> the git bisect run in the meantime. I had to restart a few times due to
+> mistakes, but I was able to identify the following upstream commit as the
+> commit that introduced the issue:
+> 
+> https://git.kernel.org/linus/0c58a97f919c24fe4245015f4375a39ff05665b6
+> 
+>     fuse: remove tmp folio for writebacks and internal rb tree
+> 
+> The relevant commit history is as follows:
+> 
+>   *   2619a6d413f4c3 Merge tag 'fuse-update-6.16' of git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse  <-- bad
+>   |\  
+>   | * dabb9039102879 fuse: increase readdir buffer size
+>   | * 467e245d47e666 readdir: supply dir_context.count as readdir buffer size hint
+>   | * c31f91c6af96a5 fuse: don't allow signals to interrupt getdents copying
+>   | * f3cb8bd908c72e fuse: support large folios for writeback
+>   | * 906354c87f4917 fuse: support large folios for readahead
+>   | * ff7c3ee4842d87 fuse: support large folios for queued writes
+>   | * c91440c89fbd9d fuse: support large folios for stores
+>   | * cacc0645bcad3e fuse: support large folios for symlinks
+>   | * 351a24eb48209b fuse: support large folios for folio reads
+>   | * d60a6015e1a284 fuse: support large folios for writethrough writes
+>   | * 63c69ad3d18a80 fuse: refactor fuse_fill_write_pages()
+>   | * 3568a956932621 fuse: support large folios for retrieves
+>   | * 394244b24fdd09 fuse: support copying large folios
+>   | * f09222980d7751 fs: fuse: add dev id to /dev/fuse fdinfo
+>   | * 18ee43c398af0b docs: filesystems: add fuse-passthrough.rst
+>   | * 767c4b82715ad3 MAINTAINERS: update filter of FUSE documentation
+>   | * 69efbff69f89c9 fuse: fix race between concurrent setattrs from multiple nodes
+>   | * 0c58a97f919c24 fuse: remove tmp folio for writebacks and internal rb tree              <-- first bad commit
+>   | * 0c4f8ed498cea1 mm: skip folio reclaim in legacy memcg contexts for deadlockable mappings
+>   | * 4fea593e625cd5 fuse: optimize over-io-uring request expiration check
+>   | * 03a3617f92c2a7 fuse: use boolean bit-fields in struct fuse_copy_state
+>   | * a5c4983bb90759 fuse: Convert 'write' to a bit-field in struct fuse_copy_state
+>   | * 2396356a945bb0 fuse: add more control over cache invalidation behaviour
+>   | * faa794dd2e17e7 fuse: Move prefaulting out of hot write path
+>   | * 0486b1832dc386 fuse: change 'unsigned' to 'unsigned int'
+>   *   0fb34422b5c223 Merge tag 'vfs-6.16-rc1.netfs' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs   <-- good
+> 
+> The first and last commits shown are merge commits done by Linus Torvalds. The
+> fuse-update branch was based on v6.15-rc1, under which I can't run my test due
+> to an unrelated bug, so I ended up merging in 0fb34422b5c223 to test the
+> commits within the fuse-update branch. e.g.:
+> 
+>   git reset --hard 394244b24fdd09 && git merge 0fb34422b5c223 && make clean && make
+> 
+> 
+> I have also verified that the issue still happens on v6.18-rc7 but I wasn't
+> able to revert 0c58a97f919 on top of this release, because a trivial revert
+> is not possible.
+> 
+> My test case consists of a few parts:
+> 
+>  - A podman container based on the "debian:13" image (which points to
+>    docker.io/library/debian via /etc/containers/registries.conf.d/shortnames.conf),
+>    where I installed x2goserver and a openjdk-21-based application; It runs the
+>    OpenSSH server and port 22 is exposed as localhost:2001
+>  - x2goclient to start a desktop session in the container
+> 
+> Source code: https://codeberg.org/neuschaefer/re-workspace
+> 
+> I suspect, but haven't verified, that the X server in the container somehow
+> uses the FUSE-emulated filesystem in the container to create a file that is
+> used with mmap (perhaps to create shared pages as frame buffers).
+> 
+> 
+> Raw bisect notes:
+> 
+> good:
+> - v6.12.48+deb13-amd64
+> - v6.12.59
+> - v6.12
+> - v6.14
+> - v6.15-1304-g14418ddcc2c205
+> - v6.15-10380-gec71f661a572
+> - v6.15-10888-gb509c16e1d7cba
+> - v6.15-rc7-357-g8e86e73626527e
+> - v6.15-10933-g4c3b7df7844340
+> - v6.15-10954-gd00a83477e7a8f
+> - v6.15-rc7-366-g438e22801b1958 (CONFIG_X86_5LEVEL=y)
+> - v6.15-rc4-126-g07212d16adc7a0
+> - v6.15-10958-gdf7b9b4f6bfeb1    <-- first parent, 5LEVEL doesn't exist
+> - v6.15-rc4-00127-g4d62121ce9b5
+> - v6.15-rc7-375-g61374cc145f4a5  <-- second parent, `X86_5LEVEL=y`
+> - v6.15-rc7-375-g61374cc145f4a5  <-- second parent, `X86_5LEVEL=n`
+> - v6.15-11061-g7f9039c524a351: "first bad", actually good. merge of df7b9b4f6bfeb1 61374cc145f4a5
+> - v6.15-11093-g0fb34422b5c223
+> - v6.15-rc1-7-g0c4f8ed498cea1 + merge = v6.15-11101-gaec20ffad33068
+> 
+> testing:
+> - v6.18-rc7 + revert: doesn't apply
+> 
+> weird (ssh doesn't work):
+> - v6.15-rc1-1-g0486b1832dc386
+> - v6.15-rc1-10-g767c4b82715ad3
+> - v6.15-rc1-13-g394244b24fdd09: folio stuff
+> - v6.15-rc1-22-gf3cb8bd908c72e
+> - v6.15-rc1-23-gc31f91c6af96a5
+> - next-20251128
+> 
+> bad:
+> - v6.15-rc1-8-g0c58a97f919c24 + merge = v6.15-11102-gdfc4869c8ef1f0  first bad commit
+> - v6.15-rc1-9-g69efbff69f89c9 + merge = v6.15-11103-ga7b103c57680ce
+> - v6.15-rc1-11-g18ee43c398af0b + merge = v6.15-11105-g4ad0d4fa61974c
+> - v6.15-rc1-13-g394244b24fdd09 + merge = v6.15-11107-g37da056b3b873b
+> - v6.15-11119-g2619a6d413f4c3: merge of 0fb34422b5c223 (last good) dabb9039102879 (fuse branch)
+> - v6.15-11165-gfd1f8473503e5b: confirmed bad
+> - v6.15-11401-g69352bd52b2667
+> - v6.15-12422-g2c7e4a2663a1ab
+> - regulator-fix-v6.16-rc2-372-g5c00eca95a9a20
+> - v6.16.12
+> - v6.16.12 again
+> - v6.16.12+deb14+1-amd64
+> - v6.18-rc7
 
-For simple_offset_rename() solution is to preinsert the target into the
-tree for new_dir; the rest can be done without any potentially failing
-operations.
+Would that ring some bells to you which make this tackable?
 
-That preinsertion has to be done in shmem_rename2() rather than in
-simple_offset_rename() itself - otherwise we'd need to deal with the
-possibility of failure after successful shmem_whiteout().
-
-Fixes: a2e459555c5f ("shmem: stable directory offsets")
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/libfs.c         | 50 +++++++++++++++++++---------------------------
- include/linux/fs.h |  2 +-
- mm/shmem.c         | 18 ++++++++++++-----
- 3 files changed, 35 insertions(+), 35 deletions(-)
-
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 9264523be85c..591eb649ebba 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -346,22 +346,22 @@ void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry)
-  * User space expects the directory offset value of the replaced
-  * (new) directory entry to be unchanged after a rename.
-  *
-- * Returns zero on success, a negative errno value on failure.
-+ * Caller must have grabbed a slot for new_dentry in the maple_tree
-+ * associated with new_dir, even if dentry is negative.
-  */
--int simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
--			 struct inode *new_dir, struct dentry *new_dentry)
-+void simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
-+			  struct inode *new_dir, struct dentry *new_dentry)
- {
- 	struct offset_ctx *old_ctx = old_dir->i_op->get_offset_ctx(old_dir);
- 	struct offset_ctx *new_ctx = new_dir->i_op->get_offset_ctx(new_dir);
- 	long new_offset = dentry2offset(new_dentry);
- 
--	simple_offset_remove(old_ctx, old_dentry);
-+	if (WARN_ON(!new_offset))
-+		return;
- 
--	if (new_offset) {
--		offset_set(new_dentry, 0);
--		return simple_offset_replace(new_ctx, old_dentry, new_offset);
--	}
--	return simple_offset_add(new_ctx, old_dentry);
-+	simple_offset_remove(old_ctx, old_dentry);
-+	offset_set(new_dentry, 0);
-+	WARN_ON(simple_offset_replace(new_ctx, old_dentry, new_offset));
- }
- 
- /**
-@@ -388,31 +388,23 @@ int simple_offset_rename_exchange(struct inode *old_dir,
- 	long new_index = dentry2offset(new_dentry);
- 	int ret;
- 
--	simple_offset_remove(old_ctx, old_dentry);
--	simple_offset_remove(new_ctx, new_dentry);
-+	if (WARN_ON(!old_index || !new_index))
-+		return -EINVAL;
- 
--	ret = simple_offset_replace(new_ctx, old_dentry, new_index);
--	if (ret)
--		goto out_restore;
-+	ret = mtree_store(&new_ctx->mt, new_index, old_dentry, GFP_KERNEL);
-+	if (WARN_ON(ret))
-+		return ret;
- 
--	ret = simple_offset_replace(old_ctx, new_dentry, old_index);
--	if (ret) {
--		simple_offset_remove(new_ctx, old_dentry);
--		goto out_restore;
-+	ret = mtree_store(&old_ctx->mt, old_index, new_dentry, GFP_KERNEL);
-+	if (WARN_ON(ret)) {
-+		mtree_store(&new_ctx->mt, new_index, new_dentry, GFP_KERNEL);
-+		return ret;
- 	}
- 
--	ret = simple_rename_exchange(old_dir, old_dentry, new_dir, new_dentry);
--	if (ret) {
--		simple_offset_remove(new_ctx, old_dentry);
--		simple_offset_remove(old_ctx, new_dentry);
--		goto out_restore;
--	}
-+	offset_set(old_dentry, new_index);
-+	offset_set(new_dentry, old_index);
-+	simple_rename_exchange(old_dir, old_dentry, new_dir, new_dentry);
- 	return 0;
--
--out_restore:
--	(void)simple_offset_replace(old_ctx, old_dentry, old_index);
--	(void)simple_offset_replace(new_ctx, new_dentry, new_index);
--	return ret;
- }
- 
- /**
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 04ceeca12a0d..f5c9cf28c4dc 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3247,7 +3247,7 @@ struct offset_ctx {
- void simple_offset_init(struct offset_ctx *octx);
- int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry);
- void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry);
--int simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
-+void simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			 struct inode *new_dir, struct dentry *new_dentry);
- int simple_offset_rename_exchange(struct inode *old_dir,
- 				  struct dentry *old_dentry,
-diff --git a/mm/shmem.c b/mm/shmem.c
-index d3edc809e2e7..4232f8a39a43 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -4039,6 +4039,7 @@ static int shmem_rename2(struct mnt_idmap *idmap,
- 	struct inode *inode = d_inode(old_dentry);
- 	int they_are_dirs = S_ISDIR(inode->i_mode);
- 	int error;
-+	int had_offset = false;
- 
- 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
- 		return -EINVAL;
-@@ -4050,16 +4051,23 @@ static int shmem_rename2(struct mnt_idmap *idmap,
- 	if (!simple_empty(new_dentry))
- 		return -ENOTEMPTY;
- 
-+	error = simple_offset_add(shmem_get_offset_ctx(new_dir), new_dentry);
-+	if (error == -EBUSY)
-+		had_offset = true;
-+	else if (unlikely(error))
-+		return error;
-+
- 	if (flags & RENAME_WHITEOUT) {
- 		error = shmem_whiteout(idmap, old_dir, old_dentry);
--		if (error)
-+		if (error) {
-+			if (!had_offset)
-+				simple_offset_remove(shmem_get_offset_ctx(new_dir),
-+						     new_dentry);
- 			return error;
-+		}
- 	}
- 
--	error = simple_offset_rename(old_dir, old_dentry, new_dir, new_dentry);
--	if (error)
--		return error;
--
-+	simple_offset_rename(old_dir, old_dentry, new_dir, new_dentry);
- 	if (d_really_is_positive(new_dentry)) {
- 		(void) shmem_unlink(new_dir, new_dentry);
- 		if (they_are_dirs) {
--- 
-2.47.3
-
+Regards,
+Salvatore
 
