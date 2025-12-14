@@ -1,95 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-71270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C646CBBDD0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Dec 2025 18:03:21 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3CFCBBE77
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Dec 2025 19:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2AFF23009F9F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Dec 2025 17:03:12 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D0C2C300EA2C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Dec 2025 18:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F18A2DBF45;
-	Sun, 14 Dec 2025 17:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D5030CD99;
+	Sun, 14 Dec 2025 18:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nYLe4OVF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqsL/h3Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6157E110
-	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Dec 2025 17:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47FE2E764C
+	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Dec 2025 18:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765731789; cv=none; b=KDAo11bWD/uZCuUCJpgomug9o1dqdyDdp8Vobf55bDt4rkcwBi1Ouan8A4Cd6C1RjFNJxP/y82T4PX6u+s7N7c5CaSPEU089Z/8xrGBVrQ5w2oBzRwfkgrD4uO4ZQMItBIQpv5CKTW21qjzd53DLHbweu5I39BiFpr0U7BcgSEc=
+	t=1765735379; cv=none; b=phhfpBvgjtus5hqhNR1wrgMIisKvoCn7PtVw0xRdX3g+5Rz7hBIOZ8FVyKdQNKrKB1A//9wOarTDvfBbYBYecNgTlWxc6i8/Vf1xWVf/CfIBVynO/YPJM4oATrEo/kPLWRR5N/QX2XlXh4wf0h8emk2yB5PRCd6ZYsf8mdOnoNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765731789; c=relaxed/simple;
-	bh=v660C2Dk/Gx8fiGsyuR1n9r+m08wFi7kF7l6Mcq494o=;
+	s=arc-20240116; t=1765735379; c=relaxed/simple;
+	bh=IVvRulDuWrrNS9715azItbKskAH+S1PQ1xvsLxX6NH4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nyhaNR7nS4s9g0KVx0ndB7S/CUVQkMPQ+r3vWuuUJFmI+m4f/YBp7wdSkkwVCAo7DCJv+G7ApdGja9kH+6t82s9CbPP6xDpFVC84VNMski9agoawSQ/4MBjNEl0q43WcsqdYrwfK5BwGICOZjo/pXqK7n7mynZ4xzGSLZL/sbuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nYLe4OVF; arc=none smtp.client-ip=209.85.208.176
+	 MIME-Version; b=FLTuutW6hKukVu/uK79d6r1M2UubNWHUipXP/h6k8m1YyxFxaUM1tRoykwDWY30waKtyYTCeFIFEBB9lzlBptQwjfo6i9ujRSDLRK702SWCehq3fAyy+W4tk2EfDdLkBGlZkHRxSUHQbRgYxJk7ZYMS11F8mryGrl/bZKWDRgLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqsL/h3Y; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-37d275cb96cso23909271fa.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Dec 2025 09:03:07 -0800 (PST)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-8b2627269d5so285902185a.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Dec 2025 10:02:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765731785; x=1766336585; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1765735377; x=1766340177; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zyfSmnzQ8O83AsWeCYuUm5FAslFHwFSDWhZIVSmFfHY=;
-        b=nYLe4OVFrH0J0j+rmOYGwSr1JwG7qJlsZTDrGqcsqhH8b0YTP2mdQNxUxUEjKhfL12
-         OK/CXbfugoI2YbbM+18EMKr4v2pBHWxcTHScfnVoMHNC79Wpex0ffDxqIIsg6yLACp1q
-         NuXPI1qsbagauUTx/35Ti/mcErpKJzSrceY0B6ppMKNsrIFHLHhZ6UFtOhWinOFbU2N4
-         /oUiaFhDbEv2bFATB3+5LKK00vhQiH+itynHJ02DqkwxNNgq72nFBFKfCGJ+rG7Qv8Xs
-         TLWeXdLC4MtwcmFny5u9P6IrzfCmjDweaQr4rELFOpRvfs17xf5fvRD8FGz/hP0uDtTi
-         1MLg==
+        bh=6cy/g9evgHNFkAquxzr3d7GuxFauDlKjTyALOqssS9A=;
+        b=AqsL/h3Y/mACwWcpSGC3kQ/JZsSkD5Rm3VEWV5p2BiWyT361MvHmbkQtY1nnFpdJlB
+         EAS3UTzJlJWQLWENaVzkB+bSfYSvmhO+Wvg69zW1EhdUM2mgFEokIQjffnIiesOwwYfE
+         RJfso84W6q3DKIsVG+lNDkaq3dWWTgasyWyP/tP68MYaHOEYe/8n+QHx3BMpKI+qsab1
+         OP/ruRvQxbsyDJD3qh81LoEQzmNb9Ch5tsHUWp2rQf6r41SJG7trR32T0Ll43QKUSe33
+         9hdRfEPS5mZBV9YyhIrqWt7S99ZH16lbBx6hjYa0VpDIjgY9kS5An4FOkUhtwIfysX5E
+         SvOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765731785; x=1766336585;
+        d=1e100.net; s=20230601; t=1765735377; x=1766340177;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=zyfSmnzQ8O83AsWeCYuUm5FAslFHwFSDWhZIVSmFfHY=;
-        b=Gjr8buV4Myo6gI/OMnzIPNjDFS+wBIHkzbmkIOVPGPJX2YZsmjkFgkFG3vIPX+Z9Vj
-         NNAHW/NQ14RUIe0ctlm+NwbtBeKHfYNLnClyJzSnTHM+Ow5xbKRYxahGvQij77o52qif
-         490QjUoAIAU1CjXpJGWje/zED56cfadibKNCxQ6g0RrIm4b2umaz8lP1c89fuxyM9wuo
-         m+kNItjnbFsR2QIp1RoZDZ4Do5iIlJHw99n7n+Ckf3VDlFBO2lkPKnhkYvZhJbmleKEJ
-         8jJAuKumJ0i71ZK+doBeIrYPIyGeXA35+1AkHniPOy5ceZIgR7RC7KvSD43soXdaV5p5
-         fRhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeHykOWezv9F9pq85dyWOIjvG9wFQUpd1bUrCWakuLYoAPPo+Hc5X/wP3O/HHYh2SyTf0xXYfnM0WRGhVE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLh+o1uDjqgVYkwlYM/cSeyTKlAYR+k3rnI6BU0FsC5EeUd/Wc
-	vX3AW606P757yDxK8JJA8DWahnH6CeWYMarv7jmTdolDjNVE1hpyNMke
-X-Gm-Gg: AY/fxX4ADqngNwqU20Rlp900aBphLg3Rp1FAPFqgFsvabWMThIX3SU8N8fE5xtOTiB5
-	qlifos/jBYaeFvo3p12r+0NFp87UQ5gtjV1zysw2TddotBp0LhoBSjiwbl+K6Y3x2OdcYUMGF0P
-	qD/LhZBkg1uGCADXpxvaUpz7FkaLYLaeTYUBw6yKA4dLMfgz/JnbGriKvzCDCMP7adw+PlGoNtR
-	DeT79U4adiW3eqqaWdRVnRBQgIVX+NZE6Mjta44xr8qvBiCbEi6Oz74rEMv34ouovMsT70FsgGx
-	5cA6Vj/2cTI+jvq1DivNH63jHo1MOKrB4NUTruXaTCyYfckS5qFRaiKLuC8SDP6lFc2g0kWlukL
-	nMi/TabqP2RPrs4wW1zXGY3go83Ie7oVVgxlR9U8hQhAbq/yIkMc5FthRYscz8kC9cmpayr9ytr
-	kMrm+pZ6SC
-X-Google-Smtp-Source: AGHT+IF314RbItjfgLDzXmIuQMPnc0ktxJg24TOlijEKCh7eZ+wiajZor58nxzGV4TLGgiLgOP9pig==
-X-Received: by 2002:a2e:a545:0:b0:378:e23a:dba4 with SMTP id 38308e7fff4ca-37fd079dcf8mr24178981fa.13.1765731785064;
-        Sun, 14 Dec 2025 09:03:05 -0800 (PST)
-Received: from localhost ([194.190.17.114])
-        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-37fdee364e6sm18994371fa.49.2025.12.14.09.03.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Dec 2025 09:03:04 -0800 (PST)
-From: Askar Safin <safinaskar@gmail.com>
-To: luis@igalia.com
-Cc: amir73il@gmail.com,
-	bschubert@ddn.com,
-	djwong@kernel.org,
-	hbirthelmer@ddn.com,
-	kchen@ddn.com,
-	kernel-dev@igalia.com,
+        bh=6cy/g9evgHNFkAquxzr3d7GuxFauDlKjTyALOqssS9A=;
+        b=AaUuBrbm7oY8gmP88imxF7e7+jpp1FJrFleU7v6slQiVFnPhkId1D5w3vPhTojUoN4
+         zpXO/ouQXy2ccCkLv4wb2lDPbg2uvHBe3zRmJJKCy8h3fUuPkdxHMCYc3Ejvv2j4jLPn
+         oNvoen26RAovxZjXj+WW4o5rzo7aB4N4K5qFFfsH65MXr5EM5XBq9zG0gbi2VB3wGxLr
+         3ydeMI79664kZkm4FgqqK4XMvYFOi93rMqbYVuRb5GaYlXmtD8snEDWG1RhaZ4s2EsMY
+         svqAve6Zl5ZT6d5wz6O9M3A/W8cAbHI0BxUrdt3Tmn+j+vQOhWxel8zpIQa3YrH+/ffx
+         aL8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXRlcp9RVqLIiJC5YCxtDpCKd5omiy3YxV2rY4QcbMnQy/4Q2vQtSqLwdPoUpGfZB0llQdLvqOQLA4gHvCv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT+Fr/pa5tzpUbj21881l0RArbCvzZdXCFyDMjhdiaz7hBniG7
+	VxqIs+HT5ixiBY91C2iWvyv7nKO0OEQx8hO4E/QQRYCHVpyzbU9aVgOn
+X-Gm-Gg: AY/fxX5usHPzqppOpXdFsHIfD5Qj6rUgppgiG9wgO4PV7FTU8DP7FZpSNYGp1aot2Oz
+	qMtB0HfgT+AAvWhIFWk0XIZLuQTKYId+JEcCSkRU8wa7crkQDwaPTrtFEGdb4uYLQSIlVKeqp0h
+	yWeKfh6wNIe1YdXAF5cpO207WRAj45JItCzypDKixIGLjtcWPzM1dQeJtZhHZYGWFyEKW+zeg6t
+	2ollhRalbiQukBfgJJZdZmjdlaXgwOCVc9dfLNo/P+gJfZ/6z9GfRf570TZsQRkyAOVd92KyOwo
+	n58kDuUBYf4BQe3IHIivWp65LGTgDYfnoNS/Ojkg74gVz3DJOdYyutdqp0Q8IG/3SSwL9vasdLT
+	DfZkg0SCxT9kBAupMl4bIIfWG8S+Fh2GarMFJt/F0Y53W4tFqUG1ljRA2TuXRBw/u9XPZlq77b9
+	o/eUXaJehmYGL6EW6EpHkw9UDrEcQLncIut3lkrQaUQ2YADf4=
+X-Google-Smtp-Source: AGHT+IF4CyCgSDlTgHN3haCqqdOhd5KCo9UN7nKgxU7MjiducFCfBbhTh5Ca3dMYLQuvxHuk1OnEHg==
+X-Received: by 2002:a05:620a:4046:b0:8b2:dd0a:8814 with SMTP id af79cd13be357-8bb3a39ee87mr1219774285a.85.1765735376520;
+        Sun, 14 Dec 2025 10:02:56 -0800 (PST)
+Received: from dans-laptop.miyazaki.mit.edu ([18.10.148.114])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8bab5d4cd34sm891587485a.47.2025.12.14.10.02.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Dec 2025 10:02:56 -0800 (PST)
+From: Dan Klishch <danilklishch@gmail.com>
+To: legion@kernel.org
+Cc: containers@lists.linux-foundation.org,
+	ebiederm@xmission.com,
+	keescook@chromium.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	mharvey@jumptrading.com,
-	miklos@szeredi.hu
-Subject: Re: [RFC PATCH v2 0/6] fuse: LOOKUP_HANDLE operation
-Date: Sun, 14 Dec 2025 20:02:24 +0300
-Message-ID: <20251214170224.2574100-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251212181254.59365-1-luis@igalia.com>
-References: <20251212181254.59365-1-luis@igalia.com>
+	viro@zeniv.linux.org.uk
+Subject: Re: [RESEND PATCH v6 0/5] proc: subset=pid: Relax check of mount visibility
+Date: Sun, 14 Dec 2025 13:02:54 -0500
+Message-ID: <20251214180254.799969-1-danilklishch@gmail.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <aT7ohARHhPEmFlW9@example.org>
+References: <aT7ohARHhPEmFlW9@example.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -98,16 +94,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Luis Henriques <luis@igalia.com>:
-> As I mentioned in the v1 cover letter, I've been working on implementing the
-> FUSE_LOOKUP_HANDLE operation.  As I also mentioned, this is being done in
-> the scope of a wider project, which is to be able to restart FUSE servers
-> without the need to unmount the file systems.  For context, here are the
-> links again: [0] [1].
+On 12/14/25 11:40 AM, Alexey Gladkov wrote:
+> But then, if I understand you correctly, this patch will not be enough
+> for you. procfs with subset=pid will not allow you to have /proc/meminfo,
+> /proc/cpuinfo, etc.
 
-Will this fix long-standing fuse+suspend problem, described here
-https://lore.kernel.org/all/20250720205839.2919-1-safinaskar@zohomail.com/ ?
+Hmm, I didn't think of this. sunwalker-box only exposes cpuinfo and PID
+tree to the sandboxed programs (empirically, this is enough for most of
+programs you want sandboxing for). With that in mind, this patch and a
+FUSE providing an overlay with cpuinfo / seccomp intercepting opens of
+/proc/cpuinfo / a small kernel patch with a new mount option for procfs
+to expose more static files still look like a clean solution to me.
 
--- 
-Askar Safin
+>> Also, correct me if I am wrong, installing ebpf controller requires
+>> CAP_BPF in initial userns, so rootless podman will not be able to mask
+>> /proc "properly" even if someone sends a patch switching it to ebpf.
+> 
+> You can turn on /proc/sys/kernel/unprivileged_bpf_disabled.
+
+$ cat /proc/sys/kernel/unprivileged_bpf_disabled
+0
+$ unshare -pfr --mount-proc
+$ ./proc-controller -p deny /proc/cpuinfo
+libbpf: prog 'proc_access_restrict': BPF program load failed: Operation not permitted
+libbpf: prog 'proc_access_restrict': failed to load: -1
+libbpf: failed to load object './proc-controller.bpf.o'
+proc-controller: ERROR: loading BPF object file failed
+
+I think only packet filters are allowed to be installed by non-root.
+
+Thanks,
+Dan Klishch
 
