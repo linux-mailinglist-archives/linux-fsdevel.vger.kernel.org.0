@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-71260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009B7CBB5EA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Dec 2025 03:01:57 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C3ECBB604
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Dec 2025 03:27:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E570E300D4A0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Dec 2025 02:01:47 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 287D1300EE62
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Dec 2025 02:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA5F2D29D6;
-	Sun, 14 Dec 2025 02:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B5329BDB1;
+	Sun, 14 Dec 2025 02:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Djc2CE/3"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WE7qSunw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AE5155A5D;
-	Sun, 14 Dec 2025 02:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661ED1A3160;
+	Sun, 14 Dec 2025 02:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765677703; cv=none; b=g0Ran+hDAzkEUStq6E5jPReGNePFdEpxzIOjwddvPYo0hpPVy3EyBCsyvXo6meozfwP0Erqsa+Edo3C/I+2L8XoajM9/A12ffS8flU37/oNDmAOBw8RbiXBSe/PTyN7vroxXb/B/QSTLWjO+HkyzJhMSvz8w66PBYiBpnGEI7iw=
+	t=1765679236; cv=none; b=QTw6dnlnH2Z1UnUyHK7Mc2XoU/hCIXhXL9dBDsF5PIHhujqHSdFCrWnE70Rx7/mq9VmxgRmZVjdNBywCiFJfHq4NIM2fPxxcvaWMh+zMqrK0cMvJCuZ3h+QHV1hUDi9Kdg7fyP277Lb9zDLYQhghi8RHOTGJUE/cLYhpUQK+o+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765677703; c=relaxed/simple;
-	bh=Fntz3N6a+yCAHVlhe5sPHCt93FGF0GGV0+eMEQvLpVU=;
+	s=arc-20240116; t=1765679236; c=relaxed/simple;
+	bh=OpAWcmEgxWUrV4zOZQXGCRQx7KO2B8ir0OyL8PgjPhQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EARmKX8rqsFLYqdhlOa0Zq0JyNTirBtODk2eB7qGnjtnKxCql1++a2Jy9OG//9XYi290dkv30cxwQbaflmJVoXfJ66ChvwCcJGTh8k+IqIAXpuYDgi6MNhJMeTGhd8ehvQPlVlljVxXY+n9u7AAD7QiwWIXAKLM3pcxU+BLT6w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Djc2CE/3; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=Unp7CQsLDQK7x4c1emkE8Ox0qPLmoPJKdz5+B+AbFB96y2O9D9wIl1vKBpExwwuaMNDtKpNt7VTv2i5szK1wkF7kYFjgEVLYppP4cSslYYhKTqvuCIix+SaPZzLbqZBLg9yDHZ8tmg11yjKuoCXw+K5qjwi4PcIJfbs7r9/7TQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WE7qSunw; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RZncDv56SSpPSHUKAMFKDJBm5cqzsvZg+ctZP4rGIT0=; b=Djc2CE/3OX9aSwLomy3jOUmDog
-	19f710WRYxXoUiGlzHjGoMjJaRrFd3SMjCOw/axKi1XZza1MoIiSOPN5naQxkzAtqjgWH4V1f48bh
-	z1EhQWHiurQ+zSY5iq0W59ojItR7BiQHcyHJcf85xWiipoyNG+Me/zQX/lizLUf1DK6Helfn+NUGf
-	DwacBZH8Tc/2w4Pd3jbinCRq6wxswOWphnATKJND2uFe2Ow75r1MxO4Lu4kBvid8S0mMS0qWBdTiV
-	z9P/sgxknqYc/+Ek9PTZcCwgtzavR+U5s8R7TtQb+XXEMkuqKbEVQZ4ywSiB9db4cYd5/LmL8u7DR
-	cDMif4Nw==;
+	bh=qKoXM0Oo1LxjniI2xLos9hOKVQHq6LwZ4b9t7IxOwYU=; b=WE7qSunwhUjblJ7OK7ITmOA1kx
+	/Fish8IppoqsRnVCiOJQ4kQIyDbDvJNT+eTZd5lwoUxBXE4uPvPPi7oT3Q24omKEJ6AP0pLVJFcpH
+	LqEiHxAa6+IlNwiyr3vLGgYm3N93XCq5yXLTTszRmeHpFR1EiBVTIAJN2eV6ki4h8IeWALsiCxj0S
+	F6g28z9vFQNtjVOtozQYL076Qo02vPp2BIP9BuXoKPRdAOEg+nAi3EpCaGfDA184gSyRpTfsxJv5T
+	jAnnnyTEX7hvHPsA34s8hZzd7odAYrhMzeAMFiqnHzxrEEQm6J5+8TCMTP/TSxHlRVPhoTfi86Kwo
+	DBa/Y+RA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vUbR6-000000010D2-1t2X;
-	Sun, 14 Dec 2025 02:02:12 +0000
-Date: Sun, 14 Dec 2025 02:02:12 +0000
+	id 1vUbpp-00000001GNV-0GiX;
+	Sun, 14 Dec 2025 02:27:45 +0000
+Date: Sun, 14 Dec 2025 02:27:45 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Ahmet Eray Karadag <eraykrdg1@gmail.com>
 Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
@@ -50,9 +50,10 @@ Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
 	david.hunter.linux@gmail.com,
 	syzbot+1c70732df5fd4f0e4fbb@syzkaller.appspotmail.com
 Subject: Re: [PATCH] adfs: fix memory leak in sb->s_fs_info
-Message-ID: <20251214020212.GJ1712166@ZenIV>
+Message-ID: <20251214022745.GK1712166@ZenIV>
 References: <20251213233621.151496-2-eraykrdg1@gmail.com>
  <20251214013249.GI1712166@ZenIV>
+ <20251214020212.GJ1712166@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,92 +62,51 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251214013249.GI1712166@ZenIV>
+In-Reply-To: <20251214020212.GJ1712166@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, Dec 14, 2025 at 01:32:49AM +0000, Al Viro wrote:
+On Sun, Dec 14, 2025 at 02:02:12AM +0000, Al Viro wrote:
 
-> Question: if that thing is leaking all the time, why hadn't that been caught
-> earlier?
-> 
-> Question: does it really leak all the time?  How would one check that?
-> 
-> Question: if it does not leak in each and every case, presumably the damn thing
-> does get freed at some point; where would that be?
-> 
-> Question: would we, by any chance, run into a double-free with that "fix"?
-> 
-> 
-> Please, do yourself a favour and find answers to the questions above.
-> They are fairly trivial and it is the kind of exercise one has to do every
-> time when dealing with something of that sort.
+> IOW, there's our double-free.  For extra fun, it's not just kfree() + kfree(),
+> it's kfree_rcu() + kfree().
 
-<spoiler alert>
+[sorry, accidentally sent halfway through writing a reply; continued below]
 
-
+So after successful mount, it gets freed (RCU-delayed) from ->kill_sb() called
+at fs shutdown.
 
-A trivial experiment would be to mount a valid image, unmount it and see
-if anything has leaked.  Finding a valid image is not hard - the second
-hit when googling for "ADFS image acorn" is a github-hosted project
-and right in there there's a directory called "ADFS Test Images", with
-expected contents.  Whether it's legitimate or not, mounting it in a kernel
-that runs under unpriveleged qemu ought to be safe enough.
+On adfs_fill_super() failure (hit #2) it is freed on failure exit - with non-delayed
+kfree().
 
-And no, it doesn't leak on mount + umount
+In case we never got to superblock allocation, the thing gets freed by adfs_free_fc()
+(also non-delayed).
 
-Looking for places where it could be freed in normal operation is also
-not terribly hard - looking for kfree() in fs/adfs/super.c catches three
-hits:
+The gap is between a successful call of sget_fc() and call of adfs_fill_super()
+(in get_tree_bdev(), which is where adfs_fill_super() is passed as a callback).
+If setup_bdev_super() fails, we will
+	* transfer it from fs_context to super_block, so the fs_context destruction
+won't have anything to free
+	* won't free it in never-called adfs_fill_super()
+	* won't free it in ->kill_sb(), since ->s_root remains NULL and ->put_super()
+is never called.
 
-1) in adfs_put_super() we see
-	struct adfs_sb_info *asb = ADFS_SB(sb);
-	adfs_free_map(sb);
-	kfree_rcu(asb, rcu);
+A leak is real, IOW.
 
-2) in the end of adfs_fill_super() there's
-error:
-        sb->s_fs_info = NULL;
-        kfree(asb);
-        return ret;
+Getting ->kill_sb() to do freeing unconditionally would cover the gap.  However,
+to do that, we need to _move_ freeing (RCU-delayed) from adfs_put_super() to
+adfs_kill_sb(), not just add kfree() in the latter.
 
-3) in adfs_free_fc() we have
-        struct adfs_context *asb = fc->s_fs_info;
-        kfree(asb);
+What's more, that allows to simplify adfs_fill_super() failure exit: we can leave
+freeing asb (and clearing ->s_fs_info, of course) to ->kill_sb() - the latter is
+called on any superblock destruction, including that after failing fill_super()
+callback.  Almost the first thing done by deactivate_locked_super() called in
+that case is
+                fs->kill_sb(s);
 
-#2 and #3 are obviously irrelevant for the case of normal mount + umount -
-adfs_fill_super() has already run at mount time (and did not hit error:)
-and so did adfs_free_fc().
+So if we go with "have it freed in ->kill_sb()" approach, the solution would be
 
-So we have #1 to look into.  adfs_put_super() is never called directly and
-it's only reached as a member of struct super_operations adfs_sops -
-something called 'put_super'.  Where would that method be called?
-
-grep and you shall find it:
-void generic_shutdown_super(struct super_block *sb)
-{
-        const struct super_operations *sop = sb->s_op;
- 
-        if (sb->s_root) {
-		...
-                if (sop->put_super)
-                        sop->put_super(sb);
-
-So it is called by generic_shutdown_super() in case if ->s_root had not
-been NULL.  Looking for callers of generic_shutdown_super() immediately
-catches
-void kill_block_super(struct super_block *sb)
-{
-        struct block_device *bdev = sb->s_bdev;
- 
-        generic_shutdown_super(sb);
-        if (bdev) {
-                sync_blockdev(bdev);
-                bdev_fput(sb->s_bdev_file);
-        }
-}
-so it is called by adfs ->kill_sb() - both the current mainline and with
-that patch.
-
-IOW, there's our double-free.  For extra fun, it's not just kfree() + kfree(),
-it's kfree_rcu() + kfree().
+1) adfs_kill_sb() calling kfree_rcu(asb, rcu) instead of kfree(asb)
+2) call of kfree_rcu() removed from adfs_put_super()
+3) all goto error; in adfs_fill_super() becoming return ret; (and error:
+getting removed, that is)
 
