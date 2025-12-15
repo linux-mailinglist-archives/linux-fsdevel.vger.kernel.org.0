@@ -1,151 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-71351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id D19DFCBE73A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:59:59 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB594CBE92A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 16:16:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C49F2301AB23
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 14:58:51 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 67ABA305DCF5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACD831576C;
-	Mon, 15 Dec 2025 14:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3F8331A4B;
+	Mon, 15 Dec 2025 15:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/8uG09n"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TiaYXPhk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB88313263;
-	Mon, 15 Dec 2025 14:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E304533121E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 15:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765810728; cv=none; b=crmzIxKkMuQVE6+8ZTa8vCH1wIOZz1+smP2AMR3ltuq0lwgI3rdxpNoLZG1QVskqnZmESo7YJaR/Z00qXFMEcaBNk7FYCKpjPiOr3qoL6sMeBTv8rIOFoGiPnOsk0Uq1bfvg7zKWCSTXOb8MiHSdLHhHH4PHJExoJ3XrLZBrkD4=
+	t=1765810956; cv=none; b=UukS3jNumHrNZX6tR0p+Gekw/t5n69qNUOQK39MSC0r6js5tL5g6B88i43gvvne2r+DuHrBjAf93+gm2he2+jQlP31hDmDtjbgd/BirPN7XRPTdNi4P7V9mAmnSGfdECnT2JLDfqxYXCyzelCCBcqRbDqmo7piuypzHIfVXsJiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765810728; c=relaxed/simple;
-	bh=PCV8sd44c/5aFC/WUSRWenozpYDDIq0lVJk8xWbAOpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gfLNFoDtdmx+/6IJxla2gmaM6Q/HlUS9Y+IDiDR0dSMWeOIx/QGXNuCr9K6YU/ySJCzndQSlfbPYtm83fudfZ2NObV7y3s2q8uyxJxQlmzV5Ohrol6gSPGYzWC7dFu7oAJWS8OuI7xfbrArl7rjpRm5NiJvygzRqdVx7410aQnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/8uG09n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB115C4CEF5;
-	Mon, 15 Dec 2025 14:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765810727;
-	bh=PCV8sd44c/5aFC/WUSRWenozpYDDIq0lVJk8xWbAOpE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d/8uG09n3GqrHPuGLyYc3q1dqzmBBEOTWCd9i+FnKQOMMSTjeJDwE0L+0b1adnIy2
-	 w775w+vPDAm6FxAOTA492Wcfd6FJUWdj+XqdiUms/PTdMQz5pj4E6J3s4lx8C/GHsD
-	 KYQ2jdPdvviwKYVNk1oPbdqxNnDhVB98ACJhWBv/7ZMdyd3Osk8xkqbFLCZXD/F6V6
-	 7y33ugbbqHElrv1q3L1jBQHWqyUaGlRW2WmvoCDA+rMKiGBpqP0AF1FrIfvZ1sxpvy
-	 Q2ZsdrvstU60EfX4Pavx2np7OwKQPHAKTzeU86IyH3JxlBgUnNwyvl6kTe/7ja1hkO
-	 J/euzD4p8MOGA==
-Date: Mon, 15 Dec 2025 15:58:42 +0100
-From: Alexey Gladkov <legion@kernel.org>
-To: Dan Klishch <danilklishch@gmail.com>
-Cc: brauner@kernel.org, containers@lists.linux-foundation.org,
-	ebiederm@xmission.com, keescook@chromium.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [RESEND PATCH v6 0/5] proc: subset=pid: Relax check of mount
- visibility
-Message-ID: <aUAiIkNPgied0Tyf@example.org>
-References: <aT_elfmyOaWuJRjW@example.org>
- <20251215144600.911100-1-danilklishch@gmail.com>
+	s=arc-20240116; t=1765810956; c=relaxed/simple;
+	bh=9DIbAAS4fmLPWh9z1hwJEGriinnfU6EzsYhzAkF4FYQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=p9u31Ibz5Q2/ojr43hmE8s8kUofrwDQYH8UlUXCPUunE23yH+LKeEgPGwHxvRueRHczDUI9A0jPHwNPzMWj0QFztjTOj8SyLCXDLKzKTJh0OGZMHXz8UcKDAMLog4Xc6/NC2UctQZ0qFAv5Zss2wknR6dVYbKU6C00WJ9ClJ1Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TiaYXPhk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1765810953;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ef9lgEblGmTogvoJK7b07OBRK+jbjZpqLe2jJTbo2Do=;
+	b=TiaYXPhkS6LhqjH1kpUCSmfa7zfHAfyht4erORBa//o0ett7ONB4UZ/fddbXK9ko3OMVTE
+	GikQZTmlDxD8WF//6o4amKa4jAs6Yq8bvGqj88Agv2gQ4/YeddlbICKXRQEbSAZWOjCqvR
+	Ul0yhMojHp+h8Q1ef1gVC1Xh34sAJEs=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-394-LWdApg1OOIW2RewCnqm2eQ-1; Mon,
+ 15 Dec 2025 10:02:32 -0500
+X-MC-Unique: LWdApg1OOIW2RewCnqm2eQ-1
+X-Mimecast-MFC-AGG-ID: LWdApg1OOIW2RewCnqm2eQ_1765810951
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7F9C0195608E;
+	Mon, 15 Dec 2025 15:02:30 +0000 (UTC)
+Received: from ws (unknown [10.45.242.20])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4D50619560A7;
+	Mon, 15 Dec 2025 15:02:28 +0000 (UTC)
+Date: Mon, 15 Dec 2025 16:02:25 +0100
+From: Karel Zak <kzak@redhat.com>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux v2.41.3
+Message-ID: <no7nihf3ju4e6wndc45z2lro67ygi7ezebnxy63abjlart77iz@l6bynuajkn5l>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251215144600.911100-1-danilklishch@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, Dec 15, 2025 at 09:46:00AM -0500, Dan Klishch wrote:
-> On 12/15/25 5:10 AM, Alexey Gladkov wrote:
-> > On Sun, Dec 14, 2025 at 01:02:54PM -0500, Dan Klishch wrote:
-> >> On 12/14/25 11:40 AM, Alexey Gladkov wrote:
-> >>> But then, if I understand you correctly, this patch will not be enough
-> >>> for you. procfs with subset=pid will not allow you to have /proc/meminfo,
-> >>> /proc/cpuinfo, etc.
-> >>
-> >> Hmm, I didn't think of this. sunwalker-box only exposes cpuinfo and PID
-> >> tree to the sandboxed programs (empirically, this is enough for most of
-> >> programs you want sandboxing for). With that in mind, this patch and a
-> >> FUSE providing an overlay with cpuinfo / seccomp intercepting opens of
-> >> /proc/cpuinfo / a small kernel patch with a new mount option for procfs
-> >> to expose more static files still look like a clean solution to me.
-> > 
-> > I don't think you'll be able to do that. procfs doesn't allow itself to
-> > be overlayed [1]. What should block mounting overlayfs and fuse on top
-> > of procfs.
-> > 
-> > [1] https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/proc/root.c#n274
-> 
-> This is why I have been careful not to say overlayfs. With [2] (warning:
-> zero-shot ChatGPT output), I can do:
-> 
-> $ ./fuse-overlay target --source=/proc
-> $ ls target
-> 1   88   194   1374    889840  908552
-> 2   90   195   1375    889987  908619
-> 3   91   196   1379    890031  908658
-> 4   92   203   1412    890063  908756
-> 5   93   205   1590    890085  908804
-> 6   94   233   1644    890139  908951
-> 7   96   237   1802    890246  909848
-> 8   97   239   1850    890271  909914
-> 10  98   240   1852    894665  909924
-> 13  99   243   1865    895854  909926
-> 15  100  244   1888    895864  910005
-> 16  102  246   1889    896030  acpi
-> 17  103  262   1891    896205  asound
-> 18  104  263   1895    896508  bus
-> 19  105  264   1896    896544  driver
-> 20  106  265   1899    896706  dynamic_debug
-> <...>
-> 
-> [2] https://gist.github.com/DanShaders/547eeb74a90315356b98472feae47474
-> 
-> This requires a much more careful thought wrt magic symlinks
-> and permission checks. The fact that I am highly unlikely to 100%
-> correctly reimplement the checks and special behavior of procfs makes me
-> not want to proceed with the FUSE route.
-> 
-> On 12/15/25 6:30 AM, Christian Brauner wrote:
-> > The standard way of making it possible to mount procfs inside of a
-> > container with a separate mount namespace that has a procfs inside it
-> > with overmounted entries is to ensure that a fully-visible procfs
-> > instance is present.
-> 
-> Yes, this is a solution. However, this is only marginally better than
-> passing --privileged to the outer container (in a sense that we require
-> outer sandbox to remove some protections for the inner sandbox to work).
-> 
-> > The container needs to inherit a fully-visible instance somehow if you
-> > want nesting. Using an unprivileged LSM such as landlock to prevent any
-> > access to the fully visible procfs instance is usually the better way.
-> > 
-> > My hope is that once signed bpf is more widely adopted that distros will
-> > just start enabling blessed bpf programs that will just take on the
-> > access protecting instead of the clumsy bind-mount protection mechanism.
-> 
-> These are big changes to container runtimes that are unlikely to happen
-> soon. In contrast, the patch we are discussing will be available in 2
-> months after the merge for me to use on ArchLinux, and in a couple more
-> months on Ubuntu.
-> 
-> So, is there any way forward with the patch or should I continue trying
-> to find a userspace solution?
 
-I still consider these patches useful. I made them precisely to remove
-some of the restrictions we have for procfs because of global files in
-the root of this filesystem.
+The util-linux release v2.41.3 is now available at
+ 
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.41
+ 
+This release addresses build issues with GCC 15 (C23) and fixes
+CVE-2025-14104.
 
-I can update and prepare a new version of patchset if Christian thinks
-it's useful too.
+Feedback and bug reports, as always, are welcomed.
+ 
+  Karel
+
+
+
+util-linux 2.41.3 Release Notes
+===============================
+
+bash-completion:
+    - (mount) add missing options (by Christian Goeschel Ndjomouo)
+    - add lsfd (by Karel Zak)
+    - add blkpr (by Karel Zak)
+    - add bits to dist tarball (by Karel Zak)
+
+dmesg:
+    - fix const qualifier warnings in parse_callerid (by Karel Zak)
+
+eject:
+    - fix const qualifier warning in read_speed (by Karel Zak)
+
+enosys:
+    - fix const qualifier warning in parse_block (by Karel Zak)
+
+libblkid:
+    - fix const qualifier warning in blkid_parse_tag_string (by Karel Zak)
+    - use snprintf() instead of sprintf() (by Karel Zak)
+
+libfdisk:
+    - (dos) fix off-by-one in maximum last sector calculation (by Karel Zak)
+
+liblastlog2:
+    - fix operator precedence in conditional assignments (by Karel Zak)
+
+lib, lscpu:
+    - fix const qualifier discarded warnings in bsearch (by Karel Zak)
+
+libmount:
+    - fix const qualifier warning in mnt_parse_mountinfo_line (by Karel Zak)
+    - fix const qualifier warnings for C23 (by Karel Zak)
+
+logger:
+    - fix const qualifier warnings for C23 (by Karel Zak)
+
+login-utils:
+    - fix setpwnam() buffer use [CVE-2025-14104] (by Karel Zak)
+
+losetup:
+    - sort 'O' correctly for the mutual-exclusive check to work (by Benno Schulenberg)
+
+lscpu:
+    - use maximum CPU speed from DMI, avoid duplicate version string (by Karel Zak)
+    - Add a few missing Arm CPU identifiers (by Jonathan Thackray)
+
+lsfd:
+    - fix memory leak related to stat_error_class (by Masatake YAMATO)
+    - (bugfix) use PRIu32 for prining lport of netlink socket (by Masatake YAMATO)
+    - fix const qualifier warning in strnrstr (by Karel Zak)
+    - fix const qualifier warning in new_counter_spec (by Karel Zak)
+    - fix bsearch macro usage with glibc C23 (by Cristian Rodríguez)
+
+lsns:
+    - fix const qualifier warnings for C23 (by Karel Zak)
+
+namei:
+    - fix const qualifier warning in readlink_to_namei (by Karel Zak)
+
+partx:
+    - fix const qualifier warning in get_max_partno (by Karel Zak)
+
+po:
+    - update sr.po (from translationproject.org) (by Мирослав Николић)
+
+po-man:
+    - merge changes (by Karel Zak)
+    - update sr.po (from translationproject.org) (by Мирослав Николић)
+
+umount:
+    - consider helper return status for success message (by Christian Goeschel Ndjomouo)
+
+wdctl:
+    - remove -d option leftover (by Munehisa Kamata)
+
+whereis:
+    - fix const qualifier warnings for C23 (by Karel Zak)
+
+Misc:
+    - Fix memory leak in setpwnam() (by yao zhang)
+
 
 -- 
-Rgrds, legion
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
 
