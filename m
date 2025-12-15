@@ -1,98 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-71340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C17CBE399
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:14:03 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21319CBE5B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:43:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id C3A1C3014F42
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 14:13:55 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id ACD48301B81D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 14:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1DE33A6F1;
-	Mon, 15 Dec 2025 14:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2337D33FE1A;
+	Mon, 15 Dec 2025 14:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HflWFVqK"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t0NoRFkg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5F433A039;
-	Mon, 15 Dec 2025 14:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8691D33E36A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 14:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765808028; cv=none; b=Hhm1P84nx/eEnKjhryCqo3Rqrq5bZrZ9ndm//dkWglmQZJyAxg1pox/Xs82HOsdMYPWmi0edT1BQWVOwQyOxgtFspUSxzC0v7Ou37WyyQ0SG049HXYuivrmWe4F545dzQ58HSQAg8w4nNypzwWF8r+AzBbh7AR1oUx5GLsroyAo=
+	t=1765808281; cv=none; b=juCoHY4Lo6twQgBi0eXlUAtbX7n1gXTXANG9AOSwjL7KLUHgijcUSXQ7dvSCdnsUszPs8Jn+NX0cwnenCK8I43YYCerG7HIw8UyG/9pVU5bncFv8YKS20dWlNPjE83Lx7WlTFg1TGoQsCikUdTnfQLzyC4bEpSm9hzy/XhpDcpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765808028; c=relaxed/simple;
-	bh=m3i3iwxp5OsOcI8oD68UsVKqQyef/36yw8egizy9blw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YZmtNBUsHwxWINwfMlNLqNI9mn/mPE5F51rzurWFp2cVUpY1bighY5AlOlhO09vaGyMX8ij0qqYBu4LRpcvxJjOtbmJUjoJh+/oMweA+oSek1X4wEfVLXSDydYj9ATsYg2Oze30fVwwQBNLI5pn3KobRM0ZrlAf1VMEo5DqfsDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HflWFVqK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 199BFC4CEF5;
-	Mon, 15 Dec 2025 14:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765808027;
-	bh=m3i3iwxp5OsOcI8oD68UsVKqQyef/36yw8egizy9blw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HflWFVqKNdY2GZEPU09+ZBF7GU/QbHs69ZckCZ9ltDArpslFfuhqbsEfy/f9+DHIL
-	 2LK8Lm/Hsmwrk3GlWl3nRpT/jCOvvx15keGMRT49AxpaPh1M175dB3Iqa6SwKAev4Z
-	 CfdqTMU+v0F7g+zTTo7u0i2YtY+e7+jH9Vxp9OpCIia9es3lubRbNagT0YmvxFHOod
-	 GIih3713M8NB+v0Zt9NaQ6ulgRqEwydI+RkrbinNGq3ydKXYaAK+G+MBA4UPHwVa/N
-	 EAL2cdhNgVTSE4qruTBAa3DE8hV9s43++kZhcVn7dPB1et191p/fa4LVEhiaXT0/vD
-	 nKELDhw/m7g3w==
-From: Christian Brauner <brauner@kernel.org>
-To: Mathias Krause <minipli@grsecurity.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH] media: mc: fix potential use-after-free in media_request_alloc()
-Date: Mon, 15 Dec 2025 15:13:24 +0100
-Message-ID: <20251215-zugeparkt-umsonst-2b5755c0bece@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251209210903.603958-1-minipli@grsecurity.net>
-References: <20251209210903.603958-1-minipli@grsecurity.net>
+	s=arc-20240116; t=1765808281; c=relaxed/simple;
+	bh=DVXX00EvWSkvKgIKYW6V02V2bN4a5dGFmPLMTUDmkgs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=kahjBx5M2UNLAJgM6lje1gAYPKCGwi3M1OCHoICZcg6yzpLJi+sJsP+31iLofYc3H3O/jvi7mnqzHCwFiU5pLQ7ZW62SlBkRznBvvYAYPpztb4UjTwouOTumw2ezL5Y0p2SBGC1PftPDIuuXrzS0nBtWt8CRzcHS+ugeRf28wuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t0NoRFkg; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1765808270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2w9jfozl4pegwTIhi1nuDTYSt+1YDok7xKyhV+Gat4I=;
+	b=t0NoRFkg+xVOYewT1Y/OXijRVKM/ZqYjS8HJrH1HTlaezWGTsc35M625VSofKi/f9rZsZs
+	WRLqDOe07blna9I6pzr5ONssUa4diF2k6iCX7qp7f5aJ4G/CR+OG2XLKKtg42yRp4OG2iv
+	hq3HT3mshKUzlmhOgoij/cxxKXBRFB4=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1290; i=brauner@kernel.org; h=from:subject:message-id; bh=m3i3iwxp5OsOcI8oD68UsVKqQyef/36yw8egizy9blw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ6iE9f6qNz58P2r61Rcv/afhisTpwf/HOigntGEWPAU wnX2u1zO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaS8Jbhn22uk0L/zF8ts3JC 781LXLGdq0V0BidrzLvc/LTNS7Wc1zIyNK3SFWZ2afq8z1YgQrLP27c953bBG74ps9Yt67fJcJP jAwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] namespace: Replace simple_strtoul with kstrtoul to parse
+ boot params
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <3hnvigpwa2jomy6wimsdkkz4da64x7nsk4ffoko47ocpokqbou@fqymwie5damt>
+Date: Mon, 15 Dec 2025 15:17:14 +0100
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <E07BDF4C-F76A-4050-A4B9-3D2A362A3ABE@linux.dev>
+References: <20251214153141.218953-2-thorsten.blum@linux.dev>
+ <3hnvigpwa2jomy6wimsdkkz4da64x7nsk4ffoko47ocpokqbou@fqymwie5damt>
+To: Jan Kara <jack@suse.cz>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 09 Dec 2025 22:09:03 +0100, Mathias Krause wrote:
-> Commit 6f504cbf108a ("media: convert media_request_alloc() to
-> FD_PREPARE()") moved the call to fd_install() (now hidden in
-> fd_publish()) before the snprintf(), making the later write to
-> potentially already freed memory, as userland is free to call
-> close() concurrently right after the call to fd_install() which
-> may end up in the request_fops.release() handler freeing 'req'.
+On 15. Dec 2025, at 10:15, Jan Kara wrote:
+> On Sun 14-12-25 16:31:42, Thorsten Blum wrote:
+>> Replace simple_strtoul() with the recommended kstrtoul() for parsing the
+>> 'mhash_entries=' and 'mphash_entries=' boot parameters.
+>> 
+>> Check the return value of kstrtoul() and reject invalid values. This
+>> adds error handling while preserving behavior for existing values, and
+>> removes use of the deprecated simple_strtoul() helper.
+>> 
+>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 > 
-> [...]
+> ...
+> 
+>> @@ -49,20 +49,14 @@ static unsigned int mp_hash_shift __ro_after_init;
+>> static __initdata unsigned long mhash_entries;
+>> static int __init set_mhash_entries(char *str)
+>> {
+>> -	if (!str)
+>> -		return 0;
+>> -	mhash_entries = simple_strtoul(str, &str, 0);
+>> -	return 1;
+>> +	return kstrtoul(str, 0, &mhash_entries) == 0;
+>> }
+>> __setup("mhash_entries=", set_mhash_entries);
+> 
+> I'm not very experienced with the cmdline option parsing but AFAICT the
+> 'str' argument can be indeed NULL and kstrtoul() will not be happy with
+> that?
 
-Thanks for spotting this, Mathias.
+I don't think 'str' can be NULL. If you don't pass a value, 'str' will
+be the empty string (just tested this).
 
----
+Thanks,
+Thorsten
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] media: mc: fix potential use-after-free in media_request_alloc()
-      https://git.kernel.org/vfs/vfs/c/a260bd22a355
 
