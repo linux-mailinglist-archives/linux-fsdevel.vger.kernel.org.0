@@ -1,243 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-71358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 282D4CBF37F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 18:22:20 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F6E4CBF2F4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 18:16:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A435A3005E8C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 17:15:47 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3324F302573F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 17:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D8B312803;
-	Mon, 15 Dec 2025 17:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2E833F37A;
+	Mon, 15 Dec 2025 17:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UUNX59KV"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="DBmsQD4o";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z9u8MS08"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298F52EB841
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 17:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BA53376A3;
+	Mon, 15 Dec 2025 17:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765818400; cv=none; b=A0a+Et5BmaAD1ICzF+r8UiK71HssEUgrlWX7ynFVGekRJypDLI00kkV3Dlc05h/Lb23TtsEjrXAFm8bUED0xev88ivrujyzNQLbMyDu7QRdlQ1gJWuQWvUKL0z7Z+I3gpnNNfTQBAX3iA6rnJ8vobtayvJU+WTbf+IUA8jRNRHs=
+	t=1765818570; cv=none; b=te8On8WizBMfpg2luGR/dgj5oBIw9p0D0EEdz/5MO5WwACg5h/SvQrdeflbjvi+RvCMN6fdbUAsp7tlmvrMPY5nRUJ1I6F7wo0GG0/V+RwnLBFhB8PDPht5WHdIP+ww9Hjt4kaVgMvIk0Vb6kd19BSscU911CS51An0DgmOKbKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765818400; c=relaxed/simple;
-	bh=mk6fxjeyf6WodUAMSDPR1+yVt9ZM8VPAQ+DpWb51X3Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZV2aVvVB36vPejsH4yCP0PwYL6OLfK6/S3/CGJCaxD6Y9ntTFqJEFddhueD/ndYJCXrQjqN96MJgGsdiIAIoOnUcW1aBhbQIsNLg9yyOMwnvG38VNN1fF6nWDoODkui+SWj9dU3bzdXHtP0Renw39G+jGGeExiU+Nh8z8gH4r7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UUNX59KV; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-649820b4b3aso1054629a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 09:06:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765818396; x=1766423196; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T3Lr5M1Eh3DlRWyLf7Ai9/rnPnHZwbuj9GGv2H1V150=;
-        b=UUNX59KVmYfeowfm6TJJBf9SYSJ7zDkBZlYTSfVPBrJDPShVt0pCoudF58hB3n4zcL
-         39PgurfPvy58zVi+1izQmkHNVOcWouc9SAhK6mPO+WtEMkr+/o41HVQAsxbK1yG4LRkJ
-         863n5C+f1vrULbPujT9HrQSA/KGUb7x0nb5+tXNTZOTs1F9S49si0X6dw/PfgC0L5kpq
-         Zw6a4gKu9sJnJj0fQQwTwJLRX1C/nIQINJ5JopVMwTMzrbZc9oiIKPPftQCYU5d+UP1X
-         aw03CVTQHaaJGG4sjJYBySMYahWYDo6uDuWlTc4VV4/pIihlDDkJdWhgGodEY0ueecPL
-         1Gqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765818396; x=1766423196;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=T3Lr5M1Eh3DlRWyLf7Ai9/rnPnHZwbuj9GGv2H1V150=;
-        b=LyUR5DWGQL/NwUwP0mnYo43Z8pznzJOmzX9t9qUCWWd0ELOtdnfTgP/jE1a+SDotH4
-         HmTxQXpHhPlkryU7HScdEosr+CoqG1eoU9xuob2PNqX1i45GydFK/KHAnUJVrWYoYteV
-         jrIQ6w5YxAII0Hh8SoNiAsQh9VefkpDxJ8Lut6cpIITsihWhXT2ac/k3xMlrGB++FM/6
-         3SU5fm2sq9FQPhlDZWhNeYEVXK0WtdSrkTUMIKr3hiTv7bBxKSI8Bl8PQfuf9Zdv93Au
-         GgFehwrAvLso92AF0oG9hI0bhmqeBC537JnfIpJI5zlnGzEktingQuMwsImdruSAIrJs
-         NBGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyA0UgZagKRobbxnYkLOqMrc6+D75Lr94jMfNx11MJHLGu2kxaOfFXYyKVEqlWfo+/LzVc6OMA3q7IFIqw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs7ZEGQ0yLbSfnExJVEGuuhNymbb2uPelbiYslQie3ylLgidyI
-	XxXPx93dCCWb8s4muzjaSzSd8+h6TsMml086/cjaZKvc+2GVdTw96B2mI9N2uZd5XlhqTrXlt0Z
-	AQxaHn4fB98hyj33sR1N+mKAROUX2iZw=
-X-Gm-Gg: AY/fxX5SsNGvV1eiVlFMH7H6tQsZa6klajllOzIlGfGoQgwZokKRaxtXnlRCUwgJHos
-	wxtCrFz7MDYa3tvpVhLyip4arkr5/uIEknJM61c4mV8L0hXmb5u8JTM1VVnmA4xREcK5uoFu/kA
-	/I12eaVN9lrUQ6ugiR/80owpqn5oB9ijCgaNhvaMllxSno/IkqOrxgxt1Gsjg9x/57o7O8lNNnd
-	T6rjcwN9+/rHIZXk08yYXh+VokO6fUv1p9nsHZ7Z1+Cwo3YuM9PmPONhghRo0wVVFK5ZrVMPlkL
-	LMd1cUHd9pHKs2Re4INYio3PEDygSJe8GiT57KPO
-X-Google-Smtp-Source: AGHT+IF2ahviMuH2nyVFWFlr1seQH3VoPQWUSrp8MfEVoM51h7Hwp1WaZqcRCBflotRrz9q5Vmxdw72arjMb+Ez5ykE=
-X-Received: by 2002:a05:6402:3482:b0:649:9268:1f43 with SMTP id
- 4fb4d7f45d1cf-6499b1fa7d5mr9246854a12.21.1765818396247; Mon, 15 Dec 2025
- 09:06:36 -0800 (PST)
+	s=arc-20240116; t=1765818570; c=relaxed/simple;
+	bh=UpueoY4td8Le9kj70RSd7cpZwl2U2zAl8gIz9iDdiSE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OLQFo5RyP82T0/IpgnZ7pCy8wjimVOOXkUS0LjMXIBqYOnJH66kEBEBLhn/laV0XjCDWsmKpe1CSrJq+gc6jLzuSSHanwXQ+jEj3YpA04YUpHmZHtgiWKGfNkDC5DYUCYfKp04yIb9feTwdNFaTuLvcYsa4Onsk2DK3v3UN3sc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=DBmsQD4o; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z9u8MS08; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 3EE6614001F1;
+	Mon, 15 Dec 2025 12:09:19 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Mon, 15 Dec 2025 12:09:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1765818559;
+	 x=1765904959; bh=xVWwiXFD+0T8MSjifsQoEy4fskO/HVJ0qZSwyVu4ZIM=; b=
+	DBmsQD4oMM0qgWntCWtu0WtfgCf/MbXQL0FUzxGBYcCdiKwv6Ob824yeOfiSuBdV
+	P1B90i6yCqsvXITHwrN+TSar2UAJcowbupdnIalHEtW8LBAmrSWKUhvHvbIaLJ4k
+	jShsXUCGfXrijIeeaSbeTEJwxU4C/+fWMjhxWYiyvxVvmBUtKRer9/QvmRJQbDQT
+	o1sXVzHHZuS+vFq+ZxmBtaSoS7krHEYHF8xglr2nqgbTh25V9wXTBWmzwb/EEc9d
+	jvGwGI/vlrCEkHUzawnhwuFrN9HUs1ezWODsu0QFVWuuzv2pE/YTZhP/K1KEvjlV
+	Uu2DLXq9S/ln1gdbpSN6FA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1765818559; x=
+	1765904959; bh=xVWwiXFD+0T8MSjifsQoEy4fskO/HVJ0qZSwyVu4ZIM=; b=Z
+	9u8MS08Ik++NoxS3z66EZ0cJMm5KvLl6hGst26/iYdACNhfPrRO94El2ktlKhugD
+	J80UG5N4Pw/OL78tsDsmMjLopfPrabQUp8gS4BbA6YRoReroHKpoYsk2wYnP1iHP
+	p9zpvahy7mx4UjOLQyB2EvDXX88qBCYGxUPif6HJF+r/OAGzb/lfdjlSMXKOfy6U
+	mRbpgHMmpET+yL1BZRMcdDxQZTZzOn0GhNlyI9qszF7/D1VGRTJBX4kqWVrJQJFr
+	kkjlVZbgzkwcbArq2jtbKlhmFPmcfAt/Hqkj/VUV1pF9Fk6BrdGVZK3S/0EfrK2g
+	HHxlroYaIcnqDyYLh3f5w==
+X-ME-Sender: <xms:vkBAaTnfn8IXfsPJTqp0bgHes1h0G7rlhD_tYVLPcp3bB8rXjB16rg>
+    <xme:vkBAaZ5CoOdVNPSImGLGiehDvXAYi3sCtH6QlXkti1K3n__KvgiDuCt9M-2TVYVhK
+    bOoRcfNrs-6NO8MEDNtVoisYmnehpyWjnGQ4ZRqCL1okpioG9w>
+X-ME-Received: <xmr:vkBAaUQp3GQuZa4G6m_Fqs7NASk9Ry4LYiXEKLRDXK2UmQA-9ZTjki3orkKJaWzcnQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefjeefjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepuegvrhhnugcu
+    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
+    htvghrnhepfeeggeefffekudduleefheelleehgfffhedujedvgfetvedvtdefieehfeel
+    gfdvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
+    gvrhhnugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohepuddtpdhmohguvgep
+    shhmthhpohhuthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtg
+    homhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+    pdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtohepmhhikh
+    hlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggt
+    khdrohhrghdprhgtphhtthhopegrthhhuhhlrdhkrhhishhhnhgrrdhkrhesphhrohhtoh
+    hnmhgrihhlrdgtohhmpdhrtghpthhtohepjhdrnhgvuhhstghhrggvfhgvrhesghhmgidr
+    nhgvthdprhgtphhtthhopegtrghrnhhilhesuggvsghirghnrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:vkBAaXwhg5qPoMSFxr2fjFWyNP3WxxYhQ73419jrK3qKUZ2yeX7Ssg>
+    <xmx:vkBAacoS-5NRhIxVYWmGPTFL3D8ol9w16UKMZ8fl7XiWv23-lX1Ccw>
+    <xmx:vkBAaa2MctWN15wgAlH3c4uX1-gQ9Gfl1BgMgTktPpzzX6UX9TGxLw>
+    <xmx:vkBAacwVIAsywd5d6YrAgETJowG17h3I0KHd7Nw_L4SQyMrJOkmY-w>
+    <xmx:v0BAaYs0WBymy6XKlOGtl7jdV99-_OSENo7ShJW2OJY5BD0iRI2jHBFg>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 15 Dec 2025 12:09:17 -0500 (EST)
+Message-ID: <2410c88d-380a-4aef-898e-857307a57959@bsbernd.com>
+Date: Mon, 15 Dec 2025 18:09:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251212181254.59365-1-luis@igalia.com> <20251212181254.59365-4-luis@igalia.com>
- <87f48f32-ddc4-4c57-98c1-75bc5e684390@ddn.com>
-In-Reply-To: <87f48f32-ddc4-4c57-98c1-75bc5e684390@ddn.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 15 Dec 2025 18:06:24 +0100
-X-Gm-Features: AQt7F2pu51pEzyBoPdDqMNTJ94ozn1tCzgFQ4BJcmKxur7T-oCJL5x8ulEFjzEY
-Message-ID: <CAOQ4uxj_-_zbuCLdWuHQj4fx2sBOn04+-6F2WiC9SRdmcacsDA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 3/6] fuse: initial infrastructure for
- FUSE_LOOKUP_HANDLE support
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Kevin Chen <kchen@ddn.com>, 
-	Horst Birthelmer <hbirthelmer@ddn.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Matt Harvey <mharvey@jumptrading.com>, 
-	"kernel-dev@igalia.com" <kernel-dev@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] fs/writeback: skip AS_NO_DATA_INTEGRITY mappings
+ in wait_sb_inodes()
+To: Joanne Koong <joannelkoong@gmail.com>, akpm@linux-foundation.org
+Cc: david@redhat.com, miklos@szeredi.hu, linux-mm@kvack.org,
+ athul.krishna.kr@protonmail.com, j.neuschaefer@gmx.net, carnil@debian.org,
+ linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+References: <20251215030043.1431306-1-joannelkoong@gmail.com>
+ <20251215030043.1431306-2-joannelkoong@gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US
+In-Reply-To: <20251215030043.1431306-2-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 15, 2025 at 2:36=E2=80=AFPM Bernd Schubert <bschubert@ddn.com> =
-wrote:
->
-> Hi Luis,
->
-> I'm really sorry for late review.
->
-> On 12/12/25 19:12, Luis Henriques wrote:
-> > This patch adds the initial infrastructure to implement the LOOKUP_HAND=
-LE
-> > operation.  It simply defines the new operation and the extra fuse_init=
-_out
-> > field to set the maximum handle size.
-> >
-> > Signed-off-by: Luis Henriques <luis@igalia.com>
-> > ---
-> >   fs/fuse/fuse_i.h          | 4 ++++
-> >   fs/fuse/inode.c           | 9 ++++++++-
-> >   include/uapi/linux/fuse.h | 8 +++++++-
-> >   3 files changed, 19 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index 1792ee6f5da6..fad05fae7e54 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -909,6 +909,10 @@ struct fuse_conn {
-> >       /* Is synchronous FUSE_INIT allowed? */
-> >       unsigned int sync_init:1;
-> >
-> > +     /** Is LOOKUP_HANDLE implemented by fs? */
-> > +     unsigned int lookup_handle:1;
-> > +     unsigned int max_handle_sz;
-> > +
-> >       /* Use io_uring for communication */
-> >       unsigned int io_uring;
-> >
-> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > index ef63300c634f..bc84e7ed1e3d 100644
-> > --- a/fs/fuse/inode.c
-> > +++ b/fs/fuse/inode.c
-> > @@ -1465,6 +1465,13 @@ static void process_init_reply(struct fuse_mount=
- *fm, struct fuse_args *args,
-> >
-> >                       if (flags & FUSE_REQUEST_TIMEOUT)
-> >                               timeout =3D arg->request_timeout;
-> > +
-> > +                     if ((flags & FUSE_HAS_LOOKUP_HANDLE) &&
-> > +                         (arg->max_handle_sz > 0) &&
-> > +                         (arg->max_handle_sz <=3D FUSE_MAX_HANDLE_SZ))=
- {
-> > +                             fc->lookup_handle =3D 1;
-> > +                             fc->max_handle_sz =3D arg->max_handle_sz;
->
-> I don't have a strong opinion on it, maybe
->
-> if (flags & FUSE_HAS_LOOKUP_HANDLE) {
->         if (!arg->max_handle_sz || arg->max_handle_sz > FUSE_MAX_HANDLE_S=
-Z) {
->                 pr_info_ratelimited("Invalid fuse handle size %d\n, arg->=
-max_handle_sz)
->         } else {
->                 fc->lookup_handle =3D 1;
->                 fc->max_handle_sz =3D arg->max_handle_sz;
 
-Why do we need both?
-This seems redundant.
-fc->max_handle_sz !=3D 0 is equivalent to fc->lookup_handle
-isnt it?
 
-Thanks,
-Amir.
+On 12/15/25 04:00, Joanne Koong wrote:
+> Skip waiting on writeback for inodes that belong to mappings that do not
+> have data integrity guarantees (denoted by the AS_NO_DATA_INTEGRITY
+> mapping flag).
+> 
+> This restores fuse back to prior behavior where syncs are no-ops. This
+> is needed because otherwise, if a system is running a faulty fuse
+> server that does not reply to issued write requests, this will cause
+> wait_sb_inodes() to wait forever.
+> 
+> Fixes: 0c58a97f919c ("fuse: remove tmp folio for writebacks and internal rb tree")
+> Reported-by: Athul Krishna <athul.krishna.kr@protonmail.com>
+> Reported-by: J. Neuschäfer <j.neuschaefer@gmx.net>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>   fs/fs-writeback.c       |  3 ++-
+>   fs/fuse/file.c          |  4 +++-
+>   include/linux/pagemap.h | 11 +++++++++++
+>   3 files changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 6800886c4d10..ab2e279ed3c2 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -2751,7 +2751,8 @@ static void wait_sb_inodes(struct super_block *sb)
+>   		 * do not have the mapping lock. Skip it here, wb completion
+>   		 * will remove it.
+>   		 */
+> -		if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK))
+> +		if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK) ||
+> +		    mapping_no_data_integrity(mapping))
+>   			continue;
+>   
+>   		spin_unlock_irq(&sb->s_inode_wblist_lock);
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 01bc894e9c2b..3b2a171e652f 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -3200,8 +3200,10 @@ void fuse_init_file_inode(struct inode *inode, unsigned int flags)
+>   
+>   	inode->i_fop = &fuse_file_operations;
+>   	inode->i_data.a_ops = &fuse_file_aops;
+> -	if (fc->writeback_cache)
+> +	if (fc->writeback_cache) {
+>   		mapping_set_writeback_may_deadlock_on_reclaim(&inode->i_data);
+> +		mapping_set_no_data_integrity(&inode->i_data);
+> +	}
 
->         }
-> }
->
->
-> I.e. give developers a warning what is wrong?
->
->
-> > +                     }
-> >               } else {
-> >                       ra_pages =3D fc->max_read / PAGE_SIZE;
-> >                       fc->no_lock =3D 1;
-> > @@ -1515,7 +1522,7 @@ static struct fuse_init_args *fuse_new_init(struc=
-t fuse_mount *fm)
-> >               FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
-> >               FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
-> >               FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_ALLOW_IDM=
-AP |
-> > -             FUSE_REQUEST_TIMEOUT;
-> > +             FUSE_REQUEST_TIMEOUT | FUSE_LOOKUP_HANDLE;
-> >   #ifdef CONFIG_FUSE_DAX
-> >       if (fm->fc->dax)
-> >               flags |=3D FUSE_MAP_ALIGNMENT;
-> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> > index c13e1f9a2f12..4acf71b407c9 100644
-> > --- a/include/uapi/linux/fuse.h
-> > +++ b/include/uapi/linux/fuse.h
->
-> I forget to do that all the time myself, I think it should also increase =
-the
-> minor version here and add add a comment for it.
->
-> > @@ -495,6 +495,7 @@ struct fuse_file_lock {
-> >   #define FUSE_ALLOW_IDMAP    (1ULL << 40)
-> >   #define FUSE_OVER_IO_URING  (1ULL << 41)
-> >   #define FUSE_REQUEST_TIMEOUT        (1ULL << 42)
-> > +#define FUSE_HAS_LOOKUP_HANDLE       (1ULL << 43)
-> >
-> >   /**
-> >    * CUSE INIT request/reply flags
-> > @@ -663,6 +664,7 @@ enum fuse_opcode {
-> >       FUSE_TMPFILE            =3D 51,
-> >       FUSE_STATX              =3D 52,
-> >       FUSE_COPY_FILE_RANGE_64 =3D 53,
-> > +     FUSE_LOOKUP_HANDLE      =3D 54,
-> >
-> >       /* CUSE specific operations */
-> >       CUSE_INIT               =3D 4096,
-> > @@ -908,6 +910,9 @@ struct fuse_init_in {
-> >       uint32_t        unused[11];
-> >   };
-> >
-> > +/* Same value as MAX_HANDLE_SZ */
-> > +#define FUSE_MAX_HANDLE_SZ 128
-> > +
-> >   #define FUSE_COMPAT_INIT_OUT_SIZE 8
-> >   #define FUSE_COMPAT_22_INIT_OUT_SIZE 24
-> >
-> > @@ -925,7 +930,8 @@ struct fuse_init_out {
-> >       uint32_t        flags2;
-> >       uint32_t        max_stack_depth;
-> >       uint16_t        request_timeout;
-> > -     uint16_t        unused[11];
-> > +     uint16_t        max_handle_sz;
-> > +     uint16_t        unused[10];
-> >   };
->
-> No strong opinion either and just given we are slowly running out of
-> available space. If we never expect to need more than 256 bytes,
-> maybe uint8_t?
->
->
->
-> Thanks,
-> Bernd
->
+For a future commit, maybe we could add a FUSE_INIT flag that allows privileged
+fuse server to not set this? Maybe even in combination with an enforced request
+timeout?
+
+>   
+>   	INIT_LIST_HEAD(&fi->write_files);
+>   	INIT_LIST_HEAD(&fi->queued_writes);
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 31a848485ad9..ec442af3f886 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -210,6 +210,7 @@ enum mapping_flags {
+>   	AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM = 9,
+>   	AS_KERNEL_FILE = 10,	/* mapping for a fake kernel file that shouldn't
+>   				   account usage to user cgroups */
+> +	AS_NO_DATA_INTEGRITY = 11, /* no data integrity guarantees */
+>   	/* Bits 16-25 are used for FOLIO_ORDER */
+>   	AS_FOLIO_ORDER_BITS = 5,
+>   	AS_FOLIO_ORDER_MIN = 16,
+> @@ -345,6 +346,16 @@ static inline bool mapping_writeback_may_deadlock_on_reclaim(const struct addres
+>   	return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags);
+>   }
+>   
+> +static inline void mapping_set_no_data_integrity(struct address_space *mapping)
+> +{
+> +	set_bit(AS_NO_DATA_INTEGRITY, &mapping->flags);
+> +}
+> +
+> +static inline bool mapping_no_data_integrity(const struct address_space *mapping)
+> +{
+> +	return test_bit(AS_NO_DATA_INTEGRITY, &mapping->flags);
+> +}
+> +
+>   static inline gfp_t mapping_gfp_mask(const struct address_space *mapping)
+>   {
+>   	return mapping->gfp_mask;
+
+
+Reviewed-by: Bernd Schubert <bschubert@ddn.com>
 
