@@ -1,83 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-71339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EBFCBE333
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:10:48 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C17CBE399
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 3C86C3014722
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 14:10:16 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id C3A1C3014F42
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 14:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6143314C0;
-	Mon, 15 Dec 2025 14:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1DE33A6F1;
+	Mon, 15 Dec 2025 14:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I1sDsTSU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HflWFVqK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D58D32B9A2;
-	Mon, 15 Dec 2025 14:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5F433A039;
+	Mon, 15 Dec 2025 14:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765807812; cv=none; b=Pdy6ZcNxQucCDhUiJ2r6oPze70SXLIHs9lacg3bGuVfb0jo7TGf1vZFLASAvZI6QY0rd0HGQlO+cwhpeV41atAk1zMdvwU+1RsvkyAEbydU2IOOYh/nekNaVM1Cr0vzA/aPLSQDdFPjKv57+n6Q7JUQly6CMldObNDWHrq9ee/o=
+	t=1765808028; cv=none; b=Hhm1P84nx/eEnKjhryCqo3Rqrq5bZrZ9ndm//dkWglmQZJyAxg1pox/Xs82HOsdMYPWmi0edT1BQWVOwQyOxgtFspUSxzC0v7Ou37WyyQ0SG049HXYuivrmWe4F545dzQ58HSQAg8w4nNypzwWF8r+AzBbh7AR1oUx5GLsroyAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765807812; c=relaxed/simple;
-	bh=JzUuQZ6PTK7J4bmbQecxHYg1BWa8IyxJIw5BwLjae+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rlQvhnDBZLbghVFD5lxC9zYn8Eyr7zF3EwNYDJpzuaq/ZJEZ/A+mtQCUO0Kmq7kfwiat9FTAJPHRdjpHbexF5OK2m1MB9sZFdpRGx9Jhk9KNwbzZNHl8EuuBFVei7Y8MlaaxfNnKNj/hIksWUVBMz8tDlH2tQX4iAPIUJD1z/So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=I1sDsTSU; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=a2AIMEuMO63fon6DvcO/Y3XcQwHDOR1ZxHudwpfq7s8=; b=I1sDsTSU1KfjM9/bdkkapQkmOr
-	GnW3sElZMeHfkA2DsdbS+56hxgM4DKcfeH+K8oKvGK09YGJeqqTDCGLAtQ3uwvgd6/nKeeLsXwFBq
-	k6VycbSzkyfGJPHZUAhFIGkXEddbFjUL8ackwcLE5SFh1eDg2IJyUftdRcn8hWqeycc6Z4GHRfSPv
-	ku26eth540qcA8sJe+tOukoYFdH91TMLHH+I2Xm5OLkrBHyfAY/NZHou/4xfGq1vYqr/UDTm6Vh44
-	j5h+OgxnrStBSKTbRjMK00DU+G8jK3o1W+/wOQgrD6AqTTSdRFQk9A/63Cj+CTmUNLD0YL21C/Dyl
-	IJ4Z5yGw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vV9H6-00000001znb-1m3c;
-	Mon, 15 Dec 2025 14:10:08 +0000
-Date: Mon, 15 Dec 2025 14:10:08 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: jack@suse.cz, Deepakkumar Karn <dkarn@redhat.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2] fs/buffer: add alert in try_to_free_buffers() for
- folios without buffers
-Message-ID: <aUAWwPWDq0GgAjnP@casper.infradead.org>
-References: <20251211131211.308021-1-dkarn@redhat.com>
- <20251215-zuckungen-autogramm-a0c4291e525b@brauner>
+	s=arc-20240116; t=1765808028; c=relaxed/simple;
+	bh=m3i3iwxp5OsOcI8oD68UsVKqQyef/36yw8egizy9blw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YZmtNBUsHwxWINwfMlNLqNI9mn/mPE5F51rzurWFp2cVUpY1bighY5AlOlhO09vaGyMX8ij0qqYBu4LRpcvxJjOtbmJUjoJh+/oMweA+oSek1X4wEfVLXSDydYj9ATsYg2Oze30fVwwQBNLI5pn3KobRM0ZrlAf1VMEo5DqfsDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HflWFVqK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 199BFC4CEF5;
+	Mon, 15 Dec 2025 14:13:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765808027;
+	bh=m3i3iwxp5OsOcI8oD68UsVKqQyef/36yw8egizy9blw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HflWFVqKNdY2GZEPU09+ZBF7GU/QbHs69ZckCZ9ltDArpslFfuhqbsEfy/f9+DHIL
+	 2LK8Lm/Hsmwrk3GlWl3nRpT/jCOvvx15keGMRT49AxpaPh1M175dB3Iqa6SwKAev4Z
+	 CfdqTMU+v0F7g+zTTo7u0i2YtY+e7+jH9Vxp9OpCIia9es3lubRbNagT0YmvxFHOod
+	 GIih3713M8NB+v0Zt9NaQ6ulgRqEwydI+RkrbinNGq3ydKXYaAK+G+MBA4UPHwVa/N
+	 EAL2cdhNgVTSE4qruTBAa3DE8hV9s43++kZhcVn7dPB1et191p/fa4LVEhiaXT0/vD
+	 nKELDhw/m7g3w==
+From: Christian Brauner <brauner@kernel.org>
+To: Mathias Krause <minipli@grsecurity.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH] media: mc: fix potential use-after-free in media_request_alloc()
+Date: Mon, 15 Dec 2025 15:13:24 +0100
+Message-ID: <20251215-zugeparkt-umsonst-2b5755c0bece@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251209210903.603958-1-minipli@grsecurity.net>
+References: <20251209210903.603958-1-minipli@grsecurity.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251215-zuckungen-autogramm-a0c4291e525b@brauner>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1290; i=brauner@kernel.org; h=from:subject:message-id; bh=m3i3iwxp5OsOcI8oD68UsVKqQyef/36yw8egizy9blw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ6iE9f6qNz58P2r61Rcv/afhisTpwf/HOigntGEWPAU wnX2u1zO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaS8Jbhn22uk0L/zF8ts3JC 781LXLGdq0V0BidrzLvc/LTNS7Wc1zIyNK3SFWZ2afq8z1YgQrLP27c953bBG74ps9Yt67fJcJP jAwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 15, 2025 at 03:07:35PM +0100, Christian Brauner wrote:
-> On Thu, 11 Dec 2025 18:42:11 +0530, Deepakkumar Karn wrote:
-> > try_to_free_buffers() can be called on folios with no buffers attached
-> > when filemap_release_folio() is invoked on a folio belonging to a mapping
-> > with AS_RELEASE_ALWAYS set but no release_folio operation defined.
-> > 
-> > In such cases, folio_needs_release() returns true because of the
-> > AS_RELEASE_ALWAYS flag, but the folio has no private buffer data. This
-> > causes try_to_free_buffers() to call drop_buffers() on a folio with no
-> > buffers, leading to a null pointer dereference.
-> > 
-> > [...]
+On Tue, 09 Dec 2025 22:09:03 +0100, Mathias Krause wrote:
+> Commit 6f504cbf108a ("media: convert media_request_alloc() to
+> FD_PREPARE()") moved the call to fd_install() (now hidden in
+> fd_publish()) before the snprintf(), making the later write to
+> potentially already freed memory, as userland is free to call
+> close() concurrently right after the call to fd_install() which
+> may end up in the request_fops.release() handler freeing 'req'.
 > 
-> Applied to the vfs-7.0.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs-7.0.misc branch should appear in linux-next soon.
+> [...]
 
-No, this is the wrong fix.  Please drop.
+Thanks for spotting this, Mathias.
+
+---
+
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] media: mc: fix potential use-after-free in media_request_alloc()
+      https://git.kernel.org/vfs/vfs/c/a260bd22a355
 
