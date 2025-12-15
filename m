@@ -1,125 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-71303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56828CBD4E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 11:02:35 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729F6CBD514
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 11:10:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 9D5863017CB8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 10:02:34 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C51E83014A05
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 10:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D002A314B91;
-	Mon, 15 Dec 2025 10:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140AF32C935;
+	Mon, 15 Dec 2025 10:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6AcqTkr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5014029ACC5;
-	Mon, 15 Dec 2025 10:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698B232AADA;
+	Mon, 15 Dec 2025 10:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765792952; cv=none; b=f0KN9BjLm2BKb9+p2YHPcFi8OeUN1MsJa3HcY4MXmXt+LeyoHkTBGVU15s6zlcD8vAb/l6jHfoeTn6WjxdZMOJG5UKhNK+z33lD6+LRhQjGDIMQCS/v8ytMvvF3kam+r4fJkizn2vA4C8obRYHLWgfwcFN9sONVlY0dY0hFaDbs=
+	t=1765793435; cv=none; b=n2gLHfZeFE0hRXx9oTcF/o6hM6SX/NiorukQ7kUo1DtUsDpca+iO1ihVE+89FseuY0ZhzlDOjCVBiEV3HwEvrJA9N/3K92/M8N1yhgejK2iQbjDk1zCyt5W4yqx3qeQ20IK8y/B7NqnOvYbFL8WwMNst9FqJ9+4Wlw/PhyYrZlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765792952; c=relaxed/simple;
-	bh=GyeIkxR1+30Py3QYSp0HmOcopTRz4jeq8pA2AK1hE0U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eqxQW+LN9T5s4Yb/CVHmPVyDMH6WYcObcZTdSKx9PKUo/w8ld4O10zCOMs5GRyFvGt1XELf/T1zpbpzjkLSOp3kiUigXKNB6JKDotUXKbPSUXrqcdeLQRsRIdT7XxixNakWeJJfScjLzLefF5Nmp7Acx0TG6Q7U7TQWrxI3nQPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 23fa53d4d99d11f0a38c85956e01ac42-20251215
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:fd9a8df2-f284-44c2-a57f-92218c27e60d,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-5
-X-CID-META: VersionHash:a9d874c,CLOUDID:7adbf85120823665fc4c7ba17ce066e1,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850|898,TC:nil,Content:0|15|50,EDM:-
-	3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,A
-	V:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 23fa53d4d99d11f0a38c85956e01ac42-20251215
-X-User: jiangyunshui@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <chenzhang@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1710653524; Mon, 15 Dec 2025 18:02:18 +0800
-From: chen zhang <chenzhang@kylinos.cn>
-To: miklos@szeredi.hu,
-	mszeredi@redhat.com,
-	joannelkoong@gmail.com,
-	josef@toxicpanda.com,
-	gmaglione@redhat.com,
-	vgoyal@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	chenzhang_0901@163.com,
-	chen zhang <chenzhang@kylinos.cn>
-Subject: [PATCH] virtio_fs: use sysfs_emit_at() instead of snprintf()
-Date: Mon, 15 Dec 2025 18:02:14 +0800
-Message-Id: <20251215100214.144568-1-chenzhang@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1765793435; c=relaxed/simple;
+	bh=Q8aUgCK3qUVzxftEIXSI765gX1wZABO69d3NEZOhSVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TXzxPo+W2tn1DEzMk8sYIn9MD9wKPPnjYPH/3n1VwpMnnw6LGbLaNoVYgXmg+fJpD0ZTpVe81/oPxfmg1te3Stf1xJhJQRsEwXJZxqH2NOPUXTbd1WUZ5NqKV87egDNOrHuasXkMwHmdEe4oXPoRW66v05H6ydbADFq0R1b+cXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6AcqTkr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFB3C4CEF5;
+	Mon, 15 Dec 2025 10:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765793435;
+	bh=Q8aUgCK3qUVzxftEIXSI765gX1wZABO69d3NEZOhSVg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c6AcqTkrGNkGvAsK16P6V+1JZHeOOg1n2Q2SDBOqtqu13ZXBhfvDndAvfeBgfke5d
+	 TzuQ6+/NthEA9ia27lWIDVw58i5AbOxM93P8xERV/tBl7hGeylcy0ausEAfx3WoZaT
+	 xTb+bHzYZ+DnVR6lFHy94pDWQOvtfV3ujU9rAakwKA4f6hNng4tnKC4s6Tyn1GZ/Fd
+	 oNnlpaoaoUwgF2wBfxHyVvCfg0S1R60mIpPJEvYFmxiT3sOFsLn635gS4bG4YgsO6i
+	 VkNl2+jgx/eyMD22A/4Kx8+zYsaBou6OdmwavT5oE/MwN6NHbQ2CzxJK4ezuczCUpL
+	 PTKnud9t//P6g==
+Date: Mon, 15 Dec 2025 11:10:29 +0100
+From: Alexey Gladkov <legion@kernel.org>
+To: Dan Klishch <danilklishch@gmail.com>
+Cc: containers@lists.linux-foundation.org, ebiederm@xmission.com,
+	keescook@chromium.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [RESEND PATCH v6 0/5] proc: subset=pid: Relax check of mount
+ visibility
+Message-ID: <aT_elfmyOaWuJRjW@example.org>
+References: <aT7ohARHhPEmFlW9@example.org>
+ <20251214180254.799969-1-danilklishch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251214180254.799969-1-danilklishch@gmail.com>
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
+On Sun, Dec 14, 2025 at 01:02:54PM -0500, Dan Klishch wrote:
+> On 12/14/25 11:40 AM, Alexey Gladkov wrote:
+> > But then, if I understand you correctly, this patch will not be enough
+> > for you. procfs with subset=pid will not allow you to have /proc/meminfo,
+> > /proc/cpuinfo, etc.
+> 
+> Hmm, I didn't think of this. sunwalker-box only exposes cpuinfo and PID
+> tree to the sandboxed programs (empirically, this is enough for most of
+> programs you want sandboxing for). With that in mind, this patch and a
+> FUSE providing an overlay with cpuinfo / seccomp intercepting opens of
+> /proc/cpuinfo / a small kernel patch with a new mount option for procfs
+> to expose more static files still look like a clean solution to me.
 
-Signed-off-by: chen zhang <chenzhang@kylinos.cn>
----
- fs/fuse/virtio_fs.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+I don't think you'll be able to do that. procfs doesn't allow itself to
+be overlayed [1]. What should block mounting overlayfs and fuse on top
+of procfs.
 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index b2f6486fe1d5..7466e5d6baa2 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -234,7 +234,6 @@ static ssize_t cpu_list_show(struct kobject *kobj,
- 	struct virtio_fs *fs = container_of(kobj->parent->parent, struct virtio_fs, kobj);
- 	struct virtio_fs_vq *fsvq = virtio_fs_kobj_to_vq(fs, kobj);
- 	unsigned int cpu, qid;
--	const size_t size = PAGE_SIZE - 1;
- 	bool first = true;
- 	int ret = 0, pos = 0;
- 
-@@ -244,18 +243,20 @@ static ssize_t cpu_list_show(struct kobject *kobj,
- 	qid = fsvq->vq->index;
- 	for (cpu = 0; cpu < nr_cpu_ids; cpu++) {
- 		if (qid < VQ_REQUEST || (fs->mq_map[cpu] == qid)) {
--			if (first)
--				ret = snprintf(buf + pos, size - pos, "%u", cpu);
--			else
--				ret = snprintf(buf + pos, size - pos, ", %u", cpu);
--
--			if (ret >= size - pos)
--				break;
--			first = false;
-+			if (first) {
-+				ret = sysfs_emit_at(buf, pos, "%u", cpu);
-+				first = false;
-+			} else
-+				ret = sysfs_emit_at(buf, pos, ", %u", cpu);
-+
-+			if (ret < 0)
-+				return  -EINVAL;
- 			pos += ret;
- 		}
- 	}
--	ret = snprintf(buf + pos, size + 1 - pos, "\n");
-+	ret = sysfs_emit_at(buf, pos, "\n");
-+	if (ret < 0)
-+		return -EINVAL;
- 	return pos + ret;
- }
- 
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/proc/root.c#n274
+
+> >> Also, correct me if I am wrong, installing ebpf controller requires
+> >> CAP_BPF in initial userns, so rootless podman will not be able to mask
+> >> /proc "properly" even if someone sends a patch switching it to ebpf.
+> > 
+> > You can turn on /proc/sys/kernel/unprivileged_bpf_disabled.
+> 
+> $ cat /proc/sys/kernel/unprivileged_bpf_disabled
+> 0
+> $ unshare -pfr --mount-proc
+> $ ./proc-controller -p deny /proc/cpuinfo
+> libbpf: prog 'proc_access_restrict': BPF program load failed: Operation not permitted
+> libbpf: prog 'proc_access_restrict': failed to load: -1
+> libbpf: failed to load object './proc-controller.bpf.o'
+> proc-controller: ERROR: loading BPF object file failed
+> 
+> I think only packet filters are allowed to be installed by non-root.
+
+I probably forgot about that. I wrote this code a long time ago, and
+to be honest, I forgot whether it can be used for rootless.
+
 -- 
-2.25.1
+Rgrds, legion
 
 
