@@ -1,238 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-71298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id C456BCBD0FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 09:57:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C475BCBD12F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 09:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 36998302ABA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 08:56:25 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 55CDD3028EE7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 08:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39882330333;
-	Mon, 15 Dec 2025 08:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QDg8RJ4d";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wBBuYG1o";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yr9u8eFR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3Gn/PI5j"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0D3329E4C;
+	Mon, 15 Dec 2025 08:56:01 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D872459FD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 08:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B195832938A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 08:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765788384; cv=none; b=qi1/vnTtMHXDGP78FcpNiMUj23tOA86Xfoa8pDgBhKV2V3WOK/oZ+2dQhXOLsjel6KlTzjm7vy0cIUf3KdEOQjj6B73JN89bv5dvRRYSk4jXwEqqg5svzBcm3U2iZZbWsZXAORQSt9pkBluNbbd4DkBR4GRGn9FHP15gYHwU4ek=
+	t=1765788961; cv=none; b=iD6wY/kbLtZ6tbVxV2u53IRC3wiRWTGPyf00OwFkcjjMoB5g9XGhiXPWmx4JUPRy2vIDRJj+lFLZjOLpaxBaVj2winrAm31aGEa+MIvdtiRxDf8ZltV/NHwKuXI63Yv92xPT6pfR6HswxtX5npwn7SQ86ECF58qr0siynFeKkT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765788384; c=relaxed/simple;
-	bh=dm184A/+6Dqyot/rqGSgpiulsmHLgefYTOAHynng6lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jgej4oLF2RksgNtMRF4BGKAUbP/Cyd9GYENDLzRYlFLmDfO/mzHqUV2VIPhZZLKUGI9qAOkB91Dlpr40wuJanSplRhJ93K4aVdCURYZaIBxqbQXxdTxVfKTMH3TgExVXWPW3m3A20NimO8p2x9fcqOlxOv7NUOeeTaNuguWklVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QDg8RJ4d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wBBuYG1o; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yr9u8eFR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3Gn/PI5j; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DE3CB336AF;
-	Mon, 15 Dec 2025 08:46:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765788380; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N/QXeAUf3kFRwiz7tA4aJhXkTwwMFk8KaQft9K/jHkc=;
-	b=QDg8RJ4dhZKTk2BvV8pawHmsc2HPHhdHIza+hxeV6k66FwKyOQhPzFFI8uzYqp9JuMcmg3
-	mNiDfa9nzj0wnZwHcuLFmstVxhO1ercARSKCGX+68mJmJjZwEDqYuY6qgRi5ael8OEdJKu
-	42lHYOXf1Nj2e8bAsIZWI4Odofz397s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765788380;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N/QXeAUf3kFRwiz7tA4aJhXkTwwMFk8KaQft9K/jHkc=;
-	b=wBBuYG1ojxpfgYakpYygIZ491/K5rNHmIMrgLEERJX9B028B57rffkXYgjdvQri4ZZsSFn
-	fC2z7B92wFsUzLDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Yr9u8eFR;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="3Gn/PI5j"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765788379; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N/QXeAUf3kFRwiz7tA4aJhXkTwwMFk8KaQft9K/jHkc=;
-	b=Yr9u8eFRRe8SZQ4e8yzvzKeb7VdWWGN71edEgELPFM3xmTeON7HMROrV05IFv9yNhSzVLO
-	t3oA6Johcxi1Qg5/LlTeiM3LZ9WtkVREsp9fVQttX0XJbg0dHP5X55OoLl5aBBukhCrPLL
-	YU5zDmTBnkp12OfOpPGDOrZKpyZ9XY8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765788379;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N/QXeAUf3kFRwiz7tA4aJhXkTwwMFk8KaQft9K/jHkc=;
-	b=3Gn/PI5jA8uJCER4zlKZyb0UsTzAmT225pfv1MpokGbrsnhHTLGrZtG0cML4PQp4aEkCeV
-	9k8y50OxmHZ+IHDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3FF33EA63;
-	Mon, 15 Dec 2025 08:46:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kGG5M9vKP2nbZgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Dec 2025 08:46:19 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8089CA09B4; Mon, 15 Dec 2025 09:46:19 +0100 (CET)
-Date: Mon, 15 Dec 2025 09:46:19 +0100
-From: Jan Kara <jack@suse.cz>
-To: me@black-desk.cn
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] vfs: fix EBUSY on FSCONFIG_CMD_CREATE retry
-Message-ID: <k7kcsc6wljl32mik2qqwij23hjsqtxqbuq6a5gbu7r6z33vq5c@7jeeepio6jkd>
-References: <20251213-mount-ebusy-v1-1-7b2907b7b0b2@black-desk.cn>
+	s=arc-20240116; t=1765788961; c=relaxed/simple;
+	bh=JZz9JU4z69cVYdUg7URaUVpfzMhnOcFJCKbJFU1XYuA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qAKr5AIsD3p/2UhAMMvKx70YRUDeZ6jXcWWc0H4fGoch5SpfjfbtZv/TP9f2S9U/DGxcZ096qfFN3KkBMxASShMRh6qkWbjoHL89lcISn7dfFiGiy5NZNw2p50SHZRxYj3y2/w0upz/guRgutNcWHd1CKCLPfZJy4EZ/P2uOOyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=black-desk.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.224.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=black-desk.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-64470c64c1bso4334830d50.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 00:55:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765788958; x=1766393758;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=bZmZ392SyRouDGiRBywTbyIPFjYGlT+0xiRyvkmmrxg=;
+        b=QhS6O++wwm2saM2QvyLpAOwBX5YnVVBjFjWZEPad2a9FXRxHzveAKjiV4Gu6kmjxLS
+         W4tvRzsxYidG65orgfW8NiaHskQ6qtP9OEHp8qRSy9HhA+4hjeiTeFUiV+moV4i1f/9Q
+         wqGaqFzQqHRq/eQbUsQ2Z/Hr8We0jPprG9ERSOGnnkTGmt10kysROler+r8aou9b92TQ
+         a3s8Lz+N2OVLgUoal+U+JTV9gPQtz6PLiNWlaWk3/F3G4iHV+STUPDfkA1/utUk0LhJ2
+         2TH+nywjsEDNPpk0fZlF6BJ01hSuOv1ygTiuUsrfMosbhL86MQJNShplbMi7KZ4FTFx3
+         D8dA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOpL00yRo3VuLWuQqrwLUtBe4hNQBE/s8Jq6NR5aqZgXHrZaSaeH/kMU2V3NY34rcQpgCGh2r7rJ7Ac2XB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyprkEzN/BLuCkBZQOJvurfXsTyLjeswww3ksLkts76Mu27K/+p
+	iuGcHGKEr3Y0/J9KnfS29S//aVixo2yYEH7lVYKXbQ60c1k+LkVKa5cEranQ52s+sHs=
+X-Gm-Gg: AY/fxX7tPDeiiWGWVoCEpZ4SRF9iBC01xFhZ91olznrezQSBglvkITID533Suh33uDm
+	RTFpzxxfrlgvT760xMAZLz/ivx+o9LCOp/U4IUVb7JVZjQmr0/9noWIzcNrTcfy3uWl5yUYY9Dg
+	8iTfrocpZJ2Wd6Ba88S/YbgZz5ARAnqiTzewmLet4m9VLm4rArb3AazdgKoSn+7Hg695BMRQ4MM
+	I8vrU8H8Zs5wbJutpXkFSV0qcgY6j9xv2/quHI2tXQgIWgv9BsiApTgSt+UDuWkc92EymH1RNnF
+	nGxbUEkE0+TfHihDlRHmFJcsDfcAmejFfwFSsY43lZXBsNf3+H6z4swuD0nSb4YH8bNPUHFh78N
+	UjzNDNp/h/ZVdKh+/CvO6FoGipZR+VB1jd5hDFli5lkMscZFQBssRN9KU1GHJOOSOl1whdZp45j
+	vgfnAaNJE4SO4s4BlkH5/KW02rry07MFzKq9D7xPfecjH7/2DxC4Ye8g==
+X-Google-Smtp-Source: AGHT+IGOHEmlQ20+S/LvvidCUt4RXWNQYoKX4m9pB5LvHzl6MDj2RrjWcXLkI7O/KrFJl2gxBFtFwQ==
+X-Received: by 2002:a05:690e:d0f:b0:63f:b353:8fb5 with SMTP id 956f58d0204a3-6455515a1aemr7261778d50.15.1765788958474;
+        Mon, 15 Dec 2025 00:55:58 -0800 (PST)
+Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com. [74.125.224.46])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-64477dab78fsm6117637d50.15.2025.12.15.00.55.58
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Dec 2025 00:55:58 -0800 (PST)
+Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-64470c64c1bso4334785d50.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 00:55:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUDOcjYIyU+LBsRzkXqvXdfRZP9Zw/0PPy4rY4rKJp16faFAdure1Zq02wyXkmVXlMi8/LydPe/ljImWuc+@vger.kernel.org
+X-Received: by 2002:a05:690c:dc5:b0:786:a68f:aec7 with SMTP id
+ 00721157ae682-78d6ded488cmr126790657b3.14.1765788957951; Mon, 15 Dec 2025
+ 00:55:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251213-mount-ebusy-v1-1-7b2907b7b0b2@black-desk.cn>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[black-desk.cn:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Rspamd-Queue-Id: DE3CB336AF
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
+References: <20251213-mount-ebusy-v1-1-7b2907b7b0b2@black-desk.cn> <k7kcsc6wljl32mik2qqwij23hjsqtxqbuq6a5gbu7r6z33vq5c@7jeeepio6jkd>
+In-Reply-To: <k7kcsc6wljl32mik2qqwij23hjsqtxqbuq6a5gbu7r6z33vq5c@7jeeepio6jkd>
+From: Chen Linxuan <me@black-desk.cn>
+Date: Mon, 15 Dec 2025 16:55:46 +0800
+X-Gmail-Original-Message-ID: <CAC1kPDMrF_vZAbPatzgQP_RDowCwOpBV71V1acv5VpogWuhzXg@mail.gmail.com>
+X-Gm-Features: AQt7F2q8dQ6TO1jnmhgh6xV5sZ0ve5sQZxU4h-8wlLqKz3QYB8QPxcDhRrAZ-k4
+Message-ID: <CAC1kPDMrF_vZAbPatzgQP_RDowCwOpBV71V1acv5VpogWuhzXg@mail.gmail.com>
+Subject: Re: [PATCH] vfs: fix EBUSY on FSCONFIG_CMD_CREATE retry
+To: Jan Kara <jack@suse.cz>
+Cc: me@black-desk.cn, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat 13-12-25 02:03:56, Chen Linxuan via B4 Relay wrote:
-> From: Chen Linxuan <me@black-desk.cn>
-> 
-> When using fsconfig(..., FSCONFIG_CMD_CREATE, ...), the filesystem
-> context is retrieved from the file descriptor. Since the file structure
-> persists across syscall restarts, the context state is preserved:
-> 
-> 	// fs/fsopen.c
-> 	SYSCALL_DEFINE5(fsconfig, ...)
-> 	{
-> 		...
-> 		fc = fd_file(f)->private_data;
-> 		...
-> 		ret = vfs_fsconfig_locked(fc, cmd, &param);
-> 		...
-> 	}
-> 
-> In vfs_cmd_create(), the context phase is transitioned to
-> FS_CONTEXT_CREATING before calling vfs_get_tree():
-> 
-> 	// fs/fsopen.c
-> 	static int vfs_cmd_create(struct fs_context *fc, bool exclusive)
-> 	{
-> 		...
-> 		fc->phase = FS_CONTEXT_CREATING;
-> 		...
-> 		ret = vfs_get_tree(fc);
-> 		...
-> 	}
-> 
-> However, vfs_get_tree() may return -ERESTARTNOINTR if the filesystem
-> implementation needs to restart the syscall. For example, cgroup v1 does
-> this when it encounters a race condition where the root is dying:
-> 
-> 	// kernel/cgroup/cgroup-v1.c
-> 	int cgroup1_get_tree(struct fs_context *fc)
-> 	{
-> 		...
-> 		if (unlikely(ret > 0)) {
-> 			msleep(10);
-> 			return restart_syscall();
-> 		}
-> 		return ret;
-> 	}
-> 
-> If the syscall is restarted, fsconfig() is called again and retrieves
-> the *same* fs_context. However, vfs_cmd_create() rejects the call
-> because the phase was left as FS_CONTEXT_CREATING during the first
-> attempt:
+On Mon, Dec 15, 2025 at 4:46=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Sat 13-12-25 02:03:56, Chen Linxuan via B4 Relay wrote:
+> > If the syscall is restarted, fsconfig() is called again and retrieves
+> > the *same* fs_context. However, vfs_cmd_create() rejects the call
+> > because the phase was left as FS_CONTEXT_CREATING during the first
+> > attempt:
+>
+> Well, not quite. The phase is actually set to FS_CONTEXT_FAILED if
+> vfs_get_tree() returns any error. Still the effect is the same.
 
-Well, not quite. The phase is actually set to FS_CONTEXT_FAILED if
-vfs_get_tree() returns any error. Still the effect is the same.
+Oh, that's a mistake.
 
-> 	if (fc->phase != FS_CONTEXT_CREATE_PARAMS)
-> 		return -EBUSY;
-> 
-> Fix this by resetting fc->phase back to FS_CONTEXT_CREATE_PARAMS if
-> vfs_get_tree() returns -ERESTARTNOINTR.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Chen Linxuan <me@black-desk.cn>
-> ---
->  fs/fsopen.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/fsopen.c b/fs/fsopen.c
-> index f645c99204eb..8a7cb031af50 100644
-> --- a/fs/fsopen.c
-> +++ b/fs/fsopen.c
-> @@ -229,6 +229,10 @@ static int vfs_cmd_create(struct fs_context *fc, bool exclusive)
->  	fc->exclusive = exclusive;
->  
->  	ret = vfs_get_tree(fc);
-> +	if (ret == -ERESTARTNOINTR) {
-> +		fc->phase = FS_CONTEXT_CREATE_PARAMS;
-> +		return ret;
-> +	}
->  	if (ret) {
->  		fc->phase = FS_CONTEXT_FAILED;
->  		return ret;
+> Thanks for the patch. It looks good to me. I'd slightly prefer style like=
+:
+>
+>         if (ret) {
+>                 if (ret =3D=3D -ERESTARTNOINTR)
+>                         fc->phase =3D FS_CONTEXT_CREATE_PARAMS;
+>                 else
+>                         fc->phase =3D FS_CONTEXT_FAILED;
+>                 return ret;
+>         }
 
-Thanks for the patch. It looks good to me. I'd slightly prefer style like:
-
-	if (ret) {
-		if (ret == -ERESTARTNOINTR)
-			fc->phase = FS_CONTEXT_CREATE_PARAMS;
-		else
-			fc->phase = FS_CONTEXT_FAILED;
-		return ret;
-	}
-
-but I can live with what you propose as well. So feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Will be applied in v2.
 
