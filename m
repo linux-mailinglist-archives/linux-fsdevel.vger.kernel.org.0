@@ -1,156 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-71347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A898DCBE6E6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:56:52 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4325ECBE526
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:37:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 717D0300217B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 14:56:35 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 271F930024E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 14:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD3D34C80D;
-	Mon, 15 Dec 2025 14:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CA314B96E;
+	Mon, 15 Dec 2025 14:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L6G+RgzD"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Q0zXCTJG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA6C3469F2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 14:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFAE3B8D5E;
+	Mon, 15 Dec 2025 14:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765809137; cv=none; b=Il33ifRcyn2V4viXqtYpuhBs7e4RdRRjxy0X2/KthyftM4alDVrTsUYLDViOM93OY8fSRDll05vWAmubPPQqQzbapVm1Jhp6YeiD/EQOA8t03exN+tNl4vXjtiAoBvZzJiJ7zfVPe5D8+XAUBqpaME41K8RYgkpf4/xdYHwryc8=
+	t=1765809456; cv=none; b=ogBqk1p0S1GfzaY/tuglUEYDh9OXUZuKlXakQ01k3sDhyZI5BCx9/rU+KjJYUifZJSS15JRFYxx4ZZMXTd4wWALKtmEkw0GTeciW4/QzbhFipqQiW6yBfecIw0nMuitVNYG/9hktztfUrTyXKSfgVGGRAOk/uHNyqmET/YGDRCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765809137; c=relaxed/simple;
-	bh=VLk0i/NYaHQVpTmIt0fcgx5av6WUcfbyBsjOtROhLjc=;
+	s=arc-20240116; t=1765809456; c=relaxed/simple;
+	bh=/qa5s65gU3g1Q4gJa/dljDUWl87YAU2rtIPazQx17kQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JtxmhZ98tbqf516X/FJfk4QOmHYjj3J90ugfkm5u0IG/+HWmxG2VXXxcJ8DVYdG+bIFSl/wFNDtz6ScWP2N9Q6MHteWbovyu8h7GnX9LGXSVDz1TUlBYGKo1tIYC/IVCV4OWrHYI7DbYZgW9PFYCIM90EPgqJ4qGqDoS1xzAj1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L6G+RgzD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1765809134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XQmtRJhrvldzP3zRFFCgw8Z+zWn0PLlT0InwVYiSlxo=;
-	b=L6G+RgzDvkNH2odEZ/0aBxo2Im7oneL3Z7AZOSGlF2Vd766vi2WmC95EEwwfVtUwIbN+eo
-	OaOOePLqqPVoipEhVNbIYNOpHJ2swnd2MWLav4EySRXHVDqjjRDJAenzhgSEl9Y5T99Jko
-	6V0EVn8b7aXWkAe/aeGzbE8L4FMx9uI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-189-1_u3H66XO0O8C7r6ltSNxw-1; Mon,
- 15 Dec 2025 09:32:11 -0500
-X-MC-Unique: 1_u3H66XO0O8C7r6ltSNxw-1
-X-Mimecast-MFC-AGG-ID: 1_u3H66XO0O8C7r6ltSNxw_1765809129
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74CCE1800621;
-	Mon, 15 Dec 2025 14:32:09 +0000 (UTC)
-Received: from localhost (unknown [10.2.16.117])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 64F341955F21;
-	Mon, 15 Dec 2025 14:32:08 +0000 (UTC)
-Date: Mon, 15 Dec 2025 09:32:07 -0500
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: Qianchang Zhao <pioooooooooip@gmail.com>
-Cc: Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhitong Liu <liuzhitong1993@gmail.com>, stable@vger.kernel.org,
-	Alok Tiwari <alok.a.tiwari@oracle.com>
-Subject: Re: [PATCH] virtiofs: fix NULL dereference in
- virtio_fs_add_queues_sysfs()
-Message-ID: <20251215143207.GC19970@fedora>
-References: <20251213012829.685605-1-pioooooooooip@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hAp0o6FOLk2xn9pXz35jzzSByL+XRt47QBd6dgquyfxa9lSeh6NCeuvCBlEDiHFAKzIpypYRMsYL1ohEL6DO+K1wge92sArOJOzsFw0yD47wFHtdBfFfq41J0lmRwVULmVH2KGyiPvKJFehmGsb0sxFAqaG82O/BqCXKIOsWEe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Q0zXCTJG; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GL+t1YP5Sq1fjsltWXMjIWkUSofjmPUmHoVyBGu/NzU=; b=Q0zXCTJGUBTpmj7QVRb7pb9/PF
+	nCdmn1RvTIEinpSgDQ6jHJV2czMl0ToxHaEDZQVTTY9B2YoqqCb8dnTPROfHM0buxH2mY/71qAkbP
+	ME+6cC4KCnOMT+GiiROyPbh/r5CUKKhpIQUZDmTvQix8CnhQb3+jBgGM7SXz3mi1djUADkkm5X78o
+	Ac9tt4BmJBDmE8zD/NVqGbixmETmYYBEcQn4F1HZ45DytFxfXKV+KQKH3jtkf6qUzwBUk0lvLpEpO
+	39txek78yC8C31LZ7NzNrICrlYUi0NBhyBroGkfO591MaIo+d1su/AyEKoQZ5zRZw9ZSarxQMGcqQ
+	q4aiGbHA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vV9hb-00000003oUx-0ETP;
+	Mon, 15 Dec 2025 14:37:31 +0000
+Date: Mon, 15 Dec 2025 06:37:31 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+	Chris Arges <carges@cloudflare.com>
+Subject: Re: [PATCH] 9p/virtio: restrict page pinning to user_backed_iter()
+ iovec
+Message-ID: <aUAdKxcC7195Od5N@infradead.org>
+References: <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org>
+ <aTkNbptI5stvpBPn@infradead.org>
+ <aTkjWsOyDzXq_bLv@codewreck.org>
+ <aTkwKbnXvUZs4UU9@infradead.org>
+ <aT1qEmxcOjuJEZH9@codewreck.org>
+ <aT-iwMpOfSoRzkTF@infradead.org>
+ <aT-59HURCGPDUJnZ@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LOuCmyU5AYYXeXj4"
-Content-Disposition: inline
-In-Reply-To: <20251213012829.685605-1-pioooooooooip@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
-
-
---LOuCmyU5AYYXeXj4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aT-59HURCGPDUJnZ@codewreck.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sat, Dec 13, 2025 at 10:28:29AM +0900, Qianchang Zhao wrote:
-> virtio_fs_add_queues_sysfs() creates per-queue sysfs kobjects via
-> kobject_create_and_add(). The current code checks the wrong variable
-> after the allocation:
->=20
-> - kobject_create_and_add() may return NULL on failure.
-> - The code incorrectly checks fs->mqs_kobj (the parent kobject), which is
->   expected to be non-NULL at this point.
-> - If kobject_create_and_add() fails, fsvq->kobj is NULL but the code can
->   still call sysfs_create_group(fsvq->kobj, ...), leading to a NULL point=
-er
->   dereference and kernel panic (DoS).
->=20
-> Fix by validating fsvq->kobj immediately after kobject_create_and_add()
-> and aborting on failure, so sysfs_create_group() is never called with a
-> NULL kobject.
->=20
-> Reported-by: Qianchang Zhao <pioooooooooip@gmail.com>
-> Reported-by: Zhitong Liu <liuzhitong1993@gmail.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Qianchang Zhao <pioooooooooip@gmail.com>
-> ---
->  fs/fuse/virtio_fs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Dec 15, 2025 at 04:34:12PM +0900, Dominique Martinet wrote:
+> Christoph Hellwig wrote on Sun, Dec 14, 2025 at 09:55:12PM -0800:
+> > > Ok, I don't understand why the current code locks everything down and
+> > > wants to use a single scatterlist shared for the whole channel (and
+> > > capped to 128 pages?), it should only need to lock around the
+> > > virtqueue_add_sg() call, I'll need to play with that some more.
+> > 
+> > What do you mean with "lock down"?
+> 
+> Just the odd (to me) use of the chan->lock around basically all of
+> p9_virtio_request() and most of p9_virtio_zc_request() -- I'm not pretty
+> sure this was just the author trying to avoid an allocation by recycling
+> the chan->sg array around though, so ignore this.
 
-This issue was fixed in October. It no longer exists in mainline Linux:
+Oh, ok.  This seems unrelated to the handling of the iov_iters and
+I'm sorry that I don't really know anything about that part.
 
-  commit c014021253d77cd89b2d8788ce522283d83fbd40
-  Author: Alok Tiwari <alok.a.tiwari@oracle.com>
-  Date:   Mon Oct 27 03:46:47 2025 -0700
- =20
-      virtio-fs: fix incorrect check for fsvq->kobj
+> 
+> > > Looking at other virtio drivers I could probably use a sg_table and
+> > > have extract_iter_to_sg() do all the work for us...
+> > 
+> > Looking at the code I'm actually really confused.  Both because I
+> > actually though we were talking about the 9fs direct I/O code, but
+> > that has actually been removed / converted to netfs a long time ago.
+> >
+> > But even more so what the net/9p code is actually doing..  How do
+> > we even end up with user addresses here at all?
+> 
+> FWIW I tried logging and saw ITER_BVEC, ITER_KVEC and ITER_FOLIOQ --
+> O_DIRECT writes are seen as BVEC so I guess it's not as direct as I
+> expected them to be -- that code could very well be leftovers from
+> the switch to iov_iter back in 2015...
 
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index 6bc7c97b0..b2f6486fe 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -373,7 +373,7 @@ static int virtio_fs_add_queues_sysfs(struct virtio_f=
-s *fs)
-> =20
->  		sprintf(buff, "%d", i);
->  		fsvq->kobj =3D kobject_create_and_add(buff, fs->mqs_kobj);
-> -		if (!fs->mqs_kobj) {
-> +		if (!fsvq->kobj) {
->  			ret =3D -ENOMEM;
->  			goto out_del;
->  		}
-> --=20
-> 2.34.1
->=20
+Oh right, I think this from Dave's netfs_extract_user_iter.
 
---LOuCmyU5AYYXeXj4
-Content-Type: application/pgp-signature; name=signature.asc
+> (waiting for David's answer here, but as far as I see the contract
+> between the transport and the vfs is that the transport should handle
+> whatever it's being fed, so it doesn't really matter if it's a bio_vec
+> or an iov_iter -- ultimately virtio or whatever backend that wants to
+> handle zc likely won't handle bio_vec any better so it'll need
+> converting anyway)
 
------BEGIN PGP SIGNATURE-----
+Yeah.  Looking at what the code does with the pages, I think all this
+should go away in favor of using extract_iter_to_sg and build the
+scatterlists directly from the iters, without an extra page indirection.
 
-iQEzBAEBCgAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmlAG+cACgkQnKSrs4Gr
-c8jOXgf+IJyYgDN+7FhPHBih2tiL96tciiQtS5FpAjegchA4Y4qFMEc7Sg0BoxKm
-Ply8O4IRDPzTQMxUR9d77OeAPZxOD1feZpIbFB4Euv7Nd/FwdxW4wg8hqVDMXuU0
-IHvhRnHnynGVlxWiQh0j5cUDhbAUSnFBVA816W6t1bz+3zz4kllgKMWWxNAn/5md
-i4IHV8/ZPydLLUzSAQ7Ys2wwdPsp671IBD5hPG5KRSikaHTcJ030/TklV7tYUpdH
-gwEvFrhMEh4ffSyFPE6lkizpgF02PCBzzWpD5hN0CMEtVK7qqyn/EMAGTisB3BwY
-HkSkvQN20oBh5Hlfe9KgtvXndEhg3g==
-=MWEv
------END PGP SIGNATURE-----
-
---LOuCmyU5AYYXeXj4--
-
+(and of course one day virtio should migrate away from scatterlists,
+but that's for another time).
 
