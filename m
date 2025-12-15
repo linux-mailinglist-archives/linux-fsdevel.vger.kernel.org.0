@@ -1,165 +1,277 @@
-Return-Path: <linux-fsdevel+bounces-71296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBCE3CBCCFD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 08:42:01 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78723CBCCC4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 08:40:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0C2E13012969
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 07:41:14 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7C6AC301FC2D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 07:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F85331A53;
-	Mon, 15 Dec 2025 07:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61983328B43;
+	Mon, 15 Dec 2025 07:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="Nsmmu+CL"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="keJgcqC4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541563314BF;
-	Mon, 15 Dec 2025 07:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166FE313E1A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 07:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765784084; cv=none; b=H8miOwoHaiHjH0xnUrMtLNCGzAftEnSk34NGr8wWvheeM5lqCabylnaq6/AimncAdwC5tmHNuNz/Yg255YKChHFH5dSYVKwwWIStF5eK/4KW3Y8+J/Ah7wSNqKeWPYDWKnrG6UUwz0+L8Q+W5QRYcjWRZeaXWSMF1r2pnQ2cTRw=
+	t=1765784323; cv=none; b=jCfOA/nXlZjdanqCMl4dce5iC79gesQWi9Ny0KjOVy24SrUwtWmwuJZLzUwldAH6k4MEUfFs8gUuXMaGs/RBb+h/ZT0BJVaQmLJyR5IOoM17y+kiMObrD7f+wffzWYjs6QnGIfR+zfLFDc0LoauVcJx7FIyAV1M4tWBBVtjF+00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765784084; c=relaxed/simple;
-	bh=zbm+jqicToWboMwjagVc8RU32WHSJ+AtB3NYb5q848E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wx+oUXdxq3clDHQuN/Xb7mWMWJMhpTKtu9wM/pcwV//I5eMaORhXS2TgpX3kl0v2Gd3mrQbEYmlIMLXP4Fy3FQHOYrrJFdRB/XobUpteZmPDfyPVUBjAC2BjtRI70wBVTU/w9ZeRKm2JjQWnlUO4qobuhK2VHC16vIQsFBxX+5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=Nsmmu+CL; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id B179F14C2D6;
-	Mon, 15 Dec 2025 08:34:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1765784072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e/z98N9MJ0ct+E35eqpP5x8fOWj2e48oc+gfqMBBA8I=;
-	b=Nsmmu+CLUPXePqnoeu5iLNIa8ueRMbyphYpZBgHEAFH+lJbXqhYlCZyWQtK1hS4bCjVEb8
-	ayZ9C0gwU0w2FhFnUWDDSlDTcZ1hQyyxMUTQUIQB9OfJ5RhkWb56nFxc5376+GoBPZ6cYI
-	DKmSR/YMD/Pa6eKqZmJl5nlQPtyr3ULVWOKEEvOK4on3jioZ3tC7LRUu5VP5cA/k4+Wr+u
-	+WAYXzHnfGNT4hXf/nszH/FSV1i7mJ2YEgG07s7y2DIEkNTLqfPdGM0V/LWVHPcqOzDMUk
-	H39j7QLwKFASohDGc+Qas2OdBiHGlf9N6bmLnVFMFeu9a97cUOgaaWQvCWdCmA==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 27c7665d;
-	Mon, 15 Dec 2025 07:34:27 +0000 (UTC)
-Date: Mon, 15 Dec 2025 16:34:12 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
-	David Howells <dhowells@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	Chris Arges <carges@cloudflare.com>
-Subject: Re: [PATCH] 9p/virtio: restrict page pinning to user_backed_iter()
- iovec
-Message-ID: <aT-59HURCGPDUJnZ@codewreck.org>
-References: <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org>
- <aTkNbptI5stvpBPn@infradead.org>
- <aTkjWsOyDzXq_bLv@codewreck.org>
- <aTkwKbnXvUZs4UU9@infradead.org>
- <aT1qEmxcOjuJEZH9@codewreck.org>
- <aT-iwMpOfSoRzkTF@infradead.org>
+	s=arc-20240116; t=1765784323; c=relaxed/simple;
+	bh=oRAU2UVJTWLWreJ30hI/iFaneEyhTmkER6fCAR/qC8I=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=JW5o+3ePUDfEH4OSho3VEEoyWcyf4BzXJtUtHtVupWjKpnBEK19d85Fs1vsdDXLwfcZuJpoe4EyNjuFmatOf5wAmNvnEtK+0GobH0ASHVW2HVPOY1sBaT5eMZqVTM1jiE2Ubpcr428kgRTAQKh7eD8T6p04Bkh2m6RENSC4k93k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=keJgcqC4; arc=none smtp.client-ip=74.125.224.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-6446c2bbfe3so2807518d50.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Dec 2025 23:38:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1765784321; x=1766389121; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iIeKRKKKCnzupDfCwJqFB1013cUpwf+GNDgK+GELOro=;
+        b=keJgcqC4cYWkbkA9/4zfMD/V/G/FhMarzl4JzUClpmV8z19jfRChNU4mrJndhvEO/m
+         4nauPqFvyhLhMrtTqvlgYkedGLS9gUAVZL81rXOnq+0FmSQbBU6U5cSEqm7fSC3ApMhE
+         cqmkKPpAbMKtW5cS2+TI5jvCAFDKgU+ZAwI89+0HRljyk0Z4AO3vqMv8heHs1dCpdXdw
+         w5/VIcXCa1OKBLHTjX3iyLxVanBZYxd6bJZltDeyrxhrnXqxy4KeiYJAPdotIkPrE6oG
+         C+sgyDMMNzeVL1nPn/3Fu4BhUNiKVzdJAKt6DLdlW+r7OfsXbeBIIce8K86vRmwWNYeK
+         iApA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765784321; x=1766389121;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iIeKRKKKCnzupDfCwJqFB1013cUpwf+GNDgK+GELOro=;
+        b=oEvz9Wj412zGGa/2Pmw2NMY6dMfVq5iSMrqy8N8E2Zlhw1JrWGrzYiXnvfTrwdoS5u
+         GDOUcJZYrWYyvaM2hUlMQbSU5g8+sUW4Ty01vfw7tpqBXjPZUM/nHqB9zBcvDpMRCmFP
+         C5bjUHtyEJavwJVi6X97TRp/WrxfdsN4YSuEYApSzG/FYk8mwIvXdGU2sTkkg1DL9qop
+         m2/LJRM74yl+I6zhG1VSbH/wCDYp6Q4WdGg/sYOfJVCBzCBtYXn6W9vZqqS/hz/C6rKG
+         x/m99sNnuRK+SGKuNy/z5EZE4Jw4ikNQyF0MQgIRC+pGrsWRDbR3sGhykwGziNpavRBk
+         mNfA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5fI5vU4tGKbWieHn1TquppYRFfCXc+z7+0pdHhPpzHl2ZXGblwOkL5Doq7Ex5z/mwus8fQVav8+jLXBAb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwo0bCcrIkXB8qkKAe6qGPL4Apa2GvAv9nu09i4O01nH2C24NV
+	gP/eMpvEIiSrVbfceki2Fov0sxShjJJ9hRfPWgSDM0KFrbVKMv/hMtTPbKFGo9PP3w==
+X-Gm-Gg: AY/fxX64Ue8o10/gVqbfkiHEPHaerhZuj7FBWbp8x+By3V5/OL/AJA5cMQm0NQcph/1
+	xiuUgt31ESDanaw6p+3obVH3CbRdJqRtOiRwVguodIWMPnnhbLgpDMJrXortXcTNsxxiS+Hk0Wr
+	lhdMYKZk84DMmeTKL2f7OY2YOhxd5Kro3wAIN3ioU8oGXycu0WmBg87V5ZaZnSOCM472S4ISnvq
+	NIyF2Qtaol5l3nvttgk1uuZK0oInLbAIIYgn6BLlveD7DwQVcyLzc3JI2yrszUaiCb/C9Don27l
+	v8RuJMjpDCsZOfCBjJdHUdTa1rL9krpsPZHx4qMqGnMtXlZTP0IokJwvXQEFHYbtxyd+/CsfXTp
+	uAn5UzQ4zsr2/8gFYjXLbOczZzobCwNwBmGv83pD4siOR3wbgGqrrFQhFAXDoOih3HF3Jnn6EgJ
+	i//QI0YIi4xtA4DTCFZrx0a/40fCmes8CmAu8bHyOHydm10jgKW4zk3NmamIraBpLAg5Rw2VM=
+X-Google-Smtp-Source: AGHT+IGWwU3CR/BLGGM37Mj6ED/FrmrwwoSCDyBwGpC4O4RY5GWa1NaXFkGRwTEcuL+iHjjMa3Jb3A==
+X-Received: by 2002:a05:690e:d8d:b0:641:f5bc:68d3 with SMTP id 956f58d0204a3-645556680dbmr6576002d50.80.1765784320678;
+        Sun, 14 Dec 2025 23:38:40 -0800 (PST)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-64477dc673asm6105794d50.25.2025.12.14.23.38.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Dec 2025 23:38:39 -0800 (PST)
+Date: Sun, 14 Dec 2025 23:38:28 -0800 (PST)
+From: Hugh Dickins <hughd@google.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+cc: Hugh Dickins <hughd@google.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+    Christian Brauner <brauner@kernel.org>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, linux-fsdevel@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+    Linus Torvalds <torvalds@linux-foundation.org>, 
+    Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [RFC][PATCH 2/2] shmem: fix recovery on rename failures
+In-Reply-To: <20251214033049.GB460900@ZenIV>
+Message-ID: <8a925e3f-bd27-ac32-841a-a79690d971d7@google.com>
+References: <47e9d03c-7a50-2c7d-247d-36f95a5329ed@google.com> <20251212050225.GD1712166@ZenIV> <20251212053452.GE1712166@ZenIV> <8ab63110-38b2-2188-91c5-909addfc9b23@google.com> <20251212063026.GF1712166@ZenIV> <2a102c6d-82d9-2751-cd31-c836b5c739b7@google.com>
+ <bed18e79-ab2b-2a8f-0c32-77e6d27e2a05@google.com> <20251213072241.GH1712166@ZenIV> <20251214032734.GL1712166@ZenIV> <20251214033049.GB460900@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aT-iwMpOfSoRzkTF@infradead.org>
+Content-Type: text/plain; charset=US-ASCII
 
+On Sun, 14 Dec 2025, Al Viro wrote:
 
-Thanks for having a look
-
-Christoph Hellwig wrote on Sun, Dec 14, 2025 at 09:55:12PM -0800:
-> > Ok, I don't understand why the current code locks everything down and
-> > wants to use a single scatterlist shared for the whole channel (and
-> > capped to 128 pages?), it should only need to lock around the
-> > virtqueue_add_sg() call, I'll need to play with that some more.
+> maple_tree insertions can fail if we are seriously short on memory;
+> simple_offset_rename() does not recover well if it runs into that.
+> The same goes for simple_offset_rename_exchange().
 > 
-> What do you mean with "lock down"?
-
-Just the odd (to me) use of the chan->lock around basically all of
-p9_virtio_request() and most of p9_virtio_zc_request() -- I'm not pretty
-sure this was just the author trying to avoid an allocation by recycling
-the chan->sg array around though, so ignore this.
-
-> > Looking at other virtio drivers I could probably use a sg_table and
-> > have extract_iter_to_sg() do all the work for us...
+> Moreover, shmem_whiteout() expects that if it succeeds, the caller will
+> progress to d_move(), i.e. that shmem_rename2() won't fail past the
+> successful call of shmem_whiteout().
 > 
-> Looking at the code I'm actually really confused.  Both because I
-> actually though we were talking about the 9fs direct I/O code, but
-> that has actually been removed / converted to netfs a long time ago.
->
-> But even more so what the net/9p code is actually doing..  How do
-> we even end up with user addresses here at all?
-
-FWIW I tried logging and saw ITER_BVEC, ITER_KVEC and ITER_FOLIOQ --
-O_DIRECT writes are seen as BVEC so I guess it's not as direct as I
-expected them to be -- that code could very well be leftovers from
-the switch to iov_iter back in 2015...
-
-(I'm actually not sure why Christian suggested checking for is_iovec()
-in https://lkml.kernel.org/r/2245723.irdbgypaU6@weasel -- then I
-generalized it to user_backed_iter() and it just worked because checking
-for that moved out bvec and folioq from iov_iter_get_pages_alloc2()
-to... something that obviously should not work in my opinion but
-apparently was enough to not trigger this particular BUG.)
-
-
-> Let me try to understand things:
+> Not hard to fix, fortunately - mtree_store() can't fail if the index we
+> are trying to store into is already present in the tree as a singleton.
 > 
->  - p9_virtio_zc_request is the only instances of the p9_trans_module
->    zc_request operation.
->  - zc_request only gets called by p9_client_zc_rpc
->  - p9_client_zc_rpc gets called by p9_client_read_once, p9_client_write,
->    p9_client_write_subreq and p9_client_readdir
+> For simple_offset_rename_exchange() that's enough - we just need to be
+> careful about the order of operations.
 > 
-> Let's go through these:
+> For simple_offset_rename() solution is to preinsert the target into the
+> tree for new_dir; the rest can be done without any potentially failing
+> operations.
 > 
->  - p9_client_write_subreq is entirely unused
-
-Let's remove that.. I'll send a patch later.
-
->  - p9_client_readdir builds a local iov_iter_kvec
->  - p9_client_read_once is only called by p9_client_read, and really
->    should be marked static.
-
-agreed, will cleanup too.
-
->  - p9_client_read is called by v9fs_issue_read on a netfs iov_iter
->    and by v9fs_dir_readdir and v9fs_fid_xattr_get on a local kvec iter
->  - p9_client_write is called with a iov_iter_kvec from
->    v9fs_fid_xattr_set, and with a netfs-issued iov_iter by
->    v9fs_issue_write
->  
-> So right now except for netfs everything is on a kvec.  Dave, what
-> kind of iov_iter does netfs send down to the file system?  I had
-> a bit of a hard time reading through it, but I'd expect that any
-> page pinning would be done in netfs and not below it?  Why are we
-> using iov_iters here and not something like a bio_vec?  What is
-> the fs / transport supported to do with these iters?
+> That preinsertion has to be done in shmem_rename2() rather than in
+> simple_offset_rename() itself - otherwise we'd need to deal with the
+> possibility of failure after successful shmem_whiteout().
 > 
-> Ignoring the rest of the mail for now, because I suspect the outcome
-> of the above might make it irrelevant, but I'll come back to it if
-> needed.
+> Fixes: a2e459555c5f ("shmem: stable directory offsets")
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-(waiting for David's answer here, but as far as I see the contract
-between the transport and the vfs is that the transport should handle
-whatever it's being fed, so it doesn't really matter if it's a bio_vec
-or an iov_iter -- ultimately virtio or whatever backend that wants to
-handle zc likely won't handle bio_vec any better so it'll need
-converting anyway)
+Well, what you say above, and what you've done below, make sense to me;
+and neither I nor xfstests noticed anything wrong (aside from one
+trivium - I'd prefer "bool had_offset = false" to "int ...";
+maybe placed one line up to look prettier).
 
+But please don't expect proper engagement from me on this one,
+it's above my head, and I'll trust you and Chuck on it.
 
 Thanks,
--- 
-Dominique Martinet | Asmadeus
+Hugh
+
+> ---
+>  fs/libfs.c         | 50 +++++++++++++++++++---------------------------
+>  include/linux/fs.h |  2 +-
+>  mm/shmem.c         | 18 ++++++++++++-----
+>  3 files changed, 35 insertions(+), 35 deletions(-)
+> 
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 9264523be85c..591eb649ebba 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -346,22 +346,22 @@ void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry)
+>   * User space expects the directory offset value of the replaced
+>   * (new) directory entry to be unchanged after a rename.
+>   *
+> - * Returns zero on success, a negative errno value on failure.
+> + * Caller must have grabbed a slot for new_dentry in the maple_tree
+> + * associated with new_dir, even if dentry is negative.
+>   */
+> -int simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
+> -			 struct inode *new_dir, struct dentry *new_dentry)
+> +void simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
+> +			  struct inode *new_dir, struct dentry *new_dentry)
+>  {
+>  	struct offset_ctx *old_ctx = old_dir->i_op->get_offset_ctx(old_dir);
+>  	struct offset_ctx *new_ctx = new_dir->i_op->get_offset_ctx(new_dir);
+>  	long new_offset = dentry2offset(new_dentry);
+>  
+> -	simple_offset_remove(old_ctx, old_dentry);
+> +	if (WARN_ON(!new_offset))
+> +		return;
+>  
+> -	if (new_offset) {
+> -		offset_set(new_dentry, 0);
+> -		return simple_offset_replace(new_ctx, old_dentry, new_offset);
+> -	}
+> -	return simple_offset_add(new_ctx, old_dentry);
+> +	simple_offset_remove(old_ctx, old_dentry);
+> +	offset_set(new_dentry, 0);
+> +	WARN_ON(simple_offset_replace(new_ctx, old_dentry, new_offset));
+>  }
+>  
+>  /**
+> @@ -388,31 +388,23 @@ int simple_offset_rename_exchange(struct inode *old_dir,
+>  	long new_index = dentry2offset(new_dentry);
+>  	int ret;
+>  
+> -	simple_offset_remove(old_ctx, old_dentry);
+> -	simple_offset_remove(new_ctx, new_dentry);
+> +	if (WARN_ON(!old_index || !new_index))
+> +		return -EINVAL;
+>  
+> -	ret = simple_offset_replace(new_ctx, old_dentry, new_index);
+> -	if (ret)
+> -		goto out_restore;
+> +	ret = mtree_store(&new_ctx->mt, new_index, old_dentry, GFP_KERNEL);
+> +	if (WARN_ON(ret))
+> +		return ret;
+>  
+> -	ret = simple_offset_replace(old_ctx, new_dentry, old_index);
+> -	if (ret) {
+> -		simple_offset_remove(new_ctx, old_dentry);
+> -		goto out_restore;
+> +	ret = mtree_store(&old_ctx->mt, old_index, new_dentry, GFP_KERNEL);
+> +	if (WARN_ON(ret)) {
+> +		mtree_store(&new_ctx->mt, new_index, new_dentry, GFP_KERNEL);
+> +		return ret;
+>  	}
+>  
+> -	ret = simple_rename_exchange(old_dir, old_dentry, new_dir, new_dentry);
+> -	if (ret) {
+> -		simple_offset_remove(new_ctx, old_dentry);
+> -		simple_offset_remove(old_ctx, new_dentry);
+> -		goto out_restore;
+> -	}
+> +	offset_set(old_dentry, new_index);
+> +	offset_set(new_dentry, old_index);
+> +	simple_rename_exchange(old_dir, old_dentry, new_dir, new_dentry);
+>  	return 0;
+> -
+> -out_restore:
+> -	(void)simple_offset_replace(old_ctx, old_dentry, old_index);
+> -	(void)simple_offset_replace(new_ctx, new_dentry, new_index);
+> -	return ret;
+>  }
+>  
+>  /**
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 04ceeca12a0d..f5c9cf28c4dc 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3247,7 +3247,7 @@ struct offset_ctx {
+>  void simple_offset_init(struct offset_ctx *octx);
+>  int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry);
+>  void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry);
+> -int simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
+> +void simple_offset_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  			 struct inode *new_dir, struct dentry *new_dentry);
+>  int simple_offset_rename_exchange(struct inode *old_dir,
+>  				  struct dentry *old_dentry,
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index d3edc809e2e7..4232f8a39a43 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -4039,6 +4039,7 @@ static int shmem_rename2(struct mnt_idmap *idmap,
+>  	struct inode *inode = d_inode(old_dentry);
+>  	int they_are_dirs = S_ISDIR(inode->i_mode);
+>  	int error;
+> +	int had_offset = false;
+>  
+>  	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
+>  		return -EINVAL;
+> @@ -4050,16 +4051,23 @@ static int shmem_rename2(struct mnt_idmap *idmap,
+>  	if (!simple_empty(new_dentry))
+>  		return -ENOTEMPTY;
+>  
+> +	error = simple_offset_add(shmem_get_offset_ctx(new_dir), new_dentry);
+> +	if (error == -EBUSY)
+> +		had_offset = true;
+> +	else if (unlikely(error))
+> +		return error;
+> +
+>  	if (flags & RENAME_WHITEOUT) {
+>  		error = shmem_whiteout(idmap, old_dir, old_dentry);
+> -		if (error)
+> +		if (error) {
+> +			if (!had_offset)
+> +				simple_offset_remove(shmem_get_offset_ctx(new_dir),
+> +						     new_dentry);
+>  			return error;
+> +		}
+>  	}
+>  
+> -	error = simple_offset_rename(old_dir, old_dentry, new_dir, new_dentry);
+> -	if (error)
+> -		return error;
+> -
+> +	simple_offset_rename(old_dir, old_dentry, new_dir, new_dentry);
+>  	if (d_really_is_positive(new_dentry)) {
+>  		(void) shmem_unlink(new_dir, new_dentry);
+>  		if (they_are_dirs) {
+> -- 
+> 2.47.3
 
