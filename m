@@ -1,91 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-71328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9830ECBDBE2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 13:16:05 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1B2CBDCE4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 13:30:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3956A304E56E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 12:08:41 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 1BBD13020C0C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 12:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AD7322B6F;
-	Mon, 15 Dec 2025 12:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0023B314B77;
+	Mon, 15 Dec 2025 12:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="XADgtCdH"
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="MFNtC9o7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D57932572C;
-	Mon, 15 Dec 2025 12:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305A12C3255;
+	Mon, 15 Dec 2025 12:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765800513; cv=none; b=evhCyDc4nr5sAFpGpiZQ/1Ar5sYPWVqTvxI85xsm1esdedZCGgsgsXPnOUjlU4TB5uTGNht3DTcmTE3mmgud8ZYd+tcu01EqFRHukVUVgQlh2hez5jmNJK42IdV847Ien8DIlCCw/FF7IMuYd1c0FbijN6bi7V6B32K20XenRkc=
+	t=1765801527; cv=none; b=WZEhER4SNUh1qzajpDxDY9oFeDT0E/KPmACPTicN2DD2hzdpd/f00p473Fw7JJ5GhgYqyhgq/0xxfSHcNwcb1LuC9iQz+M9c01OXJ6TcPhM0VT6Zd9O5mZs9OrWtKnF2FEOrJF+VnGDkSgCC3YEeTqfwAXF00uM0zCZh1h6SRTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765800513; c=relaxed/simple;
-	bh=yRIgCYQLVBD9z85rGTWt0O11vXVwSsdI3JIVMPGCLj8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KS8/Gp2EE8CxRdsLuaHBT8KwfogTCB6xCmq3wVG3IacJJWxRlCMrgoM/FSBOTRXDGGw0pa12Ujv9VFDHdWk0NEBSGl2NoQJC6t+QEEeyA80eGNQFj8B9gDBgmZ6xDkVEtSVsrjYtLwwBq+sz1S7KdbQnBwNFUmYJZOLEB/sY7D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=XADgtCdH; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=kkzNJ++9ijF0dFCIoTbUbgAaxtby2iaPSTIICN2jk/0=; b=XADgtCdHLdX4TdEP/pBqhIuEWK
-	8sOM48/IGbY4HCDktTGs8zd1Ap0H7CKD4HdXMUHyAbB4jtdyAOWyI0g1/wIK/4gHKuNI3Me1Th5kS
-	vp8ZWmwU2jUMAaQ6561S6yHJV0dnSqlzYUKYLkcuwH3LDz1eiy4ARMMz2E/PwPKNvtbY6FYZJW6rX
-	DFco4SgY4eyCKOI36w9LIeNxab0a/5mV4DMCz87/9QdMJuVaFJbyiFpNA27WBjLUOQQ9HADU2pMRB
-	6wj2vkEi5iox3Pw5QumdgNJ9SYdUJbQklvTyvInqaPFGspUBR7nDC0QvzfLIHvK2uj0Ea+Jnol3gf
-	vhXlUapQ==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vV7NH-00Cva3-0u; Mon, 15 Dec 2025 13:08:23 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Askar Safin <safinaskar@gmail.com>
-Cc: amir73il@gmail.com, bschubert@ddn.com, djwong@kernel.org,
- hbirthelmer@ddn.com, kchen@ddn.com, kernel-dev@igalia.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- mharvey@jumptrading.com, miklos@szeredi.hu
-Subject: Re: [RFC PATCH v2 0/6] fuse: LOOKUP_HANDLE operation
-In-Reply-To: <20251214170224.2574100-1-safinaskar@gmail.com>
-References: <20251212181254.59365-1-luis@igalia.com>
- <20251214170224.2574100-1-safinaskar@gmail.com>
-Date: Mon, 15 Dec 2025 12:08:22 +0000
-Message-ID: <87cy4g2bih.fsf@wotan.olymp>
+	s=arc-20240116; t=1765801527; c=relaxed/simple;
+	bh=gJOFMp1/K+qQ0MSqjWn/CbbRaLJJuaP23xTo6CU3FMU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tUV/lgcB2eJ2IJmAml5mJz0QTSRGVh4PNPPI/o/rduv2kWDeABnr8spgPGdNvM6vmnC/vcOU2F6cBbGFS09TJlnJE/0V57MGNEaCbnzo6Xnkw0FecO+UhFCLe6hm8GntIYrldCKgohez8qqiwOp9YUgsR8j8ixMBEP3gsnW3RC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=MFNtC9o7; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4dVK5Q3lJFz9scD;
+	Mon, 15 Dec 2025 13:25:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1765801514; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gJOFMp1/K+qQ0MSqjWn/CbbRaLJJuaP23xTo6CU3FMU=;
+	b=MFNtC9o7GDr77G4gP5pdlWOgQeeiKPzkDClg8L2DPLsenZjXbBPFNYiW+f7Yt3dIHPmQyP
+	OJMvPnvOPIvbcMj8jkup2nPMtdqY9haLsfcz/IxOV2J03K4sDF356sDyQ23TsGQ07TViaD
+	FhWOVrJMTFcJ9CeKh2BEanhmBKLu/puWhJkeqyz5IF7MKc0wDX6+LpZo37kPzrx07UbVHu
+	/SrGIEw9Yb9k6R4DHidfnQwttDmp8t0gODXRNwKwn1DjYqW3hsQZd1gJ97ZgepaPr9lGGF
+	Kb4b3/HsX4GoqvHqXz/IOEsaMsqC0j4WmS+EX3sDV8DayQFJEqKPzO/PssjTDQ==
+Message-ID: <1f0fd860bf3466b9967d5a99ecd49eb93e0f7a19.camel@mailbox.org>
+Subject: Re: [PATCH 12/14] drm/scheduler: Describe @result in
+ drm_sched_job_done()
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux AMDGPU
+ <amd-gfx@lists.freedesktop.org>,  Linux DRI Development
+ <dri-devel@lists.freedesktop.org>, Linux Filesystems Development
+ <linux-fsdevel@vger.kernel.org>,  Linux Media
+ <linux-media@vger.kernel.org>, linaro-mm-sig@lists.linaro.org,
+ kasan-dev@googlegroups.com,  Linux Virtualization
+ <virtualization@lists.linux.dev>, Linux Memory Management List
+ <linux-mm@kvack.org>, Linux Network Bridge <bridge@lists.linux.dev>, Linux
+ Networking <netdev@vger.kernel.org>
+Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <siqueira@igalia.com>, Alex Deucher
+ <alexander.deucher@amd.com>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Matthew Brost <matthew.brost@intel.com>, Danilo
+ Krummrich <dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>, Alexander
+ Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Sumit Semwal <sumit.semwal@linaro.org>,  Alexander
+ Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Dmitry
+ Vyukov <dvyukov@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason
+ Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
+ =?ISO-8859-1?Q?P=E9rez?= <eperezma@redhat.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>, Nikolay
+ Aleksandrov <razor@blackwall.org>, Ido Schimmel <idosch@nvidia.com>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, Taimur Hassan <Syed.Hassan@amd.com>, Wayne Lin
+ <Wayne.Lin@amd.com>, Alex Hung <alex.hung@amd.com>, Aurabindo Pillai
+ <aurabindo.pillai@amd.com>, Dillon Varone <Dillon.Varone@amd.com>, George
+ Shen <george.shen@amd.com>, Aric Cyr <aric.cyr@amd.com>, Cruise Hung
+ <Cruise.Hung@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, Sunil
+ Khatri <sunil.khatri@amd.com>, Dominik Kaszewski
+ <dominik.kaszewski@amd.com>, David Hildenbrand <david@kernel.org>, Peter
+ Zijlstra <peterz@infradead.org>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, Max Kellermann <max.kellermann@ionos.com>,
+ "Nysal Jan K.A." <nysal@linux.ibm.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Alexey Skidanov <alexey.skidanov@intel.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, Kent Overstreet
+ <kent.overstreet@linux.dev>, Vitaly Wool <vitaly.wool@konsulko.se>, Harry
+ Yoo <harry.yoo@oracle.com>, Mateusz Guzik <mjguzik@gmail.com>, NeilBrown
+ <neil@brown.name>, Amir Goldstein <amir73il@gmail.com>, Jeff Layton
+ <jlayton@kernel.org>, Ivan Lipski <ivan.lipski@amd.com>, Tao Zhou
+ <tao.zhou1@amd.com>, YiPeng Chai <YiPeng.Chai@amd.com>, Hawking Zhang
+ <Hawking.Zhang@amd.com>, Lyude Paul <lyude@redhat.com>, Daniel Almeida
+ <daniel.almeida@collabora.com>, Luben Tuikov <luben.tuikov@amd.com>,
+ Matthew Auld <matthew.auld@intel.com>, Roopa Prabhu
+ <roopa@cumulusnetworks.com>, Mao Zhu <zhumao001@208suo.com>, Shaomin Deng
+ <dengshaomin@cdjrlc.com>, Charles Han <hanchunchao@inspur.com>, Jilin Yuan
+ <yuanjilin@cdjrlc.com>, Swaraj Gaikwad <swarajgaikwad1925@gmail.com>,
+ George Anthony Vernon <contact@gvernon.com>
+Date: Mon, 15 Dec 2025 13:24:46 +0100
+In-Reply-To: <20251215113903.46555-13-bagasdotme@gmail.com>
+References: <20251215113903.46555-1-bagasdotme@gmail.com>
+	 <20251215113903.46555-13-bagasdotme@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MBO-RS-META: q9aiurnjorghwoz79fww7b6wqkkf5zeq
+X-MBO-RS-ID: ca016de3dd37ac937be
 
-On Sun, Dec 14 2025, Askar Safin wrote:
+nit about commit title:
+We use "drm/sched:" as prefix nowadays
 
-> Luis Henriques <luis@igalia.com>:
->> As I mentioned in the v1 cover letter, I've been working on implementing=
- the
->> FUSE_LOOKUP_HANDLE operation.  As I also mentioned, this is being done in
->> the scope of a wider project, which is to be able to restart FUSE servers
->> without the need to unmount the file systems.  For context, here are the
->> links again: [0] [1].
->
-> Will this fix long-standing fuse+suspend problem, described here
-> https://lore.kernel.org/all/20250720205839.2919-1-safinaskar@zohomail.com=
-/ ?
+On Mon, 2025-12-15 at 18:39 +0700, Bagas Sanjaya wrote:
+> Sphinx reports kernel-doc warning:
+>=20
+> WARNING: ./drivers/gpu/drm/scheduler/sched_main.c:367 function parameter =
+'result' not described in 'drm_sched_job_done'
+>=20
+> Describe @result parameter to fix it
+>=20
 
-No, this won't fix that.  This patchset is just an attempt to be a step
-closer to be able to restart a FUSE server.  But other things will be
-needed (including changes in the user-space server).
+Thx for fixing this!
 
-Cheers,
---=20
-Lu=C3=ADs
+> .
+>=20
+> Fixes: 539f9ee4b52a8b ("drm/scheduler: properly forward fence errors")
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 1 +
+> =C2=A01 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sch=
+eduler/sched_main.c
+> index 1d4f1b822e7b76..4f844087fd48eb 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -361,6 +361,7 @@ static void drm_sched_run_free_queue(struct drm_gpu_s=
+cheduler *sched)
+> =C2=A0/**
+> =C2=A0 * drm_sched_job_done - complete a job
+> =C2=A0 * @s_job: pointer to the job which is done
+> + * @result: job result
+
+"error code for the job's finished-fence" would be a bit better and
+more verbose.
+
+With that:
+
+Reviewed-by: Philipp Stanner <phasta@kernel.org>
+
+> =C2=A0 *
+> =C2=A0 * Finish the job's fence and resubmit the work items.
+> =C2=A0 */
 
 
