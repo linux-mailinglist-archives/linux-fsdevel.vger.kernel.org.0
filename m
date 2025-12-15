@@ -1,100 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-71274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F39CBC367
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 02:54:44 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C4AACBC43A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 03:44:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1BD55300DCB7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 01:54:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9241A300A87C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 02:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A363126BE;
-	Mon, 15 Dec 2025 01:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Lffsu/gu"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEA0315D3D;
+	Mon, 15 Dec 2025 02:44:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F000126C02;
-	Mon, 15 Dec 2025 01:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C6713AD05;
+	Mon, 15 Dec 2025 02:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765763670; cv=none; b=iUDOWwVRMCIeg4GgaS1G1Q3vSWalVOeUVqqdWW9J09BDszJ2jZQRPUSWDOpl7NKT4R8HBNiwqrLnlTvssPKnKlCWm1uD178+BsbUvgyWXbfplF5T2VNm3nIymA07EwA1j/jn4oFJggGujxTyhuAfs+bJVlogrobY9f2WB59juh4=
+	t=1765766674; cv=none; b=mYmtlc8Llnrt6DgJPEGSUL0wB50jEZLHnxnF3x8ZyBytJlwcb5vt9cBLdLTZHsZ3lnUOulDsyWiAbbsKFUR/uIOC/3vvz/ngB8y+3Hu/2Nc1n3dbQ8yQOvCEXMS3RIH6kb0gGf4V68yrHG2CC4ZuP0sDQzY0irEI94fkOsEP49A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765763670; c=relaxed/simple;
-	bh=rxkLXtaNGFecbSIc9zO2vWGIbHJZFJuVFaEHg3Lo4aA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ObzVgQydZ5Xn+Wtm2swQh4XNMKRMDACz1WRHVV4YPQryIU0qIlkAG/lLEajsV8lGTlFe25maTzRseuo7ruQOcet+vbXGyDTHL6UcIsp5Z7hGApGjz0EzNMj7SIVMCjVX8rM4MqVtxhL0P3x8mAYlAhin8Z99apmbAzURnuSXa+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Lffsu/gu; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OuULfq2Xag8coD1mfoavAYtIJln8EKeyEFYPvOmoJzs=; b=Lffsu/guHLDrhMZp2dmG9ShXbP
-	D0F/qoUa3lGTj+6le1Snpb9Q8dkQsxyuQhfXeuCl2rKOeFDrHR+Ctg/E5NA2lxTWepiCfEru8kGJt
-	42tNc+HlXloMCS0NkECjAcW6PfwtjeSFmV4sTyB/zHt31FXr/u4F0InRA1rqTEcHquqxZYZ/Z/oa1
-	MsSd2f3youv1ieJ1S37xkppqYAEO/lOoGX2GRayRymR/b65fIo3qh6PJUkAsx7uiuGylpUlshe/1A
-	qIFL/56wxipOsXQw0RyjGgh2xVsbXgcQAWC9tVbSqPUHvdvbQQofdeAYJpzHp53lhsUZpxW4SCx5u
-	Auslhg2A==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vUxng-0000000FH2S-1ul6;
-	Mon, 15 Dec 2025 01:55:00 +0000
-Date: Mon, 15 Dec 2025 01:55:00 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	syzbot+1c70732df5fd4f0e4fbb@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] adfs: fix memory leak in sb->s_fs_info
-Message-ID: <20251215015500.GM1712166@ZenIV>
-References: <20251213233621.151496-2-eraykrdg1@gmail.com>
- <20251215002252.158637-2-eraykrdg1@gmail.com>
+	s=arc-20240116; t=1765766674; c=relaxed/simple;
+	bh=Wat+8SzSu/r2ncS4XhIRmLGp10EsJegALBFR6IW+GS0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fRV2YhSGQcbicGrwlUW04nAkpHHYJamk5w29PMcjZghzqFh+5taN6I/TT6JxLu+LP2KxS+FVh+sdq8VIEX47tlnvCgbhnAXryj1A6jt/OJZ60dwp5xYof5P4PfVlrX8b8g+5MKKj7EDJLbsZtfrEpgD4VCrQu4mFVW0Am3+YfGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: f623c590d95f11f0a38c85956e01ac42-20251215
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:b8802c2d-f7c1-420e-96d7-3f15e3d42127,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:5e6481ef8b84c54c2b6d34138743eae1,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850|898,TC:nil,Content:0|15|50,EDM:-
+	3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,A
+	V:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: f623c590d95f11f0a38c85956e01ac42-20251215
+X-User: jiangyunshui@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <chenzhang@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1824232543; Mon, 15 Dec 2025 10:44:22 +0800
+From: chen zhang <chenzhang@kylinos.cn>
+To: miklos@szeredi.hu,
+	mszeredi@redhat.com,
+	joannelkoong@gmail.com,
+	josef@toxicpanda.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	chenzhang_0901@163.com,
+	chen zhang <chenzhang@kylinos.cn>
+Subject: [PATCH] fuse: use sysfs_emit() instead of sprintf()
+Date: Mon, 15 Dec 2025 10:44:16 +0800
+Message-Id: <20251215024416.40841-1-chenzhang@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251215002252.158637-2-eraykrdg1@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 15, 2025 at 03:22:52AM +0300, Ahmet Eray Karadag wrote:
+Follow the advice in Documentation/filesystems/sysfs.rst:
+show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+the value to be returned to user space.
 
-> @@ -403,15 +394,9 @@ static int adfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	if (!sb->s_root) {
->  		adfs_free_map(sb);
->  		adfs_error(sb, "get root inode failed\n");
-> -		ret = -EIO;
-> -		goto error;
-> +		return -EIO;
+Signed-off-by: chen zhang <chenzhang@kylinos.cn>
+---
+ fs/fuse/cuse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Double-free again, this time of asb->s_map - adfs_free_map() is called
-twice in that case, once here and once in adfs_kill_sb()...
+diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+index 28c96961e85d..0c8e7259f489 100644
+--- a/fs/fuse/cuse.c
++++ b/fs/fuse/cuse.c
+@@ -581,7 +581,7 @@ static ssize_t cuse_class_waiting_show(struct device *dev,
+ {
+ 	struct cuse_conn *cc = dev_get_drvdata(dev);
+ 
+-	return sprintf(buf, "%d\n", atomic_read(&cc->fc.num_waiting));
++	return sysfs_emit(buf, "%d\n", atomic_read(&cc->fc.num_waiting));
+ }
+ static DEVICE_ATTR(waiting, 0400, cuse_class_waiting_show, NULL);
+ 
+-- 
+2.25.1
 
-> +static void adfs_kill_sb(struct super_block *sb)
-> +{
-> +	struct adfs_sb_info *asb = ADFS_SB(sb);
-> +
-> +	kill_block_super(sb);
-> +
-> +	adfs_free_map(sb);
-
-... and calling adfs_map_relse(), which calls brelse() after the block
-device has been closed.  IOW, unlike freeing the ->s_fs_info this can't
-be done after kill_block_super().  And with this one we don't have that
-kind of gap - it doesn't exist until adfs_fill_super(), so there's no
-leak to be had anyway.  Yes, it would be possible to get rid of more
-of cleanup on failure exit there, but it would require expanding
-kill_block_super() and inserting adfs_free_map() call before the call
-sync_blockdev() in there - more headache than you win in adfs_fill_super(),
-IMO.
-
-Leave adfs_free_map() in adfs_put_super() (or make _it_ ->put_super(),
-for that matter).
 
