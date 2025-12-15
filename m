@@ -1,167 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-71329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1B2CBDCE4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 13:30:07 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC51CBDE7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 13:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 1BBD13020C0C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 12:25:34 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id CB67430120FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 12:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0023B314B77;
-	Mon, 15 Dec 2025 12:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389B42857FA;
+	Mon, 15 Dec 2025 12:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="MFNtC9o7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Izf1XZQq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305A12C3255;
-	Mon, 15 Dec 2025 12:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D901C3BF7;
+	Mon, 15 Dec 2025 12:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765801527; cv=none; b=WZEhER4SNUh1qzajpDxDY9oFeDT0E/KPmACPTicN2DD2hzdpd/f00p473Fw7JJ5GhgYqyhgq/0xxfSHcNwcb1LuC9iQz+M9c01OXJ6TcPhM0VT6Zd9O5mZs9OrWtKnF2FEOrJF+VnGDkSgCC3YEeTqfwAXF00uM0zCZh1h6SRTc=
+	t=1765802286; cv=none; b=IY3FgHSDGyZksgp9l+F++W1OHbi9YyHrVfQ22Vk4YzcsN5spDxtlRq27n/jtJOfPfWufT0tTF4P+KIhpL3fQZFdYPGZp8+gyA5uLyrv3hhA46gMD4PNZk5fxqLhNIGiAxY9FwxWoxPxb6gcg5iDmSgeU2Fv1DCwjlJXctsKXyHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765801527; c=relaxed/simple;
-	bh=gJOFMp1/K+qQ0MSqjWn/CbbRaLJJuaP23xTo6CU3FMU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tUV/lgcB2eJ2IJmAml5mJz0QTSRGVh4PNPPI/o/rduv2kWDeABnr8spgPGdNvM6vmnC/vcOU2F6cBbGFS09TJlnJE/0V57MGNEaCbnzo6Xnkw0FecO+UhFCLe6hm8GntIYrldCKgohez8qqiwOp9YUgsR8j8ixMBEP3gsnW3RC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=MFNtC9o7; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4dVK5Q3lJFz9scD;
-	Mon, 15 Dec 2025 13:25:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1765801514; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gJOFMp1/K+qQ0MSqjWn/CbbRaLJJuaP23xTo6CU3FMU=;
-	b=MFNtC9o7GDr77G4gP5pdlWOgQeeiKPzkDClg8L2DPLsenZjXbBPFNYiW+f7Yt3dIHPmQyP
-	OJMvPnvOPIvbcMj8jkup2nPMtdqY9haLsfcz/IxOV2J03K4sDF356sDyQ23TsGQ07TViaD
-	FhWOVrJMTFcJ9CeKh2BEanhmBKLu/puWhJkeqyz5IF7MKc0wDX6+LpZo37kPzrx07UbVHu
-	/SrGIEw9Yb9k6R4DHidfnQwttDmp8t0gODXRNwKwn1DjYqW3hsQZd1gJ97ZgepaPr9lGGF
-	Kb4b3/HsX4GoqvHqXz/IOEsaMsqC0j4WmS+EX3sDV8DayQFJEqKPzO/PssjTDQ==
-Message-ID: <1f0fd860bf3466b9967d5a99ecd49eb93e0f7a19.camel@mailbox.org>
-Subject: Re: [PATCH 12/14] drm/scheduler: Describe @result in
- drm_sched_job_done()
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux AMDGPU
- <amd-gfx@lists.freedesktop.org>,  Linux DRI Development
- <dri-devel@lists.freedesktop.org>, Linux Filesystems Development
- <linux-fsdevel@vger.kernel.org>,  Linux Media
- <linux-media@vger.kernel.org>, linaro-mm-sig@lists.linaro.org,
- kasan-dev@googlegroups.com,  Linux Virtualization
- <virtualization@lists.linux.dev>, Linux Memory Management List
- <linux-mm@kvack.org>, Linux Network Bridge <bridge@lists.linux.dev>, Linux
- Networking <netdev@vger.kernel.org>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
- Rodrigo Siqueira <siqueira@igalia.com>, Alex Deucher
- <alexander.deucher@amd.com>, Christian =?ISO-8859-1?Q?K=F6nig?=
- <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, Matthew Brost <matthew.brost@intel.com>, Danilo
- Krummrich <dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Sumit Semwal <sumit.semwal@linaro.org>,  Alexander
- Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Dmitry
- Vyukov <dvyukov@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason
- Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
- =?ISO-8859-1?Q?P=E9rez?= <eperezma@redhat.com>, Andrew Morton
- <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>, Nikolay
- Aleksandrov <razor@blackwall.org>, Ido Schimmel <idosch@nvidia.com>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Taimur Hassan <Syed.Hassan@amd.com>, Wayne Lin
- <Wayne.Lin@amd.com>, Alex Hung <alex.hung@amd.com>, Aurabindo Pillai
- <aurabindo.pillai@amd.com>, Dillon Varone <Dillon.Varone@amd.com>, George
- Shen <george.shen@amd.com>, Aric Cyr <aric.cyr@amd.com>, Cruise Hung
- <Cruise.Hung@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, Sunil
- Khatri <sunil.khatri@amd.com>, Dominik Kaszewski
- <dominik.kaszewski@amd.com>, David Hildenbrand <david@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, Max Kellermann <max.kellermann@ionos.com>,
- "Nysal Jan K.A." <nysal@linux.ibm.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Alexey Skidanov <alexey.skidanov@intel.com>, 
- Vlastimil Babka <vbabka@suse.cz>, Kent Overstreet
- <kent.overstreet@linux.dev>, Vitaly Wool <vitaly.wool@konsulko.se>, Harry
- Yoo <harry.yoo@oracle.com>, Mateusz Guzik <mjguzik@gmail.com>, NeilBrown
- <neil@brown.name>, Amir Goldstein <amir73il@gmail.com>, Jeff Layton
- <jlayton@kernel.org>, Ivan Lipski <ivan.lipski@amd.com>, Tao Zhou
- <tao.zhou1@amd.com>, YiPeng Chai <YiPeng.Chai@amd.com>, Hawking Zhang
- <Hawking.Zhang@amd.com>, Lyude Paul <lyude@redhat.com>, Daniel Almeida
- <daniel.almeida@collabora.com>, Luben Tuikov <luben.tuikov@amd.com>,
- Matthew Auld <matthew.auld@intel.com>, Roopa Prabhu
- <roopa@cumulusnetworks.com>, Mao Zhu <zhumao001@208suo.com>, Shaomin Deng
- <dengshaomin@cdjrlc.com>, Charles Han <hanchunchao@inspur.com>, Jilin Yuan
- <yuanjilin@cdjrlc.com>, Swaraj Gaikwad <swarajgaikwad1925@gmail.com>,
- George Anthony Vernon <contact@gvernon.com>
-Date: Mon, 15 Dec 2025 13:24:46 +0100
-In-Reply-To: <20251215113903.46555-13-bagasdotme@gmail.com>
-References: <20251215113903.46555-1-bagasdotme@gmail.com>
-	 <20251215113903.46555-13-bagasdotme@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1765802286; c=relaxed/simple;
+	bh=Xiwt0F7uZg8asci0wopt7blyzkMs/Z1c1ZVQV24taE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rdEfVlrs3T4jLhcAkrPTeaGLaGUvRp7OXYQSq5LvWIhUBF4uaI5r2C5TszHekdffnOk6pdXROsVCyFUTIzxCYftLTr04hOBRhuP191yPjZqwYTXMHb4GrAWdTADQJsTasjdbobNwGAKGmYMQHsCVpMth/foXeMZFqZbqdRK/VhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Izf1XZQq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D73C4CEF5;
+	Mon, 15 Dec 2025 12:38:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765802285;
+	bh=Xiwt0F7uZg8asci0wopt7blyzkMs/Z1c1ZVQV24taE8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Izf1XZQqUXGQ9m1uFJavHM7TYM/1TxOw5krNCVjWI9t+iQJTi0S6oO1B/rTpu/+H+
+	 jCj2NlwCflc8CyOzXYnniNnfSe0CiOhj/iKELmDDLcizX/T5+R9/Yov29Zwp0ogT8l
+	 BFirJqRbzj/7cC0t6W0dKNoRyIiMqI+TJwP7ZXrwnFh8+zpAJxbl7NeQ88Nys3xIEX
+	 5qfTv3MgxyGeidf6p/+1yrXiMXzWHf5LizG61DOH3LPAqiHcvo1eLfshpEQYghojue
+	 DwQv69rkeXleu9DaWw1KUHx/U8wsjtcvGshR113fPEvrQ1BKHad+dpVcE/8jPqV4Y1
+	 qG45VMXN6f3Ng==
+Date: Mon, 15 Dec 2025 13:37:59 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Chuck Lever <cel@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	hirofumi@mail.parknet.co.jp, almaz.alexandrovich@paragon-software.com, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, Volker.Lendecke@sernet.de, Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [PATCH v2 1/6] fs: Add case sensitivity info to file_kattr
+Message-ID: <20251215-genuss-neuer-1e3670000df7@brauner>
+References: <20251211152116.480799-1-cel@kernel.org>
+ <20251211152116.480799-2-cel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: q9aiurnjorghwoz79fww7b6wqkkf5zeq
-X-MBO-RS-ID: ca016de3dd37ac937be
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251211152116.480799-2-cel@kernel.org>
 
-nit about commit title:
-We use "drm/sched:" as prefix nowadays
-
-On Mon, 2025-12-15 at 18:39 +0700, Bagas Sanjaya wrote:
-> Sphinx reports kernel-doc warning:
->=20
-> WARNING: ./drivers/gpu/drm/scheduler/sched_main.c:367 function parameter =
-'result' not described in 'drm_sched_job_done'
->=20
-> Describe @result parameter to fix it
->=20
-
-Thx for fixing this!
-
-> .
->=20
-> Fixes: 539f9ee4b52a8b ("drm/scheduler: properly forward fence errors")
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+On Thu, Dec 11, 2025 at 10:21:11AM -0500, Chuck Lever wrote:
+> From: Chuck Lever <chuck.lever@oracle.com>
+> 
+> Enable upper layers such as NFSD to retrieve case sensitivity
+> information from file systems by adding a case_info field to struct
+> file_kattr.
+> 
+> Add vfs_get_case_info() as a convenience helper for kernel
+> consumers. If a filesystem does not provide a fileattr_get hook, it
+> returns the default POSIX behavior (case-sensitive,
+> case-preserving), which is correct for the majority of Linux
+> file systems implementations.
+> 
+> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 > ---
-> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 1 +
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sch=
-eduler/sched_main.c
-> index 1d4f1b822e7b76..4f844087fd48eb 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -361,6 +361,7 @@ static void drm_sched_run_free_queue(struct drm_gpu_s=
-cheduler *sched)
-> =C2=A0/**
-> =C2=A0 * drm_sched_job_done - complete a job
-> =C2=A0 * @s_job: pointer to the job which is done
-> + * @result: job result
 
-"error code for the job's finished-fence" would be a bit better and
-more verbose.
+Thanks for listening and plumbing this into file_attr() that seems a
+much better place than statx().
 
-With that:
+>  fs/file_attr.c           | 31 +++++++++++++++++++++++++++++++
+>  include/linux/fileattr.h | 23 +++++++++++++++++++++++
+>  2 files changed, 54 insertions(+)
+> 
+> diff --git a/fs/file_attr.c b/fs/file_attr.c
+> index 1dcec88c0680..609e890b5101 100644
+> --- a/fs/file_attr.c
+> +++ b/fs/file_attr.c
+> @@ -94,6 +94,37 @@ int vfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
+>  }
+>  EXPORT_SYMBOL(vfs_fileattr_get);
+>  
+> +/**
+> + * vfs_get_case_info - retrieve case sensitivity info for a filesystem
+> + * @dentry:	the object to retrieve from
+> + * @case_info:	pointer to store result
+> + *
+> + * Call i_op->fileattr_get() to retrieve case sensitivity information.
+> + * If the filesystem does not provide a fileattr_get hook, return
+> + * the default POSIX behavior (case-sensitive, case-preserving).
+> + *
+> + * Return: 0 on success, or a negative error on failure.
+> + */
+> +int vfs_get_case_info(struct dentry *dentry, u32 *case_info)
 
-Reviewed-by: Philipp Stanner <phasta@kernel.org>
+Hm, I would much prefer if we followed the statx() model where we have
+vfs_getattr{_nosec}() that always returns a struct kstat. So we should
+only have vfs_fileattr_get() instead of the special-purpose
+vfs_get_case_info() thing.
 
-> =C2=A0 *
-> =C2=A0 * Finish the job's fence and resubmit the work items.
-> =C2=A0 */
+I guess the main reason you did this is so that you can set the default
+without having to touch each filesystem that doesn't do file_attr.
 
+So just move the default setup of case_info into vfs_fileattr_get()?
+This way it's also available to other callers of this function such as
+overlayfs and ecryptfs. And then just call that in nfsd.
+
+Otherwise I have no complaints about the VFS part.
 
