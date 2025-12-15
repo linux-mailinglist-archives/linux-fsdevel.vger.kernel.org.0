@@ -1,144 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-71306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0F2CBD7AC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 12:18:48 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A37CBD7B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 12:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id ED35830469B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 11:15:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4C91D3025316
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 11:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24E4330338;
-	Mon, 15 Dec 2025 11:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDFF330335;
+	Mon, 15 Dec 2025 11:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="S+rF9uWk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CD433032F;
-	Mon, 15 Dec 2025 11:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBC433032F;
+	Mon, 15 Dec 2025 11:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765797318; cv=none; b=YZuItaskxmnSFYMHf00HR/ktsEPVXW2CL4Hbc5pQvtV5D2iUA099ohZ4zwCak0z5/oFszPZPiCiD+3fSUvofflS2HCifIdvSUhhQlfsstYsJymgLT1WcTRxVUlTbMVWpXz+gIqSkl+ClM5FTzBtKbQ0D90PjLjyRGHlGIo3OgJY=
+	t=1765797384; cv=none; b=l/rfnaFkSwHXwbYaL+S3usz04kIFw58lbkmz6/1vdWES2BBv9NYBAsQihVd572EZFyOZOCrdUbOE9ShQk//qYu7ocb4d996dOaNHrKf3Ei2AOm5KcKd0MekM1qIyGUOIrZ16owDgKDbvCVaJ4z9l0BgYc06IoXMoqaOGYtgRh54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765797318; c=relaxed/simple;
-	bh=PXlAp725fYrDg3F+cW7h+nuedrV4NqKP33ZJQSI6jGM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GjSU6zNIEfEZwqE1idIDFaibt1ELOXjR962uPSADXL5RGSRyB9oIM5KgLjJd9eiet0CbWoqUCm2Z5hTuIudxFAmU8G0XstS+EhDGLLn1NriN4THqBYSxC1SuSq9lhQtE3uMVn+CBxl7MAO6I0EpoG+DMWpjDmPnZTIEutNfvpkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 4e5edb18d9a711f0a38c85956e01ac42-20251215
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:3e0eaed8-e63c-44d5-9aae-16fd66b48968,IP:0,UR
-	L:0,TC:0,Content:-25,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:547e6ca5d6628fb648bacd1f3005be6c,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850|898,TC:nil,Content:0|15|50,EDM:5
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 4e5edb18d9a711f0a38c85956e01ac42-20251215
-X-User: jiangyunshui@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <chenzhang@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 2032657404; Mon, 15 Dec 2025 19:15:04 +0800
-From: chen zhang <chenzhang@kylinos.cn>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenzhang_0901@163.com,
-	chen zhang <chenzhang@kylinos.cn>
-Subject: [PATCH v2] chardev: Switch to guard(mutex) and __free(kfree)
-Date: Mon, 15 Dec 2025 19:15:00 +0800
-Message-Id: <20251215111500.159243-1-chenzhang@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1765797384; c=relaxed/simple;
+	bh=EuSiIuyRALw+TdcF14QddpLJOwbNYrv2UImUyp6ZNh0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TUH2nd15MpHUu54Pxk2VUv1EIakQCPmpoR6yT39NRcqqqPX/h+KfuS8PEpq52h883n+jowAQimKvejp+d6macrmyA8X4wHno69Qi73fePIHf1caRNdimsgeLY63qFeiIz92y0d1avKOqBkZabqzYGBZ2Tk8VVDLcMCbGffKMtXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=S+rF9uWk; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=hP/U9X3ek/QPwoi3hGCAMfuswx9V7+TFBIHg3O2P6rc=; b=S+rF9uWkZtNiWd/8J8ou1tmFj8
+	9YuwD6EmL+i3avVYw4IEyLfND/tWoVcKkp/cVbKMw1ejAMRubvxTAXfiJczfv3vALZ7rlgh9X0oS5
+	tl7poU4qLn60GJ3XU+oDqtNR+1Y4bqOwTXzguO6D2bMKCI3jHNiX985n9zoUJc7vJNWjpVUwVH74z
+	EllTfZYCeYaQT/kgoPC94FsdUTPi0yNrzRR+8KNrKj2IxHcHiJGZOKXY+2oM5C7F+sHDWb3rGqTAy
+	A6YymweDqLbpcL4o0BaZ2bodgaReivKG0VJl6t0v39JgELAzcze5jYIjwtaR/Xv50FakOZhZLpQ92
+	PlJqCMbsqsUAf1ab4OdXA2TFLqcWfuSYn+3vzQSMrYG9ojiFxD3JNkXnUmaVuJ/yYAagY0p4Yirp3
+	D4aQRHo9vP62RntLW4qCAniGztY94QOSpm+aMTselahAE7m6XPqSgGMqdGj54CmEsAMNX2HmYsmSY
+	uB79S7zMbBg2hLiiF3y9Hg4e085edg+k7T4YC+gfNct1Qy7BYQCqIt2anicmF8ZGDsJOgqnH3v4qB
+	reSssMpwgnpC9aCgzbjKfZA5zLXfpzxPyrg0RTGYDZz9hPHOIPu9/axT72B3kpgB3tHVtyahUui7C
+	8XdcGrkStSiggcGu+o997hiBHXZvgSQdU2zfIUcjA=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Christoph Hellwig <hch@infradead.org>,
+ Dominique Martinet <asmadeus@codewreck.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
+ linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+ Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+ Chris Arges <carges@cloudflare.com>
+Subject:
+ Re: [PATCH] 9p/virtio: restrict page pinning to user_backed_iter() iovec
+Date: Mon, 15 Dec 2025 12:16:07 +0100
+Message-ID: <3918430.kQq0lBPeGt@weasel>
+In-Reply-To: <aT-59HURCGPDUJnZ@codewreck.org>
+References:
+ <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org>
+ <aT-iwMpOfSoRzkTF@infradead.org> <aT-59HURCGPDUJnZ@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Instead of using the 'goto label; mutex_unlock()' pattern use
-'guard(mutex)' which will release the mutex when it goes out of scope.
-Use the __free(kfree) cleanup to replace instances of manually
-calling kfree(). Also make some code path simplifications that this
-allows.
+On Monday, 15 December 2025 08:34:12 CET Dominique Martinet wrote:
+> Thanks for having a look
+> 
+> Christoph Hellwig wrote on Sun, Dec 14, 2025 at 09:55:12PM -0800:
+> > > Ok, I don't understand why the current code locks everything down and
+> > > wants to use a single scatterlist shared for the whole channel (and
+> > > capped to 128 pages?), it should only need to lock around the
+> > > virtqueue_add_sg() call, I'll need to play with that some more.
+> > 
+> > What do you mean with "lock down"?
+> 
+> Just the odd (to me) use of the chan->lock around basically all of
+> p9_virtio_request() and most of p9_virtio_zc_request() -- I'm not pretty
+> sure this was just the author trying to avoid an allocation by recycling
+> the chan->sg array around though, so ignore this.
 
-Signed-off-by: chen zhang <chenzhang@kylinos.cn>
----
- fs/char_dev.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+The lock protects the channel wide, shared scatterlist while the scatterlist 
+is filled from the linear buffers by pack_sg_list(). Then virtqueue_add_sgs() 
+pushes scatterlist's segments as virtio descriptors into the virtio FIFOs. 
+From this point it safe to unlock as the scatterlist is no longer needed.
 
-diff --git a/fs/char_dev.c b/fs/char_dev.c
-index c2ddb998f3c9..74d4bdfaa9ae 100644
---- a/fs/char_dev.c
-+++ b/fs/char_dev.c
-@@ -10,6 +10,7 @@
- #include <linux/kdev_t.h>
- #include <linux/slab.h>
- #include <linux/string.h>
-+#include <linux/cleanup.h>
- 
- #include <linux/major.h>
- #include <linux/errno.h>
-@@ -97,7 +98,8 @@ static struct char_device_struct *
- __register_chrdev_region(unsigned int major, unsigned int baseminor,
- 			   int minorct, const char *name)
- {
--	struct char_device_struct *cd, *curr, *prev = NULL;
-+	struct char_device_struct *cd __free(kfree) = NULL;
-+	struct char_device_struct *curr, *prev = NULL;
- 	int ret;
- 	int i;
- 
-@@ -117,14 +119,14 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
- 	if (cd == NULL)
- 		return ERR_PTR(-ENOMEM);
- 
--	mutex_lock(&chrdevs_lock);
-+	guard(mutex)(&chrdevs_lock);
- 
- 	if (major == 0) {
- 		ret = find_dynamic_major();
- 		if (ret < 0) {
- 			pr_err("CHRDEV \"%s\" dynamic allocation region is full\n",
- 			       name);
--			goto out;
-+			return ERR_PTR(ret);
- 		}
- 		major = ret;
- 	}
-@@ -144,7 +146,7 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
- 		if (curr->baseminor >= baseminor + minorct)
- 			break;
- 
--		goto out;
-+		return ERR_PTR(ret);
- 	}
- 
- 	cd->major = major;
-@@ -160,12 +162,7 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
- 		prev->next = cd;
- 	}
- 
--	mutex_unlock(&chrdevs_lock);
--	return cd;
--out:
--	mutex_unlock(&chrdevs_lock);
--	kfree(cd);
--	return ERR_PTR(ret);
-+	return_ptr(cd);
- }
- 
- static struct char_device_struct *
--- 
-2.25.1
+And yes, the assumption probably was that handling the scatterlist as a 
+temporary was more expensive due to allocation.
+
+> > > Looking at other virtio drivers I could probably use a sg_table and
+> > > have extract_iter_to_sg() do all the work for us...
+> > 
+> > Looking at the code I'm actually really confused.  Both because I
+> > actually though we were talking about the 9fs direct I/O code, but
+> > that has actually been removed / converted to netfs a long time ago.
+> > 
+> > But even more so what the net/9p code is actually doing..  How do
+> > we even end up with user addresses here at all?
+> 
+> FWIW I tried logging and saw ITER_BVEC, ITER_KVEC and ITER_FOLIOQ --
+> O_DIRECT writes are seen as BVEC so I guess it's not as direct as I
+> expected them to be -- that code could very well be leftovers from
+> the switch to iov_iter back in 2015...
+> 
+> (I'm actually not sure why Christian suggested checking for is_iovec()
+> in https://lkml.kernel.org/r/2245723.irdbgypaU6@weasel -- then I
+> generalized it to user_backed_iter() and it just worked because checking
+> for that moved out bvec and folioq from iov_iter_get_pages_alloc2()
+> to... something that obviously should not work in my opinion but
+> apparently was enough to not trigger this particular BUG.)
+
+Sorry, I should have explained why I suggested that change: My understanding 
+of the p9_get_mapped_pages() code was that the original author intended to go 
+down the iov_iter_get_pages_alloc2() path only for user space memory 
+exclusively and that he assumed that his preceding !iov_iter_is_kvec(data) 
+check would guard this appropriately. But apparently there are several other 
+iterator types that are kernel memory as well. So I thought switching the 
+check to is_iovec() would be better as these are user space memory, however I 
+missed that there is also ITER_UBUF with user space memory, which you realized 
+fortunately by suggesting user_backed_iter() check instead.
+
+/Christian
+
 
 
