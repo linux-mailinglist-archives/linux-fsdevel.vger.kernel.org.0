@@ -1,112 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-71364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D981BCBF560
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 19:01:23 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2606ECBF56C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 19:02:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 073B53028D96
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 17:59:49 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DCC2E3016340
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 18:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4B332549B;
-	Mon, 15 Dec 2025 17:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B97325496;
+	Mon, 15 Dec 2025 18:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWcISiYv"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dA7IVJmI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1RPZ0nE7";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dA7IVJmI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1RPZ0nE7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CEA3242B5
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 17:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F75322C73
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 18:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765821585; cv=none; b=m9Ji9LNfQG65hfkS84lHOdmcXewuabniY/7mKio/QEk7s41OQTO1AEuqrdJsD04oTkamOTH9gZFy//J1GJYfKhr9OcbrdVde2zqQ2eVrLBfH0w/rLzYXtU3pAgwPM83DR/31rR9iZUdDCWNHcT8F97iayIKqjlcAxKDODjMetMQ=
+	t=1765821631; cv=none; b=jUC5bM+k2KqW+icJXN7nfUaF3kyVZCRE483fb97xheXvqVi4J26r1RLrMTI6YzP62q2TXJLOzReY/QuXyoTdHssAFCHiHkktrnp8CjQtuadSsumlP2AZx89dNDe1FcW4C4R+ljroOK2JyNnxF6l0XgyaNKZVFPPGzMgutGlxMOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765821585; c=relaxed/simple;
-	bh=rKVKnsmZY5Zk5WseCbLhC70tZU73oYSI0ZX68nvqOpU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NjKoE5tXBKpkgH4HMHU0Eo6bUMelDwcqfCqXT6E/g5Pjq/g4eZtDwGdXusHWVzgwR5MIYuAWMjEcuHEbomTsRdGWHsTGVAKCONSfyDgHAMGItXGPREgcXrqQXumoMj+9qcDKp7IwIJS/kRlsoVfWcM8G49GAfLTgaHTbY7LnXeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mWcISiYv; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-597c83bb5c2so3248218e87.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 09:59:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765821580; x=1766426380; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zIbn2oDFRSGWfD5W22SaWrURpraJkYSQ1nm0bbeV7eo=;
-        b=mWcISiYvQDMyWrcSRycAfbgC2LcfDHeiHNEwlrIHZIiej1AYC1xSGsNIQAQ09hrYkV
-         JX5RKvAXPuBpvT42pleeeJWKLBH2sgmOEqfv/KpJmG2j4MZwEb/VhmN2KUWZSKmpR4y8
-         W9Y9TRYiK/LUJSWBxJeCtVm6+grs9CMML+9OjkE4C8237semIawFtJN/0+n1tfa/B4sH
-         4PXZxM7CBczsbeXD5LrxS/cB7X27CZ/SgFLeQqgNRSooR0u6fqf5viqD1bfmET98d1BJ
-         y+OTGkBGOVpj54S8EoEEBS6SOazJkp5BEh/6fqKDGAxYCvW45iAXLY5VypDKgUjIZ0ta
-         NCVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765821580; x=1766426380;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zIbn2oDFRSGWfD5W22SaWrURpraJkYSQ1nm0bbeV7eo=;
-        b=O9IQWcM8v32MjqJAEqtXj8iTfNBTNcoByEj0s/+FUamk3g9bV2uAmb+7UXoerTcQxL
-         Q92WNEJB0fG5rYNrZkwimWyIlbc4JEQV42REPZmAB5wHSr2+3T80BqbxB87/c+AHw4EC
-         1tJ5QGTD8feKn4gnAR5rlF/p9lfliMnbaFQUk9tp6xFiiepS1IIJ6V8xAReEMNcsH7Ig
-         8fBaGbULx+QvP2HP/XYJ5nOcbZAgHDvOfRGATLV698GMfYvaBP0Nwt/L4ArSb17J7mc1
-         ohLgsjcMHgypPETgNUi0xEqpMQuvMuquKQddbctiY9qshZaFFuSC8MezscFh5SFzcLm8
-         tCag==
-X-Forwarded-Encrypted: i=1; AJvYcCWVhx1SzZoaFLa+Km6wvSpe3JLG99WLfLMdb+idyGOvi0Y8d6ocmiB+KCFxMlZ3MM6gNWwdolj+eaRGy3X1@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfCuYOUSFACN/z1GG8pBpSrVTaa3r6Osh+Q0RiyAUAE8LAR4Tf
-	TNLcxLMpX1PoPvj2+7In06Xx/KxVr0mTOW4QhCp1ogXkxlNNsADF/gSk
-X-Gm-Gg: AY/fxX7mllZdjFqKVGWJVquFRc70yTfxF/HVu0CCyBUZqUV6mykTFaeZWLYaBd/Xwfo
-	x2wFscUjLOoUK0/B5/zLpfMCOcj9M+SxayRNGSwPh9+k9SL3qORy7v+mHM3D7jkY6lshlsqejy1
-	CqpjBd1qTqkzrtG77P7tJIjwc6Y+XfNQc88cr3otPYqBJOJhsi9T7YqOsCqydP9DHKTlZxqkNJI
-	0pYRP/+QoFWdnq7EtX5PGnzfSa8UzH2AwNdScW3aIP5UOwLWMmw3xBQjuSIxP8aV/sJTcuXW3YF
-	w+w3Ob2dgkE0tsYVSNltueIHmSRKotWZZRoz6Q+jZPpLr6i6nKfTK5rtkeTUPYB0NGRwjXSb7t8
-	R+SVjVtpGYjTYJcwW0Gh8+2kiiHA/A0zrditCATn1kb3iXGURQZrKDqiP/bd4wRiYw+r0lWy1N/
-	nk3lBNdXCz
-X-Google-Smtp-Source: AGHT+IFsDUVoZATaLzj9N1/hjfRE03GZ2gIP+Qj4HQeX9tt2ONoJL779FMDFpau9DQULSPR5u/L2Cg==
-X-Received: by 2002:a05:6512:1154:b0:597:d59a:69ca with SMTP id 2adb3069b0e04-598faa4d5b5mr3889154e87.28.1765821580147;
-        Mon, 15 Dec 2025 09:59:40 -0800 (PST)
-Received: from localhost ([194.190.17.114])
-        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-5990da11dbfsm5648e87.13.2025.12.15.09.59.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Dec 2025 09:59:39 -0800 (PST)
-From: Askar Safin <safinaskar@gmail.com>
-To: rdunlap@infradead.org
-Cc: initramfs@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v4 1/3] init: remove deprecated "load_ramdisk" and "prompt_ramdisk" command line parameters
-Date: Mon, 15 Dec 2025 20:59:27 +0300
-Message-ID: <20251215175927.300936-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <5c3c4233-3572-4842-850e-0a88ce16eee3@infradead.org>
-References: <5c3c4233-3572-4842-850e-0a88ce16eee3@infradead.org>
+	s=arc-20240116; t=1765821631; c=relaxed/simple;
+	bh=PP1QB9fP7iJIa9UMyxTSOQmxthWq7BvOOJOKOeGeSgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=St1uh+iePI1xBVK+qdyvjo90mANimIyhUr3WX7/XM2M8CYMFmGdeZfzFPbR2h02RWqdUcr3df4N6P0OfX6/iepKZ+URvjjrbuIJr+i1NTIToqYdsjQCWXe1y0+bObGiuHWdcIuKbiD6Gouj3a2AC/9+A3lOB5DsSk7KZLjbwXpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dA7IVJmI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1RPZ0nE7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dA7IVJmI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1RPZ0nE7; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CA36C337FA;
+	Mon, 15 Dec 2025 18:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1765821627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NB+wF0ukLb6g2fbRJemjtHvsFGr3BKPYjICDCF6HH+k=;
+	b=dA7IVJmIx4yykWLzmbmNGytoNvmrE2GCvufzTNYMpw1+oK49blXx+hVpb+DJsYkwyEpA/C
+	drlGJBlYDPSEbiNn7DclExM6ol11MD4Nsbm/vwF/UMoATwZd1yfTBYmmc/zqz+y3McrnBz
+	BCScszpx8S3hoBbwIEeHWnTF5pKbRco=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1765821627;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NB+wF0ukLb6g2fbRJemjtHvsFGr3BKPYjICDCF6HH+k=;
+	b=1RPZ0nE7XHEdIQR6UnyTwJDTir6oc7uGcoXgMs/XPbzWrTzAeJnl/XwbGdd/+Th5s7M3Be
+	rM82wEv2wH2lKWDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1765821627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NB+wF0ukLb6g2fbRJemjtHvsFGr3BKPYjICDCF6HH+k=;
+	b=dA7IVJmIx4yykWLzmbmNGytoNvmrE2GCvufzTNYMpw1+oK49blXx+hVpb+DJsYkwyEpA/C
+	drlGJBlYDPSEbiNn7DclExM6ol11MD4Nsbm/vwF/UMoATwZd1yfTBYmmc/zqz+y3McrnBz
+	BCScszpx8S3hoBbwIEeHWnTF5pKbRco=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1765821627;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NB+wF0ukLb6g2fbRJemjtHvsFGr3BKPYjICDCF6HH+k=;
+	b=1RPZ0nE7XHEdIQR6UnyTwJDTir6oc7uGcoXgMs/XPbzWrTzAeJnl/XwbGdd/+Th5s7M3Be
+	rM82wEv2wH2lKWDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C09893EA63;
+	Mon, 15 Dec 2025 18:00:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id XCUAL7tMQGkNXwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 15 Dec 2025 18:00:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 6B4ACA0927; Mon, 15 Dec 2025 19:00:19 +0100 (CET)
+Date: Mon, 15 Dec 2025 19:00:19 +0100
+From: Jan Kara <jack@suse.cz>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>, jack@suse.cz, 
+	Deepakkumar Karn <dkarn@redhat.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v2] fs/buffer: add alert in try_to_free_buffers() for
+ folios without buffers
+Message-ID: <bqxwr6mbyhgstdidmhvz7cbojkdizmlrsdu3x7cfj3n4xt5nuy@h7imqnipzihl>
+References: <20251211131211.308021-1-dkarn@redhat.com>
+ <20251215-zuckungen-autogramm-a0c4291e525b@brauner>
+ <aUAWwPWDq0GgAjnP@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aUAWwPWDq0GgAjnP@casper.infradead.org>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.990];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
 
-Randy Dunlap <rdunlap@infradead.org>:
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+On Mon 15-12-25 14:10:08, Matthew Wilcox wrote:
+> On Mon, Dec 15, 2025 at 03:07:35PM +0100, Christian Brauner wrote:
+> > On Thu, 11 Dec 2025 18:42:11 +0530, Deepakkumar Karn wrote:
+> > > try_to_free_buffers() can be called on folios with no buffers attached
+> > > when filemap_release_folio() is invoked on a folio belonging to a mapping
+> > > with AS_RELEASE_ALWAYS set but no release_folio operation defined.
+> > > 
+> > > In such cases, folio_needs_release() returns true because of the
+> > > AS_RELEASE_ALWAYS flag, but the folio has no private buffer data. This
+> > > causes try_to_free_buffers() to call drop_buffers() on a folio with no
+> > > buffers, leading to a null pointer dereference.
+> > > 
+> > > [...]
+> > 
+> > Applied to the vfs-7.0.misc branch of the vfs/vfs.git tree.
+> > Patches in the vfs-7.0.misc branch should appear in linux-next soon.
 > 
-> Thanks.
+> No, this is the wrong fix.  Please drop.
 
-Thank you!
+Nobody says this is a fix (it has WARN_ON() in it after all). But it's a
+sensible hardening regardless of other changes we do in this area. After our
+discussion I agree that the change to mapping_set_release_always() is not
+needed if we instead rework how .release_folio (and try_to_free_buffers())
+is called but this is a separate change...
 
-P. S. For unknown reasons I don't see your email in my Gmail. Not even in
-spam folder.
-
-
+								Honza
 -- 
-Askar Safin
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
