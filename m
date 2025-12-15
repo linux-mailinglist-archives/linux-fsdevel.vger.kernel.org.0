@@ -1,161 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-71365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2606ECBF56C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 19:02:39 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id A812CCBF5CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 19:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DCC2E3016340
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 18:00:33 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id E1A5930210E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 18:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B97325496;
-	Mon, 15 Dec 2025 18:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339C7339B52;
+	Mon, 15 Dec 2025 18:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dA7IVJmI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1RPZ0nE7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dA7IVJmI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1RPZ0nE7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmLoifyw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F75322C73
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 18:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B2A338904
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 18:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765821631; cv=none; b=jUC5bM+k2KqW+icJXN7nfUaF3kyVZCRE483fb97xheXvqVi4J26r1RLrMTI6YzP62q2TXJLOzReY/QuXyoTdHssAFCHiHkktrnp8CjQtuadSsumlP2AZx89dNDe1FcW4C4R+ljroOK2JyNnxF6l0XgyaNKZVFPPGzMgutGlxMOw=
+	t=1765822196; cv=none; b=jLg646QRuT7yv22JXKr7K6dUpDEQSoTnxeBPpQKSihxmOguJo6iGTFhHa831z9cR0yFGLsuXkc/9odZO25bmcUhETRrDpzVxTZxLHpOy802C/j7A+bgoUPrjhvDYGiW1QIYmBJhdsRLAW5poOsuQb1GSuLw+CN9JGrzkXS5ZYOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765821631; c=relaxed/simple;
-	bh=PP1QB9fP7iJIa9UMyxTSOQmxthWq7BvOOJOKOeGeSgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=St1uh+iePI1xBVK+qdyvjo90mANimIyhUr3WX7/XM2M8CYMFmGdeZfzFPbR2h02RWqdUcr3df4N6P0OfX6/iepKZ+URvjjrbuIJr+i1NTIToqYdsjQCWXe1y0+bObGiuHWdcIuKbiD6Gouj3a2AC/9+A3lOB5DsSk7KZLjbwXpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dA7IVJmI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1RPZ0nE7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dA7IVJmI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1RPZ0nE7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CA36C337FA;
-	Mon, 15 Dec 2025 18:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765821627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NB+wF0ukLb6g2fbRJemjtHvsFGr3BKPYjICDCF6HH+k=;
-	b=dA7IVJmIx4yykWLzmbmNGytoNvmrE2GCvufzTNYMpw1+oK49blXx+hVpb+DJsYkwyEpA/C
-	drlGJBlYDPSEbiNn7DclExM6ol11MD4Nsbm/vwF/UMoATwZd1yfTBYmmc/zqz+y3McrnBz
-	BCScszpx8S3hoBbwIEeHWnTF5pKbRco=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765821627;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NB+wF0ukLb6g2fbRJemjtHvsFGr3BKPYjICDCF6HH+k=;
-	b=1RPZ0nE7XHEdIQR6UnyTwJDTir6oc7uGcoXgMs/XPbzWrTzAeJnl/XwbGdd/+Th5s7M3Be
-	rM82wEv2wH2lKWDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765821627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NB+wF0ukLb6g2fbRJemjtHvsFGr3BKPYjICDCF6HH+k=;
-	b=dA7IVJmIx4yykWLzmbmNGytoNvmrE2GCvufzTNYMpw1+oK49blXx+hVpb+DJsYkwyEpA/C
-	drlGJBlYDPSEbiNn7DclExM6ol11MD4Nsbm/vwF/UMoATwZd1yfTBYmmc/zqz+y3McrnBz
-	BCScszpx8S3hoBbwIEeHWnTF5pKbRco=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765821627;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NB+wF0ukLb6g2fbRJemjtHvsFGr3BKPYjICDCF6HH+k=;
-	b=1RPZ0nE7XHEdIQR6UnyTwJDTir6oc7uGcoXgMs/XPbzWrTzAeJnl/XwbGdd/+Th5s7M3Be
-	rM82wEv2wH2lKWDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C09893EA63;
-	Mon, 15 Dec 2025 18:00:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XCUAL7tMQGkNXwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Dec 2025 18:00:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6B4ACA0927; Mon, 15 Dec 2025 19:00:19 +0100 (CET)
-Date: Mon, 15 Dec 2025 19:00:19 +0100
-From: Jan Kara <jack@suse.cz>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, jack@suse.cz, 
-	Deepakkumar Karn <dkarn@redhat.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2] fs/buffer: add alert in try_to_free_buffers() for
- folios without buffers
-Message-ID: <bqxwr6mbyhgstdidmhvz7cbojkdizmlrsdu3x7cfj3n4xt5nuy@h7imqnipzihl>
-References: <20251211131211.308021-1-dkarn@redhat.com>
- <20251215-zuckungen-autogramm-a0c4291e525b@brauner>
- <aUAWwPWDq0GgAjnP@casper.infradead.org>
+	s=arc-20240116; t=1765822196; c=relaxed/simple;
+	bh=Gd8DcJXPdYpYzHvc8vztMt3k9avy5V2xDnRpZLOlOdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dqRPJBvYo9qmW2g3MVk3MvHPEiT+o5h8n7Cv6h4sky0ij7yF1l5qfIziR5AbwjVvgj4jvZPUrYFLl3+qt1q25rrDvORuelbfn0vxvL0Km5Hlm2NRUmvFsx9oM/j61kzBzvM/akdIiVSrMGXSGj89UeGymqYntDsIZHEeVfUcscY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hmLoifyw; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-640ca678745so7397630a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 10:09:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765822193; x=1766426993; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PQCL+HwWypxdtQ2FQkCr64ZPgIWt3g5fyAei1RWbYrA=;
+        b=hmLoifyw1fvSeps5jeU0wBNUBzp/YsVg+wbUt3UFlyQOcxrwfTatRGmJ3ssHbM2Skc
+         PzA5ECH34DNxtn33IwSHsK3qTNftQmgxzCqJYgPKh31Y1ld6J7zHxYWVWmZ9WmUcPpXu
+         QiOe7wd1YfyBEqndOcfeUcA9wn/UGvr3GEhySKmKmGD/lMIKlwUIpPdISnriTCOOaOWT
+         Jt2ZHG66UNL3H4vnLbvpOfDjUYKfcAWraS/gf3qXDmNNikOE7VTNX1/foyzoq/vC62kT
+         a4oUDPsrICwR+auFs1yq+lg+1sb3cz0KKaLkvOZ4Yyq6VGhKiVdFxOeoDlFf9VYuv0vm
+         uf2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765822193; x=1766426993;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=PQCL+HwWypxdtQ2FQkCr64ZPgIWt3g5fyAei1RWbYrA=;
+        b=JNxGoBFOuKxU9jlEqux1jn2FdDyOjsgM2G9lke6T90TrNcdv2AeQOJd6Uc1f7v8uwq
+         wPvoAyhZNaSTOOnlmkgy+hx44AX5s4/4XgWfF+9lFEqaB/pXtiqRjbqj1KRL7ThBAFjT
+         3yquxq3tB00DgHSx9ofI4OcNWjbGafMOdtQhCGdfos75AF58Cw83as08ulXiyHX9pNF2
+         UyBqRq+ARPKmLFF/Mn1jfZG8tFeLrAKvSlyccf1qk+PyijnPPjyBUds9ikNRw1yJz86A
+         WS+89pRh4Sg3jL8x/0eJZNZDM6KpiuYFqnS9QxcyVDT6s15FTPru4Bw/iBteB0qsr5ZI
+         IvMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYUeCA2ofitZmp9RJCx3PABhVKTRpJdrvuGd9zROprDxweEv0wdd+MKXlvWawtHNxAahJoH4iJwp5RSA2E@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfyipM14Vyw4BGJexPZTWq+y6YpF/R4WEZeXngtUjjaG50UHxe
+	Uv61i35CFA9FHOzUynn5RGPNsjbS//dRYqBzXmI5fJOQQeQa2tb+ogCsKtcuFqtiemEfdKpglNy
+	EJlDJHIrVA1a8sL2EpFC5SiIqJVBi5g8=
+X-Gm-Gg: AY/fxX5S8ZvFt5aT/weqkjeM4jNK8BiwCpvYPEtEISQiGz7Q7ROFDAMf4ojRtmhmBP+
+	zYvOKnpBU4E/0ySxZ/HPzbVy1B3IXWcPX8+ljcjkBrgt4kWgIofbJfgpjsyoNZYcPTLC9uRKBeS
+	58mKCeaN2TIpBdbzEN7ThDPWYIUgZ1vDIirAPmjTJZc5LVQ+l7SggGZvDVSmah1Rtnrro7VCIue
+	wJ8qQtoa/Bb0WHqeNulO7INpvhTU488dAT1jZFpmOGl5uhKvo0jiQu8LerzlTR6tfvo00gf0xsf
+	IvwoiVNvqXJ8knbU06icMNNvUxhwEA==
+X-Google-Smtp-Source: AGHT+IHcdsw0TmXCkgRXvoiHN56SVQuerdwwmxQLhKtsgwBAN+D7k0zVL6uUOdqPjF8LlyQU+mVT2sZysteLT5FPaVg=
+X-Received: by 2002:a05:6402:5194:b0:649:2336:deed with SMTP id
+ 4fb4d7f45d1cf-6499b1cc740mr11313567a12.16.1765822192832; Mon, 15 Dec 2025
+ 10:09:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aUAWwPWDq0GgAjnP@casper.infradead.org>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.990];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+References: <20251212181254.59365-1-luis@igalia.com> <20251212181254.59365-4-luis@igalia.com>
+ <87f48f32-ddc4-4c57-98c1-75bc5e684390@ddn.com> <CAOQ4uxj_-_zbuCLdWuHQj4fx2sBOn04+-6F2WiC9SRdmcacsDA@mail.gmail.com>
+ <8bae31f2-37fc-4a87-98c8-4aa966c812af@ddn.com>
+In-Reply-To: <8bae31f2-37fc-4a87-98c8-4aa966c812af@ddn.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 15 Dec 2025 19:09:41 +0100
+X-Gm-Features: AQt7F2pKvuVuAyuwmGAbS8nriYdpokIMqWKel66P15TG6hYFEU6W0p9LBRn7NRY
+Message-ID: <CAOQ4uxh-+S_KMSjH6CYRGa--aLfQOeqCTt=22DGSRQUJTJ2bPw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 3/6] fuse: initial infrastructure for
+ FUSE_LOOKUP_HANDLE support
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Kevin Chen <kchen@ddn.com>, 
+	Horst Birthelmer <hbirthelmer@ddn.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Matt Harvey <mharvey@jumptrading.com>, 
+	"kernel-dev@igalia.com" <kernel-dev@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 15-12-25 14:10:08, Matthew Wilcox wrote:
-> On Mon, Dec 15, 2025 at 03:07:35PM +0100, Christian Brauner wrote:
-> > On Thu, 11 Dec 2025 18:42:11 +0530, Deepakkumar Karn wrote:
-> > > try_to_free_buffers() can be called on folios with no buffers attached
-> > > when filemap_release_folio() is invoked on a folio belonging to a mapping
-> > > with AS_RELEASE_ALWAYS set but no release_folio operation defined.
-> > > 
-> > > In such cases, folio_needs_release() returns true because of the
-> > > AS_RELEASE_ALWAYS flag, but the folio has no private buffer data. This
-> > > causes try_to_free_buffers() to call drop_buffers() on a folio with no
-> > > buffers, leading to a null pointer dereference.
-> > > 
-> > > [...]
-> > 
-> > Applied to the vfs-7.0.misc branch of the vfs/vfs.git tree.
-> > Patches in the vfs-7.0.misc branch should appear in linux-next soon.
-> 
-> No, this is the wrong fix.  Please drop.
+On Mon, Dec 15, 2025 at 6:11=E2=80=AFPM Bernd Schubert <bschubert@ddn.com> =
+wrote:
+>
+> On 12/15/25 18:06, Amir Goldstein wrote:
+> > On Mon, Dec 15, 2025 at 2:36=E2=80=AFPM Bernd Schubert <bschubert@ddn.c=
+om> wrote:
+> >>
+> >> Hi Luis,
+> >>
+> >> I'm really sorry for late review.
+> >>
+> >> On 12/12/25 19:12, Luis Henriques wrote:
+> >>> This patch adds the initial infrastructure to implement the LOOKUP_HA=
+NDLE
+> >>> operation.  It simply defines the new operation and the extra fuse_in=
+it_out
+> >>> field to set the maximum handle size.
+> >>>
+> >>> Signed-off-by: Luis Henriques <luis@igalia.com>
+> >>> ---
+> >>>    fs/fuse/fuse_i.h          | 4 ++++
+> >>>    fs/fuse/inode.c           | 9 ++++++++-
+> >>>    include/uapi/linux/fuse.h | 8 +++++++-
+> >>>    3 files changed, 19 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> >>> index 1792ee6f5da6..fad05fae7e54 100644
+> >>> --- a/fs/fuse/fuse_i.h
+> >>> +++ b/fs/fuse/fuse_i.h
+> >>> @@ -909,6 +909,10 @@ struct fuse_conn {
+> >>>        /* Is synchronous FUSE_INIT allowed? */
+> >>>        unsigned int sync_init:1;
+> >>>
+> >>> +     /** Is LOOKUP_HANDLE implemented by fs? */
+> >>> +     unsigned int lookup_handle:1;
+> >>> +     unsigned int max_handle_sz;
+> >>> +
 
-Nobody says this is a fix (it has WARN_ON() in it after all). But it's a
-sensible hardening regardless of other changes we do in this area. After our
-discussion I agree that the change to mapping_set_release_always() is not
-needed if we instead rework how .release_folio (and try_to_free_buffers())
-is called but this is a separate change...
+The bitwise section better be clearly separated from the non bitwise sectio=
+n,
+but as I wrote, the bitwise one is not needed anyway.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> >>>        /* Use io_uring for communication */
+> >>>        unsigned int io_uring;
+> >>>
+> >>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> >>> index ef63300c634f..bc84e7ed1e3d 100644
+> >>> --- a/fs/fuse/inode.c
+> >>> +++ b/fs/fuse/inode.c
+> >>> @@ -1465,6 +1465,13 @@ static void process_init_reply(struct fuse_mou=
+nt *fm, struct fuse_args *args,
+> >>>
+> >>>                        if (flags & FUSE_REQUEST_TIMEOUT)
+> >>>                                timeout =3D arg->request_timeout;
+> >>> +
+> >>> +                     if ((flags & FUSE_HAS_LOOKUP_HANDLE) &&
+> >>> +                         (arg->max_handle_sz > 0) &&
+> >>> +                         (arg->max_handle_sz <=3D FUSE_MAX_HANDLE_SZ=
+)) {
+> >>> +                             fc->lookup_handle =3D 1;
+> >>> +                             fc->max_handle_sz =3D arg->max_handle_s=
+z;
+> >>
+> >> I don't have a strong opinion on it, maybe
+> >>
+> >> if (flags & FUSE_HAS_LOOKUP_HANDLE) {
+> >>          if (!arg->max_handle_sz || arg->max_handle_sz > FUSE_MAX_HAND=
+LE_SZ) {
+> >>                  pr_info_ratelimited("Invalid fuse handle size %d\n, a=
+rg->max_handle_sz)
+> >>          } else {
+> >>                  fc->lookup_handle =3D 1;
+> >>                  fc->max_handle_sz =3D arg->max_handle_sz;
+> >
+> > Why do we need both?
+> > This seems redundant.
+> > fc->max_handle_sz !=3D 0 is equivalent to fc->lookup_handle
+> > isnt it?
+>
+> I'm personally always worried that some fuse server implementations just
+> don't zero the entire buffer. I.e. areas they don't know about.
+> If all servers are guaranteed to do that the flag would not be needed.
+>
+
+I did not mean that we should not use the flag FUSE_HAS_LOOKUP_HANDLE
+we should definitely use it, but why do we need both
+bool fc->lookup_handle and unsigned fc->max_handle_sz in fuse_conn?
+The first one seems redundant.
+
+Thanks,
+Amir.
 
