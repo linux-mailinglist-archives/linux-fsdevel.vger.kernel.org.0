@@ -1,145 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-71326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F9BCBDBAE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 13:13:42 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2323CBDBB4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 13:14:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2CA583035A75
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 12:05:59 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id E35BD30414FE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 12:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F5F2C15BA;
-	Mon, 15 Dec 2025 12:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4D02E5B32;
+	Mon, 15 Dec 2025 12:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="VOEgTWrP"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q1qPQIc4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E63E2874F8;
-	Mon, 15 Dec 2025 12:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F4A263F5F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 12:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765800354; cv=none; b=n3wmL5Rrye6pVs/hrB/57tDgyuh9asq6TmwVs1IG2Fic5XoV1hoyr0q+WCciH0v5Ar7gQw2iTKatbmge74LSVAd0tZK2zzskjvpclfY/UuQmsSch5OrOlU+2RN+MqLriZmpyonKugwC2LGchnCpwfK3txBPft12uMHE3ycdljy4=
+	t=1765800505; cv=none; b=Yu1PYHKoz+JRC3AEXbzF/CahCA1G40fQMmjri2wfsxoMADikfbY8EdMQX8tX56UZOxWNGr+rW9jNXAEgaVkTeg3TFv6ZSyswe+sCp3FcjUn8DG0AvYnS/UN4+MjbpEbuoqM5lJ4nRmb9aHGbQtA2CoNrkTfkUU0weGjykZE93sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765800354; c=relaxed/simple;
-	bh=oiHECL9l14QhufIeCuC4BVFpdI86psH/EZaZbiZ6dTA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UfmTIYctpU5OKZX4iKaJpvOVjCsNh+YFRZdTEhKH5fVFgkKBauaIKNkWhahjHGu2m7oD6z0mfASPzznqB2A1BM4+BLChwKvqUbh0lyZ7pSrzd6u3lQg5AkGnYM0TfxMM6fkAWMZR6/5mMRDcdKnrAjDpGgurPW3JmLIF8/LqhKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=VOEgTWrP; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=tvAkG8GmKC/cUEWyVQ1n51s4lpN0UNsYYiSW3c3ggIk=; b=VOEgTWrP9jr5LzJ/i/mJuO6/m/
-	Swvgxdj0g6wHVnttwBPw/HWfzi9pHap1pU1QvzjkBHprn80DFMNrbazPy9pYsWbqUpZDMQ2uikTtu
-	ICue/EIhSTrct0OrlkRt3F0xU2ZoESjT2tHSzFNtiL0hRSrQYXrL9b8VpR8QSaGWd1M73ISr3jhVH
-	WjBG6YEMQBGmpi8pBYJzs8bNRFVEOu3PBkd/EC+tXTtqbs1fGgj+4F1NDB+4cG7nDGMMMssOkjFrT
-	yOW+1VRf71+jNQh5DtnN1OUHgM5Ked9HzgDNQiPNx+fbVc2kWPuXUmWx+WhLDGEgk4G4Y21KqlOXg
-	IXlwjqgw==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vV7KX-00CvWw-LF; Mon, 15 Dec 2025 13:05:33 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, "Darrick J. Wong"
- <djwong@kernel.org>, Bernd Schubert <bschubert@ddn.com>, Kevin Chen
- <kchen@ddn.com>, Horst Birthelmer <hbirthelmer@ddn.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Harvey
- <mharvey@jumptrading.com>, kernel-dev@igalia.com
-Subject: Re: [RFC PATCH v2 5/6] fuse: factor out NFS export related code
-In-Reply-To: <CAOQ4uxgXdOpr_qYH9hg-nKMLFj06XJP4c1yZ8ZJzCvdCtUok9A@mail.gmail.com>
-References: <20251212181254.59365-1-luis@igalia.com>
- <20251212181254.59365-6-luis@igalia.com>
- <CAOQ4uxgXdOpr_qYH9hg-nKMLFj06XJP4c1yZ8ZJzCvdCtUok9A@mail.gmail.com>
-Date: Mon, 15 Dec 2025 12:05:26 +0000
-Message-ID: <87h5ts2bnd.fsf@wotan.olymp>
+	s=arc-20240116; t=1765800505; c=relaxed/simple;
+	bh=Ov8cS5KYxzY2mYfh/O4WmV6Fp6bmcasgAm++BTdClYU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CgO7smNnJFNVnn2B2DVZUfTSXsDJClGodZ12T8FGiBaFhzplkZTAHOFMD+sdEP5xmkeCuYGWTkUl9u8uEne4pIUE0O0NLoLoSIIScoSLYBGmHbiSNU2Du5O+/oosug88gr4Y3OtRDQwlA4fKkZhcs6pdN0dCah9RFLNLjJ7GvGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q1qPQIc4; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7f0db5700b2so2961738b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 04:08:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1765800501; x=1766405301; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+DGkbwvSveRrQtSlxFukYMul6SfDciYSPOsqEu5ZQPQ=;
+        b=q1qPQIc4ugqGGvmnFRqQUZIooNx9pvIAzURJ8G8Yj3T8j1o7OyytcjgA0nJuxoZIR8
+         0giWXtJ5+Ca9OavO3Cwt+jH9M1sx2y+Huldeoru1TkG2/lNq61NzufEYyPVbxWlGVs8g
+         N2tt3rovceiPQMtxC1tBrTs+EO8bBsdWcDWCOU6R5kkAlUBTXQf+V0AKyxwfRfbYqEbi
+         3tQfq2GetmwYRkCFCYdCfIZtOYCTeaRCoruys44WPGjvV+LoMnspsVJrmvCtynu87o7H
+         JAcAGRW7hO+T/ttk8eZE4G3Uz7xc16gnxZmGdKJqRqztiMDY7Lm/ujLJGecz7Jw9dIsy
+         TKAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765800501; x=1766405301;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+DGkbwvSveRrQtSlxFukYMul6SfDciYSPOsqEu5ZQPQ=;
+        b=QY0G1TJKYEUaxaRdrt3Rok1qqv91ItvBGyqnP0enaZ3yU9ouzax3OKcJ3aFxHtSF/d
+         /m+4MIyqebVS8/whYBX5kozNZhj2bfFp4ln6CqBeubUPX6JafvKxDNw6x/FNcuo5F95z
+         IJtSqu/M4PVdXXfyBvEGNEYkIcuhi7AFFjyRuR7OB7EUb4BNNuCDK6zlObOMTmzsIaei
+         znfiDbsZkBYHFgNZPS9lRzSSWIN/TH7/MBVCgFr7H1upTnLGtVkHNiqHpC5OIyeIWx4N
+         AozhsHSRh//gXCMuTEcpRLwJj9dMpb4wGjGRdUEUjulPJRdbz6GpAe7kP7FdgkaZ+vxi
+         Q6fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPxrzL9mkGQZzVByr70cDUTIAX3I0qNs8j/+L3dZqCX4zsisyh4MsB3FE2muYKKY+xtUrfRaBWEeZyw1CI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXNN/Frqz0sId/Hk4fda22kS0DPyT8wbl1TQnMhN4At+8GEBIl
+	f7J8FHEQY3M8eWRl1B3PhhitrID4Nq9qo0KTgsv1ZcOgP5Mrb0UFzQaCtffiIVraGrKtGtVxNwj
+	lOj+Gmtm6rR6Z78RURZ0uoD3jTPUzqLT6HfqIcu+D
+X-Gm-Gg: AY/fxX5ig/2yI8bmsgvXJyRDBmPPJ7pmqZmP/LYSYNmA+E1tH6GyWHBaqP4PD5LmaT8
+	rr71jGzz+y764R9o9BDvn8m0g9QlJdxYIgzd0jhW8sdfdxh4yx477AJKej0MHo329omky5yCEHV
+	6xX71wF7zMqTdnx6L2taCEEwctIX+ZNbZs2jElWEWZ2crUXoKQkXTU6lngZkI316uxZAXigHu+6
+	CwfoXk4UsI9RyMLKe/81ORIDloDItNCQx4Tb9M7hjzeh3LDtpjkUgwV/Eq9FM4aJnHSKZM/uOqG
+	MzQrztaUZIUN4YoOxIeZDBQsw+brva/1hbYA
+X-Google-Smtp-Source: AGHT+IEBC+acRqtjaBBJQBmhlbonF1wwGFrMO77Zlp8D2bmspUQHM2nItV5HpI3KRFKcy27LH5o2hYak0ysa4tYnvE8=
+X-Received: by 2002:a05:701a:ca0d:b0:11b:8fc9:9f5d with SMTP id
+ a92af1059eb24-11f34c4d15emr7306064c88.30.1765800500924; Mon, 15 Dec 2025
+ 04:08:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20251215113903.46555-1-bagasdotme@gmail.com> <20251215113903.46555-6-bagasdotme@gmail.com>
+In-Reply-To: <20251215113903.46555-6-bagasdotme@gmail.com>
+From: Marco Elver <elver@google.com>
+Date: Mon, 15 Dec 2025 13:07:43 +0100
+X-Gm-Features: AQt7F2pEt11ob6m3jn_EvmNyiM9lcI5ir1gIqaEopvbMbWpYo3dEgZbn6PIAiFk
+Message-ID: <CANpmjNNrHYCPp19A_FPeFY1kSTuyS0W_zjo21AUrmjqjqcYa0A@mail.gmail.com>
+Subject: Re: [PATCH 05/14] mm, kfence: Describe @slab parameter in __kfence_obj_info()
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux AMDGPU <amd-gfx@lists.freedesktop.org>, 
+	Linux DRI Development <dri-devel@lists.freedesktop.org>, 
+	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>, Linux Media <linux-media@vger.kernel.org>, 
+	linaro-mm-sig@lists.linaro.org, kasan-dev@googlegroups.com, 
+	Linux Virtualization <virtualization@lists.linux.dev>, 
+	Linux Memory Management List <linux-mm@kvack.org>, Linux Network Bridge <bridge@lists.linux.dev>, 
+	Linux Networking <netdev@vger.kernel.org>, Harry Wentland <harry.wentland@amd.com>, 
+	Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Matthew Brost <matthew.brost@intel.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Alexander Potapenko <glider@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Ido Schimmel <idosch@nvidia.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Taimur Hassan <Syed.Hassan@amd.com>, Wayne Lin <Wayne.Lin@amd.com>, Alex Hung <alex.hung@amd.com>, 
+	Aurabindo Pillai <aurabindo.pillai@amd.com>, Dillon Varone <Dillon.Varone@amd.com>, 
+	George Shen <george.shen@amd.com>, Aric Cyr <aric.cyr@amd.com>, 
+	Cruise Hung <Cruise.Hung@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Sunil Khatri <sunil.khatri@amd.com>, Dominik Kaszewski <dominik.kaszewski@amd.com>, 
+	David Hildenbrand <david@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Max Kellermann <max.kellermann@ionos.com>, 
+	"Nysal Jan K.A." <nysal@linux.ibm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Alexey Skidanov <alexey.skidanov@intel.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Vitaly Wool <vitaly.wool@konsulko.se>, 
+	Harry Yoo <harry.yoo@oracle.com>, Mateusz Guzik <mjguzik@gmail.com>, NeilBrown <neil@brown.name>, 
+	Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
+	Ivan Lipski <ivan.lipski@amd.com>, Tao Zhou <tao.zhou1@amd.com>, 
+	YiPeng Chai <YiPeng.Chai@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>, 
+	Lyude Paul <lyude@redhat.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Luben Tuikov <luben.tuikov@amd.com>, Matthew Auld <matthew.auld@intel.com>, 
+	Roopa Prabhu <roopa@cumulusnetworks.com>, Mao Zhu <zhumao001@208suo.com>, 
+	Shaomin Deng <dengshaomin@cdjrlc.com>, Charles Han <hanchunchao@inspur.com>, 
+	Jilin Yuan <yuanjilin@cdjrlc.com>, Swaraj Gaikwad <swarajgaikwad1925@gmail.com>, 
+	George Anthony Vernon <contact@gvernon.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Dec 14 2025, Amir Goldstein wrote:
-
-> On Fri, Dec 12, 2025 at 7:13=E2=80=AFPM Luis Henriques <luis@igalia.com> =
-wrote:
->>
->> Move all the NFS-related code into a different file.  This is just
->> preparatory work to be able to use the LOOKUP_HANDLE file handles as the=
- NFS
->> handles.
->>
->> Signed-off-by: Luis Henriques <luis@igalia.com>
+On Mon, 15 Dec 2025 at 12:39, Bagas Sanjaya <bagasdotme@gmail.com> wrote:
 >
-> Very nice.
-> Apart from minor nit below, feel free to add:
+> Sphinx reports kernel-doc warning:
+>
+> WARNING: ./include/linux/kfence.h:220 function parameter 'slab' not described in '__kfence_obj_info'
+>
+> Fix it by describing @slab parameter.
+>
+> Fixes: 2dfe63e61cc31e ("mm, kfence: support kmem_dump_obj() for KFENCE objects")
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+Acked-by: Marco Elver <elver@google.com>
 
 Thanks!
 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  include/linux/kfence.h | 1 +
+>  1 file changed, 1 insertion(+)
 >
->> ---
->>  fs/fuse/Makefile |   2 +-
->>  fs/fuse/dir.c    |   1 +
->>  fs/fuse/export.c | 174 +++++++++++++++++++++++++++++++++++++++++++++++
->>  fs/fuse/fuse_i.h |   6 ++
->>  fs/fuse/inode.c  | 167 +--------------------------------------------
->>  5 files changed, 183 insertions(+), 167 deletions(-)
->>  create mode 100644 fs/fuse/export.c
->>
->> diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
->> index 22ad9538dfc4..1d1401658278 100644
->> --- a/fs/fuse/Makefile
->> +++ b/fs/fuse/Makefile
->> @@ -12,7 +12,7 @@ obj-$(CONFIG_VIRTIO_FS) +=3D virtiofs.o
->>
->>  fuse-y :=3D trace.o      # put trace.o first so we see ftrace errors so=
-oner
->>  fuse-y +=3D dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.=
-o ioctl.o
->> -fuse-y +=3D iomode.o
->> +fuse-y +=3D iomode.o export.o
->>  fuse-$(CONFIG_FUSE_DAX) +=3D dax.o
->>  fuse-$(CONFIG_FUSE_PASSTHROUGH) +=3D passthrough.o backing.o
->>  fuse-$(CONFIG_SYSCTL) +=3D sysctl.o
->> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
->> index a6edb444180f..a885f1dc61eb 100644
->> --- a/fs/fuse/dir.c
->> +++ b/fs/fuse/dir.c
->> @@ -190,6 +190,7 @@ static void fuse_lookup_init(struct fuse_conn *fc, s=
-truct fuse_args *args,
->>
->>                 args->opcode =3D FUSE_LOOKUP_HANDLE;
->>                 args->out_argvar =3D true;
->> +               args->out_argvar_idx =3D 0;
->>
+> diff --git a/include/linux/kfence.h b/include/linux/kfence.h
+> index 0ad1ddbb8b996a..e5822f6e7f2794 100644
+> --- a/include/linux/kfence.h
+> +++ b/include/linux/kfence.h
+> @@ -211,6 +211,7 @@ struct kmem_obj_info;
+>   * __kfence_obj_info() - fill kmem_obj_info struct
+>   * @kpp: kmem_obj_info to be filled
+>   * @object: the object
+> + * @slab: the slab
+>   *
+>   * Return:
+>   * * false - not a KFENCE object
+> --
+> An old man doll... just what I always wanted! - Clara
 >
-> This change looks out of place.
-
-Oops! Indeed, not sure how that happen.  This change belongs to patch
-
-  fuse: store index of the variable length argument
-
-> Keep in mind that it may take me some time to get to the rest of the patc=
-hes,
-> but this one was a low hanging review.
-
-Sure, no problem.  I just wanted to send a new rev before everyone goes
-off for EOY break.  But I understand  it'll probably take some time before
-anyone has a look into it.
-
-[ And maybe this -- FUSE restartability -- is even a topic for LSFMM. ]
-
-Cheers,
---=20
-Lu=C3=ADs
 
