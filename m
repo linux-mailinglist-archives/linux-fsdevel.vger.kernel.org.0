@@ -1,164 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-71343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 866ABCBE5A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:43:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B182CCBE9BB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 16:22:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 7DB43301275E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 14:42:57 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 19E793061C7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD863446D3;
-	Mon, 15 Dec 2025 14:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C9E345752;
+	Mon, 15 Dec 2025 14:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/CA3vtW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFCKKO8Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E898D3446C3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 14:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA65B3451D9;
+	Mon, 15 Dec 2025 14:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765808387; cv=none; b=nL9Ow/eqct4NvhB+x2KFDPJlEzAksygL80yWbPBx+OubJBlBe1kOP824d38q1qG3+BK/8Cs1V68+BpyXpuZjj8ZOJM0K2TS29Fi9uYbXpGME9TyvsYuWWZnjb7eONU0dZFEBIXYM5zX0E4ASKpFQO6QCpaFjiMdYr6RxFygVPPc=
+	t=1765808401; cv=none; b=Uz/ULNkROUSRhpVbfpWDpmGr7rc+aSqYkuhZUQpXW2ca5s5v5GaCVfYrEHsTV21OrRLyo9H5EpnPv6NYtiV8WnaaNUYPk2w8VhG+NJCq8ji1GqJCOBp+mEhJrNq/q+LXzfX4xw7wjogdm0Ols8d/MTQzcgr/XqW2gPqaqketfJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765808387; c=relaxed/simple;
-	bh=OzMBOJxaVDe8N1dePuBrfiBywTYG3E45s+K3aAqvcXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tw3ReHK1uzepTMYwgiwyRdaUj0VdY1roixXMMgOqGZRo/1hNKhzqUjTHlhFnn/En3dj3MoWj7S+Uws1Y2P758Z1loUFknBoQDuJmZbGyqHWkq9TNMSSLVblg/0StY5I+ZRWF66XmFYX3AXn3vd+CUykZIXjGfTxVGNjkfg0MY0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/CA3vtW; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-34c61194e88so944655a91.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 06:19:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765808385; x=1766413185; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sz2ZyabzWF0ZrqxI+wXOJC7zHA/OIk4HRDatPq5ZR/Y=;
-        b=A/CA3vtW8Iiob46zM5WfQslL4YcacgGnaT6+e+Pc+wi5BHqXkGfNBR3oNJFjlP6g2u
-         mW6lVitN9LWIo63h//QgX1H9ekrxgmbuY7jT11ilMsS9z3vdhMHigO5miVma7zCkFmj+
-         vT1p1oU2ycPpdoV5TSG+xSaJembnEUEtF0oF7MAFO4MgrxK9AUPzxm0Pkc9pk9UnGaRF
-         Wtia1sSa1ceIVEnbGZJN8epYGlBKmh50t9pJr5o5dP7pU0Et1qz1mHCIVmPwom0FaDrr
-         Ti4fjWmWVSz8p6QO3jgBzHFTzkjfjy+4M4wvIXkQdF0DmIpzyMlDh+6oUSuPULcFSJA2
-         RFrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765808385; x=1766413185;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sz2ZyabzWF0ZrqxI+wXOJC7zHA/OIk4HRDatPq5ZR/Y=;
-        b=RchwzN/VFKr1HMAHoYvc8Ebiny5Da/1bDu9REmbCUn2ylZ3sSDPhdslsOIANfjGlX5
-         uFJgcxXmkL6B+aeSUc8g5IApDmGIl/uJUBNbROgYU1N+HMLyvqvpKGEcdczVuwsKJaQQ
-         bMHPLnwzydPtZnk+iWt8WHWHVkPJU86CGfVUXA3bP0lUHv69mYMcJBmHpwp2cRUfdxSL
-         5aT6oHUEnAdCnDNfZ6f+RM2AMZyei9LQXoGNWQbI9YzfWpQotZZEumoR8kKpbU6h1FcX
-         99m51c3cf9ufbY98x9exxT013mDHPi8hKvBFeaX8KsAeaV5m+PmJrf86E3TWg0QcGRLS
-         z60w==
-X-Forwarded-Encrypted: i=1; AJvYcCVDQPFXMxoV9T77pSTuFUDKSfLe+O1sby+z2yvKzbSyT+FkdSXdmv1dyRqlroj7t7c5odk6wQA6OtC2sb9/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7vTskk1RpaNAJiBR+8xNg0XQNlw/R3R5+c+SADOVyucSMs3os
-	9V8YPlg3fYImMRlb4N0uHw2FBP1lVx6Lqcshetu5rstF/308x1GE5kgM
-X-Gm-Gg: AY/fxX6G4GFFiQaWKXwl3ORbbCaqUnMEkhaPrOfomAanaG4uPZQ7qjYp592yYBea6jG
-	0nadzzAoFJixd+ehf5KRXCDAH6diS0Qr2IdHjmjK1W230jOZ2yS92HBeBIBKvut1PByab0VCjdG
-	LG1eZZOjr+10s/1y7oisac3eHaT16H2zdTn1SUMv/Z7/7MBr0YLVcZ+LzHrDrXZzvLbK1US1WuQ
-	OI+MaZY8Bz23JGu9HErCzWOIoSfdtiM1xHksGIXbMSejryv+rxxn8SCXA1RLP4oVLmZHkIAj1v4
-	kP7qozjwdv3+p4MXj/DJVyS0EATmTbTosabEJz2leL16kCo2VSmuh+NTfiEVNPXkyKVyzAs2EYS
-	ir9Ul6xgBmsfbfbtC2/Go1eLBdnjpGE1uMZzd1q3tN4oXQUIwq+cUVDfaJG+jvvss5w/K5i+ULJ
-	sYk9I=
-X-Google-Smtp-Source: AGHT+IGdF2f/MNFoSK/nrxLbzKgQ5vS0nfeLfMK+djS7OwzM+f7jzutmhjxvjiyFHRAZZn9EuGNBFQ==
-X-Received: by 2002:a17:90b:3c4f:b0:340:9cf1:54d0 with SMTP id 98e67ed59e1d1-34abd7a93f1mr9394279a91.1.1765808385125;
-        Mon, 15 Dec 2025 06:19:45 -0800 (PST)
-Received: from localhost ([2a12:a304:100::105b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34abe1ffde5sm9524411a91.1.2025.12.15.06.19.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Dec 2025 06:19:44 -0800 (PST)
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Hannes Reinecke <hare@suse.de>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org,
-	Jinchao Wang <wangjinchao600@gmail.com>,
-	syzbot+4d3cc33ef7a77041efa6@syzkaller.appspotmail.com,
-	syzbot+fdba5cca73fee92c69d6@syzkaller.appspotmail.com
-Subject: [PATCH] mm/readahead: read min folio constraints under invalidate lock
-Date: Mon, 15 Dec 2025 22:19:00 +0800
-Message-ID: <20251215141936.1045907-1-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1765808401; c=relaxed/simple;
+	bh=SOKNAp3KlXqmQkYAHiY1KnI5hmWZlwxQAhzfS0nZwp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kIoEB+n1sPAcQgcbWZrUiLBH+jZQZY3o6jxGUMLFjiuxGX500ACkKSve6XLqihOQw8EGfPHDOGNnKS8OpLkaOFF+tBdZQb1xKhsgLoTGcgp1JuPnzZ7c67KaxgVeZHXxsXIsLIC2cP2eGx2RBcmLvjW8qVe5gMficrmvqbPcgfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DFCKKO8Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0605C4CEF5;
+	Mon, 15 Dec 2025 14:19:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765808400;
+	bh=SOKNAp3KlXqmQkYAHiY1KnI5hmWZlwxQAhzfS0nZwp0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DFCKKO8Y56kGcvgU39JK+toyUpk4jGwiPG6HyglacSq1MKmKkenC3jKNS9/HS5ipp
+	 B6NSOx8wBgq7Am6EMfMeh1PNOzsczwCgxkrjC6/z42Hk9J8i+SuYZOm6VUp9ou3SV9
+	 dgItcJM7Pf5rvLbJn9iHf33BlNlYry5yy3lCZ7IwJ+0MJKNGUTfNv5fUXEn1llrPl4
+	 EdZzX8EDySvcR9aLsG+tR4I+BaJYILYt8x/3OPDwPDyv8kLUOno34+gcWfYODinh1u
+	 qnMHAYCJBYMihFLwg4WxBl6Nw3qxa68g95/milv0l5zl+UvAMcycihLDuAxNErOEg+
+	 Xu0/K5zP9ANjw==
+Date: Mon, 15 Dec 2025 15:19:49 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, 
+	NeilBrown <neil@brown.name>, Val Packett <val@packett.cool>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>, 
+	David Sterba <dsterba@suse.com>, David Howells <dhowells@redhat.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Olga Kornievskaia <okorniev@redhat.com>, 
+	Dai Ngo <Dai.Ngo@oracle.com>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Carlos Maiolino <cem@kernel.org>, John Johansen <john.johansen@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Stefan Berger <stefanb@linux.ibm.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org
+Subject: Re: [PATCH] fuse: fix conversion of fuse_reverse_inval_entry() to
+ start_removing()
+Message-ID: <20251215-immens-hurtig-1f0b23aa4bf3@brauner>
+References: <20251113002050.676694-1-neilb@ownmail.net>
+ <20251113002050.676694-7-neilb@ownmail.net>
+ <6713ea38-b583-4c86-b74a-bea55652851d@packett.cool>
+ <176454037897.634289.3566631742434963788@noble.neil.brown.name>
+ <CAOQ4uxjihcBxJzckbJis8hGcWO61QKhiqeGH+hDkTUkDhu23Ww@mail.gmail.com>
+ <20251201083324.GA3538@ZenIV>
+ <CAJfpegs+o01jgY76WsGnk9j41LS5V0JQSk--d6xsJJp4VjTh8Q@mail.gmail.com>
+ <20251205-unmoralisch-jahrtausend-cca02ad0e4fa@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251205-unmoralisch-jahrtausend-cca02ad0e4fa@brauner>
 
-page_cache_ra_order() and page_cache_ra_unbounded() read mapping minimum folio
-constraints before taking the invalidate lock, allowing concurrent changes to
-violate page cache invariants.
+On Fri, Dec 05, 2025 at 02:09:41PM +0100, Christian Brauner wrote:
+> On Mon, Dec 01, 2025 at 03:03:08PM +0100, Miklos Szeredi wrote:
+> > On Mon, 1 Dec 2025 at 09:33, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > >
+> > > On Mon, Dec 01, 2025 at 09:22:54AM +0100, Amir Goldstein wrote:
+> > >
+> > > > I don't think there is a point in optimizing parallel dir operations
+> > > > with FUSE server cache invalidation, but maybe I am missing
+> > > > something.
+> > >
+> > > The interesting part is the expected semantics of operation;
+> > > d_invalidate() side definitely doesn't need any of that cruft,
+> > > but I would really like to understand what that function
+> > > is supposed to do.
+> > >
+> > > Miklos, could you post a brain dump on that?
+> > 
+> > This function is supposed to invalidate a dentry due to remote changes
+> > (FUSE_NOTIFY_INVAL_ENTRY).  Originally it was supplied a parent ID and
+> > a name and called d_invalidate() on the looked up dentry.
+> > 
+> > Then it grew a variant (FUSE_NOTIFY_DELETE) that was also supplied a
+> > child ID, which was matched against the looked up inode.  This was
+> > commit 451d0f599934 ("FUSE: Notifying the kernel of deletion."),
+> > Apparently this worked around the fact that at that time
+> > d_invalidate() returned -EBUSY if the target was still in use and
+> > didn't unhash the dentry in that case.
+> > 
+> > That was later changed by commit bafc9b754f75 ("vfs: More precise
+> > tests in d_invalidate") to unconditionally unhash the target, which
+> > effectively made FUSE_NOTIFY_INVAL_ENTRY and FUSE_NOTIFY_DELETE
+> > equivalent and the code in question unnecessary.
+> > 
+> > For the future, we could also introduce FUSE_NOTIFY_MOVE, that would
+> > differentiate between a delete and a move, while
+> > FUSE_NOTIFY_INVAL_ENTRY would continue to be the common (deleted or
+> > moved) notification.
+> > 
+> > Attaching untested patch to remove this cruft.
+> 
+> Should we revert the fuse specific bits of c9ba789dad15 ("VFS: introduce
+> start_creating_noperm() and start_removing_noperm()") and then apply
+> your changes afterwards?
 
-Move the lookups under filemap_invalidate_lock_shared() to ensure readahead
-allocations respect the mapping constraints.
-
-Fixes: 47dd67532303 ("block/bdev: lift block size restrictions to 64k")
-Reported-by: syzbot+4d3cc33ef7a77041efa6@syzkaller.appspotmail.com
-Reported-by: syzbot+fdba5cca73fee92c69d6@syzkaller.appspotmail.com
-Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
----
- mm/readahead.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/mm/readahead.c b/mm/readahead.c
-index b415c9969176..74acd6c4f87c 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -214,7 +214,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
- 	unsigned long index = readahead_index(ractl);
- 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
- 	unsigned long mark = ULONG_MAX, i = 0;
--	unsigned int min_nrpages = mapping_min_folio_nrpages(mapping);
-+	unsigned int min_nrpages;
- 
- 	/*
- 	 * Partway through the readahead operation, we will have added
-@@ -232,6 +232,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
- 				      lookahead_size);
- 	filemap_invalidate_lock_shared(mapping);
- 	index = mapping_align_index(mapping, index);
-+	min_nrpages = mapping_min_folio_nrpages(mapping);
- 
- 	/*
- 	 * As iterator `i` is aligned to min_nrpages, round_up the
-@@ -467,7 +468,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
- 	struct address_space *mapping = ractl->mapping;
- 	pgoff_t start = readahead_index(ractl);
- 	pgoff_t index = start;
--	unsigned int min_order = mapping_min_folio_order(mapping);
-+	unsigned int min_order;
- 	pgoff_t limit = (i_size_read(mapping->host) - 1) >> PAGE_SHIFT;
- 	pgoff_t mark = index + ra->size - ra->async_size;
- 	unsigned int nofs;
-@@ -485,13 +486,16 @@ void page_cache_ra_order(struct readahead_control *ractl,
- 
- 	new_order = min(mapping_max_folio_order(mapping), new_order);
- 	new_order = min_t(unsigned int, new_order, ilog2(ra->size));
--	new_order = max(new_order, min_order);
- 
- 	ra->order = new_order;
- 
- 	/* See comment in page_cache_ra_unbounded() */
- 	nofs = memalloc_nofs_save();
- 	filemap_invalidate_lock_shared(mapping);
-+
-+	min_order = mapping_min_folio_order(mapping);
-+	new_order = max(new_order, min_order);
-+
- 	/*
- 	 * If the new_order is greater than min_order and index is
- 	 * already aligned to new_order, then this will be noop as index
--- 
-2.43.0
-
+I think we shouldn't have this sitting around indefinitely so it would
+be good if we'd get a nod that this is ok or someone sending revert +
+fix that I can pick up. :)
 
