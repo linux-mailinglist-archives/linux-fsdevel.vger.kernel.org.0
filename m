@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-71319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B643CBDAEB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 13:04:56 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1F1CBDA3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 12:55:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 91B8E301C944
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 11:52:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B2092304EB47
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 11:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDD0334389;
-	Mon, 15 Dec 2025 11:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1612335BAF;
+	Mon, 15 Dec 2025 11:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0JdnHzO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAd6h6l4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CD233290F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 11:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5E932C333
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 11:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765798768; cv=none; b=qX6A+XZTbGg7YzpjHeSOWnzIDapeG50q28D9oG04RN1+kUJRmn1oJ0nsD4MwoDHBHm4y44ZlxcqkTtVjvwTDd/LProiaORu+lRnmQTmwCRnI4b/e0wN8WovxTtSvc4v3IWeYfkf5GLnO1tFC36KC0ByyZTcwXPIc1r4qqcwxLxw=
+	t=1765799323; cv=none; b=NCkW51hFp+BdDyWG0o4cUJnpsay4j+mXA5XWXTLhXipFbDpmn1Kauo+pScDR9zSyz6bHYfDmqERlDiKIFlkputWM0cSn582w5RtEXdgElsZLBJ2A2vUEa6w9DA2Kh5dhJ91MmUtl1FywMHPZItU6SjKg5IF4y1pySG4yOMm0okM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765798768; c=relaxed/simple;
-	bh=NBybN5/snlW67CYY0LDf5z9mjlB8/ZE5MQWmfMjzEtk=;
+	s=arc-20240116; t=1765799323; c=relaxed/simple;
+	bh=kdwYayfiPuGdbX+6/rKZkI1jkonQkDY24KG3T7ZKuZA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WlvJo5REnAs1U8hw96bmAw7mGZXHt4Q2Nl1feGu1sLWAvXHd7UniSmiHX9YGtFgEDTNiqwm84UTKk5g48p5KXasXTkX/XQ28wkno9IpEJfhPrZxucGzvItHvpysmzA2DeD1EBncNQqkGFsHj+1ksQx33CD8Zbe3brgiBGr39aVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0JdnHzO; arc=none smtp.client-ip=209.85.214.173
+	 MIME-Version; b=F0YG8/XaLonhj+snt4wqZaP2V/7snRi0hOtoeEY4OZoCcmILgoaHHb2xm+R8wyEPUyXCfVluj+dWASVNBBOx3kWGVAJxDhkZTTA1whJCMHS7R+jm7SsqYshIA9RGsLZdKMMlUBYKI80ziRLQs+eFoxwg6JQwnWRp8jmjXoyp3fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAd6h6l4; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2a0c09bb78cso8844515ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 03:39:24 -0800 (PST)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2a0d0788adaso9722685ad.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 03:48:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765798763; x=1766403563; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1765799320; x=1766404120; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TrKHAwDmwEWPzZzAT0wzFml+5He+R0bXqVhPFRZE9SA=;
-        b=i0JdnHzO8tyN9GvqycuvJXYYalEvDT2ihAk/0j99Lm51m82sZlG/haWENYXR2kwwld
-         InrABQQZ5B1sdm/rIqnFsoSJEEFJdFax3yY/dCjhEtHQYHS9pr/HGerZFPuv3rsoaSSs
-         zq2rSKZ+O4ZXugp8Mx7d6izDQtTySetmXXB3roID++o0wj1E74+vlc9vMCUiu6IaC5IT
-         u6VWyXKCNySGGQR9N9QcmUAnbE8j0IZF74luX7sYKOgqpIoLnMwtsLC0lzm4mXjUOosD
-         N3IL3oFUS0rRXWMwvyagU/h6RP5/I5ufUU4zTO+JMKakiTNR8AvH3pV6Z5qciPMd2KaN
-         fy7w==
+        bh=JUAs+7T6aM5YvKJFQXSXqoVkTtSxZtzq470O+YaXF94=;
+        b=MAd6h6l4/YKSc10LnEFfm3OhEEbVLEKRuYqfPLONcXog2pLTf6OojvodUTKSpLiJCk
+         hJm9lRC4I6IyLOPZy4uZz7WzMI9zvRoeGHTOvJdgXYWcY4SZPosskSgjiLKoHz7zUFh6
+         bQhz1MNPYg1GHlpA+j8THPjt1R5oGeKktMBTQHBFR1q+a+mpKcSg902hA92IYeEqpenf
+         KYyg3sXuv6N4qdzs2XOq7uXib2ucnunNa8MyP9z7TODJagWiisdYEhT3inIPSTtsAF6l
+         n3MkoL0gMOOGDYLeqch/50JvIBVgu3YXwwjQUWzGsq6kdI+nrFMWHijpbp8gMrB082St
+         p92g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765798763; x=1766403563;
+        d=1e100.net; s=20230601; t=1765799320; x=1766404120;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=TrKHAwDmwEWPzZzAT0wzFml+5He+R0bXqVhPFRZE9SA=;
-        b=J3Dq0tbgAoqW2ef/0HHiDaK3z+hEkV9juYOvRyNHXhFpJVQ5eCLhGSgse4/ZsEn0Qt
-         y4mesEKYEjudfWpiTsGLfgU4oX1oHvYd32MMd5qiGSIjgQOKNQlSldg6C3mIExaU6qW0
-         KGuSGis0Q96jDdGPdV2Gr/zBJyTDNx64TPbdQZA2cfB8ORuVRqrsGTxjwO3CWOIm4YsE
-         MFxRc7mLcMuUN9rNRt1FjNNQ0FKBV+DYiaozPFfYBatxEZhiS4qIX+CktRiOhC4ZTHjX
-         jCxXYixSPDAxGqXVL8+LhRUK/FOQecYtLejt55B1XvrJIKg54ElIFlDYZfoEXFNrEfRn
-         id1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVLmrisAmu5TpbXOL3k232ywLP6Hc9YIwvkbKmYoabqB9dKweUFS/VRyboZ91GrUiDqlh1NqmDmwjxbI9sG@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMZbE8UY5BLFAPXyk0//MwQHPKBNYaxA312/yOQiUgMpSFkRhG
-	zPz4CGl9zK9z/cT8y9SusRJYbpd6IqIBFo+a5ygpAeIlI6AF6q0ou3mp
-X-Gm-Gg: AY/fxX64AJHQXKn5jo/hf23nNlmc2rrldBb8vl6yfD63KnkvMNm8GuhvoTsOFSi5M89
-	vyH4fmD+AOAxVZ3SL7O37HB8KBjSDnzfsqsIV0GCGhA5ECWQuAKKcWd/qzqdZ8cjg8X60ESABTu
-	OyuiQFFFWRlt+hIB/74wEMPj050wAAWWKdkgm0jr6L08qEKhqQxSH/fa1eqg1/aS+rWpDm/KDRP
-	NmzY0PxeMyce0qYpuedvF5Hd0O64uAFs29MOjuNbyywKGefZZrjybT1hbdt2/oaKYUxT9/j6IO2
-	OR23q2cRHXfriZjHlJhVSn2EP+u1jXBzSkEJpSSr3q9HzvCWnW9cWm7UNYDOYGVQuydv6hZvFNm
-	UkaMrBWkcwpYWkl5JbGPlZOZd7wHhiZBdrAKXJip3Dmg8+yUS1Oyy77aNw5pDDniHznbHWtgS2c
-	f0LMOIx0lqNRI=
-X-Google-Smtp-Source: AGHT+IGEKo7pUOqZ/Msgj5pboeIPXCGG8SyTdVwEqd2zfEZHqjnoFfxwhdJcfbexnC7zJuC88ktUrA==
-X-Received: by 2002:a17:903:1988:b0:2a0:d0ae:454d with SMTP id d9443c01a7336-2a0d0ae4b49mr35282785ad.22.1765798763267;
-        Mon, 15 Dec 2025 03:39:23 -0800 (PST)
+        bh=JUAs+7T6aM5YvKJFQXSXqoVkTtSxZtzq470O+YaXF94=;
+        b=SBSVkDrAssDmgTyFvNMh9KchX1DYZpb1OymIkX10IOd+8vuidqpOdVUBHAwOoToHWe
+         ekcp9ubiferXIEauFDrpy/TyMBudrjl5xVGxNvtu3cTId2Hzs+ieK2hTNSUGy5NxwMVA
+         Vj6G2kMq/EGH1mSgXVmlG5HBA/hn9BvnKF/l4P3/IQK639/fsgU5myxBp+gTfq2lAXfG
+         DWObo5A7rKiqNz4O6L5rA12N7Fm/KjhMd6cL365c8QkOYlPDeZ949K/SmToFv+OKtJ+A
+         u3mZDJxLOzp8LpjsW5wQII7a0QHUT+zrLEq94MzCfD3cG61lDWLJIExs8rMXRuAtObXk
+         qgfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXneysWGmFFQqav5Gxwthg3uH7qNanceraS48vOm6hVs0GdahERNHxDS6iR6hHuRMViv4rYGC4JqgqTDF3W@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4mISreeWc0dQToVFgSoVd8OO1qS68vU4WRf+oXxQ+quWFAHpx
+	4xBHCpsP/+3ryFO9uo+Bj+Ic3ajmBkhvdLC1EMhEELyVF+ZCIF358Mvr
+X-Gm-Gg: AY/fxX4MWS5FOVIgS1fSowryLkWwmMiUwzHM8DsYoyL9+Dx1DLtm9lRXZQlRw2nkIEr
+	O3a7E946bMLDpuEBocWgNkFCp80dxzcn8jq9BULma2g4KqNLanfwjPVqnhU96K3uKDS0ti3CbMf
+	ufbE1EO2h8JW5suVENGT/j+eVAZRMUtA2fqRd9CLJxZoHAehvEWdkJFwOsgr8aRGxxs1dIfMDCb
+	1cif1cfW5ASNLevsbHbSpFiPnUAC2UI+6rQ+onRVGdHBnuRngXv2AreRC4Vu0ggkz5/EwIamw42
+	4YsG/0H5LZ6kFVgPNfvOwVi3dtDSMp5NbhQvMHOFFITtIOLtoWD5/cve6xDlqZz8pTNS+pK0zDA
+	SPL/sxZi8nDwAGs58mfc3sQUiPneAFoe0EEpJGx36T+dzO2OEfPLMVAJ7fVxPmHtoLdTjk8N75o
+	n6U1CG1ZaDx90=
+X-Google-Smtp-Source: AGHT+IEA4ldqjntSU1IZe10aX19mQKLjoCVDqCMnCNeqo44SOanRLtLHyqhQX8MxC8RVHbAWKM2xrg==
+X-Received: by 2002:a17:903:1a2e:b0:2a0:b02b:2105 with SMTP id d9443c01a7336-2a0b02b228amr63659225ad.56.1765799319837;
+        Mon, 15 Dec 2025 03:48:39 -0800 (PST)
 Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a0f58d7c27sm27523715ad.24.2025.12.15.03.39.14
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a0867ebe9dsm77190525ad.40.2025.12.15.03.48.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Dec 2025 03:39:18 -0800 (PST)
+        Mon, 15 Dec 2025 03:48:39 -0800 (PST)
 Received: by archie.me (Postfix, from userid 1000)
-	id 357B044588D8; Mon, 15 Dec 2025 18:39:06 +0700 (WIB)
+	id 46E2D447330A; Mon, 15 Dec 2025 18:39:06 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux AMDGPU <amd-gfx@lists.freedesktop.org>,
@@ -161,9 +161,9 @@ Cc: Harry Wentland <harry.wentland@amd.com>,
 	Jilin Yuan <yuanjilin@cdjrlc.com>,
 	Swaraj Gaikwad <swarajgaikwad1925@gmail.com>,
 	George Anthony Vernon <contact@gvernon.com>
-Subject: [PATCH 11/14] drm/gem/shmem: Describe @shmem and @size parameters
-Date: Mon, 15 Dec 2025 18:38:59 +0700
-Message-ID: <20251215113903.46555-12-bagasdotme@gmail.com>
+Subject: [PATCH 12/14] drm/scheduler: Describe @result in drm_sched_job_done()
+Date: Mon, 15 Dec 2025 18:39:00 +0700
+Message-ID: <20251215113903.46555-13-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20251215113903.46555-1-bagasdotme@gmail.com>
 References: <20251215113903.46555-1-bagasdotme@gmail.com>
@@ -173,37 +173,34 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1239; i=bagasdotme@gmail.com; h=from:subject; bh=NBybN5/snlW67CYY0LDf5z9mjlB8/ZE5MQWmfMjzEtk=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJn2n4OX/nxidPxCa7t5fuOD8HMfrQSuP1hub/O7ZcKpR 3k2jWdLOkpZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjCRtAcM/yunTjs9ydWYJypu wYcH6cfFNi1X5dYSuyPxxuv3me1JcpKMDBs+vU9uutHzrUbncPwy+73MjZlbOwIfHrr54bGU4uz aOwwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=982; i=bagasdotme@gmail.com; h=from:subject; bh=kdwYayfiPuGdbX+6/rKZkI1jkonQkDY24KG3T7ZKuZA=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJn2n4Pfzvv2aMJ6/2fiW3RmVPTpTFSM/fBW4Nu0ikdP3 J/+EMyq6ShlYRDjYpAVU2SZlMjXdHqXkciF9rWOMHNYmUCGMHBxCsBENP8y/FN2WnBW9dYhDc+y QzUe+4R7v/wRO/L/c0NDkJC4klf71CqG3yyrLnq/ur5px+nadXME75rW9sxVOp7eMOmL58xwZZ6 TlnwA
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-Sphinx reports kernel-doc warnings:
+Sphinx reports kernel-doc warning:
 
-WARNING: ./drivers/gpu/drm/drm_gem_shmem_helper.c:104 function parameter 'shmem' not described in 'drm_gem_shmem_init'
-WARNING: ./drivers/gpu/drm/drm_gem_shmem_helper.c:104 function parameter 'size' not described in 'drm_gem_shmem_init'
+WARNING: ./drivers/gpu/drm/scheduler/sched_main.c:367 function parameter 'result' not described in 'drm_sched_job_done'
 
-Describe the parameters.
+Describe @result parameter to fix it.
 
-Fixes: e3f4bdaf2c5bfe ("drm/gem/shmem: Extract drm_gem_shmem_init() from drm_gem_shmem_create()")
+Fixes: 539f9ee4b52a8b ("drm/scheduler: properly forward fence errors")
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- drivers/gpu/drm/drm_gem_shmem_helper.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/scheduler/sched_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-index 93b9cff89080f9..7f73900abcbb9d 100644
---- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-+++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-@@ -96,7 +96,8 @@ static int __drm_gem_shmem_init(struct drm_device *dev, struct drm_gem_shmem_obj
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index 1d4f1b822e7b76..4f844087fd48eb 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -361,6 +361,7 @@ static void drm_sched_run_free_queue(struct drm_gpu_scheduler *sched)
  /**
-  * drm_gem_shmem_init - Initialize an allocated object.
-  * @dev: DRM device
-- * @obj: The allocated shmem GEM object.
-+ * @shmem: The allocated shmem GEM object.
-+ * @size: shmem GEM object size
+  * drm_sched_job_done - complete a job
+  * @s_job: pointer to the job which is done
++ * @result: job result
   *
-  * Returns:
-  * 0 on success, or a negative error code on failure.
+  * Finish the job's fence and resubmit the work items.
+  */
 -- 
 An old man doll... just what I always wanted! - Clara
 
