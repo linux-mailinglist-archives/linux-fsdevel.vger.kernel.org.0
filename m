@@ -1,125 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-71348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4325ECBE526
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:37:42 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id A21DDCBE6E3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 271F930024E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 14:37:40 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id E38903007A92
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 14:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CA314B96E;
-	Mon, 15 Dec 2025 14:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E955D34405D;
+	Mon, 15 Dec 2025 14:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Q0zXCTJG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5mlNd08"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFAE3B8D5E;
-	Mon, 15 Dec 2025 14:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3376344036
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 14:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765809456; cv=none; b=ogBqk1p0S1GfzaY/tuglUEYDh9OXUZuKlXakQ01k3sDhyZI5BCx9/rU+KjJYUifZJSS15JRFYxx4ZZMXTd4wWALKtmEkw0GTeciW4/QzbhFipqQiW6yBfecIw0nMuitVNYG/9hktztfUrTyXKSfgVGGRAOk/uHNyqmET/YGDRCM=
+	t=1765809965; cv=none; b=OAey5ADgrnVvyAoIPlBKgK947FuYMYwPQ2YxAHFKoGNhJOnP1Bei9L74zmT14r8dJieXjSLeVgZRvcLPK9B+bb6xvQOdJX/TAfDfIY9E+36y5E12Yjn6UZ0ICmLzmHPn2YgMsoifASM85Rgf4KdWvugCkUJcKrbjZDfcB9ZZcwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765809456; c=relaxed/simple;
-	bh=/qa5s65gU3g1Q4gJa/dljDUWl87YAU2rtIPazQx17kQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hAp0o6FOLk2xn9pXz35jzzSByL+XRt47QBd6dgquyfxa9lSeh6NCeuvCBlEDiHFAKzIpypYRMsYL1ohEL6DO+K1wge92sArOJOzsFw0yD47wFHtdBfFfq41J0lmRwVULmVH2KGyiPvKJFehmGsb0sxFAqaG82O/BqCXKIOsWEe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Q0zXCTJG; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GL+t1YP5Sq1fjsltWXMjIWkUSofjmPUmHoVyBGu/NzU=; b=Q0zXCTJGUBTpmj7QVRb7pb9/PF
-	nCdmn1RvTIEinpSgDQ6jHJV2czMl0ToxHaEDZQVTTY9B2YoqqCb8dnTPROfHM0buxH2mY/71qAkbP
-	ME+6cC4KCnOMT+GiiROyPbh/r5CUKKhpIQUZDmTvQix8CnhQb3+jBgGM7SXz3mi1djUADkkm5X78o
-	Ac9tt4BmJBDmE8zD/NVqGbixmETmYYBEcQn4F1HZ45DytFxfXKV+KQKH3jtkf6qUzwBUk0lvLpEpO
-	39txek78yC8C31LZ7NzNrICrlYUi0NBhyBroGkfO591MaIo+d1su/AyEKoQZ5zRZw9ZSarxQMGcqQ
-	q4aiGbHA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vV9hb-00000003oUx-0ETP;
-	Mon, 15 Dec 2025 14:37:31 +0000
-Date: Mon, 15 Dec 2025 06:37:31 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
-	David Howells <dhowells@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	Chris Arges <carges@cloudflare.com>
-Subject: Re: [PATCH] 9p/virtio: restrict page pinning to user_backed_iter()
- iovec
-Message-ID: <aUAdKxcC7195Od5N@infradead.org>
-References: <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org>
- <aTkNbptI5stvpBPn@infradead.org>
- <aTkjWsOyDzXq_bLv@codewreck.org>
- <aTkwKbnXvUZs4UU9@infradead.org>
- <aT1qEmxcOjuJEZH9@codewreck.org>
- <aT-iwMpOfSoRzkTF@infradead.org>
- <aT-59HURCGPDUJnZ@codewreck.org>
+	s=arc-20240116; t=1765809965; c=relaxed/simple;
+	bh=UkwbhPBH6v6iuGA++QLEZTiBSrnPQHO4IbRsksKf7ew=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BAY5oXro1430zm+pVC88KFOW5nCqgfqwoPvM6gn6rdLLM7bUZpQcxibsWLvw1vXL9wWMF0nE55n9EQQSp5k2DFfKDNXjPY1IaRGEiCK06CwmJGEB25L8YIlwlOQJLO59QGhpBJsUYFAP982shJHaGaGHMPaswbB0hC2ey6UzZp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5mlNd08; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-8b2d6df99c5so376426485a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 06:46:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765809963; x=1766414763; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oV0jaZrI8aZtsZE9apOwrB8bJI30o+iCw2TQfGhgA5Q=;
+        b=a5mlNd08D65NzkEkpMCby+8pUYIRm2B1APJXYpPOvn2uYMyttc54O98YrpZ51R+55X
+         vJEc77H0GqMdQi8W4fNnZFCUKUDHXx1AblhbrjLg0BNUFv2EcxbHa/9H/qFYdjdeE+H4
+         zUEAzUAl+9DXIkwz4iQe69EDhnv3WBl3bR8aYOXhn3PR6lSdVERz0Pe3hyN5mqNrQ0+k
+         QVdqlvtLVp3jwSWG8VUAhXPYI90/Q/6mYUckO7+vJNcpNHxX2DQaML2BcwSYL1iCVKu7
+         xrP/a9IBw282k6UY3kHsnomKYNMMPpGAEP3vampxs0gn8/tFWV4Weya1C7gdy/NzqXyW
+         22bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765809963; x=1766414763;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=oV0jaZrI8aZtsZE9apOwrB8bJI30o+iCw2TQfGhgA5Q=;
+        b=irAyWOeJv7QSp6mo9GlofJ+vc7kmUSBO6VZxkLR20iOeQoa529QtQqHwh55nmccsvY
+         j9h04HwjTIRSRKxmvCWFL7tfQ2s66H0b4pOKV+9YDCQ100xCsM512CWs6oil9AmHOsRH
+         GPzO+95DTAZ4ta/qBKRoa9jfs5Aha2NBlarzCBi+2IWoT+8ClIjaaoBf55jJ2mlIAVsg
+         9KbCN/kVHlZsNGkNI4u1tQarTbAe9pTAZPBZS8x6cHp6cYq2S/D4RogOzkue7CIxjm68
+         rIHO0Fj8XQ+KgLPjUOwqsE0xX4UTQ4uDj909KQKeKTcQNdReJZHPekx0KfCnxsN1b4rE
+         OTOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoY7HifO5tdSebDHyVpgNmWnWce0AwMRlhI6t8WGah54Uc8yb+MjHJsIVZ5V+NxvTmTjuFpYQVN/jlaDUN@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVt645dTO4BFxNlGdG4L2pzR2YG/trFoOYJ5KLg70fkpqlKBtr
+	QP/Ra5JCqVmFJtfcRA9lNsJAQPk0OarpCNUHnU82F8/T7lEequ4Y0pMx
+X-Gm-Gg: AY/fxX5hgNMUMsWdYWnx4E0QQKa5lsi78Lyl6dytObFBHIda+GCu+n+uflwBKOWJFFR
+	ucWsbNba10HonT3zh2Cv9VQkW/eegEVKGENEk2iq90Kf7511JFzxdZLMkwTWeR41zlty4kdVhBA
+	C/KCyxTa8fBPFf5lXdXKSLmXpCQBgzwSkksaFE3lJPwlM19ZCsJqSV5mLKXXAqZwCBCFwwP3FDB
+	tdSURoV09uRLD51N1hxqN9OzBrTcnMI6kv1jFtvVqD0ppDfpAviDb7h1WIQJovtNPqEyVz3/dXC
+	6LfyDJaVz7LAB8w3ZAtIbRcUxs8FiV4A3SupvVCMysbGEwHIZG1LyE9bNHyyRonXiZmxEBqIDqa
+	L4qcyfknIc1RN0Ye4t2wLrLA8AhtBkPONafWZHPAps9MskaHAYWOrJ9xJ3GEUbmphmaCOqXkwt5
+	OrUluFNHZ/OXGnTCphBuZaI9zUI20No33Oxd3W
+X-Google-Smtp-Source: AGHT+IGv+oWV+L8kWHp92FAVovjf1CCnrWsTpFVhPmh2RNosHWcTKLsi2sjAMqZ9z5iZ6IjkvQ1W2Q==
+X-Received: by 2002:a05:620a:2847:b0:828:faae:b444 with SMTP id af79cd13be357-8bad430092emr1940562285a.20.1765809962557;
+        Mon, 15 Dec 2025 06:46:02 -0800 (PST)
+Received: from dans-laptop.miyazaki.mit.edu ([18.10.141.178])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-889a85eab16sm52150876d6.39.2025.12.15.06.46.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Dec 2025 06:46:01 -0800 (PST)
+From: Dan Klishch <danilklishch@gmail.com>
+To: legion@kernel.org,
+	brauner@kernel.org
+Cc: containers@lists.linux-foundation.org,
+	ebiederm@xmission.com,
+	keescook@chromium.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [RESEND PATCH v6 0/5] proc: subset=pid: Relax check of mount visibility
+Date: Mon, 15 Dec 2025 09:46:00 -0500
+Message-ID: <20251215144600.911100-1-danilklishch@gmail.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <aT_elfmyOaWuJRjW@example.org>
+References: <aT_elfmyOaWuJRjW@example.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aT-59HURCGPDUJnZ@codewreck.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 15, 2025 at 04:34:12PM +0900, Dominique Martinet wrote:
-> Christoph Hellwig wrote on Sun, Dec 14, 2025 at 09:55:12PM -0800:
-> > > Ok, I don't understand why the current code locks everything down and
-> > > wants to use a single scatterlist shared for the whole channel (and
-> > > capped to 128 pages?), it should only need to lock around the
-> > > virtqueue_add_sg() call, I'll need to play with that some more.
-> > 
-> > What do you mean with "lock down"?
+On 12/15/25 5:10 AM, Alexey Gladkov wrote:
+> On Sun, Dec 14, 2025 at 01:02:54PM -0500, Dan Klishch wrote:
+>> On 12/14/25 11:40 AM, Alexey Gladkov wrote:
+>>> But then, if I understand you correctly, this patch will not be enough
+>>> for you. procfs with subset=pid will not allow you to have /proc/meminfo,
+>>> /proc/cpuinfo, etc.
+>>
+>> Hmm, I didn't think of this. sunwalker-box only exposes cpuinfo and PID
+>> tree to the sandboxed programs (empirically, this is enough for most of
+>> programs you want sandboxing for). With that in mind, this patch and a
+>> FUSE providing an overlay with cpuinfo / seccomp intercepting opens of
+>> /proc/cpuinfo / a small kernel patch with a new mount option for procfs
+>> to expose more static files still look like a clean solution to me.
 > 
-> Just the odd (to me) use of the chan->lock around basically all of
-> p9_virtio_request() and most of p9_virtio_zc_request() -- I'm not pretty
-> sure this was just the author trying to avoid an allocation by recycling
-> the chan->sg array around though, so ignore this.
-
-Oh, ok.  This seems unrelated to the handling of the iov_iters and
-I'm sorry that I don't really know anything about that part.
-
+> I don't think you'll be able to do that. procfs doesn't allow itself to
+> be overlayed [1]. What should block mounting overlayfs and fuse on top
+> of procfs.
 > 
-> > > Looking at other virtio drivers I could probably use a sg_table and
-> > > have extract_iter_to_sg() do all the work for us...
-> > 
-> > Looking at the code I'm actually really confused.  Both because I
-> > actually though we were talking about the 9fs direct I/O code, but
-> > that has actually been removed / converted to netfs a long time ago.
-> >
-> > But even more so what the net/9p code is actually doing..  How do
-> > we even end up with user addresses here at all?
+> [1] https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/proc/root.c#n274
+
+This is why I have been careful not to say overlayfs. With [2] (warning:
+zero-shot ChatGPT output), I can do:
+
+$ ./fuse-overlay target --source=/proc
+$ ls target
+1   88   194   1374    889840  908552
+2   90   195   1375    889987  908619
+3   91   196   1379    890031  908658
+4   92   203   1412    890063  908756
+5   93   205   1590    890085  908804
+6   94   233   1644    890139  908951
+7   96   237   1802    890246  909848
+8   97   239   1850    890271  909914
+10  98   240   1852    894665  909924
+13  99   243   1865    895854  909926
+15  100  244   1888    895864  910005
+16  102  246   1889    896030  acpi
+17  103  262   1891    896205  asound
+18  104  263   1895    896508  bus
+19  105  264   1896    896544  driver
+20  106  265   1899    896706  dynamic_debug
+<...>
+
+[2] https://gist.github.com/DanShaders/547eeb74a90315356b98472feae47474
+
+This requires a much more careful thought wrt magic symlinks
+and permission checks. The fact that I am highly unlikely to 100%
+correctly reimplement the checks and special behavior of procfs makes me
+not want to proceed with the FUSE route.
+
+On 12/15/25 6:30 AM, Christian Brauner wrote:
+> The standard way of making it possible to mount procfs inside of a
+> container with a separate mount namespace that has a procfs inside it
+> with overmounted entries is to ensure that a fully-visible procfs
+> instance is present.
+
+Yes, this is a solution. However, this is only marginally better than
+passing --privileged to the outer container (in a sense that we require
+outer sandbox to remove some protections for the inner sandbox to work).
+
+> The container needs to inherit a fully-visible instance somehow if you
+> want nesting. Using an unprivileged LSM such as landlock to prevent any
+> access to the fully visible procfs instance is usually the better way.
 > 
-> FWIW I tried logging and saw ITER_BVEC, ITER_KVEC and ITER_FOLIOQ --
-> O_DIRECT writes are seen as BVEC so I guess it's not as direct as I
-> expected them to be -- that code could very well be leftovers from
-> the switch to iov_iter back in 2015...
+> My hope is that once signed bpf is more widely adopted that distros will
+> just start enabling blessed bpf programs that will just take on the
+> access protecting instead of the clumsy bind-mount protection mechanism.
 
-Oh right, I think this from Dave's netfs_extract_user_iter.
+These are big changes to container runtimes that are unlikely to happen
+soon. In contrast, the patch we are discussing will be available in 2
+months after the merge for me to use on ArchLinux, and in a couple more
+months on Ubuntu.
 
-> (waiting for David's answer here, but as far as I see the contract
-> between the transport and the vfs is that the transport should handle
-> whatever it's being fed, so it doesn't really matter if it's a bio_vec
-> or an iov_iter -- ultimately virtio or whatever backend that wants to
-> handle zc likely won't handle bio_vec any better so it'll need
-> converting anyway)
+So, is there any way forward with the patch or should I continue trying
+to find a userspace solution?
 
-Yeah.  Looking at what the code does with the pages, I think all this
-should go away in favor of using extract_iter_to_sg and build the
-scatterlists directly from the iters, without an extra page indirection.
-
-(and of course one day virtio should migrate away from scatterlists,
-but that's for another time).
+Thanks,
+Dan Klishch
 
