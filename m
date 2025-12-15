@@ -1,176 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-71352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71353-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB594CBE92A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 16:16:00 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C18CBEA00
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 16:25:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 67ABA305DCF5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:02:47 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 9F0883015DCD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 15:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3F8331A4B;
-	Mon, 15 Dec 2025 15:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C50334C20;
+	Mon, 15 Dec 2025 15:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TiaYXPhk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e13qmcjA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E304533121E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 15:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B1B33469D;
+	Mon, 15 Dec 2025 15:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765810956; cv=none; b=UukS3jNumHrNZX6tR0p+Gekw/t5n69qNUOQK39MSC0r6js5tL5g6B88i43gvvne2r+DuHrBjAf93+gm2he2+jQlP31hDmDtjbgd/BirPN7XRPTdNi4P7V9mAmnSGfdECnT2JLDfqxYXCyzelCCBcqRbDqmo7piuypzHIfVXsJiQ=
+	t=1765812335; cv=none; b=uTfZt3yKhsizA152hCEuVVcOWfWod1K9BwHbLsV+916gapSUiu4gd+HNtFQQTZm4K7lgaMmOFNowie0ywyO6fIe0f16OlhutCOTFYqgelazhVdgVvTRDp7NASMNpvQqpJFd3rpuGJmacpfjJftjFk/K6hLIUBZRlDU7UCmpptPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765810956; c=relaxed/simple;
-	bh=9DIbAAS4fmLPWh9z1hwJEGriinnfU6EzsYhzAkF4FYQ=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=p9u31Ibz5Q2/ojr43hmE8s8kUofrwDQYH8UlUXCPUunE23yH+LKeEgPGwHxvRueRHczDUI9A0jPHwNPzMWj0QFztjTOj8SyLCXDLKzKTJh0OGZMHXz8UcKDAMLog4Xc6/NC2UctQZ0qFAv5Zss2wknR6dVYbKU6C00WJ9ClJ1Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TiaYXPhk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1765810953;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ef9lgEblGmTogvoJK7b07OBRK+jbjZpqLe2jJTbo2Do=;
-	b=TiaYXPhkS6LhqjH1kpUCSmfa7zfHAfyht4erORBa//o0ett7ONB4UZ/fddbXK9ko3OMVTE
-	GikQZTmlDxD8WF//6o4amKa4jAs6Yq8bvGqj88Agv2gQ4/YeddlbICKXRQEbSAZWOjCqvR
-	Ul0yhMojHp+h8Q1ef1gVC1Xh34sAJEs=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-394-LWdApg1OOIW2RewCnqm2eQ-1; Mon,
- 15 Dec 2025 10:02:32 -0500
-X-MC-Unique: LWdApg1OOIW2RewCnqm2eQ-1
-X-Mimecast-MFC-AGG-ID: LWdApg1OOIW2RewCnqm2eQ_1765810951
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7F9C0195608E;
-	Mon, 15 Dec 2025 15:02:30 +0000 (UTC)
-Received: from ws (unknown [10.45.242.20])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4D50619560A7;
-	Mon, 15 Dec 2025 15:02:28 +0000 (UTC)
-Date: Mon, 15 Dec 2025 16:02:25 +0100
-From: Karel Zak <kzak@redhat.com>
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	util-linux@vger.kernel.org
-Subject: [ANNOUNCE] util-linux v2.41.3
-Message-ID: <no7nihf3ju4e6wndc45z2lro67ygi7ezebnxy63abjlart77iz@l6bynuajkn5l>
+	s=arc-20240116; t=1765812335; c=relaxed/simple;
+	bh=mkIo7KJEQTeZErn4R1TynpXwcTTiQfApK6kMsQXsfQk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SVNkKUtJuCsRQeGlmUNudqvvc3DMx0EgCjrqOAC9XUMVbuarxm47xBF1Y/i+wAsW5GFYUy8UaRu2q33pFoHtHVf4An5IHEqy2urjan/tOI6tm727BSSK46YBDAHll1e10FaWQoTU2GBM86UWAB16k58mFZcCizwgbHxdIjRfs1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e13qmcjA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C58A1C4CEFB;
+	Mon, 15 Dec 2025 15:25:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765812334;
+	bh=mkIo7KJEQTeZErn4R1TynpXwcTTiQfApK6kMsQXsfQk=;
+	h=From:Date:Subject:To:Cc:From;
+	b=e13qmcjAwrPhAeC0cAhHznqo59gRv3HU4KJyh28RW3Nu9t+c8BjFfY9RU/Xi+4lEy
+	 LDgSGpCSpSy37b6TfLKenV0MQ60KrtVcIgw91MbweoyKzvZ6bF6ubBWCHnl61mGFct
+	 00x0DGAslok/PGpWBOZrv9i+Yio4qp7J8oiRShdyrEDy+hIhb1NQXpxG7foBxM169i
+	 J0MytsHpUQ+OtJ4Gv8zMMqQrKG56aRljQNt2/H7qXea8b11MuANjyts41jXKtS8x9m
+	 IB2+0s6SgMJddzp7sJrqTzHZIxMhpt+Die/IVqIqEsINGIfrpBHOh6SjViY0TmKPs8
+	 ZWgJr6JPgSV6Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0528D5B16C;
+	Mon, 15 Dec 2025 15:25:34 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Date: Mon, 15 Dec 2025 16:25:19 +0100
+Subject: [PATCH] sysctl: Remove unused ctl_table forward declarations
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251215-jag-sysctl_fw_decl-v1-1-2a9af78448f8@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAF4oQGkC/x3MSwqAMAwA0atI1hZMoVi8iohIGjUiKo34Qby7x
+ eVbzDygHIUVquyByIeorEsC5hnQ2C0DGwnJYAvr0KIzUzcYvZX2ue3PNjDNxnkq0ZfoyBOkcIv
+ cy/VP6+Z9PwnR03lkAAAA
+X-Change-ID: 20251215-jag-sysctl_fw_decl-58c718715c8c
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
+ David Hildenbrand <david@kernel.org>, Petr Mladek <pmladek@suse.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ John Ogness <john.ogness@linutronix.de>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mm@kvack.org, linux-hams@vger.kernel.org, netdev@vger.kernel.org, 
+ Joel Granados <joel.granados@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2620;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=mkIo7KJEQTeZErn4R1TynpXwcTTiQfApK6kMsQXsfQk=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGlAKG1vvzqtVGOj5deDTFASziA+J0o6GzQpS
+ K9/VN+bko9gyIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJpQChtAAoJELqXzVK3
+ lkFPAaQL/2BXoApyadWKDJjcZKhfBYyuqiQr7rMW2CIoeSMCjKsOLeBbHC0m6BAtuGLdmqdBsb3
+ /PtOT1k9iyez0roDo8NQemHT0SupdxouZ7zEtHF03aG+6DnLpcw4xiYx+mgMLKI3wm2fyhkgXpb
+ PSj4DBMPF5cx1gzGQ1K91g5lKE9pSo6/SSXkI1R35iTOay1OQMVfE0NaI5oa7kJuS8I1L1oO26u
+ z4jZJQKzRpkL07mKiL0GWyAvuDPjMFbb9e7tlZEACNEEZoFvRW9rpZGU97v/j/6T6LjSsTUQWUJ
+ Ar2s55t7h405SKOSjEfNbJnrotmNLxG3DigYGQ5xEPzpyS8lmksyhRSzJWrwAa+SW+aYIyYaU1R
+ rIczJx1OYp9MD+YtE3Xg+FWLZO2AsAEtZ2oNg4CDXiHgrNBVhz0OjegA4G4bYgNuTnaM/YlZghR
+ kMgN4tKwwJBtc8chd7QEMbxHaaWzdtYKOZ7Um9ebZNJc781OX74vcH0nL1GfpWHuKqBXwf86zM4
+ XI=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
+Remove superfluous forward declarations of ctl_table from header files
+where they are no longer needed. These declarations were left behind
+after sysctl code refactoring and cleanup.
 
-The util-linux release v2.41.3 is now available at
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
+---
+Apologies for such a big To: list. My idea is for this to go into
+mainline through sysctl; get back to me if you prefer otherwise. On the
+off chance that this has a V2, let me know if you want to be removed
+from the To and I'll make that happen
+---
+ include/linux/fs.h      | 1 -
+ include/linux/hugetlb.h | 2 --
+ include/linux/printk.h  | 1 -
+ include/net/ax25.h      | 2 --
+ 4 files changed, 6 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 04ceeca12a0d5caadb68643bf68b7a78e17c08d4..77f6302fdced1ef7e61ec1b35bed77c77b294124 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3487,7 +3487,6 @@ ssize_t simple_attr_write(struct file *file, const char __user *buf,
+ ssize_t simple_attr_write_signed(struct file *file, const char __user *buf,
+ 				 size_t len, loff_t *ppos);
  
-  http://www.kernel.org/pub/linux/utils/util-linux/v2.41
+-struct ctl_table;
+ int __init list_bdev_fs_names(char *buf, size_t size);
  
-This release addresses build issues with GCC 15 (C23) and fixes
-CVE-2025-14104.
-
-Feedback and bug reports, as always, are welcomed.
+ #define __FMODE_EXEC		((__force int) FMODE_EXEC)
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 019a1c5281e4e6e04a9207dff7f7aa58c9669a80..18d1c4ecc4f948b179679b8fcc7870f3d466a4d9 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -16,8 +16,6 @@
+ #include <linux/userfaultfd_k.h>
+ #include <linux/nodemask.h>
  
-  Karel
+-struct ctl_table;
+-struct user_struct;
+ struct mmu_gather;
+ struct node;
+ 
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index 45c663124c9bd3b294031d839f1253f410313faa..63d516c873b4c412eead6ee4eb9f90a5c28f630c 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -78,7 +78,6 @@ extern void console_verbose(void);
+ /* strlen("ratelimit") + 1 */
+ #define DEVKMSG_STR_MAX_SIZE 10
+ extern char devkmsg_log_str[DEVKMSG_STR_MAX_SIZE];
+-struct ctl_table;
+ 
+ extern int suppress_printk;
+ 
+diff --git a/include/net/ax25.h b/include/net/ax25.h
+index a7bba42dde153a2aeaf010a7ef8b48d39d15a835..beec9712e9c71d4be90acb6fc7113022527bc1ab 100644
+--- a/include/net/ax25.h
++++ b/include/net/ax25.h
+@@ -215,8 +215,6 @@ typedef struct {
+ 	unsigned short		slave_timeout;		/* when? */
+ } ax25_dama_info;
+ 
+-struct ctl_table;
+-
+ typedef struct ax25_dev {
+ 	struct list_head	list;
+ 
 
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20251215-jag-sysctl_fw_decl-58c718715c8c
 
-
-util-linux 2.41.3 Release Notes
-===============================
-
-bash-completion:
-    - (mount) add missing options (by Christian Goeschel Ndjomouo)
-    - add lsfd (by Karel Zak)
-    - add blkpr (by Karel Zak)
-    - add bits to dist tarball (by Karel Zak)
-
-dmesg:
-    - fix const qualifier warnings in parse_callerid (by Karel Zak)
-
-eject:
-    - fix const qualifier warning in read_speed (by Karel Zak)
-
-enosys:
-    - fix const qualifier warning in parse_block (by Karel Zak)
-
-libblkid:
-    - fix const qualifier warning in blkid_parse_tag_string (by Karel Zak)
-    - use snprintf() instead of sprintf() (by Karel Zak)
-
-libfdisk:
-    - (dos) fix off-by-one in maximum last sector calculation (by Karel Zak)
-
-liblastlog2:
-    - fix operator precedence in conditional assignments (by Karel Zak)
-
-lib, lscpu:
-    - fix const qualifier discarded warnings in bsearch (by Karel Zak)
-
-libmount:
-    - fix const qualifier warning in mnt_parse_mountinfo_line (by Karel Zak)
-    - fix const qualifier warnings for C23 (by Karel Zak)
-
-logger:
-    - fix const qualifier warnings for C23 (by Karel Zak)
-
-login-utils:
-    - fix setpwnam() buffer use [CVE-2025-14104] (by Karel Zak)
-
-losetup:
-    - sort 'O' correctly for the mutual-exclusive check to work (by Benno Schulenberg)
-
-lscpu:
-    - use maximum CPU speed from DMI, avoid duplicate version string (by Karel Zak)
-    - Add a few missing Arm CPU identifiers (by Jonathan Thackray)
-
-lsfd:
-    - fix memory leak related to stat_error_class (by Masatake YAMATO)
-    - (bugfix) use PRIu32 for prining lport of netlink socket (by Masatake YAMATO)
-    - fix const qualifier warning in strnrstr (by Karel Zak)
-    - fix const qualifier warning in new_counter_spec (by Karel Zak)
-    - fix bsearch macro usage with glibc C23 (by Cristian Rodríguez)
-
-lsns:
-    - fix const qualifier warnings for C23 (by Karel Zak)
-
-namei:
-    - fix const qualifier warning in readlink_to_namei (by Karel Zak)
-
-partx:
-    - fix const qualifier warning in get_max_partno (by Karel Zak)
-
-po:
-    - update sr.po (from translationproject.org) (by Мирослав Николић)
-
-po-man:
-    - merge changes (by Karel Zak)
-    - update sr.po (from translationproject.org) (by Мирослав Николић)
-
-umount:
-    - consider helper return status for success message (by Christian Goeschel Ndjomouo)
-
-wdctl:
-    - remove -d option leftover (by Munehisa Kamata)
-
-whereis:
-    - fix const qualifier warnings for C23 (by Karel Zak)
-
-Misc:
-    - Fix memory leak in setpwnam() (by yao zhang)
-
-
+Best regards,
 -- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
+Joel Granados <joel.granados@kernel.org>
+
 
 
