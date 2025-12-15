@@ -1,205 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-71302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1AB4CBD3FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 10:47:11 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56828CBD4E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 11:02:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 27F3C3015A92
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 09:46:26 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 9D5863017CB8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Dec 2025 10:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35740315772;
-	Mon, 15 Dec 2025 09:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bGNKstCl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tCaYSEBJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tttXcNhO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mpWJtLKK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D002A314B91;
+	Mon, 15 Dec 2025 10:02:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D2F314A8E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 09:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5014029ACC5;
+	Mon, 15 Dec 2025 10:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765791983; cv=none; b=ux4xiBErIQVQ49Qy1D0/KWpqtktg2HFQ17cEA+ql8UM4QUAGIt9Cm/7VSrwSCsli0XHHHrnrLbTpV1jaJLavGJFc+0fkb5fvGPcD2gx9ozGBn3qfsrWX0NJpJUF389qT685tPOC3HyaPODQtAKiQ1pHqgIyIUMRrIFBuStDECuY=
+	t=1765792952; cv=none; b=f0KN9BjLm2BKb9+p2YHPcFi8OeUN1MsJa3HcY4MXmXt+LeyoHkTBGVU15s6zlcD8vAb/l6jHfoeTn6WjxdZMOJG5UKhNK+z33lD6+LRhQjGDIMQCS/v8ytMvvF3kam+r4fJkizn2vA4C8obRYHLWgfwcFN9sONVlY0dY0hFaDbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765791983; c=relaxed/simple;
-	bh=TKUAEGFvvpKkjalzw0PfwVe25KDjuB9Fxuixn2dP/xw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VG7obL7AspfP6jSajMJOf7SP/RHhhJKCG4Lm6P9Jp0mhc/bw+7+8X6JWFFQjrc2JqY451dDzgGkRHDgQrtpdruHJEQrxKgNJNLSw1HtU08u3abJ434VTAnAW9AGXhhT5Kl79hSr7E1QluX6jjXgCA4rjoeYCEzPcwLSXi+nneSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bGNKstCl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tCaYSEBJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tttXcNhO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mpWJtLKK; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 72D9E337C4;
-	Mon, 15 Dec 2025 09:46:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765791978; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FJv/KnuYUi6bTC/y8u3k9PcS9d8rFBSdWoZXsh6PAgQ=;
-	b=bGNKstClLV69YG4+pssaW6EEX1j95yeXjc517BfcAgMDqnW04Np3/0tYeaU01jRAVI5cZR
-	Jf8ltVgA8pKkClfE4V7EKpy/1tQLWRQhOgQakBOJJxpWZ2i0vYwJXbUIqxmP+QabhZOup3
-	T/xyrwv7zjKhlcDaXz0wdOepVtAIhPY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765791978;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FJv/KnuYUi6bTC/y8u3k9PcS9d8rFBSdWoZXsh6PAgQ=;
-	b=tCaYSEBJKrNjST5bkAwaDRNP+rCLERap7CKfvXLVRb1OHQenDNVIUhhTQQzSl8yluyzjEn
-	liBX7f+mT38i4mAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=tttXcNhO;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=mpWJtLKK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765791977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FJv/KnuYUi6bTC/y8u3k9PcS9d8rFBSdWoZXsh6PAgQ=;
-	b=tttXcNhO7OMQi0ijOH3AlPux3b6Y5jRxlJYU0Tb1E6aqPHHhmvcSPY+LKI5cqZjlTZd1jj
-	CRDopDkjYW91CJYCzqKG5xYpz1quh3Z+rB+Z3BHkh+LBx9JxnSddu86eGneopH3GnNzESU
-	9F0IQAno0KI0ubPY2AJklBFf/3SqHC4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765791977;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FJv/KnuYUi6bTC/y8u3k9PcS9d8rFBSdWoZXsh6PAgQ=;
-	b=mpWJtLKKp5lIXSGim/Kkth/isS6sM0B6NYfIbEuTGpKGlJV7FE4L7hViEdO/UXUnIch5oF
-	qFZpuJHTp8ArpfBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6850E3EA65;
-	Mon, 15 Dec 2025 09:46:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6KhxGenYP2lMHgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Dec 2025 09:46:17 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1B3E5A09B4; Mon, 15 Dec 2025 10:46:17 +0100 (CET)
-Date: Mon, 15 Dec 2025 10:46:17 +0100
-From: Jan Kara <jack@suse.cz>
-To: chen zhang <chenzhang@kylinos.cn>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, chenzhang_0901@163.com
-Subject: Re: [PATCH] chardev: Switch to guard(mutex)
-Message-ID: <twm7w7grcgw6h4s5iyzifgmaazlx2u2awl3l4sjm24unq64ath@erjimgt3u4wi>
-References: <20251215060657.87947-1-chenzhang@kylinos.cn>
+	s=arc-20240116; t=1765792952; c=relaxed/simple;
+	bh=GyeIkxR1+30Py3QYSp0HmOcopTRz4jeq8pA2AK1hE0U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eqxQW+LN9T5s4Yb/CVHmPVyDMH6WYcObcZTdSKx9PKUo/w8ld4O10zCOMs5GRyFvGt1XELf/T1zpbpzjkLSOp3kiUigXKNB6JKDotUXKbPSUXrqcdeLQRsRIdT7XxixNakWeJJfScjLzLefF5Nmp7Acx0TG6Q7U7TQWrxI3nQPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 23fa53d4d99d11f0a38c85956e01ac42-20251215
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:fd9a8df2-f284-44c2-a57f-92218c27e60d,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:a9d874c,CLOUDID:7adbf85120823665fc4c7ba17ce066e1,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850|898,TC:nil,Content:0|15|50,EDM:-
+	3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,A
+	V:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 23fa53d4d99d11f0a38c85956e01ac42-20251215
+X-User: jiangyunshui@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <chenzhang@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1710653524; Mon, 15 Dec 2025 18:02:18 +0800
+From: chen zhang <chenzhang@kylinos.cn>
+To: miklos@szeredi.hu,
+	mszeredi@redhat.com,
+	joannelkoong@gmail.com,
+	josef@toxicpanda.com,
+	gmaglione@redhat.com,
+	vgoyal@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	chenzhang_0901@163.com,
+	chen zhang <chenzhang@kylinos.cn>
+Subject: [PATCH] virtio_fs: use sysfs_emit_at() instead of snprintf()
+Date: Mon, 15 Dec 2025 18:02:14 +0800
+Message-Id: <20251215100214.144568-1-chenzhang@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251215060657.87947-1-chenzhang@kylinos.cn>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[163.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,163.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kylinos.cn:email,suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 72D9E337C4
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
+Content-Transfer-Encoding: 8bit
 
-On Mon 15-12-25 14:06:57, chen zhang wrote:
-> Instead of using the 'goto label; mutex_unlock()' pattern use
-> 'guard(mutex)' which will release the mutex when it goes out of scope.
-> 
-> Signed-off-by: chen zhang <chenzhang@kylinos.cn>
+Follow the advice in Documentation/filesystems/sysfs.rst:
+show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+the value to be returned to user space.
 
-Thanks for the patch. I agree guards can simplify this function but why not
-handle 'cd' variable with __free as well then? The kfree() calls you have
-to add otherwise kind of defeat the purpose of guards...
+Signed-off-by: chen zhang <chenzhang@kylinos.cn>
+---
+ fs/fuse/virtio_fs.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-								Honza
-
-> ---
->  fs/char_dev.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/char_dev.c b/fs/char_dev.c
-> index c2ddb998f3c9..ca6037304e19 100644
-> --- a/fs/char_dev.c
-> +++ b/fs/char_dev.c
-> @@ -117,14 +117,15 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
->  	if (cd == NULL)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	mutex_lock(&chrdevs_lock);
-> +	guard(mutex)(&chrdevs_lock);
->  
->  	if (major == 0) {
->  		ret = find_dynamic_major();
->  		if (ret < 0) {
->  			pr_err("CHRDEV \"%s\" dynamic allocation region is full\n",
->  			       name);
-> -			goto out;
-> +			kfree(cd);
-> +			return ERR_PTR(ret);
->  		}
->  		major = ret;
->  	}
-> @@ -144,7 +145,8 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
->  		if (curr->baseminor >= baseminor + minorct)
->  			break;
->  
-> -		goto out;
-> +		kfree(cd);
-> +		return ERR_PTR(ret);
->  	}
->  
->  	cd->major = major;
-> @@ -160,12 +162,7 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
->  		prev->next = cd;
->  	}
->  
-> -	mutex_unlock(&chrdevs_lock);
->  	return cd;
-> -out:
-> -	mutex_unlock(&chrdevs_lock);
-> -	kfree(cd);
-> -	return ERR_PTR(ret);
->  }
->  
->  static struct char_device_struct *
-> -- 
-> 2.25.1
-> 
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index b2f6486fe1d5..7466e5d6baa2 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -234,7 +234,6 @@ static ssize_t cpu_list_show(struct kobject *kobj,
+ 	struct virtio_fs *fs = container_of(kobj->parent->parent, struct virtio_fs, kobj);
+ 	struct virtio_fs_vq *fsvq = virtio_fs_kobj_to_vq(fs, kobj);
+ 	unsigned int cpu, qid;
+-	const size_t size = PAGE_SIZE - 1;
+ 	bool first = true;
+ 	int ret = 0, pos = 0;
+ 
+@@ -244,18 +243,20 @@ static ssize_t cpu_list_show(struct kobject *kobj,
+ 	qid = fsvq->vq->index;
+ 	for (cpu = 0; cpu < nr_cpu_ids; cpu++) {
+ 		if (qid < VQ_REQUEST || (fs->mq_map[cpu] == qid)) {
+-			if (first)
+-				ret = snprintf(buf + pos, size - pos, "%u", cpu);
+-			else
+-				ret = snprintf(buf + pos, size - pos, ", %u", cpu);
+-
+-			if (ret >= size - pos)
+-				break;
+-			first = false;
++			if (first) {
++				ret = sysfs_emit_at(buf, pos, "%u", cpu);
++				first = false;
++			} else
++				ret = sysfs_emit_at(buf, pos, ", %u", cpu);
++
++			if (ret < 0)
++				return  -EINVAL;
+ 			pos += ret;
+ 		}
+ 	}
+-	ret = snprintf(buf + pos, size + 1 - pos, "\n");
++	ret = sysfs_emit_at(buf, pos, "\n");
++	if (ret < 0)
++		return -EINVAL;
+ 	return pos + ret;
+ }
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.1
+
 
