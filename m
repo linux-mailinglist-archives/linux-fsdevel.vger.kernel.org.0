@@ -1,91 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-71485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10270CC4BBE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 18:39:08 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D2ECC4C1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 18:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id AB9BE30690E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 17:36:32 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 187EB30073DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 17:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89B2334C09;
-	Tue, 16 Dec 2025 17:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF84A33C1B9;
+	Tue, 16 Dec 2025 17:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="EUwOlzwJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPLR5Phk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69832EA75E;
-	Tue, 16 Dec 2025 17:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD0B3BB40;
+	Tue, 16 Dec 2025 17:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765906590; cv=none; b=q3QfMdxmK2zT7TeV+gPPu0AuLC0KBEKvmE+DtGSZHaD6nDQWsGznzWiHycBLJ3IKg+t0Vz+PgwEC40onVGKpSb2buzHUyNZZ+xjV7WvdjcmbkP/DOINMc71K3Bm1t/oOj1Cz8ywMJhE8kMyJqI4Y9v4pKErV9amOd/4aUlTlJU8=
+	t=1765907881; cv=none; b=stm8P0QEuhw/Reyds1jsKOiamSkAy2/mVv3Weq9WLmuNO0+UM72nGX3rMHbhCM2oOdht/y7MzKh0mjkCTRRUNyJHvnU98G9kjBSDqUA91l9kNxP2E1yChh8QKP4eW6ucpOT6HEDE2lBG7MlJ758iX1G9CbVXAeQVGPGUwgMJo/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765906590; c=relaxed/simple;
-	bh=Ey2Rn3gotBG53wIdE0ArTmJMrB/UTxoNDLJ5CmlUS/M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XrG7Ylpgn1WmpaohbjQ23soWbHRG7OgkRlvUtcMTDFmiVhDniSeP0xv5oz4ZhQUkJwzG72LYQzb5577at5cwG2wNiN5YZmsyuxYK/1mm3E8PUWazJBJ5p9AEvgZGPZcHyVx5s91s4+PR8V1xr3U7q20paWXQeL/vbQOPgQmcL2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=EUwOlzwJ; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=MvqD1lCTVXUJNMqv16zr6wGoF2MI4z8z1UEk6qRQycw=; b=EUwOlzwJnbhy+tcz3PbIPg9xaH
-	xp9xjJozjmZQElDPeeuSJfRUSOC00QDiqJsDJ8oxQmv8jkkeWfiFmbFwpCJBt8zWjelU3IfU9ZjYc
-	2/YVGjQAdvsV3lYOfCX/gVNlAQKHh/zRTzLVw3Xr1/h0CF9wpnaNU6iU7pDaU6CriB4K4ujvGWV45
-	eXxC38ih0TQE2uUr2uuU18JsSYuHKIr81odJnEtWyv9Qi2bdLImlx3npm8/XHeZEQRCh5LszX3XMO
-	uRskVfqkpCJDNm5atK1mUrvq7YacQtSG9tP/Ix12sxbrO6trst2vQlj6s1BgujJ7sltp6XWMV11EJ
-	PXI9d9BA==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vVYy8-00DUND-SU; Tue, 16 Dec 2025 18:36:16 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Askar Safin <safinaskar@gmail.com>
-Cc: amir73il@gmail.com,  bschubert@ddn.com,  djwong@kernel.org,
-  hbirthelmer@ddn.com,  kchen@ddn.com,  kernel-dev@igalia.com,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  mharvey@jumptrading.com,  miklos@szeredi.hu
-Subject: Re: [RFC PATCH v2 0/6] fuse: LOOKUP_HANDLE operation
-In-Reply-To: <CAPnZJGBtHf3p=R+0uxNuK42s5wteMi01Fs+0yhW3gUDMF0PC6w@mail.gmail.com>
-	(Askar Safin's message of "Tue, 16 Dec 2025 03:33:36 +0300")
-References: <20251212181254.59365-1-luis@igalia.com>
-	<20251214170224.2574100-1-safinaskar@gmail.com>
-	<87cy4g2bih.fsf@wotan.olymp>
-	<CAPnZJGBtHf3p=R+0uxNuK42s5wteMi01Fs+0yhW3gUDMF0PC6w@mail.gmail.com>
-Date: Tue, 16 Dec 2025 17:36:16 +0000
-Message-ID: <87v7i6ba7j.fsf@wotan.olymp>
+	s=arc-20240116; t=1765907881; c=relaxed/simple;
+	bh=w0PekU5o2AswxOM3dl9y1AxSBjOhImdfxrfiF55jfYE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rLDShY/KT9bnNXHrabfh5hQZSjhK40SaSS9AtcAwabPIBB1GIk4pHPbawfh2yu5+BvAEjbcgg3z/fHvP7uJsy3whgl8UpvRSo9FfUAkyGv4LKAdv37oGHMzzsGsC4l1CFN1FPnzCfivdiHguQJ/W5ouf6MjrXavSbw283gwrEkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPLR5Phk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25EBDC4CEF1;
+	Tue, 16 Dec 2025 17:57:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765907878;
+	bh=w0PekU5o2AswxOM3dl9y1AxSBjOhImdfxrfiF55jfYE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=IPLR5Phkoy61xaw026IojDgvEa9eKebrMG5c+iNmO7PCZtxW5yxc8/vHww9GWHwYi
+	 2YJ2w79tSH0yG3sOUumE0VHcTBxwlXk/24dmMOIjyTvhYFb2PzwMgv/ntcBkDlxYKM
+	 mFqJgx6SrJ3spsDQsjo4UWfMIbHr4qYT8q4Vzba6s0nBXG0O75Sbk9IJBuqZgvKavC
+	 8w4lPIcqYLwvl+w3qvd3d5pRJEvm0YuO2T9vGwUmBA4cgRwzvOgMjBpygyUBcKyVlo
+	 HFSjZvk89uA3yAcepQtlI1nKFQGHytvm1b4c0w3OWHUwshzex7JlTCNhcP/q+CRUO9
+	 UK1HerzgEwmbQ==
+Message-ID: <33364f5a1f0626ff5e2be61b04ca2b0f59d4d12b.camel@kernel.org>
+Subject: Re: [PATCH fstests v3 3/3] generic: add tests for file delegations
+From: Jeff Layton <jlayton@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Date: Tue, 16 Dec 2025 12:57:56 -0500
+In-Reply-To: <20251216171333.GG7716@frogsfrogsfrogs>
+References: <20251203-dir-deleg-v3-0-be55fbf2ad53@kernel.org>
+	 <20251203-dir-deleg-v3-3-be55fbf2ad53@kernel.org>
+	 <20251205172554.pmzqzdmwpmflh5bi@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+	 <be8dace96aa68c59330f6c7be6ec5e2482bb6ca3.camel@kernel.org>
+	 <20251216171333.GG7716@frogsfrogsfrogs>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 16 2025, Askar Safin wrote:
+On Tue, 2025-12-16 at 09:13 -0800, Darrick J. Wong wrote:
+> On Sun, Dec 07, 2025 at 03:35:29AM +0900, Jeff Layton wrote:
+> > On Sat, 2025-12-06 at 01:25 +0800, Zorro Lang wrote:
+> > > On Wed, Dec 03, 2025 at 10:43:09AM -0500, Jeff Layton wrote:
+> > > > Mostly the same ones as leases, but some additional tests to valida=
+te
+> > > > that they are broken on metadata changes.
+> > > >=20
+> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > ---
+> > >=20
+> > > This version is good to me. But this test fails without the:
+> > > https://lore.kernel.org/linux-fsdevel/20251201-dir-deleg-ro-v1-1-2e32=
+cf2df9b7@kernel.org/
+> > >=20
+> >=20
+> >=20
+> > Thanks. Yes, that bug is unfortunate. I'm hoping Christian will take
+> > that patch in soon so all of the tests will pass.
+> >=20
+> > > So maybe we can mark that:
+> > >=20
+> > >   _fixed_by_kernel_commit xxxxxxxxxxxx ...
+> > >=20
+> > > or
+> > >=20
+> > >   _wants_kernel_commit xxxxxxxxxxxx ...
+> > >=20
+> > > Anyway, we can add that after the patchset get merged. I'll merge thi=
+s patchset
+> > > at first.
+> > >=20
+> > > Reviewed-by: Zorro Lang <zlang@redhat.com>
+> >=20
+> > If you like. This functionality is only in v6.19-rc so far, so there is
+> > no released kernel that has this (yet).
+>=20
+> Hi Jeff/Zorro,
+>=20
+> Having rebased on 6.19-rc1, I now see that generic/787 (this test) fails
+> with:
+>=20
+>  --- /run/fstests/bin/tests/generic/787.out	2025-12-09 09:18:49.076881595=
+ -0800
+>  +++ /var/tmp/fstests/generic/787.out.bad	2025-12-16 07:23:40.092000000 -=
+0800
+>  @@ -1,2 +1,4 @@
+>   QA output created by 787
+>  -success!
+>  +ls: cannot access '/mnt/dirdeleg': No such file or directory
+>  +Server reported failure (2)
+>  +(see /var/tmp/fstests/generic/787.full for details)
+>=20
+> The 787.full file contains:
+>=20
+>       ***** Client log *****
+>  10 tests run, 0 failed
+>       ***** Server log *****
+>       ***** Server failure *****
+>       in test 3, while Set Delegationing using offset 1, length 0 - err =
+=3D 0:Success
+>       3:Fail Write Deleg if file is open somewhere else
+>       ***** Server failure *****
+>       in test 3, while Get Delegationing using offset 1, length 0 - err =
+=3D 0:Success
+>       3:Fail Write Deleg if file is open somewhere else
+>       ***** Server failure *****
+>       in test 4, while Set Delegationing using offset 0, length 0 - err =
+=3D 0:Success
+>       4:Fail Read Deleg if opened with write permissions
+>       ***** Server failure *****
+>       in test 4, while Get Delegationing using offset 0, length 0 - err =
+=3D 0:Success
+>       4:Fail Read Deleg if opened with write permissions
+>  13 tests run, 2 failed
+>       ***** End file details *****
+>  Server reported failure (2)
+>=20
+> (Apparently this test would _notrun in 6.18-rc)
+>=20
+> Is this the failure fixed by the patch above?  If so, I'll ignore the
+> failure until rc2.
 
-> On Mon, Dec 15, 2025 at 3:08=E2=80=AFPM Luis Henriques <luis@igalia.com> =
-wrote:
->> No, this won't fix that.  This patchset is just an attempt to be a step
->> closer to be able to restart a FUSE server.  But other things will be
->> needed (including changes in the user-space server).
->
-> So, fix for fuse+suspend is planned?
-
-To be honest, I really don't know.  I haven't looked closely into that
-issue (time is scarce) but I'm not sure if the real problem you're
-reporting in your link is a kernel issue or a problem in the user-space
-implementation.  Have you tried to report it upstream (to the sshfs
-maintainers)?
+Yep, the patch should fix that. Christian just merged the fix into his
+tree, so I'm hoping it'll make the -rc3 or 4.
 
 Cheers,
 --=20
-Lu=C3=ADs
+Jeff Layton <jlayton@kernel.org>
 
