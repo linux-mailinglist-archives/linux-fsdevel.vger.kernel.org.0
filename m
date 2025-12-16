@@ -1,89 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-71490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABE2FCC50ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 21:00:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE8DCC510F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 21:09:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 98DA030402EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 20:00:26 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8222E304199D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 20:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7583370ED;
-	Tue, 16 Dec 2025 20:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC00832F751;
+	Tue, 16 Dec 2025 20:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="YD4REUXR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S89KkUna"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
+Received: from mail-lf1-f65.google.com (mail-lf1-f65.google.com [209.85.167.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9572EAD1C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 20:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE31126B755
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 20:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765915222; cv=none; b=jLSlb7uEiQkY5TrxIISPgGK7W7LqA5/WfaSEUktmN54IVtgBtMny1wlHZ9zwkJt+2oX8BXBffduXmx6XC6DPtctcZlQlk7zxRmGZbn1ttsr/7mZz0o4GSpn9DRR3hpyA7qfeEirgSqzWJWifd+UffS84zlPjcNhRMNjcuuQz5+g=
+	t=1765915746; cv=none; b=Nnr9FSdrEEEP54NQ4PIWogjtolOJ5Jdc2etcR2OViVMkyVh68dEJe9UcTV9kTWhGpmDYffojnbWFnhVZH/tolQQ55n+RLtIWDQx6OQ9yJUlsT7wwIv/YDZc1bSwv5R5s4Fnj17xZ7cQ3YfP+VVBwfARXg2Yr2kvnbKlx/XOy3iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765915222; c=relaxed/simple;
-	bh=W9myzMlDVTfDdzd2dxRqugETmI9Y3kZ4dF3KewVdvTk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oY+niGMfiMMJj4jLE+9H18E9UUJ/aDrCiAyCAa7i4SbnNyCxFzm3YcN/iNEakyZIEjzxpVVvnd7lkHgJ3VgEASpFpY+ads4NG91YklevSL55Yp4LpxR2mpDlZ7AQO9cILxHXoKIeE7SVy6PeJ7sEDZxww2aGw4p+grWxrotZvwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=YD4REUXR; arc=none smtp.client-ip=209.85.128.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-78e7cfd782aso26863507b3.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 12:00:20 -0800 (PST)
+	s=arc-20240116; t=1765915746; c=relaxed/simple;
+	bh=kIhSKDmibiZeir6cA6DLCbZr7ql+u1kAXnIHyYbuQVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SS9C2vd2/9qR/6aIuwfd1t1TsPkmn4XYZWDwdOhoXJwW9yVJSkUufcz2t67O5ZFvnF5jcptKpU1m7ZaLPAO8rz44yu63UBhZLFs6Y+EnScgDDGHJbeV8CSn+FbzV7g6uPr7uE0r2NgEXiplhcwWnNr/jsCIJQFDkBfiDY37RMeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S89KkUna; arc=none smtp.client-ip=209.85.167.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f65.google.com with SMTP id 2adb3069b0e04-597de27b241so6408605e87.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 12:09:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1765915219; x=1766520019; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ce5/Jr+wXPPAgYBiuheNMGHCY0MttENpNDX20Yhq0K4=;
-        b=YD4REUXRUHGvS+huWIEc/0By59SEsOz7NPuFVFelPHCkReK1Y96iqAeWPRqWjsXRLF
-         5AyJeUh5MFtJ4dQ+8J/Ng4Zpx4fM7oFKsc9x5EVYxQSV5isdjAEJ+XKH86txNI/uTOjc
-         NfZD9Xq56P+0+IDR2Ez4H6lPxqeSNkt6kV20Yc2a+O7RVxYPm8/502Sfm5pXKxSLQpsx
-         rhImIGS5w2/5V7FDKjnZX+GYkZFgwhhpkP112eMb4WQ1sOH9FjGD1qkmJOySmL89YrYe
-         rdwNeFQGBK8id5PUS3+pMY8PcfY8Wlbekb8IsPxLAmNdilNCo2Gs9+se8P9pqzyNlvV6
-         LH5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765915219; x=1766520019;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1765915743; x=1766520543; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ce5/Jr+wXPPAgYBiuheNMGHCY0MttENpNDX20Yhq0K4=;
-        b=f0HnG/3h2xuc9RRkBBGO2h2PrR/XSp/Jn05P8Qbv44QjLHIkXhWFsu+gZCZXlXMDuU
-         sl6T9sgPUCRgN7VkdO/HNp1MZ4Isqss/dUTiaA7tB0+u2XdX9BpMl8tsdfN0/lyMKGoH
-         iaD1R5GJqlzsI2D45Ld/F6t+ZqpZJnpEQxC5p0JuhE45wK46DS4+ERXGSieZ86492BUy
-         /QFFVP2O9dxJAMCUXYwPq7kaGZmhXKxBzwYMU056EOqm4NlXZr0qwuu3UMwkVo6Mkw2q
-         IU+z627I5QmfA/NO3riuvOw8zuYisoqCVrB+g8NBXOfQ7OIYPxLPvbYpOSe0qmuNoDD0
-         1Rjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzIJYqdVT01t0I8LgJocxVFG1SHmPKI8zr/q+D8DBPQxtUtN2BhG2RcmzOc5o5XN6PVt7lUrBOBHu8wQ24@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaqR58Z2Tw4Gb/kKMBWHlqAAU2dVAQkEQEpHh87N7LcVfICIvA
-	+F8Iz7NuECKaz9PT82I0yyUiMXysS6gpz3Q7+pO9mCYhNLS0EfKhCGiAFOC5nQ7Dx1Q=
-X-Gm-Gg: AY/fxX7eJAjxZyRdN8b98c3sY1m1JbryiHi5XMKol1Zvtcud8ZVOOYzKLdNVBe5FLyY
-	UCLPnowP8e24DofkpQvJX58R15pnrnIdtxcLVse6XKSxpKhjdbx13RAwkADqC7dhP1RFBXsrSC4
-	A+VU3MWnWZq4QFdqw6UGR30kcvEauXN1heM+OkMSPJiTBN2N+UgcxHPAiNxuCSjA2nncvoMYS1y
-	d25VVD+EvVvWT5yk+XEqYWgY9SOxi51/UhBlO0qwPwW6z1UjgjyB3txtZjTsmrR43enui8ISLzq
-	qwW6YcHVqn1QAk41bI5OGYkddJjdNrTUkjohGg4D/YSy058YlUU2N0jPOr1n24+8Unj03VQenqN
-	a8ejbjLIIJEFFmYgvHe8CQ1Ff9WJDvmqJRqEP6AZsnnsmWOkHMmLT1Yj4X187awalGIOk9Co4iE
-	fmn9qAKjHbahY5PSOARFPfXTS3vMHRtAxJkj0luAY=
-X-Google-Smtp-Source: AGHT+IFss4XifqHhQdhVU+8YTknoHGIrjYBMPTiUOuaw5AB/60y6F7hQuTuki2v3rPw9Z10H0e6/0w==
-X-Received: by 2002:a05:690e:1c08:b0:645:5b0e:c916 with SMTP id 956f58d0204a3-6455b0ecbcdmr10495906d50.3.1765915219244;
-        Tue, 16 Dec 2025 12:00:19 -0800 (PST)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:877:a727:61cf:6a50])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78e749e5bc1sm42744327b3.30.2025.12.16.12.00.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Dec 2025 12:00:18 -0800 (PST)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
+        bh=i1bbnR9hzdM9Uf+6FrzBwEhl6E+6kDOhpZpgPAvE7Vg=;
+        b=S89KkUnaqoFYdw+5He12dGILB4/8WVzBmYaCGuP3wwjIf3verZO3h6yhqkOveTTiFq
+         LLRmQCsHkx5+7+2ewLHHcvZUNX3m9EUK/eGK9H6yyjvpD84WNI2z/h29RkkSHnsJVz0u
+         ioZaACbEapFKrhQYPw1tHEys82hqDeXLwE9YNcAncM+Rm8J8FHiff+ZE57RdDLMvxuMU
+         RO2rS41KObHDdH90x+LX6yqN6t7G5eqpBzEUjzwroaeySr8T3DWT6hEfrO8gpH993xD6
+         3yFOhj6uzg/buohO8t7tMPhrXMsJs6fHz0aiogAzJfozYdKGUpOyCjJ2jIe6Dk96HSDR
+         hqpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765915743; x=1766520543;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=i1bbnR9hzdM9Uf+6FrzBwEhl6E+6kDOhpZpgPAvE7Vg=;
+        b=WXK23V/a6GXz9rJIMag/Rn0/WgCbUAJSy9xG1ndsIYLNtCDUl90SZpNquGwAhszE6S
+         E7pxbf9eWNFg27fy6muN962zuNbE4FAvXPrxHi5yFe5F+qBvtXCTKZw987g3mayfaYYY
+         YNlWg2R0NMhRYrMEfQMvRn3lZ8M00/w6GRE10DDfshicGD2hiqQ9qECKXi3PIbFjMoO6
+         860n9ufUnlwyTsH8STXBSU/mmbIskphIV7IyYisOURovTR7ROVAT+ObdxAYIueplye6L
+         xmgpWlvN6unyRKcMjORjzNF19w3ZF/0SwlP0EBAOOQCKKMs0mBAszqjYqG7B2nwEq2SG
+         Htyg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0DydIvpKr8+7qzAyLvlhZl/O9vWPeGJU/q/az9yfcuJQzXiBUs53vrTEJdXumiB1yEI079Erk7Uvnmeu4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+oCsotTHqxcLD/QnhRTHOWhYu3gZ3ujDxafuKhPxY1lirknvx
+	PNVj/oTesv7jPgdL+R99msh/y1ydIzJOYuayLdXrEXudhF+eKsmrdoyr
+X-Gm-Gg: AY/fxX7CP8U66Bl+diTeH0NnhiI+G/63mZDPxunJcbDNVZt55dFJmAE5QpC3u16zI2k
+	+2/p2y3+Uep8WEVKaiV5flzf4D9FwGz+18juu13rPctfd/KMzDsgvhgBpyKsrSGlqN1yU8wmhUu
+	+H0cnmu/VbXOOQnlvYRwyA80xmngjOum6J2UiW30F33khmbloosRqFzyb5xbGk28Do6sGAKIR0v
+	B2nGD1VU5QmbXDXBs7xgl+mM1Fl378PWLwTPmnQmfHQUDfrxjoJ2ypK8hM3/+G/hkoQnKNoOze7
+	M5NCsPBaU2WV2qbde4U9E/lfNqZYl22jDUYt90bi3dwg7dWZfiNMLdBZzMqqmxvG7iE3rPDthz4
+	fhWlPSxQtF5sgF8tunca8xFgvlTHfQ77Q/2X/RGP3msAUHM24QAjK/y2h9BbVxf4Y4p21kBthbF
+	26BknxfL3I
+X-Google-Smtp-Source: AGHT+IFV1QMqnFEYIhxE0eg69fEl9/ql3eoaZPZV7PrMeB7/xLG89YWVuYGgHgekTUU1ROL/2OouVw==
+X-Received: by 2002:a05:6512:3ba2:b0:598:edd4:d68 with SMTP id 2adb3069b0e04-598faa5a3bamr4551753e87.28.1765915742645;
+        Tue, 16 Dec 2025 12:09:02 -0800 (PST)
+Received: from localhost ([194.190.17.114])
+        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-599115eb95fsm825534e87.19.2025.12.16.12.09.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Dec 2025 12:09:02 -0800 (PST)
+From: Askar Safin <safinaskar@gmail.com>
+To: viro@zeniv.linux.org.uk
+Cc: audit@vger.kernel.org,
+	axboe@kernel.dk,
+	brauner@kernel.org,
+	io-uring@vger.kernel.org,
+	jack@suse.cz,
 	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com,
-	vdubeyko@redhat.com,
-	Pavan.Rallabhandi@ibm.com
-Subject: [PATCH v3] ceph: rework co-maintainers list in MAINTAINERS file
-Date: Tue, 16 Dec 2025 12:00:06 -0800
-Message-ID: <20251216200005.16281-2-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+	linux-kernel@vger.kernel.org,
+	mjguzik@gmail.com,
+	paul@paul-moore.com,
+	torvalds@linux-foundation.org
+Subject: Re: [RFC PATCH v3 27/59] do_sys_openat2(): get rid of useless check, switch to CLASS(filename)
+Date: Tue, 16 Dec 2025 23:08:58 +0300
+Message-ID: <20251216200858.2255839-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251216035518.4037331-28-viro@zeniv.linux.org.uk>
+References: <20251216035518.4037331-28-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,46 +98,11 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Al Viro <viro@zeniv.linux.org.uk>:
+> do_file_open() will do the right thing is given ERR_PTR() for name...
 
-This patch reworks the list of co-mainteainers for
-Ceph file system in MAINTAINERS file.
+Maybe you meant "right thing if given"?
 
-Fixes: d74d6c0e9895 ("ceph: add bug tracking system info to MAINTAINERS")
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-cc: Alex Markuze <amarkuze@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Ceph Development <ceph-devel@vger.kernel.org>
----
- MAINTAINERS | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5b11839cba9d..f17933667828 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5801,7 +5801,8 @@ F:	drivers/power/supply/cw2015_battery.c
- 
- CEPH COMMON CODE (LIBCEPH)
- M:	Ilya Dryomov <idryomov@gmail.com>
--M:	Xiubo Li <xiubli@redhat.com>
-+M:	Alex Markuze <amarkuze@redhat.com>
-+M:	Viacheslav Dubeyko <slava@dubeyko.com>
- L:	ceph-devel@vger.kernel.org
- S:	Supported
- W:	http://ceph.com/
-@@ -5812,8 +5813,9 @@ F:	include/linux/crush/
- F:	net/ceph/
- 
- CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)
--M:	Xiubo Li <xiubli@redhat.com>
- M:	Ilya Dryomov <idryomov@gmail.com>
-+M:	Alex Markuze <amarkuze@redhat.com>
-+M:	Viacheslav Dubeyko <slava@dubeyko.com>
- L:	ceph-devel@vger.kernel.org
- S:	Supported
- W:	http://ceph.com/
 -- 
-2.52.0
-
+Askar Safin
 
