@@ -1,151 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-71475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C28CC48F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 18:09:23 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 487A7CC43DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 17:22:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 2450B300A578
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 17:09:06 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id DF1E73065C75
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 16:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C3C390207;
-	Tue, 16 Dec 2025 12:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9534730DD2E;
+	Tue, 16 Dec 2025 16:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DE3BNhOc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AlThjLIz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF653901F4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 12:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060F32EDD76
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 16:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765889064; cv=none; b=hOfAmQJ0KrVCvXWLAxfUd5ARWSqABZ929/IYwAtlN/g3q9a6R7CflF+TPvDbiszbXdbS+HYGGxf0ajhplBfxxlmgC1uo2o1MSwJvzRsDV/xmN7U1S+l0zojUp9RyxUqynPZm7aDfq+rqRh2UhjZ6jXycaXx2pm7lv/OJ1HIUS3s=
+	t=1765901880; cv=none; b=ocmCz9iogce/IKSfUJHMMvTPLA8onhwDc053oXUESDS8NK1VbHr3FN3xpo0/UH6ey6J868nikEu7FnN7TuDbHijY5ieHhniJOxGx+pkr47Iy3fUy4SpB2h9JsJWHwkLiZqaFZgBi3v40T074Q/MJswWQPI8jJCEnDOwTSBgS/Jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765889064; c=relaxed/simple;
-	bh=boIqxM+ov9nSjwgWpy63cnTTzp37ctPMetwDRjr716c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YRe9IbXAkHCp4gpWYB3iN3UUNvOHOLVI5N4IPFH7DwVnqPUKF5tw9G4vF+Rz0/Pvavy+l9V9ypKZDx67CBG3hJGpR0pVYVCpQ9WwnO9evjbRqAnbz4RxGk3+YLu8+TnexxBwzCLWDaDEoBcrtrp+6CpDu7ubUlcoziGLnq5kIvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DE3BNhOc; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so35354805e9.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 04:44:21 -0800 (PST)
+	s=arc-20240116; t=1765901880; c=relaxed/simple;
+	bh=NfVFaEsgYlTNWhHiG9lD88HgIX1yIjeLewaZDgU2dKI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wrgtbe3T4nOeagtE4q3nyHUvXOE8/e574RCKed3myYQaolQ7vsaJu3bS8lXk1+I6jx3ISGyafPl2TF/M/aqU0vZxFI/ASV7P76SNzDS5eGIGmUR5pL20Atoi6PfQJLA9vqNLJnWhJABhEjT+XQOD8EOMSw7XvNNyT+ON0LVqsrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AlThjLIz; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b7633027cb2so843491466b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 08:17:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1765889060; x=1766493860; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/lTD5T6FLVPMFiI1zK6zOO1/qp2X5cLGG7vD5u13cD0=;
-        b=DE3BNhOcc+HNQXvq2D9wHK7NIuewOffYSeXDSlTTjBkaAYU97BUwxMG9Bd17Vj04G0
-         Udn8He0ZTL2b6WWpup21Pz65uKv9xFnVS7CsZ3CMMxLk4LdE+ORIqEU90QzUCeZoYY3E
-         M93a4SOb9XP+Clv4+mIKU4Mp8YVXMRjFWFsAvF6zu11+Ni4hYptYb8CfRJTJBTud4Nwq
-         C61+N5a2YmlS6bDZ/Ku2Q5wgp/hTUEegwISlmbTHBHBU5TMM+11ijwfMN4CfjDDiL/MH
-         g4UfBRPjvF2wlxN0Xv8vHhKINDlp+zTZpBTb3GZCiCYQBxHLtYr5ITzGE3AKYiitxSzC
-         1FZg==
+        d=gmail.com; s=20230601; t=1765901877; x=1766506677; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jc74d610ubg8JlIaa6JmNgUpYxdbPfvvf6uFfQxvzNI=;
+        b=AlThjLIzoxD3BcLFdC2V2jydRwD5nq594bpgF95jJReweec4to8tfQGS+Lx1pLGAA9
+         KRfL4SPnZYBPcYxiw9/GWdwCUqWTp0l5cB41cp3isjJu+RdQ9+CcpnKaBXGpsWClbuO3
+         kdzJBOxu6A+MobLFWPU2OK4oqep4G/l8yYWZeNDEyUt0yXbSPTYXSLkLDD+CslOlbJc5
+         ga3sIv8iECLoOw438HbGhA2xqLIuIqb3KEuD9/NRodcsRgmjT/jHlZc29EEOSRFJwS7W
+         LCP1iJNjz9OlS+4f5JsxXkDTw4sl/ZWYYXqiVH31AgXmHYqeLPVx+O54OZo0tNhMcERl
+         TBfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765889060; x=1766493860;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/lTD5T6FLVPMFiI1zK6zOO1/qp2X5cLGG7vD5u13cD0=;
-        b=QU/Dn3nP+QCw67Dl5Q/aRZa5t8WSEPmdzSfXO3Yy8PZEW3GaXyDDe4yF8vxAGROjr5
-         +/fQ/tCS/upBM6lRvIZ57BAiZ2VAzgdnhVPZviqi4ApOWBdWJ9yKrtQ42YE2IrvPZ7cQ
-         HnFwoCSHczS+QkcQNKI0wITLRKxyWUF2xg/XVVFgaTXbJhn2p7VljfqOzzmaJn8w9pfH
-         2a4W1w3luWtLjF9Phu1I+YY15RzwH+JX4HecWXqxtPclz0Im0iH5Kopb63qWFsaS9E0U
-         ZR5KHp7RZU9HzpTKWv6uzU8xHAJ+Ki4dY0kD1rEQEa5B6jok/JDX4uaEj433lPORp7U9
-         9CwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXi0E6JhdWEIHHrLgNqRRwNxJ8H9oGNG0sn2v1/edHKOkZEwjTt9nmM1QFem4/VC+3ei0Lc6Ru4+j5opz0q@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC1oU/EiC2sHhqRdT0Ej8o/BXBQNNnd63PPtW9avDxs95A+MxF
-	UrbOug0gIaeSKTyIXEGMUx0LzZN7Vr5jpUS9kvoQcOGm8P/Bi5EH9Wi9YksmH3mMRJg=
-X-Gm-Gg: AY/fxX4mBPYxOWLPfxljur4a7XjfhTuUfZ4m6TECmYVLABPSWTZz85zDo4x59yAkRFM
-	AE8+Pqb/Equ4UcSKSY/CvE/iPhQpMfnCB57eRwtq7w90p0gyhwDIn66ZSIzdebe/DwLqaL5oskx
-	ugyahJGMFmdQp4nCvEKISMTILlbLFBJF+kkR+1Efb+d6vIjTZ5MgHkum63mAwC3ZGWuI3msigjN
-	ECUCywsz3DLAfCt2RddKMKcyjm1ppPu7VhOlUeW3g9CWVKqqSQgLqvllOZH3pAgILPEqYMFIdhj
-	vD84ljC9ueR1FtMXohNnqpJdALof5rygDlUW67dFDp7uC44W3bBZFXuOd3cmnn5XhsMZ0fZY30V
-	5BFratn+c7m6UrrtVY1/KecjgZ/5sA93Kyhj8P08WWnohvCoEp9O6zUL1SGuh0S7zNBQIHvNb1J
-	+nV3biVYL+RXW/9g==
-X-Google-Smtp-Source: AGHT+IFW5qDickl4JAEFRsGArKDI6FcAB611ceysvy3jNS62BLSz150yvQDh+EMhh7oPcWPJX+4yHw==
-X-Received: by 2002:a05:600c:3acf:b0:477:1bb6:17de with SMTP id 5b1f17b1804b1-47a8f90f96bmr152908605e9.30.1765889060304;
-        Tue, 16 Dec 2025 04:44:20 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47bd95e0161sm9700215e9.2.2025.12.16.04.44.18
+        d=1e100.net; s=20230601; t=1765901877; x=1766506677;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jc74d610ubg8JlIaa6JmNgUpYxdbPfvvf6uFfQxvzNI=;
+        b=NrM4bH9i5s2hJinZaeZljd9HkQxZQ7ZNpe6V/Smjz1SXXdBCPzsMZHzAQDVQF5O5us
+         Xr5QFP56VyqecVGiPqTGatmpI/ufP2SpCfueQl3faemW5gntmw/Wun0ikn5AXBkj1T7w
+         q8rUuTGdijMVk6hHrMluLclqDJzmNLcBYUtKNUp3e9wjiAdc04anfwagV6lCr2vDZu/G
+         JLQFA7FwspSmpmEFMlMF0JG6O3pcXIKbKOqjzQwY+edTb3T/+m6191TaYzjgULv/Jpy0
+         TgfGyuIARYeGUtk67yHp619r62QSNh8hU7jflnXiBDJLRbr1PGF48o0gzkURCFC0UpyH
+         N07w==
+X-Forwarded-Encrypted: i=1; AJvYcCVjz7P4PGXmAS9GSLe0+wRT/sTfIoOO6cwaecE9J2vhSBNjSuN+/gNwvvXvlM0ks9G9E9wcxDmWc3l7KgH2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjuGJMrb8KHB+H0C+pfSR1zqMIMpknCr8rmkfF/1/opUdtydRy
+	Gj/veReURFr5kWGl7ZVa8KTzmtUcfoIIFWjJbtuGil1JjflVGhUtCVJ8MTXYzA==
+X-Gm-Gg: AY/fxX4/v9x937/3hds9QD4cYx9YOX+3Jexg0iUAHE3uuuoyHdlokftrFbnrUo5GH+g
+	QoIVLyQPwSZbEUfHCi4MfGVHzzAwkjfj3WKZS5RpjtVbzQqevTZBwANmJnKH2WBAaWkpTl0ddMy
+	I2014c+EXoZPSD0mzVb34Jq84J1Umb48dmxxRlT0YLXp/um3m/T0OsnSGa68/P7KeQLddAtD+hJ
+	6tYxC9DLejET7v5eU5As4kTmD+B9Ox3fjCCXvQIPYIwY4q0j1H11+T34JJ9Jz65g/QHhPzuwIhN
+	05q/2H5QvnK9DGDNHqaPHKxRwSA60evBtg5f9yUJoYmy+xWs9UzBTzLY9660ElAB5k9mU8S22DL
+	MxFRwt3N/f8NnOiIg3sZMdLl9pagp/BBYoPOA62m/FopI88AK+SK5Ty/Fh7UvA579bcdUz3iC5n
+	CPZWHo9GWnq4rwmHqGtrYd9nBmgSStjuLsDn6/kQOxgEyoWrm0UIVdUI9Svoqzj5IOL1CyVy5w
+X-Google-Smtp-Source: AGHT+IE++hUTpvVDoXTnEPkKwj2xABrPJXo5oPLEznAqITCPrZaE2A39nltiMCOFhyKLkzIMNDObkg==
+X-Received: by 2002:a05:600d:105:b0:47a:97c7:f08b with SMTP id 5b1f17b1804b1-47a97c7f1a9mr66099745e9.31.1765894609327;
+        Tue, 16 Dec 2025 06:16:49 -0800 (PST)
+Received: from snowdrop.snailnet.com (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a8f74b44csm240035745e9.3.2025.12.16.06.16.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Dec 2025 04:44:19 -0800 (PST)
-Date: Tue, 16 Dec 2025 13:44:17 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-hams@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] sysctl: Remove unused ctl_table forward declarations
-Message-ID: <aUFUIfVvRcYN3_ID@pathway.suse.cz>
-References: <20251215-jag-sysctl_fw_decl-v1-1-2a9af78448f8@kernel.org>
+        Tue, 16 Dec 2025 06:16:49 -0800 (PST)
+From: david.laight.linux@gmail.com
+To: Bernd Schubert <bschubert@ddn.com>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: David Laight <david.laight.linux@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] fuse: change fuse_wr_pages() to avoid signedness error from min()
+Date: Tue, 16 Dec 2025 14:16:47 +0000
+Message-Id: <20251216141647.13911-1-david.laight.linux@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251215-jag-sysctl_fw_decl-v1-1-2a9af78448f8@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon 2025-12-15 16:25:19, Joel Granados wrote:
-> Remove superfluous forward declarations of ctl_table from header files
-> where they are no longer needed. These declarations were left behind
-> after sysctl code refactoring and cleanup.
-> 
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
+From: David Laight <david.laight.linux@gmail.com>
 
-For the printk part:
+On 32bit builds the 'number of pages required' calculation is signed
+and min() complains because max_pages is unsigned.
+Change the calcualtion that determines the number of pages by adding the
+'offset in page' to 'len' rather than subtracting the end and start pages.
+Although the 64bit value is still signed, the compiler knows it isn't
+negative so min() doesn't complain.
+The generated code is also slightly better.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Forcing the calculation to 32 bits (eg len + (size_t)(pos & ...))
+generates much better code and is probably safe because len should
+be limited to 'INT_MAX - PAGE_SIZE).
 
-That said, I have found one more declaration in kernel/printk/internal.h.
-It is there because of devkmsg_sysctl_set_loglvl() declaration.
-But I think that a better solution would be:
+Fixes: 0f5bb0cfb0b4 ("fs: use min() or umin() instead of min_t()")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202512160948.O7QqxHj2-lkp@intel.com/
+Signed-off-by: David Laight <david.laight.linux@gmail.com>
+---
+ fs/fuse/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-index dff97321741a..27169fd33231 100644
---- a/kernel/printk/internal.h
-+++ b/kernel/printk/internal.h
-@@ -4,9 +4,9 @@
-  */
- #include <linux/console.h>
- #include <linux/types.h>
-+#include <linux/sysctl.h>
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 4f71eb5a9bac..98edb6a2255d 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1323,7 +1323,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
+ static inline unsigned int fuse_wr_pages(loff_t pos, size_t len,
+ 				     unsigned int max_pages)
+ {
+-	return min(((pos + len - 1) >> PAGE_SHIFT) - (pos >> PAGE_SHIFT) + 1,
++	return min(((len + (pos & (PAGE_SIZE - 1)) - 1) >> PAGE_SHIFT) + 1,
+ 		   max_pages);
+ }
  
- #if defined(CONFIG_PRINTK) && defined(CONFIG_SYSCTL)
--struct ctl_table;
- void __init printk_sysctl_init(void);
- int devkmsg_sysctl_set_loglvl(const struct ctl_table *table, int write,
- 			      void *buffer, size_t *lenp, loff_t *ppos);
-diff --git a/kernel/printk/sysctl.c b/kernel/printk/sysctl.c
-index bb8fecb3fb05..512f0c692d6a 100644
---- a/kernel/printk/sysctl.c
-+++ b/kernel/printk/sysctl.c
-@@ -3,7 +3,6 @@
-  * sysctl.c: General linux system control interface
-  */
- 
--#include <linux/sysctl.h>
- #include <linux/printk.h>
- #include <linux/capability.h>
- #include <linux/ratelimit.h>
+-- 
+2.39.5
 
-Feel free to add this into v2. Or we could do this in a separate patch.
-
-Best Regards,
-Petr
 
