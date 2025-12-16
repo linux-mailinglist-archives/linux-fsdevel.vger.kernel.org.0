@@ -1,228 +1,251 @@
-Return-Path: <linux-fsdevel+bounces-71486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D2ECC4C1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 18:58:03 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277B4CC4DA1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 19:23:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 187EB30073DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 17:58:03 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id F01643039FCF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 18:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF84A33C1B9;
-	Tue, 16 Dec 2025 17:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2946A33E362;
+	Tue, 16 Dec 2025 18:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPLR5Phk"
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="Uv3k/uM4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD0B3BB40;
-	Tue, 16 Dec 2025 17:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F385B339B52;
+	Tue, 16 Dec 2025 18:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765907881; cv=none; b=stm8P0QEuhw/Reyds1jsKOiamSkAy2/mVv3Weq9WLmuNO0+UM72nGX3rMHbhCM2oOdht/y7MzKh0mjkCTRRUNyJHvnU98G9kjBSDqUA91l9kNxP2E1yChh8QKP4eW6ucpOT6HEDE2lBG7MlJ758iX1G9CbVXAeQVGPGUwgMJo/c=
+	t=1765908853; cv=none; b=bNiCzT8NBeXYY3nGxAtU5X1PcybTNNUXZCmOnHQLYo2lQHGKIvS/Ja+7Sdu9gInLJBqyoUtqguGNZf4NBVa7nnOfhFEZ6YS0LbPDvr6JcMckVd8Xga6sNmqPGsAiVOCZmIRPE+LPI8krRuM8UpQk96/2ZL+AsxI9KHzLC5On1UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765907881; c=relaxed/simple;
-	bh=w0PekU5o2AswxOM3dl9y1AxSBjOhImdfxrfiF55jfYE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rLDShY/KT9bnNXHrabfh5hQZSjhK40SaSS9AtcAwabPIBB1GIk4pHPbawfh2yu5+BvAEjbcgg3z/fHvP7uJsy3whgl8UpvRSo9FfUAkyGv4LKAdv37oGHMzzsGsC4l1CFN1FPnzCfivdiHguQJ/W5ouf6MjrXavSbw283gwrEkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPLR5Phk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25EBDC4CEF1;
-	Tue, 16 Dec 2025 17:57:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765907878;
-	bh=w0PekU5o2AswxOM3dl9y1AxSBjOhImdfxrfiF55jfYE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=IPLR5Phkoy61xaw026IojDgvEa9eKebrMG5c+iNmO7PCZtxW5yxc8/vHww9GWHwYi
-	 2YJ2w79tSH0yG3sOUumE0VHcTBxwlXk/24dmMOIjyTvhYFb2PzwMgv/ntcBkDlxYKM
-	 mFqJgx6SrJ3spsDQsjo4UWfMIbHr4qYT8q4Vzba6s0nBXG0O75Sbk9IJBuqZgvKavC
-	 8w4lPIcqYLwvl+w3qvd3d5pRJEvm0YuO2T9vGwUmBA4cgRwzvOgMjBpygyUBcKyVlo
-	 HFSjZvk89uA3yAcepQtlI1nKFQGHytvm1b4c0w3OWHUwshzex7JlTCNhcP/q+CRUO9
-	 UK1HerzgEwmbQ==
-Message-ID: <33364f5a1f0626ff5e2be61b04ca2b0f59d4d12b.camel@kernel.org>
-Subject: Re: [PATCH fstests v3 3/3] generic: add tests for file delegations
-From: Jeff Layton <jlayton@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Date: Tue, 16 Dec 2025 12:57:56 -0500
-In-Reply-To: <20251216171333.GG7716@frogsfrogsfrogs>
-References: <20251203-dir-deleg-v3-0-be55fbf2ad53@kernel.org>
-	 <20251203-dir-deleg-v3-3-be55fbf2ad53@kernel.org>
-	 <20251205172554.pmzqzdmwpmflh5bi@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-	 <be8dace96aa68c59330f6c7be6ec5e2482bb6ca3.camel@kernel.org>
-	 <20251216171333.GG7716@frogsfrogsfrogs>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
+	s=arc-20240116; t=1765908853; c=relaxed/simple;
+	bh=b9AhQQflDubLSEkJ9VYXZBfb/K2hrR04XJ51g2a5Xbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A0uOXaXCaM4cV+AR3ddpAEpQLozP4PxC8qEWhlfQWiBv5L1DrtuNH6ZXCp8CbRdR5LUVJwNjV4i2Kgvlc5QDs73wNMZG5Sv/OlxXcf9rVlc2Q9prLgKcM8+KO13GNYPxwLC/8myWiCUS1BOhk4toJN4XSSsYoILHUlWnSmpeGHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=Uv3k/uM4; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1765908837; x=1766513637; i=j.neuschaefer@gmx.net;
+	bh=L8FQ2rgVLCdkD/oF0eHdo9FUsYW9diG97aFUGJ99iGw=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Uv3k/uM42oIPhA/ZvpsLkiDMSos0h+YodmndgiX00sDnjeSmatTVNcmN8cOc1Pob
+	 5w8k35zIaCjmyImzopDNfOdTzl4Q+Cez891p1HrnqdWdvCf8UUsYDJWfuwH9MfeP1
+	 oQaB8G1OGjx7Agg8AfGJjufj9KySKghgkZHQgwHxLefMqCfTh7PxfUztsJ/8xjXGF
+	 ygCw9DNzHRteol4H7LF1iSzWwy1yDtdTytXRThC2lbPJxsEupcy1sDE0xaBjqDEoD
+	 wigarnoODsqMOifxgVI6Ddl0d7Cl9WawjqQ6IqBz208kYiOY7Y6iJnFnXqJSbPwH5
+	 XtBCJ3/gxDFAeISqBg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([89.1.209.246]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MIdeR-1vjaBE0Yyb-0070dz; Tue, 16
+ Dec 2025 19:13:57 +0100
+Date: Tue, 16 Dec 2025 19:13:56 +0100
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, miklos@szeredi.hu,
+	linux-mm@kvack.org, athul.krishna.kr@protonmail.com,
+	j.neuschaefer@gmx.net, carnil@debian.org,
+	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] fs/writeback: skip AS_NO_DATA_INTEGRITY mappings
+ in wait_sb_inodes()
+Message-ID: <aUGhZM5pl8JKBGvR@probook>
+References: <20251215030043.1431306-1-joannelkoong@gmail.com>
+ <20251215030043.1431306-2-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251215030043.1431306-2-joannelkoong@gmail.com>
+X-Provags-ID: V03:K1:2CwlOGn9Hl+M3/cVdNFnPEX6oSIqboEhfldkkQoVU/NHkdValS5
+ m7OW2RgwykwP8c5uHHAfFrsqJ8uWwqKrVxoKo/A9ykHJ5Uc46MJzBw0L2GuRMJjqVMAFoRx
+ /+1xiQXhpPQmIduaoaHFDhp0e2Ii9rAvHAIFGdJo0bJrLqj3aZmyeBpzcvCrLL3JewntUXO
+ Yfzeu7f3FANVFg2foqpog==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:DjCyqchm0cc=;GX5yp3ip5mQdvDrNweDnQU0+V1F
+ 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
 
-On Tue, 2025-12-16 at 09:13 -0800, Darrick J. Wong wrote:
-> On Sun, Dec 07, 2025 at 03:35:29AM +0900, Jeff Layton wrote:
-> > On Sat, 2025-12-06 at 01:25 +0800, Zorro Lang wrote:
-> > > On Wed, Dec 03, 2025 at 10:43:09AM -0500, Jeff Layton wrote:
-> > > > Mostly the same ones as leases, but some additional tests to valida=
-te
-> > > > that they are broken on metadata changes.
-> > > >=20
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > >=20
-> > > This version is good to me. But this test fails without the:
-> > > https://lore.kernel.org/linux-fsdevel/20251201-dir-deleg-ro-v1-1-2e32=
-cf2df9b7@kernel.org/
-> > >=20
-> >=20
-> >=20
-> > Thanks. Yes, that bug is unfortunate. I'm hoping Christian will take
-> > that patch in soon so all of the tests will pass.
-> >=20
-> > > So maybe we can mark that:
-> > >=20
-> > >   _fixed_by_kernel_commit xxxxxxxxxxxx ...
-> > >=20
-> > > or
-> > >=20
-> > >   _wants_kernel_commit xxxxxxxxxxxx ...
-> > >=20
-> > > Anyway, we can add that after the patchset get merged. I'll merge thi=
-s patchset
-> > > at first.
-> > >=20
-> > > Reviewed-by: Zorro Lang <zlang@redhat.com>
-> >=20
-> > If you like. This functionality is only in v6.19-rc so far, so there is
-> > no released kernel that has this (yet).
+On Sun, Dec 14, 2025 at 07:00:43PM -0800, Joanne Koong wrote:
+> Skip waiting on writeback for inodes that belong to mappings that do not
+> have data integrity guarantees (denoted by the AS_NO_DATA_INTEGRITY
+> mapping flag).
 >=20
-> Hi Jeff/Zorro,
+> This restores fuse back to prior behavior where syncs are no-ops. This
+> is needed because otherwise, if a system is running a faulty fuse
+> server that does not reply to issued write requests, this will cause
+> wait_sb_inodes() to wait forever.
 >=20
-> Having rebased on 6.19-rc1, I now see that generic/787 (this test) fails
-> with:
->=20
->  --- /run/fstests/bin/tests/generic/787.out	2025-12-09 09:18:49.076881595=
- -0800
->  +++ /var/tmp/fstests/generic/787.out.bad	2025-12-16 07:23:40.092000000 -=
-0800
->  @@ -1,2 +1,4 @@
->   QA output created by 787
->  -success!
->  +ls: cannot access '/mnt/dirdeleg': No such file or directory
->  +Server reported failure (2)
->  +(see /var/tmp/fstests/generic/787.full for details)
->=20
-> The 787.full file contains:
->=20
->       ***** Client log *****
->  10 tests run, 0 failed
->       ***** Server log *****
->       ***** Server failure *****
->       in test 3, while Set Delegationing using offset 1, length 0 - err =
-=3D 0:Success
->       3:Fail Write Deleg if file is open somewhere else
->       ***** Server failure *****
->       in test 3, while Get Delegationing using offset 1, length 0 - err =
-=3D 0:Success
->       3:Fail Write Deleg if file is open somewhere else
->       ***** Server failure *****
->       in test 4, while Set Delegationing using offset 0, length 0 - err =
-=3D 0:Success
->       4:Fail Read Deleg if opened with write permissions
->       ***** Server failure *****
->       in test 4, while Get Delegationing using offset 0, length 0 - err =
-=3D 0:Success
->       4:Fail Read Deleg if opened with write permissions
->  13 tests run, 2 failed
->       ***** End file details *****
->  Server reported failure (2)
->=20
-> (Apparently this test would _notrun in 6.18-rc)
->=20
-> Is this the failure fixed by the patch above?  If so, I'll ignore the
-> failure until rc2.
+> Fixes: 0c58a97f919c ("fuse: remove tmp folio for writebacks and internal=
+ rb tree")
+> Reported-by: Athul Krishna <athul.krishna.kr@protonmail.com>
+> Reported-by: J. Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 
-Yep, the patch should fix that. Christian just merged the fix into his
-tree, so I'm hoping it'll make the -rc3 or 4.
+I can confirm that this patch fixes the issue I reported.
+(Tested by applying it on top of v6.19-rc1)
 
-Cheers,
---=20
-Jeff Layton <jlayton@kernel.org>
+Tested-by: J. Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+
+Thank you very much!
+
+
+> ---
+>  fs/fs-writeback.c       |  3 ++-
+>  fs/fuse/file.c          |  4 +++-
+>  include/linux/pagemap.h | 11 +++++++++++
+>  3 files changed, 16 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 6800886c4d10..ab2e279ed3c2 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -2751,7 +2751,8 @@ static void wait_sb_inodes(struct super_block *sb)
+>  		 * do not have the mapping lock. Skip it here, wb completion
+>  		 * will remove it.
+>  		 */
+> -		if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK))
+> +		if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK) ||
+> +		    mapping_no_data_integrity(mapping))
+>  			continue;
+> =20
+>  		spin_unlock_irq(&sb->s_inode_wblist_lock);
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 01bc894e9c2b..3b2a171e652f 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -3200,8 +3200,10 @@ void fuse_init_file_inode(struct inode *inode, un=
+signed int flags)
+> =20
+>  	inode->i_fop =3D &fuse_file_operations;
+>  	inode->i_data.a_ops =3D &fuse_file_aops;
+> -	if (fc->writeback_cache)
+> +	if (fc->writeback_cache) {
+>  		mapping_set_writeback_may_deadlock_on_reclaim(&inode->i_data);
+> +		mapping_set_no_data_integrity(&inode->i_data);
+> +	}
+> =20
+>  	INIT_LIST_HEAD(&fi->write_files);
+>  	INIT_LIST_HEAD(&fi->queued_writes);
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 31a848485ad9..ec442af3f886 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -210,6 +210,7 @@ enum mapping_flags {
+>  	AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM =3D 9,
+>  	AS_KERNEL_FILE =3D 10,	/* mapping for a fake kernel file that shouldn'=
+t
+>  				   account usage to user cgroups */
+> +	AS_NO_DATA_INTEGRITY =3D 11, /* no data integrity guarantees */
+>  	/* Bits 16-25 are used for FOLIO_ORDER */
+>  	AS_FOLIO_ORDER_BITS =3D 5,
+>  	AS_FOLIO_ORDER_MIN =3D 16,
+> @@ -345,6 +346,16 @@ static inline bool mapping_writeback_may_deadlock_o=
+n_reclaim(const struct addres
+>  	return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags)=
+;
+>  }
+> =20
+> +static inline void mapping_set_no_data_integrity(struct address_space *=
+mapping)
+> +{
+> +	set_bit(AS_NO_DATA_INTEGRITY, &mapping->flags);
+> +}
+> +
+> +static inline bool mapping_no_data_integrity(const struct address_space=
+ *mapping)
+> +{
+> +	return test_bit(AS_NO_DATA_INTEGRITY, &mapping->flags);
+> +}
+> +
+>  static inline gfp_t mapping_gfp_mask(const struct address_space *mappin=
+g)
+>  {
+>  	return mapping->gfp_mask;
+> --=20
+> 2.47.3
+>=20
 
