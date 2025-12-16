@@ -1,178 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-71460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29048CC1FD0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 11:36:26 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A234CC1FEE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 11:40:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 9BF4330220D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 10:36:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 181C93037534
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 10:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB0833CE95;
-	Tue, 16 Dec 2025 10:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502A833D6D3;
+	Tue, 16 Dec 2025 10:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="FSOF8UYL"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Xsb6jJOw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E05C313E17;
-	Tue, 16 Dec 2025 10:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD1833D6C4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 10:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765881382; cv=none; b=U7Eo3M7uxviOkPLcu7iOB2pSm2GGNzk/2Sz89dQBUrs0PtA9lRIDZlmrnL2iS1BSwIaQY3TTXobqusnWPSbhS2A41z2c3sAv9TMCLWyTXS80ChGfE9Uc3X2dAkaatGKN5x5+vLFzYlxuLKcTreo4OR01PgMl81IYLv7U126mNK8=
+	t=1765881609; cv=none; b=AR1yW5pTxy/Q+ukJ72U+kTGCcPi5e/XI7v/PtzpmLu5amVmU1UKBrPzwd1Uqw5XC11tTbV8K+IQoKoK8GhR264GYEDOKKHCTyt6UYx+H8uve2/Tuj9DHN/j2g7xO80s7QRAt+hcYrrz/3wnJOvv4vOzuE9MlusjTvzU2Ykmsbh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765881382; c=relaxed/simple;
-	bh=q06U7v7JeXssf1n1fmvO/x0bCigbtnHVuXJczJNIiTw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QreS1hJNbroqQKfOpxZQ78OmQoLU/7T4GphbUKZJ+EXKb46JyRYupEFB0CWjOxssdTemsA2TM/4l3czXOhtobrmy148Q680RSXbcdICXVxxIKlqAj6hjUG5vDk7V3ou7UkpHdzuwr7Zr8Iidza8zXMGUfBHdnkdilRrgaT5jXgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=FSOF8UYL; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=oIjfkjjCOq5FhBC2I+orpnkRDvoExxJPIVGvERd6bSA=; b=FSOF8UYLKyuLxN1MqwOcSzfjU/
-	z9qtdtpM3iQOYq7So5zlJ/r5FvGWK2JJQu6MXF9ygD7YprLkhF825jYI+vP+SmPa4b5RB4nRS3FNr
-	t/H6j3tVTg1DXvJe1r41rGAVAeJqk/79VvyQWl/lHqWcCloPGbzml7XV/6tH695gNxjB3R0LinEiS
-	BkzcgQusdR3VTPKBxtg4s3CPyO2d5FJNb1ujCgOaK6dNE4dPPekO3WmjD8o+pAfiEZW+Xy18mJAi1
-	beUMMqInalAR8pxQ8LpnzHibrZ2UF7Nhow7rSj3FAzxOhctEEBtPpbOM+jOrEM7jCFuVnWJPJOSA9
-	vm9JRoqQ==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vVSPb-00DLgf-0R; Tue, 16 Dec 2025 11:36:11 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bschubert@ddn.com>,  Miklos Szeredi <miklos@szeredi.hu>,
-  "Darrick J. Wong" <djwong@kernel.org>,  Kevin Chen <kchen@ddn.com>,
-  Horst Birthelmer <hbirthelmer@ddn.com>,  "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>,  Matt Harvey <mharvey@jumptrading.com>,
-  "kernel-dev@igalia.com" <kernel-dev@igalia.com>
-Subject: Re: [RFC PATCH v2 3/6] fuse: initial infrastructure for
- FUSE_LOOKUP_HANDLE support
-In-Reply-To: <CAOQ4uxh-+S_KMSjH6CYRGa--aLfQOeqCTt=22DGSRQUJTJ2bPw@mail.gmail.com>
-	(Amir Goldstein's message of "Mon, 15 Dec 2025 19:09:41 +0100")
-References: <20251212181254.59365-1-luis@igalia.com>
-	<20251212181254.59365-4-luis@igalia.com>
-	<87f48f32-ddc4-4c57-98c1-75bc5e684390@ddn.com>
-	<CAOQ4uxj_-_zbuCLdWuHQj4fx2sBOn04+-6F2WiC9SRdmcacsDA@mail.gmail.com>
-	<8bae31f2-37fc-4a87-98c8-4aa966c812af@ddn.com>
-	<CAOQ4uxh-+S_KMSjH6CYRGa--aLfQOeqCTt=22DGSRQUJTJ2bPw@mail.gmail.com>
-Date: Tue, 16 Dec 2025 10:36:10 +0000
-Message-ID: <87wm2md885.fsf@wotan.olymp>
+	s=arc-20240116; t=1765881609; c=relaxed/simple;
+	bh=R9Tb8whQoT3JDFy4+8xkeYUsiQfJdy9DNDXFZ9/6UQA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UIhDSk4jn/1vO9mmCELo4o+v/TwlWtLM04cvON3Zsc+Gi7Hl00IJVElSDQ3IzZYv0Kl6Y+KLJCBrwghGQTyflLYfG6ALojLFOAz778U2Yu72TRB+33yjrhReNaU+5k5fR/9PSUWDYyO55cxuOK4iziCGbMnUzC+Lu6T5jy3Dvcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Xsb6jJOw; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4f1aecac2c9so48879531cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 02:40:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1765881606; x=1766486406; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OWvXmhU1Eg9uCDeh/PMgWMisx9j6I/VJvmFEqitj/PY=;
+        b=Xsb6jJOwEbwlNyRY4Dz1EGe24MbrhpvWQYLJU9II1p9EH5FYBtcCeOc591b43Y26iB
+         CSnr3ApJupp/nNlS7oOA+OP+5aWKO29IboZT5WEZiROONoHnl2n0FO5AY9IPQvcoqK3L
+         idFb6Tru2bkq574HPVBlzeVtxRzl2IsLOqoBA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765881606; x=1766486406;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OWvXmhU1Eg9uCDeh/PMgWMisx9j6I/VJvmFEqitj/PY=;
+        b=cW4jxYKRVA5pM9KhAdDV0Bxh1ClvYxqNL7yAutHDclM6cTF2u7EW/XDfAfMATIzmzj
+         tEtLZzb5NehdelhqDW9ioemEIQwsbRL5A98H0iHTkIKiHnU/tZl+Xt6sjEHKulaqET0D
+         af2my1ztrPXvvUQcQa+OlCUpJ+9OoKhBDyCTTATaXvHjY3NpM62uKCNH9PlqdRxTSs0o
+         cuDhB+bEgOiHhHHjN4DL23XIjDPNCxg+kL3kVP/WI2QgsyXOueXA+6B6Vz2e9xjIOwL2
+         4WOZG6BccqTJiqDhryg1gbDbV/NqdVKfUy6rPgeI8nxNj7ji+RbK+wPsPwJgYE6RcalP
+         XYSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNR/jcOP8gOAGgENCKSNObC3khetNW/HGqHgN55GkUaml8El/BbDygnKryRDcv25wU83lHijiI/OOei7LQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSFxV8q3LzhczYS2M7spr6qQ7F6bC84fgVCCFFf9ayY0jIcxnf
+	WjPDainjNHLgO7+dlWBAmL7QWO84xWy16Y/9MouWNyLQUL2CzDouF7IReXxTilC6Fhm06UakqA8
+	6zgPylrjnseDabkUoF/YkgUJvNJGObxM4Sj/FnswBqA==
+X-Gm-Gg: AY/fxX5yKYBtKwDBR0H2z8gV3cQc0CpfHohXo0iN0rtfyEoj4wD8hae7jtFAWnR8UXc
+	RMW2tu5ohB6x+rktUQbhvd0MtqjETZpRSbCgGTROx1lKZwi4UNRaz5WHgOB1op4tEdnIwoqGGo9
+	JmcZIQv6gY0FuVa8+CzEiiRYPiLHjQe0uPJZH4X6diJIDDGTyMxnFRsNPGGPgAhnkLtagiu4uZ6
+	wv8au8QEkpA0xGVC4CRRa2mBlZcez4iRP42dFOU4iPShdHeRhTw3/rLPx54ODhfL1e45bwsUMKU
+	7oAZsw==
+X-Google-Smtp-Source: AGHT+IGyvp1IcpTAoE2oiN1Ja/XossQU2f1A+DqDhbx6/D8cc0lSjHfy3V0E9sCrCA0UqCLbiuuNFzm4VFO5RUXrXSE=
+X-Received: by 2002:a05:622a:60f:b0:4ee:17c7:8996 with SMTP id
+ d75a77b69052e-4f1cf311c95mr199863951cf.14.1765881605822; Tue, 16 Dec 2025
+ 02:40:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20251212181254.59365-1-luis@igalia.com> <20251212181254.59365-5-luis@igalia.com>
+In-Reply-To: <20251212181254.59365-5-luis@igalia.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 16 Dec 2025 11:39:54 +0100
+X-Gm-Features: AQt7F2rmP45n9HroB0YsDQUb5fy_Ft-x_wr7vOjYbMk4UW0uZp2zIyWVzc67Iv0
+Message-ID: <CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the FUSE_LOOKUP_HANDLE operation
+To: Luis Henriques <luis@igalia.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Bernd Schubert <bschubert@ddn.com>, Kevin Chen <kchen@ddn.com>, 
+	Horst Birthelmer <hbirthelmer@ddn.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Matt Harvey <mharvey@jumptrading.com>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Dec 15 2025, Amir Goldstein wrote:
-
-> On Mon, Dec 15, 2025 at 6:11=E2=80=AFPM Bernd Schubert <bschubert@ddn.com=
-> wrote:
->>
->> On 12/15/25 18:06, Amir Goldstein wrote:
->> > On Mon, Dec 15, 2025 at 2:36=E2=80=AFPM Bernd Schubert <bschubert@ddn.=
-com> wrote:
->> >>
->> >> Hi Luis,
->> >>
->> >> I'm really sorry for late review.
->> >>
->> >> On 12/12/25 19:12, Luis Henriques wrote:
->> >>> This patch adds the initial infrastructure to implement the LOOKUP_H=
-ANDLE
->> >>> operation.  It simply defines the new operation and the extra fuse_i=
-nit_out
->> >>> field to set the maximum handle size.
->> >>>
->> >>> Signed-off-by: Luis Henriques <luis@igalia.com>
->> >>> ---
->> >>>    fs/fuse/fuse_i.h          | 4 ++++
->> >>>    fs/fuse/inode.c           | 9 ++++++++-
->> >>>    include/uapi/linux/fuse.h | 8 +++++++-
->> >>>    3 files changed, 19 insertions(+), 2 deletions(-)
->> >>>
->> >>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
->> >>> index 1792ee6f5da6..fad05fae7e54 100644
->> >>> --- a/fs/fuse/fuse_i.h
->> >>> +++ b/fs/fuse/fuse_i.h
->> >>> @@ -909,6 +909,10 @@ struct fuse_conn {
->> >>>        /* Is synchronous FUSE_INIT allowed? */
->> >>>        unsigned int sync_init:1;
->> >>>
->> >>> +     /** Is LOOKUP_HANDLE implemented by fs? */
->> >>> +     unsigned int lookup_handle:1;
->> >>> +     unsigned int max_handle_sz;
->> >>> +
+On Fri, 12 Dec 2025 at 19:12, Luis Henriques <luis@igalia.com> wrote:
 >
-> The bitwise section better be clearly separated from the non bitwise sect=
-ion,
-> but as I wrote, the bitwise one is not needed anyway.
+> The implementation of LOOKUP_HANDLE modifies the LOOKUP operation to include
+> an extra inarg: the file handle for the parent directory (if it is
+> available).  Also, because fuse_entry_out now has a extra variable size
+> struct (the actual handle), it also sets the out_argvar flag to true.
+
+How about adding this as an extension header (FUSE_EXT_HANDLE)?  That
+would allow any operation to take a handle instead of a nodeid.
+
+Yeah, the infrastructure for adding extensions is inadequate, but I
+think the API is ready for this.
+
+> @@ -181,8 +182,24 @@ static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
+>         args->in_args[2].size = 1;
+>         args->in_args[2].value = "";
+>         args->out_numargs = 1;
+> -       args->out_args[0].size = sizeof(struct fuse_entry_out);
+> +       args->out_args[0].size = sizeof(*outarg) + outarg->fh.size;
+> +
+> +       if (fc->lookup_handle) {
+> +               struct fuse_inode *fi = NULL;
+> +
+> +               args->opcode = FUSE_LOOKUP_HANDLE;
+> +               args->out_argvar = true;
+
+How about allocating variable length arguments on demand?  That would
+allow getting rid of max_handle_size negotiation.
+
+        args->out_var_alloc  = true;
+        args->out_args[1].size = MAX_HANDLE_SZ;
+        args->out_args[1].value = NULL; /* Will be allocated to the
+actual size of the handle */
+
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 4acf71b407c9..b75744d2d75d 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -690,6 +690,13 @@ enum fuse_notify_code {
+>  #define FUSE_MIN_READ_BUFFER 8192
 >
->> >>>        /* Use io_uring for communication */
->> >>>        unsigned int io_uring;
->> >>>
->> >>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->> >>> index ef63300c634f..bc84e7ed1e3d 100644
->> >>> --- a/fs/fuse/inode.c
->> >>> +++ b/fs/fuse/inode.c
->> >>> @@ -1465,6 +1465,13 @@ static void process_init_reply(struct fuse_mo=
-unt *fm, struct fuse_args *args,
->> >>>
->> >>>                        if (flags & FUSE_REQUEST_TIMEOUT)
->> >>>                                timeout =3D arg->request_timeout;
->> >>> +
->> >>> +                     if ((flags & FUSE_HAS_LOOKUP_HANDLE) &&
->> >>> +                         (arg->max_handle_sz > 0) &&
->> >>> +                         (arg->max_handle_sz <=3D FUSE_MAX_HANDLE_S=
-Z)) {
->> >>> +                             fc->lookup_handle =3D 1;
->> >>> +                             fc->max_handle_sz =3D arg->max_handle_=
-sz;
->> >>
->> >> I don't have a strong opinion on it, maybe
->> >>
->> >> if (flags & FUSE_HAS_LOOKUP_HANDLE) {
->> >>          if (!arg->max_handle_sz || arg->max_handle_sz > FUSE_MAX_HAN=
-DLE_SZ) {
->> >>                  pr_info_ratelimited("Invalid fuse handle size %d\n, =
-arg->max_handle_sz)
->> >>          } else {
->> >>                  fc->lookup_handle =3D 1;
->> >>                  fc->max_handle_sz =3D arg->max_handle_sz;
+>  #define FUSE_COMPAT_ENTRY_OUT_SIZE 120
+> +#define FUSE_COMPAT_45_ENTRY_OUT_SIZE 128
+> +
+> +struct fuse_file_handle {
+> +       uint32_t        size;
 
-Right, having some warning here also makes sense.
+uint16_t should be enough for everyone ;)
 
->> >
->> > Why do we need both?
->> > This seems redundant.
->> > fc->max_handle_sz !=3D 0 is equivalent to fc->lookup_handle
->> > isnt it?
->>
->> I'm personally always worried that some fuse server implementations just
->> don't zero the entire buffer. I.e. areas they don't know about.
->> If all servers are guaranteed to do that the flag would not be needed.
->>
->
-> I did not mean that we should not use the flag FUSE_HAS_LOOKUP_HANDLE
-> we should definitely use it, but why do we need both
-> bool fc->lookup_handle and unsigned fc->max_handle_sz in fuse_conn?
-> The first one seems redundant.
+> +       uint32_t        type;
 
-OK, I'll drop the ->lookup_handle.  At some point it seemed to make sense
-to have both, but it doesn't anymore (maybe I had max_handle_sz stored
-somewhere else, not sure).  Thank you for your comments.
+Please make "type" just be a part of the opaque handle.  Makes
+conversion from struct file_handle to struct fuse_file_handle slightly
+more complex, but api clarity is more important imo.
 
-Cheers,
---=20
-Lu=C3=ADs
+> +       char            handle[0];
+
+uint8_t handle[];
+
+Thanks,
+Miklos
 
