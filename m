@@ -1,102 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-71374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC69CC05AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 01:34:27 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F6CCC0780
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 02:37:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A67D73019B88
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 00:34:15 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 39D7D3003109
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 01:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B1F23B61B;
-	Tue, 16 Dec 2025 00:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F2127B353;
+	Tue, 16 Dec 2025 01:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lW4iq1F2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gl7nPRlX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2820C1E1E12
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 00:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7FD155C97
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 01:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765845254; cv=none; b=cOjFLDnqj58w0bkKXMcBJF7eKY+VhoLZQ942hZw+IY+nPJGy7I0Kwq2yTfiee2BZPfGZsP0xIAWSo2kTML/KkIINx8WHuaLQfQhRJOIL4EdQmljxKGgCnw3qDKN38I/j26WI/0/xl7+Rf7cbI8Zr6F7p9DNQ+QM1jpE0bzcmMo0=
+	t=1765849076; cv=none; b=rJbE2E6h3vvaknEcvcz6fzdcXoL/cyKOuw7ZkvvgRJCgnFdT8B0MzJuUpXgNUngy9613csHwQglJgxmkMhN6jC2gqpSQn2rtuKD2e8JZB/9yezdTqafyEOaDYHU75nYKe6EQcSX/q/EPwntW1/kL0krdKRXk9iEVVM8iM2Xue1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765845254; c=relaxed/simple;
-	bh=527Ki6DG61yutNPw3iE5vYB3nLGpUwGz6BX2Mkg+X8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JPqazxMk+IJBmCBo54hvIr7rzXHKGIZgtxOzDfIQ5g+GiZE0bOd+l/dJcbl/OdikrcywzScMRa4+pNZhIBig80O8Kezjs4jKDNeyALpUdIcMaCB6P956sPYqX5BTq8+gPcNiL+qP0dpyiUqYOlmBIxPKvv1IIq86XeqHVfdrAdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lW4iq1F2; arc=none smtp.client-ip=74.125.224.46
+	s=arc-20240116; t=1765849076; c=relaxed/simple;
+	bh=jneufzrQq9U/X2h2rmo/2QoND+mJCZiav6Js47r/6OQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j6OS4j7idDD8dUBDlmCiP7rRq7DsF6D3wYB9sEsby7XpNbrIOh8Ieoekgoq19cdiPMVPthg7hfUdsRAnfBXn64FrOnRaFZxfDHGsNPcLmRrNp3yGSLxSSY/yt4AQLAGdh4GbKelpBJAoWFexaVLUoHcufdMRfel1iAtLWKyTUr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gl7nPRlX; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-64472c71fc0so3556043d50.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 16:34:12 -0800 (PST)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7aae5f2633dso4329148b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 17:37:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765845252; x=1766450052; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lF/Ed64PRuSu8RyJdfDoB9EbQSHWNT/BHtYaKlCLiao=;
-        b=lW4iq1F2mUilqaSPQBycXnKlj8cCDmc9mbstCIdv1YT2NIGOZ+g9EZBgEyPMex82m0
-         VgQEzRtp6NZXLZih9gETCQDF+Fa3GeDCONmK6tscxqx8QtBd9xw2+VqMvQk/MbZ+gCCp
-         6ywHRUjtztiFO3+nxzMcuOU1mWGuvSK42uPmBHcJynv78r5KTOKbrS2oxFuxc/9EuNni
-         ntRpnk918cBe8QUA29qxeG8nYXjLacoC7CHTuQKslrW8dplOMNm4YT1sRthrxtNc2itp
-         Zdo5lnMuAoNvCyJGR66ZQk5Ri390EKGidONJrmzV5zCfR5pRzAg5zaauS8QrrnZW61oj
-         bc4w==
+        d=gmail.com; s=20230601; t=1765849075; x=1766453875; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=f0FDBivIYW8TFHL3VKiPkgeHToq4CwEnpvCaDs7HwAE=;
+        b=Gl7nPRlX5FRSyqolHTAUG6fRj3GnsUuARuEenBxn9CLzFjxiLIpqAbWFPN/KjbMTk0
+         efuQlkePS9LcFV6ak/CSYmj2OMW10Fr2HxOIAxgKV2Dxpq6Bjk7fIFNksEyfkcbrpwIY
+         Bma6FGXgh/BMmDwapkX0MPOL0uc3n4cDoFsZ9orJeWRBpxyg2HzaKD6EvuQ4+6u17hf5
+         oHbYIxB3sClAyXML2zSE8ajHc6vBIjq8B80/A3EHE0ZuN17nWjYGFnzmLvlyWPcTIfW3
+         87OzPMwkhBcZfW+/qxnOAgRazpsNenTBym9MRLpzgPKH+iERxDFlm/JvkDJb8UR/tUGr
+         Sleg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765845252; x=1766450052;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lF/Ed64PRuSu8RyJdfDoB9EbQSHWNT/BHtYaKlCLiao=;
-        b=uKl3mNUe5uCXqktqlw07uvuBnx3sLOwTGF4Vqpb/szwtuYivYqBMa/iQWE9x7J43Fp
-         z6VbRB6YgDfNfWFnObmWiqr7JE89HbGP1neqIySzOhugEhG7jBcwCj/B2CcbSJ0m5PkE
-         WorQwRaE9AEGHFlKB7nkPqps7sq9Z5hba7iEroRPGU2nHFOXGaM0vfRk2j9IWnPnyypR
-         OkBEYBwFpjkgnZobUEd8onlCcdHw56GTH9y0raKv9EgmnpVfdZu1wkh3m7VAp92Lqo1C
-         B2cMFrnTObbv+ioAjklHslA1dyZNi09Hx7+BD89bldS4U4BwK6D7LZHUYfTw2VPnpudX
-         hFjA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+e82DI1L1jt7HerKgBebFaQDnNN9k5zO44BEg0gKW4uh10co+zdxrVq29p+S6Fvor5p1mFq9kq0+SZ2/T@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJgKn2W7SqNdam8oKKT0CNB4H9unYkKNBLDVva7IDawwNodr82
-	Rzn7nZCp35WCBKsYrajG4UdknGBAzs6eoHueu7Di91Zl7GkOQbzQZZqvG6YFNvY57AlEv4o6cQi
-	D6KWs98F+Uvd2HRNMgpOGlWpk5bXsO345/g==
-X-Gm-Gg: AY/fxX7sSiOQ62WV/Jauu6DzECOH73c+LFhU446SeswifQ0zViAy7ZmcC1o0e+4zNY/
-	RPF1pBe32YJ2AiIlNIqBNQZe50qo9pVpSPaPQuj19VQR96XEjkwFzvaljtcY4ctlMv9Ck1JMW5H
-	VEFAmJ234kQ0DYmR1Qw4O8jBzd4f3HgAmViot/IsXi7OfrHH7fsV3Mi3AW+BvN/ICchSNURNzpY
-	5tmjzAosSWEVJycbZa6/zV9hmpv8RTLGm2a6/vbaoGcx+SYwl97wx+pXJw+MqauBQuxFFN5
-X-Google-Smtp-Source: AGHT+IHmBZysfgneKViKTEeYfivPpplY4LKDIFEiwX63GCxKWbRBeeC13S5RHIZoqmtHWOmmooT2kyyGkYJ7ULr9ves=
-X-Received: by 2002:a05:690e:1348:b0:644:5c55:a817 with SMTP id
- 956f58d0204a3-6455564eeb7mr9879964d50.61.1765845252018; Mon, 15 Dec 2025
- 16:34:12 -0800 (PST)
+        d=1e100.net; s=20230601; t=1765849075; x=1766453875;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f0FDBivIYW8TFHL3VKiPkgeHToq4CwEnpvCaDs7HwAE=;
+        b=WchJdMmAUFvqXASiTnZzvYXsK/PZGcOuk2xRIjjwy0CLRA6SqdGNoD2Hm9zcoX6clP
+         hE/qrabvZXL2KME3Gc6k6MrmF+E9/1sb0Zz3bdGZRWM0ctecs7Wt8XUCk0cm1ziZNF/F
+         4hDS+4kEHwzoCmekpcwy5gEbW/XlktRRvzflrD12gc1eagJMi+qjZ2fWQ29wT+FWfTLH
+         usU3Hdb02Cn4cv3QvVZHMNJW9QBYIEHU9ggAZs4PJqohwPaJkdmL/qUctmoBykuWXwru
+         89vugwFFaLxF2q70wm93MTa5mTILsPyPsvqdufHTJ6SPgkB0yUOonnL3htCXKnVqPnwK
+         IlRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWv894/gvJkyPcUQ69tJdynnpp2e4dWi3/IEYzABVjJNBM0HsQ7og+7uHv68nwuVYmv+jJJ7I8IHMMRRm7K@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0X1Su49QPoyAa6AN+N7KYdhkQ1hwLWUvBk/LjzyFRu8tb+oHD
+	+gQheG1GD3IGUcRm6O7Q2YDw2MnDsD1ayB9hA1FeEQr+9j3Tck+4/ZtB
+X-Gm-Gg: AY/fxX5Ta3zSmWCTwjDm8HgZfyEW5Rg/lPW++EA6024lO0hmIo6e4Cjs1WX2cmBlkiz
+	dHMUJBcl6SuSSe3xsn5bxlf+5+zs6CPAtujsggPYDJo7cpuimqwDKS26o8MZ9Z9++ighkQJdDoG
+	iQ32OPY2Np0b0bhcuG9Mugzq8hhJ9bdBhPHtubTOyRWASS2yVS9txdzYVmyTd8S5xcUwx6zfKIR
+	/+u5or2w8ERwGqE27Sd+tmI/VQnjx2XFzuPH+92nqtKddt85ZQKTqXDUJGSWIGsv/S/LlUD7s9Z
+	G87nzbTA3lbTI+mrEpZAvOs86AOuGJRif+iEheQWnqGWFBcV896h3aSv4YIv1YEa550WbS9WGeU
+	mH7lcbkVuK57CzPYiZDA2bQI28bk58jwqPiPqMimmHWzIZ8tK4wSTweLnZ7xxIabtClXeVuraRU
+	gDMno=
+X-Google-Smtp-Source: AGHT+IGt3M1e5nD6KT/Tr73XIoi0zHyij2fPN6XhQLefORTEEkXDCvzAbax3QerzbjuxYRohNPHGbw==
+X-Received: by 2002:a05:6a20:394b:b0:366:14ac:e200 with SMTP id adf61e73a8af0-369b708cd8dmr12251610637.62.1765849074655;
+        Mon, 15 Dec 2025 17:37:54 -0800 (PST)
+Received: from localhost ([2a12:a304:100::105b])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c0c26515d4bsm13325458a12.9.2025.12.15.17.37.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Dec 2025 17:37:54 -0800 (PST)
+Date: Tue, 16 Dec 2025 09:37:51 +0800
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Hannes Reinecke <hare@suse.de>,
+	Luis Chamberlain <mcgrof@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	syzbot+4d3cc33ef7a77041efa6@syzkaller.appspotmail.com,
+	syzbot+fdba5cca73fee92c69d6@syzkaller.appspotmail.com
+Subject: Re: [PATCH] mm/readahead: read min folio constraints under
+ invalidate lock
+Message-ID: <aUC32PJZWFayGO-X@ndev>
+References: <20251215141936.1045907-1-wangjinchao600@gmail.com>
+ <aUAZn1ituYtbCEdd@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251212181254.59365-1-luis@igalia.com> <20251214170224.2574100-1-safinaskar@gmail.com>
- <87cy4g2bih.fsf@wotan.olymp>
-In-Reply-To: <87cy4g2bih.fsf@wotan.olymp>
-From: Askar Safin <safinaskar@gmail.com>
-Date: Tue, 16 Dec 2025 03:33:36 +0300
-X-Gm-Features: AQt7F2p8cHZTmFwqwPe2o06gHN83p4HgsaJygt-muB1Z6Idz4h3ESqOTuBH13D8
-Message-ID: <CAPnZJGBtHf3p=R+0uxNuK42s5wteMi01Fs+0yhW3gUDMF0PC6w@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/6] fuse: LOOKUP_HANDLE operation
-To: Luis Henriques <luis@igalia.com>
-Cc: amir73il@gmail.com, bschubert@ddn.com, djwong@kernel.org, 
-	hbirthelmer@ddn.com, kchen@ddn.com, kernel-dev@igalia.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mharvey@jumptrading.com, miklos@szeredi.hu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aUAZn1ituYtbCEdd@casper.infradead.org>
 
-On Mon, Dec 15, 2025 at 3:08=E2=80=AFPM Luis Henriques <luis@igalia.com> wr=
-ote:
-> No, this won't fix that.  This patchset is just an attempt to be a step
-> closer to be able to restart a FUSE server.  But other things will be
-> needed (including changes in the user-space server).
+On Mon, Dec 15, 2025 at 02:22:23PM +0000, Matthew Wilcox wrote:
+> On Mon, Dec 15, 2025 at 10:19:00PM +0800, Jinchao Wang wrote:
+> > page_cache_ra_order() and page_cache_ra_unbounded() read mapping minimum folio
+> > constraints before taking the invalidate lock, allowing concurrent changes to
+> > violate page cache invariants.
+> > 
+> > Move the lookups under filemap_invalidate_lock_shared() to ensure readahead
+> > allocations respect the mapping constraints.
+> 
+> Why are the mapping folio size constraints being changed?  They're
+> supposed to be set at inode instantiation and then never changed.
 
-So, fix for fuse+suspend is planned?
-
---
-Askar Safin
+They can change after instantiation for block devices. In the syzbot repro:
+  blkdev_ioctl() -> blkdev_bszset() -> set_blocksize() ->
+  mapping_set_folio_min_order()
 
