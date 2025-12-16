@@ -1,155 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-71476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09EFECC3042
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 14:00:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E0FCC212F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 12:07:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 50C43304FE92
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 12:58:44 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 91BD03015940
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 11:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C208734F250;
-	Tue, 16 Dec 2025 12:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEEE342504;
+	Tue, 16 Dec 2025 11:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXH+YHC5"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="F3QNoPSO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5478834C83C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 12:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74AB342173
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 11:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765889468; cv=none; b=lYWg136a0Je6wYpcwJZLKBBq0KQwyfDJkkEWNHSlrZDtdoYdzc+YEToJgI8L9zQ/rdep/K8bEDSg8LxvGrfTzXS1cMk5oONqFTRobGdbbcOLTR1dul5yoXBjB4hf0oBzaX6+EjhhLmNZpujBQbNIVeTFEhrm5tUAPEpidU24wg8=
+	t=1765883264; cv=none; b=qGAlYdTN0zx5ScDUeLKUfjO0X62dhOErh73+P/MWto0ce/5xc3oOWIIHFyhfZzl1GhgLKLWWAFm0ij2uHZcPRtelN0zp84JU2aK3eteHVBlZkEGwCt3uP7jCuLyNWsOU3uxHbnJ0/C4px06BT4KSEiQaueAHH4IFWlzm8eXZa7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765889468; c=relaxed/simple;
-	bh=fjySlG+wDGqoUAaOpS7wlXqPSCjoePl0tLAR0GFeyAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tOyfnJQrKfpi31DpfLcQqBYzLk2ElEhqZ115Lw4/UUIYltWiSXLLy6hsxGO8s9/+ObY9OLdElWruZYAMQZSGI2zXDcuQEqgZYiYlxdqVk7qcPClriQDGTCQT6LQTQqwiw6D22P1Qnjm1CQvwBA6151KNwxyAC6XhaE7dhg4VQcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XXH+YHC5; arc=none smtp.client-ip=209.85.221.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-42fb2314eb0so3295793f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 04:51:06 -0800 (PST)
+	s=arc-20240116; t=1765883264; c=relaxed/simple;
+	bh=lMTuLIsxhCVcnKQD731XO5NCZxpeVjppKafwI5jqz5g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IrERUtD1paxB16SAGGx1SsUuNyZO+5h9httCBfmKzmY3gdAzmmkVJhxXJLaCp6iwV3C8yJDESOCC1rykcAPCbQ7lAR2v7daur5Ub68E20c/rNgP6PeNMoBIiYej3tfqh7xOCiTBEmYjfAmFKDv2OwIaObpeh9waOwtgqxsrYRk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=F3QNoPSO; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4eda77e2358so39338741cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 03:07:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765889465; x=1766494265; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4a6mOsfv3RnQ6962mCNsIiYlyvmUIvf225M/JZ00fuU=;
-        b=XXH+YHC5VfWESOnmtd0o51oy46jw5UEGV9x6jUIYd/of5+BTx5brzAL79RHhSXZi2u
-         BqgMyNPYMvKGq1O92NwAOECwDb/HEODxK9cyip4Frg7sfT0S33rEEofabXdyXvR4H7pB
-         OabiqbR9P4afZCnZlsvwE3YT8XlLD0PFPw2icRYDtUmgSvjaW+NbkaSHCfPOwIZ4/iGl
-         Cllx76SIStBugcGm/HXQ1xa6FyptucNp9oukkthhtmc3j2WWom8+vrgMdJa4sthJcRUA
-         xGvhbs0IthzqdSU0eiPhylDzjx2qKmuKdFSsr8drQUprEnXxhP6oIv68x0BAfYDSSg0H
-         xygQ==
+        d=szeredi.hu; s=google; t=1765883260; x=1766488060; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MlzdekFkPm3sA+OW/VE7mJ2R9Cdqzm7oPJWDRazhBmk=;
+        b=F3QNoPSOLHtXZpTA1mocyDQo6ZwChh0UI70YZblJ2LSwZC1CXpyQrkMXxdktfF9i3H
+         F26Z7odimtVelPLL1lqeSKuzkZqD/uueCvLiP/XnoIup5LPVUt25kt1Glc/QcdcYWgBu
+         SfJ2GscG/XoGAKaSCEbMkBj3Sm4GkEHUVNdUc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765889465; x=1766494265;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4a6mOsfv3RnQ6962mCNsIiYlyvmUIvf225M/JZ00fuU=;
-        b=QJxdzGPDfVtBBCxEclx4M6w2Vrds01JZHaMmS6OqNL3TIZGexLXvgeMSKBmbwrOFi8
-         8jujUgceiPgCNCYzbS+BHKkO/I3mU9OXOz2jp+QESF3vWDLKY1rpIF9UKz2yqaI+puI3
-         hMOH8iXDuxaYdyj/JmZTnPFvVCIetuuPjcJ0JhnpL/zLgfyCCbkgFbnZIBGBFuS4u7MT
-         OtT4dfQ3t1oZXm+XcHuN5v+b1n/5oIxXp14mXSiSQxZQjWbhrCgxMxoiJan64ThX97Em
-         T8r/bQDScD2xRQJh+IOAhoRDVVbEsDMWN+zFCaksc8rNhwcx4XiXB5J8Ul10eHnF2ont
-         XdFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfB6w0iYwRTJp2bkLOii1Qh8WvDd2h8B+EQUwutd/3aEXWn2ekR+Dihl/+D/ZTH8HnYvjSNpeGg9/N1zqq@vger.kernel.org
-X-Gm-Message-State: AOJu0YymONOa3LN1awp/TvSbErYGgYix1jh/ODqonUs5wDptwPPaS6F4
-	oWOSYPWiD1pqE6ETkmkAqXgMTyouOt8QE4B4YgkKspk8MFzRgyAWFV1wayL8fHXZ
-X-Gm-Gg: AY/fxX71wDr/nqnj9T801cNRERgyLoys/ReZs8o3ceoqLDLsjxleknxQaYFf31OV+3d
-	+ErZ1Wenh0SJEFu6fM/T6ZNGE8cuAALoC34P6SF7OuwNwwX7bOz/tMMvgoWnA87/XT4yzOLEUWU
-	kuCwf63ELzXV6saDQT2rLwvvrAJRskpIO2LFKrYODshsAkmv69q7c4EtDQRh+s4cv3vqLzyuCqr
-	2tNEUg9gpfUjIWEu9LTXgdB3H8eXUIsW5O2nBO+0CZBUt6/EIGqPiMHf1lFYZjjIiJjBicdTxMz
-	Wd4Hp/6TYJJSV1sd7c2zUVvwttYr895YF1xLqNrhzxPJzN81xij/Glia0DznqsbImhsgQwa5tyt
-	qH1qXo8gt4MJkjycIT/BmMcJBTCfFezIxepp0paj+S4acKL4XtiBNmqQvshOC87LEq18VlUdMP+
-	GARvU26nH/zoFUf4uz5tUC7NU6u6HhIW/GDIodshVM9QB+MIS798Ma
-X-Google-Smtp-Source: AGHT+IFPgi7TTcjcdd99eLNcHo7wpcpOi8USD2GLgaobtq004FVNQnOS5KgbJ3i0Qdom2oLbozNUGQ==
-X-Received: by 2002:a05:6000:228a:b0:431:9b2:61c8 with SMTP id ffacd0b85a97d-43109b263f4mr556895f8f.10.1765882981024;
-        Tue, 16 Dec 2025 03:03:01 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42fa8b9b750sm34285532f8f.42.2025.12.16.03.03.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Dec 2025 03:03:00 -0800 (PST)
-Date: Tue, 16 Dec 2025 11:02:59 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
- linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
-Subject: Re: [linux-next:master 1617/1848]
- include/linux/compiler_types.h:630:45: error: call to
- '__compiletime_assert_612' declared with attribute error: min(((pos + len -
- 1) >> 12) - (pos >> 12) + 1, max_pages) signedness error
-Message-ID: <20251216110259.60c84f61@pumpkin>
-In-Reply-To: <202512160948.O7QqxHj2-lkp@intel.com>
-References: <202512160948.O7QqxHj2-lkp@intel.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1765883260; x=1766488060;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MlzdekFkPm3sA+OW/VE7mJ2R9Cdqzm7oPJWDRazhBmk=;
+        b=nKeFO3vcxO1gptoMSniho2fVmj5YY7Cdija24KBSOTgCtH+6EvRC6B2NVkU//XHr5s
+         V+y1mGtnEA6wI054ydBQlGJWAqToHBQ7PSOrkaqseTG02P6U/UiI/ci6LOMFLjJffJoh
+         heZ8rg01H0D5jRZwc6rtYvTqNy/fYzCfjKNGrh2AZY3lTm84elnZlaygG2XH7yWNbcun
+         E9JlL6TL3qbHPfLoSC0DOqfZ/n5kV9o/3r2ybLiaMCCYRryw5juf2dpToRYM4A4hJj7T
+         XDvlmqyExTSslR9GQE3TTfKOxXlTOyc2ED/RXwk/mO2eFzZZhB3Sg6PPWJmZ51dOUjG/
+         34Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6kAEgGZ9pM2+lNgpqNr0dN0neGYPt03+b429i9cFxtZaTj4ZT2JgS4lGF/FpvVrrScOdiIrJQDkaTIov9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQJGsAAffqq0RVgJvQU+HhWWK0SFiebURFglog7vcI1Rp+eX2p
+	rBdFjiKpivDFzgxA5KqZtUxeVo/inDQhIM1ir3FyODs18f0Ei9hMyas8yDmtxENPWft1AyHhhSz
+	1jpxc/NFwrTPc4xkZYVzEu3kNO1SuICygNBncEvPwSQ==
+X-Gm-Gg: AY/fxX5Idt/849sVqb5BDqUgpVIEN6Iea2scqE1DppXr4V8ihVwsphf/+hW2lmLsme2
+	uS0gJrbpa5lqvNQT29RtM3fWs2S8i+JeCYJ9ZwTrt6gw4ciAkv61aGuTvj7GHK5pR35niXF5Y3+
+	E/VbC9+ABOI65Z08vpYb+fGW8NZ/Zumr79L4gZBbNe8K/mZbDywL5JQiwQGgtPpVOJwFVln6NLd
+	2/LelkWrVBRFZ1JZdIJy5/fcxSFSeG7NO5VYcVOXskRlD5hIf2pbFjA0fcpIs32Ku2WIco=
+X-Google-Smtp-Source: AGHT+IHRZhDQXlj83EvfZqPralOneuTPYHNmYBl1MCKvewvqN5v5F5ckiqPKoDO2q8R3kgqLBjc3HYhf3J9Rm/jMMPg=
+X-Received: by 2002:a05:622a:2609:b0:4f1:c76b:d003 with SMTP id
+ d75a77b69052e-4f1d064f3b7mr195647731cf.78.1765883259712; Tue, 16 Dec 2025
+ 03:07:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251212181254.59365-1-luis@igalia.com> <20251212181254.59365-5-luis@igalia.com>
+ <CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com> <CAOQ4uxgY=gYYyc62k-Xo7vgrSHgQczC_2d4d-s445GK=eWpKAQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgY=gYYyc62k-Xo7vgrSHgQczC_2d4d-s445GK=eWpKAQ@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 16 Dec 2025 12:07:28 +0100
+X-Gm-Features: AQt7F2rmplW9HvQv8QSWxtHcWv1558gyJc4pE9IF47--Tzp2n2meFK7r2OBZrhk
+Message-ID: <CAJfpegvM7UwdkTG-aaqTxAAqTgfxGO7uAd5cL3dcQUjM90tFuQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the FUSE_LOOKUP_HANDLE operation
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Luis Henriques <luis@igalia.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Bernd Schubert <bschubert@ddn.com>, Kevin Chen <kchen@ddn.com>, 
+	Horst Birthelmer <hbirthelmer@ddn.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Matt Harvey <mharvey@jumptrading.com>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 16 Dec 2025 09:05:42 +0100
-kernel test robot <lkp@intel.com> wrote:
+On Tue, 16 Dec 2025 at 11:52, Amir Goldstein <amir73il@gmail.com> wrote:
 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-> head:   563c8dd425b59e44470e28519107b1efc99f4c7b
-> commit: 0f5bb0cfb0b40a31d2fe146ecbef5727690fa547 [1617/1848] fs: use min() or umin() instead of min_t()
-> config: i386-randconfig-2006-20250825 (https://download.01.org/0day-ci/archive/20251216/202512160948.O7QqxHj2-lkp@intel.com/config)
-> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251216/202512160948.O7QqxHj2-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202512160948.O7QqxHj2-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->    In file included from <command-line>:
->    In function 'fuse_wr_pages',
->        inlined from 'fuse_perform_write' at fs/fuse/file.c:1347:27:
-> >> include/linux/compiler_types.h:630:45: error: call to '__compiletime_assert_612' declared with attribute error: min(((pos + len - 1) >> 12) - (pos >> 12) + 1, max_pages) signedness error  
-...
+> Keep in mind that we will need to store the file handle in the fuse_inode.
+> Don't you think that it is better to negotiate the max_handle_size even
+> if only as an upper limit?
 
-The definitions are:
+I don't see the point.  The handle will be allocated after the lookup
+has completed, and by that time will will know the exact size, so the
+maximum is irrelevant.  What am I missing?
 
-loff_t pos  - 64bit signed.
-size_t len  - unsigned long, 32bit for this i386 build.
-unsigned int max_pages - 32 bit unsigned.
+> Note that MAX_HANDLE_SZ is not even UAPI.
+> It is the upper limit of the moment for the open_by_handle_at() syscall.
+> FUSE protocol is by no means obligated to it, but sure we can use that
+> as the default upper limit.
 
-On a 64bit build 'len' is 64bits unsigned which promotes the LHS to
-   unsigned and min() is happy.
-On a 32bit build this doesn't happen, the LHS remains signed and
-   min() is unhappy.
+Yeah, but even that is excessive, since this will be a non-connectable
+one, and need to fit two of them plus a header into a connectable fuse
+file handle.
 
-I'm not sure why file offsets are signed (apart from relative lseek()),
-causes signedness issues in a few places.
-
-In any case there are a few ways to fix this.
-Clearly a cast could be used somewhere, the most subtle would be changing
-the prototype to 'u64 len'.
-
-Perhaps better is rewriting the conditional as:
-	min(((len + (pos & (PAGE_SIZE - 1)) - 1) >> PAGE_SHIFT) + 1,
-		max_pages);
-Although the LHS is still signed 64bit, the compiler knows it can't
-be negative.
-
-This still contains a lot of 64bit maths, adding a cast:
-	min(((len + (size_t)(pos & (PAGE_SIZE - 1)) - 1) >> PAGE_SHIFT) + 1,
-makes it 32bit and the generated code much, much better.
-
-In theory the expression can overflow (fixable by masking off the high bit
-of 'len' (eg (len << 1 >> 1)), but normal IO are limited to MAX_RW_COUNT
-(INT_MAX & PAGE_MASK) even on 64bit.
-I'm not sure io_uring enforces that limit (it should, a lot of drivers are
-broken if the requested size exceeds 4G).
-
-	David
+Thanks,
+Miklos
 
