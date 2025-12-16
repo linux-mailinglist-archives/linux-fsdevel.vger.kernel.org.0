@@ -1,76 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-71494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 990B0CC51A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 21:31:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A594BCC54C3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 23:06:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E290A304EF5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 20:28:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D8E98300FE0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 22:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7303370EE;
-	Tue, 16 Dec 2025 20:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B992633ADAE;
+	Tue, 16 Dec 2025 22:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wja1avNh"
+	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="MVAeESDM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA1032570E;
-	Tue, 16 Dec 2025 20:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173F4139579;
+	Tue, 16 Dec 2025 22:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765916930; cv=none; b=krQD+XOdztsQ5D+wZ8a6a1gJgVqjTU0tlSfK9oWJCVUGpj6YKRbJ+7U+v1P8j9DYtEJ5K+X9XV0bo+JP6kEguKwbVUuOe/6Q03BzdFpp4Sn8v8P1F7QQx9eEkuB+3Pu8b/Ydd/jhQ9q1ORIgJ93Now00Fv36+XxL7mHCrtiLgyg=
+	t=1765922755; cv=none; b=ibuBGEtYw9Mio/oEm/gtTRimo2uAbPFv88Z6Mt9yam+dz6hnIX4XXt3sIlo2UyldCRvnJp9S0o0B3YGan00eQFTgjjTbh00Qsn93rj+JkYy3Mj6J73Qe8VQgZyGFiZAAP/4aSBWsMr+Xb6dZCAXokDSUV+ekINyyZhnHty47IyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765916930; c=relaxed/simple;
-	bh=cZ9J0yCtRRvW8MLul0aNvzOyQ7FCswFchJ7kRazNs9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AwKDM3/9daBfzmfG8RHLCFLAD4w6UT86X1fRphHjSiluzMIymoPiAKguB8kbjcyrXovlfWAIYgGCS35Bg37zc7G3/bSm6zHLGV3VWlnJWttcOvWd4dJi11+LCEE1KftNlI0cRBnAHhloutqzxqRAer6RvyugYbN+6Mg02oJKA/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wja1avNh; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1765922755; c=relaxed/simple;
+	bh=KKYQolnNqjo7Mny+RH2MXQizQmTGoGiHiiH2Ze55tR0=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=SfK+AGIPRGh8LBnsmj6wyWU7jWkzWt4hqNf5RVDnHFyXsJcUGhrcF1bi8cSuwjexQxiAr1fNZuWTU9SRwwCFZ0I2XUrIcqntDxVt4k14gAn9nppvccYFZMMdUri6yaYOhM15Uaj6arRbB3a+K0sAc773yjzEKxfdLLlBCBsHEQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=MVAeESDM; arc=none smtp.client-ip=143.255.12.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZXGbBAGtFTGJQu6DvlRW8lD9k2adw+/xutbdi2KbdyA=; b=wja1avNh1ZdhJI8IajB25YJZWJ
-	sROXCUBsZ6EkpL/Yc8QlhGgWPf+IHDU1NU4NnSLXQXNWBPo2H0GLxtRsoWLya5ViBQOGkXWSnlNW/
-	bQCLnBEl0J+vczdTaI4X6y0ItsYhMXZfXztBm98XmEv1/PxCBtNLUxmWS1HdckCkz8uJpJcFIR15R
-	5hC+pjbKGrF6EFq6j1Ad/6YFcwExWR2KzplC3srCw1uV2grOs+tqv86ViTtDYRNWpCQdhLAzmuCPa
-	r5aDs4RNwB72D3Oz/AzhvDxT9cXtRU3KZNYHtlWHjt0Lx7oZYmeGPNYcdsD1+M3PnV/F2pnZS42ch
-	CD3U2HVQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vVbff-0000000HQE6-33GP;
-	Tue, 16 Dec 2025 20:29:23 +0000
-Date: Tue, 16 Dec 2025 20:29:23 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Askar Safin <safinaskar@gmail.com>
-Cc: audit@vger.kernel.org, axboe@kernel.dk, brauner@kernel.org,
-	io-uring@vger.kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mjguzik@gmail.com, paul@paul-moore.com,
-	torvalds@linux-foundation.org
-Subject: Re: [RFC PATCH v3 27/59] do_sys_openat2(): get rid of useless check,
- switch to CLASS(filename)
-Message-ID: <20251216202923.GR1712166@ZenIV>
-References: <20251216035518.4037331-28-viro@zeniv.linux.org.uk>
- <20251216200858.2255839-1-safinaskar@gmail.com>
+	bh=KKYQolnNqjo7Mny+RH2MXQizQmTGoGiHiiH2Ze55tR0=; b=MVAeESDMcv7xYRF3/z4Dbv0ar9
+	RnC/S9WcVhhoesayHLb1eAca9/A6seBmgEQ7ypd6vjVNTowbxTp0vCUUjMITwksWYpc5tL9L3OmBv
+	rx5DY/70AiEXRcZKmiaaKasU9jIKyi/EvGfnZW/GaslpT/LMrNhSRItVnucbH3wxrR9ONUZ2Ubhx+
+	VCrZynOetB/W69fWljziiACJ8YxEZ9P4H9M4dZaNYZdxvSFhp27vaOThTt4N7c3ftWaicnAXtd6Ak
+	thYjsauAAvvDBCOAH14EChcaW+MJ/0Y24hhTnL2vqUdQA3VLlyYKRN6+uuZcDp9veOSdIB5Iu+IoB
+	pHi1TJmw==;
+Received: from pc by mx1.manguebit.org with local (Exim 4.99)
+	id 1vVd3J-00000000jt4-2RUj;
+	Tue, 16 Dec 2025 18:57:53 -0300
+Message-ID: <dc7873860a14c8e476a60f3254731b3f@manguebit.org>
+From: Paulo Alcantara <pc@manguebit.org>
+To: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>
+Cc: David Howells <dhowells@redhat.com>, Enzo Matsumiya
+ <ematsumiya@suse.de>, linux-cifs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/18] cifs: Scripted header file cleanup
+In-Reply-To: <20251211121715.759074-2-dhowells@redhat.com>
+References: <20251211121715.759074-2-dhowells@redhat.com>
+Date: Tue, 16 Dec 2025 18:57:53 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251216200858.2255839-1-safinaskar@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain
 
-On Tue, Dec 16, 2025 at 11:08:58PM +0300, Askar Safin wrote:
-> Al Viro <viro@zeniv.linux.org.uk>:
-> > do_file_open() will do the right thing is given ERR_PTR() for name...
-> 
-> Maybe you meant "right thing if given"?
+LGTM.
 
-d'oh...
+Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
 
