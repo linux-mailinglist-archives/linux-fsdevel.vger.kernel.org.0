@@ -1,115 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-71471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BE3CC2AEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 13:24:32 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C28CC48F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 18:09:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0894431A802A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 12:14:04 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 2450B300A578
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 17:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7913570DC;
-	Tue, 16 Dec 2025 12:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C3C390207;
+	Tue, 16 Dec 2025 12:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HUTZx0V2"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DE3BNhOc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E393570B0;
-	Tue, 16 Dec 2025 12:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF653901F4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 12:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765886549; cv=none; b=cZpTmfaZTsaViWYsiBrm/Rh0oxX+YCYjDbe/oLKgq7SafaD52e4FSWn6Yck7tzqNZc1PbDCUzffkc6jl+ajGWSnw+F2MjTEGgIDWWY2R/+MJzkbbXjrQKC50O6OOo9xpSv1ZUJZ0ZygIp2S74ZlqqwM/lpZiuL7o1Gvl9vjOEJA=
+	t=1765889064; cv=none; b=hOfAmQJ0KrVCvXWLAxfUd5ARWSqABZ929/IYwAtlN/g3q9a6R7CflF+TPvDbiszbXdbS+HYGGxf0ajhplBfxxlmgC1uo2o1MSwJvzRsDV/xmN7U1S+l0zojUp9RyxUqynPZm7aDfq+rqRh2UhjZ6jXycaXx2pm7lv/OJ1HIUS3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765886549; c=relaxed/simple;
-	bh=kWmVjzJbflYYYfJyjioyZizFxQTMZX/xgN9efzJ8dZA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Q0mvualNq+UsZ5B6S/L9bx1iwEbi6EuRNKU4BdYsbqO5n/F2R3OtD/djfHKV2dMFduM+rlVzQ/ZJUDl9SIOd7OU46Wax0gNX+U4ZIYKGOyM8Y0NDJXaHEHJmsTvd+BcqHfrQJaHC1ZjdfMoeUciBHtRGltA+TtVWhdyhmu78eUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HUTZx0V2; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=PJYZVMcs/arHSwxVZZwQuj1IXRWxJY68PEX+DfaVYwA=; b=HUTZx0V28H+8OSkEX9Sfl6V3dw
-	4cjiV4VJQQLW89mRPdRVsy4YBN86ZYwHhoW+yjE4Gp1w6fbdWbMOPJP6zT322SowTI7eoDYmQoGuF
-	ZstciD18Y3ehHvUIn+ppE6iMX1Lhwqi5RtlX0UNiBQwLjZOL1CXFbVhKxdnWiIky8EQrpHph+68Vh
-	XvD+VxnBiDWlz9dS9iXzwddaqmfGP/TLBGOzsBesfIKOteA2FF1sK1TiOi9xBRKGq9A0imZwfGj/M
-	6KD9awCbM+S83rySV153KKAmT3y8VTDfl7cTV18955cpFbyDntXmRDATZhcm5S6G4LQ8tKk/JDNJ6
-	0u8z7p4w==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vVTkv-00DNDh-OH; Tue, 16 Dec 2025 13:02:17 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>,  "Darrick J. Wong"
- <djwong@kernel.org>,  Bernd Schubert <bschubert@ddn.com>,  Kevin Chen
- <kchen@ddn.com>,  Horst Birthelmer <hbirthelmer@ddn.com>,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Matt
- Harvey <mharvey@jumptrading.com>,  kernel-dev@igalia.com
-Subject: Re: [RFC PATCH v2 3/6] fuse: initial infrastructure for
- FUSE_LOOKUP_HANDLE support
-In-Reply-To: <CAJfpegt-0VDicWso6ZjsFyawuKj8Xf4qwTEth00CdAd-pUNcjQ@mail.gmail.com>
-	(Miklos Szeredi's message of "Tue, 16 Dec 2025 12:46:54 +0100")
-References: <20251212181254.59365-1-luis@igalia.com>
-	<20251212181254.59365-4-luis@igalia.com>
-	<CAJfpegsoeUH42ZSg_MSEYukbgXOM_83YT8z_sksMj84xPPCMGQ@mail.gmail.com>
-	<87pl8ed5l3.fsf@wotan.olymp>
-	<CAJfpegt-0VDicWso6ZjsFyawuKj8Xf4qwTEth00CdAd-pUNcjQ@mail.gmail.com>
-Date: Tue, 16 Dec 2025 12:02:12 +0000
-Message-ID: <87ecoud48r.fsf@wotan.olymp>
+	s=arc-20240116; t=1765889064; c=relaxed/simple;
+	bh=boIqxM+ov9nSjwgWpy63cnTTzp37ctPMetwDRjr716c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YRe9IbXAkHCp4gpWYB3iN3UUNvOHOLVI5N4IPFH7DwVnqPUKF5tw9G4vF+Rz0/Pvavy+l9V9ypKZDx67CBG3hJGpR0pVYVCpQ9WwnO9evjbRqAnbz4RxGk3+YLu8+TnexxBwzCLWDaDEoBcrtrp+6CpDu7ubUlcoziGLnq5kIvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DE3BNhOc; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so35354805e9.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 04:44:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1765889060; x=1766493860; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/lTD5T6FLVPMFiI1zK6zOO1/qp2X5cLGG7vD5u13cD0=;
+        b=DE3BNhOcc+HNQXvq2D9wHK7NIuewOffYSeXDSlTTjBkaAYU97BUwxMG9Bd17Vj04G0
+         Udn8He0ZTL2b6WWpup21Pz65uKv9xFnVS7CsZ3CMMxLk4LdE+ORIqEU90QzUCeZoYY3E
+         M93a4SOb9XP+Clv4+mIKU4Mp8YVXMRjFWFsAvF6zu11+Ni4hYptYb8CfRJTJBTud4Nwq
+         C61+N5a2YmlS6bDZ/Ku2Q5wgp/hTUEegwISlmbTHBHBU5TMM+11ijwfMN4CfjDDiL/MH
+         g4UfBRPjvF2wlxN0Xv8vHhKINDlp+zTZpBTb3GZCiCYQBxHLtYr5ITzGE3AKYiitxSzC
+         1FZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765889060; x=1766493860;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/lTD5T6FLVPMFiI1zK6zOO1/qp2X5cLGG7vD5u13cD0=;
+        b=QU/Dn3nP+QCw67Dl5Q/aRZa5t8WSEPmdzSfXO3Yy8PZEW3GaXyDDe4yF8vxAGROjr5
+         +/fQ/tCS/upBM6lRvIZ57BAiZ2VAzgdnhVPZviqi4ApOWBdWJ9yKrtQ42YE2IrvPZ7cQ
+         HnFwoCSHczS+QkcQNKI0wITLRKxyWUF2xg/XVVFgaTXbJhn2p7VljfqOzzmaJn8w9pfH
+         2a4W1w3luWtLjF9Phu1I+YY15RzwH+JX4HecWXqxtPclz0Im0iH5Kopb63qWFsaS9E0U
+         ZR5KHp7RZU9HzpTKWv6uzU8xHAJ+Ki4dY0kD1rEQEa5B6jok/JDX4uaEj433lPORp7U9
+         9CwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXi0E6JhdWEIHHrLgNqRRwNxJ8H9oGNG0sn2v1/edHKOkZEwjTt9nmM1QFem4/VC+3ei0Lc6Ru4+j5opz0q@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC1oU/EiC2sHhqRdT0Ej8o/BXBQNNnd63PPtW9avDxs95A+MxF
+	UrbOug0gIaeSKTyIXEGMUx0LzZN7Vr5jpUS9kvoQcOGm8P/Bi5EH9Wi9YksmH3mMRJg=
+X-Gm-Gg: AY/fxX4mBPYxOWLPfxljur4a7XjfhTuUfZ4m6TECmYVLABPSWTZz85zDo4x59yAkRFM
+	AE8+Pqb/Equ4UcSKSY/CvE/iPhQpMfnCB57eRwtq7w90p0gyhwDIn66ZSIzdebe/DwLqaL5oskx
+	ugyahJGMFmdQp4nCvEKISMTILlbLFBJF+kkR+1Efb+d6vIjTZ5MgHkum63mAwC3ZGWuI3msigjN
+	ECUCywsz3DLAfCt2RddKMKcyjm1ppPu7VhOlUeW3g9CWVKqqSQgLqvllOZH3pAgILPEqYMFIdhj
+	vD84ljC9ueR1FtMXohNnqpJdALof5rygDlUW67dFDp7uC44W3bBZFXuOd3cmnn5XhsMZ0fZY30V
+	5BFratn+c7m6UrrtVY1/KecjgZ/5sA93Kyhj8P08WWnohvCoEp9O6zUL1SGuh0S7zNBQIHvNb1J
+	+nV3biVYL+RXW/9g==
+X-Google-Smtp-Source: AGHT+IFW5qDickl4JAEFRsGArKDI6FcAB611ceysvy3jNS62BLSz150yvQDh+EMhh7oPcWPJX+4yHw==
+X-Received: by 2002:a05:600c:3acf:b0:477:1bb6:17de with SMTP id 5b1f17b1804b1-47a8f90f96bmr152908605e9.30.1765889060304;
+        Tue, 16 Dec 2025 04:44:20 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47bd95e0161sm9700215e9.2.2025.12.16.04.44.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Dec 2025 04:44:19 -0800 (PST)
+Date: Tue, 16 Dec 2025 13:44:17 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-hams@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] sysctl: Remove unused ctl_table forward declarations
+Message-ID: <aUFUIfVvRcYN3_ID@pathway.suse.cz>
+References: <20251215-jag-sysctl_fw_decl-v1-1-2a9af78448f8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251215-jag-sysctl_fw_decl-v1-1-2a9af78448f8@kernel.org>
 
-On Tue, Dec 16 2025, Miklos Szeredi wrote:
+On Mon 2025-12-15 16:25:19, Joel Granados wrote:
+> Remove superfluous forward declarations of ctl_table from header files
+> where they are no longer needed. These declarations were left behind
+> after sysctl code refactoring and cleanup.
+> 
+> Signed-off-by: Joel Granados <joel.granados@kernel.org>
 
-> On Tue, 16 Dec 2025 at 12:33, Luis Henriques <luis@igalia.com> wrote:
->>
->> On Tue, Dec 16 2025, Miklos Szeredi wrote:
->>
->> > On Fri, 12 Dec 2025 at 19:12, Luis Henriques <luis@igalia.com> wrote:
->> >>
->> >> This patch adds the initial infrastructure to implement the LOOKUP_HA=
-NDLE
->> >> operation.  It simply defines the new operation and the extra fuse_in=
-it_out
->> >> field to set the maximum handle size.
->> >
->> > Since we are introducing a new op, I'd consider switching to
->> > fuse_statx for the attributes.
->>
->> So, just to clarify: you're suggesting that the maximum handle size shou=
-ld
->> instead be set using statx.  Which means that the first time the client
->> (kernel) needs to use this value it would emit a FUSE_STATX, and cache
->> that value for future use.  IIUC, this would also require a new mask
->> (STATX_MAX_HANDLE_SZ) to be added.  Did I got it right?
->
-> No, using statx as the output of LOOKUP_HANDLE is independent from the
-> other suggestion.
->
->> What would be the advantages of using statx?  Keeping the unused bytes in
->> struct fuse_init_out untouched?
->
-> Using fuse_statx instead of fuse_attr would allow btime (and other
-> attributes added to statx in the future) to be initialized on lookup.
+For the printk part:
 
-Oh! Of course, I totally misunderstood your suggestion.  Right, creating a
-new *_out struct probably makes sense.  Something like a mix between
-fuse_entry_out and fuse_statx_out.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Cheers,
---=20
-Lu=C3=ADs
+That said, I have found one more declaration in kernel/printk/internal.h.
+It is there because of devkmsg_sysctl_set_loglvl() declaration.
+But I think that a better solution would be:
+
+diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+index dff97321741a..27169fd33231 100644
+--- a/kernel/printk/internal.h
++++ b/kernel/printk/internal.h
+@@ -4,9 +4,9 @@
+  */
+ #include <linux/console.h>
+ #include <linux/types.h>
++#include <linux/sysctl.h>
+ 
+ #if defined(CONFIG_PRINTK) && defined(CONFIG_SYSCTL)
+-struct ctl_table;
+ void __init printk_sysctl_init(void);
+ int devkmsg_sysctl_set_loglvl(const struct ctl_table *table, int write,
+ 			      void *buffer, size_t *lenp, loff_t *ppos);
+diff --git a/kernel/printk/sysctl.c b/kernel/printk/sysctl.c
+index bb8fecb3fb05..512f0c692d6a 100644
+--- a/kernel/printk/sysctl.c
++++ b/kernel/printk/sysctl.c
+@@ -3,7 +3,6 @@
+  * sysctl.c: General linux system control interface
+  */
+ 
+-#include <linux/sysctl.h>
+ #include <linux/printk.h>
+ #include <linux/capability.h>
+ #include <linux/ratelimit.h>
+
+Feel free to add this into v2. Or we could do this in a separate patch.
+
+Best Regards,
+Petr
 
