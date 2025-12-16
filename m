@@ -1,116 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-71445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29560CC0F6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 06:12:23 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C53CC1008
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 06:23:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 956EF30B7FB9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 04:32:42 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 025063023D6B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 05:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B273E332EA2;
-	Tue, 16 Dec 2025 04:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D7A335077;
+	Tue, 16 Dec 2025 05:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dnuy74tg"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KkyHTRR7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FAE33291A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 04:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E0F335087;
+	Tue, 16 Dec 2025 05:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765859551; cv=none; b=C3qXy60W+hradZ/yM80ZG5KEmK+HEVq0w7K0AKKiGj4cTbwP5FEVODDee5grJjYZZYLg9KChKHbC5l1hJnzg/QEzKCO7sPVoYBmzb94QxMjeELNUFVMwKEm5t3NJLyMQV5S9PAat2hnwv6KwkNoABSB8fil6L8wnT8NDuxb9tgc=
+	t=1765862581; cv=none; b=n2xUIA+Rz2pySkcgjeft1IjG9tjQTNwtyaMjn2quZE7RlOytCkCnQ6J+G6ePAsPRAxA0nSrv+Ka9n6jJ8qngmj4qLzCFGbar8ahMqAkYMysYXYmesgG5OAnEUH8QSNTOaZC3QM/boFtHnsemlj6CuHnAP+rx5igLuY+YzLpz/qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765859551; c=relaxed/simple;
-	bh=JAC7T84OH3rJpKA9s8hbP8b38NGlwWMNJLYmPCkoa0A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OF/FKR4i11ZmBloY72ac15PoCv3VPVHK28QPKJLf2F7BZmiCKn8ck2luyzbrEXJNNL5bBWXu8cZj40Njf0sufdLbkkP1KCSVmfOe4LWg+Sd+V5HuodmerjFQ9gtcmwuPCycc6MQtJnFY3sD08EMH5RZX3cZFosAcM5MXH/sEJfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dnuy74tg; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b7697e8b01aso774122166b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 20:32:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1765859541; x=1766464341; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=u04lKI+ITCEhSjyN8l/3SfN1GaX76pkUdUELbvLmtVI=;
-        b=dnuy74tgEdeg4sZQHPQgfnWfF65ZIaEb5VaAbZbGlMltJVDW0a5u0idlX00NVT9MKv
-         aZEye1jQa/uTxf9x3WflndEYSycittJiYS4qGTFjnB2wgj5nLvrkoDLkfrTvUXZsVqJJ
-         GjdJkjtJqCXh0J0oBfcOTARTHjwr6JFQic18M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765859541; x=1766464341;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u04lKI+ITCEhSjyN8l/3SfN1GaX76pkUdUELbvLmtVI=;
-        b=cSL93rZaNHIl56A5gl9sA2etSGageqcb/Y5SBMRHatRCuQ4WkpnRpTscscfUqu8WWN
-         ualbTUVeKwivxfKTwl64ySx6ifZgcq5tuLw/lfUd7e7wLjz9s2F5BDQnuZaAj6i7o0uU
-         jrX9uXSqNi8jduipzi5ale2bbB9oVekO13DR07ytfggMBICNjiLZ3m6vYKCDTHkHX3+I
-         hSHVspPnhECaYfBRfvRq9gKePhb5v+RWC1/KpUlCA9A8NKWQ63xLvinWlbyWb0NAaZ+e
-         7tjJcOJxf/z+3ImxcblSAeMJ/vmbDNzGLNCD1IvCT0yRJHIX1506XpU+qdagY9UegVwc
-         xN+A==
-X-Gm-Message-State: AOJu0YydxmdOnpN9M6cqpwie5XtL5PtWIInc9InpyiHOsg3YNK3JFv/H
-	eZkXZXDrHdUIbltrJcGbPpPnmKTrQuPwWWXEKTL2LJW/V5YaylKVWwKbBP3BIhgOSy4Vf9dp//O
-	tBZ+/PDXEtg==
-X-Gm-Gg: AY/fxX7KKwqKahiP+yi8bAzOqfGf67h+ZIsnkxcd6hNtn470sUvhEwE2XBq1Fvwm+6N
-	E9otGnDq8uOVOlYr4dft0XpjYDNT+hQcVmG6u6Ts8sCBKXwybpeTTkAx/ouvEEDVelwqTWKne33
-	1xjuKMLHLd6aimnkkpm5OQuTkVe14LPSAp2UvfYWbfqIjVZGohM2rXxZrLoVsFKpDfIXrRGNeDM
-	FcWvRMAyuKcJIZWnw+59ZnO9VMkSUK0xiUtEPHkE5+kSOFGegVyiaqQoDx9ey19S2mRpQ4oB43c
-	lsjrZdWpCoWT4foudnFqZCa6p37J5zbqfxjFPLfXv91gNSJs8sxN0+hvzA08e9GFMa4eqLE8Nng
-	JD2Ahp1rxas59wLB6HogmdU5fDDkg5xEgxB2EMFMyIPGfq2kHTt+I0ONk5zLxTD/diMCw2B9S4w
-	hOmV8miD6DND6eLMr+BPlpB/hibd2NL1KuuasksNeBZywXPQCCxlvxpQYiAXSq
-X-Google-Smtp-Source: AGHT+IE8zH8yXW1AbZluR/pksC6eTLfjsNgeCI1v2py18bX5pXa9zSskZMe/Bl4mT5pW/os/D39XFw==
-X-Received: by 2002:a17:907:7296:b0:b79:ecb0:db74 with SMTP id a640c23a62f3a-b7d23d11086mr1207067066b.59.1765859541129;
-        Mon, 15 Dec 2025 20:32:21 -0800 (PST)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7fee422729sm117504066b.9.2025.12.15.20.32.19
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Dec 2025 20:32:19 -0800 (PST)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b7697e8b01aso774119866b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 20:32:19 -0800 (PST)
-X-Received: by 2002:a17:907:7e8d:b0:b7a:2ba7:18c0 with SMTP id
- a640c23a62f3a-b7d23d13db8mr1509432666b.61.1765859539518; Mon, 15 Dec 2025
- 20:32:19 -0800 (PST)
+	s=arc-20240116; t=1765862581; c=relaxed/simple;
+	bh=ANTiFC7CAQbX9HvT6WD6bVN8bSCuRsdBVrcj0kRllXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8I/xtFwOfiakwloqJHKzbJh2DV1jGBbJQjt4JhiiVdsb9Zin4wHG36tlyhCvKRFZDuh6mHeS54E/BTh42pW/ju9E5A7HwgTD6l+ud9xeSnCJKeIsRhm9S3ttl2Lq34zV4T8ipiGphh0KLTf3IAOCd3gp9GlPJEuGR6di4sJzvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KkyHTRR7; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PyZUMQbKsz3hNPzX0ob+jNGLPe0VdOlESaTZlf2s0q0=; b=KkyHTRR7KIs2XrELB1q/tng+P1
+	gvLrsk28fC+Ckbu9HgocDwPxJUL8H4q/I7ATLath8vN3MWA+Y2l9iKP9fx1nfcnA+/6BQI5WjNU8P
+	blD8m0C2lfvCUHbaX9elJlFKNfVHbblIqPBnqVYwaxev/BSnOnoq4c2r5V/KN2KCXQFsHDybgcCjW
+	HY94J59iutJXiIeyLZZQk2deS0cNlg+2x0SGd17Oi2e/vc2LhiTVX+VA/M5HQ/5Sdj8yHTciwDNjF
+	/m42/jcY6w80EaqLdx3boJH1oYMZw5JV7CydPZ7bw0T3y7KUb6RsCdIizVit850A84qy4t4Iq//qy
+	ZT04zjPw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vVNWc-00000000UhW-1AVD;
+	Tue, 16 Dec 2025 05:23:06 +0000
+Date: Tue, 16 Dec 2025 05:23:06 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz,
+	mjguzik@gmail.com, paul@paul-moore.com, axboe@kernel.dk,
+	audit@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v3 00/59] struct filename work
+Message-ID: <20251216052306.GO1712166@ZenIV>
+References: <20251216035518.4037331-1-viro@zeniv.linux.org.uk>
+ <CAHk-=wi4j0+zDZPTr4-fyEE4qzHwNdVOwCSuPoJ4w0fpDZcDRQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251216035518.4037331-1-viro@zeniv.linux.org.uk>
-In-Reply-To: <20251216035518.4037331-1-viro@zeniv.linux.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 16 Dec 2025 16:32:03 +1200
-X-Gmail-Original-Message-ID: <CAHk-=wi4j0+zDZPTr4-fyEE4qzHwNdVOwCSuPoJ4w0fpDZcDRQ@mail.gmail.com>
-X-Gm-Features: AQt7F2rYyucJ8k8M5suIcIYwHZryFGRojM10TYRYQXZevxtnA0xqMtui8-ALNA8
-Message-ID: <CAHk-=wi4j0+zDZPTr4-fyEE4qzHwNdVOwCSuPoJ4w0fpDZcDRQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/59] struct filename work
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, jack@suse.cz, 
-	mjguzik@gmail.com, paul@paul-moore.com, axboe@kernel.dk, 
-	audit@vger.kernel.org, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi4j0+zDZPTr4-fyEE4qzHwNdVOwCSuPoJ4w0fpDZcDRQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-So I like the whole series, but..
+On Tue, Dec 16, 2025 at 04:32:03PM +1200, Linus Torvalds wrote:
+> So I like the whole series, but..
+> 
+> On Tue, 16 Dec 2025 at 15:56, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> >   struct filename ->refcnt doesn't need to be atomic
+> 
+> Does ->refcnt need to exist _at_all_ if audit isn't enabled?
+> 
+> Are there any other users of it? Maybe I missed some?
+> 
+> Because I'm wondering if we could just encapsulate the thing entirely
+> in some #ifdef CONFIG_AUDIT check.
+> 
+> Now, I think absolutely everybody does enable audit, so it's not
+> because I'd try to save one word of memory and a few tests, it's more
+> of a "could we make it very explicit that all that code is purely
+> about the audit case"?
 
-On Tue, 16 Dec 2025 at 15:56, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->   struct filename ->refcnt doesn't need to be atomic
+Umm...  Not exactly.  I mean, yes, at the moment we never increment the
+refcount outside of kernel/auditsc.c, so it'll always be 1 if that thing
+is disabled.
 
-Does ->refcnt need to exist _at_all_ if audit isn't enabled?
+But if you mean to store it on caller's stack, that's another kettle of
+fish - anything async with io_uring won't be able to do that, even we
+ignore the stack footprint issues.  In configs without audit we end up
+	1) allocating it and copying the pathname from userland on
+request submission; pointer is stashed into request.
+	2) picking it in processing thread and doing the operation
+there By that point submitted might have not just left the kernel,
+but overwritten the pathname contents in userland.
+	3) either stashing it back into request or freeing it.
 
-Are there any other users of it? Maybe I missed some?
+With audit (2) might become "... and have an extra ref stashed in audit
+context" with (3) becoming "either stashing it back into request, if no
+extra ref has appeared, or making a copy, stashing it back into request
+and dropping the reference on the original"
 
-Because I'm wondering if we could just encapsulate the thing entirely
-in some #ifdef CONFIG_AUDIT check.
+So refcount may be audit-only thing, at least at the moment, but the
+need to outlive the syscall where getname() had been called is very much
+not audit-only.
 
-Now, I think absolutely everybody does enable audit, so it's not
-because I'd try to save one word of memory and a few tests, it's more
-of a "could we make it very explicit that all that code is purely
-about the audit case"?
-
-                    Linus
+And stack footprint is not trivial either, unless you limit embedded
+case to something very short - even an extra hundred bytes (or two,
+e.g. in case of rename()) is not something I'd be entirely comfortable
+grabbing for pathname-related syscalls.
 
