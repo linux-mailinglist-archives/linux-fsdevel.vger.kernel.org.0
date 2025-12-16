@@ -1,109 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-71465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E0FCC212F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 12:07:48 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76446CC2677
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 12:46:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 91BD03015940
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 11:07:47 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 33924311B213
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 11:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEEE342504;
-	Tue, 16 Dec 2025 11:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B542342504;
+	Tue, 16 Dec 2025 11:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="F3QNoPSO"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Qy4ekxbn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74AB342173
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 11:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2CB341AC5;
+	Tue, 16 Dec 2025 11:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765883264; cv=none; b=qGAlYdTN0zx5ScDUeLKUfjO0X62dhOErh73+P/MWto0ce/5xc3oOWIIHFyhfZzl1GhgLKLWWAFm0ij2uHZcPRtelN0zp84JU2aK3eteHVBlZkEGwCt3uP7jCuLyNWsOU3uxHbnJ0/C4px06BT4KSEiQaueAHH4IFWlzm8eXZa7M=
+	t=1765884882; cv=none; b=XFHPgTgDA+ocTUUm8iLOiRJsWYiaBd/EmzW9Y7qZmot19XwqBPfKuLNnJJ1fyQWO/e+VuXajTFcarWpiCMKX1WqvZ0HnUtPOw3s9GccgnK2VUNyDtTgoEETz9PRZKQ0yuNqAsE2uv9MXTaVxOR8IlRTqZeq8P1HKL3GlFrv3jgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765883264; c=relaxed/simple;
-	bh=lMTuLIsxhCVcnKQD731XO5NCZxpeVjppKafwI5jqz5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IrERUtD1paxB16SAGGx1SsUuNyZO+5h9httCBfmKzmY3gdAzmmkVJhxXJLaCp6iwV3C8yJDESOCC1rykcAPCbQ7lAR2v7daur5Ub68E20c/rNgP6PeNMoBIiYej3tfqh7xOCiTBEmYjfAmFKDv2OwIaObpeh9waOwtgqxsrYRk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=F3QNoPSO; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4eda77e2358so39338741cf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 03:07:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1765883260; x=1766488060; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MlzdekFkPm3sA+OW/VE7mJ2R9Cdqzm7oPJWDRazhBmk=;
-        b=F3QNoPSOLHtXZpTA1mocyDQo6ZwChh0UI70YZblJ2LSwZC1CXpyQrkMXxdktfF9i3H
-         F26Z7odimtVelPLL1lqeSKuzkZqD/uueCvLiP/XnoIup5LPVUt25kt1Glc/QcdcYWgBu
-         SfJ2GscG/XoGAKaSCEbMkBj3Sm4GkEHUVNdUc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765883260; x=1766488060;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MlzdekFkPm3sA+OW/VE7mJ2R9Cdqzm7oPJWDRazhBmk=;
-        b=nKeFO3vcxO1gptoMSniho2fVmj5YY7Cdija24KBSOTgCtH+6EvRC6B2NVkU//XHr5s
-         V+y1mGtnEA6wI054ydBQlGJWAqToHBQ7PSOrkaqseTG02P6U/UiI/ci6LOMFLjJffJoh
-         heZ8rg01H0D5jRZwc6rtYvTqNy/fYzCfjKNGrh2AZY3lTm84elnZlaygG2XH7yWNbcun
-         E9JlL6TL3qbHPfLoSC0DOqfZ/n5kV9o/3r2ybLiaMCCYRryw5juf2dpToRYM4A4hJj7T
-         XDvlmqyExTSslR9GQE3TTfKOxXlTOyc2ED/RXwk/mO2eFzZZhB3Sg6PPWJmZ51dOUjG/
-         34Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6kAEgGZ9pM2+lNgpqNr0dN0neGYPt03+b429i9cFxtZaTj4ZT2JgS4lGF/FpvVrrScOdiIrJQDkaTIov9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQJGsAAffqq0RVgJvQU+HhWWK0SFiebURFglog7vcI1Rp+eX2p
-	rBdFjiKpivDFzgxA5KqZtUxeVo/inDQhIM1ir3FyODs18f0Ei9hMyas8yDmtxENPWft1AyHhhSz
-	1jpxc/NFwrTPc4xkZYVzEu3kNO1SuICygNBncEvPwSQ==
-X-Gm-Gg: AY/fxX5Idt/849sVqb5BDqUgpVIEN6Iea2scqE1DppXr4V8ihVwsphf/+hW2lmLsme2
-	uS0gJrbpa5lqvNQT29RtM3fWs2S8i+JeCYJ9ZwTrt6gw4ciAkv61aGuTvj7GHK5pR35niXF5Y3+
-	E/VbC9+ABOI65Z08vpYb+fGW8NZ/Zumr79L4gZBbNe8K/mZbDywL5JQiwQGgtPpVOJwFVln6NLd
-	2/LelkWrVBRFZ1JZdIJy5/fcxSFSeG7NO5VYcVOXskRlD5hIf2pbFjA0fcpIs32Ku2WIco=
-X-Google-Smtp-Source: AGHT+IHRZhDQXlj83EvfZqPralOneuTPYHNmYBl1MCKvewvqN5v5F5ckiqPKoDO2q8R3kgqLBjc3HYhf3J9Rm/jMMPg=
-X-Received: by 2002:a05:622a:2609:b0:4f1:c76b:d003 with SMTP id
- d75a77b69052e-4f1d064f3b7mr195647731cf.78.1765883259712; Tue, 16 Dec 2025
- 03:07:39 -0800 (PST)
+	s=arc-20240116; t=1765884882; c=relaxed/simple;
+	bh=Yka1063WsBDL5EBUQSy5YiyHqs00dVg0CEw0JGL1uN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pKz6rUn+OJXoEyCmGY2M1EwlGbTdU9Z/ZCuWHbKaa3hwqph/scF3C4cxdFzldqZkWkTeaJ5V5CYDXnUgejG0Klih+3a9JOF7ySIrjUsmri6A//zP99tdPvx2h5EORnMLQSoXltUwp3wuxxd4kaTW2xgEP8MRV3ZZormc7dFKYrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Qy4ekxbn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1C82C4CEF1;
+	Tue, 16 Dec 2025 11:34:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1765884882;
+	bh=Yka1063WsBDL5EBUQSy5YiyHqs00dVg0CEw0JGL1uN4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Qy4ekxbnNBg3DisQuYWm/6a0OjnIU/cxSSbtUrWb4t0XnxQs6o9UTkCysv7zCn6pV
+	 2RE3wHvvWYv4nzY0Bt3MnkVyDMiJ6M3Qk1dJxsrCclgnKLKy9NYKMwlbAMjIkCr7Wi
+	 RQt4AbpYvwfoUzSUeFvKt2PlCjuJZ+ZrYlXyFvHM=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	David Howells <dhowells@redhat.com>,
+	"Paulo Alcantara (Red Hat)" <pc@manguebit.org>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	linux-cifs@vger.kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	Steve French <stfrench@microsoft.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.12 328/354] cifs: Fix handling of a beyond-EOF DIO/unbuffered read over SMB2
+Date: Tue, 16 Dec 2025 12:14:55 +0100
+Message-ID: <20251216111332.792869420@linuxfoundation.org>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20251216111320.896758933@linuxfoundation.org>
+References: <20251216111320.896758933@linuxfoundation.org>
+User-Agent: quilt/0.69
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251212181254.59365-1-luis@igalia.com> <20251212181254.59365-5-luis@igalia.com>
- <CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com> <CAOQ4uxgY=gYYyc62k-Xo7vgrSHgQczC_2d4d-s445GK=eWpKAQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgY=gYYyc62k-Xo7vgrSHgQczC_2d4d-s445GK=eWpKAQ@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 16 Dec 2025 12:07:28 +0100
-X-Gm-Features: AQt7F2rmplW9HvQv8QSWxtHcWv1558gyJc4pE9IF47--Tzp2n2meFK7r2OBZrhk
-Message-ID: <CAJfpegvM7UwdkTG-aaqTxAAqTgfxGO7uAd5cL3dcQUjM90tFuQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the FUSE_LOOKUP_HANDLE operation
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Luis Henriques <luis@igalia.com>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Bernd Schubert <bschubert@ddn.com>, Kevin Chen <kchen@ddn.com>, 
-	Horst Birthelmer <hbirthelmer@ddn.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Matt Harvey <mharvey@jumptrading.com>, 
-	kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 16 Dec 2025 at 11:52, Amir Goldstein <amir73il@gmail.com> wrote:
+6.12-stable review patch.  If anyone has any objections, please let me know.
 
-> Keep in mind that we will need to store the file handle in the fuse_inode.
-> Don't you think that it is better to negotiate the max_handle_size even
-> if only as an upper limit?
+------------------
 
-I don't see the point.  The handle will be allocated after the lookup
-has completed, and by that time will will know the exact size, so the
-maximum is irrelevant.  What am I missing?
+From: David Howells <dhowells@redhat.com>
 
-> Note that MAX_HANDLE_SZ is not even UAPI.
-> It is the upper limit of the moment for the open_by_handle_at() syscall.
-> FUSE protocol is by no means obligated to it, but sure we can use that
-> as the default upper limit.
+[ Upstream commit 4ae4dde6f34a4124c65468ae4fa1f915fb40f900 ]
 
-Yeah, but even that is excessive, since this will be a non-connectable
-one, and need to fit two of them plus a header into a connectable fuse
-file handle.
+If a DIO read or an unbuffered read request extends beyond the EOF, the
+server will return a short read and a status code indicating that EOF was
+hit, which gets translated to -ENODATA.  Note that the client does not cap
+the request at i_size, but asks for the amount requested in case there's a
+race on the server with a third party.
 
-Thanks,
-Miklos
+Now, on the client side, the request will get split into multiple
+subrequests if rsize is smaller than the full request size.  A subrequest
+that starts before or at the EOF and returns short data up to the EOF will
+be correctly handled, with the NETFS_SREQ_HIT_EOF flag being set,
+indicating to netfslib that we can't read more.
+
+If a subrequest, however, starts after the EOF and not at it, HIT_EOF will
+not be flagged, its error will be set to -ENODATA and it will be abandoned.
+This will cause the request as a whole to fail with -ENODATA.
+
+Fix this by setting NETFS_SREQ_HIT_EOF on any subrequest that lies beyond
+the EOF marker.
+
+Fixes: 1da29f2c39b6 ("netfs, cifs: Fix handling of short DIO read")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+cc: Shyam Prasad N <sprasad@microsoft.com>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/smb/client/smb2pdu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+index 7aa87908e0ff1..b0ff9f7e8cea8 100644
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@ -4634,7 +4634,7 @@ smb2_readv_callback(struct mid_q_entry *mid)
+ 	} else {
+ 		size_t trans = rdata->subreq.transferred + rdata->got_bytes;
+ 		if (trans < rdata->subreq.len &&
+-		    rdata->subreq.start + trans == ictx->remote_i_size) {
++		    rdata->subreq.start + trans >= ictx->remote_i_size) {
+ 			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+ 			rdata->result = 0;
+ 		}
+-- 
+2.51.0
+
+
+
 
