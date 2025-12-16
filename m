@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-71469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95EE0CC2B62
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 13:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BE3CC2AEC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 13:24:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 59FEF31B85F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 12:19:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0894431A802A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 12:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A3434A77A;
-	Tue, 16 Dec 2025 11:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7913570DC;
+	Tue, 16 Dec 2025 12:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fvhwrgFL"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HUTZx0V2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEBC2E9EB5;
-	Tue, 16 Dec 2025 11:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E393570B0;
+	Tue, 16 Dec 2025 12:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765885709; cv=none; b=So1PbE4+cqkMYluuBuP6eNwJoSO2mM1fQeJDlmaY1PXBzjhUCodoBkjB+q/KskjJkGN1wicrjfW6G84nsTF9hqc/9Epr39k0eK5p5XII/8i1t63unDGh/2iGuzSPXBw5O3s6upwnXDAqAT603iZq4XvXWqhH3NHZPKMQPncJ9rM=
+	t=1765886549; cv=none; b=cZpTmfaZTsaViWYsiBrm/Rh0oxX+YCYjDbe/oLKgq7SafaD52e4FSWn6Yck7tzqNZc1PbDCUzffkc6jl+ajGWSnw+F2MjTEGgIDWWY2R/+MJzkbbXjrQKC50O6OOo9xpSv1ZUJZ0ZygIp2S74ZlqqwM/lpZiuL7o1Gvl9vjOEJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765885709; c=relaxed/simple;
-	bh=XoUxJlD9WOjxAkU6DHlmiQFh2axyhB6GCIIrxm5nfHU=;
+	s=arc-20240116; t=1765886549; c=relaxed/simple;
+	bh=kWmVjzJbflYYYfJyjioyZizFxQTMZX/xgN9efzJ8dZA=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iTsIAJuzHxYVUxLWKBmH0n+aJDhmyRK3Z2riiBDKPJSFX7rG5eFJGoATnM1wKM2LrBvmNN09UHOv6Ol22eJ7tFWp7DwDMYXBKMVhzQkfhANppjG95iQvApdKXgbZ+J7J/5zZ5wM/brJZF28Zpck0JtRpczYAO4DlV5Qtw4IuDhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fvhwrgFL; arc=none smtp.client-ip=213.97.179.56
+	 MIME-Version:Content-Type; b=Q0mvualNq+UsZ5B6S/L9bx1iwEbi6EuRNKU4BdYsbqO5n/F2R3OtD/djfHKV2dMFduM+rlVzQ/ZJUDl9SIOd7OU46Wax0gNX+U4ZIYKGOyM8Y0NDJXaHEHJmsTvd+BcqHfrQJaHC1ZjdfMoeUciBHtRGltA+TtVWhdyhmu78eUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HUTZx0V2; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -35,34 +35,34 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=K/fhvhkiEktnk/2Z7WHoZ3hMxclF75DfHmLMCpuN3Oc=; b=fvhwrgFLuzlDd5RQkXaU43rMYL
-	yNrhlSpIvMPFk2/I00MgP+MJ8qa0weMD4DLDQNMKVRNpFSrLqEd+UPDs2C1L9AtlrLXY0Q4i/kVxZ
-	Sy/62pVY+BT+pvebbEY2wtYe1lgYaTzF1p4jNiXUbsnkfRC6WgafLhIGHUCjeE0mOUrAQgIbCy+Lq
-	6ftI5jYNLdWV6oYRf0+rK6quM7iO4upi810Md2FzCrWToj4bDZafrImgfnjQqSGsAep6UWU5Ti90a
-	YZMMNnl9wndrysRJjvG5L9LX0KaD+rldboIAzNzmGPZr4Pk4VXIraCznexyYUrDIZuss8WHv/yzwG
-	KDNsKYbg==;
+	bh=PJYZVMcs/arHSwxVZZwQuj1IXRWxJY68PEX+DfaVYwA=; b=HUTZx0V28H+8OSkEX9Sfl6V3dw
+	4cjiV4VJQQLW89mRPdRVsy4YBN86ZYwHhoW+yjE4Gp1w6fbdWbMOPJP6zT322SowTI7eoDYmQoGuF
+	ZstciD18Y3ehHvUIn+ppE6iMX1Lhwqi5RtlX0UNiBQwLjZOL1CXFbVhKxdnWiIky8EQrpHph+68Vh
+	XvD+VxnBiDWlz9dS9iXzwddaqmfGP/TLBGOzsBesfIKOteA2FF1sK1TiOi9xBRKGq9A0imZwfGj/M
+	6KD9awCbM+S83rySV153KKAmT3y8VTDfl7cTV18955cpFbyDntXmRDATZhcm5S6G4LQ8tKk/JDNJ6
+	0u8z7p4w==;
 Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
 	by fanzine2.igalia.com with utf8esmtpsa 
 	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vVTXO-00DMw8-Cy; Tue, 16 Dec 2025 12:48:18 +0100
+	id 1vVTkv-00DNDh-OH; Tue, 16 Dec 2025 13:02:17 +0100
 From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
- <amir73il@gmail.com>,  "Darrick J. Wong" <djwong@kernel.org>,  Kevin Chen
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>,  "Darrick J. Wong"
+ <djwong@kernel.org>,  Bernd Schubert <bschubert@ddn.com>,  Kevin Chen
  <kchen@ddn.com>,  Horst Birthelmer <hbirthelmer@ddn.com>,
-  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,  Matt
- Harvey <mharvey@jumptrading.com>,  "kernel-dev@igalia.com"
- <kernel-dev@igalia.com>
-Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the
- FUSE_LOOKUP_HANDLE operation
-In-Reply-To: <76f21528-9b14-4277-8f4c-f30036884e75@ddn.com> (Bernd Schubert's
-	message of "Mon, 15 Dec 2025 17:39:22 +0000")
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Matt
+ Harvey <mharvey@jumptrading.com>,  kernel-dev@igalia.com
+Subject: Re: [RFC PATCH v2 3/6] fuse: initial infrastructure for
+ FUSE_LOOKUP_HANDLE support
+In-Reply-To: <CAJfpegt-0VDicWso6ZjsFyawuKj8Xf4qwTEth00CdAd-pUNcjQ@mail.gmail.com>
+	(Miklos Szeredi's message of "Tue, 16 Dec 2025 12:46:54 +0100")
 References: <20251212181254.59365-1-luis@igalia.com>
-	<20251212181254.59365-5-luis@igalia.com>
-	<76f21528-9b14-4277-8f4c-f30036884e75@ddn.com>
-Date: Tue, 16 Dec 2025 11:48:18 +0000
-Message-ID: <87ike6d4vx.fsf@wotan.olymp>
+	<20251212181254.59365-4-luis@igalia.com>
+	<CAJfpegsoeUH42ZSg_MSEYukbgXOM_83YT8z_sksMj84xPPCMGQ@mail.gmail.com>
+	<87pl8ed5l3.fsf@wotan.olymp>
+	<CAJfpegt-0VDicWso6ZjsFyawuKj8Xf4qwTEth00CdAd-pUNcjQ@mail.gmail.com>
+Date: Tue, 16 Dec 2025 12:02:12 +0000
+Message-ID: <87ecoud48r.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,78 +72,42 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 15 2025, Bernd Schubert wrote:
+On Tue, Dec 16 2025, Miklos Szeredi wrote:
 
-> On 12/12/25 19:12, Luis Henriques wrote:
->> The implementation of LOOKUP_HANDLE modifies the LOOKUP operation to inc=
-lude
->> an extra inarg: the file handle for the parent directory (if it is
->> available).  Also, because fuse_entry_out now has a extra variable size
->> struct (the actual handle), it also sets the out_argvar flag to true.
->>=20
->> Most of the other modifications in this patch are a fallout from these
->> changes: because fuse_entry_out has been modified to include a variable =
-size
->> struct, every operation that receives such a parameter have to take this
->> into account:
->>=20
->>    CREATE, LINK, LOOKUP, MKDIR, MKNOD, READDIRPLUS, SYMLINK, TMPFILE
->>=20
->> Signed-off-by: Luis Henriques <luis@igalia.com>
->> ---
->>   fs/fuse/dev.c             | 16 +++++++
->>   fs/fuse/dir.c             | 87 ++++++++++++++++++++++++++++++---------
->>   fs/fuse/fuse_i.h          | 34 +++++++++++++--
->>   fs/fuse/inode.c           | 69 +++++++++++++++++++++++++++----
->>   fs/fuse/readdir.c         | 10 ++---
->>   include/uapi/linux/fuse.h |  8 ++++
->>   6 files changed, 189 insertions(+), 35 deletions(-)
->>=20
->> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
->> index 629e8a043079..fc6acf45ae27 100644
->> --- a/fs/fuse/dev.c
->> +++ b/fs/fuse/dev.c
->> @@ -606,6 +606,22 @@ static void fuse_adjust_compat(struct fuse_conn *fc=
-, struct fuse_args *args)
->>   	if (fc->minor < 4 && args->opcode =3D=3D FUSE_STATFS)
->>   		args->out_args[0].size =3D FUSE_COMPAT_STATFS_SIZE;
->>=20=20=20
->> +	if (fc->minor < 45) {
+> On Tue, 16 Dec 2025 at 12:33, Luis Henriques <luis@igalia.com> wrote:
+>>
+>> On Tue, Dec 16 2025, Miklos Szeredi wrote:
+>>
+>> > On Fri, 12 Dec 2025 at 19:12, Luis Henriques <luis@igalia.com> wrote:
+>> >>
+>> >> This patch adds the initial infrastructure to implement the LOOKUP_HA=
+NDLE
+>> >> operation.  It simply defines the new operation and the extra fuse_in=
+it_out
+>> >> field to set the maximum handle size.
+>> >
+>> > Since we are introducing a new op, I'd consider switching to
+>> > fuse_statx for the attributes.
+>>
+>> So, just to clarify: you're suggesting that the maximum handle size shou=
+ld
+>> instead be set using statx.  Which means that the first time the client
+>> (kernel) needs to use this value it would emit a FUSE_STATX, and cache
+>> that value for future use.  IIUC, this would also require a new mask
+>> (STATX_MAX_HANDLE_SZ) to be added.  Did I got it right?
 >
-> Could we use fc->lookup_handle here? Numbers are hard with backports
-
-To be honest, I'm not sure this code is correct.  I just followed the
-pattern.  I'll need to dedicate some more time looking into this,
-specially because the READDIRPLUS op handling is still TBD.
-
-<snip>
-
->> @@ -505,6 +535,30 @@ struct inode *fuse_iget(struct super_block *sb, u64=
- nodeid,
->>   	if (!inode)
->>   		return NULL;
->>=20=20=20
->> +	fi =3D get_fuse_inode(inode);
->> +	if (fc->lookup_handle) {
->> +		if ((fh =3D=3D NULL) && (nodeid !=3D FUSE_ROOT_ID)) {
->> +			pr_err("NULL file handle for nodeid %llu\n", nodeid);
->> +			iput(inode);
->> +			return NULL;
+> No, using statx as the output of LOOKUP_HANDLE is independent from the
+> other suggestion.
 >
-> Hmm, so there are conditions like "if (fi && fi->fh) {" in lookup and I
-> was thinking "nice, fuse-server can decide to skip the fh for some
-> inodes like FUSE_ROOT_ID. But now it gets forbidden here. In combination
-> with the other comment in fuse_inode_handle_alloc(), could be allocate
-> here to the needed size and allow fuse-server to not send the handle
-> for some files?
+>> What would be the advantages of using statx?  Keeping the unused bytes in
+>> struct fuse_init_out untouched?
+>
+> Using fuse_statx instead of fuse_attr would allow btime (and other
+> attributes added to statx in the future) to be initialized on lookup.
 
-I'm not sure the code is consistent with this regard, but here I'm doing
-exactly that: allowing the fh to be NULL only for FUSE_ROOT_ID.  Or did I
-misunderstood your comment?
-
-Regarding the comment in fuse_inode_handle_alloc(), I believe I'll need to
-rethink about it anyway, specially after some of the comments I've already
-seen from Miklos (which I'm still going through).
+Oh! Of course, I totally misunderstood your suggestion.  Right, creating a
+new *_out struct probably makes sense.  Something like a mix between
+fuse_entry_out and fuse_statx_out.
 
 Cheers,
 --=20
