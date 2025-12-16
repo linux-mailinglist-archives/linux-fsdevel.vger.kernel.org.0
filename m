@@ -1,86 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-71481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487A7CC43DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 17:22:34 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1695ACC3C08
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 15:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id DF1E73065C75
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 16:18:47 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 83D65300887A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 14:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9534730DD2E;
-	Tue, 16 Dec 2025 16:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2175334AAE3;
+	Tue, 16 Dec 2025 14:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AlThjLIz"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f98E1pah"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060F32EDD76
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 16:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5FC28030E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 14:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765901880; cv=none; b=ocmCz9iogce/IKSfUJHMMvTPLA8onhwDc053oXUESDS8NK1VbHr3FN3xpo0/UH6ey6J868nikEu7FnN7TuDbHijY5ieHhniJOxGx+pkr47Iy3fUy4SpB2h9JsJWHwkLiZqaFZgBi3v40T074Q/MJswWQPI8jJCEnDOwTSBgS/Jw=
+	t=1765896778; cv=none; b=t6l9gJ6wVaQQQF9a+NRsmdE8AloPEPgGVONzbJvYaiiYi4+DStGMWpR56JumTT8UP2FYgwuo871TuTFU9lFcPx2XYNUaVfEglopLxUD+cu7LRd4HbgYhHMO0ZqrKWaDm0dLo0OwarOzHN0fGPnrVUteMb0PQJSQ6yx4ijNQL9P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765901880; c=relaxed/simple;
-	bh=NfVFaEsgYlTNWhHiG9lD88HgIX1yIjeLewaZDgU2dKI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wrgtbe3T4nOeagtE4q3nyHUvXOE8/e574RCKed3myYQaolQ7vsaJu3bS8lXk1+I6jx3ISGyafPl2TF/M/aqU0vZxFI/ASV7P76SNzDS5eGIGmUR5pL20Atoi6PfQJLA9vqNLJnWhJABhEjT+XQOD8EOMSw7XvNNyT+ON0LVqsrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AlThjLIz; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b7633027cb2so843491466b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 08:17:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765901877; x=1766506677; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jc74d610ubg8JlIaa6JmNgUpYxdbPfvvf6uFfQxvzNI=;
-        b=AlThjLIzoxD3BcLFdC2V2jydRwD5nq594bpgF95jJReweec4to8tfQGS+Lx1pLGAA9
-         KRfL4SPnZYBPcYxiw9/GWdwCUqWTp0l5cB41cp3isjJu+RdQ9+CcpnKaBXGpsWClbuO3
-         kdzJBOxu6A+MobLFWPU2OK4oqep4G/l8yYWZeNDEyUt0yXbSPTYXSLkLDD+CslOlbJc5
-         ga3sIv8iECLoOw438HbGhA2xqLIuIqb3KEuD9/NRodcsRgmjT/jHlZc29EEOSRFJwS7W
-         LCP1iJNjz9OlS+4f5JsxXkDTw4sl/ZWYYXqiVH31AgXmHYqeLPVx+O54OZo0tNhMcERl
-         TBfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765901877; x=1766506677;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jc74d610ubg8JlIaa6JmNgUpYxdbPfvvf6uFfQxvzNI=;
-        b=NrM4bH9i5s2hJinZaeZljd9HkQxZQ7ZNpe6V/Smjz1SXXdBCPzsMZHzAQDVQF5O5us
-         Xr5QFP56VyqecVGiPqTGatmpI/ufP2SpCfueQl3faemW5gntmw/Wun0ikn5AXBkj1T7w
-         q8rUuTGdijMVk6hHrMluLclqDJzmNLcBYUtKNUp3e9wjiAdc04anfwagV6lCr2vDZu/G
-         JLQFA7FwspSmpmEFMlMF0JG6O3pcXIKbKOqjzQwY+edTb3T/+m6191TaYzjgULv/Jpy0
-         TgfGyuIARYeGUtk67yHp619r62QSNh8hU7jflnXiBDJLRbr1PGF48o0gzkURCFC0UpyH
-         N07w==
-X-Forwarded-Encrypted: i=1; AJvYcCVjz7P4PGXmAS9GSLe0+wRT/sTfIoOO6cwaecE9J2vhSBNjSuN+/gNwvvXvlM0ks9G9E9wcxDmWc3l7KgH2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjuGJMrb8KHB+H0C+pfSR1zqMIMpknCr8rmkfF/1/opUdtydRy
-	Gj/veReURFr5kWGl7ZVa8KTzmtUcfoIIFWjJbtuGil1JjflVGhUtCVJ8MTXYzA==
-X-Gm-Gg: AY/fxX4/v9x937/3hds9QD4cYx9YOX+3Jexg0iUAHE3uuuoyHdlokftrFbnrUo5GH+g
-	QoIVLyQPwSZbEUfHCi4MfGVHzzAwkjfj3WKZS5RpjtVbzQqevTZBwANmJnKH2WBAaWkpTl0ddMy
-	I2014c+EXoZPSD0mzVb34Jq84J1Umb48dmxxRlT0YLXp/um3m/T0OsnSGa68/P7KeQLddAtD+hJ
-	6tYxC9DLejET7v5eU5As4kTmD+B9Ox3fjCCXvQIPYIwY4q0j1H11+T34JJ9Jz65g/QHhPzuwIhN
-	05q/2H5QvnK9DGDNHqaPHKxRwSA60evBtg5f9yUJoYmy+xWs9UzBTzLY9660ElAB5k9mU8S22DL
-	MxFRwt3N/f8NnOiIg3sZMdLl9pagp/BBYoPOA62m/FopI88AK+SK5Ty/Fh7UvA579bcdUz3iC5n
-	CPZWHo9GWnq4rwmHqGtrYd9nBmgSStjuLsDn6/kQOxgEyoWrm0UIVdUI9Svoqzj5IOL1CyVy5w
-X-Google-Smtp-Source: AGHT+IE++hUTpvVDoXTnEPkKwj2xABrPJXo5oPLEznAqITCPrZaE2A39nltiMCOFhyKLkzIMNDObkg==
-X-Received: by 2002:a05:600d:105:b0:47a:97c7:f08b with SMTP id 5b1f17b1804b1-47a97c7f1a9mr66099745e9.31.1765894609327;
-        Tue, 16 Dec 2025 06:16:49 -0800 (PST)
-Received: from snowdrop.snailnet.com (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47a8f74b44csm240035745e9.3.2025.12.16.06.16.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Dec 2025 06:16:49 -0800 (PST)
-From: david.laight.linux@gmail.com
-To: Bernd Schubert <bschubert@ddn.com>,
-	Miklos Szeredi <mszeredi@redhat.com>,
+	s=arc-20240116; t=1765896778; c=relaxed/simple;
+	bh=dqD3qZSjcbSnh5gCbahmUSEok9esyhLdBnatHULtqKI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=STWpK7qZlOJ3B5FZpvvwiSaIrXi86NdAqFVlUkqFgkdjllQZXoL6P2IBQPdlmcDk48VbXYZwsSig/PeQYBFiwgEb0xQdg1gEf+BHnc/AB10WkgRiPyLdra/DJsbD1tvQKHOfK1Bocu2tD2jJFurabHqsvXQ6mYC/qnxPz2xFAns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f98E1pah; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1765896775;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+xfxZPHc4yJJ1NHFfvbKujleBGkMgd2FNdpQr/zDwwM=;
+	b=f98E1pahqTI6HD+oH0cUYeOl8AWFJaSKCuMK5TJbAr3+ufUC04rb5L2A0NR/cEyYeYLwNy
+	gdlDGXmlByugy/RRYo2NbChHoY9nKnkYX/aiEvnI6AWFtFvmvnarz6u8ArVxnE8B0mptfg
+	1OATkHsoVBd/G83By78pzhCKrhzq0eY=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: David Laight <david.laight.linux@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] fuse: change fuse_wr_pages() to avoid signedness error from min()
-Date: Tue, 16 Dec 2025 14:16:47 +0000
-Message-Id: <20251216141647.13911-1-david.laight.linux@gmail.com>
-X-Mailer: git-send-email 2.39.5
+Subject: [PATCH] dcache: Replace simple_strtoul with kstrtoul in set_dhash_entries
+Date: Tue, 16 Dec 2025 15:52:37 +0100
+Message-ID: <20251216145236.44520-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,43 +55,38 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: David Laight <david.laight.linux@gmail.com>
+Replace simple_strtoul() with the recommended kstrtoul() for parsing the
+'dhash_entries=' boot parameter.
 
-On 32bit builds the 'number of pages required' calculation is signed
-and min() complains because max_pages is unsigned.
-Change the calcualtion that determines the number of pages by adding the
-'offset in page' to 'len' rather than subtracting the end and start pages.
-Although the 64bit value is still signed, the compiler knows it isn't
-negative so min() doesn't complain.
-The generated code is also slightly better.
+Check the return value of kstrtoul() and reject invalid values. This
+adds error handling while preserving behavior for existing values, and
+removes use of the deprecated simple_strtoul() helper.
 
-Forcing the calculation to 32 bits (eg len + (size_t)(pos & ...))
-generates much better code and is probably safe because len should
-be limited to 'INT_MAX - PAGE_SIZE).
-
-Fixes: 0f5bb0cfb0b4 ("fs: use min() or umin() instead of min_t()")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202512160948.O7QqxHj2-lkp@intel.com/
-Signed-off-by: David Laight <david.laight.linux@gmail.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- fs/fuse/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/dcache.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 4f71eb5a9bac..98edb6a2255d 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1323,7 +1323,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
- static inline unsigned int fuse_wr_pages(loff_t pos, size_t len,
- 				     unsigned int max_pages)
+diff --git a/fs/dcache.c b/fs/dcache.c
+index dc2fff4811d1..ec275f4fd81c 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -3227,10 +3227,7 @@ EXPORT_SYMBOL(d_parent_ino);
+ static __initdata unsigned long dhash_entries;
+ static int __init set_dhash_entries(char *str)
  {
--	return min(((pos + len - 1) >> PAGE_SHIFT) - (pos >> PAGE_SHIFT) + 1,
-+	return min(((len + (pos & (PAGE_SIZE - 1)) - 1) >> PAGE_SHIFT) + 1,
- 		   max_pages);
+-	if (!str)
+-		return 0;
+-	dhash_entries = simple_strtoul(str, &str, 0);
+-	return 1;
++	return kstrtoul(str, 0, &dhash_entries) == 0;
  }
+ __setup("dhash_entries=", set_dhash_entries);
  
 -- 
-2.39.5
+Thorsten Blum <thorsten.blum@linux.dev>
+GPG: 1D60 735E 8AEF 3BE4 73B6  9D84 7336 78FD 8DFE EAD4
 
 
