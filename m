@@ -1,155 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-71380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C7CCC0AF1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 04:09:04 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2906FCC0B09
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 04:12:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 86248302EA07
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 03:08:00 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3D2AE301CD9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Dec 2025 03:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C8A2BE64A;
-	Tue, 16 Dec 2025 03:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93369296BAB;
+	Tue, 16 Dec 2025 03:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Lqp9yliZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AOFBuCyj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02660287502
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 03:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C8F2F39D1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 03:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765854478; cv=none; b=jOo6ZNnYWlBI1pkK2pMVPLstQr2Y0lMRevVg4TiuWZF/5dJ0jABM0SVmYZ/91aepHz3o9Ifvun3MnyS6mr+aYnrcrfSL9KfoeK0DXDDSH4B8M1inGNDkmWFVHMVA7T+2EaLo3o0mGSZ9Jp1lT0xrcf+xOwXo2pq88t5fG0q9FkY=
+	t=1765854747; cv=none; b=cDpYdnGb2SMermHNH+xsnadIe3LQCKXUCadtnMX76uwZ/3albllSiDKq2slNmudpc20AVOM5B4SglLe+hqPc1cFpZwacVW4daTPS8VE+B40+6UCW3bLLv0atLDL2APxX4GqFVeYLxyVPP9hN2cEvIpoXCNrLQE0S+/Zg3e1z4P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765854478; c=relaxed/simple;
-	bh=oNczs+Op/enBhLN5wk5s5RblT5qG1Ab4V5eXZu0DuZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GAMtdj+kKGwrKc97OBicd9VezS/uwAtmsAyZ4BAZfl0tSbxw6futhIkD/3qu/TOeG+KFdE2I5c3SaVwJczNCDLFYwZNK7FJKye1m7vP+kirjKyOhaVNwNuL5iCM5CrMgxhk2oH/jgohzKoW5PA9tA+5iOwY/FRsSzAzEfc6A/18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Lqp9yliZ; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-34ab8682357so479963a91.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 19:07:56 -0800 (PST)
+	s=arc-20240116; t=1765854747; c=relaxed/simple;
+	bh=MHj5eMaKpbXLESG/oNUTKn3hO7O7opkUhpED1G1y26E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HmN9v1rU2wRcYthfbP9eMBwZGuE+bUHjpl9tnX0owHqVz6zeBppjdieb77IYYtAiYBh3VtsU6tfr0FQOkglc+y5z7nyUeUhLBGszQfHLMQVw7YbGUSvfImlhZUqH4ygxyTgsNY+1+QYz7uoEql9234iEhWhTj4md73vvdk4Caec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AOFBuCyj; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7bf0ad0cb87so5135346b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Dec 2025 19:12:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1765854476; x=1766459276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i32kBNi0DJqYnn5gUYyWAtk6nPGBOqaLEFAY1AGj4T8=;
-        b=Lqp9yliZWgiLJc/ZH3jCfOEJf+dMq/iU2iKxvPWBtE7Ih8/6FqBbIlhb6+nFUfPvog
-         6zz7VCf7ONd6JG8sueftRvUdQGIxuoVW4eku2aajBCUGAnMpSUGgeyefPjTXAr1b3Xeu
-         2GIyvahmnEoOCjejEuVX3LDhISsdWOD956MzZ8J30zsd8Shp/nzYEVKtKW1bjgCoBtLB
-         vAbMeX5855Nxo1sMyTzhe42x6fqHxnRlNz+vJwheQKSMu5osyZaPMMUa/L2eJO1Q4Xg7
-         Z5bZX0Zd4iTvVopa6o7280krggaKEyr4OmWAMszRA1TnCxN+BHJDcX2FRtooSHPz+Opr
-         7kBQ==
+        d=gmail.com; s=20230601; t=1765854745; x=1766459545; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=v1XTKIE7lS6ISh9SSrfsgd7hwp0qO7clmkEC+ykt48o=;
+        b=AOFBuCyj5biOosYWEPnJZmYqmDNs/s4hEc8ENSzZJM6QjNPTyOKpB/75Onk+oNaLlZ
+         tQxfk89kAQgkNSxUtrkBgHZ3O2x3+w29YQTDTM92xEgDMPbtBytuX/m2VpkjBlV+raqA
+         5oMfy/dlcGuGW7xk6hu7I1gPBzhuNEpZP0+JQSr5JyiSbGX/to4lTAFW0SYQrGSbOkyh
+         AuG2PVToLgtczCi/sAONDEaJOMzR5LCFYoFJkQzgWemSiRZkCdACniI63GmTGOIKMc4m
+         x8jcOIyjj7a5NARv2pHmMEBnKtx1hKeNmUZwQl7kTgSL+7RSmt44QVNCK3BLLjQYw326
+         7oTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765854476; x=1766459276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=i32kBNi0DJqYnn5gUYyWAtk6nPGBOqaLEFAY1AGj4T8=;
-        b=hKqqkjH63p90QM0bHJ480eq4YMuP2A/s2S7zR9SA6+UDb0d6G0TxKpoMJ8dp25W23j
-         SMs47TzJfAps8F6zFMV4JqUz8kaEo3u/xy4/ZbBG1UGSXT2FRIDHZVDFrgU1y34OVyg8
-         /OoW6OCoRyZy7mtOvw3UPAaSJ2EJUlj9C5ZSsvbEpStyKmBFqXPhqR8ktrTlzDIjjWgQ
-         m1iCQjBtRSJELIf1sC5hf9+LbkkAZscURHIY51/L/x5TZp9b8KX9mXhwrePMDMARjMTJ
-         r66PSv5qqdd+N1wEqGx7T/LkH5tvF0bEfGbcZfYkO32FM6RcCGIAt7gkYouT77jSnXpS
-         QLTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhPkV2G2+wwvwMdlgNVRwGmYXj5Zom4kgWwU2IcbM1RQB44BhDseao8pWLcX3U8mh/ATu4N+pZXcnSr3NP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO1r3BHnohEzvVtecipbGmk4Ctx8+piaYRmeURAztWuZgrXKBa
-	k8UKT4+SqXueErNNn0rP11eC5Bx4O82Y44gGYS70pJXCqRJWC4b4k8sZsH1OeAIXQc7Ke6IjnyX
-	Xx4UZ5I87rB0cqQAbJd6D9cjboHWTlXCV8S0MfhGgFA==
-X-Gm-Gg: AY/fxX41l753sgB7YgF5fM8UsFS0PoP3SsjKGQVc5znsuqcxsr8wYT7gE9FT84gj0cm
-	imzABiqerlXob9+pPvusWZkOQdKGcEFPQydL73TNPkef6mQucjdcHfkGwxB/O2AJZh59xbxcziy
-	njvfTzAko7C4aYZdD9lGhDIru0yV2Cvm760lPjqrbFEGTIpqgtG8V7OgH/Kna82EllrNEgwu7xb
-	MReiTb5o1sL1m4tN1YMWZprJtx1+LYReVqaS+YJZtLeS9XgYL06AmA0J82bCbgZ4/DAgRh1
-X-Google-Smtp-Source: AGHT+IEkdAVOYyrzH2Vn0TCTeVw7DcwshVmz6ZS2XMprUMhrrm3CgypWJ2YPV/Vdl4267ZP4bVvWUx4X9lYhEbPlhIs=
-X-Received: by 2002:a05:7022:ec0b:b0:11b:1c6d:98ed with SMTP id
- a92af1059eb24-11f349a9d7emr5968016c88.2.1765854476034; Mon, 15 Dec 2025
- 19:07:56 -0800 (PST)
+        d=1e100.net; s=20230601; t=1765854745; x=1766459545;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v1XTKIE7lS6ISh9SSrfsgd7hwp0qO7clmkEC+ykt48o=;
+        b=AqTxDSha1IdSjkTE+QslnJEl6LwPPf+7GFVpTl24xhpj4ydjG5yVqQFd/ebFNtaGXP
+         cmKojAyXiZXuRTP/v+QV4jf2dj0H0gpGtBneGi9lITPHntCtpCrUUUfOaDxrHrsfSQeZ
+         /cyDxFE4FFfjCMC3cYU7LPiIe0fEWUdbZuOfI7w9EWguCk1n5whCW9VYUkIEWU8SUOLz
+         l3LlwSvq6U2kFxy2cDcUr90iqa457u5ktaZfwvKF4T9Ofrj3Vmd3zyR4+tvjYUkp75Q7
+         HgA2+80e0nZpJQlb4VeQ9uWRoyzGqYZrZqPBROoUFsc4nkutIAyOqDp9Et3dvnuM+zTG
+         PE5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWrOkJoX6108NDUfcWffWvaOMrJv9X5UnlZXMm9LLFBRL60xKw9BMw93+acYSs4ACNBhamlmvMkUkSwfnR0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx07IHOD9yjYHWcQBRvQkrqe3t3JVSCnD+4dB4aNBg3klDzhMYc
+	UzKsByD1YmLMGgsfsrVrYtwC3tD2t4QEaJq0qsuGfpNSASIhNQfvpIGmMqUdhlpB
+X-Gm-Gg: AY/fxX6ojkRFCpTXlyo0zfWRWTQrU2MdsRlkysh0J0LYogXYCZN07EpLl79PAKe4Bi4
+	shK97TSfc11IhlyK/SIC2m/L+fRxxNHCE+XnWwYxv6nG2mBXEIxjgURouOX83z7XvKnwaNjwV34
+	fGP7Zc2GAPbkDbLHfaqneYB+vPg3DxjL17RN1zSMOtNka7EMF/G+jKmzUBUioqAOuGpyaPhfD00
+	ZlWspZbRwH858Eh6Gx1mIORsMhMbybCcwMeK4tQrQtE5YxeQ8cbM0q8uyolPUo5RgGTPjdZnWsf
+	Yg61sZu3GkGQ45d01iPbH6PhZ56Gp10bgsfdVtQLN1q6FLRAOkR6FbMENFGJf9t3VbgdOD2EimG
+	wVCsX3oQSbW5aqX9HVWlymDm52DIn+mhomIf12LTjWV76YJ6mBF0UBWQc21PJUDTuANpGJSczJU
+	Ki5QQ=
+X-Google-Smtp-Source: AGHT+IF0tz0zYbc0FACU6KRTQzZw3IhUO2xklXRdt4pY23/rn5onAkq4lgOwW+t2ZMZ15thjO9SINg==
+X-Received: by 2002:a05:6a00:288e:b0:7e8:43f5:bd2c with SMTP id d2e1a72fcca58-7f669c8add9mr10107967b3a.65.1765854745459;
+        Mon, 15 Dec 2025 19:12:25 -0800 (PST)
+Received: from localhost ([2a12:a304:100::105b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7f4c585cde0sm13791160b3a.69.2025.12.15.19.12.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Dec 2025 19:12:24 -0800 (PST)
+Date: Tue, 16 Dec 2025 11:12:21 +0800
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Hannes Reinecke <hare@suse.de>,
+	Luis Chamberlain <mcgrof@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	syzbot+4d3cc33ef7a77041efa6@syzkaller.appspotmail.com,
+	syzbot+fdba5cca73fee92c69d6@syzkaller.appspotmail.com
+Subject: Re: [PATCH] mm/readahead: read min folio constraints under
+ invalidate lock
+Message-ID: <aUDOCPDa-FURkeob@ndev>
+References: <20251215141936.1045907-1-wangjinchao600@gmail.com>
+ <aUAZn1ituYtbCEdd@casper.infradead.org>
+ <aUC32PJZWFayGO-X@ndev>
+ <aUDG_vVdM03PyVYs@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251203003526.2889477-1-joannelkoong@gmail.com>
- <20251203003526.2889477-23-joannelkoong@gmail.com> <CADUfDZp3NCnJ7-dAmFo2VbApez9ni+zR7Z-iGsudDrTN4qw1Xg@mail.gmail.com>
- <CAJnrk1YO+xWWAQtEvk_xAsoBStRR=o0=t3audmmGrEpKpYGPpg@mail.gmail.com>
-In-Reply-To: <CAJnrk1YO+xWWAQtEvk_xAsoBStRR=o0=t3audmmGrEpKpYGPpg@mail.gmail.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 15 Dec 2025 19:07:44 -0800
-X-Gm-Features: AQt7F2pCCnk4VD1YEf4p6JENbqY7Nml3f00KeaP3YXqjMXyifAnUo5W-x6D8z2c
-Message-ID: <CADUfDZp3_r2E5uhu88HgfWQhf5-QWdYL+JiicTeBMDFLrdvVCw@mail.gmail.com>
-Subject: Re: [PATCH v1 22/30] io_uring/rsrc: refactor io_buffer_register_bvec()/io_buffer_unregister_bvec()
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aUDG_vVdM03PyVYs@casper.infradead.org>
 
-On Fri, Dec 12, 2025 at 9:11=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> On Sun, Dec 7, 2025 at 5:33=E2=80=AFPM Caleb Sander Mateos
-> <csander@purestorage.com> wrote:
-> >
-> > On Tue, Dec 2, 2025 at 4:37=E2=80=AFPM Joanne Koong <joannelkoong@gmail=
-.com> wrote:
-> > >
-> > > +int io_uring_cmd_buffer_unregister(struct io_uring_cmd *cmd, unsigne=
-d int index,
-> > > +                                  unsigned int issue_flags)
-> > > +{
-> > > +       struct io_ring_ctx *ctx =3D cmd_to_io_kiocb(cmd)->ctx;
-> > > +
-> > > +       return io_buffer_unregister(ctx, index, issue_flags);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(io_uring_cmd_buffer_unregister);
-> >
-> > It would be nice to avoid these additional function calls that can't
-> > be inlined. I guess we probably don't want to include the
-> > io_uring-internal header io_uring/rsrc.h in the external header
-> > linux/io_uring/cmd.h, which is probably why the functions were
-> > declared in linux/io_uring/cmd.h but defined in io_uring/rsrc.c
-> > previously. Maybe it would make sense to move the definitions of
-> > io_uring_cmd_buffer_register_request() and
-> > io_uring_cmd_buffer_unregister() to io_uring/rsrc.c so
-> > io_buffer_register_request()/io_buffer_unregister() can be inlined
-> > into them?
->
-> imo I think having the code organized more logically outweighs the
-> minimal improvement we would get from inlining (especially as
-> io_buffer_register_request() is not a small function), but I'm happy
-> to make this change if you feel strongly about it.
+On Tue, Dec 16, 2025 at 02:42:06AM +0000, Matthew Wilcox wrote:
+> On Tue, Dec 16, 2025 at 09:37:51AM +0800, Jinchao Wang wrote:
+> > On Mon, Dec 15, 2025 at 02:22:23PM +0000, Matthew Wilcox wrote:
+> > > On Mon, Dec 15, 2025 at 10:19:00PM +0800, Jinchao Wang wrote:
+> > > > page_cache_ra_order() and page_cache_ra_unbounded() read mapping minimum folio
+> > > > constraints before taking the invalidate lock, allowing concurrent changes to
+> > > > violate page cache invariants.
+> > > > 
+> > > > Move the lookups under filemap_invalidate_lock_shared() to ensure readahead
+> > > > allocations respect the mapping constraints.
+> > > 
+> > > Why are the mapping folio size constraints being changed?  They're
+> > > supposed to be set at inode instantiation and then never changed.
+> > 
+> > They can change after instantiation for block devices. In the syzbot repro:
+> >   blkdev_ioctl() -> blkdev_bszset() -> set_blocksize() ->
+> >   mapping_set_folio_min_order()
+> 
+> Oh, this is just syzbot doing stupid things.  We should probably make
+> blkdev_bszset() fail if somebody else has an fd open.
 
-Yes, io_buffer_register_request() is a large function, but this
-io_uring_cmd_buffer_unregister() wrapper is small. It would be nice to
-either inline it into its caller or have io_buffer_register_request()
-inlined into it. I don't feel that strongly, but this is in the ublk
-zero-copy I/O path. You make a good point that this organization is a
-cleaner abstraction. And I guess there are already plenty of thin
-wrapper functions in io_uring/uring_cmd.c. Let's hope LTO comes to the
-rescue!
-
-Thanks,
-Caleb
-
->
-> Thanks,
-> Joanne
->
-> >
-> > Best,
-> > Caleb
-> >
-> > > +
-> > >  /*
-> > >   * Return true if this multishot uring_cmd needs to be completed, ot=
-herwise
-> > >   * the event CQE is posted successfully.
-> > > --
-> > > 2.47.3
-> > >
+Thanks, that makes sense.
+Tightening blkdev_bszset() would avoid the race entirely.
+This change is meant as a defensive fix to prevent BUGs.
 
