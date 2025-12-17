@@ -1,133 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-71577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E17CC8F1F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 18:03:35 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0481CC9166
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 18:40:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id A8308300BE69
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 17:03:32 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 51BCD30391B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 17:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFFA33A9E3;
-	Wed, 17 Dec 2025 17:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD33F340D90;
+	Wed, 17 Dec 2025 17:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ql6KCuK/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bj9NEYt0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E132D663E;
-	Wed, 17 Dec 2025 17:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA40C3346A0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Dec 2025 17:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765990991; cv=none; b=s14QECF1cdnud/7osFjtGgwj0eWn9SobfVZ9nw5pdUT0mTPcR9RtMiQ4GupiQmfkFRJyRj17g8LNJVFE88sigW2hRdzoQsNPJSWeXy+8FGl0Pi9gUUxUDTxUc0h8v2Bs5ETLCcSs4zH5henppQN7Wz6VOmQg03Mb2dLi14mUkpQ=
+	t=1765992837; cv=none; b=BPyLcelC2oyW6TD+XdbhkJ8sflHIVpvkSlpBsjwYlnWAnHE3kyOW2jX3e/xFt/aoHPrDVRm/SDqEJKuLwVd4O3dWMNZweOsfAuqF6AneB3f7uL9HPOKHyS3uGHeVIooxfN3aVwvtvh4eOTFZRmakL8uOw7uctUz1h8krqxiwluU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765990991; c=relaxed/simple;
-	bh=fpMT0wLq/t3XGakqK8qCUMkE97fU8nA7avKnISC1xZ0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=g+4R6dRKJUvt2NUC9qcpp8wlDnspqUFpjpnKpf6wdxglvIcvv9FStwyBROwrChcloZe+gkKR7qvgbzUFUcTlHycg2utRvGncGOfeYVUu0MWyJn4jdHdSPinxRKkUrNPXN2nLa50K/+0py4EaJUMArHtP+hDt20bq2HSZpnKzQF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ql6KCuK/; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=eXBf49DUa2aK/vl2TUAfcs9TVtTDGlcPm7CWRwkSKT8=; b=ql6KCuK/A6Jv/FpmGEx3VlbBvc
-	aIu1jl0e2Z/S2OhqU9hEHAIlhGU+V8tQeiRQLPmzMiWl9iBWYh6SYrcl/iprzKW3UuRxFnVsmPVHr
-	Xbn/GIA9bOEKRxldHifqU08xI6H3qIsv1TiXpggICTIIsIG3BlE0R9PPSJ4mEHzdPjB/uzqzfIebB
-	vlq74kSZDiSVO9EMV8fSKwJtbJXd4f/Lqt1YGds5Q4CKEfWDbickIR9nXdtJpbHkrSe95TallNdwr
-	mIEanjmBtMHK9+u0czYsLTtBHD5+y5TrSvfyEcA14WVeTiXZrFYhTUp3aXsz2AnJmTG86zRP1C1fA
-	NdtFEDAw==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vVuvU-00Dw2Y-30; Wed, 17 Dec 2025 18:03:00 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Horst Birthelmer <horst@birthelmer.de>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
- <amir73il@gmail.com>,  "Darrick J. Wong" <djwong@kernel.org>,  Bernd
- Schubert <bschubert@ddn.com>,  Kevin Chen <kchen@ddn.com>,  Horst
- Birthelmer <hbirthelmer@ddn.com>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Matt Harvey <mharvey@jumptrading.com>,
-  kernel-dev@igalia.com
-Subject: Re: [RFC PATCH v2 6/6] fuse: implementation of export_operations
- with FUSE_LOOKUP_HANDLE
-In-Reply-To: <b3ygfin4h2v64fs2cup2fu5pux7skm7nby7nhostqo7ejgbw2r@zvr6yre5vr57>
-	(Horst Birthelmer's message of "Tue, 16 Dec 2025 21:12:46 +0100")
-References: <20251212181254.59365-1-luis@igalia.com>
-	<20251212181254.59365-7-luis@igalia.com>
-	<CAJfpegu8-ddQeE9nnY5NH64KQHzr1Zfb=187Pb2uw14oTEPdOw@mail.gmail.com>
-	<874ipqcq5q.fsf@wotan.olymp>
-	<b3ygfin4h2v64fs2cup2fu5pux7skm7nby7nhostqo7ejgbw2r@zvr6yre5vr57>
-Date: Wed, 17 Dec 2025 17:02:59 +0000
-Message-ID: <87jyyloxbw.fsf@wotan.olymp>
+	s=arc-20240116; t=1765992837; c=relaxed/simple;
+	bh=kuAZBCSnNBL9V/n+rhZ+YxfCpI1HKs034UQEsn8vyy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=od2ktZXi8P2n6zEG1kQUEKbZdycXgfi/Eo9CPLuBua0ypt8Y+pmvYlzM+eHRAlrlj9j4XQxzwbPQFeDW6rSu01qQBIv8rZUUmVXbn6PzEvX566j/VeI9Pw5gTbFaOIzKTWhqfjRDC6o4vFDpLuPFCUFI15fFBUu5NrjsV9wynYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=fail smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bj9NEYt0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1765992833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KTOQjH2WVKdvzEgOIBmSJCwOUcL4LQU8kkqeURW75fg=;
+	b=Bj9NEYt0c/0T3WewBdw1Ptj68y7ab1WSyEEX+jmft9/sF1hjLbkeaCGV1f5AabdsV5Ti5y
+	s1WCegh7+OcoVXZxJbNhS3Saj5JX0TDKYc7gWdNUK1133qhCaJV0Pfxj8moUoJPSN2+MJh
+	TRctaBsAZrxMLxLZrsMPINbcvaRdLlw=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-496-R6YyjY8vPaSbUAhIt3n7Ag-1; Wed,
+ 17 Dec 2025 12:33:48 -0500
+X-MC-Unique: R6YyjY8vPaSbUAhIt3n7Ag-1
+X-Mimecast-MFC-AGG-ID: R6YyjY8vPaSbUAhIt3n7Ag_1765992826
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B79AB18814D9;
+	Wed, 17 Dec 2025 17:33:31 +0000 (UTC)
+Received: from fedora (unknown [10.44.33.39])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8E3031956056;
+	Wed, 17 Dec 2025 17:33:28 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 17 Dec 2025 18:33:31 +0100 (CET)
+Date: Wed, 17 Dec 2025 18:33:26 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Aaron Tomlin <atomlin@atomlin.com>
+Cc: akpm@linux-foundation.org, gregkh@linuxfoundation.org, david@kernel.org,
+	brauner@kernel.org, mingo@kernel.org, sean@ashe.io,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/proc: Expose mm_cpumask in /proc/[pid]/status
+Message-ID: <aULpZoSf2AATA_kT@redhat.com>
+References: <20251217024603.1846651-1-atomlin@atomlin.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251217024603.1846651-1-atomlin@atomlin.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, Dec 16 2025, Horst Birthelmer wrote:
+Can't really comment this patch... I mean the intent.
+Just a couple of nits:
 
-> On Tue, Dec 16, 2025 at 05:06:25PM +0000, Luis Henriques wrote:
->> On Tue, Dec 16 2025, Miklos Szeredi wrote:
-> ...
->> >
->> > I think it should be either
->> >
->> >   - encode nodeid + generation (backward compatibility),
->> >
->> >   - or encode file handle for servers that support it
->> >
->> > but not both.
->>=20
->> OK, in fact v1 was trying to do something like that, by defining the
->> handle with this:
->>=20
->> struct fuse_inode_handle {
->> 	u32 type;
->> 	union {
->> 		struct {
->> 			u64 nodeid;
->> 			u32 generation;
->> 		};
->> 		struct fuse_file_handle fh;
->> 	};
->> };
->>=20
->> (The 'type' is likely to be useless, as we know if the server supports fh
->> or not.)
->>=20
->> > Which means that fuse_iget() must be able to search the cache based on
->> > the handle as well, but that should not be too difficult to implement
->> > (need to hash the file handle).
->>=20
->> Right, I didn't got that far in v1.  I'll see what I can come up to.
->> Doing memcmp()s would definitely be too expensive, so using hashes is the
->> only way I guess.
->>=20
-> Please excuse my ignorance, but why would memcmp() be too expensive for a=
- proof of concept?
-> Inode handles are limited and the cache is somewhat limited.
+	- I think this patch should also update Documentation/filesystems/proc.rst
 
-(Oops, looks like I missed your email.)
+	- I won't object, but do we really need/want another "if (mm)" block ?
 
-So, if every time we're looking for a file handle we need to memcmp() it
-with all the handles until we find it (or not!), that would easily be very
-expensive if we have a lot of handles cached.  That's what I meant in my
-reply, comparing this with an hash-based lookup.
+	- I guess this is just my poor English, but the usage of "affinity"
+	  in the changelog/comment looks a bit confusing to me ;) As if this
+	  refers to task_struct.cpus_mask.
 
-(Not sure I answered your question, as I may have also misunderstood
-Miklos suggestions.  It happens quite often!  Just read my replies in this
-patchset :-) )
+	  Fortunately "Cpus_active_mm..." in task_cpus_active_mm() makes it
+	  more clear, so feel free to ignore.
 
-Cheers,
---=20
-Lu=C3=ADs
+Oleg.
+
+On 12/16, Aaron Tomlin wrote:
+>
+> This patch introduces two new fields to /proc/[pid]/status to display the
+> set of CPUs, representing the CPU affinity of the process's active
+> memory context, in both mask and list format: "Cpus_active_mm" and
+> "Cpus_active_mm_list". The mm_cpumask is primarily used for TLB and
+> cache synchronisation.
+>
+> Exposing this information allows userspace to easily identify
+> memory-task affinity, insight to NUMA alignment, CPU isolation and
+> real-time workload placement.
+>
+> Frequent mm_cpumask changes may indicate instability in placement
+> policies or excessive task migration overhead.
+>
+> Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
+> ---
+>  fs/proc/array.c | 22 +++++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/proc/array.c b/fs/proc/array.c
+> index 42932f88141a..8887c5e38e51 100644
+> --- a/fs/proc/array.c
+> +++ b/fs/proc/array.c
+> @@ -409,6 +409,23 @@ static void task_cpus_allowed(struct seq_file *m, struct task_struct *task)
+>  		   cpumask_pr_args(&task->cpus_mask));
+>  }
+>
+> +/**
+> + * task_cpus_active_mm - Show the mm_cpumask for a process
+> + * @m: The seq_file structure for the /proc/PID/status output
+> + * @mm: The memory descriptor of the process
+> + *
+> + * Prints the set of CPUs, representing the CPU affinity of the process's
+> + * active memory context, in both mask and list format. This mask is
+> + * primarily used for TLB and cache synchronisation.
+> + */
+> +static void task_cpus_active_mm(struct seq_file *m, struct mm_struct *mm)
+> +{
+> +	seq_printf(m, "Cpus_active_mm:\t%*pb\n",
+> +		   cpumask_pr_args(mm_cpumask(mm)));
+> +	seq_printf(m, "Cpus_active_mm_list:\t%*pbl\n",
+> +		   cpumask_pr_args(mm_cpumask(mm)));
+> +}
+> +
+>  static inline void task_core_dumping(struct seq_file *m, struct task_struct *task)
+>  {
+>  	seq_put_decimal_ull(m, "CoreDumping:\t", !!task->signal->core_state);
+> @@ -450,12 +467,15 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
+>  		task_core_dumping(m, task);
+>  		task_thp_status(m, mm);
+>  		task_untag_mask(m, mm);
+> -		mmput(mm);
+>  	}
+>  	task_sig(m, task);
+>  	task_cap(m, task);
+>  	task_seccomp(m, task);
+>  	task_cpus_allowed(m, task);
+> +	if (mm) {
+> +		task_cpus_active_mm(m, mm);
+> +		mmput(mm);
+> +	}
+>  	cpuset_task_status_allowed(m, task);
+>  	task_context_switch_counts(m, task);
+>  	arch_proc_pid_thread_features(m, task);
+> --
+> 2.51.0
+>
+
 
