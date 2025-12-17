@@ -1,207 +1,319 @@
-Return-Path: <linux-fsdevel+bounces-71563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 984F3CC79AA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 13:28:34 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53DC9CC7950
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 13:24:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DEBFF3087F79
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 12:25:38 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 6E0AA3019DB9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 12:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8BF340A4A;
-	Wed, 17 Dec 2025 12:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4D733B6C8;
+	Wed, 17 Dec 2025 12:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PX/EJFlQ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="q66cb5Lr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mvv88HZj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A9sXhjHy";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lFVMxk77"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91B333C533;
-	Wed, 17 Dec 2025 12:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6D03168E7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Dec 2025 12:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765973821; cv=none; b=iBE86aQxZEgvjv+jQc5QIKBb8mop+SmowP1bh6EhF6YtinQwZppZAn784ljDx+XjodazxVe+P3c6HMny8tAuCGzZ0xCjxiv7ljvs9P47Euzu2423nGCGCol5/fz9zOPUeQNo57W8xPkpqu98QHDU/d4Mvi1NZ6abiGtdoJI/EZM=
+	t=1765974236; cv=none; b=hIHNaDjBuT9MO67nQ2akqG/tNDp7cyiu/PPznY79zZ4XrafjFdKRSSDwUxNlC90a5GDMbFdI0UcrN2RV9GSD4Re2VB7ZSMrhkgGOueLtuKa6klfyIMyxh6zi7KquKNiRnanctrzS6PHIaDpSxBR4yABwki6b8fphZN7cXCgHnRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765973821; c=relaxed/simple;
-	bh=+N4sH+sHD/mZO0Dopjn0v7xWI8qX66vpH1TR36avIcM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kkPforGC+B2l2iX+9l2lsLkFawvjBYnKx3IlnMS1hpzY3oNSrMTiCjWFzGp+8dCJGCb50NNuK1D0tQrkByr8wbnETWCyh2lgSt0T47o67cj2xmzNDNfrRzhAWuQytyiIbM4pIyW21Y15rgVawg9JF5cRzGcgvlP6rMvp1x9T6T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PX/EJFlQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D4CCC113D0;
-	Wed, 17 Dec 2025 12:16:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765973819;
-	bh=+N4sH+sHD/mZO0Dopjn0v7xWI8qX66vpH1TR36avIcM=;
-	h=From:Date:Subject:To:Cc:From;
-	b=PX/EJFlQdIuBgyDARQas6jPR6/RoewsC7HadKO+icTia7eEJOVUDgH0NHanwK6WHq
-	 I6+mma7n9dPpK9KaTnCyCwpZAnZKommqNmqvbkwq9Ki3KNRFSXNH5tdvE/oUQo5EdW
-	 R2FZAA9OBebqk4yxX6GN5ZOJRyQ6t09SlmQsrOw7+77kXujs+Ffvj8itQ0j8SrB1dA
-	 3GTYsehdaup6CH/k4fBawqPNEg8KBHR9KcRkO/DjT5DloAhTjUjG3SAgJ2HYQxSELf
-	 2sKvCVjwcsa1D0K77SP6ivJWUrN3szeBX5A9nrGfbd7VnarXM2RpW2ljzBCVwRM95u
-	 xQPoJ/l7DIoAQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19AC2D65550;
-	Wed, 17 Dec 2025 12:16:59 +0000 (UTC)
-From: Joel Granados <joel.granados@kernel.org>
-Date: Wed, 17 Dec 2025 13:16:42 +0100
-Subject: [PATCH v2] sysctl: Remove unused ctl_table forward declarations
+	s=arc-20240116; t=1765974236; c=relaxed/simple;
+	bh=6+NHnw9iJyLKGMs0iTEF9pIQd9u6Gerh+nYPcNRAirE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h2dPt76mbHHT8Tof/3Qsb7M5i6M4ylSbi3v4SzjX3Fmi1kMCKcKFQFrODjHpHdpLG0yZAk1//PYqXPMGD1pIiHiKHS2t5vOqqQZcpRejq6Bb9HMBkm7wkNA3FNMwfZ1g+WCoGbanb+rw9k0Ew4LDHtov7nbOkUeuY7wnrirL6AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=q66cb5Lr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mvv88HZj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A9sXhjHy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lFVMxk77; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E01B35BCF6;
+	Wed, 17 Dec 2025 12:23:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1765974232; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+KXbxG00KylL9Jx4UXbfEWiE2yGrlSZ5Ct4ZfTRaRr0=;
+	b=q66cb5Lr/+mGepj7IKoPjBLkpB6KaOtn7SEz7dvm45cGZNY3VfoOz7AbZQobQUg5C0O0WO
+	4pfQyP7U5rb2KoJxNTBkbkDOxINiegMFDIqbg54iO4hdbuolqcwHtu++RkkVlzc97wEytJ
+	UbeYZyPD4mMX7C7p3Cwi8mMk5VCC9Lc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1765974232;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+KXbxG00KylL9Jx4UXbfEWiE2yGrlSZ5Ct4ZfTRaRr0=;
+	b=Mvv88HZjFE2s5uBPp/B+pktpF11rBOPtuu6/K2EapyNO8Ewy8MDZjEY5H/QOWIpWL7TwRn
+	tuFZjLz5b5jL2SAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1765974231; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+KXbxG00KylL9Jx4UXbfEWiE2yGrlSZ5Ct4ZfTRaRr0=;
+	b=A9sXhjHy+rYYrLaLfZ6gkG5/YGksPNEJqgye+HKCh3fSt5S/pnu9snpaoxaUJr8tgIrq55
+	4WyuZrcMUamQZiKN4jgFymAVUJVH7jJ6k44Sjz6nAA6WI5gEQ7ZBBdglHO7J2o9lw9QZwJ
+	GkBFmW14IKONB4m34e51tgYRlAnb4Yk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1765974231;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+KXbxG00KylL9Jx4UXbfEWiE2yGrlSZ5Ct4ZfTRaRr0=;
+	b=lFVMxk77ZSL+qZ99xkNGBGiWTKPc3h2DLxR/fwTvkg99QcGsfpeBLPlu41ew/YKvJF4n15
+	r9d97yvAy0RakXDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C6FCA3EA63;
+	Wed, 17 Dec 2025 12:23:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BcaKMNegQml4FAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 17 Dec 2025 12:23:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4155CA0927; Wed, 17 Dec 2025 13:23:43 +0100 (CET)
+Date: Wed, 17 Dec 2025 13:23:43 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan Kara <jack@suse.cz>, 
+	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, 
+	Carlos Maiolino <cem@kernel.org>, Stefan Roesch <shr@fb.com>, Jeff Layton <jlayton@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	gfs2@lists.linux.dev, io-uring@vger.kernel.org, devel@lists.orangefs.org, 
+	linux-unionfs@vger.kernel.org, linux-mtd@lists.infradead.org, linux-xfs@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 05/10] fs: allow error returns from
+ inode_update_timestamps
+Message-ID: <j47ue7pzvtbg76hs5z7wov2ftjh2nnr4xxsslliiqjks5cmpwf@vz275nqw2bqb>
+References: <20251217061015.923954-1-hch@lst.de>
+ <20251217061015.923954-6-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251217-jag-sysctl_fw_decl-v2-1-d917a73635bc@kernel.org>
-X-B4-Tracking: v=1; b=H4sIACmfQmkC/32NQQrDIBBFrxJmXUtHIrFd9R4lBDGjsRUNGtKG4
- N1rc4Au34P//g6ZkqMMt2aHRKvLLoYK/NSAnlSwxNxYGfiFC+Qo2FNZlresFz+Y9zCS9kxI3aH
- sUGipoQ7nRMZ9juijrzy5vMS0HR8r/uzf3IoMGVdXZTrZttLI+4tSIH+OyUJfSvkCUBUTnLUAA
- AA=
-X-Change-ID: 20251215-jag-sysctl_fw_decl-58c718715c8c
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
- David Hildenbrand <david@kernel.org>, Petr Mladek <pmladek@suse.com>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- John Ogness <john.ogness@linutronix.de>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mm@kvack.org, linux-hams@vger.kernel.org, netdev@vger.kernel.org, 
- Joel Granados <joel.granados@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4070;
- i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=+N4sH+sHD/mZO0Dopjn0v7xWI8qX66vpH1TR36avIcM=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGlCnzn3+gSU0+j0UAVfyYseAC+Luiy67oOfV
- qoKl7xQ38Gdt4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJpQp85AAoJELqXzVK3
- lkFP6CUL/2DCbeAT7eVMIUFZuqFbctu8L27EdqamYQi/f14ivfW67IvMpQd8Ecs34YCaZK0a57n
- VIl4Z4L0Ryr0Ft1STkGYh1/pbipbCooRk3yYNucpnyHHJZpNrh89htfwoo43BNMR7dR83TrEQT1
- NCvvC0oKxZkeHvhidOVij1Z5Sbon0SHgnBuTRa23Nn8EGG+LqerkB/k0iFGtLGp5y7tFOruDgzo
- M0oGggM5rMfY2qCxSnYjSUAOLtYXznHU+hNAAxVC17o8jf8UZRRLLOkiADhHIqFTbZrTjP/2QAF
- O/A49Iw58uDNGcNHrvqfIOfHQ/O41LM1wXsCo5+0ijFAr9Ba0GMFlIjz3hCVO327HR792KjIf8H
- BjvCs2nQs+AX2XhGgZ+G+kS7SCm76yJr3Djq4RVTNN/0t9cFixWp93vjU1N6N20awGC38ev6EwK
- h0OwtNUDISj1y7LaFQgLFCXs+0yIZjVPe5uzzq5qMhx0RcXJUP/1kVq20J4OxdFpLO3aoZIsKW8
- zo=
-X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
- auth_id=239
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251217061015.923954-6-hch@lst.de>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.991];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
 
-Remove superfluous forward declarations of ctl_table from header files
-where they are no longer needed. These declarations were left behind
-after sysctl code refactoring and cleanup.
+On Wed 17-12-25 07:09:38, Christoph Hellwig wrote:
+> Change flags to a by reference argument so that it can be updated so that
+> the return value can be used for error returns.  This will be used to
+> implement non-blocking timestamp updates.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+
+Looks good. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
-Acked-by: Muchun Song <muchun.song@linux.dev>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Joel Granados <joel.granados@kernel.org>
----
-Apologies for such a big To: list. My idea is for this to go into
-mainline through sysctl; get back to me if you prefer otherwise. On the
-off chance that this has a V3, let me know if you want to be removed
-from the To and I'll make that happen
----
-Changes in v2:
-- Replaced a ctl_table forward declaration in kernel/printk/internal.h
-  with an actual #include <linux/sysctl.h>
-- Link to v1: https://lore.kernel.org/r/20251215-jag-sysctl_fw_decl-v1-1-2a9af78448f8@kernel.org
----
- include/linux/fs.h       | 1 -
- include/linux/hugetlb.h  | 2 --
- include/linux/printk.h   | 1 -
- include/net/ax25.h       | 2 --
- kernel/printk/internal.h | 2 +-
- kernel/printk/sysctl.c   | 1 -
- 6 files changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 04ceeca12a0d5caadb68643bf68b7a78e17c08d4..77f6302fdced1ef7e61ec1b35bed77c77b294124 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3487,7 +3487,6 @@ ssize_t simple_attr_write(struct file *file, const char __user *buf,
- ssize_t simple_attr_write_signed(struct file *file, const char __user *buf,
- 				 size_t len, loff_t *ppos);
- 
--struct ctl_table;
- int __init list_bdev_fs_names(char *buf, size_t size);
- 
- #define __FMODE_EXEC		((__force int) FMODE_EXEC)
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 019a1c5281e4e6e04a9207dff7f7aa58c9669a80..18d1c4ecc4f948b179679b8fcc7870f3d466a4d9 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -16,8 +16,6 @@
- #include <linux/userfaultfd_k.h>
- #include <linux/nodemask.h>
- 
--struct ctl_table;
--struct user_struct;
- struct mmu_gather;
- struct node;
- 
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index 45c663124c9bd3b294031d839f1253f410313faa..63d516c873b4c412eead6ee4eb9f90a5c28f630c 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -78,7 +78,6 @@ extern void console_verbose(void);
- /* strlen("ratelimit") + 1 */
- #define DEVKMSG_STR_MAX_SIZE 10
- extern char devkmsg_log_str[DEVKMSG_STR_MAX_SIZE];
--struct ctl_table;
- 
- extern int suppress_printk;
- 
-diff --git a/include/net/ax25.h b/include/net/ax25.h
-index a7bba42dde153a2aeaf010a7ef8b48d39d15a835..beec9712e9c71d4be90acb6fc7113022527bc1ab 100644
---- a/include/net/ax25.h
-+++ b/include/net/ax25.h
-@@ -215,8 +215,6 @@ typedef struct {
- 	unsigned short		slave_timeout;		/* when? */
- } ax25_dama_info;
- 
--struct ctl_table;
--
- typedef struct ax25_dev {
- 	struct list_head	list;
- 
-diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-index 5f5f626f427942ed8ea310f08c285775d8e095a6..29a3bd1799d426bc7b5ebdc28ff8b75214c57a57 100644
---- a/kernel/printk/internal.h
-+++ b/kernel/printk/internal.h
-@@ -4,9 +4,9 @@
-  */
- #include <linux/console.h>
- #include <linux/types.h>
-+#include <linux/sysctl.h>
- 
- #if defined(CONFIG_PRINTK) && defined(CONFIG_SYSCTL)
--struct ctl_table;
- void __init printk_sysctl_init(void);
- int devkmsg_sysctl_set_loglvl(const struct ctl_table *table, int write,
- 			      void *buffer, size_t *lenp, loff_t *ppos);
-diff --git a/kernel/printk/sysctl.c b/kernel/printk/sysctl.c
-index da77f3f5c1fe917d9ce2d777355403f123587757..f15732e93c2e9c0865c42e4af9cb6458d4402c0a 100644
---- a/kernel/printk/sysctl.c
-+++ b/kernel/printk/sysctl.c
-@@ -3,7 +3,6 @@
-  * sysctl.c: General linux system control interface
-  */
- 
--#include <linux/sysctl.h>
- #include <linux/printk.h>
- #include <linux/capability.h>
- #include <linux/ratelimit.h>
+								Honza
 
----
-base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-change-id: 20251215-jag-sysctl_fw_decl-58c718715c8c
-
-Best regards,
+> ---
+>  fs/btrfs/inode.c    |  8 +++++---
+>  fs/inode.c          | 24 ++++++++++++++++--------
+>  fs/nfs/inode.c      |  4 ++--
+>  fs/orangefs/inode.c |  5 ++++-
+>  fs/ubifs/file.c     |  2 +-
+>  include/linux/fs.h  |  2 +-
+>  6 files changed, 29 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 317db7d10a21..3ca8d294770e 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -6349,13 +6349,15 @@ static int btrfs_dirty_inode(struct btrfs_inode *inode)
+>  static int btrfs_update_time(struct inode *inode, int flags)
+>  {
+>  	struct btrfs_root *root = BTRFS_I(inode)->root;
+> -	bool dirty;
+> +	int error;
+>  
+>  	if (btrfs_root_readonly(root))
+>  		return -EROFS;
+>  
+> -	dirty = inode_update_timestamps(inode, flags);
+> -	return dirty ? btrfs_dirty_inode(BTRFS_I(inode)) : 0;
+> +	error = inode_update_timestamps(inode, &flags);
+> +	if (error || !flags)
+> +		return error;
+> +	return btrfs_dirty_inode(BTRFS_I(inode));
+>  }
+>  
+>  /*
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 17ecb7bb5067..2c0d69f7fd01 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2095,14 +2095,18 @@ static bool relatime_need_update(struct vfsmount *mnt, struct inode *inode,
+>   * attempt to update all three of them. S_ATIME updates can be handled
+>   * independently of the rest.
+>   *
+> - * Returns a set of S_* flags indicating which values changed.
+> + * Updates @flags to contain the S_* flags which actually need changing.  This
+> + * can drop flags from the input when they don't need an update, or can add
+> + * S_VERSION when the version needs to be bumped.
+> + *
+> + * Returns 0 or a negative errno.
+>   */
+> -int inode_update_timestamps(struct inode *inode, int flags)
+> +int inode_update_timestamps(struct inode *inode, int *flags)
+>  {
+>  	int updated = 0;
+>  	struct timespec64 now;
+>  
+> -	if (flags & (S_MTIME|S_CTIME|S_VERSION)) {
+> +	if (*flags & (S_MTIME | S_CTIME | S_VERSION)) {
+>  		struct timespec64 ctime = inode_get_ctime(inode);
+>  		struct timespec64 mtime = inode_get_mtime(inode);
+>  
+> @@ -2119,7 +2123,7 @@ int inode_update_timestamps(struct inode *inode, int flags)
+>  		now = current_time(inode);
+>  	}
+>  
+> -	if (flags & S_ATIME) {
+> +	if (*flags & S_ATIME) {
+>  		struct timespec64 atime = inode_get_atime(inode);
+>  
+>  		if (!timespec64_equal(&now, &atime)) {
+> @@ -2127,7 +2131,9 @@ int inode_update_timestamps(struct inode *inode, int flags)
+>  			updated |= S_ATIME;
+>  		}
+>  	}
+> -	return updated;
+> +
+> +	*flags = updated;
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL(inode_update_timestamps);
+>  
+> @@ -2145,10 +2151,12 @@ EXPORT_SYMBOL(inode_update_timestamps);
+>   */
+>  int generic_update_time(struct inode *inode, int flags)
+>  {
+> -	flags = inode_update_timestamps(inode, flags);
+> -	if (flags)
+> +	int error;
+> +
+> +	error = inode_update_timestamps(inode, &flags);
+> +	if (!error && flags)
+>  		mark_inode_dirty_time(inode, flags);
+> -	return 0;
+> +	return error;
+>  }
+>  EXPORT_SYMBOL(generic_update_time);
+>  
+> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+> index 84049f3cd340..221816524c66 100644
+> --- a/fs/nfs/inode.c
+> +++ b/fs/nfs/inode.c
+> @@ -671,8 +671,8 @@ static void nfs_set_timestamps_to_ts(struct inode *inode, struct iattr *attr)
+>  
+>  static void nfs_update_timestamps(struct inode *inode, unsigned int ia_valid)
+>  {
+> -	enum file_time_flags time_flags = 0;
+>  	unsigned int cache_flags = 0;
+> +	int time_flags = 0;
+>  
+>  	if (ia_valid & ATTR_MTIME) {
+>  		time_flags |= S_MTIME | S_CTIME;
+> @@ -682,7 +682,7 @@ static void nfs_update_timestamps(struct inode *inode, unsigned int ia_valid)
+>  		time_flags |= S_ATIME;
+>  		cache_flags |= NFS_INO_INVALID_ATIME;
+>  	}
+> -	inode_update_timestamps(inode, time_flags);
+> +	inode_update_timestamps(inode, &time_flags);
+>  	NFS_I(inode)->cache_validity &= ~cache_flags;
+>  }
+>  
+> diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+> index d7275990ffa4..3b58f31bd54f 100644
+> --- a/fs/orangefs/inode.c
+> +++ b/fs/orangefs/inode.c
+> @@ -875,11 +875,14 @@ int orangefs_permission(struct mnt_idmap *idmap,
+>  int orangefs_update_time(struct inode *inode, int flags)
+>  {
+>  	struct iattr iattr;
+> +	int error;
+>  
+>  	gossip_debug(GOSSIP_INODE_DEBUG, "orangefs_update_time: %pU\n",
+>  	    get_khandle_from_ino(inode));
+>  
+> -	flags = inode_update_timestamps(inode, flags);
+> +	error = inode_update_timestamps(inode, &flags);
+> +	if (error || !flags)
+> +		return error;
+>  
+>  	memset(&iattr, 0, sizeof iattr);
+>          if (flags & S_ATIME)
+> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+> index ec1bb9f43acc..71540644a931 100644
+> --- a/fs/ubifs/file.c
+> +++ b/fs/ubifs/file.c
+> @@ -1387,7 +1387,7 @@ int ubifs_update_time(struct inode *inode, int flags)
+>  		return err;
+>  
+>  	mutex_lock(&ui->ui_mutex);
+> -	inode_update_timestamps(inode, flags);
+> +	inode_update_timestamps(inode, &flags);
+>  	release = ui->dirty;
+>  	__mark_inode_dirty(inode, I_DIRTY_SYNC);
+>  	mutex_unlock(&ui->ui_mutex);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 66d3d18cf4e3..75d5f38b08c9 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2399,7 +2399,7 @@ static inline void super_set_sysfs_name_generic(struct super_block *sb, const ch
+>  extern void ihold(struct inode * inode);
+>  extern void iput(struct inode *);
+>  void iput_not_last(struct inode *);
+> -int inode_update_timestamps(struct inode *inode, int flags);
+> +int inode_update_timestamps(struct inode *inode, int *flags);
+>  int generic_update_time(struct inode *inode, int flags);
+>  
+>  /* /sys/fs */
+> -- 
+> 2.47.3
+> 
 -- 
-Joel Granados <joel.granados@kernel.org>
-
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
