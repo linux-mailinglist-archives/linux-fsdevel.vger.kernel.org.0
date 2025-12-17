@@ -1,91 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-71566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E8CCC7B63
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 13:56:59 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1831DCC7BA3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 14:01:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B43D330026BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 12:56:58 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B7556301372D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 13:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106AB2561A2;
-	Wed, 17 Dec 2025 12:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CB5350A34;
+	Wed, 17 Dec 2025 12:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="If/0ScIB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6k6j+GIM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SQv+2cat";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eHxNyqf3"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a56aVGMj";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EM2At4C2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a56aVGMj";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EM2At4C2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3F21ADFE4
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Dec 2025 12:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2F8350A0D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Dec 2025 12:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765974629; cv=none; b=dIiGh/VtSZPgd5mh6DayS3MTHExU6+zDuNr4S/NcCUHsoswFwCGa2Md9DxgnHv7n2K0k1NSWNNjBntnCNj6RkykXXsNuQOQvsLwlP1sMaqGTLncK2oDkdDcUhFCDUjo0OhpLYyrzGLo4q/eotxm5SyY0LTblIyAjCfXsE8gqiGU=
+	t=1765975351; cv=none; b=YHPSCv2W63N0dUEOlmnPaSo1tw7m+yxlMyqIonUMFkCggOdVvMy0PMNWMfgBLoj3k7ajBRq+0F/XP/PBw1AXA5C4pzlt6Y7VQR5Nm/EuXLuLEsPvsitviRXbot92vCwnxOOAeWHuyke+zcrI8g0bv67+OGefoMGlU7RoN/KnfPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765974629; c=relaxed/simple;
-	bh=rc/OZnIfrpKFc9aOcZfe3w9Hjyrs0c4OOzVAIRSi47E=;
+	s=arc-20240116; t=1765975351; c=relaxed/simple;
+	bh=BgyZH9Lq6PUbACHJrPVyiXxQg8gNucfjWaGUktOVPvA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jb7PwNg8U49Yf+4e8svtdamqGWkvT7di9tWvx2pbkjVYnu9LRigbrKBuDiSGSv5weSYGk5JraPJPcCWp5PsUrFiKx5V8Y7YeuIRM3GWCUqmBvxyrF1atKO9CLICdYZUcHUFcZx3GzO/fwUBLi01BtetL3fYPxgoUCyXb6nNhIXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=If/0ScIB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6k6j+GIM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SQv+2cat; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eHxNyqf3; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=CC0vIs2+SRu+rH1vhYVeDQWFK3rIXorS6hv9I2bYgF3VDJ+r0YOuBDILIW6IGDl3ldH/Qefa7IPWfZi300xP/N9rayPC0QoKFa+zoh0r6T0KOUmIKEO/gW1tW4rPYCQXM52wQDFXf/f/BpnJTMjnGtTA340Gahjd4gCE5II6dOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a56aVGMj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EM2At4C2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a56aVGMj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EM2At4C2; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C7F255BCF6;
-	Wed, 17 Dec 2025 12:30:23 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 186F85BCF8;
+	Wed, 17 Dec 2025 12:42:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765974625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1765975345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jSf9spPIi1Qf/2K9X4gmxIrPuIqQb2l81Ji+pztCBkI=;
-	b=If/0ScIBJTOcR0mlvXYPhmWw19jh3FlYB27VviwciIsxHGkKfOZE2PVvpEd6evZWn/igXQ
-	uMdtXNSCN6viplx1nZNFLmFVBbPYzFjpIIeLdEA7Izm6XdEW2ZsGDlZxn2JlzbqDw80W4K
-	Gw6NOndu2DFJNINDEOHJM2IFDoZxMs0=
+	bh=MvZL3WPwwLagDUEBdiS3N24cxsJRy97UBGLmu0SgiWg=;
+	b=a56aVGMj0kst528k5fM83MBSiUUP1ExJ6+hm7lKF4DuthbszXMhLRK/4prA/Xi3veetPsL
+	1FxXQGEYI6xeyYruR72CLCodkv7S0DG7gCJocLY2hiU3g32mscOCAVLKTQfytgbtlvc/h3
+	N3zyCJl7agpHI8TlOxMklJ9D7MzAOPA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765974625;
+	s=susede2_ed25519; t=1765975345;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jSf9spPIi1Qf/2K9X4gmxIrPuIqQb2l81Ji+pztCBkI=;
-	b=6k6j+GIModzpCK+q4SIEFCozl1jxg53PQuZXu3tTqCit5JPoCHdBRFAd0rdyigEP+pbogN
-	urUVinppOBPG2kDg==
+	bh=MvZL3WPwwLagDUEBdiS3N24cxsJRy97UBGLmu0SgiWg=;
+	b=EM2At4C2BKWwLeD76Gc7lnI11b5w81+nDNLjgylvh8PQ29xLBA5OEhNJCJw0CzZQrz9PFD
+	EowZTDQSfM684EDA==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=SQv+2cat;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=eHxNyqf3
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=a56aVGMj;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=EM2At4C2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765974623; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1765975345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jSf9spPIi1Qf/2K9X4gmxIrPuIqQb2l81Ji+pztCBkI=;
-	b=SQv+2catA0Gtyh6nroPcclKZiXKeoL8nhL0CG39aEqTWTXoM6RXRnUYTnkvo6jZrrTC3rs
-	cdLUHgT3q5IVbe9ZAGl4gwDClbE3MrHpRjKEXMlI011Rw/e6N/RGsoRn4JOsCdRCtEy4+8
-	W0sFvlQvjZU9rX5I6cOjMNQEfpIvGS4=
+	bh=MvZL3WPwwLagDUEBdiS3N24cxsJRy97UBGLmu0SgiWg=;
+	b=a56aVGMj0kst528k5fM83MBSiUUP1ExJ6+hm7lKF4DuthbszXMhLRK/4prA/Xi3veetPsL
+	1FxXQGEYI6xeyYruR72CLCodkv7S0DG7gCJocLY2hiU3g32mscOCAVLKTQfytgbtlvc/h3
+	N3zyCJl7agpHI8TlOxMklJ9D7MzAOPA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765974623;
+	s=susede2_ed25519; t=1765975345;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jSf9spPIi1Qf/2K9X4gmxIrPuIqQb2l81Ji+pztCBkI=;
-	b=eHxNyqf3e/pzjyAWK1/B2E/g/j8E8482kxzz80g38Nodf/kpdIpXaPD8Zu1sLANN8zZTm3
-	FOF7bn1TDMS0N5Cw==
+	bh=MvZL3WPwwLagDUEBdiS3N24cxsJRy97UBGLmu0SgiWg=;
+	b=EM2At4C2BKWwLeD76Gc7lnI11b5w81+nDNLjgylvh8PQ29xLBA5OEhNJCJw0CzZQrz9PFD
+	EowZTDQSfM684EDA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ACDE53EA63;
-	Wed, 17 Dec 2025 12:30:23 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E58B43EA63;
+	Wed, 17 Dec 2025 12:42:24 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LM8vKl+iQmlsGgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 17 Dec 2025 12:30:23 +0000
+	id ZTlhNzClQmnEJQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 17 Dec 2025 12:42:24 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id F41CEA0927; Wed, 17 Dec 2025 13:30:18 +0100 (CET)
-Date: Wed, 17 Dec 2025 13:30:18 +0100
+	id 3CC90A0927; Wed, 17 Dec 2025 13:42:20 +0100 (CET)
+Date: Wed, 17 Dec 2025 13:42:20 +0100
 From: Jan Kara <jack@suse.cz>
 To: Christoph Hellwig <hch@lst.de>
 Cc: Christian Brauner <brauner@kernel.org>, 
@@ -96,10 +96,10 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	gfs2@lists.linux.dev, io-uring@vger.kernel.org, devel@lists.orangefs.org, 
 	linux-unionfs@vger.kernel.org, linux-mtd@lists.infradead.org, linux-xfs@vger.kernel.org, 
 	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 07/10] fs: add a ->sync_lazytime method
-Message-ID: <ghtgokkzdo7owrkfkpittqlc6xvjhr5w4eprbq5gcszqpmy7z3@7m3ecvlqfrzu>
+Subject: Re: [PATCH 08/10] fs: add support for non-blocking timestamp updates
+Message-ID: <2hnq54zc4x2fpxkpuprnrutrwfp3yi5ojntu3e3xfcpeh6ztei@2fwwsemx4y5z>
 References: <20251217061015.923954-1-hch@lst.de>
- <20251217061015.923954-8-hch@lst.de>
+ <20251217061015.923954-9-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -108,7 +108,10 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251217061015.923954-8-hch@lst.de>
+In-Reply-To: <20251217061015.923954-9-hch@lst.de>
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: 186F85BCF8
 X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -117,97 +120,91 @@ X-Spamd-Result: default: False [-4.01 / 50.00];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	URIBL_BLOCKED(0.00)[lst.de:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MISSING_XM_UA(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[20];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.com:email,lst.de:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,lst.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+	RCVD_COUNT_THREE(0.00)[3];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Spam-Level: 
-X-Rspamd-Queue-Id: C7F255BCF6
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
 
-On Wed 17-12-25 07:09:40, Christoph Hellwig wrote:
-> Allow the file system to explicitly implement lazytime syncing instead
-> of pigging back on generic inode dirtying.  This allows to simplify
-> the XFS implementation and prepares for non-blocking lazytime timestamp
-> updates.
+On Wed 17-12-25 07:09:41, Christoph Hellwig wrote:
+> Currently file_update_time_flags unconditionally returns -EAGAIN if any
+> timestamp needs to be updated and IOCB_NOWAIT is passed.  This makes
+> non-blocking direct writes impossible on file systems with granular
+> enough timestamps.
+> 
+> Add a S_NOWAIT to ask for timestamps to not block, and return -EAGAIN in
+> all methods for now.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
 ...
 
->  	if (flags & I_DIRTY_INODE) {
-> +		bool was_dirty_time =
-> +			inode_state_read_once(inode) & I_DIRTY_TIME;
+> @@ -2110,12 +2110,26 @@ int inode_update_timestamps(struct inode *inode, int *flags)
+>  		now = inode_set_ctime_current(inode);
+>  		if (!timespec64_equal(&now, &ctime))
+>  			updated |= S_CTIME;
+> -		if (!timespec64_equal(&now, &mtime)) {
+> -			inode_set_mtime_to_ts(inode, now);
+> +		if (!timespec64_equal(&now, &mtime))
+>  			updated |= S_MTIME;
 > +
->  		/*
->  		 * Inode timestamp update will piggback on this dirtying.
->  		 * We tell ->dirty_inode callback that timestamps need to
->  		 * be updated by setting I_DIRTY_TIME in flags.
->  		 */
-> -		if (inode_state_read_once(inode) & I_DIRTY_TIME) {
-> +		if (was_dirty_time) {
->  			spin_lock(&inode->i_lock);
->  			if (inode_state_read(inode) & I_DIRTY_TIME) {
->  				inode_state_clear(inode, I_DIRTY_TIME);
->  				flags |= I_DIRTY_TIME;
-> +				was_dirty_time = true;
+> +		if (IS_I_VERSION(inode)) {
+> +			if (*flags & S_NOWAIT) {
+> +				/*
+> +				 * Error out if we'd need timestamp updates, as
+> +				 * the generally requires blocking to dirty the
+> +				 * inode in one form or another.
+> +				 */
+> +				if (updated && inode_iversion_need_inc(inode))
+> +					goto bail;
 
-This looks bogus. was_dirty_time is already true here. What I think you
-wanted here is to set it to false if locked I_DIRTY_TIME check failed.
-Otherwise the patch looks good.
+I'm confused here. What the code does is that if S_NOWAIT is set and
+i_version needs increment we bail. However the comment as well as the
+changelog speaks about timestamps needing update and not about i_version.
+And intuitively I agree that if any timestamp is updated, inode needs
+dirtying and thus we should bail regardless of whether i_version is updated
+as well or not. What am I missing?
 
 								Honza
 
->  			}
->  			spin_unlock(&inode->i_lock);
+> +			} else {
+> +				if (inode_maybe_inc_iversion(inode, updated))
+> +					updated |= S_VERSION;
+> +			}
 >  		}
-> @@ -2591,9 +2598,12 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  		 * for just I_DIRTY_PAGES or I_DIRTY_TIME.
->  		 */
->  		trace_writeback_dirty_inode_start(inode, flags);
-> -		if (sb->s_op->dirty_inode)
-> +		if (sb->s_op->dirty_inode) {
->  			sb->s_op->dirty_inode(inode,
->  				flags & (I_DIRTY_INODE | I_DIRTY_TIME));
-> +		} else if (was_dirty_time && inode->i_op->sync_lazytime) {
-> +			inode->i_op->sync_lazytime(inode);
-> +		}
->  		trace_writeback_dirty_inode(inode, flags);
+> -		if (IS_I_VERSION(inode) && inode_maybe_inc_iversion(inode, updated))
+> -			updated |= S_VERSION;
+> +
+> +		if (updated & S_MTIME)
+> +			inode_set_mtime_to_ts(inode, now);
+>  	} else {
+>  		now = current_time(inode);
+>  	}
+> @@ -2131,6 +2145,9 @@ int inode_update_timestamps(struct inode *inode, int *flags)
 >  
->  		/* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 75d5f38b08c9..255eb3b42d1d 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2011,6 +2011,7 @@ struct inode_operations {
->  	int (*fiemap)(struct inode *, struct fiemap_extent_info *, u64 start,
->  		      u64 len);
->  	int (*update_time)(struct inode *, int);
-> +	void (*sync_lazytime)(struct inode *inode);
->  	int (*atomic_open)(struct inode *, struct dentry *,
->  			   struct file *, unsigned open_flag,
->  			   umode_t create_mode);
-> -- 
-> 2.47.3
-> 
+>  	*flags = updated;
+>  	return 0;
+> +bail:
+> +	*flags = 0;
+> +	return -EAGAIN;
+>  }
+>  EXPORT_SYMBOL(inode_update_timestamps);
+>  
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
