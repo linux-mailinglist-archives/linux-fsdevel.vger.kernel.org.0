@@ -1,129 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-71507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E54CC5F42
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 05:21:17 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10296CC6216
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 07:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 9D3143024278
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 04:21:15 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 893FF30145CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 06:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89FD29BD91;
-	Wed, 17 Dec 2025 04:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5383F2D59E8;
+	Wed, 17 Dec 2025 06:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="DDC/zJxs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JyK4gPlN"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qHjjCuDt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6051DFFD;
-	Wed, 17 Dec 2025 04:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259DB2D323D;
+	Wed, 17 Dec 2025 06:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765945272; cv=none; b=oRvG/A8KRH1LWjAwfcoV4aKJ/NkkQdYqKb0sOH8n35b1j64nK3AVZzPimtNlpWNwBpnDJRFb8WOyO0FyYIa0tcd1mr4Kf2iWGpblF6HoVbf/bVFJdav9x0wmMxErlwv0oL0iAPCZCA+i2z3Bvz1QLUdWcfEv5U5jKypAIpg+OlM=
+	t=1765951672; cv=none; b=eXrvFherU+VUizVAJ+hDxThhD1RnwFhNWZWgyREBnTsLkvyT53ihtPPWvNGL3QkcdZ6JrYyi7NCdSHO6LkovMIO+XuCBtFkgN0nHhuW0/tjYJf2aqRmKivyR9AParjtG/IF6Tj+8jN24SGX6n/RTDBWWIvz+zOPrG1J3DvbKSec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765945272; c=relaxed/simple;
-	bh=V44O9YS2fEQe5GlmUSXMQ57r9NXHCKoCHMsAAzkfGUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YY95kWHVUL1Hg5KFzjs4UuBl0oXz8H4iBaWZPOuMw2xpvV6G/v0K7JTZtIUgT3HobRQoVZ9WBR9hPzAKHS7fn4pWrMXDFk5fk3qWEA+X51V/EUbGv57c7HbfDgjSmTxWnaJyCMYw30ZiAR39VmUVXVydWL+jJGUwYyUMrHOxSAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=DDC/zJxs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JyK4gPlN; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 040B67A0044;
-	Tue, 16 Dec 2025 23:21:08 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Tue, 16 Dec 2025 23:21:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1765945268;
-	 x=1766031668; bh=apzxJrLZTs3K7lqQ1syXkRTRvEhfGpt0EKc0mVl3B7c=; b=
-	DDC/zJxsZ4V4YIv4C6jW1g3ulxbzHQDewTpeU73doK99H/0eJ1/KRmlksK1+A7Kd
-	sYr3LCXrRtX1NAuLYWuWWM/cb2bjGEden98WNf1zkUT3N2monrgcho39XW0ZuAPy
-	NMNIEq4kVAFKVN0qcduYEXypIRpOOdXPxZc0BgTCdk6B4aVcUnHN0xq0Tismhwft
-	JIB5uOThivu+MHPf1MVrJl4QR3SDtldIm0pBhmoXtoTIf6sl4b/3QohBLb370x5s
-	Ml1/mFW67yiOcb9xTQvsQyTYN+uNPD8tG53PgjavVK7Gxh34jWt3UWVyUw1W7W2P
-	F/pzZ9INLmlREwyYMq4kww==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1765945268; x=
-	1766031668; bh=apzxJrLZTs3K7lqQ1syXkRTRvEhfGpt0EKc0mVl3B7c=; b=J
-	yK4gPlN6M5XxkpLM05c3qfWP1fROcmcq7nZDraHkai/aO1ddPFcpM9CAUMsAITVh
-	d0zbgTI/zYnhOsTkrmXBYD72NWFS1SRZq8u2e3yQqMV5aKJnhHPqgTcDfxZRNuGZ
-	IcHqXSUWz52nAgrihWsin/NTxGcouk4oecuBNxtM5BywY/Ro1Wjzb97U8kgb2x+P
-	UyLj4BOXWE/DnmgXRF1w/o156D3sI3DznDPVIAAhiGxMD7+1vgyUZclunb3dgPSB
-	2JgSQD2gMhVVzjVz4uh3SJwBHmy2QBDoZXqM8d2y8+dY69sqGKxpRIwFFxRzx+rU
-	DNnQ9MnKtG/LNcQ4tTWCA==
-X-ME-Sender: <xms:tC9CaSofCRVviaO0kczt_a0Pya9T6WSO1IDtd_w9O9m7O0fq3kI7Ww>
-    <xme:tC9CaS4FaEz03SWw9deCsqYHBkQMhDzktGYH7dQrd2A05x3yIWiAwDv43cwjVpBeb
-    161NwHoIYJtuyMaGd3xyYEJXy_HqwEHnqOuinURhPY-If9Fp9jup4E>
-X-ME-Received: <xmr:tC9CaZdknZIhkOEBZn-KtZrp9ATQwLKyQPuQ9QNelHbs_qp1lonMYbt3KL8xKztPjxNFA9nC5r-WctMDJ0Qrxe72NQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdegudehlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepgfhrihgtucfu
-    rghnuggvvghnuceoshgrnhguvggvnhesshgrnhguvggvnhdrnhgvtheqnecuggftrfgrth
-    htvghrnhepveeikeeuteefueejtdehfeefvdegffeivdejjeelfffhgeegjeeutdejueel
-    hfdvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsh
-    grnhguvggvnhesshgrnhguvggvnhdrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehsrghnuggvvghnsehrvgguhhgrthdrtghomhdprhgtphhtthhope
-    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    peguhhhofigvlhhlshesrhgvughhrghtrdgtohhmpdhrtghpthhtohepvhhirhhoseiivg
-    hnihhvrdhlihhnuhigrdhorhhgrdhukh
-X-ME-Proxy: <xmx:tC9CaX7sRhEMpA6J-MHRwgi3xxCg5tN2YTOmdKn0RjJksTk0P9Wm1g>
-    <xmx:tC9CaQu6iKP85mZSvZsFA_WgvQQcA1ZZavnetczznx3KNc9DVfebgw>
-    <xmx:tC9CaXh4ztacqAcat1zJjToWb5PstKnjfqRATfA_fj5N_Z5vKkPs2Q>
-    <xmx:tC9Cabp2n4hp0Cg6pO-QJhhWKth3mYS5yaun7kCsH2K4hBzh4D_alw>
-    <xmx:tC9CaciNKJuE4v5vl5ahyPgl7Pad8n2eryJqK-CmTubRQpAMHky2BKiV>
-Feedback-ID: i2b59495a:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Dec 2025 23:21:08 -0500 (EST)
-Message-ID: <5d630a62-6774-43b8-a9b7-9b6ab56e25be@sandeen.net>
-Date: Tue, 16 Dec 2025 22:21:07 -0600
+	s=arc-20240116; t=1765951672; c=relaxed/simple;
+	bh=eExQzGfBj6psi3YL80CDqzX+OuS72Q8WjgOYf/om3sM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MMYbYirQE2LzCvLBWpt4urHmyzdPKkqyziOhvebAZJ9lVTcbcq5QkSwp/5ajQbLSFpcfAZUNGGzGGXclFWBvCDg73a3f/wG1ucSJLr9qEZp0bBIeIqkqa0SC/WioMKI7mWi2oQHEYEYcWR1152IUnKUL3lov4l4JvYemC+5ihPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qHjjCuDt; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=Q8fnJCAxIboHaGMCCiZzVJBJGBTeYABIzMowgl6Kolc=; b=qHjjCuDtl3/MhygSBvA7ZRm9ch
+	aQBOEn26J0zj8Ns4hnON6hwEds2UICe7SgeRK6X7CEeqbf+umbHHnxjkr13ROVxL9+LQekeWtV72S
+	MRmTGuvx7pXHT1LhsBWLc/XyapLs28C3Dd2txRUud8Lwt+ON3whCi8w14PytQLsOFWfWKHeOqxX14
+	FpwSo+vjMxVKFKKptFSGslkkC1EhmpqBUnlG+3KW7cU/HsYhAKLSYblZ4s20eGPYfyq/Tec3J4yo2
+	MgXh/p6qKp+9F7EuyhQhSY8l//b4Iypxc6FA8Ci4ApZGWoyFpRhobKgBN88oQ9SfQSufRZQJqgjFy
+	C6l9CEtQ==;
+Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vVkhO-00000006DBz-03eE;
+	Wed, 17 Dec 2025 06:07:46 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>,
+	Eric Biggers <ebiggers@kernel.org>
+Cc: linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org
+Subject: move blk-crypto-fallback to sit above the block layer v3
+Date: Wed, 17 Dec 2025 07:06:43 +0100
+Message-ID: <20251217060740.923397-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: Remove internal old mount API code
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- Eric Sandeen <sandeen@redhat.com>
-Cc: linux-kernel@vger.kernel.org, dhowells@redhat.com, viro@zeniv.linux.org.uk
-References: <20251212174403.2882183-1-sandeen@redhat.com>
- <20251215-brummen-rosen-c4fc9d11009a@brauner>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@sandeen.net>
-In-Reply-To: <20251215-brummen-rosen-c4fc9d11009a@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 12/15/25 8:02 AM, Christian Brauner wrote:
-> On Fri, 12 Dec 2025 11:44:03 -0600, Eric Sandeen wrote:
->> Now that the last in-tree filesystem has been converted to the new mount
->> API, remove all legacy mount API code designed to handle un-converted
->> filesystems, and remove associated documentation as well.
->>
->> (The code to handle the legacy mount(2) syscall from userspace is still
->> in place, of course.)
->>
->> [...]
-> 
-> I love this. Thanks for all the work on this! :)
+Hi all,
 
-"Of the 56 or so kernel filesystems, around 30 still remain to be
-converted, Sandeen said, so he has been joking that the completion
-of the effort will be in 2026."
+in the past we had various discussions that doing the blk-crypto fallback
+below the block layer causes all kinds of problems due to very late
+splitting and communicating up features.
 
-*phew* just under the wire ;)
+This series turns that call chain upside down by requiring the caller to
+call into blk-crypto using a new submit_bio wrapper instead so that only
+hardware encryption bios are passed through the block layer as such.
 
--Eric
+While doings this I also noticed that the existing blk-crypto-fallback
+code does various unprotected memory allocations which this converts to
+mempools, or from loops of mempool allocations to the new safe batch
+mempool allocator.
+
+There might be future avenues for optimization by using high order
+folio allocations that match the file systems preferred folio size,
+but for that'd probably want a batch folio allocator first, in addition
+to deferring it to avoid scope creep.
+
+TODO:
+
+ - what to pass to mempool_alloc bulk (patch)
+ - bio_has_crypt_ctx wrapper??
+
+Changes since v2:
+ - drop the block split refactoring that was broken
+ - add a bio_crypt_ctx() helper
+ - add a missing bio_endio in blk_crypto_fallback_bio_prep
+ - fix page freeing in the error path of
+   __blk_crypto_fallback_encrypt_bio
+ - improve a few comment and commit messages
+
+Changes since v1:
+ - drop the mempool bulk allocator that was merged upstream
+ - keep call bio_crypt_check_alignment for the hardware crypto case
+ - rework the way bios are submitted earlier and reorder the series
+   a bit to suit this
+ - use struct initializers for struct fscrypt_zero_done in
+   fscrypt_zeroout_range_inline_crypt
+ - use cmpxchg to make the bi_status update in
+   blk_crypto_fallback_encrypt_endio safe
+ - rename the bio_set matching it's new purpose
+ - remove usage of DECLARE_CRYPTO_WAIT()
+ - use consistent GFP flags / scope
+ - optimize data unit alignment checking
+ - update Documentation/block/inline-encryption.rst for the new
+   blk_crypto_submit_bio API
+ - optimize alignment checking and ensure it still happens for
+   hardware encryption
+ - reorder the series a bit
+ - improve various comments
+
+Diffstat:
+ Documentation/block/inline-encryption.rst |    6 
+ block/blk-core.c                          |   10 
+ block/blk-crypto-fallback.c               |  428 ++++++++++++++----------------
+ block/blk-crypto-internal.h               |   30 --
+ block/blk-crypto.c                        |   78 +----
+ block/blk-merge.c                         |    9 
+ fs/buffer.c                               |    3 
+ fs/crypto/bio.c                           |   91 +++---
+ fs/ext4/page-io.c                         |    3 
+ fs/ext4/readpage.c                        |    9 
+ fs/f2fs/data.c                            |    4 
+ fs/f2fs/file.c                            |    3 
+ fs/iomap/direct-io.c                      |    3 
+ include/linux/blk-crypto.h                |   32 ++
+ 14 files changed, 369 insertions(+), 340 deletions(-)
 
