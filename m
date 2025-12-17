@@ -1,113 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-71547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A8B6CC7489
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 12:16:48 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C60CC6F97
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 11:08:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C8AE2310092D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 11:10:32 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 40BD53022AB2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 10:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCED834844F;
-	Wed, 17 Dec 2025 10:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC8234B199;
+	Wed, 17 Dec 2025 10:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vr2PS9XL"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="KH/4Hf74"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DF034321D;
-	Wed, 17 Dec 2025 10:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDFE2EB86C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Dec 2025 10:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765965932; cv=none; b=f9lDyR5jEQSVvXSB9iGLJmcRFAzwIR5V4xicyKQd/u/zWPwnmO8wEt9xZlmpzJFc0XYtkzas5tit/dR1sdGvWLgALtPJUo4oJwF5Ft5LPqkrUmv7BREamtFGfmn+fpT5hVNqsXnV6yTqJu0qTFONA4k4VrarV4nISosXFqnmzew=
+	t=1765966099; cv=none; b=skoZvkiEq9ee5t8seu8bNPzTbl0OcYonOQP3RjFqFKBoFXjAEK7Q3fFvF0GcTTPnbIYXCipl2iJwEaQVyldKidy5E/oelPEtH/stufQ78ai/ormTaP2JOFlQcIKW/UNIJHNq2coOMOZTAPSz7xFl1AcWOx3jExd5V2LZ46mJ+Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765965932; c=relaxed/simple;
-	bh=rGv74+siSNJFt8dgrH7blgn+LbjbbjzG7WytWqSTU5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sdp1JwyTS/aIIBp07e3+6Aq+fqw6JwgHbUdlbqkzPUVV7HGq0zUoE+9ekD5BkXgGuozlwehGcrSo2e4WPAd9FP9ZirozcmRoK9tfLKmSKwWeBCFbadAbq/HXr/OFr5e+r7S4Ekk24VVCTBu7vNP3XlD5X346ih6lkXyk9bucvSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vr2PS9XL; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=2VQ+Ha7ydeLFOxLPx4vqajJ6vBS5KmmxAj9dwhtCY1o=; b=vr2PS9XLOGEQeGl6JzdGr6tsTA
-	DXCGLIvEsQRc9MGI9tYr1SnMlWBIbCwVzItH7GT/Dz3BlkPdSSylBufa1HzX+M+/rdQOm0q2BS2vp
-	EFM7Ha1g1M0ypa2MxqBcjAkOWTBFMECp2ZMP0J6jUcYN/JVAazlCkXGGDw6EkrB5rMyXFUhQE7crf
-	yxAZkRMZsxDU0TUjW/mHmgtWCpaAoc3KAW4WV469hIIJNiDku9NqvGGGa4k6NB0+5lvsyWJKrmQ2J
-	B3zKF6+nRjxo+hJev9zS+ldQ96yzq40FPDfRCpgGruSKlGelYfRSkzzmK4DZE2EqIK97K0yVh3HO1
-	cO39zMmw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vVoQ1-0000000EdIg-0Ubb;
-	Wed, 17 Dec 2025 10:06:05 +0000
-Date: Wed, 17 Dec 2025 10:06:05 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, clm@meta.com
-Subject: Re: [PATCH v2] fs: make sure to fail try_to_unlazy() and
- try_to_unlazy() for LOOKUP_CACHED
-Message-ID: <20251217100605.GT1712166@ZenIV>
-References: <20251217084704.2323682-1-mjguzik@gmail.com>
- <20251217090833.GS1712166@ZenIV>
- <CAGudoHE5SrcUbUU8AuMCE1F_+wEUfM4o_Bp9eiYjX0jtJPUUmA@mail.gmail.com>
+	s=arc-20240116; t=1765966099; c=relaxed/simple;
+	bh=+3nylnR+1dS70anYFBkg/oVtiGfIp0ODmVVKhr+0cnk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VILs2/8LvOnXALVECIVFoRV0oZW2fG6t3IX3AbnNIbviQouAuMlaKoRo01/B3YfswvXbaeR2+mVI/Oqvk0p/TbiHrGtIl1a4sedp3rdJfZnr6TBwuBOzIMefzEyZCZ29gBkOsuxC7OPtJ7TmL8NSKdomBrghHvZcKjFTeQoVfvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=KH/4Hf74; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4ed7024c8c5so45480291cf.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Dec 2025 02:08:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1765966096; x=1766570896; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5iOWOH87yTUjQrX+6lvY7Qje7Wqq4gmAE/Y8zWUAl60=;
+        b=KH/4Hf748/eyXqTTaVjdRxtWwqJ+SyHmT9AfIQv5Xzzl/eQ55Nnhfrkn6PN8HBRNp+
+         rPfQCQbncZwyG4gwqo2BlvP0uFXK6/Sah2I5yVwThzOZ92hkkjZQGt1XX+hCDK1MbixT
+         CiL6YEe2ogjnJWBzGRTRqEbZ/uIFvCUf5ypLg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765966096; x=1766570896;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5iOWOH87yTUjQrX+6lvY7Qje7Wqq4gmAE/Y8zWUAl60=;
+        b=JYiMTNOGcYqq9CkN1lgzlVOfltCJYGVYo63JOuVHTd/Um79gFNHUnTyCgoaixLV4R4
+         /VbjmELRrK1H357TlsdEPuVZm0XCKOwLF/euI6/nGGXvrwS/1EoXBs1iIqh//PLGfrdu
+         h/Y3xXLE3Wggc/4apUhN7guemI+D9wtHOWfqwP7vDf4gc/NQviulaZrY27EFctIJM3/d
+         5YVrgwv4UNolYJ93+yAJPqhnFk6ux9KeiBBP9X9z/d+taNqIwyNL6+Nd/2gOpAJvMVxV
+         eMEQh3i40Y2vdLQo6KZvmKna8wp/THfiWzYfPTwwCVgti45q0pV4D2Jnn3wobmYne/SY
+         x96A==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Yr/W0bFfcrEB5B4HgzLakhadCWIxinwGA1Fs770eqRr4c/XuO2mYZTyNTLurwy3g6thlHf3ktXAlWeXX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSwvELBTCgliuhucA1TcpzHqrNT+sJ0guOvnkH4PJkn+ZHiEkK
+	08NH5FNm+6S6/rBfgEu6xYn2wAWKBka48tsi5YwsAk9jbsNmm0ckkmIzhg2j7QtDw1nLy3M/rAg
+	wrz/SnFZapWsYQXTh1d9VkguTZuW1kUJqAVGDjCTyaQ==
+X-Gm-Gg: AY/fxX4XLFNAooLni0phbMVHpFD9jK/1tYNHXWGZ0cqS2krIG4Mq/w0d6oCUga5ILb8
+	vbuqeSpbdYjwqeK3/gYVrNDnLebB1aUBQUWfxHftNNZu+it2YfJ53i+lV52T8W+9zCk2FW3ecBI
+	lKewyG03x5lduZZwKN07uXVn69gYsXz+nxe9kM71rZwB9Wh3y4NzBMjdtrq1PXrsMaI18g/Qbre
+	a6r0E5etYBVvNo7FukCBGjFhN1LfgHXZ+bkMdyXQEhyoGC3fDMq58Z3biB5wAPD7DcK
+X-Google-Smtp-Source: AGHT+IENmyiffuhR1E85249uJOMBukjdN7IEdU+yZgj4tInjgk9NJQyQ6MT/4U5bfxSRkxD/WNEfOJ1et5Jld6U8DK8=
+X-Received: by 2002:a05:622a:19a1:b0:4f1:b795:18bc with SMTP id
+ d75a77b69052e-4f1d0629f75mr260633831cf.64.1765966096105; Wed, 17 Dec 2025
+ 02:08:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHE5SrcUbUU8AuMCE1F_+wEUfM4o_Bp9eiYjX0jtJPUUmA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20251212181254.59365-1-luis@igalia.com> <20251212181254.59365-5-luis@igalia.com>
+ <CAJnrk1aN4icSpL4XhVKAzySyVY+90xPG4cGfg7khQh-wXV+VaA@mail.gmail.com>
+ <0427cbb9-f3f2-40e6-a03a-204c1798921d@ddn.com> <CAJnrk1a8nFhws6L61QSw21A4uR=67JSW+PyDF7jBH-YYFS8CEQ@mail.gmail.com>
+ <20251217010046.GC7705@frogsfrogsfrogs> <CAJnrk1bVZDA9Q8u+9dpAySuaz+JDGdp9AcYyEMLe9zME35Y48g@mail.gmail.com>
+ <87ike5xxbd.fsf@wotan.olymp>
+In-Reply-To: <87ike5xxbd.fsf@wotan.olymp>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 17 Dec 2025 11:08:04 +0100
+X-Gm-Features: AQt7F2r413xom3uHWk_AJkZrOPL8lUbHg9Y_OKsZVnSbaG1b7-VdU54GakePpJI
+Message-ID: <CAJfpegsDL70SZVBKNcdUJcyuf+ifQGuMRy+p80ToUaQFL2aXag@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the FUSE_LOOKUP_HANDLE operation
+To: Luis Henriques <luis@igalia.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Bernd Schubert <bschubert@ddn.com>, Amir Goldstein <amir73il@gmail.com>, Kevin Chen <kchen@ddn.com>, 
+	Horst Birthelmer <hbirthelmer@ddn.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Matt Harvey <mharvey@jumptrading.com>, 
+	"kernel-dev@igalia.com" <kernel-dev@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Dec 17, 2025 at 10:11:04AM +0100, Mateusz Guzik wrote:
-> On Wed, Dec 17, 2025 at 10:07 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Wed, Dec 17, 2025 at 09:47:04AM +0100, Mateusz Guzik wrote:
-> > > One remaining weirdness is terminate_walk() walking the symlink stack
-> > > after drop_links().
-> >
-> > What weirdness?  If we are not in RCU mode, we need to drop symlink bodies
-> > *and* drop symlink references?
-> 
-> One would expect a routine named drop_links() would handle the
-> entirety of clean up of symlinks.
-> 
-> Seeing how it only handles some of it, it should be renamed to better
-> indicate what it is doing, but that's a potential clean up for later.
+On Wed, 17 Dec 2025 at 10:38, Luis Henriques <luis@igalia.com> wrote:
 
-Take a look at the callers.  All 3 of them.
+> (A question that just appeared in my mind is whether the two lookup
+> operations should be exclusive, i.e. if the kernel should explicitly avoid
+> sending a LOOKUP to a server that implements LOOKUP_HANDLE and vice-versa.
+> I _think_ the current implementation currently does this, but that was
+> mostly by accident.)
 
-1) terminate_walk(): drop all symlink bodies, in non-RCU mode drop
-all paths as well.
+Yes, I think LOOKUP_HANDLE should supersede LOOKUP.
 
-2) a couple in legitimize_links(): *always* called in RCU mode.  That's
-the whole point - trying to grab references to a bunch of dentries/mounts,
-so that we could continue in non-RCU mode from that point on.  What should
-we do if we'd grabbed some of those references, but failed halfway through
-the stack?
+Which begs the question: do we need nodeid and generation if file
+handles are used by the server?
 
-We *can't* do path_put() there - not under rcu_read_lock().  And we can't
-delay dropping the link bodies past rcu_read_unlock().
+The generation is for guaranteeing uniqueness, and a file handle must
+also provide that property, so it is clearly superfluous.
 
-Note that this state has
-	nd->depth link bodies in stack, all need to be droped before
-rcu_read_unlock()
-	first K link references in stack that need to be dropped after
-rcu_read_unlock()
-	nd->depth - K link references in stack that do _not_ need to
-be dropped.
+The nodeid is different.  It can be used as a temporary tag for easy
+lookup of a cached object (e.g. cast to a pointer).  Since it's
+temporary, it can't be embedded in the file handle.
 
-Solution: have link bodies dropped, callbacks cleared and nd->depth
-reset to K.  The caller of legitimate_links() immediately drops out
-of RCU mode and we proceed to terminate_walk(), same as we would
-on an error in non-RCU mode.
+The direct cache reference can be replaced with a hash table lookup
+based on the file handle.  This would have an additional advantage,
+namely that the lifetime of objects in the user cache are not strictly
+synchronized with the kernel cache (FORGET completely omitted, or just
+a hint).
 
-This case is on a slow path; we could microoptimize it, but result
-would be really harder to understand.
+Thanks,
+Miklos
 
