@@ -1,189 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-71506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4560ACC5D0F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 03:48:45 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E54CC5F42
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 05:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 924243010E2E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 02:48:44 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9D3143024278
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 04:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E07218ACC;
-	Wed, 17 Dec 2025 02:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89FD29BD91;
+	Wed, 17 Dec 2025 04:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndPxeDgU"
+	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="DDC/zJxs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JyK4gPlN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552AC5464D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Dec 2025 02:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6051DFFD;
+	Wed, 17 Dec 2025 04:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765939722; cv=none; b=tBw5NSm6yLDUTtOe1Xqy1tTnaVpKcjNKLEtus98WUdFVYxBKe/4iNYAtzD/fv9qD64jKq/0RVJy2amx4NV9zvTpX8SKc2tp5tyr/g4zk5WLW+SHR3ewDno34/bb8HywOjOFR1JtkfCRUpLgeVkS1tgZJWSvobdaH9tCT27PwhEE=
+	t=1765945272; cv=none; b=oRvG/A8KRH1LWjAwfcoV4aKJ/NkkQdYqKb0sOH8n35b1j64nK3AVZzPimtNlpWNwBpnDJRFb8WOyO0FyYIa0tcd1mr4Kf2iWGpblF6HoVbf/bVFJdav9x0wmMxErlwv0oL0iAPCZCA+i2z3Bvz1QLUdWcfEv5U5jKypAIpg+OlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765939722; c=relaxed/simple;
-	bh=Uh7RHveH8xXW9Hfnz4BFu5lWuSWSj4itxI+b3endLLw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IL4Q2e3wLVk4+X6I4rk8eaxEWN4b/ZUM0l7yfP1EcA1ihsHylfhs/xyhZYNJzaart8lHS/KZH29H2MZH1sswsce4D886KA3Kj/Tar5jGVvdGxifaWauncK0U0r2R1x+033tLbiv38vB1eyk2FFxzOGI438wKlyxH6OBIPbBF20I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ndPxeDgU; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ee0ce50b95so1532321cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Dec 2025 18:48:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765939719; x=1766544519; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hPKRMuZ+/QbjJGnog+FPFDBCZSK+qTuV0BL8UXwwWP4=;
-        b=ndPxeDgUITlp2/K+8++KBHoQLGjrfcV3Xb7TzgRKR9kSQB04Z4ETMnpaqafSiJIHaO
-         l/wert9+HWsq2ILCGoZa5bVFcOQ+yvEHq/ubavr0inlNb6FduJ7ggfhGMhxhj/v6W7Nq
-         GlltpwSqNsbyJVo2dFvF6vBu2V3CBCBOj2Bj99l7+0w/ctWTUuFCnlLvWK9ikYUej+8U
-         ArKv3B1BkpqbthCMWxYqiyRbIX6sZ4SyqXLNK94mS/vWWVBrYiLmlfuThB8qX599awHj
-         8H4dVDiqoe6ip5vq8mKMkdEeqX/v/TC/TaWvGcInB6NQ8iVbytEtxAd2oRGU130L4/TM
-         u+iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765939719; x=1766544519;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=hPKRMuZ+/QbjJGnog+FPFDBCZSK+qTuV0BL8UXwwWP4=;
-        b=Ph5aIjysa29si3mLQ9XG9tzOFjYdNPVFrMeujhjdpANd9MNrp9Tboff333CId1M7kn
-         tPBr1jurdPLGcHjDll4iCRqJf0UB3iTbopWJfzI5I68exXIvkUydnxrVxdbphKPyXVaH
-         GpVCfmKTq1LKDOXGekLD4KzoR+VpGnatvfpwbpSyh2H2t/z4gjftIXVxKj5EwkHznS0u
-         Jze/aJjQqpA5MF1au5lSh+cqzsvjyOnQmzP6+zYJyXx++A8LtxNY/6Ymr67eJPXuIDkV
-         Sjz0HxnjqZla2WYWSNcda9OUrac9SIK19P1bBWTTRm3M6FSMtUXPKXlQUtWLUQrVziHo
-         MK7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVJdgvlaoqvLatsFmrzEktkza0aVvGJhAmkrG/YA2ZZIG136ycggLjK5rs9yKuF9wGmjkjUbV6oDZbWzNrD@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsjSBq+tnMzfn5Na6gkdNkozbcQWK4hhjSlrL+ckUdb0fjb3uT
-	12A75P+mFT+fazl56N8WKOjHjkWDpFEeds2Aq8BqJy7PCg2EFuJQvWoyOIBiJClZ84MXxbV4fB6
-	tJx5BPbpsukCkqUehi8s8W4PSeKilAZgW3Y8njjU=
-X-Gm-Gg: AY/fxX6yG/kW/6I1jRO3MIQPw/WCybAWv6EFISZtnLJyn+4TIWkLKhXVdgYaICoEXlP
-	82qzFyw2vmJ1sJFhtTXkmgvn7qB37ov84vuyn3GLexHKsUdhDLmsVS8FtE1BgZIynVrdE0vyYUU
-	VTD1bzUoj6T5fFQfOtcDvpCftdIyyCVq61QH5sTUxCQ9wDLe3QAixJG6xdLjTcMmbgz3xAGT1m4
-	xMgoH8U+KWfXUowhgjlc8oMz728sJBkRZTUe9/IErtMhck8wR3OgWUyw0wQ+fvdDqndvh1hqI8h
-	VOH6uNBciLI=
-X-Google-Smtp-Source: AGHT+IEk37sbumwKC/o3soje0ALx+8awM5C/gCgZ20N3qOLa/LSB6vFmsmBCMp4Ce4zQ5cl2TIoOX4370tm7aIeXRQ4=
-X-Received: by 2002:a05:622a:2512:b0:4ed:4ee:3a82 with SMTP id
- d75a77b69052e-4f1cf2c4b9cmr229346781cf.6.1765939719262; Tue, 16 Dec 2025
- 18:48:39 -0800 (PST)
+	s=arc-20240116; t=1765945272; c=relaxed/simple;
+	bh=V44O9YS2fEQe5GlmUSXMQ57r9NXHCKoCHMsAAzkfGUc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YY95kWHVUL1Hg5KFzjs4UuBl0oXz8H4iBaWZPOuMw2xpvV6G/v0K7JTZtIUgT3HobRQoVZ9WBR9hPzAKHS7fn4pWrMXDFk5fk3qWEA+X51V/EUbGv57c7HbfDgjSmTxWnaJyCMYw30ZiAR39VmUVXVydWL+jJGUwYyUMrHOxSAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=DDC/zJxs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JyK4gPlN; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 040B67A0044;
+	Tue, 16 Dec 2025 23:21:08 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Tue, 16 Dec 2025 23:21:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1765945268;
+	 x=1766031668; bh=apzxJrLZTs3K7lqQ1syXkRTRvEhfGpt0EKc0mVl3B7c=; b=
+	DDC/zJxsZ4V4YIv4C6jW1g3ulxbzHQDewTpeU73doK99H/0eJ1/KRmlksK1+A7Kd
+	sYr3LCXrRtX1NAuLYWuWWM/cb2bjGEden98WNf1zkUT3N2monrgcho39XW0ZuAPy
+	NMNIEq4kVAFKVN0qcduYEXypIRpOOdXPxZc0BgTCdk6B4aVcUnHN0xq0Tismhwft
+	JIB5uOThivu+MHPf1MVrJl4QR3SDtldIm0pBhmoXtoTIf6sl4b/3QohBLb370x5s
+	Ml1/mFW67yiOcb9xTQvsQyTYN+uNPD8tG53PgjavVK7Gxh34jWt3UWVyUw1W7W2P
+	F/pzZ9INLmlREwyYMq4kww==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1765945268; x=
+	1766031668; bh=apzxJrLZTs3K7lqQ1syXkRTRvEhfGpt0EKc0mVl3B7c=; b=J
+	yK4gPlN6M5XxkpLM05c3qfWP1fROcmcq7nZDraHkai/aO1ddPFcpM9CAUMsAITVh
+	d0zbgTI/zYnhOsTkrmXBYD72NWFS1SRZq8u2e3yQqMV5aKJnhHPqgTcDfxZRNuGZ
+	IcHqXSUWz52nAgrihWsin/NTxGcouk4oecuBNxtM5BywY/Ro1Wjzb97U8kgb2x+P
+	UyLj4BOXWE/DnmgXRF1w/o156D3sI3DznDPVIAAhiGxMD7+1vgyUZclunb3dgPSB
+	2JgSQD2gMhVVzjVz4uh3SJwBHmy2QBDoZXqM8d2y8+dY69sqGKxpRIwFFxRzx+rU
+	DNnQ9MnKtG/LNcQ4tTWCA==
+X-ME-Sender: <xms:tC9CaSofCRVviaO0kczt_a0Pya9T6WSO1IDtd_w9O9m7O0fq3kI7Ww>
+    <xme:tC9CaS4FaEz03SWw9deCsqYHBkQMhDzktGYH7dQrd2A05x3yIWiAwDv43cwjVpBeb
+    161NwHoIYJtuyMaGd3xyYEJXy_HqwEHnqOuinURhPY-If9Fp9jup4E>
+X-ME-Received: <xmr:tC9CaZdknZIhkOEBZn-KtZrp9ATQwLKyQPuQ9QNelHbs_qp1lonMYbt3KL8xKztPjxNFA9nC5r-WctMDJ0Qrxe72NQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdegudehlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepgfhrihgtucfu
+    rghnuggvvghnuceoshgrnhguvggvnhesshgrnhguvggvnhdrnhgvtheqnecuggftrfgrth
+    htvghrnhepveeikeeuteefueejtdehfeefvdegffeivdejjeelfffhgeegjeeutdejueel
+    hfdvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsh
+    grnhguvggvnhesshgrnhguvggvnhdrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehsrghnuggvvghnsehrvgguhhgrthdrtghomhdprhgtphhtthhope
+    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    peguhhhofigvlhhlshesrhgvughhrghtrdgtohhmpdhrtghpthhtohepvhhirhhoseiivg
+    hnihhvrdhlihhnuhigrdhorhhgrdhukh
+X-ME-Proxy: <xmx:tC9CaX7sRhEMpA6J-MHRwgi3xxCg5tN2YTOmdKn0RjJksTk0P9Wm1g>
+    <xmx:tC9CaQu6iKP85mZSvZsFA_WgvQQcA1ZZavnetczznx3KNc9DVfebgw>
+    <xmx:tC9CaXh4ztacqAcat1zJjToWb5PstKnjfqRATfA_fj5N_Z5vKkPs2Q>
+    <xmx:tC9Cabp2n4hp0Cg6pO-QJhhWKth3mYS5yaun7kCsH2K4hBzh4D_alw>
+    <xmx:tC9CaciNKJuE4v5vl5ahyPgl7Pad8n2eryJqK-CmTubRQpAMHky2BKiV>
+Feedback-ID: i2b59495a:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 16 Dec 2025 23:21:08 -0500 (EST)
+Message-ID: <5d630a62-6774-43b8-a9b7-9b6ab56e25be@sandeen.net>
+Date: Tue, 16 Dec 2025 22:21:07 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251212181254.59365-1-luis@igalia.com> <20251212181254.59365-5-luis@igalia.com>
- <CAJnrk1aN4icSpL4XhVKAzySyVY+90xPG4cGfg7khQh-wXV+VaA@mail.gmail.com>
- <0427cbb9-f3f2-40e6-a03a-204c1798921d@ddn.com> <CAJnrk1a8nFhws6L61QSw21A4uR=67JSW+PyDF7jBH-YYFS8CEQ@mail.gmail.com>
- <20251217010046.GC7705@frogsfrogsfrogs>
-In-Reply-To: <20251217010046.GC7705@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 17 Dec 2025 10:48:27 +0800
-X-Gm-Features: AQt7F2pHBAMnWNlQ_n0elAUyAhO_UUDEimO696wqnlHNoSB35dlgDG5W_mYULxs
-Message-ID: <CAJnrk1bVZDA9Q8u+9dpAySuaz+JDGdp9AcYyEMLe9zME35Y48g@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the FUSE_LOOKUP_HANDLE operation
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Bernd Schubert <bschubert@ddn.com>, Luis Henriques <luis@igalia.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, Kevin Chen <kchen@ddn.com>, 
-	Horst Birthelmer <hbirthelmer@ddn.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Matt Harvey <mharvey@jumptrading.com>, 
-	"kernel-dev@igalia.com" <kernel-dev@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: Remove internal old mount API code
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Eric Sandeen <sandeen@redhat.com>
+Cc: linux-kernel@vger.kernel.org, dhowells@redhat.com, viro@zeniv.linux.org.uk
+References: <20251212174403.2882183-1-sandeen@redhat.com>
+ <20251215-brummen-rosen-c4fc9d11009a@brauner>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@sandeen.net>
+In-Reply-To: <20251215-brummen-rosen-c4fc9d11009a@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 17, 2025 at 9:00=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> On Wed, Dec 17, 2025 at 08:32:02AM +0800, Joanne Koong wrote:
-> > On Tue, Dec 16, 2025 at 4:54=E2=80=AFPM Bernd Schubert <bschubert@ddn.c=
-om> wrote:
-> > >
-> > > On 12/16/25 09:49, Joanne Koong wrote:
-> > > > On Sat, Dec 13, 2025 at 2:14=E2=80=AFAM Luis Henriques <luis@igalia=
-.com> wrote:
-> > > >>
-> > > >> The implementation of LOOKUP_HANDLE modifies the LOOKUP operation =
-to include
-> > > >> an extra inarg: the file handle for the parent directory (if it is
-> > > >> available).  Also, because fuse_entry_out now has a extra variable=
- size
-> > > >> struct (the actual handle), it also sets the out_argvar flag to tr=
-ue.
-> > > >>
-> > > >> Most of the other modifications in this patch are a fallout from t=
-hese
-> > > >> changes: because fuse_entry_out has been modified to include a var=
-iable size
-> > > >> struct, every operation that receives such a parameter have to tak=
-e this
-> > > >> into account:
-> > > >>
-> > > >>   CREATE, LINK, LOOKUP, MKDIR, MKNOD, READDIRPLUS, SYMLINK, TMPFIL=
-E
-> > > >>
-> > > >> Signed-off-by: Luis Henriques <luis@igalia.com>
-> > > >> ---
-> > > >>  fs/fuse/dev.c             | 16 +++++++
-> > > >>  fs/fuse/dir.c             | 87 ++++++++++++++++++++++++++++++----=
------
-> > > >>  fs/fuse/fuse_i.h          | 34 +++++++++++++--
-> > > >>  fs/fuse/inode.c           | 69 +++++++++++++++++++++++++++----
-> > > >>  fs/fuse/readdir.c         | 10 ++---
-> > > >>  include/uapi/linux/fuse.h |  8 ++++
-> > > >>  6 files changed, 189 insertions(+), 35 deletions(-)
-> > > >>
-> > > >
-> > > > Could you explain why the file handle size needs to be dynamically =
-set
-> > > > by the server instead of just from the kernel-side stipulating that
-> > > > the file handle size is FUSE_HANDLE_SZ (eg 128 bytes)? It seems to =
-me
-> > > > like that would simplify a lot of the code logic here.
-> > >
-> > > It would be quite a waste if one only needs something like 12 or 16
-> > > bytes, wouldn't it? 128 is the upper limit, but most file systems won=
-'t
-> > > need that much.
-> >
-> > Ah, I was looking at patch 5 + 6 and thought the use of the lookup
-> > handle was for servers that want to pass it to NFS. But just read
-> > through the previous threads and see now it's for adding server
-> > restart. That makes sense, thanks for clarifying.
->
-> <-- wakes up from his long slumber
->
-> Why wouldn't you use the same handle format for NFS and for fuse server
-> restarts?  I would think that having separate formats would cause type
-> confusion and friction.
->
-> But that said, the fs implementation (fuse server) gets to decide the
-> handle format it uses, because they're just binary blobcookies to the
-> clients.  I think that's why the size is variable.
->
-> (Also I might be missing some context, if fuse handles aren't used in
-> the same places as nfs handles...)
+On 12/15/25 8:02 AM, Christian Brauner wrote:
+> On Fri, 12 Dec 2025 11:44:03 -0600, Eric Sandeen wrote:
+>> Now that the last in-tree filesystem has been converted to the new mount
+>> API, remove all legacy mount API code designed to handle un-converted
+>> filesystems, and remove associated documentation as well.
+>>
+>> (The code to handle the legacy mount(2) syscall from userspace is still
+>> in place, of course.)
+>>
+>> [...]
+> 
+> I love this. Thanks for all the work on this! :)
 
-I think the fuse server would use the same NFS handle format if it
-needs to pass it to NFS but with the server restart stuff, the handle
-will also be used generically by servers that don't need to interact
-with NFS (or at least that's my understanding of it though I might be
-missing some context here too).
+"Of the 56 or so kernel filesystems, around 30 still remain to be
+converted, Sandeen said, so he has been joking that the completion
+of the effort will be in 2026."
 
-Thanks,
-Joanne
+*phew* just under the wire ;)
 
->
-> --D
->
-> > Thanks,
-> > Joanne
-> >
-> > >
-> > >
-> > > Thanks,
-> > > Bernd
-> >
+-Eric
 
