@@ -1,120 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-71561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE0D9CC77F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 13:08:49 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28C3CC7806
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 13:09:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6FFBD306BD44
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 12:07:56 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C96773055BB9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Dec 2025 12:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7CD33EAE5;
-	Wed, 17 Dec 2025 12:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D184333FE1F;
+	Wed, 17 Dec 2025 12:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHGkerYQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFA733CE82;
-	Wed, 17 Dec 2025 12:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDDA33F37D;
+	Wed, 17 Dec 2025 12:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765973274; cv=none; b=a3+Hk9Q+zHOMl5z0/F+GdfAccvH3eZtfmwj2V6LIzwa7GS3dQkUy+ItnUyhXsmMvEm6p1JVBGBybopqNTRWPe3P83nkNVafcwKD9Xrl4VD7KqUI1NJ1qDlVrjNqBR3+D72kUY6u8WjH9N1zPerT1X2N4xK7PX2ZoKN0ZtRnE00Y=
+	t=1765973356; cv=none; b=MkxMKDW7dWLoBuSNDZNCk8LBMXGOm6y+l9PYvDhtq/fFQtoeqXUG4Qf95AcXpfe0l+Grz5c3eu8gIpK75D7UDnMP8uoJOkV/CyVBBzC64xoSCOU6V4J86s6m8zRWO+9W+6DNEsw3VvpWvTNK3jK8HlCMqd/hYoPYMah5/OJ7IHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765973274; c=relaxed/simple;
-	bh=SB6bVlxIdKN3Jilw0/lGuiOTBaycEjpGHXmweO3ggbA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IY6zTUHsgJbCRfVY+iaFJtedYZasvJ4psM0vF4lTvxp/nI2LWxdIFN2IWTlUgNT/RN5B9Fx48bJs1dMxhQ2zy36YgIOaW9mcznaRxLt5F/JWYjmMkTMMWjRR4ToHvEjYl678N0lZjSTySDTzBIX0R5Ft2nSG1DejdsKIZ0DhDaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.83])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dWXbs59nkzJ46Cy;
-	Wed, 17 Dec 2025 20:07:21 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 09CB740565;
-	Wed, 17 Dec 2025 20:07:51 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Wed, 17 Dec
- 2025 12:07:49 +0000
-Date: Wed, 17 Dec 2025 12:07:48 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Dave Jiang <dave.jiang@intel.com>
-CC: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan
- Williams <dan.j.williams@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Matthew Wilcox" <willy@infradead.org>,
-	Jan Kara <jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown
-	<len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, Li Ming
-	<ming.li@zohomail.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Ying
- Huang <huang.ying.caritas@gmail.com>, Yao Xingtao <yaoxt.fnst@fujitsu.com>,
-	Peter Zijlstra <peterz@infradead.org>, Greg KH <gregkh@linuxfoundation.org>,
-	"Nathan Fontenot" <nathan.fontenot@amd.com>, Terry Bowman
-	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
-	<benjamin.cheatham@amd.com>, Zhijian Li <lizhijian@fujitsu.com>, "Borislav
- Petkov" <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v4 3/9] dax/hmem: Gate Soft Reserved deferral on
- DEV_DAX_CXL
-Message-ID: <20251217120748.0000581e@huawei.com>
-In-Reply-To: <f35d86cd-03f8-4e0b-8373-8d8e749aaa8e@intel.com>
-References: <20251120031925.87762-1-Smita.KoralahalliChannabasappa@amd.com>
-	<20251120031925.87762-4-Smita.KoralahalliChannabasappa@amd.com>
-	<f35d86cd-03f8-4e0b-8373-8d8e749aaa8e@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1765973356; c=relaxed/simple;
+	bh=XqkQNpF8ME1hBE+b0FBunoFr4flf8biZ9M+St65icok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TGd3l5kUg3WznY9FbrX0ksd8ayURoWO2Hm1PZu9w2B8UW1Wx7y1mNT7hXBSVq/GcAsnnb7W+Z6+00TCdSmzYoSP7UZhq/ocwih55snaQcC2cgBy/pgUweFAW8ecOQKGi2Smtumnsz3tanCvV5sGCziG+XqM9PVfiy+uSLv7/Iho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHGkerYQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91ACAC4CEF5;
+	Wed, 17 Dec 2025 12:09:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765973355;
+	bh=XqkQNpF8ME1hBE+b0FBunoFr4flf8biZ9M+St65icok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZHGkerYQQpCZRqgTasBEJuRZlEi95UWbFNGNAP+ikltfrpTgTNoae+CCb+NS842NR
+	 Nh0XnKWmz9EMIsQdCoPdJfG5Q5T/kK0s6XEyDh/flPZQfOisnWZnn6SFQA72hCdDJS
+	 /xdVx0eZvGqOR8nlI2xDCykgnwq6PRZGnu4c6S3YI6KPBT/SHA8TuIT3HhZAf7mZIg
+	 JdMPAgJa4vnqu+ZRPB1UVvhgTg+i1GU+HC+N9pP+wFUI0X2Q/TFThkv2yg2IOr6xXU
+	 JqdpWlyzwFkJmz90DGyFFdMJNQ24qZa4tO0NC/ijz2DZKdrSNjIonLNOGPRNXGSBFX
+	 PDyWtiBxgi4Hw==
+Date: Wed, 17 Dec 2025 13:09:08 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-hams@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH] sysctl: Remove unused ctl_table forward declarations
+Message-ID: <44x5syvqsqy4bfjdc5r5hfwhppz74vxa3p74diwmnlls26yox2@xccmzuov2afw>
+References: <20251215-jag-sysctl_fw_decl-v1-1-2a9af78448f8@kernel.org>
+ <aUFUIfVvRcYN3_ID@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
- dubpeml100005.china.huawei.com (7.214.146.113)
-
-On Tue, 2 Dec 2025 16:32:24 -0700
-Dave Jiang <dave.jiang@intel.com> wrote:
-
-> On 11/19/25 8:19 PM, Smita Koralahalli wrote:
-> > From: Dan Williams <dan.j.williams@intel.com>
-> > 
-> > Replace IS_ENABLED(CONFIG_CXL_REGION) with IS_ENABLED(CONFIG_DEV_DAX_CXL)
-> > so that HMEM only defers Soft Reserved ranges when CXL DAX support is
-> > enabled. This makes the coordination between HMEM and the CXL stack more
-> > precise and prevents deferral in unrelated CXL configurations.
-> > 
-> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>  
-> 
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
-
-Something odd happened with that tag from Dave so that might need manual
-application if you use b4 or similar.
-
-This seems sensible to me.
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hawgbyhlcibefy4q"
+Content-Disposition: inline
+In-Reply-To: <aUFUIfVvRcYN3_ID@pathway.suse.cz>
 
 
-> >  drivers/dax/hmem/hmem.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
-> > index 02e79c7adf75..c2c110b194e5 100644
-> > --- a/drivers/dax/hmem/hmem.c
-> > +++ b/drivers/dax/hmem/hmem.c
-> > @@ -66,7 +66,7 @@ static int hmem_register_device(struct device *host, int target_nid,
-> >  	long id;
-> >  	int rc;
-> >  
-> > -	if (IS_ENABLED(CONFIG_CXL_REGION) &&
-> > +	if (IS_ENABLED(CONFIG_DEV_DAX_CXL) &&
-> >  	    region_intersects(res->start, resource_size(res), IORESOURCE_MEM,
-> >  			      IORES_DESC_CXL) != REGION_DISJOINT) {
-> >  		dev_dbg(host, "deferring range to CXL: %pr\n", res);  
-> 
-> 
+--hawgbyhlcibefy4q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Dec 16, 2025 at 01:44:17PM +0100, Petr Mladek wrote:
+> On Mon 2025-12-15 16:25:19, Joel Granados wrote:
+> > Remove superfluous forward declarations of ctl_table from header files
+> > where they are no longer needed. These declarations were left behind
+> > after sysctl code refactoring and cleanup.
+> >=20
+> > Signed-off-by: Joel Granados <joel.granados@kernel.org>
+>=20
+> For the printk part:
+>=20
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+>=20
+> That said, I have found one more declaration in kernel/printk/internal.h.
+> It is there because of devkmsg_sysctl_set_loglvl() declaration.
+> But I think that a better solution would be:
+>=20
+> diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+> index dff97321741a..27169fd33231 100644
+> --- a/kernel/printk/internal.h
+> +++ b/kernel/printk/internal.h
+> @@ -4,9 +4,9 @@
+>   */
+>  #include <linux/console.h>
+>  #include <linux/types.h>
+> +#include <linux/sysctl.h>
+> =20
+>  #if defined(CONFIG_PRINTK) && defined(CONFIG_SYSCTL)
+> -struct ctl_table;
+>  void __init printk_sysctl_init(void);
+>  int devkmsg_sysctl_set_loglvl(const struct ctl_table *table, int write,
+>  			      void *buffer, size_t *lenp, loff_t *ppos);
+> diff --git a/kernel/printk/sysctl.c b/kernel/printk/sysctl.c
+> index bb8fecb3fb05..512f0c692d6a 100644
+> --- a/kernel/printk/sysctl.c
+> +++ b/kernel/printk/sysctl.c
+> @@ -3,7 +3,6 @@
+>   * sysctl.c: General linux system control interface
+>   */
+> =20
+> -#include <linux/sysctl.h>
+>  #include <linux/printk.h>
+>  #include <linux/capability.h>
+>  #include <linux/ratelimit.h>
+>=20
+> Feel free to add this into v2. Or we could do this in a separate patch.
+>=20
+> Best Regards,
+> Petr
+
+Very nice, thx.=20
+
+I believe it fits inside the current commit (no need to make two).
+I'll add this and send a V2. You can then add co-developed-by &
+Signed-off-by if you want.
+
+Best
+
+--=20
+
+Joel Granados
+
+--hawgbyhlcibefy4q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmlCnWQACgkQupfNUreW
+QU8WIAwAlXDIVtCbnzQInz9B4QixLTMB7RpOH2nNcUQUwOUdE/qfX2Kbwu/dXjAy
+CGdwiVkAQIKkjCQTarmTjAdefqugLsww8q1am99VByg9gmupsvM/F2u8y0rFXzoQ
+pgWaLO4o5L+U6yyp+vXV2g0GKtNZc719cyIncUOPF3Cjr9p1M2Iob3psSrkzTsGa
+1W4g9MUTpRCnPCgsnQKirmCZSvjfHghg2xJPgV/nPrR7WLtT7AgV/VNjJig3mP1t
+VDvkXoA0nIPfdiT9wBWDRO4UaacUIJyAglb0rXSIDarH3un2KgkoPdH3gJk0akmO
+k8iquu/T9Z4ncxoyLkwuq4W1xvueV436iYn493pLhdr1qqZPsdZq6Tr42rgn/441
+ccJJtwwvS2pdFlAttoOv70l1ZZAtG158VHtAOSXedkDiqWxSWnj6tuJIf9VmAndn
+4Ngz8GGzJ4nj9m0LJl51YoD/1G6i2j+UQK0YV5vjhX3f4eQfiJ8nstHdNvRUWZko
+AJWhoOxU
+=u1jZ
+-----END PGP SIGNATURE-----
+
+--hawgbyhlcibefy4q--
 
