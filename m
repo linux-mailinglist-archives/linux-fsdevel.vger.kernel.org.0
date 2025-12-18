@@ -1,125 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-71603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2751FCCA2A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 04:23:41 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E36CCA372
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 04:52:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 487B2301FF2A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 03:23:39 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 26B933061C7A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 03:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DCD2F659F;
-	Thu, 18 Dec 2025 03:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC732FE581;
+	Thu, 18 Dec 2025 03:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aaTA2qCQ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XqrD6Rtr";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="fDbxNoS9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C4922A4E1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 03:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D0B2571B8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 03:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766028216; cv=none; b=FMYloDi4huTza4FXlI3qxI0Y+EORe/Gdssa4EsfNH2xdJfhQsQ1llWAU0BlLGAzlXuAAuyirSigEpXSdmX5pCP/YWUz4oKXQmrNpgXazrIE3N2FHfyVXk73ppkYyDANEEUgXYDUiw+O+GKOk0N6GESOo20xNF/gUnLivuz+Iiac=
+	t=1766029854; cv=none; b=eXcUiNycmocqHOZ9rbbY/mDOK5aaYdVkFKxnmcdLdv0lOwqxLqmhHVcPytWssWmylwQUA72AeRU15eJ/Uv2P9APNQixBnJAp1PWtoLP5m6xfKc5hCjoK6BpLYR5pScqvI52dTNkXm7TCW/Ykaa4062Jj9uvnIsfuRWDDNEx2c+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766028216; c=relaxed/simple;
-	bh=hFFblwx86ZqfGEV3nxo2B7GDHQAhuu5OeGAZxPRChv0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j7wGUFssWV87yS+enflCqeIbHatx1ITu9Uq8AdDe1eUOWThDUF0rjkkmY+o20DcUm2sGEt4z52lXk1SeBiC8YCnPwh0nLOtl7UlQxld9R3RvkUr0Ia8KzcgcT3ZhWNfUGe7D4yVA/fKocZbHZYOIXYwAkyz26SEaDlEYSBo3zxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aaTA2qCQ; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7aa9be9f03aso183267b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Dec 2025 19:23:34 -0800 (PST)
+	s=arc-20240116; t=1766029854; c=relaxed/simple;
+	bh=3NjRZoIfXWJ3zNa/5zT3Awvrf33cGByJk/NuJvo2i88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lg3ueSGeeY5Eo+/sax3GRW5LQjkND9WRcr7WKw5vTp9PNUwcNJw7BwbSD3SvVBEE2AKlz9MgNkgibOXSmLczhDMZRXfai4lGeMi/MF3HGHm3UhByhePO/U1OnmOcxLb0UbAtT5vU4WN8lX/1Dn/ln8OkKQHerUjTgl74tIK1AJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XqrD6Rtr; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=fDbxNoS9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1766029851;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HREBjb2QxiwbqHRQDxCYqTPo2R84DWJ+5LQcwkuRwhM=;
+	b=XqrD6RtrspCSZOMBbsC9C8BYVjtk7XoUlYmGWHRXoHrc++HwHH8ASHZ1bevRfkw+3g8DuA
+	lT76L5owb3APVBePA7naxIp9Hn/ZbWCupdCSl+37DtOh7NjZeS96WgqTO9psr0cni4L0Dp
+	pRTL4bkpGwiMtTmMZzR2bqJK2ahWhpA=
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
+ [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-202-6n2IylQgMrqX6scakhV2nQ-1; Wed, 17 Dec 2025 22:50:50 -0500
+X-MC-Unique: 6n2IylQgMrqX6scakhV2nQ-1
+X-Mimecast-MFC-AGG-ID: 6n2IylQgMrqX6scakhV2nQ_1766029849
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-65d004d4d01so149492eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Dec 2025 19:50:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766028214; x=1766633014; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UG7pfV58XRZ1xvXhlyO6OK4zqz4Y181lJscZD1whg/U=;
-        b=aaTA2qCQPtiF9SLs+dGvKc8W6z3dGHr3OdEJka2EKWKnaf/8Samx3IGpXUbMXqOX49
-         pshFajsx5Y4zE/EyOlB503An+7PJb0Wb/cu5DX5Bp0bWs5UcG/JLL2F8TBOGMebN5Fbc
-         LsYoeEIP7QYQ8TTJYQ2lrGeAiofIvdJ4gTXS3opoUV6BZyDVcNUTCkkqB8hn7Ti3P6eL
-         aGZPcgQw3TbdAIzQBQYHY1yGejpFtLkCZNIc/qvwoxpMNuiSlE1uvqQVDfhetZOAI3RT
-         06kEdy8CQuPAUL3/waPxDsoc1LN/H/gfp/rlQzkJCKlBLirlb3enFiICupq+ckiWmtBU
-         wYLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766028214; x=1766633014;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1766029849; x=1766634649; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UG7pfV58XRZ1xvXhlyO6OK4zqz4Y181lJscZD1whg/U=;
-        b=sUz/NwWyV+CQ9cYP8Gp1X/SzsUxcYcu2RaOqR1YTEKgKqJSo7LL/dn45VlQMZIMlt3
-         tm8Gje71v4E5mJ2eq9AoivXdIOC3hDgUFd+j+V/BnYraboNn/EoBsNuuX6C4zhBbUZHg
-         98Rbl/SpobrabO3/tFJ0L1JFx/KSkR5W/GgetloI77Pcn6rPdVaCdKBeg0b5hDZkWhBa
-         ihwS0Rn0Ih7j83B87tyf58vbSY+yn4uSufVq3EXuuEnyW57xnCw8C5MdVxldeNSHWieL
-         IuDusUXaDNmuAyaK7Pco2TOsnwj99Pzvt/MyDQgIkWFV54qYegsUD9wfcNY47V7ow4v7
-         jqtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCzPQRdEPkIkallgDmCo9WcW7sgnEMR5zvCykrGeB4yIINesv65lUJdhmuQ5H527dIcp+v5X+wkFQa6ycy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr+llK6Fy3uOQXf61YsaTYE4g8KzC9WtN2dQVv6VxCzLwXFrUk
-	fcWaLnshr0aSi3GXffyBACwJkaYuZCm62ZcI3a3GU5ubqRQFi6ar7z0P
-X-Gm-Gg: AY/fxX71urr35Xa4quPHFOaN6296GmHO/jyZ04t4G89LAKJi8K7TpKH4nS5qi/ieNNz
-	8Ghd2vR/vY8lVz4yu8fB/yhmhE+SxWVwGzbEsG+BcEMWFEMJs/SCW+L8a0SqwOsJzGoKk4evmth
-	YviQ7aDDgFU6q4RtMjpvCEHUwdPnQAAvPUPSP+rAh+F6IZdkXATjMK0Q6NEXUTECdDylfYYdnYA
-	znMiw5UCvLoR/v/1Iilmjqy3inqPyHYfRGxWLFN7lVBBDGTobnQCQ8WTYAKuKw9odVOeflzswek
-	bJMP4uSBJEN333BYgWRxcIenwh9aGwNV9+8F5vaDLwl89og0Xd0+JAya1CGX3mBV5eywCUl84sG
-	21YT8h5K1pldZ2GZEQPLaTs2QwP0R4tUYPMVJPPeIqU18tpk1WsZw/8zi2f8SEreqyxZbY9FT8G
-	YGvbM=
-X-Google-Smtp-Source: AGHT+IGQvq/DdZI6Fp9wfMB+YHKDour/ZpI/dwBFNByAuJ3jrP5gtK30k5BaErSIpjYma/as4s6gNg==
-X-Received: by 2002:a05:6a00:bb84:b0:7e8:4471:8e4 with SMTP id d2e1a72fcca58-7f66a470cd1mr18789906b3a.69.1766028214396;
-        Wed, 17 Dec 2025 19:23:34 -0800 (PST)
-Received: from localhost ([2a12:a304:100::105b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7fe12125b0fsm884992b3a.20.2025.12.17.19.23.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Dec 2025 19:23:33 -0800 (PST)
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Jinchao Wang <wangjinchao600@gmail.com>,
-	stable@vger.kernel.org,
-	syzbot+9ca2c6e6b098bf5ae60a@syzkaller.appspotmail.com
-Subject: [PATCH] exec: do not call sched_mm_cid_after_execve() on exec fail
-Date: Thu, 18 Dec 2025 11:23:23 +0800
-Message-ID: <20251218032327.199721-1-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=HREBjb2QxiwbqHRQDxCYqTPo2R84DWJ+5LQcwkuRwhM=;
+        b=fDbxNoS9QAC+IwI2GVjKbn7Yn/EX/kaORpE+kh9J0mG/+TGThU444MbwfGxE9+WOWv
+         WluCQRtK5V1OL3LmP7r+yVTyhAVyUimLU/jyGWxWcS4/ZdUMj12k1S3yPPetmccdkKdS
+         QYAcCQteLpID4k4B10u3DvKfnlCCrKL/+x4MRPCtPXPvaJBDNVD9O2Uw1RkZzpSafRdp
+         Pjsr7uI5kVMMAQ98VxlhKaRbjFk3zNjmTmdEyhjpL7I64TycPtGFful6mnCa4/phXCEm
+         OhQFi0BbOXwBWbhxNSgEsnyi04ih/gGbDwitxCrg5/c/QqraYbCSG+miKweUgSp3q4Oi
+         U+Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766029849; x=1766634649;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=HREBjb2QxiwbqHRQDxCYqTPo2R84DWJ+5LQcwkuRwhM=;
+        b=nvYpiRQqlf05hDXgb6C7uiRqQoIKaj0sxFoy3q0pGUB7HWqsKFt121QZ4SXwkp+go2
+         iPPxadjO+ro500GiVOLm76rrgXW2JFUjhi5LsBNUnwyU7mGBuifJKWB7WVw2orvjFrRG
+         /GIKXyTzsnSL898G/F62BP09IGUf11p/6lGxk7/S8bpky/mK6KJhclcjPvmXWy4Q9IOI
+         EtGWk9mOzwAg91VV3XamBWRjGU/IEr8O2zR8OydthejNCzZnULQanerwF0Q5XX9hZZAu
+         59pvABQwEva29G3n+JNANydecg/i3gj2whRDoUcVLhrivtuWmff2vMSTmCLxrSD3hIFF
+         D2IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUb+EZnHXYo3NCuzvI+IGnQJAQqDrq9sbP38n3LqnWY9SR0umeR8sFSiw3jyyGZcVrmXTuN0q6akFeu0NQP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2u51IKGinO3awOX1g0WrDiIgpoQfuDY0cULSwRxOIdkLVjtrO
+	OKjAfzpBFdpcqzvgZNU9TuLAtyA8NwU7ybbtbhj97uCLUud4J0MV2UXl96m17bFubad3wVBLULx
+	urTMdANSFOrkBO0BE38+ka4Bwrh7wTdAO8O8Pqm9OGMLKT2FdpYNsyA1v5Ahwm/5Ub7K54o90Gr
+	W7OI7N8PPzuFRsp2yF9oAC20FtMp7HzqEvzpkN7731+A==
+X-Gm-Gg: AY/fxX4jEFlGiPwxwTi66Jvzolq3jJoeml0k07ELejSakx7L8L+J2lPb8W5xxssE/uE
+	3ROWh/r22Wq+/JFV5WZmsT5SsKNFfenEpUTkGgTVmy0ZA+jslvSXuXIjPmq1kjrDEnGMypfcCdD
+	pKL9K95uplr36lmtcWFQmoSFPwO5XUh0iBFL1gzSaZoiaHj99TPUcytQDSeQyt0thJzWf66sHWX
+	eH8D9asYPB3HuRd7BSP0d9NYA==
+X-Received: by 2002:a05:6820:1613:b0:659:9a49:8e3b with SMTP id 006d021491bc7-65b4518076fmr8410105eaf.11.1766029849444;
+        Wed, 17 Dec 2025 19:50:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHmnT+9YdP42WGYbx4GL92R/LsivEa+Q4Y8dS576ThWfw+doiQ2TCzi3NRqSV8Hy3+gr19NHDpEyB+sb4qeG9g=
+X-Received: by 2002:a05:6820:1613:b0:659:9a49:8e3b with SMTP id
+ 006d021491bc7-65b4518076fmr8410100eaf.11.1766029849137; Wed, 17 Dec 2025
+ 19:50:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251215215301.10433-2-slava@dubeyko.com> <CA+2bHPbtGQwxT5AcEhF--AthRTzBS2aCb0mKvM_jCu_g+GM17g@mail.gmail.com>
+ <efbd55b968bdaaa89d3cf29a9e7f593aee9957e0.camel@ibm.com>
+In-Reply-To: <efbd55b968bdaaa89d3cf29a9e7f593aee9957e0.camel@ibm.com>
+From: Patrick Donnelly <pdonnell@redhat.com>
+Date: Wed, 17 Dec 2025 22:50:23 -0500
+X-Gm-Features: AQt7F2qRHCnNAtF8htmTG7RN9sTQYIaOKs8Qm9m-7WqsZ7izIVxH2V_V15lJJbU
+Message-ID: <CA+2bHPYRUycP0M5m6_XJiBXPEw0SyPCKJNk8P5-9uRSdtdFw4w@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: fix kernel crash in ceph_open()
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "slava@dubeyko.com" <slava@dubeyko.com>, Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>, 
+	Viacheslav Dubeyko <vdubeyko@redhat.com>, 
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "idryomov@gmail.com" <idryomov@gmail.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>, 
+	Kotresh Hiremath Ravishankar <khiremat@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-sched_mm_cid_after_execve() is called from the failure path
-of bprm_execve(). At that point exec has not completed successfully,
-so updating the mm CID state is incorrect and can trigger a panic,
-as reported by syzbot.
+On Wed, Dec 17, 2025 at 3:44=E2=80=AFPM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> On Wed, 2025-12-17 at 15:36 -0500, Patrick Donnelly wrote:
+> > Hi Slava,
+> >
+> > A few things:
+> >
+> > * CEPH_NAMESPACE_WIDCARD -> CEPH_NAMESPACE_WILDCARD ?
+>
+> Yeah, sure :) My bad.
+>
+> > * The comment "name for "old" CephFS file systems," appears twice.
+> > Probably only necessary in the header.
+>
+> Makes sense.
+>
+> > * You also need to update ceph_mds_auth_match to call
+> > namespace_equals.
+> >
+>
+> Do you mean this code [1]?
 
-Remove the call from the exec failure path.
+Yes, that's it.
 
-Cc: stable@vger.kernel.org
-Reported-by: syzbot+9ca2c6e6b098bf5ae60a@syzkaller.appspotmail.com
-Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
----
- fs/exec.c | 1 -
- 1 file changed, 1 deletion(-)
+> >  Suggest documenting (in the man page) that
+> > mds_namespace mntopt can be "*" now.
+> >
+>
+> Agreed. Which man page do you mean? Because 'man mount' contains no info =
+about
+> Ceph. And it is my worry that we have nothing there. We should do somethi=
+ng
+> about it. Do I miss something here?
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 9d5ebc9d15b0..9044a75d26ab 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1773,7 +1773,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 	if (bprm->point_of_no_return && !fatal_signal_pending(current))
- 		force_fatal_sig(SIGSEGV);
- 
--	sched_mm_cid_after_execve(current);
- 	rseq_force_update();
- 	current->in_execve = 0;
- 
--- 
-2.43.0
+https://github.com/ceph/ceph/blob/2e87714b94a9e16c764ef6f97de50aecf1b0c41e/=
+doc/man/8/mount.ceph.rst
+
+^ that file. (There may be others but I think that's the main one
+users look at.)
+
+--=20
+Patrick Donnelly, Ph.D.
+He / Him / His
+Red Hat Partner Engineer
+IBM, Inc.
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
 
 
