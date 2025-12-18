@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-71633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B2DCCAF5F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 09:41:54 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA15CCAEB9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 09:36:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 71AD130E0835
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 08:35:43 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3F7343016BBE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 08:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13522F1FEE;
-	Thu, 18 Dec 2025 08:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9E0331A70;
+	Thu, 18 Dec 2025 08:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UKQOagvo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDRt+RBb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61558328628
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 08:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B58E330304
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 08:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766046886; cv=none; b=cZR7+0i7cyqO82ctaNKL7hTSAcDuOSXCm008vTWoEUSgVGd1fh9W3Dexlkp/NU/08HqjK56O69AVf4uX7/vHZSdY+Ib/OFmV4F/45IpaVuvV41ANpEbQrTgccp/ruahkbeSyzeAmTsVm2hmGYIJcFvv1CW/l0DriI7PaJvuGMZI=
+	t=1766046887; cv=none; b=izEHkc9PCAlHx8E298qAIwJH7syXJTvCb4GF+8hnDlxhgDTCKU00dXiKH2X4UjG1ey/g5I8oaN08RNx2QnsUVrTXwefcszmsVNo8ackifB2gHnwdm1/aE4ACL9fn+YLadD4d7TV9n+DByuCJMp0xa9Q/p/uSVPxWfqhUITMzTEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766046886; c=relaxed/simple;
-	bh=/4RZHLoCb4GiD4zAnYngKfei8dqwc+KX7vdsWyFBqzY=;
+	s=arc-20240116; t=1766046887; c=relaxed/simple;
+	bh=GpGUafLBUm8GKz5DC07Mir9ylZp3MydsvMtbSOLpySA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XIdflx3MlSsYjrLE9eW0qPDhdyfElapt+Qk7kK3PmR7R4faBbFy7gSTfWdFRt5J9mM3SrrM2mm6NDdCWGgjxl0ZYsAgHTwg7/KhAwtudrefhi1yZNcjX3HGkmIo0jZaT4YOQGnmvkfbwdD8Y6ZY+ScEuPPK6LnZUD35EvmGuUu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UKQOagvo; arc=none smtp.client-ip=209.85.216.52
+	 MIME-Version; b=oW2qtYjtR/rUniqejjTdFJgjLbz6DhY5ZPlCupUTUu1nfF21RLGl9ieyxeCWAvxajaDL0AM4lVYFuBkL2tEKdzLee0l6lx3MiLTY0x0PMKJQPeRjW8JGhOVMfT2LtKXoEHRhO3j4KbvwHNnJ/EXyTlLIFH8QSTo3pWrZhDOW4Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDRt+RBb; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-34c565b888dso470291a91.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 00:34:43 -0800 (PST)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7fbbb84f034so368340b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 00:34:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766046883; x=1766651683; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1766046885; x=1766651685; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xDr/pVQGl4RyBMOb2VLE9p8tCJeLDlxrykePUeVpwtY=;
-        b=UKQOagvo6TGmQMdJQLArICiylU7/c59TR6A1K/GELwUB2ZLbIlVw4wuw62cYyGIQng
-         jfxJiisZbPLTM+lyqbVfcxaY2fB8iDHRA8owXVJZqWAyd4DHj1R0HvvKCKzKYVJqO7l1
-         aN02c3lS/IgpMW49P2JlViTalNg8swMAzMT0i9XXikfJGqZhElck3q5ft5GWgdOqqVuk
-         Dvn5ptHxBiRwij5IMHNCGwtQCYDZwGB+Uco9ihXsuwRlN14lGD6FftVx8+RoFeHxbXKw
-         XzVNkKHJHkpBsjdcTHvZ4PxSMk5owzqcj6WD6kLM0GG6QDKx7U4zTA1ooMgZm+lhm6rS
-         bsCw==
+        bh=4ERLpzI7XBTuNuqqGKmhy3jz90mZWWvNenbvXb4ecYY=;
+        b=lDRt+RBb2e05nNjfw8bXJy7CrwLeV0j6JE6lVU5pKJyD9peS66XoHpnlSQT5ddFBlW
+         DWgLWE75Q8IFdDB0F2Swl9F9I1rCPpe3jeMwrC65DhzGgUFwU5woGHWfiFVpbt9eN1xO
+         JSP69tlCgxwNQQSTtpwNFY6HFHhYPjtnLo4rxImYID3MehghGkxe25bdAcAU1RoPaPQl
+         /VvucK6UgVicMJ/2D9ZMRvPx+8npL8YBFcNTAfELGMCidsa00ZyRmL47EW/ZY0ycPzrm
+         kKHm1Nt6blqH2JlkSBS8dXC7+RylRfOsvtRdjp9jvwqcRp9b2iQNxKk7lVfLm+YKMAPx
+         bdnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766046883; x=1766651683;
+        d=1e100.net; s=20230601; t=1766046885; x=1766651685;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=xDr/pVQGl4RyBMOb2VLE9p8tCJeLDlxrykePUeVpwtY=;
-        b=XMIuhUXRjh//sYBEWOK4pkkkQ3Gw0xh2bDU5Pt7vGB6/3EqLrruODjugwbghhhTgwZ
-         /YO9fF/+zpwnB5zkR+Fb4wB+rHCmwY71HQN4whPHAci6ClINZN2XzN23bLLaR/H6OmNZ
-         PORHEFI2zWHpmDz2xyDjKm++w/baoq180/t/AJWXgU311OUHOp0uVF4tQ/ZSRG5yfATT
-         hHWQz/v4w4p/syFOj1/y3Ecnn9tnakTdv1m47gMAmzN/YitHCxwYBD//nRtu9WVElvJq
-         azElyPJB2GeGM3tQFywCVfARKbKN5DwTpvgRmN3X18NFGXYwMGYfomvWXJL9ZUWIfKQr
-         n5dA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDIjb4wrCgczjISr3Dvmo1BR8G2VwBI1NnRS5w9Sk9RlkZaaBt0J32iGclrCpyfcTmEmz1oTd1z3MWSmQr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7ceyVYekF7gA+oOsOoDk2/CrdsOqURFADWVsJdSrlUtZLrX0N
-	1oeQdj7ONMeBtqMSkG8XI9N1mc1DhT/qvW3Q8Kqnd0l5UvETMsD34mjQ
-X-Gm-Gg: AY/fxX6PORfYVVkj7xo1CFkdJSts0MBoY6k5xSHdut6Md2+s00+ULDltruSSxGEq0ni
-	b4oLkhQ1rUVTJDGgjLNqbw8WSjQ3RTUt6qLWQ+QgTcc0NJigfXQKkl2dH8rvmvOpDTUneRYDmWU
-	aAsyY/3iZBBoX3rle9SJX7PSPLnVIT5CgDVOMWIWGEv3dRoF4gJU3EBA9qdWziFCDAK08oOOtZm
-	3WdR6lRitucjmAgMDjbT2aq1up2XmqJR2B51PLot+nx/9VvDt1x6TVpLEI5w8oBDwVverTB7faV
-	UKBiooCBHmLu8tUriGrkjKx8MYMVHh73Ig9UanJc85advmXmBUEQhiFBJoeuNtuhzqV5WmIXY9g
-	AhXf8Uag1d0Ma080Ulnk0Q+fA/td6rQxdlfsMsFQJwIFml/HoypQ2yFfOBzhS7T5j9f7yAmQJT1
-	ntaMuFaT5APvO5RF8Yhg==
-X-Google-Smtp-Source: AGHT+IGoBO4dAvcNnka005zSlBVJcUV2ZzsGa6EJKqY1jr7ZHUX60Dabv0NOIujzg6oiUz3pkbLRkg==
-X-Received: by 2002:a17:90a:d450:b0:34c:f92a:ad05 with SMTP id 98e67ed59e1d1-34cf92ac1ebmr5214742a91.11.1766046883446;
-        Thu, 18 Dec 2025 00:34:43 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:71::])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34e74546993sm1620838a91.7.2025.12.18.00.34.43
+        bh=4ERLpzI7XBTuNuqqGKmhy3jz90mZWWvNenbvXb4ecYY=;
+        b=tzJcTkrrz6NxZQ3qoScWDmjbYmu+O2nHrZoIlllkEiMP2NYlQ4r3O0pu8uJ3R6A0K0
+         kWdDofGhYyNOuc2q80UWB1SB5jEI5WN5mCEfuILncarONttCTH3T40O4vJr9ybejp3T3
+         8UGi7jQ2R/D9Ih6uIJBUVyCv0lcSTVf96yiYVAKKeJ2NklpkHsy/1g8C3Ihj53KJROkW
+         lJls4s/KDUP8+1J7JPRu7UxiHdCcB9yb/JmdpnMNqnGEUyfZo+OrUMNrEsESYKJIAqDI
+         EuxvB9isgmwtXEWi6+SRwSdJupjAYsCns40quOxUDPTEWmtIrderiM4hzQjU07aVGdbZ
+         9aXA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2+i8k/wIS4J1wtz7BHqAFKcJoiq+uDpuu2nplliAoU0uZrvAXVXAXgWA8eliEn6Jl4F91DCfWnhH+2LpN@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU/Uj3C3qzlwyCzj5pFF+nNStQuRmH6QmjbZhZUS19m4PES77/
+	BFEw0am+ylS25UDgncz+EL/KQwzUvtzai7bRas4tzgYIqLSzc8xjSTiD
+X-Gm-Gg: AY/fxX6imSTTZiPz76SZECWBX4fXzHngSQY6MyPu1nYfAcFKfjnmfTnFVDyHu5ekFfV
+	Kxnp+a4mMzkszyHve/gYzNS2sj23rhvy5ulgVCkZc1J1hj4kCmMkQimxWcJmjGIOJm0U6QOS0z8
+	ucEjirtsMIxGZyFg7BygBxt8QSLhvx6o19tqAV0WhjoFbnFq6KqWITaJMdB8PnwaTcXFYsRJfhh
+	+ZSvd6/78/7nYZ0HlgGbg13FZmD/0M4WJa92xCIcA53SAAIKhCpUXmr+rW16zjrBRlnRyc3wgXm
+	aHhIsFVZ1T5Kfhshyabt0t9Q0hhI4fcg1tMxheA0JeGFB+Snbags/9Np0STeC8R8v5UIw1sjMy2
+	yTQXHOsEksSQmuIPF8Hhi/k8c58t8DbsP5OkY3UoheREuRiew0QHe33J7KlprRIr7sxyYojvGGb
+	LBvbgh5L5pV66zBL5LcWtpTJfY6uX0
+X-Google-Smtp-Source: AGHT+IEgIc5UqekCKUDpL+uIqJsUxb26MBRJSRhvx202TFh9xOYA1PjDnMaWOpeIPECmEf0wRetO2w==
+X-Received: by 2002:a05:6a00:8c11:b0:7b9:7349:4f0f with SMTP id d2e1a72fcca58-7f664d0322dmr21146775b3a.0.1766046885285;
+        Thu, 18 Dec 2025 00:34:45 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:5c::])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7fe14a5727fsm1807075b3a.69.2025.12.18.00.34.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Dec 2025 00:34:43 -0800 (PST)
+        Thu, 18 Dec 2025 00:34:45 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	axboe@kernel.dk
@@ -81,9 +81,9 @@ Cc: bschubert@ddn.com,
 	csander@purestorage.com,
 	xiaobing.li@samsung.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 06/25] io_uring/kbuf: add buffer ring pinning/unpinning
-Date: Thu, 18 Dec 2025 00:33:00 -0800
-Message-ID: <20251218083319.3485503-7-joannelkoong@gmail.com>
+Subject: [PATCH v2 07/25] io_uring/kbuf: add recycling for kernel managed buffer rings
+Date: Thu, 18 Dec 2025 00:33:01 -0800
+Message-ID: <20251218083319.3485503-8-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251218083319.3485503-1-joannelkoong@gmail.com>
 References: <20251218083319.3485503-1-joannelkoong@gmail.com>
@@ -95,56 +95,44 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add kernel APIs to pin and unpin buffer rings, preventing userspace from
-unregistering a buffer ring while it is pinned by the kernel.
+Add an interface for buffers to be recycled back into a kernel-managed
+buffer ring.
 
-This provides a mechanism for kernel subsystems to safely access buffer
-ring contents while ensuring the buffer ring remains valid. A pinned
-buffer ring cannot be unregistered until explicitly unpinned. On the
-userspace side, trying to unregister a pinned buffer will return -EBUSY.
-
-This is a preparatory change for upcoming fuse usage of kernel-managed
-buffer rings. It is necessary for fuse to pin the buffer ring because
-fuse may need to select a buffer in atomic contexts, which it can only
-do so by using the underlying buffer list pointer.
+This is a preparatory patch for fuse over io-uring.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- include/linux/io_uring/cmd.h | 17 +++++++++++++
- io_uring/kbuf.c              | 48 ++++++++++++++++++++++++++++++++++++
- io_uring/kbuf.h              | 10 ++++++++
- io_uring/uring_cmd.c         | 18 ++++++++++++++
- 4 files changed, 93 insertions(+)
+ include/linux/io_uring/cmd.h | 13 +++++++++++
+ io_uring/kbuf.c              | 42 ++++++++++++++++++++++++++++++++++++
+ io_uring/kbuf.h              |  3 +++
+ io_uring/uring_cmd.c         | 11 ++++++++++
+ 4 files changed, 69 insertions(+)
 
 diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index 375fd048c4cb..424f071f42e5 100644
+index 424f071f42e5..7169a2a9a744 100644
 --- a/include/linux/io_uring/cmd.h
 +++ b/include/linux/io_uring/cmd.h
-@@ -84,6 +84,10 @@ struct io_br_sel io_uring_cmd_buffer_select(struct io_uring_cmd *ioucmd,
- bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
- 				 struct io_br_sel *sel, unsigned int issue_flags);
- 
-+int io_uring_cmd_buf_ring_pin(struct io_uring_cmd *ioucmd, unsigned buf_group,
-+			      unsigned issue_flags, struct io_buffer_list **bl);
-+int io_uring_cmd_buf_ring_unpin(struct io_uring_cmd *ioucmd, unsigned buf_group,
-+				unsigned issue_flags);
+@@ -88,6 +88,11 @@ int io_uring_cmd_buf_ring_pin(struct io_uring_cmd *ioucmd, unsigned buf_group,
+ 			      unsigned issue_flags, struct io_buffer_list **bl);
+ int io_uring_cmd_buf_ring_unpin(struct io_uring_cmd *ioucmd, unsigned buf_group,
+ 				unsigned issue_flags);
++
++int io_uring_cmd_kmbuffer_recycle(struct io_uring_cmd *cmd,
++				  unsigned int buf_group, u64 addr,
++				  unsigned int len, unsigned int bid,
++				  unsigned int issue_flags);
  #else
  static inline int
  io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-@@ -126,6 +130,19 @@ static inline bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
+@@ -143,6 +148,14 @@ static inline int io_uring_cmd_buf_ring_unpin(struct io_uring_cmd *ioucmd,
  {
- 	return true;
+ 	return -EOPNOTSUPP;
  }
-+static inline int io_uring_cmd_buf_ring_pin(struct io_uring_cmd *ioucmd,
-+					    unsigned buf_group,
-+					    unsigned issue_flags,
-+					    struct io_buffer_list **bl)
-+{
-+	return -EOPNOTSUPP;
-+}
-+static inline int io_uring_cmd_buf_ring_unpin(struct io_uring_cmd *ioucmd,
-+					      unsigned buf_group,
-+					      unsigned issue_flags)
++static inline int io_uring_cmd_kmbuffer_recycle(struct io_uring_cmd *cmd,
++						unsigned int buf_group,
++						u64 addr, unsigned int len,
++						unsigned int bid,
++						unsigned int issue_flags)
 +{
 +	return -EOPNOTSUPP;
 +}
@@ -152,123 +140,89 @@ index 375fd048c4cb..424f071f42e5 100644
  
  static inline struct io_uring_cmd *io_uring_cmd_from_tw(struct io_tw_req tw_req)
 diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index c98cecb56b8c..49dc75f24432 100644
+index 49dc75f24432..f494d896c17e 100644
 --- a/io_uring/kbuf.c
 +++ b/io_uring/kbuf.c
-@@ -238,6 +238,52 @@ struct io_br_sel io_buffer_select(struct io_kiocb *req, size_t *len,
- 	return sel;
+@@ -101,6 +101,48 @@ void io_kbuf_drop_legacy(struct io_kiocb *req)
+ 	req->kbuf = NULL;
  }
  
-+int io_kbuf_ring_pin(struct io_kiocb *req, unsigned buf_group,
-+		     unsigned issue_flags, struct io_buffer_list **bl)
-+{
-+	struct io_buffer_list *buffer_list;
-+	struct io_ring_ctx *ctx = req->ctx;
-+	int ret = -EINVAL;
-+
-+	io_ring_submit_lock(ctx, issue_flags);
-+
-+	buffer_list = io_buffer_get_list(ctx, buf_group);
-+	if (likely(buffer_list) && likely(buffer_list->flags & IOBL_BUF_RING)) {
-+		if (unlikely(buffer_list->flags & IOBL_PINNED)) {
-+			ret = -EALREADY;
-+		} else {
-+			buffer_list->flags |= IOBL_PINNED;
-+			ret = 0;
-+			*bl = buffer_list;
-+		}
-+	}
-+
-+	io_ring_submit_unlock(ctx, issue_flags);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(io_kbuf_ring_pin);
-+
-+int io_kbuf_ring_unpin(struct io_kiocb *req, unsigned buf_group,
-+		       unsigned issue_flags)
++int io_kmbuf_recycle(struct io_kiocb *req, unsigned int bgid, u64 addr,
++		     unsigned int len, unsigned int bid,
++		     unsigned int issue_flags)
 +{
 +	struct io_ring_ctx *ctx = req->ctx;
++	struct io_uring_buf_ring *br;
++	struct io_uring_buf *buf;
 +	struct io_buffer_list *bl;
 +	int ret = -EINVAL;
 +
++	if (WARN_ON_ONCE(req->flags & REQ_F_BUFFERS_COMMIT))
++		return ret;
++
 +	io_ring_submit_lock(ctx, issue_flags);
 +
-+	bl = io_buffer_get_list(ctx, buf_group);
-+	if (likely(bl) && likely(bl->flags & IOBL_BUF_RING) &&
-+	    likely(bl->flags & IOBL_PINNED)) {
-+		bl->flags &= ~IOBL_PINNED;
-+		ret = 0;
-+	}
++	bl = io_buffer_get_list(ctx, bgid);
 +
++	if (WARN_ON_ONCE(!(bl->flags & IOBL_BUF_RING)) ||
++	    WARN_ON_ONCE(!(bl->flags & IOBL_KERNEL_MANAGED)))
++		goto done;
++
++	br = bl->buf_ring;
++
++	if (WARN_ON_ONCE((br->tail - bl->head) >= bl->nr_entries))
++		goto done;
++
++	buf = &br->bufs[(br->tail) & bl->mask];
++
++	buf->addr = addr;
++	buf->len = len;
++	buf->bid = bid;
++
++	req->flags &= ~REQ_F_BUFFER_RING;
++
++	br->tail++;
++	ret = 0;
++
++done:
 +	io_ring_submit_unlock(ctx, issue_flags);
 +	return ret;
 +}
-+EXPORT_SYMBOL_GPL(io_kbuf_ring_unpin);
 +
- /* cap it at a reasonable 256, will be one page even for 4K */
- #define PEEK_MAX_IMPORT		256
- 
-@@ -744,6 +790,8 @@ int io_unregister_buf_ring(struct io_ring_ctx *ctx, void __user *arg)
- 		return -ENOENT;
- 	if (!(bl->flags & IOBL_BUF_RING))
- 		return -EINVAL;
-+	if (bl->flags & IOBL_PINNED)
-+		return -EBUSY;
- 
- 	scoped_guard(mutex, &ctx->mmap_lock)
- 		xa_erase(&ctx->io_bl_xa, bl->bgid);
+ bool io_kbuf_recycle_legacy(struct io_kiocb *req, unsigned issue_flags)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
 diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-index 11d165888b8e..c4368f35cf11 100644
+index c4368f35cf11..4d8b7491628e 100644
 --- a/io_uring/kbuf.h
 +++ b/io_uring/kbuf.h
-@@ -12,6 +12,11 @@ enum {
- 	IOBL_INC		= 2,
- 	/* buffers are kernel managed */
- 	IOBL_KERNEL_MANAGED	= 4,
-+	/*
-+	 * buffer ring is pinned and cannot be unregistered by userspace until
-+	 * it has been unpinned
-+	 */
-+	IOBL_PINNED		= 8,
- };
- 
- struct io_buffer_list {
-@@ -136,4 +141,9 @@ static inline unsigned int io_put_kbufs(struct io_kiocb *req, int len,
- 		return 0;
- 	return __io_put_kbufs(req, bl, len, nbufs);
- }
-+
-+int io_kbuf_ring_pin(struct io_kiocb *req, unsigned buf_group,
-+		     unsigned issue_flags, struct io_buffer_list **bl);
-+int io_kbuf_ring_unpin(struct io_kiocb *req, unsigned buf_group,
-+		       unsigned issue_flags);
+@@ -146,4 +146,7 @@ int io_kbuf_ring_pin(struct io_kiocb *req, unsigned buf_group,
+ 		     unsigned issue_flags, struct io_buffer_list **bl);
+ int io_kbuf_ring_unpin(struct io_kiocb *req, unsigned buf_group,
+ 		       unsigned issue_flags);
++int io_kmbuf_recycle(struct io_kiocb *req, unsigned int bgid, u64 addr,
++		     unsigned int len, unsigned int bid,
++		     unsigned int issue_flags);
  #endif
 diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 197474911f04..8ac79ead4158 100644
+index 8ac79ead4158..b6b675010bfd 100644
 --- a/io_uring/uring_cmd.c
 +++ b/io_uring/uring_cmd.c
-@@ -398,3 +398,21 @@ bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
- 	return true;
+@@ -416,3 +416,14 @@ int io_uring_cmd_buf_ring_unpin(struct io_uring_cmd *ioucmd, unsigned buf_group,
+ 	return io_kbuf_ring_unpin(req, buf_group, issue_flags);
  }
- EXPORT_SYMBOL_GPL(io_uring_mshot_cmd_post_cqe);
+ EXPORT_SYMBOL_GPL(io_uring_cmd_buf_ring_unpin);
 +
-+int io_uring_cmd_buf_ring_pin(struct io_uring_cmd *ioucmd, unsigned buf_group,
-+			      unsigned issue_flags, struct io_buffer_list **bl)
++int io_uring_cmd_kmbuffer_recycle(struct io_uring_cmd *ioucmd,
++				  unsigned int buf_group, u64 addr,
++				  unsigned int len, unsigned int bid,
++				  unsigned int issue_flags)
 +{
 +	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
 +
-+	return io_kbuf_ring_pin(req, buf_group, issue_flags, bl);
++	return io_kmbuf_recycle(req, buf_group, addr, len, bid, issue_flags);
 +}
-+EXPORT_SYMBOL_GPL(io_uring_cmd_buf_ring_pin);
-+
-+int io_uring_cmd_buf_ring_unpin(struct io_uring_cmd *ioucmd, unsigned buf_group,
-+				unsigned issue_flags)
-+{
-+	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
-+
-+	return io_kbuf_ring_unpin(req, buf_group, issue_flags);
-+}
-+EXPORT_SYMBOL_GPL(io_uring_cmd_buf_ring_unpin);
++EXPORT_SYMBOL_GPL(io_uring_cmd_kmbuffer_recycle);
 -- 
 2.47.3
 
