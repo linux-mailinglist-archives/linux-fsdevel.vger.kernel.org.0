@@ -1,127 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-71654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id A88E1CCB654
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 11:33:27 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F11CCB6CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 11:37:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id AB41F303B643
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 10:31:05 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 26ACF301848E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 10:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE49533EAFD;
-	Thu, 18 Dec 2025 10:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6863832F755;
+	Thu, 18 Dec 2025 10:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fw8J0xoz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LAQf9yXP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F17A331A79
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 10:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3B52F617D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 10:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766053858; cv=none; b=ZXDSnkc4/kdYDfx991JLHdDfhMYibcybHMP9Ua8jGigwkmmQnRo+38Mdwf9GGo9GHcPRkjNH2XGbVVIUFem/2wcMTihY1fH1Sws8Zi+mqB9sLzVdGEv7bI5q9A/V7mvbcc+GXInuQ0BzlAe0ThBXZxHNv7jYuvylhReWyJCmwwc=
+	t=1766054243; cv=none; b=X9OFa16SilAPztBFHv5aOOtBTGS0sF35+6HUA3x0N8TEPPhpaJDvjrqxeKoCZjCKeKGmKhmKudMWPdMIvtVVgK94ZcFAk4YB74/gUfuO5Mo9kLKsBuYdmNRXe/P3FF0dqwqch/sOYgMl/uJD7zHD0b1tO6Egafcqf2PxeYfQjcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766053858; c=relaxed/simple;
-	bh=coLA1gMnueOdWW2y3zkfSAuSFNiYs3kPhCnOPTkxuf0=;
+	s=arc-20240116; t=1766054243; c=relaxed/simple;
+	bh=IuOTfb3lLj0gtabV7omSu2xz0+Bp2f5JB0yCBLcuQSA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FQSyRrO1Ro+pBdtvgn7u2eGk56TUpoYIP3Qt1LW4MnQUdKQ4EECP/mVk5VMM5+la2OMnLhTdG43vohrDjxPIzGKytcrV/GDEwERoFzrXIbNo5nx2rdrfHrO2WSSBvXNhn3umd30dMeMnOjwX1bVp03ksYxNXrsoW3ZEbWFt+ePo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fw8J0xoz; arc=none smtp.client-ip=209.85.214.172
+	 To:Cc:Content-Type; b=DU+InvDCsr6o6BRh2udUoZiA+ToHSkksMWIWhoFh2kEByZry5MkYKHuYTS2vfxwb67HE8b6fs/pyAaRqW3sPyHrV6gYhwvv3rOZLHffDefWIFRw9uArBqWBgcNiM+rCcj6/3Eh3OnJT1UjTMOH1+2qgh/oft2+dGcXSDe/Ew9fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LAQf9yXP; arc=none smtp.client-ip=209.85.215.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2a0833b5aeeso6164905ad.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 02:30:56 -0800 (PST)
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-bf1b402fa3cso488949a12.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 02:37:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766053856; x=1766658656; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1766054242; x=1766659042; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qfx0RSNVAivkH6E1CctvNqx0dWYRIEIIvPaPiHNi3os=;
-        b=fw8J0xozTCj++5U+USmL9K9+0AUaiUN2hPOITMXq8m9FDVCk24dJr5HbPJJIaIeuo2
-         GBkeNu+UBMxKAN1vFx560UjWjN5jSek70QEjCB6iHApc20D9n1GpsTXkuP6WbxAiwjQm
-         YOyWM/pO4/vFQsGQxhUiVD/u+VwS0pJsXVI2ZPrwTr3wnzrfwSb03EcX+SAfTcd7zvr9
-         Sk4/MzA7w9300n3KBuradHKIoPsACOm3cDCSElhI+9y+vYbs8gqo3ZFvi7ZBFtg3TIe5
-         clNcMzSdqnfWxs2gLWPTrYGJlgm5rvnUVFGXSraUzUrcPuUmv3e8F6XpcwVeFYCsQ42r
-         GxFA==
+        bh=z75uRcgro6LKMAAGXHvWW3/RKLL5y/yTiUe9tOAv4zs=;
+        b=LAQf9yXPBI9k3UVD9HoA1CgG6Va3gDPyyVZYISt2LEEBLoCqQaiQCK19BdH7+2HNEy
+         1rlHMtBsK/FGW6J6ycxCm2nrycvZ7OeXjw/D46Ol+D8HmwtRwaLmTnWIQqJldTjIhenM
+         j6LzblNeciV7M5Iu4xhl5uLs4U17n0s3xpB4WlemPbX/7Q3guky56cCW+Xr0ESmLnet3
+         iK/DN7kjZl+RHSYON23Wzsfx6EmhmTz3Y2uojNbFQhrYKLX/2Sl5T2JRF67jO0i76JSX
+         +1fRjJOs+IJ/Y/ik2ZuLV5sieuNuTs82g5vrnygWsSVqUWUtpv9T8SVBOFVLXw3eDo2D
+         GaVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766053856; x=1766658656;
+        d=1e100.net; s=20230601; t=1766054242; x=1766659042;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=qfx0RSNVAivkH6E1CctvNqx0dWYRIEIIvPaPiHNi3os=;
-        b=Ga/t4SYsOyTLMNtHgm5fAV9Woy97g/cwlixofrZtfFVEWj5BDo/YTc4fTyFMGbiueH
-         ov07bBajn5QSEAxYr3Yd23bWGH4t2pSN1i5LsgW5a5DDTtx9eu8tCXVtH2PApDV+K/wM
-         euX+67gnzbeuJ3u8/F7SWFXp3yjQR8CFwUdHhrYIw9FFt4qb99WTHj2OcBSKWUd68KAr
-         bE4u2bTdm0NA85UJX6+Uws/T8ZE+gpfGBRFmAAeI8C9ktibZm7cDSVPBFbm533EmrQRs
-         qzeUBl4dKSIXnZDUad/HkeW1M172xKjqicqZxdF3kHa0wV8vt7efnehFQmwAsF9SanT2
-         wBAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFyI8uagH6+lyNcrirOvYKgohpNLbrJuuV++miBUeYFWuNJrGdcWwnBt+TR/vGLnRh2HnAO3AAJyQb2+it@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXaFoOMCxSakjpXmoPAx7cVFyX1U0sfi71AEkL08Co9SsUTI9x
-	3QX+RlHLUFlQqSnYht78wG3o+PBNl72xNS8UHGl/WwjTzSUM/Ow6hSRoMXxvl1gILM08vFmZIlA
-	JXrqXVnRpnD3uekPsBIRurp/hNmROnPQ=
-X-Gm-Gg: AY/fxX5x8o7ZQG1HfYmTIjVecS14XgKlwjloCH6qkcYeXVIDu68JEgQfc7CUzhkksAc
-	rlFlUVHAaLgVm6bmtx1bq0W79ysP6ExTwxrgPOIqjkN0D4UC3MT2DaKJrviTdNHEMA7XZ1qrR77
-	k/RQK+D1yq7cFGBR8hoiXqoKCMNgJgAblOM2YM7k5ZzC6zGPRMfAeF5zklKHjjwpJNOiLU2Dqfs
-	dtchZvneVo0rQBVeMDyQqX40ASa2AQ6XnoVqLpVNhd970Qe4627rRI0ytUJMC2XNpvbtzw=
-X-Google-Smtp-Source: AGHT+IGTrXflbA7TuH+HMFPKadliLmhPvmaddni0A+suBBUE0r17KKOfpya47jmQzV7xIWL/JMQTbmyuegC/gaPJ6Kk=
-X-Received: by 2002:a05:7022:7f1a:b0:11f:2c9e:87f8 with SMTP id
- a92af1059eb24-11f34c12699mr14026707c88.34.1766053856001; Thu, 18 Dec 2025
- 02:30:56 -0800 (PST)
+        bh=z75uRcgro6LKMAAGXHvWW3/RKLL5y/yTiUe9tOAv4zs=;
+        b=lrDDWRDPVGl/JpTCdfqaq9nzANeuI77dlVZShw7+U4wPMQ3wcwRYHS9ywRbj3RdIus
+         5a/EZo+OOr9vvezI68XXP1Lj/opLwz/BEYE07gWNFFIzdwKEOjPqGE0QvJiViI2/523S
+         Y3JbvuEOCeIJywwfPuPX7S8EA5ffsC/nJqbsO79SZiJ3c/ktNhRH8c0K/XvbuFrisITo
+         LVFUCUV3paNZ4pJYvfa5lL9OJmfOUpHq6DB+YePzd6x/VnzBA0UNSenoCIe3NxpXlFoS
+         uhvZlsdDrCivSRQy0OURzcSOu2XEmu2PbE2wY23H7rIlGim6g/Sz+huAbuf7eCfJenDK
+         UFwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVogNE5Fnwj3p6ng9Y8Air24BNzoVh/Zo5oidtGteTkPlM6I+iKEFjT2MwpePgyrzObPxmz1p6jMFS+QJli@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUercGS/uTgGOg6j9xOacC3hAXFRnko/a8T6hKqqH+RQ5OuE2y
+	GvY8G3B3g80kmrgj/VwPZ37G1tgPQ7y7zYBw0ejQA359IN553Su7p31LhdFAe0GdhyJzjrviMMP
+	fuU36DIjk0gVRfcPhlqE8el24Dmk3lEY=
+X-Gm-Gg: AY/fxX4YBCSE1mU66gHBbCVdeFfs4qFPB3z8LSv2d5iDSy8CWYFxXAX2e9lul88i3Pg
+	boxiR2ySIFYmmuSJSSMvB9sagIsZRGdAvJ3vuFl6HSbo1aihEktuBOKctxPsuFTjCtoWX2EbTGe
+	FAPazO6WgawJoJm3WBOfprj0RVbKstssMSnQvxg+cu1aY1BxTav0yDx8ia1H16W/Plc6qc/8aXF
+	M2+3MC0TTY8YRPIls7wAF6OSnSeC9I7K9rop7QF+hkqMHNAorSzgcsAPVKqhmm8ehkMnSQ=
+X-Google-Smtp-Source: AGHT+IF5UZcHGl6F1FKSYKUt2aGFnGQgfg/iINjTf635blGax4A17hhn2ud4VDyWJCoj6evsChYwN6fyjxpqsLdtklE=
+X-Received: by 2002:a05:7022:b8a:b0:11b:d211:3a64 with SMTP id
+ a92af1059eb24-11f34863cd1mr19121836c88.0.1766054241600; Thu, 18 Dec 2025
+ 02:37:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251215215301.10433-2-slava@dubeyko.com> <CA+2bHPbtGQwxT5AcEhF--AthRTzBS2aCb0mKvM_jCu_g+GM17g@mail.gmail.com>
- <efbd55b968bdaaa89d3cf29a9e7f593aee9957e0.camel@ibm.com> <CA+2bHPYRUycP0M5m6_XJiBXPEw0SyPCKJNk8P5-9uRSdtdFw4w@mail.gmail.com>
-In-Reply-To: <CA+2bHPYRUycP0M5m6_XJiBXPEw0SyPCKJNk8P5-9uRSdtdFw4w@mail.gmail.com>
+References: <20251216200005.16281-2-slava@dubeyko.com>
+In-Reply-To: <20251216200005.16281-2-slava@dubeyko.com>
 From: Ilya Dryomov <idryomov@gmail.com>
-Date: Thu, 18 Dec 2025 11:30:42 +0100
-X-Gm-Features: AQt7F2rd8ZAR0qUouk3bbCRZlGum8CJLI2DtlF-AsBtcTzZCpUDhii1Zu1eXreo
-Message-ID: <CAOi1vP_y+UT8yk00gxQZ7YOfAN3kTu6e6LE1Ya87goMFLEROsw@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: fix kernel crash in ceph_open()
-To: Patrick Donnelly <pdonnell@redhat.com>
-Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, "slava@dubeyko.com" <slava@dubeyko.com>, 
-	Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>, Viacheslav Dubeyko <vdubeyko@redhat.com>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>, 
-	Kotresh Hiremath Ravishankar <khiremat@redhat.com>
+Date: Thu, 18 Dec 2025 11:37:10 +0100
+X-Gm-Features: AQt7F2q9n6B06XMlN9W0DzGnhk5ayXYGI6LMPtZE9i0PYNPDhUkMyTdX7TwL5NI
+Message-ID: <CAOi1vP88-aV+EXyVEgfiqUoSuqmaJnZ457uG6QrnOG34kimE7w@mail.gmail.com>
+Subject: Re: [PATCH v3] ceph: rework co-maintainers list in MAINTAINERS file
+To: Viacheslav Dubeyko <slava@dubeyko.com>, amarkuze@redhat.com, Xiubo Li <xiubli@redhat.com>
+Cc: ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	pdonnell@redhat.com, Slava.Dubeyko@ibm.com, vdubeyko@redhat.com, 
+	Pavan.Rallabhandi@ibm.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 18, 2025 at 4:50=E2=80=AFAM Patrick Donnelly <pdonnell@redhat.c=
+On Tue, Dec 16, 2025 at 9:00=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
 om> wrote:
-> > >  Suggest documenting (in the man page) that
-> > > mds_namespace mntopt can be "*" now.
-> > >
-> >
-> > Agreed. Which man page do you mean? Because 'man mount' contains no inf=
-o about
-> > Ceph. And it is my worry that we have nothing there. We should do somet=
-hing
-> > about it. Do I miss something here?
 >
-> https://github.com/ceph/ceph/blob/2e87714b94a9e16c764ef6f97de50aecf1b0c41=
-e/doc/man/8/mount.ceph.rst
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 >
-> ^ that file. (There may be others but I think that's the main one
-> users look at.)
+> This patch reworks the list of co-mainteainers for
+> Ceph file system in MAINTAINERS file.
+>
+> Fixes: d74d6c0e9895 ("ceph: add bug tracking system info to MAINTAINERS")
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> cc: Alex Markuze <amarkuze@redhat.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Ceph Development <ceph-devel@vger.kernel.org>
+> ---
+>  MAINTAINERS | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 5b11839cba9d..f17933667828 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5801,7 +5801,8 @@ F:        drivers/power/supply/cw2015_battery.c
+>
+>  CEPH COMMON CODE (LIBCEPH)
+>  M:     Ilya Dryomov <idryomov@gmail.com>
+> -M:     Xiubo Li <xiubli@redhat.com>
+> +M:     Alex Markuze <amarkuze@redhat.com>
+> +M:     Viacheslav Dubeyko <slava@dubeyko.com>
+>  L:     ceph-devel@vger.kernel.org
+>  S:     Supported
+>  W:     http://ceph.com/
+> @@ -5812,8 +5813,9 @@ F:        include/linux/crush/
+>  F:     net/ceph/
+>
+>  CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)
+> -M:     Xiubo Li <xiubli@redhat.com>
+>  M:     Ilya Dryomov <idryomov@gmail.com>
+> +M:     Alex Markuze <amarkuze@redhat.com>
+> +M:     Viacheslav Dubeyko <slava@dubeyko.com>
+>  L:     ceph-devel@vger.kernel.org
+>  S:     Supported
+>  W:     http://ceph.com/
+> --
+> 2.52.0
+>
 
-Hi Patrick,
+Hi Alex and Xiubo,
 
-Is that actually desired?  After having to take a look at the userspace
-code to suggest the path forward in the thread for the previous version
-of Slava's patch, I got the impression that "*" was just an MDSAuthCaps
-thing.  It's one of the two ways to express a match for any fs_name
-(the other is not specifying fs_name in the cap at all).
+Could you please send your Acked-by?
 
-I don't think this kind of matching is supposed to occur when mounting.
-When fs_name is passed via ceph_select_filesystem() API or --client_fs
-option on mount it appears to be a literal comparison that happens in
-FSMapUser::get_fs_cid().  Assuming "*" isn't a valid fs_name (it it was
-the cap syntax wouldn't make sense), the user passing "*" for fs_name
-when mounting would always lead to an error.
+(Please ignore the Fixes tag -- commit d74d6c0e9895 isn't really
+related to this patch.)
 
 Thanks,
 
