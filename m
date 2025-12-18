@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-71609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37D1CCA4CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 06:17:38 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B49DCCA4DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 06:22:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0A16F302B7A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 05:17:26 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 77744301FF6F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 05:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A9F303A1D;
-	Thu, 18 Dec 2025 05:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081C3306487;
+	Thu, 18 Dec 2025 05:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Enz99r65"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AriwOwP7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C4E18B0F;
-	Thu, 18 Dec 2025 05:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6E7303C94;
+	Thu, 18 Dec 2025 05:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766035041; cv=none; b=Xx8gXapjG3fX32PCNUQDgYZGRUTPUHEqAgdaHJf7EBTlGNykhHQJO+9UwfzHa7MRxx0MJWqSum9hZDHjLPYDHHM7xZgU7UVCWopZHOIsWYi57XICHrrNGhzdsGR5To8aiMJKL8DP38jFUiilpF66+NB5zQLNWW8KraQ18wWjst8=
+	t=1766035315; cv=none; b=SjYhTU0ZmgVBw3PCNglA+4lxX2lf+65/1ov5cqRNofsO5Y3UjYgnO/MNrPyI7y2Q/wvTcn8fUHYeDSquP1RGETRJDWwtvj7gJMj9DCn70u5cJ/cjgKqPAADAkJ+vY+tC52fB08ZgfqARA9B0kasWHPAvDYyyjYs8MuaZXm4ZxfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766035041; c=relaxed/simple;
-	bh=/6QXAGIURpv2Nh2mYCEAy3CsdaGtWLbSAIpwtRV6dTM=;
+	s=arc-20240116; t=1766035315; c=relaxed/simple;
+	bh=T7jaQOVSdUpeQAm/dm8hYPWxVyxizN08hSymBZCzgZs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mcQ8HRQdCWu6ahj8uH0efRhtKi5Ey9bEc2lcrhStb6qtpd4uFIVs5YAKtV6W8z8a5BYob2EIJoJ6Ze8BXSsLrmxw10KSnITL6C7ht8W07HDi4UuaeLnhBdQuTtFfx+CYfOnK33k9uWURZ8g5ALHaVbtwjTKh9NlYPrP0H/SJ+WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Enz99r65; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=EgheoSJKI/DgdH/KxOp+RxovtVXbYFQ5zx+H9dcxPdsK/I/2QARiB1Oj8w6C/WwtdJQ/fL0JCNOQVyeOHmJ1y/NI8W4fVF3/5bd9s6B5OEOjDeqGACykK6vzNjl4Z2T3w5bOnmixhKo3rLMWdDCvzKo8jwl7nUy6ZXXMMKdw5PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AriwOwP7; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ywGqXo3KnkhaaWWbXkrkr+rF0feJrXkyNkz8h39qvxE=; b=Enz99r65ai04gcWCJI0SAfHVxR
-	7M8BEntt68wvOQgwvKAChmIRJeOmDiy5FjValL5dqEZKqHWCdAiBLN8ktbkrHacRWnPs1OM71jWV3
-	IiTTwLHGtFdhkn5AZAZ+IWKfM0Hkj/p2TA8hEfxX7oyvvuHaq9Wr/OeOEGMKnc0oKG2q8BMgp+AWR
-	BvNTTU1AYCUYQHluNup6fKPffT6bn8Tjh8M5az4k77KikXwFyJNmwMOGPP/5y8Bl2pIHdCR3aGCRI
-	l9o4t33634qpRdULCng4q19L1IK2YaJRA8J9keho+LB1WDwN/EYP9QdIOStcsZhooV5yicQucR3Cp
-	TCkU7fuQ==;
+	bh=tvuYr5D8Q6laaTYwCJsjAZfLtDXELvjHjl5xjwK1rrc=; b=AriwOwP7oG9iQBW2psObb6x4r2
+	tiTk///I53gWttq3fPQs4Z3jZdm5Rsya9nyzy3XG1p52zEv/hTrYGCoOuseBaDQQ/rDHBYIctZcuW
+	xBpKvPhU03yzLRJkYCS35SH4sxT2+mQQpfjlxmZmhEFHRSvTiMrC2Fc5Vk58x8+OVanKeSfU4scVd
+	NXQ/yYN4ZcfZxqrj7M7dHNgx9mVUMlGs4nfsjPsehrl1yeCWS9mBh6kolwt/Fz4b0AuYTh09vem82
+	R7eWlfGKEONxkUnNbi+KfPO7UrVHMxk9yxPYyv3pN2zMfFOh4HBXDE+30wWEMe5SM73CMevhZMUB/
+	ta/ngWlw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vW6O3-00000007oyU-3pxc;
-	Thu, 18 Dec 2025 05:17:15 +0000
-Date: Wed, 17 Dec 2025 21:17:15 -0800
+	id 1vW6SW-00000007pt9-46D9;
+	Thu, 18 Dec 2025 05:21:52 +0000
+Date: Wed, 17 Dec 2025 21:21:52 -0800
 From: Christoph Hellwig <hch@infradead.org>
 To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-ext4@vger.kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, gabriel@krisman.be,
-	amir73il@gmail.com, linux-man@vger.kernel.org
-Subject: Re: [PATCH 1/6] uapi: promote EFSCORRUPTED and EUCLEAN to errno.h
-Message-ID: <aUOOW9z3K5ff-531@infradead.org>
+Cc: brauner@kernel.org, linux-ext4@vger.kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	gabriel@krisman.be, amir73il@gmail.com
+Subject: Re: [PATCH 2/6] fs: report filesystem and file I/O errors to fsnotify
+Message-ID: <aUOPcNNR1oAxa1hC@infradead.org>
 References: <176602332085.686273.7564676516217176769.stgit@frogsfrogsfrogs>
- <176602332146.686273.6355079912638580915.stgit@frogsfrogsfrogs>
+ <176602332171.686273.14690243193639006055.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,344 +60,50 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <176602332146.686273.6355079912638580915.stgit@frogsfrogsfrogs>
+In-Reply-To: <176602332171.686273.14690243193639006055.stgit@frogsfrogsfrogs>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Dec 17, 2025 at 06:02:56PM -0800, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
-> 
-> Stop definining these privately and instead move them to the uapi
-> errno.h so that they become canonical instead of copy pasta.
+>  	long					s_min_writeback_pages;
+> +
+> +	/* number of fserrors that are being sent to fsnotify/filesystems */
+> +	refcount_t		s_pending_errors;
 
-Sounds fine:
+Use the same tab-alignment as the fields above?  Also is this really
+a refcount?  It's a counter, but not really a reference?  I guess
+that doesn't matter too much.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+> +static inline void fserror_unmount(struct super_block *sb)
+> +{
+> +	/*
+> +	 * If we don't drop the pending error count to zero, then wait for it
+> +	 * to drop below 1, which means that the pending errors cleared or
+> +	 * that we saturated the system with 1 billion+ concurrent events.
+> +	 */
+> +	if (!refcount_dec_and_test(&sb->s_pending_errors))
+> +		wait_var_event(&sb->s_pending_errors,
+> +			       refcount_read(&sb->s_pending_errors) < 1);
+> +}
 
-Do we need to document these overlay errnos in the man man pages,
-though?
+Should this be out of line?
 
-> 
-> Cc: linux-api@vger.kernel.org
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> ---
->  arch/alpha/include/uapi/asm/errno.h        |    2 ++
->  arch/mips/include/uapi/asm/errno.h         |    2 ++
->  arch/parisc/include/uapi/asm/errno.h       |    2 ++
->  arch/sparc/include/uapi/asm/errno.h        |    2 ++
->  fs/erofs/internal.h                        |    2 --
->  fs/ext2/ext2.h                             |    1 -
->  fs/ext4/ext4.h                             |    3 ---
->  fs/f2fs/f2fs.h                             |    3 ---
->  fs/minix/minix.h                           |    2 --
->  fs/udf/udf_sb.h                            |    2 --
->  fs/xfs/xfs_linux.h                         |    2 --
->  include/linux/jbd2.h                       |    3 ---
->  include/uapi/asm-generic/errno.h           |    2 ++
->  tools/arch/alpha/include/uapi/asm/errno.h  |    2 ++
->  tools/arch/mips/include/uapi/asm/errno.h   |    2 ++
->  tools/arch/parisc/include/uapi/asm/errno.h |    2 ++
->  tools/arch/sparc/include/uapi/asm/errno.h  |    2 ++
->  tools/include/uapi/asm-generic/errno.h     |    2 ++
->  18 files changed, 20 insertions(+), 18 deletions(-)
-> 
-> 
-> diff --git a/arch/alpha/include/uapi/asm/errno.h b/arch/alpha/include/uapi/asm/errno.h
-> index 3d265f6babaf0a..6791f6508632ee 100644
-> --- a/arch/alpha/include/uapi/asm/errno.h
-> +++ b/arch/alpha/include/uapi/asm/errno.h
-> @@ -55,6 +55,7 @@
->  #define	ENOSR		82	/* Out of streams resources */
->  #define	ETIME		83	/* Timer expired */
->  #define	EBADMSG		84	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EPROTO		85	/* Protocol error */
->  #define	ENODATA		86	/* No data available */
->  #define	ENOSTR		87	/* Device not a stream */
-> @@ -96,6 +97,7 @@
->  #define	EREMCHG		115	/* Remote address changed */
->  
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
-> diff --git a/arch/mips/include/uapi/asm/errno.h b/arch/mips/include/uapi/asm/errno.h
-> index 2fb714e2d6d8fc..c01ed91b1ef44b 100644
-> --- a/arch/mips/include/uapi/asm/errno.h
-> +++ b/arch/mips/include/uapi/asm/errno.h
-> @@ -50,6 +50,7 @@
->  #define EDOTDOT		73	/* RFS specific error */
->  #define EMULTIHOP	74	/* Multihop attempted */
->  #define EBADMSG		77	/* Not a data message */
-> +#define EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define ENAMETOOLONG	78	/* File name too long */
->  #define EOVERFLOW	79	/* Value too large for defined data type */
->  #define ENOTUNIQ	80	/* Name not unique on network */
-> @@ -88,6 +89,7 @@
->  #define EISCONN		133	/* Transport endpoint is already connected */
->  #define ENOTCONN	134	/* Transport endpoint is not connected */
->  #define EUCLEAN		135	/* Structure needs cleaning */
-> +#define EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define ENOTNAM		137	/* Not a XENIX named type file */
->  #define ENAVAIL		138	/* No XENIX semaphores available */
->  #define EISNAM		139	/* Is a named type file */
-> diff --git a/arch/parisc/include/uapi/asm/errno.h b/arch/parisc/include/uapi/asm/errno.h
-> index 8d94739d75c67c..8cbc07c1903e4c 100644
-> --- a/arch/parisc/include/uapi/asm/errno.h
-> +++ b/arch/parisc/include/uapi/asm/errno.h
-> @@ -36,6 +36,7 @@
->  
->  #define	EDOTDOT		66	/* RFS specific error */
->  #define	EBADMSG		67	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EUSERS		68	/* Too many users */
->  #define	EDQUOT		69	/* Quota exceeded */
->  #define	ESTALE		70	/* Stale file handle */
-> @@ -62,6 +63,7 @@
->  #define	ERESTART	175	/* Interrupted system call should be restarted */
->  #define	ESTRPIPE	176	/* Streams pipe error */
->  #define	EUCLEAN		177	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		178	/* Not a XENIX named type file */
->  #define	ENAVAIL		179	/* No XENIX semaphores available */
->  #define	EISNAM		180	/* Is a named type file */
-> diff --git a/arch/sparc/include/uapi/asm/errno.h b/arch/sparc/include/uapi/asm/errno.h
-> index 81a732b902ee38..4a41e7835fd5b8 100644
-> --- a/arch/sparc/include/uapi/asm/errno.h
-> +++ b/arch/sparc/include/uapi/asm/errno.h
-> @@ -48,6 +48,7 @@
->  #define	ENOSR		74	/* Out of streams resources */
->  #define	ENOMSG		75	/* No message of desired type */
->  #define	EBADMSG		76	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EIDRM		77	/* Identifier removed */
->  #define	EDEADLK		78	/* Resource deadlock would occur */
->  #define	ENOLCK		79	/* No record locks available */
-> @@ -91,6 +92,7 @@
->  #define	ENOTUNIQ	115	/* Name not unique on network */
->  #define	ERESTART	116	/* Interrupted syscall should be restarted */
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index f7f622836198da..d06e99baf5d5ae 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -541,6 +541,4 @@ long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
->  long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
->  			unsigned long arg);
->  
-> -#define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
-> -
->  #endif	/* __EROFS_INTERNAL_H */
-> diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-> index cf97b76e9fd3e9..5e0c6c5fcb6cd6 100644
-> --- a/fs/ext2/ext2.h
-> +++ b/fs/ext2/ext2.h
-> @@ -357,7 +357,6 @@ struct ext2_inode {
->   */
->  #define	EXT2_VALID_FS			0x0001	/* Unmounted cleanly */
->  #define	EXT2_ERROR_FS			0x0002	/* Errors detected */
-> -#define	EFSCORRUPTED			EUCLEAN	/* Filesystem is corrupted */
->  
->  /*
->   * Mount flags
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 56112f201cace7..62c091b52bacdf 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3938,7 +3938,4 @@ extern int ext4_block_write_begin(handle_t *handle, struct folio *folio,
->  				  get_block_t *get_block);
->  #endif	/* __KERNEL__ */
->  
-> -#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> -
->  #endif	/* _EXT4_H */
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 20edbb99b814a7..9f3aa3c7f12613 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -5004,7 +5004,4 @@ static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
->  	f2fs_invalidate_compress_pages_range(sbi, blkaddr, len);
->  }
->  
-> -#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> -
->  #endif /* _LINUX_F2FS_H */
-> diff --git a/fs/minix/minix.h b/fs/minix/minix.h
-> index 2bfaf377f2086c..7e1f652f16d311 100644
-> --- a/fs/minix/minix.h
-> +++ b/fs/minix/minix.h
-> @@ -175,6 +175,4 @@ static inline int minix_test_bit(int nr, const void *vaddr)
->  	__minix_error_inode((inode), __func__, __LINE__,	\
->  			    (fmt), ##__VA_ARGS__)
->  
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> -
->  #endif /* FS_MINIX_H */
-> diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
-> index 08ec8756b9487b..8399accc788dea 100644
-> --- a/fs/udf/udf_sb.h
-> +++ b/fs/udf/udf_sb.h
-> @@ -55,8 +55,6 @@
->  #define MF_DUPLICATE_MD		0x01
->  #define MF_MIRROR_FE_LOADED	0x02
->  
-> -#define EFSCORRUPTED EUCLEAN
-> -
->  struct udf_meta_data {
->  	__u32	s_meta_file_loc;
->  	__u32	s_mirror_file_loc;
-> diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-> index 4dd747bdbccab2..55064228c4d574 100644
-> --- a/fs/xfs/xfs_linux.h
-> +++ b/fs/xfs/xfs_linux.h
-> @@ -121,8 +121,6 @@ typedef __u32			xfs_nlink_t;
->  
->  #define ENOATTR		ENODATA		/* Attribute not found */
->  #define EWRONGFS	EINVAL		/* Mount with wrong filesystem type */
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> -#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
->  
->  #define __return_address __builtin_return_address(0)
->  
-> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-> index f5eaf76198f377..a53a00d36228ce 100644
-> --- a/include/linux/jbd2.h
-> +++ b/include/linux/jbd2.h
-> @@ -1815,7 +1815,4 @@ static inline int jbd2_handle_buffer_credits(handle_t *handle)
->  
->  #endif	/* __KERNEL__ */
->  
-> -#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> -
->  #endif	/* _LINUX_JBD2_H */
-> diff --git a/include/uapi/asm-generic/errno.h b/include/uapi/asm-generic/errno.h
-> index cf9c51ac49f97e..92e7ae493ee315 100644
-> --- a/include/uapi/asm-generic/errno.h
-> +++ b/include/uapi/asm-generic/errno.h
-> @@ -55,6 +55,7 @@
->  #define	EMULTIHOP	72	/* Multihop attempted */
->  #define	EDOTDOT		73	/* RFS specific error */
->  #define	EBADMSG		74	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EOVERFLOW	75	/* Value too large for defined data type */
->  #define	ENOTUNIQ	76	/* Name not unique on network */
->  #define	EBADFD		77	/* File descriptor in bad state */
-> @@ -98,6 +99,7 @@
->  #define	EINPROGRESS	115	/* Operation now in progress */
->  #define	ESTALE		116	/* Stale file handle */
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
-> diff --git a/tools/arch/alpha/include/uapi/asm/errno.h b/tools/arch/alpha/include/uapi/asm/errno.h
-> index 3d265f6babaf0a..6791f6508632ee 100644
-> --- a/tools/arch/alpha/include/uapi/asm/errno.h
-> +++ b/tools/arch/alpha/include/uapi/asm/errno.h
-> @@ -55,6 +55,7 @@
->  #define	ENOSR		82	/* Out of streams resources */
->  #define	ETIME		83	/* Timer expired */
->  #define	EBADMSG		84	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EPROTO		85	/* Protocol error */
->  #define	ENODATA		86	/* No data available */
->  #define	ENOSTR		87	/* Device not a stream */
-> @@ -96,6 +97,7 @@
->  #define	EREMCHG		115	/* Remote address changed */
->  
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
-> diff --git a/tools/arch/mips/include/uapi/asm/errno.h b/tools/arch/mips/include/uapi/asm/errno.h
-> index 2fb714e2d6d8fc..c01ed91b1ef44b 100644
-> --- a/tools/arch/mips/include/uapi/asm/errno.h
-> +++ b/tools/arch/mips/include/uapi/asm/errno.h
-> @@ -50,6 +50,7 @@
->  #define EDOTDOT		73	/* RFS specific error */
->  #define EMULTIHOP	74	/* Multihop attempted */
->  #define EBADMSG		77	/* Not a data message */
-> +#define EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define ENAMETOOLONG	78	/* File name too long */
->  #define EOVERFLOW	79	/* Value too large for defined data type */
->  #define ENOTUNIQ	80	/* Name not unique on network */
-> @@ -88,6 +89,7 @@
->  #define EISCONN		133	/* Transport endpoint is already connected */
->  #define ENOTCONN	134	/* Transport endpoint is not connected */
->  #define EUCLEAN		135	/* Structure needs cleaning */
-> +#define EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define ENOTNAM		137	/* Not a XENIX named type file */
->  #define ENAVAIL		138	/* No XENIX semaphores available */
->  #define EISNAM		139	/* Is a named type file */
-> diff --git a/tools/arch/parisc/include/uapi/asm/errno.h b/tools/arch/parisc/include/uapi/asm/errno.h
-> index 8d94739d75c67c..8cbc07c1903e4c 100644
-> --- a/tools/arch/parisc/include/uapi/asm/errno.h
-> +++ b/tools/arch/parisc/include/uapi/asm/errno.h
-> @@ -36,6 +36,7 @@
->  
->  #define	EDOTDOT		66	/* RFS specific error */
->  #define	EBADMSG		67	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EUSERS		68	/* Too many users */
->  #define	EDQUOT		69	/* Quota exceeded */
->  #define	ESTALE		70	/* Stale file handle */
-> @@ -62,6 +63,7 @@
->  #define	ERESTART	175	/* Interrupted system call should be restarted */
->  #define	ESTRPIPE	176	/* Streams pipe error */
->  #define	EUCLEAN		177	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		178	/* Not a XENIX named type file */
->  #define	ENAVAIL		179	/* No XENIX semaphores available */
->  #define	EISNAM		180	/* Is a named type file */
-> diff --git a/tools/arch/sparc/include/uapi/asm/errno.h b/tools/arch/sparc/include/uapi/asm/errno.h
-> index 81a732b902ee38..4a41e7835fd5b8 100644
-> --- a/tools/arch/sparc/include/uapi/asm/errno.h
-> +++ b/tools/arch/sparc/include/uapi/asm/errno.h
-> @@ -48,6 +48,7 @@
->  #define	ENOSR		74	/* Out of streams resources */
->  #define	ENOMSG		75	/* No message of desired type */
->  #define	EBADMSG		76	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EIDRM		77	/* Identifier removed */
->  #define	EDEADLK		78	/* Resource deadlock would occur */
->  #define	ENOLCK		79	/* No record locks available */
-> @@ -91,6 +92,7 @@
->  #define	ENOTUNIQ	115	/* Name not unique on network */
->  #define	ERESTART	116	/* Interrupted syscall should be restarted */
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
-> diff --git a/tools/include/uapi/asm-generic/errno.h b/tools/include/uapi/asm-generic/errno.h
-> index cf9c51ac49f97e..92e7ae493ee315 100644
-> --- a/tools/include/uapi/asm-generic/errno.h
-> +++ b/tools/include/uapi/asm-generic/errno.h
-> @@ -55,6 +55,7 @@
->  #define	EMULTIHOP	72	/* Multihop attempted */
->  #define	EDOTDOT		73	/* RFS specific error */
->  #define	EBADMSG		74	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EOVERFLOW	75	/* Value too large for defined data type */
->  #define	ENOTUNIQ	76	/* Name not unique on network */
->  #define	EBADFD		77	/* File descriptor in bad state */
-> @@ -98,6 +99,7 @@
->  #define	EINPROGRESS	115	/* Operation now in progress */
->  #define	ESTALE		116	/* Stale file handle */
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
-> 
-> 
----end quoted text---
+> +/**
+> + * fserror_report - report a filesystem error of some kind
+> + *
+> + * Report details of a filesystem error to the super_operations::report_error
+> + * callback if present; and to fsnotify for distribution to userspace.  @sb,
+> + * @gfp, @type, and @error must all be specified.  For file I/O errors, the
+> + * @inode, @pos, and @len fields must also be specified.  For file metadata
+> + * errors, @inode must be specified.  If @inode is not NULL, then @inode->i_sb
+> + * must point to @sb.
+> + *
+> + * Reporting work is deferred to a workqueue to ensure that ->report_error is
+> + * called from process context without any locks held.  An active reference to
+> + * the inode is maintained until event handling is complete, and unmount will
+> + * wait for queued events to drain.
+> + *
+> + * @sb:		superblock of the filesystem
+
+The normal convention is to have the arguments documented above the
+long description.  Any reason to deviate from that here?
+
 
