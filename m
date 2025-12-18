@@ -1,161 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-71604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E36CCA372
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 04:52:26 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0A9CCA3BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 05:03:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 26B933061C7A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 03:50:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 638A5300D17A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 04:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC732FE581;
-	Thu, 18 Dec 2025 03:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEA92EB5D4;
+	Thu, 18 Dec 2025 04:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XqrD6Rtr";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="fDbxNoS9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J/pCWsH6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D0B2571B8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 03:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921DC1A9FAC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 04:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766029854; cv=none; b=eXcUiNycmocqHOZ9rbbY/mDOK5aaYdVkFKxnmcdLdv0lOwqxLqmhHVcPytWssWmylwQUA72AeRU15eJ/Uv2P9APNQixBnJAp1PWtoLP5m6xfKc5hCjoK6BpLYR5pScqvI52dTNkXm7TCW/Ykaa4062Jj9uvnIsfuRWDDNEx2c+s=
+	t=1766030614; cv=none; b=rpGNXo+0Zn0g9RLoWBAWBAgyi2qJNXFMA4Q4uv7QiH/ljEg4d9qZkmSw7JuzVokACl+NXFq8A6nUr3mKd031wtwmGMA446rrV31bKnqIDDWPR9sw0wbOGIQF9ByUpI0h6j0fCHoqUlyN9SBn7DLZLpYhTXFPHJ19bgkAyq1+Uk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766029854; c=relaxed/simple;
-	bh=3NjRZoIfXWJ3zNa/5zT3Awvrf33cGByJk/NuJvo2i88=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lg3ueSGeeY5Eo+/sax3GRW5LQjkND9WRcr7WKw5vTp9PNUwcNJw7BwbSD3SvVBEE2AKlz9MgNkgibOXSmLczhDMZRXfai4lGeMi/MF3HGHm3UhByhePO/U1OnmOcxLb0UbAtT5vU4WN8lX/1Dn/ln8OkKQHerUjTgl74tIK1AJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XqrD6Rtr; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=fDbxNoS9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766029851;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HREBjb2QxiwbqHRQDxCYqTPo2R84DWJ+5LQcwkuRwhM=;
-	b=XqrD6RtrspCSZOMBbsC9C8BYVjtk7XoUlYmGWHRXoHrc++HwHH8ASHZ1bevRfkw+3g8DuA
-	lT76L5owb3APVBePA7naxIp9Hn/ZbWCupdCSl+37DtOh7NjZeS96WgqTO9psr0cni4L0Dp
-	pRTL4bkpGwiMtTmMZzR2bqJK2ahWhpA=
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
- [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-202-6n2IylQgMrqX6scakhV2nQ-1; Wed, 17 Dec 2025 22:50:50 -0500
-X-MC-Unique: 6n2IylQgMrqX6scakhV2nQ-1
-X-Mimecast-MFC-AGG-ID: 6n2IylQgMrqX6scakhV2nQ_1766029849
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-65d004d4d01so149492eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Dec 2025 19:50:50 -0800 (PST)
+	s=arc-20240116; t=1766030614; c=relaxed/simple;
+	bh=wipqmJTb3RPr4bYzc7MlLp/HKbCdY/GhUhkFh7D5GpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f3FL5uXSZG8b+PZvKjauLoV68ds7JE/M18H1b6dAVti3cELIPuokp2mQE8wAfXdF539v/+9VWWhkTtLP4wSMC85a2UWs4sXvBdut1o7ivo7U3EK7lKqWWlayIiObx07Zrua+ix+1tqHA5kZmzZmbhzS0CPpNM09GDpwSgo38BB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J/pCWsH6; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2a1388cdac3so1939555ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Dec 2025 20:03:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1766029849; x=1766634649; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HREBjb2QxiwbqHRQDxCYqTPo2R84DWJ+5LQcwkuRwhM=;
-        b=fDbxNoS9QAC+IwI2GVjKbn7Yn/EX/kaORpE+kh9J0mG/+TGThU444MbwfGxE9+WOWv
-         WluCQRtK5V1OL3LmP7r+yVTyhAVyUimLU/jyGWxWcS4/ZdUMj12k1S3yPPetmccdkKdS
-         QYAcCQteLpID4k4B10u3DvKfnlCCrKL/+x4MRPCtPXPvaJBDNVD9O2Uw1RkZzpSafRdp
-         Pjsr7uI5kVMMAQ98VxlhKaRbjFk3zNjmTmdEyhjpL7I64TycPtGFful6mnCa4/phXCEm
-         OhQFi0BbOXwBWbhxNSgEsnyi04ih/gGbDwitxCrg5/c/QqraYbCSG+miKweUgSp3q4Oi
-         U+Aw==
+        d=gmail.com; s=20230601; t=1766030612; x=1766635412; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aHI6rvtpgTrf2rQzMwqNIBav/7/ZYbn4AXdiKjSA/wA=;
+        b=J/pCWsH6ZIeXwnyY/YhHAxwuz0uapGe68KJYNP9GFw+46jadqqOkN4C/0IqlddkpqN
+         sqq60ApIy8TTkiPyDBVoeTR37fmrFajVv6AAWMzwKTYuudIKCZph+l2KvrJLhLolGrM9
+         8ObryUBGx1e3xJytQjBpp9UXG4NsDMqgz/Ng/RLPZDq8NyyugpqdrRsAhxpo0qFcK0Eu
+         4NKw6Qj9V4ynMr5f+YTXbuDghQtIX3YpCcuD89ticlqIrwACda7KlPNsdr0qbWCRKOGP
+         F1IsCrcPo+oRT1WSDAiCTpW07ppOYhe6xqalY4p9NVgAYwQHQGtnUvh7ixe3nJPKpvDm
+         zNfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766029849; x=1766634649;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HREBjb2QxiwbqHRQDxCYqTPo2R84DWJ+5LQcwkuRwhM=;
-        b=nvYpiRQqlf05hDXgb6C7uiRqQoIKaj0sxFoy3q0pGUB7HWqsKFt121QZ4SXwkp+go2
-         iPPxadjO+ro500GiVOLm76rrgXW2JFUjhi5LsBNUnwyU7mGBuifJKWB7WVw2orvjFrRG
-         /GIKXyTzsnSL898G/F62BP09IGUf11p/6lGxk7/S8bpky/mK6KJhclcjPvmXWy4Q9IOI
-         EtGWk9mOzwAg91VV3XamBWRjGU/IEr8O2zR8OydthejNCzZnULQanerwF0Q5XX9hZZAu
-         59pvABQwEva29G3n+JNANydecg/i3gj2whRDoUcVLhrivtuWmff2vMSTmCLxrSD3hIFF
-         D2IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUb+EZnHXYo3NCuzvI+IGnQJAQqDrq9sbP38n3LqnWY9SR0umeR8sFSiw3jyyGZcVrmXTuN0q6akFeu0NQP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2u51IKGinO3awOX1g0WrDiIgpoQfuDY0cULSwRxOIdkLVjtrO
-	OKjAfzpBFdpcqzvgZNU9TuLAtyA8NwU7ybbtbhj97uCLUud4J0MV2UXl96m17bFubad3wVBLULx
-	urTMdANSFOrkBO0BE38+ka4Bwrh7wTdAO8O8Pqm9OGMLKT2FdpYNsyA1v5Ahwm/5Ub7K54o90Gr
-	W7OI7N8PPzuFRsp2yF9oAC20FtMp7HzqEvzpkN7731+A==
-X-Gm-Gg: AY/fxX4jEFlGiPwxwTi66Jvzolq3jJoeml0k07ELejSakx7L8L+J2lPb8W5xxssE/uE
-	3ROWh/r22Wq+/JFV5WZmsT5SsKNFfenEpUTkGgTVmy0ZA+jslvSXuXIjPmq1kjrDEnGMypfcCdD
-	pKL9K95uplr36lmtcWFQmoSFPwO5XUh0iBFL1gzSaZoiaHj99TPUcytQDSeQyt0thJzWf66sHWX
-	eH8D9asYPB3HuRd7BSP0d9NYA==
-X-Received: by 2002:a05:6820:1613:b0:659:9a49:8e3b with SMTP id 006d021491bc7-65b4518076fmr8410105eaf.11.1766029849444;
-        Wed, 17 Dec 2025 19:50:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHmnT+9YdP42WGYbx4GL92R/LsivEa+Q4Y8dS576ThWfw+doiQ2TCzi3NRqSV8Hy3+gr19NHDpEyB+sb4qeG9g=
-X-Received: by 2002:a05:6820:1613:b0:659:9a49:8e3b with SMTP id
- 006d021491bc7-65b4518076fmr8410100eaf.11.1766029849137; Wed, 17 Dec 2025
- 19:50:49 -0800 (PST)
+        d=1e100.net; s=20230601; t=1766030612; x=1766635412;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aHI6rvtpgTrf2rQzMwqNIBav/7/ZYbn4AXdiKjSA/wA=;
+        b=HzFGrLk74VTwLhepGWeuGzpVI0SJP+/Hme7o8jebr52f2yczoagVb7jF6wMKLHG7Kx
+         Xv9gAJ6GmGCzABYDVCCuoZX6F0HGNFkgMxqC9dfAu160z6d2vGEwz2LiK0hWjpCKEupH
+         jQhmF+iDvL1qbm44s7k5QUZ1BLCHJmm12g7HX/y1VHbH9I6INvwrrqMfMx7U8DtMqYhm
+         IpR+0eQ6xU91RjuKTWps5zL/i+0EraD2zKtjaC3+j1XaoP4CKX8S1K/CR5QsW8Se8ZXq
+         yUlSiy1zQM1v1efTcpuBRxYbdzpm9HGpqpuJ3+4DQCRYxsjCyPw37aN4eES7uTJV3wht
+         b+aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEssA97+vzQ0y9ySlajAbq9rnqsYJgoLS6SBZ4fbG45bsVOuxbckaO9zMUih7ZDvWBbX2V0U7dg6TiFeAy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+i3PGTDAnn6giO3pSpn5QepYNxRKPMTvbl7+2QYrIxDTuCrlI
+	xbp7BXTSr19mW2FLGlAGHEjWzM6OzR9bozCoLe2TC59Pjp9TaolAxeKL
+X-Gm-Gg: AY/fxX65PDXShYjxkTqejGnhP3j97J45M3gv3cmYmV+52uJ6xQlraH46lmpazFZXKLd
+	yNzBGb9UsBzk6c5bouDw8Vbt8G5HhgYyutOvSnNizBK5dTP0bbupseYVru0iO22Cg2TcC5PIDpa
+	J0/WWvsD48uLfq42f0Wes3lrf+fwmSVJXx9iscd8Bq0r34JO6yxfiUkuBJJ2ECUf6oeli3p2kkz
+	fCnbZTT/gCC9TgkbkTUPArobR69QZxvnawThBu0tWcNw4nE+9Vshc8t0rLizM7h+dlyBuvv9jOA
+	9NruDef3kr+U+Q5yhex6nlIuwiwTojxIuY8VPNoX13Wf3c5MdQWW72/o77g+xkNqo2jjPqZYpic
+	2VjBQBM33JQP5PCg/h5eid91dg7fd68Vbab9DHQJDp0ejZH6xAv747Jd9jhzDvXZSsFK+JpXOLi
+	DHYZ8=
+X-Google-Smtp-Source: AGHT+IHa7r0mYrLhWHjYQHKjTjGzpva8/SmCDywQMnfbi/eRtfbpSa8NAyazhiN4pJFcNwjNZ5uZlg==
+X-Received: by 2002:a17:903:11c8:b0:2a1:388c:ca5b with SMTP id d9443c01a7336-2a1388cced6mr90213585ad.39.1766030611814;
+        Wed, 17 Dec 2025 20:03:31 -0800 (PST)
+Received: from localhost ([2a12:a304:100::105b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2d087c690sm8680035ad.20.2025.12.17.20.03.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Dec 2025 20:03:31 -0800 (PST)
+Date: Thu, 18 Dec 2025 12:03:28 +0800
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Hannes Reinecke <hare@suse.de>,
+	Luis Chamberlain <mcgrof@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	syzbot+4d3cc33ef7a77041efa6@syzkaller.appspotmail.com,
+	syzbot+fdba5cca73fee92c69d6@syzkaller.appspotmail.com
+Subject: Re: [PATCH] mm/readahead: read min folio constraints under
+ invalidate lock
+Message-ID: <aUN9BFdxHQj8ThMS@ndev>
+References: <20251215141936.1045907-1-wangjinchao600@gmail.com>
+ <aUAZn1ituYtbCEdd@casper.infradead.org>
+ <aUC32PJZWFayGO-X@ndev>
+ <aUDG_vVdM03PyVYs@casper.infradead.org>
+ <aUDOCPDa-FURkeob@ndev>
+ <aUDXrYgwZAMYkXVu@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251215215301.10433-2-slava@dubeyko.com> <CA+2bHPbtGQwxT5AcEhF--AthRTzBS2aCb0mKvM_jCu_g+GM17g@mail.gmail.com>
- <efbd55b968bdaaa89d3cf29a9e7f593aee9957e0.camel@ibm.com>
-In-Reply-To: <efbd55b968bdaaa89d3cf29a9e7f593aee9957e0.camel@ibm.com>
-From: Patrick Donnelly <pdonnell@redhat.com>
-Date: Wed, 17 Dec 2025 22:50:23 -0500
-X-Gm-Features: AQt7F2qRHCnNAtF8htmTG7RN9sTQYIaOKs8Qm9m-7WqsZ7izIVxH2V_V15lJJbU
-Message-ID: <CA+2bHPYRUycP0M5m6_XJiBXPEw0SyPCKJNk8P5-9uRSdtdFw4w@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: fix kernel crash in ceph_open()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "slava@dubeyko.com" <slava@dubeyko.com>, Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>, 
-	Viacheslav Dubeyko <vdubeyko@redhat.com>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "idryomov@gmail.com" <idryomov@gmail.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>, 
-	Kotresh Hiremath Ravishankar <khiremat@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aUDXrYgwZAMYkXVu@casper.infradead.org>
 
-On Wed, Dec 17, 2025 at 3:44=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
->
-> On Wed, 2025-12-17 at 15:36 -0500, Patrick Donnelly wrote:
-> > Hi Slava,
-> >
-> > A few things:
-> >
-> > * CEPH_NAMESPACE_WIDCARD -> CEPH_NAMESPACE_WILDCARD ?
->
-> Yeah, sure :) My bad.
->
-> > * The comment "name for "old" CephFS file systems," appears twice.
-> > Probably only necessary in the header.
->
-> Makes sense.
->
-> > * You also need to update ceph_mds_auth_match to call
-> > namespace_equals.
-> >
->
-> Do you mean this code [1]?
+On Tue, Dec 16, 2025 at 03:53:17AM +0000, Matthew Wilcox wrote:
+> On Tue, Dec 16, 2025 at 11:12:21AM +0800, Jinchao Wang wrote:
+> > On Tue, Dec 16, 2025 at 02:42:06AM +0000, Matthew Wilcox wrote:
+> > > On Tue, Dec 16, 2025 at 09:37:51AM +0800, Jinchao Wang wrote:
+> > > > On Mon, Dec 15, 2025 at 02:22:23PM +0000, Matthew Wilcox wrote:
+> > > > > On Mon, Dec 15, 2025 at 10:19:00PM +0800, Jinchao Wang wrote:
+> > > > > > page_cache_ra_order() and page_cache_ra_unbounded() read mapping minimum folio
+> > > > > > constraints before taking the invalidate lock, allowing concurrent changes to
+> > > > > > violate page cache invariants.
+> > > > > > 
+> > > > > > Move the lookups under filemap_invalidate_lock_shared() to ensure readahead
+> > > > > > allocations respect the mapping constraints.
+> > > > > 
+> > > > > Why are the mapping folio size constraints being changed?  They're
+> > > > > supposed to be set at inode instantiation and then never changed.
+> > > > 
+> > > > They can change after instantiation for block devices. In the syzbot repro:
+> > > >   blkdev_ioctl() -> blkdev_bszset() -> set_blocksize() ->
+> > > >   mapping_set_folio_min_order()
+> > > 
+> > > Oh, this is just syzbot doing stupid things.  We should probably make
+> > > blkdev_bszset() fail if somebody else has an fd open.
+> > 
+> > Thanks, that makes sense.
+> > Tightening blkdev_bszset() would avoid the race entirely.
+> > This change is meant as a defensive fix to prevent BUGs.
+> 
+> Yes, but the point is that there's a lot of code which relies on
+> the AS_FOLIO bits not changing in the middle.  Syzbot found one of them,
+> but there are others.
 
-Yes, that's it.
+I've been thinking about this more, and I wanted to share another
+perspective if that's okay.
 
-> >  Suggest documenting (in the man page) that
-> > mds_namespace mntopt can be "*" now.
-> >
->
-> Agreed. Which man page do you mean? Because 'man mount' contains no info =
-about
-> Ceph. And it is my worry that we have nothing there. We should do somethi=
-ng
-> about it. Do I miss something here?
+Rather than tracking down every place that might change AS_FOLIO bits
+(like blkdev_bszset() and potentially others), what if we make the
+page cache layer itself robust against such changes?
 
-https://github.com/ceph/ceph/blob/2e87714b94a9e16c764ef6f97de50aecf1b0c41e/=
-doc/man/8/mount.ceph.rst
+The invalidate_lock was introduced for exactly this kind of protection
+(commit 730633f0b7f9: "mm: Protect operations adding pages to page
+cache with invalidate_lock"). This way, the page cache doesn't need
+to rely on assumptions about what upper layers might do.
 
-^ that file. (There may be others but I think that's the main one
-users look at.)
+The readahead functions already hold filemap_invalidate_lock_shared(),
+so moving the constraint reads under the lock adds no overhead. It
+would protect against AS_FOLIO changes regardless of their source.
 
---=20
-Patrick Donnelly, Ph.D.
-He / Him / His
-Red Hat Partner Engineer
-IBM, Inc.
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+I think this separates concerns nicely: upper layers can change
+constraints through the invalidate_lock protocol, and page cache
+operations are automatically safe. But I'd really value your thoughts
+on this approach - you have much more experience with these tradeoffs
+than I do.
 
+Thanks again for taking the time to discuss this.
 
