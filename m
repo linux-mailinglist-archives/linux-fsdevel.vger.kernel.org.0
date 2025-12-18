@@ -1,51 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-71589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846DFCCA090
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 03:03:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3903CCA099
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 03:03:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8BCDF30237A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 02:02:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E2E49303461D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 02:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8EC2750ED;
-	Thu, 18 Dec 2025 02:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6727274B55;
+	Thu, 18 Dec 2025 02:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+j1uXJM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Af6IaXkG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966BF1D5CD4;
-	Thu, 18 Dec 2025 02:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45420257435;
+	Thu, 18 Dec 2025 02:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766023365; cv=none; b=tPPBp7x9tMWZRMejqz4+KUX6q1dxL491J9m0jEtRuE6H5L78H1bnV5alcISc4HzHC5iAphwfovhHsZfc9zk97vsjvgRvMpfmWtLpnwW+NRTz75Wo+W4vuFQI1Wi0OsUFAG0jX8CC4EPSRAZ1zWAL+Dvw3vX4hp3+DfufN3137b8=
+	t=1766023371; cv=none; b=cbwT77bJji5kG6SeP9AIQRiwOOVZTwYE3V90aOwdZ7nN9Rprbk71GEaaQsw2ZnTnzaWysw3JMJ65AcNfSvbQsuqrhbUYBVGEJl+yjI8zIIejJ5rUuFAPQnJ5k2QgZMSvCI3qprUA46CKtuZIlJCfNBZqqo8utPSaHeuL3AAGpw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766023365; c=relaxed/simple;
-	bh=u76OWdWN5eeNBkvlN2MC7QTcfUrXbEvUqPLzjrIxIdQ=;
-	h=Date:Subject:From:To:Cc:Message-ID:MIME-Version:Content-Type; b=KNHL9vw//uCuGYKRdfjVWukXCxTbfMrWYnyTDgfMbegdYm8mfXV21VDkUR7rK4CMRTSfrJySclklCgb7HXYwfqHPCu5nQBiGF6cqQFFKGtSTRyVrlfLtT2OUzF+4ezf2m30t7m4i8OTuOXa6j103bl+8imBK/C203gNblIMgkio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+j1uXJM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 185CAC116B1;
-	Thu, 18 Dec 2025 02:02:45 +0000 (UTC)
+	s=arc-20240116; t=1766023371; c=relaxed/simple;
+	bh=oH6Si/IQGwMkVWEFlgne6RF6Y/0VrLC5U4ma5Osfq3c=;
+	h=Date:Subject:From:To:Cc:Message-ID:MIME-Version:Content-Type; b=nKgIIumlWu6kOxFijjuiCC1dGjHsY4/Wd74lC+sm6/OxuP30XhdWvcHmX9GMg1QlfynfRpTqgSEqU0iflh+E1ZEWBchsR7KT+xvMzrloWqEomV5EHcRvYAFTOL/7xUxhw+YGdo8gmfmWbqPQlx9ZI2XP3LicILh5oFxtIpYHKB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Af6IaXkG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDE8FC4CEF5;
+	Thu, 18 Dec 2025 02:02:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766023365;
-	bh=u76OWdWN5eeNBkvlN2MC7QTcfUrXbEvUqPLzjrIxIdQ=;
+	s=k20201202; t=1766023370;
+	bh=oH6Si/IQGwMkVWEFlgne6RF6Y/0VrLC5U4ma5Osfq3c=;
 	h=Date:Subject:From:To:Cc:From;
-	b=p+j1uXJMSevQnBN9YQCxDFxiW3b9URZnH3oHaYi6tA8aRxPrMUFiZN8dB5g8KTaxJ
-	 g4idxaHWo6DFhmLnlXk/cbandUV2vYdoVUUa5o/3RoFUhnsSfSy0ycil2QNzn/54yh
-	 aEy0Gui8Vno5cTq9dltljvgwSLYKD4ZQZhAPFGN0yHQKVGX1q1EPE0t8LZ3N9+y4Pf
-	 emy6y270WMS2NFOzcwSgQM/bUMagTcUpgk8zC68g3ZXosLDI9z7St/QX1Ec5/I/b6U
-	 yfKGB3C1zIGRxtOGV2bGyFu8YrqGZ4tJhFOGu513jPnCU+BUI7cDgpJzd1fj25Hw1B
-	 puwQqWIJSWeig==
-Date: Wed, 17 Dec 2025 18:02:44 -0800
-Subject: [PATCHSET V4 1/2] fs: generic file IO error reporting
+	b=Af6IaXkGoG11xHPkCt+uCy4AdVJXJxsXNOFBU4uTSq9x2gA9eMgSEOQ8i9WTcWP72
+	 by0jwksuFFibLg5uOAxFOcc9Eda0kywGvAjYvZzfRsoF43FtqprQNyoO1Kntr2tFIk
+	 GB+dhU/j4eqmCLjBq8ZMGLXRvxsnQ0FzPLJ3vI5N/gaupPJM2wcY1W7tjPLYnfwGaR
+	 sj7sgPIM1P4PcqjNFVJ2eV4LxfDh5pM260VlxpLzA2e9EwPZ8VdeTElYL8kekEAMMj
+	 IDuHBlwM1eZb608EWRbNLKSNaZ++KgAqEaKqA6C4ehEaffGAn8QZ85mvNrbOKieKAu
+	 +wAxbORPk59+g==
+Date: Wed, 17 Dec 2025 18:02:50 -0800
+Subject: [PATCHSET V4 2/2] fs: send uevents on mount and unmount
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: brauner@kernel.org, djwong@kernel.org
-Cc: linux-api@vger.kernel.org, hch@lst.de, linux-ext4@vger.kernel.org,
- jack@suse.cz, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- gabriel@krisman.be, hch@lst.de, amir73il@gmail.com
-Message-ID: <176602332085.686273.7564676516217176769.stgit@frogsfrogsfrogs>
+Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, hch@lst.de,
+ linux-fsdevel@vger.kernel.org
+Message-ID: <176602332484.688213.11232314346072982565.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,15 +56,20 @@ Content-Transfer-Encoding: 7bit
 
 Hi all,
 
-This patchset adds some generic helpers so that filesystems can report
-errors to fsnotify in a standard way.  Then it adapts iomap to use the
-generic helpers so that any iomap-enabled filesystem can report I/O
-errors through this mechanism as well.  Finally, it makes XFS report
-metadata errors through this mechanism in much the same way that ext4
-does now.
+To support a self healing filesystem, we need a way to autostart the
+xfs_healer userspace daemon as soon as a filesystem mounts.  Since XFS
+actually creates a file in the sysfs namespace, the kernel can emit
+a uevent for that sysfs file when the filesystem mounts.  In turn, udev
+will process the uevent according to the uevent rules, which means that
+we have an easy way to start the background service.
 
-These are a prerequisite for the XFS self-healing V4 series which will
-come at a later time.
+This short series adds some common code to emit filesystem uevents and
+teaches xfs to take advantage of it.  Unfortunately this isn't a fully
+generic solution because not all filesystems actually create kobjects
+for themselves.
+
+This is also a prerequisite for the XFS self-healing V4 series which
+will come at a later time.
 
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
@@ -76,52 +80,27 @@ Comments and questions are, as always, welcome.
 --D
 
 kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=filesystem-error-reporting
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=filesystem-uevents
 
 fstests git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=filesystem-error-reporting
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=filesystem-uevents
 ---
 Commits in this patchset:
- * uapi: promote EFSCORRUPTED and EUCLEAN to errno.h
- * fs: report filesystem and file I/O errors to fsnotify
- * iomap: report file I/O errors to the VFS
- * xfs: report fs metadata errors via fsnotify
- * xfs: translate fsdax media errors into file "data lost" errors when convenient
- * ext4: convert to new fserror helpers
+ * fs: send uevents for filesystem mount events
+ * xfs: send uevents when major filesystem events happen
+ * ext4: convert ext4_root to a kset
+ * ext4: send uevents when major filesystem events happen
 ---
- arch/alpha/include/uapi/asm/errno.h        |    2 
- arch/mips/include/uapi/asm/errno.h         |    2 
- arch/parisc/include/uapi/asm/errno.h       |    2 
- arch/sparc/include/uapi/asm/errno.h        |    2 
- fs/erofs/internal.h                        |    2 
- fs/ext2/ext2.h                             |    1 
- fs/ext4/ext4.h                             |    3 -
- fs/f2fs/f2fs.h                             |    3 -
- fs/minix/minix.h                           |    2 
- fs/udf/udf_sb.h                            |    2 
- fs/xfs/xfs_linux.h                         |    2 
- include/linux/fs/super_types.h             |    7 +
- include/linux/fserror.h                    |   93 ++++++++++++++++
- include/linux/jbd2.h                       |    3 -
- include/uapi/asm-generic/errno.h           |    2 
- tools/arch/alpha/include/uapi/asm/errno.h  |    2 
- tools/arch/mips/include/uapi/asm/errno.h   |    2 
- tools/arch/parisc/include/uapi/asm/errno.h |    2 
- tools/arch/sparc/include/uapi/asm/errno.h  |    2 
- tools/include/uapi/asm-generic/errno.h     |    2 
- fs/Makefile                                |    2 
- fs/ext4/ioctl.c                            |    2 
- fs/ext4/super.c                            |   13 ++
- fs/fserror.c                               |  168 ++++++++++++++++++++++++++++
- fs/iomap/buffered-io.c                     |   23 ++++
- fs/iomap/direct-io.c                       |   12 ++
- fs/iomap/ioend.c                           |    6 +
- fs/super.c                                 |    3 +
- fs/xfs/xfs_fsops.c                         |    4 +
- fs/xfs/xfs_health.c                        |   14 ++
- fs/xfs/xfs_notify_failure.c                |    4 +
- 31 files changed, 365 insertions(+), 24 deletions(-)
- create mode 100644 include/linux/fserror.h
- create mode 100644 fs/fserror.c
+ include/linux/fsevent.h |   33 ++++++++++++
+ fs/Makefile             |    2 -
+ fs/ext4/ioctl.c         |    2 +
+ fs/ext4/super.c         |    6 ++
+ fs/ext4/sysfs.c         |   22 +++++---
+ fs/fsevent.c            |  128 +++++++++++++++++++++++++++++++++++++++++++++++
+ fs/xfs/xfs_fsops.c      |    2 +
+ fs/xfs/xfs_super.c      |   10 ++++
+ 8 files changed, 195 insertions(+), 10 deletions(-)
+ create mode 100644 include/linux/fsevent.h
+ create mode 100644 fs/fsevent.c
 
 
