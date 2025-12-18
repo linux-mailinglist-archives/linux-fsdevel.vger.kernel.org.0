@@ -1,158 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-71677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF07CCCB20
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 17:18:41 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9A6CCCCD9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 17:34:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8F057301738A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 16:18:26 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A5F8D3016357
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 16:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D1136C5AD;
-	Thu, 18 Dec 2025 16:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E62248F4E;
+	Thu, 18 Dec 2025 16:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MS7gOg/f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DJ8Sep7X";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MS7gOg/f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DJ8Sep7X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d80aXgte"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD5E2D8393
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 16:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39F8214A9B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 16:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766074703; cv=none; b=tVIzk3o/KYwgfvTCMquY+IvEjNlEFIfzxFINWCFKvpoAqvh19WTKRiLcYUXIFbX0Vad8Q5I37B5xFGMq6DS5/UH/CHvhdOzMVoOqCghHcR/yaJ7rZCsMCJlzDKEmRHGwBqYZF1o8/ku6IHx6o5KtcsuMY/1KI0a2mrVgqcVb068=
+	t=1766074933; cv=none; b=PAxaJ0y16hJWQWguBBAneIUo8fBvMUGZThcNqSJEDX/gyvrP2cL9oxXT8vwPAivIDygpJ7uP4mOQpkAtw5ni5wEC07VR+JigPy+AbAyWHKy/G0RmWTt/d50h+4I12v6Mf0gxuAt5D9flhElxtKhje8WFPAOu8Gx+uDEmgqhvTVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766074703; c=relaxed/simple;
-	bh=jbIEAI5MqjsnTTwFJ1orRJGZLBGCTKce0KlIf8l+BSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i5mTbAIzEPVio2Wo0+iuAOrkBvMyVdptbRq2y3LuGtwG+vhq27RJMHSN5BpopFSrHdJLrcT+m/sHEiqJhR15aPnqg4trSBUw4vUuLPW+Ce036qcUGI4A8UqpHhxQndO1NsLmzlqBvVeFmbrjyeWNS32fSuLpi6Tle+CHYLoMS6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MS7gOg/f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DJ8Sep7X; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MS7gOg/f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DJ8Sep7X; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 72B7A5BCEA;
-	Thu, 18 Dec 2025 16:18:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1766074700; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=baOM8EKBvLL9fCbXYmb52OowM0fn3984p0jGSFCLQZQ=;
-	b=MS7gOg/fvOhON7FctmhLqMHNv+nMMxWj6vK4slYUScMepHpkeNpDduA9HnYvhapS3D5JL4
-	Vm7r3+ATigLixjTRoysu8HeQl1yn28xqYrH/pLllpv3NCYmLp67ybLyDAqNXpxezACAnhv
-	rlJM3KE3M4TFBtbgLFO8gZ/vwQpDhuE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1766074700;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=baOM8EKBvLL9fCbXYmb52OowM0fn3984p0jGSFCLQZQ=;
-	b=DJ8Sep7XE+SUC1HBoROVPZsvI+fKBrSwbLExE25wR6roVMSrgN+WqzOKBRm5uCeDNjTE7i
-	qnhy6RCTlQd1IgDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1766074700; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=baOM8EKBvLL9fCbXYmb52OowM0fn3984p0jGSFCLQZQ=;
-	b=MS7gOg/fvOhON7FctmhLqMHNv+nMMxWj6vK4slYUScMepHpkeNpDduA9HnYvhapS3D5JL4
-	Vm7r3+ATigLixjTRoysu8HeQl1yn28xqYrH/pLllpv3NCYmLp67ybLyDAqNXpxezACAnhv
-	rlJM3KE3M4TFBtbgLFO8gZ/vwQpDhuE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1766074700;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=baOM8EKBvLL9fCbXYmb52OowM0fn3984p0jGSFCLQZQ=;
-	b=DJ8Sep7XE+SUC1HBoROVPZsvI+fKBrSwbLExE25wR6roVMSrgN+WqzOKBRm5uCeDNjTE7i
-	qnhy6RCTlQd1IgDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 699F23EA63;
-	Thu, 18 Dec 2025 16:18:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pzXEGUwpRGldKwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 18 Dec 2025 16:18:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 23196A0918; Thu, 18 Dec 2025 17:18:20 +0100 (CET)
-Date: Thu, 18 Dec 2025 17:18:20 +0100
-From: Jan Kara <jack@suse.cz>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] Fsnotify fixes for 6.19-rc2
-Message-ID: <27rvclbkoz52xjo4m5zmigtcoke4nbr3lfvfnnqr6pemxulsac@a3lngmry2dy4>
+	s=arc-20240116; t=1766074933; c=relaxed/simple;
+	bh=1KjwagivxN6bJH97+BBZrIikBoJ3jm4kvAJ19GSKhDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=udPL5Bi5TaVTzlEFSUB0tWGp/EbKxMaLv6JDe/wzyitwqs66BVlse4Ee3+1pbBdowkW6sz2QjzEpj+MlvN37O6Oidd10dXOgk39oV47pLvP0/nWbha/epHCUSah2rt3Vb5v7MQ/Mc5MHSyjNIXGwz2KdnpJ1pA97U0iCqQo25SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d80aXgte; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 903E2C19421
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 16:22:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766074932;
+	bh=1KjwagivxN6bJH97+BBZrIikBoJ3jm4kvAJ19GSKhDE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=d80aXgte8O18MK3XAVadRFml9P8BTAaVh2gmcwkf8E0ijsjhVGXQGIA/WSvWc0ypL
+	 iWMGmQ2lywVxN7b3OFOjSzVtPx75iCuad8r6mhqCpS2bvc+VsE3G+SqikkdMXS8MP6
+	 1IHAIlWb2RRsgkDk4+/2QxG//EYRbnIVHOJasnoEpTuQVJySjYsxkoz17ZD1yKKGVu
+	 OKPBl9gexYK3862X7jpH4LskKzglol4lT7yRZuy23O6sknHsIBUAFv6CTYPE+/UPLn
+	 83JygMsBwVcNlm4iCJ4wP01QUlxK14jd2+6j29emlBX1Q3XnCTW/uLIVVYg46jaQik
+	 7XvmIO60bYY2g==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64b608ffca7so919661a12.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 08:22:12 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWIrFguTWf91LaPj7611Imq8sMsQW848btlcegJVaTCSP7JbIwTdKRmRcQ24nBpRcWjB7AFgWRe3suu9omR@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjlEWSKYrleNkOuK1fZ7uW3wG/RfHtgEQp+fzNN6XttDh0J03F
+	LAeCSFy7lVFIuTP2iiZEJPEwSeG6GMKtvR6YaOXA4ZtiIv9UqvCenI50MhfpIpLFMwl7pv4S3j1
+	MOaSwn9ziwyUxhkl3bFXngjXdXJCAgDU=
+X-Google-Smtp-Source: AGHT+IFU3E1sjZarnpPoMTz9FMi/bbnUASHMb9ds5I3lpt7FiJsflopghXP0cIBEk8sAM+WmRsyl1jl0mQ5J7Qk3oi4=
+X-Received: by 2002:a05:6402:40c7:b0:64b:83cb:d943 with SMTP id
+ 4fb4d7f45d1cf-64b83cbdc15mr712275a12.6.1766074931208; Thu, 18 Dec 2025
+ 08:22:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -3.79
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.79 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.19)[-0.970];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_TWO(0.00)[2];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+References: <712257.1766069339@warthog.procyon.org.uk>
+In-Reply-To: <712257.1766069339@warthog.procyon.org.uk>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Fri, 19 Dec 2025 01:21:59 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_Yjc_ByJdbx6N++G6DT02WTXnPpw2rqW=cZgvoCns=Tw@mail.gmail.com>
+X-Gm-Features: AQt7F2pMQm-q3FOu8j6FHMifBarCz04C8N2xggbWupXnzfihE7S88r26UN3qQN0
+Message-ID: <CAKYAXd_Yjc_ByJdbx6N++G6DT02WTXnPpw2rqW=cZgvoCns=Tw@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: Fix to handle removal of rfc1002 header from smb_hdr
+To: David Howells <dhowells@redhat.com>
+Cc: Steve French <sfrench@samba.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Tom Talpey <tom@talpey.com>, Paulo Alcantara <pc@manguebit.org>, 
+	Shyam Prasad N <sprasad@microsoft.com>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  Hello Linus,
-
-  could you please pull from
-
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v6.19-rc2
-
-to get two fsnotify fixes. The fix from Ahelenia makes sure we generate
-event when modifying inode flags, the fix from Amir disables sending of
-events from device inodes to their parent directory as it could concievably
-create a usable side channel attack in case of some devices and so far we
-aren't aware of anybody depending on the functionality.
-
-Top of the tree is 6f7c877cc397. The full shortlog is:
-
-Ahelenia Ziemiańska (1):
-      fs: send fsnotify_xattr()/IN_ATTRIB from vfs_fileattr_set()/chattr(1)
-
-Amir Goldstein (1):
-      fsnotify: do not generate ACCESS/MODIFY events on child for special files
-
-The diffstat is
-
- fs/file_attr.c       | 2 ++
- fs/notify/fsnotify.c | 9 ++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
-
-							Thanks
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On Thu, Dec 18, 2025 at 11:49=E2=80=AFPM David Howells <dhowells@redhat.com=
+> wrote:
+>
+> Hi Namjae,
+Hi David,
+>
+> Does this (untested) patch fix the problem for you?
+I sent the v2 patch to the list now.  I have tested it with cifs.ko
+and windows clients.
+Thanks!
+>
+> David
+> ---
+> The commit that removed the RFC1002 header from struct smb_hdr didn't als=
+o
+> fix the places in ksmbd that use it in order to provide graceful rejectio=
+n
+> of SMB1 protocol requests.
+>
+> Fixes: 83bfbd0bb902 ("cifs: Remove the RFC1002 header from smb_hdr")
+> Reported-by: Namjae Jeon <linkinjeon@kernel.org>
+> Link: https://lore.kernel.org/r/CAKYAXd9Ju4MFkkH5Jxfi1mO0AWEr=3DR35M3vQ_X=
+a7Yw34JoNZ0A@mail.gmail.com/
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Steve French <sfrench@samba.org>
+> cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+> cc: Tom Talpey <tom@talpey.com>
+> cc: Paulo Alcantara <pc@manguebit.org>
+> cc: Shyam Prasad N <sprasad@microsoft.com>
+> cc: linux-cifs@vger.kernel.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+>  fs/smb/server/server.c     |    2 +-
+>  fs/smb/server/smb_common.c |   10 +++++-----
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+> index 3cea16050e4f..bedc8390b6db 100644
+> --- a/fs/smb/server/server.c
+> +++ b/fs/smb/server/server.c
+> @@ -95,7 +95,7 @@ static inline int check_conn_state(struct ksmbd_work *w=
+ork)
+>
+>         if (ksmbd_conn_exiting(work->conn) ||
+>             ksmbd_conn_need_reconnect(work->conn)) {
+> -               rsp_hdr =3D work->response_buf;
+> +               rsp_hdr =3D smb2_get_msg(work->response_buf);
+>                 rsp_hdr->Status.CifsError =3D STATUS_CONNECTION_DISCONNEC=
+TED;
+>                 return 1;
+>         }
+> diff --git a/fs/smb/server/smb_common.c b/fs/smb/server/smb_common.c
+> index b23203a1c286..d6084580b59d 100644
+> --- a/fs/smb/server/smb_common.c
+> +++ b/fs/smb/server/smb_common.c
+> @@ -140,7 +140,7 @@ int ksmbd_verify_smb_message(struct ksmbd_work *work)
+>         if (smb2_hdr->ProtocolId =3D=3D SMB2_PROTO_NUMBER)
+>                 return ksmbd_smb2_check_message(work);
+>
+> -       hdr =3D work->request_buf;
+> +       hdr =3D smb2_get_msg(work->request_buf);
+>         if (*(__le32 *)hdr->Protocol =3D=3D SMB1_PROTO_NUMBER &&
+>             hdr->Command =3D=3D SMB_COM_NEGOTIATE) {
+>                 work->conn->outstanding_credits++;
+> @@ -278,7 +278,6 @@ static int ksmbd_negotiate_smb_dialect(void *buf)
+>                                                   req->DialectCount);
+>         }
+>
+> -       proto =3D *(__le32 *)((struct smb_hdr *)buf)->Protocol;
+>         if (proto =3D=3D SMB1_PROTO_NUMBER) {
+>                 struct smb_negotiate_req *req;
+>
+> @@ -320,8 +319,8 @@ static u16 get_smb1_cmd_val(struct ksmbd_work *work)
+>   */
+>  static int init_smb1_rsp_hdr(struct ksmbd_work *work)
+>  {
+> -       struct smb_hdr *rsp_hdr =3D (struct smb_hdr *)work->response_buf;
+> -       struct smb_hdr *rcv_hdr =3D (struct smb_hdr *)work->request_buf;
+> +       struct smb_hdr *rsp_hdr =3D (struct smb_hdr *)smb2_get_msg(work->=
+response_buf);
+> +       struct smb_hdr *rcv_hdr =3D (struct smb_hdr *)smb2_get_msg(work->=
+request_buf);
+>
+>         rsp_hdr->Command =3D SMB_COM_NEGOTIATE;
+>         *(__le32 *)rsp_hdr->Protocol =3D SMB1_PROTO_NUMBER;
+> @@ -412,9 +411,10 @@ static int init_smb1_server(struct ksmbd_conn *conn)
+>
+>  int ksmbd_init_smb_server(struct ksmbd_conn *conn)
+>  {
+> +       struct smb_hdr *rcv_hdr =3D (struct smb_hdr *)smb2_get_msg(conn->=
+request_buf);
+>         __le32 proto;
+>
+> -       proto =3D *(__le32 *)((struct smb_hdr *)conn->request_buf)->Proto=
+col;
+> +       proto =3D *(__le32 *)rcv_hdr->Protocol;
+>         if (conn->need_neg =3D=3D false) {
+>                 if (proto =3D=3D SMB1_PROTO_NUMBER)
+>                         return -EINVAL;
+>
 
