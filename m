@@ -1,90 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-71626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A61DCCAE31
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 09:31:05 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 989B6CCAF1D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 09:39:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id CB5493009619
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 08:31:02 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 16A4D30D2F99
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 08:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E677A331A6A;
-	Thu, 18 Dec 2025 08:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452F51EF36E;
+	Thu, 18 Dec 2025 08:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdyXhyLL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNUAefHE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4663D137C52;
-	Thu, 18 Dec 2025 08:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF4D2E285C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 08:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766046659; cv=none; b=p1twPPtw4ljbj+jR5EsmIys1OiOInSpy4NI7a2k5cda1Mqpq83ABqoiK2su/Rtut1a766l/GiCuEPIWW5YpkPljC9chaHJ/ZDsXdyzdxoYV+L5Z3OsnBxtJNLNI5a9X4wHU6VE1ISZRnP5EC7kMX+s6gsZjhqIztu/OOgYLgMIc=
+	t=1766046877; cv=none; b=tJny0agjdLM1rNW7Y24g0sQVjsupzKHrdzUzw633lh+pnvF94lnKLxCOOvoqCNHg31bcNvDlhT5AlkOMTlQSkBmFFA3dldpZeblDy/YNO8Q7cQWH1ukLt+plPQBuNZoj5nuwGTfuTVaLCaqgJ3+PEJOWzUcNuYK2c1y6omEgeMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766046659; c=relaxed/simple;
-	bh=uWxfQmCWrYNSgH6TtvELIainhetU2B1JwIvJxQ3ncC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u1St8zGBNOgAk9GpgyQi5JhhMoVfFhoyLuSlH6hsIT1eIOVt5eulT3Be8Pp94slHr/9m+l0553909Bb+QlrUdfDgDu0ovn8X1xwSAvfecsgwvua486z3Oblt27vsZUJ7AiX6sL8tn4zXviWbIP3q75Sou2Iz57jDwgKaY1GJ4eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdyXhyLL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6317C4CEFB;
-	Thu, 18 Dec 2025 08:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766046657;
-	bh=uWxfQmCWrYNSgH6TtvELIainhetU2B1JwIvJxQ3ncC0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OdyXhyLLnqhdD6rKtgXu7ITH1q41wIuX9sEPJpMHYHhMmV/hHwcjeaRjXLoXa6IBy
-	 Os6aL7/A6NqEx7PAz4DeJ7oheKt/eo7Zcut9f8YlrkImS++qc3LBgwcxZhsxN5DaeS
-	 a74pthncwQmP4jSgCu5OoZrPEQV8LPd6f5iqHTN3kd4w3gfMsfy6t+nv8AfgsdrW/w
-	 2S/4qLyUwfqw/5FQXaIUf2nwCKI12QS1iIaKDaGaoLJA6xIvAcaTiJErh92iWnPN8+
-	 JUhTrmxlHMTaLDK8kNTIWMvT5C6N1G863SWHUTFVPWlGnrg0kirmJTFEbbI1PaEIKw
-	 LXLRs/WOfFwKQ==
-Message-ID: <060edde3-7cc4-4a36-b9aa-824e607d954c@kernel.org>
-Date: Thu, 18 Dec 2025 09:30:53 +0100
+	s=arc-20240116; t=1766046877; c=relaxed/simple;
+	bh=SeJW1PaiWGfj8QqeEhkWXgt+VVvT/XgFlDtLomeoufw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LsnqMarXCQYx11SdCW8NJEZwQ27u7/07vkDtduVum/p9bT8a3b3Z6NPfC4nqDiSEr1tHn+RiIG8OfB/2skzBNdk2lZ5v8a6jASQM3x0PwKBxK/i0rG3lC3pfy1P18H/e6oajgqeuSW38csUiAjtYdzOek2TJ7/MkfplWPUwF0/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNUAefHE; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7fbbb84f034so368246b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 00:34:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1766046874; x=1766651674; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ryKEv83UFMgwQSkwJiJ8ATe2IKAahgjV9yo2n63384=;
+        b=NNUAefHEzDhUhzUEvlY1bckXcWx4dR+vWoJzOEPLqGk0c3bNZO+4X9sAukkvLZNYMR
+         tnscGnCIMrXZX03St1iVR9ibNYFUbiGTq31GCNa64sBMp07szL1+CY1uAmw9Oxo0Uex9
+         rDK3bx14jPEHfwZmuOT8qzN8Q9bx607y8HgJCRKAqglrEnu3ipSH8qcggScgLRpUI7vK
+         yyVpEN7M/uIjzWPwMubVn6J4ZuQuVl6LxaqOGf5GWEDkrFADFapy8bR8azWgt3llfmRh
+         4hIN0WEjeyxqholM5hmWaAdW8YKjXNzAJpOwsBeUWzdpndGsJMQqkV75f3TFnmihXrwD
+         wu7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766046874; x=1766651674;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ryKEv83UFMgwQSkwJiJ8ATe2IKAahgjV9yo2n63384=;
+        b=WDFhwvfKRvFovPtMu7J9+FLC+awuNVrOasFCjtBRisw/K1+D1h1Kg+3bBODzfB8YgS
+         mk4sl/M6FUeSDSRq212gt4gIDG0+pmUsxZGFeXwhubSN9+DNdJz9oDNiwB8zTK4QHpAB
+         +UvOSCDG/NuXadx36AnYdiMIUubw971Jq36R8N888xM8m0JlTaJKBYe+dJ/SvKdbrm+J
+         x+lovgDlumPfkKrrHPjb+P8OrdnsiOOEYNCCwdlDowV+CxJlQFjbJ9EEXDFh1LWFaEdm
+         7CT8neXM3oc5NJMOhY84ZTbkNKNoLNTHJ2hd2nezGLfItDSq3cUt5uRXKSY/irPtwIYu
+         v8NA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/FXxBntcbkFAoaw3J1BQHgmtSeWZvpMWH+ugElXTAzdWECikbTwZagdaiI6vMNl7HA2ksPXrxxa7ORYuH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD//bsZV6kXWx3xpwQo0tiXtst0P0O6vVq1PQdoF4qd0q6qGMA
+	tu5np+ce+eHzcs2nA0GiQ4lsj/t/BRx5v7V4ThOrOSq0qx965ReW/0u+
+X-Gm-Gg: AY/fxX5hLGb0g6MnRoAuPs6nqAP/ryUiTSxTsJoPdy8myOZA6+M4CJ3s/1/TaWvRHqN
+	5uNhMeNQUvBm+3Hzize01cUTkmJ+8CFuuXR9UpACvXnBuJ9HjhkZvJq76uRoOFmuQXxIbwm/RMc
+	rZwvXEd4XmOcKYZqrIQwcAbNZ/GDI5AzFHWVljFgG+5UVRwnvTuZ0mlAc9EBTMmbMRgVLaiUsqH
+	BWELwcmtUWNwCL2Feyk75znCwwZxRJikjEXHzJnrb6bHpoZa83JKa20l4GNz+aFI4soCy3U/+3A
+	w9yckq7jyrlT/R2h0AEey471fj3Dsy1lzRXeFeTtWKmI6aOqDmWJC8Fo4lYmsAR3JO4DHuadJ+p
+	928pCcTXDNIqWcPzp9bcVRzD7l8L94o55kViE3eVjJTG9/8wulvudJNFieXHHb3Oas2NF5QJjR3
+	jfR7QBolMwaqXz6v4Kow==
+X-Google-Smtp-Source: AGHT+IG5zrmlTr7UR67R7uSsS8bFVhvQbzc6eOUVE4YLzIwXn78N7KCNnvPbayZ4Mskm+rF0za72aA==
+X-Received: by 2002:a05:6a20:7343:b0:35e:bfe5:ee82 with SMTP id adf61e73a8af0-369af336dffmr22095569637.48.1766046873674;
+        Thu, 18 Dec 2025 00:34:33 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:54::])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c1d2dca06e0sm1588644a12.12.2025.12.18.00.34.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Dec 2025 00:34:33 -0800 (PST)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu,
+	axboe@kernel.dk
+Cc: bschubert@ddn.com,
+	asml.silence@gmail.com,
+	io-uring@vger.kernel.org,
+	csander@purestorage.com,
+	xiaobing.li@samsung.com,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 00/25] fuse/io-uring: add kernel-managed buffer rings and zero-copy
+Date: Thu, 18 Dec 2025 00:32:54 -0800
+Message-ID: <20251218083319.3485503-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/proc: Expose mm_cpumask in /proc/[pid]/status
-To: Aaron Tomlin <atomlin@atomlin.com>, oleg@redhat.com,
- akpm@linux-foundation.org, gregkh@linuxfoundation.org, brauner@kernel.org,
- mingo@kernel.org
-Cc: sean@ashe.io, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20251217024603.1846651-1-atomlin@atomlin.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251217024603.1846651-1-atomlin@atomlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/17/25 03:46, Aaron Tomlin wrote:
-> This patch introduces two new fields to /proc/[pid]/status to display the
-> set of CPUs, representing the CPU affinity of the process's active
-> memory context, in both mask and list format: "Cpus_active_mm" and
-> "Cpus_active_mm_list". The mm_cpumask is primarily used for TLB and
-> cache synchronisation.
-> 
-> Exposing this information allows userspace to easily identify
-> memory-task affinity, insight to NUMA alignment, CPU isolation and
-> real-time workload placement.
-> 
-> Frequent mm_cpumask changes may indicate instability in placement
-> policies or excessive task migration overhead.
+This series adds buffer ring and zero-copy capabilities to fuse over io-uring.
+This requires adding a new kernel-managed buf (kmbuf) ring type to io-uring
+where the buffers are provided and managed by the kernel instead of by
+userspace.
 
-I agree with Oleg's comments.
+On the io-uring side, the kmbuf interface is basically identical to pbufs.
+They differ mostly in how the memory region is set up and whether it is
+userspace or kernel that recycles back the buffer. Internally, the
+IOBL_KERNEL_MANAGED flag is used to mark the buffer ring as kernel-managed. 
 
-Given that everybody has read access to /proc/$PID/status IIUC, I wonder 
-if that information could somehow help an attacker to better attack a 
-target program (knowing which CPUs have dirty TLB etc). As you saise, 
-it's primarily for TLB and cache sync ...
+The zero-copy work builds on top of the infrastructure added for
+kernel-managed buffer rings (the bulk of which is in patch 19: "fuse: add
+io-uring kernel-managed buffer ring") and that informs some of the design
+choices for how fuse uses the kernel-managed buffer ring without zero-copy.
 
-Just a thought, have nothing concrete in mind.
+There was a previous submission for supporting registered buffers in fuse [1]
+but that was abandoned in favor of using kernel-managed buffer rings, which,
+once incremental buffer consumption is added in a later patchset, gives
+significant memory usage advantages in allowing the full buffer capacity to be
+utilized across multiple requests, as well as offers more flexibility for
+future additions. As well, it also makes the userspace side setup simpler.
+The relevant refactoring fuse patches from the previous submission are carried
+over into this one.
+
+Benchmarks for zero-copy (patch 24) show approximately the following
+differences in throughput for bs=1M:
+
+direct randreads: ~20% increase (~2100 MB/s -> ~2600 MB/s)
+buffered randreads: ~25% increase (~1900 MB/s -> 2400 MB/s)
+direct randwrites: no difference (~750 MB/s)
+buffered randwrites: ~10% increase (950 MB/s -> 1050 MB/s)
+
+The benchmark was run using fio on the passthrough_hp server:
+fio --name=test_run --ioengine=sync --rw=rand{read,write} --bs=1M
+--size=1G --numjobs=2 --ramp_time=30 --group_reporting=1
+
+This series is on top of commit 40fbbd64bba6  in the io-uring tree.
+
+The libfuse patch used for testing / verifying functionality is in [4].
+
+Thanks,
+Joanne 
+
+[1] https://lore.kernel.org/linux-fsdevel/20251027222808.2332692-1-joannelkoong@gmail.com/
+[2] https://lore.kernel.org/linux-fsdevel/20251125181347.667883-1-joannelkoong@gmail.com/
+[3] https://lore.kernel.org/linux-fsdevel/20251021-io-uring-fixes-copy-finish-v1-0-913ecf8aa945@ddn.com/
+[4] https://github.com/joannekoong/libfuse/commit/630db88e600fea515d62ef94d784988cefba05af
+
+v1: https://lore.kernel.org/linux-fsdevel/20251203003526.2889477-1-joannelkoong@gmail.com/
+v1 -> v2:
+* drop fuse buffer cleanup on ring death, which makes things a lot simpler (Jens)
+  - this drops a lot of things (eg needing ring_ctx tracking, needing callback
+    for ring death, etc)
+* drop fixed buffer pinning altogether and just do lookup every time (Jens)
+  (didn't significantly affect the benchmark results seen)
+* fix spelling mistake in docs (Askar)
+* use -EALREADY for pinning already pinned bufring, return PTR_ERR for
+   registration instead of err, move initializations to outside locks, etc. (Caleb)
+* drop fuse patches for zero-ed out headers (me)
+
+Joanne Koong (25):
+  io_uring/kbuf: refactor io_buf_pbuf_register() logic into generic
+    helpers
+  io_uring/kbuf: rename io_unregister_pbuf_ring() to
+    io_unregister_buf_ring()
+  io_uring/kbuf: add support for kernel-managed buffer rings
+  io_uring/kbuf: add mmap support for kernel-managed buffer rings
+  io_uring/kbuf: support kernel-managed buffer rings in buffer selection
+  io_uring/kbuf: add buffer ring pinning/unpinning
+  io_uring/kbuf: add recycling for kernel managed buffer rings
+  io_uring: add io_uring_cmd_fixed_index_get() and
+    io_uring_cmd_fixed_index_put()
+  io_uring/kbuf: add io_uring_cmd_is_kmbuf_ring()
+  io_uring/kbuf: export io_ring_buffer_select()
+  io_uring/kbuf: return buffer id in buffer selection
+  io_uring/cmd: set selected buffer index in __io_uring_cmd_done()
+  fuse: refactor io-uring logic for getting next fuse request
+  fuse: refactor io-uring header copying to ring
+  fuse: refactor io-uring header copying from ring
+  fuse: use enum types for header copying
+  fuse: refactor setting up copy state for payload copying
+  fuse: support buffer copying for kernel addresses
+  fuse: add io-uring kernel-managed buffer ring
+  io_uring/rsrc: rename
+    io_buffer_register_bvec()/io_buffer_unregister_bvec()
+  io_uring/rsrc: split io_buffer_register_request() logic
+  io_uring/rsrc: Allow buffer release callback to be optional
+  io_uring/rsrc: add io_buffer_register_bvec()
+  fuse: add zero-copy over io-uring
+  docs: fuse: add io-uring bufring and zero-copy documentation
+
+ Documentation/block/ublk.rst                  |  14 +-
+ .../filesystems/fuse/fuse-io-uring.rst        |  55 +-
+ drivers/block/ublk_drv.c                      |  18 +-
+ fs/fuse/dev.c                                 |  30 +-
+ fs/fuse/dev_uring.c                           | 710 ++++++++++++++----
+ fs/fuse/dev_uring_i.h                         |  41 +-
+ fs/fuse/fuse_dev_i.h                          |   8 +-
+ include/linux/io_uring/buf.h                  |  25 +
+ include/linux/io_uring/cmd.h                  |  99 ++-
+ include/linux/io_uring_types.h                |  10 +-
+ include/uapi/linux/fuse.h                     |  14 +-
+ include/uapi/linux/io_uring.h                 |  17 +-
+ io_uring/kbuf.c                               | 352 +++++++--
+ io_uring/kbuf.h                               |  29 +-
+ io_uring/memmap.c                             | 117 ++-
+ io_uring/memmap.h                             |   4 +
+ io_uring/register.c                           |   9 +-
+ io_uring/rsrc.c                               | 190 ++++-
+ io_uring/rsrc.h                               |   5 +
+ io_uring/uring_cmd.c                          |  65 +-
+ 20 files changed, 1535 insertions(+), 277 deletions(-)
+ create mode 100644 include/linux/io_uring/buf.h
 
 -- 
-Cheers
+2.47.3
 
-David
 
