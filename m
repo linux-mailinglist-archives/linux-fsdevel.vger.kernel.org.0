@@ -1,116 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-71670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9582CCC6DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 16:16:27 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0649CCC78F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 16:31:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8B1323064BE2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 15:15:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 13EF630CAC88
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 15:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DC225CC7A;
-	Thu, 18 Dec 2025 15:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3EE345CD2;
+	Thu, 18 Dec 2025 15:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="WrXBq2GO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdQPFvDY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A1F34BA21;
-	Thu, 18 Dec 2025 15:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BB534402C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 15:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766070903; cv=none; b=Vp0FBwcya2KHj2Dj2MOgF4bh2pZyqTYr0mc5gmC8M9L10YkSqVZf7//owwv2duDpx29INneVN7JBCNsLjUIRMdjHVpXUNj7e3RpF6l5HQ+ymaoBjuy4qdbpqFSuMWH+HpqP2MviJoZUjAj+VMBRezIkctnOWROEBCtUCdIzBTgY=
+	t=1766071056; cv=none; b=TehXDc6WdzMyyMDt7kAiKrW1y49genquhaZYhyQuaCTcedBkq1BV9j+SRgWWHdATP+/K+B1mAQPhJdWRI8pvzn/rS3NrFFSL0CPSv9s6zxDE8syJZ1E6cKPsEqKgwxI1z77zAGI/DOAznA9GatQ5sH8+H990Xuc3gIbYHYKfXH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766070903; c=relaxed/simple;
-	bh=/BwbEwPSOc2OIZA1Mnf8+XRdoiORcAKFaXF5cQRoHN8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UxgZg3KsQEozb2yZ1d4ovvgYTxTwhJJfeNhIls6J+u4aYQG+ivT14PdgZWG+8fAeenX9D70SMK+ppgoAjSqUDC+ItAseCybiNKWkRQIZz5aAfe/hxuEMZ919Usxx7TmXmN1lZn28GJAdHoifT4KN/+X5ih8AYToCSMUogOqqQx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=WrXBq2GO; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=nYx1Zg9NreHm8zXRg1aJvu+X2PTqLETKhbv8sypSjZ0=; b=WrXBq2GOr3jNoWsTs0xNdMOt8l
-	h2UW9kMnEt/tGzY2MikrQ6qX665KFaT6BCaNkgMiFah+PdWdlMixUW0qDY90N1/4BKyun00QkedaY
-	upgoGCAt16TWHTOzZ1/F32jJifgaF+cxxQgY7NwhixQO1LoxlgqM1PtEam6uuH9Slf70xfmZYlu5l
-	t4Rc5po3HIrreQZ16MbO0HbQj7OiCE1yqQqc/wirFk6jJAY/P458M6hM0Q2wetKzOhuXjoJyGt/c6
-	w8VyZZlC3naeGmOejP0RCIFix18gbpn22GACuoyXBuhI44zDzme3MNukmu+Z2oVGj1nWqr97Ch3sV
-	AD+pqtQK2EYSNo8bxCBPS6UXjH0qdurEFQJ9bnk6xnHEoj3UesFFvbfbZHJKAjf/pD5KfIOtxuC6v
-	xnc6WRCR1x7fAAHo3akjzU7w+XA6/gKT0rKbI9GPU9cnsdvf6l3g10GJNvSFnq2nGdFRqV523mHI8
-	k2DzSeB+VacOyRbCiKBoh9VUzdxBYKe2RL58KMu98M5sy+hOwGAIcU3tnOMwIZVRVpGxQvImhuThQ
-	kLax9q38on+t7Vh0tQnkxgOifmetfUOdInBGkGr9Uh8qh1Nulhoo43JFxUweBJJg4LU7VhAxhY8DG
-	1fG49amx6rGjYFPArlAv3cVAAoMFKCt/vyyxxK+Bg=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: asmadeus@codewreck.org
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
- Latchesar Ionkov <lucho@ionkov.net>, Chris Arges <carges@cloudflare.com>,
- v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
- David Howells <dhowells@redhat.com>, Matthew Wilcox <willy@infradead.org>,
- linux-fsdevel@vger.kernel.org
-Subject:
- Re: [PATCH] 9p/virtio: restrict page pinning to user_backed_iter() iovec
-Date: Thu, 18 Dec 2025 16:14:45 +0100
-Message-ID: <8622834.T7Z3S40VBb@weasel>
-In-Reply-To: <aUQN96w9qi9FAxag@codewreck.org>
-References:
- <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org>
- <aUMlUDBnBs8Bdqg0@codewreck.org> <aUQN96w9qi9FAxag@codewreck.org>
+	s=arc-20240116; t=1766071056; c=relaxed/simple;
+	bh=wiQaayGqV6R38Tz/VLdb3rRA8ZnWrvRCRpcP9/jPE68=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LBUwbOppU9BWok+nl7Lsz1uWq1+maTqmIL4QXg0X2CCP2Sw0UaVsyuFM5t9et7gqRBu43HfIKxm8a1L/rK1aA3Bu8W+rpH9E+ld/l0MyAzFed8hsT2eY4krMR0Jk40h44RDebeXMYrr01/ffsrwy2Lk7Vi8caYdYc5zlKZGuX0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdQPFvDY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E9F7C4CEFB
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 15:17:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766071055;
+	bh=wiQaayGqV6R38Tz/VLdb3rRA8ZnWrvRCRpcP9/jPE68=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IdQPFvDYI5CH7/mSuUv1lxEOOFlD7P9TC/gqDERynpBqhJBKPPzfQEJdb2tbvecKK
+	 6WD6Fx4j1fKLuR9XdSknDb/r+62Tm7S0qOKo5hZVZsGvhnFeIFdHLdtlV8yP0p5UVu
+	 KqNIh+EmM27nIIBBH/dkHzrHsJ0Ig8EgCEzR+XKi+VOMR1X97ETSAUKgRrmhm7Xll+
+	 TPDVxEs/aj9uYyR+kQaFCxHZnj+eQg4GqNa6hLO3zsoRps4haBTeL3f/QfQKlSfszs
+	 J0/eqtZ2tqHSDKcmx5sP/1+hoyTc/vjNTPaZu9Q9Bk7pBWGGycudq0p1+3OY9jWLgC
+	 x2aDCqlRoutTA==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b7ffa421f1bso322889266b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 07:17:35 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXIWPY/M7MqU2llwFsg//wCV2tHwIU6mJb6xTw0XTyU/iyjd8D+/2TxWceNNWD6W2m7ZUI5RpaXPI1Ch84Y@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCKxym0AXdq0gexYgvY+7c8i0IupJ8zTEA1XU/y8jvxkev2PUn
+	uDB6cu63+Asq48u1+Xnm/nvdQuXzHKkkUIzkWiIrnFqfOgInhqL6V3Dsux1oHskmpMMmKj5k0Z3
+	ksZ8TSspbXbeXdo35Kxm0KFOyos3y12A=
+X-Google-Smtp-Source: AGHT+IFtGcuOep+jKQD/k1z01d9sAmC6HG3VaUnfceAOvl0dHhDVM8Ca+5LZGkSHRIpF0xfLmjuSIV5QBHqNYKY37zo=
+X-Received: by 2002:a17:907:3e12:b0:b7d:27dd:9a54 with SMTP id
+ a640c23a62f3a-b8020634a93mr383586866b.31.1766071054068; Thu, 18 Dec 2025
+ 07:17:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20251201225732.1520128-1-dhowells@redhat.com> <20251201225732.1520128-2-dhowells@redhat.com>
+ <CAKYAXd9Ju4MFkkH5Jxfi1mO0AWEr=R35M3vQ_Xa7Yw34JoNZ0A@mail.gmail.com> <611045.1766064976@warthog.procyon.org.uk>
+In-Reply-To: <611045.1766064976@warthog.procyon.org.uk>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Fri, 19 Dec 2025 00:17:22 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8r1j9Z_yV2EHyUJ-yN+Z4U5s6jNqni97SY0U+D8YpMVw@mail.gmail.com>
+X-Gm-Features: AQt7F2pS84S-3B8FBwyVSpBfwG6J7RVNHTbpgdtOqDmfedWyD4ctvYVJJCzjZo4
+Message-ID: <CAKYAXd8r1j9Z_yV2EHyUJ-yN+Z4U5s6jNqni97SY0U+D8YpMVw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/9] cifs: Remove the RFC1002 header from smb_hdr
+To: David Howells <dhowells@redhat.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Stefan Metzmacher <metze@samba.org>, Tom Talpey <tom@talpey.com>, 
+	linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thursday, 18 December 2025 15:21:43 CET asmadeus@codewreck.org wrote:
-> asmadeus@codewreck.org wrote on Thu, Dec 18, 2025 at 06:49:04AM +0900:
-> > Christian Schoenebeck wrote on Wed, Dec 17, 2025 at 02:41:31PM +0100:
-> >> Something's seriously messed up with 9p cache right now. With today's git
-> >> master I do get data corruption in any 9p cache mode, including
-> >> cache=mmap,
-> >> only cache=none behaves clean.
-> > 
-> > Ugh...
-> 
-> I've updated from v6.18-rc2 + 9p pull requests to master and I can't
-> reproduce any obvious corruption, booting an alpine rootfs over 9p and
-> building a kernel inside (tried cache=loose and mmap)
-> 
-> Won't be the first time I can't reproduce, but what kind of workload are
-> you testing?
-> Anything that might help me try to reproduce (like VM cpu count/memory)
-> will be appreciated, corruptions are Bad...
-
-Debian Trixie guest running as 9p rootfs in QEMU, 4 cores, 16 GB.
-
-Compiling a bunch of projects with GCC works fine without errors, but with 
-clang it's very simple for me to reproduce. E.g. just a very short C++ file 
-that pulls in some system headers:
-
-#include <utility>
-#include <sys/cdefs.h>
-#include <limits>
-
-Then running 3 times: clang++ -c foo.cpp -std=c++17
-
-The first 2 clang runs succeed, the 3rd clang run then always blows up for 
-anything else than cache=none, various spurious clang errors on those system 
-headers like
-
-  error: source file is not valid UTF-8
-  ...
-  warning: null character ignored [-Wnull-character]
-  ...
-  error: expected unqualified-id
-
-and finally clang crashes.
-
-/Christian
-
-
+On Thu, Dec 18, 2025 at 10:36=E2=80=AFPM David Howells <dhowells@redhat.com=
+> wrote:
+>
+> Namjae Jeon <linkinjeon@kernel.org> wrote:
+>
+> > Why did you only change smb client after changing smb_hdr structure in
+> > smb/common?  smb server also uses smb_hdr structure to handle smb1 nego=
+tiate
+> > request.
+>
+> Apologies, but I was under the impression from Steve that ksmbd didn't su=
+pport
+> SMB1 and was never going to.  Further, I'm pretty certain I have been bui=
+lding
+> the server and it hasn't shown up any errors - and Steve hasn't mentioned=
+ any
+> either.
+ksmbd needs to handle SMB1 requests to support auto-negotiation. This
+process is triggered specifically during connections with Windows
+clients, So it cannot be tested using cifs.ko. And this patch will
+break the connection between ksmbd and Windows.
+>
+> > Also, Why didn't you cc me on the patch that updates smb/common?
+>
+> You're not mentioned in the MAINTAINERS record for CIFS.  I did, however,=
+ send
+> it to the linux-cifs mailing list six times, though.
+I cannot afford to review all cifs patches. Since this patch changes
+smb/common, I think that the patch prefix should not have been 'cifs'.
+That is likely why I missed it. Furthermore, smb/common is explicitly
+listed under the ksmbd entry in the MAINTAINERS file. Maybe I should
+be added as a reviewer for the cifs entry...
+>
+> David
+>
+>
 
