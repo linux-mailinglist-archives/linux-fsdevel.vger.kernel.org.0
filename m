@@ -1,93 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-71667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id E025DCCC3FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 15:22:15 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDBDFCCC5C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 15:58:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 86D9D3009F27
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 14:22:12 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 774EB3091A15
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 14:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02D8285CB9;
-	Thu, 18 Dec 2025 14:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE6A3161A3;
+	Thu, 18 Dec 2025 14:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="UPOMHvyJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RVV6vP1J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEAE257852;
-	Thu, 18 Dec 2025 14:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1747B2F0C68
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 14:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766067729; cv=none; b=fjJiDOrFjlqIKOMVYK47/Vyi2evGBqo8anQ961MCn/gPpPMVBWNktNhHEoKgN6EyRTlJ4jUU8bQVVCgnIWUrOxqAPqzMxRrZJoCeKdEvAX9S/+Qq54kvLPjuY23cWHiQQuVufWrlh5Wjms2gEXDIus15hzACdLebh3FgjseoHH8=
+	t=1766069354; cv=none; b=crVpEDP+fe5wnLoEKGIMOa9AA4/RwRUBCd3EppmfPe22slnhD1ehcPOy8t0OcZVx/dRfM3GpoQCzRuYKpS+jETPJT2IjWf1eoLvYuAHvCR7f45yoHuu2Hs+rhu4uuU2dQAR386NtVqQs2lEe6NF7dMbcIAxWWGbWHWWURTqHB50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766067729; c=relaxed/simple;
-	bh=/nh/yMoEzB3ZoZPaje/c2xtCyPzMqldjTm8yiAfq0mI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lBT4OEflsLSj0Bu9BEqz8IBWqyIOLrNsHcHe6zLGB/8Qmkn6+h6pRqbQ2JzZ8XYbT3GHQCrmSt0og/bniFUrhR+iQMcntlUMc2tmLIkE0LzxWOGergFqF6A2DgLCgx81+y/PxajCI6LTv4/d1q0X9U6e35Y3lCU6ad7o7ZmmVjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=UPOMHvyJ; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id A8AA514C2D6;
-	Thu, 18 Dec 2025 15:22:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1766067723;
+	s=arc-20240116; t=1766069354; c=relaxed/simple;
+	bh=VX0pwQBbyek58PrwiPaQkx7GaxWhGhJ7jZlRaINBvdY=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=srw50eFp9CzVUlHaFhh61ivnSr/wHISlWGxcox1914KqB+S0dn65KjXaV8AnKjcl8N7/Xzgiy7fKQJjCTChpEh1Z53sur1S+CpM0WYYb96Eoq0PfXVYo/6MJWI+voQpaM8HwOoH62dYWafZBZ7sy64MammnECUCAeCQhvFvixic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RVV6vP1J; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1766069351;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kjzX04s5ES239u2ZRb9JKfFexa4mrIRPj9QCx2jfXAk=;
-	b=UPOMHvyJjLmalszlmOccjY31YS65de3//YxYjZ3M5bP1pE4wdocXyxcOiwAMHUjMXGXoUF
-	3nDwdaVCByxuR6hbZdy+f5FoLwaa/5Ng/Pb9RJyN9vs04hnLVxKodCspEOVrOLRjqhdz3e
-	i2QTWfvGl/MOh3Fn9HwqSmm9wTDI62Gp6OhjPc0R1fym8wNn8lOgy5IH/UzAnIxSF1Y+fJ
-	BXA6foxUFKDuIEZyyiYSrz7mfL2qnrRGwfGYyQHj3NtbAoo5N0ACHd77O/X2BKpq6W4odl
-	sx5gsIVeHtUOiLCyUZeDOYjQFEVdSWo6I9hMFzzuNdblJvAcVuhhU+ybzr8CHg==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 6986aa46;
-	Thu, 18 Dec 2025 14:21:58 +0000 (UTC)
-Date: Thu, 18 Dec 2025 23:21:43 +0900
-From: asmadeus@codewreck.org
-To: Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Chris Arges <carges@cloudflare.com>, v9fs@lists.linux.dev,
-	linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] 9p/virtio: restrict page pinning to user_backed_iter()
- iovec
-Message-ID: <aUQN96w9qi9FAxag@codewreck.org>
-References: <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org>
- <2332946.iZASKD2KPV@weasel>
- <aUMlUDBnBs8Bdqg0@codewreck.org>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fI0eJnmPbifiAb/CS8fWvl+cxEgl+IqdfpnXGjo60Rw=;
+	b=RVV6vP1Jlw4ydXQqIv5RRI9z4ys+oJDWdmD+85UxdEklWd/YDla0o19xnhDCeEqbSDCv4M
+	XxTMIIaAY5bpWmqDaBPs51pRLM0DaC+iH/3S92Ldd5O1sT+wpPr67UTkMxIUgZQUwMpL3t
+	cID4PPH0zcekGV081SuzUU7AfpQTUnM=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-348-EgZJXPpwP5OiZSbQgYY7pQ-1; Thu,
+ 18 Dec 2025 09:49:07 -0500
+X-MC-Unique: EgZJXPpwP5OiZSbQgYY7pQ-1
+X-Mimecast-MFC-AGG-ID: EgZJXPpwP5OiZSbQgYY7pQ_1766069346
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A52ED180A23F;
+	Thu, 18 Dec 2025 14:49:04 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.5])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A85F91953984;
+	Thu, 18 Dec 2025 14:49:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Namjae Jeon <linkinjeon@kernel.org>,
+    Steve French <sfrench@samba.org>
+cc: dhowells@redhat.com, Sergey Senozhatsky <senozhatsky@chromium.org>,
+    Tom Talpey <tom@talpey.com>, Paulo Alcantara <pc@manguebit.org>,
+    Shyam Prasad N <sprasad@microsoft.com>, linux-cifs@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] ksmbd: Fix to handle removal of rfc1002 header from smb_hdr
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aUMlUDBnBs8Bdqg0@codewreck.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <712256.1766069339.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 18 Dec 2025 14:48:59 +0000
+Message-ID: <712257.1766069339@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-asmadeus@codewreck.org wrote on Thu, Dec 18, 2025 at 06:49:04AM +0900:
-> Christian Schoenebeck wrote on Wed, Dec 17, 2025 at 02:41:31PM +0100:
->> Something's seriously messed up with 9p cache right now. With today's git 
->> master I do get data corruption in any 9p cache mode, including cache=mmap, 
->> only cache=none behaves clean.
-> 
-> Ugh...
+Hi Namjae,
 
-I've updated from v6.18-rc2 + 9p pull requests to master and I can't
-reproduce any obvious corruption, booting an alpine rootfs over 9p and
-building a kernel inside (tried cache=loose and mmap)
+Does this (untested) patch fix the problem for you?
 
-Won't be the first time I can't reproduce, but what kind of workload are
-you testing?
-Anything that might help me try to reproduce (like VM cpu count/memory)
-will be appreciated, corruptions are Bad...
+David
+---
+The commit that removed the RFC1002 header from struct smb_hdr didn't also
+fix the places in ksmbd that use it in order to provide graceful rejection
+of SMB1 protocol requests.
 
-Thanks,
--- 
-Dominique
+Fixes: 83bfbd0bb902 ("cifs: Remove the RFC1002 header from smb_hdr")
+Reported-by: Namjae Jeon <linkinjeon@kernel.org>
+Link: https://lore.kernel.org/r/CAKYAXd9Ju4MFkkH5Jxfi1mO0AWEr=3DR35M3vQ_Xa=
+7Yw34JoNZ0A@mail.gmail.com/
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <sfrench@samba.org>
+cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+cc: Tom Talpey <tom@talpey.com>
+cc: Paulo Alcantara <pc@manguebit.org>
+cc: Shyam Prasad N <sprasad@microsoft.com>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/smb/server/server.c     |    2 +-
+ fs/smb/server/smb_common.c |   10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+index 3cea16050e4f..bedc8390b6db 100644
+--- a/fs/smb/server/server.c
++++ b/fs/smb/server/server.c
+@@ -95,7 +95,7 @@ static inline int check_conn_state(struct ksmbd_work *wo=
+rk)
+ =
+
+ 	if (ksmbd_conn_exiting(work->conn) ||
+ 	    ksmbd_conn_need_reconnect(work->conn)) {
+-		rsp_hdr =3D work->response_buf;
++		rsp_hdr =3D smb2_get_msg(work->response_buf);
+ 		rsp_hdr->Status.CifsError =3D STATUS_CONNECTION_DISCONNECTED;
+ 		return 1;
+ 	}
+diff --git a/fs/smb/server/smb_common.c b/fs/smb/server/smb_common.c
+index b23203a1c286..d6084580b59d 100644
+--- a/fs/smb/server/smb_common.c
++++ b/fs/smb/server/smb_common.c
+@@ -140,7 +140,7 @@ int ksmbd_verify_smb_message(struct ksmbd_work *work)
+ 	if (smb2_hdr->ProtocolId =3D=3D SMB2_PROTO_NUMBER)
+ 		return ksmbd_smb2_check_message(work);
+ =
+
+-	hdr =3D work->request_buf;
++	hdr =3D smb2_get_msg(work->request_buf);
+ 	if (*(__le32 *)hdr->Protocol =3D=3D SMB1_PROTO_NUMBER &&
+ 	    hdr->Command =3D=3D SMB_COM_NEGOTIATE) {
+ 		work->conn->outstanding_credits++;
+@@ -278,7 +278,6 @@ static int ksmbd_negotiate_smb_dialect(void *buf)
+ 						  req->DialectCount);
+ 	}
+ =
+
+-	proto =3D *(__le32 *)((struct smb_hdr *)buf)->Protocol;
+ 	if (proto =3D=3D SMB1_PROTO_NUMBER) {
+ 		struct smb_negotiate_req *req;
+ =
+
+@@ -320,8 +319,8 @@ static u16 get_smb1_cmd_val(struct ksmbd_work *work)
+  */
+ static int init_smb1_rsp_hdr(struct ksmbd_work *work)
+ {
+-	struct smb_hdr *rsp_hdr =3D (struct smb_hdr *)work->response_buf;
+-	struct smb_hdr *rcv_hdr =3D (struct smb_hdr *)work->request_buf;
++	struct smb_hdr *rsp_hdr =3D (struct smb_hdr *)smb2_get_msg(work->respons=
+e_buf);
++	struct smb_hdr *rcv_hdr =3D (struct smb_hdr *)smb2_get_msg(work->request=
+_buf);
+ =
+
+ 	rsp_hdr->Command =3D SMB_COM_NEGOTIATE;
+ 	*(__le32 *)rsp_hdr->Protocol =3D SMB1_PROTO_NUMBER;
+@@ -412,9 +411,10 @@ static int init_smb1_server(struct ksmbd_conn *conn)
+ =
+
+ int ksmbd_init_smb_server(struct ksmbd_conn *conn)
+ {
++	struct smb_hdr *rcv_hdr =3D (struct smb_hdr *)smb2_get_msg(conn->request=
+_buf);
+ 	__le32 proto;
+ =
+
+-	proto =3D *(__le32 *)((struct smb_hdr *)conn->request_buf)->Protocol;
++	proto =3D *(__le32 *)rcv_hdr->Protocol;
+ 	if (conn->need_neg =3D=3D false) {
+ 		if (proto =3D=3D SMB1_PROTO_NUMBER)
+ 			return -EINVAL;
+
 
