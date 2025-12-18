@@ -1,162 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-71669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7320DCCCE6E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 17:59:16 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9582CCC6DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 16:16:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 8CEB9305EFDA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 16:56:52 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8B1323064BE2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 15:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E55340285;
-	Thu, 18 Dec 2025 15:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DC225CC7A;
+	Thu, 18 Dec 2025 15:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pjdooKeH"
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="WrXBq2GO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B99633F362
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 15:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A1F34BA21;
+	Thu, 18 Dec 2025 15:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766070608; cv=none; b=dYVek90jQJJLCex8r/oSN9/ZJ0iYQHKmxoIUof40HtitrNr2zVateywvl4LW6HED5Q4jSQsLhF3ecGElDE6CeHAT9a/DWCUaGQoLFBVBKOhuBAmyZwBlurkzc7b7tMfjExXsSyaLDwNIADF34o0SFbGfKkpZkAd36WYqhBddlKk=
+	t=1766070903; cv=none; b=Vp0FBwcya2KHj2Dj2MOgF4bh2pZyqTYr0mc5gmC8M9L10YkSqVZf7//owwv2duDpx29INneVN7JBCNsLjUIRMdjHVpXUNj7e3RpF6l5HQ+ymaoBjuy4qdbpqFSuMWH+HpqP2MviJoZUjAj+VMBRezIkctnOWROEBCtUCdIzBTgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766070608; c=relaxed/simple;
-	bh=BUmnQxqOJ3d00ZoaOpUEYSmpHz3NYcD6l1+3MK6nDHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M3VGLJNmTyiXRx/orGFdAIcfmYmY2WnR8xNBsMCFJfTKhIP1ERJSC86U/bJfnGuEhfYTCqmsEDfs2FLHjAKYv9taLyeTEiUslTnFKzK0tn/+/Ccrj83LIhYTJ5gxKPD513cOtShpNCHQk9+MII5umJRMdauobWBK/ewPoOt2s3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pjdooKeH; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b5ebd3be-c567-44bb-9411-add5e79234dc@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1766070592;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y6p6e/EZtS1hyywF6vdE4TQ+N9KvYFnksenMNlGoM3E=;
-	b=pjdooKeHo20UlE+eNbSSyoDL8aAJeLpUdbhzUrzvJPNy8EMF7p0lz2X3FuIE9PZprDIQv6
-	k5OOM5ColSzuPioxGHLLJ1G8v4ZBqqDQjjQe5kVSLwtHm3mgua4UD94GyNeKN4JTg3YMNF
-	+xSuwSX3byYe6NFX0ahdrdFhnx9jQkI=
-Date: Thu, 18 Dec 2025 23:09:32 +0800
+	s=arc-20240116; t=1766070903; c=relaxed/simple;
+	bh=/BwbEwPSOc2OIZA1Mnf8+XRdoiORcAKFaXF5cQRoHN8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UxgZg3KsQEozb2yZ1d4ovvgYTxTwhJJfeNhIls6J+u4aYQG+ivT14PdgZWG+8fAeenX9D70SMK+ppgoAjSqUDC+ItAseCybiNKWkRQIZz5aAfe/hxuEMZ919Usxx7TmXmN1lZn28GJAdHoifT4KN/+X5ih8AYToCSMUogOqqQx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=WrXBq2GO; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=nYx1Zg9NreHm8zXRg1aJvu+X2PTqLETKhbv8sypSjZ0=; b=WrXBq2GOr3jNoWsTs0xNdMOt8l
+	h2UW9kMnEt/tGzY2MikrQ6qX665KFaT6BCaNkgMiFah+PdWdlMixUW0qDY90N1/4BKyun00QkedaY
+	upgoGCAt16TWHTOzZ1/F32jJifgaF+cxxQgY7NwhixQO1LoxlgqM1PtEam6uuH9Slf70xfmZYlu5l
+	t4Rc5po3HIrreQZ16MbO0HbQj7OiCE1yqQqc/wirFk6jJAY/P458M6hM0Q2wetKzOhuXjoJyGt/c6
+	w8VyZZlC3naeGmOejP0RCIFix18gbpn22GACuoyXBuhI44zDzme3MNukmu+Z2oVGj1nWqr97Ch3sV
+	AD+pqtQK2EYSNo8bxCBPS6UXjH0qdurEFQJ9bnk6xnHEoj3UesFFvbfbZHJKAjf/pD5KfIOtxuC6v
+	xnc6WRCR1x7fAAHo3akjzU7w+XA6/gKT0rKbI9GPU9cnsdvf6l3g10GJNvSFnq2nGdFRqV523mHI8
+	k2DzSeB+VacOyRbCiKBoh9VUzdxBYKe2RL58KMu98M5sy+hOwGAIcU3tnOMwIZVRVpGxQvImhuThQ
+	kLax9q38on+t7Vh0tQnkxgOifmetfUOdInBGkGr9Uh8qh1Nulhoo43JFxUweBJJg4LU7VhAxhY8DG
+	1fG49amx6rGjYFPArlAv3cVAAoMFKCt/vyyxxK+Bg=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: asmadeus@codewreck.org
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>, Chris Arges <carges@cloudflare.com>,
+ v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
+ David Howells <dhowells@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+ linux-fsdevel@vger.kernel.org
+Subject:
+ Re: [PATCH] 9p/virtio: restrict page pinning to user_backed_iter() iovec
+Date: Thu, 18 Dec 2025 16:14:45 +0100
+Message-ID: <8622834.T7Z3S40VBb@weasel>
+In-Reply-To: <aUQN96w9qi9FAxag@codewreck.org>
+References:
+ <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org>
+ <aUMlUDBnBs8Bdqg0@codewreck.org> <aUQN96w9qi9FAxag@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] ksmbd: Fix to handle removal of rfc1002 header from
- smb_hdr
-To: David Howells <dhowells@redhat.com>, Namjae Jeon <linkinjeon@kernel.org>,
- Steve French <sfrench@samba.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey
- <tom@talpey.com>, Paulo Alcantara <pc@manguebit.org>,
- Shyam Prasad N <sprasad@microsoft.com>, linux-cifs@vger.kernel.org,
- netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <712257.1766069339@warthog.procyon.org.uk>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <712257.1766069339@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-`ksmbd_conn_handler_loop()` calls `get_rfc1002_len()`. Does this need to 
-be updated as well?
+On Thursday, 18 December 2025 15:21:43 CET asmadeus@codewreck.org wrote:
+> asmadeus@codewreck.org wrote on Thu, Dec 18, 2025 at 06:49:04AM +0900:
+> > Christian Schoenebeck wrote on Wed, Dec 17, 2025 at 02:41:31PM +0100:
+> >> Something's seriously messed up with 9p cache right now. With today's git
+> >> master I do get data corruption in any 9p cache mode, including
+> >> cache=mmap,
+> >> only cache=none behaves clean.
+> > 
+> > Ugh...
+> 
+> I've updated from v6.18-rc2 + 9p pull requests to master and I can't
+> reproduce any obvious corruption, booting an alpine rootfs over 9p and
+> building a kernel inside (tried cache=loose and mmap)
+> 
+> Won't be the first time I can't reproduce, but what kind of workload are
+> you testing?
+> Anything that might help me try to reproduce (like VM cpu count/memory)
+> will be appreciated, corruptions are Bad...
 
-Thanks,
-ChenXiaoSong.
+Debian Trixie guest running as 9p rootfs in QEMU, 4 cores, 16 GB.
 
-On 12/18/25 10:48 PM, David Howells wrote:
-> Hi Namjae,
-> 
-> Does this (untested) patch fix the problem for you?
-> 
-> David
-> ---
-> The commit that removed the RFC1002 header from struct smb_hdr didn't also
-> fix the places in ksmbd that use it in order to provide graceful rejection
-> of SMB1 protocol requests.
-> 
-> Fixes: 83bfbd0bb902 ("cifs: Remove the RFC1002 header from smb_hdr")
-> Reported-by: Namjae Jeon <linkinjeon@kernel.org>
-> Link: https://lore.kernel.org/r/CAKYAXd9Ju4MFkkH5Jxfi1mO0AWEr=R35M3vQ_Xa7Yw34JoNZ0A@mail.gmail.com/
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <sfrench@samba.org>
-> cc: Sergey Senozhatsky <senozhatsky@chromium.org>
-> cc: Tom Talpey <tom@talpey.com>
-> cc: Paulo Alcantara <pc@manguebit.org>
-> cc: Shyam Prasad N <sprasad@microsoft.com>
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->   fs/smb/server/server.c     |    2 +-
->   fs/smb/server/smb_common.c |   10 +++++-----
->   2 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
-> index 3cea16050e4f..bedc8390b6db 100644
-> --- a/fs/smb/server/server.c
-> +++ b/fs/smb/server/server.c
-> @@ -95,7 +95,7 @@ static inline int check_conn_state(struct ksmbd_work *work)
->   
->   	if (ksmbd_conn_exiting(work->conn) ||
->   	    ksmbd_conn_need_reconnect(work->conn)) {
-> -		rsp_hdr = work->response_buf;
-> +		rsp_hdr = smb2_get_msg(work->response_buf);
->   		rsp_hdr->Status.CifsError = STATUS_CONNECTION_DISCONNECTED;
->   		return 1;
->   	}
-> diff --git a/fs/smb/server/smb_common.c b/fs/smb/server/smb_common.c
-> index b23203a1c286..d6084580b59d 100644
-> --- a/fs/smb/server/smb_common.c
-> +++ b/fs/smb/server/smb_common.c
-> @@ -140,7 +140,7 @@ int ksmbd_verify_smb_message(struct ksmbd_work *work)
->   	if (smb2_hdr->ProtocolId == SMB2_PROTO_NUMBER)
->   		return ksmbd_smb2_check_message(work);
->   
-> -	hdr = work->request_buf;
-> +	hdr = smb2_get_msg(work->request_buf);
->   	if (*(__le32 *)hdr->Protocol == SMB1_PROTO_NUMBER &&
->   	    hdr->Command == SMB_COM_NEGOTIATE) {
->   		work->conn->outstanding_credits++;
-> @@ -278,7 +278,6 @@ static int ksmbd_negotiate_smb_dialect(void *buf)
->   						  req->DialectCount);
->   	}
->   
-> -	proto = *(__le32 *)((struct smb_hdr *)buf)->Protocol;
->   	if (proto == SMB1_PROTO_NUMBER) {
->   		struct smb_negotiate_req *req;
->   
-> @@ -320,8 +319,8 @@ static u16 get_smb1_cmd_val(struct ksmbd_work *work)
->    */
->   static int init_smb1_rsp_hdr(struct ksmbd_work *work)
->   {
-> -	struct smb_hdr *rsp_hdr = (struct smb_hdr *)work->response_buf;
-> -	struct smb_hdr *rcv_hdr = (struct smb_hdr *)work->request_buf;
-> +	struct smb_hdr *rsp_hdr = (struct smb_hdr *)smb2_get_msg(work->response_buf);
-> +	struct smb_hdr *rcv_hdr = (struct smb_hdr *)smb2_get_msg(work->request_buf);
->   
->   	rsp_hdr->Command = SMB_COM_NEGOTIATE;
->   	*(__le32 *)rsp_hdr->Protocol = SMB1_PROTO_NUMBER;
-> @@ -412,9 +411,10 @@ static int init_smb1_server(struct ksmbd_conn *conn)
->   
->   int ksmbd_init_smb_server(struct ksmbd_conn *conn)
->   {
-> +	struct smb_hdr *rcv_hdr = (struct smb_hdr *)smb2_get_msg(conn->request_buf);
->   	__le32 proto;
->   
-> -	proto = *(__le32 *)((struct smb_hdr *)conn->request_buf)->Protocol;
-> +	proto = *(__le32 *)rcv_hdr->Protocol;
->   	if (conn->need_neg == false) {
->   		if (proto == SMB1_PROTO_NUMBER)
->   			return -EINVAL;
-> 
-> 
+Compiling a bunch of projects with GCC works fine without errors, but with 
+clang it's very simple for me to reproduce. E.g. just a very short C++ file 
+that pulls in some system headers:
+
+#include <utility>
+#include <sys/cdefs.h>
+#include <limits>
+
+Then running 3 times: clang++ -c foo.cpp -std=c++17
+
+The first 2 clang runs succeed, the 3rd clang run then always blows up for 
+anything else than cache=none, various spurious clang errors on those system 
+headers like
+
+  error: source file is not valid UTF-8
+  ...
+  warning: null character ignored [-Wnull-character]
+  ...
+  error: expected unqualified-id
+
+and finally clang crashes.
+
+/Christian
+
 
 
