@@ -1,178 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-71588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA70CC9F07
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 01:59:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 846DFCCA090
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 03:03:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 242C4302858E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 00:59:04 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8BCDF30237A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 02:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D9D242D7B;
-	Thu, 18 Dec 2025 00:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8EC2750ED;
+	Thu, 18 Dec 2025 02:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="m/yKrYt5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+j1uXJM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02A923EA82
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 00:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966BF1D5CD4;
+	Thu, 18 Dec 2025 02:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766019542; cv=none; b=KvdALqb4AGoE3rRkKKK005+l+D5mANajw+CP3ELpR/SUbTOd1y5XpxxgPkrMZhAkMvhDgCX+M0TE9i9/jqybohmvnGBDSVMLwrzMlAaDd+YoyDeMYjsY3W9wChVjVOTpER9XHv3S6tjIyhLEmvLTj64AAW43V2dSLfwBJNzM+K0=
+	t=1766023365; cv=none; b=tPPBp7x9tMWZRMejqz4+KUX6q1dxL491J9m0jEtRuE6H5L78H1bnV5alcISc4HzHC5iAphwfovhHsZfc9zk97vsjvgRvMpfmWtLpnwW+NRTz75Wo+W4vuFQI1Wi0OsUFAG0jX8CC4EPSRAZ1zWAL+Dvw3vX4hp3+DfufN3137b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766019542; c=relaxed/simple;
-	bh=NzJPmFMLogKy3D3qYmfDe7YMBODF/8CZUsAhKYaciUo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=syNX4rqI6JFfMau8c9W8PmN4KbEcJ4CgUxFvf5OF4r8bGvA/Fh76+Y3d5uyKsmCyeGSsJh5Q8jq0yaXkY7bS7kFFh6C4j3UI2Vol3rcwYRCNVdeTmyKjfDSDVIIqFb0NN4/uWy9kE5IJTeU3RNyTTlsLDFK2nmA1ViCsKYVrlaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=m/yKrYt5; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1766019537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=FLWdrmcOXEsn7JZI2AfrrHLsKmuHiuoeH/04si3RGkU=;
-	b=m/yKrYt5HoWNtJeA+j0Hu6aLAMgMu5AjYG/IguQGaktUvPC9JVFLH5YTW/m41v4Hw1xukx
-	+aY+Y1OcgfnlcYm7X4kxfHQ8JEeRiheY9gAK4XdGIq8wJsz/y+03u4JQdkVV61P4CctyzD
-	thnzVrGb6eGQf7nMKPFxWbONYzedpgY=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Meta kernel team <kernel-team@meta.com>,
-	bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
-Subject: [PATCH] lib/buildid: use __kernel_read() for sleepable context
-Date: Wed, 17 Dec 2025 16:58:18 -0800
-Message-ID: <20251218005818.614819-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1766023365; c=relaxed/simple;
+	bh=u76OWdWN5eeNBkvlN2MC7QTcfUrXbEvUqPLzjrIxIdQ=;
+	h=Date:Subject:From:To:Cc:Message-ID:MIME-Version:Content-Type; b=KNHL9vw//uCuGYKRdfjVWukXCxTbfMrWYnyTDgfMbegdYm8mfXV21VDkUR7rK4CMRTSfrJySclklCgb7HXYwfqHPCu5nQBiGF6cqQFFKGtSTRyVrlfLtT2OUzF+4ezf2m30t7m4i8OTuOXa6j103bl+8imBK/C203gNblIMgkio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+j1uXJM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 185CAC116B1;
+	Thu, 18 Dec 2025 02:02:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766023365;
+	bh=u76OWdWN5eeNBkvlN2MC7QTcfUrXbEvUqPLzjrIxIdQ=;
+	h=Date:Subject:From:To:Cc:From;
+	b=p+j1uXJMSevQnBN9YQCxDFxiW3b9URZnH3oHaYi6tA8aRxPrMUFiZN8dB5g8KTaxJ
+	 g4idxaHWo6DFhmLnlXk/cbandUV2vYdoVUUa5o/3RoFUhnsSfSy0ycil2QNzn/54yh
+	 aEy0Gui8Vno5cTq9dltljvgwSLYKD4ZQZhAPFGN0yHQKVGX1q1EPE0t8LZ3N9+y4Pf
+	 emy6y270WMS2NFOzcwSgQM/bUMagTcUpgk8zC68g3ZXosLDI9z7St/QX1Ec5/I/b6U
+	 yfKGB3C1zIGRxtOGV2bGyFu8YrqGZ4tJhFOGu513jPnCU+BUI7cDgpJzd1fj25Hw1B
+	 puwQqWIJSWeig==
+Date: Wed, 17 Dec 2025 18:02:44 -0800
+Subject: [PATCHSET V4 1/2] fs: generic file IO error reporting
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: brauner@kernel.org, djwong@kernel.org
+Cc: linux-api@vger.kernel.org, hch@lst.de, linux-ext4@vger.kernel.org,
+ jack@suse.cz, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ gabriel@krisman.be, hch@lst.de, amir73il@gmail.com
+Message-ID: <176602332085.686273.7564676516217176769.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-For the sleepable context, convert freader to use __kernel_read()
-instead of direct page cache access via read_cache_folio(). This
-simplifies the faultable code path by using the standard kernel file
-reading interface which handles all the complexity of reading file data.
+Hi all,
 
-At the moment we are not changing the code for non-sleepable context
-which uses filemap_get_folio() and only succeeds if the target folios
-are already in memory and up-to-date. The reason is to keep the patch
-simple and easier to backport to stable kernels.
+This patchset adds some generic helpers so that filesystems can report
+errors to fsnotify in a standard way.  Then it adapts iomap to use the
+generic helpers so that any iomap-enabled filesystem can report I/O
+errors through this mechanism as well.  Finally, it makes XFS report
+metadata errors through this mechanism in much the same way that ext4
+does now.
 
-Syzbot repro does not crash the kernel anymore and the selftests run
-successfully.
+These are a prerequisite for the XFS self-healing V4 series which will
+come at a later time.
 
-In the follow up we will make __kernel_read() with IOCB_NOWAIT work for
-non-sleepable contexts. In addition, I would like to replace the
-secretmem check with a more generic approach and will add fstest for the
-buildid code.
+If you're going to start using this code, I strongly recommend pulling
+from my git trees, which are linked below.
 
-Reported-by: syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=09b7d050e4806540153d
-Fixes: ad41251c290d ("lib/buildid: implement sleepable build_id_parse() API")
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+This has been running on the djcloud for months with no problems.  Enjoy!
+Comments and questions are, as always, welcome.
+
+--D
+
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=filesystem-error-reporting
+
+fstests git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=filesystem-error-reporting
 ---
- lib/buildid.c | 47 +++++++++++++++++++++++++++++++++++------------
- 1 file changed, 35 insertions(+), 12 deletions(-)
-
-diff --git a/lib/buildid.c b/lib/buildid.c
-index aaf61dfc0919..e7e258532720 100644
---- a/lib/buildid.c
-+++ b/lib/buildid.c
-@@ -5,6 +5,7 @@
- #include <linux/elf.h>
- #include <linux/kernel.h>
- #include <linux/pagemap.h>
-+#include <linux/fs.h>
- #include <linux/secretmem.h>
- 
- #define BUILD_ID 3
-@@ -37,6 +38,29 @@ static void freader_put_folio(struct freader *r)
- 	r->folio = NULL;
- }
- 
-+/*
-+ * Data is read directly into r->buf. Returns pointer to the buffer
-+ * on success, NULL on failure with r->err set.
-+ */
-+static const void *freader_fetch_sync(struct freader *r, loff_t file_off, size_t sz)
-+{
-+	ssize_t ret;
-+	loff_t pos = file_off;
-+	char *buf = r->buf;
-+
-+	do {
-+		ret = __kernel_read(r->file, r->buf, sz, &pos);
-+		if (ret <= 0) {
-+			r->err = ret ?: -EIO;
-+			return NULL;
-+		}
-+		buf += ret;
-+		sz -= ret;
-+	} while (sz > 0);
-+
-+	return r->buf;
-+}
-+
- static int freader_get_folio(struct freader *r, loff_t file_off)
- {
- 	/* check if we can just reuse current folio */
-@@ -46,20 +70,9 @@ static int freader_get_folio(struct freader *r, loff_t file_off)
- 
- 	freader_put_folio(r);
- 
--	/* reject secretmem folios created with memfd_secret() */
--	if (secretmem_mapping(r->file->f_mapping))
--		return -EFAULT;
--
-+	/* only use page cache lookup - fail if not already cached */
- 	r->folio = filemap_get_folio(r->file->f_mapping, file_off >> PAGE_SHIFT);
- 
--	/* if sleeping is allowed, wait for the page, if necessary */
--	if (r->may_fault && (IS_ERR(r->folio) || !folio_test_uptodate(r->folio))) {
--		filemap_invalidate_lock_shared(r->file->f_mapping);
--		r->folio = read_cache_folio(r->file->f_mapping, file_off >> PAGE_SHIFT,
--					    NULL, r->file);
--		filemap_invalidate_unlock_shared(r->file->f_mapping);
--	}
--
- 	if (IS_ERR(r->folio) || !folio_test_uptodate(r->folio)) {
- 		if (!IS_ERR(r->folio))
- 			folio_put(r->folio);
-@@ -97,6 +110,16 @@ const void *freader_fetch(struct freader *r, loff_t file_off, size_t sz)
- 		return r->data + file_off;
- 	}
- 
-+	/* reject secretmem folios created with memfd_secret() */
-+	if (secretmem_mapping(r->file->f_mapping)) {
-+		r->err = -EFAULT;
-+		return NULL;
-+	}
-+
-+	/* use __kernel_read() for sleepable context */
-+	if (r->may_fault)
-+		return freader_fetch_sync(r, file_off, sz);
-+
- 	/* fetch or reuse folio for given file offset */
- 	r->err = freader_get_folio(r, file_off);
- 	if (r->err)
--- 
-2.47.3
+Commits in this patchset:
+ * uapi: promote EFSCORRUPTED and EUCLEAN to errno.h
+ * fs: report filesystem and file I/O errors to fsnotify
+ * iomap: report file I/O errors to the VFS
+ * xfs: report fs metadata errors via fsnotify
+ * xfs: translate fsdax media errors into file "data lost" errors when convenient
+ * ext4: convert to new fserror helpers
+---
+ arch/alpha/include/uapi/asm/errno.h        |    2 
+ arch/mips/include/uapi/asm/errno.h         |    2 
+ arch/parisc/include/uapi/asm/errno.h       |    2 
+ arch/sparc/include/uapi/asm/errno.h        |    2 
+ fs/erofs/internal.h                        |    2 
+ fs/ext2/ext2.h                             |    1 
+ fs/ext4/ext4.h                             |    3 -
+ fs/f2fs/f2fs.h                             |    3 -
+ fs/minix/minix.h                           |    2 
+ fs/udf/udf_sb.h                            |    2 
+ fs/xfs/xfs_linux.h                         |    2 
+ include/linux/fs/super_types.h             |    7 +
+ include/linux/fserror.h                    |   93 ++++++++++++++++
+ include/linux/jbd2.h                       |    3 -
+ include/uapi/asm-generic/errno.h           |    2 
+ tools/arch/alpha/include/uapi/asm/errno.h  |    2 
+ tools/arch/mips/include/uapi/asm/errno.h   |    2 
+ tools/arch/parisc/include/uapi/asm/errno.h |    2 
+ tools/arch/sparc/include/uapi/asm/errno.h  |    2 
+ tools/include/uapi/asm-generic/errno.h     |    2 
+ fs/Makefile                                |    2 
+ fs/ext4/ioctl.c                            |    2 
+ fs/ext4/super.c                            |   13 ++
+ fs/fserror.c                               |  168 ++++++++++++++++++++++++++++
+ fs/iomap/buffered-io.c                     |   23 ++++
+ fs/iomap/direct-io.c                       |   12 ++
+ fs/iomap/ioend.c                           |    6 +
+ fs/super.c                                 |    3 +
+ fs/xfs/xfs_fsops.c                         |    4 +
+ fs/xfs/xfs_health.c                        |   14 ++
+ fs/xfs/xfs_notify_failure.c                |    4 +
+ 31 files changed, 365 insertions(+), 24 deletions(-)
+ create mode 100644 include/linux/fserror.h
+ create mode 100644 fs/fserror.c
 
 
