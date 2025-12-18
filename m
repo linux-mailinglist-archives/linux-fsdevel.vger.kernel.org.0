@@ -1,123 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-71672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E9CCCC8A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 16:45:21 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83674CCC96C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 16:57:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 02A60306B465
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 15:43:45 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id F1381301B138
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 15:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DF83446A8;
-	Thu, 18 Dec 2025 15:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E8B33F8C3;
+	Thu, 18 Dec 2025 15:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEs7Ndyo"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bF/7l4Bp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6B934402F;
-	Thu, 18 Dec 2025 15:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D6B33CEA1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 15:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766072084; cv=none; b=pLkU9qNgE7ZHFoTdUM2CvX2ogN7ll6MFJpHNgnkTx+5E153abKf3u2A8ZChnKfgwXVFXUyirJbkj2Sv7dDS+xawzNAMkWW3/abZJqFAXo9q2dzOTUPVU+UfUoNcGgUk6IvMFu9AGZUMtb2SKXgV35exg9YW64JopjqbYZiydDKU=
+	t=1766072838; cv=none; b=VCB1oN1xB/QvTNDj//8uCd+RQzELY43P22ZH+ut5BF9GPdTqSQD1TcwQOhdORnFdD/LWSj/oiNa8WD0jquwWPnp8MdWNRb3nc3OQf/cMfZovmYFRezgwa3xFQfCjyH1qmXxMhQGrC+5c5bC++vFGk2cT+cpoBKaGuRF5lnvitVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766072084; c=relaxed/simple;
-	bh=wOGwPqV7qe5Ae7SOo5zrEqHEYhzAYbMGLY4AwoM9W5s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IJNAm+TWSc8jLssVMZuGVB8KgUrJMCqL0bk8WLXmD77pZgsgrluJpn8VR7+oyDQdo5exQ9ZNWuzu4cC5RfqLDXAd2m6w38ZDeXSfrvy33gNEJ6tmRrYULNkCEH2CtR4FsxwgR49GisjaGYZkHmVVh1T6CIsiO9vV4pTIBd5tAs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vEs7Ndyo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 340B1C4CEFB;
-	Thu, 18 Dec 2025 15:34:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766072084;
-	bh=wOGwPqV7qe5Ae7SOo5zrEqHEYhzAYbMGLY4AwoM9W5s=;
-	h=From:Date:Subject:To:Cc:From;
-	b=vEs7Ndyo48m3edlZhtMc+ES6mnTiI4WoB8iL2FDYvfS4jUyiq7n6neOol2YE+bNO+
-	 6VPhSwZgeyi63CNdJx75QnnHLZyKo80WOViJ8MVbjxqB85n5VNFSfi+0w1p8NJoGqo
-	 U0QL1lmGVIhlI2yDW+aCwU5xB/oFnjLtEYp7+h7LWDzhdMdQg1qPPLrDEoBum1IAxG
-	 Su/QKxjv4MkSJ4B1jvAn84QT5p/fNLddg7iknn04M8vTEROOxPEzxf+6C/KAtB7ufO
-	 5k+Aci0zNHc/UOd2PDY6rCI7c2aFRjHWkR/GNx73aG1zpJpAS587emjdMGOLvchSo2
-	 lqfJmq/38lLoA==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 18 Dec 2025 15:34:17 +0000
-Subject: [PATCH v2] selftests/filesystems: Assume that TIOCGPTPEER is
- defined
+	s=arc-20240116; t=1766072838; c=relaxed/simple;
+	bh=HM8UphKC+SOEZKYHL+PNUYmSvUmAKA2vk/5EcCfgq74=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kNhQpC4Zu0wQRVASw0bbE3bZVWypPCw9+m7YaMAnBxYN6ZtB71AbG4YUDHxW+iHzjCSu2Q3T4y+O0qEHI9g00B9ZGL9IgKm1iQAN8irA0o1nPRLqgnK5wCGFZ2wuBei7MF4FdQ/MU82wkXF9dNfelCwidUQlROT08bUcYypJCIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bF/7l4Bp; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <cb002f72-3e2a-4d23-b08d-f6d987a29661@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1766072819;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dENL3ykrdrzuNo1GEY2zyPKnxqhaqBeqv7ZVRR/mohc=;
+	b=bF/7l4Bp/uZHbGXv6xKoLUN5otIJgnSPCRQeA92+cQMBkjQWIftCfJedDQYvKyv5chw2R1
+	IglgJHRafKN5Ias8qxRW/GupnLDq++S0U+Fx2RrCj8jLu2lNCDzSc+eGd2O/WRMasrjo/E
+	1aa6jckMtlnLhBmMiCokmldd+Ao7ZJE=
+Date: Thu, 18 Dec 2025 23:46:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251218-selftests-filesystems-devpts-tiocgptpeer-v2-1-a5fb5847fe58@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAPkeRGkC/52NQQ6CMBAAv0J6tobWFKkn/2E4CN3CRqTNbtNIC
- H+38gSPM4eZTTAQAotbtQmCjIxhKaBPlRim5zKCRFdY6FobpXQjGWafgBNLjzPwygneLB3kWFT
- CMIwxRQCSvneXGszVtsaKkosEHj/H6tEVnpBToPU4Z/Wzf0yykkpa3bvGuFrbVt1fQAvM50Cj6
- PZ9/wJxTAuM4QAAAA==
-X-Change-ID: 20251126-selftests-filesystems-devpts-tiocgptpeer-fbd30e579859
-To: Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1821; i=broonie@kernel.org;
- h=from:subject:message-id; bh=wOGwPqV7qe5Ae7SOo5zrEqHEYhzAYbMGLY4AwoM9W5s=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBpRB8SbFypJlINb4ro1PNihK6NQgsqVpq0MB8RE
- Cmd+Ix7n/+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaUQfEgAKCRAk1otyXVSH
- 0OI4B/4rUMQBV9plrPbNFLGKi7thzZrN21u5erajICH5u+hqMX+h+DtLxNu+Y+EwYu5qqTS6h4B
- 4qPPHK/Z9xVw1cCsNcQWjLPRA5c/mjnEdk59LM+f8Aa4+qlNJPqua8Bacx9/oJJf7fY4gY0nlcO
- I3RO34wIrp51yxQlPEhibJsh4ajHinmBmrf9hKiBQyTo7n6E5SZk/7yr5FbrJXT1MNknjzk+vuF
- hnUWCmGsJJe8weVOyZkp5os2czLrzvxMW3m06/oocsq4bWi88h270JU7bU57WGz9L7zoG1n+HoH
- wqzAq6cVq6CunGQthxSr2Al9vTtBDbmGuP8Iba53Skiny/Kz
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Subject: Re: [PATCH] ksmbd: Fix to handle removal of rfc1002 header from
+ smb_hdr
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
+To: David Howells <dhowells@redhat.com>, Namjae Jeon <linkinjeon@kernel.org>,
+ Steve French <sfrench@samba.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey
+ <tom@talpey.com>, Paulo Alcantara <pc@manguebit.org>,
+ Shyam Prasad N <sprasad@microsoft.com>, linux-cifs@vger.kernel.org,
+ netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <712257.1766069339@warthog.procyon.org.uk>
+ <b5ebd3be-c567-44bb-9411-add5e79234dc@linux.dev>
+Content-Language: en-US
+In-Reply-To: <b5ebd3be-c567-44bb-9411-add5e79234dc@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The devpts_pts selftest has an ifdef in case an architecture does not
-define TIOCGPTPEER, but the handling for this is broken since we need
-errno to be set to EINVAL in order to skip the test as we should. Given
-that this ioctl() has been defined since v4.15 we may as well just assume
-it's there rather than write handling code which will probably never get
-used.
+Hi David,
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
-Changes in v2:
-- Rebase onto v6.19-rc1.
-- Link to v1: https://patch.msgid.link/20251126-selftests-filesystems-devpts-tiocgptpeer-v1-1-92bd65d02981@kernel.org
----
- tools/testing/selftests/filesystems/devpts_pts.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Since the size of `struct smb_hdr` has changed, the value of 
+`SMB1_MIN_SUPPORTED_HEADER_SIZE` should also be updated to 
+`(sizeof(struct smb_hdr) + 4)`. `SMB1_MIN_SUPPORTED_HEADER_SIZE` is used 
+in `ksmbd_conn_handler_loop()`.
 
-diff --git a/tools/testing/selftests/filesystems/devpts_pts.c b/tools/testing/selftests/filesystems/devpts_pts.c
-index 54fea349204e..950e8b7f675b 100644
---- a/tools/testing/selftests/filesystems/devpts_pts.c
-+++ b/tools/testing/selftests/filesystems/devpts_pts.c
-@@ -100,7 +100,7 @@ static int resolve_procfd_symlink(int fd, char *buf, size_t buflen)
- static int do_tiocgptpeer(char *ptmx, char *expected_procfd_contents)
- {
- 	int ret;
--	int master = -1, slave = -1, fret = -1;
-+	int master = -1, slave, fret = -1;
- 
- 	master = open(ptmx, O_RDWR | O_NOCTTY | O_CLOEXEC);
- 	if (master < 0) {
-@@ -119,9 +119,7 @@ static int do_tiocgptpeer(char *ptmx, char *expected_procfd_contents)
- 		goto do_cleanup;
- 	}
- 
--#ifdef TIOCGPTPEER
- 	slave = ioctl(master, TIOCGPTPEER, O_RDWR | O_NOCTTY | O_CLOEXEC);
--#endif
- 	if (slave < 0) {
- 		if (errno == EINVAL) {
- 			fprintf(stderr, "TIOCGPTPEER is not supported. "
+Thanks,
+ChenXiaoSong.
 
----
-base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-change-id: 20251126-selftests-filesystems-devpts-tiocgptpeer-fbd30e579859
-
-Best regards,
---  
-Mark Brown <broonie@kernel.org>
+On 12/18/25 11:09 PM, ChenXiaoSong wrote:
+> `ksmbd_conn_handler_loop()` calls `get_rfc1002_len()`. Does this need to 
+> be updated as well?
+> 
+> Thanks,
+> ChenXiaoSong.
+> 
+> On 12/18/25 10:48 PM, David Howells wrote:
+>> Hi Namjae,
+>>
+>> Does this (untested) patch fix the problem for you?
+>>
+>> David
+>> ---
+>> The commit that removed the RFC1002 header from struct smb_hdr didn't 
+>> also
+>> fix the places in ksmbd that use it in order to provide graceful 
+>> rejection
+>> of SMB1 protocol requests.
+>>
+>> Fixes: 83bfbd0bb902 ("cifs: Remove the RFC1002 header from smb_hdr")
+>> Reported-by: Namjae Jeon <linkinjeon@kernel.org>
+>> Link: https://lore.kernel.org/r/ 
+>> CAKYAXd9Ju4MFkkH5Jxfi1mO0AWEr=R35M3vQ_Xa7Yw34JoNZ0A@mail.gmail.com/
+>> Signed-off-by: David Howells <dhowells@redhat.com>
+>> cc: Steve French <sfrench@samba.org>
+>> cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+>> cc: Tom Talpey <tom@talpey.com>
+>> cc: Paulo Alcantara <pc@manguebit.org>
+>> cc: Shyam Prasad N <sprasad@microsoft.com>
+>> cc: linux-cifs@vger.kernel.org
+>> cc: netfs@lists.linux.dev
+>> cc: linux-fsdevel@vger.kernel.org
+>> ---
+>>   fs/smb/server/server.c     |    2 +-
+>>   fs/smb/server/smb_common.c |   10 +++++-----
+>>   2 files changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
+>> index 3cea16050e4f..bedc8390b6db 100644
+>> --- a/fs/smb/server/server.c
+>> +++ b/fs/smb/server/server.c
+>> @@ -95,7 +95,7 @@ static inline int check_conn_state(struct ksmbd_work 
+>> *work)
+>>       if (ksmbd_conn_exiting(work->conn) ||
+>>           ksmbd_conn_need_reconnect(work->conn)) {
+>> -        rsp_hdr = work->response_buf;
+>> +        rsp_hdr = smb2_get_msg(work->response_buf);
+>>           rsp_hdr->Status.CifsError = STATUS_CONNECTION_DISCONNECTED;
+>>           return 1;
+>>       }
+>> diff --git a/fs/smb/server/smb_common.c b/fs/smb/server/smb_common.c
+>> index b23203a1c286..d6084580b59d 100644
+>> --- a/fs/smb/server/smb_common.c
+>> +++ b/fs/smb/server/smb_common.c
+>> @@ -140,7 +140,7 @@ int ksmbd_verify_smb_message(struct ksmbd_work *work)
+>>       if (smb2_hdr->ProtocolId == SMB2_PROTO_NUMBER)
+>>           return ksmbd_smb2_check_message(work);
+>> -    hdr = work->request_buf;
+>> +    hdr = smb2_get_msg(work->request_buf);
+>>       if (*(__le32 *)hdr->Protocol == SMB1_PROTO_NUMBER &&
+>>           hdr->Command == SMB_COM_NEGOTIATE) {
+>>           work->conn->outstanding_credits++;
+>> @@ -278,7 +278,6 @@ static int ksmbd_negotiate_smb_dialect(void *buf)
+>>                             req->DialectCount);
+>>       }
+>> -    proto = *(__le32 *)((struct smb_hdr *)buf)->Protocol;
+>>       if (proto == SMB1_PROTO_NUMBER) {
+>>           struct smb_negotiate_req *req;
+>> @@ -320,8 +319,8 @@ static u16 get_smb1_cmd_val(struct ksmbd_work *work)
+>>    */
+>>   static int init_smb1_rsp_hdr(struct ksmbd_work *work)
+>>   {
+>> -    struct smb_hdr *rsp_hdr = (struct smb_hdr *)work->response_buf;
+>> -    struct smb_hdr *rcv_hdr = (struct smb_hdr *)work->request_buf;
+>> +    struct smb_hdr *rsp_hdr = (struct smb_hdr *)smb2_get_msg(work- 
+>> >response_buf);
+>> +    struct smb_hdr *rcv_hdr = (struct smb_hdr *)smb2_get_msg(work- 
+>> >request_buf);
+>>       rsp_hdr->Command = SMB_COM_NEGOTIATE;
+>>       *(__le32 *)rsp_hdr->Protocol = SMB1_PROTO_NUMBER;
+>> @@ -412,9 +411,10 @@ static int init_smb1_server(struct ksmbd_conn *conn)
+>>   int ksmbd_init_smb_server(struct ksmbd_conn *conn)
+>>   {
+>> +    struct smb_hdr *rcv_hdr = (struct smb_hdr *)smb2_get_msg(conn- 
+>> >request_buf);
+>>       __le32 proto;
+>> -    proto = *(__le32 *)((struct smb_hdr *)conn->request_buf)->Protocol;
+>> +    proto = *(__le32 *)rcv_hdr->Protocol;
+>>       if (conn->need_neg == false) {
+>>           if (proto == SMB1_PROTO_NUMBER)
+>>               return -EINVAL;
+>>
+>>
+> 
 
 
