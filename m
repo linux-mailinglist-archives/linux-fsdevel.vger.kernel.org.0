@@ -1,97 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-71691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33AABCCDAB7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 22:21:27 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3C5CCDE69
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 00:07:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 0B3BE305AD85
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 21:21:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id ACDFD3024892
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 23:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A368331A4E;
-	Thu, 18 Dec 2025 21:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F8A30B51A;
+	Thu, 18 Dec 2025 23:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SEBytomn"
+	dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b="N0r26LLg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cU4C5hv2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A930A283FEF;
-	Thu, 18 Dec 2025 21:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60B62C11CF;
+	Thu, 18 Dec 2025 23:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766092877; cv=none; b=k7Nr9Mpdl4KuNeWgPOt+LDvoFixf4Z6hk9J9ewR0mD98vOwB0CJkXgx9c7aObNmoh2A/kldK4YZ1zdERMVYmM85uvo/I8Lh0aAAIOaMn0FtjoOGAOMb0CYflX9D5sLecIyLATUOl8fsCWT8gA7HJ+LY4r5B/Ccx/uNx9CQGDZfQ=
+	t=1766099229; cv=none; b=TTEi6bKUYEVK/2V9PuUocRecXqmdLcaZYABcHL4mJCuP46JrBDyJyLQ+7auwyCdtdPxaZ4kNrmI60IwNSe+le96b34+Y60jXiB4Hj+CL3g8AHE/ul0NlEGNmKbbt44/sew4k+fX7szLV6dEFLC0hmB5eu6/sB2UFUC7vpT285Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766092877; c=relaxed/simple;
-	bh=2QxZ3eI3kgiomXWTwHaqixPIsDeJcNn8cyYTgWzVg/w=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=cuuWU0xDvH5nWRO2kWfNjAxoF0BKVT/ZC1FHGZ/C4lCb6+/qNoOmMLyH7BQshM1yAO/nU5b3w8G3xOd6BAzrYPyJOKQK+wPnlT1VzhGIXSn8NZ1LwSxYDF0TUMNtWUvju8DIqjVnyBbdPdeHrpSgGwSQpbP997ogL/Wwzl88U0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SEBytomn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98754C4CEFB;
-	Thu, 18 Dec 2025 21:21:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1766092877;
-	bh=2QxZ3eI3kgiomXWTwHaqixPIsDeJcNn8cyYTgWzVg/w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SEBytomnYuljvMejgFs8ipzlTDlgRK+8pBd15nJa0wmfn9W6MwFCxxsSVQHdgXsoO
-	 zHuCld1a8EXWan1iysITOyAe28IwuwYNeTSNEjCc9J0DFsYqN1V596Tn2Fs7xrbjI6
-	 +uE/ePcwfaOfzt0aTPVM1ztOnSKv8ju9xaX5rAGQ=
-Date: Thu, 18 Dec 2025 13:21:16 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>, Andrii Nakryiko
- <andrii@kernel.org>, Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
- "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig
- <hch@infradead.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Meta kernel team <kernel-team@meta.com>,
- bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com, Christoph Hellwig
- <hch@lst.de>
-Subject: Re: [PATCH bpf v2] lib/buildid: use __kernel_read() for sleepable
- context
-Message-Id: <20251218132116.c1edb3ee6688605bd270a666@linux-foundation.org>
-In-Reply-To: <20251218205505.2415840-1-shakeel.butt@linux.dev>
-References: <20251218205505.2415840-1-shakeel.butt@linux.dev>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1766099229; c=relaxed/simple;
+	bh=jhG4gAfa4OU3Chyzua7N2zznJOfh/TjAFOfq5rpWjuU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qFqjU0bWZnC7WamQ9JGqp+6GgsIHcRTpnWN12MhsqRsU3gWshNYkQupmr5MfVbZYHnCzIVSgRJJASvDKvNiMWzTJAnuIvUoH6szKPTh779RpDuxfIMtjox0fOT1wy5dIbVkE3JYPknsM0meO1YBp40M9yr6Gn0QcolTRW8UQ/6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is; spf=pass smtp.mailfrom=alyssa.is; dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b=N0r26LLg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cU4C5hv2; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alyssa.is
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id AEE3F1D0009E;
+	Thu, 18 Dec 2025 18:07:04 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Thu, 18 Dec 2025 18:07:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alyssa.is; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1766099224; x=1766185624; bh=RkjI2Tc90zBhrrveRKS3/
+	+cl4hVdHbrnQaa6eodw164=; b=N0r26LLgxh1msfwg7A3oGO86Xkw9irQbgCn3V
+	YCzvdujMMpJ0w2RukUbSaedcA7aQ6JVBWLxwD/aYazZZgGpLuPYbOZrcH0WnincR
+	pCZPV/BZ+jBY09StlcKeUeDGtUIbbBZCUubb7hlatn5uAI4mrNC0iQIzPJQU8YST
+	rKXWAEoYBQQaatAIzjz3F+o8Os7ItrbDlVCtfKZ758+tG80qVciYvX6NOC5je8NC
+	VWaAPtKa8HysAveCybid+Vr1uhc+FyW1cIGIrnzC2XeGdm/IDrJirORSnPi12qIF
+	BYK/ghnaInVjBBrCqrbrFI3tXhATUqnPgrVG4PiT81KTyZCZg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1766099224; x=1766185624; bh=RkjI2Tc90zBhrrveRKS3/+cl4hVdHbrnQaa
+	6eodw164=; b=cU4C5hv21dCf1huRYK0t5b9q+RM7b3J5VuB7yRRt1o46JemTeoL
+	a7l2NIb0nfqmi1kqv/MA/IQSnpmM0QdcuWpbUYEvo74mlVH1sHkF1j5bwX3TzTFw
+	RmDlB0muer5tEu2SMy7Xt4yNkq4osODVVZwGv1FcavhCib4L5ABg4qvUJTdwZuqx
+	cyIIIvnxgsUzTMbvF3yRl4k6zPs0MFImLO30YVqta8gbYWF79hYLeB1ztY/TR417
+	UmKx7RE2Q8Sa0gX0uB0FczqnOp9uaMV5ELtbrzMI5d8dnxTXBgTH5y8jRW38SV+G
+	lhgSjPBzWXM+QbBimFABGhW0jn8Q7ZTeLxA==
+X-ME-Sender: <xms:GIlEabp1n9R1rKolVlcYpCdFdGeDkeYksUv81lBegjq2xp4ZjAnTtA>
+    <xme:GIlEaanxrqz_BZ13O2MSNE0dNWXXjt-OgIrSgKZF79r4vajg4VBNeOk0zUKCcEvxX
+    q9EadL3UqUFFE6rvsVeTK7FjJ3CDsQ5_dKKru59y4WFTvNkH4n9>
+X-ME-Received: <xmr:GIlEacfq5oqaCpYpc366sQpma_K8Fb4zWo4vWOIQrtEFP89qBgtUTu46YMrXYrR5Sw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdegieejtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetlhihshhsrgcutfho
+    shhsuceohhhisegrlhihshhsrgdrihhsqeenucggtffrrghtthgvrhhnpeehkefgtdevte
+    dtkeduudeguefgudejheeugfelgeettdfhffduhfehudfhudeuhfenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehhihesrghlhihsshgrrdhish
+    dpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghl
+    gieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepmhhsiigvrhgvughisehrvgguhhgrthdrtghomhdprhgtphht
+    thhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehlihhnuhigqdhfshguvghvvg
+    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhgrnh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdr
+    lhhinhhugidrohhrghdruhhk
+X-ME-Proxy: <xmx:GIlEaep2Vq5xZvU1xsXl94V5sSv4nsDHpFazvEAPIH9vrzkfc8iC0g>
+    <xmx:GIlEaePZZT69ZIl0evO8ePShVGkHPeNOu8Gkhm8qsZMUdFxO9GtM0g>
+    <xmx:GIlEaZieL0JhcYAhjV-pLlDRg9bLRRiMfYNz59DHUAj38GCbtNBbhA>
+    <xmx:GIlEaZtPiW7HD_TPTPMLKVPb_0ESlShI4SkWvXU1KCrzP3SVEWyWIw>
+    <xmx:GIlEafmtYDO9kgdcV_i8Pnic5wBXUBn6-Ii0BIkc91wLL0t5Hwnj3mPW>
+Feedback-ID: i12284293:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 18 Dec 2025 18:07:03 -0500 (EST)
+Received: by fw12.qyliss.net (Postfix, from userid 1000)
+	id 7C82A7CDB41E; Fri, 19 Dec 2025 00:06:53 +0100 (CET)
+From: Alyssa Ross <hi@alyssa.is>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-man@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH] man/man2/statmount.2: document flags argument
+Date: Fri, 19 Dec 2025 00:05:17 +0100
+Message-ID: <20251218230517.244704-1-hi@alyssa.is>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 18 Dec 2025 12:55:05 -0800 Shakeel Butt <shakeel.butt@linux.dev> wrote:
+Reading the man page for the first time, I assumed the lack of
+mentioned flags meant that there weren't any, but I had to check the
+kernel source to be sure.  Sure enough:
 
-> For the sleepable context, convert freader to use __kernel_read()
-> instead of direct page cache access via read_cache_folio(). This
-> simplifies the faultable code path by using the standard kernel file
-> reading interface which handles all the complexity of reading file data.
-> 
-> At the moment we are not changing the code for non-sleepable context
-> which uses filemap_get_folio() and only succeeds if the target folios
-> are already in memory and up-to-date. The reason is to keep the patch
-> simple and easier to backport to stable kernels.
-> 
-> Syzbot repro does not crash the kernel anymore and the selftests run
-> successfully.
-> 
-> In the follow up we will make __kernel_read() with IOCB_NOWAIT work for
-> non-sleepable contexts. In addition, I would like to replace the
-> secretmem check with a more generic approach and will add fstest for the
-> buildid code.
-> 
-> Reported-by: syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=09b7d050e4806540153d
-> Fixes: ad41251c290d ("lib/buildid: implement sleepable build_id_parse() API")
+	if (flags)
+		return -EINVAL;
 
-v6.12.
+Signed-off-by: Alyssa Ross <hi@alyssa.is>
+---
+ man/man2/statmount.2 | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+diff --git a/man/man2/statmount.2 b/man/man2/statmount.2
+index 8a83d5e34..cdc96da92 100644
+--- a/man/man2/statmount.2
++++ b/man/man2/statmount.2
+@@ -68,6 +68,8 @@ The returned buffer is a
+ which is of size
+ .I bufsize
+ with the fields filled in as described below.
++.I flags
++must be 0.
+ .P
+ (Note that reserved space and padding is omitted.)
+ .SS The mnt_id_req structure
 
-Thanks, I'll add cc:stable to this due to "crashes the kernel".
+base-commit: a5342ef55f0a96790bf279a98c9d2a30b19fc9eb
+-- 
+2.51.0
 
 
