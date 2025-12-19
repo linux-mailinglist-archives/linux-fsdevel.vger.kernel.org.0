@@ -1,107 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-71714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42890CCE9B3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 06:59:32 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1969ECCEE90
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 09:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0E7E13030590
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 05:59:13 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 76058301E991
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 08:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A0E2D73BD;
-	Fri, 19 Dec 2025 05:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2ED02E54BB;
+	Fri, 19 Dec 2025 08:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B+b/j72d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xo2kx7m/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7844B2417D1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 05:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2ACE2E2850;
+	Fri, 19 Dec 2025 08:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766123951; cv=none; b=gIAYe76XupnE/6LM17LKmzArk8+eddPi0fYiL8XqBHShXgYntEUJNfVqbMzOU1nUSMS/ObprX7uOpyUjTJLTKt+r2zfRn4HwaUjZVRv7iLtocNP9oEHBrdPpTd+z3JxxpLRA2pBzapaSvl4mfQtHUOUv0HSxj17q+1XwJtQ/wJo=
+	t=1766131988; cv=none; b=g/uxQuY296wRtBOp60nKUBsQ7P7HIMt1ugYYQ8u4sxl/5kpb5WEUAcCK7wEV5qAQZXi8lzwlRxm2dKzWdTG0UbIp13u0ukKJhtIIjlXWPD6zIb5h7q3ts64CekMpyOIHg2vjCuvEtxiazGRvoquMDZyHW59g1VQZr/NYhZJoDww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766123951; c=relaxed/simple;
-	bh=8Cr7r2B+N7v+IV9LMPV9E8fN1z4ddEFMzjQN7tozqms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AgPUiXPY8unn8Klj6y/juJ46hxpzVE3kHyw/PpJn+pVnnAiz2eYk8vBx4zMFpe5WGplOycXw8X69zsl+orDX3epszYXgVKoole0JVZG48lkanCfBjF91x8kQvA7OM69XbJBbeYiRueNsXgXrwoxzySAJtK1XhFPsGazemFRmqGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B+b/j72d; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 18 Dec 2025 21:58:43 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1766123934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4HqcONQ2/Kfp88WL6kDtebaHTkyU0GryyZiYjvEXXW8=;
-	b=B+b/j72dwvAoxDdB7jiAaEQfq7UbTcs4Qs+juxF9UnufHwCuRuSPxYgWsdOInVY1ZA+Qgt
-	Q3/MPKjEz3nmM9S0Z53adtGmaYLaczFL/AdToDqPU3TW47fSnyyQ5VNtMhMVH43zdwPkJz
-	i/v6F2YtnsQ66oXbUiQiChCOBXKxueo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Shaurya Rane <ssrane_b23@ee.vjti.ac.in>, 
-	"Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Meta kernel team <kernel-team@meta.com>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH bpf v2] lib/buildid: use __kernel_read() for sleepable
- context
-Message-ID: <64muytpsnwmjcnc5szbz4gfnh2owgorsfdl5zmomtykptfry4s@tuajoyqmulqc>
-References: <20251218205505.2415840-1-shakeel.butt@linux.dev>
- <aUSUe9jHnYJ577Gh@casper.infradead.org>
- <3lf3ed3xn2oaenvlqjmypuewtm6gakzbecc7kgqsadggyvdtkr@uyw4boj6igqu>
- <aUTPl35UPcjc66l3@casper.infradead.org>
+	s=arc-20240116; t=1766131988; c=relaxed/simple;
+	bh=Da1igU9nJRPnZ5L4W+6oiwIrxZfJDMP73Owv2lIqQYo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=tQr9hDuI/YeNtl6JJCCANjSavhLeyU2qo1cUWnr8v1QOjZ64s7EwD7zPptPVO5IrYBJH7YeQn8TBMB8AEUbmu4Ka4kuSRy7/uL3D4SGQY3SKHOn8EMT2ePym24rjRCmoqtI2n7bfrIuBgUO6rVDf86yy9XwLSsxVyHgwB4WQ078=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xo2kx7m/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4893CC4CEF1;
+	Fri, 19 Dec 2025 08:13:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766131987;
+	bh=Da1igU9nJRPnZ5L4W+6oiwIrxZfJDMP73Owv2lIqQYo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Xo2kx7m/wag5DqzcA3vxDHxKhWOgdPOuJESlc1/0Bw4zijQRvGwcYF8sgefqxVOUH
+	 Zw7Jq6c5KKya3qz84l3oCzhyv+f3Hl5QN6IR/gQco94/zBQsFWJdUZMRarmcE3Ll17
+	 OQ7tjezH9QvsQp+tDWb38i+rSMT0jcobYPSBIFuOov4nLe+6ZCUeTdTun+6WS/hhTx
+	 W5N1PVgKEmBDep/c+MpJ7ASaed7AYRm9hypU4jHMnojPqCCBuQmDlX2Msq21NunqfC
+	 TPT3nmO8DeMmdKSb9GRyluaIuOy7isHD9uVzuPGv9qibqFkmE44JdEtsdo/sYFbVcX
+	 QY19z9sJx1rpA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 78C73380AA50;
+	Fri, 19 Dec 2025 08:09:57 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aUTPl35UPcjc66l3@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH V14 0/6] riscv: mm: Add soft-dirty and uffd-wp support
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <176613179607.3684357.9882444672528861382.git-patchwork-notify@kernel.org>
+Date: Fri, 19 Dec 2025 08:09:56 +0000
+References: <20250918083731.1820327-1-zhangchunyan@iscas.ac.cn>
+In-Reply-To: <20250918083731.1820327-1-zhangchunyan@iscas.ac.cn>
+To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, robh@kernel.org, krzk+dt@kernel.org,
+ conor@kernel.org, debug@rivosinc.com, ved@rivosinc.com,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ akpm@linux-foundation.org, peterx@redhat.com, arnd@arndb.de,
+ david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+ axelrasmussen@google.com, yuanchu@google.com, zhang.lyra@gmail.com
 
-On Fri, Dec 19, 2025 at 04:07:51AM +0000, Matthew Wilcox wrote:
-> On Thu, Dec 18, 2025 at 04:16:40PM -0800, Shakeel Butt wrote:
-> > On Thu, Dec 18, 2025 at 11:55:39PM +0000, Matthew Wilcox wrote:
-> > > On Thu, Dec 18, 2025 at 12:55:05PM -0800, Shakeel Butt wrote:
-> > > > +	do {
-> > > > +		ret = __kernel_read(r->file, buf, sz, &pos);
-> > > > +		if (ret <= 0) {
-> > > > +			r->err = ret ?: -EIO;
-> > > > +			return NULL;
-> > > > +		}
-> > > > +		buf += ret;
-> > > > +		sz -= ret;
-> > > > +	} while (sz > 0);
-> > > 
-> > > Why are you doing a loop around __kernel_read()?  eg kernel_read() does
-> > > not do a read around __kernel_read().  The callers of kernel_read()
-> > > don't do a loop either.  So what makes you think it needs to have a loop
-> > > around it?
-> > 
-> > I am assuming that __kernel_read() can return less data than the
-> > requested. Is that assumption incorrect?
+Hello:
+
+This series was applied to riscv/linux.git (fixes)
+by Andrew Morton <akpm@linux-foundation.org>:
+
+On Thu, 18 Sep 2025 16:37:25 +0800 you wrote:
+> This patchset adds support for Svrsw60t59b [1] extension which is ratified now,
+> also add soft dirty and userfaultfd write protect tracking for RISC-V.
 > 
-> I think it can, but I don't think a second call will get any more data.
-> For example, it could hit EOF.  What led you to think that calling it in
-> a loop was the right approach?
+> The patches 1 and 2 add macros to allow architectures to define their own checks
+> if the soft-dirty / uffd_wp PTE bits are available, in other words for RISC-V,
+> the Svrsw60t59b extension is supported on which device the kernel is running.
+> Also patch1-2 are removing "ifdef CONFIG_MEM_SOFT_DIRTY"
+> "ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP" and
+> "ifdef CONFIG_PTE_MARKER_UFFD_WP" in favor of checks which if not overridden by
+> the architecture, no change in behavior is expected.
+> 
+> [...]
 
-I am kind of following the convention of a userspace application doing
-read() syscall i.e. repeatedly call read() until you hit an error or EOF
-in which case 0 will be returned or you successfully read the amount of
-data you want. I am handling negative error and 0 and for 0, I am
-returning -EIO as that would be unexpected end of an ELF file.
+Here is the summary with links:
+  - [V14,1/6] mm: softdirty: Add pgtable_supports_soft_dirty()
+    (no matching commit)
+  - [V14,2/6] mm: userfaultfd: Add pgtable_supports_uffd_wp()
+    (no matching commit)
+  - [V14,3/6] riscv: Add RISC-V Svrsw60t59b extension support
+    https://git.kernel.org/riscv/c/59f6acb4be02
+  - [V14,4/6] riscv: mm: Add soft-dirty page tracking support
+    https://git.kernel.org/riscv/c/2a3ebad4db63
+  - [V14,5/6] riscv: mm: Add userfaultfd write-protect support
+    https://git.kernel.org/riscv/c/c64da3950cf4
+  - [V14,6/6] dt-bindings: riscv: Add Svrsw60t59b extension description
+    https://git.kernel.org/riscv/c/519912bdaee8
 
-Anyways the question is if __kernel_read() returns less amount of data
-than requested, should we return error instead of retrying? I looked
-couple of callers of __kernel_read() & kernel_read(). Some are erroring
-out if received data is less than requested (e.g. big_key_read()) and
-some are calling in the loop (e.g. kernel_read_file()).
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
