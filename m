@@ -1,168 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-71778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A041CD1BC8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 21:20:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8840CD1BE0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 21:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E0680305AE78
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 20:20:49 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B0CBB30601B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 20:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE982D6E44;
-	Fri, 19 Dec 2025 20:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC7B33ADB1;
+	Fri, 19 Dec 2025 20:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Ioywp382";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="og8IXOLt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvP5AfLE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB79242D79
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 20:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7041C3BB44;
+	Fri, 19 Dec 2025 20:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766175648; cv=none; b=Zj2ItR88S5tt2Pxv6+DVquspvHyKXzh5LwWr49IvGjo+GNUdCXTqEzYlBNXIBjiT0OT5Yawd5l0wIL1ZZLhwLNv2iZ2YGVjRaKJn+nt9rTzefsq9P15z8K4hqbrvYKiwSpNeQviB3A5LQ81QFrDW4i6TLDaebH9r0gsWLf6Assg=
+	t=1766175943; cv=none; b=oKPkbdcAI8kf+ZdIDMceMg0dLCDJaBuJ5RwwKq1jLMg0xTxRZqepIFdpUwU4ldKJB2BPBzUbWNLWbdSsJYm/rjx8zXd7Ky7o10CwpVS/67OBceU91Ap2VppVw96W/0v2F4YPRcLhZiSueJLj+6bfgHvsHoOCeFOHkZi7KZItaDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766175648; c=relaxed/simple;
-	bh=uvS3omnuuDhAcMEI/B0QUF2vA0veSataykqXm8Zs5GM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Otxu4EH4XHs37UhetAkONpxjnEk0BN+aRgLMXbxfmoutQ3Z2ycpJLONc4xJnhxRuyh0TsjiEzLWXr61WxMkRmrgVrSpp9J2Qd0r9Cxul3wKQMsfc0nECGcjdqibPeNVCdI9Zza+jZHvQZ/l3X539v6imx+zttB0ipLxBUHwOq74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Ioywp382; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=og8IXOLt; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 0EDB51D0007A;
-	Fri, 19 Dec 2025 15:20:44 -0500 (EST)
-Received: from phl-imap-17 ([10.202.2.105])
-  by phl-compute-04.internal (MEProxy); Fri, 19 Dec 2025 15:20:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1766175643;
-	 x=1766262043; bh=Ajgf0rKRRQ9LFo13Zd/qc7LeQHMbNIDfCQBML/26PZg=; b=
-	Ioywp382GijI9RzuguD4NiwqaDlYPhRLkudTYDqIBQ08GKxMFSBofLiIUD6ko0oU
-	a02wVJnanc83P0N1IGm4FdSzAfuaB+r/ffrnqdfID10whA7hq1HwpOKd56dnDYIa
-	EdKKs1fUmSWioraACcR3WQUzBxBm5yPJWqSYPOMEYC2Q2rLY2InlpUMqj3PiysVa
-	NHC/Oe1I/6N1LJff22F8v4n0nUwc8MmLPBq6G5RPyFyAwBnsFMaZgdY6J7uvsHLX
-	J2wb79TXw/rde+5pNU8cSjmru4/JtY2VQwsEJXZDPTCJhk6zvYYhePPGPrgrMqSe
-	nOpqFdz9nTJAmF15h19D0A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1766175643; x=
-	1766262043; bh=Ajgf0rKRRQ9LFo13Zd/qc7LeQHMbNIDfCQBML/26PZg=; b=o
-	g8IXOLtfcHmaPL/0tZhx1BWEKNIJZCEw9DZ5WGPkXcXTrBTD126XAEvsCVNE09wm
-	rFBXvkfM8nr/Nqk2egzJZPfL4XpKnJH37cR1NXfCri9sByVXjNgX1TVrFGy8gub6
-	uzicqc4TpRKy1jhdKI2q+y4ahDGI5qIvNk/81IlehrMxWg0pSwFuB5sf8rCCzfTh
-	gd0tBv8kzKJbkBwiE1MVF7HsVOkDtRRGErcdFd/8A4v8cPHxRTAuFDiCcZaHnla6
-	3l+aVuWzvnz37xZu0WxD1kTXeYvKUkiqq4E/15FmeRIBaIvH3kSO6P4uoBogdhP9
-	SBdE++ev1wYdh1lmiNEXg==
-X-ME-Sender: <xms:mLNFaYQBdrGx3L_x-6cVNW-PNixpsjzM1Yd6uyWfxNVxe8ZZ6Glwjw>
-    <xme:mLNFaQkR2k01XAMccHs0N2kkNp0_rfQILSSqWH3qZKPoKvaf3MHNxi6IeMoobAgA3
-    xfhg5jlgoV4uWdv9LOsw-vu7qgVmUKtjQd5QHMViwDFJwKFV_SUqQo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdegledvhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeffedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtoheplhhinhhugiesrg
-    hrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdr
-    ihgurdgruhdprhgtphhtthhopegrnhgurhgvrghssehgrghishhlvghrrdgtohhmpdhrtg
-    hpthhtohepnhhpihhgghhinhesghhmrghilhdrtghomhdprhgtphhtthhopehsuhhrvghn
-    sgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrug
-    drohhrghdprhgtphhtthhopegurghvvgdrhhgrnhhsvghnsehinhhtvghlrdgtohhmpdhr
-    tghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:mLNFaWoje0ZTjN4FWEG307qsoelv8UP7xuwOV-bJDlPneRgqHoxhSQ>
-    <xmx:mLNFaY4cHwgKqJc2hMLfk2iQM1BIuaryrhSrPa-TOjP02OcwvFVYmA>
-    <xmx:mLNFaYJ0tukoZqhoq8MtrkOcZIcZBCdTfMFUftiVM5EHFLLaD8nt-w>
-    <xmx:mLNFaUnow3ag4xv8Fc1BEkx1u7qedoC76aowy9QsDziIR23OT3VabA>
-    <xmx:m7NFabOykPl24tgMULroiVZq6vEE9hmNtVVs6Fr7pVsm_3xW_iGmm6Cb>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 99661C40072; Fri, 19 Dec 2025 15:20:40 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1766175943; c=relaxed/simple;
+	bh=SHB1c/Mt35w8ehZ2mu70GI9/3KMFJySg6IrHgEOWOcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTyL8NeV1jz5ct8TD8JHZh4YWKQlx0EWJfHgxcJUOdvkMX82An+lLi+mF9+UATstTy7juzZVzYjLbBq3hjZ/HlWPu2y9bDxJx5tZ3f8pWtwqanbyjdCSgpY54girqgpzKEnkWtKO8OAYhb5KMoBpaD4cvYiS7A1/GqAA2AwvV/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvP5AfLE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E027EC4CEF1;
+	Fri, 19 Dec 2025 20:25:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766175943;
+	bh=SHB1c/Mt35w8ehZ2mu70GI9/3KMFJySg6IrHgEOWOcU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hvP5AfLEgSNwHAVtlr0ZfJE17v+bnHhKFSSLSmi8p9/ttWhm6JVOzcyr2CUuh5gKJ
+	 Dwh4nQxdHyDx8raqER44nqenFZvYTmTVNBq4TQsaut/nxAqULZ4tVNwwfoq/ad/tyL
+	 eSpPL4m5I7KmGPCRm9BRvxk+FoPItO5fqzBdS9sMm3ItGhklmWT43hhp4boYLRJss/
+	 ZPndaAce7oG5BP4bKeyC8WV0f9lsX6P/48R/VFru8XAzQcXyIqZVhwzDAkFpRBDdnr
+	 VLc3us0Dd3mwK+Z5m4VEMuQFIlH6KwVYWvUNXPRynoQ9nzNr9ymnICeSpC1bsDt0Bv
+	 lzQXZ8ubjkI4g==
+Date: Fri, 19 Dec 2025 12:25:33 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org
+Subject: Re: [PATCH 7/9] blk-crypto: use mempool_alloc_bulk for encrypted bio
+ page allocation
+Message-ID: <20251219202533.GA397103@sol>
+References: <20251217060740.923397-1-hch@lst.de>
+ <20251217060740.923397-8-hch@lst.de>
+ <20251219200244.GE1602@sol>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AhgucsMdbVXw
-Date: Fri, 19 Dec 2025 21:20:20 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Dave Hansen" <dave.hansen@intel.com>, "Arnd Bergmann" <arnd@kernel.org>,
- linux-mm@kvack.org
-Cc: "Andrew Morton" <akpm@linux-foundation.org>,
- "Andreas Larsson" <andreas@gaisler.com>,
- "Christophe Leroy" <chleroy@kernel.org>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "Jason Gunthorpe" <jgg@nvidia.com>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Matthew Wilcox" <willy@infradead.org>,
- "Richard Weinberger" <richard@nod.at>,
- "Russell King" <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
- "Madhavan Srinivasan" <maddy@linux.ibm.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>, "Michal Simek" <monstr@monstr.eu>,
- "David Hildenbrand (Red Hat)" <david@kernel.org>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, "Mike Rapoport" <rppt@kernel.org>,
- "Suren Baghdasaryan" <surenb@google.com>,
- "Michal Hocko" <mhocko@suse.com>, "Nishanth Menon" <nm@ti.com>,
- "Lucas Stach" <l.stach@pengutronix.de>
-Message-Id: <bad18ad8-93e8-4150-a85e-a2852e243363@app.fastmail.com>
-In-Reply-To: <a3f22579-13ee-4479-a5fd-81c29145c3f3@intel.com>
-References: <20251219161559.556737-1-arnd@kernel.org>
- <20251219161559.556737-2-arnd@kernel.org>
- <a3f22579-13ee-4479-a5fd-81c29145c3f3@intel.com>
-Subject: Re: [PATCH 1/4] arch/*: increase lowmem size to avoid highmem use
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251219200244.GE1602@sol>
 
-On Fri, Dec 19, 2025, at 19:02, Dave Hansen wrote:
-> On 12/19/25 08:15, Arnd Bergmann wrote:
->> --- a/arch/x86/Kconfig
->> +++ b/arch/x86/Kconfig
->> @@ -1416,7 +1416,9 @@ config HIGHMEM4G
->>  
->>  choice
->>  	prompt "Memory split" if EXPERT
->> -	default VMSPLIT_3G
->> +	default VMSPLIT_2G_OPT if HIGHMEM && !X86_PAE
->> +	default VMSPLIT_2G if X86_PAE
->> +	default VMSPLIT_3G_OPT
->>  	depends on X86_32
->
-> For simplicity, I think this can just be:
->
-> -	default VMSPLIT_3G
-> +	default VMSPLIT_2G
->
-> I doubt the 2G vs. 2G_OPT matters in very many cases. If it does, folks
-> can just set it in their config manually.
->
-> But, in the end, I don't this this matters all that much. If you think
-> having x86 be consistent with ARM, for example, is more important and
-> ARM really wants this complexity, I can live with it.
+On Fri, Dec 19, 2025 at 12:02:44PM -0800, Eric Biggers wrote:
+> On Wed, Dec 17, 2025 at 07:06:50AM +0100, Christoph Hellwig wrote:
+> >  new_bio:
+> > -	enc_bio = blk_crypto_alloc_enc_bio(src_bio, nr_segs);
+> > +	enc_bio = blk_crypto_alloc_enc_bio(src_bio, nr_segs, &enc_pages);
+> >  	enc_idx = 0;
+> >  	for (;;) {
+> >  		struct bio_vec src_bv =
+> >  			bio_iter_iovec(src_bio, src_bio->bi_iter);
+> > -		struct page *enc_page;
+> > +		struct page *enc_page = enc_pages[enc_idx];
+> >  
+> > -		enc_page = mempool_alloc(blk_crypto_bounce_page_pool,
+> > -				GFP_NOIO);
+> >  		__bio_add_page(enc_bio, enc_page, src_bv.bv_len,
+> >  				src_bv.bv_offset);
+> >  
+> > @@ -246,10 +284,8 @@ static void __blk_crypto_fallback_encrypt_bio(struct bio *src_bio,
+> >  		/* Encrypt each data unit in this page */
+> >  		for (j = 0; j < src_bv.bv_len; j += data_unit_size) {
+> >  			blk_crypto_dun_to_iv(curr_dun, &iv);
+> > -			if (crypto_skcipher_encrypt(ciph_req)) {
+> > -				enc_idx++;
+> > -				goto out_free_bounce_pages;
+> > -			}
+> > +			if (crypto_skcipher_encrypt(ciph_req))
+> > +				goto out_free_enc_bio;
+> >  			bio_crypt_dun_increment(curr_dun, 1);
+> >  			src.offset += data_unit_size;
+> >  			dst.offset += data_unit_size;
+> > @@ -278,9 +314,9 @@ static void __blk_crypto_fallback_encrypt_bio(struct bio *src_bio,
+> >  	submit_bio(enc_bio);
+> >  	return;
+> >  
+> > -out_free_bounce_pages:
+> > -	while (enc_idx > 0)
+> > -		mempool_free(enc_bio->bi_io_vec[--enc_idx].bv_page,
+> > +out_free_enc_bio:
+> > +	for (enc_idx = 0; enc_idx < enc_bio->bi_max_vecs; enc_idx++)
+> > +		mempool_free(enc_bio->bi_io_vec[enc_idx].bv_page,
+> >  			     blk_crypto_bounce_page_pool);
+> >  	bio_put(enc_bio);
+> >  	cmpxchg(&src_bio->bi_status, 0, BLK_STS_IOERR);
+> 
+> The error handling at out_free_enc_bio is still broken, I'm afraid.
+> It's not taking into account that some of the pages may have been moved
+> into bvecs and some have not.
+> 
+> I think it needs something like the following:
+> 
+> diff --git a/block/blk-crypto-fallback.c b/block/blk-crypto-fallback.c
+> index 23e097197450..d6760404b76c 100644
+> --- a/block/blk-crypto-fallback.c
+> +++ b/block/blk-crypto-fallback.c
+> @@ -272,7 +272,7 @@ static void __blk_crypto_fallback_encrypt_bio(struct bio *src_bio,
+>  	for (;;) {
+>  		struct bio_vec src_bv =
+>  			bio_iter_iovec(src_bio, src_bio->bi_iter);
+> -		struct page *enc_page = enc_pages[enc_idx];
+> +		struct page *enc_page;
+>  
+>  		if (!IS_ALIGNED(src_bv.bv_len | src_bv.bv_offset,
+>  				data_unit_size)) {
+> @@ -280,6 +280,7 @@ static void __blk_crypto_fallback_encrypt_bio(struct bio *src_bio,
+>  			goto out_free_enc_bio;
+>  		}
+>  
+> +		enc_page = enc_pages[enc_idx++];
+>  		__bio_add_page(enc_bio, enc_page, src_bv.bv_len,
+>  				src_bv.bv_offset);
+>  
+> @@ -305,7 +306,7 @@ static void __blk_crypto_fallback_encrypt_bio(struct bio *src_bio,
+>  			break;
+>  
+>  		nr_segs--;
+> -		if (++enc_idx == enc_bio->bi_max_vecs) {
+> +		if (enc_idx == enc_bio->bi_max_vecs) {
+>  			/*
+>  			 * For each additional encrypted bio submitted,
+>  			 * increment the source bio's remaining count.  Each
+> @@ -323,9 +324,11 @@ static void __blk_crypto_fallback_encrypt_bio(struct bio *src_bio,
+>  	return;
+>  
+>  out_free_enc_bio:
+> -	for (enc_idx = 0; enc_idx < enc_bio->bi_max_vecs; enc_idx++)
+> +	for (j = 0; j < enc_idx; j++)
+>  		mempool_free(enc_bio->bi_io_vec[j].bv_page,
+>  			     blk_crypto_bounce_page_pool);
+> +	for (; j < enc_bio->bi_max_vecs; j++)
+> +		mempool_free(enc_pages[j], blk_crypto_bounce_page_pool);
+>  	bio_put(enc_bio);
+>  	bio_endio(src_bio);
+>  }
 
-Yes, I think we do want the default of VMSPLIT_3G_OPT for
-configs that have neither highmem nor lpae, otherwise the most
-common embedded configs go from 3072 MiB to 1792 MiB of virtual
-addressing, and that is much more likely to cause regressions
-than the 2816 MiB default.
+Also, this shows that the decrement of 'nr_segs' is a bit out-of-place
+(as was 'enc_idx').  nr_segs is used only when allocating a bio, so it
+could be decremented only when starting a new one:
 
-It would be nice to not need the VMSPLIT_2G default for PAE/LPAE,
-but that seems like a larger change.
+        submit_bio(enc_bio);
+        nr_segs -= nr_enc_pages;                                 
+        goto new_bio;                                            
 
-     Arnd
+- Eric
 
