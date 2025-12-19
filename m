@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-71751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5241CD0690
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 15:57:00 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73487CD0727
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 16:07:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id A5A75308C1A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 14:52:41 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id F321E30FCF0B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 15:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9751A33C50A;
-	Fri, 19 Dec 2025 14:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E786233B6E9;
+	Fri, 19 Dec 2025 14:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y82BXQAu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9iqa4Ip"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CECB339B4A;
-	Fri, 19 Dec 2025 14:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BA2303A0D;
+	Fri, 19 Dec 2025 14:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766155934; cv=none; b=cA536tRB66JqeVmc6pIRYzRmbsd5bIcfA0BAaQtXNCYCinMgafSc0iVAWZCkVzOKb//Q6O7sdOtnO7R+eanBYo34DS9ATd9ULQWiNBT3PbkK0PecsbW7vgoPnGgcbKy7/70Fyvpd1hvql74oVdJCmw4Z+GY9GwPw9jxUo34fuOY=
+	t=1766155955; cv=none; b=F76LU8pkbm1pApwTBE2V6rTgEieGmt8Zs+U5HgcF1DUoW93RbGUjOFcRsklLwQr7iWhFw0lVFgb0XCoModoIWIPi/aqDeHO7KHznXFCGjzqA89WGB5oL9Xt1APayy32y9q4aUomikX9soaaDhENAyexTru+wKzBUcqPb1EQO8jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766155934; c=relaxed/simple;
-	bh=2LyZsRMj9IagVXf8necnnozfapmC4e3RrVeAdhKkg3o=;
+	s=arc-20240116; t=1766155955; c=relaxed/simple;
+	bh=fL4QBmLxRt5fZQFVj9GsOL7If6i9p9vb7HI0yDZxhEI=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NPZUP8pI5BgmA0vENY382lRqs8y3rcnQSCDxbQUa9cM9pgNIc8vvPwexqd3+f8l1s0kFOgk7JSCB6aW53m+OKCB/RbEjAxQwOxdq61/MkI0MinGATidvyGAmZrSgtDRDN1Jcln6Z5PQ5G8agUS869EvFyWUx/9oAzHRTJxHJgQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y82BXQAu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51322C4CEF1;
-	Fri, 19 Dec 2025 14:52:12 +0000 (UTC)
+	 Content-Type:MIME-Version; b=bRi/6SPnjMOF7YZVUsFMCWwqWsapRHykzFsxTRXP/NLkdlsUoXPgDoOKXCDzk+HMEchqcQ+2979znVSYRbxbT3eYGk4kUTR5pILg9V/4bVVCUHYJqCpqjzuiGeQ1vhuiLt6QkkSowYA8KmM/52PwpdLBjkeZsP2dlpP0hbdO4qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9iqa4Ip; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33DCAC4CEF1;
+	Fri, 19 Dec 2025 14:52:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766155933;
-	bh=2LyZsRMj9IagVXf8necnnozfapmC4e3RrVeAdhKkg3o=;
+	s=k20201202; t=1766155955;
+	bh=fL4QBmLxRt5fZQFVj9GsOL7If6i9p9vb7HI0yDZxhEI=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Y82BXQAuXh4aq3Ue6UnucLMIed/7GtPIKuxOXq5oi80EJEEduaf9N45HKdE8f82iS
-	 +eYbTpP5JsyHEdR/k+47w5oqxWNjcSAqbaHKuKR6VFfS+D3c2UCLC0Gk+aDW72r4cp
-	 Iaf94DFRbaYyKu0/bQhAxLiYH+qc2NdwknUBW5SbG/m4JILXdt3fCkUKb0JGxKec8R
-	 SnuhKSWounx6o8ji4+pr5bBkDLhsuDaF/yXRgZqxD8AjUCshlvERAfftnaslnXzRQQ
-	 fhjdBrrevdtgef7In+VsAZ4MrU9lmYPk1q8811VS6QHTnwV5SATicPaJ5q58O+kv1u
-	 Dit1GMRgKYxXA==
-Message-ID: <fa459e5fd28e81167397e768df0661cf78cfa636.camel@kernel.org>
-Subject: Re: [PATCH 1/2] fs: Describe @isnew parameter in ilookup5_nowait()
+	b=n9iqa4IpEfw1oEeMqqoPRxbCJxhRyTX/65br6NUOiY9HXJAXqXrckHFanw0spCDNO
+	 NEndbiOs0mJXMYWTg8qAspaZzuzmcdA6txCt19Hj1YcaiGo9hWLoAGtKbxTQlN+r7t
+	 Y6mOpKUPLTUT2X04TFv4Hp4Wh+cxY34eFMhgrVJv+srONDSYITQRq09yqcd8lShbdM
+	 2vG5Q21uhR+mibRjIsEyNvHPTrIXVN4Q6KV7d0Go9pNlu9yMYF/2kqMdIZ2PvGEUoS
+	 UR2OT0METUmsr+gkXZwwjDy8bbKVhzRaAx8nRnrBAki2X1yImPYB9PCRdc2FlB5Tn6
+	 fwnN+Rypm5SDQ==
+Message-ID: <47c60415d3020aff07b66f2b8219c4ef2c8c8693.camel@kernel.org>
+Subject: Re: [PATCH 2/2] VFS: fix __start_dirop() kernel-doc warnings
 From: Jeff Layton <jlayton@kernel.org>
 To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
 	 <linux-kernel@vger.kernel.org>, Linux Filesystems Development
@@ -49,10 +49,10 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
  <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Mateusz Guzik
  <mjguzik@gmail.com>,  NeilBrown <neil@brown.name>, Amir Goldstein
  <amir73il@gmail.com>
-Date: Fri, 19 Dec 2025 09:52:11 -0500
-In-Reply-To: <20251219024620.22880-2-bagasdotme@gmail.com>
+Date: Fri, 19 Dec 2025 09:52:33 -0500
+In-Reply-To: <20251219024620.22880-3-bagasdotme@gmail.com>
 References: <20251219024620.22880-1-bagasdotme@gmail.com>
-	 <20251219024620.22880-2-bagasdotme@gmail.com>
+	 <20251219024620.22880-3-bagasdotme@gmail.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -138,36 +138,44 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Fri, 2025-12-19 at 09:46 +0700, Bagas Sanjaya wrote:
-> Sphinx reports kernel-doc warning:
+> Sphinx report kernel-doc warnings:
 >=20
-> WARNING: ./fs/inode.c:1607 function parameter 'isnew' not described in 'i=
-lookup5_nowait'
+> WARNING: ./fs/namei.c:2853 function parameter 'state' not described in '_=
+_start_dirop'
+> WARNING: ./fs/namei.c:2853 expecting prototype for start_dirop(). Prototy=
+pe was for __start_dirop() instead
 >=20
-> Describe the parameter.
+> Fix them up.
 >=20
-> Fixes: a27628f4363435 ("fs: rework I_NEW handling to operate without fenc=
-es")
+> Fixes: ff7c4ea11a05c8 ("VFS: add start_creating_killable() and start_remo=
+ving_killable()")
 > Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 > ---
->  fs/inode.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  fs/namei.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 521383223d8a45..379f4c19845c95 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1593,6 +1593,9 @@ EXPORT_SYMBOL(igrab);
->   * @hashval:	hash value (usually inode number) to search for
->   * @test:	callback used for comparisons between inodes
->   * @data:	opaque data pointer to pass to @test
-> + * @isnew:	return argument telling whether I_NEW was set when
-> + *		the inode was found in hash (the caller needs to
-> + *		wait for I_NEW to clear)
+> diff --git a/fs/namei.c b/fs/namei.c
+> index bf0f66f0e9b92c..91fd3a786704e2 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2836,10 +2836,11 @@ static int filename_parentat(int dfd, struct file=
+name *name,
+>  }
+> =20
+>  /**
+> - * start_dirop - begin a create or remove dirop, performing locking and =
+lookup
+> + * __start_dirop - begin a create or remove dirop, performing locking an=
+d lookup
+>   * @parent:       the dentry of the parent in which the operation will o=
+ccur
+>   * @name:         a qstr holding the name within that parent
+>   * @lookup_flags: intent and other lookup flags.
+> + * @state:        task state bitmask
 >   *
->   * Search for the inode specified by @hashval and @data in the inode cac=
-he.
->   * If the inode is in the cache, the inode is returned with an increment=
-ed
+>   * The lookup is performed and necessary locks are taken so that, on suc=
+cess,
+>   * the returned dentry can be operated on safely.
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
