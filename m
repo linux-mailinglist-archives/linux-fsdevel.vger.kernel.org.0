@@ -1,84 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-71726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C32CCF8AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 12:12:07 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C92CCF91D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 12:26:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B0393303A195
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 11:10:26 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 01162301B80B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 11:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCC83081B0;
-	Fri, 19 Dec 2025 11:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8AB311C30;
+	Fri, 19 Dec 2025 11:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QUu/BlPP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SSrKrAiY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4AF274670;
-	Fri, 19 Dec 2025 11:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA91E31197A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 11:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766142625; cv=none; b=pWKzuciHfkZueT4uSkz32vdCq6SuQwLoJsGdHFegs7TS8oQIq/JPSOgnaJg6uvq3yw8Ur5v26i85oJ0+Dm8ZgV6LE4HTgRkowUcN5d+ytPaH42yY2JOhRtnoGH3TrCX8AO9N3UJTnK1STsgUEmlmVq7BIjVTqpbU0BGEtONQxgI=
+	t=1766143597; cv=none; b=NBOSvBUjqGmlkX7grKRHt7ytYVzgFlYOx4ybxvSOc0/rzKtLEoiOcHvNJEgfxjRIe3hFS94xY2MhHu+hiqkFLYiDt22aJcRijw0oUo/qSOVaJTwG4nuQjXoOQqln+q18XxzKXCj6wjUg2eyWlBvyXzbBSb2dXRR9SldGZWrGLTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766142625; c=relaxed/simple;
-	bh=ymHDycBiD3cdlOsRLJpMzh+CAe7R8FTNqUi6noJRgc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KaBPMQvQigmB/JBroCKCu4mGLTCFZBsC4fWN4aROP6M+J92vlMGEW/BBaZz28GAm04zsIJrvPOiBZCr+dHwkujFmb0UcxTcSffQaQFbdOPxJOE/0TBouZmz5SBnYU4xbXko/td6o0o6lyQ2HKyJFLpJMbMiQRavfLjfE2Zt4jAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QUu/BlPP; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=77glmLHUn38+bjFwaQX0aUFqGU278qbMfSMlpnIXh9Q=; b=QUu/BlPPopOOjJPBENVYe9e2zd
-	Rwwa1KOm6AX0D8t7dMX8AgblxZ+f/bvv0wzvCBIJbzxaVu4RVeBTNwolVuNdS0PbtI5u3PuDHZYwv
-	PUbmh8AWksaiStR/VhSELAEcYgwsr7cEYvP2RQTJ81H99ZXltiGAw8A3W3wM1ueDVIO8VuxnH6MgH
-	dPbDdiCB1q3UmHcWvTu6LAaFOLwhbiRkY1jQF7G9zzNeb4m6wNYTYByMRqlLlGFK1ccWeD8dRSIp1
-	GtXK46QkPVV5s6Bb4xEiJ43xjdwmR0eh5u6pi4ccIhHQY/sCMtnuCcZGC2VYt6TPnwZqhTRqKeTFj
-	JXm29eVg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vWYNG-0000000AAoe-3YGk;
-	Fri, 19 Dec 2025 11:10:18 +0000
-Date: Fri, 19 Dec 2025 03:10:18 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Joanne Chang <joannechien@google.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Zorro Lang <zlang@kernel.org>,
-	fstests@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net, Chao Yu <chao@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1] generic/735: disable for f2fs
-Message-ID: <aUUymqMO4RfK8thK@infradead.org>
-References: <20251218071717.2573035-1-joannechien@google.com>
- <aUOuMmZnw3tij2nj@infradead.org>
- <CACQK4XDtWzoco7WgmF81dEYpF1rP3s+3AjemPL40ysojMztOtQ@mail.gmail.com>
- <aUTi5KPgn1fqezel@infradead.org>
- <CACQK4XCmq2_nSJA7jLz+TWiTgyZpVwnZZmG-NbNOkB2JjrCSeA@mail.gmail.com>
+	s=arc-20240116; t=1766143597; c=relaxed/simple;
+	bh=OjKMLBMWvXBLsRQ+Ku+b35IsH0szsjD/FESaTra+1sE=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=FRpqGpxmlS42PA6adPRRjaH/KdFxZoIK3Jl7t3WG9hR2W7lFvTX33iSeDkEQ+JQRDC7I0ag1Yjx1DvW2r0f8iU6AR3FIl9XwbZpmZogSGCv/KftOK4MZsVcjLwd//oYrcIY+LxmnhUzAu5oYnl7fWiVwwuosLWtFGq3U5NkmB7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SSrKrAiY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1766143594;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DNkySk2gooQskMWGcML4EcBFjuRdoagkUJErjio2lVE=;
+	b=SSrKrAiYkvDY27cMRas0vvMJL/omCSKFAkTe48cA5Vw1qa4AwWK0Igdw8u7mqd7rzUPtb8
+	ZxZlTaqzEGi/+YaM32K5x3xkFP37oLGBArLtWZrQAZXXvMPJpLyd8GejxXW9wnmT42jc1w
+	qvR4XL29QDr7nJOX1Skg1KzfXyFCL0o=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-299-VECoU5aiMvyqXc5WYRp_Hg-1; Fri,
+ 19 Dec 2025 06:26:29 -0500
+X-MC-Unique: VECoU5aiMvyqXc5WYRp_Hg-1
+X-Mimecast-MFC-AGG-ID: VECoU5aiMvyqXc5WYRp_Hg_1766143588
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D35CF1956053;
+	Fri, 19 Dec 2025 11:26:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.5])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 90E3819560B4;
+	Fri, 19 Dec 2025 11:26:23 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <aT1qEmxcOjuJEZH9@codewreck.org>
+References: <aT1qEmxcOjuJEZH9@codewreck.org> <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org> <aTkNbptI5stvpBPn@infradead.org> <aTkjWsOyDzXq_bLv@codewreck.org> <aTkwKbnXvUZs4UU9@infradead.org>
+To: asmadeus@codewreck.org
+Cc: dhowells@redhat.com, Christoph Hellwig <hch@infradead.org>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Latchesar Ionkov <lucho@ionkov.net>,
+    Christian Schoenebeck <linux_oss@crudebyte.com>,
+    v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
+    Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+    Chris Arges <carges@cloudflare.com>
+Subject: Re: [PATCH] 9p/virtio: restrict page pinning to user_backed_iter() iovec
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACQK4XCmq2_nSJA7jLz+TWiTgyZpVwnZZmG-NbNOkB2JjrCSeA@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <814007.1766143582.1@warthog.procyon.org.uk>
+Date: Fri, 19 Dec 2025 11:26:22 +0000
+Message-ID: <814008.1766143582@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri, Dec 19, 2025 at 04:53:04PM +0800, Joanne Chang wrote:
-> Thanks for the reply. To clarify, I meant testing the architectural
-> limit of blocks per file, not the current free blocks. Sorry for any
-> confusion in my previous reply.
-> 
-> The limit is indeed the maximum file size. However, since both the F2FS
-> file size limit and the test's requirements are calculated as
-> (block_number * block_size), I believe it is simpler to just test the
-> block number.
+asmadeus@codewreck.org wrote:
 
-Well, for the file size you can test by doing a truncate to the expected
-size and _notrun if not supported.  I can't really think of a way that
-easy to directly check for the number of supported blocks.
+> FWIW, the comment at the top of extract_iter_to_sg() says:
+> > The iov_iter_extract_mode() function should be used to query how cleanup
+> but I couldn't find any such function (even back when this comment was
+> added to netfs code in 2023...), the two copies of this comment probably
+> could use updating... David?
+
+Ah, the function got renamed to iov_iter_extract_will_pin() instead.  I need
+to fix the comment.
+
+David
 
 
