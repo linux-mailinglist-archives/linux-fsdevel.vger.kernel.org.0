@@ -1,185 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-71748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE7FCD0240
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 14:54:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 511F9CD031A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 15:03:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C399D3093FA9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 13:52:12 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 06ED630A322C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 14:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAEC324B09;
-	Fri, 19 Dec 2025 13:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F2E327C0B;
+	Fri, 19 Dec 2025 14:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e5+IbRoD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iukwmGOd";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QbOC2Aqu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oJud9F3m"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cAPtK90L"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1B41E7C34
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 13:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AE2327BF5
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 14:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766152330; cv=none; b=m/Zu/ihFotXKmkKJ6XQjKbQJM1ByImTXnHSbLTn+XzTrNtS018YTIogE8kQdSBovHMD9eBAhsP2YGuBY3GRkKqpnXcF7gR+yb2wpgJ/79F0RbDWt0cDRa/9ZAmtOJdzawQJodFsCK+32HlQHYtrO5Ih94sDkKXxUvAd7ULC1C00=
+	t=1766152931; cv=none; b=q3BPaHDNltMpxwvJp1r4Hg7I972k+RKRCfmppugS8N0O+T2Z7FKGSUcqz6bUw+f4J4D5Ht+1m0k95YR/8KpX2yQt8SQ6JfxxBH0HU+ez1WYMBQZlOM5Iovs7mNNDjNxgwGoGCMc46qjf3h/hKdEMLCnineJj5ohwHcFvPWoEwbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766152330; c=relaxed/simple;
-	bh=kqcu6qEZM3MDVa2jQmNjPSemWCOCbM9AhOsppOvavgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPBzLUJYu0aULfEHTJ0aU7LxUv7Rp42JOd/L4jxUxoXGCS7TvojYP6GgfCHi7vUpN0yyA9l2jmSSwhpGRLMU9nBiMkept0BwrhkQ+oorta1RqxEunN6Y7vGPQSPGROm++oz1BhGgvFK4uzEFWH5qgMIUTSsKfSsYwJWrQmI3NkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e5+IbRoD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iukwmGOd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QbOC2Aqu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oJud9F3m; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1766152931; c=relaxed/simple;
+	bh=lYIXcGcrOPmOZzFUGlVjofb/tOUmKZRLWpRMjul5nf0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=eBoziqt9chZiD6NgwJHDTDJmAoI+4OQzB+tOHrwpWom1ERaPEGVGfsf3Q+wcTBq4gHRoLz82ZIDY0elILuBqtf4gARhMHdozLr7dbPGVIHoFGF9mr9PrTXJNO0hEvfSNd5qLbcPA+J+4hBUtnBWE1yWmzIxwbmIQhTKydnaRHUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cAPtK90L; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1766152928;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yzNnOFBqwNj3DGyLxibs+wwctNsN2xP1MIdjPWFUw7s=;
+	b=cAPtK90Lm2ZcHuYxr09OzmCkhotou5Rj5HW204PE22N9sDVmO54T9jJIjDeF1JMzIjrkwN
+	CK7kHbnWzYJ2L3sRzEIEnlOgUUztjVidYhQiOQsU7tIFQAfjghD1ymn/lIFUUZeNXS19DI
+	Caymw78HpR/T7EKQjgbZa9b9Q7x1Kzs=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-454-ou7AYO8ANTehcnavAX8JjA-1; Fri,
+ 19 Dec 2025 09:02:05 -0500
+X-MC-Unique: ou7AYO8ANTehcnavAX8JjA-1
+X-Mimecast-MFC-AGG-ID: ou7AYO8ANTehcnavAX8JjA_1766152923
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B03BC3378A;
-	Fri, 19 Dec 2025 13:52:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1766152325; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=53hNUa+MCXc25E9rF3v+NHVwjXhyWkYUHlwp4mlUtUA=;
-	b=e5+IbRoD3gyCzPqmmfmt3e2HzynvxyfA0oGxuhpfOUcMtpHnY30QnCtnIg/PwP994/Hv9H
-	HyKz3Z79LUslyof55j4R+5IVP+f+MZRhAB5c7m6B6/xSM2+fDzkExk+IyVOihQhFsc+TJK
-	8pwD7S/yOsNqUIBWd2MzfBsce4F4ITk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1766152325;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=53hNUa+MCXc25E9rF3v+NHVwjXhyWkYUHlwp4mlUtUA=;
-	b=iukwmGOdJ7CTWNIxsyjyhWfETajZGvtgEXwDSzG7kufRBXsJ1+yNwAf6RQ1kEeh47bjiyZ
-	nG8hwrD2de/qQ+DA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QbOC2Aqu;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=oJud9F3m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1766152324; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=53hNUa+MCXc25E9rF3v+NHVwjXhyWkYUHlwp4mlUtUA=;
-	b=QbOC2Aqu5csQopiXnqGQj8Cei24OU5Z2PzAgCx9FcgDaZndz5re68z9m2pn2PmkDAD/fcC
-	hid0+pX9pdRE5BWxawKVaPIZxH0vLL6IBlWjdXW487P/PULmpYUCto+QT/gNCNPyOQ81x6
-	RodaZVY3+YuavNK6KYi79dpg5fLrBPM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1766152324;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=53hNUa+MCXc25E9rF3v+NHVwjXhyWkYUHlwp4mlUtUA=;
-	b=oJud9F3m0jxKSrei4ZK5Io7xPwcslYuwCmLwkJqu3SaBMrbMWpmn+4+eViqP7OiX1fbnXv
-	LHeqleGXtJQgHACA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A37433EA63;
-	Fri, 19 Dec 2025 13:52:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1qDgJ4RYRWl6MwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 19 Dec 2025 13:52:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 68246A090B; Fri, 19 Dec 2025 14:51:56 +0100 (CET)
-Date: Fri, 19 Dec 2025 14:51:56 +0100
-From: Jan Kara <jack@suse.cz>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>, Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH 2/2] VFS: fix __start_dirop() kernel-doc warnings
-Message-ID: <ifsfc5ha6ooxrl5pqlr3x7sou2kvtbubn5slxgcurd46psywgq@pfrmqdg24cpe>
-References: <20251219024620.22880-1-bagasdotme@gmail.com>
- <20251219024620.22880-3-bagasdotme@gmail.com>
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1DA8E1955DD1;
+	Fri, 19 Dec 2025 14:02:02 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.5])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6616D30001A2;
+	Fri, 19 Dec 2025 14:01:58 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <aUTP9oCJ9RkIYtKQ@codewreck.org>
+References: <aUTP9oCJ9RkIYtKQ@codewreck.org> <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org> <aUMlUDBnBs8Bdqg0@codewreck.org> <aUQN96w9qi9FAxag@codewreck.org> <8622834.T7Z3S40VBb@weasel> <aUSK8vrhPLAGdQlv@codewreck.org>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: dhowells@redhat.com, Christian Schoenebeck <linux_oss@crudebyte.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Latchesar Ionkov <lucho@ionkov.net>,
+    Chris Arges <carges@cloudflare.com>, v9fs@lists.linux.dev,
+    linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+    linux-fsdevel@vger.kernel.org
+Subject: Re: 9p read corruption of mmaped content (Was: [PATCH] 9p/virtio: restrict page pinning to user_backed_iter() iovec)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251219024620.22880-3-bagasdotme@gmail.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,kernel.org,suse.cz,gmail.com,brown.name];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Rspamd-Queue-Id: B03BC3378A
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <818488.1766152917.1@warthog.procyon.org.uk>
+Date: Fri, 19 Dec 2025 14:01:57 +0000
+Message-ID: <818489.1766152917@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri 19-12-25 09:46:20, Bagas Sanjaya wrote:
-> Sphinx report kernel-doc warnings:
-> 
-> WARNING: ./fs/namei.c:2853 function parameter 'state' not described in '__start_dirop'
-> WARNING: ./fs/namei.c:2853 expecting prototype for start_dirop(). Prototype was for __start_dirop() instead
-> 
-> Fix them up.
-> 
-> Fixes: ff7c4ea11a05c8 ("VFS: add start_creating_killable() and start_removing_killable()")
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Dominique Martinet <asmadeus@codewreck.org> wrote:
 
-Looks good. Feel free to add:
+>    netfs_collect_folio: R=00001b55 ix=00003 r=3000-4000 t=3000/5fb2
+>    netfs_folio: i=157f3 ix=00003-00003 read-done
+>    netfs_folio: i=157f3 ix=00003-00003 read-unlock
+>    netfs_collect_folio: R=00001b55 ix=00004 r=4000-5000 t=4000/5fb2
+>    netfs_folio: i=157f3 ix=00004-00004 read-done
+>    netfs_folio: i=157f3 ix=00004-00004 read-unlock
+>    netfs_collect_folio: R=00001b55 ix=00005 r=5000-5fb2 t=5000/5fb2
+>    netfs_folio: i=157f3 ix=00005-00005 read-done
+>    netfs_folio: i=157f3 ix=00005-00005 read-unlock
+>    ...
+>    netfs_collect_stream: R=00001b55[0:] cto=5fb2 frn=ffffffff
+>    netfs_collect_state: R=00001b55 col=5fb2 cln=6000 n=c
+>    netfs_collect_stream: R=00001b55[0:] cto=5fb2 frn=ffffffff
+>    netfs_collect_state: R=00001b55 col=5fb2 cln=6000 n=8
+>    ...
+>    netfs_sreq: R=00001b55[2] ZERO SUBMT f=000 s=5fb2 0/4e s=0 e=0
+>    netfs_sreq: R=00001b55[2] ZERO TERM  f=102 s=5fb2 4e/4e s=5 e=0
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+This would seem to show a problem, if not the problem.
 
-								Honza
+We unlocked page ix=00005 before doing the ZERO subreq that clears the page
+tail.  That shouldn't have happened since the collection point hasn't reached
+the end of the folio yet.
 
-> ---
->  fs/namei.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index bf0f66f0e9b92c..91fd3a786704e2 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2836,10 +2836,11 @@ static int filename_parentat(int dfd, struct filename *name,
->  }
->  
->  /**
-> - * start_dirop - begin a create or remove dirop, performing locking and lookup
-> + * __start_dirop - begin a create or remove dirop, performing locking and lookup
->   * @parent:       the dentry of the parent in which the operation will occur
->   * @name:         a qstr holding the name within that parent
->   * @lookup_flags: intent and other lookup flags.
-> + * @state:        task state bitmask
->   *
->   * The lookup is performed and necessary locks are taken so that, on success,
->   * the returned dentry can be operated on safely.
-> -- 
-> An old man doll... just what I always wanted! - Clara
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+David
+
 
