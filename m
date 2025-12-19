@@ -1,214 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-71767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7294CD1249
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 18:28:24 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2526ECD137C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 18:51:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 900DB304F113
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 17:25:16 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id D1254302878E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 17:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0136E2EBB84;
-	Fri, 19 Dec 2025 17:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425D634214F;
+	Fri, 19 Dec 2025 17:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4O/0Ac0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a3HiN4an"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DE632B982;
-	Fri, 19 Dec 2025 17:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B66F33CEB5
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 17:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766165114; cv=none; b=nzos+yIB3KnrF98G0fagLH/MxTPek5DMcKFpRiDQYg7p9HLFkRsku/aAVk9gWUcZRDixoqHijhubuP2AC8xIi/JE7zv7HFDmHs87BfSJzvoUbktMWdT9RMk2PnPOB8lFwlZvXBuKDJUJ+XXJeQsNu39ThudbZ3ObWqlTIEvcomw=
+	t=1766166147; cv=none; b=Mgq84Sxiw+FLmusrjT0OKiFQ9dw1SB/d/H1oWsFdW/9nHzGjH1rPMBtiteKynHCcYnqcsewqYRVrXS2TxeFYQtHxpfumbV0czyx7cG1dxzb1uaFJzWOjjsa3Hyn8MnH8+SIJiBukS6pF3ZLqMHozxPqft7QuIjoZcQ/w7FaXn8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766165114; c=relaxed/simple;
-	bh=YEA9BKJF3rVbKK4t9UqRKdF4ELUwp7ZDAniqyWcGzc4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VDxt/7W7VSj+hlGQkPFUksB0eS82j0xMiKPLnhCxMZhFBGTUYjldPfN4AzmuloNK/Cvag1oxOyAobNRB0MqEfIpKb6HcFgRIUvHlcX+w/F+LyxewO1bSuGAbHWNRXwj/4r/XxXadUJ2lEZFo7AuExt88IoiHXg7xG717Xt+ssas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4O/0Ac0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37FABC4CEF1;
-	Fri, 19 Dec 2025 17:25:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766165113;
-	bh=YEA9BKJF3rVbKK4t9UqRKdF4ELUwp7ZDAniqyWcGzc4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=H4O/0Ac0j/M+NKG+1FrbmYImdH+aDGNUL6FN36h1+RLlJmJFoozTDsGkviMwtLIkJ
-	 1K3Aa2daIwxXPML45p7akZM4zifkFV/yfKJTAyof29lgpW1iWSTRhLoVQlJod15eDZ
-	 R5Eyrmbgsf3nIkiHEDcGVPwd10uGm1LBtXKJsuDG+44TceH5BXgsa4WL7515CzmCKC
-	 30rCK/pDc+J0HrtTkXVuwKF5/og7Pn95Ajpq95R0BJtme7P/hMglpbmdbmpYU1vE5H
-	 hxTIlbzJKBJ6AOHwU6rf0D7Qf9nCjiH8zqhzRhr6GyTo8SlKZ3nu0Y+ok35bj3w330
-	 gBpiYpVrf07Pg==
-Message-ID: <ca86b70c1a4a25c2f084bfce53ed864a557ebfed.camel@kernel.org>
-Subject: Re: [PATCH v4 8/8] nfsd: freeze c/mtime updates with outstanding
- WRITE_ATTRS delegation
-From: Jeff Layton <jlayton@kernel.org>
-To: Olga Kornievskaia <aglo@umich.edu>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner	
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven Rostedt	
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Chuck Lever
- <chuck.lever@oracle.com>, NeilBrown	 <neil@brown.name>, Olga Kornievskaia
- <okorniev@redhat.com>, Dai Ngo	 <Dai.Ngo@oracle.com>, Tom Talpey
- <tom@talpey.com>, Trond Myklebust	 <trondmy@hammerspace.com>, Anna
- Schumaker <anna@kernel.org>, 	linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-trace-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org
-Date: Fri, 19 Dec 2025 12:25:10 -0500
-In-Reply-To: <CAN-5tyEjYRFrJ7Gc4S8KwAZUuF-uz6ovPa4-_ynt+GGVqJHN_A@mail.gmail.com>
-References: <20250730-nfsd-testing-v4-0-7f5730570a52@kernel.org>
-	 <20250730-nfsd-testing-v4-8-7f5730570a52@kernel.org>
-	 <CAN-5tyEjYRFrJ7Gc4S8KwAZUuF-uz6ovPa4-_ynt+GGVqJHN_A@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
+	s=arc-20240116; t=1766166147; c=relaxed/simple;
+	bh=ijXQWykGOGL2TDj17B557+scMQWaX05VsSV+vuQBmIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u2OqZYo3pLo2ncYT1jwlktrEwZOfgXf27wg2K01+z8OfLl9calDw9/SkjMkcmcKZ42FKLT5DrBUz8MNQuV3qWpx0m9aaFASKz83BFogH1O8b6pagV8boDHID+3xFL4TRY5deSM/5MWfygRM/zVJ1wMKvaKkTQGKWVIQA53a4SKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a3HiN4an; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-34c93e0269cso1610714a91.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 09:42:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1766166146; x=1766770946; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JW8x981xzKG4MFNW1u7R47ZafSPsRMNXeILtwJPy3Eo=;
+        b=a3HiN4anjqEKYe5mOkDveGPEmeYEkiik25NphNw377w339CsOYEdNkoKEslzQGN6g6
+         XHed/8fc4BWUAo5nw9oliAs7FeHqfwboXV8AhdClHP3qHYZtJqevDOCa5r5IwxxR9yfT
+         J1Owhwd9K3Lajl+SpFKVxjfJXnOsJKf3ENcH/f0vK01a7nUrXPW01a9YvvSFyGZrhv//
+         NWMrqhH3AvXtam/gEERHpv0Y/4H8rVkoKpaRS5RFSCsJVBMHYRgIUbkCiYxwAyO+GcC+
+         SH80++rufbd4oPP569t+6fs4SIAlTIKPjx7l3BcDQ71Qj4CYC8RCeZfWNa9Ttihr2oTX
+         +HNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766166146; x=1766770946;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JW8x981xzKG4MFNW1u7R47ZafSPsRMNXeILtwJPy3Eo=;
+        b=DZ/va9cgiT2VYMF4hpQy4pGl5UJCiXtE/sCoQRBfUhmTfTzv1tbcG++ixwv9+BSsht
+         EPDUhPRhL1NKvvFK+oNq8hI3tPofoSDxyPwOeXYJzmUurXeQubLeXmBE7HIOcYdSIej0
+         H6cxGwrS+fEo4c+fdnGou0dawLP+5dKyzUk62kULeg2MM5lMjL6XYuOkbxg/mzovwi+W
+         L/j/nFF2kU2ecQ79H8HzfkKORVK6nxtGPMFXyxr1nAuGBaLW6JTitF8eNXspwoHdirWB
+         LC4sQS3VWeP+BgfwUB5HLlfZrLxYyZwvbXaSmq9Fm4BCaUZQoxZVuvfyq2rQyW9pwoKQ
+         fWYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVaF+ZdmpBifI7JSkpXEyTbY0b7Zmq5GktJokYcsGpPOnlqx3se4pZfypc1woG5aBZGxjI7pT8JqtgnMDN6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxsIjKlmDe3EjAaEV7s9MXhPrys2+2QFH2ExfMVfhVd99ue4hm
+	DoUJEeSo7Sv1xevxQzPajUWYwU0j8fwWTIHackXfmqLDo0Zw+XbBNhWew8rbHb+U1/px/a32k7P
+	6W6vPAZ5scXkCmiXDxpLPpaK0e03wPN8=
+X-Gm-Gg: AY/fxX5ptXQzH70aQpGd+gkidbHD0Y46AxoYcj08aeyRFykxlgFxmB3F8ECSN7sxxbU
+	g6eTaQA+8pVWlOioPMtP1ByW4c8ETlnw0lFWM/LP10vxHDFv+gFSTWoJEAuYkwQBr7p7qOulCal
+	PJjoJ8XSkL0BNe3DI/KzFKaUiw73xop9ju5NNFbAyft5SKrbvvPxb9CV8IPXUWbBLAzwx7Bna03
+	lx00YfvIuMmqch4MGABZC7XxyRgpWDC6TFAzqOLl7BAtzFPsOY6o4qoe8x3NKwnJr7euQc=
+X-Google-Smtp-Source: AGHT+IHpINJuwfKifBLEq1prr5FrJkIDHltFeoo+6LV09TLdfIop0tuY4u1d1V1PT4Cd13YrZszjS9knwymVFnKkxe8=
+X-Received: by 2002:a17:90b:3c8d:b0:34e:6e7d:7e73 with SMTP id
+ 98e67ed59e1d1-34e71e0910emr5359098a91.11.1766166145554; Fri, 19 Dec 2025
+ 09:42:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251218205505.2415840-1-shakeel.butt@linux.dev>
+ <aUSUe9jHnYJ577Gh@casper.infradead.org> <3lf3ed3xn2oaenvlqjmypuewtm6gakzbecc7kgqsadggyvdtkr@uyw4boj6igqu>
+ <aUTPl35UPcjc66l3@casper.infradead.org> <64muytpsnwmjcnc5szbz4gfnh2owgorsfdl5zmomtykptfry4s@tuajoyqmulqc>
+In-Reply-To: <64muytpsnwmjcnc5szbz4gfnh2owgorsfdl5zmomtykptfry4s@tuajoyqmulqc>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 19 Dec 2025 09:42:13 -0800
+X-Gm-Features: AQt7F2rfNtQWCgEkml7MtGjiHiq38CyNWFSgjhPC7t5q8T4gXasMjJ76tzv38qA
+Message-ID: <CAEf4BzY2YYJJsMx8BgkKk7BG67pj52stv_GRGwZkj3jnuipw+Q@mail.gmail.com>
+Subject: Re: [PATCH bpf v2] lib/buildid: use __kernel_read() for sleepable context
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Matthew Wilcox <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Shaurya Rane <ssrane_b23@ee.vjti.ac.in>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Meta kernel team <kernel-team@meta.com>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com, 
+	Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-12-19 at 10:58 -0500, Olga Kornievskaia wrote:
-> Hi Jeff,
->=20
-> I narrowed down the upstream failure for generic/215 and generic/407
-> to this commit.
->=20
-> Let's consider first where the kernel is compiled with delegated
-> attributes off (but it also fails just the same if the delegated
-> attributes are compiled in).
->=20
-> I don't understand why the code unconditionally changed to call
-> nfsd4_finalize_deleg_timestamps() which I think the main driver behind
-> the failure.
->=20
-> Running generic/407 there is an OPEN (which gives out a write
-> delegation) and returns a change id, then on this filehandle there is
-> a SETATTR (with a getattr) which returns a new changeid. Then there is
-> a CLONE where the filehandle is the destination filehandle on which
-> there is a getattr which returns unchanged changeid/modify time (bad).
-> Then there is a DELEGRETURN (with a getattr) which again returns same
-> change id. Test fails.
->=20
-> Prior to this commit. The changeid/modify time is different in CLONE
-> and DELEGRETURN -- test passes.
->=20
-> Now let me describe what happens with delegated attributes enabled.
-> OPEN returns delegated attributes delegation, included getattr return
-> a changeid. Then CLONE is done, the included gettattr returns a
-> different (from open's) changeid (different time_modify). Then there
-> is SETATTR+GEATTR+DELEGRETURN compound from the client (which carries
-> a time_deleg_modify value different from above). Server in getattr
-> replies with changeid same as in clone and mtime with the value client
-> provided. So I'm not sure exactly why the test fails here but that's a
-> different problem as my focus is on "delegation attribute off option"
-> at the moment.
->=20
-> I don't know if this is the correct fix or not but perhaps we
-> shouldn't unconditionally be setting this mode? (note this fix only
-> fixes the delegattributes off. however i have no claims that this
-> patch is what broke 215/407 for delegated attributes on. Something
-> else is in play there). If this solution is acceptable, I can send a
-> patch.
->=20
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index 81fa7cc6c77b..624cc6ab2802 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -6318,7 +6318,8 @@ nfs4_open_delegation(struct svc_rqst *rqstp,
-> struct nfsd4_open *open,
->                 dp->dl_ctime =3D stat.ctime;
->                 dp->dl_mtime =3D stat.mtime;
->                 spin_lock(&f->f_lock);
-> -               f->f_mode |=3D FMODE_NOCMTIME;
-> +               if (deleg_ts)
-> +                       f->f_mode |=3D FMODE_NOCMTIME;
->                 spin_unlock(&f->f_lock);
->                 trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
->         } else {
->=20
->=20
+On Thu, Dec 18, 2025 at 9:59=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> On Fri, Dec 19, 2025 at 04:07:51AM +0000, Matthew Wilcox wrote:
+> > On Thu, Dec 18, 2025 at 04:16:40PM -0800, Shakeel Butt wrote:
+> > > On Thu, Dec 18, 2025 at 11:55:39PM +0000, Matthew Wilcox wrote:
+> > > > On Thu, Dec 18, 2025 at 12:55:05PM -0800, Shakeel Butt wrote:
+> > > > > +       do {
+> > > > > +               ret =3D __kernel_read(r->file, buf, sz, &pos);
+> > > > > +               if (ret <=3D 0) {
+> > > > > +                       r->err =3D ret ?: -EIO;
+> > > > > +                       return NULL;
+> > > > > +               }
+> > > > > +               buf +=3D ret;
+> > > > > +               sz -=3D ret;
+> > > > > +       } while (sz > 0);
+> > > >
+> > > > Why are you doing a loop around __kernel_read()?  eg kernel_read() =
+does
+> > > > not do a read around __kernel_read().  The callers of kernel_read()
+> > > > don't do a loop either.  So what makes you think it needs to have a=
+ loop
+> > > > around it?
+> > >
+> > > I am assuming that __kernel_read() can return less data than the
+> > > requested. Is that assumption incorrect?
+> >
+> > I think it can, but I don't think a second call will get any more data.
+> > For example, it could hit EOF.  What led you to think that calling it i=
+n
+> > a loop was the right approach?
+>
+> I am kind of following the convention of a userspace application doing
+> read() syscall i.e. repeatedly call read() until you hit an error or EOF
+> in which case 0 will be returned or you successfully read the amount of
+> data you want. I am handling negative error and 0 and for 0, I am
+> returning -EIO as that would be unexpected end of an ELF file.
+>
+> Anyways the question is if __kernel_read() returns less amount of data
+> than requested, should we return error instead of retrying? I looked
+> couple of callers of __kernel_read() & kernel_read(). Some are erroring
+> out if received data is less than requested (e.g. big_key_read()) and
+> some are calling in the loop (e.g. kernel_read_file()).
 
-That patch does look correct to me -- nice catch. Have you validated
-that it fixes 215 and 407?
-
-Thanks,
-Jeff
---=20
-Jeff Layton <jlayton@kernel.org>
+From a user perspective, I'd very much appreciate it if I get exactly
+the requested amount of bytes from freader_fetch_sync(), so yeah,
+let's please keep the loop. It does seem that ret <=3D 0 handling is
+correct and should not result in an endless loop.
 
