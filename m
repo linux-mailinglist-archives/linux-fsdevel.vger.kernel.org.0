@@ -1,89 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-71697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43CBCCE01C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 00:56:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A51A1CCE046
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 01:03:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 43770301F8D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Dec 2025 23:55:57 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E6E3030319A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 00:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1673093AC;
-	Thu, 18 Dec 2025 23:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E7B2CCC5;
+	Fri, 19 Dec 2025 00:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZbcV24Wg"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ou37KOyy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296981F30A9;
-	Thu, 18 Dec 2025 23:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1842110;
+	Fri, 19 Dec 2025 00:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766102154; cv=none; b=swmlY+X9RdIoOAhX/vP2T78bD2bxs/Yc9zBFj7oQDbhSLRpWUeCvOqNgb3pXzKepsVfqU0iwA3D4oJcDZrb1dENdJgGWKLV4+84gj6hZ17uAznbQ5HyhqooZzq/x1QL/mtVIfJiUqrlfF7JNa5NIQqGZ6MdX410qUA43ZEVKv5M=
+	t=1766102613; cv=none; b=PT78qDgZPUK1Ixmh2UMqZGz7Ta23y7kobg/jsP7/hs+A/MxyP573T7aZGjmgBxQCkk4tWJ0jbnBoXOOROMD3LNAS5hnwhM5Lb0/cYO2v1Ywajg/x5iCeebHq+okoNO3heN9eWmkcD692yHk+Fj5qC8Wo3MBakb1VPSNJVnefC3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766102154; c=relaxed/simple;
-	bh=GONjvaOBh0XpXpleiYvujXPILEwEfkwDmxomLs1O//M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P7g4t3vJ71ZukS9xq06zw84Ynz1FLxkxCs5pMH1cGE3d3O5RcjL8AJI4v2aYMy4PR7ZYOcSAN5oWhoLgyEamczUEfFbjcWtLyazwM05XjwWYGtS+GYthKnqiEA0WT1uwWqDhzXZ4X0KW1eFKEGrFi+c0L36FpXXmqvZk6ZWGpOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZbcV24Wg; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7cRVqnT8PTUMlTtnuPb2AQO/9hbRZw65ZP76rwPKE1c=; b=ZbcV24Wgo7Invnggx+YGo10U0g
-	k3Ub4BJrrQa42JxRBq96N8u/lt8QnaRuQKEZSbbOyMmN+0C4UZwldBfY/hO6YrfjI16S60uGKuM1A
-	0L6m3Gaw7TJAQXzI7OpRr+PvPANWq9zqF0akdN9OXWvcLJXnLF7Et074WQGVOXmliS2giqShr3XK3
-	DL/Mmw+9Cd6Hgh7D3Uof0XxVu/HZqJA8a1IKUC9ziMswAfPqyiV2Y0T5wAq9Yn2YAEQC0nkaHOYR8
-	ZaUGlkLxMNXInyg43Wi8eUrZ8DmJCnVPqpJmslzV1UlMScm21UBqSrceem92beFSb5PwcbEa0laZ7
-	0yF+f+8w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vWNqN-00000006ngf-2n65;
-	Thu, 18 Dec 2025 23:55:39 +0000
-Date: Thu, 18 Dec 2025 23:55:39 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Meta kernel team <kernel-team@meta.com>, bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH bpf v2] lib/buildid: use __kernel_read() for sleepable
- context
-Message-ID: <aUSUe9jHnYJ577Gh@casper.infradead.org>
-References: <20251218205505.2415840-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1766102613; c=relaxed/simple;
+	bh=8E6NAIDxQMdp/s3lyLs23U2jDp0pVydVmLy6lig72oo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=IjHi0P6qGSSj0hm4uPu2Wqgo8KWR2nevhi34H+vBY0bNcNVY30aR/TFDMf8jxhZlmGqLKmUhpZkLXrYuttj2v2AhaGrsMR2y6+0vYeLv33V/hpNmN+XswemisuV5x2deS60oTTXuN6pOqF4A223ksd0mVsmsT96bBKoM7c1dcJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ou37KOyy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3873C4CEFB;
+	Fri, 19 Dec 2025 00:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1766102613;
+	bh=8E6NAIDxQMdp/s3lyLs23U2jDp0pVydVmLy6lig72oo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ou37KOyy/qUsRdv+f7A/vXWmM6at3ULcpPNQp4K3dWHw6+WdeucY7orgVLPhNsZWW
+	 z5E7EXHQ8MKf/c3U7xANZL0sk27brGRGj1lwDM7M3KRLTsbn9jfywK9s41Uh1wFcBL
+	 FVb6B/ynS7thy421b3HjKo0OufktoQsfbOqYJbdA=
+Date: Thu, 18 Dec 2025 16:03:32 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: John Groves <John@groves.net>, David Hildenbrand <david@kernel.org>,
+ Oscar Salvador <osalvador@suse.de>, John Groves <jgroves@micron.com>,
+ "Darrick J . Wong" <djwong@kernel.org>, Dan Williams
+ <dan.j.williams@intel.com>, Gregory Price <gourry@gourry.net>, Balbir Singh
+ <bsingharora@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, Aravind Ramesh
+ <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [PATCH] mm/memremap: fix spurious large folio warning for
+ FS-DAX
+Message-Id: <20251218160332.ee5b1c9b2ac7aebabbabfa45@linux-foundation.org>
+In-Reply-To: <74npmrpzagba2bbye7kmwwoguafbpvnkxarprp3txy4wmu6gxp@japia7ysaisi>
+References: <20251217211310.98772-1-john@groves.net>
+	<74npmrpzagba2bbye7kmwwoguafbpvnkxarprp3txy4wmu6gxp@japia7ysaisi>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251218205505.2415840-1-shakeel.butt@linux.dev>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 18, 2025 at 12:55:05PM -0800, Shakeel Butt wrote:
-> +	do {
-> +		ret = __kernel_read(r->file, buf, sz, &pos);
-> +		if (ret <= 0) {
-> +			r->err = ret ?: -EIO;
-> +			return NULL;
-> +		}
-> +		buf += ret;
-> +		sz -= ret;
-> +	} while (sz > 0);
+On Thu, 18 Dec 2025 09:58:02 +1100 Alistair Popple <apopple@nvidia.com> wrote:
 
-Why are you doing a loop around __kernel_read()?  eg kernel_read() does
-not do a read around __kernel_read().  The callers of kernel_read()
-don't do a loop either.  So what makes you think it needs to have a loop
-around it?
+> On 2025-12-18 at 08:13 +1100, John Groves <John@Groves.net> wrote...
+> > From: John Groves <John@Groves.net>
+> > 
+> > This patch addresses a warning that I discovered while working on famfs,
+> > which is an fs-dax file system that virtually always does PMD faults
+> > (next famfs patch series coming after the holidays).
+> > 
+> > However, XFS also does PMD faults in fs-dax mode, and it also triggers
+> > the warning. It takes some effort to get XFS to do a PMD fault, but
+> > instructions to reproduce it are below.
+> > 
+> > The VM_WARN_ON_ONCE(folio_test_large(folio)) check in
+> > free_zone_device_folio() incorrectly triggers for MEMORY_DEVICE_FS_DAX
+> > when PMD (2MB) mappings are used.
+> > 
+> > FS-DAX legitimately creates large file-backed folios when handling PMD
+> > faults. This is a core feature of FS-DAX that provides significant
+> > performance benefits by mapping 2MB regions directly to persistent
+> > memory. When these mappings are unmapped, the large folios are freed
+> > through free_zone_device_folio(), which triggers the spurious warning.
+> 
+> Yep, and I'm pretty sure devdax can also create large folios so we might need
+> a similar fix there. In fact looking at old vs. new code it seems we only ever
+> used to have this warning for anon folios, which I think could only ever be true
+> for DEVICE_PRIVATE or DEVICE_COHERENT folios.
+> 
+> So I suspect the proper fix is to just remove the warning entirely now that they
+> also support compound sizes.
+
+So I'm assuming we can expect an updated version of this fix.
+
+> > The warning was introduced by commit that added support for large zone
+> > device private folios. However, that commit did not account for FS-DAX
+> > file-backed folios, which have always supported large (PMD-sized)
+> > mappings.
+> 
+> Right, one of the nice side-effects (other than delaying fam-fs, sorry! :-/) of
+> fixing the refcounting was that these started looking like normal large folios.
+> 
+> > The check distinguishes between anonymous folios (which clear
+> > AnonExclusive flags for each sub-page) and file-backed folios. For
+> > file-backed folios, it assumes large folios are unexpected - but this
+> > assumption is incorrect for FS-DAX.
+> > 
+> > The fix is to exempt MEMORY_DEVICE_FS_DAX from the large folio warning,
+> > allowing FS-DAX to continue using PMD mappings without triggering false
+> > warnings.
+> 
+> As this is a fix you will want a "Fixes:" tag.
+
+Someone (possibly me) already added
+
+Fixes: d245f9b4ab80 ("mm/zone_device: support large zone device private folios")
+
+
 
