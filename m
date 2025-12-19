@@ -1,142 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-71705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F15CCE45B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 03:31:57 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A45FCCE780
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 05:40:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5B8BA3016733
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 02:31:43 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id A6866300EFD3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 04:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C86023C4F4;
-	Fri, 19 Dec 2025 02:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769F92848A2;
+	Fri, 19 Dec 2025 04:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iv/3YKUX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lhp0VkKM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD46481DD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 02:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B51B221FDA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 04:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766111502; cv=none; b=R3gHK+0q4let5fRzzSwbHC+sqn96KD9mwJFsHgl5zIagtD9Z6iTPUbtx1+2pWF5/mxpkdmZA23V62Hs0CuI3sigKkiCweCjvEW3woBNRKD5I1ZRtmzHS3lGjXdxdmSMo0W4ruvFptM9qBXKip3RYu4GGIqFgjIHvRnTm+Ds5ugs=
+	t=1766119228; cv=none; b=DHbzbEnwHj0hUL2mA5FONeE+wls96bRoFpVZuaXrwLeJmgn/FehvF0Z0JwT9wEH1L4HkYc0YCWfSCtXLLyforolEUURHj13F495wRXhpVI6bq1IScuoYxsgCMOSw9Wc5cZgSE15DLdpJSbk9P+zh15mszg+316xU1OLPKEEOv3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766111502; c=relaxed/simple;
-	bh=80ua+D2RIvCPcXTVRwfsaPXe53yUh5Vxqmv+kgYV8HE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kZAvuf2s3LIYOxjz6/yw6N/KbmXM4JC/jvgCG0TyfLvXxN4kc+8XWXpSwreWpZSiCTojlheOUjBWQseUro/F/TqShVQ4D5ij+7hfvOU1Hc5PFJcwHaASMx661swO6FayTKSxQyH9dTysfJ2JXy2Oyi5w0QshpST2aVO6q/EzO7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iv/3YKUX; arc=none smtp.client-ip=209.85.160.180
+	s=arc-20240116; t=1766119228; c=relaxed/simple;
+	bh=8u9pDZ2Kt0Xu9tvZ0dKgyiEhx6iHj4yWIq0k99Kapx8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UjB0wMivxWJZpe3tq6pFQrP7sf31thSYNBS9wxQ/DMaxQZrQbcJvQlogUUsVoJvRXdQp7k6877c9r/KV+S0UFhcT00nVJdDyLyH5ZsfBrvnMgZJbh9ZkeNJeSszuaHgH2HI8M+NrlxK6G18CyoN6JK/xk76y42QnO7JQDVPg1TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lhp0VkKM; arc=none smtp.client-ip=209.85.216.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4f1899960f0so13710031cf.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 18:31:40 -0800 (PST)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-34ca40c1213so1145316a91.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 20:40:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766111499; x=1766716299; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s//N441lm6jH6EmR9jS1oCDzV4PumUKfa4KZaur//to=;
-        b=Iv/3YKUX3QirMq+VPwhIZMForpJ4lUObvkVsOL6Y3m/HOgHFxCT6zB92k/uFJIhZdA
-         SQLiOGqR/KdAiL9v1r6Vco+1dZ2LwYdNZMIPSb2wHNJC6L4co4Mq9x3Oe3/MvoCFmzvV
-         iQwos6nLxHO73uB7XDU0KqsH9U+mLNv/LoNShhVWNwC2LK5E/fViOLaww1eXpRHAip7Z
-         OAaAC/ZP/9sCMvJec3hiGSloY4WBwE3RUhiOCfx/s6QlltNW4xK05QD3b3wLCBGPPpxw
-         wWD10btZRQWgkoxqjh2rxWtTkE10qXU8OjIAUWmX9Gg2PWkYUIDyk/QA2MV16wonYOdS
-         siJA==
+        d=gmail.com; s=20230601; t=1766119227; x=1766724027; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4MvSjlvxPTvLZlxzW5nlJgiRQaGZslKwQs9e+mnP29c=;
+        b=lhp0VkKM374crliRhGYvpbNfLfG2ILJyR8aGuH/Q9MHpvZpTTowvBLWi3p0bunhn1z
+         HDykekIYTSJqu7/3EEIj+H78+BZdds+g1dzMzb93k6sWa8uKkUjgviR23ePQvXBKRfla
+         TcWTYHweNS8bn0g+q8eovDTRTiGO596SRXJFVskfH5t0RKQr1PldAKJHkIBJKuPUv5yV
+         KOPQjLPg6mQ6b79u7DbPPmsqqMiwEqmzPpndXhU7fDvvwm23fKzxnF8D+LQbPzw4Lfr1
+         t21zewmkhISAd86//RVW9ntiZCLLVg39Tj7eCxKHsMrGTwM10s4zv7F+S2Xbl4NRbNC0
+         xh2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766111499; x=1766716299;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=s//N441lm6jH6EmR9jS1oCDzV4PumUKfa4KZaur//to=;
-        b=RmGlmm+57uuNwOne56qX/KZGdSnz9waCFQjUM776twx47N04w4n/BR7wbZSsxRHywM
-         fcD5pnp9uwUVyODGqn8vn5kX6/Y3ejbDXz6E1tWhrjcjLcUAphRoeqlrgZW6f6bKM8h+
-         KrxDH2Tdxhgn90SYHiOC9/MIk85Ez3Q/H84Gz07lJGab3uaoSz8/WENSmgLmZxye2h0e
-         aD9zWbVEbbNFli+FffWBLs9ERN2w5rCWjil15HZ13+fu/diRlBT3oHe9LzAX75JKSEoz
-         X5c47ydbowW1F3ZCiqRrHeUljyoagnlo3D/2R6xDAsdIajTx7fx/PpsR+xvzw9PFSXZr
-         BmSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKNKhHf8G9NpD4MceIV1+jbuZg8cTd6qEw46H6iGZDvOn1Pv0XTeP0vcpxqcbYVR9gLXamfe+n00Y8etGb@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO90ceJdRgV7EOAzkU1NrbOqYWHpC1plLq52ag6Z8Iffzi4lXo
-	GE8QN003M9Mk828RnaDPAt0tl+LjqJVfyXWFi6oTRqBVU84yrn7u+3beR25/BJouFC9mBdfZXGD
-	0omuIonvSzpiNuDSRsgl5OVzn3MJ4d5k=
-X-Gm-Gg: AY/fxX5rL9sP7ynZSejdC+448tTUJvzXm1Bl+mGI+7811DGaR35kHRMFDp4/54b/J7I
-	DUNcvjjrlRu8O+60vjMJ24DOd7qUHSm2q7uc1IMnVViObtYcwpxDB5BjVflKv18cTmkqR/VZyG+
-	Ftcnye/3j3RaN9vVLJFIJySjNmbaUnFPeBsqF8M6JnOmKqtC5MO/ZiSMU77qikLhTV7xCdBL4Ta
-	moNx/0GZ60yjT+CyhLkpC7lxcCIOqZP06WbI6aaQ0ZEoFEVK0o2F+nbJF1/gRjgcooTov1RZkL+
-	zUAz76yk2AA=
-X-Google-Smtp-Source: AGHT+IHXEBT8Qm36Ez+9xaJ9V7MUqLAih0uxJQh6Y+Uofc8XIsPDlW1Z8j5x3GGujiztv80SsFvQTPB3eZG6aXNEZpo=
-X-Received: by 2002:a05:622a:1e8e:b0:4f3:5889:2a79 with SMTP id
- d75a77b69052e-4f4abdcb97amr20315031cf.81.1766111499161; Thu, 18 Dec 2025
- 18:31:39 -0800 (PST)
+        d=1e100.net; s=20230601; t=1766119227; x=1766724027;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4MvSjlvxPTvLZlxzW5nlJgiRQaGZslKwQs9e+mnP29c=;
+        b=i1T+T5ThUlQUPlMfWVTONTtFAXsmLEc6ToasLyskHOHbM9yJFnbzGNCvoUooD0Fd5v
+         dE9LjjJsWcSGem9q+OK65epBSMX2OLXDPb79Uybab+mO6kL8zc9V1x6KyjfEEMkOPmi5
+         p6OyINj13hf+fO5f0USQg74WDDXhNY6zFAEZ1ADRvRVA8FKVBsGaKM8jS3lD3jcbyU7R
+         sFzJ4pVZEViTSyeggih9sMyvhSjD55a2ggfCzJpjL3mrIYv36SRbGhNzurJ0RCgZBWfx
+         kYxUNmGOX4WMPvDchxqch+5jRpVrrbi+1Qbr3TknCoRxj0GhvawbAnVCm39Rwtou85Ls
+         9Jyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSunTDihtJBU/ELhBEKZpfdw+pm8QN3N1Bowx473l6CtgykN6gaZfDVNedo5lqFDYD7E0zlKDeDpsKAiej@vger.kernel.org
+X-Gm-Message-State: AOJu0YxafmqV/GF9f5tegd+xUznfRFNzZMn6xDVL2IkBsC/UN435qV6Z
+	/pi7nSdWU2QDGsWb4177SR5wzr9v3FFgW5m0yTqrLsTmLIVBaXFo6Kf2wos689TA
+X-Gm-Gg: AY/fxX73g4iY+0AvKyEmEOhhO0HThdhXv63ozz55Ac+XwcEGSeHVdjZno34UJDvc57H
+	dcch6hXzg1mFPl9De4WwDJOohiw57VeIYG8eHxwynyzNHnV5phC2izYhHQ4lnu+8LhmBk8GcYpj
+	XzZWZqAjDKoO0DYi31vqUXM/ShF8gTOlisTb5B7vt5fZWJHShMbRobAxU+UdtAun/AhdXo9HfOe
+	bSU1v8Rp5DpmXG7pU9CftiCrkQ0ydex00FhK6cfp/CZTsEVk65T5rAlniZ1i54/UJOneTrplUJx
+	PAYKJn7RcsUbTSNvKuBbSFBxSzowns2q+QMHi4c63SF58M6qsad6gaB0l8gCwZT506Fabo/jRCQ
+	X2mcUi+19hIhByqAYBtPayQoddqlL10NfX9JeGfJ0he7Av0AmUTG43f/tdoOA0U1KI/HQxX4Dqp
+	N5S33E0M4m1Ns=
+X-Google-Smtp-Source: AGHT+IHbYgonJVHNaYEC3zqBGg9Dfi9S9PcwRNrhR7Czp1czKGBrj0QLhz4l7qjuhFVsfrt0iRLSOQ==
+X-Received: by 2002:a17:903:2ac6:b0:29f:5f5:fa91 with SMTP id d9443c01a7336-2a2f242d7e6mr13081255ad.27.1766112388700;
+        Thu, 18 Dec 2025 18:46:28 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2f3d4d869sm6131245ad.53.2025.12.18.18.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Dec 2025 18:46:28 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 4DDAE420A9C8; Fri, 19 Dec 2025 09:46:26 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH 0/2] vfs kernel-doc fixes for 6.19
+Date: Fri, 19 Dec 2025 09:46:18 +0700
+Message-ID: <20251219024620.22880-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112083716.1759678-1-abhishek.angale@rubrik.com>
- <20251217135646.3512805-1-abhishek.angale@rubrik.com> <20251217135646.3512805-2-abhishek.angale@rubrik.com>
-In-Reply-To: <20251217135646.3512805-2-abhishek.angale@rubrik.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 19 Dec 2025 10:31:28 +0800
-X-Gm-Features: AQt7F2q3soHPHTmwec9YGk2esBaxzm0HplPKIY8Je6IoOtAr8n_jFmOP_DYtsDc
-Message-ID: <CAJnrk1Yi-_x6w0f7w=xRBT7s4SDEJKcTm_f-hCZjdyBVtvxCzQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] fuse: wait on congestion for async readahead
-To: Abhishek Angale <abhishek.angale@rubrik.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, Anna Schumaker <anna@kernel.org>, 
-	Trond Myklebust <trond.myklebust@hammerspace.com>, NeilBrown <neilb@ownmail.net>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=603; i=bagasdotme@gmail.com; s=Zp7juWIhw0R1; h=from:subject; bh=8u9pDZ2Kt0Xu9tvZ0dKgyiEhx6iHj4yWIq0k99Kapx8=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJkuu3/ttY05/OyyRdsJ7d9CliLvXs51v+tpH106v8Dhk 1lj3sxHHaUsDGJcDLJiiiyTEvmaTu8yErnQvtYRZg4rE8gQBi5OAZjI+kWMDBu+vo5xz5jtyNi/ 7/CRtghPybwXB8+Hui4p3Xmp00/zAlDFq89//f0zmMKEOcwSeBb+Olj8I/FXt2umduJhof0eyyw 4AQ==
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 18, 2025 at 12:23=E2=80=AFAM Abhishek Angale
-<abhishek.angale@rubrik.com> wrote:
->
-> Commit 670d21c6e17f ("fuse: remove reliance on bdi congestion")
-> introduced a FUSE-specific solution for limiting number of background
-> requests outstanding. Unlike previous bdi congestion, this algorithm
-> actually works and limits the number of outstanding background requests
-> based on the congestion threshold. As a result, some workloads such as
-> buffered sequential reads over FUSE got slower (from ~1.3 GB/s to
-> ~1.05 GB/s). The fio command to reproduce is:
->
-> fio --filename=3D/<fuse mountpoint>/file.250g --rw=3Dread --bs=3D4K \
->     --numjobs=3D32 --ioengine=3Dlibaio --iodepth=3D4 \
->     --offset_increment=3D1G --size=3D1G
->
-> This happens because FUSE sends requests up to the congestion
-> threshold and throttles any further async readahead until the
-> number of background requests drops below the threshold. By the time
-> this happens, the congestion has eased and the disk is idle.
->
-> To fix this problem and make FUSE react faster to eased congestion,
-> block waiting for congestion to resolve instead of aborting async
-> readahead. This improves the buffered sequential read throughput back to
-> 1.3 GB/s.
->
-> This approach is inspired by the fix made for NFS writeback in commit
-> 2f1f31042ef0 ("nfs: Block on write congestion").
+Hi,
 
-Hi Abhishek,
+Here are kernel-doc fixes for vfs subsystem targetting 6.19. This small
+series is split from much larger kernel-doc fixes series I posted a while
+ago [1].
 
-How does this perform on workloads where there's other work
-interspersed between the buffered sequential reads, or on random/mixed
-workloads where readahead is triggered but not fully utilized?
+Enjoy!
 
-To me, the difference between this and the nfs writeback fix you
-mentioned is that writeback seems fine to block because it happens in
-the background thread and wouldn't block the application thread,
-whereas readahead happens directly in the caller's path. It seems to
-me that for these workloads the currently existing behavior is much
-more optimal.
+[1]: https://lore.kernel.org/linux-fsdevel/20251215113903.46555-1-bagasdotme@gmail.com/
 
-I'm also concerned about how this would affect application-visible
-tail latency, since congestion could take a while to clear up (eg if
-writeback is to a remote server somewhere).
+Bagas Sanjaya (2):
+  fs: Describe @isnew parameter in ilookup5_nowait()
+  VFS: fix __start_dirop() kernel-doc warnings
 
-Thanks,
-Joanne
+ fs/inode.c | 3 +++
+ fs/namei.c | 3 ++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
->
-> Signed-off-by: Abhishek Angale <abhishek.angale@rubrik.com>
+
+base-commit: 24835a96f21ebb295d24e265b5466d9e40f12cbd
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
