@@ -1,112 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-71749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 511F9CD031A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 15:03:57 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2BCCD03DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 15:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 06ED630A322C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 14:02:14 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9018C306D318
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 14:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F2E327C0B;
-	Fri, 19 Dec 2025 14:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE453314D1;
+	Fri, 19 Dec 2025 14:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cAPtK90L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O717isD1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AE2327BF5
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 14:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF1B33121B;
+	Fri, 19 Dec 2025 14:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766152931; cv=none; b=q3BPaHDNltMpxwvJp1r4Hg7I972k+RKRCfmppugS8N0O+T2Z7FKGSUcqz6bUw+f4J4D5Ht+1m0k95YR/8KpX2yQt8SQ6JfxxBH0HU+ez1WYMBQZlOM5Iovs7mNNDjNxgwGoGCMc46qjf3h/hKdEMLCnineJj5ohwHcFvPWoEwbA=
+	t=1766153700; cv=none; b=C1M6g443HuUjBs7Tl7BbARHseYtCX1f3q2IynjfMIfSknY3JIAxNHBwTrTuysnMoD5p8T3IwKhBfi1iThLyhhjT1+CZ6zEgrLy2qCdlV4bnSmOKmgy/ycmDgKhRAhQM+18WUHUM/ftnmH6KIDucJNMqAWoxcR0o6b1aeQL3qjk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766152931; c=relaxed/simple;
-	bh=lYIXcGcrOPmOZzFUGlVjofb/tOUmKZRLWpRMjul5nf0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=eBoziqt9chZiD6NgwJHDTDJmAoI+4OQzB+tOHrwpWom1ERaPEGVGfsf3Q+wcTBq4gHRoLz82ZIDY0elILuBqtf4gARhMHdozLr7dbPGVIHoFGF9mr9PrTXJNO0hEvfSNd5qLbcPA+J+4hBUtnBWE1yWmzIxwbmIQhTKydnaRHUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cAPtK90L; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766152928;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yzNnOFBqwNj3DGyLxibs+wwctNsN2xP1MIdjPWFUw7s=;
-	b=cAPtK90Lm2ZcHuYxr09OzmCkhotou5Rj5HW204PE22N9sDVmO54T9jJIjDeF1JMzIjrkwN
-	CK7kHbnWzYJ2L3sRzEIEnlOgUUztjVidYhQiOQsU7tIFQAfjghD1ymn/lIFUUZeNXS19DI
-	Caymw78HpR/T7EKQjgbZa9b9Q7x1Kzs=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-454-ou7AYO8ANTehcnavAX8JjA-1; Fri,
- 19 Dec 2025 09:02:05 -0500
-X-MC-Unique: ou7AYO8ANTehcnavAX8JjA-1
-X-Mimecast-MFC-AGG-ID: ou7AYO8ANTehcnavAX8JjA_1766152923
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1DA8E1955DD1;
-	Fri, 19 Dec 2025 14:02:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.5])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6616D30001A2;
-	Fri, 19 Dec 2025 14:01:58 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <aUTP9oCJ9RkIYtKQ@codewreck.org>
-References: <aUTP9oCJ9RkIYtKQ@codewreck.org> <20251210-virtio_trans_iter-v1-1-92eee6d8b6db@codewreck.org> <aUMlUDBnBs8Bdqg0@codewreck.org> <aUQN96w9qi9FAxag@codewreck.org> <8622834.T7Z3S40VBb@weasel> <aUSK8vrhPLAGdQlv@codewreck.org>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: dhowells@redhat.com, Christian Schoenebeck <linux_oss@crudebyte.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Latchesar Ionkov <lucho@ionkov.net>,
-    Chris Arges <carges@cloudflare.com>, v9fs@lists.linux.dev,
-    linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-    linux-fsdevel@vger.kernel.org
-Subject: Re: 9p read corruption of mmaped content (Was: [PATCH] 9p/virtio: restrict page pinning to user_backed_iter() iovec)
+	s=arc-20240116; t=1766153700; c=relaxed/simple;
+	bh=h9gatBXLPknkA9XB/kDpWVDHKRf+rqWFuU1zgf9gItM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G8ZcEzkV6lae7U+ZUu3a9K0j7Udy40id61LeTOH4FtVjQ3OZNueiBmC7VBNFqzqdtHlRjOtzb46UNhMnPUTa13+c1c2hm4+SpPKaQj34QxbEfqR7iI6HHPdYcQo+2phRCdaN6iMScyGPBEwqUyolviZzLIiBh/IrRWAelNvYSYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O717isD1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 405DDC4CEF1;
+	Fri, 19 Dec 2025 14:14:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766153699;
+	bh=h9gatBXLPknkA9XB/kDpWVDHKRf+rqWFuU1zgf9gItM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O717isD1mHBm5W4zYOFNoyxyRF7E9NbvNqjbXcL4AhlmDAOPyLQ33+Kr9Lv7uuq14
+	 ohp1+/WYbEhEL/CST8pbWNnvW1sAS2iIOYrj8+0JrEqqvx3mvCjjI/LgdiYcd93cL6
+	 HCAERNkf2egSFz2ikTO1H4RjquN2pCH+Ajbdo0teEkX5FcAq1oLo+JGYJGghTlxmjQ
+	 5XqtpYvGZgHHWjpDNXYlBjZubxrTfFTk59FwbQz6CINzp98bvVwDsuCxsSD9bDXoaa
+	 ItcakAYKMnhUHmAucPOMJcoLlPH8n1AtCbGfuHdvDf/Gqm1zCOuRrh8nrgPdf8np1P
+	 yE+NKtFJE/Bzw==
+Message-ID: <3f3e2e99-cf87-4498-93a7-700ecb42a2a9@kernel.org>
+Date: Fri, 19 Dec 2025 15:14:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <818488.1766152917.1@warthog.procyon.org.uk>
-Date: Fri, 19 Dec 2025 14:01:57 +0000
-Message-ID: <818489.1766152917@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] mm/memremap: fix spurious large folio warning for
+ FS-DAX
+To: John Groves <John@Groves.net>, Oscar Salvador <osalvador@suse.de>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: John Groves <jgroves@micron.com>, "Darrick J . Wong" <djwong@kernel.org>,
+ Dan Williams <dan.j.williams@intel.com>, Gregory Price <gourry@gourry.net>,
+ Balbir Singh <bsingharora@gmail.com>, Alistair Popple <apopple@nvidia.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Aravind Ramesh <arramesh@micron.com>,
+ Ajay Joshi <ajayjoshi@micron.com>
+References: <20251219123717.39330-1-john@groves.net>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251219123717.39330-1-john@groves.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Dominique Martinet <asmadeus@codewreck.org> wrote:
+On 12/19/25 13:37, John Groves wrote:
+> From: John Groves <John@Groves.net>
+> 
+> This patch addresses a warning that I discovered while working on famfs,
+> which is an fs-dax file system that virtually always does PMD faults
+> (next famfs patch series coming after the holidays).
+> 
+> However, XFS also does PMD faults in fs-dax mode, and it also triggers
+> the warning. It takes some effort to get XFS to do a PMD fault, but
+> instructions to reproduce it are below.
+> 
+> The VM_WARN_ON_ONCE(folio_test_large(folio)) check in
+> free_zone_device_folio() incorrectly triggers for MEMORY_DEVICE_FS_DAX
+> when PMD (2MB) mappings are used.
+> 
+> FS-DAX legitimately creates large file-backed folios when handling PMD
+> faults. This is a core feature of FS-DAX that provides significant
+> performance benefits by mapping 2MB regions directly to persistent
+> memory. When these mappings are unmapped, the large folios are freed
+> through free_zone_device_folio(), which triggers the spurious warning.
+> 
+> The warning was introduced by commit that added support for large zone
+> device private folios. However, that commit did not account for FS-DAX
+> file-backed folios, which have always supported large (PMD-sized)
+> mappings.
+> 
+> The check distinguishes between anonymous folios (which clear
+> AnonExclusive flags for each sub-page) and file-backed folios. For
+> file-backed folios, it assumes large folios are unexpected - but this
+> assumption is incorrect for FS-DAX.
+> 
+> The fix is to exempt MEMORY_DEVICE_FS_DAX from the large folio warning,
+> allowing FS-DAX to continue using PMD mappings without triggering false
+> warnings.
+> 
+> Fixes: d245f9b4ab80 ("mm/zone_device: support large zone device private folios")
+> Signed-off-by: John Groves <john@groves.net>
+> ---
+> 
+> Change since V1: Deleted the warning altogether, rather than exempting
+> fs-dax.
+> 
+> === How to reproduce ===
+> 
+> A reproducer is available at:
+> 
+>      git clone https://github.com/jagalactic/dax-pmd-test.git
+>      cd xfs-dax-test
+>      make
+>      sudo make test
+> 
+> This will set up XFS on pmem with 2MB stripe alignment and run a test
+> that triggers the warning.
+> 
+> Alternatively, follow the manual steps below.
+> 
+> Prerequisites:
+>    - Linux kernel with FS-DAX support and CONFIG_DEBUG_VM=y
+>    - A pmem device (real or emulated)
+>    - An fsdax namespace configured via ndctl as /dev/pmem0
+> 
+> Manual steps:
+> 
+> 1. Create an fsdax namespace (if not already present):
+>     # ndctl create-namespace -m fsdax -e namespace0.0
+> 
+> 2. Create XFS with 2MB stripe alignment:
+>     # mkfs.xfs -f -d su=2m,sw=1 /dev/pmem0
+>     # mount -o dax /dev/pmem0 /mnt/pmem
+> 
+> 3. Compile and run the reproducer:
+>     # gcc -Wall -O2 -o dax_pmd_test dax_pmd_test.c
+>     # ./dax_pmd_test /mnt/pmem/testfile
+> 
+> 4. Check dmesg for the warning:
+>     WARNING: mm/memremap.c:431 at free_zone_device_folio+0x.../0x...
+> 
+> Note: The 2MB stripe alignment (-d su=2m,sw=1) is critical. XFS normally
+> allocates blocks at arbitrary offsets, causing PMD faults to fall back
+> to PTE faults. The stripe alignment forces 2MB-aligned allocations,
+> allowing PMD faults to succeed and exposing this bug.
+> 
+> 
+>   mm/memremap.c | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/mm/memremap.c b/mm/memremap.c
+> index 4c2e0d68eb27..63c6ab4fdf08 100644
+> --- a/mm/memremap.c
+> +++ b/mm/memremap.c
+> @@ -427,8 +427,6 @@ void free_zone_device_folio(struct folio *folio)
+>   	if (folio_test_anon(folio)) {
+>   		for (i = 0; i < nr; i++)
+>   			__ClearPageAnonExclusive(folio_page(folio, i));
+> -	} else {
+> -		VM_WARN_ON_ONCE(folio_test_large(folio));
+>   	}
+>   
 
->    netfs_collect_folio: R=00001b55 ix=00003 r=3000-4000 t=3000/5fb2
->    netfs_folio: i=157f3 ix=00003-00003 read-done
->    netfs_folio: i=157f3 ix=00003-00003 read-unlock
->    netfs_collect_folio: R=00001b55 ix=00004 r=4000-5000 t=4000/5fb2
->    netfs_folio: i=157f3 ix=00004-00004 read-done
->    netfs_folio: i=157f3 ix=00004-00004 read-unlock
->    netfs_collect_folio: R=00001b55 ix=00005 r=5000-5fb2 t=5000/5fb2
->    netfs_folio: i=157f3 ix=00005-00005 read-done
->    netfs_folio: i=157f3 ix=00005-00005 read-unlock
->    ...
->    netfs_collect_stream: R=00001b55[0:] cto=5fb2 frn=ffffffff
->    netfs_collect_state: R=00001b55 col=5fb2 cln=6000 n=c
->    netfs_collect_stream: R=00001b55[0:] cto=5fb2 frn=ffffffff
->    netfs_collect_state: R=00001b55 col=5fb2 cln=6000 n=8
->    ...
->    netfs_sreq: R=00001b55[2] ZERO SUBMT f=000 s=5fb2 0/4e s=0 e=0
->    netfs_sreq: R=00001b55[2] ZERO TERM  f=102 s=5fb2 4e/4e s=5 e=0
+LGTM
 
-This would seem to show a problem, if not the problem.
+Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
 
-We unlocked page ix=00005 before doing the ZERO subreq that clears the page
-tail.  That shouldn't have happened since the collection point hasn't reached
-the end of the folio yet.
+-- 
+Cheers
 
 David
-
 
