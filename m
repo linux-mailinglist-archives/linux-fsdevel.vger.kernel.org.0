@@ -1,224 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-71741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 639E6CCFC13
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 13:19:41 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9352DCCFD23
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 13:38:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E90A43066651
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 12:16:30 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 4586430101FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 12:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1745333B95B;
-	Fri, 19 Dec 2025 12:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E89E2D6608;
+	Fri, 19 Dec 2025 12:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aa0EwxxR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4+ytKGK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C55339860;
-	Fri, 19 Dec 2025 12:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54F521773D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 12:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766146572; cv=none; b=tWoGi5yvtsXsAFFReqFmKJAJf/OUr1p+zWrbrIZQXdjiefvaa4i74Tn2fxUIXauVZ9mtVdT2D7pXyDDYMU3tFjJwkQpCZ+syPcTtEmxGd8O4c+JNM0AxyHcmwt9qDw1HCjfRItaMhNUF2mJpYHoP5cAuGr6CVxgdys2+z85r7mY=
+	t=1766147845; cv=none; b=lsuJfYCctSvUruD7dePp3W+uiSc7cw57cVOd2r5ay7MtbPa0f0TTh5RDPLRs9R1OUyek+C9mxQCbDWKqfrdzbzr6AbKot22cyA3E5rr213gJ9HKqNd5K+n1spCXoW4uuoWUkk/JVq+mMm6d7pwvGP/NUkGwziE77TPt/Sq9hUQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766146572; c=relaxed/simple;
-	bh=eyaAlhT7GvJk0qhWteiivwFW9DszaFjDaDK9NOAWZr0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NjD+zEh/4Nwf0oinFojViQgLwIpC1QlDesRj/qxfdIKcCasEIIFarUeiEcOhU59iTUO/qOKYoCKoFenOTDpS4qfl0xhtsybzbW1JytdyA8wEW3ZvlCpUCD1LRThkan+QJNLNEx0t0RpxIywyRjMCIMd8gGLPfBDrSJxdrvuq9yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aa0EwxxR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 051B7C19424;
-	Fri, 19 Dec 2025 12:16:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766146572;
-	bh=eyaAlhT7GvJk0qhWteiivwFW9DszaFjDaDK9NOAWZr0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Aa0EwxxRe0j5hQaNpDvdrTmbVhOglobliWIxJaEyfeEOPTVeowDhGVl4WeYtiCsEk
-	 3EtRZ7H6fZrss/icW+dprbYu+lCE6lIGa2Ak0DUPQoxNd/HtKXHtMG6xsLy2sAFN1q
-	 pgwi2F8PB+B6RrR//FAJIpWWfsYGgnDNsxbujUgNvJGIcZPZXIh/A+gFxR96mzZz8l
-	 LV4XSvl49q8GRc+IDzBv5f78PCt9XdY0dDNGQRgiN/GIJ8y+yTGVCLVP227vT4TBIJ
-	 q+Z7QIZEgzoN7bsmm8GvmgU6A764gclbHJiPpa8yXWGL2vtH7XHrG1HBqqY+U0QPj4
-	 I0MCCbQa/MiEQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F24CBD78767;
-	Fri, 19 Dec 2025 12:16:11 +0000 (UTC)
-From: Joel Granados <joel.granados@kernel.org>
-Date: Fri, 19 Dec 2025 13:16:00 +0100
-Subject: [PATCH 9/9] sysctl: Update API function documentation
+	s=arc-20240116; t=1766147845; c=relaxed/simple;
+	bh=/KO9zUvcW4Dg8BOmM2ZDfaFSNvhLzW8vK8xe00YlUgg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HCusKADMqL4Q8yx9b/crSxXqOb649EPNWFafkfzafd35Cuuga6nQNGrRivsqR1t3UWqIxU5drG0pJF5M9CgPetG6uQAq+H50NHnZLAkJptZC/PA9IF/1UojkjTmhMG0Ca1cgZpDR71CSH127sI7pE/P0PUl1ed730sOczVGDVQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4+ytKGK; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7c7660192b0so1121785a34.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 04:37:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1766147842; x=1766752642; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=IcHUaTFrmXuihljZ9NPOpOfzWyP2bzk3HiTs5aJT8Q8=;
+        b=H4+ytKGKrZl5ieedBgH3OEWHdiLUDJTBLJ6up2s0wvV+akqhLMWA7t+St6X19O3PiF
+         7AkxXkvq8OaptIQS2hh5L4CzyXLBurbiqXCTYtsyUSJoukrfX6/ujtHxwLpUhi3F7SAB
+         rxsZl/lPoizwrOWV+fsTp0jt2cD2F/tFyUaB3TesssVG206e06qoIQdHtsU5SUYQZ1nV
+         JB+JOOp0NwOBtHM4K/Rkw/KIJFb0H4gphB9TPUAfPsUHDEWI7FsWpXefFRp+dxbb51EO
+         rRQEXrD24Xe0BNT2JMNv93nyaWesBykjEIdwstnpFdAMghWYMW4fDQTDN+K1CCTDhJBR
+         +6Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766147842; x=1766752642;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IcHUaTFrmXuihljZ9NPOpOfzWyP2bzk3HiTs5aJT8Q8=;
+        b=HqBUBOYmFAYlhDo5G8BeL5q1iGQFU8WqmZMYz/qOD0PoBz7Nk2BIWXYmI3l2KTTsjx
+         tLeBos6URLob0LQ5To6KpaYTW2ah7W+wtwuTid4dgy5fVbMPTMdZrbr0S4CfBEDxc8M2
+         GFYFjkKHsXRZzpMSimWL9vZkQ1P1UIRQWGkwkwV7N2YllSwl+8GVwyQkB3eGpZbt3Mt9
+         pCD0+KbjgmYVwo3QReWFjx/TdstsKwo4DZpZKxK0J3zd7qnngAiO2odQTJVsoNOD5DH8
+         gIEEaxRcZwqEG37qm89RU83VZY3CH/7vDWd56FPH9bRGtYkr/smR1Dm/aBd+HQrWEGuT
+         sUEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOCh1c1AAe2apiOWCti9OQSShMZMsnEHn6t7x132NwqTU1zbuQuGwxjFbVCKGB4TBa/hDxTN6/MwJfMd4f@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIAJQJGvt8+TmD9U72ck+HFoqz6gnXYn9JiBE9MqFAuNTMQg0I
+	fSSBg5m2o8ubuJB9it2YW/gJIZ3poFo376mA16Olv3oLUEC1JsXZ3n43
+X-Gm-Gg: AY/fxX4PZRDWwJsVPtyV8+SzcRvLt05QvJ0gNJorlpzpk3E6QH98xkN99v/uChrMvUP
+	8OpSVbHA+E1CA0eWQy3yytLBrbx9C1PEreOxtr57TY8IH0dxNeBl2VW1e84AyzaH7gzqVtYNPSf
+	sjqKX1mbfEDQJQUFWneHxogwE9R1ZYXZuXDLHIlRsGniZckmCu3GeDHL55HFH05VNY6ucydkIPz
+	kzffWestNtxqogYltkSM23W/Ywn48xK/gIhxlVs+20Gp8aEsFyUuauhvSY8eKeFGdR0gWEn931h
+	hFpcwiZVu9lM8/3yFQHBJcoo/ZzOkSlD0A/cLCDXOWJcBPbS7SEblUVfRevg6z5KHm+CrAdsdRn
+	PkELSqR4yD6ipyuUZF8OmrFDSZ5EEHOnwAE+BmWimQZbui4JVvTVrYFuffg4o1g7W2uYIDbL7lE
+	9i+pzUUwz0j/C9rmCiibYEaKXrr2o0ypFYFoc8Xn8ZLntz
+X-Google-Smtp-Source: AGHT+IEgOA0/a6B77dCuTQnCdZXbZikCeOm1NYByQGossxUkCBmPTXJQBtJah4Ps9oYiD64ephxmcQ==
+X-Received: by 2002:a05:6830:25d4:b0:7c7:591a:7e91 with SMTP id 46e09a7af769-7cc668a4bd5mr1727231a34.7.1766147842443;
+        Fri, 19 Dec 2025 04:37:22 -0800 (PST)
+Received: from localhost.localdomain ([2603:8080:1500:3d89:7cbc:db2c:ec63:19af])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cc667ebe98sm1571289a34.21.2025.12.19.04.37.21
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 19 Dec 2025 04:37:21 -0800 (PST)
+Sender: John Groves <grovesaustin@gmail.com>
+From: John Groves <John@Groves.net>
+X-Google-Original-From: John Groves <john@groves.net>
+To: David Hildenbrand <david@kernel.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: John Groves <John@Groves.net>,
+	John Groves <jgroves@micron.com>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Gregory Price <gourry@gourry.net>,
+	Balbir Singh <bsingharora@gmail.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>,
+	John Groves <john@groves.net>
+Subject: [PATCH V2] mm/memremap: fix spurious large folio warning for FS-DAX
+Date: Fri, 19 Dec 2025 06:37:17 -0600
+Message-ID: <20251219123717.39330-1-john@groves.net>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251219-jag-dovec_consolidate-v1-9-1413b92c6040@kernel.org>
-References: <20251219-jag-dovec_consolidate-v1-0-1413b92c6040@kernel.org>
-In-Reply-To: <20251219-jag-dovec_consolidate-v1-0-1413b92c6040@kernel.org>
-To: Kees Cook <kees@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Joel Granados <joel.granados@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5503;
- i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=eyaAlhT7GvJk0qhWteiivwFW9DszaFjDaDK9NOAWZr0=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGlFQgl2j/tke9WV5lXX1Z5qLslstlVwvskoc
- H6HywWfCJe4E4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJpRUIJAAoJELqXzVK3
- lkFPjyYL/0itMb/Er52OShWAef0GqQNRxocv7a4GVmiUHriWBBws1KMmOSYjzVpRaZPquXhK7Zo
- fpEhAEtuWEJiTIRKqibGbFsInUCrl3s8zoK5ZYAZFfQ1cVVHN2pxyQrJnO1M7Ef0RKan0oIOJZj
- 3+aS13Awg0i4ewXAJNcY521XcppJkp5Ej2dSKw+Jj/SSslteBDpMTJLw50HsIb5+mQDY+x3isWo
- 1Bmb/1QTdEBrOs21pmZ3cjIwTv2Ngcyci4MZmwi3nd39K5jRp5NdkcMPYUDnKU1DLWJQTAu35sw
- ZOXS/BNkA15KGxRR+yBeiQzyb+DWJRVttyP4kGYSx5ISN2IhsiG6KFqZ4qYtybJuEL3dPXscVdV
- LukowPs/md5D3knbOGzS7YrvJPzhjzBIhGkvK+EOE9qR71fmRTXuIVzrubj4ECvJXfE58OGTtrd
- O8LMTJhHz7xVDQY+JEZRBi4LejAo6W/q+txenZeSUYjmUaPeejNmX4IpsKs1UbYTxAfy7l/w2l3
- 3w=
-X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
- auth_id=239
+Content-Transfer-Encoding: 8bit
 
-Add colon ":" after argument name where it is missing
-Add doc for proc_int_conv and proc_dointvec_conv
+From: John Groves <John@Groves.net>
 
-Signed-off-by: Joel Granados <joel.granados@kernel.org>
+This patch addresses a warning that I discovered while working on famfs,
+which is an fs-dax file system that virtually always does PMD faults
+(next famfs patch series coming after the holidays).
+
+However, XFS also does PMD faults in fs-dax mode, and it also triggers
+the warning. It takes some effort to get XFS to do a PMD fault, but
+instructions to reproduce it are below.
+
+The VM_WARN_ON_ONCE(folio_test_large(folio)) check in
+free_zone_device_folio() incorrectly triggers for MEMORY_DEVICE_FS_DAX
+when PMD (2MB) mappings are used.
+
+FS-DAX legitimately creates large file-backed folios when handling PMD
+faults. This is a core feature of FS-DAX that provides significant
+performance benefits by mapping 2MB regions directly to persistent
+memory. When these mappings are unmapped, the large folios are freed
+through free_zone_device_folio(), which triggers the spurious warning.
+
+The warning was introduced by commit that added support for large zone
+device private folios. However, that commit did not account for FS-DAX
+file-backed folios, which have always supported large (PMD-sized)
+mappings.
+
+The check distinguishes between anonymous folios (which clear
+AnonExclusive flags for each sub-page) and file-backed folios. For
+file-backed folios, it assumes large folios are unexpected - but this
+assumption is incorrect for FS-DAX.
+
+The fix is to exempt MEMORY_DEVICE_FS_DAX from the large folio warning,
+allowing FS-DAX to continue using PMD mappings without triggering false
+warnings.
+
+Fixes: d245f9b4ab80 ("mm/zone_device: support large zone device private folios")
+Signed-off-by: John Groves <john@groves.net>
 ---
- kernel/sysctl.c | 60 +++++++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 46 insertions(+), 14 deletions(-)
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 3fa59ef77f931c2753584ed03006f3ff9f5a1d0e..0965ea1212b4097fb21158b08007cf550815a19f 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -365,7 +365,7 @@ static void proc_put_char(void **buf, size_t *size, char c)
-  * not NULL. Check that the values are less than UINT_MAX to avoid
-  * having to support wrap around from userspace.
-  *
-- * returns 0 on success.
-+ * Returns: 0 on success.
-  */
- int proc_uint_u2k_conv_uop(const ulong *u_ptr, uint *k_ptr,
- 			   ulong (*u_ptr_op)(const ulong))
-@@ -386,7 +386,7 @@ int proc_uint_u2k_conv_uop(const ulong *u_ptr, uint *k_ptr,
-  *
-  * Uses READ_ONCE to assign value to u_ptr.
-  *
-- * returns 0 on success.
-+ * Returns: 0 on success.
-  */
- int proc_uint_k2u_conv(ulong *u_ptr, const uint *k_ptr)
- {
-@@ -460,16 +460,16 @@ static int do_proc_uint_conv_minmax(bool *negp, ulong *u_ptr, uint *k_ptr,
- 
- /**
-  * proc_int_k2u_conv_kop - Assign kernel value to a user space pointer
-- * @u_ptr - pointer to user space variable
-- * @k_ptr - pointer to kernel variable
-- * @negp - assigned %TRUE if the converted kernel value is negative;
-+ * @u_ptr: pointer to user space variable
-+ * @k_ptr: pointer to kernel variable
-+ * @negp: assigned %TRUE if the converted kernel value is negative;
-  *         %FALSE otherweise
-- * @k_ptr_op - execute this function before assigning to u_ptr
-+ * @k_ptr_op: execute this function before assigning to u_ptr
-  *
-  * Uses READ_ONCE to get value from k_ptr. Executes k_ptr_op before assigning
-  * to u_ptr if not NULL. Does **not** check for overflow.
-  *
-- * returns 0 on success.
-+ * Returns: 0 on success.
-  */
- int proc_int_k2u_conv_kop(ulong *u_ptr, const int *k_ptr, bool *negp,
- 			  ulong (*k_ptr_op)(const ulong))
-@@ -488,15 +488,15 @@ int proc_int_k2u_conv_kop(ulong *u_ptr, const int *k_ptr, bool *negp,
- 
- /**
-  * proc_int_u2k_conv_uop - Assign user value to a kernel pointer
-- * @u_ptr - pointer to user space variable
-- * @k_ptr - pointer to kernel variable
-- * @negp - If %TRUE, the converted user value is made negative.
-- * @u_ptr_op - execute this function before assigning to k_ptr
-+ * @u_ptr: pointer to user space variable
-+ * @k_ptr: pointer to kernel variable
-+ * @negp: If %TRUE, the converted user value is made negative.
-+ * @u_ptr_op: execute this function before assigning to k_ptr
-  *
-  * Uses WRITE_ONCE to assign value to k_ptr. Executes u_ptr_op if
-  * not NULL. Check for overflow with UINT_MAX.
-  *
-- * returns 0 on success.
-+ * Returns: 0 on success.
-  */
- int proc_int_u2k_conv_uop(const ulong *u_ptr, int *k_ptr, const bool *negp,
- 			  ulong (*u_ptr_op)(const ulong))
-@@ -515,6 +515,23 @@ int proc_int_u2k_conv_uop(const ulong *u_ptr, int *k_ptr, const bool *negp,
- 	return 0;
- }
- 
-+/**
-+ * proc_int_conv - Change user or kernel pointer based on direction
-+ *
-+ * @negp: will be passed to uni-directional converters
-+ * @u_ptr: pointer to user variable
-+ * @k_ptr: pointer to kernel variable
-+ * @dir: %TRUE if this is a write to the sysctl file
-+ * @tbl: the sysctl table
-+ * @k_ptr_range_check: Check range for k_ptr when %TRUE
-+ * @user_to_kern: Callback used to assign value from user to kernel var
-+ * @kern_to_user: Callback used to assign value from kernel to user var
-+ *
-+ * When direction is kernel to user, then the u_ptr is modified.
-+ * When direction is user to kernel, then the k_ptr is modified.
-+ *
-+ * Returns: 0 on success
-+ */
- int proc_int_conv(bool *negp, ulong *u_ptr, int *k_ptr, int dir,
- 		  const struct ctl_table *tbl, bool k_ptr_range_check,
- 		  int (*user_to_kern)(const bool *negp, const ulong *u_ptr, int *k_ptr),
-@@ -910,7 +927,7 @@ int proc_ulong_conv(ulong *u_ptr, ulong *k_ptr, int dir,
-  * Uses WRITE_ONCE to assign value to k_ptr. Executes u_ptr_op if
-  * not NULL.
-  *
-- * returns: 0 on success.
-+ * Returns: 0 on success.
-  */
- int proc_ulong_u2k_conv_uop(const ulong *u_ptr, ulong *k_ptr,
- 			    ulong (*u_ptr_op)(const ulong))
-@@ -936,7 +953,7 @@ static int proc_ulong_u2k_conv(const ulong *u_ptr, ulong *k_ptr)
-  * Uses READ_ONCE to assign value to u_ptr. Executes k_ptr_op if
-  * not NULL.
-  *
-- * returns: 0 on success.
-+ * Returns: 0 on success.
-  */
- int proc_ulong_k2u_conv_kop(ulong *u_ptr, const ulong *k_ptr,
- 			    ulong (*k_ptr_op)(const ulong))
-@@ -1005,6 +1022,21 @@ int proc_doulongvec_minmax(const struct ctl_table *table, int dir,
- 				do_proc_ulong_conv);
- }
- 
-+/**
-+ * proc_dointvec_conv - read a vector of ints with a custom converter
-+ *
-+ * @table: the sysctl table
-+ * @dir: %TRUE if this is a write to the sysctl file
-+ * @buffer: the user buffer
-+ * @lenp: the size of the user buffer
-+ * @ppos: file position
-+ * @conv: Custom converter call back. Defaults to do_proc_int_conv
-+ *
-+ * Reads/writes up to table->maxlen/sizeof(int) integer values from/to the
-+ * user buffer, treated as an ASCII string.
-+ *
-+ * Returns: 0 on success
-+ */
- int proc_dointvec_conv(const struct ctl_table *table, int dir, void *buffer,
- 		       size_t *lenp, loff_t *ppos,
- 		       int (*conv)(bool *negp, unsigned long *u_ptr, int *k_ptr,
+Change since V1: Deleted the warning altogether, rather than exempting
+fs-dax.
 
+=== How to reproduce ===
+
+A reproducer is available at:
+
+    git clone https://github.com/jagalactic/dax-pmd-test.git
+    cd xfs-dax-test
+    make
+    sudo make test
+
+This will set up XFS on pmem with 2MB stripe alignment and run a test
+that triggers the warning.
+
+Alternatively, follow the manual steps below.
+
+Prerequisites:
+  - Linux kernel with FS-DAX support and CONFIG_DEBUG_VM=y
+  - A pmem device (real or emulated)
+  - An fsdax namespace configured via ndctl as /dev/pmem0
+
+Manual steps:
+
+1. Create an fsdax namespace (if not already present):
+   # ndctl create-namespace -m fsdax -e namespace0.0
+
+2. Create XFS with 2MB stripe alignment:
+   # mkfs.xfs -f -d su=2m,sw=1 /dev/pmem0
+   # mount -o dax /dev/pmem0 /mnt/pmem
+
+3. Compile and run the reproducer:
+   # gcc -Wall -O2 -o dax_pmd_test dax_pmd_test.c
+   # ./dax_pmd_test /mnt/pmem/testfile
+
+4. Check dmesg for the warning:
+   WARNING: mm/memremap.c:431 at free_zone_device_folio+0x.../0x...
+
+Note: The 2MB stripe alignment (-d su=2m,sw=1) is critical. XFS normally
+allocates blocks at arbitrary offsets, causing PMD faults to fall back
+to PTE faults. The stripe alignment forces 2MB-aligned allocations,
+allowing PMD faults to succeed and exposing this bug.
+
+
+ mm/memremap.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/mm/memremap.c b/mm/memremap.c
+index 4c2e0d68eb27..63c6ab4fdf08 100644
+--- a/mm/memremap.c
++++ b/mm/memremap.c
+@@ -427,8 +427,6 @@ void free_zone_device_folio(struct folio *folio)
+ 	if (folio_test_anon(folio)) {
+ 		for (i = 0; i < nr; i++)
+ 			__ClearPageAnonExclusive(folio_page(folio, i));
+-	} else {
+-		VM_WARN_ON_ONCE(folio_test_large(folio));
+ 	}
+ 
+ 	/*
+
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
 -- 
-2.50.1
-
+2.49.0
 
 
