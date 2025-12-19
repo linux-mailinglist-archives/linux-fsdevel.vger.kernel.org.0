@@ -1,139 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-71721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84556CCF0BB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 09:53:58 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E060CCF149
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 10:07:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C43153030FC4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 08:53:26 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4C632301F5CD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 09:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEF61C3C1F;
-	Fri, 19 Dec 2025 08:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189C72E8DEF;
+	Fri, 19 Dec 2025 09:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qF3lpoNU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jp9qeAux"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695912E92C3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 08:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766134405; cv=pass; b=A/9jhw6fQGvGBPXaKC9pTyeuPYzTZjGJap0zxuP0TJmhNswqWBoQ+gJVdNZDRSnu1Np6cW/Na2WESb+ikVtSacfEqpgHJuXXFfDBjSJMTMHiiSuc9E1CPCCTq2AgEGl0iDjrbNpaSwl/6SSwS100wWdqYgZXjxsZbi38417UDas=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766134405; c=relaxed/simple;
-	bh=hDsnAgQTN88zaXjzezRZfy0sE1W++L3Yumln8u0o1AA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uLsxm6OcNg6im3GURg6XXRqGBUHV7DQFee0+eObOogRSBTRpKtEUZYbZr9WMRw2KywvdUZkyJHO+sVBQRX6BVtIIqiI8h4+1kgnCgIs48VAiX+yTVeqCRtCBZDb6FqTwTnAOIVlKph+kFYEmxkxdlECiNIJpKnTjNjhyX/xvqGw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qF3lpoNU; arc=pass smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-64baa44df99so1313a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 00:53:23 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1766134402; cv=none;
-        d=google.com; s=arc-20240605;
-        b=lvM5elz812fNaZIFU7gYFY7J7TsMqOf22y19q4xJAYgJyPJHGJwkQOfrfriTYoQ9so
-         Q/L0sBbQTHqX5R04/YIdtYK3xY07kng7HJeluYe4p4by4LyNCtXEQCEJ7MiYS3RNsVYW
-         fh5+B5y9cx93kJSk+iR/PktdxUwQHGCgwmk47Ahveeq5aC9Fy0Al8HTjRAghApyGMYV2
-         384UbAWF956xfGeIUD7Dqfn3yQ4++53+2BkGqKltx4y47d5EPLnJsVIX+T7/g17gp06D
-         v0zFED46rmOzCVMD/MYj6OQZje8PyUTa15nnTYD6iei0ZqcxCuT5tdO0QwFaxc+A2nq8
-         XWpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Fs8T/bx/dvPsalE6IyzXiaKyBFs/NfE6tP6xBoAggoI=;
-        fh=Uphzd24aMKvpHcZBhXSEX+3UbHUB4vvyrSzIoI25tJs=;
-        b=dkeZHZreidprhE0fcQxBPQss7xWUN+esWyKX9u9G52RorALPUb0VvIOg/i92T+UzKs
-         4k1zDjp+0dtKp+V+WBqhWIQ8jL8yiTlqQAom4jVRRKQ9QYPiBU/GAiLI6nMlNICwrGyv
-         ZrWvc91afYLSVoXYDMYNzm+LME/7tQamOYDVCwv07og1nLTFKPC1wDOiKq4LsrC+xJQt
-         A6h0CkJGWoP2GLPeE2+qrs+TACIevO7ndBJpeJuN1/D74PpAHx+fYG/cg5lGZ+z7Dq4F
-         WXkt0TnX6Vq+k8tsol5PeN9f1mziJF4CWwRIkDExM3RxzCr6H3tXAUlH9Jd1C9h6SORe
-         Lo/A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61E72D7DDF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 09:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1766135227; cv=none; b=pIPBJjT9quC7MvFsnJdKMzZygBHJrjMfSZhrxGpFvKaaRy3O25mTl/t7oexYsntK8zh3CUjsTkTzCFBP9OnKWV3Djuf/W+q85FRqGMKzkSRHhsTyVAjdvb8c8UTw9a4nsXmWr4VUwd6DghvnBu3NRzz/S5rLoNcTQBGlFOy2/Cg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1766135227; c=relaxed/simple;
+	bh=IvXHjwzY77XaX7X/U9dF0cDnVYHe1YX3RN/SMu0a+j0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=td7gt9tKaE85IsQiuLoHbRsfR4AN1aQfjJi1zbxX12PwE+0UylOP81ALP29MnZ/PXyEkwX0W1DUN6zX7aZ0uRUh/9NjBTLfR2gKYpgvEDDumUsGV7lu5O9RecCFgVBvseKrPn/RWSZHT85WVvtruL1UFRAPlIU/yh8MafBCYoMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jp9qeAux; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47a8195e515so11837665e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 01:07:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1766134402; x=1766739202; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1766135224; x=1766740024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Fs8T/bx/dvPsalE6IyzXiaKyBFs/NfE6tP6xBoAggoI=;
-        b=qF3lpoNUuSxLEcE4qrUGxU7/4rVzyW/VjdzmPjYtXds5P50OM41in+JzIth4h44mNI
-         khtJ5i+ZqjvjOSyKKWSlxDOQ/Trp8SvBAz3EWUzakl3ckkHMx7sCn0Q7BopsiqyDd9pM
-         cw0q0bnBU89xcfsDmMt7K1g9sgUUHWqB7yY1G+okIrqR6MfgEduRny6+kIs0tBlbww15
-         r5mFzRj4LEfMkDXVgRwH8KdGSKp3LQrNuJcvPFpBStyTp9ps1RKRQR2pEu1AxZGqO2g0
-         5SS0aoFpaR0NuuCwkC43XngcjIKqhkwvQ3nSejmNO9EERBhbypLGVVFz3HBgu1SxUbAN
-         0k2A==
+        bh=YBS6/GkvOknyT7Zpvi8ZpC9HmfcmPlYKsO2XlNLAgug=;
+        b=jp9qeAuxAD8Q2HE2+ijX5VzUIL4RQI5rrfccVcWgbBx8bKkIcvb6euKgGm2DPGAb7a
+         d2p0z8wuj4gLtl+a4IWXtiRA9GnWgAMS55C1DEOLHdsxrWsn/GEFq1K2a1BYXU1G+VCt
+         4qvNMCZtsWSOA/bdb0r+9h9z05dvl71RF22UWdDVSv9Gg8FMXLrzJGN+qV4tXY6hJ/wH
+         Bx0tZZO8mwdSptw6Bj8IB0+GnSTkm6DiMFVByoyY+l8wC0YKn9R1I34hGi387/1IceQc
+         /Z4NYOYcdTornnkb5o3TdkrQzwNMdAmpj7D6IM6atlrgtel1ugsItyBmwrWlqHwgUNJf
+         JANQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766134402; x=1766739202;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1766135224; x=1766740024;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Fs8T/bx/dvPsalE6IyzXiaKyBFs/NfE6tP6xBoAggoI=;
-        b=tPfFbdDXDEIRUpaPrbGE0wG781+U8nkZAAHzeSupEO5dvhJKaMGx8yRwg1KGhZoVOS
-         scwiXNxCTw4VPKA4ENTOJC1/zSCEWM9ySygZtHDHMLKFdYdYqwNYYRA/wg0DdvdCPPyO
-         peKmYD3I+5WQ8PD30yOCTJR+fAu4kkIKpUwEHRXr33bqg1VZ7Fy0IQA1eg0KdwXEjr6n
-         o3M9W9ustkx2a2zlJShW/bZTFLjMKHviGZilxFGRUrxLaM8ZAlAosRoa0azRGyjV/FQF
-         nVzGpWU4HxpTIjc5bRNjydZame3oTEQc9Fm9DqzQ9jbrdvK4SFV3G3tZzf1NKyL2aHZA
-         Zmeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXyHNkOPaRvgMPzO1Ov4fXlk7v3kAxMbx4rVcOcOpOoupBzhsOd3Ti6i6r9meUhW6Xb5rFCRNvkM1/1o9j/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8Yrpr0LWRFD637ZARiunuBZo1QcqmUXOhDJUZbqQmSMgZuBZt
-	D/iTOWfJgFG8IUBis5p0iWeMztVXNErEub6sDkomc+TEFm8T0z9RbCp6p9cJ3OpJ0I/fuiiw7Sb
-	OBHPTavmjLs52fJZFQbHXIN0dIUU7aXVOukWBXOGp
-X-Gm-Gg: AY/fxX56pyXxG601R/XvLzafludBNQxzy0DGhYnB6qI8dOyJgru+1hENSCXeGzJLX03
-	T/GpUfBWS7bxP8ip8xSc2KDQwxIpPqbxc/hpXJmdRGpbTCegEoGIdiuOXvnwyfansvtdu76W0Bm
-	us9V7w+QqMNHxokmvHhUBmT5wXvZiHgBDWC0UVuscyY42kFGDYvZ/JQsEKWHhg+uVc583sLU7LA
-	QtOo/LbuPjvzhIYybkhR34eG5XYKztWDJSHgS54bdsN95qvQPjWQshhiaXUvN0InZexdIzxT4S/
-	kjx7f9EoCHx620u5Hz3Hu4k=
-X-Google-Smtp-Source: AGHT+IHuq3d4KNN0YyYAniV+RPAme4gkyFjgPMmpMJeYKEriKWzrRS16Ut3ZIhRlPYydbLU+pSeNuVjrsmXnVjuRd+I=
-X-Received: by 2002:a05:6402:289c:b0:64b:4a02:f726 with SMTP id
- 4fb4d7f45d1cf-64ba219eacfmr11471a12.10.1766134401509; Fri, 19 Dec 2025
- 00:53:21 -0800 (PST)
+        bh=YBS6/GkvOknyT7Zpvi8ZpC9HmfcmPlYKsO2XlNLAgug=;
+        b=pzY75TGAjwgcicnkaL23tHGMQll7Vfzq8QxGRC0sPQH3giGDG+upqRsIpX750XfkKc
+         NaDNlaZAki/MXeyuVlUo1wiX1i4vk4jUd/5xKJYakjxPnsZMKRhGc8TrKITrwlrFbutL
+         wCJxBeQ5makQCBXmWpMJsrfJAByK8e5nMNB6e7qj2+JOtJPZwXO8XAaAC7Eq059EKuiR
+         ZCm2LS/Peo4r8wEnQXkGj4QVjIUH5lHvaAVwkwdGGKQkfQKp9XFCehOozeAUob1xuDdS
+         67aOoJMvsv23pin8qXY9LmzUZkRVmXeeDfH5uZkCixC8SoQaMJxA0P+mInT9UFiozqKd
+         ALfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsmWnrecdru6/PBmJ8pJ0bx0emSsiFPboKjM559qI5T0gGu1AQN9CuyEtb9Z8jRh+ezLMBV1YkESCqmYHs@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTKo/X1g5fkL2u5fTMnJWqatsxDT/Cx3xEDPpUt/P5SZk8V7EO
+	4T7j9DOd4yDV90BFONDnn0y5DRp1//WcXitxP2oYF6aYk3yUF3RdxnZJ
+X-Gm-Gg: AY/fxX7EgR5YEm17DEY/U1Ro5UPYTGNVzrae3VyI5gHKG9PZGRjyfy/FcWpPN9CSh7O
+	DSLw+1fIP/LGrkV024J8pFEkdWsUEnAHGbJTi+WFsfB0dYbg8dmZVU1AlC+Ynl4QkM6NvtrQA0k
+	GHvhtyudcdJpKPmLaRTklQj0euM+sh8wGu/upG9snBHMyjjLec/HqIWjvylXLFdiiBrECkiOEY8
+	TTGMDXzkPvHxbCCm/Gldqx5BzRZJCtUz04wLzf8AhhrUt37vj8KHrBGj6HTd4aB9KOVKi/54TON
+	VpLPPDqhxxCgFGSb/8MI8EuU9K8Oxs/1VeS0J+6eEeVz46QEmWoBkMwUzuv1RPFtx88X1NlPUJC
+	ne3cP7ppYCNp0MxuBTHX8Pov14Gxv/YmWC7SHneOzTOQ8JXf22vtkaRe4RF1bGMQX9443r4djDU
+	Rpmn35n1sAFeskx7ePkPjV27Hm+8idv3broaWCQ11/fAdT+brk6Lwy
+X-Google-Smtp-Source: AGHT+IFLmds42d8vq8VOO1M1o+9hrFfg92pPA/nYyB7zACk7trqZpvV3gBxa+GxMMxXj4A+KGeNviw==
+X-Received: by 2002:a05:600c:8b0c:b0:475:dcbb:7903 with SMTP id 5b1f17b1804b1-47d19555796mr16725745e9.9.1766135223727;
+        Fri, 19 Dec 2025 01:07:03 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47be3a49315sm33171175e9.2.2025.12.19.01.07.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Dec 2025 01:07:03 -0800 (PST)
+Date: Fri, 19 Dec 2025 09:07:01 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi
+ <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] fuse: change fuse_wr_pages() to avoid signedness error
+ from min()
+Message-ID: <20251219090701.58d8141b@pumpkin>
+In-Reply-To: <CAJnrk1Zm7+-ha-Oyfamm0D1nEtzmYqP6cDF_mc7JftqWmENewg@mail.gmail.com>
+References: <20251216141647.13911-1-david.laight.linux@gmail.com>
+	<CAJnrk1Zm7+-ha-Oyfamm0D1nEtzmYqP6cDF_mc7JftqWmENewg@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251218071717.2573035-1-joannechien@google.com>
- <aUOuMmZnw3tij2nj@infradead.org> <CACQK4XDtWzoco7WgmF81dEYpF1rP3s+3AjemPL40ysojMztOtQ@mail.gmail.com>
- <aUTi5KPgn1fqezel@infradead.org>
-In-Reply-To: <aUTi5KPgn1fqezel@infradead.org>
-From: Joanne Chang <joannechien@google.com>
-Date: Fri, 19 Dec 2025 16:53:04 +0800
-X-Gm-Features: AQt7F2oJIHIkcmTVNq-CM0D_Pggo29w0ne08iqhRm5s3GY2QUVqSO82KqAeqqQg
-Message-ID: <CACQK4XCmq2_nSJA7jLz+TWiTgyZpVwnZZmG-NbNOkB2JjrCSeA@mail.gmail.com>
-Subject: Re: [PATCH v1] generic/735: disable for f2fs
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, 
-	Chao Yu <chao@kernel.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 19, 2025 at 1:30=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
-g> wrote:
-> On Thu, Dec 18, 2025 at 08:02:48PM +0800, Joanne Chang wrote:
-> > Thank you for the feedback. I will implement a
-> > _require_blocks_in_file helper in the next version. As far as I
-> > know, there isn't a generic way to query the block number limit
-> > across filesystems, so I plan to hardcode the known limit for
-> > F2FS within the helper for now.
->
-> Oh, the limits is not the file size per se, so the number of blocks?
-> I.e. you can have a 64-bit i_size, but if the file isn't spare it
-> eventually can't fill holes?  That really does seem like behavior
-> applications would not not expect, aka a bug.
+On Fri, 19 Dec 2025 11:24:23 +0800
+Joanne Koong <joannelkoong@gmail.com> wrote:
 
-Thanks for the reply. To clarify, I meant testing the architectural
-limit of blocks per file, not the current free blocks. Sorry for any
-confusion in my previous reply.
+> On Wed, Dec 17, 2025 at 12:22=E2=80=AFAM <david.laight.linux@gmail.com> w=
+rote:
+> >
+> > From: David Laight <david.laight.linux@gmail.com>
+> >
+> > On 32bit builds the 'number of pages required' calculation is signed
+> > and min() complains because max_pages is unsigned.
+> > Change the calcualtion that determines the number of pages by adding the
+> > 'offset in page' to 'len' rather than subtracting the end and start pag=
+es.
+> > Although the 64bit value is still signed, the compiler knows it isn't
+> > negative so min() doesn't complain.
+> > The generated code is also slightly better.
+> >
+> > Forcing the calculation to 32 bits (eg len + (size_t)(pos & ...))
+> > generates much better code and is probably safe because len should
+> > be limited to 'INT_MAX - PAGE_SIZE).
+> >
+> > Fixes: 0f5bb0cfb0b4 ("fs: use min() or umin() instead of min_t()")
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202512160948.O7QqxHj2-lkp=
+@intel.com/
+> > Signed-off-by: David Laight <david.laight.linux@gmail.com>
+> > ---
+> >  fs/fuse/file.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > index 4f71eb5a9bac..98edb6a2255d 100644
+> > --- a/fs/fuse/file.c
+> > +++ b/fs/fuse/file.c
+> > @@ -1323,7 +1323,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_=
+io_args *ia,
+> >  static inline unsigned int fuse_wr_pages(loff_t pos, size_t len,
+> >                                      unsigned int max_pages)
+> >  {
+> > -       return min(((pos + len - 1) >> PAGE_SHIFT) - (pos >> PAGE_SHIFT=
+) + 1,
+> > +       return min(((len + (pos & (PAGE_SIZE - 1)) - 1) >> PAGE_SHIFT) =
++ 1,
+> >                    max_pages); =20
+>=20
+> I find this logic a bit confusing to read still, what about something lik=
+e:
+>=20
+> unsigned int nr_pages =3D DIV_ROUND_UP(offset_in_page(pos) + len, PAGE_SI=
+ZE);
+> return min(nr_pages, max_pages);
 
-The limit is indeed the maximum file size. However, since both the F2FS
-file size limit and the test's requirements are calculated as
-(block_number * block_size), I believe it is simpler to just test the
-block number.
+You can just do:
+	return min(DIV_ROUND_UP(offset_in_page(pos) + len, PAGE_SIZE), max_pages);
 
-Best regards,
-Joanne
+or splitting the long line:
+	len +=3D offset_in_page(pos);
+	return min(DIV_ROUND_UP(len, PAGE_SIZE), max_pages);
+
+Using offset_in_page() and DIV_ROUND_UP adds the 'hidden' requirement that
+	'len <=3D MAX_ULONG - 2 * PAGE_SIZE'.
+(Should be true - read/write (etc) are bounded to MAX_INT - PAGE_SIZE.)
+
+> instead? I think the compiler will automatically optimize the
+> DIV_ROUND_UP to use a bit shift.
+
+Provided it is an unsigned divide - and the LHS is unsigned.
+
+DIV_ROUNDUP(a, b) is '(a + b - 1)/b' which can overflow for large 'a'.
+The other option is '(a - 1)/b + 1' which is valid for non-zero 'a'.
+
+	David
+
+>=20
+> Thanks,
+> Joanne
+> >  }
+> >
+> > --
+> > 2.39.5
+> >
+> > =20
+
 
