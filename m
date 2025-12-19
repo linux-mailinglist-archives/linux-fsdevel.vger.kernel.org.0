@@ -1,137 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-71701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3761CCE1DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 02:07:33 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D08FCCE1E2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 02:11:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1BDDF30115DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 01:06:39 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7DE223014AD7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Dec 2025 01:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473F62264B0;
-	Fri, 19 Dec 2025 01:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4D5221DAC;
+	Fri, 19 Dec 2025 01:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhvgVWK/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OhtaN4LE";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="dGj+ITNM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C0E1E1DF0;
-	Fri, 19 Dec 2025 01:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8758921ABB9
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 01:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766106396; cv=none; b=NO/hIWV44ASCqkl807eBJoocljXG+gXs6/aL1rJutoE92pb9t5xqzl89+DzKW7S711qsSLSRogrw+AOgvlu4z6TGgugDoTp94nzyulpY0q70DwXonNngkEcDhXvjybP9xg9kkVGG9M+oHRJCrUQOpTQNhDWr8HZKSoHONf7S4kQ=
+	t=1766106704; cv=none; b=DZN73ulrZuWH1hGpkOEI/WkuoHhvRlDvu0ycVARQxq8gEFeKFWp8CSrt9WJobH/vJvdj6Q3whDKJiF1bzOBk4/ZazgNe6rH6ZR/mtDzhvFHpNLYLMOg83M0l5NyKRbzWrvSQuDOIh22x/RPYqDlWKacNtahNp7NIFlwt2qeRr7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766106396; c=relaxed/simple;
-	bh=Jz6xTdkIWbRf4JwQ0oyn1ju2pEVKbtDCK11HDqTa9Dc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F1B0kfazQiXzyqt7eVCGyE7IFth3NK5AAJtLV5XzUj2abo0yoxgNkvBV5msnXuj/U7beiRnvcfXDCkheE+Bkfvi7azOtXlOVxoOJlC3nIW98Klcx3tppwcTu/tQxAvZrBjllZ+T9HahQNp4YR7/9ifoQa6TFr1/2EV8SDAn/2PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhvgVWK/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 17E9DC4CEFB;
-	Fri, 19 Dec 2025 01:06:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766106396;
-	bh=Jz6xTdkIWbRf4JwQ0oyn1ju2pEVKbtDCK11HDqTa9Dc=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=RhvgVWK/jpW7BphXF9m3/hhkZ9eebZlK1MzHWfC6ykhaG/LtKa6zU/2YO+PcA6DOh
-	 6hpt5lrNwxhQQm+/LzS/zLkVNYvTdHOuhvxM+xa8nGgSMkBwgEnkXXc3vrOGVLYUnE
-	 ZicHL6azCfajwuf4gH+qwNlQg2wMbTgfdkAnEg4G16FSsyXkEpZGUW4fiZKoLlneqe
-	 OKV3uCrDjGT/Tk/JOEdfPiXdAcDL82ko2MPxCxgtHA5vtlywXD1RS4h8h1mmclbSfi
-	 9SjXviPgCwViQ0VZrQbH0+PS+9fT+oELxEKKjTTz+v0SOiSvx4qUK0zIsPEAV2F7ZQ
-	 asXjGzF9/2oAA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 057B6D711D2;
-	Fri, 19 Dec 2025 01:06:36 +0000 (UTC)
-From: Bagas Sanjaya via B4 Relay <devnull+bagasdotme.gmail.com@kernel.org>
-Date: Fri, 19 Dec 2025 08:06:19 +0700
-Subject: [PATCH v2] VFS: fix dentry_create() kernel-doc comment
+	s=arc-20240116; t=1766106704; c=relaxed/simple;
+	bh=cypdv1WcQjsWPVmw/CKxIZtz/TZoJzZOztqX045WzdU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eCGuiH6z3Wf6JOwAPcoHYVpJdfD0i5J9epTb2DaadI1P08QPyJTuxYQVksbn54A+0BOielzTgLWik24v77DhwtVHbhPdHBTgQVSULcOsDR7aI6hGmA/hhFzg5I7rgXAhfUejvJnv767dzg9fIcIkdm5mx2z0codn0LDQBbJlreY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OhtaN4LE; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=dGj+ITNM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1766106701;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kK1BjENHT315R0V+8XhXVEsGAsXTisaxdut0tnfFRGY=;
+	b=OhtaN4LEjHB/l6mRphjEtYuyt/D1PLqoPNtIbQAHHeqEgp14yGKSq6RZZgV1B9Gb4esc6Z
+	fwj8GjCa2yGV5LKxxEJNeexpi88of6N3FmfKrfBHmDQ0Md3p5tp/DA89FttZzJTO8knbWE
+	wks/J03YkhrU0WITdqpbiuy81EhN52E=
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
+ [209.85.167.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-641-qsb6T2BnOu2Sw-RLNEFsuQ-1; Thu, 18 Dec 2025 20:11:40 -0500
+X-MC-Unique: qsb6T2BnOu2Sw-RLNEFsuQ-1
+X-Mimecast-MFC-AGG-ID: qsb6T2BnOu2Sw-RLNEFsuQ_1766106699
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-45322138f81so2118554b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Dec 2025 17:11:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1766106699; x=1766711499; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kK1BjENHT315R0V+8XhXVEsGAsXTisaxdut0tnfFRGY=;
+        b=dGj+ITNMim6NOVeEAMHFyI7TqwZaf683IiZjWUT6VCiZdVyxXvGm3P7PgfRvGPP7oq
+         7ZLzEjB3ZIEmgnhSvQcyRXr8BcwHDmDgZd40/ObF1Ase27cIod99xhDWHO0KMmA/8Rzd
+         AV1ETWCj5JUqL8ZHtPayYZ2TaBKF6bfNZ/eSP3LlwYh8iUExf65tt8TZIQO7Y2/4AbKd
+         TwxO2UPJ7edTFp91F/JbM/s3mta0n0Cv4d5bziJSkjKiSqCMm+ra31Ag8MKfbUKnBt+E
+         F259AAVaS1Vie8iSjz2/OCkwGdD5dJtsByDximLCtYiKu37rSNj1mzIBj0hNCyebc5Ca
+         Gj9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766106699; x=1766711499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kK1BjENHT315R0V+8XhXVEsGAsXTisaxdut0tnfFRGY=;
+        b=qsIMz/trJ1IeKJbnN9BFhNOiGrc4TfzStmKbnfPKKjMJG0MPNtGo/i2qwprzT2uVeF
+         ZU3S7dlGMh7iOGYDRe2cU4kQq5DukD5EyaNJMqgINvZtnhHQzQ0e4SkZ+N0nmz4yGK9G
+         RqR8YPTJxa3fuNOaJgaGfVUwX2qwBrSE6/7McKS1qcnDA3AeqWmAo89RdeVwdJOZxFBU
+         L++ECPp4QhdiXfZMNqF8ILABqifUpUggayCGzRP9ktx26hgl+RCWTFxFgn3qCcTvqNgU
+         8ji/FIoc6x0ev7+8TzVYMdLmWVlMQG+b+0wQHP4mjo8FxbjCgmALEL0JQcihPpgczFuw
+         lv3A==
+X-Forwarded-Encrypted: i=1; AJvYcCX1fj7GZXFE6nPl8u+e4JWEIXUPkJZFUYpK8w1CX07V5YeJV126ayQRDVNsHIQsAQFtc7Kk7aHjtNStxHqu@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjmR2Oas6MfqgNxWJMP1dATYOmEETf0GM3LXFrEqeo5IxU25KM
+	xnMvTSKGxMgu4xXY05FuzJrpY4gduzOwjF9mrTHy88v2SbXnmKtgta/wVLZ1EuJ/Pnft4X24K0p
+	3zkZYwn7eiTfgylQ2CkNDvzYxgoP8saSRotraiZDrtGK4E0z+IHRmIqR33owjgzBlWXsj0LGqm5
+	OI8NhCdQtSOrkovWL6i4fgEOVvBGDxRPpIQynBBsiD4A==
+X-Gm-Gg: AY/fxX6mAgJaFjjdvUv+y7/C08h3XHD0T3SdVXkqzVNpQxxHJoDAPmWDkMyeLuBmUjH
+	+av5ke0BhmjcBuoJpll5Ge0XV88W4JHulEWX00bjJ2YmoIx/erPDv0VEQ47ueWVr+0qNMkUWetH
+	+vUblulbadMUYvvUS9A+tmyPvrs4+oN8IbCZaYhCURQqbxo750AIIorNjOvy8hYdr3CSXqpPNtX
+	+D6rZm/NWIGwNezJXa6BBjiXg==
+X-Received: by 2002:a05:6808:e82:b0:450:c7dc:d7f6 with SMTP id 5614622812f47-457a2956782mr2011013b6e.25.1766106699400;
+        Thu, 18 Dec 2025 17:11:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFtVBPCCNoDj+iZNdcFdsjUyUmyVLsV5cVhaTU6hofQvRoJEGh8oFm6QrJ5JkKPTeWjcI4OOJDjXeg+R4RJsI0=
+X-Received: by 2002:a05:6808:e82:b0:450:c7dc:d7f6 with SMTP id
+ 5614622812f47-457a2956782mr2010999b6e.25.1766106699050; Thu, 18 Dec 2025
+ 17:11:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251219-dentry-inline-v2-1-c074b5bfb3a6@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAqlRGkC/3XMQQqDMBCF4avIrDslE6JNu+o9igtJJjqgsSQiF
- fHuTd13+T943w6Zk3CGR7VD4lWyzLGEvlTghi72jOJLg1a6Jk0WPcclbShxlMho1J0Cc8eNraF
- 83omDfE7v1ZYeJC9z2k5+pd/6T1oJCRWpWzDOW22aZz91Ml7dPEF7HMcX3K8/raoAAAA=
-X-Change-ID: 20251218-dentry-inline-4091feeae685
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Benjamin Coddington <bcodding@hammerspace.com>, 
- Jeff Layton <jlayton@kernel.org>
-Cc: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Stephen Rothwell <sfr@canb.auug.org.au>, 
- Bagas Sanjaya <bagasdotme@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1835;
- i=bagasdotme@gmail.com; s=Zp7juWIhw0R1; h=from:subject:message-id;
- bh=NzFzLqPLn+tL6t15hgLivh9hhV8Uu6nQkc/2k2IeoUw=;
- b=owGbwMvMwCX2bWenZ2ig32LG02pJDJkuSyULj190sH/5XED3WMkkxz3lb26n33RX2NzEWeaRy
- Hw5miWyo5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABNJmMnwV1ahIuv90ZXmvIGv
- UiTn+k12lv6p8y7L+fTqCsnCj5X/TzAyNKv995u/dqLRoUAXl9cinodO5akWbjgRv8fKLO7yBbH
- FXAA=
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp;
- fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-X-Endpoint-Received: by B4 Relay for bagasdotme@gmail.com/Zp7juWIhw0R1 with
- auth_id=581
-X-Original-From: Bagas Sanjaya <bagasdotme@gmail.com>
-Reply-To: bagasdotme@gmail.com
+References: <20251215215301.10433-2-slava@dubeyko.com> <CA+2bHPbtGQwxT5AcEhF--AthRTzBS2aCb0mKvM_jCu_g+GM17g@mail.gmail.com>
+ <efbd55b968bdaaa89d3cf29a9e7f593aee9957e0.camel@ibm.com> <CA+2bHPYRUycP0M5m6_XJiBXPEw0SyPCKJNk8P5-9uRSdtdFw4w@mail.gmail.com>
+ <fd1e92b107d6c36f65ebc12e5aaa7fb773608c6f.camel@ibm.com>
+In-Reply-To: <fd1e92b107d6c36f65ebc12e5aaa7fb773608c6f.camel@ibm.com>
+From: Patrick Donnelly <pdonnell@redhat.com>
+Date: Thu, 18 Dec 2025 20:11:13 -0500
+X-Gm-Features: AQt7F2o1xOq8N6VmFiiXc3BbbWHuTS4OE1Ez9oqQgwuW2iKClAq_iiWbHkenKdg
+Message-ID: <CA+2bHPaxwf5iVo5N9HgOeCQtVTL8+LrHN_=K3EB-z+jujdGbuQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: fix kernel crash in ceph_open()
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: Viacheslav Dubeyko <vdubeyko@redhat.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>, 
+	Kotresh Hiremath Ravishankar <khiremat@redhat.com>, Alex Markuze <amarkuze@redhat.com>, 
+	"idryomov@gmail.com" <idryomov@gmail.com>, Pavan Rallabhandi <Pavan.Rallabhandi@ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bagas Sanjaya <bagasdotme@gmail.com>
+On Thu, Dec 18, 2025 at 2:02=E2=80=AFPM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> On Wed, 2025-12-17 at 22:50 -0500, Patrick Donnelly wrote:
+> > On Wed, Dec 17, 2025 at 3:44=E2=80=AFPM Viacheslav Dubeyko
+> > <Slava.Dubeyko@ibm.com> wrote:
+> > >
+> > > On Wed, 2025-12-17 at 15:36 -0500, Patrick Donnelly wrote:
+> > > > Hi Slava,
+> > > >
+> > > > A few things:
+> > > >
+> > > > * CEPH_NAMESPACE_WIDCARD -> CEPH_NAMESPACE_WILDCARD ?
+> > >
+> > > Yeah, sure :) My bad.
+> > >
+> > > > * The comment "name for "old" CephFS file systems," appears twice.
+> > > > Probably only necessary in the header.
+> > >
+> > > Makes sense.
+> > >
+> > > > * You also need to update ceph_mds_auth_match to call
+> > > > namespace_equals.
+> > > >
+> > >
+> > > Do you mean this code [1]?
+> >
+> > Yes, that's it.
+> >
+> > > >  Suggest documenting (in the man page) that
+> > > > mds_namespace mntopt can be "*" now.
+> > > >
+> > >
+> > > Agreed. Which man page do you mean? Because 'man mount' contains no i=
+nfo about
+> > > Ceph. And it is my worry that we have nothing there. We should do som=
+ething
+> > > about it. Do I miss something here?
+> >
+> > https://github.com/ceph/ceph/blob/2e87714b94a9e16c764ef6f97de50aecf1b0c=
+41e/doc/man/8/mount.ceph.rst
+> >
+> > ^ that file. (There may be others but I think that's the main one
+> > users look at.)
+>
+> So, should we consider to add CephFS mount options' details into
+> man page for generic mount command?
 
-Sphinx reports htmldocs warnings:
+For the generic mount command? No, only in mount.ceph(8).
 
-Documentation/filesystems/api-summary:56: fs/namei.c:4952: WARNING: Inline emphasis start-string without end-string. [docutils]
-Documentation/filesystems/api-summary:56: fs/namei.c:4942: ERROR: Unknown target name: "o". [docutils]
 
-Fix them up.
-
-Fixes: 977de00dfcf87e ("VFS: move dentry_create() from fs/open.c to fs/namei.c")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/linux-next/20251216115252.709078e8@canb.auug.org.au/
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
-Changes in v2:
-- Add ellipsis placeholder on @flags description (Al Viro)
-- Phrase return value struct (Al Viro)
-- Link to v1: https://lore.kernel.org/r/20251218-dentry-inline-v1-1-0107f4cd8246@gmail.com
----
- fs/namei.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index aefb21bc0944e3..ad6a9930dc68b5 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4939,7 +4939,7 @@ EXPORT_SYMBOL(start_creating_user_path);
- /**
-  * dentry_create - Create and open a file
-  * @path: path to create
-- * @flags: O_ flags
-+ * @flags: O\_... flags
-  * @mode: mode bits for new file
-  * @cred: credentials to use
-  *
-@@ -4950,7 +4950,7 @@ EXPORT_SYMBOL(start_creating_user_path);
-  * the new file is to be created. The parent directory and the
-  * negative dentry must reside on the same filesystem instance.
-  *
-- * On success, returns a "struct file *". Otherwise a ERR_PTR
-+ * On success, return a pointer to opened file. Otherwise a ERR_PTR
-  * is returned.
-  */
- struct file *dentry_create(struct path *path, int flags, umode_t mode,
-
----
-base-commit: 981be27a72d163610e8e1c342373930bae80ac99
-change-id: 20251218-dentry-inline-4091feeae685
-
-Best regards,
--- 
-Bagas Sanjaya <bagasdotme@gmail.com>
-
+--=20
+Patrick Donnelly, Ph.D.
+He / Him / His
+Red Hat Partner Engineer
+IBM, Inc.
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
 
 
