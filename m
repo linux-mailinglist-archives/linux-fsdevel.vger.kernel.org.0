@@ -1,173 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-71792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3075CD2829
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Dec 2025 06:40:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC6B1CD2997
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Dec 2025 08:17:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C67BE301B2EA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Dec 2025 05:40:36 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 08EC130194D0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Dec 2025 07:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAEA2F39BE;
-	Sat, 20 Dec 2025 05:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2/DcTnc"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D59C29A9C9;
+	Sat, 20 Dec 2025 07:16:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DB926A1CF
-	for <linux-fsdevel@vger.kernel.org>; Sat, 20 Dec 2025 05:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5C520102B;
+	Sat, 20 Dec 2025 07:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766209234; cv=none; b=SmL+iVhBzHHVVogF4wWPIie4ay3O2DJ5xWgHt0NhTBBZ5zrSXUK2Vs38eIH6p/xHAS+zvX1TjFSJL2Bh5cdsBbU6IJatTbcrtR6S4UeS0QsiBQz2jWyDbJGlQzBHrjN2MmLA05EpDeHVWyjWe2CRniD6dgmB3We3dttPKPuQwnE=
+	t=1766215009; cv=none; b=loz1Hi/VmNbmlC1xDbi5FPlxtBuHBHAfEHm8DlOAKHQoky3i3I51K1qlmt5Uog5Cvbx1o7GWz4CuX0jSZCxOlmhBJO1QG0WMjW6bPB8uf2j+9t9mQdKtcX2A4wUj8bfCtroPtDJIRkoVJN3exjmUGn4b3SM6ZHsB4h18LMh+CCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766209234; c=relaxed/simple;
-	bh=p42BJNupHuIS+VpYjjVjkRpU78a/l7ZJSRdNnBbDs8I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KHKuCjOV0ccNyjhOzQ0Yqj0CmzaqIdenVWy2eChfMcl/cVvQ12AnEUPEAqFdCQ0LTAaNZT9rrht/Q0k0Py1gN8wR4covQAFb/g77+LilCwRoqqh71eGTyjbaDzWJ9SQp5b4naab4toAYQIKRqCiS2bPpu6a4uGCyTpx6JZyYxAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2/DcTnc; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64b81ec3701so2991530a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Dec 2025 21:40:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766209231; x=1766814031; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C8prGX8mCG0hlpIUxCwCqtaCOrf4LfFVDrIHbCsEcuY=;
-        b=G2/DcTncR/tdE9SGjPTShYB4J939dQydgy6mvg7nFKjSFzybbppdxY+Sr7WeEyY2wV
-         sMXNwjMdXM4nBG+TS9M6Jo2y/KuNXYBN6mTv0O/DEp5qJkcD2yGPTVS+BquRUVe85NkF
-         DJHHjtRP/0e1oLena1krlBhfZti2+rZHGxKluR98QhIzcRvSgTH/ayWiZW4AjHe6nWQ4
-         e0Iib/DmqhxGjGgVeulq+9QjIj5N/3HaI29tnPcQv2ueTi9sd4bi0vRdRjMHylFjkMWN
-         rCIyJmy13u/6C176eYo1ciwJw+aQy3Hf1dq/KzAKMOAYJ1vptiGuSml0Au3rPaTEwfow
-         OQcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766209231; x=1766814031;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C8prGX8mCG0hlpIUxCwCqtaCOrf4LfFVDrIHbCsEcuY=;
-        b=O/79ZMrZXnhz9FMU18OwkFlw/F0RBUczL4GahqLEqMLtmFngHQrKiYD6y7y3009/of
-         R8w6KH+orZPV8iEE5y/rrWh4doJlerDEyqd9sXCszSYyddHR6P2eLjHKN3D0SliC/S7N
-         ln4d+b/HY1QsYiPT+AlbV+jG5zd2pRKBo34jch4cnvctzQFEkjrXCujxoTjHg9MTMTZz
-         A1TD9IS+acOMr6vPkniFevqE+cNJ5oVQUzNl+u/lLL1DGa4u2BK7SyXKoWxmgJw4bUsp
-         +QB6NicAL8XJWBPUGblU+SdWpjw/Bn3jrPs+K9HMVFs1Nb3fHMm775kMI5SV9+B1cG08
-         2D5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW1LPVIFdZxu1YszA8gi9/0YPhOtCFHlIjLSKWNB5RusNsTns7fpK+7eLqL3/SHiWOjFid+THiOflYNuRS+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWkOSvsiTfGoFSIsShMhoBKEy2sIOnQEj4IE6Z/HUXAcNHfZ8J
-	KVlKh5iG1cKvtDyhsuQviJVc9vp2jxEk7qJDHrovdXch/bbzGYgah9VK
-X-Gm-Gg: AY/fxX5mrjnQSuguwyzCoSBl1lqXDFQP3VD51gABid5HbH8EyiyEV+U3gef3fPSUaSN
-	eREavbJ9f3pjve4U8wxVI84hAYLsgEne80XZxXcgM+dojQtfnc75h/qmhdezw7snuIXZxJztNEv
-	THtAZ2J9Q4PRZ7NlnOEzCQ39BTu7h1WwsUjKLQSM1ZpcSTNSLMUXq8AvusURurrYCbXJjFG3Jk6
-	ZZlJKT1m6FnbFxQ1S7O2LrATPh4/MYr2AHM6m+vduwRcf4fUr/ODui8GaxH8KecPpqYekoudw2O
-	uqeTA1ljt8e1Rr3OCCfwWT46D8dthxo9f0t/BjG/uHutmQT7E7yT/8Ro7FkzxAaUdU6pxkj+VKJ
-	R5q53YmB8qJxExM5yaAcrGPBIdWwyZHg8jze5V7/5i2DgwZF8YaJvq+WoC+TL3v/lrYoE2Th5vj
-	PZxxCJf8SSJhGghgNxBDl50S9kvJNqz6DCi2ZNa6kscKHPxReoOCmxReEP4eyeJVP7Ptuf9w==
-X-Google-Smtp-Source: AGHT+IEq/HNbwlXVDbvScjeQpoQYsBu8b0ZfA8ZLBC5usoKuom4CFt9Fhy6b6qXz23H6iI2r4T8l8A==
-X-Received: by 2002:a17:907:8690:b0:b76:63b8:7394 with SMTP id a640c23a62f3a-b80371d9dcbmr515084466b.51.1766209230538;
-        Fri, 19 Dec 2025 21:40:30 -0800 (PST)
-Received: from f.. (cst-prg-91-72.cust.vodafone.cz. [46.135.91.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037f3e271sm412429566b.60.2025.12.19.21.40.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Dec 2025 21:40:29 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org,
-	viro@zeniv.linux.org.uk
-Cc: jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	clm@meta.com,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v3] fs: make sure to fail try_to_unlazy() and try_to_unlazy() for LOOKUP_CACHED
-Date: Sat, 20 Dec 2025 06:40:22 +0100
-Message-ID: <20251220054023.142134-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1766215009; c=relaxed/simple;
+	bh=THGr9dij6vUQ92tAxmYUHS0K+B7d2kX45hFqayHs0uE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZAC+z70gzBhn77x1nKUTW1s+e/Bi+LamNFnakTHQQ6/uob35yCsDWfsG7egonZXJIYhFSWN4UVRErbwGMpekkUTiq8kqb8axCQ5V+o9OeCkUjejanVqd+lKY/O92YQ7mXig94umumali7BpK6uUCnanGTa8Bdm/CtWkhcaf0M8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.170])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dYG0W5Z1lzYQtf3;
+	Sat, 20 Dec 2025 15:16:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 50F0240562;
+	Sat, 20 Dec 2025 15:16:43 +0800 (CST)
+Received: from [10.174.178.152] (unknown [10.174.178.152])
+	by APP4 (Coremail) with SMTP id gCh0CgBnFvdZTUZprgBUAw--.52524S3;
+	Sat, 20 Dec 2025 15:16:43 +0800 (CST)
+Message-ID: <5f6f9588-52a0-4ab8-a1ad-3d466488b985@huaweicloud.com>
+Date: Sat, 20 Dec 2025 15:16:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next 3/7] ext4: avoid starting handle when dio writing an
+ unwritten extent
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ojaswin@linux.ibm.com, ritesh.list@gmail.com, yi.zhang@huawei.com,
+ yizhang089@gmail.com, libaokun1@huawei.com, yangerkun@huawei.com,
+ yukuai@fnnas.com
+References: <20251213022008.1766912-1-yi.zhang@huaweicloud.com>
+ <20251213022008.1766912-4-yi.zhang@huaweicloud.com>
+ <6kfhyiin2m3iook5c4s6dwq45yeqshv4vbez3dfvwaehltajuc@4ybsharot344>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <6kfhyiin2m3iook5c4s6dwq45yeqshv4vbez3dfvwaehltajuc@4ybsharot344>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgBnFvdZTUZprgBUAw--.52524S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxAr1rGF4DuFWUZFWxtr47Arb_yoW5WFWUpr
+	Z3KFykCF40qFyUua97Z3Wvqr1Fqw4DKr4xuF4rKr1Yqr9Igr18KF4vqFW5WF48KrZ7CF4I
+	vFWUA34xZFnxArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Otherwise the slowpath can be taken by the caller, defeating the flag.
+On 12/19/2025 11:25 PM, Jan Kara wrote:
+> On Sat 13-12-25 10:20:04, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Since we have deferred the split of the unwritten extent until after I/O
+>> completion, it is not necessary to initiate the journal handle when
+>> submitting the I/O.
+>>
+>> This can improve the write performance of concurrent DIO for multiple
+>> files. The fio tests below show a ~25% performance improvement when
+>> wirting to unwritten files on my VM with a mem disk.
+>>
+>>   [unwritten]
+>>   direct=1
+>>   ioengine=psync
+>>   numjobs=16
+>>   rw=write     # write/randwrite
+>>   bs=4K
+>>   iodepth=1
+>>   directory=/mnt
+>>   size=5G
+>>   runtime=30s
+>>   overwrite=0
+>>   norandommap=1
+>>   fallocate=native
+>>   ramp_time=5s
+>>   group_reporting=1
+>>
+>>  [w/o]
+>>   w:  IOPS=62.5k, BW=244MiB/s
+>>   rw: IOPS=56.7k, BW=221MiB/s
+>>
+>>  [w]
+>>   w:  IOPS=79.6k, BW=311MiB/s
+>>   rw: IOPS=70.2k, BW=274MiB/s
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  fs/ext4/file.c  | 4 +---
+>>  fs/ext4/inode.c | 4 +++-
+>>  2 files changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+>> index 7a8b30932189..9f571acc7782 100644
+>> --- a/fs/ext4/file.c
+>> +++ b/fs/ext4/file.c
+>> @@ -418,9 +418,7 @@ static const struct iomap_dio_ops ext4_dio_write_ops = {
+>>   *   updating inode i_disksize and/or orphan handling with exclusive lock.
+>>   *
+>>   * - shared locking will only be true mostly with overwrites, including
+>> - *   initialized blocks and unwritten blocks. For overwrite unwritten blocks
+>> - *   we protect splitting extents by i_data_sem in ext4_inode_info, so we can
+>> - *   also release exclusive i_rwsem lock.
+>> + *   initialized blocks and unwritten blocks.
+>>   *
+>>   * - Otherwise we will switch to exclusive i_rwsem lock.
+>>   */
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index ffde24ff7347..08a296122fe0 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -3819,7 +3819,9 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>>  			 * For atomic writes the entire requested length should
+>>  			 * be mapped.
+>>  			 */
+>> -			if (map.m_flags & EXT4_MAP_MAPPED) {
+>> +			if ((map.m_flags & EXT4_MAP_MAPPED) ||
+>> +			    (!(flags & IOMAP_DAX) &&
+> 
+> Why is here an exception for DAX writes? DAX is fine writing to unwritten
+> extents AFAIK. It only needs to pre-zero newly allocated blocks... Or am I
+> missing some corner case?
+> 
+> 								Honza
 
-This regressed after calls to legitimize_links() started being
-conditionally elided and stems from the routine always failing
-after seeing the flag, regardless if there were any links.
+Hi, Jan!
 
-In order to address both the bug and the weird semantics make it illegal
-to call legitimize_links() with LOOKUP_CACHED and handle the problem at
-the two callsites.
+Thank you for reviewing this series.
 
-Fixes: 7c179096e77eca21 ("fs: add predicts based on nd->depth")
-Reported-by: Chris Mason <clm@meta.com>
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+Yes, that is precisely why this exception is necessary here. Without this
+exception, a DAX write to an unwritten extent would return immediately
+without invoking ext4_iomap_alloc() to perform pre-zeroing.
 
-v3:
-- keep nd->depth = 0 out of drop_links to further simplify the patch
+Thanks,
+Yi.
 
-The thread for v2 got derailed with a discussion unrelated to the fix
-itself.
-
-Whatever future cleanups or lack thereof can be discussed after the
-regression is fixed so I'm keep anything of the sort out of this patch.
-
-The easiest way out I can think of would merely remove the ->depth
-checks before calling legitimize_mnt, but it would be a bummer to
-reintroduce the func call.
-
-The second easiest way out literally copy-pastes the current body into
-the 2 callers, which I implemented in this patch.
-
- fs/namei.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index bf0f66f0e9b9..f7a8b5b000c2 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -830,11 +830,9 @@ static inline bool legitimize_path(struct nameidata *nd,
- static bool legitimize_links(struct nameidata *nd)
- {
- 	int i;
--	if (unlikely(nd->flags & LOOKUP_CACHED)) {
--		drop_links(nd);
--		nd->depth = 0;
--		return false;
--	}
-+
-+	VFS_BUG_ON(nd->flags & LOOKUP_CACHED);
-+
- 	for (i = 0; i < nd->depth; i++) {
- 		struct saved *last = nd->stack + i;
- 		if (unlikely(!legitimize_path(nd, &last->link, last->seq))) {
-@@ -883,6 +881,11 @@ static bool try_to_unlazy(struct nameidata *nd)
- 
- 	BUG_ON(!(nd->flags & LOOKUP_RCU));
- 
-+	if (unlikely(nd->flags & LOOKUP_CACHED)) {
-+		drop_links(nd);
-+		nd->depth = 0;
-+		goto out1;
-+	}
- 	if (unlikely(nd->depth && !legitimize_links(nd)))
- 		goto out1;
- 	if (unlikely(!legitimize_path(nd, &nd->path, nd->seq)))
-@@ -918,6 +921,11 @@ static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry)
- 	int res;
- 	BUG_ON(!(nd->flags & LOOKUP_RCU));
- 
-+	if (unlikely(nd->flags & LOOKUP_CACHED)) {
-+		drop_links(nd);
-+		nd->depth = 0;
-+		goto out2;
-+	}
- 	if (unlikely(nd->depth && !legitimize_links(nd)))
- 		goto out2;
- 	res = __legitimize_mnt(nd->path.mnt, nd->m_seq);
--- 
-2.48.1
+> 
+>> +			     (map.m_flags & EXT4_MAP_UNWRITTEN))) {
+>>  				if ((!(flags & IOMAP_ATOMIC) && ret > 0) ||
+>>  				   (flags & IOMAP_ATOMIC && ret >= orig_mlen))
+>>  					goto out;
+>> -- 
+>> 2.46.1
+>>
 
 
