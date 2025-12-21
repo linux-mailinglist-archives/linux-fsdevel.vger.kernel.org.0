@@ -1,134 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-71807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60C1BCD39C7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Dec 2025 03:29:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A67CACD3DAB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Dec 2025 10:30:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 118703008559
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Dec 2025 02:29:00 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 82C2630072B2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Dec 2025 09:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19F11624C0;
-	Sun, 21 Dec 2025 02:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCB1244665;
+	Sun, 21 Dec 2025 09:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M5k0SFts"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZt8jayi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DB613FEE;
-	Sun, 21 Dec 2025 02:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5E31397
+	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Dec 2025 09:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766284138; cv=none; b=YXlg+win4Gmql/vpeAYIeymmUXQJQ2gdrIe+DNPXrwS+s+6h6YLtxBHPVfQKq8sf5+BqA4BBvxQ56I4hd7r54CkKi60oReBsfX3iC2TCmCWk7TyO6LsRsdF4UIB53g5QEnEYAEwJnLbVs/T0XJ4f7TUDk2GCPVqFCpyBUnGKzWM=
+	t=1766309425; cv=none; b=SMu8LGdJJBThkivxFTclwVPdScuFCqIITu+e+QsRPYDMM0RDAX6i2AVa84No/JRQMVomW173UN8Hc5ED0BtmC9PxkHcqwzpPZ9V8F5GIMVOc8vGRA2QSxHJh5YBaNq/sJSjoBxYwJUSQV5tgO+7tntk9lfUKus1fRuQVQKs3B24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766284138; c=relaxed/simple;
-	bh=zWyOdYOZRlqUbz38ByLXJzsPNEXfBPqSvhxivGTIwEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tMwLgcqEMKC9tGJRSubBFk52DJm3zLEBLr6gZWQyylKS1g/Q6bifx48+m9oSV8wny1YAIVeDcQdsoZaIa1lp+fSp4Ema5mf7hBCakuuPAhyfQmJK8fb3RygBFzO6Q+N+KZpt3xfhweVxpKiE5gO4j/wF+iMIaQ0xDyWV/7Kt8nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M5k0SFts; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1766284136; x=1797820136;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zWyOdYOZRlqUbz38ByLXJzsPNEXfBPqSvhxivGTIwEo=;
-  b=M5k0SFts1dZqYYG7zBK+vgEW+q27Lq1F0EUbNI7jOskXOwhkxJ51LEKP
-   +I55TejDZvvuYcdMOVnDvMD040T/GkgPL/kmf9LfpAkfiU/ehsKdbhJNE
-   hh4YxjY2feBSo9hfg9+dVCYBhs6k9R3gVxKF6W289LVscXoenquvnMGYj
-   PhDVMmNcCyPZ2Z6lh4euAU3jKZHiuN8QifPCXSGxYgehzIw7FBebJE45p
-   GOGzqHANBFSgt4aGRGtx8XyHSVhhi6FNDn4utF/RcQZWvj3kBBETFUq2u
-   soCNhoQnuI2m9rQyfXOYbFiEvVHqQ3x3W7UB6V/D83F8CuTf0VAcUoPOo
-   A==;
-X-CSE-ConnectionGUID: hvUoNfwQSZqjkqukg15kVQ==
-X-CSE-MsgGUID: ELEHYw3IS9GnDsJ5Ai8mWQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11635"; a="68128990"
-X-IronPort-AV: E=Sophos;i="6.20,256,1758610800"; 
-   d="scan'208";a="68128990"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Dec 2025 18:28:55 -0800
-X-CSE-ConnectionGUID: Lxp/T6RbTMyH3M7dsh0EBQ==
-X-CSE-MsgGUID: XQdHALwPQQ+4ydY6QC/i8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
-   d="scan'208";a="203727498"
-Received: from igk-lkp-server01.igk.intel.com (HELO 8a0c053bdd2a) ([10.211.93.152])
-  by orviesa004.jf.intel.com with ESMTP; 20 Dec 2025 18:28:53 -0800
-Received: from kbuild by 8a0c053bdd2a with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vX9Bi-000000004u0-3gxE;
-	Sun, 21 Dec 2025 02:28:50 +0000
-Date: Sun, 21 Dec 2025 03:28:25 +0100
-From: kernel test robot <lkp@intel.com>
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
-	axboe@kernel.dk
-Cc: oe-kbuild-all@lists.linux.dev, bschubert@ddn.com,
-	asml.silence@gmail.com, io-uring@vger.kernel.org,
-	csander@purestorage.com, xiaobing.li@samsung.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 25/25] docs: fuse: add io-uring bufring and zero-copy
- documentation
-Message-ID: <202512210331.Yc46M5Rg-lkp@intel.com>
-References: <20251218083319.3485503-26-joannelkoong@gmail.com>
+	s=arc-20240116; t=1766309425; c=relaxed/simple;
+	bh=dynri6cO7Epp0o2N9qQ3cdoFscVQqJSuLqeok3MBBiM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r8oCO2MeLkHMWYUcjl95SIoHKZMOmSh0wb82w9OM6D23XCy5HgJxZFUCzJpZc0mtrS9cGmz+B8B5E0rAck+lty5pTEE1dSGaLBWClNcHTWYSlshUq948fgKMQouGIgPjhw5+7oaALJy/pycQeUsD2mnP8dyVMM8kAs6zZgaKXI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZt8jayi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84754C4CEFB;
+	Sun, 21 Dec 2025 09:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766309425;
+	bh=dynri6cO7Epp0o2N9qQ3cdoFscVQqJSuLqeok3MBBiM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aZt8jayi0KTKlYfeM8PXcjFeXS/nexnOlW7wp5qpXy8jeA90IS+dY96x2qy1rT5xO
+	 FHl5hVlhatmZm8PdARiR984pcX5Xnvb/DN3H8anneFIS8urkPCN+tf5dstcWVRW0gb
+	 MtpipYZ4/nTh4uvDJud/EwfAeYoY6eMvezzyrEHIwa4jQVN+kGDWFX9QlrkXMmlhHg
+	 +/MzLZJiX1cgSGhR6cIHSoivnfh4RJpQU3BWUmReDCQIKKfO8emvBUqYksawYAEan6
+	 IemtDz7JnMnQaHpRMNWXo27R+S6bUs2yHEAc+/muXldZEic5H52t16UN2Lx8FHINn3
+	 pxRdGiibDmVHQ==
+Message-ID: <4aecb94f-e283-4720-96e5-1837352c3329@kernel.org>
+Date: Sun, 21 Dec 2025 10:30:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251218083319.3485503-26-joannelkoong@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] arch/*: increase lowmem size to avoid highmem use
+To: Dave Hansen <dave.hansen@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+ Arnd Bergmann <arnd@kernel.org>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Andreas Larsson <andreas@gaisler.com>, Christophe Leroy
+ <chleroy@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Jason Gunthorpe <jgg@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Matthew Wilcox <willy@infradead.org>, Richard Weinberger <richard@nod.at>,
+ Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ "H. Peter Anvin" <hpa@zytor.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Michal Simek <monstr@monstr.eu>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Nishanth Menon <nm@ti.com>, Lucas Stach <l.stach@pengutronix.de>
+References: <20251219161559.556737-1-arnd@kernel.org>
+ <20251219161559.556737-2-arnd@kernel.org>
+ <a3f22579-13ee-4479-a5fd-81c29145c3f3@intel.com>
+ <bad18ad8-93e8-4150-a85e-a2852e243363@app.fastmail.com>
+ <a2ce2849-e572-404c-9713-9283a43c09fe@intel.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <a2ce2849-e572-404c-9713-9283a43c09fe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Joanne,
+On 12/19/25 21:52, Dave Hansen wrote:
+> On 12/19/25 12:20, Arnd Bergmann wrote:
+>>> For simplicity, I think this can just be:
+>>>
+>>> -	default VMSPLIT_3G
+>>> +	default VMSPLIT_2G
+>>>
+>>> I doubt the 2G vs. 2G_OPT matters in very many cases. If it does, folks
+>>> can just set it in their config manually.
+>>>
+>>> But, in the end, I don't this this matters all that much. If you think
+>>> having x86 be consistent with ARM, for example, is more important and
+>>> ARM really wants this complexity, I can live with it.
+>> Yes, I think we do want the default of VMSPLIT_3G_OPT for
+>> configs that have neither highmem nor lpae, otherwise the most
+>> common embedded configs go from 3072 MiB to 1792 MiB of virtual
+>> addressing, and that is much more likely to cause regressions
+>> than the 2816 MiB default.
+>>
+>> It would be nice to not need the VMSPLIT_2G default for PAE/LPAE,
+>> but that seems like a larger change.
+> 
+> The only thing we'd "regress" would be someone who is repeatedly
+> starting from scratch with a defconfig and expecting defconfig to be the
+> same all the time. I honestly think that's highly unlikely.
+> 
+> If folks are upgrading and _actually_ exposed to regressions, they've
+> got an existing config and won't be hit by these defaults at *all*. They
+> won't actually regress.
+> 
+> In other words, I think we can be a lot more aggressive about defaults
+> than with the feature set we support. I'd much rather add complexity in
+> here for solving a real problem, like if we have armies of 32-bit x86
+> users constantly starting new projects from scratch and using defconfigs.
+> 
+> I'd _really_ like to keep the defaults as simple as possible.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on axboe/for-next]
-[also build test WARNING on linus/master v6.19-rc1 next-20251219]
-[cannot apply to mszeredi-fuse/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/io_uring-kbuf-refactor-io_buf_pbuf_register-logic-into-generic-helpers/20251218-165107
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git for-next
-patch link:    https://lore.kernel.org/r/20251218083319.3485503-26-joannelkoong%40gmail.com
-patch subject: [PATCH v2 25/25] docs: fuse: add io-uring bufring and zero-copy documentation
-reproduce: (https://download.01.org/0day-ci/archive/20251221/202512210331.Yc46M5Rg-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202512210331.Yc46M5Rg-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   ERROR: Cannot find file ./include/linux/fscache.h
-   WARNING: No kernel-doc for file ./include/linux/fscache.h
-   ERROR: Cannot find file ./include/linux/fiemap.h
-   WARNING: No kernel-doc for file ./include/linux/fiemap.h
-   Documentation/filesystems/fuse/fuse-io-uring.rst:103: ERROR: Unexpected indentation. [docutils]
->> Documentation/filesystems/fuse/fuse-io-uring.rst:104: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
-   Documentation/filesystems/fuse/fuse-io-uring.rst:112: ERROR: Unexpected indentation. [docutils]
-   Documentation/filesystems/fuse/fuse-io-uring.rst:115: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
-   Documentation/filesystems/fuse/fuse-io-uring.rst:140: ERROR: Unexpected indentation. [docutils]
-   Documentation/filesystems/fuse/fuse-io-uring.rst:141: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
-   ERROR: Cannot find file ./include/linux/jbd2.h
-
-
-vim +104 Documentation/filesystems/fuse/fuse-io-uring.rst
-
-   100	
-   101	Kernel-managed buffer rings have two main advantages:
-   102	* eliminates the overhead of pinning/unpinning user pages and translating
- > 103	  virtual addresses for every server-kernel interaction
- > 104	* reduces buffer memory allocation requirements
-   105	
+I agree with that. In particular in areas where there is the chance that 
+we could count the number of people that actually care about that with 
+one hand (in binary ;) ).
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers
+
+David
 
