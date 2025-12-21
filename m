@@ -1,126 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-71808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67CACD3DAB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Dec 2025 10:30:28 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79400CD4002
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Dec 2025 13:24:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 82C2630072B2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Dec 2025 09:30:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 483C5301099C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Dec 2025 12:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCB1244665;
-	Sun, 21 Dec 2025 09:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2B9221282;
+	Sun, 21 Dec 2025 12:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZt8jayi"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bmENUQ6i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5E31397
-	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Dec 2025 09:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233AE8248B;
+	Sun, 21 Dec 2025 12:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766309425; cv=none; b=SMu8LGdJJBThkivxFTclwVPdScuFCqIITu+e+QsRPYDMM0RDAX6i2AVa84No/JRQMVomW173UN8Hc5ED0BtmC9PxkHcqwzpPZ9V8F5GIMVOc8vGRA2QSxHJh5YBaNq/sJSjoBxYwJUSQV5tgO+7tntk9lfUKus1fRuQVQKs3B24=
+	t=1766319861; cv=none; b=s8pLcaJKTBuLnLuKzODIMvRad6vIAjowWQY3ueZiPQzoBlBnmKyKYnuQcZ/ij3ptEToEXQAKdcY32jo3a69oPmhVN3+E0K8MN2H2VR7Ym/sY6b5DwtIJogrGcOLqUIkjM+iBL9KW5s1JLD4mRT6dSWrjnUOY04LQMPpu3BcZNwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766309425; c=relaxed/simple;
-	bh=dynri6cO7Epp0o2N9qQ3cdoFscVQqJSuLqeok3MBBiM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r8oCO2MeLkHMWYUcjl95SIoHKZMOmSh0wb82w9OM6D23XCy5HgJxZFUCzJpZc0mtrS9cGmz+B8B5E0rAck+lty5pTEE1dSGaLBWClNcHTWYSlshUq948fgKMQouGIgPjhw5+7oaALJy/pycQeUsD2mnP8dyVMM8kAs6zZgaKXI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZt8jayi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84754C4CEFB;
-	Sun, 21 Dec 2025 09:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766309425;
-	bh=dynri6cO7Epp0o2N9qQ3cdoFscVQqJSuLqeok3MBBiM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aZt8jayi0KTKlYfeM8PXcjFeXS/nexnOlW7wp5qpXy8jeA90IS+dY96x2qy1rT5xO
-	 FHl5hVlhatmZm8PdARiR984pcX5Xnvb/DN3H8anneFIS8urkPCN+tf5dstcWVRW0gb
-	 MtpipYZ4/nTh4uvDJud/EwfAeYoY6eMvezzyrEHIwa4jQVN+kGDWFX9QlrkXMmlhHg
-	 +/MzLZJiX1cgSGhR6cIHSoivnfh4RJpQU3BWUmReDCQIKKfO8emvBUqYksawYAEan6
-	 IemtDz7JnMnQaHpRMNWXo27R+S6bUs2yHEAc+/muXldZEic5H52t16UN2Lx8FHINn3
-	 pxRdGiibDmVHQ==
-Message-ID: <4aecb94f-e283-4720-96e5-1837352c3329@kernel.org>
-Date: Sun, 21 Dec 2025 10:30:15 +0100
+	s=arc-20240116; t=1766319861; c=relaxed/simple;
+	bh=oHXGxvDNAoN1RK4XoFp9y+1KrMsH94ZEtYW2e9P1t+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LtXD/c9g2wT4AZJyece+/7inW3T+EdjWxq/ooAuSy3qf+sAvEP0kOgTVyw99Nvrb4xccPqI7y8FO0Sc9vxOntCdYPK2nMCYfJh3O57KqGiguoBBM2qWVMLKXE32qb3YgnfsctdwaakiumYcQBy3lPzHpMXi14cVEWQhl4GSnCPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bmENUQ6i; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1766319858; x=1797855858;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oHXGxvDNAoN1RK4XoFp9y+1KrMsH94ZEtYW2e9P1t+M=;
+  b=bmENUQ6idBkqr8vj/HFb2l29135DrShlSUn2yVe3u+4jTuHymqvOV34u
+   moWn9c0bdRiRigWb2g2d119lJ0JVzIhZkgJwx049h452Lrk4RflDmpTYe
+   xfW7Kf9o9+y1vARH/uKzZz4T9JjMCfOXPZRk9rdhT94NSW5Ou2q7z1V5l
+   9oUSGBoRIsgEFd798id/9UWnRyzStC6H553ECgJhJipUns1a/4TEflE7C
+   j4koM0HwODSvrQw5aP33/WRaOlkGq5kYSMm1ZH7RQJUdjXcwFo5/jf4AN
+   y4Gvl4M/dlOaldV9HQIMsjD9jpoKXqUhOS1lRvdo66dikP4HESNWUughO
+   w==;
+X-CSE-ConnectionGUID: MrL2bqA4Tke5d3624LMkZw==
+X-CSE-MsgGUID: VfW9qEYzT4mLvFTiQ2neHw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11648"; a="67199236"
+X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
+   d="scan'208";a="67199236"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2025 04:24:17 -0800
+X-CSE-ConnectionGUID: jvwbb3CURKqpeThAKD+q+Q==
+X-CSE-MsgGUID: 7Qmy7wJaQtSTB/iaeJERKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
+   d="scan'208";a="199590146"
+Received: from lkp-server01.sh.intel.com (HELO 0d09efa1b85f) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 21 Dec 2025 04:24:15 -0800
+Received: from kbuild by 0d09efa1b85f with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vXITs-000000005fB-3hXj;
+	Sun, 21 Dec 2025 12:24:12 +0000
+Date: Sun, 21 Dec 2025 20:24:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+	axboe@kernel.dk
+Cc: oe-kbuild-all@lists.linux.dev, bschubert@ddn.com,
+	asml.silence@gmail.com, io-uring@vger.kernel.org,
+	csander@purestorage.com, xiaobing.li@samsung.com,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 03/25] io_uring/kbuf: add support for kernel-managed
+ buffer rings
+Message-ID: <202512212016.Nbc4ikuj-lkp@intel.com>
+References: <20251218083319.3485503-4-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] arch/*: increase lowmem size to avoid highmem use
-To: Dave Hansen <dave.hansen@intel.com>, Arnd Bergmann <arnd@arndb.de>,
- Arnd Bergmann <arnd@kernel.org>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Andreas Larsson <andreas@gaisler.com>, Christophe Leroy
- <chleroy@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Jason Gunthorpe <jgg@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>,
- Matthew Wilcox <willy@infradead.org>, Richard Weinberger <richard@nod.at>,
- Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- "H. Peter Anvin" <hpa@zytor.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Michal Simek <monstr@monstr.eu>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Nishanth Menon <nm@ti.com>, Lucas Stach <l.stach@pengutronix.de>
-References: <20251219161559.556737-1-arnd@kernel.org>
- <20251219161559.556737-2-arnd@kernel.org>
- <a3f22579-13ee-4479-a5fd-81c29145c3f3@intel.com>
- <bad18ad8-93e8-4150-a85e-a2852e243363@app.fastmail.com>
- <a2ce2849-e572-404c-9713-9283a43c09fe@intel.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <a2ce2849-e572-404c-9713-9283a43c09fe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251218083319.3485503-4-joannelkoong@gmail.com>
 
-On 12/19/25 21:52, Dave Hansen wrote:
-> On 12/19/25 12:20, Arnd Bergmann wrote:
->>> For simplicity, I think this can just be:
->>>
->>> -	default VMSPLIT_3G
->>> +	default VMSPLIT_2G
->>>
->>> I doubt the 2G vs. 2G_OPT matters in very many cases. If it does, folks
->>> can just set it in their config manually.
->>>
->>> But, in the end, I don't this this matters all that much. If you think
->>> having x86 be consistent with ARM, for example, is more important and
->>> ARM really wants this complexity, I can live with it.
->> Yes, I think we do want the default of VMSPLIT_3G_OPT for
->> configs that have neither highmem nor lpae, otherwise the most
->> common embedded configs go from 3072 MiB to 1792 MiB of virtual
->> addressing, and that is much more likely to cause regressions
->> than the 2816 MiB default.
->>
->> It would be nice to not need the VMSPLIT_2G default for PAE/LPAE,
->> but that seems like a larger change.
-> 
-> The only thing we'd "regress" would be someone who is repeatedly
-> starting from scratch with a defconfig and expecting defconfig to be the
-> same all the time. I honestly think that's highly unlikely.
-> 
-> If folks are upgrading and _actually_ exposed to regressions, they've
-> got an existing config and won't be hit by these defaults at *all*. They
-> won't actually regress.
-> 
-> In other words, I think we can be a lot more aggressive about defaults
-> than with the feature set we support. I'd much rather add complexity in
-> here for solving a real problem, like if we have armies of 32-bit x86
-> users constantly starting new projects from scratch and using defconfigs.
-> 
-> I'd _really_ like to keep the defaults as simple as possible.
+Hi Joanne,
 
-I agree with that. In particular in areas where there is the chance that 
-we could count the number of people that actually care about that with 
-one hand (in binary ;) ).
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on axboe/for-next]
+[also build test WARNING on linus/master v6.19-rc1 next-20251219]
+[cannot apply to mszeredi-fuse/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/io_uring-kbuf-refactor-io_buf_pbuf_register-logic-into-generic-helpers/20251218-165107
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git for-next
+patch link:    https://lore.kernel.org/r/20251218083319.3485503-4-joannelkoong%40gmail.com
+patch subject: [PATCH v2 03/25] io_uring/kbuf: add support for kernel-managed buffer rings
+config: nios2-allnoconfig (https://download.01.org/0day-ci/archive/20251221/202512212016.Nbc4ikuj-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251221/202512212016.Nbc4ikuj-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512212016.Nbc4ikuj-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   io_uring/kbuf.c: In function 'io_setup_kmbuf_ring':
+>> io_uring/kbuf.c:810:29: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     810 |                 buf->addr = (u64)buf_region;
+         |                             ^
+
+
+vim +810 io_uring/kbuf.c
+
+   781	
+   782	static int io_setup_kmbuf_ring(struct io_ring_ctx *ctx,
+   783				       struct io_buffer_list *bl,
+   784				       struct io_uring_buf_reg *reg)
+   785	{
+   786		struct io_uring_buf_ring *ring;
+   787		unsigned long ring_size;
+   788		void *buf_region;
+   789		unsigned int i;
+   790		int ret;
+   791	
+   792		/* allocate pages for the ring structure */
+   793		ring_size = flex_array_size(ring, bufs, bl->nr_entries);
+   794		ring = kzalloc(ring_size, GFP_KERNEL_ACCOUNT);
+   795		if (!ring)
+   796			return -ENOMEM;
+   797	
+   798		ret = io_create_region_multi_buf(ctx, &bl->region, bl->nr_entries,
+   799						 reg->buf_size);
+   800		if (ret) {
+   801			kfree(ring);
+   802			return ret;
+   803		}
+   804	
+   805		/* initialize ring buf entries to point to the buffers */
+   806		buf_region = bl->region.ptr;
+   807		for (i = 0; i < bl->nr_entries; i++) {
+   808			struct io_uring_buf *buf = &ring->bufs[i];
+   809	
+ > 810			buf->addr = (u64)buf_region;
+   811			buf->len = reg->buf_size;
+   812			buf->bid = i;
+   813	
+   814			buf_region += reg->buf_size;
+   815		}
+   816		ring->tail = bl->nr_entries;
+   817	
+   818		bl->buf_ring = ring;
+   819	
+   820		return 0;
+   821	}
+   822	
 
 -- 
-Cheers
-
-David
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
