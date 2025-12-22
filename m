@@ -1,132 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-71813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38138CD4945
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 03:49:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39016CD4B91
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 06:32:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8C6203006A93
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 02:48:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 86B34300F330
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 05:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0317F2FF652;
-	Mon, 22 Dec 2025 02:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D501F301471;
+	Mon, 22 Dec 2025 05:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fB4U4fR/"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sM3F76iy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBE2259C92
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 02:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766371737; cv=pass; b=o5SU/BRY7rdlcXoGmdZduMX5YSehy2Wact+srJcNQ/RtPHUuAH5dHcQT5LDA6nzVaxrOpUZO7+QRWwzl6aZIGw/knDB/xlxnEqbMPzGx2dm+nwRatomnhUQ5aQMWuzhB8QIPBxnQGPIFLz5EXmH/X7UalJ1c3mdleb2eRsKvDUQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766371737; c=relaxed/simple;
-	bh=0m+pcDn1Y4QSRuAPXVBQkxrWftTQwI+SMqc6yp0+T+I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DQ+HxZI/ccO5tqAPwPtT7Vp/W9u2xv4cWmx/DgydQGkShxEE7Ff2Ao3BpkDum9W7Ixiq/VNaha1fOn6BTBzWyMxl5GuhqfyCCzZH7gmdQlPS+XXMV9EqgMYpRJzuyxn3g/QIjbboKWBLJ7QPZjg6lzrwwAjQA16PwBPwmeKJWak=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fB4U4fR/; arc=pass smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-64baa44df99so16158a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Dec 2025 18:48:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1766371734; cv=none;
-        d=google.com; s=arc-20240605;
-        b=IqdsGaHzN+WNM9v6b1IMmeiU0lmvCY9rIAq2O88HwhTxEM3mw3VN4asVzgj0Q9mXrt
-         af1NuCNbY2/wk/VR1OU87/cqNLCxU0h69jOPlAl5xt6yOL8DzX1cNtORIgXan7O4tYLY
-         3F89K131tvIyg18OestEoQkx+ljbqnN7SKk0oBd8dXcZuAcxcS8PQKHN/OS+mX6tPJDg
-         s9fJ0374lGcHa0pR5Q+RiA2UUWBk2iVe/PDSBqMxqEt293NCbhEma/Y2tOVycZ+xJ/F6
-         QDFpKjm5fn9nRxhmsbQileKNwuFhkB7W8S9sbSrlEL4GtYSNyOx34AAYarqibwIKZRhl
-         vJ+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=CwSTfOK2PQKjAWo+5ivUdXM7DoFjB7pfUDLS+oPx57g=;
-        fh=ZTsNDWxS1BY8SVba889UOyNZoJEm0ZCuZDfJwJBG5z4=;
-        b=ThDlzijBOCyDYAxWkpjhp8Up+BdltPFnUoDXgNtxTlLfi7t8JcsIrkSYGRxQ/1llY/
-         TQlo/8iGtp34Vcqc6AyW6yuF97Kze1bGGJIHgzNxyBU3KFDX5PhaQ1Cu/7f41x7z+Esh
-         +0ao/0qiSkb9cTcy4jEsWuiNVokvluAz1ZaKXddmmdtFJDb0Nwd9pD6x+0P6EbxylwzW
-         eFxWB/ZtlJ5Yqw7QRvs6osnuqswCYhS8vkWPPsm3zB94QBQZGhlDbIuYVcICy1/6bwAr
-         NyZFISWnE5gLLBvyFqtbzvzkDXICbSypuYh0HPgGmbn4/nh8R2sE95/C+V5DN+Fh3ZaZ
-         olrg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1766371734; x=1766976534; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CwSTfOK2PQKjAWo+5ivUdXM7DoFjB7pfUDLS+oPx57g=;
-        b=fB4U4fR/rmslyoD1cwKryzwn8Jl3yXNzLGnE8KMKwiyqdOwflkfsfKdXxUSzD4nM/d
-         2yAu+5wgiQzuE4vQl683XnjHsMbclI02ALWvxo5mBmpjN1Nz/4Ip08j9/HaDLSMnjHZU
-         J26SYXmvycWhmY50bUr1udHD05aegPgYefrNvNsFiek5uPSX2W7lXaLqhEhjFkQdVKEF
-         Cu5je2tjqZxiYFSx9MAPgZ5LRHkiWdlOQlqHi+EG3u516hZcDt3MKaPUg6IjPnIML6pb
-         Mt9HWsHzGynqXBXWIwyhbm6n+bhLQxCz2Kl+hv66DYLmNFpTY58g2Ve6Sg6vWrz3s06A
-         Fojg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766371734; x=1766976534;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=CwSTfOK2PQKjAWo+5ivUdXM7DoFjB7pfUDLS+oPx57g=;
-        b=s6PvRqmmknwZh6fipnpKuTtl9qVkVX2kzuxl5hZWqS6kEzK54uR2p9diPWZPUHa6eZ
-         u0PWdNWsmdkv8JudT2x9Xt0TCNG3LsN1I6wTIw3Id9vCh3lnJeOVpeUHCFL6kE5InVdN
-         v1Kbem3w+dxFR/+EKu0JHX1GTuqB5ig03hd0Cr3QD8Stg0O03od2ME5zmQnNjO/5go4Z
-         7KNvdKWbDxnt6B3tm4GNM8u1EHiFY2AF5ErWTfz+dEHIpqDQPd5ejWS80iQlBkwiqG5/
-         aowkGFv35XK5P04AHlxYfmw1VH8JfVZ/7kWvY9zT0CD1LsH8VkVYXH7cbrV5VT2LsPxl
-         2qPA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2g8RDeFA2JVoJE9n7w4jUdR54jVnFvvd/zxFKwSVlWgliGvWLnPt1s8pu9Zzhk1q5v9brKK26mAiapCo6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD7ryWudzmE46HxYXtlNSqxDJUXyeXCbSkx4MKDRSypB9IHifx
-	cetN4D6E6mQJC5m86TqUkl8RC5FRRdE2+ZonwG1dtafwxgRsoJyZCv8iKXukEFHyB/jGkj1Ojau
-	WnlkQ8M1foRaYegAdALhE9rq0ru0h6UaIYEQvdJsZ
-X-Gm-Gg: AY/fxX5d/kTFoqMMTLY3thU7qqV1yWMqg0Bs3O9nNIGXi3Trq5bbKLHn+SN0++pcgIy
-	RWctoD+Y7YEf71NyOEFoo7rFgZmMITmHMrPubj/ddStv1LJ3nwUnK0gJOkOXvLrrKHRJgvg7f6e
-	3SHCCX5zqAfR2FE9DPWxrdEhzMMRD2M/ZUVmayRhs4NSusWXywmh7yyy/aLRER0TjKQ8tQR/Okb
-	BRqeW1aPW0p6WZbtntTsJC6q8mK/XvmkLMW3GK6eEmI4aHDr4x1gnjeOD0dXKkORPRPf/Y5Qoi1
-	M9FT+CNIBE1JgXxI56uxmSX7Du7W9r+QU0He
-X-Google-Smtp-Source: AGHT+IGICnv+CNulcBUQj4EVMqHrV4XCI9DVrr3ZNtTi17PvRnxG9nGncqdET6iqs+YBkatoM7bhDOnN+T+cZex2OlM=
-X-Received: by 2002:a05:6402:1753:b0:643:6984:cee9 with SMTP id
- 4fb4d7f45d1cf-64d065c43f6mr35946a12.12.1766371733804; Sun, 21 Dec 2025
- 18:48:53 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3EAA937;
+	Mon, 22 Dec 2025 05:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1766381533; cv=none; b=fbw1+5RCxj9Mu/5CnT8P2A3wpiyAGo8YIzvJZV9aKiyoYhnLGVYDYyMqolrtfUHjpB+jHmN75cJWuT9eiUKG2a/9RiEcWPOfu2v0u0FjuA42on6E2sjUMPzQt2NbsLhvjmo314nxQ20/9CenBEXfpRZLWFXk3eWW4Za4HW3IHyo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1766381533; c=relaxed/simple;
+	bh=J2JGW0mysUx28At+ZIRDQst0grD7zKOVCdW3i8E0EXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ePrWeAy28Gl3ETVfOMtkL7b+Z3MKSXQKWyVOEiZNXET7kcuexAbmL8Ol9w+4D39f+iJe0o41uBwaH1B5UfqdSBAiCSTYsC89QciTPNK7jP1BkoWpsEUremHd6McxLJr6Y2L7eWTiR4Nz21iB+6n4viH9c/H1UkMgJ2NJr7CXTHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sM3F76iy; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lX8y5tr+Ej6/Fte/ET0M0ceaoM1fpFqL+guGVcSXbfw=; b=sM3F76iyTio8JB//xIvz/ZMHEM
+	ZOZa3523ThrZ7l9UIeOHEaWk3Tx9703GWNeD9Lo6fjjtwWgg9iuVGDZN3POBMeSMWhAvIwIc4WQ8M
+	XAwhyFcGyBwNwDP738CoKJvToMayTT3tfX9MBh29ICxHug4rdkyl8evSbU2aQP02XOTyr2umbRM2s
+	OM1qG8NqEpITxZfPGCK0yaZKewZMuI8uYYBOUGlzisDCPVXXMvh49vAaP89wGsCWMu+H3loDVsFc0
+	gMWRf7aoDM2j4tP3orXqAPkPMHHbX8azIiDTzXBLH7zHc8nL/R7tyguBd+CRFt7oERae2Oh5wvjp7
+	6DIPJwvQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vXYWM-0000000BFuo-1Fwr;
+	Mon, 22 Dec 2025 05:31:50 +0000
+Date: Mon, 22 Dec 2025 05:31:50 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Meta kernel team <kernel-team@meta.com>, bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com,
+	Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH bpf v2] lib/buildid: use __kernel_read() for sleepable
+ context
+Message-ID: <aUjXxSAD2-c4Ivy1@casper.infradead.org>
+References: <20251218205505.2415840-1-shakeel.butt@linux.dev>
+ <aUSUe9jHnYJ577Gh@casper.infradead.org>
+ <3lf3ed3xn2oaenvlqjmypuewtm6gakzbecc7kgqsadggyvdtkr@uyw4boj6igqu>
+ <aUTPl35UPcjc66l3@casper.infradead.org>
+ <64muytpsnwmjcnc5szbz4gfnh2owgorsfdl5zmomtykptfry4s@tuajoyqmulqc>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251218071717.2573035-1-joannechien@google.com>
- <aUOuMmZnw3tij2nj@infradead.org> <CACQK4XDtWzoco7WgmF81dEYpF1rP3s+3AjemPL40ysojMztOtQ@mail.gmail.com>
- <aUTi5KPgn1fqezel@infradead.org> <CACQK4XCmq2_nSJA7jLz+TWiTgyZpVwnZZmG-NbNOkB2JjrCSeA@mail.gmail.com>
- <aUUymqMO4RfK8thK@infradead.org>
-In-Reply-To: <aUUymqMO4RfK8thK@infradead.org>
-From: Joanne Chang <joannechien@google.com>
-Date: Mon, 22 Dec 2025 10:48:37 +0800
-X-Gm-Features: AQt7F2p6Hjd_Nc7T5OEAyJgKQ5pr8sxJsosqYLA4O1HbB9YpKCqF7Pm762ItbGg
-Message-ID: <CACQK4XAyDLfOcPWpRzKd+VXA5EtvzVNkxrZC9hjNJjx0uHx=Tg@mail.gmail.com>
-Subject: Re: [PATCH v1] generic/735: disable for f2fs
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, 
-	Chao Yu <chao@kernel.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <64muytpsnwmjcnc5szbz4gfnh2owgorsfdl5zmomtykptfry4s@tuajoyqmulqc>
 
-On Fri, Dec 19, 2025 at 7:10=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
-g> wrote:
-> Well, for the file size you can test by doing a truncate to the expected
-> size and _notrun if not supported.  I can't really think of a way that
-> easy to directly check for the number of supported blocks.
+On Thu, Dec 18, 2025 at 09:58:43PM -0800, Shakeel Butt wrote:
+> On Fri, Dec 19, 2025 at 04:07:51AM +0000, Matthew Wilcox wrote:
+> > > I am assuming that __kernel_read() can return less data than the
+> > > requested. Is that assumption incorrect?
+> > 
+> > I think it can, but I don't think a second call will get any more data.
+> > For example, it could hit EOF.  What led you to think that calling it in
+> > a loop was the right approach?
+> 
+> I am kind of following the convention of a userspace application doing
+> read() syscall i.e. repeatedly call read() until you hit an error or EOF
+> in which case 0 will be returned or you successfully read the amount of
+> data you want. I am handling negative error and 0 and for 0, I am
+> returning -EIO as that would be unexpected end of an ELF file.
 
-I guess we can calculate the block limit by _get_max_file_size() /
-block_size. However, I am concerned whether this method might mask a
-regression that reduces a filesystem's supported file size. So I
-wonder if explicit, hardcoded limits within the helper for known
-architectural constraints (like for F2FS) would be safer, as we can
-ensure tests are only skipped when the limitation is intended.
+Oh, you sweet summer child.  I hope Father Christmas leaves you an
+extra special present in your stocking this week!
 
-Please let me know if you have suggestions for either method.
+While it would be lovely to believe that userspace does that kind of loop,
+it just doesn't.  That's why mounting NFS filesystems with the "intr"
+option (before I made it a no-op) was dangerous -- userspace just isn't
+prepared for short reads.  I mean, we're lucky if userspace even checks
+for errors, let alone does this kind of advanced "oh, we got fewer bytes
+than we wanted, keep trying" scheme.
 
-Best regards,
-Joanne
+A filesystem's ->read_iter() implementation can stop short of reading
+all bytes requested if:
+
+ - We hit EIO.  No amount of asking will return more bytes, the data's
+   just not there any more.
+ - We hit EOF.  There's no more data to read.
+ - We're unable to access the buffer.  That's only possible for user
+   buffers, not kernel buffers.
+ - We receive a fatal signal.  I suppose there is the tiniest chance
+   that the I/O completes while we're processing the "we returned early"
+   loop, but in practice, the user has asked that we die now, and even
+   trying again is rude.  Just die as quickly as we can.
+
+I can't think of any other cases.  It's just not allowed to return
+short reads to userspace (other than EIO/EOF), and that drives all
+the behaviour.
+
+> Anyways the question is if __kernel_read() returns less amount of data
+> than requested, should we return error instead of retrying? I looked
+> couple of callers of __kernel_read() & kernel_read(). Some are erroring
+> out if received data is less than requested (e.g. big_key_read()) and
+> some are calling in the loop (e.g. kernel_read_file()).
+
+kernel_read_file() is wrong.  Thanks for reporting it; I'll send a patch.
 
