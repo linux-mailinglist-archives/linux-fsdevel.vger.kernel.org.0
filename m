@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-71878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3D7CD76E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 00:08:18 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D486CD769A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 00:03:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1F96230380FA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 23:03:26 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id BCD5D30221B6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 23:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB5C34EF05;
-	Mon, 22 Dec 2025 22:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DD234F47D;
+	Mon, 22 Dec 2025 22:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IuemNAvd"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XksZ4j8b"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D2034E760
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 22:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECDA34E748
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 22:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766442718; cv=none; b=DPpVR3q/ItQdQMf9grp2So7wvUAdyHoNTXef54V73pl5sUzS+w61ptIkPDoiaZJc0JWTY7SZaC+dmXgQbIAeb6DO7rymDv9KcoPNHa0omdZHp/skRD0s3nicwIfGjcqay7V+8SHAVHC6tEWh/Xs9USl7TsUjWrTE+9j4ZcYlaWI=
+	t=1766442725; cv=none; b=irrryDBV125KgRNzYx+++lO92nQsgH/FbuP/ZiyTTvX1WwseCkYC7T+WKTUOiLAc3gidL3r4lprRQvMffJIsWGGAGTmjPUlJcRc4DajAu+sxnBTD1stOBESChkluzXMYgeFD28DrgQqIBuC0lL0g5XO1EFz8qzs4g0dIZyKHNUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766442718; c=relaxed/simple;
-	bh=ZDKu2++B7BFkwdi1cw+860rqZEWpPkElme+Du6P9Xos=;
+	s=arc-20240116; t=1766442725; c=relaxed/simple;
+	bh=kqcBg22A94Ky2lgs70gSIgHLTNlBEcKdizBgWnaHVv8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MCsAwKATcnzWtsuXWI3lfvFPhkUjPnvhv0mYo698rpIV6CECybD0iUQLgL9mGmvRFZZmhB9Ik0PWgUoalMC9ax7fGWnsSPiqh3prv9r49V+morGEn8eXrUKjnuCguJLJxKGtEIJSYakL3Yd8vHBnhNKYnu2W++fOX7TwaWItCBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IuemNAvd; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=uV/+qU35jkA32wWT694Ssx9n5oIK2Y2nfCSbovPPZqVFTuqAdttRAVcpCDDMbUqZDrn1wos2xjR6dtBNM9DIIWQQrfr2pcaeBfiHshvdfCDxkjq12LyApbkkbsFaGsCkjER4BNDRipmFXnjKraQ980oempeBPzLO29W4DpsbRQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XksZ4j8b; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766442716;
+	s=mimecast20190719; t=1766442720;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=K2bHUFjgtHnt0pzv9uZhJdA2s3CnNTbaaTJ1v0TSe+M=;
-	b=IuemNAvd8VHXyGYHt5Q7oqNXibhkvf9AYt0hCBY58TZ+7PqS3gMcbkQvmZVElwQJ65hM9w
-	OO1RaCXDaVrScsjJX755zBtQi+zfp/ADFdTExCHop1a1GUO296pzGixToGKU9zGxIZqaUA
-	nuHHdhtrZsS2fJx4StYke7YETKhGKL8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+	bh=zFwn4eLmw5T0wpf5Lw3KYxKpcXR3/QCuP0wOeUAkqpI=;
+	b=XksZ4j8btcd6xxFMh77+MRTrcke/2HpqKVWpoXRj/ysZnnAf7bVc1anMRtx0Mp/4pBQuUB
+	BhtHAJt0KvHD0xKFrWRe2TVz8lWuBNr1JLcYCJTNhaKnTX4CUmBVlQQiJBXlBbKZ0rCtAt
+	Ov1Wfsbf50iqtZIEkBgID0BVQCFWha0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-193-xicOQjEKMWaWPOP1ZFxkAw-1; Mon,
- 22 Dec 2025 17:31:52 -0500
-X-MC-Unique: xicOQjEKMWaWPOP1ZFxkAw-1
-X-Mimecast-MFC-AGG-ID: xicOQjEKMWaWPOP1ZFxkAw_1766442711
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-287-LQVjhNCoMsajdzbR73l0qQ-1; Mon,
+ 22 Dec 2025 17:31:56 -0500
+X-MC-Unique: LQVjhNCoMsajdzbR73l0qQ-1
+X-Mimecast-MFC-AGG-ID: LQVjhNCoMsajdzbR73l0qQ_1766442715
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9943618002C9;
-	Mon, 22 Dec 2025 22:31:51 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 219C11800365;
+	Mon, 22 Dec 2025 22:31:55 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.42.28.4])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D844519560A7;
-	Mon, 22 Dec 2025 22:31:49 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 072EA19560AB;
+	Mon, 22 Dec 2025 22:31:52 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Steve French <sfrench@samba.org>
 Cc: David Howells <dhowells@redhat.com>,
@@ -63,9 +63,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-cifs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 32/37] cifs: SMB1 split: misc.c
-Date: Mon, 22 Dec 2025 22:29:57 +0000
-Message-ID: <20251222223006.1075635-33-dhowells@redhat.com>
+Subject: [PATCH 33/37] cifs: SMB1 split: netmisc.c
+Date: Mon, 22 Dec 2025 22:29:58 +0000
+Message-ID: <20251222223006.1075635-34-dhowells@redhat.com>
 In-Reply-To: <20251222223006.1075635-1-dhowells@redhat.com>
 References: <20251222223006.1075635-1-dhowells@redhat.com>
 Precedence: bulk
@@ -75,9 +75,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Split SMB1 bits from misc.c to smb1misc.c.
+Split a variety of bits from netmisc.c into other places, notably the error
+table into smb1maperror.c.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Steve French <sfrench@samba.org>
@@ -87,424 +88,1761 @@ cc: linux-cifs@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
 cc: linux-kernel@vger.kernel.org
 ---
- fs/smb/client/Makefile    |   1 +
- fs/smb/client/cifsproto.h |   4 -
- fs/smb/client/misc.c      | 165 -----------------------------------
- fs/smb/client/smb1misc.c  | 177 ++++++++++++++++++++++++++++++++++++++
- fs/smb/client/smb1proto.h |   7 ++
- 5 files changed, 185 insertions(+), 169 deletions(-)
- create mode 100644 fs/smb/client/smb1misc.c
+ fs/smb/client/Makefile       |   1 +
+ fs/smb/client/cifsproto.h    |   4 -
+ fs/smb/client/netmisc.c      | 822 ----------------------------------
+ fs/smb/client/smb1maperror.c | 825 +++++++++++++++++++++++++++++++++++
+ fs/smb/client/smb1misc.c     |  12 +
+ fs/smb/client/smb1proto.h    |   8 +
+ 6 files changed, 846 insertions(+), 826 deletions(-)
+ create mode 100644 fs/smb/client/smb1maperror.c
 
 diff --git a/fs/smb/client/Makefile b/fs/smb/client/Makefile
-index c51f67a5caaa..5288f9de07cd 100644
+index 5288f9de07cd..82ad4bccb131 100644
 --- a/fs/smb/client/Makefile
 +++ b/fs/smb/client/Makefile
 @@ -35,6 +35,7 @@ cifs-$(CONFIG_CIFS_ROOT) += cifsroot.o
  cifs-$(CONFIG_CIFS_ALLOW_INSECURE_LEGACY) += \
  	cifssmb.o \
  	smb1debug.o \
-+	smb1misc.o \
++	smb1maperror.o \
+ 	smb1misc.o \
  	smb1ops.o \
  	smb1transport.o
- 
 diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-index 6cf084aeb30e..fc97c6c452d2 100644
+index fc97c6c452d2..884a66b6bd34 100644
 --- a/fs/smb/client/cifsproto.h
 +++ b/fs/smb/client/cifsproto.h
-@@ -131,7 +131,6 @@ void cifs_signal_cifsd_for_reconnect(struct TCP_Server_Info *server,
- void cifs_mark_tcp_ses_conns_for_reconnect(struct TCP_Server_Info *server,
- 					   bool mark_smb_session);
- int cifs_reconnect(struct TCP_Server_Info *server, bool mark_smb_session);
--bool is_valid_oplock_break(char *buffer, struct TCP_Server_Info *srv);
- bool backup_cred(struct cifs_sb_info *cifs_sb);
- bool is_size_safe_to_change(struct cifsInodeInfo *cifsInode, __u64 end_of_file,
- 			    bool from_readdir);
-@@ -157,9 +156,6 @@ void cifs_set_port(struct sockaddr *addr, const unsigned short int port);
- int map_smb_to_linux_error(char *buf, bool logErr);
- int map_and_check_smb_error(struct TCP_Server_Info *server,
- 			    struct mid_q_entry *mid, bool logErr);
--unsigned int header_assemble(struct smb_hdr *buffer, char smb_command,
--			     const struct cifs_tcon *treeCon, int word_count
--			     /* length of fixed section (word count) in two byte units  */);
+@@ -148,14 +148,10 @@ int cifs_get_readable_path(struct cifs_tcon *tcon, const char *name,
+ 			   struct cifsFileInfo **ret_file);
+ int cifs_get_hardlink_path(struct cifs_tcon *tcon, struct inode *inode,
+ 			   struct file *file);
+-unsigned int smbCalcSize(void *buf);
+ int decode_negTokenInit(unsigned char *security_blob, int length,
+ 			struct TCP_Server_Info *server);
+ int cifs_convert_address(struct sockaddr *dst, const char *src, int len);
+ void cifs_set_port(struct sockaddr *addr, const unsigned short int port);
+-int map_smb_to_linux_error(char *buf, bool logErr);
+-int map_and_check_smb_error(struct TCP_Server_Info *server,
+-			    struct mid_q_entry *mid, bool logErr);
  int CIFS_SessSetup(const unsigned int xid, struct cifs_ses *ses,
  		   struct TCP_Server_Info *server,
  		   const struct nls_table *nls_cp);
-diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
-index 273c54d39857..1773e3b471aa 100644
---- a/fs/smb/client/misc.c
-+++ b/fs/smb/client/misc.c
-@@ -262,171 +262,6 @@ free_rsp_buf(int resp_buftype, void *rsp)
- 		cifs_buf_release(rsp);
+diff --git a/fs/smb/client/netmisc.c b/fs/smb/client/netmisc.c
+index 1f8994a38b37..bddadee82d0c 100644
+--- a/fs/smb/client/netmisc.c
++++ b/fs/smb/client/netmisc.c
+@@ -24,98 +24,6 @@
+ #include "cifs_debug.h"
+ #include "nterr.h"
+ 
+-struct smb_to_posix_error {
+-	__u16 smb_err;
+-	int posix_code;
+-};
+-
+-static const struct smb_to_posix_error mapping_table_ERRDOS[] = {
+-	{ERRbadfunc, -EINVAL},
+-	{ERRbadfile, -ENOENT},
+-	{ERRbadpath, -ENOTDIR},
+-	{ERRnofids, -EMFILE},
+-	{ERRnoaccess, -EACCES},
+-	{ERRbadfid, -EBADF},
+-	{ERRbadmcb, -EIO},
+-	{ERRnomem, -EREMOTEIO},
+-	{ERRbadmem, -EFAULT},
+-	{ERRbadenv, -EFAULT},
+-	{ERRbadformat, -EINVAL},
+-	{ERRbadaccess, -EACCES},
+-	{ERRbaddata, -EIO},
+-	{ERRbaddrive, -ENXIO},
+-	{ERRremcd, -EACCES},
+-	{ERRdiffdevice, -EXDEV},
+-	{ERRnofiles, -ENOENT},
+-	{ERRwriteprot, -EROFS},
+-	{ERRbadshare, -EBUSY},
+-	{ERRlock, -EACCES},
+-	{ERRunsup, -EINVAL},
+-	{ERRnosuchshare, -ENXIO},
+-	{ERRfilexists, -EEXIST},
+-	{ERRinvparm, -EINVAL},
+-	{ERRdiskfull, -ENOSPC},
+-	{ERRinvname, -ENOENT},
+-	{ERRinvlevel, -EOPNOTSUPP},
+-	{ERRdirnotempty, -ENOTEMPTY},
+-	{ERRnotlocked, -ENOLCK},
+-	{ERRcancelviolation, -ENOLCK},
+-	{ERRalreadyexists, -EEXIST},
+-	{ERRmoredata, -EOVERFLOW},
+-	{ERReasnotsupported, -EOPNOTSUPP},
+-	{ErrQuota, -EDQUOT},
+-	{ErrNotALink, -ENOLINK},
+-	{ERRnetlogonNotStarted, -ENOPROTOOPT},
+-	{ERRsymlink, -EOPNOTSUPP},
+-	{ErrTooManyLinks, -EMLINK},
+-	{0, 0}
+-};
+-
+-static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
+-	{ERRerror, -EIO},
+-	{ERRbadpw, -EACCES},  /* was EPERM */
+-	{ERRbadtype, -EREMOTE},
+-	{ERRaccess, -EACCES},
+-	{ERRinvtid, -ENXIO},
+-	{ERRinvnetname, -ENXIO},
+-	{ERRinvdevice, -ENXIO},
+-	{ERRqfull, -ENOSPC},
+-	{ERRqtoobig, -ENOSPC},
+-	{ERRqeof, -EIO},
+-	{ERRinvpfid, -EBADF},
+-	{ERRsmbcmd, -EBADRQC},
+-	{ERRsrverror, -EIO},
+-	{ERRbadBID, -EIO},
+-	{ERRfilespecs, -EINVAL},
+-	{ERRbadLink, -EIO},
+-	{ERRbadpermits, -EINVAL},
+-	{ERRbadPID, -ESRCH},
+-	{ERRsetattrmode, -EINVAL},
+-	{ERRpaused, -EHOSTDOWN},
+-	{ERRmsgoff, -EHOSTDOWN},
+-	{ERRnoroom, -ENOSPC},
+-	{ERRrmuns, -EUSERS},
+-	{ERRtimeout, -ETIME},
+-	{ERRnoresource, -EREMOTEIO},
+-	{ERRtoomanyuids, -EUSERS},
+-	{ERRbaduid, -EACCES},
+-	{ERRusempx, -EIO},
+-	{ERRusestd, -EIO},
+-	{ERR_NOTIFY_ENUM_DIR, -ENOBUFS},
+-	{ERRnoSuchUser, -EACCES},
+-/*	{ERRaccountexpired, -EACCES},
+-	{ERRbadclient, -EACCES},
+-	{ERRbadLogonTime, -EACCES},
+-	{ERRpasswordExpired, -EACCES},*/
+-	{ERRaccountexpired, -EKEYEXPIRED},
+-	{ERRbadclient, -EACCES},
+-	{ERRbadLogonTime, -EACCES},
+-	{ERRpasswordExpired, -EKEYEXPIRED},
+-
+-	{ERRnosupport, -EINVAL},
+-	{0, 0}
+-};
+-
+ /*
+  * Convert a string containing text IPv4 or IPv6 address to binary form.
+  *
+@@ -199,736 +107,6 @@ cifs_set_port(struct sockaddr *addr, const unsigned short int port)
+ 	}
  }
  
--/* NB: MID can not be set if treeCon not passed in, in that
--   case it is responsibility of caller to set the mid */
+-/*****************************************************************************
+- *convert a NT status code to a dos class/code
+- *****************************************************************************/
+-/* NT status -> dos error map */
+-static const struct {
+-	__u8 dos_class;
+-	__u16 dos_code;
+-	__u32 ntstatus;
+-} ntstatus_to_dos_map[] = {
+-	{
+-	ERRDOS, ERRgeneral, NT_STATUS_UNSUCCESSFUL}, {
+-	ERRDOS, ERRbadfunc, NT_STATUS_NOT_IMPLEMENTED}, {
+-	ERRDOS, ERRinvlevel, NT_STATUS_INVALID_INFO_CLASS}, {
+-	ERRDOS, 24, NT_STATUS_INFO_LENGTH_MISMATCH}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ACCESS_VIOLATION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_IN_PAGE_ERROR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PAGEFILE_QUOTA}, {
+-	ERRDOS, ERRbadfid, NT_STATUS_INVALID_HANDLE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BAD_INITIAL_STACK}, {
+-	ERRDOS, 193, NT_STATUS_BAD_INITIAL_PC}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_CID}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_TIMER_NOT_CANCELED}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER}, {
+-	ERRDOS, ERRbadfile, NT_STATUS_NO_SUCH_DEVICE}, {
+-	ERRDOS, ERRbadfile, NT_STATUS_NO_SUCH_FILE}, {
+-	ERRDOS, ERRbadfunc, NT_STATUS_INVALID_DEVICE_REQUEST}, {
+-	ERRDOS, 38, NT_STATUS_END_OF_FILE}, {
+-	ERRDOS, 34, NT_STATUS_WRONG_VOLUME}, {
+-	ERRDOS, 21, NT_STATUS_NO_MEDIA_IN_DEVICE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNRECOGNIZED_MEDIA}, {
+-	ERRDOS, 27, NT_STATUS_NONEXISTENT_SECTOR},
+-/*	{ This NT error code was 'sqashed'
+-	 from NT_STATUS_MORE_PROCESSING_REQUIRED to NT_STATUS_OK
+-	 during the session setup } */
+-	{
+-	ERRDOS, ERRnomem, NT_STATUS_NO_MEMORY}, {
+-	ERRDOS, 487, NT_STATUS_CONFLICTING_ADDRESSES}, {
+-	ERRDOS, 487, NT_STATUS_NOT_MAPPED_VIEW}, {
+-	ERRDOS, 87, NT_STATUS_UNABLE_TO_FREE_VM}, {
+-	ERRDOS, 87, NT_STATUS_UNABLE_TO_DELETE_SECTION}, {
+-	ERRDOS, 2142, NT_STATUS_INVALID_SYSTEM_SERVICE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ILLEGAL_INSTRUCTION}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_INVALID_LOCK_SEQUENCE}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_INVALID_VIEW_SIZE}, {
+-	ERRDOS, 193, NT_STATUS_INVALID_FILE_FOR_SECTION}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_ALREADY_COMMITTED},
+-/*	{ This NT error code was 'sqashed'
+-	 from NT_STATUS_ACCESS_DENIED to NT_STATUS_TRUSTED_RELATIONSHIP_FAILURE
+-	 during the session setup }   */
+-	{
+-	ERRDOS, ERRnoaccess, NT_STATUS_ACCESS_DENIED}, {
+-	ERRDOS, 111, NT_STATUS_BUFFER_TOO_SMALL}, {
+-	ERRDOS, ERRbadfid, NT_STATUS_OBJECT_TYPE_MISMATCH}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NONCONTINUABLE_EXCEPTION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_DISPOSITION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNWIND}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BAD_STACK}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_UNWIND_TARGET}, {
+-	ERRDOS, 158, NT_STATUS_NOT_LOCKED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PARITY_ERROR}, {
+-	ERRDOS, 487, NT_STATUS_UNABLE_TO_DECOMMIT_VM}, {
+-	ERRDOS, 487, NT_STATUS_NOT_COMMITTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_PORT_ATTRIBUTES}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PORT_MESSAGE_TOO_LONG}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_MIX}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_QUOTA_LOWER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DISK_CORRUPT_ERROR}, {
+-	 /* mapping changed since shell does lookup on * expects FileNotFound */
+-	ERRDOS, ERRbadfile, NT_STATUS_OBJECT_NAME_INVALID}, {
+-	ERRDOS, ERRbadfile, NT_STATUS_OBJECT_NAME_NOT_FOUND}, {
+-	ERRDOS, ERRalreadyexists, NT_STATUS_OBJECT_NAME_COLLISION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_HANDLE_NOT_WAITABLE}, {
+-	ERRDOS, ERRbadfid, NT_STATUS_PORT_DISCONNECTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DEVICE_ALREADY_ATTACHED}, {
+-	ERRDOS, 161, NT_STATUS_OBJECT_PATH_INVALID}, {
+-	ERRDOS, ERRbadpath, NT_STATUS_OBJECT_PATH_NOT_FOUND}, {
+-	ERRDOS, 161, NT_STATUS_OBJECT_PATH_SYNTAX_BAD}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DATA_OVERRUN}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DATA_LATE_ERROR}, {
+-	ERRDOS, 23, NT_STATUS_DATA_ERROR}, {
+-	ERRDOS, 23, NT_STATUS_CRC_ERROR}, {
+-	ERRDOS, ERRnomem, NT_STATUS_SECTION_TOO_BIG}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_PORT_CONNECTION_REFUSED}, {
+-	ERRDOS, ERRbadfid, NT_STATUS_INVALID_PORT_HANDLE}, {
+-	ERRDOS, ERRbadshare, NT_STATUS_SHARING_VIOLATION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_QUOTA_EXCEEDED}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PAGE_PROTECTION}, {
+-	ERRDOS, 288, NT_STATUS_MUTANT_NOT_OWNED}, {
+-	ERRDOS, 298, NT_STATUS_SEMAPHORE_LIMIT_EXCEEDED}, {
+-	ERRDOS, 87, NT_STATUS_PORT_ALREADY_SET}, {
+-	ERRDOS, 87, NT_STATUS_SECTION_NOT_IMAGE}, {
+-	ERRDOS, 156, NT_STATUS_SUSPEND_COUNT_EXCEEDED}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_THREAD_IS_TERMINATING}, {
+-	ERRDOS, 87, NT_STATUS_BAD_WORKING_SET_LIMIT}, {
+-	ERRDOS, 87, NT_STATUS_INCOMPATIBLE_FILE_MAP}, {
+-	ERRDOS, 87, NT_STATUS_SECTION_PROTECTION}, {
+-	ERRDOS, ERReasnotsupported, NT_STATUS_EAS_NOT_SUPPORTED}, {
+-	ERRDOS, 255, NT_STATUS_EA_TOO_LARGE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NONEXISTENT_EA_ENTRY}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_EAS_ON_FILE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_EA_CORRUPT_ERROR}, {
+-	ERRDOS, ERRlock, NT_STATUS_FILE_LOCK_CONFLICT}, {
+-	ERRDOS, ERRlock, NT_STATUS_LOCK_NOT_GRANTED}, {
+-	ERRDOS, ERRbadfile, NT_STATUS_DELETE_PENDING}, {
+-	ERRDOS, ERRunsup, NT_STATUS_CTL_FILE_NOT_SUPPORTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNKNOWN_REVISION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_REVISION_MISMATCH}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_OWNER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_PRIMARY_GROUP}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_IMPERSONATION_TOKEN}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CANT_DISABLE_MANDATORY}, {
+-	ERRDOS, 2215, NT_STATUS_NO_LOGON_SERVERS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_LOGON_SESSION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_PRIVILEGE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_ACCOUNT_NAME}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_USER_EXISTS},
+-/*	{ This NT error code was 'sqashed'
+-	 from NT_STATUS_NO_SUCH_USER to NT_STATUS_LOGON_FAILURE
+-	 during the session setup } */
+-	{
+-	ERRDOS, ERRnoaccess, NT_STATUS_NO_SUCH_USER}, { /* could map to 2238 */
+-	ERRHRD, ERRgeneral, NT_STATUS_GROUP_EXISTS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_GROUP}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_MEMBER_IN_GROUP}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_MEMBER_NOT_IN_GROUP}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LAST_ADMIN},
+-/*	{ This NT error code was 'sqashed'
+-	 from NT_STATUS_WRONG_PASSWORD to NT_STATUS_LOGON_FAILURE
+-	 during the session setup } */
+-	{
+-	ERRSRV, ERRbadpw, NT_STATUS_WRONG_PASSWORD}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ILL_FORMED_PASSWORD}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PASSWORD_RESTRICTION}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_LOGON_FAILURE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ACCOUNT_RESTRICTION}, {
+-	ERRSRV, ERRbadLogonTime, NT_STATUS_INVALID_LOGON_HOURS}, {
+-	ERRSRV, ERRbadclient, NT_STATUS_INVALID_WORKSTATION}, {
+-	ERRSRV, ERRpasswordExpired, NT_STATUS_PASSWORD_EXPIRED}, {
+-	ERRSRV, ERRaccountexpired, NT_STATUS_ACCOUNT_DISABLED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NONE_MAPPED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_TOO_MANY_LUIDS_REQUESTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LUIDS_EXHAUSTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_SUB_AUTHORITY}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_ACL}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_SID}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_SECURITY_DESCR}, {
+-	ERRDOS, 127, NT_STATUS_PROCEDURE_NOT_FOUND}, {
+-	ERRDOS, 193, NT_STATUS_INVALID_IMAGE_FORMAT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_TOKEN}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BAD_INHERITANCE_ACL}, {
+-	ERRDOS, 158, NT_STATUS_RANGE_NOT_LOCKED}, {
+-	ERRDOS, 112, NT_STATUS_DISK_FULL}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_SERVER_DISABLED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_SERVER_NOT_DISABLED}, {
+-	ERRDOS, 68, NT_STATUS_TOO_MANY_GUIDS_REQUESTED}, {
+-	ERRDOS, 259, NT_STATUS_GUIDS_EXHAUSTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_ID_AUTHORITY}, {
+-	ERRDOS, 259, NT_STATUS_AGENTS_EXHAUSTED}, {
+-	ERRDOS, 154, NT_STATUS_INVALID_VOLUME_LABEL}, {
+-	ERRDOS, 14, NT_STATUS_SECTION_NOT_EXTENDED}, {
+-	ERRDOS, 487, NT_STATUS_NOT_MAPPED_DATA}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_RESOURCE_DATA_NOT_FOUND}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_RESOURCE_TYPE_NOT_FOUND}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_RESOURCE_NAME_NOT_FOUND}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ARRAY_BOUNDS_EXCEEDED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_DENORMAL_OPERAND}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_DIVIDE_BY_ZERO}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_INEXACT_RESULT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_INVALID_OPERATION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_OVERFLOW}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_STACK_CHECK}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_UNDERFLOW}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INTEGER_DIVIDE_BY_ZERO}, {
+-	ERRDOS, 534, NT_STATUS_INTEGER_OVERFLOW}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PRIVILEGED_INSTRUCTION}, {
+-	ERRDOS, ERRnomem, NT_STATUS_TOO_MANY_PAGING_FILES}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FILE_INVALID}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ALLOTTED_SPACE_EXCEEDED},
+-/*	{ This NT error code was 'sqashed'
+-	 from NT_STATUS_INSUFFICIENT_RESOURCES to
+-	 NT_STATUS_INSUFF_SERVER_RESOURCES during the session setup } */
+-	{
+-	ERRDOS, ERRnoresource, NT_STATUS_INSUFFICIENT_RESOURCES}, {
+-	ERRDOS, ERRbadpath, NT_STATUS_DFS_EXIT_PATH_FOUND}, {
+-	ERRDOS, 23, NT_STATUS_DEVICE_DATA_ERROR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DEVICE_NOT_CONNECTED}, {
+-	ERRDOS, 21, NT_STATUS_DEVICE_POWER_FAILURE}, {
+-	ERRDOS, 487, NT_STATUS_FREE_VM_NOT_AT_BASE}, {
+-	ERRDOS, 487, NT_STATUS_MEMORY_NOT_ALLOCATED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_WORKING_SET_QUOTA}, {
+-	ERRDOS, 19, NT_STATUS_MEDIA_WRITE_PROTECTED}, {
+-	ERRDOS, 21, NT_STATUS_DEVICE_NOT_READY}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_GROUP_ATTRIBUTES}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BAD_IMPERSONATION_LEVEL}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CANT_OPEN_ANONYMOUS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BAD_VALIDATION_CLASS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BAD_TOKEN_TYPE}, {
+-	ERRDOS, 87, NT_STATUS_BAD_MASTER_BOOT_RECORD}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INSTRUCTION_MISALIGNMENT}, {
+-	ERRDOS, ERRpipebusy, NT_STATUS_INSTANCE_NOT_AVAILABLE}, {
+-	ERRDOS, ERRpipebusy, NT_STATUS_PIPE_NOT_AVAILABLE}, {
+-	ERRDOS, ERRbadpipe, NT_STATUS_INVALID_PIPE_STATE}, {
+-	ERRDOS, ERRpipebusy, NT_STATUS_PIPE_BUSY}, {
+-	ERRDOS, ERRbadfunc, NT_STATUS_ILLEGAL_FUNCTION}, {
+-	ERRDOS, ERRnotconnected, NT_STATUS_PIPE_DISCONNECTED}, {
+-	ERRDOS, ERRpipeclosing, NT_STATUS_PIPE_CLOSING}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PIPE_CONNECTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PIPE_LISTENING}, {
+-	ERRDOS, ERRbadpipe, NT_STATUS_INVALID_READ_MODE}, {
+-	ERRDOS, 121, NT_STATUS_IO_TIMEOUT}, {
+-	ERRDOS, 38, NT_STATUS_FILE_FORCED_CLOSED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PROFILING_NOT_STARTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PROFILING_NOT_STOPPED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_COULD_NOT_INTERPRET}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_FILE_IS_A_DIRECTORY}, {
+-	ERRDOS, ERRunsup, NT_STATUS_NOT_SUPPORTED}, {
+-	ERRDOS, 51, NT_STATUS_REMOTE_NOT_LISTENING}, {
+-	ERRDOS, 52, NT_STATUS_DUPLICATE_NAME}, {
+-	ERRDOS, 53, NT_STATUS_BAD_NETWORK_PATH}, {
+-	ERRDOS, 54, NT_STATUS_NETWORK_BUSY}, {
+-	ERRDOS, 55, NT_STATUS_DEVICE_DOES_NOT_EXIST}, {
+-	ERRDOS, 56, NT_STATUS_TOO_MANY_COMMANDS}, {
+-	ERRDOS, 57, NT_STATUS_ADAPTER_HARDWARE_ERROR}, {
+-	ERRDOS, 58, NT_STATUS_INVALID_NETWORK_RESPONSE}, {
+-	ERRDOS, 59, NT_STATUS_UNEXPECTED_NETWORK_ERROR}, {
+-	ERRDOS, 60, NT_STATUS_BAD_REMOTE_ADAPTER}, {
+-	ERRDOS, 61, NT_STATUS_PRINT_QUEUE_FULL}, {
+-	ERRDOS, 62, NT_STATUS_NO_SPOOL_SPACE}, {
+-	ERRDOS, 63, NT_STATUS_PRINT_CANCELLED}, {
+-	ERRDOS, 64, NT_STATUS_NETWORK_NAME_DELETED}, {
+-	ERRDOS, 65, NT_STATUS_NETWORK_ACCESS_DENIED}, {
+-	ERRDOS, 66, NT_STATUS_BAD_DEVICE_TYPE}, {
+-	ERRDOS, ERRnosuchshare, NT_STATUS_BAD_NETWORK_NAME}, {
+-	ERRDOS, 68, NT_STATUS_TOO_MANY_NAMES}, {
+-	ERRDOS, 69, NT_STATUS_TOO_MANY_SESSIONS}, {
+-	ERRDOS, 70, NT_STATUS_SHARING_PAUSED}, {
+-	ERRDOS, 71, NT_STATUS_REQUEST_NOT_ACCEPTED}, {
+-	ERRDOS, 72, NT_STATUS_REDIRECTOR_PAUSED}, {
+-	ERRDOS, 88, NT_STATUS_NET_WRITE_FAULT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PROFILING_AT_LIMIT}, {
+-	ERRDOS, ERRdiffdevice, NT_STATUS_NOT_SAME_DEVICE}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_FILE_RENAMED}, {
+-	ERRDOS, 240, NT_STATUS_VIRTUAL_CIRCUIT_CLOSED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_SECURITY_ON_OBJECT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CANT_WAIT}, {
+-	ERRDOS, ERRpipeclosing, NT_STATUS_PIPE_EMPTY}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CANT_ACCESS_DOMAIN_INFO}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CANT_TERMINATE_SELF}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_SERVER_STATE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_DOMAIN_STATE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_DOMAIN_ROLE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_DOMAIN}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DOMAIN_EXISTS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DOMAIN_LIMIT_EXCEEDED}, {
+-	ERRDOS, 300, NT_STATUS_OPLOCK_NOT_GRANTED}, {
+-	ERRDOS, 301, NT_STATUS_INVALID_OPLOCK_PROTOCOL}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INTERNAL_DB_CORRUPTION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INTERNAL_ERROR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_GENERIC_NOT_MAPPED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BAD_DESCRIPTOR_FORMAT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_USER_BUFFER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNEXPECTED_IO_ERROR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNEXPECTED_MM_CREATE_ERR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNEXPECTED_MM_MAP_ERROR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNEXPECTED_MM_EXTEND_ERR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NOT_LOGON_PROCESS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LOGON_SESSION_EXISTS}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_1}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_2}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_3}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_4}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_5}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_6}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_7}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_8}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_9}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_10}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_11}, {
+-	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_12}, {
+-	ERRDOS, ERRbadpath, NT_STATUS_REDIRECTOR_NOT_STARTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_REDIRECTOR_STARTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_STACK_OVERFLOW}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_PACKAGE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BAD_FUNCTION_TABLE}, {
+-	ERRDOS, 203, 0xc0000100}, {
+-	ERRDOS, 145, NT_STATUS_DIRECTORY_NOT_EMPTY}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FILE_CORRUPT_ERROR}, {
+-	ERRDOS, 267, NT_STATUS_NOT_A_DIRECTORY}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BAD_LOGON_SESSION_STATE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LOGON_SESSION_COLLISION}, {
+-	ERRDOS, 206, NT_STATUS_NAME_TOO_LONG}, {
+-	ERRDOS, 2401, NT_STATUS_FILES_OPEN}, {
+-	ERRDOS, 2404, NT_STATUS_CONNECTION_IN_USE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_MESSAGE_NOT_FOUND}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_PROCESS_IS_TERMINATING}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_LOGON_TYPE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_GUID_TRANSLATION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CANNOT_IMPERSONATE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_IMAGE_ALREADY_LOADED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_NOT_PRESENT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_LID_NOT_EXIST}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_LID_ALREADY_OWNED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_NOT_LID_OWNER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_INVALID_COMMAND}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_INVALID_LID}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_SELECTOR_NOT_AVAILABLE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_INVALID_SELECTOR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_LDT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_LDT_SIZE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_LDT_OFFSET}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_LDT_DESCRIPTOR}, {
+-	ERRDOS, 193, NT_STATUS_INVALID_IMAGE_NE_FORMAT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_RXACT_INVALID_STATE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_RXACT_COMMIT_FAILURE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_MAPPED_FILE_SIZE_ZERO}, {
+-	ERRDOS, ERRnofids, NT_STATUS_TOO_MANY_OPENED_FILES}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CANCELLED}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_CANNOT_DELETE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_COMPUTER_NAME}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_FILE_DELETED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_SPECIAL_ACCOUNT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_SPECIAL_GROUP}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_SPECIAL_USER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_MEMBERS_PRIMARY_GROUP}, {
+-	ERRDOS, ERRbadfid, NT_STATUS_FILE_CLOSED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_TOO_MANY_THREADS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_THREAD_NOT_IN_PROCESS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_TOKEN_ALREADY_IN_USE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PAGEFILE_QUOTA_EXCEEDED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_COMMITMENT_LIMIT}, {
+-	ERRDOS, 193, NT_STATUS_INVALID_IMAGE_LE_FORMAT}, {
+-	ERRDOS, 193, NT_STATUS_INVALID_IMAGE_NOT_MZ}, {
+-	ERRDOS, 193, NT_STATUS_INVALID_IMAGE_PROTECT}, {
+-	ERRDOS, 193, NT_STATUS_INVALID_IMAGE_WIN_16}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LOGON_SERVER_CONFLICT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_TIME_DIFFERENCE_AT_DC}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_SYNCHRONIZATION_REQUIRED}, {
+-	ERRDOS, 126, NT_STATUS_DLL_NOT_FOUND}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_OPEN_FAILED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_IO_PRIVILEGE_FAILED}, {
+-	ERRDOS, 182, NT_STATUS_ORDINAL_NOT_FOUND}, {
+-	ERRDOS, 127, NT_STATUS_ENTRYPOINT_NOT_FOUND}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CONTROL_C_EXIT}, {
+-	ERRDOS, 64, NT_STATUS_LOCAL_DISCONNECT}, {
+-	ERRDOS, 64, NT_STATUS_REMOTE_DISCONNECT}, {
+-	ERRDOS, 51, NT_STATUS_REMOTE_RESOURCES}, {
+-	ERRDOS, 59, NT_STATUS_LINK_FAILED}, {
+-	ERRDOS, 59, NT_STATUS_LINK_TIMEOUT}, {
+-	ERRDOS, 59, NT_STATUS_INVALID_CONNECTION}, {
+-	ERRDOS, 59, NT_STATUS_INVALID_ADDRESS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DLL_INIT_FAILED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_MISSING_SYSTEMFILE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNHANDLED_EXCEPTION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_APP_INIT_FAILURE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PAGEFILE_CREATE_FAILED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_PAGEFILE}, {
+-	ERRDOS, 124, NT_STATUS_INVALID_LEVEL}, {
+-	ERRDOS, 86, NT_STATUS_WRONG_PASSWORD_CORE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ILLEGAL_FLOAT_CONTEXT}, {
+-	ERRDOS, 109, NT_STATUS_PIPE_BROKEN}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_REGISTRY_CORRUPT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_REGISTRY_IO_FAILED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_EVENT_PAIR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNRECOGNIZED_VOLUME}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_SERIAL_NO_DEVICE_INITED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_ALIAS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_MEMBER_NOT_IN_ALIAS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_MEMBER_IN_ALIAS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ALIAS_EXISTS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LOGON_NOT_GRANTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_TOO_MANY_SECRETS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_SECRET_TOO_LONG}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INTERNAL_DB_ERROR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FULLSCREEN_MODE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_TOO_MANY_CONTEXT_IDS}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_LOGON_TYPE_NOT_GRANTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NOT_REGISTRY_FILE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NT_CROSS_ENCRYPTION_REQUIRED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DOMAIN_CTRLR_CONFIG_ERROR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FT_MISSING_MEMBER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ILL_FORMED_SERVICE_ENTRY}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ILLEGAL_CHARACTER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNMAPPABLE_CHARACTER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNDEFINED_CHARACTER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FLOPPY_VOLUME}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FLOPPY_ID_MARK_NOT_FOUND}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FLOPPY_WRONG_CYLINDER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FLOPPY_UNKNOWN_ERROR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FLOPPY_BAD_REGISTERS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DISK_RECALIBRATE_FAILED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DISK_OPERATION_FAILED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DISK_RESET_FAILED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_SHARED_IRQ_BUSY}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FT_ORPHANING}, {
+-	ERRHRD, ERRgeneral, 0xc000016e}, {
+-	ERRHRD, ERRgeneral, 0xc000016f}, {
+-	ERRHRD, ERRgeneral, 0xc0000170}, {
+-	ERRHRD, ERRgeneral, 0xc0000171}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PARTITION_FAILURE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_BLOCK_LENGTH}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DEVICE_NOT_PARTITIONED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNABLE_TO_LOCK_MEDIA}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNABLE_TO_UNLOAD_MEDIA}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_EOM_OVERFLOW}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_MEDIA}, {
+-	ERRHRD, ERRgeneral, 0xc0000179}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_MEMBER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_MEMBER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_KEY_DELETED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_LOG_SPACE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_TOO_MANY_SIDS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LM_CROSS_ENCRYPTION_REQUIRED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_KEY_HAS_CHILDREN}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CHILD_MUST_BE_VOLATILE}, {
+-	ERRDOS, 87, NT_STATUS_DEVICE_CONFIGURATION_ERROR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DRIVER_INTERNAL_ERROR}, {
+-	ERRDOS, 22, NT_STATUS_INVALID_DEVICE_STATE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_IO_DEVICE_ERROR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DEVICE_PROTOCOL_ERROR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BACKUP_CONTROLLER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LOG_FILE_FULL}, {
+-	ERRDOS, 19, NT_STATUS_TOO_LATE}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_NO_TRUST_LSA_SECRET},
+-/*	{ This NT error code was 'sqashed'
+-	 from NT_STATUS_NO_TRUST_SAM_ACCOUNT to
+-	 NT_STATUS_TRUSTED_RELATIONSHIP_FAILURE during the session setup } */
+-	{
+-	ERRDOS, ERRnoaccess, NT_STATUS_NO_TRUST_SAM_ACCOUNT}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_TRUSTED_DOMAIN_FAILURE}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_TRUSTED_RELATIONSHIP_FAILURE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_EVENTLOG_FILE_CORRUPT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_EVENTLOG_CANT_START}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_TRUST_FAILURE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_MUTANT_LIMIT_EXCEEDED}, {
+-	ERRDOS, ERRnetlogonNotStarted, NT_STATUS_NETLOGON_NOT_STARTED}, {
+-	ERRSRV, ERRaccountexpired, NT_STATUS_ACCOUNT_EXPIRED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_POSSIBLE_DEADLOCK}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NETWORK_CREDENTIAL_CONFLICT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_REMOTE_SESSION_LIMIT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_EVENTLOG_FILE_CHANGED}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_NOLOGON_INTERDOMAIN_TRUST_ACCOUNT}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_NOLOGON_WORKSTATION_TRUST_ACCOUNT}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_NOLOGON_SERVER_TRUST_ACCOUNT},
+-/*	{ This NT error code was 'sqashed'
+-	 from NT_STATUS_DOMAIN_TRUST_INCONSISTENT to NT_STATUS_LOGON_FAILURE
+-	 during the session setup }  */
+-	{
+-	ERRDOS, ERRnoaccess, NT_STATUS_DOMAIN_TRUST_INCONSISTENT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FS_DRIVER_REQUIRED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_USER_SESSION_KEY}, {
+-	ERRDOS, 59, NT_STATUS_USER_SESSION_DELETED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_RESOURCE_LANG_NOT_FOUND}, {
+-	ERRDOS, ERRnoresource, NT_STATUS_INSUFF_SERVER_RESOURCES}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_BUFFER_SIZE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_ADDRESS_COMPONENT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_ADDRESS_WILDCARD}, {
+-	ERRDOS, 68, NT_STATUS_TOO_MANY_ADDRESSES}, {
+-	ERRDOS, 52, NT_STATUS_ADDRESS_ALREADY_EXISTS}, {
+-	ERRDOS, 64, NT_STATUS_ADDRESS_CLOSED}, {
+-	ERRDOS, 64, NT_STATUS_CONNECTION_DISCONNECTED}, {
+-	ERRDOS, 64, NT_STATUS_CONNECTION_RESET}, {
+-	ERRDOS, 68, NT_STATUS_TOO_MANY_NODES}, {
+-	ERRDOS, 59, NT_STATUS_TRANSACTION_ABORTED}, {
+-	ERRDOS, 59, NT_STATUS_TRANSACTION_TIMED_OUT}, {
+-	ERRDOS, 59, NT_STATUS_TRANSACTION_NO_RELEASE}, {
+-	ERRDOS, 59, NT_STATUS_TRANSACTION_NO_MATCH}, {
+-	ERRDOS, 59, NT_STATUS_TRANSACTION_RESPONDED}, {
+-	ERRDOS, 59, NT_STATUS_TRANSACTION_INVALID_ID}, {
+-	ERRDOS, 59, NT_STATUS_TRANSACTION_INVALID_TYPE}, {
+-	ERRDOS, ERRunsup, NT_STATUS_NOT_SERVER_SESSION}, {
+-	ERRDOS, ERRunsup, NT_STATUS_NOT_CLIENT_SESSION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CANNOT_LOAD_REGISTRY_FILE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DEBUG_ATTACH_FAILED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_SYSTEM_PROCESS_TERMINATED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DATA_NOT_ACCEPTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_BROWSER_SERVERS_FOUND}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_VDM_HARD_ERROR}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DRIVER_CANCEL_TIMEOUT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_REPLY_MESSAGE_MISMATCH}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_MAPPED_ALIGNMENT}, {
+-	ERRDOS, 193, NT_STATUS_IMAGE_CHECKSUM_MISMATCH}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LOST_WRITEBEHIND_DATA}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CLIENT_SERVER_PARAMETERS_INVALID}, {
+-	ERRSRV, ERRpasswordExpired, NT_STATUS_PASSWORD_MUST_CHANGE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NOT_FOUND}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NOT_TINY_STREAM}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_RECOVERY_FAILURE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_STACK_OVERFLOW_READ}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FAIL_CHECK}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DUPLICATE_OBJECTID}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_OBJECTID_EXISTS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CONVERT_TO_LARGE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_RETRY}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FOUND_OUT_OF_SCOPE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ALLOCATE_BUCKET}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PROPSET_NOT_FOUND}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_MARSHALL_OVERFLOW}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_VARIANT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_DOMAIN_CONTROLLER_NOT_FOUND}, {
+-	ERRDOS, ERRnoaccess, NT_STATUS_ACCOUNT_LOCKED_OUT}, {
+-	ERRDOS, ERRbadfid, NT_STATUS_HANDLE_NOT_CLOSABLE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CONNECTION_REFUSED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_GRACEFUL_DISCONNECT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ADDRESS_ALREADY_ASSOCIATED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_ADDRESS_NOT_ASSOCIATED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CONNECTION_INVALID}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CONNECTION_ACTIVE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NETWORK_UNREACHABLE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_HOST_UNREACHABLE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PROTOCOL_UNREACHABLE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PORT_UNREACHABLE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_REQUEST_ABORTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CONNECTION_ABORTED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BAD_COMPRESSION_BUFFER}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_USER_MAPPED_FILE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_AUDIT_FAILED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_TIMER_RESOLUTION_NOT_SET}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_CONNECTION_COUNT_LIMIT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LOGIN_TIME_RESTRICTION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LOGIN_WKSTA_RESTRICTION}, {
+-	ERRDOS, 193, NT_STATUS_IMAGE_MP_UP_MISMATCH}, {
+-	ERRHRD, ERRgeneral, 0xc000024a}, {
+-	ERRHRD, ERRgeneral, 0xc000024b}, {
+-	ERRHRD, ERRgeneral, 0xc000024c}, {
+-	ERRHRD, ERRgeneral, 0xc000024d}, {
+-	ERRHRD, ERRgeneral, 0xc000024e}, {
+-	ERRHRD, ERRgeneral, 0xc000024f}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INSUFFICIENT_LOGON_INFO}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BAD_DLL_ENTRYPOINT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_BAD_SERVICE_ENTRYPOINT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LPC_REPLY_LOST}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_IP_ADDRESS_CONFLICT1}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_IP_ADDRESS_CONFLICT2}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_REGISTRY_QUOTA_LIMIT}, {
+-	ERRSRV, 3, NT_STATUS_PATH_NOT_COVERED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_NO_CALLBACK_ACTIVE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_LICENSE_QUOTA_EXCEEDED}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PWD_TOO_SHORT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PWD_TOO_RECENT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PWD_HISTORY_CONFLICT}, {
+-	ERRHRD, ERRgeneral, 0xc000025d}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_PLUGPLAY_NO_DEVICE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_UNSUPPORTED_COMPRESSION}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_HW_PROFILE}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_INVALID_PLUGPLAY_DEVICE_PATH}, {
+-	ERRDOS, 182, NT_STATUS_DRIVER_ORDINAL_NOT_FOUND}, {
+-	ERRDOS, 127, NT_STATUS_DRIVER_ENTRYPOINT_NOT_FOUND}, {
+-	ERRDOS, 288, NT_STATUS_RESOURCE_NOT_OWNED}, {
+-	ERRDOS, ErrTooManyLinks, NT_STATUS_TOO_MANY_LINKS}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_QUOTA_LIST_INCONSISTENT}, {
+-	ERRHRD, ERRgeneral, NT_STATUS_FILE_IS_OFFLINE}, {
+-	ERRDOS, 21, 0xc000026e}, {
+-	ERRDOS, 161, 0xc0000281}, {
+-	ERRDOS, ERRnoaccess, 0xc000028a}, {
+-	ERRDOS, ERRnoaccess, 0xc000028b}, {
+-	ERRHRD, ERRgeneral, 0xc000028c}, {
+-	ERRDOS, ERRnoaccess, 0xc000028d}, {
+-	ERRDOS, ERRnoaccess, 0xc000028e}, {
+-	ERRDOS, ERRnoaccess, 0xc000028f}, {
+-	ERRDOS, ERRnoaccess, 0xc0000290}, {
+-	ERRDOS, ERRbadfunc, 0xc000029c}, {
+-	ERRDOS, ERRsymlink, NT_STATUS_STOPPED_ON_SYMLINK}, {
+-	ERRDOS, ERRinvlevel, 0x007c0001}, {
+-	0, 0, 0 }
+-};
+-
+-/*****************************************************************************
+- Print an error message from the status code
+- *****************************************************************************/
+-static void
+-cifs_print_status(__u32 status_code)
+-{
+-	int idx = 0;
+-
+-	while (nt_errs[idx].nt_errstr != NULL) {
+-		if (nt_errs[idx].nt_errcode == status_code) {
+-			pr_notice("Status code returned 0x%08x %s\n",
+-				  status_code, nt_errs[idx].nt_errstr);
+-			return;
+-		}
+-		idx++;
+-	}
+-	return;
+-}
+-
+-
+-static void
+-ntstatus_to_dos(__u32 ntstatus, __u8 *eclass, __u16 *ecode)
+-{
+-	int i;
+-	if (ntstatus == 0) {
+-		*eclass = 0;
+-		*ecode = 0;
+-		return;
+-	}
+-	for (i = 0; ntstatus_to_dos_map[i].ntstatus; i++) {
+-		if (ntstatus == ntstatus_to_dos_map[i].ntstatus) {
+-			*eclass = ntstatus_to_dos_map[i].dos_class;
+-			*ecode = ntstatus_to_dos_map[i].dos_code;
+-			return;
+-		}
+-	}
+-	*eclass = ERRHRD;
+-	*ecode = ERRgeneral;
+-}
+-
+-int
+-map_smb_to_linux_error(char *buf, bool logErr)
+-{
+-	struct smb_hdr *smb = (struct smb_hdr *)buf;
+-	unsigned int i;
+-	int rc = -EIO;	/* if transport error smb error may not be set */
+-	__u8 smberrclass;
+-	__u16 smberrcode;
+-
+-	/* BB if NT Status codes - map NT BB */
+-
+-	/* old style smb error codes */
+-	if (smb->Status.CifsError == 0)
+-		return 0;
+-
+-	if (smb->Flags2 & SMBFLG2_ERR_STATUS) {
+-		/* translate the newer STATUS codes to old style SMB errors
+-		 * and then to POSIX errors */
+-		__u32 err = le32_to_cpu(smb->Status.CifsError);
+-		if (logErr && (err != (NT_STATUS_MORE_PROCESSING_REQUIRED)))
+-			cifs_print_status(err);
+-		else if (cifsFYI & CIFS_RC)
+-			cifs_print_status(err);
+-		ntstatus_to_dos(err, &smberrclass, &smberrcode);
+-	} else {
+-		smberrclass = smb->Status.DosError.ErrorClass;
+-		smberrcode = le16_to_cpu(smb->Status.DosError.Error);
+-	}
+-
+-	/* old style errors */
+-
+-	/* DOS class smb error codes - map DOS */
+-	if (smberrclass == ERRDOS) {
+-		/* 1 byte field no need to byte reverse */
+-		for (i = 0;
+-		     i <
+-		     sizeof(mapping_table_ERRDOS) /
+-		     sizeof(struct smb_to_posix_error); i++) {
+-			if (mapping_table_ERRDOS[i].smb_err == 0)
+-				break;
+-			else if (mapping_table_ERRDOS[i].smb_err ==
+-								smberrcode) {
+-				rc = mapping_table_ERRDOS[i].posix_code;
+-				break;
+-			}
+-			/* else try next error mapping one to see if match */
+-		}
+-	} else if (smberrclass == ERRSRV) {
+-		/* server class of error codes */
+-		for (i = 0;
+-		     i <
+-		     sizeof(mapping_table_ERRSRV) /
+-		     sizeof(struct smb_to_posix_error); i++) {
+-			if (mapping_table_ERRSRV[i].smb_err == 0)
+-				break;
+-			else if (mapping_table_ERRSRV[i].smb_err ==
+-								smberrcode) {
+-				rc = mapping_table_ERRSRV[i].posix_code;
+-				break;
+-			}
+-			/* else try next error mapping to see if match */
+-		}
+-	}
+-	/* else ERRHRD class errors or junk  - return EIO */
+-
+-	/* special cases for NT status codes which cannot be translated to DOS codes */
+-	if (smb->Flags2 & SMBFLG2_ERR_STATUS) {
+-		__u32 err = le32_to_cpu(smb->Status.CifsError);
+-		if (err == (NT_STATUS_NOT_A_REPARSE_POINT))
+-			rc = -ENODATA;
+-		else if (err == (NT_STATUS_PRIVILEGE_NOT_HELD))
+-			rc = -EPERM;
+-	}
+-
+-	cifs_dbg(FYI, "Mapping smb error code 0x%x to POSIX err %d\n",
+-		 le32_to_cpu(smb->Status.CifsError), rc);
+-
+-	/* generic corrective action e.g. reconnect SMB session on
+-	 * ERRbaduid could be added */
+-
+-	if (rc == -EIO)
+-		smb_EIO2(smb_eio_trace_smb1_received_error,
+-			 le32_to_cpu(smb->Status.CifsError),
+-			 le16_to_cpu(smb->Flags2));
+-	return rc;
+-}
+-
+-int
+-map_and_check_smb_error(struct TCP_Server_Info *server,
+-			struct mid_q_entry *mid, bool logErr)
+-{
+-	int rc;
+-	struct smb_hdr *smb = (struct smb_hdr *)mid->resp_buf;
+-
+-	rc = map_smb_to_linux_error((char *)smb, logErr);
+-	if (rc == -EACCES && !(smb->Flags2 & SMBFLG2_ERR_STATUS)) {
+-		/* possible ERRBaduid */
+-		__u8 class = smb->Status.DosError.ErrorClass;
+-		__u16 code = le16_to_cpu(smb->Status.DosError.Error);
+-
+-		/* switch can be used to handle different errors */
+-		if (class == ERRSRV && code == ERRbaduid) {
+-			cifs_dbg(FYI, "Server returned 0x%x, reconnecting session...\n",
+-				code);
+-			cifs_signal_cifsd_for_reconnect(server, false);
+-		}
+-	}
+-
+-	return rc;
+-}
+-
+-
+-/*
+- * calculate the size of the SMB message based on the fixed header
+- * portion, the number of word parameters and the data portion of the message
+- */
 -unsigned int
--header_assemble(struct smb_hdr *buffer, char smb_command,
--		const struct cifs_tcon *treeCon, int word_count
--		/* length of fixed section (word count) in two byte units  */)
+-smbCalcSize(void *buf)
 -{
--	unsigned int in_len;
--	char *temp = (char *) buffer;
--
--	memset(temp, 0, 256); /* bigger than MAX_CIFS_HDR_SIZE */
--
--	in_len = (2 * word_count) + sizeof(struct smb_hdr) +
--		2 /* for bcc field itself */;
--
--	buffer->Protocol[0] = 0xFF;
--	buffer->Protocol[1] = 'S';
--	buffer->Protocol[2] = 'M';
--	buffer->Protocol[3] = 'B';
--	buffer->Command = smb_command;
--	buffer->Flags = 0x00;	/* case sensitive */
--	buffer->Flags2 = SMBFLG2_KNOWS_LONG_NAMES;
--	buffer->Pid = cpu_to_le16((__u16)current->tgid);
--	buffer->PidHigh = cpu_to_le16((__u16)(current->tgid >> 16));
--	if (treeCon) {
--		buffer->Tid = treeCon->tid;
--		if (treeCon->ses) {
--			if (treeCon->ses->capabilities & CAP_UNICODE)
--				buffer->Flags2 |= SMBFLG2_UNICODE;
--			if (treeCon->ses->capabilities & CAP_STATUS32)
--				buffer->Flags2 |= SMBFLG2_ERR_STATUS;
--
--			/* Uid is not converted */
--			buffer->Uid = treeCon->ses->Suid;
--			if (treeCon->ses->server)
--				buffer->Mid = get_next_mid(treeCon->ses->server);
--		}
--		if (treeCon->Flags & SMB_SHARE_IS_IN_DFS)
--			buffer->Flags2 |= SMBFLG2_DFS;
--		if (treeCon->nocase)
--			buffer->Flags  |= SMBFLG_CASELESS;
--		if ((treeCon->ses) && (treeCon->ses->server))
--			if (treeCon->ses->server->sign)
--				buffer->Flags2 |= SMBFLG2_SECURITY_SIGNATURE;
--	}
--
--/*  endian conversion of flags is now done just before sending */
--	buffer->WordCount = (char) word_count;
--	return in_len;
+-	struct smb_hdr *ptr = buf;
+-	return (sizeof(struct smb_hdr) + (2 * ptr->WordCount) +
+-		2 /* size of the bcc field */ + get_bcc(ptr));
 -}
 -
--bool
--is_valid_oplock_break(char *buffer, struct TCP_Server_Info *srv)
--{
--	struct smb_hdr *buf = (struct smb_hdr *)buffer;
--	struct smb_com_lock_req *pSMB = (struct smb_com_lock_req *)buf;
--	struct TCP_Server_Info *pserver;
--	struct cifs_ses *ses;
--	struct cifs_tcon *tcon;
--	struct cifsInodeInfo *pCifsInode;
--	struct cifsFileInfo *netfile;
--
--	cifs_dbg(FYI, "Checking for oplock break or dnotify response\n");
--	if ((pSMB->hdr.Command == SMB_COM_NT_TRANSACT) &&
--	   (pSMB->hdr.Flags & SMBFLG_RESPONSE)) {
--		struct smb_com_transaction_change_notify_rsp *pSMBr =
--			(struct smb_com_transaction_change_notify_rsp *)buf;
--		struct file_notify_information *pnotify;
--		__u32 data_offset = 0;
--		size_t len = srv->total_read - srv->pdu_size;
--
--		if (get_bcc(buf) > sizeof(struct file_notify_information)) {
--			data_offset = le32_to_cpu(pSMBr->DataOffset);
--
--			if (data_offset >
--			    len - sizeof(struct file_notify_information)) {
--				cifs_dbg(FYI, "Invalid data_offset %u\n",
--					 data_offset);
--				return true;
--			}
--			pnotify = (struct file_notify_information *)
--				((char *)&pSMBr->hdr.Protocol + data_offset);
--			cifs_dbg(FYI, "dnotify on %s Action: 0x%x\n",
--				 pnotify->FileName, pnotify->Action);
--			/*   cifs_dump_mem("Rcvd notify Data: ",buf,
--				sizeof(struct smb_hdr)+60); */
--			return true;
--		}
--		if (pSMBr->hdr.Status.CifsError) {
--			cifs_dbg(FYI, "notify err 0x%x\n",
--				 pSMBr->hdr.Status.CifsError);
--			return true;
--		}
--		return false;
--	}
--	if (pSMB->hdr.Command != SMB_COM_LOCKING_ANDX)
--		return false;
--	if (pSMB->hdr.Flags & SMBFLG_RESPONSE) {
--		/* no sense logging error on invalid handle on oplock
--		   break - harmless race between close request and oplock
--		   break response is expected from time to time writing out
--		   large dirty files cached on the client */
--		if ((NT_STATUS_INVALID_HANDLE) ==
--		   le32_to_cpu(pSMB->hdr.Status.CifsError)) {
--			cifs_dbg(FYI, "Invalid handle on oplock break\n");
--			return true;
--		} else if (ERRbadfid ==
--		   le16_to_cpu(pSMB->hdr.Status.DosError.Error)) {
--			return true;
--		} else {
--			return false; /* on valid oplock brk we get "request" */
--		}
--	}
--	if (pSMB->hdr.WordCount != 8)
--		return false;
--
--	cifs_dbg(FYI, "oplock type 0x%x level 0x%x\n",
--		 pSMB->LockType, pSMB->OplockLevel);
--	if (!(pSMB->LockType & LOCKING_ANDX_OPLOCK_RELEASE))
--		return false;
--
--	/* If server is a channel, select the primary channel */
--	pserver = SERVER_IS_CHAN(srv) ? srv->primary_server : srv;
--
--	/* look up tcon based on tid & uid */
--	spin_lock(&cifs_tcp_ses_lock);
--	list_for_each_entry(ses, &pserver->smb_ses_list, smb_ses_list) {
--		if (cifs_ses_exiting(ses))
--			continue;
--		list_for_each_entry(tcon, &ses->tcon_list, tcon_list) {
--			if (tcon->tid != buf->Tid)
--				continue;
--
--			cifs_stats_inc(&tcon->stats.cifs_stats.num_oplock_brks);
--			spin_lock(&tcon->open_file_lock);
--			list_for_each_entry(netfile, &tcon->openFileList, tlist) {
--				if (pSMB->Fid != netfile->fid.netfid)
--					continue;
--
--				cifs_dbg(FYI, "file id match, oplock break\n");
--				pCifsInode = CIFS_I(d_inode(netfile->dentry));
--
--				set_bit(CIFS_INODE_PENDING_OPLOCK_BREAK,
--					&pCifsInode->flags);
--
--				netfile->oplock_epoch = 0;
--				netfile->oplock_level = pSMB->OplockLevel;
--				netfile->oplock_break_cancelled = false;
--				cifs_queue_oplock_break(netfile);
--
--				spin_unlock(&tcon->open_file_lock);
--				spin_unlock(&cifs_tcp_ses_lock);
--				return true;
--			}
--			spin_unlock(&tcon->open_file_lock);
--			spin_unlock(&cifs_tcp_ses_lock);
--			cifs_dbg(FYI, "No matching file for oplock break\n");
--			return true;
--		}
--	}
--	spin_unlock(&cifs_tcp_ses_lock);
--	cifs_dbg(FYI, "Can not process oplock break for non-existent connection\n");
--	return true;
--}
--
- void
- dump_smb(void *buf, int smb_buf_length)
- {
-diff --git a/fs/smb/client/smb1misc.c b/fs/smb/client/smb1misc.c
+ /* The following are taken from fs/ntfs/util.c */
+ 
+ #define NTFS_TIME_OFFSET ((u64)(369*365 + 89) * 24 * 3600 * 10000000)
+diff --git a/fs/smb/client/smb1maperror.c b/fs/smb/client/smb1maperror.c
 new file mode 100644
-index 000000000000..d73ef87f55d0
+index 000000000000..1565f249452d
 --- /dev/null
-+++ b/fs/smb/client/smb1misc.c
-@@ -0,0 +1,177 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+/*
++++ b/fs/smb/client/smb1maperror.c
+@@ -0,0 +1,825 @@
++/* smb1maperror.c: description
 + *
-+ *   Copyright (C) International Business Machines  Corp., 2002,2008
-+ *   Author(s): Steve French (sfrench@us.ibm.com)
++ * Copyright (C) 2025 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
 + *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
 + */
 +
++#include "cifsproto.h"
 +#include "smb1proto.h"
 +#include "smberr.h"
 +#include "nterr.h"
 +#include "cifs_debug.h"
 +
-+/* NB: MID can not be set if treeCon not passed in, in that
-+   case it is responsibility of caller to set the mid */
-+unsigned int
-+header_assemble(struct smb_hdr *buffer, char smb_command,
-+		const struct cifs_tcon *treeCon, int word_count
-+		/* length of fixed section (word count) in two byte units  */)
++struct smb_to_posix_error {
++	__u16 smb_err;
++	int posix_code;
++};
++
++static const struct smb_to_posix_error mapping_table_ERRDOS[] = {
++	{ERRbadfunc, -EINVAL},
++	{ERRbadfile, -ENOENT},
++	{ERRbadpath, -ENOTDIR},
++	{ERRnofids, -EMFILE},
++	{ERRnoaccess, -EACCES},
++	{ERRbadfid, -EBADF},
++	{ERRbadmcb, -EIO},
++	{ERRnomem, -EREMOTEIO},
++	{ERRbadmem, -EFAULT},
++	{ERRbadenv, -EFAULT},
++	{ERRbadformat, -EINVAL},
++	{ERRbadaccess, -EACCES},
++	{ERRbaddata, -EIO},
++	{ERRbaddrive, -ENXIO},
++	{ERRremcd, -EACCES},
++	{ERRdiffdevice, -EXDEV},
++	{ERRnofiles, -ENOENT},
++	{ERRwriteprot, -EROFS},
++	{ERRbadshare, -EBUSY},
++	{ERRlock, -EACCES},
++	{ERRunsup, -EINVAL},
++	{ERRnosuchshare, -ENXIO},
++	{ERRfilexists, -EEXIST},
++	{ERRinvparm, -EINVAL},
++	{ERRdiskfull, -ENOSPC},
++	{ERRinvname, -ENOENT},
++	{ERRinvlevel, -EOPNOTSUPP},
++	{ERRdirnotempty, -ENOTEMPTY},
++	{ERRnotlocked, -ENOLCK},
++	{ERRcancelviolation, -ENOLCK},
++	{ERRalreadyexists, -EEXIST},
++	{ERRmoredata, -EOVERFLOW},
++	{ERReasnotsupported, -EOPNOTSUPP},
++	{ErrQuota, -EDQUOT},
++	{ErrNotALink, -ENOLINK},
++	{ERRnetlogonNotStarted, -ENOPROTOOPT},
++	{ERRsymlink, -EOPNOTSUPP},
++	{ErrTooManyLinks, -EMLINK},
++	{0, 0}
++};
++
++static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
++	{ERRerror, -EIO},
++	{ERRbadpw, -EACCES},  /* was EPERM */
++	{ERRbadtype, -EREMOTE},
++	{ERRaccess, -EACCES},
++	{ERRinvtid, -ENXIO},
++	{ERRinvnetname, -ENXIO},
++	{ERRinvdevice, -ENXIO},
++	{ERRqfull, -ENOSPC},
++	{ERRqtoobig, -ENOSPC},
++	{ERRqeof, -EIO},
++	{ERRinvpfid, -EBADF},
++	{ERRsmbcmd, -EBADRQC},
++	{ERRsrverror, -EIO},
++	{ERRbadBID, -EIO},
++	{ERRfilespecs, -EINVAL},
++	{ERRbadLink, -EIO},
++	{ERRbadpermits, -EINVAL},
++	{ERRbadPID, -ESRCH},
++	{ERRsetattrmode, -EINVAL},
++	{ERRpaused, -EHOSTDOWN},
++	{ERRmsgoff, -EHOSTDOWN},
++	{ERRnoroom, -ENOSPC},
++	{ERRrmuns, -EUSERS},
++	{ERRtimeout, -ETIME},
++	{ERRnoresource, -EREMOTEIO},
++	{ERRtoomanyuids, -EUSERS},
++	{ERRbaduid, -EACCES},
++	{ERRusempx, -EIO},
++	{ERRusestd, -EIO},
++	{ERR_NOTIFY_ENUM_DIR, -ENOBUFS},
++	{ERRnoSuchUser, -EACCES},
++/*	{ERRaccountexpired, -EACCES},
++	{ERRbadclient, -EACCES},
++	{ERRbadLogonTime, -EACCES},
++	{ERRpasswordExpired, -EACCES},*/
++	{ERRaccountexpired, -EKEYEXPIRED},
++	{ERRbadclient, -EACCES},
++	{ERRbadLogonTime, -EACCES},
++	{ERRpasswordExpired, -EKEYEXPIRED},
++
++	{ERRnosupport, -EINVAL},
++	{0, 0}
++};
++
++/*****************************************************************************
++ *convert a NT status code to a dos class/code
++ *****************************************************************************/
++/* NT status -> dos error map */
++static const struct {
++	__u8 dos_class;
++	__u16 dos_code;
++	__u32 ntstatus;
++} ntstatus_to_dos_map[] = {
++	{
++	ERRDOS, ERRgeneral, NT_STATUS_UNSUCCESSFUL}, {
++	ERRDOS, ERRbadfunc, NT_STATUS_NOT_IMPLEMENTED}, {
++	ERRDOS, ERRinvlevel, NT_STATUS_INVALID_INFO_CLASS}, {
++	ERRDOS, 24, NT_STATUS_INFO_LENGTH_MISMATCH}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ACCESS_VIOLATION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_IN_PAGE_ERROR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PAGEFILE_QUOTA}, {
++	ERRDOS, ERRbadfid, NT_STATUS_INVALID_HANDLE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BAD_INITIAL_STACK}, {
++	ERRDOS, 193, NT_STATUS_BAD_INITIAL_PC}, {
++	ERRDOS, 87, NT_STATUS_INVALID_CID}, {
++	ERRHRD, ERRgeneral, NT_STATUS_TIMER_NOT_CANCELED}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER}, {
++	ERRDOS, ERRbadfile, NT_STATUS_NO_SUCH_DEVICE}, {
++	ERRDOS, ERRbadfile, NT_STATUS_NO_SUCH_FILE}, {
++	ERRDOS, ERRbadfunc, NT_STATUS_INVALID_DEVICE_REQUEST}, {
++	ERRDOS, 38, NT_STATUS_END_OF_FILE}, {
++	ERRDOS, 34, NT_STATUS_WRONG_VOLUME}, {
++	ERRDOS, 21, NT_STATUS_NO_MEDIA_IN_DEVICE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNRECOGNIZED_MEDIA}, {
++	ERRDOS, 27, NT_STATUS_NONEXISTENT_SECTOR},
++/*	{ This NT error code was 'sqashed'
++	 from NT_STATUS_MORE_PROCESSING_REQUIRED to NT_STATUS_OK
++	 during the session setup } */
++	{
++	ERRDOS, ERRnomem, NT_STATUS_NO_MEMORY}, {
++	ERRDOS, 487, NT_STATUS_CONFLICTING_ADDRESSES}, {
++	ERRDOS, 487, NT_STATUS_NOT_MAPPED_VIEW}, {
++	ERRDOS, 87, NT_STATUS_UNABLE_TO_FREE_VM}, {
++	ERRDOS, 87, NT_STATUS_UNABLE_TO_DELETE_SECTION}, {
++	ERRDOS, 2142, NT_STATUS_INVALID_SYSTEM_SERVICE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ILLEGAL_INSTRUCTION}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_INVALID_LOCK_SEQUENCE}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_INVALID_VIEW_SIZE}, {
++	ERRDOS, 193, NT_STATUS_INVALID_FILE_FOR_SECTION}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_ALREADY_COMMITTED},
++/*	{ This NT error code was 'sqashed'
++	 from NT_STATUS_ACCESS_DENIED to NT_STATUS_TRUSTED_RELATIONSHIP_FAILURE
++	 during the session setup }   */
++	{
++	ERRDOS, ERRnoaccess, NT_STATUS_ACCESS_DENIED}, {
++	ERRDOS, 111, NT_STATUS_BUFFER_TOO_SMALL}, {
++	ERRDOS, ERRbadfid, NT_STATUS_OBJECT_TYPE_MISMATCH}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NONCONTINUABLE_EXCEPTION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_DISPOSITION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNWIND}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BAD_STACK}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_UNWIND_TARGET}, {
++	ERRDOS, 158, NT_STATUS_NOT_LOCKED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PARITY_ERROR}, {
++	ERRDOS, 487, NT_STATUS_UNABLE_TO_DECOMMIT_VM}, {
++	ERRDOS, 487, NT_STATUS_NOT_COMMITTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_PORT_ATTRIBUTES}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PORT_MESSAGE_TOO_LONG}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_MIX}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_QUOTA_LOWER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DISK_CORRUPT_ERROR}, {
++	 /* mapping changed since shell does lookup on * expects FileNotFound */
++	ERRDOS, ERRbadfile, NT_STATUS_OBJECT_NAME_INVALID}, {
++	ERRDOS, ERRbadfile, NT_STATUS_OBJECT_NAME_NOT_FOUND}, {
++	ERRDOS, ERRalreadyexists, NT_STATUS_OBJECT_NAME_COLLISION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_HANDLE_NOT_WAITABLE}, {
++	ERRDOS, ERRbadfid, NT_STATUS_PORT_DISCONNECTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DEVICE_ALREADY_ATTACHED}, {
++	ERRDOS, 161, NT_STATUS_OBJECT_PATH_INVALID}, {
++	ERRDOS, ERRbadpath, NT_STATUS_OBJECT_PATH_NOT_FOUND}, {
++	ERRDOS, 161, NT_STATUS_OBJECT_PATH_SYNTAX_BAD}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DATA_OVERRUN}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DATA_LATE_ERROR}, {
++	ERRDOS, 23, NT_STATUS_DATA_ERROR}, {
++	ERRDOS, 23, NT_STATUS_CRC_ERROR}, {
++	ERRDOS, ERRnomem, NT_STATUS_SECTION_TOO_BIG}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_PORT_CONNECTION_REFUSED}, {
++	ERRDOS, ERRbadfid, NT_STATUS_INVALID_PORT_HANDLE}, {
++	ERRDOS, ERRbadshare, NT_STATUS_SHARING_VIOLATION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_QUOTA_EXCEEDED}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PAGE_PROTECTION}, {
++	ERRDOS, 288, NT_STATUS_MUTANT_NOT_OWNED}, {
++	ERRDOS, 298, NT_STATUS_SEMAPHORE_LIMIT_EXCEEDED}, {
++	ERRDOS, 87, NT_STATUS_PORT_ALREADY_SET}, {
++	ERRDOS, 87, NT_STATUS_SECTION_NOT_IMAGE}, {
++	ERRDOS, 156, NT_STATUS_SUSPEND_COUNT_EXCEEDED}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_THREAD_IS_TERMINATING}, {
++	ERRDOS, 87, NT_STATUS_BAD_WORKING_SET_LIMIT}, {
++	ERRDOS, 87, NT_STATUS_INCOMPATIBLE_FILE_MAP}, {
++	ERRDOS, 87, NT_STATUS_SECTION_PROTECTION}, {
++	ERRDOS, ERReasnotsupported, NT_STATUS_EAS_NOT_SUPPORTED}, {
++	ERRDOS, 255, NT_STATUS_EA_TOO_LARGE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NONEXISTENT_EA_ENTRY}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_EAS_ON_FILE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_EA_CORRUPT_ERROR}, {
++	ERRDOS, ERRlock, NT_STATUS_FILE_LOCK_CONFLICT}, {
++	ERRDOS, ERRlock, NT_STATUS_LOCK_NOT_GRANTED}, {
++	ERRDOS, ERRbadfile, NT_STATUS_DELETE_PENDING}, {
++	ERRDOS, ERRunsup, NT_STATUS_CTL_FILE_NOT_SUPPORTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNKNOWN_REVISION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_REVISION_MISMATCH}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_OWNER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_PRIMARY_GROUP}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_IMPERSONATION_TOKEN}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CANT_DISABLE_MANDATORY}, {
++	ERRDOS, 2215, NT_STATUS_NO_LOGON_SERVERS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_LOGON_SESSION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_PRIVILEGE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_ACCOUNT_NAME}, {
++	ERRHRD, ERRgeneral, NT_STATUS_USER_EXISTS},
++/*	{ This NT error code was 'sqashed'
++	 from NT_STATUS_NO_SUCH_USER to NT_STATUS_LOGON_FAILURE
++	 during the session setup } */
++	{
++	ERRDOS, ERRnoaccess, NT_STATUS_NO_SUCH_USER}, { /* could map to 2238 */
++	ERRHRD, ERRgeneral, NT_STATUS_GROUP_EXISTS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_GROUP}, {
++	ERRHRD, ERRgeneral, NT_STATUS_MEMBER_IN_GROUP}, {
++	ERRHRD, ERRgeneral, NT_STATUS_MEMBER_NOT_IN_GROUP}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LAST_ADMIN},
++/*	{ This NT error code was 'sqashed'
++	 from NT_STATUS_WRONG_PASSWORD to NT_STATUS_LOGON_FAILURE
++	 during the session setup } */
++	{
++	ERRSRV, ERRbadpw, NT_STATUS_WRONG_PASSWORD}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ILL_FORMED_PASSWORD}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PASSWORD_RESTRICTION}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_LOGON_FAILURE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ACCOUNT_RESTRICTION}, {
++	ERRSRV, ERRbadLogonTime, NT_STATUS_INVALID_LOGON_HOURS}, {
++	ERRSRV, ERRbadclient, NT_STATUS_INVALID_WORKSTATION}, {
++	ERRSRV, ERRpasswordExpired, NT_STATUS_PASSWORD_EXPIRED}, {
++	ERRSRV, ERRaccountexpired, NT_STATUS_ACCOUNT_DISABLED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NONE_MAPPED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_TOO_MANY_LUIDS_REQUESTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LUIDS_EXHAUSTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_SUB_AUTHORITY}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_ACL}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_SID}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_SECURITY_DESCR}, {
++	ERRDOS, 127, NT_STATUS_PROCEDURE_NOT_FOUND}, {
++	ERRDOS, 193, NT_STATUS_INVALID_IMAGE_FORMAT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_TOKEN}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BAD_INHERITANCE_ACL}, {
++	ERRDOS, 158, NT_STATUS_RANGE_NOT_LOCKED}, {
++	ERRDOS, 112, NT_STATUS_DISK_FULL}, {
++	ERRHRD, ERRgeneral, NT_STATUS_SERVER_DISABLED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_SERVER_NOT_DISABLED}, {
++	ERRDOS, 68, NT_STATUS_TOO_MANY_GUIDS_REQUESTED}, {
++	ERRDOS, 259, NT_STATUS_GUIDS_EXHAUSTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_ID_AUTHORITY}, {
++	ERRDOS, 259, NT_STATUS_AGENTS_EXHAUSTED}, {
++	ERRDOS, 154, NT_STATUS_INVALID_VOLUME_LABEL}, {
++	ERRDOS, 14, NT_STATUS_SECTION_NOT_EXTENDED}, {
++	ERRDOS, 487, NT_STATUS_NOT_MAPPED_DATA}, {
++	ERRHRD, ERRgeneral, NT_STATUS_RESOURCE_DATA_NOT_FOUND}, {
++	ERRHRD, ERRgeneral, NT_STATUS_RESOURCE_TYPE_NOT_FOUND}, {
++	ERRHRD, ERRgeneral, NT_STATUS_RESOURCE_NAME_NOT_FOUND}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ARRAY_BOUNDS_EXCEEDED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_DENORMAL_OPERAND}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_DIVIDE_BY_ZERO}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_INEXACT_RESULT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_INVALID_OPERATION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_OVERFLOW}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_STACK_CHECK}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FLOAT_UNDERFLOW}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INTEGER_DIVIDE_BY_ZERO}, {
++	ERRDOS, 534, NT_STATUS_INTEGER_OVERFLOW}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PRIVILEGED_INSTRUCTION}, {
++	ERRDOS, ERRnomem, NT_STATUS_TOO_MANY_PAGING_FILES}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FILE_INVALID}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ALLOTTED_SPACE_EXCEEDED},
++/*	{ This NT error code was 'sqashed'
++	 from NT_STATUS_INSUFFICIENT_RESOURCES to
++	 NT_STATUS_INSUFF_SERVER_RESOURCES during the session setup } */
++	{
++	ERRDOS, ERRnoresource, NT_STATUS_INSUFFICIENT_RESOURCES}, {
++	ERRDOS, ERRbadpath, NT_STATUS_DFS_EXIT_PATH_FOUND}, {
++	ERRDOS, 23, NT_STATUS_DEVICE_DATA_ERROR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DEVICE_NOT_CONNECTED}, {
++	ERRDOS, 21, NT_STATUS_DEVICE_POWER_FAILURE}, {
++	ERRDOS, 487, NT_STATUS_FREE_VM_NOT_AT_BASE}, {
++	ERRDOS, 487, NT_STATUS_MEMORY_NOT_ALLOCATED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_WORKING_SET_QUOTA}, {
++	ERRDOS, 19, NT_STATUS_MEDIA_WRITE_PROTECTED}, {
++	ERRDOS, 21, NT_STATUS_DEVICE_NOT_READY}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_GROUP_ATTRIBUTES}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BAD_IMPERSONATION_LEVEL}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CANT_OPEN_ANONYMOUS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BAD_VALIDATION_CLASS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BAD_TOKEN_TYPE}, {
++	ERRDOS, 87, NT_STATUS_BAD_MASTER_BOOT_RECORD}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INSTRUCTION_MISALIGNMENT}, {
++	ERRDOS, ERRpipebusy, NT_STATUS_INSTANCE_NOT_AVAILABLE}, {
++	ERRDOS, ERRpipebusy, NT_STATUS_PIPE_NOT_AVAILABLE}, {
++	ERRDOS, ERRbadpipe, NT_STATUS_INVALID_PIPE_STATE}, {
++	ERRDOS, ERRpipebusy, NT_STATUS_PIPE_BUSY}, {
++	ERRDOS, ERRbadfunc, NT_STATUS_ILLEGAL_FUNCTION}, {
++	ERRDOS, ERRnotconnected, NT_STATUS_PIPE_DISCONNECTED}, {
++	ERRDOS, ERRpipeclosing, NT_STATUS_PIPE_CLOSING}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PIPE_CONNECTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PIPE_LISTENING}, {
++	ERRDOS, ERRbadpipe, NT_STATUS_INVALID_READ_MODE}, {
++	ERRDOS, 121, NT_STATUS_IO_TIMEOUT}, {
++	ERRDOS, 38, NT_STATUS_FILE_FORCED_CLOSED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PROFILING_NOT_STARTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PROFILING_NOT_STOPPED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_COULD_NOT_INTERPRET}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_FILE_IS_A_DIRECTORY}, {
++	ERRDOS, ERRunsup, NT_STATUS_NOT_SUPPORTED}, {
++	ERRDOS, 51, NT_STATUS_REMOTE_NOT_LISTENING}, {
++	ERRDOS, 52, NT_STATUS_DUPLICATE_NAME}, {
++	ERRDOS, 53, NT_STATUS_BAD_NETWORK_PATH}, {
++	ERRDOS, 54, NT_STATUS_NETWORK_BUSY}, {
++	ERRDOS, 55, NT_STATUS_DEVICE_DOES_NOT_EXIST}, {
++	ERRDOS, 56, NT_STATUS_TOO_MANY_COMMANDS}, {
++	ERRDOS, 57, NT_STATUS_ADAPTER_HARDWARE_ERROR}, {
++	ERRDOS, 58, NT_STATUS_INVALID_NETWORK_RESPONSE}, {
++	ERRDOS, 59, NT_STATUS_UNEXPECTED_NETWORK_ERROR}, {
++	ERRDOS, 60, NT_STATUS_BAD_REMOTE_ADAPTER}, {
++	ERRDOS, 61, NT_STATUS_PRINT_QUEUE_FULL}, {
++	ERRDOS, 62, NT_STATUS_NO_SPOOL_SPACE}, {
++	ERRDOS, 63, NT_STATUS_PRINT_CANCELLED}, {
++	ERRDOS, 64, NT_STATUS_NETWORK_NAME_DELETED}, {
++	ERRDOS, 65, NT_STATUS_NETWORK_ACCESS_DENIED}, {
++	ERRDOS, 66, NT_STATUS_BAD_DEVICE_TYPE}, {
++	ERRDOS, ERRnosuchshare, NT_STATUS_BAD_NETWORK_NAME}, {
++	ERRDOS, 68, NT_STATUS_TOO_MANY_NAMES}, {
++	ERRDOS, 69, NT_STATUS_TOO_MANY_SESSIONS}, {
++	ERRDOS, 70, NT_STATUS_SHARING_PAUSED}, {
++	ERRDOS, 71, NT_STATUS_REQUEST_NOT_ACCEPTED}, {
++	ERRDOS, 72, NT_STATUS_REDIRECTOR_PAUSED}, {
++	ERRDOS, 88, NT_STATUS_NET_WRITE_FAULT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PROFILING_AT_LIMIT}, {
++	ERRDOS, ERRdiffdevice, NT_STATUS_NOT_SAME_DEVICE}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_FILE_RENAMED}, {
++	ERRDOS, 240, NT_STATUS_VIRTUAL_CIRCUIT_CLOSED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_SECURITY_ON_OBJECT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CANT_WAIT}, {
++	ERRDOS, ERRpipeclosing, NT_STATUS_PIPE_EMPTY}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CANT_ACCESS_DOMAIN_INFO}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CANT_TERMINATE_SELF}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_SERVER_STATE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_DOMAIN_STATE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_DOMAIN_ROLE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_DOMAIN}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DOMAIN_EXISTS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DOMAIN_LIMIT_EXCEEDED}, {
++	ERRDOS, 300, NT_STATUS_OPLOCK_NOT_GRANTED}, {
++	ERRDOS, 301, NT_STATUS_INVALID_OPLOCK_PROTOCOL}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INTERNAL_DB_CORRUPTION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INTERNAL_ERROR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_GENERIC_NOT_MAPPED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BAD_DESCRIPTOR_FORMAT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_USER_BUFFER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNEXPECTED_IO_ERROR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNEXPECTED_MM_CREATE_ERR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNEXPECTED_MM_MAP_ERROR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNEXPECTED_MM_EXTEND_ERR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NOT_LOGON_PROCESS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LOGON_SESSION_EXISTS}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_1}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_2}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_3}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_4}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_5}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_6}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_7}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_8}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_9}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_10}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_11}, {
++	ERRDOS, 87, NT_STATUS_INVALID_PARAMETER_12}, {
++	ERRDOS, ERRbadpath, NT_STATUS_REDIRECTOR_NOT_STARTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_REDIRECTOR_STARTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_STACK_OVERFLOW}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_PACKAGE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BAD_FUNCTION_TABLE}, {
++	ERRDOS, 203, 0xc0000100}, {
++	ERRDOS, 145, NT_STATUS_DIRECTORY_NOT_EMPTY}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FILE_CORRUPT_ERROR}, {
++	ERRDOS, 267, NT_STATUS_NOT_A_DIRECTORY}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BAD_LOGON_SESSION_STATE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LOGON_SESSION_COLLISION}, {
++	ERRDOS, 206, NT_STATUS_NAME_TOO_LONG}, {
++	ERRDOS, 2401, NT_STATUS_FILES_OPEN}, {
++	ERRDOS, 2404, NT_STATUS_CONNECTION_IN_USE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_MESSAGE_NOT_FOUND}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_PROCESS_IS_TERMINATING}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_LOGON_TYPE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_GUID_TRANSLATION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CANNOT_IMPERSONATE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_IMAGE_ALREADY_LOADED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_NOT_PRESENT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_LID_NOT_EXIST}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_LID_ALREADY_OWNED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_NOT_LID_OWNER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_INVALID_COMMAND}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_INVALID_LID}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_SELECTOR_NOT_AVAILABLE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ABIOS_INVALID_SELECTOR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_LDT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_LDT_SIZE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_LDT_OFFSET}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_LDT_DESCRIPTOR}, {
++	ERRDOS, 193, NT_STATUS_INVALID_IMAGE_NE_FORMAT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_RXACT_INVALID_STATE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_RXACT_COMMIT_FAILURE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_MAPPED_FILE_SIZE_ZERO}, {
++	ERRDOS, ERRnofids, NT_STATUS_TOO_MANY_OPENED_FILES}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CANCELLED}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_CANNOT_DELETE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_COMPUTER_NAME}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_FILE_DELETED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_SPECIAL_ACCOUNT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_SPECIAL_GROUP}, {
++	ERRHRD, ERRgeneral, NT_STATUS_SPECIAL_USER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_MEMBERS_PRIMARY_GROUP}, {
++	ERRDOS, ERRbadfid, NT_STATUS_FILE_CLOSED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_TOO_MANY_THREADS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_THREAD_NOT_IN_PROCESS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_TOKEN_ALREADY_IN_USE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PAGEFILE_QUOTA_EXCEEDED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_COMMITMENT_LIMIT}, {
++	ERRDOS, 193, NT_STATUS_INVALID_IMAGE_LE_FORMAT}, {
++	ERRDOS, 193, NT_STATUS_INVALID_IMAGE_NOT_MZ}, {
++	ERRDOS, 193, NT_STATUS_INVALID_IMAGE_PROTECT}, {
++	ERRDOS, 193, NT_STATUS_INVALID_IMAGE_WIN_16}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LOGON_SERVER_CONFLICT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_TIME_DIFFERENCE_AT_DC}, {
++	ERRHRD, ERRgeneral, NT_STATUS_SYNCHRONIZATION_REQUIRED}, {
++	ERRDOS, 126, NT_STATUS_DLL_NOT_FOUND}, {
++	ERRHRD, ERRgeneral, NT_STATUS_OPEN_FAILED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_IO_PRIVILEGE_FAILED}, {
++	ERRDOS, 182, NT_STATUS_ORDINAL_NOT_FOUND}, {
++	ERRDOS, 127, NT_STATUS_ENTRYPOINT_NOT_FOUND}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CONTROL_C_EXIT}, {
++	ERRDOS, 64, NT_STATUS_LOCAL_DISCONNECT}, {
++	ERRDOS, 64, NT_STATUS_REMOTE_DISCONNECT}, {
++	ERRDOS, 51, NT_STATUS_REMOTE_RESOURCES}, {
++	ERRDOS, 59, NT_STATUS_LINK_FAILED}, {
++	ERRDOS, 59, NT_STATUS_LINK_TIMEOUT}, {
++	ERRDOS, 59, NT_STATUS_INVALID_CONNECTION}, {
++	ERRDOS, 59, NT_STATUS_INVALID_ADDRESS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DLL_INIT_FAILED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_MISSING_SYSTEMFILE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNHANDLED_EXCEPTION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_APP_INIT_FAILURE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PAGEFILE_CREATE_FAILED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_PAGEFILE}, {
++	ERRDOS, 124, NT_STATUS_INVALID_LEVEL}, {
++	ERRDOS, 86, NT_STATUS_WRONG_PASSWORD_CORE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ILLEGAL_FLOAT_CONTEXT}, {
++	ERRDOS, 109, NT_STATUS_PIPE_BROKEN}, {
++	ERRHRD, ERRgeneral, NT_STATUS_REGISTRY_CORRUPT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_REGISTRY_IO_FAILED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_EVENT_PAIR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNRECOGNIZED_VOLUME}, {
++	ERRHRD, ERRgeneral, NT_STATUS_SERIAL_NO_DEVICE_INITED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_ALIAS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_MEMBER_NOT_IN_ALIAS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_MEMBER_IN_ALIAS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ALIAS_EXISTS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LOGON_NOT_GRANTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_TOO_MANY_SECRETS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_SECRET_TOO_LONG}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INTERNAL_DB_ERROR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FULLSCREEN_MODE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_TOO_MANY_CONTEXT_IDS}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_LOGON_TYPE_NOT_GRANTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NOT_REGISTRY_FILE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NT_CROSS_ENCRYPTION_REQUIRED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DOMAIN_CTRLR_CONFIG_ERROR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FT_MISSING_MEMBER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ILL_FORMED_SERVICE_ENTRY}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ILLEGAL_CHARACTER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNMAPPABLE_CHARACTER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNDEFINED_CHARACTER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FLOPPY_VOLUME}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FLOPPY_ID_MARK_NOT_FOUND}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FLOPPY_WRONG_CYLINDER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FLOPPY_UNKNOWN_ERROR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FLOPPY_BAD_REGISTERS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DISK_RECALIBRATE_FAILED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DISK_OPERATION_FAILED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DISK_RESET_FAILED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_SHARED_IRQ_BUSY}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FT_ORPHANING}, {
++	ERRHRD, ERRgeneral, 0xc000016e}, {
++	ERRHRD, ERRgeneral, 0xc000016f}, {
++	ERRHRD, ERRgeneral, 0xc0000170}, {
++	ERRHRD, ERRgeneral, 0xc0000171}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PARTITION_FAILURE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_BLOCK_LENGTH}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DEVICE_NOT_PARTITIONED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNABLE_TO_LOCK_MEDIA}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNABLE_TO_UNLOAD_MEDIA}, {
++	ERRHRD, ERRgeneral, NT_STATUS_EOM_OVERFLOW}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_MEDIA}, {
++	ERRHRD, ERRgeneral, 0xc0000179}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_SUCH_MEMBER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_MEMBER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_KEY_DELETED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_LOG_SPACE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_TOO_MANY_SIDS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LM_CROSS_ENCRYPTION_REQUIRED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_KEY_HAS_CHILDREN}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CHILD_MUST_BE_VOLATILE}, {
++	ERRDOS, 87, NT_STATUS_DEVICE_CONFIGURATION_ERROR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DRIVER_INTERNAL_ERROR}, {
++	ERRDOS, 22, NT_STATUS_INVALID_DEVICE_STATE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_IO_DEVICE_ERROR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DEVICE_PROTOCOL_ERROR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BACKUP_CONTROLLER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LOG_FILE_FULL}, {
++	ERRDOS, 19, NT_STATUS_TOO_LATE}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_NO_TRUST_LSA_SECRET},
++/*	{ This NT error code was 'sqashed'
++	 from NT_STATUS_NO_TRUST_SAM_ACCOUNT to
++	 NT_STATUS_TRUSTED_RELATIONSHIP_FAILURE during the session setup } */
++	{
++	ERRDOS, ERRnoaccess, NT_STATUS_NO_TRUST_SAM_ACCOUNT}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_TRUSTED_DOMAIN_FAILURE}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_TRUSTED_RELATIONSHIP_FAILURE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_EVENTLOG_FILE_CORRUPT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_EVENTLOG_CANT_START}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_TRUST_FAILURE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_MUTANT_LIMIT_EXCEEDED}, {
++	ERRDOS, ERRnetlogonNotStarted, NT_STATUS_NETLOGON_NOT_STARTED}, {
++	ERRSRV, ERRaccountexpired, NT_STATUS_ACCOUNT_EXPIRED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_POSSIBLE_DEADLOCK}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NETWORK_CREDENTIAL_CONFLICT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_REMOTE_SESSION_LIMIT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_EVENTLOG_FILE_CHANGED}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_NOLOGON_INTERDOMAIN_TRUST_ACCOUNT}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_NOLOGON_WORKSTATION_TRUST_ACCOUNT}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_NOLOGON_SERVER_TRUST_ACCOUNT},
++/*	{ This NT error code was 'sqashed'
++	 from NT_STATUS_DOMAIN_TRUST_INCONSISTENT to NT_STATUS_LOGON_FAILURE
++	 during the session setup }  */
++	{
++	ERRDOS, ERRnoaccess, NT_STATUS_DOMAIN_TRUST_INCONSISTENT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FS_DRIVER_REQUIRED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_USER_SESSION_KEY}, {
++	ERRDOS, 59, NT_STATUS_USER_SESSION_DELETED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_RESOURCE_LANG_NOT_FOUND}, {
++	ERRDOS, ERRnoresource, NT_STATUS_INSUFF_SERVER_RESOURCES}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_BUFFER_SIZE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_ADDRESS_COMPONENT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_ADDRESS_WILDCARD}, {
++	ERRDOS, 68, NT_STATUS_TOO_MANY_ADDRESSES}, {
++	ERRDOS, 52, NT_STATUS_ADDRESS_ALREADY_EXISTS}, {
++	ERRDOS, 64, NT_STATUS_ADDRESS_CLOSED}, {
++	ERRDOS, 64, NT_STATUS_CONNECTION_DISCONNECTED}, {
++	ERRDOS, 64, NT_STATUS_CONNECTION_RESET}, {
++	ERRDOS, 68, NT_STATUS_TOO_MANY_NODES}, {
++	ERRDOS, 59, NT_STATUS_TRANSACTION_ABORTED}, {
++	ERRDOS, 59, NT_STATUS_TRANSACTION_TIMED_OUT}, {
++	ERRDOS, 59, NT_STATUS_TRANSACTION_NO_RELEASE}, {
++	ERRDOS, 59, NT_STATUS_TRANSACTION_NO_MATCH}, {
++	ERRDOS, 59, NT_STATUS_TRANSACTION_RESPONDED}, {
++	ERRDOS, 59, NT_STATUS_TRANSACTION_INVALID_ID}, {
++	ERRDOS, 59, NT_STATUS_TRANSACTION_INVALID_TYPE}, {
++	ERRDOS, ERRunsup, NT_STATUS_NOT_SERVER_SESSION}, {
++	ERRDOS, ERRunsup, NT_STATUS_NOT_CLIENT_SESSION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CANNOT_LOAD_REGISTRY_FILE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DEBUG_ATTACH_FAILED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_SYSTEM_PROCESS_TERMINATED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DATA_NOT_ACCEPTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_BROWSER_SERVERS_FOUND}, {
++	ERRHRD, ERRgeneral, NT_STATUS_VDM_HARD_ERROR}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DRIVER_CANCEL_TIMEOUT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_REPLY_MESSAGE_MISMATCH}, {
++	ERRHRD, ERRgeneral, NT_STATUS_MAPPED_ALIGNMENT}, {
++	ERRDOS, 193, NT_STATUS_IMAGE_CHECKSUM_MISMATCH}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LOST_WRITEBEHIND_DATA}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CLIENT_SERVER_PARAMETERS_INVALID}, {
++	ERRSRV, ERRpasswordExpired, NT_STATUS_PASSWORD_MUST_CHANGE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NOT_FOUND}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NOT_TINY_STREAM}, {
++	ERRHRD, ERRgeneral, NT_STATUS_RECOVERY_FAILURE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_STACK_OVERFLOW_READ}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FAIL_CHECK}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DUPLICATE_OBJECTID}, {
++	ERRHRD, ERRgeneral, NT_STATUS_OBJECTID_EXISTS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CONVERT_TO_LARGE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_RETRY}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FOUND_OUT_OF_SCOPE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ALLOCATE_BUCKET}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PROPSET_NOT_FOUND}, {
++	ERRHRD, ERRgeneral, NT_STATUS_MARSHALL_OVERFLOW}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_VARIANT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_DOMAIN_CONTROLLER_NOT_FOUND}, {
++	ERRDOS, ERRnoaccess, NT_STATUS_ACCOUNT_LOCKED_OUT}, {
++	ERRDOS, ERRbadfid, NT_STATUS_HANDLE_NOT_CLOSABLE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CONNECTION_REFUSED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_GRACEFUL_DISCONNECT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ADDRESS_ALREADY_ASSOCIATED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_ADDRESS_NOT_ASSOCIATED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CONNECTION_INVALID}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CONNECTION_ACTIVE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NETWORK_UNREACHABLE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_HOST_UNREACHABLE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PROTOCOL_UNREACHABLE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PORT_UNREACHABLE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_REQUEST_ABORTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CONNECTION_ABORTED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BAD_COMPRESSION_BUFFER}, {
++	ERRHRD, ERRgeneral, NT_STATUS_USER_MAPPED_FILE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_AUDIT_FAILED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_TIMER_RESOLUTION_NOT_SET}, {
++	ERRHRD, ERRgeneral, NT_STATUS_CONNECTION_COUNT_LIMIT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LOGIN_TIME_RESTRICTION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LOGIN_WKSTA_RESTRICTION}, {
++	ERRDOS, 193, NT_STATUS_IMAGE_MP_UP_MISMATCH}, {
++	ERRHRD, ERRgeneral, 0xc000024a}, {
++	ERRHRD, ERRgeneral, 0xc000024b}, {
++	ERRHRD, ERRgeneral, 0xc000024c}, {
++	ERRHRD, ERRgeneral, 0xc000024d}, {
++	ERRHRD, ERRgeneral, 0xc000024e}, {
++	ERRHRD, ERRgeneral, 0xc000024f}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INSUFFICIENT_LOGON_INFO}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BAD_DLL_ENTRYPOINT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_BAD_SERVICE_ENTRYPOINT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LPC_REPLY_LOST}, {
++	ERRHRD, ERRgeneral, NT_STATUS_IP_ADDRESS_CONFLICT1}, {
++	ERRHRD, ERRgeneral, NT_STATUS_IP_ADDRESS_CONFLICT2}, {
++	ERRHRD, ERRgeneral, NT_STATUS_REGISTRY_QUOTA_LIMIT}, {
++	ERRSRV, 3, NT_STATUS_PATH_NOT_COVERED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_NO_CALLBACK_ACTIVE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_LICENSE_QUOTA_EXCEEDED}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PWD_TOO_SHORT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PWD_TOO_RECENT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PWD_HISTORY_CONFLICT}, {
++	ERRHRD, ERRgeneral, 0xc000025d}, {
++	ERRHRD, ERRgeneral, NT_STATUS_PLUGPLAY_NO_DEVICE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_UNSUPPORTED_COMPRESSION}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_HW_PROFILE}, {
++	ERRHRD, ERRgeneral, NT_STATUS_INVALID_PLUGPLAY_DEVICE_PATH}, {
++	ERRDOS, 182, NT_STATUS_DRIVER_ORDINAL_NOT_FOUND}, {
++	ERRDOS, 127, NT_STATUS_DRIVER_ENTRYPOINT_NOT_FOUND}, {
++	ERRDOS, 288, NT_STATUS_RESOURCE_NOT_OWNED}, {
++	ERRDOS, ErrTooManyLinks, NT_STATUS_TOO_MANY_LINKS}, {
++	ERRHRD, ERRgeneral, NT_STATUS_QUOTA_LIST_INCONSISTENT}, {
++	ERRHRD, ERRgeneral, NT_STATUS_FILE_IS_OFFLINE}, {
++	ERRDOS, 21, 0xc000026e}, {
++	ERRDOS, 161, 0xc0000281}, {
++	ERRDOS, ERRnoaccess, 0xc000028a}, {
++	ERRDOS, ERRnoaccess, 0xc000028b}, {
++	ERRHRD, ERRgeneral, 0xc000028c}, {
++	ERRDOS, ERRnoaccess, 0xc000028d}, {
++	ERRDOS, ERRnoaccess, 0xc000028e}, {
++	ERRDOS, ERRnoaccess, 0xc000028f}, {
++	ERRDOS, ERRnoaccess, 0xc0000290}, {
++	ERRDOS, ERRbadfunc, 0xc000029c}, {
++	ERRDOS, ERRsymlink, NT_STATUS_STOPPED_ON_SYMLINK}, {
++	ERRDOS, ERRinvlevel, 0x007c0001}, {
++	0, 0, 0 }
++};
++
++/*****************************************************************************
++ Print an error message from the status code
++ *****************************************************************************/
++static void
++cifs_print_status(__u32 status_code)
 +{
-+	unsigned int in_len;
-+	char *temp = (char *) buffer;
++	int idx = 0;
 +
-+	memset(temp, 0, 256); /* bigger than MAX_CIFS_HDR_SIZE */
-+
-+	in_len = (2 * word_count) + sizeof(struct smb_hdr) +
-+		2 /* for bcc field itself */;
-+
-+	buffer->Protocol[0] = 0xFF;
-+	buffer->Protocol[1] = 'S';
-+	buffer->Protocol[2] = 'M';
-+	buffer->Protocol[3] = 'B';
-+	buffer->Command = smb_command;
-+	buffer->Flags = 0x00;	/* case sensitive */
-+	buffer->Flags2 = SMBFLG2_KNOWS_LONG_NAMES;
-+	buffer->Pid = cpu_to_le16((__u16)current->tgid);
-+	buffer->PidHigh = cpu_to_le16((__u16)(current->tgid >> 16));
-+	if (treeCon) {
-+		buffer->Tid = treeCon->tid;
-+		if (treeCon->ses) {
-+			if (treeCon->ses->capabilities & CAP_UNICODE)
-+				buffer->Flags2 |= SMBFLG2_UNICODE;
-+			if (treeCon->ses->capabilities & CAP_STATUS32)
-+				buffer->Flags2 |= SMBFLG2_ERR_STATUS;
-+
-+			/* Uid is not converted */
-+			buffer->Uid = treeCon->ses->Suid;
-+			if (treeCon->ses->server)
-+				buffer->Mid = get_next_mid(treeCon->ses->server);
++	while (nt_errs[idx].nt_errstr != NULL) {
++		if (nt_errs[idx].nt_errcode == status_code) {
++			pr_notice("Status code returned 0x%08x %s\n",
++				  status_code, nt_errs[idx].nt_errstr);
++			return;
 +		}
-+		if (treeCon->Flags & SMB_SHARE_IS_IN_DFS)
-+			buffer->Flags2 |= SMBFLG2_DFS;
-+		if (treeCon->nocase)
-+			buffer->Flags  |= SMBFLG_CASELESS;
-+		if ((treeCon->ses) && (treeCon->ses->server))
-+			if (treeCon->ses->server->sign)
-+				buffer->Flags2 |= SMBFLG2_SECURITY_SIGNATURE;
++		idx++;
 +	}
-+
-+/*  endian conversion of flags is now done just before sending */
-+	buffer->WordCount = (char) word_count;
-+	return in_len;
++	return;
 +}
 +
-+bool
-+is_valid_oplock_break(char *buffer, struct TCP_Server_Info *srv)
++
++static void
++ntstatus_to_dos(__u32 ntstatus, __u8 *eclass, __u16 *ecode)
 +{
-+	struct smb_hdr *buf = (struct smb_hdr *)buffer;
-+	struct smb_com_lock_req *pSMB = (struct smb_com_lock_req *)buf;
-+	struct TCP_Server_Info *pserver;
-+	struct cifs_ses *ses;
-+	struct cifs_tcon *tcon;
-+	struct cifsInodeInfo *pCifsInode;
-+	struct cifsFileInfo *netfile;
++	int i;
++	if (ntstatus == 0) {
++		*eclass = 0;
++		*ecode = 0;
++		return;
++	}
++	for (i = 0; ntstatus_to_dos_map[i].ntstatus; i++) {
++		if (ntstatus == ntstatus_to_dos_map[i].ntstatus) {
++			*eclass = ntstatus_to_dos_map[i].dos_class;
++			*ecode = ntstatus_to_dos_map[i].dos_code;
++			return;
++		}
++	}
++	*eclass = ERRHRD;
++	*ecode = ERRgeneral;
++}
 +
-+	cifs_dbg(FYI, "Checking for oplock break or dnotify response\n");
-+	if ((pSMB->hdr.Command == SMB_COM_NT_TRANSACT) &&
-+	   (pSMB->hdr.Flags & SMBFLG_RESPONSE)) {
-+		struct smb_com_transaction_change_notify_rsp *pSMBr =
-+			(struct smb_com_transaction_change_notify_rsp *)buf;
-+		struct file_notify_information *pnotify;
-+		__u32 data_offset = 0;
-+		size_t len = srv->total_read - srv->pdu_size;
++int
++map_smb_to_linux_error(char *buf, bool logErr)
++{
++	struct smb_hdr *smb = (struct smb_hdr *)buf;
++	unsigned int i;
++	int rc = -EIO;	/* if transport error smb error may not be set */
++	__u8 smberrclass;
++	__u16 smberrcode;
 +
-+		if (get_bcc(buf) > sizeof(struct file_notify_information)) {
-+			data_offset = le32_to_cpu(pSMBr->DataOffset);
++	/* BB if NT Status codes - map NT BB */
 +
-+			if (data_offset >
-+			    len - sizeof(struct file_notify_information)) {
-+				cifs_dbg(FYI, "Invalid data_offset %u\n",
-+					 data_offset);
-+				return true;
++	/* old style smb error codes */
++	if (smb->Status.CifsError == 0)
++		return 0;
++
++	if (smb->Flags2 & SMBFLG2_ERR_STATUS) {
++		/* translate the newer STATUS codes to old style SMB errors
++		 * and then to POSIX errors */
++		__u32 err = le32_to_cpu(smb->Status.CifsError);
++		if (logErr && (err != (NT_STATUS_MORE_PROCESSING_REQUIRED)))
++			cifs_print_status(err);
++		else if (cifsFYI & CIFS_RC)
++			cifs_print_status(err);
++		ntstatus_to_dos(err, &smberrclass, &smberrcode);
++	} else {
++		smberrclass = smb->Status.DosError.ErrorClass;
++		smberrcode = le16_to_cpu(smb->Status.DosError.Error);
++	}
++
++	/* old style errors */
++
++	/* DOS class smb error codes - map DOS */
++	if (smberrclass == ERRDOS) {
++		/* 1 byte field no need to byte reverse */
++		for (i = 0;
++		     i <
++		     sizeof(mapping_table_ERRDOS) /
++		     sizeof(struct smb_to_posix_error); i++) {
++			if (mapping_table_ERRDOS[i].smb_err == 0)
++				break;
++			else if (mapping_table_ERRDOS[i].smb_err ==
++								smberrcode) {
++				rc = mapping_table_ERRDOS[i].posix_code;
++				break;
 +			}
-+			pnotify = (struct file_notify_information *)
-+				((char *)&pSMBr->hdr.Protocol + data_offset);
-+			cifs_dbg(FYI, "dnotify on %s Action: 0x%x\n",
-+				 pnotify->FileName, pnotify->Action);
-+			/*   cifs_dump_mem("Rcvd notify Data: ",buf,
-+				sizeof(struct smb_hdr)+60); */
-+			return true;
++			/* else try next error mapping one to see if match */
 +		}
-+		if (pSMBr->hdr.Status.CifsError) {
-+			cifs_dbg(FYI, "notify err 0x%x\n",
-+				 pSMBr->hdr.Status.CifsError);
-+			return true;
-+		}
-+		return false;
-+	}
-+	if (pSMB->hdr.Command != SMB_COM_LOCKING_ANDX)
-+		return false;
-+	if (pSMB->hdr.Flags & SMBFLG_RESPONSE) {
-+		/* no sense logging error on invalid handle on oplock
-+		   break - harmless race between close request and oplock
-+		   break response is expected from time to time writing out
-+		   large dirty files cached on the client */
-+		if ((NT_STATUS_INVALID_HANDLE) ==
-+		   le32_to_cpu(pSMB->hdr.Status.CifsError)) {
-+			cifs_dbg(FYI, "Invalid handle on oplock break\n");
-+			return true;
-+		} else if (ERRbadfid ==
-+		   le16_to_cpu(pSMB->hdr.Status.DosError.Error)) {
-+			return true;
-+		} else {
-+			return false; /* on valid oplock brk we get "request" */
-+		}
-+	}
-+	if (pSMB->hdr.WordCount != 8)
-+		return false;
-+
-+	cifs_dbg(FYI, "oplock type 0x%x level 0x%x\n",
-+		 pSMB->LockType, pSMB->OplockLevel);
-+	if (!(pSMB->LockType & LOCKING_ANDX_OPLOCK_RELEASE))
-+		return false;
-+
-+	/* If server is a channel, select the primary channel */
-+	pserver = SERVER_IS_CHAN(srv) ? srv->primary_server : srv;
-+
-+	/* look up tcon based on tid & uid */
-+	spin_lock(&cifs_tcp_ses_lock);
-+	list_for_each_entry(ses, &pserver->smb_ses_list, smb_ses_list) {
-+		if (cifs_ses_exiting(ses))
-+			continue;
-+		list_for_each_entry(tcon, &ses->tcon_list, tcon_list) {
-+			if (tcon->tid != buf->Tid)
-+				continue;
-+
-+			cifs_stats_inc(&tcon->stats.cifs_stats.num_oplock_brks);
-+			spin_lock(&tcon->open_file_lock);
-+			list_for_each_entry(netfile, &tcon->openFileList, tlist) {
-+				if (pSMB->Fid != netfile->fid.netfid)
-+					continue;
-+
-+				cifs_dbg(FYI, "file id match, oplock break\n");
-+				pCifsInode = CIFS_I(d_inode(netfile->dentry));
-+
-+				set_bit(CIFS_INODE_PENDING_OPLOCK_BREAK,
-+					&pCifsInode->flags);
-+
-+				netfile->oplock_epoch = 0;
-+				netfile->oplock_level = pSMB->OplockLevel;
-+				netfile->oplock_break_cancelled = false;
-+				cifs_queue_oplock_break(netfile);
-+
-+				spin_unlock(&tcon->open_file_lock);
-+				spin_unlock(&cifs_tcp_ses_lock);
-+				return true;
++	} else if (smberrclass == ERRSRV) {
++		/* server class of error codes */
++		for (i = 0;
++		     i <
++		     sizeof(mapping_table_ERRSRV) /
++		     sizeof(struct smb_to_posix_error); i++) {
++			if (mapping_table_ERRSRV[i].smb_err == 0)
++				break;
++			else if (mapping_table_ERRSRV[i].smb_err ==
++								smberrcode) {
++				rc = mapping_table_ERRSRV[i].posix_code;
++				break;
 +			}
-+			spin_unlock(&tcon->open_file_lock);
-+			spin_unlock(&cifs_tcp_ses_lock);
-+			cifs_dbg(FYI, "No matching file for oplock break\n");
-+			return true;
++			/* else try next error mapping to see if match */
 +		}
 +	}
-+	spin_unlock(&cifs_tcp_ses_lock);
-+	cifs_dbg(FYI, "Can not process oplock break for non-existent connection\n");
-+	return true;
++	/* else ERRHRD class errors or junk  - return EIO */
++
++	/* special cases for NT status codes which cannot be translated to DOS codes */
++	if (smb->Flags2 & SMBFLG2_ERR_STATUS) {
++		__u32 err = le32_to_cpu(smb->Status.CifsError);
++		if (err == (NT_STATUS_NOT_A_REPARSE_POINT))
++			rc = -ENODATA;
++		else if (err == (NT_STATUS_PRIVILEGE_NOT_HELD))
++			rc = -EPERM;
++	}
++
++	cifs_dbg(FYI, "Mapping smb error code 0x%x to POSIX err %d\n",
++		 le32_to_cpu(smb->Status.CifsError), rc);
++
++	/* generic corrective action e.g. reconnect SMB session on
++	 * ERRbaduid could be added */
++
++	if (rc == -EIO)
++		smb_EIO2(smb_eio_trace_smb1_received_error,
++			 le32_to_cpu(smb->Status.CifsError),
++			 le16_to_cpu(smb->Flags2));
++	return rc;
++}
++
++int
++map_and_check_smb_error(struct TCP_Server_Info *server,
++			struct mid_q_entry *mid, bool logErr)
++{
++	int rc;
++	struct smb_hdr *smb = (struct smb_hdr *)mid->resp_buf;
++
++	rc = map_smb_to_linux_error((char *)smb, logErr);
++	if (rc == -EACCES && !(smb->Flags2 & SMBFLG2_ERR_STATUS)) {
++		/* possible ERRBaduid */
++		__u8 class = smb->Status.DosError.ErrorClass;
++		__u16 code = le16_to_cpu(smb->Status.DosError.Error);
++
++		/* switch can be used to handle different errors */
++		if (class == ERRSRV && code == ERRbaduid) {
++			cifs_dbg(FYI, "Server returned 0x%x, reconnecting session...\n",
++				code);
++			cifs_signal_cifsd_for_reconnect(server, false);
++		}
++	}
++
++	return rc;
++}
+diff --git a/fs/smb/client/smb1misc.c b/fs/smb/client/smb1misc.c
+index d73ef87f55d0..ba56023010d8 100644
+--- a/fs/smb/client/smb1misc.c
++++ b/fs/smb/client/smb1misc.c
+@@ -175,3 +175,15 @@ is_valid_oplock_break(char *buffer, struct TCP_Server_Info *srv)
+ 	cifs_dbg(FYI, "Can not process oplock break for non-existent connection\n");
+ 	return true;
+ }
++
++/*
++ * calculate the size of the SMB message based on the fixed header
++ * portion, the number of word parameters and the data portion of the message
++ */
++unsigned int
++smbCalcSize(void *buf)
++{
++	struct smb_hdr *ptr = buf;
++	return (sizeof(struct smb_hdr) + (2 * ptr->WordCount) +
++		2 /* size of the bcc field */ + get_bcc(ptr));
 +}
 diff --git a/fs/smb/client/smb1proto.h b/fs/smb/client/smb1proto.h
-index de021e17dc4b..259cfafacfab 100644
+index 259cfafacfab..f5760af58999 100644
 --- a/fs/smb/client/smb1proto.h
 +++ b/fs/smb/client/smb1proto.h
-@@ -220,6 +220,13 @@ int CIFSSMBSetEA(const unsigned int xid, struct cifs_tcon *tcon,
+@@ -220,12 +220,20 @@ int CIFSSMBSetEA(const unsigned int xid, struct cifs_tcon *tcon,
  void cifs_dump_detail(void *buf, size_t buf_len,
  		      struct TCP_Server_Info *server);
  
 +/*
-+ * smb1misc.c
++ * smb1maperror.c
 + */
-+unsigned int header_assemble(struct smb_hdr *buffer, char smb_command,
-+			     const struct cifs_tcon *treeCon, int word_count);
-+bool is_valid_oplock_break(char *buffer, struct TCP_Server_Info *srv);
++int map_smb_to_linux_error(char *buf, bool logErr);
++int map_and_check_smb_error(struct TCP_Server_Info *server,
++			    struct mid_q_entry *mid, bool logErr);
 +
  /*
-  * smb1ops.c
+  * smb1misc.c
   */
+ unsigned int header_assemble(struct smb_hdr *buffer, char smb_command,
+ 			     const struct cifs_tcon *treeCon, int word_count);
+ bool is_valid_oplock_break(char *buffer, struct TCP_Server_Info *srv);
++unsigned int smbCalcSize(void *buf);
+ 
+ /*
+  * smb1ops.c
 
 
