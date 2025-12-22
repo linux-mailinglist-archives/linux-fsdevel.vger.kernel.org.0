@@ -1,168 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-71826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B4CCD6276
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 14:29:00 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D855CD6601
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 15:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 31943300BDAC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 13:28:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BE323303FA5C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 14:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E68E2E03EC;
-	Mon, 22 Dec 2025 13:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C128F2F616A;
+	Mon, 22 Dec 2025 14:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4CGnW/+"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="TRjDYwUL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066DD2C026A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 13:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766410135; cv=none; b=KB3Ou2qExfqn3StJFaS0Z6s+pzrmvBj6+LWe4/Fcb6or1prrCf6CKKdWoYQ4WlbeKJuQfMh0j+6A6JpAPmrD0KZG+jwPJQP7h8+CCBH4aobytdVvsxZObVKbQUL+zJ/7n37u/ZdmBeKJfaUm7KSeX5X7McKp6gAoKDuqsr3ZbPE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766410135; c=relaxed/simple;
-	bh=DQHNLnCJMOvA/C6YBw1ZxZdCTkaUBXfe9KJGnju/iQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pnsJIFqdVyUsw6LDrCsnE2eNoUdFZB2UAOYGswguvxZb9rfLU/8xpuUtF3+R+192+wR12d55Zj8i9rx2xjJBvxu56FD3baZQNeNXNgjuYQ/SoAj4rV62cfnlzmdd+TMc1OodGGss2N7bg41vIZGtiLa6P1ILuHZUu5jTaf9xnuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4CGnW/+; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-5de0c1fa660so1186999137.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 05:28:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766410133; x=1767014933; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DQHNLnCJMOvA/C6YBw1ZxZdCTkaUBXfe9KJGnju/iQU=;
-        b=D4CGnW/+X21KQ85W0n2nGE8x1vlHPZTUcHbDRHIiFJD/hCiKzjkIxO7WhPRIdZLJgN
-         p7uVFvxam+EqHBg/GjdkUhfqUsZPm9pgwuQsHNde/k6jGOUSPxyu5cRxCtdmr0IFwZlc
-         QonVJl9t1oRpI+hT+fRn+Z/a3mQWxHxqyi744pQ0DZYHWoEVNx2T0+KOybpFY/dSdx+I
-         UgSTiT6PIjcu8Ywk8C2l4Xg/3aI0OQDUGA0kuhAWCZf2ES/z8kJzxdiOBVnLH6awXH/M
-         fD5u5kHGOUsLvac6gFGZp16fwFX3rcFQZ8+5vV2VCTH1ZUlOSShA5c6kHyOci5bijwFb
-         oRwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766410133; x=1767014933;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=DQHNLnCJMOvA/C6YBw1ZxZdCTkaUBXfe9KJGnju/iQU=;
-        b=CLQ2McPPljrcN7bbMiqHXBxDvhWia/QZpaM0slvjQ6iJ+IOHH6um66q/BMhunkMwAy
-         VuJndc59BZAHwexlortLBpqr895OUfJBG1f6JKeorRmtJZf2+BjHF3P5lcNOG5JCyzsw
-         DSYJndAMdzp67hskUh2kvBazeINodkSbkBHR3e3jmw7uVJUfjeemBlA7TRZKZ2cHbTPu
-         N7mJONc3hXHb/T25n0IhQnX0nJTprruHctkbMrIqwKfNyCsafhdwfkW8Ev/nIxz6lwzS
-         VLVpNLGfFEj8V2kPT/C7j+MKjhhYXyACmeZp1ySgwWA2uv2SBeqVsU7x2C1TABztL19t
-         oI/Q==
-X-Gm-Message-State: AOJu0YzHLjiJlzPTU2d0h/4WaY38KJo0VOwgcTtaHbKSIqdczqFsAIrx
-	v+l1MQ8EzfM1p9OxUDS9qgTwRviadYYgur0kwD670+tr+kKxv5OkHZrG8Dj+8hSBZmG5HcIeMrF
-	SRgHigDH305yDc+wDFVqmiO5IdprmH3xk5Eypt9s=
-X-Gm-Gg: AY/fxX7Pui9KKWeVrEvmDG1mP0DQc+n/ZfAj+sb8s9Ik9EGwHQU+PQfOr+xsNq+bWX0
-	z9YF5wOb3H3uH5DzvvhadKpRNWtU7nPQLQQ7FMOjjgRMvhxIhhtWaHUhneUZX/qAPu0AYVKld5V
-	fFUU0+xHPcfzPz0t5WL8XSHzfHubf6z7k+sxHh41umPt7pFbKdyFMHmWdKu9M/ERWqXzz7CDwax
-	fJzAuimTcEVzVU8aBsqUJp/tYk/GcH8+HHCrj4YECmimtqlIKoY1GJX1SVnPJhuD5Kf3pUalbny
-	jkYOhakUSNG//M/BO4i3ZfGxJSskWbcExs/s
-X-Google-Smtp-Source: AGHT+IGWSKeaCyoidML79ijHHfRkMzw6/qBLjWiWxYaln1qC3rAnMzGrFutr3bncG4QqjlYXnc+jDLoh1XKoiMZWWfY=
-X-Received: by 2002:a05:6102:5987:b0:5db:f031:84d6 with SMTP id
- ada2fe7eead31-5eb1a7c48d4mr3410921137.28.1766410132835; Mon, 22 Dec 2025
- 05:28:52 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6FC2D738E;
+	Mon, 22 Dec 2025 14:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1766413964; cv=pass; b=fnEMwCjiZ78Rz1R55vgRduqgVmY/FQk1Jh66IqEPpjGXwfbkww5BySbxXEL/sz3LykSxqJLxmJ/u7u2ozNhn65va6HAo8epsrk6A0FhdI0dagiyQDuHCCA4BUPzzB2g2jIGRGGf6Tclu8acNxV3zKyTB8mVF/u3qQ5BAN1JGFis=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1766413964; c=relaxed/simple;
+	bh=xHQA30nq/9OWMxphyKsKsbr1ItGgYEOcffQ4phEwvHM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=hoN63VYCa98iuTPYQT2PlSoxCsT+y6NJuNp3dbmruM0kIkLjW0h18DiRCHI88CYRTKt6L/Rn6gwUIDXAvHC2BAryDmat1/xhTjM1rZnZ11Wy8+Ij8TzdkLf7MeomZRhIlzYWeS/OzW5biIyWSyeK0paZACTEapDeUZ3C90fxnq0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=TRjDYwUL; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1766413935; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TF3d24BYfzI3d1cXZPOUxy1Kt7yhIDjKDmhMgFoAVLjj59af3DeE4OHkrnSGgep/L9BTmx2YYhQdcwUBDSV5Pfy9bNDnEDsoUfUZGHSGMdrR7Qe/qyl6quWw9sqzm/tDfUy3PA+3QXKGdncjbjFn0Ed6ANwJWxF2e2XeY1G+jrQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1766413935; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=MIsebt+0bW61I/ZAHjyZRH22/kuuWpq+aRZENXzI4ss=; 
+	b=DJ5c7J6HM2N+HN05vrsXjT+URBRJUUDUd0no1jdPzE26FH/WusjWZ0AhawuBtvzJuERKCp3iTZemNP0uy05MUcfqf4Ps/hPRBWK8NpWFcqTYuCJfI6YKCVfXvzhuyE8GSmsoP0ZvUfLGmD0GyFRfgol0Ta/SPig3bEsgsQ+8y5s=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1766413935;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=MIsebt+0bW61I/ZAHjyZRH22/kuuWpq+aRZENXzI4ss=;
+	b=TRjDYwULCFJHHqehnDRLU6wUbi7vkT4D58/qj9qLat+kf0FTXu4HMHJpDd6emHHf
+	DeY41iKV88Ka86M4e39dgSzWRKkgMDH/9rkAiVwrbiUcTVSC0pMBvieeH+mfsxetqIG
+	y6pOHWUMgkppOXyteWMXESNdb9cLFMT+lh9N1LtI=
+Received: by mx.zohomail.com with SMTPS id 1766413933869679.9055953780143;
+	Mon, 22 Dec 2025 06:32:13 -0800 (PST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251221132402.27293-1-vitalifster@gmail.com> <aUh_--eKRKYOHzLz@kbusch-mbp>
- <CAPqjcqqFN-Axot-5Oxc7pXybQW9gt-+G99NnW6cfC==x39WiAg@mail.gmail.com>
-In-Reply-To: <CAPqjcqqFN-Axot-5Oxc7pXybQW9gt-+G99NnW6cfC==x39WiAg@mail.gmail.com>
-From: Vitaliy Filippov <vitalifster@gmail.com>
-Date: Mon, 22 Dec 2025 16:28:42 +0300
-X-Gm-Features: AQt7F2rjOdKLFtEGlcGjuvPN1jag3_np44VzlfGS5b59_jYAW2qeSlSH9vVC2wU
-Message-ID: <CAPqjcqqi8uR=RWEpLEC+JiwOg0fzvWvwEOscj-XYHKLuPcnDBA@mail.gmail.com>
-Subject: Re: [PATCH v2] Do not require atomic writes to be power of 2 sized
- and aligned on length boundary
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	linux-fsdevel+subscribe@vger.kernel.org, Keith Busch <kbusch@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] rust: seq_file: replace `kernel::c_str!` with C-Strings
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20251222-cstr-vfs-v1-1-18e3d327cbd7@gmail.com>
+Date: Mon, 22 Dec 2025 11:31:57 -0300
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Tamir Duberstein <tamird@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <3F4AEA7B-65E3-41E8-90BB-7F5896041FB8@collabora.com>
+References: <20251222-cstr-vfs-v1-1-18e3d327cbd7@gmail.com>
+To: Tamir Duberstein <tamird@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-Hi linux-fsdevel,
-I recently discovered that Linux incorrectly requires all atomic
-writes to have 2^N length and to be aligned on the length boundary.
-This requirement contradicts NVMe specification which doesn't require
-such alignment and length and thus highly restricts usage of atomic
-writes with NVMe disks which support it (Micron and Kioxia).
-NVMe specification has its own atomic write restrictions - AWUPF and
-NABSPF/NABO, but both are already checked by the nvme subsystem.
-The 2^N restriction comes from generic_atomic_write_valid().
-I submitted a patch which removes this restriction to linux-block and
-linux-nvme. Sorry if these maillists weren't the right place to send
-it to, it's my first patch :).
-But the function is currently used in 3 places: block/fops.c,
-fs/ext4/file.c and fs/xfs/xfs_file.c.
-Can you tell me if ext4 and xfs really want atomic writes to be 2^N
-sized and length-aligned?
-From looking at the code I'd say they don't really require it?
-Can you approve my patch if I'm right? Please :-)
 
-On Mon, Dec 22, 2025 at 12:54=E2=80=AFPM Vitaliy Filippov <vitalifster@gmai=
-l.com> wrote:
->
-> Hi! Thanks a lot for your reply! This is actually my first patch ever
-> so please don't blame me for not following some standards, I'll try to
-> resubmit it correctly.
->
-> Regarding the rest:
->
-> 1) NVMe atomic boundaries seem to already be checked in
-> nvme_valid_atomic_write().
->
-> 2) What's atomic_write_hw_unit_max? As I understand, Linux also
-> already checks it, at least
-> /sys/block/nvme**/queue/atomic_write_max_bytes is already limited by
-> max_hw_sectors_kb.
->
-> 3) Yes, I've of course seen that this function is also used by ext4
-> and xfs, but I don't understand the motivation behind the 2^n
-> requirement. I suppose file systems may fragment the write according
-> to currently allocated extents for example, but I don't see how issues
-> coming from this can be fixed by requiring writes to be 2^n.
->
-> But I understand that just removing the check may break something if
-> somebody relies on them. What do you think about removing the
-> requirement only for NVMe or only for block devices then? I see 3 ways
-> to do it:
-> a) split generic_atomic_write_valid() into two functions - first for
-> all types of inodes and second only for file systems.
-> b) remove generic_atomic_write_valid() from block device checks at all.
-> c) change generic_atomic_write_valid() just like in my original patch
-> but copy original checks into other places where it's used (ext4 and
-> xfs).
->
-> Which way do you think would be the best?
->
-> On Mon, Dec 22, 2025 at 2:17=E2=80=AFAM Keith Busch <kbusch@kernel.org> w=
-rote:
-> >
-> > On Sun, Dec 21, 2025 at 04:24:02PM +0300, Vitaliy Filippov wrote:
-> > > It contradicts NVMe specification where alignment is only required wh=
-en atomic
-> > > write boundary (NABSPF/NABO) is set and highly limits usage of NVMe a=
-tomic writes
-> >
-> > Commit header is missing the "fs:" prefix, and the commit log should
-> > wrap at 72 characters.
-> >
-> > On the techincal side, this is a generic function used by multiple
-> > protocols, so you can't just appeal to NVMe to justify removing the
-> > checks.
-> >
-> > NVMe still has atomic boundaries where straddling it fails to be an
-> > atomic operation. Instead of removing the checks, you'd have to replace
-> > it with a more costly operation if you really want to support more
-> > arbitrary write lengths and offsets. And if you do manage to remove the
-> > power of two requirement, then the queue limit for nvme's
-> > atomic_write_hw_unit_max isn't correct anymore.
+
+> On 22 Dec 2025, at 09:18, Tamir Duberstein <tamird@kernel.org> wrote:
+>=20
+> From: Tamir Duberstein <tamird@gmail.com>
+>=20
+> C-String literals were added in Rust 1.77. Replace instances of
+> `kernel::c_str!` with C-String literals where possible.
+>=20
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Benno Lossin <lossin@kernel.org>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> ---
+> rust/kernel/seq_file.rs | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/rust/kernel/seq_file.rs b/rust/kernel/seq_file.rs
+> index 855e533813a6..518265558d66 100644
+> --- a/rust/kernel/seq_file.rs
+> +++ b/rust/kernel/seq_file.rs
+> @@ -4,7 +4,7 @@
+> //!
+> //! C header: =
+[`include/linux/seq_file.h`](srctree/include/linux/seq_file.h)
+>=20
+> -use crate::{bindings, c_str, fmt, str::CStrExt as _, =
+types::NotThreadSafe, types::Opaque};
+> +use crate::{bindings, fmt, str::CStrExt as _, types::NotThreadSafe, =
+types::Opaque};
+>=20
+> /// A utility for generating the contents of a seq file.
+> #[repr(transparent)]
+> @@ -36,7 +36,7 @@ pub fn call_printf(&self, args: fmt::Arguments<'_>) =
+{
+>         unsafe {
+>             bindings::seq_printf(
+>                 self.inner.get(),
+> -                c_str!("%pA").as_char_ptr(),
+> +                c"%pA".as_char_ptr(),
+>                 =
+core::ptr::from_ref(&args).cast::<crate::ffi::c_void>(),
+>             );
+>         }
+>=20
+> ---
+> base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+> change-id: 20251222-cstr-vfs-55ca2ceca0a4
+>=20
+> Best regards,
+> -- =20
+> Tamir Duberstein <tamird@gmail.com>
+>=20
+>=20
+
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+
 
