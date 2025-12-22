@@ -1,217 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-71837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0AE1CD70EA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 21:22:00 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D1CCD7141
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 21:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 347B3301595C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 20:21:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8E094301E927
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 20:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6204307481;
-	Mon, 22 Dec 2025 20:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB71130BF62;
+	Mon, 22 Dec 2025 20:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="p8hlTmNt"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WVPtq2sd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BA52E2F14
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 20:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90E32F3C22
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 20:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766434917; cv=fail; b=ol5X/BMQGvaN3saPHgDgBWccLo5mv+fVnJgxbIuRQsllxOUVLXyN9O/q668urWKn0IZrlxnWVGLm8Eixc7vjfjKoYHUjNFG/Se14V3fsbaUFDb9jfs+T6eo6wkvTKVh294e1Mr5QakK3tEUydS4WMoresOtm1VIJ3LwMISsW7TY=
+	t=1766435319; cv=fail; b=kC95VFxqS45NQZN6cUAFQY79qvwkifb1k91U1X988Cb0AbAIj/SEP26T8cT993wPT27Ho/6jCiybAfyM85nJv7F6fIex8ekrME/nUtCi6L7tST8HtYqB93otRuAL7CgqU6b6APxRK45Jzq9T7+WTytWp9sd+ppIr50+KiALRxps=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766434917; c=relaxed/simple;
-	bh=Xb7JNG8+dr6G7rW1KUKWCryy4AKQ29KvU6vwaaLZvyk=;
+	s=arc-20240116; t=1766435319; c=relaxed/simple;
+	bh=WwC3xSlqzVQbUfMJzqlUfGJN+n5ehrjQZs3g15YOMHQ=;
 	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=OvZW1q3DuBxVuNAxchEe66l3+CcbjuNfyXWgYepLjsqqdOG4NQSX3yBrquKIb/eRa/3FfOHRQdjyHT/br0BqXaAsjrDquIq32aFErCCuAAvVd36Dx3yvuKib70aBHpFMptWyaU1OpD69hzlmTyXAodt7r+G8AQOWbJY1zDQqaKg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=p8hlTmNt; arc=fail smtp.client-ip=148.163.158.5
+	 MIME-Version:Subject; b=EqpqtcBdL2XH6l8XNU+wgBg0zKkPJLKBPx9avXwWl80XUOd8oY9nO5iLtq7PVi+mWCmGrFQpF4zEuF/m1lGlRE2Dl1KDGv5WrJ9Eoo6nrGRb6sDRZzuP1O0IxigpWezkPWTo0+YWBJkbNljuxCzcjqNNlZMZRc3SGcTfiHCUh9s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WVPtq2sd; arc=fail smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5BMJ2XC3009901
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 20:21:54 GMT
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5BM8qpU6013384
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 20:28:37 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-id:content-transfer-encoding:content-type:date:from
 	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=f3JSGOJSSo1hk4+CZxgwhTC91bfecuMeBrk0jkQbPzM=; b=p8hlTmNt
-	9KEg+3UPmTawc7MQKAF1UryiPnw0h0kRf5WvSk6TXbDciu62FHjcmnvZHPi9fTeX
-	iV3uPkadk5GWi8YwREyBSX5nX2Xt/26M9hitVhHUuxtGeYmFZtVXiLlGHgArP+2t
-	rXT4YFXQQhBwLWvwEYFWk5td8pKyA8BtTLoN6R9uynRJ5ZMZMa9RJls0Ox/yXEZo
-	QUxCXQLn2KW76yyn54Rp+4XJzqsErCrXBv8bAatEepkZevcHgmTGvZpx6FjQAWdc
-	flslISPBy9clBlkjFLMq4j1Xc7qON/BhNxA2QPEMZmRZaQ9pZbrmjTwbEeercfrh
-	uOneUh/hZB1/DQ==
+	pp1; bh=5DxGKhV3HKXdPo3xaJ9SrK7f25AomtWKkUNlKhVmtFA=; b=WVPtq2sd
+	GDgs/zZaXjiCTtuWUQNWYxhxHNzkfcuXwtyTyzewLu3CNEktBK+/YMSFKyZW0hCo
+	+/ADCGzlICRlxl02ot9lp3b4o/7cylmA7Ci+ylszBYW5ZNgOQTihbFkCZxVQ57P8
+	XjJ/RdhT66eIcqfdEESXqvs/32irT0NufcbAjBVvn8Q3ad+P5IDigQxYZalonVnI
+	T+d9X6vIe02oSV5l7xd5ams2ROu9GNbedPnEUzoB3m4V2fOKeHhgaj3a37URMO+Q
+	aE0rSggN1RjanOmcMIgtLa5u+bD8KrMrVWwtblyTrowEekhL4HZMOjwdQoNA8Bvp
+	vYDM1DKqbJDUlQ==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b5h7hsxxn-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b5ka3a30g-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 20:21:54 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5BMK17s7016391
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 20:21:53 GMT
-Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010030.outbound.protection.outlook.com [52.101.56.30])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b5h7hsxxj-1
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 20:28:37 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5BMKSanq020520
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 20:28:36 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b5ka3a30a-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Dec 2025 20:21:53 +0000 (GMT)
+	Mon, 22 Dec 2025 20:28:36 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5BMKRZFh017875;
+	Mon, 22 Dec 2025 20:28:35 GMT
+Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010065.outbound.protection.outlook.com [52.101.56.65])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4b5ka3a305-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Dec 2025 20:28:35 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gKimzOxV4Ts3fAnmAp4KL2VAD9C2mfOdiRqBa99B+xVKSV4RR21JW/UdYriTXeZZSqIsfFyS6ceyy1SbCGfbQPOhg884pJNjiOrzLSKNxcCZqTYbLM3DUpGcRpEfBHf7pVXC05e3JdOl/rtivi2fwvg0Xt+uvUXQsB+shaLX/HIEsNRabH5OZfTUegdruzW4vhwMzuhw9iVxBnBOcEHpFa4ckySI+IOyYJ+o06KB9Z/9no2klHACRfw/jDn1lPGpQ1nU/0HWCcoOFxq53QULDfl/jl+XgNgC6gDNwFgN5xylY6Rmda/aQ8aXWZWDR2r5pb519IYbraS27zsjpBNDtQ==
+ b=AfpPXMr5VNr5ZmkTEOKhVeeIvy8y4ktWqeFwWOBANv6ZQtqsSWPNTNucbX+1SDyS8mtmXfAuIKXvUz9+UUZ5Zy/zkYLZGstsYhAwQ1zv7FC76jlRf9wPyvw23glSMNsje30o0yKFtzJERbIgqYvpPA4GnXWj+Wqjf4ACxBj/BIMJJZ9uMjAXGmVLA5RxVkDMm6A1B8asOXJZYtLBAzWVPZ4fZWjAtZsBE2y5Twd7s7rtTdtgm0o0uBmXf9Plz8ZS2z+ZMaCSLyAwJey9qiUW5/vXTAR2iBp3bF27nV731ZiwDHhOZvgOfeHBPmGwZSVtzKtk03Rl0oO1e5UN76u/GQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W7d5My2rlWpQ9Igl+szXAj3FlYPIGrJHNoIxZDP3Xgc=;
- b=Csw/wg/ymYjJrKMvruxcJjAYkoHd/mXXcFE7z0F+x/ASFYi6cEfUVYhMusTOQu0jaWhFVMLJnVuqfwhdocnViG7Vu8FYoGV0NxrfxV9EkTvSprbTQtt4r1sXQKvoYX0NeRvxZ1/iGs5cB4VR3SRMgu5LFhhKqjKPYv7R6TyogS8aojo+j6D711/SkQgszM8XpSkItr+LYJgHYzy83+sr7fDyo9sOudIOB2sXuvtnBmV5DesoNH7mq0Zqm6nEo/1hACIwirqTpDID+1AjQekudQ8Apmmze46lP+HVHPSHtb4cVAAp2dmiyfTG5LX5SmRI9FbO/h7qY8PRTE9ksj0c9g==
+ bh=vbKwt+Gie+picmeY+o7U2suPzp5HMuUOYrm8xav6gZk=;
+ b=zWvrkwZgwS6+xqRlHVR3k4b9ip8/UbKdpEfCZgIrU8pBKh0Yz0CiuKP64bap8+/kqqTGFDOtvSIfax7QtueFJuxEYAUQddzM/TvtYtX7WkUtM/L4oElD299fqA9VeDckDY3SUuSoRECtcNe8ZtmsdHjBDF3EJoBLXeLj8OMFtZr17ShLIyJ1iWPBaO5JFud4Epw17Nufc6Cy3Nj6aibbX7EXbsBZpXMR+vChBbLqJ0BmOWQ4pdUKdv8NU61O7KkiLQxtP4TlnVtof2n41ulOZI+9rM2L/H1uVCVUnxAPYD+NUhX+fNV7XXYjLy2olPcV2kRPTjDk71PIdehu1t7vJg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
  header.d=ibm.com; arc=none
 Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by SA1PR15MB4387.namprd15.prod.outlook.com (2603:10b6:806:192::14) with
+ by DM4PR15MB5503.namprd15.prod.outlook.com (2603:10b6:8:bc::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9434.11; Mon, 22 Dec
- 2025 20:21:51 +0000
+ 2025 20:28:30 +0000
 Received: from SA1PR15MB5819.namprd15.prod.outlook.com
  ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
  ([fe80::920c:d2ba:5432:b539%4]) with mapi id 15.20.9434.001; Mon, 22 Dec 2025
- 20:21:51 +0000
+ 20:28:30 +0000
 From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: "slava@dubeyko.com" <slava@dubeyko.com>,
-        "jkoolstra@xs4all.nl"
-	<jkoolstra@xs4all.nl>
-CC: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
+To: Patrick Donnelly <pdonnell@redhat.com>
+CC: Viacheslav Dubeyko <vdubeyko@redhat.com>,
         "linux-fsdevel@vger.kernel.org"
 	<linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "skhan@linuxfoundation.org"
-	<skhan@linuxfoundation.org>,
-        "syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com"
-	<syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com>
-Thread-Topic: [EXTERNAL] [PATCH v4] hfs: Replace BUG_ON with error handling
- for CNID count checks
-Thread-Index: AQHcceRrUgsE66faw0mbZ12OPvA55rUuHWwA
-Date: Mon, 22 Dec 2025 20:21:50 +0000
-Message-ID: <56e1a4d8a05a2345619808ed7def43d919d5ab62.camel@ibm.com>
-References: <20251220191006.2465256-1-jkoolstra@xs4all.nl>
-In-Reply-To: <20251220191006.2465256-1-jkoolstra@xs4all.nl>
+        "ceph-devel@vger.kernel.org"
+	<ceph-devel@vger.kernel.org>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        Kotresh Hiremath Ravishankar <khiremat@redhat.com>,
+        Alex Markuze
+	<amarkuze@redhat.com>,
+        "idryomov@gmail.com" <idryomov@gmail.com>,
+        Pavan
+ Rallabhandi <Pavan.Rallabhandi@ibm.com>
+Thread-Topic: [EXTERNAL] Re: [PATCH v2] ceph: fix kernel crash in ceph_open()
+Thread-Index:
+ AQHcb5TpmMeL+RYIakuRlVP/l+uM0bUmTK4AgAB3B4CAAP6yAIAAZyuAgAFGR4CAADd8AIAEfJMA
+Date: Mon, 22 Dec 2025 20:28:30 +0000
+Message-ID: <dce8ca6d1d25e12c8365ca2302697c1763c4b6aa.camel@ibm.com>
+References: <20251215215301.10433-2-slava@dubeyko.com>
+	 <CA+2bHPbtGQwxT5AcEhF--AthRTzBS2aCb0mKvM_jCu_g+GM17g@mail.gmail.com>
+	 <efbd55b968bdaaa89d3cf29a9e7f593aee9957e0.camel@ibm.com>
+	 <CA+2bHPYRUycP0M5m6_XJiBXPEw0SyPCKJNk8P5-9uRSdtdFw4w@mail.gmail.com>
+	 <fd1e92b107d6c36f65ebc12e5aaa7fb773608c6f.camel@ibm.com>
+	 <CA+2bHPaxwf5iVo5N9HgOeCQtVTL8+LrHN_=K3EB-z+jujdGbuQ@mail.gmail.com>
+	 <87994d8c04ecb211005c0ad63f63e750b41070bd.camel@ibm.com>
+	 <CA+2bHPZjUqwPfGiCMLkktszx+E2iatE80O0FHk4pr=K08GJH8g@mail.gmail.com>
+In-Reply-To:
+ <CA+2bHPZjUqwPfGiCMLkktszx+E2iatE80O0FHk4pr=K08GJH8g@mail.gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|SA1PR15MB4387:EE_
-x-ms-office365-filtering-correlation-id: e49124bd-ff40-40a6-54d4-08de4197bd9e
+x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|DM4PR15MB5503:EE_
+x-ms-office365-filtering-correlation-id: 8063252f-2fb6-44f5-9c9c-08de4198abd3
+x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|10070799003|38070700021;
+ BCL:0;ARA:13230040|10070799003|366016|376014|1800799024|38070700021;
 x-microsoft-antispam-message-info:
- =?utf-8?B?ZnpCY1RBU05YT2MveTFwcWRQR1JVM0RsblB3WGQzWDJFR1A1ZjNLWFBjaXVG?=
- =?utf-8?B?QzAzS3ZGT1d2bVY4Ylc5N2hpWk5UWTRuelQ5U1BFNVNFakJtK3VZSzVZTmtF?=
- =?utf-8?B?eXNzTGV4NzlURFl3emk5RXhOU2kwejZwZFhRNWxrTm5jc29XR1E5QXJPM3VE?=
- =?utf-8?B?QTFjWnA3K1BoNkh4MWczSTlMNVJqOUxxMlhZYmp0Q3FlYTFNdUw1clhOV2gv?=
- =?utf-8?B?RHZoeE45NDJ4M3gzTWQwU3daVEx6K0dHZVlBK3I1dHJCTkhRWGdkbG4wOG1S?=
- =?utf-8?B?a2ljd2JGNUt4c01ocUxKTnNNbklGd1lYbXdsd1FFcDQxUzNBQmhURXU1RGEw?=
- =?utf-8?B?M1dtUkFwa3NRL2gzQjBTWC9TdEZNKzlMSk5VVjlLK0Z4amVBMlZhMlBTM3or?=
- =?utf-8?B?QWxrNUtzRlZBc2xqZmd4Y3oxazB4bUtTenVxdWhCSlBMUncvTFVlTFYyY0ps?=
- =?utf-8?B?TG90QkYxTEhQaldadW41SXZQMHM4bkFFcVBtd0hPcTlZOUYxY0E0Mjh2YUND?=
- =?utf-8?B?RGNSTkd1MEtIQWdnWGJaNkZHZEo2UGIxU3Q2N1VyRXYxU1phVDZnZm9NMTRs?=
- =?utf-8?B?Y2czOXBkTzB4dndzMktIS2ZyblRNVWFrYjRlUVduTEVIUys4Q3BEL2lQczhB?=
- =?utf-8?B?Q0NiREp1OGhiWjFmV0NwMXlsbEh4UDdxZWdiZ3pXeTFlZmJqRndLYmxIQ2Fn?=
- =?utf-8?B?cUxvY0MxWHZTcXA4WFVKT0htcmFjV2tuWVlvYmdnSGp1UU5Xd1kyZUM5S0k1?=
- =?utf-8?B?bFlSaFF3OStvcVdGR256ZkFrWkJUWGdqVzduUGRRcENCNkxld0c3WXFYSVZT?=
- =?utf-8?B?Y0phT1IxQ0RONUtLckhvemRQM2ovWnc0bktESVVHdzdMbjI2Z1BoU1NpUHN4?=
- =?utf-8?B?b3kyOURsbkdKS2NLWWwzeGsrK2xpT2h0cWN4NHVpV0xMTFQ4dXp0WTZpUDRs?=
- =?utf-8?B?dnhybEJlZ2J4bmIwOEYvMzdyajBRN3JZaFFiV3lNalN6L29lTkFZYm42S21o?=
- =?utf-8?B?OU1ITjdwR0lDaVBLK2wyZWllZDh0ZytBK2lSU1JPY2xqV1Nyazl0TmsrQ1p4?=
- =?utf-8?B?WkxMQUFjRkdRZGRGdGpRYTdOVnlJTndmNis1WDVRa1kzVVJSd29XMTJidGNw?=
- =?utf-8?B?V0tESmRhN3F2WVVmNWFrQktTZ2FycllQYUdReVpycVpoWG5pVStBY21FRTJU?=
- =?utf-8?B?ZWpXaEE2NmwzcE1OR1RhVFlUdDBXbVF0bGIyangrbUxzdjRlRHlPN0RXcUN6?=
- =?utf-8?B?TFNGaUl3Z3c3Wjl4VmR6T1pyUXJCanI4aW1QOVB2UE9tbUlFZTFCaGxHOHQ4?=
- =?utf-8?B?SVFyc0VwZCtXdFdOWWk3U1lCTFNndWNzQ0p3aDhPRkVtWmZ3dWVzcktOVWg5?=
- =?utf-8?B?aHMzeldIZ1NJb3FacFJoU1BqTmtIS0RnaU0yeDlndkplSlBDQ2twbDFZTDcv?=
- =?utf-8?B?MGgzRFVjVkE0UFRUK1gzZVgvQVg4MFpObjZZOUNjVnFHMDZPUDZxOFNma0FX?=
- =?utf-8?B?dmRycHlaaktiWFQ3Q1ByUUJMRWorVCtXYWp1VitjY3pYSGpyazF3Y2s3Z0Nu?=
- =?utf-8?B?ZWVUOVczNWRFTHI2b01hb3Z5QzVVQUUrcnBsTGRuZS8zYjA4ZXBGZ1dNUVBl?=
- =?utf-8?B?ajBsQWhJR2ZvZTlkTldQVzJxY3Z1N3kvYzI1SW1JRkVEWk1rNWI5YXRjRFNU?=
- =?utf-8?B?OUdLUXNqZGUvVkQ0bHlpWXlObHZVb2hRMWNvZVZEWDJWcnR2TnpKeThnSHNO?=
- =?utf-8?B?RkUvMnI4a3lLczljaVhzaDdnZk5uQW1ON0ZCNVZPSHppUXVkcXNiaVpxMWxr?=
- =?utf-8?B?WERrV1Z4ZHBtU0tqQTJXOUxic0NiOElxaTlYM0lMUDJBY09wYmZhcUZsUGVP?=
- =?utf-8?B?YzBqVFVVVTlDdGkzTFRsNCtMNm5NQkVjcjU2RDFZaGlBQU51L1cyc3RyNWpE?=
- =?utf-8?B?RURWMUhHMHhyb0JtbWY0YmwyTXNKUzFlVEcxUC9DMUt3OHgyRWgwMFl5WHNP?=
- =?utf-8?B?RzdoQW1mNFd3PT0=?=
+ =?utf-8?B?SjE3QVNPTW52VkZVS0YrN2hWZTBUeUNxZ2dmWXhkYXBiVE41QXZYRDNmRzAw?=
+ =?utf-8?B?YWpUSTUzWStMd2Jvb244azRUcTI4Z01xdEllTHJBT3lQZm5kOGwxVVNBMVN4?=
+ =?utf-8?B?V2hKbm10OTI0VUFUdXJUTUYyQStIbnpFUFhoMzRESFNkSHRoYW5xZVVWaHVj?=
+ =?utf-8?B?TmtrLzIvdUxyaHR1V2J6WUdTL0NJKy82U1k4YUt2clBkdVZ6TFRUTjBrSUxD?=
+ =?utf-8?B?VlFmSW5jNWlNMmlaYS9tUE1Dd0ZUNHVvMFpaU21IVEtiTUVWaXlxRUJycXB3?=
+ =?utf-8?B?N2VCT0RsRmxlbUtiSFNnWnFRVW5abFNyOGJkemlCeFUrVHpwSWJkSG1YdVoy?=
+ =?utf-8?B?U3A3eTR0ZEFQWFh4UVZURWpMbmlTS05RY3gxL2w0VlIzdVRtQjBKNFl1VElK?=
+ =?utf-8?B?RTEwVUtXeVA0WEJvWGViTzY0YUpRVGdKNzQ3STlaM242dWliSDRJemRWZHg4?=
+ =?utf-8?B?Y2ZpeU9rUC8vcHNnT25hNzlBRFhUcitrai93UmxtWkMxVWZ4WHc4U1FFaURk?=
+ =?utf-8?B?TmhhVTVHYVJxcWluYjVzaGNzdVp1azcvZ2tLM3Y3NEZuSmozRzVEWTlZVDVt?=
+ =?utf-8?B?TkI2SlcxSnVNaDRKWWJ5WEZGdDltZGRUVTFMbzVpcDJMUHVPT2huOGlnTkxJ?=
+ =?utf-8?B?NFlWZVppMERaQkFyaVNoZFZ1OWo2YkZJYjZKTnpwS1hDVkpzcmswTUQwSFNo?=
+ =?utf-8?B?ZmtrczVtTW1Sa2srVnAwTll5Rk5TN05seklHZUhCeUg0TTc5Rzg0OGpzMWJH?=
+ =?utf-8?B?TkppSUJxcmZDRnFqWERVQXdiOXFPdE9aNU1vYmRvMnAzZ3EyQ1VBbFBRNHFC?=
+ =?utf-8?B?OGR1Q3pEOGpGeDd3ZFhKZXludE15aHdtK3BCakcvTVNGQnJTMi9lQTBxQVgv?=
+ =?utf-8?B?RllacEJOYnpGaFNvMFVPdGlSSjdrNEpKNzNGVFkyUDQxTCtVOUdoOWVlN0g4?=
+ =?utf-8?B?UjIvOHdSU1EvR0xKckh6UnNkTzNqcG9oSFhjYVBlYW5sdzB3KzY2OTJZaEVN?=
+ =?utf-8?B?c1lVai84V0ozbmdWU29ZWXl1ejhLa0RPZW5hMXp1QUJQcm05WnBiTDlHeExn?=
+ =?utf-8?B?cjRCRGZnd3Fpa1RTdkVpVGJFd0g1cnRWNE00SE1SbGo1cmEzdytsZDh0bzh3?=
+ =?utf-8?B?Y1E1MXhWRktOWmQ2US84emRUUlg3aE5XSG9KY1RmUGNSbFdFT2d3QUs2K1h2?=
+ =?utf-8?B?eEU0dkEzTWpmd3E2MjR4Q2Rna09VVkN5ckJTa0YzY0ZzVm5ieGtCK2Q4UU5W?=
+ =?utf-8?B?S3VDaldVOTVjdWtNV3crSGh2MlpreGVDV3U4dEVFSFJENXdqWWFDdThOQzJ0?=
+ =?utf-8?B?cG8rZ3BuV1dTQW9vTXZqaVhGMGpxSkxkd1V1Z1ljODZxYTIwUkhVd2tLTHBM?=
+ =?utf-8?B?bWRQT3dsenFRR0NQbUVscnZKTzMzK05SZU9BZi9tdnVEaUMwWUx1akpaZm9v?=
+ =?utf-8?B?TkpUYWx3eUgzeEtKTVFWZkh1SC9TQXgxcmtlUW1EdXNPYXp6TG5KUGcrdE92?=
+ =?utf-8?B?UmtsN0gxYTgwSVZQeE55b2ZneXdNTC9Wd1NsRTZnRVljWGtMd0JEZlV3aXoz?=
+ =?utf-8?B?REN1RFNvR213YWtULzF4SUh4MUFtMWJuNUVxRHFyY1JxbEE5UjRacE5XeHhl?=
+ =?utf-8?B?TEVOcDhpQXFLTEsrdkh1cFhDS3ZTZnpvTnQ4SXFLaVRJK2tYNkl3d3BNYWE0?=
+ =?utf-8?B?YVozWE5uaTRNblM1ODNQK2ttK3RaMlA1d0ZUa2pxY3Z0TFFKVndyNHlkdndC?=
+ =?utf-8?B?OE45TWNvYWlFUzVkUDkxUFJDT295SDNQRzRpYXlrell4MUpZQnBSQzlheUhS?=
+ =?utf-8?B?KytGTFUzbVQ3WXhXVlVYVFRSbGg5SmpwQ0Z2OFJnL05SRnlqU0J0cUVpTHJH?=
+ =?utf-8?B?T3BRQnp0ZjVwcUFpSW1KaHk4c0lMemwyVTl5L0dVYmY4QTZWVkhKdjFXTU9q?=
+ =?utf-8?B?bzBkc0dTazZVN2tPS0dQTDFWREhIYlFONXNxUGJlN1cxV2kxbFh0U3FheTJ2?=
+ =?utf-8?B?akliSHVmbzVRPT0=?=
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(10070799003)(38070700021);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?TDRVdzkvL2ZKY2g1NU5nTnoxSlQyQWJFckQ2NTB6MGYybkdjeXkrcGtkZkZQ?=
- =?utf-8?B?bHNjMUdOcGpGeUJDNExndWgvQTRZNTVjc3lSTFdkUHRtUWFmVlo2aVhlc3Iv?=
- =?utf-8?B?NkR1RXF4bTd6R0RrakwvYXYvVGR1WU9SSXJuWTAyREw2MmprMW8xNVlidFBz?=
- =?utf-8?B?NWxqMjBSaWI2Z2VpSElkbkVmcjliaGRuN215bjZMVklsR09HWFQ5OUdUblNn?=
- =?utf-8?B?MUFtQkkrY2ZZdTZSQVh6RWlMdUcwTnVtQ2hKUWIzOFhzM1pVRDY2dnFQbFRm?=
- =?utf-8?B?UUpOaFVLb2RLcXRtV1RjanZ1enRBcFVObXZpeittNWVQNkhoZ2ZyQVpVWG83?=
- =?utf-8?B?YlZCbWk0dCtaSjlqcjM3VllkSDVqS3JzQTlYQVRCMzBGcEpnd2QwTUNCeFlM?=
- =?utf-8?B?Y3hYWEpUTHYzQS9JZ0dMNXM3eE9DSGlPUUpmNnF3RFBFS0VwM0NYQk9sQkV2?=
- =?utf-8?B?QVNMKzl4bUh4blZZdnl5MmQrQUptTVFwVUppNWNQWjl3Zm9pQ2tZY1EzTFJ1?=
- =?utf-8?B?aytHNzJuYmplNVp3c2ZZUE9MRnhNS0xYY2VCLzhibk5TU0hIbEhmWE5Bc1E1?=
- =?utf-8?B?UGZnU1EwS3doNGpSbEpzejBhUWxxNFVzODRQWUdTc3pNUC8vRGVEMm5zWnNp?=
- =?utf-8?B?QS9oTFF6dm1BNVM4RktjS3Bvb1J2NVdBMUxjdmlyeTdiY2hWWDZnZE9kd1ND?=
- =?utf-8?B?cmc1L1lNN0t0ZDJZR2JaYXJKTStBV2k1SHVrbjY3UkExYnpYOGxhUVorcy83?=
- =?utf-8?B?NlhHMTRNdk5TcDhjd08xaEQ1dEdEblRwN1NyQU04dWZWQkxMa3hRMkVsS05y?=
- =?utf-8?B?aE1KYVBmaTMwczNOZllldHhFbm9wZHExQi9WOVlLY1hyKzNIOUtTSmN0UHFJ?=
- =?utf-8?B?eU01UUNMZFNZOXl4SnhPNEpkS1U2NWdUZWlKSTJUYlhRazR5eHZYUm1IbXh5?=
- =?utf-8?B?aTRiTERDcGI2WklmRHJMTG9kT083YXYrbkxSeHdoRjJoMDdHeWh2YjNsUXdJ?=
- =?utf-8?B?VWJONzdjZkY4MW1FNG1wZWszV0o5V0VqNmRhR3BhUXM3Y3BySjhMbXVuWExE?=
- =?utf-8?B?eG8zcnF5a3dNVUo4a1lycDVXUis5QmJOTy9zZ2NZY01BdHF1REJFVi95cWM5?=
- =?utf-8?B?dDNTbFRCMzFiSEZkVDkyY3BFaXFYZXRyK2p6MVV1T1ZPTVVYbHRPeklGOU5a?=
- =?utf-8?B?Z2pPblBsNDZMZ3MxaFFoWGRDN1BhTDhMUzlSS2RTU0NWT1BUQ25adkl5OHI1?=
- =?utf-8?B?dENvRitwRmt5Z095NnNXdU15TktoM21GV1JXeUF5eGRXZ3FuWG42aEZWNlJP?=
- =?utf-8?B?TmpGTGJHVXdDYTEwbHNaK21hSmlwRFBTbzFEL2pxT0xRcnBUeTN2QUd2WmMz?=
- =?utf-8?B?K2FwajF5eTFwQXV2UU1ZYjQ3TFE4bGFSblNUUWtOWU9XTGx5a3d5UnhSV3Iz?=
- =?utf-8?B?eUdBZnNSUHVwNzJPWXZ1dTRQSzl4TDZTdUV4L3F0dU9TbVR2U0JIdnF3ZE1Y?=
- =?utf-8?B?TXBIUkNLODVQY3A2bDRPNEFWUVhHdDNnbmhtd3dleTllMUZpMk1TWTJFRmlh?=
- =?utf-8?B?Tk1kVXBUbHVhblRkOUpHYTFoQ0piRVdIVkllcHpKakxSSTl5bDNLVFZJRHhS?=
- =?utf-8?B?cXJSbDJaam84ZzVNQks4Q1pPc204VmpGZk1zWEN5czdJZlV0THRoUC9Jc2Zw?=
- =?utf-8?B?UzNwTVloUlZiWVBOd1JxVStQZjlvVmZ6NjY3dEM1L1cxRGFTaFJzck5pZ2h2?=
- =?utf-8?B?S2srWjdpdmJ5TThsTmlZa0VVMmxOR1BWK3dXbHZmMTlnaGJmZHdyRW5KK0Fq?=
- =?utf-8?B?RVZha0IrTGNGNEUrSVk1MlJIYXhYaGhVNkFML1A1by8wbHNkZXZRTW0xVHBz?=
- =?utf-8?B?aEdRMmZmNjNxZFZpWjl5K3RJTm13RTJpTnlabkVzaExCZ0REZlJNN1JXWitF?=
- =?utf-8?B?NG1qMkNWU1lNUU9mT2Q5RndVcVovZWltUW1BdkM0bXNqdkVMS3pGc1VRd2dY?=
- =?utf-8?B?S01tVVl5YUxjKy80NXZPK2lDZkJMNGVhejBQZ2FqakhaeldrbnNxYnpOdmpi?=
- =?utf-8?B?ZHR1VGlYNzFKQzBQWUNCY1grNmorRmtibTE5Vm9zcW9JY3pyZTFMMWlyMFlp?=
- =?utf-8?B?QW5NOVpvQlJFaUh1SWovdXVnTFJSK3BmY0NEaXk3cWMwczQvTVZMVUlUNGxz?=
- =?utf-8?B?am9TV24ycXhrU2RaQ000N0tMNVRIRXFJMVNDVk0yYWpJejI2elRNWnNBVmx3?=
- =?utf-8?B?a0x0c3RoZEVCVGpEQnhraHYwbTRndUZjaURXVHJoNEZCRzUzdWt5aEdyMEcv?=
- =?utf-8?B?SkxMSFB3UUh3M1I1L2toSTU3YlR3SWQ1SDZPNkFoRnBLK2ptOWgwMFovakNj?=
- =?utf-8?Q?4JHnBU+lJiCw6aj4oJIislLypUri8E5pDBVMl?=
+ =?utf-8?B?U2NsSmhvd3ZCbFA3a1hPTzNrcFNodUlmZlVFT1Raa2llMXBLTDlSdXVkazhn?=
+ =?utf-8?B?OHlmbm1JMUs2dk56cGFpdmxkWTRUZDNkNE92TDlwK2NwOXl6MkgvVWV2NXBF?=
+ =?utf-8?B?Z0ZyMGJ4Y3hKeUt4S1BOb3hXdE50NDhzZFAzeTFnTUNFL1NoQmNMeWdlZXpP?=
+ =?utf-8?B?N0pwYzlvTElmSlp0eXRjellQS1pGaGhTMG41YWxWTTgvZ0dmQkhUZjM4a0lv?=
+ =?utf-8?B?bGtzWXZxVEZJMEZacmx3MnpLMk9JZU5aNS9Jc0t2UDBoaDFaTVovMTRBVkNm?=
+ =?utf-8?B?djIrWEtkZXorc2FUMTF4SjRsVnRyUXFyYlpJNVFCRXhvdThra0liaGlVWXJz?=
+ =?utf-8?B?OXV0RHhrYmwyTndxeWhOenI0NWFWajh6YmhXdlpqWnZXMEpOd09RWHZIQjVV?=
+ =?utf-8?B?WUYwU3pXTnlRdFU3V05JbGJwOStycVQ3VmFlQ0k3a0hWQVJFczVXd2kybGoy?=
+ =?utf-8?B?bCtGQXJHYzQ2Y0RzOGt0WXZaQkFVWTlJVkE2bzk1Rm16NkM1M0dBRzk5Tm9T?=
+ =?utf-8?B?dXZjY2UyNHByMHFkVURUS0QzZ0Z1bElEUit1clpucFZsdnBtS1FlOG9kcVo4?=
+ =?utf-8?B?VFEvb1c2aXRIOVRuZ25jaWRTbGE1UUF1UHhHengrRnU1YVYyV0NJQXIwUTJt?=
+ =?utf-8?B?d2tGZ0lDT1VqOHc2U0dHVGdaSVpoSFdtcStxY0xnZFFMSm0vV2Q5K2picm1D?=
+ =?utf-8?B?S1VRNG9sL2xZUGlMRVZLbEh3Z0Z2ak1GanI1cHVHYm11Z3hOOWVYdEFJS25q?=
+ =?utf-8?B?cmpPaFV4UW5WVFhEQTRsc1ZRZ1ZXbUNobWJyNFRJeUpOTkNCSmpxRk13WlZZ?=
+ =?utf-8?B?TmVpYXhOYVpiUVI4YjJXeHdHamdPWWs2ekY1WU1ocjBLSkdvTW80RGlWaHRT?=
+ =?utf-8?B?d3VHeEJUNUhVd1JOcmo1cnZ4Y2kxUUtQWjdEZDVkS3dCU1hMZ1Nrd1JERmJo?=
+ =?utf-8?B?YU1Obm10UGp5ZFhBa0JkbmhVMHBFY3JkYjJwVFFPYmhjNHJYZ2RtSXp5cisz?=
+ =?utf-8?B?b0ppWXlGQ0UyOEhmZURpTUZXSU1hbHRLbUdQQm1HWUR3YkoxbVkzREV3bmxB?=
+ =?utf-8?B?SlcyaGpBNUgvZW9VQkQrSjZMNTdnbmFjVkZDbzU3S1E2VFlaMWdMRmlJVWtW?=
+ =?utf-8?B?K2tEbGtmRUhvZlJvbVJ2TjBEN0EvTmVtS1ZLT0t4V2VnWVQrSjI1enhsMFp6?=
+ =?utf-8?B?TVBNZkc3V3ZBMVhCZDRBUGNJVFdLTUc2QWloUGdEdUlEbnk5UHM4ZnU3aXlk?=
+ =?utf-8?B?QTlYelliV2tyTCtEL2J2N1VwWTcrMG9ZalovR2ZkR1cyUXdVSHMrS25ZajZL?=
+ =?utf-8?B?ZVZweHdCN1Bqejh2bzFWbnVrcmxwWTdPNlNTUWpRZ0JXMTl1VzZGS0RuamJ3?=
+ =?utf-8?B?dmlYZVB5V3QrMTJkR0JQRFBCTER2aDhPWnVxaTRUYjIxTlBNdnpyT1BiczBq?=
+ =?utf-8?B?V1ZoeTVqa05LUmZZS01lNDJmQVI1ZmxWeStYL1pSYnVyT2dveUJqbDBmNFVF?=
+ =?utf-8?B?WEZsYjgwa25yckpoTDJBaGJjY0tNcVM0bzFuaXdVTWlNdnR1cW1PVzh1WWZw?=
+ =?utf-8?B?ZGl0TjhPOWpscXlTZFRGWmdpckYzWW5ualFIaytlZnZrM0dOaHhoQzhCb0lP?=
+ =?utf-8?B?WmZwUVRQTTJ6eHo4WGN6K0srTWRFcFBKNzBzV1MxQ0NKWlZwQWtiTVNGYlB2?=
+ =?utf-8?B?ZHRYbURYRVVVcUNzd3o1T3U2MEJQcUpYd2w0OFoxeFZyT1A3OVdsK3dZcnNu?=
+ =?utf-8?B?MlF0K1FCcTMxMHloWXdydVpIejRGZ2YwWThLWEcyVW5oVm1BdFh6UjZ1Z1ZC?=
+ =?utf-8?B?Z0ZSRmlvYzJGRDVESy9mNFI2NnF3QUJ1Ti9KQklNdWYzSDREdS9QRUdDY2ZY?=
+ =?utf-8?B?eUtjZUZMd3F0VEl2TnJhTUxBN0prdktUUWJQZ04vdVBNdWdvQ3lkUVhBemU1?=
+ =?utf-8?B?ZFZ3VnNDK0F5Mm9GSDhidUl1L1Q2dUZsMUVwdVBYQ0JLTUR5Y2RENVltU1Rj?=
+ =?utf-8?B?Y2dXdmsvaTg0TGExWTc0NUUwRXYrZDl1RjFnVGdOTUdaZFJiYXJieFNGYUFI?=
+ =?utf-8?B?aFJLQTJqWmZVeWFYcHJzUW01THp4Yk9tMFFnYU9MNXkyZjI0MkM2Z2lQeUJU?=
+ =?utf-8?B?WngrR3BWcUtJc1ZJTmF2aDk1N2x5QnpxTGx5WmpKUG5VaFBZakI1Z25keURu?=
+ =?utf-8?B?dGlyVmlPNCtZNWMzUjFLQ0FmVkdXQUhhcDFObkc4dmU0bkg3VkhITGROb2dm?=
+ =?utf-8?B?MzRpQ0RMelJjdVJucmRiWGU4YzNIS1JzbDh6YXZkMkZhdFZ6VFVaR0lWdzho?=
+ =?utf-8?B?M0NScU5renBZZnlTTlFnRVd2SG1vMG1ZWDFyaGRQWnFxVWdFS2N6TTVMVGcy?=
+ =?utf-8?Q?zbi8oPrwG6n1rxrlWhVsG9yNLMHUaUin3RDHq?=
 X-OriginatorOrg: ibm.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e49124bd-ff40-40a6-54d4-08de4197bd9e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Dec 2025 20:21:51.0057
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8063252f-2fb6-44f5-9c9c-08de4198abd3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Dec 2025 20:28:30.5988
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: inIc/K+9v+Kad+NLnI6q2DSNhUo3SQiCLxKFf9+qjGsnJKUfsDeiuo3Xvwuxzjv8g1ZEeQzeYkxi3I+79/VQOg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR15MB4387
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjIyMDE4NiBTYWx0ZWRfX3JAOA315RUHW
- 52TP/2KjTpcbw0aVIgtfxncwi3ZZSkV1c9XYtP5XhcVx5dFBxuw3X8aCCBbuY5+5uKEdNR2Zw7M
- FXRhlskd1mHBMnvUFF3X+NRFV7KeUEU8PhVj25HxIW6H1OgTic0e8SCUd17n0BAdMxdZsuacPig
- AAuSGFeFZOM991Mn4zKYaCuXshEmknn1BHcFKMy4ws2Zl7UoBT7WqBpERK63hOLBFucjTpn/Cpq
- uoGMHO/rXzIwoBBqcA+VzTFoBN8jJl1e/VdowwqzBwIe/Mfodi23IdM2xj3s+6OC/DDwup3al/3
- ZXbJfj9pTWyjFaes3S/7khcaQkGx2SH+3HQfWSoGYX9meMA3qPksm27t9Trm7AdlNDwojjGisbc
- LAHRNx8cd6pFpAPjpUTU6rY2skG8vP84iIe7Y9vO2Caq/BYi6nF17XUZsKWqwqdKNy2baj2RNyo
- am31A/kJxNlBvx2p2vA==
-X-Authority-Analysis: v=2.4 cv=Ba3VE7t2 c=1 sm=1 tr=0 ts=6949a861 cx=c_pps
- a=lJB3plHzOIAfJWf+6KWQLg==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+X-MS-Exchange-CrossTenant-userprincipalname: eZWsMZ3ZhmKkMl14R+H9dgbniGZ8MFacNlzxNhPdi2Q8VO+GbhtUIhxkLe5c7GEZKpd4slJEM/FRnbveN76BSA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR15MB5503
+X-Proofpoint-GUID: WTOBw9PspvnI2xSX-nTmUMI1rhIquKbU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjIyMDE4NiBTYWx0ZWRfX18U2m+dAEFcB
+ Fdet21wqqg5yOwdHNl+UMly2Rz0p/6a3ywQ49fZE0MA4WNoi7nl5BsBkfQzqzyYlMZlbfAT6NdS
+ ShqPKoJ5H238CK1iqWyelEN9n6xDyI/wlYTem2+W4TWlRAuZKNKRW+bJ9waaqGckWMJMwn9Fl7/
+ 8fIvB0muGLKKJntq7qQ0k0AadZRKBtKHq2UzvygcFhP7C68kscaVNGW127HiXaHsfj9hWFFmjuZ
+ DET6y8LkCs/+I5+DuBcj74MoLqpwVcV6/aHm7r7G09j69PB7KXc8PucoVRcmn+X2Zhc8WM8nadU
+ S5ZERti0B2gg4fZI5YAxk86LjAvtZsfEmgoWdk75lXdNuRrtj71lVdX8nCxY7OmelE/sFZz+gb0
+ suihKh+7hOTOv4i8t9mQQoTA0H0VrZMQlQI9EvH6uGwkN8+lr3n/YVQ9aV3zXfLAp3YxrPD6SyZ
+ 9YtT5BK/b+LiQusyDhw==
+X-Proofpoint-ORIG-GUID: fTTxBsbjMN1XG_qPGufr7so3lDwYQQmA
+X-Authority-Analysis: v=2.4 cv=dqHWylg4 c=1 sm=1 tr=0 ts=6949a9f4 cx=c_pps
+ a=eQn4vQZDn50HuGbH8T6KOA==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=-ibLmwfWAAAA:8 a=xOd6jRPJAAAA:8
- a=hSkVLCK3AAAA:8 a=wCmvBT1CAAAA:8 a=4Ta7guRoTBLeWIrIcvUA:9 a=QEXdDO2ut3YA:10
- a=A6MkUVyZPcTV1i89ro0M:22 a=cQPPKAXgyycSBL8etih5:22 a=6z96SAwNL0f8klobD5od:22
-X-Proofpoint-ORIG-GUID: T0qA4thZGv8RA7FejHHM9PUtAnYubUE2
-X-Proofpoint-GUID: T0qA4thZGv8RA7FejHHM9PUtAnYubUE2
+ a=wP3pNCr1ah4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=A2VhLGvBAAAA:20
+ a=4u6H09k7AAAA:8 a=VnNF1IyMAAAA:8 a=0YJr3vf45kOuuNllAs8A:9 a=QEXdDO2ut3YA:10
+ a=5yerskEF2kbSkDMynNst:22 a=bA3UWDv6hWIuX7UZL3qL:22
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <705D15E0562CFF49836A0C6EC85BDCB1@namprd15.prod.outlook.com>
+Content-ID: <32AF3192BFFFE54F8456C081C7A6E2C4@namprd15.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -219,302 +235,97 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re:  [PATCH v4] hfs: Replace BUG_ON with error handling for CNID
- count checks
+Subject: RE: [PATCH v2] ceph: fix kernel crash in ceph_open()
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-12-22_03,2025-12-22_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 bulkscore=0 adultscore=0 priorityscore=1501
- malwarescore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=2 engine=8.19.0-2512120000 definitions=main-2512220186
+ spamscore=0 priorityscore=1501 clxscore=1015 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 bulkscore=0 phishscore=0 suspectscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=2 engine=8.19.0-2512120000
+ definitions=main-2512220186
 
-On Sat, 2025-12-20 at 20:10 +0100, Jori Koolstra wrote:
-> In a06ec283e125 next_id, folder_count, and file_count in the super block
-> info were expanded to 64 bits, and BUG_ONs were added to detect
-> overflow. This triggered an error reported by syzbot: if the MDB is
-> corrupted, the BUG_ON is triggered. This patch replaces this mechanism
-> with proper error handling and resolves the syzbot reported bug.
+On Fri, 2025-12-19 at 18:57 -0500, Patrick Donnelly wrote:
+> On Fri, Dec 19, 2025 at 3:39=E2=80=AFPM Viacheslav Dubeyko
+> <Slava.Dubeyko@ibm.com> wrote:
+> >=20
+> > On Thu, 2025-12-18 at 20:11 -0500, Patrick Donnelly wrote:
+> > > On Thu, Dec 18, 2025 at 2:02=E2=80=AFPM Viacheslav Dubeyko
+> > > <Slava.Dubeyko@ibm.com> wrote:
+> > > >=20
+> > > > On Wed, 2025-12-17 at 22:50 -0500, Patrick Donnelly wrote:
+> > > > > On Wed, Dec 17, 2025 at 3:44=E2=80=AFPM Viacheslav Dubeyko
+> > > > > <Slava.Dubeyko@ibm.com> wrote:
+> > > > > >=20
+> > > > > > On Wed, 2025-12-17 at 15:36 -0500, Patrick Donnelly wrote:
+> > > > > > > Hi Slava,
+> > > > > > >=20
+> > > > > > > A few things:
+> > > > > > >=20
+> > > > > > > * CEPH_NAMESPACE_WIDCARD -> CEPH_NAMESPACE_WILDCARD ?
+> > > > > >=20
+> > > > > > Yeah, sure :) My bad.
+> > > > > >=20
+> > > > > > > * The comment "name for "old" CephFS file systems," appears t=
+wice.
+> > > > > > > Probably only necessary in the header.
+> > > > > >=20
+> > > > > > Makes sense.
+> > > > > >=20
+> > > > > > > * You also need to update ceph_mds_auth_match to call
+> > > > > > > namespace_equals.
+> > > > > > >=20
+> > > > > >=20
+> > > > > > Do you mean this code [1]?
+> > > > >=20
+> > > > > Yes, that's it.
+> > > > >=20
+> > > > > > >  Suggest documenting (in the man page) that
+> > > > > > > mds_namespace mntopt can be "*" now.
+> > > > > > >=20
+> > > > > >=20
+> > > > > > Agreed. Which man page do you mean? Because 'man mount' contain=
+s no info about
+> > > > > > Ceph. And it is my worry that we have nothing there. We should =
+do something
+> > > > > > about it. Do I miss something here?
+> > > > >=20
+> > > > > https://github.com/ceph/ceph/blob/2e87714b94a9e16c764ef6f97de50ae=
+cf1b0c41e/doc/man/8/mount.ceph.rst =20
+> > > > >=20
+> > > > > ^ that file. (There may be others but I think that's the main one
+> > > > > users look at.)
+> > > >=20
+> > > > So, should we consider to add CephFS mount options' details into
+> > > > man page for generic mount command?
+> > >=20
+> > > For the generic mount command? No, only in mount.ceph(8).
+> > >=20
+> >=20
+> > I meant that, currently, we have no information about CephFS mount opti=
+ons in
+> > man page for generic mount command. From my point of view, it makes sen=
+se to
+> > have some explanation of CephFS mount options there. So, I see the poin=
+t to send
+> > a patch for adding the explanation of CephFS mount options into man pag=
+e of
+> > generic mount command. As a result, we will have brief information in m=
+an page
+> > for generic mount command and detailed explanation in mount.ceph(8). Ho=
+w do you
+> > feel about it?
 >=20
-> Singed-off-by: Jori Koolstra <jkoolstra@xs4all.nl>
-> Reported-by: syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com
-> Closes: https://syzbot.org/bug?extid=3D17cc9bb6d8d69b4139f0 =20
-> Signed-off-by: Jori Koolstra <jkoolstra@xs4all.nl>
-> ---
-> Changes from v3:
-> Removed some redunancy in the count overflow error in hfs_remove, and
-> a ;; typo.
->=20
-> Changes from v2:
-> There is now a is_hfs_cnid_counts_valid() function that checks several
-> CNID counts in the hfs super block info which can overflow. This check
-> is performed in hfs_mdb_get(), when syncing, and when doing the
-> mdb_flush(). Overall, effort is taken for the checks to be as
-> non-intrusive as possible. So the mdb continues to flush, but warnings
-> are printed, instead of stopping fully, so not to derail the fs
-> operation too much.
->=20
-> When loading the mdb from disk however, we can be sure there is disk
-> corruption when is_hfs_cnid_counts_valid() is triggered. In that case we
-> mount RO.
->=20
-> Also, instead of returning EFSCORRUPTED, we return ERANGE.
-> ---
->  fs/hfs/dir.c    | 15 +++++++++++----
->  fs/hfs/hfs_fs.h |  1 +
->  fs/hfs/inode.c  | 30 ++++++++++++++++++++++++------
->  fs/hfs/mdb.c    | 31 +++++++++++++++++++++++++++----
->  fs/hfs/super.c  |  3 +++
->  5 files changed, 66 insertions(+), 14 deletions(-)
->=20
-> diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
-> index 86a6b317b474..0c615c078650 100644
-> --- a/fs/hfs/dir.c
-> +++ b/fs/hfs/dir.c
-> @@ -196,8 +196,8 @@ static int hfs_create(struct mnt_idmap *idmap, struct=
- inode *dir,
->  	int res;
-> =20
->  	inode =3D hfs_new_inode(dir, &dentry->d_name, mode);
-> -	if (!inode)
-> -		return -ENOMEM;
-> +	if (IS_ERR(inode))
-> +		return PTR_ERR(inode);
-> =20
->  	res =3D hfs_cat_create(inode->i_ino, dir, &dentry->d_name, inode);
->  	if (res) {
-> @@ -226,8 +226,8 @@ static struct dentry *hfs_mkdir(struct mnt_idmap *idm=
-ap, struct inode *dir,
->  	int res;
-> =20
->  	inode =3D hfs_new_inode(dir, &dentry->d_name, S_IFDIR | mode);
-> -	if (!inode)
-> -		return ERR_PTR(-ENOMEM);
-> +	if (IS_ERR(inode))
-> +		return ERR_CAST(inode);
-> =20
->  	res =3D hfs_cat_create(inode->i_ino, dir, &dentry->d_name, inode);
->  	if (res) {
-> @@ -254,11 +254,18 @@ static struct dentry *hfs_mkdir(struct mnt_idmap *i=
-dmap, struct inode *dir,
->   */
->  static int hfs_remove(struct inode *dir, struct dentry *dentry)
->  {
-> +	struct super_block *sb =3D dir->i_sb;
->  	struct inode *inode =3D d_inode(dentry);
->  	int res;
-> =20
->  	if (S_ISDIR(inode->i_mode) && inode->i_size !=3D 2)
->  		return -ENOTEMPTY;
-> +
-> +	if (unlikely(!is_hfs_cnid_counts_valid(sb))) {
-> +	    pr_err("cannot remove file/folder\n");
-> +	    return -ERANGE;
-> +	}
-> +
->  	res =3D hfs_cat_delete(inode->i_ino, dir, &dentry->d_name);
->  	if (res)
->  		return res;
-> diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
-> index e94dbc04a1e4..ac0e83f77a0f 100644
-> --- a/fs/hfs/hfs_fs.h
-> +++ b/fs/hfs/hfs_fs.h
-> @@ -199,6 +199,7 @@ extern void hfs_delete_inode(struct inode *inode);
->  extern const struct xattr_handler * const hfs_xattr_handlers[];
-> =20
->  /* mdb.c */
-> +extern bool is_hfs_cnid_counts_valid(struct super_block *sb);
->  extern int hfs_mdb_get(struct super_block *sb);
->  extern void hfs_mdb_commit(struct super_block *sb);
->  extern void hfs_mdb_close(struct super_block *sb);
-> diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-> index 524db1389737..878535db64d6 100644
-> --- a/fs/hfs/inode.c
-> +++ b/fs/hfs/inode.c
-> @@ -187,16 +187,23 @@ struct inode *hfs_new_inode(struct inode *dir, cons=
-t struct qstr *name, umode_t
->  	s64 next_id;
->  	s64 file_count;
->  	s64 folder_count;
-> +	int err =3D -ENOMEM;
-> =20
->  	if (!inode)
-> -		return NULL;
-> +		goto out_err;
-> +
-> +	err =3D -ERANGE;
-> =20
->  	mutex_init(&HFS_I(inode)->extents_lock);
->  	INIT_LIST_HEAD(&HFS_I(inode)->open_dir_list);
->  	spin_lock_init(&HFS_I(inode)->open_dir_lock);
->  	hfs_cat_build_key(sb, (btree_key *)&HFS_I(inode)->cat_key, dir->i_ino, =
-name);
->  	next_id =3D atomic64_inc_return(&HFS_SB(sb)->next_id);
-> -	BUG_ON(next_id > U32_MAX);
-> +	if (next_id > U32_MAX) {
-> +		atomic64_dec(&HFS_SB(sb)->next_id);
-> +		pr_err("cannot create new inode: next CNID exceeds limit\n");
-> +		goto out_discard;
-> +	}
->  	inode->i_ino =3D (u32)next_id;
->  	inode->i_mode =3D mode;
->  	inode->i_uid =3D current_fsuid();
-> @@ -210,7 +217,11 @@ struct inode *hfs_new_inode(struct inode *dir, const=
- struct qstr *name, umode_t
->  	if (S_ISDIR(mode)) {
->  		inode->i_size =3D 2;
->  		folder_count =3D atomic64_inc_return(&HFS_SB(sb)->folder_count);
-> -		BUG_ON(folder_count > U32_MAX);
-> +		if (folder_count> U32_MAX) {
-> +			atomic64_dec(&HFS_SB(sb)->folder_count);
-> +			pr_err("cannot create new inode: folder count exceeds limit\n");
-> +			goto out_discard;
-> +		}
->  		if (dir->i_ino =3D=3D HFS_ROOT_CNID)
->  			HFS_SB(sb)->root_dirs++;
->  		inode->i_op =3D &hfs_dir_inode_operations;
-> @@ -220,7 +231,11 @@ struct inode *hfs_new_inode(struct inode *dir, const=
- struct qstr *name, umode_t
->  	} else if (S_ISREG(mode)) {
->  		HFS_I(inode)->clump_blocks =3D HFS_SB(sb)->clumpablks;
->  		file_count =3D atomic64_inc_return(&HFS_SB(sb)->file_count);
-> -		BUG_ON(file_count > U32_MAX);
-> +		if (file_count > U32_MAX) {
-> +			atomic64_dec(&HFS_SB(sb)->file_count);
-> +			pr_err("cannot create new inode: file count exceeds limit\n");
-> +			goto out_discard;
-> +		}
->  		if (dir->i_ino =3D=3D HFS_ROOT_CNID)
->  			HFS_SB(sb)->root_files++;
->  		inode->i_op =3D &hfs_file_inode_operations;
-> @@ -244,6 +259,11 @@ struct inode *hfs_new_inode(struct inode *dir, const=
- struct qstr *name, umode_t
->  	hfs_mark_mdb_dirty(sb);
-> =20
->  	return inode;
-> +
-> +	out_discard:
-> +		iput(inode);
-> +	out_err:
-> +		return ERR_PTR(err);
->  }
-> =20
->  void hfs_delete_inode(struct inode *inode)
-> @@ -252,7 +272,6 @@ void hfs_delete_inode(struct inode *inode)
-> =20
->  	hfs_dbg("ino %lu\n", inode->i_ino);
->  	if (S_ISDIR(inode->i_mode)) {
-> -		BUG_ON(atomic64_read(&HFS_SB(sb)->folder_count) > U32_MAX);
->  		atomic64_dec(&HFS_SB(sb)->folder_count);
->  		if (HFS_I(inode)->cat_key.ParID =3D=3D cpu_to_be32(HFS_ROOT_CNID))
->  			HFS_SB(sb)->root_dirs--;
-> @@ -261,7 +280,6 @@ void hfs_delete_inode(struct inode *inode)
->  		return;
->  	}
-> =20
-> -	BUG_ON(atomic64_read(&HFS_SB(sb)->file_count) > U32_MAX);
->  	atomic64_dec(&HFS_SB(sb)->file_count);
->  	if (HFS_I(inode)->cat_key.ParID =3D=3D cpu_to_be32(HFS_ROOT_CNID))
->  		HFS_SB(sb)->root_files--;
-> diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
-> index 53f3fae60217..e0150945cf13 100644
-> --- a/fs/hfs/mdb.c
-> +++ b/fs/hfs/mdb.c
-> @@ -64,6 +64,27 @@ static int hfs_get_last_session(struct super_block *sb,
->  	return 0;
->  }
-> =20
-> +bool is_hfs_cnid_counts_valid(struct super_block *sb)
-> +{
-> +	struct hfs_sb_info *sbi =3D HFS_SB(sb);
-> +	bool corrupted =3D false;
-> +
-> +	if (unlikely(atomic64_read(&sbi->next_id) > U32_MAX)) {
-> +		pr_warn("next CNID exceeds limit\n");
-> +		corrupted =3D true;
-> +	}
-> +	if (unlikely(atomic64_read(&sbi->file_count) > U32_MAX)) {
-> +		pr_warn("file count exceeds limit\n");
-> +		corrupted =3D true;
-> +	}
-> +	if (unlikely(atomic64_read(&sbi->folder_count) > U32_MAX)) {
-> +		pr_warn("folder count exceeds limit\n");
-> +		corrupted =3D true;
-> +	}
-> +
-> +	return !corrupted;
-> +}
-> +
->  /*
->   * hfs_mdb_get()
->   *
-> @@ -156,6 +177,11 @@ int hfs_mdb_get(struct super_block *sb)
->  	atomic64_set(&HFS_SB(sb)->file_count, be32_to_cpu(mdb->drFilCnt));
->  	atomic64_set(&HFS_SB(sb)->folder_count, be32_to_cpu(mdb->drDirCnt));
-> =20
-> +	if (!is_hfs_cnid_counts_valid(sb)) {
-> +		pr_warn("filesystem possibly corrupted, running fsck.hfs is recommende=
-d. Mounting read-only.\n");
-> +		sb->s_flags |=3D SB_RDONLY;
-> +	}
-> +
->  	/* TRY to get the alternate (backup) MDB. */
->  	sect =3D part_start + part_size - 2;
->  	bh =3D sb_bread512(sb, sect, mdb2);
-> @@ -209,7 +235,7 @@ int hfs_mdb_get(struct super_block *sb)
-> =20
->  	attrib =3D mdb->drAtrb;
->  	if (!(attrib & cpu_to_be16(HFS_SB_ATTRIB_UNMNT))) {
-> -		pr_warn("filesystem was not cleanly unmounted, running fsck.hfs is rec=
-ommended.  mounting read-only.\n");
-> +		pr_warn("filesystem was not cleanly unmounted, running fsck.hfs is rec=
-ommended.	Mounting read-only.\n");
->  		sb->s_flags |=3D SB_RDONLY;
->  	}
->  	if ((attrib & cpu_to_be16(HFS_SB_ATTRIB_SLOCK))) {
-> @@ -273,15 +299,12 @@ void hfs_mdb_commit(struct super_block *sb)
->  		/* These parameters may have been modified, so write them back */
->  		mdb->drLsMod =3D hfs_mtime();
->  		mdb->drFreeBks =3D cpu_to_be16(HFS_SB(sb)->free_ablocks);
-> -		BUG_ON(atomic64_read(&HFS_SB(sb)->next_id) > U32_MAX);
->  		mdb->drNxtCNID =3D
->  			cpu_to_be32((u32)atomic64_read(&HFS_SB(sb)->next_id));
->  		mdb->drNmFls =3D cpu_to_be16(HFS_SB(sb)->root_files);
->  		mdb->drNmRtDirs =3D cpu_to_be16(HFS_SB(sb)->root_dirs);
-> -		BUG_ON(atomic64_read(&HFS_SB(sb)->file_count) > U32_MAX);
->  		mdb->drFilCnt =3D
->  			cpu_to_be32((u32)atomic64_read(&HFS_SB(sb)->file_count));
-> -		BUG_ON(atomic64_read(&HFS_SB(sb)->folder_count) > U32_MAX);
->  		mdb->drDirCnt =3D
->  			cpu_to_be32((u32)atomic64_read(&HFS_SB(sb)->folder_count));
-> =20
-> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-> index 47f50fa555a4..70e118c27e20 100644
-> --- a/fs/hfs/super.c
-> +++ b/fs/hfs/super.c
-> @@ -34,6 +34,7 @@ MODULE_LICENSE("GPL");
-> =20
->  static int hfs_sync_fs(struct super_block *sb, int wait)
->  {
-> +	is_hfs_cnid_counts_valid(sb);
->  	hfs_mdb_commit(sb);
->  	return 0;
->  }
-> @@ -65,6 +66,8 @@ static void flush_mdb(struct work_struct *work)
->  	sbi->work_queued =3D 0;
->  	spin_unlock(&sbi->work_lock);
-> =20
-> +	is_hfs_cnid_counts_valid(sb);
-> +
->  	hfs_mdb_commit(sb);
->  }
-> =20
+> I didn't realize that the mount(8) manpage had FS specific options.
+> That would be good to add, certainly. I would also recommend pointing
+> out in that same man page that mount.ceph has some user-friendly
+> helpers (like pulling information out of the ceph.conf) so we
+> recommend using it routinely.
 
-Looks good.
+OK. Sounds good. Let me create a ticket in https://tracker.ceph.com for this
+task.
 
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
-
-Thanks a lot,
+Thanks,
 Slava.
 
