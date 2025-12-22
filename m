@@ -1,36 +1,36 @@
-Return-Path: <linux-fsdevel+bounces-71825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3B1CD6273
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 14:28:59 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B4CCD6276
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 14:29:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 05BD9300DB96
+	by tor.lore.kernel.org (Postfix) with ESMTP id 31943300BDAC
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 13:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114652DEA93;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E68E2E03EC;
 	Mon, 22 Dec 2025 13:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
 	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4CGnW/+"
-X-Original-To: linux-fsdevel+subscribe@vger.kernel.org
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+X-Original-To: linux-fsdevel@vger.kernel.org
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01379221546
-	for <linux-fsdevel+subscribe@vger.kernel.org>; Mon, 22 Dec 2025 13:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066DD2C026A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 13:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766410135; cv=none; b=RCd+1m3A9zjYr37TAUbisHYiSJT2B0hXQ7Q0+zALwu0BIZGzZqpsA6spfJil4i2HS1rdfjRvYt00m2OYWyVhN3BGR7fEjy7b7nbqkWOufuYTOQVpl1l5arqiulwzpuFhDZpp/q6ehfCVEAX6s+5Cu48SAQ6y/7UpTTP6g2Shsfw=
+	t=1766410135; cv=none; b=KB3Ou2qExfqn3StJFaS0Z6s+pzrmvBj6+LWe4/Fcb6or1prrCf6CKKdWoYQ4WlbeKJuQfMh0j+6A6JpAPmrD0KZG+jwPJQP7h8+CCBH4aobytdVvsxZObVKbQUL+zJ/7n37u/ZdmBeKJfaUm7KSeX5X7McKp6gAoKDuqsr3ZbPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1766410135; c=relaxed/simple;
 	bh=DQHNLnCJMOvA/C6YBw1ZxZdCTkaUBXfe9KJGnju/iQU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
 	 To:Cc:Content-Type; b=pnsJIFqdVyUsw6LDrCsnE2eNoUdFZB2UAOYGswguvxZb9rfLU/8xpuUtF3+R+192+wR12d55Zj8i9rx2xjJBvxu56FD3baZQNeNXNgjuYQ/SoAj4rV62cfnlzmdd+TMc1OodGGss2N7bg41vIZGtiLa6P1ILuHZUu5jTaf9xnuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4CGnW/+; arc=none smtp.client-ip=209.85.222.53
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4CGnW/+; arc=none smtp.client-ip=209.85.217.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-93f64ae67dbso907858241.1
-        for <linux-fsdevel+subscribe@vger.kernel.org>; Mon, 22 Dec 2025 05:28:53 -0800 (PST)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-5de0c1fa660so1186999137.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 05:28:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1766410133; x=1767014933; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
@@ -49,20 +49,20 @@ X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
         bh=DQHNLnCJMOvA/C6YBw1ZxZdCTkaUBXfe9KJGnju/iQU=;
-        b=JhCqr9BzMCeJiDCuXezr0CWtB7ZIsUYcw/h+R1vNSfcyRcx7LpgFG2TCC4Qz+/CcJj
-         FiOUoNQBIRziJ0TrufyrnGIIiFL6hG8AiaAehPzV7WcmfB2gmleSbY4zK12Z5QU5JT9V
-         GeC207h88r23h9u3ZPSmgUNSp1knC5yEZiKsvvI6A79b9jHS26rDgiHkphoXpOZUbmSR
-         sZ2shApIon7APT/ScwIbkdNK2P5QYbOC7CsECirR8dvFak2nSz5ygmQU1iI+JE+slsoN
-         30/dkpe5HRR2KMTr3Kc5twjzrG7bLQXYl77kvtBZJFjbNG0m94Mya971dZotivKw/oWo
-         gnPQ==
-X-Gm-Message-State: AOJu0YxWf11dWL/UFwqEcP6HmD8YW7LbBFCTWyDOttLLd28+q+KT7SBZ
-	/jdmIBPRTBS6x8kHznjJ4q6evhTnEJrlOb01JLXcIDNdKVuxzVn6JiZ2lmsS6VuoOVVGxcA+X/X
-	qZKg32IiVCIfc+Dm30uuKcbfxqSvM1pE=
-X-Gm-Gg: AY/fxX6gvb7aRuRGCqgOfx3GK7UH9WW2K6lmXiT8GDums0m4UxaYSkXO0zocONbqpy9
-	BQX+5prWPbkJsmYGBrpBe800KWmMScrEsXaA8G0x1Ahy+WG5lVPSLTiV6DzbWfaRHBGVenNv3UR
-	jAyJD1u4yyJT83mUwl2jgaQ9qnekveF95LYz2B1yALvTY6F6xWeEYaXJ/lIPAOHZn93N0rUWPVT
-	iIPGNrMl3/lsm3Zp2ucplBQ8nq1dQO3+Z3JTLe2Q3EJQXccM1bIGwS+m4h8syHq5cNsERBRc+aJ
-	DEyPxGnPU5c7sdj80x2qVCnlsl1pfAtcZSEK
+        b=CLQ2McPPljrcN7bbMiqHXBxDvhWia/QZpaM0slvjQ6iJ+IOHH6um66q/BMhunkMwAy
+         VuJndc59BZAHwexlortLBpqr895OUfJBG1f6JKeorRmtJZf2+BjHF3P5lcNOG5JCyzsw
+         DSYJndAMdzp67hskUh2kvBazeINodkSbkBHR3e3jmw7uVJUfjeemBlA7TRZKZ2cHbTPu
+         N7mJONc3hXHb/T25n0IhQnX0nJTprruHctkbMrIqwKfNyCsafhdwfkW8Ev/nIxz6lwzS
+         VLVpNLGfFEj8V2kPT/C7j+MKjhhYXyACmeZp1ySgwWA2uv2SBeqVsU7x2C1TABztL19t
+         oI/Q==
+X-Gm-Message-State: AOJu0YzHLjiJlzPTU2d0h/4WaY38KJo0VOwgcTtaHbKSIqdczqFsAIrx
+	v+l1MQ8EzfM1p9OxUDS9qgTwRviadYYgur0kwD670+tr+kKxv5OkHZrG8Dj+8hSBZmG5HcIeMrF
+	SRgHigDH305yDc+wDFVqmiO5IdprmH3xk5Eypt9s=
+X-Gm-Gg: AY/fxX7Pui9KKWeVrEvmDG1mP0DQc+n/ZfAj+sb8s9Ik9EGwHQU+PQfOr+xsNq+bWX0
+	z9YF5wOb3H3uH5DzvvhadKpRNWtU7nPQLQQ7FMOjjgRMvhxIhhtWaHUhneUZX/qAPu0AYVKld5V
+	fFUU0+xHPcfzPz0t5WL8XSHzfHubf6z7k+sxHh41umPt7pFbKdyFMHmWdKu9M/ERWqXzz7CDwax
+	fJzAuimTcEVzVU8aBsqUJp/tYk/GcH8+HHCrj4YECmimtqlIKoY1GJX1SVnPJhuD5Kf3pUalbny
+	jkYOhakUSNG//M/BO4i3ZfGxJSskWbcExs/s
 X-Google-Smtp-Source: AGHT+IGWSKeaCyoidML79ijHHfRkMzw6/qBLjWiWxYaln1qC3rAnMzGrFutr3bncG4QqjlYXnc+jDLoh1XKoiMZWWfY=
 X-Received: by 2002:a05:6102:5987:b0:5db:f031:84d6 with SMTP id
  ada2fe7eead31-5eb1a7c48d4mr3410921137.28.1766410132835; Mon, 22 Dec 2025
