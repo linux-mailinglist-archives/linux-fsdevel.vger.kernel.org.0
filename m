@@ -1,100 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-71828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF77CD6786
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 16:05:23 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3012BCD687C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 16:30:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E534430CECCD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 15:01:25 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D64EC3011B28
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 15:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A0F320A1A;
-	Mon, 22 Dec 2025 15:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB57132E146;
+	Mon, 22 Dec 2025 15:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PBq8bao2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AfR+7BPY";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I1Dngh0w";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UER1f8ES"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zw7sO8ES";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EFxgzX7N";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Dj/ljclW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CbZ/HmJl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB6531ED67
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 15:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6DF32D7F9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 15:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766415682; cv=none; b=WiU1pDkHbC89aA7NA1ASE4WcydFvvWlvpM0rjaq62p7lcKAyr1VP0wyAtzDxxHNzY0O16/WEJ6RATn+IOpD/mKBnS95JznbnMglrXC/PDCqpiP/Naoztnf+yC5swNWZA6Sh+Ilv2N2QHbzd3xgYxiZ/oHydvFCNngwB3uvAUbW4=
+	t=1766417428; cv=none; b=besBE/hFQxjsGhw4oxmh5mRwjeTY+1zdr3Q2wCbon/c++UBjiL8y+PRhcz3QcDgQ15stIFOEDf3hX5+XSYdJOmra2dYUuSUk9bf+LJ0GR/AjHis466iTDB9H4L4A7N6iJ7p39WwDyOFUi2m6kdn29DPVQtZiRYx9TbMyGxwNtWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766415682; c=relaxed/simple;
-	bh=SZdQECnAuh3evi5qEo98CncBOOT5aJFsfafebtH24xo=;
+	s=arc-20240116; t=1766417428; c=relaxed/simple;
+	bh=XnN6EflEKp/eYb58YH9xHCz8rnekR7GFnKf0c/4uQok=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DW3lSa/vtr/EL2ovHQodOQuazUekGDCoFnWnsMSLO91DyPyqy9Voygy2TDPcpIF97ZIEow1XaaFb/cf8hUuKxq+6s+Dd2dSIJMb5fBxJXNVm0DZbxfgYiBw411iSmrcmrLgvKYrSEaQQ02xS+oVIBWkgZjS3pED4QLwOCejg+rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PBq8bao2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AfR+7BPY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I1Dngh0w; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UER1f8ES; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=OS5CqsW7ifBeEe/g+b/3KzOpIroLVbD9WpUys9L5rKHpw2e8Xu79JHn0wtmduiZcGJz3DZzIw4wKnoL2siEYmnWHN1vePIX0v1rzwl5tfFXpHz3pwNytCb8PyRiPbJV7jbCak5zPjAc6PKSaXgGxTCw90vg0j0/MbK6JbeSmf5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zw7sO8ES; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EFxgzX7N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Dj/ljclW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CbZ/HmJl; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4721A336A9;
-	Mon, 22 Dec 2025 15:01:11 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 048085BCDA;
+	Mon, 22 Dec 2025 15:30:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1766415672; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1766417421; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/4+Tyu8tctXsQondAS9xaAdXgKieYmZ4xcN5I5GwVHk=;
-	b=PBq8bao2ufYtkjqAs92m6higCGY5Kg9/t0RvXWcFJBpxXzO7Byb18mjzkGgkUN1QTvVaUg
-	oAkGjwvSqsFHaCGuSx+0LZjVQsFDxyxaD1PLNE6BqMEz6uZjfErn8TMExfXrrhTRqLi+fM
-	jMn7tVUNbYUrjHbVKX0i5E3Lxq6XMWo=
+	bh=FgRC0OwhbptUyq8wymRkGUMEXCjSvB4yp4BzwrBvNz8=;
+	b=zw7sO8ESADioDfSMkN8+AsySezgi6aGGerhUiaw9ybQ0m4gEspw+L0gSKFhUB//sIsZXah
+	8BLqlifQ2QfTo77Cr+jYeVpSTzOiHqZ6IXOC/qswcbDlrEig33QM9xn4HSwjTf7IqwtoS3
+	HFcMPbCxFZnWhP038+6FmFV2VKcPMyc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1766415672;
+	s=susede2_ed25519; t=1766417421;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/4+Tyu8tctXsQondAS9xaAdXgKieYmZ4xcN5I5GwVHk=;
-	b=AfR+7BPYyKDR4IACLknj76He/9T3+LCT82QoPHTb5y3/69sbYDDUrChUEV0Wn7gPKKK8SL
-	69xAM84ssswarUCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=I1Dngh0w;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UER1f8ES
+	bh=FgRC0OwhbptUyq8wymRkGUMEXCjSvB4yp4BzwrBvNz8=;
+	b=EFxgzX7NDTqU/yHq5YL9K5WYzZj12T0ErSGUntAGwMfpE+XQWY97iIVQc9mrPTYE7Vxjqz
+	lkC1u9imoprocyAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="Dj/ljclW";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="CbZ/HmJl"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1766415671; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1766417420; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/4+Tyu8tctXsQondAS9xaAdXgKieYmZ4xcN5I5GwVHk=;
-	b=I1Dngh0wG11P/29NCvf0BZvwBNUALZBK+ub1bgmqI5nfiKuFdYFQ1L76hqs5gEHUWhDDCO
-	srcQBAm+zmN6nWKQRotBcHrRdLss4Rmft1zl/ldgYrVpPU3C3XlI5rIrhVcNGtqSvOvgWR
-	12FebBT7XpJjoNUQRn8nJp/PkEbXgvo=
+	bh=FgRC0OwhbptUyq8wymRkGUMEXCjSvB4yp4BzwrBvNz8=;
+	b=Dj/ljclWUg3sBmMFJebCqxK21aFOVBSE5lxgNPSufGdu1y54CcW3zRN6pfdRPbEchTbbzM
+	LJzH74Zu+5RmGBbsKgtz1F/myQDqMySCfkHPbHgLT4L0WqrCqqNKhZod1lrkcyYgLLUOK0
+	PsSQ/IrLZaXe3avxfhNEldFwLcyzNBM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1766415671;
+	s=susede2_ed25519; t=1766417420;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/4+Tyu8tctXsQondAS9xaAdXgKieYmZ4xcN5I5GwVHk=;
-	b=UER1f8ESdqa4Ii8TK8pgsnKa6ccmoB2cY2Mfydbta40+9T2ExYiFZG7oc2IhZfCiDL/Hew
-	yp7BD6Aqw3fWgnCw==
+	bh=FgRC0OwhbptUyq8wymRkGUMEXCjSvB4yp4BzwrBvNz8=;
+	b=CbZ/HmJl95jxOHM6pzRZ8922NiiVMCrQ5BGM6A6qHnQ3lDXaKnTCB6txLu0Be69nUrHwft
+	dOovP+bFtL0IIRCg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 37DA71364B;
-	Mon, 22 Dec 2025 15:01:11 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EB1551364B;
+	Mon, 22 Dec 2025 15:30:19 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id C62cDTddSWm1BwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 22 Dec 2025 15:01:11 +0000
+	id Q1pdOQtkSWl/DQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 22 Dec 2025 15:30:19 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C298BA09CB; Mon, 22 Dec 2025 16:01:10 +0100 (CET)
-Date: Mon, 22 Dec 2025 16:01:10 +0100
+	id AFB15A09CB; Mon, 22 Dec 2025 16:30:19 +0100 (CET)
+Date: Mon, 22 Dec 2025 16:30:19 +0100
 From: Jan Kara <jack@suse.cz>
 To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: brauner@kernel.org, linux-api@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, gabriel@krisman.be, hch@lst.de, amir73il@gmail.com
-Subject: Re: [PATCH 1/6] uapi: promote EFSCORRUPTED and EUCLEAN to errno.h
-Message-ID: <vn6wnmfy2az6aecm43zmyttbnno2y7gm4jlria5vwe2ylwj3ka@m3jq5nm6yupa>
+Cc: brauner@kernel.org, linux-ext4@vger.kernel.org, jack@suse.cz, 
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, gabriel@krisman.be, hch@lst.de, 
+	amir73il@gmail.com
+Subject: Re: [PATCH 3/6] iomap: report file I/O errors to the VFS
+Message-ID: <r2gurwreel7vcr3pkyq3axn7qotvz32qnwcrm4rrhkkqg3xtrl@qjldvkhr4epo>
 References: <176602332085.686273.7564676516217176769.stgit@frogsfrogsfrogs>
- <176602332146.686273.6355079912638580915.stgit@frogsfrogsfrogs>
+ <176602332192.686273.7145566076281990940.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,7 +103,10 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <176602332146.686273.6355079912638580915.stgit@frogsfrogsfrogs>
+In-Reply-To: <176602332192.686273.7145566076281990940.stgit@frogsfrogsfrogs>
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: 048085BCDA
 X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -112,9 +115,9 @@ X-Spamd-Result: default: False [-4.01 / 50.00];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_COUNT_THREE(0.00)[3];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim,suse.cz:email];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
 	ARC_NA(0.00)[];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	TO_DN_SOME(0.00)[];
@@ -126,26 +129,22 @@ X-Spamd-Result: default: False [-4.01 / 50.00];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	MISSING_XM_UA(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,suse.cz,krisman.be,lst.de,gmail.com];
 	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email,suse.com:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Spam-Level: 
-X-Rspamd-Queue-Id: 4721A336A9
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
 
-On Wed 17-12-25 18:02:56, Darrick J. Wong wrote:
+On Wed 17-12-25 18:03:27, Darrick J. Wong wrote:
 > From: Darrick J. Wong <djwong@kernel.org>
 > 
-> Stop definining these privately and instead move them to the uapi
-> errno.h so that they become canonical instead of copy pasta.
+> Wire up iomap so that it reports all file read and write errors to the
+> VFS (and hence fsnotify) via the new fserror mechanism.
 > 
-> Cc: linux-api@vger.kernel.org
 > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 
 Looks good. Feel free to add:
@@ -155,323 +154,150 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  arch/alpha/include/uapi/asm/errno.h        |    2 ++
->  arch/mips/include/uapi/asm/errno.h         |    2 ++
->  arch/parisc/include/uapi/asm/errno.h       |    2 ++
->  arch/sparc/include/uapi/asm/errno.h        |    2 ++
->  fs/erofs/internal.h                        |    2 --
->  fs/ext2/ext2.h                             |    1 -
->  fs/ext4/ext4.h                             |    3 ---
->  fs/f2fs/f2fs.h                             |    3 ---
->  fs/minix/minix.h                           |    2 --
->  fs/udf/udf_sb.h                            |    2 --
->  fs/xfs/xfs_linux.h                         |    2 --
->  include/linux/jbd2.h                       |    3 ---
->  include/uapi/asm-generic/errno.h           |    2 ++
->  tools/arch/alpha/include/uapi/asm/errno.h  |    2 ++
->  tools/arch/mips/include/uapi/asm/errno.h   |    2 ++
->  tools/arch/parisc/include/uapi/asm/errno.h |    2 ++
->  tools/arch/sparc/include/uapi/asm/errno.h  |    2 ++
->  tools/include/uapi/asm-generic/errno.h     |    2 ++
->  18 files changed, 20 insertions(+), 18 deletions(-)
+>  fs/iomap/buffered-io.c |   23 ++++++++++++++++++++++-
+>  fs/iomap/direct-io.c   |   12 ++++++++++++
+>  fs/iomap/ioend.c       |    6 ++++++
+>  3 files changed, 40 insertions(+), 1 deletion(-)
 > 
 > 
-> diff --git a/arch/alpha/include/uapi/asm/errno.h b/arch/alpha/include/uapi/asm/errno.h
-> index 3d265f6babaf0a..6791f6508632ee 100644
-> --- a/arch/alpha/include/uapi/asm/errno.h
-> +++ b/arch/alpha/include/uapi/asm/errno.h
-> @@ -55,6 +55,7 @@
->  #define	ENOSR		82	/* Out of streams resources */
->  #define	ETIME		83	/* Timer expired */
->  #define	EBADMSG		84	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EPROTO		85	/* Protocol error */
->  #define	ENODATA		86	/* No data available */
->  #define	ENOSTR		87	/* Device not a stream */
-> @@ -96,6 +97,7 @@
->  #define	EREMCHG		115	/* Remote address changed */
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index e5c1ca440d93bd..b21e989b9fa5e6 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/writeback.h>
+>  #include <linux/swap.h>
+>  #include <linux/migrate.h>
+> +#include <linux/fserror.h>
+>  #include "internal.h"
+>  #include "trace.h"
 >  
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
-> diff --git a/arch/mips/include/uapi/asm/errno.h b/arch/mips/include/uapi/asm/errno.h
-> index 2fb714e2d6d8fc..c01ed91b1ef44b 100644
-> --- a/arch/mips/include/uapi/asm/errno.h
-> +++ b/arch/mips/include/uapi/asm/errno.h
-> @@ -50,6 +50,7 @@
->  #define EDOTDOT		73	/* RFS specific error */
->  #define EMULTIHOP	74	/* Multihop attempted */
->  #define EBADMSG		77	/* Not a data message */
-> +#define EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define ENAMETOOLONG	78	/* File name too long */
->  #define EOVERFLOW	79	/* Value too large for defined data type */
->  #define ENOTUNIQ	80	/* Name not unique on network */
-> @@ -88,6 +89,7 @@
->  #define EISCONN		133	/* Transport endpoint is already connected */
->  #define ENOTCONN	134	/* Transport endpoint is not connected */
->  #define EUCLEAN		135	/* Structure needs cleaning */
-> +#define EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define ENOTNAM		137	/* Not a XENIX named type file */
->  #define ENAVAIL		138	/* No XENIX semaphores available */
->  #define EISNAM		139	/* Is a named type file */
-> diff --git a/arch/parisc/include/uapi/asm/errno.h b/arch/parisc/include/uapi/asm/errno.h
-> index 8d94739d75c67c..8cbc07c1903e4c 100644
-> --- a/arch/parisc/include/uapi/asm/errno.h
-> +++ b/arch/parisc/include/uapi/asm/errno.h
-> @@ -36,6 +36,7 @@
+> @@ -371,8 +372,11 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
+>  	if (folio_test_uptodate(folio))
+>  		return 0;
 >  
->  #define	EDOTDOT		66	/* RFS specific error */
->  #define	EBADMSG		67	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EUSERS		68	/* Too many users */
->  #define	EDQUOT		69	/* Quota exceeded */
->  #define	ESTALE		70	/* Stale file handle */
-> @@ -62,6 +63,7 @@
->  #define	ERESTART	175	/* Interrupted system call should be restarted */
->  #define	ESTRPIPE	176	/* Streams pipe error */
->  #define	EUCLEAN		177	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		178	/* Not a XENIX named type file */
->  #define	ENAVAIL		179	/* No XENIX semaphores available */
->  #define	EISNAM		180	/* Is a named type file */
-> diff --git a/arch/sparc/include/uapi/asm/errno.h b/arch/sparc/include/uapi/asm/errno.h
-> index 81a732b902ee38..4a41e7835fd5b8 100644
-> --- a/arch/sparc/include/uapi/asm/errno.h
-> +++ b/arch/sparc/include/uapi/asm/errno.h
-> @@ -48,6 +48,7 @@
->  #define	ENOSR		74	/* Out of streams resources */
->  #define	ENOMSG		75	/* No message of desired type */
->  #define	EBADMSG		76	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EIDRM		77	/* Identifier removed */
->  #define	EDEADLK		78	/* Resource deadlock would occur */
->  #define	ENOLCK		79	/* No record locks available */
-> @@ -91,6 +92,7 @@
->  #define	ENOTUNIQ	115	/* Name not unique on network */
->  #define	ERESTART	116	/* Interrupted syscall should be restarted */
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index f7f622836198da..d06e99baf5d5ae 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -541,6 +541,4 @@ long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
->  long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
->  			unsigned long arg);
+> -	if (WARN_ON_ONCE(size > iomap->length))
+> +	if (WARN_ON_ONCE(size > iomap->length)) {
+> +		fserror_report_io(iter->inode, FSERR_BUFFERED_READ,
+> +				  iomap->offset, size, -EIO, GFP_NOFS);
+>  		return -EIO;
+> +	}
+>  	if (offset > 0)
+>  		ifs_alloc(iter->inode, folio, iter->flags);
 >  
-> -#define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
-> -
->  #endif	/* __EROFS_INTERNAL_H */
-> diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-> index cf97b76e9fd3e9..5e0c6c5fcb6cd6 100644
-> --- a/fs/ext2/ext2.h
-> +++ b/fs/ext2/ext2.h
-> @@ -357,7 +357,6 @@ struct ext2_inode {
->   */
->  #define	EXT2_VALID_FS			0x0001	/* Unmounted cleanly */
->  #define	EXT2_ERROR_FS			0x0002	/* Errors detected */
-> -#define	EFSCORRUPTED			EUCLEAN	/* Filesystem is corrupted */
+> @@ -399,6 +403,11 @@ void iomap_finish_folio_read(struct folio *folio, size_t off, size_t len,
+>  		spin_unlock_irqrestore(&ifs->state_lock, flags);
+>  	}
 >  
->  /*
->   * Mount flags
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 56112f201cace7..62c091b52bacdf 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3938,7 +3938,4 @@ extern int ext4_block_write_begin(handle_t *handle, struct folio *folio,
->  				  get_block_t *get_block);
->  #endif	/* __KERNEL__ */
+> +	if (error)
+> +		fserror_report_io(folio->mapping->host, FSERR_BUFFERED_READ,
+> +				  folio_pos(folio) + off, len, error,
+> +				  GFP_ATOMIC);
+> +
+>  	if (finished)
+>  		folio_end_read(folio, uptodate);
+>  }
+> @@ -540,6 +549,10 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+>  			if (!*bytes_submitted)
+>  				iomap_read_init(folio);
+>  			ret = ctx->ops->read_folio_range(iter, ctx, plen);
+> +			if (ret < 0)
+> +				fserror_report_io(iter->inode,
+> +						  FSERR_BUFFERED_READ, pos,
+> +						  plen, ret, GFP_NOFS);
+>  			if (ret)
+>  				return ret;
+>  			*bytes_submitted += plen;
+> @@ -815,6 +828,10 @@ static int __iomap_write_begin(const struct iomap_iter *iter,
+>  			else
+>  				status = iomap_bio_read_folio_range_sync(iter,
+>  						folio, block_start, plen);
+> +			if (status < 0)
+> +				fserror_report_io(iter->inode,
+> +						  FSERR_BUFFERED_READ, pos,
+> +						  len, status, GFP_NOFS);
+>  			if (status)
+>  				return status;
+>  		}
+> @@ -1805,6 +1822,7 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
+>  	u64 pos = folio_pos(folio);
+>  	u64 end_pos = pos + folio_size(folio);
+>  	u64 end_aligned = 0;
+> +	loff_t orig_pos = pos;
+>  	size_t bytes_submitted = 0;
+>  	int error = 0;
+>  	u32 rlen;
+> @@ -1848,6 +1866,9 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
 >  
-> -#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> -
->  #endif	/* _EXT4_H */
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 20edbb99b814a7..9f3aa3c7f12613 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -5004,7 +5004,4 @@ static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
->  	f2fs_invalidate_compress_pages_range(sbi, blkaddr, len);
+>  	if (bytes_submitted)
+>  		wpc->nr_folios++;
+> +	if (error && pos > orig_pos)
+> +		fserror_report_io(inode, FSERR_BUFFERED_WRITE, orig_pos, 0,
+> +				  error, GFP_NOFS);
+>  
+>  	/*
+>  	 * We can have dirty bits set past end of file in page_mkwrite path
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 8e273408453a9c..a06c73eaa8901b 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/pagemap.h>
+>  #include <linux/iomap.h>
+>  #include <linux/task_io_accounting_ops.h>
+> +#include <linux/fserror.h>
+>  #include "internal.h"
+>  #include "trace.h"
+>  
+> @@ -78,6 +79,13 @@ static void iomap_dio_submit_bio(const struct iomap_iter *iter,
+>  	}
 >  }
 >  
-> -#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> -
->  #endif /* _LINUX_F2FS_H */
-> diff --git a/fs/minix/minix.h b/fs/minix/minix.h
-> index 2bfaf377f2086c..7e1f652f16d311 100644
-> --- a/fs/minix/minix.h
-> +++ b/fs/minix/minix.h
-> @@ -175,6 +175,4 @@ static inline int minix_test_bit(int nr, const void *vaddr)
->  	__minix_error_inode((inode), __func__, __LINE__,	\
->  			    (fmt), ##__VA_ARGS__)
+> +static inline enum fserror_type iomap_dio_err_type(const struct iomap_dio *dio)
+> +{
+> +	if (dio->flags & IOMAP_DIO_WRITE)
+> +		return FSERR_DIRECTIO_WRITE;
+> +	return FSERR_DIRECTIO_READ;
+> +}
+> +
+>  ssize_t iomap_dio_complete(struct iomap_dio *dio)
+>  {
+>  	const struct iomap_dio_ops *dops = dio->dops;
+> @@ -87,6 +95,10 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
 >  
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> -
->  #endif /* FS_MINIX_H */
-> diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
-> index 08ec8756b9487b..8399accc788dea 100644
-> --- a/fs/udf/udf_sb.h
-> +++ b/fs/udf/udf_sb.h
-> @@ -55,8 +55,6 @@
->  #define MF_DUPLICATE_MD		0x01
->  #define MF_MIRROR_FE_LOADED	0x02
+>  	if (dops && dops->end_io)
+>  		ret = dops->end_io(iocb, dio->size, ret, dio->flags);
+> +	if (dio->error)
+> +		fserror_report_io(file_inode(iocb->ki_filp),
+> +				  iomap_dio_err_type(dio), offset, dio->size,
+> +				  dio->error, GFP_NOFS);
 >  
-> -#define EFSCORRUPTED EUCLEAN
-> -
->  struct udf_meta_data {
->  	__u32	s_meta_file_loc;
->  	__u32	s_mirror_file_loc;
-> diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-> index 4dd747bdbccab2..55064228c4d574 100644
-> --- a/fs/xfs/xfs_linux.h
-> +++ b/fs/xfs/xfs_linux.h
-> @@ -121,8 +121,6 @@ typedef __u32			xfs_nlink_t;
+>  	if (likely(!ret)) {
+>  		ret = dio->size;
+> diff --git a/fs/iomap/ioend.c b/fs/iomap/ioend.c
+> index 86f44922ed3b6a..5b27ee98896707 100644
+> --- a/fs/iomap/ioend.c
+> +++ b/fs/iomap/ioend.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/list_sort.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/writeback.h>
+> +#include <linux/fserror.h>
+>  #include "internal.h"
+>  #include "trace.h"
 >  
->  #define ENOATTR		ENODATA		/* Attribute not found */
->  #define EWRONGFS	EINVAL		/* Mount with wrong filesystem type */
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> -#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+> @@ -55,6 +56,11 @@ static u32 iomap_finish_ioend_buffered(struct iomap_ioend *ioend)
 >  
->  #define __return_address __builtin_return_address(0)
->  
-> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-> index f5eaf76198f377..a53a00d36228ce 100644
-> --- a/include/linux/jbd2.h
-> +++ b/include/linux/jbd2.h
-> @@ -1815,7 +1815,4 @@ static inline int jbd2_handle_buffer_credits(handle_t *handle)
->  
->  #endif	/* __KERNEL__ */
->  
-> -#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
-> -#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-> -
->  #endif	/* _LINUX_JBD2_H */
-> diff --git a/include/uapi/asm-generic/errno.h b/include/uapi/asm-generic/errno.h
-> index cf9c51ac49f97e..92e7ae493ee315 100644
-> --- a/include/uapi/asm-generic/errno.h
-> +++ b/include/uapi/asm-generic/errno.h
-> @@ -55,6 +55,7 @@
->  #define	EMULTIHOP	72	/* Multihop attempted */
->  #define	EDOTDOT		73	/* RFS specific error */
->  #define	EBADMSG		74	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EOVERFLOW	75	/* Value too large for defined data type */
->  #define	ENOTUNIQ	76	/* Name not unique on network */
->  #define	EBADFD		77	/* File descriptor in bad state */
-> @@ -98,6 +99,7 @@
->  #define	EINPROGRESS	115	/* Operation now in progress */
->  #define	ESTALE		116	/* Stale file handle */
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
-> diff --git a/tools/arch/alpha/include/uapi/asm/errno.h b/tools/arch/alpha/include/uapi/asm/errno.h
-> index 3d265f6babaf0a..6791f6508632ee 100644
-> --- a/tools/arch/alpha/include/uapi/asm/errno.h
-> +++ b/tools/arch/alpha/include/uapi/asm/errno.h
-> @@ -55,6 +55,7 @@
->  #define	ENOSR		82	/* Out of streams resources */
->  #define	ETIME		83	/* Timer expired */
->  #define	EBADMSG		84	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EPROTO		85	/* Protocol error */
->  #define	ENODATA		86	/* No data available */
->  #define	ENOSTR		87	/* Device not a stream */
-> @@ -96,6 +97,7 @@
->  #define	EREMCHG		115	/* Remote address changed */
->  
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
-> diff --git a/tools/arch/mips/include/uapi/asm/errno.h b/tools/arch/mips/include/uapi/asm/errno.h
-> index 2fb714e2d6d8fc..c01ed91b1ef44b 100644
-> --- a/tools/arch/mips/include/uapi/asm/errno.h
-> +++ b/tools/arch/mips/include/uapi/asm/errno.h
-> @@ -50,6 +50,7 @@
->  #define EDOTDOT		73	/* RFS specific error */
->  #define EMULTIHOP	74	/* Multihop attempted */
->  #define EBADMSG		77	/* Not a data message */
-> +#define EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define ENAMETOOLONG	78	/* File name too long */
->  #define EOVERFLOW	79	/* Value too large for defined data type */
->  #define ENOTUNIQ	80	/* Name not unique on network */
-> @@ -88,6 +89,7 @@
->  #define EISCONN		133	/* Transport endpoint is already connected */
->  #define ENOTCONN	134	/* Transport endpoint is not connected */
->  #define EUCLEAN		135	/* Structure needs cleaning */
-> +#define EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define ENOTNAM		137	/* Not a XENIX named type file */
->  #define ENAVAIL		138	/* No XENIX semaphores available */
->  #define EISNAM		139	/* Is a named type file */
-> diff --git a/tools/arch/parisc/include/uapi/asm/errno.h b/tools/arch/parisc/include/uapi/asm/errno.h
-> index 8d94739d75c67c..8cbc07c1903e4c 100644
-> --- a/tools/arch/parisc/include/uapi/asm/errno.h
-> +++ b/tools/arch/parisc/include/uapi/asm/errno.h
-> @@ -36,6 +36,7 @@
->  
->  #define	EDOTDOT		66	/* RFS specific error */
->  #define	EBADMSG		67	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EUSERS		68	/* Too many users */
->  #define	EDQUOT		69	/* Quota exceeded */
->  #define	ESTALE		70	/* Stale file handle */
-> @@ -62,6 +63,7 @@
->  #define	ERESTART	175	/* Interrupted system call should be restarted */
->  #define	ESTRPIPE	176	/* Streams pipe error */
->  #define	EUCLEAN		177	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		178	/* Not a XENIX named type file */
->  #define	ENAVAIL		179	/* No XENIX semaphores available */
->  #define	EISNAM		180	/* Is a named type file */
-> diff --git a/tools/arch/sparc/include/uapi/asm/errno.h b/tools/arch/sparc/include/uapi/asm/errno.h
-> index 81a732b902ee38..4a41e7835fd5b8 100644
-> --- a/tools/arch/sparc/include/uapi/asm/errno.h
-> +++ b/tools/arch/sparc/include/uapi/asm/errno.h
-> @@ -48,6 +48,7 @@
->  #define	ENOSR		74	/* Out of streams resources */
->  #define	ENOMSG		75	/* No message of desired type */
->  #define	EBADMSG		76	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EIDRM		77	/* Identifier removed */
->  #define	EDEADLK		78	/* Resource deadlock would occur */
->  #define	ENOLCK		79	/* No record locks available */
-> @@ -91,6 +92,7 @@
->  #define	ENOTUNIQ	115	/* Name not unique on network */
->  #define	ERESTART	116	/* Interrupted syscall should be restarted */
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
-> diff --git a/tools/include/uapi/asm-generic/errno.h b/tools/include/uapi/asm-generic/errno.h
-> index cf9c51ac49f97e..92e7ae493ee315 100644
-> --- a/tools/include/uapi/asm-generic/errno.h
-> +++ b/tools/include/uapi/asm-generic/errno.h
-> @@ -55,6 +55,7 @@
->  #define	EMULTIHOP	72	/* Multihop attempted */
->  #define	EDOTDOT		73	/* RFS specific error */
->  #define	EBADMSG		74	/* Not a data message */
-> +#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
->  #define	EOVERFLOW	75	/* Value too large for defined data type */
->  #define	ENOTUNIQ	76	/* Name not unique on network */
->  #define	EBADFD		77	/* File descriptor in bad state */
-> @@ -98,6 +99,7 @@
->  #define	EINPROGRESS	115	/* Operation now in progress */
->  #define	ESTALE		116	/* Stale file handle */
->  #define	EUCLEAN		117	/* Structure needs cleaning */
-> +#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
->  #define	ENOTNAM		118	/* Not a XENIX named type file */
->  #define	ENAVAIL		119	/* No XENIX semaphores available */
->  #define	EISNAM		120	/* Is a named type file */
+>  	/* walk all folios in bio, ending page IO on them */
+>  	bio_for_each_folio_all(fi, bio) {
+> +		if (ioend->io_error)
+> +			fserror_report_io(inode, FSERR_BUFFERED_WRITE,
+> +					  folio_pos(fi.folio) + fi.offset,
+> +					  fi.length, ioend->io_error,
+> +					  GFP_ATOMIC);
+>  		iomap_finish_folio_write(inode, fi.folio, fi.length);
+>  		folio_count++;
+>  	}
 > 
 -- 
 Jan Kara <jack@suse.com>
