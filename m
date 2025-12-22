@@ -1,99 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-71831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7088ECD696F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 16:37:41 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09419CD6D4B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 18:32:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 614B1306A2C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 15:36:25 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 9E65830049EE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 17:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734BD2F999F;
-	Mon, 22 Dec 2025 15:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE522BE62B;
+	Mon, 22 Dec 2025 17:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xGclTYGz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="znIS3dyE";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r1x6ydTJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="n6mwVSJT"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LAHloAlD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED6E308F07
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 15:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91F9299A8F;
+	Mon, 22 Dec 2025 17:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766417780; cv=none; b=SfyuDzIuYkX+bLjWKwZStGMcRphEXl0xMRxXGhiMm4Fapc+ETCxYq+A2Yp8JQzF7cLs7sCXa77tZLR8abmu9knuzWxaDogTiiuObUwlj49j5JAOsHvZdc/gu1SQG7I5vk+7pjUP5AjVlohneli+V2pqlSN2FNjduw4/4Qhd3lEY=
+	t=1766424295; cv=none; b=e5m7XSKIhqWLTM7esObYYVq+PS3wP+ZSBKogdlqcweahQEofC7odv9uJ61bnfvENfvDufLXamCp6lhg7S5jbNxo6+GELukcbuymRqmBZa4ojrUcsGRgTY5rgRkbfzPLvSQUi5VWVTRR151/GSJ6QruV9TKJe5F+t7NS4Wm/Wr3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766417780; c=relaxed/simple;
-	bh=lOqQG2EGhBnybfgMFM30ZXJMDMi1J18t4+jGfujyHr8=;
+	s=arc-20240116; t=1766424295; c=relaxed/simple;
+	bh=Meh4IFJKwQmWFy7b4k7Ru7HZTrffdNhPM8b0t4yMLHA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U27jLsIX+/Ez2Yzmiel10goM8YN2gjbnrqQc6GPynQSJMmpYx4q9MH88MQ5l5DSlXUC78ptyKEQxuVX6WIzOxg0xf1erVHCgg3zayAtxYIMCXYvLKPlJGynsrmUBYOFY2grIEmi0w1vkgbOUbfO4lXFdwWmxYsNz3cgx0N+pIYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xGclTYGz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=znIS3dyE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r1x6ydTJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=n6mwVSJT; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 37D90336A0;
-	Mon, 22 Dec 2025 15:36:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1766417777; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h5h7+A5awHzkqbIHTSYYSLcXY7sXSCMhj2UcviA/ZOg=;
-	b=xGclTYGzxgCAiGf2rsY5NSDnd662HC7W5T+5haLCTzllg0JJziFeZXZE0jdHW+fSve1nQj
-	oWRKF6I9r+qz2BMeG9sChxD0HV7O1gMnDsorZvKgYVymvHYoUmnr7R0GfHAnwuieUKmnci
-	bLaPLj55hKVQKfg/NUTHnX+Lr4+RxPQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1766417777;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h5h7+A5awHzkqbIHTSYYSLcXY7sXSCMhj2UcviA/ZOg=;
-	b=znIS3dyEfdCGy/1NWT2t/Ae9DNQ6Y8fM6cJTddTiYnJ/oAcZL+cZXxKxmYGBmvoB4oFfCe
-	ST60pL4AsrjrMaBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1766417775; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h5h7+A5awHzkqbIHTSYYSLcXY7sXSCMhj2UcviA/ZOg=;
-	b=r1x6ydTJgRcyBOIqB9Y/qfRXG4JZwju7cDb7a4aAcNuhn9xtWepTqRjpCI9AzqZr38+ju6
-	Rjmd9L6FPfcp+qTn6nYatl2KvMjL8+htiY+SemGC7V+D0b5v7p9tK6+g5Vbz+mXFhEAcI2
-	8Pe0LVxH6EKm5OIQgM0k8vAuHMSf0Kg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1766417775;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h5h7+A5awHzkqbIHTSYYSLcXY7sXSCMhj2UcviA/ZOg=;
-	b=n6mwVSJTG3c7QIMaJFXCa9AuExDQWPM6eY4OJlyDPsIPRUDwEErF/MqsdOyavH/GU1hW/L
-	gUV6CARDiHuCSCBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2DDA51364B;
-	Mon, 22 Dec 2025 15:36:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QEgvC29lSWl9DgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 22 Dec 2025 15:36:15 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E7058A09CB; Mon, 22 Dec 2025 16:36:14 +0100 (CET)
-Date: Mon, 22 Dec 2025 16:36:14 +0100
-From: Jan Kara <jack@suse.cz>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: brauner@kernel.org, hch@lst.de, linux-ext4@vger.kernel.org, 
-	jack@suse.cz, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	gabriel@krisman.be, amir73il@gmail.com
-Subject: Re: [PATCH 2/6] fs: report filesystem and file I/O errors to fsnotify
-Message-ID: <cunesvp5k37ocmz2nbkdov7ssu3djqvdii26d4gn6sj7sgtnca@b5mokxhvneay>
-References: <176602332085.686273.7564676516217176769.stgit@frogsfrogsfrogs>
- <176602332171.686273.14690243193639006055.stgit@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j9EqwdXhw57IpEalxMo05Y5TMGwnKoqlAcP9XzKunDQTKxvkZk2jtux1P6puNZKfQOpuraKF/py6MebY5R15YPw5tobUOwAIGAgK2Rck+cHutYgMLh+Cqi+CfQMwQkn00Eqxuuwrbf2YGMBou5cyxWb1qInEt6/Z4DjN51jr6gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LAHloAlD; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1766424292; x=1797960292;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Meh4IFJKwQmWFy7b4k7Ru7HZTrffdNhPM8b0t4yMLHA=;
+  b=LAHloAlD48Xvp1XK9c9aoPvFklMaS7dNj5qqCaObfqexGOyfH0gPPnVb
+   q+/wizfDbL0k302MDsXD5IXtOyefGlRCQfGUh97cavrHIS/8opXqNwcaY
+   RJaYsDxMU5LaD7ebNDOTYtMygsH1JGyBKx/FSmDLsKTAxLdr/cqSn+I9n
+   z6PUWMo2GLo5/xYcJOEAANiMTezUiHY7xC8RoOjW0ty/XynOMIVhLd/co
+   wSTHTHq7NIlkiD7aSow1HUvA1zBIDWq90aOoRuErcJ4fIlNqAXGZ9s3H+
+   8YVML6vGfjZAMMR2PLU4TuFWq70MHgaNtkcOaUVUNu8MKy2goiwXWK1n3
+   A==;
+X-CSE-ConnectionGUID: Fmj3zsz4TtuYCjLtSXeCIg==
+X-CSE-MsgGUID: LPP6NkRmQHWk0trAjaxiLQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11650"; a="93753033"
+X-IronPort-AV: E=Sophos;i="6.21,168,1763452800"; 
+   d="scan'208";a="93753033"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Dec 2025 09:24:50 -0800
+X-CSE-ConnectionGUID: 3D03URhnR7qKeY5xeft+uA==
+X-CSE-MsgGUID: bm0uX86LSyWVPF7HV1Kz9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,168,1763452800"; 
+   d="scan'208";a="199214417"
+Received: from lkp-server02.sh.intel.com (HELO dd3453e2b682) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 22 Dec 2025 09:24:48 -0800
+Received: from kbuild by dd3453e2b682 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vXjeI-000000000vV-0Dw5;
+	Mon, 22 Dec 2025 17:24:46 +0000
+Date: Tue, 23 Dec 2025 01:23:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+	axboe@kernel.dk
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, bschubert@ddn.com,
+	asml.silence@gmail.com, io-uring@vger.kernel.org,
+	csander@purestorage.com, xiaobing.li@samsung.com,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 19/25] fuse: add io-uring kernel-managed buffer ring
+Message-ID: <202512230043.PJcZViVh-lkp@intel.com>
+References: <20251218083319.3485503-20-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -102,145 +79,132 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <176602332171.686273.14690243193639006055.stgit@frogsfrogsfrogs>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,lst.de,vger.kernel.org,suse.cz,krisman.be,gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+In-Reply-To: <20251218083319.3485503-20-joannelkoong@gmail.com>
 
-On Wed 17-12-25 18:03:11, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
-> 
-> Create some wrapper code around struct super_block so that filesystems
-> have a standard way to queue filesystem metadata and file I/O error
-> reports to have them sent to fsnotify.
-> 
-> If a filesystem wants to provide an error number, it must supply only
-> negative error numbers.  These are stored internally as negative
-> numbers, but they are converted to positive error numbers before being
-> passed to fanotify, per the fanotify(7) manpage.  Implementations of
-> super_operations::report_error are passed the raw internal event data.
-> 
-> Note that we have to play some shenanigans with mempools and queue_work
-> so that the error handling doesn't happen outside of process context,
-> and the event handler functions (both ->report_error and fsnotify) can
-> handle file I/O error messages without having to worry about whatever
-> locks might be held.  This asynchronicity requires that unmount wait for
-> pending events to clear.
-> 
-> Add a new callback to the superblock operations structure so that
-> filesystem drivers can themselves respond to file I/O errors if they so
-> desire.  This will be used for an upcoming self-healing patchset for
-> XFS.
-> 
-> Suggested-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+Hi Joanne,
 
-Looks good to me. Besides the nits Christoph commented on just two comments:
+kernel test robot noticed the following build warnings:
 
-> +static inline struct fserror_event *fserror_alloc_event(struct super_block *sb,
-> +							gfp_t gfp_flags)
-> +{
-> +	struct fserror_event *event = NULL;
-> +
-> +	/*
-> +	 * If pending_errors already reached zero or is no longer active,
-> +	 * the superblock is being deactivated so there's no point in
-> +	 * continuing.
-> +	 */
-> +	if (!refcount_inc_not_zero(&sb->s_pending_errors))
-> +		return NULL;
+[auto build test WARNING on axboe/for-next]
+[also build test WARNING on linus/master v6.19-rc2 next-20251219]
+[cannot apply to mszeredi-fuse/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-It would be good here or in the above comment explicitely mention that the
-ordering of s_pending_errors check and SB_ACTIVE check is mandated by the
-ordering in generic_shutdown_super() and that the barriers are implicitely
-provided by the refcount manipulations here and in fserror_unmount().
+url:    https://github.com/intel-lab-lkp/linux/commits/Joanne-Koong/io_uring-kbuf-refactor-io_buf_pbuf_register-logic-into-generic-helpers/20251218-165107
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git for-next
+patch link:    https://lore.kernel.org/r/20251218083319.3485503-20-joannelkoong%40gmail.com
+patch subject: [PATCH v2 19/25] fuse: add io-uring kernel-managed buffer ring
+config: um-randconfig-001-20251222 (https://download.01.org/0day-ci/archive/20251223/202512230043.PJcZViVh-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 185f5fd5ce4c65116ca8cf6df467a682ef090499)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251223/202512230043.PJcZViVh-lkp@intel.com/reproduce)
 
-> +	if (!(sb->s_flags & SB_ACTIVE))
-> +		goto out_pending;
-> +
-> +	event = mempool_alloc(&fserror_events_pool, gfp_flags);
-> +	if (!event)
-> +		goto out_pending;
-> +
-> +	/* mempool_alloc doesn't support GFP_ZERO */
-> +	memset(event, 0, sizeof(*event));
-> +	event->sb = sb;
-> +	INIT_WORK(&event->work, fserror_worker);
-> +
-> +	return event;
-> +
-> +out_pending:
-> +	fserror_pending_dec(sb);
-> +	return NULL;
-> +}
-> +
-> +/**
-> + * fserror_report - report a filesystem error of some kind
-> + *
-> + * Report details of a filesystem error to the super_operations::report_error
-> + * callback if present; and to fsnotify for distribution to userspace.  @sb,
-> + * @gfp, @type, and @error must all be specified.  For file I/O errors, the
-> + * @inode, @pos, and @len fields must also be specified.  For file metadata
-> + * errors, @inode must be specified.  If @inode is not NULL, then @inode->i_sb
-> + * must point to @sb.
-> + *
-> + * Reporting work is deferred to a workqueue to ensure that ->report_error is
-> + * called from process context without any locks held.  An active reference to
-> + * the inode is maintained until event handling is complete, and unmount will
-> + * wait for queued events to drain.
-> + *
-> + * @sb:		superblock of the filesystem
-> + * @inode:	inode within that filesystem, if applicable
-> + * @type:	type of error encountered
-> + * @pos:	start of inode range affected, if applicable
-> + * @len:	length of inode range affected, if applicable
-> + * @error:	error number encountered, must be negative
-> + * @gfp:	memory allocation flags for conveying the event to a worker,
-> + *		since this function can be called from atomic contexts
-> + */
-> +void fserror_report(struct super_block *sb, struct inode *inode,
-> +		    enum fserror_type type, loff_t pos, u64 len, int error,
-> +		    gfp_t gfp)
-> +{
-> +	struct fserror_event *event;
-> +
-> +	/* sb and inode must be from the same filesystem */
-> +	WARN_ON_ONCE(inode && inode->i_sb != sb);
-> +
-> +	/* error number must be negative */
-> +	WARN_ON_ONCE(error >= 0);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512230043.PJcZViVh-lkp@intel.com/
 
-Since the error reporting is kind of expensive now (allocation & queueing
-work) it would be nice to check somebody actually cares about the error
-events at all. We can provide a helper from fsnotify for that, I'm not sure
-about ->report_error hook since it didn't get used in this series at all in
-the end...
+All warnings (new ones prefixed by >>):
 
-								Honza
+   In file included from fs/fuse/dev_uring.c:7:
+   In file included from fs/fuse/fuse_i.h:23:
+   In file included from include/linux/backing-dev.h:16:
+   In file included from include/linux/writeback.h:13:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:24:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:12:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:1209:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+    1209 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
+         |                                                   ~~~~~~~~~~ ^
+>> fs/fuse/dev_uring.c:704:35: warning: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
+     703 |                                     "header_type=%u, header_size=%lu, "
+         |                                                                  ~~~
+         |                                                                  %zu
+     704 |                                     "use_bufring=%d\n", type, header_size,
+         |                                                               ^~~~~~~~~~~
+   include/linux/printk.h:726:46: note: expanded from macro 'pr_info_ratelimited'
+     726 |         printk_ratelimited(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+         |                                             ~~~     ^~~~~~~~~~~
+   include/linux/printk.h:706:17: note: expanded from macro 'printk_ratelimited'
+     706 |                 printk(fmt, ##__VA_ARGS__);                             \
+         |                        ~~~    ^~~~~~~~~~~
+   include/linux/printk.h:512:60: note: expanded from macro 'printk'
+     512 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
+         |                                                     ~~~    ^~~~~~~~~~~
+   include/linux/printk.h:484:19: note: expanded from macro 'printk_index_wrap'
+     484 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ~~~~    ^~~~~~~~~~~
+   fs/fuse/dev_uring.c:743:35: warning: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
+     742 |                                     "header_type=%u, header_size=%lu, "
+         |                                                                  ~~~
+         |                                                                  %zu
+     743 |                                     "use_bufring=%d\n", type, header_size,
+         |                                                               ^~~~~~~~~~~
+   include/linux/printk.h:726:46: note: expanded from macro 'pr_info_ratelimited'
+     726 |         printk_ratelimited(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+         |                                             ~~~     ^~~~~~~~~~~
+   include/linux/printk.h:706:17: note: expanded from macro 'printk_ratelimited'
+     706 |                 printk(fmt, ##__VA_ARGS__);                             \
+         |                        ~~~    ^~~~~~~~~~~
+   include/linux/printk.h:512:60: note: expanded from macro 'printk'
+     512 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
+         |                                                     ~~~    ^~~~~~~~~~~
+   include/linux/printk.h:484:19: note: expanded from macro 'printk_index_wrap'
+     484 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ~~~~    ^~~~~~~~~~~
+   3 warnings generated.
+
+
+vim +704 fs/fuse/dev_uring.c
+
+   670	
+   671	static __always_inline int copy_header_to_ring(struct fuse_ring_ent *ent,
+   672						       enum fuse_uring_header_type type,
+   673						       const void *header,
+   674						       size_t header_size)
+   675	{
+   676		bool use_bufring = ent->queue->use_bufring;
+   677		int err = 0;
+   678	
+   679		if (use_bufring) {
+   680			struct iov_iter iter;
+   681	
+   682			err =  get_kernel_ring_header(ent, type, &iter);
+   683			if (err)
+   684				goto done;
+   685	
+   686			if (copy_to_iter(header, header_size, &iter) != header_size)
+   687				err = -EFAULT;
+   688		} else {
+   689			void __user *ring = get_user_ring_header(ent, type);
+   690	
+   691			if (!ring) {
+   692				err = -EINVAL;
+   693				goto done;
+   694			}
+   695	
+   696			if (copy_to_user(ring, header, header_size))
+   697				err = -EFAULT;
+   698		}
+   699	
+   700	done:
+   701		if (err)
+   702			pr_info_ratelimited("Copying header to ring failed: "
+   703					    "header_type=%u, header_size=%lu, "
+ > 704					    "use_bufring=%d\n", type, header_size,
+   705					    use_bufring);
+   706	
+   707		return err;
+   708	}
+   709	
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
