@@ -1,194 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-71821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74C75CD5A85
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 11:49:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E397ACD5CA1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 12:19:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7058D302C8C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 10:48:23 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B8AF030595B4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 11:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741CA3148C7;
-	Mon, 22 Dec 2025 10:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Eh7LnRVc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QKoN2jDv";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Eh7LnRVc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QKoN2jDv"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375423164A8;
+	Mon, 22 Dec 2025 11:18:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0A5313E14
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 10:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACE43148D9;
+	Mon, 22 Dec 2025 11:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766400501; cv=none; b=bOSa0lVWG6qA9G5Ahb0Zfb9YQJ0Rsv12M9v1ajoraTgJHfkgQDBDLKAASkGbSV9TwA2pPHW7/PN0LuHJQyX/pH2j3ssfb+nRdWVolIk4rsr/kLiWIZJSIjfPR0+Ow6sBsPajw4KZKQX9c/cfb06bvbU334IrdiEg2y/bW4yz2HI=
+	t=1766402330; cv=none; b=m4UZ/DJ4fLgqCmFi9sN16LyYrnqryxC5WMg/r37VmmLZaY2bEsEKLU/Cx1dABZlmvpPOf2mfpl9J3TyozU49gRvL6APX7zYnFQDkIGUAqxParlmLphT2WYifKxCN/pggrHoJm60vDf7E+0T3wiOM2faASKO1IvngaqgdV6aHRN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766400501; c=relaxed/simple;
-	bh=peSjBXclAYGfvscpw9KaL2NBBwoS2BjO7mjWGZv0ZCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+WPT8lQg+JFlvBgMcdCfchduMRh6YUo/T14dDTFA4OMNJr0DYkZxb7SXbyEjmlYzEZdGElNhspTHdJ9fIhyWz3hWHvarkoyMdus2LAOzJCFxBpv5xEB3+lo6g16RBs+e5e3iDJWQvl45p8aD8o1VeKK3zNo+/dIwVL5NdmuzLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Eh7LnRVc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QKoN2jDv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Eh7LnRVc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QKoN2jDv; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 80B7F5BCE2;
-	Mon, 22 Dec 2025 10:48:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1766400492; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MU/DlRaIrxFQbb2VYGudXuXbvw/N2T0qOfiEg1I4q1s=;
-	b=Eh7LnRVc8KhUbZ6iE9jqt09/ex+eY/FS5REFiRkT0sQgPOC3dIgSg+YTangFRI6l6v8ikC
-	LxqQIMMas8maKB10qWA4z3YC7Ss/3nVfo4U6Oaj6QsL7HrA9nVIthStvBBPTYNvBt4pF9x
-	Kjtwca+PULDe54lYk2VKI+wStI9vqfc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1766400492;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MU/DlRaIrxFQbb2VYGudXuXbvw/N2T0qOfiEg1I4q1s=;
-	b=QKoN2jDv3xrBfJF6oqLIf26kYBTcBJ5jDdnwQ0Zo6l1z76CbgCmy7pyCAVSehxz45GVns5
-	RPleYHqhU2Sd/BCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1766400492; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MU/DlRaIrxFQbb2VYGudXuXbvw/N2T0qOfiEg1I4q1s=;
-	b=Eh7LnRVc8KhUbZ6iE9jqt09/ex+eY/FS5REFiRkT0sQgPOC3dIgSg+YTangFRI6l6v8ikC
-	LxqQIMMas8maKB10qWA4z3YC7Ss/3nVfo4U6Oaj6QsL7HrA9nVIthStvBBPTYNvBt4pF9x
-	Kjtwca+PULDe54lYk2VKI+wStI9vqfc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1766400492;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MU/DlRaIrxFQbb2VYGudXuXbvw/N2T0qOfiEg1I4q1s=;
-	b=QKoN2jDv3xrBfJF6oqLIf26kYBTcBJ5jDdnwQ0Zo6l1z76CbgCmy7pyCAVSehxz45GVns5
-	RPleYHqhU2Sd/BCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 75BFA1364B;
-	Mon, 22 Dec 2025 10:48:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dti5HOwhSWnxVgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 22 Dec 2025 10:48:12 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 36AC8A09CB; Mon, 22 Dec 2025 11:48:12 +0100 (CET)
-Date: Mon, 22 Dec 2025 11:48:12 +0100
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com, yi.zhang@huawei.com, yizhang089@gmail.com, 
-	libaokun1@huawei.com, yangerkun@huawei.com, yukuai@fnnas.com
-Subject: Re: [PATCH] ext4: don't order data when zeroing unwritten or delayed
- block
-Message-ID: <iih22kuucq6s2pdkhdcdosaaclfapmpanuikbvvzw4zf45pqw2@23kqz7drc6pr>
-References: <20251222013136.2658907-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1766402330; c=relaxed/simple;
+	bh=L5CSwTNRoAzejG8cIanyZQEioZ3Ta7TMfGL/jJVgFa8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D+HlaFjlZ6hS9IAjZ5wvKqSIoSqWG4USKDULA9mF7x+J14wI9LZ4o6IfCsNyBzdCgzpvAdXRfdWb6uusWrytDQIWepOTEvzGBDTZT9bp9OAuVc36gpn/CNvUstdYOm07riTuIXGqQuBMchqjnBVnFaisAtkPj+OYJOi3mH21ltk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.170])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dZbGk3HkXzYQv8Y;
+	Mon, 22 Dec 2025 19:18:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A07274056C;
+	Mon, 22 Dec 2025 19:18:41 +0800 (CST)
+Received: from [10.174.178.152] (unknown [10.174.178.152])
+	by APP4 (Coremail) with SMTP id gCh0CgCX+PgOKUlpLfBUBA--.49541S3;
+	Mon, 22 Dec 2025 19:18:41 +0800 (CST)
+Message-ID: <4f6ac1c0-8bd7-4547-8eb2-bf764cff0880@huaweicloud.com>
+Date: Mon, 22 Dec 2025 19:18:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251222013136.2658907-1-yi.zhang@huaweicloud.com>
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	URIBL_BLOCKED(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,huawei.com:email];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,linux.ibm.com,gmail.com,huawei.com,fnnas.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next 3/7] ext4: avoid starting handle when dio writing an
+ unwritten extent
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ojaswin@linux.ibm.com, ritesh.list@gmail.com, yi.zhang@huawei.com,
+ yizhang089@gmail.com, libaokun1@huawei.com, yangerkun@huawei.com,
+ yukuai@fnnas.com
+References: <20251213022008.1766912-1-yi.zhang@huaweicloud.com>
+ <20251213022008.1766912-4-yi.zhang@huaweicloud.com>
+ <6kfhyiin2m3iook5c4s6dwq45yeqshv4vbez3dfvwaehltajuc@4ybsharot344>
+ <5f6f9588-52a0-4ab8-a1ad-3d466488b985@huaweicloud.com>
+ <7btwyxrkixgmv45jeh3bf4uf4fqmauypb2ss67uqsiicklz6gq@rmll5ujssmwx>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <7btwyxrkixgmv45jeh3bf4uf4fqmauypb2ss67uqsiicklz6gq@rmll5ujssmwx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCX+PgOKUlpLfBUBA--.49541S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFWfKFW3uw45Jw48GrW3Jrb_yoW5tFWxpr
+	Z3KFy8CF4vqryUu3s2v3W8Xr1Sq397Kr4xZF4Fgr1jqr909r1xKw1jqFW5WF18KrWxCF10
+	vFWUAryxZF15ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Mon 22-12-25 09:31:36, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On 12/22/2025 6:15 PM, Jan Kara wrote:
+> On Sat 20-12-25 15:16:41, Zhang Yi wrote:
+>> On 12/19/2025 11:25 PM, Jan Kara wrote:
+>>> On Sat 13-12-25 10:20:04, Zhang Yi wrote:
+>>>> From: Zhang Yi <yi.zhang@huawei.com>
+>>>>
+>>>> Since we have deferred the split of the unwritten extent until after I/O
+>>>> completion, it is not necessary to initiate the journal handle when
+>>>> submitting the I/O.
+>>>>
+>>>> This can improve the write performance of concurrent DIO for multiple
+>>>> files. The fio tests below show a ~25% performance improvement when
+>>>> wirting to unwritten files on my VM with a mem disk.
+>>>>
+>>>>   [unwritten]
+>>>>   direct=1
+>>>>   ioengine=psync
+>>>>   numjobs=16
+>>>>   rw=write     # write/randwrite
+>>>>   bs=4K
+>>>>   iodepth=1
+>>>>   directory=/mnt
+>>>>   size=5G
+>>>>   runtime=30s
+>>>>   overwrite=0
+>>>>   norandommap=1
+>>>>   fallocate=native
+>>>>   ramp_time=5s
+>>>>   group_reporting=1
+>>>>
+>>>>  [w/o]
+>>>>   w:  IOPS=62.5k, BW=244MiB/s
+>>>>   rw: IOPS=56.7k, BW=221MiB/s
+>>>>
+>>>>  [w]
+>>>>   w:  IOPS=79.6k, BW=311MiB/s
+>>>>   rw: IOPS=70.2k, BW=274MiB/s
+>>>>
+>>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>>>> ---
+>>>>  fs/ext4/file.c  | 4 +---
+>>>>  fs/ext4/inode.c | 4 +++-
+>>>>  2 files changed, 4 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+>>>> index 7a8b30932189..9f571acc7782 100644
+>>>> --- a/fs/ext4/file.c
+>>>> +++ b/fs/ext4/file.c
+>>>> @@ -418,9 +418,7 @@ static const struct iomap_dio_ops ext4_dio_write_ops = {
+>>>>   *   updating inode i_disksize and/or orphan handling with exclusive lock.
+>>>>   *
+>>>>   * - shared locking will only be true mostly with overwrites, including
+>>>> - *   initialized blocks and unwritten blocks. For overwrite unwritten blocks
+>>>> - *   we protect splitting extents by i_data_sem in ext4_inode_info, so we can
+>>>> - *   also release exclusive i_rwsem lock.
+>>>> + *   initialized blocks and unwritten blocks.
+>>>>   *
+>>>>   * - Otherwise we will switch to exclusive i_rwsem lock.
+>>>>   */
+>>>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>>>> index ffde24ff7347..08a296122fe0 100644
+>>>> --- a/fs/ext4/inode.c
+>>>> +++ b/fs/ext4/inode.c
+>>>> @@ -3819,7 +3819,9 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>>>>  			 * For atomic writes the entire requested length should
+>>>>  			 * be mapped.
+>>>>  			 */
+>>>> -			if (map.m_flags & EXT4_MAP_MAPPED) {
+>>>> +			if ((map.m_flags & EXT4_MAP_MAPPED) ||
+>>>> +			    (!(flags & IOMAP_DAX) &&
+>>>
+>>> Why is here an exception for DAX writes? DAX is fine writing to unwritten
+>>> extents AFAIK. It only needs to pre-zero newly allocated blocks... Or am I
+>>> missing some corner case?
+>>>
+>>> 								Honza
+>>
+>> Hi, Jan!
+>>
+>> Thank you for reviewing this series.
+>>
+>> Yes, that is precisely why this exception is necessary here. Without this
+>> exception, a DAX write to an unwritten extent would return immediately
+>> without invoking ext4_iomap_alloc() to perform pre-zeroing.
 > 
-> When zeroing out a written partial block, it is necessary to order the
-> data to prevent exposing stale data on disk. However, if the buffer is
-> unwritten or delayed, it is not allocated as written, so ordering the
-> data is not required. This can prevent strange and unnecessary ordered
-> writes when appending data across a region within a block.
+> Ah, you're right. I already forgot how writing to unwritten extents works
+> with DAX and it seems we convert the extents to initialized (and zero them
+> out) before copying the data. Can you please expand the comment above by
+> "For DAX we convert extents to initialized ones before copying the data,
+> otherwise we do it after IO so there's no need to call into
+> ext4_iomap_alloc()." Otherwise feel free to add:
 > 
-> Assume we have a 2K unwritten file on a filesystem with 4K blocksize,
-> and buffered write from 3K to 4K. Before this patch,
-> __ext4_block_zero_page_range() would add the range [2k,3k) to the
-> ordered range, and then the JBD2 commit process would write back this
-> block. However, it does nothing since the block is not mapped, this
-							^^^ by this you
-mean that the block is unwritten, don't you?
-
-> folio will be redirtied and written back agian through the normal write
-> back process.
+> Reviewed-by: Jan Kara <jack@suse.cz>
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> 								Honza
 
-The patch looks good. Feel free to add:
+Sure! I will add this comment in v2.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Thanks,
+Yi.
 
-								Honza
-
-> ---
->  fs/ext4/inode.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index fa579e857baf..fc16a89903b9 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -4104,9 +4104,13 @@ static int __ext4_block_zero_page_range(handle_t *handle,
->  	if (ext4_should_journal_data(inode)) {
->  		err = ext4_dirty_journalled_data(handle, bh);
->  	} else {
-> -		err = 0;
->  		mark_buffer_dirty(bh);
-> -		if (ext4_should_order_data(inode))
-> +		/*
-> +		 * Only the written block requires ordered data to prevent
-> +		 * exposing stale data.
-> +		 */
-> +		if (!buffer_unwritten(bh) && !buffer_delay(bh) &&
-> +		    ext4_should_order_data(inode))
->  			err = ext4_jbd2_inode_add_write(handle, inode, from,
->  					length);
->  	}
-> -- 
-> 2.52.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
