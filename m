@@ -1,130 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-71835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C01ACD6FF2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 20:41:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC3FCD709A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 21:04:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 87560301E5BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 19:41:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 873663029D33
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 20:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213BC33B6D1;
-	Mon, 22 Dec 2025 19:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E9033D4F2;
+	Mon, 22 Dec 2025 20:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Wk98+9ck"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ks4sEbD4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2EF2FBE1F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 19:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC941DEFF5;
+	Mon, 22 Dec 2025 20:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766432487; cv=none; b=Lokj5rFnO2o9pkioEEh5hhDFDu3mk8EjYig3nPq1DqzlmQoaIWs0/2eeztIpY1KZ3ziOEw2/+kiUrPHuYgxCnKFzP/rLHXF+avZIB2wETMfm1/vBJQt3mUaLZTFjS55An8vG1RGvpZ+UPLjwnnMTKARBvsIy4Ne/Lf7pBjipEbA=
+	t=1766433861; cv=none; b=VlBhSziaKRTLWj6xSAO8+kqiMSrpD8oS4cyrFOpuqserMwj6fgnyl+2L5e3KacdnSxacNV1hD3wXW6+z8NLoSUjylptAFHV/3SABiuRTTLpNqhL6Pnpw6vhENiv/PnoMUXstSCiD0cDK+zyBtVE9J+z+fqs6Zyk/IE6+OVi9jQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766432487; c=relaxed/simple;
-	bh=lxB95KkAqNYSOdDKJbZuu4ofz3iyWK92aFO1vbQmLrw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KiRR6pnwB5gVOKEFLZi5uVWhuopR0WkuFAd8Qk08M3WXuRPoQxvycrWitjZpw7OJN+hmB1IbngZxlbd3Ud0SFr67J7uA56h8hLQUk9tFnMDxoiX/pXi61IYt3LNfOlR4W1AcIbYAYaxkT3Z5CVd61G10jcY6lmXpEYGyXmEDK78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Wk98+9ck; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 22 Dec 2025 11:41:07 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1766432473;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HBdPhxcvOkIIGXIYWQYM6O/Y0FlYFzryvwDPx4PZFuM=;
-	b=Wk98+9ckbp5jyANGKAKbT97FXJKGd1XTR154MtCpLTT5tdBRnTwFEHi72KBwuBF/gg/K6o
-	8oPGDBxmzSvgpcYhPo/byoaIT1aGfHmwGCJKn7z+quPKKTRLAGyJGagm64wAgjZpLYHJPq
-	FPN0Ye9v5CYBeXvgSB9WQTadw8/ZOzM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Shaurya Rane <ssrane_b23@ee.vjti.ac.in>, 
-	"Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Meta kernel team <kernel-team@meta.com>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH bpf v2] lib/buildid: use __kernel_read() for sleepable
- context
-Message-ID: <7gyxkpozyno7hl2jz5k2v2k5yo6gpvr3i5whqrgqlc5eahxvjz@p7p2a2aezsbt>
-References: <20251218205505.2415840-1-shakeel.butt@linux.dev>
- <aUSUe9jHnYJ577Gh@casper.infradead.org>
- <3lf3ed3xn2oaenvlqjmypuewtm6gakzbecc7kgqsadggyvdtkr@uyw4boj6igqu>
- <aUTPl35UPcjc66l3@casper.infradead.org>
- <64muytpsnwmjcnc5szbz4gfnh2owgorsfdl5zmomtykptfry4s@tuajoyqmulqc>
- <aUjXxSAD2-c4Ivy1@casper.infradead.org>
+	s=arc-20240116; t=1766433861; c=relaxed/simple;
+	bh=zwpPZI3aCzU701r+bt49CUPkrH2uvexax+yCoGFo4dk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=a1SDRZJsVLetj3lRd+Z3FcidGLtkZh/rWrbU1Km3ExQX0ooL96QrIqksEkD2l1L4k3TP0bydRq7mk+gaUDILcd0i4LW73HRolFdS4foqhtvURH7GFoS6oLaZ3eCQzji7O3/xREPkIuu/XIcL6ZcTh/l0hFm6qyRrgvRPdAtVggE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ks4sEbD4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB36C4CEF1;
+	Mon, 22 Dec 2025 20:04:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766433861;
+	bh=zwpPZI3aCzU701r+bt49CUPkrH2uvexax+yCoGFo4dk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Ks4sEbD4BmEIL+iZbfylQlhQIi6pN3LrZ83VQb9hSJU3r7XUizrxcsW6e/FeWfUvd
+	 gUHvKlGB9e7kpSWLMwSsxLIajsEJesvz+egvwY9KfQKhXq5lWNSDo7ad5p76ERuwYn
+	 nx733ghtCo2Vv0USO877gmZtEIAvFFkMMf4O5yXdUVX8g1KzsKgmEYf13snZfFswn2
+	 UzB43OXM0N2SIksoQEeMUYVUD9pc+B9Qd24TzWGVxk7U11h1w87whOpqfCRkCfjgCG
+	 trJawH2puCyAErsYIAFuNf7WoKp1zQJIft2VjIy4xRgaq9BOtNkaBPi2FfphiVKZ71
+	 5RKGWht8ECTkQ==
+From: Mark Brown <broonie@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Breno Leitao <leitao@debian.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Jens Axboe <axboe@kernel.dk>, 
+ Alexandre Courbot <acourbot@nvidia.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rae Moar <raemoar63@gmail.com>, 
+ Tamir Duberstein <tamird@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+In-Reply-To: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
+References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
+Subject: Re: (subset) [PATCH v2 00/19] rust: replace `kernel::c_str!` with
+ C-Strings
+Message-Id: <176643385114.959021.16173066477128119135.b4-ty@kernel.org>
+Date: Mon, 22 Dec 2025 20:04:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aUjXxSAD2-c4Ivy1@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-47773
 
-On Mon, Dec 22, 2025 at 05:31:50AM +0000, Matthew Wilcox wrote:
-> On Thu, Dec 18, 2025 at 09:58:43PM -0800, Shakeel Butt wrote:
-> > On Fri, Dec 19, 2025 at 04:07:51AM +0000, Matthew Wilcox wrote:
-> > > > I am assuming that __kernel_read() can return less data than the
-> > > > requested. Is that assumption incorrect?
-> > > 
-> > > I think it can, but I don't think a second call will get any more data.
-> > > For example, it could hit EOF.  What led you to think that calling it in
-> > > a loop was the right approach?
-> > 
-> > I am kind of following the convention of a userspace application doing
-> > read() syscall i.e. repeatedly call read() until you hit an error or EOF
-> > in which case 0 will be returned or you successfully read the amount of
-> > data you want. I am handling negative error and 0 and for 0, I am
-> > returning -EIO as that would be unexpected end of an ELF file.
+On Thu, 25 Sep 2025 09:53:48 -0400, Tamir Duberstein wrote:
+> This series depends on step 3[0].
 > 
-> Oh, you sweet summer child.  I hope Father Christmas leaves you an
-> extra special present in your stocking this week!
+> Subsystem maintainers: I would appreciate your `Acked-by`s so that this
+> can be taken through Miguel's tree (where the previous series must go).
 > 
-> While it would be lovely to believe that userspace does that kind of loop,
-> it just doesn't.  That's why mounting NFS filesystems with the "intr"
-> option (before I made it a no-op) was dangerous -- userspace just isn't
-> prepared for short reads.  I mean, we're lucky if userspace even checks
-> for errors, let alone does this kind of advanced "oh, we got fewer bytes
-> than we wanted, keep trying" scheme.
+> Link: https://lore.kernel.org/all/20250925-cstr-core-v16-0-5cdcb3470ec2@gmail.com/ [0]
 > 
-> A filesystem's ->read_iter() implementation can stop short of reading
-> all bytes requested if:
-> 
->  - We hit EIO.  No amount of asking will return more bytes, the data's
->    just not there any more.
->  - We hit EOF.  There's no more data to read.
->  - We're unable to access the buffer.  That's only possible for user
->    buffers, not kernel buffers.
->  - We receive a fatal signal.  I suppose there is the tiniest chance
->    that the I/O completes while we're processing the "we returned early"
->    loop, but in practice, the user has asked that we die now, and even
->    trying again is rude.  Just die as quickly as we can.
-> 
-> I can't think of any other cases.  It's just not allowed to return
-> short reads to userspace (other than EIO/EOF), and that drives all
-> the behaviour.
+> [...]
 
-Thanks for the explanation. Is calling kernel_read() again after it
-returned less amount of data unsafe or unnecessary?
+Applied to
 
-> 
-> > Anyways the question is if __kernel_read() returns less amount of data
-> > than requested, should we return error instead of retrying? I looked
-> > couple of callers of __kernel_read() & kernel_read(). Some are erroring
-> > out if received data is less than requested (e.g. big_key_read()) and
-> > some are calling in the loop (e.g. kernel_read_file()).
-> 
-> kernel_read_file() is wrong.  Thanks for reporting it; I'll send a patch.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-There are couple more like do_read() and do_verify() in
-drivers/usb/gadget/function/f_mass_storage.c. There might be more but I
-have not looked into every caller.
+Thanks!
+
+[19/19] rust: regulator: replace `kernel::c_str!` with C-Strings
+        commit: b0655377aa5a410df02d89170c20141a1a5bbc28
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
