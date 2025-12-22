@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-71847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E014BCD74B8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 23:30:39 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D82CD74DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 23:31:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8F02230213CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 22:30:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CC552304DEA9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 22:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B5D30EF98;
-	Mon, 22 Dec 2025 22:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD1731076B;
+	Mon, 22 Dec 2025 22:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bHHBi9Lr"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QA2nKi6+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CDF30FF3A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 22:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460D43128A9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 22:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766442623; cv=none; b=Tkxp5us8r6GRb+Mc6uuHSlckXG48GIUbLyvANa3wvXkrW0hqWuVCopzDMpvaIHV5rsiFoN9Zu8+n+PG5QUtbaffCVIQSm8xIFZQSYUipeM1dIEfgmcgWaf1hXymLwBywY8fVU01eJk6Lv0pmd4Vp32vpcEWipmSCYD6IY7hle3o=
+	t=1766442626; cv=none; b=uBwmWS1AwAe1L7a8rULEqmNgl9FXpU81BhmRGso4b6eOMA1yE/QDpaEPFjMj6PkZJJOjBKRS6cJPYzaxoANs973yagjMCPpCqn/UCG/hx0QNIMrauYtnRhgBszBJBZpos1Z+ok8/x4o5MgnMa9B3xeHehATWXgo+Qf7/2lLX1V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766442623; c=relaxed/simple;
-	bh=6HT4bpIkmylfTxujLc2RbKpDqRo8DLvgdweiK6y3ANA=;
+	s=arc-20240116; t=1766442626; c=relaxed/simple;
+	bh=B5B1UpVLxfIVT8FXHwNiuCVnkKxhHweN84i+Ja0mBUM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bC6pic7feq0vlPk0wge04d62fBGG4YF2efCATVUeO/ig9rAIYpFei5SsjTnssIihXpkyObM3aedvU/ey3TfE9hm16bQ7E+zrQyn1sbEh9lruRy2VK8VH0gCBsP/1bDA+d1B52vpWTct/AxSf1eoep7A9p8+plamUqDkakp7OQS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bHHBi9Lr; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=kL+X/nCZwB5oWo6CeYjIzVZyHVmvZykY/9aSSJzBsNOGytBydd4kIubzRtvqwlRy3GjxjcM19NlmVA5A1leH0U7gZJiGng5dnBW3E3LsH2cLVoS6+pxlzUytOKsfqRUWemT/MaNHktHZ1LCehKZMaEjb0N0BmHO9YonZPtbz7+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QA2nKi6+; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766442620;
+	s=mimecast20190719; t=1766442623;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vp6OX7uL6m79SkKOoGXJJCHtSD5Ariw4GExCJNzZvKg=;
-	b=bHHBi9LrTpob7wMF7zQ0dOIilDa3SSCwza0YmBrj/V5yJBbQyXVF1ooLrBKyXkNP9o6jEY
-	ZxvnPPlLkcR3IazqnkhHyqECIucdKiwurK+QMDrJ7CJn4/eCmUBS13W/PqcfTiVL//W0ju
-	Unm5vZBzmwMJ7+W/W4Tbk5GEBS5OP0w=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=Azyu375a0PbyVqSBelYOYqj6n7XdILlIQ8dFfw/FECA=;
+	b=QA2nKi6+ehG903Rc4jCJ383KoS5qt+AMp1TCZdp30IrgS2GAUzokReqhiOQK+XI4l9P6VT
+	IcIZH2J1U0UhO+Jc+ISiPzLXGUaf2yiY7oDKk9wPP4pBqannpmDE6aAxzwqgSnadIiQCbO
+	2Jw2K1eTnSvhLC3nc/hlbYb+h+uWFzY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-130-dh-HiZw9Pg2pM_5WyLkEzg-1; Mon,
- 22 Dec 2025 17:30:16 -0500
-X-MC-Unique: dh-HiZw9Pg2pM_5WyLkEzg-1
-X-Mimecast-MFC-AGG-ID: dh-HiZw9Pg2pM_5WyLkEzg_1766442615
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-359-5FZmNPOnOX2YEZpQI3yqtQ-1; Mon,
+ 22 Dec 2025 17:30:19 -0500
+X-MC-Unique: 5FZmNPOnOX2YEZpQI3yqtQ-1
+X-Mimecast-MFC-AGG-ID: 5FZmNPOnOX2YEZpQI3yqtQ_1766442618
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2714618002DE;
-	Mon, 22 Dec 2025 22:30:15 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 84E581956096;
+	Mon, 22 Dec 2025 22:30:18 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.42.28.4])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5148619560B4;
-	Mon, 22 Dec 2025 22:30:13 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 994481800670;
+	Mon, 22 Dec 2025 22:30:16 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Steve French <sfrench@samba.org>
 Cc: David Howells <dhowells@redhat.com>,
@@ -63,9 +63,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-cifs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 01/37] cifs: Scripted clean up fs/smb/client/cached_dir.h
-Date: Mon, 22 Dec 2025 22:29:26 +0000
-Message-ID: <20251222223006.1075635-2-dhowells@redhat.com>
+Subject: [PATCH 02/37] cifs: Scripted clean up fs/smb/client/dfs.h
+Date: Mon, 22 Dec 2025 22:29:27 +0000
+Message-ID: <20251222223006.1075635-3-dhowells@redhat.com>
 In-Reply-To: <20251222223006.1075635-1-dhowells@redhat.com>
 References: <20251222223006.1075635-1-dhowells@redhat.com>
 Precedence: bulk
@@ -75,7 +75,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
 Remove externs, correct argument names and reformat declarations.
 
@@ -87,48 +87,22 @@ cc: linux-cifs@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
 cc: linux-kernel@vger.kernel.org
 ---
- fs/smb/client/cached_dir.h | 30 +++++++++++++-----------------
- 1 file changed, 13 insertions(+), 17 deletions(-)
+ fs/smb/client/dfs.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/smb/client/cached_dir.h b/fs/smb/client/cached_dir.h
-index 1e383db7c337..f0837bb2161a 100644
---- a/fs/smb/client/cached_dir.h
-+++ b/fs/smb/client/cached_dir.h
-@@ -77,22 +77,18 @@ is_valid_cached_dir(struct cached_fid *cfid)
- 	return cfid->time && cfid->has_lease;
+diff --git a/fs/smb/client/dfs.h b/fs/smb/client/dfs.h
+index e60f0a24a8a1..6b5b5ca0f55c 100644
+--- a/fs/smb/client/dfs.h
++++ b/fs/smb/client/dfs.h
+@@ -151,7 +151,8 @@ static inline void ref_walk_mark_end(struct dfs_ref_walk *rw)
+ 	ref->tit = ERR_PTR(-ENOENT); /* end marker */
  }
  
--extern struct cached_fids *init_cached_dirs(void);
--extern void free_cached_dirs(struct cached_fids *cfids);
--extern int open_cached_dir(unsigned int xid, struct cifs_tcon *tcon,
--			   const char *path,
--			   struct cifs_sb_info *cifs_sb,
--			   bool lookup_only, struct cached_fid **cfid);
--extern int open_cached_dir_by_dentry(struct cifs_tcon *tcon,
--				     struct dentry *dentry,
--				     struct cached_fid **cfid);
--extern void close_cached_dir(struct cached_fid *cfid);
--extern void drop_cached_dir_by_name(const unsigned int xid,
--				    struct cifs_tcon *tcon,
--				    const char *name,
--				    struct cifs_sb_info *cifs_sb);
--extern void close_all_cached_dirs(struct cifs_sb_info *cifs_sb);
--extern void invalidate_all_cached_dirs(struct cifs_tcon *tcon);
--extern bool cached_dir_lease_break(struct cifs_tcon *tcon, __u8 lease_key[16]);
-+struct cached_fids *init_cached_dirs(void);
-+void free_cached_dirs(struct cached_fids *cfids);
-+int open_cached_dir(unsigned int xid, struct cifs_tcon *tcon, const char *path,
-+		    struct cifs_sb_info *cifs_sb, bool lookup_only,
-+		    struct cached_fid **ret_cfid);
-+int open_cached_dir_by_dentry(struct cifs_tcon *tcon, struct dentry *dentry,
-+			      struct cached_fid **ret_cfid);
-+void close_cached_dir(struct cached_fid *cfid);
-+void drop_cached_dir_by_name(const unsigned int xid, struct cifs_tcon *tcon,
-+			     const char *name, struct cifs_sb_info *cifs_sb);
-+void close_all_cached_dirs(struct cifs_sb_info *cifs_sb);
-+void invalidate_all_cached_dirs(struct cifs_tcon *tcon);
-+bool cached_dir_lease_break(struct cifs_tcon *tcon, __u8 lease_key[16]);
+-int dfs_parse_target_referral(const char *full_path, const struct dfs_info3_param *ref,
++int dfs_parse_target_referral(const char *full_path,
++			      const struct dfs_info3_param *ref,
+ 			      struct smb3_fs_context *ctx);
+ int dfs_mount_share(struct cifs_mount_ctx *mnt_ctx);
  
- #endif			/* _CACHED_DIR_H */
 
 
