@@ -1,1054 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-71816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EFA1CD4EE9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 09:07:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16FF9CD5360
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 09:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A249F3009A80
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 08:07:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 914D930393EE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 08:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA5830BB96;
-	Mon, 22 Dec 2025 08:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB8721FF35;
+	Mon, 22 Dec 2025 08:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2dFg599f";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HFH6bpzE"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="AXDcShST";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cG0437ix"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BF424E4C3;
-	Mon, 22 Dec 2025 08:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58281F3BA4;
+	Mon, 22 Dec 2025 08:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766390867; cv=none; b=imEvGGx5jcqFFoNLaDmBhMBBK+IflU6FTivFrAYmVbJg5MYPvk805BqGLWiW/7bDsajjbToJ3xNLCdF5+u5T5ERECtCjPTHDr16f2rTiOX6P05ECpbCnAJYxhh7C6QvpIlUbBks7E83iJOO0bOFdXpqgCoLGAGgZSHOwL1i6tr0=
+	t=1766393671; cv=none; b=nt+Zv1N+aboCJ/AWtiIt6Fqs7+YWujxH9YSx9iF2bA7Fk+RI9DCb+qn9b4hUpK3Amu2fChaC5X26h5Xhp2opJU7f0NG14FRdgWzQXfF8j/n6klJjDPanCbD8arGV+LDwAJtPm5C5w0aJ29vAbDE9xR8fTsKHGSsDW2aNCOpLht4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766390867; c=relaxed/simple;
-	bh=JfXsj4X/QeSJhVcgw8UCgjRsPjO2qgMwJjqMdbY95eM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P0wt5U+zm61ywC0n5+2zPqXro+1V8Lf3idYz/bESvkgpeqcqffzkPSBozt2fddynt5qat15v0J7SV1V222qD6gqLbClM1ov9TimMWZig+AlB/DrNRQDOI2dGgP2VNBDf1eABAfmqcL3+3pIMnFVt5mu8HUR+PCSVyak5f3stwug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2dFg599f; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HFH6bpzE; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1766390863;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BSJKqI0WdGT4KVoYkY4ZG8ILDyulCmKCbt1ewmw8fH4=;
-	b=2dFg599fG2tXGPAkpFd9QkTOe9dQblbzWdI/SiCqLDQc5m0uiqZnF18FEE0O8y/ul2Z7W7
-	a0crTIsQ2aQXILYPa1CF7egSXnJgL/JGIolZp4yciVUlg2s6GwI7KWHkEuKgU42C8k8/OP
-	SBbO7EihKUGLY9sUJfOO98/01YelsG0C5EXUPNCMos4JEvYZmu3hBr8mGLb0IJw/ztHjJJ
-	39aeUzUVWtvjlqN0omBm6mhvdhigBW9Y4SPdiOiEXKDI2V1eB+G/Bj7mQi3XJQokwcLoCR
-	5I2BtmsJsM4caGNfDUqRx/+e57LAb0kt+kwvYK9cf5s4AwpcQeA8wCdOotBilg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1766390863;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BSJKqI0WdGT4KVoYkY4ZG8ILDyulCmKCbt1ewmw8fH4=;
-	b=HFH6bpzEKqbYaxaja8DmYzG0mpcpcqRmXJcTN03qDNqQmzajj2qpT1himP+iHrGbJ8WYDG
-	Lio2NAxwix5KjICg==
-Date: Mon, 22 Dec 2025 09:06:44 +0100
-Subject: [PATCH] fuse: uapi: use UAPI types
+	s=arc-20240116; t=1766393671; c=relaxed/simple;
+	bh=hXBkUL4bpUJA3ygWep4d0JCg2YhgBKEK21mCJNmapPE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=csLAF6yN2wthdP7YXE+Y5XPAaUSXyHmdQRjTGsn+oWmYz0myFwFtXKsDT9tMgqUJZQKLqojcoFSMX0x8w3VtSnPJpGyCcPGbiO90FZSEueBVBp5HzpzBHbsUJbg9Fqw4GxQz18O6UebHon7hLNQK+Sn9S2s6BEH1FH1hcYv93ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=AXDcShST; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cG0437ix; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 37A331D0007E;
+	Mon, 22 Dec 2025 03:54:29 -0500 (EST)
+Received: from phl-imap-17 ([10.202.2.105])
+  by phl-compute-04.internal (MEProxy); Mon, 22 Dec 2025 03:54:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1766393669;
+	 x=1766480069; bh=wvmwf3OpGHoDU2nbu11x0x8a23pnPis6thF+lYtVYNE=; b=
+	AXDcShST7/5b6vfoaTzW6t7INMeYJEpyxOjLqkgiFl46fQREmnHWr9jUEKXYlIFz
+	+Er1NU9VqjRx3ZdnXt6VYba3G18xPOSExSApfaOYgGlBNzdV/aKPtnS+QYYXJhN0
+	3TUYEje+AEKYF8LN8kXoET6fG4SYo10IqG+3eJfw/Ed4E8TTa4jk/PiToO27r9En
+	h/pKvhgwWUzhYUCCyP5/2j3Zn4JgKvRhGQDMhlB+TXMEzJzLGL8ze//9iY3KE1L2
+	OPMq5a28VuZTS3vAkLcPSvAy2xL1zQmKvw3+GQ42g7pcFgtYS7go6qGXVpS/g153
+	O3U5ziYN3baio7bXdMMkNw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1766393669; x=
+	1766480069; bh=wvmwf3OpGHoDU2nbu11x0x8a23pnPis6thF+lYtVYNE=; b=c
+	G0437ixZ88pvL1PLkupdCYYWwmlZ5TsLzUwKHaLNxS4z4TsnDQZTOsKzPqgf4xXn
+	0DnWa4agafha6LiRO/Ze684qqn+kNXu/Yvi+iAZn5mW54YTYSvKTCLZqtqogqa1k
+	DW1mGFRUrWOkgRal1ciz7HNe+ekiAlfmJsw1HVmBN2QUlRpNk/cwNSy2YLwHPvRW
+	ZifLKZofKCmuviUsuBbmBkQNfENHd3Y/dRLtcZ9GZ/4XGGo3UA1xKOfRqZlHbSQL
+	ws6mDwRPj0++P7kDw5fSJ3bB4MxELAETTiXyTQkOu3h0xpZMrHFd+OGUpZDB3/is
+	fDhO0i6FS9be9/6RTZPwg==
+X-ME-Sender: <xms:RAdJaT8YUOmKWReqtOO-7Vyc5l6khmMM1ygatZQmsMKnOvsY0vLFIw>
+    <xme:RAdJaajAhSS8gnhBicId8jD8KKONNLO1v0SpCrLQVkuVP3Bk2m7EuJPgUpFDgNML3
+    FWPIU0V6NsaCnbx_wnz8zyuf5WhQpUfiMhG5RvkS5xol5_KYBYl1w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdehieehudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehthhhomhgrshdrfigvihhsshhstghhuhhhsehlihhnuhhtrhhonhhigi
+    druggvpdhrtghpthhtohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthho
+    pehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:RAdJaYHaXYIK6xQ2YejL92cjJVJ_54brepCUMdA2qP8deL8gucQClQ>
+    <xmx:RAdJacw8yG8NrRkCb7aIo3sKxTP64voP7hP0WXfnD4vhmYGh_j7O_w>
+    <xmx:RAdJaVo-3Po9i6FS218Mlf3l7P_rJmY6JX8ycrJlz6IR5dbH_Ri0_g>
+    <xmx:RAdJaehO8FHbDA1QWt-Jw01W2I5ej5Jidc2-Y2tnSqMwun3mQW4mMw>
+    <xmx:RQdJaa6DUZfohbwDPsseqyYHn9ZEZLvl1ZsFqP1Zacu3WtipXtDYR8Xl>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B1E06C40054; Mon, 22 Dec 2025 03:54:28 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251222-uapi-fuse-v1-1-85a61b87baa0@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIABP8SGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDIyMj3dLEgkzdtNLiVF3DxOSUtCTTxKQ0c3MloPqCotS0zAqwWdGxtbU
- AzEAooVsAAAA=
-X-Change-ID: 20251222-uapi-fuse-1acdfb5abf77
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Arnd Bergmann <arnd@arndb.de>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1766390862; l=19270;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=JfXsj4X/QeSJhVcgw8UCgjRsPjO2qgMwJjqMdbY95eM=;
- b=mCFnlVyVrtDZO1DiuuqxVpYP7iAcRwfZ4iBO+0L0bni8GNupdfFbiqJMRuXzH1OtwQRxE1naQ
- m2l/2Z+n2agA0hk0vvjMIv+HUv6edhz0F8rliXy967NQi6rKQ0uqfAa
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+X-ThreadId: AFH8t3pChEx3
+Date: Mon, 22 Dec 2025 09:54:08 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ "Miklos Szeredi" <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <43f1fd40-438a-4589-a6f5-7e044a9a3caa@app.fastmail.com>
+In-Reply-To: <20251222-uapi-fuse-v1-1-85a61b87baa0@linutronix.de>
+References: <20251222-uapi-fuse-v1-1-85a61b87baa0@linutronix.de>
+Subject: Re: [PATCH] fuse: uapi: use UAPI types
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Using libc types and headers from the UAPI headers is problematic as it
-introduces a dependency on a full C toolchain.
+On Mon, Dec 22, 2025, at 09:06, Thomas Wei=C3=9Fschuh wrote:
+> Using libc types and headers from the UAPI headers is problematic as it
+> introduces a dependency on a full C toolchain.
+>
+> Use the fixed-width integer types provided by the UAPI headers instead.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 
-Use the fixed-width integer types provided by the UAPI headers instead.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- include/uapi/linux/fuse.h | 614 +++++++++++++++++++++++-----------------------
- 1 file changed, 305 insertions(+), 309 deletions(-)
+Please check the whitespace though:
 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index c13e1f9a2f12..dfbd407b7bfd 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -245,11 +245,7 @@
- #ifndef _LINUX_FUSE_H
- #define _LINUX_FUSE_H
- 
--#ifdef __KERNEL__
- #include <linux/types.h>
--#else
--#include <stdint.h>
--#endif
- 
- /*
-  * Version negotiation:
-@@ -284,22 +280,22 @@
-    userspace works under 64bit kernels */
- 
- struct fuse_attr {
--	uint64_t	ino;
--	uint64_t	size;
--	uint64_t	blocks;
--	uint64_t	atime;
--	uint64_t	mtime;
--	uint64_t	ctime;
--	uint32_t	atimensec;
--	uint32_t	mtimensec;
--	uint32_t	ctimensec;
--	uint32_t	mode;
--	uint32_t	nlink;
--	uint32_t	uid;
--	uint32_t	gid;
--	uint32_t	rdev;
--	uint32_t	blksize;
--	uint32_t	flags;
-+	__u64	ino;
-+	__u64	size;
-+	__u64	blocks;
-+	__u64	atime;
-+	__u64	mtime;
-+	__u64	ctime;
-+	__u32	atimensec;
-+	__u32	mtimensec;
-+	__u32	ctimensec;
-+	__u32	mode;
-+	__u32	nlink;
-+	__u32	uid;
-+	__u32	gid;
-+	__u32	rdev;
-+	__u32	blksize;
-+	__u32	flags;
- };
- 
- /*
-@@ -307,53 +303,53 @@ struct fuse_attr {
-  * Linux.
-  */
- struct fuse_sx_time {
--	int64_t		tv_sec;
--	uint32_t	tv_nsec;
--	int32_t		__reserved;
-+	__s64		tv_sec;
-+	__u32	tv_nsec;
-+	__s32		__reserved;
- };
- 
- struct fuse_statx {
--	uint32_t	mask;
--	uint32_t	blksize;
--	uint64_t	attributes;
--	uint32_t	nlink;
--	uint32_t	uid;
--	uint32_t	gid;
--	uint16_t	mode;
--	uint16_t	__spare0[1];
--	uint64_t	ino;
--	uint64_t	size;
--	uint64_t	blocks;
--	uint64_t	attributes_mask;
-+	__u32	mask;
-+	__u32	blksize;
-+	__u64	attributes;
-+	__u32	nlink;
-+	__u32	uid;
-+	__u32	gid;
-+	__u16	mode;
-+	__u16	__spare0[1];
-+	__u64	ino;
-+	__u64	size;
-+	__u64	blocks;
-+	__u64	attributes_mask;
- 	struct fuse_sx_time	atime;
- 	struct fuse_sx_time	btime;
- 	struct fuse_sx_time	ctime;
- 	struct fuse_sx_time	mtime;
--	uint32_t	rdev_major;
--	uint32_t	rdev_minor;
--	uint32_t	dev_major;
--	uint32_t	dev_minor;
--	uint64_t	__spare2[14];
-+	__u32	rdev_major;
-+	__u32	rdev_minor;
-+	__u32	dev_major;
-+	__u32	dev_minor;
-+	__u64	__spare2[14];
- };
- 
- struct fuse_kstatfs {
--	uint64_t	blocks;
--	uint64_t	bfree;
--	uint64_t	bavail;
--	uint64_t	files;
--	uint64_t	ffree;
--	uint32_t	bsize;
--	uint32_t	namelen;
--	uint32_t	frsize;
--	uint32_t	padding;
--	uint32_t	spare[6];
-+	__u64	blocks;
-+	__u64	bfree;
-+	__u64	bavail;
-+	__u64	files;
-+	__u64	ffree;
-+	__u32	bsize;
-+	__u32	namelen;
-+	__u32	frsize;
-+	__u32	padding;
-+	__u32	spare[6];
- };
- 
- struct fuse_file_lock {
--	uint64_t	start;
--	uint64_t	end;
--	uint32_t	type;
--	uint32_t	pid; /* tgid */
-+	__u64	start;
-+	__u64	end;
-+	__u32	type;
-+	__u32	pid; /* tgid */
- };
- 
- /**
-@@ -690,165 +686,165 @@ enum fuse_notify_code {
- #define FUSE_COMPAT_ENTRY_OUT_SIZE 120
- 
- struct fuse_entry_out {
--	uint64_t	nodeid;		/* Inode ID */
--	uint64_t	generation;	/* Inode generation: nodeid:gen must
-+	__u64	nodeid;		/* Inode ID */
-+	__u64	generation;	/* Inode generation: nodeid:gen must
- 					   be unique for the fs's lifetime */
--	uint64_t	entry_valid;	/* Cache timeout for the name */
--	uint64_t	attr_valid;	/* Cache timeout for the attributes */
--	uint32_t	entry_valid_nsec;
--	uint32_t	attr_valid_nsec;
-+	__u64	entry_valid;	/* Cache timeout for the name */
-+	__u64	attr_valid;	/* Cache timeout for the attributes */
-+	__u32	entry_valid_nsec;
-+	__u32	attr_valid_nsec;
- 	struct fuse_attr attr;
- };
- 
- struct fuse_forget_in {
--	uint64_t	nlookup;
-+	__u64	nlookup;
- };
- 
- struct fuse_forget_one {
--	uint64_t	nodeid;
--	uint64_t	nlookup;
-+	__u64	nodeid;
-+	__u64	nlookup;
- };
- 
- struct fuse_batch_forget_in {
--	uint32_t	count;
--	uint32_t	dummy;
-+	__u32	count;
-+	__u32	dummy;
- };
- 
- struct fuse_getattr_in {
--	uint32_t	getattr_flags;
--	uint32_t	dummy;
--	uint64_t	fh;
-+	__u32	getattr_flags;
-+	__u32	dummy;
-+	__u64	fh;
- };
- 
- #define FUSE_COMPAT_ATTR_OUT_SIZE 96
- 
- struct fuse_attr_out {
--	uint64_t	attr_valid;	/* Cache timeout for the attributes */
--	uint32_t	attr_valid_nsec;
--	uint32_t	dummy;
-+	__u64	attr_valid;	/* Cache timeout for the attributes */
-+	__u32	attr_valid_nsec;
-+	__u32	dummy;
- 	struct fuse_attr attr;
- };
- 
- struct fuse_statx_in {
--	uint32_t	getattr_flags;
--	uint32_t	reserved;
--	uint64_t	fh;
--	uint32_t	sx_flags;
--	uint32_t	sx_mask;
-+	__u32	getattr_flags;
-+	__u32	reserved;
-+	__u64	fh;
-+	__u32	sx_flags;
-+	__u32	sx_mask;
- };
- 
- struct fuse_statx_out {
--	uint64_t	attr_valid;	/* Cache timeout for the attributes */
--	uint32_t	attr_valid_nsec;
--	uint32_t	flags;
--	uint64_t	spare[2];
-+	__u64	attr_valid;	/* Cache timeout for the attributes */
-+	__u32	attr_valid_nsec;
-+	__u32	flags;
-+	__u64	spare[2];
- 	struct fuse_statx stat;
- };
- 
- #define FUSE_COMPAT_MKNOD_IN_SIZE 8
- 
- struct fuse_mknod_in {
--	uint32_t	mode;
--	uint32_t	rdev;
--	uint32_t	umask;
--	uint32_t	padding;
-+	__u32	mode;
-+	__u32	rdev;
-+	__u32	umask;
-+	__u32	padding;
- };
- 
- struct fuse_mkdir_in {
--	uint32_t	mode;
--	uint32_t	umask;
-+	__u32	mode;
-+	__u32	umask;
- };
- 
- struct fuse_rename_in {
--	uint64_t	newdir;
-+	__u64	newdir;
- };
- 
- struct fuse_rename2_in {
--	uint64_t	newdir;
--	uint32_t	flags;
--	uint32_t	padding;
-+	__u64	newdir;
-+	__u32	flags;
-+	__u32	padding;
- };
- 
- struct fuse_link_in {
--	uint64_t	oldnodeid;
-+	__u64	oldnodeid;
- };
- 
- struct fuse_setattr_in {
--	uint32_t	valid;
--	uint32_t	padding;
--	uint64_t	fh;
--	uint64_t	size;
--	uint64_t	lock_owner;
--	uint64_t	atime;
--	uint64_t	mtime;
--	uint64_t	ctime;
--	uint32_t	atimensec;
--	uint32_t	mtimensec;
--	uint32_t	ctimensec;
--	uint32_t	mode;
--	uint32_t	unused4;
--	uint32_t	uid;
--	uint32_t	gid;
--	uint32_t	unused5;
-+	__u32	valid;
-+	__u32	padding;
-+	__u64	fh;
-+	__u64	size;
-+	__u64	lock_owner;
-+	__u64	atime;
-+	__u64	mtime;
-+	__u64	ctime;
-+	__u32	atimensec;
-+	__u32	mtimensec;
-+	__u32	ctimensec;
-+	__u32	mode;
-+	__u32	unused4;
-+	__u32	uid;
-+	__u32	gid;
-+	__u32	unused5;
- };
- 
- struct fuse_open_in {
--	uint32_t	flags;
--	uint32_t	open_flags;	/* FUSE_OPEN_... */
-+	__u32	flags;
-+	__u32	open_flags;	/* FUSE_OPEN_... */
- };
- 
- struct fuse_create_in {
--	uint32_t	flags;
--	uint32_t	mode;
--	uint32_t	umask;
--	uint32_t	open_flags;	/* FUSE_OPEN_... */
-+	__u32	flags;
-+	__u32	mode;
-+	__u32	umask;
-+	__u32	open_flags;	/* FUSE_OPEN_... */
- };
- 
- struct fuse_open_out {
--	uint64_t	fh;
--	uint32_t	open_flags;
--	int32_t		backing_id;
-+	__u64	fh;
-+	__u32	open_flags;
-+	__s32		backing_id;
- };
- 
- struct fuse_release_in {
--	uint64_t	fh;
--	uint32_t	flags;
--	uint32_t	release_flags;
--	uint64_t	lock_owner;
-+	__u64	fh;
-+	__u32	flags;
-+	__u32	release_flags;
-+	__u64	lock_owner;
- };
- 
- struct fuse_flush_in {
--	uint64_t	fh;
--	uint32_t	unused;
--	uint32_t	padding;
--	uint64_t	lock_owner;
-+	__u64	fh;
-+	__u32	unused;
-+	__u32	padding;
-+	__u64	lock_owner;
- };
- 
- struct fuse_read_in {
--	uint64_t	fh;
--	uint64_t	offset;
--	uint32_t	size;
--	uint32_t	read_flags;
--	uint64_t	lock_owner;
--	uint32_t	flags;
--	uint32_t	padding;
-+	__u64	fh;
-+	__u64	offset;
-+	__u32	size;
-+	__u32	read_flags;
-+	__u64	lock_owner;
-+	__u32	flags;
-+	__u32	padding;
- };
- 
- #define FUSE_COMPAT_WRITE_IN_SIZE 24
- 
- struct fuse_write_in {
--	uint64_t	fh;
--	uint64_t	offset;
--	uint32_t	size;
--	uint32_t	write_flags;
--	uint64_t	lock_owner;
--	uint32_t	flags;
--	uint32_t	padding;
-+	__u64	fh;
-+	__u64	offset;
-+	__u32	size;
-+	__u32	write_flags;
-+	__u64	lock_owner;
-+	__u32	flags;
-+	__u32	padding;
- };
- 
- struct fuse_write_out {
--	uint32_t	size;
--	uint32_t	padding;
-+	__u32	size;
-+	__u32	padding;
- };
- 
- #define FUSE_COMPAT_STATFS_SIZE 48
-@@ -858,36 +854,36 @@ struct fuse_statfs_out {
- };
- 
- struct fuse_fsync_in {
--	uint64_t	fh;
--	uint32_t	fsync_flags;
--	uint32_t	padding;
-+	__u64	fh;
-+	__u32	fsync_flags;
-+	__u32	padding;
- };
- 
- #define FUSE_COMPAT_SETXATTR_IN_SIZE 8
- 
- struct fuse_setxattr_in {
--	uint32_t	size;
--	uint32_t	flags;
--	uint32_t	setxattr_flags;
--	uint32_t	padding;
-+	__u32	size;
-+	__u32	flags;
-+	__u32	setxattr_flags;
-+	__u32	padding;
- };
- 
- struct fuse_getxattr_in {
--	uint32_t	size;
--	uint32_t	padding;
-+	__u32	size;
-+	__u32	padding;
- };
- 
- struct fuse_getxattr_out {
--	uint32_t	size;
--	uint32_t	padding;
-+	__u32	size;
-+	__u32	padding;
- };
- 
- struct fuse_lk_in {
--	uint64_t	fh;
--	uint64_t	owner;
-+	__u64	fh;
-+	__u64	owner;
- 	struct fuse_file_lock lk;
--	uint32_t	lk_flags;
--	uint32_t	padding;
-+	__u32	lk_flags;
-+	__u32	padding;
- };
- 
- struct fuse_lk_out {
-@@ -895,117 +891,117 @@ struct fuse_lk_out {
- };
- 
- struct fuse_access_in {
--	uint32_t	mask;
--	uint32_t	padding;
-+	__u32	mask;
-+	__u32	padding;
- };
- 
- struct fuse_init_in {
--	uint32_t	major;
--	uint32_t	minor;
--	uint32_t	max_readahead;
--	uint32_t	flags;
--	uint32_t	flags2;
--	uint32_t	unused[11];
-+	__u32	major;
-+	__u32	minor;
-+	__u32	max_readahead;
-+	__u32	flags;
-+	__u32	flags2;
-+	__u32	unused[11];
- };
- 
- #define FUSE_COMPAT_INIT_OUT_SIZE 8
- #define FUSE_COMPAT_22_INIT_OUT_SIZE 24
- 
- struct fuse_init_out {
--	uint32_t	major;
--	uint32_t	minor;
--	uint32_t	max_readahead;
--	uint32_t	flags;
--	uint16_t	max_background;
--	uint16_t	congestion_threshold;
--	uint32_t	max_write;
--	uint32_t	time_gran;
--	uint16_t	max_pages;
--	uint16_t	map_alignment;
--	uint32_t	flags2;
--	uint32_t	max_stack_depth;
--	uint16_t	request_timeout;
--	uint16_t	unused[11];
-+	__u32	major;
-+	__u32	minor;
-+	__u32	max_readahead;
-+	__u32	flags;
-+	__u16	max_background;
-+	__u16	congestion_threshold;
-+	__u32	max_write;
-+	__u32	time_gran;
-+	__u16	max_pages;
-+	__u16	map_alignment;
-+	__u32	flags2;
-+	__u32	max_stack_depth;
-+	__u16	request_timeout;
-+	__u16	unused[11];
- };
- 
- #define CUSE_INIT_INFO_MAX 4096
- 
- struct cuse_init_in {
--	uint32_t	major;
--	uint32_t	minor;
--	uint32_t	unused;
--	uint32_t	flags;
-+	__u32	major;
-+	__u32	minor;
-+	__u32	unused;
-+	__u32	flags;
- };
- 
- struct cuse_init_out {
--	uint32_t	major;
--	uint32_t	minor;
--	uint32_t	unused;
--	uint32_t	flags;
--	uint32_t	max_read;
--	uint32_t	max_write;
--	uint32_t	dev_major;		/* chardev major */
--	uint32_t	dev_minor;		/* chardev minor */
--	uint32_t	spare[10];
-+	__u32	major;
-+	__u32	minor;
-+	__u32	unused;
-+	__u32	flags;
-+	__u32	max_read;
-+	__u32	max_write;
-+	__u32	dev_major;		/* chardev major */
-+	__u32	dev_minor;		/* chardev minor */
-+	__u32	spare[10];
- };
- 
- struct fuse_interrupt_in {
--	uint64_t	unique;
-+	__u64	unique;
- };
- 
- struct fuse_bmap_in {
--	uint64_t	block;
--	uint32_t	blocksize;
--	uint32_t	padding;
-+	__u64	block;
-+	__u32	blocksize;
-+	__u32	padding;
- };
- 
- struct fuse_bmap_out {
--	uint64_t	block;
-+	__u64	block;
- };
- 
- struct fuse_ioctl_in {
--	uint64_t	fh;
--	uint32_t	flags;
--	uint32_t	cmd;
--	uint64_t	arg;
--	uint32_t	in_size;
--	uint32_t	out_size;
-+	__u64	fh;
-+	__u32	flags;
-+	__u32	cmd;
-+	__u64	arg;
-+	__u32	in_size;
-+	__u32	out_size;
- };
- 
- struct fuse_ioctl_iovec {
--	uint64_t	base;
--	uint64_t	len;
-+	__u64	base;
-+	__u64	len;
- };
- 
- struct fuse_ioctl_out {
--	int32_t		result;
--	uint32_t	flags;
--	uint32_t	in_iovs;
--	uint32_t	out_iovs;
-+	__s32		result;
-+	__u32	flags;
-+	__u32	in_iovs;
-+	__u32	out_iovs;
- };
- 
- struct fuse_poll_in {
--	uint64_t	fh;
--	uint64_t	kh;
--	uint32_t	flags;
--	uint32_t	events;
-+	__u64	fh;
-+	__u64	kh;
-+	__u32	flags;
-+	__u32	events;
- };
- 
- struct fuse_poll_out {
--	uint32_t	revents;
--	uint32_t	padding;
-+	__u32	revents;
-+	__u32	padding;
- };
- 
- struct fuse_notify_poll_wakeup_out {
--	uint64_t	kh;
-+	__u64	kh;
- };
- 
- struct fuse_fallocate_in {
--	uint64_t	fh;
--	uint64_t	offset;
--	uint64_t	length;
--	uint32_t	mode;
--	uint32_t	padding;
-+	__u64	fh;
-+	__u64	offset;
-+	__u64	length;
-+	__u32	mode;
-+	__u32	padding;
- };
- 
- /**
-@@ -1029,37 +1025,37 @@ struct fuse_fallocate_in {
-  * FUSE_MKNOD, FUSE_SYMLINK, FUSE_MKDIR, FUSE_TMPFILE,
-  * FUSE_CREATE and FUSE_RENAME2 (with RENAME_WHITEOUT).
-  */
--#define FUSE_INVALID_UIDGID ((uint32_t)(-1))
-+#define FUSE_INVALID_UIDGID ((__u32)(-1))
- 
- struct fuse_in_header {
--	uint32_t	len;
--	uint32_t	opcode;
--	uint64_t	unique;
--	uint64_t	nodeid;
--	uint32_t	uid;
--	uint32_t	gid;
--	uint32_t	pid;
--	uint16_t	total_extlen; /* length of extensions in 8byte units */
--	uint16_t	padding;
-+	__u32	len;
-+	__u32	opcode;
-+	__u64	unique;
-+	__u64	nodeid;
-+	__u32	uid;
-+	__u32	gid;
-+	__u32	pid;
-+	__u16	total_extlen; /* length of extensions in 8byte units */
-+	__u16	padding;
- };
- 
- struct fuse_out_header {
--	uint32_t	len;
--	int32_t		error;
--	uint64_t	unique;
-+	__u32	len;
-+	__s32		error;
-+	__u64	unique;
- };
- 
- struct fuse_dirent {
--	uint64_t	ino;
--	uint64_t	off;
--	uint32_t	namelen;
--	uint32_t	type;
-+	__u64	ino;
-+	__u64	off;
-+	__u32	namelen;
-+	__u32	type;
- 	char name[];
- };
- 
- /* Align variable length records to 64bit boundary */
- #define FUSE_REC_ALIGN(x) \
--	(((x) + sizeof(uint64_t) - 1) & ~(sizeof(uint64_t) - 1))
-+	(((x) + sizeof(__u64) - 1) & ~(sizeof(__u64) - 1))
- 
- #define FUSE_NAME_OFFSET offsetof(struct fuse_dirent, name)
- #define FUSE_DIRENT_ALIGN(x) FUSE_REC_ALIGN(x)
-@@ -1077,127 +1073,127 @@ struct fuse_direntplus {
- 	FUSE_DIRENT_ALIGN(FUSE_NAME_OFFSET_DIRENTPLUS + (d)->dirent.namelen)
- 
- struct fuse_notify_inval_inode_out {
--	uint64_t	ino;
--	int64_t		off;
--	int64_t		len;
-+	__u64	ino;
-+	__s64		off;
-+	__s64		len;
- };
- 
- struct fuse_notify_inval_entry_out {
--	uint64_t	parent;
--	uint32_t	namelen;
--	uint32_t	flags;
-+	__u64	parent;
-+	__u32	namelen;
-+	__u32	flags;
- };
- 
- struct fuse_notify_delete_out {
--	uint64_t	parent;
--	uint64_t	child;
--	uint32_t	namelen;
--	uint32_t	padding;
-+	__u64	parent;
-+	__u64	child;
-+	__u32	namelen;
-+	__u32	padding;
- };
- 
- struct fuse_notify_store_out {
--	uint64_t	nodeid;
--	uint64_t	offset;
--	uint32_t	size;
--	uint32_t	padding;
-+	__u64	nodeid;
-+	__u64	offset;
-+	__u32	size;
-+	__u32	padding;
- };
- 
- struct fuse_notify_retrieve_out {
--	uint64_t	notify_unique;
--	uint64_t	nodeid;
--	uint64_t	offset;
--	uint32_t	size;
--	uint32_t	padding;
-+	__u64	notify_unique;
-+	__u64	nodeid;
-+	__u64	offset;
-+	__u32	size;
-+	__u32	padding;
- };
- 
- /* Matches the size of fuse_write_in */
- struct fuse_notify_retrieve_in {
--	uint64_t	dummy1;
--	uint64_t	offset;
--	uint32_t	size;
--	uint32_t	dummy2;
--	uint64_t	dummy3;
--	uint64_t	dummy4;
-+	__u64	dummy1;
-+	__u64	offset;
-+	__u32	size;
-+	__u32	dummy2;
-+	__u64	dummy3;
-+	__u64	dummy4;
- };
- 
- struct fuse_notify_prune_out {
--	uint32_t	count;
--	uint32_t	padding;
--	uint64_t	spare;
-+	__u32	count;
-+	__u32	padding;
-+	__u64	spare;
- };
- 
- struct fuse_backing_map {
--	int32_t		fd;
--	uint32_t	flags;
--	uint64_t	padding;
-+	__s32		fd;
-+	__u32	flags;
-+	__u64	padding;
- };
- 
- /* Device ioctls: */
- #define FUSE_DEV_IOC_MAGIC		229
--#define FUSE_DEV_IOC_CLONE		_IOR(FUSE_DEV_IOC_MAGIC, 0, uint32_t)
-+#define FUSE_DEV_IOC_CLONE		_IOR(FUSE_DEV_IOC_MAGIC, 0, __u32)
- #define FUSE_DEV_IOC_BACKING_OPEN	_IOW(FUSE_DEV_IOC_MAGIC, 1, \
- 					     struct fuse_backing_map)
--#define FUSE_DEV_IOC_BACKING_CLOSE	_IOW(FUSE_DEV_IOC_MAGIC, 2, uint32_t)
-+#define FUSE_DEV_IOC_BACKING_CLOSE	_IOW(FUSE_DEV_IOC_MAGIC, 2, __u32)
- #define FUSE_DEV_IOC_SYNC_INIT		_IO(FUSE_DEV_IOC_MAGIC, 3)
- 
- struct fuse_lseek_in {
--	uint64_t	fh;
--	uint64_t	offset;
--	uint32_t	whence;
--	uint32_t	padding;
-+	__u64	fh;
-+	__u64	offset;
-+	__u32	whence;
-+	__u32	padding;
- };
- 
- struct fuse_lseek_out {
--	uint64_t	offset;
-+	__u64	offset;
- };
- 
- struct fuse_copy_file_range_in {
--	uint64_t	fh_in;
--	uint64_t	off_in;
--	uint64_t	nodeid_out;
--	uint64_t	fh_out;
--	uint64_t	off_out;
--	uint64_t	len;
--	uint64_t	flags;
-+	__u64	fh_in;
-+	__u64	off_in;
-+	__u64	nodeid_out;
-+	__u64	fh_out;
-+	__u64	off_out;
-+	__u64	len;
-+	__u64	flags;
- };
- 
- /* For FUSE_COPY_FILE_RANGE_64 */
- struct fuse_copy_file_range_out {
--	uint64_t	bytes_copied;
-+	__u64	bytes_copied;
- };
- 
- #define FUSE_SETUPMAPPING_FLAG_WRITE (1ull << 0)
- #define FUSE_SETUPMAPPING_FLAG_READ (1ull << 1)
- struct fuse_setupmapping_in {
- 	/* An already open handle */
--	uint64_t	fh;
-+	__u64	fh;
- 	/* Offset into the file to start the mapping */
--	uint64_t	foffset;
-+	__u64	foffset;
- 	/* Length of mapping required */
--	uint64_t	len;
-+	__u64	len;
- 	/* Flags, FUSE_SETUPMAPPING_FLAG_* */
--	uint64_t	flags;
-+	__u64	flags;
- 	/* Offset in Memory Window */
--	uint64_t	moffset;
-+	__u64	moffset;
- };
- 
- struct fuse_removemapping_in {
- 	/* number of fuse_removemapping_one follows */
--	uint32_t        count;
-+	__u32        count;
- };
- 
- struct fuse_removemapping_one {
- 	/* Offset into the dax window start the unmapping */
--	uint64_t        moffset;
-+	__u64        moffset;
- 	/* Length of mapping required */
--	uint64_t	len;
-+	__u64	len;
- };
- 
- #define FUSE_REMOVEMAPPING_MAX_ENTRY   \
- 		(PAGE_SIZE / sizeof(struct fuse_removemapping_one))
- 
- struct fuse_syncfs_in {
--	uint64_t	padding;
-+	__u64	padding;
- };
- 
- /*
-@@ -1207,8 +1203,8 @@ struct fuse_syncfs_in {
-  * fuse_secctx, name, context
-  */
- struct fuse_secctx {
--	uint32_t	size;
--	uint32_t	padding;
-+	__u32	size;
-+	__u32	padding;
- };
- 
- /*
-@@ -1218,8 +1214,8 @@ struct fuse_secctx {
-  *
-  */
- struct fuse_secctx_header {
--	uint32_t	size;
--	uint32_t	nr_secctx;
-+	__u32	size;
-+	__u32	nr_secctx;
- };
- 
- /**
-@@ -1231,8 +1227,8 @@ struct fuse_secctx_header {
-  * FUSE_MAX_NR_SECCTX
-  */
- struct fuse_ext_header {
--	uint32_t	size;
--	uint32_t	type;
-+	__u32	size;
-+	__u32	type;
- };
- 
- /**
-@@ -1241,8 +1237,8 @@ struct fuse_ext_header {
-  * @groups: flexible array of group IDs
-  */
- struct fuse_supp_groups {
--	uint32_t	nr_groups;
--	uint32_t	groups[];
-+	__u32	nr_groups;
-+	__u32	groups[];
- };
- 
- /**
-@@ -1253,19 +1249,19 @@ struct fuse_supp_groups {
- 
- /* Used as part of the fuse_uring_req_header */
- struct fuse_uring_ent_in_out {
--	uint64_t flags;
-+	__u64 flags;
- 
- 	/*
- 	 * commit ID to be used in a reply to a ring request (see also
- 	 * struct fuse_uring_cmd_req)
- 	 */
--	uint64_t commit_id;
-+	__u64 commit_id;
- 
- 	/* size of user payload buffer */
--	uint32_t payload_sz;
--	uint32_t padding;
-+	__u32 payload_sz;
-+	__u32 padding;
- 
--	uint64_t reserved;
-+	__u64 reserved;
- };
- 
- /**
-@@ -1298,14 +1294,14 @@ enum fuse_uring_cmd {
-  * In the 80B command area of the SQE.
-  */
- struct fuse_uring_cmd_req {
--	uint64_t flags;
-+	__u64 flags;
- 
- 	/* entry identifier for commits */
--	uint64_t commit_id;
-+	__u64 commit_id;
- 
- 	/* queue the command is for (queue index) */
--	uint16_t qid;
--	uint8_t padding[6];
-+	__u16 qid;
-+	__u8 padding[6];
- };
- 
- #endif /* _LINUX_FUSE_H */
+> @@ -307,53 +303,53 @@ struct fuse_attr {
+>   * Linux.
+>   */
+>  struct fuse_sx_time {
+> -	int64_t		tv_sec;
+> -	uint32_t	tv_nsec;
+> -	int32_t		__reserved;
+> +	__s64		tv_sec;
+> +	__u32	tv_nsec;
+> +	__s32		__reserved;
+>  };
 
----
-base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-change-id: 20251222-uapi-fuse-1acdfb5abf77
+This looks misaligned now, same for any other struct that
+mixes signed and unsigned types, like fuse_open_out.
 
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> @@ -1298,14 +1294,14 @@ enum fuse_uring_cmd {
+>   * In the 80B command area of the SQE.
+>   */
+>  struct fuse_uring_cmd_req {
+> -	uint64_t flags;
+> +	__u64 flags;
+>=20
+>  	/* entry identifier for commits */
+> -	uint64_t commit_id;
+> +	__u64 commit_id;
+>=20
+>  	/* queue the command is for (queue index) */
+> -	uint16_t qid;
+> -	uint8_t padding[6];
+> +	__u16 qid;
+> +	__u8 padding[6];
+>  };
 
+Maybe also change this to use tab for alignment like all
+the other structures.
+
+    Arnd
 
