@@ -1,73 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-71882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 226E6CD7571
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 23:43:31 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 410F9CD7650
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 23:58:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 1FC48300197F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 22:43:30 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3D0D53055B9B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 22:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226D235029B;
-	Mon, 22 Dec 2025 22:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54FF33F8B8;
+	Mon, 22 Dec 2025 22:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="STKlWSN6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhDIAIHy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B190634F27E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 22:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC6432E72B;
+	Mon, 22 Dec 2025 22:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766442733; cv=none; b=crk4fO9A8Gg4Ik4Rpnis9uD4QM3YnvDj0+lO8PX0CYp8SueT2Vcyc2d7yJsdyisL7RSyH6ACjQEnzAHITIDWnV/aLIWKMhAIY+mvL2/wy/ISYUy+18BKqMvB2iKlA9XJAhK97Q23ovrcjy7C6dCX8xYvGtHi94p93ALd/34P2Uo=
+	t=1766444242; cv=none; b=HLdVrfFW0bghSCJUPYRrz0wW7L0yytl0AKtGFwTP2dG742u4dscCmghie1xyEUVz9Z4geNC3pbD4jJ4OFrngI0vAeghwKTBDIZV4LdfsUAOX3cug8wMQ3LeDvOSHlyuVdcO912Cvi0fKwTKsvaCB5YwEE7QmUEA31bhJRwA4MSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766442733; c=relaxed/simple;
-	bh=PNws5mwnRbKQce0nmr0F4ETiz1tK1EcaNaka93kF5D8=;
+	s=arc-20240116; t=1766444242; c=relaxed/simple;
+	bh=49MnGzZAQYqcyLlxZKydO8rdk9ZLuuAGgmq+qGPMu68=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mKNDkWb/P0o8NJAQxXbEKFZWAt3ddgIZ8NH/8MOZUu310QH6YviAhH0Kzcd2/fnPiCm/kLah5rqbAh6JL6whEU8jSjQxc/A2wHXJUl9sj+f0bmIcqaXMQnOWITZwL5JLz+R0yCQPdtydrROdE781eTUEfVZ72NvoIUnfP1x+7mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=STKlWSN6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766442730;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qX9dROQiP6/aMUr6ukkKfXCExfdWHH3TQJBkk4RJM7o=;
-	b=STKlWSN6zv8rLdhZ3ToeRBBdqyBVa7q2xZKyqgA6rqqe4nRFMB7SCp8s6r/F4/hTApctsL
-	ZRQ5xFlC9CQGLHrOoYbu6UDvuuTbBYbkMgjilz9B368M3vkevdbP2/B1IAjuLR8HzEqnaI
-	ZX64aecWR8mav2lLOdgD2y3X/kVKQAs=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-246-BmeE_gLFPwmSOHBErFEanA-1; Mon,
- 22 Dec 2025 17:32:09 -0500
-X-MC-Unique: BmeE_gLFPwmSOHBErFEanA-1
-X-Mimecast-MFC-AGG-ID: BmeE_gLFPwmSOHBErFEanA_1766442728
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A3FF195608D;
-	Mon, 22 Dec 2025 22:32:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.4])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 51AF8180049F;
-	Mon, 22 Dec 2025 22:32:06 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Steve French <sfrench@samba.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Enzo Matsumiya <ematsumiya@suse.de>,
-	linux-cifs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 37/37] cifs: SMB1 split: Make BCC accessors conditional
-Date: Mon, 22 Dec 2025 22:30:02 +0000
-Message-ID: <20251222223006.1075635-38-dhowells@redhat.com>
-In-Reply-To: <20251222223006.1075635-1-dhowells@redhat.com>
-References: <20251222223006.1075635-1-dhowells@redhat.com>
+	 MIME-Version; b=C+oCIm3ukxZB+wWLzKcPnY3/24OPBfhFmKiiCxMnXE3fqvOOr6zlSneOlVfIsbDb/5vf2xwCEppTskJVOW+/Ary/q5oZQgmVPff0u6fF1mMEgpyh8voApZ3eGBUEFK6vptW2HfxemsDE6OwbyfzwcO9uvy1l7KhbQhID+175XmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhDIAIHy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57634C19421;
+	Mon, 22 Dec 2025 22:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766444241;
+	bh=49MnGzZAQYqcyLlxZKydO8rdk9ZLuuAGgmq+qGPMu68=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=RhDIAIHyowlMyaMKSCZwqh+Oc+vHFYCUiCiD1KqDUvzKB8WWhqi8nndOE98azx3sg
+	 d/kohivM5Z96B/DRHSBEGtxs8U1OtqiHH55gUIzGsaItzFAWOpjUJGszvOtQBTJZKh
+	 qzfB2utYoEsKx9ihRbKxZSznrUjNX9ZNhxHbPDABF92RuUYsAkI3ZtZOGGT6qHVjdR
+	 U6duuikWoRHGy1wKXrnVX1ru6c/3FQNBh3wvNSeH9M9dLmJs/aItyuXlrW5hL8t2PG
+	 RbFMqPdOzq71QSRZNu70g70X7Il/JmDe1Y4KzvoxyMlucwuO8OWS9xti3BTML844Qn
+	 ZTAtVz62hzLxg==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 03/11] tools headers: Sync UAPI linux/fcntl.h with kernel sources
+Date: Mon, 22 Dec 2025 14:57:08 -0800
+Message-ID: <20251222225716.3565649-3-namhyung@kernel.org>
+X-Mailer: git-send-email 2.52.0.351.gbe84eed79e-goog
+In-Reply-To: <20251222225716.3565649-1-namhyung@kernel.org>
+References: <20251222225716.3565649-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,40 +63,58 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Make the BCC accessor functions conditional.
+To pick up changes from:
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.org>
-cc: Enzo Matsumiya <ematsumiya@suse.de>
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-kernel@vger.kernel.org
+  fe93446b5ebdaa89 ("vfs: use UAPI types for new struct delegation definition")
+  4be9e04ebf75a5c4 ("vfs: add needed headers for new struct delegation definition")
+  1602bad16d7df82f ("vfs: expose delegation support to userland")
+
+This should be used to beautify fcntl syscall arguments and it addresses
+these tools/perf build warnings:
+
+  Warning: Kernel ABI header differences:
+    diff -u tools/perf/trace/beauty/include/uapi/linux/fcntl.h include/uapi/linux/fcntl.h
+
+Please see tools/include/README.kernel-copies.
+
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- fs/smb/client/smb1proto.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/trace/beauty/include/uapi/linux/fcntl.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/fs/smb/client/smb1proto.h b/fs/smb/client/smb1proto.h
-index 5ccca02841a8..0c622b5d2555 100644
---- a/fs/smb/client/smb1proto.h
-+++ b/fs/smb/client/smb1proto.h
-@@ -300,8 +300,6 @@ compare_mid(__u16 mid, const struct smb_hdr *smb)
- 	return mid == le16_to_cpu(smb->Mid);
- }
+diff --git a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+index 3741ea1b73d85000..aadfbf6e0cb3a004 100644
+--- a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
++++ b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+@@ -4,6 +4,7 @@
  
--#endif /* CONFIG_CIFS_ALLOW_INSECURE_LEGACY */
--
- #define GETU16(var)  (*((__u16 *)var))	/* BB check for endian issues */
- #define GETU32(var)  (*((__u32 *)var))	/* BB check for endian issues */
+ #include <asm/fcntl.h>
+ #include <linux/openat2.h>
++#include <linux/types.h>
  
-@@ -333,4 +331,6 @@ put_bcc(__u16 count, struct smb_hdr *hdr)
- 	put_unaligned_le16(count, bc_ptr);
- }
+ #define F_SETLEASE	(F_LINUX_SPECIFIC_BASE + 0)
+ #define F_GETLEASE	(F_LINUX_SPECIFIC_BASE + 1)
+@@ -79,6 +80,17 @@
+  */
+ #define RWF_WRITE_LIFE_NOT_SET	RWH_WRITE_LIFE_NOT_SET
  
-+#endif /* CONFIG_CIFS_ALLOW_INSECURE_LEGACY */
++/* Set/Get delegations */
++#define F_GETDELEG		(F_LINUX_SPECIFIC_BASE + 15)
++#define F_SETDELEG		(F_LINUX_SPECIFIC_BASE + 16)
 +
- #endif /* _SMB1PROTO_H */
++/* Argument structure for F_GETDELEG and F_SETDELEG */
++struct delegation {
++	__u32	d_flags;	/* Must be 0 */
++	__u16	d_type;		/* F_RDLCK, F_WRLCK, F_UNLCK */
++	__u16	__pad;		/* Must be 0 */
++};
++
+ /*
+  * Types of directory notifications that may be requested.
+  */
+-- 
+2.52.0.351.gbe84eed79e-goog
 
 
