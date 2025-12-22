@@ -1,127 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-71812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B3E6CD4837
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 02:34:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38138CD4945
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 03:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 80B80300B82C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 01:34:35 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8C6203006A93
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 02:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2446F2D6607;
-	Mon, 22 Dec 2025 01:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0317F2FF652;
+	Mon, 22 Dec 2025 02:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fB4U4fR/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7332609C5;
-	Mon, 22 Dec 2025 01:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766367262; cv=none; b=ewxSUsmbSP+WU6ZFykxfdEVteMphMPpAOj03CH2NqWjktLaTntr4+F1a/D5PIO93yx8PFAmcx0YQJr1dYyvEekXK8M2oHMYXF65+feBXflgnZumAj4q4u+tkLefCZ+3DmFpIsYg/GfI7b1Lxdc89tet2avT/y2TemQmitQk0NrQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766367262; c=relaxed/simple;
-	bh=GuDumnQGfwX+UPtwB319+YbaIfObOU6wVLTzokhKWh8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jxbhrIBACNd/PueiW9NvrNqhLKKnusX0zhNb29dUaG3lh1s6catTyuPMAOZ/hloilooJ5h66QtSNQNS2PvH0+kZ7yu3d9/ojOAzb7/lBwpcUfXfbRVC/BAujTvSzCZNVtt76sFH43PN6udedSd5VJDnKJdrZrBLCtNHiyArnyok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.170])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4dZLJX3GDMzKHLx4;
-	Mon, 22 Dec 2025 09:33:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7B4A140562;
-	Mon, 22 Dec 2025 09:34:04 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP4 (Coremail) with SMTP id gCh0CgAXd_cDoEhp4rgkBA--.37336S4;
-	Mon, 22 Dec 2025 09:34:04 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	yizhang089@gmail.com,
-	libaokun1@huawei.com,
-	yangerkun@huawei.com,
-	yukuai@fnnas.com
-Subject: [PATCH] ext4: don't order data when zeroing unwritten or delayed block
-Date: Mon, 22 Dec 2025 09:31:36 +0800
-Message-ID: <20251222013136.2658907-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.52.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBE2259C92
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 02:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1766371737; cv=pass; b=o5SU/BRY7rdlcXoGmdZduMX5YSehy2Wact+srJcNQ/RtPHUuAH5dHcQT5LDA6nzVaxrOpUZO7+QRWwzl6aZIGw/knDB/xlxnEqbMPzGx2dm+nwRatomnhUQ5aQMWuzhB8QIPBxnQGPIFLz5EXmH/X7UalJ1c3mdleb2eRsKvDUQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1766371737; c=relaxed/simple;
+	bh=0m+pcDn1Y4QSRuAPXVBQkxrWftTQwI+SMqc6yp0+T+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DQ+HxZI/ccO5tqAPwPtT7Vp/W9u2xv4cWmx/DgydQGkShxEE7Ff2Ao3BpkDum9W7Ixiq/VNaha1fOn6BTBzWyMxl5GuhqfyCCzZH7gmdQlPS+XXMV9EqgMYpRJzuyxn3g/QIjbboKWBLJ7QPZjg6lzrwwAjQA16PwBPwmeKJWak=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fB4U4fR/; arc=pass smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-64baa44df99so16158a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Dec 2025 18:48:55 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1766371734; cv=none;
+        d=google.com; s=arc-20240605;
+        b=IqdsGaHzN+WNM9v6b1IMmeiU0lmvCY9rIAq2O88HwhTxEM3mw3VN4asVzgj0Q9mXrt
+         af1NuCNbY2/wk/VR1OU87/cqNLCxU0h69jOPlAl5xt6yOL8DzX1cNtORIgXan7O4tYLY
+         3F89K131tvIyg18OestEoQkx+ljbqnN7SKk0oBd8dXcZuAcxcS8PQKHN/OS+mX6tPJDg
+         s9fJ0374lGcHa0pR5Q+RiA2UUWBk2iVe/PDSBqMxqEt293NCbhEma/Y2tOVycZ+xJ/F6
+         QDFpKjm5fn9nRxhmsbQileKNwuFhkB7W8S9sbSrlEL4GtYSNyOx34AAYarqibwIKZRhl
+         vJ+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=CwSTfOK2PQKjAWo+5ivUdXM7DoFjB7pfUDLS+oPx57g=;
+        fh=ZTsNDWxS1BY8SVba889UOyNZoJEm0ZCuZDfJwJBG5z4=;
+        b=ThDlzijBOCyDYAxWkpjhp8Up+BdltPFnUoDXgNtxTlLfi7t8JcsIrkSYGRxQ/1llY/
+         TQlo/8iGtp34Vcqc6AyW6yuF97Kze1bGGJIHgzNxyBU3KFDX5PhaQ1Cu/7f41x7z+Esh
+         +0ao/0qiSkb9cTcy4jEsWuiNVokvluAz1ZaKXddmmdtFJDb0Nwd9pD6x+0P6EbxylwzW
+         eFxWB/ZtlJ5Yqw7QRvs6osnuqswCYhS8vkWPPsm3zB94QBQZGhlDbIuYVcICy1/6bwAr
+         NyZFISWnE5gLLBvyFqtbzvzkDXICbSypuYh0HPgGmbn4/nh8R2sE95/C+V5DN+Fh3ZaZ
+         olrg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1766371734; x=1766976534; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CwSTfOK2PQKjAWo+5ivUdXM7DoFjB7pfUDLS+oPx57g=;
+        b=fB4U4fR/rmslyoD1cwKryzwn8Jl3yXNzLGnE8KMKwiyqdOwflkfsfKdXxUSzD4nM/d
+         2yAu+5wgiQzuE4vQl683XnjHsMbclI02ALWvxo5mBmpjN1Nz/4Ip08j9/HaDLSMnjHZU
+         J26SYXmvycWhmY50bUr1udHD05aegPgYefrNvNsFiek5uPSX2W7lXaLqhEhjFkQdVKEF
+         Cu5je2tjqZxiYFSx9MAPgZ5LRHkiWdlOQlqHi+EG3u516hZcDt3MKaPUg6IjPnIML6pb
+         Mt9HWsHzGynqXBXWIwyhbm6n+bhLQxCz2Kl+hv66DYLmNFpTY58g2Ve6Sg6vWrz3s06A
+         Fojg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766371734; x=1766976534;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=CwSTfOK2PQKjAWo+5ivUdXM7DoFjB7pfUDLS+oPx57g=;
+        b=s6PvRqmmknwZh6fipnpKuTtl9qVkVX2kzuxl5hZWqS6kEzK54uR2p9diPWZPUHa6eZ
+         u0PWdNWsmdkv8JudT2x9Xt0TCNG3LsN1I6wTIw3Id9vCh3lnJeOVpeUHCFL6kE5InVdN
+         v1Kbem3w+dxFR/+EKu0JHX1GTuqB5ig03hd0Cr3QD8Stg0O03od2ME5zmQnNjO/5go4Z
+         7KNvdKWbDxnt6B3tm4GNM8u1EHiFY2AF5ErWTfz+dEHIpqDQPd5ejWS80iQlBkwiqG5/
+         aowkGFv35XK5P04AHlxYfmw1VH8JfVZ/7kWvY9zT0CD1LsH8VkVYXH7cbrV5VT2LsPxl
+         2qPA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2g8RDeFA2JVoJE9n7w4jUdR54jVnFvvd/zxFKwSVlWgliGvWLnPt1s8pu9Zzhk1q5v9brKK26mAiapCo6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD7ryWudzmE46HxYXtlNSqxDJUXyeXCbSkx4MKDRSypB9IHifx
+	cetN4D6E6mQJC5m86TqUkl8RC5FRRdE2+ZonwG1dtafwxgRsoJyZCv8iKXukEFHyB/jGkj1Ojau
+	WnlkQ8M1foRaYegAdALhE9rq0ru0h6UaIYEQvdJsZ
+X-Gm-Gg: AY/fxX5d/kTFoqMMTLY3thU7qqV1yWMqg0Bs3O9nNIGXi3Trq5bbKLHn+SN0++pcgIy
+	RWctoD+Y7YEf71NyOEFoo7rFgZmMITmHMrPubj/ddStv1LJ3nwUnK0gJOkOXvLrrKHRJgvg7f6e
+	3SHCCX5zqAfR2FE9DPWxrdEhzMMRD2M/ZUVmayRhs4NSusWXywmh7yyy/aLRER0TjKQ8tQR/Okb
+	BRqeW1aPW0p6WZbtntTsJC6q8mK/XvmkLMW3GK6eEmI4aHDr4x1gnjeOD0dXKkORPRPf/Y5Qoi1
+	M9FT+CNIBE1JgXxI56uxmSX7Du7W9r+QU0He
+X-Google-Smtp-Source: AGHT+IGICnv+CNulcBUQj4EVMqHrV4XCI9DVrr3ZNtTi17PvRnxG9nGncqdET6iqs+YBkatoM7bhDOnN+T+cZex2OlM=
+X-Received: by 2002:a05:6402:1753:b0:643:6984:cee9 with SMTP id
+ 4fb4d7f45d1cf-64d065c43f6mr35946a12.12.1766371733804; Sun, 21 Dec 2025
+ 18:48:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXd_cDoEhp4rgkBA--.37336S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7AryxAF13tFyfAF1fuF43trb_yoW8WryDpa
-	sxK3W8Gr4kG34q9a93uF1xZr1jka18WFW8GFWfG3yDZ3y3JF129F9rKry09a17trW7Ja4Y
-	qF4UW3409FnxA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUoWlkDUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20251218071717.2573035-1-joannechien@google.com>
+ <aUOuMmZnw3tij2nj@infradead.org> <CACQK4XDtWzoco7WgmF81dEYpF1rP3s+3AjemPL40ysojMztOtQ@mail.gmail.com>
+ <aUTi5KPgn1fqezel@infradead.org> <CACQK4XCmq2_nSJA7jLz+TWiTgyZpVwnZZmG-NbNOkB2JjrCSeA@mail.gmail.com>
+ <aUUymqMO4RfK8thK@infradead.org>
+In-Reply-To: <aUUymqMO4RfK8thK@infradead.org>
+From: Joanne Chang <joannechien@google.com>
+Date: Mon, 22 Dec 2025 10:48:37 +0800
+X-Gm-Features: AQt7F2p6Hjd_Nc7T5OEAyJgKQ5pr8sxJsosqYLA4O1HbB9YpKCqF7Pm762ItbGg
+Message-ID: <CACQK4XAyDLfOcPWpRzKd+VXA5EtvzVNkxrZC9hjNJjx0uHx=Tg@mail.gmail.com>
+Subject: Re: [PATCH v1] generic/735: disable for f2fs
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org, 
+	Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, 
+	Chao Yu <chao@kernel.org>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Fri, Dec 19, 2025 at 7:10=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+> Well, for the file size you can test by doing a truncate to the expected
+> size and _notrun if not supported.  I can't really think of a way that
+> easy to directly check for the number of supported blocks.
 
-When zeroing out a written partial block, it is necessary to order the
-data to prevent exposing stale data on disk. However, if the buffer is
-unwritten or delayed, it is not allocated as written, so ordering the
-data is not required. This can prevent strange and unnecessary ordered
-writes when appending data across a region within a block.
+I guess we can calculate the block limit by _get_max_file_size() /
+block_size. However, I am concerned whether this method might mask a
+regression that reduces a filesystem's supported file size. So I
+wonder if explicit, hardcoded limits within the helper for known
+architectural constraints (like for F2FS) would be safer, as we can
+ensure tests are only skipped when the limitation is intended.
 
-Assume we have a 2K unwritten file on a filesystem with 4K blocksize,
-and buffered write from 3K to 4K. Before this patch,
-__ext4_block_zero_page_range() would add the range [2k,3k) to the
-ordered range, and then the JBD2 commit process would write back this
-block. However, it does nothing since the block is not mapped, this
-folio will be redirtied and written back agian through the normal write
-back process.
+Please let me know if you have suggestions for either method.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/inode.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index fa579e857baf..fc16a89903b9 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4104,9 +4104,13 @@ static int __ext4_block_zero_page_range(handle_t *handle,
- 	if (ext4_should_journal_data(inode)) {
- 		err = ext4_dirty_journalled_data(handle, bh);
- 	} else {
--		err = 0;
- 		mark_buffer_dirty(bh);
--		if (ext4_should_order_data(inode))
-+		/*
-+		 * Only the written block requires ordered data to prevent
-+		 * exposing stale data.
-+		 */
-+		if (!buffer_unwritten(bh) && !buffer_delay(bh) &&
-+		    ext4_should_order_data(inode))
- 			err = ext4_jbd2_inode_add_write(handle, inode, from,
- 					length);
- 	}
--- 
-2.52.0
-
+Best regards,
+Joanne
 
