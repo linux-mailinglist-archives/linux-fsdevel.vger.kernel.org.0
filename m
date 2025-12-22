@@ -1,140 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-71811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D95ACD422A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Dec 2025 16:30:37 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3E6CD4837
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 02:34:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 696F13004784
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Dec 2025 15:30:35 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 80B80300B82C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 01:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E631F151C;
-	Sun, 21 Dec 2025 15:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="d4LBr66A"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2446F2D6607;
+	Mon, 22 Dec 2025 01:34:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A34D282EB
-	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Dec 2025 15:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7332609C5;
+	Mon, 22 Dec 2025 01:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766331032; cv=none; b=M07EOmuwZ7KzDa1bWYoAM3TC8QWFvG0Uu/S9q1lEnQQG7dB+JogmX2beHjOY+ZbAMa/2b4Nu2zrZ23Neo4aqe1btQr7pwss6ofxleBR6ofhqPX7WEnRL1hqTlCMVonqzNwtPLIsZinI93bKJIv1JbkoXLIGnB4eVKXCGCDbPT5A=
+	t=1766367262; cv=none; b=ewxSUsmbSP+WU6ZFykxfdEVteMphMPpAOj03CH2NqWjktLaTntr4+F1a/D5PIO93yx8PFAmcx0YQJr1dYyvEekXK8M2oHMYXF65+feBXflgnZumAj4q4u+tkLefCZ+3DmFpIsYg/GfI7b1Lxdc89tet2avT/y2TemQmitQk0NrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766331032; c=relaxed/simple;
-	bh=9jRXzqdm+O8sCU9dSss5nSLGK1fQA5oef6IwJ8MUb7Y=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=sFq0Uy2aEx+Bj+mqYx2HHAQa2dG6BK+69Tw7SM80PkuuT7VYSaVLNnuqCH3XiDmEvNCP2y+OXLfyBiXxeJ5P5fZJ1mKEvwMlxdRICw/ayNaECTcikMxrTTUy1DxgIvxsl5yWTd6Zln9GS7KKa7rY+zLDPwZ4PZ/xiteSMlO1mV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=d4LBr66A; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5BLFQAQb2906325
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sun, 21 Dec 2025 07:26:11 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5BLFQAQb2906325
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025112201; t=1766330779;
-	bh=jlKsAFeaIV2hMkoHG30hkHGQj8Sy9Pccwd7CmoKW274=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=d4LBr66A/lMYsQQUrfpraHzgjeSyK6794g+KDFvXyLiRZzLUKCZVKw68GdUqnufZZ
-	 +NAvFJ1Tc1JY5HEDmF0egLxtTnk8IAec4qisamrjj52wF9Zyd4QozYprO+iiGUZQJU
-	 c2fm+Em7HTcQi1P/wvEzvyQwP9GZuEEsuyscS4GLVm8IDRc8zdqM36lHHl3R5uLzaZ
-	 l6bZyDuDsP+7ONg1mrdK0BrGIdBfrsgOE07sYDDOHVvHchBTA+qa7DJxFrF2DMYbxm
-	 Nho6yO0DvkfLBbFDJfdtimxRjHn09lg7IcBD3DPpHB3/L17Ujb74vSiGQta0IdSzu5
-	 LQhxq3/8OdW4Q==
-Date: Sun, 21 Dec 2025 07:26:10 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: "David Hildenbrand (Red Hat)" <david@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Arnd Bergmann <arnd@kernel.org>, linux-mm@kvack.org
-CC: Andrew Morton <akpm@linux-foundation.org>,
-        Andreas Larsson <andreas@gaisler.com>,
-        Christophe Leroy <chleroy@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>, Michal Simek <monstr@monstr.eu>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Nishanth Menon <nm@ti.com>, Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH 1/4] arch/*: increase lowmem size to avoid highmem use
-User-Agent: K-9 Mail for Android
-In-Reply-To: <4aecb94f-e283-4720-96e5-1837352c3329@kernel.org>
-References: <20251219161559.556737-1-arnd@kernel.org> <20251219161559.556737-2-arnd@kernel.org> <a3f22579-13ee-4479-a5fd-81c29145c3f3@intel.com> <bad18ad8-93e8-4150-a85e-a2852e243363@app.fastmail.com> <a2ce2849-e572-404c-9713-9283a43c09fe@intel.com> <4aecb94f-e283-4720-96e5-1837352c3329@kernel.org>
-Message-ID: <D1726374-3075-47CF-B2FF-FBAC11BC962C@zytor.com>
+	s=arc-20240116; t=1766367262; c=relaxed/simple;
+	bh=GuDumnQGfwX+UPtwB319+YbaIfObOU6wVLTzokhKWh8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jxbhrIBACNd/PueiW9NvrNqhLKKnusX0zhNb29dUaG3lh1s6catTyuPMAOZ/hloilooJ5h66QtSNQNS2PvH0+kZ7yu3d9/ojOAzb7/lBwpcUfXfbRVC/BAujTvSzCZNVtt76sFH43PN6udedSd5VJDnKJdrZrBLCtNHiyArnyok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.170])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4dZLJX3GDMzKHLx4;
+	Mon, 22 Dec 2025 09:33:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 7B4A140562;
+	Mon, 22 Dec 2025 09:34:04 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP4 (Coremail) with SMTP id gCh0CgAXd_cDoEhp4rgkBA--.37336S4;
+	Mon, 22 Dec 2025 09:34:04 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	yizhang089@gmail.com,
+	libaokun1@huawei.com,
+	yangerkun@huawei.com,
+	yukuai@fnnas.com
+Subject: [PATCH] ext4: don't order data when zeroing unwritten or delayed block
+Date: Mon, 22 Dec 2025 09:31:36 +0800
+Message-ID: <20251222013136.2658907-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXd_cDoEhp4rgkBA--.37336S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7AryxAF13tFyfAF1fuF43trb_yoW8WryDpa
+	sxK3W8Gr4kG34q9a93uF1xZr1jka18WFW8GFWfG3yDZ3y3JF129F9rKry09a17trW7Ja4Y
+	qF4UW3409FnxA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUoWlkDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On December 21, 2025 1:30:15 AM PST, "David Hildenbrand (Red Hat)" <david@k=
-ernel=2Eorg> wrote:
->On 12/19/25 21:52, Dave Hansen wrote:
->> On 12/19/25 12:20, Arnd Bergmann wrote:
->>>> For simplicity, I think this can just be:
->>>>=20
->>>> -	default VMSPLIT_3G
->>>> +	default VMSPLIT_2G
->>>>=20
->>>> I doubt the 2G vs=2E 2G_OPT matters in very many cases=2E If it does,=
- folks
->>>> can just set it in their config manually=2E
->>>>=20
->>>> But, in the end, I don't this this matters all that much=2E If you th=
-ink
->>>> having x86 be consistent with ARM, for example, is more important and
->>>> ARM really wants this complexity, I can live with it=2E
->>> Yes, I think we do want the default of VMSPLIT_3G_OPT for
->>> configs that have neither highmem nor lpae, otherwise the most
->>> common embedded configs go from 3072 MiB to 1792 MiB of virtual
->>> addressing, and that is much more likely to cause regressions
->>> than the 2816 MiB default=2E
->>>=20
->>> It would be nice to not need the VMSPLIT_2G default for PAE/LPAE,
->>> but that seems like a larger change=2E
->>=20
->> The only thing we'd "regress" would be someone who is repeatedly
->> starting from scratch with a defconfig and expecting defconfig to be th=
-e
->> same all the time=2E I honestly think that's highly unlikely=2E
->>=20
->> If folks are upgrading and _actually_ exposed to regressions, they've
->> got an existing config and won't be hit by these defaults at *all*=2E T=
-hey
->> won't actually regress=2E
->>=20
->> In other words, I think we can be a lot more aggressive about defaults
->> than with the feature set we support=2E I'd much rather add complexity =
-in
->> here for solving a real problem, like if we have armies of 32-bit x86
->> users constantly starting new projects from scratch and using defconfig=
-s=2E
->>=20
->> I'd _really_ like to keep the defaults as simple as possible=2E
->
->I agree with that=2E In particular in areas where there is the chance tha=
-t we could count the number of people that actually care about that with on=
-e hand (in binary ;) )=2E
->
+From: Zhang Yi <yi.zhang@huawei.com>
 
-So, maximum 31? ;)
+When zeroing out a written partial block, it is necessary to order the
+data to prevent exposing stale data on disk. However, if the buffer is
+unwritten or delayed, it is not allocated as written, so ordering the
+data is not required. This can prevent strange and unnecessary ordered
+writes when appending data across a region within a block.
+
+Assume we have a 2K unwritten file on a filesystem with 4K blocksize,
+and buffered write from 3K to 4K. Before this patch,
+__ext4_block_zero_page_range() would add the range [2k,3k) to the
+ordered range, and then the JBD2 commit process would write back this
+block. However, it does nothing since the block is not mapped, this
+folio will be redirtied and written back agian through the normal write
+back process.
+
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+---
+ fs/ext4/inode.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index fa579e857baf..fc16a89903b9 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4104,9 +4104,13 @@ static int __ext4_block_zero_page_range(handle_t *handle,
+ 	if (ext4_should_journal_data(inode)) {
+ 		err = ext4_dirty_journalled_data(handle, bh);
+ 	} else {
+-		err = 0;
+ 		mark_buffer_dirty(bh);
+-		if (ext4_should_order_data(inode))
++		/*
++		 * Only the written block requires ordered data to prevent
++		 * exposing stale data.
++		 */
++		if (!buffer_unwritten(bh) && !buffer_delay(bh) &&
++		    ext4_should_order_data(inode))
+ 			err = ext4_jbd2_inode_add_write(handle, inode, from,
+ 					length);
+ 	}
+-- 
+2.52.0
+
 
