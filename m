@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-71863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F201CD76CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 00:06:51 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4622BCD7564
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 23:42:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4FB2030AE7AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 23:01:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DCAAE305058A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Dec 2025 22:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F87C34A77A;
-	Mon, 22 Dec 2025 22:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546D8349B0F;
+	Mon, 22 Dec 2025 22:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HrN922ms"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dLwejnlx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8A4346FA9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 22:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613E433987E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 22:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766442673; cv=none; b=PbK266knIFvYuaaxFGNizgHB732XkC1B0PnGs5/jjQzVtcNEQZGC4yy0KUWEUMgW/i0RQEfbgtjcT+6MrFs3NRalqCciq5WSAkT7Me8QxxHb1JoLuNzcWhLgkbhSPDsDg9TUQRv5ppazSSGEhQz1Gm7D6VoC+9IIJRNh058dMn0=
+	t=1766442670; cv=none; b=uUj4Kd99muaYyQI7RtdKDjAldQKLu/Gbf7OXLvT22SY9N2HcOZf+eEI0FF3DOCn6dO4slWV+yor+3uHIKncj/nP9iLFf91A87KLjNEpK2xXhkcTb4DfD6EmEIs4paWw6XxXONTfNXye0+8nxoKGT0JJBfBiUDicoss80QA7kK4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766442673; c=relaxed/simple;
-	bh=ytoBwTGdw1pZ3mpFGzdBmDI44ONKUMSqHMIc+9O4iHQ=;
+	s=arc-20240116; t=1766442670; c=relaxed/simple;
+	bh=l9zo0EXonEq03TFI/f6JGfF7B1OyrUbKh6aUqoUh/vQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HFjLk6h4NUwM+dN/lXOxbX1fCrO15YcBjDIjceAgUviPvpL0V/2Mvzuh2jRW4MnIP4juYY7DOYkTuxMTC9MhXmvvZqZssiICq7eR4fXU+eTquEkggflytZMAJaz1XbGhRwB9aACEuQrB+//703sNHKsCiWjgnqPVSrXTaoeNlcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=fail smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HrN922ms; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=DYWrrYHhGjahxOg5aVGmRgvhR+2mcFoC5xH5HGBJVz8WU9zMTxRCjZvtrDhk62hmLNLCsYR6q0pSKRGsSACy3f7IgBaTb2PEVb8G2DoG1GJkwChDidzbSZRjyRndze8bxxbTkqv4xY+TidVOJbCmnum2uywtoRNVRmI9IjcoTWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=fail smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dLwejnlx; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766442669;
+	s=mimecast20190719; t=1766442667;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OFuO3WztJTPasz8cQaqOaz1zmSpdViB4uluLBvaXFdM=;
-	b=HrN922msvrXb1lsROMZEe/R9z77JADGWubtMlEa4I8KWLgzayd3YyfRay9plROEHKfNu7P
-	gtG9vIaKEB+aYl1G2FM1cgfIKgI7J4pYuCLdp+j4DvxHrnmkflCLEcGE8eduMa6xR8gaOo
-	jQb9tFzXeWMHPD7eQh+AR/At47rcHjU=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+	bh=AJBBsTnUoSekD8Jtjh4VEvFM2BerBPLv40YPx1hJJCY=;
+	b=dLwejnlxlmadnC/IsBekgnt0mNnaSRC3PQTednj7xmUXRalR0XtJWaNovaKS/ImejKIDFn
+	FlQoR3ScNYXFlVbR91vDgrQeF8n+nPsvu8EGZfvfHwo5iBxGDrAcA6wG3ezfYLv5531XFZ
+	3M+cgpFthCzVIIBdAKd56tnV4RXjitg=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-572-KpG_4fGnOEaqrQZzyUPUbw-1; Mon,
- 22 Dec 2025 17:31:02 -0500
-X-MC-Unique: KpG_4fGnOEaqrQZzyUPUbw-1
-X-Mimecast-MFC-AGG-ID: KpG_4fGnOEaqrQZzyUPUbw_1766442661
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-75-Rzh3mCFFPAGEh4Ne7PYyRg-1; Mon,
+ 22 Dec 2025 17:31:05 -0500
+X-MC-Unique: Rzh3mCFFPAGEh4Ne7PYyRg-1
+X-Mimecast-MFC-AGG-ID: Rzh3mCFFPAGEh4Ne7PYyRg_1766442664
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 85CDF1956046;
-	Mon, 22 Dec 2025 22:31:01 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A94A8195609F;
+	Mon, 22 Dec 2025 22:31:04 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.42.28.4])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 95FA530001A2;
-	Mon, 22 Dec 2025 22:30:59 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EC00F30001A2;
+	Mon, 22 Dec 2025 22:31:02 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Steve French <sfrench@samba.org>
 Cc: David Howells <dhowells@redhat.com>,
@@ -63,9 +63,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-cifs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 16/37] cifs: Scripted clean up fs/smb/client/smb2proto.h
-Date: Mon, 22 Dec 2025 22:29:41 +0000
-Message-ID: <20251222223006.1075635-17-dhowells@redhat.com>
+Subject: [PATCH 17/37] cifs: Scripted clean up fs/smb/client/reparse.h
+Date: Mon, 22 Dec 2025 22:29:42 +0000
+Message-ID: <20251222223006.1075635-18-dhowells@redhat.com>
 In-Reply-To: <20251222223006.1075635-1-dhowells@redhat.com>
 References: <20251222223006.1075635-1-dhowells@redhat.com>
 Precedence: bulk
@@ -87,516 +87,31 @@ cc: linux-cifs@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
 cc: linux-kernel@vger.kernel.org
 ---
- fs/smb/client/smb2proto.h | 468 ++++++++++++++++++--------------------
- 1 file changed, 216 insertions(+), 252 deletions(-)
+ fs/smb/client/reparse.h | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
-index 063c9f83bbcd..abd62cb2cecd 100644
---- a/fs/smb/client/smb2proto.h
-+++ b/fs/smb/client/smb2proto.h
-@@ -22,287 +22,251 @@ struct smb_rqst;
-  * All Prototypes
-  *****************************************************************
-  */
--extern int map_smb2_to_linux_error(char *buf, bool log_err);
--extern int smb2_check_message(char *buf, unsigned int pdu_len, unsigned int length,
--			      struct TCP_Server_Info *server);
--extern unsigned int smb2_calc_size(void *buf);
--extern char *smb2_get_data_area_len(int *off, int *len,
--				    struct smb2_hdr *shdr);
--extern __le16 *cifs_convert_path_to_utf16(const char *from,
--					  struct cifs_sb_info *cifs_sb);
-+int map_smb2_to_linux_error(char *buf, bool log_err);
-+int smb2_check_message(char *buf, unsigned int pdu_len, unsigned int len,
-+		       struct TCP_Server_Info *server);
-+unsigned int smb2_calc_size(void *buf);
-+char *smb2_get_data_area_len(int *off, int *len, struct smb2_hdr *shdr);
-+__le16 *cifs_convert_path_to_utf16(const char *from,
-+				   struct cifs_sb_info *cifs_sb);
+diff --git a/fs/smb/client/reparse.h b/fs/smb/client/reparse.h
+index 19caab2fd11e..cfbb7dd28958 100644
+--- a/fs/smb/client/reparse.h
++++ b/fs/smb/client/reparse.h
+@@ -130,11 +130,12 @@ bool cifs_reparse_point_to_fattr(struct cifs_sb_info *cifs_sb,
+ 				 struct cifs_fattr *fattr,
+ 				 struct cifs_open_info_data *data);
+ int create_reparse_symlink(const unsigned int xid, struct inode *inode,
+-				struct dentry *dentry, struct cifs_tcon *tcon,
+-				const char *full_path, const char *symname);
+-int mknod_reparse(unsigned int xid, struct inode *inode,
+-		       struct dentry *dentry, struct cifs_tcon *tcon,
+-		       const char *full_path, umode_t mode, dev_t dev);
+-struct reparse_data_buffer *smb2_get_reparse_point_buffer(const struct kvec *rsp_iov, u32 *len);
++			   struct dentry *dentry, struct cifs_tcon *tcon,
++			   const char *full_path, const char *symname);
++int mknod_reparse(unsigned int xid, struct inode *inode, struct dentry *dentry,
++		  struct cifs_tcon *tcon, const char *full_path, umode_t mode,
++		  dev_t dev);
++struct reparse_data_buffer *smb2_get_reparse_point_buffer(const struct kvec *rsp_iov,
++							  u32 *plen);
  
--extern int smb2_verify_signature(struct smb_rqst *, struct TCP_Server_Info *);
--extern int smb2_check_receive(struct mid_q_entry *mid,
--			      struct TCP_Server_Info *server, bool log_error);
--extern struct mid_q_entry *smb2_setup_request(struct cifs_ses *ses,
--					      struct TCP_Server_Info *,
--					      struct smb_rqst *rqst);
--extern struct mid_q_entry *smb2_setup_async_request(
--			struct TCP_Server_Info *server, struct smb_rqst *rqst);
--extern struct cifs_tcon *smb2_find_smb_tcon(struct TCP_Server_Info *server,
--						__u64 ses_id, __u32  tid);
--extern __le32 smb2_get_lease_state(struct cifsInodeInfo *cinode);
--extern bool smb2_is_valid_oplock_break(char *buffer,
--				       struct TCP_Server_Info *srv);
--extern int smb3_handle_read_data(struct TCP_Server_Info *server,
--				 struct mid_q_entry *mid);
-+int smb2_verify_signature(struct smb_rqst *rqst,
-+			  struct TCP_Server_Info *server);
-+int smb2_check_receive(struct mid_q_entry *mid, struct TCP_Server_Info *server,
-+		       bool log_error);
-+struct mid_q_entry *smb2_setup_request(struct cifs_ses *ses,
-+				       struct TCP_Server_Info *server,
-+				       struct smb_rqst *rqst);
-+struct mid_q_entry *smb2_setup_async_request(struct TCP_Server_Info *server,
-+					     struct smb_rqst *rqst);
-+struct cifs_tcon *smb2_find_smb_tcon(struct TCP_Server_Info *server,
-+				     __u64 ses_id, __u32  tid);
-+__le32 smb2_get_lease_state(struct cifsInodeInfo *cinode);
-+bool smb2_is_valid_oplock_break(char *buffer, struct TCP_Server_Info *server);
-+int smb3_handle_read_data(struct TCP_Server_Info *server,
-+			  struct mid_q_entry *mid);
- struct inode *smb2_create_reparse_inode(struct cifs_open_info_data *data,
--				     struct super_block *sb,
--				     const unsigned int xid,
--				     struct cifs_tcon *tcon,
--				     const char *full_path,
--				     bool directory,
--				     struct kvec *reparse_iov,
--				     struct kvec *xattr_iov);
--int smb2_query_reparse_point(const unsigned int xid,
--			     struct cifs_tcon *tcon,
-+					struct super_block *sb,
-+					const unsigned int xid,
-+					struct cifs_tcon *tcon,
-+					const char *full_path, bool directory,
-+					struct kvec *reparse_iov,
-+					struct kvec *xattr_iov);
-+int smb2_query_reparse_point(const unsigned int xid, struct cifs_tcon *tcon,
- 			     struct cifs_sb_info *cifs_sb,
--			     const char *full_path,
--			     u32 *tag, struct kvec *rsp,
-+			     const char *full_path, u32 *tag, struct kvec *rsp,
- 			     int *rsp_buftype);
--int smb2_query_path_info(const unsigned int xid,
--			 struct cifs_tcon *tcon,
--			 struct cifs_sb_info *cifs_sb,
--			 const char *full_path,
-+int smb2_query_path_info(const unsigned int xid, struct cifs_tcon *tcon,
-+			 struct cifs_sb_info *cifs_sb, const char *full_path,
- 			 struct cifs_open_info_data *data);
--extern int smb2_set_path_size(const unsigned int xid, struct cifs_tcon *tcon,
--			      const char *full_path, __u64 size,
--			      struct cifs_sb_info *cifs_sb, bool set_alloc,
--				  struct dentry *dentry);
--extern int smb2_set_file_info(struct inode *inode, const char *full_path,
--			      FILE_BASIC_INFO *buf, const unsigned int xid);
--extern int smb311_posix_mkdir(const unsigned int xid, struct inode *inode,
--			       umode_t mode, struct cifs_tcon *tcon,
--			       const char *full_path,
--			       struct cifs_sb_info *cifs_sb);
--extern int smb2_mkdir(const unsigned int xid, struct inode *inode,
--		      umode_t mode, struct cifs_tcon *tcon,
--		      const char *name, struct cifs_sb_info *cifs_sb);
--extern void smb2_mkdir_setinfo(struct inode *inode, const char *full_path,
--			       struct cifs_sb_info *cifs_sb,
--			       struct cifs_tcon *tcon, const unsigned int xid);
--extern int smb2_rmdir(const unsigned int xid, struct cifs_tcon *tcon,
--		      const char *name, struct cifs_sb_info *cifs_sb);
--extern int smb2_unlink(const unsigned int xid, struct cifs_tcon *tcon,
--		       const char *name, struct cifs_sb_info *cifs_sb,
--			   struct dentry *dentry);
--int smb2_rename_path(const unsigned int xid,
--		     struct cifs_tcon *tcon,
--		     struct dentry *source_dentry,
--		     const char *from_name, const char *to_name,
--		     struct cifs_sb_info *cifs_sb);
--int smb2_create_hardlink(const unsigned int xid,
--			 struct cifs_tcon *tcon,
--			 struct dentry *source_dentry,
--			 const char *from_name, const char *to_name,
--			 struct cifs_sb_info *cifs_sb);
--extern int smb3_create_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
--			struct cifs_sb_info *cifs_sb, const unsigned char *path,
--			char *pbuf, unsigned int *pbytes_written);
--extern int smb3_query_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
-+int smb2_set_path_size(const unsigned int xid, struct cifs_tcon *tcon,
-+		       const char *full_path, __u64 size,
-+		       struct cifs_sb_info *cifs_sb, bool set_alloc,
-+		       struct dentry *dentry);
-+int smb2_set_file_info(struct inode *inode, const char *full_path,
-+		       FILE_BASIC_INFO *buf, const unsigned int xid);
-+int smb311_posix_mkdir(const unsigned int xid, struct inode *inode,
-+		       umode_t mode, struct cifs_tcon *tcon,
-+		       const char *full_path, struct cifs_sb_info *cifs_sb);
-+int smb2_mkdir(const unsigned int xid, struct inode *parent_inode,
-+	       umode_t mode, struct cifs_tcon *tcon, const char *name,
-+	       struct cifs_sb_info *cifs_sb);
-+void smb2_mkdir_setinfo(struct inode *inode, const char *name,
-+			struct cifs_sb_info *cifs_sb, struct cifs_tcon *tcon,
-+			const unsigned int xid);
-+int smb2_rmdir(const unsigned int xid, struct cifs_tcon *tcon,
-+	       const char *name, struct cifs_sb_info *cifs_sb);
-+int smb2_unlink(const unsigned int xid, struct cifs_tcon *tcon,
-+		const char *name, struct cifs_sb_info *cifs_sb,
-+		struct dentry *dentry);
-+int smb2_rename_path(const unsigned int xid, struct cifs_tcon *tcon,
-+		     struct dentry *source_dentry, const char *from_name,
-+		     const char *to_name, struct cifs_sb_info *cifs_sb);
-+int smb2_create_hardlink(const unsigned int xid, struct cifs_tcon *tcon,
-+			 struct dentry *source_dentry, const char *from_name,
-+			 const char *to_name, struct cifs_sb_info *cifs_sb);
-+int smb3_create_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
-+			   struct cifs_sb_info *cifs_sb,
-+			   const unsigned char *path, char *pbuf,
-+			   unsigned int *pbytes_written);
-+int smb3_query_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
- 			  struct cifs_sb_info *cifs_sb,
- 			  const unsigned char *path, char *pbuf,
- 			  unsigned int *pbytes_read);
--int smb2_fix_symlink_target_type(char **target, bool directory, struct cifs_sb_info *cifs_sb);
-+int smb2_fix_symlink_target_type(char **target, bool directory,
-+				 struct cifs_sb_info *cifs_sb);
- int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
--			      bool relative,
--			      const char *full_path,
-+			      bool relative, const char *full_path,
- 			      struct cifs_sb_info *cifs_sb);
- int smb2_parse_symlink_response(struct cifs_sb_info *cifs_sb,
--				const struct kvec *iov,
--				const char *full_path,
-+				const struct kvec *iov, const char *full_path,
- 				char **path);
--int smb2_open_file(const unsigned int xid, struct cifs_open_parms *oparms, __u32 *oplock,
--		   void *buf);
--extern int smb2_unlock_range(struct cifsFileInfo *cfile,
--			     struct file_lock *flock, const unsigned int xid);
--extern int smb2_push_mandatory_locks(struct cifsFileInfo *cfile);
--extern void smb2_reconnect_server(struct work_struct *work);
--extern int smb3_crypto_aead_allocate(struct TCP_Server_Info *server);
--extern unsigned long smb_rqst_len(struct TCP_Server_Info *server,
--				  struct smb_rqst *rqst);
--extern void smb2_set_next_command(struct cifs_tcon *tcon,
--				  struct smb_rqst *rqst);
--extern void smb2_set_related(struct smb_rqst *rqst);
--extern void smb2_set_replay(struct TCP_Server_Info *server,
--			    struct smb_rqst *rqst);
--extern bool smb2_should_replay(struct cifs_tcon *tcon,
--			  int *pretries,
--			  int *pcur_sleep);
-+int smb2_open_file(const unsigned int xid, struct cifs_open_parms *oparms,
-+		   __u32 *oplock, void *buf);
-+int smb2_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
-+		      const unsigned int xid);
-+int smb2_push_mandatory_locks(struct cifsFileInfo *cfile);
-+void smb2_reconnect_server(struct work_struct *work);
-+int smb3_crypto_aead_allocate(struct TCP_Server_Info *server);
-+unsigned long smb_rqst_len(struct TCP_Server_Info *server,
-+			   struct smb_rqst *rqst);
-+void smb2_set_next_command(struct cifs_tcon *tcon, struct smb_rqst *rqst);
-+void smb2_set_related(struct smb_rqst *rqst);
-+void smb2_set_replay(struct TCP_Server_Info *server, struct smb_rqst *rqst);
-+bool smb2_should_replay(struct cifs_tcon *tcon, int *pretries,
-+			int *pcur_sleep);
- 
- /*
-  * SMB2 Worker functions - most of protocol specific implementation details
-  * are contained within these calls.
-  */
--extern int SMB2_negotiate(const unsigned int xid,
--			  struct cifs_ses *ses,
--			  struct TCP_Server_Info *server);
--extern int SMB2_sess_setup(const unsigned int xid, struct cifs_ses *ses,
--			   struct TCP_Server_Info *server,
--			   const struct nls_table *nls_cp);
--extern int SMB2_logoff(const unsigned int xid, struct cifs_ses *ses);
--extern int SMB2_tcon(const unsigned int xid, struct cifs_ses *ses,
--		     const char *tree, struct cifs_tcon *tcon,
--		     const struct nls_table *);
--extern int SMB2_tdis(const unsigned int xid, struct cifs_tcon *tcon);
--extern int SMB2_open(const unsigned int xid, struct cifs_open_parms *oparms,
--		     __le16 *path, __u8 *oplock,
--		     struct smb2_file_all_info *buf,
--		     struct create_posix_rsp *posix,
--		     struct kvec *err_iov, int *resp_buftype);
--extern int SMB2_open_init(struct cifs_tcon *tcon,
--			  struct TCP_Server_Info *server,
--			  struct smb_rqst *rqst,
--			  __u8 *oplock, struct cifs_open_parms *oparms,
--			  __le16 *path);
--extern void SMB2_open_free(struct smb_rqst *rqst);
--extern int SMB2_ioctl(const unsigned int xid, struct cifs_tcon *tcon,
--		     u64 persistent_fid, u64 volatile_fid, u32 opcode,
--		     char *in_data, u32 indatalen, u32 maxoutlen,
--		     char **out_data, u32 *plen /* returned data len */);
--extern int SMB2_ioctl_init(struct cifs_tcon *tcon,
--			   struct TCP_Server_Info *server,
--			   struct smb_rqst *rqst,
--			   u64 persistent_fid, u64 volatile_fid, u32 opcode,
--			   char *in_data, u32 indatalen,
--			   __u32 max_response_size);
--extern void SMB2_ioctl_free(struct smb_rqst *rqst);
--extern int SMB2_change_notify(const unsigned int xid, struct cifs_tcon *tcon,
--			u64 persistent_fid, u64 volatile_fid, bool watch_tree,
--			u32 completion_filter, u32 max_out_data_len,
--			char **out_data, u32 *plen /* returned data len */);
-+int SMB2_negotiate(const unsigned int xid, struct cifs_ses *ses,
-+		   struct TCP_Server_Info *server);
-+int SMB2_sess_setup(const unsigned int xid, struct cifs_ses *ses,
-+		    struct TCP_Server_Info *server,
-+		    const struct nls_table *nls_cp);
-+int SMB2_logoff(const unsigned int xid, struct cifs_ses *ses);
-+int SMB2_tcon(const unsigned int xid, struct cifs_ses *ses, const char *tree,
-+	      struct cifs_tcon *tcon, const struct nls_table *cp);
-+int SMB2_tdis(const unsigned int xid, struct cifs_tcon *tcon);
-+int SMB2_open(const unsigned int xid, struct cifs_open_parms *oparms,
-+	      __le16 *path, __u8 *oplock, struct smb2_file_all_info *buf,
-+	      struct create_posix_rsp *posix, struct kvec *err_iov,
-+	      int *buftype);
-+int SMB2_open_init(struct cifs_tcon *tcon, struct TCP_Server_Info *server,
-+		   struct smb_rqst *rqst, __u8 *oplock,
-+		   struct cifs_open_parms *oparms, __le16 *path);
-+void SMB2_open_free(struct smb_rqst *rqst);
-+int SMB2_ioctl(const unsigned int xid, struct cifs_tcon *tcon,
-+	       u64 persistent_fid, u64 volatile_fid, u32 opcode, char *in_data,
-+	       u32 indatalen, u32 max_out_data_len, char **out_data,
-+	       u32 *plen /* returned data len */);
-+int SMB2_ioctl_init(struct cifs_tcon *tcon, struct TCP_Server_Info *server,
-+		    struct smb_rqst *rqst, u64 persistent_fid,
-+		    u64 volatile_fid, u32 opcode, char *in_data, u32 indatalen,
-+		    __u32 max_response_size);
-+void SMB2_ioctl_free(struct smb_rqst *rqst);
-+int SMB2_change_notify(const unsigned int xid, struct cifs_tcon *tcon,
-+		       u64 persistent_fid, u64 volatile_fid, bool watch_tree,
-+		       u32 completion_filter, u32 max_out_data_len,
-+		       char **out_data, u32 *plen /* returned data len */);
- 
--extern int __SMB2_close(const unsigned int xid, struct cifs_tcon *tcon,
--			u64 persistent_fid, u64 volatile_fid,
--			struct smb2_file_network_open_info *pbuf);
--extern int SMB2_close(const unsigned int xid, struct cifs_tcon *tcon,
--		      u64 persistent_file_id, u64 volatile_file_id);
--extern int SMB2_close_init(struct cifs_tcon *tcon,
--			   struct TCP_Server_Info *server,
--			   struct smb_rqst *rqst,
--			   u64 persistent_fid, u64 volatile_fid,
--			   bool query_attrs);
--extern void SMB2_close_free(struct smb_rqst *rqst);
--extern int SMB2_flush(const unsigned int xid, struct cifs_tcon *tcon,
--		      u64 persistent_file_id, u64 volatile_file_id);
--extern int SMB2_flush_init(const unsigned int xid, struct smb_rqst *rqst,
--			   struct cifs_tcon *tcon,
--			   struct TCP_Server_Info *server,
--			   u64 persistent_file_id, u64 volatile_file_id);
--extern void SMB2_flush_free(struct smb_rqst *rqst);
--extern int SMB311_posix_query_info(const unsigned int xid, struct cifs_tcon *tcon,
--		u64 persistent_fid, u64 volatile_fid, struct smb311_posix_qinfo *data, u32 *plen);
--extern int SMB2_query_info(const unsigned int xid, struct cifs_tcon *tcon,
--			   u64 persistent_file_id, u64 volatile_file_id,
--			   struct smb2_file_all_info *data);
--extern int SMB2_query_info_init(struct cifs_tcon *tcon,
--				struct TCP_Server_Info *server,
--				struct smb_rqst *rqst,
--				u64 persistent_fid, u64 volatile_fid,
--				u8 info_class, u8 info_type,
--				u32 additional_info, size_t output_len,
--				size_t input_len, void *input);
--extern void SMB2_query_info_free(struct smb_rqst *rqst);
--extern int SMB2_query_acl(const unsigned int xid, struct cifs_tcon *tcon,
--			  u64 persistent_file_id, u64 volatile_file_id,
--			  void **data, unsigned int *plen, u32 info);
--extern int SMB2_get_srv_num(const unsigned int xid, struct cifs_tcon *tcon,
-+int __SMB2_close(const unsigned int xid, struct cifs_tcon *tcon,
-+		 u64 persistent_fid, u64 volatile_fid,
-+		 struct smb2_file_network_open_info *pbuf);
-+int SMB2_close(const unsigned int xid, struct cifs_tcon *tcon,
-+	       u64 persistent_fid, u64 volatile_fid);
-+int SMB2_close_init(struct cifs_tcon *tcon, struct TCP_Server_Info *server,
-+		    struct smb_rqst *rqst, u64 persistent_fid,
-+		    u64 volatile_fid, bool query_attrs);
-+void SMB2_close_free(struct smb_rqst *rqst);
-+int SMB2_flush(const unsigned int xid, struct cifs_tcon *tcon,
-+	       u64 persistent_fid, u64 volatile_fid);
-+int SMB2_flush_init(const unsigned int xid, struct smb_rqst *rqst,
-+		    struct cifs_tcon *tcon, struct TCP_Server_Info *server,
-+		    u64 persistent_fid, u64 volatile_fid);
-+void SMB2_flush_free(struct smb_rqst *rqst);
-+int SMB311_posix_query_info(const unsigned int xid, struct cifs_tcon *tcon,
- 			    u64 persistent_fid, u64 volatile_fid,
--			    __le64 *uniqueid);
--extern int smb2_async_readv(struct cifs_io_subrequest *rdata);
--extern int SMB2_read(const unsigned int xid, struct cifs_io_parms *io_parms,
--		     unsigned int *nbytes, char **buf, int *buf_type);
--extern void smb2_async_writev(struct cifs_io_subrequest *wdata);
--extern int SMB2_write(const unsigned int xid, struct cifs_io_parms *io_parms,
--		      unsigned int *nbytes, struct kvec *iov, int n_vec);
--extern int SMB2_echo(struct TCP_Server_Info *server);
--extern int SMB2_query_directory(const unsigned int xid, struct cifs_tcon *tcon,
--				u64 persistent_fid, u64 volatile_fid, int index,
--				struct cifs_search_info *srch_inf);
--extern int SMB2_query_directory_init(unsigned int xid, struct cifs_tcon *tcon,
--				     struct TCP_Server_Info *server,
--				     struct smb_rqst *rqst,
--				     u64 persistent_fid, u64 volatile_fid,
--				     int index, int info_level);
--extern void SMB2_query_directory_free(struct smb_rqst *rqst);
--extern int SMB2_set_eof(const unsigned int xid, struct cifs_tcon *tcon,
--			u64 persistent_fid, u64 volatile_fid, u32 pid,
--			loff_t new_eof);
--extern int SMB2_set_info_init(struct cifs_tcon *tcon,
-+			    struct smb311_posix_qinfo *data, u32 *plen);
-+int SMB2_query_info(const unsigned int xid, struct cifs_tcon *tcon,
-+		    u64 persistent_fid, u64 volatile_fid,
-+		    struct smb2_file_all_info *data);
-+int SMB2_query_info_init(struct cifs_tcon *tcon,
-+			 struct TCP_Server_Info *server, struct smb_rqst *rqst,
-+			 u64 persistent_fid, u64 volatile_fid, u8 info_class,
-+			 u8 info_type, u32 additional_info, size_t output_len,
-+			 size_t input_len, void *input);
-+void SMB2_query_info_free(struct smb_rqst *rqst);
-+int SMB2_query_acl(const unsigned int xid, struct cifs_tcon *tcon,
-+		   u64 persistent_fid, u64 volatile_fid, void **data,
-+		   u32 *plen, u32 extra_info);
-+int SMB2_get_srv_num(const unsigned int xid, struct cifs_tcon *tcon,
-+		     u64 persistent_fid, u64 volatile_fid, __le64 *uniqueid);
-+int smb2_async_readv(struct cifs_io_subrequest *rdata);
-+int SMB2_read(const unsigned int xid, struct cifs_io_parms *io_parms,
-+	      unsigned int *nbytes, char **buf, int *buf_type);
-+void smb2_async_writev(struct cifs_io_subrequest *wdata);
-+int SMB2_write(const unsigned int xid, struct cifs_io_parms *io_parms,
-+	       unsigned int *nbytes, struct kvec *iov, int n_vec);
-+int SMB2_echo(struct TCP_Server_Info *server);
-+int SMB2_query_directory(const unsigned int xid, struct cifs_tcon *tcon,
-+			 u64 persistent_fid, u64 volatile_fid, int index,
-+			 struct cifs_search_info *srch_inf);
-+int SMB2_query_directory_init(const unsigned int xid, struct cifs_tcon *tcon,
- 			      struct TCP_Server_Info *server,
--			      struct smb_rqst *rqst,
--			      u64 persistent_fid, u64 volatile_fid, u32 pid,
--			      u8 info_class, u8 info_type, u32 additional_info,
--			      void **data, unsigned int *size);
--extern void SMB2_set_info_free(struct smb_rqst *rqst);
--extern int SMB2_set_acl(const unsigned int xid, struct cifs_tcon *tcon,
--			u64 persistent_fid, u64 volatile_fid,
--			struct smb_ntsd *pnntsd, int pacllen, int aclflag);
--extern int SMB2_set_ea(const unsigned int xid, struct cifs_tcon *tcon,
--		       u64 persistent_fid, u64 volatile_fid,
--		       struct smb2_file_full_ea_info *buf, int len);
--extern int SMB2_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
--				u64 persistent_fid, u64 volatile_fid);
--extern int SMB2_oplock_break(const unsigned int xid, struct cifs_tcon *tcon,
--			     const u64 persistent_fid, const u64 volatile_fid,
--			     const __u8 oplock_level);
--extern int smb2_handle_cancelled_close(struct cifs_tcon *tcon,
--				       __u64 persistent_fid,
--				       __u64 volatile_fid);
--extern int smb2_handle_cancelled_mid(struct mid_q_entry *mid, struct TCP_Server_Info *server);
-+			      struct smb_rqst *rqst, u64 persistent_fid,
-+			      u64 volatile_fid, int index, int info_level);
-+void SMB2_query_directory_free(struct smb_rqst *rqst);
-+int SMB2_set_eof(const unsigned int xid, struct cifs_tcon *tcon,
-+		 u64 persistent_fid, u64 volatile_fid, u32 pid,
-+		 loff_t new_eof);
-+int SMB2_set_info_init(struct cifs_tcon *tcon, struct TCP_Server_Info *server,
-+		       struct smb_rqst *rqst, u64 persistent_fid,
-+		       u64 volatile_fid, u32 pid, u8 info_class, u8 info_type,
-+		       u32 additional_info, void **data, unsigned int *size);
-+void SMB2_set_info_free(struct smb_rqst *rqst);
-+int SMB2_set_acl(const unsigned int xid, struct cifs_tcon *tcon,
-+		 u64 persistent_fid, u64 volatile_fid, struct smb_ntsd *pnntsd,
-+		 int pacllen, int aclflag);
-+int SMB2_set_ea(const unsigned int xid, struct cifs_tcon *tcon,
-+		u64 persistent_fid, u64 volatile_fid,
-+		struct smb2_file_full_ea_info *buf, int len);
-+int SMB2_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
-+			 u64 persistent_fid, u64 volatile_fid);
-+int SMB2_oplock_break(const unsigned int xid, struct cifs_tcon *tcon,
-+		      const u64 persistent_fid, const u64 volatile_fid,
-+		      __u8 oplock_level);
-+int smb2_handle_cancelled_close(struct cifs_tcon *tcon, __u64 persistent_fid,
-+				__u64 volatile_fid);
-+int smb2_handle_cancelled_mid(struct mid_q_entry *mid,
-+			      struct TCP_Server_Info *server);
- void smb2_cancelled_close_fid(struct work_struct *work);
--extern int SMB311_posix_qfs_info(const unsigned int xid, struct cifs_tcon *tcon,
--			 u64 persistent_file_id, u64 volatile_file_id,
--			 struct kstatfs *FSData);
--extern int SMB2_QFS_attr(const unsigned int xid, struct cifs_tcon *tcon,
--			 u64 persistent_file_id, u64 volatile_file_id, int lvl);
--extern int SMB2_lock(const unsigned int xid, struct cifs_tcon *tcon,
--		     const __u64 persist_fid, const __u64 volatile_fid,
--		     const __u32 pid, const __u64 length, const __u64 offset,
--		     const __u32 lockFlags, const bool wait);
--extern int smb2_lockv(const unsigned int xid, struct cifs_tcon *tcon,
--		      const __u64 persist_fid, const __u64 volatile_fid,
--		      const __u32 pid, const __u32 num_lock,
--		      struct smb2_lock_element *buf);
--extern int SMB2_lease_break(const unsigned int xid, struct cifs_tcon *tcon,
--			    __u8 *lease_key, const __le32 lease_state);
--extern int smb3_validate_negotiate(const unsigned int, struct cifs_tcon *);
-+int SMB311_posix_qfs_info(const unsigned int xid, struct cifs_tcon *tcon,
-+			  u64 persistent_fid, u64 volatile_fid,
-+			  struct kstatfs *fsdata);
-+int SMB2_QFS_attr(const unsigned int xid, struct cifs_tcon *tcon,
-+		  u64 persistent_fid, u64 volatile_fid, int level);
-+int SMB2_lock(const unsigned int xid, struct cifs_tcon *tcon,
-+	      const __u64 persist_fid, const __u64 volatile_fid,
-+	      const __u32 pid, const __u64 length, const __u64 offset,
-+	      const __u32 lock_flags, const bool wait);
-+int smb2_lockv(const unsigned int xid, struct cifs_tcon *tcon,
-+	       const __u64 persist_fid, const __u64 volatile_fid,
-+	       const __u32 pid, const __u32 num_lock,
-+	       struct smb2_lock_element *buf);
-+int SMB2_lease_break(const unsigned int xid, struct cifs_tcon *tcon,
-+		     __u8 *lease_key, const __le32 lease_state);
-+int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon);
- 
--extern enum securityEnum smb2_select_sectype(struct TCP_Server_Info *,
--					enum securityEnum);
--int smb2_parse_contexts(struct TCP_Server_Info *server,
--			struct kvec *rsp_iov,
--			__u16 *epoch,
--			char *lease_key, __u8 *oplock,
-+enum securityEnum smb2_select_sectype(struct TCP_Server_Info *server,
-+				      enum securityEnum requested);
-+int smb2_parse_contexts(struct TCP_Server_Info *server, struct kvec *rsp_iov,
-+			__u16 *epoch, char *lease_key, __u8 *oplock,
- 			struct smb2_file_all_info *buf,
- 			struct create_posix_rsp *posix);
- 
--extern int smb3_encryption_required(const struct cifs_tcon *tcon);
--extern int smb2_validate_iov(unsigned int offset, unsigned int buffer_length,
--			     struct kvec *iov, unsigned int min_buf_size);
--extern int smb2_validate_and_copy_iov(unsigned int offset,
--				      unsigned int buffer_length,
--				      struct kvec *iov,
--				      unsigned int minbufsize, char *data);
--extern void smb2_copy_fs_info_to_kstatfs(
--	 struct smb2_fs_full_size_info *pfs_inf,
--	 struct kstatfs *kst);
--extern int smb3_crypto_shash_allocate(struct TCP_Server_Info *server);
--extern void smb311_update_preauth_hash(struct cifs_ses *ses,
--				       struct TCP_Server_Info *server,
--				       struct kvec *iov, int nvec);
--extern int smb2_query_info_compound(const unsigned int xid,
--				    struct cifs_tcon *tcon,
--				    const char *path, u32 desired_access,
--				    u32 class, u32 type, u32 output_len,
--				    struct kvec *rsp, int *buftype,
--				    struct cifs_sb_info *cifs_sb);
-+int smb3_encryption_required(const struct cifs_tcon *tcon);
-+int smb2_validate_iov(unsigned int offset, unsigned int buffer_length,
-+		      struct kvec *iov, unsigned int min_buf_size);
-+int smb2_validate_and_copy_iov(unsigned int offset, unsigned int buffer_length,
-+			       struct kvec *iov, unsigned int minbufsize,
-+			       char *data);
-+void smb2_copy_fs_info_to_kstatfs(struct smb2_fs_full_size_info *pfs_inf,
-+				  struct kstatfs *kst);
-+int smb3_crypto_shash_allocate(struct TCP_Server_Info *server);
-+void smb311_update_preauth_hash(struct cifs_ses *ses,
-+				struct TCP_Server_Info *server,
-+				struct kvec *iov, int nvec);
-+int smb2_query_info_compound(const unsigned int xid, struct cifs_tcon *tcon,
-+			     const char *path, u32 desired_access, u32 class,
-+			     u32 type, u32 output_len, struct kvec *rsp,
-+			     int *buftype, struct cifs_sb_info *cifs_sb);
- /* query path info from the server using SMB311 POSIX extensions*/
- int posix_info_parse(const void *beg, const void *end,
- 		     struct smb2_posix_info_parsed *out);
- int posix_info_sid_size(const void *beg, const void *end);
--int smb2_rename_pending_delete(const char *full_path,
--			       struct dentry *dentry,
-+int smb2_rename_pending_delete(const char *full_path, struct dentry *dentry,
- 			       const unsigned int xid);
- 
- #endif			/* _SMB2PROTO_H */
+ #endif /* _CIFS_REPARSE_H */
 
 
