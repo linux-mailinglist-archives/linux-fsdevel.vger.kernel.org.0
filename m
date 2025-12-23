@@ -1,208 +1,427 @@
-Return-Path: <linux-fsdevel+bounces-71985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E700CD9B7B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 15:49:10 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B530CDA2E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 18:57:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9E0FC3026B2E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 14:49:06 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 869BE3003DAD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 17:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17C82737FC;
-	Tue, 23 Dec 2025 14:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBC734C838;
+	Tue, 23 Dec 2025 17:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtcTCvEJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dh/eGOfA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AEF258EC2
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Dec 2025 14:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F11934C154
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Dec 2025 17:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766501345; cv=none; b=iqOD47/tuTXyXQmZtXj+0FI4IAxh3E/qNi/9ce/ZmKcuEbGS2c0gMRhvhoJJRgUsj42Y383A9ZLIBPK47l4+UPP/nwKuEHRWVUCWBBZYWaeE9p/WXv02MY14Ws1z2LA8QnolSTXC/6+m51iLRkhZtJX8whVPMe2KgIBeRnn2jT8=
+	t=1766511566; cv=none; b=Gtopv3cOxM8DXwNUAoqvXT1Ev0jXBSrfW4Pgd9awBtVLPseHr5MmyJ3D4XcKQ3LUeOoN4tJViHd1CP/QPb3F98kCB2NNMAOH+6icprbIiO2krduawjTFh8KqDL1OAUjX+hnR0L5CPx9tSxN8bB9Ij2tMGV9pZjfBROU5JEpZdhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766501345; c=relaxed/simple;
-	bh=ufSnxcyP8EQ3M5HUHlTgXBfSdwRRBuJgHdT4xDWQ/W0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hXn56RhQJJIuMZ1e2FBR2fqwjDAnyimVny0+hf/tY3qDYcueqULHgPkRIcvTETzylEsor0VwCrwORMhjGnWf1gRm2WSSMt3rllp7R/c7bRx5/ivQKey6oo0ZWQBVE/iY674rrASZx8BeSVmRa3dra/9RV8c4OfIhdTDJctgXybk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtcTCvEJ; arc=none smtp.client-ip=209.85.208.51
+	s=arc-20240116; t=1766511566; c=relaxed/simple;
+	bh=lh5UxtMI4n6lSjsHeO6WA255moNt2pva8ID0kdKL0Fg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=piTZl23jmsfSjh1ki2tr1yeFK6tA3ToZ6fUuEbSrvE146j8eVGgwi/MuhXD3GIvqPrMOBDZkbCCXL+NqLlWfufmLbj8zAbLCsl1GedRs8S/tnYWcZSckPSx930jxG6HcsZ6dv08h9oljoA3qdCkaG3worrRNRbnuEOggEfiz8yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dh/eGOfA; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64b4b35c812so6869349a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Dec 2025 06:49:03 -0800 (PST)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-430ff148844so2463542f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Dec 2025 09:39:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766501342; x=1767106142; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JFfROU2c7Qq+368iXNodvvI4Bi1Q7qmgRcOhzYiDkmE=;
-        b=YtcTCvEJkrCE8TYS+tQS2AeHaz3/GxJzL+jeCaqsMgZ3WBlA1g6bIM1BpTQ6POzQJs
-         /iqp3teHvI6KDdDixBhKSgW9b9O+H0Lu/rAci6fLa4SWWrY8KUIRnlIX4mdfX8UXUXuY
-         J+GpimC21/7KVD6mJZO61C9AOsoZ7hOpb2Q9d+f80v28yHtVJmLuhag0ysubs0fK7tw5
-         86jR+IzeUHShh+xV54MjEvzVasplY4PzqNDI59GGAwuBXkmbdJED5eDFWaO0UpphzP39
-         XgdJISJudS7tWlV2VJS5szsoKHoQmMaRO8minL3fPBFj/eJ0Yo3pZAKMm0lBJcvbCkBt
-         D8tw==
+        d=gmail.com; s=20230601; t=1766511562; x=1767116362; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/4iaP4edOtBplWS78T5/vqsGo3RVpJ9d21smi9Hz1+8=;
+        b=Dh/eGOfAjzcTU9xRKu38ToDMSVzcGEv0jCeWhno4K5HMoBE9G2Sk//RnbX0StaoVdN
+         sRpFxgCgy/y9mb6eJVUmxfSKBpfN9ZzWNvm77RB2q5VCB/OJhGvTHis44l8VOHUyuxXR
+         MM71HVf3G7nIoaK6oAtBqbe55CzKIK6ggZwN7JBI5t77JcGkapE9Ti82bq4ZpvO3DtJv
+         UmZXa/LhAFDm1frd9necM5JlwbnqYNvNsThWqcRgV3+SU558RHRuxAZv878u/KMVsLJi
+         lk8ZFIDbu0PzFIzrRSuBiwVnIpew7kR5voq97FkEecRQ1vv2OoqKp5Tywp4LTRlFKNKS
+         McjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766501342; x=1767106142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JFfROU2c7Qq+368iXNodvvI4Bi1Q7qmgRcOhzYiDkmE=;
-        b=kClWngiIqo7pHA5lYtiyIKDHnMWKQgZCT+cQz6zteAPZxExbWSHrxBUUvPW6d8JNms
-         Obx7Jql+xg/lw8B9ifFW4vol/s+uFQkk2IpuX9c51OyNT4w178OdUPc7tiIem2wOl28K
-         655OR18XehHihJ5u8Q/xJSJEBqcUouM/qO1aa3wQAQ7NOQJmXVkpqmDqae3E/RitqcDs
-         5lcmy8lmmgC2jvJQlLfwiLAyL0Rt1Q3qKKtl5HSWyLY4VlQdvDPJr37DQiTrZcV35Odj
-         Yjp0y3OK4skUjFA0p1KsyFyx+4JrzAyF+u+xqyxCWxemjFeGcMRhn7Pi+iuwBr1+t9n8
-         XCpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzHxT1uWs8I+/dVdsmWdpzkFhJK9JrqKY/LMCtC+KTL6Cewe9zLbRM1E67V39xzX8PCFdKBzVktcOjm0b4@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV80T8f/9LY5HtG2dYA2+pypPM6yW+aCC4Y113RQejGTv9NnrL
-	Q9/jM/kjOKu3yH/mwnnLdTED0D33ZhQnUmhgiIOOkSQELEnxspC9S7xJjuvfIcyRx9AgC3ye8FI
-	rhd38QaxETGZxeps7uB8oKAS8LKUM/VY=
-X-Gm-Gg: AY/fxX6xCa/AJ08oyD9l06+zBnSHyEGAIdid+vN6ZVwgdN8vn8PHQ3Yx2auXI81qPEk
-	qIt7ML610duLwn2aMhw+VhBP6bm+0ZoKDVqMx8Zty6sAEOeYRTpNHotBI0BITolu5kb5mmzAYPV
-	x+fmDGrqg6bMKaRlr17RoClrFVr8OFVfebPQp1rCFqGa2094w+s7jsqDvHKn2Wuwe3juGpXoC56
-	JKz0wWJ+H7GgA5dWOIgxtH/LMb51dGLOcq0ITUuEAVmY6KR/hvDSp1z1qMDaLDQ4IVDbT+BE69T
-	9yh1m2yhIa3mCqGzxQqVs61I5DBF76Rc40iSZpXb
-X-Google-Smtp-Source: AGHT+IHuG4Zlty0EBY8cSlYcxfsFprBgXJUV1JABoiLxrZSBt9aqmgn78+Moy6YnKpfKdeTiIVEtCIBURTefrpkDT6c=
-X-Received: by 2002:a05:6402:350e:b0:64b:6271:4e1e with SMTP id
- 4fb4d7f45d1cf-64b8ec6a5abmr14975028a12.17.1766501341335; Tue, 23 Dec 2025
- 06:49:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1766511562; x=1767116362;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/4iaP4edOtBplWS78T5/vqsGo3RVpJ9d21smi9Hz1+8=;
+        b=Wd0KoAYDusJqaYoHr4DPUJY2PSLseP5arJh2iH73QlZXzX18fz0tDICLLz/n+0hbFQ
+         tpO8nTjbORCyaevolW367BpPdVu2LcFvY8a9p3Na7D5/Acr0fCQWU7S0Ry3K+qeoqn0A
+         69REI80rjVmZjmxzyJoG4ERKBo9UA0VXxtWw8tPr9B/8eWxLYUeCepVumnkUiPAK7/gb
+         tS+gbWZ/RRv6Y9Yht5leDf9lVdBKQTNhuYuuKTuW6E8xlgW3MkojgGJYGjNiqqFb/fyt
+         gjLIad0DQYYD28CEO6mdTZMMsJLBNfCg/HwQGFCY48EAMP2ZHISkpl7RH5mrDFIqw2ME
+         Y0VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGnhrqtxGIC4v/uZzFG5dns0/DVJlZ+4H9ydyovQ6fSb5HA2Urn5KWIsU+sYeIKa5PCJaHExQeCaKdU+aF@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM3mSP3+UU0qQYfG4W4JTo4yra8e06E22vajNDyhMvs7HBDtAb
+	CX/4Zt0D1b2KTcHyqwltqUtf/L97PzsNvk8P5mNiBQgnAIG8L9ecxD2t88qHZhnQgRc=
+X-Gm-Gg: AY/fxX6YZmhWWw1zYReCQLKudCblC+AK6rltu/3fMhmC0xHqdf+N8z23Bhyzs0eXgZ7
+	O/LOj8X8PwYDTunzlDt87fuDkuJ0c+rN+t1Is1rcI/BlDF4QeHEA7aExt4V75mwINLGcSgb5+a7
+	j5Pw+VJVmbp2L6wjmdcQCVBs1HR5vOBC8rb6x7PECpD/lvZbNiOHcX1Zhwu7gOmyUAf/YqXGREG
+	ehKMn6Er70oQYpQzOElzFCmgr99CUBWGcxmednu86omtCt6cTeY63ouHV0eiAVJQwvJCYFlVkol
+	Dnmv1OADn/Pwsqa2pQVB6qpsSmpNyL6qCckt9/BgLlb/DlJKy9xBvHNKnXLX4sR5KujAfP+/Fjr
+	J1BbYgpuCvc6NP2FcxZGDJaFUWBOqf/jY4u5V9RBvYKxkWAbsw7BYhFnLY6rTPGPwMxqI3jmoJG
+	UcRbPtOfr0p1ZtFfeB26dafucTKpyvW4QElUAqKKslI77qFTP6QxUF8AH7LvQMhtP2YJsEkHFwu
+	NRP+bvd4Gj8b8+H1OH0Kyb4c3sxLbXvIzM4XsG8tKQeT9ZdxA==
+X-Google-Smtp-Source: AGHT+IFqHfJ8jF2fnYcTvBDI75jIgkEZirbsytQMRmyb1lvndDoLUUZamKuJYPEWwzF9RvTHYPqxYA==
+X-Received: by 2002:a5d:5f53:0:b0:429:d3c9:b8af with SMTP id ffacd0b85a97d-4324e42eac2mr15907608f8f.25.1766511561647;
+        Tue, 23 Dec 2025 09:39:21 -0800 (PST)
+Received: from ip-10-91-41-136.eu-west-1.compute.internal (ec2-52-214-180-36.eu-west-1.compute.amazonaws.com. [52.214.180.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4324eaa477bsm29119568f8f.36.2025.12.23.09.39.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Dec 2025 09:39:21 -0800 (PST)
+From: Andrei Topala <topala.andrei@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	Andrei Topala <topala.andrei@gmail.com>
+Subject: [PATCH] fs: allow rename across bind mounts on same superblock
+Date: Tue, 23 Dec 2025 17:38:03 +0000
+Message-ID: <20251223173803.1623903-1-topala.andrei@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGzaKqnw+218VAa_L-XfzcrzivV31R-OdAO1xjAT1p_Boi94dg@mail.gmail.com>
-In-Reply-To: <CAGzaKqnw+218VAa_L-XfzcrzivV31R-OdAO1xjAT1p_Boi94dg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 23 Dec 2025 15:48:50 +0100
-X-Gm-Features: AQt7F2rgYvQriINDbMIOLXV5v6UkW93ByYRMm5lGx4qb6_3NEkWXdvCpPojfviY
-Message-ID: <CAOQ4uxi505WQB1E1dSYXcVGf9b5=HT-Cz55FMNw5RxnE=ww2yA@mail.gmail.com>
-Subject: Re: overlay unionmount failed when a long path is set
-To: Kun Wang <kunwan@redhat.com>, Christian Brauner <brauner@kernel.org>
-Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Zirong Lang <zlang@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 23, 2025 at 3:25=E2=80=AFPM Kun Wang <kunwan@redhat.com> wrote:
->
-> Hi,
->
-> This issue was found when I was doing overlayfs test on RHEL10 using unio=
-nmount-test-suite. Confirmed upstream kernel got the same problem after doi=
-ng the same test on the latest version with latest xfstests and unionmount-=
-testsuite.
-> [root@dell-per660-12-vm-01 xfstests]# uname -r
-> 6.19.0-rc2+
->
-> This issue only occurs when new mount API is on, some test cases in union=
-mount test-suite start to fail like below after I set a long-name(longer th=
-an 12 characters)  test dir:
->
-> [root@dell-per660 xfstests]# ./check -overlay overlay/103
-> FSTYP         -- overlay
-> PLATFORM      -- Linux/x86_64 dell-per660-12-vm-01 6.19.0-rc2+ #1 SMP PRE=
-EMPT_DYNAMIC Tue Dec 23 03:56:43 EST 2025
-> MKFS_OPTIONS  -- /123456789abc
-> MOUNT_OPTIONS -- -o context=3Dsystem_u:object_r:root_t:s0 /123456789abc /=
-123456789abc/ovl-mnt
->
-> overlay/103        - output mismatch (see /root/xfstests/results//overlay=
-/103.out.bad)
->     --- tests/overlay/103.out   2025-12-23 05:30:37.467387962 -0500
->     +++ /root/xfstests/results//overlay/103.out.bad     2025-12-23 05:44:=
-53.414195538 -0500
->     @@ -1,2 +1,17 @@
->      QA output created by 103
->     +mount: /123456789abc/union/m: wrong fs type, bad option, bad superbl=
-ock on overlay, missing codepage or helper program, or other error.
->     +       dmesg(1) may have more information after failed mount system =
-call.
->     +Traceback (most recent call last):
->     +  File "/root/unionmount-testsuite/./run", line 362, in <module>
->     +    func(ctx)
->     +  File "/root/unionmount-testsuite/tests/rename-file.py", line 96, i=
-n subtest_7
->     ...
->     (Run 'diff -u /root/xfstests/tests/overlay/103.out /root/xfstests/res=
-ults//overlay/103.out.bad'  to see the entire diff)
-> Ran: overlay/103
-> Failures: overlay/103
-> Failed 1 of 1 tests
->
-> So I looked into unionmount-testsuite, and picked out the cmdline reprodu=
-cer for this issue:
->
-> //make a long name test dir and multiple lower later dir init//
-> [root@dell-per660 xfstests]# mkdir -p /123456789abcdefgh/l{0..11}
-> [root@dell-per660 xfstests]# mkdir /123456789abcdefgh/u /123456789abcdefg=
-h/m /123456789abcdefgh/w
-> [root@dell-per660 xfstests]# ls /123456789abcdefgh/
-> l0  l1  l10  l11   l2  l3  l4  l5  l6  l7  l8  l9  m  u  w
->
-> //do overlay unionmount with below cmd will tigger the issue://
-> [root@dell-per660 xfstests]# mount -t overlay overlay /123456789abcdefgh/=
-m -orw,index=3Don,redirect_dir=3Don -olowerdir=3D/123456789abcdefgh/l1:/123=
-456789abcdefgh/l2:/123456789abcdefgh/l3:/123456789abcdefgh/l4:/123456789abc=
-defgh/l5:/123456789abcdefgh/l6:/123456789abcdefgh/l7:/123456789abcdefgh/l8:=
-/123456789abcdefgh/l9:/123456789abcdefgh/l10:/123456789abcdefgh/l11:/123456=
-789abcdefgh/l0,upperdir=3D/123456789abcdefgh/u,workdir=3D/123456789abcdefgh=
-/w
->
-> mount: /123456789abcdefgh/m: wrong fs type, bad option, bad superblock on=
- overlay, missing codepage or helper program, or other error.
->        dmesg(1) may have more information after failed mount system call.
->
-> //If I reduce the length of test dir name by 1 character, the mount will =
-success://
-> [root@dell-per660 xfstests]# cp /123456789abcdefgh /123456789abcdefg -r
-> [root@dell-per660 xfstests]# mount -t overlay overlay /123456789abcdefg/m=
- -orw,index=3Don,redirect_dir=3Don -olowerdir=3D/123456789abcdefg/l1:/12345=
-6789abcdefg/l2:/123456789abcdefg/l3:/123456789abcdefg/l4:/123456789abcdefg/=
-l5:/123456789abcdefg/l6:/123456789abcdefg/l7:/123456789abcdefg/l8:/12345678=
-9abcdefg/l9:/123456789abcdefg/l10:/123456789abcdefg/l11:/123456789abcdefg/l=
-0,upperdir=3D/123456789abcdefg/u,workdir=3D/123456789abcdefg/w
-> [root@dell-per660 xfstests]# df -h | grep overlay
-> overlay          57G   29G   28G  52% /123456789abcdefg/m
->
->  //If force using mount2 api, the mount will be good too://
-> [root@dell-per660 xfstests]# export LIBMOUNT_FORCE_MOUNT2=3Dalways
-> [root@dell-per660 xfstests]# mount -t overlay overlay /123456789abcdefgh/=
-m -orw,index=3Don,redirect_dir=3Don -olowerdir=3D/123456789abcdefgh/l1:/123=
-456789abcdefgh/l2:/123456789abcdefgh/l3:/123456789abcdefgh/l4:/123456789abc=
-defgh/l5:/123456789abcdefgh/l6:/123456789abcdefgh/l7:/123456789abcdefgh/l8:=
-/123456789abcdefgh/l9:/123456789abcdefgh/l10:/123456789abcdefgh/l11:/123456=
-789abcdefgh/l0,upperdir=3D/123456789abcdefgh/u,workdir=3D/123456789abcdefgh=
-/w
-> [root@dell-per660 xfstests]# df -h | grep overlay
-> overlay          57G   29G   28G  52% /123456789abcdefg/m
-> overlay          57G   29G   28G  52% /123456789abcdefgh/m
->
-> So I don't think this unionmount cmd had reached the limit of param lengt=
-h, since it's working with the old mount API.
-> Then maybe a kernel bug needs to be fixed..
+  Currently rename() returns EXDEV when source and destination are on
+  different mounts, even if they're bind mounts of the same filesystem.
+  This forces userspace (mv) to fall back to slow copy+delete.
 
-Hi Kun,
+  Change the check from comparing mount pointers to comparing superblocks,
+  which allows renaming across bind mounts within the same filesystem.
 
-Thanks for reporting this issue.
+  This also handles the case where source and destination mounts have different
+  properties (idmaps, read-only flags) by checking both mounts appropriately.
 
-We've had several issues with systems that are upgraded to linmount
-that uses new mount API by default.
+Signed-off-by: Andrei Topala <topala.andrei@gmail.com>
+---
+ fs/cachefiles/namei.c    |  3 ++-
+ fs/ecryptfs/inode.c      |  3 ++-
+ fs/namei.c               | 39 +++++++++++++++++++++++++--------------
+ fs/nfsd/vfs.c            |  3 ++-
+ fs/overlayfs/copy_up.c   |  6 ++++--
+ fs/overlayfs/dir.c       | 12 ++++++++----
+ fs/overlayfs/overlayfs.h |  3 ++-
+ fs/overlayfs/super.c     |  3 ++-
+ fs/smb/server/vfs.c      |  3 ++-
+ include/linux/fs.h       |  6 ++++--
+ 10 files changed, 53 insertions(+), 28 deletions(-)
 
-FYI, the lowerdir+ mount option was added exactly to avoid these sorts
-of limits, but that will require changing applications (like unionmount
-testsuite) to use this more scalable mount options or require libmount
-to automatically parse and convert a long lowerdir=3D mount option to
-smaller lowerdir+=3D mount options.
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index e5ec90dcc..771f169cc 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -383,7 +383,8 @@ int cachefiles_bury_object(struct cachefiles_cache *cache,
+ 		cachefiles_io_error(cache, "Rename security error %d", ret);
+ 	} else {
+ 		struct renamedata rd = {
+-			.mnt_idmap	= &nop_mnt_idmap,
++			.old_mnt_idmap	= &nop_mnt_idmap,
++			.new_mnt_idmap	= &nop_mnt_idmap,
+ 			.old_parent	= dir,
+ 			.old_dentry	= rep,
+ 			.new_parent	= cache->graveyard,
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index 397824824..1d59b8a2e 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -614,7 +614,8 @@ ecryptfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 
+ 	target_inode = d_inode(new_dentry);
+ 
+-	rd.mnt_idmap  = &nop_mnt_idmap;
++	rd.old_mnt_idmap = &nop_mnt_idmap;
++	rd.new_mnt_idmap = &nop_mnt_idmap;
+ 	rd.old_parent = lower_old_dir_dentry;
+ 	rd.new_parent = lower_new_dir_dentry;
+ 	rc = start_renaming_two_dentries(&rd, lower_old_dentry, lower_new_dentry);
+diff --git a/fs/namei.c b/fs/namei.c
+index bf0f66f0e..be9931d63 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3867,7 +3867,8 @@ __start_renaming(struct renamedata *rd, int lookup_flags,
+  * These references and the lock are dropped by end_renaming().
+  *
+  * The passed in qstrs need not have the hash calculated, and basic
+- * eXecute permission checking is performed against @rd.mnt_idmap.
++ * eXecute permission checking is performed against @rd.old_mnt_idmap
++ * and @rd.new_mnt_idmap respectively.
+  *
+  * Returns: zero or an error.
+  */
+@@ -3876,10 +3877,10 @@ int start_renaming(struct renamedata *rd, int lookup_flags,
+ {
+ 	int err;
+ 
+-	err = lookup_one_common(rd->mnt_idmap, old_last, rd->old_parent);
++	err = lookup_one_common(rd->old_mnt_idmap, old_last, rd->old_parent);
+ 	if (err)
+ 		return err;
+-	err = lookup_one_common(rd->mnt_idmap, new_last, rd->new_parent);
++	err = lookup_one_common(rd->new_mnt_idmap, new_last, rd->new_parent);
+ 	if (err)
+ 		return err;
+ 	return __start_renaming(rd, lookup_flags, old_last, new_last);
+@@ -3964,7 +3965,7 @@ __start_renaming_dentry(struct renamedata *rd, int lookup_flags,
+  * References and the lock can be dropped with end_renaming()
+  *
+  * The passed in qstr need not have the hash calculated, and basic
+- * eXecute permission checking is performed against @rd.mnt_idmap.
++ * eXecute permission checking is performed against @rd.new_mnt_idmap.
+  *
+  * Returns: zero or an error.
+  */
+@@ -3973,7 +3974,7 @@ int start_renaming_dentry(struct renamedata *rd, int lookup_flags,
+ {
+ 	int err;
+ 
+-	err = lookup_one_common(rd->mnt_idmap, new_last, rd->new_parent);
++	err = lookup_one_common(rd->new_mnt_idmap, new_last, rd->new_parent);
+ 	if (err)
+ 		return err;
+ 	return __start_renaming_dentry(rd, lookup_flags, old_dentry, new_last);
+@@ -5816,20 +5817,20 @@ int vfs_rename(struct renamedata *rd)
+ 	if (source == target)
+ 		return 0;
+ 
+-	error = may_delete(rd->mnt_idmap, old_dir, old_dentry, is_dir);
++	error = may_delete(rd->old_mnt_idmap, old_dir, old_dentry, is_dir);
+ 	if (error)
+ 		return error;
+ 
+ 	if (!target) {
+-		error = may_create(rd->mnt_idmap, new_dir, new_dentry);
++		error = may_create(rd->new_mnt_idmap, new_dir, new_dentry);
+ 	} else {
+ 		new_is_dir = d_is_dir(new_dentry);
+ 
+ 		if (!(flags & RENAME_EXCHANGE))
+-			error = may_delete(rd->mnt_idmap, new_dir,
++			error = may_delete(rd->new_mnt_idmap, new_dir,
+ 					   new_dentry, is_dir);
+ 		else
+-			error = may_delete(rd->mnt_idmap, new_dir,
++			error = may_delete(rd->new_mnt_idmap, new_dir,
+ 					   new_dentry, new_is_dir);
+ 	}
+ 	if (error)
+@@ -5844,13 +5845,13 @@ int vfs_rename(struct renamedata *rd)
+ 	 */
+ 	if (new_dir != old_dir) {
+ 		if (is_dir) {
+-			error = inode_permission(rd->mnt_idmap, source,
++			error = inode_permission(rd->old_mnt_idmap, source,
+ 						 MAY_WRITE);
+ 			if (error)
+ 				return error;
+ 		}
+ 		if ((flags & RENAME_EXCHANGE) && new_is_dir) {
+-			error = inode_permission(rd->mnt_idmap, target,
++			error = inode_permission(rd->new_mnt_idmap, target,
+ 						 MAY_WRITE);
+ 			if (error)
+ 				return error;
+@@ -5926,7 +5927,7 @@ int vfs_rename(struct renamedata *rd)
+ 		if (error)
+ 			goto out;
+ 	}
+-	error = old_dir->i_op->rename(rd->mnt_idmap, old_dir, old_dentry,
++	error = old_dir->i_op->rename(rd->old_mnt_idmap, old_dir, old_dentry,
+ 				      new_dir, new_dentry, flags);
+ 	if (error)
+ 		goto out;
+@@ -5996,7 +5997,7 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+ 		goto exit1;
+ 
+ 	error = -EXDEV;
+-	if (old_path.mnt != new_path.mnt)
++	if (old_path.mnt->mnt_sb != new_path.mnt->mnt_sb)
+ 		goto exit2;
+ 
+ 	error = -EBUSY;
+@@ -6012,9 +6013,16 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+ 	if (error)
+ 		goto exit2;
+ 
++	if (old_path.mnt != new_path.mnt) {
++		error = mnt_want_write(new_path.mnt);
++		if (error)
++			goto exit3;
++	}
++
+ retry_deleg:
+ 	rd.old_parent	   = old_path.dentry;
+-	rd.mnt_idmap	   = mnt_idmap(old_path.mnt);
++	rd.old_mnt_idmap   = mnt_idmap(old_path.mnt);
++	rd.new_mnt_idmap   = mnt_idmap(new_path.mnt);
+ 	rd.new_parent	   = new_path.dentry;
+ 	rd.delegated_inode = &delegated_inode;
+ 	rd.flags	   = flags;
+@@ -6053,6 +6061,9 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
+ 		if (!error)
+ 			goto retry_deleg;
+ 	}
++	if (old_path.mnt != new_path.mnt)
++		mnt_drop_write(new_path.mnt);
++exit3:
+ 	mnt_drop_write(old_path.mnt);
+ exit2:
+ 	if (retry_estale(error, lookup_flags))
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 964cf922a..5ffcd279f 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -2154,7 +2154,8 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
+ 		goto out;
+ 	}
+ 
+-	rd.mnt_idmap	= &nop_mnt_idmap;
++	rd.old_mnt_idmap = &nop_mnt_idmap;
++	rd.new_mnt_idmap = &nop_mnt_idmap;
+ 	rd.old_parent	= fdentry;
+ 	rd.new_parent	= tdentry;
+ 
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index 758611ee4..0f1df4fef 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -556,7 +556,8 @@ static int ovl_create_index(struct dentry *dentry, const struct ovl_fh *fh,
+ 	if (err)
+ 		goto out;
+ 
+-	rd.mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.old_mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.new_mnt_idmap = ovl_upper_mnt_idmap(ofs);
+ 	rd.old_parent = indexdir;
+ 	rd.new_parent = indexdir;
+ 	err = start_renaming_dentry(&rd, 0, temp, &name);
+@@ -804,7 +805,8 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx *c)
+ 	 * ovl_copy_up_data(), so lock workdir and destdir and make sure that
+ 	 * temp wasn't moved before copy up completion or cleanup.
+ 	 */
+-	rd.mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.old_mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.new_mnt_idmap = ovl_upper_mnt_idmap(ofs);
+ 	rd.old_parent = c->workdir;
+ 	rd.new_parent = c->destdir;
+ 	rd.flags = 0;
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index ff3dbd1ca..cb988dfa3 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -135,7 +135,8 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, struct dentry *dir,
+ 	if (d_is_dir(dentry))
+ 		flags = RENAME_EXCHANGE;
+ 
+-	rd.mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.old_mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.new_mnt_idmap = ovl_upper_mnt_idmap(ofs);
+ 	rd.old_parent = ofs->workdir;
+ 	rd.new_parent = dir;
+ 	rd.flags = flags;
+@@ -413,7 +414,8 @@ static struct dentry *ovl_clear_empty(struct dentry *dentry,
+ 	if (IS_ERR(opaquedir))
+ 		goto out;
+ 
+-	rd.mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.old_mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.new_mnt_idmap = ovl_upper_mnt_idmap(ofs);
+ 	rd.old_parent = workdir;
+ 	rd.new_parent = upperdir;
+ 	rd.flags = RENAME_EXCHANGE;
+@@ -504,7 +506,8 @@ static int ovl_create_over_whiteout(struct dentry *dentry, struct inode *inode,
+ 	if (IS_ERR(newdentry))
+ 		goto out_dput;
+ 
+-	rd.mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.old_mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.new_mnt_idmap = ovl_upper_mnt_idmap(ofs);
+ 	rd.old_parent = workdir;
+ 	rd.new_parent = upperdir;
+ 	rd.flags = 0;
+@@ -1230,7 +1233,8 @@ static int ovl_rename_upper(struct ovl_renamedata *ovlrd, struct list_head *list
+ 		}
+ 	}
+ 
+-	rd.mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.old_mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.new_mnt_idmap = ovl_upper_mnt_idmap(ofs);
+ 	rd.old_parent = old_upperdir;
+ 	rd.new_parent = new_upperdir;
+ 	rd.flags = ovlrd->flags;
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index f9ac9bdde..4b7824761 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -374,7 +374,8 @@ static inline int ovl_do_rename(struct ovl_fs *ofs, struct dentry *olddir,
+ 				struct dentry *newdentry, unsigned int flags)
+ {
+ 	struct renamedata rd = {
+-		.mnt_idmap	= ovl_upper_mnt_idmap(ofs),
++		.old_mnt_idmap	= ovl_upper_mnt_idmap(ofs),
++		.new_mnt_idmap	= ovl_upper_mnt_idmap(ofs),
+ 		.old_parent	= olddir,
+ 		.old_dentry	= olddentry,
+ 		.new_parent	= newdir,
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index ba9146f22..86d164c05 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -582,7 +582,8 @@ static int ovl_check_rename_whiteout(struct ovl_fs *ofs)
+ 	if (IS_ERR(temp))
+ 		return err;
+ 
+-	rd.mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.old_mnt_idmap = ovl_upper_mnt_idmap(ofs);
++	rd.new_mnt_idmap = ovl_upper_mnt_idmap(ofs);
+ 	rd.old_parent = workdir;
+ 	rd.new_parent = workdir;
+ 	rd.flags = RENAME_WHITEOUT;
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index f891344bd..f9e46b6e0 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -698,7 +698,8 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+ 	if (err)
+ 		goto out2;
+ 
+-	rd.mnt_idmap		= mnt_idmap(old_path->mnt);
++	rd.old_mnt_idmap	= mnt_idmap(old_path->mnt);
++	rd.new_mnt_idmap	= mnt_idmap(new_path.mnt);
+ 	rd.old_parent		= NULL;
+ 	rd.new_parent		= new_path.dentry;
+ 	rd.flags		= flags;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f5c9cf28c..4b7a1fd23 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1774,7 +1774,8 @@ int vfs_unlink(struct mnt_idmap *, struct inode *, struct dentry *,
+ 
+ /**
+  * struct renamedata - contains all information required for renaming
+- * @mnt_idmap:     idmap of the mount in which the rename is happening.
++ * @old_mnt_idmap:     idmap of the source mount
++ * @new_mnt_idmap:     idmap of the destination mount
+  * @old_parent:        parent of source
+  * @old_dentry:                source
+  * @new_parent:        parent of destination
+@@ -1783,7 +1784,8 @@ int vfs_unlink(struct mnt_idmap *, struct inode *, struct dentry *,
+  * @flags:             rename flags
+  */
+ struct renamedata {
+-	struct mnt_idmap *mnt_idmap;
++	struct mnt_idmap *old_mnt_idmap;
++	struct mnt_idmap *new_mnt_idmap;
+ 	struct dentry *old_parent;
+ 	struct dentry *old_dentry;
+ 	struct dentry *new_parent;
+-- 
+2.50.1
 
-Christian,
-
-Do you remember seeing this phenomenon when working on the new mount API?
-I might have known about it and forgot...
-
-Thanks,
-Amir.
 
