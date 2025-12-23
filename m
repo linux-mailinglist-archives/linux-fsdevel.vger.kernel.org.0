@@ -1,74 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-71925-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5208ECD793E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 01:48:34 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E9DCD7A42
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 02:22:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 97334305DCCD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 00:46:46 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B98CA308ED24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 01:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC052D9499;
-	Tue, 23 Dec 2025 00:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oXZJEA/h"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD33242D84;
+	Tue, 23 Dec 2025 01:20:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF49A2BE02A;
-	Tue, 23 Dec 2025 00:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738DC1F541E;
+	Tue, 23 Dec 2025 01:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766450346; cv=none; b=qK8tkF6yNjVFSf0Bwv/y31+fzUvkEATk74BUy1gkp7S6YBGVEO0PRVxtIa9siYicF999UR6NpX55kqjFSlOEMjh4Et3L1oCd1yLC8s/CBtytYArUh+TdIIa9cCpwkYFsEk+LKlvL+i4MIA9YPIQETeYYA27aP4upUqeUdqT+vbQ=
+	t=1766452848; cv=none; b=pxH6PZg73tWkVFCCl7yfR8phBulvpfou0tGXb4XpghpXOOvoSkazbSuW7PSuKZkRhoAzkPhKiSQXvEyTZBbMK2mQ1CXp8/d1xa3SczSWMjnQZImtB23jqQwr0HtYw78qLlDKhG7JYRR5YfENOYq8EROh7pUBQBIZePQuM8q0sVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766450346; c=relaxed/simple;
-	bh=IfaqT1FwkkPlvNK+9vGxPt7qaaBRmNYbdSrLiNl4lts=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Pa/lfHHeaNQsE4fOt7A5O5Ep6SkVC6NVRcRLKi+b15bjPCtLV0KH2+lxTsQDBsWIZ+3WA8WFYVNK9AlvFKF7FFqv5S/W1XtqYdl+SuOkBYGwRTAgEY3ac26x+8VXolsS9IlUl+uuc5w08WWGMnWZwgIgyHqfOgQmhBw2ClLAkaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oXZJEA/h; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Lz/gfojNOQEzMThjbhxxwMo5vvQbozdveVwLBNNNNnk=; b=oXZJEA/hdSIzf0iL/xwwzU2XeN
-	y6JNAEkZaTdObxRLRp8qxhRgWk0aodtccieMOE9EVHp3l0zdFfDYvY5aVaRFmvTtwk/xnjdFnt0Dr
-	zjpnn7bJ7AvJ+zwtZHUEOdLt24kYLHGabI/dgIwidLsTlkuX5yTFemkdjVxfVQTtoAoxbUyQim7vK
-	TddAydZ471UHgfhGtmKLX2iBlJfdlF9+/hORm53QKBi5hYBYCdxZxzLw3FBpFlS/ur7NcR65Aj1xU
-	EtzqFzaU91OeX+9ULM2Pn9lOE9IpAtNZZL/M4my9/GauNm+lzY79VeTweMsG++ZTZ8DmgCVwzKuYA
-	KnTHZB7w==;
-Received: from s58.ghokkaidofl2.vectant.ne.jp ([202.215.7.58] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vXqQY-0000000EJD0-2O8m;
-	Tue, 23 Dec 2025 00:39:02 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	David Sterba <dsterba@suse.com>,
-	Jan Kara <jack@suse.cz>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Stefan Roesch <shr@fb.com>,
-	Jeff Layton <jlayton@kernel.org>,
+	s=arc-20240116; t=1766452848; c=relaxed/simple;
+	bh=x69l8+2WGN+FTaMh43i4WYna7gXXqW68EQT75ys0UXY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DcpxZt+s6ayaGiuOYEP8TBZdIsYZGop4Jqw+wOwkI87XtWNYnBqDkL22xIFkfRgoBUkGJhzZzqysV1h4us4lK3U2Wx9X1/Pl2WcaDa8+5TyRW+J8RF8QQok4QwgFBGFoJJAABreGgtqwH3fcK8iR5MVb1ZZ3FtEuFLwPMkLQwk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.177])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4dZxyf3RqlzKHMMK;
+	Tue, 23 Dec 2025 09:20:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 0B0024058D;
+	Tue, 23 Dec 2025 09:20:44 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP4 (Coremail) with SMTP id gCh0CgAXd_dY7klpHOeZBA--.61342S4;
+	Tue, 23 Dec 2025 09:20:39 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	gfs2@lists.linux.dev,
-	io-uring@vger.kernel.org,
-	devel@lists.orangefs.org,
-	linux-unionfs@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-xfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH 11/11] xfs: enable non-blocking timestamp updates
-Date: Tue, 23 Dec 2025 09:37:54 +0900
-Message-ID: <20251223003756.409543-12-hch@lst.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251223003756.409543-1-hch@lst.de>
-References: <20251223003756.409543-1-hch@lst.de>
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	yizhang089@gmail.com,
+	libaokun1@huawei.com,
+	yangerkun@huawei.com,
+	yukuai@fnnas.com
+Subject: [PATCH -next v2 0/7] ext4: defer unwritten splitting until I/O completion
+Date: Tue, 23 Dec 2025 09:17:55 +0800
+Message-ID: <20251223011802.31238-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,56 +61,139 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-CM-TRANSID:gCh0CgAXd_dY7klpHOeZBA--.61342S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF1xXF1UXrWxZFyUWF47CFg_yoWrCFWUpr
+	Wfuw17Jr4kta4UK397Aa1jqr1F9w1fAr47ur1rG348ZF15CFyYgr42q3WrZa45J395W3WY
+	vr4Yqw1DC3WUCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-The lazytime path using the generic helpers can never block in XFS
-because there is no ->dirty_inode method that could block.  Allow
-non-blocking timestamp updates for this case by replacing
-generic_update_time with the open coded version without the S_NOWAIT
-check.
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Fixes: 66fa3cedf16a ("fs: Add async write file modification handling.")
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
----
- fs/xfs/xfs_iops.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+Changes sicne v1:
+ - In patch 03, add a comment explaining how DAX writes to unwritten
+   extents, as Jan suggested.
 
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index e12c6e6d313e..1fba10281e54 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1195,16 +1195,23 @@ xfs_vn_update_time(
- 
- 	trace_xfs_update_time(ip);
- 
--	if (flags & S_NOWAIT)
--		return -EAGAIN;
--
- 	if (inode->i_sb->s_flags & SB_LAZYTIME) {
--		if (!((flags & S_VERSION) &&
--		      inode_maybe_inc_iversion(inode, false)))
--			return generic_update_time(inode, flags);
-+		int dirty_flags;
-+
-+		error = inode_update_timestamps(inode,
-+				flags | S_CAN_NOWAIT_LAZYTIME, &dirty_flags);
-+		if (error)
-+			return error;
-+		if (dirty_flags == I_DIRTY_TIME) {
-+			__mark_inode_dirty(inode, I_DIRTY_TIME);
-+			return 0;
-+		}
- 
- 		/* Capture the iversion update that just occurred */
- 		log_flags |= XFS_ILOG_CORE;
-+	} else {
-+		if (flags & S_NOWAIT)
-+			return -EAGAIN;
- 	}
- 
- 	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp);
+v1: https://lore.kernel.org/linux-ext4/20251213022008.1766912-1-yi.zhang@huaweicloud.com/
+
+This series proposes deferring the splitting of unwritten extents from
+the point of I/O submission until I/O completion when partially writing
+to a preallocated file.
+
+This change primarily needs to address whether it will increase the
+likelihood of extent conversion failure due to the inability to split
+extents in scenarios with insufficient space, which could result in I/O
+write failures and data loss. After analysis, it has been confirmed that
+two existing mechanisms ensure I/O operations do not fail.
+
+The first is the EXT4_GET_BLOCKS_METADATA_NOFAIL flag, which is a best
+effort, it permits the use of 2% of the reserved space or 4,096 blocks
+in the file system when splitting extents. This flag covers most
+scenarios where extent splitting might fail. The second is the
+EXT4_EXT_MAY_ZEROOUT flag, which is also set during extent splitting. If
+the reserved space is insufficient and splitting fails, it does not
+retry the allocation. Instead, it directly zeros out the extra part of
+the extent, thereby avoiding splitting and directly converting the
+entire extent to the written type.
+
+These two mechanisms currently have no difference before I/O submission
+or after I/O completion. Therefore, Although deferring extent splitting
+will add pressure on reserved space after I/O completion, but it won't
+increase the risk of I/O failure and data loss. On the contrary, if some
+I/Os can be merged when I/O completion during writeback, it can also
+reduce unnecessary splitting operations, thereby alleviating the
+pressure on reserved space. 
+
+In addition, deferring extent splitting until I/O completion can also
+simplify the I/O submission process and avoid initiating unnecessary
+journal handles when writing unwritten extents.
+
+Patch 01-03: defer splitting extent until I/O completion.
+Patch 04-07: do some cleanup of the DIO path and remove
+             EXT4_GET_BLOCKS_IO_CREATE_EXT.
+
+Tests:
+
+ - Run xfstests with the -g enospc option approximately 50 times. Before
+   applying this series, the reserved blocks were used over 6000/7000
+   times on a 1 GB filesystem with a 4 KB / 1 KB block size. After
+   applying this series, the counts remain nearly the same. In both
+   cases, there were no splitting failures.
+ - Run xfstests with the -g enospc option about one day, no regressions
+   occurred.
+ - Intentionally create a scenario in which reserved blocks are
+   exhausted. Before applying the patch, zero out the extent before I/O
+   submission; after applying the patch, zero out the extent after I/O
+   completion. There are no other differences.
+ - xfstests-bld shows no regression.
+
+Performance:
+
+This can improve the write performance of concurrent DIO for multiple
+files. The fio tests below show a ~25% performance improvement when
+wirting to unwritten files on my VM with a 100G memory backed disk.
+
+  [unwritten]
+  direct=1
+  ioengine=psync
+  numjobs=16
+  rw=write     # write/randwrite
+  bs=4K
+  iodepth=1
+  directory=/mnt
+  size=5G
+  runtime=30s
+  overwrite=0
+  norandommap=1
+  fallocate=native
+  ramp_time=5s
+  group_reporting=1
+
+ [w/o]
+  w:  IOPS=62.5k, BW=244MiB/s
+  rw: IOPS=56.7k, BW=221MiB/s
+
+ [w]
+  w:  IOPS=79.6k, BW=311MiB/s
+  rw: IOPS=70.2k, BW=274MiB/s
+
+TODO:
+
+Next, we can investigate whether, during the buffer I/O write-back
+process, writing an unwritten extent can also avoid initiating a journal
+handle.
+
+Thank,
+Yi.
+
+Zhang Yi (7):
+  ext4: use reserved metadata blocks when splitting extent on endio
+  ext4: don't split extent before submitting I/O
+  ext4: avoid starting handle when dio writing an unwritten extent
+  ext4: remove useless ext4_iomap_overwrite_ops
+  ext4: remove unused unwritten parameter in ext4_dio_write_iter()
+  ext4: simply the mapping query logic in ext4_iomap_begin()
+  ext4: remove EXT4_GET_BLOCKS_IO_CREATE_EXT
+
+ fs/ext4/ext4.h    | 10 ---------
+ fs/ext4/extents.c | 46 ++++----------------------------------
+ fs/ext4/file.c    | 23 ++++++++-----------
+ fs/ext4/inode.c   | 56 ++++++++++++-----------------------------------
+ 4 files changed, 27 insertions(+), 108 deletions(-)
+
 -- 
-2.47.3
+2.52.0
 
 
