@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-71902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63C03CD784E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 01:38:17 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A243CD7854
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 01:38:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EC6CD304C1ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 00:36:52 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B4F90304EDAE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 00:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC8420C029;
-	Tue, 23 Dec 2025 00:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173F71F4613;
+	Tue, 23 Dec 2025 00:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kr0O7K/f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3a9VoQE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDE11F4613
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Dec 2025 00:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A981F8AC5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Dec 2025 00:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766450211; cv=none; b=chcnJuzD2hrDmHnHoif0B2nvn6i8wJjbK2Hw4KP50QY5OF3xeBt8wfXFqV68Vt09Q35D3LT3Gt4TMQW7/j4yC+4jVPXtzg11F6uBDUCmfQbjz6uxt/6BRnGBBhyIVtMjjwb7K7YElbm34vJvwmk8LGryHdOuqmD2PpKNPXZbE4M=
+	t=1766450211; cv=none; b=bdD6sSiYSPcsPB6PvmkDCPurFYJaUca7lnPD8ySdCc0TH8e82UAyu+N0y2W6hPGVHlDRHXzwNijZpNWSku6Tz8THMqAECYAeDFk3e4eq2lNduQM7+xdBVQTL80Vg0q7vvEsj1lNOasJCs4OtPy9rlBc/OrKu4yLeqW23cHGbLTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1766450211; c=relaxed/simple;
-	bh=dCE9Ifsy53U4i9ZoCVgrqAcptT5uW4tuuXml9xDq4zM=;
+	bh=7StnbW/TqmHUc1vg9s38n043pYlTzeZZxclo5H0fKUQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nbl13X+6MEQjDekahwa7Oqcv6Cs95H3KBrmGNUclaeQjnJ7cpjDq4QaofIm9oIKc20c02RZ8fN2z2HrOeLHseNTJIsNBeGHqlbU/RPRWLMiq1/KKZz7Ivl9z132D26EqX192f2zQrUp+gCY+WdbF6s/JeNNvwTIEcHZggpWLT1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kr0O7K/f; arc=none smtp.client-ip=209.85.210.176
+	 MIME-Version; b=LfYaapBdjUSrXogwcL6AZZUO4d/WPtWrxYRuoI4VCrq8O8Sjg6aTGKM5ryYizIh1Xe10NbJDyocvYg6ub08y2YFVurAYal72Ilm5JSgLrG7e5/Z4Yrwit7AhVBmlJdqe7z08RoznLdCGiJ3PGrbt2j2o0RqkglzIaa4gC19BHgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3a9VoQE; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7b22ffa2a88so4191436b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 16:36:48 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-29efd139227so59935065ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 16:36:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766450208; x=1767055008; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1766450209; x=1767055009; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9L/4yXbNzZtfTE9c852n7Fp8KTBsMqoDKIABPL39CrI=;
-        b=Kr0O7K/f+yR7Xts04IRWah+DPAWBsv++iHiSujESvuVvsib9pewvhMvDlMc/WxF9Dy
-         MI4E+0nOl01k1FdY7Bd3c51zWopmtExlTNjY4FmCQaabJg/cGmLD6ie5mrFWWNAUWAm4
-         Xn4TZmT7Xg90bqpd5eVg0DDNiglDWZz7IEfqHge7W+RGzq04cB/m/CRMoOeMA67QxVdZ
-         ocOia5pTbTYd9l6SXGtQ+nLrGrzPXJ46DUUGsFZOWOtGE5MDoP58dXFjx1bllPAoT+dT
-         p+vHRRAf6dXCGw5EP2ZLvEI87CS7a+7JotLkEuGWFpM/A8jcfIzNO5PP/SvwPXZCeBYM
-         JF1g==
+        bh=w+ttqcfQ3T5zSOFv2YhovKb1gWr/JPYacZE2ZQZbU7Y=;
+        b=k3a9VoQEfMtFU5eFpe8Ramn6QNsP59pf8Ut98dfXo/vtPxW0Cmvg98i1WLMr3KvbZf
+         kUSLgxzeE/PxXSyLj3vi3erdlEaHnyUiCAI6gC9Y6FGglMA0nrsW8jOjc2TAMbzt6F3+
+         8TMO1TIwv/K+x+FVoN0uXbJf6Gsmk564H1FVFfD5DjI0KBKmhr42yiSNmMrsGRJwkyL3
+         i2QGwN7Ayf5EnGHlcfwEsDxlm/cBixqARdq/bbB8Hpwq+oYQzSVO8fZBx40lbWwpZ/7I
+         tCjE1CQAUpSWf6nOWjJqFn8+pJE5FEoi28OGfOHl3jo1DVDJgOHylG68yZqj+4NGYHKs
+         9HKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766450208; x=1767055008;
+        d=1e100.net; s=20230601; t=1766450209; x=1767055009;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=9L/4yXbNzZtfTE9c852n7Fp8KTBsMqoDKIABPL39CrI=;
-        b=Me4bP3u5CPgaNdKFalKiGWmoKyKB6r7sJ8wBa60WWLUhlVT3rmLZdEQ7BjzCceuH5j
-         ovLuzDZ6SNeMuSmxPTCQ6gjB90r9PeSVxcpSuMphNtyR4tWYvEyy/uhY0kTzlzGwYv8w
-         81qiYHXJLom4iGDTgbvap1UE3cinPtyXv1FVVfq/FbggqDBVdeVuYO3siTYRYzppy3aN
-         DomR5qxmrlV4oClNGp5GxWmbfekcXihnP6gNQAq7PTbRuPsVT538oNHZAD/NFxXxrU1n
-         qRH/pkXW+BFb6XDzXD5FnQuUAYvUFbGE8AUOW9s3lh+SOR30Fjjanyrsvwtn+Y0HqtOT
-         6j7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUu+VVzyvBYnMxlpEq4fhLwGYAReWazLUJkqDDKoh7uWIy5UtvFrMZ8e4zKUpJ00625A2dzKVi7CaeAVPbJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAASBFhXU5cAW0hQXa6xrqk9ShrRtkMddjWRqo20AvZU0WHlFR
-	nlmq1y4l7tRExVt6lxkbqr5Ze6sNDIa4caXytwHMr80pzvrg3/lyFHaXZ9f6LmNc
-X-Gm-Gg: AY/fxX7f+kNHNplPW0YNwrTroorHRGLnN32vQ1xIZT42+lthx3eIH6UiLl7tSv6ixXp
-	7rlZ3JRnWzHt+dQKu0HDeDZQ0usu5f6sq9hseZLxQOkcx3J7lhKWyUSn5J4p8eg4wkuurUt4+Wk
-	UqmLXfaVepl/sXmgmtHOMB+/WP/SrIC3nDHS2cS4sOLZXQu9KWTGiyHhvNLhHGzv29Q+RttPjsy
-	vlmJQ9bZA6Es+9McwNKlE6/wa/vo9kPypF5ytZRtuCXwF5yZZmNWjf7GKfNj6jLJTwK989C8eVy
-	gTfbRnYCgTldilqs1FRaLb7e4mOkBy7jdp5F8c22+23MAQnI2Ec7uQB8MHWhDRzA639jpEXvw+L
-	Ut6MXoS407F34Mdlwco/PK3jMgpNrA1tV7JZjq2wXykDt2PzPbiZ+9DAUDHMav5uX7sZNNoy2Dt
-	2AmgixaWKJCuA4HUUi6g==
-X-Google-Smtp-Source: AGHT+IHVdbjckMfiuEk88UJEb1waxjTNLZMmz6/YhqW8vhxBy6d9JfnViDgdIFqCP3BFIXY3RksA0g==
-X-Received: by 2002:a05:6a00:3489:b0:7ef:3f4e:9182 with SMTP id d2e1a72fcca58-7ff67965e2amr11079021b3a.47.1766450207863;
-        Mon, 22 Dec 2025 16:36:47 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:51::])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7ff7a93ab3csm11529868b3a.7.2025.12.22.16.36.47
+        bh=w+ttqcfQ3T5zSOFv2YhovKb1gWr/JPYacZE2ZQZbU7Y=;
+        b=oQ6j0Aq97+lbrGpQNbxBtB0uFlBvlNBS/KbMeX9jg99vgsnoQdQI2a2M0I3GfZ3HBq
+         0p/a6hj9ZcA2kLUmYRPdLlD1i0p5Oyhc8GMXVZX9FadVuuKgAL20opWEwr3RWzRK4VWD
+         XsfF/R9W7PUvB5GCVGmysFm4usrf2CGBzxVxgcEVNiztzLu0Jz298B02K+mXa9+utnQb
+         jExDKOVgDz6mGySsq4gwrZF3vDJuvgcjYAmIgDM3KwDPKXfU6lcmrYPPBE0ZGbLYV/O6
+         zMlNxOq65VDr2/5F5Bs0v9P+wg78Y6nto1tLDp0HDwfejIFSngzERpCoL+Z+166PrxBS
+         KhKA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5OgCh8chyIGWTFCGrRf1iGCnW6ZtXtYr/H9wRFpXRCxFxANY1c+OhAyl40wLnXvcxzys6xX3VvIqSZKA4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkGGnHjhoKAkfGj90C5Xx6hykvi0n6JJLrOslLuAK0bY4mwxhq
+	OmyFQHCY+J2Mme/srvfSxnfSjBkJmDf905YkUHn8ouVSlDMxvU60v3oD
+X-Gm-Gg: AY/fxX6GzHFZJ5p82kkjKcOA5uFL9PFr2N9+t1pEtmxyCVS8vBbdC7566hhavrglrbI
+	GSSJnKeaCdTv3KPrAwXI+mM4WD2pLtrNNoaDKF7C+jtJzBO1mvzZHmOCbkmTc6IgSQy+YgnjpTr
+	MqKP41axL921/Gi0alSE+246dlykqrykK0pDUEeL7/eRhRF3tT7GQ9b1c5rKIef7HJWVJtTF1cF
+	HOPYPOwGiyP4QvmUgJSfImaOjGz8XqyzMt8pMEdSoYy/Ds/A6p1EEw+tgw0YetUXPYlHLRcAmpc
+	OeQH0PNqPiVniEiL6KFd2qsnpyKpk3j1fIRMDyRReOCguKY0mHInb0bgvdUWR3YdnIgj/XVXZkW
+	fNnkUoYFh/i/zA1G4BBtiV4DLGZ64x6PaTenYwEsIeZQBop+cZq+BeSX6fB6h6UuGXhNyvex1At
+	EtHsNpCGodaRT/vRD+
+X-Google-Smtp-Source: AGHT+IEG2ZslDRIBVszUST8fjCQfpuscl1VfHChhLWfIfgGL+anHgSStZkgHL/p5tjHNzxd0QrnJ2A==
+X-Received: by 2002:a17:902:cecd:b0:2a0:909a:1535 with SMTP id d9443c01a7336-2a2f21fc33fmr129619795ad.11.1766450209461;
+        Mon, 22 Dec 2025 16:36:49 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:9::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2f3d5d566sm107593665ad.71.2025.12.22.16.36.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Dec 2025 16:36:47 -0800 (PST)
+        Mon, 22 Dec 2025 16:36:49 -0800 (PST)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	axboe@kernel.dk
@@ -81,9 +81,9 @@ Cc: bschubert@ddn.com,
 	csander@purestorage.com,
 	xiaobing.li@samsung.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 14/25] fuse: refactor io-uring header copying to ring
-Date: Mon, 22 Dec 2025 16:35:11 -0800
-Message-ID: <20251223003522.3055912-15-joannelkoong@gmail.com>
+Subject: [PATCH v3 15/25] fuse: refactor io-uring header copying from ring
+Date: Mon, 22 Dec 2025 16:35:12 -0800
+Message-ID: <20251223003522.3055912-16-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251223003522.3055912-1-joannelkoong@gmail.com>
 References: <20251223003522.3055912-1-joannelkoong@gmail.com>
@@ -95,28 +95,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move header copying to ring logic into a new copy_header_to_ring()
+Move header copying from ring logic into a new copy_header_from_ring()
 function. This consolidates error handling.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- fs/fuse/dev_uring.c | 39 +++++++++++++++++++++------------------
- 1 file changed, 21 insertions(+), 18 deletions(-)
+ fs/fuse/dev_uring.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
 diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-index 1efee4391af5..7962a9876031 100644
+index 7962a9876031..e8ee51bfa5fc 100644
 --- a/fs/fuse/dev_uring.c
 +++ b/fs/fuse/dev_uring.c
-@@ -575,6 +575,18 @@ static int fuse_uring_out_header_has_err(struct fuse_out_header *oh,
- 	return err;
+@@ -587,6 +587,18 @@ static __always_inline int copy_header_to_ring(void __user *ring,
+ 	return 0;
  }
  
-+static __always_inline int copy_header_to_ring(void __user *ring,
-+					       const void *header,
-+					       size_t header_size)
++static __always_inline int copy_header_from_ring(void *header,
++						 const void __user *ring,
++						 size_t header_size)
 +{
-+	if (copy_to_user(ring, header, header_size)) {
-+		pr_info_ratelimited("Copying header to ring failed.\n");
++	if (copy_from_user(header, ring, header_size)) {
++		pr_info_ratelimited("Copying header from ring failed.\n");
 +		return -EFAULT;
 +	}
 +
@@ -126,54 +126,34 @@ index 1efee4391af5..7962a9876031 100644
  static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
  				     struct fuse_req *req,
  				     struct fuse_ring_ent *ent)
-@@ -637,13 +649,11 @@ static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_req *req,
- 		 * Some op code have that as zero size.
- 		 */
- 		if (args->in_args[0].size > 0) {
--			err = copy_to_user(&ent->headers->op_in, in_args->value,
--					   in_args->size);
--			if (err) {
--				pr_info_ratelimited(
--					"Copying the header failed.\n");
--				return -EFAULT;
--			}
-+			err = copy_header_to_ring(&ent->headers->op_in,
-+						  in_args->value,
-+						  in_args->size);
-+			if (err)
-+				return err;
- 		}
- 		in_args++;
- 		num_args--;
-@@ -659,9 +669,8 @@ static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_req *req,
+@@ -597,10 +609,10 @@ static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
+ 	int err;
+ 	struct fuse_uring_ent_in_out ring_in_out;
+ 
+-	err = copy_from_user(&ring_in_out, &ent->headers->ring_ent_in_out,
+-			     sizeof(ring_in_out));
++	err = copy_header_from_ring(&ring_in_out, &ent->headers->ring_ent_in_out,
++				    sizeof(ring_in_out));
+ 	if (err)
+-		return -EFAULT;
++		return err;
+ 
+ 	err = import_ubuf(ITER_SOURCE, ent->payload, ring->max_payload_sz,
+ 			  &iter);
+@@ -794,10 +806,10 @@ static void fuse_uring_commit(struct fuse_ring_ent *ent, struct fuse_req *req,
+ 	struct fuse_conn *fc = ring->fc;
+ 	ssize_t err = 0;
+ 
+-	err = copy_from_user(&req->out.h, &ent->headers->in_out,
+-			     sizeof(req->out.h));
++	err = copy_header_from_ring(&req->out.h, &ent->headers->in_out,
++				    sizeof(req->out.h));
+ 	if (err) {
+-		req->out.h.error = -EFAULT;
++		req->out.h.error = err;
+ 		goto out;
  	}
  
- 	ent_in_out.payload_sz = cs.ring.copied_sz;
--	err = copy_to_user(&ent->headers->ring_ent_in_out, &ent_in_out,
--			   sizeof(ent_in_out));
--	return err ? -EFAULT : 0;
-+	return copy_header_to_ring(&ent->headers->ring_ent_in_out, &ent_in_out,
-+				   sizeof(ent_in_out));
- }
- 
- static int fuse_uring_copy_to_ring(struct fuse_ring_ent *ent,
-@@ -690,14 +699,8 @@ static int fuse_uring_copy_to_ring(struct fuse_ring_ent *ent,
- 	}
- 
- 	/* copy fuse_in_header */
--	err = copy_to_user(&ent->headers->in_out, &req->in.h,
--			   sizeof(req->in.h));
--	if (err) {
--		err = -EFAULT;
--		return err;
--	}
--
--	return 0;
-+	return copy_header_to_ring(&ent->headers->in_out, &req->in.h,
-+				   sizeof(req->in.h));
- }
- 
- static int fuse_uring_prepare_send(struct fuse_ring_ent *ent,
 -- 
 2.47.3
 
