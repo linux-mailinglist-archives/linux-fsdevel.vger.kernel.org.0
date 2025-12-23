@@ -1,113 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-71946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832E2CD7D67
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 03:14:20 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A1FCD7DFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 03:32:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6D656303E66E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 02:12:30 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id EEAF2301CD0B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 02:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFC8245019;
-	Tue, 23 Dec 2025 02:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D257B24503F;
+	Tue, 23 Dec 2025 02:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Riocl+6g"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hDlmawTr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8A01F1537;
-	Tue, 23 Dec 2025 02:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32AD1F541E;
+	Tue, 23 Dec 2025 02:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766455948; cv=none; b=uPsLUMJXoH0ECy7b8KM1X6/O6ACIFrHbcn/UJVjdqBKROf7B7tFpTGNrUwWgQ8t2Y/+CYFbZaWa5DcUyvSIdB52ER+G2pYMGFGtHrcwZR0KJxB2MGZenHZZr612t1LJp6/5aimCe/WKYkIW9POsDMU+PMzv+6P6e9jASuxu3eSA=
+	t=1766457138; cv=none; b=jkBVRvqiYc6/xXVVTVAsGy1Mik6Sm9q1eyacAoh8nt5j69BkOH0ye/iYbn/LqILNPB/dQlnExSFzyLa4vQg4348xv05r1SYJZTf4BUDgTu0LW39Cxxwo13ng8/RmsLQiOZYvxLexm7AJzClpUtAJh16XSajjmQ4bLeddxJr82lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766455948; c=relaxed/simple;
-	bh=aIEznLhQ+jZhT2/mMUIIu4rOLsvpEsHFIWEmq39A+Kg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IFgG5KufsMNFG5aAOICX+mnUwCjeRQSA5bYCSPl5WmgNV9FZTi9QPyZKuLHOitwFRryz+9yr6760cUKz3EHDwdN646tG0L7Ddwo35ywcEW6O+YL2I5eL1XsoLgrlAMoFJZ4zYf27iAB4/2WKfMj/lZim7Ruuu+2apBNxfCejOy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Riocl+6g; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=fllzjWjA0QiMVaQE0XGLTZEqit8wTV6yyXHSdawZCLo=;
-	b=Riocl+6gGjn7j8nlAw+G83OCczVcxw7rBgXeLX5XHrKkHz6yIpKamFLQgTKOfr8TYORqKULs+
-	ausLYXYNYRTV/VCh+4oMccVftTQmsJx8RSuzIWm0VtXm3Zdr4LgpmxLEGYRK4hTYNbc/fBcNkdh
-	P8uIN+eCEn1EaccVTV5YvKE=
-Received: from mail.maildlp.com (unknown [172.19.162.140])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4dZz3w5B6Jz1T4GK;
-	Tue, 23 Dec 2025 10:10:04 +0800 (CST)
-Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id D9303201E8;
-	Tue, 23 Dec 2025 10:12:24 +0800 (CST)
-Received: from huawei.com (10.67.174.162) by kwepemr500015.china.huawei.com
- (7.202.195.162) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 23 Dec
- 2025 10:12:24 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <hsiangkao@linux.alibaba.com>, <chao@kernel.org>, <brauner@kernel.org>,
-	<djwong@kernel.org>, <amir73il@gmail.com>, <hch@lst.de>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <lihongbo22@huawei.com>
-Subject: [PATCH v10 10/10] erofs: implement .fadvise for page cache share
-Date: Tue, 23 Dec 2025 02:00:08 +0000
-Message-ID: <20251223020008.485685-1-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.22.0
+	s=arc-20240116; t=1766457138; c=relaxed/simple;
+	bh=aGQcFcA6rVDBuzg6qgXgqURPfKInCJoPm6VQAiDCtL0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iPnikTmX+eIaRKYm3ywg/TMoykygNr7R/Un8yIXHLXJeLZZmSW1Di3jdkyRPFvon8/KzU3EC5B191FecbAJD/XZ7fElBXzNT6Gp5Ott8SwE0ypaZIzzImMm+2DRFI+gZCkC1Zf2yOtNCpzyNmEYrbZ7XMl+6L7qNXbBAurgd5qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hDlmawTr; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1766457130; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=P7yuWWW0S7jbDDkt/SoyrOQc7euoUuNF2KjMNdz0I+g=;
+	b=hDlmawTrQh21w/t5FT1w29E8bm623kKu36hl1AgVXxRG3SKUGPjlKRsuVbZsFttcJn6Wf15dluZyOw+Nm0TYtVHKN9rmLdfoGDfgW9x00g5LeV2th9KKOCZhidDpu/sSaRrlnzebjjdk9YPVCJ564+G49ppB4HofvtmlGdmxLT4=
+Received: from 30.221.131.244(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WvW2.0d_1766457128 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 23 Dec 2025 10:32:09 +0800
+Message-ID: <665e4ff3-0289-431b-b718-4cf71925fc29@linux.alibaba.com>
+Date: Tue, 23 Dec 2025 10:32:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemr500015.china.huawei.com (7.202.195.162)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 01/10] iomap: stash iomap read ctx in the private
+ field of iomap_iter
+To: Hongbo Li <lihongbo22@huawei.com>, chao@kernel.org, brauner@kernel.org,
+ djwong@kernel.org, amir73il@gmail.com, hch@lst.de
+Cc: linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20251223015618.485626-1-lihongbo22@huawei.com>
+ <20251223015618.485626-2-lihongbo22@huawei.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20251223015618.485626-2-lihongbo22@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Hongzhen Luo <hongzhen@linux.alibaba.com>
 
-This patch implements the .fadvise interface for page cache share.
-Similar to overlayfs, it drops those clean, unused pages through
-vfs_fadvise().
+
+On 2025/12/23 09:56, Hongbo Li wrote:
+> It's useful to get filesystem-specific information using the
+> existing private field in the @iomap_iter passed to iomap_{begin,end}
+> for advanced usage for iomap buffered reads, which is much like the
+> current iomap DIO.
+> 
+> For example, EROFS needs it to:
+> 
+>   - implement an efficient page cache sharing feature, since iomap
+>     needs to apply to anon inode page cache but we'd like to get the
+>     backing inode/fs instead, so filesystem-specific private data is
+>     needed to keep such information;
+> 
+>   - pass in both struct page * and void * for inline data to avoid
+>     kmap_to_page() usage (which is bogus).
+> 
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
 
 Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
----
- fs/erofs/ishare.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/fs/erofs/ishare.c b/fs/erofs/ishare.c
-index 269b53b3ed79..d7231953cba2 100644
---- a/fs/erofs/ishare.c
-+++ b/fs/erofs/ishare.c
-@@ -187,6 +187,16 @@ static int erofs_ishare_mmap(struct file *file, struct vm_area_struct *vma)
- 	return generic_file_readonly_mmap(file, vma);
- }
- 
-+static int erofs_ishare_fadvise(struct file *file, loff_t offset,
-+				      loff_t len, int advice)
-+{
-+	struct file *realfile = file->private_data;
-+
-+	if (!realfile)
-+		return -EINVAL;
-+	return vfs_fadvise(realfile, offset, len, advice);
-+}
-+
- const struct file_operations erofs_ishare_fops = {
- 	.open		= erofs_ishare_file_open,
- 	.llseek		= generic_file_llseek,
-@@ -195,6 +205,7 @@ const struct file_operations erofs_ishare_fops = {
- 	.release	= erofs_ishare_file_release,
- 	.get_unmapped_area = thp_get_unmapped_area,
- 	.splice_read	= filemap_splice_read,
-+	.fadvise	= erofs_ishare_fadvise,
- };
- 
- /*
--- 
-2.22.0
-
+Thanks,
+Gao Xiang
 
