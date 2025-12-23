@@ -1,114 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-72000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8CFCDAD34
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 00:16:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABE37CDAD53
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 00:25:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2025930262BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 23:16:19 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A6A38302628A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 23:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47562E62D9;
-	Tue, 23 Dec 2025 23:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE05E2F1FFE;
+	Tue, 23 Dec 2025 23:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DZ9E3An7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+tkzHNs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B345A289378
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Dec 2025 23:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A563A27FD71
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Dec 2025 23:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766531776; cv=none; b=EryJJhyvR92eCaQXlvxwqYXqsJpnT+PA4wUFtSC2E+GkZVJzB+8LEFv21196lNP4eVSvGoKR3GXyEkUV29QbfObFHMFTKo8pidyE1pV25EZgFCj3MZsnuRw1EKk8cgwz52L7qwFwOCCLeWE7suy6pUVv5B8aOFBaV63LjQHgl/8=
+	t=1766532327; cv=none; b=IOcEPyNPrRJ4N7Qd4BeQXlZ1ztb0glQUXb+jWi/Vneqp9kztnL1cnjItxFF0pnXFjmTrfP1mVO3UsVtaDXwqPjXNBZL+PXO9Vy+gMJNJmVxs/QOcyw//I0Tlg1xRLaq5QsC9CWn2BldBZmyik9uptOCZAFfaK07q8fphvV7qu0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766531776; c=relaxed/simple;
-	bh=7HtS3cbUYFQbR5TB4PWBGJMujtQutmHG+tQIIsV7P6w=;
+	s=arc-20240116; t=1766532327; c=relaxed/simple;
+	bh=bH4hm859hWi8Na0CDvaRgWQifcQ3UavBrUz9a7uZ/+8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BPEpU99htl35C2eGHsA5yMvl/O+P5v7obgv4ec9Id41OumHUqiaE9pheFGsYKRV+SGcShPDOa6ONV5DmQHYqCDfGtH4WD/lS8sDstfPEyrRXbP8zJ2ZRN0b8cmIErBZwlIFED5cdQmzUxByQEs9EKPRlR7zeOfcSEzdf+IQbCIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DZ9E3An7; arc=none smtp.client-ip=209.85.160.170
+	 To:Cc:Content-Type; b=MrqbxaXNVyGxK4J6KrWIVMqjbkqRjmyMquevEBtHpTrGvFv/3J94Z4gTWic4g6UR/wEm2NmNNA65mIc5Z4NBdMVGkog6T6ZbnN5cBkQV3FSZ7UbVMsyXEG22fgG1TWwPIjyyqrd9PJuWwOoqCxKg8spq5BIJufx8n6xt+UK6T3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+tkzHNs; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ee1939e70bso53662941cf.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Dec 2025 15:16:14 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b7cf4a975d2so794526766b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Dec 2025 15:25:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766531773; x=1767136573; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qSoAl7bmkFBWbm2lzvgR/QrN7sSc2bfGq/BBEr14rkI=;
-        b=DZ9E3An71ibSXHvY6p9b+YchjNxya4WJDTF0wWpwe2885Lk2n4ix/YBRllf3QdOUfg
-         GW0w8Wk5UWct0X51+sy/60/ndfHf492YIj+yQC6LS/JA1zZ+K55vgDOZAxtfYZaL7kef
-         GozEzlMvHHgZxeYaSBRbTrBREGMTnG79sd662OBGKL0WIjhhHKoP/q3tJpS+luCQBZ8C
-         KGchkX4OMjlfTuCme/zaHM7bstPfyCctz5N9BPwMD/Sh56yIFvO38casWmLqXvh4Rb/B
-         JOVwY7v2gEEhY6ObYiKXfOD4lN+C0mkVqCQzqguI0j7q6GcIzihYe+YxBy8xfJP1Rmoq
-         Ns4g==
+        d=gmail.com; s=20230601; t=1766532324; x=1767137124; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vlvoklPggO5V2VvOB1NMWj76C7NPURSV8R5yE1vvMbc=;
+        b=m+tkzHNs7aZfCPDcBvQxkINOqI9n/1rfLzO4iPOrKkPVwjvEBiyzFipQ2aqgLifkiW
+         IJWfngZ5CmcXPK/o/gG06qVl0+IXQEHQ3+gT+W3OA4WzgwUXO6fWMJfxV9oevbDz1AA0
+         K/s1TEfZVnYWVFLhuTLp8uhyxSBmuXpHTQoPH5eTi5fLq9UJlz3GKZ86XkyRryQ3pPQB
+         3EHoeHtOV4XA4f5J04VlMEYT1nnfLX/n2ojs9W/28qwJlm7NN1AMlQgqXeHfhv59Xt4g
+         Sw5TIlsf9FMNTd9vNK3W9Cftyft3sEZcBGBCVO/3QilMSy7msZQoHff9bME/pg8PVpYx
+         ZadA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766531773; x=1767136573;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=qSoAl7bmkFBWbm2lzvgR/QrN7sSc2bfGq/BBEr14rkI=;
-        b=Ub5laizPOczrsTzqByQCIAycXu/4/eo5DE33ta9857P6+Is1IHQM1cmQP0rsbGFS8w
-         9w5PO0/hIbiW9fTTW2Q4Koo8J2QNFVl8cHC84s75OQQWAm7kD99TU7P2bWN0TXNAKRug
-         iQdxEZ4kYQrfmiKPaPVdqlTtJMkmmrmtufsFckCdOQh1RvHqqDkJ6Rqqi7ucIllmSPZ6
-         xJcjdRF8j9rlX3fl4NqhEb8cPKMAXOx3qVdO935aEmd1iDrE3Lv4eMZYzTReZ/O4UkzN
-         j2nNsXukZvaQNhTRSwumZ8M5hE480velP3kKwsjp4oggQNvqN0z+cjHcSpkGoCKpS6Q6
-         f6qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOMIAgxvkIt0sffYeQ8aIkCMYWTdZH9EG4Kwlch7rXnxwlJFqJOyaLsnUVtAB4IYxfhIssmDZabRXU4mTD@vger.kernel.org
-X-Gm-Message-State: AOJu0YylvnYLWzTbQ8bwzdKIM2yYjYIp0hPFC1qoEcwEZYYtoxL7Rgia
-	V4sB6Hwymd4NVNdivwG0A5e2yJpGuHTQqkTGIc+2AhuA+dYDaiU8RK/Wx+4/qYs8OeYqj3vK0TP
-	G/oB7nOX9CZxP68C4KfQkSfXtazD+hSY=
-X-Gm-Gg: AY/fxX49jfagRuhbcf3sJ6xGpb3NuQoFxpm97DuTh43GyzK/K+1yQsysJzAITtzFOhB
-	ufctamXw2Rs/Cn+fsDPi03131J83ppglLQaDEzYHU++9/YR3H2VcUUWBPUdRbLbfv2nzPQC11G+
-	lJnvrUR2k17iTqaQASFn9h8uWwAiSodn570Ow6T4N/F8J6RBmbUalVq2ZIRAdIEv9wiMJoUogHE
-	9UVeKhU8hMeH+EnCXyqt3JSObGbDcMzOse0JwTDQH0W3zhhDHL/pUgqLlvLGFAKwS0Vng==
-X-Google-Smtp-Source: AGHT+IFI8Jx9SVFGrh6F5DEH5VcrmbQyslvLB/aCN8vn1DrQooovLIgGcRc3MQ4q8QEcAxqVrR/eTUiCic5peKyu0nc=
-X-Received: by 2002:a05:622a:4a12:b0:4ed:6803:6189 with SMTP id
- d75a77b69052e-4f4abd799e2mr262951351cf.53.1766531773630; Tue, 23 Dec 2025
- 15:16:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1766532324; x=1767137124;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vlvoklPggO5V2VvOB1NMWj76C7NPURSV8R5yE1vvMbc=;
+        b=jqitmyY9wggIEDnsh9kloqAAwMel+X7vfosKduhdLdeZyrDYu8hs1ygGmEn1O8ju44
+         eZ8m+BcZimD2XLBHdexasm61cgQNBzbtnrnFsm174KhouPUSJb/MZGKEgS+kWvs8xfqH
+         IZOuyBXYjJIOjKPDXb+b8HqhpNxT+jHgWfesFKYYEesvUWPtRypJyJvROeH9KJ1FH93N
+         h+UMMvf/bcHjNcDJ2rUjVFA8oLajkqSVgMAM+S00AkLkaHC9vGkGddevpHqYMn1wXHz7
+         t/DxQgxIIMqLMMTs4W2T4NHehQeUkNj+3yPGhQ4d9ew/Hy8Oj7QJWCKD8gvvYLDmXedt
+         KXhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUn0zl8vQkf5XTStmhB9Fbk+t5mKWe6KXPss2/1GI8/RGFHcb8GcY0CJZBiB9FZ+eFPn4oOu48xZdRjNYn5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRRhpjqYpCOS2ADZ7jD3A0cAN2rnMQiVP3bNw1CA8eW8cn4zUF
+	IlvN1f1bI0BB28Wat+3QQ27BWTfhVkfW52dKPy+pqMu0xSrx2JUHYgwCGhy2VRgnGo+6GyL/6wQ
+	vphGS02E/qTkfZSJEVAk8zw4duLt6Xf0=
+X-Gm-Gg: AY/fxX4auhno3tts5v28yTto40k74RKvE/Hw5MaYJp9DvH7NFKe4GDDgVvZPkEdivKT
+	0bD2lB4v1nn9dzQNeEx4Jz/jZwhsiEw+/dTXuVsNOnBfU1WpgvgzS6Iz3SDrKUnLTwBpslD8klF
+	c/LRctTGWAxIL9zTxdX3jWeV4KHd9hbKVHrz9pgURxbK6Yi2hybQxtK1nifRzUnL01xAt+scmz2
+	asQaIIc4+1n68Mxg3xBwOKsPPVrXaOtTCerG1kPInZNdFSNuycJdPEDyOqAe8fOTtnTe+XY
+X-Google-Smtp-Source: AGHT+IG6p1H6vOdORdN+4xiVy4gJwmwnr8X2HM3NfUP+87HF6WHRMN6GWxkKtl+bVfFyREtjadazGW6mzFzZm5TwbaU=
+X-Received: by 2002:a17:907:6094:b0:b73:9368:ad5e with SMTP id
+ a640c23a62f3a-b8037051288mr1679135866b.34.1766532323661; Tue, 23 Dec 2025
+ 15:25:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251223062113.52477-1-zhangtianci.1997@bytedance.com>
-In-Reply-To: <20251223062113.52477-1-zhangtianci.1997@bytedance.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 23 Dec 2025 15:16:02 -0800
-X-Gm-Features: AQt7F2pl86WHzP_gbut-XIdGmOaBWfPE8iqFS3SPuDeNQ8ksgRxCzOTsKUBFGCA
-Message-ID: <CAJnrk1aR=fPSXPuTBytnOPtE-0zuxfjMmFyug7fjsDa5T1djRA@mail.gmail.com>
-Subject: Re: [PATCH] fuse: add hang check in request_wait_answer()
-To: Zhang Tianci <zhangtianci.1997@bytedance.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, xieyongji@bytedance.com, 
-	zhujia.zj@bytedance.com, Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+References: <CAFnufp2ZD5u6pp84xtTcZKqQWtmtwN8n_d7-9UpqoUJUsEwwAA@mail.gmail.com>
+ <87345fxayu.fsf@gmail.com> <8cd912f2-587b-45ff-a3aa-951272f1f538@cs.ucla.edu>
+ <CAFnufp0zMe04Hh41-z6Yi8RTc0gZ7i74F6zRBDqOS5k9DZu2TQ@mail.gmail.com>
+ <dabc0311-8872-4744-89ec-82a3170880b1@draigBrady.com> <CAFnufp35pGf6SDYRxf8YW17tdT0sTTXt_SXnPjpdWtg4ndojZA@mail.gmail.com>
+ <4b3d3a05-09db-4a6a-80e2-8d6131d56366@cs.ucla.edu> <CAFnufp26+PnkY2OM=5NMvxDxrBf3F=FfoKBU8e0XVu4im6ZU0g@mail.gmail.com>
+ <6831a0c6-baa1-4fbb-b021-4de4026922ab@cs.ucla.edu> <CAFnufp1z=-BfUVEX+wiiv+Y5f-fGbzBTZYwwhXM7VFGxAQLexQ@mail.gmail.com>
+ <1a8636a8-bc53-4bb8-9ecb-677c0514efa2@cs.ucla.edu> <CAFnufp072=wSfU4TUY7DcymJCqY5VYw2dqxt=OAY3Op3zZwEpw@mail.gmail.com>
+ <7e74a2c1-3053-4c2a-b1de-967d3d4f58a1@cs.ucla.edu>
+In-Reply-To: <7e74a2c1-3053-4c2a-b1de-967d3d4f58a1@cs.ucla.edu>
+From: Matteo Croce <technoboy85@gmail.com>
+Date: Wed, 24 Dec 2025 00:24:47 +0100
+X-Gm-Features: AQt7F2ppDxZq0zniEA6Uki2npZDIjrHh0e0P_nCkHWn9VQQMyZi8WAvfa66U4yA
+Message-ID: <CAFnufp0Dtg1=mKaCgSHnossVE4h41uzigw5WMTy6wkOO90sskg@mail.gmail.com>
+Subject: Re: cat: adjust the maximum data copied by copy_file_range
+To: Paul Eggert <eggert@cs.ucla.edu>
+Cc: Collin Funk <collin.funk1@gmail.com>, coreutils@gnu.org, 
+	=?UTF-8?Q?P=C3=A1draig_Brady?= <P@draigbrady.com>, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 22, 2025 at 10:22=E2=80=AFPM Zhang Tianci
-<zhangtianci.1997@bytedance.com> wrote:
+Il giorno mar 23 dic 2025 alle ore 20:40 Paul Eggert
+<eggert@cs.ucla.edu> ha scritto:
 >
-> If the FUSEDaemon fails to respond to FUSE requests
-> due to certain reasons (e.g., deadlock), the kernel
-> can detect this situation and issue an alert via logging.
-> Based on monitoring of such alerts in the kernel logs,
-> we can configure hang event alerts for large-scale deployed
-> FUSEDaemon clusters.
-
-Hi Zhang,
-
-Does setting a timeout on fuse requests suffice for what you need?
-That will detect deadlocks and abort the connection if so.
-
-Thanks,
-Joanne
+> On 2025-12-22 17:28, Matteo Croce wrote:
 >
-> Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-> Signed-off-by: Zhang Tianci <zhangtianci.1997@bytedance.com>
-> ---
->  fs/fuse/dev.c | 46 ++++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 38 insertions(+), 8 deletions(-)
+> > Where in cat.c the code avoids the overflow? I see:
+> >
+> > ssize_t copy_max = MIN (SSIZE_MAX, SIZE_MAX) >> 30 << 30;
+> >
+> > which should evaluate to 0x7FFFFFFFC0000000
 >
+> Oh, I might be mistaken here. I was looking at my experimental copy of
+> coreutils, which has some changes/fixes in this area.
+>
+> > also strace says:
+> >
+> > $ strace -e copy_file_range cat /etc/fstab >fstab
+> > copy_file_range(3, NULL, 1, NULL, 9223372035781033984, 0) = 568
+> > copy_file_range(3, NULL, 1, NULL, 9223372035781033984, 0) = 0
+> > +++ exited with 0 +++
+>
+> Those particular copy_file_range calls don't tickle the kernel bug, as
+> the files are at offset 0. But you're right, you can probably tickle the
+> kernel bug in other uses.
+>
+
+Maybe with a huge file and a seek, e.g.
+
+$ truncate -s $((2**63-1)) file1
+$ ( dd status=noxfer bs=1 skip=$((2**63-1)) count=0 && cat ) <file1 >file2
+0+0 records in
+0+0 records out
+cat: -: Invalid argument
+
+strace reveals:
+copy_file_range(0, NULL, 1, NULL, 9223372035781033984, 0) = 0
+read(0, 0xffff273fc000, 262144)         = -1 EINVAL (Invalid argument)
+
+I also see that copy_file_range() is used first and read().
+I guess that it's because copy_file_range() returns 0,
+so copy_cat() returns 'some_copied' which is 0,
+which is propagated to 'copy_cat_status'
+and then cat fallbacks to simple_cat()?
+
+> > Yes, the kernel bug has to be fixed, of course.
+> > Your patch doesn't compile due to an unmatched curly brace, I fixed it
+> > but it panics at boot, can you check if I preserved the correct logic?
+>
+> No, but that's understandable as my patch was hopelessly munged. You can
+> try the attached instead. (Notice that it does not fail with EOVERFLOW;
+> either the requested area is valid or it's not.)
+
+Will it as soon as I'll have my devel machine back.
+
+Regards,
+-- 
+Matteo Croce
+
+perl -e 'for($t=0;;$t++){print chr($t*($t>>8|$t>>13)&255)}' |aplay
 
