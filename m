@@ -1,205 +1,377 @@
-Return-Path: <linux-fsdevel+bounces-71935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7F6CD7A90
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 02:29:43 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 901EECD7CE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 03:09:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1E38C304C1CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 01:29:36 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 48CEF300AA78
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 02:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264FC354AE6;
-	Tue, 23 Dec 2025 01:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4123323B632;
+	Tue, 23 Dec 2025 02:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h44+IsG0"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="lYJ20m9W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15C6354ADB
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Dec 2025 01:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5044F21D3D2;
+	Tue, 23 Dec 2025 02:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766453374; cv=none; b=FprwiTvDxQyoAIv8sEY0iztUHsuKpNGkUS6U1aeIlLoCctWMRnTyM5Ww+r4RHt6BVqEKdUJwnxDWOydQv7JDXNGkEL0jN54wZRVI/D7oSIWOAtOWhQauXF2nkiV4QdM/fA3b4ADACqc5lZy4ZxLlR/jGmTLM3YpUw5mbM25uCSk=
+	t=1766455734; cv=none; b=Lvs+eWqHk6zDkZZAW74RW/ywlB6sqBBz8wFK2Usqyx77Cjbk4Rx6ZXFOzQmwY3y/piBBVUMqLlImuwrmphx1XGwCNdQH+zm50MuBNQ5ufgoJZOLBAblDruCTbA5cyLZZH6zIVT+cBBOsKwfQZitJQ7JH2WkVXl1pjkdXbAuTpEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766453374; c=relaxed/simple;
-	bh=tnVmiQvk3TdzZHeV/MEsMpRHNEUbfvdFAf0v/2dAxtc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jTOeTSeQKcRHxavXmYattfqE9tvjB9St7fbGwE0/SHep5AdySpt+mFn1tjYbsJB+yQpHJeFqz7DkccFA02SApOiQLSJjxQJiE8IrD6ybHw7S6lynTz+R7mTG7bxtHXcym4KdZsida/2ff3kxftrSyy2E8sRy9Mo+HvZ6j6lfvfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h44+IsG0; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b736ffc531fso802014166b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Dec 2025 17:29:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766453371; x=1767058171; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PhwXnt5hJ0imZS+xNsBGPQ+kpSbizuoLhgsv4Ha59ms=;
-        b=h44+IsG0qXBHrGeDVzUdOVABa6h8zD69sBZ3QeJu9GlY30qS53K+Xf+oMY9S7GyAdp
-         D+i1ofwDddiF24VachrOGmm1IyDqC6KjdpDdlMf2vNX+nDyz6bs6aPp67pWSOt07SqYh
-         xyaMCWL0hprZrBeb5qxATJIFDIr1zTb0qZoBC9uTOjQ75R9u1v8h6DSuyGdpWAvZELy9
-         2e/X+Ey8S4OOYK2UzC+Sf/leczYLbdVldJmMKduzA3EayJ4GAgyMHycmQ72djklCwiYk
-         /4JjGew8lkF26hCpryh9fzYkK8ceNzwit/BgRIcDdDcCh5uVoKAHDhkCMnB5nzUogFQT
-         RWFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766453371; x=1767058171;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PhwXnt5hJ0imZS+xNsBGPQ+kpSbizuoLhgsv4Ha59ms=;
-        b=QdmIZVpninfkQLc8diAPg8tKMdjnaYzPFcT4Om1L9PpDes3tZZvnzy4/rg6F+Y1Vaf
-         uN19vbhPcBU21j8akclhmQKwy1wM9Mmt7Rkprt1VClbEakHceZrU34GdmgoVPhE+DRlK
-         tz6WVKnKfwt8Gf2eDM2Eh97rqGkU/WOz3VxzBM2a2Wt8zz3KFomyce88wZkwMpQA3MNO
-         i53dqm8EvcE+sTnTfPEryK+iC9A2HrUqU/xG+uui7beNR1YjfyCiXkghF0ky4SZyxqSL
-         TRQr/r4U0Y3XqP2r5HHbkEY1YIgnm9ZGqAtWcA955k9ZFof228gPjM2JvmM5NKbIui90
-         lqkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUUw9X+4aiF+ytzV2WmxewlxO/5+eO6mkdM51xjjLxdLJCwMVkwBwFMI6WWfQR3eAykVIimgou0Dy4JxWK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvP1i5GS2awzDgTVmeoTStcTn62HqbkjCpJgznGHHEKT7zJ5pp
-	KxrEEiNRWYOmHRtTpNky2sWCwB4A4hQaDdr5+He4f0BosL7/8s56EAvVByLiYoLyVWUSqHynhFv
-	VmU3WKXJlANdfTS8ncGFS3kVtsZzpOfU=
-X-Gm-Gg: AY/fxX6wo/AUneyVE51aXR9Mu/r7Qcl800+J/ulb16tJlRVPNzyRzrQKrq+jxPSJ+Al
-	WUUirQrCgkTcvHxE5vgHamqy1KjEp1E0sqN+XKnCogNNXIQgaGO2QA+Pqt3l6JoOsmRRrUy5tli
-	NvBI2S8EinD7hSoobKRcxyF2yhHfHKRhTLwXhzcBkRaC87kt22bVOdv2cQIbff/qVu5vzTc7Qu3
-	Vrw65gQWGCFL/14B0JS45EJ/St4Co2AQJOBgT2aenS6xx8KyCSMdck8RBk68/w8nPxVppqk
-X-Google-Smtp-Source: AGHT+IGtbPXkp/1iq6B6e2HcORnQrAIemgfhFqPhpetL2XNJkDKKd0PIiYuJqJavMoe6JYSNihwduBK8Tuy9zNjRXtQ=
-X-Received: by 2002:a17:906:9f92:b0:b2b:3481:93c8 with SMTP id
- a640c23a62f3a-b8036f1d812mr1219906866b.19.1766453370757; Mon, 22 Dec 2025
- 17:29:30 -0800 (PST)
+	s=arc-20240116; t=1766455734; c=relaxed/simple;
+	bh=t7eTHyleVFPO0zAAmir8hgYJ1RT9IKOEXuYYn7Xceyw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JMWfvqVOnR+EOXVpV0CFyFlTkwPLb1Fiwdap8V8NgTmCDy9qC40VfP7HXb3j3yQ1UMwzG6P2q/58AntNkcZskolok+b0P9xoBA4dvwptF1P1VRDFRLBT2cmKOtbc7+xZ+jVgKiJdX+4ZhBLjvx+O0IFkAJdvIyPIbbxjX2lC/Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=lYJ20m9W; arc=none smtp.client-ip=113.46.200.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=J7bS4IwTZDpSJOTVDAG6fqYQLgjlWhw0ulSeeboyTmU=;
+	b=lYJ20m9W//LXBAx8jFb4aRgBo21muj/kXLvx9YyMBWfKBcp1FWulNdCe1jGxlv0+0HI9SNIpI
+	k7cA8l0xeHw533chC4I5/APkuZZ2dzvbaFntArkgyuGc8MKohE1pUSiTbP91xg98u1hkOqmKL0L
+	SKiGFXdiah25PmfP0ABJQ24=
+Received: from mail.maildlp.com (unknown [172.19.163.0])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4dZyyr4JKtz1prL7;
+	Tue, 23 Dec 2025 10:05:40 +0800 (CST)
+Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
+	by mail.maildlp.com (Postfix) with ESMTPS id C40004056D;
+	Tue, 23 Dec 2025 10:08:48 +0800 (CST)
+Received: from huawei.com (10.67.174.162) by kwepemr500015.china.huawei.com
+ (7.202.195.162) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 23 Dec
+ 2025 10:08:48 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <hsiangkao@linux.alibaba.com>, <chao@kernel.org>, <brauner@kernel.org>,
+	<djwong@kernel.org>, <amir73il@gmail.com>, <hch@lst.de>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <lihongbo22@huawei.com>
+Subject: [PATCH v10 00/10] erofs: Introduce page cache sharing feature
+Date: Tue, 23 Dec 2025 01:56:09 +0000
+Message-ID: <20251223015618.485626-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.22.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFnufp2ZD5u6pp84xtTcZKqQWtmtwN8n_d7-9UpqoUJUsEwwAA@mail.gmail.com>
- <87345fxayu.fsf@gmail.com> <8cd912f2-587b-45ff-a3aa-951272f1f538@cs.ucla.edu>
- <CAFnufp0zMe04Hh41-z6Yi8RTc0gZ7i74F6zRBDqOS5k9DZu2TQ@mail.gmail.com>
- <dabc0311-8872-4744-89ec-82a3170880b1@draigBrady.com> <CAFnufp35pGf6SDYRxf8YW17tdT0sTTXt_SXnPjpdWtg4ndojZA@mail.gmail.com>
- <4b3d3a05-09db-4a6a-80e2-8d6131d56366@cs.ucla.edu> <CAFnufp26+PnkY2OM=5NMvxDxrBf3F=FfoKBU8e0XVu4im6ZU0g@mail.gmail.com>
- <6831a0c6-baa1-4fbb-b021-4de4026922ab@cs.ucla.edu> <CAFnufp1z=-BfUVEX+wiiv+Y5f-fGbzBTZYwwhXM7VFGxAQLexQ@mail.gmail.com>
- <1a8636a8-bc53-4bb8-9ecb-677c0514efa2@cs.ucla.edu>
-In-Reply-To: <1a8636a8-bc53-4bb8-9ecb-677c0514efa2@cs.ucla.edu>
-From: Matteo Croce <technoboy85@gmail.com>
-Date: Tue, 23 Dec 2025 02:28:53 +0100
-X-Gm-Features: AQt7F2rXv4PR5blAs4-UyuEOfD2TaA33hAZCePJewpZ3AYzL_PSRslABsOjfvvQ
-Message-ID: <CAFnufp072=wSfU4TUY7DcymJCqY5VYw2dqxt=OAY3Op3zZwEpw@mail.gmail.com>
-Subject: Re: cat: adjust the maximum data copied by copy_file_range
-To: Paul Eggert <eggert@cs.ucla.edu>
-Cc: Collin Funk <collin.funk1@gmail.com>, coreutils@gnu.org, 
-	=?UTF-8?Q?P=C3=A1draig_Brady?= <P@draigbrady.com>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000ad87880646947934"
-
---000000000000ad87880646947934
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemr500015.china.huawei.com (7.202.195.162)
 
-Il giorno lun 22 dic 2025 alle ore 19:41 Paul Eggert
-<eggert@cs.ucla.edu> ha scritto:
->
-> [cc'ing linux-fsdevel@vger.kernel.org; this coreutils thread can be
-> found in <https://lists.gnu.org/r/coreutils/2025-12/threads.html#00055>.]
->
-> On 2025-12-20 00:51, Matteo Croce wrote:
-> > This can be triggered with a huge file:
-> >
-> > $ truncate -s $((2**63 - 1)) file1
-> >
-> > $ ( dd bs=1M skip=$((2**43 - 2)) count=0 && cat ) < file1
-> > 0+0 records in
-> > 0+0 records out
-> > 0 bytes copied, 2,825e-05 s, 0,0 kB/s
-> > cat: -: Invalid argument
-> >
-> > $ dd if=file1 bs=1M skip=$((2**43 - 2))
-> > dd: error reading 'file1': Invalid argument
-> > 1+0 records in
-> > 1+0 records out
-> > 1048576 bytes (1,0 MB, 1,0 MiB) copied, 0,103536 s, 10,1 MB/s
->
-> OK, but in bleeding-edge coreutils neither of these examples call
-> copy_file_range. The diagnostics result from plain 'read' syscalls near
-> TYPE_MAXIMUM (off_t). (dd never calls copy_file_range, and ironically
-> the code in 'cat' that does call copy_file_range avoids the overflow
-> itself, before invoking copy_file_range, and relies on plain 'read' to
-> do the right thing near TYPE_MAXIMUM (off_t).) So these examples have
-> nothing to do with copy_file_range.
->
+Enabling page cahe sharing in container scenarios has become increasingly
+crucial, as it can significantly reduce memory usage. In previous efforts,
+Hongzhen has done substantial work to push this feature into the EROFS
+mainline. Due to other commitments, he hasn't been able to continue his
+work recently, and I'm very pleased to build upon his work and continue
+to refine this implementation.
 
-Yes I know that copy_file_range is unrelated, my commands are just a
-simple reproducers for the kernel issue.
-Where in cat.c the code avoids the overflow? I see:
+This patch series is based on Hongzhen's original EROFS shared pagecache
+implementation which was posted about half a year ago:
+https://lore.kernel.org/all/20250301145002.2420830-1-hongzhen@linux.alibaba.com/T/#u
 
-ssize_t copy_max = MIN (SSIZE_MAX, SIZE_MAX) >> 30 << 30;
+In addition to the forward-port, I have also fixed several bugs, resolved
+some prerequisite dependencies and performed some minor cleanup.
 
-which should evaluate to 0x7FFFFFFFC0000000
-also strace says:
+(A recap of Hongzhen's original cover letter is below, edited slightly
+for this serise:)
 
-$ strace -e copy_file_range cat /etc/fstab >fstab
-copy_file_range(3, NULL, 1, NULL, 9223372035781033984, 0) = 568
-copy_file_range(3, NULL, 1, NULL, 9223372035781033984, 0) = 0
-+++ exited with 0 +++
+Background
+==============
+Currently, reading files with different paths (or names) but the same
+content can consume multiple copies of the page cache, even if the
+content of these caches is identical. For example, reading identical
+files (e.g., *.so files) from two different minor versions of container
+images can result in multiple copies of the same page cache, since
+different containers have different mount points. Therefore, sharing
+the page cache for files with the same content can save memory.
 
-> You've found a Linux kernel bug that affects countless apps, and we
-> can't reasonably expect app developers to patch all the apps to work
-> around the bug. So the fix should be done in the kernel.
->
-> I looked at the kernel patch you suggested in
-> <https://lore.kernel.org/linux-fsdevel/20251219125250.65245-1-teknoraver@meta.com/T/>.
-> Unfortunately, I see two problems with it, the first minor, the second
-> less so.
->
-> The minor problem is that the unpatched kernel code is merely
-> incorrectly checking whether pos + count fits into loff_t. MAX_RW_COUNT
-> should not be involved with the fix, as MAX_RW_COUNT is irrelevant to
-> file offset range. Better would be to do correct overflow checks, with
-> something like the attached patch (which I have not compiled or tested).
->
-> Second and more important, the patch doesn't fix the real bug which is
-> that read(FD, BUF, SIZE) fails with -EINVAL if adding SIZE to the
-> current file position would overflow off_t. That's wrong: the syscall
-> should read whatever bytes are present (up to EOF), and then report the
-> number of bytes read. We cannot fix this bug merely via something like
-> the attached patch.
->
-> One possible fix for the second problem would be to change
-> rw_verify_area's API to return the possibly-smaller number of bytes that
-> can be read, and then modify its callers to do the right thing.
-> ("correct" in the sense of "don't try to read past TYPE_MAXIMUM
-> (off_t)".) Alternatively, we could fix rw_verify_area's callers to not
-> try to read past TYPE_MAXIMUM (off_t), without changing the API.
+Proposal
+==============
 
-Yes, the kernel bug has to be fixed, of course.
-Your patch doesn't compile due to an unmatched curly brace, I fixed it
-but it panics at boot, can you check if I preserved the correct logic?
+1. determining file identity
+----------------------------
+First, a way needs to be found to check whether the content of two files
+is the same. Here, the xattr values associated with the file
+fingerprints are assessed for consistency. When creating the EROFS
+image, users can specify the name of the xattr for file fingerprints,
+and the corresponding name will be stored in the packfile. The on-disk
+`ishare_key_start` indicates the index of the xattr name within the
+prefix xattrs:
 
-Regards,
+```
+struct erofs_super_block {
+	__u8 xattr_filter_reserved; /* reserved for xattr name filter */
+-	__u8 reserved[3];
++	__u8 ishare_xattr_prefix_id;	/* indexes the ishare key in prefix xattres */
++	__u8 reserved[2];
+};
+```
+
+For example, users can specify the first long prefix as the name for the
+file fingerprint as follows:
+
+```
+mkfs.erofs  --ishare_key=trusted.erofs.fingerprint  erofs.img ./dir
+```
+
+In this way, `trusted.erofs.fingerprint` serves as the name of the xattr
+for the file fingerprint. The relevant patch for erofs-utils has been posted
+in:
+
+v2: https://lore.kernel.org/all/20251118015849.228939-1-lihongbo22@huawei.com/
+
+At the same time, for security reasons, this patch series only shares
+files within the same domain, which is achieved by adding
+"-o domain_id=xxxx" during the mounting process:
+
+```
+mount -t erofs -o domain_id=trusted.erofs.fingerprint erofs.img /mnt
+```
+
+If no domain ID is specified, it will fall back to the non-page cache
+sharing mode.
+
+2. Implementation
+==================
+
+2.1. file open & close
+----------------------
+When the file is opened, the ->private_data field of file A or file B is
+set to point to an internal deduplicated file. When the actual read
+occurs, the page cache of this deduplicated file will be accessed.
+
+When the file is opened, if the corresponding erofs inode is newly
+created, then perform the following actions:
+1. add the erofs inode to the backing list of the deduplicated inode;
+2. increase the reference count of the deduplicated inode.
+
+The purpose of step 1 above is to ensure that when a real I/O operation
+occurs, the deduplicated inode can locate one of the disk devices
+(as the deduplicated inode itself is not bound to a specific device).
+Step 2 is for managing the lifecycle of the deduplicated inode.
+
+When the erofs inode is destroyed, the opposite actions mentioned above
+will be taken.
+
+2.2. file reading
+-----------------
+Assuming the deduplication inode's page cache is PGCache_dedup, there
+are two possible scenarios when reading a file:
+1) the content being read is already present in PGCache_dedup;
+2) the content being read is not present in PGCache_dedup.
+
+In the second scenario, it involves the iomap operation to read from the
+disk.
+
+2.2.1. reading existing data in PGCache_dedup
+-------------------------------------------
+In this case, the overall read flowchart is as follows (take ksys_read()
+for example):
+
+         ksys_read
+             │
+             │
+             ▼
+            ...
+             │
+             │
+             ▼
+erofs_ishare_file_read_iter (switch to backing deduplicated file)
+             │
+             │
+             ▼
+
+ read PGCache_dedup & return
+
+At this point, the content in PGCache_dedup will be read directly and
+returned.
+
+2.2.2 reading non-existent content in PGCache_dedup
+---------------------------------------------------
+In this case, disk I/O operations will be involved. Taking the reading
+of an uncompressed file as an example, here is the reading process:
+
+         ksys_read
+             │
+             │
+             ▼
+            ...
+             │
+             │
+             ▼
+erofs_ishare_file_read_iter (switch to backing deduplicated file)
+             │
+             │
+             ▼
+            ... (allocate pages)
+             │
+             │
+             ▼
+erofs_read_folio/erofs_readahead
+             │
+             │
+             ▼
+            ... (iomap)
+             │
+             │
+             ▼
+        erofs_iomap_begin
+             │
+             │
+             ▼
+            ...
+
+Iomap and the layers below will involve disk I/O operations. As
+described in 2.1, the deduplicated inode itself is not bound to a
+specific device. The deduplicated inode will select an erofs inode from
+the backing list (by default, the first one) to complete the
+corresponding iomap operation.
+
+2.3. release page cache
+-----------------------
+Similar to overlayfs, when dropping the page cache via .fadvise, erofs
+locates the deduplicated file and applies vfs_fadvise to that specific
+file.
+
+Effect
+==================
+I conducted experiments on two aspects across two different minor
+versions of container images:
+
+1. reading all files in two different minor versions of container images
+
+2. run workloads or use the default entrypoint within the containers^[1]
+
+Below is the memory usage for reading all files in two different minor
+versions of container images:
+
++-------------------+------------------+-------------+---------------+
+|       Image       | Page Cache Share | Memory (MB) |    Memory     |
+|                   |                  |             | Reduction (%) |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     241     |       -       |
+|       redis       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     163     |      33%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     872     |       -       |
+|      postgres     +------------------+-------------+---------------+
+|    16.1 & 16.2    |        Yes       |     630     |      28%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     2771    |       -       |
+|     tensorflow    +------------------+-------------+---------------+
+|  2.11.0 & 2.11.1  |        Yes       |     2340    |      16%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     926     |       -       |
+|       mysql       +------------------+-------------+---------------+
+|  8.0.11 & 8.0.12  |        Yes       |     735     |      21%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     390     |       -       |
+|       nginx       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     219     |      44%      |
++-------------------+------------------+-------------+---------------+
+|       tomcat      |        No        |     924     |       -       |
+| 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+|                   |        Yes       |     474     |      49%      |
++-------------------+------------------+-------------+---------------+
+
+Additionally, the table below shows the runtime memory usage of the
+container:
+
++-------------------+------------------+-------------+---------------+
+|       Image       | Page Cache Share | Memory (MB) |    Memory     |
+|                   |                  |             | Reduction (%) |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     34.9    |       -       |
+|       redis       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     33.6    |       4%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |    149.1    |       -       |
+|      postgres     +------------------+-------------+---------------+
+|    16.1 & 16.2    |        Yes       |      95     |      37%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |    1027.9   |       -       |
+|     tensorflow    +------------------+-------------+---------------+
+|  2.11.0 & 2.11.1  |        Yes       |    934.3    |      10%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |    155.0    |       -       |
+|       mysql       +------------------+-------------+---------------+
+|  8.0.11 & 8.0.12  |        Yes       |    139.1    |      11%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     25.4    |       -       |
+|       nginx       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     18.8    |      26%      |
++-------------------+------------------+-------------+---------------+
+|       tomcat      |        No        |     186     |       -       |
+| 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+|                   |        Yes       |      99     |      47%      |
++-------------------+------------------+-------------+---------------+
+
+It can be observed that when reading all the files in the image, the
+reduced memory usage varies from 16% to 49%, depending on the specific
+image. Additionally, the container's runtime memory usage reduction
+ranges from 4% to 47%.
+
+[1] Below are the workload for these images:
+      - redis: redis-benchmark
+      - postgres: sysbench
+      - tensorflow: app.py of tensorflow.python.platform
+      - mysql: sysbench
+      - nginx: wrk
+      - tomcat: default entrypoint
+
+Changes from v9:
+    - make shared page cache as a compatiable feature.
+    - refine code style as suggested by Xiang.
+    - init ishare mnt during the module init as suggested by Xiang.
+    - rebase the latest mainline and fix the comments in cover letter.
+
+Changes from v8:
+    - add review-by in patch 1 and patch 10.
+    - do some clean up in patch 2 and patch 4,6,9 as suggested by Xiang.
+    - add new patch 3 to export alloc_empty_backing_file.
+    - patch 5 only use xattr prefix id to record the ishare info, changed
+      config to EROFS_FS_PAGE_CACHE_SHARE and make it compatible.
+    - patch 7 use backing file helpers to alloc file when ishare file is
+      opened as suggested by Xiang.
+    - patch 8 remove erofs_read_{begin,end} as suggested by Xiang.
+
+v9: https://lore.kernel.org/all/20251117132537.227116-1-lihongbo22@huawei.com/
+v8: https://lore.kernel.org/all/20251114095516.207555-1-lihongbo22@huawei.com/
+v7: https://lore.kernel.org/all/20251021104815.70662-1-lihongbo22@huawei.com/
+v6: https://lore.kernel.org/all/20250301145002.2420830-1-hongzhen@linux.alibaba.com/T/#u
+v5: https://lore.kernel.org/all/20250105151208.3797385-1-hongzhen@linux.alibaba.com/
+v4: https://lore.kernel.org/all/20240902110620.2202586-1-hongzhen@linux.alibaba.com/
+v3: https://lore.kernel.org/all/20240828111959.3677011-1-hongzhen@linux.alibaba.com/
+v2: https://lore.kernel.org/all/20240731080704.678259-1-hongzhen@linux.alibaba.com/
+v1: https://lore.kernel.org/all/20240722065355.1396365-1-hongzhen@linux.alibaba.com/
+
+Diffstat:
+ fs/erofs/Kconfig       |   9 ++
+ fs/erofs/Makefile      |   1 +
+ fs/erofs/data.c        |  89 +++++++++++----
+ fs/erofs/erofs_fs.h    |   5 +-
+ fs/erofs/fscache.c     |  13 ---
+ fs/erofs/inode.c       |   4 +
+ fs/erofs/internal.h    |  50 ++++++++
+ fs/erofs/ishare.c      | 253 +++++++++++++++++++++++++++++++++++++++++
+ fs/erofs/super.c       |  52 ++++++++-
+ fs/erofs/xattr.c       |  13 +++
+ fs/erofs/zdata.c       |  42 +++++--
+ fs/file_table.c        |   1 +
+ fs/fuse/file.c         |   4 +-
+ fs/iomap/buffered-io.c |   6 +-
+ include/linux/iomap.h  |   8 +-
+ 15 files changed, 492 insertions(+), 58 deletions(-)
+ create mode 100644 fs/erofs/ishare.c
+
 -- 
-Matteo Croce
+2.22.0
 
-perl -e 'for($t=0;;$t++){print chr($t*($t>>8|$t>>13)&255)}' |aplay
-
---000000000000ad87880646947934
-Content-Type: application/octet-stream; name="rw_verify_area-overflow.diff"
-Content-Disposition: attachment; filename="rw_verify_area-overflow.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mjhw0t6y0>
-X-Attachment-Id: f_mjhw0t6y0
-
-ZGlmZiAtLWdpdCBhL2ZzL3JlYWRfd3JpdGUuYyBiL2ZzL3JlYWRfd3JpdGUuYwppbmRleCA4MzNi
-YWUwNjg3NzAuLjQyNmVjNTA0NGY4MSAxMDA2NDQKLS0tIGEvZnMvcmVhZF93cml0ZS5jCisrKyBi
-L2ZzL3JlYWRfd3JpdGUuYwpAQCAtNDU5LDEzICs0NTksMTYgQEAgaW50IHJ3X3ZlcmlmeV9hcmVh
-KGludCByZWFkX3dyaXRlLCBzdHJ1Y3QgZmlsZSAqZmlsZSwgY29uc3QgbG9mZl90ICpwcG9zLCBz
-aXplX3QKIAlpZiAocHBvcykgewogCQlsb2ZmX3QgcG9zID0gKnBwb3M7CgotCQlpZiAodW5saWtl
-bHkocG9zIDwgMCkpIHsKLQkJCWlmICghdW5zaWduZWRfb2Zmc2V0cyhmaWxlKSkKKwkJaWYgKCF1
-bnNpZ25lZF9vZmZzZXRzKGZpbGUpKQorCQkJcmV0dXJuIC1FSU5WQUw7CisJCWlmICh1bnNpZ25l
-ZF9vZmZzZXRzKGZpbGUpKSB7CisJCQlpZiAoY2hlY2tfYWRkX292ZXJmbG93ICgodW9mZl90KSBw
-b3MsIGNvdW50LAorCQkJCQkJJih1b2ZmX3QpIHswfSkpCiAJCQkJcmV0dXJuIC1FSU5WQUw7Ci0J
-CQlpZiAoY291bnQgPj0gLXBvcykgLyogYm90aCB2YWx1ZXMgYXJlIGluIDAuLkxMT05HX01BWCAq
-LwotCQkJCXJldHVybiAtRU9WRVJGTE9XOwotCQl9IGVsc2UgaWYgKHVubGlrZWx5KChsb2ZmX3Qp
-IChwb3MgKyBjb3VudCkgPCAwKSkgewotCQkJaWYgKCF1bnNpZ25lZF9vZmZzZXRzKGZpbGUpKQor
-CQl9IGVsc2UgeworCQkJaWYgKHVubGlrZWx5KHBvcyA8IDApKQorCQkJCXJldHVybiAtRUlOVkFM
-OworCQkJaWYgKGNoZWNrX2FkZF9vdmVyZmxvdyAocG9zLCBjb3VudCwgJihsb2ZmX3QpIHswfSkp
-CiAJCQkJcmV0dXJuIC1FSU5WQUw7CiAJCX0KIAl9Cg==
---000000000000ad87880646947934--
 
