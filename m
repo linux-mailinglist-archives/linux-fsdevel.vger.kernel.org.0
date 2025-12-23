@@ -1,19 +1,19 @@
-Return-Path: <linux-fsdevel+bounces-71970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-71971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93764CD8936
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 10:26:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A908CD8939
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 10:27:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0807C301B2EB
+	by sea.lore.kernel.org (Postfix) with ESMTP id 461DC301C910
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Dec 2025 09:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC3B3246ED;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBC33246E4;
 	Tue, 23 Dec 2025 09:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
 	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dz6h7FlM";
 	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="fZkIrR5M"
-X-Original-To: linux-fsdevel+subscribe@vger.kernel.org
+X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
