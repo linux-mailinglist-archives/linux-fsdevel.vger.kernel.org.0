@@ -1,100 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-72004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43021CDADED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 01:00:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DCF5CDADF0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 01:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C617F30456A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 00:00:09 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7AF96303E3DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 00:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAB530F7FE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD37727713;
 	Wed, 24 Dec 2025 00:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GmDV2L8C"
+	dkim=pass (2048-bit key) header.d=cs.ucla.edu header.i=@cs.ucla.edu header.b="K+c26Y5F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.cs.ucla.edu (mail.cs.ucla.edu [131.179.128.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD67303A12
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Dec 2025 00:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C0A2C11CA
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Dec 2025 00:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.179.128.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766534408; cv=none; b=HTnwsPo6vG8nzAAskLu+a2FiznTCqWz/xF1+YcsQWPsmXHz81Vo11iRHHt9kL+NU9IGzuO2jBiZ3fiBjbN4/ExsdVuM6lN5BqAED/LIsuV88FHpgxKI5qovYJtp3OhirGqx/EOgk/cCG5+mzis0vy7IcRKfQ98sV3/vfH6lAfFE=
+	t=1766534409; cv=none; b=e++CNPXmyGVYwFrmMTbxDl08ocugGyVhXfs1tHReas0ByCyDqu4d3TAUrS3ugE1VrNkRXyKEn3adnVjJA/UPnI7Thono7OeUB6eGOWExarPBUYgd1n/2JeQXAsjNpkutANK0KU8els1R5DnDY+nC5ZPssb8V50nQO/mzlzNLu+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766534408; c=relaxed/simple;
-	bh=B0nckleMWq7UsqEXq2mwjwFnjis1yLN+CnFFCYaxwpY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W5BHKdWcNjuaG8H1JCrh6x5MyPDNjb/sQepDPkWg7XN9O5U6KqQnOZy1ZBijuUQyYiDLsWcPJ4PV3FrurC+g04mUdsjTUZNRqNX4LZw2b3XVhS2ZEr5LwKQCsbdnvSwHxfwlx4AQtlxzPAlR3B9rvJUkpHZ6rfqx9RkaXAtTUxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GmDV2L8C; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-78fba1a1b1eso57833997b3.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Dec 2025 16:00:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766534406; x=1767139206; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=B0nckleMWq7UsqEXq2mwjwFnjis1yLN+CnFFCYaxwpY=;
-        b=GmDV2L8C4DeOWW9pe5e1EheNzTyZnt8HZE3K50gEdlf1gCsfi3Jau89ilNLiA/mXpR
-         vZd7RfZGeEa0GGfeDGinU6vLOwBajt+EeetmdWHcv8qUPaLKrGKz5Kl6o5yllcGSfNHS
-         T+fGbgHzjcz+JkHbXhq/5DQ5c1GDv9PyS0eqoLT2Io2FCuYY4JUl/WWwM8rdw3xtGzUO
-         DKg9FZJzGnULgqgujlTiZhowtHg7TR7iOr1p6KWwuvWvvGkOs3u0n4QrWUrbT+LVBpu0
-         tYoKd0eU9rooAay4bGovRRicFD1dsD2PubREy4HMDR9RDkhbAFpO+QxHh5WLBYVVDB6B
-         LgcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766534406; x=1767139206;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B0nckleMWq7UsqEXq2mwjwFnjis1yLN+CnFFCYaxwpY=;
-        b=bMHMqsJfITZzeg6h+MDt8QTl50806L8QoXv4J6rgnRaXtgJbElptNaqr/Jr12ynK4C
-         QprAeiJOT5sFX3tMsXbXOF/+DfRMd9E1uWVy2h+nUbo3ycibnB5uCPSb/RJoVtnj10UV
-         HJiu976Ta288bAmjQTE3s+jgQRQoqVeNDmlMrJHyLxdqcCGqwVla2afaePgJtAzQFKWd
-         A3dqQw3Eo1GH1MWeyPInWQMMWWc1weMUXuObIb5EHZeVqpwC7a2MuWtEh6CKqE7wo9w9
-         yCcp4K9l9rxOFtrFn8H0//NgYMyM3LAhMsfrXGOwUL4ZgGo7Mz7TsJc8nTx6vayh8hmL
-         TFGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMoOFtzqLeWg4fq5dWcDj5Oxfsn0eGe3ILcBle54qbby44SWgq94QPxo+MYilx2Ogt9HetnRuUPcNjLQ8x@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz01eh8ejWaUG8ORQ/UouTUaOgEo2GhjjyM/BMkgDEdi2v+BkC1
-	1mv4P7+Q2eOI0qTi3og//wIzJ/4ivFSuEZ7KxJpsP0aLtTN5U+z6IiS7x9Yl7iXUZUIcbSpK28B
-	DLH22+zWlG7h0w2Su5MTSRaqHPTf6iYA=
-X-Gm-Gg: AY/fxX4kqLzlt9ZlO2FjXpSxr1758WC4FbzHqQBiGnbBdZtGrppFYtpxARbecXjwrW5
-	DIC7lcEPxXiQhg69Ya3aLOXinkK/uxlIvLPe6n2WaqD4AR3ilWF4PQkBPzeOL9JRyAmBiaTxZ8S
-	xVZlSOzDrqUr8dhzxUZexWkvrWvn6jAKCQPtBWsQJSRahBVtj0zjZWo9/wyJdWN3eURn15K7Cu3
-	9Rq8R4/CA26Ee6ISVQvnRSCPvSBv9Kz+AYbMVTQrgc6kO3wIKEfkeDiPyh8xIq4GC+2+1w=
-X-Google-Smtp-Source: AGHT+IGrhx+M5D1iPAq047L/VfbKJZxNg/dmAvrPfbeVw0cZG3kBS4xxyQdVxQF4ZbdvM2AlY4nj7j6vFcQmzKr5F44=
-X-Received: by 2002:a53:c048:0:20b0:644:59ed:dba3 with SMTP id
- 956f58d0204a3-6466329bed9mr11883498d50.30.1766534405824; Tue, 23 Dec 2025
- 16:00:05 -0800 (PST)
+	s=arc-20240116; t=1766534409; c=relaxed/simple;
+	bh=T8H17ErY2UxWS+/CB5yUOEGHlMqaIJQoGM+wz3401rQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kCY782HHTaVNCREGAGFix7j3oD9QRUtHNQe4zWtPoeXxvv1Lci1mvOjVomezISpGbd6dzDR47coftZsjfK9iDGzhnXfCRmnBmPpaEk4XfkJtfIsOuMVvHhRr1tsVt7WuZ6zkWwpAgzq/YyF7vu6uwPDt3Ahw85lpZgNoA1Z/s0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.ucla.edu; spf=pass smtp.mailfrom=cs.ucla.edu; dkim=pass (2048-bit key) header.d=cs.ucla.edu header.i=@cs.ucla.edu header.b=K+c26Y5F; arc=none smtp.client-ip=131.179.128.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.ucla.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.ucla.edu
+Received: from localhost (localhost [127.0.0.1])
+	by mail.cs.ucla.edu (Postfix) with ESMTP id 11E693C03E9ED;
+	Tue, 23 Dec 2025 16:00:07 -0800 (PST)
+Received: from mail.cs.ucla.edu ([127.0.0.1])
+ by localhost (mail.cs.ucla.edu [127.0.0.1]) (amavis, port 10032) with ESMTP
+ id cl-nGPGlD9me; Tue, 23 Dec 2025 16:00:07 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.cs.ucla.edu (Postfix) with ESMTP id DAEA13C03E9F4;
+	Tue, 23 Dec 2025 16:00:06 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.cs.ucla.edu DAEA13C03E9F4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cs.ucla.edu;
+	s=9D0B346E-2AEB-11ED-9476-E14B719DCE6C; t=1766534406;
+	bh=XzUxjJss1m93snz+IKguTdLjbfmyCqXLGpJizRHmPPM=;
+	h=Message-ID:Date:MIME-Version:To:From;
+	b=K+c26Y5FLcPsNUS+q/8sQ3HnBxXrK7sRXdv979Xbtq7R5cXbCrmJkyCVdjtQf6rkL
+	 aCTqJe111gptIW0zDUNvxjkOMfH0NoGNfqMOFPCqZ3ahY/39UW8lmGNBvZe0i8xzjF
+	 QvgAlVh6Tu6I9ShoHBjZftHyVt1du9wEjiyJGm5cxGFNE+dhlfukF6KsQeE6Br+3Pl
+	 ds3tCjSfAN7014c/Zsv0jiaqpMSEsuCnVdezrx1FuIKmM7OB8NmTNCUkVkh6nOvyIL
+	 Nb22nvhLRXuqG7Hk0vWjx9LXumX/RIP4Z70vsHGgs524gJ4mhBb7UoFCE7efvGbkOm
+	 qkbFbxM561bnA==
+X-Virus-Scanned: amavis at mail.cs.ucla.edu
+Received: from mail.cs.ucla.edu ([127.0.0.1])
+ by localhost (mail.cs.ucla.edu [127.0.0.1]) (amavis, port 10026) with ESMTP
+ id I25W-adrIkW2; Tue, 23 Dec 2025 16:00:06 -0800 (PST)
+Received: from penguin.cs.ucla.edu (47-154-25-30.fdr01.snmn.ca.ip.frontiernet.net [47.154.25.30])
+	by mail.cs.ucla.edu (Postfix) with ESMTPSA id B46793C03E9ED;
+	Tue, 23 Dec 2025 16:00:06 -0800 (PST)
+Message-ID: <d11040d8-287d-45f9-920c-5d9e25e380ab@cs.ucla.edu>
+Date: Tue, 23 Dec 2025 16:00:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251223173803.1623903-1-topala.andrei@gmail.com>
- <20251223175128.GC1712166@ZenIV> <CAF8SvsB0yQC7Meni=UQEehaT5YBQx2uEas8irhg3vWstdM_JVA@mail.gmail.com>
- <20251223185926.GD1712166@ZenIV>
-In-Reply-To: <20251223185926.GD1712166@ZenIV>
-From: Andrei Topala <topala.andrei@gmail.com>
-Date: Wed, 24 Dec 2025 01:59:29 +0200
-X-Gm-Features: AQt7F2ok3FzMNEq8jfRGaScbOsqQPfYx1tvR-ZMTlcc4iCLVl-Vz9OfToP1ETA4
-Message-ID: <CAF8SvsBriV4NFbDo-REyke1FSRUaiQ-SZ+gMYVKfzF4BaAthOA@mail.gmail.com>
-Subject: Re: [PATCH] fs: allow rename across bind mounts on same superblock
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: cat: adjust the maximum data copied by copy_file_range
+To: Matteo Croce <technoboy85@gmail.com>
+Cc: Collin Funk <collin.funk1@gmail.com>, coreutils@gnu.org,
+ =?UTF-8?Q?P=C3=A1draig_Brady?= <P@draigbrady.com>,
+ linux-fsdevel@vger.kernel.org
+References: <CAFnufp2ZD5u6pp84xtTcZKqQWtmtwN8n_d7-9UpqoUJUsEwwAA@mail.gmail.com>
+ <87345fxayu.fsf@gmail.com> <8cd912f2-587b-45ff-a3aa-951272f1f538@cs.ucla.edu>
+ <CAFnufp0zMe04Hh41-z6Yi8RTc0gZ7i74F6zRBDqOS5k9DZu2TQ@mail.gmail.com>
+ <dabc0311-8872-4744-89ec-82a3170880b1@draigBrady.com>
+ <CAFnufp35pGf6SDYRxf8YW17tdT0sTTXt_SXnPjpdWtg4ndojZA@mail.gmail.com>
+ <4b3d3a05-09db-4a6a-80e2-8d6131d56366@cs.ucla.edu>
+ <CAFnufp26+PnkY2OM=5NMvxDxrBf3F=FfoKBU8e0XVu4im6ZU0g@mail.gmail.com>
+ <6831a0c6-baa1-4fbb-b021-4de4026922ab@cs.ucla.edu>
+ <CAFnufp1z=-BfUVEX+wiiv+Y5f-fGbzBTZYwwhXM7VFGxAQLexQ@mail.gmail.com>
+ <1a8636a8-bc53-4bb8-9ecb-677c0514efa2@cs.ucla.edu>
+ <CAFnufp072=wSfU4TUY7DcymJCqY5VYw2dqxt=OAY3Op3zZwEpw@mail.gmail.com>
+ <7e74a2c1-3053-4c2a-b1de-967d3d4f58a1@cs.ucla.edu>
+ <CAFnufp0Dtg1=mKaCgSHnossVE4h41uzigw5WMTy6wkOO90sskg@mail.gmail.com>
+Content-Language: en-US
+From: Paul Eggert <eggert@cs.ucla.edu>
+Organization: UCLA Computer Science Department
+In-Reply-To: <CAFnufp0Dtg1=mKaCgSHnossVE4h41uzigw5WMTy6wkOO90sskg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Consider fun with moving a subdirectory of a mounted subtree to another
-> mounted subtree, while some process has been chdired into it, for
-> starters...
+On 2025-12-23 15:24, Matteo Croce wrote:
+> copy_file_range(0, NULL, 1, NULL, 9223372035781033984, 0) = 0
+> read(0, 0xffff273fc000, 262144)         = -1 EINVAL (Invalid argument)
 
-I see the same situation can occur when renaming through the
-underlying mount. If process A does chdir("/bind1/subdir") and
-process B does rename("/mnt/fs/dir1/subdir", "/mnt/fs/dir2/subdir"),
-the rename succeeds while process A is inside.
-
-I understand this patch would make it easier to trigger for
-processes that only have access to bind mount paths. Is that the
-main concern, or am I missing something more fundamental?
+Yes, the idea is to not trust copy_file_range all that much, and to 
+finish off with a classic read/write loop to make sure things are OK, as 
+we've run into so many squirrelly file systems where copy_file_range 
+doesn't copy everything. Ironically here the classic code runs into the 
+'read' kernel bug whereas copy_file_range works.
 
