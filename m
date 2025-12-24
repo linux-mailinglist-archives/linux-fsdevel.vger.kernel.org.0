@@ -1,151 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-72066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B61CDC986
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 15:54:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6657CDCA11
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 16:07:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 676AD30E6D1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 14:49:26 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 5A48C300C5E4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 15:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A2D357A50;
-	Wed, 24 Dec 2025 14:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tyhicks.com header.i=@tyhicks.com header.b="oz34Y+Eo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hdGU5FRS"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B32F340A51;
+	Wed, 24 Dec 2025 15:07:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com [209.85.161.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB8334E74E;
-	Wed, 24 Dec 2025 14:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81397212566
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Dec 2025 15:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766587665; cv=none; b=fznQ77FPMua27afYYT3icOAGv4AdflIho/ZkYDaoqyj2kjgzPYzfPB13Wvk87m8SOI0CAbB66e8BUqMPRHMBENAQQwcT0UCjO/RpIyxn6MgyPCd2K58UWkt53l8Fc44lu94EncmJHHsS9oocJr/ubtKY8UTBLnl3C7OcF21PVkM=
+	t=1766588825; cv=none; b=UwR3RmvY2a+xh0lWtFlZNEAhEQf3gnutpeUCvyXe9xczk7o8ALFSkVdX0D+BNim8DrdMsrkR2QmjhPAn5PPmPeEYxnQpO8pz28+XNQ/eUBgRrWjgNk0qyhT00ZqpJi1Os/AMeccAlMosScpUtfBvvJ0+v8xjCY/5ZieVB4D8rjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766587665; c=relaxed/simple;
-	bh=SqBEQsTs8SDxEIJg4ZrazeXz15zlp0d74t+CsBqNEwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cef8XisyJ5W++5/oIzhhHGwuT29GZrc8IihggCyEx74M7RMzGc5KjrzDw7iluJyQ3BJNGRYx1shl/Xp+1p0lKsyUxY9rr9EyA2907gkRfizrq79AvWnULvdjCZsccLeurioKBFoP81PCzjv05hyNB0FOaIJSQMpcZJBJp/Ns4SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tyhicks.com; spf=pass smtp.mailfrom=tyhicks.com; dkim=pass (2048-bit key) header.d=tyhicks.com header.i=@tyhicks.com header.b=oz34Y+Eo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hdGU5FRS; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tyhicks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tyhicks.com
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 78ABC1D000F8;
-	Wed, 24 Dec 2025 09:47:42 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Wed, 24 Dec 2025 09:47:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tyhicks.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1766587662;
-	 x=1766674062; bh=5dlqoBNLe1qadi3fugn7RBaiGTrrIZ80AP50YCGn7xY=; b=
-	oz34Y+Eo3TjxE8PmKKYBfuLhEqry1N6+rBQZIcOTdKoxWwpB/7GeR6+3P1/Cxroo
-	m0EQWQq96XoChfzlB8Q1WwwxAuSykhByXUB2If6LZKTL14RukXSEOMAurFSwnWSp
-	afVCHE7Cj1XZ0jdnGx07DxGdx9xtHRQcdBVuyu48h1ja2R1mh4gE4TPXOerY2m0a
-	ygjOfSwUDp6EopuNpYz5hOr5ZKx+6H2q5vn4jDwjTq9Er3HH0OAs8F8NG72G6mbA
-	eXsdPkAHlJGXn31GeXZszmQtMFFTo3VQXfN4VR+8XyDYuqlgjJDv4eMH5iIOlod6
-	OEljYzgskhTSs8KUFNAUQw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1766587662; x=
-	1766674062; bh=5dlqoBNLe1qadi3fugn7RBaiGTrrIZ80AP50YCGn7xY=; b=h
-	dGU5FRStUCpERImsfDUA+IrDlj1ssSyzUAuPHiKLWFBbqgIuBVhKE7vnpYpHUMwL
-	mRmHiufRXePoR8osuiCwCJDbUNbQn77/xGQqGFdPk8xy7MhP9OPt+b1whINodd5F
-	AUGJ7nhyUIvfm9P9sBKpRSlhnmWP6ULBr4DixBkTcAdhoFFtq1wFnZbHX/FgA4xi
-	ui1CY1NXEUhdEDeg86fbcExcZBvDHmm3msDzX+d/m3dBLp7cp2gqdjb2GOFNlAM5
-	PWPXJPDxBomrFB0C0GAMgsWT8qSXBMArb/MwCkSfVL56UXYxvX4jPFcFCw33PkVM
-	AUEtCZhjz/zpjkU1wHMhQ==
-X-ME-Sender: <xms:Dv1LabmB5W7u0smPsjKMjRDrxDtv0I597wrvUXrAr9POCnHe9XfFwg>
-    <xme:Dv1LaY7RHcFM2iY95Nt0f6ukejkFWF_6rpMe7bS_BqESV-qaNbvXkNc8fyV_VyLkI
-    2FWunPWBFu3MBfY3S7Ftn_2Vz6RVCXU1ZAkr6-03CnUD7suVkFuoQg>
-X-ME-Received: <xmr:Dv1LaRgpusoK8JQSSvHqSKKH45vrnVS9Ry-mAw1tPfAc_shoUN30_Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeivdelkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepvfihlhgvrhcu
-    jfhitghkshcuoegtohguvgesthihhhhitghkshdrtghomheqnecuggftrfgrthhtvghrnh
-    epgefhieeuheefkeetffefffekjefhgfefiedvveeiuedugfeufeefvdeihfehieevnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheptghouggvse
-    hthihhihgtkhhsrdgtohhmpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhope
-    gsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghilhessghrohif
-    nhdrnhgrmhgvpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepvggtrhihphhtfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:Dv1LaVEKuNL9CyokRiLYshqJe82kfyRL0JEgX_Ej4Xv4EjSfPaPV_A>
-    <xmx:Dv1LaXTo2WUcUkHb6X9AT_kFQQWCmU34ioI570PynJWP80zreRJ8gA>
-    <xmx:Dv1LaSxPeXwjwrzFUPL3ZOw51J3CiIXx2ZjW8L5FrECttLX4bRE1Xg>
-    <xmx:Dv1LaTfMlknCSCL369P96_qizovsq7BI9aJAsjJ9-u_VMfJsvh9UqQ>
-    <xmx:Dv1LaTV8wY_1-wRSFM3T_KTp00-zzjMtK8BA5rCowLMmYJcOGn6nVZnB>
-Feedback-ID: i78e14604:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 24 Dec 2025 09:47:41 -0500 (EST)
-Date: Wed, 24 Dec 2025 08:47:39 -0600
-From: Tyler Hicks <code@tyhicks.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, NeilBrown <neil@brown.name>,
-	Jeff Layton <jlayton@kernel.org>, ecryptfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] Fix two regressions from
- start_creating()/start_removing() conversion
-Message-ID: <aUv9C5Z4Y996T8BT@yaupon>
-References: <20251223194153.2818445-1-code@tyhicks.com>
- <CAOQ4uxg5Qbkt2WzfXojzCNUYwj9BsW6vzKEL4265PQxBgNkdeA@mail.gmail.com>
+	s=arc-20240116; t=1766588825; c=relaxed/simple;
+	bh=Hf+2I7pWdDSKiMdf5GKTtKVx2c5a8qSqVgZJTcGK4Qo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GIsorCApeYkwazpSJdnO586+iXcS/dlJg+YxvogvxQGvU3v/1zvKRwo8SXb99kuGWTU1ujWiNdql6A5y9ubsp+/bSkgzJcwad/uDegSpWLssSVU9qE1FB/dcKROzKa43Js2UhNKj4UbCQ1nfQTgFjZPF4o7LYyiHCHL7FTACaIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-65747d01bb0so9600743eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Dec 2025 07:07:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766588822; x=1767193622;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tGEebkuJuIJnxoSbDFwOV//9p90hs4SM8XrLhdxyQ9Y=;
+        b=jw7Zh3UnKMZ6iXYIIti88TEtfOzDBKD9xmn1VthfM1DwBn1DiNYcDoEEVccv0emh9e
+         sA3gp8hc4UgHSWaV7g+sefVuKcY8ZX0pk0UJNdYvioerzhuu4Qc43SobLGmcijewF4Hn
+         3WPTg55P+8xrBTnqYwTjAEpIGF3dMOKrSrXdA4foL0EHWoIrRQb1ngPjUx0XzQasY9ik
+         Dtw0gRf1krRseftiZECfi1U9o3Jqtf8NxRX68FwAiSm+Amuvv54oYDCy621y5Y+xIpOC
+         YKMlUDqoD/ycQlOvxcjPPJ0jLV3CjPQf07lC0VLOEArZF61mQ8YFwi8LnJ8hTVB6eu8Q
+         qIig==
+X-Forwarded-Encrypted: i=1; AJvYcCUH5Uobi2x/dE5z77DAyLtevFMCdmHLURD3NZ2UPeLmowALuqTzN4A6WymAB4wkVOP7ljGfLgh/dumyGI3/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg5OJR+0k0LTRMYEQ4cKI9JOefbXqtF8CKvq22Uw5Rt/hUsg9b
+	e6giWQ2nvnmfo0tFA228VBIqZyb31mRXIDw+zljoYRc6MLO1gL8fUICH0/m464WrF0KKHNancp2
+	1H49ZBBaXxiI3sY/AtvwXVbI4ki4zZPh8dJT7RSMw2XAdBJxf3gmvWWnz4Zk=
+X-Google-Smtp-Source: AGHT+IELDyu5WssNs4ccQsrLICH7J90xI0qUly/KgqTtQolyEWQ8LpQAL6MVRydvk9ULcnvYUPBIqyCzYF/L07NusW1YFeL5az8X
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxg5Qbkt2WzfXojzCNUYwj9BsW6vzKEL4265PQxBgNkdeA@mail.gmail.com>
+X-Received: by 2002:a05:6820:3010:b0:659:9a49:8e87 with SMTP id
+ 006d021491bc7-65d0e9f7c48mr4815313eaf.11.1766588822437; Wed, 24 Dec 2025
+ 07:07:02 -0800 (PST)
+Date: Wed, 24 Dec 2025 07:07:02 -0800
+In-Reply-To: <20251224143748.45491-1-activprithvi@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <694c0196.050a0220.35954c.001e.GAE@google.com>
+Subject: Re: [syzbot] [fs?] memory leak in getname_flags
+From: syzbot <syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com>
+To: activprithvi@gmail.com, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-12-24 07:31:59, Amir Goldstein wrote:
-> On Tue, Dec 23, 2025 at 9:42 PM Tyler Hicks <code@tyhicks.com> wrote:
-> >
-> > When running the eCryptfs test suite on v6.19-rc2, I noticed BUG splats
-> > from every test and that the umount utility was segfaulting when tearing
-> > down after a test. Bisection led me to commit f046fbb4d81d ("ecryptfs:
-> > use new start_creating/start_removing APIs").
-> >
-> > This patch series addresses that regression and also a mknod problem
-> > spotted during code review.
-> >
-> 
-> Ouch!
-> 
-> Christian,
-> 
-> In retrospect, it's a shame that patches get merged with zero test coverage
-> and no ACK from the maintainer.
+Hello,
 
-I wasn't able to be a very active maintainer over the last year. I think
-Christian did the right thing here.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> OTOH, relying on ACKs from all fs maintainers will seriously impair
-> the ability to make vfs wide changes like this one.
+Reported-by: syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com
+Tested-by: syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com
 
-Exactly. The fringe filesystems shouldn't slow down the entire VFS.
+Tested on:
 
-> Feels like we need to find a better balance.
-> 
-> At least for ecryptfs, if we know that Tyler is at least testing rc1
-> regularly (?) that's a comfort.
+commit:         b9275466 Merge tag 'dma-mapping-6.19-2025-12-22' of gi..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=170e209a580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d60836e327fd6756
+dashboard link: https://syzkaller.appspot.com/bug?extid=00e61c43eb5e4740438f
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11e790fc580000
 
-I will be more active going forward and now have an easy setup for
-testing rc1's regularly.
-
-Tyler
-
-> 
-> Thanks,
-> Amir.
+Note: testing is done by a robot and is best-effort only.
 
