@@ -1,137 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-72046-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B8ACDC2B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 13:01:18 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D37CDC2B9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 13:02:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BFA1830206A1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 12:01:06 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id BC9B830072A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 12:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FC132D0DC;
-	Wed, 24 Dec 2025 12:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4C0330B32;
+	Wed, 24 Dec 2025 12:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b="hA1TjIyI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FY1b1b2u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sender4-of-o52.zoho.com (sender4-of-o52.zoho.com [136.143.188.52])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E38F224F3;
-	Wed, 24 Dec 2025 12:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766577662; cv=pass; b=NmL6mulYklmQxNavLKSRzDOIGg5h22WvdIfOHbikxssNEhIZkI+sVcp8jWXtdY8QVXEV5agQ+RXB4gwgP5bkw9eVYbU6YZggF3kd78cuqC77avWdHQHl+ksdEk4MWGvR1HP1+El8nEiLt2bXd1CyUUvmZ/Oshq9isDaHDNuDR0c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766577662; c=relaxed/simple;
-	bh=176Ole/tvAjRYt/vFqeQ1qgguYONJYLg0pmUl0ZM7B0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G7jJoSFUoDtrc4fGEi5oWHUD0TpFLxfKqnh/OD9ZlabCEnOGa/jc6JTFKFsmnAGt7QKiTVsBX0pULDwq0aws6MeCBVXTnx7SPZdwKWvpHhyXMfn8nE4776PPmCOONCoUQOp4VwhzZq2qQv9HrsVSK8IVc2HbtRArKkSRPTVU2U4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com; spf=pass smtp.mailfrom=mpiricsoftware.com; dkim=pass (1024-bit key) header.d=mpiricsoftware.com header.i=shardul.b@mpiricsoftware.com header.b=hA1TjIyI; arc=pass smtp.client-ip=136.143.188.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mpiricsoftware.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mpiricsoftware.com
-ARC-Seal: i=1; a=rsa-sha256; t=1766577639; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Unpy3JJyqNbHxIi+olVVYLFLGs3nzkcpGGbvN45njelkqsar42IxZ20/lgHkAcobqdtyNW8htXneldJ4hsuKelPoPzFSB/MlGQzb+IP7yu2pxj0P4NG/HY0UcTri27w0vTIqaTjMoNf49OsZw/PFUYbuzBCtkR6u0MR2SGm5mT0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1766577639; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=176Ole/tvAjRYt/vFqeQ1qgguYONJYLg0pmUl0ZM7B0=; 
-	b=UpPARitklb3x7yRw5BgSDErDOz0gZxO9fA9cO1YEURqNGcULQVD7IPqH+9sh+lH/GQEavNyq2I5xlgXQEWAWJKpM8ZabkCNyZDO4kQOcDbJTR1nvIqFNAnYoHtaajUnq7wWclmwgYia9nr7Ts3L8cNvuP36CzHZOyTh/eRQ+DV4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=mpiricsoftware.com;
-	spf=pass  smtp.mailfrom=shardul.b@mpiricsoftware.com;
-	dmarc=pass header.from=<shardul.b@mpiricsoftware.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1766577639;
-	s=mpiric; d=mpiricsoftware.com; i=shardul.b@mpiricsoftware.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=176Ole/tvAjRYt/vFqeQ1qgguYONJYLg0pmUl0ZM7B0=;
-	b=hA1TjIyIMJAMbsl0EqRy7clGDOUHQREZJJicrwFLe7bQ7TGSVGFFUBNpQ/vha1Ir
-	sloaF9i1EU+wFjlu5N2DTVKUoswiiDyh43SZhVkukhk/T1wJ0fePHGWVZwYgC5CF/SF
-	uDWuB+M0CBUF/W3ANrs9A5aSFEzTGoLJSkeeHb00=
-Received: by mx.zohomail.com with SMTPS id 1766577636521335.3919721590854;
-	Wed, 24 Dec 2025 04:00:36 -0800 (PST)
-Message-ID: <966687093123e00c166afabc0a9de87e0ba844d5.camel@mpiricsoftware.com>
-Subject: Re:  [PATCH] hfsplus: fix missing hfs_bnode_get() in
- hfs_bnode_create()
-From: Shardul Bankar <shardul.b@mpiricsoftware.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, "zippel@linux-m68k.org"
-	 <zippel@linux-m68k.org>, "glaubitz@physik.fu-berlin.de"
-	 <glaubitz@physik.fu-berlin.de>, "linux-fsdevel@vger.kernel.org"
-	 <linux-fsdevel@vger.kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>, 
-	"frank.li@vivo.com"
-	 <frank.li@vivo.com>
-Cc: "akpm@osdl.org" <akpm@osdl.org>, "janak@mpiricsoftware.com"
-	 <janak@mpiricsoftware.com>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>, shardulsb08@gmail.com
-Date: Wed, 24 Dec 2025 17:30:30 +0530
-In-Reply-To: <1e0095625a71cca2ff25c2946fd6532c28cfd1b0.camel@ibm.com>
-References: <20251213233215.368558-1-shardul.b@mpiricsoftware.com>
-	 <e38cd77f31c4aba62f412d61024183be34db5558.camel@ibm.com>
-	 <a817a3a65e5a0fe33dbdf1322f4909c3ff1edfcc.camel@mpiricsoftware.com>
-	 <1e0095625a71cca2ff25c2946fd6532c28cfd1b0.camel@ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2.1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6391F224F3;
+	Wed, 24 Dec 2025 12:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1766577725; cv=none; b=rxUo1k/X+BB+QUosDt5vD0XiHSgDYhz+aVSNm9/DbD4guxS10X8DoOZPnNuh0zj6Fk6sq5NmRB2Of4gL+pPMCfpQcW9I6Uzt9It+iqSrZfNFBTKdCtxHkmflyX/TPNmzoJZn7UyU9zk1lS9hwVEL2OnpvZ/0xhwp+vKZgJpBGSI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1766577725; c=relaxed/simple;
+	bh=uBPqXxyHezu6KXMQBRpWZz+nm9zp7C2D106puhEjv7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ASVQnk210MSjcq7rVntPNG5kGxoobTLECesk72B/SwrEfT652oxTnLBq9APU2wixkquA4cBKJzYHytv83mpApRtt4AmFj7kIopsys6rybxZ9kfO0vac7LFzY/1FFrTvWvGz6LpVp20xR/CxFXoemkqks9JRbqjB3vS6bPTqhZrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FY1b1b2u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64201C4CEFB;
+	Wed, 24 Dec 2025 12:02:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766577725;
+	bh=uBPqXxyHezu6KXMQBRpWZz+nm9zp7C2D106puhEjv7o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FY1b1b2utCFXPMdOoq8ndCNnjTuXNaW7HmED9XfyIybn9/6t4O9TBn6CrzTWmRCBf
+	 DzV0uk8sNGWBHT0e0hIJUUGnFPYUjyDW438hnokF+br63eXJfp1opNni5v2uh3xMHn
+	 EPuLx/iua/0vEldXwaiE1aTVrKqT+IgrWn5jCTM9EKb6e0Rb20IllUtj34SGr5zowJ
+	 1AhUcBmkCZziavlIh6PfLNzEly5DYHo0poNTxs+al9f1yoz9Q4NyW58X7WsFXoqdjX
+	 gof0rFbzXjx98ncanny1FHY1o5Vr/pKtrsxnQITJXnPcY6CRmzOnLvG8tGwfW8pkYV
+	 gdXFNgVCx1agA==
+Date: Wed, 24 Dec 2025 13:01:58 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Shaurya Rane <ssrane_b23@ee.vjti.ac.in>, "Darrick J . Wong" <djwong@kernel.org>, 
+	Christoph Hellwig <hch@infradead.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, bpf@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>, syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com, 
+	Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH bpf v3] lib/buildid: use __kernel_read() for sleepable
+ context
+Message-ID: <20251224-partner-eiszapfen-92104956caed@brauner>
+References: <20251222205859.3968077-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251222205859.3968077-1-shakeel.butt@linux.dev>
 
-On Tue, 2025-12-16 at 20:28 +0000, Viacheslav Dubeyko wrote:
->=20
-> The fix in hfs_bmap_alloc() sounds reasonable to me. But I don't see
-> the point
-> of adding hfs_bnode_get() in hfs_bnode_create() for the case of
-> erroneous
-> situation [1]:
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (node) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0pr_crit("new node %u already hashed?\n", num);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0WARN_ON(1);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0return node;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
->=20
-> It will be much better to return ERR_PTR(-EEXIST) here. Because, it
-> is not
-> situation of "doing business as usual". We should not continue to
-> believe that
-> "sun is shining for us", but we should stop the logic somehow.
->=20
-> Thanks,
-> Slava.
->=20
-> [1] https://elixir.bootlin.com/linux/v6.18/source/fs/hfs/bnode.c#L518
+On Mon, Dec 22, 2025 at 12:58:59PM -0800, Shakeel Butt wrote:
+> For the sleepable context, convert freader to use __kernel_read()
+> instead of direct page cache access via read_cache_folio(). This
+> simplifies the faultable code path by using the standard kernel file
+> reading interface which handles all the complexity of reading file data.
+> 
+> At the moment we are not changing the code for non-sleepable context
+> which uses filemap_get_folio() and only succeeds if the target folios
+> are already in memory and up-to-date. The reason is to keep the patch
+> simple and easier to backport to stable kernels.
+> 
+> Syzbot repro does not crash the kernel anymore and the selftests run
+> successfully.
+> 
+> In the follow up we will make __kernel_read() with IOCB_NOWAIT work for
+> non-sleepable contexts. In addition, I would like to replace the
+> secretmem check with a more generic approach and will add fstest for the
+> buildid code.
+> 
+> Reported-by: syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=09b7d050e4806540153d
+> Fixes: ad41251c290d ("lib/buildid: implement sleepable build_id_parse() API")
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> ---
 
-Hi Slava,
-
-Thanks, agreed.
-
-I=E2=80=99ll keep the hfs_bmap_alloc() change to ensure node 0 is never
-allocated.
-
-And I agree that the =E2=80=9Calready hashed?=E2=80=9D case in hfs_bnode_cr=
-eate()
-should not try to continue by returning a pointer (even with an extra
-hfs_bnode_get()). Callers like hfs_btree_inc_height() and
-hfs_bnode_split() treat the returned node as a freshly allocated node
-and immediately rewrite its header/records. If hfs_bnode_create()
-returns an existing hashed node, that effectively overwrites live node
-contents and amplifies corruption, which can then cascade into later
-failures.
-
-So I=E2=80=99ll rework v2 as a small series:
-1/2: guard against allocating node 0 in hfs_bmap_alloc()
-2/2: make the =E2=80=9Calready hashed?=E2=80=9D path return ERR_PTR(-EEXIST=
-) and
-propagate the error
-
-I=E2=80=99ll send the updated series shortly.
-
-Thanks,
-Shardul
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
