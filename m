@@ -1,64 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-72050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67568CDC379
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 13:33:54 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE688CDC405
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 13:45:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 14DC830A3069
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 12:31:34 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E668630777BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 12:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CF7338902;
-	Wed, 24 Dec 2025 12:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E897F3375DC;
+	Wed, 24 Dec 2025 12:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kE1sijUa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4DX+RWw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0E1315765;
-	Wed, 24 Dec 2025 12:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CFF336EC0;
+	Wed, 24 Dec 2025 12:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766579485; cv=none; b=JyAhqjOiBrnONeroISRZcw9tyiWRJQrO4sKPean9BoYpHA9PwMttWik7O5IiClt/m/ixDPhZ3ZV8L3fCnHRe5kgUsDBdyXNo5CFk36f+P5/Pkg2ZTbTNpgP75JiiUftxNnH74M8aYmuYZ7pDVsnU3FPMSYDgEx0E+YpgX7F1rZs=
+	t=1766579541; cv=none; b=q0fjoYdJz2Ox6EV3HiyGOvdNzb6lvoDBCjFqiZQXX+XyFsbTCTBttFm3kVbaRmgfCXnobJuPFXEXCLSlbi360/+HGZe+CNfgI+h+x646HBNu+nyalixZJxGWRxlofgxzvi8TpMbK2vS0MaU/FkDU7iAAN3wrscSO9kvAEnP4KF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766579485; c=relaxed/simple;
-	bh=bwXJJa5UIvtNLv3UOr4xkIKceEE7wzh9E4B/3ZqQ138=;
+	s=arc-20240116; t=1766579541; c=relaxed/simple;
+	bh=1IJIqelldDL1bCCmgph7G45ztJGB2Oe0IAskJUdNTe4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GwgoltHxISw4Gh6fNRvd0cbBOhVT4KaRZwpc7a2COfd2UMJCnH5JuARuMOg9hR7y9iJvog/OwLkh4DMmc/QYlN0Bjk/qsYkro605KPLoqiFbU+uaG4XtvLsO5+nLR8nNiFdRLeazvZWUWi+FNdWTTUDW0Dn9OgSCKq/EgCVMXq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kE1sijUa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A178C19421;
-	Wed, 24 Dec 2025 12:31:21 +0000 (UTC)
+	 MIME-Version:Content-Type; b=bf0+tZl62ThfBaIRPbxDUOhTGJbz7hi/aQQOT39Pnvuk3V/AROtr1ZCw2xQN56PWySsI3fWCRHK7dFdHqxWaaP8YKN28V9cWRYy6LmdnAqY6tlbHqMuhwv4xYgO81piMw15FW16M4AlTGGbPsUqTH7YQB/mT+TBRQUzlktcZJkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4DX+RWw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3098FC4CEFB;
+	Wed, 24 Dec 2025 12:32:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766579484;
-	bh=bwXJJa5UIvtNLv3UOr4xkIKceEE7wzh9E4B/3ZqQ138=;
+	s=k20201202; t=1766579540;
+	bh=1IJIqelldDL1bCCmgph7G45ztJGB2Oe0IAskJUdNTe4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kE1sijUaDNKRy2uClNM15cW5Wa3Iloo5Flu8VR2jjbJWn+m4OdyOkbYvnOmOWTzfI
-	 +Lyf+0qfVFQ/aafBcqPQukxxdlIbeKrYod1ey7FNvDrcK7XOlKqxwgbgpAw/tq/iWT
-	 19k1PVui5xuUvZffDcckOqdklP0dbTJgtkckUZo5Mf9GoWL7bnjC8yYxsxA91/VcUK
-	 RnlIi5T2IJvxPb7uuU97r6OpfgiUvB45cuk/Jc3bG3OcEJkSsgL6deiTE0pNciKJV2
-	 0LsDXQK+E3OUapUigErrE/liMT6k4/PqonyJdvx6wtAEFgXsB1WuQtQ/y3r/9qQLG+
-	 jN5zOE9rNNa0Q==
+	b=U4DX+RWwy2DNdBR2Vk3/ledHYYb3hYkjyt/G8mO0jPuvEzmLrBzbs48fv4+adAN6P
+	 vil37aJET58mniS2km+9u3Fh+oeAH+icxs8DG1FrBIsXfRLcfiH+KXyIjsMoJ6iAjy
+	 P7keg1C2894YtlNqgl5U7guKlM79f3Md3ZNANpCfsiZuGQO5UVRNnUo/qCqZJ7Q+K3
+	 NYSvNH0omczx5K+5mtIR16CT0SwLcc1xn7QXisIaXVlx7mPcSHGQKpsPLHsVbsouA1
+	 J+1s4xHJihvgkMJQuCyNp07NtVUZN5A56oTk4YMcHrDVClwJwM2BkxpI4Qd9PsBsP8
+	 tsvv8mesLiplQ==
 From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: Christian Brauner <brauner@kernel.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Chris Arges <carges@cloudflare.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Steve French <sfrench@samba.org>,
-	v9fs@lists.linux.dev,
-	netfs@lists.linux.dev,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix early read unlock of page with EOF in middle
-Date: Wed, 24 Dec 2025 13:31:14 +0100
-Message-ID: <20251224-petrischalen-abtreiben-c023b9242319@brauner>
+	clm@meta.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v3] fs: make sure to fail try_to_unlazy() and try_to_unlazy() for LOOKUP_CACHED
+Date: Wed, 24 Dec 2025 13:32:10 +0100
+Message-ID: <20251224-zunichte-hautnah-57728a08cb13@brauner>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <938162.1766233900@warthog.procyon.org.uk>
-References: <938162.1766233900@warthog.procyon.org.uk>
+In-Reply-To: <20251220054023.142134-1-mjguzik@gmail.com>
+References: <20251220054023.142134-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,33 +60,20 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1975; i=brauner@kernel.org; h=from:subject:message-id; bh=bwXJJa5UIvtNLv3UOr4xkIKceEE7wzh9E4B/3ZqQ138=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR63xWR1tC5vbRLfbpM9WEmnplbNTK5xCe3JtpYRcx5E dLJlc7ZUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJFAY0aGD1v6JA4c8NiUmq5y ZrK3LOOrG+/UnmgtaBNbvk1eNtfJj+GfrW26z1KxVZsiGbpmulun+Cq2pz2+K5d7IPSefMmynTc 4AQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1310; i=brauner@kernel.org; h=from:subject:message-id; bh=1IJIqelldDL1bCCmgph7G45ztJGB2Oe0IAskJUdNTe4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR63w0ILw1Imnf86a/wY97RE27tYlUTFd1W/vf2Ft8lz o43T0zx6ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIv0ZGhlcTc2dO+LJa9vT9 7X3hKeskRKddCm/bb33+05o1US7R038x/GZtZJkbGn1VcJlhLWfPCr/rqcE5jAsXXlYzl9lgezQ kgg8A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Sat, 20 Dec 2025 12:31:40 +0000, David Howells wrote:
-> The read result collection for buffered reads seems to run ahead of the
-> completion of subrequests under some circumstances, as can be seen in the
-> following log snippet:
+On Sat, 20 Dec 2025 06:40:22 +0100, Mateusz Guzik wrote:
+> Otherwise the slowpath can be taken by the caller, defeating the flag.
 > 
->     9p_client_res: client 18446612686390831168 response P9_TREAD tag  0 err 0
->     ...
->     netfs_sreq: R=00001b55[1] DOWN TERM  f=192 s=0 5fb2/5fb2 s=5 e=0
->     ...
->     netfs_collect_folio: R=00001b55 ix=00004 r=4000-5000 t=4000/5fb2
->     netfs_folio: i=157f3 ix=00004-00004 read-done
->     netfs_folio: i=157f3 ix=00004-00004 read-unlock
->     netfs_collect_folio: R=00001b55 ix=00005 r=5000-5fb2 t=5000/5fb2
->     netfs_folio: i=157f3 ix=00005-00005 read-done
->     netfs_folio: i=157f3 ix=00005-00005 read-unlock
->     ...
->     netfs_collect_stream: R=00001b55[0:] cto=5fb2 frn=ffffffff
->     netfs_collect_state: R=00001b55 col=5fb2 cln=6000 n=c
->     netfs_collect_stream: R=00001b55[0:] cto=5fb2 frn=ffffffff
->     netfs_collect_state: R=00001b55 col=5fb2 cln=6000 n=8
->     ...
->     netfs_sreq: R=00001b55[2] ZERO SUBMT f=000 s=5fb2 0/4e s=0 e=0
->     netfs_sreq: R=00001b55[2] ZERO TERM  f=102 s=5fb2 4e/4e s=5 e=0
+> This regressed after calls to legitimize_links() started being
+> conditionally elided and stems from the routine always failing
+> after seeing the flag, regardless if there were any links.
+> 
+> In order to address both the bug and the weird semantics make it illegal
+> to call legitimize_links() with LOOKUP_CACHED and handle the problem at
+> the two callsites.
 > 
 > [...]
 
@@ -111,6 +92,6 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs.fixes
 
-[1/1] netfs: Fix early read unlock of page with EOF in middle
-      https://git.kernel.org/vfs/vfs/c/570ad253a345
+[1/1] fs: make sure to fail try_to_unlazy() and try_to_unlazy() for LOOKUP_CACHED
+      https://git.kernel.org/vfs/vfs/c/46af9ae1305f
 
