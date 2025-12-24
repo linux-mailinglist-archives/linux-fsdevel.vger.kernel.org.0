@@ -1,127 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-72063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4847ACDC547
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 14:13:43 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF9B1CDC944
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 15:51:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 4B2C43031DE2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 13:11:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 97B583088864
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 14:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C665D34B683;
-	Wed, 24 Dec 2025 13:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADC3361DB9;
+	Wed, 24 Dec 2025 13:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4jCnbzM"
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="dR75wlmt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020112.outbound.protection.outlook.com [52.101.189.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5F93446C3;
-	Wed, 24 Dec 2025 13:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766581901; cv=none; b=RsdRHRkvZExFwpmJpgKdGAxaJn7P05GJ5J0936+/5Q60lzPjjB6S8NWqfYuwguHwhf6a9EwsHX3oSYD/Ox87pmSyEdrJgBP0D4AQppkPqAhLOXztG5IqJdIxyLpTjNgBEX0Ij3M2XDPAgvqeJckSZ7zJai9BU4XAtUJxFveg920=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766581901; c=relaxed/simple;
-	bh=xkzFLbJE3Yl6/KjE/bhEo+uzD1k3qFUB9hXgXJmvF9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RGUzqlQy1F4hYBgN3P8T5fuigJxYyfFACMjxYwRBfR42La5ZD7fcF3T9BdTy47CZvwDpJ5DkbdajmE1LhmmuJWj6DykdrsXS5bw9CuhSmv+5J53lCSqUgpjfj44LMsXk+rTG6SthMC+eehUJ9kTGX2T7qIT94pTYH+cfLAiRWqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4jCnbzM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FD69C4CEFB;
-	Wed, 24 Dec 2025 13:11:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766581900;
-	bh=xkzFLbJE3Yl6/KjE/bhEo+uzD1k3qFUB9hXgXJmvF9c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=H4jCnbzM3mOgqWIdxR3C3K2n3HI1lcBsgb+Ru/Qb0aCw/VL9DX9Lb5CnzIiQswF4A
-	 pJKR6nkrEuWDuCES+6pMYluaUXGp0D6J54b5f05m7vMlV0UP2/7BVwL7fzFFwZxcCI
-	 nxeWBMa0oQONvUuGckHG2Zg8KqjTzfhVsUT7bJ0zAljCq8un6sQqsNzV1zt5fxX25n
-	 JzJIRtOUgTqTb4yxYV1o1KWaRd9nJ0IppElaoiZjpm2unGrwAuLay1lKbTeqC0EFAV
-	 G612qY5Z0BsJe6l0vVzhPtIMUOJQgCg40oz5KXe2WIxN6a84IhK91JRBQqaIUzg8vU
-	 WjAhNRNhlSJZA==
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	David Sterba <dsterba@suse.com>,
-	Jan Kara <jack@suse.cz>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Stefan Roesch <shr@fb.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	gfs2@lists.linux.dev,
-	io-uring@vger.kernel.org,
-	devel@lists.orangefs.org,
-	linux-unionfs@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-xfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: Re: re-enable IOCB_NOWAIT writes to files v4
-Date: Wed, 24 Dec 2025 14:11:29 +0100
-Message-ID: <20251224-zusah-emporsteigen-764a9185a0a1@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251223003756.409543-1-hch@lst.de>
-References: <20251223003756.409543-1-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024BF361DB0;
+	Wed, 24 Dec 2025 13:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1766584344; cv=fail; b=TVT38VxEVOSfSXfBU6ZHAhtVdDIBQsMXsZmQJKEGYnfVG3jLVr3o88YRJJhcwp7TlNf8BuaK2vXKrf/8XWqp0YO2y+wiK1Om6JFRkiVkMitigoIx9w8udXPN4yJbJKvlKdFzm/vZCgAEqEcVwMwHIFt+vBvLNOUBnVWjfZXCuus=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1766584344; c=relaxed/simple;
+	bh=m83aLlHNWP7rx6DKIyAGgop7j3BYIK42h1+F7HdzKOI=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ri6SCnEmMhkjNHVh9JhjHhlfeEcqQRQUPVeXDDnyePL+QEAeyPI3a/x3XXoBoBDZ9NidqrM5K71fDuEyLq+AXga1zFT15eaHBipwgGXQRXu3C3tNiy6AiCyU88KP7enVPJFzo5ZD4TXIc11rW2oK7rrAQIEdfQZ22o+cEMuM4hw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=dR75wlmt; arc=fail smtp.client-ip=52.101.189.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vFEkTzvCUhOMFuwXiiL3LfQFPwCo7JhgPN+ZQPvxBuV2XNSmlpsE9r3NW55ecKEKNexQxZN2cc+KpzSb+xiQVLYDfN0iTfdTc2AWzpXx+cPevHbOVOxlDUXRG+fvPoDYfD8fQmh5B/MwTTmJiQojUnpcRIl8Tyx+LXP/WuARClx+FJTmr/kGjlsuvlo2AP1luQzrbkbRMIH2fMJdz8Zua5k0WnXMAgZasDAl1xZwp6604PX3fTSdaZpYata7UctSBMuKmWKxKDfL6c/abQ8DDYgm5Cczhw/A22kBM6ZQxvnYcpDcIsgMwkBoXkDYgsFmR/7aBZWNXbxTyDi6PkTdyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cb/5Mlucnwq4Fl1N/Y50Y29hkTN5lMT6zBWJRjuV9S4=;
+ b=dhh7YB6iq1tyEjS6SGDpE9xvDXuGa2rOfKfVTtwhYh5cWa9O5FUtJkGBjXKTY6bSY708Tlix6WQe/Hu2ux4uEtq6rSBpxI7aQOHmddRgYSbfxIhBjyJvVE4GfnjgjOHJG/biOaWVAf3zDg+v88qC+pMj3ir9ZWcb6992KCRdhJ4CsW/+B71oHUS/QgdoHE7xEUmTjlzyBC9IfE7KjdnEPhZRhA19Sbwpi6fECxGLrAkymtrjqqaFCr00wc2Pio6eqKkiUpOG2iYmzIgEYOIwaVWa8vUR0v5lgHw0wAw28BNXGSz3Xxt3uVrCAh+8nPwJgE8HWXBlrkwL3vpzlem55w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cb/5Mlucnwq4Fl1N/Y50Y29hkTN5lMT6zBWJRjuV9S4=;
+ b=dR75wlmt4vA9fUS5GgjeOsEH+54Ed7lIo5MX6wYPeI/X2vwr4DtfsBU98lY+NdNu1e4mnKbSbdQxdyuryHhp+SVPiAhV6iOnedHyXdSOIfZghXJi5Kzfz37RweQsWRyQrvkfTSinJvZa4QFNaaNOoGl+Gx6sPeFXu4jjLE+2VtfOR0oXZE8P3D9IouXvh4ROZJdUGhV5Hs5kvJHYWvCi9GkjJK354MrqDah2FIIKmiwIfxBnl5Ny0i66WNyAsi5POoamSpG+CNQmIzpdYs73Op7R7hRMyRiLSjx8XAQfelOQ7dpqNmOy4i3VQpD3FJ0kf+4LHcr69BCY9vclvz/FWw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YQXPR01MB6219.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:2a::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9456.11; Wed, 24 Dec
+ 2025 13:52:18 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::6004:a862:d45d:90c1]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::6004:a862:d45d:90c1%5]) with mapi id 15.20.9456.008; Wed, 24 Dec 2025
+ 13:52:18 +0000
+Message-ID: <4b221d91-84f8-4600-83b6-a2aa16a02c57@efficios.com>
+Date: Wed, 24 Dec 2025 08:52:16 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] exec: do not call sched_mm_cid_after_execve() on exec
+ fail
+To: Jinchao Wang <wangjinchao600@gmail.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20251218032327.199721-1-wangjinchao600@gmail.com>
+ <aUvYMRmkWXUuuWXW@ndev>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <aUvYMRmkWXUuuWXW@ndev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT4PR01CA0108.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d7::7) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2451; i=brauner@kernel.org; h=from:subject:message-id; bh=xkzFLbJE3Yl6/KjE/bhEo+uzD1k3qFUB9hXgXJmvF9c=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR6P2u9P8NC4Oknl7n+KaseXU9zXzhvZm2QvLrO6W3vJ 6tuyLhc21HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR7BkM/9RVShfZSa156/bx 1eXNz6SeJXfd3dXamjphTqX5hxVNKosZ/lcvu/A9Llf0x8MWnStxfpW3xBwCVpVM83e7znXwGHP 8YRYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQXPR01MB6219:EE_
+X-MS-Office365-Filtering-Correlation-Id: 989976e1-f7b4-4fa2-33fe-08de42f3a71a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VGpZVzlEZ0x5dzZCSFFHU05KR2ZQWHM3dW1NNG4yNmVod3BGemNCNXN3MVRR?=
+ =?utf-8?B?QkVUazhZdUNoQXVmTFRlWkU5VStkU1I5M0FsY3RncytGRlhESkZzTS9UamM5?=
+ =?utf-8?B?bmV0WU9JVkhjY2lkZzBsZFM4VlE1K2tEMnlHYStZckZhTzNQeGMzZE96blRK?=
+ =?utf-8?B?YVk2U090ZWhhaEJOc0pZem5kaGFHSVVxRm1XYkV2UlZsbm9FTHE2ajAyVkxW?=
+ =?utf-8?B?R0p6cHRUd2l4ZkJwd3hoc2ZXdTNxT1B1K1ViWVZUblRqTTVYZy9mSkpCcGNO?=
+ =?utf-8?B?SkxNZG5pOHVaZFdCcnppU1F6UWoySlcyenNBcGlJU3BjS21PQzN6b3lmUGs5?=
+ =?utf-8?B?b0pqd3V2SmhEai9UdFBkL2o5ZjlaOUdpVGx4YktEZUxZQkpyL0dmUXpRTFRS?=
+ =?utf-8?B?N2ozOXVrSnRVcjZjY3I5RG5WcWJTdnZTRmlwTDFZZFNyR0pEWnN6Mmh4TG1s?=
+ =?utf-8?B?OUlSYTByelhVTXh1SUxLNVJRVTlMRXBwYzluMmFLU1RQa0E3UWFTcFZXUzdO?=
+ =?utf-8?B?R0R5bWF0RUttWmJUUjJWMWRMSHdGWnRTczY2N2J1SmxRNFpXOThkemx2cE9h?=
+ =?utf-8?B?MUM4dWlYSlJySExmNFJRVDFQTXhhRjBrbU5Rb1ZSUnFmRkM3eGlNN3IzMVlq?=
+ =?utf-8?B?UGJiZGh4eUc3M2g2akxCS1J4bC8xcCsrR0IxZzFUeVJuQkxJb1daQ28xTFY5?=
+ =?utf-8?B?anhJWGRvWEd3YkNVVWNFdENvZ2JRbzdxN05ZdTNvclhlNGw1SGd0VG14N1JB?=
+ =?utf-8?B?UkFyZDYva1BIRXNQOXk3MzVSYXdOd2RadVpHRnZjbmF4dTczaHFlLzhpVUln?=
+ =?utf-8?B?QXVrQ1dUOWdab3BYY1gzVVZqclZaU1Iwb01HSk94aUU4UFhtdHNQK1NMd291?=
+ =?utf-8?B?TzhWS1R6OS93MEdzbk5RYWd6V1A5U2JSMFNJNzRmVEJ5RXYyZlFSMTdabUgr?=
+ =?utf-8?B?S2xaVU5YZkJ0WDZTYWVEdEYwSDdRdC9wNlN0UTlhS01HMjkycXNOTWlsY1pt?=
+ =?utf-8?B?ejVBd0RYakpEV1dHR0ZNVnlkNTQ3K2U0T3JMR2ZjN0dzcVk4blJaQlhvc2ta?=
+ =?utf-8?B?Y2N2Qi8wYWdUaTUzT0EvNTZLcGdaTUJyQVhMWG50cTVwcmkwYTVEcGpjRUZX?=
+ =?utf-8?B?dVhpeFlveDZ2b3FDWDFDQlcvUU1hVHIxNDYzM1pEUUV0Ump5Um4rUkNneXlt?=
+ =?utf-8?B?ZjdyamVMaWxnbVZZVUhaZkFISVJuV1MzQzh1ZlJ6d3c5blY0d3o0UUxOTU5v?=
+ =?utf-8?B?UFIyRk5zaElpczdXN2IrVk1hSXY5bldmakdCbGlhVlZFbEZySE4yOWtqRU9m?=
+ =?utf-8?B?d1I1N2oxb2NqSFZ0aHJWM1RLV2dyVWx5Q24vYXhGcU45OFBFS2ViUGxsb3lQ?=
+ =?utf-8?B?TXp4QXMyRFJrZHllSkhQNGthcytueHQ3T0t2UytNb3dhSG9VYWwwdzdoa2JD?=
+ =?utf-8?B?dkFGMG9GeFR1dERqaHdMaEs3TUlzeGRKUTRZazJUa3hiZ09wUTI0VWpGZW9s?=
+ =?utf-8?B?VGFaSm1KV1lDdmFwei9aV2ZNSlJ5Y2pIQXBETit3cEVISm1wZVdmMnNWKzFi?=
+ =?utf-8?B?OGJyNUdncjM1cGptbExhbjlRTU1hY3NTK2NBeUlqNnhFbE94b0ZVUkNZemIz?=
+ =?utf-8?B?NWV6K2xJRFNIcUNHYk0vd1JUcURCRFp0VmU4VWwxMmdqTFNDaXpBME9IUDdN?=
+ =?utf-8?B?OGsyTVBZUEtJdGlJYnloTnJhdmRUWEJWU1E0b01IcHNKbTVKb0lVWW8rV0VS?=
+ =?utf-8?B?UG1hY0VmbFVZQnFaZWVKck03NE9QWUFmc3RKanlIbDJHUDU5dWtJZFhDZzAy?=
+ =?utf-8?B?YkkzVEYrTHk0WEsyVVowTXRTMW1UVEdzWnAvTStXYnczV1AzdDcyK2tZYWxG?=
+ =?utf-8?B?RWpUQ0NlWU9YNW5IMThwZVZyc3VOTEViMUZ0ek1rSzZ6eWc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a21FSGJ6eGoyVS9tR0lCWlJGeVhkbmFUSTNSa2dkK2xyRGM2VStocTJiakxI?=
+ =?utf-8?B?OWk4ejQvcGJ0ZFJobFhqOGt4aS9XOWZmbWFDTW1oNE1rTm9meFZOcFJMdkFW?=
+ =?utf-8?B?azFOQVJCeElaNURxQ2I0VmNKclQrTmV3VUZIRGMrc1hucDhJMDVpay9BNzVH?=
+ =?utf-8?B?Ti9Wa0dYUGZKa1NqTDJMMUtRUEtkbytra1BtM3ZLNHRYMjRzQldZci9IbHla?=
+ =?utf-8?B?THBMdHZIa204QW1jYlJEdWFhT3k1YWNQQXROV0s2eUVBYlozWXllblE2TnUw?=
+ =?utf-8?B?YnVpYWZMN1BOYlg1cUozWkltQzcrbkRWODdZYlIwb3ZZMFYyQWwwWWRJN3RJ?=
+ =?utf-8?B?NVIrWlhXTFRvVlg4OXRDQUZLTUtZZWxmVzVqTWZkakpwRi9QeGQwaXU5YkZL?=
+ =?utf-8?B?ai9lMjBrQkx6LzJBZUdYMkZNcFVhdnluUTh2SUdUamN1Zmh1ckhzSkdqbW13?=
+ =?utf-8?B?QXJHeUpYZFc5Vnp4aThEVitTUDBuczZFRjh2Vk9HTCtodkJqRW1zVWRtNitk?=
+ =?utf-8?B?K0ZuSnlweEVrTEpVakpYL0E0K1ExUGhEaG9yNGxFRWtBc3I2ZTdWUG5kTDQ3?=
+ =?utf-8?B?YVJkdG9kdHZCMis0ZlY3b0k0ZmVmZDR4NnhXQm54Z0ErSWZ5QTFrTXhwbk11?=
+ =?utf-8?B?R2tMVkpMVmNVczZnb2szSTVkbHVhRW9qZEk1WitoOVVZcDN2TG5jZUFwNHZx?=
+ =?utf-8?B?RTN0RWZEUG1yRDk4OVJwbGNWUTFadlROa2NMWVZaZWVkTTQ4SnlXUHBNODlO?=
+ =?utf-8?B?L2pXUDVBS3RLLzJJSDMvT21ES3RRMmduSGtFNmp3QUl3M0p5T1Fjb0s4djMx?=
+ =?utf-8?B?ZXc5MjJtbnVQKzBYSTRrcitwVWl6QURmekU5MURqbTlTWVg4MXBNY2RmUmw0?=
+ =?utf-8?B?NDdWSTFXR2ZQdkY3VWNjM0dZSUc0NjIrT3BwYjNLVG9vbW1YSjl3WlFUTkF5?=
+ =?utf-8?B?N2ttSG0vZCsvTCtlQTh5dFFIWEtEclRQWXRPekxBU1d6eGxUQzRjNUlsR09P?=
+ =?utf-8?B?dTg4Z1hSNVRYbVlZaE5mQXpZZTlUbDVjK1ZBRHU1NDMwQlpCMFFTc0dJN0Ja?=
+ =?utf-8?B?eHhrZFlHWHE1Qjd4K05RU2FYV0lyeEIxaTFXV3NBZXZHekhlKzFDYnliLzlx?=
+ =?utf-8?B?aEtQVlU0eWNIT3dqNUJYaG1xRE9jVlFzUm1PZFBpamdSZ3g4cmNDWDk1T1FY?=
+ =?utf-8?B?VWN2NWErWlg1T2ZnOGVScnRRS3drVm9oY3NBdjRiQzhYN2xwbkdUclIwTk1F?=
+ =?utf-8?B?QjlPMFVpS1dkUGRMQXRpSmlTOSswOFZqQXJjRXZKeEVWbDdSV1djWmJoNGFY?=
+ =?utf-8?B?NXFsanQ3OS9OVmRzQVZOcXNJRkRieVMwelNTOGlCQkJ1N2tFcDJCc1hsM1Vp?=
+ =?utf-8?B?Kzh5Vjc1aHdqdVNSNGwrZXB4blFBdEVWblJVNnNBR2NNck9OTnAyTjBCcitO?=
+ =?utf-8?B?WDlWZjlaZndabkIrU1dhRTJHRVh0MklCQ1MwUnMwblZ5cUFnTDBiWVA2SXdT?=
+ =?utf-8?B?czNsODJhVGNUNjN4bkhISGxDQzJuelBvc0pPQzZRTHFUQVZzQVJXQ0RvWi8v?=
+ =?utf-8?B?RTBtZHVVcmNzMmE4VTUyRHE5RENRU0tBcDdrM2I1NFpVYXBDVTB0MlZqSFJL?=
+ =?utf-8?B?eWhIRDBzRk1mTDRLWGp0R2dvZHRhK1ZDRnhBWTh1ZkpnK0xFcFdZRlBsOEpB?=
+ =?utf-8?B?T1kxckE2MFZ6bXIxYWJPZjBsZDNSL3ExVXQxQ3VlWFQ2bWQ0YWJiL0ZlTTUr?=
+ =?utf-8?B?SGthNExlV1JVNjVZanFsTXpFQnJodzE5ZC9rUGxJdlEyVzVqRSsxVXU4T1NI?=
+ =?utf-8?B?Q1BSSXZPclVCWERsTS9GaEJuY042emdTUUdaTEdjNFdJaVJuZzJYM1NiYVRY?=
+ =?utf-8?B?QUxpcWtrTC9JdmhKUGxNdVErU2ZVZU8rVEZabXZ5VnBjYnhvRGNEQ1NYdHVw?=
+ =?utf-8?B?MysrWitEQ21TUGsvNDVrOUVEd0duUWh5MVhZVXJmc2RyLyt5R3FCUTM1NVU0?=
+ =?utf-8?B?UGFwY2E3Vm5ORzRGRXhGTWYrWmJtUFF5dDArN0RpNXdKd0pCMjdZZVNXYXh2?=
+ =?utf-8?B?OU1qbkxXekdoYmhzbDV3VGZ5cDJpR3h6UitkV2FuejVtQ0dTZlQzOU9xS3da?=
+ =?utf-8?B?OEhKVVdOSXA1SXJ6Rzd3SXRtWWJKbVllbXVSQitsZEdpUjJKREVBMmhLVFh6?=
+ =?utf-8?B?Vy80Y1dNVEZpb1pQeUoxMFpwZjJuM1UyLzNOOXdkVFFJbmZ0WG9QWjdoT1Yz?=
+ =?utf-8?B?MFBqdGUxNFdleU85YS9RMnNSbDQ3enFUTnpxcXhLaE05SzFhaUtjMVp0WUJt?=
+ =?utf-8?B?UWFRdUx5Vnd4a0dHMzJFR3pXVGdVMEp1T3orV2VJaEhCT2UvRUZ0RFQyMGZF?=
+ =?utf-8?Q?YzS8h4gDeL/Amzh4=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 989976e1-f7b4-4fa2-33fe-08de42f3a71a
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Dec 2025 13:52:18.2466
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zZ6KWp/Cr9dj7kb1aFeP4bTI7DaoNe4u0+1WbilBShFu5J80+yj9+XJYDRMvqv6RvgZGHGKK7RKou1KBdCkoPxuM01wlVJZjUcAYa2HDvdw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR01MB6219
 
-On Tue, 23 Dec 2025 09:37:43 +0900, Christoph Hellwig wrote:
-> commit 66fa3cedf16a ("fs: Add async write file modification handling.")
-> effectively disabled IOCB_NOWAIT writes as timestamp updates currently
-> always require blocking, and the modern timestamp resolution means we
-> always update timestamps.  This leads to a lot of context switches from
-> applications using io_uring to submit file writes, making it often worse
-> than using the legacy aio code that is not using IOCB_NOWAIT.
+On 2025-12-24 07:10, Jinchao Wang wrote:
+> On Thu, Dec 18, 2025 at 11:23:23AM +0800, Jinchao Wang wrote:
 > 
-> [...]
+> Hi, mathieu
+> 
+> Please review this patch for mm_cid.
 
-Applied to the vfs-7.0.nonblocking_timestamps branch of the vfs/vfs.git tree.
-Patches in the vfs-7.0.nonblocking_timestamps branch should appear in linux-next soon.
+Nack. Your fix lacks context and removes a needed call in the
+common case to fix what I understand to be a init task issue.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+See this patch instead which addresses an issue very similar to
+yours removing the relevant sched_mm_cid_after_exec() call:
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+https://lore.kernel.org/lkml/20251223215113.639686-1-xiyou.wangcong@gmail.com/
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+I added Thomas Gleixner in CC.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-7.0.nonblocking_timestamps
+Thanks,
 
-[01/11] fs: remove inode_update_time
-        https://git.kernel.org/vfs/vfs/c/a3c5dc04be9f
-[02/11] fs: allow error returns from generic_update_time
-        https://git.kernel.org/vfs/vfs/c/829f055d68ee
-[03/11] fs: exit early in generic_update_time when there is no work
-        https://git.kernel.org/vfs/vfs/c/3c5f7a9696fa
-[04/11] fs: delay the actual timestamp updates in inode_update_timestamps
-        https://git.kernel.org/vfs/vfs/c/6e827e32c6ae
-[05/11] fs: return I_DIRTY_* and allow error returns from inode_update_timestamps
-        https://git.kernel.org/vfs/vfs/c/b79904581c69
-[06/11] fs: factor out a sync_lazytime helper
-        https://git.kernel.org/vfs/vfs/c/0cd53e2011e2
-[07/11] fs: add a ->sync_lazytime method
-        https://git.kernel.org/vfs/vfs/c/641284ff9133
-[08/11] fs: add support for non-blocking timestamp updates
-        https://git.kernel.org/vfs/vfs/c/3cb9ff38ddaf
-[09/11] fat: enable non-blocking timestamp updates
-        https://git.kernel.org/vfs/vfs/c/1736c77f0834
-[10/11] xfs: implement ->sync_lazytime
-        https://git.kernel.org/vfs/vfs/c/831c93b34fa4
-[11/11] xfs: enable non-blocking timestamp updates
-        https://git.kernel.org/vfs/vfs/c/bafbe984c54e
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
