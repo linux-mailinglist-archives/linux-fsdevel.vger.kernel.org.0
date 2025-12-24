@@ -1,61 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-72052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F1ECDC3CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 13:41:43 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B964CDC3A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 13:37:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8195E30FDE86
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 12:34:30 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 4B2EF3013C15
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 12:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C59337B8F;
-	Wed, 24 Dec 2025 12:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B09731A802;
+	Wed, 24 Dec 2025 12:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BtI143b2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hcff7Lq0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BD7315765;
-	Wed, 24 Dec 2025 12:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F022BE02D;
+	Wed, 24 Dec 2025 12:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766579632; cv=none; b=Q9OyxIi11ZdyLVIiFPpKb/JbiR1QczyJv7jXx9GVCZR6s7MYM+qwE0dPVcm8KodE9RwfBAkw8Ts9jI47mRnUo6oopmEVm+GtdGBcelwaduSDpNepy3sZxA5exgjWbFeHPxS6K4LP1wjzGLRruh2xuLB+Kp24DltAsobWezMK1c0=
+	t=1766579826; cv=none; b=B6c0hZ+bgZJlqqllo5gDcJKy/7UyvpnnJn3cbucG3KP0KF61CR0HIP9PpCdDRFWzlREE1nHqxNEPC+sqp42C4Ar8XOigMY8JoBFD383BEoti6pc8WDKezdsOPDBkfglS9wbOZgcwMvnWKzwlYWYr54g+QS7Gp1hhG1BK9b2PJf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766579632; c=relaxed/simple;
-	bh=N5EoLbsRMh0OjdruItXhYdxR+NCojts0PAlkMFRBsE0=;
+	s=arc-20240116; t=1766579826; c=relaxed/simple;
+	bh=7BdLPeoO5l5ol1lZ4eIkKGMr05fZfF3RpACuY3vcuHE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nl91ucipUt3q3s8Lk+19qmuG1nJXN6ccx+l4haBw3OWwq+GCgAcf9H6La2WQ2viYQ5sHTmwhAzVY5lbuU1K5jZdSawlKDiwEAh8VC5+fSLWqWg14g/HHDAH5uRScBrgTEEiP0WGvDgZt2Q0/Abf7P17Zf5idB9bsVa6WOVzFpVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BtI143b2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B7B6C4CEFB;
-	Wed, 24 Dec 2025 12:33:49 +0000 (UTC)
+	 MIME-Version:Content-Type; b=MV14qCA89XuXIVXOaaeQGkwsFV/HjHKFnwSqa+js/6GTFDnivX81lA9aVDjhZG5W506fhDQ/HhnYFpWr9/a8p+eFVlOz452H/gGuVM4yrcEAu5tOmbR3XbXkKLfWcNbbMu47DflpmNbN9d6ufsZeRpnZbgVKojsN3iqvaebae/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hcff7Lq0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8C8AC4CEFB;
+	Wed, 24 Dec 2025 12:37:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766579631;
-	bh=N5EoLbsRMh0OjdruItXhYdxR+NCojts0PAlkMFRBsE0=;
+	s=k20201202; t=1766579824;
+	bh=7BdLPeoO5l5ol1lZ4eIkKGMr05fZfF3RpACuY3vcuHE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BtI143b2o06YkhmeBr04qpDjGZw5KzkDnCavOYfhDnmi8kvuEkl71rKgyvoBAb1FG
-	 G4yGad22YUjjGiKciaNn+O4r1lWQyglnIARrs/8I02gFpDbl8LsousuISxvqdRS367
-	 D3Dd+4rlVB2OH+9lfUKK2w8U/PEWhUmvhtEf1n4d1RkuCjEk/3AQZY/K12RhjpjrCS
-	 eSj8HLSOeYeL7675IIbFYj5JjQmXskWYVbeuF83NBrBkcMEY9C+VQh3JQflcw7iNCt
-	 D3Isb34TuXzIX/kamIwyw1xIWTJFY/QuD2ATlxNcc8HkfCIIhAr/QxPXMeehOr3HUh
-	 /PFXLcvSjxeRA==
+	b=hcff7Lq0kWLcxY5R3jKuSdoZuabquE2td3JhP+vVW5csL3PH3qbju/cijDkSsnEKl
+	 RcZiyInsYwRC+ppuFzspgkvKbiaEPTAvrGP8gZdznZL025Q4gMQZLbxOIbSCVjinkO
+	 FoqKh1nzs8ewJXuPjARpWU3txWhTKJEa9+5JDAhnsNPz/fG+/rPZ0bC5wse7kgeYTl
+	 e6uupqY1mtRP1d/Pfq7ca2NXdFZZdEoARcivtCcBFO2xqlF1xvX0043QIDeSCirRBp
+	 UHoHLRnvpTdh6hDmpqa7DmHIh3m99dE5Wau/XTxHmZEKPy+JdGV11l0gvOtRA34kqX
+	 8IiYDFBCkmFmA==
 From: Christian Brauner <brauner@kernel.org>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
 Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] vfs kernel-doc fixes for 6.19
-Date: Wed, 24 Dec 2025 13:33:38 +0100
-Message-ID: <20251224-gelacht-mitsingen-1e786e2e1c2b@brauner>
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs: Replace simple_strtoul with kstrtoul in set_ihash_entries
+Date: Wed, 24 Dec 2025 13:36:54 +0100
+Message-ID: <20251224-klarkommen-herum-94f3576f235f@brauner>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251219024620.22880-1-bagasdotme@gmail.com>
-References: <20251219024620.22880-1-bagasdotme@gmail.com>
+In-Reply-To: <20251218112144.225301-2-thorsten.blum@linux.dev>
+References: <20251218112144.225301-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,23 +59,22 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1214; i=brauner@kernel.org; h=from:subject:message-id; bh=N5EoLbsRMh0OjdruItXhYdxR+NCojts0PAlkMFRBsE0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR6313FzfktRnLhDzF7h8dR3IIT5VockvVub/RyT1czW R520WhlRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERU9Bn+x0i8nn/Y6aLjW4fA u2KrtW/0WrzZvFbizO3glsLzmWuOlTD8s3h7zbBA4brdpKlSKosl9jlrr89MqfXeLHN+keEnw3t 2bAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1182; i=brauner@kernel.org; h=from:subject:message-id; bh=7BdLPeoO5l5ol1lZ4eIkKGMr05fZfF3RpACuY3vcuHE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR638sWL3euMKnXFP6zcsXhhvrjzO0z525p8cgqsDl4d 13+26yKjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIn0XGNkmPnRgHvbvL+5GsIH o33EFTQS390q3H1r7oxQr/1v2S4ynGJk+Nvd4319TtREy577ja+qHEQ/T+Znez+XQUP0fo7BZe7 1/AA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Fri, 19 Dec 2025 09:46:18 +0700, Bagas Sanjaya wrote:
-> Here are kernel-doc fixes for vfs subsystem targetting 6.19. This small
-> series is split from much larger kernel-doc fixes series I posted a while
-> ago [1].
+On Thu, 18 Dec 2025 12:21:45 +0100, Thorsten Blum wrote:
+> Replace simple_strtoul() with the recommended kstrtoul() for parsing the
+> 'ihash_entries=' boot parameter.
 > 
-> Enjoy!
-> 
-> [1]: https://lore.kernel.org/linux-fsdevel/20251215113903.46555-1-bagasdotme@gmail.com/
+> Check the return value of kstrtoul() and reject invalid values. This
+> adds error handling while preserving behavior for existing valid values,
+> and removes use of the deprecated simple_strtoul() helper.
 > 
 > [...]
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Applied to the vfs-7.0.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-7.0.misc branch should appear in linux-next soon.
 
 Please report any outstanding bugs that were missed during review in a
 new review to the original patch series allowing us to drop it.
@@ -91,10 +86,8 @@ Note that commit hashes shown below are subject to change due to rebase,
 trailer updates or similar. If in doubt, please check the listed branch.
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+branch: vfs-7.0.misc
 
-[1/2] fs: Describe @isnew parameter in ilookup5_nowait()
-      https://git.kernel.org/vfs/vfs/c/fe33729d2907
-[2/2] VFS: fix __start_dirop() kernel-doc warnings
-      https://git.kernel.org/vfs/vfs/c/73a91ef328a9
+[1/1] fs: Replace simple_strtoul with kstrtoul in set_ihash_entries
+      https://git.kernel.org/vfs/vfs/c/63ad216fbfe2
 
