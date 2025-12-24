@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-72055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCC8CDC46E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 13:50:06 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D29CDC48C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 13:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 75F0830136EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 12:50:01 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7140530778EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 12:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFEE326922;
-	Wed, 24 Dec 2025 12:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EF2332EB7;
+	Wed, 24 Dec 2025 12:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3RydRJn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnHROVXU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B658C3128C2;
-	Wed, 24 Dec 2025 12:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69C3318130;
+	Wed, 24 Dec 2025 12:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766580598; cv=none; b=YbErSEqOvRGliuEfGR4zyYtcLEr2W1Hn4CrfzoSdS7mlbyLMY7TJVvMzADyQPm9MldAPIKnAe7MzVFvzNiSv5YMGxtfWwtrG1QFendgTEjj7CTlv5AFVGCpJ71eBeRGlsoVzcNKeVK6HzUjtUv05iXZEo+7ZBcN1bRTCL2JnyE0=
+	t=1766580696; cv=none; b=l3JccWBFYfeGSqg5MemZP/83Baq0vKqvzfQcLqbkAQHkYo3RvXUBfslb48oowy0qR8wwqkgpZPnW/iDFZCbIG7jY3j4+51WxJgrnlZ/07MkPDnJKUBqMRphainOQZ21UQvgKhed2UcIJulvRj2hdc3+z0uT5rro/H96DbPsENvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766580598; c=relaxed/simple;
-	bh=WTZwqMscj1m81ezIC442OoCvwHxFGU02XGIgQJBHXcE=;
+	s=arc-20240116; t=1766580696; c=relaxed/simple;
+	bh=bFKrhNSgO9tZOZisND9QyFk3olLUBErfEx0vIPopvfM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qio8IzEnjemZ3inZKXw2NwlZ7noQFjrPrlSJyx3gAyhAzixsRj+tOE5H1yKOkwXyopSJygavFt1FtxKFLjdMUV6yiLeLX0s5WGNsLtFmgdxGhZd6Wb3NfvCdaEuBgv5WDmI8k8XX4seXeKgAv/RfbhQRD3mXXKi3BzTJzWP056M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3RydRJn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A3DC4CEFB;
-	Wed, 24 Dec 2025 12:49:56 +0000 (UTC)
+	 MIME-Version:Content-Type; b=nn+yLLRzDc6IWt/ZDMWWcvRPIuUfvH6V8NWZNQmDqPPBJhJKkU8X9W1dkfmdZvglgL0ENE4dZb/oi+QurlOT5aNtNCbdAGfeWfDCNaql0+6un8y2NCCvbFXSQf6/e/DoOdSLTJI3VTJKhzFI6GfJOUakatX57g8SjCvCmmjok3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnHROVXU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9603C4CEFB;
+	Wed, 24 Dec 2025 12:51:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766580598;
-	bh=WTZwqMscj1m81ezIC442OoCvwHxFGU02XGIgQJBHXcE=;
+	s=k20201202; t=1766580696;
+	bh=bFKrhNSgO9tZOZisND9QyFk3olLUBErfEx0vIPopvfM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=N3RydRJn891AIU3PBvZUQwFImJXXwFhDYDMM9Zs8eP1KDovht2ekVXyPFrBIKELFS
-	 u+vk3Y0q4noUiatbDhzoVceNK03qKdGa5cF8MmpYPpbHJUe8rO8jdJtnh0ZGHzQERk
-	 CSOJxj1GzU6obp2e7+E+eGXzTDxJ1kxYPB88rKh1TOPl3X42xbDsd1IgrrAIVb2SZ3
-	 hlLAH+gJ7jEUabCs5u1RxwIZOnhB+7HHvk05Om/dQ/cCVnplZ0RcD7zSJmWdX8PZcD
-	 Hhkd5uGEULx4P1MoQG+Ejq92Z0sIVp58BgBu0hBvsRUz1APqjnDxzI1IUWQF35FENw
-	 A8nQ7cP6q5Rxw==
+	b=ZnHROVXULmt+jP/g/gD0bFqc7x2/jsr2QqYUJIBpMeD+TfYuTVCNlmf77gaLNSBZp
+	 9gOhYwF6aXkaDrciewiq9ccR5BC9lIEuSRIerTigdKwKBc8B/oh2bjE4B1UmbG44HT
+	 fdSSDh4Z3Y+i8YQJQnv2LNj1oDXTC1RJsilg0eG75idRUS9mGfTbgJCKokXknTfEzp
+	 NhHOSGoDLd8K0U7P45z2oszFsa/Jd4ByoDnvDf5g9H+puMmgZo69r3AjXmp2NYs9nS
+	 O6frlTcXUjtgb5X5xw8TpczlUTHb5cMD5DMXWLz0rAxipi5o96u+fXv6PbnM5/Z8VM
+	 67n89WJf2t21A==
 From: Christian Brauner <brauner@kernel.org>
 To: Thorsten Blum <thorsten.blum@linux.dev>
 Cc: Christian Brauner <brauner@kernel.org>,
@@ -46,12 +46,12 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] dcache: Replace simple_strtoul with kstrtoul in set_dhash_entries
-Date: Wed, 24 Dec 2025 13:49:48 +0100
-Message-ID: <20251224-joghurt-hauen-459014aae177@brauner>
+Subject: Re: [PATCH] namespace: Replace simple_strtoul with kstrtoul to parse boot params
+Date: Wed, 24 Dec 2025 13:51:26 +0100
+Message-ID: <20251224-knirschen-messen-b175b9e1e854@brauner>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251216145236.44520-2-thorsten.blum@linux.dev>
-References: <20251216145236.44520-2-thorsten.blum@linux.dev>
+In-Reply-To: <20251214153141.218953-2-thorsten.blum@linux.dev>
+References: <20251214153141.218953-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,13 +59,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1180; i=brauner@kernel.org; h=from:subject:message-id; bh=WTZwqMscj1m81ezIC442OoCvwHxFGU02XGIgQJBHXcE=; b=kA0DAAoWkcYbwGV43KIByyZiAGlL4XGi6r81uzCYZE1BS5Y/HMInySe8UUNGoziur0r2HQXBG Ih1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAmlL4XEACgkQkcYbwGV43KI58QD/UYU+ Iw6gwJ28mXsFmJt86V7wzJescdsGPL3aRFgaS3AA/02tlI4/EhzoHEUmqAG3vmSIoJhu4YcloaQ XusDblg0I
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1206; i=brauner@kernel.org; h=from:subject:message-id; bh=bFKrhNSgO9tZOZisND9QyFk3olLUBErfEx0vIPopvfM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR6P7yyp5J/ofQjzaV/zv+9qXvhlXpSi9OxeQrftnQ// L1RfcW0kI5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJ+DxkZOj0+J4X1LfKssWt 0cN1YlH7RrblbkVH4hWVvipLXCy6s4bhf0r7Lon8T+kLYyXYK/UfX5NWZs4O/aapsET2fPLZDvt 8JgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Tue, 16 Dec 2025 15:52:37 +0100, Thorsten Blum wrote:
+On Sun, 14 Dec 2025 16:31:42 +0100, Thorsten Blum wrote:
 > Replace simple_strtoul() with the recommended kstrtoul() for parsing the
-> 'dhash_entries=' boot parameter.
+> 'mhash_entries=' and 'mphash_entries=' boot parameters.
 > 
 > Check the return value of kstrtoul() and reject invalid values. This
 > adds error handling while preserving behavior for existing values, and
@@ -88,6 +88,6 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs-7.0.misc
 
-[1/1] dcache: Replace simple_strtoul with kstrtoul in set_dhash_entries
-      https://git.kernel.org/vfs/vfs/c/b29a0a37f46b
+[1/1] namespace: Replace simple_strtoul with kstrtoul to parse boot params
+      https://git.kernel.org/vfs/vfs/c/3f320e5c2eca
 
