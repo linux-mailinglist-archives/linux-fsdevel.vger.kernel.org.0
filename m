@@ -1,141 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-72073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B9BCDCEE1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 18:27:14 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC8EBCDCFD1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 19:02:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E51A33010E69
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 17:27:12 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DD98D3034344
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Dec 2025 18:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485AF2F4A14;
-	Wed, 24 Dec 2025 17:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF54E33ADA7;
+	Wed, 24 Dec 2025 18:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hEbDHtur"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="IBKrHv6H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A781DF736;
-	Wed, 24 Dec 2025 17:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AE526D4C3
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Dec 2025 18:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766597230; cv=none; b=VvnwrAAGeCLn2Wnh29gI5tdxOrrsOadvSI8lODxuwchPDpUQzY/8Ep2C9FPNC34phylprttMiEfQoypfmFFBUyxMIVDBPSf1joHvlu1NEfjrI5ED/XYgEwWh8JEzl3YuXMTWqa3z2MqXbJ11LaZuYMz+ka9QfvANqoUnlrBG1yM=
+	t=1766599322; cv=none; b=prGa/wSRsR9H8tvhMe7rC57Klm5e1ZeEjF3bHsHmuDLQmnUBvqw2kCeZ6oPNhci3fr/Z28JGP/o8lGUj3jGaMPM2pc2dkFwDv5qjuOHfiB1bCdzGpCIi8ZNn3iI5wsr3832BwELzka8/4+FjiIi0rEOxkJxyxj+rCp/o7nr8n38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766597230; c=relaxed/simple;
-	bh=BdDdqihR6xqBfpXM60AqeMWUAY/5T77gZXYrsV7bqm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W0yyIIh+neVQ7xBi+5QpxfghEvMxRU4gXfEhJAUyTumG0hR2k+hGl6Ko9OEy5hXhIXJYyDwdRydyDR2sZDnpPF/+tgWLqTnvoQQGkw/v/2YDQ6C1u4ouej7zjKbu/aGq8DCXBrZLUKBYsCbnULesvvfT57iOwQyBSBJjSZgafj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hEbDHtur; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=t4DBCX4IjIfbtOcEZ5tm+Y855ePEDhpBMI0gdq2wPgU=; b=hEbDHturTlAlcug9OEyvI5iyZR
-	UeB/FQtxykwqwUdGwq5Kh3hK3PBOi4BC8zX9VW/KnA3Qz+LxsmCokNGdo32j+/+012Wa/Mzxv59mF
-	vpJ+wJRrf3auISbOfz3fsYe6EahdtSagjHscHzkNsyLC9/RgQJLVVjumavsMpLVm9yreJyp6GOmQV
-	Irb8K5ECZf/1hpZMrqE/zF968EOZHsU/Rpl189XRXCXHfilOmQ0jacwoml+sY0Srs6n4nfmhDKO0m
-	KmumQ2vrC5IGNGhkvWgdDzz4iJOWllqrui4OE7VxX0cU5KDoRgxX383ILign6xf2GBDIX598d6TmX
-	06u7AFOQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vYSdc-0000000EWEF-0fiN;
-	Wed, 24 Dec 2025 17:27:04 +0000
-Date: Wed, 24 Dec 2025 17:27:03 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/1] iomap: fix race between iomap_set_range_uptodate
- and folio_end_read
-Message-ID: <aUwiZ0Rurc8_aUnW@casper.infradead.org>
-References: <20250926002609.1302233-13-joannelkoong@gmail.com>
- <20251223223018.3295372-1-sashal@kernel.org>
- <20251223223018.3295372-2-sashal@kernel.org>
- <CAJnrk1ZiJVNg-k+CSY_VqJ3sQOW1mo6C-9QT0bzgLT4sKGGCyg@mail.gmail.com>
- <aUtLi37WQR07rJeS@casper.infradead.org>
- <aUwKPtahCaMipU83@laps>
+	s=arc-20240116; t=1766599322; c=relaxed/simple;
+	bh=ffr8BuiqR1HXDARhf4WRKjYaZRBbwe/ETGa9BNLzfkQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aGe08uY58rwJv+06yM2rvBbXyl5Sxj/h3I/ujwQosr/AuVCtyv0yC3zVuBvgdosLKX7aU7+EO+gEazuCvKR8aSISdWpZY1eANGaLb1bBmQdYpfUnYHV8xa3crJ3ZrDxKTfzWVzCRsudXrMtly6YlvFFeiSR7uQ5MvZRJau6qzp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=IBKrHv6H; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7c78d30649aso4030443a34.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Dec 2025 10:01:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1766599318; x=1767204118; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=31Zv6z83wAMfU9zE8KFoguUGkPYnxjQorySjBsQWmUo=;
+        b=IBKrHv6HrW2iA/iq3RIbQOS3QFkpkOIwhAtdCEdcMwpL5tkf9XNfhu/jGZJ5+A2jDM
+         3dzBNJI0bnbIq3ghv3WNUOkwTRPnieTWTGmH15E2lSsD41NK3reD8DmfknQzZ29whT9v
+         xUchTkByUW57AniMOcZKJtQCg5SUY8v7ETMyy57YJgUEIXrYl/qKYp8MTaW6gyBOeE5S
+         Y0ccCTPRus7SeeN+xw9iyXlbNOYQP1c9w6gORDBqwGTguIMFr7m6Dr2boEChFR2N8P3n
+         eJFV6kjDCWv1/AqKeeXd+CvvfQGzHGn1/6VHLLVSezC1O8OsbHSCoTT/TDiItGAylB/l
+         H9jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766599318; x=1767204118;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=31Zv6z83wAMfU9zE8KFoguUGkPYnxjQorySjBsQWmUo=;
+        b=lbaDit04jsNFdZy22bjtv0wN6yppZeqYIy9aQ+qzK5A+XuDWnWCJgpjTbpzzaJSC7/
+         mH8sjHUSj+7WKeoKYskwPJ7IoNADGC0TmaUPYbk9xLDNojwN8Zvd6ifPifbPlVnhXYCR
+         oes0vlNkDncL/guutac+TOnLWBUgT/wWw3/KEUKadFPXSLEE5he2DzEwA9ite63PCxmh
+         CaMz8BQniS0RzZznk9zTFr2xo1WQnWlxVuyORJExsEpt4+zI0JbcaARdmezwb0YWZP6C
+         AYH3gdRRs2XRPnKisBepYS7TCuCvTkxbFxZaZokKuPdXknOJ3Sff6sgx0uma+faTyc/+
+         CAJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVe57lpwkQUAOIbqDtPjMr3LnKaRP4Z+kgHIEqp14A5moF2Q1MClN4k+/HxIj+6gMjXd3ONcbgUgpzV1B0+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf1HcdjkWln58r70he1wrRUPfHt1jU5F7++C1gqcpvBACB6pbJ
+	P6yxLq7a6Ef+XeiufDf2Mx2K/FvqqPdZQ4/xQ+BrZwkE5Hr1wfm9tQhzgj47v+y1e+U=
+X-Gm-Gg: AY/fxX6ba9UYhXA03RC9ItNMeaXTLlMxgWdrVpN7RsIjqItY+hlV4Tmt99M7tBNFhWh
+	XekGNGH8L2sWvGlvEaQ1ml8UO3zFoQbUvOiWUcRMGvCD5CiMFpJTqs7HbKx4cukMf4QCDGCOT+o
+	nE8s5mpRUzY96T1L+jL02uY2ydr8vuS3dLKQHrIU6/eo2xiO+/tr+4OgolFiql9UG+aHRv4zYur
+	2+CpUPKUksLx5aFJPjQ8xtuEiP1wBNPekBnn2CVFOPTTFNOD5uLhTCRgoRGr16RrqCcJliYgE86
+	h9QGREXWOka1cyDW3sxjLG2WpJg4EOMu5BfjcFwH9UVYQKegwsz3sAxTOIm71f/u7cXFpx0JGjx
+	e4gFWxmQgJtbXZ6Aipb0tyOO98F47bo9tlO8scX15h9zgizusqCqT6ZlZNf9+nUKedl3HuCjA4R
+	nul/Bvmo81
+X-Google-Smtp-Source: AGHT+IGfEWIgxDSU+uANNE79e+2413xwqBZuFut4L1sp7glYjUDAwIPMADbg+343p4Lu36fqv0j2bg==
+X-Received: by 2002:a05:6830:2546:b0:7ca:ee2d:fd8d with SMTP id 46e09a7af769-7cc668bb2abmr9050695a34.9.1766599318375;
+        Wed, 24 Dec 2025 10:01:58 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cc66645494sm11921405a34.0.2025.12.24.10.01.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Dec 2025 10:01:57 -0800 (PST)
+Message-ID: <dc51a709-e404-4515-8023-3597c376aff5@kernel.dk>
+Date: Wed, 24 Dec 2025 11:01:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aUwKPtahCaMipU83@laps>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring: fix filename leak in __io_openat_prep()
+To: Prithvi Tambewagh <activprithvi@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
+ linux-fsdevel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org,
+ syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com, stable@vger.kernel.org
+References: <20251224164247.103336-1-activprithvi@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20251224164247.103336-1-activprithvi@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 24, 2025 at 10:43:58AM -0500, Sasha Levin wrote:
-> On Wed, Dec 24, 2025 at 02:10:19AM +0000, Matthew Wilcox wrote:
-> > So Sasha has produced a very convincingly worded writeup that's
-> > hallucinated.
+On 12/24/25 9:42 AM, Prithvi Tambewagh wrote:
+> __io_openat_prep() allocates a struct filename using getname(), but
+> it isn't freed in case the present file is installed in the fixed file
+> table and simultaneously, it has the flag O_CLOEXEC set in the
+> open->how.flags field.
 > 
-> And spent a few hours trying to figure it out so I could unblock testing, but
-> sure - thanks.
+> This is an erroneous condition, since for a file installed in the fixed
+> file table, it won't be installed in the normal file table, due to which
+> the file cannot support close on exec. Earlier, the code just returned
+> -EINVAL error code for this condition, however, the memory allocated for
+> that struct filename wasn't freed, resulting in a memory leak.
+> 
+> Hence, the case of file being installed in the fixed file table as well
+> as having O_CLOEXEC flag in open->how.flags set, is adressed by using
+> putname() to release the memory allocated to the struct filename, then
+> setting the field open->filename to NULL, and after that, returning
+> -EINVAL.
+> 
+> Reported-by: syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=00e61c43eb5e4740438f
+> Tested-by: syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Prithvi Tambewagh <activprithvi@gmail.com>
+> ---
+>  io_uring/openclose.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/io_uring/openclose.c b/io_uring/openclose.c
+> index bfeb91b31bba..fc190a3d8112 100644
+> --- a/io_uring/openclose.c
+> +++ b/io_uring/openclose.c
+> @@ -75,8 +75,11 @@ static int __io_openat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe
+>  	}
+>  
+>  	open->file_slot = READ_ONCE(sqe->file_index);
+> -	if (open->file_slot && (open->how.flags & O_CLOEXEC))
+> +	if (open->file_slot && (open->how.flags & O_CLOEXEC)) {
+> +		putname(open->filename);
+> +		open->filename = NULL;
+>  		return -EINVAL;
+> +	}
+>  
+>  	open->nofile = rlimit(RLIMIT_NOFILE);
+>  	req->flags |= REQ_F_NEED_CLEANUP;
 
-When you produce a convincingly worded writeup that's utterly wrong,
-and have a reputation for using AI, that's the kind of reaction you're
-going to get.
+You can probably fix it similarly by just having REQ_F_NEED_CLEANUP set
+earlier in the process, then everything that needs undoing will get
+undone as part of ending the request.
 
-> Here's the full log:
-> https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.18-rc7-13806-gb927546677c8/testrun/30618654/suite/log-parser-test/test/exception-warning-fsiomapbuffered-io-at-ifs_free/log
-> , happy to test any patches you might have.
-
-That's actually much more helpful because it removes your incorrect
-assumptions about what's going on.
-
- WARNING: fs/iomap/buffered-io.c:254 at ifs_free+0x130/0x148, CPU#0: msync04/406
-
-That's this one:
-
-        WARN_ON_ONCE(ifs_is_fully_uptodate(folio, ifs) !=
-                        folio_test_uptodate(folio));
-
-which would be fully explained by fuse calling folio_clear_uptodate()
-in fuse_send_write_pages().  I have come to believe that allowing
-filesystems to call folio_clear_uptodate() is just dangerous.  It
-causes assertions to fire all over the place (eg if the page is mapped
-into memory, the MM contains assertions that it must be uptodate).
-
-So I think the first step is simply to delete the folio_clear_uptodate()
-calls in fuse:
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 01bc894e9c2b..b819ede407d5 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1194,7 +1194,6 @@ static ssize_t fuse_send_write_pages(struct fuse_io_args *ia,
- 	struct fuse_file *ff = file->private_data;
- 	struct fuse_mount *fm = ff->fm;
- 	unsigned int offset, i;
--	bool short_write;
- 	int err;
- 
- 	for (i = 0; i < ap->num_folios; i++)
-@@ -1209,22 +1208,16 @@ static ssize_t fuse_send_write_pages(struct fuse_io_args *ia,
- 	if (!err && ia->write.out.size > count)
- 		err = -EIO;
- 
--	short_write = ia->write.out.size < count;
- 	offset = ap->descs[0].offset;
- 	count = ia->write.out.size;
- 	for (i = 0; i < ap->num_folios; i++) {
- 		struct folio *folio = ap->folios[i];
- 
--		if (err) {
--			folio_clear_uptodate(folio);
--		} else {
-+		if (!err) {
- 			if (count >= folio_size(folio) - offset)
- 				count -= folio_size(folio) - offset;
--			else {
--				if (short_write)
--					folio_clear_uptodate(folio);
-+			else
- 				count = 0;
--			}
- 			offset = 0;
- 		}
- 		if (ia->write.folio_locked && (i == ap->num_folios - 1))
+-- 
+Jens Axboe
 
