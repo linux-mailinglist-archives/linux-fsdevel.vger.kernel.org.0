@@ -1,126 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-72096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C740CDDE1E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Dec 2025 16:18:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE050CDE1F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Dec 2025 22:35:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 13A8F3022A9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Dec 2025 15:18:22 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2740B300B91B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Dec 2025 21:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D528132B99E;
-	Thu, 25 Dec 2025 15:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839EF26E175;
+	Thu, 25 Dec 2025 21:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cgCAOeS8"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="bO6Mv2iK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lerySeDS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C7D329390
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Dec 2025 15:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF341B652;
+	Thu, 25 Dec 2025 21:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766675899; cv=none; b=cp0qL/1MlnZ0USmeaTrxcYBhRwBwzSCrzN1FFPbiCQNUhDzl2IqsXe6W4CJf0uW6Qx2d6somrJbEb29FXdj7TAMpb+aCIfc0Qem+XBAaLHPn8Y6eidZw5UIpqsujnqFcmxBRWSPvMtdL16Cij69y0B74G9MfPYN+2lOAh5y6TY4=
+	t=1766698492; cv=none; b=tnTW/KEKInqGD6b6fepJBlBKXPCkPTHhfmdlYH4PiCCLx+DloaGob6ig/KN9P9IppJjOdNIIl7zdvg2oqvV0qCGsHN09YbVOSTZjFz2eIAeuRciX1Y6FPUYLyvBtKa+600ObmbsKwjUbumtu8M+Zt8lmLMgClrH4Ke6PbjoJLEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766675899; c=relaxed/simple;
-	bh=MbMBUpR7B2x4JyBu84ec/Nl4m/QIwV9QVVSShfb9dMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r5N7RuAwlI+EcolK6rYDXAr0akPXI8zjy1PMHnkjbdDgBSp5wqreAIay1YAXh9xsvpuuV3BGx6P8rZuZMsU2/9haO+SQqe87kRBUECM4Eg5P5mei7wVBszeIE57JoLJdM4bP5muoVBL/m8eNC1o+iRjAX95HNAk+g77lSh7XaLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cgCAOeS8; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-34ccbf37205so4904101a91.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Dec 2025 07:18:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766675897; x=1767280697; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qs6BJX7+RWUbYyZjj+cOPleo4iCRlFe1YsbACYZyhFI=;
-        b=cgCAOeS8Yvk+9LCKE/fHmRulgnlQzJIUyW0juEgc3OseKtBjGdBOSNyCXbkOC7COCt
-         Is33sTVt5+DDeP3u4VMRsm2qWaBgQAjIIusab5yL91HohBt4r9wTkAw4XJMQwRktM9jw
-         ukEeNSY/DqEsP50+iVRoWfWSb+1WfqlM+ogrLAar6LTqMICAjYXqsVxnNpN6EL/ljSTE
-         F0pm3q7kY6+xDulaoaeEx3rrJRtFh18F3eJfqTsLGVfmhfRRep8gp5ueYU5XUHCIpvp3
-         JIRn0z5/dCf3wMGoUaQlFbFsROQJNlhPpK6uILb+9ZWyevuqJSEpDVk8JU1wKmXhi06l
-         xO1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766675897; x=1767280697;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qs6BJX7+RWUbYyZjj+cOPleo4iCRlFe1YsbACYZyhFI=;
-        b=tyFUuyek1yjiOik/TXY5U6n1qK/mitazSkbfXrNwJxH8REjL8v1YHjKO/jAYheDla2
-         Zic2gR7hi6xaRs/dOCW6q+212e9mp2glka4q5G/ijYfO1MOw6/ybjTngMnKbcuooAFf2
-         6ZmSY/eKhjWqUYuK2sSmQyOu8xNl4ckrNuCGi+4CVtjbSHjhFMoTLxTOYjM8evT5wrJA
-         mtY04/X1RhUSczagIui/ywSvMaihnXvfdeAu80Q6n/QDmMmRl49UCNu+fV0hzbeRrZDY
-         Y0STksrRG7+9kZfxfUdbePGSdbRbH9Riqw+49ml1dFeNTu16bnngekT8hlTA1/iWyJxP
-         qBXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcj6vHJKn2fAmlfr1Ot+4WiK92rLf2qZk4I8YDyVjUruPo8sid5EiMd8ia9DM+3OmQ3E+XlzUnXSI9KS5T@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQLziknxvKKUSAycYNve7On2yJJXGyOtq6YIZa1y+9Lmz506OF
-	pA+OOM4hN43iYzK+J2RFJQTRfC5/0UjUjX5gV83Glfs5111i+zpNwN6OpqpeSmCD
-X-Gm-Gg: AY/fxX7/95jjtX5c3ZhMpK9KHtUstTMscZXjmGS0pXRYuyXgs+qSx7Iy2W9ui6S1IyK
-	S18QGBkRgSHxvJ7ZQZbFxG6/GAj7DaDYzfckSSrVAyAC4o+Jrsj7hUdhlcmOnjrU1jTvzo3ZAK/
-	bMr3OZalgJBXsUPCwYDOKPMnYpodrQJfio8E/AmB1/mkdTFFtolmOWnMQ0z0JPqqV1KR3pPwHak
-	vi/Av31/EpwL0pqakh49YwrHh6mqiBH4JuzWcyJTFMJmWv1k266avN+h6z0uKvQvDwkIUw/DUAs
-	Iil0DjKaM6s4zcu96S7V4CnD5aY+ONZtyN2wlGPVcwx+s09tF6XpECe9mD0Vj0WSDe98gjmm+2W
-	2WqK1SgG/zL0riNO1+lyX3068+URqnHqQwhV6of7IQyQ9pyF9H7gRZ8vw/ISAUWeEPUILCJ2MAI
-	SoEyThEBBwiIc=
-X-Google-Smtp-Source: AGHT+IFyYhem34TIt5JkWzwnSB53xq94ui6A4MQrPDy5SuIyfwhYp7CBOvr+9/vlj+sQXcZsrKKlUw==
-X-Received: by 2002:a17:90a:c888:b0:340:be44:dd0b with SMTP id 98e67ed59e1d1-34e921f582amr15972331a91.34.1766675896814;
-        Thu, 25 Dec 2025 07:18:16 -0800 (PST)
-Received: from inspiron ([111.125.235.126])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34e772ac06fsm9337558a91.11.2025.12.25.07.18.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Dec 2025 07:18:16 -0800 (PST)
-Date: Thu, 25 Dec 2025 20:48:08 +0530
-From: Prithvi <activprithvi@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, brauner@kernel.org, jack@suse.cz,
-	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	syzbot+00e61c43eb5e4740438f@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] io_uring: fix filename leak in __io_openat_prep()
-Message-ID: <20251225151808.lvpfdwqvcej4vxgm@inspiron>
-References: <20251225072829.44646-1-activprithvi@gmail.com>
- <176667533028.68806.11770987520631890583.b4-ty@kernel.dk>
+	s=arc-20240116; t=1766698492; c=relaxed/simple;
+	bh=na1cXMOr0cRlVWfUuTWQLqgLJvOO6+LPS22az9csOrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RWX/eiTYt652faYixNIGVVfyJQsynotH0hIW8g4sL1l2CSX3mv8h37GWuFMwwZOWuTL9zKL1bCCpVMA36ss5vc70ptIjAYUOjr/og4E9KcnMDOdNxt7aP7ZMA60x2lsS/znCrd4ASrd2NoARXnv6yXw0JMGIiOhK1ClY15ETBVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=bO6Mv2iK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lerySeDS; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A2714140008C;
+	Thu, 25 Dec 2025 16:34:48 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Thu, 25 Dec 2025 16:34:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1766698488;
+	 x=1766784888; bh=+g6bwxbARqsMNcA+6OZsSa+v4s2z0nckTmorSOHcRfI=; b=
+	bO6Mv2iKW384C134FCIlTmI/hiISzNQxPLFwwqwra2oWPjZ03SIWB6YcArROmVJ3
+	WR6u0ADvNm5nBdHQEqBRC6xUsQKUohlOUqvOBrUQeWB9xpWX8xMF1x0562yG9iLJ
+	70u9sTQ3Gk3uWOno2A/qxH0JAV4SHoxrglqdyxC7/M5rxnf7ghFqpNCMumYYD+7t
+	uM58fkNxtuD6NoA/NyEI11EN5HCZ9sj1jLSEC/ztJofXR5fXGcqCo60xYw2UxBAs
+	jdxL5h9MaJKKqH0N+xpx2Pvk4yE+PVpeVLxqxff4Iv26nF7PYbtVusqd6uComHc8
+	56FIOXdbjZ9oq7zsCA7/Wg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1766698488; x=
+	1766784888; bh=+g6bwxbARqsMNcA+6OZsSa+v4s2z0nckTmorSOHcRfI=; b=l
+	erySeDS+7ULW3x3655gmylLjMlUoNruv6h+9F+CtqbhHD+75meAZXhgrI/X4G8At
+	GnMA8uIpncXTsmTcDCXYs2S2dMYdY/32AV5NI2sWUWjne64g0599tL1NyI/jZDPc
+	9T8/ts3mLLbPIyQpTvNINmqMbd67X5pJ4tMrber2OVYGl5UkB8TRXAqE5ahcSCup
+	QUIqsYOGXFKPuSiPnpDxVwik9LzVNSNwSOgha9EkaoPgHsOrz42IhMAVVYPGudmn
+	0MKTDqOkz3msX5jtEhExj8JI/SaI6wwi6BYDTSQLwmSMAiQboxyAbss63cPMKd+4
+	vMRGvJv0MieW0NHuTRWfQ==
+X-ME-Sender: <xms:-K1NacGKXdR2ITXw4ANZErddOcYHOhi4SobT4lcnNIDohJqZ-9ZDFQ>
+    <xme:-K1NaW2kCkT73NqyNugA9JVd5Y0oC-kon5tRAibOS7EO07CO8Ec0n9j85vi3LytSN
+    RKo9u5j-IGu-B8lfiMsXPhQn8rlLEcVCXd7JGQ34uDrupkzSDGh>
+X-ME-Received: <xmr:-K1NaWOt09c9xnSj8S7E9LbOn9i5l76Ei3hZy92XtSKp-TDKrdGk2Z1fcZgM04-CNbaifk9_VxrZmorL4wCikPdYlPt1KW6ds6zXmKrJ7mohENL3iVPV>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeiieeijecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhnugcu
+    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
+    htvghrnhephefhjeeujeelhedtheetfedvgfdtleffuedujefhheegudefvdfhheeuvedu
+    ueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
+    gvrhhnugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohephedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepkhhurghnghhkrghisehkhihlihhnohhsrdgtnhdprh
+    gtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhu
+    gidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehk
+    khegjeihgiesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:-K1Nad4eKMhtO4eHs7bt608IMCrkyYlCLbQ3mKmfip81sf-iuPAFHQ>
+    <xmx:-K1NaY3gsZO3xino8FxPNJCwYMCTPoJIM8z6sxztBWlAXffZiIichQ>
+    <xmx:-K1NaWyL6PHyVOtq5d2pp2LE2SLhGUge57vkvrb49HELTTc0mVFo6Q>
+    <xmx:-K1Naau_mWW-EJTIVIajTm0iKELVVH4Wg1hFxwIDBdlea3ww-He1xw>
+    <xmx:-K1NaQTE_Eq3REpXVL8g3JlxtJlzb43-NjcqnjnDjBnTHPToc-v27aBI>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 25 Dec 2025 16:34:47 -0500 (EST)
+Message-ID: <9f54caaa-1936-4a37-8046-0335e469935d@bsbernd.com>
+Date: Thu, 25 Dec 2025 22:34:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <176667533028.68806.11770987520631890583.b4-ty@kernel.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: show the io_uring mount option
+To: Kuang Kai <kuangkai@kylinos.cn>, miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kk47yx@gmail.com
+References: <20251225055021.42491-1-kuangkai@kylinos.cn>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20251225055021.42491-1-kuangkai@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 25, 2025 at 08:08:50AM -0700, Jens Axboe wrote:
-> 
-> On Thu, 25 Dec 2025 12:58:29 +0530, Prithvi Tambewagh wrote:
-> >  __io_openat_prep() allocates a struct filename using getname(). However,
-> > for the condition of the file being installed in the fixed file table as
-> > well as having O_CLOEXEC flag set, the function returns early. At that
-> > point, the request doesn't have REQ_F_NEED_CLEANUP flag set. Due to this,
-> > the memory for the newly allocated struct filename is not cleaned up,
-> > causing a memory leak.
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [1/1] io_uring: fix filename leak in __io_openat_prep()
->       commit: b14fad555302a2104948feaff70503b64c80ac01
-> 
-> Best regards,
-> -- 
-> Jens Axboe
-> 
-> 
-> 
 
-Thank you!
 
-Best Regards,
-Prithvi
+On 12/25/25 06:50, Kuang Kai wrote:
+> From: kuangkai <kuangkai@kylinos.cn>
+> 
+> mount with io_uring options will not work if the kernel parameter of /sys/module/fuse/parameters/enable_uring has not been set,
+> displaying this option can help confirm whether the fuse over io_uring function is enabled.
+
+The problem is that is io_uring is not a mount option, showing it as
+such would not be right. Maybe showing all FUSE_INIT parameters should
+be added in /sys?
+
+Thanks,
+Bernd
+
+> 
+> Signed-off-by: kuangkai <kuangkai@kylinos.cn>
+> ---
+>  fs/fuse/inode.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 21e04c394a80..190de3f29552 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -937,6 +937,11 @@ static int fuse_show_options(struct seq_file *m, struct dentry *root)
+>  		seq_puts(m, ",dax=inode");
+>  #endif
+>  
+> +#ifdef CONFIG_FUSE_IO_URING
+> +	if (fc->io_uring)
+> +		seq_puts(m, ",io_uring");
+> +#endif
+> +
+>  	return 0;
+>  }
+>  
+
 
