@@ -1,240 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-72079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB3EDCDD3E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Dec 2025 04:18:37 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A065ECDD47D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Dec 2025 05:05:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 165DD301CFA3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Dec 2025 03:18:37 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1581B302A122
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Dec 2025 04:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6168D2472A6;
-	Thu, 25 Dec 2025 03:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C3623F42D;
+	Thu, 25 Dec 2025 04:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l0wIROli"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="nT+xDUMz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25AC205E25;
-	Thu, 25 Dec 2025 03:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83B9215F7D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Dec 2025 04:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766632712; cv=none; b=ILsWu9Gk/8AupITuboVwJDNko/vdEfRUI26zWw1ofxfEH2eJiyrFXnMp61zh2q6EcNxGLPEywe9wyqIcD2ux/rOAliEbz83A15zRag4zR7dcY9/XEh9vYThSbnQe8lfdzOG7ImauKG14gXjQtSlfWj8CAQ+uZpJVE4HP8oTiYCQ=
+	t=1766635347; cv=none; b=I+LFDisM/1cTyYuofOsHQO0fjEkG7OSJrG3LF4UQhYzeTLeIEOv4zIjK1w4mSzqKSzboJ6QBwDbVT06f+OICeGLg43wtvT5u2SGhehd4w8T1bXEJPlqwxfD08ZyFM5qGM1ttKFu9MM3bB+Y4HRhtxCN88afXBkVLidDBJ1UZiRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766632712; c=relaxed/simple;
-	bh=UhH2roQaIORKlAWJx4LLpOinOzu1elW+yrcxpjEzyHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sxuViQs8ESiyLynm3HoBsiAB4/ppGolTAw1lVdAkKnM7/7XuR61BesoKKIFnXbOTj+8r9EFo4Cw+pup1P8PxbUGMlG7yLeFIl00vIQNDyfChyLFN2Y8KXVQDXW10x085kNUJUFwotDt9QewrSx1xjFMxRCGUREL4x9tLxJxEeMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l0wIROli; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1766632711; x=1798168711;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UhH2roQaIORKlAWJx4LLpOinOzu1elW+yrcxpjEzyHw=;
-  b=l0wIROliGdmvtANASumhPk7PD8KDkVein4hHj4kOSlEb6XdQOc2Pa6aB
-   ZJklowh2yaxtfUgaaljDrQxsvOcViaUzU09//HwQLOTMqUBhsTKaN8t51
-   0P0IVbTOvNW2NYoY6egPkU2/Gn61nHD0ejWtnjET08DVDCfsPBp/RkNxP
-   UUXHDnqXsQxl5SX0kTlzisZh/G2VPNkyDl/L90GeIAZuz1D8gAjtyzGgR
-   k1u3rsbTDqU6HzrlcD5RUxQ4SfQ9xlCGfxAhzu00pO97jjg/V/D90fIQi
-   RMVneORSNBUhfw5WPCmhTVRdFNrAdHH+s116sOUBGl3ClXnpdRlYTIWzB
-   g==;
-X-CSE-ConnectionGUID: /p587xHKTfmPkczJHL/lUg==
-X-CSE-MsgGUID: gT9A9KywRcKUmocBjhRZNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11652"; a="79813744"
-X-IronPort-AV: E=Sophos;i="6.21,175,1763452800"; 
-   d="scan'208";a="79813744"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Dec 2025 19:18:30 -0800
-X-CSE-ConnectionGUID: eil06ZHzQ6mCSWS3LVhJFg==
-X-CSE-MsgGUID: gL86m4FtSj+3r/t0CTxMvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,175,1763452800"; 
-   d="scan'208";a="200111036"
-Received: from lkp-server02.sh.intel.com (HELO dd3453e2b682) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 24 Dec 2025 19:18:27 -0800
-Received: from kbuild by dd3453e2b682 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vYbrs-000000003gt-3bWg;
-	Thu, 25 Dec 2025 03:18:24 +0000
-Date: Thu, 25 Dec 2025 11:17:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hongbo Li <lihongbo22@huawei.com>, hsiangkao@linux.alibaba.com,
-	chao@kernel.org, brauner@kernel.org, djwong@kernel.org,
-	amir73il@gmail.com, hch@lst.de
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	lihongbo22@huawei.com
-Subject: Re: [PATCH v11 05/10] erofs: support user-defined fingerprint name
-Message-ID: <202512251005.yZVSPUOm-lkp@intel.com>
-References: <20251224040932.496478-6-lihongbo22@huawei.com>
+	s=arc-20240116; t=1766635347; c=relaxed/simple;
+	bh=nYqU6zxgPk/qNiPgO4IThHn+KtwJOODMSqihM7UGYfE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=THuyVbcVpqlOAfu92u/DHAqGa5py7uulXxtaFx6zaIz5s2BEvE9bM+sz1ETyPh0fMlp4lIlRCdu+J7O0kS+4mDIgipTXqKzV+d89g+s/aDeQMhm+MVq1mERekctzUF1oitLcPLgF05mm6dX5f/I1qm2yYWW/IbWoWo0AQeLzeV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=nT+xDUMz; arc=none smtp.client-ip=209.85.128.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-78fc7892214so37316967b3.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Dec 2025 20:02:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1766635344; x=1767240144; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=aqWWn8IKcWEWWUsA5WL517uii5ea/a/1krkJG2emav8=;
+        b=nT+xDUMztcAQOL4J60VrMKwMcDBGxZUtCoxVoVTuff6zK+3JxSSHh/M7+VW+vS7ozR
+         Fhwa5jUwk8NSKXk4hSaWOsPbl1OExxp22vwcvlXAbujPwP6xky9k5T9lV0IrK5horgNh
+         4EMgocm+pH+nfqjxN54E3umeeezVxGTP7+vJwWa/N9gWKcqaiCnVdzrwzQ2uzOfIRBHk
+         A0DxRtiZVBstVW+XxzOllf1gAl06ODBAOVfos9FCl7eC0SsGHvu9HzzfJehk2OdbUvbc
+         ZasfOLbBEisC61GfQeTID7fI5nPvGhGjOMwJtRUHbcmjec7rZc1aP0Gec5bZ0X27U4Hn
+         tkng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766635344; x=1767240144;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aqWWn8IKcWEWWUsA5WL517uii5ea/a/1krkJG2emav8=;
+        b=kzE35qHTRq1lFQhEIm7TmpD3ayQ2xj0oMDGAw2Vek/Gzyxe8LMC9rwQQTEYG5hOtCR
+         dlIsLZl90LlyFXciEHEYTs8ZApPJ5tQ7wUvtdJClkQTZqe0HBGrjPaDo+z8dW0aHdz3Q
+         Hfq0Czeg84xSFuVyxEpEF46d8r5l0tt5EkLNDYBcMOVk6GTs+XLd5ZBv+KQmmcC5ZaWr
+         eqJKPjCEuZypmoC8Qm2yYfevQ2OdnFHQSy2+n8WPe7KSgG302RkL2gGAW13e4VkYqHtW
+         uI8Ga6hQwQ0nCIAfkPuw53RXmH7jRAaHOICvhKHQMQLL1jM63Y/y99ZuslsurQJcseLa
+         SGog==
+X-Forwarded-Encrypted: i=1; AJvYcCXljIffMsw/NaKk6d43hWwzipnBXunKSkJVE8hBDdzk0tzn+mlEiqTiqOE7ddEBjpuLc4EcMjPJquXAroD9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyZxFyzcqFuFRWBptpM0g8wy2uA92DkfagQdLrj8veK8jH+pEW
+	TNic9Bfx1DHyOvf6KYGKQ8E2niQ2M8D8xvo8mx/YbN0MXoZ40gDpS85KzIW/msttmFY=
+X-Gm-Gg: AY/fxX6NK/iqtDdNQu2r3GqHOWS3LTIhW1YgvfolOH+lYwBZxI2GnfE5dwlW0VPcmLl
+	yiRQVklfFBSsg8xol0t2NjhcTu96tuJOE+G6e+jXZGfPHGjLzNhAfhKD/Ijlpwzj+EIPr9GrCIB
+	HHhTGhlkXooVePHsIeS5D9h5/zi25tE1VM3aIfQ6g9BGYi9qlFCJATT2oJWQexWaoPVBQpL/9O2
+	WwZp5v+Y6Uo6hC4icGTDBYrzNeJqR0P/XOvPqxP5EH0+VvQ/ygO/9XzyQu9WjNGrSKxTJxok8al
+	SGpIx+FhwYJv/XOBUDcPHjLssiVHGfqCy0PKxnq32aaLB17yECboCpZEBZwHFuQrA21MdxjqbHf
+	crxpHiSwPs7TMvWv43yZvunuiBTKr6gNFE7aOjucNTxJyJPyy8Hq/8RPn48NW4dNTsF0yQhWjkG
+	At8lCWqHbsQjlo7PNFTYMfzarB2SBlzVM5u4MpMqYgML9YdqrXcu0/Lp1wr4v0zMUK8+ZZ/iddX
+	mpnQODDQldCwiBLFTFjIWtQux0vXxqAvvM8764sUz0ZkePR
+X-Google-Smtp-Source: AGHT+IG8Y+cwmZ8zjr0cdykEcowVV5K3/d/B9M8WUNdSXDLtJBjo9H1y8Leh6k68q6gPgbRZeOYKOQ==
+X-Received: by 2002:a53:b84c:0:b0:640:ddf5:254f with SMTP id 956f58d0204a3-6466a8ac06dmr12338597d50.62.1766635343670;
+        Wed, 24 Dec 2025 20:02:23 -0800 (PST)
+Received: from ?IPv6:2600:1700:6476:1430:d657:3387:9f65:590a? ([2600:1700:6476:1430:d657:3387:9f65:590a])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78fb43790dcsm70987117b3.11.2025.12.24.20.02.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Dec 2025 20:02:23 -0800 (PST)
+Message-ID: <63e3ff1595ebd27e9835ae7057204b7eef0c1254.camel@dubeyko.com>
+Subject: Re: [PATCH v2 1/2] hfsplus: skip node 0 in hfs_bmap_alloc
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Shardul Bankar <shardul.b@mpiricsoftware.com>, zippel@linux-m68k.org, 
+	linux-fsdevel@vger.kernel.org, glaubitz@physik.fu-berlin.de,
+ frank.li@vivo.com
+Cc: akpm@osdl.org, linux-kernel@vger.kernel.org, janak@mpiricsoftware.com, 
+	shardulsb08@gmail.com, stable@vger.kernel.org, 
+	syzbot+1c8ff72d0cd8a50dfeaa@syzkaller.appspotmail.com
+Date: Wed, 24 Dec 2025 20:02:21 -0800
+In-Reply-To: <20251224151347.1861896-2-shardul.b@mpiricsoftware.com>
+References: <20251224151347.1861896-1-shardul.b@mpiricsoftware.com>
+	 <20251224151347.1861896-2-shardul.b@mpiricsoftware.com>
+Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.2 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251224040932.496478-6-lihongbo22@huawei.com>
 
-Hi Hongbo,
+On Wed, 2025-12-24 at 20:43 +0530, Shardul Bankar wrote:
+> Node 0 is the header node in HFS+ B-trees and should always be
+> allocated.
+> However, if a filesystem image has node 0's bitmap bit unset (e.g.,
+> due to
+> corruption or a buggy image generator), hfs_bmap_alloc() will find
+> node 0
+> as free and attempt to allocate it. This causes a conflict because
+> node 0
+> already exists as the header node, leading to a WARN_ON(1) in
+> hfs_bnode_create() when the node is found already hashed.
+>=20
+> This issue can occur with syzkaller-generated HFS+ images or
+> corrupted
+> real-world filesystems. Add a guard in hfs_bmap_alloc() to skip node
+> 0
+> during allocation, providing defense-in-depth against such
+> corruption.
+>=20
+> Reported-by: syzbot+1c8ff72d0cd8a50dfeaa@syzkaller.appspotmail.com
+> Link: https://syzkaller.appspot.com/bug?extid=3D1c8ff72d0cd8a50dfeaa
+> Signed-off-by: Shardul Bankar <shardul.b@mpiricsoftware.com>
+> ---
+> =C2=A0v2:
+> =C2=A0- Keep the node-0 allocation guard as targeted hardening for
+> corrupted images.
+> =C2=A0fs/hfsplus/btree.c | 3 +++
+> =C2=A01 file changed, 3 insertions(+)
+>=20
+> diff --git a/fs/hfsplus/btree.c b/fs/hfsplus/btree.c
+> index 229f25dc7c49..60985f449450 100644
+> --- a/fs/hfsplus/btree.c
+> +++ b/fs/hfsplus/btree.c
+> @@ -411,6 +411,9 @@ struct hfs_bnode *hfs_bmap_alloc(struct hfs_btree
+> *tree)
+> =C2=A0			if (byte !=3D 0xff) {
+> =C2=A0				for (m =3D 0x80, i =3D 0; i < 8; m >>=3D
+> 1, i++) {
+> =C2=A0					if (!(byte & m)) {
+> +						/* Skip node 0
+> (header node, always allocated) */
+> +						if (idx =3D=3D 0 && i =3D=3D
+> 0)
+> +							continue;
 
-kernel test robot noticed the following build errors:
+I think that it's not completely correct fix. First of all, we have
+bitmap corruption. It means that we need to complain about it and
+return error code. Logic cannot continue to work normally because we
+cannot rely on bitmap anymore. It could contain multiple corrupted
+bits.
 
-[auto build test ERROR on xiang-erofs/dev-test]
-[also build test ERROR on xiang-erofs/dev xiang-erofs/fixes brauner-vfs/vfs.all linus/master v6.19-rc2 next-20251219]
-[cannot apply to mszeredi-fuse/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Technically speaking, we need to check that bitmap is corrupted when we
+create b-trees during mount operation (we can define it for node 0 but
+it could be tricky for other nodes). If we have detected the
+corruption, then we can recommend to run FSCK tool and we can mount in
+READ-ONLY mode.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hongbo-Li/iomap-stash-iomap-read-ctx-in-the-private-field-of-iomap_iter/20251224-122950
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
-patch link:    https://lore.kernel.org/r/20251224040932.496478-6-lihongbo22%40huawei.com
-patch subject: [PATCH v11 05/10] erofs: support user-defined fingerprint name
-config: nios2-randconfig-r071-20251225 (https://download.01.org/0day-ci/archive/20251225/202512251005.yZVSPUOm-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251225/202512251005.yZVSPUOm-lkp@intel.com/reproduce)
+I think we can check the bitmap when we are trying to open/create not a
+new node but already existing in the tree. I mean if we mounted the
+volume this b-tree containing several nodes on the volume, we can check
+that bitmap contains the set bit for these nodes. And if the bit is not
+there, then it's clear sign of bitmap corruption. Currently, I haven't
+idea how to check corrupted bits that showing presence of not existing
+nodes in the b-tree. But I suppose that we can do some check in
+driver's logic. Finally, if we detected corruption, then we should
+complain about the corruption. Ideally, it will be good to remount in
+READ-ONLY mode.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202512251005.yZVSPUOm-lkp@intel.com/
+Does it make sense to you?
 
-All errors (new ones prefixed by >>):
+Thanks,
+Slava.=20
 
-   fs/erofs/super.c: In function 'erofs_read_superblock':
->> fs/erofs/super.c:302:20: error: 'struct erofs_sb_info' has no member named 'ishare_xattr_pfx'
-     302 |                 sbi->ishare_xattr_pfx =
-         |                    ^~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for CAN_DEV
-   Depends on [n]: NETDEVICES [=n] && CAN [=m]
-   Selected by [m]:
-   - CAN [=m] && NET [=y]
-
-
-vim +302 fs/erofs/super.c
-
-   263	
-   264	static int erofs_read_superblock(struct super_block *sb)
-   265	{
-   266		struct erofs_sb_info *sbi = EROFS_SB(sb);
-   267		struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
-   268		struct erofs_super_block *dsb;
-   269		void *data;
-   270		int ret;
-   271	
-   272		data = erofs_read_metabuf(&buf, sb, 0, false);
-   273		if (IS_ERR(data)) {
-   274			erofs_err(sb, "cannot read erofs superblock");
-   275			return PTR_ERR(data);
-   276		}
-   277	
-   278		dsb = (struct erofs_super_block *)(data + EROFS_SUPER_OFFSET);
-   279		ret = -EINVAL;
-   280		if (le32_to_cpu(dsb->magic) != EROFS_SUPER_MAGIC_V1) {
-   281			erofs_err(sb, "cannot find valid erofs superblock");
-   282			goto out;
-   283		}
-   284	
-   285		sbi->blkszbits = dsb->blkszbits;
-   286		if (sbi->blkszbits < 9 || sbi->blkszbits > PAGE_SHIFT) {
-   287			erofs_err(sb, "blkszbits %u isn't supported", sbi->blkszbits);
-   288			goto out;
-   289		}
-   290		if (dsb->dirblkbits) {
-   291			erofs_err(sb, "dirblkbits %u isn't supported", dsb->dirblkbits);
-   292			goto out;
-   293		}
-   294	
-   295		sbi->feature_compat = le32_to_cpu(dsb->feature_compat);
-   296		if (erofs_sb_has_sb_chksum(sbi)) {
-   297			ret = erofs_superblock_csum_verify(sb, data);
-   298			if (ret)
-   299				goto out;
-   300		}
-   301		if (erofs_sb_has_ishare_xattrs(sbi))
- > 302			sbi->ishare_xattr_pfx =
-   303				dsb->ishare_xattr_prefix_id & EROFS_XATTR_LONG_PREFIX_MASK;
-   304	
-   305		ret = -EINVAL;
-   306		sbi->feature_incompat = le32_to_cpu(dsb->feature_incompat);
-   307		if (sbi->feature_incompat & ~EROFS_ALL_FEATURE_INCOMPAT) {
-   308			erofs_err(sb, "unidentified incompatible feature %x, please upgrade kernel",
-   309				  sbi->feature_incompat & ~EROFS_ALL_FEATURE_INCOMPAT);
-   310			goto out;
-   311		}
-   312	
-   313		sbi->sb_size = 128 + dsb->sb_extslots * EROFS_SB_EXTSLOT_SIZE;
-   314		if (sbi->sb_size > PAGE_SIZE - EROFS_SUPER_OFFSET) {
-   315			erofs_err(sb, "invalid sb_extslots %u (more than a fs block)",
-   316				  sbi->sb_size);
-   317			goto out;
-   318		}
-   319		sbi->dif0.blocks = le32_to_cpu(dsb->blocks_lo);
-   320		sbi->meta_blkaddr = le32_to_cpu(dsb->meta_blkaddr);
-   321	#ifdef CONFIG_EROFS_FS_XATTR
-   322		sbi->xattr_blkaddr = le32_to_cpu(dsb->xattr_blkaddr);
-   323		sbi->xattr_prefix_start = le32_to_cpu(dsb->xattr_prefix_start);
-   324		sbi->xattr_prefix_count = dsb->xattr_prefix_count;
-   325		sbi->xattr_filter_reserved = dsb->xattr_filter_reserved;
-   326	#endif
-   327		sbi->islotbits = ilog2(sizeof(struct erofs_inode_compact));
-   328		if (erofs_sb_has_48bit(sbi) && dsb->rootnid_8b) {
-   329			sbi->root_nid = le64_to_cpu(dsb->rootnid_8b);
-   330			sbi->dif0.blocks = sbi->dif0.blocks |
-   331					((u64)le16_to_cpu(dsb->rb.blocks_hi) << 32);
-   332		} else {
-   333			sbi->root_nid = le16_to_cpu(dsb->rb.rootnid_2b);
-   334		}
-   335		sbi->packed_nid = le64_to_cpu(dsb->packed_nid);
-   336		if (erofs_sb_has_metabox(sbi)) {
-   337			if (sbi->sb_size <= offsetof(struct erofs_super_block,
-   338						     metabox_nid))
-   339				return -EFSCORRUPTED;
-   340			sbi->metabox_nid = le64_to_cpu(dsb->metabox_nid);
-   341			if (sbi->metabox_nid & BIT_ULL(EROFS_DIRENT_NID_METABOX_BIT))
-   342				return -EFSCORRUPTED;	/* self-loop detection */
-   343		}
-   344		sbi->inos = le64_to_cpu(dsb->inos);
-   345	
-   346		sbi->epoch = (s64)le64_to_cpu(dsb->epoch);
-   347		sbi->fixed_nsec = le32_to_cpu(dsb->fixed_nsec);
-   348		super_set_uuid(sb, (void *)dsb->uuid, sizeof(dsb->uuid));
-   349	
-   350		if (dsb->volume_name[0]) {
-   351			sbi->volume_name = kstrndup(dsb->volume_name,
-   352						    sizeof(dsb->volume_name), GFP_KERNEL);
-   353			if (!sbi->volume_name)
-   354				return -ENOMEM;
-   355		}
-   356	
-   357		/* parse on-disk compression configurations */
-   358		ret = z_erofs_parse_cfgs(sb, dsb);
-   359		if (ret < 0)
-   360			goto out;
-   361	
-   362		ret = erofs_scan_devices(sb, dsb);
-   363	
-   364		if (erofs_sb_has_48bit(sbi))
-   365			erofs_info(sb, "EXPERIMENTAL 48-bit layout support in use. Use at your own risk!");
-   366		if (erofs_sb_has_metabox(sbi))
-   367			erofs_info(sb, "EXPERIMENTAL metadata compression support in use. Use at your own risk!");
-   368		if (erofs_is_fscache_mode(sb))
-   369			erofs_info(sb, "[deprecated] fscache-based on-demand read feature in use. Use at your own risk!");
-   370	out:
-   371		erofs_put_metabuf(&buf);
-   372		return ret;
-   373	}
-   374	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> =C2=A0						idx +=3D i;
+> =C2=A0						data[off] |=3D m;
+> =C2=A0						set_page_dirty(*page
+> p);
 
