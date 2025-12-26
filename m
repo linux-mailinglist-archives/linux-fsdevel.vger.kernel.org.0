@@ -1,242 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-72122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BC2CDF04F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 22:14:51 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AEDCDF249
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Dec 2025 00:58:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0971A3008885
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 21:14:24 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 84E3C300789A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 23:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4737830F554;
-	Fri, 26 Dec 2025 21:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AA128980A;
+	Fri, 26 Dec 2025 23:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="k6Op2MFL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="p9hD+4bO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020116.outbound.protection.outlook.com [52.101.195.116])
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EFB30EF92;
-	Fri, 26 Dec 2025 21:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766783660; cv=fail; b=lQJ5t/C0y9DFrWvXQl389EuzMVRyjdMqnAyfjXwxWs6tsGhBbdcpSPQUwCZ+YBxrt3ZoGCQd0Gwr0DBXBHq0BK26jQJlsLV8f7yc0qStJT2JOSkjMbysYXI1mmMcIazoiSuFntY508fTkBVBYyT2XhDBDO5FlITR+EiFzG1XcoI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766783660; c=relaxed/simple;
-	bh=uc7IGK98MsEu9NKftWuEHMpgxe54L3vPBWhrzJR08oQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=m89RKKhon5kTjBsIiVnv5EKWzcjXR7toKPwUEPTuI6c9zaEk4VJLcE7j3H6Cu/2h+VKzuYVSmgXgK73O1gskoo4Vog/P4I3xrFdvajwcZLeJ3NRjk1aJ8C4Q3Kq4j0lNbbSms7PIUvZo/FhNCvRhfeAErntunE64S0vCpg26Ehs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.195.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lF9AP9dyMsSYf4OCDOmLldQPQkVcZ3BUh7imKS+6iOwvkLwVAnaKUJoX/jhJNqGA7ykZ1zY+IZjZQDVeWFiIK4xi2Z0TSW9Mzypz5AzZs2XEWJ2/+7W/HLJ050gYF+0a7Gt54hH7YMcZPV7Sng2CS4XgCDZe7VEeVb7YUKOsRWIaFcSLcRFcwPjeETK3fxj5fFxtaNESN/7AVP/8ycjcWQXvZOc2Tac0zS1SLVOTH4DRPtetI0GJazGQ0uI2htS/lChz0xnRUmeJ7PjDsxgSrO/1TxIqFgGqY7nbjyuHeuHgNgiShpxZsVtxJG+o9TB1aHWuG+ZPAX+Memby71DlfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u1YAkOdlA9tW8sphY8sJ5wnRTrUwR70pcDi3PJ4+QN0=;
- b=JwHdeU6curHswQ3UfOud+4FFAurwnB2vG4G9/UHAAoQFu4ZLqnSc3jLLnGgYMDx23OrXBdZhaulnM3amvdRBtWv3vc3zFPgm2rJ+QfJ38Gc+UBZ6zKdhSldXx6c7L5jBmBq50s0w/AoAmb+c+9N/SVYxf4NyDcLqPqjMs9hbBnLewDcduQIRdgLxqD8tTbZtL4vjHVdwODU0jY0aYUqKgWvwcsOWOmraL0wdD/Y+PZVAWSk7WUoVfRoOZMIzUyA/pAZ6vycnaWuJOZVC4jiE+PY7RK6bk3iXtjgLB2iQkhqVmDaERL5tkUxIqN1fc7gO7pPa813NX8dwR1i7HcoCFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
- dkim=pass header.d=atomlin.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=atomlin.com;
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
- by LO0P123MB4236.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:15a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9456.12; Fri, 26 Dec
- 2025 21:14:16 +0000
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf%5]) with mapi id 15.20.9456.008; Fri, 26 Dec 2025
- 21:14:16 +0000
-From: Aaron Tomlin <atomlin@atomlin.com>
-To: oleg@redhat.com,
-	akpm@linux-foundation.org,
-	gregkh@linuxfoundation.org,
-	david@kernel.org,
-	brauner@kernel.org,
-	mingo@kernel.org
-Cc: sean@ashe.io,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [v2 PATCH 1/1] fs/proc: Expose mm_cpumask in /proc/[pid]/status
-Date: Fri, 26 Dec 2025 16:14:07 -0500
-Message-ID: <20251226211407.2252573-2-atomlin@atomlin.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251226211407.2252573-1-atomlin@atomlin.com>
-References: <20251226211407.2252573-1-atomlin@atomlin.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BN9PR03CA0081.namprd03.prod.outlook.com
- (2603:10b6:408:fc::26) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:70::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE36F4F1;
+	Fri, 26 Dec 2025 23:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1766793500; cv=none; b=Nsa+xUkQ0O8vZW6EYxqQ5uqGllbZNk/RqGSCj/1PiD73LNUYLnk9p3zflF6bMCm2ZgyRiQDeVbu1toDvRJXH7tzRzGgoQif+blOZ164fxSfLHBKMf13DOkRgpEGMWLIsy9suaF6xF6t4XpyBUTcPeWPYthwnEBCUsC1ztGZoKzk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1766793500; c=relaxed/simple;
+	bh=zRLmVnYeRSFcZlCjgIszfhNKuakh2j2GEY/j42RfBtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CU1rTitiqwRVIVx3gqkviBf86lKIW/hyVcFgfAZY0HhSFUrQy0Mmoc0OMjHbyCOk+1hFAiTayWKx6T9ESk4Pis86f+Aq7bP6P+qr3ZbDWx9lIbOlqOYdUzqHLudiCopxDCxpl6pPC3/DetD8hDA6uEJC0yFJtb8Sh4ayr/eFTj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=k6Op2MFL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=p9hD+4bO; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=themaw.net
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id BBA217A006A;
+	Fri, 26 Dec 2025 18:58:16 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Fri, 26 Dec 2025 18:58:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1766793496;
+	 x=1766879896; bh=d+03CflXQCI16mDu2/y/gDZidxMLNdelGVGnEAD9RCg=; b=
+	k6Op2MFLM4gTA/hYHX8xWwC6csvtWfeQzuo3FxV0uwHsfyJaPTagjg0leUTBf6Bc
+	KMvnQhO5tgZTjuwcL0V8ozh7L+aswrsxcfAezz0piakssxAyYbOSKMuFaagpdokL
+	oWmzxHfWcqEJQrBljVza4Xtq31bVI7mnVAh7/zYDyvsT7IHZ2/XKw9u5PqJx0tdi
+	RXfs7a3raRtuMEe0gEuPY2pDxiUESDufsV2oXhmZ/IFeOsztumxPyG/Nxql86Q9t
+	+q0ljC+rq3uhPghMUXSNNKGNKxpGONvnTNdc1HZ5/Xqb+o14M8uMMFMht7MlZMWi
+	CCSv5V4LTUtlXNPmmg4COA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1766793496; x=
+	1766879896; bh=d+03CflXQCI16mDu2/y/gDZidxMLNdelGVGnEAD9RCg=; b=p
+	9hD+4bOW1P0R6kx6R7wpEgJqEKLeyCO/Hvd2emu7fe1dNogRyIiJoauD6ZB3eoZG
+	+IvlPaxtuv4MHNManXhzx8uvPyGF0P4gEXA8CwDZeAvlMhxa184z6KYR3H607CMU
+	NHqPO1Q0/AQRQpL8u3dvqsWtiEVcSWE1hGA9cH+E6HGsC8gwJexQ6WgMua/OqTcC
+	Fl7BqRpx6Tf8Aw2YwQGBfHStX+xNANSwUQ3U3Wf3SKH+JntP+EGZij6INrD2cJTm
+	oqsFrWZBgCQ4DrkFoCjBmPUFa5Fs6Y48RyhFqxQPKPRZBcUPgy+VZoSfCuCk6JqH
+	ipUxrCuF1Q3lLkRwVOkvg==
+X-ME-Sender: <xms:GCFPaZ0iGGK9QOPUDzuXWLg9WD04TCsJ-bYGSL2bJdVwD6eAgpFtCA>
+    <xme:GCFPabDpSxGnCBFRkRYwC641UVXHpLVF4xK_-PG4v4GQ6Jty4FXx3o9tTbDVZeeX0
+    04A1JhWugyWFqxnlJzZHxZ85c47eqjZONphcLHtUOcwmXSw>
+X-ME-Received: <xmr:GCFPaY4Wj60QmCx0e991QVxEFEnW4cubU55yycJq3N8XprdNA9WeUW9yvKWOF8gbOsu1IjWEzJy4bXXGUjzSmd7_tWwNg5HoCPZGOSEq1rNPHsLMmwwCTWs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeileekgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepkfgrnhcumfgv
+    nhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpeefke
+    fhgeeigeetleffgeelteejkeduvdfhheejhfehueeitdehuefhkeeukeffheenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthh
+    gvmhgrfidrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhr
+    tghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughjfi
+    honhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgvgihtgeesvhhg
+    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdigfhhssehvghgvrh
+    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgthheslhhsthdruggvpdhrtghpthht
+    oheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:GCFPacIy5mEeyvjbNoV7ZWO9F7VJkKetvs5LJfkW5eso3pCRDQLC-Q>
+    <xmx:GCFPaZvEuXLsOThMxfRsEu6NNnTX1q2G6xZVDMcqgiboOVh1O7ojOg>
+    <xmx:GCFPaTJmT_eKJX-RLJfZ9dfRRrog9xWy8NqzFSpM-Lde2SmEMLyaaQ>
+    <xmx:GCFPaa9DbHwnAu0BB27tmYpZ3AKkjFpaYrNK9fegOEGJadkTK2oxJA>
+    <xmx:GCFPadQJBATT6J_uMz_91-7NUjc67ViIyq3szfL2LuykLf9rlD7dMspr>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 26 Dec 2025 18:58:14 -0500 (EST)
+Message-ID: <284c79aa-7088-40a5-a6f5-31de8404e62f@themaw.net>
+Date: Sat, 27 Dec 2025 07:58:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|LO0P123MB4236:EE_
-X-MS-Office365-Filtering-Correlation-Id: b3282f15-800a-4bcb-5d1d-08de44c3b9d7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?mkrxTGXMmLCCMvez6o3B0faSoJufaRyDpV76yxL1hFTxr71lQUsQ2BlyAQnw?=
- =?us-ascii?Q?mRQUQhyNI52n3mPMtELNLHxX4uKk+oJL56Hba1ymnQjj6GSB/Wtpb+4v6ox3?=
- =?us-ascii?Q?ys918/heKbuD+TGeXY32h+Sb9yIq9PrH51oNGs1bHCdG3XA8Gahr2ZmobaAV?=
- =?us-ascii?Q?nEo9NlGCS2RDYAxQ1wntieSQkP7ivkRPkjd/UFggazBEqeu3TalU8xPN/i62?=
- =?us-ascii?Q?jp5gJZWItD7gzZwtwNJjbPzNvGAwynwuciyINk4mLyNfUlm3LZN0Ga+aNipH?=
- =?us-ascii?Q?xOlqxc3kXCmYQ0P6IVooCKVEkBL9SaNhdvFPG+khY77WgnvSYthoSQH4Jcel?=
- =?us-ascii?Q?xT16KyMddruMa5JCtpVHhwRx90wv9bFZSkjtodHUUHtEyxhjF8DZZPPhYGK8?=
- =?us-ascii?Q?QYo5bMHZDrqOkqz0w0Z44WwvXcjaa3RTBKdP6CcKfe2LZo1CZqe4QugXjTq9?=
- =?us-ascii?Q?OHV6odoObT1TtU2BrT9bltmMepzWNpQ5Hjp/kdKKfjJtbApxh7oqD8mHuDIJ?=
- =?us-ascii?Q?W7tW+vlPE4OTLphzl6wODyo9cRkzcIlL9pZMbjbtIp6ihXhp2XlOAwFkjUoJ?=
- =?us-ascii?Q?mznGAIL0+DQxSKmfkSPkoE++iZ+U4suaNRijRbFqP9r1bfi4NH5A6GttVhKt?=
- =?us-ascii?Q?DgeZxphWq3IqQmiGZVy1dY55YicWYb1OTA1IAYTEEdFmSL1tUHXmRAC+ZLt6?=
- =?us-ascii?Q?xQQS3Q1gEBDmOf2F6K0dWecvdHWNxopbSGLZNV3n6ZagOGlaN3juB6FL+bXE?=
- =?us-ascii?Q?s3CxZbBt4rPJSKTp5oW/NNlErDm4IoZ+y1kFI0NTr6BCztQdPCuAH/3G/+D2?=
- =?us-ascii?Q?6CkjT6Z19pNG+vpcTSiR6n3IowGLGTyxBXD2eVv9iLJsP9cJToC7L/ZYOF9k?=
- =?us-ascii?Q?D+eeLNHTbDxPQmB7+ESA5/Zv/osvKz5hTuoPNQFeRnb9PiLkLPH/Ks8ox2mQ?=
- =?us-ascii?Q?UZGPm37UET7BTB1NokRx1olc0lYbG8xWtfdO3mSTxi6ARJNLOXJ93zBDzgWx?=
- =?us-ascii?Q?xz0VDSAVCWgmujtTOzILRUiWOguwwN3oOuhBK8AGNCPA9XZEthcpcfv2z9q5?=
- =?us-ascii?Q?j4UzWi7gZk7S4zRBKyI7XghixsvhDOEcIdr83pYUEJWf3WpMHfMC/zIwkOrV?=
- =?us-ascii?Q?BnPPDxBKNAX9Z+nqzjG5RzD7YziPs7oXJHmgxNbWNJSc4SZc8zZ7u8ZU3KzH?=
- =?us-ascii?Q?jEJ6lJFs1nFWUJpAyVsr5scnjN0yNYi7oH36idYiWVMM58ZRY9wh0z1vBuDg?=
- =?us-ascii?Q?Q1b4fLtnbX9HQXBMC+yZdcpzNSNjcUOHt2zPrDXYQjZRFyf6OVmMZb6ni6v3?=
- =?us-ascii?Q?98+IieX4bdXX5MRkolAh0CXVKMC8DJNvwwj61mbGc8b1N+MdfYu1gVqAxXno?=
- =?us-ascii?Q?A1FKljU+SxZNZSIffh/64OvRxh9hESLc2l771Mlkrh/CNmYn9+dU1Fcdx9bn?=
- =?us-ascii?Q?oUy7k5BgVe1rH4Pc27rr+FRsD4PZUCAg?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qPAJ6bTWfQajy0CZhXO6FoL/5scwmEzY0IH/5Fj1x0a+Vuf08HhDl2l6AAdC?=
- =?us-ascii?Q?xQ7vhYOg/WEjph7yhIsFbCPDpob7orp5/abMx875dJu6i7Da2cotV1sjzRhX?=
- =?us-ascii?Q?D+XVJDijIkUH7/u3KPumRcH5SviUWSfqv0yhWcae3A/gmvwELtqkyw0qVrHT?=
- =?us-ascii?Q?qlSYCHwsSVMdNLOPIlb8zDTa0CiH7nXWmMNiPJ6rclPMLBp/qOCNWCdq37J9?=
- =?us-ascii?Q?X/9gNH50hROSUBJWxQQMV4ipLmqRvgaX8jLnrD/2l0z/eQtPOj05Fn458NgE?=
- =?us-ascii?Q?bwC6CeGYWp1Mjuej+Bk/GBHHevhUFwneLtYOcookdJJjGIuICWlAAP9vBIBW?=
- =?us-ascii?Q?q3cEweJTG7eCfHFXp3BQnMdJDZyXC99SGE9bfnxalAtYzwMRc6tB9XHA8Vqk?=
- =?us-ascii?Q?0d3+bBfSnJy5G2z2vHlhNsOP61qrLrf96wTwpPeVgToqNH0n/RXJmA2gm8jP?=
- =?us-ascii?Q?xFPdF7RQ3xcQC5e7wZZi/doQRnx4rC3pAA9sAWmHkVZBHNcgEO7EO/zX12ai?=
- =?us-ascii?Q?3hiH0r4dUFht+p3ssJnioxlmIG1goHibkncOg6H/k3/cTeTgYfficIKzYfjE?=
- =?us-ascii?Q?D6c/YwQ3xRk/4qt/p9xJ/5utTO4Umerarw4hOcNjzFTJHrdKn0TJF2rDwjzk?=
- =?us-ascii?Q?ionOuFavnhYR2svbnm9oDPPaq5jILrKJtiTvWJ8S6r9I/6IPr4JAmFdTqlRY?=
- =?us-ascii?Q?+seH5Tu3dZ3bJa7grICzJ+zX62k3F0ydpN7HhoNlCj9dbs16041Q2bbqQCEQ?=
- =?us-ascii?Q?TmSws586XAAC5o0sX+EqiUbcNIOmIoHpBjaANJOhYWImCe28vkkSmz0Z03Gi?=
- =?us-ascii?Q?kgjb10yUr3ZgfFA7+NXBLFkybqqRiP+n3RZvz2iB0bRFvlzVvYcMumxun8Gs?=
- =?us-ascii?Q?qFveVwgE1VD39A19pAGcEWfPGab6NgBhKbvwzcaHuwoS51AygjPy6podG05f?=
- =?us-ascii?Q?B3FFSf6yqG6iZSpRM5sPqKii74qqVjx3bSUcPCexkGk25NUMJ7BU7X4mriQc?=
- =?us-ascii?Q?g3r38+HeCT4pkgfIueesgInqst0abJKrEWLVW0LWuFqB9k2H9qNSQTVV0jFb?=
- =?us-ascii?Q?kF+7Ssgoo8yKppIK9G1UDjiB/VTXWoGe609tWV5Rw8ay4fMYhYY2IrXQXe6M?=
- =?us-ascii?Q?XUVsQVxlPWHUZyW+99P9+On4iFSwPTI+7vXnmK1SpQREfFRsTvMRh1hgija5?=
- =?us-ascii?Q?hO9wjx1OqOLuFEpjDefDbpGdJSFOUHVun4eyh0zu7gAlZ3DGCFx/mox/4xVv?=
- =?us-ascii?Q?Yz/5zKbTAkEJ8aLSf7choh06aeNJIIN9oN1vZQGVOCqnpWPuIZUUgv9EPFfN?=
- =?us-ascii?Q?nvTo631LRe44VC3e1pAfi3nyrKsdM4T3/Q31HYPUtDz94VXOXwceV6Djduvu?=
- =?us-ascii?Q?GYUXeNPsnc638W8yzE+3yvKs6ciOeWvyg7oPOomPKDOGWpRng1gEbJCBapao?=
- =?us-ascii?Q?vZzOvUn04fDP3d4Q8DjfBvSGn06f26LBoHc+xgRnqeOUFibvEf6cUYChtO7f?=
- =?us-ascii?Q?KILSZ96uSuInzaHWGuHlRpThY9RErMoEPuKNlocZgItGZEb/SG2+vloN1l0C?=
- =?us-ascii?Q?UysTeohEg2TEfu+QNU0c7EDG8SKBwIZcLutdxuwOCjWgoi2TE2k4aTq+lk0Y?=
- =?us-ascii?Q?xjner5mFAm2c62Eyof0V97+bYtiVsZfvJNqtiKut/dbFhBrS4+F6wY7yCnAR?=
- =?us-ascii?Q?i/DbsLE+hivqtGtdDp4aF6xWExPyLb11ZovfUQhdmb/e0cTaie8CZUc7cuqp?=
- =?us-ascii?Q?JfxuluB+6g=3D=3D?=
-X-OriginatorOrg: atomlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3282f15-800a-4bcb-5d1d-08de44c3b9d7
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Dec 2025 21:14:16.2676
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HD9sV0cJ/qYN9As+UVYlyMFuoT9cIlJIrbkgktK8wL5M+7i3fVEVm1DL+mzFgH5imsOSJLDUT2FFqmN6EMIndQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P123MB4236
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] fs: send uevents for filesystem mount events
+To: Christian Brauner <brauner@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, hch@lst.de,
+ linux-fsdevel@vger.kernel.org
+References: <176602332484.688213.11232314346072982565.stgit@frogsfrogsfrogs>
+ <176602332527.688213.9644123318095990966.stgit@frogsfrogsfrogs>
+ <20251224-imitieren-flugtauglich-dcef25c57c8d@brauner>
+Content-Language: en-AU
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net;
+ keydata= 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
+In-Reply-To: <20251224-imitieren-flugtauglich-dcef25c57c8d@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch introduces two new fields to /proc/[pid]/status to display the
-set of CPUs, representing the CPU affinity of the process's active
-memory context, in both mask and list format: "Cpus_active_mm" and
-"Cpus_active_mm_list". The mm_cpumask is primarily used for TLB and
-cache synchronisation.
 
-Exposing this information allows userspace to easily describe the
-relationship between CPUs where a memory descriptor is "active" and the
-CPUs where the thread is allowed to execute. The primary intent is to
-provide visibility into the "memory footprint" across CPUs, which is
-invaluable for debugging performance issues related to IPI storms and
-TLB shootdowns in large-scale NUMA systems. The CPU-affinity sets the
-boundary; the mm_cpumask records the arrival; they complement each
-other.
+On 24/12/25 20:47, Christian Brauner wrote:
+> On Wed, Dec 17, 2025 at 06:04:29PM -0800, Darrick J. Wong wrote:
+>> From: Darrick J. Wong <djwong@kernel.org>
+>>
+>> Add the ability to send uevents whenever a filesystem mounts, unmounts,
+>> or goes down.  This will enable XFS to start daemons whenever a
+>> filesystem is first mounted.
+>>
+>> Regrettably, we can't wire this directly into get_tree_bdev_flags or
+>> generic_shutdown_super because not all filesystems set up a kobject
+>> representation in sysfs, and the VFS has no idea if a filesystem
+>> actually does that.
+>>
+>> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+>> ---
+> I have issues with uevents as a mechanism for this. Uevents are tied to
+> network namespaces and they are not really namespaced appropriately. Any
+> filesystem that hooks into this mechanism will spew uevents into the
+> initial network namespace unconditionally. Any container mountable
+> filesystem that wants to use this interface will spam the host with
+> this event though the even is completely useless without appropriate
+> meta information about the relevant mount namespaces and further
+> parameters. This is a design dead end going forward imho. So please
+> let's not do this.
+>
+> Instead ties this to fanotify which is the right interface for this.
+> My suggestion would be to tie this to mount namespaces as that's the
+> appropriate object. Fanotify already supports listening for general
+> mount/umount events on mount namespaces. So extend it to send filesystem
+> creation/destruction events so that a caller may listen on the initial
+> mount namespace - where xfs fses can be mounted - you could even make it
+> filterable per filesystem type right away.
 
-Frequent mm_cpumask changes may indicate instability in placement
-policies or excessive task migration overhead.
+Seconded, there are way too many sources of mount events for them to not
 
-Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
----
- Documentation/filesystems/proc.rst |  3 +++
- fs/proc/array.c                    | 22 +++++++++++++++++++++-
- 2 files changed, 24 insertions(+), 1 deletion(-)
+be specific and targeted.
 
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 8256e857e2d7..c92e95e28047 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -291,6 +291,9 @@ It's slow but very precise.
-  SpeculationIndirectBranch   indirect branch speculation mode
-  Cpus_allowed                mask of CPUs on which this process may run
-  Cpus_allowed_list           Same as previous, but in "list format"
-+ Cpus_active_mm              mask of CPUs on which this process has an active
-+                             memory context
-+ Cpus_active_mm_list         Same as previous, but in "list format"
-  Mems_allowed                mask of memory nodes allowed to this process
-  Mems_allowed_list           Same as previous, but in "list format"
-  voluntary_ctxt_switches     number of voluntary context switches
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 42932f88141a..8887c5e38e51 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -409,6 +409,23 @@ static void task_cpus_allowed(struct seq_file *m, struct task_struct *task)
- 		   cpumask_pr_args(&task->cpus_mask));
- }
- 
-+/**
-+ * task_cpus_active_mm - Show the mm_cpumask for a process
-+ * @m: The seq_file structure for the /proc/PID/status output
-+ * @mm: The memory descriptor of the process
-+ *
-+ * Prints the set of CPUs, representing the CPU affinity of the process's
-+ * active memory context, in both mask and list format. This mask is
-+ * primarily used for TLB and cache synchronisation.
-+ */
-+static void task_cpus_active_mm(struct seq_file *m, struct mm_struct *mm)
-+{
-+	seq_printf(m, "Cpus_active_mm:\t%*pb\n",
-+		   cpumask_pr_args(mm_cpumask(mm)));
-+	seq_printf(m, "Cpus_active_mm_list:\t%*pbl\n",
-+		   cpumask_pr_args(mm_cpumask(mm)));
-+}
-+
- static inline void task_core_dumping(struct seq_file *m, struct task_struct *task)
- {
- 	seq_put_decimal_ull(m, "CoreDumping:\t", !!task->signal->core_state);
-@@ -450,12 +467,15 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
- 		task_core_dumping(m, task);
- 		task_thp_status(m, mm);
- 		task_untag_mask(m, mm);
--		mmput(mm);
- 	}
- 	task_sig(m, task);
- 	task_cap(m, task);
- 	task_seccomp(m, task);
- 	task_cpus_allowed(m, task);
-+	if (mm) {
-+		task_cpus_active_mm(m, mm);
-+		mmput(mm);
-+	}
- 	cpuset_task_status_allowed(m, task);
- 	task_context_switch_counts(m, task);
- 	arch_proc_pid_thread_features(m, task);
--- 
-2.51.0
+
+Just my opinion, ;),
+
+Ian
 
 
