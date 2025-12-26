@@ -1,84 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-72116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97446CDEF4D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 20:55:47 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 235B4CDEF44
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 20:55:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A7F34301227F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 19:55:27 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id D0C2A3001BDE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 19:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609AA2989BC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39222BEC2E;
 	Fri, 26 Dec 2025 19:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gOTCoBDe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9ctCUZC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24501257824
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Dec 2025 19:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE152749CF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Dec 2025 19:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766778924; cv=none; b=r8PiP6Cad+od8d2V9ICdppyoSNoLPwskvNK8W5q8PdgFUsikLypuvqRsLG2cPY0xE3hjznE5zq4T+CDaElIvulxshJ0E/Rkb5GbHn6u1fI9/chUWtxlQ0/7Ha9FzA6bfmHmOFBVyz8oTtWjMQ4Pcpg1beLUsrD/JWzk8qvtzqy4=
+	t=1766778925; cv=none; b=MZJ5O9yrQobicbBG7wnzXJqxw1CUjktE9TJgzgSnC4Of3p+llpBjgRhi2+Af2Mi9yRlsA83ge5J4BmGyB0l3r0nTe8LgsCxwNm+xeJBd8FPRiHe0MztoR1G4pYag4gHN+tJyanNQmIxtlAUr7TZvJpukmYhK8T8gR05enaGBURE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766778924; c=relaxed/simple;
-	bh=y0eeyInOH/AIg6NutvYQeOZ0LyR6GWlgPWgYp17PDAE=;
+	s=arc-20240116; t=1766778925; c=relaxed/simple;
+	bh=A0kmk3HxGUL3/4tIIWUC/2ECisNfpkAADLaTtVUd4z0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fUDxuX1mzPdsZC48i324DQ9SirfmbrwrxXzxY/JATNFtJq0g865DjRRBDJAGKoNLnm4ALvToi//OrR4DpDUSiE9Qh3HG6mH3ntGKRb6oX/9fN4LCpa9SnrVm5svbt4VQIsttOXIgvX68LOPq61o9E0hnVJ+GSDxHD8Uh6RluTpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gOTCoBDe; arc=none smtp.client-ip=209.85.208.178
+	 MIME-Version; b=U8GAD3FakK5FG3S0sopjHbZOYUpJnEdX2/1BYbSXT3fEjGmlJs8rcwhK6Uej/RBRf6iwa8YKAUqFmJS1bhQr/ggxR1JHzcSc1OhSUthrntXVOUYqxS+aGoZzaAZQSW5Gz1gvI9tzPtnsOFpmHsUhiOpfPTyaLrDzg+6/u/iqS0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9ctCUZC; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-37b95f87d64so60882661fa.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Dec 2025 11:55:22 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-596ba05aaecso7988748e87.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Dec 2025 11:55:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766778921; x=1767383721; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1766778922; x=1767383722; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XZ7wyrGQbKhbSZ1qkyBpRXfcM3pVMOETN7OPFmbDZho=;
-        b=gOTCoBDeOY9KuiZeHHMXOvSQqfWcKwR037RYssRY0knway2ve5SVRHrm2Pbz6mye/a
-         MVMn/7pS4houxbdWVvfJ0KvGXvoSi7e7NxZh3AJ+jsDvUg1wzsuTV5hT+MNFWh5MGXS1
-         2UQlzi2S5OTKf8BQ7ayHOpFR9e5aaD0Wz/NzE0i1UEPCIvjS7oHQ8oYb5JJQ49Dzzj4z
-         Xg1PvfgaM8LgMYAImlpaZDrK+0g0izwS2rrisg4gS3YSKhvAleEFdUt+q10uyU/5LSAp
-         dUWrIIrckpRAjjJrFdR2eVwX88WsHIPzhOO2VMNlEt08eOg8vvjzL2oSugJtJEReIm2R
-         aYlQ==
+        bh=lvweSQ4BMR3eXRmaA0kn4QnkUvwNZou9C1daYWMvC/E=;
+        b=C9ctCUZC3zjOt5Aybg0XLoe5tK+2rh/X8g0p1Hlw2iMTA5tSHdtUje/m17zRqDQIf8
+         TFifGpSREFRaYUrjsbieTJqgicb5/25D13g5WRucmtZm1HeUNirpiNlfYdnUi9CsOwSR
+         DCJCiLHKCKaq/KQxVjgWAESGgG+VhVxbIkFcJIaoOoZbOn3mWs22XVpjB/XlDZEc3QXH
+         1UOqP3Viw3yMpTJapcwnQZJkbR96ZY1AkulEWrxSSU7jZByeuuQZloi4Kxcby/taUeTr
+         CKraDBTJJo0Wjn6U4zgqSEDM1jmJoaPFhGQsvMYiaYXVBykWVKaRMK2fmow/+WcdOEbs
+         H+mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766778921; x=1767383721;
+        d=1e100.net; s=20230601; t=1766778922; x=1767383722;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=XZ7wyrGQbKhbSZ1qkyBpRXfcM3pVMOETN7OPFmbDZho=;
-        b=LR/BUZ5eulsWaJE34idJKFK7sOsoKlZxb/aDiuCeLenU3UYcioDnBnxMhdEhnzIXz+
-         lcxidjVYmhsp5HWRW2Dx8YAGe7cOKY7ekT823JyO9SKOBXUT0npXtY82WTnKBkTHUjfo
-         u2OsvKhUn63dME/ziR0MTh8yr1xNJ0CBWcD5LIrYiUaMIB3E9cmjEi3bWKudLt7j56Mk
-         IfjFCoR9Ww8AcybfXbuqviv3JF5G5gXngHHQOn7Gi9pqmubATJv8nP+5LvlBg6SP5oGJ
-         dZq5gjF0+YGfyY3lh4r2ARNjh2a312NcnnFhjrawd7CljfM3ZPMla+TxB8pgi4Iosh0Y
-         1stw==
-X-Gm-Message-State: AOJu0YwhktOlQtvXG/gZUayOc8x0MxZU3hzDpyD1r+wUqMiwCDQuxLPD
-	8JneS3/Sb5PyzyzPPqtyRT1PE0mh2cv6TPNf63abIevpfHgd9vh70nrk1gHC
-X-Gm-Gg: AY/fxX5h/6BmTPF10DnATUPbghCphtvNlAlAzZ0gLjDrBlcpngc4n+c7zhjUOUuREYA
-	QvBmY0v1J/rNHL8G0sD1wXWTJysdD1hnXXe3DF6gYJ12SKZn/jet/VOPaV2N1pIj1NoGoUv2kU/
-	vc/EVglHh3R+GAjiXp4Pe0Uj+rWI4UpEx8l51x1PL5WzM6q8/ZfgY74/U/MbwaRCcEoJJRcQ5T5
-	DLo3mYmevbrTWWwEPi0eeICCuy9H0/L6vJm/hzdCfYq5+hhx8o0aV+d0GcDYNZ8tTjdqEaEM/Li
-	8oEjY8FDU34f0yJKuwS7WJAibHLNlcDpCZFlxbXNbGeXH8FOFsHRv5gWubKFywCRpw2KggRp0SS
-	hAZ+7R9pBiX62YecPTeo3luGn7bRf9933k+sVIiE8qZDvpv5nnxCzEaCFPLktBoVlhOJ7vDqdmJ
-	4=
-X-Google-Smtp-Source: AGHT+IEgTr4LvCZev/7h3JR1Phz8GPGj4AW1DaTe1GXBLMXWI2FBM/C0duRBVHm4/Nu2XwhXBIPOjQ==
-X-Received: by 2002:a05:651c:1506:b0:37b:9101:77e6 with SMTP id 38308e7fff4ca-381215699edmr71348711fa.15.1766778920951;
-        Fri, 26 Dec 2025 11:55:20 -0800 (PST)
+        bh=lvweSQ4BMR3eXRmaA0kn4QnkUvwNZou9C1daYWMvC/E=;
+        b=AJ68pAXiLkZvYCeR/eSfBeI8mCD+YI0kk8sBcdRUaQx9SNH4SFMb1u+m/sCgihyqMu
+         E1r/r4UrjcDOPcLGfkkblQWuC/oarUXIBsdDlrk1iTBjZVp7aWP9SrNsOfkzSqShRzGH
+         Gb7SJ9R80eTDvh+2lvfP3WhucLOJDYiQG49xp+YOz/tXYrxIPpLMNnF9UIy1xsmOLnmx
+         xT/p7aCgUKIzQVoXT+UOxLfAnkVVG55VjMlZThk3LQp7M7tRlSGKybmRMX5zwjUDnMLa
+         h664KMQXk2lJqojFE1HhWXud2fUbs+DxmrZ37y0M95cqNAN2U4jt2+T0uwTlous6kKjZ
+         wnDw==
+X-Gm-Message-State: AOJu0YxCIxPlgBZ9a+sOchGBOpPY/XYej78NbxkZ7AGz+UrUiV258mU+
+	tw/Eo/xwJc5GUJ1/QnpdUVxfoKfhpbUWXcV2/sAONUOzC7MBz2Rmu5391A5A
+X-Gm-Gg: AY/fxX527Jo+AmZDLzqunHLWV8xSN4mf06rz2xLdEFizQ0Odz9Cyn7VUeHAN2z3uAr9
+	FnrNz4foYzZJbafwXZZXxoWKV3yBK+C7/UTMLGhSsERKUIQIwaKw5IgK0+KvRxPsq9fn7k3jKQ6
+	6xIjSX5D4TSCo0uxqj80/q1DDxN9pCI9gcBiZFSrbBHr9/vgHZ2ienK9e3vqzhlIurqamiqkYin
+	BeWvsw5G17nro0fbAm3/49IvtqnQa9LgFSHbVvYTF+/D0hmD7OegzgfJRk3kElguXp2jgOWWd1g
+	TQGUMUnwtQnxwiI+4QNzvDc6a03zU2yV95S1LO8lBIyAfvBGJeu1Xe0OiY9mJS87L37PjqMZlAE
+	8WnHZ4zEsz3UFHGQ6777A2scdoha02EmUF6rxKDE+CnZN/16ms59MWsfqhybgxrjpsxWnwwSGpY
+	M=
+X-Google-Smtp-Source: AGHT+IEHyV8aBI08nSBinQ1Bcdups9vXCh4r/yM6qYWQVtr7mQOBxTq26+B4SXbAa/PQAGXrv7Rrug==
+X-Received: by 2002:a05:6512:b8d:b0:599:ce8:24a8 with SMTP id 2adb3069b0e04-59a17d579e7mr7092376e87.40.1766778921560;
+        Fri, 26 Dec 2025 11:55:21 -0800 (PST)
 Received: from p183 ([178.172.146.10])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3812251cfffsm63088951fa.19.2025.12.26.11.55.20
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3812251cfffsm63088951fa.19.2025.12.26.11.55.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Dec 2025 11:55:20 -0800 (PST)
+        Fri, 26 Dec 2025 11:55:21 -0800 (PST)
 From: Alexey Dobriyan <adobriyan@gmail.com>
 To: akpm@linux-foundation.org
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	adobriyan@gmail.com
-Subject: [PATCH 1/1] proc: test lseek on /proc/net/dev
-Date: Fri, 26 Dec 2025 22:55:35 +0300
-Message-ID: <20251226195536.468978-2-adobriyan@gmail.com>
+Subject: [PATCH 2/2] proc: rewrite next_tgid()
+Date: Fri, 26 Dec 2025 22:55:36 +0300
+Message-ID: <20251226195536.468978-3-adobriyan@gmail.com>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20251226195536.468978-1-adobriyan@gmail.com>
 References: <20251226195536.468978-1-adobriyan@gmail.com>
@@ -90,112 +90,150 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
----
- tools/testing/selftests/proc/.gitignore       |  1 +
- tools/testing/selftests/proc/Makefile         |  1 +
- .../selftests/proc/proc-net-dev-lseek.c       | 68 +++++++++++++++++++
- 3 files changed, 70 insertions(+)
- create mode 100644 tools/testing/selftests/proc/proc-net-dev-lseek.c
+* deduplicate "iter.tgid += 1" line,
+  it is done once inside next_tgid() itself and second time inside
+  "for" loop
 
-diff --git a/tools/testing/selftests/proc/.gitignore b/tools/testing/selftests/proc/.gitignore
-index 19bb333e2485..243f4537a670 100644
---- a/tools/testing/selftests/proc/.gitignore
-+++ b/tools/testing/selftests/proc/.gitignore
-@@ -7,6 +7,7 @@
- /proc-loadavg-001
- /proc-maps-race
- /proc-multiple-procfs
-+/proc-net-dev-lseek
- /proc-empty-vm
- /proc-pid-vm
- /proc-self-map-files-001
-diff --git a/tools/testing/selftests/proc/Makefile b/tools/testing/selftests/proc/Makefile
-index 50aba102201a..2a9547630115 100644
---- a/tools/testing/selftests/proc/Makefile
-+++ b/tools/testing/selftests/proc/Makefile
-@@ -10,6 +10,7 @@ TEST_GEN_PROGS += fd-003-kthread
- TEST_GEN_PROGS += proc-2-is-kthread
- TEST_GEN_PROGS += proc-loadavg-001
- TEST_GEN_PROGS += proc-maps-race
-+TEST_GEN_PROGS += proc-net-dev-lseek
- TEST_GEN_PROGS += proc-empty-vm
- TEST_GEN_PROGS += proc-pid-vm
- TEST_GEN_PROGS += proc-self-map-files-001
-diff --git a/tools/testing/selftests/proc/proc-net-dev-lseek.c b/tools/testing/selftests/proc/proc-net-dev-lseek.c
-new file mode 100644
-index 000000000000..742a3e804451
---- /dev/null
-+++ b/tools/testing/selftests/proc/proc-net-dev-lseek.c
-@@ -0,0 +1,68 @@
-+/*
-+ * Copyright (c) 2025 Alexey Dobriyan <adobriyan@gmail.com>
-+ *
-+ * Permission to use, copy, modify, and distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+#undef _GNU_SOURCE
-+#define _GNU_SOURCE
-+#undef NDEBUG
-+#include <assert.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sched.h>
-+/*
-+ * Test that lseek("/proc/net/dev/", 0, SEEK_SET)
-+ * a) works,
-+ * b) does what you think it does.
-+ */
-+int main(void)
-+{
-+	/* /proc/net/dev output is deterministic in fresh netns only. */
-+	if (unshare(CLONE_NEWNET) == -1) {
-+		if (errno == ENOSYS || errno == EPERM) {
-+			return 4;
-+		}
-+		return 1;
-+	}
-+
-+	const int fd = open("/proc/net/dev", O_RDONLY);
-+	assert(fd >= 0);
-+
-+	char buf1[4096];
-+	const ssize_t rv1 = read(fd, buf1, sizeof(buf1));
-+	/*
-+	 * Not "<=", this file can't be empty:
-+	 * there is header, "lo" interface with some zeroes.
-+	 */
-+	assert(0 < rv1);
-+	assert(rv1 <= sizeof(buf1));
-+
-+	/* Believe it or not, this line broke one day. */
-+	assert(lseek(fd, 0, SEEK_SET) == 0);
-+
-+	char buf2[4096];
-+	const ssize_t rv2 = read(fd, buf2, sizeof(buf2));
-+	/* Not "<=", see above. */
-+	assert(0 < rv2);
-+	assert(rv2 <= sizeof(buf2));
-+
-+	/* Test that lseek rewinds to the beginning of the file. */
-+	assert(rv1 == rv2);
-+	assert(memcmp(buf1, buf2, rv1) == 0);
-+
-+	/* Contents of the file is not validated: this test is about lseek(). */
-+
-+	return 0;
+* deduplicate next_tgid() call itself with different loop style:
+
+	auto it = make_xxx_iter();
+	while (next_xxx(&it)) {
+	}
+
+  gcc seems to inline it twice in the original code:
+
+  	$ ./scripts/bloat-o-meter ../vmlinux-000 ../obj/vmlinux
+	add/remove: 0/1 grow/shrink: 1/0 up/down: 100/-245 (-145)
+	Function                                     old     new   delta
+	proc_pid_readdir                             531     631    +100
+	next_tgid                                    245       -    -245
+
+But if there is only one call, it doesn't matter if it is inlined or not!
+
+* make tgid_iter.pid_ns const
+  it never changes during readdir, returning instance + C99 initializer
+  make it possible,
+
+* rename "iter" to "it", this is what another language seems to be doing.
+
+* limit declaration scope to prevent problems (in general).
+---
+ fs/proc/base.c | 69 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 39 insertions(+), 30 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 7c1089226a47..ddf5e16c795b 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3535,35 +3535,48 @@ struct dentry *proc_pid_lookup(struct dentry *dentry, unsigned int flags)
+ 
+ /*
+  * Find the first task with tgid >= tgid
+- *
+  */
+ struct tgid_iter {
+ 	unsigned int tgid;
+ 	struct task_struct *task;
+-	struct pid_namespace *pid_ns;
++	struct pid_namespace *const pid_ns;
+ };
+ 
+-static struct tgid_iter next_tgid(struct tgid_iter iter)
++static
++struct tgid_iter
++make_tgid_iter(unsigned int init_tgid, struct pid_namespace *pid_ns)
+ {
+-	struct pid *pid;
++	return (struct tgid_iter){
++		/* See preincrement below. */
++		.tgid = init_tgid - 1,
++		.pid_ns = pid_ns,
++	};
 +}
++
++static bool next_tgid(struct tgid_iter *it)
++{
++	if (it->task) {
++		put_task_struct(it->task);
++		it->task = NULL;
++	}
+ 
+-	if (iter.task)
+-		put_task_struct(iter.task);
+ 	rcu_read_lock();
+-retry:
+-	iter.task = NULL;
+-	pid = find_ge_pid(iter.tgid, iter.pid_ns);
+-	if (pid) {
+-		iter.tgid = pid_nr_ns(pid, iter.pid_ns);
+-		iter.task = pid_task(pid, PIDTYPE_TGID);
+-		if (!iter.task) {
+-			iter.tgid += 1;
+-			goto retry;
++	while (1) {
++		it->tgid += 1;
++		struct pid *pid = find_ge_pid(it->tgid, it->pid_ns);
++		if (pid) {
++			it->tgid = pid_nr_ns(pid, it->pid_ns);
++			it->task = pid_task(pid, PIDTYPE_TGID);
++			if (it->task) {
++				get_task_struct(it->task);
++				rcu_read_unlock();
++				return true;
++			}
++		} else {
++			rcu_read_unlock();
++			return false;
+ 		}
+-		get_task_struct(iter.task);
+ 	}
+-	rcu_read_unlock();
+-	return iter;
+ }
+ 
+ #define TGID_OFFSET (FIRST_PROCESS_ENTRY + 2)
+@@ -3571,7 +3584,6 @@ static struct tgid_iter next_tgid(struct tgid_iter iter)
+ /* for the /proc/ directory itself, after non-process stuff has been done */
+ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
+ {
+-	struct tgid_iter iter;
+ 	struct proc_fs_info *fs_info = proc_sb_info(file_inode(file)->i_sb);
+ 	struct pid_namespace *pid_ns = proc_pid_ns(file_inode(file)->i_sb);
+ 	loff_t pos = ctx->pos;
+@@ -3589,24 +3601,21 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
+ 			return 0;
+ 		ctx->pos = pos = pos + 1;
+ 	}
+-	iter.tgid = pos - TGID_OFFSET;
+-	iter.task = NULL;
+-	iter.pid_ns = pid_ns;
+-	for (iter = next_tgid(iter);
+-	     iter.task;
+-	     iter.tgid += 1, iter = next_tgid(iter)) {
++
++	auto it = make_tgid_iter(pos - TGID_OFFSET, pid_ns);
++	while (next_tgid(&it)) {
+ 		char name[10 + 1];
+ 		unsigned int len;
+ 
+ 		cond_resched();
+-		if (!has_pid_permissions(fs_info, iter.task, HIDEPID_INVISIBLE))
++		if (!has_pid_permissions(fs_info, it.task, HIDEPID_INVISIBLE))
+ 			continue;
+ 
+-		len = snprintf(name, sizeof(name), "%u", iter.tgid);
+-		ctx->pos = iter.tgid + TGID_OFFSET;
++		len = snprintf(name, sizeof(name), "%u", it.tgid);
++		ctx->pos = it.tgid + TGID_OFFSET;
+ 		if (!proc_fill_cache(file, ctx, name, len,
+-				     proc_pid_instantiate, iter.task, NULL)) {
+-			put_task_struct(iter.task);
++				     proc_pid_instantiate, it.task, NULL)) {
++			put_task_struct(it.task);
+ 			return 0;
+ 		}
+ 	}
 -- 
-2.49.1
+2.51.2
 
 
