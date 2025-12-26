@@ -1,239 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-72117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 235B4CDEF44
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 20:55:31 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF70CDEF60
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 21:02:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id D0C2A3001BDE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 19:55:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7393530124E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 20:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39222BEC2E;
-	Fri, 26 Dec 2025 19:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FC72459DD;
+	Fri, 26 Dec 2025 20:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9ctCUZC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BiTt/cEF";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uh4GqLT7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE152749CF
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Dec 2025 19:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72573238171
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Dec 2025 20:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766778925; cv=none; b=MZJ5O9yrQobicbBG7wnzXJqxw1CUjktE9TJgzgSnC4Of3p+llpBjgRhi2+Af2Mi9yRlsA83ge5J4BmGyB0l3r0nTe8LgsCxwNm+xeJBd8FPRiHe0MztoR1G4pYag4gHN+tJyanNQmIxtlAUr7TZvJpukmYhK8T8gR05enaGBURE=
+	t=1766779320; cv=none; b=CthRfCUaQZT6Absc3x5XgSHy8fIgk5ptdP4qrZa3CIoUZAIZxDGATPZk5ozxsXwe1p/dooeg0fphVfIflFhd1TbXFoXSOp0bYaUvayV1fhCrLgc9/odBQzQuuTm9zMwvHUpJQFF5dkq031Hhx3govcx7QayRHCnMe3ExXDOTrnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766778925; c=relaxed/simple;
-	bh=A0kmk3HxGUL3/4tIIWUC/2ECisNfpkAADLaTtVUd4z0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U8GAD3FakK5FG3S0sopjHbZOYUpJnEdX2/1BYbSXT3fEjGmlJs8rcwhK6Uej/RBRf6iwa8YKAUqFmJS1bhQr/ggxR1JHzcSc1OhSUthrntXVOUYqxS+aGoZzaAZQSW5Gz1gvI9tzPtnsOFpmHsUhiOpfPTyaLrDzg+6/u/iqS0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9ctCUZC; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-596ba05aaecso7988748e87.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Dec 2025 11:55:23 -0800 (PST)
+	s=arc-20240116; t=1766779320; c=relaxed/simple;
+	bh=QQyG4KMrALCAk4qB42lsLkH4v13igT5T+7TUGqsvJ7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KOkXfzsW/TObOShAttK7mMBUiG7kd7SMIA4xKB8AzsjcTM6ty9tlWuSo1qGGD0ZrfPWgLGbfwhrL6ibWUZViheVFJ3XV4GOZR5txjXAQPeP+WifgEh1wClcyfjabK1PPkyZft4pYEAjE+7izM0oWZwWxffdTurDVcLgbJYsFy3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BiTt/cEF; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uh4GqLT7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1766779317;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ojpffjf9WXO3wNJhOKSQJLHQbbSlgOUFtmMuKKKVw8E=;
+	b=BiTt/cEFmTpjSTVEQ86LjebwdkxEt3isCmp4KbOizPc6iIagw6akKUaTYt5rh73ud7F5kt
+	C1ykLBWzujhyary3s0mwUMNSChCDzXwLHr8SkE2dlMsn9ZyuU42Q5RDlM5EoU3MDVp14Hz
+	X9VbeXKTpowhDREOh9AjO8aNoVH7uiQ=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-86-94R90D6aMJKNSoqpNJBgmA-1; Fri, 26 Dec 2025 15:01:53 -0500
+X-MC-Unique: 94R90D6aMJKNSoqpNJBgmA-1
+X-Mimecast-MFC-AGG-ID: 94R90D6aMJKNSoqpNJBgmA_1766779313
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4edb6a94873so144942191cf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Dec 2025 12:01:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766778922; x=1767383722; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lvweSQ4BMR3eXRmaA0kn4QnkUvwNZou9C1daYWMvC/E=;
-        b=C9ctCUZC3zjOt5Aybg0XLoe5tK+2rh/X8g0p1Hlw2iMTA5tSHdtUje/m17zRqDQIf8
-         TFifGpSREFRaYUrjsbieTJqgicb5/25D13g5WRucmtZm1HeUNirpiNlfYdnUi9CsOwSR
-         DCJCiLHKCKaq/KQxVjgWAESGgG+VhVxbIkFcJIaoOoZbOn3mWs22XVpjB/XlDZEc3QXH
-         1UOqP3Viw3yMpTJapcwnQZJkbR96ZY1AkulEWrxSSU7jZByeuuQZloi4Kxcby/taUeTr
-         CKraDBTJJo0Wjn6U4zgqSEDM1jmJoaPFhGQsvMYiaYXVBykWVKaRMK2fmow/+WcdOEbs
-         H+mA==
+        d=redhat.com; s=google; t=1766779313; x=1767384113; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ojpffjf9WXO3wNJhOKSQJLHQbbSlgOUFtmMuKKKVw8E=;
+        b=Uh4GqLT7vNyTUbnzYFCwXxqrzrQSyCTuF6eFECe0JeQs5SxqWeOA3uOO9d7lK1ErVl
+         F6BoWHsclq/XDvRC+GZmWFGNa2HtoqowfhJaV6Q6Az8AXWjx5FQR9bXMvSDu9nm6GfSw
+         ry20l5XAcXL7IRUUNBBlyZQRYwxhlIzF9usHXYLCay+oQuqlHUreg0Tm3e/9lY10EUXJ
+         p995z8U/67t9dJWjKaYhtfKv4V+ZHha8HiRsj/ruTUfsPEgaerKklONvHLSnFaK3vgGQ
+         nGSFOzMjYMuqZvus/enbGxjcYYBujgsLG8rvMLPGz70eDS/9kgDkJ99FKpbX8TPoBoj3
+         4TTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766778922; x=1767383722;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lvweSQ4BMR3eXRmaA0kn4QnkUvwNZou9C1daYWMvC/E=;
-        b=AJ68pAXiLkZvYCeR/eSfBeI8mCD+YI0kk8sBcdRUaQx9SNH4SFMb1u+m/sCgihyqMu
-         E1r/r4UrjcDOPcLGfkkblQWuC/oarUXIBsdDlrk1iTBjZVp7aWP9SrNsOfkzSqShRzGH
-         Gb7SJ9R80eTDvh+2lvfP3WhucLOJDYiQG49xp+YOz/tXYrxIPpLMNnF9UIy1xsmOLnmx
-         xT/p7aCgUKIzQVoXT+UOxLfAnkVVG55VjMlZThk3LQp7M7tRlSGKybmRMX5zwjUDnMLa
-         h664KMQXk2lJqojFE1HhWXud2fUbs+DxmrZ37y0M95cqNAN2U4jt2+T0uwTlous6kKjZ
-         wnDw==
-X-Gm-Message-State: AOJu0YxCIxPlgBZ9a+sOchGBOpPY/XYej78NbxkZ7AGz+UrUiV258mU+
-	tw/Eo/xwJc5GUJ1/QnpdUVxfoKfhpbUWXcV2/sAONUOzC7MBz2Rmu5391A5A
-X-Gm-Gg: AY/fxX527Jo+AmZDLzqunHLWV8xSN4mf06rz2xLdEFizQ0Odz9Cyn7VUeHAN2z3uAr9
-	FnrNz4foYzZJbafwXZZXxoWKV3yBK+C7/UTMLGhSsERKUIQIwaKw5IgK0+KvRxPsq9fn7k3jKQ6
-	6xIjSX5D4TSCo0uxqj80/q1DDxN9pCI9gcBiZFSrbBHr9/vgHZ2ienK9e3vqzhlIurqamiqkYin
-	BeWvsw5G17nro0fbAm3/49IvtqnQa9LgFSHbVvYTF+/D0hmD7OegzgfJRk3kElguXp2jgOWWd1g
-	TQGUMUnwtQnxwiI+4QNzvDc6a03zU2yV95S1LO8lBIyAfvBGJeu1Xe0OiY9mJS87L37PjqMZlAE
-	8WnHZ4zEsz3UFHGQ6777A2scdoha02EmUF6rxKDE+CnZN/16ms59MWsfqhybgxrjpsxWnwwSGpY
-	M=
-X-Google-Smtp-Source: AGHT+IEHyV8aBI08nSBinQ1Bcdups9vXCh4r/yM6qYWQVtr7mQOBxTq26+B4SXbAa/PQAGXrv7Rrug==
-X-Received: by 2002:a05:6512:b8d:b0:599:ce8:24a8 with SMTP id 2adb3069b0e04-59a17d579e7mr7092376e87.40.1766778921560;
-        Fri, 26 Dec 2025 11:55:21 -0800 (PST)
-Received: from p183 ([178.172.146.10])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3812251cfffsm63088951fa.19.2025.12.26.11.55.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Dec 2025 11:55:21 -0800 (PST)
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	adobriyan@gmail.com
-Subject: [PATCH 2/2] proc: rewrite next_tgid()
-Date: Fri, 26 Dec 2025 22:55:36 +0300
-Message-ID: <20251226195536.468978-3-adobriyan@gmail.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251226195536.468978-1-adobriyan@gmail.com>
-References: <20251226195536.468978-1-adobriyan@gmail.com>
+        d=1e100.net; s=20230601; t=1766779313; x=1767384113;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ojpffjf9WXO3wNJhOKSQJLHQbbSlgOUFtmMuKKKVw8E=;
+        b=kqkAwKbDN9utTuQWePrsus1KZ0sapgeEId/FOk5LZ6/KFsrYEF9bnR9urDKBOuS9sC
+         IlmKw0jInCzxkGyW0Vm12KarLOQx/EKGhUdXnq1jHL43CVitf9aoqmDhD3wBsqicg4PA
+         X+xLedao4BJ0/JTZ6nNCpmWZITaQicMpxvVo3zVBB9sLxGg/Ul473nZEuGo0PJQpjbfd
+         IfFA16yeRp6XDNSCL86DwfHWteFucqJEcE/d2UiK96BqPO1k2wU7uF+uC9L1zQO7zU7k
+         LmVOBx/Ib7VXDV7EiWq/m8c5/0EzxQWOkRBYMrPs69+8LlYGeH1lbs5mYjMMBQNTcnEG
+         9esg==
+X-Forwarded-Encrypted: i=1; AJvYcCVahEMcNbxA0mgxARYl+Ru+r6Y5Ch/YVMm2om6vu+3bmwx137zzfT5eg8wCvWfXzso2nXU0eJyWOxQW6xI5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaH9FC/VRjGwWf0mZ1ZR8LgEbbZbNuvcivqTXIUhnj59/dR/YZ
+	ME5vyhcFYUOtZoTfjVfd/R4rLL1xJWddgFmxNfYlRw+sN9oC1jjZh0tFJ5I5RjtXTHFfiueBTV5
+	ssEVTyC2QOlM2LZiJ6+g7Y2eIus8i/6qrMK995abohzZ57j3Gr0hGYzIE0bUIbZe9drA=
+X-Gm-Gg: AY/fxX5QtxnMBQWxRDvaR+EKixVVL/YzfzBHra1qxqrYgYRgjfLISpbMwHF3HEJlUbc
+	ni/m5reuUYT9IikQsc2sVay4LA0rJiEfRhskop6kRi/xTe4C/Xm0t7pxnxzu3l1pn+cCJDdC+Lu
+	/Nr1BlJWZ7b/rQy/F7dUyvpON92re8y4afv43OTC+4afVMds/jtIxuZBn8fxpPkcxTYLBalvjK7
+	TNUk8HA2KuEr2TpRkfeMgunXXasPwgAgVuAhoH70R0s8Mr4Ze9WyJttVf5O3tYQoQFoHkELVVM+
+	JUXTvuSEYy/BevWNACPVF+DhRWzTfEhNguI/Ox6Kkpckx98IHwRlcLTQRdUtbVZw2kaFrfXXzYS
+	/LovQOEBHzBYcHTXGQMOwVKrsJGHI+bWnL5dvpxShARG122i8A7s=
+X-Received: by 2002:a05:622a:3cc:b0:4e8:baad:9875 with SMTP id d75a77b69052e-4f4abccf532mr368603451cf.4.1766779313167;
+        Fri, 26 Dec 2025 12:01:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFZnYKkCFK7rhcnq+xYC/+SDh2RlrIBRh7zni7hxgTjidevNQ22xkFYWKyG03JlVIxpiZ0mxg==
+X-Received: by 2002:a05:622a:3cc:b0:4e8:baad:9875 with SMTP id d75a77b69052e-4f4abccf532mr368602871cf.4.1766779312766;
+        Fri, 26 Dec 2025 12:01:52 -0800 (PST)
+Received: from [10.0.0.82] (97-127-77-149.mpls.qwest.net. [97.127.77.149])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4f4ac62f59csm161375721cf.20.2025.12.26.12.01.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Dec 2025 12:01:52 -0800 (PST)
+Message-ID: <fb920248-a0fc-432f-926f-c27b1760de58@redhat.com>
+Date: Fri, 26 Dec 2025 14:01:50 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next:master] [fs] 51a146e059:
+ BUG:kernel_hang_in_boot_stage
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
+ Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <202512230315.1717476b-lkp@intel.com>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@redhat.com>
+In-Reply-To: <202512230315.1717476b-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-* deduplicate "iter.tgid += 1" line,
-  it is done once inside next_tgid() itself and second time inside
-  "for" loop
+On 12/22/25 8:36 PM, kernel test robot wrote:
+> 
+> 
+> Hello,
+> 
+> 
+> we don't have enough knowledge to analyze the connection between the issue and
+> this change. just observed the issue is quite persistent on 51a146e059 and
+> clean on its parent.
 
-* deduplicate next_tgid() call itself with different loop style:
+Odd. Not much to go on, and I don't see any obvious connection either, but
+I'll see if i can reproduce.
 
-	auto it = make_xxx_iter();
-	while (next_xxx(&it)) {
-	}
+In the successful dmesg it looks like devtmpfs was next up, maybe that's a clue.
 
-  gcc seems to inline it twice in the original code:
+This is probably a classic case of assuming that removing dead code
+"can't break anything!" without enough testing. :( I'll see what I can find.
 
-  	$ ./scripts/bloat-o-meter ../vmlinux-000 ../obj/vmlinux
-	add/remove: 0/1 grow/shrink: 1/0 up/down: 100/-245 (-145)
-	Function                                     old     new   delta
-	proc_pid_readdir                             531     631    +100
-	next_tgid                                    245       -    -245
+Thanks for the report,
+-Eric
 
-But if there is only one call, it doesn't matter if it is inlined or not!
-
-* make tgid_iter.pid_ns const
-  it never changes during readdir, returning instance + C99 initializer
-  make it possible,
-
-* rename "iter" to "it", this is what another language seems to be doing.
-
-* limit declaration scope to prevent problems (in general).
----
- fs/proc/base.c | 69 ++++++++++++++++++++++++++++----------------------
- 1 file changed, 39 insertions(+), 30 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 7c1089226a47..ddf5e16c795b 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -3535,35 +3535,48 @@ struct dentry *proc_pid_lookup(struct dentry *dentry, unsigned int flags)
- 
- /*
-  * Find the first task with tgid >= tgid
-- *
-  */
- struct tgid_iter {
- 	unsigned int tgid;
- 	struct task_struct *task;
--	struct pid_namespace *pid_ns;
-+	struct pid_namespace *const pid_ns;
- };
- 
--static struct tgid_iter next_tgid(struct tgid_iter iter)
-+static
-+struct tgid_iter
-+make_tgid_iter(unsigned int init_tgid, struct pid_namespace *pid_ns)
- {
--	struct pid *pid;
-+	return (struct tgid_iter){
-+		/* See preincrement below. */
-+		.tgid = init_tgid - 1,
-+		.pid_ns = pid_ns,
-+	};
-+}
-+
-+static bool next_tgid(struct tgid_iter *it)
-+{
-+	if (it->task) {
-+		put_task_struct(it->task);
-+		it->task = NULL;
-+	}
- 
--	if (iter.task)
--		put_task_struct(iter.task);
- 	rcu_read_lock();
--retry:
--	iter.task = NULL;
--	pid = find_ge_pid(iter.tgid, iter.pid_ns);
--	if (pid) {
--		iter.tgid = pid_nr_ns(pid, iter.pid_ns);
--		iter.task = pid_task(pid, PIDTYPE_TGID);
--		if (!iter.task) {
--			iter.tgid += 1;
--			goto retry;
-+	while (1) {
-+		it->tgid += 1;
-+		struct pid *pid = find_ge_pid(it->tgid, it->pid_ns);
-+		if (pid) {
-+			it->tgid = pid_nr_ns(pid, it->pid_ns);
-+			it->task = pid_task(pid, PIDTYPE_TGID);
-+			if (it->task) {
-+				get_task_struct(it->task);
-+				rcu_read_unlock();
-+				return true;
-+			}
-+		} else {
-+			rcu_read_unlock();
-+			return false;
- 		}
--		get_task_struct(iter.task);
- 	}
--	rcu_read_unlock();
--	return iter;
- }
- 
- #define TGID_OFFSET (FIRST_PROCESS_ENTRY + 2)
-@@ -3571,7 +3584,6 @@ static struct tgid_iter next_tgid(struct tgid_iter iter)
- /* for the /proc/ directory itself, after non-process stuff has been done */
- int proc_pid_readdir(struct file *file, struct dir_context *ctx)
- {
--	struct tgid_iter iter;
- 	struct proc_fs_info *fs_info = proc_sb_info(file_inode(file)->i_sb);
- 	struct pid_namespace *pid_ns = proc_pid_ns(file_inode(file)->i_sb);
- 	loff_t pos = ctx->pos;
-@@ -3589,24 +3601,21 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
- 			return 0;
- 		ctx->pos = pos = pos + 1;
- 	}
--	iter.tgid = pos - TGID_OFFSET;
--	iter.task = NULL;
--	iter.pid_ns = pid_ns;
--	for (iter = next_tgid(iter);
--	     iter.task;
--	     iter.tgid += 1, iter = next_tgid(iter)) {
-+
-+	auto it = make_tgid_iter(pos - TGID_OFFSET, pid_ns);
-+	while (next_tgid(&it)) {
- 		char name[10 + 1];
- 		unsigned int len;
- 
- 		cond_resched();
--		if (!has_pid_permissions(fs_info, iter.task, HIDEPID_INVISIBLE))
-+		if (!has_pid_permissions(fs_info, it.task, HIDEPID_INVISIBLE))
- 			continue;
- 
--		len = snprintf(name, sizeof(name), "%u", iter.tgid);
--		ctx->pos = iter.tgid + TGID_OFFSET;
-+		len = snprintf(name, sizeof(name), "%u", it.tgid);
-+		ctx->pos = it.tgid + TGID_OFFSET;
- 		if (!proc_fill_cache(file, ctx, name, len,
--				     proc_pid_instantiate, iter.task, NULL)) {
--			put_task_struct(iter.task);
-+				     proc_pid_instantiate, it.task, NULL)) {
-+			put_task_struct(it.task);
- 			return 0;
- 		}
- 	}
--- 
-2.51.2
+> 
+> =========================================================================================
+> tbox_group/testcase/rootfs/kconfig/compiler/sleep:
+>   vm-snb-i386/boot/debian-11.1-i386-20220923.cgz/i386-randconfig-2006-20250804/gcc-14/1
+> 
+> d5bc4e31f2a3f301 51a146e0595c638c58097a1660f
+> ---------------- ---------------------------
+>        fail:runs  %reproduction    fail:runs
+>            |             |             |
+>            :200        100%         200:200   last_state.booting
+>            :200        100%         200:200   last_state.is_incomplete_run
+>            :200        100%         200:200   dmesg.BUG:kernel_hang_in_boot_stage
+> 
+> 
+> we cannot spot out useful information from dmesg which is uploaded to [1]. also
+> attached one dmesg from parent commit (d5bc4e31f2) FYI.
+> 
+> 
+> kernel test robot noticed "BUG:kernel_hang_in_boot_stage" on:
+> 
+> commit: 51a146e0595c638c58097a1660ff6b6e7d3b72f3 ("fs: Remove internal old mount API code")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> 
+> [test failed on linux-next/master cc3aa43b44bdb43dfbac0fcb51c56594a11338a8]
+> 
+> in testcase: boot
+> 
+> config: i386-randconfig-2006-20250804
+> compiler: gcc-14
+> test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202512230315.1717476b-lkp@intel.com
+> 
+> 
+> [   15.178608][    T1] signal: max sigframe size: 1760
+> [   15.669386][    T1] rcu: Hierarchical SRCU implementation.
+> [   15.785114][    T1] rcu: 	Max phase no-delay instances is 1000.
+> [  104.130757][    C0] workqueue: round-robin CPU selection forced, expect performance impact
+> [  110.182304][    C0] random: crng init done
+> BUG: kernel hang in boot stage
+> 
+> 
+> 
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20251223/202512230315.1717476b-lkp@intel.com [1]
+> 
+> 
+> 
 
 
