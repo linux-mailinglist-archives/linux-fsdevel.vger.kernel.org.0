@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-72106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C46CDE8EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 10:46:41 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F634CDE8FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 10:46:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 17436301CC58
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 09:45:53 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 37FAA302C22C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Dec 2025 09:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229073195FB;
-	Fri, 26 Dec 2025 09:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF63314B7C;
+	Fri, 26 Dec 2025 09:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="K6ke+9RX"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kGsHo69a"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3ECE314D3F;
-	Fri, 26 Dec 2025 09:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E148A291864;
+	Fri, 26 Dec 2025 09:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766742342; cv=none; b=K55M2hdQlQfa4TSByhEL8Alh6J4DZ8geoqk0sbePeYT89FVgSPgSrGkDoHrwLCcHPSkjoyQ1ZatcTR091qCfFTFgS0lQGHtCgqvD7FtLpd7XhxV/XAXhRWqoKZ/Neu0C+SkWq3foVEfXK/pfhG5L6+ZWt+i2JK4X7lPNKtIrZ1E=
+	t=1766742340; cv=none; b=slk3vaQhGxtHDt64JYEh2KmbB8vsCdcMxfngkSS+/exZ34nsnaNf0HccJ/yptn8czmEbifqAv8OXlvuy2wNqRGLctisGr4R0dA4OgI0xaGcQ8lxVL9WUfDTsnm7a4I4kOfKBDoa8RjM1eonu6hmK3h+9FQuDcZgIA92Y1z+LAIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766742342; c=relaxed/simple;
-	bh=1B+lE2U3eAYn+bEmF8/XAwLuFOqS0i95Q+IJTMt1yXc=;
+	s=arc-20240116; t=1766742340; c=relaxed/simple;
+	bh=p7J1A3k1PpQP8t2VLMhQe+7FnsV9LZt/G8cGNkFQSdQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=auUrRwQK7RqkTzbUwWen1Z+PrZe/Ph02YRDainikBy5lTDYWe5bexVsMArKXwKaCurm6BlhncxaEjxdvzSL7qkFjVdgHhFggVv1euTNMxeqdEzsZdibE8t6NycKkC6O8/8haI1ZvDwwjJlMTjn0B17ASwdgEAyXGogBQGJaLPaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=K6ke+9RX; arc=none smtp.client-ip=117.135.210.5
+	 MIME-Version; b=Sh/ggaRdeA0bq3IlI0Z+ohLY0VFaUWsunnl/+57Qzu27dYa3RNiAHo1dnYNV9Kes/b2DI6W56vU9zUTPdBvACVCO1B9UcIAmb4uBst1EpDEU8nsPtZykxbrx2IkEoxlyN2zzF3RZL1rnQ9nujWqOZ7PgJWgOkS5FQcoYEWLwe/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kGsHo69a; arc=none smtp.client-ip=220.197.31.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=W8
-	Dd4uKOqtugp8rh1JHuRfCfqK66RWhGo/RX+lV/P7o=; b=K6ke+9RXPEhzKJ0ZKT
-	F/ES+xKMBXJND7+H1ZbLp2dEsxnDii/nhb/vN/OpriUw0dgU5p/+SlyhnzpreoRU
-	6W/cqjMYTX1yCTWY/zl12XNe6OusmtouZUOh1QqwBKwRA4BePrLNYVyZLctpsKTg
-	X+Htz/A731LO+I7BFlMu2VhFM=
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=2z
+	Kn3M2El0UGziHuxP9HkuCQv8bFi5A/9Zv8bRNdnds=; b=kGsHo69aQ6K/nbUAB9
+	+1wIe9EDo0JO3noJAI3k0nP/rJyvdSBtMgSVtvEzzOiyXoGDV1B76L6lKyF36e5x
+	IiwCt4JtNQSiE/5dcpPzPhhchMHsDGh01teHyhSYO4wfhFa71uZZh44h9MZlbmbn
+	oOw4oRJ2zCE5XsoCPuYrdUaek=
 Received: from chi-Redmi-Book.. (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgCnlXIPWU5p9JFCJA--.53S4;
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgCnlXIPWU5p9JFCJA--.53S5;
 	Fri, 26 Dec 2025 17:44:51 +0800 (CST)
 From: Chi Zhiling <chizhiling@163.com>
 To: linux-fsdevel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc: Namjae Jeon <linkinjeon@kernel.org>,
 	Jan Kara <jack@suse.cz>,
 	Matthew Wilcox <willy@infradead.org>,
 	Chi Zhiling <chizhiling@kylinos.cn>
-Subject: [PATCH v1 2/9] exfat: support reuse buffer head for exfat_ent_get
-Date: Fri, 26 Dec 2025 17:44:33 +0800
-Message-ID: <20251226094440.455563-3-chizhiling@163.com>
+Subject: [PATCH v1 3/9] exfat: reuse cache to improve exfat_get_cluster
+Date: Fri, 26 Dec 2025 17:44:34 +0800
+Message-ID: <20251226094440.455563-4-chizhiling@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251226094440.455563-1-chizhiling@163.com>
 References: <20251226094440.455563-1-chizhiling@163.com>
@@ -62,153 +62,70 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgCnlXIPWU5p9JFCJA--.53S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAFW7WFykJr45AF1DZw1DZFb_yoWrCrykpF
-	4DKas5JrWUt3W7uwnrtr4kZ3WS93yxWFykGa15A3Z0yryDtrn5ur17tryayFWrA3y8C3Wa
-	kF1jgF1Uur9xWaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j72-5UUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC+BNI5WlOWROBQAAA3q
+X-CM-TRANSID:QCgvCgCnlXIPWU5p9JFCJA--.53S5
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar15Gr4ftrW3Aw1fWF15Jwb_yoW8WF13pr
+	ZxKay5t3yrA3929w4rKFn3Z3WS9FZ7JF4UGay3A3Wjkryvyr4F9r17Kr9xA3WrJw4kuF4Y
+	9ryrK3WUurnrG3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jqYLkUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC+BNI5WlOWROBRAAA3u
 
 From: Chi Zhiling <chizhiling@kylinos.cn>
 
-This patch is part 2 of cached buffer head for exfat_ent_get,
-it introduces an argument for exfat_ent_get, and make sure this
-routine releases buffer head refcount when any error return.
+Since exfat_ent_get supports cache buffer head, we can use this option to
+reduce sb_bread calls when fetching consecutive entries.
 
 Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
 ---
- fs/exfat/cache.c    |  2 +-
- fs/exfat/exfat_fs.h |  4 ++--
- fs/exfat/fatent.c   | 39 ++++++++++++++++++++++++---------------
- 3 files changed, 27 insertions(+), 18 deletions(-)
+ fs/exfat/cache.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/fs/exfat/cache.c b/fs/exfat/cache.c
-index d5ce0ae660ba..61af3fa05ab7 100644
+index 61af3fa05ab7..4161b983b6af 100644
 --- a/fs/exfat/cache.c
 +++ b/fs/exfat/cache.c
-@@ -287,7 +287,7 @@ int exfat_get_cluster(struct inode *inode, unsigned int cluster,
- 			return -EIO;
+@@ -241,6 +241,7 @@ int exfat_get_cluster(struct inode *inode, unsigned int cluster,
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+ 	unsigned int limit = sbi->num_clusters;
+ 	struct exfat_inode_info *ei = EXFAT_I(inode);
++	struct buffer_head *bh = NULL;
+ 	struct exfat_cache_id cid;
+ 	unsigned int content;
+ 
+@@ -284,11 +285,11 @@ int exfat_get_cluster(struct inode *inode, unsigned int cluster,
+ 			exfat_fs_error(sb,
+ 				"detected the cluster chain loop (i_pos %u)",
+ 				(*fclus));
+-			return -EIO;
++			goto err;
  		}
  
--		if (exfat_ent_get(sb, *dclus, &content))
-+		if (exfat_ent_get(sb, *dclus, &content, NULL))
- 			return -EIO;
+-		if (exfat_ent_get(sb, *dclus, &content, NULL))
+-			return -EIO;
++		if (exfat_ent_get(sb, *dclus, &content, &bh))
++			goto err;
  
  		*last_dclus = *dclus;
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index 176fef62574c..f7f25e0600c7 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -432,13 +432,13 @@ int exfat_set_volume_dirty(struct super_block *sb);
- int exfat_clear_volume_dirty(struct super_block *sb);
+ 		*dclus = content;
+@@ -299,7 +300,7 @@ int exfat_get_cluster(struct inode *inode, unsigned int cluster,
+ 				exfat_fs_error(sb,
+ 				       "invalid cluster chain (i_pos %u, last_clus 0x%08x is EOF)",
+ 				       *fclus, (*last_dclus));
+-				return -EIO;
++				goto err;
+ 			}
  
- /* fatent.c */
--#define exfat_get_next_cluster(sb, pclu) exfat_ent_get(sb, *(pclu), pclu)
-+#define exfat_get_next_cluster(sb, pclu) exfat_ent_get(sb, *(pclu), pclu, NULL)
- 
- int exfat_alloc_cluster(struct inode *inode, unsigned int num_alloc,
- 		struct exfat_chain *p_chain, bool sync_bmap);
- int exfat_free_cluster(struct inode *inode, struct exfat_chain *p_chain);
- int exfat_ent_get(struct super_block *sb, unsigned int loc,
--		unsigned int *content);
-+		unsigned int *content, struct buffer_head **last);
- int exfat_ent_set(struct super_block *sb, unsigned int loc,
- 		unsigned int content);
- int exfat_chain_cont_cluster(struct super_block *sb, unsigned int chain,
-diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
-index 0cfbc0b435bd..679688cfea01 100644
---- a/fs/exfat/fatent.c
-+++ b/fs/exfat/fatent.c
-@@ -88,49 +88,58 @@ int exfat_ent_set(struct super_block *sb, unsigned int loc,
- 	return 0;
- }
- 
-+/*
-+ * Caller must release the buffer_head if no error return.
-+ */
- int exfat_ent_get(struct super_block *sb, unsigned int loc,
--		unsigned int *content)
-+		unsigned int *content, struct buffer_head **last)
- {
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
--	int err;
- 
- 	if (!is_valid_cluster(sbi, loc)) {
- 		exfat_fs_error_ratelimit(sb,
- 			"invalid access to FAT (entry 0x%08x)",
- 			loc);
--		return -EIO;
-+		goto err;
+ 			break;
+@@ -309,6 +310,10 @@ int exfat_get_cluster(struct inode *inode, unsigned int cluster,
+ 			cache_init(&cid, *fclus, *dclus);
  	}
  
--	err = __exfat_ent_get(sb, loc, content, NULL);
--	if (err) {
-+	if (unlikely(__exfat_ent_get(sb, loc, content, last))) {
- 		exfat_fs_error_ratelimit(sb,
--			"failed to access to FAT (entry 0x%08x, err:%d)",
--			loc, err);
--		return err;
-+			"failed to access to FAT (entry 0x%08x)",
-+			loc);
-+		goto err;
- 	}
- 
--	if (*content == EXFAT_FREE_CLUSTER) {
-+	if (unlikely(*content == EXFAT_FREE_CLUSTER)) {
- 		exfat_fs_error_ratelimit(sb,
- 			"invalid access to FAT free cluster (entry 0x%08x)",
- 			loc);
--		return -EIO;
-+		goto err;
- 	}
- 
--	if (*content == EXFAT_BAD_CLUSTER) {
-+	if (unlikely(*content == EXFAT_BAD_CLUSTER)) {
- 		exfat_fs_error_ratelimit(sb,
- 			"invalid access to FAT bad cluster (entry 0x%08x)",
- 			loc);
--		return -EIO;
-+		goto err;
- 	}
- 
- 	if (*content != EXFAT_EOF_CLUSTER && !is_valid_cluster(sbi, *content)) {
- 		exfat_fs_error_ratelimit(sb,
- 			"invalid access to FAT (entry 0x%08x) bogus content (0x%08x)",
- 			loc, *content);
--		return -EIO;
-+		goto err;
- 	}
- 
++	brelse(bh);
+ 	exfat_cache_add(inode, &cid);
  	return 0;
 +err:
-+	if (last) {
-+		brelse(*last);
-+
-+		/* Avoid double release */
-+		*last = NULL;
-+	}
++	brelse(bh);
 +	return -EIO;
  }
- 
- int exfat_chain_cont_cluster(struct super_block *sb, unsigned int chain,
-@@ -299,7 +308,7 @@ int exfat_find_last_cluster(struct super_block *sb, struct exfat_chain *p_chain,
- 	do {
- 		count++;
- 		clu = next;
--		if (exfat_ent_get(sb, clu, &next))
-+		if (exfat_ent_get(sb, clu, &next, NULL))
- 			return -EIO;
- 	} while (next != EXFAT_EOF_CLUSTER && count <= p_chain->size);
- 
-@@ -490,7 +499,7 @@ int exfat_count_num_clusters(struct super_block *sb,
- 	count = 0;
- 	for (i = EXFAT_FIRST_CLUSTER; i < sbi->num_clusters; i++) {
- 		count++;
--		if (exfat_ent_get(sb, clu, &clu))
-+		if (exfat_ent_get(sb, clu, &clu, NULL))
- 			return -EIO;
- 		if (clu == EXFAT_EOF_CLUSTER)
- 			break;
 -- 
 2.43.0
 
