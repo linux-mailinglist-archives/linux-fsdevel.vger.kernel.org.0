@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-72133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C5C8CDFBEB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Dec 2025 13:48:04 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 543E8CDFB85
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Dec 2025 13:42:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D7328301A34E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Dec 2025 12:41:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BF56B301A19B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Dec 2025 12:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B49E3195E0;
-	Sat, 27 Dec 2025 12:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A4C3191B8;
+	Sat, 27 Dec 2025 12:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bqhCR2Ep"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eBo2H9F7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7230226B755
-	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Dec 2025 12:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F12B3195F3
+	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Dec 2025 12:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766837880; cv=none; b=CC2/X44FBj1NocAme4zNJo3+whiDehnrZc430Qk6oj5yc8rXalNHancw0TA2AWyrU7W9Q4zZMAPAizqJpCP9OByH4mqvAhyC+YZ3rSGdbhZ/Mba3b2p+A/ObCmhAQ3L2n8F4xPmVqtCdxz41LlO6W27OFjM0e8qaxHK1y6+4yVc=
+	t=1766837888; cv=none; b=WeQAgU/2cLh3W7kL7l6joTEIJy/ARkUZj1hBCRUh7+RcBCxj9rptNCWtO8V3scchTWxRnfEZeFBVnmLTQ/1yLvdlMAuaN8xXQz4gWg7QOcRlp7+zSB56Y6dREi4eAy3+cf2XZ7gmCljpc6iPa+L166+QWE8FQ0LYb+q/W1V65nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766837880; c=relaxed/simple;
-	bh=oiRJqd24xNJBRHp4bn2koH7CqQq/f2UmEpMOGnQzYhI=;
+	s=arc-20240116; t=1766837888; c=relaxed/simple;
+	bh=i+edMET6/ej5N2K5avM5O831EcMojt2VSHcuUrQdfTw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lVuoyFcmvlWlsJXELiYe3txkmJrrw1Zo9V95FeP0d5+MkDDHbloa7D0anoESoZq+P7LtFMG/9lY6bGXeA60MQ71iFhYt+1ng6eMPElWwD9YvuRFsOdF45jSU731RJFALCfcdXfyA5K91EKRKN3ax3EL/FP61EijGtA1kCjXaAJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bqhCR2Ep; arc=none smtp.client-ip=209.85.128.48
+	 In-Reply-To:To:Cc; b=peLhVI5f5xVKszQVs7e6V68Kv13GU6hqXrkSmCuZdl2iYo8H520Hg+aDSjCAvoKsay6+eTI0Ewgw7ZSfvjnx5r2jgk6C9j/wbNLfyBVhOmdriTL3HZXJgC7qSgHGpLyHmK45ix0D06HjSwdCHrtQ7/mIHaTu5B5Xn6Joc9FInhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eBo2H9F7; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47a95efd2ceso70900825e9.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Dec 2025 04:17:54 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4779ce2a624so59146095e9.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Dec 2025 04:18:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1766837872; x=1767442672; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1766837882; x=1767442682; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8WVQ5l6OvuwNcTcqNwKXFrwDkeL8FFp17NQ/ZoKZRdE=;
-        b=bqhCR2EpXLgE9XhZI2hiZEPRB3n5r5OlzMOb9+L3gWNCQ0G+4Sw63quX08cvfNhUj4
-         7S5EUvA6p5KaP293DvxGfw+1LRUwCv9MqA4vdLqhwK3VPhFu0eGSoZS+m49Ty6DvcSGU
-         LFxHzrsOaUWacQfesOju5lG8NxWBnjrsC1s5Bm01xToejDk/uYBPO+OqNm9vpa12Ge6L
-         IfctQno8izT5lZAB7Ob/tkthX3WObdogL3Ib5eyXYyXilxeMRc8O6xQaAzhyxRSSQKfm
-         0WGFH+ZuJ0Jn3auPF7AmdegCgkbK7Ez/KbUBb86G7NnnsM4k9razjzp3Z9hXG3c3TMsQ
-         uHZQ==
+        bh=YPj481dav1h3nWeyVMYXYXTPRZgLS1US6KZdyNyRyzc=;
+        b=eBo2H9F7jsvmaK92/XVdbdEGM9Tdcx4wgE+kCCLtUhDw4tiFGEFwrffvmJg3Cjflr4
+         lLVjUhZChvFwikE0XJxcYjf0zBktHsHCPeQ1eRdVm52B1/xes6ShF/BI6rU3QvrL5sSM
+         7jUR3QpNP5VGu1rAaHCctimiqxfroEiKYvmlv99XtG3FfaXc2C8SLHlvl87kAxKq3Jva
+         ETdrsaBZZY0yjMUvbD+hJFiwLigqRz/RW3FlZQ8BcDTHnJ+LTxi77x5xGrYYwApC3/HC
+         qy10hdktZ51gFdtI6Ure5hOa6dcgq/XZ2kbj+ggfexvJq8+uWpi7mf1SOoyl/T+MexXY
+         2uVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766837872; x=1767442672;
+        d=1e100.net; s=20230601; t=1766837882; x=1767442682;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=8WVQ5l6OvuwNcTcqNwKXFrwDkeL8FFp17NQ/ZoKZRdE=;
-        b=HELe0ggIzpCDbNSNxGYH9Tle5R2lyTy6qbWvRehayJHqlf0asHLCJbI7s45h2vtb6w
-         c9f65eUruvkapIxoPneIpewIVRHtdoAh85gV+j/QCBWpW2GJDiNTKsP5bEQPJzv7MzXq
-         ZkkeltpZcyYWZ+egx+gpO4XrdgJ3TCZL+wQZTyyxUc7cG0Ay1d3SZ/MX/IEUfBnMXt8U
-         YI4Kz/Rgyq26iqErkcFxYx6WTpUi6TwYHGxTA+0Gl8qtGlOeY5BddKJ4cYQzlr4tzwHO
-         bCYxYp1ewHEkJI++vUNjVRpbxTJyIDsS4oSyxXFmPrm9AcDt8jjaQZmSTYAgZJGRJ+0t
-         rnwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXl83vitbtajFzOorAWo09NzV8HvHh6hzBYielE7aVTDw0NLolyx5dvTmRtn7mOLkCJhJqKQrosxi+evxUQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YySrFxAIo+I96OCyNqjGFiXJKkY5rNBWOR0Yxemnyxtir3fGI7J
-	7+VQCt9zpaGWIPCNZOAp81IlGXjSOxLC96TfG13xDz/k/4x0GvHmHcH0PWVEHTSRCtQ=
-X-Gm-Gg: AY/fxX6/4C8MA2HQbNmTeLprtAgSVNfddgqC6OhhMD0FTjbTdDPULNHN1K1LPJqCW8D
-	h13HQG5bKM4GADY4ckCBYDGNqDRHLDc7ryydkNb0zLtJggxquWZZLnNaVsKbBBKhx1tEOViSEPX
-	VKEhaio9VECY9uXGmTXmbMZRbY+zsY6LZjLtSOAHGPEgR0ZdZ7RbPv+Mgtl2ILSv+FRwJpjMAXP
-	zw98lkw2e7g2xFoRKDnvcOqrL1hFLcnws+j6tB2sncl4azk+USFYgZtJPj1BPwvhxqMLwzvCSgf
-	RLQAOSZ3uig2lpP+gKZV+cIe2ldmY6okpOdImoED/tKxTvE6i5vS95LOh/k855b7wwjber9+UOS
-	4PwDlM4ST1VBWD7+wzXrbdE+Y3iC3lhw+iPq1aeTW35SC7YoXb2Za2Wuca9KwYIbMmouezXL0Ik
-	lgoW8AQEgH
-X-Google-Smtp-Source: AGHT+IF/XDCpzgWo6CWLRHeKJmnECzN+dRl41jhTKGOm6P2nA90X9/hReUsAzbYAQmyiLuP2DWyXTg==
-X-Received: by 2002:a05:600c:3111:b0:477:b642:9dc6 with SMTP id 5b1f17b1804b1-47d195aa79cmr275082695e9.34.1766837872067;
-        Sat, 27 Dec 2025 04:17:52 -0800 (PST)
+        bh=YPj481dav1h3nWeyVMYXYXTPRZgLS1US6KZdyNyRyzc=;
+        b=xFjP39MB4aqmO9wI9SPuinXq8YtoAmkvndbNNDo7+b+vAQUbCCBZFd8oJBsMTNSjld
+         aTMFfg93I4v52/ibZ5LOWnWYkNovR5UxaWoh4+B0J5erfYmhdJC8+S2CShUb4AFq1WJj
+         KJ3pTfIjkHp904h48RhtybHC6KgM9f+3D7EYu+J4EKWQh+FelV5Op8G/OwOz+YaB5rL2
+         WWK5V+0w7o/IGrvH53R3gzBgE2MMGGHqU71wT4m6ZLqOBuiICFowQFFHqqKMIMbQ4AJI
+         Ov0d6znpBUCkSjrUKyArvNg2d/9hh+TlsQqGW82tpVthWb51OmcG88GIRmdI99XpZziX
+         zZNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmjiw/nyQj1dyIpUsj3mbcQNEZ5qm+BXApIzRaFeKB4YS6Utv4RWoePdW3UW5O+dKST6dYiVB8EQENTkFU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZiDd2C1u/3iYuF+lLGkrNgWrSrnHdyleiu5V498LVQGfkWY7/
+	Fr7kaQcHaTI9OkJQkv3aUVSCweS+Ri8iNrP3SFK2rwF6f5WyjgHPH/IkA+V25MYINhw=
+X-Gm-Gg: AY/fxX58Qp1kFlu1Fa2SswF8Ih2TK3kC6pMPBqXJUJ8WFR8tcqbfmlPClwP8T8Yz9QZ
+	uyUrnvW/mIqzSMisYLS5nzkvtBkvhzz51SzlSVOHP86IvtS7M7EF6LhJP+L/qbKM6G0zO132AEB
+	O7dUgHjnKvGEBgc4XM3jw0nUvzSmbfJkmSRMx3t+R5PaBO75S02efkdvvYdG9Qh6hK9+r1J3oeg
+	pkMKmqwa7xDZM1QjSJ4KW9HjtWO1/mjUyQ+6u3u3GVY44Rprem2lmELzY7hos6MgLFM6SD/KK6/
+	KabpBMjF4RCZpqrrqvbQsCZo/eEjabVMWx1IQCO+gqwcM/XIIQ4VVpy2gsyz+PbWUev25tyUOM/
+	W/9W6lHACMrHIG4ATQeRJeuLACAaJpbT0NV1dTLv5BTklwWSFKkOgxRjrLGAof5mL50deRMCRp5
+	abjhORx4rU
+X-Google-Smtp-Source: AGHT+IG0mR7FQaw+l23lNeDI3HZ2oGPwNQnJRaTrq28MQwyhH5VRn+b1LrDgTvBXBb163N6NepB/tA==
+X-Received: by 2002:a05:600c:198b:b0:477:9fcf:3fe3 with SMTP id 5b1f17b1804b1-47d1df12f84mr272520785e9.0.1766837881680;
+        Sat, 27 Dec 2025 04:18:01 -0800 (PST)
 Received: from [127.0.0.1] ([2804:5078:811:d400:58f2:fc97:371f:2])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-121724cfdd0sm97940127c88.4.2025.12.27.04.17.43
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-121724cfdd0sm97940127c88.4.2025.12.27.04.17.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Dec 2025 04:17:51 -0800 (PST)
+        Sat, 27 Dec 2025 04:18:00 -0800 (PST)
 From: Marcos Paulo de Souza <mpdesouza@suse.com>
-Date: Sat, 27 Dec 2025 09:16:14 -0300
-Subject: [PATCH 07/19] drivers: netconsole: Migrate to
- register_console_force helper
+Date: Sat, 27 Dec 2025 09:16:15 -0300
+Subject: [PATCH 08/19] debug: debug_core: Migrate to register_console_force
+ helper
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251227-printk-cleanup-part3-v1-7-21a291bcf197@suse.com>
+Message-Id: <20251227-printk-cleanup-part3-v1-8-21a291bcf197@suse.com>
 References: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
 In-Reply-To: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
 To: Richard Weinberger <richard@nod.at>, 
@@ -121,11 +121,11 @@ Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
  Marcos Paulo de Souza <mpdesouza@suse.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1766837798; l=1917;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1766837798; l=1369;
  i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
- bh=oiRJqd24xNJBRHp4bn2koH7CqQq/f2UmEpMOGnQzYhI=;
- b=PNCcHQvlH3xv93I4pBS5nug5ofRvIPVdGmJf0P9wllAmoEtQiq8Up0JT6yGQIvoJ3BjyCDLfA
- 69PIUeecq2AAR6MO/z2xt/dsbeEPhnFU/DPDF0NwOHQtgJdH0eloVGe
+ bh=i+edMET6/ej5N2K5avM5O831EcMojt2VSHcuUrQdfTw=;
+ b=frjUdDlkDnmz9ghHbQI85g3SWQC6r698VmLv/vY5BaR0ZhD0fZI/A4RKNedga5QpYNhkZRCmF
+ 1wOfSuqi/z5ASQwxAphrFcarhmThsZ8zA4jjeiyha2OJh22t8WzJ4PJ
 X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
  pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
 
@@ -133,61 +133,44 @@ The register_console_force function was introduced to register consoles
 even on the presence of default consoles, replacing the CON_ENABLE flag
 that was forcing the same behavior.
 
+No functional changes.
+
 Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 ---
- drivers/net/netconsole.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ kernel/debug/debug_core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index bb6e03a92956..509ab629d95f 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -583,16 +583,14 @@ static ssize_t enabled_store(struct config_item *item,
- 		}
- 
- 		if (nt->extended && !console_is_registered(&netconsole_ext)) {
--			netconsole_ext.flags |= CON_ENABLED;
--			register_console(&netconsole_ext);
-+			register_console_force(&netconsole_ext);
- 		}
- 
- 		/* User might be enabling the basic format target for the very
- 		 * first time, make sure the console is registered.
- 		 */
- 		if (!nt->extended && !console_is_registered(&netconsole)) {
--			netconsole.flags |= CON_ENABLED;
--			register_console(&netconsole);
-+			register_console_force(&netconsole);
- 		}
- 
- 		/*
-@@ -1917,13 +1915,12 @@ static void free_param_target(struct netconsole_target *nt)
- 
- static struct console netconsole_ext = {
- 	.name	= "netcon_ext",
--	.flags	= CON_ENABLED | CON_EXTENDED,
-+	.flags	= CON_EXTENDED,
- 	.write	= write_ext_msg,
+diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
+index 0b9495187fba..4bf736e5a059 100644
+--- a/kernel/debug/debug_core.c
++++ b/kernel/debug/debug_core.c
+@@ -941,7 +941,7 @@ static void kgdb_console_write(struct console *co, const char *s,
+ static struct console kgdbcons = {
+ 	.name		= "kgdb",
+ 	.write		= kgdb_console_write,
+-	.flags		= CON_PRINTBUFFER | CON_ENABLED,
++	.flags		= CON_PRINTBUFFER,
+ 	.index		= -1,
  };
  
- static struct console netconsole = {
- 	.name	= "netcon",
--	.flags	= CON_ENABLED,
- 	.write	= write_msg,
- };
+@@ -950,7 +950,7 @@ static int __init opt_kgdb_con(char *str)
+ 	kgdb_use_con = 1;
  
-@@ -1971,9 +1968,9 @@ static int __init init_netconsole(void)
- 		goto undonotifier;
+ 	if (kgdb_io_module_registered && !kgdb_con_registered) {
+-		register_console(&kgdbcons);
++		register_console_force(&kgdbcons);
+ 		kgdb_con_registered = 1;
+ 	}
  
- 	if (console_type_needed & CONS_EXTENDED)
--		register_console(&netconsole_ext);
-+		register_console_force(&netconsole_ext);
- 	if (console_type_needed & CONS_BASIC)
--		register_console(&netconsole);
-+		register_console_force(&netconsole);
- 	pr_info("network logging started\n");
- 
- 	return err;
+@@ -1071,7 +1071,7 @@ static void kgdb_register_callbacks(void)
+ 		register_sysrq_key('g', &sysrq_dbg_op);
+ #endif
+ 		if (kgdb_use_con && !kgdb_con_registered) {
+-			register_console(&kgdbcons);
++			register_console_force(&kgdbcons);
+ 			kgdb_con_registered = 1;
+ 		}
+ 	}
 
 -- 
 2.52.0
