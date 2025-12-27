@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-72143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559C6CDFCF1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Dec 2025 14:14:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F9FDCDFCDC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Dec 2025 14:12:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EEC233037500
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Dec 2025 13:11:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 66379301D66F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Dec 2025 13:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF08327BEB;
-	Sat, 27 Dec 2025 12:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A84328B67;
+	Sat, 27 Dec 2025 12:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Mm3mjxvQ"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RnSJgO5f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F5D327BE2
-	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Dec 2025 12:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482CC327C04
+	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Dec 2025 12:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766837968; cv=none; b=ChKKaw1YFmzBOrI7mr40rVQmWFnNo5Qgx+iIVR7rkyHuwrry+7rSCom4CroinFAWJy7sjZuJpyILMlCvZcYy88w49hwgWN2cN1ylZhrDsZoxm2/6OltcdRhMpAC74PGnZ+b1FP/L1B/c8tcrBU3vUO4knwLrjPwBW/I85yoDxjk=
+	t=1766837979; cv=none; b=uCtfrb/qQIMOzirQm8QwidkkRnwtH3hUwJrEVPO3KEBSIMqjTatvFoYCt2+i+vAtQlqLkDFvwkd25OvtxVkrAi3JDqUxC/7una7e9KoIDiNuuK/uSTT3K7F8YLq9eWt4/8CQ7hXeGeDKh5Twrmxk2plAOLzfl5G1+vPgR96Qh50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766837968; c=relaxed/simple;
-	bh=ipo1oJr6oF51GaJ/ypmHdNm6pxSai2H+L3ksWdFz4YE=;
+	s=arc-20240116; t=1766837979; c=relaxed/simple;
+	bh=M+RAaPiD4L8bkGcekgUNUpTeF+sJQV6vQniznC8VslM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rmuCvc+VnNwJ4FE07mHFTrZmUCWG2c0FuQ9Mk7XnoJXYqyWXAPbjf/zjue6bRUAjRrIBq6crQz7gXfkC0/hURTy+ex5Qjr9LmLCsHw2KmnIi8MnKyE5Tb5bfxZGz9I83GDE/KGT7XwBpNT27pTxAh6Kjyoq1SQKoVBl2+N0q7vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Mm3mjxvQ; arc=none smtp.client-ip=209.85.128.68
+	 In-Reply-To:To:Cc; b=dWz/IMMNcJTMmMks1bsrlKyHrOoaQZ6rCoNYiRBkQcg7hVSzSFTQ1GrdfPr4k+v0YvQJeB6kML4f7mDJku4SGTTNmd6yGrWOpZZtbLaVIi8LHVJzeAcix9alTQdSx6PaGsH1uOEumvvFF+kFaKcZUIkx3eKXJAu6a5bqNOcP/O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RnSJgO5f; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-477632b0621so49222285e9.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Dec 2025 04:19:26 -0800 (PST)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-477aa218f20so47224395e9.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Dec 2025 04:19:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1766837965; x=1767442765; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1766837974; x=1767442774; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PI64KbZN9t1PF6ymgBKKgUkODGeQdgLto8SJvKTSB0M=;
-        b=Mm3mjxvQbYaOSTBPuMB21rwV2Ovuq4exCypSwKkvktgS8oVXqKqxc2gaY6VAjRCwt0
-         o1tULQVGcNg//FqPUyCqHjQQJrFrjIkh4wKzSpZpOH0vCTpyWrIJCCSR6XAE6oLWiX8g
-         d57XMFMDkexc8mI+87N4qAImcYwmLV2oy85aAEEQrW4+ac+G3sEVV5eOYz8YngBlVwf8
-         FTrQTYQwdlJV9CLN2ZuLcXKOfGnaHQkwCqiq2CSKUzkuAMvezSWa4wbybRwYO5mp+3Dz
-         uWIahmKU1flzE6vD3fS3tKyAMG5RXmrXWIwjEQfE4NOtfmvvfMf/XXjrQMmyrpbrSrNN
-         SH8g==
+        bh=Ltdd8M4LmPmBXDEHAaMGtcqMVaDk3ISf2NYRX3F1G54=;
+        b=RnSJgO5f3vtUewM4rvTV3gj9+yMbOKfC+MYezexVwjrMMLylt/VPAyyHXH1YzFUumt
+         QXxRzkBUdgGbSc6jSzUsYa3jXKAwZa4Bqp8TNo6cmEn0wTHDc7Kwx7Tv6JxfQPBXSK1Z
+         Qm0UOn9K3FCagDp9yEtJZ0PgTwmlFVmfIa3bZbJLozDjG0MYnrvBOj6fARSSOgW9ISLM
+         TDx3DmRqR+dAYOLhMLlQRJaunF1kHWlswsvoFGluPHPnjD4wBz+hVljhInUYK2dzJj0r
+         yyuvtBwmOGTxCPGWEQwBTqKOH47FDqb650jLrsWlgqlnlGTtx51xlzhAVlIMAzFUvQdR
+         obXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766837965; x=1767442765;
+        d=1e100.net; s=20230601; t=1766837974; x=1767442774;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=PI64KbZN9t1PF6ymgBKKgUkODGeQdgLto8SJvKTSB0M=;
-        b=rmiIqmF+Uc1pPluw5EvjaDghoJVEzI2MXYFZ+6jowFwrSnmgGzZ6ncxY1rBxlBnUv/
-         XK/FPpxL3jg1PsMBHrrKkYzjd2lcYmg5M6TuhR/GVLRBtA4AmGj6ajUTAZw1Q+F415Wa
-         KAf68pTEq+1P5pp+J4zvi1FpZnuDPT1qRyTepLuW45HKk3AfNHud7RJg1ESiFsDug5Rr
-         36aH1XIRQN2gLM8kS8qffDeQ2Dv90lmB0PH0XwQA/YvzZ6hpskPCVKPsU7t8u/cZMsiJ
-         fOYQsIJugkGo9MEt9DqqZVmdReMNIx1MIXecXtuHWDnIyvC6EcC2oDMkcgixdZCTJKlV
-         d7Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5xJo3h+ZLf2hQ+r9lcoqO76FSPd3iP5e1XXGAkRHUZWkn+zmL4riqvYp90uIkaSNyOLXWPYGkn8OANait@vger.kernel.org
-X-Gm-Message-State: AOJu0YztEdj9QnQrnpxT0Eg2GWOZ34zsr+SzVfnj2rDIqFr2joIxgmSB
-	OD2WYmg/fJ2FYATOQLzMpSRdXzfIiclYmO3IbC0dgTxAoItGUvbQbBCg/4VxHsig/EQ=
-X-Gm-Gg: AY/fxX62GvsvUw6QsKpjtZ0g25MzDHOAmFaNMjWaIj6CdH3t8xjyxfjyRQOxrbtM09p
-	Qxj5LO1pv41nWD6xqZn2Pfrv7Z/YCokoCF3OsATY0Hn+zWTZg6p4BVKDqsa2aBypkmalme0GfpL
-	5L07jOz72yv0EtJQSmcqACYKaELUZ8j5l2kPWDD02UH1mikcd8mFl9rQL6h2xNpaaywbuhNo1lJ
-	go+FRDKY6J/T8P3m/lnRKWq3DotjnZ4smAbd9Bojc5DM47xnBkaQgt1i77xc9xRtfV4vOiFpz/+
-	Em39OPHjY2KQAsGrdD8udRp7h2KrAw3Fl5JpmvRqRAFIqZ15OC4PSTqjlSwCIS6PNwwRrgcRKO5
-	oO8NLLojdTaWWm2nPZ2omYZBi/w1NNg7yPi5+4Wb6HumcWNZZzDTIQzsldDu0RERR/ITA/l7jC5
-	ueaP9TsERa
-X-Google-Smtp-Source: AGHT+IEqqHc/Rd2kLfHagj9YhzIrZRGfzwvOOoeUxY4FRXLnI0VACA/N9sgft7uDx22VCc1m3UDX7g==
-X-Received: by 2002:a05:600c:190f:b0:475:dd89:acb with SMTP id 5b1f17b1804b1-47d195a72fbmr289900545e9.22.1766837964788;
-        Sat, 27 Dec 2025 04:19:24 -0800 (PST)
+        bh=Ltdd8M4LmPmBXDEHAaMGtcqMVaDk3ISf2NYRX3F1G54=;
+        b=ppfwSdh7dSDLjfU4kPaj8fNl3k9/V3oqziKlr0k68sg758vbCw9LA/XsMWLAi1KgnP
+         VXhzyVme3+usyPsCJpvt5Six6JgCJlOmDq/d8ke4xGUvWFM4WsFgy88oGVTSYj6RocGU
+         g0B3MI8ZpDhQbKLLB+wsYLRkHj4+hdLUa3pbjCSNp+bnNr//EiDLYzKPvzHWTcmG+dUp
+         4aH0hFaWyumDWwpPB7FW6cS4zCeiOUKVQvnfgI+kZp51t2OSuUYXgKrWBMsY+Q/orsXl
+         6FxCHVA1dUhwg0Ke3yog1OnNux3xumwg8QvXip/SxUw9G8n/IJaSrZLXBxbMP9ZWDcZk
+         m+zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbwVxfR3vMIaMrxnz3G0WoQl6bC5VRvDjYAIE5jeK6HPJt7Ws5bfcJ775VO+bMWvqeaQzE014clJb+PLe/@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXjwnXECnq8lhdTQaRGYdvjMDtnJR46YdSLG1FhLGOm8MPh6HY
+	3ur9APZ8wzhRSuuAZPTMcQ9B0kOYFpl4gOL3l38u+bQqUQYTcOcwSyrK5wJOAOAzZMQ=
+X-Gm-Gg: AY/fxX4WJYFwvWLvIDcb/Yy/14wCLb5PzfH0ignTQ8v+dqDVHpsp6GRcRRCWFoGh09k
+	0XRU+vzZlLvfD89eNUHEaICTYrS1lqgV4hauB9oVAcgwlLed8TNPcnLfeWS791Qg3sQzgo9r+SG
+	3uiqSmDbgGkBTDty+QU3dxwlXI0SUfkgEFRyi2uxnGIM+CMF9H8auxJe1aQ6lI6qBCWFmw4LqjT
+	ka8RByAdks1w/0rY1hDPk7QiTyuPSFNvNyxjYfh631SQait7fWeY+9keQCo7pMb2wT0dK2bultz
+	r0Z6j1H39gre0JO+YmVP+MPzerDgGlgTnety26Rj4S83xZIdKayAXxKPSIqXWtjx1MFrKhWPN3J
+	DtVw6GOBYIMMP+hKgMO/g18JwKYmZMYq1Ji6TUA5LLP1K+ZSrlkYZutDP3EYpfQWeq6gWXbgcwQ
+	+ocL0WWDZR
+X-Google-Smtp-Source: AGHT+IHMLS3VfYivW6iZyjAkGRbHMebp8EGQujmDyd6LpCoRzo/q2pR4OLsY4m1yHd+Dy1qj+iz1Lw==
+X-Received: by 2002:a05:600c:5288:b0:47a:75b6:32c with SMTP id 5b1f17b1804b1-47d19532f91mr239061855e9.2.1766837974046;
+        Sat, 27 Dec 2025 04:19:34 -0800 (PST)
 Received: from [127.0.0.1] ([2804:5078:811:d400:58f2:fc97:371f:2])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-121724cfdd0sm97940127c88.4.2025.12.27.04.19.15
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-121724cfdd0sm97940127c88.4.2025.12.27.04.19.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Dec 2025 04:19:24 -0800 (PST)
+        Sat, 27 Dec 2025 04:19:33 -0800 (PST)
 From: Marcos Paulo de Souza <mpdesouza@suse.com>
-Date: Sat, 27 Dec 2025 09:16:24 -0300
-Subject: [PATCH 17/19] drivers: tty: ehv_bytechan: Migrate to
- register_console_force helper
+Date: Sat, 27 Dec 2025 09:16:25 -0300
+Subject: [PATCH 18/19] drivers: braille: console: Drop CON_ENABLED console
+ flag
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251227-printk-cleanup-part3-v1-17-21a291bcf197@suse.com>
+Message-Id: <20251227-printk-cleanup-part3-v1-18-21a291bcf197@suse.com>
 References: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
 In-Reply-To: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
 To: Richard Weinberger <richard@nod.at>, 
@@ -121,47 +121,35 @@ Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
  Marcos Paulo de Souza <mpdesouza@suse.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1766837798; l=1183;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1766837798; l=917;
  i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
- bh=ipo1oJr6oF51GaJ/ypmHdNm6pxSai2H+L3ksWdFz4YE=;
- b=BCXQlMZHiSgf9aACQxFpdYHusJFHrRGAPtAecEP+JmKnj9nHT6kdi2m955mQdUkj992asxAcQ
- YxGwDMjxOJdD2wCUfBrHw1pcuZeGNuCZOOekwLuy8OjtGsDgBHGc3PP
+ bh=M+RAaPiD4L8bkGcekgUNUpTeF+sJQV6vQniznC8VslM=;
+ b=VNcSKbW4wn0ZJDPmlW3fCDrj2qqqMiKzMUpnoUVSmYqwNJRukKGa+p9lja5itToGTVwI9LN+2
+ mQPFka3TIBIDqDnH2JmGqErVL6l4YMmEx/hbdpLg4Ll2XIa+vBtsfSS
 X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
  pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
 
-The register_console_force function was introduced to register consoles
-even on the presence of default consoles, replacing the CON_ENABLE flag
-that was forcing the same behavior.
-
-No functional changes.
+The braille console doesn't take the same path on register_console
+that other console drivers. At this point, it only registers the console
+and do not receive any printk message, so we can drop the CON_ENABLED.
 
 Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 ---
- drivers/tty/ehv_bytechan.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/accessibility/braille/braille_console.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/tty/ehv_bytechan.c b/drivers/tty/ehv_bytechan.c
-index 69508d7a4135..a2aab48d11ae 100644
---- a/drivers/tty/ehv_bytechan.c
-+++ b/drivers/tty/ehv_bytechan.c
-@@ -299,7 +299,7 @@ static struct console ehv_bc_console = {
- 	.name		= "ttyEHV",
- 	.write		= ehv_bc_console_write,
- 	.device		= ehv_bc_console_device,
--	.flags		= CON_PRINTBUFFER | CON_ENABLED,
-+	.flags		= CON_PRINTBUFFER,
- };
- 
- /*
-@@ -331,7 +331,7 @@ static int __init ehv_bc_console_init(void)
- 	   byte channels here, either, since we only care about one. */
- 
- 	add_preferred_console(ehv_bc_console.name, ehv_bc_console.index, NULL);
--	register_console(&ehv_bc_console);
-+	register_console_force(&ehv_bc_console);
- 
- 	pr_info("ehv-bc: registered console driver for byte channel %u\n",
- 		stdout_bc);
+diff --git a/drivers/accessibility/braille/braille_console.c b/drivers/accessibility/braille/braille_console.c
+index 06b43b678d6e..0b7ec68b305c 100644
+--- a/drivers/accessibility/braille/braille_console.c
++++ b/drivers/accessibility/braille/braille_console.c
+@@ -360,7 +360,6 @@ int braille_register_console(struct console *console, int index,
+ 		if (ret != 0)
+ 			return ret;
+ 	}
+-	console->flags |= CON_ENABLED;
+ 	console->index = index;
+ 	braille_co = console;
+ 	register_keyboard_notifier(&keyboard_notifier_block);
 
 -- 
 2.52.0
