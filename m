@@ -1,145 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-72146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B6A2CE0364
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Dec 2025 01:18:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF67CE5294
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Dec 2025 17:04:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 88EEC3026871
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Dec 2025 00:18:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BA162300A87D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Dec 2025 16:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C2254262;
-	Sun, 28 Dec 2025 00:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BE921767A;
+	Sun, 28 Dec 2025 16:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ngo8rijB";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="PguR7RVL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZenBnDJV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F207F4FA
-	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Dec 2025 00:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775FC207A20
+	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Dec 2025 16:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766881121; cv=none; b=BBBqswc5o+n4JMpglgDzG2/CkoT66Yb01T42IspI0STffK/1uh8inWZT+oD9PboumAduU2ljnzFurFYkpQ2fhb04r5Hp0gvvmrPvviRfCTEdMykyPhk7kqg+GgbNWJP2VehuwaExG43RBcdV8XIz7DYKGMQz6IncVsB79+DZaXE=
+	t=1766937860; cv=none; b=WMmOelsSHojWS/y0+eyghQq/aHSxjHGijKXZyg7eVm13pYHXgNi0iQh31mMQ8QVpaGKpWu1d8PEVQHrGnJYlkamU3kQyGuYlIsHpwwTZ7oTeBzmPVDYDmofeLrvX7QPbb5UdsimuaPnMhMvIMDfHa6MrbTJofa2GBpagcR5kHuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766881121; c=relaxed/simple;
-	bh=mA4xZkh+IOnROo9dYqtZQB8RfI56qce5+TX4AgzD1wM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PfzxpRhKYwCG73wg3++Rv5LiOcJ1KIpP+UMczE6yuT4rnWzuGgI9Wjlh7LMLRcSdJ0gJKgcINfCOEHyRJkYtXTZk8Tf9GDddnZLWpQHQPABE9ormd1l3j1H2Qp8Vpxdq7rZLvFOfIiX7f0ujooRKoAKfy39u68ehTEpHLXONpHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ngo8rijB; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=PguR7RVL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766881118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wqR5WHFE7nfIedlDLTwqJJFi0bNQgjEyNOznlTwzMF8=;
-	b=Ngo8rijBYCGsJgZgJaCz9qHSr60zJ7mQsZa/yxXzF/CYTvTK+RAzWjkuI4sPh7JhkQU90r
-	IUpvJF4WxLinxQrvPSEMYJ/YIEjnYd4vmAjrTjPQyp5EW5Rnzv4oAa5MOWGwmVC/aw/vV4
-	PXA7/7FQxuHb17H9ZhLzECg3qxn3dnY=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-567-pe8G3W5JMPWyMxLlTCMszA-1; Sat, 27 Dec 2025 19:18:36 -0500
-X-MC-Unique: pe8G3W5JMPWyMxLlTCMszA-1
-X-Mimecast-MFC-AGG-ID: pe8G3W5JMPWyMxLlTCMszA_1766881116
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ed6ff3de05so225340591cf.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Dec 2025 16:18:36 -0800 (PST)
+	s=arc-20240116; t=1766937860; c=relaxed/simple;
+	bh=0g5FqN/rkOiZFe9WwucAUU+cUZwTdOzUAsQjlujWoHc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JYoNkLiFaOWkz7TK4tYQIRlyEIf6uw2omM+LCQohMQspB0DmaKYyvfk09OZfZb/fUmmovKrnMMTXaN7KRdd7zYhq8toxt0mhk9Yjgnkl5+DVPWDDZPzGX35t7LaJ17+8wBizkRCPjKczAt2CWFMYaMQg7jUZOM0E1Vte1vUVM4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZenBnDJV; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-34abc7da414so6998825a91.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Dec 2025 08:04:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1766881116; x=1767485916; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wqR5WHFE7nfIedlDLTwqJJFi0bNQgjEyNOznlTwzMF8=;
-        b=PguR7RVLE5JckiN+14NI9GPZQ5Pjjf04DE8514XGXgd1zcZZsVm7QZTUNz8oypV8zg
-         o9NHfcS8tHd+XKRZ9C7Ojxk1CiX6o42sPeGOYVSAAgRrFn+jkLDRCIuj/oAAFOL3IY57
-         I1xZEcowhLLHMmGhx7pw+IbtDOPgtFhok4/K0J4dLk51BlAtvpjz6bmPkxfeI6tMRYBg
-         3X8kW2ctg15yj9Cr5rDlIALHQpkmcHriMaCJQTlld3zkLTD+tGcAZUCaXssD5W5Sqt56
-         r/PR848zXW/1W4r1KtjFi200D1bptsKSGjvnMS1+YuG7WJuH3AWcDApT4nlC9r6WJUOF
-         IDfQ==
+        d=gmail.com; s=20230601; t=1766937859; x=1767542659; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MX67VFPBKvZMeuzSJbgA+xToCTH8S/+0RCQrFqbWcNY=;
+        b=ZenBnDJVRwqU/3SOKi49GxnH4hLPBQJPFQFNzmMtMWM5eYHlyXK0TODRT2NM3po1Le
+         zqORoC07t5b3rxnRYy2clcUGWVm7BcNKpi/hM+L2Qw7Pmxmxt/z5pa5gvj9Xev0kUi8O
+         jPyNhtk+rVOuvi/+JpFofVrZhsuHfKjkJ5YxZmQwZ4MKyQd1xsTGtoaN71d3BViF5K3c
+         GSpJEbL7Opv2/A4nGjbo14Fs289nIpU/D2nRR8z5/cN8pz2yCXNK5GZJ0//mVtPXmBUI
+         caE8PbsLnReNFd7yCOzrvguqv29DwKDGmJ1K97wKWP4/B0YFt4R+SxK6/j5wmy+kgmcB
+         jQvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766881116; x=1767485916;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wqR5WHFE7nfIedlDLTwqJJFi0bNQgjEyNOznlTwzMF8=;
-        b=cVMN/nC+COibCTutL5YeNjdWyXdS6ca/j1mfo91CfH7jlZSIYfGUeHS+9Xq0tpgPSc
-         Dh5iUz/P1InjkZW0WABuvP8QjBxZ2I8k3Nac4wDDRq0WWVO9/i7hNhzw4VTzJPWOLnLO
-         E93CbJshtTLj8aTn1HQTxjQrjWduubi6ldZ3krXUSvkm6JlYYEaiTO2MoOMLiLa7MWZI
-         GpX0HCFEat81POneYYc8dV/MM5Ory0+hxcs3mr1YtYKAfNpRlebcaVwhn316iYAKKEG8
-         lWIRW8Z035oD/JofoJLTzWUrPZOgm9nNwyzYJJbb3ubgH7j6/yuRWfQyoulBuwB68XsK
-         9O8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUTu4DFON6E1ujTQCAK6M5IBxpgTpJ3c7aTs8ngGHM2N5G71PGXWWicfwImwo8K1gZjEpRYMPOgGBHrQibG@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYKtQK6356XiwA7OYLJd/qgqUAFFHqUMUiyS+ZTRMH64rUpq58
-	AoiDehlj+MAmBpKMpv9/OvqUG1/6zw27ETKLRMGjI6C4M2W75rulwkYnUEgy17BR5wdCJ5aAaMX
-	AAkT/A/DXRxCzYibIExv3EV40GS3w2HFwn2S1U/l5ywPfUWnQ1Hm274epc9ywXdAC7FQ=
-X-Gm-Gg: AY/fxX7JSyu62GU3DlNXUnRZS+sFtVAPbG1JWSjQ4l9EISvz5OFQKzDWKna7zxfIpzM
-	p7SyRy2Ymmoevbwrx8xpRV9PwGbCGPeVh3t0JiAUiAwT6l1RG50RRjRVPobqf2zBmNFZt09Bu1H
-	C32V/on26jtJPSIMDEZ5j637UyS6VxJfSuHIKK9EsDsnmmnz20mUETT+I+I0UJbMRSZdT7hhqYl
-	uiXxOTb1XuQo30tDYuz0cclLUFDze7uCtC+mVWx4OoMWQx/NMofyS70OurIRKRta1dsDTUY7D3i
-	q8NP2CQHXkYws32mi6oB78ZZbF5jowIe/OIoeBN8fUghzFpI18yMWC91p3BpRkQAiAHYbfNT/oN
-	KaPJr1hYIGpgHtHoVWtW1CY8CGlByhZ5VtZj0rSxSlB9b2P9iDvk=
-X-Received: by 2002:ac8:6681:0:b0:4f6:fe06:6cf5 with SMTP id d75a77b69052e-4f81a80489emr7949631cf.28.1766881116252;
-        Sat, 27 Dec 2025 16:18:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGdcNz3k8Zcw6evwj0qQEpbP+CQXVPF3z7KIXIQn98bZQezQtwjFGuO/GyEM7uNUQswQYVdPw==
-X-Received: by 2002:ac8:6681:0:b0:4f6:fe06:6cf5 with SMTP id d75a77b69052e-4f81a80489emr7949451cf.28.1766881115900;
-        Sat, 27 Dec 2025 16:18:35 -0800 (PST)
-Received: from [10.0.0.82] (97-127-77-149.mpls.qwest.net. [97.127.77.149])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4f4ac563f66sm186020801cf.15.2025.12.27.16.18.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Dec 2025 16:18:35 -0800 (PST)
-Message-ID: <1db851cc-f1a8-4de6-a01e-37ec091094ce@redhat.com>
-Date: Sat, 27 Dec 2025 18:18:34 -0600
+        d=1e100.net; s=20230601; t=1766937859; x=1767542659;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MX67VFPBKvZMeuzSJbgA+xToCTH8S/+0RCQrFqbWcNY=;
+        b=d4KjkyPCH6Orok4wcaEpcUEaLOIb5oQ99Vrli5myEKqxWVfsI+h8KikFJ+P+O+RhGB
+         eUPdytUXJAYpa9ddBt3yoOLxV2Tv9IdLmqEa9W2jB2H9pAZHAmC+FtnHb98H1N+n4kaw
+         uL+KQMkP3yFZWZOHS1D+lAU/mve8U3gH3ADEUB3Yg11qiTqJnCYGU0B0TnQdBcBEmqYd
+         d1iPNtXYnFTswGwrMFJv3rKQmkADlsGmmYQe/aafbecn53p1unto3d66Jw3s7IRYXSlB
+         HLGMAEz8tBCxSENYT2qX3Pzc3A5zqHKN9GeqsmlJQuB6WTyRhDOR2YUQhl5lYJKNj+o/
+         9RZw==
+X-Gm-Message-State: AOJu0YyHTMmX/3e4QbCN590z+4eRxl7+DtcjTPt66LwUPwLXkCI2odL2
+	nMOsdj9sL0B9SGDAu5WwPfu8S02YXM6T4gTbCSblgQsZfy4w7oMICK0A
+X-Gm-Gg: AY/fxX4K5ubFGapVPoWqwlaGWK0fKMW9idjpAO27rPxWHvFvQymdiyDqA0s+d/bEFj4
+	u4DVgbFMDDFcflFYUD8Jt1WVK4hIch/MDvx3PctUKpadWR+CGVddlbZ9Em9TnUuuaTWwGD+GyLo
+	snwxec4IgqJViAbbY4UBPM6RMTBdenpdpWlE9Li4uPVHIMwPCMxLfMI4+hzvugF6YJRsS2R6RNP
+	SemdG1S1jf6+rD60EyLAanIq1+0OmhOlLhe+hNDOoQYWrKL/pC85Eb6zchn88ZTXGfqKghFaC4Y
+	T4MgthuY0XO9ooN7+IyO8zC/y/1bxLkn/w+08Yv2F7tdjcDL0pODTfRhYVG1tfhCH9U7qNQdr8q
+	Ziy0L69Cp8G1rZYkFHdlyf5OJLy5IGvTP6DxXx6YRsoyYMHEQndyf0E+18UNxym76VcobfEBbw5
+	SphNKkYeXbs5L0vTaFgk0=
+X-Google-Smtp-Source: AGHT+IHM+TWbM5664Wh25HgkAhOwA9g/o8G5+DcxzmekpUzA4x7/rDMZHaMAkbWnj+3GASKlt92+MA==
+X-Received: by 2002:a17:90b:35ca:b0:33e:30e8:81cb with SMTP id 98e67ed59e1d1-34e921353a5mr23123485a91.13.1766937858523;
+        Sun, 28 Dec 2025 08:04:18 -0800 (PST)
+Received: from [172.16.80.107] ([210.228.119.9])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34e769c114bsm14929709a91.0.2025.12.28.08.04.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Dec 2025 08:04:18 -0800 (PST)
+From: Ryota Sakamoto <sakamo.ryota@gmail.com>
+Date: Mon, 29 Dec 2025 01:04:07 +0900
+Subject: [PATCH] inode: move @isnew kdoc from inode_insert5 to
+ ilookup5_nowait
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next:master] [fs] 51a146e059:
- BUG:kernel_hang_in_boot_stage
-From: Eric Sandeen <sandeen@redhat.com>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
- Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <202512230315.1717476b-lkp@intel.com>
- <fb920248-a0fc-432f-926f-c27b1760de58@redhat.com>
-Content-Language: en-US
-In-Reply-To: <fb920248-a0fc-432f-926f-c27b1760de58@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20251229-fix-kdoc-ilookup5_nowait-v1-1-60413f2723cf@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x2MWwqEMAwAryL53oANiuJVRBZtowalkdYXiHffs
+ p8DM/NA5CAcockeCHxKFPUJzCcDO/d+YhSXGCin0hDVOMqNi1OLsqoux1Z+vV697DiYytmiqIa
+ RLKR8C5zc/7rt3vcHio9rtGoAAAA=
+X-Change-ID: 20251228-fix-kdoc-ilookup5_nowait-b17dc447bf2c
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ryota Sakamoto <sakamo.ryota@gmail.com>
+X-Mailer: b4 0.14.2
 
-On 12/26/25 2:01 PM, Eric Sandeen wrote:
-> On 12/22/25 8:36 PM, kernel test robot wrote:
->>
->>
->> Hello,
->>
->>
->> we don't have enough knowledge to analyze the connection between the issue and
->> this change. just observed the issue is quite persistent on 51a146e059 and
->> clean on its parent.
-> 
-> Odd. Not much to go on, and I don't see any obvious connection either, but
-> I'll see if i can reproduce.
+The commit reworking I_NEW handling accidentally documented the @isnew
+parameter in the kernel-doc for inode_insert5(), which does not take the
+parameter. Meanwhile, ilookup5_nowait() gained the @isnew parameter but
+lacked the corresponding kernel-doc.
 
-I can more or less reproduce, I think, though I am not getting the hung task
-warning.
+Move the description to the correct function to ensure the kernel-doc
+accuracy.
 
-Oddly if I just put the 
+Fixes: a27628f43634 ("fs: rework I_NEW handling to operate without fences")
+Signed-off-by: Ryota Sakamoto <sakamo.ryota@gmail.com>
+---
+ fs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	struct dentry *(*mount) ...
+diff --git a/fs/inode.c b/fs/inode.c
+index 521383223d8a455a2d09caff70615032213e3dfc..68056473d65ed4beba5241f4b1bac79b29cd84e9 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1278,7 +1278,6 @@ EXPORT_SYMBOL(unlock_two_nondirectories);
+  * @test:	callback used for comparisons between inodes
+  * @set:	callback used to initialize a new struct inode
+  * @data:	opaque data pointer to pass to @test and @set
+- * @isnew:	pointer to a bool which will indicate whether I_NEW is set
+  *
+  * Search for the inode specified by @hashval and @data in the inode cache,
+  * and if present return it with an increased reference count. This is a
+@@ -1593,6 +1592,7 @@ EXPORT_SYMBOL(igrab);
+  * @hashval:	hash value (usually inode number) to search for
+  * @test:	callback used for comparisons between inodes
+  * @data:	opaque data pointer to pass to @test
++ * @isnew:	pointer to a bool which will indicate whether I_NEW is set
+  *
+  * Search for the inode specified by @hashval and @data in the inode cache.
+  * If the inode is in the cache, the inode is returned with an incremented
 
-member back in struct file_system_type it seems to resolve the problem.
-Even if I give it a different symbol name (like mount_foo).
+---
+base-commit: d26143bb38e2546fe6f8c9860c13a88146ce5dd6
+change-id: 20251228-fix-kdoc-ilookup5_nowait-b17dc447bf2c
 
-I'm confused.
-
--Eric
+Best regards,
+-- 
+Ryota Sakamoto <sakamo.ryota@gmail.com>
 
 
