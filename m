@@ -1,129 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-72175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD885CE6CCB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 14:01:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 303B6CE675F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 12:10:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0828F305844B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 12:58:05 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 94A72301AD08
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 11:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7671131A7FF;
-	Mon, 29 Dec 2025 12:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C2F2FBE00;
+	Mon, 29 Dec 2025 11:09:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+Received: from mail-oa1-f80.google.com (mail-oa1-f80.google.com [209.85.160.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE0931A7E3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 12:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C50C2F7AAB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 11:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767012580; cv=none; b=PQcZOa8oyVL3X5x8gDa7L4GOWJZdHY/2IoeQ7PmlKwG6SJxf6+zZVmpfy4YPWDbnN/C63VQFI9Q5E8JeYsvUNr3QgYozLJk/vMUqzYA2npZgrI1EEfoIFxAgDEVa51jT3T8Wtm9ro9wK08UiJU1A0Dubc0v9Fuvgb+zpImf5imc=
+	t=1767006564; cv=none; b=omcJpGMVmZt4ZzeY0H+qLSqpCh/CIx9Q5hUjxzgCar0Vfx5SoJp+B2dNcFYkflhzLmJiQw71dSV4xpS4tX5Pg7ZThLLHvGD5K11fQzJjmt3emNMSVvyGwmga7A56l5l8HEbcbBj9P3WzVTHlqKEMckCm/HD09NvvnxnyzGfJ1rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767012580; c=relaxed/simple;
-	bh=WbFJrbRBoJyHWpytKp1fUuTXgxtIE+WhTHXCWj6uSeM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BbxukcCIaC33U6Z5jHl6bVlNHQPZYDVc7qF+rOXE6mmnXuzY08Xizt/PSTeEA0CzlOKw+vJdIpULRnvoG5KwkdlGoNZbOoPNuY6pEdPV5JFXasBckm1mC4+S3ccrR//bCsXsoehsCAxVqWKCJwajCG+yzxX7Pj+W9SQPglXnM9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-5dbd8bb36fcso7591796137.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 04:49:38 -0800 (PST)
+	s=arc-20240116; t=1767006564; c=relaxed/simple;
+	bh=pAuyDpU5oLWj9w9Cz+NjQIf9qoyI6EVxPrVuUOPMWSI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YzjF3O4/FbgtQsYBl/D99Q6UrPfaM6LhsxZ8LiVr31WvySsMEmsKBUj80J8NhPWqcB9L8dbi/+9M7+wEID6EGmaM3A+0xr3e4z3MWfL/KVeB9/HUu+XnVoao+EDgxNgO2V8GZbXyfKDVvVsnzq9Lgh1GU1+XtJsGZ/Q53TIrEMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.160.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oa1-f80.google.com with SMTP id 586e51a60fabf-3fea6c3e817so2280813fac.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 03:09:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767012577; x=1767617377;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=BSDzJ1on7IXtc7FdawhZo2ycnH6jAqif4XQVPGYGWjc=;
-        b=ie0+biAty5GIU8loHGFKcss0ypU/X+9qQCbYwyqplS+zpokF8GWpPhFHPJFqo+270s
-         RC3MGsmUVKlouiC6PPdLUSX9V/TmtsEDvdw104qj5ZUfkZvg8ODH4HDvmoXlt5uwQ4aY
-         lzEQHBjLlcmytzrzzQFwAXZedozhvycYhS5fj+PMsehSxbPeB3jwGfOHS+5HqtBDsbyo
-         rXnh4Qz7m7twSdcLg/vsioIwg9f/+hmVcbJhUXLA5K/x42JLC5IG7QCeNOykDUvyRAV/
-         RKh5bfXCQRtztHmtvsP+fpzQP4NH6MDICLbAnwD0+j0BAJFfAIK/2o8j10H3uREGAD/2
-         RaBw==
-X-Gm-Message-State: AOJu0YxCWRwxXI5sbjhxoHVZ3RkgY0AcbhPyVkUJn9TXbO5Pf5IGwOTI
-	7tv43yZ6Ea+NrUt+hG1mHYvWRQFxbBQ6V45TgP89KhzCDfmGL9SnKdaB8Q9YLg==
-X-Gm-Gg: AY/fxX4MecX+8X9KBxLEn4W5AmfW+gbFsbyvWSKEmhuunP3xRHI68Lsyeu2xacBavcv
-	2nzQGSXTOI2e92pIBAIqHAkSeeaoIujZztLmJQ800DOKeGNz5jcdB5aL1Kq3CQPWl9e7/5rBRt0
-	pWGy5imGzcMcvJq2rpUw1u/Dl1W2pIpe+2Za2j0AoYLn5wI0BPkKRivbOxOVhqBitSLNyW/fl6z
-	xZPV7xxludf1lCbLketzrhlbmc4tlQM/eFOx8h6ugvk0nsvCR1SFJ4Xb1XwyUmhdvtI7Z+C0SwI
-	QoAi875TMw+Y1d8I7QL/GTzXERyCqAcMbuJfAYuwEhn8lMaNJecwriN+JuJHds2ReXux6hfEpVW
-	n6m2gSuXmzZ9tVPLaQJAphPZ1QRy5l2GIeOIy1ZoYEuFj9KMxmCeHOOXZLpI4qPYO9i0lfV0PH7
-	+ELvR+O/W0fjktFS9eBEFlyx64m0Z9RVJuk1iJ
-X-Google-Smtp-Source: AGHT+IENkaCb89iPxhBJhkzILAPVU17Ix2Ayev/PDjoYSbb92W7ZQtUh9+Nheqau6rV91KNshDtH4g==
-X-Received: by 2002:a05:6a00:409b:b0:7e8:3fcb:bc4e with SMTP id d2e1a72fcca58-7ff553cbbf2mr29698598b3a.35.1767006150575;
-        Mon, 29 Dec 2025 03:02:30 -0800 (PST)
-Received: from localhost.localdomain ([1.227.206.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7ff7aa328basm29320722b3a.11.2025.12.29.03.02.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Dec 2025 03:02:29 -0800 (PST)
-From: Namjae Jeon <linkinjeon@kernel.org>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	hch@infradead.org,
-	hch@lst.de,
-	tytso@mit.edu,
-	willy@infradead.org,
-	jack@suse.cz,
-	djwong@kernel.org,
-	josef@toxicpanda.com,
-	sandeen@sandeen.net,
-	rgoldwyn@suse.com,
-	xiang@kernel.org,
-	dsterba@suse.com,
-	pali@kernel.org,
-	ebiggers@kernel.org,
-	neil@brown.name,
-	amir73il@gmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	iamjoonsoo.kim@lge.com,
-	cheol.lee@lge.com,
-	jay.sim@lge.com,
-	gunho.lee@lge.com,
-	Namjae Jeon <linkinjeon@kernel.org>
-Subject: [PATCH v3 14/14] MAINTAINERS: add ntfs filesystem
-Date: Mon, 29 Dec 2025 19:59:32 +0900
-Message-Id: <20251229105932.11360-15-linkinjeon@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251229105932.11360-1-linkinjeon@kernel.org>
-References: <20251229105932.11360-1-linkinjeon@kernel.org>
+        d=1e100.net; s=20230601; t=1767006561; x=1767611361;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=60Xyamx/h3ysjnvTktyovzErOYdK/RULB9LFjkm+8RA=;
+        b=Xm45vgKGDOShyXdeHg2Zwi2pu0T6YbYx3Z4iGO0hpQOHEUCKLRV0BWlS/qRjd7+uYG
+         k/+ZB6znw1Op0NLWyg3z0GylKkAndoCYqyFvU6MIDxsOPL4+PHI0KrRxy0i4JL5lfVcy
+         V/th85jt2OQXS91caHcvE2ljaQ1Psi4a9rHj0QJefecW+oItlvOBA+IUPnqpTaKdNd+m
+         CkDZHuXwjyk+kxHmlAehUPZICTalNcmvsPkbVx6EMe3TsQN1QcbDLQP4XOCOaTRcp54Q
+         SPfaj1kH4Ia6lOvTlTZpAZgESnYx5rKgAY1ivnPSo07/ogFZkSSM1u1y+CH2fZK6A4s2
+         NJrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrRivkDOf+6/bl8p48qs0SfQz/mBLQXAJRUrcUIhCRSZfnMnEzo1h+ga+DhBft7rlwdTomeir9sETLetRh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYOmdWf0m6MyS0Qx+R2Jp400jgjR4A4UlNTYQlwajebaDBdwub
+	HRRX8UBEvaITzQkdAl944m8vWDcnnMqzYmnGI+/RIvaiYbBV9yPnAvicx+++JsrGCp3oQbNOabT
+	A83ndPUhx6rz9f1FbPfCk9Ll/zGu7uBOZAooJfDOa2G7xgUOZqu647u4AsrE=
+X-Google-Smtp-Source: AGHT+IHUvuTKW6aL+r29nwMOlej4fRaox1OMiLU6rEO9bqqPpwqwJv4xa5pzZrmM9T0v3TgFjFyt9taUN+yrJwEqPYdOygQn6WUr
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a4a:d744:0:b0:65c:f062:bdde with SMTP id
+ 006d021491bc7-65cfe799322mr11668000eaf.36.1767006560880; Mon, 29 Dec 2025
+ 03:09:20 -0800 (PST)
+Date: Mon, 29 Dec 2025 03:09:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69526160.050a0220.3b1790.0007.GAE@google.com>
+Subject: [syzbot] [fs?] BUG: corrupted list in vfs_setxattr
+From: syzbot <syzbot+51930590c5ad85537daf@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-Add myself and Hyunchul Lee as ntfs maintainer.
+Hello,
 
-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+syzbot found the following issue on:
+
+HEAD commit:    40384c840ea1 Linux 6.13-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=129395e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=50c7a61469ce77e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=51930590c5ad85537daf
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/92994d383dd8/disk-40384c84.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5296b519dbbf/vmlinux-40384c84.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/284141b3f7b6/bzImage-40384c84.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+51930590c5ad85537daf@syzkaller.appspotmail.com
+
+list_del corruption. prev->next should be ffffc90004bef8c0, but was ffff88805cd4d170. (prev=ffff88805cd4d170)
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:64!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 1 UID: 0 PID: 12801 Comm: syz.4.1836 Not tainted 6.13.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__list_del_entry_valid_or_report+0x11b/0x140 lib/list_debug.c:62
+Code: 36 fc 90 0f 0b 48 c7 c7 20 67 5f 8c 4c 89 fe e8 db 67 36 fc 90 0f 0b 48 c7 c7 80 67 5f 8c 4c 89 fe 48 89 d9 e8 c6 67 36 fc 90 <0f> 0b 48 c7 c7 00 68 5f 8c 4c 89 fe 4c 89 f1 e8 b1 67 36 fc 90 0f
+RSP: 0018:ffffc90004bef738 EFLAGS: 00010046
+RAX: 000000000000006d RBX: ffff88805cd4d170 RCX: 1ea682c095ed3b00
+RDX: ffffc9000ef54000 RSI: 00000000000051e2 RDI: 00000000000051e3
+RBP: ffffc90004bef990 R08: ffffffff817f075c R09: fffffbfff1cfa210
+R10: dffffc0000000000 R11: fffffbfff1cfa210 R12: dffffc0000000000
+R13: ffffc90004bef8c0 R14: ffff88805cd4d170 R15: ffffc90004bef8c0
+FS:  00007f75e3bba6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f75e3bb9fb8 CR3: 000000004d838000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ __list_del_entry_valid include/linux/list.h:124 [inline]
+ __list_del_entry include/linux/list.h:215 [inline]
+ list_del include/linux/list.h:229 [inline]
+ rwsem_try_write_lock kernel/locking/rwsem.c:661 [inline]
+ rwsem_down_write_slowpath+0xf9b/0x13b0 kernel/locking/rwsem.c:1150
+ __down_write_common kernel/locking/rwsem.c:1304 [inline]
+ __down_write kernel/locking/rwsem.c:1313 [inline]
+ down_write+0x1d7/0x220 kernel/locking/rwsem.c:1578
+ inode_lock include/linux/fs.h:818 [inline]
+ vfs_setxattr+0x1e1/0x430 fs/xattr.c:320
+ do_setxattr fs/xattr.c:636 [inline]
+ filename_setxattr+0x2af/0x430 fs/xattr.c:665
+ path_setxattrat+0x440/0x510 fs/xattr.c:713
+ __do_sys_setxattr fs/xattr.c:747 [inline]
+ __se_sys_setxattr fs/xattr.c:743 [inline]
+ __x64_sys_setxattr+0xbc/0xe0 fs/xattr.c:743
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f75e2d80849
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f75e3bba058 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
+RAX: ffffffffffffffda RBX: 00007f75e2f46080 RCX: 00007f75e2d80849
+RDX: 0000000020001840 RSI: 0000000020000240 RDI: 0000000020000200
+RBP: 00007f75e2df3986 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000000002d6 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f75e2f46080 R15: 00007ffcc95a8aa8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__list_del_entry_valid_or_report+0x11b/0x140 lib/list_debug.c:62
+Code: 36 fc 90 0f 0b 48 c7 c7 20 67 5f 8c 4c 89 fe e8 db 67 36 fc 90 0f 0b 48 c7 c7 80 67 5f 8c 4c 89 fe 48 89 d9 e8 c6 67 36 fc 90 <0f> 0b 48 c7 c7 00 68 5f 8c 4c 89 fe 4c 89 f1 e8 b1 67 36 fc 90 0f
+RSP: 0018:ffffc90004bef738 EFLAGS: 00010046
+RAX: 000000000000006d RBX: ffff88805cd4d170 RCX: 1ea682c095ed3b00
+RDX: ffffc9000ef54000 RSI: 00000000000051e2 RDI: 00000000000051e3
+RBP: ffffc90004bef990 R08: ffffffff817f075c R09: fffffbfff1cfa210
+R10: dffffc0000000000 R11: fffffbfff1cfa210 R12: dffffc0000000000
+R13: ffffc90004bef8c0 R14: ffff88805cd4d170 R15: ffffc90004bef8c0
+FS:  00007f75e3bba6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f75e3bb9fb8 CR3: 000000004d838000 CR4: 0000000000350ef0
+
+
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 12f49de7fe03..adf80c8207f1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18646,6 +18646,15 @@ W:	https://github.com/davejiang/linux/wiki
- T:	git https://github.com/davejiang/linux.git
- F:	drivers/ntb/hw/intel/
- 
-+NTFS FILESYSTEM
-+M:	Namjae Jeon <linkinjeon@kernel.org>
-+M:	Hyunchul Lee <hyc.lee@gmail.com>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Maintained
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/ntfs.git
-+F:	Documentation/filesystems/ntfs.rst
-+F:	fs/ntfs/
-+
- NTFS3 FILESYSTEM
- M:	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
- L:	ntfs3@lists.linux.dev
--- 
-2.25.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
