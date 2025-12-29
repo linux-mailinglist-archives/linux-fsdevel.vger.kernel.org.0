@@ -1,157 +1,273 @@
-Return-Path: <linux-fsdevel+bounces-72188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18C0CE7120
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 15:37:25 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3055CCE71A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 15:44:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E1C69301F039
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 14:36:51 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id F13F23051EA2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 14:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB90320CD6;
-	Mon, 29 Dec 2025 14:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4309B321442;
+	Mon, 29 Dec 2025 14:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KV3Kygz0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ly7H3S/Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A4732039B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 14:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96AC1624C6
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 14:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767018605; cv=none; b=bHvp1TQlbdoaiVVxZWvLHwz+/fT7/zTSgMDQh3OWboX7btuo3sjFylVEbSKy7lFZVgcLgIOOLffnESqeDwNI8CVK7fo8P3qqvE7hugNvkcpjqOVpfQKhZw/jTauX2m0PTE7Fkjlo3YjsIKw21RxN3ciVohXTKcZUQbgA8O5U5BQ=
+	t=1767018864; cv=none; b=HyPIqd5TXPHiOIQze47tlTnXZqbqxvJ6yAGzABT61T2omt6GYrewvYJkJeEzzEOuJ+pQMY8LRaS9x0anggFqj6pQ9L+1pcuxaYNziNKLOFvc+hSSv2h92VDspexYIV3k2hEjz0CjDljjygGIeuAwfEM7hMgdgs8KnPthA2tP2GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767018605; c=relaxed/simple;
-	bh=BjExR2fcSwk5ft6XHu7ewQjdKogdco4tISWv876qstE=;
+	s=arc-20240116; t=1767018864; c=relaxed/simple;
+	bh=dA8Hg9GblVRXBX7B1PHpAdr8ny3+vnqsd5VBChSuqog=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r4OxT2SAJ8wBr0inSM4ToTAPw3Ok3i0VZpXbPwvlPfFN6dq7h0b2r8oTfJDCqabDEAf93ejAOoq8Zk7MbQCBXaegTcLfg89ZyIey/4WU8aoTeoBif48q0YZxsf1s/eKniJSjH7+mIzvAkK2SgRz5lzwURv/Z2oBUi1aT2fZwclM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KV3Kygz0; arc=none smtp.client-ip=209.85.208.52
+	 To:Cc:Content-Type; b=fTHlZy6nbEpEJbw7eoygqp7pPCf8IPuG4JgRVbSSBIIX76zmOkkzDlVI8uKYq3wBzuVFRQfmZlWFOjtoocOTGide0ETVLPnqFwVpx33HdTZ9u8WX5Wy7q0yjoDgi7r7gnuuLZeSXP/vFqMqMpceygNmBN9ZaprachsEdbOcYppM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ly7H3S/Z; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-64bea6c5819so10413449a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 06:30:02 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64baaa754c6so9697831a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 06:34:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767018600; x=1767623400; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767018861; x=1767623661; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nUncX7PRBdsLXg+2RDiQBgU1QyWHdZR8qm6qx/C1qPk=;
-        b=KV3Kygz0XQb2/t9MGg+pj4p+MV8pMBEV5/eaoLGsJP0YQggwyrfdfMs6Izn9TtwUy0
-         o5lpXneg3RBf5oJTxic9aJ4sGhEh6LJcSEcuA0KSpTn0C42PQi1I9yx07CXqzctrN5kX
-         qlELV/5+NlkX2/Wta1VTc8ihmyqc3q1TRRhgNYTw9Yuw/jCGx5dXJWXRUeCCKQp+9ZQX
-         L4Zp3CFsCC+EhwJiVKc7Psdan2GIJDgsCUcCBBrQJFgAYGcFgx+58P/5bW8vh4anDjrz
-         7n/GU943veKOB01pM2glMcw3KrIziCCqtTJOPwYjC4mifvwzK0NbG0YRN0UEVfVt/Zpd
-         jWRg==
+        bh=1OVfnZ6hclQ5OPvGA4jCZCMMxlNl/05g1VRvSIxd9aA=;
+        b=Ly7H3S/ZPPY4fqFMoljLjZEXILQvF2PfBN61V833xy/HPNMXnKReEEGHhfu2Tr4r98
+         z+5OPUhMCmsTkSfLu4a1JeRIYx6jg51uqEWdLhgSGKi4i+PBfg9dzgP04G7X87k3KFRE
+         nzKrVwq13SVRyDVYT9EL7hi2SPzuvV8lIaQ6D1cvYAd0GzvJpG+AGnG4a6m0OGTgeIFv
+         ji2JgarO1wU+7tB87YpqbPqV/b30goTCjWMtI8YIQuQ8HzjFH3aCBlMwS4Q9gkx1UrDN
+         CWlP3kUQwsRqaWH4f+cMHNDA59NAUEELc5R05WdrwDjDH3yHD6J0DflvvraVVCLw85O2
+         j2kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767018600; x=1767623400;
+        d=1e100.net; s=20230601; t=1767018861; x=1767623661;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=nUncX7PRBdsLXg+2RDiQBgU1QyWHdZR8qm6qx/C1qPk=;
-        b=E6SL1qEhn1M+TXk6JEkBpN6enzUHTiy9fc/PyUIGMGPMStl0DRAq8nNNAfqmoefJ4J
-         ViDoJlMEEG1yArI5WJO2agf2Xumkk0jLR+dJV6zb4PUD5LF8ohi7M5/HmDtd9NrUFK8Q
-         DJfmKgX6EMdFfFRCY+n1dSo+8fzXua60dfwF0I5Zh0/n6tJ+xwTgnQ+fUfNjWnNyNizL
-         fPp4WToxBxl9EUH7lnVcBz2Zzgwfepy3vK3UEdwyihyYzRw8rMdFL8L/KEpk2pVjAf35
-         m3YoGKn0GNPRYFP3bEjmeeJw2MBDWWKsB9IgyjPYaKQvDgUT3N9FNrILUDWuw1NmiS5h
-         JXBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKh1dcMsLLq4x6SOsgJD12/ZHwmHtvvyk5ykKuKttlxPSLNF961y0CyMJgJQ5+s39eEkFGUtDe3Gly/Ht4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB4sdMBBL/ZoQFZc6vlMTXup0mE+DvsuJ3nEFcRL54U2bFJ34r
-	P7ydqbPwyYIbilD3uz4LGtg7WEaBsxX63ypfR0A/EIHAZY5uoIzjlWbErHwDWNw2crnzzn1vNli
-	QobgeOEO9JUSUZphzcnADXjcgwU1VQTA=
-X-Gm-Gg: AY/fxX70Jd9DnI7ivrqydz7cg0DtE5RHzKAbUawqCyeud9vrO6587a0w3UlMS1YqqAi
-	XXNfgI2xgfb0saJnrrM+eRdg1H+HcyRhdAWpeocHRb4GhzkXeP1JhU2FxX14M9doh5pDQfj4XBB
-	1+o/WsDxKZqRnPXIawdSIf093EkMh9pqMBaxYwa3sHZR8CGKYD3fYuyBMwnbHyB1HgKZh1ouz8L
-	pgUBWT5op3Y0cfcBXhhSJdM4nztaQarqd3WzIBECgVaWGplzj/cGVywUVoV6IUez/i061uz/AY6
-	ZBPCkrBjYglpS5TrYCmGixU3sOTT0A==
-X-Google-Smtp-Source: AGHT+IFZz9XX61YXExhwIXv86987Nw+FewSupazYdCLYVs+xCunteo14XdzSlroyODlG9ZYH4HNkxT9brx41xuI87Zs=
-X-Received: by 2002:a05:6402:27c7:b0:64d:2822:cf71 with SMTP id
- 4fb4d7f45d1cf-64d2822d2d5mr20966627a12.29.1767018600395; Mon, 29 Dec 2025
- 06:30:00 -0800 (PST)
+        bh=1OVfnZ6hclQ5OPvGA4jCZCMMxlNl/05g1VRvSIxd9aA=;
+        b=FVrMxuW4N7iER+tGQZDhidYGIInASv3XiK2SAgR2wOgAdahaV3kyh+i9N3UOf1TphR
+         OErb9zUdpohgZatOVLQnC5NUFBazC5cHIekxC0XGn1enH/Bm4F1aCQ6t47f1fmmtt3vT
+         Yu5PdkYk8gdmyA2IBYwXaK199HXutnfaSjDcG3OLegfXwmv4qWehZQKwLmBlGtxlpKH5
+         o+xWwXZdHgcfKoMfCdBltHBfkH/+bkaU/2Cpt5I+B3fScH1wFjD6hQkdjZbfsld8PPD5
+         OXA+znlXIqttDH/OxTVvfxMb+5Rs3WoY5Dc4lBC/A5rSqteBCPziw7G3mEFPOheQREGG
+         IzHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnnxXhf5RZxtiHqpbHrVR0RPEIXbdJcRnj50Y72l++Bajkv6YeK0EHrTebUxhlPQXxFjEwOCr27P9dQLxX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuRahixPyjLahMD1R7+w7p3e62ZbKSn1FbhtruD6JwaxnjT3x8
+	j0agBe0HBIGugMQvIlX7HeuBuoFRlYtLoftxkLvKJ6I6Qitjyh74BY/swyLTjjuVqUDGm0tMDcZ
+	PkomLSSQikcvy3ACvpTVIE9YSnUqYrmQ=
+X-Gm-Gg: AY/fxX5K7okjpzEfrFecrjp09PAi+WMPEJmE5DqU6zj5P5GjFIKvUVXjhJgi9cFfBuX
+	JOomwEC+ipBC5Di2ftKM4LJDlSzM0TOwCvMjzSXIWIOn0QejOp7ISEhyTJHg1d73N1wSZMjyYkT
+	MbXWzO52tmUyS3TmKqUDgFP6YvTpwPFDlfrw5rL3LqhlQRiMwYtovwuMvisyUgrfQ7bAEBJKWgL
+	xL2/x5bYzlyT1EhDSNJd1ieQWj6sR7lcvExWOQ6oWu6Ij81HJo8grtllSZtnpbo2i8JUQONAW1N
+	5CYrzJZhTunlqVhV76D6C4FRApZN7A==
+X-Google-Smtp-Source: AGHT+IE4B772OE6WLCksyuHZsqkBv1jiwJvQCseppQGOxL5wZVA8BRVOKWLTKKqgFDtp7VnmWY2f3fA1akt/L+T+c0M=
+X-Received: by 2002:a17:907:94cf:b0:b7d:1a23:81a0 with SMTP id
+ a640c23a62f3a-b8037297276mr2862652966b.63.1767018860657; Mon, 29 Dec 2025
+ 06:34:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251229105932.11360-1-linkinjeon@kernel.org> <20251229105932.11360-15-linkinjeon@kernel.org>
-In-Reply-To: <20251229105932.11360-15-linkinjeon@kernel.org>
+References: <20251229105932.11360-1-linkinjeon@kernel.org>
+In-Reply-To: <20251229105932.11360-1-linkinjeon@kernel.org>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 29 Dec 2025 15:29:48 +0100
-X-Gm-Features: AQt7F2rX0VeAJP4K1Kcpmlb1voMbyWLZJUbXM-xp0y3a1-GpMDLvdkp59ZLDEug
-Message-ID: <CAOQ4uxh3MM1kToyhpcGR98pD8dH_FMyyvsngnexuqpjU14RfzA@mail.gmail.com>
-Subject: Re: [PATCH v3 14/14] MAINTAINERS: add ntfs filesystem
+Date: Mon, 29 Dec 2025 15:34:09 +0100
+X-Gm-Features: AQt7F2pqHxpeITEEQtZLOdG6gapi_u83gbesMmtnYOVfS2kGvQNnt410AC_i_2M
+Message-ID: <CAOQ4uxgSJXrQ5YEzEZrP5yFobzcHBShwSUX9DvHsmex0w-d5uQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/12] ntfs filesystem remake
 To: Namjae Jeon <linkinjeon@kernel.org>
 Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
 	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
 	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
 	xiang@kernel.org, dsterba@suse.com, pali@kernel.org, ebiggers@kernel.org, 
 	neil@brown.name, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com, 
-	Anton Altaparmakov <anton@tuxera.com>
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 29, 2025 at 2:44=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.org>=
+On Mon, Dec 29, 2025 at 2:45=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.org>=
  wrote:
 >
-> Add myself and Hyunchul Lee as ntfs maintainer.
+> Introduction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 >
-> Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
-> ---
->  MAINTAINERS | 9 +++++++++
->  1 file changed, 9 insertions(+)
+> The NTFS filesystem[1] still remains the default filesystem for Windows
+> and The well-maintained NTFS driver in the Linux kernel enhances
+> interoperability with Windows devices, making it easier for Linux users
+> to work with NTFS-formatted drives. Currently, ntfs support in Linux was
+> the long-neglected NTFS Classic (read-only), which has been removed from
+> the Linux kernel, leaving the poorly maintained ntfs3. ntfs3 still has
+> many problems and is poorly maintained, so users and distributions are
+> still using the old legacy ntfs-3g.
 >
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 12f49de7fe03..adf80c8207f1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18646,6 +18646,15 @@ W:     https://github.com/davejiang/linux/wiki
->  T:     git https://github.com/davejiang/linux.git
->  F:     drivers/ntb/hw/intel/
+> The remade ntfs is an implementation that supports write and the essentia=
+l
+> requirements(iomap, no buffer-head, utilities, xfstests test result) base=
+d
+> on read-only classic NTFS.
+> The old read-only ntfs code is much cleaner, with extensive comments,
+> offers readability that makes understanding NTFS easier. This is why
+> new ntfs was developed on old read-only NTFS base.
+> The target is to provide current trends(iomap, no buffer head, folio),
+> enhanced performance, stable maintenance, utility support including fsck.
 >
-> +NTFS FILESYSTEM
-> +M:     Namjae Jeon <linkinjeon@kernel.org>
-> +M:     Hyunchul Lee <hyc.lee@gmail.com>
-> +L:     linux-fsdevel@vger.kernel.org
-> +S:     Maintained
-> +T:     git git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/ntfs=
-.git
-> +F:     Documentation/filesystems/ntfs.rst
-> +F:     fs/ntfs/
-> +
+>
+> Key Features
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> - Write support:
+>    Implement write support on classic read-only NTFS. Additionally,
+>    integrate delayed allocation to enhance write performance through
+>    multi-cluster allocation and minimized fragmentation of cluster bitmap=
+.
+>
+> - Switch to using iomap:
+>    Use iomap for buffered IO writes, reads, direct IO, file extent mappin=
+g,
+>    readpages, writepages operations.
+>
+> - Stop using the buffer head:
+>    The use of buffer head in old ntfs and switched to use folio instead.
+>    As a result, CONFIG_BUFFER_HEAD option enable is removed in Kconfig al=
+so.
+>
+> - Public utilities include fsck[2]:
+>    While ntfs-3g includes ntfsprogs as a component, it notably lacks
+>    the fsck implementation. So we have launched a new ntfs utilitiies
+>    project called ntfsprogs-plus by forking from ntfs-3g after removing
+>    unnecessary ntfs fuse implementation. fsck.ntfs can be used for ntfs
+>    testing with xfstests as well as for recovering corrupted NTFS device.
+>
+> - Performance Enhancements:
+>
+>    - ntfs vs. ntfs3:
+>
+>      * Performance was benchmarked using iozone with various chunk size.
+>         - In single-thread(1T) write tests, ntfs show approximately
+>           3~5% better performance.
+>         - In multi-thread(4T) write tests, ntfs show approximately
+>           35~110% better performance.
+>         - Read throughput is identical for both ntfs implementations.
+>
+>      1GB file      size:4096           size:16384           size:65536
+>      MB/sec       ntfs | ntfs3        ntfs | ntfs3        ntfs | ntfs3
+>      =E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80
+>      read          399 | 399           426 | 424           429 | 430
+>      =E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80
+>      write(1T)     291 | 276           325 | 305           333 | 317
+>      write(4T)     105 | 50            113 | 78            114 | 99.6
+>
+>
+>      * File list browsing performance. (about 12~14% faster)
+>
+>                   files:100000        files:200000        files:400000
+>      Sec          ntfs | ntfs3        ntfs | ntfs3        ntfs | ntfs3
+>      =E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80
+>      ls -lR       7.07 | 8.10        14.03 | 16.35       28.27 | 32.86
+>
+>
+>      * mount time.
+>
+>              parti_size:1TB      parti_size:2TB      parti_size:4TB
+>      Sec          ntfs | ntfs3        ntfs | ntfs3        ntfs | ntfs3
+>      =E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80
+>      mount        0.38 | 2.03         0.39 | 2.25         0.70 | 4.51
+>
+>    The following are the reasons why ntfs performance is higher
+>     compared to ntfs3:
+>      - Use iomap aops.
+>      - Delayed allocation support.
+>      - Optimize zero out for newly allocated clusters.
+>      - Optimize runlist merge overhead with small chunck size.
+>      - pre-load mft(inode) blocks and index(dentry) blocks to improve
+>        readdir + stat performance.
+>      - Load lcn bitmap on background.
+>
+> - Stability improvement:
+>    a. Pass more xfstests tests:
+>       ntfs passed 287 tests, significantly higher than ntfs3's 218.
+>       ntfs implement fallocate, idmapped mount and permission, etc,
+>       resulting in a significantly high number of xfstests passing compar=
+ed
+>       to ntfs3.
+>    b. Bonnie++ issue[3]:
+>       The Bonnie++ benchmark fails on ntfs3 with a "Directory not empty"
+>       error during file deletion. ntfs3 currently iterates directory
+>       entries by reading index blocks one by one. When entries are delete=
+d
+>       concurrently, index block merging or entry relocation can cause
+>       readdir() to skip some entries, leaving files undeleted in
+>       workloads(bonnie++) that mix unlink and directory scans.
+>       ntfs implement leaf chain traversal in readdir to avoid entry skip
+>       on deletion.
+>
+> - Journaling support:
+>    ntfs3 does not provide full journaling support. It only implement jour=
+nal
+>    replay[4], which in our testing did not function correctly. My next ta=
+sk
+>    after upstreaming will be to add full journal support to ntfs.
+>
+>
+> The feature comparison summary
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+>
+> Feature                               ntfs       ntfs3
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D   =3D=3D=3D=3D=3D=3D=3D=3D   =3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> Write support                         Yes        Yes
+> iomap support                         Yes        No
+> No buffer head                        Yes        No
+> Public utilities(mkfs, fsck, etc.)    Yes        No
+> xfstests passed                       287        218
+> Idmapped mount                        Yes        No
+> Delayed allocation                    Yes        No
+> Bonnie++                              Pass       Fail
+> Journaling                            Planned    Inoperative
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D   =3D=3D=3D=3D=3D=3D=3D=3D   =3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
 
-Would have been nicer and more informative if you kept MAINTAINERS
-in the first revert patch and then really "Add yourself and Hyunchul
-Less as maintainers".
-
-A note about the CREDITS file.
-Willy's deprecate commit that you partially reverted added this CREDITS rec=
-ord:
-`
-NTFS FILESYSTEM
-N: Anton Altaparmakov
-E: anton@tuxera.com
-D: NTFS filesystem
-`
-
-It is oddly formatted - this NTFS FILESYSTEM header is uncovetional in
-this file.
-and also, Anton already had a more descriptive entry in the CREDITS file:
-`
-N: Anton Altaparmakov
-E: aia21@cantab.net
-W: http://www-stu.christs.cam.ac.uk/~aia21/
-D: Author of new NTFS driver, various other kernel hacks.
-S: Christ's College
-S: Cambridge CB2 3BU
-S: United Kingdom
-`
-
-So I think that the later entry could be reverted along with the revert com=
-mit
-and maybe add or update to the Tuxera email/website entries, because the
-current W link in CREDITS is broken.
+For completion of this report, are the 287 passed xfstests a super set
+of the 218
+passed xfstest for ntfs3?
+IOW, are there any known functional regressions from ntfs3 to ntfs?
 
 Thanks,
 Amir.
