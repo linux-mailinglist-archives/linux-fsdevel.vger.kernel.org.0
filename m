@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-72180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342A8CE6D1E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 14:07:01 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B93CFCE6D21
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 14:07:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DE88D301637D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 13:03:44 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B5658301989D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 13:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028CA288520;
-	Mon, 29 Dec 2025 13:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F19E27AC3A;
+	Mon, 29 Dec 2025 13:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HX5CLR6n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shbfyk42"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544811DF759
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 13:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AFA1E8826
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 13:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767013423; cv=none; b=n2ZncUgs7wTZ0pXKKwyBW6EqEFuszOvcxGZDE2W48Wy/L5UYsuLp71D8tz11fgmaohE6Q7EAKYfgbe7lfq7PxrFyXRm0BWlhe7wv/DftCjGvAng0fioxt9Z4qWOB8fYHLGrHUlmZpMvn0A5r1DcKbvBXBodNvBKoqQD8D8rhmvU=
+	t=1767013426; cv=none; b=sHHwlO9VUpU5F/RXkOAIdxsTpFjelBAFKr/t3+H2Orr/NIJJaeqIB2hMsveL4VN7wSjm1AcIak+mrF7FR0ohEQ7v62tmqyCq//OfOOea2b269UAYG9VnyZtLErq/zRr5Y3um4zp/oUtaK3txVfJcM7zK6GY7x7KChW+JryOI4ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767013423; c=relaxed/simple;
-	bh=DMgqK8M8L49mI4ywk3Nk0o4THSYJNVX0qob52eF2cgU=;
+	s=arc-20240116; t=1767013426; c=relaxed/simple;
+	bh=i06q8JzdMBgIaReJlyv833T6625//6VXM2jutcOAA1E=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NOCZDYZlhp2FMOgsjhFZmkNcK2KvXNdfmcnsji2KgGuJIT6bktOBTHIsx1nTZIFjZc25vyBgYNPTVuOGlVwmdiNjgYVJt5VKDFQe09LjYOe5MfHiPhoXoLA+MK73iWuKtnsOgDqfigs0HOcFBBW5XakLr6BhJRNwFTj6A96eGjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HX5CLR6n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2139C4AF09;
-	Mon, 29 Dec 2025 13:03:39 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=iSYjfFUjCXuHN8RixItkg6Yt3UdnkyMUFTvfCCnuoangnz3HDKggBplDnwD+tX+fmMYZlzzVSya+2ciQeasYk2x65gFApobnE/bNoBeKdAFUSGIWmbrGuwoHYjPa1VwBTYHKM0w/1YzRiLwwF4Bp7lZEZr2RMxwQtxEIJgamKBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shbfyk42; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76265C4CEF7;
+	Mon, 29 Dec 2025 13:03:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767013422;
-	bh=DMgqK8M8L49mI4ywk3Nk0o4THSYJNVX0qob52eF2cgU=;
+	s=k20201202; t=1767013426;
+	bh=i06q8JzdMBgIaReJlyv833T6625//6VXM2jutcOAA1E=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=HX5CLR6nuScpD71EyMwuzfggscu/ehDFh9Lmi4dlXK+hpkAHiaGmQ+xOpF1/IeAS4
-	 uppeLiBJ2eZRAWME5ipPHlTNldfi9kD02iHQssQ10/P0AcdyfljqGoSrRwWmUUh7lt
-	 9yNNJAVbLo0vWPttK+APrlsSeDWq2d1qvXpxAWpk2furGj2dg70PhbdG5RViiRttn1
-	 xAco4M7++D/7s+8TjWKnNahXkTqTRbAT4+tsy0ctUujPzt9lizuH8i78HhpkN3tcU4
-	 J462uMOQVtuUkGkNhG+gBOTerbSDEoz14ge/XPZXP92RNhjbwdcDWHVFLn+ae4SaLl
-	 i1hTe7jEPXFNg==
+	b=shbfyk42OOcOIMYWFUwva5ZCB8Tmw8mE3A0RBm46OrC8BzkTgzzkVpksqV/BzrDod
+	 qUmUt4lmrKgZV7AVyLMDqYKnemJ1y8RIwBAxwXhIlIZiCzQXour0Tqvb14Z32k560h
+	 X3THaQJCpiWcpRNhOhkbqcQBKJQD0IxLiENnQE1hpHVB2SkPedA3v0HLgJ3LmzXPFe
+	 3O4dpnBLbnKTetMT536UFjkofYSIDELe/3OCQzQXaa6A+EyXU0XupYgat0hRFScfko
+	 1ADkV/5OokSbqk0R7KGQEuX9alpf0gx9G44s0TnokQQSLYqEZxiGgle/809T9EdZxP
+	 c8ZyqUY+nT4EQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 29 Dec 2025 14:03:24 +0100
-Subject: [PATCH 1/2] mount: add OPEN_TREE_NAMESPACE
+Date: Mon, 29 Dec 2025 14:03:25 +0100
+Subject: [PATCH 2/2] selftests/open_tree: add OPEN_TREE_NAMESPACE tests
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251229-work-empty-namespace-v1-1-bfb24c7b061f@kernel.org>
+Message-Id: <20251229-work-empty-namespace-v1-2-bfb24c7b061f@kernel.org>
 References: <20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org>
 In-Reply-To: <20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
@@ -59,375 +59,1134 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
  Jan Kara <jack@suse.cz>, Aleksa Sarai <cyphar@cyphar.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12750; i=brauner@kernel.org;
- h=from:subject:message-id; bh=DMgqK8M8L49mI4ywk3Nk0o4THSYJNVX0qob52eF2cgU=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQG1agvP3tpe86dvU0nGyqnTdZaLNl2yyxkyR6XEsuUM
- te1+196dJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkljkjQ+M1s91HDUy0eS2e
- JxlPSy1gcxbKYlTu/ygg+aPAbOmSNoZ/5lY3l7Jd22GwuDS/eqc32/45JmHhb9iFpnlaqarf8pz
- BDgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=27127; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=i06q8JzdMBgIaReJlyv833T6625//6VXM2jutcOAA1E=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQG1ai726xyfpue5ioV36hr9FuiUVsmoSt7rVtqVdmUI
+ +f0i9U6SlkYxLgYZMUUWRzaTcLllvNUbDbK1ICZw8oEMoSBi1MAJvKag5HhQ9myd9IMytyq4WXn
+ c49vPDEh7sY8Zd9ld3RPpm/vvL5vEcM/+yBVPbEoLx6PfqP5qVccOE8cXazRbzjz7pcPHTEbeNq
+ ZAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-When creating containers the setup usually involves using CLONE_NEWNS
-via clone3() or unshare(). This copies the caller's complete mount
-namespace. The runtime will also assemble a new rootfs and then use
-pivot_root() to switch the old mount tree with the new rootfs. Afterward
-it will recursively umount the old mount tree thereby getting rid of all
-mounts.
-
-On a basic system here where the mount table isn't particularly large
-this still copies about 30 mounts. Copying all of these mounts only to
-get rid of them later is pretty wasteful.
-
-This is exacerbated if intermediary mount namespaces are used that only
-exist for a very short amount of time and are immediately destroyed
-again causing a ton of mounts to be copied and destroyed needlessly.
-
-With a large mount table and a system where thousands or ten-thousands
-of containers are spawned in parallel this quickly becomes a bottleneck
-increasing contention on the semaphore.
-
-Extend open_tree() with a new OPEN_TREE_NAMESPACE flag. Similar to
-OPEN_TREE_CLONE only the indicated mount tree is copied. Instead of
-returning a file descriptor referring to that mount tree
-OPEN_TREE_NAMESPACE will cause open_tree() to return a file descriptor
-to a new mount namespace. In that new mount namespace the copied mount
-tree has been mounted on top of a copy of the real rootfs.
-
-The caller can setns() into that mount namespace and perform any
-additionally required setup such as move_mount() detached mounts in
-there.
-
-This allows OPEN_TREE_NAMESPACE to function as a combined
-unshare(CLONE_NEWNS) and pivot_root().
-
-A caller may for example choose to create an extremely minimal rootfs:
-
-fd_mntns = open_tree(-EBADF, "/var/lib/containers/wootwoot", OPEN_TREE_NAMESPACE);
-
-This will create a mount namespace where "wootwoot" has become the
-rootfs mounted on top of the real rootfs. The caller can now setns()
-into this new mount namespace and assemble additional mounts.
-
-This also works with user namespaces:
-
-unshare(CLONE_NEWUSER);
-fd_mntns = open_tree(-EBADF, "/var/lib/containers/wootwoot", OPEN_TREE_NAMESPACE);
-
-which creates a new mount namespace owned by the earlier created user
-namespace with "wootwoot" as the rootfs mounted on top of the real
-rootfs.
+Add tests for OPEN_TREE_NAMESPACE.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/internal.h              |   1 +
- fs/namespace.c             | 155 ++++++++++++++++++++++++++++++++++++++++-----
- fs/nsfs.c                  |  13 ++++
- include/uapi/linux/mount.h |   3 +-
- 4 files changed, 155 insertions(+), 17 deletions(-)
+ .../selftests/filesystems/open_tree_ns/.gitignore  |    1 +
+ .../selftests/filesystems/open_tree_ns/Makefile    |   10 +
+ .../filesystems/open_tree_ns/open_tree_ns_test.c   | 1030 ++++++++++++++++++++
+ tools/testing/selftests/filesystems/utils.c        |   26 +
+ tools/testing/selftests/filesystems/utils.h        |    1 +
+ 5 files changed, 1068 insertions(+)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index ab638d41ab81..b5aad5265e0e 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -247,6 +247,7 @@ extern void mnt_pin_kill(struct mount *m);
-  */
- extern const struct dentry_operations ns_dentry_operations;
- int open_namespace(struct ns_common *ns);
-+struct file *open_namespace_file(struct ns_common *ns);
- 
- /*
-  * fs/stat.c:
-diff --git a/fs/namespace.c b/fs/namespace.c
-index c58674a20cad..fd9698671c70 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2796,6 +2796,9 @@ static inline void unlock_mount(struct pinned_mountpoint *m)
- 		__unlock_mount(m);
- }
- 
-+static void lock_mount_exact(const struct path *path,
-+			     struct pinned_mountpoint *mp);
+diff --git a/tools/testing/selftests/filesystems/open_tree_ns/.gitignore b/tools/testing/selftests/filesystems/open_tree_ns/.gitignore
+new file mode 100644
+index 000000000000..fb12b93fbcaa
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/open_tree_ns/.gitignore
+@@ -0,0 +1 @@
++open_tree_ns_test
+diff --git a/tools/testing/selftests/filesystems/open_tree_ns/Makefile b/tools/testing/selftests/filesystems/open_tree_ns/Makefile
+new file mode 100644
+index 000000000000..73c03c4a7ef6
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/open_tree_ns/Makefile
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0
++TEST_GEN_PROGS := open_tree_ns_test
 +
- #define LOCK_MOUNT_MAYBE_BENEATH(mp, path, beneath) \
- 	struct pinned_mountpoint mp __cleanup(unlock_mount) = {}; \
- 	do_lock_mount((path), &mp, (beneath))
-@@ -2946,10 +2949,11 @@ static inline bool may_copy_tree(const struct path *path)
- 	return check_anonymous_mnt(mnt);
- }
- 
--
--static struct mount *__do_loopback(const struct path *old_path, int recurse)
-+static struct mount *__do_loopback(const struct path *old_path,
-+				   unsigned int flags, unsigned int copy_flags)
- {
- 	struct mount *old = real_mount(old_path->mnt);
-+	bool recurse = flags & AT_RECURSIVE;
- 
- 	if (IS_MNT_UNBINDABLE(old))
- 		return ERR_PTR(-EINVAL);
-@@ -2960,10 +2964,22 @@ static struct mount *__do_loopback(const struct path *old_path, int recurse)
- 	if (!recurse && __has_locked_children(old, old_path->dentry))
- 		return ERR_PTR(-EINVAL);
- 
-+	/*
-+	 * When creating a new mount namespace we don't want to copy over
-+	 * mounts of mount namespaces to avoid the risk of cycles and also to
-+	 * minimize the default complex interdependencies between mount
-+	 * namespaces.
-+	 *
-+	 * We could ofc just check whether all mount namespace files aren't
-+	 * creating cycles but really let's keep this simple.
-+	 */
-+	if (!(flags & OPEN_TREE_NAMESPACE))
-+		copy_flags |= CL_COPY_MNT_NS_FILE;
++CFLAGS := -Wall -Werror -g $(KHDR_INCLUDES)
++LDLIBS := -lcap
 +
- 	if (recurse)
--		return copy_tree(old, old_path->dentry, CL_COPY_MNT_NS_FILE);
--	else
--		return clone_mnt(old, old_path->dentry, 0);
-+		return copy_tree(old, old_path->dentry, copy_flags);
++include ../../lib.mk
 +
-+	return clone_mnt(old, old_path->dentry, copy_flags);
- }
- 
- /*
-@@ -2974,7 +2990,9 @@ static int do_loopback(const struct path *path, const char *old_name,
- {
- 	struct path old_path __free(path_put) = {};
- 	struct mount *mnt = NULL;
-+	unsigned int flags = recurse ? AT_RECURSIVE : 0;
- 	int err;
++$(OUTPUT)/open_tree_ns_test: open_tree_ns_test.c ../utils.c
++	$(CC) $(CFLAGS) -o $@ $^ $(LDLIBS)
+diff --git a/tools/testing/selftests/filesystems/open_tree_ns/open_tree_ns_test.c b/tools/testing/selftests/filesystems/open_tree_ns/open_tree_ns_test.c
+new file mode 100644
+index 000000000000..9711556280ae
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/open_tree_ns/open_tree_ns_test.c
+@@ -0,0 +1,1030 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Test for OPEN_TREE_NAMESPACE flag.
++ *
++ * Test that open_tree() with OPEN_TREE_NAMESPACE creates a new mount
++ * namespace containing the specified mount tree.
++ */
++#define _GNU_SOURCE
 +
- 	if (!old_name || !*old_name)
- 		return -EINVAL;
- 	err = kern_path(old_name, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT, &old_path);
-@@ -2991,7 +3009,7 @@ static int do_loopback(const struct path *path, const char *old_name,
- 	if (!check_mnt(mp.parent))
- 		return -EINVAL;
- 
--	mnt = __do_loopback(&old_path, recurse);
-+	mnt = __do_loopback(&old_path, flags, 0);
- 	if (IS_ERR(mnt))
- 		return PTR_ERR(mnt);
- 
-@@ -3004,7 +3022,7 @@ static int do_loopback(const struct path *path, const char *old_name,
- 	return err;
- }
- 
--static struct mnt_namespace *get_detached_copy(const struct path *path, bool recursive)
-+static struct mnt_namespace *get_detached_copy(const struct path *path, unsigned int flags)
- {
- 	struct mnt_namespace *ns, *mnt_ns = current->nsproxy->mnt_ns, *src_mnt_ns;
- 	struct user_namespace *user_ns = mnt_ns->user_ns;
-@@ -3029,7 +3047,7 @@ static struct mnt_namespace *get_detached_copy(const struct path *path, bool rec
- 			ns->seq_origin = src_mnt_ns->ns.ns_id;
- 	}
- 
--	mnt = __do_loopback(path, recursive);
-+	mnt = __do_loopback(path, flags, 0);
- 	if (IS_ERR(mnt)) {
- 		emptied_ns = ns;
- 		return ERR_CAST(mnt);
-@@ -3043,9 +3061,9 @@ static struct mnt_namespace *get_detached_copy(const struct path *path, bool rec
- 	return ns;
- }
- 
--static struct file *open_detached_copy(struct path *path, bool recursive)
-+static struct file *open_detached_copy(struct path *path, unsigned int flags)
- {
--	struct mnt_namespace *ns = get_detached_copy(path, recursive);
-+	struct mnt_namespace *ns = get_detached_copy(path, flags);
- 	struct file *file;
- 
- 	if (IS_ERR(ns))
-@@ -3061,21 +3079,114 @@ static struct file *open_detached_copy(struct path *path, bool recursive)
- 	return file;
- }
- 
-+DEFINE_FREE(put_empty_mnt_ns, struct mnt_namespace *,
-+	    if (!IS_ERR_OR_NULL(_T)) free_mnt_ns(_T))
++#include <errno.h>
++#include <fcntl.h>
++#include <limits.h>
++#include <linux/nsfs.h>
++#include <sched.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <sys/mount.h>
++#include <sys/stat.h>
++#include <sys/wait.h>
++#include <unistd.h>
 +
-+static struct file *open_new_namespace(struct path *path, unsigned int flags)
++#include "../wrappers.h"
++#include "../statmount/statmount.h"
++#include "../utils.h"
++#include "../../kselftest_harness.h"
++
++#ifndef OPEN_TREE_NAMESPACE
++#define OPEN_TREE_NAMESPACE	(1 << 1)
++#endif
++
++static int get_mnt_ns_id(int fd, uint64_t *mnt_ns_id)
 +{
-+	struct mnt_namespace *new_ns __free(put_empty_mnt_ns) = NULL;
-+	struct path to_path __free(path_put) = {};
-+	struct mnt_namespace *ns = current->nsproxy->mnt_ns;
-+	struct user_namespace *user_ns = current_user_ns();
-+	struct mount *new_ns_root;
-+	struct mount *mnt;
-+	struct ns_common *new_ns_common;
-+	unsigned int copy_flags = 0;
-+	bool locked = false;
++	if (ioctl(fd, NS_GET_MNTNS_ID, mnt_ns_id) < 0)
++		return -errno;
++	return 0;
++}
 +
-+	if (user_ns != ns->user_ns)
-+		copy_flags |= CL_SLAVE;
++static int get_mnt_ns_id_from_path(const char *path, uint64_t *mnt_ns_id)
++{
++	int fd, ret;
 +
-+	new_ns = alloc_mnt_ns(user_ns, false);
-+	if (IS_ERR(new_ns))
-+		return ERR_CAST(new_ns);
++	fd = open(path, O_RDONLY);
++	if (fd < 0)
++		return -errno;
 +
-+	scoped_guard(namespace_excl) {
-+		new_ns_root = clone_mnt(ns->root, ns->root->mnt.mnt_root, copy_flags);
-+		if (IS_ERR(new_ns_root))
-+			return ERR_CAST(new_ns_root);
++	ret = get_mnt_ns_id(fd, mnt_ns_id);
++	close(fd);
++	return ret;
++}
 +
-+		/*
-+		 * If the real rootfs had a locked mount on top of it somewhere
-+		 * in the stack, lock the new mount tree as well so it can't be
-+		 * exposed.
-+		 */
-+		mnt = ns->root;
-+		while (mnt->overmount) {
-+			mnt = mnt->overmount;
-+			if (mnt->mnt.mnt_flags & MNT_LOCKED)
-+				locked = true;
++#define STATMOUNT_BUFSIZE (1 << 15)
++
++static struct statmount *statmount_alloc(uint64_t mnt_id, uint64_t mnt_ns_id, uint64_t mask)
++{
++	struct statmount *buf;
++	size_t bufsize = STATMOUNT_BUFSIZE;
++	int ret;
++
++	for (;;) {
++		buf = malloc(bufsize);
++		if (!buf)
++			return NULL;
++
++		ret = statmount(mnt_id, mnt_ns_id, mask, buf, bufsize, 0);
++		if (ret == 0)
++			return buf;
++
++		free(buf);
++		if (errno != EOVERFLOW)
++			return NULL;
++
++		bufsize <<= 1;
++	}
++}
++
++static void log_mount(struct __test_metadata *_metadata, struct statmount *sm)
++{
++	const char *fs_type = "";
++	const char *mnt_root = "";
++	const char *mnt_point = "";
++
++	if (sm->mask & STATMOUNT_FS_TYPE)
++		fs_type = sm->str + sm->fs_type;
++	if (sm->mask & STATMOUNT_MNT_ROOT)
++		mnt_root = sm->str + sm->mnt_root;
++	if (sm->mask & STATMOUNT_MNT_POINT)
++		mnt_point = sm->str + sm->mnt_point;
++
++	TH_LOG("  mnt_id: %llu, parent_id: %llu, fs_type: %s, root: %s, point: %s",
++	       (unsigned long long)sm->mnt_id,
++	       (unsigned long long)sm->mnt_parent_id,
++	       fs_type, mnt_root, mnt_point);
++}
++
++static void dump_mounts(struct __test_metadata *_metadata, uint64_t mnt_ns_id)
++{
++	uint64_t list[256];
++	ssize_t nr_mounts;
++
++	nr_mounts = listmount(LSMT_ROOT, mnt_ns_id, 0, list, 256, 0);
++	if (nr_mounts < 0) {
++		TH_LOG("listmount failed: %s", strerror(errno));
++		return;
++	}
++
++	TH_LOG("Mount namespace %llu contains %zd mount(s):",
++	       (unsigned long long)mnt_ns_id, nr_mounts);
++
++	for (ssize_t i = 0; i < nr_mounts; i++) {
++		struct statmount *sm;
++
++		sm = statmount_alloc(list[i], mnt_ns_id,
++				     STATMOUNT_MNT_BASIC |
++				     STATMOUNT_FS_TYPE |
++				     STATMOUNT_MNT_ROOT |
++				     STATMOUNT_MNT_POINT);
++		if (!sm) {
++			TH_LOG("  [%zd] mnt_id %llu: statmount failed: %s",
++			       i, (unsigned long long)list[i], strerror(errno));
++			continue;
 +		}
++
++		log_mount(_metadata, sm);
++		free(sm);
 +	}
-+
-+	/*
-+	 * We dropped the namespace semaphore so we can actually lock
-+	 * the copy for mounting. The copied mount isn't attached to any
-+	 * mount namespace and it is thus excluded from any propagation.
-+	 * So realistically we're isolated and the mount can't be
-+	 * overmounted.
-+	 */
-+
-+	/* Borrow the reference from clone_mnt(). */
-+	to_path.mnt = &new_ns_root->mnt;
-+	to_path.dentry = dget(new_ns_root->mnt.mnt_root);
-+
-+	/* Now lock for actual mounting. */
-+	LOCK_MOUNT_EXACT(mp, &to_path);
-+	if (unlikely(IS_ERR(mp.parent)))
-+		return ERR_CAST(mp.parent);
-+
-+	/*
-+	 * We don't emulate unshare()ing a mount namespace. We stick to the
-+	 * restrictions of creating detached bind-mounts. It has a lot
-+	 * saner and simpler semantics.
-+	 */
-+	mnt = __do_loopback(path, flags, copy_flags);
-+	if (IS_ERR(mnt))
-+		return ERR_CAST(mnt);
-+
-+	scoped_guard(mount_writer) {
-+		if (locked)
-+			mnt->mnt.mnt_flags |= MNT_LOCKED;
-+		/*
-+		 * Now mount the detached tree on top of the copy of the
-+		 * real rootfs we created.
-+		 */
-+		attach_mnt(mnt, new_ns_root, mp.mp);
-+		if (user_ns != ns->user_ns)
-+			lock_mnt_tree(new_ns_root);
-+	}
-+
-+	/* Add all mounts to the new namespace. */
-+	for (struct mount *p = new_ns_root; p; p = next_mnt(p, new_ns_root)) {
-+		mnt_add_to_ns(new_ns, p);
-+		new_ns->nr_mounts++;
-+	}
-+
-+	new_ns->root = real_mount(no_free_ptr(to_path.mnt));
-+	ns_tree_add_raw(new_ns);
-+	new_ns_common = to_ns_common(no_free_ptr(new_ns));
-+	return open_namespace_file(new_ns_common);
 +}
 +
- static struct file *vfs_open_tree(int dfd, const char __user *filename, unsigned int flags)
- {
- 	int ret;
- 	struct path path __free(path_put) = {};
- 	int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
--	bool detached = flags & OPEN_TREE_CLONE;
- 
- 	BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
- 
- 	if (flags & ~(AT_EMPTY_PATH | AT_NO_AUTOMOUNT | AT_RECURSIVE |
- 		      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE |
--		      OPEN_TREE_CLOEXEC))
-+		      OPEN_TREE_CLOEXEC | OPEN_TREE_NAMESPACE))
- 		return ERR_PTR(-EINVAL);
- 
--	if ((flags & (AT_RECURSIVE | OPEN_TREE_CLONE)) == AT_RECURSIVE)
-+	if ((flags & (AT_RECURSIVE | OPEN_TREE_CLONE | OPEN_TREE_NAMESPACE)) ==
-+	    AT_RECURSIVE)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (hweight32(flags & (OPEN_TREE_CLONE | OPEN_TREE_NAMESPACE)) > 1)
- 		return ERR_PTR(-EINVAL);
- 
- 	if (flags & AT_NO_AUTOMOUNT)
-@@ -3085,15 +3196,27 @@ static struct file *vfs_open_tree(int dfd, const char __user *filename, unsigned
- 	if (flags & AT_EMPTY_PATH)
- 		lookup_flags |= LOOKUP_EMPTY;
- 
--	if (detached && !may_mount())
-+	/*
-+	 * If we create a new mount namespace with the cloned mount tree we
-+	 * just care about being privileged over our current user namespace.
-+	 * The new mount namespace will be owned by it.
-+	 */
-+	if ((flags & OPEN_TREE_NAMESPACE) &&
-+	    !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
-+		return ERR_PTR(-EPERM);
-+
-+	if ((flags & OPEN_TREE_CLONE) && !may_mount())
- 		return ERR_PTR(-EPERM);
- 
- 	ret = user_path_at(dfd, filename, lookup_flags, &path);
- 	if (unlikely(ret))
- 		return ERR_PTR(ret);
- 
--	if (detached)
--		return open_detached_copy(&path, flags & AT_RECURSIVE);
-+	if (flags & OPEN_TREE_NAMESPACE)
-+		return open_new_namespace(&path, flags);
-+
-+	if (flags & OPEN_TREE_CLONE)
-+		return open_detached_copy(&path, flags);
- 
- 	return dentry_open(&path, O_PATH, current_cred());
- }
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index bf27d5da91f1..db91de208645 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -99,6 +99,19 @@ int ns_get_path(struct path *path, struct task_struct *task,
- 	return ns_get_path_cb(path, ns_get_path_task, &args);
- }
- 
-+struct file *open_namespace_file(struct ns_common *ns)
++FIXTURE(open_tree_ns)
 +{
-+	struct path path __free(path_put) = {};
-+	int err;
++	int fd;
++	uint64_t current_ns_id;
++};
 +
-+	/* call first to consume reference */
-+	err = path_from_stashed(&ns->stashed, nsfs_mnt, ns, &path);
-+	if (err < 0)
-+		return ERR_PTR(err);
++FIXTURE_VARIANT(open_tree_ns)
++{
++	const char *path;
++	unsigned int flags;
++	bool expect_success;
++	bool expect_different_ns;
++	int min_mounts;
++};
 +
-+	return dentry_open(&path, O_RDONLY, current_cred());
++FIXTURE_VARIANT_ADD(open_tree_ns, basic_root)
++{
++	.path = "/",
++	.flags = OPEN_TREE_NAMESPACE | OPEN_TREE_CLOEXEC,
++	.expect_success = true,
++	.expect_different_ns = true,
++	/*
++	 * The empty rootfs is hidden from listmount()/mountinfo,
++	 * so we only see the bind mount on top of it.
++	 */
++	.min_mounts = 1,
++};
++
++FIXTURE_VARIANT_ADD(open_tree_ns, recursive_root)
++{
++	.path = "/",
++	.flags = OPEN_TREE_NAMESPACE | AT_RECURSIVE | OPEN_TREE_CLOEXEC,
++	.expect_success = true,
++	.expect_different_ns = true,
++	.min_mounts = 1,
++};
++
++FIXTURE_VARIANT_ADD(open_tree_ns, subdir_tmp)
++{
++	.path = "/tmp",
++	.flags = OPEN_TREE_NAMESPACE | OPEN_TREE_CLOEXEC,
++	.expect_success = true,
++	.expect_different_ns = true,
++	.min_mounts = 1,
++};
++
++FIXTURE_VARIANT_ADD(open_tree_ns, subdir_proc)
++{
++	.path = "/proc",
++	.flags = OPEN_TREE_NAMESPACE | OPEN_TREE_CLOEXEC,
++	.expect_success = true,
++	.expect_different_ns = true,
++	.min_mounts = 1,
++};
++
++FIXTURE_VARIANT_ADD(open_tree_ns, recursive_tmp)
++{
++	.path = "/tmp",
++	.flags = OPEN_TREE_NAMESPACE | AT_RECURSIVE | OPEN_TREE_CLOEXEC,
++	.expect_success = true,
++	.expect_different_ns = true,
++	.min_mounts = 1,
++};
++
++FIXTURE_VARIANT_ADD(open_tree_ns, recursive_run)
++{
++	.path = "/run",
++	.flags = OPEN_TREE_NAMESPACE | AT_RECURSIVE | OPEN_TREE_CLOEXEC,
++	.expect_success = true,
++	.expect_different_ns = true,
++	.min_mounts = 1,
++};
++
++FIXTURE_VARIANT_ADD(open_tree_ns, invalid_recursive_alone)
++{
++	.path = "/",
++	.flags = AT_RECURSIVE | OPEN_TREE_CLOEXEC,
++	.expect_success = false,
++	.expect_different_ns = false,
++	.min_mounts = 0,
++};
++
++FIXTURE_SETUP(open_tree_ns)
++{
++	int ret;
++
++	self->fd = -1;
++
++	/* Check if open_tree syscall is supported */
++	ret = sys_open_tree(-1, NULL, 0);
++	if (ret == -1 && errno == ENOSYS)
++		SKIP(return, "open_tree() syscall not supported");
++
++	/* Check if statmount/listmount are supported */
++	ret = statmount(0, 0, 0, NULL, 0, 0);
++	if (ret == -1 && errno == ENOSYS)
++		SKIP(return, "statmount() syscall not supported");
++
++	/* Get current mount namespace ID for comparison */
++	ret = get_mnt_ns_id_from_path("/proc/self/ns/mnt", &self->current_ns_id);
++	if (ret < 0)
++		SKIP(return, "Failed to get current mount namespace ID");
 +}
 +
- /**
-  * open_namespace - open a namespace
-  * @ns: the namespace to open
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 5d3f8c9e3a62..acbc22241c9c 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -61,7 +61,8 @@
- /*
-  * open_tree() flags.
-  */
--#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
-+#define OPEN_TREE_CLONE		(1 << 0)	/* Clone the target tree and attach the clone */
-+#define OPEN_TREE_NAMESPACE	(1 << 1)	/* Clone the target tree into a new mount namespace */
- #define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
++FIXTURE_TEARDOWN(open_tree_ns)
++{
++	if (self->fd >= 0)
++		close(self->fd);
++}
++
++TEST_F(open_tree_ns, create_namespace)
++{
++	uint64_t new_ns_id;
++	uint64_t list[256];
++	ssize_t nr_mounts;
++	int ret;
++
++	self->fd = sys_open_tree(AT_FDCWD, variant->path, variant->flags);
++
++	if (!variant->expect_success) {
++		ASSERT_LT(self->fd, 0);
++		ASSERT_EQ(errno, EINVAL);
++		return;
++	}
++
++	if (self->fd < 0 && errno == EINVAL)
++		SKIP(return, "OPEN_TREE_NAMESPACE not supported");
++
++	ASSERT_GE(self->fd, 0);
++
++	/* Verify we can get the namespace ID */
++	ret = get_mnt_ns_id(self->fd, &new_ns_id);
++	ASSERT_EQ(ret, 0);
++
++	/* Verify it's a different namespace */
++	if (variant->expect_different_ns)
++		ASSERT_NE(new_ns_id, self->current_ns_id);
++
++	/* List mounts in the new namespace */
++	nr_mounts = listmount(LSMT_ROOT, new_ns_id, 0, list, 256, 0);
++	ASSERT_GE(nr_mounts, 0) {
++		TH_LOG("%m - listmount failed");
++	}
++
++	/* Verify minimum expected mounts */
++	ASSERT_GE(nr_mounts, variant->min_mounts);
++	TH_LOG("Namespace contains %zd mounts", nr_mounts);
++}
++
++TEST_F(open_tree_ns, setns_into_namespace)
++{
++	uint64_t new_ns_id;
++	pid_t pid;
++	int status;
++	int ret;
++
++	/* Only test with basic flags */
++	if (!(variant->flags & OPEN_TREE_NAMESPACE))
++		SKIP(return, "setns test only for basic / case");
++
++	self->fd = sys_open_tree(AT_FDCWD, variant->path, variant->flags);
++	if (self->fd < 0 && errno == EINVAL)
++		SKIP(return, "OPEN_TREE_NAMESPACE not supported");
++
++	ASSERT_GE(self->fd, 0);
++
++	/* Get namespace ID and dump all mounts */
++	ret = get_mnt_ns_id(self->fd, &new_ns_id);
++	ASSERT_EQ(ret, 0);
++
++	dump_mounts(_metadata, new_ns_id);
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		/* Child: try to enter the namespace */
++		if (setns(self->fd, CLONE_NEWNS) < 0)
++			_exit(1);
++		_exit(0);
++	}
++
++	ASSERT_EQ(waitpid(pid, &status, 0), pid);
++	ASSERT_TRUE(WIFEXITED(status));
++	ASSERT_EQ(WEXITSTATUS(status), 0);
++}
++
++TEST_F(open_tree_ns, verify_mount_properties)
++{
++	struct statmount sm;
++	uint64_t new_ns_id;
++	uint64_t list[256];
++	ssize_t nr_mounts;
++	int ret;
++
++	/* Only test with basic flags on root */
++	if (variant->flags != (OPEN_TREE_NAMESPACE | OPEN_TREE_CLOEXEC) ||
++	    strcmp(variant->path, "/") != 0)
++		SKIP(return, "mount properties test only for basic / case");
++
++	self->fd = sys_open_tree(AT_FDCWD, "/", OPEN_TREE_NAMESPACE | OPEN_TREE_CLOEXEC);
++	if (self->fd < 0 && errno == EINVAL)
++		SKIP(return, "OPEN_TREE_NAMESPACE not supported");
++
++	ASSERT_GE(self->fd, 0);
++
++	ret = get_mnt_ns_id(self->fd, &new_ns_id);
++	ASSERT_EQ(ret, 0);
++
++	nr_mounts = listmount(LSMT_ROOT, new_ns_id, 0, list, 256, 0);
++	ASSERT_GE(nr_mounts, 1);
++
++	/* Get info about the root mount (the bind mount, rootfs is hidden) */
++	ret = statmount(list[0], new_ns_id, STATMOUNT_MNT_BASIC, &sm, sizeof(sm), 0);
++	ASSERT_EQ(ret, 0);
++
++	ASSERT_NE(sm.mnt_id, sm.mnt_parent_id);
++
++	TH_LOG("Root mount id: %llu, parent: %llu",
++	       (unsigned long long)sm.mnt_id,
++	       (unsigned long long)sm.mnt_parent_id);
++}
++
++FIXTURE(open_tree_ns_caps)
++{
++	bool has_caps;
++};
++
++FIXTURE_SETUP(open_tree_ns_caps)
++{
++	int ret;
++
++	/* Check if open_tree syscall is supported */
++	ret = sys_open_tree(-1, NULL, 0);
++	if (ret == -1 && errno == ENOSYS)
++		SKIP(return, "open_tree() syscall not supported");
++
++	self->has_caps = (geteuid() == 0);
++}
++
++FIXTURE_TEARDOWN(open_tree_ns_caps)
++{
++}
++
++TEST_F(open_tree_ns_caps, requires_cap_sys_admin)
++{
++	pid_t pid;
++	int status;
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		int fd;
++
++		/* Child: drop privileges using utils.h helper */
++		if (enter_userns() != 0)
++			_exit(2);
++
++		/* Drop all caps using utils.h helper */
++		if (caps_down() == 0)
++			_exit(3);
++
++		fd = sys_open_tree(AT_FDCWD, "/",
++				   OPEN_TREE_NAMESPACE | OPEN_TREE_CLOEXEC);
++		if (fd >= 0) {
++			close(fd);
++			/* Should have failed without caps */
++			_exit(1);
++		}
++
++		if (errno == EPERM)
++			_exit(0);
++
++		/* EINVAL means OPEN_TREE_NAMESPACE not supported */
++		if (errno == EINVAL)
++			_exit(4);
++
++		/* Unexpected error */
++		_exit(5);
++	}
++
++	ASSERT_EQ(waitpid(pid, &status, 0), pid);
++	ASSERT_TRUE(WIFEXITED(status));
++
++	switch (WEXITSTATUS(status)) {
++	case 0:
++		/* Expected: EPERM without caps */
++		break;
++	case 1:
++		ASSERT_FALSE(true) TH_LOG("OPEN_TREE_NAMESPACE succeeded without caps");
++		break;
++	case 2:
++		SKIP(return, "setup_userns failed");
++		break;
++	case 3:
++		SKIP(return, "caps_down failed");
++		break;
++	case 4:
++		SKIP(return, "OPEN_TREE_NAMESPACE not supported");
++		break;
++	default:
++		ASSERT_FALSE(true) TH_LOG("Unexpected error in child (exit %d)",
++					  WEXITSTATUS(status));
++		break;
++	}
++}
++
++FIXTURE(open_tree_ns_userns)
++{
++	int fd;
++};
++
++FIXTURE_SETUP(open_tree_ns_userns)
++{
++	int ret;
++
++	self->fd = -1;
++
++	/* Check if open_tree syscall is supported */
++	ret = sys_open_tree(-1, NULL, 0);
++	if (ret == -1 && errno == ENOSYS)
++		SKIP(return, "open_tree() syscall not supported");
++
++	/* Check if statmount/listmount are supported */
++	ret = statmount(0, 0, 0, NULL, 0, 0);
++	if (ret == -1 && errno == ENOSYS)
++		SKIP(return, "statmount() syscall not supported");
++}
++
++FIXTURE_TEARDOWN(open_tree_ns_userns)
++{
++	if (self->fd >= 0)
++		close(self->fd);
++}
++
++TEST_F(open_tree_ns_userns, create_in_userns)
++{
++	pid_t pid;
++	int status;
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		uint64_t new_ns_id;
++		uint64_t list[256];
++		ssize_t nr_mounts;
++		int fd;
++
++		/* Create new user namespace (also creates mount namespace) */
++		if (enter_userns() != 0)
++			_exit(2);
++
++		/* Now we have CAP_SYS_ADMIN in the user namespace */
++		fd = sys_open_tree(AT_FDCWD, "/",
++				   OPEN_TREE_NAMESPACE | OPEN_TREE_CLOEXEC);
++		if (fd < 0) {
++			if (errno == EINVAL)
++				_exit(4); /* OPEN_TREE_NAMESPACE not supported */
++			_exit(1);
++		}
++
++		/* Verify we can get the namespace ID */
++		if (get_mnt_ns_id(fd, &new_ns_id) != 0)
++			_exit(5);
++
++		/* Verify we can list mounts in the new namespace */
++		nr_mounts = listmount(LSMT_ROOT, new_ns_id, 0, list, 256, 0);
++		if (nr_mounts < 0)
++			_exit(6);
++
++		/* Should have at least 1 mount */
++		if (nr_mounts < 1)
++			_exit(7);
++
++		close(fd);
++		_exit(0);
++	}
++
++	ASSERT_EQ(waitpid(pid, &status, 0), pid);
++	ASSERT_TRUE(WIFEXITED(status));
++
++	switch (WEXITSTATUS(status)) {
++	case 0:
++		/* Success */
++		break;
++	case 1:
++		ASSERT_FALSE(true) TH_LOG("open_tree(OPEN_TREE_NAMESPACE) failed in userns");
++		break;
++	case 2:
++		SKIP(return, "setup_userns failed");
++		break;
++	case 4:
++		SKIP(return, "OPEN_TREE_NAMESPACE not supported");
++		break;
++	case 5:
++		ASSERT_FALSE(true) TH_LOG("Failed to get mount namespace ID");
++		break;
++	case 6:
++		ASSERT_FALSE(true) TH_LOG("listmount failed in new namespace");
++		break;
++	case 7:
++		ASSERT_FALSE(true) TH_LOG("New namespace has no mounts");
++		break;
++	default:
++		ASSERT_FALSE(true) TH_LOG("Unexpected error in child (exit %d)",
++					  WEXITSTATUS(status));
++		break;
++	}
++}
++
++TEST_F(open_tree_ns_userns, setns_in_userns)
++{
++	pid_t pid;
++	int status;
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		uint64_t new_ns_id;
++		int fd;
++		pid_t inner_pid;
++		int inner_status;
++
++		/* Create new user namespace */
++		if (enter_userns() != 0)
++			_exit(2);
++
++		fd = sys_open_tree(AT_FDCWD, "/",
++				   OPEN_TREE_NAMESPACE | OPEN_TREE_CLOEXEC);
++		if (fd < 0) {
++			if (errno == EINVAL)
++				_exit(4);
++			_exit(1);
++		}
++
++		if (get_mnt_ns_id(fd, &new_ns_id) != 0)
++			_exit(5);
++
++		/* Fork again to test setns into the new namespace */
++		inner_pid = fork();
++		if (inner_pid < 0)
++			_exit(8);
++
++		if (inner_pid == 0) {
++			/* Inner child: enter the new namespace */
++			if (setns(fd, CLONE_NEWNS) < 0)
++				_exit(1);
++			_exit(0);
++		}
++
++		if (waitpid(inner_pid, &inner_status, 0) != inner_pid)
++			_exit(9);
++
++		if (!WIFEXITED(inner_status) || WEXITSTATUS(inner_status) != 0)
++			_exit(10);
++
++		close(fd);
++		_exit(0);
++	}
++
++	ASSERT_EQ(waitpid(pid, &status, 0), pid);
++	ASSERT_TRUE(WIFEXITED(status));
++
++	switch (WEXITSTATUS(status)) {
++	case 0:
++		/* Success */
++		break;
++	case 1:
++		ASSERT_FALSE(true) TH_LOG("open_tree or setns failed in userns");
++		break;
++	case 2:
++		SKIP(return, "setup_userns failed");
++		break;
++	case 4:
++		SKIP(return, "OPEN_TREE_NAMESPACE not supported");
++		break;
++	case 5:
++		ASSERT_FALSE(true) TH_LOG("Failed to get mount namespace ID");
++		break;
++	case 8:
++		ASSERT_FALSE(true) TH_LOG("Inner fork failed");
++		break;
++	case 9:
++		ASSERT_FALSE(true) TH_LOG("Inner waitpid failed");
++		break;
++	case 10:
++		ASSERT_FALSE(true) TH_LOG("setns into new namespace failed");
++		break;
++	default:
++		ASSERT_FALSE(true) TH_LOG("Unexpected error in child (exit %d)",
++					  WEXITSTATUS(status));
++		break;
++	}
++}
++
++TEST_F(open_tree_ns_userns, recursive_in_userns)
++{
++	pid_t pid;
++	int status;
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		uint64_t new_ns_id;
++		uint64_t list[256];
++		ssize_t nr_mounts;
++		int fd;
++
++		/* Create new user namespace */
++		if (enter_userns() != 0)
++			_exit(2);
++
++		/* Test recursive flag in userns */
++		fd = sys_open_tree(AT_FDCWD, "/",
++				   OPEN_TREE_NAMESPACE | AT_RECURSIVE | OPEN_TREE_CLOEXEC);
++		if (fd < 0) {
++			if (errno == EINVAL)
++				_exit(4);
++			_exit(1);
++		}
++
++		if (get_mnt_ns_id(fd, &new_ns_id) != 0)
++			_exit(5);
++
++		nr_mounts = listmount(LSMT_ROOT, new_ns_id, 0, list, 256, 0);
++		if (nr_mounts < 0)
++			_exit(6);
++
++		/* Recursive should copy submounts too */
++		if (nr_mounts < 1)
++			_exit(7);
++
++		close(fd);
++		_exit(0);
++	}
++
++	ASSERT_EQ(waitpid(pid, &status, 0), pid);
++	ASSERT_TRUE(WIFEXITED(status));
++
++	switch (WEXITSTATUS(status)) {
++	case 0:
++		/* Success */
++		break;
++	case 1:
++		ASSERT_FALSE(true) TH_LOG("open_tree(OPEN_TREE_NAMESPACE|AT_RECURSIVE) failed in userns");
++		break;
++	case 2:
++		SKIP(return, "setup_userns failed");
++		break;
++	case 4:
++		SKIP(return, "OPEN_TREE_NAMESPACE not supported");
++		break;
++	case 5:
++		ASSERT_FALSE(true) TH_LOG("Failed to get mount namespace ID");
++		break;
++	case 6:
++		ASSERT_FALSE(true) TH_LOG("listmount failed in new namespace");
++		break;
++	case 7:
++		ASSERT_FALSE(true) TH_LOG("New namespace has no mounts");
++		break;
++	default:
++		ASSERT_FALSE(true) TH_LOG("Unexpected error in child (exit %d)",
++					  WEXITSTATUS(status));
++		break;
++	}
++}
++
++TEST_F(open_tree_ns_userns, umount_fails_einval)
++{
++	pid_t pid;
++	int status;
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		uint64_t new_ns_id;
++		uint64_t list[256];
++		ssize_t nr_mounts;
++		int fd;
++		ssize_t i;
++
++		/* Create new user namespace */
++		if (enter_userns() != 0)
++			_exit(2);
++
++		fd = sys_open_tree(AT_FDCWD, "/",
++				   OPEN_TREE_NAMESPACE | AT_RECURSIVE | OPEN_TREE_CLOEXEC);
++		if (fd < 0) {
++			if (errno == EINVAL)
++				_exit(4);
++			_exit(1);
++		}
++
++		if (get_mnt_ns_id(fd, &new_ns_id) != 0)
++			_exit(5);
++
++		/* Get all mounts in the new namespace */
++		nr_mounts = listmount(LSMT_ROOT, new_ns_id, 0, list, 256, LISTMOUNT_REVERSE);
++		if (nr_mounts < 0)
++			_exit(9);
++
++		if (nr_mounts < 1)
++			_exit(10);
++
++		/* Enter the new namespace */
++		if (setns(fd, CLONE_NEWNS) < 0)
++			_exit(6);
++
++		for (i = 0; i < nr_mounts; i++) {
++			struct statmount *sm;
++			const char *mnt_point;
++
++			sm = statmount_alloc(list[i], new_ns_id,
++					     STATMOUNT_MNT_POINT);
++			if (!sm)
++				_exit(11);
++
++			mnt_point = sm->str + sm->mnt_point;
++
++			TH_LOG("Trying to umount %s", mnt_point);
++			if (umount2(mnt_point, MNT_DETACH) == 0) {
++				free(sm);
++				_exit(7);
++			}
++
++			if (errno != EINVAL) {
++				/* Wrong error */
++				free(sm);
++				_exit(8);
++			}
++
++			free(sm);
++		}
++
++		close(fd);
++		_exit(0);
++	}
++
++	ASSERT_EQ(waitpid(pid, &status, 0), pid);
++	ASSERT_TRUE(WIFEXITED(status));
++
++	switch (WEXITSTATUS(status)) {
++	case 0:
++		break;
++	case 1:
++		ASSERT_FALSE(true) TH_LOG("open_tree(OPEN_TREE_NAMESPACE) failed");
++		break;
++	case 2:
++		SKIP(return, "setup_userns failed");
++		break;
++	case 4:
++		SKIP(return, "OPEN_TREE_NAMESPACE not supported");
++		break;
++	case 5:
++		ASSERT_FALSE(true) TH_LOG("Failed to get mount namespace ID");
++		break;
++	case 6:
++		ASSERT_FALSE(true) TH_LOG("setns into new namespace failed");
++		break;
++	case 7:
++		ASSERT_FALSE(true) TH_LOG("umount succeeded but should have failed with EINVAL");
++		break;
++	case 8:
++		ASSERT_FALSE(true) TH_LOG("umount failed with wrong error (expected EINVAL)");
++		break;
++	case 9:
++		ASSERT_FALSE(true) TH_LOG("listmount failed");
++		break;
++	case 10:
++		ASSERT_FALSE(true) TH_LOG("No mounts in new namespace");
++		break;
++	case 11:
++		ASSERT_FALSE(true) TH_LOG("statmount_alloc failed");
++		break;
++	default:
++		ASSERT_FALSE(true) TH_LOG("Unexpected error in child (exit %d)",
++					  WEXITSTATUS(status));
++		break;
++	}
++}
++
++TEST_F(open_tree_ns_userns, umount_succeeds)
++{
++	pid_t pid;
++	int status;
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		uint64_t new_ns_id;
++		uint64_t list[256];
++		ssize_t nr_mounts;
++		int fd;
++		ssize_t i;
++
++		if (unshare(CLONE_NEWNS))
++			_exit(1);
++
++		if (sys_mount(NULL, "/", NULL, MS_SLAVE | MS_REC, NULL) != 0)
++			_exit(1);
++
++		fd = sys_open_tree(AT_FDCWD, "/",
++				   OPEN_TREE_NAMESPACE | AT_RECURSIVE | OPEN_TREE_CLOEXEC);
++		if (fd < 0) {
++			if (errno == EINVAL)
++				_exit(4);
++			_exit(1);
++		}
++
++		if (get_mnt_ns_id(fd, &new_ns_id) != 0)
++			_exit(5);
++
++		/* Get all mounts in the new namespace */
++		nr_mounts = listmount(LSMT_ROOT, new_ns_id, 0, list, 256, LISTMOUNT_REVERSE);
++		if (nr_mounts < 0)
++			_exit(9);
++
++		if (nr_mounts < 1)
++			_exit(10);
++
++		/* Enter the new namespace */
++		if (setns(fd, CLONE_NEWNS) < 0)
++			_exit(6);
++
++		for (i = 0; i < nr_mounts; i++) {
++			struct statmount *sm;
++			const char *mnt_point;
++
++			sm = statmount_alloc(list[i], new_ns_id,
++					     STATMOUNT_MNT_POINT);
++			if (!sm)
++				_exit(11);
++
++			mnt_point = sm->str + sm->mnt_point;
++
++			TH_LOG("Trying to umount %s", mnt_point);
++			if (umount2(mnt_point, MNT_DETACH) != 0) {
++				free(sm);
++				_exit(7);
++			}
++
++			free(sm);
++		}
++
++		close(fd);
++		_exit(0);
++	}
++
++	ASSERT_EQ(waitpid(pid, &status, 0), pid);
++	ASSERT_TRUE(WIFEXITED(status));
++
++	switch (WEXITSTATUS(status)) {
++	case 0:
++		break;
++	case 1:
++		ASSERT_FALSE(true) TH_LOG("open_tree(OPEN_TREE_NAMESPACE) failed");
++		break;
++	case 2:
++		SKIP(return, "setup_userns failed");
++		break;
++	case 4:
++		SKIP(return, "OPEN_TREE_NAMESPACE not supported");
++		break;
++	case 5:
++		ASSERT_FALSE(true) TH_LOG("Failed to get mount namespace ID");
++		break;
++	case 6:
++		ASSERT_FALSE(true) TH_LOG("setns into new namespace failed");
++		break;
++	case 7:
++		ASSERT_FALSE(true) TH_LOG("umount succeeded but should have failed with EINVAL");
++		break;
++	case 9:
++		ASSERT_FALSE(true) TH_LOG("listmount failed");
++		break;
++	case 10:
++		ASSERT_FALSE(true) TH_LOG("No mounts in new namespace");
++		break;
++	case 11:
++		ASSERT_FALSE(true) TH_LOG("statmount_alloc failed");
++		break;
++	default:
++		ASSERT_FALSE(true) TH_LOG("Unexpected error in child (exit %d)",
++					  WEXITSTATUS(status));
++		break;
++	}
++}
++
++FIXTURE(open_tree_ns_unbindable)
++{
++	char tmpdir[PATH_MAX];
++	bool mounted;
++};
++
++FIXTURE_SETUP(open_tree_ns_unbindable)
++{
++	int ret;
++
++	self->mounted = false;
++
++	/* Check if open_tree syscall is supported */
++	ret = sys_open_tree(-1, NULL, 0);
++	if (ret == -1 && errno == ENOSYS)
++		SKIP(return, "open_tree() syscall not supported");
++
++	/* Create a temporary directory for the test mount */
++	snprintf(self->tmpdir, sizeof(self->tmpdir),
++		 "/tmp/open_tree_ns_test.XXXXXX");
++	ASSERT_NE(mkdtemp(self->tmpdir), NULL);
++
++	/* Mount tmpfs there */
++	ret = mount("tmpfs", self->tmpdir, "tmpfs", 0, NULL);
++	if (ret < 0) {
++		rmdir(self->tmpdir);
++		SKIP(return, "Failed to mount tmpfs");
++	}
++	self->mounted = true;
++
++	ret = mount(NULL, self->tmpdir, NULL, MS_UNBINDABLE, NULL);
++	if (ret < 0) {
++		rmdir(self->tmpdir);
++		SKIP(return, "Failed to make tmpfs unbindable");
++	}
++}
++
++FIXTURE_TEARDOWN(open_tree_ns_unbindable)
++{
++	if (self->mounted)
++		umount2(self->tmpdir, MNT_DETACH);
++	rmdir(self->tmpdir);
++}
++
++TEST_F(open_tree_ns_unbindable, fails_on_unbindable)
++{
++	int fd;
++
++	fd = sys_open_tree(AT_FDCWD, self->tmpdir,
++			   OPEN_TREE_NAMESPACE | OPEN_TREE_CLOEXEC);
++	ASSERT_LT(fd, 0);
++}
++
++TEST_F(open_tree_ns_unbindable, recursive_skips_on_unbindable)
++{
++	uint64_t new_ns_id;
++	uint64_t list[256];
++	ssize_t nr_mounts;
++	int fd;
++	ssize_t i;
++	bool found_unbindable = false;
++
++	fd = sys_open_tree(AT_FDCWD, "/",
++			   OPEN_TREE_NAMESPACE | AT_RECURSIVE | OPEN_TREE_CLOEXEC);
++	ASSERT_GT(fd, 0);
++
++	ASSERT_EQ(get_mnt_ns_id(fd, &new_ns_id), 0);
++
++	nr_mounts = listmount(LSMT_ROOT, new_ns_id, 0, list, 256, 0);
++	ASSERT_GE(nr_mounts, 0) {
++		TH_LOG("listmount failed: %m");
++	}
++
++	/*
++	 * Iterate through all mounts in the new namespace and verify
++	 * the unbindable tmpfs mount was silently dropped.
++	 */
++	for (i = 0; i < nr_mounts; i++) {
++		struct statmount *sm;
++		const char *mnt_point;
++
++		sm = statmount_alloc(list[i], new_ns_id, STATMOUNT_MNT_POINT);
++		ASSERT_NE(sm, NULL) {
++			TH_LOG("statmount_alloc failed for mnt_id %llu",
++			       (unsigned long long)list[i]);
++		}
++
++		mnt_point = sm->str + sm->mnt_point;
++
++		if (strcmp(mnt_point, self->tmpdir) == 0) {
++			TH_LOG("Found unbindable mount at %s (should have been dropped)",
++			       mnt_point);
++			found_unbindable = true;
++		}
++
++		free(sm);
++	}
++
++	ASSERT_FALSE(found_unbindable) {
++		TH_LOG("Unbindable mount at %s was not dropped", self->tmpdir);
++	}
++
++	close(fd);
++}
++
++TEST_HARNESS_MAIN
+diff --git a/tools/testing/selftests/filesystems/utils.c b/tools/testing/selftests/filesystems/utils.c
+index c9dd5412b37b..d6f26f849053 100644
+--- a/tools/testing/selftests/filesystems/utils.c
++++ b/tools/testing/selftests/filesystems/utils.c
+@@ -515,6 +515,32 @@ int setup_userns(void)
+ 	return 0;
+ }
  
- /*
++int enter_userns(void)
++{
++	int ret;
++	char buf[32];
++	uid_t uid = getuid();
++	gid_t gid = getgid();
++
++	ret = unshare(CLONE_NEWUSER);
++	if (ret)
++		return ret;
++
++	sprintf(buf, "0 %d 1", uid);
++	ret = write_file("/proc/self/uid_map", buf);
++	if (ret)
++		return ret;
++	ret = write_file("/proc/self/setgroups", "deny");
++	if (ret)
++		return ret;
++	sprintf(buf, "0 %d 1", gid);
++	ret = write_file("/proc/self/gid_map", buf);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
+ /* caps_down - lower all effective caps */
+ int caps_down(void)
+ {
+diff --git a/tools/testing/selftests/filesystems/utils.h b/tools/testing/selftests/filesystems/utils.h
+index 70f7ccc607f4..0bccfed666a9 100644
+--- a/tools/testing/selftests/filesystems/utils.h
++++ b/tools/testing/selftests/filesystems/utils.h
+@@ -28,6 +28,7 @@ extern int cap_down(cap_value_t down);
+ 
+ extern bool switch_ids(uid_t uid, gid_t gid);
+ extern int setup_userns(void);
++extern int enter_userns(void);
+ 
+ static inline bool switch_userns(int fd, uid_t uid, gid_t gid, bool drop_caps)
+ {
 
 -- 
 2.47.3
