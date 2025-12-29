@@ -1,126 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-72176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335F4CE6D45
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 14:08:34 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A409CE6D1B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 14:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 38670300FF8A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 13:06:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0372B300F5A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 13:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23ED4313E2F;
-	Mon, 29 Dec 2025 12:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC127288520;
+	Mon, 29 Dec 2025 13:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fYyyUlGw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQq0crpz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECA43126A8
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 12:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494681DF759
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 13:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767013082; cv=none; b=C31L5LZqnKacLw8CAfHBtdXfB+HdCFYtMPpUHD6jRAcfdjsioXFAJEiMfqxoj1Y/2Ath6wv9m5ia+sTkhfzpGDKRFPgMPv8LTfrN2niJbf/9MkxMbFJfRH1hqkFty92rpcI8PadCctx6RXKrQaOvPjuRIuu3yNpHXxp0qjGCPeA=
+	t=1767013419; cv=none; b=WnxiqcGmBVa9f0pvkYHw2FvZYOpfAYkQGlvfg7cULQFws/NrOQ6Xd2BKez/3DrAb/TYF0ZxiU1WJrNsPp2U4oU0d2ceyiu+QmaqRY9fwWn2qSyG+eszbtRcfEkx7lUqWg2sgO2KPAgI8WFUtE3aYTEcX3nlUMuMf54YncX1Uy8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767013082; c=relaxed/simple;
-	bh=ta7lZGA+hai2JyTArwPNBQWsuum5zr06k8vH75DR8FQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CDbsiSRac2zSX6OiwU4QUPt5Mf0cqpILAI4FZEDenDNah0ljNRSo/pDQeJFapjdrqC7OX9vk0cLGR06aJF9ecLrYIMRPqi350bxRLpoZs6NDiCIQhbNzOoHg97GsFVZX9megyNvFHTBvknRciTorTonk/UeLXf3vO029zvARxPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fYyyUlGw; arc=none smtp.client-ip=209.85.218.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-b79d6a70fc8so1583152166b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 04:58:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767013079; x=1767617879; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JFlgmBF+dAOw4m3iy7iEt5EI8FOvkwW5KU9tIs4MiuQ=;
-        b=fYyyUlGwpYCQpnOw3v8CQ3Fo9QA8NypAJm0pUAkfJfrGu2EFygMy0+VXQrW291GAPg
-         Jnge5S11aOnQiOz7o1aj3wpTm97BFXNJWVUheDQjKc1KVfpPVMsj65AhK3Iw1UsDufsC
-         1Q/ycGlbBu0I+AnSMOkZr6cJBbPCM4+3OTnaDLxJr9pGtWRRwkRUgjT8DtiD4akUu+Kp
-         r1E+PUYu2dzUOcV+ZLpRxVygqc8ilcMjO9iLmSfGAJ2Pb1gD3pIMJ19L2EYq6ybUC0yv
-         GHC8+quRvzc2LSrRY6GUMDti//3yB+uw4JuCiQFiOamyO81eTXPZgyuBvF2d3K5v1OGv
-         hVRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767013079; x=1767617879;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JFlgmBF+dAOw4m3iy7iEt5EI8FOvkwW5KU9tIs4MiuQ=;
-        b=KNYiiwTFrGGipUpNUfiAsIOxUmnhu1xtC+m8jY2O/gC2WwsKPUBw3mQ3Gl85BkFQD/
-         tltDMPlwHcd0f2y6zh1T526Fg6ixEKRtzuV6BaMlWp7k7iQgCIkyzTZqogRzaTw8kg9S
-         /m+mZKIF76Z1yEt3ogf0qOAMe+Lu07Etns7CI1dSki5L39UA+33uZfzXox8w2EjCjENL
-         /aXoC+2HNEUEyrb8mO9QDwiuZ/h9tYITNcyBZZ8VMmCsRIgXFd/4ySG/VyD9+rNv0A+/
-         ddXjKaQtG6nO8wMqkge5EP5E5oYAYgVdzDVdQeDJXgpA2kCHI1PszAkKMxg5dAVC9FfC
-         vipw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2teVFyukr3kKKKZrHqxAExo2PxfF3FsYyq617roa+r/fsU3EFfSWqYF9XabLLN+mqnHvq2fFb6qJcJQ6D@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya+CP3PFZ6DxL1ts8H76uVqPk8OWk1ZCJ1jH8teDO/QeiSOkOb
-	iNWsAOrQc3nT3mJZ30qOIa21hDViOFUHopuHdh+1NrA/kCyMFO8ARgF7
-X-Gm-Gg: AY/fxX6HfV3e3TdRDQEHVGLec7R9MFm4qzViR7O6xhc2X6vim45yZ3rZgBw+croEoBS
-	OGxYU1Zcbcu0aaIHM+DAOkiDO9uVxeMRwp3IUhfUjwpvTXWo7HJI1Np6fSWuJmQDwiymQDsbRgf
-	ouVHaJtT1/SQkp+cD3LM1eHCpH2nguAI73MzpxPgR8DJxBB2TzxaKDalVkZloh6dC9q49oOChOE
-	KPNlqq696fK8PdnJjtATF9EBvVG1El71GbzbUeBp9G5OQEQoGTJxyO5/8+zfpPIYA3yi6gE8fbi
-	EOzmams17zTPUkTl40MTNbLCwqsya3elW27LkmQVywPlPUxX+8GC9bj2C7vn7P7C77zFGyWMhAj
-	/FFw2IvRbysBRgMP3UCT/1ZPJ+KAFKrVJF9ngybnLPevfRcoXqlw80sqervI689LiszFXdmuI/C
-	8Jx0qJc64tJW0RIGGmYBqHVwFx9fGc0bUR/o09FwoHytWRBNkeo/qYcnn0M8l7gg==
-X-Google-Smtp-Source: AGHT+IHYbDO6SQ29ghTpyGHFbkDHeKHNdJl/FrDAFqwDNAjYU07KwKyrkDXE8N5Al3/Rd52qAimBcw==
-X-Received: by 2002:a17:907:fdca:b0:b76:3bfd:8afe with SMTP id a640c23a62f3a-b8036ebdd5bmr3185431666b.5.1767013078944;
-        Mon, 29 Dec 2025 04:57:58 -0800 (PST)
-Received: from f.. (cst-prg-87-163.cust.vodafone.cz. [46.135.87.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037a60500sm3300549066b.13.2025.12.29.04.57.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Dec 2025 04:57:58 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org,
-	viro@zeniv.linux.org.uk
-Cc: jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: only assert on LOOKUP_RCU when built with CONFIG_DEBUG_VFS
-Date: Mon, 29 Dec 2025 13:57:51 +0100
-Message-ID: <20251229125751.826050-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1767013419; c=relaxed/simple;
+	bh=3PaYhMqtCaXILxQESluYsq/Tpcaa2qYxyWmEO9LDcLY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Jbh8amDeQcC2xDnNSR/BTWCr+aOMfpLNb7dhyDG7Hze09J4o9a0PYYwRNQWLduBAJPWFlKppAHvEj/WQYLyatcwnLScp9RPDavg+oFN9bZUD8roYWc9lCHNOX6/+KdJldIRomytzERy/CWk3cqWrOPetXynKdRYg8MebFgIfEWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQq0crpz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 128AAC4CEF7;
+	Mon, 29 Dec 2025 13:03:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767013418;
+	bh=3PaYhMqtCaXILxQESluYsq/Tpcaa2qYxyWmEO9LDcLY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=iQq0crpzXUtRG07pvrWs9GTGzusgQfu+IZ3qkVmUy4GZX73tzWV5MvNJM3vGqUD1e
+	 3zSY6Bw2x/AWd8UVw5pKNSjULiPasBnxIlIA48C2zx2YztoD76i1x1DRzMj24nz1en
+	 I7SqeeGVQIdQ2A3wJ/wmBLyYrD08AoRWtA3pti/GP8cnoh8T3jxUdEzq41yMeNy5jG
+	 2pQk4UNl2w77jU//VCMrSXXSKcvMxG7w9I2E3XeQpHw6Y5mIUzI5QsuPuLrClQ/kB3
+	 jOkd+YucbTu2M4ylwNcvWE4keQarZFrBZahpoF4q/dKGI5K2Fs85HGmMnMem0I9W4m
+	 3YjijOFVq0h6A==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 0/2] mount: add OPEN_TREE_NAMESPACE
+Date: Mon, 29 Dec 2025 14:03:23 +0100
+Message-Id: <20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABt8UmkC/x3MwQ6CMAyA4VchPVvCajCZr2I8lFFkMRtLS1BDe
+ Henx+/w/zuYaBSDa7ODyhYtLrnCnRoIM+eHYByrgTrqHZHH16JPlFTWD2ZOYoWD4Lkn9oHGSTq
+ GmhaVKb7/29u9emATHJRzmH+zxLaKttuldR41ODiOL9R4bpmJAAAA
+X-Change-ID: 20251229-work-empty-namespace-352a9c2dfe0a
+To: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+ Jan Kara <jack@suse.cz>, Aleksa Sarai <cyphar@cyphar.com>, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3438; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=3PaYhMqtCaXILxQESluYsq/Tpcaa2qYxyWmEO9LDcLY=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQG1ag392g2vzrEqnorovbqdtb/P3Tm2Aob6Py745e84
+ qne3QNsHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMxdWFkmHrcVFV/Nd9EoY3n
+ uHdfZ3fp1mj6sMvNRLmjoPrD4uuWuYwMJ3ZdORxR5cGyoD7rRonL8Q06v1rZdObffhLptau+ZL4
+ WKwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Calls to the 2 modified routines are explicitly gated with checks for
-the flag, so there is no use for this in production kernels.
+When creating containers the setup usually involves using CLONE_NEWNS
+via clone3() or unshare(). This copies the caller's complete mount
+namespace. The runtime will also assemble a new rootfs and then use
+pivot_root() to switch the old mount tree with the new rootfs. Afterward
+it will recursively umount the old mount tree thereby getting rid of all
+mounts.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+On a basic system here where the mount table isn't particularly large
+this still copies about 30 mounts. Copying all of these mounts only to
+get rid of them later is pretty wasteful.
+
+This is exacerbated if intermediary mount namespaces are used that only
+exist for a very short amount of time and are immediately destroyed
+again causing a ton of mounts to be copied and destroyed needlessly.
+
+With a large mount table and a system where thousands or ten-thousands
+of namespaces are spawned in parallel this quickly becomes a bottleneck
+increasing contention on the semaphore.
+
+Extend open_tree() with a new OPEN_TREE_NAMESPACE flag. Similar to
+OPEN_TREE_CLONE only the indicated mount tree is copied. Instead of
+returning a file descriptor referring to that mount tree
+OPEN_TREE_NAMESPACE will cause open_tree() to return a file descriptor
+to a new mount namespace. In that new mount namespace the copied mount
+tree has been mounted on top of a copy of the real rootfs.
+
+The caller can setns() into that mount namespace and perform any
+additionally setup such as move_mount()ing detached mounts in there.
+
+This allows OPEN_TREE_NAMESPACE to function as a combined
+unshare(CLONE_NEWNS) and pivot_root().
+
+A caller may for example choose to create an extremely minimal rootfs:
+
+fd_mntns = open_tree(-EBADF, "/var/lib/containers/wootwoot", OPEN_TREE_NAMESPACE);
+
+This will create a mount namespace where "wootwoot" has become the
+rootfs mounted on top of the real rootfs. The caller can now setns()
+into this new mount namespace and assemble additional mounts.
+
+This also works with user namespaces:
+
+unshare(CLONE_NEWUSER);
+fd_mntns = open_tree(-EBADF, "/var/lib/containers/wootwoot", OPEN_TREE_NAMESPACE);
+
+which creates a new mount namespace owned by the earlier created user
+namespace with "wootwoot" as the rootfs mounted on top of the real
+rootfs.
+
+This will scale a lot better when creating tons of mount namespaces and
+will allow to get rid of a lot of unnecessary mount and umount cycles.
+It also allows to create mount namespaces without needing to spawn
+throwaway helper processes.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/namei.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Christian Brauner (2):
+      mount: add OPEN_TREE_NAMESPACE
+      selftests/open_tree: add OPEN_TREE_NAMESPACE tests
 
-diff --git a/fs/namei.c b/fs/namei.c
-index f7a8b5b000c2..9c5a372a86f6 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -879,7 +879,7 @@ static bool try_to_unlazy(struct nameidata *nd)
- {
- 	struct dentry *parent = nd->path.dentry;
- 
--	BUG_ON(!(nd->flags & LOOKUP_RCU));
-+	VFS_BUG_ON(!(nd->flags & LOOKUP_RCU));
- 
- 	if (unlikely(nd->flags & LOOKUP_CACHED)) {
- 		drop_links(nd);
-@@ -919,7 +919,8 @@ static bool try_to_unlazy(struct nameidata *nd)
- static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry)
- {
- 	int res;
--	BUG_ON(!(nd->flags & LOOKUP_RCU));
-+
-+	VFS_BUG_ON(!(nd->flags & LOOKUP_RCU));
- 
- 	if (unlikely(nd->flags & LOOKUP_CACHED)) {
- 		drop_links(nd);
--- 
-2.48.1
+ fs/internal.h                                      |    1 +
+ fs/namespace.c                                     |  155 ++-
+ fs/nsfs.c                                          |   13 +
+ include/uapi/linux/mount.h                         |    3 +-
+ .../selftests/filesystems/open_tree_ns/.gitignore  |    1 +
+ .../selftests/filesystems/open_tree_ns/Makefile    |   10 +
+ .../filesystems/open_tree_ns/open_tree_ns_test.c   | 1030 ++++++++++++++++++++
+ tools/testing/selftests/filesystems/utils.c        |   26 +
+ tools/testing/selftests/filesystems/utils.h        |    1 +
+ 9 files changed, 1223 insertions(+), 17 deletions(-)
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20251229-work-empty-namespace-352a9c2dfe0a
 
 
