@@ -1,258 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-72211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6217CE830A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 22:07:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9634DCE8389
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 22:31:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D5B443016708
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 21:07:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7A7AB3010CEF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 21:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C632E7180;
-	Mon, 29 Dec 2025 21:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8B92853F8;
+	Mon, 29 Dec 2025 21:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ki2p6sic";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n1nCYHjd";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="q+jAk7nA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YK/out0l"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4jpFlzq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FC527FD48
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 21:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8048125B2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 21:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767042451; cv=none; b=WRYGXCmE5nr0komXTrH7n9DCBlnQE8q6QmL9D6FEWj27XUf5NbnR6MKh/kpKkaPs+OaEhB48NvJQwmIGWc79G7H7MnKKm4s6uSWINLf5AtHE7v5tniDXOYFba9CXajobwvm/RHN//AfjxqMWuAfr2bxf2r0J2z/zhKVgjTX/Emo=
+	t=1767043897; cv=none; b=ooTz7jJgiloKVdUeI2lS6x7BAZNTLrJRLLU5Vjmj6X1tNyiXsdUbhQpXElAcmBAdV5UNGDspyqMc4u3WZWIHDln1ZX/7Hkeq03HLqvpjOX2AiU2W77OogjAactYdxXa3/qyh06r6BIz62SLXji826fehtG4ynIXBkqekfUHA5M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767042451; c=relaxed/simple;
-	bh=JYL/Hx0G+duCnR1w/LphUkqH8DKMRMPn31iS2tqmV58=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nV9eLvleWfhsxlGNH7qyvOE2/A9irlrDnu5kliolkTbKMiDNWI7CQ4DWJyMRSFYuwt9oCqoGEvSqq9f1cWkva/1zgHCJCEWOfM2CiMXsNBYM0oCjfeKV/sPqcMp0eY9OxFfljiR9seZgVvwXB04we+Rp0jhYZVPFv51mWv9U2fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ki2p6sic; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n1nCYHjd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=q+jAk7nA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YK/out0l; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EB09E336B5;
-	Mon, 29 Dec 2025 21:07:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1767042446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y9tKAQT75iqCX5Pv+ILhSLqtyAl4KGwU3u3z3Glje2A=;
-	b=ki2p6sicHviAhmI6hD9hqogb4z/AtNM/dbAKCR0ICbcjviL0XwBBKu+4EB2h0zjVNg7den
-	yOLCKJskUmClkx3toal2RnZB8WLuHtWgKtR3aBQlUzvOSxQQGSRq1vI2XU5M8MKQSa3kLF
-	noszqsEKkl2duS0pGCyuVxKZWHNOarQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1767042446;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y9tKAQT75iqCX5Pv+ILhSLqtyAl4KGwU3u3z3Glje2A=;
-	b=n1nCYHjdas2DayLk24JrBBBlZ9HXS4kGWGgbB4vjYQf2Yzhd/pKKJKZ7NwiyvM8QyGrExZ
-	zTE83MaEpr/TOmDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1767042444; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y9tKAQT75iqCX5Pv+ILhSLqtyAl4KGwU3u3z3Glje2A=;
-	b=q+jAk7nAVzzqPGt5XFTJwUO3gx3YGVHY/U1tbj/elA+vcbAAT6NpCmG0eR7dreM75nXAyD
-	AlIid3MNN/F6jixveSUgFSsrNJDS029x+MEU2ukl9nL8PWzvXGdSHfxDc1P/XiRSnWpdzv
-	BBcOBWQ9JoURmF6VmEhayvMn94WMKR4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1767042444;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y9tKAQT75iqCX5Pv+ILhSLqtyAl4KGwU3u3z3Glje2A=;
-	b=YK/out0lRn5iDTlrhypL3LyTgst4ec3RbFmY/jPT0ZpS+gvmibgMTB7nM6hz7KmBTEfeJK
-	y0TOs0Y8W6UqC5CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ACE76137C3;
-	Mon, 29 Dec 2025 21:07:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hylfI4ztUmmJYwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Mon, 29 Dec 2025 21:07:24 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu,  axboe@kernel.dk,  bschubert@ddn.com,
-  asml.silence@gmail.com,  io-uring@vger.kernel.org,
-  csander@purestorage.com,  xiaobing.li@samsung.com,
-  linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 06/25] io_uring/kbuf: add buffer ring pinning/unpinning
-In-Reply-To: <20251223003522.3055912-7-joannelkoong@gmail.com> (Joanne Koong's
-	message of "Mon, 22 Dec 2025 16:35:03 -0800")
-References: <20251223003522.3055912-1-joannelkoong@gmail.com>
-	<20251223003522.3055912-7-joannelkoong@gmail.com>
-Date: Mon, 29 Dec 2025 16:07:14 -0500
-Message-ID: <87y0mlyp31.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1767043897; c=relaxed/simple;
+	bh=2doAA4Fk0P1J7gufz0cYA3e0Uog/QgQKoRTnXLg5fJI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=igv3aJ9Wb6yXmI/JXwDCRxv1XFVST3Chrqw2OuCc29pZDbF3Cj3xxpUzM7qLv0dwL+gWXewpAQ1RP4RFW2Qf645Q+fXwaa0uemAdstqCbK+WcpnK5LrRdotlzdE7oevTj/h66otsJaoPUCMejW7DApPNFhAbPpsKKbgfHTmPVpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C4jpFlzq; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ee19b1fe5dso107239641cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 13:31:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767043895; x=1767648695; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2doAA4Fk0P1J7gufz0cYA3e0Uog/QgQKoRTnXLg5fJI=;
+        b=C4jpFlzq7FyfNXmfL8N0+BXQJM6Hm9cm8te5L4YLT9U0ucswSJeUYKC2dMJ0dizxkJ
+         EEpAfoEP+QaWjDcGi15JAdSIl4323kdnuP8WGFPj6qYBpwcEtgAGu+VWWlMX6Jbe79O1
+         cJu42pyJF7r3MIZeqRE02BXzodp7wAKBQ0l1Yru51iYB7OQiMGFGA9PAHUQ/ruPjbcEn
+         JtDlois8SJi45wDZinMCSRAbdU25WfATYxzNoBm6wKjVMzxQL89rKLmmk8xG+KlAOL3d
+         1htNwHa91zoXr1621KTvZNyRDXuQ8X/U3fdDH7hiyoQYQE7ceprg3viih0icMCayNfuf
+         AiCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767043895; x=1767648695;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2doAA4Fk0P1J7gufz0cYA3e0Uog/QgQKoRTnXLg5fJI=;
+        b=lzGnfK3APG2nXo//J8AOAJevAZMwDvjgvk5T21EA0y+1buLu4VqZcXrvpNT3PFzeow
+         ZZPCVKvTXMEh34hzVTaHKIMu7ev2Yp7AXVQ0TFoyFMWo3FgunvC04h2XtpgbA9ZijOp6
+         FkFajf8W5BJoY/0XCFciMy7OoZ2pHudVlZR2eA7CobFpos0q34e0FRfg/VywfdhdqxlF
+         jcX8feuMIEgR9faLYqmLEwcAf3yPemHau9ZVKaP5hMq+MFuiJpDTjqJMx0j1MOb0sSRp
+         1pk5TGbALIP91RjyCQb6dmSpcs4BbLmzRR05dR1zxZQbiXtOv++diO0VkLPRbDgHkDh9
+         9Cmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXlcLKNBVnPwGHWwC/+TgfJSkudXc0cSLUnt6Aj6p8EEzynMk1LQn4P/gMwESqYMmcXamKPg6C9li68Y9+G@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjz8UZziMw1I/sxbORO0fxsKW7+UlP8+Qb8Msk4h7MTzmJvHzZ
+	fZat0Plj7YaEy9L8VdgYWXGcW59jt36E6hD12TVeGbij1d/0s2jbCqh0SpPZ+gq16zgqehFpvJj
+	ggecHFIVWLMu169NbDtbS98kdMtTyrLI=
+X-Gm-Gg: AY/fxX7+fGmUDbJ44/UXae57CVOjpoeZrl+BEu9KFaKHVJ2T2W9eo+ikhTiEhh3EtPH
+	7M1lZSuBaBhJyTWsZGzBzTU8ib3PEcZuok7CLTXe5wEsx6JLvtL5oQqP1aIoW8hW4aDfXMoPFWM
+	eCPfnm8r4V78F1pYg4yc8zSXwq14stkJ2N3+E18N89oc/sqdj504DsSD1/w5G5P+Gp+DdhN1WxY
+	j60+8FD/T/d1Xygl5dApcU4t2NIEG5qToSOJoO8sJ9lwk+w8/6HJd3s5L/Ajxfq/cc/kdSj7gBe
+	WlQk
+X-Google-Smtp-Source: AGHT+IEW6jCTZX+LNzZ1wuZKqmsS+B6NgyKwbQpmwlQuybgwz8ITHGyQFS44a4Nm36kvw8ngyNueou3teounR4sB2Hw=
+X-Received: by 2002:ac8:758f:0:b0:4f4:de66:5901 with SMTP id
+ d75a77b69052e-4f4de665a8emr252776341cf.5.1767043894904; Mon, 29 Dec 2025
+ 13:31:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,mailhost.krisman.be:mid];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[szeredi.hu,kernel.dk,ddn.com,gmail.com,vger.kernel.org,purestorage.com,samsung.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mailhost.krisman.be:mid,imap1.dmz-prg2.suse.org:helo]
+References: <20251225055021.42491-1-kuangkai@kylinos.cn> <9f54caaa-1936-4a37-8046-0335e469935d@bsbernd.com>
+In-Reply-To: <9f54caaa-1936-4a37-8046-0335e469935d@bsbernd.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 29 Dec 2025 13:31:24 -0800
+X-Gm-Features: AQt7F2ofnTGHxTQ2UOtNFLmTU-KIMEH1sPmO6h8T4nB8eK__3vSK-sV1h-M14Aw
+Message-ID: <CAJnrk1b28v4RWvVN5LWwMiqTtqC=wWPQhSQJ-dkYQyaFvjbVPQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: show the io_uring mount option
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Kuang Kai <kuangkai@kylinos.cn>, miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kk47yx@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Joanne Koong <joannelkoong@gmail.com> writes:
+On Thu, Dec 25, 2025 at 1:34=E2=80=AFPM Bernd Schubert <bernd@bsbernd.com> =
+wrote:
+>
+>
+>
+> On 12/25/25 06:50, Kuang Kai wrote:
+> > From: kuangkai <kuangkai@kylinos.cn>
+> >
+> > mount with io_uring options will not work if the kernel parameter of /s=
+ys/module/fuse/parameters/enable_uring has not been set,
+> > displaying this option can help confirm whether the fuse over io_uring =
+function is enabled.
+>
+> The problem is that is io_uring is not a mount option, showing it as
+> such would not be right. Maybe showing all FUSE_INIT parameters should
+> be added in /sys?
 
-> +int io_kbuf_ring_pin(struct io_kiocb *req, unsigned buf_group,
-> +		     unsigned issue_flags, struct io_buffer_list **bl)
-> +{
-> +	struct io_buffer_list *buffer_list;
-> +	struct io_ring_ctx *ctx = req->ctx;
-> +	int ret = -EINVAL;
-> +
-> +	io_ring_submit_lock(ctx, issue_flags);
-> +
-> +	buffer_list = io_buffer_get_list(ctx, buf_group);
-> +	if (likely(buffer_list) && likely(buffer_list->flags & IOBL_BUF_RING)) {
+Or maybe showing all FUSE_INIT parameters through libfuse to something
+like /var/run/$UID/libfuse instead of doing it through /sys/fs/ and
+the kernel? I think other connection state could be added there too,
+eg the name or pid corresponding to the server.
 
-FWIW, the likely construct is unnecessary here. At least, it should
-encompass the entire expression:
+Thanks,
+Joanne
 
-    if (likely(buffer_list && buffer_list->flags & IOBL_BUF_RING))
-
-But you can just drop it.
-
-> +		if (unlikely(buffer_list->flags & IOBL_PINNED)) {
-> +			ret = -EALREADY;
-> +		} else {
-> +			buffer_list->flags |= IOBL_PINNED;
-> +			ret = 0;
-> +			*bl = buffer_list;
-> +		}
-> +	}
-> +
-> +	io_ring_submit_unlock(ctx, issue_flags);
-> +	return ret;
-> +}
-> +
-> +int io_kbuf_ring_unpin(struct io_kiocb *req, unsigned buf_group,
-> +		       unsigned issue_flags)
-> +{
-> +	struct io_ring_ctx *ctx = req->ctx;
-> +	struct io_buffer_list *bl;
-> +	int ret = -EINVAL;
-> +
-> +	io_ring_submit_lock(ctx, issue_flags);
-> +
-> +	bl = io_buffer_get_list(ctx, buf_group);
-> +	if (likely(bl) && likely(bl->flags & IOBL_BUF_RING) &&
-> +	    likely(bl->flags & IOBL_PINNED)) {
-
-likewise.
-
-> +		bl->flags &= ~IOBL_PINNED;
-> +		ret = 0;
-> +	}
-> +
-> +	io_ring_submit_unlock(ctx, issue_flags);
-> +	return ret;
-> +}
-> +
->  /* cap it at a reasonable 256, will be one page even for 4K */
->  #define PEEK_MAX_IMPORT		256
->  
-> @@ -744,6 +788,8 @@ int io_unregister_buf_ring(struct io_ring_ctx *ctx, void __user *arg)
->  		return -ENOENT;
->  	if (!(bl->flags & IOBL_BUF_RING))
->  		return -EINVAL;
-> +	if (bl->flags & IOBL_PINNED)
-> +		return -EBUSY;
->  
->  	scoped_guard(mutex, &ctx->mmap_lock)
->  		xa_erase(&ctx->io_bl_xa, bl->bgid);
-> diff --git a/io_uring/kbuf.h b/io_uring/kbuf.h
-> index 11d165888b8e..c4368f35cf11 100644
-> --- a/io_uring/kbuf.h
-> +++ b/io_uring/kbuf.h
-> @@ -12,6 +12,11 @@ enum {
->  	IOBL_INC		= 2,
->  	/* buffers are kernel managed */
->  	IOBL_KERNEL_MANAGED	= 4,
-> +	/*
-> +	 * buffer ring is pinned and cannot be unregistered by userspace until
-> +	 * it has been unpinned
-> +	 */
-> +	IOBL_PINNED		= 8,
->  };
->  
->  struct io_buffer_list {
-> @@ -136,4 +141,9 @@ static inline unsigned int io_put_kbufs(struct io_kiocb *req, int len,
->  		return 0;
->  	return __io_put_kbufs(req, bl, len, nbufs);
->  }
-> +
-> +int io_kbuf_ring_pin(struct io_kiocb *req, unsigned buf_group,
-> +		     unsigned issue_flags, struct io_buffer_list **bl);
-> +int io_kbuf_ring_unpin(struct io_kiocb *req, unsigned buf_group,
-> +		       unsigned issue_flags);
->  #endif
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index 197474911f04..8ac79ead4158 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -398,3 +398,21 @@ bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
->  	return true;
->  }
->  EXPORT_SYMBOL_GPL(io_uring_mshot_cmd_post_cqe);
-> +
-> +int io_uring_cmd_buf_ring_pin(struct io_uring_cmd *ioucmd, unsigned buf_group,
-> +			      unsigned issue_flags, struct io_buffer_list **bl)
-> +{
-> +	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
-> +
-> +	return io_kbuf_ring_pin(req, buf_group, issue_flags, bl);
-> +}
-> +EXPORT_SYMBOL_GPL(io_uring_cmd_buf_ring_pin);
-> +
-> +int io_uring_cmd_buf_ring_unpin(struct io_uring_cmd *ioucmd, unsigned buf_group,
-> +				unsigned issue_flags)
-> +{
-> +	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
-> +
-> +	return io_kbuf_ring_unpin(req, buf_group, issue_flags);
-> +}
-> +EXPORT_SYMBOL_GPL(io_uring_cmd_buf_ring_unpin);
-
--- 
-Gabriel Krisman Bertazi
+>
+> Thanks,
+> Bernd
+>
 
