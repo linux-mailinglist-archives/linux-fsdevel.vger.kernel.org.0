@@ -1,167 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-72195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DED0CE73CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 16:40:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D57CE73A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 16:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id AE7D93026B2F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 15:40:01 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7EC363017387
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Dec 2025 15:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407DE32B98E;
-	Mon, 29 Dec 2025 15:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A06324B3E;
+	Mon, 29 Dec 2025 15:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gSUE6kGm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqmRja8U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0314532B9A2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 15:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E28726CE2B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 15:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767022799; cv=none; b=VTUKiIyisJi26TaAEXyONHyT+9N+wIIzGFdUDhpnzL+a9syBVG8sbeRJrAYMpmh+hiGAqvkGF1V8qRA+MpNDKbSIsZkh2m/5yr3KMmpvkgtAi+jFyQ3pBzqzirUgIaIMV3xO+BPKlUy9CWzwdfNGWesL4OkmPGIQLYMTYgcNH74=
+	t=1767022681; cv=none; b=ls/LrqLHfTjbyfZacnBZF+b3ZAu8CTHBaF4PIJnnWhmvWWbFfEDA4pqmPp2rSj8Z+rzpoeiMQYHdTGt/7s5pcF7ykNAlXQzj0uW569SjdUmsQGPN0UwXaSZQCkoiVkE07mX6oL1Gggb3PfwEw7IFNPJaRAl61zHJh9GMLE33Npo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767022799; c=relaxed/simple;
-	bh=XwryuZi0uTU9EFaGThhkoOJ6M8f/+MIiOxtyENLQPIk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=UMGPN+SMxwtEi9GBNdljOJhhcn/raU6SfMVXBGDezf6Fup9+mAe7ibwcEWlki1VvCYT5Md0kzlp4NqUep4ueW9/hqagb+YlaeLlmzMvb9XUqC10di+6FN1GSzq+/mxgFJVeWoyNrdTvRek1EZnu6NW1N/8JYTMISwuWTkl77Z3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gSUE6kGm; arc=none smtp.client-ip=209.85.161.51
+	s=arc-20240116; t=1767022681; c=relaxed/simple;
+	bh=M+n/asYPRZ98K++RdyjAiMXrIWu//u7uquWLSZ2T2pY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UJJCjucgJ9kkZjvl385c1Sw3z6DtJAjndBnTaNWsqzwUFuCWLqfp8kGN6RmTff9V+ETV+z1R3BLBjpZy2EzfdA7OTKcB+z+hHZIJG7tgkgA7tjnYIDdoNS8VL4tUxhXR8Eg/A4uos6VjWEs2vZvdLH85LmjgJAQTRxVf5FnUcpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqmRja8U; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-659848c994bso4532532eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 07:39:57 -0800 (PST)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-64d2c50f0d6so10463072a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 07:37:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767022797; x=1767627597; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HSdFJuT68YvIuaiA0MO2Fgksa1c4I3mBaRzX7eN+h8s=;
-        b=gSUE6kGmXKTdrAC3t+dZU33dZchYUXyqlHWOmGZuw/9XJlq2junQCDMxxHDd3c82Ji
-         4TUMxcC3u5vpI4Al+OI0zv/fEgD1n8vftsqgx5MOmRdDDzqqSS6y5wJWUfG7HPoSSR73
-         EDWC8au1HalxaVDdQwUrIKhzDD0g81fSt6xYQagH7nlbeV01xiARzzNJL/49zbFXiXVc
-         pIp3sTxOTwgKSQ5smFe+N/+9zKh+zTOClEuEe+NeK/1TpGG5x1BA1mX7aLD1gsEkaNXY
-         aZccCYzRN37SBofkBj4S9IbovHJ/Rv0yMPXZ1+aylWQdeiNYJOBUE9r4bnMVCurdIRmt
-         eC8w==
+        d=gmail.com; s=20230601; t=1767022678; x=1767627478; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IQu+3cek+G7ype1IIG96TrFy2B8q2Y0rPO9MgBIDIdo=;
+        b=fqmRja8U+ic2IpRytBYAJ/U2STg9wG0dPkgOA3iir70UKxukldnhUKF/qbMpjYyKC9
+         iInLoi5mqP/0nZ1TIqDhpeUs2wSpxDTh5Kf0J8cdt3xtQv4LJ1Lf/a98pf0crNIoCU6V
+         HZ0Mg7S/OXkmjL05ZardW/ruiheTQ8rswjALsms/CpoEpFdz08SSVxOlPV8FUN98Gx9b
+         JDMFMCIoljtZZomnZMyQ/mBCs1r9HFzET1P+Lc8CZzhc+89BPzWrZOoLZ6WXYOCruJrk
+         wlUd+T5Gdl0uTud3F7HmjEjpPQHJoLI+wi6dXbtkE9EfMdZJBXFlMLJSMyvbgqtlFNzK
+         5/zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767022797; x=1767627597;
-        h=to:subject:message-id:date:from:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HSdFJuT68YvIuaiA0MO2Fgksa1c4I3mBaRzX7eN+h8s=;
-        b=Shec862B5IhCIHrBeunE6xprrq9EYw/iuE1DRdCRRU3vyb+U4sICK8bEMT/m6DMtTa
-         /0TaOEaXlF4PTWZK7XWXMYIhEhqHwU3Dm6OdGVamHBH/ICT17DJARqwWPQNB+myksPMU
-         PuIRJPbXGDlTJi7wkNqgk/dNeGUW0xxsLt5TTWIT9yCrW2pADwgYKaOSi6EF/24GerA0
-         ke/W0jOTlZnjU1C/H9gS/1E0z1ixI/YB0XPswpxORTtTStK4/WFmTM9Zh8viOWP7iYoB
-         CmEn2xIbWCYfpNXA6juekBs3TET8/9c8W6t5WH4vwz3EQyYHlwjaJLOtSQuK3TDN6LAA
-         mndA==
-X-Gm-Message-State: AOJu0YwLbIuAGXu/BOcSCGnWy6Ni0YdVPKQSNctkSt8U/i7yFQjmHpJZ
-	w6EUUBGckCgCtopWa08YNFvTOhLgR39Pl7asKXSzcMSt4b8FnZLHYPsmuSE3Z8DkDNO+d3GDjxH
-	qh3FsIkUMGaJJOVHk+Oh4kXFznWpTAcJ/u/2qSDM=
-X-Gm-Gg: AY/fxX53DpoaRJMEtZeE7LopZVmX5f39p+pqLvBTGdXVgfMKD+Mzm0yQc9cESCCar0o
-	digUPZ5esKrxStnzFTbzCFhdfWmavXnZ50oeNoJn7yUmu7i0c/5oB2hZJNRBNJEnXdqeF2nPyg+
-	6RfLy6/U46jq7RXRhZqbznTN05XmSciowSciUtM/C+MI6Jqg2M1vuAjViEKto8JdMsmis6BWCQC
-	CbUoO5ViyJhR3pMFlP7U9M1RvmXrxOnVUPcPQ837fQ3szD+RjU2Nzbzlu6JBqHQzQX9
-X-Google-Smtp-Source: AGHT+IHsICd7Z+EOAjyniy9oZ9YZDpHGbJ73bDv9JhE8YFI9UgqJl2DfCDBDkGPMhfTZCQ8ncHdYlKlpLzyJM/FO5aI=
-X-Received: by 2002:a05:6820:1687:b0:659:9a49:8fde with SMTP id
- 006d021491bc7-65d0e932cd7mr12635568eaf.11.1767022796723; Mon, 29 Dec 2025
- 07:39:56 -0800 (PST)
+        d=1e100.net; s=20230601; t=1767022678; x=1767627478;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=IQu+3cek+G7ype1IIG96TrFy2B8q2Y0rPO9MgBIDIdo=;
+        b=keD65BrlHrFlzqeSDZ+aQkpbKPtlWkENYxKeDOOCdiMN44SCiBCQG7Si2TeF72zMHR
+         k1s+OlPFvmKpLzd1NHSukRUpSh9iNEpnBxhXhAA+D/qT3LCQemxvzEFRrSFwCsniuBFR
+         wI8fg5D8PtV5mnYcIbhJ7JH9Zq4e7L2xKDT5jH3y3hjTmXGtbsLfYQA1xtIPWFa1foiy
+         Kr8rHo/r6iCpZEk1DBmERsVEuth0O9paU1EhjcmYzbaSIxnOG2gSx87Fs/JmRLdzP7SC
+         g8ajq5ZBEVA/VK4hCK/mWnpbGl7HW7lE+APuaqtOlj662AFoIyJk87vYzoP92etgTp5O
+         CIuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIHlHO+BNiz9RcEIc7JdamB9siuyhfLbuDV1OzOO1cakOmD6KkbqF25R9YyV7Oja2sRWXbkyxsC4xknz0q@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQY3MS06Kft7bC0DhZ8+amoIz257q58Oyuj2yH4C3vOefeOifC
+	f4W2nSdbjr6HuuIW27UFKuJ6/Dl3/U+e4y24bkOeFF4C0fIkPl6YMsL9B0C8QipyZ+/YbIBmNZ2
+	zPvWvCjZsXREG1NLv7VbEtj2WNq+jDgg=
+X-Gm-Gg: AY/fxX6ravOQNEGDW9Paz/8jd9MZQzZRsOiR5WLCW+gPgtP9mEGCpnRiAneSpAAyOGI
+	rKzyOll2fSBRQ2ZghY1EUj2wenJCphyoxBBm0cqpwwWq9j6QHSm+YmG62Ed3jST1fWxilqljKtW
+	9j/2hqulvY+dkdQLZwbGV/p/2fkMFX1cOVvL41O5WYM9/0cwpUpY+Fj2AIM6FgjdoDKTV+Z7DFr
+	ZRyIAHO49yYERrtD0dc+ndelrPPVEpaMMS/+O9hqLl5xg2/De0SaITKy8C4oykERvm7JEis9k0g
+	sxkY+5PRY1AMtCsUYeJ9UFJGejjnbDy6iakLI+io
+X-Google-Smtp-Source: AGHT+IE6xFIeeF19mSrh42z2GiQ0duCwohZ1aP7gaVHuMpU+1c32ls+61yK5U4ehC0J49R809Nd6HCDmKFuUS6HIBQ0=
+X-Received: by 2002:a05:6402:20c4:10b0:64e:f6e1:e517 with SMTP id
+ 4fb4d7f45d1cf-64ef6e1e6f0mr1078326a12.32.1767022677818; Mon, 29 Dec 2025
+ 07:37:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Devourer <accelerator0099@gmail.com>
-Date: Mon, 29 Dec 2025 23:36:57 +0800
-X-Gm-Features: AQt7F2qUponimgOZV-8XE1mZgTf6LKTYKVi3RcLaFH9k1LpdlvIXHGe51HayEOY
-Message-ID: <CACzV9_3D7MRzK2CGNH1EX_V9xB+uaEAQR0snOU8nQ8u3Czw2ng@mail.gmail.com>
-Subject: [BUG] [exfat] Unable to mount exfat after commit 79c1587b
-To: linux-fsdevel@vger.kernel.org
+References: <20251229105932.11360-1-linkinjeon@kernel.org> <20251229105932.11360-3-linkinjeon@kernel.org>
+In-Reply-To: <20251229105932.11360-3-linkinjeon@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 29 Dec 2025 17:37:46 +0200
+X-Gm-Features: AQt7F2p89_q5uov30h9xAw05QkRLxf2leG3dG7NYZNYzzuOTl7_cLgh5rlEE5LM
+Message-ID: <CAOQ4uxgNJT5+rGG5=yLwDhcSCBuFVr+jPZmYcM2q6OOpHDs67Q@mail.gmail.com>
+Subject: Re: [PATCH v3 02/14] ntfs: update in-memory, on-disk structures and headers
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org, hch@lst.de, 
+	tytso@mit.edu, willy@infradead.org, jack@suse.cz, djwong@kernel.org, 
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com, 
+	xiang@kernel.org, dsterba@suse.com, pali@kernel.org, ebiggers@kernel.org, 
+	neil@brown.name, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-## Mounting exfat produces:
+On Mon, Dec 29, 2025 at 3:01=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.org>=
+ wrote:
+>
+> This updates in-memory, on-disk structures, headers and documentation.
+>
+> Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+> ---
+>  Documentation/filesystems/index.rst |    1 +
+>  Documentation/filesystems/ntfs.rst  |  203 +++
 
-mount: /run/media/AWD1T: can't read superblock on /dev/sda1.
-       dmesg(1) may have more information after failed mount system call.
+This does not belong in this patch.
+Should have been part of the revert patch.
 
-## dmesg message:
-
-[  +3.177475] sd 6:0:0:0: [sda] 1953458176 512-byte logical blocks:
-(1.00 TB/931 GiB)
-[  +0.000560] sd 6:0:0:0: [sda] Write Protect is off
-[  +0.000004] sd 6:0:0:0: [sda] Mode Sense: 47 00 10 08
-[  +0.000547] sd 6:0:0:0: [sda] No Caching mode page found
-[  +0.000002] sd 6:0:0:0: [sda] Assuming drive cache: write through
-[  +0.041258]  sda: sda1 sda2
-[  +0.000094] sd 6:0:0:0: [sda] Attached SCSI disk
-[  +4.240762] exFAT-fs (sda1): failed to load alloc-bitmap
-[  +0.000006] exFAT-fs (sda1): failed to recognize exfat type
-
-## However fsck says the fs is clean:
-
-exfatprogs version : 1.3.0
-/dev/disk/by-label/AWD1T: clean. directories 259, files 3744
-
-## so does mocrosoft chkdsk
-
-## The function exfat_test_bitmap_range() (at  fs/exfat/balloc.c)
-returns false at line 64
-
-## If I insert some printk to show the details, it gives:
-
-i = 0, b = 96
-bit_offset = 32
-bits_to_check = 20
-word = ffc7ffffffffffff, mask = 000fffff00000000
-
-## The modified code is:
-
-static bool exfat_test_bitmap_range(struct super_block *sb, unsigned int clu,
-        unsigned int count)
-{
-    struct exfat_sb_info *sbi = EXFAT_SB(sb);
-    unsigned int start = clu;
-    unsigned int end = clu + count;
-    unsigned int ent_idx, i, b;
-    unsigned int bit_offset, bits_to_check;
-    __le_long *bitmap_le;
-    unsigned long mask, word;
-
-    if (!is_valid_cluster(sbi, start) || !is_valid_cluster(sbi, end - 1))
-        return false;
-
-    while (start < end) {
-        ent_idx = CLUSTER_TO_BITMAP_ENT(start);
-        i = BITMAP_OFFSET_SECTOR_INDEX(sb, ent_idx);
-        b = BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
-printk("i = %u, b = %u\n", i, b);
-
-        bitmap_le = (__le_long *)sbi->vol_amap[i]->b_data;
-
-        /* Calculate how many bits we can check in the current word */
-        bit_offset = b % BITS_PER_LONG;
-printk("bit_offset = %u\n", bit_offset);
-        bits_to_check = min(end - start,
-                    (unsigned int)(BITS_PER_LONG - bit_offset));
-printk("bits_to_check = %u\n", bits_to_check);
-
-        /* Create a bitmask for the range of bits to check */
-        if (bits_to_check >= BITS_PER_LONG)
-            mask = ~0UL;
-        else
-            mask = ((1UL << bits_to_check) - 1) << bit_offset;
-        word = lel_to_cpu(bitmap_le[b / BITS_PER_LONG]);
-printk("word = %016lx, mask = %016lx\n", word, mask);
-
-        /* Check if all bits in the mask are set */
-        if ((word & mask) != mask)
-            return false;
-
-        start += bits_to_check;
-    }
-
-    return true;
-}
-
-## The disk is about 630GB so I can't upload it here. I can provide
-some blocks if required. Please tell me if I can do anything to give
-more information
+Thanks
+Amir.
 
