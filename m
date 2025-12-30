@@ -1,308 +1,281 @@
-Return-Path: <linux-fsdevel+bounces-72230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7771DCE8E7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 08:38:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A383DCE8ECD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 08:55:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E717D30141EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 07:38:11 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0188B3018F7E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 07:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE25D2E091B;
-	Tue, 30 Dec 2025 07:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F9A2FE06F;
+	Tue, 30 Dec 2025 07:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJewMB4y"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nfbPGN9+";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ZObmXyr3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4E0224244
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Dec 2025 07:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767080289; cv=none; b=PvXq6w5oGFHDcKbZV/KS2GjLa07MhBqQON4cslrfglsMUuwaAhLFsBrnXKjnVaIdqXrZF4PjTIUPV56X9CDNvifFcvyxCIe+a8lHHEdcflY4W+7xWQ5PU+OvGXUoAmTGwjr+xEfexgEj11dSHnn7/dJ+Ro+CLKsftx6i+dMY6NY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767080289; c=relaxed/simple;
-	bh=SLkGujyyg40oZUI8h9KmuQbdjAJLAkgE4JDqZG0FvKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=ZKF3vony0Gw14EqIjpgel9SIU/BY4bMd9VO/wUTXUD1uVYSILOXWqnO/vUTIxDokdqCwjL3wd3vFHVgXeE3aHPKCwulWibw/6Fk7wpKWka/DODe79rpGcEpLVk8BzPTDOCxKtlkGpSu6iQd6DiOSotvkEUk05t6CIx1E6rblnLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJewMB4y; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7c7503c73b4so5115089a34.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 23:38:07 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB472FDC3D;
+	Tue, 30 Dec 2025 07:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767081279; cv=fail; b=kd2rgcbbIFhXGA63JpnAuDT9wXGgwuXDg4Sewe8CXwMRNnowyDXt/X5R/MHV0n27h1eHTTOO+ajDh8miQ1Rz+9q7q0X+h9Wz4I205Uacv9TZpuH5F2u4/8U74Uvqpeidqgs82Uk70VPkG3CYzIUxPj1dA38l+FRhoXXhwArzXiI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767081279; c=relaxed/simple;
+	bh=8OjqF1QcsQLfjcYD62s/EK6N2txAgdE9wyoNqu53z3A=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=f4zJN3vDtTY2gRYzgxMo7SiNA9IMYg7glmYyioX7QhIqOeAczmrkDMcubXWuf45kt+P1sXA0PNr/2QzJmIY2CbACNfLaDz32Ufd/hVHJY4t5IKQPppP6Z2jqL1U8K1tPG+jK33JiqzO3ZfYteP+t+V6R/4TDyO7eQJHK6AmZBbU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nfbPGN9+; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ZObmXyr3; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BU2xdVK3058807;
+	Tue, 30 Dec 2025 07:54:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=ZW8WWdC8oVmP1cfTXkklean1XaufbUR7W2FelaDqNx8=; b=
+	nfbPGN9+s4vMn+91/zyVASf7SY1GHR5UuGtE2uXk+NfVkOOKxQvDtmEjg15qz58L
+	JEHCTfIPpM+sROq3gIOO5YU6R+cmyXbZPb1wtRjs8bKT6k/wShwZtGinLHTAzsyb
+	X29fA+WhIf/w+HNY077m7rXQY6VAxjxYg5Mxcz+rtlnHoQderr5ArMQKLplwS4R4
+	inrrMppIVCRijPlwSUdcBY0knUWw4U8jE8x8TO+fq6YQCEStKIgXKGq4TZEeEAAX
+	gdqO05mIU2HpbOTocVoLB10fvSPjRMTUge9Cmm08D6N4KxwI1sszCZTdtZEmujcC
+	4EaruBaUZZZLMVofcewoSg==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4ba61waace-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 30 Dec 2025 07:54:31 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5BU4D0ZH022952;
+	Tue, 30 Dec 2025 07:54:30 GMT
+Received: from byapr05cu005.outbound.protection.outlook.com (mail-westusazon11010013.outbound.protection.outlook.com [52.101.85.13])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4ba5w7p7q5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 30 Dec 2025 07:54:30 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yEyCYFKfpdelaishpGrpqV2Jo+TeDBs+HFOUbIcjYxx9yeP6AX3VMmFv42a7Pf1b4KVf3rnP/775v5eJ61J/gJp7qqEDI6lga7IpDIPki/omgaTyV01NDBKQk+wYJk37h+Ks57Bma9eBpWbG0MS1PZkwaf1DZSgWzFh0kWEk2vWdv4+oCDCcnBVbODTaey17j6JIU7/4AasnYD6aiwc5Bot7G7TSO0/jI/mpoY1gQL+vDrr+bdeinaZhAnl4RXgvtMBvELasOrr6fLFwW2UcK9umsQ/UdjT4bBCzEktxBKLqCzIAGIBofJP3/x91fz7lXQrpGTQZo+Xz/QAWCBGgxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZW8WWdC8oVmP1cfTXkklean1XaufbUR7W2FelaDqNx8=;
+ b=REuhbZq7rQdem88kj7xgd4oORgT8LVEWoItMuMg78mG06aFrkS6T6mVHQJd8jJbRrjGlndIHEwWhlSUb4rEz753MLpglNzkOx8XyiHUnNeocfsuqmzWu4sTdSqaAzybAouZLoUXOfGMdhzi3GAvzGhY9ta6MilCw940dqNXMVqSyG3LiM+guI94MuHh/uu8QqiWm0nSimDvZJfCd3a64uKRurhZ9YNOzqi176B/d2upwWB3QxbEx34/xJtRAtGhrjnYcmUsOexUSKVfmdM7I0Kb4O5E1g9NZP+XyigChmiBohk54sUxlVWlVqobMw9iRs0m9YGpa4yMqXyEOyTKzag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767080286; x=1767685086; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PtuLhiX1X4nLly6twHmuh4hqcDYxp1P5O538tZGArVA=;
-        b=MJewMB4yDZPZmxFv4ZDced2/DjAi3h6bEmcGDwRl4QeQwQVx8t3A+h3kbr7+MYMoZZ
-         lX8L1wihmgT6hB8n8lUxsifsKzlUdXJ1vTsZVRAPkrQNH3AD0KqNqe69kND+goRYYlca
-         Heb8zsUZYMgO40bBq8qJPqKrJIMM7tovhAnTZ22H2ed0/ae/51Kijr5XyC2ln/T0xdgF
-         TQe2Fo5mjYemnS2HvMOqVPkbZO+QN0KEOhDeE/C1sswbAyy43/aEhwbaLR8Hk9Xu6FDi
-         bajLcGNWiXKOXd9aDF8rzUNAakUrS3q4+erOSaQ+jJG7StB4Rbk557X3HhvwIn8n+0iz
-         m3Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767080286; x=1767685086;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PtuLhiX1X4nLly6twHmuh4hqcDYxp1P5O538tZGArVA=;
-        b=TLHX/GjtvvV6/N+HUc2fEP52h3X94ZgU8++oSKRUXX5Q03nMeu6crhtSG63wBkYJ6Q
-         cGcxHmofaJOO/4l6jnb22cB4Y4LppO7qGu+xjE8eS20ww2R8SP2j3vWuyi0ARKIizUdA
-         N0yCaDx+ViHjOkp7XKPoWE3HzoEeSXgrO2/t64XW2939ZbYXDKNkskXruHRfH6Lv92t2
-         BvC108Mc7JILZ75TkUG7lyBpFkDW8x5MMQ87vSmUfF1LQAS8ysu1HyZQ7RxACK2QG3PH
-         K/vaXVxuFkNYd+HDTTS5QOs+mW5G3+EZBc63JPU+EuI0jsZLrN74FrqM8stCf1knmzf5
-         UXgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVu23p7A5wtSJdHeBUq01EGbHQZCQrp2aanZxBo+dpJED+WvExCaYI2Q244s1eREHeXmsSco/UV1S8eQeO1@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIFD0T7sF/jXkShvep1KfO60Hv1uVCnkRvJphmCjxj3pEFuyp+
-	9UJ6jWyTk6xlfp4kS9DCAKDgbWRY6NLlZ+do7scdRZ9jY+3HG767R5sSE0rRVoFNIpABMfYovcG
-	uImQR0H0a+CS5Bi506iPQ7aUWYjibPimGpeit0i7geA==
-X-Gm-Gg: AY/fxX6RGd2mCQCt8BmUmcmlLqzdnE/oSVNs3UCZ5RMPhrPh21I6G78Fe9P9ddSBcYN
-	M0pDsWO1EomYQk3KIReMWAUNr9yKgdFOjxcf7O6A6unYNf9Rqeu04L5QS0l9ijtIvVwwhaAvdO+
-	4L2B5aradIERQKygoDqLnFzUeF+38i2CjnV/Vy57MGfOvioAxOqj43jVNH1Du105rvTtXOLUWnD
-	iJbIZfgeT7g4A+hCxN9NFfatww2aB+aW4nIgRZWP1v45189iMKJN9dlpzoyCyu1Rd6Gew==
-X-Google-Smtp-Source: AGHT+IGW57MTvyRbD2XdqmR255L7IDXUgbUtXSX2allFjYfb/7Cfe7J8Wplp58j9+Byk0qK3qj5IJF1SaAx2aRYK59A=
-X-Received: by 2002:a05:6830:4124:b0:771:5ae2:fcde with SMTP id
- 46e09a7af769-7cc668a4b47mr15772989a34.2.1767080285660; Mon, 29 Dec 2025
- 23:38:05 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZW8WWdC8oVmP1cfTXkklean1XaufbUR7W2FelaDqNx8=;
+ b=ZObmXyr3XFMdk4OhYJyJuFy+x5q6wFFwxJkEz0EdRELTrIdkW8aDm3Ev2wEhD2ezpEUkT6h5x6Bj/XvJCky8KQZhxha8+6xpFKbNXeL+JCYeLMsJKktjeWd3TqPh8VJFzVXmijjA6hexRnGx8EKqkcTRP+LbVCnraildu4qcnwQ=
+Received: from DS4PPFEAFA21C69.namprd10.prod.outlook.com
+ (2603:10b6:f:fc00::d54) by CH3PR10MB7260.namprd10.prod.outlook.com
+ (2603:10b6:610:12e::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9456.14; Tue, 30 Dec
+ 2025 07:54:27 +0000
+Received: from DS4PPFEAFA21C69.namprd10.prod.outlook.com
+ ([fe80::ba87:9589:750c:6861]) by DS4PPFEAFA21C69.namprd10.prod.outlook.com
+ ([fe80::ba87:9589:750c:6861%8]) with mapi id 15.20.9478.004; Tue, 30 Dec 2025
+ 07:54:27 +0000
+Message-ID: <cc83c3fa-1bee-48b0-bfda-3a807c0b46bd@oracle.com>
+Date: Tue, 30 Dec 2025 07:54:23 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: remove power of 2 and length boundary atomic write
+ restrictions
+To: Vitaliy Filippov <vitalifster@gmail.com>, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <20251224115312.27036-1-vitalifster@gmail.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20251224115312.27036-1-vitalifster@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DB9PR02CA0017.eurprd02.prod.outlook.com
+ (2603:10a6:10:1d9::22) To DS4PPFEAFA21C69.namprd10.prod.outlook.com
+ (2603:10b6:f:fc00::d54)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALf2hKtp5SQCAzjkY8UvKU6Qqq4Qt=ZSjN18WK_BU==v4JOLuA@mail.gmail.com>
-In-Reply-To: <CALf2hKtp5SQCAzjkY8UvKU6Qqq4Qt=ZSjN18WK_BU==v4JOLuA@mail.gmail.com>
-From: Zhiyu Zhang <zhiyuzhang999@gmail.com>
-Date: Tue, 30 Dec 2025 15:37:53 +0800
-X-Gm-Features: AQt7F2qReCUQiEel-r-gWl3TSU78sVDwJpAbhzrBhY6hvuv7Cso-yNZclSrXHa4
-Message-ID: <CALf2hKsMc3o+mYg2xwNEFO+q2Z=XteOmCjd1=EHOR0Na3=201Q@mail.gmail.com>
-Subject: Re: [Kernel Bug] WARNING in vfat_rmdir
-To: viro@zeniv.linux.org.uk, brauner@kernel.org, Jan Kara <jack@suse.cz>, 
-	hirofumi@mail.parknet.co.jp, linux-fsdevel@vger.kernel.org, 
-	syzkaller <syzkaller@googlegroups.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS4PPFEAFA21C69:EE_|CH3PR10MB7260:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e20313f-f9da-4777-6f93-08de4778a7c1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V3cwbGdMRnNRZDFTVHFNOVlyQzQvbVFTMHdtR24rY05VY1p6aVN2MHpXZCtl?=
+ =?utf-8?B?SzVtdjg2eWY5VDJIL1d5L3lxclhQRS91OXlFTG9MK2ZhNi9CLy9HelJRN1Yz?=
+ =?utf-8?B?SzlYV0g5aGZsSFlsWlFOTWpBcy9Jd0RkYk5ENTNJVGRLbXdyTlVyKzg2MlV5?=
+ =?utf-8?B?Ky9GZ3lJOThhREo1dEwwcXl6a0pQSkFKejR5M0N4M0IwYVU3bUh6UnM0NXdP?=
+ =?utf-8?B?MWFSbVVpWlJza1MwbFY0eDFwOEduTGZ1ZGx1cTJ4d0hDYkQwWk1DNWZ6ZGtY?=
+ =?utf-8?B?NGlBemVoMUIyZHRuSjRxblE2aGZId0dsZDUyV1BSWEIvQTZRK2xUd0F2OWI2?=
+ =?utf-8?B?S0FhM1dqYzlZcTh1KytjM0grY3FZb1phU1phcXAwYjU3SDl3bHJoRWFGYjRh?=
+ =?utf-8?B?VURkYzQyOXRWYmlkQVQzTjNCdnU4bWZEN2pnYVhybkd6aFdoakk3MWk5TExx?=
+ =?utf-8?B?Q0FGNmJXbFJCUUVhZVR3Y0VtMmJkWTdjQ2FSNGljd1JEa201bWthWHlzSWI2?=
+ =?utf-8?B?UXJmZnNQRzl3azVkRWR3Q25GdmlkTHZ0bTI3NjNzYXdKdHJXNXRFOFJBTS9U?=
+ =?utf-8?B?UlU2b3NpWUVyOHRkdm1EcklvMVQ5YlNOWTFrVi9lcHpQZGZaaGdFTzBkdUJP?=
+ =?utf-8?B?djEzczNJc1NHckZORHU3LzI0R2NaSU5MQkJJem4rVHJjR00vdmF2WTRRTHlG?=
+ =?utf-8?B?OFBPSDNPQjJLWUhNOEFxbWlVT01TUFgrMmxkdERVSk5rUHcyL1hSVElrYVpY?=
+ =?utf-8?B?bmthRXRaSTNUNXJ6a0dpaVZrNE1IdXlJN1ZPTXpJTTdSUHFrSWFmdTBaRmNN?=
+ =?utf-8?B?d2hucHhDeUVXcHBHaDRBS05GUXhrZmJGYUMwcGFLcTl5YkM2YU1LcnJTSkRr?=
+ =?utf-8?B?VmlqTkwybTh0NmxpSEw0c3dBL0Q2ZGswVjRwV1hMUkdhL0NrNjJ5Sk5QcFlq?=
+ =?utf-8?B?Z01XMk5xaFhoU0Rxb1NVaFFFQ01jZnFrK1N1OEc0eXNyTlh2RFF6aDE2enRD?=
+ =?utf-8?B?YzQ4V1pPOHhkRkowTi9USkhBdkFMVVJYMGtVMm82bk5CYm1lbFIwMXpHdlZY?=
+ =?utf-8?B?Q1M1NnhFV3MzWXdRdnNkdWQ5NGpFTDN5dHU0ZGRxTnZzb3R1dklMdGV4U3Br?=
+ =?utf-8?B?d3liRGFFMk80OWxEcStvSVN0NFRFQWttVWRwMU5UQXROOG03TkpqNmhFRk9O?=
+ =?utf-8?B?amZ1TlR6UC90SjcwK1NBOXVJeENMMmwwUFN1NFlzd1BTaERmd1ZUSXc1VWRY?=
+ =?utf-8?B?U3VtbDJ2amFBY1l6WXBnWGtIUmYwdEI5RUdsYjd3dUZoTzVKMFN3dUlqdnNj?=
+ =?utf-8?B?RkxvRE5BN0w0SHBScGRzMGtCRUpsODlOc3RKQzNBRGJsUVhZcisvVXF6Q0RT?=
+ =?utf-8?B?MWJqQ0FwbXh1UmtacUpLb1BadUVNcVJVQlY3RlVJL0VmR0JHN1l0bXRvU3Jh?=
+ =?utf-8?B?bzhXZTZrV2FDeDFBS2tjckMwQmlDMHAwekxKcjRlTmhQNFJOMVRHdStQSU5S?=
+ =?utf-8?B?Yzk2UWIrTW1GKzJWZ1ZRVi9PUjQwT1ExTUlHSkNNN2trZ3pJdzNkbnZMZStZ?=
+ =?utf-8?B?SmJ2VjFBMDMrT00zMTh2NjF2UDlGRHJyekEvWktGajBMVmFlMDVsZHF2Y21z?=
+ =?utf-8?B?cjhHa2d0eGZ1aUVQb2UzVXZERXlkcnN1THlHMWtmV1EwUERLSTRKc1ByME9k?=
+ =?utf-8?B?czh0R20zdVFFclV2YzduUm9BdnZOSTFjSnkzMVozaG1qRDlOeW9uMTFQNjNl?=
+ =?utf-8?B?aUJ1T0ZrNFFRZnBnUHR6UlA4QTZPVmFOcDlIWXBXOGtOUUY4OFo3MmpPUGQ1?=
+ =?utf-8?B?VDZMbU4wQlNUbi8wYUtkaHBoT0V3YlhybGZNYTExRDczQW9vT0Y3ZXJlVGV3?=
+ =?utf-8?B?U3Z3SHNORk5SZkMvRVFGR3p6VzkrOG9ka0w2enZZWnFUS3pPSGpjNDQzeG40?=
+ =?utf-8?Q?oGoOEl9XnwY0xFlplRMI5Ie1qjn83DEp?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PPFEAFA21C69.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dXFFMWFNdUdZdDBkcTRmT2ZWd0RhVENTNG5oMHhnZWorYWU5QXVteEEwM2NL?=
+ =?utf-8?B?RkhaNUR0RFg4NWtPb3BzeDV4aWcra01xOWM0UzhWRndyQWdPQ1ZBcXVEY0J4?=
+ =?utf-8?B?ZEx1L0ErLzRMZDM5bktUOG1jOWVaK3cvWFN4ZjB1MTR3RDdJQVFpdzAyMjMr?=
+ =?utf-8?B?Sk83QWJESWkvOTVvZms1MngrVnFsTTh6RW01bWk0UmY4WjNGTGVjUnk3eGFi?=
+ =?utf-8?B?VGFuYzlzdVYwNWhLUWwvUTdpTG92QzNNc0RTMWdoR2tHTkUyNFdxWVFXTTRh?=
+ =?utf-8?B?dWNxRXVHS0N0aVowdXVXYjJVaE5WYlZhbGZpKzU4MERZbTBXQVljTFN6UTVF?=
+ =?utf-8?B?OVF0clVFS0NhWTV4VHdhVXJzY2Q3UDUvUHRCcm96aHBRTmMxMFUzTEdzL1p5?=
+ =?utf-8?B?RUtHeFhVT2wyMTRkMjRIcnVTUUkwR2RBbzV1eU5sK1ZKeWh5UjZOYVpKeUNE?=
+ =?utf-8?B?aDlhaDVBTk5CaGFjVHdiZkJXRms3QUIxaVV1aUViYXhiQ2V0elJPUGFyT0F6?=
+ =?utf-8?B?cmpQRzJlMElQTGtvYUoxK25QUjladW1YSk80emJGSSswd2lhMmtlaHV5cGd4?=
+ =?utf-8?B?Vk91b0xLYitnc1RLOWZIRzRwM1pyUDAzZkVnVm9wbkFwTzg3WlBQQWVibGh4?=
+ =?utf-8?B?T1lweVRvYUk3Sk9DU0pZN2JvYXNWRTJlTGk3Z3FCRUVQOXVleG9NK3VDZFlI?=
+ =?utf-8?B?aldyWmU0T3BqRjdvSGRYWGd1S2R1OFZIR2NlalhnbzRxamNHSFJJSkpTbUpu?=
+ =?utf-8?B?bHkrWXhnUGlxR25PdmRDc3VBNlQxQTMwbmR2QmRzUG1qTit3blUrd2FuNVp3?=
+ =?utf-8?B?MklYR3VsOFFJemxENGhyeFJxK05XZkFpdmV2My9PcERTUXF0bUsvNHV1OWlG?=
+ =?utf-8?B?a25TdTR4ZG05OEJid3ZUczVJSmJsUHdublphTkRSZHJMUWtNSkNxdFF1QXNn?=
+ =?utf-8?B?RlU3VlFsL2R6cGI2OXdndGRLQmY1QXVVSExRUUtvRUJ4M2Yva2pqc052aXFU?=
+ =?utf-8?B?cU9iTnhVU1dFckhtSHdVZWR3UkVMbmdGVk5JOSthYVo5WUI4WE0rMjJTSmIy?=
+ =?utf-8?B?bWxvYkNibThIcVJpNENaYW5qRmw0ckZSYkQwV2V0N01vZ1YwcUVwaFpVa2VQ?=
+ =?utf-8?B?enplbkU2eDh2UnNTeUtwNVo2QTZocjJXZzNSTWdjUGFZTzVtVkp4ckQvZS9w?=
+ =?utf-8?B?UDFkQzQyeU9PQXBPSDIzblh4amp3ajNtcGpFVVBteVF1NmZ1b1JGK0xrODUz?=
+ =?utf-8?B?K0dtbGpPRUJGQ1EwVThKazloKzZmOXVNZy9mTkZDZmlRTjg1UVljRWQxUGNQ?=
+ =?utf-8?B?eE1rbk9Xcm5HSzkxMGVweEMvTlNmN2FTR0NPb1hWVGloRHRlbVN1ZUkrazFE?=
+ =?utf-8?B?OHVROFl1VHdmS3NGOTVtR3hPMGJZbTlrNHJ2Y2ZEcmlCcUFhM0RSNlY4eGUz?=
+ =?utf-8?B?Tm5UV0ZzNGNubnJXTFZ1TE5FTTdhOUFkVU5kWjBaT3dPcUp1VXRxNTFWcTBn?=
+ =?utf-8?B?N3F4VHdvOERmOW1jWk4rZkhIeDJ2NjdydjhLdHVHekVPUkhVRTlMMTRveVlu?=
+ =?utf-8?B?QnI0UVZKRFRwUWRrUEYyWXd3UDNDNzFhMHVGV1RXSDc2Vk9uYzZZbXM4S2ov?=
+ =?utf-8?B?M2dhNHJzQTBZRUdEVzlZL1lNK3NVM3M4UGl6OEpLaFZkcnBRVEFZRjRqMmQw?=
+ =?utf-8?B?T05nUGhTQXo2bEFIeXRSYXVNc0piTGQ4THRBSWJQYmg0WUdhWVJIVGhkMmtr?=
+ =?utf-8?B?Tm1TOVVaMkJNUWN6VkVBeWNaa2NBanhTQWN4QmRnbXE4amJHVU9wMG5BVzgv?=
+ =?utf-8?B?U3cyUzR5bFJDNmFNQTgyNW1jYjZzNDc4R3hRS0ViOEYxdGxMNU8rcGtHSEtr?=
+ =?utf-8?B?T2tzVjJrbWtCRkFIaVR1bnhTSDVVenVDbXB3VHI4M0t1Z2NSQmJrOGNMS2c5?=
+ =?utf-8?B?dFFnVGlFZVdEbTJ3WTh6Q2I3OHdEcC9sUnBPeVBpR1lKNnc1SGpIcFpyUm4z?=
+ =?utf-8?B?bzFCdVliL2VhVlo0MnQrTnp2QmN6cXJIV21kbjJZZjZxMEswSjJidWkyNEgx?=
+ =?utf-8?B?Q29xcEI2aGtSTWFhaU5IN2ZpU3RJWm45bUpvRGJuQWdHZ04vbXZ6UVBzQ3Na?=
+ =?utf-8?B?Q1lMelZ6eE9iTlZ5cFpuSnk1WkJNNC93VHBxMHJWSDNSRjU3dVplYzZWVW9Z?=
+ =?utf-8?B?UmduV3FQOTJRRGZIT05SK0FOZnh2cUo2Vk9lVURaM1JKMGdXbGhXM3FjM2ky?=
+ =?utf-8?B?RW5QV0dZNUQweDFGUXFEUVYwaXF3R3ZGeTZoMFVBcUhpc1k1Rk0zWUNxN2NS?=
+ =?utf-8?B?ZDVBU0ZYdXlsbTBOK2VtTjA4cmlkWHV0UmpaSUxEQ1EwMTNUbFJGRlJqYzZy?=
+ =?utf-8?Q?b4HYsGlwlCt9D1As=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ibX3dX0mqcf27Qt5YMTvx0s5ecDxu47X7zvrlhMrZvD+9LHLqALZoqYRYJKuQan1EDV+1H5KnL6nUGD8PQH7ddcwUMFIAtTTuPMKmMmR/mjEbTJhAF/bz8biBKbLnyW205axp6H27GYsprKYlcM3597TK/0Qa1WmDdybXuPlgwu+MQ/Wxh5Gsm1tHJSCIwSy5Ppxb1jMlsLRC2n1o54+Aa74CU2+d/3OUHCsS7EZBF2CE8tAoBaG7ZWE/t/m0NeOSuYVV2Xvc6JQjqELlqSmi2BAdDG5WD7qoI4Ilvdumnzq68x9p03SSVfwkXnKwSMtzJZc5ZqXbqGgdkhQBJY8cJ9ErOWaAHPB28oOvR6jHrFReB4KadoZocG3R+Dz+QmIHFpMOH3yG3XZIbDB8jXinmWBrAoAaHdrKRdR5Mpq1S+uHdt8ZdtnBYg3ex4fO9ZgGLaN6a2bXwceRTJnqoQIvtE0r8tCZ5CN7oIJy0HNmojhqTr1gso9ocu/DNBZ2xKB2jCyGhRZDPLA/XfmAFLNNLAhUTL6l5wZa135nKhX5Sc8jC0812npqbXnbgOw+EQqtfCUnPSMNsORdf2cm6a/JgfX3Y5+skwcRWZIqkaPuDE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e20313f-f9da-4777-6f93-08de4778a7c1
+X-MS-Exchange-CrossTenant-AuthSource: DS4PPFEAFA21C69.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Dec 2025 07:54:27.1489
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LDn3iJTAs8COvc9/K4rnmVR8vrS51y/6c4AjEB7YOwqs7j3LdPGSFP8suoTR9ccJI62xWDmeFCpUeniecETarA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7260
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-29_07,2025-12-30_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
+ mlxlogscore=999 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2512120000 definitions=main-2512300070
+X-Authority-Analysis: v=2.4 cv=LL1rgZW9 c=1 sm=1 tr=0 ts=69538537 cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=wP3pNCr1ah4A:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=pGLkceISAAAA:8 a=vnroSBewysfMifUhr8UA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: wA0qGikajTdvQdo1e8BE9aJ7xfQxhTCu
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjMwMDA3MCBTYWx0ZWRfX0sy4Cb9/gCtq
+ X8ul6rjA2fia8SJ7LKJTgxI1+nacNHpMno1TS59uNYEq65/fftK7J++LcsobsOwmPykCmEmr1gv
+ ZYpYQodlbmEbWkh703917YnkpNHs3bJKwrUymmVx7XAL3fDey6fmkd5Mcn6yd2n13edMoiqlvrI
+ EIjMgUuComeVZ0K83XqM1EwH3GN7o6vZo4vcwvLhN5LaiEMZYlyLiYPdxbpI9xl34HBjkSa0oo9
+ Wu3meJLGCMo0o2vIszJDM90aCWU6LP6d7ogOlVz4sgphx1vSHxIH1kvT1sYe5nqyhdsGPclpBoA
+ ZM2T8/gVn0Crrnq1q7ZMtFNOsp5A4huXwa4sGOPSjoflAgxUhaeBuGzg4p1cI0JjcnHj3jIBc/l
+ sdwyHVFmsB2gKJxlQo+pEkurDwcbBvXPWGTEwTU2FJVC4liUJLb5hizWPNw0JFz0Cg6X1oL3g5w
+ cEqfbJ860BhcgeR5+JQ==
+X-Proofpoint-GUID: wA0qGikajTdvQdo1e8BE9aJ7xfQxhTCu
 
-Dear Linux kernel developers and maintainers,
+On 24/12/2025 11:53, Vitaliy Filippov wrote:
+> generic_atomic_write_valid() returns EINVAL for non-power-of-2 and for
+> non-length-aligned writes. This check is used for block devices, ext4
+> and xfs, but neither ext4 nor xfs rely on power of 2 restrictions.
+> 
+> For block devices, neither NVMe nor SCSI specification doesn't require
+> length alignment and 2^N length. Both specifications only require to
+> respect the atomic write boundary if it's set (NABSPF/NABO for NVMe and
+> ATOMIC BOUNDARY for SCSI).
 
-I=E2=80=99m sorry =E2=80=94 the root cause analysis in my previous report w=
-as likely
-incorrect, and the patch I suggested there does not alleviate the
-issue after further testing, which means that the root cause is not on
-the errno passing.
 
-After adding debug prints in fat__get_entry(), I observed frequent
-cases of err=3D0, phys=3D0 at pos =3D=3D i_size, which means the code is
-taking a "normal EOF" path (as decided by fat_bmap()) rather than
-hitting and swallowing a negative errno. As a result,
-fat_get_short_entry() still returns -ENOENT, fat_dir_empty() still
-returns 0, and the code path does not prevent drop_nlink(dir) from
-being executed even when the parent directory's i_nlink is already
-abnormal. In other words, the parent directory's i_nlink appears to be
-wrong/corrupted in the first place. Subsequent vfat_rmdir() calls then
-decrement the already-too-low link count, eventually reaching 0 and
-triggering WARN_ON(inode->i_nlink =3D=3D 0) in drop_nlink() (and panicking
-if panic_on_warn is enabled).
+> NVMe subsystem already checks writes against
+> this boundary; SCSI uses an explicit atomic write command so the write
+> is checked by the drive itself.
+> 
 
-So please IGNORE my previous patch proposal. A conservative mitigation
-that I tested EFFECTIVE is similar to the UDF fix for corrupted parent
-link count handling (Jan Kara's WARNING in udf_rmdir fix:
-"https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/=
-?id=3Dc5566903af56dd1abb092f18dcb0c770d6cd8dcb").
+Yes, they do check it - this is a safeguard against being sent something 
+which cannot be atomically written. But we should not be sending 
+something to the driver or disk which cannot be atomically written. So 
+we are providing protection against kernel bugs.
 
-static int vfat_rmdir(struct inode *dir, struct dentry *dentry)
-        err =3D fat_remove_entries(dir, &sinfo);  /* and releases bh */
-        if (err)
-                goto out;
--       drop_nlink(dir);
-+       if (dir->i_nlink >=3D 3)
-+               drop_nlink(dir);
-+       else
-+               fat_fs_error_ratelimit(sb, "parent dir link count too
-low (%u)\n",
-+                       dir->i_nlink);
+The user should not be concerned about atomic boundaries. They should 
+not encounter a scenario where they try a write which crosses a boundary 
+(and cannot be atomically written). Hence the power-of-2 and alignment 
+rule to avoid this.
 
-        clear_nlink(inode);
-        fat_truncate_time(inode, NULL, S_ATIME|S_MTIME);
 
-Given that the Syz reproducer (part) looks like:
-syz_mount_image$vfat(&(0x7f0000000080), &(0x7f0000001240)=3D'./bus\x00',
-0xa00400, &(0x7f0000000000)=3DANY=3D[@ANYRES64=3D0x0], 0x1, 0x1230,
-&(0x7f00000024c0)=3D"$XXX...")
-r1 =3D openat(0xffffffffffffff9c, &(0x7f0000000040)=3D'.\x00', 0x0, 0x0)
-mkdirat(r1, &(0x7f0000000180)=3D'./bus\x00', 0x0)
-mkdirat(r1, &(0x7f0000000100)=3D'./file0/file0\x00', 0x0) (rerun: 64)
-unlinkat(r1, &(0x7f00000001c0)=3D'./bus/file0\x00', 0x200) (rerun: 64)
+> Signed-off-by: Vitaliy Filippov <vitalifster@gmail.com>
+> ---
+>   fs/read_write.c | 8 --------
+>   1 file changed, 8 deletions(-)
+> 
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index 833bae068770..5467d710108d 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1802,17 +1802,9 @@ int generic_file_rw_checks(struct file *file_in, struct file *file_out)
+>   
+>   int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter)
+>   {
+> -	size_t len = iov_iter_count(iter);
+> -
+>   	if (!iter_is_ubuf(iter))
+>   		return -EINVAL;
+>   
+> -	if (!is_power_of_2(len))
+> -		return -EINVAL;
+> -
+> -	if (!IS_ALIGNED(iocb->ki_pos, len))
+> -		return -EINVAL;
+> -
+>   	if (!(iocb->ki_flags & IOCB_DIRECT))
+>   		return -EOPNOTSUPP;
+>   
 
-I'm still debugging why, with the corrupted image, creation of
-./file0/file0 seems to end up writing into bus's directory data blocks
-(cluster sharing), so bus's on-disk directory content appears to
-contain a subdir entry while bus->i_nlink remains 2.
-
-Best,
-Zhiyu Zhang
-
-Zhiyu Zhang <zhiyuzhang999@gmail.com> =E4=BA=8E2025=E5=B9=B412=E6=9C=8830=
-=E6=97=A5=E5=91=A8=E4=BA=8C 02:18=E5=86=99=E9=81=93=EF=BC=9A
->
-> Dear Linux kernel developers and maintainers,
->
-> We would like to report a filesystem corruption triggered bug that
-> causes a WARNING in drop_nlink() from the VFAT rmdir path, and leads
-> to a kernel panic when panic_on_warn is enabled. The bug titled
-> "WARNING in vfat_rmdir" was found on linux-6.17.1 and is also
-> reproducible on the latest 6.19-rc3.
->
-> The possible root cause is that the FAT directory iteration helpers
-> conflate real errors with "end of directory" in a way that hides
-> corruption from higher layers. Concretely, fat__get_entry() returns -1
-> both when it reaches EOF (!phys) and when fat_bmap() fails due to a
-> corrupted cluster chain (err !=3D 0). Then fat_get_short_entry() treats
-> any < 0 from fat_get_entry() as "no more entries" and returns -ENOENT.
-> As a result, callers such as fat_dir_empty() and fat_subdirs() cannot
-> distinguish a genuinely empty directory from a directory walk that
-> terminates early due to corruption. In this situation, fat_dir_empty()
-> may incorrectly return success (empty), allowing vfat_rmdir() to
-> proceed with metadata updates, including drop_nlink(dir). Separately,
-> fat_subdirs() may silently "succeed" with an incorrect count (e.g., 0)
-> when the walk is cut short, which can further poison in-memory link
-> counts when inodes are built from corrupted on-disk state. Eventually,
-> the VFAT rmdir path can reach drop_nlink() with an already-zero
-> i_nlink, triggering WARN_ON(inode->i_nlink =3D=3D 0) and panicking under
-> panic_on_warn.
->
-> This bug may lead to denial-of-service on systems that enable
-> panic_on_warn, and more broadly to inconsistent in-memory metadata
-> updates when operating on corrupted VFAT images.
->
-> We suggest the following potential patch:
-> (1) Propagate real errors from the directory iteration path instead of
-> folding them into -ENOENT and make fat_get_short_entry() translate
-> only true EOF into -ENOENT while propagating other negative errors.
-> (2) Update fat_dir_empty() / fat_subdirs() to treat propagated errors
-> as failures rather than "empty" / a weird count, and handle negative
-> returns at their call sites.
->
-> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-> index 92b091783966..f4c5a6f0cc84 100644
-> --- a/fs/fat/dir.c
-> +++ b/fs/fat/dir.c
-> @@ -92,8 +92,10 @@ static int fat__get_entry(struct inode *dir, loff_t *p=
-os,
->         *bh =3D NULL;
->         iblock =3D *pos >> sb->s_blocksize_bits;
->         err =3D fat_bmap(dir, iblock, &phys, &mapped_blocks, 0, false);
-> -       if (err || !phys)
-> -               return -1;      /* beyond EOF or error */
-> +       if (err)
-> +               return err;     /* real error (e.g., -EIO, -EUCLEAN) */
-> +       if (!phys)
-> +               return -1;      /* beyond EOF */
->
->         fat_dir_readahead(dir, iblock, phys);
->
-> @@ -882,12 +884,14 @@ static int fat_get_short_entry(struct inode
-> *dir, loff_t *pos,
->                                struct buffer_head **bh,
->                                struct msdos_dir_entry **de)
->  {
-> -       while (fat_get_entry(dir, pos, bh, de) >=3D 0) {
-> +       int err;
-> +       while ((err =3D fat_get_entry(dir, pos, bh, de)) >=3D 0) {
->                 /* free entry or long name entry or volume label */
->                 if (!IS_FREE((*de)->name) && !((*de)->attr & ATTR_VOLUME)=
-)
->                         return 0;
->         }
-> -       return -ENOENT;
-> +       /* -1 is EOF sentinel; propagate other errors */
-> +       return (err =3D=3D -1) ? -ENOENT : err;
->  }
->
->  /*
-> @@ -919,11 +923,11 @@ int fat_dir_empty(struct inode *dir)
->         struct buffer_head *bh;
->         struct msdos_dir_entry *de;
->         loff_t cpos;
-> -       int result =3D 0;
-> +       int result =3D 0, err;
->
->         bh =3D NULL;
->         cpos =3D 0;
-> -       while (fat_get_short_entry(dir, &cpos, &bh, &de) >=3D 0) {
-> +       while ((err =3D fat_get_short_entry(dir, &cpos, &bh, &de)) >=3D 0=
-) {
->                 if (strncmp(de->name, MSDOS_DOT   , MSDOS_NAME) &&
->                     strncmp(de->name, MSDOS_DOTDOT, MSDOS_NAME)) {
->                         result =3D -ENOTEMPTY;
-> @@ -931,6 +935,8 @@ int fat_dir_empty(struct inode *dir)
->                 }
->         }
->         brelse(bh);
-> +       if (err < 0 && err !=3D -ENOENT)
-> +               return err;
->         return result;
->  }
->  EXPORT_SYMBOL_GPL(fat_dir_empty);
-> @@ -944,15 +950,17 @@ int fat_subdirs(struct inode *dir)
->         struct buffer_head *bh;
->         struct msdos_dir_entry *de;
->         loff_t cpos;
-> -       int count =3D 0;
-> +       int count =3D 0, err;
->
->         bh =3D NULL;
->         cpos =3D 0;
-> -       while (fat_get_short_entry(dir, &cpos, &bh, &de) >=3D 0) {
-> +       while ((err =3D fat_get_short_entry(dir, &cpos, &bh, &de)) >=3D 0=
-) {
->                 if (de->attr & ATTR_DIR)
->                         count++;
->         }
->         brelse(bh);
-> +       if (err < 0 && err !=3D -ENOENT)
-> +               return err;
->         return count;
->  }
->
-> diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-> index 0b6009cd1844..36ec8901253e 100644
-> --- a/fs/fat/inode.c
-> +++ b/fs/fat/inode.c
-> @@ -535,7 +535,10 @@ int fat_fill_inode(struct inode *inode, struct
-> msdos_dir_entry *de)
->                         return error;
->                 MSDOS_I(inode)->mmu_private =3D inode->i_size;
->
-> -               set_nlink(inode, fat_subdirs(inode));
-> +               int nsubs =3D fat_subdirs(inode);
-> +               if (nsubs < 0)
-> +                       return nsubs;
-> +               set_nlink(inode, nsubs);
->
->                 error =3D fat_validate_dir(inode);
->                 if (error < 0)
-> @@ -1345,7 +1348,10 @@ static int fat_read_root(struct inode *inode)
->         fat_save_attrs(inode, ATTR_DIR);
->         inode_set_mtime_to_ts(inode,
->                               inode_set_atime_to_ts(inode,
-> inode_set_ctime(inode, 0, 0)));
-> -       set_nlink(inode, fat_subdirs(inode)+2);
-> +       int nsubs =3D fat_subdirs(inode);
-> +       if (nsubs < 0)
-> +               return nsubs;
-> +       set_nlink(inode, nsubs+2);
->
->         return 0;
->  }
->
-> If the approach above is acceptable, we are willing to submit a proper
-> patch immediately. Please let us know if any further information is
-> required.
->
-> Best regards,
-> Zhiyu Zhang
 
