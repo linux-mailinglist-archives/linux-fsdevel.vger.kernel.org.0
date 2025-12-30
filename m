@@ -1,298 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-72251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0B2CEA9D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 21:34:31 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C614CEAA4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 22:03:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 09F20301D64C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 20:34:25 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1BD2030191B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 21:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE7A270ED2;
-	Tue, 30 Dec 2025 20:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FE3221F20;
+	Tue, 30 Dec 2025 21:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q1QFYAfp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+JawV1p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EF91C4A24;
-	Tue, 30 Dec 2025 20:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDC286277
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Dec 2025 21:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767126862; cv=none; b=U50OqwbJFy61N+bbyBvtw5C2qWl97ILSlI/LrmxkPW6/aJ42rgWvBPIcZxJxFFFsCzYTXwnjyO+8REpw0+WgbNcl4Ibx90EFXV0AyySayOwgjTzmZaFpeyP/jCZsB3u80YIycYDlqeFb/d383OiA+g51YNyRy0rvTzdgGJuhY0w=
+	t=1767128608; cv=none; b=rBDLnH6wiRCRT/a7qfVHbuRzTfAW4F/FcyR0wc/NOsBwSZhwvgFOWpFqozoUgQ2y2bWeQULf75H31YKdj5lijLQZDzPp5BeTYQ7uGLoXl0YDf6PNPxIGx2fta4UnFpFtO+0+0EcgkxtZupGxvbYiKjGqR6elYoVHJwNdKFYeqno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767126862; c=relaxed/simple;
-	bh=Wc0iK0oNUrBiKY76jJFMsmF3cAIUm6ISoNB2BRSUIB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bob3joxmJvBp3qTVthsHM4U4ViJyY3+hf2kFyXKU4qGHPp/zU1RHmReUGDVoM94UEd7LJ8v9ENtYmrM8H4h7BZo0eW/SadFz2a8xksFHX9Qn4V/yyIykTpDftaZl134EKi8LCNJoQkBkirSD524TMCdf2XbCrPE16POyXTavqzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q1QFYAfp; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1767126860; x=1798662860;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Wc0iK0oNUrBiKY76jJFMsmF3cAIUm6ISoNB2BRSUIB8=;
-  b=Q1QFYAfpwRE8utDNh/VTjRUxoH1PoW7GXoYltbgojGdxVVUnmQZjVEHW
-   oIZyhMTi18mTxDlNQjHsA7eod36I54/dZ512+wk4zrkpnPUKg6RU2IkqX
-   /YYUJqwZSVypDITLukQELP0PRNMwzPGDdV3rhR18TLWSrmxfB+CKoWT28
-   RJeXvvtcztpyHabqUwqPtUdY0l3AlS0HntRMrTcOfgUq+i+EX+Eu6s4c0
-   DHuYikfmgh4v8S6WVytocRfnOmaUhNN2aV9+PR7eXi5KZx4QBBm5KISFI
-   PUYWNNhptKyukz3y56xwSww806LKlb0noVi+ZWtawLqGSjn2iExqBRQAY
-   Q==;
-X-CSE-ConnectionGUID: hP/BJFBBRfaOhHPqAKMHlQ==
-X-CSE-MsgGUID: vVLY2nNLQUy/dRwTxCJmOA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11657"; a="72563602"
-X-IronPort-AV: E=Sophos;i="6.21,189,1763452800"; 
-   d="scan'208";a="72563602"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2025 12:34:19 -0800
-X-CSE-ConnectionGUID: RzQTmgrDTWeph3B3bsyazw==
-X-CSE-MsgGUID: CbIiXqDoQIquYPl7Bc2V9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,189,1763452800"; 
-   d="scan'208";a="224787160"
-Received: from igk-lkp-server01.igk.intel.com (HELO 8a0c053bdd2a) ([10.211.93.152])
-  by fmviesa002.fm.intel.com with ESMTP; 30 Dec 2025 12:34:17 -0800
-Received: from kbuild by 8a0c053bdd2a with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vagQ2-0000000081Q-3Zc1;
-	Tue, 30 Dec 2025 20:34:14 +0000
-Date: Tue, 30 Dec 2025 21:34:11 +0100
-From: kernel test robot <lkp@intel.com>
-To: Yuto Ohnuki <ytohnuki@amazon.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Yuto Ohnuki <ytohnuki@amazon.com>
-Subject: Re: [PATCH] fs: remove stale and duplicate forward declarations
-Message-ID: <202512302108.nIV8r5ES-lkp@intel.com>
-References: <20251229071401.98146-1-ytohnuki@amazon.com>
+	s=arc-20240116; t=1767128608; c=relaxed/simple;
+	bh=bgT10EkK03Svs5fHkTLULngDPsGQUnaYXxpVT6Mb6PI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tEiv7Va+K85nGLAnD4t2lV+ccOTiXAKwwnrobyxIWWm444KP4O9M+cDZabWX6X/EEMQOryXa84xD9Es1bf9iAF6cfDHJICi2SD63Y3kW9VE9wGRj2FPNgKrI2oAtwV+o4YdR78P2+49sSa/n285ot6Ym331+HF1QHwwgKfCv8ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+JawV1p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 329B0C4CEFB;
+	Tue, 30 Dec 2025 21:03:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767128607;
+	bh=bgT10EkK03Svs5fHkTLULngDPsGQUnaYXxpVT6Mb6PI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U+JawV1p69DJMmJH/Z1+xqQnMTK0Yrgs1k//1yynBy33zml61E9GcZcjClkq0F/92
+	 zp93yXLLkoQ99qKtUrUpUaZU9jMM23DUk0ugJSFXKF8Pi9oBufClSK6GsM7xSGHHLA
+	 uquCXqY0NYnJhlCwKXQPyE3QTf8qMs6N/eGVzItMvn3F4j4gQokEd3L3vTimz/lJGR
+	 MIQL2vDQz6ETlcdfR4oe6DizESV81g1yg5Jv4GAEQfFmybryzSWORe20zADLLV6OWQ
+	 gdFN/OgSvml37LQSQOuynk9LiF4/sJywgdXOlAFNVgT0xn7JjFHzHz+anBszo/Ar9U
+	 fTH5g+UDfA7Jg==
+Message-ID: <fc73a7a4-c66b-4437-b581-43bd7e5fae8d@kernel.org>
+Date: Tue, 30 Dec 2025 22:03:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251229071401.98146-1-ytohnuki@amazon.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [bug report] memory leak of xa_node in collapse_file() when
+ rollbacks
+To: Jinjiang Tu <tujinjiang@huawei.com>,
+ Shardul Bankar <shardul.b@mpiricsoftware.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, ziy@nvidia.com,
+ lorenzo.stoakes@oracle.com, baolin.wang@linux.alibaba.com,
+ Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+ dev.jain@arm.com, baohua@kernel.org, lance.yang@linux.dev,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>, shardulsb08@gmail.com
+References: <86834731-02ba-43ea-9def-8b8ca156ec4a@huawei.com>
+ <32e4658f-d23b-4bae-9053-acdd5277bb17@kernel.org>
+ <4b129453-97d1-4da4-9472-21c1634032d0@huawei.com>
+ <05bbe26e-e71a-4a49-95d2-47373b828145@kernel.org>
+ <a629d3bb-c7e2-41e0-87e0-7a7a6367c1b6@huawei.com>
+ <308b7b3c4f6c74c46906e25d6069049c70222ed8.camel@mpiricsoftware.com>
+ <eefae4cc-ec75-4378-a153-c190fdc230c1@huawei.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <eefae4cc-ec75-4378-a153-c190fdc230c1@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Yuto,
+On 12/27/25 02:24, Jinjiang Tu wrote:
+> 
+> 在 2025/12/25 12:15, Shardul Bankar 写道:
+>> On Thu, 2025-12-18 at 21:11 +0800, Jinjiang Tu wrote:
+>>> 在 2025/12/18 20:49, David Hildenbrand (Red Hat) 写道:
+>>>    
+>>>>    Thanks for checking. I thought that was also discussed as part of
+>>>> the other fix.
+>>>>    
+>>>>    See [2] where we have
+>>>>    
+>>>>    "Note: This fixes the leak of pre-allocated nodes. A separate fix
+>>>> will
+>>>>    be needed to clean up empty nodes that were inserted into the tree
+>>>> by
+>>>>    xas_create_range() but never populated."
+>>>>    
+>>>>    Is that the issue you are describing? (sounds like it, but I only
+>>>> skimmed over the details).
+>>>>    
+>>>>    CCing Shardul.
+>>> Yes, the same issue. As I descirbed in the first email:
+>>> "
+>>> At first, I tried to destory the empty nodes when collapse_file()
+>>> goes to rollback path. However,
+>>> collapse_file() only holds xarray lock and may release the lock, so
+>>> we couldn't prevent concurrent
+>>> call of collapse_file(), so the deleted empty nodes may be needed by
+>>> other collapse_file() calls.
+>>> "
+>> Hi David, Jinjiang,
+>>
+>> As Jinjiang mentioned, this appears to address what I had originally
+>> referred to in the "Note:" in [1].
+>>
+>> Just to clarify the context of the "Note:", that was based on my
+>> assumption at the time that such empty nodes would be considered leaks.
+>> After Dev’s feedback in [2]:
+>> "No "fix" is needed in this case, the empty nodes are there in the tree
+>> and there is no leak."
+>>
+>> and looking at the older discussion in [3]:
+>> "There's nothing to free; if a node is allocated, then it's stored in
+>> the tree where it can later be found and reused. "
+> 
+> However, if the empty nodes aren't reused, When the file is deleted,
+> shmem_evict_inode()->shmem_truncate_range() traverses all entries and
+> calls xas_store(xas, NULL) to delete, if the leaf xa_node that stores
+> deleted entry becomes empty, xas_store() will automatically delete the
+> empty node and delete it's parent is empty too, until parent node isn't
+> empty. shmem_evict_inode() won't traverse the empty nodes created by
+> xas_create_range() due to these nodes doesn't store any entries.
 
-kernel test robot noticed the following build errors:
+So you're saying that nothing/nobody would clean up these xarray entries 
+and we'd be leaking them?
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.16-rc1 next-20251219]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Yuto-Ohnuki/fs-remove-stale-and-duplicate-forward-declarations/20251229-151612
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20251229071401.98146-1-ytohnuki%40amazon.com
-patch subject: [PATCH] fs: remove stale and duplicate forward declarations
-config: x86_64-rhel-9.4-ltp (https://download.01.org/0day-ci/archive/20251230/202512302108.nIV8r5ES-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251230/202512302108.nIV8r5ES-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202512302108.nIV8r5ES-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   In file included from block/bdev.c:14:
->> include/linux/blkdev.h:1656:48: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
-         |                                                ^~~~~~~~~~~
---
-   In file included from block/ioctl.c:4:
->> include/linux/blkdev.h:1656:48: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
-         |                                                ^~~~~~~~~~~
-   block/ioctl.c: In function 'blkdev_getgeo':
->> block/ioctl.c:564:40: error: passing argument 2 of 'disk->fops->getgeo' from incompatible pointer type [-Wincompatible-pointer-types]
-     564 |         ret = disk->fops->getgeo(disk, &geo);
-         |                                        ^~~~
-         |                                        |
-         |                                        struct hd_geometry *
-   block/ioctl.c:564:40: note: expected 'struct hd_geometry *' but argument is of type 'struct hd_geometry *'
---
-   In file included from drivers/md/md.c:43:
->> include/linux/blkdev.h:1656:48: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
-         |                                                ^~~~~~~~~~~
->> drivers/md/md.c:8421:27: error: initialization of 'int (*)(struct gendisk *, struct hd_geometry *)' from incompatible pointer type 'int (*)(struct gendisk *, struct hd_geometry *)' [-Wincompatible-pointer-types]
-    8421 |         .getgeo         = md_getgeo,
-         |                           ^~~~~~~~~
-   drivers/md/md.c:8421:27: note: (near initialization for 'md_fops.getgeo')
---
-   In file included from include/linux/blk-mq.h:5,
-                    from drivers/md/dm-core.h:15,
-                    from drivers/md/dm-builtin.c:2:
->> include/linux/blkdev.h:1656:48: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
-         |                                                ^~~~~~~~~~~
-   In file included from drivers/md/dm.h:14,
-                    from drivers/md/dm-core.h:21:
->> include/linux/device-mapper.h:571:54: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-     571 | int dm_get_geometry(struct mapped_device *md, struct hd_geometry *geo);
-         |                                                      ^~~~~~~~~~~
-   include/linux/device-mapper.h:572:54: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-     572 | int dm_set_geometry(struct mapped_device *md, struct hd_geometry *geo);
-         |                                                      ^~~~~~~~~~~
---
-   In file included from include/linux/blk-mq.h:5,
-                    from drivers/md/dm-core.h:15,
-                    from drivers/md/dm.c:9:
->> include/linux/blkdev.h:1656:48: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
-         |                                                ^~~~~~~~~~~
-   In file included from drivers/md/dm.h:14,
-                    from drivers/md/dm-core.h:21:
->> include/linux/device-mapper.h:571:54: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-     571 | int dm_get_geometry(struct mapped_device *md, struct hd_geometry *geo);
-         |                                                      ^~~~~~~~~~~
-   include/linux/device-mapper.h:572:54: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-     572 | int dm_set_geometry(struct mapped_device *md, struct hd_geometry *geo);
-         |                                                      ^~~~~~~~~~~
-   drivers/md/dm.c: In function 'dm_blk_getgeo':
->> drivers/md/dm.c:410:36: error: passing argument 2 of 'dm_get_geometry' from incompatible pointer type [-Wincompatible-pointer-types]
-     410 |         return dm_get_geometry(md, geo);
-         |                                    ^~~
-         |                                    |
-         |                                    struct hd_geometry *
-   include/linux/device-mapper.h:571:67: note: expected 'struct hd_geometry *' but argument is of type 'struct hd_geometry *'
-     571 | int dm_get_geometry(struct mapped_device *md, struct hd_geometry *geo);
-         |                                               ~~~~~~~~~~~~~~~~~~~~^~~
-   drivers/md/dm.c: At top level:
->> drivers/md/dm.c:839:5: error: conflicting types for 'dm_get_geometry'; have 'int(struct mapped_device *, struct hd_geometry *)'
-     839 | int dm_get_geometry(struct mapped_device *md, struct hd_geometry *geo)
-         |     ^~~~~~~~~~~~~~~
-   include/linux/device-mapper.h:571:5: note: previous declaration of 'dm_get_geometry' with type 'int(struct mapped_device *, struct hd_geometry *)'
-     571 | int dm_get_geometry(struct mapped_device *md, struct hd_geometry *geo);
-         |     ^~~~~~~~~~~~~~~
->> drivers/md/dm.c:849:5: error: conflicting types for 'dm_set_geometry'; have 'int(struct mapped_device *, struct hd_geometry *)'
-     849 | int dm_set_geometry(struct mapped_device *md, struct hd_geometry *geo)
-         |     ^~~~~~~~~~~~~~~
-   include/linux/device-mapper.h:572:5: note: previous declaration of 'dm_set_geometry' with type 'int(struct mapped_device *, struct hd_geometry *)'
-     572 | int dm_set_geometry(struct mapped_device *md, struct hd_geometry *geo);
-         |     ^~~~~~~~~~~~~~~
->> drivers/md/dm.c:3784:19: error: initialization of 'int (*)(struct gendisk *, struct hd_geometry *)' from incompatible pointer type 'int (*)(struct gendisk *, struct hd_geometry *)' [-Wincompatible-pointer-types]
-    3784 |         .getgeo = dm_blk_getgeo,
-         |                   ^~~~~~~~~~~~~
-   drivers/md/dm.c:3784:19: note: (near initialization for 'dm_blk_dops.getgeo')
-   drivers/md/dm.c:3795:19: error: initialization of 'int (*)(struct gendisk *, struct hd_geometry *)' from incompatible pointer type 'int (*)(struct gendisk *, struct hd_geometry *)' [-Wincompatible-pointer-types]
-    3795 |         .getgeo = dm_blk_getgeo,
-         |                   ^~~~~~~~~~~~~
-   drivers/md/dm.c:3795:19: note: (near initialization for 'dm_rq_blk_dops.getgeo')
---
-   In file included from include/linux/blk-mq.h:5,
-                    from drivers/md/dm-core.h:15,
-                    from drivers/md/dm-ioctl.c:9:
->> include/linux/blkdev.h:1656:48: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
-         |                                                ^~~~~~~~~~~
-   In file included from drivers/md/dm.h:14,
-                    from drivers/md/dm-core.h:21:
->> include/linux/device-mapper.h:571:54: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-     571 | int dm_get_geometry(struct mapped_device *md, struct hd_geometry *geo);
-         |                                                      ^~~~~~~~~~~
-   include/linux/device-mapper.h:572:54: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-     572 | int dm_set_geometry(struct mapped_device *md, struct hd_geometry *geo);
-         |                                                      ^~~~~~~~~~~
-   drivers/md/dm-ioctl.c: In function 'dev_set_geometry':
->> drivers/md/dm-ioctl.c:1111:33: error: passing argument 2 of 'dm_set_geometry' from incompatible pointer type [-Wincompatible-pointer-types]
-    1111 |         r = dm_set_geometry(md, &geometry);
-         |                                 ^~~~~~~~~
-         |                                 |
-         |                                 struct hd_geometry *
-   include/linux/device-mapper.h:572:67: note: expected 'struct hd_geometry *' but argument is of type 'struct hd_geometry *'
-     572 | int dm_set_geometry(struct mapped_device *md, struct hd_geometry *geo);
-         |                                               ~~~~~~~~~~~~~~~~~~~~^~~
---
-   In file included from drivers/nvdimm/btt.c:8:
->> include/linux/blkdev.h:1656:48: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
-         |                                                ^~~~~~~~~~~
->> drivers/nvdimm/btt.c:1493:33: error: initialization of 'int (*)(struct gendisk *, struct hd_geometry *)' from incompatible pointer type 'int (*)(struct gendisk *, struct hd_geometry *)' [-Wincompatible-pointer-types]
-    1493 |         .getgeo =               btt_getgeo,
-         |                                 ^~~~~~~~~~
-   drivers/nvdimm/btt.c:1493:33: note: (near initialization for 'btt_fops.getgeo')
---
-   In file included from include/linux/blk-mq.h:5,
-                    from drivers/memstick/core/mspro_block.c:11:
->> include/linux/blkdev.h:1656:48: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
-         |                                                ^~~~~~~~~~~
->> drivers/memstick/core/mspro_block.c:206:27: error: initialization of 'int (*)(struct gendisk *, struct hd_geometry *)' from incompatible pointer type 'int (*)(struct gendisk *, struct hd_geometry *)' [-Wincompatible-pointer-types]
-     206 |         .getgeo         = mspro_block_bd_getgeo,
-         |                           ^~~~~~~~~~~~~~~~~~~~~
-   drivers/memstick/core/mspro_block.c:206:27: note: (near initialization for 'ms_block_bdops.getgeo')
---
-   In file included from drivers/nvme/host/core.c:8:
->> include/linux/blkdev.h:1656:48: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
-         |                                                ^~~~~~~~~~~
->> drivers/nvme/host/core.c:2616:27: error: initialization of 'int (*)(struct gendisk *, struct hd_geometry *)' from incompatible pointer type 'int (*)(struct gendisk *, struct hd_geometry *)' [-Wincompatible-pointer-types]
-    2616 |         .getgeo         = nvme_getgeo,
-         |                           ^~~~~~~~~~~
-   drivers/nvme/host/core.c:2616:27: note: (near initialization for 'nvme_bdev_ops.getgeo')
---
-   In file included from include/linux/blk-mq.h:5,
-                    from include/linux/blk-integrity.h:5,
-                    from drivers/nvme/host/ioctl.c:6:
->> include/linux/blkdev.h:1656:48: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
-         |                                                ^~~~~~~~~~~
-   In file included from drivers/nvme/host/ioctl.c:10:
->> drivers/nvme/host/nvme.h:946:46: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-     946 | int nvme_getgeo(struct gendisk *disk, struct hd_geometry *geo);
-         |                                              ^~~~~~~~~~~
---
-   In file included from include/linux/blk-mq.h:5,
-                    from include/linux/blktrace_api.h:5,
-                    from include/trace/events/block.h:8,
-                    from drivers/nvme/host/multipath.c:9:
->> include/linux/blkdev.h:1656:48: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
-         |                                                ^~~~~~~~~~~
-   In file included from drivers/nvme/host/multipath.c:10:
->> drivers/nvme/host/nvme.h:946:46: warning: 'struct hd_geometry' declared inside parameter list will not be visible outside of this definition or declaration
-     946 | int nvme_getgeo(struct gendisk *disk, struct hd_geometry *geo);
-         |                                              ^~~~~~~~~~~
->> drivers/nvme/host/multipath.c:603:27: error: initialization of 'int (*)(struct gendisk *, struct hd_geometry *)' from incompatible pointer type 'int (*)(struct gendisk *, struct hd_geometry *)' [-Wincompatible-pointer-types]
-     603 |         .getgeo         = nvme_getgeo,
-         |                           ^~~~~~~~~~~
-   drivers/nvme/host/multipath.c:603:27: note: (near initialization for 'nvme_ns_head_ops.getgeo')
-..
-
-
-vim +8421 drivers/md/md.c
-
-e8c59ac4197443 Christoph Hellwig 2022-07-19  8410  
-7e0adbfc20c50b Christoph Hellwig 2020-06-07  8411  const struct block_device_operations md_fops =
-^1da177e4c3f41 Linus Torvalds    2005-04-16  8412  {
-^1da177e4c3f41 Linus Torvalds    2005-04-16  8413  	.owner		= THIS_MODULE,
-c62b37d96b6eb3 Christoph Hellwig 2020-07-01  8414  	.submit_bio	= md_submit_bio,
-a39907fa2fdb73 Al Viro           2008-03-02  8415  	.open		= md_open,
-a39907fa2fdb73 Al Viro           2008-03-02  8416  	.release	= md_release,
-b492b852cd8c99 NeilBrown         2009-05-26  8417  	.ioctl		= md_ioctl,
-aa98aa31987ad9 Arnd Bergmann     2009-12-14  8418  #ifdef CONFIG_COMPAT
-aa98aa31987ad9 Arnd Bergmann     2009-12-14  8419  	.compat_ioctl	= md_compat_ioctl,
-aa98aa31987ad9 Arnd Bergmann     2009-12-14  8420  #endif
-a885c8c4316e1c Christoph Hellwig 2006-01-08 @8421  	.getgeo		= md_getgeo,
-a564e23f0f9975 Christoph Hellwig 2020-07-08  8422  	.check_events	= md_check_events,
-118cf084adb396 Christoph Hellwig 2020-11-03  8423  	.set_read_only	= md_set_read_only,
-e8c59ac4197443 Christoph Hellwig 2022-07-19  8424  	.free_disk	= md_free_disk,
-^1da177e4c3f41 Linus Torvalds    2005-04-16  8425  };
-^1da177e4c3f41 Linus Torvalds    2005-04-16  8426  
+"struct xarray" documents "If all of the entries in the array are NULL, 
+@xa_head is a NULL pointer.". So we depend on all entries being set to 
+NULL in order to properly cleanup/free the xarray automatically.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers
+
+David
 
