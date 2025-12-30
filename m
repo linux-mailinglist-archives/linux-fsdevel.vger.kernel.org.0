@@ -1,154 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-72226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73581CE87B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 02:27:35 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E54ACE87ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 02:40:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 79A25300CCFC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 01:27:34 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 9F49C3002D12
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 01:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4161EEA31;
-	Tue, 30 Dec 2025 01:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D6329B777;
+	Tue, 30 Dec 2025 01:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfpwMWOa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DAbOmbaY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E16A2AD0C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Dec 2025 01:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FA183A14
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Dec 2025 01:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767058052; cv=none; b=LL9yhwpI4kA5wXP8N0KiYPvEfDMKsNcKJbRPmf1jKR+whR7vE4dhSM5TmXyYYVDR+BrR8Na58TMs6M8AvfI5bwjoukT0RzEbW0BdA2E6WhmZ5QfcrVZlqEPg3F8d5DTSuSXPqGWWx2z66gY5FDRxLPO8uPzswDVB1zEMKBz9Qx4=
+	t=1767058831; cv=none; b=Qm7WXy53cEB/8wMPhLgmIzLWCaQ1iG1NpGLt4rfr6B1j+1wVdoi3HZUORmKjHB/QMm3uy8z1IkPEVStXs/6oDJIShnQj1dfSR35C8HqFF6nkc++GZhTRLSbBE6JYubmQFBspMG5congX2xJu2r82IDgndTuZpgfabZ2zw7XsJU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767058052; c=relaxed/simple;
-	bh=03Ig/4f7NlIENVyrUs/YNTqAQxlnByDRom572un8Sk8=;
+	s=arc-20240116; t=1767058831; c=relaxed/simple;
+	bh=cu2+rxubfA0kEr9nGwBLqnzUtrW14DV8+NiV37PKSn4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nt6AnuBzHLyGV99NyDH8HZq9i878ubG1WG+gfMpQxRxVpDC3BFIphxa2bOMq9+DFzY4Xvrrq/krrKipBf9SzQ+610HFqiK1vTTfMlu0dD9FSZ+ma3cTTnOxClGWCZj97IW2JLyjDOFHBn9ISWKNItS3nrTvSIxBu7hUTC9ciI84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfpwMWOa; arc=none smtp.client-ip=209.85.219.46
+	 To:Cc:Content-Type; b=XVamxyyUmDyjdE08E0P2qyKqEosLdOYIxM4fIV1qotiQp7KUD4uvEGbnjpGHbfz9dE5d075esgWmOADKMMe3ruWRp/fMnW3OuuNAy1qX/80gGTfYOtfTFVMjTI426gciS/EvZDl1waiO0Guyw0+2rG+TvRXXKR1DTAkuOgXdnb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DAbOmbaY; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-8888a1c50e8so128836056d6.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 17:27:31 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b8010b8f078so1364003966b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Dec 2025 17:40:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767058050; x=1767662850; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767058828; x=1767663628; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k91pgBWmPa8akUfZJ7BSG2CpbE5hOjf4BCq5FsPTwOg=;
-        b=XfpwMWOaYqNuP6WpvQ2MnAJm2IYSU9mkpvIAuRnNH0L4Qwh1w3jQlSnWSmQ0C1hYuu
-         KCrHXGlWN9lnsaq/KkOhwjdEz/pBcoE2YWz6b3jJRDcvJo/zeyqlts1zrJ68ZKxiT7Mk
-         aRY+MempDtvkd4PZJHXKNY6Aef2vQxE8DZoVB1acCZP4xXsUe1NBmiwP4CmnPsaOYhmG
-         JWXz6R8sE6Jc+G+onHJ1R9BAkIoYGiOmSAdxsSLcuF6bo6zQkQvtRTFmYbufi7xQGcvo
-         pCsh7CMIXm1imgjWpG52HsuKx2JccAhBrGt349DK2EHfM18T7+atFR0G+CzJEDV23HJ0
-         SgBg==
+        bh=lcHl0LI6VBylgpNheuMX14+DiS2VnKD9duDhs1UabJQ=;
+        b=DAbOmbaYErLwaHwy7g/vkcWax8kHB5aI6klItW14eHszdUEYrmVYOXyg86VK0i258X
+         p5lHGC8W6JGydW5wsN5YoY+XJcoaZwGm+v6NuygYHu/rJ2EHK1qR7NErhQjIIFnA61Qu
+         uR4TT642OY+Xj/quZEoB62pycBgMkQ1WL0ihknxDmNgYJGCLRzdcxMhXf+lHMlFez5Zf
+         RatYmrgfsaWNrxLbjxfhf2hvff25V96sU1tBSK3e9iZvRWGAc/iNIOLaMO/4ZQafSS3t
+         +FGcAYVJ4gju2BnCWERzoI4eMWgs9DaiRJajHQyywksSY5kbtULtGcGKYe5ioyLyvgxO
+         qflA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767058050; x=1767662850;
+        d=1e100.net; s=20230601; t=1767058828; x=1767663628;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=k91pgBWmPa8akUfZJ7BSG2CpbE5hOjf4BCq5FsPTwOg=;
-        b=RS2hQWKBT2BW9J8/QQOgf08qk3pzqlN5B4Z6F5k/2U1izozDpiKk3/e/wEjmGcdgLb
-         UuBW+k//1/aqSDCqLCKcN5NjtJ8813treIl9ut0RJn+yFp8LkAtrQybZABYa0jvWsMR1
-         qi15mh4r/HzXpCNH8VPsHchl3vMxfhWBOygRoF7yidWkbvzubAfegJzjxatZl0vujQSt
-         JAJqilzIaoOi9fLKEOVJTYT9ZpFk3sDSPf+/Fmr4WN6rbj0Sbpn47UdlirTy8DB2kUwd
-         8JWicPyoDgNFIOXINzoFUoTde19XBZhqJyz7al8JQVIcvarOvtuNrwYhFebvnU12RjGF
-         xc2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXi/9iV7bqIucyYpym3uokD7qYA6B51zMqzpAeHBpPrN0H2tyYzG7dVHBhvRNsxSbX96kp9doDb0s81z8l9@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUE8wwavanVW2aphlpWfSeCPhhhgfts4cUGBHlfMNflgFgzcmi
-	gKxS7lY+8iQN8B1UpWWacu5QKgb6FjjewFobZl/c7RLhcueunUW8tMoYKJ0h8XG0dyh4qVzu+Ta
-	534LuMqh/y0leozpjZDETH8mGsoHcsbQ=
-X-Gm-Gg: AY/fxX7hudHQuIpQt0QLilXGkQeH5IEUZgbxpSIS2/mEij9BN70/uFK4mvHcI1JwZ1N
-	Dbu9W+31rWeqA6md+Tt77Mc6eCoA6hYIB24bU7zVmrrQmpM8U9wcWhPVR03RcqkVTeKiHhtMENo
-	f/0Z8daJ09qNPRSguhFP6xBQ8a9P1YZC7w1yqEu7obulXv6/BBJilaN+ipyQBnubprsDHu+2pnK
-	yLsjBDhfmdx3bLerfTypc/7AJo5Rm/YFvkmGCMdgPg+ibXhJHVYLWdEU0U7vfiatfah7w==
-X-Google-Smtp-Source: AGHT+IHm+3ZnhvCYiAawzpugNI36XN0vlG84RIO//EpPhE6QiwUoxFqREBINmHF5z6uXZQtnfCLznOx0rc9abKcsOxw=
-X-Received: by 2002:a05:622a:514a:b0:4ee:1c81:b1d1 with SMTP id
- d75a77b69052e-4f4abcf2b74mr473834161cf.22.1767058050170; Mon, 29 Dec 2025
- 17:27:30 -0800 (PST)
+        bh=lcHl0LI6VBylgpNheuMX14+DiS2VnKD9duDhs1UabJQ=;
+        b=lbaxY9nRS63TgeE+3sdXBScKfCExegGdpt7TcI/DzEj3bi1loETd2R/wHhcA+8TWJz
+         H+VQQ48/VguJD5lP3nHAfiDeU1MrHwuITfEGBb/RL/VYqfr+xdfaH3M5q7TAes4ndOk8
+         MOgL1TI3AoRsCeXZa2BWIA+Cf6ou4sbm4Dztg8vdaysDkH1bND3OUF4c27frzK04x1T1
+         YTJA6Wm1SMG1nrJBR7P6CaAp969A4RpFuHdLjjY2h2kqgJTWnLroZ1WnHgSx/fuz+SU1
+         cpBuJ7sGh3O6L/xIlnjWdhI3dYSXS7B0OKkQXP16b87jaexeSCFlXEv38qt62Lb48/C1
+         HBPw==
+X-Gm-Message-State: AOJu0YzeU94n56S2QLrHEQuDYNer8xHc6L6Fc5C2f3B9UOuElVYtENQR
+	i7QGQnM8oygAfvHsnhCAMQy2O713jZbe9Q7D3nWPMde8Ewje/QHQQTyRjUHbgl8g83hFM/C0E49
+	c2NsUHiBf705/PLcEjirCHshQjcM1IJQPoZiXzaY=
+X-Gm-Gg: AY/fxX6+rcalWFJkTFCxaTlQfPV7aup2/DgcNF7KDRGIQn3U7mvsbjgtU3U48zoUaNU
+	Swn2MmGlWN9UcWJ2HYFaMS/ioY7oaSgSfNqf+nlkvW6g6AwdJN1WVMWJ2NIUo40G5foSrK0X9AY
+	T+fdHjucLctNEkbv888cN7pEwb+c9WlPG7eHOfmAgPV1uihObVrnITOEqHSAnTt0X7YdUg8Dckg
+	Y/+6kjr3ojfwp+RXkKE4aHfqyl4BSnC98Ml2xfkHJ6Sk+tn1ODX0Ibi74vO9CqLeo3U
+X-Google-Smtp-Source: AGHT+IECv0bjJWM9gyLXeAWKan6FtvkmjkmopVlvwjNGwjXq8PlQb6UvsavkP8o5CcfG6pg8ylvZ6i0dKFKQm8Xk9dg=
+X-Received: by 2002:a17:907:972a:b0:b83:1326:62e6 with SMTP id
+ a640c23a62f3a-b8313266fffmr1873315266b.35.1767058827551; Mon, 29 Dec 2025
+ 17:40:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251223003522.3055912-1-joannelkoong@gmail.com>
- <20251223003522.3055912-7-joannelkoong@gmail.com> <87y0mlyp31.fsf@mailhost.krisman.be>
-In-Reply-To: <87y0mlyp31.fsf@mailhost.krisman.be>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 29 Dec 2025 17:27:19 -0800
-X-Gm-Features: AQt7F2oXNyfS4Qq35qc2jw9Q3_knUBbEA949Xmd2hfXwLMUF6Sk2Bnmq-U9YFaQ
-Message-ID: <CAJnrk1a_qDe22E5WYN+yxJ3SrPCLp=uFKYQ6NU2WPf-wCiZOtg@mail.gmail.com>
-Subject: Re: [PATCH v3 06/25] io_uring/kbuf: add buffer ring pinning/unpinning
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, csander@purestorage.com, 
-	xiaobing.li@samsung.com, linux-fsdevel@vger.kernel.org
+References: <CAGmFzSc=YbHdaFbGQOrs_E4-MBXrM7QwXZ0DuKAGW1Ers2q=Rg@mail.gmail.com>
+ <CAJnrk1ZOYnXpY0qf3yU41gQUHjyHOdBhAdyRPt_kaBmhvjr_9g@mail.gmail.com>
+In-Reply-To: <CAJnrk1ZOYnXpY0qf3yU41gQUHjyHOdBhAdyRPt_kaBmhvjr_9g@mail.gmail.com>
+From: Gang He <dchg2000@gmail.com>
+Date: Tue, 30 Dec 2025 09:40:16 +0800
+X-Gm-Features: AQt7F2pUPyP5XR7rEkiHqR8by99jiXFc4mDLRLT1dx1EspCBal5U1P0lSfyj-sI
+Message-ID: <CAGmFzSdQ2Js5xUjb-s2vQkNB75Y5poOr_kTf4_8wqzeSgA6mJg@mail.gmail.com>
+Subject: Re: feedback: fuse/io-uring: add kernel-managed buffer rings and zero-copy
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 29, 2025 at 1:07=E2=80=AFPM Gabriel Krisman Bertazi <krisman@su=
-se.de> wrote:
->
-> Joanne Koong <joannelkoong@gmail.com> writes:
->
-> > +int io_kbuf_ring_pin(struct io_kiocb *req, unsigned buf_group,
-> > +                  unsigned issue_flags, struct io_buffer_list **bl)
-> > +{
-> > +     struct io_buffer_list *buffer_list;
-> > +     struct io_ring_ctx *ctx =3D req->ctx;
-> > +     int ret =3D -EINVAL;
-> > +
-> > +     io_ring_submit_lock(ctx, issue_flags);
-> > +
-> > +     buffer_list =3D io_buffer_get_list(ctx, buf_group);
-> > +     if (likely(buffer_list) && likely(buffer_list->flags & IOBL_BUF_R=
-ING)) {
->
-> FWIW, the likely construct is unnecessary here. At least, it should
-> encompass the entire expression:
->
->     if (likely(buffer_list && buffer_list->flags & IOBL_BUF_RING))
->
-> But you can just drop it.
+Hi Joanne,
 
-I see, thanks. Could you explain when likelys/unlikelys should be used
-vs not? It's unclear to me when they need to be included vs can be
-dropped. I see some other io-uring code use likely() for similar-ish
-logic, but is the idea that it's unnecessary because the compiler
-already infers it?
+I used passthrough_hp, the startup command is as below,
+cd libfuse/build/example
+./passthrough_hp -o io_uring /mnt/xfs/ /mnt/fusemnt/
+then,
+cd /mnt/fusemnt/
+run some fio commands, e.g.,
+fio -direct=3D0 --filename=3Dsingfile --rw=3Dwrite -iodepth=3D1
+--ioengine=3Dlibaio --bs=3D1M --size=3D16G --runtime=3D60 --numjobs=3D1
+-name=3Dtest_fuse1
 
-Thanks,
-Joanne
+All the testing is executed in a virtual machine on x86_64(6cpu, 4G
+memory, 60G disk).
 
+Thanks
+Gang
+
+
+Joanne Koong <joannelkoong@gmail.com> =E4=BA=8E2025=E5=B9=B412=E6=9C=8830=
+=E6=97=A5=E5=91=A8=E4=BA=8C 02:03=E5=86=99=E9=81=93=EF=BC=9A
 >
-> > +             if (unlikely(buffer_list->flags & IOBL_PINNED)) {
-> > +                     ret =3D -EALREADY;
-> > +             } else {
-> > +                     buffer_list->flags |=3D IOBL_PINNED;
-> > +                     ret =3D 0;
-> > +                     *bl =3D buffer_list;
-> > +             }
-> > +     }
-> > +
-> > +     io_ring_submit_unlock(ctx, issue_flags);
-> > +     return ret;
-> > +}
-> > +
-> > +int io_kbuf_ring_unpin(struct io_kiocb *req, unsigned buf_group,
-> > +                    unsigned issue_flags)
-> > +{
-> > +     struct io_ring_ctx *ctx =3D req->ctx;
-> > +     struct io_buffer_list *bl;
-> > +     int ret =3D -EINVAL;
-> > +
-> > +     io_ring_submit_lock(ctx, issue_flags);
-> > +
-> > +     bl =3D io_buffer_get_list(ctx, buf_group);
-> > +     if (likely(bl) && likely(bl->flags & IOBL_BUF_RING) &&
-> > +         likely(bl->flags & IOBL_PINNED)) {
+> On Wed, Dec 24, 2025 at 12:13=E2=80=AFAM Gang He <dchg2000@gmail.com> wro=
+te:
+> >
+> > Hi Joanne Koong,
+> >
+> > I tested your v3 patch set about fuse/io-uring: add kernel-managed
+> > buffer rings and zero-copy. There are some feedbacks for your
+> > reference.
+> > 1) the fuse file system looks workable after your 25 patches are
+> > applied in the latest Linux kernel source.
+> > 2)I did not see any performance improvement with your patch set. I
+> > also used my fio commands to do some testing, e.g.,
+> >  fio -direct=3D0 --filename=3Dsingfile --rw=3Dwrite -iodepth=3D1
+> > --ioengine=3Dlibaio --bs=3D1M --size=3D16G --runtime=3D60 --numjobs=3D1
+> > -name=3Dtest_fuse1
+> >  fio -direct=3D0 --filename=3Dsingfile --rw=3Dread  -iodepth=3D1
+> > --ioengine=3Dlibaio --bs=3D1M --size=3D16G --runtime=3D60 --numjobs=3D1
+> > -name=3Dtest_fuse2
+> >
+> > Anyway, I am very glad to see your commits, but can you tell us how to
+> > show your patch set really change the fuse rw performance?
 >
-> likewise.
+> Hi Gang,
 >
+> Which server are you using? passthrough_hp? If you're using
+> passthrough_hp, can you paste the command you're using to start up the
+> server?
+>
+> I tried out the fio command you listed above (except using size=3D1G
+> instead of size=3D16G to make it fit on my VM, but that shouldn't make
+> any difference). I'm still seeing for reads a noticeable difference
+> where the baseline throughput is about 2100 MiB/s and with zero-copy
+> I'm seeing about 2700 MiB/s. The server I'm using is passthrough_hp.
+>
+> Thanks,
+> Joanne
+> >
+> > Thanks
+> > Gang
 
