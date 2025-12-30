@@ -1,206 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-72245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 502D1CE9D0C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 14:50:52 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E20FCE9D6C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 14:59:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id CF681301BEB0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 13:50:48 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 51AB43006704
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 13:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38AE228CB8;
-	Tue, 30 Dec 2025 13:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5DB2417FB;
+	Tue, 30 Dec 2025 13:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mKdjwZH7"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hhP+rDhb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37174594A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Dec 2025 13:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A57242D76;
+	Tue, 30 Dec 2025 13:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767102647; cv=none; b=UC9ObBowi34gn8LySyrjknYzufd6S3ksCVLD2p0ZmPOskimkMeyH/aX9iCs2uX5mOqRwNh+q/ll+3wRtJVXnTSMaVg6wY154NvowzGV62YINC/pd2JoWfX3BYQBytJLX+j+Adq/++2UjJXzOP17IMlxycYHiXuCfsISDt5VlR04=
+	t=1767103147; cv=none; b=DM3pEeV97bwj5PAIxWURxYO11R7w+ZYerv0TYain27aYzErxZ72xipHPosljZOWxCofVcuzRySZZp12gcVgt6Zin6Had3cbHQ+ffVgHRff1p3v4dtiqoc6T7l5ErzSEL2jCmevw/OfK9b6+bF6iotHPlXSr0nnu5ilyRJ+QEROE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767102647; c=relaxed/simple;
-	bh=T5wvdjCPg8PuhFR1pXN1iGJFo3d8MM/pdznXbVxjkqQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I0Xvmpc4RoPY0sX6GtvMej+72/VIQH4Xi90aUguPd27BRw63TS32eiaU5z2+VTegi5vSKFROMhQa3b+EXGe43C3TQj8G7EKheOVb9LXb8IDne/c4qkPMwgl2rlzy9JI+38BPj/mHpnK6VA5eX9nCttbwTNaOv5iOR3u3cRdkCCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mKdjwZH7; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-65d0441b6feso5462812eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Dec 2025 05:50:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767102645; x=1767707445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=46uAt53bXrO63AYOm/n+OwROEOKy1TWgUO7XKdbAN1E=;
-        b=mKdjwZH7F5OvPjLgLIcpTjUe0lrlHfUq6NAkoEwss/z6CyiTn+6EdwPEGXgn3GgGVs
-         fKIQOB9wGAg8LLipy+WUJZLj2SPajLgOIaOkxubXZjU641nUmTumsslTR9MXT5pnPnIW
-         7Pycw84WHrQjOfrstoZhbjzLjiOFlnLq0epXyyzY0VfyBrbqt+bWsujkWAuOhhZpX6F8
-         36Z9tZGP2PXelW8xCIPR9jCR7RHhi7l61LZp/IVQdB3zTp+YQCH0nSJhewoWYPbrqRlW
-         WTO5DVv6TtWM4c7hEz3ZCuTGy160QMECFqA++k4zDK6R+lYOwK2xYcSEc8mWOBTod2+s
-         YcPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767102645; x=1767707445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=46uAt53bXrO63AYOm/n+OwROEOKy1TWgUO7XKdbAN1E=;
-        b=ikVwbuOfqtj9aLa/XoSXCWBRDidNY0R5Emj+6itggUJHabY5Z6EmRxkUBMT2vPdn5a
-         gN5zqq+jCCc6gvwzdZSgn8M+0nkjR4lNMfx1Gy6z9cxXwAvvF1X+LbTRS74BbuG3K5ji
-         4vo0JC9fP+qD7s0ZIX5m0PrI7KUuu8DNeLrwKIjdTL/EjvYOKWrTs6hRYHTtgIaRgxsw
-         2P61+anrbDYeVXncFqWXmS/ULLchs8Q4DuN+LV4OLWgmcMd3JorMhb6byMNg1i2Cs2ha
-         rrRGV3ernljqVqqdLzMZundp1GpNitiga/kUhbDbQ3z87NYi3a65QngA3vHsOK02glG4
-         LnkQ==
-X-Gm-Message-State: AOJu0Yy52QZaUKHh2s5O4pqHrr0+kDYRwUlCMNHWgftAjmXhFi+lPDUH
-	LhmFHGkpW8APd2TyUmZRzirXETy1soZ69IEEuwnkzg/Hvu3gTSy62cCTemcl+d/NzONt071qcKH
-	BkXrCW9tXtobdZLtLuih3OB2XOheCunLGq6x+TtI=
-X-Gm-Gg: AY/fxX5xlHX6g/Azsm7STGWV2DNUV4kxjN79k7t4UMJqaA9+3UPhmJiF76AXPqb37qt
-	XBTEemWz/0aQTzucieY4mVfYoIBtUWHfCgCOVLV85s+QxZfIYpys9AO7PQYnoC9yICNVfo3TOyO
-	imrge8GLfQOaTc1AOAQwBsK1MMHOWho0tJMb++NXfkI1XHZ421nv2RySkcE8HpOzxc/9xlajYuJ
-	PDdCRVyAmDhTZvk9x42rHvo6+FlO+jfrtKbwkjy45mE1crpgC4XKJjP6bCTkW6TOlpa
-X-Google-Smtp-Source: AGHT+IG/nmT1xsHsMUgHyQNztRCwLj1gRq8tbTFDfJMqHg4mElvim04FJ9qP7JKJ+7xOJm3YSakxZqqRfQHCbRQBLiY=
-X-Received: by 2002:a4a:ddc2:0:b0:65c:fe8b:53c7 with SMTP id
- 006d021491bc7-65d0eab99b9mr12495773eaf.56.1767102644591; Tue, 30 Dec 2025
- 05:50:44 -0800 (PST)
+	s=arc-20240116; t=1767103147; c=relaxed/simple;
+	bh=OksRJgvU8zlQcIDRIgwO1NsjY/+/9nbvL8rYxjG4X4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZcvHQOQDM6OOc3zNljFhmD8dX/j1c4VU8obArmaAJyjLTJB2P2TAcw+nlXsarjbq1ECXr671k1yHz2tLXnm3lDh5yX2A181jsg0QjVRr0aW6IJHjBZvaCk+0E+k30F15u2ndYYb/AB7hZb2YH/kTB2sVLQ1yEDJouRYs35ZNB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hhP+rDhb; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1767103146; x=1798639146;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OksRJgvU8zlQcIDRIgwO1NsjY/+/9nbvL8rYxjG4X4w=;
+  b=hhP+rDhbbA4t40ml7uMkPslluvGMa9njD9zdUpvxhcDljFnTH3uzdDYV
+   0eIPPsNYvEAGac5NNZ8LT20yJXFjhKNaULPJSytDoy6AbH8yx9E+1hIGI
+   GUGChKFI0CiPy0ymvJt8SLB2Vw3Ru3Mu9ZUj231XHvVzwl/DTBmAlfRii
+   EkvJmHdU2E971/WunE+l/2jyUKkqT+QIHw1m99Z12LA4rVFHgJEmgRpDz
+   pY7tdAbLen1hmwmWnaLR0Akw2OcY2M7+PPakWTyT0dRyhe+IefP5JiWFe
+   yPjxdI+P6GpQ9NH3tQO4i239hlYbqOetMJu35ECqf9mp4Vo0VzU9Xwzci
+   Q==;
+X-CSE-ConnectionGUID: 1rhPycVlTpyAKOHa2JWbJA==
+X-CSE-MsgGUID: nVs5L9+YSaW20pfIU9cFXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11656"; a="72541486"
+X-IronPort-AV: E=Sophos;i="6.21,189,1763452800"; 
+   d="scan'208";a="72541486"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2025 05:59:03 -0800
+X-CSE-ConnectionGUID: XNxBiNSFS+Oh5TvNDeBnbA==
+X-CSE-MsgGUID: Cq0f+igbRYuoswcP3DcGXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,189,1763452800"; 
+   d="scan'208";a="201217998"
+Received: from lkp-server01.sh.intel.com (HELO c9aa31daaa89) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 30 Dec 2025 05:59:01 -0800
+Received: from kbuild by c9aa31daaa89 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vaaFW-000000000QT-11C8;
+	Tue, 30 Dec 2025 13:58:58 +0000
+Date: Tue, 30 Dec 2025 21:58:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yuto Ohnuki <ytohnuki@amazon.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Yuto Ohnuki <ytohnuki@amazon.com>
+Subject: Re: [PATCH] fs: remove stale and duplicate forward declarations
+Message-ID: <202512302139.Wl0soAlz-lkp@intel.com>
+References: <20251229071401.98146-1-ytohnuki@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACzV9_0qDaRJeaLLhs7DtVL8m8d5mUhrEAbe1GOy61dDKWj1fw@mail.gmail.com>
- <CAKYAXd_O93Wmbe=rYuv4fPcJJ-y98+vSJHcfu145kNiDNrzsXA@mail.gmail.com> <CAKYAXd8mAQw_LqS=1DRY32wje228CbVKVUq_eAsOBMYKhZKR=A@mail.gmail.com>
-In-Reply-To: <CAKYAXd8mAQw_LqS=1DRY32wje228CbVKVUq_eAsOBMYKhZKR=A@mail.gmail.com>
-From: Devourer <accelerator0099@gmail.com>
-Date: Tue, 30 Dec 2025 21:47:46 +0800
-X-Gm-Features: AQt7F2qKz762PX5WEb_X9BDasU7vUcRUGmsDeJGOp4bmgjfaMK7YJYUByo4xB94
-Message-ID: <CACzV9_0y1V2Wd_+eUprrozhK_q0b5j_xARihq5q0uT-iuBu3nw@mail.gmail.com>
-Subject: Re: [BUG] [exfat] Unable to mount exfat after commit 79c1587b
-To: linux-fsdevel@vger.kernel.org
-Cc: yuezhang.mo@sony.com, sj1557.seo@samsung.com, 
-	Namjae Jeon <linkinjeon@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251229071401.98146-1-ytohnuki@amazon.com>
 
-exfatprogs 1.3.1 fixed it! Thanks
+Hi Yuto,
 
-On Tue, Dec 30, 2025 at 12:53=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.org=
-> wrote:
->
-> > exfatprogs version : 1.3.0
-> And please try to repair your exfat storage with exfatprogs 1.3.1
-> version.(the latest version).
->
-> Thanks.
->
-> On Tue, Dec 30, 2025 at 9:15=E2=80=AFAM Namjae Jeon <linkinjeon@kernel.or=
-g> wrote:
-> >
-> > Hi Devourer,
-> >
-> > Can you send me it after dump using the following command and compress
-> > using gzip ?
-> >
-> > exfat2img -o sda1.dump /dev/sda1
-> >
-> > Thanks!
-> >
-> > On Tue, Dec 30, 2025 at 12:43=E2=80=AFAM Devourer <accelerator0099@gmai=
-l.com> wrote:
-> > >
-> > > ## Mounting exfat produces:
-> > >
-> > > mount: /run/media/AWD1T: can't read superblock on /dev/sda1.
-> > >        dmesg(1) may have more information after failed mount system c=
-all.
-> > >
-> > > ## dmesg message:
-> > >
-> > > [  +3.177475] sd 6:0:0:0: [sda] 1953458176 512-byte logical blocks:
-> > > (1.00 TB/931 GiB)
-> > > [  +0.000560] sd 6:0:0:0: [sda] Write Protect is off
-> > > [  +0.000004] sd 6:0:0:0: [sda] Mode Sense: 47 00 10 08
-> > > [  +0.000547] sd 6:0:0:0: [sda] No Caching mode page found
-> > > [  +0.000002] sd 6:0:0:0: [sda] Assuming drive cache: write through
-> > > [  +0.041258]  sda: sda1 sda2
-> > > [  +0.000094] sd 6:0:0:0: [sda] Attached SCSI disk
-> > > [  +4.240762] exFAT-fs (sda1): failed to load alloc-bitmap
-> > > [  +0.000006] exFAT-fs (sda1): failed to recognize exfat type
-> > >
-> > > ## However fsck says the fs is clean:
-> > >
-> > > exfatprogs version : 1.3.0
-> > > /dev/disk/by-label/AWD1T: clean. directories 259, files 3744
-> > >
-> > > ## so does mocrosoft chkdsk
-> > >
-> > > ## The function exfat_test_bitmap_range() (at  fs/exfat/balloc.c)
-> > > returns false at line 64
-> > >
-> > > ## If I insert some printk to show the details, it gives:
-> > >
-> > > i =3D 0, b =3D 96
-> > > bit_offset =3D 32
-> > > bits_to_check =3D 20
-> > > word =3D ffc7ffffffffffff, mask =3D 000fffff00000000
-> > >
-> > > ## The modified code is:
-> > >
-> > > static bool exfat_test_bitmap_range(struct super_block *sb, unsigned =
-int clu,
-> > >         unsigned int count)
-> > > {
-> > >     struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
-> > >     unsigned int start =3D clu;
-> > >     unsigned int end =3D clu + count;
-> > >     unsigned int ent_idx, i, b;
-> > >     unsigned int bit_offset, bits_to_check;
-> > >     __le_long *bitmap_le;
-> > >     unsigned long mask, word;
-> > >
-> > >     if (!is_valid_cluster(sbi, start) || !is_valid_cluster(sbi, end -=
- 1))
-> > >         return false;
-> > >
-> > >     while (start < end) {
-> > >         ent_idx =3D CLUSTER_TO_BITMAP_ENT(start);
-> > >         i =3D BITMAP_OFFSET_SECTOR_INDEX(sb, ent_idx);
-> > >         b =3D BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
-> > > printk("i =3D %u, b =3D %u\n", i, b);
-> > >
-> > >         bitmap_le =3D (__le_long *)sbi->vol_amap[i]->b_data;
-> > >
-> > >         /* Calculate how many bits we can check in the current word *=
-/
-> > >         bit_offset =3D b % BITS_PER_LONG;
-> > > printk("bit_offset =3D %u\n", bit_offset);
-> > >         bits_to_check =3D min(end - start,
-> > >                     (unsigned int)(BITS_PER_LONG - bit_offset));
-> > > printk("bits_to_check =3D %u\n", bits_to_check);
-> > >
-> > >         /* Create a bitmask for the range of bits to check */
-> > >         if (bits_to_check >=3D BITS_PER_LONG)
-> > >             mask =3D ~0UL;
-> > >         else
-> > >             mask =3D ((1UL << bits_to_check) - 1) << bit_offset;
-> > >         word =3D lel_to_cpu(bitmap_le[b / BITS_PER_LONG]);
-> > > printk("word =3D %016lx, mask =3D %016lx\n", word, mask);
-> > >
-> > >         /* Check if all bits in the mask are set */
-> > >         if ((word & mask) !=3D mask)
-> > >             return false;
-> > >
-> > >         start +=3D bits_to_check;
-> > >     }
-> > >
-> > >     return true;
-> > > }
-> > >
-> > > ## The disk is about 630GB so I can't upload it here. I can provide
-> > > some blocks if required. Please tell me if I can do anything to give
-> > > more information
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on linus/master v6.19-rc3 next-20251219]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Yuto-Ohnuki/fs-remove-stale-and-duplicate-forward-declarations/20251229-151612
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20251229071401.98146-1-ytohnuki%40amazon.com
+patch subject: [PATCH] fs: remove stale and duplicate forward declarations
+config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20251230/202512302139.Wl0soAlz-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251230/202512302139.Wl0soAlz-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512302139.Wl0soAlz-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   In file included from block/bdev.c:14:
+>> include/linux/blkdev.h:1656:41: warning: declaration of 'struct hd_geometry' will not be visible outside of this function [-Wvisibility]
+    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
+         |                                                ^
+   1 warning generated.
+--
+   In file included from block/ioctl.c:4:
+>> include/linux/blkdev.h:1656:41: warning: declaration of 'struct hd_geometry' will not be visible outside of this function [-Wvisibility]
+    1656 |         int (*getgeo)(struct gendisk *, struct hd_geometry *);
+         |                                                ^
+>> block/ioctl.c:564:33: error: incompatible pointer types passing 'struct hd_geometry *' to parameter of type 'struct hd_geometry *' [-Werror,-Wincompatible-pointer-types]
+     564 |         ret = disk->fops->getgeo(disk, &geo);
+         |                                        ^~~~
+   1 warning and 1 error generated.
+
+
+vim +564 block/ioctl.c
+
+d30a2605be9d513 David Woodhouse   2008-08-11  545  
+d8e4bb8103df02a Christoph Hellwig 2015-10-15  546  static int blkdev_getgeo(struct block_device *bdev,
+d8e4bb8103df02a Christoph Hellwig 2015-10-15  547  		struct hd_geometry __user *argp)
+d8e4bb8103df02a Christoph Hellwig 2015-10-15  548  {
+d8e4bb8103df02a Christoph Hellwig 2015-10-15  549  	struct gendisk *disk = bdev->bd_disk;
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  550  	struct hd_geometry geo;
+d8e4bb8103df02a Christoph Hellwig 2015-10-15  551  	int ret;
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  552  
+d8e4bb8103df02a Christoph Hellwig 2015-10-15  553  	if (!argp)
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  554  		return -EINVAL;
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  555  	if (!disk->fops->getgeo)
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  556  		return -ENOTTY;
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  557  
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  558  	/*
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  559  	 * We need to set the startsect first, the driver may
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  560  	 * want to override it.
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  561  	 */
+a014741c0adfb8f Vasiliy Kulikov   2010-11-08  562  	memset(&geo, 0, sizeof(geo));
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  563  	geo.start = get_start_sect(bdev);
+4fc8728aa34f548 Al Viro           2024-05-21 @564  	ret = disk->fops->getgeo(disk, &geo);
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  565  	if (ret)
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  566  		return ret;
+d8e4bb8103df02a Christoph Hellwig 2015-10-15  567  	if (copy_to_user(argp, &geo, sizeof(geo)))
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  568  		return -EFAULT;
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  569  	return 0;
+a885c8c4316e1c1 Christoph Hellwig 2006-01-08  570  }
+d8e4bb8103df02a Christoph Hellwig 2015-10-15  571  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
