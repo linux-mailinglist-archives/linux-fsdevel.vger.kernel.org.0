@@ -1,101 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-72255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28686CEAB46
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 22:17:46 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F6F0CEAC24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 23:05:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 88DD63030599
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 21:16:37 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id DFABD3006990
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Dec 2025 22:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24593229B12;
-	Tue, 30 Dec 2025 21:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203A528489E;
+	Tue, 30 Dec 2025 22:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBAwaT3D"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R6zgYslp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817803A1E81;
-	Tue, 30 Dec 2025 21:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EA228469B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Dec 2025 22:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767129395; cv=none; b=VKG/iqzW9FZvOiJH21xc4r3KibyfkEE4iBUsDc7NZyq1ecVj8epMoSNDHjCtjrc/EZP2ZxU76Hw7u3ZKm3lTqyefBOe3eqDvFlOyVqpbAyQCYYagMZtb4dvgxnkkkuP5RZjVMSxTG4nqMXtA1Wvgt8JxjsZBdfAWW2O7AudHng8=
+	t=1767132304; cv=none; b=g+zBhuBlQWWAwOq2K2TFhzuS41BL7Z/rKAROGlzBU/TN2n6DAquLR2uMjMrpWipIkM7hdyNqdHHcaY3Ds4ea8bwOH04u8yLybZt82VrFGFn49PVDrN+yDQIlyvkM9joAwB9duBk1/wY8Mu2zfniIi8QfN6/+hXA7sxXcwatVgQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767129395; c=relaxed/simple;
-	bh=4DKULb/zuWKAShCcUWLrmxZb0ZVLjYP4ZC9IAD+5sZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jB5akK+2lv2BtxVzL0rVBJwRy8f3BxnC/y/rZ43CLLMNgl2uF7+N+rDzyUXWDjDgxUw4qJCyst9LkeG4X31J4Zff1SNh24w5lllkmf90nlEKR00HVBgSfph2fqX96RUnC7hhJUCl2HTo7QzFawqcWBrqvjgNi/zxgGWKDH30AuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBAwaT3D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B2DC4CEFB;
-	Tue, 30 Dec 2025 21:16:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767129395;
-	bh=4DKULb/zuWKAShCcUWLrmxZb0ZVLjYP4ZC9IAD+5sZc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lBAwaT3DCkGP8tR0MTimu69apbG5cWbRANBmPDMz6KgRQScZYW6QoSrjxFemajZCa
-	 mFd88BMw4p7aekW9hJ/saQtN/itiAX7vgTkBoWyHXzUWk3pHxTiW1HiUWxOBcHiJXQ
-	 zu7oVhnO6kvEDMiN9m+Q9+kzNFfXnPFay88XYFdTX0yaPHf7KxzWl7D+nGRpxlVD7c
-	 np1ovlAgWup75llT1C+h6szaS2ZwjyuLn471yUtfFAvlrtTVtH3UFAJtGn/g/eW0H+
-	 fF/Ou5S8rDEIqm/FQpdIWcBs3amTj/9bbrU/sMmXDE9EpU6++0zCwkPAPTDr8ShTl4
-	 ZdhnNpRK0RL2w==
-Message-ID: <ac50181c-8a9d-43b8-9597-4d6d01f31f81@kernel.org>
-Date: Tue, 30 Dec 2025 22:16:30 +0100
+	s=arc-20240116; t=1767132304; c=relaxed/simple;
+	bh=ciEnuCD23jowJ/L+XGQbb7pSaDpfH4eCH7oImwf2d0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b6PkvAiMpxM1f2e/8vxbp9eS1KSeFBxXJeoDJgoPic9UciCXrZH1lRUQIq/St5H49G0nC1p1Gcf9otqhGSJKgrl5hzc9FbJyl4gb8FcowvUzPGlyZyEhgVRFZ3Hqb2BwW0vdG5ZqV4llNzdE2d8hwusDDa1yzclH0w2u2ekrsDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R6zgYslp; arc=none smtp.client-ip=209.85.208.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-64d02c01865so13325803a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Dec 2025 14:05:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767132301; x=1767737101; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iL9oUwPK6pMmNAMWI41vZfP4nRtVQLFCd6SfZyUQxgg=;
+        b=R6zgYslp5lbcmAd3i8vca/Dq8PTNAo7Lj4IMNk1n2/Nr9YfhQUSubfGadW/VO3ucTI
+         o0fkTvRvMYDYzXi5XblRWF+bGSYmdm6cZY33Co+Y+52iZS2H5DH9PgER9vb7nh3LVb4h
+         wLW/Woa8lgczK0acXDksj0q+ZQgu+roI3TGFWoc3d8GlPCiPosIk8sL1hVpL3T650GBM
+         fe25QLnEQldsXD7/GVaZi1O+4YRH8oSPzXHjrG44c8yvHIiw2ofmRuMi2LHnwUQMc+eB
+         779q9vbcHEtFoH8RIZpyac6w9PRUTqxE7mXUTVdaU2TvXFgPWqbtiSKtaV0LOoRJRbd1
+         8HYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767132301; x=1767737101;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iL9oUwPK6pMmNAMWI41vZfP4nRtVQLFCd6SfZyUQxgg=;
+        b=XAGlBjoaoDi+A3Tw7bNCFP8Hy7g02imfYLkkjscE5CGLWLrKeUeNLy1BscJHhW26AT
+         CvzcZEW/NLU2yLxKVUHFpxv4W4YVen5dfPOo8uEPVXseFHfc80y/UcyL3I3Cy09STzMa
+         24SSwchsqw4Le7bStoczefbTXyL2Mm4K73cCrPiW9VFEKUfazalzuNH4dQSsK1ZI/zj7
+         oxaQOGQVaM2T/T2j+6/66h2ays28PhM8Zva89PoHyNUzpX/1aoikC8MJg2ufINexsru5
+         DU/S7hxoWB8/cnEHcLJlZVledAjNBFHfwPzvlBmH5SZdggAd35lmnuku4nKgwEzVt5pp
+         QpaQ==
+X-Gm-Message-State: AOJu0Yytu5EnynkrqQq830+vXynDN4GYD576IemEfL18hTtUp+ZGMV7I
+	uCCDgJKNO1GSDAKVsxwvgazG+Ezg66leOpP7heCcGMaj7QVu/bzFvt23
+X-Gm-Gg: AY/fxX7VgZFDBTw9ZkMyEUOsBE2U6VQm9tKachQ7hBdkOaIgh8qW/JZk2w47Hqr4w2W
+	g1vcTmWQUQ7MtDnm1UfvmRTs2I/XPydriyu0kAbKMUtCZbjscYhOSlvYSnJkS165o+5ApX5Xx/y
+	c4L7AecO2s00iRj0x/ncevIYHwV+QCtan65T9qHSzbqq6vW1KKRqIwK/0MDx6p3K00tkurMTP1x
+	hWqcTbhSLxSK4oAAWPHveq66M0qiQ+P08c8hQyKxirQFOxDBSl6ElaKvD3N9aVJylFhmv5l95Fo
+	ppvEaMftvZmloeY9v2l5y3O3v+BwpJ1ulCoDsCBZJ3jGfQuPsB5bwGPTH5uJwBlotmwTkmPGIoH
+	Y8Zh5Bj3MPUM0HUjTsaLh4ngy6QqkaeTU8526oDOyj0QIEBQqVgFRD2ZuXIIg8/P3BLThvueb6u
+	b45cDW8QTBLJJ64cnz2hIRHG+ZIc4RxUraFOwit4ps5ILSvS7Aah7I8M51j/0=
+X-Google-Smtp-Source: AGHT+IFNqw3fHXA+0vU+KlB/nzXR38Cm2kP1GIXjrZY1/19S+eNMcf/p5//Z+VJzLtIGZInAPA2ybA==
+X-Received: by 2002:a05:6402:2685:b0:64b:6e44:217 with SMTP id 4fb4d7f45d1cf-64b8e2a6a78mr34031433a12.0.1767132296212;
+        Tue, 30 Dec 2025 14:04:56 -0800 (PST)
+Received: from f (cst-prg-87-163.cust.vodafone.cz. [46.135.87.163])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64b90f5400bsm35893748a12.4.2025.12.30.14.04.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Dec 2025 14:04:55 -0800 (PST)
+Date: Tue, 30 Dec 2025 23:04:46 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	David Howells <dhowells@redhat.com>, lkp@intel.com, oe-lkp@lists.linux.dev, 
+	Alexander Viro <aviro@redhat.com>
+Subject: Re: [PATCH RFC] fs: cache-align lock_class_keys in struct
+ file_system_type
+Message-ID: <o6cnjqy4ivjqaj4n5xphstfnk5jznufaygwmfkm2gyixqgfump@7fc6c6h6d5if>
+References: <9fbb6bf2-70ae-4d49-9221-751d28dcfd1a@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 PATCH 1/1] fs/proc: Expose mm_cpumask in /proc/[pid]/status
-To: Aaron Tomlin <atomlin@atomlin.com>, oleg@redhat.com,
- akpm@linux-foundation.org, gregkh@linuxfoundation.org, brauner@kernel.org,
- mingo@kernel.org
-Cc: sean@ashe.io, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20251226211407.2252573-1-atomlin@atomlin.com>
- <20251226211407.2252573-2-atomlin@atomlin.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251226211407.2252573-2-atomlin@atomlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9fbb6bf2-70ae-4d49-9221-751d28dcfd1a@redhat.com>
 
-On 12/26/25 22:14, Aaron Tomlin wrote:
-> This patch introduces two new fields to /proc/[pid]/status to display the
-> set of CPUs, representing the CPU affinity of the process's active
-> memory context, in both mask and list format: "Cpus_active_mm" and
-> "Cpus_active_mm_list". The mm_cpumask is primarily used for TLB and
-> cache synchronisation.
+On Tue, Dec 30, 2025 at 03:07:10PM -0600, Eric Sandeen wrote:
+> LKP reported that one of their tests was failing to even boot with my
+> "old mount API code" removal patch. The test was booting an i386 kernel
+> under QEMU, with lockdep enabled. Rather than a functional failure, it
+> seemed to have been slowed to a crawl and eventually timed out.
 > 
-> Exposing this information allows userspace to easily describe the
-> relationship between CPUs where a memory descriptor is "active" and the
-> CPUs where the thread is allowed to execute. The primary intent is to
-> provide visibility into the "memory footprint" across CPUs, which is
-> invaluable for debugging performance issues related to IPI storms and
-> TLB shootdowns in large-scale NUMA systems. The CPU-affinity sets the
-> boundary; the mm_cpumask records the arrival; they complement each
-> other.
+> I narrowed the problem down to the removal of the ->mount op from
+> file_system_type, which changed structure alignment and seems to have
+> caused cacheline issues with this structure. Annotating the alignment
+> fixes the problem for me.
 > 
-> Frequent mm_cpumask changes may indicate instability in placement
-> policies or excessive task migration overhead.
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202512230315.1717476b-lkp@intel.com
+> Fixes: 51a146e05 ("fs: Remove internal old mount API code")
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> ---
+> 
+> RFC because I honestly don't understand why this should be so critical,
+> especially the structure was not explicitly (or even very well) aligned
+> before. I would welcome insights from folks who are smarter than me!
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 9949d253e5aa..b3d8cad15de1 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2279,7 +2279,7 @@ struct file_system_type {
+>  	struct file_system_type * next;
+>  	struct hlist_head fs_supers;
+>  
+> -	struct lock_class_key s_lock_key;
+> +	struct lock_class_key s_lock_key ____cacheline_aligned;
+>  	struct lock_class_key s_umount_key;
+>  	struct lock_class_key s_vfs_rename_key;
+>  	struct lock_class_key s_writers_key[SB_FREEZE_LEVELS];
+> 
 
-Just a note: I have the faint recollection that there are some 
-arch-specific oddities around mm_cpumask().
+There is no way is about cacheline bouncing. According to the linked
+thread the test vm has only 2 vcpus:
+> test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
 
-In particular, that some architectures never clear CPUs from the mask, 
-while others (e.g., x86) clear them one the TLB for them is clean.
+Even if the vcpu count was in hundreds and the ping pong was a problem it
+still would not have prevented bootup.
 
-I'd assume that all architectures at least set the CPUs once they ever 
-ran an MM. But are we sure about that?
+Instead something depends on the old layout for correctness.
 
-$ git grep mm_cpumask | grep m68k
+By any chance is this type-punned somewhere?
 
-gives me no results and I don't see common code to ever set a cpu in
-the mm_cpumask.
-
--- 
-Cheers
-
-David
+While I can't be bothered to investigate, I *suspect* the way to catch
+this would patch out all of the lock_class_key vars & uses and boot with
+KMSAN (or was it KASAN?). Or whatever mechanism which can tell the
+access is oob.
 
