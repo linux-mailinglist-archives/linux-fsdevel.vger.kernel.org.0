@@ -1,139 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-72262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B91CEB184
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 03:35:59 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA8ECEB3D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 05:48:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id AF3B33014D93
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 02:35:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 1481C300AFF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 04:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F81F2459C6;
-	Wed, 31 Dec 2025 02:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3364A2F49EB;
+	Wed, 31 Dec 2025 04:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QuvkP2Nz"
+	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="Vi6WhnPf";
+	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="LDduBncw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807421A840A;
-	Wed, 31 Dec 2025 02:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B08219E8;
+	Wed, 31 Dec 2025 04:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767148548; cv=none; b=NdjuKIbHKoNeg45l1xqiNPgL1+3QRDoxXspMcydftzSxTFi2pLsvNME75IVozs2viqyoAbgwqUxWewpolXa5Pkfh+GtaubZP6ngigGX6/svFrv2f6DrkAbkHeKGqZRH1fOFrNwjLkI4eOs2w2sw+QoMHXn2AAJ1R0kk8osJZsiU=
+	t=1767156509; cv=none; b=QrfjbO8aloJTytNykNiGnNJz1DLsmSycefWEScUveuf2K/c7TyzZ1ypdRiPd60MxN2i74NisQcxQ4anT6kd+VuTSjwGUWOkfBfOP7ZeTrbRwumIuB2dNz8PpedxMrdtAXFa9ZghfA2VNazchpwGQqVD0MjQiaOEQ9YxnqbiCJvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767148548; c=relaxed/simple;
-	bh=5kAEtgp3AUCLgViqiEmswnVoFXKmx932NIMVJQGVUI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OF0prS3WeM0Gy6bncUT0aoiLcSeuNenwqwELXYYj7m0oycJuGsSKJez4iPSZdWY9UZy6ae0ASZ2p0tcVku/6aj7089X8IsByMAOsrI6DWKYeTaepeGDI0JsqI80OAjsVssFH/GC5KCK3Zl2TZLrzPHkIxDBKtRnyaIlH52btFno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QuvkP2Nz; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=43lfbCdG1iPweBSVVwVAKkHG4CimAzus/9X0K+CoqzA=;
-	b=QuvkP2NzcNV56R7dOfFodpasqHj4ExaCawQ6Re5Y0Qu6BHPFmd3Jm2KDvawEZ1
-	WFz8xvtNusOl3MXhqy5zQ374LpbzHhTDwdL0GZ6nVgGeKirnA9ucPNCmpUX4yJzT
-	ZhWhy1owYU6P8xfYnRrOcMPfXC3L2Dcvq0gem9zTuciZA=
-Received: from [10.42.20.201] (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgD3D+ffi1RpbbH0Kg--.12976S2;
-	Wed, 31 Dec 2025 10:35:11 +0800 (CST)
-Message-ID: <d832364d-02e6-458d-9eb2-442e1452a0f9@163.com>
-Date: Wed, 31 Dec 2025 10:35:11 +0800
+	s=arc-20240116; t=1767156509; c=relaxed/simple;
+	bh=Y5STvpbLFchDPxv5AKA6CA0YE5aPUZ9b41fJenXR/A4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OgCMtFBVq6pizIzaJr97buU2Rmf81FraknlaiREWKJuL5r6y/FA6G/UEIeIbXbXTgHyriHycBH2lFBtEUnjFnGuRkXaVjHrkoNNq7a9COEMHy6l94MX6jLSQYK1jehkRf904z/RsZrdxkcveGU1WF1SLSaVsueOGDji/zD5zIIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=Vi6WhnPf; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=LDduBncw; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id 5FD9526F7658;
+	Wed, 31 Dec 2025 13:41:47 +0900 (JST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114; t=1767156107;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GJg9D2/rQAcIczscJ6y9eKBgMTU7/0gQppNdTnS+N/A=;
+	b=Vi6WhnPfpbTAdPOQSWwQrGenYQESGcwWr9wSe7LXBTrZ8FZ7pSC45FPqBojvbjR0TAr/8V
+	tlrmswope0EO7nyGITwEIFosw7JSUuQqBxtmZAzdD+HxRPeDnnQd5omWQqf2CVvZj/ECDa
+	shpBuKU050V0R9a9L+sSk+wR1cuoukWn2khMDYnfShlq3MijpRq4qDplioO5GO1fPAHQ9O
+	momwPdSFIcCNEsQCrcwD0WB2kRXU7037ctp9dyeFtvFrBG608oGcAEbwhPHK6U17qJJFhb
+	RnBFVNGYIQCT4p7UNB8l7PCLkFJatp4xWYhg/Ag76mZJ97LHNjnvbS1tMZaF6w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114-ed25519; t=1767156107;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GJg9D2/rQAcIczscJ6y9eKBgMTU7/0gQppNdTnS+N/A=;
+	b=LDduBncw9gEdm7YZj8at9UxlA5yPFTQ2Cveqe8LBtMVRYYCKEzjrOTcCR3ZIJMjzR3UCjc
+	AS1DvFML97z027Bw==
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-7) with ESMTPS id 5BV4fjV0267935
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 31 Dec 2025 13:41:46 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-7) with ESMTPS id 5BV4fj24637326
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 31 Dec 2025 13:41:45 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 5BV4fjl5637325;
+	Wed, 31 Dec 2025 13:41:45 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Zhiyu Zhang <zhiyuzhang999@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, syzkaller <syzkaller@googlegroups.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Kernel Bug] WARNING in vfat_rmdir
+In-Reply-To: <CALf2hKsMc3o+mYg2xwNEFO+q2Z=XteOmCjd1=EHOR0Na3=201Q@mail.gmail.com>
+References: <CALf2hKtp5SQCAzjkY8UvKU6Qqq4Qt=ZSjN18WK_BU==v4JOLuA@mail.gmail.com>
+	<CALf2hKsMc3o+mYg2xwNEFO+q2Z=XteOmCjd1=EHOR0Na3=201Q@mail.gmail.com>
+Date: Wed, 31 Dec 2025 13:41:44 +0900
+Message-ID: <87ms2zgt4n.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 9/9] exfat: support multi-cluster for exfat_get_cluster
-To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-Cc: "brauner@kernel.org" <brauner@kernel.org>,
- "chizhiling@kylinos.cn" <chizhiling@kylinos.cn>, "jack@suse.cz"
- <jack@suse.cz>, "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "willy@infradead.org" <willy@infradead.org>
-References: <PUZPR04MB6316194114D39A6505BA45A381BCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Content-Language: en-US
-From: Chi Zhiling <chizhiling@163.com>
-In-Reply-To: <PUZPR04MB6316194114D39A6505BA45A381BCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:PSgvCgD3D+ffi1RpbbH0Kg--.12976S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Aw4xZry7Xw4xAFW7AF45Awb_yoW8ZF15pr
-	WxKa48trsrJasFkwn2yw4kZr4Ska4kJF15Ja1YqFWUCr98ArnYgF98Kr9xAF18CrsYvanF
-	vw1Ygw17u3ZxA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEF4EJUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC3B+JJ2lUi99ZbwAA3y
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 12/30/25 17:06, Yuezhang.Mo@sony.com wrote:
->> @@ -243,6 +244,7 @@ int exfat_get_cluster(struct inode *inode, unsigned int cluster,
->>        struct buffer_head *bh = NULL;
->>        struct exfat_cache_id cid;
->>        unsigned int content, fclus;
->> +     unsigned int end = (*count <= 1) ? cluster : cluster + *count - 1;
-> 
-> In exfat_get_block,  count is set as follows:
-> 
-> count = EXFAT_B_TO_CLU_ROUND_UP(bh_result->b_size, sbi);
-> 
-> So '*count' is always greater than or equal to 1, the above condition seems unnecessary.
+Zhiyu Zhang <zhiyuzhang999@gmail.com> writes:
 
+> Dear Linux kernel developers and maintainers,
+>
+> I=E2=80=99m sorry =E2=80=94 the root cause analysis in my previous report=
+ was likely
+> incorrect, and the patch I suggested there does not alleviate the
+> issue after further testing, which means that the root cause is not on
+> the errno passing.
+>
+> After adding debug prints in fat__get_entry(), I observed frequent
+> cases of err=3D0, phys=3D0 at pos =3D=3D i_size, which means the code is
+> taking a "normal EOF" path (as decided by fat_bmap()) rather than
+> hitting and swallowing a negative errno. As a result,
+> fat_get_short_entry() still returns -ENOENT, fat_dir_empty() still
+> returns 0, and the code path does not prevent drop_nlink(dir) from
+> being executed even when the parent directory's i_nlink is already
+> abnormal. In other words, the parent directory's i_nlink appears to be
+> wrong/corrupted in the first place. Subsequent vfat_rmdir() calls then
+> decrement the already-too-low link count, eventually reaching 0 and
+> triggering WARN_ON(inode->i_nlink =3D=3D 0) in drop_nlink() (and panicking
+> if panic_on_warn is enabled).
+>
+> So please IGNORE my previous patch proposal. A conservative mitigation
+> that I tested EFFECTIVE is similar to the UDF fix for corrupted parent
+> link count handling (Jan Kara's WARNING in udf_rmdir fix:
+> "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commi=
+t/?id=3Dc5566903af56dd1abb092f18dcb0c770d6cd8dcb").
 
-Yes, it is unnecessary.
+It can occur on a corrupted image that didn't correctly initialized as a
+directory.
 
-> 
->> --- a/fs/exfat/inode.c
->> +++ b/fs/exfat/inode.c
->> @@ -134,6 +134,7 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
->>        struct exfat_inode_info *ei = EXFAT_I(inode);
->>        unsigned int local_clu_offset = clu_offset;
->>        unsigned int num_to_be_allocated = 0, num_clusters;
->> +     unsigned int hint_count = max(*count, 1);
-> 
-> Same as above, hint_count seems unnecessary.
-> 
->> +     /*
->> +      * Return on cache hit to keep the code simple.
->> +      */
->> +     if (fclus == cluster) {
->> +             *count = cid.fcluster + cid.nr_contig - fclus + 1;
->>                return 0;
-> 
-> If 'cid.fcluster + cid.nr_contig - fclus + 1 < *count', how about continuing to collect clusters?
-> The following clusters may be continuous.
+> static int vfat_rmdir(struct inode *dir, struct dentry *dentry)
+>         err =3D fat_remove_entries(dir, &sinfo);  /* and releases bh */
+>         if (err)
+>                 goto out;
+> -       drop_nlink(dir);
+> +       if (dir->i_nlink >=3D 3)
+> +               drop_nlink(dir);
+> +       else
+> +               fat_fs_error_ratelimit(sb, "parent dir link count too
+> low (%u)\n",
+> +                       dir->i_nlink);
 
-I'm glad you noticed this detail. It is necessary to explain this and 
-update it in the code comments.
+Looks good sanity check. However, I think it doesn't need
+_ratelimit. And this should be done in msdos_namei.c too.
 
-The main reason why I didn't continue the collection was that the 
-subsequent clusters might also exist in the cache. This requires us to 
-search the cache again to confirm this, and this action might introduce 
-additional performance overhead.
+And fat_fs_error() should remove last "\n", and please add {} for 2
+lines code (it is not necessary as c though, sorry for kind of my
+preference), also looks like no "sb" here, need testing before actually
+submitting the patch.
 
-I think we can continue to collect, but we need to check the cache 
-before doing so.
+	else {
+		fat_fs_error(sb, "parent dir link count too low (%u)",
+			     dir->i_nlink);
+	}
 
-> 
->> +             while (fclus < end) {
->> +                     if (exfat_ent_get(sb, clu, &content, &bh))
->> +                             goto err;
->> +                     if (++clu != content) {
->> +                             /* TODO: read ahead if content valid */
->> +                             break;
-> 
-> The next cluster index has been read and will definitely be used.
-> How about add it to the cache?
+Thanks.
 
-Good idea!
-will add it in v2,
-
-thanks,
-
-> 
-
+>         clear_nlink(inode);
+>         fat_truncate_time(inode, NULL, S_ATIME|S_MTIME);
+--=20
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
