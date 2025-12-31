@@ -1,68 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-72291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E763CEBF85
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 13:32:32 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05BBDCEBF88
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 13:32:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 74D79303364F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 12:31:57 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 5D2623013845
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 12:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609D4325492;
-	Wed, 31 Dec 2025 12:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C85322C60;
+	Wed, 31 Dec 2025 12:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nQCx8LIw"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rXg+fj/D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA0D3246ED
-	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Dec 2025 12:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C104324B06
+	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Dec 2025 12:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767183765; cv=none; b=SZLM2aioFjNe8bP2npasFdl3P4a85yraGNOqHW1dOV1TkqKUPHOB8knaR1bURoPdUxbyIGTPtlJ2bosRp7DraFWN+II8muzgNN1rl3BLLgIBYq1pCZGAkhIKjAFbeVt7dbqQ319JAPLynGXXF+zxHlq/TjDXeMMESjBKf5JUUrE=
+	t=1767183766; cv=none; b=VdhQk+DKqEmYVx1KiaOyQ4BwgoZxSjC1WH2DVsSpZsnpbSazK+UT6zREFuKA9+/03l386WTwiX71R3bwihfG4NrWvVCPlFU4u2onLRLwhz1Ad4p2RyeVXFQ6QDYM8PQuNpJ5kbwSNPvQJiSnUGdZcMfK6Bmdt50iHUkck04dXuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767183765; c=relaxed/simple;
-	bh=dWGhxjFk0H0ccZ8Z0LvyX4T5xP2vhqe9w9Pjy9Iy9EA=;
+	s=arc-20240116; t=1767183766; c=relaxed/simple;
+	bh=x48g//vEaovaCGc/+3V+kdS96OVZQrdlR7cVmTcJM3Y=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UDtLnrnfOKSm6WuMBP9aywqi4Fu/O1F0tDpfX0vKIc6+qtlrfXLO2pc0pZDGxhUSIwjFNRPYupEif2avW8rHI19FlvtYujc6u9n6S1mlemFLBHyF3uCc9pCehgZfpzay7kWaiAp0eafxHi6xUmtLB5g3yjeyKtPzGcRsc3Xl2P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nQCx8LIw; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=Q+DMuqrZBPMIdutCjASF7BTqK3EHpzsLAjT9NXvoq5itkFT96ektazwBzVsPMDSXLRU/8a6ip94tj5vXjKqEcv32tfaLYLyi4XYDrrOllx/UsjBsH8wqcpftVRWC0wXs1+kJ3KQBonvuOLFSfXpBWiRcbmyqeCeN3T11q9FKDq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rXg+fj/D; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4775f51ce36so95593665e9.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Dec 2025 04:22:43 -0800 (PST)
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-43102ac1da8so7722219f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Dec 2025 04:22:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1767183762; x=1767788562; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1767183763; x=1767788563; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IML1ayTIBjLRiL1IISCGMNFG24NcobrFATGIP2DkaPQ=;
-        b=nQCx8LIw+IgysOK/5LWZzN/DCseniEUCOx83/YJLJoYGeRXt2B9W0ViIzG/PLVxErJ
-         aPTCWHKdShoMzrvJLx7VlCbIKxZLE5/lAGpmOemIut2kSAYo5coyRJj2Z1fF/5d3jNKJ
-         b1n7Uu64DCLHSIuSspS9y/ror7OQA/AKG/D2Cwa6CtBd0/elfRROWUYvDZXYfu2LKxuq
-         U3hIl0Ftp6SOzCwb1M4m45VgGeeHVnNZV6iSLdXIt+/Bl3Tlrb9Nv62ydTN4tpcGaPpi
-         VhMZeJLZ5CbMQoIK0g0PgDmWA86RLK3OLOtd4YRc0326TR9OGav+5mpSKb8Hxh0nico3
-         rLqA==
+        bh=EnX+YiWBwSFj03NZe+M6b1I0lykasXzPK5veF6o26Xk=;
+        b=rXg+fj/DzoTvLQUq1C+NqmI1l/Dv9/E+2MpEhMt9Bn2phj0jP+SEVHcy6DFdj25ZWT
+         cUZnz/qO1Qjs6y8pbxud7nGfmNScImOxjXZtq0ysNMkYcUmVxJTMi9HqajRH89WZDJPp
+         D4n08kz2zhlNVxK5fLBL2MbnBu36uVh8B50QgJUpIjy2Ln2ixFUb9wkTubZUR2z5s0tU
+         l6+mFPAmw4nGWooXRhLE3pmb7yHtaNG5Ilo6WykD0NpSojQ5s/1wggb/ZB/NfVTawK/x
+         5DG/FXxuiw4SnZ0HBZkOh4NSj4bScSQfDWK4NLUnyqqdHvOXZ0FrIU8hGYtakERRt/Gv
+         0l1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767183762; x=1767788562;
+        d=1e100.net; s=20230601; t=1767183763; x=1767788563;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IML1ayTIBjLRiL1IISCGMNFG24NcobrFATGIP2DkaPQ=;
-        b=Y4VCmnVHRuXuSdZVS2sZDMIHpzyC1YLIWxdOMYS8YgbG5DQgCO/gbWNaOOKNyeBoOI
-         VJyyuAEeZ/OJ+3pCi9aKlHv7zip+F4QftKEN0IkI9FcXEbczM5P1eKa+tIM8qVl8ovOU
-         1gUYQ8i28gfzoZCF1mRa6zqIviF1dBA2G3mGfJ0LAU2WK1H/kweu2AgpAYlp162KpXPc
-         +Ths9eRDW0zvn1up2puD6HKarLK1FsIadhNng+RXyLB3osRcJA8bYqno7HzPGpb+4ual
-         KG2HMhbVO01+WjbLNuCrEDUc7AiurZvAcwE0f4+ISGOQc11joB16HwznDBz0N1IpCPaB
-         knjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgNZM3OBoVQZMzIJVs9kLp1FSMkKzSzbdmF4stoeN/fiRlpRx5KGA2MvSJAYOcGSpd4jcQrHPqjaitPeaL@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbPu8maZW+ZkLskjedgo7WXVslMiaELKruQ0gQTG6S6/jWtp73
-	DxFW5CDGVtmPRQyQfmx/jSVNJan8H/fJWTkf0rmi3icUsk4QW038ZmMZIJLCpnbxuxdJMk9aQHN
-	3lLwIefM0Vaw5eJYbcw==
-X-Google-Smtp-Source: AGHT+IEJ0sOB06BtEpr8ZstmrMz9PeNhPmO2C6GqJfhTbjec6TNWZvpmubPfbs7AHp85adb5H0AyCveolppYmsI=
-X-Received: from wmco11.prod.google.com ([2002:a05:600c:a30b:b0:47d:47dc:d5d4])
+        bh=EnX+YiWBwSFj03NZe+M6b1I0lykasXzPK5veF6o26Xk=;
+        b=pdfqly98A2swplLwYv5Dq1Aacd1WJwBb5rNepuUUEddyIn797Fap2vX6CFr3BYtl2G
+         UamsnaZHTbH0kek8+UGfs7awzVJpvxQziRidQ6ASWcJ6nnvFnrmenGrz+UYoIrRYtG41
+         ghJY5lV6/rd+8ez6tklxCHHkZkEAzm5GpwhlGBg8olAXB4xQVrRG3U+3hHiQhQq1O5po
+         GA+cW3yyoen7nG8RXiK4qNe+fnkBpz4W44iE5Q0bSnUbz7kmEV/s9B6OtxPHIFgfQW8x
+         ipJdzh+TrXC97HNheagB77/erz8djzjTzY29uWkLrUFdjvkmQg1r8GoHRzplZu6yHx25
+         mPFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHQxD00/dOJr8pxHR9Y6/gy7hGQ9miB4C7BQiyBg+s+Mw6ppzQsHm1+a0KpP2HwXZ8t9x6RKlWgoNeTyfG@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTzw8QffV5cMob8HEBkdQWg9NbayuhuJh5LhUXUE0/GJvl9AAE
+	0w3KQEX/nbHoGQg6iBP5ARG3xWfowZb5EYWtReo3PUfzqeSHAiZUZyOImXdTyzECUQjW/0Zx2pv
+	uBWecZQjAfPofL+UJGw==
+X-Google-Smtp-Source: AGHT+IEVvKcXr6CgV/sO/SopdsqbSp5OU9ou7XeJWfmPxsy3aUaKE2cdpBZhPeJYGAC28ivLbvgGuv+puag4k9w=
+X-Received: from wro8.prod.google.com ([2002:a05:6000:41c8:b0:432:5cc6:c7ec])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600d:115:b0:46e:37fe:f0e6 with SMTP id 5b1f17b1804b1-47d1997e733mr293114935e9.30.1767183761820;
- Wed, 31 Dec 2025 04:22:41 -0800 (PST)
-Date: Wed, 31 Dec 2025 12:22:28 +0000
+ 2002:a05:6000:40db:b0:42c:b8fd:21b3 with SMTP id ffacd0b85a97d-4324e70b2c0mr47793415f8f.57.1767183762838;
+ Wed, 31 Dec 2025 04:22:42 -0800 (PST)
+Date: Wed, 31 Dec 2025 12:22:29 +0000
 In-Reply-To: <20251231-rwonce-v1-0-702a10b85278@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -72,22 +72,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251231-rwonce-v1-0-702a10b85278@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1228; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=dWGhxjFk0H0ccZ8Z0LvyX4T5xP2vhqe9w9Pjy9Iy9EA=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpVRWLGkM6ekaGvNs/GppoXyA8q6kxlkpqLewuW
- 7WNKhbTKjqJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaVUViwAKCRAEWL7uWMY5
- RtLUEACKkaSaNK/TcJXYBxaQi+3v3CPDHRjWTgRzkBlZ2cipngBrd+Bwm5aNQr6HLLA2wljr5zB
- sd8yJUc9TZdLiWbispUZaLCxJC+XAMVad9CXiS98PYq5H0Hv98uxbgcFI4T3nuHqM/xrG4OBMqR
- d9jwZii4XhRij0gUrPqQYAqX3+sb174Ah2h6tS1WLllr/7oegCZFedCpoObQ7JF9OwSXtT5VevH
- R2ZDKva3GoKaG0vo428LZXH/UDDFPKUn6o0Y1whhaRXdzIG5we6N/H53PjF2Q+OC2kHDHtqgKea
- xjKnfDl8tJ5TAjd69k/mBPk3xHvVo/vIbXfL35oFTix2yk1n8kcuv1Zx0+Qbv6gF1FSr5sn9Yot
- z3DlseF+Q4w5zWKbGVngm4+kn9Lo6gew72+hoQ8C2n7b9mGKUkCIqmNHamdglZznxgfrHGI8imv
- Lkz8hP73DNqX6vhQblP3+Fxt/SN84uREUef+vAAyVKFAIp7SprtvVzputk+BQAw+YVR+0f8QLLn
- eErdIcXGjyGhtXHOc3Gp79iwy56k9avNJ3qKMHDpuuC1LPYW4FH+9lKwRwkh6qmqJXW5Wd6RnE0
- rUhuFmIzHmZwLTF8u3QbBC9TYTfct5eLCQac3dju/Lnq2VWuei0fDBQanQibHCkKnD/nVST47AS Hq8sRXqSOcbvtBQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1210; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=x48g//vEaovaCGc/+3V+kdS96OVZQrdlR7cVmTcJM3Y=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpVRWLpYz+qsgfDBCA957maLrU5abZ/AV0KNPf2
+ x2dVJo4CRyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaVUViwAKCRAEWL7uWMY5
+ RpbRD/0SaSpBYAhj01HuT6p1Sh0F3HjDBRU4CbZou0WZNZ4WriLhGAdf+MIIjlEt+5DLcmae+YX
+ 27BXKetHb+p7wJar0/d6qrTf/TQHUwmCyaL950x8UvyGKZjIVa/TCNx64b/oJobA7VmOtuNtFHr
+ krbCJy/HsPCYdyTfYX7LhHPaeMGMOZDlhS5MWUgWYmbEo0Jx4LgSaNXEzhQpnmDg88F1vPMjjhW
+ no8A0idLJ5umHWtXn0h1OKB0XvRpQTVwo+JZsNk8M/8cFdcvbJQxHrbwuTEGFaIkb01dRY1Ntdf
+ 01rcHfSx1yu4iyuNDwnwXWxKy6Gk0DisKWSz0r+uqQjJIH5yLwLiZ+oKtGUU50CoT+p7D3XX7ee
+ NQYmTAfFErPyMycWpb0rdPLebSye3a2RtXxOO0cCLsGAzKsadQYt9Qyiz/SRaSuGAxprP+2SaA1
+ tYW2y41LKbfKByd3v4AXtcjuXykAoAaaZnFcRcSSFxaaLuuAzS1kB42Gdu92hVpMPWBZ16h/RLM
+ lf/wjXI1jEitSsib4IBK188r4m5IDfIk6q5hlJM5cvNgfzDpsOBNpz0qvCLfTiIP01+JvimWH6n
+ S+0cvXpMJQIc85ahkyeZd7IPV6qu+FHl1qL2ZnTHNJ0ktF6I2ONB+Fvhbz5Z7ky5OYO5MmZfBJO 4eEFKw4YUaLnpqg==
 X-Mailer: b4 0.14.2
-Message-ID: <20251231-rwonce-v1-4-702a10b85278@google.com>
-Subject: [PATCH 4/5] rust: hrtimer: use READ_ONCE instead of read_volatile
+Message-ID: <20251231-rwonce-v1-5-702a10b85278@google.com>
+Subject: [PATCH 5/5] rust: fs: use READ_ONCE instead of read_volatile
 From: Alice Ryhl <aliceryhl@google.com>
 To: Boqun Feng <boqun.feng@gmail.com>, Will Deacon <will@kernel.org>, 
 	Peter Zijlstra <peterz@infradead.org>
@@ -107,32 +107,32 @@ Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmai
 	Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-Using `READ_ONCE` is the correct way to read the `node.expires` field.
+Using `READ_ONCE` is the correct way to read the `f_flags` field.
 
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/time/hrtimer.rs | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ rust/kernel/fs/file.rs | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-index 856d2d929a00892dc8eaec63cebdf547817953d3..e2b7a26f8aade972356c3eb5f6489bcda3e2e849 100644
---- a/rust/kernel/time/hrtimer.rs
-+++ b/rust/kernel/time/hrtimer.rs
-@@ -239,11 +239,9 @@ pub fn expires(&self) -> HrTimerInstant<T>
-         // - Timers cannot have negative ktime_t values as their expiration time.
-         // - There's no actual locking here, a racy read is fine and expected
-         unsafe {
--            Instant::from_ktime(
--                // This `read_volatile` is intended to correspond to a READ_ONCE call.
--                // FIXME(read_once): Replace with `read_once` when available on the Rust side.
--                core::ptr::read_volatile(&raw const ((*c_timer_ptr).node.expires)),
--            )
-+            Instant::from_ktime(kernel::sync::READ_ONCE(
-+                &raw const (*c_timer_ptr).node.expires,
-+            ))
-         }
+diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+index 23ee689bd2400565223181645157d832a836589f..6b07f08e7012f512e53743266096ce0076d29e1c 100644
+--- a/rust/kernel/fs/file.rs
++++ b/rust/kernel/fs/file.rs
+@@ -335,12 +335,8 @@ pub fn cred(&self) -> &Credential {
+     /// The flags are a combination of the constants in [`flags`].
+     #[inline]
+     pub fn flags(&self) -> u32 {
+-        // This `read_volatile` is intended to correspond to a READ_ONCE call.
+-        //
+-        // SAFETY: The file is valid because the shared reference guarantees a nonzero refcount.
+-        //
+-        // FIXME(read_once): Replace with `read_once` when available on the Rust side.
+-        unsafe { core::ptr::addr_of!((*self.as_ptr()).f_flags).read_volatile() }
++        // SAFETY: The `f_flags` field of `struct file` is readable with `READ_ONCE`.
++        unsafe { kernel::sync::READ_ONCE(&raw const (*self.as_ptr()).f_flags) }
      }
  }
+ 
 
 -- 
 2.52.0.351.gbe84eed79e-goog
