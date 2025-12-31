@@ -1,113 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-72281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E32F0CEBA94
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 10:16:09 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086A9CEBF4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 13:23:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 598B030BEF7C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 09:14:22 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 467EE302D920
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 12:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA96A31A54A;
-	Wed, 31 Dec 2025 09:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A474D322B60;
+	Wed, 31 Dec 2025 12:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Lr6wWqp9"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H8Xch63Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04303191BA;
-	Wed, 31 Dec 2025 09:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C37A31ED76
+	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Dec 2025 12:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767172449; cv=none; b=Fmjw81AJjhc3s4CKvDjma5APdEfR77B0drQOSNExLCOD2+BfuC9v/zUNy1TypOxLcpMeUrEhlZfW9K3E1QogNwzmBuv5I4Z9uwUvfr95BMCXuL9iI0oP+mHzMBE60COIl0oYEPISO3yORKJRDBmZAyJF2kbCSg5mSy0HNjzCo/E=
+	t=1767183760; cv=none; b=l1OkhBWcoLTXBAsp2vEiI6s++fQ+Wfef8V/ppPh3Ra75bTNrJf6jNvEhJ5ZsEXXFcx6nSbIiLRXBM5cuolUyYgJKtX8qSKsRNQnG4lxzeWZOmIKsKv4Ewv/LD4FG0UORCkLT5NMMDLxHAH2xhMu1ZwV70VZyUbouvGV8MC6eOog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767172449; c=relaxed/simple;
-	bh=Z1+mrHcVx+KTT4EB306qKfgW24bF1dSwWLrK3KG7ALQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PWdAAONRQ1IPuAqK7ZHSHMU0ykyV5xH/JBf6aFw2DPnc+cefmEYr75IZR9/r07pY1aL7OEyEKn80VEXh4Egp3Sck05RKa9PiyNPdaDV9N6hXYZI4csvkHP+tBQ5fKZaQb566zRgxVw53n0f1XpkxFMHhQ6QGg9ePcCFq0BpJQuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Lr6wWqp9; arc=none smtp.client-ip=113.46.200.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=NTdhokYX3kI07kKshOUNPjp2sz5Cl0rGRESoWXdC/s8=;
-	b=Lr6wWqp9bpNPnS+wDXjw2P7VdC7omvQxMxE0x7eBdXMprgWXOFhzZLXykT28pHIIv/3WwPjbI
-	N3WGGdkh+znXVXgDYMgYGBR0JnfzjpNsbmgLLRJbKRaBJDGyDfBJYBxBYm+UkCXPLW7P0IXC1z7
-	D2hptI7JmQbi3TlXW1KZkQ4=
-Received: from mail.maildlp.com (unknown [172.19.163.104])
-	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4dh41p4l7Cz12LDq;
-	Wed, 31 Dec 2025 17:10:54 +0800 (CST)
-Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id 004684056A;
-	Wed, 31 Dec 2025 17:14:03 +0800 (CST)
-Received: from huawei.com (10.67.174.162) by kwepemr500015.china.huawei.com
- (7.202.195.162) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 31 Dec
- 2025 17:14:02 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <hsiangkao@linux.alibaba.com>, <chao@kernel.org>, <brauner@kernel.org>
-CC: <djwong@kernel.org>, <amir73il@gmail.com>, <hch@lst.de>,
-	<lihongbo22@huawei.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v12 10/10] erofs: implement .fadvise for page cache share
-Date: Wed, 31 Dec 2025 09:01:18 +0000
-Message-ID: <20251231090118.541061-11-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20251231090118.541061-1-lihongbo22@huawei.com>
-References: <20251231090118.541061-1-lihongbo22@huawei.com>
+	s=arc-20240116; t=1767183760; c=relaxed/simple;
+	bh=DgkCDNZwcq8gq47PvBSES/tVZ/480I2oLP6adymLeb4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=YQsIUKTbvh8VTekchlVQQfqG30VpSG/692MwGNjCn6F3v5+rb6SAYYtJaiLLjejosWuZVzUPuwyciPz1ZKYmEyxEicwAtRir6/Tjru9cIrXVIwcIQrwF3Ju1EiUvVJWpr4MTys38NlfEeUJU6APfZHPIvxI+bwqBtRMbnyDrJX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H8Xch63Q; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-43065ad16a8so5598260f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Dec 2025 04:22:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1767183757; x=1767788557; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UQVrUosci++sweVUg2oDGu1yrtQHcLYzZp5maq37Uks=;
+        b=H8Xch63QUmjz00EuKOfAHU2PBlIXcud1d+ScTTcNSaDmBEu9Ei2a7wnzQdjTYm8y7C
+         u3hY9xf+p0jsnDW9kCM/ewzNG6T9pCB8oeMObV+0UwPQNv+3qZLMsDsvs/eCvD8vjJlB
+         Nfi7O2pnBN8ViFIeenSkficV9vOdlutn+sGxVBk2nixx7U6zsH2TpY9BLBiqxL3C5YO1
+         eK/oUAmeuqVZoQCrcWI0x5Z88ONGXrHnE6yVvZuWKpsrHBqiHrdJ3EF76WyyfCsBEJzF
+         OxMh8wWJsRQVqaNvGSfHrLTuMCz1OT0tHwz7IYsQ6gWCXnbhy5IVFwmX8QBfXwI3T0Wj
+         VetQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767183757; x=1767788557;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UQVrUosci++sweVUg2oDGu1yrtQHcLYzZp5maq37Uks=;
+        b=Lyvb8O14oqVwR5O070VwKzpq1JZeAp9e54O7imZ229QGovQxbKrWgzFXBgPFnMN6D8
+         NGIYGi85WB8YcJcLjXYTUzf1So00LgQrYuDjC+YztE80BesUcv2ZjqLuE+Qr+Re9lOzo
+         PwDt5JVvTR7C1R0YrAXRfWj1g5v28nG8nUeRH/hg56yiLX4CT5BKHu//cGcaxD4eSLUR
+         2jNQ/bEoMW9IgzMb5E39QDvo8+hXTsDLcVYP5YD4MbEtX8Ui3A604r6/Lubu9FGSsLFI
+         zEQGoZVsqXIJHuK1vx1SlUftDPPjmbKHTFjMAXPPLHz7a+2uQ2pI+rrRjrJRicZgCGeU
+         N2pg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/S1b6d+m/2Ln8vBHDtQQA3sSenKKySpa6HFXjaFe4+pw8da4d8iNIVxpwbP03LdeKT7/srvInf6rtkyoz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzleh/Z+au3YuaNLxd/C9lttnA7hAvoj8PmcdfrEy3NUsMf202u
+	hDD1q1Nu85Ic6yaizspAKznGT33t5K1Jed3OXwPU0hj0HFEfMPgYAKDIPE8JXfk/Z5ieAkd9Nk3
+	g+FyzoKkhnP7TgOGA5Q==
+X-Google-Smtp-Source: AGHT+IFGevL4RjPve8xtRgOLaqwe1KRUGekHJd+lI5/ywPU8CYGMrfT3q1rcsX5yZhQNUWvXrJwartEV+7L+OGI=
+X-Received: from wro20.prod.google.com ([2002:a05:6000:41d4:b0:430:c782:27f3])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:609:b0:431:342:ad41 with SMTP id ffacd0b85a97d-4324e6fa1a7mr47643775f8f.61.1767183756634;
+ Wed, 31 Dec 2025 04:22:36 -0800 (PST)
+Date: Wed, 31 Dec 2025 12:22:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemr500015.china.huawei.com (7.202.195.162)
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAIAVVWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDI2MD3aLy/LzkVF3DVIsUo9RUg6TkNEsloOKCotS0zAqwQdGxtbUAFXT clFgAAAA=
+X-Change-Id: 20251230-rwonce-1e8d2ee0bcf9
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1686; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=DgkCDNZwcq8gq47PvBSES/tVZ/480I2oLP6adymLeb4=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpVRWGF5bAiUtejlxi6BOwMVDKnGMRxV0brpJMZ
+ 4N76blF6DqJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaVUVhgAKCRAEWL7uWMY5
+ Rq6PEACahBDOuqhWNRdS7KKKt5/h9IB0Ae0tEIYhZCaGdynMz9p5ZroHJGY3427iEbwD1Xf1sd3
+ krvr6Thhw3P3Xe/n9H8Zv/X9u1c5luZ3Xf4eCUMRH4chFWH9JwzEvBz7jXADexXhLdQpug7K2mb
+ wcyPQj1ud8v+7Di8+fu4PtJLHimoywoMf6ZFhCGnAxPySJWvVweGV7hUrW8LxDszplrE2HZ8tD9
+ RPAbn1uqanDGL40aeAib7oCMvMY0u3Qwpf7JB+7YpeulCoPXBOoLck6sczMbHd7yzidbpiP+RnS
+ 37uYnZopCUQmCd47pDgFlfMgZD27v6IYXqZ8zIryrOl3Sod72AtB9UoCLEW11pV2LQ1AlYpBJL3
+ rU7Ya3QisvjzdEQ6OOLsnzwTh0b25pX6GjpAOkQxz6xI3oeH9Epbm5H/pviAgf3R1wjJrOvIOxj
+ 0GmRhz2x4wq8lHjcbjoljHHRYDgHFXMm0qSjahun8/DqZkoYlfBxzuxT46T2n5gdefNJ8ejq+Dv
+ Sm69I+Q/czN4RKBQIQDvayvG7VhtPNqrAKgOupQ9wDPuDSMURnwra3sFVkMWxmkk6wr8VB86lin
+ 9RO+10zQWOISHeiZ3OkAmQ5U361UXsQx2g45A72GjESpW/kXTosPejSa7Qj5uclYBBvCaLrP0Uj f+YHVZGzb5+fZ7Q==
+X-Mailer: b4 0.14.2
+Message-ID: <20251231-rwonce-v1-0-702a10b85278@google.com>
+Subject: [PATCH 0/5] Add READ_ONCE and WRITE_ONCE to Rust
+From: Alice Ryhl <aliceryhl@google.com>
+To: Boqun Feng <boqun.feng@gmail.com>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Magnus Lindholm <linmag7@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Lyude Paul <lyude@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
+	linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+There are currently a few places in the kernel where we use volatile
+reads when we really should be using `READ_ONCE`. To make it possible to
+replace these with proper `READ_ONCE` calls, introduce a Rust version of
+`READ_ONCE`.
 
-This patch implements the .fadvise interface for page cache share.
-Similar to overlayfs, it drops those clean, unused pages through
-vfs_fadvise().
+A new config option CONFIG_ARCH_USE_CUSTOM_READ_ONCE is introduced so
+that Rust is able to use conditional compilation to implement READ_ONCE
+in terms of either a volatile read, or by calling into a C helper
+function, depending on the architecture.
 
-Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+This series is intended to be merged through ATOMIC INFRASTRUCTURE.
+
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- fs/erofs/ishare.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Alice Ryhl (5):
+      arch: add CONFIG_ARCH_USE_CUSTOM_READ_ONCE for arm64/alpha
+      rust: sync: add READ_ONCE and WRITE_ONCE
+      rust: sync: support using bool with READ_ONCE
+      rust: hrtimer: use READ_ONCE instead of read_volatile
+      rust: fs: use READ_ONCE instead of read_volatile
 
-diff --git a/fs/erofs/ishare.c b/fs/erofs/ishare.c
-index b91f0ce412c0..2b7660d7e9d4 100644
---- a/fs/erofs/ishare.c
-+++ b/fs/erofs/ishare.c
-@@ -152,6 +152,13 @@ static int erofs_ishare_mmap(struct file *file, struct vm_area_struct *vma)
- 	return generic_file_readonly_mmap(file, vma);
- }
- 
-+static int erofs_ishare_fadvise(struct file *file, loff_t offset,
-+				      loff_t len, int advice)
-+{
-+	return vfs_fadvise((struct file *)file->private_data,
-+			   offset, len, advice);
-+}
-+
- const struct file_operations erofs_ishare_fops = {
- 	.open		= erofs_ishare_file_open,
- 	.llseek		= generic_file_llseek,
-@@ -160,6 +167,7 @@ const struct file_operations erofs_ishare_fops = {
- 	.release	= erofs_ishare_file_release,
- 	.get_unmapped_area = thp_get_unmapped_area,
- 	.splice_read	= filemap_splice_read,
-+	.fadvise	= erofs_ishare_fadvise,
- };
- 
- struct inode *erofs_real_inode(struct inode *inode, bool *need_iput)
+ MAINTAINERS                     |   2 +
+ arch/Kconfig                    |  11 +++
+ arch/alpha/Kconfig              |   1 +
+ arch/alpha/include/asm/rwonce.h |   4 +-
+ arch/arm64/Kconfig              |   1 +
+ arch/arm64/include/asm/rwonce.h |   4 +-
+ rust/helpers/helpers.c          |   1 +
+ rust/helpers/rwonce.c           |  34 +++++++
+ rust/kernel/fs/file.rs          |   8 +-
+ rust/kernel/sync.rs             |   2 +
+ rust/kernel/sync/rwonce.rs      | 207 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/time/hrtimer.rs     |   8 +-
+ 12 files changed, 268 insertions(+), 15 deletions(-)
+---
+base-commit: f8f9c1f4d0c7a64600e2ca312dec824a0bc2f1da
+change-id: 20251230-rwonce-1e8d2ee0bcf9
+
+Best regards,
 -- 
-2.22.0
+Alice Ryhl <aliceryhl@google.com>
 
 
