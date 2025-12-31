@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-72259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1AEFCEB009
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 02:38:46 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD534CEB02F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 02:45:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D28B53019E20
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 01:38:45 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 57C863024D5F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Dec 2025 01:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615062D77FA;
-	Wed, 31 Dec 2025 01:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EAE2D7DF6;
+	Wed, 31 Dec 2025 01:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EkPxcjS0"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ZD69KrY0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14B72D5436;
-	Wed, 31 Dec 2025 01:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6853BB44;
+	Wed, 31 Dec 2025 01:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767145123; cv=none; b=qrS3xe/94EF7N5rwZayzvHYjyApY9G3+CAnR0owASnq9hX/9sc3fXQ00GNcR/kmeAQzZiWCodAZHZbVA4v/gKMSlUXzqSmfgcXayr025KVESrKEPCfIHMvKIwuYFEjK/tq9EBxxPXMugvmpdVL4iPdgVhABpgYL9f6QcuFI8qJk=
+	t=1767145532; cv=none; b=nc41VqOhdkOtK/dGlcsIOEhZb+9PZd1VbKzSSuM70ui3UaMGhW2oJ5V+EmOgyFH5ed8N4yuq/obYDpP/1q8ahWs5Mo9T9ykP3qAkVP6A3MkqGdsMzpwSuFYpaeF2xdvVKuaIIGzKvcuI69DO30zr6UW9KTGtpIIqJVhh4AH/VWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767145123; c=relaxed/simple;
-	bh=vbgoXjtbThmQ+GYV7wLAam2cLtkEKW/pmXJMhloaCrI=;
+	s=arc-20240116; t=1767145532; c=relaxed/simple;
+	bh=er4R6GStLvulkoQdZVkuzGPzRYTk33FsSgqJgj1pQcc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N19CmvpcfOZVLXqpYuRQjGkoDieO9Wr+bf/nz28v506N9LV4x8vnplzREQNyX/m44TZQa+hSeOyvOwdYKT1bkefsOCyk/yOd3DHfT1gPIg+vp7e709PaZ6+iEsmaSPbSvyEDU96yF+FNa/njHm7/5AXuvTY/7iTJ++CVfXGxuTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EkPxcjS0; arc=none smtp.client-ip=117.135.210.4
+	 In-Reply-To:Content-Type; b=UVKIX82Y9PMYgySmqDbKDP8t6WGRG8yUjkRT/MVtTIen8GnvuJZtb2YhM2l06j3B0X+58brApgu7O1z+PqC9iPi3ddqEHbZqvmUKERdqpcDreF+ECRY/U0zbCZjkuv+9W/YK0ETr/F7gQO0uLwKzY2QiD6ciVmWIyJrTnFEebQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ZD69KrY0; arc=none smtp.client-ip=117.135.210.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
 	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=lcgJ5aqhgWg4BJSMNaqfZ1vO1qpj6eG5+s5Ly5QT7Xk=;
-	b=EkPxcjS0qFmRkROEpQDf58AgWEiDEncDfE8fE45ALyxwnhhjs41n1L4AEin8bo
-	GO1D4PQM9KVSEx7k5wclKNGLprSCJEv1h3/gemp/5y+Z48bVbUkP+TQ9nROlmKJO
-	j6pzZ3syU46LgCwHxnF93cNP7SJTS8tYDDCjYCfpim9pQ=
+	Content-Type; bh=MdOTbZy6Ph3s14jjtoezAg6zDQg55Buw3Y24j/xc7ic=;
+	b=ZD69KrY09lC7WDN3LaLr5cF2l2kwUNYUs/04tHq8tSCDyHHen6Xj0kDQyBiJeu
+	W+Aa9mR/V1bFaZt6cdIVmbTHMaT8KXLHywl11ZCoDBapIMiPDzEDxNAlGblf3+Nu
+	tIVb5OKV46KO+eM4F15r0bmyV02yRfr624AHUChF9qZFU=
 Received: from [10.42.20.201] (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgD3ht1pflRpv+7tKg--.11419S2;
-	Wed, 31 Dec 2025 09:37:45 +0800 (CST)
-Message-ID: <4c72c670-5ec1-404d-8177-bd80fabf4695@163.com>
-Date: Wed, 31 Dec 2025 09:37:45 +0800
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDH1KQRgFRpJGPuDA--.23496S2;
+	Wed, 31 Dec 2025 09:44:51 +0800 (CST)
+Message-ID: <29ca8dd9-3a00-490a-8a20-7d187b7ab7ff@163.com>
+Date: Wed, 31 Dec 2025 09:44:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,7 +47,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/9] exfat: reuse cache to improve exfat_get_cluster
+Subject: Re: [PATCH v1 6/9] exfat: remove unused parameters from
+ exfat_get_cluster
 To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
 Cc: "brauner@kernel.org" <brauner@kernel.org>,
  "chizhiling@kylinos.cn" <chizhiling@kylinos.cn>, "jack@suse.cz"
@@ -57,84 +58,69 @@ Cc: "brauner@kernel.org" <brauner@kernel.org>,
  "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
  "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
  "willy@infradead.org" <willy@infradead.org>
-References: <PUZPR04MB631637893887AB587E1E3A9381BCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
+References: <PUZPR04MB6316EAFF1D1D002551408CD181BCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
 Content-Language: en-US
 From: Chi Zhiling <chizhiling@163.com>
-In-Reply-To: <PUZPR04MB631637893887AB587E1E3A9381BCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
+In-Reply-To: <PUZPR04MB6316EAFF1D1D002551408CD181BCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:PSgvCgD3ht1pflRpv+7tKg--.11419S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7CFy5ArykWw1kKFW8Zr1fJFb_yoW8Xry7pr
-	Z8Ka4DAw4UJrn2vw10vFs3X3WS9Fs3tFs8GF45JanxAr98tr4kWrnrKryayFW8Cw4v9rWY
-	vayUK3W8urnrGFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziQ6pdUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC9wkpxmlUfmmuigAA3f
+X-CM-TRANSID:_____wDH1KQRgFRpJGPuDA--.23496S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ArWrAw45ZFW5Kw4kXF4xJFb_yoW8GFy7pr
+	s7JFy8tay3XFWxGF40qFs5X34fJ3ZrGrWDJFsxAr15Ar90yr109a1qkr43Aa1kCw4rurWf
+	t3W3Gr1a9rnxG3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziQtxkUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC9xOTMWlUgBPMYgAA3G
 
 On 12/30/25 17:05, Yuezhang.Mo@sony.com wrote:
->> -             if (exfat_ent_get(sb, *dclus, &content, NULL))
->> -                     return -EIO;
->> +             if (exfat_ent_get(sb, *dclus, &content, &bh))
->> +                     goto err;
-> 
-> As you commented,  the buffer_head needs release if no error return.
-> Here, an error was returned, buffer_head had been released.
-
-
-I mean, it seems like a duplicate release in there, but in fact it's not.
-
-When exfat_ent_get return an error, *bh is released and set to NULL. So 
-the second brelse() call in exfat_get_cluster() does nothing.
-
-~~~
-int exfat_ent_get(struct super_block *sb, unsigned int loc,
-                 unsigned int *content, struct buffer_head **last)
-{
-
-	...
-
-err:
-         if (last) {
-                 brelse(*last);
-
-                 /* Avoid double release */
-                 *last = NULL;
-         }
-         return -EIO;
-}
-~~~
-
-The reason using "goto err" is that I want to handle all errors in the 
-same way. Although this does seem a bit strange and confusing with the 
-comment in exfat_ent_get.
-
-
-Thank,
-
-> 
+>> diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+>> index f9501c3a3666..1062ce470cb1 100644
+>> --- a/fs/exfat/inode.c
+>> +++ b/fs/exfat/inode.c
+>> @@ -157,28 +157,26 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
+>>                                *clu += clu_offset;
+>>                }
+>>        } else if (ei->type == TYPE_FILE) {
+>> -             unsigned int fclus = 0;
+>>                int err = exfat_get_cluster(inode, clu_offset,
+>> -                             &fclus, clu, &last_clu, 1);
+>> +                             clu, &last_clu);
+>>                if (err)
+>>                        return -EIO;
+>> -
+>> -             clu_offset -= fclus;
+>>        } else {
+>> +             unsigned int fclus = 0;
+>>                /* hint information */
+>>                if (clu_offset > 0 && ei->hint_bmap.off != EXFAT_EOF_CLUSTER &&
+>>                    ei->hint_bmap.off > 0 && clu_offset >= ei->hint_bmap.off) {
+>> -                     clu_offset -= ei->hint_bmap.off;
+>>                        /* hint_bmap.clu should be valid */
+>>                        WARN_ON(ei->hint_bmap.clu < 2);
+>> +                     fclus = ei->hint_bmap.off;
+>>                        *clu = ei->hint_bmap.clu;
+>>                }
 >>   
->>                *last_dclus = *dclus;
->>                *dclus = content;
->> @@ -299,7 +300,7 @@ int exfat_get_cluster(struct inode *inode, unsigned int cluster,
->>                                exfat_fs_error(sb,
->>                                       "invalid cluster chain (i_pos %u, last_clus 0x%08x is EOF)",
->>                                       *fclus, (*last_dclus));
->> -                             return -EIO;
->> +                             goto err;
->>                        }
->>
->>                        break;
->> @@ -309,6 +310,10 @@ int exfat_get_cluster(struct inode *inode, unsigned int cluster,
->>                        cache_init(&cid, *fclus, *dclus);
->>        }
->>
->> +     brelse(bh);
->>        exfat_cache_add(inode, &cid);
->>        return 0;
->> +err:
->> +     brelse(bh);
->> +     return -EIO;
->>   }
+>> -             while (clu_offset > 0 && *clu != EXFAT_EOF_CLUSTER) {
+>> +             while (fclus < clu_offset && *clu != EXFAT_EOF_CLUSTER) {
+>>                        last_clu = *clu;
+>>                        if (exfat_get_next_cluster(sb, clu))
+>>                                return -EIO;
+>> -                     clu_offset--;
+>> +                     fclus++;
+>>                }
 > 
+> exfat_map_cluster() is only used for files. The code in this 'else' block is never executed and
+> can be cleaned up.
+
+Thanks for confirming that. It was confusing me.
+
+I'll clear this up in the next version.
+
+
+Thanks,
+
+> 
+>>        }
 > 
 
 
