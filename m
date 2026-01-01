@@ -1,244 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-72300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09483CECBB4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 01 Jan 2026 02:19:41 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D422CECCBC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 01 Jan 2026 04:57:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0B18D3007205
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jan 2026 01:19:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7073C3009560
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Jan 2026 03:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9672749EA;
-	Thu,  1 Jan 2026 01:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C7926A1AC;
+	Thu,  1 Jan 2026 03:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ResmzQtZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from CWXP265CU010.outbound.protection.outlook.com (mail-ukwestazon11022077.outbound.protection.outlook.com [52.101.101.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E23F26C3BD;
-	Thu,  1 Jan 2026 01:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.101.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767230377; cv=fail; b=fI4LFs+84OqIN1wLnvfXoLgIJBMfsU8U2+ZNxRgmCDtliE8u15lXtbB6sQlwT7IBv532KEt91lQMyRJjP4sfyoZ2WoiQCcjxXb96PiuTzctz2+z7LiTq7HNjB446m3lCzJ8iV1Ng5eZtREPNMwakQ4E1+U0L/EfeEr5BsrAK49w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767230377; c=relaxed/simple;
-	bh=/RHOeL7f2QA8c7miEY9mmd5eLave9mmdirsntmiiXcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=QeTAMZdXFXZnG5qFrRZEL6SuPzUY1GEqh63rfnFgE3J5CyjmuZQXEWRI1xumU0lsuYMO0AMYXdHvDlmZzuqzptZzk/8kKXHVuY4uVr8JI6E0p2JxJi5p0eqgP+UL8xw84UKdIlCmT7cq72Y6jWyNAZ9vH4L/eJ2rm9/dNxeaZNM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.101.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dQX/gjeZjV1epILsxTlJzi5xEaeFEO51IYOjdJvWa852i+tRhxmEuMh8iXsODyYib+yH3ScYDqFfICXaQFz9XPbdnqpKTccS6+UQ/GfKTk4jdd86bY0Vt02P/qUwOnRA6UFmfFyzdwkI7wtAp4Kqpsgt4L3AeYBwDCUJgOtAddPqXu4cwwqH9d2hJvksSy9Rz6vIpD5oO2NYyAmBF+lZfxrhaSX/YIS9OcaMRX8QU5CdIR03U7cPHbkJd3ywN99ateGEwG3pqpOzVRHzWyTn34fPvFmCE6tn7nmP5NTyx8r+woDvRImAvoc310d7nL9nARVQrwwIDnh6Ak4IKSrjRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/RHOeL7f2QA8c7miEY9mmd5eLave9mmdirsntmiiXcI=;
- b=JUjAY33dW9CDGCq9uKnwkAtDk5qIY33KjtvOId8IraQVS3TLCIMMeYF3W3I3G7It8rl8TJNv/tDvFGXzo5Jo9NgcMQzzmIU9MhZSBkH6BN0QZfMHStyLKfdJvTe5+mR24d0GB8r8GDiEqSM0mw9M7xCi0wT/oUzT9VZB9YOaK9I4fRoqn0+0rK0vDuHgjtRJwyVtgq5NWqqxoqSjyv4AyqPCBMCkdvFlqjppbFbES+VV7tUna455GLNXdYsIXVXWIacBMGk1MP/o1BcPLIUNpQsSo2Xcx+4OFAXsfbukyV+V5Xl9EQwk8ulCLh8DbjLzbGs/t72xoiohyExPAYSJ+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
- dkim=pass header.d=atomlin.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=atomlin.com;
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
- by CWXP123MB3160.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:34::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Thu, 1 Jan
- 2026 01:19:30 +0000
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf%5]) with mapi id 15.20.9478.004; Thu, 1 Jan 2026
- 01:19:30 +0000
-Date: Wed, 31 Dec 2025 20:19:26 -0500
-From: Aaron Tomlin <atomlin@atomlin.com>
-To: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Cc: oleg@redhat.com, akpm@linux-foundation.org, gregkh@linuxfoundation.org, 
-	brauner@kernel.org, mingo@kernel.org, sean@ashe.io, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [v2 PATCH 1/1] fs/proc: Expose mm_cpumask in /proc/[pid]/status
-Message-ID: <suoe7pyfr2qcbxyov456lglf4hcxkrzhoyqbiaba4kw32u5m2h@hg2crnjgdfoy>
-References: <20251226211407.2252573-1-atomlin@atomlin.com>
- <20251226211407.2252573-2-atomlin@atomlin.com>
- <ac50181c-8a9d-43b8-9597-4d6d01f31f81@kernel.org>
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d547sj7ydjrl6zsx"
-Content-Disposition: inline
-In-Reply-To: <ac50181c-8a9d-43b8-9597-4d6d01f31f81@kernel.org>
-X-ClientProxiedBy: BN9PR03CA0521.namprd03.prod.outlook.com
- (2603:10b6:408:131::16) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:70::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1052580DE
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Jan 2026 03:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767239869; cv=none; b=jvlp6XhnhdSXRpxaKW5kpYx/EKgXs4sqtLG241RK7hV63CX9nqlLUU++iqyC8FlTRU4xEohQwIqpd0FnfmTi6+DLcPuside7q6bXOyGgNQ5H84Mooqcki4YjzyuGED9Q71EqiB8rLfBMHfCIbo3yQMa3m+/z8Wo/UMnWktqsV7A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767239869; c=relaxed/simple;
+	bh=/vyg0ynh5LAMEF2mj8X9Csbd5f/G8rOZ2939OPD08pY=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=i59eA3x1WFQYnJ67I+8TPwjFk00zjTCptZ4qLyIhMoBuoAs5z7XvRqTFV0b+paAi1pzr/oc5wDgvIDCTC37ljOmAAry3eajMbaWRMCyhNBsmhLne/qsNvUXbJLVlQiDEZVlkgHJjv+e6sogJJUsBTEzQTdDpSHPPVZ1TvgyU7oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ResmzQtZ; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4f8a6b37b2dso44080211cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Dec 2025 19:57:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767239867; x=1767844667; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YHJ9HSrCP71SSn2XcU2kZVrOG3UT/v21uGWNywYBtRo=;
+        b=ResmzQtZqZmj7nJh6YPuumTuTL+8cDzHdZSHIKZHGrrhVnmXCgWz88PCJb2BAcoqrs
+         KRIMnfOrwN49It406gO4C6StYMwlDzKEWmVVPKSbQ3EOl0qSvvone9p7Zh2/ISj94cgC
+         b93BZjVIy51Ni7WRR9m5JECORQ/XfIQx8j4l3Fc4DF8KWPkVPiSNuACjZUMt7bPLbOW1
+         ZT5JxkGGKQLJk0OxdYHnuRRbQxhxzzbpHRYvk7emS7UIFaHqJGiwkNO+tjuBvWVkZa6o
+         vpHIZLhl0sOonCB8FCWCsGZ0P3SI8PY0Sz/EskfO98M+hZTbNJViyDdIbZCeniXIxvc+
+         D8mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767239867; x=1767844667;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YHJ9HSrCP71SSn2XcU2kZVrOG3UT/v21uGWNywYBtRo=;
+        b=NKCB3JOi9wDTg+PN34PjvzlFziC4WwSWY/aXRimRoqChGORpPOONDeM8AeKTmbwGTY
+         /hYFjgaJuYTjj8KCNCKcTvpARPjE0RKeax9+H7g59zirBCDecm0CVyLMa7Ig5IaeCc0y
+         O0a1IdlXhnr/CdZ/AS528lq4uKLDAhiQGgwcW8zfVO2NNmJpAqddUI4roaYxHKTadVeX
+         n4N31FshVZJc15EyrEfk4B/MaoqrdYf8NWtS8mMdbVXJo9tMeXDbFIg/jniDmVWQL/4g
+         d9y/KiB8IcN1Xj/Kd+chXJlDAMr2pszL3G/zsVtDLO8a6Wmjf8AG1WWnDy0SK0jkw+KW
+         +C9A==
+X-Forwarded-Encrypted: i=1; AJvYcCV2n7LbD4THWRxin0/gdHJKU6aQEQ6stEpgqXlKcxdPdpo+IL/j/ZN0wfaOO6m+PHb7tBQnngFkyerl9YUf@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaSFP2dh27B0BaGYm/XVkrG4CQTEpBT63oFLERIpfzcjF6YB1t
+	VjtkiLjv9AntTpKN6xEv1s37b1l7QdURr4m5zwKirgvaHVLJzZYEHWAq
+X-Gm-Gg: AY/fxX6zu9eE6Z5UDmYCWcY7TYUqBXrBodufopRdgO+PFiHSAVFtJw/TR/VZ/l3mCGz
+	MWpStXuQEoBTWVVTbj+Z5OAFTLvq+u5aS5DXKzGXStqgdFWgBI9Wf2yQ4o0UDCBFGjzC1lxTV4O
+	Hk0hcsm0jE0t22hkUr7wn7ozzksgzPS7S0BvsPR6kEzIq8jrGvDOGeN0GxVsXMU1UGOEbvQxMd3
+	KFGCihPUVSfqfmzwoI7iJI0g1P8LT5ruK6ojCkPD5ObrluB17Qug0D7LkH5wbWnTGHogNHihAXb
+	GuwpYXUXb4MLWNgHAI6UZxJBc9LGqU/pVQbv7eEfPP/N4wcB5/59zNUcK+5SsxP95zfn2/hNoOY
+	w4CQg9RYxv37+TQOyjV8zK5G5xfsKTxYc6FlIbvRjhOlAcH8hclNRn8lsfvtUgnNgBkz8ZRyDFQ
+	GayCn/KeRV7sieHe4vm+7JH9isuGxCqT/FDHtTHS4qT1zHZLb+LppJZT4KSj6/+jgpLsI=
+X-Google-Smtp-Source: AGHT+IGM0rVADS2lnU5j12v/LNHM3kU8YwfTvvv4Iz7GzLiaw8hH+kvxJs1uiRf5TU0O+ftRhl7yow==
+X-Received: by 2002:a17:903:b90:b0:29f:301a:f6da with SMTP id d9443c01a7336-2a2f2a34f54mr371027125ad.43.1767233502214;
+        Wed, 31 Dec 2025 18:11:42 -0800 (PST)
+Received: from localhost (p5342157-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.39.242.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2f3d776c1sm334899895ad.102.2025.12.31.18.11.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Dec 2025 18:11:41 -0800 (PST)
+Date: Thu, 01 Jan 2026 11:11:23 +0900 (JST)
+Message-Id: <20260101.111123.1233018024195968460.fujita.tomonori@gmail.com>
+To: aliceryhl@google.com, lyude@redhat.com, a.hindborg@kernel.org
+Cc: boqun.feng@gmail.com, will@kernel.org, peterz@infradead.org,
+ richard.henderson@linaro.org, mattst88@gmail.com, linmag7@gmail.com,
+ catalin.marinas@arm.com, ojeda@kernel.org, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, lossin@kernel.org, tmgross@umich.edu,
+ dakr@kernel.org, mark.rutland@arm.com, fujita.tomonori@gmail.com,
+ frederic@kernel.org, tglx@linutronix.de, anna-maria@linutronix.de,
+ jstultz@google.com, sboyd@kernel.org, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/5] rust: hrtimer: use READ_ONCE instead of
+ read_volatile
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <20251231-rwonce-v1-4-702a10b85278@google.com>
+References: <20251231-rwonce-v1-0-702a10b85278@google.com>
+	<20251231-rwonce-v1-4-702a10b85278@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|CWXP123MB3160:EE_
-X-MS-Office365-Filtering-Correlation-Id: 876093e3-564c-49c7-99ad-08de48d3d020
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RTBZZGlXMng2S0V1ZFFwRXNvQkdQN003ZlQ4bklaL1hNZFpBb1BNUkZpVnhG?=
- =?utf-8?B?eUVnSHJWZmZMWFR2RSt4UkhXTmFnNzRwWHJZRmtIb3BWU0R4VzB4ak5PYkJC?=
- =?utf-8?B?VmlYdkFQWm9ZSzhIRlNjWDhVaCtURnZEVHkyZ2FPWFd0SDVmNEsxTGVxRWNj?=
- =?utf-8?B?U2dqZE5tWEcrSDZ4bjhnQktHUnpmTFFITENOd2VXU2VVOWc1dnZCS3kwMjZv?=
- =?utf-8?B?MGdWWEsrQUxGUWpjdkNjelU4VnY0QmgvV2NIVnBOV0w2bW5mRWdNSncwUTAy?=
- =?utf-8?B?c1dGdkpJT1U1cDd6TkxNSjErYUFhV3VBK3lHOVYrTTg1NEVNc2R1ampDUml5?=
- =?utf-8?B?ZkhTeit5dzU2UEJrMjJRdUdHQmJTTWpkU211ZUkreEZjZEpjb0pEUmFPWmFE?=
- =?utf-8?B?d3AxK1dMb1ZHUkkyNTVSSGZuN24rNmRIWXNXc1RodFZFZ0kyMUk2VUlkRlRW?=
- =?utf-8?B?dHZWQkpteGZub1laVCtaL2VxVGpSU1BwblJVdGRpN3FpNGRDOGM4TkxIazZ2?=
- =?utf-8?B?MVh4K0duUTZ5dnAva2RzbVVLZGpwUGdXd3ozZmt0OGpvaU9RVUhEWjJaamk5?=
- =?utf-8?B?bXhxR1NDb09jc1pYRGNISnhHUGNTdzcrbW5uY3BnYU1IOE1TVHNmMkpoNnhm?=
- =?utf-8?B?Lzd4K21Cai90cnFxd0NUVUFPbEMzeFdUL3lHa2RQYkpLS1cxdHBPb1ZJZ3pt?=
- =?utf-8?B?UUM5NG4zK3lIWVoyK0ZnSGthY0lWV2FUSDB1dGE1RE91QXIxVVhkd05UNEtU?=
- =?utf-8?B?Rm5YRFhhWFhJSEtMbXN4TnhvSVh2Kzk1VUdNZitFZGVNbkd0SDNycjZsamdY?=
- =?utf-8?B?ZEI5cTNKY2crNktkMVJWRWxacCtDbVA1VSsveUlVN3NYVGJkRWxPM1VVYUVv?=
- =?utf-8?B?REFxODFEdEFXdlZmdmtEeTU4Z290T05aa0R2MHFNUnZtRHQzNGdSNHNDUmhw?=
- =?utf-8?B?cUFmS1RRYlJPTmhoOEJYNFc3ZWg4WXRLNit0V0VOZ21EZHpKaVQ3a0swZHRM?=
- =?utf-8?B?Kzd1U1ZQNG1VdWJacEtVSGJ2N05SRWxXQWRBNkk5YzdaT3Q0N290UFpuVzZT?=
- =?utf-8?B?ZVNaalVNYjVneW1wU3pFNm9CTTFrNEh5enhIeHAxbUNUYndGaVN4bEpjb2xP?=
- =?utf-8?B?eHYrbkpOMmxyQlF3dmdpNktsOWIwZXdPK2psZ1p2cWQ1VjV0RjNFZEJTV3Nx?=
- =?utf-8?B?aUF0bTUwdW45bm9MMitwNXhRYko3MFA1T01abXZmYktIVll0RDMwRjBoOGNj?=
- =?utf-8?B?bmNYcCsvL0Urd1gwbDE3MlJMdStQWUdyQk13M2VrY0hFOXlUdG9ibW1IbmNN?=
- =?utf-8?B?b3c4YTdMQlhNQlVoU3JXNUFEUnBWY3Z0WE9MM1ViNHJtVWtvZDZWODA5UVBQ?=
- =?utf-8?B?cXIxZmNQUVV1UFhDSldpd2ZHbk9LRlAzSlNoeVAxNUluUStsNjFoKzk4MnJo?=
- =?utf-8?B?MmpGUVNKM2lHOEtVQjNPTjBXZlFVbi9lMGQ4UURTUSsxUFl1MVdGQ01CWlJH?=
- =?utf-8?B?ZnlsYlJiRU5ka3RGMTJJd1ViZ0R1a1pNcVlrSVp2RjUxZmlEaVV3Ym1jdnZ4?=
- =?utf-8?B?UG11ZW5wcEF1WndmUlFoZXdZNi8wdm03ZkVVVWp6NXRXU2pwdnpqQXk1RFdI?=
- =?utf-8?B?UVJDdEplTWhiYmR1KzQrQ0o1eHdDOHJ0UmE4UXlJRnZPRVYzVk42WURSRGFK?=
- =?utf-8?B?VWo5T2JQOXBwVmxZcHRiR3NDMjgzVERndS9GRERvdFdlZVloOUZ6ayszLzRQ?=
- =?utf-8?B?M3pYckd4ZmpoUTd5bWVIKzdZWGRKSmNMUEVmNWhDNVAyS0FXQ245SnR2TDM0?=
- =?utf-8?B?ZGppRzZzZjBPcTErMGNmKzkyMFhuTnkzcG4vMk5lL1J6UTl3RHNNVDQwSEdV?=
- =?utf-8?B?dTJVV2YzeHVSV21yRDZTNU9zdENIMFl1UGlsZFlFVDYvWW5DNFYrMUxibnEr?=
- =?utf-8?Q?eeU6RzYNTQqUWzghvi0EO/LkLnHwvOMJ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VjVseTJFcno5akdEOGNNYWk1ZHdwTDVEeDJLcW1aY3lPUVBTOXlzZnB6aUpi?=
- =?utf-8?B?cHh1TVlqWnZURWxVRHl5RlFRNHd3ZGJUdHg2UHROTkNpVnJyalZqUmNheWRw?=
- =?utf-8?B?Qm5nQVYzN2pEK0lodWtXUzA2cHE1RHdWWURPQ1lRZnVSMm0zYnlzSzR2c3VM?=
- =?utf-8?B?MDF1YnY2RDdBTXg2WWZYUnpIYlY2NGRnQ2o3WkdvQnNDNERoRXgyVXR5aDlH?=
- =?utf-8?B?WGJQWE50OEJhajBZUHJlZWR1TUtoYlBkdDJicC93NThYQlBpeVNmRldTNTBX?=
- =?utf-8?B?amFaMkQwWEdGSDFTVlNqKytGWTA1NklFYno3OUtaRFVNQzF0S3R0MklvdG91?=
- =?utf-8?B?NERURXJMM3F4ZUxlakJZVHFsbGE2bUViK1p6ZTkvazQxM1pLbTFHUk1aUTNQ?=
- =?utf-8?B?K25GdU14SDlQVzFaUUNQNTJZTTVPMkdGd3hya2VDU1EyOGZZTFhQSkJ0c2h1?=
- =?utf-8?B?K0pzTE9tMTJpem8yRmpHYTBmRU9QS21WTWZhSGEvNVdJdHhtTUQ2eWJFZy9P?=
- =?utf-8?B?WEViRStKWUthR3dheGRLbmlUbnVidDF2UWVsVHgrUnAvS0FhVEN6Mkc0MlVq?=
- =?utf-8?B?RmtxTG1YNXVPallWWXJLUzZ3b0l6VE1vTkdnZjNuYzcvQldPTlZsalFWYlZ1?=
- =?utf-8?B?OTRiR0NkYUxvT204TVgwbXJwR1BuMjBOQldqaEtzMXVzSTg0ZG02NXJlTnA4?=
- =?utf-8?B?ZjhKM2V2Rlh4SjJQbmRLejExeEUvYjNQMEIxK08wMS9iWTRTWERzYVdONUFa?=
- =?utf-8?B?MENmNUZiWkxoa0NzYVRKZm1mVHF2alhzVVlOR2dPeURxYllxMG1VWERZY1BC?=
- =?utf-8?B?dnhIU28rVDBUTjkzeVdqL3RsUUdTQkpMVjVNd0VTb1VuWVF6KzQ3c2loQmU4?=
- =?utf-8?B?d1NSa3NDa0NTVmQvSnZsS3cweHVWMXFXRzZFMFpvTzZlaDNSbHRERFdGNUo4?=
- =?utf-8?B?a2I4YitzRGVqSU5yOVNrM0J3Y2tyTFF3NDd2RXd6SmRKOURsdW9VLzdES09i?=
- =?utf-8?B?OExMS2dzMStQVzhiTkNRb1BqVUg1cEJwQjJNWjBZUGdRTXdReHVSS1BjZldF?=
- =?utf-8?B?aWsrOVZDRjdtWGxBdXBseEI2VEdIbTFoRlFQN0xPZDJLMFlmUEk0TXVnQXBo?=
- =?utf-8?B?ajUyUHBEM1RoeWFWSGhnVVJWTThhU0pqSjJZNVA2UjlNRFk4V0tBbVVDRi9P?=
- =?utf-8?B?ckNjQnlwWFlnczhCS1JuMzhQWE04VU04UitNQjd0NUdrK0lqeTlBOTJpUXJm?=
- =?utf-8?B?cUxNSFlRdkNaMitwdXdocytJTXJtMTV5NlZ6RElXeE1JWUdDQjBqSXRRZVlK?=
- =?utf-8?B?R01tVGNyN0pTMGxoajJUOWsrT3I4UDhzNzdpY3ZnT25rbDRZL05nQzhRSXJo?=
- =?utf-8?B?L2VMM0ZaYlptL3hORytucm42QzMva2pmMXg3d0M4YmtsQ0l3a1RLSStUZzdN?=
- =?utf-8?B?Q3FJZzB1aWpIcjM5WTdDTm4xb090WHZuOFQreHVDT2tYaVBZN1RJZE1icDF4?=
- =?utf-8?B?N2NzeEp2WXlZRVpNUE1jaC9ZaTEwQ25UWm82USsrTXRPYVF2VzF2b0xQVUta?=
- =?utf-8?B?M0s5Q2ZpRzh3NlhLMlpxK3J2OGVMUWs4OWpuaHBZeU9YeVU1OUhBaU5BRity?=
- =?utf-8?B?Y3dCWmJJL1IwbDhTSWRLVnZsZkx5TzhPOEJSYTJkd0Y5NU5Mb3hWQktHN2dG?=
- =?utf-8?B?OFNPUi9xYkFjK2ZiSzhkeWU2UjV4QTlvV2lUbVlYeFlwTlJMeXlxM01aN1RI?=
- =?utf-8?B?SDltRVJMMWExS2dsM1ZseGo0d2hPeWU5UzNmVEVORjhBRjBVVnZnc1pMa1Jj?=
- =?utf-8?B?UVNUMnRCMDZ5M2FlTGFWYkZDRm05R3k5ckdjRjlFakpuUnAvS0dBdGliWTZY?=
- =?utf-8?B?OW1uSHJXSEQxWWQzQ2ZuY09ENitSVVVLSTRXSGpwTjNtcmc4anoxVklwNXFN?=
- =?utf-8?B?YVdpU1V2QndIc3Y3R2p6eXpyVUl6WUUrNmRPd2ROa0hKcmF6UGxXSC9MUkJx?=
- =?utf-8?B?dFdIait5ZUlyOFZFVXFkUGFKVHVzSU5BdGNwYms0VzdkNytGRTFwdVNJNnJY?=
- =?utf-8?B?ZEx4MWkwSVNLNFJqOWxaZFJEMzlDa2RORjRzbXVzWTJUL0tVQWF3am9yazRU?=
- =?utf-8?B?ZEVrR0ZhNnBxWkVNUXFDY0VMNk4xMUFQUHhVWkNPTFlMNDRVQ1VjZm45MzA3?=
- =?utf-8?B?SjFYQWxRQ2M1ckxBQmk4MmRuaElhRTE3YkFCSDVhTTcvTllNZFIyY284cHdQ?=
- =?utf-8?B?eURPQzBGb3NFZmdJOFBYdjNaQnNBM2ZESEFDa3o5RU9tK25PeFdRWjByQVlI?=
- =?utf-8?B?Q3c2ODdDM2FsQmMzYTZsTDdPN3ROc3lFZCtPU1FjZnh4VzB4UEpFQT09?=
-X-OriginatorOrg: atomlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 876093e3-564c-49c7-99ad-08de48d3d020
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jan 2026 01:19:30.2527
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tMNDLdu0Qh+yYGIfWuHg79juyGbrv5mjAt9D/GGEWvlWGyx+VGlFCzV2XOMB42WjK5mheSTscKkX37CMXvg7Kw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWXP123MB3160
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
---d547sj7ydjrl6zsx
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [v2 PATCH 1/1] fs/proc: Expose mm_cpumask in /proc/[pid]/status
-MIME-Version: 1.0
+On Wed, 31 Dec 2025 12:22:28 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-On Tue, Dec 30, 2025 at 10:16:30PM +0100, David Hildenbrand (Red Hat) wrote:
-> Just a note: I have the faint recollection that there are some arch-speci=
-fic
-> oddities around mm_cpumask().
->=20
-> In particular, that some architectures never clear CPUs from the mask, wh=
-ile
-> others (e.g., x86) clear them one the TLB for them is clean.
->=20
-> I'd assume that all architectures at least set the CPUs once they ever ran
-> an MM. But are we sure about that?
->=20
-> $ git grep mm_cpumask | grep m68k
->=20
-> gives me no results and I don't see common code to ever set a cpu in
-> the mm_cpumask.
->=20
-> --=20
-> Cheers
->=20
-Hi David,
+> Using `READ_ONCE` is the correct way to read the `node.expires` field.
+> 
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/time/hrtimer.rs | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+> index 856d2d929a00892dc8eaec63cebdf547817953d3..e2b7a26f8aade972356c3eb5f6489bcda3e2e849 100644
+> --- a/rust/kernel/time/hrtimer.rs
+> +++ b/rust/kernel/time/hrtimer.rs
+> @@ -239,11 +239,9 @@ pub fn expires(&self) -> HrTimerInstant<T>
+>          // - Timers cannot have negative ktime_t values as their expiration time.
+>          // - There's no actual locking here, a racy read is fine and expected
+>          unsafe {
+> -            Instant::from_ktime(
+> -                // This `read_volatile` is intended to correspond to a READ_ONCE call.
+> -                // FIXME(read_once): Replace with `read_once` when available on the Rust side.
+> -                core::ptr::read_volatile(&raw const ((*c_timer_ptr).node.expires)),
+> -            )
+> +            Instant::from_ktime(kernel::sync::READ_ONCE(
+> +                &raw const (*c_timer_ptr).node.expires,
+> +            ))
+>          }
 
-You are correct; mm_cpumask semantics vary across architectures (e.g., arc)
-and are even unused on some (e.g., m68k).
+Do we actually need READ_ONCE() here? I'm not sure but would it be
+better to call the C-side API?
 
-Rather than attempting to standardise this across all architectures, I
-propose we restrict this information to those that follow the "Lazy" TLB
-model-specifically x86. In this model, the mask represents CPUs that might
-hold stale TLB entries for a given MM and thus require IPI-based TLB
-shootdowns to maintain coherency. Since this is the primary context where
-mm_cpumask provides actionable debug data for performance bottlenecks,
-showing it only for x86 (where it is reliably maintained) seems the most
-pragmatic path.
-
-I can document this arch-specific limitation in
-Documentation/filesystems/proc.rst and wrapped the implementation in
-CONFIG_X86 to avoid exposing "Best Effort" or zeroed-out data on
-architectures where the mask is not meaningful.
-
-Please let me know your thoughts.
-
-
-Kind regards,
---=20
-Aaron Tomlin
-
---d547sj7ydjrl6zsx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEeQaE6/qKljiNHm6b4t6WWBnMd9YFAmlVy5kACgkQ4t6WWBnM
-d9Z6qg//U7q8T2jic0eD44uhX1qzNzl2E+mGn3v0ZYZ6ZXDHtmfjUjXJGqWPaTXE
-jUOnt4EeMlPurfc0TNTlgEtN+l8lbzWR6oD0M5yWAFpKD4RTxI29psVFpjgBc9vm
-YHqBTzvmCduchyoMoMJ6SJNpACdFEpt0iUxqM5b0KTzz/G6oMTQ/pcP9bsp6A31h
-Axe2UfUzH8BeERmuhF/kPPb6sTs93GNb0Nxl8XDocAdWDxv+r8L0r6eDCJGhmJLd
-rP6YjszuuXRKKVLiuJ6Od7ieF+DvMx7Kb2HZ1PX7plkvoPwsrFAdFXMzEvo8iNp2
-Pp3kqoGB5JgmAos+fbt7Zvk4p9krrtr5g0U9ubh7Ffy/bwETETTot+7UPYxtS8Xv
-v/ie18+qq7eIuVnYBkdWDBumzn4jvc/ww8IHwxmbK7Xg5onpwUdhzEcAiszx4l67
-m1CXCr5zsmYEE7KTru8aw9UiXBzdP9iteWqfWCuK/eUdxiSOKDloNyctu9v5HJNV
-VYqG1xf27sC0SxeP632DO0l61LwSnQ8biowpLR/32EXyeCYY1/NmTlvCxIrxDDwF
-sJ397dhob/BAqr2be4x6no7vYN152Bq4eyUmBKgBTCyQ7bc/TgI+2Nm/Db7r9DLR
-e9atzHESLeLkOADQzq2hGxuc/awKdf0Nqgi2zm0EmYU2mEg99vo=
-=CtVG
------END PGP SIGNATURE-----
-
---d547sj7ydjrl6zsx--
+diff --git a/rust/helpers/time.c b/rust/helpers/time.c
+index 67a36ccc3ec4..73162dea2a29 100644
+--- a/rust/helpers/time.c
++++ b/rust/helpers/time.c
+@@ -2,6 +2,7 @@
+ 
+ #include <linux/delay.h>
+ #include <linux/ktime.h>
++#include <linux/hrtimer.h>
+ #include <linux/timekeeping.h>
+ 
+ void rust_helper_fsleep(unsigned long usecs)
+@@ -38,3 +39,8 @@ void rust_helper_udelay(unsigned long usec)
+ {
+ 	udelay(usec);
+ }
++
++__rust_helper ktime_t rust_helper_hrtimer_get_expires(const struct hrtimer *timer)
++{
++	return timer->node.expires;
++}
+diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+index 856d2d929a00..61e656a65216 100644
+--- a/rust/kernel/time/hrtimer.rs
++++ b/rust/kernel/time/hrtimer.rs
+@@ -237,14 +237,7 @@ pub fn expires(&self) -> HrTimerInstant<T>
+ 
+         // SAFETY:
+         // - Timers cannot have negative ktime_t values as their expiration time.
+-        // - There's no actual locking here, a racy read is fine and expected
+-        unsafe {
+-            Instant::from_ktime(
+-                // This `read_volatile` is intended to correspond to a READ_ONCE call.
+-                // FIXME(read_once): Replace with `read_once` when available on the Rust side.
+-                core::ptr::read_volatile(&raw const ((*c_timer_ptr).node.expires)),
+-            )
+-        }
++        unsafe { Instant::from_ktime(bindings::hrtimer_get_expires(c_timer_ptr)) }
+     }
+ }
+ 
 
