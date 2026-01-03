@@ -1,209 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-72340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC2ECF00AA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 03 Jan 2026 15:07:47 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C06ACF00B6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 03 Jan 2026 15:10:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 97681300B01A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Jan 2026 14:07:44 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id CD853301D5C8
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Jan 2026 14:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEACF30C62C;
-	Sat,  3 Jan 2026 14:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E3930C62C;
+	Sat,  3 Jan 2026 14:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qjC3uUee"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZNl5r1C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDD3299954;
-	Sat,  3 Jan 2026 14:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8622D0610
+	for <linux-fsdevel@vger.kernel.org>; Sat,  3 Jan 2026 14:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767449261; cv=none; b=QYu+lt+dLNaUROTf2CUz9CkQJ2z0ey3YEikv7Lsj6RJxekKBrYwq5NYzQk7lpD8adrZEt+XtbTp8fSDjdBID4ISBpwjTi5nRCgkxQkGORqGUouQeIg1pWsJjCBAxNbPq79cjr8t21IXHQgIII6IHjm0M+vQh1WjDms3DUOv+osc=
+	t=1767449431; cv=none; b=nbXyedPZ3W9M36wxXjJtImvlJLKrvHF/SVmE3rN6GXTjxbv838IZR5L3HswF9iT8eU5Eu6fv7/dwO/bqp4RLXgjjLS+CJP9rxrBLNmmSpx7gGZqWUz8VueqwTWtbq2sdMBT+DjnVzOuEFZ6OmVECs/ED7ezzno2JrlQz0mNaP7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767449261; c=relaxed/simple;
-	bh=ia5apwccu/WRfZFdCUjTE5iaEuisLNmwMenDA0pYWTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QQi2AWAqDk2Y/TnnHSASkUfp3LOK0SCoQqp5uUAD2OVIFO0n67OdLh8Uv3CLDrOTS6rzkA1CgcL4xJiw2hr1ac2Yu7jh/fG1dQD63ij04zZoAm26P6BI2+MKX0abz+w7enY9WXbcZLRnU6Rbngn7e+y/FOTrYx+qbBgcn2nTDnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qjC3uUee; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 603CtxPj001034;
-	Sat, 3 Jan 2026 14:07:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=5EGjkxyoD/hh6GxCiyYaO/SBJhzSLk
-	573NzFmp0RUm8=; b=qjC3uUeeKM7XcsKBD+cNyRK6I3ClSTDwMdMR2FCdT6ur1G
-	rCq2SIOpYZwXAQFc0ZAbSiO79fQdpGVJFLI4r0wVWAI8RAIVeMzY0TFNqS6henkO
-	qME+GtcSu9hBFT2WKpOEBjy30Ia3jMWKZezzLgygcqdZkLYjsLeVs4+v3dR/XOq7
-	WkqAV6B1w9wKgp404dsGlXfP1QY7pSFmCwpR1bp6LHI3GgYeA5qA4Lxxj7H1HXZl
-	gRK4P8LDJSfYLhx9wn7SYZoZVc9fwpZCsVBJloaTkzmonwx/btWofiqksxTZv4LM
-	j/h1d9P0nGqo7xxt4D5Jvi76BI2h3NafVLIipL0w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4besheh83p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 03 Jan 2026 14:07:00 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 603E6xv4024528;
-	Sat, 3 Jan 2026 14:06:59 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4besheh83m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 03 Jan 2026 14:06:59 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 603D1GnQ012851;
-	Sat, 3 Jan 2026 14:06:58 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4basstakup-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 03 Jan 2026 14:06:58 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 603E6vij51970366
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 3 Jan 2026 14:06:57 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0E1A620043;
-	Sat,  3 Jan 2026 14:06:57 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1293A20040;
-	Sat,  3 Jan 2026 14:06:54 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.213.223])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sat,  3 Jan 2026 14:06:53 +0000 (GMT)
-Date: Sat, 3 Jan 2026 19:36:51 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jack@suse.cz, ritesh.list@gmail.com, yi.zhang@huawei.com,
-        yizhang089@gmail.com, libaokun1@huawei.com, yangerkun@huawei.com,
-        yukuai@fnnas.com
-Subject: Re: [PATCH -next v2 3/7] ext4: avoid starting handle when dio
- writing an unwritten extent
-Message-ID: <aVkie8pdqg8_NtqT@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <20251223011802.31238-1-yi.zhang@huaweicloud.com>
- <20251223011802.31238-4-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1767449431; c=relaxed/simple;
+	bh=0jeERn9NpZZ2fejBdcmKiErTpF5nJP3LfgwB+jSsQ2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CWor9JR3P2//N4XvCHewnaA2V4wnBEehBkarZYL0utZfflF4YYvPuDlq1XI9FQWk+cpnCJen5VNqGy7nKPzT2QmnXtVEOhtHQhgGXvgJZtDYhR6vfFzXQY4i+qfaxxsY/3x69Z2ftg+pCAEVjNvUwHDIcEc92oRJh07YQElXYUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZNl5r1C; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47d5e021a53so21293435e9.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 03 Jan 2026 06:10:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767449428; x=1768054228; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xpakONkt0cdtCmYKrus/j6VwGnJGjtAMDlF2yJRIvJY=;
+        b=AZNl5r1CDLiCEyodFDXCiQRTGl96ONNPexRmGRQ/ywAYBAqk7tw4bBpUEIYwlp9YFN
+         JY3krEyLdXIOntHcD6rQhSTC0FEY2sruPz1gxuQ2SWmuZr5njOVJ1NyTeIvTpnDSRLXL
+         fQw9ZmtVDqFf9cu0cbO5rvO41+lhwYre8qv5bug2FXE+51iKvrDzjtJfSHlBOs7FR9P7
+         lwpCbV5dVsPkXr7RVyeYhEOvN3a52aoAqqKgZphqK0Xc3ntu0YInHNIBlqn18mzTv8gu
+         MLh70IOtkkHIhAIhT1fvha6f0Q3A03Ks6MTVsYMOZUElMWCNJ2bEzbfnJ8zM4Qcg0xp3
+         huZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767449428; x=1768054228;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xpakONkt0cdtCmYKrus/j6VwGnJGjtAMDlF2yJRIvJY=;
+        b=Yr9VS7da9I/wkeeLVMDhf5JkJ0pAuWrd+cJUQ2/JSULWH0cJCcco9+p9nYH6+SF3hr
+         sSq64cqONSvnQ0qB+TXKCMAuBAQpo+QsCcEcS6k5GiBNcdxZFbvh2rB979r2liznqTGX
+         uMN2KEuM3ZwULdqWtN0+ZXBAjVDaPOkhBv5+hbW6COBdq7Gk1rRp+wa6ODfdHTPuIjc3
+         IvO/YTu2+K18yJCqYaBt96336hFugPsvoXGJfPdTGXOEHYlzPso/+xn8uD0NoKYy4oGh
+         6w58EGdDNHdR5+KwZ/yldT8fJSEmq1nPJwAB0Vewlkvuft+eKsjoGjiM9mRvQ247XTMt
+         bJ5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWFo37pKMLkxwzLpUQ0OApTz3Y4T6gmQphAEtYS1EJ3tXtxql5B2EKGebsgPPW8vlvRT2ITd42tvAhxOdRv@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOGKtK6EQ8nMRTgHElo3bnvr57ve1/kak7ZlaBfDDB35pqAtXn
+	5at43fh2NcGTEY/0fIjkz8ekAimEA1GsF523QQWwm1nNQKtPR2ucwcG8
+X-Gm-Gg: AY/fxX6K7mnQv3TQGFhF5UHies12R16+IxjeURfgQUXDxZwr0PfiS7NSnBgBxXnIpbv
+	qTtasYwW4Lqd/Y/tVznWBa8mkwnbK9s3otU6zkNA5fPXv8BU0wzMjeM8fSEfePn+xaNnX5AKjcN
+	nG4cUv92m0jNUdQePwAjEAgGEr8slx1y+u8NZGNGAKFu9d7pXV7DPQUGXIpKgmP1FgoHZiN/Zqt
+	fe8luVlFl4ZcEF6tWxD3ZdMQzAxbEfkmc8WYequnbEC/hVw4PryQxa8NmfNB7g90CgcZ1ouiLtB
+	nV+2/gYImMgw8S2WCmRWP7w0Pcr3lr/KjptIOXGEkONbY/Yck+CdPIK+T7fOaHxGBUEoZD1uWV0
+	YfBv4Nz5D2c3eRp20s3zPFcd+FXG3cHP5pCwaHt4r3ZwDM9+28vABzm2ab+6DIpVT68KiIdSj6g
+	OcACaFa6pRBRYPAnKdRybSkYIXyRSF7kNhexznv1R9jlZbqXKOkwAk
+X-Google-Smtp-Source: AGHT+IGRYaGVqJD6FZ0S4FmHf27IFkeNrxyxfsk1iX42EQS64FQ53veY1xfx5Vp60d1k8JN3XPGmMA==
+X-Received: by 2002:a05:600c:1c21:b0:47b:e2a9:2bd9 with SMTP id 5b1f17b1804b1-47d19583142mr658909105e9.31.1767449427663;
+        Sat, 03 Jan 2026 06:10:27 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d6d13ed0asm41096705e9.3.2026.01.03.06.10.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 Jan 2026 06:10:27 -0800 (PST)
+Date: Sat, 3 Jan 2026 14:10:25 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <thomas.weissschuh@linutronix.de>,
+ Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2] fuse: uapi: use UAPI types
+Message-ID: <20260103141025.2651dbbd@pumpkin>
+In-Reply-To: <8efcbf41-7c74-4baf-9d75-1512f4f3fb03@bsbernd.com>
+References: <20251230-uapi-fuse-v2-1-5a8788d62525@linutronix.de>
+	<8efcbf41-7c74-4baf-9d75-1512f4f3fb03@bsbernd.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251223011802.31238-4-yi.zhang@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTAzMDEyNSBTYWx0ZWRfXxZ0N/tUFS52Y
- M8YrOqW4mkCQT9bsniIr7oJguityhO+XzhCicKyGYJ/kMStNPBcj2Yj3koRyUZUQsysC4Eoj/gJ
- 5gzYGOR+keXCxS+U0rNIYiJZsGxIyxakHj4UZLsnoLQsaL/bt8JLujzhVUtWsvGmhQb29Gc54tp
- mI/Mllkm/WOxMv9jq1wMhdDm7Qj/seWeFZCNLiZFUNnDNP71k+y/6a0ItMtEyDQRn8jt+lhzv8L
- XNiT1spnPV/nOQz+JfZe5lHe/XL37sOIEQBiiImL3yGvTwPYqR8ia5mylMggp748SUzLE+aDVsd
- 4WpHkZ7P57GEZfquTmlAFtjLh52+czSoo0w/JM5uMaPWtX48CBFSeIG3fRkqrZnA5Z5D48qPrNa
- 2Fa6BIHpao6iL4MLAXDbCU/MXP9B4sofJAtmZNPlyCqM2iVTMkzhY748EvAZK1zKnUa+7zc6iHo
- p3sRcmhYCiRBrNQe/0g==
-X-Proofpoint-GUID: YBDc3nvyLNGo4dQx6Pp1L_mn0lEXxmMq
-X-Proofpoint-ORIG-GUID: mMEkLm-5sFTP3jVT-ztktlZzgupVvzBO
-X-Authority-Analysis: v=2.4 cv=AOkvhdoa c=1 sm=1 tr=0 ts=69592284 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=kj9zAlcOel0A:10 a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8 a=BiM9-E9gWugAvIAtniIA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-03_02,2025-12-31_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 adultscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2512120000 definitions=main-2601030125
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 23, 2025 at 09:17:58AM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Since we have deferred the split of the unwritten extent until after I/O
-> completion, it is not necessary to initiate the journal handle when
-> submitting the I/O.
-> 
-> This can improve the write performance of concurrent DIO for multiple
-> files. The fio tests below show a ~25% performance improvement when
-> wirting to unwritten files on my VM with a mem disk.
-> 
->   [unwritten]
->   direct=1
->   ioengine=psync
->   numjobs=16
->   rw=write     # write/randwrite
->   bs=4K
->   iodepth=1
->   directory=/mnt
->   size=5G
->   runtime=30s
->   overwrite=0
->   norandommap=1
->   fallocate=native
->   ramp_time=5s
->   group_reporting=1
-> 
->  [w/o]
->   w:  IOPS=62.5k, BW=244MiB/s
->   rw: IOPS=56.7k, BW=221MiB/s
-> 
->  [w]
->   w:  IOPS=79.6k, BW=311MiB/s
->   rw: IOPS=70.2k, BW=274MiB/s
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
+On Fri, 2 Jan 2026 23:27:16 +0100
+Bernd Schubert <bernd@bsbernd.com> wrote:
 
-Looks good, feel free to add:
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> On 12/30/25 13:10, Thomas Wei=C3=9Fschuh wrote:
+> > Using libc types and headers from the UAPI headers is problematic as it
+> > introduces a dependency on a full C toolchain.
+> >=20
+> > Use the fixed-width integer types provided by the UAPI headers instead.
+> > To keep compatibility with non-Linux platforms, add a stdint.h fallback.
+> >=20
+> > Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+> > ---
+> > Changes in v2:
+> > - Fix structure member alignments
+> > - Keep compatibility with non-Linux platforms
+> > - Link to v1: https://lore.kernel.org/r/20251222-uapi-fuse-v1-1-85a61b8=
+7baa0@linutronix.de
+> > ---
+> >  include/uapi/linux/fuse.h | 626 +++++++++++++++++++++++---------------=
+--------
+> >  1 file changed, 319 insertions(+), 307 deletions(-) =20
+>=20
+> I tested this and it breaks libfuse compilation
+>=20
+> https://github.com/libfuse/libfuse/pull/1410
+>=20
+> Any chance you could test libfuse compilation for v3? Easiest way is to
+> copy it to <libfuse>/include/fuse_kernel.h and then create PR. That
+> includes a BSD test.
+>=20
+>=20
+> libfuse3.so.3.19.0.p/fuse_uring.c.o -c
+> ../../../home/runner/work/libfuse/libfuse/lib/fuse_uring.c
+> ../../../home/runner/work/libfuse/libfuse/lib/fuse_uring.c:197:5: error:
+> format specifies type 'unsigned long' but the argument has type '__u64'
+> (aka 'unsigned long long') [-Werror,-Wformat]
+>   196 |                 fuse_log(FUSE_LOG_DEBUG, "    unique: %" PRIu64
+> ", result=3D%d\n",
+>       |                                                       ~~~~~~~~~
+>   197 |                          out->unique, ent_in_out->payload_sz);
+>       |                          ^~~~~~~~~~~
+> 1 error generated.
+>=20
+>=20
+> I can certainly work it around in libfuse by adding a cast, IMHO,
+> PRIu64 is the right format.
 
-Regards,
-ojaswin
+Or use 'unsigned long long' for the 64bit values and %llu for the format.
+I'm pretty sure that works for all reasonable modern architectures.
 
-> ---
->  fs/ext4/file.c  | 4 +---
->  fs/ext4/inode.c | 9 +++++++--
->  2 files changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 7a8b30932189..9f571acc7782 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -418,9 +418,7 @@ static const struct iomap_dio_ops ext4_dio_write_ops = {
->   *   updating inode i_disksize and/or orphan handling with exclusive lock.
->   *
->   * - shared locking will only be true mostly with overwrites, including
-> - *   initialized blocks and unwritten blocks. For overwrite unwritten blocks
-> - *   we protect splitting extents by i_data_sem in ext4_inode_info, so we can
-> - *   also release exclusive i_rwsem lock.
-> + *   initialized blocks and unwritten blocks.
->   *
->   * - Otherwise we will switch to exclusive i_rwsem lock.
->   */
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index ffde24ff7347..ff3ad1a2df45 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3817,9 +3817,14 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  			ret = ext4_map_blocks(NULL, inode, &map, 0);
->  			/*
->  			 * For atomic writes the entire requested length should
-> -			 * be mapped.
-> +			 * be mapped. For DAX we convert extents to initialized
-> +			 * ones before copying the data, otherwise we do it
-> +			 * after I/O so there's no need to call into
-> +			 * ext4_iomap_alloc().
->  			 */
-> -			if (map.m_flags & EXT4_MAP_MAPPED) {
-> +			if ((map.m_flags & EXT4_MAP_MAPPED) ||
-> +			    (!(flags & IOMAP_DAX) &&
-> +			     (map.m_flags & EXT4_MAP_UNWRITTEN))) {
->  				if ((!(flags & IOMAP_ATOMIC) && ret > 0) ||
->  				   (flags & IOMAP_ATOMIC && ret >= orig_mlen))
->  					goto out;
-> -- 
-> 2.52.0
-> 
+You might still want to use the fuse_[us][8|16|32|64] names but they
+can be defined directly as char/short/int/long long.
+
+	David
+
+
+>=20
+>=20
+> Thanks,
+> Bernd
+>=20
+
 
