@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-72344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87814CF00F3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 03 Jan 2026 15:18:56 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF37BCF00FC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 03 Jan 2026 15:21:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E7963302D91C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Jan 2026 14:18:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 58E5E302CB83
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Jan 2026 14:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B9830DD08;
-	Sat,  3 Jan 2026 14:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFA130DD08;
+	Sat,  3 Jan 2026 14:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sx9tl1ud"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PML7pCTJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78DC1E1DE5;
-	Sat,  3 Jan 2026 14:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A4D23E350;
+	Sat,  3 Jan 2026 14:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767449921; cv=none; b=aVhBChOtMjgPDiD0pSS8CzFRirWi3aqvL0dimD3ug5I2gdrJQ/hr/X1J7DE6ZAiG0qad1oY8UfWUOsxPBQM6ETZcDa6UmRI/p53hvugIdi5+wvPetaFpbotFi6L3SPYAERlR3Z2q7CscIz/Hx6cB03/1F8MjaZuRmSVP85F4RI8=
+	t=1767450057; cv=none; b=qDTuaZNV6Si7smE7fXzyRFAsz/pCCw+Kpzax/Kczf3aR8h7ChlvQYRFzfcaGbjFllhncY0hMjErAnNZ5DezajSD6iVekqU7MFfMELADstL1cZOr1XUanQZwOYYBYmUuKX6myl4gdQvDnMQcysvZfZjVirpWy6ZQYgFRUUMqNPgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767449921; c=relaxed/simple;
-	bh=b2Ixarepcnj0YstAHyuc+6v40xtaO9LsoVIqOE23fqQ=;
+	s=arc-20240116; t=1767450057; c=relaxed/simple;
+	bh=mhtdT0N5lOtusN5DU9ihWD/5AYcjKlAv1G96lrfjdNk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N9bHNxE6EnNcY//43CHDNycK0TfqQ7qE2LRNasb+RUBQ5qOJrN3MQITrV8saDoUvIEzYS1cl1EH96Rc9N+/lIlJ1IOtbC8WAPsPMaKnCE7XrkFr7sOuE/QCvYqH1vDY04RKY9pokBoEfF+euGBltke4q4crnP3VqHTvlj9zvT8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sx9tl1ud; arc=none smtp.client-ip=148.163.158.5
+	 Content-Type:Content-Disposition:In-Reply-To; b=JCcdO1OkH8rkU5hAnhpssufEpF45LjX3THcWJ/oOsad2zujCzqFjUHlqIommPE9SH/zl1DX9ve3XghHUqC1XfJ+/viGX0+ykUY1lN3kLmSpN1+n9KuAdGav8rOpcnxGA8bMzj26DK1RUjfNZWfcx6bVBmmN+Z40SmwQGcBHgjLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PML7pCTJ; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 6031FXRV016188;
-	Sat, 3 Jan 2026 14:18:11 GMT
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 6032xPaF007603;
+	Sat, 3 Jan 2026 14:20:21 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=CVkGICilnsCI/vIuqh7RJ25lTgX13D
-	+R1LAi7t60p9o=; b=sx9tl1udyIsfI+SFZYm50R0pVh2p2EPrDGnYrntCTBNA5+
-	t/RCNundN2Vwh1f5NJAB1dmPiTkz35D9fQLwoJhdLz1+gzeYgYx1EghW2bTyZmC5
-	26WCEhDG7zJpEctkDWzd5NOt8XZ9LUpICru/apFk9CwnlJT1audxfKE6QAdiakP1
-	eg0CnZb+aujmQJWgkigalVijYyBWLCxn+CaEzF7qpMz4shfsAzS65dnxBAe3Hvh/
-	8hPyYebCFoH4KORHGhR2D0b+U0g3wngldbX388eO5T4JECbU6R01LDpBUe5GuGR/
-	/93oMn25xgQFNb2BOESo796GIMoTR/wEQsq0TXVw==
+	:references:subject:to; s=pp1; bh=RDZ3Ym74AbkoabYtF3BoFlAGA20UJu
+	V6cz61HIvPAPc=; b=PML7pCTJLEgNvEmTLg7DIkbSLl4rk7oXzQP6kzwG+8eV5W
+	YYkxsmwzii18qYWTPQFkmPaL11tGbg4K7yi3VpBXMmHaZzomS9QFvbwFXt6ExRzx
+	JSx9KvjSlpeR6Fs09fVb1P5aTpWCnszPrFT++3Ynu6gi6+pmDg+IdU+9f8okgHh9
+	mysDuWGLW3UNIXsqUoUiizKmsVIvudEeKr7l5iEKjKhzvNeMrJBf4Lf3dI9WybVB
+	Zokr1lbTzzhgcDLFEgHjDi+iHRNLpMmvSeHhgFzSrxkV2Zv5zq++R4VXzkZjLFvX
+	PYPO/pLvW0iMHzJUmvw0MINyIcf3YCb9EnS96ZLA==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4berhjscnd-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4betsps7y5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 03 Jan 2026 14:18:11 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 603EIAu0018660;
-	Sat, 3 Jan 2026 14:18:10 GMT
+	Sat, 03 Jan 2026 14:20:20 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 603EKKjv030236;
+	Sat, 3 Jan 2026 14:20:20 GMT
 Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4berhjscnb-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4betsps7y3-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 03 Jan 2026 14:18:10 +0000 (GMT)
+	Sat, 03 Jan 2026 14:20:20 +0000 (GMT)
 Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 6039ZdjD008053;
-	Sat, 3 Jan 2026 14:18:09 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4bav0ka97h-1
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 6038Tf7x008412;
+	Sat, 3 Jan 2026 14:20:19 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4bav0ka9br-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 03 Jan 2026 14:18:09 +0000
+	Sat, 03 Jan 2026 14:20:19 +0000
 Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 603EI3Dh55247340
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 603EKHh825559578
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 3 Jan 2026 14:18:03 GMT
+	Sat, 3 Jan 2026 14:20:17 GMT
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2A5EF2004B;
-	Sat,  3 Jan 2026 14:18:03 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 987D220040;
+	Sat,  3 Jan 2026 14:20:17 +0000 (GMT)
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 195D120043;
-	Sat,  3 Jan 2026 14:18:00 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 6D9BA20043;
+	Sat,  3 Jan 2026 14:20:14 +0000 (GMT)
 Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.213.223])
 	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sat,  3 Jan 2026 14:17:59 +0000 (GMT)
-Date: Sat, 3 Jan 2026 19:47:57 +0530
+	Sat,  3 Jan 2026 14:20:14 +0000 (GMT)
+Date: Sat, 3 Jan 2026 19:50:11 +0530
 From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 To: Zhang Yi <yi.zhang@huaweicloud.com>
 Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -80,11 +80,10 @@ Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         jack@suse.cz, ritesh.list@gmail.com, yi.zhang@huawei.com,
         yizhang089@gmail.com, libaokun1@huawei.com, yangerkun@huawei.com,
         yukuai@fnnas.com
-Subject: Re: [PATCH -next v2 6/7] ext4: simply the mapping query logic in
- ext4_iomap_begin()
-Message-ID: <aVklFae8eF4ZziSW@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Subject: Re: [PATCH -next v2 7/7] ext4: remove EXT4_GET_BLOCKS_IO_CREATE_EXT
+Message-ID: <aVklm3LAg_SBH22S@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 References: <20251223011802.31238-1-yi.zhang@huaweicloud.com>
- <20251223011802.31238-7-yi.zhang@huaweicloud.com>
+ <20251223011802.31238-8-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,82 +92,149 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251223011802.31238-7-yi.zhang@huaweicloud.com>
+In-Reply-To: <20251223011802.31238-8-yi.zhang@huaweicloud.com>
 X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=P4s3RyAu c=1 sm=1 tr=0 ts=69592523 cx=c_pps
+X-Proofpoint-GUID: vA9K5n_EWEzZ4djFW2BKgCD_mwzq7taM
+X-Authority-Analysis: v=2.4 cv=Jvf8bc4C c=1 sm=1 tr=0 ts=695925a4 cx=c_pps
  a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
  a=kj9zAlcOel0A:10 a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8 a=z9pMmLfz73O0ZsV4afUA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: yYwM9PUKcyX3H5z2MAjHPj5mhIcPhlp4
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTAzMDEzMCBTYWx0ZWRfX2VJpRI/X9jSG
- rNEOnWosTHs3RdyDz1ItHPsCoUm9x4WDLCeB7yKi7pLH6tfPP6H1dx18hraWikk2Z+oyx0VXfze
- G/2xhC6+zDhGGq7Hf2Xi6+q8flq0eB5t+PTH+UbYXuExqblJyEWOXFlaTDXITW8O5+KyIvdKzLM
- vRCtJ+QT9C18m/nz2wrgSO1bdQuqwnD280Bm+YvbS3s40OjXrPuYbKw0hbgJ153uwEAfHJO9uIO
- gEVZBxvuq9vy4rXJ2HchyBSQ3UEN4uwSaRB/FlOUKscJcpJ+p4Q4GPxjIl85jkPX74TANJPhjE9
- x6tsyNh5S/UB8oy4IiSfxKO/UTnoOHPmUU3/cfKF9qd/wCmnlsXlHcV2huIIN4WTyD5c/bCA5vg
- QRjrL9qeUrY5Fm+bOaFzXf9ugPc8ZRpzSFr+cQLVEQv07Z2mTEYk+F7P/emgnvvCy4FL/7Y9kAh
- a52NRfgsYd0hBxBAg2g==
-X-Proofpoint-GUID: lrm-HCl0QADx3byi_G9AXHaYElwqFWwl
+ a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8 a=mlgNnLZtXwf3JRKynsoA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: IgqUtdBd6uJbxizL6UB6na48gCN9ylmy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTAzMDEzMCBTYWx0ZWRfX2dsnnub3uxdk
+ hx29Zj7lIOVqYtohCrvaM6wEKVpx7HMZyHNg7SXCnNNWM3KnbUrtJeVHUXYtYlmkGi5VfCACI2G
+ f5IA4CGa+Ev7i+Gc+I1a2KCM2UXtQ61jgPjjPLJUxCl2hBQR5hB5T22w/08VswV5CNqqiTYVeHW
+ fwUmgCxg+pUSDWKUFV9B/44mRqT4k3wNNGknMyji3ZwbWVx6AXZkb+Sh9Dzj87qBgrRaI+1RtCX
+ J6uZiN4lwIdSBhauqWqBSD85BiKFTgM86iibYiTd/6mUciYqU+XNCOL8XVO3lZUpGOHfNSm2B8b
+ iwYGEaUswP6+Jx50+EISlgEeBnnHF/p6byXTsYGk1cegjSR9DWAxT+ljP/52IKsE+v7Q7Uo6nik
+ 9/pSxUDjnw5YrLwnZ0lgl4mb/TWdCUAqOxWFuzb33MFCf3xvtapXobGzupWbRaZ+GMuhZQVesFz
+ joLCk5CQPkjfo3hmqZw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2026-01-03_02,2025-12-31_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015 suspectscore=0
- phishscore=0 adultscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2512120000 definitions=main-2601030130
+ clxscore=1015 suspectscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 phishscore=0 adultscore=0 spamscore=0 bulkscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2512120000
+ definitions=main-2601030130
 
-On Tue, Dec 23, 2025 at 09:18:01AM +0800, Zhang Yi wrote:
+On Tue, Dec 23, 2025 at 09:18:02AM +0800, Zhang Yi wrote:
 > From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> In the write path mapping check of ext4_iomap_begin(), the return value
-> 'ret' should never greater than orig_mlen. If 'ret' equals 'orig_mlen',
-> it can be returned directly without checking IOMAP_ATOMIC.
+> We do not use EXT4_GET_BLOCKS_IO_CREATE_EXT or split extents before
+> submitting I/O; therefore, remove the related code.
 > 
 > Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > Reviewed-by: Jan Kara <jack@suse.cz>
 
-Looks good, feel free to add:
+Nice, feel free to add:
 Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
 Regards,
 ojaswin
 
 > ---
->  fs/ext4/inode.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
+>  fs/ext4/ext4.h    |  9 ---------
+>  fs/ext4/extents.c | 29 -----------------------------
+>  fs/ext4/inode.c   | 11 -----------
+>  3 files changed, 49 deletions(-)
 > 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 9a71357f192d..174c51402864 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -707,15 +707,6 @@ enum {
+>  	 * found an unwritten extent, we need to split it.
+>  	 */
+>  #define EXT4_GET_BLOCKS_SPLIT_NOMERGE		0x0008
+> -	/*
+> -	 * Caller is from the dio or dioread_nolock buffered IO, reqest to
+> -	 * create an unwritten extent if it does not exist or split the
+> -	 * found unwritten extent. Also do not merge the newly created
+> -	 * unwritten extent, io end will convert unwritten to written,
+> -	 * and try to merge the written extent.
+> -	 */
+> -#define EXT4_GET_BLOCKS_IO_CREATE_EXT		(EXT4_GET_BLOCKS_SPLIT_NOMERGE|\
+> -					 EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT)
+>  	/* Convert unwritten extent to initialized. */
+>  #define EXT4_GET_BLOCKS_CONVERT			0x0010
+>  	/* Eventual metadata allocation (due to growing extent tree)
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index c98f7c5482b4..c7c66ab825e7 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -3925,34 +3925,6 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
+>  	trace_ext4_ext_handle_unwritten_extents(inode, map, flags,
+>  						*allocated, newblock);
+>  
+> -	/* get_block() before submitting IO, split the extent */
+> -	if (flags & EXT4_GET_BLOCKS_SPLIT_NOMERGE) {
+> -		int depth;
+> -
+> -		path = ext4_split_convert_extents(handle, inode, map, path,
+> -						  flags, allocated);
+> -		if (IS_ERR(path))
+> -			return path;
+> -		/*
+> -		 * shouldn't get a 0 allocated when splitting an extent unless
+> -		 * m_len is 0 (bug) or extent has been corrupted
+> -		 */
+> -		if (unlikely(*allocated == 0)) {
+> -			EXT4_ERROR_INODE(inode,
+> -					 "unexpected allocated == 0, m_len = %u",
+> -					 map->m_len);
+> -			err = -EFSCORRUPTED;
+> -			goto errout;
+> -		}
+> -		/* Don't mark unwritten if the extent has been zeroed out. */
+> -		path = ext4_find_extent(inode, map->m_lblk, path, flags);
+> -		if (IS_ERR(path))
+> -			return path;
+> -		depth = ext_depth(inode);
+> -		if (ext4_ext_is_unwritten(path[depth].p_ext))
+> -			map->m_flags |= EXT4_MAP_UNWRITTEN;
+> -		goto out;
+> -	}
+>  	/* IO end_io complete, convert the filled extent to written */
+>  	if (flags & EXT4_GET_BLOCKS_CONVERT) {
+>  		path = ext4_convert_unwritten_extents_endio(handle, inode,
+> @@ -4006,7 +3978,6 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
+>  		goto errout;
+>  	}
+>  
+> -out:
+>  	map->m_flags |= EXT4_MAP_NEW;
+>  map_out:
+>  	map->m_flags |= EXT4_MAP_MAPPED;
 > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index b84a2a10dfb8..67fe7d0f47e3 100644
+> index 67fe7d0f47e3..2e79b09fe2f0 100644
 > --- a/fs/ext4/inode.c
 > +++ b/fs/ext4/inode.c
-> @@ -3816,17 +3816,19 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  		if (offset + length <= i_size_read(inode)) {
->  			ret = ext4_map_blocks(NULL, inode, &map, 0);
->  			/*
-> -			 * For atomic writes the entire requested length should
-> -			 * be mapped. For DAX we convert extents to initialized
-> -			 * ones before copying the data, otherwise we do it
-> -			 * after I/O so there's no need to call into
-> -			 * ext4_iomap_alloc().
-> +			 * For DAX we convert extents to initialized ones before
-> +			 * copying the data, otherwise we do it after I/O so
-> +			 * there's no need to call into ext4_iomap_alloc().
->  			 */
->  			if ((map.m_flags & EXT4_MAP_MAPPED) ||
->  			    (!(flags & IOMAP_DAX) &&
->  			     (map.m_flags & EXT4_MAP_UNWRITTEN))) {
-> -				if ((!(flags & IOMAP_ATOMIC) && ret > 0) ||
-> -				   (flags & IOMAP_ATOMIC && ret >= orig_mlen))
-> +				/*
-> +				 * For atomic writes the entire requested
-> +				 * length should be mapped.
-> +				 */
-> +				if (ret == orig_mlen ||
-> +				    (!(flags & IOMAP_ATOMIC) && ret > 0))
->  					goto out;
->  			}
->  			map.m_len = orig_mlen;
+> @@ -588,7 +588,6 @@ static int ext4_map_query_blocks(handle_t *handle, struct inode *inode,
+>  static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
+>  				  struct ext4_map_blocks *map, int flags)
+>  {
+> -	struct extent_status es;
+>  	unsigned int status;
+>  	int err, retval = 0;
+>  
+> @@ -649,16 +648,6 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
+>  			return err;
+>  	}
+>  
+> -	/*
+> -	 * If the extent has been zeroed out, we don't need to update
+> -	 * extent status tree.
+> -	 */
+> -	if (flags & EXT4_GET_BLOCKS_SPLIT_NOMERGE &&
+> -	    ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, &map->m_seq)) {
+> -		if (ext4_es_is_written(&es))
+> -			return retval;
+> -	}
+> -
+>  	status = map->m_flags & EXT4_MAP_UNWRITTEN ?
+>  			EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
+>  	ext4_es_insert_extent(inode, map->m_lblk, map->m_len, map->m_pblk,
 > -- 
 > 2.52.0
 > 
