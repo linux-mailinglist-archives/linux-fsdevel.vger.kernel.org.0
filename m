@@ -1,168 +1,371 @@
-Return-Path: <linux-fsdevel+bounces-72364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D38CF0F4E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 04 Jan 2026 14:00:47 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F08ECF1386
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 04 Jan 2026 19:46:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A724B301C96F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jan 2026 13:00:35 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3B755300E7B1
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jan 2026 18:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB3A2FABE7;
-	Sun,  4 Jan 2026 13:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9A5288C26;
+	Sun,  4 Jan 2026 18:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iYLShZNy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JS2Q0IVc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC14321CC44;
-	Sun,  4 Jan 2026 13:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B83A26E6F0
+	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Jan 2026 18:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767531632; cv=none; b=VP3cSvs2YiNjhfxAcEWZbAyviWWlIi1LXx7a7tDASWu1XJgzfF9Q2LQBrfkuDisK6NxzONbPLrBxtKorZVQJHZ+qheZbS07G8aqJLdJFobRWc9T2/hSmBe1VhExmSlRPabohgktKiFr+rEz3WxTnQouu2wjRbMkzipRDOId6/aU=
+	t=1767552268; cv=none; b=TFS1ShF8h8SYRf0bVeCMWb77/J+flijIZthdFfFuEja7lUSxa7WIeAnTjlS0US9BNVKGwFH+4HOl9oPfeDHtKDacA7vRLkuF1ZiRqW+WbOWYs/h2MoQ0km+2Iun6DEKNKaZNkVAFtN0OmsEicUZCl8IeQbY9+lrZ5Saoih/rfrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767531632; c=relaxed/simple;
-	bh=w+Za7i0qZ9e6Cwm8z4YFFZyXszscJxU6c5gG0Iqi41s=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=LLt08yx0tjXEU2/WEzZxDnN8vZiVu1nU4n4JIEQZBdwNX+c/EOOSkebBYi1ivqFcugeNu78JMLW2KzVcUvjgaFrSI10LpH/6xELvSpy8iSzGRk8AsM9ZOGpl6yhr1i8qMfyyVcHEg/pYB1Uv44oHHB4a1NIte25hin+KYu9ELA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iYLShZNy; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1767531628; x=1768136428; i=markus.elfring@web.de;
-	bh=w+Za7i0qZ9e6Cwm8z4YFFZyXszscJxU6c5gG0Iqi41s=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=iYLShZNyxML7AIIUrQoK7lhKBEcUlDiBRkklW0XqGuL70QLSrQnF1OVub1eF1dDQ
-	 t9WR9OSNnt6AND5DIsu197g7GA4WrZDxeIk+kx0l/YL/wOdAjzbVR27J/ZRwJoMi/
-	 wfz7GsWeqXIfYES+HMQ9ST3bZO6BDrjyp+1q6/eaFEN1umKWCeYMAzefauqijES2d
-	 NG27uSUgnP9S2Tfb4UmFVJMi3V+H96mVrMuiQJF1zrzB10TU00WoRLcpsBzRvio0k
-	 bPomP+Fz+Y9ixPWSDulFbgjj4Ap7LjKftw0GRBXJKCeLCgDN/GDMWb//22OD7DsYl
-	 vQ13HgO02JE6veBnrA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.182]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M604f-1vVXIO3RNr-00GWfH; Sun, 04
- Jan 2026 14:00:27 +0100
-Message-ID: <f81c3747-ef35-4726-a7b9-f69b99ed1d97@web.de>
-Date: Sun, 4 Jan 2026 14:00:25 +0100
+	s=arc-20240116; t=1767552268; c=relaxed/simple;
+	bh=aXHrPbVk55wUDS0cKNhqT2+IHruxnpWg181ytScV9uY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RfMpXwYMaVs6f8fb6mJdgXVEOz53qer5Wj8ulCf+i+3Wm4KBVzUKg997DhaT/dFtWp/ANk0mAB6i8EhRG89s3+Gm2OkrD6ZnVEyQqHIPmebEXs/sOTLgfeCNkY4LCYDSvVpZ6VBUxs5iuA6Ku59KCCBNDDGekVEuvP7X2P7/5H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JS2Q0IVc; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-64d2c50f0d6so17076733a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Jan 2026 10:44:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767552265; x=1768157065; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TfDs7DqszebnHmL46L7VaAm03Q1xsOVYA4XooF/3n1A=;
+        b=JS2Q0IVcxU9RWA0ypCnsnw2ZO2YV/eOGxUa/Kt8ZgyxxZhycix7igeLXDYeU6elWuf
+         bje+DRdIANw0dvwxRN5PK+36xLbet11EoKEAhvY5lUQUicSWd5xqHLbf9m824Vr5qdiv
+         IiHy+3zlNLo8DmvNvK2nknOuH/WephfjuTJ2ZberwdA6taie2cIMe0WduH2yPSdn9S5e
+         rXFOByKPJFyRMS5GzhMcr7+W1CiD8/EZgt8xgEMgbUfXzAKaloVr2yY+V1n1daWqtEHP
+         /ppAMTqhBdd0ZmARzjprseGG834O5W+SW7Qu3X3QzHBKLn/D+JmxboyjZ2hbWkt4LbS3
+         e0Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767552265; x=1768157065;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=TfDs7DqszebnHmL46L7VaAm03Q1xsOVYA4XooF/3n1A=;
+        b=AJUOUBzYNYTjwekZ8qHmOpS/0+3scH7h/ATgzZ/4x2JeqyXMLHQmGmFA/Dc3bCsJlP
+         yDcF9cDVS9NIaca3d2dJNMjQOARSK8WmWsPl5mOS+LXXzw8/ITf0wkIR5bO7GulSRUjZ
+         meQXnMvCo1YHAV4KSIjmmtHvLEVq6KAdDEGIx69Q69aDDdM1zrNfudlh2U+N57GPX8L7
+         zjFXfPbb4i0JLyUukRdlQRz5oSoljn5nZyxw1L5WwHRsliI7bTI/ZA9lXS1wymVOVFiy
+         8ScSRKFzmwAvJwZIyUY/6hpka5YzuitTnA57qvyfarn5Go6fkAMEUgpDAiFVABl+huRS
+         uu0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVND8TeTN5Ws8RKCeie7d3atvP3fCxtowEj0oR7PQps5efbabJxu2W7E1yPaxkHGlcD6k5/3n5xVe6+v17C@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNiHUIp6RG3hJhhPoBYXy6wsQi/hFb5svO4SKbjkXX6n+dp1f/
+	iwzM6iT3r0hGRBzSnB++opkGx0zO2yvSIXLnuVesxDUsqn7Ft5Am/cQkb7KBz2160nveGyeO0o5
+	M2m9ZYSPzZ7x3v7ZRbuxjHJhDDvi17HA=
+X-Gm-Gg: AY/fxX7WpBbM9hBTxzy5J2iFjLZ7S5hw9yAPob0Q48IphYk+TjhyZVpm50ZMLPgYZSp
+	UEb5F5myNO3aC1g97L2jPUZGlrHSYHCSrP4fUt1bZBra5S0OZBaMiKjBcJjmEsmcDl8Uk5cXC1G
+	ZqvQPCE5OYkS5vVewT35LY5LmVFK/p3+9R6yfqP2x/xPbfV+j8pSysFDbHXeQQPEmEQFgjLIpbF
+	TIkFjuKGjAHZCSZNTeJz28uM1HDUagPbR/HL5k+sz3g3zLEPv07dya8sIBlGwn/8+rpIDYbkWs+
+	0aHCY9aPboCjY3Y6BYYUmQPhA3RtXg==
+X-Google-Smtp-Source: AGHT+IGobmM075+9PECiT3+qYwobmHJ0zTC9/9avV8VAIU3rRyNMMeFz3HbbmzkfcqL0GyWgMp94xrmkcc3prZ+LRl4=
+X-Received: by 2002:a05:6402:13ca:b0:64d:e1c:4c0a with SMTP id
+ 4fb4d7f45d1cf-64d0e1c4d98mr50289922a12.0.1767552264317; Sun, 04 Jan 2026
+ 10:44:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zhang Yi <yi.zhang@huawei.com>, linux-ext4@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>,
- Jan Kara <jack@suse.cz>, Ojaswin Mujoo <ojaswin@linux.ibm.com>,
- Theodore Ts'o <tytso@mit.edu>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andreas Dilger <adilger.kernel@dilger.ca>,
- Ritesh Harjani <ritesh.list@gmail.com>, Yang Erkun <yangerkun@huawei.com>,
- Yu Kuai <yukuai@fnnas.com>, zhangyi <yizhang089@gmail.com>
-References: <20251223011802.31238-7-yi.zhang@huaweicloud.com>
-Subject: Re: [PATCH -next v2 6/7] ext4: simply the mapping query logic in
- ext4_iomap_begin()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251223011802.31238-7-yi.zhang@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20251231204225.2752893-1-hsiangkao@linux.alibaba.com>
+ <CAOQ4uxjjxUHr3Tkxo9PkrBUPcYG1C309cYA9EEvk1-oVGcV_Og@mail.gmail.com>
+ <18246672-2c4f-415e-8667-2f826eb4fe19@linux.alibaba.com> <CAOQ4uxgWc7sVwikg3uV0Ey0rrGG+X_a5JLkK-bBFpQSAEeTSVw@mail.gmail.com>
+ <2a7ab37a-7293-4083-82f8-f4022a6fa35e@linux.alibaba.com>
+In-Reply-To: <2a7ab37a-7293-4083-82f8-f4022a6fa35e@linux.alibaba.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 4 Jan 2026 20:44:13 +0200
+X-Gm-Features: AQt7F2qnxZnEfgl9eiTfTcbXZzOaOHnxjc1yu79QWS-aXZuyZlu_RwI74eJ-ZbY
+Message-ID: <CAOQ4uxhBM-rKQsV-S78G0b_aTTYbeXdt-mCiy7GcC4WSdn-NnQ@mail.gmail.com>
+Subject: Re: [PATCH] erofs: don't bother with s_stack_depth increasing for now
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, 
+	Alexander Larsson <alexl@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:tTkzsWA1lD6klQv053OAO2VjxhVYPiYSgMVwyUCszRCpFaAYN/l
- FD/jccq8mKC1XL37JjbdHVJUawhjigLERr8fooiIQgMd75+sDCgzi71gHKT4Uhmn50sKpVz
- HozNz3aLi8UWHmMBUzru7s67RD1ae0rbaj2Y8CR5v7aw0aitSFd5SD8KO7KKwflL05pZlKj
- KExOlO3TXtIA2KaPwpAWQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:hvsP5aVmQy0=;BKsjqClKkkOFLjzzwbhTEyaQIxi
- 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
 
-> In the write path mapping check of ext4_iomap_begin(), the return value
-> 'ret' should never greater than orig_mlen. If 'ret' equals 'orig_mlen',
-> it can be returned directly without checking IOMAP_ATOMIC.
+On Sun, Jan 4, 2026 at 11:42=E2=80=AFAM Gao Xiang <hsiangkao@linux.alibaba.=
+com> wrote:
+>
+>
+>
+> On 2026/1/4 18:01, Amir Goldstein wrote:
+> > [+fsdevel][+overlayfs]
+> >
+> > On Sun, Jan 4, 2026 at 4:56=E2=80=AFAM Gao Xiang <hsiangkao@linux.aliba=
+ba.com> wrote:
+> >>
+> >> Hi Amir,
+> >>
+> >> On 2026/1/1 23:52, Amir Goldstein wrote:
+> >>> On Wed, Dec 31, 2025 at 9:42=E2=80=AFPM Gao Xiang <hsiangkao@linux.al=
+ibaba.com> wrote:
+> >>>>
+> >>>> Previously, commit d53cd891f0e4 ("erofs: limit the level of fs stack=
+ing
+> >>>> for file-backed mounts") bumped `s_stack_depth` by one to avoid kern=
+el
+> >>>> stack overflow, but it breaks composefs mounts, which need erofs+ovl=
+^2
+> >>>> sometimes (and such setups are already used in production for quite =
+long
+> >>>> time) since `s_stack_depth` can be 3 (i.e., FILESYSTEM_MAX_STACK_DEP=
+TH
+> >>>> needs to change from 2 to 3).
+> >>>>
+> >>>> After a long discussion on GitHub issues [1] about possible solution=
+s,
+> >>>> it seems there is no need to support nesting file-backed mounts as o=
+ne
+> >>>> conclusion (especially when increasing FILESYSTEM_MAX_STACK_DEPTH to=
+ 3).
+> >>>> So let's disallow this right now, since there is always a way to use
+> >>>> loopback devices as a fallback.
+> >>>>
+> >>>> Then, I started to wonder about an alternative EROFS quick fix to
+> >>>> address the composefs mounts directly for this cycle: since EROFS is=
+ the
+> >>>> only fs to support file-backed mounts and other stacked fses will ju=
+st
+> >>>> bump up `FILESYSTEM_MAX_STACK_DEPTH`, just check that `s_stack_depth=
+`
+> >>>> !=3D 0 and the backing inode is not from EROFS instead.
+> >>>>
+> >>>> At least it works for all known file-backed mount use cases (compose=
+fs,
+> >>>> containerd, and Android APEX for some Android vendors), and the fix =
+is
+> >>>> self-contained.
+> >>>>
+> >>>> Let's defer increasing FILESYSTEM_MAX_STACK_DEPTH for now.
+> >>>>
+> >>>> Fixes: d53cd891f0e4 ("erofs: limit the level of fs stacking for file=
+-backed mounts")
+> >>>> Closes: https://github.com/coreos/fedora-coreos-tracker/issues/2087 =
+[1]
+> >>>> Closes: https://lore.kernel.org/r/CAFHtUiYv4+=3D+JP_-JjARWjo6OwcvBj1=
+wtYN=3Dz0QXwCpec9sXtg@mail.gmail.com
+> >>>> Cc: Amir Goldstein <amir73il@gmail.com>
+> >>>> Cc: Alexander Larsson <alexl@redhat.com>
+> >>>> Cc: Christian Brauner <brauner@kernel.org>
+> >>>> Cc: Miklos Szeredi <mszeredi@redhat.com>
+> >>>> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> >>>> ---
+> >>>
+> >>> Acked-by: Amir Goldstein <amir73il@gmail.com>
+> >>>
+> >>> But you forgot to include details of the stack usage analysis you ran
+> >>> with erofs+ovl^2 setup.
+> >>>
+> >>> I am guessing people will want to see this information before relaxin=
+g
+> >>> s_stack_depth in this case.
+> >>
+> >> Sorry I didn't check emails these days, I'm not sure if posting
+> >> detailed stack traces are useful, how about adding the following
+> >> words:
+> >
+> > Didn't mean detailed stack traces, but you did some tests with the
+> > new possible setup and you reached stack usage < 8K so  I think this is
+>
+> The issue is that my limited stress test setup cannot cover
+> every cases:
+>
+>   - I cannot find a way to make direct reclaim reliably in the
+>     deep memory allocation, is there some suggestion on this?
+>
+>   - I'm not sure what's the perfered way to evaluate the worst
+>     stack usage below the block layer, but we should care more
+>     about increasing delta just out of one more overlayfs I
+>     guess?
+>
+> I can only say what I've seen is the peak stack usage of my
+> fsstress for an erofs+ovl^2 setup on x86_64 is < 8K (7184 bytes,
+> but I don't think the peak value absolutely useful), which
+> evaluates RW workloads in the upperdir, and for such workloads,
+> the stack depth won't be impacted by FILESYSTEM_MAX_STACK_DEPTH,
+> I don't see such workload is harmful.
+>
+> And then I manually copyup some files (because I didn't find any
+> available tool to stress overlayfs copyups) and I could see the
+> delta is (I think "ovl_copy_up_" is the only one path to do
+> copyups):
+>
+>    0)     6688      48   mempool_alloc_slab+0x9/0x20
+>    1)     6640      56   mempool_alloc_noprof+0x65/0xd0
+>    2)     6584      72   __sg_alloc_table+0x128/0x190
+>    3)     6512      40   sg_alloc_table_chained+0x46/0xa0
+>    4)     6472      64   scsi_alloc_sgtables+0x91/0x2c0
+>    5)     6408      72   sd_init_command+0x263/0x930
+>    6)     6336      88   scsi_queue_rq+0x54a/0xb70
+>    7)     6248     144   blk_mq_dispatch_rq_list+0x265/0x6c0
+>    8)     6104     144   __blk_mq_sched_dispatch_requests+0x399/0x5c0
+>    9)     5960      16   blk_mq_sched_dispatch_requests+0x2d/0x70
+>   10)     5944      56   blk_mq_run_hw_queue+0x208/0x290
+>   11)     5888      96   blk_mq_dispatch_list+0x13f/0x460
+>   12)     5792      48   blk_mq_flush_plug_list+0x4b/0x180
+>   13)     5744      32   blk_add_rq_to_plug+0x3d/0x160
+>   14)     5712     136   blk_mq_submit_bio+0x4f4/0x760
+>   15)     5576     120   __submit_bio+0x9b/0x240
+>   16)     5456      88   submit_bio_noacct_nocheck+0x271/0x330
+>   17)     5368      72   iomap_bio_read_folio_range+0xde/0x1d0
+>   18)     5296     112   iomap_read_folio_iter+0x1ee/0x2d0
+>   19)     5184     264   iomap_readahead+0xb9/0x290
+>   20)     4920      48   xfs_vm_readahead+0x4a/0x70
+>   21)     4872     112   read_pages+0x6c/0x1b0
+>   22)     4760     104   page_cache_ra_unbounded+0x12c/0x210
+>   23)     4656      80   filemap_readahead.isra.0+0x78/0xb0
+>   24)     4576     192   filemap_get_pages+0x3a6/0x820
+>   25)     4384     376   filemap_read+0xde/0x380
+>   26)     4008      32   xfs_file_buffered_read+0xa6/0xd0
+>   27)     3976      16   xfs_file_read_iter+0x6a/0xd0
+>   28)     3960      48   vfs_iocb_iter_read+0xdb/0x140
+>   29)     3912      88   erofs_fileio_rq_submit+0x136/0x190
+>   30)     3824     368   z_erofs_runqueue+0x1ce/0x9f0
+>   31)     3456     232   z_erofs_readahead+0x16c/0x220
+>   32)     3224     112   read_pages+0x6c/0x1b0
+>   33)     3112     104   page_cache_ra_unbounded+0x12c/0x210
+>   34)     3008      80   filemap_readahead.isra.0+0x78/0xb0
+>   35)     2928     192   filemap_get_pages+0x3a6/0x820
+>   36)     2736     400   filemap_splice_read+0x12c/0x2f0
+>   37)     2336      48   backing_file_splice_read+0x3f/0x90
+>   38)     2288     128   ovl_splice_read+0xef/0x170
+>   39)     2160     104   splice_direct_to_actor+0xb9/0x260
+>   40)     2056      88   do_splice_direct+0x76/0xc0
+>   41)     1968     120   ovl_copy_up_file+0x1a8/0x2b0
+>   42)     1848     840   ovl_copy_up_one+0x14b0/0x1610
+>   43)     1008      72   ovl_copy_up_flags+0xd7/0x110
+>   44)      936      56   ovl_open+0x72/0x110
+>   45)      880      56   do_dentry_open+0x16c/0x480
+>   46)      824      40   vfs_open+0x2e/0xf0
+>   47)      784     152   path_openat+0x80a/0x12e0
+>   48)      632     296   do_filp_open+0xb8/0x160
+>   49)      336      80   do_sys_openat2+0x72/0xf0
+>   50)      256      40   __x64_sys_openat+0x57/0xa0
+>   51)      216      40   do_syscall_64+0xa4/0x310
+>   52)      176     176   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> And it's still far from the stack overflow of 16k stacks,
+> because the difference seems only how many (
+> ovl_splice_read + backing_file_splice_read), and there only takes
+> hundreds of bytes for each layer.
+>
+> Finally I used my own rostress to stress RO workloads, and the
+> deepest stack so far is as below (5456 bytes):
+>
+>    0)     5456      48   arch_scale_cpu_capacity+0x9/0x30
+>    1)     5408      16   cpu_util.constprop.0+0x7e/0xe0
+>    2)     5392     392   sched_balance_find_src_group+0x29f/0xd30
+>    3)     5000     280   sched_balance_rq+0x1b2/0xf10
+>    4)     4720     120   pick_next_task_fair+0x23b/0x7b0
+>    5)     4600     104   __schedule+0x2bc/0xda0
+>    6)     4496      16   schedule+0x27/0xd0
+>    7)     4480      24   io_schedule+0x46/0x70
+>    8)     4456     120   blk_mq_get_tag+0x11b/0x280
+>    9)     4336      96   __blk_mq_alloc_requests+0x2a1/0x410
+>   10)     4240     136   blk_mq_submit_bio+0x59c/0x760
+>   11)     4104     120   __submit_bio+0x9b/0x240
+>   12)     3984      88   submit_bio_noacct_nocheck+0x271/0x330
+>   13)     3896      72   iomap_bio_read_folio_range+0xde/0x1d0
+>   14)     3824     112   iomap_read_folio_iter+0x1ee/0x2d0
+>   15)     3712     264   iomap_readahead+0xb9/0x290
+>   16)     3448      48   xfs_vm_readahead+0x4a/0x70
+>   17)     3400     112   read_pages+0x6c/0x1b0
+>   18)     3288     104   page_cache_ra_unbounded+0x12c/0x210
+>   19)     3184      80   filemap_readahead.isra.0+0x78/0xb0
+>   20)     3104     192   filemap_get_pages+0x3a6/0x820
+>   21)     2912     376   filemap_read+0xde/0x380
+>   22)     2536      32   xfs_file_buffered_read+0xa6/0xd0
+>   23)     2504      16   xfs_file_read_iter+0x6a/0xd0
+>   24)     2488      48   vfs_iocb_iter_read+0xdb/0x140
+>   25)     2440      88   erofs_fileio_rq_submit+0x136/0x190
+>   26)     2352     368   z_erofs_runqueue+0x1ce/0x9f0
+>   27)     1984     232   z_erofs_readahead+0x16c/0x220
+>   28)     1752     112   read_pages+0x6c/0x1b0
+>   29)     1640     104   page_cache_ra_unbounded+0x12c/0x210
+>   30)     1536      40   force_page_cache_ra+0x96/0xc0
+>   31)     1496     192   filemap_get_pages+0x123/0x820
+>   32)     1304     376   filemap_read+0xde/0x380
+>   33)      928      72   do_iter_readv_writev+0x1b9/0x220
+>   34)      856      56   vfs_iter_read+0xde/0x140
+>   35)      800      64   backing_file_read_iter+0x193/0x1e0
+>   36)      736      56   ovl_read_iter+0x98/0xa0
+>   37)      680      72   do_iter_readv_writev+0x1b9/0x220
+>   38)      608      56   vfs_iter_read+0xde/0x140
+>   39)      552      64   backing_file_read_iter+0x193/0x1e0
+>   40)      488      56   ovl_read_iter+0x98/0xa0
+>   41)      432     152   vfs_read+0x21a/0x350
+>   42)      280      64   __x64_sys_pread64+0x92/0xc0
+>   43)      216      40   do_syscall_64+0xa4/0x310
+>   44)      176     176   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> > something worth mentioning.
+> >
+> >>
+> >> Note: There are some observations while evaluating the erofs + ovl^2
+> >> setup with an XFS backing fs:
+> >>
+> >>    - Regular RW workloads traverse only one overlayfs layer regardless=
+ of
+> >>      the value of FILESYSTEM_MAX_STACK_DEPTH, because `upperdir=3D` ca=
+nnot
+> >>      point to another overlayfs.  Therefore, for pure RW workloads, th=
+e
+> >>      typical stack is always just:
+> >>        overlayfs + upper fs + underlay storage
+> >>
+> >>    - For read-only workloads and the copy-up read part (ovl_splice_rea=
+d),
+> >>      the difference can lie in how many overlays are nested.
+> >>      The stack just looks like either:
+> >>        ovl + ovl [+ erofs] + backing fs + underlay storage
+> >>      or
+> >>        ovl [+ erofs] + ext4/xfs + underlay storage
+> >>
+> >>    - The fs reclaim path should be entered only once, so the writeback
+> >>      path will not re-enter.
+> >>
+> >> Sorry about my English, and I'm not sure if it's enough (e.g. FUSE
+> >> passthrough part).  I will look for your further inputs (and other
+> >> acks) before sending this patch upstream.
+> >>
+> >
+> > I think that most people will have problems understanding this
+> > rationale not because of the English, but because of the tech ;)
+> > this is a bit too hand wavy IMO.
+>
+> Honestly, I don't have better way to describe it, I think we'd
+> better just to focus more on the increment of one more overlayfs:
+>
 
-See also once more:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.19-rc3#n94
+ok. but are we talking about one more overlayfs?
+This patch is adding just one erofs, so what am I missing?
 
+> FILESYSTEM_MAX_STACK_DEPTH 2 already works for 8k kstacks on
+> 32-bit arches, so I don't think FILESYSTEM_MAX_STACK_DEPTH from
+> 2 to 3, which causes hundreds-more-byte additional stack usage
+> out of mediate overlayfs on 16k kstacks on 64-bit arches is
+> harmful (and only RO workloads and copyups are impacted).
+>
+> And if hundreds-more-byte additional stack usage can overflow
+> the 16k kstack, I do think then the kernel stack can be
+> overflowed randomly everywhere in the storage stack, not just
+> because this FILESYSTEM_MAX_STACK_DEPTH modification.
+>
 
-How do you think about to use the word =E2=80=9Csimplify=E2=80=9D in the s=
-ummary phrase?
+Fine by me, but does that mean that you only want to allow
+erofs backing files with >8K stack size?
 
-Regards,
-Markus
+Otherwise, I do not follow your argument.
+
+Thanks,
+Amir.
 
