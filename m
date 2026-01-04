@@ -1,269 +1,372 @@
-Return-Path: <linux-fsdevel+bounces-72359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD75CF0BD6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 04 Jan 2026 08:57:21 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F93ECF0C8E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 04 Jan 2026 10:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 19ADF30146C8
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jan 2026 07:57:19 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CBEFA301339F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jan 2026 09:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1362F6918;
-	Sun,  4 Jan 2026 07:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D484927A47F;
+	Sun,  4 Jan 2026 09:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="pCFhAJ4/"
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="i/xtglaC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012026.outbound.protection.outlook.com [40.107.75.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F699944F;
-	Sun,  4 Jan 2026 07:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1EF207A38;
+	Sun,  4 Jan 2026 09:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.26
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767513435; cv=fail; b=AQZvQ7/vKD+EOmwhAtudhrcSt3+tF9pIuPKjheHtbefYovZBpnCMFFchVL4EHzfCeIyi9XxfdWCUx47/KSyPOWQq4MufvZPx9DBUBGCr89bjxAxyp5xkEmbFzL8CjPIlxTEpPwxxb6dJc8+RAdJ8VZbsoEnaRiD+/dUCHThYAV8=
+	t=1767518199; cv=fail; b=CYppoZ5ZDFg3BEzSWREJltfVP1TCthsIUw867waRahk8FKUzTJJo64CcYIah6TvXPGT28qNoBTUDSWJ7zWA/y9Mx+IGhUNFQJ2JVByhQ2KMOb6t7NThFNhC8Es9P7koUoKbWOEQNX79UQ78NhAuYyBd9brfcFyrIXHPZbRR6eZ8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767513435; c=relaxed/simple;
-	bh=HQ19ipK8CC6yNcXlFFjz8qa8smj9N2RAhDyQmJKjomE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=E3PZuN1V/ptcapTtrYCvDWcFoQAfoCVGuKucmmm0Yg5H7dNKKqTZ2xa/1CoiLaWXmlUZj2uPF/wKCqYiGerJfhSmlngoSowYBgBEntETVZmUCf+FUsw7G46z6GbtOma6sgbySYiQqZN/01Gb0J2ikcoRGNIUiu0uFmeyvI3QQRc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=pCFhAJ4/; arc=fail smtp.client-ip=185.183.30.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-Received: from pps.filterd (m0209322.ppops.net [127.0.0.1])
-	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 6047oAZC017558;
-	Sun, 4 Jan 2026 07:56:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=S1; bh=uy2hy87
-	nEN3n1tiRw7pFBI79pQk4TULCoOgQsS8uiqo=; b=pCFhAJ4/hi/Lboj2xAbL4Om
-	zrM0ORJE5gK/wX7diN0I18F+FdbC+0Y+UYNQ78FN85v67YIYOMQaY/a0y/31aRsD
-	sBb5f3DsAdgt4RGcOle9nvYWqKmoLKSvZbFW2yVoIgDzFDhC7mQlsgi5lqy+5u+w
-	Y6Kf57CBfqqyVXR4bOrxYsXndfSpKilpeBKbBEOoNW3QmGM92HBGougUDDHCO+sk
-	FbItbGok0Hf7qC0B5Zo1S8Oygjs4Fsa7q4bevntibE+PbEQDynD/CEbWjV0oNI79
-	PfA06HheNCaD0PE2NYUshv4BmL39gsZWa8U3TPI3JzUVpqWOhuCa9+YfZober+A=
-	=
-Received: from tydpr03cu002.outbound.protection.outlook.com (mail-japaneastazon11013033.outbound.protection.outlook.com [52.101.127.33])
-	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 4besw2rsug-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 04 Jan 2026 07:56:28 +0000 (GMT)
+	s=arc-20240116; t=1767518199; c=relaxed/simple;
+	bh=1aF7vzApxxkNARgDUqB4PCiPQNl6ggkCRMWZxRDjkSM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=iT1eErsKX2aMRwGld2GRgRvW1RKRaW+bbiv4fd+07fBc0Ggt4WANhTbhZoUXTITv2STZtTTUP3LsYhVq0kgh4LdDJQKb2DujDCt8mDigUC12SnXNphghF59j1KXWIxVJe541ClTNFqVva3qLlKTICuX8oq4HX7P31dQZKrR8zGw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=i/xtglaC; arc=fail smtp.client-ip=40.107.75.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HWksw9Ia3WWdt72g9AVunTcz53ZBQgpcOk3ytCVT2SgeSYyGsPNIS3C1rd6a071++9wQxlIBDwfMU4YY3dIs2VfokETCT8bRCHsuNLSEkKBXCCcfGcwS4PIZcedW5FkCdbmSuPUMtSKANiEOkc9YXyw2JZj/iD01VskULJjAw7NewsIiQPx9x3Ma4U9mS2NOejS+AekyLuniA5Aw15pipyRtXMkWXEzt58nvikv/XG8xUJJ02gVFmUbxUF7kvzvkG3qrabghFhlzP8vrpoaT4vTlxdCzcHED6w4zoNg30NBUuHWmZRX+gQiL3DZ9XiqU7xmaOJzAvpkARYZwAnyUTg==
+ b=ZulyimKTA9+gbg7ZUsldrUASy6mrqOv5qqg35iRTXzxp2Ext+FUjEiSwgjKlE8Qar5M+oqNIrohEORnTgPqr4IFkdfm/Rq6xe6ECQW7RVnvOOo1wsKqK9RihhUab1by3Mhp8U0beonYo2RSpVyHpUlvKdS/kLTmuDUS3dxgQsB9E/1ZRlyz/90c+7AXOt/TJ7pMHikgqXWng0dV91O2ytyx0uxjhv7DKlvE0ZpoV+36mALxwH3IpIjQJMDGjbuaBeGY15youW2Ulr/T69ClS6DSeBzRhORePwsFpu/+ALAQHIdxR0FfJjJdfhleIb7hT3lgYi7CdEK0tTVqtfuRnsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uy2hy87nEN3n1tiRw7pFBI79pQk4TULCoOgQsS8uiqo=;
- b=cqTWI+t4O8MTYjjNueapYwv9HOiOcgCh1QzEf098rF0qZJAFHfEtRIjYqSh4dsvpqleGnPXBNZF/KqrB1UJSqgP3PfnkZIw9WVbEoJlMUfekbPoWjCdMPVk1SROosidgu/rIAIZq6YJNOgLzkvmoo9DVPy3/YI3NRVrI7oIX6sqqprYVDlt/6fB+V1+wjYRw/OOtMCVvm721FFip+g23Mw81YecqGo41bKktA/+gq3lbqjntnInVTBWpkTORMWJZx/+93UDyVlIqieeIicgcixW967npRoJM+prp67LouV8N6J+euKZo3W029bEndmyKwKQWMHuygpESN9bLZk5iqA==
+ bh=bd2hP7g0MLB+jrCZYuLukNqlFg27+ytVf09bT/UkgTQ=;
+ b=Qse54X0WgXZPzxJ89sf2rgU0LflEgpKPJYT5f9OzqJgmvh2o8xP4z+RQHYAOxJCb1uGU8etR2scpKaCaUYWUdwUOH1vMoyDrZFjwDc+K+LpHB/+29Cbso9XMNCEuKLOYBqilo1SFQpjzStA54essH7ohYKoptBurFt9EIbbON24EsiWRFA/LMxUyV0NjOYOxuhfd1FkO6qYZ0skriWV7erIJyBZqoWF8rFuoTwQs11ikfsNWBeU8+YfGVn/93BcQu96i/ZC7Xsar4+q3es6ID5K/a7fyuyuXbeho8HqpuiyCXxiSJebaUgnasTH9FP5YltFRLmVlKsR+wEZrb8J9YQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
- by TYSPR04MB7274.apcprd04.prod.outlook.com (2603:1096:400:473::6) with
+ smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
+ dkim=pass header.d=oppo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bd2hP7g0MLB+jrCZYuLukNqlFg27+ytVf09bT/UkgTQ=;
+ b=i/xtglaCtF9+WCd2js0LnbANCxmrB4h657GWSnxYo147D7/myTtPlT5VIc4uMi8Z4w0X277igHVyW30+d/7weSCu0yhACctqceSkRVp078+UXuZLty9j3KwG4S8zsF+1ICT3ih6/PPCCyTCSHKnw36MNwUVE1Yw2cUsYLv3SaJA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oppo.com;
+Received: from KL1PR02MB7739.apcprd02.prod.outlook.com (2603:1096:820:133::9)
+ by SI2PR02MB6037.apcprd02.prod.outlook.com (2603:1096:4:1fc::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Sun, 4 Jan
- 2026 07:56:22 +0000
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::a631:6b1a:332c:831c]) by PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::a631:6b1a:332c:831c%5]) with mapi id 15.20.9478.004; Sun, 4 Jan 2026
- 07:56:22 +0000
-From: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-To: Chi Zhiling <chizhiling@163.com>
-CC: "brauner@kernel.org" <brauner@kernel.org>,
-        "chizhiling@kylinos.cn"
-	<chizhiling@kylinos.cn>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
-        "viro@zeniv.linux.org.uk"
-	<viro@zeniv.linux.org.uk>,
-        "willy@infradead.org" <willy@infradead.org>
-Subject: Re: [PATCH v1 9/9] exfat: support multi-cluster for exfat_get_cluster
-Thread-Topic: [PATCH v1 9/9] exfat: support multi-cluster for
- exfat_get_cluster
-Thread-Index: AQHceWR4L2gswImwWE6uvNkpmwBpsbU7CWKAgAaVBPc=
-Date: Sun, 4 Jan 2026 07:56:22 +0000
-Message-ID:
- <PUZPR04MB631627BD83F409B370337E4D81B9A@PUZPR04MB6316.apcprd04.prod.outlook.com>
-References:
- <PUZPR04MB6316194114D39A6505BA45A381BCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <d832364d-02e6-458d-9eb2-442e1452a0f9@163.com>
-In-Reply-To: <d832364d-02e6-458d-9eb2-442e1452a0f9@163.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|TYSPR04MB7274:EE_
-x-ms-office365-filtering-correlation-id: 5ccb201a-62a2-449d-9e54-08de4b66c0ea
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|10070799003|7416014|376014|366016|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?xj/gNVHIoRIMoHYQnSRRAiMNcCe+tJ43oWxpfodDzy3pr91uXbWL9d75iu?=
- =?iso-8859-1?Q?UrZmJM9n+YAYJKSKyj/5HOLUSIbsVjNv1dS7JBxt11iALofrumbSE1H3K7?=
- =?iso-8859-1?Q?lYZLTYEjUt9lDT4EOghba7LguoSc/dynWiiDH916uH4vHFpunwCbZyckyC?=
- =?iso-8859-1?Q?WqiORjXccWbfMNoG6i2DH9CyiJ4sYzjSTdAaTJYBI8wfqDxSYiT4NAuTkP?=
- =?iso-8859-1?Q?GvVpCV5WoZlZk9E09iqiwYDrfnv9uY4l/55dQHMRNv1c70b89GT84WX1q5?=
- =?iso-8859-1?Q?MLoKOFnlSOBtwS4bG3vFWKljmMvvcfdopHjhGziDS3JCHVqrQYCNfw0KhU?=
- =?iso-8859-1?Q?DIKA0ZKoK62v8NOYb7EWXmpghkdrxgdmQLINsXRWSl6KX7C4gKtMLYEOhh?=
- =?iso-8859-1?Q?o83GrI5t3m1GYKJWfbQ0FC0BEfjwgoun96Vthdr2Qnt/c5ZJxaroHwwraV?=
- =?iso-8859-1?Q?FExMGZ9dikzQm6bn1WAdTg3suoey8uMQs2d8FbNiueij82II8j+NzegJUF?=
- =?iso-8859-1?Q?CgHz2Br8Nx2TqGHtta29a2DOr2gnpm9N0ZKdgmHXhW2AHBHHxcDzIr51HM?=
- =?iso-8859-1?Q?FyA6gguhGyMZkqbn5XfpAK/i5YNEkDJy+Y6hv6HiMsWpaQjJtD7NsVYN33?=
- =?iso-8859-1?Q?/wah/y5TBeALZsb3uRPhuU9AM92rIDxr4Y7r9qZVeoKn7DnsmbRM7ZH4FY?=
- =?iso-8859-1?Q?kIiAQK24G6jAfEPyk0xcJSFKCtKndcX0eEv76hF7EjsJ+z7Fdd4LFD/xt0?=
- =?iso-8859-1?Q?AejpI6YL2rYDwvKqM0vRXjmb+Qe5MUBUIGQVbOp7j7ebBUVE/IACRRVUkD?=
- =?iso-8859-1?Q?ZaknHexPBwdRmyL8eFWaQh4PafRVnba3Z6qOYyQ8puNg6/omvODBn8OqoM?=
- =?iso-8859-1?Q?uHRvkpbWiHwCmXgMmgvYM9aRtllXHztcFcem9zBKVUICK5LX5D8Yc85qPP?=
- =?iso-8859-1?Q?WGJWp2Wss0T3yo80wIdidBeMl/ijXxY5+cm6a0M+bFYp4uupLBK57jAnr4?=
- =?iso-8859-1?Q?mecwQaRrDb/Ks2LmiqM35Pi/9ZW5iZeGcLVB/UsXq6ExNTfYC3ONT82nBF?=
- =?iso-8859-1?Q?TuM7TNovrUu52UGbapxTceiGKH2VPozGoKm+3Rb93gWBfhfgpBoiy+q6aB?=
- =?iso-8859-1?Q?/Iz1B/OSy7y27d1Qtg5361QJn5gb+Np7riEY+8UrLtw1wOpaNrr9x/ngUA?=
- =?iso-8859-1?Q?gQQkJKqLsc7YuM9StRu7zKf1/QxO11AQLpy7RT7kGw64nu3oh8XQKaD7+b?=
- =?iso-8859-1?Q?7ZdTTBS+yZVlxiRw5rsc5A0z9ZfOCjmRuRID2rpwwFRiG8Fs2LgchcKW+W?=
- =?iso-8859-1?Q?/McctK4h5V9MQDZDWHWHVTcE3iT31CMbKBAk90peSgI79wk13idahSs59u?=
- =?iso-8859-1?Q?AsFerGliLbpgMVvwtmZBFhmDX5ZLCrDbTNuhGJeq8dMgAv/RESM2KK1JgV?=
- =?iso-8859-1?Q?AL+fSGeuVjCoNLQPWsfdj62WlOW9JC4DyHaRJitWjict3RuCmmNdatTG/5?=
- =?iso-8859-1?Q?7Q4MSjydy/8fAus6bJBsqO9yncsBHTGTW/DliSF1AY0GDwGujgsnzfrCuA?=
- =?iso-8859-1?Q?gDoh/jzjvNkQLmWqQJVlZbp40PoA?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(376014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?1AKl+iYxs0mf5/6NWdnSiRrEvvtv/nHAiERFLUZXckwqdlER0yJ+iWLwkh?=
- =?iso-8859-1?Q?Zxe2+DkbxPVqL4Kzj9ZhayDYHRWEdQzp2f2j/WIVN/plr5lYuesqMawKsz?=
- =?iso-8859-1?Q?BKPJ+alcTAO7bNUcmhpEOXLT/cdOAx6hgJpXd/nb9sFv7aqLmwd5C9Y5F5?=
- =?iso-8859-1?Q?iFlz1XxrVWJodw5NtIftzZTdsbQx5tKYNSIv3L221MUHjEz9QXvx/+KVaJ?=
- =?iso-8859-1?Q?c+mw5AJpB5rseDUz2N3JqYSd7hgLD9em+foAkgw1T2lF5gOU4TT6DPUoXp?=
- =?iso-8859-1?Q?UhdE0XwGyXMqovqvhHPHw0qje96EVhKlAQHAq1TqOAyV42QmRnyvOnngEg?=
- =?iso-8859-1?Q?6+8CNI21zvzivvKAayG3HzEajkIAuy17eIgIwamHz0qaKlX0BHmWFAb10P?=
- =?iso-8859-1?Q?S5DLIqr/tjSHJ4xD/V076Ujbz6tczq1aJqPD3i+qFz4YJghs39ruKMK0ZI?=
- =?iso-8859-1?Q?/Up9cApGpdoLKnfN1rR/0ox7hI6NOlHIvXpS5Q6DT1WT1C2pyB42DV5Ytq?=
- =?iso-8859-1?Q?dm/Vjh6/0mWo3EnOTspt/OsTyglVwyQWxgj/TT9M53/Lou55RPnnnXl9qc?=
- =?iso-8859-1?Q?+eR2Hwsty8IWRSdTQnZPYNS1Cwc7R6+aehM2qluESXI3WlLUYib/PQAcBj?=
- =?iso-8859-1?Q?8KOHcCZfPwxl1e+cIiSl8ys2bwMqvzKZ+/v+PZDr6iq+b1dYnDl/+k2oPc?=
- =?iso-8859-1?Q?o46v4uxE3vq3QccuRZaUhz8WAs1ZWeEtAzYK5M535qMqgwfpq3aSj6jFFB?=
- =?iso-8859-1?Q?YTRG9PKJtXGAgpERqh6/23qDzgtu5w2gFoIsGJD5mz07lYdo6a2hRhXKiY?=
- =?iso-8859-1?Q?It+uKFzPOPOl9tYVq5iqucggPbBHnwGhvM1J2UdlljM4QzLT8RhMxDp8Mo?=
- =?iso-8859-1?Q?Qoi//fRoQTjRo659abGmY8lnTBiRD1GIOTc8YfzgoRBkg6T32qLelm4RYM?=
- =?iso-8859-1?Q?+hzWTtHWmxkHpDf15juKx1L2quCp0udBZoNBHkrfmMJn9FWSsoT4JIZ7AL?=
- =?iso-8859-1?Q?X1ORslUbdHVP+pFZd4Qbyt0NflUlWBtgLkYb05La5X2YtynJZAILD/1vJ/?=
- =?iso-8859-1?Q?bdT2m5fVqHQMb6KfIexoVeraa6aga32HdqXKKOgrz76yhbDy8j9v2v0J3Z?=
- =?iso-8859-1?Q?MWD5TOFzcEoB7htYIGMrQz2VlH6Ch15IBx8fGGSmXLUZRXYjuXMBMHuJW4?=
- =?iso-8859-1?Q?orRb7v1RYOFiDQYGJKR/Tt90HZm7ru+7ZcwKR6C7hv4HErL7t6ejzvXj5I?=
- =?iso-8859-1?Q?UhfT8m8Qi/bxFBB/yqo4ix9tQogOrHul7DnbOfNP+ZgjXiw3OzAaFFTY5t?=
- =?iso-8859-1?Q?86+kWIH9iBEQ1h56XOceTwEbgDBFIRsY1TLB2auPN7/BTD6u6J90+lWI73?=
- =?iso-8859-1?Q?PHuiOTQ3gypyxDoS0vEwtM5jzaGmpmOEI6zZ9oddXVKjP5WHb8xE0vgXHf?=
- =?iso-8859-1?Q?zzMT4rYCBFRSpQt5pCboK1pAUf/D0ClJfSY5QRvF5mAwXojeuKFuGZ7loD?=
- =?iso-8859-1?Q?2b2aJb/Lj3EuMy+IPflPs2ZouqbFh3Nh3fVWtOWCo6decGLNK2HB0RW7L/?=
- =?iso-8859-1?Q?c7ikeFpLLxcTC3qjsdzYrmeC8HCim7yezmCyzOUhWIWAAjdrQMJGYU/dFL?=
- =?iso-8859-1?Q?/zg1HftGnnh1p5NakCdQqSqJCYn1EOvmx7zUoLl1tCbGYJs+Gjdb6AjPuY?=
- =?iso-8859-1?Q?3LQIp3QIr1s3t6pTefph7eDsHhxCuswQu7yHzSM3R1/qbuDPl+wpubSK6q?=
- =?iso-8859-1?Q?WMK/Sj/24oDc7yYf/PWSBFDSO9tZnOwqbn0C3rgaAoTgMhL1PrNupCjuoX?=
- =?iso-8859-1?Q?ALSfepN0fEkXZ9Yjf7NijDt8OvV6TAY=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ 2026 09:16:28 +0000
+Received: from KL1PR02MB7739.apcprd02.prod.outlook.com
+ ([fe80::c7b0:3b4:9c16:78f]) by KL1PR02MB7739.apcprd02.prod.outlook.com
+ ([fe80::c7b0:3b4:9c16:78f%7]) with mapi id 15.20.9478.004; Sun, 4 Jan 2026
+ 09:16:28 +0000
+Message-ID: <cccf352a-1a68-430d-83fa-a14bb5e37464@oppo.com>
+Date: Sun, 4 Jan 2026 17:16:24 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/2] mm: continue using per-VMA lock when retrying
+ page faults after I/O
+To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: Barry Song <v-songbaohua@oppo.com>, Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
+ <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+ "H . Peter Anvin" <hpa@zytor.com>, David Hildenbrand <david@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Matthew Wilcox <willy@infradead.org>, Pedro Falcato <pfalcato@suse.de>,
+ Jarkko Sakkinen <jarkko@kernel.org>, Oscar Salvador <osalvador@suse.de>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Ada Couprie Diaz <ada.coupriediaz@arm.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ =?UTF-8?Q?Kristina_Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ Wentao Guan <guanwentao@uniontech.com>,
+ Thorsten Blum <thorsten.blum@linux.dev>, Steven Rostedt
+ <rostedt@goodmis.org>, Yunhui Cui <cuiyunhui@bytedance.com>,
+ Nam Cao <namcao@linutronix.de>, Chris Li <chrisl@kernel.org>,
+ Kairui Song <kasong@tencent.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
+ Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20251127011438.6918-1-21cnbao@gmail.com>
+From: Oven Liyang <liyangouwen1@oppo.com>
+In-Reply-To: <20251127011438.6918-1-21cnbao@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR01CA0024.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::20) To KL1PR02MB7739.apcprd02.prod.outlook.com
+ (2603:1096:820:133::9)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	TNO8EcWgeNa/kk4JnOfvY+BnBE5uhQJCv/mUX69kLTZWFqP6QFlSdvSMm2zgOMyvBj5f+RnHvJNgDuP7LFC1wQQHCTvu85EMzN0uvFk6T/r52fP4e5GxBdFJVLIUk5DapY9m2qDMbZyr29fnoaOvRFFNGndtKmSCBpwr219KBraHaZiM9JMh7/DnLwE5JpiuCj8kO/1WF1aX6U4vC9AcSbPSxpCju22AlLEsYwKB+FTb+bdfF9DyXzcMqG5S0KNzuXYpy70zV/WaZg8M4BCoHEH12l1FiWCAmFoFH+A215rpBQ6CS6mLA/3HYuMEOmvFNTv13/hfiAreTdbpkvrLgJYbZXXlWa+UgLJDtinb2k+0lFtMt//eeEGcCugiOa05FKPTJNS+zHi4sX/TwNyvORUs4pDnEtfnAHNFLC7dfdmwGfDGHSEJfJRiwKuIKdCZCz0Hgfl9PrDW/JMTM70p2Bpy4IMwL1qZJxcTViAP5ANsB8GeO5gBDQyIbLUWGzsa6ALfMwvhliQ3tQDbwWPDvM1cbcHzU+TLv25HXTDoMi6xGbK5K32HsX41N6Q8fhsP4TdrM3AUzzVvaVREUR8ckkQsbbOjkAI2RYHUUVIIQ2uZ7pN8HHNeANjWDJxdWU6w
-X-OriginatorOrg: sony.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR02MB7739:EE_|SI2PR02MB6037:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70212a75-9cf2-499b-1b51-08de4b71f12a
+X-LD-Processed: f1905eb1-c353-41c5-9516-62b4a54b5ee6,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?K0UrTlNpNEN4NVNUM2x5SDFOZGRwbm5Zc2RHanJMT3JFdDZiTlE2WjA1dlA4?=
+ =?utf-8?B?a3BhQis5b3dtdXp3aDlHdjQyaitPcGQ0cXhSWkVzaEx3NjZBTHQ0YlNmZlkw?=
+ =?utf-8?B?MjBNMVhyYTRHaXdoRytUNUNzVjQvTFZzU3pYREdiakltRCtOOUFrZnl6eity?=
+ =?utf-8?B?RVV3cTBaOHIyMzUrU010dzJwMkVoYW1oUWprMXVvQ3U3UWh3cnZxOHV4bm04?=
+ =?utf-8?B?dDRQd3czZ2hER09zQ2RLcmtkNUlFdE5GOWNDVGRwOGRBaU9SL2kzYXpBVTgv?=
+ =?utf-8?B?YjN2VXY5dDVRVWozRlh4dWN5NS9uZm9QMDVkSmNoMFJZeVhpZ0o1UVdLUnNj?=
+ =?utf-8?B?aDZaRHRzS3pBTVJOMldnaXRTKzFUdW1oRERUWWNMenVwNjlxL0N6OW9VMjRH?=
+ =?utf-8?B?LzlMa0d1NFgrRlBDNlRpa0I4OHpwYmRXb2tHUm9seFU5SjBkQnMrQURpK0Zq?=
+ =?utf-8?B?OGVMRHEzVGhKR1ZPTTNKUGRzcVFrQ1BIRURZK0J0T1RKU0dqOHN1aXVKZDRE?=
+ =?utf-8?B?ZUs1M3dlS3FJYlpBaXpoU1p5d2RqV2JhaCtDK245ekVyVjVwZjhPYUsra2Rz?=
+ =?utf-8?B?cGxKRHhsb1R3WUJOcmFrZlNxWW5RTy9mVkNNenMwWUpTMHQrdXBFRERzVmJH?=
+ =?utf-8?B?aVp0WDVLK2k3Um5aQVZSQTJMNC9lNEFNRTdhSmJtNUNTR3FSYWVxM3RIQ1po?=
+ =?utf-8?B?U1FvWHpjSXB1aFpBYUVnNWQwZjZvYm5oMXl2RmNybms0TUxBbVpwbFY5WXI0?=
+ =?utf-8?B?TTRUY2JLVGFmeVR4WEFQcmgvc3FTek42MU9MUUNsOVk5aXlTTzBZQUJQN0V2?=
+ =?utf-8?B?dVkxOTcxeTJYRjZkK3kydHJLZThYbndoZFZpOGhlNHVrZURQZkVwcmFnT2l0?=
+ =?utf-8?B?amFzd25OVnRMS2tmTXRvbUVJbE1RdzZzVVh4R0pnU3kybityU3loRHp1Z1VM?=
+ =?utf-8?B?OEs3WENsRHQ3b2xDaERtVVl0KzdRaWtXVTJ4VllsVG1GclM2OEg0N1NaN1pX?=
+ =?utf-8?B?bklKSGEzWUdqLzlaY0N1VUxITE9oOWxGZ0NMWFlWN2JkYk8zVnVlWnNiakov?=
+ =?utf-8?B?YzlKUzFqSlo1ZTUrbTlkdXJOQ1E1V0k3L2NKRGFFMjk2YkxuRUFySlo5NzM1?=
+ =?utf-8?B?MEdmcngyOVFFTHZpK0NVcnJPd2JnUG5wbnJqY1IyZEI1cFlERmM1VkJnUTBG?=
+ =?utf-8?B?ZUlGVDlraWZTTUp3Y0VJcFhzMGRFSnJrU1hHZ3NiNXkxRVpGanNuWCtjcWc2?=
+ =?utf-8?B?aUw1alRMTWZJMnhkUHRCU21rdTI3bjA4MjBQemhLcko1L1VrUWs0ZmUvb1Z4?=
+ =?utf-8?B?K29NU20ycXloM0VsN1BLaHFJMEpLeWVnT3ZFWElkeFcxYXI3djhSVndPeGRk?=
+ =?utf-8?B?VVh0eElZWVNhdjhicDJXWi9LalNxajRReTdmK1FCRlNSbTJZSkl4OHBvWHd2?=
+ =?utf-8?B?VGJJTDI3T213UTRHa1NDUkZ2MDBrMmtCN0g1b2VoY3Rqa21EVFB1SkYzRkNI?=
+ =?utf-8?B?R0IxVmZqNXFZZzNlY0NKRVhOR0NLQTBuaVQ4WFltdjRzZTJiUEhtczJEcDVP?=
+ =?utf-8?B?NXc1YkdlZmdKQzZXN2Rlb2tWUzFpcE5PbStPeGVmdlI4d1ZsT3BsY1RvMko2?=
+ =?utf-8?B?YVA4Qm9XWXlrbUI4cU5YVnlzaGFkcGUxeEsvN0tyOTQ4MWI3RE1LWDlEUnh6?=
+ =?utf-8?B?WjBJT0k3S1o0MncyN2F5WENuWkpkUTVlYWEwUVVoQlJNNVpWazZic1BWMHox?=
+ =?utf-8?B?Yy9Rc200QjBXMEIvZjAxams2Y2tJTUdLb051N0pHQ1JoVmpqTGx0R0s4WGRM?=
+ =?utf-8?B?MXJwVU9Oc0M0aHhKUUl2TG5PRHB6ZDZtblRXcFhWUnAxWTVOSjBlOWRaeTlD?=
+ =?utf-8?B?T3ByeGNhVUdJZHlWQlhhcWtxQTArUnJ6bU5wV2ZQRmxIRWN4MGF6S0tDUUpQ?=
+ =?utf-8?Q?Hw02SOU7+wZB6F39ZaZZZDfsMjjPE4TJ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR02MB7739.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VFJSbXNIdE0xUGdGMVVubnhYTldKTmNWK0ZaT1NucW0wTlU0TzhCRGpaS2pn?=
+ =?utf-8?B?UmlYYkIzVVg5RUxtWVFIRnJCNC84NTI5T2dMc1ZLdmlobnoxUDFkMnVHbHg5?=
+ =?utf-8?B?TlU2U0xIdXRDbmplWVFYbVV3d3gzN2FxN0dzWFBJbW11Tk9xUUh2cnFqWGpY?=
+ =?utf-8?B?NzBGa3NndzM0M2EvaFFVNk5qYXVhTmVRTUZHK29rMnZSMXJ5OFhwSnpPUU02?=
+ =?utf-8?B?MmF2L280NGhzWkIyQlk2K1lXbGhadUw2OGJDT0Y4cXdqVWQ5U3VCVmp4aU5z?=
+ =?utf-8?B?VzV1QVN1ZlhoSWExaDdwclp6aGhPLzhoYUs3K2xMQkVYVUZHU2lJd0JiRXhn?=
+ =?utf-8?B?bFRROTRzUWF3ejRuTFd1MDZseXRlRy9LYTBPSUFjTnpJNnhicFR5QmROM1Rp?=
+ =?utf-8?B?WFJGK0RMWGxKQS8xUGN3TklrbVhlQVI1elExK3pBVXJZaGF3NlI1SlRDN0Zs?=
+ =?utf-8?B?emRtZWNjdXlHOHhzc0lIczFzYnVyeklTdWpxK0NyVTh3b1hCZTBaa2ZuSWls?=
+ =?utf-8?B?by93V0pjSlRMVGJiV2ZwaFRqemM1aitueXNPSllpVE9Db0FRaVAvN1ltVTNG?=
+ =?utf-8?B?dmRDdHUvZ1g5T3R4NEZ5dlMxQjFFTUs1MmZ1eUlaVlhKdEZVWHZRU2ZaS294?=
+ =?utf-8?B?d3B6cDZQNng5MGJZWEQ2bmNUTXFpaXRPNlc2a2tSRElXZE9oa1RMWUEwUGNu?=
+ =?utf-8?B?VUx2V01HSmxvc2Y3R1ZoZWJMTi9EMjVMdC9JZnFDR1crMDY3ZkVqVW1zZ1Fn?=
+ =?utf-8?B?TDltdUNKUXdDaFJQWW0wV2F6M2NOTHQrYkpMbExGQVpuRUN4dndkbXd5YW5x?=
+ =?utf-8?B?MW5PdXRGT1FZbjA0VDlpdW1wUzV2elU1R1Z3Zlg5VmwvUTh2dVptUGhEOUpZ?=
+ =?utf-8?B?MFdPYmRoSGxMNjZ2YlVQQjB6dFJvOEdUeU5XckZIclJUR3IzNmxrMm96STJH?=
+ =?utf-8?B?bm0xdWhQQXBYdlZxU1JWSlNHL09qQjVJSUV0RUN5dktIK2ljNFlsNHpXTzln?=
+ =?utf-8?B?bThSOS84UGppejg5QmZBOS9DSjU4VmltTlhEMUk2dGFKUTA1UHFsb3NKS0NS?=
+ =?utf-8?B?Skt0THc4WnVDUy9SV1ZaRFdQaWlrNmlxWWExK3NFVC94QWVhdUVaZ01hT1Qx?=
+ =?utf-8?B?Z3hBQjUyL0xOZGN6SW5NaHJJSWdNVjFkT0J6c0hWVTZOcnpJK0VSUmY2NWNQ?=
+ =?utf-8?B?U0phVTUxT2lPKzRDb3FKcHJWWG9RMytBRGlUMDhOSElWNW0zcGhQakdwamlM?=
+ =?utf-8?B?VlE0bmZ6QmhvZk1PaUFiM2RPSW9raTZ4OHNsOWtpWmJoeDM0SnFvcTBiSkxs?=
+ =?utf-8?B?ZjJYaHdBOCs4d2ZmTnFyR3pQUjdNU204RlpqS2JGSWJVTjlGdlVTMjVyd0pI?=
+ =?utf-8?B?MC9BYkl2V25FZzBTdThjcXNQL1dONFg2YTBhRjZtOXlwNm9CTzhWUTBjS1RJ?=
+ =?utf-8?B?RUdCSTBFZ1I2bkFTblptYWZaY0JrSlRqUmk5RHUra2dqMDY2YnRpaTN5eVFs?=
+ =?utf-8?B?U1ZjZEZ6aURubXpmNkU1YkVPcFpiVUt4Q3VsUGJ4NTRsa0hPYUtaU2NJeHpF?=
+ =?utf-8?B?NXpKcHZMK0VQc2M3OU9IcmgvNGttb0RBTWh4aGI4QS9LcmdESGh6VUU4ZXd3?=
+ =?utf-8?B?RSt2alVMcGZscUtCalJJa1dvL0VybEsybTJuV1BwZ0NwZER2N1BzaTM4STRE?=
+ =?utf-8?B?RDRvWi9EVlRidGxvRkphaGdSbmNBcnRTbmI4SVNXRTJ5c0M5ZG40cCt5T0E5?=
+ =?utf-8?B?dUJpZk5YSE1TVTdnOVRiUGNaZGJqMlFKdUJTTTltWVQ3T2pqNkhVMjZrZmEr?=
+ =?utf-8?B?WHVBQTJpdG9NMnRJU1hWWnI0Q3NrSGh3bmRVRE96N0JONlhoWE5GOHpTWE1u?=
+ =?utf-8?B?TjJMQmlRN1dXWGExSHZxL3FQMFRpVENYb2dxdFJzV1hSbUphQ1VZNjBWRm1O?=
+ =?utf-8?B?S25wUlhwOXcraG5lRjZsaGdqeWpKMlVYMktNL01Qbm5hbVFOR2J2ckY1MGJk?=
+ =?utf-8?B?aExHMlNRclZ3OUhRK2lVbjM0OG1FKzhUcVRHVlo4b0RVTGphdllLWUpFYUF2?=
+ =?utf-8?B?YnFsZTY4ayt4Ui9tWjhpaHBhL1ZERnZhRG5jNzhOU2RZSUpXSUVBZWtDNGp6?=
+ =?utf-8?B?blpJQTFCNVpUeWN2TllpRlJadW9QWFJwUk9SRGw0c2xReE54YzdqeGhKME95?=
+ =?utf-8?B?TURvYzh2MElKeUxGdWg5V0ZWYlRvcm5ENTNkT21KMGtzUXFEa1ExQWJMUFNk?=
+ =?utf-8?B?V1VuZUFUdmViZW9GaitEc0NCZExmeTFLVVFCZEtMVHJNMDMwUWU2d2xNY1FK?=
+ =?utf-8?B?SEVZa2p6YTVaMHI3K0ZsdHhVdWM3ejltM1BsaFRVaC9DZXphcVVPT3JHSGdJ?=
+ =?utf-8?Q?ccKUP4tDkSxtShkQ=3D?=
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70212a75-9cf2-499b-1b51-08de4b71f12a
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR02MB7739.apcprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ccb201a-62a2-449d-9e54-08de4b66c0ea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2026 07:56:22.8522
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jan 2026 09:16:28.3654
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1gFBhYl/z2sWcCxBkeFEfZL7Li5oCs/DluHrJF/H95ZXztWoxG+lpyatMekPs1FbPSTpQTHNocCx6AaTiYHagQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR04MB7274
-X-Authority-Analysis: v=2.4 cv=P/Q3RyAu c=1 sm=1 tr=0 ts=695a1d2d cx=c_pps a=AV3VLuJWgg5JCmondQPfTw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10 a=vUbySO9Y5rIA:10 a=7j0FZ4iXMVMA:10
- a=xR56lInIT_wA:10 a=VkNPw1HP01LnGYTKEx00:22 a=z6gsHLkEAAAA:8 a=AEFdySdFzCt3eBlzStcA:9 a=wPNLvfGTeEIA:10
-X-Proofpoint-GUID: mnUz-SjBLHcRQDm3SpoCSXayEfSrlnmQ
-X-Proofpoint-ORIG-GUID: mnUz-SjBLHcRQDm3SpoCSXayEfSrlnmQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA0MDA3MiBTYWx0ZWRfX4HQ6qsHzVzIl 7h0nmEzoZp5xxJVul9LGp1Uma6ichnM+mdP4X53UMgTIJFfz7jFZjvPaMjX9PY+bR6377DrhC+f ACNA36x+aKVdlOJNDLKk7DJuwaESYwtxM9EN1Nz7IeY9AgdjLVT+o1Yd6S/KdZtpd/ijZ0EbEzW
- DP6hCcgSaVbz02SlJGZvKZq1YJ/ldMJQUA5s0tKR1MhQu0bCb67VQ9jK3O9eB+CAGu/ecLKgUP9 qSlUC01AHObiI01SYLSzt3Dhx1EjVahimSBWCFUlMDsvvLHcjnrtKRn3UMzVNvdfUft/ZokLVoM eSCjWlUB4uJAmTYtsocTeIXrFEPUUY+V5IL3pa8pZ73mkf606g5omX7rWtZlyKwairjR0jYcmA/
- AKSwk66XGP/1vkApAodUz9BeiImYqyUYQMRvJC7OkHdXNt9xZ7e09BP2JfIhKxQlDgdwhAhdLyE 9ANwOHdIbtM+gVg0lZg==
-X-Sony-Outbound-GUID: mnUz-SjBLHcRQDm3SpoCSXayEfSrlnmQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-04_02,2025-12-31_01,2025-10-01_01
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UFWbx3ZciZeM19tBv2pWlQYPCUur1U/nKfRVz8IhK7CB7RGngsnl7QSaI6YOrNZY7HFnV9N/FEB6Ms1eJEkYUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR02MB6037
 
-> On 12/30/25 17:06, Yuezhang.Mo@sony.com wrote:=0A=
->>> +     /*=0A=
->>> +      * Return on cache hit to keep the code simple.=0A=
->>> +      */=0A=
->>> +     if (fclus =3D=3D cluster) {=0A=
->>> +             *count =3D cid.fcluster + cid.nr_contig - fclus + 1;=0A=
->>>                return 0;=0A=
->>=0A=
->> If 'cid.fcluster + cid.nr_contig - fclus + 1 < *count', how about contin=
-uing to collect clusters?=0A=
->> The following clusters may be continuous.=0A=
->=0A=
-> I'm glad you noticed this detail. It is necessary to explain this and=0A=
-> update it in the code comments.=0A=
-> =0A=
-> The main reason why I didn't continue the collection was that the=0A=
-> subsequent clusters might also exist in the cache. This requires us to=0A=
-> search the cache again to confirm this, and this action might introduce=
-=0A=
-> additional performance overhead.=0A=
-> =0A=
-> I think we can continue to collect, but we need to check the cache=0A=
-> before doing so.=0A=
->=0A=
-=0A=
-So we also need to check the cache in the following, right?=0A=
-=0A=
-```=0A=
-        /*=0A=
-         * Collect the remaining clusters of this contiguous extent.=0A=
-         */=0A=
-        if (*dclus !=3D EXFAT_EOF_CLUSTER) {=0A=
-                unsigned int clu =3D *dclus;=0A=
-=0A=
-                /*=0A=
-                 * Now the cid cache contains the first cluster requested,=
-=0A=
-                 * Advance the fclus to the last cluster of contiguous=0A=
-                 * extent, then update the count and cid cache accordingly.=
-=0A=
-                 */=0A=
-                while (fclus < end) {=0A=
-                        if (exfat_ent_get(sb, clu, &content, &bh))=0A=
-                                goto err;=0A=
-                        if (++clu !=3D content) {=0A=
-                                /* TODO: read ahead if content valid */=0A=
-                                break;=0A=
-                        }=0A=
-                        fclus++;=0A=
-                }=0A=
-                cid.nr_contig =3D fclus - cid.fcluster;=0A=
-                *count =3D fclus - cluster + 1;=0A=
-```=0A=
-=0A=
->>>=0A=
->>> +             while (fclus < end) {=0A=
->>> +                     if (exfat_ent_get(sb, clu, &content, &bh))=0A=
->>> +                             goto err;=0A=
->>> +                     if (++clu !=3D content) {=0A=
->>> +                             /* TODO: read ahead if content valid */=
-=0A=
->>> +                             break;=0A=
->>=0A=
->> The next cluster index has been read and will definitely be used.=0A=
->> How about add it to the cache?=0A=
->=0A=
-> Good idea!=0A=
-> will add it in v2,=0A=
+
+
+On 11/27/2025 9:14 AM, Barry Song wrote:
+> 
+> From: Barry Song <v-songbaohua@oppo.com>
+> 
+> Oven observed most mmap_lock contention and priority inversion
+> come from page fault retries after waiting for I/O completion.
+> Oven subsequently raised the following idea:
+> 
+> There is no need to always fall back to mmap_lock if the per-VMA
+> lock was released only to wait for pagecache or swapcache to
+> become ready.
+> 
+> In this case, the retry path can continue using the per-VMA lock.
+> This is a big win: it greatly reduces mmap_lock acquisitions.
+Here are some test data for the patches:
+
+== Test Case ==
+
+Douyin (Chinese version of TikTok) warm start on smart phone with 8GB RAM
+
+
+== mmap_lock Acquisitions And Wait Time ==
+
+Metric                    Before (Avg)    After (Avg)    Change
+------------------------------------------------------------------------
+Read Lock Count           20,010          5,719          -71.42%
+Read Total Wait (us)      10,695,877     408,436        -96.18%
+Read Avg Wait (us)        534.00         71.00           -86.70%
+Write Lock Count          838             909            +8.47%
+Write Total Wait (us)     501,293        97,633          -80.52%
+Write Avg Wait (us)       598.00         107.00          -82.11%
+
+
+== Read Lock Waiting Time Distribution of mmap_lock ==
+
+Range (us)                 Before (Avg)    After (Avg)    Change
+------------------------------------------------------------------------
+[0, 1)                     9,927           4,286          -56.82%
+[1, 10)                    9,179           1,327          -85.54%
+[10, 100)                  191             88             -53.93%
+[100, 1000)                57              6              -89.47%
+[1000, 10000)              328             9              -97.26%
+[10000, 100000)            328             6              -98.17%
+[100000, 1000000)          0               0              N/A
+[1000000, +)               0               0              N/A
+
+
+== Write Lock Waiting Time Distribution of mmap_lock ==
+
+Range (us)                 Before (Avg)    After (Avg)    Change
+------------------------------------------------------------------------
+[0, 1)                     250             300            +20.00%
+[1, 10)                    483             556            +15.11%
+[10, 100)                  52              41             -21.15%
+[100, 1000)                12              5              -58.33%
+[1000, 10000)              22              4              -81.82%
+[10000, 100000)            16              1              -93.75%
+[100000, 1000000)          0               0              N/A
+[1000000, +)               0               0              N/A
+
+
+After the optimization, the number of read lock acquisitions is 
+significantly reduced, and both lock waiting time and tail latency are 
+dramatically improved.
+
+Thanks,
+Oven
+> 
+> Oven Liyang (1):
+>    mm/filemap: Retry fault by VMA lock if the lock was released for I/O
+> 
+> Barry Song (1):
+>    mm/swapin: Retry swapin by VMA lock if the lock was released for I/O
+> 
+>   arch/arm/mm/fault.c       |  5 +++++
+>   arch/arm64/mm/fault.c     |  5 +++++
+>   arch/loongarch/mm/fault.c |  4 ++++
+>   arch/powerpc/mm/fault.c   |  5 ++++-
+>   arch/riscv/mm/fault.c     |  4 ++++
+>   arch/s390/mm/fault.c      |  4 ++++
+>   arch/x86/mm/fault.c       |  4 ++++
+>   include/linux/mm_types.h  |  9 +++++----
+>   mm/filemap.c              |  5 ++++-
+>   mm/memory.c               | 10 ++++++++--
+>   10 files changed, 47 insertions(+), 8 deletions(-)
+> 
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Huacai Chen <chenhuacai@kernel.org>
+> Cc: WANG Xuerui <kernel@xen0n.name>
+> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: Paul Walmsley <pjw@kernel.org>
+> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> Cc: Albert Ou <aou@eecs.berkeley.edu>
+> Cc: Alexandre Ghiti <alex@ghiti.fr>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: x86@kernel.org
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: David Hildenbrand <david@kernel.org>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Pedro Falcato <pfalcato@suse.de>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Cc: Oven Liyang <liyangouwen1@oppo.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Kristina Martšenko <kristina.martsenko@arm.com>
+> Cc: Kevin Brodsky <kevin.brodsky@arm.com>
+> Cc: Yeoreum Yun <yeoreum.yun@arm.com>
+> Cc: Wentao Guan <guanwentao@uniontech.com>
+> Cc: Thorsten Blum <thorsten.blum@linux.dev>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Yunhui Cui <cuiyunhui@bytedance.com>
+> Cc: Nam Cao <namcao@linutronix.de>
+> Cc: Chris Li <chrisl@kernel.org>
+> Cc: Kairui Song <kasong@tencent.com>
+> Cc: Kemeng Shi <shikemeng@huaweicloud.com>
+> Cc: Nhat Pham <nphamcs@gmail.com>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: loongarch@lists.linux.dev
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-s390@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: linux-fsdevel@vger.kernel.org
+> 
+> --
+> 2.39.3 (Apple Git-146)
+> 
+
 
