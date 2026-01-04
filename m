@@ -1,150 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-72354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86014CF089D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 04 Jan 2026 03:30:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF451CF0AE9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 04 Jan 2026 07:51:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 70F2E301D598
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jan 2026 02:29:52 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AB4F7301FC31
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Jan 2026 06:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45552857CC;
-	Sun,  4 Jan 2026 02:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694DC2E6CC5;
+	Sun,  4 Jan 2026 06:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvnXBvWV"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OjPYTMch"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C532472A6
-	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Jan 2026 02:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34901A9B46
+	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Jan 2026 06:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767493791; cv=none; b=ty0sGBYhqU7d7Gh7NjeiQudfh+yu27ltoh/V2J4wlY4aYiWB6X3byIFiY31KAU3hWug+w4xfaia2DUBkJAMyq2QaZIFkbP4cxPEfS7buOqOxKvIGyjyZzfQcOhvgAokDIRGV+KPDBV4mzloxzlMGXzO0zAZhIiEpJyVetC0YCkg=
+	t=1767509486; cv=none; b=qTzIBz24gxJGc3oDan8FNKptqkQyGhSrc4l0Vqm06pceUnJqYvIrp92X+5zEOAzh4JLH6uYbwTaHp7bLxJnZw8Lhcitbb8bM/JWNs+N1qJRHl5kfpywMEzKk9PYLQOjyF4fRikpBxXuok/ml8PwIM02f+NrBZBT/jwXPHEk2HVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767493791; c=relaxed/simple;
-	bh=P+PY7OymFb/4N9KP/lPDwhjGpPFBU+3pNPlDxFn26VA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X0NZZPPtdJD3Ou3ICTEdG+fP48Q6LJ4eWN2cqxDwgWlXEUM+tW3jb7POvmYgrX8TPHklxitKYnKryvIVvZkGeBUFHXU23VkfM8Ndekgp5yctU6F04qe/NBplKo+bShumY9x9qoQgS+KlwHnpUqtGFMnWaG1dbuhK/TB+Spv/1gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvnXBvWV; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-37cd7f9de7cso110762971fa.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 03 Jan 2026 18:29:48 -0800 (PST)
+	s=arc-20240116; t=1767509486; c=relaxed/simple;
+	bh=6zrvH/Y6xj4ImMc7hbH57hysfldTJmwwfrXUGUhRLhw=;
+	h=Mime-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=A1+FkDlIdbriCKyaDGdcDJAhmrw2pbKaXjKW2Cfvb09ps2MuwUaHeoj0+LceoydaHqPt+ZfCtyZrzccAmjmVJAbS0jYKVmfoFS+ouUmv3h4l6WrSN+MP8OxmpItL06TlBXiOpgjqdCQyZb38D5iFeZu2RA1Cyp1C31neR4W6tuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OjPYTMch; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2a0d0788adaso117865285ad.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 03 Jan 2026 22:51:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767493786; x=1768098586; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1767509483; x=1768114283; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zETYNPHIFMkBIdZl2aEi7jhtGoaurx1nMtILAMqUgkk=;
-        b=YvnXBvWVLwnx1+vlD/gL81JguU8zhSBJygXKVNwQMKQvs18Oh8kfzfSyUCJTU+yjRT
-         693InVHfuQOkOe3b3dPQ30Pbn7Lb+3A+uwPRazcuQgrD28Ja7rvJ/vqOwpVdc9RtWk3u
-         XtBlcvoA0wdxiv6Ec3KM2m1bVCrZyd3wBtO4TVGeLiCGJFozZBc0vneRwRiNpYivoFjb
-         rmC8aFVdGcSfDaWIgjPUbC8Tqi5JJX7VhGRN+oxUg+D83V8rD09VNTMH/8ljBu0Aeonn
-         1tU4FlUwiOhCHmvbMX7OIWM3B7Usqn1z5nDTBlLNfo0GUwEFYVKtqpMl6txLYEIBAbim
-         ikjw==
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6zrvH/Y6xj4ImMc7hbH57hysfldTJmwwfrXUGUhRLhw=;
+        b=OjPYTMchVEL33uYhFsibtk4+fbIi40YvRzNPzcPsbR0/2JTnnYHeG0EmlWFpCEaVlq
+         4FsIp0ETk9OUvDmnQ2syOaG77glJIMzCnuInun8kbs/fERo0GRX2XOXA5DEKxGooZAqD
+         ybjoDapOBRXOs14Ch9DWD30wdxV4RTkDjaMK+eSruvHwQYL1TemrDPqq46ajl49xGfT0
+         TnCPwEjfjw0ZNjiLFd6g18K71CWiJEiB5jLEsMbUU3x3k2LjrqbfkfMQEZB3nQT1FgDI
+         w3RHafPorcsNLxnH16+mmsDjybMFC3O2rkTwPtbZLJ2R3HPuErq/2/Yvnit5mSJ88ULp
+         TpLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767493786; x=1768098586;
+        d=1e100.net; s=20230601; t=1767509483; x=1768114283;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zETYNPHIFMkBIdZl2aEi7jhtGoaurx1nMtILAMqUgkk=;
-        b=l0euUNyWKT0LinaYs8XVk6Y2L7g5bAlV594zh/r2f3Ia4GTHDDecClCA3+WK0RqVxN
-         ehiHYMGjEcz3ZBleaeMCq39/Ytx9At26uDieHIpA/hmJTccElQEFFRYcCg0gGbSu6iiJ
-         sSEPSJ5FpL9s5Z8SuxH8p0FUE5GMl3zgUOjC7PzqFfKPZAtlTI7g+szhbxMue7QjQjfT
-         7Z2u2Fg+GCzOCek86V10MBi+442q+w0jwoQWwpfVb4A3INfBzrOOmgA3qUzcTmMwInDW
-         WaLj+LG3+O14I0Vjk173zWVREaDjJbcdFG2o1kmh+QiFiKQcYDja9CJUOFvOLNoanGMD
-         Qmig==
-X-Gm-Message-State: AOJu0YwOTf/xyA02WjJgSQQ2wjpLq/qqh5CEQVDNo9HtTknTSixGr3NO
-	9XlRrORKs3LnA4w3dOseh6L8PGFj9s2DeeAunzFsMnT7sDQPNqqLVA/e4FAK6CbXl1e/uS1T+aF
-	9cqWxUzb4F5ytd0BGPmWC4AFJ8NazbH4=
-X-Gm-Gg: AY/fxX4JfR0uHIoId5S+EDGUk5zUwSvfRr+Q9Jw6t2yVjCEbV+YEt+a3sFznYQvGT+e
-	DpIKWUS4xrGh9HtSJSF/Gu6E9/4/u5wCq715tw0PZYAGpxLFN3n34zpZ9vlCwUi0U+eeSnkCb++
-	rxMLtndTpUdXLYgBGcDof6NESXmv+IYvJpGXnTEyYPg96FjYeuUa6imBnJgxtbsI02Dv6zlLc24
-	V5+a2QllDk9EbeUQEhLztHbzzTrrAIcOcxr2Gz1UYj6JazidX6z2klWJLV/coYUY/w01nMD1BAl
-	SfIaMibRpTweJc9/cb+ktHhUmCp/Sv/S4DpkR8Hh9GTCu8lMtUIaL02+XixqacRofEkhWaJK6bp
-	/XDdIlSlRs0XGoo7tL0GVQc3FJxWGX8iyjL7ZEnBVUQ==
-X-Google-Smtp-Source: AGHT+IEkeF149vCKkv131U29TT7uWwUvDBTWyqILbhkq8xrmcL3uGcHe6zXBC00ZBwP4ptWq6LmgDctKC/u+p834rdw=
-X-Received: by 2002:a05:651c:a0a:b0:382:8844:2080 with SMTP id
- 38308e7fff4ca-382884420e0mr60448961fa.25.1767493786271; Sat, 03 Jan 2026
- 18:29:46 -0800 (PST)
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6zrvH/Y6xj4ImMc7hbH57hysfldTJmwwfrXUGUhRLhw=;
+        b=oGaWpROPQIbSa2Va9FpxvOFDb+7m0rSIm2/+LKuN3HQ6oYrL46LmNTWFo8WShBMDJz
+         b9l1F/5UVZRYVUVWBojfLSqnQzeah5h5tXR2WdSTcLVvtRCUHQa+08cR3gjaSuzbCoa0
+         gqeNS8sBrcOaZyBgr/7nYX+tEun4gHG9Syq4Id+jsLSVMzASL3iLpwqPgo0Fwm8b4NC0
+         hn/5umb3fHRN1zQQFkzwyYlpK3nZPY/AWmrPMCftUnzMq4GhB/yYUsgdMkFJrmE3aC1k
+         fxEFgRDef65eejWhe7DsxKUiVEQcgYYXbaYtSIzWgEqXxGTpz+o3/mQUkmJKWW4tQrNZ
+         Pt4A==
+X-Gm-Message-State: AOJu0YyvZmdDN4iXZr0S1G4ZYrCQNP1dha1xeguqAFDVoZVr3uicMg7y
+	3af6/XZYEO9NSeqHOqK8jaHQD5sM7/yeOC8TqDROxYbTiDTl8diTB9QWKV5ZUpOeuKFOoHHPwlv
+	ywav0yPjCf96Q8tw1n5lHBbZ9yP7j1IK10kwGFjVC7g==
+X-Gm-Gg: AY/fxX7GtjgiHWaeFXVNyrYejo/uuwaN2NAzGm6hIL4VfFJ3ilEAmlyWnHEDOcuO0al
+	IbmXRJoTJeF5d6ZpUd3U9R56AfljcT7rWIKC480ZNY1lnxFw16Qu3b2XDWWWaE9u6o2rKUJAML0
+	9eZn1mAX3Fb2LcP6we1j0JSJu3uoT3IP00J+60POdl8vCfdVeYacJYH/u8bI2uw+WR+9Hj4S8sY
+	YQbaHAuuA93vWU6FpD9Hy5xbWmOUMpi35LlPW7+rVTbKxjccRRJrK/6sjThgffak/1d88E=
+X-Google-Smtp-Source: AGHT+IHEAp/0Uc42kWijpM2HjcTQxPtxvKnhqNUvcFoStiKxYNNrELPPWVIjU/gLXl2Nucc8SX4ABd99S6P+454wyo0=
+X-Received: by 2002:a17:903:3b8b:b0:2a0:b461:c883 with SMTP id
+ d9443c01a7336-2a2f2a354ebmr444934985ad.45.1767509483005; Sat, 03 Jan 2026
+ 22:51:23 -0800 (PST)
+Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
+ Sun, 4 Jan 2026 06:51:22 +0000
+Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
+ Sun, 4 Jan 2026 06:51:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251222-cstr-vfs-v1-1-18e3d327cbd7@gmail.com>
-In-Reply-To: <20251222-cstr-vfs-v1-1-18e3d327cbd7@gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 3 Jan 2026 21:29:10 -0500
-X-Gm-Features: AQt7F2qv5FlJRZgMoO2uW18PvkkkOZyVxcSR3j5bBanFQJE8sULbQYbFPqIB6Qg
-Message-ID: <CAJ-ks9kDy2_A+Zt4jO_h-=yzDjN024e1pmDy4kBrr5jsbJxvtQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: seq_file: replace `kernel::c_str!` with C-Strings
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Mime-Version: 1.0
+From: Zhang Tianci <zhangtianci.1997@bytedance.com>
+Date: Sun, 4 Jan 2026 06:51:22 +0000
+X-Gm-Features: AQt7F2rLFSKIBx_vo7nV2oTn4tgI-gsnDi4JWnKTHuLFxCFiIik9i1XzBTLQYIc
+Message-ID: <CAP4dvsfs55KqSNmdv_LM1_4moUUcVxvjCrj5zjGFxOH4mi8xOQ@mail.gmail.com>
+Subject: [QUESTION] fuse: why invalidate all page cache in truncate()
+To: miklos <miklos@szeredi.hu>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, =?UTF-8?B?6LCi5rC45ZCJ?= <xieyongji@bytedance.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 22, 2025 at 7:19=E2=80=AFAM Tamir Duberstein <tamird@kernel.org=
-> wrote:
->
-> From: Tamir Duberstein <tamird@gmail.com>
->
-> C-String literals were added in Rust 1.77. Replace instances of
-> `kernel::c_str!` with C-String literals where possible.
->
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->  rust/kernel/seq_file.rs | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/rust/kernel/seq_file.rs b/rust/kernel/seq_file.rs
-> index 855e533813a6..518265558d66 100644
-> --- a/rust/kernel/seq_file.rs
-> +++ b/rust/kernel/seq_file.rs
-> @@ -4,7 +4,7 @@
->  //!
->  //! C header: [`include/linux/seq_file.h`](srctree/include/linux/seq_fil=
-e.h)
->
-> -use crate::{bindings, c_str, fmt, str::CStrExt as _, types::NotThreadSaf=
-e, types::Opaque};
-> +use crate::{bindings, fmt, str::CStrExt as _, types::NotThreadSafe, type=
-s::Opaque};
->
->  /// A utility for generating the contents of a seq file.
->  #[repr(transparent)]
-> @@ -36,7 +36,7 @@ pub fn call_printf(&self, args: fmt::Arguments<'_>) {
->          unsafe {
->              bindings::seq_printf(
->                  self.inner.get(),
-> -                c_str!("%pA").as_char_ptr(),
-> +                c"%pA".as_char_ptr(),
->                  core::ptr::from_ref(&args).cast::<crate::ffi::c_void>(),
->              );
->          }
->
-> ---
-> base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-> change-id: 20251222-cstr-vfs-55ca2ceca0a4
->
-> Best regards,
-> --
-> Tamir Duberstein <tamird@gmail.com>
->
+Hi all,
 
-@Christian could you please have a look?
+We have recently encountered a case where aria2c adopts the following
+IO pattern when downloading files(We enabled writeback_cache option):
 
-Cheers.
-Tamir
+It allocates file space via fallocate. If fallocate is not supported,
+it will circularly write 256KB of zero-filled data to the file until it rea=
+ches
+an enough size, and then truncate the file to the desired size. Subsequentl=
+y,
+it fills non-zero data into the file through random writes.
+
+This causes aria2c to run extremely slowly, which does not meet our
+expectations,
+because we have enabled writeback_cache, random writes should not be this s=
+low.
+After investigation, I found that a readpage operation is performed in ever=
+y
+write_begin callback. This is quite odd, as the file was just fully filled =
+with
+zeros via write operations; the file's page cache should all be uptodate,
+so there is no need for a readpage. Upon further analysis, I discovered tha=
+t the
+root cause is that truncate has invalidated all the page cache.
+
+I would like to know why the invalidation is performed. After checking the =
+code
+commit history, I found that this has been the implementation since FUSE ad=
+ded
+support for the writeback cache mode.
+
+Therefore, I can only seek help from the community: What were the
+considerations
+behind this implementation, and can it be removed?
+
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -2279,7 +2279,6 @@ int fuse_do_setattr(struct mnt_idmap *idmap,
+struct dentry *dentry,
+=C2=A0=C2=A0 =C2=A0 =C2=A0=C2=A0 if ((is_truncate || !is_wb) &&
+=C2=A0=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 S_ISREG(inode->i_mode) && ol=
+dsize !=3D outarg.attr.size) {
+=C2=A0=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 truncate_pagec=
+ache(inode, outarg.attr.size);
+- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 invalidate_inode_pages2(=
+mapping);
+=C2=A0=C2=A0 =C2=A0 =C2=A0=C2=A0 }
+
+=C2=A0=C2=A0 =C2=A0 =C2=A0=C2=A0 clear_bit(FUSE_I_SIZE_UNSTABLE, &fi->state=
+);
+
+Thanks,
+Tianci
 
