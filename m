@@ -1,141 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-72395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05084CF457C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 05 Jan 2026 16:17:00 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EAF6CF4650
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 05 Jan 2026 16:28:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7E6833061294
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jan 2026 15:11:01 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6380B302BF60
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jan 2026 15:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8AC283FD4;
-	Mon,  5 Jan 2026 15:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09881F3D56;
+	Mon,  5 Jan 2026 15:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SRSLmMTs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5399E3A1E6D
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jan 2026 15:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AF71D5CC6
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jan 2026 15:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767625858; cv=none; b=N+PdmQXztXDMob0AmJOnXwzTie+l/UHbNk7jCg4n3CzVXSAtOxXh3xt0HLv0nCWwpzAAn7zRriZ52TtD1vvgI6XDyVXs5Djg5B2AxiY+iWUA0DRLAHOx1uvMnuQ/fasvGotABW408ivcZNV7gszkgdnJTKw64QAqF5FJZGDLFAE=
+	t=1767626845; cv=none; b=EzX30NZ5VFPN8XV/3Uq+vPtV7zPx7nJ1IQ9HzvWq1XToIDy8ddrzFoJzi2j3eu9jnNVvKAbG2ymOSv9zG7yOe2hNy25qmVi3BKzwoJX7TNSJZIZsCWbIZHAQx5wK4fSjpjiCNbXpupBl+qMVXTjsZXty3y9jQmfhAcpg3vG5YSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767625858; c=relaxed/simple;
-	bh=u36PWBh4yDI8ZT2iUBF75swI9f7/OKlVQSDrJTnmZos=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DX/H1pJfEpYiODxEdfVamUos868CYFRNh0Yy+bTL0ZzRI8vpREJY076uoByP8Wci9o0tRWH1vd3v2F/sUDGKsJRgx9AcVT/lZPWzyt+tVSdtlRzJY0XUIyUpHG5iKs4a0aJ/XK5W3MhFQre5n34sDP18f9FMwfzw7gvUKIy8qJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1767626845; c=relaxed/simple;
+	bh=C5vrL1z6SnvH6Ygy1t0+EZnabdVjHODIVIGv4RRZCEU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ejwHYISup8SXEpwq+8h1+Ze6p7o47YFe0HT7gOyLQ2Ggv5+byfE+YoxHtVrAacb/3j4hwYjXN/H5XNVSXI2A7cDSCtH1wBHhX4YuKO8gyt3+jOtjHi78Jdvrq4jMUCCnS+Dbp31itHCUMj3TAXAUSfqM0IOrVwVelHaVi2nXoeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SRSLmMTs; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-3f5aaa0c8d7so3254fac.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Jan 2026 07:10:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767625856; x=1768230656;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-37ba5af5951so377811fa.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Jan 2026 07:27:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767626841; x=1768231641; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vMUqaZe1HlAwvxBsuw2KJZob+y3kwCNvb0wcDt4zAN0=;
-        b=PUY8Dw4XSB8NjN55gemiptu64Me05RnB7Blfcd23PmSokQCW38Y8qyiIvuXS01V7Wd
-         uYjLxFoyANTRaQPV/4VTHfVGoGud7W3lMJhXOR+X7joxnXNUgtnD8edoNaNEzWTZfmjB
-         fjvyW+WFrIFL515ngjviv5lqaRhrIt7TvKdHfQoq8CdFcDxBesqviPn8WYI26NbTq6ba
-         t0jg/pSl01jWFiCw5tBH5SVRLHmR20TCJznmb12wg9Qg7wCgaiDZg18WpyELSAl6Efmq
-         nwJUzytTBlM78z30e9coXqa07P7i8gZoKaVl5LOD/UHTMsnryBbk0GB2hpEbtWU+/rRn
-         U4MQ==
-X-Gm-Message-State: AOJu0YyRnDYJlRbGDSYRmOfpuyGKfKxsvNhyliGxxhWhCd3CFFS5FA+l
-	y2fPm0N1gjNjaS9voavg4YlOp+keweFFtaIWtfaSkoLhLdYA7ErXWyFR
-X-Gm-Gg: AY/fxX6EOlgRK0Y+1lCQip9CDvB+z+keTFNTNQxIr2WW4L80/ROg67m0/zJx9bkLCjJ
-	TG71s1PoMfS6Nq9tR9pcHSCycNXLl7TWSudrz9R6fvDnunly6WnGTG1jaG1SzA01KFfJuO2rtTw
-	e64DHduhyWCEc6kDO1JYR+/xCT+s0Rvw6YNLSj/oCSqVMusGub3z/mC10cSlUqSl48ybCG9g4UV
-	hHIcgkotpj0lfZM0dNiHOE3qakl87VCKPlqmNv8eI5mMlnUh6KeexYNpDkNRcikPvLXD9NoUwiQ
-	l45Q6EZYha6s857MKdLRQNypVYpwL4dTISI4w5Onq7Z5HfjFMYzKmvf8OKMstXGq2H2JSuxsIDG
-	RYgv8xbwYOEPPXlacUlvAGKCKXtOsNt9W8XRnKeNxaxfyI3t5IxCpMKN/fjR9cWkeQvniCJINSZ
-	4Ye04sCOBtrFUo
-X-Google-Smtp-Source: AGHT+IGLAqoKMdc62EywNVMPYR3pwG4yo40iBpF7FyJBMFZ17/YVq8489e554IGjBVnvmWX9oKE8yg==
-X-Received: by 2002:a4a:ef0c:0:b0:65d:51c:7fee with SMTP id 006d021491bc7-65d0e9fe015mr16836603eaf.16.1767625856226;
-        Mon, 05 Jan 2026 07:10:56 -0800 (PST)
-Received: from localhost ([2a03:2880:10ff:8::])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65d0f69ba9bsm29689785eaf.10.2026.01.05.07.10.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jan 2026 07:10:55 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 05 Jan 2026 07:10:27 -0800
-Subject: [PATCH] fs/namei: Remove redundant DCACHE_MANAGED_DENTRY check in
- __follow_mount_rcu
+        bh=Kn43i3LzpcaVKx8sZkO5nilSDYZhIbH7gusssvJywO0=;
+        b=SRSLmMTs2UBHru+2q7kTmuwodhC/c8Gx/kvnJd9qPc2w+IRMXJ8MNAhgCNBhxOV6O4
+         XwEEiUjwIEOZUHxlFPenRllsdIdQYp3pHDaMJlT89w97xzga43bH2FED8xpE2LDY9p5T
+         MhRzqDT2UISNzNVbhL6LqIS6zwnPklPPgFS4BuUvJImr6pTPM2XiahhGIPlOZgGsXeaQ
+         Mc9NHJWvDDmQrqBIa9dQi1bOUTNSuVV+U27WtGD88Tn8+NShOgsb+6DVnT3xqO4AxK2D
+         GTnfq+2OBpmbX6epTziT3mrGDFnSq0aK331hCk+qJPcmgwwN+k2FOAJJkkWkXnVYYe4Q
+         wpdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767626841; x=1768231641;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Kn43i3LzpcaVKx8sZkO5nilSDYZhIbH7gusssvJywO0=;
+        b=fImPUOvPaXhkB3yxkiAeRWw3upHeBWWQSjp/0jx1ynGpcaKETRJByl55hyjWPr1Nny
+         Zl/ESPuETvFnsO0RsBMX9teTLV8SCeyF1WdKZ/WqA3l/Oz7Jt+wMrEf8xKVfMgvSEnNT
+         sL7Wey3CXy3iDjtHOFnvNU4pHu7yOnJo5pZgJhXzRsF4vhKtGag5iAsazXRDKSEi7H8s
+         5lpiFRwSVjMxGCfnkSPkjjDpDrh5hOkatV4qgrdj7qeHI14usfrYgD0VxAEI9OHVnA9g
+         N+AdlMI1AbqcnO3DcVU6s5bDxyH384tIU5dAvvWtTEXhtJx9ohrJjpHCxOzgsLw+vcfq
+         qjkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrafOsJX9b0rZfHzZtWgrL1CdfiOwJZEm5eIsB2cqIFUZfdXJVVGbzyOlsQGM0LeMNjlM741vgNUsZYt0y@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV4BRKZV8Mugbhc1tCc7gZdeMsFuIJKp0z+JR2+heyF3PMzeto
+	27VRAxq4n4OWJshK0xjDZreH4w5kLLK5TL5suokRXeKq8jeFqpPgcm132livi9dSNjGi4bGnJ2t
+	kbSAhZ0pSUgSjD5hgfgzwCqEbWLGJUCg=
+X-Gm-Gg: AY/fxX4vwmt6Oxn+G//U6F77QRIGvYsDOrgZUle9428zd7tTPS1RswaaraDk3xdAswf
+	yYSoBH0HWJSrVxOSc3qnIyAl1EPmiPD0P79xW9h7fiIuAsQrITlfYppU7/RZQwKCHlR5EXNVufG
+	AzTqfZHCmX0E1wM9x62y3cY80UzW9Ikd67fl+u8qX1szDpNF7VPdEdsibrxoVj4Ph/DyuG/sN47
+	FnzESwtA6cK11j1eVbq8HmjrkBHCQulVt282qluZhH8HAheC6tAhq5Gu44Gv0zFcGB66YQb8Rig
+	yhZNv3OpAmaxBMKUgfQjIEtI6E9d3YMI3IxFgihxkaFcZZBe7iMl//G5c6gZ8R2LPhHJQZkqU/T
+	UB9dNKuPElkZd/OcExqkNbD9PyPmugl3ZYX/JdygQ9g==
+X-Google-Smtp-Source: AGHT+IHLPkk84HDbctsvqovRdNwO8VvPLDd80eOVW7PHacCQOYIdRdymbqSCwJh/PEO5EV8UmN/IUnVVjDjqV/oUkCU=
+X-Received: by 2002:a05:651c:1a08:b0:372:628b:5cb4 with SMTP id
+ 38308e7fff4ca-381216a75b0mr155117721fa.45.1767626841435; Mon, 05 Jan 2026
+ 07:27:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260105-dcache-v1-1-f0d904b4a7c2@debian.org>
-X-B4-Tracking: v=1; b=H4sIAGPUW2kC/yXMQQqDMBBG4asM/9pAErHQXKV0ESejjgtbEhVBv
- Luoy7f43o4iWaUg0I4sqxb9TQjkKgIPcerFaEIgeOtf1tnGJI48iLEuxiY5fre1R0X4Z+l0u0e
- f79NlaUfh+dI4jhPjwM1uagAAAA==
-X-Change-ID: 20260105-dcache-01aa5d1c9b32
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- jlayton@kernel.org, rostedt@goodmis.org, kernel-team@meta.com, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1279; i=leitao@debian.org;
- h=from:subject:message-id; bh=u36PWBh4yDI8ZT2iUBF75swI9f7/OKlVQSDrJTnmZos=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBpW9R/KC2HMUGNVhVBtyaw/Mx3J36QvTGMTN2Wk
- b9SP1g0X8iJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaVvUfwAKCRA1o5Of/Hh3
- bdGZD/9aC/VOpoYXOQtb4qzpoLcHBMPATE96DyLEW3RWFRFVR8cbijyap9GV47cubaWQEjT9oor
- BkgmhOcntEvtEG4bvT66ZdDaN85S7AGyTTg33AAxNzxWXsrHCEWBluR+KPVZamcLM7kP+kBkuU9
- vM3N4Ma/qLGH58tiqA+sjrSyJLvTuJY6jvy3LJoF2OpXmIPIWLC5tl4Efg1Gpyy/+/cokbrBnXP
- yDTyTROSQjW/Yjm+qwtXOJTZ00mUoEvl3m6nLO2bkS0a4cOURlbM12JXIxJB4Jo60wxVjrD1hLm
- 3yubvi6G0D7Wty2XI8mShy4oRjELlHyVICVcRXLKsHjwVvfV01PbVDCJX04B6YpPS644nvMXTJH
- WqsDUw45JEqswX0sKyGWywcb4DcxwRnhRKjPAh5UrJpr0BkqCciiZPn4d0IxMV2/m9fiJkJ5GTX
- rKUq1Zexu8cNV8cjOwjjUDc9/pY2OE4zmAOKRHlxtbgiQDHJZ0JNtuKfNIs/4geK+xxKEagLHp/
- ML9P2EfAiDeld3vKoDN8xqg8oZAiTzhYQpn9CLmdtyG44dZuowE0Ym9LG8UW/8qdxVfb2Y6A3P5
- 9joASX5VYhxZFLMckA2NT6DDC9vIvzfo3t+49ee9pAS55atlJvVEzBfzhgYLJ4386H8AgLcbAYd
- SfCEwayilAR6tgA==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+References: <20260105-define-rust-helper-v2-0-51da5f454a67@google.com> <20260105-define-rust-helper-v2-27-51da5f454a67@google.com>
+In-Reply-To: <20260105-define-rust-helper-v2-27-51da5f454a67@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 5 Jan 2026 10:26:45 -0500
+X-Gm-Features: AQt7F2qJLVbMjEOQg2dt-RJ8P2I5PmniDGVk1Kk9Jbi2wHHMLCGhrUjUoujZw4c
+Message-ID: <CAJ-ks9mh9ni0_td285C+=o8TDshrKKzUE64-hQ5hx4pO0v0vXQ@mail.gmail.com>
+Subject: Re: [PATCH v2 27/27] rust: xarray: add __rust_helper to helpers
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The check for DCACHE_MANAGED_DENTRY at the start of __follow_mount_rcu()
-is redundant because the only caller (handle_mounts) already verifies
-d_managed(dentry) before calling this function, so, dentry in
-__follow_mount_rcu() has always DCACHE_MANAGED_DENTRY set.
+On Mon, Jan 5, 2026 at 7:43=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
+>
+> This is needed to inline these helpers into Rust code.
+>
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> Reviewed-by: Gary Guo <gary@garyguo.net>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-This early-out optimization never fires in practice - but it is marking
-as likely().
+Acked-by: Tamir Duberstein <tamird@gmail.com>
 
-This was detected with branch profiling, which shows 100% misprediction
-in this likely.
-
-Remove the whole if clause instead of removing the likely, given we
-know for sure that dentry is not DCACHE_MANAGED_DENTRY.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- fs/namei.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index bf0f66f0e9b9..774a2f5b0a10 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1623,9 +1623,6 @@ static bool __follow_mount_rcu(struct nameidata *nd, struct path *path)
- 	struct dentry *dentry = path->dentry;
- 	unsigned int flags = dentry->d_flags;
- 
--	if (likely(!(flags & DCACHE_MANAGED_DENTRY)))
--		return true;
--
- 	if (unlikely(nd->flags & LOOKUP_NO_XDEV))
- 		return false;
- 
-
----
-base-commit: 3609fa95fb0f2c1b099e69e56634edb8fc03f87c
-change-id: 20260105-dcache-01aa5d1c9b32
-
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
-
+> ---
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Tamir Duberstein <tamird@gmail.com>
+> Cc: Andreas Hindborg <a.hindborg@kernel.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> ---
+>  rust/helpers/xarray.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/rust/helpers/xarray.c b/rust/helpers/xarray.c
+> index 60b299f11451d2c4a75e50e25dec4dac13f143f4..08979b3043410ff89d2adc0b2=
+597825115c5100f 100644
+> --- a/rust/helpers/xarray.c
+> +++ b/rust/helpers/xarray.c
+> @@ -2,27 +2,27 @@
+>
+>  #include <linux/xarray.h>
+>
+> -int rust_helper_xa_err(void *entry)
+> +__rust_helper int rust_helper_xa_err(void *entry)
+>  {
+>         return xa_err(entry);
+>  }
+>
+> -void rust_helper_xa_init_flags(struct xarray *xa, gfp_t flags)
+> +__rust_helper void rust_helper_xa_init_flags(struct xarray *xa, gfp_t fl=
+ags)
+>  {
+>         return xa_init_flags(xa, flags);
+>  }
+>
+> -int rust_helper_xa_trylock(struct xarray *xa)
+> +__rust_helper int rust_helper_xa_trylock(struct xarray *xa)
+>  {
+>         return xa_trylock(xa);
+>  }
+>
+> -void rust_helper_xa_lock(struct xarray *xa)
+> +__rust_helper void rust_helper_xa_lock(struct xarray *xa)
+>  {
+>         return xa_lock(xa);
+>  }
+>
+> -void rust_helper_xa_unlock(struct xarray *xa)
+> +__rust_helper void rust_helper_xa_unlock(struct xarray *xa)
+>  {
+>         return xa_unlock(xa);
+>  }
+>
+> --
+> 2.52.0.351.gbe84eed79e-goog
+>
 
