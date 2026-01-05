@@ -1,189 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-72385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA6DCF2DFD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 05 Jan 2026 10:57:26 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D07CF2E57
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 05 Jan 2026 11:03:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 34F1C300EDE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jan 2026 09:57:25 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C6A0030161B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jan 2026 09:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6EF31A579;
-	Mon,  5 Jan 2026 09:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bhwCtBTW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ejZSeGwx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C70C329C6E;
+	Mon,  5 Jan 2026 09:58:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5103FC9;
-	Mon,  5 Jan 2026 09:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29ACA3FC9
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jan 2026 09:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767607041; cv=none; b=E/HkUsq4kt1soFkLnaZjtg15oyks9Fv5/m8HDk2dMR0YVPCpRHbsQ2i0g2dFHoww44D1IXwYUKLzmaswbL0cT+W3fagEhsz9DuMX2iGYQWdLKQdDJxmsBPO2XmmMff7INOe8mtJiyWR995CNm0b5OxTqQFpPz6Ro62fMvYCFlPQ=
+	t=1767607085; cv=none; b=myYizwM2X8dkCDNC+JA+qCTJct9UyJHXy47+/bnDHEz3wVkn4pFAcrvWHCaD+jhIoNxt8VRNabsUjvMxEGNJSd9mU31Uu1ng3JXjEQGXRcp8vpiQWg7LxcJ3tBhF218C6Neu4EeovGyFfxx2wF7mb0d5pUQinJTlYDExYpKS1o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767607041; c=relaxed/simple;
-	bh=iKhVYsPd3xjI//wmGXtgta1cQPO1Wdk//hk+Sb44+EE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MIIip1GB1t0kMihi8ucS7oNtfQRZyS3q/6d9IapGHtCq69QqLO0hsVunMVsF2QpnmENWfdDWn68czoKnTpS1JSg8bcsuwfVYeX1Tt1wghgqwW676DFf6Jy7AEm3FvxN4VHfypzJd+FKXoV+/LiDdUTvMnjxyfzEQDUI25MFU3ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bhwCtBTW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ejZSeGwx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 5 Jan 2026 10:57:17 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1767607038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VuijUZ/0RA0CIbUtjMYRmWCI5fwbdYagkTZ2rdcL1lY=;
-	b=bhwCtBTWhbAGyLBMdDnFWD7YT8uwQQlq2SZLJrr00gBzkrcjXMxWZuEyC7O6g2uloWllGs
-	TPxdeVuMfJZjEUYvfKN//ipxinZhrXrsF2ZAFr/VafK0wOQydtyXyg3iFl2K2dSQ9UETP+
-	wu3ObudQpGi4jGckBpMinRa1p6u7c7+6eJfs++NnYVOZqScUVBNb0ffGnCUSAD1w8XZIdh
-	hz+vUt1Ebku0YaCjsvZC7Te7DRZ46hSsSktxlnFqS5/r6sSTVYCmCwla3hCzG74ARiVNda
-	EYp/JkbcdhdMnJ8rjvqeBxqtCW/GDd6Q2LmKCdT/dnj318UrWE69hQFfi+ougg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1767607038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VuijUZ/0RA0CIbUtjMYRmWCI5fwbdYagkTZ2rdcL1lY=;
-	b=ejZSeGwxfotngO5iJO34oG6+7Ll/f75Cqnf/2cMdNNL365G5whELq0goWVVWfoPamFyidg
-	gedKdWqSicnQwqDA==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] fuse: uapi: use UAPI types
-Message-ID: <20260105104342-8d6f1457-f422-4ef6-ac66-5170869a5ec7@linutronix.de>
-References: <20251230-uapi-fuse-v2-1-5a8788d62525@linutronix.de>
- <8efcbf41-7c74-4baf-9d75-1512f4f3fb03@bsbernd.com>
- <b975404f-fd6d-42aa-9743-c11e0088596b@bsbernd.com>
- <20260105092847-f05669a4-f8a1-498d-a8b4-dc1c5a0ac1f8@linutronix.de>
- <51731990-37fe-4821-9feb-7ee75829d3a0@bsbernd.com>
+	s=arc-20240116; t=1767607085; c=relaxed/simple;
+	bh=HkOv+wAGL1Dq64KlQJMKTjRGPPlR5TSIpg2gbL/5vnw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OpFQ4Fw5OWR2nvZoIhZ1teyziNIp9EkOwdiepoyd+Y0UKTRDf0FYaTf2qMCiUvhs712uF1pLN5/CQNezMKinr2LhvEdBzY7nbjdLjIfBsa8EQU+z/TKJ5ReOpccjjyqxLbCb8aZxJfJ64XltVas/6dXxzW5Yj7LkIG7kxCP1jKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-65d12f446c2so26577990eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Jan 2026 01:58:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767607082; x=1768211882;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QDGmjMaHgnZwwAqDdlQy6B4Ob7QJflg+s9wTsqFHJ2E=;
+        b=s8G4c6cgSmFC8afCIbHTyowkJNGIyBdPp1z/RQyVv22+wRNKEF9WqRwE4O8hVY08gy
+         IsRsVsE68EAiiRIYdvZNyyFhl+FI98vRuWZwbn9cSibDOabWoKOQNr/xt7RR4JTJ0okk
+         qAxulfrLUCxTNVquEEoGgAtq4Vs6JhNkWPzFbCVnamqrYREbH7Se8aoHqUIkZgjOsJIQ
+         Mi3zeBzHtGP4a+H8x38BANXIbY9unJuJHSaYMXJEtLy/ZCF82HKXOJJNfXzAvKyPMHP/
+         hUdwYIFaV2/hRPZqkQCHeYfAFPjbGVYXWx4bI5X8/5lwBMtWjnaHriwZrGknLcT7IPn0
+         tkCg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7h1z9I0MIgZiiVBkHSWhZfPJBlJ9nDKDP2Lh1eoLPqo3RNIn2Ac/SHhTqEkPEJ/VuR0aJ2SXIZ0EjSrT6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZdO+e/bvL75O270WdDtdEiunIlpUWHtGoA9VQm/nXI0Q94Mbj
+	sLk+ddzXwW7A9vglp9p9h+fXcwYi67oHb8UP4neoSXf+dsOfUTHXhY8onUZTPw2fOqphjvu7puu
+	xn2G/F/jikzNDMB4nzufZq8tfeJ5RU9MbFb+VyYCmxbfLUzk8lNHw+vrvZe8=
+X-Google-Smtp-Source: AGHT+IHp1Iokdt1C1OpMO5MYFyiTIFq/unOeK2efM0UBFldfFzcjBM4b2J6affPRU5gF5OT28seal58My4+2OvzLg+1gFGRm9W7g
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <51731990-37fe-4821-9feb-7ee75829d3a0@bsbernd.com>
+X-Received: by 2002:a4a:b808:0:b0:659:9a49:8ead with SMTP id
+ 006d021491bc7-65d0eb2eed6mr16225489eaf.49.1767607081903; Mon, 05 Jan 2026
+ 01:58:01 -0800 (PST)
+Date: Mon, 05 Jan 2026 01:58:01 -0800
+In-Reply-To: <6888afe6.050a0220.f0410.0005.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <695b8b29.050a0220.1c9965.002c.GAE@google.com>
+Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in driver_remove_file
+From: syzbot <syzbot+a56aa983ce6a1bf12485@syzkaller.appspotmail.com>
+To: abbotti@mev.co.uk, dakr@kernel.org, eadavis@qq.com, 
+	gregkh@linuxfoundation.org, hdanton@sina.com, hsweeten@visionengravers.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rafael@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jan 05, 2026 at 09:50:30AM +0100, Bernd Schubert wrote:
-> 
-> 
-> On 1/5/26 09:40, Thomas Weiﬂschuh wrote:
-> > On Sat, Jan 03, 2026 at 01:44:49PM +0100, Bernd Schubert wrote:
-> >>
-> >>
-> >> On 1/2/26 23:27, Bernd Schubert wrote:
-> >>>
-> >>>
-> >>> On 12/30/25 13:10, Thomas Weiﬂschuh wrote:
-> >>>> Using libc types and headers from the UAPI headers is problematic as it
-> >>>> introduces a dependency on a full C toolchain.
-> >>>>
-> >>>> Use the fixed-width integer types provided by the UAPI headers instead.
-> >>>> To keep compatibility with non-Linux platforms, add a stdint.h fallback.
-> >>>>
-> >>>> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> >>>> ---
-> >>>> Changes in v2:
-> >>>> - Fix structure member alignments
-> >>>> - Keep compatibility with non-Linux platforms
-> >>>> - Link to v1: https://lore.kernel.org/r/20251222-uapi-fuse-v1-1-85a61b87baa0@linutronix.de
-> >>>> ---
-> >>>>  include/uapi/linux/fuse.h | 626 +++++++++++++++++++++++-----------------------
-> >>>>  1 file changed, 319 insertions(+), 307 deletions(-)
-> >>>
-> >>> I tested this and it breaks libfuse compilation
-> >>>
-> >>> https://github.com/libfuse/libfuse/pull/1410
-> >>>
-> >>> Any chance you could test libfuse compilation for v3? Easiest way is to
-> >>> copy it to <libfuse>/include/fuse_kernel.h and then create PR. That
-> >>> includes a BSD test.
-> > 
-> > Ack.
-> > 
-> >>> libfuse3.so.3.19.0.p/fuse_uring.c.o -c
-> >>> ../../../home/runner/work/libfuse/libfuse/lib/fuse_uring.c
-> >>> ../../../home/runner/work/libfuse/libfuse/lib/fuse_uring.c:197:5: error:
-> >>> format specifies type 'unsigned long' but the argument has type '__u64'
-> >>> (aka 'unsigned long long') [-Werror,-Wformat]
-> >>>   196 |                 fuse_log(FUSE_LOG_DEBUG, "    unique: %" PRIu64
-> >>> ", result=%d\n",
-> >>>       |                                                       ~~~~~~~~~
-> >>>   197 |                          out->unique, ent_in_out->payload_sz);
-> >>>       |                          ^~~~~~~~~~~
-> >>> 1 error generated.
-> >>>
-> >>>
-> >>> I can certainly work it around in libfuse by adding a cast, IMHO,
-> >>> PRIu64 is the right format.
-> > 
-> > PRIu64 is indeed the right format for uint64_t. Unfortunately not necessarily
-> > for __u64. As the vast majority of the UAPI headers to use the UAPI types,
-> > adding a cast in this case is already necessary for most UAPI users.
-> > 
-> >> I think what would work is the attached version. Short interesting part
-> >>
-> >> #if defined(__KERNEL__)
-> >> #include <linux/types.h>
-> >> typedef __u8	fuse_u8;
-> >> typedef __u16	fuse_u16;
-> >> typedef __u32	fuse_u32;
-> >> typedef __u64	fuse_u64;
-> >> typedef __s8	fuse_s8;
-> >> typedef __s16	fuse_s16;
-> >> typedef __s32	fuse_s32;
-> >> typedef __s64	fuse_s64;
-> >> #else
-> >> #include <stdint.h>
-> >> typedef uint8_t		fuse_u8;
-> >> typedef uint16_t	fuse_u16;
-> >> typedef uint32_t	fuse_u32;
-> >> typedef uint64_t	fuse_u64;
-> >> typedef int8_t		fuse_s8;
-> >> typedef int16_t		fuse_s16;
-> >> typedef int32_t		fuse_s32;
-> >> typedef int64_t		fuse_s64;
-> >> #endif
-> > 
-> > Unfortunately this is equivalent to the status quo.
-> > It contains a dependency on the libc header stdint.h when used from userspace.
-> > 
-> > IMO the best way forward is to use the v2 patch and add a cast in fuse_uring.c.
-> 
-> libfuse is easy, but libfuse is just one library that might use/copy the
-> header. If libfuse breaks the others might as well.
+syzbot suspects this issue was fixed by commit:
 
-Yes, unfortunately.
+commit 72262330f7b3ad2130e800cecf02adcce3c32c77
+Author: Ian Abbott <abbotti@mev.co.uk>
+Date:   Thu Oct 23 12:31:41 2025 +0000
 
-> Maybe you could explain your issue more detailed? I.e. how are you using
-> this include exactly?
+    comedi: c6xdigio: Fix invalid PNP driver unregistration
 
-I want the linux/fuse.h to work together with -nostdinc.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13622e9a580000
+start commit:   3b08f56fbbb9 Merge tag 'x86-urgent-2025-09-20' of git://gi..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
+dashboard link: https://syzkaller.appspot.com/bug?extid=a56aa983ce6a1bf12485
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15571534580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=152f7e42580000
 
-This has various advantages:
-* It allows compilers for other languages to parse the C headers without
-  the dependency on a full toolchain.
-* It enables the usage in other, non-libc based C environments.
-* Together with [0], it allows the verification of the header for all
-  architectures. For example Arnd works on validating the UAPI against -Wpadded
-  which requires the header to be built for each architecture.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-This affected me at [1] and now I'm trying to proactively avoid this issue in
-other places and prevent its re-introduction.
+#syz fix: comedi: c6xdigio: Fix invalid PNP driver unregistration
 
-[0] https://lore.kernel.org/lkml/20251223-uapi-nostdinc-v1-0-d91545d794f7@linutronix.de/
-[1] https://lore.kernel.org/lkml/20251203-uapi-fcntl-v1-1-490c67bf3425@linutronix.de/
-
-
-Thomas
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
