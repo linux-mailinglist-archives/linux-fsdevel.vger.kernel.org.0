@@ -1,192 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-72410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C345FCF5A7B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 05 Jan 2026 22:22:53 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F30CF5D65
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 05 Jan 2026 23:31:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id ADC6730FD9EA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jan 2026 21:19:04 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A87C630754D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jan 2026 22:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477572DEA74;
-	Mon,  5 Jan 2026 21:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599F627D786;
+	Mon,  5 Jan 2026 22:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8JtyCTI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERRvTVJt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101902DECDF
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jan 2026 21:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FF08F7D
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jan 2026 22:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767647943; cv=none; b=bWIPDh6NS/vfuS5FfXc05gu6HYRQMYQLKOmCdx6vFQwOBbqEc4fI8YageGXWLDgATCKgrD4H/CZ55XHws2G2/E/9MzvIUWYldXFFpFejxt4Woz+A9DuszTeYu35u39g85B2tCFRSoTRQNYeP2N7lOB/TAkpar+xJLxu4FfjV7F8=
+	t=1767652254; cv=none; b=IB3Wk7+vrQkhM+JpWBhtveZ9PZwx0LlB5X8DMY+6dBjyl4NlddHW/ZdvzoFEC+JdCuoZcLH5FnGx3k1ATR43dCfYKlqoOPodt1MKJASFlrzZVUKwP9dZxHDHsXVtT/nll08VDhvLO2iMUkpEu/B+xO56SWrjQS+fRZtLE9Oum7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767647943; c=relaxed/simple;
-	bh=7OhCL/hJxXrY3+WYN78M1I0TgI0OqSU05lY8vX8SPRY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cBdueKPtH9bPrPjOSFrFYH2x4YKUeFbURgD2bzqa5Op686UWGF3tJllMynXnQM8Wx0cSWqHSyTZhSt5haW4AvuG//A8sXzW7rXyddaMug1/JJ9iW68pZKWOsyYJ0gWkrolLwAO4Lf3UAXrOY7yd0MUdQlVHiOlaN8cFOVMAju0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J8JtyCTI; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1767652254; c=relaxed/simple;
+	bh=5TSiCGHtgVwG4QGQWtbePwrqqtBM+EEwuz9E6PZ+cbA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bWRcdNUMwhk/HCPKnI2ViUo9FXjgH18idTlGzaz2TLMh9cQ99dF5keho5Y6x/ubWxYnf0zHz4MRAYcCKA7xqN02gvxdljEK8kTQp6JLsuYGm7yPoqxeZHko9NdRK/XrMmwDM0JBcQp5jANDNipjs/REKJnakCvFHnf9OZ2f8en4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ERRvTVJt; arc=none smtp.client-ip=209.85.160.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2a0833b5aeeso4525815ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Jan 2026 13:19:00 -0800 (PST)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ed82ee9e57so4587681cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Jan 2026 14:30:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767647940; x=1768252740; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1767652252; x=1768257052; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x5LAxK+AjnG3YzNOBaLOPsRos3hCuelykUfVzgLenNc=;
-        b=J8JtyCTINDIWTwhSKmmKNZ4eK/1f97ThwCfUon3NKnRSyZHRXOioNo/kpKZmyStQ8O
-         jkLf/ZYS9OMCAXrkoKsA1Qb/z3vfTGl0iouaPmdKm5aOlT6Uo5PMbLbbcbNFaQ17MNq2
-         v9KPSFyCTDU21ueOLXl9+sonUn/Mb7exTc4ar70A8OnoWdbAS+cCeRyqSQ9yxZHlMFWs
-         ot3LoH6C4V4YPpCqSOrU30EU+P8+18UNKzOG3F1pnaAKA6+lDRqfc/XT5Zou7UDW75zr
-         jX9ObMrZRjVcgXGPSqwTrqCBgo91G9JUquq7784mOhosi1KonjmlzYQh1Z/p3X3h7atg
-         KDZw==
+        bh=5TSiCGHtgVwG4QGQWtbePwrqqtBM+EEwuz9E6PZ+cbA=;
+        b=ERRvTVJtjTPVtC75bUcqKhUjhJMpemF7+S0jJYNvehSgM4mW12+424o3wgiUJWxkrv
+         l6alIVHRaM62GjT7zaQi7qQGs63Od+FmElgTe8ajf1M/T+pmL3LG+mqhSMhMPKaiCja6
+         P198vGHeJASwixzU7W7xBqKwxUa5zU6VsAeL3lV5C0czVsetn5a4DtLYe/KGfJ7jGitn
+         PLk3dJLz4bTywpLW/VVzzP6jUGGKa1LEE6B9BD8+KI/IByf00pY2KOQwniTJhd4ONqbg
+         A6niNor/sWFZvkgnS8qq/G4rMb/umZ+8OuvR/YC/MNIy+yeNowtPOIuvYRa25YCGB3b6
+         PqOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767647940; x=1768252740;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1767652252; x=1768257052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=x5LAxK+AjnG3YzNOBaLOPsRos3hCuelykUfVzgLenNc=;
-        b=F8YviuPUH+qNFYCNcs57UAUIoD0fsu/4mpTn5T5YejPxLdAZZ++K69fmyRenNjX82H
-         m9NLR4JxDs1iPHT+nko7g1pRtJwyBaBRYuL+t/WVH1WYTBPx7TAw9Xi/DdOD03o0LOis
-         M1sckM63R8qOOKQWmFxI3n4++CrKWwoej6KmY/hEsoAQqk+SnWxmv4pqYVG5pQcWDWhN
-         sTLG4YpEC9HQSJvl8vn27kXd2cDiHNoV/EXbf1wtpFB6l32tSdWJ1jO/jZzT3Fxd//yN
-         XTSPYvDnimmhLztUtNTepLwpXacGJx7ISuZnjqJOkvfsypuLPo2eIyjcsmMjxevcaOTW
-         e1mw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUGo4rpcC1NCjsJ1RKdEscmz5yoO3gCdBLTi3zSSKk00hqY/EN2hDoOODRf7Qq4/WG82LtHZBVYl6obDBP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXueWNnLcmnjNu4M1uKEcncJ8BgzSatjLa/GkWOxBf0xE7FFT6
-	JxM86rsEvVnoET+hgtxifk17l366BKHwAYKOr9knzQk6WHG0PA93otcDDlCUwA==
-X-Gm-Gg: AY/fxX73NWjEPA8BOSQgEN1SIpTb+HdUH4aAgFoU81EuL0lnAtGCFAfUsYeZrqS2NBc
-	irWXBxwZQiJYK4TM1XXFF7xwLhXoryWiYniEsxpiuIy1NiKilyEY+cnONJXWoO/RJl5vHHMZ7Pz
-	zRMVPQgw2db6uXFCoZrn9KNQRux/I8q6bnUNzUDZiYyAvy1rM3VX7auXBGHJ/4SR5evwlpYq9ab
-	v+c5es8qDpUAysUWxHFWUXojZ2+UlK67TRalFXlj5em2uZuzrNiRdz4DLeqo4xwVxbrRYl/LZZV
-	JLh0jRBITun/xI4JlkgTwSBfzKTcxEa1MshlXLViYafh0phTJGplhwxBugMSWA4Lz6pANSvYjBA
-	FR29P8QTU7AETs0xHAJJdwJ+22VWR1jNC3ItS60NMTlWyjcKXWjkeOUFR5c7LHFyVQfjtRfKRGX
-	PeoycL2ureNDpq7Ed0
-X-Google-Smtp-Source: AGHT+IHHnbvfuO02O2T8eWP+vcVOcuSJ7Y6r/Zmdy3IOsvMBodteHhpEqVwKxEJiZnOh/YXs6iICfw==
-X-Received: by 2002:a17:903:2f92:b0:2a0:d629:9035 with SMTP id d9443c01a7336-2a3e2d758c7mr8216695ad.3.1767647940296;
-        Mon, 05 Jan 2026 13:19:00 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:3::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a3e3cc8dd2sm1526925ad.82.2026.01.05.13.18.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jan 2026 13:18:59 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: akpm@linux-foundation.org
-Cc: david@redhat.com,
-	miklos@szeredi.hu,
-	linux-mm@kvack.org,
-	athul.krishna.kr@protonmail.com,
-	j.neuschaefer@gmx.net,
-	carnil@debian.org,
-	linux-fsdevel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Bernd Schubert <bschubert@ddn.com>
-Subject: [PATCH v3 1/1] fs/writeback: skip AS_NO_DATA_INTEGRITY mappings in wait_sb_inodes()
-Date: Mon,  5 Jan 2026 13:17:27 -0800
-Message-ID: <20260105211737.4105620-2-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260105211737.4105620-1-joannelkoong@gmail.com>
-References: <20260105211737.4105620-1-joannelkoong@gmail.com>
+        bh=5TSiCGHtgVwG4QGQWtbePwrqqtBM+EEwuz9E6PZ+cbA=;
+        b=qgmUbThhBQ9cqUuURdHcDdW1X3yIYc0cv6A7kFlaCckJ5C7FmyU4uGu8gV3++y5oAd
+         UvWU/THXs62EIhup+K08rqZPj0YopCgGsG2if+qa78PpXAP1R+klT/+B4pFZG3x1CWA8
+         7sSRmtR6nJ93iUBT6jAneN8aR65RHygmxnLIKCBweAqF6A06E8KOMMIlHf68hUToU0nM
+         K47mnytNKLYZEs9IEH3EtmigULcbi1zGXyCCS4Ccvfh7bwgvsGwwJiGZKH+RLCzse1iP
+         cW2HjEhcFMKM0ePJhTzW1q7qJKLpWDnQWxQMyfrXapR8169tzWF5Saabh8WC05sokumz
+         zmDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTiNkD1nyNGK22zV4arMhmk21eymkaEWjetiXkBEBYmX5JHgjUX4qwyILAUO+Z0/GljCCYSzzul2mNSLif@vger.kernel.org
+X-Gm-Message-State: AOJu0YysBBqw5yVgRztg/HQcZuDSopdWo3K5KtWB77kVzOhNirFtCfpa
+	KF54E2mKin2bqj2+iUPzme08mg7jYfJFWKMcchMoMrGih5QVF4RjQ9hriuLcCyA8hFDMR93Scsj
+	M2pEFqIPQKyYk+xmG+SxXzM4LD393YF4taZAsAuU=
+X-Gm-Gg: AY/fxX6Jl7FqUqMXl07WHGCZ4Zy8l+K48RH+QlXeN4i691AkWh0lUvjYj6t4P0nunpY
+	QQMi6dRtHxBSheWS6hq/Qm9/PKsMD+GcNpmXXQlfeJOg3u9CwubqmPCh77gEaru7MOS0kdeVREv
+	S6BD3x+mmvOrU80yGvY2DobsAWmlQbPqaN+u8yn2/46epKg3RHDgGGTTO3sClaYVUY8Y6h/jn9C
+	BoUbcGgUx9wM7Qftd14vIBYhjmhxO6Lj48utS74820pDeFhKKBlj7Hu0sODKZ38+VhY+w==
+X-Google-Smtp-Source: AGHT+IF9DpYs7749/6gkNMdlDErzzYcJn1S0xwOYuM+fl7NM2pvZOJAurkuOaK85Qmm3ySVoe45Eh84qJBwtQwY2CFU=
+X-Received: by 2002:ac8:7d8f:0:b0:4ee:197a:e80a with SMTP id
+ d75a77b69052e-4ffa7843387mr16079941cf.77.1767652252124; Mon, 05 Jan 2026
+ 14:30:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251223062113.52477-1-zhangtianci.1997@bytedance.com>
+ <CAJnrk1aR=fPSXPuTBytnOPtE-0zuxfjMmFyug7fjsDa5T1djRA@mail.gmail.com>
+ <CAP4dvsf+XGJQFk_UrGFmgTPfkbchm_izjO31M9rQN+wYU=8zMA@mail.gmail.com>
+ <CAJnrk1Y0+j2xyko83s=b5Jw=maDKp3=HMYbLrVT5S+fJ1e2BNg@mail.gmail.com> <CAP4dvseWhaeu08NR-q=F5pRyMN5BnmWXHZi4i1L+utdjJTECaQ@mail.gmail.com>
+In-Reply-To: <CAP4dvseWhaeu08NR-q=F5pRyMN5BnmWXHZi4i1L+utdjJTECaQ@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 5 Jan 2026 14:30:41 -0800
+X-Gm-Features: AQt7F2oMKwiQv3sNIQlU4td8_0QR_Wk8Q_4qifm5wJGCPyOdvcTCk1fMYPl_Ud0
+Message-ID: <CAJnrk1a2-HS6cqthfcU5hxBi7Rinwh8MpYggNtOg6P256aW0zw@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] fuse: add hang check in request_wait_answer()
+To: Zhang Tianci <zhangtianci.1997@bytedance.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, xieyongji@bytedance.com, 
+	zhujia.zj@bytedance.com, Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Above the while() loop in wait_sb_inodes(), we document that we must
-wait for all pages under writeback for data integrity. Consequently, if
-a mapping, like fuse, traditionally does not have data integrity
-semantics, there is no need to wait at all; we can simply skip these
-inodes.
+On Sat, Jan 3, 2026 at 11:22=E2=80=AFPM Zhang Tianci
+<zhangtianci.1997@bytedance.com> wrote:
+>
+> Hi Joanne, I apologize for the delayed response. Happy New Year!
+Hi Tianci,
 
-This restores fuse back to prior behavior where syncs are no-ops. This
-fixes a user regression where if a system is running a faulty fuse
-server that does not reply to issued write requests, this causes
-wait_sb_inodes() to wait forever.
+No worries at all, happy 2026!
+>
+> > That makes sense. In that case, I think it's cleaner to detect and
+>
+> > print the corresponding debug statements for this through libfuse
+>
+> > instead of the kernel.
+>
+> Yes, you're absolutely right. From the perspective of FUSEDaemon maintain=
+ers,
+> it is appropriate to place such checks in libfuse.
+>
+> However, from the viewpoint of personnel responsible for maintaining
+> cluster kernel stability, they are more concerned with whether the
+> kernel itself is affected.
+>
+> Additionally, if FUSEDaemon enters a state where it neither responds to k=
+ernel
+> FUSE requests nor can exit during the process exit phase due to certain b=
+ugs
+> (such as when FUSEDaemon incorrectly depends on the mount point it
+> provides and thus enters a deadlock state), the alerts in libfuse will
+> become ineffective.
 
-Fixes: 0c58a97f919c ("fuse: remove tmp folio for writebacks and internal rb tree")
-Reported-by: Athul Krishna <athul.krishna.kr@protonmail.com>
-Reported-by: J. Neuschäfer <j.neuschaefer@gmx.net>
-Cc: stable@vger.kernel.org
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Reviewed-by: Bernd Schubert <bschubert@ddn.com>
-Tested-by: J. Neuschäfer <j.neuschaefer@gmx.net>
----
- fs/fs-writeback.c       |  7 ++++++-
- fs/fuse/file.c          |  4 +++-
- include/linux/pagemap.h | 11 +++++++++++
- 3 files changed, 20 insertions(+), 2 deletions(-)
+imo it's possible to check whether the kernel itself is affected just
+purely through libfuse changes to fuse_lowlevel.c where the request
+communication with the kernel happens. The number of requests ready by
+the kernel is exposed to userspace through sysfs, so if the daemon is
+deadlocked or cannot read fuse requests, that scenario is detectable
+by userspace.
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 6800886c4d10..baa2f2141146 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -2750,8 +2750,13 @@ static void wait_sb_inodes(struct super_block *sb)
- 		 * The mapping can appear untagged while still on-list since we
- 		 * do not have the mapping lock. Skip it here, wb completion
- 		 * will remove it.
-+		 *
-+		 * If the mapping does not have data integrity semantics,
-+		 * there's no need to wait for the writeout to complete, as the
-+		 * mapping cannot guarantee that data is persistently stored.
- 		 */
--		if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK))
-+		if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK) ||
-+		    mapping_no_data_integrity(mapping))
- 			continue;
- 
- 		spin_unlock_irq(&sb->s_inode_wblist_lock);
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 01bc894e9c2b..3b2a171e652f 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3200,8 +3200,10 @@ void fuse_init_file_inode(struct inode *inode, unsigned int flags)
- 
- 	inode->i_fop = &fuse_file_operations;
- 	inode->i_data.a_ops = &fuse_file_aops;
--	if (fc->writeback_cache)
-+	if (fc->writeback_cache) {
- 		mapping_set_writeback_may_deadlock_on_reclaim(&inode->i_data);
-+		mapping_set_no_data_integrity(&inode->i_data);
-+	}
- 
- 	INIT_LIST_HEAD(&fi->write_files);
- 	INIT_LIST_HEAD(&fi->queued_writes);
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 31a848485ad9..ec442af3f886 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -210,6 +210,7 @@ enum mapping_flags {
- 	AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM = 9,
- 	AS_KERNEL_FILE = 10,	/* mapping for a fake kernel file that shouldn't
- 				   account usage to user cgroups */
-+	AS_NO_DATA_INTEGRITY = 11, /* no data integrity guarantees */
- 	/* Bits 16-25 are used for FOLIO_ORDER */
- 	AS_FOLIO_ORDER_BITS = 5,
- 	AS_FOLIO_ORDER_MIN = 16,
-@@ -345,6 +346,16 @@ static inline bool mapping_writeback_may_deadlock_on_reclaim(const struct addres
- 	return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags);
- }
- 
-+static inline void mapping_set_no_data_integrity(struct address_space *mapping)
-+{
-+	set_bit(AS_NO_DATA_INTEGRITY, &mapping->flags);
-+}
-+
-+static inline bool mapping_no_data_integrity(const struct address_space *mapping)
-+{
-+	return test_bit(AS_NO_DATA_INTEGRITY, &mapping->flags);
-+}
-+
- static inline gfp_t mapping_gfp_mask(const struct address_space *mapping)
- {
- 	return mapping->gfp_mask;
--- 
-2.47.3
+Thanks,
+Joanne
 
+>
+> Therefore, I think there is no need for an either-or choice between kerne=
+l
+> alerts and FUSEDaemon alerts.
+>
+> Thanks,
+> Tianci
 
