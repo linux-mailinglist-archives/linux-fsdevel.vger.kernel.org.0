@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-72380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E23ECF1AED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 05 Jan 2026 03:59:55 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB5AFCF1B3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 05 Jan 2026 04:08:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 239FE30069B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jan 2026 02:59:54 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 7A3E330010DB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jan 2026 03:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA53131AF1E;
-	Mon,  5 Jan 2026 02:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F0530C60D;
+	Mon,  5 Jan 2026 03:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WGfzxyVI"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FALLOl6h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6192430F526;
-	Mon,  5 Jan 2026 02:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A8531CA7B;
+	Mon,  5 Jan 2026 03:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767581991; cv=none; b=YOTt/WPiAqhgraqRxLYa2ESAWVCvbM4Vk/MR6v/n/qfLkCN51F7ZZeIie72YBsemn4K2Vxa4RPgiT1kxrGXBzFZJcfR/2Dhw4Dx2WpdcPOkZDEHFCe425OqQoQx5JSzkuNmFjvRdk94tNbw2OKPZAnRH1II0lk3d4NDEDfmC7OM=
+	t=1767582481; cv=none; b=SVvqRKLK/qNK5c7ajzJgNSrlJv4fSYPZyJ+WujnQey+TXdSCTMra1dXCPAOuawNuBMMM0FWTZN/kFcv1XiM/xC9NrXbGzkBncu83vxZpIe+Nif3ECHS3a0luJF51yxSNgEHNJjtd+adUTcswCSS4w/limqppYmiIu0sCOqv+NH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767581991; c=relaxed/simple;
-	bh=c/mkKQs9bnXNk+rEOrGSqkJdIjdFyH19RvNkl4tYIHo=;
+	s=arc-20240116; t=1767582481; c=relaxed/simple;
+	bh=rz0fkIAYb7S/dLqtS5+ID/AhJ742Z5vmbQP+XRKJEo0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SEcrknWUzssoXuar67dkDptbI13QXXIViJwtaYkphqixkelgpY7ckBOlujoH+IJbMzsO/LfT3nCiwMrTsR7dvEfltUssQz8Qd49AJJWMT8z1CJYCAaBHsJdiexMNYt3BRAoWgUPxN2aLHvPkP6J+SMF6jy+uyeBNwIjeQ2qt/LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WGfzxyVI; arc=none smtp.client-ip=220.197.31.2
+	 In-Reply-To:Content-Type; b=Sil+R61etQ6rrKsg+kvV0B1JaJ0TZ/Nw04I2CDXjosgdKiiVAOuRpm41lCdaGMscVFIigMeYiwWYWrYkvO8Z9s2enEBV1Nym6lerlFnkHHwaIIBJGytIP3ov87pl3zjphNUs/8K3pZhlFGkfArqwtQ0337i40lTkb30uIUHOzJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FALLOl6h; arc=none smtp.client-ip=220.197.31.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
 	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=k/wDDq/c0Y07ER+L2EOyIK/ZfCUXFlUnopGGQGTncAk=;
-	b=WGfzxyVIt36WkMWcCbY+I+caXpjpcrYrwWIjDjkCMHHpUZIfDIruLGLRWMhHr4
-	OaaqV2CtWHx5eNzqXhVhN0o7VOQdRri5q4Zop4jyTix25z8FGF8nXFtDfSoN+sP9
-	jBZgOq4VUiLbaX1kIDIpEiSzzvljQ7/gqWO70BREAX7bQ=
+	Content-Type; bh=SSvrK5qll96czaa0gJeWIBUXz6CWMthA3oxyt3ijLHk=;
+	b=FALLOl6hFQyNeYscXW4nyuWQVPuvY/7yJqqK8HIyB8Ilie1R9XTYj/h9ECvIFS
+	UrYWtttNiWvfENvwp2JoZo/2b9KPuhC/v2GGr7SrLnlmdNyAzCAUkkSYGmT/aBeD
+	XBD1okLFXKSPU2PLGPZTDIl9zSJTpuNLXWWnbT7pzXlZI=
 Received: from [10.42.20.201] (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgBHozHhKFtpej7pKA--.136S2;
-	Mon, 05 Jan 2026 10:58:45 +0800 (CST)
-Message-ID: <eb265ced-5694-4bf8-884c-b188a670d796@163.com>
-Date: Mon, 5 Jan 2026 10:58:41 +0800
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wBXi7jkKltpf75QEQ--.2535S2;
+	Mon, 05 Jan 2026 11:07:16 +0800 (CST)
+Message-ID: <53c38e14-13bb-4857-85cf-221408669475@163.com>
+Date: Mon, 5 Jan 2026 11:07:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,7 +47,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 9/9] exfat: support multi-cluster for exfat_get_cluster
+Subject: Re: [PATCH v1 3/9] exfat: reuse cache to improve exfat_get_cluster
 To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
 Cc: "brauner@kernel.org" <brauner@kernel.org>,
  "chizhiling@kylinos.cn" <chizhiling@kylinos.cn>, "jack@suse.cz"
@@ -57,190 +57,157 @@ Cc: "brauner@kernel.org" <brauner@kernel.org>,
  "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
  "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
  "willy@infradead.org" <willy@infradead.org>
-References: <PUZPR04MB6316194114D39A6505BA45A381BCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <d832364d-02e6-458d-9eb2-442e1452a0f9@163.com>
- <PUZPR04MB631627BD83F409B370337E4D81B9A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+References: <PUZPR04MB631637893887AB587E1E3A9381BCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
+ <4c72c670-5ec1-404d-8177-bd80fabf4695@163.com>
+ <PUZPR04MB6316842140CBEDFC8E30CDE081B9A@PUZPR04MB6316.apcprd04.prod.outlook.com>
 Content-Language: en-US
 From: Chi Zhiling <chizhiling@163.com>
-In-Reply-To: <PUZPR04MB631627BD83F409B370337E4D81B9A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+In-Reply-To: <PUZPR04MB6316842140CBEDFC8E30CDE081B9A@PUZPR04MB6316.apcprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:QCgvCgBHozHhKFtpej7pKA--.136S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCry7KF47Xr48trWfWrykKrg_yoW7Gr48pr
-	WxKa45trs3X34xCw48tw4kZ3yS9F97tF47Jw15Jwn8Cryvqr4F9rn8trnIyF1rCw48uanF
-	vr4Fgw17ursxA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEb4SnUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC+AV0EmlbKOWwigAA3e
+X-CM-TRANSID:_____wBXi7jkKltpf75QEQ--.2535S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCry5ur47JFyrAF4xZrWkJFb_yoW5tr1xpr
+	W5Ka1Ut3y5A3s7ur10vFs3X3WS9FZ7tF4UGan8A3ZIyryDtFs5urnrGr9xuFyrCw4kua1Y
+	9F4UK3W7urnxG3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziBbytUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC3AT0kmlbKuSNYQAA3u
 
 On 1/4/26 15:56, Yuezhang.Mo@sony.com wrote:
->> On 12/30/25 17:06, Yuezhang.Mo@sony.com wrote:
->>>> +     /*
->>>> +      * Return on cache hit to keep the code simple.
->>>> +      */
->>>> +     if (fclus == cluster) {
->>>> +             *count = cid.fcluster + cid.nr_contig - fclus + 1;
->>>>                 return 0;
+>> On 12/30/25 17:05, Yuezhang.Mo@sony.com wrote:
+>>>> -             if (exfat_ent_get(sb, *dclus, &content, NULL))
+>>>> -                     return -EIO;
+>>>> +             if (exfat_ent_get(sb, *dclus, &content, &bh))
+>>>> +                     goto err;
 >>>
->>> If 'cid.fcluster + cid.nr_contig - fclus + 1 < *count', how about continuing to collect clusters?
->>> The following clusters may be continuous.
+>>> As you commented,  the buffer_head needs release if no error return.
+>>> Here, an error was returned, buffer_head had been released.
 >>
->> I'm glad you noticed this detail. It is necessary to explain this and
->> update it in the code comments.
 >>
->> The main reason why I didn't continue the collection was that the
->> subsequent clusters might also exist in the cache. This requires us to
->> search the cache again to confirm this, and this action might introduce
->> additional performance overhead.
+>> I mean, it seems like a duplicate release in there, but in fact it's not.
 >>
->> I think we can continue to collect, but we need to check the cache
->> before doing so.
+>> When exfat_ent_get return an error, *bh is released and set to NULL. So
+>> the second brelse() call in exfat_get_cluster() does nothing.
 >>
+>> ~~~
+>> int exfat_ent_get(struct super_block *sb, unsigned int loc,
+>>                   unsigned int *content, struct buffer_head **last)
+>> {
+>>
+>>         ...
+>>
+>> err:
+>>           if (last) {
+>>                  brelse(*last);
+>>
+>>                  /* Avoid double release */
+>>                  *last = NULL;
+>>           }
+>>           return -EIO;
+>> }
+>> ~~~
+>>
+>> The reason using "goto err" is that I want to handle all errors in the
+>> same way. Although this does seem a bit strange and confusing with the
+>> comment in exfat_ent_get.
 > 
-> So we also need to check the cache in the following, right?
+> I don't think it's necessary to handle all errors in the same way.
+> 
+> - Only the following error handling requires calling brelse.
+>      /* prevent the infinite loop of cluster chain */
+>      if (fclus > limit) {
+>              exfat_fs_error(sb,
+>                      "detected the cluster chain loop (i_pos %u)",
+>                      fclus);
+>              goto err;
+>      }
+> - This makes confused with the comment in exfat_ent_get.
+> - Unnecessary code modifications are avoided.
 
-Uh, I don't think it's necessary in here, because these clusters won't 
-exist in the cache.
-
-In the cache_lru, all exfat_cache start from non-continuous clusters. 
-This is because exfat_get_cluster adds consecutive clusters to the cache 
-from left to right, which means that the left side of all caches is 
-non-continuous.
-
-For instance, if a file contains two extents,  [0,30] and [31,60], then 
-exfat_cache must start at either 0 or 31, right?
-
-When we have found a cache is [31, 45], then there won't be [41, 60] in 
-the cache_lru.
-
-So when we already get some head clusters of a continuous extent, the 
-tail cluster will definitely not be present in the cache.
-
-
----
-
-Here are some modifications regarding this patch (which may be reflected 
-in the V2 version). Do you have any thoughts or suggestions on this?
-
+Okay, V2 is ready:
 
 diff --git a/fs/exfat/cache.c b/fs/exfat/cache.c
-index 1ec531859944..8ff416beea3c 100644
+index 61af3fa05ab7..a5e6858e5a20 100644
 --- a/fs/exfat/cache.c
 +++ b/fs/exfat/cache.c
-@@ -80,6 +80,10 @@ static inline void exfat_cache_update_lru(struct 
-inode *inode,
-                 list_move(&cache->cache_list, &ei->cache_lru);
-  }
-
-+/*
-+ * Return fcluster of the cache which behind fclus, or
-+ * EXFAT_EOF_CLUSTER if no cache in there.
-+ */
-  static bool exfat_cache_lookup(struct inode *inode,
-                 unsigned int fclus, struct exfat_cache_id *cid,
-                 unsigned int *cached_fclus, unsigned int *cached_dclus)
-@@ -87,6 +91,7 @@ static bool exfat_cache_lookup(struct inode *inode,
-         struct exfat_inode_info *ei = EXFAT_I(inode);
-         static struct exfat_cache nohit = { .fcluster = 0, };
-         struct exfat_cache *hit = &nohit, *p;
-+       unsigned int next = EXFAT_EOF_CLUSTER;
-         unsigned int offset;
-
-         spin_lock(&ei->cache_lru_lock);
-@@ -98,8 +103,9 @@ static bool exfat_cache_lookup(struct inode *inode,
-                                 offset = hit->nr_contig;
-                         } else {
-                                 offset = fclus - hit->fcluster;
--                               break;
-                         }
-+               } else if (p->fcluster > fclus && p->fcluster < next) {
-+                       next = p->fcluster;
-                 }
-         }
-         if (hit != &nohit) {
-@@ -114,7 +120,7 @@ static bool exfat_cache_lookup(struct inode *inode,
-         }
-         spin_unlock(&ei->cache_lru_lock);
-
--       return hit != &nohit;
-+       return next;
-  }
-
-  static struct exfat_cache *exfat_cache_merge(struct inode *inode,
-@@ -243,7 +249,7 @@ int exfat_get_cluster(struct inode *inode, unsigned 
+@@ -241,6 +241,7 @@ int exfat_get_cluster(struct inode *inode, unsigned 
 int cluster,
+         struct exfat_sb_info *sbi = EXFAT_SB(sb);
+         unsigned int limit = sbi->num_clusters;
          struct exfat_inode_info *ei = EXFAT_I(inode);
-         struct buffer_head *bh = NULL;
++       struct buffer_head *bh = NULL;
          struct exfat_cache_id cid;
--       unsigned int content, fclus;
-+       unsigned int content, fclus, next;
-         unsigned int end = cluster + *count - 1;
+         unsigned int content;
 
-         if (ei->start_clu == EXFAT_FREE_CLUSTER) {
-@@ -272,14 +278,15 @@ int exfat_get_cluster(struct inode *inode, 
+@@ -284,10 +285,10 @@ int exfat_get_cluster(struct inode *inode, 
 unsigned int cluster,
-                 return 0;
+                         exfat_fs_error(sb,
+                                 "detected the cluster chain loop (i_pos 
+%u)",
+                                 (*fclus));
+-                       return -EIO;
++                       goto err;
+                 }
 
-         cache_init(&cid, fclus, *dclus);
--       exfat_cache_lookup(inode, cluster, &cid, &fclus, dclus);
-+       next = exfat_cache_lookup(inode, cluster, &cid, &fclus, dclus);
+-               if (exfat_ent_get(sb, *dclus, &content, NULL))
++               if (exfat_ent_get(sb, *dclus, &content, &bh))
+                         return -EIO;
 
--       /*
--        * Return on cache hit to keep the code simple.
--        */
-         if (fclus == cluster) {
--               *count = cid.fcluster + cid.nr_contig - fclus + 1;
--               return 0;
-+               /* The cache includes all cluster requested */
-+               if (cid.fcluster + cid.nr_contig >= end)
-+                       return 0;
-+               /* No cache hole behind this cache */
-+               if (next == cid.fcluster + cid.nr_contig + 1)
-+                       return 0;
+                 *last_dclus = *dclus;
+@@ -299,7 +300,7 @@ int exfat_get_cluster(struct inode *inode, unsigned 
+int cluster,
+                                 exfat_fs_error(sb,
+                                        "invalid cluster chain (i_pos 
+%u, last_clus 0x%08x is EOF)",
+                                        *fclus, (*last_dclus));
+-                               return -EIO;
++                               goto err; // will remove in patch 6/9
+                         }
+
+                         break;
+@@ -309,6 +310,10 @@ int exfat_get_cluster(struct inode *inode, unsigned 
+int cluster,
+                         cache_init(&cid, *fclus, *dclus);
          }
 
-         /*
++       brelse(bh);
+         exfat_cache_add(inode, &cid);
+         return 0;
++err:
++       brelse(bh);
++       return -EIO;
+  }
 
 
 Thanks,
 
 > 
-> ```
->          /*
->           * Collect the remaining clusters of this contiguous extent.
->           */
->          if (*dclus != EXFAT_EOF_CLUSTER) {
->                  unsigned int clu = *dclus;
-> 
->                  /*
->                   * Now the cid cache contains the first cluster requested,
->                   * Advance the fclus to the last cluster of contiguous
->                   * extent, then update the count and cid cache accordingly.
->                   */
->                  while (fclus < end) {
->                          if (exfat_ent_get(sb, clu, &content, &bh))
->                                  goto err;
->                          if (++clu != content) {
->                                  /* TODO: read ahead if content valid */
->                                  break;
->                          }
->                          fclus++;
->                  }
->                  cid.nr_contig = fclus - cid.fcluster;
->                  *count = fclus - cluster + 1;
-> ```
-> 
->>>>
->>>> +             while (fclus < end) {
->>>> +                     if (exfat_ent_get(sb, clu, &content, &bh))
->>>> +                             goto err;
->>>> +                     if (++clu != content) {
->>>> +                             /* TODO: read ahead if content valid */
->>>> +                             break;
 >>>
->>> The next cluster index has been read and will definitely be used.
->>> How about add it to the cache?
->>
->> Good idea!
->> will add it in v2,
+>>>>
+>>>>                 *last_dclus = *dclus;
+>>>>                 *dclus = content;
+>>>> @@ -299,7 +300,7 @@ int exfat_get_cluster(struct inode *inode, unsigned int cluster,
+>>>>                                 exfat_fs_error(sb,
+>>>>                                        "invalid cluster chain (i_pos %u, last_clus 0x%08x is EOF)",
+>>>>                                        *fclus, (*last_dclus));
+>>>> -                             return -EIO;
+>>>> +                             goto err;
+>>>>                         }
+>>>>
+>>>>                         break;
+>>>> @@ -309,6 +310,10 @@ int exfat_get_cluster(struct inode *inode, unsigned int cluster,
+>>>>                         cache_init(&cid, *fclus, *dclus);
+>>>>         }
+>>>>
+>>>> +     brelse(bh);
+>>>>         exfat_cache_add(inode, &cid);
+>>>>         return 0;
+>>>> +err:
+>>>> +     brelse(bh);
+>>>> +     return -EIO;
+>>>>    }
+>>>
+>>>
+> 
+> 
 
 
