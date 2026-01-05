@@ -1,113 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-72401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B479CF4FE1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 05 Jan 2026 18:27:20 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C880CF5455
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 05 Jan 2026 19:51:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 94008303F9AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jan 2026 17:26:39 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AEEDD30DCC63
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jan 2026 18:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDD52F12D9;
-	Mon,  5 Jan 2026 17:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A3F340A4C;
+	Mon,  5 Jan 2026 18:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3PksEop"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JVUOZG0w";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mHdcbXk1";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JVUOZG0w";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mHdcbXk1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486C033C514;
-	Mon,  5 Jan 2026 17:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBB62F6911
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Jan 2026 18:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767633980; cv=none; b=DiQkSbED4+/3mgT9Vnbc6dDJW08cO7SncEZ3XCow1JkxLcMx7LbCVwMUwKMqKi1kUmOm4uZkdi/qUXGntVfdSokzNqLm78tZxsBJaJExwshBaJ7hb5k/+n1snSOjc0EwC0QsrVsI/kdNdy4le6HzFyevRZPIbxixEmlgzetUDW4=
+	t=1767638981; cv=none; b=qyO+S9HgLrC8RlDf+zsQNXPiMCXcYSKTbJyZm/SyOSflpTxEVagbAfxQel94rQwWgQDgjBb2yJg0Y2KMUElyupNnkb4k5lf27sH5wD0+mQptbXFTYnPz8yhiZ1R1ZPuKd3Dj46HqIgkIvXRPBAy61TZQiAXJ3SACVbT5VeijIWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767633980; c=relaxed/simple;
-	bh=SykrCjOThSCOTyBCvtQFA5OVoQRr6sTQwUlL1i50TZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KRYwZcVFZjKNIPzSIxGAOceHjgwH4NMmR5qHAqX729VG6KCSp0esZETSdJ5qXiGn0o4WTzObbN32g+EyT8fC8qDmqNhOdvri/9uO59XumLW5ogcjVaix/5hFN3Olwf+9m2n4RiLk6UYOI4oZGpLT75znVv7gb9GVCDx5e0RiPzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3PksEop; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 980C6C116D0;
-	Mon,  5 Jan 2026 17:26:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767633978;
-	bh=SykrCjOThSCOTyBCvtQFA5OVoQRr6sTQwUlL1i50TZ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C3PksEoplxOiVTaFKbKtB/xJ3nD9U0qH5o6F/tNbb3ZHMpGHGYWwtxNYzxqhzcl4J
-	 zKiBlkERtRY4lIiznNbKrwz9kNanBaeeGTDgVRvNDlVGWaJKMBNfpKGvTZOlpmfnGu
-	 UUhM+kbHXLzLw/yNl08vqu1xvOwC8JCxHXAc/vIhyVtHeq4231so7oByMBru+/yYIN
-	 GeWNUUwvgXhcB2j72IQA3oklXbfFC2AIdImB5euZh0X5Hmq5QNjMJY1G2gFFEGYS+k
-	 e+lRrzyRQEuXAufnQ1X4RgljcyfJuAwNYSSVKwunnQ+jITqJEBVyTCN67bcLNJ4fhU
-	 oyaduFm7byKfw==
-Date: Mon, 5 Jan 2026 09:26:18 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ian Kent <raven@themaw.net>
-Cc: Christian Brauner <brauner@kernel.org>, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, hch@lst.de,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/4] fs: send uevents for filesystem mount events
-Message-ID: <20260105172618.GB191481@frogsfrogsfrogs>
-References: <176602332484.688213.11232314346072982565.stgit@frogsfrogsfrogs>
- <176602332527.688213.9644123318095990966.stgit@frogsfrogsfrogs>
- <20251224-imitieren-flugtauglich-dcef25c57c8d@brauner>
- <284c79aa-7088-40a5-a6f5-31de8404e62f@themaw.net>
+	s=arc-20240116; t=1767638981; c=relaxed/simple;
+	bh=rSGv+BlFMGxxakwLr1BkoKCuhfW0aUzX2Fd6UW2LkpQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PlapeJ9/uxSjivmeHYHlpd2mODVjJR9rUNRiRHWY4gMV/Qk9JawttM20PlOe7+WLvCHNKZRZxJtUjBRZgfdM2+CyKzOpQi5AZPtcBR76wmNgz3zeG49bXio3R/VUkdPALjH5NtiKAIklKbdST7UYzRHbJXVvtQfscwuzCGhmQB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JVUOZG0w; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mHdcbXk1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JVUOZG0w; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mHdcbXk1; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 395C433750;
+	Mon,  5 Jan 2026 18:49:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1767638977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GBlu/tOBxV908moG/lkaU3l0aelM/P8LluhY6WvfIms=;
+	b=JVUOZG0wjKub8hg1ckvT7Uav4iP4X1lO88EF7wni5KHaha+AiXuo1ydzwjEl5pibd6xoZV
+	w/cMDOlIq7+S7T6bLi+/XuAzKkjX9Mi+NsJXhD1AaooC9GrzVBojHxV24Q4smazIcyCoNV
+	WZ5D37wpwA4xuMxFBHbcm6F2aguxmB0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1767638977;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GBlu/tOBxV908moG/lkaU3l0aelM/P8LluhY6WvfIms=;
+	b=mHdcbXk1ksd6lrLxyWE3hdAg1ZF4z5UYpHFqKPHOo/mI2kCTSK1nkxmjmfaPAIgKQhv7Gj
+	WNaK8jy9ghklm6Bw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=JVUOZG0w;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=mHdcbXk1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1767638977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GBlu/tOBxV908moG/lkaU3l0aelM/P8LluhY6WvfIms=;
+	b=JVUOZG0wjKub8hg1ckvT7Uav4iP4X1lO88EF7wni5KHaha+AiXuo1ydzwjEl5pibd6xoZV
+	w/cMDOlIq7+S7T6bLi+/XuAzKkjX9Mi+NsJXhD1AaooC9GrzVBojHxV24Q4smazIcyCoNV
+	WZ5D37wpwA4xuMxFBHbcm6F2aguxmB0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1767638977;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GBlu/tOBxV908moG/lkaU3l0aelM/P8LluhY6WvfIms=;
+	b=mHdcbXk1ksd6lrLxyWE3hdAg1ZF4z5UYpHFqKPHOo/mI2kCTSK1nkxmjmfaPAIgKQhv7Gj
+	WNaK8jy9ghklm6Bw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EAD3A3EA63;
+	Mon,  5 Jan 2026 18:49:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Z2yOMsAHXGnSNwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Mon, 05 Jan 2026 18:49:36 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu,  axboe@kernel.dk,  bschubert@ddn.com,
+  asml.silence@gmail.com,  io-uring@vger.kernel.org,
+  csander@purestorage.com,  xiaobing.li@samsung.com,
+  linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 07/25] io_uring/kbuf: add recycling for kernel
+ managed buffer rings
+In-Reply-To: <CAJnrk1YRZYdEBL=6K0-7oAq6s-TfL7AnuHwZsN2miPYy1vGCOg@mail.gmail.com>
+	(Joanne Koong's message of "Mon, 29 Dec 2025 17:15:42 -0800")
+References: <20251223003522.3055912-1-joannelkoong@gmail.com>
+	<20251223003522.3055912-8-joannelkoong@gmail.com>
+	<87tsx9ymm9.fsf@mailhost.krisman.be>
+	<87ms31ylor.fsf@mailhost.krisman.be>
+	<CAJnrk1YRZYdEBL=6K0-7oAq6s-TfL7AnuHwZsN2miPYy1vGCOg@mail.gmail.com>
+Date: Mon, 05 Jan 2026 13:49:34 -0500
+Message-ID: <87pl7n7v41.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <284c79aa-7088-40a5-a6f5-31de8404e62f@themaw.net>
+Content-Type: text/plain
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[szeredi.hu,kernel.dk,ddn.com,gmail.com,vger.kernel.org,purestorage.com,samsung.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,mailhost.krisman.be:mid]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 395C433750
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
 
-On Sat, Dec 27, 2025 at 07:58:10AM +0800, Ian Kent wrote:
-> 
-> On 24/12/25 20:47, Christian Brauner wrote:
-> > On Wed, Dec 17, 2025 at 06:04:29PM -0800, Darrick J. Wong wrote:
-> > > From: Darrick J. Wong <djwong@kernel.org>
-> > > 
-> > > Add the ability to send uevents whenever a filesystem mounts, unmounts,
-> > > or goes down.  This will enable XFS to start daemons whenever a
-> > > filesystem is first mounted.
-> > > 
-> > > Regrettably, we can't wire this directly into get_tree_bdev_flags or
-> > > generic_shutdown_super because not all filesystems set up a kobject
-> > > representation in sysfs, and the VFS has no idea if a filesystem
-> > > actually does that.
-> > > 
-> > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > > ---
-> > I have issues with uevents as a mechanism for this. Uevents are tied to
-> > network namespaces and they are not really namespaced appropriately. Any
-> > filesystem that hooks into this mechanism will spew uevents into the
-> > initial network namespace unconditionally. Any container mountable
-> > filesystem that wants to use this interface will spam the host with
-> > this event though the even is completely useless without appropriate
-> > meta information about the relevant mount namespaces and further
-> > parameters. This is a design dead end going forward imho. So please
-> > let's not do this.
-> > 
-> > Instead ties this to fanotify which is the right interface for this.
-> > My suggestion would be to tie this to mount namespaces as that's the
-> > appropriate object. Fanotify already supports listening for general
-> > mount/umount events on mount namespaces. So extend it to send filesystem
-> > creation/destruction events so that a caller may listen on the initial
-> > mount namespace - where xfs fses can be mounted - you could even make it
-> > filterable per filesystem type right away.
-> 
-> Seconded, there are way too many sources of mount events for them to not
-> 
-> be specific and targeted.
+Joanne Koong <joannelkoong@gmail.com> writes:
 
-NP, thanks to you both for the quick feedback. :)
+>> But now I see this is never exposed to userspace as an io_uring_cmd
+>> command itself, it is only used internally by other fuse operations.
+>> Nevertheless, it's implemented as an io_uring_cmd by
+>> io_uring_cmd_kmbuffer_recycle.
+>>
+>> Is it eventually going to be exposed as operations to userspace? If not,
+>> I'd suggest to stay out of the io_uring_cmd namespace (perhaps call
+>> io_kmbuf_recycle directly from fs/fuse).  Do we need to have this
+>> io_uring_cmd abstraction for some reason I'm missing?
+>
+> Hi Gabriel,
+>
+> Thanks for taking a look at the patchset.
+>
+> This is not going to be exposed as an operation to userspace. Only the
+> kernel will be able to recycle kmbufs.
+>
+> I was under the impression the io_uring_cmd_* abstraction was
+> preferred as the API for interfacing with io_uring from another
+> subsystem.
 
---D
+Hello,
 
-> 
-> Just my opinion, ;),
-> 
-> Ian
-> 
-> 
+I don't think that's the case, no. io_uring_cmd are used to expose
+backend-specific file operations to userspace, similar to an
+asynchronous ioctl.  Moreover, it would just add an extra layer, without
+bringing any benefits, IMO.
+
+> In that case then, I'll get rid of the io_uring_cmd layers
+> for the calls then, that will make things simpler.
+
+-- 
+Gabriel Krisman Bertazi
 
