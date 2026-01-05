@@ -1,201 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-72373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D4DCF1943
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 05 Jan 2026 02:49:22 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E23ECF1AED
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 05 Jan 2026 03:59:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EB7C23019BBA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jan 2026 01:48:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 239FE30069B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Jan 2026 02:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931DF2BEC2B;
-	Mon,  5 Jan 2026 01:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA53131AF1E;
+	Mon,  5 Jan 2026 02:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WGfzxyVI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8D23BB5A;
-	Mon,  5 Jan 2026 01:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6192430F526;
+	Mon,  5 Jan 2026 02:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767577727; cv=none; b=NH4yQLfotCgkW7bnI3l61vGVZkv1tkSqpoIhfXnuGXxavBswKlQlu3PKzfyUjc29rwBWtrNLzMbpVPfDX0PGDxXLF56wf5Tav/sa6phKy8ZQhmqooGIzz2pJjp/d+yEyRwoPEQE0bExMLlvKA6f+HUdXRySFjuHxTzQsLeDbiTU=
+	t=1767581991; cv=none; b=YOTt/WPiAqhgraqRxLYa2ESAWVCvbM4Vk/MR6v/n/qfLkCN51F7ZZeIie72YBsemn4K2Vxa4RPgiT1kxrGXBzFZJcfR/2Dhw4Dx2WpdcPOkZDEHFCe425OqQoQx5JSzkuNmFjvRdk94tNbw2OKPZAnRH1II0lk3d4NDEDfmC7OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767577727; c=relaxed/simple;
-	bh=zZYvnQBA5etWrYYMEpqGReUtUXBCqXJWIkPndb5non0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Jo7aK86tEkIHmKa3vyUV0kAodMhygL76v6dWp+YDTDPJrKMC+Uah6y6rwyk43SoNlpq8bnCGWnXvNEw2gONfHHq9R0o+lUsFJ1zh8UQ/KgXxk7qDxqmYYgUEwiVD6F9PIF2n6+nB+25413Y1XLTDMVqm9LqBlhVN920QphZxt7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.170])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dkxy903s0zYQtxm;
-	Mon,  5 Jan 2026 09:47:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 146E04056F;
-	Mon,  5 Jan 2026 09:48:43 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP4 (Coremail) with SMTP id gCh0CgBHp_dpGFtppFisCg--.42376S11;
-	Mon, 05 Jan 2026 09:48:42 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	yizhang089@gmail.com,
-	libaokun1@huawei.com,
-	yangerkun@huawei.com,
-	yukuai@fnnas.com
-Subject: [PATCH -next v3 7/7] ext4: remove EXT4_GET_BLOCKS_IO_CREATE_EXT
-Date: Mon,  5 Jan 2026 09:45:22 +0800
-Message-ID: <20260105014522.1937690-8-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260105014522.1937690-1-yi.zhang@huaweicloud.com>
-References: <20260105014522.1937690-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1767581991; c=relaxed/simple;
+	bh=c/mkKQs9bnXNk+rEOrGSqkJdIjdFyH19RvNkl4tYIHo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SEcrknWUzssoXuar67dkDptbI13QXXIViJwtaYkphqixkelgpY7ckBOlujoH+IJbMzsO/LfT3nCiwMrTsR7dvEfltUssQz8Qd49AJJWMT8z1CJYCAaBHsJdiexMNYt3BRAoWgUPxN2aLHvPkP6J+SMF6jy+uyeBNwIjeQ2qt/LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WGfzxyVI; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=k/wDDq/c0Y07ER+L2EOyIK/ZfCUXFlUnopGGQGTncAk=;
+	b=WGfzxyVIt36WkMWcCbY+I+caXpjpcrYrwWIjDjkCMHHpUZIfDIruLGLRWMhHr4
+	OaaqV2CtWHx5eNzqXhVhN0o7VOQdRri5q4Zop4jyTix25z8FGF8nXFtDfSoN+sP9
+	jBZgOq4VUiLbaX1kIDIpEiSzzvljQ7/gqWO70BREAX7bQ=
+Received: from [10.42.20.201] (unknown [])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgBHozHhKFtpej7pKA--.136S2;
+	Mon, 05 Jan 2026 10:58:45 +0800 (CST)
+Message-ID: <eb265ced-5694-4bf8-884c-b188a670d796@163.com>
+Date: Mon, 5 Jan 2026 10:58:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHp_dpGFtppFisCg--.42376S11
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFWUGw1UGF1xAryfXr1UJrb_yoWrXF47pa
-	sxAF1xGr4jq3yj93yxCF1UXr12k3W8KFW7urW5JrWF9a43AryfKF18tayFyFyFgFW8ZF4Y
-	qFWFk34UJayfGrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0JUQFxUUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 9/9] exfat: support multi-cluster for exfat_get_cluster
+To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc: "brauner@kernel.org" <brauner@kernel.org>,
+ "chizhiling@kylinos.cn" <chizhiling@kylinos.cn>, "jack@suse.cz"
+ <jack@suse.cz>, "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "willy@infradead.org" <willy@infradead.org>
+References: <PUZPR04MB6316194114D39A6505BA45A381BCA@PUZPR04MB6316.apcprd04.prod.outlook.com>
+ <d832364d-02e6-458d-9eb2-442e1452a0f9@163.com>
+ <PUZPR04MB631627BD83F409B370337E4D81B9A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Content-Language: en-US
+From: Chi Zhiling <chizhiling@163.com>
+In-Reply-To: <PUZPR04MB631627BD83F409B370337E4D81B9A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:QCgvCgBHozHhKFtpej7pKA--.136S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCry7KF47Xr48trWfWrykKrg_yoW7Gr48pr
+	WxKa45trs3X34xCw48tw4kZ3yS9F97tF47Jw15Jwn8Cryvqr4F9rn8trnIyF1rCw48uanF
+	vr4Fgw17ursxA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEb4SnUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC+AV0EmlbKOWwigAA3e
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On 1/4/26 15:56, Yuezhang.Mo@sony.com wrote:
+>> On 12/30/25 17:06, Yuezhang.Mo@sony.com wrote:
+>>>> +     /*
+>>>> +      * Return on cache hit to keep the code simple.
+>>>> +      */
+>>>> +     if (fclus == cluster) {
+>>>> +             *count = cid.fcluster + cid.nr_contig - fclus + 1;
+>>>>                 return 0;
+>>>
+>>> If 'cid.fcluster + cid.nr_contig - fclus + 1 < *count', how about continuing to collect clusters?
+>>> The following clusters may be continuous.
+>>
+>> I'm glad you noticed this detail. It is necessary to explain this and
+>> update it in the code comments.
+>>
+>> The main reason why I didn't continue the collection was that the
+>> subsequent clusters might also exist in the cache. This requires us to
+>> search the cache again to confirm this, and this action might introduce
+>> additional performance overhead.
+>>
+>> I think we can continue to collect, but we need to check the cache
+>> before doing so.
+>>
+> 
+> So we also need to check the cache in the following, right?
 
-We do not use EXT4_GET_BLOCKS_IO_CREATE_EXT or split extents before
-submitting I/O; therefore, remove the related code.
+Uh, I don't think it's necessary in here, because these clusters won't 
+exist in the cache.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+In the cache_lru, all exfat_cache start from non-continuous clusters. 
+This is because exfat_get_cluster adds consecutive clusters to the cache 
+from left to right, which means that the left side of all caches is 
+non-continuous.
+
+For instance, if a file contains two extents,  [0,30] and [31,60], then 
+exfat_cache must start at either 0 or 31, right?
+
+When we have found a cache is [31, 45], then there won't be [41, 60] in 
+the cache_lru.
+
+So when we already get some head clusters of a continuous extent, the 
+tail cluster will definitely not be present in the cache.
+
+
 ---
- fs/ext4/ext4.h    |  9 ---------
- fs/ext4/extents.c | 29 -----------------------------
- fs/ext4/inode.c   | 11 -----------
- 3 files changed, 49 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 9a71357f192d..174c51402864 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -707,15 +707,6 @@ enum {
- 	 * found an unwritten extent, we need to split it.
- 	 */
- #define EXT4_GET_BLOCKS_SPLIT_NOMERGE		0x0008
--	/*
--	 * Caller is from the dio or dioread_nolock buffered IO, reqest to
--	 * create an unwritten extent if it does not exist or split the
--	 * found unwritten extent. Also do not merge the newly created
--	 * unwritten extent, io end will convert unwritten to written,
--	 * and try to merge the written extent.
--	 */
--#define EXT4_GET_BLOCKS_IO_CREATE_EXT		(EXT4_GET_BLOCKS_SPLIT_NOMERGE|\
--					 EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT)
- 	/* Convert unwritten extent to initialized. */
- #define EXT4_GET_BLOCKS_CONVERT			0x0010
- 	/* Eventual metadata allocation (due to growing extent tree)
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index c98f7c5482b4..c7c66ab825e7 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -3925,34 +3925,6 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
- 	trace_ext4_ext_handle_unwritten_extents(inode, map, flags,
- 						*allocated, newblock);
- 
--	/* get_block() before submitting IO, split the extent */
--	if (flags & EXT4_GET_BLOCKS_SPLIT_NOMERGE) {
--		int depth;
--
--		path = ext4_split_convert_extents(handle, inode, map, path,
--						  flags, allocated);
--		if (IS_ERR(path))
--			return path;
--		/*
--		 * shouldn't get a 0 allocated when splitting an extent unless
--		 * m_len is 0 (bug) or extent has been corrupted
--		 */
--		if (unlikely(*allocated == 0)) {
--			EXT4_ERROR_INODE(inode,
--					 "unexpected allocated == 0, m_len = %u",
--					 map->m_len);
--			err = -EFSCORRUPTED;
--			goto errout;
--		}
--		/* Don't mark unwritten if the extent has been zeroed out. */
--		path = ext4_find_extent(inode, map->m_lblk, path, flags);
--		if (IS_ERR(path))
--			return path;
--		depth = ext_depth(inode);
--		if (ext4_ext_is_unwritten(path[depth].p_ext))
--			map->m_flags |= EXT4_MAP_UNWRITTEN;
--		goto out;
--	}
- 	/* IO end_io complete, convert the filled extent to written */
- 	if (flags & EXT4_GET_BLOCKS_CONVERT) {
- 		path = ext4_convert_unwritten_extents_endio(handle, inode,
-@@ -4006,7 +3978,6 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
- 		goto errout;
- 	}
- 
--out:
- 	map->m_flags |= EXT4_MAP_NEW;
- map_out:
- 	map->m_flags |= EXT4_MAP_MAPPED;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 67fe7d0f47e3..2e79b09fe2f0 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -588,7 +588,6 @@ static int ext4_map_query_blocks(handle_t *handle, struct inode *inode,
- static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
- 				  struct ext4_map_blocks *map, int flags)
- {
--	struct extent_status es;
- 	unsigned int status;
- 	int err, retval = 0;
- 
-@@ -649,16 +648,6 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
- 			return err;
- 	}
- 
--	/*
--	 * If the extent has been zeroed out, we don't need to update
--	 * extent status tree.
--	 */
--	if (flags & EXT4_GET_BLOCKS_SPLIT_NOMERGE &&
--	    ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, &map->m_seq)) {
--		if (ext4_es_is_written(&es))
--			return retval;
--	}
--
- 	status = map->m_flags & EXT4_MAP_UNWRITTEN ?
- 			EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
- 	ext4_es_insert_extent(inode, map->m_lblk, map->m_len, map->m_pblk,
--- 
-2.52.0
+Here are some modifications regarding this patch (which may be reflected 
+in the V2 version). Do you have any thoughts or suggestions on this?
+
+
+diff --git a/fs/exfat/cache.c b/fs/exfat/cache.c
+index 1ec531859944..8ff416beea3c 100644
+--- a/fs/exfat/cache.c
++++ b/fs/exfat/cache.c
+@@ -80,6 +80,10 @@ static inline void exfat_cache_update_lru(struct 
+inode *inode,
+                 list_move(&cache->cache_list, &ei->cache_lru);
+  }
+
++/*
++ * Return fcluster of the cache which behind fclus, or
++ * EXFAT_EOF_CLUSTER if no cache in there.
++ */
+  static bool exfat_cache_lookup(struct inode *inode,
+                 unsigned int fclus, struct exfat_cache_id *cid,
+                 unsigned int *cached_fclus, unsigned int *cached_dclus)
+@@ -87,6 +91,7 @@ static bool exfat_cache_lookup(struct inode *inode,
+         struct exfat_inode_info *ei = EXFAT_I(inode);
+         static struct exfat_cache nohit = { .fcluster = 0, };
+         struct exfat_cache *hit = &nohit, *p;
++       unsigned int next = EXFAT_EOF_CLUSTER;
+         unsigned int offset;
+
+         spin_lock(&ei->cache_lru_lock);
+@@ -98,8 +103,9 @@ static bool exfat_cache_lookup(struct inode *inode,
+                                 offset = hit->nr_contig;
+                         } else {
+                                 offset = fclus - hit->fcluster;
+-                               break;
+                         }
++               } else if (p->fcluster > fclus && p->fcluster < next) {
++                       next = p->fcluster;
+                 }
+         }
+         if (hit != &nohit) {
+@@ -114,7 +120,7 @@ static bool exfat_cache_lookup(struct inode *inode,
+         }
+         spin_unlock(&ei->cache_lru_lock);
+
+-       return hit != &nohit;
++       return next;
+  }
+
+  static struct exfat_cache *exfat_cache_merge(struct inode *inode,
+@@ -243,7 +249,7 @@ int exfat_get_cluster(struct inode *inode, unsigned 
+int cluster,
+         struct exfat_inode_info *ei = EXFAT_I(inode);
+         struct buffer_head *bh = NULL;
+         struct exfat_cache_id cid;
+-       unsigned int content, fclus;
++       unsigned int content, fclus, next;
+         unsigned int end = cluster + *count - 1;
+
+         if (ei->start_clu == EXFAT_FREE_CLUSTER) {
+@@ -272,14 +278,15 @@ int exfat_get_cluster(struct inode *inode, 
+unsigned int cluster,
+                 return 0;
+
+         cache_init(&cid, fclus, *dclus);
+-       exfat_cache_lookup(inode, cluster, &cid, &fclus, dclus);
++       next = exfat_cache_lookup(inode, cluster, &cid, &fclus, dclus);
+
+-       /*
+-        * Return on cache hit to keep the code simple.
+-        */
+         if (fclus == cluster) {
+-               *count = cid.fcluster + cid.nr_contig - fclus + 1;
+-               return 0;
++               /* The cache includes all cluster requested */
++               if (cid.fcluster + cid.nr_contig >= end)
++                       return 0;
++               /* No cache hole behind this cache */
++               if (next == cid.fcluster + cid.nr_contig + 1)
++                       return 0;
+         }
+
+         /*
+
+
+Thanks,
+
+> 
+> ```
+>          /*
+>           * Collect the remaining clusters of this contiguous extent.
+>           */
+>          if (*dclus != EXFAT_EOF_CLUSTER) {
+>                  unsigned int clu = *dclus;
+> 
+>                  /*
+>                   * Now the cid cache contains the first cluster requested,
+>                   * Advance the fclus to the last cluster of contiguous
+>                   * extent, then update the count and cid cache accordingly.
+>                   */
+>                  while (fclus < end) {
+>                          if (exfat_ent_get(sb, clu, &content, &bh))
+>                                  goto err;
+>                          if (++clu != content) {
+>                                  /* TODO: read ahead if content valid */
+>                                  break;
+>                          }
+>                          fclus++;
+>                  }
+>                  cid.nr_contig = fclus - cid.fcluster;
+>                  *count = fclus - cluster + 1;
+> ```
+> 
+>>>>
+>>>> +             while (fclus < end) {
+>>>> +                     if (exfat_ent_get(sb, clu, &content, &bh))
+>>>> +                             goto err;
+>>>> +                     if (++clu != content) {
+>>>> +                             /* TODO: read ahead if content valid */
+>>>> +                             break;
+>>>
+>>> The next cluster index has been read and will definitely be used.
+>>> How about add it to the cache?
+>>
+>> Good idea!
+>> will add it in v2,
 
 
