@@ -1,254 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-72474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70DB3CF7F28
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 12:03:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F06CF7FDC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 12:16:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9AF033114B1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 10:57:04 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3A6A830C0AA8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 11:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D4931AA8D;
-	Tue,  6 Jan 2026 10:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3092E03E4;
+	Tue,  6 Jan 2026 11:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dknFXvlg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xEENhlSj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o6GYRRI/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="euT+aJA3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tS38dcVN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0988199E94
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jan 2026 10:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F2E27FB2A;
+	Tue,  6 Jan 2026 11:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767697020; cv=none; b=iaGMMtnBjrSuaBAqq1Zyovt9qdGhLrxLQi0jSGOzcSe0AjGIrr1RimjzjzBJgG3+72E0bHIzcdGbDBGxraS0Kd79KOHAH3hRlxKXRAQN5J0uCkoEKl6GEPWZCpoz5VInuvYvucMqSpEJwtJ4e231krDoNXBG22gU2C6mEJ+QsUA=
+	t=1767697766; cv=none; b=BjTIb/FAskFZn4HaBsD46HaIVd8WNPW0twtpHVQ7b2M12jLILE8LD1cYKLGIOAfZzcJ+AKxNtWoNl6//a2qH7DCV5Mhy49fd49ktelOs6s/jIFY9li6YAFr3kVWgOW6Hjl+z67Z5ziOuBRId3aCjBWbTKJ+X5fe8ZfMRSbdinH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767697020; c=relaxed/simple;
-	bh=6s4Ay9LOJUcj9HxtsFOyGRFDUVmw+G4S56sQDNxNndY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4CN2Sg/bbAIKqGzqpRBP1U12clXzXsb86ooshVcTQh7ot+VxeyIp042XRmYpfPoFviBkcfN6QWB297vZ1Ofx3zJHh83K2Uq81LCkPBM1FXcoTz8Ig5EQnFFU1/Sq3IHlEefDD12qVgu/Vn95sDO1qb9betX35r1N6NSyk+f/s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dknFXvlg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xEENhlSj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o6GYRRI/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=euT+aJA3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D06D55BCCE;
-	Tue,  6 Jan 2026 10:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767697017; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EceJEOv3NYd1LQb0kSunwml0UObwvblgyGa3oOMlbGo=;
-	b=dknFXvlgnbY19pfzC9pG3IUKV8An0dSEDhKSI1U/paVB+tz7v3HAbvSwypsUIkK+t7qL3z
-	93131A0zcmGfK3FfFaXhjID5wxWrsjWvfkP8J5JhJzDVTR/8QwTrY3vyp2PHDdArNvrfW7
-	PkoxdBbaOt65+OIih1y09OFHiINfBKU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767697017;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EceJEOv3NYd1LQb0kSunwml0UObwvblgyGa3oOMlbGo=;
-	b=xEENhlSjb6y2skfxDNQWBe+rJKAHJ74SzC1rDsdB4sdve5ek+H4tFoW/GUgHE8U3LhHWNP
-	dz37u9Kdqg0ZM/Cg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767697016; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EceJEOv3NYd1LQb0kSunwml0UObwvblgyGa3oOMlbGo=;
-	b=o6GYRRI/0USuVXYJv4ur1CqL21ByA8M6JFOEDsO2XbCRdKFk73vkbByN8EPtC+Xz6cdf+a
-	wzsuNREd/QPWOgGalJEk9e/TkOoPfGq4DlUDR3ZJGfKSFqE+BuyKy4lyKDbd2YY3pAkeTc
-	hhIIachc1kmCvVWZsSIY11vWHRFV5jY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767697016;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EceJEOv3NYd1LQb0kSunwml0UObwvblgyGa3oOMlbGo=;
-	b=euT+aJA3HglZmsa12FEkRoAJKimyUxXGDy0s+5Fop1qCs8ylhfeyIxGmftDvdblTbuGwPi
-	SgxEyHBs7JYGmBDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C48443EA63;
-	Tue,  6 Jan 2026 10:56:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bp3qL3jqXGlDNwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 06 Jan 2026 10:56:56 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 84FA0A08E3; Tue,  6 Jan 2026 11:56:52 +0100 (CET)
-Date: Tue, 6 Jan 2026 11:56:52 +0100
-From: Jan Kara <jack@suse.cz>
-To: sunyongjian1@huawei.com
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	tytso@mit.edu, jack@suse.cz, yangerkun@huawei.com, yi.zhang@huawei.com, 
-	libaokun1@huawei.com, chengzhihao1@huawei.com
-Subject: Re: [RFC PATCH] ext4: fix e4b bitmap inconsistency reports
-Message-ID: <ak5cxhlqoqdq47nyp6v6ynbww4u4pndkytzitzt3w2ukad2wlq@qlcwq5fhr7qa>
-References: <20260106090820.836242-1-sunyongjian@huaweicloud.com>
+	s=arc-20240116; t=1767697766; c=relaxed/simple;
+	bh=VKue5qKJ/+N41UgeZZ6tDw29vy+Tds0M/PpBIAYLOY8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Kh3Jf5ho4Esf5Rie4/+ozp/9G1ftCp9jJul6o3rORF/b7PciGfd1MRl2QLcgGuqw8Nu0ArcmfssnjJ81f/l24g+kwKn+sGiS6W0QzCQKYqpYmQyxwF7gJCbMf/8RWWY1gHBHeZ6vmolvFFprIM/1lEcMtgZvAIUGpmabvhpl9lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tS38dcVN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B3DAC116C6;
+	Tue,  6 Jan 2026 11:09:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767697766;
+	bh=VKue5qKJ/+N41UgeZZ6tDw29vy+Tds0M/PpBIAYLOY8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=tS38dcVNh4bNmZj1149H7hi5uMJftB6IQNsDvgGT/70FZt206xefYC0cQOTzgMsfS
+	 7/6Kw9Z7Sw1vNulK38/AKR0QdwnqzU9Dz9gH0g9Nd+2eHtmFtE8xESgPylwOKCtdJ0
+	 NhFsPqwQ7/5Fq8MwryUXOOsq9/ssE76AvLibNnygwClZtD5Qm7s+HSczNHNthrS2WD
+	 n578uDwZwSrJBHQXc7Z7mPpEB4UCC9xTXwXfFqbCceY1dvNa6ygbBVQok0UQrHdBgr
+	 zvgRYyBTshTN3g8wT5GqnAq3NWf5vT6Af327D5bMx+AdFofq6DIbX9lFtnqXcSUXCm
+	 WYGUqXRn5Umyg==
+Message-ID: <696b5d94d413aa89b88c68138eabecca9ce9e873.camel@kernel.org>
+Subject: Re: [PATCH fstests v3 3/3] generic: add tests for file delegations
+From: Jeff Layton <jlayton@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, Zorro Lang
+	 <zlang@redhat.com>, Christian Brauner <brauner@kernel.org>
+Date: Tue, 06 Jan 2026 06:09:24 -0500
+In-Reply-To: <aVyriyPD8x8oJUo-@infradead.org>
+References: <20251203-dir-deleg-v3-0-be55fbf2ad53@kernel.org>
+	 <20251203-dir-deleg-v3-3-be55fbf2ad53@kernel.org>
+	 <aVyriyPD8x8oJUo-@infradead.org>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260106090820.836242-1-sunyongjian@huaweicloud.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.995];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	URIBL_BLOCKED(0.00)[huawei.com:email,suse.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_NONE(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
 
-On Tue 06-01-26 17:08:20, Yongjian Sun wrote:
-> From: Yongjian Sun <sunyongjian1@huawei.com>
-> 
-> A bitmap inconsistency issue was observed during stress tests under
-> mixed huge-page workloads. Ext4 reported multiple e4b bitmap check
-> failures like:
-> 
-> ext4_mb_complex_scan_group:2508: group 350, 8179 free clusters as
-> per group info. But got 8192 blocks
-> 
-> Analysis and experimentation confirmed that the issue is caused by a
-> race condition between page migration and bitmap modification. Although
-> this timing window is extremely narrow, it is still hit in practice:
-> 
-> folio_lock                        ext4_mb_load_buddy
-> __migrate_folio
->   check ref count
->   folio_mc_copy                     __filemap_get_folio
->                                       folio_try_get(folio)
->                                   ......
->                                   mb_mark_used
->                                   ext4_mb_unload_buddy
->   __folio_migrate_mapping
->     folio_ref_freeze
-> folio_unlock
-> 
-> The root cause of this issue is that the fast path of load_buddy only
-> increments the folio's reference count, which is insufficient to prevent
-> concurrent folio migration. We observed that the folio migration process
-> acquires the folio lock. Therefore, we can determine whether to take the
-> fast path in load_buddy by checking the lock status. If the folio is
-> locked, we opt for the slow path (which acquires the lock) to close this
-> concurrency window.
-> 
-> Additionally, this change addresses the following issues:
-> 
-> When the DOUBLE_CHECK macro is enabled to inspect bitmap-related
-> issues, the following error may be triggered:
-> 
-> corruption in group 324 at byte 784(6272): f in copy != ff on
-> disk/prealloc
-> 
-> Analysis reveals that this is a false positive. There is a specific race
-> window where the bitmap and the group descriptor become momentarily
-> inconsistent, leading to this error report:
-> 
-> ext4_mb_load_buddy                   ext4_mb_load_buddy
->   __filemap_get_folio(create|lock)
->     folio_lock
->   ext4_mb_init_cache
->     folio_mark_uptodate
->                                      __filemap_get_folio(no lock)
->                                      ......
->                                      mb_mark_used
->                                        mb_mark_used_double
->   mb_cmp_bitmaps
->                                        mb_set_bits(e4b->bd_bitmap)
->   folio_unlock
-> 
-> The original logic assumed that since mb_cmp_bitmaps is called when the
-> bitmap is newly loaded from disk, the folio lock would be sufficient to
-> prevent concurrent access. However, this overlooks a specific race
-> condition: if another process attempts to load buddy and finds the folio
-> is already in an uptodate state, it will immediately begin using it without
-> holding folio lock.
-> 
-> Signed-off-by: Yongjian Sun <sunyongjian1@huawei.com>
+On Mon, 2026-01-05 at 22:28 -0800, Christoph Hellwig wrote:
+> On Wed, Dec 03, 2025 at 10:43:09AM -0500, Jeff Layton wrote:
+> > Mostly the same ones as leases, but some additional tests to validate
+> > that they are broken on metadata changes.
+>=20
+> Under what conditions is this test supposed to actually work?  It seems
+> to consistently fail for me even with latest mainline, which is a bit
+> annoying.
 
-Nice catch! The fix looks good to me. Feel free to add:
+There is a patch that is not yet merged:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+https://lore.kernel.org/linux-fsdevel/20251204-dir-deleg-ro-v2-0-22d37f92ce=
+2c@kernel.org/
 
-								Honza
+Christian, do you plan to send this to Linus for v6.19? I think we need
+it.
 
-> ---
->  fs/ext4/mballoc.c | 21 +++++++++++----------
->  1 file changed, 11 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index 56d50fd3310b..de4cacb740b3 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -1706,16 +1706,17 @@ ext4_mb_load_buddy_gfp(struct super_block *sb, ext4_group_t group,
->  
->  	/* Avoid locking the folio in the fast path ... */
->  	folio = __filemap_get_folio(inode->i_mapping, pnum, FGP_ACCESSED, 0);
-> -	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-> +	if (IS_ERR(folio) || !folio_test_uptodate(folio) || folio_test_locked(folio)) {
-> +		/*
-> +		 * folio_test_locked is employed to detect ongoing folio
-> +		 * migrations, since concurrent migrations can lead to
-> +		 * bitmap inconsistency. And if we are not uptodate that
-> +		 * implies somebody just created the folio but is yet to
-> +		 * initialize it. We can drop the folio reference and
-> +		 * try to get the folio with lock in both cases to avoid
-> +		 * concurrency.
-> +		 */
->  		if (!IS_ERR(folio))
-> -			/*
-> -			 * drop the folio reference and try
-> -			 * to get the folio with lock. If we
-> -			 * are not uptodate that implies
-> -			 * somebody just created the folio but
-> -			 * is yet to initialize it. So
-> -			 * wait for it to initialize.
-> -			 */
->  			folio_put(folio);
->  		folio = __filemap_get_folio(inode->i_mapping, pnum,
->  				FGP_LOCK | FGP_ACCESSED | FGP_CREAT, gfp);
-> @@ -1764,7 +1765,7 @@ ext4_mb_load_buddy_gfp(struct super_block *sb, ext4_group_t group,
->  
->  	/* we need another folio for the buddy */
->  	folio = __filemap_get_folio(inode->i_mapping, pnum, FGP_ACCESSED, 0);
-> -	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-> +	if (IS_ERR(folio) || !folio_test_uptodate(folio) || folio_test_locked(folio)) {
->  		if (!IS_ERR(folio))
->  			folio_put(folio);
->  		folio = __filemap_get_folio(inode->i_mapping, pnum,
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+--=20
+Jeff Layton <jlayton@kernel.org>
 
