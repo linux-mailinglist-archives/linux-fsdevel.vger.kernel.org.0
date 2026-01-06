@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-72469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D21CF7BA2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 11:15:41 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9633CF7C4B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 11:23:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 225683031343
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 10:11:53 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 0AEEB305E160
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 10:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB96F30FC34;
-	Tue,  6 Jan 2026 10:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD3F32693C;
+	Tue,  6 Jan 2026 10:22:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FE630F545;
-	Tue,  6 Jan 2026 10:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035FA325492;
+	Tue,  6 Jan 2026 10:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767694309; cv=none; b=ZnPQIE42aPTCnwT+fEqPIjpnzeRrRt/o+l7YOEH/NPI7i1HgU6hEF17HWFiplJyhGkocIWQ3mtjG8wP7VmMU/Kgid34cRmpWyEdg5qgsU4ptRALYB/Qm7HUnhf5qfLHR+UVj/HcGDgjEFaZfpBcZQXHxG85pvjddS3cqQDnYv4M=
+	t=1767694946; cv=none; b=sHg/ZbAb6EqkVdullEmR7LUEIifzBKU29II710TwToUSViDh6sWfOoF/sId/dA0xio2Hz50ZBeZ3Ug16fNh862FTUVKylWWIo9WKBlL6yzU+0gzLI6l1rlSAs/VdolB/IJPg7ZZnu83v2ad5oH/M8BfxiYn7EkF0ZwOtAKFP4Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767694309; c=relaxed/simple;
-	bh=7+pJ9a9wzlsO0NlkO0D77NZZGffvvy6kI4LGzXtpMqs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O7TKBZJZ5dXs/UI7iMU6u2wMAjzYAYLedjd9z98omfBkJFHe5ObPSpeu9msmckPQdcr79aAMi6z4a7f6iMZlWbeiauXM7uA0dOHzSbHH10hIhCybS6u89Ydpcp0f3PI/FaoSSGyZfw+0C5a4XLQx62p12Onvc/rZRea6t2R5hKg=
+	s=arc-20240116; t=1767694946; c=relaxed/simple;
+	bh=Qb6WoV9Vb+9ivg8YiGHYmDmhRSLCLFqNAxPn2UOFfRk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NIrC8SE5zm/ZsgI+BR4DKmi0Ux8uNbSUEcGpgQFZyTuE7MyOaLINamz06OKMU3aCJ7P7BFz23HhpCqzrqJ4cz4rT9t6sUnj2YWJ/PVvG20oK3mI2Doztg8U/xeoaefSy8tL4p1k2FvSpxcz59jQXdXKiWr/3WpZlNP7QkP5jkyM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
 Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 606AAhR4051469;
-	Tue, 6 Jan 2026 19:10:43 +0900 (JST)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 606ALgNX054401;
+	Tue, 6 Jan 2026 19:21:42 +0900 (JST)
 	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
 Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
 	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 606AAhFa051464
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 606ALgkU054395
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 6 Jan 2026 19:10:43 +0900 (JST)
+	Tue, 6 Jan 2026 19:21:42 +0900 (JST)
 	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <afaeed87-66bd-4203-ae81-842ca4619db9@I-love.SAKURA.ne.jp>
-Date: Tue, 6 Jan 2026 19:10:41 +0900
+Message-ID: <75fd5e4a-65af-48b1-a739-c9eb04bc72c5@I-love.SAKURA.ne.jp>
+Date: Tue, 6 Jan 2026 19:21:39 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -46,82 +46,79 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for 6.19-rc1] fs: preserve file type in make_bad_inode()
- unless invalid
-To: Jan Kara <jack@suse.cz>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com>,
-        brauner@kernel.org, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mark@fasheh.com,
-        ocfs2-devel@lists.linux.dev, sj1557.seo@samsung.com,
-        syzkaller-bugs@googlegroups.com, Chuck Lever <chuck.lever@oracle.com>
-References: <6w4u7ysv6yxdqu3c5ug7pjbbwxlmczwgewukqyrap3ltpazp4s@ozir7zbfyvfj>
- <6930e200.a70a0220.d98e3.01bd.GAE@google.com>
- <CAGudoHE0Q-Loi_rsbk5rnzgtGfbvY+Fpo9g=NPJHqLP5G_AaUg@mail.gmail.com>
- <20251204082156.GK1712166@ZenIV>
- <CAGudoHGLFBq2Fg5ksJeVkn=S2pv6XzxenjVFrQYScA7QV9kwJw@mail.gmail.com>
- <7e2bd36e-3347-4781-a6fd-96a41b6c538d@I-love.SAKURA.ne.jp>
- <wqkxevwtev5p77czk2com5zvbbwcpxxeucrt7zbgjciqxjyivx@c7624klburuh>
-Content-Language: en-US
+Subject: Re: [PATCH v2 1/2] hfs: Validate CNIDs in hfs_read_inode
 From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <wqkxevwtev5p77czk2com5zvbbwcpxxeucrt7zbgjciqxjyivx@c7624klburuh>
+To: George Anthony Vernon <contact@gvernon.com>,
+        Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "linux-kernel-mentees@lists.linux.dev"
+ <linux-kernel-mentees@lists.linux.dev>,
+        "syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com"
+ <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
+ <20251104014738.131872-3-contact@gvernon.com>
+ <df9ed36b-ec8a-45e6-bff2-33a97ad3162c@I-love.SAKURA.ne.jp>
+ <a31336352b94595c3b927d7d0ba40e4273052918.camel@ibm.com>
+ <aSTuaUFnXzoQeIpv@Bertha>
+ <43eb85b9-4112-488b-8ea0-084a5592d03c@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <43eb85b9-4112-488b-8ea0-084a5592d03c@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav304.rs.sakura.ne.jp
 X-Virus-Status: clean
+X-Anti-Virus-Server: fsav404.rs.sakura.ne.jp
 
-On 2025/12/10 19:09, Jan Kara wrote:
-> On Wed 10-12-25 18:45:26, Tetsuo Handa wrote:
->> syzbot is hitting VFS_BUG_ON_INODE(!S_ISDIR(inode->i_mode)) check
->> introduced by commit e631df89cd5d ("fs: speed up path lookup with cheaper
->> handling of MAY_EXEC"), for make_bad_inode() is blindly changing file type
->> to S_IFREG. Since make_bad_inode() might be called after an inode is fully
->> constructed, make_bad_inode() should not needlessly change file type.
+On 2025/11/30 19:07, Tetsuo Handa wrote:
+> On 2025/11/25 8:46, George Anthony Vernon wrote:
+>> On Tue, Nov 11, 2025 at 10:42:09PM +0000, Viacheslav Dubeyko wrote:
+>>> On Tue, 2025-11-11 at 23:39 +0900, Tetsuo Handa wrote:
+>>>> On 2025/11/04 10:47, George Anthony Vernon wrote:
+>>>>> +	if (!is_valid_cnid(inode->i_ino,
+>>>>> +			   S_ISDIR(inode->i_mode) ? HFS_CDR_DIR : HFS_CDR_FIL))
+>>>>> +		BUG();
+>>>>
+>>>> Is it guaranteed that hfs_write_inode() and make_bad_inode() never run in parallel?
+>>>> If no, this check is racy because make_bad_inode() makes S_ISDIR(inode->i_mode) == false.
+>>>>  
+>>>
+>>> Any inode should be completely created before any hfs_write_inode() call can
+>>> happen. So, I don't see how hfs_write_inode() and make_bad_inode() could run in
+>>> parallel.
+>>>
 >>
->> Reported-by: syzbot+d222f4b7129379c3d5bc@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=d222f4b7129379c3d5bc
->> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> Could we not read the same inode a second time, during the execution of
+>> hfs_write_inode()?
+>>
+>> Then I believe we could hit make_bad_inode() in hfs_read_inode() once we
+>> had already entered hfs_write_inode(), and so test a cnid against the
+>> wrong i_mode.
+>>
 > 
-> No. make_bad_inode() must not be called once the inode is fully visible
-> because that can cause all sorts of fun. That function is really only good
-> for handling a situation when read of an inode from the disk failed or
-> similar early error paths.
-I'm surprised to hear that.
+> My "Is it guaranteed that hfs_write_inode() and make_bad_inode() never run in parallel?"
+> question does not assume "make_bad_inode() for HFS is called from only hfs_read_inode()".
 
-But since commit 58b6fcd2ab34 ("ocfs2: mark inode bad upon validation failure
-during read") is a bug fix, we want to somehow prevent this bug from re-opening.
+In a different thread, it turned out that make_bad_inode() must not be called
+once the inode is fully visible
+( https://lkml.kernel.org/r/wqkxevwtev5p77czk2com5zvbbwcpxxeucrt7zbgjciqxjyivx@c7624klburuh ),
+requiring "make_bad_inode() for HFS is called from only hfs_read_inode()" assumption being true.
 
-Minimal change for this release cycle might look like
+When can we expect next version of this patch?
 
-----------
-diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index b5fcc2725a29..2c97c8b4013f 100644
---- a/fs/ocfs2/inode.c
-+++ b/fs/ocfs2/inode.c
-@@ -1715,8 +1715,13 @@ int ocfs2_read_inode_block_full(struct inode *inode, struct buffer_head **bh,
- 	rc = ocfs2_read_blocks(INODE_CACHE(inode), OCFS2_I(inode)->ip_blkno,
- 			       1, &tmp, flags, ocfs2_validate_inode_block);
- 
--	if (rc < 0)
-+	if (rc < 0) {
-+		/* Preserve file type while making operations no-op. */
-+		umode_t	mode = inode->i_mode & S_IFMT;
-+
- 		make_bad_inode(inode);
-+		inode->i_mode = mode;
-+	}
- 	/* If ocfs2_read_blocks() got us a new bh, pass it up. */
- 	if (!rc && !*bh)
- 		*bh = tmp;
-----------
-
-but what approach do you prefer?
-
-Introduce a copy of bad_{inode,file}_ops for ocfs2 and replace
-a call to make_bad_inode() with updating only {inode,file}_ops ?
-
-Or, modify existing {inode,file}_ops for ocfs2 to check whether
-an I/O error has occurred in the past?
+> 
+> write_inode() already checks for !is_bad_inode(inode) before calling
+> filesystem's write_inode callback
+> ( https://elixir.bootlin.com/linux/v6.18-rc7/source/fs/fs-writeback.c#L1558 ).
+> 
+> If the reason for "ubifs is doing it in the ubifs_write_inode()" 
+> ( https://elixir.bootlin.com/linux/v6.18-rc7/source/fs/ubifs/super.c#L299 ) is
+> that make_bad_inode() could be called at any moment, it is not safe for HFS to
+> depend on "inode->i_mode does not change during hfs_write_inode()".
+> 
 
 
