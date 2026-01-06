@@ -1,151 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-72505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46382CF8845
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 14:30:44 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D2D8CF87C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 14:25:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 8CA5F3075AC6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 13:27:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E77C23010CD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 13:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB192330332;
-	Tue,  6 Jan 2026 13:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A690E32F761;
+	Tue,  6 Jan 2026 13:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="mSdGiVoW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE220330644
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jan 2026 13:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA4430B53D
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jan 2026 13:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767706073; cv=none; b=gEvqnTVCKfm1Pz+cPaKWfae4HqmKAt7TgqwXk/8SFdF0ly+zw0Q7UGBluJyI/1ognBI2Co9rITxN+hAqIjTeha6fUz3h+Zh5+XE1WpTb7zLNqQsJew4TLZScYTik/EflmUdwkrHd4wR8vgluEzDKIAi1DB8tPDTfgA4WWW8joMw=
+	t=1767705250; cv=none; b=qRka4bNVkBL33jf9BUfiK+5kGb4iht6r9n8mfkg0yCCYYKS0RvnDXQqPt59JDojuxOoaL8P1gjdAbhXv9LWl20GGlNMENXCymMzln1AWCDl4SPIkhA4W/rHDwB+fElQ1qvkp1MyAeuuJI3YUWT5IZPEaPTVxfLmD96t/J3paG48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767706073; c=relaxed/simple;
-	bh=qVudGycKqbPfaGQrtQWqrmhyxZSjXIqRlgT7izNGSKw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EF6wvJeio/p5jjG476VZID/nr25Wgecac5Py96qd3Wn/4zA8c+Q2UYKBBgrVf8jZ1OPIetO0t0/72ytNAVfjKsgcIVqmo4nrKOGplcoqa7UhcEAP5G3WIx45URFLVnEjdT+H+r2yaG05o7bspOVWA/iW3jNG5g+9DfYvWFLQhjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-29f0f875bc5so13214685ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jan 2026 05:27:51 -0800 (PST)
+	s=arc-20240116; t=1767705250; c=relaxed/simple;
+	bh=xhANzf8zPHqInwt7sqx1ceuLymDpjEml1Zk8b+gRlII=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SCkeFgJgotr+ntE1c+drjRHbfFBuw4dLFWUlcypW/fvGOQhhX+qTvvJw8FqD83RrqA63CIKO+JiqPntJOeg8bvs6AfMVeOUE+vwrYpS0y6GCQ3PGeOrYeljOAMpbjuW+hoTqhqrqN602wllZ7O7/WJexdpxa4jljEJiUqO030LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=mSdGiVoW; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-88a379ca088so10256806d6.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jan 2026 05:14:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1767705246; x=1768310046; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OKoNVgafDUk8SCtl+9edMLUBCEIskB7+sjp4jDlq9us=;
+        b=mSdGiVoWGQ8WVOy3pDHc//onwx0ZD7bPlESoG/mheZPPl6OvGXY00QG5zUeHHsUpoC
+         ZkIM5i3kl+q/BmV/c2UxY5Hg6cYFZNfuGTW/jbw9jPoaiPzS+G2sevBXqVDL5InkW8Rm
+         4KGZoK+Aan82oN0WywwdZT+sZFWKPgoiLzsTE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767706071; x=1768310871;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=SKLp/eo5/DTa4F8EOOCq1r8QsMncr43hczwzVx6VrGA=;
-        b=Ux3ZCmxDwy3NYRIY7gH51cFEZswUNra5vnsvkar74nWxoaF7k7M9mOVba+pQE23eYQ
-         Ze9n6km8EyimW/dJk8RMZenuI9R4E5lZMD+IEdFbUS7GJfx2nkIw+wdytn5vltj8VJQ2
-         seZVQOzMCihLjra57/Lj7w7oSsZ0XTGY+1VhCvn3h579ybr1pufxePwHjstCG5N0pSYy
-         qH43f2h6+oJlhFdDhO3331P552/+V8pQs3kOZ0VKnvFi+g2UmHiNEU/byWvVghehw7yQ
-         +lNrNiFUp5ENo76tFupyVZWm1S7k9zn4evuadDzCvs6YA1cl4RPSid8LMQp063km38s5
-         zC2Q==
-X-Gm-Message-State: AOJu0YzlEOLGfOedwqzkT4lDgLXZIdT/WdRqiL+abxfGaRX4501mL5sS
-	ZjCCVrKkkkZdpvPaVEJD/XO8hlWR7eZ2WO+PrZV8XjUCIY1MHBMhFncm
-X-Gm-Gg: AY/fxX4OPSusqpc2qbOQHtPsOrn4rn2WambjBz84GZ+Hs36d/o9LBuH+/74F07d9RvG
-	3eFRYzquqBCtlyuoxjb3vIPOl1ZTf1+7I3WH8rsZ3/ZMDK27aeAtwtZKLd6anHAmz4RMD63AyS/
-	hH8nfEM6JQ0YZW/G9u+nA9BykgxMs0HaA6V8DaltsY0vSPsyJd/Jwn/zKsbriiXeAmNv3ye5LTW
-	7l4DgNRBv+p/weJ51BaDma0lev+ghaUqBq/VWbL8vDKMMQXJEcPFhOIelGY6bJK5YD5S2sCG/tS
-	p+8pJ1VKDGrghFqbKzdnbOZ0vIqKHhLv/GJdHVCAIiovDE34y+Pj1jO7HB4dkAb6y3Q3SLAoEN3
-	MpoKtUEHPloz6j0wyvdzRF4ecPHCYK81rAw9XiKAVPxNOp6ZAItxU8JFsFSDfpsLmg8ucqeIU1G
-	y6X5T0klTHgQVl5uA2erO3GHeFDh1Iqp8MEix3
-X-Google-Smtp-Source: AGHT+IG5y2stVwRUU8JhQBJ/M9Aub7a2FzVoZyu27EnOLVLJjBy66P8LCzzkbFVlFaMnmX2x8/1DFQ==
-X-Received: by 2002:a17:90b:3845:b0:341:d265:1e82 with SMTP id 98e67ed59e1d1-34f5f3331f5mr2458289a91.29.1767706071123;
-        Tue, 06 Jan 2026 05:27:51 -0800 (PST)
-Received: from localhost.localdomain ([1.227.206.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c4cc95d5c66sm2409570a12.24.2026.01.06.05.27.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jan 2026 05:27:50 -0800 (PST)
-From: Namjae Jeon <linkinjeon@kernel.org>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	hch@infradead.org,
-	hch@lst.de,
-	tytso@mit.edu,
-	willy@infradead.org,
-	jack@suse.cz,
-	djwong@kernel.org,
-	josef@toxicpanda.com,
-	sandeen@sandeen.net,
-	rgoldwyn@suse.com,
-	xiang@kernel.org,
-	dsterba@suse.com,
-	pali@kernel.org,
-	ebiggers@kernel.org,
-	neil@brown.name,
-	amir73il@gmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	iamjoonsoo.kim@lge.com,
-	cheol.lee@lge.com,
-	jay.sim@lge.com,
-	gunho.lee@lge.com,
-	Namjae Jeon <linkinjeon@kernel.org>
-Subject: [PATCH v4 14/14] MAINTAINERS: update ntfs filesystem entry
-Date: Tue,  6 Jan 2026 22:11:10 +0900
-Message-Id: <20260106131110.46687-15-linkinjeon@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260106131110.46687-1-linkinjeon@kernel.org>
-References: <20260106131110.46687-1-linkinjeon@kernel.org>
+        d=1e100.net; s=20230601; t=1767705246; x=1768310046;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OKoNVgafDUk8SCtl+9edMLUBCEIskB7+sjp4jDlq9us=;
+        b=D4AI973QGSNYc9jUbfQpFPaM+wc4IN2n/dHdNee5Hw9LvNwYaqe/PCyPvKukqZyQmZ
+         gbvUSzKzQfdc7Y1U9e3FmC+Qh8OGEzrObv1DU6kI1H/gTgnELNdNWfCLWF6PxEaHrPpk
+         EOoBQQlxfETUXMJgR9illJD0KXrEpQI/w543pReNY+hEII5yZPQ4LnK4+5/MCGErRMLw
+         2sxXYx0mj71s9bPB85IZEJts6GvS5ijci/Vu12vnlLzi3cfOmdjUhr8YKqRdW1TnQmAE
+         7f9UZKuA18LRm+Fgs8Dj/GaozQrekEg+O5ewXEXjsRMZ9glSHJynTQts3T5mr2eTZR9l
+         bJuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUp25ohSyOSK8PMPAgbIvbTukgHmFGaUelTrQ49gYnxt2WcAXibQSgrgjZstYfj1aHI7Heu7XkbzFAqHpFo@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMLtFcKo4HkObEWUK4RgzI5vQ9YT6xsCY2LYXS+HGs7gz8SudP
+	nW6uDC203rV2kQS9CKd8Cu8XoK39GqOHn9dPFJGtGqKTmFL2R233MAin+IjC3GsIlFhJhcObV4f
+	nK3pnJG8Z+8tqs05qSlQ9ZFKI+MBL/UDEyj/n8bkbiw==
+X-Gm-Gg: AY/fxX4rv3veBl9SzZ+4jOp0csmpNGX65CUIsZ4U3omzUH/kjehl8CVM04E1pNiu/rZ
+	dFJnl74QbMSta43RC+tTKUZKpz7YnTxTQqnxnkrMGO9Pzq/uZwqn8wQl8bEgr9kIleOlQxEgw/E
+	bUabXwP2r/DJNTtFwgO3eCk0LXWDQdW3xPhsArutVfx258mch5IqNL9TAFrScqg+HFEpctyKjxJ
+	o7TS4vZUtxm+4ILRrsaMW9/2lNpfj3bW2QdaGE5FQ+3yRgH4wPuhO241p4rjGofgQGGiQ==
+X-Google-Smtp-Source: AGHT+IHW76vCaJhXrXtTlnreXmPXnBIYSekopXMOxH3fFuu6sJOI0CsMQDsWF0DT/SavMiCaskutPoC4R4PdrvU0vSc=
+X-Received: by 2002:a05:6214:5786:b0:890:587b:207c with SMTP id
+ 6a1803df08f44-89075e43bfbmr38843306d6.12.1767705246435; Tue, 06 Jan 2026
+ 05:14:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251215030043.1431306-1-joannelkoong@gmail.com>
+ <20251215030043.1431306-2-joannelkoong@gmail.com> <ypyumqgv5p7dnxmq34q33keb6kzqnp66r33gtbm4pglgdmhma6@3oleltql2qgp>
+ <616c2e51-ff69-4ef9-9637-41f3ff8691dd@kernel.org>
+In-Reply-To: <616c2e51-ff69-4ef9-9637-41f3ff8691dd@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 6 Jan 2026 14:13:55 +0100
+X-Gm-Features: AQt7F2pvvv_dgMF5DVe6cpYkBdBWgiQKoSy1bex9EciACOPG1MjR_kzstwfJ66w
+Message-ID: <CAJfpeguBuHBGUq45bOFvypsyd8XXekLKycRBGO1eeqLxz3L0eA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] fs/writeback: skip AS_NO_DATA_INTEGRITY mappings
+ in wait_sb_inodes()
+To: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Joanne Koong <joannelkoong@gmail.com>, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, athul.krishna.kr@protonmail.com, j.neuschaefer@gmx.net, 
+	carnil@debian.org, linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add myself and Hyunchul Lee as ntfs maintainer.
-Since Anton is already listed in CREDITS, only his outdated information
-is updated here. the web address in the W: field in his entry is no loger
-accessible. Update his CREDITS with the web and emial address found in
-the ntfs filesystem entry.
+On Tue, 6 Jan 2026 at 11:05, David Hildenbrand (Red Hat)
+<david@kernel.org> wrote:
 
-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
----
- CREDITS     |  4 ++--
- MAINTAINERS | 11 +++++------
- 2 files changed, 7 insertions(+), 8 deletions(-)
+> > So I understand your patch fixes the regression with suspend blocking but I
+> > don't have a high confidence we are not just starting a whack-a-mole game
 
-diff --git a/CREDITS b/CREDITS
-index 52f4df2cbdd1..4cf780e71775 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -80,8 +80,8 @@ S: B-2610 Wilrijk-Antwerpen
- S: Belgium
- 
- N: Anton Altaparmakov
--E: aia21@cantab.net
--W: http://www-stu.christs.cam.ac.uk/~aia21/
-+E: anton@tuxera.com
-+W: http://www.tuxera.com/
- D: Author of new NTFS driver, various other kernel hacks.
- S: Christ's College
- S: Cambridge CB2 3BU
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a8af534cdfd4..adf80c8207f1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18647,12 +18647,11 @@ T:	git https://github.com/davejiang/linux.git
- F:	drivers/ntb/hw/intel/
- 
- NTFS FILESYSTEM
--M:	Anton Altaparmakov <anton@tuxera.com>
--R:	Namjae Jeon <linkinjeon@kernel.org>
--L:	linux-ntfs-dev@lists.sourceforge.net
--S:	Supported
--W:	http://www.tuxera.com/
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/aia21/ntfs.git
-+M:	Namjae Jeon <linkinjeon@kernel.org>
-+M:	Hyunchul Lee <hyc.lee@gmail.com>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Maintained
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/ntfs.git
- F:	Documentation/filesystems/ntfs.rst
- F:	fs/ntfs/
- 
--- 
-2.25.1
+Joanne did a thorough analysis, so I still have hope.  Missing a case
+in such a complex thing is not unexpected.
 
+> Yes, I think so, and I think it is [1] not even only limited to
+> writeback [2].
+
+You are referring to DoS against compaction?
+
+It is a much more benign issue, since compaction will just skip locked
+pages, AFAIU (wasn't always so:
+https://lore.kernel.org/all/1288817005.4235.11393.camel@nimitz/).
+
+Not saying it shouldn't be fixed, but it should be a separate discussion.
+
+> To handle the bigger picture (I raised another problematic instance in
+> [4]): I don't know how to handle that without properly fixing fuse. Fuse
+> folks should really invest some time to solve this problem for good.
+
+Fixing it generically in fuse would necessarily involve bringing back
+some sort of temp buffer.  The performance penalty could be minimized,
+but complexity is what really hurts.
+
+Maybe doing whack-a-mole results in less mess overall :-/
+
+> As a big temporary kernel hack, we could add a
+> AS_ANY_WAITING_UTTERLY_BROKEN and simply refuse to wait for writeback
+> directly inside folio_wait_writeback() -- not arbitrarily skipping it in
+> callers -- and possibly other places (readahead, not sure). That would
+> restore the old behavior.
+
+No it wouldn't, since the old code had surrogate methods for waiting
+on outstanding writes, which were called on fsync, etc.
+
+Thanks,
+Miklos
 
