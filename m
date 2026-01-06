@@ -1,119 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-72491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1FFBCF86CC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 14:09:19 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B504ACF8786
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 14:21:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id D55FB301B590
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 13:09:14 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8B4CF30B6B76
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 13:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D518632E13A;
-	Tue,  6 Jan 2026 13:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4862732F751;
+	Tue,  6 Jan 2026 13:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bixDvBWy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RVe5xUIT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE60632E6B4
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jan 2026 13:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB2E32E13A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jan 2026 13:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767704951; cv=none; b=JLh1OLDIj0Zu77qeDoP6Ztpc5ZmhwXyUhjKTCDiD26iNgh7+ExKgZa6f9Z9pNy5SCOwmhBNyiE6tz0aYOlp3HfSdk9OGLmBhA3vF5WVWmHShfSBHvfmWQ2X+vbONXunrcmvDX7Ie1BiJND12icxh5cIVZJg8a8GCPU3j7Y5sjNk=
+	t=1767704985; cv=none; b=MaeGlkP/7JC6EZal4H84dgWNr+Dfl8uKNOpCvUK4sdjlagAGhKXqgFAj5C04//lAbX6o/Ppru/5ep5X2O7RSfxaamV8T5J2QQiiQxir6fxLEyKkK9qtlzzAVUJEgQwivflYp+fqCIjfLs2H8+xlUfxb26V0kaS1biagRgbObrGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767704951; c=relaxed/simple;
-	bh=o7Fz/xjhhyAfYaDaPdZMeqQ5JFH0kftLC+VcdxYCtfI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JWzBaA3UxMdm+qxX/klR1dPMCPyFOIQoz+v9XbAHLnAYhRw771AiTx0v+PQ+Mo7L32VkQimJQPXILlKkDrU+Lzk5J8cJ4KlrTOWHpdUPprx5w3Hrad/iwQfZcHyRLlAAm8zsWU0TdOWebhvlRHRCRmo8/aCzX5d3sld2HP2SyUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bixDvBWy; arc=none smtp.client-ip=209.85.217.54
+	s=arc-20240116; t=1767704985; c=relaxed/simple;
+	bh=7vNqbhncbz2ImZAWXhLrEG8jeofeaKSGrO+Rt1M8f0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YSA5ykqqn+pkGu6fk/55EzMp4KOob4dNmI8nfdDM129IlazStx5B7AARXEf3kZMxrf/j8p0XimrBTem8BPutmq6w9wnsNkRgBYXq4xBmwMcBxSYo1gZKNhZ4AdzbTAU0ZTWSxZIhc7lLxTSi4vSrJIpLyeEjaC03iqeBWkX+D+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RVe5xUIT; arc=none smtp.client-ip=209.85.222.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5eb8f9be588so699957137.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jan 2026 05:09:09 -0800 (PST)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-8ba0d6c68a8so90453485a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jan 2026 05:09:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767704948; x=1768309748; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=o7Fz/xjhhyAfYaDaPdZMeqQ5JFH0kftLC+VcdxYCtfI=;
-        b=bixDvBWyOv4mAALGMb7D5YNkwa+m3FfHwx91D+vCET3Y+t4UeVe12jOTYS+BipfHve
-         lhU9NrW8XM6ftAPvnJ7M6bbz2hTtWvxCL55+O0vgrVHFQB/koKYkv89A0IfjBT7+ohec
-         D0lZ6ZOQaSd0+W4dhw41n5bem7AiZOJsyFyRVl2OJJR7GIYQOOT7fGKXxJJNKuy0Y7XW
-         rD4ue22DXJ6VhW1rjGq0afP3IKRh/PCM3o56rPH7PDPJvUEw/IDR9VKoGGHZAC6doVoc
-         VBjc/v8bGvZhe7Kz5gMAWsokv0yFGNy17Ce6NRFzWzn+oTcefg0xZe2RhNnWXGTGZNQI
-         yluQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767704948; x=1768309748;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1767704983; x=1768309783; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o7Fz/xjhhyAfYaDaPdZMeqQ5JFH0kftLC+VcdxYCtfI=;
-        b=veyhadNH6YXaColSdivhFW6DWNMsFkRdEBhC7JV9zgJIWkSE4xGSeOjZb/tndp0HwJ
-         O7eQzKPp/A/n4bonSkGkUHrAUmtq4m7MQGBvJcR0DZXOe63L1vcdZYxK7l2mQQ618FMa
-         F1U9dt6SP9pRFkaWMfnss8AffNUaj/gt300xqinNo3D8nDoH6BHcV29irnDQsoNZSzWT
-         +Q6pZ8t8iuYHn23aYhCtMgNXp/4wQ64gfVyQXmM02vqnsUMToZoK0cy+7UlVmkLyAqlz
-         +bH2AqP1SbMsuUIVMyhqAbvQdJ+nI+q8ppFjvOpAUB3gIMtJojGdkIelaQSnd0uVf06x
-         ARKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBVfkUcp7y4SOR3krXfzO0x9R1JrmJqSmZvJBYv9CGt4fA60zS5veuQkgwZhustHAbaXv/6lHb0MZcQEhi@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmrFwbytCI264PBoALonTDeYPd8GSmfUs6zrZ29Cj6Tvh1r38p
-	mxiTsrU3EkNznVsttfr2yr6V1aqLJEVx4R5Z4zFj4X/EYYMSuBBedVLAqozjBhpIggv2HPuEShs
-	r2k7V7fVtRQfXUWcaWJ1SNLA6jmlyr6tLt88W2Fa6nQ==
-X-Gm-Gg: AY/fxX6muS58cYLnStF6xECCi9X1vCXUkkEQnWFeux6yFYws7CVBgkyMg57umqcTYFI
-	1ax9qtzpcYyNq6kn+EyLd5TsvZu2J/ZsrzsXj/kd3C4wjMwGzYgzG5rkXA8EPw2AoTHNFr0LxRB
-	M9kd7y9O5GY9TdpFpV90K8WNOKpT91JUOcTwkOiMkxaP3Gy3yYx5GOzwXfubJ2KhUgYGvZ99YQK
-	UH22tG8FdLuSwxO2XtB574+a4XmzHhdba2j3cCQBsGafYRdcS+WzBdh0NJ00lV4V9iA08hhrUMp
-	XJ42F0uyx7Vksk4Sm1AtO9QX4ys2lCGsBNr6zZ0=
-X-Google-Smtp-Source: AGHT+IE+q53QRcrwa1X/P2rGt0w5PqjH9BdnPnB9kQyI+2KZqEtLpu+X2QQ2N5km3AlrsGYd8/6HCfpH0EmY/KsMAEA=
-X-Received: by 2002:a05:6102:3050:b0:5db:23d0:65e7 with SMTP id
- ada2fe7eead31-5ec74524505mr976101137.27.1767704948553; Tue, 06 Jan 2026
- 05:09:08 -0800 (PST)
+        bh=JpzahlfiGpAFEOQGjh5jjjaXUgZ9jhcXoloaQUEBJwU=;
+        b=RVe5xUITdR78PuScG3gXhIryZDhqamHfCSere5daOlkm3u7xWsadhsSeh4KGP9RP86
+         3HRsAdemsSYGZdq15BM+8S+AhguN/z8ioIY/Ca5DKx2lYn2okFiD6PvQQqSNj3ul3byE
+         1o32TVcYRePiMSNKlmJA2/OFKhZW1ocSO1K6nAaURXbdDpbfPiybkQVPdSvfNS8vw7IN
+         VCivcw5qYqfadvl0h7qZC/7jRiJw2awIa6Pzfigpx2zAkUTkqQvi3ljqncEnm+BZnmCC
+         hL1pNbiICJ1zQT86xDAv2kyfmdPOumuTE1BVCjbQBZTu/rBvZ36l9ymf0SFNqIG6Jc9E
+         +7jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767704983; x=1768309783;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JpzahlfiGpAFEOQGjh5jjjaXUgZ9jhcXoloaQUEBJwU=;
+        b=dpjEYe9BUsGoP2zlf0hil5iHFo49X7xXUKpJW/SE9EVErFEKJW1lSF0ed6dQHAZC0y
+         VVtVh0hGF6eEuoZ2nMaJizwM64iy0MxQhhOjNXNq4NoayUYwSYstI3C0pZ40gfLx43OH
+         jYaKLiwMKbIuVXaGkBaC/PHyzX2Aaz9Y/KgfAO9ytmaHh0Pxvj8hRQbErrlwYzmzWsai
+         w5QZ22TonVO2VkQpIoRabR1SiroCKIYLNoabhfA6Jnpi09Fbra/GV07MD/IVqGjvTepu
+         3rX32AYTF+SiuupLpDFgrwShbHH1zlgoD5iw0kXC1yxzfVJmnATlIeHuWswWDD72Ket8
+         wzlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcnYAjRxK6JUaafN3yMnNTqFphylCHZwPUpBq6WgirHOjq41FUq2GOK978323mDYDTgUxP2NGNVdnq5Qg4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsJNgH5Rs4A1aBqc3lDnTMSGjJgRxmRw4Vs+OwtYYQBzFMZMja
+	icCJrqLSZTQxdiFd5M2dAnOyo/2+/lisGBHPtAW30F4PPbdcdr2nZoiT
+X-Gm-Gg: AY/fxX7qmcHeoJDgIPCP+Vh2x6kcNcVk+EmSdWHxdcwYbp67VG5XmYkmG1KPu4fhVj9
+	IKDCoZ/WqBu/U+tYftpeiRX0NObmpNubCX0D962tOL2H+OXM1yeOHnA2bw6luVwrjU2DfgQNVC0
+	X4VyeoRtQG95Kk2r3Eb/LJ9AeigNQ54rJrP9hkWJhfeBU4oH7j1Y+CxP4FdlUK0BtmasTvHLM8m
+	24G0ckNleWj2bGLSW6uuXlmXp/+VqAFWD3qSe4dDdOEp7CSqduA6L27gvnxPOgxxUfEn2NBbHE0
+	2horDMqd0WUj7fR9NCpQiv4y1IaF+4emYWpa2Zh2RC33q/OuDVlXvXP8RjZYZs976CjvtaNu6rD
+	mLyBY1m8Cu3zk8yt0moIkOAqgHK0Nfh9wI9T+f9zvYpxTHrvISa47HxeiBTzMeYXfSrWtcsMuYF
+	hebCRC0aySgvQrgVAMV+ukheKAeXvdaFUIplHa+9REaT1lErNBHbMJpf5tEF/rwFkQ4dpOxOaHY
+	xrDpUZFpPdLe6M=
+X-Google-Smtp-Source: AGHT+IE/G8uVi22ATP3WXoVJPNVxriboWDTjcasbHlPDtJRw+IZ7O9Erdw+Esh+/t/URn4jtbR4Hhg==
+X-Received: by 2002:a05:620a:708b:b0:8c2:2b5c:6bb3 with SMTP id af79cd13be357-8c37ec03772mr311728985a.85.1767704982941;
+        Tue, 06 Jan 2026 05:09:42 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-890770ce659sm13118086d6.10.2026.01.06.05.09.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jan 2026 05:09:42 -0800 (PST)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfauth.phl.internal (Postfix) with ESMTP id C2639F4006A;
+	Tue,  6 Jan 2026 08:09:41 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Tue, 06 Jan 2026 08:09:41 -0500
+X-ME-Sender: <xms:lQldad4o6VabieTCt7VP58h0fxSMJlnDJTqq9xmv4gUsrGb-cUuIaw>
+    <xme:lQldaW3w0iVE7aXBFYGf2kwkmwV7ZmcAciKP2d4j9qH8XOU2umqBPTN4JSUHhyLas
+    MMcI5zPbhgT9iepLo_t-G6251LnGrpdPhJIjqxnQG4vnpq4XEYmtQ>
+X-ME-Received: <xmr:lQldaXhp32blzk3e-OBl_fGY-rmkxQc2DpKO7gj9iS1ZTCXrKa1lzqId>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddutddtvdekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueevieduffei
+    vdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsoh
+    hquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedq
+    udejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmh
+    gvrdhnrghmvgdpnhgspghrtghpthhtohepfedvpdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprg
+    hlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghr
+    hihguhhordhnvghtpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehprghu
+    lhhmtghksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrihgthhgrrhgurdhhvghnug
+    gvrhhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehmrghtthhsthekkeesghhm
+    rghilhdrtghomhdprhgtphhtthhopehlihhnmhgrghejsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:lQldaRhoUQCXatEp-h38AqvV77rEtxvLNRGsFs8u2ms1OXSWNmrpQA>
+    <xmx:lQldaTL4wxZLBZcRJjEHFu3dFfuCMiPW4zPdLeIt9ZiOItPMMXuaFg>
+    <xmx:lQldaRiB9oounBOronYP2u5oKk5izsY-IGiIW14zReJVSjSCA01RJg>
+    <xmx:lQldaXQI6hAF-uCxxcjncArfbu2vke8bZCG4ZKq76q5AAcla84LNSA>
+    <xmx:lQldaWaMzSdWWEga_pd7OPdzFUdDDo_J3WFoBuhK1tVbKT2LHOV3QlIj>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 6 Jan 2026 08:09:40 -0500 (EST)
+Date: Tue, 6 Jan 2026 21:09:37 +0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Gary Guo <gary@garyguo.net>,
+	Will Deacon <will@kernel.org>,	Peter Zijlstra <peterz@infradead.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,	Magnus Lindholm <linmag7@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,	Mark Rutland <mark.rutland@arm.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,	Lyude Paul <lyude@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,	rust-for-linux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/5] Add READ_ONCE and WRITE_ONCE to Rust
+Message-ID: <aV0JkZdrZn97-d7d@tardis-2.local>
+References: <20251231-rwonce-v1-0-702a10b85278@google.com>
+ <20251231151216.23446b64.gary@garyguo.net>
+ <aVXFk0L-FegoVJpC@google.com>
+ <OFUIwAYmy6idQxDq-A3A_s2zDlhfKE9JmkSgcK40K8okU1OE_noL1rN6nUZD03AX6ixo4Xgfhi5C4XLl5RJlfA==@protonmail.internalid>
+ <aVXKP8vQ6uAxtazT@tardis-2.local>
+ <87fr8ij4le.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251224115312.27036-1-vitalifster@gmail.com> <cc83c3fa-1bee-48b0-bfda-3a807c0b46bd@oracle.com>
- <CAPqjcqqEAb9cUTU3QrmgZ7J-wc_b7Ai_8fi17q5OQAyRZ8RfwQ@mail.gmail.com>
- <492a0427-2b84-47aa-b70c-a4355a7566f2@oracle.com> <CAPqjcqpPQMhTOd3hHTsZxKuLwZB-QJdHqOyac2vyZ+AeDYWC6g@mail.gmail.com>
- <6cd50989-2cae-4535-9581-63b6a297d183@oracle.com> <CAPqjcqo=A45mK01h+o3avOUaSSSX6g_y3FfvCFLRoO7YEwUddw@mail.gmail.com>
- <58a89dc4-1bc9-4b38-a8cc-d0097ee74b29@oracle.com>
-In-Reply-To: <58a89dc4-1bc9-4b38-a8cc-d0097ee74b29@oracle.com>
-From: Vitaliy Filippov <vitalifster@gmail.com>
-Date: Tue, 6 Jan 2026 16:08:57 +0300
-X-Gm-Features: AQt7F2qgRlmnXSCMJz7lKw8ZBRZc8vluWO41oBPbsEaM3ovL2_DdxgbKzkrNO78
-Message-ID: <CAPqjcqq+DFc4TwAPDZodZ61b5pRrt4i+moy3K1dkzGhH9r-2Rw@mail.gmail.com>
-Subject: Re: [PATCH] fs: remove power of 2 and length boundary atomic write restrictions
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87fr8ij4le.fsf@t14s.mail-host-address-is-not-set>
 
-> For ext4, the maximum atomic write size is limited to the bigalloc
-> cluster size. Disk blocks are allocated to this cluster size granularity
-> and alignment. As such, a properly aligned atomic write <= cluster size
-> can never span discontiguous disk blocks.
+On Tue, Jan 06, 2026 at 01:41:33PM +0100, Andreas Hindborg wrote:
+> "Boqun Feng" <boqun.feng@gmail.com> writes:
+> 
+[...]
+> >> > I would prefer not to expose the READ_ONCE/WRITE_ONCE functions, at
+> >> > least not with their atomic semantics.
+> >> >
+> >> > Both callsites that you have converted should be using
+> >> >
+> >> > 	Atomic::from_ptr().load(Relaxed)
+> >> >
+> >> > Please refer to the documentation of `Atomic` about this. Fujita has a
+> >> > series that expand the type to u8/u16 if you need narrower accesses.
+> >>
+> >> Why? If we say that we're using the LKMM, then it seems confusing to not
+> >> have a READ_ONCE() for cases where we interact with C code, and that C
+> >> code documents that READ_ONCE() should be used.
+> >>
+> >
+> > The problem of READ_ONCE() and WRITE_ONCE() is that the semantics is
+> > complicated. Sometimes they are used for atomicity, sometimes they are
+> > used for preventing data race. So yes, we are using LKMM in Rust as
+> > well, but whenever possible, we need to clarify the intentation of the
+> > API, using Atomic::from_ptr().load(Relaxed) helps on that front.
+> >
+> > IMO, READ_ONCE()/WRITE_ONCE() is like a "band aid" solution to a few
+> > problems, having it would prevent us from developing a more clear view
+> > for concurrent programming.
+> 
+> What is the semantics of a non-atomic write in C code under lock racing
+> with a READ_ONCE/atomic relaxed read in Rust? That is the hrtimer case.
+> 
 
-Ok, thank you for the explanation.
+Some C code believes a plain write to a properly aligned location is
+atomic (see KCSAN_ASSUME_PLAIN_WRITES_ATOMIC, and no, this doesn't mean
+it's recommended to assume such), and I guess that's the case for
+hrtimer, if it's not much a trouble you can replace the plain write with
+WRITE_ONCE() on C side ;-)
 
-But it seems that it's an internal implementation detail of ext4,
-right? So this check should be done inside ext4 code. And in fact I
-suspect it's actually already done there because generic checks which
-I suggest to remove can't take ext4 cluster size into account, so at
-least some atomic write validation is already done inside ext4. The
-only thing that's left is to move the write alignment check there too.
+Regards,
+Boqun
 
-Another thing that suggests that it's an internal implementation
-detail is that a CoW filesystem like ZFS or btrfs can probably provide
-atomic write guarantees for unaligned writes too, and probably even
-without hardware atomic write support.
-
-Can my change be limited to raw block devices then? Thanks to your
-explanation now I understand the motivation for these checks with
-ext4, but they still make no sense for the raw NVMe disk.
-
-I mean, can you approve my change if I rework it to only lift 2^N and
-alignment checks for raw block devices and not for file systems? For
-example if I move these checks directly to the related ext4 and xfs
-code? I think it's the right place to do them.
+> 
+> Best regards,
+> Andreas Hindborg
+> 
+> 
+> 
 
