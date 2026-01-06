@@ -1,123 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-72538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id E863ECFA7B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 20:06:54 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221D4CFAB48
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 20:35:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 9EA7A300D412
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 19:06:46 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7DA8B318F222
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 18:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84A2359FBE;
-	Tue,  6 Jan 2026 18:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96D735A940;
+	Tue,  6 Jan 2026 18:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DTAW00IT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G72D2UhT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B1F359FA5
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jan 2026 18:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE2A35A922;
+	Tue,  6 Jan 2026 18:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767725002; cv=none; b=cgg2HUXLLlTUAC2AxF8Nb1aHuPcPv4xTrEEYZf1XjwMgDfXAf1qHGFKgIMoFcYJuVRqZ9x/Rk/c7uyKEDwQwgmrH470vkMpkDDw8tyW1w2vwRNsiVaBSHG0de/hZ2r+jTh2vlS/dU9tnOgtYao6qH6uyJFUvqPLll77OWt7G0AU=
+	t=1767725700; cv=none; b=oExTBsxQxJDrYXqscEKj644nzrqGjtv4tYLWCP6gXr/8a/r0S0lIJvUKozTgnjMZCV2EQNNHtfW2D4EN/BZVOPyQscZJm2YZFvIDJGr8FHCOJjNjZIhmlvCfGM9cDX8pIDmYShUDVdAguR60aHCggBzGdEeJlrCDveWtLLPuO4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767725002; c=relaxed/simple;
-	bh=+hgXtvwaG0Luhj+7jS4/1WIg+U754WDTLyVGK0ofmHI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=n+naF6tBF6T99mh4Hlewx0o8Ab7SnfY02xQrfmRXzp+1xUSUOEctjx22h2oJf3Yubux8lCtxazBgJRGQUolT0ExYN0cRgFt7f3AWniKR9sIQnjqTerHWkvV/UvEI4p+j4px/Y2ayMSp0WKtpasscqyRA1dLRNiJMzZYV9x/8k+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DTAW00IT; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-43065ad16a8so688625f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jan 2026 10:43:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1767724999; x=1768329799; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q9kRQb6TCp9mLA5G8uSGQS65VbTtuKHR0kMxDo1y8mc=;
-        b=DTAW00ITyLnbQBDYcYCXFcRZynF4aeOlu+aqSYI1ZlSN8pbLHPgWhxDG8x8+EsDmMa
-         tPLgi8Dr32r6zqGhu9e2reA9E15x3hoIPZ+36dqdkLW0qqhFRN9tN8fbA9/hImJHN/lB
-         CcUsBxWb9LGttwhgctmyJojNxCOnh9cbmriPxOU/r1SXEAxgtftYweLor07za++DCiLE
-         h6H/sOICzWwklw2vJlipcY6oq2OgW+SYWpogwTrM4yC2D4sNxP5QTmOl85PyC4u0yEQ4
-         AuU8fwSYYv9FpGa5CHSPGZ1uJRw8UmeButZnD31CP9XmwUuR3+41a+B8pmneGY0flVhi
-         vKzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767724999; x=1768329799;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q9kRQb6TCp9mLA5G8uSGQS65VbTtuKHR0kMxDo1y8mc=;
-        b=Mb8bo03JLlWf9yW7511cH7xYTvvnPQPVxcoJBYdnrrYLSYESjYKHIatLXViZTyOyNq
-         D5FAWJT5UntwCxBG3kr3Tw6/0lZ2SBPOetPwVBKY5tu9FxE4YZs8AXByiuCQOsw4dfUf
-         D6rE0kvxqtgKJhJOTg2ILjYdey+1Hn4LfDV3feJ7FUFVMqEbeSgL+9+nV8TdLjNXyUuP
-         XB2Z+MVhEedgP3do/X2aM3vnhGORRTlsOEuk+AqfstBRNSw9qxyKm3eOnVGWa++EudFj
-         5BYvtaCGzGDDfr8DPXURdB/yFYdH+An6W7sqZBeAaFMlbfJjeA7cdICXy/7QnMIfRo76
-         47IA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgAhoX10fAsK/58P+vo2Z4Ujhk6mRyhWAfRaj+XoR2EJhmvcDC0hU0sAgqke4qAaeKNpGbiH/X+r6UvmAi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9TnVrVzz6iyp2xprSw9ktHZfZrmggkbIrRDl3dio8gc4dfX1J
-	Z6F5EKUtclXk+kZKNDI2Pia9ZNQ5ytD/WAGu+M6AQyec7RJopzHRFKhpyz/Df8fE0LTo+28o+Tb
-	ozv3AOJm7baL4QtamCA==
-X-Google-Smtp-Source: AGHT+IGVcCDObMivGZ6ItRLBNbRjswIjQ3SNYuJmmzi0+OqW9p2tg/ybCzvxMsorncSHo3wGn72koB3zTO666Zo=
-X-Received: from wrbgv17.prod.google.com ([2002:a05:6000:4611:b0:430:f5d7:f015])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2c0e:b0:431:752:671e with SMTP id ffacd0b85a97d-432c363280fmr199767f8f.15.1767724998951;
- Tue, 06 Jan 2026 10:43:18 -0800 (PST)
-Date: Tue, 6 Jan 2026 18:43:17 +0000
-In-Reply-To: <20260106152300.7fec3847.gary@garyguo.net>
+	s=arc-20240116; t=1767725700; c=relaxed/simple;
+	bh=OZ0lYvE27BoXnsUrCJis4sLZ9xgMFKfugHtLgCQtoPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HsRB7tPV64xQLBAknizBnxUe/8yEsQb6zA49FT8WGLFeNlOvHlJmwJ5y1SMU7Y5oOoNzeGJvwdyIs5lgUYWdgeqlrinkjrEBfe5P43hw5fxSt1SJiHNhdu1Oc5pAiUcB95GQ0zpL+g27ixl12AjaSHIZV6/epmxYmMKVs3thhZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G72D2UhT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 480AFC116C6;
+	Tue,  6 Jan 2026 18:54:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767725698;
+	bh=OZ0lYvE27BoXnsUrCJis4sLZ9xgMFKfugHtLgCQtoPw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G72D2UhTUxCMo8vfXKw5ttRU7tJkM8/o2pUVVSQ7XcUnfSmBjWCVSDGepNw9T6qvc
+	 cjbAMxSaHVkx5WHx321NiYIkVb18oZTU/DD5ExAnqNVO2hD/OYuJCw71e9KEo2vddE
+	 AkzDzNc8BQByj42ua4vomS1GYcaRYE3A4neOh0DyVJbH8ycYZ80TkH5mtoEj5ldwj5
+	 aOg6uFnJlKZlio+b5AcFSPaSRCSgq+9M8qpZ+uyCrF8rHgZm++Gj7EAYfuOwXFn7F9
+	 EU0ctFByAQoLKmMuwRDZbQVAeWBHIJrEpAkyF7KhjZRcUqLTzrZFgmdAbh0FeT9D9O
+	 PI/X6mFS40uHw==
+Message-ID: <175da76e-3f04-460b-8629-05062edd2d62@kernel.org>
+Date: Tue, 6 Jan 2026 19:54:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251231-rwonce-v1-0-702a10b85278@google.com> <20251231-rwonce-v1-4-702a10b85278@google.com>
- <20260101.111123.1233018024195968460.fujita.tomonori@gmail.com>
- <L2dmGLLYJbusZn9axfRubM0hIOSTuny2cW3uyUhOVGvck7lQxTzDe0Xxf8Hw2cLxICT8kdmNAE74e-LV7YrReg==@protonmail.internalid>
- <20260101.130012.2122315449079707392.fujita.tomonori@gmail.com>
- <87ikdej4s1.fsf@t14s.mail-host-address-is-not-set> <20260106152300.7fec3847.gary@garyguo.net>
-Message-ID: <aV1XxWbXwkdM_AdA@google.com>
-Subject: Re: [PATCH 4/5] rust: hrtimer: use READ_ONCE instead of read_volatile
-From: Alice Ryhl <aliceryhl@google.com>
-To: Gary Guo <gary@garyguo.net>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, FUJITA Tomonori <fujita.tomonori@gmail.com>, lyude@redhat.com, 
-	boqun.feng@gmail.com, will@kernel.org, peterz@infradead.org, 
-	richard.henderson@linaro.org, mattst88@gmail.com, linmag7@gmail.com, 
-	catalin.marinas@arm.com, ojeda@kernel.org, bjorn3_gh@protonmail.com, 
-	lossin@kernel.org, tmgross@umich.edu, dakr@kernel.org, mark.rutland@arm.com, 
-	frederic@kernel.org, tglx@linutronix.de, anna-maria@linutronix.de, 
-	jstultz@google.com, sboyd@kernel.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2 PATCH 1/1] fs/proc: Expose mm_cpumask in /proc/[pid]/status
+To: Aaron Tomlin <atomlin@atomlin.com>
+Cc: oleg@redhat.com, akpm@linux-foundation.org, gregkh@linuxfoundation.org,
+ brauner@kernel.org, mingo@kernel.org, sean@ashe.io,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20251226211407.2252573-1-atomlin@atomlin.com>
+ <20251226211407.2252573-2-atomlin@atomlin.com>
+ <ac50181c-8a9d-43b8-9597-4d6d01f31f81@kernel.org>
+ <suoe7pyfr2qcbxyov456lglf4hcxkrzhoyqbiaba4kw32u5m2h@hg2crnjgdfoy>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=david@kernel.org; keydata=
+ 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
+In-Reply-To: <suoe7pyfr2qcbxyov456lglf4hcxkrzhoyqbiaba4kw32u5m2h@hg2crnjgdfoy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jan 06, 2026 at 03:23:00PM +0000, Gary Guo wrote:
-> On Tue, 06 Jan 2026 13:37:34 +0100
-> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+On 1/1/26 02:19, Aaron Tomlin wrote:
+> On Tue, Dec 30, 2025 at 10:16:30PM +0100, David Hildenbrand (Red Hat) wrote:
+>> Just a note: I have the faint recollection that there are some arch-specific
+>> oddities around mm_cpumask().
+>>
+>> In particular, that some architectures never clear CPUs from the mask, while
+>> others (e.g., x86) clear them one the TLB for them is clean.
+>>
+>> I'd assume that all architectures at least set the CPUs once they ever ran
+>> an MM. But are we sure about that?
+>>
+>> $ git grep mm_cpumask | grep m68k
+>>
+>> gives me no results and I don't see common code to ever set a cpu in
+>> the mm_cpumask.
+>>
+>> -- 
+>> Cheers
+>>
+> Hi David,
 > 
-> > "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
-> > >
-> > > Sorry, of course this should be:
-> > >
-> > > +__rust_helper ktime_t rust_helper_hrtimer_get_expires(const struct hrtimer *timer)
-> > > +{
-> > > +	return hrtimer_get_expires(timer);
-> > > +}
-> > >  
-> > 
-> > This is a potentially racy read. As far as I recall, we determined that
-> > using read_once is the proper way to handle the situation.
-> > 
-> > I do not think it makes a difference that the read is done by C code.
+> You are correct; mm_cpumask semantics vary across architectures (e.g., arc)
+> and are even unused on some (e.g., m68k).
 > 
-> If that's the case I think the C code should be fixed by inserting the
-> READ_ONCE?
+> Rather than attempting to standardise this across all architectures, I
+> propose we restrict this information to those that follow the "Lazy" TLB
+> model-specifically x86. In this model, the mask represents CPUs that might
+> hold stale TLB entries for a given MM and thus require IPI-based TLB
+> shootdowns to maintain coherency. Since this is the primary context where
+> mm_cpumask provides actionable debug data for performance bottlenecks,
+> showing it only for x86 (where it is reliably maintained) seems the most
+> pragmatic path.
 
-I maintain my position that if this is what you recommend C code does,
-it's confusing to not make the same recommendation for Rust abstractions
-to the same thing.
+Yes, starting with a very restrictive set, and carefully documenting it 
+sounds good to me.
 
-After all, nothing is stopping you from calling atomic_read() in C too.
+One question is what would happen if these semantics one day change on 
+x86. I guess best we can do is to ... document it very carefully.
 
-Alice
+> 
+> I can document this arch-specific limitation in
+> Documentation/filesystems/proc.rst and wrapped the implementation in
+> CONFIG_X86 to avoid exposing "Best Effort" or zeroed-out data on
+> architectures where the mask is not meaningful.
+> 
+> Please let me know your thoughts.
+
+Something along these lines. Maybe we want an CONFIG_ARCH_* define to 
+unlock this from arch code.
+
+-- 
+Cheers
+
+David
 
