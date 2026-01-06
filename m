@@ -1,139 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-72524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22923CF92B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 16:52:26 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD843CF9472
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 17:11:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 425CC30519FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 15:51:49 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E42DD3019BA4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 16:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8955321F39;
-	Tue,  6 Jan 2026 15:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A0033A014;
+	Tue,  6 Jan 2026 16:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3oqSPRr"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="i1zDWpvm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FE322F77B;
-	Tue,  6 Jan 2026 15:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB62337109
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jan 2026 16:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767714112; cv=none; b=mz9hKXfJ1kMqtlvv63VVOVu4+GzPsDsGVLzE5wn3REVq1MEU0eKpnb9WLX7Krx9sfUFiAMcGmC4fm8/xjUiYPbxGAccA1s03Ex4b6aRtul3dE1sbB7xUetKiGtj3o2R8QSYUc5D2Yt4eXXrSG0OjmIUvqyjIjPfOPO9TysgyT2k=
+	t=1767715552; cv=none; b=LKBAsxUoj7pJsavdrhnR7q5ke6bJWf0CrTrSHtX3mHL+4s9nAhlE8JFH74NY5wsGq01FjB1hrMuzMoughYaVDyux10DqUy3efmSaOunJ3hjBYeHUVaYFnXpTSbrXrwVgr5VoXGCW1k+prFUR5YRDp33Xj5/f0rSWxSjmpqdeLMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767714112; c=relaxed/simple;
-	bh=lLS8KmtOZp2zZZScnCqYpBIcm1XXF9y6DjF8nyQEl2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fcaqhZf2xsc6NCCuXg3hv09tobVyTMFkx6hB5SsjU9/CsoaFdrw86Q6uI+dITQx+xJz0tJ54b2H4bY2yyRtqVveh5BYpLImHaAV1r4EIRyGfE3ZjqCOnhqOg67HIfBMmPRN6B417ykbaqTDbx1DEhMwdEpoaunWvKvoIHjrte0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3oqSPRr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC48C116C6;
-	Tue,  6 Jan 2026 15:41:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767714111;
-	bh=lLS8KmtOZp2zZZScnCqYpBIcm1XXF9y6DjF8nyQEl2k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g3oqSPRrkU8q7sONds5Cf2OqAY/lUYNmQljRgD2wu+PLkdCs7+5lpK02C3YF2wcOy
-	 KXpMmdJ+qc96quWHQW6pIOk+RWVePLuLHW0J3pxbMNeJFbT+mOv9a+cxksjTrGbIQ1
-	 H1E1dy1AmyLWTtQYUHnNq4LAG3CvOFHB8eUzN8J4/DrB6dL4c4ivpUZVHGUu9HZoQG
-	 O07TtVhyC4IXPUzFkblGph3FTi08R2Wr1y7Y3iBaaGO7zw13sCtFRdCWHwqq4yGt3/
-	 O73JmTX9H1tfnccCgB0x5C8t+Kxfxf6vDHGLp6wL/2X4ZUZy4RjBAI8S0g8++Tpbrh
-	 dqzGbcx8AkGYg==
-Message-ID: <c39232ea-8cf0-45e6-9a5a-e2abae60134c@kernel.org>
-Date: Tue, 6 Jan 2026 16:41:46 +0100
+	s=arc-20240116; t=1767715552; c=relaxed/simple;
+	bh=P9pkAPzgU9jiMtELSPkK4tgujKYh/5GTTPxNlHaGGAo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PJOMgCdgWszlubUTEyywAQMbxNB9OkSr/OiFCLECEI8EOlvD808q9pkq2AmG6oGm5m6241tGSEVxbp92vpD2zueHn0lLS/k2r4SVYr2liBD50vpzhwZpBbnJwmOxUqeUCzBcAWUNjCaMGf9gqkiRsLAyaV2tvOTmWoSI5uu9iXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=i1zDWpvm; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4eddfb8c7f5so10657041cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jan 2026 08:05:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1767715549; x=1768320349; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bxubu6bhf1aeIofDmdnq3Yy4S+a1o4zcmmWzD9LU3qU=;
+        b=i1zDWpvmvujJ8hsl6QDaxmK7HlaTbH5xsQQf3kaeLWXQ2Nksg9XDA9sREX2gslCBum
+         BD8/cZmedxX3BpVDyMvS3UNtIzZGjBfuk79roGeEJ2N8IUKZQqnK4IAzZZ6L+fpPXxmh
+         IzNT41fhbnGq4jvOsVJ/QehnNdzLLVzMmUaGk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767715549; x=1768320349;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bxubu6bhf1aeIofDmdnq3Yy4S+a1o4zcmmWzD9LU3qU=;
+        b=UDGqD2wyZKvFPm/zwnc/dEHR0DGT+23TOXGZSNaVwWlFMtKTpRq7s/o9jRP/s0G8vf
+         rak+ljU15yI4Ju54yszULKECdT672HZU9f4LqNbW//zKMbnzr5HRB+Jnzl4giRK0HEgX
+         nNW0iTJt+kTgnLPWP59xaFX7lVp6njz7NNnGjjbheP+xeTeXx8qH17y9e7YZP7PwCSpm
+         p0C+mjK2pyfSC66RU1buMtV5kVOXti8AiIAWGEQ3s6Xl7xcHxN8FwwcwDM/Xf53RmH1g
+         65fIx1NrNRS5/L9Ggub6rXXxSncPFfVJRnXULSjF8k+Nm6vE7SBhAPNeoa+MJ0dtA0Hs
+         wbDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGBHMauGbDFMXcH6IpWmyrcv1EP2fPt0xclPJ0ThYMBryQIesely02gAbKTPt4eJwmXVZzW+oYfRd64pUG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6CaRfchOXrGUm3A5nRhJLpmkYHhoIcbmT3y1wqQiZ+NYdnxpR
+	IG3QFzn9Dvh3xRSLbk3Av9ZBlih3s5l7jGusRvU0Lcc7VTQyoADredFLLRuGQN0KwvZMZdmBG2S
+	wI0JGc4zwOjOvrvBmXGaZTLTAPAeWPo0VIszRn5jRSQ==
+X-Gm-Gg: AY/fxX5XjsyBswevbwOWPpEI6dFArR7309DRtC+mTihVSnWeXD5sJNF5moyvj2v9Wu2
+	MQkkJBGoOiydtDqmRIzV20jD6cf2YQLp4cBtMe5Zxs3AyfsqxJTlQWU6PxphJ81JAme/RoHa1UP
+	uZ8sQ0+LskbKkwqoWaHmr0DgZKuOGWz5NTVhMqrXyFpCWPDAxi/TLJfK07+5ZGIuMAOvSfKrnY2
+	GnKrgkC7lR7wWRuxQq598sAKS9EIgO43ykdC+4TfnlhtoB8vyjZ6pWGTJs8Q7r6N4u7Yw==
+X-Google-Smtp-Source: AGHT+IFCiBafqUgtl2raN6GQUVNDDPPvtFF/AxT7TW768dFtVoExGBHENTdsULyggB6RdI6ZLBqSAqmAI5g+2iJa/go=
+X-Received: by 2002:a05:622a:4c0b:b0:4e8:b85f:8a7a with SMTP id
+ d75a77b69052e-4ffa77a5584mr38480931cf.41.1767715549416; Tue, 06 Jan 2026
+ 08:05:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20251215030043.1431306-1-joannelkoong@gmail.com>
+ <20251215030043.1431306-2-joannelkoong@gmail.com> <ypyumqgv5p7dnxmq34q33keb6kzqnp66r33gtbm4pglgdmhma6@3oleltql2qgp>
+ <616c2e51-ff69-4ef9-9637-41f3ff8691dd@kernel.org> <CAJfpeguBuHBGUq45bOFvypsyd8XXekLKycRBGO1eeqLxz3L0eA@mail.gmail.com>
+ <238ef4ab-7ea3-442a-a344-a683dd64f818@kernel.org> <CAJfpegvUP5MK-xB2=djmGo4iYzmsn9LLWV3ZJXFbyyft_LsA_Q@mail.gmail.com>
+ <c39232ea-8cf0-45e6-9a5a-e2abae60134c@kernel.org>
+In-Reply-To: <c39232ea-8cf0-45e6-9a5a-e2abae60134c@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 6 Jan 2026 17:05:38 +0100
+X-Gm-Features: AQt7F2rb-cr5B2gKtHwtRDiTVmalqmfCL58if05whOX7dHeEO4sH6ByS6QMbH6g
+Message-ID: <CAJfpegt0Bp5qNFPS0KsAZeU62vw4CqHv+1d53CmEOV45r-Rj0Q@mail.gmail.com>
 Subject: Re: [PATCH v2 1/1] fs/writeback: skip AS_NO_DATA_INTEGRITY mappings
  in wait_sb_inodes()
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jan Kara <jack@suse.cz>, Joanne Koong <joannelkoong@gmail.com>,
- akpm@linux-foundation.org, linux-mm@kvack.org,
- athul.krishna.kr@protonmail.com, j.neuschaefer@gmx.net, carnil@debian.org,
- linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-References: <20251215030043.1431306-1-joannelkoong@gmail.com>
- <20251215030043.1431306-2-joannelkoong@gmail.com>
- <ypyumqgv5p7dnxmq34q33keb6kzqnp66r33gtbm4pglgdmhma6@3oleltql2qgp>
- <616c2e51-ff69-4ef9-9637-41f3ff8691dd@kernel.org>
- <CAJfpeguBuHBGUq45bOFvypsyd8XXekLKycRBGO1eeqLxz3L0eA@mail.gmail.com>
- <238ef4ab-7ea3-442a-a344-a683dd64f818@kernel.org>
- <CAJfpegvUP5MK-xB2=djmGo4iYzmsn9LLWV3ZJXFbyyft_LsA_Q@mail.gmail.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=david@kernel.org; keydata=
- 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
-In-Reply-To: <CAJfpegvUP5MK-xB2=djmGo4iYzmsn9LLWV3ZJXFbyyft_LsA_Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Joanne Koong <joannelkoong@gmail.com>, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, athul.krishna.kr@protonmail.com, j.neuschaefer@gmx.net, 
+	carnil@debian.org, linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 1/6/26 16:21, Miklos Szeredi wrote:
-> On Tue, 6 Jan 2026 at 15:34, David Hildenbrand (Red Hat)
-> <david@kernel.org> wrote:
-> 
->> I don't recall all the details, but I think that we might end up holding
->> the folio lock forever while the fuse user space daemon is supposed to
->> fill the page with data; anybody trying to lock the folio would
->> similarly deadlock.
-> 
-> Right.
-> 
->> Maybe only compaction/migration is affected by that, hard to tell.
-> 
-> Can't imagine anything beyond actual I/O and folio logistics
-> (reclaim/compaction) that would want to touch the page lock.
+On Tue, 6 Jan 2026 at 16:41, David Hildenbrand (Red Hat)
+<david@kernel.org> wrote:
 
-I assume the usual suspects, including mm/memory-failure.c.
+> I assume the usual suspects, including mm/memory-failure.c.
+>
+> memory_failure() not only contains a folio_wait_writeback() but also a
+> folio_lock(), so twice the fun :)
 
-memory_failure() not only contains a folio_wait_writeback() but also a 
-folio_lock(), so twice the fun :)
+As long as it's run from a workqueue it shouldn't affect the rest of
+the system, right?  The wq thread will consume a nontrivial amount of
+resources, I suppose, so it would be better to implement those waits
+asynchronously.
 
--- 
-Cheers
-
-David
+Thanks,
+Miklos
 
