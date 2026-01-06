@@ -1,215 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-72552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72553-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54DF9CFB491
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 23:47:16 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 535A7CFB4A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 23:52:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0DDF23051593
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 22:47:15 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 0AD48300461D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 22:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82552FD673;
-	Tue,  6 Jan 2026 22:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFDB2EAB72;
+	Tue,  6 Jan 2026 22:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRfArTW4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAIKIyUG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244082E1C6B
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jan 2026 22:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AD17FBAC;
+	Tue,  6 Jan 2026 22:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767739633; cv=none; b=SDDoj1J5aiCBcbn1GFBaahMZI/o67Q4Avi+NQNyEXT60VvBHpq2NSFzxE2B50/jnAruDDrvoKk7+Vc2xWF69njH1GOf3gmgbTL6OR45HQGaxzWOFAd5utV3d6R2br+bb40VlM3zIodxydO4k+B8BXo3hVsaLeIYPnQTcXm5sC4c=
+	t=1767739931; cv=none; b=YRofOJ5Exz1i0NEGSpvYsWrmjcJDv6gTrkkpztv8C7EB5rqXZgpTQMV2MxBIILbzEdgqvCYwvm82S2RA6ErKiNbMxsNAw5xB8imBIzvg3/h9YwUMvrLBkVo5SJ2AHhnTsH5DsvpoflzTUlnC67EpF73YBkuGbhLweotIZTMpqh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767739633; c=relaxed/simple;
-	bh=OvQEL8mjnKjkaBgt51moqLWtfHL3dXMdCe0XoLNyQRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=padCM3oj0hFXnM8qaSxSQ9LvOzZryPX7v6xDdSB+0hHwwt3kTAAzU7x3xabg2cBF0XzCcBfSM0bDVLWKk92y/X4CkPaEQQLP2ijWRGy0XspdXk5rDQvhYie/zVkLtrP8v2B2XW/ZW3Lib3PcKHwZ59PwHP9uUbRCoCX8faDdIGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRfArTW4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18EADC116C6;
-	Tue,  6 Jan 2026 22:47:10 +0000 (UTC)
+	s=arc-20240116; t=1767739931; c=relaxed/simple;
+	bh=e3fZ8JXWqrCcjLaQaU97c3jnYE1mnbJtwZY1HvWHTaw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nNjlWKg36OhXhYBeN4jkk9D0HxYVXV/ID3TItrg62iUxQ0+Bxa5hVOfS2kfV4PsZhe146qcYGNouzUZ4poRujJ2YSJy+MCWzs9vnTw891ltRA4IbDXhO8sxBUCGicgC+SpJ+Pq6tGY6w9V83i5k/VqJtGV+Vaub8rbeVlMIw3tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAIKIyUG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E3EC116C6;
+	Tue,  6 Jan 2026 22:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767739632;
-	bh=OvQEL8mjnKjkaBgt51moqLWtfHL3dXMdCe0XoLNyQRw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PRfArTW430buD6FABZnuTksslU4Nf0ItaHHrwqIEm7ES2hJpxOQL9BCXEzUNEmY5A
-	 pcWtJYODdM/nLev9nyyS7HxMdvj/6yLeEm6mvNyk2tJ+YAkh75Fsh/LBhRewnTebVP
-	 3YNsCrVgG+rpMipLYgEOpZHvsRsUJzEUDCBWcgIAQkoYY8AHlJ5gLVTg0zNZ7BsyZ2
-	 HDuYl10rTSbv3khfwgCZSXtUpOpyYAbiQ6WZNqIXWKONH/gLhFIV5tu/4Q5yTQRnnR
-	 Ks0XCa33Z18mZV3rG4fWcqM51j8KHjcr5ZSu9QPzfbv+KXewpkb4Iv+YWHtE9fYLA8
-	 tTbbbYNJYPccw==
-Date: Tue, 6 Jan 2026 23:47:08 +0100
+	s=k20201202; t=1767739930;
+	bh=e3fZ8JXWqrCcjLaQaU97c3jnYE1mnbJtwZY1HvWHTaw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=SAIKIyUGZMCYGmy9Io/4Ei5e927lrZMmt5N5eaF8Ztebuh0PlOvwDW8MYRwDjDlw+
+	 qS7xjju/0HYEvzF9Tv8t23h26sXRAXNToo8ktxpC6JBl3twL3FnnGwwnKgyoYOiB6t
+	 t8poMp0wXMLrXc1CMywxr13mllF5Xb8Ckh3R1txONbmR00vRVLi9+Ydh2j5JlQZuzQ
+	 ME+K7003IkTLehq4AeqVbOq0rSafBX4Ebptgv2WpO0TEREiMpdICRWGnm/e0qI3Qil
+	 5x3mOe2GxfZgRg6Z7v+zStvm+H8OPgp7D67KW8FnLhnOAEIqjtrQFQNzHtPUD71USH
+	 2YrBNDjKzquGg==
 From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Jan Kara <jack@suse.cz>, Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [PATCH 0/2] mount: add OPEN_TREE_NAMESPACE
-Message-ID: <20260106-asphalt-lasziv-e830a46e8287@brauner>
-References: <20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org>
- <6efb8f5d904c3cc4273aef725ca0bd43b05902eb.camel@kernel.org>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH 0/2] vfs kernel-doc fixes for 6.19
+Date: Tue,  6 Jan 2026 23:51:47 +0100
+Message-ID: <20260106-couch-deretwegen-f8a483af5a0e@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251219024620.22880-1-bagasdotme@gmail.com>
+References: <20251219024620.22880-1-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6efb8f5d904c3cc4273aef725ca0bd43b05902eb.camel@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1223; i=brauner@kernel.org; h=from:subject:message-id; bh=e3fZ8JXWqrCcjLaQaU97c3jnYE1mnbJtwZY1HvWHTaw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTGTuKQCX6x4s2xs1Nul8cpmazvvyX59o1w5jTNSV+0G af4TrOW6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIfhsjw7+9wRuSzgTKsjx/ Hx57I2yB6abf80+bPU1jYHCck7Y/NZWRYVbK7FCpJ+U+/1o+zmu8NmejR6d0647jl6osOzbVbeV TYwIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 05, 2026 at 03:29:35PM -0500, Jeff Layton wrote:
-> On Mon, 2025-12-29 at 14:03 +0100, Christian Brauner wrote:
-> > When creating containers the setup usually involves using CLONE_NEWNS
-> > via clone3() or unshare(). This copies the caller's complete mount
-> > namespace. The runtime will also assemble a new rootfs and then use
-> > pivot_root() to switch the old mount tree with the new rootfs. Afterward
-> > it will recursively umount the old mount tree thereby getting rid of all
-> > mounts.
-> > 
-> > On a basic system here where the mount table isn't particularly large
-> > this still copies about 30 mounts. Copying all of these mounts only to
-> > get rid of them later is pretty wasteful.
-> > 
-> > This is exacerbated if intermediary mount namespaces are used that only
-> > exist for a very short amount of time and are immediately destroyed
-> > again causing a ton of mounts to be copied and destroyed needlessly.
-> > 
-> > With a large mount table and a system where thousands or ten-thousands
-> > of namespaces are spawned in parallel this quickly becomes a bottleneck
-> > increasing contention on the semaphore.
-> > 
-> > Extend open_tree() with a new OPEN_TREE_NAMESPACE flag. Similar to
-> > OPEN_TREE_CLONE only the indicated mount tree is copied. Instead of
-> > returning a file descriptor referring to that mount tree
-> > OPEN_TREE_NAMESPACE will cause open_tree() to return a file descriptor
-> > to a new mount namespace. In that new mount namespace the copied mount
-> > tree has been mounted on top of a copy of the real rootfs.
-> > 
-> > The caller can setns() into that mount namespace and perform any
-> > additionally setup such as move_mount()ing detached mounts in there.
-> > 
-> > This allows OPEN_TREE_NAMESPACE to function as a combined
-> > unshare(CLONE_NEWNS) and pivot_root().
-> > 
-> > A caller may for example choose to create an extremely minimal rootfs:
-> > 
-> > fd_mntns = open_tree(-EBADF, "/var/lib/containers/wootwoot", OPEN_TREE_NAMESPACE);
-> > 
-> > This will create a mount namespace where "wootwoot" has become the
-> > rootfs mounted on top of the real rootfs. The caller can now setns()
-> > into this new mount namespace and assemble additional mounts.
-> > 
-> > This also works with user namespaces:
-> > 
-> > unshare(CLONE_NEWUSER);
-> > fd_mntns = open_tree(-EBADF, "/var/lib/containers/wootwoot", OPEN_TREE_NAMESPACE);
-> > 
-> > which creates a new mount namespace owned by the earlier created user
-> > namespace with "wootwoot" as the rootfs mounted on top of the real
-> > rootfs.
-> > 
-> > This will scale a lot better when creating tons of mount namespaces and
-> > will allow to get rid of a lot of unnecessary mount and umount cycles.
-> > It also allows to create mount namespaces without needing to spawn
-> > throwaway helper processes.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> > Christian Brauner (2):
-> >       mount: add OPEN_TREE_NAMESPACE
-> >       selftests/open_tree: add OPEN_TREE_NAMESPACE tests
-> > 
-> >  fs/internal.h                                      |    1 +
-> >  fs/namespace.c                                     |  155 ++-
-> >  fs/nsfs.c                                          |   13 +
-> >  include/uapi/linux/mount.h                         |    3 +-
-> >  .../selftests/filesystems/open_tree_ns/.gitignore  |    1 +
-> >  .../selftests/filesystems/open_tree_ns/Makefile    |   10 +
-> >  .../filesystems/open_tree_ns/open_tree_ns_test.c   | 1030 ++++++++++++++++++++
-> >  tools/testing/selftests/filesystems/utils.c        |   26 +
-> >  tools/testing/selftests/filesystems/utils.h        |    1 +
-> >  9 files changed, 1223 insertions(+), 17 deletions(-)
-> > ---
-> > base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-> > change-id: 20251229-work-empty-namespace-352a9c2dfe0a
+On Fri, 19 Dec 2025 09:46:18 +0700, Bagas Sanjaya wrote:
+> Here are kernel-doc fixes for vfs subsystem targetting 6.19. This small
+> series is split from much larger kernel-doc fixes series I posted a while
+> ago [1].
 > 
-> I sat down today and rolled the attached program. It's a nonsensical
-> test that just tries to fork new tasks that then spawn new mount
-> namespaces and switch into them as quickly as possible.
+> Enjoy!
 > 
-> Assuming that I've done this correctly, this gives me rough numbers
-> from a test host that I checked out inside Meta:
+> [1]: https://lore.kernel.org/linux-fsdevel/20251215113903.46555-1-bagasdotme@gmail.com/
 > 
-> With the older pivot_root() based method, I can create about 73k
-> "containers" in 60s. With the newer open_tree() method, I can create
-> about 109k in the same time. So it seems like the new method is roughly
-> 40% faster than the older scheme (and a lot less syscalls too).
-> 
-> Note that the run_pivot() routine in the reproducer is based on a
-> strace of an earlier reproducer. That one used minijail0 to create the
-> containers. It's possible that there are more efficient ways to do what
-> it's doing with the existing APIs. It seems to do some weird stuff too
-> (e.g. setting everything to MS_PRIVATE twice under the old root).
-> Spawning a real container might have other bottlenecks too.
-> 
-> Still, this extension to open_tree() seems like a good idea overall,
-> and gets rid of a lot of useless work that we currently do when
-> spawning a container. The only real downside that I can see is that
-> container orchestrators will need changes to use the new method.
-> 
-> You can add:
-> 
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> Tested-by: Jeff Layton <jlayton@kernel.org>
+> [...]
 
-Thank you for testing this!
-The basic test looks correct. The pivot_root(".", ".") part could be
-simplified a tiny bit but that shouldn't matter.
+Applied to the vfs-7.0.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-7.0.misc branch should appear in linux-next soon.
 
-Fwiw, I think swapping out the rootfs isn't something that can always
-be avoided in the manner I illustrated. Some users want to spawn an
-empty mount namespace (e.g., just a tmpfs on top of the real rootfs) and
-then assemble a detached mount tree and swap the two mounts.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-But I have a better way of doing this than what pivot_root() currently
-does. The main problem with pivot_root() is not just that it moves the
-old rootfs to any other location on the new rootfs it also takes the
-tasklist read lock and walks all processes on the system trying to find
-any process that uses the old rootfs as its fs root or its pwd and then
-rechroots and repwds all of these processes into the new rootfs.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-But for 90% of the use-cases (containers) that is not needed. When the
-container's mount namespace and rootfs are setup the task creating that
-container is the only task that is using the old rootfs and that task
-could very well just rechroot itself after it unmounted the old rootfs.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-So in essence pivot_root() holds tasklist lock and walks all tasks on
-the systems for no reason. If the user has a beefy and busy machine with
-lots of processes coming and going each pivot_root() penalizes the whole
-system.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-7.0.misc
 
-I have a patchset that allows MOVE_MOUNT_BENEATH to work with the
-rootfs (and an extension that adds MOVE_MOUNT_PIVOT_ROOT which optionally
-does the rechrooting in case someone really needs to rechrooting.).
-
-With MOVE_MOUNT_BENEATH working with the real rootfs that effectively
-means one can stuff a new rootfs under the current rootfs, unmount the
-old rootfs and chroot into the new rootfs and then be done.
-
-That completely avoids the tasklist locking and has other benefits.
-
-* You get the pivot_root(".", ".") trick for free.
-
-* MOVE_MOUNT_BENEATH works with detached mounts meaning you can assemble
-  your whole rootfs in a detached mount tree (since detached mounts can
-  now be mounted onto other detached mounts) and then swap the old
-  rootfs with your new rootfs.
-
-* MOVE_MOUNT_BENEATH works with mount propagation. (Which means you
-  could live-update the rootfs for all services. It would be a bit more
-  complicated to actually make this work nicely but it would work.)
-
-I just had a few thoughts in this area I wanted to note.
+[1/2] fs: Describe @isnew parameter in ilookup5_nowait()
+      https://git.kernel.org/vfs/vfs/c/b0f5804b4178
+[2/2] VFS: fix __start_dirop() kernel-doc warnings
+      https://git.kernel.org/vfs/vfs/c/ba4c74f80ef3
 
