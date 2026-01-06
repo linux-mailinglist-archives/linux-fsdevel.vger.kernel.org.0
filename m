@@ -1,124 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-72487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53128CF85B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 13:41:39 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 260A7CF8638
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 13:53:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 49059302759B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 12:41:36 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 921B73044852
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 12:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228182F999A;
-	Tue,  6 Jan 2026 12:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1497E32C937;
+	Tue,  6 Jan 2026 12:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fF8x1imp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E861A2C04
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jan 2026 12:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E692C5695;
+	Tue,  6 Jan 2026 12:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767703294; cv=none; b=J8SStVsA1uuZERsSYhVX1/3ovmavEusmIsAemvwPItU9pxTfFoEKrCk2RkOpk2BSHSTYRTU20kPiIrbfmumupYxRu8joyJpLXCgL240YrSCVt+mroz07lSTqbKN70IQ5iHOdlBcv3usg0u3FLYVf8Ta8dB9QDwonOZ1E2xYrSW8=
+	t=1767703420; cv=none; b=VctbePU8H/MiFij4ovghLALuxr5PY2CD2p6Yrx0hDIGe5QZEWbSZj7VbGvWQrsza/J1b/7EeVD4e5hGyIs55t9NQvcotFv479kAraIwWL+2KTcwbjzRD1ytteFIayRQ4ktJlRjfYkVKSRriUzUsn/PXz3zYtsBwmQGerTQpmEzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767703294; c=relaxed/simple;
-	bh=bzm+ypZqqwMr5bJKqZb5IiQEa4RGlt/SMXESUZ2hdwg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GS1Ka1iul1JkF7RX7oQHfF6k83auvwP1HZrd1Huh+JduOhjPSkkcCBEtVpbHxufonoGzvFxU3zNaqduw3Z3VCMAiWb9JBjj1xX4uJov0VvAJYkDaz79DKIrR3LiBmCGQtTIIesS0MKdBKjSkbLgqeX49aAZJInTyV/PsAmPDQ4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 606CfUaK095527;
-	Tue, 6 Jan 2026 21:41:30 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 606CfU0V095523
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 6 Jan 2026 21:41:30 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <9ae0ff26-2cb5-4b6e-9868-f31229dacbc8@I-love.SAKURA.ne.jp>
-Date: Tue, 6 Jan 2026 21:41:29 +0900
+	s=arc-20240116; t=1767703420; c=relaxed/simple;
+	bh=l6XET2g82VU5NPqDA34kNchMz8416gLMHeQDf+qqDuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fcFGWWwNZSMVxTzCFwiMenUUac/dqE+TSsSK2QqxnxRazgMMEwvHWjGQdJI1b5AZE70wM7EQ6xxZonAvco42EQhSThfCWYhpJURsY4MXlwntgYmhfrcIoX/4Ve2/4OzT78xrFflvz/JeObave3Yc4vinJvefe+LtZ+aSKjdg9iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fF8x1imp; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oRMkA/Ca563y0+dy1t5I/0e9W9y6rU2HQmmd09ZD4+8=; b=fF8x1implaMTwmDC1WueQdrygX
+	hcp2Jzf/RJx5Vzset7UUh3RO0L/rISk8A28NzSvDhKtM+KuzehXVbdI6XKw1XyKJ9zk99lU9ACzmz
+	ps1tMiWLfwcFAuz1KVztHAKzPhJY77fcfFUiYzYoge4bvvx9pKlRj4h+FfrbuhZMvhsy11PXQNACB
+	e+9UYVgjmYoMI/Gnx+rjnEq2YOn0ecUTgl4m7qpqMsbThPBPAG6n+3vDgQz3LBhrNiALCbrFmxVTu
+	AynL8hzMi0+ECj6C1VSYyxSUJTWMGVt0W/9ccLrJLC90FS97UHXrepDcMzj9P48L3wT/3enG9ZnSs
+	uVWcN5zA==;
+Received: from 2001-1c00-8d85-5700-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d85:5700:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vd6PH-0000000BmZ5-1z2W;
+	Tue, 06 Jan 2026 12:43:27 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0D77630039E; Tue, 06 Jan 2026 13:43:26 +0100 (CET)
+Date: Tue, 6 Jan 2026 13:43:26 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Will Deacon <will@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Magnus Lindholm <linmag7@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Lyude Paul <lyude@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/5] rust: sync: support using bool with READ_ONCE
+Message-ID: <20260106124326.GY3707891@noisy.programming.kicks-ass.net>
+References: <20251231-rwonce-v1-0-702a10b85278@google.com>
+ <20251231-rwonce-v1-3-702a10b85278@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sys/linux/filesystem: remove hpfs check=none mount option
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Mikulas Patocka <mikulas@twibright.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: syzkaller <syzkaller@googlegroups.com>,
-        Viacheslav Sablin <sjava1902@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Aleksandr Nogikh <nogikh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-References: <cb9e2aac-d215-42f5-a7b4-e3e463a7e57a@I-love.SAKURA.ne.jp>
- <CANp29Y70nHpDtn1FAHPx7KccMLUWD272Jztw4SF0yMG4Fs-RbQ@mail.gmail.com>
- <2cc02c92-9f5a-4193-bdc2-df958e7b35e9@I-love.SAKURA.ne.jp>
- <6b89bfd8-feb1-47a1-85cb-d3e16f51d9e3@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <6b89bfd8-feb1-47a1-85cb-d3e16f51d9e3@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Anti-Virus-Server: fsav304.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251231-rwonce-v1-3-702a10b85278@google.com>
 
-Mikulas, can we go with the kernel config approach?
+On Wed, Dec 31, 2025 at 12:22:27PM +0000, Alice Ryhl wrote:
+> Normally it is undefined behavior for a bool to take any value other
+> than 0 or 1. However, in the case of READ_ONCE(some_bool) is used, this
+> UB seems dangerous and unnecessary. I can easily imagine some Rust code
+> that looks like this:
+> 
+> 	if READ_ONCE(&raw const (*my_c_struct).my_bool_field) {
+> 	    ...
+> 	}
+> 
+> And by making an analogy to what the equivalent C code is, anyone
+> writing this probably just meant to treat any non-zero value as true.
+> 
+> For WRITE_ONCE no special logic is required.
+> 
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/sync/rwonce.rs | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/rust/kernel/sync/rwonce.rs b/rust/kernel/sync/rwonce.rs
+> index a1660e43c9ef94011812d1816713cf031a73de1d..73477f53131926996614df573b2d50fff98e624f 100644
+> --- a/rust/kernel/sync/rwonce.rs
+> +++ b/rust/kernel/sync/rwonce.rs
+> @@ -163,6 +163,7 @@ unsafe fn write_once(ptr: *mut Self, val: Self) {
+>  // sizes, so picking the wrong helper should lead to a build error.
+>  
+>  impl_rw_once_type! {
+> +    bool, read_once_bool, write_once_1;
+>      u8,   read_once_1, write_once_1;
+>      i8,   read_once_1, write_once_1;
+>      u16,  read_once_2, write_once_2;
+> @@ -186,3 +187,21 @@ unsafe fn write_once(ptr: *mut Self, val: Self) {
+>      usize, read_once_8, write_once_8;
+>      isize, read_once_8, write_once_8;
+>  }
+> +
+> +/// Read an integer as a boolean once.
+> +///
+> +/// Returns `true` if the value behind the pointer is non-zero. Otherwise returns `false`.
+> +///
+> +/// # Safety
+> +///
+> +/// It must be safe to `READ_ONCE` the `ptr` with type `u8`.
+> +#[inline(always)]
+> +#[track_caller]
+> +unsafe fn read_once_bool(ptr: *const bool) -> bool {
+> +    // Implement `read_once_bool` in terms of `read_once_1`. The arch-specific logic is inside
+> +    // of `read_once_1`.
+> +    //
+> +    // SAFETY: It is safe to `READ_ONCE` the `ptr` with type `u8`.
+> +    let byte = unsafe { read_once_1(ptr.cast::<u8>()) };
+> +    byte != 0u8
+> +}
 
-On 2025/11/24 19:50, Tetsuo Handa wrote:
-> Can we move this forward?
-> 
-> Since syzkaller is not the only fuzzer, and syz_execute_func() could still find
-> check=none option, I prefer disabling dangerous behavior at the kernel config level.
-> It would be nice if HPFS for check=none case is implemented using FUSE.
-> 
-> On 2025/11/06 7:05, Tetsuo Handa wrote:
->> On 2025/11/06 6:16, Aleksandr Nogikh wrote:
->>> Hi Tetsuo,
->>>
->>> Could you please share a link to the original discussion with Mikulas Patocka?
->>> It would be great to know a bit more context.
->>
->> https://lkml.kernel.org/r/889ee229-8f2f-2bd4-c870-fbd11a3c4098@twibright.com
->> https://lkml.kernel.org/r/9ca81125-1c7b-ddaf-09ea-638bc5712632@redhat.com
->>
->>>
->>> On Thu, Oct 16, 2025 at 2:29 PM Tetsuo Handa
->>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>>>
->>>> Mikulas Patocka (the HPFS maintainer) thinks that check=none option
->>>> should not be used in fuzz testing.
->>>>
->>>> Closes https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
->>>> ---
->>>>  sys/linux/filesystem.txt | 1 -
->>>>  1 file changed, 1 deletion(-)
->>>
->>> FWIW
->>>
->>> Considering how fuzzers work, it's challenging to prevent them from
->>> doing something specific. Removing the descriptions is the necessary
->>> first step, but
->>> 1) Mounts with check=none are already in the fuzzer corpuses, most
->>> likely with multiple mutations on top.
->>> 2) Even without descriptions, syzkaller might discover this mount
->>> option again in the future.
->>
->> Yes, syz_execute_func() (and other fuzzers) would find again.
->> That's why I proposed disabling in the kernel config.
->>
->>>
->>> For cases like this, we unfortunately just keep on stacking the "when
->>> mounting filesystem X, remove the substring Y if it's in the mount
->>> options" rules in the C implementation of the syz_mount_image
->>> pseudo-syscall:
->>> https://github.com/google/syzkaller/blob/master/executor/common_linux.h#L3136
->>>
->>
-> 
-
+Does this hardcode that sizeof(_Bool) == 1? There are ABIs where this is
+not the case.
 
