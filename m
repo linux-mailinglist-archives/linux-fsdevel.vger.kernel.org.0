@@ -1,147 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-72486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB6FCF8605
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 13:47:21 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53128CF85B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 13:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4461D3030933
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 12:37:55 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 49059302759B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 12:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F53329E53;
-	Tue,  6 Jan 2026 12:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="REzzIMiH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228182F999A;
+	Tue,  6 Jan 2026 12:41:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC6F256D;
-	Tue,  6 Jan 2026 12:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E861A2C04
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Jan 2026 12:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767703071; cv=none; b=c/S5YR99APNzPwhu35tL2u2PiUXcgOW5S4DnlY9BUvgU2f1QlsRpdYQN/C1dIJvv5kItZv35hbIhNcd1dvUZ3FO8IXF/aZ8GH4MX+fwEpjeU/VQbx+BubgudG1T9MEGYL19v2EQ7OrYjVdXQNuqYBl3WoWxuVy/Ojv9q7z8FVXk=
+	t=1767703294; cv=none; b=J8SStVsA1uuZERsSYhVX1/3ovmavEusmIsAemvwPItU9pxTfFoEKrCk2RkOpk2BSHSTYRTU20kPiIrbfmumupYxRu8joyJpLXCgL240YrSCVt+mroz07lSTqbKN70IQ5iHOdlBcv3usg0u3FLYVf8Ta8dB9QDwonOZ1E2xYrSW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767703071; c=relaxed/simple;
-	bh=hm9zTszigCDx9gXEHsPwQEmbW0HRLieX7v57e0V8bhU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TuymiDMaESpoz7XyVGwEuwqOKblF8a1ivYv0XQFAxEhy2MciKSamctsTM68KnI6l7EH893vqFADYoJxNO8CC88o8Pr4oeYzwkZWSohUa2V+7sbdQbF7OpuvkTw+RvDIDmhOAmiLdLAFONIARuWONJRjyPph7z80/cLGuqHZYSsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=REzzIMiH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A41C116C6;
-	Tue,  6 Jan 2026 12:37:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767703070;
-	bh=hm9zTszigCDx9gXEHsPwQEmbW0HRLieX7v57e0V8bhU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=REzzIMiHLlAJ8/yX7SNtNUN34UI9sPJRaGpdk92DO+zLYJno2Yi7Pd4gD6O6eNRke
-	 7aVNJxQGRk0pFIgebjhJZgYpA/yxeQG7V10i16poDvU0Y0JORkJLC0VHoEQyZYvJbn
-	 Qs62maLF3+GbGq5mvC5TOyQx6hf7IaZtCtDL0GzQPoNYbZqwhl+9y7WGtaka52XZdW
-	 7uMM5+OAhmjqspJ0AJXxpXtN/vjJUFi7K5oKqGB9K4XYM1g7amRHfipjlQAqgZdBi0
-	 akH2hyYQFnXFyOAYlWAnkREJmQ92SKxUHavk2gbwuiX10Wc3Ibm3ymXS+cC8iKU3VZ
-	 RU/xEGefwO3KQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>, fujita.tomonori@gmail.com
-Cc: aliceryhl@google.com, lyude@redhat.com, boqun.feng@gmail.com,
- will@kernel.org, peterz@infradead.org, richard.henderson@linaro.org,
- mattst88@gmail.com, linmag7@gmail.com, catalin.marinas@arm.com,
- ojeda@kernel.org, gary@garyguo.net, bjorn3_gh@protonmail.com,
- lossin@kernel.org, tmgross@umich.edu, dakr@kernel.org,
- mark.rutland@arm.com, frederic@kernel.org, tglx@linutronix.de,
- anna-maria@linutronix.de, jstultz@google.com, sboyd@kernel.org,
- viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/5] rust: hrtimer: use READ_ONCE instead of read_volatile
-In-Reply-To: <20260101.130012.2122315449079707392.fujita.tomonori@gmail.com>
-References: <20251231-rwonce-v1-0-702a10b85278@google.com>
- <20251231-rwonce-v1-4-702a10b85278@google.com>
- <20260101.111123.1233018024195968460.fujita.tomonori@gmail.com>
- <L2dmGLLYJbusZn9axfRubM0hIOSTuny2cW3uyUhOVGvck7lQxTzDe0Xxf8Hw2cLxICT8kdmNAE74e-LV7YrReg==@protonmail.internalid>
- <20260101.130012.2122315449079707392.fujita.tomonori@gmail.com>
-Date: Tue, 06 Jan 2026 13:37:34 +0100
-Message-ID: <87ikdej4s1.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1767703294; c=relaxed/simple;
+	bh=bzm+ypZqqwMr5bJKqZb5IiQEa4RGlt/SMXESUZ2hdwg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GS1Ka1iul1JkF7RX7oQHfF6k83auvwP1HZrd1Huh+JduOhjPSkkcCBEtVpbHxufonoGzvFxU3zNaqduw3Z3VCMAiWb9JBjj1xX4uJov0VvAJYkDaz79DKIrR3LiBmCGQtTIIesS0MKdBKjSkbLgqeX49aAZJInTyV/PsAmPDQ4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 606CfUaK095527;
+	Tue, 6 Jan 2026 21:41:30 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 606CfU0V095523
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 6 Jan 2026 21:41:30 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <9ae0ff26-2cb5-4b6e-9868-f31229dacbc8@I-love.SAKURA.ne.jp>
+Date: Tue, 6 Jan 2026 21:41:29 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sys/linux/filesystem: remove hpfs check=none mount option
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Mikulas Patocka <mikulas@twibright.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: syzkaller <syzkaller@googlegroups.com>,
+        Viacheslav Sablin <sjava1902@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Aleksandr Nogikh <nogikh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
+References: <cb9e2aac-d215-42f5-a7b4-e3e463a7e57a@I-love.SAKURA.ne.jp>
+ <CANp29Y70nHpDtn1FAHPx7KccMLUWD272Jztw4SF0yMG4Fs-RbQ@mail.gmail.com>
+ <2cc02c92-9f5a-4193-bdc2-df958e7b35e9@I-love.SAKURA.ne.jp>
+ <6b89bfd8-feb1-47a1-85cb-d3e16f51d9e3@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <6b89bfd8-feb1-47a1-85cb-d3e16f51d9e3@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Anti-Virus-Server: fsav304.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+Mikulas, can we go with the kernel config approach?
 
-> On Thu, 01 Jan 2026 11:11:23 +0900 (JST)
-> FUJITA Tomonori <fujita.tomonori@gmail.com> wrote:
->
->> On Wed, 31 Dec 2025 12:22:28 +0000
->> Alice Ryhl <aliceryhl@google.com> wrote:
->>
->>> Using `READ_ONCE` is the correct way to read the `node.expires` field.
+On 2025/11/24 19:50, Tetsuo Handa wrote:
+> Can we move this forward?
+> 
+> Since syzkaller is not the only fuzzer, and syz_execute_func() could still find
+> check=none option, I prefer disabling dangerous behavior at the kernel config level.
+> It would be nice if HPFS for check=none case is implemented using FUSE.
+> 
+> On 2025/11/06 7:05, Tetsuo Handa wrote:
+>> On 2025/11/06 6:16, Aleksandr Nogikh wrote:
+>>> Hi Tetsuo,
 >>>
->>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->>> ---
->>>  rust/kernel/time/hrtimer.rs | 8 +++-----
->>>  1 file changed, 3 insertions(+), 5 deletions(-)
+>>> Could you please share a link to the original discussion with Mikulas Patocka?
+>>> It would be great to know a bit more context.
+>>
+>> https://lkml.kernel.org/r/889ee229-8f2f-2bd4-c870-fbd11a3c4098@twibright.com
+>> https://lkml.kernel.org/r/9ca81125-1c7b-ddaf-09ea-638bc5712632@redhat.com
+>>
 >>>
->>> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
->>> index 856d2d929a00892dc8eaec63cebdf547817953d3..e2b7a26f8aade972356c3eb5f6489bcda3e2e849 100644
->>> --- a/rust/kernel/time/hrtimer.rs
->>> +++ b/rust/kernel/time/hrtimer.rs
->>> @@ -239,11 +239,9 @@ pub fn expires(&self) -> HrTimerInstant<T>
->>>          // - Timers cannot have negative ktime_t values as their expiration time.
->>>          // - There's no actual locking here, a racy read is fine and expected
->>>          unsafe {
->>> -            Instant::from_ktime(
->>> -                // This `read_volatile` is intended to correspond to a READ_ONCE call.
->>> -                // FIXME(read_once): Replace with `read_once` when available on the Rust side.
->>> -                core::ptr::read_volatile(&raw const ((*c_timer_ptr).node.expires)),
->>> -            )
->>> +            Instant::from_ktime(kernel::sync::READ_ONCE(
->>> +                &raw const (*c_timer_ptr).node.expires,
->>> +            ))
->>>          }
+>>> On Thu, Oct 16, 2025 at 2:29 PM Tetsuo Handa
+>>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>>>
+>>>> Mikulas Patocka (the HPFS maintainer) thinks that check=none option
+>>>> should not be used in fuzz testing.
+>>>>
+>>>> Closes https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
+>>>> ---
+>>>>  sys/linux/filesystem.txt | 1 -
+>>>>  1 file changed, 1 deletion(-)
+>>>
+>>> FWIW
+>>>
+>>> Considering how fuzzers work, it's challenging to prevent them from
+>>> doing something specific. Removing the descriptions is the necessary
+>>> first step, but
+>>> 1) Mounts with check=none are already in the fuzzer corpuses, most
+>>> likely with multiple mutations on top.
+>>> 2) Even without descriptions, syzkaller might discover this mount
+>>> option again in the future.
 >>
->> Do we actually need READ_ONCE() here? I'm not sure but would it be
->> better to call the C-side API?
+>> Yes, syz_execute_func() (and other fuzzers) would find again.
+>> That's why I proposed disabling in the kernel config.
 >>
->> diff --git a/rust/helpers/time.c b/rust/helpers/time.c
->> index 67a36ccc3ec4..73162dea2a29 100644
->> --- a/rust/helpers/time.c
->> +++ b/rust/helpers/time.c
->> @@ -2,6 +2,7 @@
+>>>
+>>> For cases like this, we unfortunately just keep on stacking the "when
+>>> mounting filesystem X, remove the substring Y if it's in the mount
+>>> options" rules in the C implementation of the syz_mount_image
+>>> pseudo-syscall:
+>>> https://github.com/google/syzkaller/blob/master/executor/common_linux.h#L3136
+>>>
 >>
->>  #include <linux/delay.h>
->>  #include <linux/ktime.h>
->> +#include <linux/hrtimer.h>
->>  #include <linux/timekeeping.h>
->>
->>  void rust_helper_fsleep(unsigned long usecs)
->> @@ -38,3 +39,8 @@ void rust_helper_udelay(unsigned long usec)
->>  {
->>  	udelay(usec);
->>  }
->> +
->> +__rust_helper ktime_t rust_helper_hrtimer_get_expires(const struct hrtimer *timer)
->> +{
->> +	return timer->node.expires;
->> +}
->
-> Sorry, of course this should be:
->
-> +__rust_helper ktime_t rust_helper_hrtimer_get_expires(const struct hrtimer *timer)
-> +{
-> +	return hrtimer_get_expires(timer);
-> +}
->
-
-This is a potentially racy read. As far as I recall, we determined that
-using read_once is the proper way to handle the situation.
-
-I do not think it makes a difference that the read is done by C code.
-
-
-Best regards,
-Andreas Hindborg
+> 
 
 
