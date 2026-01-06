@@ -1,270 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-72523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FC1CF91FB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 16:42:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22923CF92B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 06 Jan 2026 16:52:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 05CD33050023
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 15:41:43 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 425CC30519FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Jan 2026 15:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACA3334692;
-	Tue,  6 Jan 2026 15:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8955321F39;
+	Tue,  6 Jan 2026 15:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="CD6Cpz25"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3oqSPRr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020138.outbound.protection.outlook.com [52.101.195.138])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD2E225A35;
-	Tue,  6 Jan 2026 15:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767713592; cv=fail; b=qnojHFNCeRnY/30FkKFeq9aKkkKVBORqPN6BtgCefEYcr6p2lt1/ao/rgFGWZHLxziRNmIZ7lq7piaLeHlhkXg8oRvo3HlxXmmYCQwnWQAqhNbfe66Al8Hd7NrIu7ymwerUA7NTwTNa3BzRC0cKN49+d2v+E92O1Rs2gXiJo+x4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767713592; c=relaxed/simple;
-	bh=z0uh0NO781ZgDPfnZ09e5sBOzFuZCZFJtR+qIrMCnPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g+NPfRqtBKYZTSzIcFA3MueWiPf6oDM0T1erGeVqy/UOEpfXAq6IbvOYoqxoqVOghB8XhSUlPqDUIqiHstS2SKErUPvYxnBl82oJ0RXyiF7qn8cJ4PGTRv4+gF9dLWxEGj0SsxlJ/zdus0yZ2r6EzDuzvnki9W9aBQJuq3PPIQ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=CD6Cpz25; arc=fail smtp.client-ip=52.101.195.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hUj+SUYC7lbOiEWA/CIUEkXCuiAIkhBLwF/oLFkqkyFWqpsH3028QAMvFvfSDz8AylGhAYFXh4JmFkLxWsshtgXc5deFw0SCDiutMHST6IFH5cmu9Epi549jyMGlDH5Aoj434Nwt5AuOu3gBAXfPmTmmTBFxnov0kpCAkxk2uZ62EsF5HCen5Li/GeFe4whrqAo/oZHZY3mE2cKcrdzPt1j7/TUxGtnPMrdJg+hIwC7HWdi42MC43zMR8FgnoU0jxZJUH8xjYzAVbUkMBb1DU3T2N1qqTmu873c0fS5QSAYYeqraVH38eGe7UX+83wI61pKGkMpqGBOM8zunBp5AsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GLLJEBb2fztJb6eF1uVu56I98hyErUrWZpcPRUEpD4E=;
- b=nbaAC3xPZ1iA7Ko41FN1W9hGiN9G9zTFbj8ckT1wOsvbF7o8Alohsz51KCw79KRwEjoY8lLYrdZpi7+N4XUP5M5/hIVsB2Sl1qXoG0ySmszR4EY2J479Ri8TN7YWrZoOapTj6UtJcmu8FsVOPK4FFpybI6e+7FK9PACSd1gC6GONXxkGAgCl//NaxhU//nWHxJei4UrgkulvEnwWtqfidDCtrYkgXPsGDws3ChB6JPg2eSvyHpbBVpUEv0Hjekvq+IX+bKCyom+4LJeYZgjftbHWwFiEGxZAVrzQQwYXr8aN6gwjdYcZEBpnJpLnOZqwFEUL6PyXu4Xg5WGt2H8n2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GLLJEBb2fztJb6eF1uVu56I98hyErUrWZpcPRUEpD4E=;
- b=CD6Cpz25JLvikxNcBn2t6DSCIHX4tDqVWSlMYcyQn8w2dHqQ2XAtd7kMjSop8CtrugPURjgsnhFteyOnyfwrKyZQ3ejvtuvrO3vMu1LUKui+SginYrGwKGLs4Yd/n51w0V6z6voaHgfsfcX2ZUgJKdt26Qf54JniyfEDW1WUAbM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:488::16)
- by CWLP265MB3074.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:cb::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.2; Tue, 6 Jan
- 2026 15:33:06 +0000
-Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
- ([fe80::ea6a:3ec2:375d:1ce0]) by LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
- ([fe80::ea6a:3ec2:375d:1ce0%7]) with mapi id 15.20.9478.005; Tue, 6 Jan 2026
- 15:33:06 +0000
-Date: Tue, 6 Jan 2026 15:33:03 +0000
-From: Gary Guo <gary@garyguo.net>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Brauner
- <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>, Miguel Ojeda
- <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, "=?UTF-8?B?Qmo=?=
- =?UTF-8?B?w7Zybg==?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin
- <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross
- <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Arnd Bergmann
- <arnd@arndb.de>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] rust: redefine `bindings::compat_ptr_ioctl` in Rust
-Message-ID: <20260106153303.6ff846bf.gary@garyguo.net>
-In-Reply-To: <20260105-redefine-compat_ptr_ioctl-v1-1-25edb3d91acc@google.com>
-References: <20260105-redefine-compat_ptr_ioctl-v1-1-25edb3d91acc@google.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO6P123CA0015.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:338::20) To LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:488::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FE322F77B;
+	Tue,  6 Jan 2026 15:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767714112; cv=none; b=mz9hKXfJ1kMqtlvv63VVOVu4+GzPsDsGVLzE5wn3REVq1MEU0eKpnb9WLX7Krx9sfUFiAMcGmC4fm8/xjUiYPbxGAccA1s03Ex4b6aRtul3dE1sbB7xUetKiGtj3o2R8QSYUc5D2Yt4eXXrSG0OjmIUvqyjIjPfOPO9TysgyT2k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767714112; c=relaxed/simple;
+	bh=lLS8KmtOZp2zZZScnCqYpBIcm1XXF9y6DjF8nyQEl2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fcaqhZf2xsc6NCCuXg3hv09tobVyTMFkx6hB5SsjU9/CsoaFdrw86Q6uI+dITQx+xJz0tJ54b2H4bY2yyRtqVveh5BYpLImHaAV1r4EIRyGfE3ZjqCOnhqOg67HIfBMmPRN6B417ykbaqTDbx1DEhMwdEpoaunWvKvoIHjrte0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3oqSPRr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC48C116C6;
+	Tue,  6 Jan 2026 15:41:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767714111;
+	bh=lLS8KmtOZp2zZZScnCqYpBIcm1XXF9y6DjF8nyQEl2k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=g3oqSPRrkU8q7sONds5Cf2OqAY/lUYNmQljRgD2wu+PLkdCs7+5lpK02C3YF2wcOy
+	 KXpMmdJ+qc96quWHQW6pIOk+RWVePLuLHW0J3pxbMNeJFbT+mOv9a+cxksjTrGbIQ1
+	 H1E1dy1AmyLWTtQYUHnNq4LAG3CvOFHB8eUzN8J4/DrB6dL4c4ivpUZVHGUu9HZoQG
+	 O07TtVhyC4IXPUzFkblGph3FTi08R2Wr1y7Y3iBaaGO7zw13sCtFRdCWHwqq4yGt3/
+	 O73JmTX9H1tfnccCgB0x5C8t+Kxfxf6vDHGLp6wL/2X4ZUZy4RjBAI8S0g8++Tpbrh
+	 dqzGbcx8AkGYg==
+Message-ID: <c39232ea-8cf0-45e6-9a5a-e2abae60134c@kernel.org>
+Date: Tue, 6 Jan 2026 16:41:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LOVP265MB8871:EE_|CWLP265MB3074:EE_
-X-MS-Office365-Filtering-Correlation-Id: 531cb274-3390-4a27-e565-08de4d38e345
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|7416014|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DuPzTNNm3i6dnNF7I57EsV81yDqx9GuvCLAGEXIUYtwt6sGIYDL0UZNEpXqs?=
- =?us-ascii?Q?4ubu5s+otuvpRjCrg7VrDQViOT4QJv6dAVKmeRZplAcKNI8EldfVCZrUl8Iq?=
- =?us-ascii?Q?4AZ4C4J8IUtyBM40ekMS0zJz/ujL4/6JFPh0A/HuCn8ycXawG//4cS3zj+Fe?=
- =?us-ascii?Q?GV1Ug64wzICxvxnCAQLua3w6tAmrsHm8oD4reaJZ0SCvU1biI3Huk3g91z5t?=
- =?us-ascii?Q?cEKhuNclQAW4Y3Bmo5UL7vui4j0dr9Jqi5EuQH1zZMMMXCVIEFdwwAI0eZXc?=
- =?us-ascii?Q?DJ9WtNRCRlb9ffBDpNvD8iapGvwP6G+W4At9FR3P3BgUvlqiU+txvh5WSt+G?=
- =?us-ascii?Q?gOUiqG9dQAszYf4t55B2lBlF/UMdyfG75CxYxM8HUhmnYxM5Cgb9Srsl5o4j?=
- =?us-ascii?Q?VqHvPTDDKVxanvISGCa2Q524DzlBseGx/Yu9YXDVR6wAqyKOUtz9XPWp+Xsh?=
- =?us-ascii?Q?ovsxymsOSyEycJxY0DICz9C/qqYSivEo7ewoR6GFAEj+6j3Erw3D919iEMeK?=
- =?us-ascii?Q?3EUrzVhZhyBSap25Fet5aFLX9armL9dNN49TGfuM+OB7Vrdb0mpoty9nX+tN?=
- =?us-ascii?Q?ned3mTV4TxsPyg22fyDsoAj7RweUE08KlzpoKFctJYT/sS145feFtP0T9Qmi?=
- =?us-ascii?Q?H/oHW/0OmpK9DsXoHl9BakFHtZ6GiMdp0ntYbXwQfirRcS9ntCSIL8tXi2mW?=
- =?us-ascii?Q?LNqvPqdnR/Jn6FLdnEH+NS8sKD5/gulOt884iG7gc/J8k/B95SaDLYaPMzoG?=
- =?us-ascii?Q?knb1LsqZnHoT+miY1x1h3GLN6egp6FUFKzSsBzNewrNa0o0CXZEfG+7BZot4?=
- =?us-ascii?Q?Cl25z8glHkH0y/5rnEYODFQmxK7mgdOWelZVbeA93EOKqFg/eVOU1xfvJ6M2?=
- =?us-ascii?Q?mQTnd9njM29MyWFMLewS3siXvnEtU33KDzS2upgvy9nXJ4Hf7Dj4RRB9COHv?=
- =?us-ascii?Q?I9Q4csyjl8QLIIKEaNHxheq9HnRmyiNOg2ZjLu4IW4tY+0rTdcSZ/yAy6Tqh?=
- =?us-ascii?Q?f1xm8aWu64QErs1Cvly5jLAZA1xigkPMICnuFy/wdWCowhvM1m05l2Xunj8/?=
- =?us-ascii?Q?M4JDgh5dF5VPFmke4PtDHrnNSfb407rdgzY9fcEcTk8W5xoQLn2WHByfIpex?=
- =?us-ascii?Q?ufkDaM2jkfSE4u8npb+qk+/ocQe72hv8hbUY+XU9RV2v8vyE2kcBhqINrTGM?=
- =?us-ascii?Q?ltIssWv/35ZwD/s7jSHoe0pJCIGF0TRQSY4m354ZRdJuwq7878jbDaEkrJjD?=
- =?us-ascii?Q?wmJO6e6q2crYrPMznpLxg5ct7kn9Cwl2vec3n45Oohg+bpDr+c9kWSJs8uLD?=
- =?us-ascii?Q?MVP5W7kqa7U7SCPQLhYXjGlo5ffXwRNLzYKQloLWO0avlWbXBSPAR+++6D3b?=
- =?us-ascii?Q?6Be0MxbxuWUsnmWNZuJw489qri0IbHU9KHwGtxi3sYGFBHGmoDXBgTeOlO3J?=
- =?us-ascii?Q?Ourp/BGJVJVnTVySnbYTdzvUm2UutLQj?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(7416014)(366016)(376014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UVghfYStwiLRBF3izH22kMmhi0GYN9RZ/RXVm8FCa7DaLJYM4Vx/JBp59ElJ?=
- =?us-ascii?Q?BMhuBuJzqtwAOdQMEeaRohuwCb4fdixwGLCPBl5utHx8Jw0eivIvBE4e2qLo?=
- =?us-ascii?Q?9qLegi1yM7IIET/qnoRKRnGjWYfhadyTq1+u1FEzoZvDtxpUVdJB8oilxh6d?=
- =?us-ascii?Q?MVXeeeaCWHQlqFEjC4Ij4c+m+6HFY7gRT7mWIFveNJjt7CqyUn3HyXFeVG0d?=
- =?us-ascii?Q?DZHjqxGAS6X0mKiBh6Wp4LGTFNqt/hCQlMb9uWXD6atpqt/KBWcu/SGIb6Fo?=
- =?us-ascii?Q?BxsqR1sZqnAkSRo4wiv10+RZ1AtXD4flw1nPm1kd5BSCbF0o2OhulJQEeni1?=
- =?us-ascii?Q?MyaMN4ErHjJ+0g3hBoAwwwPe8c6NiZORYMvY1z7sLixEgYvYxdxr55PJGzTX?=
- =?us-ascii?Q?sQcg+BpkJlk8Nm+ZOM2VdkUccojSGHco5DgaKatkHj8D6vlpaeH7xLAtoxms?=
- =?us-ascii?Q?6ya6ArDywTSxZXfvOGMCnSvoAO9kbOiVWHFenQ802lJVBQR0UpK3epF8TIzO?=
- =?us-ascii?Q?ZDFMxwJr5V7XFnkCRPnNVU2mS/yjgpzHdm2dUSLgDfrLdr/u/qQVLjqohces?=
- =?us-ascii?Q?hRxMLP3KDLYmzf2svkHta06z7Dtrky4U6kSuC+6H8fFgyucln6snT7f6e/Aj?=
- =?us-ascii?Q?Yl8xOvWROE5nyT+jNviV1XVY3/q3J1WziJXv1jGgz0Ns6pXBEFkXVIaOVl3m?=
- =?us-ascii?Q?BFQH41wTO0xoepUsof3yN+Qdm8y74d8Ibsyamkp1awqSXu2wv7aLxoggeAW4?=
- =?us-ascii?Q?iJ+BOb0QU+873HUHSfXCI5i9hmj2THL83KFwk9+hIBR2hulYAzD70HAWX0/q?=
- =?us-ascii?Q?3P+SjATN1bRGqD0JQy3zDGI1yzlrC8TybF2et/dIDkfto9WA7xigOhEiJS14?=
- =?us-ascii?Q?BUGIrbUZoZoOoIUoPqDikmjZLG4953qljiGJ4yBND56gB2EJkv5muaF6+iPP?=
- =?us-ascii?Q?RVGwJUvxKSjnCgFfTRUUnU1+C3Pgvza7pcMf/sidwZ+M9iGIuizxWXe0lyog?=
- =?us-ascii?Q?eniG5uw5w223bC5L5uszeQVyrdnZDZd7A9Z8f3kUaLHqTQbMU5i89ILbY9Kr?=
- =?us-ascii?Q?EKypvtFxRmoagVcqwozg3XiDBKD7/MPHRWLhpPpFaT4RFzi4dimHfB5aoaU2?=
- =?us-ascii?Q?L6jV2lVz683TH7zsghFOHpwtJRU9aNTJ4we7+xFI/IxTHy/nUYIbfd5P4CY7?=
- =?us-ascii?Q?fHO6vRf/HaE5IGZqNGCnKskkQlA8wPeeybIO8YPV0NyGemSOdMqfXrpg3czb?=
- =?us-ascii?Q?8m5u3Yc7njYC+YUaqpStoRDWosJyfZNpatGAKSsLtRqAQT29w459K7N1X5p8?=
- =?us-ascii?Q?jBsrlDVaXyvgngyw73+1952KR1Oez+pE8hdamBSmxTsOD8q4iX/SXs87NSPX?=
- =?us-ascii?Q?uklrviv+CJn/t7nsD6ddCgs9e+jK3lY7LwHJIQgkyJqIzoBiC6GiXHdfcZR2?=
- =?us-ascii?Q?mGuEwLKyeuqY63OpQwbGBzViICfoNplXc7xuQxvGqkU9+x1rgsk4FiPj1q3g?=
- =?us-ascii?Q?O/xpMKUYJjlq2wemrfUMxNDnUcxA9n30gbZXaEn3qKfc5pHd099ILdo6MqlH?=
- =?us-ascii?Q?Vnk2nLu17UCZpq7+XYIUNqwOlUkIs1hQwE90eoVMBJZmt/ErO+qPtAC5XvU9?=
- =?us-ascii?Q?ODUmWgel5KE8Nwr6pR4fCkB++95TIyMBEF5lDvoc7Kcj7XjCBEDY3NrWhiML?=
- =?us-ascii?Q?0kTOtLCDZ+RSCISxoiDcMUuU879LTFV+ncFKvc3Vm3iN8Hr3ezpmWE1ok6UU?=
- =?us-ascii?Q?w6fwta8RZw=3D=3D?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 531cb274-3390-4a27-e565-08de4d38e345
-X-MS-Exchange-CrossTenant-AuthSource: LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2026 15:33:06.0259
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: l/wyLqDETUWmZJShAkukXzKByBh0PvHHs35cueZuE6eoAigIeKOB2Dq8VdYneMyK9dsIZfd5WAxKuz6x3IvAUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB3074
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] fs/writeback: skip AS_NO_DATA_INTEGRITY mappings
+ in wait_sb_inodes()
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jan Kara <jack@suse.cz>, Joanne Koong <joannelkoong@gmail.com>,
+ akpm@linux-foundation.org, linux-mm@kvack.org,
+ athul.krishna.kr@protonmail.com, j.neuschaefer@gmx.net, carnil@debian.org,
+ linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+References: <20251215030043.1431306-1-joannelkoong@gmail.com>
+ <20251215030043.1431306-2-joannelkoong@gmail.com>
+ <ypyumqgv5p7dnxmq34q33keb6kzqnp66r33gtbm4pglgdmhma6@3oleltql2qgp>
+ <616c2e51-ff69-4ef9-9637-41f3ff8691dd@kernel.org>
+ <CAJfpeguBuHBGUq45bOFvypsyd8XXekLKycRBGO1eeqLxz3L0eA@mail.gmail.com>
+ <238ef4ab-7ea3-442a-a344-a683dd64f818@kernel.org>
+ <CAJfpegvUP5MK-xB2=djmGo4iYzmsn9LLWV3ZJXFbyyft_LsA_Q@mail.gmail.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=david@kernel.org; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAa2VybmVsLm9yZz7CwY0EEwEIADcWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCaKYhwAIbAwUJJlgIpAILCQQVCgkIAhYCAh4FAheAAAoJEE3eEPcA/4Naa5EP/3a1
+ 9sgS9m7oiR0uenlj+C6kkIKlpWKRfGH/WvtFaHr/y06TKnWn6cMOZzJQ+8S39GOteyCCGADh
+ 6ceBx1KPf6/AvMktnGETDTqZ0N9roR4/aEPSMt8kHu/GKR3gtPwzfosX2NgqXNmA7ErU4puf
+ zica1DAmTvx44LOYjvBV24JQG99bZ5Bm2gTDjGXV15/X159CpS6Tc2e3KvYfnfRvezD+alhF
+ XIym8OvvGMeo97BCHpX88pHVIfBg2g2JogR6f0PAJtHGYz6M/9YMxyUShJfo0Df1SOMAbU1Q
+ Op0Ij4PlFCC64rovjH38ly0xfRZH37DZs6kP0jOj4QdExdaXcTILKJFIB3wWXWsqLbtJVgjR
+ YhOrPokd6mDA3gAque7481KkpKM4JraOEELg8pF6eRb3KcAwPRekvf/nYVIbOVyT9lXD5mJn
+ IZUY0LwZsFN0YhGhQJ8xronZy0A59faGBMuVnVb3oy2S0fO1y/r53IeUDTF1wCYF+fM5zo14
+ 5L8mE1GsDJ7FNLj5eSDu/qdZIKqzfY0/l0SAUAAt5yYYejKuii4kfTyLDF/j4LyYZD1QzxLC
+ MjQl36IEcmDTMznLf0/JvCHlxTYZsF0OjWWj1ATRMk41/Q+PX07XQlRCRcE13a8neEz3F6we
+ 08oWh2DnC4AXKbP+kuD9ZP6+5+x1H1zEzsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCgh
+ Cj/CA/lc/LMthqQ773gauB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseB
+ fDXHA6m4B3mUTWo13nid0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts
+ 6TZ+IrPOwT1hfB4WNC+X2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiu
+ Qmt3yqrmN63V9wzaPhC+xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKB
+ Tccu2AXJXWAE1Xjh6GOC8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvF
+ FFyAS0Nk1q/7EChPcbRbhJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh
+ 2YmnmLRTro6eZ/qYwWkCu8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRk
+ F3TwgucpyPtcpmQtTkWSgDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0L
+ LH63+BrrHasfJzxKXzqgrW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4v
+ q7oFCPsOgwARAQABwsF8BBgBCAAmAhsMFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmic2qsF
+ CSZYCKEACgkQTd4Q9wD/g1oq0xAAsAnw/OmsERdtdwRfAMpC74/++2wh9RvVQ0x8xXvoGJwZ
+ rk0Jmck1ABIM//5sWDo7eDHk1uEcc95pbP9XGU6ZgeiQeh06+0vRYILwDk8Q/y06TrTb1n4n
+ 7FRwyskKU1UWnNW86lvWUJuGPABXjrkfL41RJttSJHF3M1C0u2BnM5VnDuPFQKzhRRktBMK4
+ GkWBvXlsHFhn8Ev0xvPE/G99RAg9ufNAxyq2lSzbUIwrY918KHlziBKwNyLoPn9kgHD3hRBa
+ Yakz87WKUZd17ZnPMZiXriCWZxwPx7zs6cSAqcfcVucmdPiIlyG1K/HIk2LX63T6oO2Libzz
+ 7/0i4+oIpvpK2X6zZ2cu0k2uNcEYm2xAb+xGmqwnPnHX/ac8lJEyzH3lh+pt2slI4VcPNnz+
+ vzYeBAS1S+VJc1pcJr3l7PRSQ4bv5sObZvezRdqEFB4tUIfSbDdEBCCvvEMBgoisDB8ceYxO
+ cFAM8nBWrEmNU2vvIGJzjJ/NVYYIY0TgOc5bS9wh6jKHL2+chrfDW5neLJjY2x3snF8q7U9G
+ EIbBfNHDlOV8SyhEjtX0DyKxQKioTYPOHcW9gdV5fhSz5tEv+ipqt4kIgWqBgzK8ePtDTqRM
+ qZq457g1/SXSoSQi4jN+gsneqvlTJdzaEu1bJP0iv6ViVf15+qHuY5iojCz8fa0=
+In-Reply-To: <CAJfpegvUP5MK-xB2=djmGo4iYzmsn9LLWV3ZJXFbyyft_LsA_Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 05 Jan 2026 14:25:03 +0000
-Alice Ryhl <aliceryhl@google.com> wrote:
-
-> There is currently an inconsistency between C and Rust, which is that
-> when Rust requires cfg(CONFIG_COMPAT) on compat_ioctl when using the
-> compat_ptr_ioctl symbol because '#define compat_ptr_ioctl NULL' does not
-> get translated to anything by bindgen.
+On 1/6/26 16:21, Miklos Szeredi wrote:
+> On Tue, 6 Jan 2026 at 15:34, David Hildenbrand (Red Hat)
+> <david@kernel.org> wrote:
 > 
-> But it's not *just* a matter of translating the '#define' into Rust when
-> CONFIG_COMPAT=n. This is because when CONFIG_COMPAT=y, the type of
-> compat_ptr_ioctl is a non-nullable function pointer, and to seamlessly
-> use it regardless of the config, we need a nullable function pointer.
-
-I had a think about this a while back. I was about to purpose a new
-bindgen option to generate function pointers instead of function items,
-but then I found that I am not very fond of that idea.
-
-In some sense, the C side does not have a consistent type for
-`compat_ptr_ioctl`. If CONFIG_COMPAT=y, it has a function type, otherwise
-it has a `void*` type, it just that they happen to coerce/decay to the
-same function pointer type.
-
-I think what you did to the bindings crate in this patch is the best way to
-address this inconsistency.
-
+>> I don't recall all the details, but I think that we might end up holding
+>> the folio lock forever while the fuse user space daemon is supposed to
+>> fill the page with data; anybody trying to lock the folio would
+>> similarly deadlock.
 > 
-> I think it's important to do something about this; I've seen the mistake
-> of accidentally forgetting '#[cfg(CONFIG_COMPAT)]' when compat_ptr_ioctl
-> is used multiple times now.
+> Right.
 > 
-> This explicitly declares 'bindings::compat_ptr_ioctl' as an Option that
-> is always defined but might be None. This matches C, but isn't ideal:
-> it modifies the bindings crate. But I'm not sure if there's a better way
-> to do it. If we just redefine in kernel/, then people may still use the
-> one in bindings::, since that is where you would normally find it. I am
-> open to suggestions.
-
+>> Maybe only compaction/migration is affected by that, hard to tell.
 > 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Can't imagine anything beyond actual I/O and folio logistics
+> (reclaim/compaction) that would want to touch the page lock.
 
-Reviewed-by: Gary Guo <gary@garyguo.net>
+I assume the usual suspects, including mm/memory-failure.c.
 
-Best,
-Gary
+memory_failure() not only contains a folio_wait_writeback() but also a 
+folio_lock(), so twice the fun :)
 
-> ---
->  drivers/android/binder/rust_binder_main.rs |  3 +--
->  rust/bindings/lib.rs                       | 13 +++++++++++++
->  rust/kernel/miscdevice.rs                  |  2 +-
->  3 files changed, 15 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/android/binder/rust_binder_main.rs b/drivers/android/binder/rust_binder_main.rs
-> index d84c3c360be0ee79e4dab22d613bc927a70895a7..30e4517f90a3c5c2cf83c91530a6dfcca7316bd6 100644
-> --- a/drivers/android/binder/rust_binder_main.rs
-> +++ b/drivers/android/binder/rust_binder_main.rs
-> @@ -322,8 +322,7 @@ unsafe impl<T> Sync for AssertSync<T> {}
->          owner: THIS_MODULE.as_ptr(),
->          poll: Some(rust_binder_poll),
->          unlocked_ioctl: Some(rust_binder_ioctl),
-> -        #[cfg(CONFIG_COMPAT)]
-> -        compat_ioctl: Some(bindings::compat_ptr_ioctl),
-> +        compat_ioctl: bindings::compat_ptr_ioctl,
->          mmap: Some(rust_binder_mmap),
->          open: Some(rust_binder_open),
->          release: Some(rust_binder_release),
-> diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
-> index 0c57cf9b4004f176997c59ecc58a9a9ac76163d9..19f57c5b2fa2a343c4250063e9d5ce1067e6b6ff 100644
-> --- a/rust/bindings/lib.rs
-> +++ b/rust/bindings/lib.rs
-> @@ -67,3 +67,16 @@ mod bindings_helper {
->  }
->  
->  pub use bindings_raw::*;
-> +
-> +pub const compat_ptr_ioctl: Option<
-> +    unsafe extern "C" fn(*mut file, ffi::c_uint, ffi::c_ulong) -> ffi::c_long,
-> +> = {  
-> +    #[cfg(CONFIG_COMPAT)]
-> +    {
-> +        Some(bindings_raw::compat_ptr_ioctl)
-> +    }
-> +    #[cfg(not(CONFIG_COMPAT))]
-> +    {
-> +        None
-> +    }
-> +};
-> diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> index ba64c8a858f0d74ae54789d1f16a39479fd54b96..c3c2052c92069f6e64b7bb68d6d888c6aca01373 100644
-> --- a/rust/kernel/miscdevice.rs
-> +++ b/rust/kernel/miscdevice.rs
-> @@ -410,7 +410,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
->          compat_ioctl: if T::HAS_COMPAT_IOCTL {
->              Some(Self::compat_ioctl)
->          } else if T::HAS_IOCTL {
-> -            Some(bindings::compat_ptr_ioctl)
-> +            bindings::compat_ptr_ioctl
->          } else {
->              None
->          },
-> 
-> ---
-> base-commit: 8314d2c28d3369bc879af8e848f810292b16d0af
-> change-id: 20260105-redefine-compat_ptr_ioctl-e64f9462225c
-> 
-> Best regards,
+-- 
+Cheers
 
+David
 
