@@ -1,184 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-72615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD0ACFDD0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 14:03:40 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCE8CFDDD2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 14:13:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 891EE300284C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 13:03:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 539AD30A7D9E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 13:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B518331619D;
-	Wed,  7 Jan 2026 13:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E453831B123;
+	Wed,  7 Jan 2026 13:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JINiTXys"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E21x906k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066C22EA169;
-	Wed,  7 Jan 2026 13:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4B131A552
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 13:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767790998; cv=none; b=o6JGXyIe0vZEb0DY6p79XgwbnvIqZQgyHis8IeR0caIebveSicenzZ3+x5tfw4KMgSYxcoLVUS4lAEqVmOm/63PNsb0gLduobgZz0Yf6mnTwLZ2/Lr5p9amC1zmzLcDmP4qiGlUwgIQ73vbdAKEz6bezzvkoA/VzmT8qWgIZ5VY=
+	t=1767791157; cv=none; b=DHX5642jBvxu/X0s4RpjU8ZEPNiT+z/IKODdkudtctvc13bSThrdCPk4zQDmE0HzG2a1hNNSHhuoGL2W2ebPz71mvHcT0ZQ4yLePA8zi+npzwOWHI39OWQVPQXUehZTDPoI8XI6pC/o7qtUUtrZemQ6ZyLpyGvuEPm2XIwuExnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767790998; c=relaxed/simple;
-	bh=vRLpx5vVdiPz7YURGJxoXQZNlqXXjnlqOCqTkFR1ME0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SVH4RO96dHSSEqDyxz979U/99V8e0VWS2H6Spa+KD+KDM5qlE+gcHwbGojaKu4KuFpGtET7i8zs6hj6EFJ3jYyX/i9+4lhtsAbSpUKmvnTaLCrsC6Ibn1Uxo6IkT3kU36vN8gyzHY/QLxfAW4OYiYyj7sj5u11XZMRf0dQqgHc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JINiTXys; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01005C2BC87;
-	Wed,  7 Jan 2026 13:03:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767790997;
-	bh=vRLpx5vVdiPz7YURGJxoXQZNlqXXjnlqOCqTkFR1ME0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=JINiTXystfo9788xKdUCxKisXTCjsAbTHnci9TCtUaEkMrE7hrm59Dv4IJlsA2slb
-	 q76lRVZN/9M1xp8EK8qJAonukm6VSBlH5Qx1WZjDQNgqMctK/KNgNKjS+Tmep0IOxG
-	 Pd607nAz3ytkvRRhGeYVYuIhpdgz9pasByHCDFK5IxNzo4Vm07kGg4XJud2fFqZgX+
-	 OROtwJERAluip3+Dpvvx/tZEbbOrGHNHAdnDxWehDZ/qTDgYDYqffT5GWjbgfNWhb3
-	 WHVTYkCFGdnxp6c/z58oK5gab9YHO4c98ldypZkptZt4ip6kF96wkG6qSpbMbq/oCa
-	 pxRcbJ66Xlbag==
-Message-ID: <748ad0ea534ea14e4401a0a94d29e64f27629095.camel@kernel.org>
-Subject: Re: [PATCH fstests v3 3/3] generic: add tests for file delegations
-From: Jeff Layton <jlayton@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, Zorro Lang
-	 <zlang@redhat.com>, Christian Brauner <brauner@kernel.org>
-Date: Wed, 07 Jan 2026 08:03:15 -0500
-In-Reply-To: <aV316LhsVSl0n9-E@infradead.org>
-References: <20251203-dir-deleg-v3-0-be55fbf2ad53@kernel.org>
-	 <20251203-dir-deleg-v3-3-be55fbf2ad53@kernel.org>
-	 <aVyriyPD8x8oJUo-@infradead.org>
-	 <696b5d94d413aa89b88c68138eabecca9ce9e873.camel@kernel.org>
-	 <aV316LhsVSl0n9-E@infradead.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
+	s=arc-20240116; t=1767791157; c=relaxed/simple;
+	bh=qzNG7uqiHdzI8ewoggig0HskK8lGgAMbdXIS/XZZpZs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jvuyXcvOmTEBwjaaLCo3zsERBfvvWBfGh7Gwo8z0ZLzduz54PSnGZ2B6bk2e9lDEYcYkGldbgkNrIPVL+fUaKD3/tCgzNpItUNc2bfVHOrP8u8IiFczo+ccFfU6qJzXQ77h4luQzdNt48ToPJ9v5tmxHOjToZVxqPmQBpBnUPmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E21x906k; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-5ecb1d9ac1dso495355137.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jan 2026 05:05:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767791154; x=1768395954; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qzNG7uqiHdzI8ewoggig0HskK8lGgAMbdXIS/XZZpZs=;
+        b=E21x906kuGsNhZ1wa36jAIlR7OUU/a9MFGAvKJbXbC/Axd5IVZKcYh7noOIcP3T4jv
+         cYhAI5SjzwtqmxgwAphwUQL+BK5rMQ90hBa0+SzE6EF0tMhl1TVb6XaRccgCCCl1S/jX
+         uSYgAcbgeNAu5BysKvHyXY+5wRLUBSx5dTMNvitzmL7w5Mk18QTAMa65f7A5sioZq0H3
+         HDZvm2MDpTvgsg6EZLrzrcbBTNO1jtbhDMoJCE9XXpmgSwFK3LdHYk1QJXHPStNCnuqv
+         Mu8PDMoixIwANSbLiULnhOf8VbDZ39gBuIh5r2rgiujAG0Mi9WmYKwZOBHYIKqI81bAq
+         WIFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767791154; x=1768395954;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qzNG7uqiHdzI8ewoggig0HskK8lGgAMbdXIS/XZZpZs=;
+        b=BOwSXtlmvKZP0FSaIv13dOOJT3zLbjd8dnpDT8VTsUa7g+66aJ7YCZee6vEyRb0NOX
+         O6t3ZgzL3CDXzljXI15Rnic4Xl2a3tXgRO+2zEjrWyrYbrO0O0HIau5V27yHZbCkXiPR
+         0cxesxqGWzGR92BY41vfo4LX+az0mufrptcXn8hW9eI8aoymB7GodIkl3VlbMIKF9KCw
+         z72r59hUVFPR0xamTJuq1h0djUtsaO13LO4WiY0fJDyrqPfTbW2sS204V0+eFvSl3QBw
+         YYJvs7YLLFWXK+bVFBBYwtuZ+A5sHDK84FFEXbo/T7MuHAfoesq8EJGAZIBEguRwXdvG
+         qw7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUqTEaS9oRBZnUZISDA5Boib4WSpCO83y08xTa8sJCj5BDU4lyKFZkQjbJCgeV4OSV9zc6GD5NWhkzIPBSS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAmCiNgFnP1Q9agL2zHVwYZ3Jg35m1dnt6B/VIUE5MtfCutj3J
+	Z/vP/oGEYkAcWowR1liDQLt4st+uEm3xeN7UJXT/b7qHJMfpHfeBqSij7eBlO/Ivn/gsrtsZezA
+	krwpp3lAu34FMArqAar+fCKC/KzRL7G4KSYxd3Tg=
+X-Gm-Gg: AY/fxX7IUsheT/octWLj8OOx7CtUApTrr7tRVMFiN7HwcEjIGTpFpmURs699wog7b84
+	qIBzJFRuWQ/95jWpJg7AvFESLS9b22mY1+3tg/CNLR6qsk9eppCmHzpA2QQT+p2XjIF/M2cr9j/
+	5tcxbshzCSrX2R8jpnK3arOw7aDCvnakShJMBqAjaWG1EsfmWqUwxo5njapHdhfcoHzUeWol+uT
+	F7yfOc0dPrvWcAZPcDrslwu467GyeswPf+To3j2JgCF1yVthEI1UvE6sCbnOkAbiTdkmDdVAjOw
+	/kmizIBfYEibO2gR5y19ywhXRy1X
+X-Google-Smtp-Source: AGHT+IFnNlNo6WDhAIrQsE84p6Xjc9YulduAvY+W3lIyNrnjsdyAHz3l5KS7q1vQazIQ+gufafyHW/niyaYPbQ4u/j8=
+X-Received: by 2002:a05:6102:3710:b0:5db:f5d1:5799 with SMTP id
+ ada2fe7eead31-5ecb69056c8mr956926137.33.1767791153625; Wed, 07 Jan 2026
+ 05:05:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251224115312.27036-1-vitalifster@gmail.com> <cc83c3fa-1bee-48b0-bfda-3a807c0b46bd@oracle.com>
+ <CAPqjcqqEAb9cUTU3QrmgZ7J-wc_b7Ai_8fi17q5OQAyRZ8RfwQ@mail.gmail.com>
+ <492a0427-2b84-47aa-b70c-a4355a7566f2@oracle.com> <CAPqjcqpPQMhTOd3hHTsZxKuLwZB-QJdHqOyac2vyZ+AeDYWC6g@mail.gmail.com>
+ <6cd50989-2cae-4535-9581-63b6a297d183@oracle.com> <CAPqjcqo=A45mK01h+o3avOUaSSSX6g_y3FfvCFLRoO7YEwUddw@mail.gmail.com>
+ <58a89dc4-1bc9-4b38-a8cc-d0097ee74b29@oracle.com> <CAPqjcqq+DFc4TwAPDZodZ61b5pRrt4i+moy3K1dkzGhH9r-2Rw@mail.gmail.com>
+ <704e5d2a-1b37-43c5-8ad6-bda47a4e7fc6@oracle.com>
+In-Reply-To: <704e5d2a-1b37-43c5-8ad6-bda47a4e7fc6@oracle.com>
+From: Vitaliy Filippov <vitalifster@gmail.com>
+Date: Wed, 7 Jan 2026 16:05:42 +0300
+X-Gm-Features: AQt7F2oYpr1KySfJY9yrBJPS500_11WcpTTT3dSzcpl_rsbFoDQJth87qlW7Iwo
+Message-ID: <CAPqjcqqhFWz0eNGJRW-_PoJhdM7f-yxr=pWN2_AfGSP=-VpyMg@mail.gmail.com>
+Subject: Re: [PATCH] fs: remove power of 2 and length boundary atomic write restrictions
+To: John Garry <john.g.garry@oracle.com>
+Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2026-01-06 at 21:58 -0800, Christoph Hellwig wrote:
-> On Tue, Jan 06, 2026 at 06:09:24AM -0500, Jeff Layton wrote:
-> > On Mon, 2026-01-05 at 22:28 -0800, Christoph Hellwig wrote:
-> > > On Wed, Dec 03, 2025 at 10:43:09AM -0500, Jeff Layton wrote:
-> > > > Mostly the same ones as leases, but some additional tests to valida=
-te
-> > > > that they are broken on metadata changes.
-> > >=20
-> > > Under what conditions is this test supposed to actually work?  It see=
-ms
-> > > to consistently fail for me even with latest mainline, which is a bit
-> > > annoying.
-> >=20
-> > There is a patch that is not yet merged:
->=20
-> Thanks.  Also what is the story with generic/786 on NFS?
->=20
-> It seems to constantly fail for me:
->=20
-> generic/786  5s ... [   17.862569] run fstests generic/786 at 2026-01-07 =
-05:29:40
-> [failed, exit status 1]- output mismatch (see /root/xfstests-dev/results/=
-/generic/786.out.bad)
->     --- tests/generic/786.out	2025-12-18 06:25:33.420000000 +0000
->     +++ /root/xfstests-dev/results//generic/786.out.bad	2026-01-07 05:29:=
-47.576897353 +0000
->     @@ -1,2 +1,3 @@
->      QA output created by 786
->     -success!
->     +Server reported failure (1)
->     +(see /root/xfstests-dev/results//generic/786.full for details)
->     ...
->     (Run 'diff -u /root/xfstests-dev/tests/generic/786.out /root/xfstests=
--dev/results//generic/786.out.bad'  to see the entire diff)
+> What is the actual usecase you are trying to solve? You mentioned "avoid
+> journaling", which does not explain what you want to achieve.
+>
+> You could arrange your data so that it suits the rules.
 
-Mea culpa.
+I can't. My usecase is a distributed ceph-like SDS based on atomic
+writes. Writes on a virtual block device have arbitrary length &
+offset of course, nothing like 2^N, like on a regular block device.
+Atomicity is implemented through journaling (double-write) on disks
+without hardware atomic write support.
 
-I missed the fact that directories have a different set of
-file_operations on NFS here, and those don't have the ->setlease method
-set. It's a simple fix, but it looks like I'll need to do this in some
-other filesystems too. I'll send a follow-on series soon.
+Then I found the new atomic write feature and SSDs with support for it
+and implemented a new storage layer which can take advantage of it. My
+new storage layer has write amplification about ~1.0 with atomic
+writes (i.e. almost zero overhead). It's a huge improvement for me -
+the old storage layer has WA from 3 to 4.
 
-Thanks,
---=20
-Jeff Layton <jlayton@kernel.org>
+And everything was fine until I finally deployed it with enabled
+RWF_ATOMIC (production setups should use safety features) and stumbled
+upon the 2^N restriction... It was a big surprise, I never thought
+that such a limitation could exist. It's absolutely irrational - the
+device doesn't have that limitation and I'm just using the raw device.
+
+It's normal and expected in the context of simple file systems like
+ext4 and xfs. But for the raw device... I only discovered it after
+several days of investigation with bpftrace and after reading the
+kernel code. It's really unexpected. I think anyone expects the raw
+NVMe disk to have the same requirements as it's described in the NVMe
+spec.
+
+> The atomic write API is based on:
+> a. doing statx to find atomic write min and max limits.
+> b. issuing a write with RWF_ATOMIC means that the write should be
+> naturally aligned and fit within the size limits.
+>
+> That is the same for both raw block devices and regular FS files. And
+> any atomic write boundary is not part of the API.
+
+For raw block devices, you also have sysfs. You can look there and
+determine actual restrictions. In fact I didn't even know about the
+statx API when I was implementing atomic writes, and I don't use it.
+
+And speaking of that API, why does it have to be like this? Currently
+it looks like an API designed around existing internal restrictions of
+the implementation - of two implementations more exactly: ext4 and
+xfs, both of which are classic non-cow file systems. I suspect that if
+it was primarily designed after zfs & btrfs then chances are the
+restriction wouldn't exist.
+
+Ok, it's already designed like this, but anyway, if the user is fine
+with statx and with the 2^N restriction, then removing the restriction
+for block devices also doesn't break anything for him. He'll send his
+2^N aligned writes just like before. It's fine for databases like
+mysql & postgresql because they always overwrite a whole fixed-size
+page. But even speaking of databases, it's not guaranteed that **all**
+databases will always have the same layout and that arbitrary atomic
+write offsets will never be useful for them.
+
+So again, can we please remove the restriction for raw block devices?
+I can re-submit the patch :-)
 
