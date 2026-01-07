@@ -1,151 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-72618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727FDCFE27F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 15:07:15 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CE8CFE374
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 15:15:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 8DBB43003FEC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 14:07:07 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 4BF6C30704FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 14:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B979A32E130;
-	Wed,  7 Jan 2026 14:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42DA32A3F5;
+	Wed,  7 Jan 2026 14:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dustymabe.com header.i=@dustymabe.com header.b="z/GaYuPU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pVx+QKPX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F292632AAB1
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 14:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55603316184;
+	Wed,  7 Jan 2026 14:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767794819; cv=none; b=K+uosporfdv+wooLMrozMBXceAmxu8a42arK8zUTpKWh0tLsh9QAGQtDXdFI52KmvI3CeJQKx0uHQXCsCl3twNHR4yv3ZJ5n4i75bicfCU41atyw0v1pnFHfHAlsabrfgg5z8xayqY5ZVmMMfZ1+GGAdOVAfPuoyalIXMvMCqeo=
+	t=1767795075; cv=none; b=Er1+qVpQ8Ohy++H3EDeiCb2Ry8TYMAKTVGlxWeVWUR5AaJ5IX4GeokIKB/SyjQYuipQfXiDUBQ/rZ6fQK4UIUVzoQyVEDkCK75lMGeqxv8i6/yqHnr2R4T4QpmQuvkkSr0+GFEaRw6okKzUVjhor3O61YDdwdQbY3ccsf7QtNp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767794819; c=relaxed/simple;
-	bh=Q03oAK7dYPK8RIOcWB5kLJfIjm+pK92q86ShqiLQj4c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nf4maG6rUNX6T9q6sqbWF7bUIJWl3SHyQfmf8D14Q4+HGMtqcScTz1AqRVqxkhvXC16FbCxN/3UKO63bGoIOTXdwOCxvXCKth7SzQAFnbqhIcWj5YcUx82kCUlgNdSvjj/KzEe8s2wdCoOLgHeenrLWRC3VmSaCctXySv5wHRFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-3f9e592af58so1246936fac.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jan 2026 06:06:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767794814; x=1768399614;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kq0N2ZYr66guWKudTrbZSgeGohHNa2AeqLyUsW/1UrU=;
-        b=O58GCrnV0vMwitbEpuAEgSddg53ehUiXYBC6x3XRrKKXEVjPW7rktx969KBpznp7Ul
-         ja7q/ZMEILRDe1eozgA8GJ+kC4Y/2ocooGp1QabFnnREsAwB5WRk7wLgnZlOd+CxPUAv
-         r7qSQeHPUiU2sThpUGHGqKTOld+bCbZCLzuh6XtxLQGUXMuZjrK6B8J7EvBJt+qLrOBX
-         gMeKOnc6romFhP2zEZOlLH+O50x7fan/+dCoj74QIFkAtvd1EF8rH4WknlWp7SP6x1A/
-         hnAeOlwy58VRYP1kgxfGd1nRqEUwBtwt1av3tN/D14uhxEa5wo3k+R6xS2k9nIANstRI
-         INdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhIKJtShPnHX5iBWlc4FetrB2NwcvVaMqdvdaZ2J4khlxl2Ldi/hUGeGWI7fuiGx8EgfQm3FgPo8rH36Gk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBsOnQYrJSyxNVvKjKhgw63Prt0Zn3cGMrug3O4Hl0n4m36C36
-	/84W7ozS4kGtxOwsryHRhsDOSon+NoUFEVYGe0hdLHhXIm56nyI73mwLZuFTvQ==
-X-Gm-Gg: AY/fxX7ur/6n+slUBaTQOH38QOiJ1s2M0yj/hRCGANTGpPFOMs7ud4K9r+RGQgVOcTs
-	hYHBJBfmoDnn19i82lWbNQwjhg++LFQdvKdbr2a1bc1z3MsBOTG/aw61i9j+xDZYhaYVQAvHAdk
-	fJLIhxpe7jkVRrsGh0RekSsQw4eX/grxl5ZIPUWh7Wj6fQXmKIWbfWVOEm89p2pOiQT/WqG31K1
-	iUc3QytdVRsU8hizK9/3WFA+TQ1Y8seVoN1up+q+iyVWhCqzNk44YiAuz5MQkkt4kwGxiOZ2kTn
-	ZDznunT6VqbJQu+wughZLfVLLUwXZxwKmjCLzt5CSgocEcr27zmpUopCBIAc4zhYn51MEhQ6CdJ
-	ML5MMfmpVNiPYUkVFjIPhFBCrq9BFY/gYfm3ByRr3jBVE4GwG8tyPuNEY5geWCh9KRRcAEMPmXc
-	3WD5p6gxCpb94B
-X-Google-Smtp-Source: AGHT+IHWGit+F298nFpjyBlCkq0pRLQwpp0ohTaIDars4OMRdvHaA+CCb22mjSzxxuDVBjhmE2h0kA==
-X-Received: by 2002:a05:6871:114:b0:3f5:aec3:88dd with SMTP id 586e51a60fabf-3ffc0b72aaemr1337331fac.44.1767794813851;
-        Wed, 07 Jan 2026 06:06:53 -0800 (PST)
-Received: from localhost ([2a03:2880:10ff:5::])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa516150fsm3199934fac.20.2026.01.07.06.06.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jan 2026 06:06:53 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 07 Jan 2026 06:06:36 -0800
-Subject: [PATCH] device_cgroup: remove branch hint after code refactor
+	s=arc-20240116; t=1767795075; c=relaxed/simple;
+	bh=5SuDaHkl4fPKLQ2uVUfydjXdZ7EONM2FvGMa+EGKVzg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y3/ApMWr0tAXYaO1qf3D6/aNZJaaBUddWfN5+WotHMA/rmuFnceXgI/S0pEq9NCaseFr1B0bIjzb74u/TNJYASKDELWInQhSPJTvjTFlzAm2R2h08R7qdEzOTYJQMES4I+hEviexVF74VrSUDG+36TWVJ9+3I86z/1jAZyNHKnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dustymabe.com; spf=pass smtp.mailfrom=dustymabe.com; dkim=pass (2048-bit key) header.d=dustymabe.com header.i=@dustymabe.com header.b=z/GaYuPU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pVx+QKPX; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dustymabe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dustymabe.com
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 600D7EC008C;
+	Wed,  7 Jan 2026 09:11:12 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Wed, 07 Jan 2026 09:11:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dustymabe.com;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm3;
+	 t=1767795072; x=1767881472; bh=dOKD9JMTnRtbOxhVDcnF3A5ak+ih4nA3
+	hWhXQ0/WKc4=; b=z/GaYuPU3WkHTw6BIu8x4ibkRiKb+Bs8z7PuJcMVCM1uqJ2G
+	kLbqEceqAlV0FVbnLH1ZG9WO3Y6rOROZI5lk2pXPyZuG+99T0ZrUFOAGk/Mrmd+p
+	0hE6buJUtaTtxM9AgR1ur40ZB/zndqBkCcXcy38ynQh/GJCAmLxRSflWQOp1PGhs
+	6P91rQwKp0+Q89cXrRlfhOzAoQ7NLywpUeAiWI/0ym2JqapyfexGjeG9plGqBQgz
+	+qLFAbUU8BHtoxs+HUsGzeeP/4duSeB2ExtMIBAI7eC6WM733o5FuzNvOvwTpqv9
+	SbArT31ibYXzCG5mUeptju1QXZLQBNGBQO5Mwg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1767795072; x=
+	1767881472; bh=dOKD9JMTnRtbOxhVDcnF3A5ak+ih4nA3hWhXQ0/WKc4=; b=p
+	Vx+QKPXnKQeYDYlFo3HgeFCT1BTr05iIAPBHxr1xJgq1MyAv7u7naSC2HLEpNhfj
+	FZ7Lf0i5iYcp+T6sHM1kLyG2hdLTQ/lPk3yex8vlupQ4HN/T3FzB0rxY3EXXNLgR
+	LP7gndJSqXSGGZuCQq4ePr5aNggckzUKImOPCaqdx2n8wfKROD7DkTevxJ6lo3R2
+	l6+Dktr2glc2EzNg0tGk/9kGvdfilF4CMbI5tjzYV0QMl14IvH5Qr9r9aTvRuyZ3
+	rsJQXr8/ZP/GfDAWFQix37eL/xs7uFDVa1FKN2oJFTjsoG/OQHOp8qZjiLOenXrA
+	MMDjLlrmLdQDrQhfSxpCA==
+X-ME-Sender: <xms:f2leaRsG3FVO-zEVMkl0Owquz7WO907OZGLvKVE8cg2xbxuhfsAQ_w>
+    <xme:f2leaQ1aeZldWdlQF92Tmyx1S5vjXFljhQH4etm-uibK7npZ1hu5QIOZNluvl3ICa
+    g4DzPLOt-BfYwKTu0wrx2XSHcegEnoZrDKgXFNwxcFrNlLk38pgew>
+X-ME-Received: <xmr:f2leaRAnfyZJqeyqKQV6nQWLI5pSqeeHuye847KKDUvCrHFqd6dEXQVcmbjP4g7P7nSw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddutdefvdekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeffuhhsthih
+    ucforggsvgcuoeguuhhsthihseguuhhsthihmhgrsggvrdgtohhmqeenucggtffrrghtth
+    gvrhhnpeetjedvueevfeehhfeuteeufedukeeugeethfetueekfeehfedvieevtdeffeei
+    vdenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpeguuhhsthihsegu
+    uhhsthihmhgrsggvrdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohephhhsihgrnhhgkhgroheslhhinhhugidrrghlihgsrggsrgdr
+    tghomhdprhgtphhtthhopehlihhnuhigqdgvrhhofhhssehlihhsthhsrdhoiihlrggssh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtohepthhimhesshhiohhsmhdrfhhrpdhrtghpthhtohep
+    rghnseguihhgihhtrghlthhiuggvrdhiohdprhgtphhtthhopegrmhhirhejfehilhesgh
+    hmrghilhdrtghomhdprhgtphhtthhopegrlhgvgihlsehrvgguhhgrthdrtghomhdprhgt
+    phhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:f2leaWChaemY0tI97gN2-LLQzg4NKU3LbpHqqjTQOEShedrroJYhzg>
+    <xmx:f2leaakAYOb2RaUnDhYspT7rVTzSbXKmfuo2_QnqV6Zx2-PxnEZw0w>
+    <xmx:f2leaehp7o57w-PD3ZZDEy0wlF0O6ZJKWbfCW6lZEuxRJ4Jdw1zanA>
+    <xmx:f2leachqd1pQOnYWzlVpLdPlztvUJEJ1oxb0X2yBhEXFzv3YZmHuEQ>
+    <xmx:gGleaUXaqskCkLBRAtRikoNbx18my_IQhGQiiBF-vCBHVADA3IvS38_E>
+Feedback-ID: i13394474:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 7 Jan 2026 09:11:10 -0500 (EST)
+Message-ID: <6b5047ca-b6f5-4959-80d0-227f735f61dc@dustymabe.com>
+Date: Wed, 7 Jan 2026 09:11:10 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260107-likely_device-v1-1-0c55f83a7e47@debian.org>
-X-B4-Tracking: v=1; b=H4sIAGtoXmkC/yXMywrCMBAF0F8Z7rqB6YAP8isiUpOrjpYqSS1K6
- b+LujybM6OyOCuizCicvPp9QJS2EaRLN5wZPCMKTG2trW5C7zf270Pm5InBNHfcWl6pZTSCR+H
- JX79vt/+7Po9XpvGbYFk+DJ5fsHEAAAA=
-X-Change-ID: 20260107-likely_device-20dae82d502d
-To: Mateusz Guzik <mjguzik@gmail.com>, 
- Christian Brauner <brauner@kernel.org>
-Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, 
- rostedt@goodmis.org, linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2052; i=leitao@debian.org;
- h=from:subject:message-id; bh=Q03oAK7dYPK8RIOcWB5kLJfIjm+pK92q86ShqiLQj4c=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBpXmh82Ir1CWimsBijOp4n6TRb8hZZRduh3mYui
- 2Z6wlkI/2KJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaV5ofAAKCRA1o5Of/Hh3
- bYCVD/94MQ/N702Z6ptR0kfQCM2Med8nwkztcIl3lX4VVDLsn+f5A+kJgIL/deEDtIeHpT8lPsF
- yztsQC0igyy966fS+V6rfqEMEaOPmpm1QmbdZ0m7rjeeHT2FON81v3LX2WrCKeYk7B+R89/p8t0
- EAhFSRjsgZvvnks37YuFI0K1oC0rutHcQSTPHiIJU7xxOGQCi0Dwg4ZDPN2Ly3YVN6rTVd/qgwz
- 6CaOU/Riyh3Bms/KY/1rPPbDIctF3Rpu1zcnDWMxPbiUtMBRaYm7OPgUoDkUOAGuUSf+X0qyH3C
- XSd2B9ORXQfjF6EhR+tTFGqyrAYzmzqTLW/++hxd0oFUZtb0O68GB1v6UR01kIB8Ui2wBW/tYwO
- yOCu0TlIeQEKcyOb34C1nz9JuFfEtoTXCPLHFjSRL3OByu3Eh+xbsQrcf+WFXG5jox0yRpJpo+B
- O7Tt9DHS3NrlWTIk+pb6UfkipCbNc+JUI0rPEfZtVu9yT1llDHFAsRLRm1XGSPqP9mvD20ORN2s
- 3JWQPNQZSkCVG4u16/1fgCrEFz3wOgZ3cBc3Cpb6eeXWwKr2JM/OcFQIPqBnQ37Ky+auu2hdiY/
- Ptsk2aaXP4MVSMMNU8C10BKe5N5/DAn0szweI3FgkPOZDvUK5IhjwmaW4Wvn6P6ENfcMjmEDxBm
- JgU/9+bhMpT/Xdg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] erofs: don't bother with s_stack_depth increasing for
+ now
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>, =?UTF-8?Q?Timoth=C3=A9e_Ravi?=
+ =?UTF-8?Q?er?= <tim@siosm.fr>, =?UTF-8?B?QWxla3PDqWkgTmFpZMOpbm92?=
+ <an@digitaltide.io>, Amir Goldstein <amir73il@gmail.com>,
+ Alexander Larsson <alexl@redhat.com>, Christian Brauner
+ <brauner@kernel.org>, Miklos Szeredi <mszeredi@redhat.com>,
+ Sheng Yong <shengyong1@xiaomi.com>, Zhiguo Niu <niuzhiguo84@gmail.com>
+References: <0c34f3fa-c573-4343-b8ea-6832530f0069@linux.alibaba.com>
+ <20260106170504.674070-1-hsiangkao@linux.alibaba.com>
+Content-Language: en-US
+From: Dusty Mabe <dusty@dustymabe.com>
+In-Reply-To: <20260106170504.674070-1-hsiangkao@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-commit 4ef4ac360101 ("device_cgroup: avoid access to ->i_rdev in the
-common case in devcgroup_inode_permission()") reordered the checks in
-devcgroup_inode_permission() to check the inode mode before checking
-i_rdev, for better cache behavior.
 
-However, the likely() annotation on the i_rdev check was not updated
-to reflect the new code flow. Originally, when i_rdev was checked
-first, likely(!inode->i_rdev) made sense because most inodes were(?)
-regular files/directories, thus i_rdev == 0.
 
-After the reorder, by the time we reach the i_rdev check, we have
-already confirmed the inode IS a block or character device. Block and
-character special files are precisely defined by having a device number
-(i_rdev), so !inode->i_rdev is now the rare edge case, not the common
-case.
+On 1/6/26 12:05 PM, Gao Xiang wrote:
+> Previously, commit d53cd891f0e4 ("erofs: limit the level of fs stacking
+> for file-backed mounts") bumped `s_stack_depth` by one to avoid kernel
+> stack overflow when stacking an unlimited number of EROFS on top of
+> each other.
+> 
+> This fix breaks composefs mounts, which need EROFS+ovl^2 sometimes
+> (and such setups are already used in production for quite a long time).
+> 
+> One way to fix this regression is to bump FILESYSTEM_MAX_STACK_DEPTH
+> from 2 to 3, but proving that this is safe in general is a high bar.
+> 
+> After a long discussion on GitHub issues [1] about possible solutions,
+> one conclusion is that there is no need to support nesting file-backed
+> EROFS mounts on stacked filesystems, because there is always the option
+> to use loopback devices as a fallback.
+> 
+> As a quick fix for the composefs regression for this cycle, instead of
+> bumping `s_stack_depth` for file backed EROFS mounts, we disallow
+> nesting file-backed EROFS over EROFS and over filesystems with
+> `s_stack_depth` > 0.
+> 
+> This works for all known file-backed mount use cases (composefs,
+> containerd, and Android APEX for some Android vendors), and the fix is
+> self-contained.
+> 
+> Essentially, we are allowing one extra unaccounted fs stacking level of
+> EROFS below stacking filesystems, but EROFS can only be used in the read
+> path (i.e. overlayfs lower layers), which typically has much lower stack
+> usage than the write path.
+> 
+> We can consider increasing FILESYSTEM_MAX_STACK_DEPTH later, after more
+> stack usage analysis or using alternative approaches, such as splitting
+> the `s_stack_depth` limitation according to different combinations of
+> stacking.
+> 
+> Fixes: d53cd891f0e4 ("erofs: limit the level of fs stacking for file-backed mounts")
+> Reported-by: Dusty Mabe <dusty@dustymabe.com>
+> Reported-by: Timothée Ravier <tim@siosm.fr>
+> Closes: https://github.com/coreos/fedora-coreos-tracker/issues/2087 [1]
+> Reported-by: "Alekséi Naidénov" <an@digitaltide.io>
+> Closes: https://lore.kernel.org/r/CAFHtUiYv4+=+JP_-JjARWjo6OwcvBj1wtYN=z0QXwCpec9sXtg@mail.gmail.com
+> Acked-by: Amir Goldstein <amir73il@gmail.com>
+> Cc: Alexander Larsson <alexl@redhat.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Miklos Szeredi <mszeredi@redhat.com>
+> Cc: Sheng Yong <shengyong1@xiaomi.com>
+> Cc: Zhiguo Niu <niuzhiguo84@gmail.com>
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-Branch profiling confirmed this is 100% mispredicted:
 
-  correct incorrect  %    Function                      File              Line
-  ------- ---------  -    --------                      ----              ----
-        0   2631904 100   devcgroup_inode_permission    device_cgroup.h   24
 
-Remove likely() to avoid giving the wrong hint to the CPU.
+Tested-by: Dusty Mabe <dusty@dustymabe.com>
 
-Fixes: 4ef4ac360101 ("device_cgroup: avoid access to ->i_rdev in the common case in devcgroup_inode_permission()")
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- include/linux/device_cgroup.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/device_cgroup.h b/include/linux/device_cgroup.h
-index 0864773a57e8..822085bc2d20 100644
---- a/include/linux/device_cgroup.h
-+++ b/include/linux/device_cgroup.h
-@@ -21,7 +21,7 @@ static inline int devcgroup_inode_permission(struct inode *inode, int mask)
- 	if (likely(!S_ISBLK(inode->i_mode) && !S_ISCHR(inode->i_mode)))
- 		return 0;
- 
--	if (likely(!inode->i_rdev))
-+	if (!inode->i_rdev)
- 		return 0;
- 
- 	if (S_ISBLK(inode->i_mode))
-
----
-base-commit: f0b9d8eb98dfee8d00419aa07543bdc2c1a44fb1
-change-id: 20260107-likely_device-20dae82d502d
-
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
-
+I tested this fixed the problem we observed in our Fedora CoreOS CI documented over in
+https://github.com/coreos/fedora-coreos-tracker/issues/2087
 
