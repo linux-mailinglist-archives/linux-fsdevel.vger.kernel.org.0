@@ -1,86 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-72669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33365CFEF97
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 17:59:29 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58337CFEFCE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 18:04:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EFA76331EA36
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 16:48:23 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A201735D9ADC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 16:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4240E333426;
-	Wed,  7 Jan 2026 16:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E003A9DAC;
+	Wed,  7 Jan 2026 16:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fwpu6oXJ"
+	dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b="H/7IjG5m";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cyqQoviZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAE539E6CD;
-	Wed,  7 Jan 2026 16:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618C53A702F
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 16:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767803437; cv=none; b=ehIMzLcqPtX9QC8GJbbR6miISV9JXA+apO1vy7yRh6/jCxb5oihTcKauo+a9Sxjb0KJsxQxPsrDOy0J1sHDThlTR/RUJ7vcgQX0D+2dnYZ+c0eNRSvQNZ1/h+L2RR5LkrzXNCBdadlDJh3jpnzMfXKyPgx7NFRlNWAk0b2GH7yA=
+	t=1767803645; cv=none; b=lcJfLDkrsB+Qg+r04McqK2XPDQuUPpv+qGyDTXRdmQTz3VDN3m+YRC4rEm1sHep/Mi7VBYRyOpplZmtAS7XeAeG67BI1TPdEaE0Tv0U+bgxCKkhvjg0i9HWA9nVneKzlGo3vH2tLLhim5BbNZsWlDhb/R1ya+5KXo22qjbt0ofM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767803437; c=relaxed/simple;
-	bh=PzyWecouhwLII/NV3juqn3aJyT4OgFJo85oxsOKSt6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GkMXzNbpkXQWNB+A6QIK32eTBE65+GCsOGgBMX73MqRU7MWTJ00nFhblTdgTFe92+m1dtShtYgJF23VGuXV2Q93n9ULVQ2JZ8TFgWTS9ccej4LTV8vCVLREoS9J5eIonY5Kft5bwiK8HPdsHLHrRkvAsmJAEo9so6vNVL4OVJTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fwpu6oXJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AAADC4CEF1;
-	Wed,  7 Jan 2026 16:30:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767803436;
-	bh=PzyWecouhwLII/NV3juqn3aJyT4OgFJo85oxsOKSt6Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fwpu6oXJs2UqqxxduAjq3DZZesh4CaHMovGIXVuKKkHPRKJg0TlbFjNz3kmQ6L0RM
-	 Ff0L6m6Vrprn2oyfoFHYI8EQre0GIKo1B06TbOb4I8HdqSwg5ja/ppjAeB6siVz9rG
-	 HF0HlsMgqe84a/4HtVzFvbPSyE1QQ1U81PhBUekLxSeuzyLzCJBieNaXHlRjUA6XKg
-	 NMrxUoo4dHejBEmB0VLoiTwwf0VwzwtqGQiOJ3mHY3ALb7UzxPLCs1ZtsbfPjeqIgX
-	 cMTPyPlVbQvJMUhYs9c8VkdAwpP95edSbwoVduJFBSE1LpZZH6qpTWgBVoUPe6A0sn
-	 fgiod5yK2xBDQ==
-Date: Wed, 7 Jan 2026 08:30:35 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: cem@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 11/11] xfs: add media error reporting ioctl
-Message-ID: <20260107163035.GA15551@frogsfrogsfrogs>
-References: <176766637179.774337.3663793412524347917.stgit@frogsfrogsfrogs>
- <176766637485.774337.16716764027357885673.stgit@frogsfrogsfrogs>
- <20260107093611.GC24264@lst.de>
+	s=arc-20240116; t=1767803645; c=relaxed/simple;
+	bh=yyFyFKRsdGXMeAQLPqVOrc239vPCkbIxDXQkQJTT7KE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ejVEE/89nZW6+uG+cvBYZZzIcL+HMhqYfYG4J89kYY67SzmCOpYDnPJm6M/sYJ5poYiQ0rU/6Mqng0UtCdIP05iWG+/aySEA8rV/CUwj+r9e3PagrCpMEI0yoc9Fs+3cXOtI336qH7omDpLWQW8zqrn3lZiZ37+8OmNTlTVESEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org; spf=pass smtp.mailfrom=verbum.org; dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b=H/7IjG5m; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cyqQoviZ; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verbum.org
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 4857E1400085;
+	Wed,  7 Jan 2026 11:33:52 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-04.internal (MEProxy); Wed, 07 Jan 2026 11:33:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verbum.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1767803632;
+	 x=1767890032; bh=upr3TIcCS0yiH2n4i4k6q66b2Ko4sNkbeMY+sV3rUH4=; b=
+	H/7IjG5mOjP89nDrNOaVdUqQoT4v/H4vQ+s/kZ7s4gPfc8ChgUd51urNQn+RMwwe
+	TmcCsqbxK7mbIcYHDkQP4Szqc7XjTbsuAHZbI9GEVyV5BrUhutB0Tr/MYpTCiYsg
+	cXJvIaus4niaCLl7gH5/wPiu21VFMgM1Ixc2I/eUY2XMrDmb+1gxySrI1nBPyAgb
+	0Hg9P17LIExvr41IvI27TtEeYvmW6X3Q40TKJQ4D6R+l1SfHg28VNPeh0Zcaqrzh
+	1oHHlqVI9xYaNzqeI2p5vtmbq+yPYUia6dJdSZt+ac0UJktQLzCTnyP/jisEzYIv
+	tCewcogkDMqE9qTQwDAd4w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1767803632; x=
+	1767890032; bh=upr3TIcCS0yiH2n4i4k6q66b2Ko4sNkbeMY+sV3rUH4=; b=c
+	yqQoviZnvCl2P8qfgGwtoJjsH7gM5HUoiYeDUgwtsLWqzP+/Idabmp9P09lYdQJw
+	VCUC0fRrBLY05VmuhiSBThmOayjN/yuq9HeHfdOenPlbPtWKjWWjp8GFl61t3w6+
+	TiITMuvHgARD7DnYWl225A/AypkiIUKDfhulfL2O8pvCuOyh5fNK7vz91WuZFQp3
+	C5qtYXumukF9qDtmU5ekfTBGXgE8zA5Ui9pJTcf9j1dMQDtbRM6m5/tCyHcg5ZFJ
+	urpI4/wxnZdLTSlsp3/za5aB28AP8tDt1JJEQ59nZAPIbaQZsgHX8WbNJgqXoxwI
+	X+jYo9HLFhzEoFFbXszEQ==
+X-ME-Sender: <xms:7opeaR11_2iw74tfvfy6faYpZ2iFLFB4UtewVT_u7gbyPnvU1p1sIg>
+    <xme:7opeaS6_RzBsFCPZ7TBHNXMxCrmGZIEg3Rm5QDjsJZPCT98Huy_tQD2yQBIapYGM2
+    wOJZ8EFkrBIlEaxSuQZKRQRPSnArxViqC3eZ9uw4Z_6WS356_T9FQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddutdefheeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfveholhhi
+    nhcuhggrlhhtvghrshdfuceofigrlhhtvghrshesvhgvrhgsuhhmrdhorhhgqeenucggtf
+    frrghtthgvrhhnpeetfeelhfeiteffvdehgfduveeijefgveeuveelueeuveeiffffhfdv
+    ffevfeeuvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpeifrghlthgvrhhssehvvghrsghumhdrohhrghdpnhgspghrtghpthhtohepuddtpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtg
+    homhdprhgtphhtthhopeiisgihshiivghksehinhdrfigrfidrphhlpdhrtghpthhtohep
+    sghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohephhhsihgrnhhgkhgroheslhhinhhugidrrghl
+    ihgsrggsrgdrtghomhdprhgtphhtthhopehlvghnnhgrrhhtsehpohgvthhtvghrihhngh
+    drnhgvthdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehjohhs
+    vghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvg
+    hvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:7opeaZZdWKrL9FVsiwVaENuqetkevhwzjw9tZgaMNpOpWGKvAIQgBw>
+    <xmx:7opeacRv4TzN5Mqgs3igwFXLt8I8NyVL17IOt0H1cZEHDieT94KWdQ>
+    <xmx:7opeaY_J4UaAHVEuD0pSTdvIKKrP8rELfRMJLRpcnMFlfOGl0_ZVkQ>
+    <xmx:7opeaci2Ppg7rHPbRVOGNnWhcoHFlWbpUHbKdKi3lDbUzHAG0LY7uQ>
+    <xmx:8Ipead5TAw0ebO6pRkD61biuOg5AJKmboZvuY_2Xcp3JyogUxqN0wArh>
+Feedback-ID: ibe7c40e9:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 806DD78006C; Wed,  7 Jan 2026 11:33:50 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260107093611.GC24264@lst.de>
+X-ThreadId: AND3byiW2PhB
+Date: Wed, 07 Jan 2026 11:33:29 -0500
+From: "Colin Walters" <walters@verbum.org>
+To: "Christian Brauner" <brauner@kernel.org>,
+ "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Gao Xiang" <hsiangkao@linux.alibaba.com>, linux-fsdevel@vger.kernel.org,
+ "Jan Kara" <jack@suse.cz>, "Jeff Layton" <jlayton@kernel.org>,
+ "Amir Goldstein" <amir73il@gmail.com>,
+ "Lennart Poettering" <lennart@poettering.net>,
+ =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+ "Josef Bacik" <josef@toxicpanda.com>
+Message-Id: <c118f890-31d8-4330-a146-8a2e7dd47817@app.fastmail.com>
+In-Reply-To: <20260107-gebahnt-hinfort-4f6bde731e0e@brauner>
+References: <20260102-work-immutable-rootfs-v1-0-f2073b2d1602@kernel.org>
+ <20260102-work-immutable-rootfs-v1-3-f2073b2d1602@kernel.org>
+ <f6bef901-b9a6-4882-83d1-9c5c34402351@linux.alibaba.com>
+ <20260107024727.GM1712166@ZenIV>
+ <20260107-gebahnt-hinfort-4f6bde731e0e@brauner>
+Subject: Re: [PATCH 3/3] fs: add immutable rootfs
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jan 07, 2026 at 10:36:11AM +0100, Christoph Hellwig wrote:
-> On Mon, Jan 05, 2026 at 11:13:29PM -0800, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <djwong@kernel.org>
-> > 
-> > Add a new privileged ioctl so that xfs_scrub can report the media errors
-> > that it finds to the kernel for further processing.  Ideally this would
-> > be done by the kernel, but the kernel doesn't (yet) support initiating
-> > verification reads.
-> 
-> FYI, I'd much prefer adding the kernel support than relying in userspace
-> doing it, which will be hard to move away from.
 
-Hrm.  I wonder, does the block layer use iomap for directio?  Now that
-the fserror reporting has been hooked up to iomap, I wonder if it's
-possible for xfs_healer to listen for file IO errors on a block device?
 
-Oh.  block/fops.c doesn't actually call iomap_dio_* so I guess that's
-not yet possible.  Would it be easier to convert blockdevs to use iomap,
-or should I bite the bullet and convert the legacy direct_IO code?
+On Wed, Jan 7, 2026, at 5:52 AM, Christian Brauner wrote:
+> On Wed, Jan 07, 2026 at 02:47:27AM +0000, Al Viro wrote:
+>> On Wed, Jan 07, 2026 at 10:28:23AM +0800, Gao Xiang wrote:
+>> 
+>> > Just one random suggestion.  Regardless of Al's comments,
+>> > if we really would like to expose a new visible type to
+>> > userspace,   how about giving it a meaningful name like
+>> > emptyfs or nullfs (I know it could have other meanings
+>> > in other OSes) from its tree hierarchy to avoid the
+>> > ambiguous "rootfs" naming, especially if it may be
+>> > considered for mounting by users in future potential use
+>> > cases?
+>> 
+>> *boggle*
+>> 
+>> _what_ potential use cases?  "This here directory is empty and
+>> it'll stay empty and anyone trying to create stuff in it will
+>> get an error; oh, and we want it to be a mount boundary, for
+>> some reason"?
+>> 
+>> IDGI...
+>
+> It's not a completely crazy idea. I thought about this as well. You
+> could e.g. use it to overmount and hide other directories - like procfs
+> overmounting or sysfs overmounting or hiding stuff in /etc where
+> currently tmpfs is used. But tmpfs is not ideal because you don't get
+> the reliable immutability guarantees.
 
-Or I guess one of us should go figure out a reasonable verify command
-that would call fserror_* on media errors.
+Yeah, there's e.g. `/usr/share/empty` that is intended for things like that as a canonical bind mount source.
 
---D
+I also like this idea (though bikeshed I'd call it "emptyfs") but if we generalize it beyond just the current case, it probably needs to support configuring things like permissions (some cases may want 0700, others 0755 etc.)
+
 
