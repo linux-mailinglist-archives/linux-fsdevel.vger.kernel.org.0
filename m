@@ -1,355 +1,279 @@
-Return-Path: <linux-fsdevel+bounces-72566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0F1CFB9EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 02:46:26 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EF5CFBB83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 03:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 555233047FF1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 01:46:25 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 1D20F30057D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 02:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5001DE89A;
-	Wed,  7 Jan 2026 01:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F563233D9E;
+	Wed,  7 Jan 2026 02:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P3m3GpJG"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="chkzJJNI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D181615687D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 01:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E36D2A1BB
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 02:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767750383; cv=none; b=rpRJyaA7dyyLxHOUz04vkOFZvMttRtLVr1YWojgG0NRBmjDWY9lPPbG8QwSLzi4WpwI3oaM0QKKnnB2ZghYR9qojhZLbqPQUwyORPwUQwlsBCdqzDxmE8VejMkLWyKNtfKkh+l4USerQTGQXKiI+jfCFsShDE2otMR/MzkdAY+o=
+	t=1767752911; cv=none; b=MeDVmLUuUPWWukaT/y6kJt6Jwz9RVTmNzfVr5w/TsuYu3itNrH/Laj4iMCnWfVxAx1yWj2jt3az//WZAtS+H+uykvEEV/C4FRvBfq6vSW9zBCkxFCowOWjPNqzSByw+BvTmkGCELdRFMJsU/Y/ShQMJwK+pLrH4b7AXsOmXGznk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767750383; c=relaxed/simple;
-	bh=DZ9Z3aYuUsZiBZV+yKZ07FElc1b7ZAx8CYgakRVVK0Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mm0r4CjpBhtGedvsMPIHCwXzWuN73/ts3Nwf1Xy56YTrZ29VMKV5vcF6cyOQABw3/9uDfV+Dk4/JarfpMAvEuMtMu7aKe40XPx4b9S2oa/WA5NnJYmoyhjw+BCE+mo+phw9kvtqAyZ1vviaF9ik38BFMw4X/YoI3702Di77g7tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P3m3GpJG; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4eda6a8cc12so16694881cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jan 2026 17:46:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767750381; x=1768355181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r5MnoG8VI3+vrh/92R3AOIUo0dA/WBNoOz+eG5v+Jy0=;
-        b=P3m3GpJGLH8yV4xsKVwOnYr312nqxgwB2BOcvaCawYbC1clR0no+JeKeyeWbMFa+9A
-         V8drYldlo3b260e9PTMI6LZt6FiDO3mfkgJD/EEIB+0JftGuCElZylXZnrYxOfDGucpc
-         SD0MO4o4GBwPk0nz2u6pSXg0hfVNEvGYRoc9cuN+NW7xqahELWE2qVIavY2JZ6D8yFgF
-         iWIPHiTBy6x4CCoGlDxziIPTu4CIYb2p+IDqm0MEPgUPCHWUlkMG+ZLUy4SB8OxTCbH0
-         KSdyHElq/ywFIiF3Xc93wodR0CL10WFqr6bcSNxTZVgyRpuPgJQrh5O0ZSCYM46fgKz8
-         iJYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767750381; x=1768355181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=r5MnoG8VI3+vrh/92R3AOIUo0dA/WBNoOz+eG5v+Jy0=;
-        b=QGticTh+Sf3Cdp44MDPDoacPMQ85udzPfTlfPpSatPRCIwwKz7QMNW1nfpC19PiOb2
-         S+88hJMxAjfvhtXFeG61c41MDFBsICOtfBMLI3J/wkbDeeIgRiDmb53cmfQ+KhCKQRYO
-         RoPMhNnLBjP8/Ze/BlgRMtf1kScgsNiJHF/ttNL3+ySuK968RcROrZINgoKpQBnTeXXG
-         0nuJJbIm7Y50DpuwgPef189QXzjnXnUWDVGNIiwOUgwKaiX2/HYYDnTOpf6JD8X0i0fR
-         NEVx0Ug1KSSon0zYDHAg2Ff+SJ5Pw1WVAlVLbLBCktpSNvcDDL9Q4iMMIw9vbXaYtN0e
-         qYIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAc/GD8q0xDiq8fFwbpGq9bUNH1HpPY9OAeDX10CayZ0ffWSB3qa+K/+QXVI9Uqa4RlW/vEW5Q9B6LiWwn@vger.kernel.org
-X-Gm-Message-State: AOJu0YynUeJTHgmM1hkTnU7DLNnYHQnYwr/FiMQZB1ueA1QjVm11JENh
-	OjbWc+2dyibaLP7sDrbVIafH69UlnGsVvmwQhTKZIYSgca+M2zccV29sjbjHcjD4LvaYpAOOv8w
-	PzMJbpB7YqBFChmjZvEGIXQPoQMkvVwk5CdHx
-X-Gm-Gg: AY/fxX5ISJaDsbA936QF3AV0DmOBuXOY72ci5vS12Lp+80clEYy2dM6i4nr11HhGItq
-	JIhwpU1b9D+vR5X3eY2rAQ/I2z2Q7cs3agWWqbF0GfnkKdyKtEKgPeegaJgcvlvo/u/LdOELJgH
-	QGjOvhPrzzvVxyZrWDIZLtMyuWbdPVgaLa6g9leH5gC89g7rRu3+RLQofsKPtgsGdbAEq5uEvC+
-	UZm2i/HPH94HuzipaMivc37wDAgVmIRFSp/Da1VI9JwQVYErXgMTaaUrpQuVOyG/+pRA4Sn0hfL
-	h+niBie1qVc=
-X-Google-Smtp-Source: AGHT+IGT0ZnsAleOm4aL5d5Q5yIAnHa19IgwgMoBTGzWQQOl42PVwEo+5PeTQsVVHA5jSvXiFwp5IzY3dRDthYI3eik=
-X-Received: by 2002:a05:622a:8c8:b0:4ed:66bd:95ea with SMTP id
- d75a77b69052e-4ffb4931a71mr14873031cf.29.1767750380571; Tue, 06 Jan 2026
- 17:46:20 -0800 (PST)
+	s=arc-20240116; t=1767752911; c=relaxed/simple;
+	bh=OXoUj5dJzcDd2ZulgRbd5GvsM2piQ3fzAJ5xxoH/vE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q0HsZe+HddGtejykAnFsA5npGd2i4qGT0OosoqivQ308+hG4UBTLSpt/KnD16hJSI/zpFiODceVSCEzVOW8a9ApXpILv1NZLtMxtGSdJ5lzzMrz25L5zd3Um5/sPTt8kd3kSe6x8ICaJCjbMx/O2t+pPMcTuXL010Raa9mo8mJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=chkzJJNI; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1767752904; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=thB13OYJIGjWB9NfdvWnbGMaaOE7DkpWt/H+L8lMAbI=;
+	b=chkzJJNIB+Y7S37uY5zZvPRJbNmIJRW0/UK8yW6V9HBDj7kiWo1ioFdx/HWUBa/KgD5LlRYUmiGlFJuOaTb86No0In8YSwZbH5M9cx+gvA9AzK/Wg4upx8yqn/0mzgkqFJlNk5lzFVNSNrIjnk2w7ATpFDFxC12L+d6725QG5O4=
+Received: from 30.221.132.240(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WwX9QZV_1767752903 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 07 Jan 2026 10:28:24 +0800
+Message-ID: <f6bef901-b9a6-4882-83d1-9c5c34402351@linux.alibaba.com>
+Date: Wed, 7 Jan 2026 10:28:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251223-fuse-compounds-upstream-v2-0-0f7b4451c85e@ddn.com> <20251223-fuse-compounds-upstream-v2-2-0f7b4451c85e@ddn.com>
-In-Reply-To: <20251223-fuse-compounds-upstream-v2-2-0f7b4451c85e@ddn.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 6 Jan 2026 17:46:09 -0800
-X-Gm-Features: AQt7F2re1KoYOLl_DLqE3LlyAcgZ1kNAspFVi04QSMffEXl3A_Ae3THrJew_Y4c
-Message-ID: <CAJnrk1bCenZHzPSrdjxzUMY4ekKhtAJ74Dg1QhUs77A1qEDu3A@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 2/2] fuse: add an implementation of open+getattr
-To: Horst Birthelmer <hbirthelmer@googlemail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] fs: add immutable rootfs
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
+ Lennart Poettering <lennart@poettering.net>,
+ =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+ Josef Bacik <josef@toxicpanda.com>
+References: <20260102-work-immutable-rootfs-v1-0-f2073b2d1602@kernel.org>
+ <20260102-work-immutable-rootfs-v1-3-f2073b2d1602@kernel.org>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20260102-work-immutable-rootfs-v1-3-f2073b2d1602@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 23, 2025 at 2:13=E2=80=AFPM Horst Birthelmer
-<hbirthelmer@googlemail.com> wrote:
->
-> The discussion about compound commands in fuse was
-> started over an argument to add a new operation that
-> will open a file and return its attributes in the same operation.
->
-> Here is a demonstration of that use case with compound commands.
->
-> Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
+
+
+On 2026/1/2 22:36, Christian Brauner wrote:
+> Currently pivot_root() doesnt't work on the real rootfs because it
+> cannot be unmounted. Userspace has to do a recursive removal of the
+> initramfs contents manually before continuing the boot.
+> 
+> Really all we want from the real rootfs is to serve as the parent mount
+> for anything that is actually useful such as the tmpfs or ramfs for
+> initramfs unpacking or the rootfs itself. There's no need for the real
+> rootfs to actually be anything meaningful or useful. Add a immutable
+> rootfs that can be selected via the "immutable_rootfs" kernel command
+> line option.
+> 
+> The kernel will mount a tmpfs/ramfs on top of it, unpack the initramfs
+> and fire up userspace which mounts the rootfs and can then just do:
+> 
+>    chdir(rootfs);
+>    pivot_root(".", ".");
+>    umount2(".", MNT_DETACH);
+> 
+> and be done with it. (Ofc, userspace can also choose to retain the
+> initramfs contents by using something like pivot_root(".", "/initramfs")
+> without unmounting it.)
+> 
+> Technically this also means that the rootfs mount in unprivileged
+> namespaces doesn't need to become MNT_LOCKED anymore as it's guaranteed
+> that the immutable rootfs remains permanently empty so there cannot be
+> anything revealed by unmounting the covering mount.
+> 
+> In the future this will also allow us to create completely empty mount
+> namespaces without risking to leak anything.
+> 
+> systemd already handles this all correctly as it tries to pivot_root()
+> first and falls back to MS_MOVE only when that fails.
+> 
+> This goes back to various discussion in previous years and a LPC 2024
+> presentation about this very topic.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
->  fs/fuse/file.c   | 125 ++++++++++++++++++++++++++++++++++++++++++++++++-=
-------
->  fs/fuse/fuse_i.h |   6 ++-
->  fs/fuse/inode.c  |   6 +++
->  fs/fuse/ioctl.c  |   2 +-
->  4 files changed, 121 insertions(+), 18 deletions(-)
->
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 01bc894e9c2b..507b4c4ba257 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -126,8 +126,84 @@ static void fuse_file_put(struct fuse_file *ff, bool=
- sync)
->         }
->  }
->
-> +static int fuse_compound_open_getattr(struct fuse_mount *fm, u64 nodeid,
-> +                               int flags, int opcode,
-> +                               struct fuse_file *ff,
-> +                               struct fuse_attr_out *outattrp,
-> +                               struct fuse_open_out *outopenp)
+>   fs/Makefile                |  2 +-
+>   fs/mount.h                 |  1 +
+>   fs/namespace.c             | 78 ++++++++++++++++++++++++++++++++++++++++------
+>   fs/rootfs.c                | 65 ++++++++++++++++++++++++++++++++++++++
+>   include/uapi/linux/magic.h |  1 +
+>   init/do_mounts.c           | 13 ++++++--
+>   init/do_mounts.h           |  1 +
+>   7 files changed, 149 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/Makefile b/fs/Makefile
+> index a04274a3c854..d31b56b7c4d5 100644
+> --- a/fs/Makefile
+> +++ b/fs/Makefile
+> @@ -16,7 +16,7 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+>   		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+>   		fs_dirent.o fs_context.o fs_parser.o fsopen.o init.o \
+>   		kernel_read_file.o mnt_idmapping.o remap_range.o pidfs.o \
+> -		file_attr.o
+> +		file_attr.o rootfs.o
+>   
+>   obj-$(CONFIG_BUFFER_HEAD)	+= buffer.o mpage.o
+>   obj-$(CONFIG_PROC_FS)		+= proc_namespace.o
+> diff --git a/fs/mount.h b/fs/mount.h
+> index 2d28ef2a3aed..c3e0d9dbfaa4 100644
+> --- a/fs/mount.h
+> +++ b/fs/mount.h
+> @@ -5,6 +5,7 @@
+>   #include <linux/ns_common.h>
+>   #include <linux/fs_pin.h>
+>   
+> +extern struct file_system_type immutable_rootfs_fs_type;
+>   extern struct list_head notify_list;
+>   
+>   struct mnt_namespace {
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 9261f56ccc81..30597f4610fd 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -75,6 +75,17 @@ static int __init initramfs_options_setup(char *str)
+>   
+>   __setup("initramfs_options=", initramfs_options_setup);
+>   
+> +bool immutable_rootfs = false;
+> +
+> +static int __init immutable_rootfs_setup(char *str)
 > +{
-> +       struct fuse_compound_req *compound;
-> +       struct fuse_args open_args =3D {}, getattr_args =3D {};
-> +       struct fuse_open_in open_in =3D {};
-> +       struct fuse_getattr_in getattr_in =3D {};
-> +       int err;
+> +	if (*str)
+> +		return 0;
+> +	immutable_rootfs = true;
+> +	return 1;
+> +}
+> +__setup("immutable_rootfs", immutable_rootfs_setup);
 > +
-> +       /* Build compound request with flag to execute in the given order=
- */
-> +       compound =3D fuse_compound_alloc(fm, 0);
-> +       if (IS_ERR(compound))
-> +               return PTR_ERR(compound);
+>   static u64 event;
+>   static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
+>   static DEFINE_IDA(mnt_group_ida);
+> @@ -5976,24 +5987,73 @@ struct mnt_namespace init_mnt_ns = {
+>   
+>   static void __init init_mount_tree(void)
+>   {
+> -	struct vfsmount *mnt;
+> -	struct mount *m;
+> +	struct vfsmount *mnt, *immutable_mnt;
+> +	struct mount *mnt_root;
+>   	struct path root;
+>   
+> +	/*
+> +	 * When the immutable rootfs is used, we create two mounts:
+> +	 *
+> +	 * (1) immutable rootfs with mount id 1
+> +	 * (2) mutable rootfs with mount id 2
+> +	 *
+> +	 * with (2) mounted on top of (1).
+> +	 */
+> +	if (immutable_rootfs) {
+> +		immutable_mnt = vfs_kern_mount(&immutable_rootfs_fs_type, 0,
+> +					       "rootfs", NULL);
+> +		if (IS_ERR(immutable_mnt))
+> +			panic("VFS: Failed to create immutable rootfs");
+> +	}
 > +
-> +       /* Add OPEN */
-> +       open_in.flags =3D flags & ~(O_CREAT | O_EXCL | O_NOCTTY);
-> +       if (!fm->fc->atomic_o_trunc)
-> +               open_in.flags &=3D ~O_TRUNC;
+>   	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", initramfs_options);
+>   	if (IS_ERR(mnt))
+>   		panic("Can't create rootfs");
+>   
+> -	m = real_mount(mnt);
+> -	init_mnt_ns.root = m;
+> -	init_mnt_ns.nr_mounts = 1;
+> -	mnt_add_to_ns(&init_mnt_ns, m);
+> +	if (immutable_rootfs) {
+> +		VFS_WARN_ON_ONCE(real_mount(immutable_mnt)->mnt_id != 1);
+> +		VFS_WARN_ON_ONCE(real_mount(mnt)->mnt_id != 2);
 > +
-> +       if (fm->fc->handle_killpriv_v2 &&
-> +           (open_in.flags & O_TRUNC) && !capable(CAP_FSETID)) {
-> +               open_in.open_flags |=3D FUSE_OPEN_KILL_SUIDGID;
-> +       }
-> +       open_args.opcode =3D opcode;
-> +       open_args.nodeid =3D nodeid;
-> +       open_args.in_numargs =3D 1;
-> +       open_args.in_args[0].size =3D sizeof(open_in);
-> +       open_args.in_args[0].value =3D &open_in;
-> +       open_args.out_numargs =3D 1;
-> +       open_args.out_args[0].size =3D sizeof(struct fuse_open_out);
-> +       open_args.out_args[0].value =3D outopenp;
+> +		/* The namespace root is the immutable rootfs. */
+> +		mnt_root		= real_mount(immutable_mnt);
+> +		init_mnt_ns.root	= mnt_root;
 > +
-> +       err =3D fuse_compound_add(compound, &open_args);
-> +       if (err)
-> +               goto out;
+> +		/* Mount mutable rootfs on top of the immutable rootfs. */
+> +		root.mnt		= immutable_mnt;
+> +		root.dentry		= immutable_mnt->mnt_root;
 > +
-> +       /* Add GETATTR */
-> +       getattr_args.opcode =3D FUSE_GETATTR;
-> +       getattr_args.nodeid =3D nodeid;
-> +       getattr_args.in_numargs =3D 1;
-> +       getattr_args.in_args[0].size =3D sizeof(getattr_in);
-> +       getattr_args.in_args[0].value =3D &getattr_in;
-> +       getattr_args.out_numargs =3D 1;
-> +       getattr_args.out_args[0].size =3D sizeof(struct fuse_attr_out);
-> +       getattr_args.out_args[0].value =3D outattrp;
+> +		LOCK_MOUNT_EXACT(mp, &root);
+> +		if (unlikely(IS_ERR(mp.parent)))
+> +			panic("VFS: Failed to setup immutable rootfs");
+> +		scoped_guard(mount_writer)
+> +			attach_mnt(real_mount(mnt), mp.parent, mp.mp);
+> +
+> +		pr_info("VFS: Finished setting up immutable rootfs\n");
+> +	} else {
+> +		VFS_WARN_ON_ONCE(real_mount(mnt)->mnt_id != 1);
+> +
+> +		/* The namespace root is the mutable rootfs. */
+> +		mnt_root		= real_mount(mnt);
+> +		init_mnt_ns.root	= mnt_root;
+> +	}
+> +
+> +	/*
+> +	 * We've dropped all locks here but that's fine. Not just are we
+> +	 * the only task that's running, there's no other mount
+> +	 * namespace in existence and the initial mount namespace is
+> +	 * completely empty until we add the mounts we just created.
+> +	 */
+> +	for (struct mount *p = mnt_root; p; p = next_mnt(p, mnt_root)) {
+> +		mnt_add_to_ns(&init_mnt_ns, p);
+> +		init_mnt_ns.nr_mounts++;
+> +	}
+> +
+>   	init_task.nsproxy->mnt_ns = &init_mnt_ns;
+>   	get_mnt_ns(&init_mnt_ns);
+>   
+> -	root.mnt = mnt;
+> -	root.dentry = mnt->mnt_root;
+> -
+> +	/* The root and pwd always point to the mutable rootfs. */
+> +	root.mnt	= mnt;
+> +	root.dentry	= mnt->mnt_root;
+>   	set_fs_pwd(current->fs, &root);
+>   	set_fs_root(current->fs, &root);
+>   
+> diff --git a/fs/rootfs.c b/fs/rootfs.c
+> new file mode 100644
+> index 000000000000..b82b73bb8bb2
+> --- /dev/null
+> +++ b/fs/rootfs.c
+> @@ -0,0 +1,65 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright (c) 2026 Christian Brauner <brauner@kernel.org> */
+> +#include <linux/fs/super_types.h>
+> +#include <linux/fs_context.h>
+> +#include <linux/magic.h>
+> +
+> +static const struct super_operations rootfs_super_operations = {
+> +	.statfs	= simple_statfs,
+> +};
+> +
+> +static int rootfs_fs_fill_super(struct super_block *s, struct fs_context *fc)
+> +{
+> +	struct inode *inode;
+> +
+> +	s->s_maxbytes		= MAX_LFS_FILESIZE;
+> +	s->s_blocksize		= PAGE_SIZE;
+> +	s->s_blocksize_bits	= PAGE_SHIFT;
+> +	s->s_magic		= ROOT_FS_MAGIC;
 
-I think things end up looking cleaner here (and above for the open
-args) if the arg initialization logic gets abstracted into helper
-functions, as fuse_do_getattr() and fuse_send_open() have pretty much
-the exact same logic.
+Just one random suggestion.  Regardless of Al's comments,
+if we really would like to expose a new visible type to
+userspace,   how about giving it a meaningful name like
+emptyfs or nullfs (I know it could have other meanings
+in other OSes) from its tree hierarchy to avoid the
+ambiguous "rootfs" naming, especially if it may be
+considered for mounting by users in future potential use
+cases?
 
 Thanks,
-Joanne
-
-> +
-> +       err =3D fuse_compound_add(compound, &getattr_args);
-> +       if (err)
-> +               goto out;
-> +
-> +       err =3D fuse_compound_send(compound);
-> +       if (err)
-> +               goto out;
-> +
-> +       /* Check if the OPEN operation succeeded */
-> +       err =3D fuse_compound_get_error(compound, 0);
-> +       if (err)
-> +               goto out;
-> +
-> +       /* Check if the GETATTR operation succeeded */
-> +       err =3D fuse_compound_get_error(compound, 1);
-> +       if (err)
-> +               goto out;
-> +
-> +       ff->fh =3D outopenp->fh;
-> +       ff->open_flags =3D outopenp->open_flags;
-> +
-> +out:
-> +       fuse_compound_free(compound);
-> +       return err;
-> +}
-> +
->  struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
-> -                                unsigned int open_flags, bool isdir)
-> +                               struct inode *inode,
-> +                               unsigned int open_flags, bool isdir)
->  {
->         struct fuse_conn *fc =3D fm->fc;
->         struct fuse_file *ff;
-> @@ -153,23 +229,41 @@ struct fuse_file *fuse_file_open(struct fuse_mount =
-*fm, u64 nodeid,
->         if (open) {
->                 /* Store outarg for fuse_finish_open() */
->                 struct fuse_open_out *outargp =3D &ff->args->open_outarg;
-> -               int err;
-> +               int err =3D -ENOSYS;
-> +
-> +               if (inode && fc->compound_open_getattr) {
-> +                       struct fuse_attr_out attr_outarg;
-> +                       err =3D fuse_compound_open_getattr(fm, nodeid, op=
-en_flags,
-> +                                                       opcode, ff, &attr=
-_outarg, outargp);
-> +                       if (!err)
-> +                               fuse_change_attributes(inode, &attr_outar=
-g.attr, NULL,
-> +                                                      ATTR_TIMEOUT(&attr=
-_outarg),
-> +                                                      fuse_get_attr_vers=
-ion(fc));
-> +               }
-> +               if (err =3D=3D -ENOSYS) {
-> +                       err =3D fuse_send_open(fm, nodeid, open_flags, op=
-code, outargp);
->
-> -               err =3D fuse_send_open(fm, nodeid, open_flags, opcode, ou=
-targp);
-> -               if (!err) {
-> -                       ff->fh =3D outargp->fh;
-> -                       ff->open_flags =3D outargp->open_flags;
-> -               } else if (err !=3D -ENOSYS) {
-> -                       fuse_file_free(ff);
-> -                       return ERR_PTR(err);
-> -               } else {
-> -                       if (isdir) {
-> +                       if (!err) {
-> +                               ff->fh =3D outargp->fh;
-> +                               ff->open_flags =3D outargp->open_flags;
-> +                       }
-> +               }
-> +
-> +               if (err) {
-> +                       if (err !=3D -ENOSYS) {
-> +                               /* err is not ENOSYS */
-> +                               fuse_file_free(ff);
-> +                               return ERR_PTR(err);
-> +                       } else {
->                                 /* No release needed */
->                                 kfree(ff->args);
->                                 ff->args =3D NULL;
-> -                               fc->no_opendir =3D 1;
-> -                       } else {
-> -                               fc->no_open =3D 1;
-> +
-> +                               /* we don't have open */
-> +                               if (isdir)
-> +                                       fc->no_opendir =3D 1;
-> +                               else
-> +                                       fc->no_open =3D 1;
->                         }
->                 }
->         }
-> @@ -185,11 +279,10 @@ struct fuse_file *fuse_file_open(struct fuse_mount =
-*fm, u64 nodeid,
->  int fuse_do_open(struct fuse_mount *fm, u64 nodeid, struct file *file,
->                  bool isdir)
->  {
-> -       struct fuse_file *ff =3D fuse_file_open(fm, nodeid, file->f_flags=
-, isdir);
-> +       struct fuse_file *ff =3D fuse_file_open(fm, nodeid, file_inode(fi=
-le), file->f_flags, isdir);
->
->         if (!IS_ERR(ff))
->                 file->private_data =3D ff;
-> -
->         return PTR_ERR_OR_ZERO(ff);
->  }
->  EXPORT_SYMBOL_GPL(fuse_do_open);
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 86253517f59b..98af019037c3 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -924,6 +924,9 @@ struct fuse_conn {
->         /* Use io_uring for communication */
->         unsigned int io_uring;
->
-> +       /* Does the filesystem support compound operations? */
-> +       unsigned int compound_open_getattr:1;
-> +
->         /** Maximum stack depth for passthrough backing files */
->         int max_stack_depth;
->
-> @@ -1557,7 +1560,8 @@ void fuse_file_io_release(struct fuse_file *ff, str=
-uct inode *inode);
->
->  /* file.c */
->  struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
-> -                                unsigned int open_flags, bool isdir);
-> +                                                               struct in=
-ode *inode,
-> +                                                               unsigned =
-int open_flags, bool isdir);
->  void fuse_file_release(struct inode *inode, struct fuse_file *ff,
->                        unsigned int open_flags, fl_owner_t id, bool isdir=
-);
->
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 819e50d66622..a5fd721be96d 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -991,6 +991,12 @@ void fuse_conn_init(struct fuse_conn *fc, struct fus=
-e_mount *fm,
->         fc->blocked =3D 0;
->         fc->initialized =3D 0;
->         fc->connected =3D 1;
-> +
-> +       /* pretend fuse server supports compound operations
-> +        * until it tells us otherwise.
-> +        */
-> +       fc->compound_open_getattr =3D 1;
-> +
->         atomic64_set(&fc->attr_version, 1);
->         atomic64_set(&fc->evict_ctr, 1);
->         get_random_bytes(&fc->scramble_key, sizeof(fc->scramble_key));
-> diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
-> index fdc175e93f74..07a02e47b2c3 100644
-> --- a/fs/fuse/ioctl.c
-> +++ b/fs/fuse/ioctl.c
-> @@ -494,7 +494,7 @@ static struct fuse_file *fuse_priv_ioctl_prepare(stru=
-ct inode *inode)
->         if (!S_ISREG(inode->i_mode) && !isdir)
->                 return ERR_PTR(-ENOTTY);
->
-> -       return fuse_file_open(fm, get_node_id(inode), O_RDONLY, isdir);
-> +       return fuse_file_open(fm, get_node_id(inode), NULL, O_RDONLY, isd=
-ir);
->  }
->
->  static void fuse_priv_ioctl_cleanup(struct inode *inode, struct fuse_fil=
-e *ff)
->
-> --
-> 2.51.0
->
->
+Gao Xiang
 
