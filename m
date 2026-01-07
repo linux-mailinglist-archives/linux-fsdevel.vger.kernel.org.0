@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-72597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73778CFCC9E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 10:16:57 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DECA1CFCCA2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 10:17:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9C07D3067F6D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 09:08:52 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 5851C3003854
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 09:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F17D2F2914;
-	Wed,  7 Jan 2026 09:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B23E2E9ED6;
+	Wed,  7 Jan 2026 09:17:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB652C3242;
-	Wed,  7 Jan 2026 09:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FE02701DC;
+	Wed,  7 Jan 2026 09:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767776930; cv=none; b=JP/XKd9ypvmXYbAvrYG1EKJPvHwQPTNbN7i2zchuJ//2WkVgTXDpR5TxWVouGmxuyziVfiqGoXC8Ar8IBr5UhE5z4gQTPLkW9xQh+oxdHxiLWTt5fa5egJd2qZuzhUkdqW/EWKGekFOnYVb0CFQP5i5lnsAMRHtXzsQgROPKpt0=
+	t=1767777439; cv=none; b=bcnQOnxE++eMXIbVAQcvuMD3zutchH4WMRrKt1uZV+jNbrQZ9u+NIr3aen9cCDxvjevUak7IIJkO/kp6KTRGKw/mV8u81TujMNLUVSl40FcsbnsDo161Ly/TlgGdo+F34vLvzLuEH2dhF7hzWN4bz35zlYFheL7RmzsThe8d5ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767776930; c=relaxed/simple;
-	bh=DXdYcAGfp1+pkcUUk1rRAN5+D0I2gQcz4uFbIOTNuMY=;
+	s=arc-20240116; t=1767777439; c=relaxed/simple;
+	bh=4zvYr5Pm5yPWhQdzj6n1eLfcCyvZsaLxTEHQEnlmHkg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rf3FNKoRjgQ0+FPGYxs92q+dRu00DNNgiRCCVXGUAuy6uhbDz//oBQSjxlBy8KxCO7bkMBstfu9BA1b1LeWuxZoCgGxSfUJn+4iXIqVedEaKEKyjkyz89aBqFVg4SNpVQo6AvId1D+KhxNEd3d9zec9yUsW9zt6Aey0I/E5l1N8=
+	 Content-Type:Content-Disposition:In-Reply-To; b=SIZVsLus/r4cXvYjmMA5ihBYSWHSVy5Vi86kanBId/HaiEze3aqfxbHxpPVLl3quTiLpu5fpasHstX5j6/Pv2SR2A4qYhIqjUI9oiGPf8giyN4vypuWpCs2bootq4A1Hs+nr4N8HiXGyOGMZQu93s71RZOZn1nLBpfjtxusFk/Y=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id 1DB9E6732A; Wed,  7 Jan 2026 10:08:45 +0100 (CET)
-Date: Wed, 7 Jan 2026 10:08:44 +0100
+	id A3904227A87; Wed,  7 Jan 2026 10:17:13 +0100 (CET)
+Date: Wed, 7 Jan 2026 10:17:13 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: "Darrick J. Wong" <djwong@kernel.org>
 Cc: cem@kernel.org, linux-xfs@vger.kernel.org, hch@lst.de,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 01/11] docs: discuss autonomous self healing in the xfs
- online repair design doc
-Message-ID: <20260107090844.GA22838@lst.de>
-References: <176766637179.774337.3663793412524347917.stgit@frogsfrogsfrogs> <176766637268.774337.4525804382445415752.stgit@frogsfrogsfrogs>
+Subject: Re: [PATCH 02/11] xfs: start creating infrastructure for health
+ monitoring
+Message-ID: <20260107091713.GB22838@lst.de>
+References: <176766637179.774337.3663793412524347917.stgit@frogsfrogsfrogs> <176766637289.774337.11016648296945814848.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -46,42 +46,156 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <176766637268.774337.4525804382445415752.stgit@frogsfrogsfrogs>
+In-Reply-To: <176766637289.774337.11016648296945814848.stgit@frogsfrogsfrogs>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Jan 05, 2026 at 11:10:52PM -0800, Darrick J. Wong wrote:
-> +The filesystem must therefore create event objects in response to stimuli
-> +(metadata corruption, file I/O errors, etc.) and dispatch these events to
-> +downstream consumers.
-> +Downstream consumers that are in the kernel itself are easy to implement with
-> +the ``xfs_hooks`` infrastructure created for other parts of online repair; these
-> +are basically indirect function calls.
+On Mon, Jan 05, 2026 at 11:11:08PM -0800, Darrick J. Wong wrote:
+> +struct xfs_health_monitor {
+> +	__u64	flags;		/* flags */
+> +	__u8	format;		/* output format */
+> +	__u8	pad1[7];	/* zeroes */
+> +	__u64	pad2[2];	/* zeroes */
+> +};
 
-These hooks mostly went away, didn't they?
+Why not use a single __u8-based padding field?
 
-> +Being private gives the kernel and ``xfs_healer`` the flexibility to change
-> +or update the event format in the future without worrying about backwards
-> +compatibility.
+> +struct xfs_healthmon {
+> +	/*
+> +	 * Weak reference to the xfs filesystem that is being monitored.  It
+> +	 * will be set to zero when the filesystem detaches from the monitor.
+> +	 * Do not dereference this pointer.
+> +	 */
+> +	uintptr_t			mount_cookie;
+> +
+> +	/*
+> +	 * Device number of the filesystem being monitored.  This is for
+> +	 * consistent tracing even after unmount.
+> +	 */
+> +	dev_t				dev;
 
-I think that ship has sailed once the ABI is out in the wild.
+It isn't really used for tracking, but just in a single print, right?
 
-This whole why not use XYZ discussion seems vaguely interesting for a
-commit log, but does it belong into the main documentation?
+> + * be parsed easily by userspace.  Then we hook various parts of the filesystem
 
-> +*Answer*: Yes.
-> +fanotify is much more careful about filtering out events to processes that
-> +aren't running with privileges.
-> +These processes should have a means to receive simple notifications about
-> +file errors.
-> +However, this will require coordination between fanotify, ext4, and XFS, and
-> +is (for now) outside the scope of this project.
+Is the hooking terminology still right?
 
-Didn't this already get merged by Christian, and thus this information
-is stale already?
+> + * The healthmon abstraction has a weak reference to the host filesystem mount
+> + * so that the queueing and processing of the events do not pin the mount and
+> + * cannot slow down the main filesystem.  The healthmon object can exist past
+> + * the end of the filesystem mount.
+> + */
+> +
+> +/* sign of a detached health monitor */
+> +#define DETACHED_MOUNT_COOKIE		((uintptr_t)0)
 
-> +When a filesystem mounts, the Linux kernel initiates a uevent describing the
-> +mount and the path to the data device.
+This almost looks like a not performance optimized version of hazard
+pointers.  Not that we care much about performance here.
 
-This also isn't true anymore, is it?
+> +/*
+> + * Free the health monitor after an RCU grace period to eliminate possibility
+> + * of races with xfs_healthmon_get.
+> + */
+> +static inline void
+> +xfs_healthmon_free(
+> +	struct xfs_healthmon		*hm)
+> +{
+> +	kfree_rcu_mightsleep(hm);
+> +}
+
+Is there much of a point in this wrapper vs just open coding the call to
+kfree_rcu_mightsleep in the only caller?
+
+> +/* Is this health monitor active? */
+> +static inline bool
+> +xfs_healthmon_activated(
+> +	struct xfs_healthmon	*hm)
+> +{
+> +	return hm->mount_cookie != DETACHED_MOUNT_COOKIE;
+> +}
+> +
+> +/* Is this health monitor watching the given filesystem? */
+> +static inline bool
+> +xfs_healthmon_covers_fs(
+> +	struct xfs_healthmon	*hm,
+> +	struct super_block	*sb)
+> +{
+> +	return hm->mount_cookie == (uintptr_t)sb;
+> +}
+
+Is there much of a point in these helpers vs open coding them in the callers?
+(no caller yet in this patch of the second one anyway).  Especially as we
+need to hold a lock for them to be safe.
+
+> +
+> +/* Attach a health monitor to an xfs_mount.  Only one allowed at a time. */
+> +STATIC int
+> +xfs_healthmon_attach(
+> +	struct xfs_mount	*mp,
+> +	struct xfs_healthmon	*hm)
+> +{
+> +	int			ret = 0;
+> +
+> +	spin_lock(&xfs_healthmon_lock);
+> +	if (mp->m_healthmon == NULL) {
+> +		mp->m_healthmon = hm;
+> +		hm->mount_cookie = (uintptr_t)mp->m_super;
+> +		refcount_inc(&hm->ref);
+> +	} else {
+> +		ret = -EEXIST;
+> +	}
+> +	spin_unlock(&xfs_healthmon_lock);
+> +
+> +	return ret;
+
+Maybe just me, but I'd do away with the ret variable and just handle the
+EEXIST case directly:
+
+	spin_lock(&xfs_healthmon_lock);
+	if (mp->m_healthmon) {
+		spin_unlock(&xfs_healthmon_lock);
+		return -EEXIST;
+	}
+	refcount_inc(&hm->ref);
+	mp->m_healthmon = hm;
+	hm->mount_cookie = (uintptr_t)mp->m_super;
+	spin_unlock(&xfs_healthmon_lock);
+	return 0;
+
+> +/* Detach a xfs mount from a specific healthmon instance. */
+> +STATIC void
+> +xfs_healthmon_detach(
+> +	struct xfs_healthmon	*hm)
+> +{
+> +	spin_lock(&xfs_healthmon_lock);
+> +	if (xfs_healthmon_activated(hm)) {
+> +		struct xfs_mount	*mp =
+> +			XFS_M((struct super_block *)hm->mount_cookie);
+> +
+> +		mp->m_healthmon = NULL;
+> +		hm->mount_cookie = DETACHED_MOUNT_COOKIE;
+> +	} else {
+> +		hm = NULL;
+> +	}
+> +	spin_unlock(&xfs_healthmon_lock);
+> +
+> +	if (hm)
+> +		xfs_healthmon_put(hm);
+> +}
+
+Kinda similar here:
+
+	struct xfs_mount	*mp;
+
+	spin_lock(&xfs_healthmon_lock);
+	if (hm->mount_cookie == DETACHED_MOUNT_COOKIE) {
+		spin_unlock(&xfs_healthmon_lock);
+		return;
+	}
+
+	XFS_M((struct super_block *)hm->mount_cookie)->m_healthmon = NULL;
+	hm->mount_cookie = DETACHED_MOUNT_COOKIE;
+	spin_unlock(&xfs_healthmon_lock);
+
+	xfs_healthmon_put(hm);
 
 
