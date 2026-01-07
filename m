@@ -1,279 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-72567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13EF5CFBB83
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 03:28:36 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A94ACFBC3A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 03:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 1D20F30057D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 02:28:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E68343059680
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 02:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F563233D9E;
-	Wed,  7 Jan 2026 02:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F571940A1;
+	Wed,  7 Jan 2026 02:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="chkzJJNI"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Dzris56S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E36D2A1BB
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 02:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58CC1A256B
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 02:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767752911; cv=none; b=MeDVmLUuUPWWukaT/y6kJt6Jwz9RVTmNzfVr5w/TsuYu3itNrH/Laj4iMCnWfVxAx1yWj2jt3az//WZAtS+H+uykvEEV/C4FRvBfq6vSW9zBCkxFCowOWjPNqzSByw+BvTmkGCELdRFMJsU/Y/ShQMJwK+pLrH4b7AXsOmXGznk=
+	t=1767753805; cv=none; b=JRAnwVH6n2VcKrQSrme+AnJrglo0M7ewym1VGIL4h6H5cSLj1crCrX0gIEVcD46e/qbHamdoqnpIC7KJ0tHtXJOTH4+rpsOWtMe1s0YgIXkjYxMob07DyaZORk8m6Uy51XaGwROqRdIm8sXp3EdvWnMTLeyrshwH5vabBX7WYW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767752911; c=relaxed/simple;
-	bh=OXoUj5dJzcDd2ZulgRbd5GvsM2piQ3fzAJ5xxoH/vE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q0HsZe+HddGtejykAnFsA5npGd2i4qGT0OosoqivQ308+hG4UBTLSpt/KnD16hJSI/zpFiODceVSCEzVOW8a9ApXpILv1NZLtMxtGSdJ5lzzMrz25L5zd3Um5/sPTt8kd3kSe6x8ICaJCjbMx/O2t+pPMcTuXL010Raa9mo8mJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=chkzJJNI; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1767752904; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=thB13OYJIGjWB9NfdvWnbGMaaOE7DkpWt/H+L8lMAbI=;
-	b=chkzJJNIB+Y7S37uY5zZvPRJbNmIJRW0/UK8yW6V9HBDj7kiWo1ioFdx/HWUBa/KgD5LlRYUmiGlFJuOaTb86No0In8YSwZbH5M9cx+gvA9AzK/Wg4upx8yqn/0mzgkqFJlNk5lzFVNSNrIjnk2w7ATpFDFxC12L+d6725QG5O4=
-Received: from 30.221.132.240(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WwX9QZV_1767752903 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 07 Jan 2026 10:28:24 +0800
-Message-ID: <f6bef901-b9a6-4882-83d1-9c5c34402351@linux.alibaba.com>
-Date: Wed, 7 Jan 2026 10:28:23 +0800
+	s=arc-20240116; t=1767753805; c=relaxed/simple;
+	bh=drOHgT8EVLwGZalTAFzzBlRGx5099uF+mFLLEuqeE38=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qwrYigWmCafUlJEP8bEN1AROXbOnSkZ/xU5Flbu5ZGpZsuPyi55MwdJgMbsEg/3HFe3bwaFVkaZGRzt31Fak9MfCj4xAnx6ynoHcZ9UA+pXY/LQ+3UZq1+FLXCUA0FB85+6iFYsQpVxQqB7wBZgxXk00VDtaKKQWLJUwVqA9u4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Dzris56S; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-34f63ad6f51so417868a91.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jan 2026 18:43:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1767753803; x=1768358603; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=drOHgT8EVLwGZalTAFzzBlRGx5099uF+mFLLEuqeE38=;
+        b=Dzris56SzSmXNR7hjk6ao3AyA9eS1dQLgebJbU3DOu39PcuYvNqRlSEEazV7ly25TT
+         fKm4a8WOluON1PC7A/9b3hCqqn7lT/tjMCYWX791zYMO9qRxyi527pLrBslefRkSnakE
+         nOnzORg0vyYGhFxDVw3XaIpkt7iFvHMy5bFrIN1++8baztRDUosUUMCDrxjx1DV6ziHg
+         ENcYzgmOS7CcLA7xJcYlDhABliwiLW9Ej22jcCCVoPgJQ6Vtmr0rayeAfsjR8r6p2xAP
+         EKPoEIqxiXXEe5bwRbOXFWIKr2BIdWkwqz/nPssaNC/McIg3GnfL/MJYQ9pXj7vYmazQ
+         kgbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767753803; x=1768358603;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=drOHgT8EVLwGZalTAFzzBlRGx5099uF+mFLLEuqeE38=;
+        b=GTGyS33NejA8jT/vmahIA5OzaWYbq8PL6dM20yQyaT91Bh3sQUdZSo04qfazXvC4DO
+         cQbQZG+SqKdkyE3yEOFF1RSuZhY3IQ5N6ZTDmHxU8SRXL79CbM8fONp/Kca626biG0DL
+         zatsmixePUNLy/lQynYUjKmqi1y1BjH1Pqv/1FkakIl4lgdLi46FNcHjqeP83RT0t6D0
+         cRNxAI2JyZILd6B6L4ssR1bBaq6ZyyvBMUuhmwPO4yVWDHiZztbDS8HWBsvnstti19Bd
+         6F1BT/QQLJfNNEnV0HDgBBpwRsLDSah3bymAit5fQ83BKggxtXoKbjZu2vHBPlpMzCCJ
+         sMdg==
+X-Forwarded-Encrypted: i=1; AJvYcCU92Vktw3wyFDSnChKr2y+IFyxmLh/QeVTHJOeEDxeIfvJBtIIjpmsxU/w6kmPGJUvQs+YzO2MV2uv4j4E7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJeprwF9AeyBWEa0A5ZNe//mNBQGXsyi9zSWNUiMtaUTelfwbP
+	1qTDxF6OeeMJht0EtXsHOq7Z0XDTnOzQRYDfoUgrWqUdpJ3XwksjVlyLqKyS2skZCQ4oWU/ISC5
+	xDtjAxw9cBkNyReIfqtT7Vxt9HlAggnScqR53u9GKBQ==
+X-Gm-Gg: AY/fxX4XZBFZ1cWg4oIj1/5WNr3W++34Myhqq+mVQGKeLbS/NDeqQPn1XeXyP6YsJAz
+	MfHnVxISaS8uh9BcJceFDZp3b2wJLKNjq5EYXej3s844maC/Qug6yeS9DG2CMOqQjAwcJkdWr0L
+	nWU2hAYxBOLrdAlYim4gdxRkw/Wyh8+3iYquiHLaDyXyRvLidHIw1+AsumdXzHqIbQJn05x/oP7
+	bcUm29C15NOwn3RKL+dcGRGWUSeNkCv2Gf0dJDDGh5bfhHsAVkU7Bd0n7Uy6G8jbJNWubkgPp5j
+	ORtvDzk2
+X-Google-Smtp-Source: AGHT+IFAOzJ39Prd4LsKQCIvTA5Pl6anG1dVhfCx6QT7++UKrk8hshccTcwev/xGxSDkiK0bLyYedW+bi4EkL14wbmU=
+X-Received: by 2002:a17:90a:e703:b0:340:ad5e:cd with SMTP id
+ 98e67ed59e1d1-34f68b4e666mr1055299a91.5.1767753803276; Tue, 06 Jan 2026
+ 18:43:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] fs: add immutable rootfs
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
- Lennart Poettering <lennart@poettering.net>,
- =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
- Josef Bacik <josef@toxicpanda.com>
-References: <20260102-work-immutable-rootfs-v1-0-f2073b2d1602@kernel.org>
- <20260102-work-immutable-rootfs-v1-3-f2073b2d1602@kernel.org>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20260102-work-immutable-rootfs-v1-3-f2073b2d1602@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251223062113.52477-1-zhangtianci.1997@bytedance.com>
+ <CAJnrk1aR=fPSXPuTBytnOPtE-0zuxfjMmFyug7fjsDa5T1djRA@mail.gmail.com>
+ <CAP4dvsf+XGJQFk_UrGFmgTPfkbchm_izjO31M9rQN+wYU=8zMA@mail.gmail.com>
+ <CAJnrk1Y0+j2xyko83s=b5Jw=maDKp3=HMYbLrVT5S+fJ1e2BNg@mail.gmail.com>
+ <CAP4dvseWhaeu08NR-q=F5pRyMN5BnmWXHZi4i1L+utdjJTECaQ@mail.gmail.com> <CAJnrk1a2-HS6cqthfcU5hxBi7Rinwh8MpYggNtOg6P256aW0zw@mail.gmail.com>
+In-Reply-To: <CAJnrk1a2-HS6cqthfcU5hxBi7Rinwh8MpYggNtOg6P256aW0zw@mail.gmail.com>
+From: Zhang Tianci <zhangtianci.1997@bytedance.com>
+Date: Wed, 7 Jan 2026 10:43:12 +0800
+X-Gm-Features: AQt7F2p7_lt8ZIOCbnhv6PSBnj5ju4ST5q9D6euYKmeRPVjpei_sPxkqoV4A4aM
+Message-ID: <CAP4dvsdRtO6BX6A-LdJDyakVucLskTvOViZRGonoMsK0eNtM1g@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] fuse: add hang check in request_wait_answer()
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, xieyongji@bytedance.com, 
+	zhujia.zj@bytedance.com, Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Joanne=EF=BC=8C
 
+> imo it's possible to check whether the kernel itself is affected just
+> purely through libfuse changes to fuse_lowlevel.c where the request
+> communication with the kernel happens. The number of requests ready by
+> the kernel is exposed to userspace through sysfs, so if the daemon is
+> deadlocked or cannot read fuse requests, that scenario is detectable
+> by userspace.
 
-On 2026/1/2 22:36, Christian Brauner wrote:
-> Currently pivot_root() doesnt't work on the real rootfs because it
-> cannot be unmounted. Userspace has to do a recursive removal of the
-> initramfs contents manually before continuing the boot.
-> 
-> Really all we want from the real rootfs is to serve as the parent mount
-> for anything that is actually useful such as the tmpfs or ramfs for
-> initramfs unpacking or the rootfs itself. There's no need for the real
-> rootfs to actually be anything meaningful or useful. Add a immutable
-> rootfs that can be selected via the "immutable_rootfs" kernel command
-> line option.
-> 
-> The kernel will mount a tmpfs/ramfs on top of it, unpack the initramfs
-> and fire up userspace which mounts the rootfs and can then just do:
-> 
->    chdir(rootfs);
->    pivot_root(".", ".");
->    umount2(".", MNT_DETACH);
-> 
-> and be done with it. (Ofc, userspace can also choose to retain the
-> initramfs contents by using something like pivot_root(".", "/initramfs")
-> without unmounting it.)
-> 
-> Technically this also means that the rootfs mount in unprivileged
-> namespaces doesn't need to become MNT_LOCKED anymore as it's guaranteed
-> that the immutable rootfs remains permanently empty so there cannot be
-> anything revealed by unmounting the covering mount.
-> 
-> In the future this will also allow us to create completely empty mount
-> namespaces without risking to leak anything.
-> 
-> systemd already handles this all correctly as it tries to pivot_root()
-> first and falls back to MS_MOVE only when that fails.
-> 
-> This goes back to various discussion in previous years and a LPC 2024
-> presentation about this very topic.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->   fs/Makefile                |  2 +-
->   fs/mount.h                 |  1 +
->   fs/namespace.c             | 78 ++++++++++++++++++++++++++++++++++++++++------
->   fs/rootfs.c                | 65 ++++++++++++++++++++++++++++++++++++++
->   include/uapi/linux/magic.h |  1 +
->   init/do_mounts.c           | 13 ++++++--
->   init/do_mounts.h           |  1 +
->   7 files changed, 149 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/Makefile b/fs/Makefile
-> index a04274a3c854..d31b56b7c4d5 100644
-> --- a/fs/Makefile
-> +++ b/fs/Makefile
-> @@ -16,7 +16,7 @@ obj-y :=	open.o read_write.o file_table.o super.o \
->   		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
->   		fs_dirent.o fs_context.o fs_parser.o fsopen.o init.o \
->   		kernel_read_file.o mnt_idmapping.o remap_range.o pidfs.o \
-> -		file_attr.o
-> +		file_attr.o rootfs.o
->   
->   obj-$(CONFIG_BUFFER_HEAD)	+= buffer.o mpage.o
->   obj-$(CONFIG_PROC_FS)		+= proc_namespace.o
-> diff --git a/fs/mount.h b/fs/mount.h
-> index 2d28ef2a3aed..c3e0d9dbfaa4 100644
-> --- a/fs/mount.h
-> +++ b/fs/mount.h
-> @@ -5,6 +5,7 @@
->   #include <linux/ns_common.h>
->   #include <linux/fs_pin.h>
->   
-> +extern struct file_system_type immutable_rootfs_fs_type;
->   extern struct list_head notify_list;
->   
->   struct mnt_namespace {
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 9261f56ccc81..30597f4610fd 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -75,6 +75,17 @@ static int __init initramfs_options_setup(char *str)
->   
->   __setup("initramfs_options=", initramfs_options_setup);
->   
-> +bool immutable_rootfs = false;
-> +
-> +static int __init immutable_rootfs_setup(char *str)
-> +{
-> +	if (*str)
-> +		return 0;
-> +	immutable_rootfs = true;
-> +	return 1;
-> +}
-> +__setup("immutable_rootfs", immutable_rootfs_setup);
-> +
->   static u64 event;
->   static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
->   static DEFINE_IDA(mnt_group_ida);
-> @@ -5976,24 +5987,73 @@ struct mnt_namespace init_mnt_ns = {
->   
->   static void __init init_mount_tree(void)
->   {
-> -	struct vfsmount *mnt;
-> -	struct mount *m;
-> +	struct vfsmount *mnt, *immutable_mnt;
-> +	struct mount *mnt_root;
->   	struct path root;
->   
-> +	/*
-> +	 * When the immutable rootfs is used, we create two mounts:
-> +	 *
-> +	 * (1) immutable rootfs with mount id 1
-> +	 * (2) mutable rootfs with mount id 2
-> +	 *
-> +	 * with (2) mounted on top of (1).
-> +	 */
-> +	if (immutable_rootfs) {
-> +		immutable_mnt = vfs_kern_mount(&immutable_rootfs_fs_type, 0,
-> +					       "rootfs", NULL);
-> +		if (IS_ERR(immutable_mnt))
-> +			panic("VFS: Failed to create immutable rootfs");
-> +	}
-> +
->   	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", initramfs_options);
->   	if (IS_ERR(mnt))
->   		panic("Can't create rootfs");
->   
-> -	m = real_mount(mnt);
-> -	init_mnt_ns.root = m;
-> -	init_mnt_ns.nr_mounts = 1;
-> -	mnt_add_to_ns(&init_mnt_ns, m);
-> +	if (immutable_rootfs) {
-> +		VFS_WARN_ON_ONCE(real_mount(immutable_mnt)->mnt_id != 1);
-> +		VFS_WARN_ON_ONCE(real_mount(mnt)->mnt_id != 2);
-> +
-> +		/* The namespace root is the immutable rootfs. */
-> +		mnt_root		= real_mount(immutable_mnt);
-> +		init_mnt_ns.root	= mnt_root;
-> +
-> +		/* Mount mutable rootfs on top of the immutable rootfs. */
-> +		root.mnt		= immutable_mnt;
-> +		root.dentry		= immutable_mnt->mnt_root;
-> +
-> +		LOCK_MOUNT_EXACT(mp, &root);
-> +		if (unlikely(IS_ERR(mp.parent)))
-> +			panic("VFS: Failed to setup immutable rootfs");
-> +		scoped_guard(mount_writer)
-> +			attach_mnt(real_mount(mnt), mp.parent, mp.mp);
-> +
-> +		pr_info("VFS: Finished setting up immutable rootfs\n");
-> +	} else {
-> +		VFS_WARN_ON_ONCE(real_mount(mnt)->mnt_id != 1);
-> +
-> +		/* The namespace root is the mutable rootfs. */
-> +		mnt_root		= real_mount(mnt);
-> +		init_mnt_ns.root	= mnt_root;
-> +	}
-> +
-> +	/*
-> +	 * We've dropped all locks here but that's fine. Not just are we
-> +	 * the only task that's running, there's no other mount
-> +	 * namespace in existence and the initial mount namespace is
-> +	 * completely empty until we add the mounts we just created.
-> +	 */
-> +	for (struct mount *p = mnt_root; p; p = next_mnt(p, mnt_root)) {
-> +		mnt_add_to_ns(&init_mnt_ns, p);
-> +		init_mnt_ns.nr_mounts++;
-> +	}
-> +
->   	init_task.nsproxy->mnt_ns = &init_mnt_ns;
->   	get_mnt_ns(&init_mnt_ns);
->   
-> -	root.mnt = mnt;
-> -	root.dentry = mnt->mnt_root;
-> -
-> +	/* The root and pwd always point to the mutable rootfs. */
-> +	root.mnt	= mnt;
-> +	root.dentry	= mnt->mnt_root;
->   	set_fs_pwd(current->fs, &root);
->   	set_fs_root(current->fs, &root);
->   
-> diff --git a/fs/rootfs.c b/fs/rootfs.c
-> new file mode 100644
-> index 000000000000..b82b73bb8bb2
-> --- /dev/null
-> +++ b/fs/rootfs.c
-> @@ -0,0 +1,65 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright (c) 2026 Christian Brauner <brauner@kernel.org> */
-> +#include <linux/fs/super_types.h>
-> +#include <linux/fs_context.h>
-> +#include <linux/magic.h>
-> +
-> +static const struct super_operations rootfs_super_operations = {
-> +	.statfs	= simple_statfs,
-> +};
-> +
-> +static int rootfs_fs_fill_super(struct super_block *s, struct fs_context *fc)
-> +{
-> +	struct inode *inode;
-> +
-> +	s->s_maxbytes		= MAX_LFS_FILESIZE;
-> +	s->s_blocksize		= PAGE_SIZE;
-> +	s->s_blocksize_bits	= PAGE_SHIFT;
-> +	s->s_magic		= ROOT_FS_MAGIC;
+Yes, checking in libfuse/fuse_lowlevel.c is feasible, but it depends on
+the running state of FUSEDaemon(if FUSEDaemon is in a process exit state,
+this check cannot be performed), I think we do need this approach,
+but it cannot fully cover all scenarios. Therefore, I believe it
+should coexist with this patch.
 
-Just one random suggestion.  Regardless of Al's comments,
-if we really would like to expose a new visible type to
-userspace,   how about giving it a meaningful name like
-emptyfs or nullfs (I know it could have other meanings
-in other OSes) from its tree hierarchy to avoid the
-ambiguous "rootfs" naming, especially if it may be
-considered for mounting by users in future potential use
-cases?
+The content of the /sys/fs/fuse/connections/${devid}/waiting interface
+is inaccurate;
+it cannot distinguish between normal waiting and requests that have been ha=
+nging
+for a period of time.
 
 Thanks,
-Gao Xiang
+Tianci
 
