@@ -1,207 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-72614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83DA6CFDCDB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 14:02:39 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7863DCFD7D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 12:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 896CF300EF6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 13:02:38 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id ECDE03015005
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 11:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FF62236FD;
-	Wed,  7 Jan 2026 13:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49B4313268;
+	Wed,  7 Jan 2026 11:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NaUnPCzz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRxmqDVm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com [74.125.224.52])
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FBB2EA169
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 13:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1835312813
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 11:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767790956; cv=none; b=Od+r+oFTfK4oU7mbGt1G1qVBnC6VyYmlgkVnuZHnT4xAeexLPgfXEsZl5XTozcYT1DPzjdD3d1ygXadaNBq7refvwos0JKU+vJ+DmP2ENOwyT8dm8ETaqSpdId6R/h6BFUcyBZ/MdDlb87YvNp1iwLQ83uSwqaY5CYvOwP5fUT4=
+	t=1767786699; cv=none; b=R8hOi8tdXp7GwsL47CzhFNvgkNnE+TrO6af9Xg/WeHs2IH+FUy6LQB0j/NPJTD7Lo3Bir4ma25Aq+3JD2MBHvIpiwo7f4YwLn/F3PjHRnlK3+Di5Iffe3hUogP+eiD+vLnitom2TyyvZhFnfT5+QEjMyvtsGjyhO3W4K48QGQbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767790956; c=relaxed/simple;
-	bh=bWSVV22jZh9coEv3ULigZXfiCNuesnPGhW14yA08Rbs=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=LvpvKFoj+IRLHiIHzf1+vq+qOYNclEEIJMINLpr/5GWfY2Sc6r+XPud/+sdWqr6TTcWC20RA5s/ef5JKPv2+05Vzy8k3RI3jLH6ifSgvykzPKVGDUua5u7yEHdYVhlYZ5oQMwkTImXazdzvBBp2yZOa6vEP02gE+xtCRRtkk/qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NaUnPCzz; arc=none smtp.client-ip=74.125.224.52
+	s=arc-20240116; t=1767786699; c=relaxed/simple;
+	bh=idg6pyHKilZlHeXVaqALFwttDhgDixlpu8+RaFnMLXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=meq4EHIQ2nyJcDQbiRsZ0Csn6ptz/oPptAIQzlfvkW872p4dVk2v2ovOte9bVPVg6T5nPkNRxScnwErhEA9bOurevI0MpLZaeDUOnlOQ7SAEX+NKrE1eXjGz51iHX/OX509M2IJ7RqbQHvncdyMTZHdwEsZLHlQEJ4ZKnZqRmD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRxmqDVm; arc=none smtp.client-ip=209.85.219.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-640d4f2f13dso1860696d50.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jan 2026 05:02:34 -0800 (PST)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-88a2f2e5445so22281716d6.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jan 2026 03:51:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767790954; x=1768395754; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eVyX/saFSHkwOAT/HfR9J/XxoKvZtdkuCzZLxL4WCSA=;
-        b=NaUnPCzzW/Fln5L4uwxePJLRJhddJX9UqPvnItJ7hlqspjrKAs5zY60cxbBrZTSdIK
-         LGJIsrUfjUWcoGGDEvivK3s8/IiPVuQkn+rowPS4fLobSntSz5Bt00OiseUlIP9aLRGc
-         JHqBB+3n63EaI19gCyvR3OFfvjHy2ZUDKHm59A0AUwSiq9vNDPk8wwfphHrS5dfEuZiM
-         D6G/SKsprry3mn6XHvmPeqro9YZ2Oyi/RbZBD64/mtyVNgyptAOTU3wdpBukHp9CKKkX
-         tr04G1JbVm67PWBWdJ+z+drIMI5G8ieB8MeS7mwjR/1WK4KUYyoxqmfUrSTord4TdKQZ
-         vrHw==
+        d=gmail.com; s=20230601; t=1767786696; x=1768391496; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eFhWg0yXknfBYjAjhY49eGT0he703gFuxz0J4Ryn4Hc=;
+        b=BRxmqDVmzd3XYs0P0mA2TDeTQAeULWpINwsxSMZrVqKxufR9vxlzvU6JvyN9pR6zY6
+         rafxBf071Rie1BLvTLs9+3vI+vnIINhl6YL0mPe78K/sC+ChsZ0VHNr8okFDokk+JBsy
+         NjOd9jw4R5/F0wLf23BcGAgzJMCzJFDU5xvUuZqUxej2/+9T0B4eXsppDbG2Iq7PckxQ
+         8V/uMCef6DBfLwes+SarRRM1Ur4wxidI8KYNnGhmVq8f2SX945CDigl34i3WU6Re+fJJ
+         chEVMy94vWQnoBQASbaufRfzJYmmkyABaqdvb1UhtU1AIkaFe2Ik4bLIvg5TZyV/YsX7
+         USkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767790954; x=1768395754;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eVyX/saFSHkwOAT/HfR9J/XxoKvZtdkuCzZLxL4WCSA=;
-        b=YhVJYXoNqjToFcPjsHzMVx3rHAZQmVwfKTA+Wg/AZ01pfp6zREfYJeyJdFQsJOMrl9
-         jy1NlXxU5+ua1UW7fL1vwkEzzMhBcyj+ypQvWyMtFidAae7yAgoOrT5MiyhxTnzjdl7n
-         2hhUbdAKO36cS34QyEEkwSyx7dSIzjVXwY5F2MmSj/UbtqwL42YUFNTidBtenB3E3LGk
-         CIgiqRYvf10cV7ZpPVu8Fal3EypSjuhBpZ0v9Zf5LnY4zQvob1ho6eIGle62NCnueIdF
-         Ye3ffRf/D5qaeWuuM7sQ3VsBIDoCJziUzy8hM1DXzZga4jcJ8PyXRpnmrqYuDeSKsz9T
-         qpCA==
-X-Forwarded-Encrypted: i=1; AJvYcCV59VuW8s232mp6+Vq6J4dr6RPLLMPKEzOnvo/gSqmIeQl7W3LmJOM1p0WiTw1IPu32jbYcdJnF0AZyu+B0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt0BTlf7llCKtPH4K69j818r5uCsQCmo1wSnWwA9sqcqADWskl
-	Gzt8qiW2KPa5rcDXKjz6rviaffeBb9lKIPEmkSGYqnhu936DOw1a7o0LDdQACA==
-X-Gm-Gg: AY/fxX5xCJRZaOaMrpBtMobl1M7xVYgcI3xC4h4B0gHZClANG4FaS2RUnjHJkD2cNR5
-	IWq5bDtcx7uyJ1cKVcDwOVLCSz3h/6y4k/lIKW7/QkujRyUftTr65sOTOltwCaiC7eqb88QKgrX
-	Qylbc7qhytylOyqJPesFq6cocktDNu86RGJjPUIZFdSVc60A/y2Sr/3ApzGknsT3mtu2EqnbAHB
-	uFcoQ64NgmibLumRtDBQgVt1s3qN4Bs3YYRVSnxyyUlYSVuRPdZO4BnlhQzcCuiu63Jk8IcM9nL
-	YLc5no7ejdGOkmIPQhxKtOq7Bqpl2/W5evhj8wRW6ZtViMx0Z7kjvyYScM3zj97X0cRiq9gJsIC
-	h+RLEyVQ6vod0yzw7Af91xNuG6xcS4NYUCcQmYeqnLhE3hXEcQWPAo0WUrnS8zevTwiDouTgNIq
-	vZrlhE9MkHBgOtaqIJqRn1L0blbPFOtIsGXScFnsX/CsDLq4MuzTGM6F1njxG1XLnwWNM=
-X-Google-Smtp-Source: AGHT+IFka4564yGsxxmwys4Mn7+GTaVT5Y+gqGfi+/kEB3nv8HFKvSn2ve0Sd55L7DEx3kGPj6korQ==
-X-Received: by 2002:a17:903:2291:b0:2a2:d2e8:9f25 with SMTP id d9443c01a7336-2a3ee47f0a8mr18571915ad.33.1767784973602;
-        Wed, 07 Jan 2026 03:22:53 -0800 (PST)
-Received: from localhost (p5342157-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.39.242.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a3e3cc88e3sm48170855ad.75.2026.01.07.03.22.47
+        d=1e100.net; s=20230601; t=1767786697; x=1768391497;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=eFhWg0yXknfBYjAjhY49eGT0he703gFuxz0J4Ryn4Hc=;
+        b=qXH+wredkVMNHZD5xnw85f+LP2Oe1eB5QbZHwB904v009niQOuXKPzZW2D8Rl3Uhh+
+         arPXsopy7fp4P0Gx6wEDdHuLSC8QtzR/Qf1wTfGKT7Bdar4f/NarqRZofgDC7UEeMq71
+         ecaApaSY5micLgkMKgA5M6+b1xCkJ3N/Omf5XNrLcacdx4wZzZEuAZ3tCL2fELrw0Ssg
+         t94FeOBkHY6L8fES4hOZgaIoclicCl6EreBVgbBV3PQtIUo7QlDqH8GYb9T998ul7Nj1
+         mGZCToggojzN98U2HtTcc+GmE4H5RZrXFLuCFUUHodSWevFPCjxfZSL7uKSPNzPxoLAa
+         Oh5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUiZDVwkw5dK0ncDRrfJbQobSf/xOnkAidHLzgkCRfpLRPvGdNIMdUL8QUcpWmzrK2z+e/T15cD2eubk74U@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/JZsNzLsqYBxAQvKCXAJ21FcrPNsxGGb1psOFiVHA/EGIXpYD
+	RLYuBHnIHS6u+No3EOjz/kmsMk+P1B7xF024I0n59wPnC5wRpTo5m4CS
+X-Gm-Gg: AY/fxX7i/rP1ZpSizfRyjOeGHmm/2+KRHUWk7B1wJdmAEwDUGo+dXSFGYIy6AeEcNaL
+	sfj0exe63Ob+m0myhPPjGEl3ZxaYaW6Ep3T9v7e1kW3mI4/5sOx5qIEfSzi/huyI+bGqLftd4pR
+	gfxukOWW7O/CZ/l2ohmHLnvxdvACHYIKipJ1+CvsJFPIw2vclERJDDp0EdmvXXudTLZ2CjIboh+
+	pehY0kO+kD9VZLdxNRBMNw4W55Y43zvwYVP1IhkZPY/KEUt8WgIKNse03xF4wwhaoW24uZDVGPq
+	jExIuAt6doGy18YF4YhaGg3O6PcocrLo/1FeUgPShew7VL5SKL39a3fMT5AQ0yht7pfyX+YTkeH
+	FKp+YSYhLLzsOnvCIGyCJTxG2+/wYu9JSRn/ycNSD/Pu72KiWXUTGl6cUWaERKL1HVCIs2uZ1Bx
+	AWJhr8yAqjpfDZX77CqIASUbomWLIL0diTfz6d3658xpwAh85UdTMTDW55qnZhNqSxbdyQtc+no
+	2y3UzgXvbFZ1NIhdoA7V5+xSQ==
+X-Google-Smtp-Source: AGHT+IFH0acmgHQ6EWCtnqhwKaHJRPHfquNTd9/V7OoNJZcXx2+Bls4fC+zwkD99ObEzyVSuRYfHAQ==
+X-Received: by 2002:ad4:5dc8:0:b0:88a:306b:f05a with SMTP id 6a1803df08f44-890841a56d1mr24709466d6.24.1767786696474;
+        Wed, 07 Jan 2026 03:51:36 -0800 (PST)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89077253305sm33343796d6.41.2026.01.07.03.51.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jan 2026 03:22:53 -0800 (PST)
-Date: Wed, 07 Jan 2026 20:22:45 +0900 (JST)
-Message-Id: <20260107.202245.559061117523678561.fujita.tomonori@gmail.com>
-To: a.hindborg@kernel.org
-Cc: fujita.tomonori@gmail.com, aliceryhl@google.com, lyude@redhat.com,
- boqun.feng@gmail.com, will@kernel.org, peterz@infradead.org,
- richard.henderson@linaro.org, mattst88@gmail.com, linmag7@gmail.com,
- catalin.marinas@arm.com, ojeda@kernel.org, gary@garyguo.net,
- bjorn3_gh@protonmail.com, lossin@kernel.org, tmgross@umich.edu,
- dakr@kernel.org, mark.rutland@arm.com, frederic@kernel.org,
- tglx@linutronix.de, anna-maria@linutronix.de, jstultz@google.com,
- sboyd@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/5] rust: hrtimer: use READ_ONCE instead of
- read_volatile
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <87cy3livfk.fsf@t14s.mail-host-address-is-not-set>
-References: <87ikdej4s1.fsf@t14s.mail-host-address-is-not-set>
-	<20260106.222826.2155269977755242640.fujita.tomonori@gmail.com>
-	<87cy3livfk.fsf@t14s.mail-host-address-is-not-set>
+        Wed, 07 Jan 2026 03:51:36 -0800 (PST)
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 340D0F40068;
+	Wed,  7 Jan 2026 06:51:35 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Wed, 07 Jan 2026 06:51:35 -0500
+X-ME-Sender: <xms:x0heaf_XjM8EldP7mZl_zowHomLP-0MXv_xDds5LsWx_DjphFQPC-w>
+    <xme:x0heabpSfCmlgyjpQXDGdqjqwuVdgkxFRolmdFXVbMUQGWXNBgJTxzz7sVaZD5S0w
+    km2S3EclWZgFtLJn1jwilL12tkxP9Kd0txl2zn-9hO5j2YylnNqLA>
+X-ME-Received: <xmr:x0heaYlzu_tFXU4QxcfYGOCxoupKaRJNgKb9kawPSvS-OpSF9EjGFZUt>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddutddvleelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpedtteeluedtteevuedttdduvefhffdvgeduffefleeuheevtddugfdvveeigedu
+    geenucffohhmrghinhepvgigphhirhgvshdrhhhofienucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhp
+    vghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrd
+    hfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthht
+    ohepfedupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrrdhhihhnuggsohhrgh
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhhujhhithgrrdhtohhmohhnohhrihes
+    ghhmrghilhdrtghomhdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtg
+    homhdprhgtphhtthhopehlhihuuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopeif
+    ihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgrug
+    gvrggurdhorhhgpdhrtghpthhtoheprhhitghhrghrugdrhhgvnhguvghrshhonheslhhi
+    nhgrrhhordhorhhgpdhrtghpthhtohepmhgrthhtshhtkeeksehgmhgrihhlrdgtohhmpd
+    hrtghpthhtoheplhhinhhmrghgjeesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:x0heaQacsUW0VmkipHTcgOP7bzaqt_FAwgGghK4qfmqIeaGBHJ4FIQ>
+    <xmx:x0headt2TuVedR_biaKOaZiD9V9dQ9scTL5ryadW6DQKUU173jY_jg>
+    <xmx:x0heaZq66LkmUtgAaxDhfccsF2mnCj3uLyV3TTIAsrFDbBgTIIV_Lw>
+    <xmx:x0heaXnl4kpjDj3sVzT5Vi3EOgsLlwv6aJOBq3fVP2TrLU9YiwZKLA>
+    <xmx:x0heaZSH49OXE6qcQRj4fsclvKNnwvgMD-Sq42Nmr6vDCcC-Is5bcBLF>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 7 Jan 2026 06:51:34 -0500 (EST)
+Date: Wed, 7 Jan 2026 19:51:29 +0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, aliceryhl@google.com,
+	lyude@redhat.com, will@kernel.org, peterz@infradead.org,
+	richard.henderson@linaro.org, mattst88@gmail.com, linmag7@gmail.com,
+	catalin.marinas@arm.com, ojeda@kernel.org, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, lossin@kernel.org, tmgross@umich.edu,
+	dakr@kernel.org, mark.rutland@arm.com, frederic@kernel.org,
+	tglx@linutronix.de, anna-maria@linutronix.de, jstultz@google.com,
+	sboyd@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/5] rust: hrtimer: use READ_ONCE instead of read_volatile
+Message-ID: <aV5IwaxcIF4XJvg3@tardis-2.local>
+References: <L2dmGLLYJbusZn9axfRubM0hIOSTuny2cW3uyUhOVGvck7lQxTzDe0Xxf8Hw2cLxICT8kdmNAE74e-LV7YrReg==@protonmail.internalid>
+ <20260101.130012.2122315449079707392.fujita.tomonori@gmail.com>
+ <87ikdej4s1.fsf@t14s.mail-host-address-is-not-set>
+ <20260106.222826.2155269977755242640.fujita.tomonori@gmail.com>
+ <87cy3livfk.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87cy3livfk.fsf@t14s.mail-host-address-is-not-set>
 
-On Wed, 07 Jan 2026 11:11:43 +0100
-Andreas Hindborg <a.hindborg@kernel.org> wrote:
-
+On Wed, Jan 07, 2026 at 11:11:43AM +0100, Andreas Hindborg wrote:
 > FUJITA Tomonori <fujita.tomonori@gmail.com> writes:
 > 
->> On Tue, 06 Jan 2026 13:37:34 +0100
->> Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>
->>> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
->>> 
->>>> On Thu, 01 Jan 2026 11:11:23 +0900 (JST)
->>>> FUJITA Tomonori <fujita.tomonori@gmail.com> wrote:
->>>>
->>>>> On Wed, 31 Dec 2025 12:22:28 +0000
->>>>> Alice Ryhl <aliceryhl@google.com> wrote:
->>>>>
->>>>>> Using `READ_ONCE` is the correct way to read the `node.expires` field.
->>>>>>
->>>>>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->>>>>> ---
->>>>>>  rust/kernel/time/hrtimer.rs | 8 +++-----
->>>>>>  1 file changed, 3 insertions(+), 5 deletions(-)
->>>>>>
->>>>>> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
->>>>>> index 856d2d929a00892dc8eaec63cebdf547817953d3..e2b7a26f8aade972356c3eb5f6489bcda3e2e849 100644
->>>>>> --- a/rust/kernel/time/hrtimer.rs
->>>>>> +++ b/rust/kernel/time/hrtimer.rs
->>>>>> @@ -239,11 +239,9 @@ pub fn expires(&self) -> HrTimerInstant<T>
->>>>>>          // - Timers cannot have negative ktime_t values as their expiration time.
->>>>>>          // - There's no actual locking here, a racy read is fine and expected
->>>>>>          unsafe {
->>>>>> -            Instant::from_ktime(
->>>>>> -                // This `read_volatile` is intended to correspond to a READ_ONCE call.
->>>>>> -                // FIXME(read_once): Replace with `read_once` when available on the Rust side.
->>>>>> -                core::ptr::read_volatile(&raw const ((*c_timer_ptr).node.expires)),
->>>>>> -            )
->>>>>> +            Instant::from_ktime(kernel::sync::READ_ONCE(
->>>>>> +                &raw const (*c_timer_ptr).node.expires,
->>>>>> +            ))
->>>>>>          }
->>>>>
->>>>> Do we actually need READ_ONCE() here? I'm not sure but would it be
->>>>> better to call the C-side API?
->>>>>
->>>>> diff --git a/rust/helpers/time.c b/rust/helpers/time.c
->>>>> index 67a36ccc3ec4..73162dea2a29 100644
->>>>> --- a/rust/helpers/time.c
->>>>> +++ b/rust/helpers/time.c
->>>>> @@ -2,6 +2,7 @@
->>>>>
->>>>>  #include <linux/delay.h>
->>>>>  #include <linux/ktime.h>
->>>>> +#include <linux/hrtimer.h>
->>>>>  #include <linux/timekeeping.h>
->>>>>
->>>>>  void rust_helper_fsleep(unsigned long usecs)
->>>>> @@ -38,3 +39,8 @@ void rust_helper_udelay(unsigned long usec)
->>>>>  {
->>>>>  	udelay(usec);
->>>>>  }
->>>>> +
->>>>> +__rust_helper ktime_t rust_helper_hrtimer_get_expires(const struct hrtimer *timer)
->>>>> +{
->>>>> +	return timer->node.expires;
->>>>> +}
->>>>
->>>> Sorry, of course this should be:
->>>>
->>>> +__rust_helper ktime_t rust_helper_hrtimer_get_expires(const struct hrtimer *timer)
->>>> +{
->>>> +	return hrtimer_get_expires(timer);
->>>> +}
->>>>
->>> 
->>> This is a potentially racy read. As far as I recall, we determined that
->>> using read_once is the proper way to handle the situation.
->>> 
->>> I do not think it makes a difference that the read is done by C code.
->>
->> What does "racy read" mean here?
->>
->> The C side doesn't use WRITE_ONCE() or READ_ONCE for node.expires. How
->> would using READ_ONCE() on the Rust side make a difference?
+[...]
+> >>>
+> >> 
+> >> This is a potentially racy read. As far as I recall, we determined that
+> >> using read_once is the proper way to handle the situation.
+> >> 
+> >> I do not think it makes a difference that the read is done by C code.
+> >
+> > What does "racy read" mean here?
+> >
+> > The C side doesn't use WRITE_ONCE() or READ_ONCE for node.expires. How
+> > would using READ_ONCE() on the Rust side make a difference?
 > 
 > Data races like this are UB in Rust. As far as I understand, using this
 > READ_ONCE implementation or a relaxed atomic read would make the read
 > well defined. I am not aware if this is only the case if all writes to
 > the location from C also use atomic operations or WRITE_ONCE. @Boqun?
+> 
 
-The C side updates node.expires without WRITE_ONCE()/atomics so a
-Rust-side READ_ONCE() can still observe a torn value; I think that
-this is still a data race / UB from Rust's perspective.
+I took a look into this, the current C code is probably fine (i.e.
+without READ_ONCE() or WRITE_ONCE()) because the accesses are
 
-And since expires is 64-bit, WRITE_ONCE() on 32-bit architectures does
-not inherently guarantee tear-free stores either.
+1) protected by timer base locking or
+2) in a timer callback which provides exclusive accesses to .expires as
+   well. Note that hrtimer_cancel() doesn't need to access .expires, so
+   a timer callback racing with a hrtimer_cancel() is fine.
 
-I think that the expires() method should follow the same safety
-requirements as raw_forward(): it should only be considered safe when
-holding exclusive access to hrtimer or within the context of the timer
-callback. Under those conditions, it would be fine to call C's
-hrtimer_get_expires().
+(I may miss one or two cases, but most of the cases are fine)
 
+The problem in Rust code is that HrTimer::expires() is a pub function,
+so in 2) a HrTimer::expires() can race with hrtimer_forward(), which
+causes data races.
+
+We either change hrtimer C code to support such a usage (against data
+races) or change the usage of this HrTimer::expires() function. Using
+READ_ONCE() here won't work. (Yes, we could say assuming all plain
+writes on .expires in C are atomic as some other code does, but hrtimer
+doesn't rely on this, so I don't think we should either)
+
+Regards,
+Boqun
+
+> 
+> Best regards,
+> Andreas Hindborg
+> 
+> 
 
