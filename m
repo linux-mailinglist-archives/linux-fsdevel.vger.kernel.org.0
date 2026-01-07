@@ -1,147 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-72686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04519CFFB06
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 20:17:57 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E6DCFFE77
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 21:03:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 795B1301596C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 19:17:54 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 19C133006726
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 20:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6F8265CA8;
-	Wed,  7 Jan 2026 19:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E499832B996;
+	Wed,  7 Jan 2026 20:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WT7SW+oW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fx7DRgq0";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="YRF5tVBf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2201DFDA1;
-	Wed,  7 Jan 2026 19:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F463328FC
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 20:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767813470; cv=none; b=DOtAeFFkY9x+f4DB6CIIEbleEGsuWtsY2y7ZMpyhuDm7iZQn0nEO9UijDmzebuuXtEpPHRai9kdEEEjgdXKpFr2JkcvtQl5EEd5F7hjw2mLMb5D49NDT9BhFYcYqQG3abLcX0/vEnOz6w/8JC2I2sMu9tIsUnUXQyGzaiaBR29w=
+	t=1767816179; cv=none; b=j0RXOgLPdfMoDzOZ6HbG1wVxHQruY29hoBdbJbhX+tVCQdOt4T8yvvxZN3eHy4kS2c8sX+OPqYE6f/D1e6sZXA2nNy1cDJ5EL3GYwJKB+P3i2uFwvNRPBy1e1g6ItgnIELYyXMk7LkkMYGDj+SHFNR5JN2ZniUwkC+CAYQmCIM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767813470; c=relaxed/simple;
-	bh=wpCUsEx/DAHll49wE1QSK9nxwuSDleQeOJqWpzlb4qE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YdnikVcexEvlULeH/g2cg/fEUgiT9HyMGipaxjeYQbONDDuiXdSewXmTeTY4ItDXkGf9yQINIqzkmQVqEl2cwnzFBDzsxTSvn2fNvTnpuSEfa83fXX8/AgFHI5QlVZJ8XR1CKlCQFCu3TTG0pbe8Yp+OS3cvx2PNAn8hRn5B3rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WT7SW+oW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71A9EC4CEF1;
-	Wed,  7 Jan 2026 19:17:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767813469;
-	bh=wpCUsEx/DAHll49wE1QSK9nxwuSDleQeOJqWpzlb4qE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=WT7SW+oWUw8i87keBl/9o7xZic/L29/iJY5sM9Id1OuuX5PJyeq/uc9ECaDB4/6lY
-	 NbAWzGSGVcYtQTMpQEY+mpGZltDKXtX74HeL132Y/g79cFBclirgmZJy6159WyGeHZ
-	 a/03BCqdmPa9RLfu4Dbjx9M808/OS1hEaDn1NGgMdiy1cQT6lL6BHJlt1tDbQGDSZE
-	 4apMzmpkQpCeLaQKzgmoxfyfQfkd04rQdCNC2OSFuJ0YaIRksXBcoijyvc7w+F0min
-	 8f7Vr/B2oekSry31eXkDamQlKaasOGoUWZhHcsTLo9t0yvWkkIZ45V+qlo2+UyTlUw
-	 9zJ8Stsvf6FUw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E32B1CE098B; Wed,  7 Jan 2026 11:17:48 -0800 (PST)
-Date: Wed, 7 Jan 2026 11:17:48 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Gary Guo <gary@garyguo.net>,
-	Will Deacon <will@kernel.org>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Magnus Lindholm <linmag7@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Lyude Paul <lyude@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kasan-dev@googlegroups.com
-Subject: Re: [PATCH 0/5] Add READ_ONCE and WRITE_ONCE to Rust
-Message-ID: <be85a8be-2def-48b4-9bee-9c2a8c063608@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20251231-rwonce-v1-0-702a10b85278@google.com>
- <20251231151216.23446b64.gary@garyguo.net>
- <aVXFk0L-FegoVJpC@google.com>
- <OFUIwAYmy6idQxDq-A3A_s2zDlhfKE9JmkSgcK40K8okU1OE_noL1rN6nUZD03AX6ixo4Xgfhi5C4XLl5RJlfA==@protonmail.internalid>
- <aVXKP8vQ6uAxtazT@tardis-2.local>
- <87fr8ij4le.fsf@t14s.mail-host-address-is-not-set>
- <aV0JkZdrZn97-d7d@tardis-2.local>
- <20260106145622.GB3707837@noisy.programming.kicks-ass.net>
- <7fa2c07e-acf9-4f9a-b056-4d4254ea61e5@paulmck-laptop>
- <20260107084322.GC272712@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1767816179; c=relaxed/simple;
+	bh=C56IoC/7pKu7IOe+bmIo3KG0TqDEmn/tNomGMdAluCU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WWtWUzsSk1ZBF2qVlnEg9/+mkNuhN4EkRjdm0HrqNuEjZYWIhuiVhwmh9WQJWkCw/uL8WtcpfoKThzDbiDRRP7toAsW6BGo/qypPLkDxgeVFo4KaHPkFwtnGFrvgMNvAgOGnt1OYE+0xdwBdePi6dyYgyDWkChzZjp6OaL/eH5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fx7DRgq0; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=YRF5tVBf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1767816174;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Iu+APFi4DB1BEixYf1NERY7bmC13ljDpUozQin2rblQ=;
+	b=fx7DRgq0aRftvVxmFO7vKuj1KsVZde4v1libfEZMdoD9L+gYzFLiODi1qbQTOWca2LTDbF
+	Kd3yqWncnDze4xMKsAFm7ySOOKwdFQtoeCO3OV/8TJD/o1uom1QmR/FpINyok/ymYVQKx0
+	lXpmn7fdSXgRtBgtFowNbGBfbwJ6K/Y=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-692-tFlDYg2PMkOvLxlizP2Yxg-1; Wed, 07 Jan 2026 15:02:53 -0500
+X-MC-Unique: tFlDYg2PMkOvLxlizP2Yxg-1
+X-Mimecast-MFC-AGG-ID: tFlDYg2PMkOvLxlizP2Yxg_1767816172
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-78e602d09a7so27831457b3.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jan 2026 12:02:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1767816172; x=1768420972; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Iu+APFi4DB1BEixYf1NERY7bmC13ljDpUozQin2rblQ=;
+        b=YRF5tVBf9i7M3G5iQCY/sPLkSHWaxqfgtZHG8OxXCLDNiRf2uHMROuL5CqDEiVHU2w
+         c5WLUpgAZQtP/0Aft0cnGSHfWsTEJ5NADIgYAPMwYDio7aQR+iSwtQXOzzQXmIKlHu2C
+         qmll2rAppmwYq6Smi+BjH91cYp7fYx/w28rRO1ESkHG04jCpbZUqaC0WxJgFjTUqAKga
+         QzG81ANGW42MdRv9UUNnDSTbJeFU/06DUzysqWRbCz+R2NjgAH0UFQEp2MF6am+xAaQp
+         0t8phTolrASVZMQx2X8tczyqD6LmGTzrW8zHsyeGqnbUMLMoWPhTDWMtQx1voGAyKkdJ
+         +09w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767816172; x=1768420972;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iu+APFi4DB1BEixYf1NERY7bmC13ljDpUozQin2rblQ=;
+        b=w04wc6N9luhBtue8kSUFYaPd6gKDRXysSyn/w2DzzpfaLD2xyymo2xSHpJ+3OzhXzq
+         rHZ3veI9boi9JMyZDEVj0J4d7CaeVkWJdMbaLOAhWygvtYnvPv+NVCQPid1/WWBA+AQr
+         OpuZQp/dra4JP7FwjQxwIn1y4s9tbFdf7UFo9b/+GWiFbKix5dXM9e6gnGB41BWKN2cD
+         gUdWetHzSoYW+UWtke2vTxBLoXspAkW671JAQ1Dw14Etq9/BDvJeH4ypr4BNFowlBlWu
+         MCbx5NA5baxQgRAcqXA8IpaxgjLVUDgIFupPgHXhqt4zCJAmTkEIFoEZPK64PoRJkBFa
+         El/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXh/jLZ76VtiXdidHpQzBYGeVA/cuf7n/CEfuLThul7Gt7bjLG9h5AflVc0KERgPiL4CGaHANCGQ+doPxyj@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPC+U1QYN6zM+LiwGYd8eJHp8OAvpQCiW1f3VSd7SDXGJdlOCi
+	nqYN4PtxG+UMwRhiGWAJAL27xctQ1J/BeE+ZWQun5fNoFPuYrj93Zay4OhGEFjMk2s8gk+ihZTZ
+	ZhJxOFM4XUG8R5G9Sv+/cXnjrzcbHOM1xGaIq3LRHYrbTybfX5MUgT+5l5uV3aeffwo8=
+X-Gm-Gg: AY/fxX43Ugp5eeUKOCcGCS59zfq6HPUYLLslUtavefC79P8HHvdhVJ+YJ1drbVVtCxy
+	fsI7rH/ujadKGdYMLR4iGR1XHC8Y66Q7RoEtW/PsaWuPlzMvVu1JhhPq1x0bu62MUSNTucJ2As+
+	DwZHSzEzm7NUuWEJnUd+6S/TiRmWq285dzzKOotpzi/rpFKVJz6lDVqOJIgRZAwJ+d9mNhWPIGb
+	ozyHOJTRwjqk+iAVO+Dtgb24sHMieToKH5HcxbjU0xe8qvCvIjZ1M2L25kV5xvfXHB9zhoVn+oh
+	X59JU4dj2wDWaLfymPBLyCN3TwNoJCl0+DBUWisJQogeBY+H653kR1zftKDOmfvjCf+wZQleZZ2
+	M29nsalFetGwpfeChk8DRrWeGacbAIqyTs+mJz7lb
+X-Received: by 2002:a05:690c:6002:b0:78c:8cf2:e1a8 with SMTP id 00721157ae682-790b57fd697mr35186697b3.41.1767816172488;
+        Wed, 07 Jan 2026 12:02:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFFtanv8xfnFTTRT6tEbrRIY8LovgzhbuRiJibqFx8Wg+Ad59na27viUk0nz6iFz80kLE3f9Q==
+X-Received: by 2002:a05:690c:6002:b0:78c:8cf2:e1a8 with SMTP id 00721157ae682-790b57fd697mr35186317b3.41.1767816172118;
+        Wed, 07 Jan 2026 12:02:52 -0800 (PST)
+Received: from li-4c4c4544-0032-4210-804c-c3c04f423534.ibm.com ([2600:1700:6476:1430::41])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-790aa5534f2sm22153297b3.10.2026.01.07.12.02.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Jan 2026 12:02:51 -0800 (PST)
+Message-ID: <591f69efdf89ba02c36b042faa3486eca0cec76d.camel@redhat.com>
+Subject: Re: [EXTERNAL] [PATCH 5/6] ceph: don't allow delegations to be set
+ on directories
+From: Viacheslav Dubeyko <vdubeyko@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>, Christian Brauner
+ <brauner@kernel.org>,  Al Viro <viro@zeniv.linux.org.uk>, Jan Kara
+ <jack@suse.cz>, Steve French <sfrench@samba.org>,  Paulo Alcantara	
+ <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam
+ Prasad N	 <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Bharath SM	
+ <bharathsm@microsoft.com>, Trond Myklebust <trondmy@kernel.org>, Anna
+ Schumaker	 <anna@kernel.org>, Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov	 <lucho@ionkov.net>, Dominique Martinet
+ <asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>,
+ Andreas Gruenbacher <agruenba@redhat.com>, Xiubo Li	 <xiubli@redhat.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Hans de Goede	 <hansg@kernel.org>,
+ NeilBrown <neil@brown.name>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, v9fs@lists.linux.dev, gfs2@lists.linux.dev, 
+	ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Date: Wed, 07 Jan 2026 12:02:49 -0800
+In-Reply-To: <20260107-setlease-6-19-v1-5-85f034abcc57@kernel.org>
+References: <20260107-setlease-6-19-v1-0-85f034abcc57@kernel.org>
+	 <20260107-setlease-6-19-v1-5-85f034abcc57@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260107084322.GC272712@noisy.programming.kicks-ass.net>
 
-On Wed, Jan 07, 2026 at 09:43:22AM +0100, Peter Zijlstra wrote:
-> On Tue, Jan 06, 2026 at 10:18:35AM -0800, Paul E. McKenney wrote:
-> > On Tue, Jan 06, 2026 at 03:56:22PM +0100, Peter Zijlstra wrote:
-> > > On Tue, Jan 06, 2026 at 09:09:37PM +0800, Boqun Feng wrote:
-> > > 
-> > > > Some C code believes a plain write to a properly aligned location is
-> > > > atomic (see KCSAN_ASSUME_PLAIN_WRITES_ATOMIC, and no, this doesn't mean
-> > > > it's recommended to assume such), and I guess that's the case for
-> > > > hrtimer, if it's not much a trouble you can replace the plain write with
-> > > > WRITE_ONCE() on C side ;-)
-> > > 
-> > > GCC used to provide this guarantee, some of the older code was written
-> > > on that. GCC no longer provides that guarantee (there are known cases
-> > > where it breaks and all that) and newer code should not rely on this.
-> > > 
-> > > All such places *SHOULD* be updated to use READ_ONCE/WRITE_ONCE.
-> > 
-> > Agreed!
-> > 
-> > In that vein, any objections to the patch shown below?
-> 
-> Not really; although it would of course be nice if that were accompanied
-> with a pile of cleanup patches taking out the worst offenders or
-> somesuch ;-)
+On Wed, 2026-01-07 at 09:20 -0500, Jeff Layton wrote:
+> With the advent of directory leases, it's necessary to set the
+> ->setlease() handler in directory file_operations to properly deny them.
+>=20
+> Fixes: e6d28ebc17eb ("filelock: push the S_ISREG check down to ->setlease=
+ handlers")
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/dir.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index 86d7aa594ea99335af3e91a95c0a418fdc1b8a8a..804588524cd570078ba59bf38=
+d2460950ca67daf 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -2214,6 +2214,7 @@ const struct file_operations ceph_dir_fops =3D {
+>  	.fsync =3D ceph_fsync,
+>  	.lock =3D ceph_lock,
+>  	.flock =3D ceph_flock,
+> +	.setlease =3D simple_nosetlease,
+>  };
+> =20
+>  const struct file_operations ceph_snapdir_fops =3D {
+> @@ -2221,6 +2222,7 @@ const struct file_operations ceph_snapdir_fops =3D =
+{
+>  	.llseek =3D ceph_dir_llseek,
+>  	.open =3D ceph_open,
+>  	.release =3D ceph_release,
+> +	.setlease =3D simple_nosetlease,
+>  };
+> =20
+>  const struct inode_operations ceph_dir_iops =3D {
 
-Careful what you ask for.  You might get it...  ;-)
+Looks good.
 
-							Thanx, Paul
+Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-> > ------------------------------------------------------------------------
-> > 
-> > diff --git a/lib/Kconfig.kcsan b/lib/Kconfig.kcsan
-> > index 4ce4b0c0109cb..e827e24ab5d42 100644
-> > --- a/lib/Kconfig.kcsan
-> > +++ b/lib/Kconfig.kcsan
-> > @@ -199,7 +199,7 @@ config KCSAN_WEAK_MEMORY
-> >  
-> >  config KCSAN_REPORT_VALUE_CHANGE_ONLY
-> >  	bool "Only report races where watcher observed a data value change"
-> > -	default y
-> > +	default n
-> >  	depends on !KCSAN_STRICT
-> >  	help
-> >  	  If enabled and a conflicting write is observed via a watchpoint, but
-> > @@ -208,7 +208,7 @@ config KCSAN_REPORT_VALUE_CHANGE_ONLY
-> >  
-> >  config KCSAN_ASSUME_PLAIN_WRITES_ATOMIC
-> >  	bool "Assume that plain aligned writes up to word size are atomic"
-> > -	default y
-> > +	default n
-> >  	depends on !KCSAN_STRICT
-> >  	help
-> >  	  Assume that plain aligned writes up to word size are atomic by
+Thanks,
+Slava.
+
 
