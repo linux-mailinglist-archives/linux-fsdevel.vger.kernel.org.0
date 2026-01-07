@@ -1,118 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-72568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A94ACFBC3A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 03:44:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9E1CFBC43
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 03:46:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E68343059680
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 02:43:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 16A0B30213D2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 02:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F571940A1;
-	Wed,  7 Jan 2026 02:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0C61519AC;
+	Wed,  7 Jan 2026 02:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Dzris56S"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Bt1H9kXT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58CC1A256B
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 02:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B170800
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 02:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767753805; cv=none; b=JRAnwVH6n2VcKrQSrme+AnJrglo0M7ewym1VGIL4h6H5cSLj1crCrX0gIEVcD46e/qbHamdoqnpIC7KJ0tHtXJOTH4+rpsOWtMe1s0YgIXkjYxMob07DyaZORk8m6Uy51XaGwROqRdIm8sXp3EdvWnMTLeyrshwH5vabBX7WYW0=
+	t=1767753978; cv=none; b=H+wTOPlcu9LUTMRwaBawseyDiSsAGPB/hQkrl+wkc2vdcM5XpCCDwcsyc5HKWzfDOVCiqR95QLha1v15V82e9GoO88K7G284ISQ4LKcP0MSS/D67hUG/HNvjingiDbTMfjSaNe8uORjPm3Lcw+FfkiIr8khJT+kScuyQmVjC3M0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767753805; c=relaxed/simple;
-	bh=drOHgT8EVLwGZalTAFzzBlRGx5099uF+mFLLEuqeE38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qwrYigWmCafUlJEP8bEN1AROXbOnSkZ/xU5Flbu5ZGpZsuPyi55MwdJgMbsEg/3HFe3bwaFVkaZGRzt31Fak9MfCj4xAnx6ynoHcZ9UA+pXY/LQ+3UZq1+FLXCUA0FB85+6iFYsQpVxQqB7wBZgxXk00VDtaKKQWLJUwVqA9u4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Dzris56S; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-34f63ad6f51so417868a91.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Jan 2026 18:43:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1767753803; x=1768358603; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=drOHgT8EVLwGZalTAFzzBlRGx5099uF+mFLLEuqeE38=;
-        b=Dzris56SzSmXNR7hjk6ao3AyA9eS1dQLgebJbU3DOu39PcuYvNqRlSEEazV7ly25TT
-         fKm4a8WOluON1PC7A/9b3hCqqn7lT/tjMCYWX791zYMO9qRxyi527pLrBslefRkSnakE
-         nOnzORg0vyYGhFxDVw3XaIpkt7iFvHMy5bFrIN1++8baztRDUosUUMCDrxjx1DV6ziHg
-         ENcYzgmOS7CcLA7xJcYlDhABliwiLW9Ej22jcCCVoPgJQ6Vtmr0rayeAfsjR8r6p2xAP
-         EKPoEIqxiXXEe5bwRbOXFWIKr2BIdWkwqz/nPssaNC/McIg3GnfL/MJYQ9pXj7vYmazQ
-         kgbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767753803; x=1768358603;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=drOHgT8EVLwGZalTAFzzBlRGx5099uF+mFLLEuqeE38=;
-        b=GTGyS33NejA8jT/vmahIA5OzaWYbq8PL6dM20yQyaT91Bh3sQUdZSo04qfazXvC4DO
-         cQbQZG+SqKdkyE3yEOFF1RSuZhY3IQ5N6ZTDmHxU8SRXL79CbM8fONp/Kca626biG0DL
-         zatsmixePUNLy/lQynYUjKmqi1y1BjH1Pqv/1FkakIl4lgdLi46FNcHjqeP83RT0t6D0
-         cRNxAI2JyZILd6B6L4ssR1bBaq6ZyyvBMUuhmwPO4yVWDHiZztbDS8HWBsvnstti19Bd
-         6F1BT/QQLJfNNEnV0HDgBBpwRsLDSah3bymAit5fQ83BKggxtXoKbjZu2vHBPlpMzCCJ
-         sMdg==
-X-Forwarded-Encrypted: i=1; AJvYcCU92Vktw3wyFDSnChKr2y+IFyxmLh/QeVTHJOeEDxeIfvJBtIIjpmsxU/w6kmPGJUvQs+YzO2MV2uv4j4E7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJeprwF9AeyBWEa0A5ZNe//mNBQGXsyi9zSWNUiMtaUTelfwbP
-	1qTDxF6OeeMJht0EtXsHOq7Z0XDTnOzQRYDfoUgrWqUdpJ3XwksjVlyLqKyS2skZCQ4oWU/ISC5
-	xDtjAxw9cBkNyReIfqtT7Vxt9HlAggnScqR53u9GKBQ==
-X-Gm-Gg: AY/fxX4XZBFZ1cWg4oIj1/5WNr3W++34Myhqq+mVQGKeLbS/NDeqQPn1XeXyP6YsJAz
-	MfHnVxISaS8uh9BcJceFDZp3b2wJLKNjq5EYXej3s844maC/Qug6yeS9DG2CMOqQjAwcJkdWr0L
-	nWU2hAYxBOLrdAlYim4gdxRkw/Wyh8+3iYquiHLaDyXyRvLidHIw1+AsumdXzHqIbQJn05x/oP7
-	bcUm29C15NOwn3RKL+dcGRGWUSeNkCv2Gf0dJDDGh5bfhHsAVkU7Bd0n7Uy6G8jbJNWubkgPp5j
-	ORtvDzk2
-X-Google-Smtp-Source: AGHT+IFAOzJ39Prd4LsKQCIvTA5Pl6anG1dVhfCx6QT7++UKrk8hshccTcwev/xGxSDkiK0bLyYedW+bi4EkL14wbmU=
-X-Received: by 2002:a17:90a:e703:b0:340:ad5e:cd with SMTP id
- 98e67ed59e1d1-34f68b4e666mr1055299a91.5.1767753803276; Tue, 06 Jan 2026
- 18:43:23 -0800 (PST)
+	s=arc-20240116; t=1767753978; c=relaxed/simple;
+	bh=SPPZzXp5AMcYw7vaROtFblCN4sqSlXiEZn8gNJxeVc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VcpJc7LkPLzU8UHUgxr098ebgArwZtOhxZ8Ff1uImOANiv1V8EXTQoVC85k/yiNEOzbv5hET2Ojv9lfXEG2ODo6lwA00AyT/m+mJZhhfCaBCP0h+9L92ZgHYyRrpJrHS1FnqKqA3W0RQ6eVgZHhiuNEEsIvWohqB36MTGaEr7Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Bt1H9kXT; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0YvtHZA+FUTHSzBY85OojpBFOC6uOXVgu0PH2ziaiDQ=; b=Bt1H9kXTP4FG6zuTYAOQWDMzmv
+	eZoGqeZWvVGtyeNvz2EpYvswfFnrb7/YWWovSpOfWltnDL7ZxzRl1p4nbfidPl5KRzfgul9yGKT5T
+	+0g0/czdi6dGhjZHGmfFTAe2y1akEHof/2CaCLi984e22h7ySwd/HpWmxLlEUVKSlgn4xz2kDdT40
+	UM9rUrQoLWt97Nsp7kwSul1HEKqmpZ7lqg22uhw3TKBJwFD71Ab+nr4fDqOq4YZqUIIApJIy5hwz8
+	VB4F5JPGmtfihyvyp1I4sD86ojEKR1xL/KKJ1THHjN4ov/ec9AUKZ4WCm5E2rfGd32jJd0Bd2n9X1
+	+McXm+xA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vdJa3-00000002fHF-2YT9;
+	Wed, 07 Jan 2026 02:47:27 +0000
+Date: Wed, 7 Jan 2026 02:47:27 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+	Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [PATCH 3/3] fs: add immutable rootfs
+Message-ID: <20260107024727.GM1712166@ZenIV>
+References: <20260102-work-immutable-rootfs-v1-0-f2073b2d1602@kernel.org>
+ <20260102-work-immutable-rootfs-v1-3-f2073b2d1602@kernel.org>
+ <f6bef901-b9a6-4882-83d1-9c5c34402351@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251223062113.52477-1-zhangtianci.1997@bytedance.com>
- <CAJnrk1aR=fPSXPuTBytnOPtE-0zuxfjMmFyug7fjsDa5T1djRA@mail.gmail.com>
- <CAP4dvsf+XGJQFk_UrGFmgTPfkbchm_izjO31M9rQN+wYU=8zMA@mail.gmail.com>
- <CAJnrk1Y0+j2xyko83s=b5Jw=maDKp3=HMYbLrVT5S+fJ1e2BNg@mail.gmail.com>
- <CAP4dvseWhaeu08NR-q=F5pRyMN5BnmWXHZi4i1L+utdjJTECaQ@mail.gmail.com> <CAJnrk1a2-HS6cqthfcU5hxBi7Rinwh8MpYggNtOg6P256aW0zw@mail.gmail.com>
-In-Reply-To: <CAJnrk1a2-HS6cqthfcU5hxBi7Rinwh8MpYggNtOg6P256aW0zw@mail.gmail.com>
-From: Zhang Tianci <zhangtianci.1997@bytedance.com>
-Date: Wed, 7 Jan 2026 10:43:12 +0800
-X-Gm-Features: AQt7F2p7_lt8ZIOCbnhv6PSBnj5ju4ST5q9D6euYKmeRPVjpei_sPxkqoV4A4aM
-Message-ID: <CAP4dvsdRtO6BX6A-LdJDyakVucLskTvOViZRGonoMsK0eNtM1g@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] fuse: add hang check in request_wait_answer()
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, xieyongji@bytedance.com, 
-	zhujia.zj@bytedance.com, Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f6bef901-b9a6-4882-83d1-9c5c34402351@linux.alibaba.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi Joanne=EF=BC=8C
+On Wed, Jan 07, 2026 at 10:28:23AM +0800, Gao Xiang wrote:
 
-> imo it's possible to check whether the kernel itself is affected just
-> purely through libfuse changes to fuse_lowlevel.c where the request
-> communication with the kernel happens. The number of requests ready by
-> the kernel is exposed to userspace through sysfs, so if the daemon is
-> deadlocked or cannot read fuse requests, that scenario is detectable
-> by userspace.
+> Just one random suggestion.  Regardless of Al's comments,
+> if we really would like to expose a new visible type to
+> userspace,   how about giving it a meaningful name like
+> emptyfs or nullfs (I know it could have other meanings
+> in other OSes) from its tree hierarchy to avoid the
+> ambiguous "rootfs" naming, especially if it may be
+> considered for mounting by users in future potential use
+> cases?
 
-Yes, checking in libfuse/fuse_lowlevel.c is feasible, but it depends on
-the running state of FUSEDaemon(if FUSEDaemon is in a process exit state,
-this check cannot be performed), I think we do need this approach,
-but it cannot fully cover all scenarios. Therefore, I believe it
-should coexist with this patch.
+*boggle*
 
-The content of the /sys/fs/fuse/connections/${devid}/waiting interface
-is inaccurate;
-it cannot distinguish between normal waiting and requests that have been ha=
-nging
-for a period of time.
+_what_ potential use cases?  "This here directory is empty and
+it'll stay empty and anyone trying to create stuff in it will
+get an error; oh, and we want it to be a mount boundary, for
+some reason"?
 
-Thanks,
-Tianci
+IDGI...
 
