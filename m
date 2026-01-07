@@ -1,118 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-72627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E0F4CFE5FC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 15:46:42 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE397CFE5DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 15:45:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id B14BD3002153
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 14:46:41 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 2CCD3300A3EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 14:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCCB33BBD4;
-	Wed,  7 Jan 2026 14:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D20C3446AB;
+	Wed,  7 Jan 2026 14:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYpAl51z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LlJGPpB4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50F0330337;
-	Wed,  7 Jan 2026 14:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88184344026;
+	Wed,  7 Jan 2026 14:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767795649; cv=none; b=lDrAvATduEH2Dmo5BqYxe6FlZIg++2QkzJkyWkq8UODfB2xxtKU0cMe7BY7GO3lJh5SGmuavCvQpUnef7Uh8ZBV4Ub23eb6ooQswWsH+2RAzTEQSmiJYjZDW2PRCeCcQSLKg8QZLH/olTEfnsUkqyRe3MwokKwbuL9nT9WCfZuY=
+	t=1767796601; cv=none; b=Iv34qh1+WtUTQWz/pzGJ/3bz0jiY8xO9CjlH3JlBoqv8YgZ+NBwSah6gvb4iUge2QXLgR8l2W1I9EaTdKzEx4MSyUPZtiit0XqO4l3wDOUKK7GUFbeSh9uS2OSTr7YynebDFNlKDOV8f6/aUmZxKdTzp4j/Iq3fp7qnkjOjzx2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767795649; c=relaxed/simple;
-	bh=swYePiPcFodsDh/67E0j7LPYSSE9pk5yCYXqd+3XH2Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tIOvyb6T9JkIWnK2R9YPqo8Pg2TiYxzVUn3yrJ2voEPeI4DRk8xlsFVifZhwDAZeduACyFjyB4lmzl2mLG5o0xTGL084Y1niZ0dHSNX13Ls4oPj+GQkZdCM3Wjlizfb8Jyk+EKtdbdiSnZlzOp2rFYLmh9i71fpIQGSa9hgByMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYpAl51z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BB6C4CEF7;
-	Wed,  7 Jan 2026 14:20:45 +0000 (UTC)
+	s=arc-20240116; t=1767796601; c=relaxed/simple;
+	bh=U3GkqvVUqLIjI1hj3CxuNpDqnrKa0rqNuNhg+EEUs0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HaZW8PAiMA6ns5uvvgeCyuVw8TVgEogBbNynqwFCbFCkCryPTR5c0vYi7O+fhBj4TYxQu2ytv3eIA1m+Y7yA0KCliBNXUA9U/uc4gqn09NV2SbDSqZQlpxcrVnfaUFIQFz9ZzPvVkxIlIwnuPL8LAkjafe8mKIAhEu7hu25efO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LlJGPpB4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92915C4CEF1;
+	Wed,  7 Jan 2026 14:36:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767795648;
-	bh=swYePiPcFodsDh/67E0j7LPYSSE9pk5yCYXqd+3XH2Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=AYpAl51zYcKM5SOyIjkH+SRS+s1SgwbK+zEYQJ3vsaYluDtz4qEDKpTsvxJhEXyYG
-	 UTSnn8T72uZwqIsFSSzWJpg7dyR9Ud+wjulGfX/BNnsSyQN5VqxkjvEzhOPn3xBvdS
-	 LCMFm8wgeJZkQ0wLlBejx6ZpSrSAlxbbusu4Shito0wZh5nQNt/BK383ps9t+ivcoy
-	 L8kbTGLPioQrGce25s9TlBD5CG9ZzO6VdZc7ulMRWtDD+/YBXOwhshvwLOZ28qOt0H
-	 BruLv4TMRys0iitPAaeXQMTLHu+22xZ12Cobm2cGS5HYrIfGgDLaMRR01oocXXlv2H
-	 gwgtatvghwDAg==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 07 Jan 2026 09:20:14 -0500
-Subject: [PATCH 6/6] vboxsf: don't allow delegations to be set on
- directories
+	s=k20201202; t=1767796601;
+	bh=U3GkqvVUqLIjI1hj3CxuNpDqnrKa0rqNuNhg+EEUs0E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LlJGPpB4PeH97qZ76RytczaHbzZVpk+PYs5EIz8e0zN5N2FTXhH86qT9774UnsbnR
+	 VAP3bVJDIQLBfY9/VYuRZ9qNIEzSGGC5QtIjKaxt53YYk/63RiMGwPQ6r8h7JYqQ23
+	 hr9f7DrCvnbmteJ8BtvaG1azrrhk+IKWIAB80EvgDcLqGpnsk6WBjUUev4+kjwn5XN
+	 fnBkcaHN7760UuFlSFnrwceAYAHJh+EZ5rM8CTy3f2E+6En4gX6VIKua0HkCkzstwG
+	 Ghz+OqC/7NijeuY1xDj89O0nbr1g/kT73bTBACxJ3mql0F/yq+I7guzjVpaob375cX
+	 IrhTr/2EB+XuQ==
+Message-ID: <cb269767-688d-46f1-8d82-1fd6dc32e94d@kernel.org>
+Date: Wed, 7 Jan 2026 09:36:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] NFSD: Add aggressive write throttling control
+To: Christoph Hellwig <hch@lst.de>
+Cc: Mike Snitzer <snitzer@kernel.org>, linux-nfs@vger.kernel.org,
+ Chuck Lever <chuck.lever@oracle.com>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org
+References: <20251219141105.1247093-1-cel@kernel.org>
+ <20251219141105.1247093-2-cel@kernel.org> <20260107075501.GA19005@lst.de>
+Content-Language: en-US
+From: Chuck Lever <cel@kernel.org>
+Organization: kernel.org
+In-Reply-To: <20260107075501.GA19005@lst.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260107-setlease-6-19-v1-6-85f034abcc57@kernel.org>
-References: <20260107-setlease-6-19-v1-0-85f034abcc57@kernel.org>
-In-Reply-To: <20260107-setlease-6-19-v1-0-85f034abcc57@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, 
- Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
- Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
- Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
- Bharath SM <bharathsm@microsoft.com>, Trond Myklebust <trondmy@kernel.org>, 
- Anna Schumaker <anna@kernel.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
- Latchesar Ionkov <lucho@ionkov.net>, 
- Dominique Martinet <asmadeus@codewreck.org>, 
- Christian Schoenebeck <linux_oss@crudebyte.com>, 
- Andreas Gruenbacher <agruenba@redhat.com>, Xiubo Li <xiubli@redhat.com>, 
- Ilya Dryomov <idryomov@gmail.com>, Hans de Goede <hansg@kernel.org>, 
- NeilBrown <neil@brown.name>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-cifs@vger.kernel.org, 
- samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, v9fs@lists.linux.dev, gfs2@lists.linux.dev, 
- ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=759; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=swYePiPcFodsDh/67E0j7LPYSSE9pk5yCYXqd+3XH2Y=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpXmut4DdA0I/BS+hpNDcLM7DVrBk7ZZAAPZ+Zf
- eiWHvcBVXqJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaV5rrQAKCRAADmhBGVaC
- FQvRD/sHAd32Qf+FYYgxkOBSMrFu4x01VAu/CLJP7DaLx3Xn+Dv7QzwmKIVmYCMtXyFOxudfC8d
- 0/BRqz6PP8PrWIBv5t3/l82lbaOo2STYUwHroFqZyapkFfE3L91jt84YXiW59+896fVi+QUgKwK
- 25palCrATUG2xnKiUZZplJU9lXM62SDdqGM5DTVVvdEY0lwIi9fnv5eLDWr1NXBqFhJoxX4oh57
- m6wxwDen/kPliwyNVHTNAT7djbqx4ldSz3C+CUaFplPlbh3L6KChKePwFXIo+4VC2UUv5Sdt1FP
- XBg16+mvp1o4LBlXH/CBTXcQz6/9KV0KouDjeMx2TXaqyawt+0Y5jYrH54EaZxIaEJGCn+EjbtO
- UajPiRYeCzAbSdZrtPa5ZRlFAl9Xq7Q/8hyB9+kHKcxF1xRt0uD32QQd0Vw/vx73njrWMml//qB
- ysVrjW5ZuhjRPbMmrqv/MNoPVZlRtCshC8RRTAD/adxKsAEIN4x2dQX0Ffcb8r4MVxzF1XcZeeu
- wW7pqzU7lgPfsaapcTDth0br9AAubLK1XZkgzhivEL0lxl+lzHEkyIcpOuqns+SO8FtTVyJpUoY
- IHKx4DSCl2GAL2qiCalTXVkr7WyaOgB5itY2mwVEBaKxnHyV/MvdPFoVxkqxeAWKLL+HKSJVNYS
- hxfwPgeRb504faQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-With the advent of directory leases, it's necessary to set the
-->setlease() handler in directory file_operations to properly deny them.
+On 1/7/26 2:55 AM, Christoph Hellwig wrote:
+> On Fri, Dec 19, 2025 at 09:11:04AM -0500, Chuck Lever wrote:
+>> From: Chuck Lever <chuck.lever@oracle.com>
+>>
+>> On NFS servers with fast network links but slow storage, clients can
+>> generate WRITE requests faster than the server can flush payloads to
+>> durable storage. This can push the server into memory exhaustion as
+>> dirty pages accumulate across hundreds of concurrent NFSD threads.
+>>
+>> The existing dirty page throttling (balance_dirty_pages()) uses
+>> per-task accounting with default ratelimits that allow each thread
+>> to dirty ~32 pages before throttling occurs. With many NFSD threads,
+>> this allows significant dirty page accumulation before any
+>> throttling kicks in.
+> 
+> What makes NFSD so special here vs say a userspace process with a bunch
+> of threads?  Also what is the actual problem we're trying to solve?
 
-Fixes: e6d28ebc17eb ("filelock: push the S_ISREG check down to ->setlease handlers")
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/vboxsf/dir.c | 1 +
- 1 file changed, 1 insertion(+)
+The problem, as I see it, is that the system is not providing enough
+backpressure to slow down noisy clients, allowing them to overwhelm
+the server's memory with UNSTABLE WRITE traffic.
 
-diff --git a/fs/vboxsf/dir.c b/fs/vboxsf/dir.c
-index 42bedc4ec7af7709c564a7174805d185ce86f854..230d7589d15cc98f6bc7e930ba40ca5f7dbf7e18 100644
---- a/fs/vboxsf/dir.c
-+++ b/fs/vboxsf/dir.c
-@@ -186,6 +186,7 @@ const struct file_operations vboxsf_dir_fops = {
- 	.release = vboxsf_dir_release,
- 	.read = generic_read_dir,
- 	.llseek = generic_file_llseek,
-+	.setlease = simple_nosetlease,
- };
- 
- /*
+This is the same issue, IMO, that Mike's direct I/O is attempting to
+address. Our implementation of UNSTABLE WRITE is a denial-of-service
+vector.
+
+
+> I kinda hate having this stuff in NFSD when there's nothing specific
+> about nfs serving here.
+Don't worry too much about that, these patches are obviously not in any
+kind of merge-able shape yet. We do need to understand the metabolism of
+UNSTABLE WRITEs, in particular, to get a clear picture of what needs to
+be controlled to make the server autonomously stable.
+
 
 -- 
-2.52.0
-
+Chuck Lever
 
