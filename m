@@ -1,171 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-72690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD76D00349
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 22:45:35 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670BCD00617
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 00:21:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C3ECD3030911
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 21:40:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9A8AC300FFB3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 23:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D5D2E8DE3;
-	Wed,  7 Jan 2026 21:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2D32EA473;
+	Wed,  7 Jan 2026 23:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k620oX6k"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLHpiCmM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A0E2E8B61
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 21:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786AD2609E3
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 23:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767821452; cv=none; b=ka3+CzSR6urAxoQvkt8HATNJ8xQnfdipSIZ1ojD2gxKj5bTuUAtMiSCsY6XKeP76dueZnhiZ6IrveEjc+9HPl0t5/QBBAbqP5twOe7pOnftdjDxClnpc9WFa2VrqfalyxyIWgSjULrgmlVoGX5jrpOLd20fC4QQmXPc+/C0Qu4I=
+	t=1767828063; cv=none; b=tyBVsXrx5CuDnMedUJdxewyU1wInfv7/HYbqDGPn5R88F+TpQt/ou+QgT0Dm8ODdXowZgbP7srZZyipUNB2XyfNwWHSaVdqU0oGkYifm00tFEgfn5/4aPe57+MDsZ+99NNYfzSKWMmsLHweEjsvIHh0cScaUeL3azZk3utQQ+Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767821452; c=relaxed/simple;
-	bh=hJBhEZEn2IW0Qs8Ce9poSTsX2HFP1recNbm+Qx+TfOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KGRpL/GIp1rqcLjyXp4DlyDp90yP0p6U6F5EmVsmLDojFjtyAAJrGJd9O+PiwDQxBFsq/f/jvr8Ex48JBEo8i1SILt+kEvcN+V1TzMb17mDKEREecoP5lkDdyXZ3Ii4g4USgcXN0xFLWfVcbEBn7JtfhUNW3HyYtdXo40rby4rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k620oX6k; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+	s=arc-20240116; t=1767828063; c=relaxed/simple;
+	bh=+IiIYk6tyq8dn+kFWd93D1ClEiKTPKlKcVrqsM5QbR8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nELZM6dZYxZ2/QsOaXGxVXqJtCJ3mMXB3Ts1WlxR+GuI2YOGIl0keFSd/pV+aR8XTQfGr2iH5K0kCt0FpFibSt1gAQgbRHlSWBgfe+m399JDXEUXqVFOBefEMBvXNx3lnNK3rcWrPSmd17bSzID0F4xKnjaEUpR2tKvlkV4zQhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PLHpiCmM; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-3e7f68df436so961517fac.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jan 2026 13:30:50 -0800 (PST)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4eda6a8cc12so28076401cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jan 2026 15:21:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767821449; x=1768426249; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PgyJxKcUhgy66+q0k0EwvKHt6dTWi7O1SwlvNA4nT9c=;
-        b=k620oX6kftWHDnDeRjmIEer/+zMgkbptqwQN/iMdDylr09K3ufPyVnfXo4YiSIh1uA
-         37Q7ccohaGiHSeMyJPY3HpkSMeabsbyia9fxbcPZWbXYa/y057+G/CU/usYGfIr3LwHU
-         v94gAyZs2dUGI4cUoKL1DEcP/6HZVRLfPR8BJ5ItqNThR2onBRZnfnAr4W4uilFDuPQB
-         yXd2El8PgA7qNs1hZTkDtPIUjd3G3MnWRpUTzgB0CxiRDfTSYRl2OF03yjawJkIqQ/MC
-         lV91klAR4LJVkvTetxZv5qeSxSngJBJBhwgskucop3zv5gS0gqh2PlEWbsshAVOq9KUI
-         IRyw==
+        d=gmail.com; s=20230601; t=1767828059; x=1768432859; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dCrjzEZQwv01G+U0WIfJQs+VO9PryBUCb3CgwRj0lP0=;
+        b=PLHpiCmMD6n85Yj0HEKJuT7fWVqqEfnp0pqwBnJCS3F/EdmGfjdcPv3AxeqgppxXPx
+         Qb43t8sSmr5xtt/K4UJmgAJMbkb5qBvvhdj1ImLDxs2qRnRJ4p7bnwqmg9AXiysx9qIR
+         yXsPK3yd71Q3Bkkergyd6dS9eKkHCi6gWD4xHO+LULNHOzp3+ksok8vWqg7/8njbNDjX
+         TmYURQCDCQn1m0MO/KOF1VKpS1PMGt9foJcIkJsad26LLC7/zLrTlofQ/feeah7J0fpd
+         R/jBgBXnS/LEbFO3G+3+S1Ok6jJ8hT7sLAzjZTQyYyu7OLB5CxnULF/o5Ig1CYIe3ghi
+         SiNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767821449; x=1768426249;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PgyJxKcUhgy66+q0k0EwvKHt6dTWi7O1SwlvNA4nT9c=;
-        b=juT29CjrY2399WT2OZrP6p8pzfGVAXGQVIZdUpE8geqFHFz8K6IsC4mkpCeCerBiTE
-         7l0x8W+33UaX2FEzeQzxWP0POa3cCR0dW8crZ975UMarxIKXsQueC9WDWdaLMoZjuXWE
-         olKV7o8ACAQ1diTE87wbmcbJ4dSzGOaWC4FVjWTUUa6rTzSZmEnjc+faNGjGdf5b4160
-         7fND3zX9VmZpvdmo+e58WXEXCwmkdqgIqUvR6yX+QSIjyrOkmR2/Cmo4jKC62IIRlrCb
-         YuXFC0axkBwdKISYLyGrvN5WFci9vhun056vcOg+mh7pwZgnxHipiISCW8ExPoASBAv3
-         A4nw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5mueSg0y7I9EORCkrCEfCm4QAljQQhsIydgStYH1nnXW7cEPXWDu5Ap0K0zQmGYAFilsILqCSiECcjXdF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMO2Lii8ScPsi8Q1sGnqSxyU7D07yZYjqAQn8ONQeAo7cMTb1x
-	Ks4TE0uP2pexnEpdahixtHCy55dQv9eWuWPTUlPhLimm0x3/4OjKxVBc
-X-Gm-Gg: AY/fxX4XnCamPWLrKaEPW0wQnUpjtgNmtiWiyg4GzSJIaE4ROAKCbExJm/ctQAFzoIK
-	2plqZ4bUCaQ06r/Pyr5N4SmjSFS3UNKBL6KVFUnplcbGX7mnzhPZjd+spa2qY3TCVSZmhNkZ9n5
-	dj1BcQpjbrBycMb2z08eEluU93eYNwmW0mB17iZPDdEdzHLyCuXkE4Ns67gAdefwDw5BrHuWnoI
-	+ABQkEpAYnMOaGf38Xhl9xLO8Z/estVyoaZUw3MVZ6/9Fte+JpA+X2EgS2ja/8m0jT9a6mpJ7sR
-	jsGkHFrisXsrFH8ZOHeLT7lTPNjbmQEKnQfcfCHqpBIXvT5J6ioE0eqbVKhepZRmD8P4YENIp+V
-	NLX2orW+ny+a4REWRb4l5kssYU5paRANsQuv3LLsPLyBDDrQddRsGWdsceTOHwbZx40eKXmVz5+
-	QSPSXLcPvbO2wkpkRdM9w9y0pr4sG8aStbkgsSitSD
-X-Google-Smtp-Source: AGHT+IGBpBXjThN1EPukRyzeQDjnIkWKrC19wevk+xy19Ke7HdDQYha50/3EOc1Su9/w3oCaFtcjKw==
-X-Received: by 2002:a05:6870:4191:b0:3e8:92f2:caa2 with SMTP id 586e51a60fabf-3ffbed0d56dmr2067280fac.5.1767821449438;
-        Wed, 07 Jan 2026 13:30:49 -0800 (PST)
-Received: from groves.net ([2603:8080:1500:3d89:a917:5124:7300:7cef])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa4e3e844sm3874317fac.9.2026.01.07.13.30.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jan 2026 13:30:48 -0800 (PST)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Wed, 7 Jan 2026 15:30:46 -0600
-From: John Groves <John@groves.net>
-To: Miklos Szeredi <miklos@szeredi.hu>, 
-	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Alison Schofield <alison.schofield@intel.com>
-Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, David Hildenbrand <david@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
-	Chen Linxuan <chenlinxuan@uniontech.com>, James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>, 
-	Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Gregory Price <gourry@gourry.net>, 
-	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, venkataravis@micron.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V3 15/21] famfs_fuse: Create files with famfs fmaps
-Message-ID: <smqodjljwvhnssmq4ho3hicnomzyrpsawy65ykxhigrjl7yawu@xwtbxjamivk7>
-References: <20260107153244.64703-1-john@groves.net>
- <20260107153332.64727-1-john@groves.net>
- <20260107153332.64727-16-john@groves.net>
+        d=1e100.net; s=20230601; t=1767828059; x=1768432859;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=dCrjzEZQwv01G+U0WIfJQs+VO9PryBUCb3CgwRj0lP0=;
+        b=U5hesFinDzll8G+7uw0i3ESVgrliYA16+yLDT7YSzU+vAO5NZB6dW+8jDWtogTZ3mx
+         DLNZpAKyC8vOzRFC9QMGd8P/b//gQWo8XScg9n7I9hFJcI3Iy+CiREThP++ypUcdQzHl
+         Sy7nI5dxiPCI/UV9rCtAQJss1Y0Y5AZKoBmQWPBdO2W4U+vwJ3EeAty8BHvLUCzF9m7C
+         a6xXBALBNE3VPHLNwqF1mXhSqQNAhORMn3uYINDNCLfbzcLzMTZzSlgrwYyECz4mkHhM
+         XNMR2Pw8RhRRQAMIh7pcHiujgNxU36w9XamkbQmUAmNXlwrvV8TIE6NCK52bwPuQzXmJ
+         cDiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsAQ+fwNy5E/rcZ15tmuqucB6o+c5h6yfYR8KzUsA2Cz8/XWBjxtQfetkoZrjWfO8FtBnJbvS6D6HpevY4@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywrf79RpGIslmBiLRF3PRuQP64dk2p19VSTDB6yjtY7+n4jlPEy
+	WaLGVxtcERM9QNDAjiXinst8auBoEx1jTpqhnHvDv5leVmTFGxAAJXl5Z0zTheIV5jIhlGVrRrU
+	99Y/msVNHngg+gH206LzDT8J36FG6CGRbZrTClO8=
+X-Gm-Gg: AY/fxX6mDuK4hqLVJ1UvoMlIyfQT3wihVfsbWxugMVkZHBaml77c4fAcJuHTA7YxKDo
+	AbmxKaeo4MZ73RMzpWQ88wr2bylugfm2B4JEQcA2g2xGTjf69uAM7bUqYieT1NvBaSYtUWx8fzo
+	bQhwxhTf3UqLHV+hL3xkEu1pLcHqgKz7wQ+cY2o8EcE9+ypsSJBecXQorGJ+jZyQJccagRz5UE6
+	Z8sNioDDlyINoKMCEAOSlTvMM9ZX0BIccOyrdp6OwHlDrPr3b9S/6nVlcGYVC74es2Jhg==
+X-Google-Smtp-Source: AGHT+IEiFeqiqTBVau2o0UwF1CseRs5J2I2K15YUqe72E1rmIA/k0t28m+0gQwUsMjLpxytNmWX8UDtYFxSJ2+hi2Ac=
+X-Received: by 2002:a05:622a:64a:b0:4ee:1f5b:73bc with SMTP id
+ d75a77b69052e-4ffb4a76ceemr59244041cf.66.1767828059316; Wed, 07 Jan 2026
+ 15:20:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260107153332.64727-16-john@groves.net>
+References: <20251215030043.1431306-1-joannelkoong@gmail.com>
+ <20251215030043.1431306-2-joannelkoong@gmail.com> <ypyumqgv5p7dnxmq34q33keb6kzqnp66r33gtbm4pglgdmhma6@3oleltql2qgp>
+ <CAJnrk1aYpcDpm8MpN5Emb8qNOn34-qEiARLH0RudySKFtEZVpA@mail.gmail.com> <ucnvcqbmxsiszobzzkjrgekle2nabf3w5omnfbitmotgujas4e@4f5ct4ot4mup>
+In-Reply-To: <ucnvcqbmxsiszobzzkjrgekle2nabf3w5omnfbitmotgujas4e@4f5ct4ot4mup>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 7 Jan 2026 15:20:48 -0800
+X-Gm-Features: AQt7F2rD2bYE74fC-BJPB9hchw_T0Hhn5OrF8uZDPNCgSz0wuN8d7B-9zslHZs4
+Message-ID: <CAJnrk1b-77uK2JuQaHz8KUCBnZfnQZ6M_nQQqFNWLvPDDdy4+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] fs/writeback: skip AS_NO_DATA_INTEGRITY mappings
+ in wait_sb_inodes()
+To: Jan Kara <jack@suse.cz>
+Cc: akpm@linux-foundation.org, david@redhat.com, miklos@szeredi.hu, 
+	linux-mm@kvack.org, athul.krishna.kr@protonmail.com, j.neuschaefer@gmx.net, 
+	carnil@debian.org, linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26/01/07 09:33AM, John Groves wrote:
-> On completion of GET_FMAP message/response, setup the full famfs
-> metadata such that it's possible to handle read/write/mmap directly to
-> dax. Note that the devdax_iomap plumbing is not in yet...
-> 
-> * Add famfs_kfmap.h: in-memory structures for resolving famfs file maps
->   (fmaps) to dax.
-> * famfs.c: allocate, initialize and free fmaps
-> * inode.c: only allow famfs mode if the fuse server has CAP_SYS_RAWIO
-> * Update MAINTAINERS for the new files.
-> 
-> Signed-off-by: John Groves <john@groves.net>
-> ---
->  MAINTAINERS               |   1 +
->  fs/fuse/famfs.c           | 355 +++++++++++++++++++++++++++++++++++++-
->  fs/fuse/famfs_kfmap.h     |  67 +++++++
->  fs/fuse/fuse_i.h          |  22 ++-
->  fs/fuse/inode.c           |  21 ++-
->  include/uapi/linux/fuse.h |  56 ++++++
->  6 files changed, 510 insertions(+), 12 deletions(-)
->  create mode 100644 fs/fuse/famfs_kfmap.h
-> 
+On Wed, Jan 7, 2026 at 2:12=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 06-01-26 15:30:05, Joanne Koong wrote:
+> > On Tue, Jan 6, 2026 at 1:34=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+> > > [Thanks to Andrew for CCing me on patch commit]
+> >
+> > Sorry, I didn't mean to exclude you. I hadn't realized the
+> > fs-writeback.c file had maintainers/reviewers listed for it. I'll make
+> > sure to cc you next time.
+>
+> No problem, I don't think it's formally spelled out anywhere. It's just
+> that for changes in fs/*.c people tend to CC VFS maintainers / reviewers.
+>
+> Thanks for the historical perspective, it does put some more peace into m=
+y
+> mind that things were considered :)
+>
+> > For the fsync() and truncate() examples you mentioned, I don't think
+> > it's an issue that these now wait for the server to finish the I/O and
+> > hang if the server doesn't. I think it's actually more correct
+> > behavior than what we had with temp pages, eg imo these actually ought
+> > to wait for the writeback to have been completed by the server. If the
+> > server is malicious / buggy and fsync/truncate hangs, I think that's
+> > fine given that fsync/truncate is initiated by the user on a specific
+> > file descriptor (as opposed to the generic sync()) (and imo it should
+> > hang if it can't actually be executed correctly because the server is
+> > malfunctioning).
+>
+> Here, I have a comment. The hang in truncate is not as innocent as you
+> might think. It will happen in truncate_inode_pages() and as such it will
+> also end up hanging inode reclaim. Thus kswapd (or other arbitrary proces=
+s
+> entering direct reclaim) may hang in inode reclaim waiting for
+> truncate_inode_pages() to finish. And at that point you are between a roc=
+k
+> and a hard place - truncate_inode_pages() cannot fail because the inode i=
+s
+> at the point of no return. You cannot just detach the folio under writeba=
+ck
+> from the mapping because if the writeback ever completes, the IO end
+> handlers will get seriously confused - at least in the generic case, mayb=
+e
+> specifically for FUSE there would be some solution possible - like a
+> special handler in fuse_evict_inode() walking all the pages under writeba=
+ck
+> and tearing them down in a clean way (properly synchronizing with IO
+> completion) before truncate_inode_pages() is called.
 
-[ ... ]
+Hmm... I looked into this path a bit when I was investigating a
+deadlock that was unrelated to this. The ->evict_inode() callback gets
+invoked only if the ref count on an inode has dropped to zero. In
+fuse, in the .release() callback (fuse_release()), if writeback
+caching is enabled, write_inode_now() is called on the inode with
+sync=3D1 (WB_SYNC_ALL). This does synchronous writeback and returns (and
+drops the inode ref) only after all the dirty pages have been written
+out. When ->evict_inode() -> fuse_evict_inode() is called, I don't
+think there can be any lingering dirty pages to write out in
+trunate_inode_pages().
 
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 9e121a1d63b7..391ead26bfa2 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -121,7 +121,7 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
->  		fuse_inode_backing_set(fi, NULL);
->  
->  	if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
-> -		famfs_meta_set(fi, NULL);
-> +		famfs_meta_init(fi);
->  
->  	return &fi->inode;
->  
-> @@ -1485,8 +1485,21 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
->  				timeout = arg->request_timeout;
->  
->  			if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
-> -			    flags & FUSE_DAX_FMAP)
-> -				fc->famfs_iomap = 1;
-> +			    flags & FUSE_DAX_FMAP) {
-> +				/* famfs_iomap is only allowed if the fuse
-> +				 * server has CAP_SYS_RAWIO. This was checked
-> +				 * in fuse_send_init, and FUSE_DAX_IOMAP was
-> +				 * set in in_flags if so. Only allow enablement
-> +				 * if we find it there. This function is
-> +				 * normally not running in fuse server context,
-> +				 * so we can do the capability check here...
-                                         ^^^
-Oops: this should be "can't" - we can't do the capability check here since we're not in
-fuse server context. Will fix before merge...
+Thanks,
+Joanne
 
-[ ... ]
-
-John
-
+>
+>                                                                 Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
