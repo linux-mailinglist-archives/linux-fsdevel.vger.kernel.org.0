@@ -1,43 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-72589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40277CFC6BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 08:42:20 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F016CFC657
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 08:37:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9FE8C3081102
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 07:36:03 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6933030619DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 07:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9C6280325;
-	Wed,  7 Jan 2026 07:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3EC284663;
+	Wed,  7 Jan 2026 07:36:44 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DCA264638;
-	Wed,  7 Jan 2026 07:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5680926ED59;
+	Wed,  7 Jan 2026 07:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767771360; cv=none; b=IjKLmPoPTYwkDtATFbVHLUlsiiG+Lshyxsg7OVbfOjR4fvAuPyYFaNGgQNk+kTf+YX/9yUtJRrcjau1btXb6eaZDWfHOka/qzEuirgLjgoS5nirfy+LV+GQwrqgFrAY77l5xfEe5xZlDZXsdXCHhG34YETJdK+iBRCSocf6RICw=
+	t=1767771403; cv=none; b=izs4LDDm1eeyuOsXXUlRlmMdfdLREcEgL6b5jXG+AXDoxsbpndNznNTnJJ2TScG7CqlgdxnSBiN7ta8qg2xLpdVSs4SO52cyOfDtgMmb60atXw3JZLvmU4kI1pACjJjPK8CkE2V11tynJGAUNYmKOJJm8v08oOL/fUwVzrqD2kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767771360; c=relaxed/simple;
-	bh=MYOuB/KZfOgHfaM3iD3cEkrlO8Alm/fztkpNRGJNxs8=;
+	s=arc-20240116; t=1767771403; c=relaxed/simple;
+	bh=DvC2d6O80zSDXFWkvBeIdKTiYVELIbllnOjfWZ27DHQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hPFds8DeCyz+c7HRVDcAYUUJbUjKZe9Oa2c58ARQWmdM3j88ddL6whefs0oaEn2NROKjfbRxhxytya5oNdp1VN+UsB3vH7b4hA3jxhz5EDzfhpo7AOClpf+FX36JQRXMdH0MAePcqDE/CzAHm/QO7V1OAKinPq1BXvNYMhl+BiY=
+	 Content-Type:Content-Disposition:In-Reply-To; b=TOyEzJmGgCNB+H0hIOcKdRKjivfmhigMEO6QaJ9EH278DcwGFAH/kIsr0k5X/UfiiG3pK3ZVjp7ZRXaG78lXFn8GDbwgByLXryCAH4iCm3SWmlwyj4Bch4FSgyqua4Tf/Ye14oFun+MWaA11iKpN6zkl7jxr2nAkjwK4Js/13fs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id 5170F227A87; Wed,  7 Jan 2026 08:35:53 +0100 (CET)
-Date: Wed, 7 Jan 2026 08:35:52 +0100
+	id 78F41227A87; Wed,  7 Jan 2026 08:36:39 +0100 (CET)
+Date: Wed, 7 Jan 2026 08:36:39 +0100
 From: Christoph Hellwig <hch@lst.de>
-To: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
 Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>,
 	Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>,
-	Mike Marshall <hubcap@omnibond.com>,
+	Jan Kara <jack@suse.cz>, Mike Marshall <hubcap@omnibond.com>,
 	Martin Brandenburg <martin@omnibond.com>,
 	Carlos Maiolino <cem@kernel.org>, Stefan Roesch <shr@fb.com>,
-	Jeff Layton <jlayton@kernel.org>,
 	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
 	Trond Myklebust <trondmy@kernel.org>,
 	Anna Schumaker <anna@kernel.org>, linux-kernel@vger.kernel.org,
@@ -47,8 +46,8 @@ Cc: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>,
 	linux-mtd@lists.infradead.org, linux-xfs@vger.kernel.org,
 	linux-nfs@vger.kernel.org
 Subject: Re: [PATCH 05/11] fs: refactor ->update_time handling
-Message-ID: <20260107073552.GB17448@lst.de>
-References: <20260106075008.1610195-1-hch@lst.de> <20260106075008.1610195-6-hch@lst.de> <jlw4ghr5vx32ss576akxes25oodlcx42zak7vjaaktlgn3m3d7@cbpcvx66y7za>
+Message-ID: <20260107073639.GC17448@lst.de>
+References: <20260106075008.1610195-1-hch@lst.de> <20260106075008.1610195-6-hch@lst.de> <b208c2a6e1a3ab44e3c820af106b5be99279d986.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,17 +56,19 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <jlw4ghr5vx32ss576akxes25oodlcx42zak7vjaaktlgn3m3d7@cbpcvx66y7za>
+In-Reply-To: <b208c2a6e1a3ab44e3c820af106b5be99279d986.camel@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Jan 06, 2026 at 12:48:47PM +0100, Jan Kara wrote:
-> > +static int inode_update_cmtime(struct inode *inode)
-> > +{
-> > +	struct timespec64 now = inode_set_ctime_current(inode);
-> 
-> This needs to be below sampling of ctime. Otherwise inode dirtying will be
-> broken...
+On Tue, Jan 06, 2026 at 07:09:04AM -0500, Jeff Layton wrote
+> On Tue, 2026-01-06 at 08:49 +0100, Christoph Hellwig wrote:
+> > Pass the type of update (atime vs c/mtime plus version) as an enum
 
-Fixed.
+[...]
+
+I scrolled through this but only found a full quote but no actual reply
+from you.
+
+Can you please follow standard email protocol and only quote relevant
+parts?
 
 
