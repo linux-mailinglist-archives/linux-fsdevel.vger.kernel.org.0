@@ -1,156 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-72596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D107CFCAF6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 09:52:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9370CCFCC16
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 10:11:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 8C00B30399AE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 08:52:01 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 327BD30373A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 09:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFB92E5B21;
-	Wed,  7 Jan 2026 08:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="TC6Orfwj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27F02F5485;
+	Wed,  7 Jan 2026 09:11:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
+Received: from smtp04-ext3.udag.de (smtp04-ext3.udag.de [62.146.106.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A662DECCB;
-	Wed,  7 Jan 2026 08:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06DC78F59;
+	Wed,  7 Jan 2026 09:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767775919; cv=none; b=NRxx0tdLlasgFuFUH6jzXSjaW9CJGWcBjpDgwTQWTelqOWPuJRqVZLPt0jfLq2cBK8+nEfYKSsAXtqAkI03iTx7XA3BMVW/5ZM75R3qqaLU0R0cHiud5VL1MQAxjue9tsM4z0IVDXu1IpW/7Cd/ceF+MjUqYjMEjyj7ltERB9pM=
+	t=1767777111; cv=none; b=hw/gwLtdQJXzSs7ZETzsplABwUbtaED88I1Nbh+dzEJAixhM/o/yuXbq/im5bC2W1HkGx3cXbqWvO4Ze2/Gn7BAyLc9e12b73TvBXQ01/xwcowu1MuXDM4XfzqGmqHourgp8LqzOVoei0TlJnTz3yW7lW3XrmuVJTaZSB+PMw50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767775919; c=relaxed/simple;
-	bh=tqlt8znxd6J4lRsCg8/U+yJChlwMx4AMAHbrfXSZwHw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IhUu2g4aV3YH/IYJ/yJdX4u1igGCu6AlFqfoioFyhV14xs3aBPjNj2/vQiQdhUxRhk2sueXhI6yB/1cYKOomsfNCayaQE1MirmXpAaQ75RpLDtJP+7eejNhzDMVTvrVHoClZOXn5lbdRLxhQtgiMWzWhO2XVgGJcXo59IzMKu2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=TC6Orfwj; arc=none smtp.client-ip=113.46.200.224
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=108JVCh9GjW5xEolruiVkAuLbJubn8gbsNhgLVBoKqk=;
-	b=TC6OrfwjILeUR0KaiqaMcbO4w48VARs0s030Z2ePHb4C042l+lNMSEY4UOVf3It7FQzoGUqwE
-	lGF4NhoysCpulm2w2SyOkk+vfiIymdRLydvpPBDq8pHNoIEk+f2HcqZJEnuLWP/0bj4NCYNPujK
-	N/37crmhGe9aPhZEIh1vFIo=
-Received: from mail.maildlp.com (unknown [172.19.163.214])
-	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4dmMBp21pBz1cyQn;
-	Wed,  7 Jan 2026 16:48:34 +0800 (CST)
-Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2989E40539;
-	Wed,  7 Jan 2026 16:51:49 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- kwepemr500015.china.huawei.com (7.202.195.162) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 7 Jan 2026 16:51:48 +0800
-Message-ID: <eeb5efea-aa9c-449b-b2f8-157130b02aed@huawei.com>
-Date: Wed, 7 Jan 2026 16:51:47 +0800
+	s=arc-20240116; t=1767777111; c=relaxed/simple;
+	bh=w2+7gdoIAdhGlURpMQctDeYr+bYNA9O/r0UEdE+qg9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RdXQrfU+W3qGvjAvxxcRjysoowKVtxxZGXtrlnFv0x6kC338zkXuu3VQd6GuCp2G5vqifkW9D7376tHiVw1BEzSUyPgb60jhQO4aO+cQ6lpe1lbI31X62fwCoIqRIc/U4Sn5gxcfiIlskfm+0JGq+dAAyV0jKFY6o8Es1QDhG94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
+Received: from localhost (049-102-000-128.ip-addr.inexio.net [128.0.102.49])
+	by smtp04-ext3.udag.de (Postfix) with ESMTPA id 6559DE0245;
+	Wed,  7 Jan 2026 10:03:54 +0100 (CET)
+Authentication-Results: smtp04-ext3.udag.de;
+	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
+Date: Wed, 7 Jan 2026 10:03:53 +0100
+From: Horst Birthelmer <horst@birthelmer.de>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Horst Birthelmer <hbirthelmer@googlemail.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
+Subject: Re: Re: [PATCH RFC v2 2/2] fuse: add an implementation of
+ open+getattr
+Message-ID: <aV4g3dMyVcCzrI5Q@fedora.fritz.box>
+References: <20251223-fuse-compounds-upstream-v2-0-0f7b4451c85e@ddn.com>
+ <20251223-fuse-compounds-upstream-v2-2-0f7b4451c85e@ddn.com>
+ <CAJnrk1bCenZHzPSrdjxzUMY4ekKhtAJ74Dg1QhUs77A1qEDu3A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 07/10] erofs: introduce the page cache share feature
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-CC: <djwong@kernel.org>, <amir73il@gmail.com>, <hch@lst.de>,
-	<linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, Chao Yu <chao@kernel.org>,
-	<brauner@kernel.org>
-References: <20251231090118.541061-1-lihongbo22@huawei.com>
- <20251231090118.541061-8-lihongbo22@huawei.com>
- <99a517aa-744b-487b-bce8-294b69a0cd50@linux.alibaba.com>
- <b690d435-7e9c-4424-a681-d3f798176202@huawei.com>
- <df2889c0-6027-4f42-a013-b01357fd0005@linux.alibaba.com>
- <07212138-c0fc-4a64-a323-9cab978bf610@huawei.com>
- <9bacd58e-40be-4250-9fab-7fb8e2606ad8@linux.alibaba.com>
- <48755c73-323d-469e-9125-07051daf7c19@huawei.com>
- <d82c60eb-a170-48fe-9e50-e64c80681cb6@linux.alibaba.com>
-Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <d82c60eb-a170-48fe-9e50-e64c80681cb6@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemr500015.china.huawei.com (7.202.195.162)
+In-Reply-To: <CAJnrk1bCenZHzPSrdjxzUMY4ekKhtAJ74Dg1QhUs77A1qEDu3A@mail.gmail.com>
 
-
-
-On 2026/1/7 15:53, Gao Xiang wrote:
+On Tue, Jan 06, 2026 at 05:46:09PM -0800, Joanne Koong wrote:
+> On Tue, Dec 23, 2025 at 2:13 PM Horst Birthelmer
+> <hbirthelmer@googlemail.com> wrote:
+> >
+> > +       open_args.opcode = opcode;
+> > +       open_args.nodeid = nodeid;
+> > +       open_args.in_numargs = 1;
+> > +       open_args.in_args[0].size = sizeof(open_in);
+> > +       open_args.in_args[0].value = &open_in;
+> > +       open_args.out_numargs = 1;
+> > +       open_args.out_args[0].size = sizeof(struct fuse_open_out);
+> > +       open_args.out_args[0].value = outopenp;
+> > +
+> > +       err = fuse_compound_add(compound, &open_args);
+> > +       if (err)
+> > +               goto out;
+> > +
+> > +       /* Add GETATTR */
+> > +       getattr_args.opcode = FUSE_GETATTR;
+> > +       getattr_args.nodeid = nodeid;
+> > +       getattr_args.in_numargs = 1;
+> > +       getattr_args.in_args[0].size = sizeof(getattr_in);
+> > +       getattr_args.in_args[0].value = &getattr_in;
+> > +       getattr_args.out_numargs = 1;
+> > +       getattr_args.out_args[0].size = sizeof(struct fuse_attr_out);
+> > +       getattr_args.out_args[0].value = outattrp;
 > 
+> I think things end up looking cleaner here (and above for the open
+> args) if the arg initialization logic gets abstracted into helper
+> functions, as fuse_do_getattr() and fuse_send_open() have pretty much
+> the exact same logic.
 > 
-> On 2026/1/7 15:32, Hongbo Li wrote:
->>
->>
->> On 2026/1/7 15:27, Gao Xiang wrote:
->>>
->>>
->>> On 2026/1/7 15:17, Hongbo Li wrote:
->>>> Hi, Xiang
->>>>
->>>
->>> ...
->>>
->>>>>>>> +
->>>>>>>> +bool erofs_ishare_fill_inode(struct inode *inode)
->>>>>>>> +{
->>>>>>>> +    struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
->>>>>>>> +    struct erofs_inode *vi = EROFS_I(inode);
->>>>>>>> +    struct erofs_inode_fingerprint fp;
->>>>>>>> +    struct inode *sharedinode;
->>>>>>>> +    unsigned long hash;
->>>>>>>> +
->>>>>>>> +    if (!test_opt(&sbi->opt, INODE_SHARE))
->>>>>>>> +        return false;
->>>>>>>> +    (void)erofs_xattr_fill_ishare_fp(&fp, inode, sbi->domain_id);
->>>>>>>> +    if (!fp.size)
->>>>>>>> +        return false;
->>>>>>>
->>>>>>> Why not just:
->>>>>>>
->>>>>>>      if (erofs_xattr_fill_ishare_fp(&fp, inode, sbi->domain_id))
->>>>>>>          return false;
->>>>>>>
->>>>>>
->>>>>> When erofs_sb_has_ishare_xattrs returns false, 
->>>>>> erofs_xattr_fill_ishare_fp also considers success.
->>>>>
->>>>> Then why !test_opt(&sbi->opt, INODE_SHARE) didn't return?
->>>>>
->>>>
->>>> The MOUNT_INODE_SHARE flag is passed from user's mount option. And 
->>>> it is controllered by CONFIG_EROFS_FS_PAGE_CACHE_SHARE. I doesn't do 
->>>> the check when the superblock without ishare_xattrs. (It seems the 
->>>> mount options is static, although it is useless for mounting with 
->>>> inode_share on one EROFS image without ishare_xattrs).
->>>> So should we check that if the superblock has not ishare_xattrs 
->>>> feature, and we return -ENOSUPP?
->>>
->>> I think you should just mask off the INODE_SHARE if the on-disk
->>> compat feature is unavailable, and print a warning just like
->>> FSDAX fallback.
->>>
->>
->> Ok, it seems reasonable, and also can remove the check logic in 
->> erofs_xattr_fill_ishare_fp. I will change in next version.
+> Thanks,
+> Joanne
 > 
-> I think you should move
-> 
-> if (!test_opt(&sbi->opt, INODE_SHARE))
->      return -EOPNOTSUPP;
-> 
-> into erofs_xattr_fill_inode_fingerprint() directly.
-> 
-
-Ok.
+You are completely right.
+Will change that in the next version,
 
 Thanks,
-Hongbo
-
-> Thanks,
-> Gao Xiang
+Horst
 
