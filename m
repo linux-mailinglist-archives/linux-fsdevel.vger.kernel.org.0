@@ -1,431 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-72661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A891CFFC82
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 20:37:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8744CFFB11
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 07 Jan 2026 20:18:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 84C97324FE7D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 18:43:52 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7137132DEF52
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Jan 2026 19:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A248939A80F;
-	Wed,  7 Jan 2026 15:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2AA800;
+	Wed,  7 Jan 2026 19:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMuO/cKD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZt+HrHx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E6739A800
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Jan 2026 15:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F268E4A35;
+	Wed,  7 Jan 2026 19:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767800115; cv=none; b=I80UdVHnXkCmuDrs3xJS/8n6z6qbbllP0yHXfEKYl8QKy+kcJauV+hXsdnnPnmyyOvEJBfVfL2+AVx3ZnOnvrrjHD3IazhHPqjemotv8qQg6DZGuLym9Pd0cA+GdeapXkUaGE7M/GS4Zjin/ZgEM7AYGpp3eAb9F3+PPHSiC32c=
+	t=1767812503; cv=none; b=cqxR9++KdI6i6/xl9PPQjBPGZWa02RrUIg20Xk9f0vcvTWfIk6hEGGeQ00AGZIq91FI/miIEGdA4Y9B0h/jq1thjVc/2JHAMpfI8xOZ0RE6YeMHjoeUR5RXIDDpedDZKkZZZv6RjsC3UNQnJgn6OeWYbiEYy4EJ7yPMZRH8aVH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767800115; c=relaxed/simple;
-	bh=UH7UVmm/ifZMz2a7ctzEVAj9QL1YqJfv9TEsJAmqvl0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tk5kRCRy4NoDc6AzDF18+x3mytUi7N1FhEpJZbNAb0C+EPecitTEKLtE/0Dq/znH1sfzLoF7W7LbwXkU8HcsNmjjK8aMOpDqhGUXBVowV8d5HTKTGGZ+vi5jXM0h/O+5zhU8D55i4Gwf4ATvqhxAtwX7rZgQiAWeYEdv3hMoQUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bMuO/cKD; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-455af5758fdso1395305b6e.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jan 2026 07:35:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767800110; x=1768404910; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ezmCIUYTCpc47N9MRFviC1UdzpKfkRUPsUPtXb573Uk=;
-        b=bMuO/cKDgBQ7MDSk9U5rZupNeiODJwTx7I9gFDCFydqoRNF5bb5XBxGm7iO3pn2zmN
-         RJWqRTwynU8DZ/Me9oX3OL1LfaPxg14B7bdiRmWRZS4TZHssZrk3Ihp97s+ZtjHgWNh8
-         YIjNdzcT0FtM+bnOwTgYOjNB8SCxhrBqERxthL0J3Mt/FA+v5wfAwF54UwLNOv5dmsA0
-         EcVHjxwIK7HTCh57TbkiagniQE4U0EG04F69w+iLXXUK3kwMCPRTkYLC444XDiw9oYf5
-         aXZlR7uvFrBdaNyQhR/ylbn4O75Y8KrKto8jynUQU7yvwgquWvo1bIsqDzcVZzo4TFGl
-         9tBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767800110; x=1768404910;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ezmCIUYTCpc47N9MRFviC1UdzpKfkRUPsUPtXb573Uk=;
-        b=LQ5kfol3t1GJ5qvwIT85eLW6LIq0yvoSt4w73rIW4zMQJztH7/gUAjV/tbtInhs0zr
-         27ehTkZDPj3osrjz7u0823uQkL3n3rYXBkmOZooI/WSoqe/+yVSTKIS6ztkyZgsQGaKU
-         QTjMEy23CdpJgdtmPjaszQABGMCGRY+QtS+UC1NzQOkFizfwnyHV6xHVeKUQzj52r1Rh
-         jtfj+g67WYfcR74YMOqwJxverVdxkMvrnL3lQAH+6W3JJNJFjl6WNoADLP/jjg6DhL3h
-         O9mVgwY0bFzsvdNktjhFmrdVTDt23ODha0S9v8HgSu+TpigRljv/qyUfcTXWVgplDTAa
-         fzHw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Z1Fich3efw08MJh0+IyEXPyXqGY31kNkhDSlmBDDtG5mJLI6wEmTRG+aEXxclLE2eVd1YRfKLgx3o/XY@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEn4potuFRkemeUnNug2HkRPhH68KS6hKcdra8DlsNO2iGGshY
-	KywknYqtbkDwiDMlEU6xK5zlG6q7F14U1ZIAS3qSKcnYS4fLQSjIqYEz
-X-Gm-Gg: AY/fxX7hbZhcIPX9baoY+BhlSZIaMGm5S5EY9nBwNN2hXqT4IT/zdG5zR9BBvwVmKAd
-	rVC30DF+0WK7G+JmmADpBt0WYmCvu9PUIIGdArXlrfVFOGOmb8YUB43M/itkWUW6UJAinItRBLb
-	sgn3QQAAY9Irb2dlSOeREri8FBo32ZrJOktuqExFrsFRi2ZF7XF+VqrBzhOCaMLWF7Xlld4Lhn1
-	1xJ6tG871u0bU7BnEjWxQ9laoEnIfjCetSH+XPuONJ2uDSsrvkSpg74XMn5B8p23VMilkTrOm01
-	4ogz9YHY3aIUMYz39JWtYOOJz69vQEwkjJEBr0JRR/CV+agAdE0SENX2eUuSzbxnd6yLTAE2NKh
-	oBBCZsG/BMLjo7B1m5YzoiZYx/56MIr2pm4YzNqqCL/EG7sbO2vYkvit4+Mgf1vC6z8Jegy729n
-	1v2H8K2hDvAvbcuXTWWTqEuCm2ck5bGyB/vZEnEzNqEx6p
-X-Google-Smtp-Source: AGHT+IHvJerAp0F2qVu0ANwUQaq5jdMW03NUN3RN1p6cxOBwInFyFNG7vh1+02TkB75u28LmDWlVDQ==
-X-Received: by 2002:a05:6808:2208:b0:459:bcff:a9ff with SMTP id 5614622812f47-45a6be8b053mr1272252b6e.34.1767800109996;
-        Wed, 07 Jan 2026 07:35:09 -0800 (PST)
-Received: from localhost.localdomain ([2603:8080:1500:3d89:a917:5124:7300:7cef])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-45a5e183cd4sm2415499b6e.1.2026.01.07.07.35.07
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 07 Jan 2026 07:35:09 -0800 (PST)
-Sender: John Groves <grovesaustin@gmail.com>
-From: John Groves <John@Groves.net>
-X-Google-Original-From: John Groves <john@groves.net>
-To: John Groves <John@Groves.net>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Bernd Schubert <bschubert@ddn.com>,
-	Alison Schofield <alison.schofield@intel.com>
-Cc: John Groves <jgroves@micron.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	David Hildenbrand <david@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Stefan Hajnoczi <shajnocz@redhat.com>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Chen Linxuan <chenlinxuan@uniontech.com>,
-	James Morse <james.morse@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Shivank Garg <shivankg@amd.com>,
-	Ackerley Tng <ackerleytng@google.com>,
-	Gregory Price <gourry@gourry.net>,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>,
-	venkataravis@micron.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	John Groves <john@groves.net>
-Subject: [PATCH 2/2] Add test/daxctl-famfs.sh to test famfs mode transitions:
-Date: Wed,  7 Jan 2026 09:34:59 -0600
-Message-ID: <20260107153459.64821-3-john@groves.net>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260107153459.64821-1-john@groves.net>
-References: <20260107153244.64703-1-john@groves.net>
- <20260107153459.64821-1-john@groves.net>
+	s=arc-20240116; t=1767812503; c=relaxed/simple;
+	bh=sDwOAC6+V6ZXqreGwzXX4jWEdA8kLtRlRj+GspvBufE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h/iPiXAhCE7S6L3cGKuBTCq22/9bOxZcQBbisQ6TGfrSUdo+y1PI66m9l4fIX/MSn+cSCsUyL9orJZ2iZC3l0//RDqGfXLQuTHAjOq+0Js1oaVXFA+L/Kn9l6ZhXm9RYfP2UKOgoiuc5zvbYIBh/Vt34MaaJZok1Bh7IV2y9LfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZt+HrHx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90E7CC4CEF1;
+	Wed,  7 Jan 2026 19:01:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767812502;
+	bh=sDwOAC6+V6ZXqreGwzXX4jWEdA8kLtRlRj+GspvBufE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BZt+HrHx+NIIU27/Mr1fJd0yYiPwLtsorAI1K1Bc4mlkjGEuoRN2Gx1Kguhl9YEHo
+	 nt4DRW3LD01LlZDKqBsDbBu+57mgUZgWhGHfkIulX0TqnPG4XNs9tCHZwGPtTlo40r
+	 JeqfELCbL2F30a9TUAzBYMTtpbMQPCl5VONiqw8yrGIwZFY9dCiZ9LdcvohFXin5qj
+	 NycZMVRmYgIoZuGRRmWrChznG2kvomVIUaut/DqAnxauuymdDU3mI35+Rd84p0Ud8n
+	 ULZGipvlKfzh4A07VhPFtRyEzX3NSj2+9eYdgpaRsto6ZaX1+y21HGga06qTcQ0VVg
+	 Mb3qKBCBoZj4w==
+Date: Wed, 7 Jan 2026 11:01:41 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 03/11] xfs: create event queuing, formatting, and
+ discovery infrastructure
+Message-ID: <20260107190141.GF15551@frogsfrogsfrogs>
+References: <176766637179.774337.3663793412524347917.stgit@frogsfrogsfrogs>
+ <176766637311.774337.2635132516714726157.stgit@frogsfrogsfrogs>
+ <20260107093245.GA24264@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260107093245.GA24264@lst.de>
 
-From: John Groves <John@Groves.net>
+On Wed, Jan 07, 2026 at 10:32:45AM +0100, Christoph Hellwig wrote:
+> On Mon, Jan 05, 2026 at 11:11:24PM -0800, Darrick J. Wong wrote:
+> > diff --git a/fs/xfs/xfs_healthmon.c b/fs/xfs/xfs_healthmon.c
+> > index 3fdac72b478f3f..799e0687ae3263 100644
+> > --- a/fs/xfs/xfs_healthmon.c
+> > +++ b/fs/xfs/xfs_healthmon.c
+> > @@ -45,6 +45,13 @@
+> >  /* sign of a detached health monitor */
+> >  #define DETACHED_MOUNT_COOKIE		((uintptr_t)0)
+> >  
+> > +/* Constrain the number of event objects that can build up in memory. */
+> > +#define XFS_HEALTHMON_MAX_EVENTS \
+> > +		(SZ_32K / sizeof(struct xfs_healthmon_event))
+> 
+> The double tab indent here looks a bit weird.
+> 
+> > +/* Free all events */
+> > +STATIC void
+> > +xfs_healthmon_free_events(
+> > +	struct xfs_healthmon		*hm)
+> > +{
+> > +	struct xfs_healthmon_event	*event, *next;
+> > +
+> > +	event = hm->first_event;
+> > +	while (event != NULL) {
+> > +		trace_xfs_healthmon_drop(hm, event);
+> > +		next = event->next;
+> > +		kfree(event);
+> > +		event = next;
+> > +	}
+> 
+> This could be simplified a bit to:
+> 
+> 	struct xfs_healthmon_event	*event = hm->first_event;
+> 
+> 	while (event) {
+> 		struct xfs_healthmon_event	*next = event->next;
+> 
+> 		trace_xfs_healthmon_drop(hm, event);
+> 		kfree(event);
+> 		event = next;
+> 	}
+> 
+> or alternatively:
+> 	
+> 	struct xfs_healthmon_event	*event, *next = hm->first_event;
+> 
+> 	while ((event = next) != NULL) {
+> 		trace_xfs_healthmon_drop(hm, event);
+> 		next = event->next;
+> 		kfree(event);
+> 	}
 
-- devdax <-> famfs mode switches
-- Verify famfs -> system-ram is rejected (must go via devdax)
-- Test JSON output shows correct mode
-- Test error handling for invalid modes
+Changed.
 
-The test is added to the destructive test suite since it
-modifies device modes.
+> > +	hm->first_event = hm->last_event = NULL;
+> 
+> Always personal preference, but I always hate decoding double assignments
+> like this vs the more verbose:
+> 
+> 	hm->first_event = NULL;
+> 	hm->last_event = NULL;
+> 
+> that beeing said, do we even need to zero these given that hm gets freed
+> right after?
 
-Signed-off-by: John Groves <john@groves.net>
----
- test/daxctl-famfs.sh | 253 +++++++++++++++++++++++++++++++++++++++++++
- test/meson.build     |   2 +
- 2 files changed, 255 insertions(+)
- create mode 100755 test/daxctl-famfs.sh
+Nope.
 
-diff --git a/test/daxctl-famfs.sh b/test/daxctl-famfs.sh
-new file mode 100755
-index 0000000..12fbfef
---- /dev/null
-+++ b/test/daxctl-famfs.sh
-@@ -0,0 +1,253 @@
-+#!/bin/bash -Ex
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (C) 2025 Micron Technology, Inc. All rights reserved.
-+#
-+# Test daxctl famfs mode transitions and mode detection
-+
-+rc=77
-+. $(dirname $0)/common
-+
-+trap 'cleanup $LINENO' ERR
-+
-+daxdev=""
-+original_mode=""
-+
-+cleanup()
-+{
-+	printf "Error at line %d\n" "$1"
-+	# Try to restore to original mode if we know it
-+	if [[ $daxdev && $original_mode ]]; then
-+		"$DAXCTL" reconfigure-device -f -m "$original_mode" "$daxdev" 2>/dev/null || true
-+	fi
-+	exit $rc
-+}
-+
-+# Check if fsdev_dax module is available
-+check_fsdev_dax()
-+{
-+	if modinfo fsdev_dax &>/dev/null; then
-+		return 0
-+	fi
-+	if grep -qF "fsdev_dax" "/lib/modules/$(uname -r)/modules.builtin" 2>/dev/null; then
-+		return 0
-+	fi
-+	printf "fsdev_dax module not available, skipping\n"
-+	exit 77
-+}
-+
-+# Check if kmem module is available (needed for system-ram mode tests)
-+check_kmem()
-+{
-+	if modinfo kmem &>/dev/null; then
-+		return 0
-+	fi
-+	if grep -qF "kmem" "/lib/modules/$(uname -r)/modules.builtin" 2>/dev/null; then
-+		return 0
-+	fi
-+	printf "kmem module not available, skipping system-ram tests\n"
-+	return 1
-+}
-+
-+# Find an existing dax device to test with
-+find_daxdev()
-+{
-+	# Look for any available dax device
-+	daxdev=$("$DAXCTL" list | jq -er '.[0].chardev // empty' 2>/dev/null) || true
-+
-+	if [[ ! $daxdev ]]; then
-+		printf "No dax device found, skipping\n"
-+		exit 77
-+	fi
-+
-+	# Save the original mode so we can restore it
-+	original_mode=$("$DAXCTL" list -d "$daxdev" | jq -er '.[].mode')
-+
-+	printf "Found dax device: %s (current mode: %s)\n" "$daxdev" "$original_mode"
-+}
-+
-+daxctl_get_mode()
-+{
-+	"$DAXCTL" list -d "$1" | jq -er '.[].mode'
-+}
-+
-+# Ensure device is in devdax mode for testing
-+ensure_devdax_mode()
-+{
-+	local mode
-+	mode=$(daxctl_get_mode "$daxdev")
-+
-+	if [[ "$mode" == "devdax" ]]; then
-+		return 0
-+	fi
-+
-+	if [[ "$mode" == "system-ram" ]]; then
-+		printf "Device is in system-ram mode, attempting to convert to devdax...\n"
-+		"$DAXCTL" reconfigure-device -f -m devdax "$daxdev"
-+	elif [[ "$mode" == "famfs" ]]; then
-+		printf "Device is in famfs mode, converting to devdax...\n"
-+		"$DAXCTL" reconfigure-device -m devdax "$daxdev"
-+	else
-+		printf "Device is in unknown mode: %s\n" "$mode"
-+		return 1
-+	fi
-+
-+	[[ $(daxctl_get_mode "$daxdev") == "devdax" ]]
-+}
-+
-+#
-+# Test basic mode transitions involving famfs
-+#
-+test_famfs_mode_transitions()
-+{
-+	printf "\n=== Testing famfs mode transitions ===\n"
-+
-+	# Ensure starting in devdax mode
-+	ensure_devdax_mode
-+	[[ $(daxctl_get_mode "$daxdev") == "devdax" ]]
-+	printf "Initial mode: devdax - OK\n"
-+
-+	# Test: devdax -> famfs
-+	printf "Testing devdax -> famfs... "
-+	"$DAXCTL" reconfigure-device -m famfs "$daxdev"
-+	[[ $(daxctl_get_mode "$daxdev") == "famfs" ]]
-+	printf "OK\n"
-+
-+	# Test: famfs -> famfs (re-enable in same mode)
-+	printf "Testing famfs -> famfs (re-enable)... "
-+	"$DAXCTL" reconfigure-device -m famfs "$daxdev"
-+	[[ $(daxctl_get_mode "$daxdev") == "famfs" ]]
-+	printf "OK\n"
-+
-+	# Test: famfs -> devdax
-+	printf "Testing famfs -> devdax... "
-+	"$DAXCTL" reconfigure-device -m devdax "$daxdev"
-+	[[ $(daxctl_get_mode "$daxdev") == "devdax" ]]
-+	printf "OK\n"
-+
-+	# Test: devdax -> devdax (re-enable in same mode)
-+	printf "Testing devdax -> devdax (re-enable)... "
-+	"$DAXCTL" reconfigure-device -m devdax "$daxdev"
-+	[[ $(daxctl_get_mode "$daxdev") == "devdax" ]]
-+	printf "OK\n"
-+}
-+
-+#
-+# Test mode transitions with system-ram (requires kmem)
-+#
-+test_system_ram_transitions()
-+{
-+	printf "\n=== Testing system-ram transitions with famfs ===\n"
-+
-+	# Ensure we start in devdax mode
-+	ensure_devdax_mode
-+	[[ $(daxctl_get_mode "$daxdev") == "devdax" ]]
-+
-+	# Test: devdax -> system-ram
-+	printf "Testing devdax -> system-ram... "
-+	"$DAXCTL" reconfigure-device -N -m system-ram "$daxdev"
-+	[[ $(daxctl_get_mode "$daxdev") == "system-ram" ]]
-+	printf "OK\n"
-+
-+	# Test: system-ram -> famfs should fail
-+	printf "Testing system-ram -> famfs (should fail)... "
-+	if "$DAXCTL" reconfigure-device -m famfs "$daxdev" 2>/dev/null; then
-+		printf "FAILED - should have been rejected\n"
-+		return 1
-+	fi
-+	printf "OK (correctly rejected)\n"
-+
-+	# Test: system-ram -> devdax -> famfs (proper path)
-+	printf "Testing system-ram -> devdax -> famfs... "
-+	"$DAXCTL" reconfigure-device -f -m devdax "$daxdev"
-+	[[ $(daxctl_get_mode "$daxdev") == "devdax" ]]
-+	"$DAXCTL" reconfigure-device -m famfs "$daxdev"
-+	[[ $(daxctl_get_mode "$daxdev") == "famfs" ]]
-+	printf "OK\n"
-+
-+	# Restore to devdax for subsequent tests
-+	"$DAXCTL" reconfigure-device -m devdax "$daxdev"
-+}
-+
-+#
-+# Test JSON output shows correct mode
-+#
-+test_json_output()
-+{
-+	printf "\n=== Testing JSON output for mode field ===\n"
-+
-+	# Test devdax mode in JSON
-+	ensure_devdax_mode
-+	printf "Testing JSON output for devdax mode... "
-+	mode=$("$DAXCTL" list -d "$daxdev" | jq -er '.[].mode')
-+	[[ "$mode" == "devdax" ]]
-+	printf "OK\n"
-+
-+	# Test famfs mode in JSON
-+	"$DAXCTL" reconfigure-device -m famfs "$daxdev"
-+	printf "Testing JSON output for famfs mode... "
-+	mode=$("$DAXCTL" list -d "$daxdev" | jq -er '.[].mode')
-+	[[ "$mode" == "famfs" ]]
-+	printf "OK\n"
-+
-+	# Restore to devdax
-+	"$DAXCTL" reconfigure-device -m devdax "$daxdev"
-+}
-+
-+#
-+# Test error messages for invalid transitions
-+#
-+test_error_handling()
-+{
-+	printf "\n=== Testing error handling ===\n"
-+
-+	# Ensure we're in famfs mode
-+	"$DAXCTL" reconfigure-device -m famfs "$daxdev"
-+
-+	# Test that invalid mode is rejected
-+	printf "Testing invalid mode rejection... "
-+	if "$DAXCTL" reconfigure-device -m invalidmode "$daxdev" 2>/dev/null; then
-+		printf "FAILED - invalid mode should be rejected\n"
-+		return 1
-+	fi
-+	printf "OK (correctly rejected)\n"
-+
-+	# Restore to devdax
-+	"$DAXCTL" reconfigure-device -m devdax "$daxdev"
-+}
-+
-+#
-+# Main test sequence
-+#
-+main()
-+{
-+	check_fsdev_dax
-+	find_daxdev
-+
-+	rc=1  # From here on, failures are real failures
-+
-+	test_famfs_mode_transitions
-+	test_json_output
-+	test_error_handling
-+
-+	# System-ram tests require kmem module
-+	if check_kmem; then
-+		# Save and disable online policy for system-ram tests
-+		saved_policy="$(cat /sys/devices/system/memory/auto_online_blocks)"
-+		echo "offline" > /sys/devices/system/memory/auto_online_blocks
-+
-+		test_system_ram_transitions
-+
-+		# Restore online policy
-+		echo "$saved_policy" > /sys/devices/system/memory/auto_online_blocks
-+	fi
-+
-+	# Restore original mode
-+	printf "\nRestoring device to original mode: %s\n" "$original_mode"
-+	"$DAXCTL" reconfigure-device -f -m "$original_mode" "$daxdev"
-+
-+	printf "\n=== All famfs tests passed ===\n"
-+
-+	exit 0
-+}
-+
-+main
-diff --git a/test/meson.build b/test/meson.build
-index 615376e..ad1d393 100644
---- a/test/meson.build
-+++ b/test/meson.build
-@@ -209,6 +209,7 @@ if get_option('destructive').enabled()
-   device_dax_fio = find_program('device-dax-fio.sh')
-   daxctl_devices = find_program('daxctl-devices.sh')
-   daxctl_create = find_program('daxctl-create.sh')
-+  daxctl_famfs = find_program('daxctl-famfs.sh')
-   dm = find_program('dm.sh')
-   mmap_test = find_program('mmap.sh')
- 
-@@ -226,6 +227,7 @@ if get_option('destructive').enabled()
-     [ 'device-dax-fio.sh', device_dax_fio, 'dax'   ],
-     [ 'daxctl-devices.sh', daxctl_devices, 'dax'   ],
-     [ 'daxctl-create.sh',  daxctl_create,  'dax'   ],
-+    [ 'daxctl-famfs.sh',   daxctl_famfs,   'dax'   ],
-     [ 'dm.sh',             dm,		   'dax'   ],
-     [ 'mmap.sh',           mmap_test,	   'dax'   ],
-   ]
--- 
-2.49.0
+> > +		return false;
+> > +
+> > +	switch (existing->type) {
+> > +	case XFS_HEALTHMON_RUNNING:
+> > +		/* should only ever be one of these events anyway */
+> > +		return false;
+> > +
+> > +	case XFS_HEALTHMON_LOST:
+> > +		existing->lostcount += new->lostcount;
+> > +		return true;
+> > +	}
+> > +
+> > +	return false;
+> 
+> I think the XFS_HEALTHMON_RUNNING check here is redundant, so you could
+> just special case XFS_HEALTHMON_LOST with an if instead of the switch
+> statement.
 
+The switch statement fills out as we add more event types, and with the
+way it's written now, gcc will complain if someone enlarges the enum
+without adding a switch case here.  So I'd prefer to keep this the way
+it is now.
+
+> > +/* Make a stack event dynamic so we can put it on the list. */
+> > +static inline struct xfs_healthmon_event *
+> > +xfs_healthmon_event_dup(
+> > +	const struct xfs_healthmon_event	*event)
+> > +{
+> > +	return kmemdup(event, sizeof(struct xfs_healthmon_event), GFP_NOFS);
+> > +}
+> 
+> The callers of this and and xfs_healthmon_merge_events seem to share
+> the same logic.  Maybe add a helper for the two calls and the
+> XFS_HEALTHMON_MAX_EVENTS check, and fold at least xfs_healthmon_event_dup
+> (and maybe xfs_healthmon_merge_events if it works out) into that?
+
+_event_dup can be folded into its callers.
+
+I'm less sure about _merge_events -- it would be pretty easy to
+opencode its logic in _clear_lost_prev:
+
+	if (hm->last_event &&
+	    hm->last_event->type == XFS_HEALTHMON_LOST &&
+	    hm->last_event->domain == XFS_HEALTHMON_MOUNT) {
+		hm->last_event->lostcount += hm->lost_prev_event;
+		trace_xfs_healthmon_merge(hm, hm->last_event);
+		wake_up(&hm->wait);
+		goto cleared;
+	}
+
+But the downside is that either we leave the dead XFS_HEALTHMON_LOST
+case in the switch statement in _merge_events to avoid giving up the
+compiler checking, or we add a default: case which then means that
+authors of future extensions can miss things without noticing.
+
+I think I'll remove _event_dup but leave the merge function.
+
+> > +	if (file->f_flags & O_NONBLOCK) {
+> > +		if (!xfs_healthmon_has_eventdata(hm))
+> > +			return -EAGAIN;
+> > +	} else {
+> > +		ret = wait_event_interruptible(hm->wait,
+> > +				xfs_healthmon_has_eventdata(hm));
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	inode_lock(inode);
+> 
+> should this be a trylock + -EAGAIN for O_NONBLOCK?
+
+Oops yes.
+
+--D
 
