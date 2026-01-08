@@ -1,173 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-72863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C17AD03CD6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:24:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C6ED0453F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:24:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 84FDF3187708
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 14:55:45 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 397C030F4120
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287602DC322;
-	Thu,  8 Jan 2026 14:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864BD2D73AD;
+	Thu,  8 Jan 2026 15:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qz9pm/hC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OfqF8fF3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qz9pm/hC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OfqF8fF3"
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="IV37lyqx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0F450097E
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 14:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0FF2741C9
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 15:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767883965; cv=none; b=AyXX+BUBNZz2R2fCcW6IZFwB7IDOSZLj/HPFvM6s32bRpRXZ6hUDvEYQomHhUmwTxJGO9o0OwSgTp8TSW8Lr4oVTq2R0YZT7YRIWA79Hz6PLurZ1j7f7RIIi7QsWGW7vpgiqiTC+Q+SKnzIk7G1Pk08rH1XYwhotaMa9cBO7eyk=
+	t=1767885046; cv=none; b=i9ThNTa4tGLup+w5451DM0ifom4TpggzElX9N0PLeh4cAu2t7MsQmIaTZva2nfpUcLYwRlijogkgQ0xlXlHy8eri80LI/RVMsop4RVp8xvaIJNfMxn2fSJA9jiIVrgpPeG9/04Q29VDDBNdEhdppXz7/P2Vrp76BuRjHvPsiBAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767883965; c=relaxed/simple;
-	bh=cO621mnjFcoQyLOAtXlQSioDOCGoJQMyXQY0Q+B5ao0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rHUS10agkeUzrg2fhwCmBHBnNSdEQOoZKSgqmGuHmoXpUiCq2PpAuyO1fqA7/AXpWn1VOHqmZHtJ51ixLSED6wYbkBfWpAfokaklvlWB3pXzobqvr1hMh8XkWjpawkGjYCXAL84Trs6lcFPBCHskn45pyESRtJQiAlQmPT866jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qz9pm/hC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OfqF8fF3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qz9pm/hC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OfqF8fF3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AB8C234317;
-	Thu,  8 Jan 2026 14:52:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767883961; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z9P33gJY6cdcXN4gsUXWmBD42uSLmlczLJOrjbAI4OM=;
-	b=Qz9pm/hCHTSUWo9rtJ2/Jng0zUmzJWuIwxi4q6xl4CDS/kPrVHtkMCYd5m9BjL3OzFgP0W
-	kxmUVfymumLeU0nI0+R4A3V+saA0+Hd9JUeuRxweJ6TYb2nQWO0Yu6rtncrZQac5yRFxuE
-	RVXJVL38BcSVvSsNtX/Rrd3WaXBuj9s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767883961;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z9P33gJY6cdcXN4gsUXWmBD42uSLmlczLJOrjbAI4OM=;
-	b=OfqF8fF3RxT47hd6FBMNm1jpI+4J1xzwkIF7TvlX+xvC+3r9cQl81KqcyicKzKLxnYoss1
-	LSXgi+FUcUjXOTCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="Qz9pm/hC";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OfqF8fF3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767883961; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z9P33gJY6cdcXN4gsUXWmBD42uSLmlczLJOrjbAI4OM=;
-	b=Qz9pm/hCHTSUWo9rtJ2/Jng0zUmzJWuIwxi4q6xl4CDS/kPrVHtkMCYd5m9BjL3OzFgP0W
-	kxmUVfymumLeU0nI0+R4A3V+saA0+Hd9JUeuRxweJ6TYb2nQWO0Yu6rtncrZQac5yRFxuE
-	RVXJVL38BcSVvSsNtX/Rrd3WaXBuj9s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767883961;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z9P33gJY6cdcXN4gsUXWmBD42uSLmlczLJOrjbAI4OM=;
-	b=OfqF8fF3RxT47hd6FBMNm1jpI+4J1xzwkIF7TvlX+xvC+3r9cQl81KqcyicKzKLxnYoss1
-	LSXgi+FUcUjXOTCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 996583EA63;
-	Thu,  8 Jan 2026 14:52:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EhZuJbnEX2l9WwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 08 Jan 2026 14:52:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5DC23A09CF; Thu,  8 Jan 2026 15:52:41 +0100 (CET)
-Date: Thu, 8 Jan 2026 15:52:41 +0100
-From: Jan Kara <jack@suse.cz>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jack@suse.cz, brauner@kernel.or, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] fs: add <linux/init_task.h> for 'init_fs'
-Message-ID: <ykobzabaopivf4ltmayktpobcd77dyf243moioqjiaydapugd2@sucwmv52we3h>
-References: <20260108115856.238027-1-ben.dooks@codethink.co.uk>
+	s=arc-20240116; t=1767885046; c=relaxed/simple;
+	bh=C64R9vkxaI9K5ONeC3tgaLirXTXcWSDMfLRS3TxDK8s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eQwCX/O0/9rW/c2erISQiOqApb9eTf3q4RKEPhZerujbirQWEMbePkjTdSb6RXoKby9c9TZHW9GbC2NzU4zSMEQSDAW7rSnWvgdCb7McQSpkzDwtNjNlsgn1UWiZkfpQTNhPDSF4a31C/CAh9rxpDRu5jYefUSE67SvsoOBM0P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=IV37lyqx; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7904a401d5cso36314067b3.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 07:10:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1767885044; x=1768489844; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QTkbey9LWC4b27P/G+EnN+lFuImbI+lYFoSxJEGXtiI=;
+        b=IV37lyqxJep/5ajHTExa7SHZy3vjwyq5ntmGicmKUKgrvygjZPpOn2bfiTpIWobWhk
+         IWs5pUbC+vQCl/WCppd2iPEavLxoStqCg1xP3I1GgBoXqPKor7JCgshPYAdU9lXAGTgA
+         vePeN6LzMXucEhQSHr1yFtRPsGsOyh+v/LFWE36UZhiLzNicZ1kEoWIS6OJqBWdUuLJi
+         b5n5wKdDmy6KfFs0me7P6uevmyaIc8qi1eGUTrl299YgHA7fjZdTwIueqmsYQ/1puMWR
+         YMHg1IY6SlhUiHKl1Ie570K96HL/H3BWRDBs4R0tFjoVmdwoasS+Q0koJ/pwpZfQ+FBe
+         tR/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767885044; x=1768489844;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=QTkbey9LWC4b27P/G+EnN+lFuImbI+lYFoSxJEGXtiI=;
+        b=qib1NCLx7iKH1dAGdxX6a+rLHjdQaVz4iVr0iW40U218FG3uVXWqtwn/YnQc52kMrm
+         9uoTnO9PIVJdUXAwGbZgGbsDJNqFeWqYZmXjIA3Pjz0sAIkJ0RSUtXNDNaRNGCNVala7
+         8Lr+HNBx66CjXRw1Th4nG893bYDn7SsycXKprcLNTLDTVlHEpfZ3DpZmtqe61K0rVL92
+         eOuhrB93L4TSpXT2EaO6+V+DPrZKcMqX7v6j+b4Z+5qL9zODextMemiT+x57wj/9z5Z/
+         RByhoFNW6UVxie/8/MgBQE3RxW+WEz1CL4xCzEcBErG4bcvTFdOAP8/Nt9QCoip0OXEX
+         twVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsBI1UgRgUZ9HH1B8Yez0OES0fcTtS7KzMN/16LmNIcTco/jVAcB2wR4npNE1CORwMqCos2vLRCt0TOeMr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrIG6YfjyW0YPEkLTb8/YkovJTwUzW2/Ke3i1Ls/6RpD48ejIX
+	94x9DptCjDVypOgWZu5Mo3Rf3Apl8XupBh+qT9mc6Jl2LZfjtQkGb9c68HPWLweUZcIR1Wp/UKw
+	fHvp2Y1hwGnArSi84pNyFfnZK6SPkv2eR0cz5+ry9Dw==
+X-Gm-Gg: AY/fxX4spTGTFdmAUS6aTGl78EXPrbBLr3RekOPYHX3jGuh+frz3WmmokgZfNllpR1x
+	ojv6oxIdHNEU+YdsBv9bRSUMDoU5jIy7kA+ZLPTtFupB/TEVndJVrGrlvDnhQsQOiN46rBRGbz5
+	hQL/YB1GiL4mSjcfNxuyjWD+fvz69rE3MTcQeT3glH81oQWlVxT8DAupbGmaCHX3Tmv8Lo08qL0
+	M4ZppdFVssb1yB51D8FVRG3pUWdkjI7G4tgzUeGSdrTV5xxJ9l1bDexouO8ZWA93GHsHw==
+X-Google-Smtp-Source: AGHT+IHwlV11mJiZRvrc0ba9gyUKkJLs3Ivv5ZO/Sp66Caj6iICdWSs+vjcbtX7JeT7w+lz4Sr6DicIt8PKx9jaUzQk=
+X-Received: by 2002:a05:690e:b88:b0:644:6ad4:fdfd with SMTP id
+ 956f58d0204a3-64716c14086mr5723963d50.71.1767885043558; Thu, 08 Jan 2026
+ 07:10:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260108115856.238027-1-ben.dooks@codethink.co.uk>
-X-Spam-Score: -4.01
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: AB8C234317
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
+References: <20251211-v5_user_cfi_series-v26-0-f0f419e81ac0@rivosinc.com>
+ <e052745b-6bf0-c2a3-21b2-5ecd8b04ec70@kernel.org> <aTxf7IGlkGLgHgI2@debug.ba.rivosinc.com>
+In-Reply-To: <aTxf7IGlkGLgHgI2@debug.ba.rivosinc.com>
+From: Deepak Gupta <debug@rivosinc.com>
+Date: Thu, 8 Jan 2026 07:10:32 -0800
+X-Gm-Features: AQt7F2r-MFLse9aM2Y-9SmWOvFLm93MsLbBkGvYnQc0D6QLcC_Q6_utP6Kihh0s
+Message-ID: <CAKC1njQ-hS+kUJ0C_v0oqZW1EZw2zAXMp-SnnA-ZXh_H-SoVdQ@mail.gmail.com>
+Subject: Re: [PATCH v26 00/28] riscv control-flow integrity for usermode
+To: Paul Walmsley <pjw@kernel.org>
+Cc: x86@kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, 
+	Andy Chiu <andybnac@gmail.com>, kito.cheng@sifive.com, charlie@rivosinc.com, 
+	atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
+	alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
+	rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
+	Zong Li <zong.li@sifive.com>, Andreas Korb <andreas.korb@aisec.fraunhofer.de>, 
+	Valentin Haudiquet <valentin.haudiquet@canonical.com>, Charles Mirabile <cmirabil@redhat.com>, 
+	Jesse Huang <jesse.huang@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 08-01-26 11:58:56, Ben Dooks wrote:
-> The init_fs symbol is defined in <linux/init_task.h> but was
-> not included in fs/fs_struct.c so fix by adding the include.
-> 
-> Fixes the following sparse warning:
-> fs/fs_struct.c:150:18: warning: symbol 'init_fs' was not declared. Should it be static?
-> 
-> Fixes: 3e93cd671813e ("Take fs_struct handling to new file")
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Hi Paul,
 
-Sure. Feel free to add:
+I have a bugfix for a bug reported by Jesse Huang (thanks Jesse) in riscv
+implementation of `map_shadow_stack`.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Should I send a new series or only the bugfix-patch for implementation
+of `map_shadow_stack`
 
-								Honza
+Let me know. Thanks.
 
-> ---
->  fs/fs_struct.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/fs_struct.c b/fs/fs_struct.c
-> index b8c46c5a38a0..394875d06fd6 100644
-> --- a/fs/fs_struct.c
-> +++ b/fs/fs_struct.c
-> @@ -6,6 +6,7 @@
->  #include <linux/path.h>
->  #include <linux/slab.h>
->  #include <linux/fs_struct.h>
-> +#include <linux/init_task.h>
->  #include "internal.h"
->  
->  /*
-> -- 
-> 2.37.2.352.g3c44437643
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+-Deepak
+
+-Deepak
+
+
+
+On Fri, Dec 12, 2025 at 10:33=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> =
+wrote:
+>
+> On Fri, Dec 12, 2025 at 01:30:29AM -0700, Paul Walmsley wrote:
+> >On Thu, 11 Dec 2025, Deepak Gupta via B4 Relay wrote:
+> >
+> >> v26: CONFIG_RISCV_USER_CFI depends on CONFIG_MMU (dependency of shadow=
+ stack
+> >> on MMU). Used b4 to pick tags, apparantly it messed up some tag picks.=
+ Fixing it
+> >
+> >Deepak: I'm now (at least) the third person to tell you to stop resendin=
+g
+> >this entire series over and over again.
+>
+> To be very honest I also feel very bad doing and DOSing the lists. Sorry =
+to you
+> and everyone else.
+>
+> But I have been sitting on this patch series for last 3-4 merge windows w=
+ith
+> patches being exactly same/similar. So I have been a little more than des=
+perate
+> to get it in.
+>
+> I really haven't had any meaningful feedback on patch series except stall=
+ing
+> just before each merge window for reasons which really shouldn't stall it=
+s
+> merge. Sure that's the nature of open source development and it's maintai=
+ner's
+> call at the end of the day. And I am new to this. I'll improve.
+>
+> >
+> >First, a modified version of the CFI v23 series was ALREADY SITTING IN
+> >LINUX-NEXT.  So there's no reason you should be resending the entire
+> >series, UNLESS your intention for me is to drop the entire existing seri=
+es
+> >and wait for another merge window.
+> >
+> >Second: when someone asks you questions about an individual patch, and y=
+ou
+> >want to answer those questions, it's NOT GOOD for you to resend the enti=
+re
+> >28 series as the response!  You are DDOSing a bunch of lists and E-mail
+> >inboxes.  Just answer the question in a single E-mail.  If you want to
+> >update a single patch, just send that one patch.
+>
+> Noted. I wasn't sure about it. I'll explicitly ask next time if you want =
+me to
+> send another one.
+>
+> >
+> >If you don't start paying attention to these rules then people are going
+> >to start ignoring you -- at best! -- and it's going to give the entire
+> >community a bad reputation.
+>
+> Even before this, this patch series has been ignored largely. I don't kno=
+w
+> how to get attention. All I wanted was either feedback or get it in. And =
+as I
+> said I've been desparate to get it in. Also as I said, I'll improve.
+>
+> >
+> >Please acknowledge that you understand this,
+>
+> ACKed.
+>
+> >
+> >
+> >- Paul
 
