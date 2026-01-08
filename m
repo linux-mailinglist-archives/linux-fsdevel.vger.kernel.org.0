@@ -1,268 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-72871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E28D04463
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:18:31 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id C922CD048AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:51:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 650E230A659C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:41:50 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2A6B630FE6E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6739C3358DB;
-	Thu,  8 Jan 2026 15:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JCYjElFa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d2ChgALP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JCYjElFa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d2ChgALP"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77603446B5;
+	Thu,  8 Jan 2026 15:27:21 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0577F29D29F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 15:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA391F1534;
+	Thu,  8 Jan 2026 15:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767885882; cv=none; b=fIJyI1j/AKTVm/zKcOLTTzJ8Fx1znovMikXwH6pdp8wfr8wtfa9OdVtyTD8WB+e6/l1/Pd1UjFwAw9jkFZgCZDWmvPkECFwaqJ+48tH0leZlykHPnYJfbvq7y6NVaLsOSo30j7Wnf29MPqKhmgbYSdOscF/Tj3BfMh0oIe8Ht+c=
+	t=1767886041; cv=none; b=M9qZis7IEI98PPWHjch0LGYSImD8mOHxDUx7AinPUx5uzE50fGcbpMZGn8TWQDS1PIf3rOomgjn2M1Nhs+2uTaU/PFeMiz+lJezqo1UrryL3hMf2Nw1vnc2eowJ7jt+n4X+50ufbJd+XESy1HEZ2OkPdkYi9A6T15TdIxveEq1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767885882; c=relaxed/simple;
-	bh=vXriC1hOUec5CiDeN7Kkxns/Y4aG+yALvZFE+zmwmLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ATHWWhc/LH4odb2bxgK0NqIm+ZvKt/qd+Q2vludIRtaSBSsw95wvodBWJ45zEcwvOh4VXkJRBJqQKELQ7+LEs83A1P9JduyczqVUTFwbBxg6ZhRq1DZHfi/hsEaFPhKuOZbK9W3MzlojbyFm/t1S8uOxQTdjJ6bXpHkNvn+YKSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JCYjElFa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d2ChgALP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JCYjElFa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d2ChgALP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A391F5C8BF;
-	Thu,  8 Jan 2026 15:24:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767885877; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+qK+dnL46nUtN+uNEFs23QanVQbnXiphSQbt6qXpT4=;
-	b=JCYjElFavA1D+JD67g7P3npPC+qKEUU/TbXUobTNoT7l1cVaT7b4XmIGbh8npgaG+jLv/V
-	6AckBleiCx8a50E72AwF4VkGql2Dsd8QC+IUgJ2KIt0GlENPgQOJtkIyZ+IMt5mWrZpF6P
-	/r1aau7+l5M8SCkXKYQEUfSfYOfbnog=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767885877;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+qK+dnL46nUtN+uNEFs23QanVQbnXiphSQbt6qXpT4=;
-	b=d2ChgALPnQVQKorF2BkYW7JgTwnMO5Lu5PPBlhswk0qAlUgGRqAbHwNO++BK2PotRdsuOn
-	EUNmEnGr6rkOyZAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767885877; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+qK+dnL46nUtN+uNEFs23QanVQbnXiphSQbt6qXpT4=;
-	b=JCYjElFavA1D+JD67g7P3npPC+qKEUU/TbXUobTNoT7l1cVaT7b4XmIGbh8npgaG+jLv/V
-	6AckBleiCx8a50E72AwF4VkGql2Dsd8QC+IUgJ2KIt0GlENPgQOJtkIyZ+IMt5mWrZpF6P
-	/r1aau7+l5M8SCkXKYQEUfSfYOfbnog=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767885877;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+qK+dnL46nUtN+uNEFs23QanVQbnXiphSQbt6qXpT4=;
-	b=d2ChgALPnQVQKorF2BkYW7JgTwnMO5Lu5PPBlhswk0qAlUgGRqAbHwNO++BK2PotRdsuOn
-	EUNmEnGr6rkOyZAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 933BE3EA63;
-	Thu,  8 Jan 2026 15:24:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id R8DvIzXMX2kSewAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 08 Jan 2026 15:24:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4D1D8A09CF; Thu,  8 Jan 2026 16:24:37 +0100 (CET)
-Date: Thu, 8 Jan 2026 16:24:37 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Jan Kara <jack@suse.cz>, 
-	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, 
-	Carlos Maiolino <cem@kernel.org>, Stefan Roesch <shr@fb.com>, Jeff Layton <jlayton@kernel.org>, 
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev, io-uring@vger.kernel.org, 
-	devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org, Chaitanya Kulkarni <kch@nvidia.com>
-Subject: Re: [PATCH 07/11] fs: add a ->sync_lazytime method
-Message-ID: <w35hgsrv4xxwlq2ncsukzc5s6qwjq3qmnbpvyltj2ljmc357dh@4hcrqlekhxdh>
-References: <20260108141934.2052404-1-hch@lst.de>
- <20260108141934.2052404-8-hch@lst.de>
+	s=arc-20240116; t=1767886041; c=relaxed/simple;
+	bh=jKUcZrfjjXtmON/mcBgSGHdkM8Yw6PvAIJrOv31+CnY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DANk/z2zadLDpuVm2QdtZQpA/tYuP7tCtVn3d2UZA3rrCJn8XcJnhpFjd9gbU4wx5W/eRqhG8oVMK/A0URkGeQo86jxCqazJPy5yN5+RKsA62duKvclF+0/yoaChC9agY4FNAiVdWgdSHOaqyQznwKzLrXGhOUt+cLel2WT6MXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dn80D4YQnzHnGg3;
+	Thu,  8 Jan 2026 23:27:08 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id EE2BE4056B;
+	Thu,  8 Jan 2026 23:27:16 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 8 Jan
+ 2026 15:27:15 +0000
+Date: Thu, 8 Jan 2026 15:27:13 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: John Groves <John@Groves.net>
+CC: Miklos Szeredi <miklos@szeredi.hu>, Dan Williams
+	<dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, "Alison
+ Schofield" <alison.schofield@intel.com>, John Groves <jgroves@micron.com>,
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan
+ Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, "David
+ Hildenbrand" <david@kernel.org>, Christian Brauner <brauner@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Stefan
+ Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef
+ Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Chen
+ Linxuan <chenlinxuan@uniontech.com>, "James Morse" <james.morse@arm.com>,
+	Fuad Tabba <tabba@google.com>, "Sean Christopherson" <seanjc@google.com>,
+	Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>,
+	Gregory Price <gourry@gourry.net>, Aravind Ramesh <arramesh@micron.com>, Ajay
+ Joshi <ajayjoshi@micron.com>, <venkataravis@micron.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V3 21/21] famfs_fuse: Add documentation
+Message-ID: <20260108152713.00001b42@huawei.com>
+In-Reply-To: <20260107153332.64727-22-john@groves.net>
+References: <20260107153244.64703-1-john@groves.net>
+	<20260107153332.64727-1-john@groves.net>
+	<20260107153332.64727-22-john@groves.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260108141934.2052404-8-hch@lst.de>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[24];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,nvidia.com:email,imap1.dmz-prg2.suse.org:helo,lst.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Thu 08-01-26 15:19:07, Christoph Hellwig wrote:
-> Allow the file system to explicitly implement lazytime syncing instead
-> of pigging back on generic inode dirtying.  This allows to simplify
-> the XFS implementation and prepares for non-blocking lazytime timestamp
-> updates.
+On Wed,  7 Jan 2026 09:33:30 -0600
+John Groves <John@Groves.net> wrote:
+
+> Add Documentation/filesystems/famfs.rst and update MAINTAINERS
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> Tested-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: John Groves <john@groves.net>
 > ---
->  Documentation/filesystems/locking.rst |  2 ++
->  Documentation/filesystems/vfs.rst     |  6 ++++++
->  fs/fs-writeback.c                     | 13 +++++++++++--
->  include/linux/fs.h                    |  1 +
->  4 files changed, 20 insertions(+), 2 deletions(-)
+>  Documentation/filesystems/famfs.rst | 142 ++++++++++++++++++++++++++++
+>  Documentation/filesystems/index.rst |   1 +
+>  MAINTAINERS                         |   1 +
+>  3 files changed, 144 insertions(+)
+>  create mode 100644 Documentation/filesystems/famfs.rst
 > 
-> diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-> index 37a4a7fa8094..0312fba6d73b 100644
-> --- a/Documentation/filesystems/locking.rst
-> +++ b/Documentation/filesystems/locking.rst
-> @@ -82,6 +82,7 @@ prototypes::
->  	int (*fiemap)(struct inode *, struct fiemap_extent_info *, u64 start, u64 len);
->  	void (*update_time)(struct inode *inode, enum fs_update_time type,
->  			    int flags);
-> +	void (*sync_lazytime)(struct inode *inode);
->  	int (*atomic_open)(struct inode *, struct dentry *,
->  				struct file *, unsigned open_flag,
->  				umode_t create_mode);
-> @@ -118,6 +119,7 @@ getattr:	no
->  listxattr:	no
->  fiemap:		no
->  update_time:	no
-> +sync_lazytime:	no
->  atomic_open:	shared (exclusive if O_CREAT is set in open flags)
->  tmpfile:	no
->  fileattr_get:	no or exclusive
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 51aa9db64784..d8cb181f69f8 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -487,6 +487,7 @@ As of kernel 2.6.22, the following members are defined:
->  		ssize_t (*listxattr) (struct dentry *, char *, size_t);
->  		void (*update_time)(struct inode *inode, enum fs_update_time type,
->  				    int flags);
-> +		void (*sync_lazytime)(struct inode *inode);
->  		int (*atomic_open)(struct inode *, struct dentry *, struct file *,
->  				   unsigned open_flag, umode_t create_mode);
->  		int (*tmpfile) (struct mnt_idmap *, struct inode *, struct file *, umode_t);
-> @@ -643,6 +644,11 @@ otherwise noted.
->  	an inode.  If this is not defined the VFS will update the inode
->  	itself and call mark_inode_dirty_sync.
->  
-> +``sync_lazytime``:
-> +	called by the writeback code to update the lazy time stamps to
-> +	regular time stamp updates that get syncing into the on-disk
-> +	inode.
+> diff --git a/Documentation/filesystems/famfs.rst b/Documentation/filesystems/famfs.rst
+> new file mode 100644
+> index 000000000000..0d3c9ba9b7a8
+> --- /dev/null
+> +++ b/Documentation/filesystems/famfs.rst
+
+> +Principles of Operation
+> +=======================
+....
+> +When an app accesses a data object in a famfs file, there is no page cache
+> +involvement. The CPU cache is loaded directly from the shared memory. In
+> +some use cases, this is an enormous reduction read amplification compared
+> +to loading an entire page into the page cache.
 > +
->  ``atomic_open``
->  	called on the last component of an open.  Using this optional
->  	method the filesystem can look up, possibly create and open the
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 3d68b757136c..62658be2578b 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -1717,7 +1717,10 @@ bool sync_lazytime(struct inode *inode)
->  		return false;
->  
->  	trace_writeback_lazytime(inode);
-> -	mark_inode_dirty_sync(inode);
-> +	if (inode->i_op->sync_lazytime)
-> +		inode->i_op->sync_lazytime(inode);
-> +	else
-> +		mark_inode_dirty_sync(inode);
->  	return true;
->  }
->  
-> @@ -2569,6 +2572,8 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  	trace_writeback_mark_inode_dirty(inode, flags);
->  
->  	if (flags & I_DIRTY_INODE) {
-> +		bool was_dirty_time = false;
+Trivial but this double blank line seems inconsistent.
+I don't mind if it's one or two, but do the same everywhere.
+
 > +
->  		/*
->  		 * Inode timestamp update will piggback on this dirtying.
->  		 * We tell ->dirty_inode callback that timestamps need to
-> @@ -2579,6 +2584,7 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  			if (inode_state_read(inode) & I_DIRTY_TIME) {
->  				inode_state_clear(inode, I_DIRTY_TIME);
->  				flags |= I_DIRTY_TIME;
-> +				was_dirty_time = true;
->  			}
->  			spin_unlock(&inode->i_lock);
->  		}
-> @@ -2591,9 +2597,12 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  		 * for just I_DIRTY_PAGES or I_DIRTY_TIME.
->  		 */
->  		trace_writeback_dirty_inode_start(inode, flags);
-> -		if (sb->s_op->dirty_inode)
-> +		if (sb->s_op->dirty_inode) {
->  			sb->s_op->dirty_inode(inode,
->  				flags & (I_DIRTY_INODE | I_DIRTY_TIME));
-> +		} else if (was_dirty_time && inode->i_op->sync_lazytime) {
-> +			inode->i_op->sync_lazytime(inode);
-> +		}
->  		trace_writeback_dirty_inode(inode, flags);
->  
->  		/* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 35b3e6c6b084..7837db1ba1d2 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2024,6 +2024,7 @@ struct inode_operations {
->  		      u64 len);
->  	int (*update_time)(struct inode *inode, enum fs_update_time type,
->  			   unsigned int flags);
-> +	void (*sync_lazytime)(struct inode *inode);
->  	int (*atomic_open)(struct inode *, struct dentry *,
->  			   struct file *, unsigned open_flag,
->  			   umode_t create_mode);
-> -- 
-> 2.47.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +Famfs is Not a Conventional File System
+> +---------------------------------------
+
+Nice doc.
+
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
