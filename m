@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-72749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B9AD01EC1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 10:48:27 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BEBBD01F68
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 10:55:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 8E87735A37CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 08:41:23 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9CAD4306C98A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 08:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220EA346AEE;
-	Thu,  8 Jan 2026 07:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA75346A0C;
+	Thu,  8 Jan 2026 07:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Lg6rBNqB"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JQdLwO/e"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5C032779D;
-	Thu,  8 Jan 2026 07:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D0A334C3D;
+	Thu,  8 Jan 2026 07:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767857819; cv=none; b=PJ75WrivT6QT0tmBqv4QzpywIfetTddbOgEbKHr05b1XRJ7hzvXK+eSaiIU11PXBxyzNfRAYffq+AAvlyMww/G2hsGiZeQItrpTY9lqnUzFnUNkVRgtpJOkVX46c/U4x7Z30K5EJcJ2ggcsZGl+XJX6Rdi3MwrX6Ve9CJ40896g=
+	t=1767857818; cv=none; b=PNWKxyb6a9LlG6r92sfmfarvq9ClaBQsl5jbHrepFjsz8KRAavxkLbNRWkArIXr02jcqerwVKRIa18+BML5s98XpmZvnmfDFMhVSXZBNlYm7NlbkpU1HxcPDyVAh7KfD7JM/+WyudydBvU0aIifTaON+A9DzvZy8mC6gHws0KjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767857819; c=relaxed/simple;
-	bh=ATaHNvEGkj455ZapmLUWkmm24/ySdUOMeuI8hvb1u0E=;
+	s=arc-20240116; t=1767857818; c=relaxed/simple;
+	bh=SyiCZ+BkgTbuNj29/vmF2KqVFwMK6f6m3rzqyVzJ4sQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TtbQaBO4Wu6mTqag3yd849KUeDCF4boFT8MjQwD1xEHWBxB4VYRxTGzDgyh6+qqtUHDW0XX09xSSSCYRs9G6TGxK6tz5/0ly7qNEIkpmWiQwvDQsjoU2sfXiz1UwEDYVs3aMxb1Md2HojO470FEA0RF13vWSahGJq7iC4r4dOfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Lg6rBNqB; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=cR5W+ihu3hTGCABHzpFnLNB6bMYZOlS5fpeTp4BnF1+xNS8DtF+EoATUSfo56NAF+osuI/WdTObz2KtazoReBHKDpRjKge9aYZVSUNQkKsCJ+9VkiApsqlXR/8dZFtZTPChHiZ9AtnCS1w4CMMdA0SW2STjSFS5IEIoFizG7E44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JQdLwO/e; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=CeV5xnu6YraY0E36YYd9v6GG4gssIj1+wOjZCBNOAG4=; b=Lg6rBNqBsPGYgzeiPQvhqstelK
-	3KC049nSgy7RGc1zcGAR9FirEwhCjaZpvyeFqq99fmkGoDrO7NxGzoHYRLIcH3LtST2pHFI+WLjvN
-	MjKr3QzCH9B12iTwYPdQ6GAjzcJ5qoNOo//1lf4hNvb7GO7eFIWnS6Bt6hVCT2JHGaEiIYbJAMf4G
-	BLun1rmHqAPMEXYkp5tZ+dHu3MOY4rASAp04zrLJfLQQs7PNcoFjh8b7DeZCb4OXiUuDibWRVD6Sg
-	uXvrqoteHXVutRq09vy5NDonJPety/BQI6c7sYcWx3SPOvJH3gyI6ff1xKSpVgc8YFYXdf/5f4vao
-	t6kwLagA==;
+	bh=JUE8hPERD0FXyjZgOFJkpifcmj2y7nW76IgVSlDIJnk=; b=JQdLwO/eAz0zlyu5thAfVW3EPt
+	rOXFsDV2twyaf+VQFrbnf6U1u/T9BQXGpmC3bIbfGJSBwcbr+zgZJUEOoYJURU3VfxWcLxtlXiXJ4
+	Br8unqqz2pNzHrMfs3Lo4tmJkNqfvWbsZVpqvc2ltDTOjz/BHVQwSoBLDrnE+09NLYBiCcaTaD46X
+	0zWStjF4CQF1roTqYkf+hDgO2a4z3Bd07EEMCyPKii9ppu1H5s74Gu+sWSSPZTfOdLKmKeVtDbFOZ
+	duoJs2gTcfZRD7BLfYmjBClAHEIV+i/FylWqJawD7zChbalbZv+ckGxI2KXmpHqxim84tlT9leQjR
+	/dMjqm7A==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkau-00000001mmL-2eCn;
-	Thu, 08 Jan 2026 07:38:08 +0000
+	id 1vdkav-00000001mnx-2soF;
+	Thu, 08 Jan 2026 07:38:09 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: torvalds@linux-foundation.org,
@@ -53,9 +53,9 @@ Cc: torvalds@linux-foundation.org,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 27/59] rename do_filp_open() to do_file_open()
-Date: Thu,  8 Jan 2026 07:37:31 +0000
-Message-ID: <20260108073803.425343-28-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 31/59] simplify the callers of alloc_bprm()
+Date: Thu,  8 Jan 2026 07:37:35 +0000
+Message-ID: <20260108073803.425343-32-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
 References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
@@ -68,98 +68,65 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-"filp" thing never made sense; seeing that there are exactly 4 callers
-in the entire tree (and it's neither exported nor even declared in
-linux/*/*.h), there's no point keeping that ugliness.
-
-FWIW, the 'filp' thing did originate in OSD&I; for some reason Tanenbaum
-decided to call the object representing an opened file 'struct filp',
-the last letter standing for 'position'.  In all Unices, Linux included,
-the corresponding object had always been 'struct file'...
+alloc_bprm() starts with do_open_execat() and it will do the right
+thing if given ERR_PTR() for name.  Allows to drop such checks in
+its callers...
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/exec.c            | 2 +-
- fs/internal.h        | 2 +-
- fs/namei.c           | 2 +-
- fs/open.c            | 4 ++--
- io_uring/openclose.c | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
+ fs/exec.c | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 9d5ebc9d15b0..b7d8081d12ea 100644
+index 5b4110c7522e..1473e8c06a8c 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -780,7 +780,7 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
- 	if (flags & AT_EMPTY_PATH)
- 		open_exec_flags.lookup_flags |= LOOKUP_EMPTY;
+@@ -1782,9 +1782,6 @@ static int do_execveat_common(int fd, struct filename *filename,
+ 	struct linux_binprm *bprm;
+ 	int retval;
  
--	file = do_filp_open(fd, name, &open_exec_flags);
-+	file = do_file_open(fd, name, &open_exec_flags);
- 	if (IS_ERR(file))
- 		return file;
- 
-diff --git a/fs/internal.h b/fs/internal.h
-index e44146117a42..5c3e4eac34f2 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -189,7 +189,7 @@ struct open_flags {
- 	int intent;
- 	int lookup_flags;
- };
--extern struct file *do_filp_open(int dfd, struct filename *pathname,
-+extern struct file *do_file_open(int dfd, struct filename *pathname,
- 		const struct open_flags *op);
- extern struct file *do_file_open_root(const struct path *,
- 		const char *, const struct open_flags *);
-diff --git a/fs/namei.c b/fs/namei.c
-index c8410dc6c0c6..9beb667f0307 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4855,7 +4855,7 @@ static struct file *path_openat(struct nameidata *nd,
- 	return ERR_PTR(error);
- }
- 
--struct file *do_filp_open(int dfd, struct filename *pathname,
-+struct file *do_file_open(int dfd, struct filename *pathname,
- 		const struct open_flags *op)
+-	if (IS_ERR(filename))
+-		return PTR_ERR(filename);
+-
+ 	/*
+ 	 * We move the actual failure in case of RLIMIT_NPROC excess from
+ 	 * set*uid() to execve() because too many poorly written programs
+@@ -1862,7 +1859,6 @@ static int do_execveat_common(int fd, struct filename *filename,
+ int kernel_execve(const char *kernel_filename,
+ 		  const char *const *argv, const char *const *envp)
  {
- 	struct nameidata nd;
-diff --git a/fs/open.c b/fs/open.c
-index 2fea68991d42..3d2e2a2554c5 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1382,7 +1382,7 @@ struct file *file_open_name(struct filename *name, int flags, umode_t mode)
- 	int err = build_open_flags(&how, &op);
- 	if (err)
- 		return ERR_PTR(err);
--	return do_filp_open(AT_FDCWD, name, &op);
-+	return do_file_open(AT_FDCWD, name, &op);
+-	struct filename *filename;
+ 	struct linux_binprm *bprm;
+ 	int fd = AT_FDCWD;
+ 	int retval;
+@@ -1871,15 +1867,10 @@ int kernel_execve(const char *kernel_filename,
+ 	if (WARN_ON_ONCE(current->flags & PF_KTHREAD))
+ 		return -EINVAL;
+ 
+-	filename = getname_kernel(kernel_filename);
+-	if (IS_ERR(filename))
+-		return PTR_ERR(filename);
+-
++	CLASS(filename_kernel, filename)(kernel_filename);
+ 	bprm = alloc_bprm(fd, filename, 0);
+-	if (IS_ERR(bprm)) {
+-		retval = PTR_ERR(bprm);
+-		goto out_ret;
+-	}
++	if (IS_ERR(bprm))
++		return PTR_ERR(bprm);
+ 
+ 	retval = count_strings_kernel(argv);
+ 	if (WARN_ON_ONCE(retval == 0))
+@@ -1913,8 +1904,6 @@ int kernel_execve(const char *kernel_filename,
+ 	retval = bprm_execve(bprm);
+ out_free:
+ 	free_bprm(bprm);
+-out_ret:
+-	putname(filename);
+ 	return retval;
  }
  
- /**
-@@ -1436,7 +1436,7 @@ static int do_sys_openat2(int dfd, const char __user *filename,
- 	if (IS_ERR(tmp))
- 		return PTR_ERR(tmp);
- 
--	return FD_ADD(how->flags, do_filp_open(dfd, tmp, &op));
-+	return FD_ADD(how->flags, do_file_open(dfd, tmp, &op));
- }
- 
- int do_sys_open(int dfd, const char __user *filename, int flags, umode_t mode)
-diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-index aa3acb06247f..c09dd14108ed 100644
---- a/io_uring/openclose.c
-+++ b/io_uring/openclose.c
-@@ -138,7 +138,7 @@ int io_openat2(struct io_kiocb *req, unsigned int issue_flags)
- 			goto err;
- 	}
- 
--	file = do_filp_open(open->dfd, name, &op);
-+	file = do_file_open(open->dfd, name, &op);
- 	if (IS_ERR(file)) {
- 		/*
- 		 * We could hang on to this 'fd' on retrying, but seems like
 -- 
 2.47.3
 
