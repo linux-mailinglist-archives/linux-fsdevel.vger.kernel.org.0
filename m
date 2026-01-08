@@ -1,44 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-72709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81F3D00D1D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 04:13:40 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C01D00F2A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 05:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 165D73028DAD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 03:10:35 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 8B2F730019F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 04:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375E22C11C9;
-	Thu,  8 Jan 2026 03:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="a2FQcQjG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39ECB285072;
+	Thu,  8 Jan 2026 04:04:01 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EED29DB8F;
-	Thu,  8 Jan 2026 03:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17CEBA21;
+	Thu,  8 Jan 2026 04:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767841832; cv=none; b=rxHYAtLfFjkPL+ZyPMNnBe2owD1O1fcNzu1ji4VmW27AHWy4KLSbEBrRoE4YLeMgEO3Vn8ig3GG1Va5wUK9mjR/ZsF9bIFyJpC5enNUb1quQU4ho/Y4RoTacRT1MzwczzTiHL8HogYe+FK99uJF+ePvDe3OAhbTQ02e5D1JbTiU=
+	t=1767845040; cv=none; b=hU6dONV+CNQENIGXfsSsrb20DJVR5Q6OYbfLVtwpFWVk2tG3SNoG86pon/n72eR2WEDCWrKfWwzCliMz6sq2liTdbBIpQnmwxyBU7dbTuEmzvrcnmrTA4p/K8wECHYi4EhIs68puKD++MDwkQzvXCCv2A4o1c2Envp6mnj5z0Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767841832; c=relaxed/simple;
-	bh=RymktlErUM1xQEApgkHf8BbON2yAwSVWacikZEpSCoc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VnDkv2RtOOMCgFYbcTWDy5xkcH70LrmYkTLAZtqZ8BygLo9eUqcEc0kkGsOuTJ2WN50UQ9WuCCSpA+ESqqmjNXhkHoy8tzHMAhU/xmuh3s/D6J96puCSjeZzkEyCotVkOzJ0/QH4wfrxcB890bG7x/Kcxm6xCJse1CCJDhNCQ1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=a2FQcQjG; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1767841827; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=ilOtQUyo9M6rkHo3PeohnNfzFSbL+QX/DIj6x0rDyM0=;
-	b=a2FQcQjGmpC75c69f3Gg94F32PdgvDuR2fyZzFMX2xl17T8JF5i29njTjWzxogdJuIq4vPilJ5GuIY243mS0tkpXE0HFGh49A08WCZGoG+fkG7MJNjiXF3KTKSnNQpzZF6MsKb+pkkW41sKGnnB0VNEOXTay4WT2/Lkt3aP3/iY=
-Received: from 30.221.132.104(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wwb7JBu_1767841826 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 08 Jan 2026 11:10:26 +0800
-Message-ID: <121cb490-f13a-4957-97be-ea87baa10827@linux.alibaba.com>
-Date: Thu, 8 Jan 2026 11:10:25 +0800
+	s=arc-20240116; t=1767845040; c=relaxed/simple;
+	bh=jnLStAix3XPWkAaGt9Q5bxZm79Jqj6UIqMS97i6WZqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iktkcgapXtL1FvAY97uJhtdfvzuJVIzGh0hkTDv5kQAwx8FuClBORRaOcU7lzlUOckSXVuAinA6AO13BTg7pqw3pwkQaw7LtoqzjtAG5n8LtaRdeQC2l3B0vaI7fueTJ/wheteB9SA0phTP1YuUgNgyyCkiJ1rl+ndU/a1cMxMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
+Received: from [192.168.255.10] (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [101.226.143.247])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2fe53db82;
+	Thu, 8 Jan 2026 11:48:26 +0800 (GMT+08:00)
+Message-ID: <c5e3cce3-5953-4060-ae62-76e33022f4aa@ustc.edu>
+Date: Thu, 8 Jan 2026 11:45:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -46,153 +39,133 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] erofs: don't bother with s_stack_depth increasing for
- now
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Sheng Yong <shengyong2021@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Dusty Mabe <dusty@dustymabe.com>, =?UTF-8?Q?Timoth=C3=A9e_Ravier?=
- <tim@siosm.fr>, =?UTF-8?B?QWxla3PDqWkgTmFpZMOpbm92?= <an@digitaltide.io>,
- Amir Goldstein <amir73il@gmail.com>, Alexander Larsson <alexl@redhat.com>,
- Christian Brauner <brauner@kernel.org>, Miklos Szeredi
- <mszeredi@redhat.com>, Zhiguo Niu <niuzhiguo84@gmail.com>,
- shengyong1@xiaomi.com,
- linux-erofs mailing list <linux-erofs@lists.ozlabs.org>
-References: <0c34f3fa-c573-4343-b8ea-6832530f0069@linux.alibaba.com>
- <20260106170504.674070-1-hsiangkao@linux.alibaba.com>
- <3acec686-4020-4609-aee4-5dae7b9b0093@gmail.com>
- <41b8a0bb-96d3-4eba-a5b8-77b0b0ed4730@linux.alibaba.com>
-In-Reply-To: <41b8a0bb-96d3-4eba-a5b8-77b0b0ed4730@linux.alibaba.com>
+Subject: Re: [PATCH] overlayfs: mask d_type high bits before whiteout check
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: miklos@szeredi.hu, bschubert@ddn.com, linux-unionfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20260107034551.439-1-luochunsheng@ustc.edu>
+ <CAOQ4uxhjWwTdENS2GqmOxtx4hdbv=N4f90iLVuxHNgH=NLem9w@mail.gmail.com>
+From: Chunsheng Luo <luochunsheng@ustc.edu>
+In-Reply-To: <CAOQ4uxhjWwTdENS2GqmOxtx4hdbv=N4f90iLVuxHNgH=NLem9w@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9b9bb84f3703a2kunm00b0d9a22c51c
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZHUwfVklNTU9LT0tIH0sYT1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKS0pVSUlNVUpPSFVJT0xZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSktLVU
+	pCS0tZBg++
 
 
 
-On 2026/1/8 10:32, Gao Xiang wrote:
-> Hi Sheng,
-> 
-> On 2026/1/8 10:26, Sheng Yong wrote:
->> On 1/7/26 01:05, Gao Xiang wrote:
->>> Previously, commit d53cd891f0e4 ("erofs: limit the level of fs stacking
->>> for file-backed mounts") bumped `s_stack_depth` by one to avoid kernel
->>> stack overflow when stacking an unlimited number of EROFS on top of
->>> each other.
->>>
->>> This fix breaks composefs mounts, which need EROFS+ovl^2 sometimes
->>> (and such setups are already used in production for quite a long time).
->>>
->>> One way to fix this regression is to bump FILESYSTEM_MAX_STACK_DEPTH
->>> from 2 to 3, but proving that this is safe in general is a high bar.
->>>
->>> After a long discussion on GitHub issues [1] about possible solutions,
->>> one conclusion is that there is no need to support nesting file-backed
->>> EROFS mounts on stacked filesystems, because there is always the option
->>> to use loopback devices as a fallback.
->>>
->>> As a quick fix for the composefs regression for this cycle, instead of
->>> bumping `s_stack_depth` for file backed EROFS mounts, we disallow
->>> nesting file-backed EROFS over EROFS and over filesystems with
->>> `s_stack_depth` > 0.
->>>
->>> This works for all known file-backed mount use cases (composefs,
->>> containerd, and Android APEX for some Android vendors), and the fix is
->>> self-contained.
->>>
->>> Essentially, we are allowing one extra unaccounted fs stacking level of
->>> EROFS below stacking filesystems, but EROFS can only be used in the read
->>> path (i.e. overlayfs lower layers), which typically has much lower stack
->>> usage than the write path.
->>>
->>> We can consider increasing FILESYSTEM_MAX_STACK_DEPTH later, after more
->>> stack usage analysis or using alternative approaches, such as splitting
->>> the `s_stack_depth` limitation according to different combinations of
->>> stacking.
->>>
->>> Fixes: d53cd891f0e4 ("erofs: limit the level of fs stacking for file-backed mounts")
->>> Reported-by: Dusty Mabe <dusty@dustymabe.com>
->>> Reported-by: Timothée Ravier <tim@siosm.fr>
->>> Closes: https://github.com/coreos/fedora-coreos-tracker/issues/2087 [1]
->>> Reported-by: "Alekséi Naidénov" <an@digitaltide.io>
->>> Closes: https://lore.kernel.org/r/CAFHtUiYv4+=+JP_-JjARWjo6OwcvBj1wtYN=z0QXwCpec9sXtg@mail.gmail.com
->>> Acked-by: Amir Goldstein <amir73il@gmail.com>
->>> Cc: Alexander Larsson <alexl@redhat.com>
->>> Cc: Christian Brauner <brauner@kernel.org>
->>> Cc: Miklos Szeredi <mszeredi@redhat.com>
->>> Cc: Sheng Yong <shengyong1@xiaomi.com>
->>> Cc: Zhiguo Niu <niuzhiguo84@gmail.com>
->>> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
->>> ---
->>> v2:
->>>   - Update commit message (suggested by Amir in 1-on-1 talk);
->>>   - Add proper `Reported-by:`.
->>>
->>>   fs/erofs/super.c | 18 ++++++++++++------
->>>   1 file changed, 12 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
->>> index 937a215f626c..0cf41ed7ced8 100644
->>> --- a/fs/erofs/super.c
->>> +++ b/fs/erofs/super.c
->>> @@ -644,14 +644,20 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
->>>            * fs contexts (including its own) due to self-controlled RO
->>>            * accesses/contexts and no side-effect changes that need to
->>>            * context save & restore so it can reuse the current thread
->>> -         * context.  However, it still needs to bump `s_stack_depth` to
->>> -         * avoid kernel stack overflow from nested filesystems.
->>> +         * context.
->>> +         * However, we still need to prevent kernel stack overflow due
->>> +         * to filesystem nesting: just ensure that s_stack_depth is 0
->>> +         * to disallow mounting EROFS on stacked filesystems.
->>> +         * Note: s_stack_depth is not incremented here for now, since
->>> +         * EROFS is the only fs supporting file-backed mounts for now.
->>> +         * It MUST change if another fs plans to support them, which
->>> +         * may also require adjusting FILESYSTEM_MAX_STACK_DEPTH.
->>>            */
->>>           if (erofs_is_fileio_mode(sbi)) {
->>> -            sb->s_stack_depth =
->>> -                file_inode(sbi->dif0.file)->i_sb->s_stack_depth + 1;
->>> -            if (sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH) {
->>> -                erofs_err(sb, "maximum fs stacking depth exceeded");
->>> +            inode = file_inode(sbi->dif0.file);
->>> +            if (inode->i_sb->s_op == &erofs_sops ||
+On 1/8/26 4:43 AM, Amir Goldstein wrote:
+> On Wed, Jan 7, 2026 at 4:46 AM Chunsheng Luo <luochunsheng@ustc.edu> wrote:
 >>
->> Hi, Xiang
+>> Commit c31f91c6af96 ("fuse: don't allow signals to interrupt getdents
+>> copying") introduced the use of high bits in d_type as flags. However,
+>> overlayfs was not adapted to handle this change.
 >>
->> In Android APEX scenario, apex images formatted as EROFS are packed in
->> system.img which is also EROFS format. As a result, it will always fail
->> to do APEX-file-backed mount since `inode->i_sb->s_op == &erofs_sops'
->> is true.
->> Any thoughts to handle such scenario?
+>> In ovl_cache_entry_new(), the code checks if d_type == DT_CHR to
+>> determine if an entry might be a whiteout. When fuse is used as the
+>> lower layer and sets high bits in d_type, this comparison fails,
+>> causing whiteout files to not be recognized properly and resulting in
+>> incorrect overlayfs behavior.
+>>
+>> Fix this by masking out the high bits with S_DT_MASK before checking.
+>>
+>> Fixes: c31f91c6af96 ("fuse: don't allow signals to interrupt getdents copying")
+>> Link: https://github.com/containerd/stargz-snapshotter/issues/2214
+>> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
 > 
-> Sorry, I forgot this popular case, I think it can be simply resolved
-> by the following diff:
+> Hi Chunsheng,
 > 
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index 0cf41ed7ced8..e93264034b5d 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -655,7 +655,7 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
->                   */
->                  if (erofs_is_fileio_mode(sbi)) {
->                          inode = file_inode(sbi->dif0.file);
-> -                       if (inode->i_sb->s_op == &erofs_sops ||
-> +                       if ((inode->i_sb->s_op == &erofs_sops && !sb->s_bdev) ||
-
-Sorry it should be `!inode->i_sb->s_bdev`, I've
-fixed it in v3 RESEND:
-https://lore.kernel.org/r/20260108030709.3305545-1-hsiangkao@linux.alibaba.com
-
-Thanks,
-Gao Xiang
-
->                              inode->i_sb->s_stack_depth) {
->                                  erofs_err(sb, "file-backed mounts cannot be applied to stacked fses");
->                                  return -ENOTBLK;
+> Thanks for the report and the suggested fix.
 > 
-> "!sb->s_bdev" covers file-backed EROFS mounts and
-> (deprecated) fscache EROFS mounts, I will send v3 soon.
+> This time overlayfs was surprised by unexpected d_type flags and next
+> time it could be another user.
+> 
+> I prefer to fix this in a more profound way -
+> Instead of making overlafys aware of d_type flags, require the users that
+> use the d_type flags to opt-in for them.
+> 
+> Please test/review the attached patch.
 > 
 > Thanks,
-> Gao Xiang
+> Amir.
+> 
+
+Thank you for the profound solution!
+
+The attached patch has been tested and verified to effectively address 
+the d_type high bits usage issue by enforcing the opt-in mechanism.
+
+The variable `dt_flag_mask` might be clearer if renamed to 
+`dt_flags_mask` (plural "flags").
+
+Reviewed-by: Chunsheng Luo <luochunsheng@ustc.edu>
+Tested-by: Chunsheng Luo <luochunsheng@ustc.edu>
+
+> 
+>> ---
+>>   fs/overlayfs/readdir.c | 15 +++++++++++++++
+>>   1 file changed, 15 insertions(+)
+>>
+>> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+>> index 160960bb0ad0..a2ac47458bf9 100644
+>> --- a/fs/overlayfs/readdir.c
+>> +++ b/fs/overlayfs/readdir.c
+>> @@ -246,6 +246,9 @@ static int ovl_fill_lowest(struct ovl_readdir_data *rdd,
+>>   {
+>>          struct ovl_cache_entry *p;
+>>
+>> +       /* Mask out high bits that may be used (e.g., fuse) */
+>> +       d_type &= S_DT_MASK;
+>> +
+>>          p = ovl_cache_entry_find(rdd->root, c_name, c_len);
+>>          if (p) {
+>>                  list_move_tail(&p->l_node, &rdd->middle);
+>> @@ -316,6 +319,9 @@ static bool ovl_fill_merge(struct dir_context *ctx, const char *name,
+>>          char *cf_name = NULL;
+>>          int c_len = 0, ret;
+>>
+>> +       /* Mask out high bits that may be used (e.g., fuse) */
+>> +       d_type &= S_DT_MASK;
+>> +
+>>          if (ofs->casefold)
+>>                  c_len = ovl_casefold(rdd, name, namelen, &cf_name);
+>>
+>> @@ -632,6 +638,9 @@ static bool ovl_fill_plain(struct dir_context *ctx, const char *name,
+>>          struct ovl_readdir_data *rdd =
+>>                  container_of(ctx, struct ovl_readdir_data, ctx);
+>>
+>> +       /* Mask out high bits that may be used (e.g., fuse) */
+>> +       d_type &= S_DT_MASK;
+>> +
+>>          rdd->count++;
+>>          p = ovl_cache_entry_new(rdd, name, namelen, NULL, 0, ino, d_type);
+>>          if (p == NULL) {
+>> @@ -755,6 +764,9 @@ static bool ovl_fill_real(struct dir_context *ctx, const char *name,
+>>          struct dir_context *orig_ctx = rdt->orig_ctx;
+>>          bool res;
+>>
+>> +       /* Mask out high bits that may be used (e.g., fuse) */
+>> +       d_type &= S_DT_MASK;
+>> +
+>>          if (rdt->parent_ino && strcmp(name, "..") == 0) {
+>>                  ino = rdt->parent_ino;
+>>          } else if (rdt->cache) {
+>> @@ -1144,6 +1156,9 @@ static bool ovl_check_d_type(struct dir_context *ctx, const char *name,
+>>          struct ovl_readdir_data *rdd =
+>>                  container_of(ctx, struct ovl_readdir_data, ctx);
+>>
+>> +       /* Mask out high bits that may be used (e.g., fuse) */
+>> +       d_type &= S_DT_MASK;
+>> +
+>>          /* Even if d_type is not supported, DT_DIR is returned for . and .. */
+>>          if (!strncmp(name, ".", namelen) || !strncmp(name, "..", namelen))
+>>                  return true;
+>> --
+>> 2.43.0
+>>
+
 
