@@ -1,515 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-72956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016C8D06715
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 23:35:26 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B785CD0672A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 23:37:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 7EC7830239F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 22:35:23 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8B2E73027E10
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 22:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01FB32E14D;
-	Thu,  8 Jan 2026 22:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F385432E752;
+	Thu,  8 Jan 2026 22:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="OuFJ6f13"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="M/p5WKkU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f67.google.com (mail-yx1-f67.google.com [74.125.224.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010033.outbound.protection.outlook.com [52.101.193.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C4D2EAD1B
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 22:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.67
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767911722; cv=none; b=qDkr3SSVTvZ+SlbOBVrFUfytaR2psKGYdSkYb2XBA04XSs94QoCwZhJDjF6nC2dANJ5qNdEQkAF6NqXpDT3PEdsWFXhtyxKLQU/5UPrOCmaw5HaGqRxGAuw1IJjZu6jiSLojkj8MHvgVdpsg9wjTUfBRZ1tNNwVOqINFoMq4amA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767911722; c=relaxed/simple;
-	bh=a3fdeuoOudjtNrM9FpK4FvpbWEWBWN8ckY3rHJ1y4Xo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lCUYX9wQFFJinho3Tw+Xk7fEXJuh70POveSFuBr1ZbcldFPfszYeAeRbKZ+iIbChH0t/s+QswI3MpJF1B9thEfuqrDdU2uX06lQEmzNQQluLw7w/a8ZpdUOkPj6WwnNMNESZQBJFJzZu4jMA9zA40GBZeVDbovQbLjPQjY3h2YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=OuFJ6f13; arc=none smtp.client-ip=74.125.224.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yx1-f67.google.com with SMTP id 956f58d0204a3-6467c5acb7dso3544436d50.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 14:35:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1767911718; x=1768516518; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8+wfPxvtNEz/xsp2XSHtquCItZyeqKC2vPCWLp+JShs=;
-        b=OuFJ6f13Z2WOepL48ixzXX/fh3V+QCSJorRHa+nRW/FHbBGBR3wvLRJT0QNEkSArne
-         s26wH/+quw5iKuJ5D5hazRRfDUbWYPwmFSJCeF1FpqUB+MKqLYa0oQRUpQBppPlzc9ji
-         lWteMBrWcH6NRQoOa6ptE67s0jZOWXhehYAqf/gASJgo8c78qpRw+l6IRLClD6+gLltS
-         /WLx60nJMhntjBVey6T8rj5f+Jegru4oUdE2ZmZmpfPm/Vch3ZJH6vjBQb5d5OtimxsK
-         8CCOmi9PuMJ+SSdhK9FXYZWpTyWUS0V5WUJZdwFhmpQfrWGdU5JF7/q3ASKi7ExOrxc7
-         CoFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767911718; x=1768516518;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8+wfPxvtNEz/xsp2XSHtquCItZyeqKC2vPCWLp+JShs=;
-        b=KaZgVuaV6aiOvCf/kMyo5/jVENHH+a3D9/cVMw1wzi1ciDrP5wc4JKGDztq2wCCDqD
-         D1BVJ0nyzKm7cmO8qYuf6XafiHB/JDnhlXkLYIY1EFB9kxHMFVmtUmr6/Fz72tW9fV8t
-         eRRibJwZo4Vc2pIFcQ8IzjVADS7XtrhDuFg081aOq7w1IfBo1bR3YEN4fsRZh50Kx3Iy
-         vd81GXNTJl9VhjObY60C3LRuyHlnKGJ9mhjM+TWdbGfknanSxtXxR/xTfiH+0bQu5BJL
-         nt+rrSn1bQWnevFNY6+d7OPFXG+Sq2n4JU1OmLNQt0ClnZDi5Lraqswg6eY4UGa3S+JM
-         3BmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpjTQq5RgAyegX49rguC+K5vLgdd8by4d4N184pvZy3TNb1CsXzfcmTfDa4kvorJ+hL/QMqOXM/0rF8qMM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw49rLB9q/QcTZk4hnB85BHfUn+lX3GFijx2TJNcjAkEk/iEWuJ
-	mf1yrJpcq/mPEOGpMFZaJ54YDrZyE24QgFhlSrApzlDRym730GZssoIoMQ8WTmxZNZo=
-X-Gm-Gg: AY/fxX40X4KzqjJBFyss0AWf8ntbprZcSw84KZtB8clthNcbOmMLNNzo4pwecbT2C9R
-	Z4UB5EK7Pkanay1T1oi+4zogg13WCte2DqEW1xjR34sOQGmxrTp7+9ZCiSF2XRuhbg6r2ndPZvG
-	o52TDWY38BkxQAcRhftEi+lp6ByZiDLluCKVnnKPdB6dGt3QQRCd6pV4rkq6vtwQjnlLZWlF8TV
-	oXZp4iJeq/8/b1olRTMjG0LruOCDYmRJrcIJV5gpEHPqV3NMXWHJ1HW0UZj++CZ34r6plbqD/fM
-	nZdY2XBo+j/meIVmD57YM6YBs92Ij3JFbO1dGPT0oGhOOXJq7J6H2jMJ/vGdTrKYC5BGuWpAK46
-	p5J+WfXahngPrRPH3O/e31eXZFryN3szX7MckvOGPVcsSk0LHUVLmweVyRKTeiPvK3PTj5cUkMj
-	p4Xpul5SWh7XrojDDkm3S3ahaJ8151txY44j/9hSDqcURzp/v5iKx4m/mDaMg/dNRUgROm7o/le
-	3KwYc/uU5DXstVmF0wOuiq2BZP7iA==
-X-Google-Smtp-Source: AGHT+IHSwS+SOIAwqaYx2n6FtKFwUV4+DPfuT8P1p3Eux43KvCNBQmKIeyXu4Ni8MBXJlVtSy3Vcaw==
-X-Received: by 2002:a05:690e:14c9:b0:644:fc4b:6fa4 with SMTP id 956f58d0204a3-64716c73fd5mr6132524d50.68.1767911718250;
-        Thu, 08 Jan 2026 14:35:18 -0800 (PST)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:dab3:590c:993b:659b])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-790aa6abc01sm33946057b3.46.2026.01.08.14.35.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 14:35:17 -0800 (PST)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org,
-	pdonnell@redhat.com
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com,
-	vdubeyko@redhat.com,
-	khiremat@redhat.com,
-	Pavan.Rallabhandi@ibm.com
-Subject: [PATCH v4] ceph: fix kernel crash in ceph_open()
-Date: Thu,  8 Jan 2026 14:34:54 -0800
-Message-ID: <20260108223453.907929-2-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692D1328B47
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 22:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767911819; cv=fail; b=cM9O1cKT08EFyL6e++Eh5536qBa/9aixDm8Z2f2jLfMdwrWO4KkMWgHN/K3RuhX70yqMO1pKHvrFkiHPllmf4XpmRkXAZZejacrNYT+qrII1jQ4mFEPF75XtRBVubJtdnEzWFIpxpCmLYCrSs9ipVZqQKaruYxMlAbbsQHQbDdA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767911819; c=relaxed/simple;
+	bh=g8LAcaTe7j1QHM/cCVy9ykvLSt0NfBP4aUiyt+PBlnM=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=d5oyzkRDhkUtYA/HLoW4UhOuw/9zzb5LJdd0Y+cmbekD4cY43bfO4bDzIk81Web+JYGHpOKuMlCegYwQfyl+Jxz0BxRBXdjokJUC7UqXeCxUC2fNhIEMmwSNH6IyxdlzC9OV4j5njYDwu1G+97+dFh/192ov78fTFr4qe+X1YtM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=M/p5WKkU; arc=fail smtp.client-ip=52.101.193.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CTp9IUcYuBQMTwWC9SupY8UzO7IYfRBqrySqlZCc5Lo40xPqZlaxu8cO7fsWVnlO2DsX3dFNzFkd7uq9OCz7U7DwYGejkJG98mLf7Sk1f20mHDBvzd1qHcEHMJ5bGmo3QuK5Cxajts+XznsjAY/j4tWq5PdY3DpQvZzR4eRihN/D7ytWWgw2HU9f/XnlDAhEgxzTxbmeODatiP26r2foydoe8r/ff/iS0FT/n+M94oIdy/MvYsROTu9EH2K84nZz3hdoIixSetIWhxl+3P/RcXi1JaSdchUu6iXweqgSNSjkt9/JJiNjkDYL1k+vRuNC8TuMAhH3tRVgXrAxS1PabQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g8LAcaTe7j1QHM/cCVy9ykvLSt0NfBP4aUiyt+PBlnM=;
+ b=Rpb1yZw8xWm8DoKItEuB27UemSyg5r8mg8acV9F5IQ1LVdXCACkq4+6v0eXyswf+ooZqXzIO/w41OTghfzyWcljKk/UuabeWpwLsIZG0YF6iDNX3gRcloUtvf9tweFF4zqd2v8k2gwB06wxdHIa6mAWXDHyh1qSKYZxhExGkAYrr7CZIB9eJ22rgzuEhgwQI0emI0noRai77We17nGlrbiFT0RyDbSl5lyQOAvBaEPb5e4+aUnacYTHLbHSvcxiGgIRyYo3lLzUpXlHjT7KaeD9sC5e4XqEVUrzpetieEksCYxOjezl+jfZiLzZ3u2wlgLofGPxQttsYtazUK2EZtg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g8LAcaTe7j1QHM/cCVy9ykvLSt0NfBP4aUiyt+PBlnM=;
+ b=M/p5WKkU4btTraAzGIQ4ctHcjUsEGBAZ4WCU5WzQWlIP7WbPr6zj3gT5xEWhv7TgQ9W8fa8+Pad+jKqIEVnACXxvO+3rlFrep1hopYcz+vGaK5UJW21rOhyK3fsTqav3tXujkQddwR3fUUoJUNCoQ4dsfZbrQ56UxQiAht0ZxO/rUb93uuRXp6WJWAcdZtx7h75O9bbawHbUU6tkYaLFxEU+XE0nZoKu829eZKrq5PeiISM4wTIsfm6HW5/SiXmQRTtXcCXPPXW+H/ttL1Yu2MDGpbNgaJJDR43rTOUwiW0ShAAqqaOdmEFAZBgj+MwayoDB0f9Z1eVOkbbTAod1yw==
+Received: from DM4PR12MB5102.namprd12.prod.outlook.com (2603:10b6:5:391::21)
+ by SA1PR12MB8841.namprd12.prod.outlook.com (2603:10b6:806:376::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.4; Thu, 8 Jan
+ 2026 22:36:53 +0000
+Received: from DM4PR12MB5102.namprd12.prod.outlook.com
+ ([fe80::67dc:55ce:1469:1eed]) by DM4PR12MB5102.namprd12.prod.outlook.com
+ ([fe80::67dc:55ce:1469:1eed%3]) with mapi id 15.20.9499.003; Thu, 8 Jan 2026
+ 22:36:53 +0000
+From: Jim Harris <jiharris@nvidia.com>
+To: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"miklos@szeredi.hu" <miklos@szeredi.hu>
+CC: Max Gurtovoy <mgurtovoy@nvidia.com>
+Subject: RFC: removing extra lookup in fuse_atomic_open()
+Thread-Topic: RFC: removing extra lookup in fuse_atomic_open()
+Thread-Index: AQHcgO9JeFbMHrIGIEqdzJgdNoLywA==
+Date: Thu, 8 Jan 2026 22:36:53 +0000
+Message-ID: <DC1731BD-736B-479B-99EC-FFA34547D898@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM4PR12MB5102:EE_|SA1PR12MB8841:EE_
+x-ms-office365-filtering-correlation-id: 849f73ed-1968-4c80-2709-08de4f066c02
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?aEVBL00yMjM3VE9vN3BVcGlwazNvVVdiM2JyUUtES25ZV1VXbFJsS0JyaUpQ?=
+ =?utf-8?B?R0hEeHpISWIxOEpHNXUwQlJoRS8vdFFYL0VSSzQvTHV0dERJOW16M0o0cmV4?=
+ =?utf-8?B?emhVblhOOUZvTGJjaURyN3Bockc4MnZBaUFvOGZ5SktjL1M2NjRrZ01rZ3o4?=
+ =?utf-8?B?NmJzWWhwbFlHVXg3S3pLc0EvK3FrQWlZOTcwelZ6ZExtNVJZQXc1S2Ezakth?=
+ =?utf-8?B?Rm1ZRklkSEd0MFhud09XbVhpTmpETGZhejg0SHBWMU1JQzNVeE5seEt5UGZ1?=
+ =?utf-8?B?dEtDRUgwc3JYdGRGVlBTWktJWkpoMGFkUXN3clNGQVFKRzRUbitJVHVCVlRH?=
+ =?utf-8?B?L21VTG1mU1A4bG1Ud1E2Syt1MzRhQ1J3NzRudkJyZTZLQUxCMGlRZS9wR0xx?=
+ =?utf-8?B?VFoxeithaVVReWx5U2VudlUzSjVsbVNCUFRLYTQ4WVhNeWQrWjZ5LzJCU3BB?=
+ =?utf-8?B?VjdNSnFXSjAydEVrb1JqaUFjZXBSSVpvVCsvN3NubjNoYUw5MzNyOVhvNWp2?=
+ =?utf-8?B?UloyR2IzL3ZHOFIwNTNJVUxQb2NLZFlRZ0h4Q0M0VGN2QUZ3N1BhTktJRGFi?=
+ =?utf-8?B?ZXEzb1lrQ2JvQXN6QXkyWEUydzhEK2t1cXp5TGpXQ3VDaGNvek4xV0Juc0Fj?=
+ =?utf-8?B?N3hhYUJnTkcyOGFMbi9lOVRwN0lkTjAvRGxQRWdVWUJrcUJOMGZ1SXZjQU5S?=
+ =?utf-8?B?V3ZNRU40LzEwMWppVzJHTWdvbnF6L01lRGhnL1J4bmdjRVNLQ2ViM3pLTkdn?=
+ =?utf-8?B?Z3VDNXhkdVRJQmZuNzc4Z2N4QXZSRzYwZU9SdFpIZzczWmdqRENtdlk2b2ls?=
+ =?utf-8?B?ZnFhTXozenN4bWJMRHN4Y2lmTEdwR1gvNEJraHA2MXpNK1ArMEMzaURpNHpo?=
+ =?utf-8?B?cEdDWWcxOTQ4MUYxM0xjbHBmbk9SWUU5aEV4SkQxMVNWRjlIcERkY0grRmRZ?=
+ =?utf-8?B?cVkxQzRTTXhHZW5pV2NmV1liOVdGbVBCeXR0dXVCZ1BCbUdZYUpJc0NORzM0?=
+ =?utf-8?B?WDBGQm9sM25JaGtKWkd6WTNwQ0VzWW5TOVBtY0p6NDdEUTN2M09iM2J4b2NJ?=
+ =?utf-8?B?Zm9DbS93R1JHY2crSXpJb0VpY1Q2d2RFS25UblJyVDB0ZVpYWUtZckViWFI3?=
+ =?utf-8?B?QW8rZlF5cjRkUG5sYzhuVDZuVFY3V1RvK09FY2JBdEJzcGZTMUpJWEpvalJF?=
+ =?utf-8?B?bDhnZnhEeXYwV3hHM0FuUmp4QXE0eUtxanVCdU1kZUFFL3NqTXRQMVR4SEhj?=
+ =?utf-8?B?SlZRRnd1dlhrendvcHpwV1ZKNXNVbVdjQk5HczllMExBakhNUFU3T2ZJb0RU?=
+ =?utf-8?B?T3JOTC9iVGEydmJFWko4dG9yb0t1YU9jN2o4K0tzU2MyQnZleUg4V0JBaHZ0?=
+ =?utf-8?B?Ni9WQndRRnEyZnZaWXBUQXp1L1phaGxhTHFkbXUvVHphYUlzSTBZN3dwRjY2?=
+ =?utf-8?B?UkxCWFFnZzVnVWljU1FXdUNJT09NeC9CNkxPMk5iTGVmcEQ1blVZZVVvcXFZ?=
+ =?utf-8?B?TkFvL3F1ZE1FL01CNWMraEFBdkJ2UU1QckgyL0RxSFNpL0FNWXRNN2twN2Fz?=
+ =?utf-8?B?emtSMFhMRWNudThIU0JBcVJsRjlLMDBhR1NmbnkxWkhTU2twcEVBYy9vaGRq?=
+ =?utf-8?B?d3NpZnM3WVhmUm5rVUd4STdybGFjYlZKeG1sN0hxUXBXcDgvWmhRMkczUzlD?=
+ =?utf-8?B?Nnh5RW1oSnJONEpzNnhPYzFtaW5hR1BHc0tLZy9sZG9IVExuaC9NcGpuT1JR?=
+ =?utf-8?B?cVpuVldKcjZwK2dIbHdPYkwwQWpxTEhNQmM0TWw0VVRjVTlHRW52dXhYTEcv?=
+ =?utf-8?B?T0oyL0kwOEovZXRhamlvVkZram03UDFta01ncW4wekZMVmNaVytpTzJWMysw?=
+ =?utf-8?B?OXdOK2tINEVlVmVIRCs2OGlGcmpXaU9qemFPQ3RwS2s5WkM4TkRQUUFMZDZV?=
+ =?utf-8?B?c2RlN05PNTIraXdXTDhrNHRJVlZ4WENhcDJXdUFMTWlreER5amRrMVVlaFJK?=
+ =?utf-8?B?ekcyU0FOUWpOcXg2WGllSTdzQzMvRHdvaStUV3V1Y1VXTjhVR3FBbm9Ib3I4?=
+ =?utf-8?Q?0WoezC?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5102.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?aHZ4NE5FM2lBSHBHd3pJeG83dFBKaXEwL2YwTlN3VkFGd3VUMW9vcjY0U3BQ?=
+ =?utf-8?B?alB2K1lSbWVudUxlenU4NzYrTUE1eFd5R2p1WjBMYlZuZzQwZTNJeFVMWjhl?=
+ =?utf-8?B?Z3lPMDJDcnVtcWRac3lnTmdpdmY5MjBqMC9qZ2U1VDJVY3dnWjB1aUVGTVNu?=
+ =?utf-8?B?NWIrdzlJT3JRWlVTTTN6U1B1aEtOd3VpWm9VREExd3NmSElkc1dveExlckJw?=
+ =?utf-8?B?Z2Vqemt0QXNvRlF1dU5McnlzQkxYZVZUWkZuM3N1SlJ0YXhuaFhBTUxjTTdm?=
+ =?utf-8?B?dlNvaWZUeTBhdTRUdE5CeTVIa3pJNDlBMlNrMGlISkZydTg2YnJ6VGQyb1Z1?=
+ =?utf-8?B?U003dVV1MU9icTZKSXdSdEtDOThHdVJ4RTdtYkpBQ2QwN2VSK3IzWU5IUnp2?=
+ =?utf-8?B?b0pxN04wNFQ2dTJzdlV3ZFNzZDdzVTNvbm8zVkNiZXQrL1dTKzU0cENtR1Jn?=
+ =?utf-8?B?Y1BINTZxTkd3K0NTYkZpd1h0aDc1TzZ3VFlXbVZpYTAvYS9NeVkzVnNBQ3JG?=
+ =?utf-8?B?Y2xpTUhTM2ZKdlFaOHdHRHF4NXNKVDkwZGJDNE9sQW1DQnJMUDZML1JDRlN2?=
+ =?utf-8?B?R01rNytrNGhXZGlrc2VlL2FSM0ExcFRBZlkvRkZvVHV1LzB2QU9lZ1hiQ1Ro?=
+ =?utf-8?B?UmZZcythQmJWUTRXRnVpSERJZmlzRWlqUnFMNUtETW1pM2EvU0JCUE9ydVRz?=
+ =?utf-8?B?bXBIK0hnTTR2Rlh1WDUzc0Nyd09DOTMwS2FndmZHY05UNlYvTWF2ZU8zbENt?=
+ =?utf-8?B?RS9aZzNiVEIwNnlKb0JZdkhtbzBYQ2pBNm1CZXBoRVBEaEZHeUxPVFJFM2lk?=
+ =?utf-8?B?Um8rUkkzano5OVhYWlBmNUxCSEtQMnhPdmQ2SmtVdVgra2VHRXlFSU5ZV2Nz?=
+ =?utf-8?B?K0dMSm1DdzFKRDlxK0NDMWN2WXNuWnpqYmZBNnFwT3JSdmZjS25jN0RLUStx?=
+ =?utf-8?B?bkpVWEhoRlYxWFVIQ3FlUUlFcEpMOWZMc1NXUWcrOW1sY2ZZMnBESW1OclBh?=
+ =?utf-8?B?YUQyaEtKYmp6L0F3UHRrVTdnd3JMWXFOZ3ppekloTXhOSGl4TnhnY1Q5YzlU?=
+ =?utf-8?B?Vy9rU0kxbytWd3h5d2J0bDAwOGx4REJLQjBERWgvMDlmZGlWa1BzZVhpRFJH?=
+ =?utf-8?B?VjVhSmw5WEpINlNlenhuU3VTcFhyZnN2dW5MZGJtQmVvR2YzNjZPSVZTWXdG?=
+ =?utf-8?B?bHo0N1lqOVVBaFJ0NFFZVDNFb3FjVDFTbmhQaDZrNys0dU1VTGZmWU04d2lY?=
+ =?utf-8?B?WWoyY09CL0N3VlIxU0hlbzRlY3NpU0JKRDdXR1NJV1M4MGxPVTBxNlhJbE1i?=
+ =?utf-8?B?U0g3TE91T04rd2gycUJmREh2bDBKTUpkWHBrQlgyR0hXZzJRUjF6U3R4ZnE1?=
+ =?utf-8?B?dGhkNUUwODZPNjZvN1U1ZGxwdXpVdlY5aktMSVl2bkZZMDh6UWNxbU9pU0c0?=
+ =?utf-8?B?eDhVckc5ZWJXblBwTlAyTmRDejI5Nm12Sm1XV2VSbzdxRGN1eXA0L2pYbkZO?=
+ =?utf-8?B?UmpBNGRSTUxubkR6akJpSlBoSzlYTjk5Zmd4UEJETUMxbklzRWtScjVTSDNX?=
+ =?utf-8?B?L1pKRTByS2F6czN2SHdSWXNZakNQQVZPUkQ5ZEVWQk9rUnNRL29CMVFaQSsr?=
+ =?utf-8?B?RmF0SHRsR3Z0dERYYzFYSTFnQ0F5eUc2LzVxaHY5TE4wcys3RjBBbCtuQjBG?=
+ =?utf-8?B?K0g5RjduODYvNnRyKzV5a1h3cDNDb2tUemhIWWdIMWdwSmtNWG5PRmM3cXAx?=
+ =?utf-8?B?OEZhcEVIVVpRTHd2UVRld2lqMC8rano2QUpEMVEzOTZ0SGZqZ3dJWDNBdXMr?=
+ =?utf-8?B?aDRPcE9GSnBQWDlHS3hvSmJZQ3Rjd1JnZWlZdHRqZ3VNd2xNT0RiWERhZm1u?=
+ =?utf-8?B?cUZWaUZtTktxb29mWk5Pa05XME9zQS9RSGJpNjgzbjgvWXhBUER0WTVodElF?=
+ =?utf-8?B?eW9BODBxZVhSdWRJSDNBLzM3ZHFob0tYNmkyZDlJR0Q0NlRVV3hpWnRRejRH?=
+ =?utf-8?B?QjZEdEtLSmtqaWRHeEdZQTJyUGtwM2dkenh1SEZZWWtrMmxaR1JSNU1TbGgw?=
+ =?utf-8?B?RXlldmw1SkdLRmcyLytFa0FnOUQvVWZrc1gwS2FKQXdmM21zUHFQK213NWhO?=
+ =?utf-8?B?SXRzbWhtZVp0Sys3ejZnM0hvbkNXWGFVWmk3cWl1dEt3YnpyS3JaRDRPWmgw?=
+ =?utf-8?B?aTBRZnBIeW1SWmh2WnlLb3g3NjM3eE9NUU9keGZTc1hNQVBxS2o1OG1MRy9N?=
+ =?utf-8?B?TW5uN0RGMDZ5S3RqVHJueWRnRUlNcTN1NURFR29mNHE0NVR2MWpKWkViQU91?=
+ =?utf-8?B?UjJXVktGaEFwLy9IQllMM1hkWDRzd3hUMTE4eGtxN0o5elRoRTQzUT09?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F1BAF91B76D22D4998F921340BFAAA8C@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5102.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 849f73ed-1968-4c80-2709-08de4f066c02
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2026 22:36:53.3130
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: R4rnetB9IJG8n1QruvPFSnrWAisfN/qp2yxEOuXx4sUXf9SakW9eYCFI/2fbDejwG07aAbJzycHXG7qIKQcm5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8841
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-
-The CephFS kernel client has regression starting from 6.18-rc1.
-
-sudo ./check -g quick
-FSTYP         -- ceph
-PLATFORM      -- Linux/x86_64 ceph-0005 6.18.0-rc5+ #52 SMP PREEMPT_DYNAMIC Fri
-Nov 14 11:26:14 PST 2025
-MKFS_OPTIONS  -- 192.168.1.213:3300:/scratch
-MOUNT_OPTIONS -- -o name=admin,ms_mode=secure 192.168.1.213:3300:/scratch
-/mnt/cephfs/scratch
-
-Killed
-
-Nov 14 11:48:10 ceph-0005 kernel: [  154.723902] libceph: mon0
-(2)192.168.1.213:3300 session established
-Nov 14 11:48:10 ceph-0005 kernel: [  154.727225] libceph: client167616
-Nov 14 11:48:11 ceph-0005 kernel: [  155.087260] BUG: kernel NULL pointer
-dereference, address: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.087756] #PF: supervisor read access in
-kernel mode
-Nov 14 11:48:11 ceph-0005 kernel: [  155.088043] #PF: error_code(0x0000) - not-
-present page
-Nov 14 11:48:11 ceph-0005 kernel: [  155.088302] PGD 0 P4D 0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.088688] Oops: Oops: 0000 [#1] SMP KASAN
-NOPTI
-Nov 14 11:48:11 ceph-0005 kernel: [  155.090080] CPU: 4 UID: 0 PID: 3453 Comm:
-xfs_io Not tainted 6.18.0-rc5+ #52 PREEMPT(voluntary)
-Nov 14 11:48:11 ceph-0005 kernel: [  155.091245] Hardware name: QEMU Standard PC
-(i440FX + PIIX, 1996), BIOS 1.17.0-5.fc42 04/01/2014
-Nov 14 11:48:11 ceph-0005 kernel: [  155.092103] RIP: 0010:strcmp+0x1c/0x40
-Nov 14 11:48:11 ceph-0005 kernel: [  155.092493] Code: 90 90 90 90 90 90 90 90
-90 90 90 90 90 90 31 c0 eb 14 66 66 2e 0f 1f 84 00 00 00 00 00 90 48 83 c0 01 84
-d2 74 19 0f b6 14 07 <3a> 14 06 74 ef 19 c0 83 c8 01 31 d2 31 f6 31 ff c3 cc cc
-cc cc 31
-Nov 14 11:48:11 ceph-0005 kernel: [  155.094057] RSP: 0018:ffff8881536875c0
-EFLAGS: 00010246
-Nov 14 11:48:11 ceph-0005 kernel: [  155.094522] RAX: 0000000000000000 RBX:
-ffff888116003200 RCX: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.095114] RDX: 0000000000000063 RSI:
-0000000000000000 RDI: ffff88810126c900
-Nov 14 11:48:11 ceph-0005 kernel: [  155.095714] RBP: ffff8881536876a8 R08:
-0000000000000000 R09: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.096297] R10: 0000000000000000 R11:
-0000000000000000 R12: dffffc0000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.096889] R13: ffff8881061d0000 R14:
-0000000000000000 R15: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.097490] FS:  000074a85c082840(0000)
-GS:ffff8882401a4000(0000) knlGS:0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.098146] CS:  0010 DS: 0000 ES: 0000
-CR0: 0000000080050033
-Nov 14 11:48:11 ceph-0005 kernel: [  155.098630] CR2: 0000000000000000 CR3:
-0000000110ebd001 CR4: 0000000000772ef0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.099219] PKRU: 55555554
-Nov 14 11:48:11 ceph-0005 kernel: [  155.099476] Call Trace:
-Nov 14 11:48:11 ceph-0005 kernel: [  155.099686]  <TASK>
-Nov 14 11:48:11 ceph-0005 kernel: [  155.099873]  ?
-ceph_mds_check_access+0x348/0x1760
-Nov 14 11:48:11 ceph-0005 kernel: [  155.100267]  ?
-__kasan_check_write+0x14/0x30
-Nov 14 11:48:11 ceph-0005 kernel: [  155.100671]  ? lockref_get+0xb1/0x170
-Nov 14 11:48:11 ceph-0005 kernel: [  155.100979]  ?
-__pfx__raw_spin_lock+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.101372]  ceph_open+0x322/0xef0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.101669]  ? __pfx_ceph_open+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.101996]  ?
-__pfx_apparmor_file_open+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.102434]  ?
-__ceph_caps_issued_mask_metric+0xd6/0x180
-Nov 14 11:48:11 ceph-0005 kernel: [  155.102911]  do_dentry_open+0x7bf/0x10e0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.103249]  ? __pfx_ceph_open+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.103508]  vfs_open+0x6d/0x450
-Nov 14 11:48:11 ceph-0005 kernel: [  155.103697]  ? may_open+0xec/0x370
-Nov 14 11:48:11 ceph-0005 kernel: [  155.103893]  path_openat+0x2017/0x50a0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.104110]  ? __pfx_path_openat+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.104345]  ?
-__pfx_stack_trace_save+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.104599]  ?
-stack_depot_save_flags+0x28/0x8f0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.104865]  ? stack_depot_save+0xe/0x20
-Nov 14 11:48:11 ceph-0005 kernel: [  155.105063]  do_filp_open+0x1b4/0x450
-Nov 14 11:48:11 ceph-0005 kernel: [  155.105253]  ?
-__pfx__raw_spin_lock_irqsave+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.105538]  ? __pfx_do_filp_open+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.105748]  ? __link_object+0x13d/0x2b0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.105949]  ?
-__pfx__raw_spin_lock+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.106169]  ?
-__check_object_size+0x453/0x600
-Nov 14 11:48:11 ceph-0005 kernel: [  155.106428]  ? _raw_spin_unlock+0xe/0x40
-Nov 14 11:48:11 ceph-0005 kernel: [  155.106635]  do_sys_openat2+0xe6/0x180
-Nov 14 11:48:11 ceph-0005 kernel: [  155.106827]  ?
-__pfx_do_sys_openat2+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.107052]  __x64_sys_openat+0x108/0x240
-Nov 14 11:48:11 ceph-0005 kernel: [  155.107258]  ?
-__pfx___x64_sys_openat+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.107529]  ?
-__pfx___handle_mm_fault+0x10/0x10
-Nov 14 11:48:11 ceph-0005 kernel: [  155.107783]  x64_sys_call+0x134f/0x2350
-Nov 14 11:48:11 ceph-0005 kernel: [  155.108007]  do_syscall_64+0x82/0xd50
-Nov 14 11:48:11 ceph-0005 kernel: [  155.108201]  ?
-fpregs_assert_state_consistent+0x5c/0x100
-Nov 14 11:48:11 ceph-0005 kernel: [  155.108467]  ? do_syscall_64+0xba/0xd50
-Nov 14 11:48:11 ceph-0005 kernel: [  155.108626]  ? __kasan_check_read+0x11/0x20
-Nov 14 11:48:11 ceph-0005 kernel: [  155.108801]  ?
-count_memcg_events+0x25b/0x400
-Nov 14 11:48:11 ceph-0005 kernel: [  155.109013]  ? handle_mm_fault+0x38b/0x6a0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.109216]  ? __kasan_check_read+0x11/0x20
-Nov 14 11:48:11 ceph-0005 kernel: [  155.109457]  ?
-fpregs_assert_state_consistent+0x5c/0x100
-Nov 14 11:48:11 ceph-0005 kernel: [  155.109724]  ?
-irqentry_exit_to_user_mode+0x2e/0x2a0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.109991]  ? irqentry_exit+0x43/0x50
-Nov 14 11:48:11 ceph-0005 kernel: [  155.110180]  ? exc_page_fault+0x95/0x100
-Nov 14 11:48:11 ceph-0005 kernel: [  155.110389]
-entry_SYSCALL_64_after_hwframe+0x76/0x7e
-Nov 14 11:48:11 ceph-0005 kernel: [  155.110638] RIP: 0033:0x74a85bf145ab
-Nov 14 11:48:11 ceph-0005 kernel: [  155.110821] Code: 25 00 00 41 00 3d 00 00
-41 00 74 4b 64 8b 04 25 18 00 00 00 85 c0 75 67 44 89 e2 48 89 ee bf 9c ff ff ff
-b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 91 00 00 00 48 8b 54 24 28 64 48
-2b 14 25
-Nov 14 11:48:11 ceph-0005 kernel: [  155.111724] RSP: 002b:00007ffc77d316d0
-EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-Nov 14 11:48:11 ceph-0005 kernel: [  155.112080] RAX: ffffffffffffffda RBX:
-0000000000000002 RCX: 000074a85bf145ab
-Nov 14 11:48:11 ceph-0005 kernel: [  155.112442] RDX: 0000000000000000 RSI:
-00007ffc77d32789 RDI: 00000000ffffff9c
-Nov 14 11:48:11 ceph-0005 kernel: [  155.112790] RBP: 00007ffc77d32789 R08:
-00007ffc77d31980 R09: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.113125] R10: 0000000000000000 R11:
-0000000000000246 R12: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.113502] R13: 00000000ffffffff R14:
-0000000000000180 R15: 0000000000000001
-Nov 14 11:48:11 ceph-0005 kernel: [  155.113838]  </TASK>
-Nov 14 11:48:11 ceph-0005 kernel: [  155.113957] Modules linked in:
-intel_rapl_msr intel_rapl_common intel_uncore_frequency_common intel_pmc_core
-pmt_telemetry pmt_discovery pmt_class intel_pmc_ssram_telemetry intel_vsec
-kvm_intel kvm joydev irqbypass polyval_clmulni ghash_clmulni_intel aesni_intel
-rapl floppy input_leds psmouse i2c_piix4 vga16fb mac_hid i2c_smbus vgastate
-serio_raw bochs qemu_fw_cfg pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp
-parport efi_pstore
-Nov 14 11:48:11 ceph-0005 kernel: [  155.116339] CR2: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.116574] ---[ end trace 0000000000000000
-]---
-Nov 14 11:48:11 ceph-0005 kernel: [  155.116826] RIP: 0010:strcmp+0x1c/0x40
-Nov 14 11:48:11 ceph-0005 kernel: [  155.117058] Code: 90 90 90 90 90 90 90 90
-90 90 90 90 90 90 31 c0 eb 14 66 66 2e 0f 1f 84 00 00 00 00 00 90 48 83 c0 01 84
-d2 74 19 0f b6 14 07 <3a> 14 06 74 ef 19 c0 83 c8 01 31 d2 31 f6 31 ff c3 cc cc
-cc cc 31
-Nov 14 11:48:11 ceph-0005 kernel: [  155.118070] RSP: 0018:ffff8881536875c0
-EFLAGS: 00010246
-Nov 14 11:48:11 ceph-0005 kernel: [  155.118362] RAX: 0000000000000000 RBX:
-ffff888116003200 RCX: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.118748] RDX: 0000000000000063 RSI:
-0000000000000000 RDI: ffff88810126c900
-Nov 14 11:48:11 ceph-0005 kernel: [  155.119116] RBP: ffff8881536876a8 R08:
-0000000000000000 R09: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.119492] R10: 0000000000000000 R11:
-0000000000000000 R12: dffffc0000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.119865] R13: ffff8881061d0000 R14:
-0000000000000000 R15: 0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.120242] FS:  000074a85c082840(0000)
-GS:ffff8882401a4000(0000) knlGS:0000000000000000
-Nov 14 11:48:11 ceph-0005 kernel: [  155.120704] CS:  0010 DS: 0000 ES: 0000
-CR0: 0000000080050033
-Nov 14 11:48:11 ceph-0005 kernel: [  155.121008] CR2: 0000000000000000 CR3:
-0000000110ebd001 CR4: 0000000000772ef0
-Nov 14 11:48:11 ceph-0005 kernel: [  155.121409] PKRU: 55555554
-
-We have issue here [1] if fs_name == NULL:
-
-const char fs_name = mdsc->fsc->mount_options->mds_namespace;
-    ...
-    if (auth->match.fs_name && strcmp(auth->match.fs_name, fs_name)) {
-            / fsname mismatch, try next one */
-            return 0;
-    }
-
-v2
-Patrick Donnelly suggested that: In summary, we should definitely start
-decoding `fs_name` from the MDSMap and do strict authorizations checks
-against it. Note that the `--mds_namespace` should only be used for
-selecting the file system to mount and nothing else. It's possible
-no mds_namespace is specified but the kernel will mount the only
-file system that exists which may have name "foo".
-
-v3
-The namespace_equals() logic has been generalized into
-__namespace_equals() with the goal of using it in
-ceph_mdsc_handle_fsmap() and ceph_mds_auth_match().
-The misspelling of CEPH_NAMESPACE_WILDCARD has been corrected.
-
-v4
-The __namespace_equals() now supports wildcard check.
-
-This patch reworks ceph_mdsmap_decode() and namespace_equals() with
-the goal of supporting the suggested concept. Now struct ceph_mdsmap
-contains m_fs_name field that receives copy of extracted FS name
-by ceph_extract_encoded_string(). For the case of "old" CephFS file systems,
-it is used "cephfs" name. Also, namespace_equals() method has been
-reworked with the goal of proper names comparison.
-
-[1] https://elixir.bootlin.com/linux/v6.18-rc4/source/fs/ceph/mds_client.c#L5666
-[2] https://tracker.ceph.com/issues/73886
-
-Fixes: 22c73d52a6d0 ("ceph: fix multifs mds auth caps issue")
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-cc: Kotresh Hiremath Ravishankar <khiremat@redhat.com>
-cc: Alex Markuze <amarkuze@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Patrick Donnelly <pdonnell@redhat.com>
-cc: Ceph Development <ceph-devel@vger.kernel.org>
----
- fs/ceph/mds_client.c         | 12 ++++----
- fs/ceph/mdsmap.c             | 22 +++++++++++----
- fs/ceph/mdsmap.h             |  1 +
- fs/ceph/super.h              | 54 ++++++++++++++++++++++++++++++++----
- include/linux/ceph/ceph_fs.h |  6 ++++
- 5 files changed, 78 insertions(+), 17 deletions(-)
-
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 7e4eab824dae..339736423cae 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -5671,7 +5671,7 @@ static int ceph_mds_auth_match(struct ceph_mds_client *mdsc,
- 	u32 caller_uid = from_kuid(&init_user_ns, cred->fsuid);
- 	u32 caller_gid = from_kgid(&init_user_ns, cred->fsgid);
- 	struct ceph_client *cl = mdsc->fsc->client;
--	const char *fs_name = mdsc->fsc->mount_options->mds_namespace;
-+	const char *fs_name = mdsc->mdsmap->m_fs_name;
- 	const char *spath = mdsc->fsc->mount_options->server_path;
- 	bool gid_matched = false;
- 	u32 gid, tlen, len;
-@@ -5679,7 +5679,9 @@ static int ceph_mds_auth_match(struct ceph_mds_client *mdsc,
- 
- 	doutc(cl, "fsname check fs_name=%s  match.fs_name=%s\n",
- 	      fs_name, auth->match.fs_name ? auth->match.fs_name : "");
--	if (auth->match.fs_name && strcmp(auth->match.fs_name, fs_name)) {
-+
-+	if (!__namespace_equals(auth->match.fs_name, is_wildcard_requested,
-+				fs_name, NULL, NAME_MAX)) {
- 		/* fsname mismatch, try next one */
- 		return 0;
- 	}
-@@ -6122,7 +6124,6 @@ void ceph_mdsc_handle_fsmap(struct ceph_mds_client *mdsc, struct ceph_msg *msg)
- {
- 	struct ceph_fs_client *fsc = mdsc->fsc;
- 	struct ceph_client *cl = fsc->client;
--	const char *mds_namespace = fsc->mount_options->mds_namespace;
- 	void *p = msg->front.iov_base;
- 	void *end = p + msg->front.iov_len;
- 	u32 epoch;
-@@ -6157,9 +6158,8 @@ void ceph_mdsc_handle_fsmap(struct ceph_mds_client *mdsc, struct ceph_msg *msg)
- 		namelen = ceph_decode_32(&info_p);
- 		ceph_decode_need(&info_p, info_end, namelen, bad);
- 
--		if (mds_namespace &&
--		    strlen(mds_namespace) == namelen &&
--		    !strncmp(mds_namespace, (char *)info_p, namelen)) {
-+		if (namespace_equals(fsc->mount_options,
-+				     (char *)info_p, namelen)) {
- 			mount_fscid = fscid;
- 			break;
- 		}
-diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
-index 2c7b151a7c95..9cadf811eb4b 100644
---- a/fs/ceph/mdsmap.c
-+++ b/fs/ceph/mdsmap.c
-@@ -353,22 +353,31 @@ struct ceph_mdsmap *ceph_mdsmap_decode(struct ceph_mds_client *mdsc, void **p,
- 		__decode_and_drop_type(p, end, u8, bad_ext);
- 	}
- 	if (mdsmap_ev >= 8) {
--		u32 fsname_len;
-+		size_t fsname_len;
-+
- 		/* enabled */
- 		ceph_decode_8_safe(p, end, m->m_enabled, bad_ext);
-+
- 		/* fs_name */
--		ceph_decode_32_safe(p, end, fsname_len, bad_ext);
-+		m->m_fs_name = ceph_extract_encoded_string(p, end,
-+							   &fsname_len,
-+							   GFP_NOFS);
-+		if (IS_ERR(m->m_fs_name)) {
-+			m->m_fs_name = NULL;
-+			goto nomem;
-+		}
- 
- 		/* validate fsname against mds_namespace */
--		if (!namespace_equals(mdsc->fsc->mount_options, *p,
-+		if (!namespace_equals(mdsc->fsc->mount_options, m->m_fs_name,
- 				      fsname_len)) {
- 			pr_warn_client(cl, "fsname %*pE doesn't match mds_namespace %s\n",
--				       (int)fsname_len, (char *)*p,
-+				       (int)fsname_len, m->m_fs_name,
- 				       mdsc->fsc->mount_options->mds_namespace);
- 			goto bad;
- 		}
--		/* skip fsname after validation */
--		ceph_decode_skip_n(p, end, fsname_len, bad);
-+	} else {
-+		m->m_enabled = false;
-+		m->m_fs_name = kstrdup(CEPH_OLD_FS_NAME, GFP_NOFS);
- 	}
- 	/* damaged */
- 	if (mdsmap_ev >= 9) {
-@@ -430,6 +439,7 @@ void ceph_mdsmap_destroy(struct ceph_mdsmap *m)
- 		kfree(m->m_info);
- 	}
- 	kfree(m->m_data_pg_pools);
-+	kfree(m->m_fs_name);
- 	kfree(m);
- }
- 
-diff --git a/fs/ceph/mdsmap.h b/fs/ceph/mdsmap.h
-index 1f2171dd01bf..d48d07c3516d 100644
---- a/fs/ceph/mdsmap.h
-+++ b/fs/ceph/mdsmap.h
-@@ -45,6 +45,7 @@ struct ceph_mdsmap {
- 	bool m_enabled;
- 	bool m_damaged;
- 	int m_num_laggy;
-+	char *m_fs_name;
- };
- 
- static inline struct ceph_entity_addr *
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index a1f781c46b41..fe950bd72452 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -104,18 +104,62 @@ struct ceph_mount_options {
- 	struct fscrypt_dummy_policy dummy_enc_policy;
- };
- 
-+#define CEPH_NAMESPACE_WILDCARD		"*"
-+
-+typedef bool (*wildcard_check_fn)(const char *name);
-+
-+static inline bool is_wildcard_requested(const char *name)
-+{
-+	if (!name)
-+		return false;
-+
-+	return strcmp(name, CEPH_NAMESPACE_WILDCARD) == 0;
-+}
-+
-+static inline bool __namespace_equals(const char *name1,
-+				      wildcard_check_fn is_wildcard_requested1,
-+				      const char *name2,
-+				      wildcard_check_fn is_wildcard_requested2,
-+				      size_t max_len)
-+{
-+	size_t len1, len2;
-+
-+	if (!name1 && !name2)
-+		return true;
-+
-+	if (name1) {
-+		if (is_wildcard_requested1 && is_wildcard_requested1(name1))
-+			return true;
-+		else if (!name2)
-+			return false;
-+	}
-+
-+	if (name2) {
-+		if (is_wildcard_requested2 && is_wildcard_requested2(name2))
-+			return true;
-+		else if (!name1)
-+			return true;
-+	}
-+
-+	WARN_ON_ONCE(!name1 || !name2);
-+
-+	len1 = strnlen(name1, max_len);
-+	len2 = strnlen(name2, max_len);
-+
-+	return !(len1 != len2 || strncmp(name1, name2, len1));
-+}
-+
- /*
-  * Check if the mds namespace in ceph_mount_options matches
-  * the passed in namespace string. First time match (when
-  * ->mds_namespace is NULL) is treated specially, since
-  * ->mds_namespace needs to be initialized by the caller.
-  */
--static inline int namespace_equals(struct ceph_mount_options *fsopt,
--				   const char *namespace, size_t len)
-+static inline bool namespace_equals(struct ceph_mount_options *fsopt,
-+				    const char *namespace, size_t len)
- {
--	return !(fsopt->mds_namespace &&
--		 (strlen(fsopt->mds_namespace) != len ||
--		  strncmp(fsopt->mds_namespace, namespace, len)));
-+	return __namespace_equals(fsopt->mds_namespace, is_wildcard_requested,
-+				  namespace, NULL, len);
- }
- 
- /* mount state */
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index c7f2c63b3bc3..08e5dbe15ca4 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -31,6 +31,12 @@
- #define CEPH_INO_CEPH   2            /* hidden .ceph dir */
- #define CEPH_INO_GLOBAL_SNAPREALM  3 /* global dummy snaprealm */
- 
-+/*
-+ * name for "old" CephFS file systems,
-+ * see ceph.git e2b151d009640114b2565c901d6f41f6cd5ec652
-+ */
-+#define CEPH_OLD_FS_NAME	"cephfs"
-+
- /* arbitrary limit on max # of monitors (cluster of 3 is typical) */
- #define CEPH_MAX_MON   31
- 
--- 
-2.52.0
-
+SGksDQoNCknigJl2ZSBiZWVuIGFuYWx5emluZyBGVVNFIG9wZXJhdGlvbiBjb3VudHMgZm9yIHZh
+cmlvdXMgZmlsZSBvcGVyYXRpb25zLCBhbmQNCm5vdGljZWQgdGhhdCBvcGVuKCkgd2l0aCBPX0NS
+RUFUIGFsd2F5cyByZXN1bHRzIGluIHR3byBGVVNFIG9wZXJhdGlvbnM6DQpGVVNFX0xPT0tVUCAr
+IEZVU0VfQ1JFQVRFLiBJdOKAmXMgbm90IGNsZWFyIHdoYXQgdGhlIEZVU0VfTE9PS1VQDQppcyBh
+Y2NvbXBsaXNoaW5nIGluIHRoaXMgY2FzZS4NCg0KSeKAmXZlIGJlZW4gcnVubmluZyB3aXRoIHRo
+ZSBwYXRjaCBiZWxvdyBzdWNjZXNzZnVsbHksIGluc3BpcmVkIGJ5IGhvdw0KdGhlIE5GUyBjbGll
+bnQgaGFuZGxlcyBhdG9taWNfb3BlbigpIHdpdGggT19DUkVBVCBzZXQuDQoNCklzIHRoaXMgYSBz
+dWl0YWJsZSBvcHRpbWl6YXRpb24gdG8gc3VibWl0PyBPciBhcmUgdGhlcmUgcGFydHMgb2YgdGhl
+IEZVU0UNCnByb3RvY29sIHRoYXQgSeKAmW0gbWlzc2luZywgd2hlcmUgY2VydGFpbiBGVVNFIGRl
+dmljZXMgZGVwZW5kIG9uIHRoaXMNCmV4dHJhIGxvb2t1cD8NCg0KVGhhbmtzLA0KDQpKaW0NCg0K
+DQoNCmNvbW1pdCAzMTZiODUxNzk4MmZjMzkzMzU1NGM0NjIwNTEzYTgxOWQ2MDY4NTJmDQpBdXRo
+b3I6IEppbSBIYXJyaXMgPGppbS5oYXJyaXNAbnZpZGlhLmNvbT4NCkRhdGU6ICAgV2VkIEphbiA3
+IDE5OjM3OjIyIDIwMjYgLTA3MDANCg0KICAgIGZ1c2U6IHNraXAgbG9va3VwIGR1cmluZyBhdG9t
+aWNfb3BlbigpIHdoZW4gT19DUkVBVCBpcyBzZXQNCg0KICAgIFdoZW4gT19DUkVBVCBpcyBzZXQs
+IHdlIGRvbid0IG5lZWQgdGhlIGxvb2t1cC4gVGhlIGxvb2t1cCBkb2Vzbid0DQogICAgaGFybSBh
+bnl0aGluZywgYnV0IGl0J3MgYW4gZXh0cmEgRlVTRSBvcGVyYXRpb24gdGhhdCdzIG5vdCByZXF1
+aXJlZC4NCg0KICAgIFNpZ25lZC1vZmYtYnk6IEppbSBIYXJyaXMgPGppbS5oYXJyaXNAbnZpZGlh
+LmNvbT4NCg0KZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZGlyLmMgYi9mcy9mdXNlL2Rpci5jDQppbmRl
+eCBlY2FlYzBmZWEzYTEuLjY3YjBhYmM0ZDM4NSAxMDA2NDQNCi0tLSBhL2ZzL2Z1c2UvZGlyLmMN
+CisrKyBiL2ZzL2Z1c2UvZGlyLmMNCkBAIC03MDIsNyArNzAyLDggQEAgc3RhdGljIGludCBmdXNl
+X2NyZWF0ZV9vcGVuKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFwLCBzdHJ1Y3QgaW5vZGUgKmRpciwN
+CiAgICAgICAgICAgICAgICBnb3RvIG91dF9lcnI7DQogICAgICAgIH0NCiAgICAgICAga2ZyZWUo
+Zm9yZ2V0KTsNCi0gICAgICAgZF9pbnN0YW50aWF0ZShlbnRyeSwgaW5vZGUpOw0KKyAgICAgICBk
+X2Ryb3AoZW50cnkpOw0KKyAgICAgICBkX3NwbGljZV9hbGlhcyhpbm9kZSwgZW50cnkpOw0KICAg
+ICAgICBlbnRyeS0+ZF90aW1lID0gZXBvY2g7DQogICAgICAgIGZ1c2VfY2hhbmdlX2VudHJ5X3Rp
+bWVvdXQoZW50cnksICZvdXRlbnRyeSk7DQogICAgICAgIGZ1c2VfZGlyX2NoYW5nZWQoZGlyKTsN
+CkBAIC03NDMsMTQgKzc0NCwxNCBAQCBzdGF0aWMgaW50IGZ1c2VfYXRvbWljX29wZW4oc3RydWN0
+IGlub2RlICpkaXIsIHN0cnVjdCBkZW50cnkgKmVudHJ5LA0KICAgICAgICBpZiAoZnVzZV9pc19i
+YWQoZGlyKSkNCiAgICAgICAgICAgICAgICByZXR1cm4gLUVJTzsNCg0KLSAgICAgICBpZiAoZF9p
+bl9sb29rdXAoZW50cnkpKSB7DQotICAgICAgICAgICAgICAgc3RydWN0IGRlbnRyeSAqcmVzID0g
+ZnVzZV9sb29rdXAoZGlyLCBlbnRyeSwgMCk7DQotICAgICAgICAgICAgICAgaWYgKHJlcyB8fCBk
+X3JlYWxseV9pc19wb3NpdGl2ZShlbnRyeSkpDQotICAgICAgICAgICAgICAgICAgICAgICByZXR1
+cm4gZmluaXNoX25vX29wZW4oZmlsZSwgcmVzKTsNCi0gICAgICAgfQ0KLQ0KLSAgICAgICBpZiAo
+IShmbGFncyAmIE9fQ1JFQVQpKQ0KKyAgICAgICBpZiAoIShmbGFncyAmIE9fQ1JFQVQpKSB7DQor
+ICAgICAgICAgICAgICAgaWYgKGRfaW5fbG9va3VwKGVudHJ5KSkgew0KKyAgICAgICAgICAgICAg
+ICAgICAgICAgc3RydWN0IGRlbnRyeSAqcmVzID0gZnVzZV9sb29rdXAoZGlyLCBlbnRyeSwgMCk7
+DQorICAgICAgICAgICAgICAgICAgICAgICBpZiAocmVzIHx8IGRfcmVhbGx5X2lzX3Bvc2l0aXZl
+KGVudHJ5KSkNCisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGZpbmlzaF9u
+b19vcGVuKGZpbGUsIHJlcyk7DQorICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgICAgIHJl
+dHVybiBmaW5pc2hfbm9fb3BlbihmaWxlLCBOVUxMKTsNCisgICAgICAgfQ0KDQogICAgICAgIC8q
+IE9ubHkgY3JlYXRlcyAqLw0KICAgICAgICBmaWxlLT5mX21vZGUgfD0gRk1PREVfQ1JFQVRFRDs=
 
