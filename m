@@ -1,164 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-72836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E241D02F58
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 14:19:46 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03E9D03116
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 14:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 26C0B3008734
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 13:19:29 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B38F730A672F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 13:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EC53BFE32;
-	Thu,  8 Jan 2026 13:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D21644CF33;
+	Thu,  8 Jan 2026 13:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="peXM7D1D";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dP7tBLN9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+ubIeNp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295BB3BFE29;
-	Thu,  8 Jan 2026 13:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700EC44CF4B
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 13:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767878354; cv=none; b=N65tlFmzY8e3b8b5Gu/xJohBWlsud4WK8PFHAOVjne4toHIz5vY8Y2938BEzHwKSLk5RUb7LrG3DFa9Uyy2Nhi3DK3NFZDTqAYcoFR3gQSgm3YvYPaxZLF+cYv1XZS96ySJR6C+4oeOIGr1D2xbE4JIhnW9q/XKejghdzaf1e9M=
+	t=1767878753; cv=none; b=G5jV1fFAFkP026Z8/lL625BVX+one3SxiEb9AZC5pucfmKQdd34VHzMmO7BB43RaunZXNOwZiW4LD22sxT9FxcLQ80bbhKNTMYF75/5HhTFenuvdAxh2uSrexSbuXZ/ln0f0idyAQEd0zzfW6b/5WDyqJ9BpxJvTG2TY9X5DD7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767878354; c=relaxed/simple;
-	bh=0QJM7mL+z5gWp4HGQG/yH8EBOnM/5VAwP0A+m2HcDDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OjUC93WHgO0CFqjvd0l0CEyeJ/f07Y+Y66PeRmutl/+0vMHH3li44Nmw5rGJ5MBHdoRUBGzGXvH9UWw6mmwtzkb5QVFgDUWb9j4KJy08HgWHk4fKRMVkxiQnDJhFGqUOAuJF3AQXcJAaSuAqkJMnZJj6yiZc9ItJ9RDSnkeVVoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=peXM7D1D; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dP7tBLN9; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 10EE5EC010A;
-	Thu,  8 Jan 2026 08:19:11 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Thu, 08 Jan 2026 08:19:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1767878351;
-	 x=1767964751; bh=PhcbG/AbbCj+faFilsF03kegwa/uxttETs/t9J5Tbug=; b=
-	peXM7D1Dzdnzb7NesfLIF8ofEqIIvuvij2o9y0pksmnEl1kTZJWIg+X+jaLLQgGQ
-	xkdEJzn9usp83asewAMFV7+Q3ERrleIkrkXgtuVWAwQ59HyBtrbr9AEtOQOZttys
-	iZszSnIdxMj4WbtGqGwkfsgpUZTMq5xJzJisByWGAkdaX9FJyGfybEerCPn0OmRH
-	jAWME+9t7Pt1j9txk0c4EoNpxhSoGoPMbL8Y5eMNnJ5EgXMBfTg6h79YaYt2mXYg
-	BkYiAqRtwAatZo1kj0mpq8LSMjo/V5BXf0jYU1292mb7WO+geFbROxbIqylPbtRh
-	MX/qo1yJtEvcMe3XxvS1Ew==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1767878351; x=
-	1767964751; bh=PhcbG/AbbCj+faFilsF03kegwa/uxttETs/t9J5Tbug=; b=d
-	P7tBLN9V8y9t2HVFBPRwpt7ZAdqx4t+YnHnC/IzGwKI/DO1paO+lsL3DMQensrDB
-	8pDO9IYmgP9fBLkgLsSkJ7z653KCiYBArrbfTbXIioqUnzWlF4kk5akhTohR5asl
-	TdBvp7tBhDKIJ3Ok22I+tElRCZdmVy5eby3ZL9bynZIIkrxHC8AR9TxPP1nFxI9m
-	vX4IZBPaGtRxZecm2/wCrEFvXXai8cG04vgnRzqMYd/WSWq4OfvTuLEEQEKy8Nl9
-	Gz2p+RjLi8xSFh9x8XRtZo75Xj9sgRmyOiPgG0CxHgaW2f6tB5fHI/Tr6qsNs6Uy
-	w8EQ+6FyRaMmkuJ5M4xLA==
-X-ME-Sender: <xms:zq5faToR3lZ8HUzYBqVG39_u7fiL5vNpSndgFnpcRkhPxFLS3xIxkQ>
-    <xme:zq5faXqPaCKcvNHe5WgBmDrXtkSLugYvTaTo5oYe75Ym5xA7Rxe49r9kWX3WLPOWb
-    8U5YMh-ELel1uBEIcE-zw0LHopsIdR0L7UYqYC7TWxe5HY9LF5RRw>
-X-ME-Received: <xmr:zq5faW1BI9BjwfrnTxWjl3SZ6QMUPG2zknjBw27O9dhcQtVY1qj_JFCHsuE0Cj8KUOqiCW59iElooXK88mTUNRmX351OsKYPCDbiobD_5bJMwuuUOA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddutdeitdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpeejffdutdeghfffgffgjeehteejueekieetieehveehteeuiefgieeuleek
-    jeekueenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
-    mhdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjh
-    horghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepiihhrghnghht
-    ihgrnhgtihdrudelleejsegshihtvggurghntggvrdgtohhmpdhrtghpthhtohepmhhikh
-    hlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghl
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
-    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepgihivgihohhnghhjihes
-    sgihthgvuggrnhgtvgdrtghomhdprhgtphhtthhopeiihhhujhhirgdriihjsegshihtvg
-    gurghntggvrdgtohhmpdhrtghpthhtohepiihhrghnghhjihgrtghhvghnrdhjrgihtggv
-    vgessgihthgvuggrnhgtvgdrtghomh
-X-ME-Proxy: <xmx:zq5faVHH_gJ1k067kqp-BmB9e1mWf0gpjdEhinr4YSkSZwQ5weAqiQ>
-    <xmx:zq5faRH0_KyyF7Tk8hBO0OhU2fugADz3oiFYEhiQXEPlg0OXwRhzCQ>
-    <xmx:zq5faY4RW9vNvPUUs1U6kp-12cjVjqG43JtomDaF1ny3gVs-IEQG2w>
-    <xmx:zq5faWzikREy9e17XUxR_Iz7ZHdQx0id464YOPwvYExArsuX42Uo8g>
-    <xmx:z65faS69G3Q3sZyBzLcdp1NMRm_ooY08BvBpVwjrXUvR7m7vxYvtA1SA>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 8 Jan 2026 08:19:09 -0500 (EST)
-Message-ID: <7cd19bb7-2aa8-4950-b0e0-c52d59f37f7d@bsbernd.com>
-Date: Thu, 8 Jan 2026 14:19:08 +0100
+	s=arc-20240116; t=1767878753; c=relaxed/simple;
+	bh=jwFf19PSHKXwdf9bEk3kZxmxUld0e6v3BgfnWrHCUjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XaLQCx+Z9x2lSOIAn4AnQ1YOiID1SYEsBjH2D2a3E/kJnVPS4ZqVdcXKjGXAYUsVhxWxhlpJTIGjMXN4SVofAcZMxRieLNzfv1Ngw7juAJTWVQEZIG7OczncGUpYrhG81UnMaXV8ZRlpxMGZQBUILygt5TQ13PwZHPO8p7JpNC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+ubIeNp; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7cdae63171aso2224864a34.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 05:25:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767878750; x=1768483550; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E49XAlEZRJNJzFNz0O0SAsxb11w6Gi0a4fcPebK/tXg=;
+        b=R+ubIeNp/lncYOXBpbXdxWxD4pwGcq7tkrjrm1VRvjztIpk4hRG7WV1/EeON0ROBdI
+         Aw4wvKH5g3ucA2mj6Vh8dqZRuuR/3h5QHNPC+LxkKDTECCrd11Mx3/pmm9zFu+wYCVM9
+         2R40p5+/1Hd4aXVSYDstYBJfQyoqqPGWsXywvSGcHRhC8Yx8AJHMIZb9WF3wT/kE2Zpu
+         A7xaKpemg5BFufEBSdCpwjdYQywy/oFM4y1wUDj3kScVn//AxI9ukSHVd/hAmMF6OHbS
+         tZNrVTzkF7U/66ARQOi7Brv0iQafnFZAWUvsZ3l3x9Idt9K7l/tJ//kXf9xlDwIRmPGY
+         xwgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767878750; x=1768483550;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=E49XAlEZRJNJzFNz0O0SAsxb11w6Gi0a4fcPebK/tXg=;
+        b=xPCPdii+UyI+ZxawK6fEI+lHLJ6vZxd4vM2C61PTe9eJuKEbEaD3kW/xiMJ3goMBGT
+         OgVmrBP7pl7L+bF0ePZeFzJsitzXg3c2Y2NIgS5MsNZK2B+AUpvdaVs52jm5Mq2BfEdy
+         bwKZXr0Y4SHliimf8sNWkTve+SRvcG+E8P7O44zd/54eUGA6TVj+REtzpEuV9Z6QfMsl
+         xYrSdICx45W2HLAlXevAOKot3jliw0ibRPfTrnISQpq2J2CafzhnTi68QwmcdXvxvwMp
+         qF+bIXIjBWBHJzh9FDwFE4szh96D94XrLtuMrjtIOym7eVBKbo4E5bgHPON4rVzQRNw/
+         TTpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHq1WeUrVPCJATjsiicZMX81/wVbg7jsWzjSuttihq2yBsyG/m42u1nU71i5wrdqIn3thsxvBJ8zqmKxm6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLLQGhuAjmFJN9nnESunxtYDzfKkoMuH88opNH2wuxfRTDqgQ7
+	vim7o+j5G0eNSjPe5mgWmqkfcnq9eN26LWYDV8PNXiP/yLSdRcd73yuj
+X-Gm-Gg: AY/fxX7W9YruAUo3/BWFg2QnEmeEu7UuMTDoxJWHMxkO5FJQpyMf7NHZpptwcswONxR
+	dR/PlugygJL4XcMYvAViEZVBjH5/GnPun5ftMJD1ob0xo96KY7OqlYbdVNP0FCcPU7wWh0dYVOF
+	3+sPnOArxFnGw02ZwSjKQ7orEK1Y4cAjY1o3oVSKC8iiuXP1OWM/hBk8pyX36KtEWlLpD3YnwPU
+	0Dx9d6dJKHsJK4cZWv/d1/umAs+uGP4nHIK//fSlHkgNdEGhzVuMH5UyY0rKl8aoN9OUZCEDT3C
+	v7etceA/5cWgtmzfC8JAd0XBmqgC4a87JpcvZ5ThePe75PyiTcbXbhqMiJrN5UUvpgMQFqUQGXa
+	7cBqq6pPyKnUI2h0aAB0qTdZZvLasttmcA6k+zR7VIsPQ9hiOjjxaG9jb6u+qYJY4jmmyY4UGMd
+	cdhVF4maGt7uc6NakPv/Y6zS1SxaL19w==
+X-Google-Smtp-Source: AGHT+IHiefcf7btCQSFUKrAxCiXJ1hW45Y0S4Hc66MlrtJ5LVsP42OyHRUDsrUHUXG45rEL7nC8tMw==
+X-Received: by 2002:a05:6830:411f:b0:7c7:6850:81a2 with SMTP id 46e09a7af769-7ce50b57c2cmr3718104a34.24.1767878750143;
+        Thu, 08 Jan 2026 05:25:50 -0800 (PST)
+Received: from groves.net ([2603:8080:1500:3d89:902b:954a:a912:b0f5])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ce47801d63sm5317503a34.6.2026.01.08.05.25.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Jan 2026 05:25:49 -0800 (PST)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Thu, 8 Jan 2026 07:25:47 -0600
+From: John Groves <John@groves.net>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Alison Schofield <alison.schofield@intel.com>, John Groves <jgroves@micron.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, David Hildenbrand <david@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Chen Linxuan <chenlinxuan@uniontech.com>, 
+	James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>, 
+	Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Gregory Price <gourry@gourry.net>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, venkataravis@micron.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V3 01/21] dax: move dax_pgoff_to_phys from [drivers/dax/]
+ device.c to bus.c
+Message-ID: <3kylgjwvrdrfe5hcgqka2x2jsgicnnjssdpjrqe32p6cdbw33x@vpm5gpcb5utm>
+References: <20260107153244.64703-1-john@groves.net>
+ <20260107153332.64727-1-john@groves.net>
+ <20260107153332.64727-2-john@groves.net>
+ <20260108104352.000079c3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH] fuse: add hang check in
- request_wait_answer()
-To: Joanne Koong <joannelkoong@gmail.com>,
- Zhang Tianci <zhangtianci.1997@bytedance.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, xieyongji@bytedance.com,
- zhujia.zj@bytedance.com, Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-References: <20251223062113.52477-1-zhangtianci.1997@bytedance.com>
- <CAJnrk1aR=fPSXPuTBytnOPtE-0zuxfjMmFyug7fjsDa5T1djRA@mail.gmail.com>
- <CAP4dvsf+XGJQFk_UrGFmgTPfkbchm_izjO31M9rQN+wYU=8zMA@mail.gmail.com>
- <CAJnrk1Y0+j2xyko83s=b5Jw=maDKp3=HMYbLrVT5S+fJ1e2BNg@mail.gmail.com>
- <CAP4dvseWhaeu08NR-q=F5pRyMN5BnmWXHZi4i1L+utdjJTECaQ@mail.gmail.com>
- <CAJnrk1a2-HS6cqthfcU5hxBi7Rinwh8MpYggNtOg6P256aW0zw@mail.gmail.com>
- <CAP4dvsdRtO6BX6A-LdJDyakVucLskTvOViZRGonoMsK0eNtM1g@mail.gmail.com>
- <CAJnrk1Zt=zS7UYbryE0S+-1qBqYaowgCGa5Eq=gK7ynnk+ybTA@mail.gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <CAJnrk1Zt=zS7UYbryE0S+-1qBqYaowgCGa5Eq=gK7ynnk+ybTA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260108104352.000079c3@huawei.com>
 
-Hi Joanne,
-
-On 1/8/26 01:00, Joanne Koong wrote:
-> On Tue, Jan 6, 2026 at 6:43 PM Zhang Tianci
-> <zhangtianci.1997@bytedance.com> wrote:
->>
->> Hi Joanne，
->>
->>> imo it's possible to check whether the kernel itself is affected just
->>> purely through libfuse changes to fuse_lowlevel.c where the request
->>> communication with the kernel happens. The number of requests ready by
->>> the kernel is exposed to userspace through sysfs, so if the daemon is
->>> deadlocked or cannot read fuse requests, that scenario is detectable
->>> by userspace.
+On 26/01/08 10:43AM, Jonathan Cameron wrote:
+> On Wed,  7 Jan 2026 09:33:10 -0600
+> John Groves <John@Groves.net> wrote:
 > 
-> Hi Tianci,
+> > This function will be used by both device.c and fsdev.c, but both are
+> > loadable modules. Moving to bus.c puts it in core and makes it available
+> > to both.
+> > 
+> > No code changes - just relocated.
+> > 
+> > Signed-off-by: John Groves <john@groves.net>
+> Hi John,
 > 
->>
->> Yes, checking in libfuse/fuse_lowlevel.c is feasible, but it depends on
->> the running state of FUSEDaemon(if FUSEDaemon is in a process exit state,
->> this check cannot be performed), I think we do need this approach,
->> but it cannot fully cover all scenarios. Therefore, I believe it
->> should coexist with this patch.
->>
->> The content of the /sys/fs/fuse/connections/${devid}/waiting interface
->> is inaccurate;
->> it cannot distinguish between normal waiting and requests that have been hanging
->> for a period of time.
+> I don't know the code well enough to offer an opinion on whether this
+> move causes any issues or if this is the best location, so review is superficial
+> stuff only.
 > 
-> I think if the fusedaemon is in a process exit state (by "process exit
-> state", I think you're talking about the state where
-> fuse_session_exit() has been called but the daemon is stuck/hanging
-> before actual process exit?), this can still be detected in libfuse.
-> For example one idea could be libfuse spinning up a watchdog monitor
-> thread that has logic checking if the session's mt_exited has been set
-> with no progress on /sys/fs/fuse/.../waiting requests being fulfilled.
+> Jonathan
+> 
+> > ---
+> >  drivers/dax/bus.c    | 27 +++++++++++++++++++++++++++
+> >  drivers/dax/device.c | 23 -----------------------
+> >  2 files changed, 27 insertions(+), 23 deletions(-)
+> > 
+> > diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+> > index fde29e0ad68b..a2f9a3cc30a5 100644
+> > --- a/drivers/dax/bus.c
+> > +++ b/drivers/dax/bus.c
+> > @@ -7,6 +7,9 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/dax.h>
+> >  #include <linux/io.h>
+> > +#include <linux/backing-dev.h>
+> 
+> I'm not immediately spotting why this one.  Maybe should be in a different
+> patch?
+> 
+> > +#include <linux/range.h>
+> > +#include <linux/uio.h>
+> 
+> Why this one?
 
-I added one kernel connection watchdog last week
+Good eye, thanks. These must have leaked from some of the many dead ends
+that I tried before coming up with this approach.
 
-https://github.com/libfuse/libfuse/commit/6278995cca991978abd25ebb2c20ebd3fc9e8a13
+I've dropped all new includes and it still builds :D
+
+> 
+> Style wise, dax seems to use reverse xmas tree for includes, so
+> this should keep to that.
+> 
+> >  #include "dax-private.h"
+> >  #include "bus.h"
+> >  
+> > @@ -1417,6 +1420,30 @@ static const struct device_type dev_dax_type = {
+> >  	.groups = dax_attribute_groups,
+> >  };
+> >  
+> > +/* see "strong" declaration in tools/testing/nvdimm/dax-dev.c  */
+> Bonus space before that */
+> Curiously that wasn't there in the original.
+
+Removed.
+
+[ ... ]
 
 Thanks,
-Bernd
+John
 
