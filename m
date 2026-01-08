@@ -1,126 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-72811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D54BD03F22
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:41:58 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06DD7D043F6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:15:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C8D9734756B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:20:52 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id CE4B830CCACB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E5835CBB4;
-	Thu,  8 Jan 2026 09:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4C338A296;
+	Thu,  8 Jan 2026 09:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="S2xWMhad"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJdPzVoW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924DE3C1FDF
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 09:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C13937E2E6
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 09:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767865287; cv=none; b=Kg03ptVFYw8O/XQhdOzuaO5HsOjDh5k8LVKirwNjSYofKZVgGEms7io7OgY9Igzi3R2LVt2x7krf6YzOl8+DcFqCbvhYftc33ueUiM7pBjJUlr6TiInsrP9x2FVjYbe8IJ0E99Yy9j4aTa6wgSVi819hFWpb0fy65ghE1V/vIDE=
+	t=1767865403; cv=none; b=kvKk7qMEtULPI4Pfg11uYd64Ddur1xEJSI99zOe6sSTY5HBRauf+M6TEv1iNh+s3AH2+sF7c9LEaI2NAjYNCodoAUiihfMaUEyFxYuHP89oRiUS3B3l0QK+aJMHaHF4RTWWNgwE4+mMyERDfwzLntFJA2ElZZ9BOqcrmwbbE54k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767865287; c=relaxed/simple;
-	bh=z8uuooh91RjFWtNJ78SLIUD278PPcKo7E5fB24ortS0=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=GLjAe6X5Jfx+a+dyGA9thH7zIedPHwt5F/EYSqv5/qkWLqTsfMSiM8I9f2IBslozUzy3YP6gvZ7vtKi2otjepk8ufUOBLFcSChX2Svy1bsWooTEby+huJ1eXNFGnnl9MPkUs0U7ltESWWH0iz3SweFL/oQL3Yuz4gltvJ7tCGs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=S2xWMhad; arc=none smtp.client-ip=203.205.221.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1767865264; bh=kr+PGLZ1A3LBDxvkvV8WMVHWLNR4gVDepQz4ot11vNM=;
-	h=From:To:Cc:Subject:Date;
-	b=S2xWMhadO8dWEhHIyjrgRIk8SaNQlIIwIVd7UeDkqDsFX0bFRoNahKu+/h09BrkX1
-	 QJAbw6BOf7tqBvqCU3FUUc0vYB5j3p6EDY+YwdwvRYmqBVpjF7rHXz4ZbhizjkMAWW
-	 DT+hqlID2K5kY/u89DWm7B44aZiESShwBdDS/1QA=
-Received: from OptiPlex-9020.. ([58.32.209.43])
-	by newxmesmtplogicsvrszb43-0.qq.com (NewEsmtp) with SMTP
-	id A4286EB3; Thu, 08 Jan 2026 17:41:02 +0800
-X-QQ-mid: xmsmtpt1767865262t25jbo5av
-Message-ID: <tencent_E7EF2CBD4DBC5CC047C3EB74D3C52A55C905@qq.com>
-X-QQ-XMAILINFO: MeukCuWaRbQlDz5j7ZqL7yqk7qk8LsguH5PVOFjWhyXvMP0xIKbQJHkQfuFBcq
-	 /7jEamKkIKabmgwC6Hj+KwIx3baxybecDeWCChs5vd4YuKvW9sC0fiUdLuCgAyVaUQdVfka6WobG
-	 ZdzmxSEW8dDPYmqvFwGcle6p4z2BESzp+svwbiebfpzztUZOA5DMc14as19JGQJvHsGWQo9TAqwy
-	 wDlVpgEsIxvBXksOGYesiKiQ/dx1OlbftHSuUbuOTCgfLNchAUi4NbtjxhCtbbWJuxTdgahjyuB6
-	 nAjyr0YM8mazUGIlUtUKzVmzA59Pj+9Q5eGmXz3U6okDqzJLkjTNZscRnD3ACUJ/co5TdhtHweHD
-	 oPqzxfKUlTzCh0ViQVlsBowT3iA+Cl0i+YLwIqj4O4isTh64wSLa6Yk9Oj03R1Rm0MrjVstjkUhn
-	 JlTrKOKkXbjrWa0lwg+z9RVEjm745d75Yio6prR2gfSyv2oWm3TftSfPDCJdknM4HdK/PvUOdl5n
-	 /R6sbxucFS3YT2glF0+IAkdGGerhwC5w6M/s0mMEwrLZLtTstMDWJRwJxnsOpWRZgu49hRSa25/K
-	 dYXRm8LLn5IofNuAOZs5Q2LtMS9PTNsZzeej5HhEsAuqMSYrCivD34wjLleGW1At4Q3vlXCNv0zD
-	 m0BbiUHcYOI7LdTvXCH8bHPdt0mCT8t9sf1fxBZu/gPZckIqj7Ygq4omqakIPWRFgoGuYD3MF9ej
-	 UO9QQCUYTqcIwCbLfLaAP01mqe8uY349MzkmJQKtT32M2KvF80SKZEGQOMZtF1aatdnYENhSU5d1
-	 1NJPPC0XblykS7mYMbs1m3dRsqGdKL4duuqZoy1jsWZG0qwL7g4HI7jNcG3cUvG/Lw9MQSeUjxyZ
-	 lxgnLelB59lWGMdwIVz3COxYrpEi0Tth8xB26+2uiF69TXPqinJFL4wtpgvNLFrGpj2oZ6kNsK7b
-	 1WF7YQ1Yb/066+cZpew0iXCJR0C/aZWQjunUIakJoobtOmwT5BS1EdebPJol4DgQ1+YSVPcUqPk0
-	 DG+6IXCZ4UPsW5e0dH/7ivWRD0S3I=
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
-From: yuling-dong@qq.com
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com,
-	yuezhang.mo@sony.com
-Cc: linux-fsdevel@vger.kernel.org,
-	Yuling Dong <yuling-dong@qq.com>
-Subject: [PATCH v1] exfat: reduce unnecessary writes during mmap write
-Date: Thu,  8 Jan 2026 17:38:57 +0800
-X-OQ-MSGID: <20260108093857.462560-2-yuling-dong@qq.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1767865403; c=relaxed/simple;
+	bh=sfxDBmCexDpJeVckjNjWiUluzw6B197qmSgmmOgJ86E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JpyKSLeDr/vLDsMirBMwYSckjz3hnHZVZ+BSQyyvEgXMS0vR/KDV8UjzHgjfFt9nT/xyLsf6YiZ51DZ6nWbdVk6neT67m8DPKT60ioJ2yDpc2gXn+DijCIT2SFu90P2VhQvs5dyQ8XIX5LpWR0Kyv4JNHMqYizyEG8GIdteuFBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJdPzVoW; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b802d5e9f06so424580666b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 01:43:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767865392; x=1768470192; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XRw3PJoXwX+xdp9i/McIwKxflspWMmZgC/PQP/RKUM8=;
+        b=fJdPzVoWGh0Ej2RrhC8i5kUzDy9Rmw9iVXY/QXqDyawXePhLmSWaGQSiZ5y0G4tfHx
+         0mmsFHlq8QrJjWEFw1dCCXJ32mXPxRDKwY30uQsFAwoI8o2Q15hqWifxXAIHFaBD1crM
+         gPf1scpjoTc15iNwfbCmJlMwBjKYPDhvniBv4u9QJ/2QtOaQQCNzoqQfKS2gAMKbc2Bm
+         cL7rp1zAMo/5IQDvtfrO5KK2vKd8/dmlij04JWg1/87ce6hRM5aqps2GmquhGjFRsEcw
+         6k3iShlR4HGDP0wxomnRldydjVLtqRE7eBzIs1ObDCOsP8+O/RBTQGQi5I3gMXflccz7
+         1gRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767865392; x=1768470192;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=XRw3PJoXwX+xdp9i/McIwKxflspWMmZgC/PQP/RKUM8=;
+        b=o7BTGvY/Up+uGPJDJ8qukhapUDvhzazJUawNYZAacEsQw7lj8Bo4RR4oXYk381jzn0
+         8N7jfdt4ZW0Bi3YV0Kj2H7eNcYq/+ZaUZEgtgy5nModZQKPE0/rVgJjcQMvFyInU+i3q
+         gXULBan9sJ9wdpT5s7veSC/T1j4Rpsn1IA00SL8oE2jSTp69mNRwM6BG61NlESj+hN3N
+         CkOJ3njdSl4ougnJZ3PHyHn9dAWF9V5OZ8KuDCnTLViuhRG7N5Vb4nfAt6Bno2rvZPY0
+         /mabUg4C9KmHPhpSCoxXlNCm7GKjXzL7rWKNeateepWiAkqaqFjEp9bSxdFl2N39CCF+
+         2LiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwPl7N/5JkmoaE48e+Ol/MdfaV1nT3zaunfukXoZ0tKdsHc/LdWWA4gMbTlaskef6PH3idqxWwjz/B+tNM@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHAvzflqIeOLMn8DHbr80Os+UMz0hqueUHvGH0p4sU17UOn0du
+	XPARTXVzNP8yIzrYvHVw8s12JP8hTyWYIXChfWh9oMZHsnffeVt/p/CkMdvC3qNaChYPLygYxPk
+	s0uLNJf/nKIKQknZmLMi7ChlMyiCMUfE=
+X-Gm-Gg: AY/fxX75chYHDbeQy33AKRw/0LtC4leSjL1mKJMCHjDXuzlPVemFc3ijWN24so95Y1O
+	2utvCgC1KIshqNIsDb0bIIM+kz2ODAiJrtvV7uSuV/tAHXmVNiAZiF2ZDwUAPNsYNmtecqKoF/i
+	7GNc6wvFQnSzQJiXVdqJrdy5MOudT8toqKPK7yxUBcXQ6pd7mA8pgSAC2WfT/zVfaF9DDEMPABS
+	J7iRsW8IkaBVIsYLnGXM6i8ZZ4Hz3xw7mtScat+D1LaRXb+pmioB3S6LwZS7xdwOpYs0Yj/hZp4
+	IGPvhNyfj94svek+vxe5HKLX
+X-Google-Smtp-Source: AGHT+IHj9h+CAXViTE65niWDnsYgwHBfVs04OxKQOOSCciSwXHZxgC24jtaG0Rlnwtw/s4+7+rpAlWWKIEDDHCdFODY=
+X-Received: by 2002:a17:907:a4a:b0:b81:ec75:d649 with SMTP id
+ a640c23a62f3a-b84451dd880mr495728966b.27.1767865391554; Thu, 08 Jan 2026
+ 01:43:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260105-dcache-v1-1-f0d904b4a7c2@debian.org> <h6gfebegbbtqdjefr52kqdvfjlnpq4euzrq25mw4mdkapa2cfq@dy73qj5go474>
+ <yhleevo3p4d7tlvmc4b27di3mndhnv7dmnlrupgrtjy23ehqok@whlvpgy4kqrv> <20260107205410.GN1712166@ZenIV>
+In-Reply-To: <20260107205410.GN1712166@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 8 Jan 2026 10:42:59 +0100
+X-Gm-Features: AQt7F2rIcAVAOgsY-bwGxOVzyYLVKy1nFevD8Y4NSgLOU5HJduiLcJwviLtlNtc
+Message-ID: <CAGudoHEjifON3TvRBtf-yrT11Ty-O0qentcGQKp4hjA42a3Bhw@mail.gmail.com>
+Subject: Re: [PATCH] fs/namei: Remove redundant DCACHE_MANAGED_DENTRY check in __follow_mount_rcu
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Breno Leitao <leitao@debian.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jlayton@kernel.org, rostedt@goodmis.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Yuling Dong <yuling-dong@qq.com>
+On Wed, Jan 7, 2026 at 9:52=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+> TBH, this (starting with READ_ONCE()) is quite pointless; documentation i=
+s
+> badly needed in the area, but asserts will not replace it.
+>
+> Note that mount traversal *is* wrapped in mount_lock seqcount check; anyt=
+hing
+> that used to be a mountpoint, but has ceased to be such will automaticall=
+y
+> trigger a full repeat of pathwalk in non-rcu mode.  What's more, the same
+> check is done upon the transition from rcu to non-rcu, with the same effe=
+ct
+> of a mismatch.
+>
+> This READ_ONCE() is pointless, with or without a check in the next line
+> being done the way it's done.  We are explicitly OK with the damn thing
+> changing under us; the check in the beginning of __follow_mount_rcu()
+> is only a shortcut for very common case, equivalent to what the loop
+> below would've done if we didn't have that check there.
+>
 
-During mmap write, exfat_page_mkwrite() currently extends
-valid_size to the end of the VMA range. For a large mapping,
-this can push valid_size far beyond the page that actually
-triggered the fault, resulting in unnecessary writes.
+As far as I can tell it currently happens to not matter for
+__follow_mount_rcu, so there is no correctness issue as is.
 
-valid_size only needs to extend to the start of the page
-being written, because when the page is written, valid_size
-will be extended to the end of the page.
+I do claim that basic hygiene in case of lockless code dictates stuff
+gets read and acted on once if feasible, even if the code at hand
+would be fine without it.
 
-Signed-off-by: Yuling Dong <yuling-dong@qq.com>
----
- fs/exfat/file.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
-
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 536c8078f0c1..83f9bebb49f3 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -707,21 +707,17 @@ static ssize_t exfat_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- static vm_fault_t exfat_page_mkwrite(struct vm_fault *vmf)
- {
- 	int err;
--	struct vm_area_struct *vma = vmf->vma;
--	struct file *file = vma->vm_file;
--	struct inode *inode = file_inode(file);
-+	struct inode *inode = file_inode(vmf->vma->vm_file);
- 	struct exfat_inode_info *ei = EXFAT_I(inode);
--	loff_t start, end;
-+	loff_t new_valid_size;
- 
- 	if (!inode_trylock(inode))
- 		return VM_FAULT_RETRY;
- 
--	start = ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
--	end = min_t(loff_t, i_size_read(inode),
--			start + vma->vm_end - vma->vm_start);
-+	new_valid_size = (loff_t)vmf->pgoff << PAGE_SHIFT;
- 
--	if (ei->valid_size < end) {
--		err = exfat_extend_valid_size(inode, end);
-+	if (ei->valid_size < new_valid_size) {
-+		err = exfat_extend_valid_size(inode, new_valid_size);
- 		if (err < 0) {
- 			inode_unlock(inode);
- 			return vmf_fs_error(err);
--- 
-2.43.0
-
+Any outsider (e.g., me) reading this diff has to pause and ponder if
+it changes anything and this is trivially avoidable by passing the
+found value into the routine.
 
