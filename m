@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-72765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC40D04030
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:48:26 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E761FD03D39
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E354B31A107B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:26:09 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 9367A304B317
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F61E3491C9;
-	Thu,  8 Jan 2026 07:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7FB34AAE3;
+	Thu,  8 Jan 2026 07:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TEWSypab"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aNKdbbg8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C5733E37D;
-	Thu,  8 Jan 2026 07:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16E434252D;
+	Thu,  8 Jan 2026 07:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767857822; cv=none; b=l4Xxh80p5KI9MnEhpYdJBBORlM10aocacRRlJ/7UVgk4MLdx1QeiwrK7dspcrXl//FTdDuQKKQWMmGDyAMRIof44piD2RNvSUzks/iCOpiPJzzosrRwKQjeNKgj6/O8Ayut9R2t/HEhQ9WXUr8l5D3xOS2rHNeiQnuh8tadST/M=
+	t=1767857823; cv=none; b=KoVFUwY67UXJw3ZRuD3jgV2XeZ/KJnWfKUaZ2YvkZcui3EIe3QudmhSKStP4wFsQp1QiKkgg6vWkTMqC9xfFseTkItoHvijp0uxdjZokcCF7b3luTs/Ba2Rf0Whwb2s5uv3svIqAORmGSh0TC++eUD4OfLlmJ/pakvhqZMwgoeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767857822; c=relaxed/simple;
-	bh=feV5iC2WMzEnCYTs5Mi4FLodvFANEDFlUJ5R18kq/6A=;
+	s=arc-20240116; t=1767857823; c=relaxed/simple;
+	bh=RZMRszjUY/fIM2JLm9jks2g6cg0EVOixOwmn11+9ZsU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kUgOCSq+je8F8QrIoos/xTe/upgzeq2ZzjBnaRiQWsvOKKjTP1CPQbm/FGwHnsjlij0wi6DtpXoUyfnao+TVJBG0m7+O8dLISIaquAE8LMkR/xWR9rLoqRmnMF/8QcfAcWYQSJn4EH7kaWGxfrKpQkMHhPtqNunASoWrzKSuC/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TEWSypab; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=pQkC6bLUY3iR6K6aNDV8x/VXErswGzRHCdT4VA2FmZaGDxiiCz3wzP1TTZRh2NwU1mB6ge1IEWS5EEtEf3wgux9f+GPBu+krivdkJc62ySfAivAyOh/FI43PqHKilYLu5sr2qbY7UOKLXrnaryP/IxqklK3wzxmo3jVKtuhzLBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aNKdbbg8; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=4k7kWmP1ZhXBmL+hmhsC3wCogciqSjx/xESlh9/A6eA=; b=TEWSypabzKOAox/7nNTak911u4
-	UPZ3JOWdEpkrjuxI7RtRFkHOtgnXY7iPWYiPTlkhQ1NjVOD4udEuoEm4+z/BsMh2kvIrGDZrPBwqt
-	amHHRKbqSzYK+bamO0zLHiGc0aRFNqcPMOcxhRUR8HIMSccQn4CLAw3vBj4zKmfQzMh4XZvcmeEuK
-	5WsdUIVa/uxOg6IeTxPLGxlh4zIOUMxELjqWtkwm+RKzWxJC13zbKb4ViuDVkzfEXjhwOv8eC2dVT
-	09YRfy5LTacbKJI4+svkEieu3Ykrqtb6PO50fsZ0QBp4MY4uxLPyNJhvFshw6kpe4uG8fbKoNbbFV
-	8YbvVhrQ==;
+	bh=2HkCXtuYG81yDH2ptlOKycPDQQLzNXbW/SGw7cqaL7M=; b=aNKdbbg8F69mg+KVqWmYxsUMii
+	OGUdUuFdxW+gfU9rBY40iGTrbghF66bOZnpU57JHPYE3+NsODfVEWCDJbYvEWznEyNVhMghAeLnXb
+	lltqo9DcbD00xcQf6vC/7h+2RmTqmLMkaJtO+AQNx0W6nUsfxDVn9wwBHk0m7b3LzLuS4ozEgEt0n
+	5Dk8sYO/UDe5A4ZJAv4Ys92N/SqANBXb7SyU77RpzsMsKlsaSrN32ZnSM3Esnj3+p6+WxCf196hDm
+	RSQ5tV3t0E9czwAVYL2kbda2E1aVtAjLmZHANVX6L0Gu+Cvd7VXl03qGltUxNbr+h5gDy47egWmUf
+	3lofgYsA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkaz-00000001mtA-1YVq;
-	Thu, 08 Jan 2026 07:38:13 +0000
+	id 1vdkb1-00000001mwQ-2RQS;
+	Thu, 08 Jan 2026 07:38:15 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: torvalds@linux-foundation.org,
@@ -53,9 +53,9 @@ Cc: torvalds@linux-foundation.org,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 48/59] namei.c: switch user pathname imports to CLASS(filename{,_flags})
-Date: Thu,  8 Jan 2026 07:37:52 +0000
-Message-ID: <20260108073803.425343-49-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 57/59] alpha: switch osf_mount() to strndup_user()
+Date: Thu,  8 Jan 2026 07:38:01 +0000
+Message-ID: <20260108073803.425343-58-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
 References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
@@ -68,64 +68,74 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-filename_flags is used by user_path_at().  I suspect that mixing
-LOOKUP_EMPTY with real lookup flags had been a mistake all along; the
-former belongs to pathname import, the latter - to pathwalk.  Right now
-none of the remaining in-tree callers of user_path_at() are getting
-LOOKUP_EMPTY in flags, so user_path_at() could probably be switched
-to CLASS(filename)...
+... same as native mount(2) is doing for devname argument.  While we
+are at it, fix misspelling ufs_args as cdfs_args in osf_ufs_mount() -
+layouts are identical, so it doesn't change anything, but the current
+variant is confusing for no reason.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+ arch/alpha/kernel/osf_sys.c | 34 +++++++++++-----------------------
+ 1 file changed, 11 insertions(+), 23 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 325a69f2bfff..cbddd5d44a12 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3022,11 +3022,8 @@ struct dentry *start_removing_user_path_at(int dfd,
- 					   const char __user *name,
- 					   struct path *path)
+diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
+index a08e8edef1a4..7b6543d2cca3 100644
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -454,42 +454,30 @@ static int
+ osf_ufs_mount(const char __user *dirname,
+ 	      struct ufs_args __user *args, int flags)
  {
--	struct filename *filename = getname(name);
--	struct dentry *res = __start_removing_path(dfd, filename, path);
--
--	putname(filename);
--	return res;
-+	CLASS(filename, filename)(name);
-+	return __start_removing_path(dfd, filename, path);
- }
- EXPORT_SYMBOL(start_removing_user_path_at);
+-	int retval;
+-	struct cdfs_args tmp;
+-	struct filename *devname;
++	struct ufs_args tmp;
++	char *devname __free(kfree) = NULL;
  
-@@ -3604,11 +3601,8 @@ int path_pts(struct path *path)
- int user_path_at(int dfd, const char __user *name, unsigned flags,
- 		 struct path *path)
+-	retval = -EFAULT;
+ 	if (copy_from_user(&tmp, args, sizeof(tmp)))
+-		goto out;
+-	devname = getname(tmp.devname);
+-	retval = PTR_ERR(devname);
++		return -EFAULT;
++	devname = strndup_user(tmp.devname, PATH_MAX);
+ 	if (IS_ERR(devname))
+-		goto out;
+-	retval = do_mount(devname->name, dirname, "ext2", flags, NULL);
+-	putname(devname);
+- out:
+-	return retval;
++		return PTR_ERR(devname);
++	return do_mount(devname, dirname, "ext2", flags, NULL);
+ }
+ 
+ static int
+ osf_cdfs_mount(const char __user *dirname,
+ 	       struct cdfs_args __user *args, int flags)
  {
--	struct filename *filename = getname_flags(name, flags);
--	int ret = filename_lookup(dfd, filename, flags, path, NULL);
--
--	putname(filename);
--	return ret;
-+	CLASS(filename_flags, filename)(name, flags);
-+	return filename_lookup(dfd, filename, flags, path, NULL);
- }
- EXPORT_SYMBOL(user_path_at);
+-	int retval;
+ 	struct cdfs_args tmp;
+-	struct filename *devname;
++	char *devname __free(kfree) = NULL;
  
-@@ -4967,11 +4961,8 @@ inline struct dentry *start_creating_user_path(
- 	int dfd, const char __user *pathname,
- 	struct path *path, unsigned int lookup_flags)
- {
--	struct filename *filename = getname(pathname);
--	struct dentry *res = filename_create(dfd, filename, path, lookup_flags);
--
--	putname(filename);
--	return res;
-+	CLASS(filename, filename)(pathname);
-+	return filename_create(dfd, filename, path, lookup_flags);
+-	retval = -EFAULT;
+ 	if (copy_from_user(&tmp, args, sizeof(tmp)))
+-		goto out;
+-	devname = getname(tmp.devname);
+-	retval = PTR_ERR(devname);
++		return -EFAULT;
++	devname = strndup_user(tmp.devname, PATH_MAX);
+ 	if (IS_ERR(devname))
+-		goto out;
+-	retval = do_mount(devname->name, dirname, "iso9660", flags, NULL);
+-	putname(devname);
+- out:
+-	return retval;
++		return PTR_ERR(devname);
++	return do_mount(devname, dirname, "iso9660", flags, NULL);
  }
- EXPORT_SYMBOL(start_creating_user_path);
  
+ static int
 -- 
 2.47.3
 
