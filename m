@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-72746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BEBBD01F68
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 10:55:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48814D01EC7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 10:48:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 9CAD4306C98A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 08:47:17 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 598EE359DF13
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 08:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA75346A0C;
-	Thu,  8 Jan 2026 07:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D52A346ACE;
+	Thu,  8 Jan 2026 07:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JQdLwO/e"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="p0YYE3vp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D0A334C3D;
-	Thu,  8 Jan 2026 07:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E5B33BBC6;
+	Thu,  8 Jan 2026 07:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767857818; cv=none; b=PNWKxyb6a9LlG6r92sfmfarvq9ClaBQsl5jbHrepFjsz8KRAavxkLbNRWkArIXr02jcqerwVKRIa18+BML5s98XpmZvnmfDFMhVSXZBNlYm7NlbkpU1HxcPDyVAh7KfD7JM/+WyudydBvU0aIifTaON+A9DzvZy8mC6gHws0KjQ=
+	t=1767857819; cv=none; b=PVOqfmoLThFe9VWomVNLnK6DLxiDV87TFv+fC6ggJUIm1aVQHM6wgp9JQ+8zzVpSEKX+a/XpAZw1I3RKX2GSysutabKy7h1cRXscU6U0c9VJaQW/TIb7MpMJYaDiUHT62Ly45iuO+NDkVTrjYwYTF2Gw2J1G0nsX/Mv7fwJZQQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767857818; c=relaxed/simple;
-	bh=SyiCZ+BkgTbuNj29/vmF2KqVFwMK6f6m3rzqyVzJ4sQ=;
+	s=arc-20240116; t=1767857819; c=relaxed/simple;
+	bh=1T9eJEuB6l9T+/4WSvz0MwkQ6ZS9+2XOjVOn7L1MH44=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cR5W+ihu3hTGCABHzpFnLNB6bMYZOlS5fpeTp4BnF1+xNS8DtF+EoATUSfo56NAF+osuI/WdTObz2KtazoReBHKDpRjKge9aYZVSUNQkKsCJ+9VkiApsqlXR/8dZFtZTPChHiZ9AtnCS1w4CMMdA0SW2STjSFS5IEIoFizG7E44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JQdLwO/e; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=EB6o6l0YiXizzC+VL/LqHfvpq4thXsa8APK+lqgtiRZGrD2RxzB+hHxqGMx2y9U6/cUb+IBGYTj0HuLUKxA/mEOcYd86MrMi81MthWqUdDb73Sm4qgpRLTjBAi6haKg34Im8sGrG0bS0R9if1sb1tA4wlP3LVdSsOxKsrhrax64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=p0YYE3vp; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=JUE8hPERD0FXyjZgOFJkpifcmj2y7nW76IgVSlDIJnk=; b=JQdLwO/eAz0zlyu5thAfVW3EPt
-	rOXFsDV2twyaf+VQFrbnf6U1u/T9BQXGpmC3bIbfGJSBwcbr+zgZJUEOoYJURU3VfxWcLxtlXiXJ4
-	Br8unqqz2pNzHrMfs3Lo4tmJkNqfvWbsZVpqvc2ltDTOjz/BHVQwSoBLDrnE+09NLYBiCcaTaD46X
-	0zWStjF4CQF1roTqYkf+hDgO2a4z3Bd07EEMCyPKii9ppu1H5s74Gu+sWSSPZTfOdLKmKeVtDbFOZ
-	duoJs2gTcfZRD7BLfYmjBClAHEIV+i/FylWqJawD7zChbalbZv+ckGxI2KXmpHqxim84tlT9leQjR
-	/dMjqm7A==;
+	bh=KpWOI8XMVeq41RdiPMuRug/lWmTpOFPv9An76fDH+Fk=; b=p0YYE3vpRqG1p2Bq/s+8iqSL+s
+	WYyQWit/Ix+IOXG3jRJMaiA0wXcrqQbgfOI1t9Lwlx4IfazsLIQdMP3Gtg+jn4WxCJkHDLW7m987m
+	K7Go/4T2LSqSGRLyvIUWs6xJ5lOIgy4HCfJ8xvtF0hkS1V1PqcmGvHlU0Kf99uSZjRhzE4BV80yIS
+	aktXyKRWQ5RHjgpHobti4P8N7CqXDZfLZpvDxpRUEDhsuzFw8t5DUic55sjFFF4DphIMrq6JHziMU
+	jC62wOTaUXwEm7+XHH5Ahkb0aFcqxFonBwf/ol9g939eV3EOcBdILxUfpn48So3My8Ni1c5jA9iyV
+	+BI8z96g==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkav-00000001mnx-2soF;
+	id 1vdkav-00000001moK-3eTu;
 	Thu, 08 Jan 2026 07:38:09 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -53,9 +53,9 @@ Cc: torvalds@linux-foundation.org,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 31/59] simplify the callers of alloc_bprm()
-Date: Thu,  8 Jan 2026 07:37:35 +0000
-Message-ID: <20260108073803.425343-32-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 33/59] file_[gs]etattr(2): switch to CLASS(filename_maybe_null)
+Date: Thu,  8 Jan 2026 07:37:37 +0000
+Message-ID: <20260108073803.425343-34-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
 References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
@@ -68,65 +68,49 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-alloc_bprm() starts with do_open_execat() and it will do the right
-thing if given ERR_PTR() for name.  Allows to drop such checks in
-its callers...
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/exec.c | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+ fs/file_attr.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 5b4110c7522e..1473e8c06a8c 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1782,9 +1782,6 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	struct linux_binprm *bprm;
- 	int retval;
- 
--	if (IS_ERR(filename))
--		return PTR_ERR(filename);
--
- 	/*
- 	 * We move the actual failure in case of RLIMIT_NPROC excess from
- 	 * set*uid() to execve() because too many poorly written programs
-@@ -1862,7 +1859,6 @@ static int do_execveat_common(int fd, struct filename *filename,
- int kernel_execve(const char *kernel_filename,
- 		  const char *const *argv, const char *const *envp)
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index f44ce46e1411..42721427245a 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -374,7 +374,6 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
+ 		unsigned int, at_flags)
  {
--	struct filename *filename;
- 	struct linux_binprm *bprm;
- 	int fd = AT_FDCWD;
- 	int retval;
-@@ -1871,15 +1867,10 @@ int kernel_execve(const char *kernel_filename,
- 	if (WARN_ON_ONCE(current->flags & PF_KTHREAD))
+ 	struct path filepath __free(path_put) = {};
+-	struct filename *name __free(putname) = NULL;
+ 	unsigned int lookup_flags = 0;
+ 	struct file_attr fattr;
+ 	struct file_kattr fa;
+@@ -395,7 +394,7 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
+ 	if (usize < FILE_ATTR_SIZE_VER0)
  		return -EINVAL;
  
--	filename = getname_kernel(kernel_filename);
--	if (IS_ERR(filename))
--		return PTR_ERR(filename);
--
-+	CLASS(filename_kernel, filename)(kernel_filename);
- 	bprm = alloc_bprm(fd, filename, 0);
--	if (IS_ERR(bprm)) {
--		retval = PTR_ERR(bprm);
--		goto out_ret;
--	}
-+	if (IS_ERR(bprm))
-+		return PTR_ERR(bprm);
+-	name = getname_maybe_null(filename, at_flags);
++	CLASS(filename_maybe_null, name)(filename, at_flags);
+ 	if (!name && dfd >= 0) {
+ 		CLASS(fd, f)(dfd);
+ 		if (fd_empty(f))
+@@ -428,7 +427,6 @@ SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
+ 		unsigned int, at_flags)
+ {
+ 	struct path filepath __free(path_put) = {};
+-	struct filename *name __free(putname) = NULL;
+ 	unsigned int lookup_flags = 0;
+ 	struct file_attr fattr;
+ 	struct file_kattr fa;
+@@ -458,7 +456,7 @@ SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
+ 	if (error)
+ 		return error;
  
- 	retval = count_strings_kernel(argv);
- 	if (WARN_ON_ONCE(retval == 0))
-@@ -1913,8 +1904,6 @@ int kernel_execve(const char *kernel_filename,
- 	retval = bprm_execve(bprm);
- out_free:
- 	free_bprm(bprm);
--out_ret:
--	putname(filename);
- 	return retval;
- }
- 
+-	name = getname_maybe_null(filename, at_flags);
++	CLASS(filename_maybe_null, name)(filename, at_flags);
+ 	if (!name && dfd >= 0) {
+ 		CLASS(fd, f)(dfd);
+ 		if (fd_empty(f))
 -- 
 2.47.3
 
