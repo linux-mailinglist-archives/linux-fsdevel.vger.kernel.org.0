@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-72778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5159AD04457
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:18:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAE0D04363
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:11:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D7ABC3154898
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:55:17 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 0855A315F133
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D270235B13A;
-	Thu,  8 Jan 2026 07:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8237359FA1;
+	Thu,  8 Jan 2026 07:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="UMUIKYQU"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="msEkBD12"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17A0359FAF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08E9359FA9;
 	Thu,  8 Jan 2026 07:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767858051; cv=none; b=VEs3pferbl/unzqMJiERtxZzLPnqak20XV5rWM9ZIETNbK8BXYgSH9SiZ2vBtqzn/gG/gbcLr/FQmjlDsU01kkvlAi4Dx6pfGFWaP25uG98qevuNXJGtL6Y3nFFrBTx9mCWu3zaCpRsZjKB2m44jggZ+YmvGQxFFyZDjc4Get0M=
+	t=1767858052; cv=none; b=QweKkijBrO5tdS2efXA+Cp9lTmvhaVLbXBTtarhOiLIMDxpHSvcZFsTjtCVsOfwL0Ezdy8mpB+NquXjT5JIYsdZ1J6mQC0SiOfMFX/1UrguB1SQr+IyGxHvznzrVsRZjY+STwb4N6PvxjzV5h59Ros5eeQ87O6+aAxprNwTB4fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767858051; c=relaxed/simple;
-	bh=QKH/VHjmimuM2elpWlBC6NTasYCowfM7G0/nY8QEgfM=;
+	s=arc-20240116; t=1767858052; c=relaxed/simple;
+	bh=7LPhhj5IsozaA6yrMzSUNTnp+kwn2SaqLUWClhf7DUk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PePKmalABcMoGBMmpnhGBXmMaXVGw7mKnZb5yawitgCJBacr9xkE2MtLLg7euASK1xWimvAzlOeE9mJCaUwx+2cSgrGkN1z+KWuzQaTns+3++OW6JeGflCkkEtKRic5h4+pkZowmJp+FseMtyyRComl6nEu3vxGdMKq4Nm3PDhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=UMUIKYQU; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=AAqwQHSGtz/ZWFb8oP4oK4G5NMRyKtKHHVUKT9vRSffgk0kfLyY0FdWDB1BfVL+nGE18JZvyYLsBibQgBPJZVuiJd4e22kMemwOcA1XmTihMNCyu2QD/Bd5sA4CbY3jaBQxrRm7jTUNBWrNeQtPzguekyww0Gav2aDffmGZ8khA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=msEkBD12; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=/xK9ccOp9W934T9AOt1ksaAZDsego1UZsXXZaN3Rosk=; b=UMUIKYQU5CmVXwKeaogQCx7jwD
-	k5bhcmjj0LxDLwMXUh1jHcH+IZ9oIeRs2VGSWlYqExPuH2hRl0w9FLDZN/seAbvZrE7g92Dqt2b7+
-	Dh/PPsud7usKwBN0JwjD/bS/NwjLSvoEBk4DBXbkZ8WYCIELMnlfUfXmNVwsPP79gGulgQE9ryhAn
-	WooHz3KLhczjoqBQwYk1NZfbN0i+tzSPDcNfGdkkOIA/vAiw1odVv0HmrScBdtiBCSoVSxtSZnRLI
-	H+rVy56VJBFqyhiRPHsCKTSINw3hD+/GS/DLqMlQpoGiTA3HXDml7IhJr0S3uPoq4QgDd52gRC4yG
-	GvblqNQw==;
+	bh=zD3kiYRGctHzh4A2P9AGiCndO4lLbN2+6+4Iwm7Yc98=; b=msEkBD12l/06upOy/bTdMDK+Ar
+	kYxqJP/FR41rW6cMY/XMOv6RP+EYz/0FZ9RRtzRygiwbcQto/t9z6XuNm8I0NMGkrK2hcCaIK8A4+
+	/OvbvNw+yPOAaIVAIV97U4mN3k+b582nVoOxdtHQYoq/7CAmIpD9QYN5tLoFoIwLfvf7P7YdxcAPQ
+	8FTjQdrvJrFWM14LwQNNgYN4a8aNCXOkk3dsoqoe2i/tUYwTs2mbPDVzqxdQOEQWtDXygLJo8WCZg
+	g5EZCJeOsE9SL7djNPqqFneck9eYQqJRPCMwOa6ZZ5sBG4K2GvtdcVNvDoNmvXKu9bjpVoGQBqQaZ
+	SKaYWiMg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkeh-00000001pGj-1lf7;
+	id 1vdkeh-00000001pHF-3Ddb;
 	Thu, 08 Jan 2026 07:42:03 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -53,9 +53,9 @@ Cc: torvalds@linux-foundation.org,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 5/8] non-consuming variant of do_mknodat()
-Date: Thu,  8 Jan 2026 07:41:58 +0000
-Message-ID: <20260108074201.435280-6-viro@zeniv.linux.org.uk>
+Subject: [RFC PATCH 7/8] execve: fold {compat_,}do_execve{,at}() into their sole callers
+Date: Thu,  8 Jan 2026 07:42:00 +0000
+Message-ID: <20260108074201.435280-8-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260108074201.435280-1-viro@zeniv.linux.org.uk>
 References: <20260108074201.435280-1-viro@zeniv.linux.org.uk>
@@ -68,91 +68,140 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-similar to previous commit; replacement is filename_mknodat()
+All of them are wrappers for do_execveat_common() and each has
+exactly one caller.  The only difference is in the way they are
+constructing argv/envp arguments for do_execveat_common() and
+that's easy to do with less boilerplate.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- Documentation/filesystems/porting.rst |  6 +++---
- fs/init.c                             |  3 ++-
- fs/internal.h                         |  2 +-
- fs/namei.c                            | 11 ++++++-----
- 4 files changed, 12 insertions(+), 10 deletions(-)
+ fs/exec.c | 80 +++++++++++++------------------------------------------
+ 1 file changed, 19 insertions(+), 61 deletions(-)
 
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index ace0607fe39c..7e68a148dd1e 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -1339,6 +1339,6 @@ in-tree filesystems have done).
- 
- **mandatory**
- 
--do_{mkdir,link,symlink,renameat2}() are gone; filename_...() counterparts
--replace those.  The difference is that the former used to consume
--filename references; the latter do not.
-+do_{mkdir,mknod,link,symlink,renameat2}() are gone; filename_...()
-+counterparts replace those.  The difference is that the former used
-+to consume filename references; the latter do not.
-diff --git a/fs/init.c b/fs/init.c
-index 9a550ba4802f..543444c1d79e 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -140,7 +140,8 @@ int __init init_stat(const char *filename, struct kstat *stat, int flags)
- 
- int __init init_mknod(const char *filename, umode_t mode, unsigned int dev)
- {
--	return do_mknodat(AT_FDCWD, getname_kernel(filename), mode, dev);
-+	CLASS(filename_kernel, name)(filename);
-+	return filename_mknodat(AT_FDCWD, name, mode, dev);
+diff --git a/fs/exec.c b/fs/exec.c
+index 902561a878ff..4e192d7b7e71 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1893,59 +1893,6 @@ int kernel_execve(const char *kernel_filename,
+ 	return bprm_execve(bprm);
  }
  
- int __init init_link(const char *oldname, const char *newname)
-diff --git a/fs/internal.h b/fs/internal.h
-index 03638008d84a..02b5dec13ff3 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -60,7 +60,7 @@ int may_linkat(struct mnt_idmap *idmap, const struct path *link);
- int filename_renameat2(int olddfd, struct filename *oldname, int newdfd,
- 		 struct filename *newname, unsigned int flags);
- int filename_mkdirat(int dfd, struct filename *name, umode_t mode);
--int do_mknodat(int dfd, struct filename *name, umode_t mode, unsigned int dev);
-+int filename_mknodat(int dfd, struct filename *name, umode_t mode, unsigned int dev);
- int filename_symlinkat(struct filename *from, int newdfd, struct filename *to);
- int filename_linkat(int olddfd, struct filename *old, int newdfd,
- 			struct filename *new, int flags);
-diff --git a/fs/namei.c b/fs/namei.c
-index e3252d4abce4..1aa19dde50e4 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -5038,10 +5038,9 @@ static int may_mknod(umode_t mode)
- 	}
+-static int do_execve(struct filename *filename,
+-	const char __user *const __user *__argv,
+-	const char __user *const __user *__envp)
+-{
+-	struct user_arg_ptr argv = { .ptr.native = __argv };
+-	struct user_arg_ptr envp = { .ptr.native = __envp };
+-	return do_execveat_common(AT_FDCWD, filename, argv, envp, 0);
+-}
+-
+-static int do_execveat(int fd, struct filename *filename,
+-		const char __user *const __user *__argv,
+-		const char __user *const __user *__envp,
+-		int flags)
+-{
+-	struct user_arg_ptr argv = { .ptr.native = __argv };
+-	struct user_arg_ptr envp = { .ptr.native = __envp };
+-
+-	return do_execveat_common(fd, filename, argv, envp, flags);
+-}
+-
+-#ifdef CONFIG_COMPAT
+-static int compat_do_execve(struct filename *filename,
+-	const compat_uptr_t __user *__argv,
+-	const compat_uptr_t __user *__envp)
+-{
+-	struct user_arg_ptr argv = {
+-		.is_compat = true,
+-		.ptr.compat = __argv,
+-	};
+-	struct user_arg_ptr envp = {
+-		.is_compat = true,
+-		.ptr.compat = __envp,
+-	};
+-	return do_execveat_common(AT_FDCWD, filename, argv, envp, 0);
+-}
+-
+-static int compat_do_execveat(int fd, struct filename *filename,
+-			      const compat_uptr_t __user *__argv,
+-			      const compat_uptr_t __user *__envp,
+-			      int flags)
+-{
+-	struct user_arg_ptr argv = {
+-		.is_compat = true,
+-		.ptr.compat = __argv,
+-	};
+-	struct user_arg_ptr envp = {
+-		.is_compat = true,
+-		.ptr.compat = __envp,
+-	};
+-	return do_execveat_common(fd, filename, argv, envp, flags);
+-}
+-#endif
+-
+ void set_binfmt(struct linux_binfmt *new)
+ {
+ 	struct mm_struct *mm = current->mm;
+@@ -1970,12 +1917,18 @@ void set_dumpable(struct mm_struct *mm, int value)
+ 	__mm_flags_set_mask_dumpable(mm, value);
  }
  
--int do_mknodat(int dfd, struct filename *__name, umode_t mode,
--		unsigned int dev)
-+int filename_mknodat(int dfd, struct filename *name, umode_t mode,
-+		     unsigned int dev)
++static inline struct user_arg_ptr native_arg(const char __user *const __user *p)
++{
++	return (struct user_arg_ptr){.ptr.native = p};
++}
++
+ SYSCALL_DEFINE3(execve,
+ 		const char __user *, filename,
+ 		const char __user *const __user *, argv,
+ 		const char __user *const __user *, envp)
  {
--	CLASS(filename_consume, name)(__name);
- 	struct delegated_inode di = { };
- 	struct mnt_idmap *idmap;
- 	struct dentry *dentry;
-@@ -5095,12 +5094,14 @@ int do_mknodat(int dfd, struct filename *__name, umode_t mode,
- SYSCALL_DEFINE4(mknodat, int, dfd, const char __user *, filename, umode_t, mode,
- 		unsigned int, dev)
- {
--	return do_mknodat(dfd, getname(filename), mode, dev);
-+	CLASS(filename, name)(filename);
-+	return filename_mknodat(dfd, name, mode, dev);
+-	return do_execve(getname(filename), argv, envp);
++	return do_execveat_common(AT_FDCWD, getname(filename),
++				  native_arg(argv), native_arg(envp), 0);
  }
  
- SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, dev)
+ SYSCALL_DEFINE5(execveat,
+@@ -1984,17 +1937,23 @@ SYSCALL_DEFINE5(execveat,
+ 		const char __user *const __user *, envp,
+ 		int, flags)
  {
--	return do_mknodat(AT_FDCWD, getname(filename), mode, dev);
-+	CLASS(filename, name)(filename);
-+	return filename_mknodat(AT_FDCWD, name, mode, dev);
+-	return do_execveat(fd,
+-			   getname_uflags(filename, flags),
+-			   argv, envp, flags);
++	return do_execveat_common(fd, getname_uflags(filename, flags),
++				  native_arg(argv), native_arg(envp), flags);
  }
  
- /**
+ #ifdef CONFIG_COMPAT
++
++static inline struct user_arg_ptr compat_arg(const compat_uptr_t __user *p)
++{
++	return (struct user_arg_ptr){.is_compat = true, .ptr.compat = p};
++}
++
+ COMPAT_SYSCALL_DEFINE3(execve, const char __user *, filename,
+ 	const compat_uptr_t __user *, argv,
+ 	const compat_uptr_t __user *, envp)
+ {
+-	return compat_do_execve(getname(filename), argv, envp);
++	return do_execveat_common(AT_FDCWD, getname(filename),
++				  compat_arg(argv), compat_arg(envp), 0);
+ }
+ 
+ COMPAT_SYSCALL_DEFINE5(execveat, int, fd,
+@@ -2003,9 +1962,8 @@ COMPAT_SYSCALL_DEFINE5(execveat, int, fd,
+ 		       const compat_uptr_t __user *, envp,
+ 		       int,  flags)
+ {
+-	return compat_do_execveat(fd,
+-				  getname_uflags(filename, flags),
+-				  argv, envp, flags);
++	return do_execveat_common(fd, getname_uflags(filename, flags),
++				  compat_arg(argv), compat_arg(envp), flags);
+ }
+ #endif
+ 
 -- 
 2.47.3
 
