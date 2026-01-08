@@ -1,95 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-72922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1777FD05A85
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 19:49:46 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B95D059CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 19:40:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 31D21312C515
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 18:18:59 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 0465E301A313
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 18:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B135730F52A;
-	Thu,  8 Jan 2026 18:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8125331E106;
+	Thu,  8 Jan 2026 18:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UJfNMYdL"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="MbKNLD40"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E3B30FC00
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 18:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990CF322B79
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 18:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767896337; cv=none; b=Lb9pCqywXL3+Z4AsqCOG8MaeMMP4UluQz6KYE1MURwsc2jiIJxs5zTbvW8swbftdEEj4StCXB4oy136RN3tBiCHzOJJRBoOqmyfI0UpWIvImZ3bLanf6JeKSQbMVXU6DSEzJDnaecBv1Eu7mVgzuuZXrQg9/Tay9DmDeV6vIY9I=
+	t=1767897640; cv=none; b=YeM1KRPeFhCyLHZaj6nUP5V75PGpwxGwlivqYZqg5tY0tMFP0C7x+ciWALOrHTZ2nYu8VSOryYfZJ2Pm4rdDZ3THHra9tqtFZoxIzl7QwiAnZGFBF+2Kz544bmE1xorI6ZLUeKM6yUcHti7IvjKNe9nDJ7xl0ZaN+Lp94+CfXm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767896337; c=relaxed/simple;
-	bh=Fn/JoGzjgMnLNspl3ck18e3p9KeNwhc/CT4wpLvvEIw=;
+	s=arc-20240116; t=1767897640; c=relaxed/simple;
+	bh=ooqLxmotW+G7tfKKh3TGgq3X/H5IySKMnqGMs0oJPbs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BjW3yzRiaPVaxYqjkLzt/Jcf3QCnTbZH1gotrAxCNildGAHnu/qvNA5qap8gGJbT3GRn6KQNMcmZ+588k5WGJl8c5R7WhFRUPFmvuiBQOyY7dDaagKX6gL/kbmGdT+Flxex8gOTh7kTl70IY8unYRF921cBfLJoEa1cguU17d4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UJfNMYdL; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-93f5761e09aso1975424241.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 10:18:55 -0800 (PST)
+	 To:Cc:Content-Type; b=PmXkyUT364bF/5lgT1a96wiSsN3NUorrWzqjqDopW/ioCk8hJ+BGNUmY5pgBdDEbwmV/b3t/C+LU0sbohdYq7QNEdLdL9x28ViCBJRq/f9j2ccrgFiiWRGgS8R5saozotmeNdvDQSsXSZGOZApLdcnjcbc3Ih983iSsO8C07VZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=MbKNLD40; arc=none smtp.client-ip=74.125.82.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-dl1-f49.google.com with SMTP id a92af1059eb24-11ddccf4afdso253040c88.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 10:40:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767896335; x=1768501135; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fn/JoGzjgMnLNspl3ck18e3p9KeNwhc/CT4wpLvvEIw=;
-        b=UJfNMYdLd7CGhfVtjf1YZKGwtsOA6VJM7o0BT5tJIxRs6a8Iq6OO+fo1J4eWXj+8F+
-         BVzQj0KyOeH9b3veFy27ddmS9r/VL/S9MlD+TgZYZx//kzC0kUAZ44OdgT4+vNH6WuGw
-         GjWvT3NRd153lgF7kQCSWuec9feiOQaikbrvBgfY1cjuAUb4ZVAG4nReqMOeP8geE0AI
-         9+Xuon7lnqUd2tJOmEmG+4tt1nv9CQEioyplZAXF5OkjOsIuQMPxzjXhKYkqPDLTSnag
-         95b9o0Sc01ZmSu5nuk6rgdsZ3LbqHZsjncK5ibn1TvRh2sM6kUZGuu5KIau9ukCcNk/1
-         TYUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767896335; x=1768501135;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=purestorage.com; s=google2022; t=1767897624; x=1768502424; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Fn/JoGzjgMnLNspl3ck18e3p9KeNwhc/CT4wpLvvEIw=;
-        b=g+W2XyQeEDz9h10uZvHin3Wd8UVur4ObUdKQl8MuKs5PchZjdSBbsy3B004E+VIGfL
-         LD3tRv0VaE9E1RUIdr6GEuA9+ccXg9+AiKImBDFGwUh/tgyK6nYDanfQxrfW97VOw/hP
-         AK+pOecCKISqTqEg7NWDMeyyKvodFi6IOPLaGzX0+gcj2htl8aWJWZgqEfs2KUqKBTWQ
-         vCAvwIqC86KT52rIKc2IeYtbmPNpOmK6pHydpjQp8VsNBm02m9XlPi1xrheZFUoHE7Yg
-         /ZSvhHD9buZESJmkfwIFOINQlsPm/YQ5FhXt/TdTpECi1+ZaAbgwqfUPPQFzMImnMTDq
-         XdRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIkrCZkEjGXAUmtCIprU0ruH3Qy9AlMkV+2vGmfBmG4WQxc/alRRpV+GfINrSGXRONPB60xFwpaUdNRNfS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBZO0KcqkCY8VKU9UHMY28YCr7LxvmxK7kTmIVKR0Nd4Bw5jk/
-	nM+CjWgJjQ8T16VncGe86lv5nnJ21Wn8zypGYHxO558qsj/Mxtoel4LwnT41PxW5j9yAwdU4YI8
-	nwV+vNjD+b5VIRGkDFD+zaaMQ+ex4wQA=
-X-Gm-Gg: AY/fxX4R6gjen+nyDwckVsofoOgl63MVaIqyyAOvEp3hRF+HQYlX8HqvZE91w6TRxnE
-	MnFIwybx2Y+PX5AW7AHqz9NyAITYWnS7rD3peWmIHsI36Ijm1dSEXYdbC1hIi0INUW3/fWgAneX
-	Tx//vfnmGTImeowyF6r9aLLn043GSmPCdOBCV6rvyAmnpZ/Rk9wbEmGtnljOQMP5oThvif10R5/
-	XKXZ/pQOSOw0yY0RBxPq4HOTNClmzESNQp5zDqVqaVODr2jahUx18vRbmdD+nnSk9+bvc92UzT0
-	OHBc4Mem36ob+kVaSpwaYPTNxXML
-X-Google-Smtp-Source: AGHT+IFZDy2QW6KnuIxIEyHkKpqj6MMEJSR/7O9XSRt3iqhghTeDZkCmQR+L8EcADh1b6vUy07gKP1CBUhZxixK3ryE=
-X-Received: by 2002:a05:6102:4412:b0:5db:f352:afbe with SMTP id
- ada2fe7eead31-5ecb5cbb3e6mr3294188137.6.1767896333290; Thu, 08 Jan 2026
- 10:18:53 -0800 (PST)
+        bh=0PGX+LMvYyhz3zylLZxMiON1h+i4VkAFL78U+9WSJLg=;
+        b=MbKNLD40iq31YVR5U2qNRmzq6qQqoxgpHejEIb5tgY+gM9q0fZQzfYvNZvsOGT3CDm
+         dP7B322zNS6pob8AjrYuHUavQVvhlvY3esFXl9ZComKUzIeK27x0JBnPWWxbIITxIeI2
+         M+2QWWw+udXbRMcxe3E/2sQWkNNsSwK3ByLDPByh3HbablZk+4HyrPncHzoTYkOrshmU
+         Di0YJecuZ2zYmItf8tEiZSOI8Jm49AMTwh0Y2GcpVHATT0veI+bM4D8xHNA7aQFdzEsS
+         8BmJYQ1eM5IjqZsulc/4jNOisFXtnR38QMRTzUAz23o6oJn4oltY92ltnJKEnkxN7Ahc
+         dkJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767897624; x=1768502424;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=0PGX+LMvYyhz3zylLZxMiON1h+i4VkAFL78U+9WSJLg=;
+        b=tpBfaqUFYo9yku7X9FWWl8cTuwP0Ozrni3JcYPRwmvWIHmjnCu8C8ktFQCbIuYzNpx
+         1DEvy4o6D6WWQnVj1KqYzuOlU5wIqx3ifNrU21Ay1uXYwWf9Dm3WZu2nQf3j90zWBrbE
+         aWQYV+KXY3fCtFZSiWsUssE5swddAsJfxOIfR3eIjLPCjSjIYaWAMty3y78/+skO8ycK
+         scZRZMAG70m4Bd8BTd3RhiVeP4kCJb0N4eHUdVrAxlfcBKUMOsmfXVg4M0jg96H4uBbw
+         9c/4wbMZdWUm2LMMQxp1X2VYVYLROnsm9PV+/T87WojcPFMQnJNUx68f8bgptglFXScG
+         p6ew==
+X-Forwarded-Encrypted: i=1; AJvYcCWYoIFdKYK3djiDEhDCfszi0RT+hm8AYkdXX+wRNrHlcWJ/zjZVS7Y2ry0w814MgZ++1vqFCoqvWj16pY/s@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzihee+qfYdqo21fomqaNN8R2wnHxRyza/ReWoBPzfw6dwjBB3U
+	gemsk78vmEmnwMT65O1WmSHin4aVX9VzJ4cMEnPwsP2zjfNAFzaQSzzolNRkgdhrbEeXCZelV/s
+	IFUuGvvXxEOySijxO8AMjsv+6kOvrMHKkdLWRYDOgLw==
+X-Gm-Gg: AY/fxX5uNQGPaIxW1yajos5jAzkTgd2MsZ556nh0BnI4UMMYRX6sc13gjt7VudmMlji
+	f3dzn/sh731fJdleX1obM72irGM0sLqXY5xVRxulDZyLSKzo1HgRsQNqGZAj0ROBwuUkn4Gku+4
+	h0Eaz35moyom1s3onuO5Povyk6/vH9O1V8rer+chnh5ZB3+MC7weinv0U0UIfuwlULeT+ZmlPvx
+	+wytSpyD8ixJHEpa3FkBi11TfkkTDDiR6CGOV2elPI9MLptA6Kbhmq1LJ2V5FpXMH6hCdFe
+X-Google-Smtp-Source: AGHT+IH2T58GqwNDj7fa77obaAt+xTIUdv2EKDBAD5wniWy+KkYgCi6YyRbxEKWAU5J3Rp+P1Ajt7uT+j3BdVyXtsTY=
+X-Received: by 2002:a05:7022:238b:b0:119:e56b:46ba with SMTP id
+ a92af1059eb24-121f8b45a84mr3493011c88.4.1767897624231; Thu, 08 Jan 2026
+ 10:40:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251224115312.27036-1-vitalifster@gmail.com> <cc83c3fa-1bee-48b0-bfda-3a807c0b46bd@oracle.com>
- <CAPqjcqqEAb9cUTU3QrmgZ7J-wc_b7Ai_8fi17q5OQAyRZ8RfwQ@mail.gmail.com>
- <492a0427-2b84-47aa-b70c-a4355a7566f2@oracle.com> <CAPqjcqpPQMhTOd3hHTsZxKuLwZB-QJdHqOyac2vyZ+AeDYWC6g@mail.gmail.com>
- <6cd50989-2cae-4535-9581-63b6a297d183@oracle.com> <CAPqjcqo=A45mK01h+o3avOUaSSSX6g_y3FfvCFLRoO7YEwUddw@mail.gmail.com>
- <58a89dc4-1bc9-4b38-a8cc-d0097ee74b29@oracle.com> <CAPqjcqq+DFc4TwAPDZodZ61b5pRrt4i+moy3K1dkzGhH9r-2Rw@mail.gmail.com>
- <704e5d2a-1b37-43c5-8ad6-bda47a4e7fc6@oracle.com> <CAPqjcqqhFWz0eNGJRW-_PoJhdM7f-yxr=pWN2_AfGSP=-VpyMg@mail.gmail.com>
- <02c255b8-2ddb-43bd-9bfd-4946ef065463@oracle.com>
-In-Reply-To: <02c255b8-2ddb-43bd-9bfd-4946ef065463@oracle.com>
-From: Vitaliy Filippov <vitalifster@gmail.com>
-Date: Thu, 8 Jan 2026 21:18:41 +0300
-X-Gm-Features: AZwV_Qi1KXJg98wuNlhob-PhKfYxveiRiQnCM2LlNsbeCGFpRxNmbpDflphYfZU
-Message-ID: <CAPqjcqoqR8UdC5K-RCjKvQEoA6jnRBVZc53ieR1fjJKz9-V9=w@mail.gmail.com>
-Subject: Re: [PATCH] fs: remove power of 2 and length boundary atomic write restrictions
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org
+References: <20251223003522.3055912-1-joannelkoong@gmail.com>
+ <20251223003522.3055912-7-joannelkoong@gmail.com> <87y0mlyp31.fsf@mailhost.krisman.be>
+ <CAJnrk1a_qDe22E5WYN+yxJ3SrPCLp=uFKYQ6NU2WPf-wCiZOtg@mail.gmail.com> <87ikdnzwgo.fsf@mailhost.krisman.be>
+In-Reply-To: <87ikdnzwgo.fsf@mailhost.krisman.be>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Thu, 8 Jan 2026 10:40:13 -0800
+X-Gm-Features: AQt7F2oLCADJqW9nMFr4IyujBgodH4wp0tgVDEDonHOYfDgK480giva21DkFSZo
+Message-ID: <CADUfDZrqQVRsXPbPwNNxi-WqWO5xFiTQnnhhX+0LL7c=1O-R0A@mail.gmail.com>
+Subject: Re: [PATCH v3 06/25] io_uring/kbuf: add buffer ring pinning/unpinning
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu, axboe@kernel.dk, 
+	bschubert@ddn.com, asml.silence@gmail.com, io-uring@vger.kernel.org, 
+	xiaobing.li@samsung.com, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Soo, let's remove the 2^N restriction for raw block devices?
+On Tue, Dec 30, 2025 at 9:54=E2=80=AFAM Gabriel Krisman Bertazi <krisman@su=
+se.de> wrote:
+>
+> Joanne Koong <joannelkoong@gmail.com> writes:
+>
+> > On Mon, Dec 29, 2025 at 1:07=E2=80=AFPM Gabriel Krisman Bertazi <krisma=
+n@suse.de> wrote:
+> >
+> >>
+> >> Joanne Koong <joannelkoong@gmail.com> writes:
+> >>
+> >> > +int io_kbuf_ring_pin(struct io_kiocb *req, unsigned buf_group,
+> >> > +                  unsigned issue_flags, struct io_buffer_list **bl)
+> >> > +{
+> >> > +     struct io_buffer_list *buffer_list;
+> >> > +     struct io_ring_ctx *ctx =3D req->ctx;
+> >> > +     int ret =3D -EINVAL;
+> >> > +
+> >> > +     io_ring_submit_lock(ctx, issue_flags);
+> >> > +
+> >> > +     buffer_list =3D io_buffer_get_list(ctx, buf_group);
+> >> > +     if (likely(buffer_list) && likely(buffer_list->flags & IOBL_BU=
+F_RING)) {
+> >>
+> >> FWIW, the likely construct is unnecessary here. At least, it should
+> >> encompass the entire expression:
+> >>
+> >>     if (likely(buffer_list && buffer_list->flags & IOBL_BUF_RING))
+> >>
+> >> But you can just drop it.
+> >
+> > I see, thanks. Could you explain when likelys/unlikelys should be used
+> > vs not? It's unclear to me when they need to be included vs can be
+> > dropped. I see some other io-uring code use likely() for similar-ish
+> > logic, but is the idea that it's unnecessary because the compiler
+> > already infers it?
+>
+> likely/unlikely help the compiler decide whether it should reverse the
+> jump to optimize branch prediction and code spacial locality for icache.
+> The compiler is usually great in figuring it out by itself and, in
+> general, these should only be used after profilings shows the specific
+> jump is problematic, or when you know the jump will or will not be taken
+> almost every time.  The compiler decision depends on heuristics (which I
+> guess considers the leg size and favors the if leg), but it usually gets
+> it right.
+
+Yeah, the compiler can make a guess at the likely branch direction,
+but it's not magic. Anecdotally, early return paths generally seem to
+be inferred to be unlikely and if branches seemed to be inferred as
+likely (and else branches therefore as unlikely). That's a good
+starting point, but a programmer may well have more context to know
+which direction branches are likely to go. Additionally, explicit
+likely()/unlikely() annotations seem to encourage compilers to
+optimize more aggressively for the likely path (e.g. splitting the
+unlikely path into a separate function). I guess compilers want to
+hedge their bets if they're relying on heuristics to predict the
+branch direction.
+The performance benefit of each likely()/unlikely() is generally
+small, so I tend to agree adding them is usually a premature
+optimization. But it can certainly be helpful to improve the code
+generation of a hot path. And it's used widely throughout io_uring due
+to the focus on maximizing performance.
+
+>
+> One obvious case where *unlikely* is useful is to handle error paths.
+> The logic behind it is that the error path is obviously not the
+> hot-path, so a branch misprediction or a cache miss in that path is
+> just fine.
+
+And that's the case here; the if condition is only false in the error
+case where buffer_group doesn't specify a valid kernel buf ring.
+
+>
+> The usage of likely is more rare, and some usages are just cargo-cult.
+> Here you could use it, as the hot path is definitely the if leg.  But
+> if you look at the generated code, it most likely doesn't make any
+> difference, because gcc is smart enough to handle it.
+
+Not sure I agree about this distinction between likely() and
+unlikely() in general. For example, it can make sense to annotate an
+early return path with likely() to override the compiler's heuristic
+that early returns are unlikely.
+
+>
+> A problem arises when likely/unlikely are used improperly, or the code
+> changes and the frequency when each leg is taken changes.  Now the
+> likely/unlikely is introducing mispredictions the compiler could have
+> avoided and harming performance.
+
+Yes, this is probably the biggest pitfall of likely()/unlikely(). The
+additional macro call also makes the code a bit harder for a human to
+parse. Commit 4ec703ec0c38 ("io_uring: fix incorrect unlikely() usage
+in io_waitid_prep()") is a good example of both these problems.
+
+>
+> I wasn't gonna comment in the review, since the likely() seems harmless
+> in your patch.  But what got my attention was that each separate
+> expression was under a single likely() expression.  I don't think that
+> makes much sense, since the hint is useful for the placement of the
+> if/else legs, it should encompass the whole condition.  That's how it is
+> used almost anywhere else in the kernel (there are a few occurrences
+> drivers/scsi/ that also look a bit fishy, IMO).
+
+It can absolutely make sense to use likely()/unlikely() to annotate
+individual components of an && or || expression, not just a full
+if/while/for/ternary condition. Since && and || are short-circuiting
+operators, the compiler will often emit a branch after each boolean
+operand. (For example, absent optimizations, if (a && b) ... is
+translated into if (a) { if (b) ... }.)
+But you're totally correct that likely(A && B) implies likely(A) &&
+likely(B), so there's no need to separately annotate each of the
+operands to the &&s here.
+
+Best,
+Caleb
 
