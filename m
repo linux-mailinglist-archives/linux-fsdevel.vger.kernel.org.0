@@ -1,223 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-72773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227B8D01E4C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 10:44:48 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D0CD01F9E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 10:58:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 834F434290F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 08:36:18 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7F63E34533EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 08:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AFE34AAF4;
-	Thu,  8 Jan 2026 07:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A3937F116;
+	Thu,  8 Jan 2026 07:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="kPjYk4Ku"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="R4OzD8sv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A97342539;
-	Thu,  8 Jan 2026 07:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DCF37C0EA;
+	Thu,  8 Jan 2026 07:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767857824; cv=none; b=LwzGBhl9E5xlLzAau+HwsAh9xZFhPd0rotTNzfer8jCgRmG5IFMz1JfPDWBvxlI/JiYmqVqL0ajtcBFdQlt/tHTC0hy/pvcFCH2FFS2HTfpkczHX4N6EBrdXzJ0Nlq5LiXGXuRZpBCad+6r3eUHmViEhXBq9CyaYApjD08dSnss=
+	t=1767858647; cv=none; b=MjMId6LX6znr80TdYRYAzNQyYD9mQjaIKf0XGrGxcz1vQ6vXE8h/eXtbGO1Vg5Z8ldtwsV18xRVhqVqToQ2XjbTKtO230WWWKFxdaUkDxOfJikLounFaDgnOXDVzfiFA/2P5NN/9hVz76J1CYmO7bpGT/cDkMKkSaXSSGzZTLdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767857824; c=relaxed/simple;
-	bh=yoBvx7PMTgvFHImcnFs/b/pKX9fsUsb+NkQDY8xLuIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kFVWpqU1+p9Q5/+QYf1S+bJPvkjspdnOaznEtn7lP6N1GQlK7l4gP1yQZzZOGQNkc/+ZCEl1lLk/X2Lwfb0d0czifdwIfRCBE0QgKTuy+ZjmqjLZacPoulvKmxHeLFfdFe16xl4kLicbAA2g6mnxYhe/UDgCdXePDS657gEHBSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=kPjYk4Ku; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=SSzxc7/Hgm5ux3/KUYvEqBQHfG5T2IKzIwi+kql8s1A=; b=kPjYk4KuYODtLNcxf0QT/cwAzP
-	5bsYDO8tac88+CCUDW1OUs2qujwGChRmHzx/IPKYvbqoOleuSP4d0Mq77BK2n6fxamPEaLVAMlxtw
-	l//6jg7eRDjmfHm3YitUdLr0zHx2kAwBpYq9ROKLl2d8Yn8TNWImqJaItitX+2VtSz9l1pWDWLtIz
-	1dQRoCRBJNyzaPNUItIfbmD9HOB3OwzXpHxjoOMyBdJ/NR5HPvdYcmSBbYPVyb8NJn9D9aUye+cVd
-	UPaBRWpZkf/EVFmgq4lesipghKUZHSlCs9xuHTPDIC2elz0WgZkhQJe9IFhkP2gzIKL59GZ/L8Pxw
-	bu+aIeFg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkb1-00000001mx4-45bB;
-	Thu, 08 Jan 2026 07:38:16 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: torvalds@linux-foundation.org,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mjguzik@gmail.com,
-	paul@paul-moore.com,
-	axboe@kernel.dk,
-	audit@vger.kernel.org,
-	io-uring@vger.kernel.org,
+	s=arc-20240116; t=1767858647; c=relaxed/simple;
+	bh=rfHZT9404eaU8nG9PXA0f9ytaTjUnDYBY8SrxdySRpM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aR3pw4IXyrfZlWlXb+Es21bspwplFIrE+ShhznCS5/03eCcXXyRHmSegZjc+8Jc2mc8+NTyb1lMxusIGegoC8/1CNYortvPPAh/rIf/+B8PiJKC/VAcYysakVNLhOSe5Gbiimxt+045p0G5RhDauYaH0KIeO1c23EfrKaHrSamQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=R4OzD8sv; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version:
+	Content-Type; bh=wd6pUirE51Jyz5Ivjwx97OdORTMjX3uKUwgkcmX3iBM=;
+	b=R4OzD8sv1BPLSjU3Go6lNFBmQ7o5iAsvoJs0nZrBtKVylOSv2QL210ztY68MET
+	JsieTaMNbPRXQseVbf6cPjzJjBdsvQjtLGNwoUoiMu5DcDhtum10SK9OBg0/yrVz
+	ndsTxrA+SbbL+lPeJbG8M7pA42ROnbcP4EJ5xn169xJMY=
+Received: from czl-ubuntu-pc.. (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wBH6+WpYV9pdSx_Eg--.889S2;
+	Thu, 08 Jan 2026 15:50:04 +0800 (CST)
+From: Chi Zhiling <chizhiling@163.com>
+To: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 59/59] switch init_mkdir() to use of do_mkdirat(), etc.
-Date: Thu,  8 Jan 2026 07:38:03 +0000
-Message-ID: <20260108073803.425343-60-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
-References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
+Cc: Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	Yuezhang Mo <yuezhang.mo@sony.com>,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: [PATCH v2 00/13] Enable multi-cluster fetching for exfat_get_block.
+Date: Thu,  8 Jan 2026 15:49:16 +0800
+Message-ID: <20260108074929.356683-1-chizhiling@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-CM-TRANSID:_____wBH6+WpYV9pdSx_Eg--.889S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Aw15ZFWktFyUuw17tr48Crg_yoW8ur4fpr
+	W3KwsxJrn5Xwn3JrsxAw1ktr4furn3JF17X347Gw17Cr1DZF4I9rZrtFn5CFyDG3yIqFs0
+	qr15Gw1j9r9xCrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnzVbUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC2w21U2lfYa0AdgAA38
 
-Completely straightforward, the only obstacle is do_mknodat() being
-static.
+From: Chi Zhiling <chizhiling@kylinos.cn>
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/init.c     | 88 ++++-----------------------------------------------
- fs/internal.h |  1 +
- fs/namei.c    |  2 +-
- 3 files changed, 8 insertions(+), 83 deletions(-)
+This patch series significantly improves exFAT read performance
+by adding multi-cluster mapping support.
+The changes reduce get_block calls during sequential reads,
+particularly benefiting small cluster sizes.
 
-diff --git a/fs/init.c b/fs/init.c
-index e0f5429c0a49..da6500d2ee98 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -140,78 +140,19 @@ int __init init_stat(const char *filename, struct kstat *stat, int flags)
- 
- int __init init_mknod(const char *filename, umode_t mode, unsigned int dev)
- {
--	struct dentry *dentry;
--	struct path path;
--	int error;
--
--	if (S_ISFIFO(mode) || S_ISSOCK(mode))
--		dev = 0;
--	else if (!(S_ISBLK(mode) || S_ISCHR(mode)))
--		return -EINVAL;
--
--	dentry = start_creating_path(AT_FDCWD, filename, &path, 0);
--	if (IS_ERR(dentry))
--		return PTR_ERR(dentry);
--
--	mode = mode_strip_umask(d_inode(path.dentry), mode);
--	error = security_path_mknod(&path, dentry, mode, dev);
--	if (!error)
--		error = vfs_mknod(mnt_idmap(path.mnt), path.dentry->d_inode,
--				  dentry, mode, new_decode_dev(dev), NULL);
--	end_creating_path(&path, dentry);
--	return error;
-+	return do_mknodat(AT_FDCWD, getname_kernel(filename), mode, dev);
- }
- 
- int __init init_link(const char *oldname, const char *newname)
- {
--	struct dentry *new_dentry;
--	struct path old_path, new_path;
--	struct mnt_idmap *idmap;
--	int error;
--
--	error = kern_path(oldname, 0, &old_path);
--	if (error)
--		return error;
--
--	new_dentry = start_creating_path(AT_FDCWD, newname, &new_path, 0);
--	error = PTR_ERR(new_dentry);
--	if (IS_ERR(new_dentry))
--		goto out;
--
--	error = -EXDEV;
--	if (old_path.mnt != new_path.mnt)
--		goto out_dput;
--	idmap = mnt_idmap(new_path.mnt);
--	error = may_linkat(idmap, &old_path);
--	if (unlikely(error))
--		goto out_dput;
--	error = security_path_link(old_path.dentry, &new_path, new_dentry);
--	if (error)
--		goto out_dput;
--	error = vfs_link(old_path.dentry, idmap, new_path.dentry->d_inode,
--			 new_dentry, NULL);
--out_dput:
--	end_creating_path(&new_path, new_dentry);
--out:
--	path_put(&old_path);
--	return error;
-+	return do_linkat(AT_FDCWD, getname_kernel(oldname),
-+			 AT_FDCWD, getname_kernel(newname), 0);
- }
- 
- int __init init_symlink(const char *oldname, const char *newname)
- {
--	struct dentry *dentry;
--	struct path path;
--	int error;
--
--	dentry = start_creating_path(AT_FDCWD, newname, &path, 0);
--	if (IS_ERR(dentry))
--		return PTR_ERR(dentry);
--	error = security_path_symlink(&path, dentry, oldname);
--	if (!error)
--		error = vfs_symlink(mnt_idmap(path.mnt), path.dentry->d_inode,
--				    dentry, oldname, NULL);
--	end_creating_path(&path, dentry);
--	return error;
-+	return do_symlinkat(getname_kernel(oldname), AT_FDCWD,
-+			    getname_kernel(newname));
- }
- 
- int __init init_unlink(const char *pathname)
-@@ -221,24 +162,7 @@ int __init init_unlink(const char *pathname)
- 
- int __init init_mkdir(const char *pathname, umode_t mode)
- {
--	struct dentry *dentry;
--	struct path path;
--	int error;
--
--	dentry = start_creating_path(AT_FDCWD, pathname, &path,
--				     LOOKUP_DIRECTORY);
--	if (IS_ERR(dentry))
--		return PTR_ERR(dentry);
--	mode = mode_strip_umask(d_inode(path.dentry), mode);
--	error = security_path_mkdir(&path, dentry, mode);
--	if (!error) {
--		dentry = vfs_mkdir(mnt_idmap(path.mnt), path.dentry->d_inode,
--				  dentry, mode, NULL);
--		if (IS_ERR(dentry))
--			error = PTR_ERR(dentry);
--	}
--	end_creating_path(&path, dentry);
--	return error;
-+	return do_mkdirat(AT_FDCWD, getname_kernel(pathname), mode);
- }
- 
- int __init init_rmdir(const char *pathname)
-diff --git a/fs/internal.h b/fs/internal.h
-index 5c3e4eac34f2..4c4d2733c47a 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -60,6 +60,7 @@ int may_linkat(struct mnt_idmap *idmap, const struct path *link);
- int do_renameat2(int olddfd, struct filename *oldname, int newdfd,
- 		 struct filename *newname, unsigned int flags);
- int do_mkdirat(int dfd, struct filename *name, umode_t mode);
-+int do_mknodat(int dfd, struct filename *name, umode_t mode, unsigned int dev);
- int do_symlinkat(struct filename *from, int newdfd, struct filename *to);
- int do_linkat(int olddfd, struct filename *old, int newdfd,
- 			struct filename *new, int flags);
-diff --git a/fs/namei.c b/fs/namei.c
-index cbddd5d44a12..7418a4e725da 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -5038,7 +5038,7 @@ static int may_mknod(umode_t mode)
- 	}
- }
- 
--static int do_mknodat(int dfd, struct filename *__name, umode_t mode,
-+int do_mknodat(int dfd, struct filename *__name, umode_t mode,
- 		unsigned int dev)
- {
- 	CLASS(filename_consume, name)(__name);
+- Extends exfat_get_cluster() and exfat_map_cluster() to handle multiple contiguous clusters
+- Adds buffer head caching for FAT table reads
+
+Performance results show ~10% improvement for 512-byte clusters (454->511 MB/s)
+and reduced get_block overhead from 10.8% to 0.02% for NO_FAT_CHAIN files.
+
+All criticism and suggestions are welcome :)
+
+
+Changes:
+- Cache the last dis-continuous cluster
+- Continue collect clusters after cache hit
+- Some cleanup.
+
+V1:
+https://lore.kernel.org/linux-fsdevel/20251226094440.455563-1-chizhiling@163.com/T/#u
+rfc:
+https://lore.kernel.org/linux-fsdevel/20251118082208.1034186-1-chizhiling@163.com/T/#u
+
+
+Chi Zhiling (13):
+  exfat: add cache option for __exfat_ent_get
+  exfat: support reuse buffer head for exfat_ent_get
+  exfat: improve exfat_count_num_clusters
+  exfat: improve exfat_find_last_cluster
+  exfat: remove the check for infinite cluster chain loop
+  exfat: remove the unreachable warning for cache miss cases
+  exfat: reduce the number of parameters for exfat_get_cluster()
+  exfat: reuse cache to improve exfat_get_cluster
+  exfat: remove handling of non-file types in exfat_map_cluster
+  exfat: support multi-cluster for exfat_map_cluster
+  exfat: tweak cluster cache to support zero offset
+  exfat: return the start of next cache in exfat_cache_lookup
+  exfat: support multi-cluster for exfat_get_cluster
+
+ fs/exfat/cache.c    | 149 ++++++++++++++++++++++++++++----------------
+ fs/exfat/exfat_fs.h |   7 +--
+ fs/exfat/fatent.c   |  61 +++++++++++-------
+ fs/exfat/inode.c    |  52 ++++++----------
+ 4 files changed, 157 insertions(+), 112 deletions(-)
+
+
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+prerequisite-patch-id: e5f54b5b252924be0d139310a81d57eda55bead3
 -- 
-2.47.3
+2.43.0
 
 
