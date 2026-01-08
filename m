@@ -1,354 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-72862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D49D03B9C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:17:24 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C17AD03CD6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:24:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E94A932380BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 14:47:50 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 84FDF3187708
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 14:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4651DFDA1;
-	Thu,  8 Jan 2026 14:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287602DC322;
+	Thu,  8 Jan 2026 14:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qz9pm/hC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OfqF8fF3";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qz9pm/hC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OfqF8fF3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4300B346FA4;
-	Thu,  8 Jan 2026 14:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0F450097E
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 14:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767883512; cv=none; b=tfIGJRA1/nnq5nczrxqfQ9OVJfue//kfgbLJunq1E6LNM9nqtIlLKg9oZcvM3rVer8AA3eLp/gsOynjA5udxHyZkmpyIFxWfRTfdxw4hfrpsFqm4Dt5fml9lBTPxcL721+GuWuhGMioEZR2QFqaUeE8q//vlqMeF0bW0YeULYIU=
+	t=1767883965; cv=none; b=AyXX+BUBNZz2R2fCcW6IZFwB7IDOSZLj/HPFvM6s32bRpRXZ6hUDvEYQomHhUmwTxJGO9o0OwSgTp8TSW8Lr4oVTq2R0YZT7YRIWA79Hz6PLurZ1j7f7RIIi7QsWGW7vpgiqiTC+Q+SKnzIk7G1Pk08rH1XYwhotaMa9cBO7eyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767883512; c=relaxed/simple;
-	bh=F/eTu4pG1cXQKtRdSavDbkGAtm+jieNbVY55YIiuzzg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ebgkajd+Vu6x2tWhJTpheWBew9/9XKqK4fGjVtyoOELjBirNCPDa6UHfj0QF3jIB23JV55inC4pA15b6xqVZ2ikRmtnKMyojvfmUhqxtGFnJ8T2sF+R96Kg9iyoQNONWJ6NIT2EAERmhISUkr08hPGQt/pOsCnP8yXmWSXL6dQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.107])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dn73c3BqlzJ468v;
-	Thu,  8 Jan 2026 22:45:00 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 68A0440570;
-	Thu,  8 Jan 2026 22:45:05 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 8 Jan
- 2026 14:45:03 +0000
-Date: Thu, 8 Jan 2026 14:45:02 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: John Groves <John@Groves.net>
-CC: Miklos Szeredi <miklos@szeredi.hu>, Dan Williams
-	<dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, "Alison
- Schofield" <alison.schofield@intel.com>, John Groves <jgroves@micron.com>,
-	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan
- Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, "David
- Hildenbrand" <david@kernel.org>, Christian Brauner <brauner@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Stefan
- Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef
- Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Chen
- Linxuan <chenlinxuan@uniontech.com>, "James Morse" <james.morse@arm.com>,
-	Fuad Tabba <tabba@google.com>, "Sean Christopherson" <seanjc@google.com>,
-	Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>,
-	Gregory Price <gourry@gourry.net>, Aravind Ramesh <arramesh@micron.com>, Ajay
- Joshi <ajayjoshi@micron.com>, <venkataravis@micron.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH V3 16/21] famfs_fuse: GET_DAXDEV message and
- daxdev_table
-Message-ID: <20260108144502.000024e0@huawei.com>
-In-Reply-To: <20260107153332.64727-17-john@groves.net>
-References: <20260107153244.64703-1-john@groves.net>
-	<20260107153332.64727-1-john@groves.net>
-	<20260107153332.64727-17-john@groves.net>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1767883965; c=relaxed/simple;
+	bh=cO621mnjFcoQyLOAtXlQSioDOCGoJQMyXQY0Q+B5ao0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHUS10agkeUzrg2fhwCmBHBnNSdEQOoZKSgqmGuHmoXpUiCq2PpAuyO1fqA7/AXpWn1VOHqmZHtJ51ixLSED6wYbkBfWpAfokaklvlWB3pXzobqvr1hMh8XkWjpawkGjYCXAL84Trs6lcFPBCHskn45pyESRtJQiAlQmPT866jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qz9pm/hC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OfqF8fF3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qz9pm/hC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OfqF8fF3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AB8C234317;
+	Thu,  8 Jan 2026 14:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1767883961; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z9P33gJY6cdcXN4gsUXWmBD42uSLmlczLJOrjbAI4OM=;
+	b=Qz9pm/hCHTSUWo9rtJ2/Jng0zUmzJWuIwxi4q6xl4CDS/kPrVHtkMCYd5m9BjL3OzFgP0W
+	kxmUVfymumLeU0nI0+R4A3V+saA0+Hd9JUeuRxweJ6TYb2nQWO0Yu6rtncrZQac5yRFxuE
+	RVXJVL38BcSVvSsNtX/Rrd3WaXBuj9s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1767883961;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z9P33gJY6cdcXN4gsUXWmBD42uSLmlczLJOrjbAI4OM=;
+	b=OfqF8fF3RxT47hd6FBMNm1jpI+4J1xzwkIF7TvlX+xvC+3r9cQl81KqcyicKzKLxnYoss1
+	LSXgi+FUcUjXOTCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="Qz9pm/hC";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OfqF8fF3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1767883961; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z9P33gJY6cdcXN4gsUXWmBD42uSLmlczLJOrjbAI4OM=;
+	b=Qz9pm/hCHTSUWo9rtJ2/Jng0zUmzJWuIwxi4q6xl4CDS/kPrVHtkMCYd5m9BjL3OzFgP0W
+	kxmUVfymumLeU0nI0+R4A3V+saA0+Hd9JUeuRxweJ6TYb2nQWO0Yu6rtncrZQac5yRFxuE
+	RVXJVL38BcSVvSsNtX/Rrd3WaXBuj9s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1767883961;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z9P33gJY6cdcXN4gsUXWmBD42uSLmlczLJOrjbAI4OM=;
+	b=OfqF8fF3RxT47hd6FBMNm1jpI+4J1xzwkIF7TvlX+xvC+3r9cQl81KqcyicKzKLxnYoss1
+	LSXgi+FUcUjXOTCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 996583EA63;
+	Thu,  8 Jan 2026 14:52:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EhZuJbnEX2l9WwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 08 Jan 2026 14:52:41 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5DC23A09CF; Thu,  8 Jan 2026 15:52:41 +0100 (CET)
+Date: Thu, 8 Jan 2026 15:52:41 +0100
+From: Jan Kara <jack@suse.cz>
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jack@suse.cz, brauner@kernel.or, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] fs: add <linux/init_task.h> for 'init_fs'
+Message-ID: <ykobzabaopivf4ltmayktpobcd77dyf243moioqjiaydapugd2@sucwmv52we3h>
+References: <20260108115856.238027-1-ben.dooks@codethink.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260108115856.238027-1-ben.dooks@codethink.co.uk>
+X-Spam-Score: -4.01
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: AB8C234317
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
 
-On Wed,  7 Jan 2026 09:33:25 -0600
-John Groves <John@Groves.net> wrote:
-
-> * The new GET_DAXDEV message/response is added
-> * The famfs.c:famfs_teardown() function is added as a primary teardown
->   function for famfs.
-> * The command it triggered by the update_daxdev_table() call, if there
->   are any daxdevs in the subject fmap that are not represented in the
->   daxdev_table yet.
-> * fs/namei.c: export may_open_dev()
+On Thu 08-01-26 11:58:56, Ben Dooks wrote:
+> The init_fs symbol is defined in <linux/init_task.h> but was
+> not included in fs/fs_struct.c so fix by adding the include.
 > 
-> Signed-off-by: John Groves <john@groves.net>
-Hi John,
+> Fixes the following sparse warning:
+> fs/fs_struct.c:150:18: warning: symbol 'init_fs' was not declared. Should it be static?
+> 
+> Fixes: 3e93cd671813e ("Take fs_struct handling to new file")
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-A few things inline
+Sure. Feel free to add:
 
-Thanks,
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Jonathan
+								Honza
 
 > ---
->  fs/fuse/famfs.c           | 236 ++++++++++++++++++++++++++++++++++++++
->  fs/fuse/famfs_kfmap.h     |  26 +++++
->  fs/fuse/fuse_i.h          |  13 ++-
->  fs/fuse/inode.c           |   4 +-
->  fs/namei.c                |   1 +
->  include/uapi/linux/fuse.h |  20 ++++
->  6 files changed, 298 insertions(+), 2 deletions(-)
+>  fs/fs_struct.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/fs/fuse/famfs.c b/fs/fuse/famfs.c
-> index 2aabd1d589fd..b5cd1b5c1d6c 100644
-> --- a/fs/fuse/famfs.c
-> +++ b/fs/fuse/famfs.c
-> @@ -20,6 +20,239 @@
->  #include "famfs_kfmap.h"
->  #include "fuse_i.h"
+> diff --git a/fs/fs_struct.c b/fs/fs_struct.c
+> index b8c46c5a38a0..394875d06fd6 100644
+> --- a/fs/fs_struct.c
+> +++ b/fs/fs_struct.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/path.h>
+>  #include <linux/slab.h>
+>  #include <linux/fs_struct.h>
+> +#include <linux/init_task.h>
+>  #include "internal.h"
 >  
-> +/*
-> + * famfs_teardown()
-> + *
-> + * Deallocate famfs metadata for a fuse_conn
-> + */
-> +void
-> +famfs_teardown(struct fuse_conn *fc)
-> +{
-> +	struct famfs_dax_devlist *devlist = fc->dax_devlist;
-> +	int i;
-> +
-> +	kfree(fc->shadow);
-> +
-> +	fc->dax_devlist = NULL;
-> +
-> +	if (!devlist)
-> +		return;
-> +
-> +	if (!devlist->devlist)
-
-I'm going to assume that if this is true, devlist->nslots == 0?
-If so I'd skip this check and just let the rest of the code happen.
-
-> +		goto out;
-> +
-> +	/* Close & release all the daxdevs in our table */
-> +	for (i = 0; i < devlist->nslots; i++) {
-> +		struct famfs_daxdev *dd = &devlist->devlist[i];
-> +
-> +		if (!dd->valid)
-> +			continue;
-> +
-> +		/* Release reference from dax_dev_get() */
-> +		if (dd->devp)
-> +			put_dax(dd->devp);
-> +
-> +		kfree(dd->name);
-> +	}
-> +	kfree(devlist->devlist);
-> +
-> +out:
-> +	kfree(devlist);
-> +}
-
-> +/**
-> + * famfs_fuse_get_daxdev() - Retrieve info for a DAX device from fuse server
-> + *
-> + * Send a GET_DAXDEV message to the fuse server to retrieve info on a
-> + * dax device.
-> + *
-> + * @fm:     fuse_mount
-> + * @index:  the index of the dax device; daxdevs are referred to by index
-> + *          in fmaps, and the server resolves the index to a particular daxdev
-> + *
-> + * Returns: 0=success
-> + *          -errno=failure
-> + */
-> +static int
-> +famfs_fuse_get_daxdev(struct fuse_mount *fm, const u64 index)
-> +{
-> +	struct fuse_daxdev_out daxdev_out = { 0 };
-> +	struct fuse_conn *fc = fm->fc;
-> +	struct famfs_daxdev *daxdev;
-> +	int err = 0;
-Always set before use so no need to init.
-
-> +
-> +	FUSE_ARGS(args);
-> +
-> +	/* Store the daxdev in our table */
-> +	if (index >= fc->dax_devlist->nslots) {
-> +		pr_err("%s: index(%lld) > nslots(%d)\n",
-> +		       __func__, index, fc->dax_devlist->nslots);
-> +		err = -EINVAL;
-> +		goto out;
-
-I'd return here as nothing to do.
-
-> +	}
-> +
-> +	args.opcode = FUSE_GET_DAXDEV;
-> +	args.nodeid = index;
-> +
-> +	args.in_numargs = 0;
-> +
-> +	args.out_numargs = 1;
-> +	args.out_args[0].size = sizeof(daxdev_out);
-> +	args.out_args[0].value = &daxdev_out;
-> +
-> +	/* Send GET_DAXDEV command */
-> +	err = fuse_simple_request(fm, &args);
-> +	if (err) {
-> +		pr_err("%s: err=%d from fuse_simple_request()\n",
-> +		       __func__, err);
-> +		/*
-
-I'm not sure what local comment style is, but be consistent of
-whether there is a blank line or not.
-
-> +		 * Error will be that the payload is smaller than FMAP_BUFSIZE,
-> +		 * which is the max we can handle. Empty payload handled below.
-> +		 */
-> +		goto out;
-return here is probably simpler.
-
-> +	}
-> +
-> +	down_write(&fc->famfs_devlist_sem);
-> +
-> +	daxdev = &fc->dax_devlist->devlist[index];
-> +
-> +	/* Abort if daxdev is now valid (race - another thread got it first) */
-> +	if (daxdev->valid) {
-> +		up_write(&fc->famfs_devlist_sem);
-> +		/* We already have a valid entry at this index */
-> +		pr_debug("%s: daxdev already known\n", __func__);
-> +		goto out;
-> +	}
-> +
-> +	/* Verify that the dev is valid and can be opened and gets the devno */
-> +	err = famfs_verify_daxdev(daxdev_out.name, &daxdev->devno);
-> +	if (err) {
-> +		up_write(&fc->famfs_devlist_sem);
-> +		pr_err("%s: err=%d from famfs_verify_daxdev()\n", __func__, err);
-> +		goto out;
-> +	}
-> +
-> +	/* This will fail if it's not a dax device */
-> +	daxdev->devp = dax_dev_get(daxdev->devno);
-> +	if (!daxdev->devp) {
-> +		up_write(&fc->famfs_devlist_sem);
-
-Move the label before the up_write, so you don't need to do it in each
-error case or use a guard()
-
-> +		pr_warn("%s: device %s not found or not dax\n",
-> +			__func__, daxdev_out.name);
-> +		err = -ENODEV;
-> +		goto out;
-> +	}
-> +
-> +	daxdev->name = kstrdup(daxdev_out.name, GFP_KERNEL);
-Can fail.
-
-> +	wmb(); /* all daxdev fields must be visible before marking it valid */
-> +	daxdev->valid = 1;
-> +
-> +	up_write(&fc->famfs_devlist_sem);
-> +
-> +out:
-> +	return err;
-> +}
-> +
-> +/**
-> + * famfs_update_daxdev_table() - Update the daxdev table
-> + * @fm   - fuse_mount
-> + * @meta - famfs_file_meta, in-memory format, built from a GET_FMAP response
-> + *
-> + * This function is called for each new file fmap, to verify whether all
-> + * referenced daxdevs are already known (i.e. in the table). Any daxdev
-> + * indices referenced in @meta but not in the table will be retrieved via
-> + * famfs_fuse_get_daxdev() and added to the table
-> + *
-> + * Return: 0=success
-> + *         -errno=failure
-> + */
-> +static int
-> +famfs_update_daxdev_table(
-> +	struct fuse_mount *fm,
-> +	const struct famfs_file_meta *meta)
-> +{
-> +	struct famfs_dax_devlist *local_devlist;
-> +	struct fuse_conn *fc = fm->fc;
-> +	int err;
-> +	int i;
-
-Might as well put those on one line or move i down to the loop init.
-
-> +
-> +	/* First time through we will need to allocate the dax_devlist */
-> +	if (unlikely(!fc->dax_devlist)) {
-
-I'd avoid unlikely markings unless you have good evidence they are needed.
-Let the branch predictors figure it out.
-
-> +		local_devlist = kcalloc(1, sizeof(*fc->dax_devlist), GFP_KERNEL);
-> +		if (!local_devlist)
-> +			return -ENOMEM;
-> +
-> +		local_devlist->nslots = MAX_DAXDEVS;
-> +
-> +		local_devlist->devlist = kcalloc(MAX_DAXDEVS,
-> +						 sizeof(struct famfs_daxdev),
-> +						 GFP_KERNEL);
-> +		if (!local_devlist->devlist) {
-> +			kfree(local_devlist);
-> +			return -ENOMEM;
-> +		}
-> +
-> +		/* We don't need famfs_devlist_sem here because we use cmpxchg */
-> +		if (cmpxchg(&fc->dax_devlist, NULL, local_devlist) != NULL) {
-> +			kfree(local_devlist->devlist);
-> +			kfree(local_devlist); /* another thread beat us to it */
-> +		}
-> +	}
-> +
-> +	down_read(&fc->famfs_devlist_sem);
-> +	for (i = 0; i < fc->dax_devlist->nslots; i++) {
-> +		if (!(meta->dev_bitmap & (1ULL << i)))
-
-Could you do for_each_set_bit() on that bitmap?
-Might end up clearer.
-
-> +			continue;
-> +
-> +		/* This file meta struct references devindex i
-> +		 * if devindex i isn't in the table; get it...
-> +		 */
-> +		if (!(fc->dax_devlist->devlist[i].valid)) {
-
-Maybe flip logic and do a continue as you do with the condition above.
-
-> +			up_read(&fc->famfs_devlist_sem);
-> +
-> +			err = famfs_fuse_get_daxdev(fm, i);
-> +			if (err)
-> +				pr_err("%s: failed to get daxdev=%d\n",
-> +				       __func__, i);
-> +
-> +			down_read(&fc->famfs_devlist_sem);
-> +		}
-> +	}
-> +	up_read(&fc->famfs_devlist_sem);
-> +
-> +	return 0;
-> +}
+>  /*
+> -- 
+> 2.37.2.352.g3c44437643
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
