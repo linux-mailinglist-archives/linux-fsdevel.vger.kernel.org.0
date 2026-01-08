@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-72932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F4CD061F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 21:39:18 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0FA9D06229
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 21:40:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 5C9443017C6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 20:38:57 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id CE9B13039ACC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 20:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF770330B0B;
-	Thu,  8 Jan 2026 20:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF0433066F;
+	Thu,  8 Jan 2026 20:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Vc9olPry"
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="HFFGtcTA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88A133066F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 20:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C0B330666
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 20:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767904725; cv=none; b=Vt+DEzR1MtQuPJjg2I9puALYVuRGxLjWnkxW53/82qg1HzocXO0mZhtF014tc7ZHbzLWaIiie0gXkT6rsaIkNunGlgwgnFCn7J79zrObH+v7Nw2swyoI7Pa3TWfOWmag63dKEF4XyVhlvporQMsjBlUDGWUElWP6d6MQS+iVtCI=
+	t=1767904728; cv=none; b=PEb/BF504j83cSyRiOCQdf7NYVPsHNqBxNtWH/Ee7c26bHDLSCGBPtLUP0OnfiseyggZa0DdXD7m8ZPUEWIRrasU0mWTPiL6nleLZ+6EdED7gaRU/FtYCjm1+29riCGxagN8B13xaH0/vIW4viqH+BQyKl5j4OTBuAAi7XtgYO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767904725; c=relaxed/simple;
-	bh=CQhA3mC1HF2mDq9BwlheTKnKhYcNJHlD3RCOWwoDAu4=;
+	s=arc-20240116; t=1767904728; c=relaxed/simple;
+	bh=qpZtiRNxcsJUu3AUTMQj3Awyi35/tyhY6J8Dqm1Quvo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A176W9ILGF+Fiw3v62M9VRdCSgAlyE8CEPoAzEPNdhqX2nm3Tbjm0s2Hmjd0qWjciuhR8fCh2lGIJEGnZONedGC/DU5/wbankm2Vnmh25Id5iaJBVVYpQf3VRxb+sJprHJuudf5waSl9jJgp4fH7J1YV7n1jEGCyr2/J1JERtA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Vc9olPry; arc=none smtp.client-ip=209.85.222.171
+	 MIME-Version; b=dFE/SjMK5DdCxBZCvuGLlv0b/HQpP6dAAF7vDm44b2ocm+hW2O6yGb0qm5RPZMhRM/RwTkAxUrjyxEIchuQoZkvWqjNdSwyxUT+qPW3jKBSIdGS2ux/Q4TrtdLP2KDwS5U22gOaSvm2P70uNcgbP8o1OQStcC1WMbFuQI2lgouA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=HFFGtcTA; arc=none smtp.client-ip=209.85.219.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8bc53dae8c2so496704585a.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 12:38:41 -0800 (PST)
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-88a32bf0248so28338076d6.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 12:38:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1767904721; x=1768509521; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1767904725; x=1768509525; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yOrL3864bJGfwtl8UioEmR5rhRGdyu2H2uXt3HWEC2Y=;
-        b=Vc9olPryHSrK4DKO+GwbXZOMPYDfRm7YzoSfgtJe6rN6i8gfBNR9tTrqGNbcXaUFWd
-         C9WEL29I5PIp0nOnrW802TWA3kNBNevF9AH3pNznfb4rmwzo+Bv+gQ96J3tYolmltk0o
-         HlcrfHtIsggqzRY7iR5kYp3H6uMdTasBQJNqNKuGoQGDOWklzqB7ZZocvqtqCyloK2hA
-         kHd2g7Xc6tGa++2wYYZB5rmd3E7H3re7TTKNWLluo1Z+xCNkptLtsv71k8UePjFzf95/
-         g2VuHi6dj8VTYlzIGUcEOc1j01CasObHAsrgMFZR1EzcH17OxGSQGTgbWaTH+UestQc6
-         gTBQ==
+        bh=nggVLtJRnFU0QDlUT0CWimedJUol/+KzTaLPJoqAtUY=;
+        b=HFFGtcTApntHosngjgK334Z8upT+hEJe1YlSIUt7m+8s9IFnGpbISwACJYKGBM72qk
+         nEB4sC1ThkYKzI724WdX1+NjcZFyzKKL5c+iITmvogIVkZz8Do4AACEMIorusnwlLyzR
+         2Rhu0gDdyovYpb8+yqk0tVRTZppuJahTXfU3TAoTPS7/N3w7cahCJNocg73aFGtAASD9
+         mzneFBdhddRVeZFQ6Cgy4IcfAz0WR/SBKwuHcByMwfpCOHOp18iKbEXUuKH4h5r475o2
+         HD2lPSJY/heQNxrXS4Acwf7bvAqw1IDz2hcczyGJf9+lVP6TLA1JmKTmpRar5nCeSj47
+         b01Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767904721; x=1768509521;
+        d=1e100.net; s=20230601; t=1767904725; x=1768509525;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=yOrL3864bJGfwtl8UioEmR5rhRGdyu2H2uXt3HWEC2Y=;
-        b=QAjSOC/npE6XbgE1c8BHmHxaCUlM/e19n1sUEA8YoeuRPwzv+HcjwhJVoxSaPygvU8
-         y5nWRHr70OTbVlVaAcfiNvxxgzuGF3Abr+48fpLkjxS5zKvPZbJE3obcEUWyGewcFk/H
-         8ediwryW4IX9HqYwsEmKWNhzhqlqYGnFdvB8OCuY+U+1OjxiYrlPppWKv3ZnQ8ApjA4L
-         ucNzm20FTYPz8rj6DCbm/kiQI6VqD3yBzbxjHvlKx1zvcW5HG0oudoqn+ZMmKGqrqO6A
-         D6PXBh5JX6pLrkpk7GFjVUB55Ue6/yOrF/4MORU0z8ohvk4RF1bUXKrntkZ2X/sUGSPX
-         lypg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYUFZZ2zzUKSHtF3/VKTNEkplRAzPxpY2rYnujv4oc79jM9ZO7lRbqBCAUFQtJ5cr7KwhYMbSnStXoRbJM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxemM40sQ4Npep6QN2z68AR4HSZa9DTjQPr/yYa943t4EYUyN/d
-	1iRLNcXrwH3PkItssbpBYpwlgOAw9VKik6ZXkUi1A2++sZXoz+OUMJ4huTaQCZmpLUs=
-X-Gm-Gg: AY/fxX7nrT35q+5RpWTYbiP7ZFfgZpwpbEiMo0/Yudbva0zDywMxUncNBO59fQ7sZwd
-	6ovM/Kz26PKE1LLmqLx3h9Cd7S9uOmS9hYwClf6c21w1IyZ/yb4pWDgT7VJeXvEcszdwpKrgRyh
-	OG0vFsDSQlGdl0Xjx0V7hPZ2f4Ei70lYGRVwuq2HX3u05xUwPx/lnaSXDqtOdc6DSrvmvJcw6jM
-	2P4LRBMkKmJpqw61xJeGX0+5p75nDK9D6pQWHumuiY6yEYBeCt26w9ZFt4HsNt+USj4txGlkC/P
-	GzkQVvWqUvDTZJOSa9K+7yXUePXjJfWfwvnaziYF4vqM7r+KNIrrBpHh+oDPNRn3fjNg8AFB2NN
-	j1tnbmiMwVjEQ/eb08qGvh1i9L3odStO8eb0p44J4Jc+DlHUQRMuEbzFij588G7RfTRyg8y7DAN
-	t0t7GgUTDrPUt0+i+3ov1+kRRombzMBwN1iu6jN6ARb6ShFxThgxV3gdGQWeGxXGPGdymVl2e/R
-	xs=
-X-Google-Smtp-Source: AGHT+IErusoCASFUMJ5xblQXCL2hFphAjRCx8AogbVf/OleyczW51nyjXSqkJjk86aDTspqXYukd7w==
-X-Received: by 2002:a05:620a:6ccd:b0:8b2:e17a:37 with SMTP id af79cd13be357-8c3893f239bmr1013342785a.43.1767904720528;
-        Thu, 08 Jan 2026 12:38:40 -0800 (PST)
+        bh=nggVLtJRnFU0QDlUT0CWimedJUol/+KzTaLPJoqAtUY=;
+        b=PPkpb8zb6LDZUhc7+VLspZKxHyhJHsvHAxTwINDl6QNbH2QHjsEYGKYL3O/9cy5AVQ
+         m92G+WmGG2V/pIrcHujbge6htN8hi9rlB75MARzD0jtIz4Eh0SlzhLfwKwI8QhPT1/dr
+         nos/0CkGx3fxxSZk/a8ddekXyvuUwCu/ENuXfdndol7N0+qu3Ln3ikak1D4NX61JGZoE
+         +Y4HvPIF2ocdvdoSkb7S6Jq6ko0HTS/D+FtAnsSpd4pf3Y3a7QAEDqP7IhnGy4ACQsc5
+         TPf3xIf8aYrs48Ynd8hSFCaNslL+ztM1hRmfbd40M8U28Nyo1PTT08/VThB2nTjLjPsA
+         ekUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAfox4m00xK8G2tyJ3c9pDrZCDFfHCG2mCXo9+fylUjD6bTOrYjjm5TqiivpIrz8FzeCHPwwu0Eg/zCc1Y@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNTmDczDyrCBpjbSICWj3+586ds9am239mSqjknpLvT0RZpCER
+	iIhZsMlVS2SLit/5woctgzmr4Q4UAS7FqdIInerDugUDxsvgsZMcECDp2RWsWsW3NbI=
+X-Gm-Gg: AY/fxX5jAUN4qJ+2iq7m4xkPfaz+Cj8Mik6Nw0JSFl3wrXnkzefrR+V724dO+z5nn06
+	UYtfHu3v1GD8XBgf+IPmXiW0jKpkZxcQXKpfQrmD7rH0Ky8sblGZqnAxIxN0R8TaCiFjhLGB6sr
+	xX/pv7upduaj++NPQwc51AykpQOyXH1Z7RCOwh9f2Il4s9orGd/UcScc3ndBaIlNoMi1EWeZDI+
+	3Yy1opCb0ePVPWthuwBllODKGjZLyFaP6B6XUpPaXqn+CvqWmM4qbwBgjHmxOJcuT8K/hAmqF31
+	Y5fRsZoMYVVyWKgSQPnPeT1xGfIlT5SaNxvZWnMzf8+88TITXTY17EN9oRgX6/aa/uA1veNQ5LW
+	wMgJM+l3VmYWBUZ7jgb3E+CkXxw1ABfQpefIY0yxYNHZO10RS9jaWnPHugr+6Tt3YF+c7iASTGD
+	1AWYGQFYCTqPl07N6WJ1+hr3APEvaKJMsHu7jyzbJ+T5Ps59TpGavPLLBMSvs2zyspbidfzHjAA
+	+k=
+X-Google-Smtp-Source: AGHT+IGGkUof/CU2/WL6ia65lx/hKwi6wIF+fNWN77FX8bbJUBtv8zQ3F0zWY/9RAxC3ckJGR4/xjQ==
+X-Received: by 2002:a05:6214:e4f:b0:88a:52a1:2576 with SMTP id 6a1803df08f44-8908418394fmr114080716d6.1.1767904725150;
+        Thu, 08 Jan 2026 12:38:45 -0800 (PST)
 Received: from gourry-fedora-PF4VCD3F.lan (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-890770e472csm60483886d6.23.2026.01.08.12.38.38
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-890770e472csm60483886d6.23.2026.01.08.12.38.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 12:38:40 -0800 (PST)
+        Thu, 08 Jan 2026 12:38:44 -0800 (PST)
 From: Gregory Price <gourry@gourry.net>
 To: linux-mm@kvack.org,
 	cgroups@vger.kernel.org,
@@ -133,11 +133,10 @@ Cc: linux-doc@vger.kernel.org,
 	apopple@nvidia.com,
 	cl@gentwo.org,
 	harry.yoo@oracle.com,
-	zhengqi.arch@bytedance.com,
-	Balbir Singh <bsingharora@gmail.com>
-Subject: [RFC PATCH v3 1/8] numa,memory_hotplug: create N_PRIVATE (Private Nodes)
-Date: Thu,  8 Jan 2026 15:37:48 -0500
-Message-ID: <20260108203755.1163107-2-gourry@gourry.net>
+	zhengqi.arch@bytedance.com
+Subject: [RFC PATCH v3 2/8] mm: constify oom_control, scan_control, and alloc_context nodemask
+Date: Thu,  8 Jan 2026 15:37:49 -0500
+Message-ID: <20260108203755.1163107-3-gourry@gourry.net>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260108203755.1163107-1-gourry@gourry.net>
 References: <20260108203755.1163107-1-gourry@gourry.net>
@@ -149,376 +148,262 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-N_MEMORY nodes are intended to contain general System RAM.  Today, some
-device drivers hotplug their memory (marked Specific Purpose or Reserved)
-to get access to mm/ services, but don't intend it for general consumption.
+The nodemasks in these structures may come from a variety of sources,
+including tasks and cpusets - and should never be modified by any code
+when being passed around inside another context.
 
-This creates reliability issues as there are no isolation guarantees.
-
-Create N_PRIVATE for memory nodes whose memory is not intended for
-general consumption.  This state is mutually exclusive with N_MEMORY.
-
-This will allow existing service code (like page_alloc.c) to manage
-N_PRIVATE nodes without exposing N_MEMORY users to that memory.
-
-Add `node_mark_private()` for device drivers to call to mark a node
-as private prior to hotplugging memory.  This fails if the node is
-already online or already has N_MEMORY.
-
-Private nodes must have a memory types so that multiple drivers
-trying to online private memory onto the same node are warned
-when a conflict occurs.
-
-Suggested-by: David Hildenbrand <david@kernel.org>
-Suggested-by: Balbir Singh <bsingharora@gmail.com>
 Signed-off-by: Gregory Price <gourry@gourry.net>
 ---
- drivers/base/node.c      | 199 +++++++++++++++++++++++++++++++++++++++
- include/linux/node.h     |  60 ++++++++++++
- include/linux/nodemask.h |   1 +
- mm/memory_hotplug.c      |   2 +-
- 4 files changed, 261 insertions(+), 1 deletion(-)
+ include/linux/cpuset.h | 4 ++--
+ include/linux/mm.h     | 4 ++--
+ include/linux/mmzone.h | 6 +++---
+ include/linux/oom.h    | 2 +-
+ include/linux/swap.h   | 2 +-
+ kernel/cgroup/cpuset.c | 2 +-
+ mm/internal.h          | 2 +-
+ mm/mmzone.c            | 5 +++--
+ mm/page_alloc.c        | 4 ++--
+ mm/show_mem.c          | 9 ++++++---
+ mm/vmscan.c            | 6 +++---
+ 11 files changed, 25 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 00cf4532f121..b503782ea109 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -861,6 +861,193 @@ void register_memory_blocks_under_node_hotplug(int nid, unsigned long start_pfn,
- 			   (void *)&nid, register_mem_block_under_node_hotplug);
- 	return;
- }
-+
-+static enum private_memtype *private_nodes;
-+/* Per-node list of private node operations callbacks */
-+static struct list_head private_node_ops_list[MAX_NUMNODES];
-+static DEFINE_MUTEX(private_node_ops_lock);
-+static bool private_node_ops_initialized;
-+
-+/*
-+ * Note: private_node_ops_list is initialized in node_dev_init() before
-+ * any calls to node_register_private() can occur.
-+ */
-+
-+/**
-+ * node_register_private - Mark a node as private and register ops
-+ * @nid: Node identifier
-+ * @ops: Callback operations structure (required, but callbacks may be NULL)
-+ *
-+ * Mark a node as private and register the given ops structure. The ops
-+ * structure must have res_start and res_end set to the physical address
-+ * range covered by this registration, and memtype set to the private
-+ * memory type. Multiple registrations for the same node are allowed as
-+ * long as they have the same memtype.
-+ *
-+ * Returns 0 on success, negative error code on failure.
-+ */
-+int node_register_private(int nid, struct private_node_ops *ops)
-+{
-+	int rc = 0;
-+	enum private_memtype ctype;
-+	enum private_memtype type;
-+
-+	if (!ops)
-+		return -EINVAL;
-+
-+	type = ops->memtype;
-+
-+	if (!node_possible(nid) || !private_nodes || type >= NODE_MAX_MEMTYPE)
-+		return -EINVAL;
-+
-+	/* Validate resource bounds */
-+	if (ops->res_start > ops->res_end)
-+		return -EINVAL;
-+
-+	mutex_lock(&private_node_ops_lock);
-+
-+	/* hotplug lock must be held while checking online/node state */
-+	mem_hotplug_begin();
-+
-+	/*
-+	 * N_PRIVATE and N_MEMORY are mutually exclusive. Fail if the node
-+	 * already has N_MEMORY set, regardless of online state.
-+	 */
-+	if (node_state(nid, N_MEMORY)) {
-+		rc = -EBUSY;
-+		goto out;
-+	}
-+
-+	ctype = private_nodes[nid];
-+	if (ctype > NODE_MEM_NOTYPE && ctype != type) {
-+		rc = -EINVAL;
-+		goto out;
-+	}
-+
-+	/* Initialize the ops list entry and add to the node's list */
-+	INIT_LIST_HEAD(&ops->list);
-+	list_add_tail_rcu(&ops->list, &private_node_ops_list[nid]);
-+
-+	private_nodes[nid] = type;
-+	node_set_state(nid, N_PRIVATE);
-+out:
-+	mem_hotplug_done();
-+	mutex_unlock(&private_node_ops_lock);
-+	return rc;
-+}
-+EXPORT_SYMBOL_GPL(node_register_private);
-+
-+/**
-+ * node_unregister_private - Unregister ops and potentially unmark node as private
-+ * @nid: Node identifier
-+ * @ops: Callback operations structure to remove
-+ *
-+ * Remove the given ops structure from the node's ops list. If this is
-+ * the last ops structure for the node and the node is offline, the
-+ * node is unmarked as private.
-+ */
-+void node_unregister_private(int nid, struct private_node_ops *ops)
-+{
-+	if (!node_possible(nid) || !private_nodes || !ops)
-+		return;
-+
-+	mutex_lock(&private_node_ops_lock);
-+	mem_hotplug_begin();
-+
-+	list_del_rcu(&ops->list);
-+	/* If list is now empty, clear private state */
-+	if (list_empty(&private_node_ops_list[nid])) {
-+		private_nodes[nid] = NODE_MEM_NOTYPE;
-+		node_clear_state(nid, N_PRIVATE);
-+	}
-+
-+	mem_hotplug_done();
-+	mutex_unlock(&private_node_ops_lock);
-+	synchronize_rcu();
-+}
-+EXPORT_SYMBOL_GPL(node_unregister_private);
-+
-+/**
-+ * node_private_allocated - Validate a page allocation from a private node
-+ * @page: The allocated page
-+ *
-+ * Find the ops structure whose region contains the page's physical address
-+ * and call its page_allocated callback if one is registered.
-+ *
-+ * Returns:
-+ *   0 if the callback succeeds or no callback is registered for this region
-+ *   -ENXIO if the page is not found in any registered region
-+ *   Other negative error code if the callback indicates the page is not safe
-+ */
-+int node_private_allocated(struct page *page)
-+{
-+	struct private_node_ops *ops;
-+	phys_addr_t page_phys;
-+	int nid = page_to_nid(page);
-+	int ret = -ENXIO;
-+
-+	if (!node_possible(nid) || nid >= MAX_NUMNODES)
-+		return -ENXIO;
-+
-+	if (!private_node_ops_initialized)
-+		return -ENXIO;
-+
-+	page_phys = page_to_phys(page);
-+
-+	/*
-+	 * Use RCU to safely traverse the list without holding locks.
-+	 * Writers use list_add_tail_rcu/list_del_rcu with synchronize_rcu()
-+	 * to ensure safe concurrent access.
-+	 */
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(ops, &private_node_ops_list[nid], list) {
-+		if (page_phys >= ops->res_start && page_phys <= ops->res_end) {
-+			if (ops->page_allocated)
-+				ret = ops->page_allocated(page, ops->data);
-+			else
-+				ret = 0;
-+			break;
-+		}
-+	}
-+	rcu_read_unlock();
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(node_private_allocated);
-+
-+/**
-+ * node_private_freed - Notify that a page from a private node is being freed
-+ * @page: The page being freed
-+ *
-+ * Find the ops structure whose region contains the page's physical address
-+ * and call its page_freed callback if one is registered.
-+ */
-+void node_private_freed(struct page *page)
-+{
-+	struct private_node_ops *ops;
-+	phys_addr_t page_phys;
-+	int nid = page_to_nid(page);
-+
-+	if (!node_possible(nid) || nid >= MAX_NUMNODES)
-+		return;
-+
-+	if (!private_node_ops_initialized)
-+		return;
-+
-+	page_phys = page_to_phys(page);
-+
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(ops, &private_node_ops_list[nid], list) {
-+		if (page_phys >= ops->res_start && page_phys <= ops->res_end) {
-+			if (ops->page_freed)
-+				ops->page_freed(page, ops->data);
-+			break;
-+		}
-+	}
-+	rcu_read_unlock();
-+}
-+EXPORT_SYMBOL_GPL(node_private_freed);
-+
- #endif /* CONFIG_MEMORY_HOTPLUG */
+diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+index 631577384677..fe4f29624117 100644
+--- a/include/linux/cpuset.h
++++ b/include/linux/cpuset.h
+@@ -81,7 +81,7 @@ extern bool cpuset_cpu_is_isolated(int cpu);
+ extern nodemask_t cpuset_mems_allowed(struct task_struct *p);
+ #define cpuset_current_mems_allowed (current->mems_allowed)
+ void cpuset_init_current_mems_allowed(void);
+-int cpuset_nodemask_valid_mems_allowed(nodemask_t *nodemask);
++int cpuset_nodemask_valid_mems_allowed(const nodemask_t *nodemask);
  
- /**
-@@ -959,6 +1146,7 @@ static struct node_attr node_state_attr[] = {
- 	[N_HIGH_MEMORY] = _NODE_ATTR(has_high_memory, N_HIGH_MEMORY),
- #endif
- 	[N_MEMORY] = _NODE_ATTR(has_memory, N_MEMORY),
-+	[N_PRIVATE] = _NODE_ATTR(has_private_memory, N_PRIVATE),
- 	[N_CPU] = _NODE_ATTR(has_cpu, N_CPU),
- 	[N_GENERIC_INITIATOR] = _NODE_ATTR(has_generic_initiator,
- 					   N_GENERIC_INITIATOR),
-@@ -972,6 +1160,7 @@ static struct attribute *node_state_attrs[] = {
- 	&node_state_attr[N_HIGH_MEMORY].attr.attr,
- #endif
- 	&node_state_attr[N_MEMORY].attr.attr,
-+	&node_state_attr[N_PRIVATE].attr.attr,
- 	&node_state_attr[N_CPU].attr.attr,
- 	&node_state_attr[N_GENERIC_INITIATOR].attr.attr,
- 	NULL
-@@ -1007,5 +1196,15 @@ void __init node_dev_init(void)
- 			panic("%s() failed to add node: %d\n", __func__, ret);
- 	}
+ extern bool cpuset_current_node_allowed(int node, gfp_t gfp_mask);
  
-+	private_nodes = kzalloc(sizeof(enum private_memtype) * MAX_NUMNODES,
-+				GFP_KERNEL);
-+	if (!private_nodes)
-+		pr_warn("Failed to allocate private_nodes, private node support disabled\n");
-+
-+	/* Initialize private node ops lists */
-+	for (i = 0; i < MAX_NUMNODES; i++)
-+		INIT_LIST_HEAD(&private_node_ops_list[i]);
-+	private_node_ops_initialized = true;
-+
- 	register_memory_blocks_under_nodes();
- }
-diff --git a/include/linux/node.h b/include/linux/node.h
-index 0269b064ba65..53a9fb63b60e 100644
---- a/include/linux/node.h
-+++ b/include/linux/node.h
-@@ -62,6 +62,47 @@ enum cache_mode {
- 	NODE_CACHE_ADDR_MODE_EXTENDED_LINEAR,
- };
+@@ -226,7 +226,7 @@ static inline nodemask_t cpuset_mems_allowed(struct task_struct *p)
+ #define cpuset_current_mems_allowed (node_states[N_MEMORY])
+ static inline void cpuset_init_current_mems_allowed(void) {}
  
-+enum private_memtype {
-+	NODE_MEM_NOTYPE,
-+	NODE_MEM_ZSWAP,
-+	NODE_MEM_COMPRESSED,
-+	NODE_MEM_ACCELERATOR,
-+	NODE_MEM_DEMOTE_ONLY,
-+	NODE_MAX_MEMTYPE,
-+};
-+
-+/**
-+ * struct private_node_ops - Callbacks for private node operations
-+ * @list: List node for per-node ops list
-+ * @res_start: Start physical address of the memory region
-+ * @res_end: End physical address of the memory region (inclusive)
-+ * @memtype: Private node memory type for this region
-+ * @page_allocated: Called after a page is allocated from this region
-+ *                  to validate that the page is safe to use. Returns 0
-+ *                  on success, negative error code on failure. If this
-+ *                  returns an error, the caller should free the page
-+ *                  and try another node. May be NULL if no validation
-+ *                  is needed.
-+ * @page_freed: Called when a page from this region is being freed.
-+ *              Allows the driver to update its internal tracking.
-+ *              May be NULL if no notification is needed.
-+ * @data: Driver-private data passed to callbacks
-+ *
-+ * Multiple drivers may register ops for a single private node. Each
-+ * registration covers a specific physical memory region. When a page
-+ * is allocated, the appropriate ops structure is found by matching
-+ * the page's physical address against the registered regions.
-+ */
-+struct private_node_ops {
-+	struct list_head list;
-+	resource_size_t res_start;
-+	resource_size_t res_end;
-+	enum private_memtype memtype;
-+	int (*page_allocated)(struct page *page, void *data);
-+	void (*page_freed)(struct page *page, void *data);
-+	void *data;
-+};
-+
- /**
-  * struct node_cache_attrs - system memory caching attributes
-  *
-@@ -121,6 +162,10 @@ extern struct node *node_devices[];
- #if defined(CONFIG_MEMORY_HOTPLUG) && defined(CONFIG_NUMA)
- void register_memory_blocks_under_node_hotplug(int nid, unsigned long start_pfn,
- 					       unsigned long end_pfn);
-+int node_register_private(int nid, struct private_node_ops *ops);
-+void node_unregister_private(int nid, struct private_node_ops *ops);
-+int node_private_allocated(struct page *page);
-+void node_private_freed(struct page *page);
- #else
- static inline void register_memory_blocks_under_node_hotplug(int nid,
- 							     unsigned long start_pfn,
-@@ -130,6 +175,21 @@ static inline void register_memory_blocks_under_node_hotplug(int nid,
- static inline void register_memory_blocks_under_nodes(void)
+-static inline int cpuset_nodemask_valid_mems_allowed(nodemask_t *nodemask)
++static inline int cpuset_nodemask_valid_mems_allowed(const nodemask_t *nodemask)
  {
+ 	return 1;
  }
-+static inline int node_register_private(int nid, struct private_node_ops *ops)
-+{
-+	return -ENODEV;
-+}
-+static inline void node_unregister_private(int nid,
-+					   struct private_node_ops *ops)
-+{
-+}
-+static inline int node_private_allocated(struct page *page)
-+{
-+	return -ENXIO;
-+}
-+static inline void node_private_freed(struct page *page)
-+{
-+}
- #endif
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 45dfb2f2883c..dd4f5d49f638 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3572,7 +3572,7 @@ extern int __meminit early_pfn_to_nid(unsigned long pfn);
+ extern void mem_init(void);
+ extern void __init mmap_init(void);
  
- struct node_notify {
-diff --git a/include/linux/nodemask.h b/include/linux/nodemask.h
-index bd38648c998d..dac250c6f1a9 100644
---- a/include/linux/nodemask.h
-+++ b/include/linux/nodemask.h
-@@ -391,6 +391,7 @@ enum node_states {
- 	N_HIGH_MEMORY = N_NORMAL_MEMORY,
- #endif
- 	N_MEMORY,		/* The node has memory(regular, high, movable) */
-+	N_PRIVATE,		/* The node's memory is private */
- 	N_CPU,		/* The node has one or more cpus */
- 	N_GENERIC_INITIATOR,	/* The node has one or more Generic Initiators */
- 	NR_NODE_STATES
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 389989a28abe..57463fcb4021 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1207,7 +1207,7 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
- 	online_pages_range(pfn, nr_pages);
- 	adjust_present_page_count(pfn_to_page(pfn), group, nr_pages);
+-extern void __show_mem(unsigned int flags, nodemask_t *nodemask, int max_zone_idx);
++extern void __show_mem(unsigned int flags, const nodemask_t *nodemask, int max_zone_idx);
+ static inline void show_mem(void)
+ {
+ 	__show_mem(0, NULL, MAX_NR_ZONES - 1);
+@@ -3582,7 +3582,7 @@ extern void si_meminfo(struct sysinfo * val);
+ extern void si_meminfo_node(struct sysinfo *val, int nid);
  
--	if (node_arg.nid >= 0)
-+	if (node_arg.nid >= 0 && !node_state(nid, N_PRIVATE))
- 		node_set_state(nid, N_MEMORY);
- 	if (need_zonelists_rebuild)
- 		build_all_zonelists(NULL);
+ extern __printf(3, 4)
+-void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...);
++void warn_alloc(gfp_t gfp_mask, const nodemask_t *nodemask, const char *fmt, ...);
+ 
+ extern void setup_per_cpu_pageset(void);
+ 
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 6a7db0fee54a..7f94d67ffac4 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -1721,7 +1721,7 @@ static inline int zonelist_node_idx(const struct zoneref *zoneref)
+ 
+ struct zoneref *__next_zones_zonelist(struct zoneref *z,
+ 					enum zone_type highest_zoneidx,
+-					nodemask_t *nodes);
++					const nodemask_t *nodes);
+ 
+ /**
+  * next_zones_zonelist - Returns the next zone at or below highest_zoneidx within the allowed nodemask using a cursor within a zonelist as a starting point
+@@ -1740,7 +1740,7 @@ struct zoneref *__next_zones_zonelist(struct zoneref *z,
+  */
+ static __always_inline struct zoneref *next_zones_zonelist(struct zoneref *z,
+ 					enum zone_type highest_zoneidx,
+-					nodemask_t *nodes)
++					const nodemask_t *nodes)
+ {
+ 	if (likely(!nodes && zonelist_zone_idx(z) <= highest_zoneidx))
+ 		return z;
+@@ -1766,7 +1766,7 @@ static __always_inline struct zoneref *next_zones_zonelist(struct zoneref *z,
+  */
+ static inline struct zoneref *first_zones_zonelist(struct zonelist *zonelist,
+ 					enum zone_type highest_zoneidx,
+-					nodemask_t *nodes)
++					const nodemask_t *nodes)
+ {
+ 	return next_zones_zonelist(zonelist->_zonerefs,
+ 							highest_zoneidx, nodes);
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index 7b02bc1d0a7e..00da05d227e6 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -30,7 +30,7 @@ struct oom_control {
+ 	struct zonelist *zonelist;
+ 
+ 	/* Used to determine mempolicy */
+-	nodemask_t *nodemask;
++	const nodemask_t *nodemask;
+ 
+ 	/* Memory cgroup in which oom is invoked, or NULL for global oom */
+ 	struct mem_cgroup *memcg;
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 62fc7499b408..1569f3f4773b 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -370,7 +370,7 @@ extern void swap_setup(void);
+ /* linux/mm/vmscan.c */
+ extern unsigned long zone_reclaimable_pages(struct zone *zone);
+ extern unsigned long try_to_free_pages(struct zonelist *zonelist, int order,
+-					gfp_t gfp_mask, nodemask_t *mask);
++					gfp_t gfp_mask, const nodemask_t *mask);
+ 
+ #define MEMCG_RECLAIM_MAY_SWAP (1 << 1)
+ #define MEMCG_RECLAIM_PROACTIVE (1 << 2)
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 289fb1a72550..a3ade9d5968b 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -4326,7 +4326,7 @@ nodemask_t cpuset_mems_allowed(struct task_struct *tsk)
+  *
+  * Are any of the nodes in the nodemask allowed in current->mems_allowed?
+  */
+-int cpuset_nodemask_valid_mems_allowed(nodemask_t *nodemask)
++int cpuset_nodemask_valid_mems_allowed(const nodemask_t *nodemask)
+ {
+ 	return nodes_intersects(*nodemask, current->mems_allowed);
+ }
+diff --git a/mm/internal.h b/mm/internal.h
+index 6dc83c243120..50d32055b544 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -587,7 +587,7 @@ void page_alloc_sysctl_init(void);
+  */
+ struct alloc_context {
+ 	struct zonelist *zonelist;
+-	nodemask_t *nodemask;
++	const nodemask_t *nodemask;
+ 	struct zoneref *preferred_zoneref;
+ 	int migratetype;
+ 
+diff --git a/mm/mmzone.c b/mm/mmzone.c
+index 0c8f181d9d50..59dc3f2076a6 100644
+--- a/mm/mmzone.c
++++ b/mm/mmzone.c
+@@ -43,7 +43,8 @@ struct zone *next_zone(struct zone *zone)
+ 	return zone;
+ }
+ 
+-static inline int zref_in_nodemask(struct zoneref *zref, nodemask_t *nodes)
++static inline int zref_in_nodemask(struct zoneref *zref,
++				   const nodemask_t *nodes)
+ {
+ #ifdef CONFIG_NUMA
+ 	return node_isset(zonelist_node_idx(zref), *nodes);
+@@ -55,7 +56,7 @@ static inline int zref_in_nodemask(struct zoneref *zref, nodemask_t *nodes)
+ /* Returns the next zone at or below highest_zoneidx in a zonelist */
+ struct zoneref *__next_zones_zonelist(struct zoneref *z,
+ 					enum zone_type highest_zoneidx,
+-					nodemask_t *nodes)
++					const nodemask_t *nodes)
+ {
+ 	/*
+ 	 * Find the next suitable zone to use for the allocation.
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index ecb2646b57ba..bb89d81aa68c 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3988,7 +3988,7 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 	return NULL;
+ }
+ 
+-static void warn_alloc_show_mem(gfp_t gfp_mask, nodemask_t *nodemask)
++static void warn_alloc_show_mem(gfp_t gfp_mask, const nodemask_t *nodemask)
+ {
+ 	unsigned int filter = SHOW_MEM_FILTER_NODES;
+ 
+@@ -4008,7 +4008,7 @@ static void warn_alloc_show_mem(gfp_t gfp_mask, nodemask_t *nodemask)
+ 	mem_cgroup_show_protected_memory(NULL);
+ }
+ 
+-void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
++void warn_alloc(gfp_t gfp_mask, const nodemask_t *nodemask, const char *fmt, ...)
+ {
+ 	struct va_format vaf;
+ 	va_list args;
+diff --git a/mm/show_mem.c b/mm/show_mem.c
+index 3a4b5207635d..24685b5c6dcf 100644
+--- a/mm/show_mem.c
++++ b/mm/show_mem.c
+@@ -116,7 +116,8 @@ void si_meminfo_node(struct sysinfo *val, int nid)
+  * Determine whether the node should be displayed or not, depending on whether
+  * SHOW_MEM_FILTER_NODES was passed to show_free_areas().
+  */
+-static bool show_mem_node_skip(unsigned int flags, int nid, nodemask_t *nodemask)
++static bool show_mem_node_skip(unsigned int flags, int nid,
++			       const nodemask_t *nodemask)
+ {
+ 	if (!(flags & SHOW_MEM_FILTER_NODES))
+ 		return false;
+@@ -177,7 +178,8 @@ static bool node_has_managed_zones(pg_data_t *pgdat, int max_zone_idx)
+  * SHOW_MEM_FILTER_NODES: suppress nodes that are not allowed by current's
+  *   cpuset.
+  */
+-static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
++static void show_free_areas(unsigned int filter, const nodemask_t *nodemask,
++			    int max_zone_idx)
+ {
+ 	unsigned long free_pcp = 0;
+ 	int cpu, nid;
+@@ -399,7 +401,8 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
+ 	show_swap_cache_info();
+ }
+ 
+-void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
++void __show_mem(unsigned int filter, const nodemask_t *nodemask,
++		int max_zone_idx)
+ {
+ 	unsigned long total = 0, reserved = 0, highmem = 0;
+ 	struct zone *zone;
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 7c962ee7819f..23f68e754738 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -80,7 +80,7 @@ struct scan_control {
+ 	 * Nodemask of nodes allowed by the caller. If NULL, all nodes
+ 	 * are scanned.
+ 	 */
+-	nodemask_t	*nodemask;
++	const nodemask_t *nodemask;
+ 
+ 	/*
+ 	 * The memory cgroup that hit its limit and as a result is the
+@@ -6502,7 +6502,7 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)
+  * happens, the page allocator should not consider triggering the OOM killer.
+  */
+ static bool throttle_direct_reclaim(gfp_t gfp_mask, struct zonelist *zonelist,
+-					nodemask_t *nodemask)
++				    const nodemask_t *nodemask)
+ {
+ 	struct zoneref *z;
+ 	struct zone *zone;
+@@ -6582,7 +6582,7 @@ static bool throttle_direct_reclaim(gfp_t gfp_mask, struct zonelist *zonelist,
+ }
+ 
+ unsigned long try_to_free_pages(struct zonelist *zonelist, int order,
+-				gfp_t gfp_mask, nodemask_t *nodemask)
++				gfp_t gfp_mask, const nodemask_t *nodemask)
+ {
+ 	unsigned long nr_reclaimed;
+ 	struct scan_control sc = {
 -- 
 2.52.0
 
