@@ -1,179 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-72791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 795BCD01FE3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 11:00:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B524FD01BF0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 10:09:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id AAA6937F64AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 08:52:39 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id E9A1337EA651
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 08:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3333803C5;
-	Thu,  8 Jan 2026 07:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E56F3624D1;
+	Thu,  8 Jan 2026 08:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="e5OYp+6w"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvYKfiFc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B3037E2E4;
-	Thu,  8 Jan 2026 07:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C84635BDA6
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 08:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767858651; cv=none; b=haiREq2x1pIFfpVpc7+IbMdwN/Gucc4sYmhcEQGJl2t+2r99i+k/G1r2wW55/YOKgkwFdF8lh1MBrnjsq6tsDZGZ7ezhmoLugPYtmB1bhPJwHKBx45Q6wKCb9KYtef4grTqPrn8QBhc6yONGDsSfskExJTskUTvJeFs44n/cgDU=
+	t=1767860672; cv=none; b=qdX+D2rvROw5TUNzAu4d/xR3gsWRX+BnRYnB0TJ4czK/6Yy7vF72lc8PBq/V5vZUmAOeAgZRk/rn8KwtrVw0vU5TqMx0gomMMwgIIrA4VzCaAaPtlIA6NXLV4WE0t0K2FeigeOHXnKJo3vYCXLtexHjqRdb65CcT6rfpLEq3o0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767858651; c=relaxed/simple;
-	bh=Jkg76GN876FLHX9JO/vRg6R8P8IvvWMAN51ZlTa0aQk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PWWkiCvwVD72nz6Mz0hwrTfGOz0/gtm4D8MRDl8JSUwVHMAQKCdgPCn93DXKzJbRJimfY2i5ZXI/uYCb6KegeWjXW9pL6YpgYz7pwNdfEcKSk4vV9A+8uubrkXO1QT0bjSiCYavqtvIOeLqLnKbfrWu09pAaHLkkBeh3P0JESSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=e5OYp+6w; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=iC
-	nNoDLQBrrxJ+PEef0TIPaw8E9VJArDrJ/szk9uvO0=; b=e5OYp+6wnYWBaoBRNP
-	I3J4fyJhiIimI0QtcEzgDR9K9/zfnGzPhGPfk26G1CGYzROyZjQU/AQxetqbXI9S
-	SJn+sYtj86Y0VXs3VQmSWlkEDSUpUWI4ekTVbvbxoV2xTXumRxakZJFLUBpdzShi
-	9NXmKH30zNQjUk2ByjjQ2gbZM=
-Received: from czl-ubuntu-pc.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wBH6+WpYV9pdSx_Eg--.889S12;
-	Thu, 08 Jan 2026 15:50:09 +0800 (CST)
-From: Chi Zhiling <chizhiling@163.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	Yuezhang Mo <yuezhang.mo@sony.com>,
-	Chi Zhiling <chizhiling@kylinos.cn>
-Subject: [PATCH v2 10/13] exfat: support multi-cluster for exfat_map_cluster
-Date: Thu,  8 Jan 2026 15:49:26 +0800
-Message-ID: <20260108074929.356683-11-chizhiling@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260108074929.356683-1-chizhiling@163.com>
-References: <20260108074929.356683-1-chizhiling@163.com>
+	s=arc-20240116; t=1767860672; c=relaxed/simple;
+	bh=pZRdMpJGOsjy74uDFjTdLpYm7MaofGdtP+epg3VJAVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J7ZqRsakNQOcel2CsGFf19uKW4UbhhtHvb/mKtTA2GfqGZDjybhjisx7oxrUTD1Yc9gyOggookg2xvpBZYRbAV3J5UTQx3zF60v17JLz8ROh/VlV/7F//s1r877k+vsX1elg5Gdo4DccCCnqpSiZesDFqfDaGDd6CxfCP2KWdZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvYKfiFc; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-650854c473fso3191602a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 00:24:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767860663; x=1768465463; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M0kq/g9rXrnPRB1mSfblx8o9bXq8xp0GPwblM8E2qws=;
+        b=HvYKfiFcFiDzGeXLku02RTLosqpvElClwQ54TNK6/ojMG6T4R93yR2c2FHLByc8yRs
+         plyF/UKirR4X2jcRh0usBkZvtUCxnKXFzvOLHCeZeeE8tFPm4qdqkCHNvww7QcujNsIf
+         ZkGwglXxvDIXLanpB2zwd52BJeGX+IF722RKiYzge4Vx+Z/bCHHa/xxb4Nuy/9+JcgLE
+         eKVwkfxRvcCU8b0Ej6qA6/O5VL5+Y0r0MfuwKlKFoR2C/9qDpIvIYoH0CQwZivvI7awf
+         R4/nCvKX2FuDV22DZXZXxuSlA52WOa94x7DxoiKCBGqa+PkU508lIAeJInjqFUvwSaLy
+         gUwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767860663; x=1768465463;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=M0kq/g9rXrnPRB1mSfblx8o9bXq8xp0GPwblM8E2qws=;
+        b=eHx3X/5/GrzLdXDZzgBb5WT4Dp7z/gu9JWEoFKuDPI7KQKo954W3dDQphu87iJLfP2
+         KKeWfAr2wKZKyit5eu4fPISO+7drGoUwXup9qveaxiyuGnVHmsn7Fzr/+N8CFmNb7sVH
+         3/wwmqogybNkfGNzvQbbLWfMmNl/tZGscRZuOmu9IW7CLtvMHCPallr3uFPygFEfodVS
+         2RLe5gcB7OeQczT+tNsjCKGh/X7GyEJ++mfEcO8D3y71T34MDacQM6N2oAW0pgTLMDB4
+         7a3/Q6Se2Zf2TiibwwYhZ6+4p/L3I9Nj2docS7272B0Y6VcQmC0O4jy/aOLas8HhkXEu
+         O1ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUuKFDQrEK3Ldi6xTRStu0MVY3gBvW+IkdjBrJoBbTDYftOm2yyF+/FosrNZFjXt7DRxbcnyDaleY7gseM0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5EagF75YHE0/K0jQUFzueKOolU0o0UTX94pHiW7WCPg5d0DRv
+	kR7/vgpUp+HVls27bzUVrmUBf3XILLSIbGab05Knn/0z7dRlvNJlbhwCPEUH5ybEVezQBAqXx5c
+	2hFQyoxuLQY5qjIBe6Obkp+KGTXiv2bY=
+X-Gm-Gg: AY/fxX6xz32jePLNCMvlUx0i+b5JwkIiJZgDlkgeR+NEti5szdQShaNIEdzIxB0LbIm
+	qUKSI1apVYK/5iiBaUNvT1xgBZqqBXL0PoYlbn1Qic9Z1J4Osih8KdjsiNz5pzOQkPp3aR5ACmd
+	yyd+8XhG6yKSeTzJWW+NrkDzJ6l9S2rueZcFbmq/wHluLVUldSiF8jcAADA23Y0t+vpOICH6K9X
+	giKej8Jl0PzgOU/nqxu9+Up+PeVewbzEkFB6ut8ucj/QzUFWT+Re1lPSiSGgE0HfQxU4XAeM8Oz
+	YJ+zitkSFzfXuhdrDCjOATktD8BnNw==
+X-Google-Smtp-Source: AGHT+IGoaDJdrNiEO09pR/OORz2MGC83dXHXdXNvH/C4hxxitjeNsDGXBBSuI3R0yPFQlvG//M05OkqNUDp2Cj1iTkE=
+X-Received: by 2002:a05:6402:1288:b0:641:88ff:10ad with SMTP id
+ 4fb4d7f45d1cf-6507c16e5e4mr6233151a12.14.1767860662681; Thu, 08 Jan 2026
+ 00:24:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBH6+WpYV9pdSx_Eg--.889S12
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAF1rZr47urWftw43ury8Krg_yoW5tFWrpr
-	s7Ga4rtr13JFyDGa1xJr4kZryS9wn7GFy5JayxWryUGr90qF1FqFWqyr9xC3W8Gan5uFs0
-	q3WrGw1UuwsrJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07URHqxUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC3BG2VGlfYbEA2gAA3T
+References: <0c34f3fa-c573-4343-b8ea-6832530f0069@linux.alibaba.com>
+ <20260106170504.674070-1-hsiangkao@linux.alibaba.com> <3acec686-4020-4609-aee4-5dae7b9b0093@gmail.com>
+ <41b8a0bb-96d3-4eba-a5b8-77b0b0ed4730@linux.alibaba.com> <121cb490-f13a-4957-97be-ea87baa10827@linux.alibaba.com>
+ <CAOQ4uxg14FYhZvdjZ-9UT3jVyLCbM1ReUdESSXgAbezsQx7rqQ@mail.gmail.com> <4b427f6f-3b26-4dc8-bf6f-79eeabf6ba84@linux.alibaba.com>
+In-Reply-To: <4b427f6f-3b26-4dc8-bf6f-79eeabf6ba84@linux.alibaba.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 8 Jan 2026 09:24:11 +0100
+X-Gm-Features: AQt7F2pT46wOe25cGycGlgDH7NaWTRhLN1cxNTMu4Gtag81pzvR2eU0rUU1V1nU
+Message-ID: <CAOQ4uxgcbauFza8ZsZebhTZJT-zwfydy2ofWOw-hqJbVRF+GCg@mail.gmail.com>
+Subject: Re: [PATCH v2] erofs: don't bother with s_stack_depth increasing for now
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Sheng Yong <shengyong2021@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Dusty Mabe <dusty@dustymabe.com>, 
+	=?UTF-8?Q?Timoth=C3=A9e_Ravier?= <tim@siosm.fr>, 
+	=?UTF-8?B?QWxla3PDqWkgTmFpZMOpbm92?= <an@digitaltide.io>, 
+	Alexander Larsson <alexl@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Zhiguo Niu <niuzhiguo84@gmail.com>, shengyong1@xiaomi.com, 
+	linux-erofs mailing list <linux-erofs@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chi Zhiling <chizhiling@kylinos.cn>
+On Thu, Jan 8, 2026 at 9:05=E2=80=AFAM Gao Xiang <hsiangkao@linux.alibaba.c=
+om> wrote:
+>
+> Hi Amir,
+>
+> On 2026/1/8 16:02, Amir Goldstein wrote:
+> > On Thu, Jan 8, 2026 at 4:10=E2=80=AFAM Gao Xiang <hsiangkao@linux.aliba=
+ba.com> wrote:
+>
+> ...
+>
+> >>>>
+> >>>> Hi, Xiang
+> >>>>
+> >>>> In Android APEX scenario, apex images formatted as EROFS are packed =
+in
+> >>>> system.img which is also EROFS format. As a result, it will always f=
+ail
+> >>>> to do APEX-file-backed mount since `inode->i_sb->s_op =3D=3D &erofs_=
+sops'
+> >>>> is true.
+> >>>> Any thoughts to handle such scenario?
+> >>>
+> >>> Sorry, I forgot this popular case, I think it can be simply resolved
+> >>> by the following diff:
+> >>>
+> >>> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+> >>> index 0cf41ed7ced8..e93264034b5d 100644
+> >>> --- a/fs/erofs/super.c
+> >>> +++ b/fs/erofs/super.c
+> >>> @@ -655,7 +655,7 @@ static int erofs_fc_fill_super(struct super_block=
+ *sb, struct fs_context *fc)
+> >>>                    */
+> >>>                   if (erofs_is_fileio_mode(sbi)) {
+> >>>                           inode =3D file_inode(sbi->dif0.file);
+> >>> -                       if (inode->i_sb->s_op =3D=3D &erofs_sops ||
+> >>> +                       if ((inode->i_sb->s_op =3D=3D &erofs_sops && =
+!sb->s_bdev) ||
+> >>
+> >> Sorry it should be `!inode->i_sb->s_bdev`, I've
+> >> fixed it in v3 RESEND:
+> >
+> > A RESEND implies no changes since v3, so this is bad practice.
+> >
+> >> https://lore.kernel.org/r/20260108030709.3305545-1-hsiangkao@linux.ali=
+baba.com
+> >>
+> >
+> > Ouch! If the erofs maintainer got this condition wrong... twice...
+> > Maybe better using the helper instead of open coding this non trivial c=
+heck?
+> >
+> > if ((inode->i_sb->s_op =3D=3D &erofs_sops &&
+> >        erofs_is_fileio_mode(EROFS_I_SB(inode)))
+>
+> I was thought to use that, but it excludes fscache as the
+> backing fs.. so I suggest to use !s_bdev directly to
+> cover both file-backed mounts and fscache cases directly.
 
-This patch introduces a parameter 'count' to support fetching multiple
-clusters in exfat_map_cluster. The returned 'count' indicates the number
-of consecutive clusters, or 0 when the input cluster offset is past EOF.
+Your fs, your decision.
 
-And the 'count' is also an input parameter for the caller to specify the
-required number of clusters.
+But what are you actually saying?
+Are you saying that reading from file backed fscache has similar
+stack usage to reading from file backed erofs?
+Isn't filecache doing async file IO?
 
-Only NO_FAT_CHAIN files enable multi-cluster fetching in this patch.
+If we regard fscache an extra unaccounted layer, because of all the
+sync operations that it does, then we already allowed this setup a long
+time ago, e.g. fscache+nfs+ovl^2.
 
-After this patch, the time proportion of exfat_get_block has decreased,
-The performance data is as follows:
+This could be an argument to support the claim that stack usage of
+file+erofs+ovl^2 should also be fine.
 
-Cluster size: 512 bytes
-Sequential read of a 30GB NO_FAT_CHAIN file:
-2.4GB/s -> 2.5 GB/s
-proportion of exfat_get_block:
-10.8% -> 0.02%
-
-Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
----
- fs/exfat/inode.c | 30 +++++++++++++++++-------------
- 1 file changed, 17 insertions(+), 13 deletions(-)
-
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index b714d242b238..00ff6c7ed935 100644
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@ -124,7 +124,7 @@ void exfat_sync_inode(struct inode *inode)
-  * *clu = (~0), if it's unable to allocate a new cluster
-  */
- static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
--		unsigned int *clu, int create)
-+		unsigned int *clu, unsigned int *count, int create)
- {
- 	int ret;
- 	unsigned int last_clu;
-@@ -147,20 +147,23 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
- 
- 	*clu = last_clu = ei->start_clu;
- 
--	if (ei->flags == ALLOC_NO_FAT_CHAIN) {
--		if (clu_offset > 0 && *clu != EXFAT_EOF_CLUSTER) {
--			last_clu += clu_offset - 1;
--
--			if (clu_offset == num_clusters)
--				*clu = EXFAT_EOF_CLUSTER;
--			else
--				*clu += clu_offset;
-+	if (*clu == EXFAT_EOF_CLUSTER) {
-+		*count = 0;
-+	} else if (ei->flags == ALLOC_NO_FAT_CHAIN) {
-+		last_clu += num_clusters - 1;
-+		if (clu_offset < num_clusters) {
-+			*clu += clu_offset;
-+			*count = num_clusters - clu_offset;
-+		} else {
-+			*clu = EXFAT_EOF_CLUSTER;
-+			*count = 0;
- 		}
- 	} else {
- 		int err = exfat_get_cluster(inode, clu_offset,
- 				clu, &last_clu);
- 		if (err)
- 			return -EIO;
-+		*count = (*clu == EXFAT_EOF_CLUSTER) ? 0 : 1;
- 	}
- 
- 	if (*clu == EXFAT_EOF_CLUSTER) {
-@@ -232,7 +235,7 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
- 				num_to_be_allocated--;
- 			}
- 		}
--
-+		*count = 1;
- 	}
- 
- 	/* hint information */
-@@ -251,7 +254,7 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
- 	unsigned long max_blocks = bh_result->b_size >> inode->i_blkbits;
- 	int err = 0;
- 	unsigned long mapped_blocks = 0;
--	unsigned int cluster, sec_offset;
-+	unsigned int cluster, sec_offset, count;
- 	sector_t last_block;
- 	sector_t phys = 0;
- 	sector_t valid_blks;
-@@ -264,8 +267,9 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
- 		goto done;
- 
- 	/* Is this block already allocated? */
-+	count = EXFAT_B_TO_CLU_ROUND_UP(bh_result->b_size, sbi);
- 	err = exfat_map_cluster(inode, iblock >> sbi->sect_per_clus_bits,
--			&cluster, create);
-+			&cluster, &count, create);
- 	if (err) {
- 		if (err != -ENOSPC)
- 			exfat_fs_error_ratelimit(sb,
-@@ -281,7 +285,7 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
- 	sec_offset = iblock & (sbi->sect_per_clus - 1);
- 
- 	phys = exfat_cluster_to_sector(sbi, cluster) + sec_offset;
--	mapped_blocks = sbi->sect_per_clus - sec_offset;
-+	mapped_blocks = (count << sbi->sect_per_clus_bits) - sec_offset;
- 	max_blocks = min(mapped_blocks, max_blocks);
- 
- 	map_bh(bh_result, sb, phys);
--- 
-2.43.0
-
+Thanks,
+Amir.
 
