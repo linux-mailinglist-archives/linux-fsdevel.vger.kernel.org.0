@@ -1,110 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-72820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6238CD044E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:21:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12D25D03C05
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:19:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4787E305F642
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:11:12 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 595173255635
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 14:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF173D332A;
-	Thu,  8 Jan 2026 11:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0LcxD2F"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF73E3FB208;
+	Thu,  8 Jan 2026 11:33:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8DD3AEF2F;
-	Thu,  8 Jan 2026 11:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B34D3ED633;
+	Thu,  8 Jan 2026 11:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767871916; cv=none; b=og0xxcStPUwN5I5vJu1/Mpf0zYPBl3OKeV/TEqFcyHhkkoSmzLtBUq4ydnRGDfzigd10bAX4vL7E97zuEjPHnlLNLRWL2pcjepEPXRJkjAFjBUFq5THBOWRXgLHgfXrGfP4A4Q8WKbDdhYWk5bqYE02uzwMT3MEjs/9rDSjLjNo=
+	t=1767871982; cv=none; b=ud9yRoysxY0vhGCiV6mV78m0u7JdSMyhc/MCGEVJPJKxeoER7Znyoz3PFjyzCjfkaHSguZQe84Sa5mvvxeyoQKDM9NOvX7CRpJ7/7sAML5LDJ1kl/aMjeix73MmLO9/PgErpWP6MXxWKFFm4QPldtZjfgax4jiv2PET0jBqfQTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767871916; c=relaxed/simple;
-	bh=GrXNFXLMVkEvuyjBXRmf3vAuCoPHKHapcE99UYwQNC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQoOFWqMSR7ALsrkwizeu1URRQuIbeF5idP0poQSYu72JrLNvnd7wXjOUAgpl+q2UhWD3o4h/3xuYwVTJP+PI8Rttxdtwa/3Cp2tj4YEfYinH5J3MpqR/DmtpMjX+AW3IpnVc8yyhG2Uh4LbQvNkkCecjCehbg8y2vFCapRAUag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0LcxD2F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE633C116C6;
-	Thu,  8 Jan 2026 11:31:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767871915;
-	bh=GrXNFXLMVkEvuyjBXRmf3vAuCoPHKHapcE99UYwQNC0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E0LcxD2FmBfBt5A2gB+q1KZ449IeQzU4gEsfHILvYt6lX/bEUz2tBjHnBQDV2ZScT
-	 4EsUEFCiSej8EgqA98dJL2GvmzZpfjA+gGQpMlsQZukLRCNhs+mVsEksIOfONUYVF0
-	 9XUOraxxDDNhYUEsv+EM2Qw0JJYe3ziQBRAIcHpRy8TRP1B9qX0jIi/TjLz44IRgoc
-	 Quv+bL5uhS4bMGpLHafEC4k5om3sMmc9NYGOGmLiGhHWfeXC8wnyVsZFKiTNNcLKcL
-	 YReXCQx+YCkeLN4VtxyoSK7xHbfnqj2SdM19DhhSfazXPd4YJ+YjzFLttqDgj7Wy5H
-	 faomWJ+DHzrbQ==
-Date: Thu, 8 Jan 2026 11:31:46 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andrei Vagin <avagin@google.com>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	criu@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
-	Chen Ridong <chenridong@huawei.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <david@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Koutny <mkoutny@suse.com>, Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 1/3] binfmt_elf_fdpic: fix AUXV size calculation for
- ELF_HWCAP3 and ELF_HWCAP4
-Message-ID: <79af0c28-9423-40ac-840f-ccf0ca676bf1@sirena.org.uk>
-References: <20260108050748.520792-1-avagin@google.com>
- <20260108050748.520792-2-avagin@google.com>
+	s=arc-20240116; t=1767871982; c=relaxed/simple;
+	bh=19yj1ippT+lFgZqkEqVduhYtECDl/VwUE/AFC+VPjZg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JOBDGX9E7fFnttw+CItBU+/Bw4PTiCvMQgDbTCYs70FfnzPTTN8ObiIjFonc5NpKWWv57PqzF9p6cqJ5LBapHhRRv8z1jRhLNuo3R0mJj9PBH9NmFEina2+zR94NHgQb4za6qjOSDJ3xTbxFVuayz1MoC4ccVv98Oj6+IiYffiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dn2nt0fn9zJ46db;
+	Thu,  8 Jan 2026 19:32:50 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id D070540086;
+	Thu,  8 Jan 2026 19:32:54 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 8 Jan
+ 2026 11:32:53 +0000
+Date: Thu, 8 Jan 2026 11:32:51 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: John Groves <John@Groves.net>
+CC: Miklos Szeredi <miklos@szeredi.hu>, Dan Williams
+	<dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, "Alison
+ Schofield" <alison.schofield@intel.com>, John Groves <jgroves@micron.com>,
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan
+ Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, "David
+ Hildenbrand" <david@kernel.org>, Christian Brauner <brauner@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Stefan
+ Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef
+ Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Chen
+ Linxuan <chenlinxuan@uniontech.com>, "James Morse" <james.morse@arm.com>,
+	Fuad Tabba <tabba@google.com>, "Sean Christopherson" <seanjc@google.com>,
+	Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>,
+	Gregory Price <gourry@gourry.net>, Aravind Ramesh <arramesh@micron.com>, Ajay
+ Joshi <ajayjoshi@micron.com>, <venkataravis@micron.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V3 03/21] dax: Save the kva from memremap
+Message-ID: <20260108113251.00004f1c@huawei.com>
+In-Reply-To: <20260107153332.64727-4-john@groves.net>
+References: <20260107153244.64703-1-john@groves.net>
+	<20260107153332.64727-1-john@groves.net>
+	<20260107153332.64727-4-john@groves.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YYxvTW0iZ6aVz70k"
-Content-Disposition: inline
-In-Reply-To: <20260108050748.520792-2-avagin@google.com>
-X-Cookie: If you suspect a man, don't employ him.
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
+On Wed,  7 Jan 2026 09:33:12 -0600
+John Groves <John@Groves.net> wrote:
 
---YYxvTW0iZ6aVz70k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Save the kva from memremap because we need it for iomap rw support.
+> 
+> Prior to famfs, there were no iomap users of /dev/dax - so the virtual
+> address from memremap was not needed.
+> 
+> (also fill in missing kerneldoc comment fields for struct dev_dax)
 
-On Thu, Jan 08, 2026 at 05:07:46AM +0000, Andrei Vagin wrote:
-> Commit 4e6e8c2b757f ("binfmt_elf: Wire up AT_HWCAP3 at AT_HWCAP4") added
-> support for AT_HWCAP3 and AT_HWCAP4, but it missed updating the AUX
-> vector size calculation in create_elf_fdpic_tables() and
-> AT_VECTOR_SIZE_BASE in include/linux/auxvec.h.
->=20
-> Similar to the fix for ELF_HWCAP2 in commit c6a09e342f8e
-> ("binfmt_elf_fdpic: fix AUXV size calculation when ELF_HWCAP2 is defined"=
-),
-> this omission leads to a mismatch between the reserved space and the
-> actual number of AUX entries, eventually triggering a kernel BUG_ON(csp !=
-=3D sp).
+Do that as a precursor that can be picked up ahead of the rest of the series.
 
-Sorry, missed fdpic here:
+> 
+> Signed-off-by: John Groves <john@groves.net>
+> ---
+>  drivers/dax/dax-private.h | 4 ++++
+>  drivers/dax/fsdev.c       | 1 +
+>  2 files changed, 5 insertions(+)
+> 
+> diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
+> index 0867115aeef2..1bb1631af485 100644
+> --- a/drivers/dax/dax-private.h
+> +++ b/drivers/dax/dax-private.h
+> @@ -69,18 +69,22 @@ struct dev_dax_range {
+>   * data while the device is activated in the driver.
+>   * @region - parent region
+>   * @dax_dev - core dax functionality
+> + * @virt_addr - kva from memremap; used by fsdev_dax
+> + * @align - alignment of this instance
+>   * @target_node: effective numa node if dev_dax memory range is onlined
+>   * @dyn_id: is this a dynamic or statically created instance
+>   * @id: ida allocated id when the dax_region is not static
+>   * @ida: mapping id allocator
+>   * @dev - device core
+>   * @pgmap - pgmap for memmap setup / lifetime (driver owned)
+> + * @memmap_on_memory - allow kmem to put the memmap in the memory
+>   * @nr_range: size of @ranges
+>   * @ranges: range tuples of memory used
+>   */
+>  struct dev_dax {
+>  	struct dax_region *region;
+>  	struct dax_device *dax_dev;
+> +	void *virt_addr;
+>  	unsigned int align;
+>  	int target_node;
+>  	bool dyn_id;
+> diff --git a/drivers/dax/fsdev.c b/drivers/dax/fsdev.c
+> index 2a3249d1529c..c5c660b193e5 100644
+> --- a/drivers/dax/fsdev.c
+> +++ b/drivers/dax/fsdev.c
+> @@ -235,6 +235,7 @@ static int fsdev_dax_probe(struct dev_dax *dev_dax)
+>  		pr_debug("%s: offset detected phys=%llx pgmap_phys=%llx offset=%llx\n",
+>  		       __func__, phys, pgmap_phys, data_offset);
+>  	}
+> +	dev_dax->virt_addr = addr + data_offset;
+>  
+>  	inode = dax_inode(dax_dev);
+>  	cdev = inode->i_cdev;
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
-
---YYxvTW0iZ6aVz70k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlflaIACgkQJNaLcl1U
-h9BNQQf/SWKoyWBsmRtRijLDQFwuIjFlknk89+D+ZwI7hTFR2GRem2nPrMjLveB2
-SP+8ABx9/CPZxt3iYxRGP6ljFYeT6e6sHGPloqEG/nSyp9sAgSc5a3jM8CtjhbQB
-5658MuH0gZgd7Sckj8WduZPof98zKrMkGftfJ2Q7uT/jhM7ZHIy8q+1GodpMLZ98
-jMT6IkBHsjrfNgJr3KHrTxNa2os+W+371N9L5RlTanphMm4sQOdCJvAqyLVlvpjW
-IGrFyVgOcjwFqsBjXYs874Zo2+82EKN7QER2auVrJx5oIUn+uxf/KmBxkLN6DrcY
-aF+eT03o52RmgcRqCa6h1rIN1bDr6Q==
-=96VI
------END PGP SIGNATURE-----
-
---YYxvTW0iZ6aVz70k--
 
