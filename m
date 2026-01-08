@@ -1,64 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-72782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC26D01801
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 09:04:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 736DFD01B77
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 10:02:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 3091E30E7E9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 07:58:02 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 72BFD3708985
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 08:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522E035BDAB;
-	Thu,  8 Jan 2026 07:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061023803DB;
+	Thu,  8 Jan 2026 07:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BRhrk4U3"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XOrDxPyf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CB0359FAC;
-	Thu,  8 Jan 2026 07:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5651637E2F9;
+	Thu,  8 Jan 2026 07:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767858052; cv=none; b=vBy7W6dPq7mmueHZyvzoOHkMp/LNP1+Ow32g2PBDUsNQXFt+ndbRAEAcGSmvqd4wiefO8XFuXGOME1tyrqDKwhCIEzjcwuUCIWfal7a59FwqXr9LJ0Nn7+Ee5xDI0uj3q2avqxiFLZfhEPgjlgTKiXowhxCTPsGUBEMKtO5SyyM=
+	t=1767858655; cv=none; b=BKVRfYPwItgsPqIWeEnzamvi+MGhZCHVq22/sr1FJFp1MwFUpAdLBICqT/xo11B+3NpR92xXIB3YU703NPoGPmUKv6XIxLZzXftss9WSTHLTd+AYkm1g78ys8Cyz0ejfoB/oEd98m4ATqtrbpUBZeUrmuhx3QsK+vM2KGvbBic4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767858052; c=relaxed/simple;
-	bh=YYYAsBcchiEX6jTu4koZi5Dx1eLSczpR7tymQfKyC4I=;
+	s=arc-20240116; t=1767858655; c=relaxed/simple;
+	bh=Xb8C2JLdNadFXnGNd/14DTutB+ouyLvTF+ynAxnMW9g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JBZi5mN8dpPbocpnQ3KjUCNGu53Yqt+6qCok+suyG2zFpK8FjficwRS30jYlLH4FbMlbZZAkA5FpepkvygYQNX9aqrYex/JXGzt/4XUAF11Th629+SmwnCpLw+/uns1obJGYXexBZfLJl67kNq/ZuOfNX2qx78IkTfzedId2qrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BRhrk4U3; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=JcA9xF/qUKyoDRsfXihT0Yhg31Gwyc+UC3U5oSPw9as=; b=BRhrk4U37T4C/59dzw/BVHex+o
-	w9rNf0hgGN3RR2j6SvisFi6w3CQXU9UWdTOX2j7LiTbfql1x7/S8ysn99zohIyN5tMEQHCNYEytTM
-	IWXE3TPrzxIIcBU/60YYCdOyzxfpx99ILJL8l89BQcytSp1qyshbYj19e94BsSS3t3OLeoS3FGCcn
-	ktDjjoJe8yWH3w+3rJasA0HNMriAVZ/usO5BWTcgpZSihFRffZXdsmQCvdxzExm/N38XkkPgrJONX
-	68skXOMFSqrPMUOV+azBfLFDJfLPugNjxm/7KUZabcF6NLklV8VmyPjySxKiWADnZejAt3MT03Prd
-	fRyGKuOg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkei-00000001pHZ-0AhU;
-	Thu, 08 Jan 2026 07:42:04 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: torvalds@linux-foundation.org,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mjguzik@gmail.com,
-	paul@paul-moore.com,
-	axboe@kernel.dk,
-	audit@vger.kernel.org,
-	io-uring@vger.kernel.org,
+	 MIME-Version; b=hN7Cl3cZz+7XJVxF1b29d1PM2+xNYjy5lAqepu5luAdVIN8N7aHVFd1qKT9NyF2rb3EBA5HZGMNyQe/6qye5a/yLNEkk8Od3o0zqUCtLbg9EmGkIakp7LV+R0Zi7eb55Vafkoc8puH5nHgwK6fVUtJ1JMgwbCmIM5+Y5fVJUizs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XOrDxPyf; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=0v
+	htbSvbnQVcK4ilcpDDyTdPLbheiLDwPIzUu6QCadA=; b=XOrDxPyfJGoHGnD9wE
+	VSd143scrrdvBUaOrCZDxtFerP72jkIbVxnnZzbeWZRg/pXbsi7ADsOygVUclOZ+
+	e9IXMAeB5JMyB3plX6v3vGY8s0SajAnbzkhcqQn4f3R67EfLNmqgj6Wme6FpBv/K
+	VNMHZeFYr6y6rv1g413/3LpwE=
+Received: from czl-ubuntu-pc.. (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wBH6+WpYV9pdSx_Eg--.889S3;
+	Thu, 08 Jan 2026 15:50:06 +0800 (CST)
+From: Chi Zhiling <chizhiling@163.com>
+To: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 8/8] do_execveat_common(): don't consume filename reference
-Date: Thu,  8 Jan 2026 07:42:01 +0000
-Message-ID: <20260108074201.435280-9-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260108074201.435280-1-viro@zeniv.linux.org.uk>
-References: <20260108074201.435280-1-viro@zeniv.linux.org.uk>
+Cc: Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	Yuezhang Mo <yuezhang.mo@sony.com>,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: [PATCH v2 01/13] exfat: add cache option for __exfat_ent_get
+Date: Thu,  8 Jan 2026 15:49:17 +0800
+Message-ID: <20260108074929.356683-2-chizhiling@163.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260108074929.356683-1-chizhiling@163.com>
+References: <20260108074929.356683-1-chizhiling@163.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,74 +58,81 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-CM-TRANSID:_____wBH6+WpYV9pdSx_Eg--.889S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tF13XFyrZFy8WF1DKFy3Arb_yoW8Zry5pr
+	ZxK34fKr4UX3W2v3ZFyrs5Zw1rC397GFyDGw45Cws3Jryrtr4kZryxtryYqF4xJ3y8AFWY
+	vF1UtF15CwsrWa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jzhFxUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbC3A61U2lfYa4AnQAA3Q
 
-... and convert its callers to CLASS(filename...)
+From: Chi Zhiling <chizhiling@kylinos.cn>
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+When multiple entries are obtained consecutively, these entries are mostly
+stored adjacent to each other. this patch introduces a "last" parameter to
+cache the last opened buffer head, and reuse it when possible, which
+reduces the number of sb_bread() calls.
+
+When the passed parameter "last" is NULL, it means cache option is
+disabled, the behavior unchanged as it was.
+
+Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
 ---
- fs/exec.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ fs/exfat/fatent.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 4e192d7b7e71..3405c754da80 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1775,12 +1775,11 @@ static int bprm_execve(struct linux_binprm *bprm)
- 	return retval;
+diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
+index c9c5f2e3a05e..0cfbc0b435bd 100644
+--- a/fs/exfat/fatent.c
++++ b/fs/exfat/fatent.c
+@@ -36,18 +36,23 @@ static int exfat_mirror_bh(struct super_block *sb, sector_t sec,
  }
  
--static int do_execveat_common(int fd, struct filename *__filename,
-+static int do_execveat_common(int fd, struct filename *filename,
- 			      struct user_arg_ptr argv,
- 			      struct user_arg_ptr envp,
- 			      int flags)
+ static int __exfat_ent_get(struct super_block *sb, unsigned int loc,
+-		unsigned int *content)
++		unsigned int *content, struct buffer_head **last)
  {
--	CLASS(filename_consume, filename)(__filename);
- 	int retval;
+ 	unsigned int off;
+ 	sector_t sec;
+-	struct buffer_head *bh;
++	struct buffer_head *bh = last ? *last : NULL;
  
- 	/*
-@@ -1927,7 +1926,8 @@ SYSCALL_DEFINE3(execve,
- 		const char __user *const __user *, argv,
- 		const char __user *const __user *, envp)
- {
--	return do_execveat_common(AT_FDCWD, getname(filename),
-+	CLASS(filename, name)(filename);
-+	return do_execveat_common(AT_FDCWD, name,
- 				  native_arg(argv), native_arg(envp), 0);
+ 	sec = FAT_ENT_OFFSET_SECTOR(sb, loc);
+ 	off = FAT_ENT_OFFSET_BYTE_IN_SECTOR(sb, loc);
+ 
+-	bh = sb_bread(sb, sec);
+-	if (!bh)
+-		return -EIO;
++	if (!bh || bh->b_blocknr != sec || !buffer_uptodate(bh)) {
++		brelse(bh);
++		bh = sb_bread(sb, sec);
++		if (last)
++			*last = bh;
++		if (unlikely(!bh))
++			return -EIO;
++	}
+ 
+ 	*content = le32_to_cpu(*(__le32 *)(&bh->b_data[off]));
+ 
+@@ -55,7 +60,8 @@ static int __exfat_ent_get(struct super_block *sb, unsigned int loc,
+ 	if (*content > EXFAT_BAD_CLUSTER)
+ 		*content = EXFAT_EOF_CLUSTER;
+ 
+-	brelse(bh);
++	if (!last)
++		brelse(bh);
+ 	return 0;
  }
  
-@@ -1937,7 +1937,8 @@ SYSCALL_DEFINE5(execveat,
- 		const char __user *const __user *, envp,
- 		int, flags)
- {
--	return do_execveat_common(fd, getname_uflags(filename, flags),
-+	CLASS(filename_uflags, name)(filename, flags);
-+	return do_execveat_common(fd, name,
- 				  native_arg(argv), native_arg(envp), flags);
- }
+@@ -95,7 +101,7 @@ int exfat_ent_get(struct super_block *sb, unsigned int loc,
+ 		return -EIO;
+ 	}
  
-@@ -1952,7 +1953,8 @@ COMPAT_SYSCALL_DEFINE3(execve, const char __user *, filename,
- 	const compat_uptr_t __user *, argv,
- 	const compat_uptr_t __user *, envp)
- {
--	return do_execveat_common(AT_FDCWD, getname(filename),
-+	CLASS(filename, name)(filename);
-+	return do_execveat_common(AT_FDCWD, name,
- 				  compat_arg(argv), compat_arg(envp), 0);
- }
- 
-@@ -1962,7 +1964,8 @@ COMPAT_SYSCALL_DEFINE5(execveat, int, fd,
- 		       const compat_uptr_t __user *, envp,
- 		       int,  flags)
- {
--	return do_execveat_common(fd, getname_uflags(filename, flags),
-+	CLASS(filename_uflags, name)(filename, flags);
-+	return do_execveat_common(fd, name,
- 				  compat_arg(argv), compat_arg(envp), flags);
- }
- #endif
+-	err = __exfat_ent_get(sb, loc, content);
++	err = __exfat_ent_get(sb, loc, content, NULL);
+ 	if (err) {
+ 		exfat_fs_error_ratelimit(sb,
+ 			"failed to access to FAT (entry 0x%08x, err:%d)",
 -- 
-2.47.3
+2.43.0
 
 
