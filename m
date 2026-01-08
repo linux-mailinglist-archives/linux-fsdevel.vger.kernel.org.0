@@ -1,94 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-72823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66208D04054
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:49:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C9AD045BA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id AB48331B6FFD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:26:56 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8D39A33F0875
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390C047A97C;
-	Thu,  8 Jan 2026 11:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="JuznX+vF"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A37350D41;
+	Thu,  8 Jan 2026 12:06:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7B3479C41;
-	Thu,  8 Jan 2026 11:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA00C4A4D6D;
+	Thu,  8 Jan 2026 12:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767873546; cv=none; b=o/3ewqQxNwQRtQWElT/aA9ARdxjE4BsUmnjBKHAXfyEA5vUfUDy2Op3l/GzZsHTDjXrclczQJCttUTGpqSOO6nQolf8V4SaID4l3eQpep5gUvWaqZx4z1HSxHGze0A5l6btuqKhedBuMxvYf/SAEDrrIPjqVTMKpOP8LA3Tq2Uo=
+	t=1767873994; cv=none; b=rqRVjkry3txK1nf1k7SKkxCo6SoGBdGADwTPXAU0ZRUsptL9n0rad5jbTRnpavsJuQG1iZ9ZxVbz4rcNLdYMbstRuM3nYa0h11TPS5GT+9LiSULASHLFi219lDk8W2YUpM5RebUPyy6mY7w3kJaGIcAdiymC58MRmtiqCWJx0Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767873546; c=relaxed/simple;
-	bh=Rs4iG22OlFUdQTj4wpJv3/YScVaxsRMoexgeZRYudp8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RDJHaPtFg/fYUTGIHeZBcZ/bU2o4A7RsPOZRp1Qu4xUIA3VmmniNTtX66JjmXLFp/7rmVea+db6SRlhmsB06ienxLJ78yL+qg0kwhXkJ/aQLMp++moDXN38Em4zgXc/tWRFQq6ETdCuurcQRlAaIgJdhotHbA2QJGnEDKuBwheU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.com; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=JuznX+vF; arc=none smtp.client-ip=188.40.203.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:In-Reply-To:
-	References; bh=I3FOrv4m2znxV4qlM+WnCeu3LVaPQpQlPbX2klzxAX4=; b=JuznX+vFraiv6t
-	+4oredUfPHB4ie8mxNkz1JTfkFShhdoks0P6DCXr5QXaOr/4m++rY8PhZZBlPTA/TmWs7LB/2RvAT
-	E9FP5mp2+9YR8BGqT5UDQ24p8g+DPuOBAcabFw5fCVcFPEmTWzJy4U5S3keW3fMcr/5AYJ9N0kyE7
-	1lVUCXYMx+hMgsj+GHID51lQHgoyVtZVIeFvp+1aC41Go1gFJ12t0LMHJtjxH9VJv6MOMzt8nMao/
-	kBFnIViS5Ye1fyzTQFE/2gE8EI9SRyy9lGfIdnlAdbVxiz64kXlkqSmF/n4Iha5/F913zm8TBw8zs
-	qaGQRvIUp+Tp7adHZjWg==;
-Received: from [167.98.27.226] (helo=rainbowdash)
-	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1vdofK-00AbI7-8D; Thu, 08 Jan 2026 11:58:58 +0000
-Received: from ben by rainbowdash with local (Exim 4.99.1)
-	(envelope-from <ben@rainbowdash>)
-	id 1vdofK-00000000zvM-017C;
-	Thu, 08 Jan 2026 11:58:58 +0000
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	jack@suse.cz,
-	brauner@kernel.or,
-	viro@zeniv.linux.org.uk,
-	Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH] fs: add <linux/init_task.h> for 'init_fs'
-Date: Thu,  8 Jan 2026 11:58:56 +0000
-Message-Id: <20260108115856.238027-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.37.2.352.g3c44437643
+	s=arc-20240116; t=1767873994; c=relaxed/simple;
+	bh=g/sYTBwp403O7eXxXi6S3ShzWIZlQJYz6EEeBkbibL4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Row3UplLZ6J0pl/zAfghC77lwVCwq2pX74KqrzjIKifGOznFJ+bi2qfFPhx+wLN+vblmljYQ3CdfxWU18vo3e422tRZl7Msaq9leotT86gR1LIT+eW1tpYDgB+O7OV7eUTxePbQkgY8FRzGMIQe/G7uC7In8b6/CF4yzaqZMFSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dn3XQ2fQHzHnGd7;
+	Thu,  8 Jan 2026 20:06:14 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6C8B540086;
+	Thu,  8 Jan 2026 20:06:22 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 8 Jan
+ 2026 12:06:20 +0000
+Date: Thu, 8 Jan 2026 12:06:19 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: John Groves <John@Groves.net>
+CC: Miklos Szeredi <miklos@szeredi.hu>, Dan Williams
+	<dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, "Alison
+ Schofield" <alison.schofield@intel.com>, John Groves <jgroves@micron.com>,
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan
+ Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, "David
+ Hildenbrand" <david@kernel.org>, Christian Brauner <brauner@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Stefan
+ Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef
+ Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Chen
+ Linxuan <chenlinxuan@uniontech.com>, "James Morse" <james.morse@arm.com>,
+	Fuad Tabba <tabba@google.com>, "Sean Christopherson" <seanjc@google.com>,
+	Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>,
+	Gregory Price <gourry@gourry.net>, Aravind Ramesh <arramesh@micron.com>, Ajay
+ Joshi <ajayjoshi@micron.com>, <venkataravis@micron.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V3 05/21] dax: Add dax_set_ops() for setting
+ dax_operations at bind time
+Message-ID: <20260108120619.00001bc5@huawei.com>
+In-Reply-To: <20260107153332.64727-6-john@groves.net>
+References: <20260107153244.64703-1-john@groves.net>
+	<20260107153332.64727-1-john@groves.net>
+	<20260107153332.64727-6-john@groves.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: srv_ts003@codethink.com
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-The init_fs symbol is defined in <linux/init_task.h> but was
-not included in fs/fs_struct.c so fix by adding the include.
+On Wed,  7 Jan 2026 09:33:14 -0600
+John Groves <John@Groves.net> wrote:
 
-Fixes the following sparse warning:
-fs/fs_struct.c:150:18: warning: symbol 'init_fs' was not declared. Should it be static?
+> From: John Groves <John@Groves.net>
+> 
+> The dax_device is created (in the non-pmem case) at hmem probe time via
+> devm_create_dev_dax(), before we know which driver (device_dax,
+> fsdev_dax, or kmem) will bind - by calling alloc_dax() with NULL ops,
+> drivers (i.e. fsdev_dax) that need specific dax_operations must set
+> them later.
+> 
+> Add dax_set_ops() exported function so fsdev_dax can set its ops at
+> probe time and clear them on remove. device_dax doesn't need ops since
+> it uses the mmap fault path directly.
+> 
+> Use cmpxchg() to atomically set ops only if currently NULL, returning
+> -EBUSY if ops are already set. This prevents accidental double-binding.
+> Clearing ops (NULL) always succeeds.
+> 
+> Signed-off-by: John Groves <john@groves.net>
+Hi John
 
-Fixes: 3e93cd671813e ("Take fs_struct handling to new file")
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
- fs/fs_struct.c | 1 +
- 1 file changed, 1 insertion(+)
+This one runs into the fun mess of mixing devm and other calls.
+I'd advise you just don't do it because it makes code much harder
+to review and hits the 'smells bad' button.
 
-diff --git a/fs/fs_struct.c b/fs/fs_struct.c
-index b8c46c5a38a0..394875d06fd6 100644
---- a/fs/fs_struct.c
-+++ b/fs/fs_struct.c
-@@ -6,6 +6,7 @@
- #include <linux/path.h>
- #include <linux/slab.h>
- #include <linux/fs_struct.h>
-+#include <linux/init_task.h>
- #include "internal.h"
- 
- /*
--- 
-2.37.2.352.g3c44437643
+Jonathan
+
+> ---
+>  drivers/dax/fsdev.c | 12 ++++++++++++
+>  drivers/dax/super.c | 38 +++++++++++++++++++++++++++++++++++++-
+>  include/linux/dax.h |  1 +
+>  3 files changed, 50 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dax/fsdev.c b/drivers/dax/fsdev.c
+> index 9e2f83aa2584..3f4f593896e3 100644
+> --- a/drivers/dax/fsdev.c
+> +++ b/drivers/dax/fsdev.c
+> @@ -330,12 +330,24 @@ static int fsdev_dax_probe(struct dev_dax *dev_dax)
+>  	if (rc)
+>  		return rc;
+>  
+> +	/* Set the dax operations for fs-dax access path */
+> +	rc = dax_set_ops(dax_dev, &dev_dax_ops);
+> +	if (rc)
+> +		return rc;
+> +
+>  	run_dax(dax_dev);
+>  	return devm_add_action_or_reset(dev, fsdev_kill, dev_dax);
+>  }
+>  
+> +static void fsdev_dax_remove(struct dev_dax *dev_dax)
+> +{
+> +	/* Clear ops on unbind so they aren't used with a different driver */
+> +	dax_set_ops(dev_dax->dax_dev, NULL);
+
+Generally orderings of calls that mix devm and stuff done manually in remove are
+a bad idea.  They can be safe (and this one probably is) but it adds a review
+burden that is best avoided.
+
+Once you stop using devm_ you need to stop it for everything.  So either
+use a devm_add_action_or_reset for this or drop the one for fsdev_kill and
+call that code here instead.
+
+> +}
+> +
+>  static struct dax_device_driver fsdev_dax_driver = {
+>  	.probe = fsdev_dax_probe,
+> +	.remove = fsdev_dax_remove,
+>  	.type = DAXDRV_FSDEV_TYPE,
+>  };
+
 
 
