@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-72707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E16DD00B0E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 03:38:47 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F29D00CB4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 04:09:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D8DBE3015E2B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 02:38:44 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4769A3025A5B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 03:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2993D6F;
-	Thu,  8 Jan 2026 02:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF811288C27;
+	Thu,  8 Jan 2026 03:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="g74vXeO5"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FqRQ2G9K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153D7FC0A;
-	Thu,  8 Jan 2026 02:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA62D276038;
+	Thu,  8 Jan 2026 03:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767839922; cv=none; b=JcFISGUxb3Dw3aaERR1QqzwVF1Il2f4t1QZ5IzfO3BkLjo8q8MbNNUn6GGzAEBEKr9in7/DvGaEg07VU1DLB+95UJ5aVZauj7kc8FJEbf1r2mYakIC61CyCJvR/lN6D51gV/FRZmaBjy92VcCuyz/NEMCQ1Ygch3NbIRI6gUeOo=
+	t=1767841647; cv=none; b=DiBM92WX2Krwd4vzIjSEGyxRZmvd71ZfUW2cSo+LdifJ1BD/zpYDM/ICH/X25zzz2eNFubQIqim3DTiIzqjy68ghXjz5Z5MLJ0XcXDgS70hI8ovzXJX20IRbr7ye/xvCrLf7Wo2iB8L3P4fm/pwSua37db239nr/E7uKNzMNrjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767839922; c=relaxed/simple;
-	bh=0uN/loKROqql8JtMWJo5F5nCJHwqTtPrZr+e4QXFl8s=;
+	s=arc-20240116; t=1767841647; c=relaxed/simple;
+	bh=HfFu8rI60AdSIcWyq9vAh1O2Lw40nJXqSfKYFovigJs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZGY6LwXw4wa9xrsR72TtEJC81NedWSM72bXkYcUJYkqZqmGYOBV7GqXSyEhdqYlVFHmXrTkKoRQ1l/ppklorC2tpjTtbjnxAqnnIqbish3P259npg/vLy7HIr2paj8qGfpasXHfqV16Eh17XRM2Vql0rHjq80Y5I/29I9Q5Hkmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=g74vXeO5; arc=none smtp.client-ip=115.124.30.113
+	 MIME-Version:Content-Type; b=m1XsgQc/CzPpW4wsONi388g3U0uoNfMqHsLF5Dqcz8sbrm+zDqfI4mGWUBGGscbRcUtLXg9659dsJ1iFEV6oZuJQL0QbeZ26IioXItJKZyMkv28xD9nHPSL3R9Uo5Wz77LL1XlfgBOwv1nu5fcxY8g9SnQjXquaxSpDwuyh+MkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FqRQ2G9K; arc=none smtp.client-ip=115.124.30.110
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1767839917; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=W7nr+reNeMmKn20VCZiGbi5+jcRMYMQEwOTPVt+E9Ok=;
-	b=g74vXeO5eKdoUcQZngptA8EldKIzjFTs66OmZdzjYmY6Zgs/5mXLrIeRGTb9+7qNp4aXP0Dbx8zG4PTSrgiL6wHsgwAaAYKgRqfqL5qBG7qcZ8d0jWKlGhF1YNCHuABUbi8/0z7i+4mCHJ3FYkS76VkZeM93f/7g3KsD3NHE67U=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wwaxb7U_1767839912 cluster:ay36)
+	t=1767841636; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=oQheF5fgsLWjFmn4sCy3TBSdl1g+pvd4CN8mZqdibpE=;
+	b=FqRQ2G9KiFq2NdlLkNi9b9ICT3123Qco246P/Fs4cI3cPv/H4PROv8WghoqAb9t/m5kmOp89/1kh/CR1iZBSm5/EEwzO4Fl30MrHg1QgJM0elcd+XgQYirEeZGeGv2Lrg2dlt18SiVm/pctMQFa99n+i6+3NUKEU9BDWPgV5Z0g=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wwb0Z-x_1767841631 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Thu, 08 Jan 2026 10:38:37 +0800
+          Thu, 08 Jan 2026 11:07:15 +0800
 From: Gao Xiang <hsiangkao@linux.alibaba.com>
 To: linux-erofs@lists.ozlabs.org
 Cc: LKML <linux-kernel@vger.kernel.org>,
@@ -51,9 +51,9 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
 	Miklos Szeredi <mszeredi@redhat.com>,
 	Sheng Yong <shengyong1@xiaomi.com>,
 	Zhiguo Niu <niuzhiguo84@gmail.com>
-Subject: [PATCH v3] erofs: don't bother with s_stack_depth increasing for now
-Date: Thu,  8 Jan 2026 10:38:31 +0800
-Message-ID: <20260108023831.3263544-1-hsiangkao@linux.alibaba.com>
+Subject: [PATCH v3 RESEND] erofs: don't bother with s_stack_depth increasing for now
+Date: Thu,  8 Jan 2026 11:07:09 +0800
+Message-ID: <20260108030709.3305545-1-hsiangkao@linux.alibaba.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <3acec686-4020-4609-aee4-5dae7b9b0093@gmail.com>
 References: <3acec686-4020-4609-aee4-5dae7b9b0093@gmail.com>
@@ -115,19 +115,20 @@ Cc: Sheng Yong <shengyong1@xiaomi.com>
 Cc: Zhiguo Niu <niuzhiguo84@gmail.com>
 Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 ---
-v3:
+v2->v3 RESEND:
  - Exclude bdev-backed EROFS mounts since it will be a real terminal fs
    as pointed out by Sheng Yong (APEX will rely on this);
+
  - Preserve previous "Acked-by:" and "Tested-by:" since it's trivial.
 
- fs/erofs/super.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ fs/erofs/super.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 937a215f626c..e93264034b5d 100644
+index 937a215f626c..5136cda5972a 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
-@@ -644,14 +644,20 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -644,14 +644,21 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  		 * fs contexts (including its own) due to self-controlled RO
  		 * accesses/contexts and no side-effect changes that need to
  		 * context save & restore so it can reuse the current thread
@@ -148,7 +149,8 @@ index 937a215f626c..e93264034b5d 100644
 -			if (sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH) {
 -				erofs_err(sb, "maximum fs stacking depth exceeded");
 +			inode = file_inode(sbi->dif0.file);
-+			if ((inode->i_sb->s_op == &erofs_sops && !sb->s_bdev) ||
++			if ((inode->i_sb->s_op == &erofs_sops &&
++			     !inode->i_sb->s_bdev) ||
 +			    inode->i_sb->s_stack_depth) {
 +				erofs_err(sb, "file-backed mounts cannot be applied to stacked fses");
  				return -ENOTBLK;
