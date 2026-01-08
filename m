@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-72900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783E8D04F0B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 18:27:12 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18CAD0562B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 19:10:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 99855307FA50
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 17:20:52 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7D92C3541492
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 17:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313A52EAB83;
-	Thu,  8 Jan 2026 17:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F7F345CA6;
+	Thu,  8 Jan 2026 17:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJag7iH3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEjw0/vg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CBA2DB7BC;
-	Thu,  8 Jan 2026 17:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4552DB7BC;
+	Thu,  8 Jan 2026 17:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767892544; cv=none; b=egteAPp5MYXc5xhj9pFrJXy366hUXMpi4zWX2IZr4+7yltHyXFfST+zRGcRLvOD3nkC7eQjyuP8Ypg6vSFT4YqfWAHb0yfzXGFLqZyrnbir7YOGn5r11q7etjDc6u81jU8qSgNKl0CA6oQs8dopbfz2RE2NXtzBwMiKICNE7Rbo=
+	t=1767892552; cv=none; b=Wr8Sfn+MyMlODGiKhc84UDCBfeFlF/5wYzcPlwuV5P7VDAoNIc2wrbQRZo4tTJ1xbCBXCnbGjWs5jUjsItaDgI51A95/Wnd1ZhczxJm3lTKL1/jCpzxbF5npnc1EGRqxx8R/1YU6Fg6GrUFwmbuPMpVtlVm6uqVuceOxSAE386g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767892544; c=relaxed/simple;
-	bh=yVN7kiv7Ur9Q7AnxVgFewkb0L/ZX8mnNajC6Hfb4ItY=;
+	s=arc-20240116; t=1767892552; c=relaxed/simple;
+	bh=/QjFws5fePN18OBYa8bISKhX2yIiYoWbwKUyTsCKvi8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QALChOIoZphtgYluChQ5gQp6vSQOl1CEY38WjGGREMJ4SCk+9NOYCOAE0Yum4CylrCbyJs/o5o0Eenk0FNa8V8X4/NxKGHLSm8/GuAqMJrhHyCKTUXWaezniN3E20vRNpGMcqVonCi97MDzMdcrzcSZ0TFvTIPz20UTGdOQ52Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJag7iH3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAEF5C116D0;
-	Thu,  8 Jan 2026 17:15:36 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=faMo5q6b89OK/8eR2sJyF+RBH7coP6HGluLoe5NQClT1M/8Emymu/VdH2ltCBCNTUGaRfd6zrGiVBDI39FQVeF4Eu+QeICkNFiyfbboEMFtXEZDvFu9RQhqwWGx9IhJmr7bIrZBf0kB4qwP5ukwTLBvI08GmNvpc1y0cmA0/L1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEjw0/vg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74598C19424;
+	Thu,  8 Jan 2026 17:15:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767892544;
-	bh=yVN7kiv7Ur9Q7AnxVgFewkb0L/ZX8mnNajC6Hfb4ItY=;
+	s=k20201202; t=1767892551;
+	bh=/QjFws5fePN18OBYa8bISKhX2yIiYoWbwKUyTsCKvi8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SJag7iH3Ulhau+TT2S0OSUAXBwy5iFmcU6Lcje37qhWyUrVVIS0QTH2e5wxI2OWuV
-	 uM0Dam7qLl6fl4teot25YDB/0LrIoV6VDVLM3R3t7DnQHbujCZPv6ddb9BKAedtSKV
-	 t7+lntHNYOrLgAPao6XUgZGgqu8HjC4jex629eXoSfP4riBGPiL79zD76/2NIF5M+N
-	 uX1qwg88WzADWZnJTDvKeIPDL1RrhDcY9+1Tyo7ILZF8wYpjcPUZbG8Kk/7gsRnW7M
-	 UsjdAKxfEW+GG6kp5DFxc22CxtnZQjt0Ua7js1IxpNyLl6YAFmV6M9UkWWvJcPJkR3
-	 TovnFOD6YpvAA==
+	b=PEjw0/vgT6GLsQDvxChTEJJWrZnAQSwT/oOYtarnEr1mnlXneb12dRn/+E7ODlH3e
+	 lEscuNaICbpX+q+/6dO9siSu+ISv3W0K9wwdJ/mDEw92/56eNocyUzJjpaC6QdgIyG
+	 TXJksMFDlSytDs24skqoMve70gF6oZNa7uvLK/sesVf1BfG3jX47nbuodaLg5SaXh5
+	 LmcwS/E2mZY6CTlzB8FWEcmq3mPVRu19tuFt5HFUJmWTID9UfJc3ZPIB70pwGbpr4f
+	 vHcBl/oxvixj+KEoGwXKpq84pv0rNzyvfBOZbbD9Nf9EOol0+LhwcwkX8AyEiOq27a
+	 b5nd9nZ8BtLsg==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 08 Jan 2026 12:13:11 -0500
-Subject: [PATCH 16/24] orangefs: add setlease file operation
+Date: Thu, 08 Jan 2026 12:13:12 -0500
+Subject: [PATCH 17/24] overlayfs: add setlease file operation
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260108-setlease-6-20-v1-16-ea4dec9b67fa@kernel.org>
+Message-Id: <20260108-setlease-6-20-v1-17-ea4dec9b67fa@kernel.org>
 References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
 In-Reply-To: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
 To: Luis de Bethencourt <luisbg@kernel.org>, 
@@ -107,65 +107,73 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1607; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=yVN7kiv7Ur9Q7AnxVgFewkb0L/ZX8mnNajC6Hfb4ItY=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpX+W8gf6yTM9PqdgCO6Yh8PQSc1Poy4aktqHXE
- EqXCbQwiOyJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaV/lvAAKCRAADmhBGVaC
- FRuXD/4oWPnRKMqdVVRPF71peTc836Dva171JxklgwmgsfBGNY9Coh6fglKyMqQ9V24XwbsVH7q
- SRxFfC/rZ6jRd8MVmFU4q1T864Bnzpra/VJ4veI4DPnrg77egeKX2Jx4mb0mba4rht+TFrkFCDK
- mhcPTMUj9KmWha9AOJ4147BC7Qf3qLGG9uxvqeIxHVjUN1BTNY7/BNqyZDjaygnRUIqJCWtjTOv
- YUN4eNnfRQLRKyfHAlMfbB/dlZgDLx7Q/W7Vou66JjuFzzyB17eRnChjoMC93Q44naBsb3lFX3K
- yvzZpsHh5/dCXj0hGaJ1QYi0Jg9b96rKOyntmvJpG9LPz7ciN3od6SzIH9dIvxov45RkSSGaEpy
- IuODOTTn6S41W6SKtB8fubBQCalo87arg2F+fCtLTgaMB0MsteZMBW4HgQnOFNQ9et5q4MSGTZ4
- gD/Xf6MItMTAI4y+k66u7nf3hJ5aYHRsVtsVqjfA2nWqduNGthfEsAjx0U/R/sxbYQXikUfsiOK
- 2Q/74eTQIZa2aisqeUf91C+8I05nZsfE96suNoVb/cEL/V57lNG3stvWfm+owGEN3dovr8YFNqD
- lwM/fCzJuwDoCBqjnWCQ4bOIop1NH95s7W++pbtI3bHQhWhN7B3NYsK7YTHsRJOGC1ngl5pluTK
- +CL061T+fPDjdpw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1800; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=/QjFws5fePN18OBYa8bISKhX2yIiYoWbwKUyTsCKvi8=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpX+W87k4FcETAMephFZz/qe7wC4C41gmjqLLfA
+ Q/kBv6HQmOJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaV/lvAAKCRAADmhBGVaC
+ FYTHD/9CJrqt0jlrMR3MPzOXX6TESjSMY5U+1+dwGCcCtiGwGSBiK1ZY1GBC73psRJ+mYjVfSic
+ MNCosL0YefLDvCp7QfNs9/ejLx7RUtyNCes+plJwrTahfnVJZ1uNYdK5DEZ44L2DqTFmrzcD4wQ
+ oy1zj93AjNBYypMHV/k+qL1usyMtFr3jPnged5fSSsBkJ0C5Si0L3ZpP6TqWEWeOleYjDy2urwR
+ fGkQUW+9Y6Xar5xRYHpGJwt5PKYAatcXU+SveMXOFbp35GKe+fnfNWZiABMI8W02Qp4Mf9CV2ZS
+ 45JLWGX1Hhj/0H/KewEpFamsXAQz298u+NwRFRypHdABGYAFB1wzK1r/D5p2LnmLKqrTaQe5bmi
+ 9Jgmywfj0M6wILCz2dDyEET+5PE0sipM9aPV9cHp/v/kpE/99FxGIVlFijqG1YuygTZ3CnEMEJu
+ y6HITTLBUusNTrhTU0Khne6zJzbhrbr4Ank1yRCl3u3cBFZxLvFFUf7YuQpp9L+6yqXasB7W63h
+ VKAGaSoSzMKxT87yMNEdOlgZcotY/MTm6wihQM7wiAsC80uzL7LVT26vWynyqiZeva+dO6UcZet
+ rUCqoy4q+/P7Ir1xCA0rQQCgb99iKp2pznNbBKq1+cYFA4N3yihYKFOnTD8jO/9X9fRvFIvZWGS
+ bhGnYs9Awrd5yCw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Add the setlease file_operation to orangefs_file_operations and
-orangefs_dir_operations, pointing to generic_setlease.	A future patch
-will change the default behavior to reject lease attempts with -EINVAL
-when there is no setlease file operation defined. Add generic_setlease
-to retain the ability to set leases on this filesystem.
+Add the setlease file_operation to ovl_file_operations and
+ovl_dir_operations, pointing to generic_setlease.  A future patch will
+change the default behavior to reject lease attempts with -EINVAL when
+there is no setlease file operation defined. Add generic_setlease to
+retain the ability to set leases on this filesystem.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/orangefs/dir.c  | 4 +++-
- fs/orangefs/file.c | 1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ fs/overlayfs/file.c    | 2 ++
+ fs/overlayfs/readdir.c | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/fs/orangefs/dir.c b/fs/orangefs/dir.c
-index 6d1fbeca9d8172a2155f5b524cd19bc896748d64..3c32bf9f1296e5eb62a7a603faaf4a5493c57166 100644
---- a/fs/orangefs/dir.c
-+++ b/fs/orangefs/dir.c
-@@ -3,6 +3,7 @@
-  * Copyright 2017 Omnibond Systems, L.L.C.
-  */
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index cbae894572348acb3ba6c2b6e7f84558379110c2..8269431ba3c66d49d2eea24c4ca63a3d2879580a 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -5,6 +5,7 @@
  
+ #include <linux/cred.h>
+ #include <linux/file.h>
 +#include <linux/filelock.h>
- #include "protocol.h"
- #include "orangefs-kernel.h"
- #include "orangefs-bufmap.h"
-@@ -392,5 +393,6 @@ const struct file_operations orangefs_dir_operations = {
- 	.read = generic_read_dir,
- 	.iterate_shared = orangefs_dir_iterate,
- 	.open = orangefs_dir_open,
--	.release = orangefs_dir_release
-+	.release = orangefs_dir_release,
-+	.setlease = generic_setlease,
+ #include <linux/mount.h>
+ #include <linux/xattr.h>
+ #include <linux/uio.h>
+@@ -647,4 +648,5 @@ const struct file_operations ovl_file_operations = {
+ 
+ 	.copy_file_range	= ovl_copy_file_range,
+ 	.remap_file_range	= ovl_remap_file_range,
++	.setlease		= generic_setlease,
  };
-diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
-index 919f99b16834160dd8cc87faf9b8802aa02796cf..afd610a3fc68855eba1c892d91a5c0686876cfc3 100644
---- a/fs/orangefs/file.c
-+++ b/fs/orangefs/file.c
-@@ -583,4 +583,5 @@ const struct file_operations orangefs_file_operations = {
- 	.flush		= orangefs_flush,
- 	.release	= orangefs_file_release,
- 	.fsync		= orangefs_fsync,
+diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+index 160960bb0ad0b0cd219cb2d8e82d8bda08885af0..7fd415d7471ed58849710da9f8a414b2b7aca1b4 100644
+--- a/fs/overlayfs/readdir.c
++++ b/fs/overlayfs/readdir.c
+@@ -8,6 +8,7 @@
+ #include <linux/slab.h>
+ #include <linux/namei.h>
+ #include <linux/file.h>
++#include <linux/filelock.h>
+ #include <linux/xattr.h>
+ #include <linux/rbtree.h>
+ #include <linux/security.h>
+@@ -1070,6 +1071,7 @@ const struct file_operations ovl_dir_operations = {
+ 	.llseek		= ovl_dir_llseek,
+ 	.fsync		= ovl_dir_fsync,
+ 	.release	= ovl_dir_release,
 +	.setlease	= generic_setlease,
  };
+ 
+ int ovl_check_empty_dir(struct dentry *dentry, struct list_head *list)
 
 -- 
 2.52.0
