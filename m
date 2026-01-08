@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-72848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C358D03FC1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:46:08 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C75D0403C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:48:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 95B1035D47E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:24:14 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 1A8FD307DA03
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157C64FCC26;
-	Thu,  8 Jan 2026 14:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C165011AA;
+	Thu,  8 Jan 2026 14:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cWja9dk4"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0/JWrEAT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC29040FDBA;
-	Thu,  8 Jan 2026 14:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F390B50118C;
+	Thu,  8 Jan 2026 14:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767882035; cv=none; b=n5qtq5gkud30TsEzBciVa++V2No2nlg2IHH0nPdvKyTHExu0r+locK01bKzOei5GbE9OKqrBncb4eRcAS4QjWy9+1M43tilYzcMErecxZm4IqqG6AvASilc+lmVDtyO47qogA4MvZ0PNpFl7cFusY00ttcwPmgtWgXiXtCtUFo0=
+	t=1767882078; cv=none; b=YuyzxYcoPFzstoVyNRiH0eMsY7rbvQF8gVl/V28jC9/hXmPHkCxSgLOaZ9EIO7hzo//szJHQxZ2Zle5y6uGkeyfs4yh1A9Gzjta7Q5OE3uFpHX/sGA/Kf7ZxQK61wK9dgk8w9ue4P9am+HAht7IQeKJRA+Kij6V4/56XMvWBDDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767882035; c=relaxed/simple;
-	bh=UJixZYj37aXpB/sKGXT2paWVCrS22SuVDJSKmFQ58Wg=;
+	s=arc-20240116; t=1767882078; c=relaxed/simple;
+	bh=8/JLs4IrZpMOr3xF4gPW01ZuZilf/sgRKxT0PJ8cmME=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aMWCqe3qrDf1aA4pnnYEBJpNa/yZMA9ftJN821FTzgVKM6gThT92d5b+6QKpzYUUoWfUwWdf/ju0i64fmjXi5toVjZDcokYH53lr1wYyJsQRI1FL3m/Cv380/+ynfka3+EASo1lOthW6dHHa65vtkKoUlXl5JiqxUvccWSqW6Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cWja9dk4; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=XUNGhpdmsTPnyUzYMEMM6mG69szPpz//6BVhdy/VC3QL7gvWQjCkqmitrTeGgSCT0HfGZ5rGbpBpZ9vqfh3LbSyqKklIF9zGuSQF9XDGu3YUW+eMCDg5teWd+kht/jjrFubl5AerBqbvjVzr7zupJJqdZQ6EeNs0R70/9qAtzZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0/JWrEAT; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=VgGdVSskvUBsQU99HqHR29IHCTQ+0iw5NmAp1t53cpA=; b=cWja9dk46PjK0yoEsSXYOB3HSH
-	GWi7A2PwFUP9C9VoF0UaBikUKycfv2JNr85aD3EnDvnExL1dLaLn5SG6lbI/4Wl6WgLyuvcFCrqxe
-	Ij99SdIW68927jyuUAebZn3gSKyh7nF8FoBhbtzJ1F4pCnMi8yb6KPeCWv9/aH+1ZV6PkK7h159S1
-	hcnrLAlaBE/S/EvgrHZW/ZEXYJNZ/JVG3qYfxCCmSdMBOKqkQHmXxvEUFYVkDKZPG754DABOb9YuF
-	JXaBHo82BsireO6kGeQVhg6OFINInY9vm40Y/sdMnHVVzByPIuVMi78Xk8RwdFR/OH3upu6iLiwno
-	iRMPssYg==;
+	bh=GMiF9//0kquQMpqL6P4q+NlQfu8tvch3hnZIyAVeC2U=; b=0/JWrEATOZqBP0roA531vUafSq
+	FfDDVV1tOJxwZfG9oC8BmjI4ygJa0YhDcFJkzlt8NMSxI/ZaMy2kFuKgDJMUpFTPso/z8B3b2wA4l
+	D5aYBMMF0Uza5ncF2whtUy2J337PQplYD5g5eFOWqOUZkkidm1YimR03KCXhyCNUpOB1RqPpRqa/S
+	Ey1Glw5OHx9xFH0f/i6MWMIFwA7L/8gEW3tQyLrKyegZDoie/C9qG+JbSu3QUsbSET6IQQbMUMbTU
+	P+4uSTfElv39DDGwhhOgr9UUEauYxGUygwLxSvF1MLHj5m5rbxJDjfmlRRr6o90HEA54lyKY2/F1T
+	L+LAn9QA==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vdqsG-0000000HJRE-3S5v;
-	Thu, 08 Jan 2026 14:20:30 +0000
+	id 1vdqt0-0000000HJoG-0mfI;
+	Thu, 08 Jan 2026 14:21:14 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>,
@@ -66,9 +66,9 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	linux-mtd@lists.infradead.org,
 	linux-xfs@vger.kernel.org,
 	linux-nfs@vger.kernel.org
-Subject: [PATCH 04/11] fat: cleanup the flags for fat_truncate_time
-Date: Thu,  8 Jan 2026 15:19:04 +0100
-Message-ID: <20260108141934.2052404-5-hch@lst.de>
+Subject: [PATCH 08/11] fs: add support for non-blocking timestamp updates
+Date: Thu,  8 Jan 2026 15:19:08 +0100
+Message-ID: <20260108141934.2052404-9-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260108141934.2052404-1-hch@lst.de>
 References: <20260108141934.2052404-1-hch@lst.de>
@@ -81,314 +81,198 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Fat only has a single on-disk timestamp covering ctime and mtime.  Add
-fat-specific flags that indicate which timestamp fat_truncate_time should
-update to make this more clear.  This allows removing no-op
-fat_truncate_time calls with the S_CTIME flag and prepares for removing
-the S_* flags.
+Currently file_update_time_flags unconditionally returns -EAGAIN if any
+timestamp needs to be updated and IOCB_NOWAIT is passed.  This makes
+non-blocking direct writes impossible on file systems with granular
+enough timestamps.
+
+Pass IOCB_NOWAIT to ->update_time and return -EAGAIN if it could block.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/fat/dir.c         |  2 +-
- fs/fat/fat.h         |  8 ++++----
- fs/fat/file.c        | 14 ++++++-------
- fs/fat/inode.c       |  2 +-
- fs/fat/misc.c        | 47 ++++++++++++++++++++++----------------------
- fs/fat/namei_msdos.c | 13 +++++-------
- fs/fat/namei_vfat.c  |  9 ++++-----
- 7 files changed, 44 insertions(+), 51 deletions(-)
+ fs/btrfs/inode.c     |  2 ++
+ fs/gfs2/inode.c      |  3 +++
+ fs/inode.c           | 45 +++++++++++++++++++++++++++++++++-----------
+ fs/orangefs/inode.c  |  3 +++
+ fs/overlayfs/inode.c |  2 ++
+ fs/ubifs/file.c      |  3 +++
+ fs/xfs/xfs_iops.c    |  3 +++
+ 7 files changed, 50 insertions(+), 11 deletions(-)
 
-diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-index 92b091783966..3d03bff40944 100644
---- a/fs/fat/dir.c
-+++ b/fs/fat/dir.c
-@@ -1080,7 +1080,7 @@ int fat_remove_entries(struct inode *dir, struct fat_slot_info *sinfo)
- 		}
- 	}
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 23fc38de9be5..241727459c0a 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -6362,6 +6362,8 @@ static int btrfs_update_time(struct inode *inode, enum fs_update_time type,
  
--	fat_truncate_time(dir, NULL, S_ATIME|S_MTIME);
-+	fat_truncate_time(dir, NULL, FAT_UPDATE_ATIME | FAT_UPDATE_CMTIME);
- 	if (IS_DIRSYNC(dir))
- 		(void)fat_sync_inode(dir);
- 	else
-diff --git a/fs/fat/fat.h b/fs/fat/fat.h
-index d3e426de5f01..767b566b1cab 100644
---- a/fs/fat/fat.h
-+++ b/fs/fat/fat.h
-@@ -468,10 +468,10 @@ extern void fat_time_unix2fat(struct msdos_sb_info *sbi, struct timespec64 *ts,
- 			      __le16 *time, __le16 *date, u8 *time_cs);
- extern struct timespec64 fat_truncate_atime(const struct msdos_sb_info *sbi,
- 					    const struct timespec64 *ts);
--extern struct timespec64 fat_truncate_mtime(const struct msdos_sb_info *sbi,
--					    const struct timespec64 *ts);
--extern int fat_truncate_time(struct inode *inode, struct timespec64 *now,
--			     int flags);
-+#define FAT_UPDATE_ATIME	(1u << 0)
-+#define FAT_UPDATE_CMTIME	(1u << 1)
-+void fat_truncate_time(struct inode *inode, struct timespec64 *now,
-+		unsigned int flags);
- extern int fat_update_time(struct inode *inode, int flags);
- extern int fat_sync_bhs(struct buffer_head **bhs, int nr_bhs);
+ 	if (btrfs_root_readonly(root))
+ 		return -EROFS;
++	if (flags & IOCB_NOWAIT)
++		return -EAGAIN;
  
-diff --git a/fs/fat/file.c b/fs/fat/file.c
-index 4fc49a614fb8..f9bc93411aa2 100644
---- a/fs/fat/file.c
-+++ b/fs/fat/file.c
-@@ -224,7 +224,7 @@ static int fat_cont_expand(struct inode *inode, loff_t size)
- 	if (err)
- 		goto out;
+ 	dirty = inode_update_time(inode, type, flags);
+ 	if (dirty <= 0)
+diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
+index 4ef39ff6889d..c02ebf0ca625 100644
+--- a/fs/gfs2/inode.c
++++ b/fs/gfs2/inode.c
+@@ -2250,6 +2250,9 @@ static int gfs2_update_time(struct inode *inode, enum fs_update_time type,
+ 	struct gfs2_holder *gh;
+ 	int error;
  
--	fat_truncate_time(inode, NULL, S_CTIME|S_MTIME);
-+	fat_truncate_time(inode, NULL, FAT_UPDATE_CMTIME);
- 	mark_inode_dirty(inode);
- 	if (IS_SYNC(inode)) {
- 		int err2;
-@@ -327,7 +327,7 @@ static int fat_free(struct inode *inode, int skip)
- 		MSDOS_I(inode)->i_logstart = 0;
- 	}
- 	MSDOS_I(inode)->i_attrs |= ATTR_ARCH;
--	fat_truncate_time(inode, NULL, S_CTIME|S_MTIME);
-+	fat_truncate_time(inode, NULL, FAT_UPDATE_CMTIME);
- 	if (wait) {
- 		err = fat_sync_inode(inode);
- 		if (err) {
-@@ -553,15 +553,13 @@ int fat_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	}
- 
- 	/*
--	 * setattr_copy can't truncate these appropriately, so we'll
--	 * copy them ourselves
-+	 * setattr_copy can't truncate these appropriately, so we'll copy them
-+	 * ourselves.  See fat_truncate_time for the c/mtime logic on fat.
- 	 */
- 	if (attr->ia_valid & ATTR_ATIME)
--		fat_truncate_time(inode, &attr->ia_atime, S_ATIME);
--	if (attr->ia_valid & ATTR_CTIME)
--		fat_truncate_time(inode, &attr->ia_ctime, S_CTIME);
-+		fat_truncate_time(inode, &attr->ia_atime, FAT_UPDATE_ATIME);
- 	if (attr->ia_valid & ATTR_MTIME)
--		fat_truncate_time(inode, &attr->ia_mtime, S_MTIME);
-+		fat_truncate_time(inode, &attr->ia_mtime, FAT_UPDATE_CMTIME);
- 	attr->ia_valid &= ~(ATTR_ATIME|ATTR_CTIME|ATTR_MTIME);
- 
- 	setattr_copy(idmap, inode, attr);
-diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-index 0b6009cd1844..59fa90617b5b 100644
---- a/fs/fat/inode.c
-+++ b/fs/fat/inode.c
-@@ -246,7 +246,7 @@ static int fat_write_end(const struct kiocb *iocb,
- 	if (err < len)
- 		fat_write_failed(mapping, pos + len);
- 	if (!(err < 0) && !(MSDOS_I(inode)->i_attrs & ATTR_ARCH)) {
--		fat_truncate_time(inode, NULL, S_CTIME|S_MTIME);
-+		fat_truncate_time(inode, NULL, FAT_UPDATE_CMTIME);
- 		MSDOS_I(inode)->i_attrs |= ATTR_ARCH;
- 		mark_inode_dirty(inode);
- 	}
-diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-index 950da09f0961..78c620e9b3fd 100644
---- a/fs/fat/misc.c
-+++ b/fs/fat/misc.c
-@@ -299,54 +299,53 @@ struct timespec64 fat_truncate_atime(const struct msdos_sb_info *sbi,
++	if (flags & IOCB_NOWAIT)
++		return -EAGAIN;
++
+ 	gh = gfs2_glock_is_locked_by_me(gl);
+ 	if (gh && gl->gl_state != LM_ST_EXCLUSIVE) {
+ 		gfs2_glock_dq(gh);
+diff --git a/fs/inode.c b/fs/inode.c
+index 0cafe74bff2d..cd3ca98e8355 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2090,7 +2090,7 @@ static int inode_update_atime(struct inode *inode)
+ 	return inode_time_dirty_flag(inode);
  }
  
- /*
-- * truncate mtime to 2 second granularity
-- */
--struct timespec64 fat_truncate_mtime(const struct msdos_sb_info *sbi,
--				     const struct timespec64 *ts)
--{
--	return fat_timespec64_trunc_2secs(*ts);
--}
--
--/*
-- * truncate the various times with appropriate granularity:
-- *   all times in root node are always 0
-+ * Update the in-inode atime and/or mtime after truncating the timestamp to the
-+ * granularity.  All timestamps in root inode are always 0.
-+ *
-+ * ctime and mtime share the same on-disk field, and should be identical in
-+ * memory.  All mtime updates will be applied to ctime, but ctime updates are
-+ * ignored.
-  */
--int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
-+void fat_truncate_time(struct inode *inode, struct timespec64 *now,
-+		unsigned int flags)
+-static int inode_update_cmtime(struct inode *inode)
++static int inode_update_cmtime(struct inode *inode, unsigned int flags)
  {
- 	struct msdos_sb_info *sbi = MSDOS_SB(inode->i_sb);
- 	struct timespec64 ts;
+ 	struct timespec64 ctime = inode_get_ctime(inode);
+ 	struct timespec64 mtime = inode_get_mtime(inode);
+@@ -2101,12 +2101,27 @@ static int inode_update_cmtime(struct inode *inode)
+ 	mtime_changed = !timespec64_equal(&now, &mtime);
+ 	if (mtime_changed || !timespec64_equal(&now, &ctime))
+ 		dirty = inode_time_dirty_flag(inode);
+-	if (mtime_changed)
+-		inode_set_mtime_to_ts(inode, now);
  
- 	if (inode->i_ino == MSDOS_ROOT_INO)
--		return 0;
-+		return;
- 
- 	if (now == NULL) {
- 		now = &ts;
- 		ts = current_time(inode);
- 	}
- 
--	if (flags & S_ATIME)
-+	if (flags & FAT_UPDATE_ATIME)
- 		inode_set_atime_to_ts(inode, fat_truncate_atime(sbi, now));
--	/*
--	 * ctime and mtime share the same on-disk field, and should be
--	 * identical in memory. all mtime updates will be applied to ctime,
--	 * but ctime updates are ignored.
--	 */
--	if (flags & S_MTIME)
--		inode_set_mtime_to_ts(inode,
--				      inode_set_ctime_to_ts(inode, fat_truncate_mtime(sbi, now)));
-+	if (flags & FAT_UPDATE_CMTIME) {
-+		/* truncate mtime to 2 second granularity */
-+		struct timespec64 mtime = fat_timespec64_trunc_2secs(*now);
- 
--	return 0;
-+		inode_set_mtime_to_ts(inode, mtime);
-+		inode_set_ctime_to_ts(inode, mtime);
+-	if (IS_I_VERSION(inode) && inode_maybe_inc_iversion(inode, !!dirty))
+-		dirty |= I_DIRTY_SYNC;
++	/*
++	 * Pure timestamp updates can be recorded in the inode without blocking
++	 * by not dirtying the inode.  But when the file system requires
++	 * i_version updates, the update of i_version can still block.
++	 * Error out if we'd actually have to update i_version or don't support
++	 * lazytime.
++	 */
++	if (IS_I_VERSION(inode)) {
++		if (flags & IOCB_NOWAIT) {
++			if (!(inode->i_sb->s_flags & SB_LAZYTIME) ||
++			    inode_iversion_need_inc(inode))
++				return -EAGAIN;
++		} else {
++			if (inode_maybe_inc_iversion(inode, !!dirty))
++				dirty |= I_DIRTY_SYNC;
++		}
 +	}
+ 
++	if (mtime_changed)
++		inode_set_mtime_to_ts(inode, now);
+ 	return dirty;
  }
- EXPORT_SYMBOL_GPL(fat_truncate_time);
  
- int fat_update_time(struct inode *inode, int flags)
+@@ -2131,7 +2146,7 @@ int inode_update_time(struct inode *inode, enum fs_update_time type,
+ 	case FS_UPD_ATIME:
+ 		return inode_update_atime(inode);
+ 	case FS_UPD_CMTIME:
+-		return inode_update_cmtime(inode);
++		return inode_update_cmtime(inode, flags);
+ 	default:
+ 		WARN_ON_ONCE(1);
+ 		return -EIO;
+@@ -2152,6 +2167,16 @@ int generic_update_time(struct inode *inode, enum fs_update_time type,
  {
-+	unsigned int fat_flags = 0;
- 	int dirty_flags = 0;
+ 	int dirty;
  
- 	if (inode->i_ino == MSDOS_ROOT_INO)
++	/*
++	 * ->dirty_inode is what could make generic timestamp updates block.
++	 * Don't support non-blocking timestamp updates here if it is set.
++	 * File systems that implement ->dirty_inode but want to support
++	 * non-blocking timestamp updates should call inode_update_time
++	 * directly.
++	 */
++	if ((flags & IOCB_NOWAIT) && inode->i_sb->s_op->dirty_inode)
++		return -EAGAIN;
++
+ 	dirty = inode_update_time(inode, type, flags);
+ 	if (dirty <= 0)
+ 		return dirty;
+@@ -2380,15 +2405,13 @@ static int file_update_time_flags(struct file *file, unsigned int flags)
+ 	if (!need_update)
  		return 0;
  
--	if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
-+	if (flags & S_ATIME)
-+		fat_flags |= FAT_UPDATE_ATIME;
-+	if (flags & (S_CTIME | S_MTIME))
-+		fat_flags |= FAT_UPDATE_CMTIME;
+-	if (flags & IOCB_NOWAIT)
+-		return -EAGAIN;
+-
++	flags &= IOCB_NOWAIT;
+ 	if (mnt_get_write_access_file(file))
+ 		return 0;
+ 	if (inode->i_op->update_time)
+-		ret = inode->i_op->update_time(inode, FS_UPD_CMTIME, 0);
++		ret = inode->i_op->update_time(inode, FS_UPD_CMTIME, flags);
+ 	else
+-		ret = generic_update_time(inode, FS_UPD_CMTIME, 0);
++		ret = generic_update_time(inode, FS_UPD_CMTIME, flags);
+ 	mnt_put_write_access_file(file);
+ 	return ret;
+ }
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index eab16afb5b8a..f420f48fc069 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -878,6 +878,9 @@ int orangefs_update_time(struct inode *inode, enum fs_update_time type,
+ 	struct iattr iattr = { };
+ 	int dirty;
+ 
++	if (flags & IOCB_NOWAIT)
++		return -EAGAIN;
 +
-+	if (fat_flags) {
- 		fat_truncate_time(inode, NULL, flags);
- 		if (inode->i_sb->s_flags & SB_LAZYTIME)
- 			dirty_flags |= I_DIRTY_TIME;
-diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
-index 0b920ee40a7f..ba0152ed0810 100644
---- a/fs/fat/namei_msdos.c
-+++ b/fs/fat/namei_msdos.c
-@@ -251,7 +251,7 @@ static int msdos_add_entry(struct inode *dir, const unsigned char *name,
+ 	switch (type) {
+ 	case FS_UPD_ATIME:
+ 		iattr.ia_valid = ATTR_ATIME;
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index c0ce3519e4af..00c69707bda9 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -566,6 +566,8 @@ int ovl_update_time(struct inode *inode, enum fs_update_time type,
+ 		};
+ 
+ 		if (upperpath.dentry) {
++			if (flags & IOCB_NOWAIT)
++				return -EAGAIN;
+ 			touch_atime(&upperpath);
+ 			inode_set_atime_to_ts(inode,
+ 					      inode_get_atime(d_inode(upperpath.dentry)));
+diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+index 0cc44ad142de..3dc3ca1cd803 100644
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -1377,6 +1377,9 @@ int ubifs_update_time(struct inode *inode, enum fs_update_time type,
+ 	if (!IS_ENABLED(CONFIG_UBIFS_ATIME_SUPPORT))
+ 		return generic_update_time(inode, type, flags);
+ 
++	if (flags & IOCB_NOWAIT)
++		return -EAGAIN;
++
+ 	err = ubifs_budget_space(c, &req);
  	if (err)
  		return err;
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index d9eae1af14a8..aef5b05c1b76 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1195,6 +1195,9 @@ xfs_vn_update_time(
  
--	fat_truncate_time(dir, ts, S_CTIME|S_MTIME);
-+	fat_truncate_time(dir, ts, FAT_UPDATE_CMTIME);
- 	if (IS_DIRSYNC(dir))
- 		(void)fat_sync_inode(dir);
- 	else
-@@ -295,7 +295,7 @@ static int msdos_create(struct mnt_idmap *idmap, struct inode *dir,
- 		err = PTR_ERR(inode);
- 		goto out;
- 	}
--	fat_truncate_time(inode, &ts, S_ATIME|S_CTIME|S_MTIME);
-+	fat_truncate_time(inode, &ts, FAT_UPDATE_ATIME | FAT_UPDATE_CMTIME);
- 	/* timestamp is already written, so mark_inode_dirty() is unneeded. */
+ 	trace_xfs_update_time(ip);
  
- 	d_instantiate(dentry, inode);
-@@ -328,7 +328,6 @@ static int msdos_rmdir(struct inode *dir, struct dentry *dentry)
- 	drop_nlink(dir);
- 
- 	clear_nlink(inode);
--	fat_truncate_time(inode, NULL, S_CTIME);
- 	fat_detach(inode);
- out:
- 	mutex_unlock(&MSDOS_SB(sb)->s_lock);
-@@ -382,7 +381,7 @@ static struct dentry *msdos_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 		goto out;
- 	}
- 	set_nlink(inode, 2);
--	fat_truncate_time(inode, &ts, S_ATIME|S_CTIME|S_MTIME);
-+	fat_truncate_time(inode, &ts, FAT_UPDATE_ATIME | FAT_UPDATE_CMTIME);
- 	/* timestamp is already written, so mark_inode_dirty() is unneeded. */
- 
- 	d_instantiate(dentry, inode);
-@@ -415,7 +414,6 @@ static int msdos_unlink(struct inode *dir, struct dentry *dentry)
- 	if (err)
- 		goto out;
- 	clear_nlink(inode);
--	fat_truncate_time(inode, NULL, S_CTIME);
- 	fat_detach(inode);
- out:
- 	mutex_unlock(&MSDOS_SB(sb)->s_lock);
-@@ -480,7 +478,7 @@ static int do_msdos_rename(struct inode *old_dir, unsigned char *old_name,
- 				mark_inode_dirty(old_inode);
- 
- 			inode_inc_iversion(old_dir);
--			fat_truncate_time(old_dir, NULL, S_CTIME|S_MTIME);
-+			fat_truncate_time(old_dir, NULL, FAT_UPDATE_CMTIME);
- 			if (IS_DIRSYNC(old_dir))
- 				(void)fat_sync_inode(old_dir);
- 			else
-@@ -540,7 +538,7 @@ static int do_msdos_rename(struct inode *old_dir, unsigned char *old_name,
- 	if (err)
- 		goto error_dotdot;
- 	inode_inc_iversion(old_dir);
--	fat_truncate_time(old_dir, &ts, S_CTIME|S_MTIME);
-+	fat_truncate_time(old_dir, &ts, FAT_UPDATE_CMTIME);
- 	if (IS_DIRSYNC(old_dir))
- 		(void)fat_sync_inode(old_dir);
- 	else
-@@ -550,7 +548,6 @@ static int do_msdos_rename(struct inode *old_dir, unsigned char *old_name,
- 		drop_nlink(new_inode);
- 		if (is_dir)
- 			drop_nlink(new_inode);
--		fat_truncate_time(new_inode, &ts, S_CTIME);
- 	}
- out:
- 	brelse(sinfo.bh);
-diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
-index 5dbc4cbb8fce..e46f34cade1a 100644
---- a/fs/fat/namei_vfat.c
-+++ b/fs/fat/namei_vfat.c
-@@ -676,7 +676,7 @@ static int vfat_add_entry(struct inode *dir, const struct qstr *qname,
- 		goto cleanup;
- 
- 	/* update timestamp */
--	fat_truncate_time(dir, ts, S_CTIME|S_MTIME);
-+	fat_truncate_time(dir, ts, FAT_UPDATE_CMTIME);
- 	if (IS_DIRSYNC(dir))
- 		(void)fat_sync_inode(dir);
- 	else
-@@ -806,7 +806,7 @@ static int vfat_rmdir(struct inode *dir, struct dentry *dentry)
- 	drop_nlink(dir);
- 
- 	clear_nlink(inode);
--	fat_truncate_time(inode, NULL, S_ATIME|S_MTIME);
-+	fat_truncate_time(inode, NULL, FAT_UPDATE_ATIME | FAT_UPDATE_CMTIME);
- 	fat_detach(inode);
- 	vfat_d_version_set(dentry, inode_query_iversion(dir));
- out:
-@@ -832,7 +832,7 @@ static int vfat_unlink(struct inode *dir, struct dentry *dentry)
- 	if (err)
- 		goto out;
- 	clear_nlink(inode);
--	fat_truncate_time(inode, NULL, S_ATIME|S_MTIME);
-+	fat_truncate_time(inode, NULL, FAT_UPDATE_ATIME | FAT_UPDATE_CMTIME);
- 	fat_detach(inode);
- 	vfat_d_version_set(dentry, inode_query_iversion(dir));
- out:
-@@ -918,7 +918,7 @@ static int vfat_update_dotdot_de(struct inode *dir, struct inode *inode,
- static void vfat_update_dir_metadata(struct inode *dir, struct timespec64 *ts)
- {
- 	inode_inc_iversion(dir);
--	fat_truncate_time(dir, ts, S_CTIME | S_MTIME);
-+	fat_truncate_time(dir, ts, FAT_UPDATE_CMTIME);
- 	if (IS_DIRSYNC(dir))
- 		(void)fat_sync_inode(dir);
- 	else
-@@ -996,7 +996,6 @@ static int vfat_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		drop_nlink(new_inode);
- 		if (is_dir)
- 			drop_nlink(new_inode);
--		fat_truncate_time(new_inode, &ts, S_CTIME);
- 	}
- out:
- 	brelse(sinfo.bh);
++	if (flags & IOCB_NOWAIT)
++		return -EAGAIN;
++
+ 	if (inode->i_sb->s_flags & SB_LAZYTIME) {
+ 		if (type == FS_UPD_ATIME ||
+ 		    !inode_maybe_inc_iversion(inode, false))
 -- 
 2.47.3
 
