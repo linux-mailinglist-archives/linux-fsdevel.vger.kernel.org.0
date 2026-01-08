@@ -1,104 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-72735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C37BD03895
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 15:50:46 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 284FBD03907
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 15:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id AD106303B20B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 14:44:00 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 76536307F2B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 14:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F4D3469FA;
-	Thu,  8 Jan 2026 07:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F38F4BE292;
+	Thu,  8 Jan 2026 12:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Qag851np"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="GIpn2P3f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABED32AABC;
-	Thu,  8 Jan 2026 07:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8665A4B3A98;
+	Thu,  8 Jan 2026 12:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767857817; cv=none; b=C0reQJQVq7YUgo9xWdju5Qh2s6v1XQ0WrbmxGxBTjL8I8JV3Q2HZOwOutjfBkLKVgn+YD2uanxKGUt+UT6XC4OnUa3liXNFJNpZBpQL7w3gHNR2042XwVGfM61hW0E7DiND69NP/q50RQCYrcvNDYCsmEsYdrqB3cbMH/5IeYeU=
+	t=1767874823; cv=none; b=e3me8roql8WLwgtjL/CEAor8F12HOHmPMJ6YSYUrLD2ttw4rNiZRaoXdxcOyRKt+eNnVBYjZ2OvuYQObmtz01XKJfxsy0k08bjxAC8x+d62nDPl1kVk1Dt8lkqesxk/HTyhnS1E2WWW0fFk7ieXUalVSqoowg+ly4PdIbpvmDvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767857817; c=relaxed/simple;
-	bh=rYNiXERMORELD3rtPdZULgbnCI+3YEmNF+Hwi5pTBHM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pdUYXg2h90lZIsDDDlFzEfffduSl+JVQljbDHWY78wxsfM2Kg1B8BE1PWRH7wUoyjeOi74acjhmvoH6blpUJEce3HOqcln/mYRIdiu4cgzG/oErfQNd4FpgQEl+eSK4xE4VYo62R1tuyOBviDOiwr8g0edUSk5yL4KFJRHZDgYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Qag851np; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=O3vCMEIcJ6QDV68ynljSAAzPvL85FljOJrW2O7eAqj8=; b=Qag851npjPI5cCZ5wPC3LzRWTX
-	NO2RGhhZGlx79rOTZvvbwj98Ian64HiYNdSkiR0lnKtIdvRTn9lzjR3yA/HpRqlzhO6KaBzyaSHx3
-	rib+3YCU56VMqFLBvBh4m6YBQ3UOsL9Mj6vOHY9wOb2fofP+Rox7OOm58ucAzg8y4QbpIcOGIctZo
-	+4L3fLxVmfBanVuttLUeToC6BHdWx/xJ8d4/foPHXqQafGELtfZrrcdlgCEV88zjm8hxood6vE71h
-	ldgN8JiMldXYpjrM9KRXUOgRzn4qWuqh0zqQXeOSzLKbSU/PUF2Z3uW6WHc9ryYaKMkxOL8Uhy+0L
-	A0IgbXWQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkau-00000001mlt-1SYl;
-	Thu, 08 Jan 2026 07:38:08 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: torvalds@linux-foundation.org,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mjguzik@gmail.com,
-	paul@paul-moore.com,
-	axboe@kernel.dk,
-	audit@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 25/59] ksmbd_vfs_rename(): vfs_path_parent_lookup() accepts ERR_PTR() as name
-Date: Thu,  8 Jan 2026 07:37:29 +0000
-Message-ID: <20260108073803.425343-26-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
-References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1767874823; c=relaxed/simple;
+	bh=01vIFrUicp9vIydw7PyfnDF2m4sKbRmWiMEaUWWxfeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sv6bbleLqK27ob1IPOOmlFqwunTkSbcNsVK84MZJW4Y4akxhQ0Kkgj905DOYu95K5ZB2l6hzCR8dCZmkGNnLHRaQNofjKjAIsaxXN5HTdqYE+PCNs4CVPDxHtX0sQrlrdrETmDQ6KGK+DF00rSU1BT2TgAnVKIw8hgWTOSKVs1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=GIpn2P3f; arc=none smtp.client-ip=113.46.200.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=DokPCpI+DXeppXDY77AhxNya3KTD8hrJouXcEIui7k0=;
+	b=GIpn2P3f0KYTczqlD5hfRTSljCiL0x5m4qHG3fqaAdXJNYsPunVQIu5oZNpKUbDElhXnflxh9
+	eT9s5UfISoOb7shIwIbx8F3mG9VFrvezUZEQnV6VU8poNouPmFEexhq393oezRnTDO/p0Ky0Og/
+	FRVsZPzngqetCFpCkNIxcWk=
+Received: from mail.maildlp.com (unknown [172.19.162.140])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4dn3mj70FGzRhQT;
+	Thu,  8 Jan 2026 20:16:53 +0800 (CST)
+Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
+	by mail.maildlp.com (Postfix) with ESMTPS id 520062012A;
+	Thu,  8 Jan 2026 20:20:10 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ kwepemr500015.china.huawei.com (7.202.195.162) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 8 Jan 2026 20:20:09 +0800
+Message-ID: <bb8e14f4-dbab-4974-a180-b436a00625d1@huawei.com>
+Date: Thu, 8 Jan 2026 20:20:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 07/10] erofs: introduce the page cache share feature
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+CC: <djwong@kernel.org>, <amir73il@gmail.com>, <hch@lst.de>,
+	<linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, Chao Yu <chao@kernel.org>,
+	<brauner@kernel.org>
+References: <20251231090118.541061-1-lihongbo22@huawei.com>
+ <20251231090118.541061-8-lihongbo22@huawei.com>
+ <99a517aa-744b-487b-bce8-294b69a0cd50@linux.alibaba.com>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <99a517aa-744b-487b-bce8-294b69a0cd50@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemr500015.china.huawei.com (7.202.195.162)
 
-no need to check in the caller
+Hi, Xiang
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/smb/server/vfs.c | 5 -----
- 1 file changed, 5 deletions(-)
+On 2026/1/7 14:08, Gao Xiang wrote:
+> 
+> 
+> On 2025/12/31 17:01, Hongbo Li wrote:
 
-diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index a97226116840..30b65b667b96 100644
---- a/fs/smb/server/vfs.c
-+++ b/fs/smb/server/vfs.c
-@@ -674,10 +674,6 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
- 		return -ENOMEM;
- 
- 	to = getname_kernel(newname);
--	if (IS_ERR(to)) {
--		err = PTR_ERR(to);
--		goto revert_fsids;
--	}
- 
- retry:
- 	err = vfs_path_parent_lookup(to, lookup_flags | LOOKUP_BENEATH,
-@@ -737,7 +733,6 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
- 	}
- out1:
- 	putname(to);
--revert_fsids:
- 	ksmbd_revert_fsids(work);
- 	return err;
- }
--- 
-2.47.3
+...
 
+>> +
+>> +static int erofs_ishare_file_release(struct inode *inode, struct file 
+>> *file)
+>> +{
+>> +    struct file *realfile = file->private_data;
+>> +
+>> +    iput(realfile->f_inode);
+>> +    fput(realfile);
+>> +    file->private_data = NULL;
+>> +    return 0;
+>> +}
+>> +
+>> +static ssize_t erofs_ishare_file_read_iter(struct kiocb *iocb,
+>> +                       struct iov_iter *to)
+>> +{
+>> +    struct file *realfile = iocb->ki_filp->private_data;
+>> +    struct kiocb dedup_iocb;
+>> +    ssize_t nread;
+>> +
+>> +    if (!iov_iter_count(to))
+>> +        return 0;
+>> +
+>> +    /* fallback to the original file in DIRECT mode */
+>> +    if (iocb->ki_flags & IOCB_DIRECT)
+>> +        realfile = iocb->ki_filp;
+>> +
+>> +    kiocb_clone(&dedup_iocb, iocb, realfile);
+>> +    nread = filemap_read(&dedup_iocb, to, 0);
+>> +    iocb->ki_pos = dedup_iocb.ki_pos;
+> 
+> I think it will not work for the AIO cases.
+> 
+> In order to make it simplified, how about just
+> allowing sync and non-direct I/O first, and
+> defering DIO/AIO support later?
+> 
+
+Ok, but what about doing the fallback logic:
+
+1. For direct io: fallback to the original file.
+2. For AIO: initialize the sync io by init_sync_kiocb (May be we can 
+just replace kiocb_clone with init_sync_kiocb).
+
+Thanks,
+Hongbo
+
+>> +    file_accessed(iocb->ki_filp);
+> 
+> I don't think it's useful in practice.
+> 
+
+Just keep in consistent with filemap_read?
+
+> 
+>> +    return nread;
+>> +}
+>> +
+>> +static int erofs_ishare_mmap(struct file *file, struct vm_area_struct 
+>> *vma)
+>> +{
+>> +    struct file *realfile = file->private_data;
+>> +
+>> +    vma_set_file(vma, realfile);
+>> +    return generic_file_readonly_mmap(file, vma);
+>> +}
+>> +
+
+...
+
+>> @@ -649,6 +659,16 @@ static int erofs_fc_fill_super(struct super_block 
+>> *sb, struct fs_context *fc)
+>>       sb->s_maxbytes = MAX_LFS_FILESIZE;
+>>       sb->s_op = &erofs_sops;
+>> +    if (sbi->domain_id &&
+>> +        (!sbi->fsid && !test_opt(&sbi->opt, INODE_SHARE))) {
+>> +        errorfc(fc, "domain_id should be with fsid or inode_share 
+>> option");
+>> +        return -EINVAL;
+>> +    }
+> 
+> Is that really needed?
+> 
+
+Ok, I will remove it in next version.
+
+Thanks,
+Hongbo
+
+> 
+> 
+>> +    if (test_opt(&sbi->opt, DAX_ALWAYS) && test_opt(&sbi->opt, 
+>> INODE_SHARE)) {
+>> +        errorfc(fc, "dax is not allowed when inode_share is on");
+> 
+>          errorfc(fc, "FSDAX is not allowed when inode_share is on");
+> 
+> Thanks,
+> Gao Xiang
 
