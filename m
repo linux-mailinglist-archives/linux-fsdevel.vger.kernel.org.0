@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-72851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54AF5D034F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 15:22:51 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B00D0389E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 15:50:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 2107B300BFAF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 14:21:31 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id A75C730A58DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 14:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142FA4FF863;
-	Thu,  8 Jan 2026 14:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA48543786F;
+	Thu,  8 Jan 2026 14:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H0Hx47GU"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RdRZM0th"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06F34FF842;
-	Thu,  8 Jan 2026 14:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7125544E035;
+	Thu,  8 Jan 2026 14:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767882068; cv=none; b=thYVY/OU1fYY2RACCXYvTQYbFu44mcT27M7OYagcZcDUuvYKXt9KsVEVp0KVRENjLVX701VmhD++WQDx74dBOcRvnv+wc1HSeROlM0NfgM/11+QN4ZbxS0g9O8pmXfGpElDSnIMUCH6zyg3EhTY8MN+D/r9dIvLLChpdXBONGqU=
+	t=1767882109; cv=none; b=j9BS5IawZMIFyKlUB6gFrC/sV9/7Oq49WvZYyaWi9Hrkag9IbfHADZhNvzvfhcj+uBlW59ur9u6JkkQBSrX7qkvCpqG6l8s6qMnW6Zuvnb3E9AfxDXvhAJ4JHVBKy+Z7bG/LeAkXyKrXKdkWOqJi9tLsdUWl7prWx+LFD9HSihU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767882068; c=relaxed/simple;
-	bh=sWRDWgR+AQbA40dgr/mtOYcKgGp8x2pClWq5wVlhEf4=;
+	s=arc-20240116; t=1767882109; c=relaxed/simple;
+	bh=5tJepZdBm4NT9tyjBB7PXASujyH9KkjsFzRaJR+9pl4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z+S8OOipUVy9LYSAuZdrOfBBf+xY8wA2tOC3HU8mlT2/OBhQnqPiB6H6huvO8w6K/RUJLgWxVbqy28Z7VZfvT7vGj/dCahdJN3c0qEmkathpiQWZQkBNYRJcx5iHXt09rOHTiM8vOvj+yh1Xd0OrvZEZYdgaGdm2rCzBxAdkLj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H0Hx47GU; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=W+llRZnGXSf+K9YKqCtF9pGFHXJLvxavY8wVuvpXZMPCd+QSl+nTM6md7GZgBaATRBbD6UMPlkXTUlmeMQPBkI0yjx6T+dnnB6LlO9aeZsl3SwuVrldzr0ApwWMpdlQh7GiGh/dw0SIBiYAPdiJGTJm93uPH6ZAARbIULeoshB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RdRZM0th; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=umifNtNgLmyvzlwo5GetVQnsGgQ+5QSJwODRNDbwxqk=; b=H0Hx47GUehvTzEEd/jEXZXdSAS
-	eZ57jHvkuzRc1xzKov0EAXhjVO8k3Jrj8vlKqjOCHeE4J19/JvxJNUwDCDlcjn+w08kmeRKSsoAWM
-	0nun/EI+1OI1ooXr1b5OBkYQIii0U3RLXkfcbNw/quqS3KtvXCrsOcehr3xKyYSpJKB6kg2fmOlap
-	R2Y6gBXLAuKa6BoKNVc3hwkIBijGXiJ/ssYvO0OxTtThGkBRxOpV54UbW3AzcvUKFQmWl3vhfwkb6
-	ccMXUlfJAGd53F8sKRl3G6iKXeZNPybwpvgYMo7N1vZ7ravyqJexC0gZdV8cZOtULejEEOPGxdYWA
-	5EovUYdQ==;
+	bh=dwwZ/yOU7SW1prK7b5bp9EkEBz6f02bqYmxcFFUDJQk=; b=RdRZM0th3MexAdg4BYXcprKzWL
+	qKIf8k9FWj0refwqaCOxEeK161s0QQWu6adggTvMzXXz4jgeeG7h0EhYHIR8nRKP1UBSHMmRIHA00
+	LJbOboxA6kJnns/yUZupNt9rwQ8SaGp8L6t7GGiyIkTIcdMF+r51XiSLKk1ARgg8OADVZi+RZqpWI
+	tRMOzKvd+PbqGPggfemC26C3oDDF4jiqIImlOFcF7BCgIvepUgKqFa8JcUa1WrZAas9EF7OFhuxXX
+	DooT3+wFQACjnht3zV4nWfWpAgjnTg2d/RlchvtRCAPmnvGbl6QKHGZae27DW3FwgNzEtGb/giJzU
+	6TOiZyrA==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vdqsp-0000000HJj2-2gCe;
-	Thu, 08 Jan 2026 14:21:04 +0000
+	id 1vdqtU-0000000HK5r-0Aie;
+	Thu, 08 Jan 2026 14:21:44 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>,
@@ -67,9 +67,9 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	linux-xfs@vger.kernel.org,
 	linux-nfs@vger.kernel.org,
 	Chaitanya Kulkarni <kch@nvidia.com>
-Subject: [PATCH 07/11] fs: add a ->sync_lazytime method
-Date: Thu,  8 Jan 2026 15:19:07 +0100
-Message-ID: <20260108141934.2052404-8-hch@lst.de>
+Subject: [PATCH 11/11] xfs: enable non-blocking timestamp updates
+Date: Thu,  8 Jan 2026 15:19:11 +0100
+Message-ID: <20260108141934.2052404-12-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260108141934.2052404-1-hch@lst.de>
 References: <20260108141934.2052404-1-hch@lst.de>
@@ -82,124 +82,53 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Allow the file system to explicitly implement lazytime syncing instead
-of pigging back on generic inode dirtying.  This allows to simplify
-the XFS implementation and prepares for non-blocking lazytime timestamp
-updates.
+The lazytime path using the generic helpers can never block in XFS
+because there is no ->dirty_inode method that could block.  Allow
+non-blocking timestamp updates for this case by replacing
+generic_update_time with the open coded version without the S_NOWAIT
+check.
 
+Fixes: 66fa3cedf16a ("fs: Add async write file modification handling.")
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 ---
- Documentation/filesystems/locking.rst |  2 ++
- Documentation/filesystems/vfs.rst     |  6 ++++++
- fs/fs-writeback.c                     | 13 +++++++++++--
- include/linux/fs.h                    |  1 +
- 4 files changed, 20 insertions(+), 2 deletions(-)
+ fs/xfs/xfs_iops.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index 37a4a7fa8094..0312fba6d73b 100644
---- a/Documentation/filesystems/locking.rst
-+++ b/Documentation/filesystems/locking.rst
-@@ -82,6 +82,7 @@ prototypes::
- 	int (*fiemap)(struct inode *, struct fiemap_extent_info *, u64 start, u64 len);
- 	void (*update_time)(struct inode *inode, enum fs_update_time type,
- 			    int flags);
-+	void (*sync_lazytime)(struct inode *inode);
- 	int (*atomic_open)(struct inode *, struct dentry *,
- 				struct file *, unsigned open_flag,
- 				umode_t create_mode);
-@@ -118,6 +119,7 @@ getattr:	no
- listxattr:	no
- fiemap:		no
- update_time:	no
-+sync_lazytime:	no
- atomic_open:	shared (exclusive if O_CREAT is set in open flags)
- tmpfile:	no
- fileattr_get:	no or exclusive
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 51aa9db64784..d8cb181f69f8 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -487,6 +487,7 @@ As of kernel 2.6.22, the following members are defined:
- 		ssize_t (*listxattr) (struct dentry *, char *, size_t);
- 		void (*update_time)(struct inode *inode, enum fs_update_time type,
- 				    int flags);
-+		void (*sync_lazytime)(struct inode *inode);
- 		int (*atomic_open)(struct inode *, struct dentry *, struct file *,
- 				   unsigned open_flag, umode_t create_mode);
- 		int (*tmpfile) (struct mnt_idmap *, struct inode *, struct file *, umode_t);
-@@ -643,6 +644,11 @@ otherwise noted.
- 	an inode.  If this is not defined the VFS will update the inode
- 	itself and call mark_inode_dirty_sync.
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 338f3113f674..1cdd8a360510 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1195,16 +1195,22 @@ xfs_vn_update_time(
  
-+``sync_lazytime``:
-+	called by the writeback code to update the lazy time stamps to
-+	regular time stamp updates that get syncing into the on-disk
-+	inode.
+ 	trace_xfs_update_time(ip);
+ 
+-	if (flags & IOCB_NOWAIT)
+-		return -EAGAIN;
+-
+ 	if (inode->i_sb->s_flags & SB_LAZYTIME) {
+-		if (type == FS_UPD_ATIME ||
+-		    !inode_maybe_inc_iversion(inode, false))
+-			return generic_update_time(inode, type, flags);
++		int dirty;
 +
- ``atomic_open``
- 	called on the last component of an open.  Using this optional
- 	method the filesystem can look up, possibly create and open the
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 3d68b757136c..62658be2578b 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1717,7 +1717,10 @@ bool sync_lazytime(struct inode *inode)
- 		return false;
- 
- 	trace_writeback_lazytime(inode);
--	mark_inode_dirty_sync(inode);
-+	if (inode->i_op->sync_lazytime)
-+		inode->i_op->sync_lazytime(inode);
-+	else
-+		mark_inode_dirty_sync(inode);
- 	return true;
- }
- 
-@@ -2569,6 +2572,8 @@ void __mark_inode_dirty(struct inode *inode, int flags)
- 	trace_writeback_mark_inode_dirty(inode, flags);
- 
- 	if (flags & I_DIRTY_INODE) {
-+		bool was_dirty_time = false;
-+
- 		/*
- 		 * Inode timestamp update will piggback on this dirtying.
- 		 * We tell ->dirty_inode callback that timestamps need to
-@@ -2579,6 +2584,7 @@ void __mark_inode_dirty(struct inode *inode, int flags)
- 			if (inode_state_read(inode) & I_DIRTY_TIME) {
- 				inode_state_clear(inode, I_DIRTY_TIME);
- 				flags |= I_DIRTY_TIME;
-+				was_dirty_time = true;
- 			}
- 			spin_unlock(&inode->i_lock);
- 		}
-@@ -2591,9 +2597,12 @@ void __mark_inode_dirty(struct inode *inode, int flags)
- 		 * for just I_DIRTY_PAGES or I_DIRTY_TIME.
- 		 */
- 		trace_writeback_dirty_inode_start(inode, flags);
--		if (sb->s_op->dirty_inode)
-+		if (sb->s_op->dirty_inode) {
- 			sb->s_op->dirty_inode(inode,
- 				flags & (I_DIRTY_INODE | I_DIRTY_TIME));
-+		} else if (was_dirty_time && inode->i_op->sync_lazytime) {
-+			inode->i_op->sync_lazytime(inode);
++		dirty = inode_update_time(inode, type, flags);
++		if (dirty <= 0)
++			return dirty;
++		if (dirty == I_DIRTY_TIME) {
++			__mark_inode_dirty(inode, I_DIRTY_TIME);
++			return 0;
 +		}
- 		trace_writeback_dirty_inode(inode, flags);
  
- 		/* I_DIRTY_INODE supersedes I_DIRTY_TIME. */
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 35b3e6c6b084..7837db1ba1d2 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2024,6 +2024,7 @@ struct inode_operations {
- 		      u64 len);
- 	int (*update_time)(struct inode *inode, enum fs_update_time type,
- 			   unsigned int flags);
-+	void (*sync_lazytime)(struct inode *inode);
- 	int (*atomic_open)(struct inode *, struct dentry *,
- 			   struct file *, unsigned open_flag,
- 			   umode_t create_mode);
+ 		/* Capture the iversion update that just occurred */
+ 		log_flags |= XFS_ILOG_CORE;
++	} else {
++		if (flags & IOCB_NOWAIT)
++			return -EAGAIN;
+ 	}
+ 
+ 	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp);
 -- 
 2.47.3
 
