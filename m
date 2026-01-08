@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-72872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id C922CD048AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:51:01 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566D9D04255
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:04:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2A6B630FE6E8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:42:52 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6D45B351BF09
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77603446B5;
-	Thu,  8 Jan 2026 15:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1DD318ECE;
+	Thu,  8 Jan 2026 15:31:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA391F1534;
-	Thu,  8 Jan 2026 15:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A725A50097B;
+	Thu,  8 Jan 2026 15:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767886041; cv=none; b=M9qZis7IEI98PPWHjch0LGYSImD8mOHxDUx7AinPUx5uzE50fGcbpMZGn8TWQDS1PIf3rOomgjn2M1Nhs+2uTaU/PFeMiz+lJezqo1UrryL3hMf2Nw1vnc2eowJ7jt+n4X+50ufbJd+XESy1HEZ2OkPdkYi9A6T15TdIxveEq1U=
+	t=1767886316; cv=none; b=q0jGr9RvZvxt6RH95ZaZIAwVA9Xf4PZA0ehTTCIsyhckPNzzOxmnq2UbDISdjCRJRf6G4IJA7wKsoOr+ZioSpb+3EAPreH1jJI+dta/Q6pbwH8OrxifsrLYlje8ZrIBEOourzFSeEpTJzeMj6FX2urYsCL6sKKfZQFsiGkEWizQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767886041; c=relaxed/simple;
-	bh=jKUcZrfjjXtmON/mcBgSGHdkM8Yw6PvAIJrOv31+CnY=;
+	s=arc-20240116; t=1767886316; c=relaxed/simple;
+	bh=hAAxZIvlvT50VHBWiwEYz2hEYF8NCKsZqeikTIBdozo=;
 	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DANk/z2zadLDpuVm2QdtZQpA/tYuP7tCtVn3d2UZA3rrCJn8XcJnhpFjd9gbU4wx5W/eRqhG8oVMK/A0URkGeQo86jxCqazJPy5yN5+RKsA62duKvclF+0/yoaChC9agY4FNAiVdWgdSHOaqyQznwKzLrXGhOUt+cLel2WT6MXE=
+	 MIME-Version:Content-Type; b=JOd2UW242a1cmbiXwVsZscgwzab8+coSfWxvA1PZIiEYEPNLKnShWfBXHBtfHlWQJD3AcCHd3V7QVivMkQgvxllFi4hqoog7h1E+jEqvoS8o8ck0dPJD3lJYQCH7859HHLuQLcRPWm4l66GLneT7zNW9+/XYQ0J5kYUqI4ZAKTc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.150])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dn80D4YQnzHnGg3;
-	Thu,  8 Jan 2026 23:27:08 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dn85Z5SX1zJ46D8;
+	Thu,  8 Jan 2026 23:31:46 +0800 (CST)
 Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id EE2BE4056B;
-	Thu,  8 Jan 2026 23:27:16 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id C282540570;
+	Thu,  8 Jan 2026 23:31:51 +0800 (CST)
 Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
  (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 8 Jan
- 2026 15:27:15 +0000
-Date: Thu, 8 Jan 2026 15:27:13 +0000
+ 2026 15:31:50 +0000
+Date: Thu, 8 Jan 2026 15:31:48 +0000
 From: Jonathan Cameron <jonathan.cameron@huawei.com>
 To: John Groves <John@Groves.net>
 CC: Miklos Szeredi <miklos@szeredi.hu>, Dan Williams
@@ -59,12 +59,12 @@ CC: Miklos Szeredi <miklos@szeredi.hu>, Dan Williams
 	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
 	<linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH V3 21/21] famfs_fuse: Add documentation
-Message-ID: <20260108152713.00001b42@huawei.com>
-In-Reply-To: <20260107153332.64727-22-john@groves.net>
+Subject: Re: [PATCH V3 4/4] fuse: add famfs DAX fmap support
+Message-ID: <20260108153148.00001e63@huawei.com>
+In-Reply-To: <20260107153443.64794-5-john@groves.net>
 References: <20260107153244.64703-1-john@groves.net>
-	<20260107153332.64727-1-john@groves.net>
-	<20260107153332.64727-22-john@groves.net>
+	<20260107153443.64794-1-john@groves.net>
+	<20260107153443.64794-5-john@groves.net>
 X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -73,47 +73,60 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
  dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed,  7 Jan 2026 09:33:30 -0600
+On Wed,  7 Jan 2026 09:34:43 -0600
 John Groves <John@Groves.net> wrote:
 
-> Add Documentation/filesystems/famfs.rst and update MAINTAINERS
-> 
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
+> Add new FUSE operations and capability for famfs DAX file mapping:
+>=20
+> - FUSE_CAP_DAX_FMAP: New capability flag at bit 32 (using want_ext/capabl=
+e_ext
+>   fields) to indicate kernel and userspace support for DAX fmaps
+>=20
+> - GET_FMAP: New operation to retrieve a file map for DAX-mapped files.
+>   Returns a fuse_famfs_fmap_header followed by simple or interleaved
+>   extent descriptors. The kernel passes the file size as an argument.
+>=20
+> - GET_DAXDEV: New operation to retrieve DAX device info by index.
+>   Called when GET_FMAP returns an fmap referencing a previously
+>   unknown DAX device.
+>=20
+> These operations enable FUSE filesystems to provide direct access
+> mappings to persistent memory, allowing the kernel to map files
+> directly to DAX devices without page cache intermediation.
+>=20
 > Signed-off-by: John Groves <john@groves.net>
+
+
 > ---
->  Documentation/filesystems/famfs.rst | 142 ++++++++++++++++++++++++++++
->  Documentation/filesystems/index.rst |   1 +
->  MAINTAINERS                         |   1 +
->  3 files changed, 144 insertions(+)
->  create mode 100644 Documentation/filesystems/famfs.rst
-> 
-> diff --git a/Documentation/filesystems/famfs.rst b/Documentation/filesystems/famfs.rst
-> new file mode 100644
-> index 000000000000..0d3c9ba9b7a8
-> --- /dev/null
-> +++ b/Documentation/filesystems/famfs.rst
+>  include/fuse_common.h   |  5 +++++
+>  include/fuse_lowlevel.h | 37 +++++++++++++++++++++++++++++++++++++
+>  lib/fuse_lowlevel.c     | 31 ++++++++++++++++++++++++++++++-
+>  3 files changed, 72 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/include/fuse_common.h b/include/fuse_common.h
+> index 041188e..e428ddb 100644
+> --- a/include/fuse_common.h
+> +++ b/include/fuse_common.h
+> @@ -512,6 +512,11 @@ struct fuse_loop_config_v1 {
+>   */
+>  #define FUSE_CAP_OVER_IO_URING (1UL << 31)
+> =20
+> +/**
+> + * handle files that use famfs dax fmaps
+> + */
+> +#define FUSE_CAP_DAX_FMAP (1UL<<32)
 
-> +Principles of Operation
-> +=======================
-....
-> +When an app accesses a data object in a famfs file, there is no page cache
-> +involvement. The CPU cache is loaded directly from the shared memory. In
-> +some use cases, this is an enormous reduction read amplification compared
-> +to loading an entire page into the page cache.
+=46rom the context above, looks like local style is spaces around <<
+
+That's about the level of my understanding of the fuse code ;)
+
 > +
-Trivial but this double blank line seems inconsistent.
-I don't mind if it's one or two, but do the same everywhere.
+>  /**
+>   * Ioctl flags
+>   *
 
-> +
-> +Famfs is Not a Conventional File System
-> +---------------------------------------
-
-Nice doc.
-
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
