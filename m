@@ -1,90 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-72909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A77D05118
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 18:38:00 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CEDBD050B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 18:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 433803017F89
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 17:29:08 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E7E5131AE00F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 17:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85836288C3F;
-	Thu,  8 Jan 2026 17:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439642FF14D;
+	Thu,  8 Jan 2026 17:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zlnIZXTf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="phfwz5+a";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zlnIZXTf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="phfwz5+a"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="d4rSDFVr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DgBHV1jq";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uuH3znWs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VXM5Mk8y"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111FC27C162
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 17:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B2D302CD9
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 17:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767893224; cv=none; b=H57KfnCPEgjWu+qOZUkP8TdgVd+m6/PBYy2t4BuYVQkMMq6h2aCNRteGKggHjRjmidKLLhwff7l3MRf9+cYJGZ8587Aoqc2ttJpWEQbrQ50eaaZBWpZ2ZDLLZL4aEzVhu8l4TmGkknMJFeMDRnEQVNFt+PGcVNKK4i4XsWCmUn8=
+	t=1767893294; cv=none; b=Ax82uyssOxkaqnyGOrVTxEEBTSjYDgIU7BJMpUzNE0o+U7bNFKZ+y/bhioH/YsqkXgtlXHnefE+I4pT8zQ9ACS5pT6iv6IHkuFNG9UTxMdKTtmyrzjT0kRkNp0wqP3QLcwaMRPnGRaHZxxSueXQ27SQW3cXxJy0igLvXDkfzrgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767893224; c=relaxed/simple;
-	bh=E1zEBop5GJTolFHCbMP+SF9fIVfE3y1iowinUBg0n1o=;
+	s=arc-20240116; t=1767893294; c=relaxed/simple;
+	bh=Kg/AKvpCUkjOdgj24xfowf8hKkz32nVk8wnP1vlsc9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cb4CNPxJ6q9oheC3kqc1JpBzzpzMVA5PF18142S6YIt1baCeKujQyxn/a/Tc9n4dRD3kQrAYWn3n9W6qXGAvNSFPbtDWnnNdQ5kDsIGSl8Gfgy9kvjVUKtbKBPp3V1beIHVdYQiNbrjNhLOVlgoX8I0TcLMHAiEPVyfB/pfaEeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zlnIZXTf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=phfwz5+a; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zlnIZXTf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=phfwz5+a; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=jn8GJsl9w9wG0rYtOSPplf7IVwiYLR/BYDZ2+pBv2hBGlltMhdeDzzLmY+n1ik+pHJplf3I/D+A5Kcavf+VVXbUhS4uDDsleLuTSTimsjBlPWgNvnc6X2OTJuh+Br963ifaw+crGClypdQ07B8NYvAF8hnS2S/OyuP4lUu8fIqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=d4rSDFVr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DgBHV1jq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uuH3znWs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VXM5Mk8y; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4D7F1346C1;
-	Thu,  8 Jan 2026 17:26:59 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id ED5D63448F;
+	Thu,  8 Jan 2026 17:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767893219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1767893288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R7QyMjWNwrqj8UEPWI/WaBPmYmyTfSFG6zvi/rjbSso=;
-	b=zlnIZXTfinrf7hq5vt4U5cUKJ6NPNUMQKK2r+Tmfi2xEzptt6ClI4wMDQQvjt9dx8n8JRa
-	f+6MG01/Jc9w6M+FLcxwyZZdeIID2KjyJifSH8p7z53HnRVuZYr8SQKyqt/r4Pp8Z+ZZ9O
-	oGRfCrFhM3vTR5EXInWctDXLZPrEeFo=
+	bh=dRR5MJyX+HDqbBmCwQZHQRTY+WXgey6jvqbxMzndKRo=;
+	b=d4rSDFVrXJSP77CIbAOSkyHjsRgNACqSgQbCVEPwZM/7zstbAcRfpaKGt2UisstM25nHN7
+	1Bgquq3HKv8seUDn0gF0sfxOp2JusCFG/9EjeeXW5wzvXBXqmCE1wFrQAYKngFoA0v5P6u
+	83axHXkSOymjejIcnA/3CWyrtM2EjP0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767893219;
+	s=susede2_ed25519; t=1767893288;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R7QyMjWNwrqj8UEPWI/WaBPmYmyTfSFG6zvi/rjbSso=;
-	b=phfwz5+a+RuRX25uv+FH1xiHN8WR/XirFu4FyQP6WWGFdXXorQlDWQOreoBzrsu9F8q7u1
-	Qxxocyjselc1ZHBA==
+	bh=dRR5MJyX+HDqbBmCwQZHQRTY+WXgey6jvqbxMzndKRo=;
+	b=DgBHV1jqSF0+H7pOM/PFFepN4UptQo4Xm9zzBWmsA8HM9uc0EEx2dxtRo2p/BgW1yiLhLp
+	aLSuKnoBqXXSPuAw==
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767893219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1767893286; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R7QyMjWNwrqj8UEPWI/WaBPmYmyTfSFG6zvi/rjbSso=;
-	b=zlnIZXTfinrf7hq5vt4U5cUKJ6NPNUMQKK2r+Tmfi2xEzptt6ClI4wMDQQvjt9dx8n8JRa
-	f+6MG01/Jc9w6M+FLcxwyZZdeIID2KjyJifSH8p7z53HnRVuZYr8SQKyqt/r4Pp8Z+ZZ9O
-	oGRfCrFhM3vTR5EXInWctDXLZPrEeFo=
+	bh=dRR5MJyX+HDqbBmCwQZHQRTY+WXgey6jvqbxMzndKRo=;
+	b=uuH3znWsJRM33/EOhAh+lTvh68BZDIxKyo9zcJsM2KDPHUnKhESbNnCgaKsCpFer6uHwf2
+	abN06dXzz8CxHT53yymF66s6u/Ix68K5rJ7jZFKZH6mKMl/N8fvXGjayL/1I2PQM0v+mM5
+	nhYUkQoU7sd0/FGxbgkfKK8fzi27uQw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767893219;
+	s=susede2_ed25519; t=1767893286;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R7QyMjWNwrqj8UEPWI/WaBPmYmyTfSFG6zvi/rjbSso=;
-	b=phfwz5+a+RuRX25uv+FH1xiHN8WR/XirFu4FyQP6WWGFdXXorQlDWQOreoBzrsu9F8q7u1
-	Qxxocyjselc1ZHBA==
+	bh=dRR5MJyX+HDqbBmCwQZHQRTY+WXgey6jvqbxMzndKRo=;
+	b=VXM5Mk8y1TskJT6JsZIY1z5B5ElXGfB8GTAsczB+TP5DEdg1wpqoxNISqn7aDcCn45dMNT
+	5pXEwLQRAr4TkEAA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3B03F3EA63;
-	Thu,  8 Jan 2026 17:26:59 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DF9F33EA63;
+	Thu,  8 Jan 2026 17:28:06 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DYZiDuPoX2kCdgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 08 Jan 2026 17:26:59 +0000
+	id 88GVNibpX2lJdwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 08 Jan 2026 17:28:06 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id BEB9EA0B23; Thu,  8 Jan 2026 18:26:58 +0100 (CET)
-Date: Thu, 8 Jan 2026 18:26:58 +0100
+	id 92F9DA0B23; Thu,  8 Jan 2026 18:28:02 +0100 (CET)
+Date: Thu, 8 Jan 2026 18:28:02 +0100
 From: Jan Kara <jack@suse.cz>
 To: Jeff Layton <jlayton@kernel.org>
 Cc: Luis de Bethencourt <luisbg@kernel.org>, 
@@ -125,11 +125,10 @@ Cc: Luis de Bethencourt <luisbg@kernel.org>,
 	linux-xfs@vger.kernel.org, linux-mm@kvack.org, gfs2@lists.linux.dev, 
 	linux-doc@vger.kernel.org, v9fs@lists.linux.dev, ceph-devel@vger.kernel.org, 
 	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
-Subject: Re: [PATCH 01/24] fs: add setlease to generic_ro_fops and read-only
- filesystem directory operations
-Message-ID: <iik7pdymlt6glogh6f62ps764go4233ub7mgvdctwktc4iszyz@h33w3q63jjrj>
+Subject: Re: [PATCH 05/24] ext2: add setlease file operation
+Message-ID: <pqnz52eipormcmskhnn6m4d6tzfnjrzk7qhohxri2euftpzjwx@l5zfqgeenvge>
 References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
- <20260108-setlease-6-20-v1-1-ea4dec9b67fa@kernel.org>
+ <20260108-setlease-6-20-v1-5-ea4dec9b67fa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -138,7 +137,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260108-setlease-6-20-v1-1-ea4dec9b67fa@kernel.org>
+In-Reply-To: <20260108-setlease-6-20-v1-5-ea4dec9b67fa@kernel.org>
+X-Spam-Score: -2.30
 X-Spamd-Result: default: False [-2.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -146,35 +146,32 @@ X-Spamd-Result: default: False [-2.30 / 50.00];
 	MID_RHS_NOT_FQDN(0.50)[];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	ARC_NA(0.00)[];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TAGGED_RCPT(0.00)[];
 	FREEMAIL_CC(0.00)[kernel.org,gmail.com,fluxnic.net,infradead.org,suse.cz,alarsen.net,zeniv.linux.org.uk,suse.com,fb.com,linux.alibaba.com,google.com,huawei.com,vivo.com,mit.edu,dilger.ca,mail.parknet.co.jp,nod.at,dubeyko.com,paragon-software.com,fasheh.com,evilplan.org,omnibond.com,szeredi.hu,squashfs.org.uk,linux-foundation.org,samsung.com,sony.com,oracle.com,redhat.com,lwn.net,ionkov.net,codewreck.org,crudebyte.com,samba.org,manguebit.org,microsoft.com,talpey.com,vger.kernel.org,lists.ozlabs.org,lists.sourceforge.net,lists.infradead.org,lists.linux.dev,lists.orangefs.org,kvack.org,lists.samba.org];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	R_RATELIMIT(0.00)[to_ip_from(RLwapsqjcu3srfensh8n36bg4p)];
 	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[86];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
 X-Spam-Level: 
+X-Spam-Flag: NO
 
-On Thu 08-01-26 12:12:56, Jeff Layton wrote:
-> Add the setlease file_operation to generic_ro_fops, which covers file
-> operations for several read-only filesystems (BEFS, EFS, ISOFS, QNX4,
-> QNX6, CRAMFS, FREEVXFS). Also add setlease to the directory
-> file_operations for these filesystems.	A future patch will change the
-> default behavior to reject lease attempts with -EINVAL when there is no
-> setlease file operation defined. Add generic_setlease to retain the
-> ability to set leases on these filesystems.
+On Thu 08-01-26 12:13:00, Jeff Layton wrote:
+> Add the setlease file_operation to ext2_file_operations and
+> ext2_dir_operations, pointing to generic_setlease.  A future patch will
+> change the default behavior to reject lease attempts with -EINVAL when
+> there is no setlease file operation defined. Add generic_setlease to
+> retain the ability to set leases on this filesystem.
 > 
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
@@ -185,176 +182,48 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/befs/linuxvfs.c        | 2 ++
->  fs/cramfs/inode.c         | 2 ++
->  fs/efs/dir.c              | 2 ++
->  fs/freevxfs/vxfs_lookup.c | 2 ++
->  fs/isofs/dir.c            | 2 ++
->  fs/qnx4/dir.c             | 2 ++
->  fs/qnx6/dir.c             | 2 ++
->  fs/read_write.c           | 2 ++
->  8 files changed, 16 insertions(+)
+>  fs/ext2/dir.c  | 2 ++
+>  fs/ext2/file.c | 2 ++
+>  2 files changed, 4 insertions(+)
 > 
-> diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
-> index 9fcfdd6b8189aaf5cc3b68aa8dff4798af5bdcbc..d7c5d9270387bf6c3e94942e6331b449f90fe428 100644
-> --- a/fs/befs/linuxvfs.c
-> +++ b/fs/befs/linuxvfs.c
-> @@ -14,6 +14,7 @@
->  #include <linux/fs_context.h>
->  #include <linux/fs_parser.h>
->  #include <linux/errno.h>
-> +#include <linux/filelock.h>
->  #include <linux/stat.h>
->  #include <linux/nls.h>
->  #include <linux/buffer_head.h>
-> @@ -79,6 +80,7 @@ static const struct file_operations befs_dir_operations = {
->  	.read		= generic_read_dir,
->  	.iterate_shared	= befs_readdir,
->  	.llseek		= generic_file_llseek,
-> +	.setlease	= generic_setlease,
->  };
+> diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
+> index b07b3b369710c4848d6091742cdd0b5c42d4674d..395fc36c089b7bb6360a8326727bd5606c7e2476 100644
+> --- a/fs/ext2/dir.c
+> +++ b/fs/ext2/dir.c
+> @@ -24,6 +24,7 @@
 >  
->  static const struct inode_operations befs_dir_inode_operations = {
-> diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
-> index e54ebe402df79d43a2c7cf491d669829f7ef81b7..41b1a869cf135d014003d6bf1c343d590ae7a084 100644
-> --- a/fs/cramfs/inode.c
-> +++ b/fs/cramfs/inode.c
-> @@ -16,6 +16,7 @@
->  #include <linux/module.h>
->  #include <linux/fs.h>
->  #include <linux/file.h>
+>  #include "ext2.h"
+>  #include <linux/buffer_head.h>
 > +#include <linux/filelock.h>
 >  #include <linux/pagemap.h>
->  #include <linux/ramfs.h>
->  #include <linux/init.h>
-> @@ -938,6 +939,7 @@ static const struct file_operations cramfs_directory_operations = {
->  	.llseek		= generic_file_llseek,
->  	.read		= generic_read_dir,
->  	.iterate_shared	= cramfs_readdir,
+>  #include <linux/swap.h>
+>  #include <linux/iversion.h>
+> @@ -734,4 +735,5 @@ const struct file_operations ext2_dir_operations = {
+>  	.compat_ioctl	= ext2_compat_ioctl,
+>  #endif
+>  	.fsync		= ext2_fsync,
 > +	.setlease	= generic_setlease,
 >  };
->  
->  static const struct inode_operations cramfs_dir_inode_operations = {
-> diff --git a/fs/efs/dir.c b/fs/efs/dir.c
-> index f892ac7c2a35e0094a314eeded06a974154e46d7..35ad0092c11547af68ef8baf4965b50a0a7593fe 100644
-> --- a/fs/efs/dir.c
-> +++ b/fs/efs/dir.c
-> @@ -6,6 +6,7 @@
->   */
->  
->  #include <linux/buffer_head.h>
-> +#include <linux/filelock.h>
->  #include "efs.h"
->  
->  static int efs_readdir(struct file *, struct dir_context *);
-> @@ -14,6 +15,7 @@ const struct file_operations efs_dir_operations = {
->  	.llseek		= generic_file_llseek,
->  	.read		= generic_read_dir,
->  	.iterate_shared	= efs_readdir,
-> +	.setlease	= generic_setlease,
->  };
->  
->  const struct inode_operations efs_dir_inode_operations = {
-> diff --git a/fs/freevxfs/vxfs_lookup.c b/fs/freevxfs/vxfs_lookup.c
-> index 1b0bca8b4cc686043d92246042dcf833d37712e4..138e08de976ea762a46043316f27e9a031f60c32 100644
-> --- a/fs/freevxfs/vxfs_lookup.c
-> +++ b/fs/freevxfs/vxfs_lookup.c
-> @@ -8,6 +8,7 @@
->   * Veritas filesystem driver - lookup and other directory related code.
->   */
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
+> diff --git a/fs/ext2/file.c b/fs/ext2/file.c
+> index 76bddce462fced77b24d64416cb9fdb172d8270b..ebe356a38b185e0d8662f704ad20e42fe618284e 100644
+> --- a/fs/ext2/file.c
+> +++ b/fs/ext2/file.c
+> @@ -22,6 +22,7 @@
 >  #include <linux/time.h>
->  #include <linux/mm.h>
->  #include <linux/highmem.h>
-> @@ -36,6 +37,7 @@ const struct file_operations vxfs_dir_operations = {
->  	.llseek =		generic_file_llseek,
->  	.read =			generic_read_dir,
->  	.iterate_shared =	vxfs_readdir,
-> +	.setlease =		generic_setlease,
->  };
->  
->  
-> diff --git a/fs/isofs/dir.c b/fs/isofs/dir.c
-> index 09df40b612fbf27a1a93af2b4fbf6a607f4a1ab4..2ca16c3fe5ef3427e5bbd0631eb8323ef3c58bf1 100644
-> --- a/fs/isofs/dir.c
-> +++ b/fs/isofs/dir.c
-> @@ -12,6 +12,7 @@
->   *  isofs directory handling functions
->   */
->  #include <linux/gfp.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/dax.h>
 > +#include <linux/filelock.h>
->  #include "isofs.h"
->  
->  int isofs_name_translate(struct iso_directory_record *de, char *new, struct inode *inode)
-> @@ -271,6 +272,7 @@ const struct file_operations isofs_dir_operations =
->  	.llseek = generic_file_llseek,
->  	.read = generic_read_dir,
->  	.iterate_shared = isofs_readdir,
-> +	.setlease = generic_setlease,
->  };
->  
->  /*
-> diff --git a/fs/qnx4/dir.c b/fs/qnx4/dir.c
-> index 42a529e26bd68b6de1a7738c409d5942a92066f8..6402715ab377e5686558371dd76e5a4c1cfbb787 100644
-> --- a/fs/qnx4/dir.c
-> +++ b/fs/qnx4/dir.c
-> @@ -13,6 +13,7 @@
->   */
->  
->  #include <linux/buffer_head.h>
-> +#include <linux/filelock.h>
->  #include "qnx4.h"
->  
->  static int qnx4_readdir(struct file *file, struct dir_context *ctx)
-> @@ -71,6 +72,7 @@ const struct file_operations qnx4_dir_operations =
->  	.read		= generic_read_dir,
->  	.iterate_shared	= qnx4_readdir,
->  	.fsync		= generic_file_fsync,
-> +	.setlease	= generic_setlease,
->  };
->  
->  const struct inode_operations qnx4_dir_inode_operations =
-> diff --git a/fs/qnx6/dir.c b/fs/qnx6/dir.c
-> index b4d10e45f2e41b45568fe813a3cc0aa253bcab6e..ae0c9846833d916beb7f356cfa6e9de01a6f6963 100644
-> --- a/fs/qnx6/dir.c
-> +++ b/fs/qnx6/dir.c
-> @@ -11,6 +11,7 @@
->   *
->   */
->  
-> +#include <linux/filelock.h>
->  #include "qnx6.h"
->  
->  static unsigned qnx6_lfile_checksum(char *name, unsigned size)
-> @@ -275,6 +276,7 @@ const struct file_operations qnx6_dir_operations = {
->  	.read		= generic_read_dir,
->  	.iterate_shared	= qnx6_readdir,
->  	.fsync		= generic_file_fsync,
-> +	.setlease	= generic_setlease,
->  };
->  
->  const struct inode_operations qnx6_dir_inode_operations = {
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 833bae068770a4e410e4895132586313a9687fa2..50bff7edc91f36fe5ee24198bd51a33c278d40a2 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -20,6 +20,7 @@
->  #include <linux/compat.h>
->  #include <linux/mount.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include "internal.h"
->  
->  #include <linux/uaccess.h>
-> @@ -30,6 +31,7 @@ const struct file_operations generic_ro_fops = {
->  	.read_iter	= generic_file_read_iter,
->  	.mmap_prepare	= generic_file_readonly_mmap_prepare,
+>  #include <linux/quotaops.h>
+>  #include <linux/iomap.h>
+>  #include <linux/uio.h>
+> @@ -325,6 +326,7 @@ const struct file_operations ext2_file_operations = {
+>  	.get_unmapped_area = thp_get_unmapped_area,
 >  	.splice_read	= filemap_splice_read,
+>  	.splice_write	= iter_file_splice_write,
 > +	.setlease	= generic_setlease,
 >  };
 >  
->  EXPORT_SYMBOL(generic_ro_fops);
+>  const struct inode_operations ext2_file_inode_operations = {
 > 
 > -- 
 > 2.52.0
