@@ -1,74 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-72815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E27D5D02B3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 13:43:38 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C37BD03895
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 15:50:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id F058D305B1E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 12:37:23 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id AD106303B20B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 14:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F6E48D64D;
-	Thu,  8 Jan 2026 10:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F4D3469FA;
+	Thu,  8 Jan 2026 07:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Qag851np"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAEF48DA5B;
-	Thu,  8 Jan 2026 10:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABED32AABC;
+	Thu,  8 Jan 2026 07:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767867971; cv=none; b=CSy5pWGO9SdTsm7JkekOt4D4aktFaGFMoidk2IWEEy8mQfpj2E2ctt+xZosu1Co1yYEqj5CNY3khc0xizZH67nVP4XHgattb20VHNE6LxCu2/BLYKUcdZr31dnfSOVXs3wW/l5BRQ0uEPMhIVu64vjyWFqJ0zpyFwQiyc0nxuOE=
+	t=1767857817; cv=none; b=C0reQJQVq7YUgo9xWdju5Qh2s6v1XQ0WrbmxGxBTjL8I8JV3Q2HZOwOutjfBkLKVgn+YD2uanxKGUt+UT6XC4OnUa3liXNFJNpZBpQL7w3gHNR2042XwVGfM61hW0E7DiND69NP/q50RQCYrcvNDYCsmEsYdrqB3cbMH/5IeYeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767867971; c=relaxed/simple;
-	bh=ferKa+yhyaZf3e38F8hXpHzLzfFzNGff8gsEgv5YzvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T0ozIkVPZ4TPSciIDlNVeQydizw45+DPyiPcsLLKUQC+XSjh7qm8wDxq5h/8hIMQQjZjzI6Zi0GdSBJ/uEFF/XlYpM4xQzxdVZFV3CFqrsVLsee3X1n35T8mn6LfjB7fyKuDr19LO9+s25stqnZYkfTCM4fBc4g91vvYqLT5V4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 83381227A87; Thu,  8 Jan 2026 11:25:59 +0100 (CET)
-Date: Thu, 8 Jan 2026 11:25:59 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: cem@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Chaitanya Kulkarni <kch@nvidia.com>
-Subject: Re: [PATCH 11/11] xfs: add media error reporting ioctl
-Message-ID: <20260108102559.GA25394@lst.de>
-References: <176766637179.774337.3663793412524347917.stgit@frogsfrogsfrogs> <176766637485.774337.16716764027357885673.stgit@frogsfrogsfrogs> <20260107093611.GC24264@lst.de> <20260107163035.GA15551@frogsfrogsfrogs>
+	s=arc-20240116; t=1767857817; c=relaxed/simple;
+	bh=rYNiXERMORELD3rtPdZULgbnCI+3YEmNF+Hwi5pTBHM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pdUYXg2h90lZIsDDDlFzEfffduSl+JVQljbDHWY78wxsfM2Kg1B8BE1PWRH7wUoyjeOi74acjhmvoH6blpUJEce3HOqcln/mYRIdiu4cgzG/oErfQNd4FpgQEl+eSK4xE4VYo62R1tuyOBviDOiwr8g0edUSk5yL4KFJRHZDgYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Qag851np; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=O3vCMEIcJ6QDV68ynljSAAzPvL85FljOJrW2O7eAqj8=; b=Qag851npjPI5cCZ5wPC3LzRWTX
+	NO2RGhhZGlx79rOTZvvbwj98Ian64HiYNdSkiR0lnKtIdvRTn9lzjR3yA/HpRqlzhO6KaBzyaSHx3
+	rib+3YCU56VMqFLBvBh4m6YBQ3UOsL9Mj6vOHY9wOb2fofP+Rox7OOm58ucAzg8y4QbpIcOGIctZo
+	+4L3fLxVmfBanVuttLUeToC6BHdWx/xJ8d4/foPHXqQafGELtfZrrcdlgCEV88zjm8hxood6vE71h
+	ldgN8JiMldXYpjrM9KRXUOgRzn4qWuqh0zqQXeOSzLKbSU/PUF2Z3uW6WHc9ryYaKMkxOL8Uhy+0L
+	A0IgbXWQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vdkau-00000001mlt-1SYl;
+	Thu, 08 Jan 2026 07:38:08 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: torvalds@linux-foundation.org,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mjguzik@gmail.com,
+	paul@paul-moore.com,
+	axboe@kernel.dk,
+	audit@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 25/59] ksmbd_vfs_rename(): vfs_path_parent_lookup() accepts ERR_PTR() as name
+Date: Thu,  8 Jan 2026 07:37:29 +0000
+Message-ID: <20260108073803.425343-26-viro@zeniv.linux.org.uk>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
+References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260107163035.GA15551@frogsfrogsfrogs>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Jan 07, 2026 at 08:30:35AM -0800, Darrick J. Wong wrote:
-> > FYI, I'd much prefer adding the kernel support than relying in userspace
-> > doing it, which will be hard to move away from.
-> 
-> Hrm.  I wonder, does the block layer use iomap for directio?  Now that
-> the fserror reporting has been hooked up to iomap, I wonder if it's
-> possible for xfs_healer to listen for file IO errors on a block device?
-> 
-> Oh.  block/fops.c doesn't actually call iomap_dio_* so I guess that's
-> not yet possible.  Would it be easier to convert blockdevs to use iomap,
-> or should I bite the bullet and convert the legacy direct_IO code?
+no need to check in the caller
 
-The block code basically has it's own simplified copy of the iomap
-direct I/O code.
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ fs/smb/server/vfs.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-> Or I guess one of us should go figure out a reasonable verify command
-> that would call fserror_* on media errors.
-
-Hmm, I would expect the verify command to be issued by fs/xfs/scrub/
-in the kernel, so that it can be directly tied into the in-kernel
-logical to physical and rmap.  But you are more well versed there,
-so maybe I'm missing something.
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index a97226116840..30b65b667b96 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -674,10 +674,6 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+ 		return -ENOMEM;
+ 
+ 	to = getname_kernel(newname);
+-	if (IS_ERR(to)) {
+-		err = PTR_ERR(to);
+-		goto revert_fsids;
+-	}
+ 
+ retry:
+ 	err = vfs_path_parent_lookup(to, lookup_flags | LOOKUP_BENEATH,
+@@ -737,7 +733,6 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
+ 	}
+ out1:
+ 	putname(to);
+-revert_fsids:
+ 	ksmbd_revert_fsids(work);
+ 	return err;
+ }
+-- 
+2.47.3
 
 
