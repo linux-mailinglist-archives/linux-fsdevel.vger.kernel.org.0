@@ -1,190 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-72825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CD0D03EEF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:40:42 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90852D03C82
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:23:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C8B113434CD2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:19:36 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 66674305E330
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEF43F0777;
-	Thu,  8 Jan 2026 12:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1663A7F71;
+	Thu,  8 Jan 2026 10:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RiWLMvkF"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L9PphSHv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EkjRTIoK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L9PphSHv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EkjRTIoK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C880E13FEE
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 12:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032653A1D05
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 10:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767874441; cv=none; b=gbYUvCqpU9JXJbwI2Y+HuV6kFnS+wMbRfAspCQpKqNk0ONkW6wixTPBwzeoVQLFXoaK+avGoKaw1IPHz3Ii2YSesHByTDE30GcZytAywU+ekmOu0KQbA3cw9Jjm+IJaUbx+3Mo1ocWm+jJ1a5LTW9gz4eWX5t5k/9ziDI0yZP6w=
+	t=1767868616; cv=none; b=pncFodRUBM3VYguTzAs9UtTWio/TeodhxkKg20VUXnLAYJwCW/eluMrE4TiwxwoYqIsBShZO4nLfxec9cgqfKJQWmG+DBTZ6lX4TTv1k9inNNXIdoWu8aEKq0U3l4WhgUSX7aJc4HmjVez0w3G/zWsmcq7gUzKfHmVDN796BU7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767874441; c=relaxed/simple;
-	bh=u0Rfh59JjBvib8jxFGPAzoq3QQzoRj4RCMEQjAlnJnU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YdgMx8fGG+HwrddR41ZwhA586BwbW81zHfG2fqZBLVZp5QvLAy1C+2umM/+ydriid2okzxQGsY5n2Ca1sgxk6RUr81YqlsbKfa8DVP/KB+oe0RGfniDEObLo1F9kMJgk2N9kWA2YS7fX+KsdkZNdnQ3Bv5QU4KTpKgsvyut9IVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RiWLMvkF; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-59b710d46ceso1751015e87.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 04:13:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767874429; x=1768479229; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xWXsVjPSBACvOUrTWUoZ6i3cfhSX/bnB+GsdyHt4Nog=;
-        b=RiWLMvkFvtaKRyO7JmDmUW5gcVOK5RNnf4fjHibwoECzHCqjKrTyuBkQwEBbXBwMDN
-         VPAiQ4xW2Rl/E/cG9jU480Go+emlkF1v4zduh3UPsZbWM61Izcwqy3WKoFMxQtd6HOY3
-         AbRp/xfwl5FDiZh5Hb5KC/H8E6KoIlDnB3skMfhkNaaTZfZmy5qbtFm34jAJBaAH8Xuc
-         4Tk4QYEJYlroh6wHdYd0pJoA0hFn9kNg7gTR2diuEKMbEDJ7uG85gSNRAzi+FnaDH6/F
-         dJiVj+duCTFLf3PlF4XUeLTDRLjVgkjNQyiyKAIVLgbJdBKoPe/CSWbWCyoPh6y2Oyme
-         WD4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767874429; x=1768479229;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xWXsVjPSBACvOUrTWUoZ6i3cfhSX/bnB+GsdyHt4Nog=;
-        b=aGeG9VT5GxKsGojloRmND4b2YeBymWo4v3VACdDAB+XPDluyC05kyPPfU9G/NhzmAJ
-         lZ8e/+HFF48RauFCpA3MF6l7ZiPYgeCeg3wRZbFfVVKym7A7FSaWZgbvvnhwtPpIKLQp
-         U2/YM0mg+O+2Ci/nWjKekUpWzCYojkUa6ZaLUp3YkzKiRuPk7CB8nLQGwDskS8A6x3fD
-         CX4Z/ejzUz5N6a14krYJIHoUDWyKyOzTIIbEemSVNz5pXbHhT1Ht6c9fdk+tKB4EB8/3
-         J7VJFoZj9PTFItEqr257PohTE8O9WoN8H/puhIp3uFsjGDdnFXanQptK93pADMc+oEBB
-         r/VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfpDLBs3LiIYtbrKjqGaRFd2lWlcNP2aXRl3ElwzzhDnIQG8/7zxpeV6EwbR/fFZW02DMW+4HQiBUmFN7y@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMwSCU0hA/ThdM+V9UVhq1ecmmQ2NUC9mDpYW2I59wSAWSgBmx
-	h/7p1jCxVnzNOj24vaI6T6IYfmZLG0CKpLbbzoUE0W9ha8Fkp8wKdyvc9GuxdA==
-X-Gm-Gg: AY/fxX44KEcYa9yEfVFBKhmVgYgyBR3fpECNWDTTQzFb5Pl5yHjCte6KAELQWx/pYnQ
-	WdzLBctQ/M2Aub2B047onqjFTuVW90kwwhPEaNZv0Amib3nYg0mF+uw0oE2Bkrckm5Y98NNz72z
-	+tVVOc8ktRx1AdcjaLAF4DkzTBgmn9UzPfDeNq0ptgVwyym+1NbNo1ASqUmj5duBZxrQHVk8UKU
-	XDU93jgXVu4ESGhnSr7RnjozOI45Rkgt11F6aY8hHouR5tIFQJxZeSPltNg4+/caRHH1xKEiu7P
-	KBt6/dM2MX6QSzzYIgDCunCZFVtv9jfOtI8Dboxhaj05NCdvx+RgJ44eTDPag0fwOlCdW99XO/y
-	dCeWJz4eIlyXe1smkdSg04tvkjIqIXqnP5Dp7lSzCu/LDZnV36Rd4/RnEHN5BjfZpJDvXlfUwOb
-	cxaNN2S29l3LK0f7KtYP+G/6QRq4qjNxcOQUdOviFMApsFhdOg2aCB
-X-Google-Smtp-Source: AGHT+IFmC/s2zmdOBadT/g4NYT+5EdU6A/sY6V1s9b9j38zaQ6W1AyyE0nBMoGSOz8ZyH3UraVUgxg==
-X-Received: by 2002:a05:600c:4f53:b0:477:7991:5d1e with SMTP id 5b1f17b1804b1-47d84b3860fmr58019005e9.25.1767867978798;
-        Thu, 08 Jan 2026 02:26:18 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5ee870sm15478511f8f.36.2026.01.08.02.26.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 02:26:18 -0800 (PST)
-Date: Thu, 8 Jan 2026 10:26:13 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, Sheng Yong
- <shengyong2021@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>, Dusty Mabe
- <dusty@dustymabe.com>, =?UTF-8?B?VGltb3Row6ll?= Ravier <tim@siosm.fr>,
- =?UTF-8?B?QWxla3PDqWkgTmFpZMOpbm92?= <an@digitaltide.io>, Alexander Larsson
- <alexl@redhat.com>, Christian Brauner <brauner@kernel.org>, Miklos Szeredi
- <mszeredi@redhat.com>, Zhiguo Niu <niuzhiguo84@gmail.com>,
- shengyong1@xiaomi.com, linux-erofs mailing list
- <linux-erofs@lists.ozlabs.org>
-Subject: Re: [PATCH v2] erofs: don't bother with s_stack_depth increasing
- for now
-Message-ID: <20260108102613.33bbc6d4@pumpkin>
-In-Reply-To: <4b427f6f-3b26-4dc8-bf6f-79eeabf6ba84@linux.alibaba.com>
-References: <0c34f3fa-c573-4343-b8ea-6832530f0069@linux.alibaba.com>
-	<20260106170504.674070-1-hsiangkao@linux.alibaba.com>
-	<3acec686-4020-4609-aee4-5dae7b9b0093@gmail.com>
-	<41b8a0bb-96d3-4eba-a5b8-77b0b0ed4730@linux.alibaba.com>
-	<121cb490-f13a-4957-97be-ea87baa10827@linux.alibaba.com>
-	<CAOQ4uxg14FYhZvdjZ-9UT3jVyLCbM1ReUdESSXgAbezsQx7rqQ@mail.gmail.com>
-	<4b427f6f-3b26-4dc8-bf6f-79eeabf6ba84@linux.alibaba.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1767868616; c=relaxed/simple;
+	bh=KcWwCS3VcWLJt+3EH0EsfM1JUiU9zCLrjaxsjrQEEe8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LeQIFs8FC/wxqyA7hx1TAo44JsedHGJ60YadZeuSqhzC72vU156FDA0CQFoYGpgtw1Tx6VAvvMALk5S3Z5S/M8lMTplATEE9mxtc5GQK18SYVbPK9L1HYC4/8wiW4VdW2Ic78z6Dkw+f/QU2Fu3ZRQRoQUSXM2/UHRT4B47ZAks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L9PphSHv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EkjRTIoK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L9PphSHv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EkjRTIoK; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4EAFA33CE2;
+	Thu,  8 Jan 2026 10:36:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1767868603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y7zhMg4dN+hDANKOVxoNd5LSGROZDwb68O8xAw3Tm4E=;
+	b=L9PphSHvE5aR8dH4x2yDWKzbzE7wgHTIPEJc1LruiiFeoKxe0rptToVkFsCWOKf0+iXdEN
+	BthFIq3+XrP+9YJvLraGvQZZ0YkbXpq/Wy86oN7Xn6hcghaaGXUsDuvybdBQneXBST1EjH
+	KbXkbXiZdrU+WKtZGpBN6oFPEZLh5bo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1767868603;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y7zhMg4dN+hDANKOVxoNd5LSGROZDwb68O8xAw3Tm4E=;
+	b=EkjRTIoKt0pWVfhd22UD0qU7RDnjIEAUPdxkd5yjon7tdL6zZE2EbkeRZHDxuClMhzgOER
+	dfJvWLCKhLKlqSAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=L9PphSHv;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=EkjRTIoK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1767868603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y7zhMg4dN+hDANKOVxoNd5LSGROZDwb68O8xAw3Tm4E=;
+	b=L9PphSHvE5aR8dH4x2yDWKzbzE7wgHTIPEJc1LruiiFeoKxe0rptToVkFsCWOKf0+iXdEN
+	BthFIq3+XrP+9YJvLraGvQZZ0YkbXpq/Wy86oN7Xn6hcghaaGXUsDuvybdBQneXBST1EjH
+	KbXkbXiZdrU+WKtZGpBN6oFPEZLh5bo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1767868603;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y7zhMg4dN+hDANKOVxoNd5LSGROZDwb68O8xAw3Tm4E=;
+	b=EkjRTIoKt0pWVfhd22UD0qU7RDnjIEAUPdxkd5yjon7tdL6zZE2EbkeRZHDxuClMhzgOER
+	dfJvWLCKhLKlqSAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 353253EA63;
+	Thu,  8 Jan 2026 10:36:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Erf3DLuIX2niXgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 08 Jan 2026 10:36:43 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EB010A0CF3; Thu,  8 Jan 2026 11:36:34 +0100 (CET)
+Date: Thu, 8 Jan 2026 11:36:34 +0100
+From: Jan Kara <jack@suse.cz>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, akpm@linux-foundation.org, david@redhat.com, 
+	miklos@szeredi.hu, linux-mm@kvack.org, athul.krishna.kr@protonmail.com, 
+	j.neuschaefer@gmx.net, carnil@debian.org, linux-fsdevel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] fs/writeback: skip AS_NO_DATA_INTEGRITY mappings
+ in wait_sb_inodes()
+Message-ID: <fhwhqvzs6rmn5zbazbbtcdr73tokykwy63lrorv4q5azbdg4hz@czkgoperhk4x>
+References: <20251215030043.1431306-1-joannelkoong@gmail.com>
+ <20251215030043.1431306-2-joannelkoong@gmail.com>
+ <ypyumqgv5p7dnxmq34q33keb6kzqnp66r33gtbm4pglgdmhma6@3oleltql2qgp>
+ <CAJnrk1aYpcDpm8MpN5Emb8qNOn34-qEiARLH0RudySKFtEZVpA@mail.gmail.com>
+ <ucnvcqbmxsiszobzzkjrgekle2nabf3w5omnfbitmotgujas4e@4f5ct4ot4mup>
+ <CAJnrk1b-77uK2JuQaHz8KUCBnZfnQZ6M_nQQqFNWLvPDDdy4+Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1b-77uK2JuQaHz8KUCBnZfnQZ6M_nQQqFNWLvPDDdy4+Q@mail.gmail.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.net,protonmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,linux-foundation.org,redhat.com,szeredi.hu,kvack.org,protonmail.com,gmx.net,debian.org,vger.kernel.org];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 4EAFA33CE2
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
 
-On Thu, 8 Jan 2026 16:05:03 +0800
-Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+On Wed 07-01-26 15:20:48, Joanne Koong wrote:
+> On Wed, Jan 7, 2026 at 2:12 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Tue 06-01-26 15:30:05, Joanne Koong wrote:
+> > > On Tue, Jan 6, 2026 at 1:34 AM Jan Kara <jack@suse.cz> wrote:
+> > > > [Thanks to Andrew for CCing me on patch commit]
+> > >
+> > > Sorry, I didn't mean to exclude you. I hadn't realized the
+> > > fs-writeback.c file had maintainers/reviewers listed for it. I'll make
+> > > sure to cc you next time.
+> >
+> > No problem, I don't think it's formally spelled out anywhere. It's just
+> > that for changes in fs/*.c people tend to CC VFS maintainers / reviewers.
+> >
+> > Thanks for the historical perspective, it does put some more peace into my
+> > mind that things were considered :)
+> >
+> > > For the fsync() and truncate() examples you mentioned, I don't think
+> > > it's an issue that these now wait for the server to finish the I/O and
+> > > hang if the server doesn't. I think it's actually more correct
+> > > behavior than what we had with temp pages, eg imo these actually ought
+> > > to wait for the writeback to have been completed by the server. If the
+> > > server is malicious / buggy and fsync/truncate hangs, I think that's
+> > > fine given that fsync/truncate is initiated by the user on a specific
+> > > file descriptor (as opposed to the generic sync()) (and imo it should
+> > > hang if it can't actually be executed correctly because the server is
+> > > malfunctioning).
+> >
+> > Here, I have a comment. The hang in truncate is not as innocent as you
+> > might think. It will happen in truncate_inode_pages() and as such it will
+> > also end up hanging inode reclaim. Thus kswapd (or other arbitrary process
+> > entering direct reclaim) may hang in inode reclaim waiting for
+> > truncate_inode_pages() to finish. And at that point you are between a rock
+> > and a hard place - truncate_inode_pages() cannot fail because the inode is
+> > at the point of no return. You cannot just detach the folio under writeback
+> > from the mapping because if the writeback ever completes, the IO end
+> > handlers will get seriously confused - at least in the generic case, maybe
+> > specifically for FUSE there would be some solution possible - like a
+> > special handler in fuse_evict_inode() walking all the pages under writeback
+> > and tearing them down in a clean way (properly synchronizing with IO
+> > completion) before truncate_inode_pages() is called.
+> 
+> Hmm... I looked into this path a bit when I was investigating a
+> deadlock that was unrelated to this. The ->evict_inode() callback gets
+> invoked only if the ref count on an inode has dropped to zero. In
+> fuse, in the .release() callback (fuse_release()), if writeback
+> caching is enabled, write_inode_now() is called on the inode with
+> sync=1 (WB_SYNC_ALL). This does synchronous writeback and returns (and
+> drops the inode ref) only after all the dirty pages have been written
+> out. When ->evict_inode() -> fuse_evict_inode() is called, I don't
+> think there can be any lingering dirty pages to write out in
+> trunate_inode_pages().
 
-> Hi Amir,
->=20
-> On 2026/1/8 16:02, Amir Goldstein wrote:
-> > On Thu, Jan 8, 2026 at 4:10=E2=80=AFAM Gao Xiang <hsiangkao@linux.aliba=
-ba.com> wrote: =20
->=20
-> ...
->=20
-> >>>>
-> >>>> Hi, Xiang
-> >>>>
-> >>>> In Android APEX scenario, apex images formatted as EROFS are packed =
-in
-> >>>> system.img which is also EROFS format. As a result, it will always f=
-ail
-> >>>> to do APEX-file-backed mount since `inode->i_sb->s_op =3D=3D &erofs_=
-sops'
-> >>>> is true.
-> >>>> Any thoughts to handle such scenario? =20
-> >>>
-> >>> Sorry, I forgot this popular case, I think it can be simply resolved
-> >>> by the following diff:
-> >>>
-> >>> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> >>> index 0cf41ed7ced8..e93264034b5d 100644
-> >>> --- a/fs/erofs/super.c
-> >>> +++ b/fs/erofs/super.c
-> >>> @@ -655,7 +655,7 @@ static int erofs_fc_fill_super(struct super_block=
- *sb, struct fs_context *fc)
-> >>>                    */
-> >>>                   if (erofs_is_fileio_mode(sbi)) {
-> >>>                           inode =3D file_inode(sbi->dif0.file);
-> >>> -                       if (inode->i_sb->s_op =3D=3D &erofs_sops ||
-> >>> +                       if ((inode->i_sb->s_op =3D=3D &erofs_sops && =
-!sb->s_bdev) || =20
-> >>
-> >> Sorry it should be `!inode->i_sb->s_bdev`, I've
-> >> fixed it in v3 RESEND: =20
-> >=20
-> > A RESEND implies no changes since v3, so this is bad practice.
-> >  =20
-> >> https://lore.kernel.org/r/20260108030709.3305545-1-hsiangkao@linux.ali=
-baba.com
-> >> =20
-> >=20
-> > Ouch! If the erofs maintainer got this condition wrong... twice...
-> > Maybe better using the helper instead of open coding this non trivial c=
-heck?
-> >=20
-> > if ((inode->i_sb->s_op =3D=3D &erofs_sops &&
-> >        erofs_is_fileio_mode(EROFS_I_SB(inode))) =20
->=20
-> I was thought to use that, but it excludes fscache as the
-> backing fs.. so I suggest to use !s_bdev directly to
-> cover both file-backed mounts and fscache cases directly.
+Right, that addresses my concern. Inode reclaim on FUSE shouldn't be able
+to see dirty / writeback pages. Thanks for explanation!
 
-Is it worth just allocating each fs a 'stack needed' value and then
-allowing the mount if the total is low enough.
-This is equivalent to counting the recursion depth, but lets erofs only
-add (say) 0.5.
-Ideally you'd want to do static analysis to find the value to add,
-but 'inspired guesswork' is probably good enough.
-
-Isn't there also a big difference between recursive mounts (which need
-to do read/write on the underlying file) and overlay mounts (which just
-pass the request onto the lower filesystem).
-
-	David
-
->=20
-> Thanks,
-> Gao Xiang
->=20
-> >=20
-> > Thanks,
-> > Amir. =20
->=20
->=20
-
+							Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
