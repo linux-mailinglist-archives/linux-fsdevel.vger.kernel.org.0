@@ -1,161 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-72843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72844-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7B2D0410F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:55:00 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB24D03F3A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:42:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 17B0E31382E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:36:17 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 4A32C304BB4B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4F33A0E89;
-	Thu,  8 Jan 2026 14:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CE34E90FB;
+	Thu,  8 Jan 2026 14:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WGgf1BP0"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HCkUV5Sg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE76C346AE6;
-	Thu,  8 Jan 2026 14:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710EB4E819E;
+	Thu,  8 Jan 2026 14:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767881371; cv=none; b=V0isWI85HsBHLrC0RD5PoIaLTAhjSDstKJ5BcptSmZDtQabXyhFGgQY1BuFWg26QUyuERHMz3QNpD997CSLksHmINrKBo26OkX+C1EOVl3iOtEFpLtjmGf+ipUy2bBcwOfhlIUu+eGRtGWD5anqboWI+goiRPL4uQk/m+JRadh8=
+	t=1767881992; cv=none; b=l5H8rRNRi+njebvKGF7CKkaB+cve0IuIFc9xF7LIalOuvHI9FP3zVCeWKAz3d5eMlPm0YmT9qf+sZHUokGApyd92XecdwSd4WFM/676JEgTG016hYnbGfr2OxP3LiIfw3q50LVex3X9fTlqHBK+75IbDGXZhzjwARkppG05zBrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767881371; c=relaxed/simple;
-	bh=P3c0F5fCAtLj4moe7T+UZCkUl7HlEdvHhP0YnwgjgXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bVgq6ZY2NYD1/BN+sg/1AHqlMq7e8RpoBWGexYbiGfRNS3c/z+Prrr98r2yoMpYP+10DdcjZKSjxlSxGNb40UEjkASlm6fMqIl5PT+28b+iGkhvo5bZTYVO3fpQ3YANGUuGphI5PkD2Obc70/wQpQcAvatHIPMTP+2PLdOxfrSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WGgf1BP0; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1767881992; c=relaxed/simple;
+	bh=pgFo/tGly54ijlfTPPtxx0Ky8wb8MMinxNhrt4wuMLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cC4rPmZYLTBSvaaEzOfToN0yXD0xWt7jPEwERbQkDphYs6t5NgjD4mbBKltJ1Fe4Nis4dox3F619ugrna98wB66uf3WqsHFqy0C0SaEUi6BAlREAbXUr3kpLKDjXu6EERS+YRST0Hqu42FuFLUOcd3HAeMxdUySeUMPZhNserVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HCkUV5Sg; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HojQq9q24AfBmZaxHNzm//OheDCcNKb2U02PaP3VG38=; b=WGgf1BP0kF4qcijKfc8vvVP3KC
-	njFwdcyy/JN/17iRysUAEpbBQjgGtBsRnh3A3QoIOVu6tfdKfDsv8WZumYBh3GOUrUaZG8de67oYb
-	mHhWAaD9IkuUOeYkE9Ze4MrkwfsTu3rlUwTIF7Jdy10xVE52IAPVGdGL/09heNvDK3KSFCVNOCj3l
-	BotpXMjqnZbo1CGOYGlPqTvJeip/rUKuRlsHQ5cFilwiPPJDhgOe69xx7k/E7c0MQQj/ZmbWWefBd
-	MuQkhDuZpKNRr9+0MIo5xVzH13Slb7UxOc7KwHSEoHpM6/cErYDjlnPXrtXxFL2BF8fbjQEdjzGQa
-	xY6jfdTw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vdqhU-0000000F25b-090v;
-	Thu, 08 Jan 2026 14:09:20 +0000
-Date: Thu, 8 Jan 2026 14:09:19 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jinchao Wang <wangjinchao600@gmail.com>
-Cc: Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	syzbot+2d9c96466c978346b55f@syzkaller.appspotmail.com,
-	Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH 2/2] Fix an AB-BA deadlock in hugetlbfs_punch_hole()
- involving page migration.
-Message-ID: <aV-6j97kTobFdYwE@casper.infradead.org>
-References: <20260108123957.1123502-1-wangjinchao600@gmail.com>
- <20260108123957.1123502-2-wangjinchao600@gmail.com>
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=47j3Vb5ECJCThNE4hZUuOAtfhlxTrOYUcu9LaYfkCP0=; b=HCkUV5Sg9RjiYn4vXDrQU9X8X2
+	QN7lpU67efTqRh1BaVJtEpKYMQAxG7T0N5995XKnZJk7w2W6cfF7OalQFG+1xpn4iCS1mLCF8LFZU
+	gI2xKmgSvoXaJnySBF9YEhWtKLaWW7n6Y8WsCHdLazXAFwFVgQFsrhIxgACJfaKplPExgcdHw01Kq
+	Ke4GwPEVve9HwaXeITYANFM+28/9dKysmfdekPnByN9rEJlzWGQfqqhw/sYk5H/myvcdC4/dP73NO
+	EnAdF+bwO9giTfj+kY8VlOmqBYEyM2N4eNeUEjVZQAm6jkNPHOIPZEmQEn0ZAp410vM3yx9JmCZ62
+	jjcnpyIg==;
+Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vdqrX-0000000HJ7f-3drf;
+	Thu, 08 Jan 2026 14:19:44 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	David Sterba <dsterba@suse.com>,
+	Jan Kara <jack@suse.cz>,
+	Mike Marshall <hubcap@omnibond.com>,
+	Martin Brandenburg <martin@omnibond.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Stefan Roesch <shr@fb.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	gfs2@lists.linux.dev,
+	io-uring@vger.kernel.org,
+	devel@lists.orangefs.org,
+	linux-unionfs@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-xfs@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: re-enable IOCB_NOWAIT writes to files v6
+Date: Thu,  8 Jan 2026 15:19:00 +0100
+Message-ID: <20260108141934.2052404-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260108123957.1123502-2-wangjinchao600@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Jan 08, 2026 at 08:39:25PM +0800, Jinchao Wang wrote:
-> The deadlock occurs due to the following lock ordering:
-> 
-> Task A (punch_hole):             Task B (migration):
-> --------------------             -------------------
-> 1. i_mmap_lock_write(mapping)    1. folio_lock(folio)
-> 2. folio_lock(folio)             2. i_mmap_lock_read(mapping)
->    (blocks waiting for B)           (blocks waiting for A)
-> 
-> Task A is blocked in the punch-hole path:
->   hugetlbfs_fallocate
->     hugetlbfs_punch_hole
->       hugetlbfs_zero_partial_page
->         filemap_lock_hugetlb_folio
->           filemap_lock_folio
->             __filemap_get_folio
->               folio_lock
-> 
-> Task B is blocked in the migration path:
->   migrate_pages
->     migrate_hugetlbs
->       unmap_and_move_huge_page
->         remove_migration_ptes
->           __rmap_walk_file
->             i_mmap_lock_read
-> 
-> To break this circular dependency, use filemap_lock_folio_nowait() in
-> the punch-hole path. If the folio is already locked, Task A drops the
-> i_mmap_rwsem and retries. This allows Task B to finish its rmap walk
-> and release the folio lock.
+Hi all,
 
-It looks like you didn't read the lock ordering at the top of mm/rmap.c
-carefully enough:
+commit 66fa3cedf16a ("fs: Add async write file modification handling.")
+effectively disabled IOCB_NOWAIT writes as timestamp updates currently
+always require blocking, and the modern timestamp resolution means we
+always update timestamps.  This leads to a lot of context switches from
+applications using io_uring to submit file writes, making it often worse
+than using the legacy aio code that is not using IOCB_NOWAIT.
 
- * hugetlbfs PageHuge() take locks in this order:
- *   hugetlb_fault_mutex (hugetlbfs specific page fault mutex)
- *     vma_lock (hugetlb specific lock for pmd_sharing)
- *       mapping->i_mmap_rwsem (also used for hugetlb pmd sharing)
- *         folio_lock
+This series allows non-blocking updates for lazytime if the file system
+supports it, and adds that support for XFS.
 
-So page migration is the one taking locks in the wrong order, not
-holepunch.  Maybe something like this instead?
+Changes since v5:
+ - sample ctime before calling inode_set_ctime_current
+ - fix a mild bisection hazard in fat
 
+Changes since v4:
+ - replace the S_* flags with an enum indicating either access or
+   modification time updates to make the logic less fragile and to
+   fix a bug in the previous version
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 5169f9717f60..4688b9e38cd2 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1458,6 +1458,7 @@ static int unmap_and_move_huge_page(new_folio_t get_new_folio,
- 	int page_was_mapped = 0;
- 	struct anon_vma *anon_vma = NULL;
- 	struct address_space *mapping = NULL;
-+	enum ttu_flags ttu = 0;
- 
- 	if (folio_ref_count(src) == 1) {
- 		/* page was freed from under us. So we are done. */
-@@ -1498,8 +1499,6 @@ static int unmap_and_move_huge_page(new_folio_t get_new_folio,
- 		goto put_anon;
- 
- 	if (folio_mapped(src)) {
--		enum ttu_flags ttu = 0;
--
- 		if (!folio_test_anon(src)) {
- 			/*
- 			 * In shared mappings, try_to_unmap could potentially
-@@ -1516,16 +1515,17 @@ static int unmap_and_move_huge_page(new_folio_t get_new_folio,
- 
- 		try_to_migrate(src, ttu);
- 		page_was_mapped = 1;
--
--		if (ttu & TTU_RMAP_LOCKED)
--			i_mmap_unlock_write(mapping);
- 	}
- 
- 	if (!folio_mapped(src))
- 		rc = move_to_new_folio(dst, src, mode);
- 
- 	if (page_was_mapped)
--		remove_migration_ptes(src, !rc ? dst : src, 0);
-+		remove_migration_ptes(src, !rc ? dst : src,
-+				ttu ? RMP_LOCKED : 0);
-+
-+	if (ttu & TTU_RMAP_LOCKED)
-+		i_mmap_unlock_write(mapping);
- 
- unlock_put_anon:
- 	folio_unlock(dst);
+Changes since v3:
+ - fix was_dirty_time handling in __mark_inode_dirty for the racy flag
+   update case
+ - refactor inode_update_timestamps to make the lazytime vs blocking
+   logical more clear
+ - allow non-blocking timestamp updates for fat
+
+Changes since v2:
+ - drop patches merged upstream
+ - adjust for the inode state accesors
+ - keep a check in __writeback_single_inode instead of exercising
+   potentially undefined behavior
+ - more spelling fixes
+
+Changes since v1:
+ - more regular numbering of the S_* flags
+ - fix XFS to actually not block
+ - don't ignore the generic_update_time return value in
+   file_update_time_flags
+ - fix the sync_lazytime return value
+ - fix an out of data comment in btrfs
+ - fix a race that would update i_version before returning -EAGAIN in XFS
+
+Diffstat:
+ Documentation/filesystems/locking.rst |    2 
+ Documentation/filesystems/vfs.rst     |    6 +
+ fs/btrfs/inode.c                      |    8 +-
+ fs/fs-writeback.c                     |   33 +++++++---
+ fs/gfs2/inode.c                       |    6 +
+ fs/inode.c                            |  111 +++++++++++++++++++++-------------
+ fs/internal.h                         |    3 
+ fs/nfs/inode.c                        |    4 -
+ fs/orangefs/inode.c                   |    5 +
+ fs/overlayfs/inode.c                  |    2 
+ fs/sync.c                             |    4 -
+ fs/ubifs/file.c                       |   13 ++-
+ fs/xfs/xfs_iops.c                     |   34 +++++++++-
+ fs/xfs/xfs_super.c                    |   29 --------
+ include/linux/fs.h                    |   27 ++++++--
+ include/trace/events/writeback.h      |    6 -
+ 16 files changed, 182 insertions(+), 111 deletions(-)
 
