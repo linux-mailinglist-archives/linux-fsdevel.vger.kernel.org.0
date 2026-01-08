@@ -1,211 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-72816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90852D03C82
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:23:11 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DBEAD04A42
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 18:03:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 66674305E330
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:18:45 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id ECBE2338B26A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1663A7F71;
-	Thu,  8 Jan 2026 10:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L9PphSHv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EkjRTIoK";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L9PphSHv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EkjRTIoK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABEC4BED30;
+	Thu,  8 Jan 2026 10:44:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032653A1D05
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 10:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DF44BDEB0;
+	Thu,  8 Jan 2026 10:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767868616; cv=none; b=pncFodRUBM3VYguTzAs9UtTWio/TeodhxkKg20VUXnLAYJwCW/eluMrE4TiwxwoYqIsBShZO4nLfxec9cgqfKJQWmG+DBTZ6lX4TTv1k9inNNXIdoWu8aEKq0U3l4WhgUSX7aJc4HmjVez0w3G/zWsmcq7gUzKfHmVDN796BU7s=
+	t=1767869058; cv=none; b=tfkSBcQWzCAouzCKmXVQ8FHTboosmMoYruJJLROj0zOhVn/M0hiFBpmXszOdIP4FuoxLwCBkrMbCe7doKUFSfhRyrnM+Olj/zGmRGw/OTLoixbepF1AEmT2rE0ckQH78/qYUNfdLovOg33LRfxlz+xUKh2i6CyqoZeWtRd4s2Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767868616; c=relaxed/simple;
-	bh=KcWwCS3VcWLJt+3EH0EsfM1JUiU9zCLrjaxsjrQEEe8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LeQIFs8FC/wxqyA7hx1TAo44JsedHGJ60YadZeuSqhzC72vU156FDA0CQFoYGpgtw1Tx6VAvvMALk5S3Z5S/M8lMTplATEE9mxtc5GQK18SYVbPK9L1HYC4/8wiW4VdW2Ic78z6Dkw+f/QU2Fu3ZRQRoQUSXM2/UHRT4B47ZAks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L9PphSHv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EkjRTIoK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L9PphSHv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EkjRTIoK; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4EAFA33CE2;
-	Thu,  8 Jan 2026 10:36:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767868603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7zhMg4dN+hDANKOVxoNd5LSGROZDwb68O8xAw3Tm4E=;
-	b=L9PphSHvE5aR8dH4x2yDWKzbzE7wgHTIPEJc1LruiiFeoKxe0rptToVkFsCWOKf0+iXdEN
-	BthFIq3+XrP+9YJvLraGvQZZ0YkbXpq/Wy86oN7Xn6hcghaaGXUsDuvybdBQneXBST1EjH
-	KbXkbXiZdrU+WKtZGpBN6oFPEZLh5bo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767868603;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7zhMg4dN+hDANKOVxoNd5LSGROZDwb68O8xAw3Tm4E=;
-	b=EkjRTIoKt0pWVfhd22UD0qU7RDnjIEAUPdxkd5yjon7tdL6zZE2EbkeRZHDxuClMhzgOER
-	dfJvWLCKhLKlqSAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=L9PphSHv;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=EkjRTIoK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767868603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7zhMg4dN+hDANKOVxoNd5LSGROZDwb68O8xAw3Tm4E=;
-	b=L9PphSHvE5aR8dH4x2yDWKzbzE7wgHTIPEJc1LruiiFeoKxe0rptToVkFsCWOKf0+iXdEN
-	BthFIq3+XrP+9YJvLraGvQZZ0YkbXpq/Wy86oN7Xn6hcghaaGXUsDuvybdBQneXBST1EjH
-	KbXkbXiZdrU+WKtZGpBN6oFPEZLh5bo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767868603;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7zhMg4dN+hDANKOVxoNd5LSGROZDwb68O8xAw3Tm4E=;
-	b=EkjRTIoKt0pWVfhd22UD0qU7RDnjIEAUPdxkd5yjon7tdL6zZE2EbkeRZHDxuClMhzgOER
-	dfJvWLCKhLKlqSAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 353253EA63;
-	Thu,  8 Jan 2026 10:36:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Erf3DLuIX2niXgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 08 Jan 2026 10:36:43 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id EB010A0CF3; Thu,  8 Jan 2026 11:36:34 +0100 (CET)
-Date: Thu, 8 Jan 2026 11:36:34 +0100
-From: Jan Kara <jack@suse.cz>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, akpm@linux-foundation.org, david@redhat.com, 
-	miklos@szeredi.hu, linux-mm@kvack.org, athul.krishna.kr@protonmail.com, 
-	j.neuschaefer@gmx.net, carnil@debian.org, linux-fsdevel@vger.kernel.org, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] fs/writeback: skip AS_NO_DATA_INTEGRITY mappings
- in wait_sb_inodes()
-Message-ID: <fhwhqvzs6rmn5zbazbbtcdr73tokykwy63lrorv4q5azbdg4hz@czkgoperhk4x>
-References: <20251215030043.1431306-1-joannelkoong@gmail.com>
- <20251215030043.1431306-2-joannelkoong@gmail.com>
- <ypyumqgv5p7dnxmq34q33keb6kzqnp66r33gtbm4pglgdmhma6@3oleltql2qgp>
- <CAJnrk1aYpcDpm8MpN5Emb8qNOn34-qEiARLH0RudySKFtEZVpA@mail.gmail.com>
- <ucnvcqbmxsiszobzzkjrgekle2nabf3w5omnfbitmotgujas4e@4f5ct4ot4mup>
- <CAJnrk1b-77uK2JuQaHz8KUCBnZfnQZ6M_nQQqFNWLvPDDdy4+Q@mail.gmail.com>
+	s=arc-20240116; t=1767869058; c=relaxed/simple;
+	bh=Ny4RaHcpG7jXWvMNB3ojt451TJHh0rJcIQA3Waucmps=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m3cxMdN3Zwa5hatKlzkMpZ5IRGGnwbsfNlEt1C8ck7POU4BGs68Ns1R4/mKkt4hgLlhQywMm++lP0/E6HR6OWzE5JOZ33a07OyUsSM9+6jDpctdBdVCPSljngrQaCs6ORzdr1V1r/AfsXBzS/sKrEmgzTfnEjHF8W63gZclboFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dn1jL4yF8zJ4685;
+	Thu,  8 Jan 2026 18:43:50 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 63A5240086;
+	Thu,  8 Jan 2026 18:43:55 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 8 Jan
+ 2026 10:43:53 +0000
+Date: Thu, 8 Jan 2026 10:43:52 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: John Groves <John@Groves.net>
+CC: Miklos Szeredi <miklos@szeredi.hu>, Dan Williams
+	<dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, "Alison
+ Schofield" <alison.schofield@intel.com>, John Groves <jgroves@micron.com>,
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan
+ Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, "David
+ Hildenbrand" <david@kernel.org>, Christian Brauner <brauner@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Stefan
+ Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef
+ Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Chen
+ Linxuan <chenlinxuan@uniontech.com>, "James Morse" <james.morse@arm.com>,
+	Fuad Tabba <tabba@google.com>, "Sean Christopherson" <seanjc@google.com>,
+	Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>,
+	Gregory Price <gourry@gourry.net>, Aravind Ramesh <arramesh@micron.com>, Ajay
+ Joshi <ajayjoshi@micron.com>, <venkataravis@micron.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V3 01/21] dax: move dax_pgoff_to_phys from
+ [drivers/dax/] device.c to bus.c
+Message-ID: <20260108104352.000079c3@huawei.com>
+In-Reply-To: <20260107153332.64727-2-john@groves.net>
+References: <20260107153244.64703-1-john@groves.net>
+	<20260107153332.64727-1-john@groves.net>
+	<20260107153332.64727-2-john@groves.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1b-77uK2JuQaHz8KUCBnZfnQZ6M_nQQqFNWLvPDDdy4+Q@mail.gmail.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.net,protonmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,linux-foundation.org,redhat.com,szeredi.hu,kvack.org,protonmail.com,gmx.net,debian.org,vger.kernel.org];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 4EAFA33CE2
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed 07-01-26 15:20:48, Joanne Koong wrote:
-> On Wed, Jan 7, 2026 at 2:12 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Tue 06-01-26 15:30:05, Joanne Koong wrote:
-> > > On Tue, Jan 6, 2026 at 1:34 AM Jan Kara <jack@suse.cz> wrote:
-> > > > [Thanks to Andrew for CCing me on patch commit]
-> > >
-> > > Sorry, I didn't mean to exclude you. I hadn't realized the
-> > > fs-writeback.c file had maintainers/reviewers listed for it. I'll make
-> > > sure to cc you next time.
-> >
-> > No problem, I don't think it's formally spelled out anywhere. It's just
-> > that for changes in fs/*.c people tend to CC VFS maintainers / reviewers.
-> >
-> > Thanks for the historical perspective, it does put some more peace into my
-> > mind that things were considered :)
-> >
-> > > For the fsync() and truncate() examples you mentioned, I don't think
-> > > it's an issue that these now wait for the server to finish the I/O and
-> > > hang if the server doesn't. I think it's actually more correct
-> > > behavior than what we had with temp pages, eg imo these actually ought
-> > > to wait for the writeback to have been completed by the server. If the
-> > > server is malicious / buggy and fsync/truncate hangs, I think that's
-> > > fine given that fsync/truncate is initiated by the user on a specific
-> > > file descriptor (as opposed to the generic sync()) (and imo it should
-> > > hang if it can't actually be executed correctly because the server is
-> > > malfunctioning).
-> >
-> > Here, I have a comment. The hang in truncate is not as innocent as you
-> > might think. It will happen in truncate_inode_pages() and as such it will
-> > also end up hanging inode reclaim. Thus kswapd (or other arbitrary process
-> > entering direct reclaim) may hang in inode reclaim waiting for
-> > truncate_inode_pages() to finish. And at that point you are between a rock
-> > and a hard place - truncate_inode_pages() cannot fail because the inode is
-> > at the point of no return. You cannot just detach the folio under writeback
-> > from the mapping because if the writeback ever completes, the IO end
-> > handlers will get seriously confused - at least in the generic case, maybe
-> > specifically for FUSE there would be some solution possible - like a
-> > special handler in fuse_evict_inode() walking all the pages under writeback
-> > and tearing them down in a clean way (properly synchronizing with IO
-> > completion) before truncate_inode_pages() is called.
+On Wed,  7 Jan 2026 09:33:10 -0600
+John Groves <John@Groves.net> wrote:
+
+> This function will be used by both device.c and fsdev.c, but both are
+> loadable modules. Moving to bus.c puts it in core and makes it available
+> to both.
 > 
-> Hmm... I looked into this path a bit when I was investigating a
-> deadlock that was unrelated to this. The ->evict_inode() callback gets
-> invoked only if the ref count on an inode has dropped to zero. In
-> fuse, in the .release() callback (fuse_release()), if writeback
-> caching is enabled, write_inode_now() is called on the inode with
-> sync=1 (WB_SYNC_ALL). This does synchronous writeback and returns (and
-> drops the inode ref) only after all the dirty pages have been written
-> out. When ->evict_inode() -> fuse_evict_inode() is called, I don't
-> think there can be any lingering dirty pages to write out in
-> trunate_inode_pages().
+> No code changes - just relocated.
+> 
+> Signed-off-by: John Groves <john@groves.net>
+Hi John,
 
-Right, that addresses my concern. Inode reclaim on FUSE shouldn't be able
-to see dirty / writeback pages. Thanks for explanation!
+I don't know the code well enough to offer an opinion on whether this
+move causes any issues or if this is the best location, so review is superficial
+stuff only.
 
-							Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jonathan
+
+> ---
+>  drivers/dax/bus.c    | 27 +++++++++++++++++++++++++++
+>  drivers/dax/device.c | 23 -----------------------
+>  2 files changed, 27 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+> index fde29e0ad68b..a2f9a3cc30a5 100644
+> --- a/drivers/dax/bus.c
+> +++ b/drivers/dax/bus.c
+> @@ -7,6 +7,9 @@
+>  #include <linux/slab.h>
+>  #include <linux/dax.h>
+>  #include <linux/io.h>
+> +#include <linux/backing-dev.h>
+
+I'm not immediately spotting why this one.  Maybe should be in a different
+patch?
+
+> +#include <linux/range.h>
+> +#include <linux/uio.h>
+
+Why this one?
+
+Style wise, dax seems to use reverse xmas tree for includes, so
+this should keep to that.
+
+>  #include "dax-private.h"
+>  #include "bus.h"
+>  
+> @@ -1417,6 +1420,30 @@ static const struct device_type dev_dax_type = {
+>  	.groups = dax_attribute_groups,
+>  };
+>  
+> +/* see "strong" declaration in tools/testing/nvdimm/dax-dev.c  */
+Bonus space before that */
+Curiously that wasn't there in the original.
+
+> +__weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
+> +			      unsigned long size)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < dev_dax->nr_range; i++) {
+> +		struct dev_dax_range *dax_range = &dev_dax->ranges[i];
+> +		struct range *range = &dax_range->range;
+> +		unsigned long long pgoff_end;
+> +		phys_addr_t phys;
+> +
+> +		pgoff_end = dax_range->pgoff + PHYS_PFN(range_len(range)) - 1;
+> +		if (pgoff < dax_range->pgoff || pgoff > pgoff_end)
+> +			continue;
+> +		phys = PFN_PHYS(pgoff - dax_range->pgoff) + range->start;
+> +		if (phys + size - 1 <= range->end)
+> +			return phys;
+> +		break;
+> +	}
+> +	return -1;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_pgoff_to_phys);
+> +
+>  static struct dev_dax *__devm_create_dev_dax(struct dev_dax_data *data)
+>  {
+>  	struct dax_region *dax_region = data->dax_region;
+> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+> index 22999a402e02..132c1d03fd07 100644
+> --- a/drivers/dax/device.c
+> +++ b/drivers/dax/device.c
+> @@ -57,29 +57,6 @@ static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
+>  			   vma->vm_file, func);
+>  }
+>  
+> -/* see "strong" declaration in tools/testing/nvdimm/dax-dev.c */
+> -__weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
+> -		unsigned long size)
+> -{
+> -	int i;
+> -
+> -	for (i = 0; i < dev_dax->nr_range; i++) {
+> -		struct dev_dax_range *dax_range = &dev_dax->ranges[i];
+> -		struct range *range = &dax_range->range;
+> -		unsigned long long pgoff_end;
+> -		phys_addr_t phys;
+> -
+> -		pgoff_end = dax_range->pgoff + PHYS_PFN(range_len(range)) - 1;
+> -		if (pgoff < dax_range->pgoff || pgoff > pgoff_end)
+> -			continue;
+> -		phys = PFN_PHYS(pgoff - dax_range->pgoff) + range->start;
+> -		if (phys + size - 1 <= range->end)
+> -			return phys;
+> -		break;
+> -	}
+> -	return -1;
+> -}
+> -
+>  static void dax_set_mapping(struct vm_fault *vmf, unsigned long pfn,
+>  			      unsigned long fault_size)
+>  {
+
 
