@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-72868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72869-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD43D040A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:52:05 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06801D0487D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:48:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id EB31C31A450B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:39:36 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4445A322B71B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDE333DEDD;
-	Thu,  8 Jan 2026 15:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C69E219E8D;
+	Thu,  8 Jan 2026 15:20:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E870C33A71E;
-	Thu,  8 Jan 2026 15:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BE82EFD81;
+	Thu,  8 Jan 2026 15:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767885461; cv=none; b=nwLI927D1RzRg3Tk6jjyjewN7WyJV6S/Dy6PNILntEl2+vYj4ChAVIFknQAlwia2oPxPQ772c0aKrAVYQO/TTURI6rgveAZMjFCRB2adbpfiFC5kMCfuyLK12wnOxh7ponoRFquk3hdeeZg4rjFKZNICYENPK8CPpHNUhymgKOU=
+	t=1767885621; cv=none; b=Os6S/PoBKyAqF8E4TPwesHGOffOiljfs9KufYG58hY21MgKF8lhFrfl2y0mY4GZQRE7woxRDUUGl9abpuADLLVkH9q8QtIFQlaLkWPH5Z6zXPWiPI55iHknM8N8VxVvQ6F0a2gJhswlWdk3e/3Mp/z2po0reJT4LJqj6bPp55yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767885461; c=relaxed/simple;
-	bh=JAMdqyvoBlEJDXg82/7KOufjpCqCeM/HByi3F8wEtLs=;
+	s=arc-20240116; t=1767885621; c=relaxed/simple;
+	bh=NpUv25TlkIkzmuTKGn5h5KirEBQRahvysXG/JgpQMGY=;
 	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F6rHwWFgn4ft7uA7xrbCy6q26zAedTjksraIJhA37yJwIKTPc/bjkc/DkVV7KfWDeCZJi9YMrAb4TGMf3LaK1fsncnEK79LZ8ZNnpG3iJzZK9ggxaWmQYHEgPSnku88wbCLkPXvaf8v3tfn/7bqiaW6pYkdBWEb7Eh2jsOBKqgM=
+	 MIME-Version:Content-Type; b=PbJ30AT+X63dZR+vmB4AWkxmFgFlx+5hC0febx6gZ0NRFdPU5gAQSpn1Q4fCZrx3QtKhDossNssYwZxKsXBlsvH7fcKBdi8awElGh0uv5ELOTMv3V1131neJ/bbHpfFv3LtW6EyIc0WM9kky/uGHOfkue8G5ZNbJbt+qMX7HEbs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.107])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dn7n90W89zJ46C2;
-	Thu,  8 Jan 2026 23:17:33 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dn7r84ZjSzJ467y;
+	Thu,  8 Jan 2026 23:20:08 +0800 (CST)
 Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1555040571;
-	Thu,  8 Jan 2026 23:17:38 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 9C48540569;
+	Thu,  8 Jan 2026 23:20:13 +0800 (CST)
 Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
  (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 8 Jan
- 2026 15:17:35 +0000
-Date: Thu, 8 Jan 2026 15:17:33 +0000
+ 2026 15:20:12 +0000
+Date: Thu, 8 Jan 2026 15:20:10 +0000
 From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: John Groves <John@Groves.net>
+To: John Groves <John@groves.net>
 CC: Miklos Szeredi <miklos@szeredi.hu>, Dan Williams
 	<dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, "Alison
  Schofield" <alison.schofield@intel.com>, John Groves <jgroves@micron.com>,
@@ -59,13 +59,15 @@ CC: Miklos Szeredi <miklos@szeredi.hu>, Dan Williams
 	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
 	<linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH V3 18/21] famfs_fuse: Add holder_operations for dax
- notify_failure()
-Message-ID: <20260108151733.00005f6e@huawei.com>
-In-Reply-To: <20260107153332.64727-19-john@groves.net>
+Subject: Re: [PATCH V3 01/21] dax: move dax_pgoff_to_phys from
+ [drivers/dax/] device.c to bus.c
+Message-ID: <20260108152010.00003829@huawei.com>
+In-Reply-To: <3kylgjwvrdrfe5hcgqka2x2jsgicnnjssdpjrqe32p6cdbw33x@vpm5gpcb5utm>
 References: <20260107153244.64703-1-john@groves.net>
 	<20260107153332.64727-1-john@groves.net>
-	<20260107153332.64727-19-john@groves.net>
+	<20260107153332.64727-2-john@groves.net>
+	<20260108104352.000079c3@huawei.com>
+	<3kylgjwvrdrfe5hcgqka2x2jsgicnnjssdpjrqe32p6cdbw33x@vpm5gpcb5utm>
 X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -78,127 +80,79 @@ Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
  dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed,  7 Jan 2026 09:33:27 -0600
-John Groves <John@Groves.net> wrote:
+On Thu, 8 Jan 2026 07:25:47 -0600
+John Groves <John@groves.net> wrote:
 
-> Memory errors are at least somewhat more likely on disaggregated memory
-> than on-board memory. This commit registers to be notified by fsdev_dax
-> in the event that a memory failure is detected.
+> On 26/01/08 10:43AM, Jonathan Cameron wrote:
+> > On Wed,  7 Jan 2026 09:33:10 -0600
+> > John Groves <John@Groves.net> wrote:
+> >   
+> > > This function will be used by both device.c and fsdev.c, but both are
+> > > loadable modules. Moving to bus.c puts it in core and makes it available
+> > > to both.
+> > > 
+> > > No code changes - just relocated.
+> > > 
+> > > Signed-off-by: John Groves <john@groves.net>  
+> > Hi John,
+> > 
+> > I don't know the code well enough to offer an opinion on whether this
+> > move causes any issues or if this is the best location, so review is superficial
+> > stuff only.
+> > 
+> > Jonathan
+> >   
+> > > ---
+> > >  drivers/dax/bus.c    | 27 +++++++++++++++++++++++++++
+> > >  drivers/dax/device.c | 23 -----------------------
+> > >  2 files changed, 27 insertions(+), 23 deletions(-)
+> > > 
+> > > diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+> > > index fde29e0ad68b..a2f9a3cc30a5 100644
+> > > --- a/drivers/dax/bus.c
+> > > +++ b/drivers/dax/bus.c
+> > > @@ -7,6 +7,9 @@
+> > >  #include <linux/slab.h>
+> > >  #include <linux/dax.h>
+> > >  #include <linux/io.h>
+> > > +#include <linux/backing-dev.h>  
+> > 
+> > I'm not immediately spotting why this one.  Maybe should be in a different
+> > patch?
+> >   
+> > > +#include <linux/range.h>
+> > > +#include <linux/uio.h>  
+> > 
+> > Why this one?  
 > 
-> When a file access resolves to a daxdev with memory errors, it will fail
-> with an appropriate error.
+> Good eye, thanks. These must have leaked from some of the many dead ends
+> that I tried before coming up with this approach.
 > 
-> If a daxdev failed fs_dax_get(), we set dd->dax_err. If a daxdev called
-> our notify_failure(), set dd->error. When any of the above happens, set
-> (file)->error and stop allowing access.
+> I've dropped all new includes and it still builds :D
+
+Range one should be there... 
+
 > 
-> In general, the recovery from memory errors is to unmount the file
-> system and re-initialize the memory, but there may be usable degraded
-> modes of operation - particularly in the future when famfs supports
-> file systems backed by more than one daxdev. In those cases,
-> accessing data that is on a working daxdev can still work.
+> > 
+> > Style wise, dax seems to use reverse xmas tree for includes, so
+> > this should keep to that.
+> >   
+> > >  #include "dax-private.h"
+> > >  #include "bus.h"
+> > >  
+> > > @@ -1417,6 +1420,30 @@ static const struct device_type dev_dax_type = {
+> > >  	.groups = dax_attribute_groups,
+> > >  };
+> > >  
+> > > +/* see "strong" declaration in tools/testing/nvdimm/dax-dev.c  */  
+> > Bonus space before that */
+> > Curiously that wasn't there in the original.  
 > 
-> For now, return errors for any file that has encountered a memory or dax
-> error.
+> Removed.
 > 
-> Signed-off-by: John Groves <john@groves.net>
-> ---
->  fs/fuse/famfs.c       | 115 +++++++++++++++++++++++++++++++++++++++---
->  fs/fuse/famfs_kfmap.h |   3 +-
->  2 files changed, 109 insertions(+), 9 deletions(-)
+> [ ... ]
 > 
-> diff --git a/fs/fuse/famfs.c b/fs/fuse/famfs.c
-> index c02b14789c6e..4eb87c5c628e 100644
-> --- a/fs/fuse/famfs.c
-> +++ b/fs/fuse/famfs.c
-
-> @@ -254,6 +288,38 @@ famfs_update_daxdev_table(
->  	return 0;
->  }
->  
-> +static void
-> +famfs_set_daxdev_err(
-> +	struct fuse_conn *fc,
-> +	struct dax_device *dax_devp)
-> +{
-> +	int i;
-> +
-> +	/* Gotta search the list by dax_devp;
-> +	 * read lock because we're not adding or removing daxdev entries
-> +	 */
-> +	down_read(&fc->famfs_devlist_sem);
-
-Use a guard()
-
-> +	for (i = 0; i < fc->dax_devlist->nslots; i++) {
-> +		if (fc->dax_devlist->devlist[i].valid) {
-> +			struct famfs_daxdev *dd = &fc->dax_devlist->devlist[i];
-> +
-> +			if (dd->devp != dax_devp)
-> +				continue;
-> +
-> +			dd->error = true;
-> +			up_read(&fc->famfs_devlist_sem);
-> +
-> +			pr_err("%s: memory error on daxdev %s (%d)\n",
-> +			       __func__, dd->name, i);
-> +			goto done;
-> +		}
-> +	}
-> +	up_read(&fc->famfs_devlist_sem);
-> +	pr_err("%s: memory err on unrecognized daxdev\n", __func__);
-> +
-> +done:
-
-If this isn't getting more interesting, just return above.
-
-> +}
-> +
->  /***************************************************************************/
->  
->  void
-> @@ -611,6 +677,26 @@ famfs_file_init_dax(
->  
->  static ssize_t famfs_file_bad(struct inode *inode);
->  
-> +static int famfs_dax_err(struct famfs_daxdev *dd)
-
-I'd introduce this earlier in the series to reduce need
-to refactor below.
-
-> +{
-> +	if (!dd->valid) {
-> +		pr_err("%s: daxdev=%s invalid\n",
-> +		       __func__, dd->name);
-> +		return -EIO;
-> +	}
-> +	if (dd->dax_err) {
-> +		pr_err("%s: daxdev=%s dax_err\n",
-> +		       __func__, dd->name);
-> +		return -EIO;
-> +	}
-> +	if (dd->error) {
-> +		pr_err("%s: daxdev=%s memory error\n",
-> +		       __func__, dd->name);
-> +		return -EHWPOISON;
-> +	}
-> +	return 0;
-> +}
-
-...
-
-> @@ -966,7 +1064,8 @@ famfs_file_bad(struct inode *inode)
->  		return -EIO;
->  	}
->  	if (meta->error) {
-> -		pr_debug("%s: previously detected metadata errors\n", __func__);
-> +		pr_debug("%s: previously detected metadata errors\n",
-> +			 __func__);
-
-Spurious change.
-
->  		return -EIO;
->  	}
-
+> Thanks,
+> John
 
 
