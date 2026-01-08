@@ -1,217 +1,516 @@
-Return-Path: <linux-fsdevel+bounces-72957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B785CD0672A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 23:37:25 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B0C8D0672D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 23:37:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8B2E73027E10
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 22:37:00 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3067B3027595
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 22:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F385432E752;
-	Thu,  8 Jan 2026 22:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6156D328613;
+	Thu,  8 Jan 2026 22:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="M/p5WKkU"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="zGZXUVbH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010033.outbound.protection.outlook.com [52.101.193.33])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692D1328B47
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 22:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767911819; cv=fail; b=cM9O1cKT08EFyL6e++Eh5536qBa/9aixDm8Z2f2jLfMdwrWO4KkMWgHN/K3RuhX70yqMO1pKHvrFkiHPllmf4XpmRkXAZZejacrNYT+qrII1jQ4mFEPF75XtRBVubJtdnEzWFIpxpCmLYCrSs9ipVZqQKaruYxMlAbbsQHQbDdA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767911819; c=relaxed/simple;
-	bh=g8LAcaTe7j1QHM/cCVy9ykvLSt0NfBP4aUiyt+PBlnM=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=d5oyzkRDhkUtYA/HLoW4UhOuw/9zzb5LJdd0Y+cmbekD4cY43bfO4bDzIk81Web+JYGHpOKuMlCegYwQfyl+Jxz0BxRBXdjokJUC7UqXeCxUC2fNhIEMmwSNH6IyxdlzC9OV4j5njYDwu1G+97+dFh/192ov78fTFr4qe+X1YtM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=M/p5WKkU; arc=fail smtp.client-ip=52.101.193.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CTp9IUcYuBQMTwWC9SupY8UzO7IYfRBqrySqlZCc5Lo40xPqZlaxu8cO7fsWVnlO2DsX3dFNzFkd7uq9OCz7U7DwYGejkJG98mLf7Sk1f20mHDBvzd1qHcEHMJ5bGmo3QuK5Cxajts+XznsjAY/j4tWq5PdY3DpQvZzR4eRihN/D7ytWWgw2HU9f/XnlDAhEgxzTxbmeODatiP26r2foydoe8r/ff/iS0FT/n+M94oIdy/MvYsROTu9EH2K84nZz3hdoIixSetIWhxl+3P/RcXi1JaSdchUu6iXweqgSNSjkt9/JJiNjkDYL1k+vRuNC8TuMAhH3tRVgXrAxS1PabQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g8LAcaTe7j1QHM/cCVy9ykvLSt0NfBP4aUiyt+PBlnM=;
- b=Rpb1yZw8xWm8DoKItEuB27UemSyg5r8mg8acV9F5IQ1LVdXCACkq4+6v0eXyswf+ooZqXzIO/w41OTghfzyWcljKk/UuabeWpwLsIZG0YF6iDNX3gRcloUtvf9tweFF4zqd2v8k2gwB06wxdHIa6mAWXDHyh1qSKYZxhExGkAYrr7CZIB9eJ22rgzuEhgwQI0emI0noRai77We17nGlrbiFT0RyDbSl5lyQOAvBaEPb5e4+aUnacYTHLbHSvcxiGgIRyYo3lLzUpXlHjT7KaeD9sC5e4XqEVUrzpetieEksCYxOjezl+jfZiLzZ3u2wlgLofGPxQttsYtazUK2EZtg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g8LAcaTe7j1QHM/cCVy9ykvLSt0NfBP4aUiyt+PBlnM=;
- b=M/p5WKkU4btTraAzGIQ4ctHcjUsEGBAZ4WCU5WzQWlIP7WbPr6zj3gT5xEWhv7TgQ9W8fa8+Pad+jKqIEVnACXxvO+3rlFrep1hopYcz+vGaK5UJW21rOhyK3fsTqav3tXujkQddwR3fUUoJUNCoQ4dsfZbrQ56UxQiAht0ZxO/rUb93uuRXp6WJWAcdZtx7h75O9bbawHbUU6tkYaLFxEU+XE0nZoKu829eZKrq5PeiISM4wTIsfm6HW5/SiXmQRTtXcCXPPXW+H/ttL1Yu2MDGpbNgaJJDR43rTOUwiW0ShAAqqaOdmEFAZBgj+MwayoDB0f9Z1eVOkbbTAod1yw==
-Received: from DM4PR12MB5102.namprd12.prod.outlook.com (2603:10b6:5:391::21)
- by SA1PR12MB8841.namprd12.prod.outlook.com (2603:10b6:806:376::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.4; Thu, 8 Jan
- 2026 22:36:53 +0000
-Received: from DM4PR12MB5102.namprd12.prod.outlook.com
- ([fe80::67dc:55ce:1469:1eed]) by DM4PR12MB5102.namprd12.prod.outlook.com
- ([fe80::67dc:55ce:1469:1eed%3]) with mapi id 15.20.9499.003; Thu, 8 Jan 2026
- 22:36:53 +0000
-From: Jim Harris <jiharris@nvidia.com>
-To: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"miklos@szeredi.hu" <miklos@szeredi.hu>
-CC: Max Gurtovoy <mgurtovoy@nvidia.com>
-Subject: RFC: removing extra lookup in fuse_atomic_open()
-Thread-Topic: RFC: removing extra lookup in fuse_atomic_open()
-Thread-Index: AQHcgO9JeFbMHrIGIEqdzJgdNoLywA==
-Date: Thu, 8 Jan 2026 22:36:53 +0000
-Message-ID: <DC1731BD-736B-479B-99EC-FFA34547D898@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR12MB5102:EE_|SA1PR12MB8841:EE_
-x-ms-office365-filtering-correlation-id: 849f73ed-1968-4c80-2709-08de4f066c02
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?aEVBL00yMjM3VE9vN3BVcGlwazNvVVdiM2JyUUtES25ZV1VXbFJsS0JyaUpQ?=
- =?utf-8?B?R0hEeHpISWIxOEpHNXUwQlJoRS8vdFFYL0VSSzQvTHV0dERJOW16M0o0cmV4?=
- =?utf-8?B?emhVblhOOUZvTGJjaURyN3Bockc4MnZBaUFvOGZ5SktjL1M2NjRrZ01rZ3o4?=
- =?utf-8?B?NmJzWWhwbFlHVXg3S3pLc0EvK3FrQWlZOTcwelZ6ZExtNVJZQXc1S2Ezakth?=
- =?utf-8?B?Rm1ZRklkSEd0MFhud09XbVhpTmpETGZhejg0SHBWMU1JQzNVeE5seEt5UGZ1?=
- =?utf-8?B?dEtDRUgwc3JYdGRGVlBTWktJWkpoMGFkUXN3clNGQVFKRzRUbitJVHVCVlRH?=
- =?utf-8?B?L21VTG1mU1A4bG1Ud1E2Syt1MzRhQ1J3NzRudkJyZTZLQUxCMGlRZS9wR0xx?=
- =?utf-8?B?VFoxeithaVVReWx5U2VudlUzSjVsbVNCUFRLYTQ4WVhNeWQrWjZ5LzJCU3BB?=
- =?utf-8?B?VjdNSnFXSjAydEVrb1JqaUFjZXBSSVpvVCsvN3NubjNoYUw5MzNyOVhvNWp2?=
- =?utf-8?B?UloyR2IzL3ZHOFIwNTNJVUxQb2NLZFlRZ0h4Q0M0VGN2QUZ3N1BhTktJRGFi?=
- =?utf-8?B?ZXEzb1lrQ2JvQXN6QXkyWEUydzhEK2t1cXp5TGpXQ3VDaGNvek4xV0Juc0Fj?=
- =?utf-8?B?N3hhYUJnTkcyOGFMbi9lOVRwN0lkTjAvRGxQRWdVWUJrcUJOMGZ1SXZjQU5S?=
- =?utf-8?B?V3ZNRU40LzEwMWppVzJHTWdvbnF6L01lRGhnL1J4bmdjRVNLQ2ViM3pLTkdn?=
- =?utf-8?B?Z3VDNXhkdVRJQmZuNzc4Z2N4QXZSRzYwZU9SdFpIZzczWmdqRENtdlk2b2ls?=
- =?utf-8?B?ZnFhTXozenN4bWJMRHN4Y2lmTEdwR1gvNEJraHA2MXpNK1ArMEMzaURpNHpo?=
- =?utf-8?B?cEdDWWcxOTQ4MUYxM0xjbHBmbk9SWUU5aEV4SkQxMVNWRjlIcERkY0grRmRZ?=
- =?utf-8?B?cVkxQzRTTXhHZW5pV2NmV1liOVdGbVBCeXR0dXVCZ1BCbUdZYUpJc0NORzM0?=
- =?utf-8?B?WDBGQm9sM25JaGtKWkd6WTNwQ0VzWW5TOVBtY0p6NDdEUTN2M09iM2J4b2NJ?=
- =?utf-8?B?Zm9DbS93R1JHY2crSXpJb0VpY1Q2d2RFS25UblJyVDB0ZVpYWUtZckViWFI3?=
- =?utf-8?B?QW8rZlF5cjRkUG5sYzhuVDZuVFY3V1RvK09FY2JBdEJzcGZTMUpJWEpvalJF?=
- =?utf-8?B?bDhnZnhEeXYwV3hHM0FuUmp4QXE0eUtxanVCdU1kZUFFL3NqTXRQMVR4SEhj?=
- =?utf-8?B?SlZRRnd1dlhrendvcHpwV1ZKNXNVbVdjQk5HczllMExBakhNUFU3T2ZJb0RU?=
- =?utf-8?B?T3JOTC9iVGEydmJFWko4dG9yb0t1YU9jN2o4K0tzU2MyQnZleUg4V0JBaHZ0?=
- =?utf-8?B?Ni9WQndRRnEyZnZaWXBUQXp1L1phaGxhTHFkbXUvVHphYUlzSTBZN3dwRjY2?=
- =?utf-8?B?UkxCWFFnZzVnVWljU1FXdUNJT09NeC9CNkxPMk5iTGVmcEQ1blVZZVVvcXFZ?=
- =?utf-8?B?TkFvL3F1ZE1FL01CNWMraEFBdkJ2UU1QckgyL0RxSFNpL0FNWXRNN2twN2Fz?=
- =?utf-8?B?emtSMFhMRWNudThIU0JBcVJsRjlLMDBhR1NmbnkxWkhTU2twcEVBYy9vaGRq?=
- =?utf-8?B?d3NpZnM3WVhmUm5rVUd4STdybGFjYlZKeG1sN0hxUXBXcDgvWmhRMkczUzlD?=
- =?utf-8?B?Nnh5RW1oSnJONEpzNnhPYzFtaW5hR1BHc0tLZy9sZG9IVExuaC9NcGpuT1JR?=
- =?utf-8?B?cVpuVldKcjZwK2dIbHdPYkwwQWpxTEhNQmM0TWw0VVRjVTlHRW52dXhYTEcv?=
- =?utf-8?B?T0oyL0kwOEovZXRhamlvVkZram03UDFta01ncW4wekZMVmNaVytpTzJWMysw?=
- =?utf-8?B?OXdOK2tINEVlVmVIRCs2OGlGcmpXaU9qemFPQ3RwS2s5WkM4TkRQUUFMZDZV?=
- =?utf-8?B?c2RlN05PNTIraXdXTDhrNHRJVlZ4WENhcDJXdUFMTWlreER5amRrMVVlaFJK?=
- =?utf-8?B?ekcyU0FOUWpOcXg2WGllSTdzQzMvRHdvaStUV3V1Y1VXTjhVR3FBbm9Ib3I4?=
- =?utf-8?Q?0WoezC?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5102.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?aHZ4NE5FM2lBSHBHd3pJeG83dFBKaXEwL2YwTlN3VkFGd3VUMW9vcjY0U3BQ?=
- =?utf-8?B?alB2K1lSbWVudUxlenU4NzYrTUE1eFd5R2p1WjBMYlZuZzQwZTNJeFVMWjhl?=
- =?utf-8?B?Z3lPMDJDcnVtcWRac3lnTmdpdmY5MjBqMC9qZ2U1VDJVY3dnWjB1aUVGTVNu?=
- =?utf-8?B?NWIrdzlJT3JRWlVTTTN6U1B1aEtOd3VpWm9VREExd3NmSElkc1dveExlckJw?=
- =?utf-8?B?Z2Vqemt0QXNvRlF1dU5McnlzQkxYZVZUWkZuM3N1SlJ0YXhuaFhBTUxjTTdm?=
- =?utf-8?B?dlNvaWZUeTBhdTRUdE5CeTVIa3pJNDlBMlNrMGlISkZydTg2YnJ6VGQyb1Z1?=
- =?utf-8?B?U003dVV1MU9icTZKSXdSdEtDOThHdVJ4RTdtYkpBQ2QwN2VSK3IzWU5IUnp2?=
- =?utf-8?B?b0pxN04wNFQ2dTJzdlV3ZFNzZDdzVTNvbm8zVkNiZXQrL1dTKzU0cENtR1Jn?=
- =?utf-8?B?Y1BINTZxTkd3K0NTYkZpd1h0aDc1TzZ3VFlXbVZpYTAvYS9NeVkzVnNBQ3JG?=
- =?utf-8?B?Y2xpTUhTM2ZKdlFaOHdHRHF4NXNKVDkwZGJDNE9sQW1DQnJMUDZML1JDRlN2?=
- =?utf-8?B?R01rNytrNGhXZGlrc2VlL2FSM0ExcFRBZlkvRkZvVHV1LzB2QU9lZ1hiQ1Ro?=
- =?utf-8?B?UmZZcythQmJWUTRXRnVpSERJZmlzRWlqUnFMNUtETW1pM2EvU0JCUE9ydVRz?=
- =?utf-8?B?bXBIK0hnTTR2Rlh1WDUzc0Nyd09DOTMwS2FndmZHY05UNlYvTWF2ZU8zbENt?=
- =?utf-8?B?RS9aZzNiVEIwNnlKb0JZdkhtbzBYQ2pBNm1CZXBoRVBEaEZHeUxPVFJFM2lk?=
- =?utf-8?B?Um8rUkkzano5OVhYWlBmNUxCSEtQMnhPdmQ2SmtVdVgra2VHRXlFSU5ZV2Nz?=
- =?utf-8?B?K0dMSm1DdzFKRDlxK0NDMWN2WXNuWnpqYmZBNnFwT3JSdmZjS25jN0RLUStx?=
- =?utf-8?B?bkpVWEhoRlYxWFVIQ3FlUUlFcEpMOWZMc1NXUWcrOW1sY2ZZMnBESW1OclBh?=
- =?utf-8?B?YUQyaEtKYmp6L0F3UHRrVTdnd3JMWXFOZ3ppekloTXhOSGl4TnhnY1Q5YzlU?=
- =?utf-8?B?Vy9rU0kxbytWd3h5d2J0bDAwOGx4REJLQjBERWgvMDlmZGlWa1BzZVhpRFJH?=
- =?utf-8?B?VjVhSmw5WEpINlNlenhuU3VTcFhyZnN2dW5MZGJtQmVvR2YzNjZPSVZTWXdG?=
- =?utf-8?B?bHo0N1lqOVVBaFJ0NFFZVDNFb3FjVDFTbmhQaDZrNys0dU1VTGZmWU04d2lY?=
- =?utf-8?B?WWoyY09CL0N3VlIxU0hlbzRlY3NpU0JKRDdXR1NJV1M4MGxPVTBxNlhJbE1i?=
- =?utf-8?B?U0g3TE91T04rd2gycUJmREh2bDBKTUpkWHBrQlgyR0hXZzJRUjF6U3R4ZnE1?=
- =?utf-8?B?dGhkNUUwODZPNjZvN1U1ZGxwdXpVdlY5aktMSVl2bkZZMDh6UWNxbU9pU0c0?=
- =?utf-8?B?eDhVckc5ZWJXblBwTlAyTmRDejI5Nm12Sm1XV2VSbzdxRGN1eXA0L2pYbkZO?=
- =?utf-8?B?UmpBNGRSTUxubkR6akJpSlBoSzlYTjk5Zmd4UEJETUMxbklzRWtScjVTSDNX?=
- =?utf-8?B?L1pKRTByS2F6czN2SHdSWXNZakNQQVZPUkQ5ZEVWQk9rUnNRL29CMVFaQSsr?=
- =?utf-8?B?RmF0SHRsR3Z0dERYYzFYSTFnQ0F5eUc2LzVxaHY5TE4wcys3RjBBbCtuQjBG?=
- =?utf-8?B?K0g5RjduODYvNnRyKzV5a1h3cDNDb2tUemhIWWdIMWdwSmtNWG5PRmM3cXAx?=
- =?utf-8?B?OEZhcEVIVVpRTHd2UVRld2lqMC8rano2QUpEMVEzOTZ0SGZqZ3dJWDNBdXMr?=
- =?utf-8?B?aDRPcE9GSnBQWDlHS3hvSmJZQ3Rjd1JnZWlZdHRqZ3VNd2xNT0RiWERhZm1u?=
- =?utf-8?B?cUZWaUZtTktxb29mWk5Pa05XME9zQS9RSGJpNjgzbjgvWXhBUER0WTVodElF?=
- =?utf-8?B?eW9BODBxZVhSdWRJSDNBLzM3ZHFob0tYNmkyZDlJR0Q0NlRVV3hpWnRRejRH?=
- =?utf-8?B?QjZEdEtLSmtqaWRHeEdZQTJyUGtwM2dkenh1SEZZWWtrMmxaR1JSNU1TbGgw?=
- =?utf-8?B?RXlldmw1SkdLRmcyLytFa0FnOUQvVWZrc1gwS2FKQXdmM21zUHFQK213NWhO?=
- =?utf-8?B?SXRzbWhtZVp0Sys3ejZnM0hvbkNXWGFVWmk3cWl1dEt3YnpyS3JaRDRPWmgw?=
- =?utf-8?B?aTBRZnBIeW1SWmh2WnlLb3g3NjM3eE9NUU9keGZTc1hNQVBxS2o1OG1MRy9N?=
- =?utf-8?B?TW5uN0RGMDZ5S3RqVHJueWRnRUlNcTN1NURFR29mNHE0NVR2MWpKWkViQU91?=
- =?utf-8?B?UjJXVktGaEFwLy9IQllMM1hkWDRzd3hUMTE4eGtxN0o5elRoRTQzUT09?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F1BAF91B76D22D4998F921340BFAAA8C@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FC5284B58
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 22:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767911873; cv=none; b=fPO77fKifQMoq9GGSXjLtTbhHkkWuezxeJklBfIJd/C1pUvAL1MPt9hw6Ba/tu9NYrrs9JFtllGW3GISGZvJGw8W07OAscqUpotUC/rb+gxsGEd7RGyim5PV5mAJB3SY8oJ5J1DNZq/6L0GboFL3eiaEYJfsh1PZuKoC5e3ZRsk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767911873; c=relaxed/simple;
+	bh=8T9un7bQZqCWWJpLdpWCOztOTuOxvWt7nodiP1VzcOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7wx6hMiYY2MgkexztXmjS/ykfmH9CLhiTCkyW1Td5rVevBe+l4BT/woysRExwig4XdDpdIbC/FZ/7pPiHz9BSODfQtMSyBDgPtVZ19ugkAxInHlZSuxlKYWUbx/39Y1JKTpBDmio2ixEFetECOacTMqvQPsb8NfIuDT6nprh1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=zGZXUVbH; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4dnKY60flqz9t13;
+	Thu,  8 Jan 2026 23:37:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1767911866;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lb3G72x+9lJW6xgQtqGt7+IxZmNLXxA58wBSmLtKKZU=;
+	b=zGZXUVbH3mW9FbaxtmcbG9Vv7jpM6xROpe9g70JDvlahQfSACNzUsGxBXAPUcAl9hipFMi
+	pV3LPOHzI7LLLNs9d6+d5CyoRIWefgs+EaaNn8F0ekQDf1FDGIDZWDHLROxRZhNmOYFqYS
+	OwAsyCRwxM9YiU50D3s07yzpuxmSndwoqvEvI0vdAGZu8swg8Aj09hM+5u10gWky2MvA48
+	C+91RnQ7m63MmaUA1zzobtAiioMtetF5NKzINgOhc6ND/xCKjNoIVtIlKr3+9dqmv7nNXc
+	65NlKwU1HhlL8tLgGxkpoZIDwe3nUsZZN6BMO5AAg1sdO8hvFEW2MuaiEkJWyg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Thu, 8 Jan 2026 23:37:41 +0100
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 1/2] mount: add OPEN_TREE_NAMESPACE
+Message-ID: <2026-01-07-oldest-grim-captions-spills-ywC2O3@cyphar.com>
+References: <20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org>
+ <20251229-work-empty-namespace-v1-1-bfb24c7b061f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5102.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 849f73ed-1968-4c80-2709-08de4f066c02
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2026 22:36:53.3130
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: R4rnetB9IJG8n1QruvPFSnrWAisfN/qp2yxEOuXx4sUXf9SakW9eYCFI/2fbDejwG07aAbJzycHXG7qIKQcm5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8841
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ucipoh2vbvfm5tzq"
+Content-Disposition: inline
+In-Reply-To: <20251229-work-empty-namespace-v1-1-bfb24c7b061f@kernel.org>
+X-Rspamd-Queue-Id: 4dnKY60flqz9t13
 
-SGksDQoNCknigJl2ZSBiZWVuIGFuYWx5emluZyBGVVNFIG9wZXJhdGlvbiBjb3VudHMgZm9yIHZh
-cmlvdXMgZmlsZSBvcGVyYXRpb25zLCBhbmQNCm5vdGljZWQgdGhhdCBvcGVuKCkgd2l0aCBPX0NS
-RUFUIGFsd2F5cyByZXN1bHRzIGluIHR3byBGVVNFIG9wZXJhdGlvbnM6DQpGVVNFX0xPT0tVUCAr
-IEZVU0VfQ1JFQVRFLiBJdOKAmXMgbm90IGNsZWFyIHdoYXQgdGhlIEZVU0VfTE9PS1VQDQppcyBh
-Y2NvbXBsaXNoaW5nIGluIHRoaXMgY2FzZS4NCg0KSeKAmXZlIGJlZW4gcnVubmluZyB3aXRoIHRo
-ZSBwYXRjaCBiZWxvdyBzdWNjZXNzZnVsbHksIGluc3BpcmVkIGJ5IGhvdw0KdGhlIE5GUyBjbGll
-bnQgaGFuZGxlcyBhdG9taWNfb3BlbigpIHdpdGggT19DUkVBVCBzZXQuDQoNCklzIHRoaXMgYSBz
-dWl0YWJsZSBvcHRpbWl6YXRpb24gdG8gc3VibWl0PyBPciBhcmUgdGhlcmUgcGFydHMgb2YgdGhl
-IEZVU0UNCnByb3RvY29sIHRoYXQgSeKAmW0gbWlzc2luZywgd2hlcmUgY2VydGFpbiBGVVNFIGRl
-dmljZXMgZGVwZW5kIG9uIHRoaXMNCmV4dHJhIGxvb2t1cD8NCg0KVGhhbmtzLA0KDQpKaW0NCg0K
-DQoNCmNvbW1pdCAzMTZiODUxNzk4MmZjMzkzMzU1NGM0NjIwNTEzYTgxOWQ2MDY4NTJmDQpBdXRo
-b3I6IEppbSBIYXJyaXMgPGppbS5oYXJyaXNAbnZpZGlhLmNvbT4NCkRhdGU6ICAgV2VkIEphbiA3
-IDE5OjM3OjIyIDIwMjYgLTA3MDANCg0KICAgIGZ1c2U6IHNraXAgbG9va3VwIGR1cmluZyBhdG9t
-aWNfb3BlbigpIHdoZW4gT19DUkVBVCBpcyBzZXQNCg0KICAgIFdoZW4gT19DUkVBVCBpcyBzZXQs
-IHdlIGRvbid0IG5lZWQgdGhlIGxvb2t1cC4gVGhlIGxvb2t1cCBkb2Vzbid0DQogICAgaGFybSBh
-bnl0aGluZywgYnV0IGl0J3MgYW4gZXh0cmEgRlVTRSBvcGVyYXRpb24gdGhhdCdzIG5vdCByZXF1
-aXJlZC4NCg0KICAgIFNpZ25lZC1vZmYtYnk6IEppbSBIYXJyaXMgPGppbS5oYXJyaXNAbnZpZGlh
-LmNvbT4NCg0KZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZGlyLmMgYi9mcy9mdXNlL2Rpci5jDQppbmRl
-eCBlY2FlYzBmZWEzYTEuLjY3YjBhYmM0ZDM4NSAxMDA2NDQNCi0tLSBhL2ZzL2Z1c2UvZGlyLmMN
-CisrKyBiL2ZzL2Z1c2UvZGlyLmMNCkBAIC03MDIsNyArNzAyLDggQEAgc3RhdGljIGludCBmdXNl
-X2NyZWF0ZV9vcGVuKHN0cnVjdCBtbnRfaWRtYXAgKmlkbWFwLCBzdHJ1Y3QgaW5vZGUgKmRpciwN
-CiAgICAgICAgICAgICAgICBnb3RvIG91dF9lcnI7DQogICAgICAgIH0NCiAgICAgICAga2ZyZWUo
-Zm9yZ2V0KTsNCi0gICAgICAgZF9pbnN0YW50aWF0ZShlbnRyeSwgaW5vZGUpOw0KKyAgICAgICBk
-X2Ryb3AoZW50cnkpOw0KKyAgICAgICBkX3NwbGljZV9hbGlhcyhpbm9kZSwgZW50cnkpOw0KICAg
-ICAgICBlbnRyeS0+ZF90aW1lID0gZXBvY2g7DQogICAgICAgIGZ1c2VfY2hhbmdlX2VudHJ5X3Rp
-bWVvdXQoZW50cnksICZvdXRlbnRyeSk7DQogICAgICAgIGZ1c2VfZGlyX2NoYW5nZWQoZGlyKTsN
-CkBAIC03NDMsMTQgKzc0NCwxNCBAQCBzdGF0aWMgaW50IGZ1c2VfYXRvbWljX29wZW4oc3RydWN0
-IGlub2RlICpkaXIsIHN0cnVjdCBkZW50cnkgKmVudHJ5LA0KICAgICAgICBpZiAoZnVzZV9pc19i
-YWQoZGlyKSkNCiAgICAgICAgICAgICAgICByZXR1cm4gLUVJTzsNCg0KLSAgICAgICBpZiAoZF9p
-bl9sb29rdXAoZW50cnkpKSB7DQotICAgICAgICAgICAgICAgc3RydWN0IGRlbnRyeSAqcmVzID0g
-ZnVzZV9sb29rdXAoZGlyLCBlbnRyeSwgMCk7DQotICAgICAgICAgICAgICAgaWYgKHJlcyB8fCBk
-X3JlYWxseV9pc19wb3NpdGl2ZShlbnRyeSkpDQotICAgICAgICAgICAgICAgICAgICAgICByZXR1
-cm4gZmluaXNoX25vX29wZW4oZmlsZSwgcmVzKTsNCi0gICAgICAgfQ0KLQ0KLSAgICAgICBpZiAo
-IShmbGFncyAmIE9fQ1JFQVQpKQ0KKyAgICAgICBpZiAoIShmbGFncyAmIE9fQ1JFQVQpKSB7DQor
-ICAgICAgICAgICAgICAgaWYgKGRfaW5fbG9va3VwKGVudHJ5KSkgew0KKyAgICAgICAgICAgICAg
-ICAgICAgICAgc3RydWN0IGRlbnRyeSAqcmVzID0gZnVzZV9sb29rdXAoZGlyLCBlbnRyeSwgMCk7
-DQorICAgICAgICAgICAgICAgICAgICAgICBpZiAocmVzIHx8IGRfcmVhbGx5X2lzX3Bvc2l0aXZl
-KGVudHJ5KSkNCisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGZpbmlzaF9u
-b19vcGVuKGZpbGUsIHJlcyk7DQorICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgICAgIHJl
-dHVybiBmaW5pc2hfbm9fb3BlbihmaWxlLCBOVUxMKTsNCisgICAgICAgfQ0KDQogICAgICAgIC8q
-IE9ubHkgY3JlYXRlcyAqLw0KICAgICAgICBmaWxlLT5mX21vZGUgfD0gRk1PREVfQ1JFQVRFRDs=
+
+--ucipoh2vbvfm5tzq
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] mount: add OPEN_TREE_NAMESPACE
+MIME-Version: 1.0
+
+On 2025-12-29, Christian Brauner <brauner@kernel.org> wrote:
+> When creating containers the setup usually involves using CLONE_NEWNS
+> via clone3() or unshare(). This copies the caller's complete mount
+> namespace. The runtime will also assemble a new rootfs and then use
+> pivot_root() to switch the old mount tree with the new rootfs. Afterward
+> it will recursively umount the old mount tree thereby getting rid of all
+> mounts.
+>=20
+> On a basic system here where the mount table isn't particularly large
+> this still copies about 30 mounts. Copying all of these mounts only to
+> get rid of them later is pretty wasteful.
+>=20
+> This is exacerbated if intermediary mount namespaces are used that only
+> exist for a very short amount of time and are immediately destroyed
+> again causing a ton of mounts to be copied and destroyed needlessly.
+>=20
+> With a large mount table and a system where thousands or ten-thousands
+> of containers are spawned in parallel this quickly becomes a bottleneck
+> increasing contention on the semaphore.
+>=20
+> Extend open_tree() with a new OPEN_TREE_NAMESPACE flag. Similar to
+> OPEN_TREE_CLONE only the indicated mount tree is copied. Instead of
+> returning a file descriptor referring to that mount tree
+> OPEN_TREE_NAMESPACE will cause open_tree() to return a file descriptor
+> to a new mount namespace. In that new mount namespace the copied mount
+> tree has been mounted on top of a copy of the real rootfs.
+>=20
+> The caller can setns() into that mount namespace and perform any
+> additionally required setup such as move_mount() detached mounts in
+> there.
+>=20
+> This allows OPEN_TREE_NAMESPACE to function as a combined
+> unshare(CLONE_NEWNS) and pivot_root().
+>=20
+> A caller may for example choose to create an extremely minimal rootfs:
+>=20
+> fd_mntns =3D open_tree(-EBADF, "/var/lib/containers/wootwoot", OPEN_TREE_=
+NAMESPACE);
+>=20
+> This will create a mount namespace where "wootwoot" has become the
+> rootfs mounted on top of the real rootfs. The caller can now setns()
+> into this new mount namespace and assemble additional mounts.
+>=20
+> This also works with user namespaces:
+>=20
+> unshare(CLONE_NEWUSER);
+> fd_mntns =3D open_tree(-EBADF, "/var/lib/containers/wootwoot", OPEN_TREE_=
+NAMESPACE);
+>=20
+> which creates a new mount namespace owned by the earlier created user
+> namespace with "wootwoot" as the rootfs mounted on top of the real
+> rootfs.
+
+I think there are a few other things I would really like (with my runc
+hat on), such as being able to move_mount(2) into this new kind of
+OPEN_TREE_NAMESPACE handle.
+
+However, on the whole I think this seems very reasonable and is much
+simpler than I anticipated when we talked about this at LPC. I've just
+taken a general look but feel free to take my
+
+Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
+
+and also maybe a
+
+Suggested-by: Aleksa Sarai <cyphar@cyphar.com>
+
+If you feel it's appropriate, since we came up with this together at
+LPC? ;)
+
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/internal.h              |   1 +
+>  fs/namespace.c             | 155 +++++++++++++++++++++++++++++++++++++++=
++-----
+>  fs/nsfs.c                  |  13 ++++
+>  include/uapi/linux/mount.h |   3 +-
+>  4 files changed, 155 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/fs/internal.h b/fs/internal.h
+> index ab638d41ab81..b5aad5265e0e 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -247,6 +247,7 @@ extern void mnt_pin_kill(struct mount *m);
+>   */
+>  extern const struct dentry_operations ns_dentry_operations;
+>  int open_namespace(struct ns_common *ns);
+> +struct file *open_namespace_file(struct ns_common *ns);
+> =20
+>  /*
+>   * fs/stat.c:
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index c58674a20cad..fd9698671c70 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -2796,6 +2796,9 @@ static inline void unlock_mount(struct pinned_mount=
+point *m)
+>  		__unlock_mount(m);
+>  }
+> =20
+> +static void lock_mount_exact(const struct path *path,
+> +			     struct pinned_mountpoint *mp);
+> +
+>  #define LOCK_MOUNT_MAYBE_BENEATH(mp, path, beneath) \
+>  	struct pinned_mountpoint mp __cleanup(unlock_mount) =3D {}; \
+>  	do_lock_mount((path), &mp, (beneath))
+> @@ -2946,10 +2949,11 @@ static inline bool may_copy_tree(const struct pat=
+h *path)
+>  	return check_anonymous_mnt(mnt);
+>  }
+> =20
+> -
+> -static struct mount *__do_loopback(const struct path *old_path, int recu=
+rse)
+> +static struct mount *__do_loopback(const struct path *old_path,
+> +				   unsigned int flags, unsigned int copy_flags)
+>  {
+>  	struct mount *old =3D real_mount(old_path->mnt);
+> +	bool recurse =3D flags & AT_RECURSIVE;
+> =20
+>  	if (IS_MNT_UNBINDABLE(old))
+>  		return ERR_PTR(-EINVAL);
+> @@ -2960,10 +2964,22 @@ static struct mount *__do_loopback(const struct p=
+ath *old_path, int recurse)
+>  	if (!recurse && __has_locked_children(old, old_path->dentry))
+>  		return ERR_PTR(-EINVAL);
+> =20
+> +	/*
+> +	 * When creating a new mount namespace we don't want to copy over
+> +	 * mounts of mount namespaces to avoid the risk of cycles and also to
+> +	 * minimize the default complex interdependencies between mount
+> +	 * namespaces.
+> +	 *
+> +	 * We could ofc just check whether all mount namespace files aren't
+> +	 * creating cycles but really let's keep this simple.
+> +	 */
+> +	if (!(flags & OPEN_TREE_NAMESPACE))
+> +		copy_flags |=3D CL_COPY_MNT_NS_FILE;
+
+I kind of think this is a somewhat theoretical issue but I don't think
+we'll be bitten by it. My gut feeling is that I'd prefer this to be an
+OPEN_TREE_* flag that you have to set (so we can support this in the
+future) but that's kinda ugly too...
+
+> +
+>  	if (recurse)
+> -		return copy_tree(old, old_path->dentry, CL_COPY_MNT_NS_FILE);
+> -	else
+> -		return clone_mnt(old, old_path->dentry, 0);
+> +		return copy_tree(old, old_path->dentry, copy_flags);
+> +
+> +	return clone_mnt(old, old_path->dentry, copy_flags);
+>  }
+> =20
+>  /*
+> @@ -2974,7 +2990,9 @@ static int do_loopback(const struct path *path, con=
+st char *old_name,
+>  {
+>  	struct path old_path __free(path_put) =3D {};
+>  	struct mount *mnt =3D NULL;
+> +	unsigned int flags =3D recurse ? AT_RECURSIVE : 0;
+>  	int err;
+> +
+>  	if (!old_name || !*old_name)
+>  		return -EINVAL;
+>  	err =3D kern_path(old_name, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT, &old_path);
+> @@ -2991,7 +3009,7 @@ static int do_loopback(const struct path *path, con=
+st char *old_name,
+>  	if (!check_mnt(mp.parent))
+>  		return -EINVAL;
+> =20
+> -	mnt =3D __do_loopback(&old_path, recurse);
+> +	mnt =3D __do_loopback(&old_path, flags, 0);
+>  	if (IS_ERR(mnt))
+>  		return PTR_ERR(mnt);
+> =20
+> @@ -3004,7 +3022,7 @@ static int do_loopback(const struct path *path, con=
+st char *old_name,
+>  	return err;
+>  }
+> =20
+> -static struct mnt_namespace *get_detached_copy(const struct path *path, =
+bool recursive)
+> +static struct mnt_namespace *get_detached_copy(const struct path *path, =
+unsigned int flags)
+>  {
+>  	struct mnt_namespace *ns, *mnt_ns =3D current->nsproxy->mnt_ns, *src_mn=
+t_ns;
+>  	struct user_namespace *user_ns =3D mnt_ns->user_ns;
+> @@ -3029,7 +3047,7 @@ static struct mnt_namespace *get_detached_copy(cons=
+t struct path *path, bool rec
+>  			ns->seq_origin =3D src_mnt_ns->ns.ns_id;
+>  	}
+> =20
+> -	mnt =3D __do_loopback(path, recursive);
+> +	mnt =3D __do_loopback(path, flags, 0);
+>  	if (IS_ERR(mnt)) {
+>  		emptied_ns =3D ns;
+>  		return ERR_CAST(mnt);
+> @@ -3043,9 +3061,9 @@ static struct mnt_namespace *get_detached_copy(cons=
+t struct path *path, bool rec
+>  	return ns;
+>  }
+> =20
+> -static struct file *open_detached_copy(struct path *path, bool recursive)
+> +static struct file *open_detached_copy(struct path *path, unsigned int f=
+lags)
+>  {
+> -	struct mnt_namespace *ns =3D get_detached_copy(path, recursive);
+> +	struct mnt_namespace *ns =3D get_detached_copy(path, flags);
+>  	struct file *file;
+> =20
+>  	if (IS_ERR(ns))
+> @@ -3061,21 +3079,114 @@ static struct file *open_detached_copy(struct pa=
+th *path, bool recursive)
+>  	return file;
+>  }
+> =20
+> +DEFINE_FREE(put_empty_mnt_ns, struct mnt_namespace *,
+> +	    if (!IS_ERR_OR_NULL(_T)) free_mnt_ns(_T))
+> +
+> +static struct file *open_new_namespace(struct path *path, unsigned int f=
+lags)
+> +{
+> +	struct mnt_namespace *new_ns __free(put_empty_mnt_ns) =3D NULL;
+> +	struct path to_path __free(path_put) =3D {};
+> +	struct mnt_namespace *ns =3D current->nsproxy->mnt_ns;
+> +	struct user_namespace *user_ns =3D current_user_ns();
+> +	struct mount *new_ns_root;
+> +	struct mount *mnt;
+> +	struct ns_common *new_ns_common;
+> +	unsigned int copy_flags =3D 0;
+> +	bool locked =3D false;
+> +
+> +	if (user_ns !=3D ns->user_ns)
+> +		copy_flags |=3D CL_SLAVE;
+> +
+> +	new_ns =3D alloc_mnt_ns(user_ns, false);
+> +	if (IS_ERR(new_ns))
+> +		return ERR_CAST(new_ns);
+> +
+> +	scoped_guard(namespace_excl) {
+> +		new_ns_root =3D clone_mnt(ns->root, ns->root->mnt.mnt_root, copy_flags=
+);
+> +		if (IS_ERR(new_ns_root))
+> +			return ERR_CAST(new_ns_root);
+> +
+> +		/*
+> +		 * If the real rootfs had a locked mount on top of it somewhere
+> +		 * in the stack, lock the new mount tree as well so it can't be
+> +		 * exposed.
+> +		 */
+> +		mnt =3D ns->root;
+> +		while (mnt->overmount) {
+> +			mnt =3D mnt->overmount;
+> +			if (mnt->mnt.mnt_flags & MNT_LOCKED)
+> +				locked =3D true;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * We dropped the namespace semaphore so we can actually lock
+> +	 * the copy for mounting. The copied mount isn't attached to any
+> +	 * mount namespace and it is thus excluded from any propagation.
+> +	 * So realistically we're isolated and the mount can't be
+> +	 * overmounted.
+> +	 */
+> +
+> +	/* Borrow the reference from clone_mnt(). */
+> +	to_path.mnt =3D &new_ns_root->mnt;
+> +	to_path.dentry =3D dget(new_ns_root->mnt.mnt_root);
+> +
+> +	/* Now lock for actual mounting. */
+> +	LOCK_MOUNT_EXACT(mp, &to_path);
+> +	if (unlikely(IS_ERR(mp.parent)))
+> +		return ERR_CAST(mp.parent);
+> +
+> +	/*
+> +	 * We don't emulate unshare()ing a mount namespace. We stick to the
+> +	 * restrictions of creating detached bind-mounts. It has a lot
+> +	 * saner and simpler semantics.
+> +	 */
+> +	mnt =3D __do_loopback(path, flags, copy_flags);
+> +	if (IS_ERR(mnt))
+> +		return ERR_CAST(mnt);
+> +
+> +	scoped_guard(mount_writer) {
+> +		if (locked)
+> +			mnt->mnt.mnt_flags |=3D MNT_LOCKED;
+> +		/*
+> +		 * Now mount the detached tree on top of the copy of the
+> +		 * real rootfs we created.
+> +		 */
+> +		attach_mnt(mnt, new_ns_root, mp.mp);
+> +		if (user_ns !=3D ns->user_ns)
+> +			lock_mnt_tree(new_ns_root);
+> +	}
+> +
+> +	/* Add all mounts to the new namespace. */
+> +	for (struct mount *p =3D new_ns_root; p; p =3D next_mnt(p, new_ns_root)=
+) {
+> +		mnt_add_to_ns(new_ns, p);
+> +		new_ns->nr_mounts++;
+> +	}
+> +
+> +	new_ns->root =3D real_mount(no_free_ptr(to_path.mnt));
+> +	ns_tree_add_raw(new_ns);
+> +	new_ns_common =3D to_ns_common(no_free_ptr(new_ns));
+> +	return open_namespace_file(new_ns_common);
+> +}
+> +
+>  static struct file *vfs_open_tree(int dfd, const char __user *filename, =
+unsigned int flags)
+>  {
+>  	int ret;
+>  	struct path path __free(path_put) =3D {};
+>  	int lookup_flags =3D LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
+> -	bool detached =3D flags & OPEN_TREE_CLONE;
+> =20
+>  	BUILD_BUG_ON(OPEN_TREE_CLOEXEC !=3D O_CLOEXEC);
+> =20
+>  	if (flags & ~(AT_EMPTY_PATH | AT_NO_AUTOMOUNT | AT_RECURSIVE |
+>  		      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE |
+> -		      OPEN_TREE_CLOEXEC))
+> +		      OPEN_TREE_CLOEXEC | OPEN_TREE_NAMESPACE))
+>  		return ERR_PTR(-EINVAL);
+> =20
+> -	if ((flags & (AT_RECURSIVE | OPEN_TREE_CLONE)) =3D=3D AT_RECURSIVE)
+> +	if ((flags & (AT_RECURSIVE | OPEN_TREE_CLONE | OPEN_TREE_NAMESPACE)) =
+=3D=3D
+> +	    AT_RECURSIVE)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	if (hweight32(flags & (OPEN_TREE_CLONE | OPEN_TREE_NAMESPACE)) > 1)
+>  		return ERR_PTR(-EINVAL);
+> =20
+>  	if (flags & AT_NO_AUTOMOUNT)
+> @@ -3085,15 +3196,27 @@ static struct file *vfs_open_tree(int dfd, const =
+char __user *filename, unsigned
+>  	if (flags & AT_EMPTY_PATH)
+>  		lookup_flags |=3D LOOKUP_EMPTY;
+> =20
+> -	if (detached && !may_mount())
+> +	/*
+> +	 * If we create a new mount namespace with the cloned mount tree we
+> +	 * just care about being privileged over our current user namespace.
+> +	 * The new mount namespace will be owned by it.
+> +	 */
+> +	if ((flags & OPEN_TREE_NAMESPACE) &&
+> +	    !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
+> +		return ERR_PTR(-EPERM);
+> +
+> +	if ((flags & OPEN_TREE_CLONE) && !may_mount())
+>  		return ERR_PTR(-EPERM);
+> =20
+>  	ret =3D user_path_at(dfd, filename, lookup_flags, &path);
+>  	if (unlikely(ret))
+>  		return ERR_PTR(ret);
+> =20
+> -	if (detached)
+> -		return open_detached_copy(&path, flags & AT_RECURSIVE);
+> +	if (flags & OPEN_TREE_NAMESPACE)
+> +		return open_new_namespace(&path, flags);
+> +
+> +	if (flags & OPEN_TREE_CLONE)
+> +		return open_detached_copy(&path, flags);
+> =20
+>  	return dentry_open(&path, O_PATH, current_cred());
+>  }
+> diff --git a/fs/nsfs.c b/fs/nsfs.c
+> index bf27d5da91f1..db91de208645 100644
+> --- a/fs/nsfs.c
+> +++ b/fs/nsfs.c
+> @@ -99,6 +99,19 @@ int ns_get_path(struct path *path, struct task_struct =
+*task,
+>  	return ns_get_path_cb(path, ns_get_path_task, &args);
+>  }
+> =20
+> +struct file *open_namespace_file(struct ns_common *ns)
+> +{
+> +	struct path path __free(path_put) =3D {};
+> +	int err;
+> +
+> +	/* call first to consume reference */
+> +	err =3D path_from_stashed(&ns->stashed, nsfs_mnt, ns, &path);
+> +	if (err < 0)
+> +		return ERR_PTR(err);
+> +
+> +	return dentry_open(&path, O_RDONLY, current_cred());
+> +}
+> +
+>  /**
+>   * open_namespace - open a namespace
+>   * @ns: the namespace to open
+> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> index 5d3f8c9e3a62..acbc22241c9c 100644
+> --- a/include/uapi/linux/mount.h
+> +++ b/include/uapi/linux/mount.h
+> @@ -61,7 +61,8 @@
+>  /*
+>   * open_tree() flags.
+>   */
+> -#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clon=
+e */
+> +#define OPEN_TREE_CLONE		(1 << 0)	/* Clone the target tree and attach th=
+e clone */
+> +#define OPEN_TREE_NAMESPACE	(1 << 1)	/* Clone the target tree into a new=
+ mount namespace */
+>  #define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
+> =20
+>  /*
+>=20
+> --=20
+> 2.47.3
+>=20
+>=20
+
+--=20
+Aleksa Sarai
+https://www.cyphar.com/
+
+--ucipoh2vbvfm5tzq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaWAxsRsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/I4QD+LTXmtOB7yQNRUZNy3uDJ
+MUHV2c3IKSVSHVTGjQ7war8A/2d/rr4QZgIB2ICzH/r8DZMgcfWNEBN/HI4uP58U
+DNUN
+=m+1O
+-----END PGP SIGNATURE-----
+
+--ucipoh2vbvfm5tzq--
 
