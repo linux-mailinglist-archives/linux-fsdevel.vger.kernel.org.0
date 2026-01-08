@@ -1,199 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-72864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C6ED0453F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:24:38 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A0AD03B80
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:16:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 397C030F4120
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:13:59 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 0ACA43029827
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864BD2D73AD;
-	Thu,  8 Jan 2026 15:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7763590CD;
+	Thu,  8 Jan 2026 15:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="IV37lyqx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S4OcK0/o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0FF2741C9
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 15:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37A6357A3A
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 15:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767885046; cv=none; b=i9ThNTa4tGLup+w5451DM0ifom4TpggzElX9N0PLeh4cAu2t7MsQmIaTZva2nfpUcLYwRlijogkgQ0xlXlHy8eri80LI/RVMsop4RVp8xvaIJNfMxn2fSJA9jiIVrgpPeG9/04Q29VDDBNdEhdppXz7/P2Vrp76BuRjHvPsiBAY=
+	t=1767885158; cv=none; b=k0S2t8RFs3aNk8dSN3PoA2lbE3sTOOcHuR95XQhfPOC9DogevA+w+bXG6bm0SLX6rhp+mYpVapGfH7GWbMVbpXiqu2Qc4cjP73AL+vmMlpwusjgYDifmUto8UlYJYiuy7Tx2SalLTzFNszZ0cCSgpvMQFJ4F+JC5VNiKUkC9Yto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767885046; c=relaxed/simple;
-	bh=C64R9vkxaI9K5ONeC3tgaLirXTXcWSDMfLRS3TxDK8s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eQwCX/O0/9rW/c2erISQiOqApb9eTf3q4RKEPhZerujbirQWEMbePkjTdSb6RXoKby9c9TZHW9GbC2NzU4zSMEQSDAW7rSnWvgdCb7McQSpkzDwtNjNlsgn1UWiZkfpQTNhPDSF4a31C/CAh9rxpDRu5jYefUSE67SvsoOBM0P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=IV37lyqx; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7904a401d5cso36314067b3.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 07:10:44 -0800 (PST)
+	s=arc-20240116; t=1767885158; c=relaxed/simple;
+	bh=jtYdl2t6rzb7r+mbWvmvVNZ0lh3ErThLQjz03GiTx3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tZnBHg4RI/JOoDZqBT2nxn3FOert9KwqAuTa//eklV+/7komN7Lud5QV0VbZjsRrsHu4na6LFhBWKeuzAssiyzESO9WVKvpFzmXSVSt6X750YeEvQ3ukXGyWXukz5Kwj3LN4L9xifqIApPEVe1pf7Sb26NVG/odOYfHl0VjUhR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S4OcK0/o; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-65cf3d51c95so1775150eaf.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 07:12:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1767885044; x=1768489844; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QTkbey9LWC4b27P/G+EnN+lFuImbI+lYFoSxJEGXtiI=;
-        b=IV37lyqxJep/5ajHTExa7SHZy3vjwyq5ntmGicmKUKgrvygjZPpOn2bfiTpIWobWhk
-         IWs5pUbC+vQCl/WCppd2iPEavLxoStqCg1xP3I1GgBoXqPKor7JCgshPYAdU9lXAGTgA
-         vePeN6LzMXucEhQSHr1yFtRPsGsOyh+v/LFWE36UZhiLzNicZ1kEoWIS6OJqBWdUuLJi
-         b5n5wKdDmy6KfFs0me7P6uevmyaIc8qi1eGUTrl299YgHA7fjZdTwIueqmsYQ/1puMWR
-         YMHg1IY6SlhUiHKl1Ie570K96HL/H3BWRDBs4R0tFjoVmdwoasS+Q0koJ/pwpZfQ+FBe
-         tR/Q==
+        d=gmail.com; s=20230601; t=1767885154; x=1768489954; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nsGnYTzondw31+n75eOvnobuzn+cZ2qwJK8EEZW82L8=;
+        b=S4OcK0/otuqnY9RP5vmuPvPLxSYvDPXV7oK9vImnWW3ZcP5fTRGXYM+82SMdngsyfm
+         G6SWB09b1ToQNRSiRtj8sbDBqDAjVMqH/47CMuy+CVz1bHs88StJY8tsd9DtlMAGE/9B
+         Qot0nTsB9ejWenTnQ3VDNaesQFHCmpXK1mjc2bqCSDXI2PvOzerXMSnW5leASmp+5Bzy
+         lN7NLLU+iuc/HQ5/P6ia75VikGFeAW0AmU/5IN03FyXHVfVYEgPuP2AgoCisRhS5+Z06
+         Yi8jFRX1KiWL111ONz6qbsPxyc67tw5+1NfJ+MZDZLxcQEpzxeIzTQTHxp8G4elKEgR+
+         ZDHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767885044; x=1768489844;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=QTkbey9LWC4b27P/G+EnN+lFuImbI+lYFoSxJEGXtiI=;
-        b=qib1NCLx7iKH1dAGdxX6a+rLHjdQaVz4iVr0iW40U218FG3uVXWqtwn/YnQc52kMrm
-         9uoTnO9PIVJdUXAwGbZgGbsDJNqFeWqYZmXjIA3Pjz0sAIkJ0RSUtXNDNaRNGCNVala7
-         8Lr+HNBx66CjXRw1Th4nG893bYDn7SsycXKprcLNTLDTVlHEpfZ3DpZmtqe61K0rVL92
-         eOuhrB93L4TSpXT2EaO6+V+DPrZKcMqX7v6j+b4Z+5qL9zODextMemiT+x57wj/9z5Z/
-         RByhoFNW6UVxie/8/MgBQE3RxW+WEz1CL4xCzEcBErG4bcvTFdOAP8/Nt9QCoip0OXEX
-         twVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsBI1UgRgUZ9HH1B8Yez0OES0fcTtS7KzMN/16LmNIcTco/jVAcB2wR4npNE1CORwMqCos2vLRCt0TOeMr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrIG6YfjyW0YPEkLTb8/YkovJTwUzW2/Ke3i1Ls/6RpD48ejIX
-	94x9DptCjDVypOgWZu5Mo3Rf3Apl8XupBh+qT9mc6Jl2LZfjtQkGb9c68HPWLweUZcIR1Wp/UKw
-	fHvp2Y1hwGnArSi84pNyFfnZK6SPkv2eR0cz5+ry9Dw==
-X-Gm-Gg: AY/fxX4spTGTFdmAUS6aTGl78EXPrbBLr3RekOPYHX3jGuh+frz3WmmokgZfNllpR1x
-	ojv6oxIdHNEU+YdsBv9bRSUMDoU5jIy7kA+ZLPTtFupB/TEVndJVrGrlvDnhQsQOiN46rBRGbz5
-	hQL/YB1GiL4mSjcfNxuyjWD+fvz69rE3MTcQeT3glH81oQWlVxT8DAupbGmaCHX3Tmv8Lo08qL0
-	M4ZppdFVssb1yB51D8FVRG3pUWdkjI7G4tgzUeGSdrTV5xxJ9l1bDexouO8ZWA93GHsHw==
-X-Google-Smtp-Source: AGHT+IHwlV11mJiZRvrc0ba9gyUKkJLs3Ivv5ZO/Sp66Caj6iICdWSs+vjcbtX7JeT7w+lz4Sr6DicIt8PKx9jaUzQk=
-X-Received: by 2002:a05:690e:b88:b0:644:6ad4:fdfd with SMTP id
- 956f58d0204a3-64716c14086mr5723963d50.71.1767885043558; Thu, 08 Jan 2026
- 07:10:43 -0800 (PST)
+        d=1e100.net; s=20230601; t=1767885154; x=1768489954;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nsGnYTzondw31+n75eOvnobuzn+cZ2qwJK8EEZW82L8=;
+        b=k/Lsp2MRcwdm1qZNqL6k+qKK1gl/h5U/UYybo7om8C2Rkxrh3iBWW9j0RIQ7KDZmLX
+         HelnUgnhfYuZ7hbBzXQ481e84p41CJnm5S4+CXZWvQv55yoLezftOfC8gn+87p2lHHQ/
+         8KwmF+Tdw+WraA+f8MSFYAOTQ/ksFb+yjlaf2QvqPNRPK4JZsqHUfEAOoCZ7EDhTXRpE
+         jaHYwop8bXnNsRXrxsm2+WYK767h37kl7KJjWLMEh3mvV4sMY4ADuJ7Pys4rrBtmMG+o
+         BKVqVECUg17/5qPefci+gYbmkgDfXTrK8l03KcOb062pfR9pJx4hqmV239iKI6UVd3Sl
+         CB7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVS3NzxB+4siz5RfisAl6RBNy0Fy0JS/oqRP/AebmcE0g7ZKFT41SqyplMpV4gKvaGpiN6+jNd8qm6ncBQJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQTvTVUeQMOyTIaala5Zjx6d/GkHI3ow4VS5WMt9ubbHf96d68
+	2fgstMIlph6mB0esQPNN8p+hI2n8g3O3dUyCoa6YxqpwaU26MLbCCH0r
+X-Gm-Gg: AY/fxX71YvDMBR09U5OEgmca66d9ag6Ch/Dn6hzdNDpEyjbFcKBt3QOK1JwHZfgWRCA
+	owXqPxO3kwM4xoDdFhDaRwUyydHndBQ/74lM8l+9PWHnRs8pPQVM95q25Y+123awBawGsaeHlFk
+	QgF2WHsIDl60wjPQie56nS6P5ZL+i2yM+3uPALws7+R0afdUt92CmF/R+GYHYY51/ib4+DSo16d
+	D1pBeLHOxyvFxOJxmzku/r6whlahMbTmUPh33kOTfVPQSkW+tBB1FNDkU0W3TrBDBI1HmweVMU2
+	kMirxTUuZGm3R9Dt8vuaudQFZpda3udTjC/g2tIqp3aTkkMcDn4vzs3UUhqysNWLe+NP0h7Uk4y
+	P8twnBlKGcqTwGJmDWxnlYTDM5lEn+DsJ9VS0rO+y9D+cBgP+WYztOvK2lKKgrV4Nd07hESX6Wp
+	QVQPBe8+bC9fJwH/LjD2ecds4jYZDY0U5UWhoaEHyM
+X-Google-Smtp-Source: AGHT+IFZyDwPdkeqNSyDSqdmsf84bOQBFu+dUs1b2EahO7yvP66QCwradMj+XO+4P5+KO3vwRZ/fdA==
+X-Received: by 2002:a4a:d661:0:b0:65c:fb36:f232 with SMTP id 006d021491bc7-65f55082bd4mr1868554eaf.50.1767885153692;
+        Thu, 08 Jan 2026 07:12:33 -0800 (PST)
+Received: from groves.net ([2603:8080:1500:3d89:902b:954a:a912:b0f5])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa50721a6sm5268922fac.10.2026.01.08.07.12.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Jan 2026 07:12:33 -0800 (PST)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Thu, 8 Jan 2026 09:12:31 -0600
+From: John Groves <John@groves.net>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Alison Schofield <alison.schofield@intel.com>, John Groves <jgroves@micron.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, David Hildenbrand <david@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Chen Linxuan <chenlinxuan@uniontech.com>, 
+	James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>, 
+	Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Gregory Price <gourry@gourry.net>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, venkataravis@micron.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V3 02/21] dax: add fsdev.c driver for fs-dax on character
+ dax
+Message-ID: <6ibgx5e2lnzjqln2yrdtdt3vordyoaktn4nhwe3ojxradhattg@eo2pdrlcdrt2>
+References: <20260107153244.64703-1-john@groves.net>
+ <20260107153332.64727-1-john@groves.net>
+ <20260107153332.64727-3-john@groves.net>
+ <20260108113134.000040fd@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251211-v5_user_cfi_series-v26-0-f0f419e81ac0@rivosinc.com>
- <e052745b-6bf0-c2a3-21b2-5ecd8b04ec70@kernel.org> <aTxf7IGlkGLgHgI2@debug.ba.rivosinc.com>
-In-Reply-To: <aTxf7IGlkGLgHgI2@debug.ba.rivosinc.com>
-From: Deepak Gupta <debug@rivosinc.com>
-Date: Thu, 8 Jan 2026 07:10:32 -0800
-X-Gm-Features: AQt7F2r-MFLse9aM2Y-9SmWOvFLm93MsLbBkGvYnQc0D6QLcC_Q6_utP6Kihh0s
-Message-ID: <CAKC1njQ-hS+kUJ0C_v0oqZW1EZw2zAXMp-SnnA-ZXh_H-SoVdQ@mail.gmail.com>
-Subject: Re: [PATCH v26 00/28] riscv control-flow integrity for usermode
-To: Paul Walmsley <pjw@kernel.org>
-Cc: x86@kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, 
-	Andy Chiu <andybnac@gmail.com>, kito.cheng@sifive.com, charlie@rivosinc.com, 
-	atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
-	alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
-	rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
-	Zong Li <zong.li@sifive.com>, Andreas Korb <andreas.korb@aisec.fraunhofer.de>, 
-	Valentin Haudiquet <valentin.haudiquet@canonical.com>, Charles Mirabile <cmirabil@redhat.com>, 
-	Jesse Huang <jesse.huang@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260108113134.000040fd@huawei.com>
 
-Hi Paul,
+On 26/01/08 11:31AM, Jonathan Cameron wrote:
+> On Wed,  7 Jan 2026 09:33:11 -0600
+> John Groves <John@Groves.net> wrote:
+> 
+> > The new fsdev driver provides pages/folios initialized compatibly with
+> > fsdax - normal rather than devdax-style refcounting, and starting out
+> > with order-0 folios.
+> > 
+> > When fsdev binds to a daxdev, it is usually (always?) switching from the
+> > devdax mode (device.c), which pre-initializes compound folios according
+> > to its alignment. Fsdev uses fsdev_clear_folio_state() to switch the
+> > folios into a fsdax-compatible state.
+> > 
+> > A side effect of this is that raw mmap doesn't (can't?) work on an fsdev
+> > dax instance. Accordingly, The fsdev driver does not provide raw mmap -
+> > devices must be put in 'devdax' mode (drivers/dax/device.c) to get raw
+> > mmap capability.
+> > 
+> > In this commit is just the framework, which remaps pages/folios compatibly
+> > with fsdax.
+> > 
+> > Enabling dax changes:
+> > 
+> > * bus.h: add DAXDRV_FSDEV_TYPE driver type
+> > * bus.c: allow DAXDRV_FSDEV_TYPE drivers to bind to daxdevs
+> > * dax.h: prototype inode_dax(), which fsdev needs
+> > 
+> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> > Suggested-by: Gregory Price <gourry@gourry.net>
+> > Signed-off-by: John Groves <john@groves.net>
+> 
+> > diff --git a/drivers/dax/Kconfig b/drivers/dax/Kconfig
+> > index d656e4c0eb84..491325d914a8 100644
+> > --- a/drivers/dax/Kconfig
+> > +++ b/drivers/dax/Kconfig
+> > @@ -78,4 +78,21 @@ config DEV_DAX_KMEM
+> >  
+> >  	  Say N if unsure.
+> >  
+> > +config DEV_DAX_FS
+> > +	tristate "FSDEV DAX: fs-dax compatible device driver"
+> > +	depends on DEV_DAX
+> > +	default DEV_DAX
+> 
+> What's the logic for the default? Generally I'd not expect a
+> default for something new like this (so default of default == no)
 
-I have a bugfix for a bug reported by Jesse Huang (thanks Jesse) in riscv
-implementation of `map_shadow_stack`.
+My thinking is that this is harmless unless you use it, but if you
+need it you need it. So defaulting to include the module seems
+viable.
 
-Should I send a new series or only the bugfix-patch for implementation
-of `map_shadow_stack`
+[ ... ]
 
-Let me know. Thanks.
+John
 
--Deepak
-
--Deepak
-
-
-
-On Fri, Dec 12, 2025 at 10:33=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> =
-wrote:
->
-> On Fri, Dec 12, 2025 at 01:30:29AM -0700, Paul Walmsley wrote:
-> >On Thu, 11 Dec 2025, Deepak Gupta via B4 Relay wrote:
-> >
-> >> v26: CONFIG_RISCV_USER_CFI depends on CONFIG_MMU (dependency of shadow=
- stack
-> >> on MMU). Used b4 to pick tags, apparantly it messed up some tag picks.=
- Fixing it
-> >
-> >Deepak: I'm now (at least) the third person to tell you to stop resendin=
-g
-> >this entire series over and over again.
->
-> To be very honest I also feel very bad doing and DOSing the lists. Sorry =
-to you
-> and everyone else.
->
-> But I have been sitting on this patch series for last 3-4 merge windows w=
-ith
-> patches being exactly same/similar. So I have been a little more than des=
-perate
-> to get it in.
->
-> I really haven't had any meaningful feedback on patch series except stall=
-ing
-> just before each merge window for reasons which really shouldn't stall it=
-s
-> merge. Sure that's the nature of open source development and it's maintai=
-ner's
-> call at the end of the day. And I am new to this. I'll improve.
->
-> >
-> >First, a modified version of the CFI v23 series was ALREADY SITTING IN
-> >LINUX-NEXT.  So there's no reason you should be resending the entire
-> >series, UNLESS your intention for me is to drop the entire existing seri=
-es
-> >and wait for another merge window.
-> >
-> >Second: when someone asks you questions about an individual patch, and y=
-ou
-> >want to answer those questions, it's NOT GOOD for you to resend the enti=
-re
-> >28 series as the response!  You are DDOSing a bunch of lists and E-mail
-> >inboxes.  Just answer the question in a single E-mail.  If you want to
-> >update a single patch, just send that one patch.
->
-> Noted. I wasn't sure about it. I'll explicitly ask next time if you want =
-me to
-> send another one.
->
-> >
-> >If you don't start paying attention to these rules then people are going
-> >to start ignoring you -- at best! -- and it's going to give the entire
-> >community a bad reputation.
->
-> Even before this, this patch series has been ignored largely. I don't kno=
-w
-> how to get attention. All I wanted was either feedback or get it in. And =
-as I
-> said I've been desparate to get it in. Also as I said, I'll improve.
->
-> >
-> >Please acknowledge that you understand this,
->
-> ACKed.
->
-> >
-> >
-> >- Paul
 
