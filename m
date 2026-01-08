@@ -1,243 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-72833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7551CD038D4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 15:51:52 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9778CD0319A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 14:41:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 865343005F1B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 14:45:55 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id CFB9830C5518
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 13:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6C542B725;
-	Thu,  8 Jan 2026 12:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjcuQVXw"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D145B389DFE;
+	Thu,  8 Jan 2026 12:50:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D5C41A05C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 12:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6BA387577;
+	Thu,  8 Jan 2026 12:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767876099; cv=none; b=h+wQQKK51/C0ACqNQUixPgWvDqLilcgNuBok4QTUrwWJXU3v5XK385nkYwMc6aoM+VuwfXOMfK9Yl55JoXsvxWDjLqW8o6fG0dxxEcYwQQROzmANOeyS3XThb/1ZNp2MwZHmqdtO0LQL/mhe4fAxTd5W3Jph8xNSLoi5w7Lp4/4=
+	t=1767876604; cv=none; b=JlVWGNb3K7QlN7ovOjWmQwT7YA6mR7Hmy4K8EY9lpVtGoJ/0J54ipB+nxlrf1xD84HqKei2tchpfVVyU0clTfKbYmXMeYbcJniXGv0LH/t/887sqKvKzsqamJvVVx+1dAz7VeNThHhyFf9TEq+BLUWsvMPR6UUnZgBhn6GwnO3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767876099; c=relaxed/simple;
-	bh=VS+/gAoKbos/G2h2ps++m25hUCMaeP2IET7fpDNECQU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XJouN7UnxbaqKsq2sp17S9oSRK/OjvDS6w4Ebcv/CuMXa0nXXKuBsyYb1mUZCzlYmyOQIV7Y1AQM5LoyOX6PeBZXUVsTGn19hsOeTCBVlV92BkPZJIPygcXxLtf8M4oJsXNLiQsCEqW8aPNcge2cUJjvMgtmnecxjYWseHp1bP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjcuQVXw; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7f0db5700b2so1756061b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 04:41:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767876097; x=1768480897; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KxCHi6k3BTAzPt+DiJG3qCrr7/A1NponVT67aJszG2c=;
-        b=BjcuQVXwOlomqvBflhiUiZ4h1pkqT1+JAo3VbiqKQD8PklKuy3U0w6p3b4J7bdRBZZ
-         YOofUuMTK8+q0hi4Mx8J6kBe6dTqVS+v9XydGVPkiiPZ2YFFxTb1j07vYAS2Pz6VfDmA
-         6/92rGSCuUfxKdmCMifxSP+7k76VPg2ZjHfRmDVEMcg0V1jPK1b9F2T1ikTFFiO/tyj0
-         79nG3tO6ypWCCj25U5M830GJK8F1urhE75PWZ6iYzw6HzHsZaqaj/4MCHttRDsAZWQrB
-         rTqiq8+5SD2Z/TNtry4RHGOHUp1kTPZUWDinqvu4bXJ40dgzf2NtwaQqQ6ATsMm/6zI2
-         ajLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767876097; x=1768480897;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=KxCHi6k3BTAzPt+DiJG3qCrr7/A1NponVT67aJszG2c=;
-        b=cvPNYiRx63Ch+3+4CpMe07atdXz3aU4MF+2ju+svgo5nqmYxcqa5JcIBgZM+gz3E44
-         blruaHu1sqlJ7tGfwPwrTwxi0w4CxwfR2VwlAdT/rnoOtq7b9Uq2EjIgQFzuVatOGZIB
-         K/5L4PCIJOLJ23h3YMNiXiPZEsoTlH5oxoBODGVd9/8W84x0uHoKngiFYZvAWHWTY6Sx
-         CFWu3HbKZPbGSdkBUpqR+8XZlRfF6cXSlbeuDIBYsHkXIARGXd7+/GaHG8/Sc+lIcqaO
-         Cuu+7c8aX38TvRezZu5z+tdpn918O05Y5/BA6D2BFiY4Cbsqtbr333BeYRGmSlZrJcy7
-         YtVg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0z4cVnu+Wz2/Kvf0hf+C74PYcqeA2TweUZf6Kfuaf4zF9sw28gF5vVvxK0k/0K6yiJsoz3g3an3d3Z9ex@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6fSByOOwlXEa+s4PWmlWViKETvFZXJeF0ShsPJjgBLFTKRijK
-	fkzQ2FdkO/rehwCgUwEiFXLraVl2tkpClPi+wpLbz0n0uiJmFIRKnsa/cUBtnA==
-X-Gm-Gg: AY/fxX4FMHWaqo+DuD/ulKEamrex5DmV0dM3MjGfXDwxO1uBcY55qllmaF0ibINPZKb
-	XqajPJDUK4/09Sl6gEjYAOcaDgcs2BU8zjnzVxHOzamDmGlUT8lKwYRfFKWFBbsNMGfytwx6TUE
-	fpHrXqy2iVe0fNhMFXUYjbiad9GVM/z7Z1yDQM9a2+7RHQ5Fb6mswf138yOjmdg9IsHWWhiNcZn
-	eaw9kCsBie1BrVAMNj3M2ts6R5EaSPnHWyB7lV5ERgogDTfMzhQpSqlGrHCb2G87Co60z2nEURL
-	JPMs7keGqClxnBOQeAs9tbBX4KxsoFV3UOkivGf+0SEgMy2jeQagdtB4ooTsfk9joMSLz42flFC
-	aBgtPEPDOSIKNZxRVydyYLlVrlToMRsy1P+Qd4/75EW04mDWvK2+t2f9SVuY+rL8Q65V02ou+1q
-	mxkOQ=
-X-Google-Smtp-Source: AGHT+IGFPwjr7ZXnjyyaZYR82RM8pvdbLcnYiqzU0HmuuaMkGXIPbglQBcvVQCJYW+fo7AOVgmW9fg==
-X-Received: by 2002:a05:6a00:440a:b0:819:4284:365b with SMTP id d2e1a72fcca58-81b7d95f67emr5867252b3a.7.1767876097266;
-        Thu, 08 Jan 2026 04:41:37 -0800 (PST)
-Received: from localhost ([2a12:a304:100::205b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-81c96d762f8sm2423491b3a.64.2026.01.08.04.41.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 04:41:36 -0800 (PST)
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Jinchao Wang <wangjinchao600@gmail.com>,
-	syzbot+2d9c96466c978346b55f@syzkaller.appspotmail.com
-Subject: [PATCH 2/2] Fix an AB-BA deadlock in hugetlbfs_punch_hole() involving page migration.
-Date: Thu,  8 Jan 2026 20:39:25 +0800
-Message-ID: <20260108123957.1123502-2-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260108123957.1123502-1-wangjinchao600@gmail.com>
-References: <20260108123957.1123502-1-wangjinchao600@gmail.com>
+	s=arc-20240116; t=1767876604; c=relaxed/simple;
+	bh=oRZ2lPl+gZkTUwx0MnubUkgPpy5MkPPj96/wtI4UW/Q=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jwypx3FNddimLD7g+CS3Hh3F0/p6kI50YUHMW0kSlfSaw00M/rY3YpekBVuNC2rD6MTeICRHHcwmzD5yZIM5kiysUYbTXG/CGdXC5MbMoqpq6pfLxY0/0bOD/472NCJyJsMbRiELGieGcsGXBneEISPc85NimJEj5kFY83NVuQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dn4Vp3QDBzJ469G;
+	Thu,  8 Jan 2026 20:49:54 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4FF994056A;
+	Thu,  8 Jan 2026 20:49:59 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 8 Jan
+ 2026 12:49:57 +0000
+Date: Thu, 8 Jan 2026 12:49:56 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: John Groves <John@Groves.net>
+CC: Miklos Szeredi <miklos@szeredi.hu>, Dan Williams
+	<dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, "Alison
+ Schofield" <alison.schofield@intel.com>, John Groves <jgroves@micron.com>,
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan
+ Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, "David
+ Hildenbrand" <david@kernel.org>, Christian Brauner <brauner@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Stefan
+ Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef
+ Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Chen
+ Linxuan <chenlinxuan@uniontech.com>, "James Morse" <james.morse@arm.com>,
+	Fuad Tabba <tabba@google.com>, "Sean Christopherson" <seanjc@google.com>,
+	Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>,
+	Gregory Price <gourry@gourry.net>, Aravind Ramesh <arramesh@micron.com>, Ajay
+ Joshi <ajayjoshi@micron.com>, <venkataravis@micron.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V3 14/21] famfs_fuse: Plumb the GET_FMAP
+ message/response
+Message-ID: <20260108124956.00000e0e@huawei.com>
+In-Reply-To: <20260107153332.64727-15-john@groves.net>
+References: <20260107153244.64703-1-john@groves.net>
+	<20260107153332.64727-1-john@groves.net>
+	<20260107153332.64727-15-john@groves.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-The deadlock occurs due to the following lock ordering:
+On Wed,  7 Jan 2026 09:33:23 -0600
+John Groves <John@Groves.net> wrote:
 
-Task A (punch_hole):             Task B (migration):
---------------------             -------------------
-1. i_mmap_lock_write(mapping)    1. folio_lock(folio)
-2. folio_lock(folio)             2. i_mmap_lock_read(mapping)
-   (blocks waiting for B)           (blocks waiting for A)
+> Upon completion of an OPEN, if we're in famfs-mode we do a GET_FMAP to
+> retrieve and cache up the file-to-dax map in the kernel. If this
+> succeeds, read/write/mmap are resolved direct-to-dax with no upcalls.
+> 
+> Signed-off-by: John Groves <john@groves.net>
+A few things inline.
 
-Task A is blocked in the punch-hole path:
-  hugetlbfs_fallocate
-    hugetlbfs_punch_hole
-      hugetlbfs_zero_partial_page
-        filemap_lock_hugetlb_folio
-          filemap_lock_folio
-            __filemap_get_folio
-              folio_lock
+J
 
-Task B is blocked in the migration path:
-  migrate_pages
-    migrate_hugetlbs
-      unmap_and_move_huge_page
-        remove_migration_ptes
-          __rmap_walk_file
-            i_mmap_lock_read
+> diff --git a/fs/fuse/famfs.c b/fs/fuse/famfs.c
+> new file mode 100644
+> index 000000000000..0f7e3f00e1e7
+> --- /dev/null
+> +++ b/fs/fuse/famfs.c
+> @@ -0,0 +1,74 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * famfs - dax file system for shared fabric-attached memory
+> + *
+> + * Copyright 2023-2025 Micron Technology, Inc.
+> + *
+> + * This file system, originally based on ramfs the dax support from xfs,
+> + * is intended to allow multiple host systems to mount a common file system
+> + * view of dax files that map to shared memory.
+> + */
+> +
+> +#include <linux/fs.h>
+> +#include <linux/mm.h>
+> +#include <linux/dax.h>
+> +#include <linux/iomap.h>
+> +#include <linux/path.h>
+> +#include <linux/namei.h>
+> +#include <linux/string.h>
+> +
+> +#include "fuse_i.h"
+> +
+> +
+> +#define FMAP_BUFSIZE PAGE_SIZE
+> +
+> +int
+> +fuse_get_fmap(struct fuse_mount *fm, struct inode *inode)
+> +{
+> +	struct fuse_inode *fi = get_fuse_inode(inode);
+> +	size_t fmap_bufsize = FMAP_BUFSIZE;
+> +	u64 nodeid = get_node_id(inode);
+> +	ssize_t fmap_size;
+> +	void *fmap_buf;
+> +	int rc;
+> +
+> +	FUSE_ARGS(args);
+> +
+> +	/* Don't retrieve if we already have the famfs metadata */
+> +	if (fi->famfs_meta)
+> +		return 0;
+> +
+> +	fmap_buf = kcalloc(1, FMAP_BUFSIZE, GFP_KERNEL);
 
-To break this circular dependency, use filemap_lock_folio_nowait() in
-the punch-hole path. If the folio is already locked, Task A drops the
-i_mmap_rwsem and retries. This allows Task B to finish its rmap walk
-and release the folio lock.
+If there is only ever 1, does kcalloc() make sense over kzalloc()?
 
-Link: https://lore.kernel.org/all/68e9715a.050a0220.1186a4.000d.GAE@google.com
+> +	if (!fmap_buf)
+> +		return -EIO;
+> +
+> +	args.opcode = FUSE_GET_FMAP;
+> +	args.nodeid = nodeid;
+> +
+> +	/* Variable-sized output buffer
+> +	 * this causes fuse_simple_request() to return the size of the
+> +	 * output payload
+> +	 */
+> +	args.out_argvar = true;
+> +	args.out_numargs = 1;
+> +	args.out_args[0].size = fmap_bufsize;
+> +	args.out_args[0].value = fmap_buf;
+> +
+> +	/* Send GET_FMAP command */
+> +	rc = fuse_simple_request(fm, &args);
+> +	if (rc < 0) {
+> +		pr_err("%s: err=%d from fuse_simple_request()\n",
+> +		       __func__, rc);
 
-Reported-by: syzbot+2d9c96466c978346b55f@syzkaller.appspotmail.com
-Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
----
- fs/hugetlbfs/inode.c    | 34 +++++++++++++++++++++++-----------
- include/linux/hugetlb.h |  2 +-
- 2 files changed, 24 insertions(+), 12 deletions(-)
+Leaks the fmap_buf?  Maybe use a __free() so no need to keep track of htat.
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 3b4c152c5c73..e903344aa0ec 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -653,17 +653,16 @@ static void hugetlb_vmtruncate(struct inode *inode, loff_t offset)
- 	remove_inode_hugepages(inode, offset, LLONG_MAX);
- }
- 
--static void hugetlbfs_zero_partial_page(struct hstate *h,
--					struct address_space *mapping,
--					loff_t start,
--					loff_t end)
-+static int hugetlbfs_zero_partial_page(struct hstate *h,
-+				       struct address_space *mapping,
-+				       loff_t start, loff_t end)
- {
- 	pgoff_t idx = start >> huge_page_shift(h);
- 	struct folio *folio;
- 
- 	folio = filemap_lock_hugetlb_folio(h, mapping, idx);
- 	if (IS_ERR(folio))
--		return;
-+		return PTR_ERR(folio);
- 
- 	start = start & ~huge_page_mask(h);
- 	end = end & ~huge_page_mask(h);
-@@ -674,6 +673,7 @@ static void hugetlbfs_zero_partial_page(struct hstate *h,
- 
- 	folio_unlock(folio);
- 	folio_put(folio);
-+	return 0;
- }
- 
- static long hugetlbfs_punch_hole(struct inode *inode, loff_t offset, loff_t len)
-@@ -683,6 +683,7 @@ static long hugetlbfs_punch_hole(struct inode *inode, loff_t offset, loff_t len)
- 	struct hstate *h = hstate_inode(inode);
- 	loff_t hpage_size = huge_page_size(h);
- 	loff_t hole_start, hole_end;
-+	int rc;
- 
- 	/*
- 	 * hole_start and hole_end indicate the full pages within the hole.
-@@ -698,12 +699,18 @@ static long hugetlbfs_punch_hole(struct inode *inode, loff_t offset, loff_t len)
- 		return -EPERM;
- 	}
- 
-+repeat:
- 	i_mmap_lock_write(mapping);
- 
- 	/* If range starts before first full page, zero partial page. */
--	if (offset < hole_start)
--		hugetlbfs_zero_partial_page(h, mapping,
--				offset, min(offset + len, hole_start));
-+	if (offset < hole_start) {
-+		rc = hugetlbfs_zero_partial_page(h, mapping, offset,
-+						 min(offset + len, hole_start));
-+		if (rc == -EAGAIN) {
-+			i_mmap_unlock_write(mapping);
-+			goto repeat;
-+		}
-+	}
- 
- 	/* Unmap users of full pages in the hole. */
- 	if (hole_end > hole_start) {
-@@ -714,9 +721,14 @@ static long hugetlbfs_punch_hole(struct inode *inode, loff_t offset, loff_t len)
- 	}
- 
- 	/* If range extends beyond last full page, zero partial page. */
--	if ((offset + len) > hole_end && (offset + len) > hole_start)
--		hugetlbfs_zero_partial_page(h, mapping,
--				hole_end, offset + len);
-+	if ((offset + len) > hole_end && (offset + len) > hole_start) {
-+		rc = hugetlbfs_zero_partial_page(h, mapping, hole_end,
-+						 offset + len);
-+		if (rc == -EAGAIN) {
-+			i_mmap_unlock_write(mapping);
-+			goto repeat;
-+		}
-+	}
- 
- 	i_mmap_unlock_write(mapping);
- 
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 019a1c5281e4..ad55b9dada0a 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -814,7 +814,7 @@ static inline unsigned int blocks_per_huge_page(struct hstate *h)
- static inline struct folio *filemap_lock_hugetlb_folio(struct hstate *h,
- 				struct address_space *mapping, pgoff_t idx)
- {
--	return filemap_lock_folio(mapping, idx << huge_page_order(h));
-+	return filemap_lock_folio_nowait(mapping, idx << huge_page_order(h));
- }
- 
- #include <asm/hugetlb.h>
--- 
-2.43.0
 
+> +		return rc;
+> +	}
+> +	fmap_size = rc;
+> +
+> +	/* We retrieved the "fmap" (the file's map to memory), but
+> +	 * we haven't used it yet. A call to famfs_file_init_dax() will be added
+> +	 * here in a subsequent patch, when we add the ability to attach
+> +	 * fmaps to files.
+> +	 */
+> +
+> +	kfree(fmap_buf);
+> +	return 0;
+> +}
+
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 84d0ee2a501d..691c7850cf4e 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -223,6 +223,14 @@ struct fuse_inode {
+
+>  
+> +static inline struct fuse_backing *famfs_meta_set(struct fuse_inode *fi,
+> +						       void *meta)
+> +{
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	return xchg(&fi->famfs_meta, meta);
+> +#else
+> +	return NULL;
+> +#endif
+> +}
+> +
+> +static inline void famfs_meta_free(struct fuse_inode *fi)
+> +{
+> +	/* Stub wil be connected in a subsequent commit */
+> +}
+> +
+> +static inline int fuse_file_famfs(struct fuse_inode *fi)
+> +{
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	return (READ_ONCE(fi->famfs_meta) != NULL);
+> +#else
+> +	return 0;
+> +#endif
+> +}
+> +
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +int fuse_get_fmap(struct fuse_mount *fm, struct inode *inode);
+> +#else
+> +static inline int
+> +fuse_get_fmap(struct fuse_mount *fm, struct inode *inode)
+> +{
+> +	return 0;
+> +}
+> +#endif
+I'd do a single block under one if IS_ENABLED() and then use an else
+for the stubs.   Should end up more readable.
+
+Jonathan
 
