@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-72893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C391BD04E1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 18:21:06 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B50D04E47
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 18:22:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 2D5E7304E422
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 17:17:29 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 562FD30589FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 17:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC3E331A5D;
-	Thu,  8 Jan 2026 17:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0782B334C1E;
+	Thu,  8 Jan 2026 17:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EE2gZbpw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yc4/t5lo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BB432E130;
-	Thu,  8 Jan 2026 17:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EEF3033C1;
+	Thu,  8 Jan 2026 17:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767892491; cv=none; b=eknyXcC1i1fgTrjYFOxDuF7DMcBRbPmvFpUEa8jMt1ptEp3fWEe20v6taHxkQCz17U74jYstqF7Ftiylnnd3YvgTxxF0Twy+OzYqCLJV8YRaHwB+nau9uCcyps8ORpni/+q2krTgZ/T+vCv2i0SOQt7ZVGDOm+I3PATeaZfC4gE=
+	t=1767892498; cv=none; b=bABi3/M5TrCU1VXykMVQn8Uqq1jGH07Wj1+/ivvZeR/rxMNtmJFST/Uu7b0+xGzCaiyjXGpcTXwIsxUuZzVQh9sScVb9QOm7BBP1q3+yYOi/C+lJ0z8hvnZ8APLjaczvl/wdOSGlfTkqIy4awyGEBV+oZNufBtw+k3yNWyBJSaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767892491; c=relaxed/simple;
-	bh=dYgR/946dJwV9AewaF5e0d1y1o9rSJR9ABQBhS2Sc1E=;
+	s=arc-20240116; t=1767892498; c=relaxed/simple;
+	bh=WgBctrBD8RLFVYdXDqzWSCdo8NzR8JtstjicYPh/U9Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=raGTFg39vFX3ribJt5KrIRLpC0Tmr/Omy+gWvJg4Ypj7JQzwOJxfitGX++EMlV3yzlhE53X1KLRDthoFQH8zsqp4iCiv7xUVAox9OSc8Bhr8fTtc3KUldj3WD2Atv9ssf7p3W+vGuHn92lPgbCHotNFtUioyds8fyYgaAwXzbEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EE2gZbpw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C48BC2BCB3;
-	Thu,  8 Jan 2026 17:14:43 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=gC951mIBLLvNC5u7fewJGPG6J+3elVKUXLoouDQpgJxLBR0vxLXKU+p/LNy+340f02hUso4HJ7ErlytJvJiAZeDyXWeurpxW55hcTYFHU+skpn6JRBypfFDIuNGjomXs7nUcaax/UU+Ho2js/w3pQGNJC6GNkYAi+c+vBsGAkxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yc4/t5lo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3B8EC116C6;
+	Thu,  8 Jan 2026 17:14:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767892490;
-	bh=dYgR/946dJwV9AewaF5e0d1y1o9rSJR9ABQBhS2Sc1E=;
+	s=k20201202; t=1767892498;
+	bh=WgBctrBD8RLFVYdXDqzWSCdo8NzR8JtstjicYPh/U9Y=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=EE2gZbpwilK+p65zJF+DVJq4MFRPaZe1eMYvJUmFsGZDgMyF9n/0nbfU8VldhCR1Z
-	 ig2YvmBFJpERXaOR1YuP8VA85WDlJx1s5XTX9JaCi+k8TeGUUxrgEFvZcgCNcmK4jM
-	 zUWajICcygLLxU/fnv7Bl0PM/k0sAGhrvfexl8QZcHgN41M0I+dTkt3cpSxxsgsmlm
-	 8VMU/MUbvQcy4wKiuCyibQqAQFhRM8TAJqiPwzb0h9MYwLHKGZXNeFJJU/dHSWsMCt
-	 hthHXEtbuWS1TAGQjZX+0TQBu0a5iqkHqTAFklVluh7jPWvQ1npZjrBYPStgmQMhhH
-	 tLNIRSDSTwisA==
+	b=Yc4/t5loZyezYaHDNXK9dd9JvafuBssh+sDSZ3exryKjh9p7XKLxOnlh0HZwejipA
+	 tmTIA9/0xJ8xrgH6Y0t7D/mGDf0AqOx/WxR5blHGNJ28gGiZsD17coCliZNvV/vsQQ
+	 6XXHPDcyYcOAYUAUaCsSzNRMecSySzNpEAlW8DnTJpjxE+2aVYhL1ZUMVLMRfcMxTd
+	 xcBwALhaSlls70OLDrhfnMlALrjEGcjhs7rFzNgirkNOyZkEjSq0YeHhTjU+YgFGXK
+	 0ZdpaO1Q0mxXKVnWoQw6OmB+h27qt7MwfOpTqYoFF0/0bFAfq9Vui9DQor/pHuo71X
+	 3yAVhPaaUcVtQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 08 Jan 2026 12:13:04 -0500
-Subject: [PATCH 09/24] fat: add setlease file operation
+Date: Thu, 08 Jan 2026 12:13:05 -0500
+Subject: [PATCH 10/24] gfs2: add a setlease file operation
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260108-setlease-6-20-v1-9-ea4dec9b67fa@kernel.org>
+Message-Id: <20260108-setlease-6-20-v1-10-ea4dec9b67fa@kernel.org>
 References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
 In-Reply-To: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
 To: Luis de Bethencourt <luisbg@kernel.org>, 
@@ -107,75 +107,44 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1802; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=dYgR/946dJwV9AewaF5e0d1y1o9rSJR9ABQBhS2Sc1E=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpX+W6tow5eWlg3d9LlE4JzeKYs4qhQrQSZqLyH
- 28Sqlg8Yd2JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaV/lugAKCRAADmhBGVaC
- FXExD/4+xtepcLHtJswdWEgDrfCU1l+JV7R1ZY6za66bEWKzixlzEz5aEKjLNSkfDp6latYm0WV
- nQmECaiV0baGSZOSWYMEDHJxt8XCYei2h8uIIVVGTLuh19g8JU4y6ZwbvI6IbIWBZSML25ObG/k
- BGNBwe/I+4nGuNM4MAI6DzSKz0cnW+TQv9wtK27EfsFB9aE8xFNHtQBXrfbRKkMsFHlt8nRnWgL
- 0CZlHx3wVern/FfuVElMRYXy0j8AVkjyUJxjWPvou9n1slugfh22VXcVn485XauIBxfx5F0+oJF
- Rg7mIbM5ZKrWl8BlLK4Nz24ikHNS+GO6Pl5zNOULmo5Avxq7WPmb6fIIotCODNKWbgrZ+WInbFr
- J2Mx450orrxaXQQ+ZxHv/FzG/RCq/jhW5on4+b/h3zDTBMbA9x+9eFRX3r4gmgQazMA3tL5LKmc
- dam7IMlqI1d0VjMQVGvcVYcanw4zoarKDKQoBd2lwX6SpSc4nSezLKBdMQirlmjJUQIF6U2l04P
- nbP0DomAF2vMA9H5kiyvMnMt0ojouLw/0ANYcWfJ3QIB1anSGvKDmmIiR9GgacsdwFbwJOTNCjQ
- xaaBKflgwoM3KB7kjLzZpogI65tiWTabuagt5tmxM4laxXId94a5+ZfJ8v0Vr9W8dJFWBx+K7G4
- +olNbY50fwTUfZg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=777; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=WgBctrBD8RLFVYdXDqzWSCdo8NzR8JtstjicYPh/U9Y=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpX+W7rGRw7xJ9j9CSSmtKVJzAnrZ9HKw5x4g6Q
+ fvlmyGGcu2JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaV/luwAKCRAADmhBGVaC
+ FehDD/9tUv+oBi/X1dqLnHkQjWAAqllp1O9XIJiC0Dmcj8NdKQjiIEJoahbDF1BoadzLSTlRIhG
+ A4Ia4k0zHK75I3zk36XIzkn0YkeesqfVpCvK5vIKdcZPe4GPp3NEtPgWRDmyc9smykSu9lcxyGt
+ o3l+UDqQoHxbqKwJZH9ShVgldb3vOGhWSCMI2sXQdc3CYDZ7ZxCc3YsKa5ZRB5LOjockkEKYWK8
+ p6/cCQQ6VrgkzOzR6kcmCg4RDj2xDwpeWdoJT9ycfMG0UjbmiVkiDGAa4sRYDAVvfy03xNezHyU
+ 5fyokGDABc5UKt/0cGAZdgST7O+ieCGQbEmmqZpU1+cx+UOOG/2pDPs7oDoXS4jukcCWY/H5GGR
+ FUVOQ4/6u1giyiF91KGM6VNNqNpV8VEcv8MEgDz/SAyMMSpT4EVfVtQ4CfbKhLzJPALVtAZeUBG
+ iSE5FEWPy5iiIR+EC/zcPL87/uOHshC0KlklvrdJMW94IKhSSDNyw3dkrUU9qEuYOxDTa2qfxvG
+ /Hejpi55FfCCR0Ha8ZwN9NZvBz7U51fU3QOgjIbntwAC6kia2Na5SdIB9voB+3l3b9eoMRxPGxT
+ biskjjTc1jw8WRjwPA9wlhGjmNGP4Vl8Db8cK9ZzgRfrZxP+iZ8N+sFHZS0E5jwImgp2j1lEnZX
+ PrqPNklrdm/ygrQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Add the setlease file_operation to fat_file_operations and
-fat_dir_operations, pointing to generic_setlease.  A future patch will
-change the default behavior to reject lease attempts with -EINVAL when
-there is no setlease file operation defined. Add generic_setlease to
-retain the ability to set leases on this filesystem.
+gfs2_file_fops_nolock() already has this explicitly set, so it's only
+necessary to set this in gfs2_dir_fops_nolock().  A future patch
+will change the default behavior to reject lease attempts with -EINVAL
+when there is no setlease file operation defined.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/fat/dir.c  | 2 ++
- fs/fat/file.c | 2 ++
- 2 files changed, 4 insertions(+)
+ fs/gfs2/file.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-index 92b091783966af6a9e6f5ead1a382a98dd92bba0..807bc8b1bc145a9f15765920670c6233f7e87e55 100644
---- a/fs/fat/dir.c
-+++ b/fs/fat/dir.c
-@@ -16,6 +16,7 @@
- 
- #include <linux/slab.h>
- #include <linux/compat.h>
-+#include <linux/filelock.h>
- #include <linux/uaccess.h>
- #include <linux/iversion.h>
- #include "fat.h"
-@@ -876,6 +877,7 @@ const struct file_operations fat_dir_operations = {
- 	.compat_ioctl	= fat_compat_dir_ioctl,
- #endif
- 	.fsync		= fat_file_fsync,
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index 86376f0dbf3a553375b0064c9a1eff3bfa9651f5..6daa96d815e1e30f099938543a0ed19aa90c720c 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -1639,5 +1639,6 @@ const struct file_operations gfs2_dir_fops_nolock = {
+ 	.release	= gfs2_release,
+ 	.fsync		= gfs2_fsync,
+ 	.llseek		= default_llseek,
 +	.setlease	= generic_setlease,
  };
  
- static int fat_get_short_entry(struct inode *dir, loff_t *pos,
-diff --git a/fs/fat/file.c b/fs/fat/file.c
-index 4fc49a614fb8fd64e219db60c6d9e7dd100aea1c..d50a6d8bfaae0c75b2dbe838d108135206d0f123 100644
---- a/fs/fat/file.c
-+++ b/fs/fat/file.c
-@@ -13,6 +13,7 @@
- #include <linux/mount.h>
- #include <linux/blkdev.h>
- #include <linux/backing-dev.h>
-+#include <linux/filelock.h>
- #include <linux/fsnotify.h>
- #include <linux/security.h>
- #include <linux/falloc.h>
-@@ -212,6 +213,7 @@ const struct file_operations fat_file_operations = {
- 	.splice_read	= filemap_splice_read,
- 	.splice_write	= iter_file_splice_write,
- 	.fallocate	= fat_fallocate,
-+	.setlease	= generic_setlease,
- };
- 
- static int fat_cont_expand(struct inode *inode, loff_t size)
 
 -- 
 2.52.0
