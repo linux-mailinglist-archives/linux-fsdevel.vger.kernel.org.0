@@ -1,393 +1,270 @@
-Return-Path: <linux-fsdevel+bounces-72939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC86D06271
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 21:43:47 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D008AD06274
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 21:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E6FA83038188
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 20:39:51 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 1644A300D91D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 20:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186B233291A;
-	Thu,  8 Jan 2026 20:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800D2330641;
+	Thu,  8 Jan 2026 20:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="sv4IqeaF"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Di1Zo7kY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94005331222
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 20:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767904757; cv=none; b=EvWqH32jizjvEK0clvCtpFPCC4/hYKogRAixW5s26IXqwfTbmHc57/XJuO3da+HNsExRVx0k5dohW20lN63PnF8M98gudQLkpC2OZvhKdauPQ6/+s6dNuKZs2k/zvrQAniZbN1dCnBuMNhqP4Dvha9uzUltcwO9zkEVJb1O1vg0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767904757; c=relaxed/simple;
-	bh=H1aiie8D4svpNDzSmOI68CzAj4t2rzf4KLw2L055t2E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IqRjXE8W+P2+r38b6aJ0iY/4XfPebnouXI9K7ZWZxVXIKVCMsjkBXwWVOt2O185Ao3gcYqLsyQQV1+oMl2dT5D0GAA2r4SRuk/5uI7DTVkrUFOVxZyNeUtEXuvKJIyk6UVsMvNe/xsW4VLwT7pSjevRNvaxVUwP94M5scPJ7sJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=sv4IqeaF; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4ee05b2b1beso34407291cf.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 12:39:15 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655F532E72F
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 20:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767905080; cv=pass; b=rXX6gVbVMPn1KDw+lIMYAkz7pvEovPlFtcsumbsK7B83+U1TxvUgcUsxLWTaFS2HUlMFyW2Jqeirq0OTr41KFIwWEiDc+cHZ3vbUzLm15JLK2POCgHOp4Fl/B0x+Pb2BkI0YEM4JTjPQ5VSuZNATnm8LqxS2LIV7rU4i46j5EQQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767905080; c=relaxed/simple;
+	bh=k1XBSbFb7cmHPMCntpYacEARNpC62HmflhB0LJjsUQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hn5kekoF16Ug4VRTBIWF+cae+Gy97OU5lafWlEOzh24w13icDOhFVaAelPUx8FNuCbD8d/3TUPerQonydwXREgRUAClkU1yFSWsHCd+k16f+XFqezYumDrIyKjJOd8MK4Y8tGpvryD0zKvPnH6/1DGAAVMzTGfKkw03XDKuhUZE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Di1Zo7kY; arc=pass smtp.client-ip=74.125.82.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-2ac37f8898eso68423eec.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 12:44:38 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1767905077; cv=none;
+        d=google.com; s=arc-20240605;
+        b=FEUQz3pOjtE+p41X9GThJR810e01/4yMk/vQST4RsG4Q1a2M/CdfFVDRm+751B7Ctu
+         b/KQLGXaTYBsPv9bynzlIMUgN6GI7MU1cuBpKx1qIrb0qzkV1UqhgNEN2VZewSouMwSh
+         VM4yljnmbz1TjrzZfXTSnhWeY2QKyNBWBS8Jdc6oZD9nWgTl5TsMMoYigSXRK+W8wjNa
+         5rExlUG85PCoqilBNRIh43iN2NMYjNL3eWnsDTsv4tVAmyAJjW9FeThuSvD5EACVO8iT
+         5c92Ew13G42Xgrfu0ljKBtnoA9vQtw4sXXFxheuo2/WbgNUe+dAI9lit0m8mS5gg8qEq
+         Qxhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=pW7sigX15hN6avzy6UTnxYB3uk3gvQPCeFOj5yzWtKA=;
+        fh=Rzs/tzG3VIgNC1jvWSd8bA+ZOOJ0tRurjvsTwFWgX88=;
+        b=ILkmScPgqdYLhyBib6rWh5svWDPg53LheGb/odn7p/V+AEiXrh6V3BYSGoJkd2cEra
+         3xCPXq1Xojby9YyAyJS8W41hVIpLNolvclfPagdrelJ4uuLoybWTBnFA92PSkUASUA8x
+         XdUtmhS/PagwQccq3FMcrq1/LwUdjTsOwbbnMota5Kz+20QjpbfSv97Pg5xqnVX9TpA1
+         Gsk7/Ng7hx+BpqGf0L9NACam6cBX1n6EWium6XO0gnl/XqQgCHrgjQubIkYyWcsF1BNU
+         s1qvoZKebCR9vMegGRWYmDh+L6faPCOCkldz6QnlSG/kL42xh4pxSMiRm5Unowc9EYcq
+         x1Dw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1767904754; x=1768509554; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=purestorage.com; s=google2022; t=1767905077; x=1768509877; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hbAJPMgZOoJSjKjyh3GK6UyuoBx+8LBWNLKG00C3DPA=;
-        b=sv4IqeaF1/x3PeHIs+GscpVxUPxX8J3UWJ7TgRxTJec0UV/1R0tuHdwgy/2tmS1kVn
-         CroY5GoHsj8ja2LtiCn8lb56rvpzFCowKGEPTasLH3c6hbFA/K4wQzBrraT0scodrf6B
-         TEMy4f9+7GPxIdFkVU3aw2tC5LBU2sxPDl7uq1HNnByEmr9nZQcFYyaOo5plfhfmE4pg
-         zEgoT4RmyzKJBQ/HeB1poljUX+caNgVaCLbZL6dIds+XD/74CVbL4sGKuaKBIofv2vaQ
-         ferxu6wmqIzgxcluE0XEFkfywnei2mL9AoL+dzS5Cs3uFow5vLs+vgm4goSZbcauAv94
-         nijw==
+        bh=pW7sigX15hN6avzy6UTnxYB3uk3gvQPCeFOj5yzWtKA=;
+        b=Di1Zo7kYw5eY9ly44Bo+emYczGIspYSmKSLRfLGnjjaAljb/EmIjE+JM2RkqEjOc+a
+         Bd4JvWXWO3eI1W+DVQuicpTrvq++WJfugqehtzxEiz4kwD1WND+OWaPicmpkwlRN++1u
+         6wxt8y8nNFjnNDWnYA9HXGYhPLjWNGhT7PfZGCh615He6TFi3C/TGK/ucfHZx4Hu8uTz
+         gw5Hhh8AqseFm3EEcMWsAeP53h/8ROhGuFylrag9vTC7w4YZVB70nV9C+5j6J5NJyniT
+         JQhCMZ7MzVvdDpwRkiNXiA7j5kjUTpB3mYswFZhdzuNM9/of3jOhKhAudkPGqRnQ/hao
+         pubQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767904754; x=1768509554;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1767905077; x=1768509877;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=hbAJPMgZOoJSjKjyh3GK6UyuoBx+8LBWNLKG00C3DPA=;
-        b=vaPFw+x8dCWux6CHyT+Et6+2KJdLhIJWQKMkC1W7WWkvEGYg3kTBP4f26fWkmeft8k
-         lVOGOh+OgTk8BHZtAmYaUW2l//IdaGIY05J/OgGA7KSMlNW331l1nj02gUfC/ZmicYfS
-         X0+R/keNA3gPWrSmjdobSqqX4TOvGlVNnp2lQVfA/61kESEdclJk70mBztaaS3WOBBZx
-         bm7cQL1qlaSnCz5DaY1ABL3Mk8DKSJWJ01pEBNI35PcTfK434q9wFP9MnI+/ZnafwXIk
-         f/XL8CNnwJigBKGGCWoqYGhcJ/o1E3GPrrxz4gf+Ds+jC8O1YfGiNWTR2ySTp//JzeBN
-         sPDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmtnL6RWG7VSamoJxQpfYnHY2NYjIjEUL9Fesq/11rU3O7CL3NnwF8L988n+SK9vBrWO6K/s+C3Fafnw+6@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkF5lZxD/1jzpI7VB0tqwNJO8j7p4g93J+N6KLD4Gm5zl1pFHm
-	KjoOwAbj0i4+tN7j2CG9B0zaz28Y0m6Muvi5CS7yfnkENkPsGfhpRbHFK3LU+Yv9g8w=
-X-Gm-Gg: AY/fxX7TBn41ea/c/dx+otnkMj8JwKc+Yhhc9/J0HcqxJUmV26w9zxZqEFE0/7x/P2B
-	DupHR5smz4MZgqR8rAo+ty9uhE91FGo62OPgYoQ7cBls0JXf7Ft0vUN026vZsEWDLHcUndmSGaD
-	/aB/y4c2OhRJJH6YhHozFU3uCAiGH9bDlwyd5iVBm+QR/jWW7s9nxtQbxObTI35NQeCXR6RhOuv
-	ibxKksTeGho7vxsEQ7+sE6T04RC0CmQG9Wd4ocjcNxUQF23EN2paMVJFOpJYGxeu0+K3VJAwLQF
-	KvukLdMCjBxeLNQkJnLGz9zRjVnU07Y7RENkcf1BGD5a+HNj5IeAp39Zv6PPIRaPHuMR2XCv0L9
-	gVyYRQxed2Qgax0p0R8Nz49kQBbkf7tSngBEoHE8cdh2nSoB/lqgNGGXTEeN/rpCFAJF7rMbrs6
-	P83w8xukBs2cF0vCUucI7EUk5yLLbo7Kp9NXxn32ZZStws227T8GBca8UZY88gOez4bjjo1D7nH
-	Y8=
-X-Google-Smtp-Source: AGHT+IETJUC85zNJ1zZIUFzv9QwdWQGaYClNK785q5YOPJAvYLx3d5ypHJ/HCEokjoFg0FJKBiPjgg==
-X-Received: by 2002:a05:622a:124f:b0:4ee:24b8:2275 with SMTP id d75a77b69052e-4ffb4913960mr88384181cf.1.1767904754417;
-        Thu, 08 Jan 2026 12:39:14 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F.lan (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-890770e472csm60483886d6.23.2026.01.08.12.39.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 12:39:13 -0800 (PST)
-From: Gregory Price <gourry@gourry.net>
-To: linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-cxl@vger.kernel.org
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com,
-	longman@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	corbet@lwn.net,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	dakr@kernel.org,
-	dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com,
-	akpm@linux-foundation.org,
-	vbabka@suse.cz,
-	surenb@google.com,
-	mhocko@suse.com,
-	jackmanb@google.com,
-	ziy@nvidia.com,
-	david@kernel.org,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	rppt@kernel.org,
-	axelrasmussen@google.com,
-	yuanchu@google.com,
-	weixugc@google.com,
-	yury.norov@gmail.com,
-	linux@rasmusvillemoes.dk,
-	rientjes@google.com,
-	shakeel.butt@linux.dev,
-	chrisl@kernel.org,
-	kasong@tencent.com,
-	shikemeng@huaweicloud.com,
-	nphamcs@gmail.com,
-	bhe@redhat.com,
-	baohua@kernel.org,
-	yosry.ahmed@linux.dev,
-	chengming.zhou@linux.dev,
-	roman.gushchin@linux.dev,
-	muchun.song@linux.dev,
-	osalvador@suse.de,
-	matthew.brost@intel.com,
-	joshua.hahnjy@gmail.com,
-	rakie.kim@sk.com,
-	byungchul@sk.com,
-	gourry@gourry.net,
-	ying.huang@linux.alibaba.com,
-	apopple@nvidia.com,
-	cl@gentwo.org,
-	harry.yoo@oracle.com,
-	zhengqi.arch@bytedance.com
-Subject: [RFC PATCH v3 8/8] drivers/cxl: add zswap private_region type
-Date: Thu,  8 Jan 2026 15:37:55 -0500
-Message-ID: <20260108203755.1163107-9-gourry@gourry.net>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260108203755.1163107-1-gourry@gourry.net>
-References: <20260108203755.1163107-1-gourry@gourry.net>
+        bh=pW7sigX15hN6avzy6UTnxYB3uk3gvQPCeFOj5yzWtKA=;
+        b=VdekUCK8bTJjOiUpNdeVc2z6J92ccDkWyPSbDTY111q3IIyqqrvzL2k6JOspDpRhI7
+         jXnbhxVOB8RU22kV7rM81LccCe42ivBAZcvlHaffdFYpMHJssJpO2HXVtwSruSeZy07r
+         oqR9269SwY0Qvh1eCWEa1Wc2nfh4lb/yT37sSlGXYKuUuge17bDC95d+80D7/ELQlXzc
+         knoRscsbwd7Oa2nTc0u5UwhpXNVTuHzHtAD6N0Gg0mR0RptFWCcj/O83+nAfUGgpnSVo
+         6zYlPH3ZRBEUFabdS5AD7Joof4SzflGJyLg0At25q2q6TI5SV36JyxZH/A+1WTdxrUfr
+         5OMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4MXs7mrkuizZfnFQdajPZG7b4a3WyP1zEUrZjYpt4UtHBEQGxq/kBN+musuBksSkA0Se9AdbPWWo978oH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpi6ZB8l0MOXl2eouVQemtB1HqTnD7oJ8rzd2Dk67/YEYiQjOa
+	vzxAaP5eKhNwZ+TFYi+RtooStzx5RCKqQS8u2IY9o/UaFUJnWZQ9YehVSsm5JKVPPrRBYgg6tz7
+	/ybyjsHX0az5XqG0JCl3K2ZELF2YlXNI144gyg5jgAQ==
+X-Gm-Gg: AY/fxX4gALWftdU+h7Bbh5EY1h8tPb1itP/A6yYIqmbcjp9hEKyXF/vRjysB63/VXGs
+	J50UFW9U0/PCFueQp5ivPgwX20PLTwFtLJVMA46nStb7rrUifkZbrZt+rLhYqgTY5+RO7nmNF57
+	ZBdk56KR7UR7Ds2XSwZPxy63zMMONFmTgcWgt+9p0aEtycM5PUbHSBEEScFLycx590wthVobHaV
+	tFEWJ/i41w1CfU5VehuYo2EX+gKX5RrinKR6kkoC8kscRzCguROCraqSm4BIHDyfb750UFe
+X-Google-Smtp-Source: AGHT+IFE/V4GLet/VjNoARbIbfq0zl4sxuh0zJPSjisd5kuQ0/iDtfgF0YgzI1g7MysaPIeJfGRLiHczVi6k32R3M4w=
+X-Received: by 2002:a05:7022:b9e:b0:122:8d:39d8 with SMTP id
+ a92af1059eb24-122008d3f76mr1437659c88.6.1767905077263; Thu, 08 Jan 2026
+ 12:44:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251223003522.3055912-1-joannelkoong@gmail.com>
+ <20251223003522.3055912-9-joannelkoong@gmail.com> <CADUfDZpdNNYdNnrPWviGYPViQ6O_S4S0hB7Hg56+wnQDgnXwAQ@mail.gmail.com>
+In-Reply-To: <CADUfDZpdNNYdNnrPWviGYPViQ6O_S4S0hB7Hg56+wnQDgnXwAQ@mail.gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Thu, 8 Jan 2026 12:44:25 -0800
+X-Gm-Features: AQt7F2p5vHzm4rpOv0lZNbi3GBrpBZbr7bmBEEtnT13leQSwA8xliVgiupyXOKo
+Message-ID: <CADUfDZpo06_FNCvYy+s0hi+vtUbWozeASv6ojxERqv=LMtQK2w@mail.gmail.com>
+Subject: Re: [PATCH v3 08/25] io_uring: add io_uring_cmd_fixed_index_get() and io_uring_cmd_fixed_index_put()
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a sample type of a zswap region, which registers itself as a valid
-target node with mm/zswap.  Zswap will callback into the driver on new
-page allocation and free.
+On Thu, Jan 8, 2026 at 11:02=E2=80=AFAM Caleb Sander Mateos
+<csander@purestorage.com> wrote:
+>
+> On Mon, Dec 22, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmail.=
+com> wrote:
+> >
+> > Add two new helpers, io_uring_cmd_fixed_index_get() and
+> > io_uring_cmd_fixed_index_put(). io_uring_cmd_fixed_index_get()
+> > constructs an iter for a fixed buffer at a given index and acquires a
+> > refcount on the underlying node. io_uring_cmd_fixed_index_put()
+> > decrements this refcount. The caller is responsible for ensuring
+> > io_uring_cmd_fixed_index_put() is properly called for releasing the
+> > refcount after it is done using the iter it obtained through
+> > io_uring_cmd_fixed_index_get().
+> >
+> > This is a preparatory patch needed for fuse-over-io-uring support, as
+> > the metadata for fuse requests will be stored at the last index, which
+> > will be different from the buf index set on the sqe.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  include/linux/io_uring/cmd.h | 20 +++++++++++
+> >  io_uring/rsrc.c              | 65 ++++++++++++++++++++++++++++++++++++
+> >  io_uring/rsrc.h              |  5 +++
+> >  io_uring/uring_cmd.c         | 21 ++++++++++++
+> >  4 files changed, 111 insertions(+)
+> >
+> > diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.=
+h
+> > index 7169a2a9a744..2988592e045c 100644
+> > --- a/include/linux/io_uring/cmd.h
+> > +++ b/include/linux/io_uring/cmd.h
+> > @@ -44,6 +44,12 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cm=
+d *ioucmd,
+> >                                   size_t uvec_segs,
+> >                                   int ddir, struct iov_iter *iter,
+> >                                   unsigned issue_flags);
+> > +int io_uring_cmd_fixed_index_get(struct io_uring_cmd *ioucmd, u16 buf_=
+index,
+> > +                                unsigned int off, size_t len, int ddir=
+,
+> > +                                struct iov_iter *iter,
+> > +                                unsigned int issue_flags);
+> > +int io_uring_cmd_fixed_index_put(struct io_uring_cmd *ioucmd, u16 buf_=
+index,
+> > +                                unsigned int issue_flags);
+> >
+> >  /*
+> >   * Completes the request, i.e. posts an io_uring CQE and deallocates @=
+ioucmd
+> > @@ -109,6 +115,20 @@ static inline int io_uring_cmd_import_fixed_vec(st=
+ruct io_uring_cmd *ioucmd,
+> >  {
+> >         return -EOPNOTSUPP;
+> >  }
+> > +static inline int io_uring_cmd_fixed_index_get(struct io_uring_cmd *io=
+ucmd,
+> > +                                              u16 buf_index, unsigned =
+int off,
+> > +                                              size_t len, int ddir,
+> > +                                              struct iov_iter *iter,
+> > +                                              unsigned int issue_flags=
+)
+> > +{
+> > +       return -EOPNOTSUPP;
+> > +}
+> > +static inline int io_uring_cmd_fixed_index_put(struct io_uring_cmd *io=
+ucmd,
+> > +                                              u16 buf_index,
+> > +                                              unsigned int issue_flags=
+)
+> > +{
+> > +       return -EOPNOTSUPP;
+> > +}
+> >  static inline void __io_uring_cmd_done(struct io_uring_cmd *cmd, s32 r=
+et,
+> >                 u64 ret2, unsigned issue_flags, bool is_cqe32)
+> >  {
+> > diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> > index a63474b331bf..a141aaeb099d 100644
+> > --- a/io_uring/rsrc.c
+> > +++ b/io_uring/rsrc.c
+> > @@ -1151,6 +1151,71 @@ int io_import_reg_buf(struct io_kiocb *req, stru=
+ct iov_iter *iter,
+> >         return io_import_fixed(ddir, iter, node->buf, buf_addr, len);
+> >  }
+> >
+> > +int io_reg_buf_index_get(struct io_kiocb *req, struct iov_iter *iter,
+> > +                        u16 buf_index, unsigned int off, size_t len,
+> > +                        int ddir, unsigned issue_flags)
+> > +{
+> > +       struct io_ring_ctx *ctx =3D req->ctx;
+> > +       struct io_rsrc_node *node;
+> > +       struct io_mapped_ubuf *imu;
+> > +       u64 addr;
+> > +       int err;
+> > +
+> > +       io_ring_submit_lock(ctx, issue_flags);
+> > +
+> > +       node =3D io_rsrc_node_lookup(&ctx->buf_table, buf_index);
+> > +       if (!node) {
+> > +               io_ring_submit_unlock(ctx, issue_flags);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       node->refs++;
+> > +
+> > +       io_ring_submit_unlock(ctx, issue_flags);
+> > +
+> > +       imu =3D node->buf;
+> > +       if (!imu) {
+> > +               err =3D -EFAULT;
+> > +               goto error;
+> > +       }
+> > +
+> > +       if (check_add_overflow(imu->ubuf, off, &addr)) {
+> > +               err =3D -EINVAL;
+> > +               goto error;
+> > +       }
+> > +
+> > +       err =3D io_import_fixed(ddir, iter, imu, addr, len);
+> > +       if (err)
+> > +               goto error;
+> > +
+> > +       return 0;
+> > +
+> > +error:
+> > +       io_reg_buf_index_put(req, buf_index, issue_flags);
+> > +       return err;
+> > +}
+> > +
+> > +int io_reg_buf_index_put(struct io_kiocb *req, u16 buf_index,
+> > +                        unsigned issue_flags)
+> > +{
+> > +       struct io_ring_ctx *ctx =3D req->ctx;
+> > +       struct io_rsrc_node *node;
+> > +
+> > +       io_ring_submit_lock(ctx, issue_flags);
+> > +
+> > +       node =3D io_rsrc_node_lookup(&ctx->buf_table, buf_index);
+>
+> Hmm, I don't think it's safe to assume this node looked up by
+> buf_index matches the one obtained in io_reg_buf_index_get(). Since
+> the uring_lock is released between io_reg_buf_index_get() and
+> io_reg_buf_index_put(), an intervening IORING_REGISTER_BUFFERS_UPDATE
+> operation may modify the node at buf_index in the buf_table. That
+> could result in a reference decrement on the wrong node, resulting in
+> the new node being freed while still in use.
+> Can we return the struct io_rsrc_node * from io_reg_buf_index_get()
+> and pass it to io_reg_buf_index_put() in place of buf_index?
 
-On cxl_zswap_page_allocated(), we would check whether the worst case vs
-current compression ratio is safe to allow new writes.
-
-On cxl_zswap_page_freed(), zero the page to adjust the ratio down.
-
-A device driver registering a Zswap private region would need to provide
-an indicator to this component whether to allow new allocations - this
-would probably be done via an interrupt setting a bit which says the
-compression ratio has reached some conservative threshold.
-
-Signed-off-by: Gregory Price <gourry@gourry.net>
----
- drivers/cxl/core/private_region/Makefile      |   3 +
- .../cxl/core/private_region/private_region.c  |  10 ++
- .../cxl/core/private_region/private_region.h  |   4 +
- drivers/cxl/core/private_region/zswap.c       | 127 ++++++++++++++++++
- drivers/cxl/cxl.h                             |   2 +
- 5 files changed, 146 insertions(+)
- create mode 100644 drivers/cxl/core/private_region/zswap.c
-
-diff --git a/drivers/cxl/core/private_region/Makefile b/drivers/cxl/core/private_region/Makefile
-index d17498129ba6..ba495cd3f89f 100644
---- a/drivers/cxl/core/private_region/Makefile
-+++ b/drivers/cxl/core/private_region/Makefile
-@@ -7,3 +7,6 @@ ccflags-y += -I$(srctree)/drivers/cxl
- 
- # Core dispatch and sysfs
- obj-$(CONFIG_CXL_REGION) += private_region.o
-+
-+# Type-specific implementations
-+obj-$(CONFIG_CXL_REGION) += zswap.o
-diff --git a/drivers/cxl/core/private_region/private_region.c b/drivers/cxl/core/private_region/private_region.c
-index ead48abb9fc7..da5fb3d264e1 100644
---- a/drivers/cxl/core/private_region/private_region.c
-+++ b/drivers/cxl/core/private_region/private_region.c
-@@ -16,6 +16,8 @@
- static const char *private_type_to_string(enum cxl_private_region_type type)
- {
- 	switch (type) {
-+	case CXL_PRIVATE_ZSWAP:
-+		return "zswap";
- 	default:
- 		return "";
- 	}
-@@ -23,6 +25,8 @@ static const char *private_type_to_string(enum cxl_private_region_type type)
- 
- static enum cxl_private_region_type string_to_private_type(const char *str)
- {
-+	if (sysfs_streq(str, "zswap"))
-+		return CXL_PRIVATE_ZSWAP;
- 	return CXL_PRIVATE_NONE;
- }
- 
-@@ -88,6 +92,9 @@ int cxl_register_private_region(struct cxl_region *cxlr)
- 
- 	/* Call type-specific registration which sets memtype and callbacks */
- 	switch (cxlr->private_type) {
-+	case CXL_PRIVATE_ZSWAP:
-+		rc = cxl_register_zswap_region(cxlr);
-+		break;
- 	default:
- 		dev_dbg(&cxlr->dev, "unsupported private_type: %d\n",
- 			cxlr->private_type);
-@@ -113,6 +120,9 @@ void cxl_unregister_private_region(struct cxl_region *cxlr)
- 
- 	/* Dispatch to type-specific cleanup */
- 	switch (cxlr->private_type) {
-+	case CXL_PRIVATE_ZSWAP:
-+		cxl_unregister_zswap_region(cxlr);
-+		break;
- 	default:
- 		break;
- 	}
-diff --git a/drivers/cxl/core/private_region/private_region.h b/drivers/cxl/core/private_region/private_region.h
-index 9b34e51d8df4..84d43238dbe1 100644
---- a/drivers/cxl/core/private_region/private_region.h
-+++ b/drivers/cxl/core/private_region/private_region.h
-@@ -7,4 +7,8 @@ struct cxl_region;
- int cxl_register_private_region(struct cxl_region *cxlr);
- void cxl_unregister_private_region(struct cxl_region *cxlr);
- 
-+/* Type-specific registration functions - called from region.c dispatch */
-+int cxl_register_zswap_region(struct cxl_region *cxlr);
-+void cxl_unregister_zswap_region(struct cxl_region *cxlr);
-+
- #endif /* __CXL_PRIVATE_REGION_H__ */
-diff --git a/drivers/cxl/core/private_region/zswap.c b/drivers/cxl/core/private_region/zswap.c
-new file mode 100644
-index 000000000000..c213abe2fad7
---- /dev/null
-+++ b/drivers/cxl/core/private_region/zswap.c
-@@ -0,0 +1,127 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * CXL Private Region - zswap type implementation
-+ *
-+ * This file implements the zswap private region type for CXL devices.
-+ * It handles registration/unregistration of CXL regions as zswap
-+ * compressed memory targets.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/highmem.h>
-+#include <linux/node.h>
-+#include <linux/zswap.h>
-+#include <linux/memory_hotplug.h>
-+#include "../../cxl.h"
-+#include "../core.h"
-+#include "private_region.h"
-+
-+/*
-+ * CXL zswap region page_allocated callback
-+ *
-+ * This callback is invoked by zswap when a page is allocated from a private
-+ * node to validate that the page is safe to use. For a real compressed memory
-+ * device, this would check the device's compression ratio and return an error
-+ * if the page cannot safely store data.
-+ *
-+ * Currently this is a placeholder that always succeeds. A real implementation
-+ * would query the device hardware to determine if sufficient compression
-+ * headroom exists.
-+ */
-+static int cxl_zswap_page_allocated(struct page *page, void *data)
-+{
-+	struct cxl_region *cxlr = data;
-+
-+	/*
-+	 * TODO: Query the CXL device to check if this page allocation is safe.
-+	 *
-+	 * A real compressed memory device would track its compression ratio
-+	 * and report whether it has headroom to accept new data. If the
-+	 * compression ratio is too low (device is near capacity), this should
-+	 * return -ENOSPC to tell zswap to try another node.
-+	 *
-+	 * For now, always succeed since we're testing with regular memory.
-+	 */
-+	dev_dbg(&cxlr->dev, "page_allocated callback for nid %d\n",
-+		page_to_nid(page));
-+
-+	return 0;
-+}
-+
-+/*
-+ * CXL zswap region page_freed callback
-+ *
-+ * This callback is invoked when a page from a private node is being freed.
-+ * We zero the page before returning it to the allocator so that the compressed
-+ * memory device can reclaim capacity - zeroed pages achieve excellent
-+ * compression ratios.
-+ */
-+static void cxl_zswap_page_freed(struct page *page, void *data)
-+{
-+	struct cxl_region *cxlr = data;
-+
-+	/*
-+	 * Zero the page to improve the device's compression ratio.
-+	 * Zeroed pages compress extremely well, reclaiming device capacity.
-+	 */
-+	clear_highpage(page);
-+
-+	dev_dbg(&cxlr->dev, "page_freed callback for nid %d\n",
-+		page_to_nid(page));
-+}
-+
-+/*
-+ * Unregister a zswap region from the zswap subsystem.
-+ *
-+ * This function removes the node from zswap direct nodes and unregisters
-+ * the private node operations.
-+ */
-+void cxl_unregister_zswap_region(struct cxl_region *cxlr)
-+{
-+	int nid;
-+
-+	if (!cxlr->private ||
-+	    cxlr->private_ops.memtype != NODE_MEM_ZSWAP)
-+		return;
-+
-+	if (!cxlr->params.res)
-+		return;
-+
-+	nid = phys_to_target_node(cxlr->params.res->start);
-+
-+	zswap_remove_direct_node(nid);
-+	node_unregister_private(nid, &cxlr->private_ops);
-+
-+	dev_dbg(&cxlr->dev, "unregistered zswap region for nid %d\n", nid);
-+}
-+
-+/*
-+ * Register a zswap region with the zswap subsystem.
-+ *
-+ * This function sets up the memtype, page_allocated callback, and
-+ * registers the node with zswap as a direct compression target.
-+ * The caller is responsible for adding the dax region after this succeeds.
-+ */
-+int cxl_register_zswap_region(struct cxl_region *cxlr)
-+{
-+	int nid, rc;
-+
-+	if (!cxlr->private || !cxlr->params.res)
-+		return -EINVAL;
-+
-+	nid = phys_to_target_node(cxlr->params.res->start);
-+
-+	/* Register with node subsystem as zswap memory */
-+	cxlr->private_ops.memtype = NODE_MEM_ZSWAP;
-+	cxlr->private_ops.page_allocated = cxl_zswap_page_allocated;
-+	cxlr->private_ops.page_freed = cxl_zswap_page_freed;
-+	rc = node_register_private(nid, &cxlr->private_ops);
-+	if (rc)
-+		return rc;
-+
-+	/* Register this node with zswap as a direct compression target */
-+	zswap_add_direct_node(nid);
-+
-+	dev_dbg(&cxlr->dev, "registered zswap region for nid %d\n", nid);
-+	return 0;
-+}
-diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-index b276956ff88d..89d8ae4e796c 100644
---- a/drivers/cxl/cxl.h
-+++ b/drivers/cxl/cxl.h
-@@ -534,9 +534,11 @@ enum cxl_partition_mode {
- /**
-  * enum cxl_private_region_type - CXL private region types
-  * @CXL_PRIVATE_NONE: No private region type set
-+ * @CXL_PRIVATE_ZSWAP: Region used for zswap compressed memory
-  */
- enum cxl_private_region_type {
- 	CXL_PRIVATE_NONE,
-+	CXL_PRIVATE_ZSWAP,
- };
- 
- /**
--- 
-2.52.0
-
+Alternatively, store the struct io_rsrc_node * in the struct io_kiocb,
+as io_find_buf_node() does? Then you wouldn't even need to call
+io_reg_buf_index_put(); io_uring would automatically release the
+buffer node reference upon completion of the request. The only reason
+I can see why that wouldn't work is if a single fuse io_uring_cmd
+needs to import multiple registered buffers. But it doesn't look like
+that's the case from my quick skim of the fuse code.
 
