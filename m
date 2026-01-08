@@ -1,262 +1,242 @@
-Return-Path: <linux-fsdevel+bounces-72861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F78CD035DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 15:33:25 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C307D04087
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:50:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id C18E2300B8A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 14:33:07 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 746D930E1FE3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B514070B4;
-	Thu,  8 Jan 2026 14:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CAE343D71;
+	Thu,  8 Jan 2026 07:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0rcOouU"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="M/OMdZOe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509893D3CF5
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 14:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA9830FF1E;
+	Thu,  8 Jan 2026 07:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767882771; cv=none; b=hOCqi6dzco9QWfIm+IDm6OPnOf5V7jvswzEj1xF41VYUeREZXOgVAIuhyYfmG+ZpE2T1TOh5Ff/BEqc+JSweBcXnzYkENcjgH8Q6w1Sbq7ULu/2ad+Mcg4EdXycj2J6IUnYH5u2l9FLNH2iAVVmAIxjTNlx0V5nqxqJvBxDwwgQ=
+	t=1767857815; cv=none; b=dho5KPtnEAm9/17uRFQRlj5Nxm0CXwWuAGCSrBkd86zHwvewoQWW0n6TnQrBHxF2lh+Bc2v1hy/jByuuJ7KcEqhsfcaNRvlJLAk2NUHMIzy+tYUETH4i2ziURK7KMXOJ4XVRpHiTMKGJu4tYBBCV4gJfwr2nZilxtBKx8/Co0Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767882771; c=relaxed/simple;
-	bh=byixFr826bNoUVfEfgOc5fuYDNsV3ya0YDlGYcfLm10=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZnYMbulTfDLomxEkuplZPFyWMvHCVu3oGSftfLFrsq8bW92+4fe78hvkjznusOAxWgtlAxBBArwlbDA4z8kgwFmLD5MtnWmGGxHvrbxwDCVFaxZNYrPlyy0nG72Lw+qURjF/BQXQXFWUfyETzabD0+Ufbdwn3lYgBkeVXxNGIDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j0rcOouU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44FF6C116C6;
-	Thu,  8 Jan 2026 14:32:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767882770;
-	bh=byixFr826bNoUVfEfgOc5fuYDNsV3ya0YDlGYcfLm10=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=j0rcOouUnJyejWkw7PDWaIAj/5BtvE4hHQdaZmaVtE/hZtTZbFy76PldBmv4P627j
-	 H+ztR6CF6o64VyyjgrSzH7nCBbDkF6r1z7L6MyPI2f7XxMJvJ8cixlvP2ZyzeUwYXT
-	 6jnTsNFv2BhH4ogRxYQBjHyzigb4Whsv5cc0gbfTEWDSoxlnBvbpnLyMtwMkwChxfE
-	 JixMwVX/P2D3FzKpmEMYXQN7CnqUAQEBSMa+XIMQU+F25Chjo0nC0PTV0Jx8fYxrmW
-	 443vFAl1eEVCvRBFkylhCddVemPhe8rXnZ5ZE/pSyQ8eG1phLLG5wDP+XTz/qPpRcS
-	 HkcT+AYac7lmg==
-Message-ID: <9ea6abb3-4b5d-4da5-9dcf-21ec520d1bca@kernel.org>
-Date: Thu, 8 Jan 2026 15:32:42 +0100
+	s=arc-20240116; t=1767857815; c=relaxed/simple;
+	bh=3CwEx7g4XxzBUc0Q+bIGX7rkAAwNZQrWabi2+H1hf6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pafPl1bPGEzpJqa+A0jJ9P1rFB+IVkoU+bYGzrdqiDGkJRhreaA7ogO1QWRcZZMc2do1K1awbcVFYgnJzVshpFap0H2Nn8IH+3sBCNI2zGJo1TJ3yQUMIjHXJgoAlQ6zMthObSxZBm8JxtbicTdULr2/V64frlwyhoJIQRhW1x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=M/OMdZOe; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=hW78ad4/blxMqS8sR/BdPAXHAf9Mx4sVWDJCcUn/Rm4=; b=M/OMdZOerK7ZZ97QjzAv3mDicA
+	ZeQlbslxgxaMCaBmHUGWInXKo39jS3nfGgQiQu+A2xpy9vO0rESVhva8Oveu6iWZwG30MBZ9WrK2a
+	+j2eeMhznnlK4PVQONzgiyXqHfazsFpBYMLmusuq8HUJ5l/AXkEALouvs4T6H5R0WLl1iV09KIRfQ
+	SMRyFM/Sv9iwUAzjfHSPbPbYIyCEXxQgjQDdVMBkkeBf/FNISmWwfEMLAy6dUNMz9PyrTdu1qiyGz
+	D37y0Pq6vJi0YHM4qJUBhBx4IuPLaX1GIOPIuvW9C8c6eEJq6O/+Br2USL7oJLVoLXA0LGE+/Kv/Y
+	GhtRbJFg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vdkap-00000001mee-2yf9;
+	Thu, 08 Jan 2026 07:38:03 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: torvalds@linux-foundation.org,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mjguzik@gmail.com,
+	paul@paul-moore.com,
+	axboe@kernel.dk,
+	audit@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/59] struct filename series
+Date: Thu,  8 Jan 2026 07:37:04 +0000
+Message-ID: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] arch/*: increase lowmem size to avoid highmem use
-From: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>, linux-mm@kvack.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Andreas Larsson <andreas@gaisler.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Matthew Wilcox <willy@infradead.org>, Richard Weinberger <richard@nod.at>,
- Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- "H. Peter Anvin" <hpa@zytor.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Michal Simek <monstr@monstr.eu>, David Hildenbrand <david@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Nishanth Menon <nm@ti.com>, Lucas Stach <l.stach@pengutronix.de>
-References: <20251219161559.556737-1-arnd@kernel.org>
- <20251219161559.556737-2-arnd@kernel.org>
- <6089e76b-80aa-4254-af70-12b96d115a2e@kernel.org>
-Content-Language: fr-FR
-In-Reply-To: <6089e76b-80aa-4254-af70-12b96d115a2e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+[See https://lore.kernel.org/all/20251216035518.4037331-1-viro@zeniv.linux.org.uk/
+for previous variant]
 
+Changes compared to v3:
+	* rebased to v6.19-rc4
+	* the size of embedded name is increased to the point where struct filename
+is 192 bytes long
+	* introduction of CLASS machinery moved up by several commits, so
+that "allow incomplete imports of filenames" could make use of it immediately;
+as the result, a couple of followups in io_uring/* fold into it.
+	* __getname_maybe_null() makes use of CLASS(filename_flags)
+	* calls of refname() (all 3 of them, all in kernel/auditsc.c) expanded.
+	* convert init_mkdir() et.al. to use of do_mkdirat() and friends, similar
+to how init_rmdir() and init_unlink() are done.
 
-Le 24/12/2025 à 12:35, Christophe Leroy (CS GROUP) a écrit :
-> 
-> 
-> Le 19/12/2025 à 17:15, Arnd Bergmann a écrit :
->> From: Arnd Bergmann <arnd@arndb.de>
->>
->> Most of the common 32-bit architectures (x86, arm, powerpc) all use the
->> default virtual memory layout that was already in place for i386 systems
->> in the 1990s, using exactly 3GiB of user TASK_SIZE, with the upper 1GiB
->> of addresses split between (at most 896MiB) lowmem and vmalloc.
->>
->> Linux-2.3 introduced CONFIG_HIGHMEM for large x86 server machines that
->> had 4GiB of RAM or more, with the VMSPLIT_3G/2G/1G options added in
->> v2.6.16 for machines that had one or two gigabytes of memory but wanted
->> to avoid the overhead from managing highmem. Over time, similar options
->> appeared on other 32-bit architectures.
->>
->> Twenty years later, it makes sense to reconsider the default settings,
->> as the tradeoffs have changed a bit:
->>
->>   - Configurations with more than 2GiB have become extremely rare,
->>     as any users with large memory have moved on to 64-bit systems.
->>     There were only ever a few Laptop models in this category: Apple
->>     Powerbook G4 (2005), Macbook (2006), IBM Thinkpad X60 (2006), Arm
->>     Chromebooks based on Exynos 5800 (2014), Tegra K1 (2014) and RK3288
->>     (2015), and manufacturer support for all of these has ended in 2020
->>     or (much) earlier.
->>     Embedded systems with more than 2GiB use additional SoCs of a
->>     similar vintage: Intel Atom Z5xx (2008), Freescale QorIQ (2008),
->>     Marvell Armada XP (2010), Freescale i.MX6Q (2011), LSI Axxia (2013),
->>     TI Keystone2 (2014), Renesas RZ/G1M (2015). Most boards based on
->>     these have stopped receiving kernel upgrades. Newer 32-bit chips
->>     only support smaller memory configurations, though in particular the
->>     i.MX6Q and Keystone2 families have expected support cycles past 2035.
->>     While 32-bit server installations used to support even larger memory,
->>     none of those seem to still be used in production on any 
->> architecture.
->>
->>   - While general-purpose distributes for 32-bit targets were common,
->>     it was rather risky to change the CONFIG_VMSPLIT setting because
->>     there is always a possibility of running into device driver bugs or
->>     applications that need a large virtual memory size. Presumably
->>     a lot of these issues have been resolved now, so most setups should
->>     be fine using a custom vmsplit instead of highmem now.
->>
->>   - As fewer users test highmem, the expectation is that it will
->>     increasingly break in the future, so getting users to change the
->>     vmsplit means that even if there is a bug to fix initially,
->>     it improves the situation in the long run.
->>
->>   - Highmem will ultimately need to be removed, at least for the page
->>     cache and most other code using it today. In a previous discussion, I
->>     had suggested doing this as early as 2029, but based on the 
->> discussions
->>     since ELC, the plan is now to leave highmem-enabled page cache as an
->>     option until at least 2029, at which point remaining users will have
->>     the choice between no longer updating kernels or using a 
->> combination of
->>     a custom vmsplit and zram/zswap. Changing the defaults now should 
->> both
->>     speed up the highmem deprecation and make it less painful for users.
->>
->>   - The most VM space intensive applications tend to be web browsers,
->>     specifcally Chrome/ChromeOS and Firefox. Both have now stopped
->>     providing binary updates, but Firefox can still be built from source.
->>     Testing various combinations on Debian/armhf, I found that Firefox 
->> 140
->>     can still show complex websites with VMSPLIT_2G_OPT with and without
->>     HIGHMEM, though it failed for me both with the small address space
->>     of VMSPLIT_1G and the small lowmem of VMSPLIT_3G_OPT when HIGHMEM
->>     is disabled.
->>     This is likely to get worse with future versions, so embedded users
->>     may still be forced to migrate to specialized browsers like WPE 
->> Webkit
->>     when HIGHMEM pagecache is finally removed.
->>
->> Based on the above observations and the discussion at the kernel summit,
->> change the defaults to the most appropriate values: use 1GiB of lowmem on
->> non-highmem configurations, and either 2GiB or 1.75GiB of lowmem on 
->> highmem
->> builds, depending on what is available on the architecture.  As ARM_LPAE
->> and X86_PAE builds both require a gigabyte-aligned vmsplit, those get
->> to use VMSPLIT_2G. The result is that the majority of previous highmem
->> users now only need lowmem. For platform specific defconfig files that
->> are known to only support up to 1GiB of RAM, drop the CONFIG_HIGHMEM line
->> as well as a simplification.
->>
->> On PowerPC and Microblaze, the options have somewhat different names but
->> should have the same effect. MIPS and Xtensa cannot support a larger
->> than 512MB of lowmem but are limited to small DDR2 memory in most
->> implementations, with MT7621 being a notable exception. ARC and C-Sky
->> could support a configurable vmsplit in theory, but it's not clear
->> if anyone still cares.
->> SPARC is currently limited to 192MB of lowmem and should get patched
->> to behave either like arm/x86 or powerpc/microblaze to support 2GiB
->> of lowmem.
->>
->> There are likely going to be regressions from the changed defaults,
->> in particular when hitting previously hidden device driver bugs
->> that fail to set the correct DMA mask, or from applications that
->> need a large virtual address space.
->> Ideally the in-kernel problems should all be fixable, but the previous
->> behavior is still selectable as a fallback with CONFIG_EXPERT=y
->>
->> Cc: Russell King <linux@armlinux.org.uk>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Borislav Petkov <bp@alien8.de>
->> Cc: Dave Hansen <dave.hansen@linux.intel.com>
->> Cc: x86@kernel.org
->> Cc: "H. Peter Anvin" <hpa@zytor.com>
->> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
->> Cc: Michael Ellerman <mpe@ellerman.id.au>
->> Cc: Nicholas Piggin <npiggin@gmail.com>
->> Cc: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
->> Cc: linuxppc-dev@lists.ozlabs.org
->> Cc: Michal Simek <monstr@monstr.eu>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: David Hildenbrand <david@kernel.org>
->> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: Mike Rapoport <rppt@kernel.org>
->> Cc: Suren Baghdasaryan <surenb@google.com>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Cc: linux-mm@kvack.org
->> Cc: Richard Weinberger <richard@nod.at>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Nishanth Menon <nm@ti.com>
->> Cc: Andreas Larsson <andreas@gaisler.com>
->> Cc: Lucas Stach <l.stach@pengutronix.de>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>   arch/arm/Kconfig                            |  5 ++++-
->>   arch/arm/configs/aspeed_g5_defconfig        |  1 -
->>   arch/arm/configs/dove_defconfig             |  2 --
->>   arch/arm/configs/mv78xx0_defconfig          |  2 --
->>   arch/arm/configs/u8500_defconfig            |  1 -
->>   arch/arm/configs/vt8500_v6_v7_defconfig     |  3 ---
->>   arch/arm/mach-omap2/Kconfig                 |  1 -
->>   arch/microblaze/Kconfig                     |  9 ++++++---
->>   arch/microblaze/configs/mmu_defconfig       |  1 -
->>   arch/powerpc/Kconfig                        | 17 +++++++++++------
->>   arch/powerpc/configs/44x/akebono_defconfig  |  1 -
->>   arch/powerpc/configs/85xx/ksi8560_defconfig |  1 -
->>   arch/powerpc/configs/85xx/stx_gp3_defconfig |  1 -
-> 
-> Reviewed-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
-> 
-> Be aware that it will likely trivialy conflict with https:// 
-> lore.kernel.org/linuxppc- 
-> dev/6a2575420770d075cd090b5a316730a2ffafdee4.1766574657.git.chleroy@kernel.org/
-> 
-> Another point is that it will increase the overall memory usage when 
-> people activate KASAN as KASAN reserves 1/8 of RAM for lowmem memory. I 
-> think we need to look at the impact on available virtual memory, because 
-> 1/8 of 2G is 256M which is the size of the last segment shared by KASAN 
-> shadow mem and vmalloc.
+Practically all destructor calls are done via CLASS(filename...) now;
+only 3 explicit calls left (one in audit, dropping the references it has
+grabbed for itself, two in the vicinity of fsconfig - separate story).
+No uses of __free(putname) remain; I haven't removed DEFINE_FREE yet,
+but it's really tempting.
 
-After testing I see two problems.
+I've got some continuations for that series (non-consuming variants of
+do_renameat2() and friends, now that it can be done with minimal PITA
+in the callers; with that added we get almost all constructors done via
+CLASS(...); the only exceptions are around fsconfig), but that's in
+a separate branch (#experimental.filename) on top of this one.
 
-First one is on powerpc e500, increasing CONFIG_LOWMEM_SIZE is not 
-enough, CONFIG_LOWMEM_CAM_NUM also need to be increased, otherwise 
-additional lowmem is not mapped because e500 linux port is not designed 
-to handle additional lowmem with standard pages.
+The branch lives in
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.filename
+now; individual patches in followups.
 
-For some details see commit 49e3d8ea6248 ("powerpc/fsl_booke: Enable 
-STRICT_KERNEL_RWX")
+Please, review; if nobody objects, I'm putting that in #for-next on Saturday.
 
-Second one is with KASAN, as anticipated above in my first response. 
-With a 2G+ kernel memory space, the KASAN shadow mem is 256M+, which 
-means we get an overlap between lowmem space [0x70000000-0xefffffff] and 
-KASAN shadow mem [0xee000000-0xffffffff].
-So when KASAN is enabled, either change CONFIG_PAGE_OFFSET and 
-CONFIG_TASK_SIZE to 0x60000000 instead of 0x70000000, or reduce 
-CONFIG_LOWMEM_SIZE from 0x80000000 to 0x70000000.
+Rough overview:
+1--9:
+	moving pathname import out of retry loops
+10:
+	now we can get rid of "reuse the struct filename if
+we'd just imported it from the same address _and_ audit is
+enabled" logics.
+11:
+	get rid of names_cachep abuse in ntfs
+12--15:
+	embed reasonably short pathnames into struct filename,
+*always* get struct filename out names_cachep, take the long
+names into explicitly kmalloc'ed objects.
+16:
+	runtime_const machinery for names_cachep; there's
+a potentially better variant (statically allocated kmem_cache),
+but that's a separate series.
+17:
+	infrastructure for CLASS(filename...)
+18:
+	switch __getname_maybe_null() to that.
+19:
+	delayed_filename machinery, solves the audit vs. io_uring
+problems.
+20:
+	now we don't need filename->refcnt to be atomic.
+21--25:
+	simplify checks in callers of pathwalk primitives -
+	they (with exception of do_filp_open()) will do
+	the right thing if given ERR_PTR() for name.
+26--32:	... get rid of that one exception and simplify
+	more callers.
+33--56:
+	conversions to CLASS(filename...), cleanups
+57, 58:
+	... and these should not have been using getname().
+59:
+	trimming fs/init.c down - doing to init_mkdir() et.al. what's
+	already been done to init_rmdir() and init_unlink().
 
-Christophe
+Shortlog:
+Al Viro (58):
+      do_faccessat(): import pathname only once
+      do_fchmodat(): import pathname only once
+      do_fchownat(): import pathname only once
+      do_utimes_path(): import pathname only once
+      chdir(2): import pathname only once
+      chroot(2): import pathname only once
+      user_statfs(): import pathname only once
+      do_sys_truncate(): import pathname only once
+      do_readlinkat(): import pathname only once
+      get rid of audit_reusename()
+      ntfs: ->d_compare() must not block
+      getname_flags() massage, part 1
+      getname_flags() massage, part 2
+      struct filename: use names_cachep only for getname() and friends
+      struct filename: saner handling of long names
+      allow to use CLASS() for struct filename *
+      switch __getname_maybe_null() to CLASS(filename_flags)
+      allow incomplete imports of filenames
+      struct filename ->refcnt doesn't need to be atomic
+      file_getattr(): filename_lookup() accepts ERR_PTR() as filename
+      file_setattr(): filename_lookup() accepts ERR_PTR() as filename
+      move_mount(): filename_lookup() accepts ERR_PTR() as filename
+      ksmbd_vfs_path_lookup(): vfs_path_parent_lookup() accepts ERR_PTR() as name
+      ksmbd_vfs_rename(): vfs_path_parent_lookup() accepts ERR_PTR() as name
+      do_filp_open(): DTRT when getting ERR_PTR() as pathname
+      rename do_filp_open() to do_file_open()
+      do_sys_openat2(): get rid of useless check, switch to CLASS(filename)
+      simplify the callers of file_open_name()
+      simplify the callers of do_open_execat()
+      simplify the callers of alloc_bprm()
+      switch {alloc,free}_bprm() to CLASS()
+      file_[gs]etattr(2): switch to CLASS(filename_maybe_null)
+      mount_setattr(2): don't mess with LOOKUP_EMPTY
+      do_open_execat(): don't care about LOOKUP_EMPTY
+      vfs_open_tree(): use CLASS(filename_uflags)
+      name_to_handle_at(): use CLASS(filename_uflags)
+      fspick(2): use CLASS(filename_flags)
+      do_fchownat(): unspaghettify a bit...
+      chdir(2): unspaghettify a bit...
+      do_utimes_path(): switch to CLASS(filename_uflags)
+      do_sys_truncate(): switch to CLASS(filename)
+      do_readlinkat(): switch to CLASS(filename_flags)
+      do_f{chmod,chown,access}at(): use CLASS(filename_uflags)
+      do_{renameat2,linkat,symlinkat}(): use CLASS(filename_consume)
+      do_{mknodat,mkdirat,unlinkat,rmdir}(): use CLASS(filename_consume)
+      namei.c: convert getname_kernel() callers to CLASS(filename_kernel)
+      namei.c: switch user pathname imports to CLASS(filename{,_flags})
+      filename_...xattr(): don't consume filename reference
+      move_mount(2): switch to CLASS(filename_maybe_null)
+      chroot(2): switch to CLASS(filename)
+      quotactl_block(): switch to CLASS(filename)
+      statx: switch to CLASS(filename_maybe_null)
+      user_statfs(): switch to CLASS(filename)
+      mqueue: switch to CLASS(filename)
+      ksmbd: use CLASS(filename_kernel)
+      alpha: switch osf_mount() to strndup_user()
+      sysfs(2): fs_index() argument is _not_ a pathname
+      switch init_mkdir() to use of do_mkdirat(), etc.
 
+Mateusz Guzik (1):
+      fs: hide names_cache behind runtime const machinery
+
+Diffstat:
+ arch/alpha/kernel/osf_sys.c       |  34 ++--
+ fs/dcache.c                       |   8 +-
+ fs/exec.c                         |  99 ++++------
+ fs/fhandle.c                      |   5 +-
+ fs/file_attr.c                    |  12 +-
+ fs/filesystems.c                  |   9 +-
+ fs/fsopen.c                       |   6 +-
+ fs/init.c                         |  88 +--------
+ fs/internal.h                     |   5 +-
+ fs/namei.c                        | 370 ++++++++++++++++++++------------------
+ fs/namespace.c                    |  22 +--
+ fs/ntfs3/dir.c                    |   5 +-
+ fs/ntfs3/fsntfs.c                 |   4 +-
+ fs/ntfs3/inode.c                  |  13 +-
+ fs/ntfs3/namei.c                  |  17 +-
+ fs/ntfs3/xattr.c                  |   5 +-
+ fs/open.c                         | 119 +++++-------
+ fs/quota/quota.c                  |   3 +-
+ fs/smb/server/vfs.c               |  15 +-
+ fs/stat.c                         |  28 +--
+ fs/statfs.c                       |   3 +-
+ fs/utimes.c                       |   8 +-
+ fs/xattr.c                        |  33 +---
+ include/asm-generic/vmlinux.lds.h |   3 +-
+ include/linux/audit.h             |  11 --
+ include/linux/fs.h                |  42 +++--
+ io_uring/fs.c                     | 101 ++++++-----
+ io_uring/openclose.c              |  26 +--
+ io_uring/statx.c                  |  17 +-
+ io_uring/xattr.c                  |  30 ++--
+ ipc/mqueue.c                      |  11 +-
+ kernel/acct.c                     |   4 +-
+ kernel/auditsc.c                  |  29 +--
+ mm/huge_memory.c                  |  15 +-
+ mm/swapfile.c                     |  21 +--
+ 35 files changed, 483 insertions(+), 738 deletions(-)
 
