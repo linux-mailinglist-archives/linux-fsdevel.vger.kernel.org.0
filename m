@@ -1,171 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-72710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C01D00F2A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 05:04:06 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B37AD01094
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 06:08:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 8B2F730019F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 04:04:03 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 5B3C3301E6FB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 05:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39ECB285072;
-	Thu,  8 Jan 2026 04:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376002D73BC;
+	Thu,  8 Jan 2026 05:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jji3OBLn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f73.google.com (mail-oo1-f73.google.com [209.85.161.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17CEBA21;
-	Thu,  8 Jan 2026 04:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF609286418
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 05:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767845040; cv=none; b=hU6dONV+CNQENIGXfsSsrb20DJVR5Q6OYbfLVtwpFWVk2tG3SNoG86pon/n72eR2WEDCWrKfWwzCliMz6sq2liTdbBIpQnmwxyBU7dbTuEmzvrcnmrTA4p/K8wECHYi4EhIs68puKD++MDwkQzvXCCv2A4o1c2Envp6mnj5z0Pc=
+	t=1767848875; cv=none; b=O/VgAZjwrFxM4F1ijduCUzoM/oH7RERB1MyF8n+o0u6r/br0eXUb2o8nvjctUEZXHwJ07KgFGQzojAYy50KnRycUs+njuLZMzbt4XS3s1HqvzRuy+ivahkdkHFPafbXVrNd5RJpaCyyAW9UX6+Jl7oCSZVyUwf1s3QLWe8Oqotg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767845040; c=relaxed/simple;
-	bh=jnLStAix3XPWkAaGt9Q5bxZm79Jqj6UIqMS97i6WZqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iktkcgapXtL1FvAY97uJhtdfvzuJVIzGh0hkTDv5kQAwx8FuClBORRaOcU7lzlUOckSXVuAinA6AO13BTg7pqw3pwkQaw7LtoqzjtAG5n8LtaRdeQC2l3B0vaI7fueTJ/wheteB9SA0phTP1YuUgNgyyCkiJ1rl+ndU/a1cMxMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
-Received: from [192.168.255.10] (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [101.226.143.247])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2fe53db82;
-	Thu, 8 Jan 2026 11:48:26 +0800 (GMT+08:00)
-Message-ID: <c5e3cce3-5953-4060-ae62-76e33022f4aa@ustc.edu>
-Date: Thu, 8 Jan 2026 11:45:10 +0800
+	s=arc-20240116; t=1767848875; c=relaxed/simple;
+	bh=tE1aQ8gNZYs8xPuJM9kx6/765WYYP1SfzbkObKgrR88=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=bIz/a162Ma7XkeK811pr7onANRamXuzPYrQT33Pl6Ll//WSoQG5JGfxBHuZ9of5TPGQBXb8+LaI7km1LbjTNcNfkFyCQ8NgVFVmuH12+NRKPIYUFj3JOODtGgoD0BL9GvlMmwwjuipP8YxbEGxMMGBWTX1JbYxaeIUOoYz4I6/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jji3OBLn; arc=none smtp.client-ip=209.85.161.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com
+Received: by mail-oo1-f73.google.com with SMTP id 006d021491bc7-65747d01bb0so5848138eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Jan 2026 21:07:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1767848871; x=1768453671; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=B0VNCFFD6rMDix3svYgMGRaPMGUEIYmv4wVFO1Dxy/o=;
+        b=jji3OBLn+29I07G7IHdhglJXZ6mJJKtvVRFddAhDZCbLuHRcgIxiPR6Oa8vdTkUGM0
+         MqBR0nlVQlCPGr737vI13ggxlbeGlwoXCBLYu2FNAi4etyhsE/ukgFk6jepy4FbolTlz
+         9QfYLuzcrZUv4TiOsnagu987foid8gV2U2xBLEgRG8faHL/hEsrcnFvMKnPSqmSZxebF
+         G1/YJj2pfHOzArwPIi1g2aOjwp3HObbsxCbh6ZodNjxNrKk2d/YaZX7A4Vo6JpV1lf0P
+         Ph0T4YahX0swD/X04f3RHQiOtVqGqrJDO5kzhA+ldk8ZVj78q2nQPLM1ejPLKR2Q82cM
+         QzBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767848871; x=1768453671;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B0VNCFFD6rMDix3svYgMGRaPMGUEIYmv4wVFO1Dxy/o=;
+        b=ry4Iu8+GW/eb3ozTJ42odU4QHlXrkaT4tDiRI93Qvx9UEHTqGCanhFPHoH17g8DEYG
+         B1So3U1NtdDQqyQ+06wX3gEBA14x1wv78MHa9YiJuIkrkk2x+ItEcRkYrLUuRrsIJFZu
+         MdTP+UV+uzAF5TsIwo9Jc6NkdaaLVND8rxusoDS/xb4cM0fTJBH7BRb9KCQ6N/1ZNHy0
+         qkGokTl1/I93JTv6/zwQziX3IdvpNnSc95SL4cCML23oBPVOCAzFGOM1GWodUnc3IDnN
+         1Y/viBYl9dDPZ0/IeWGV0HEaSVme9VdT6vNPqHEjFu9CF3yBbxXwbhYCHeNH0KEpC7Y6
+         n3aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwFghcjHXKuw2EZczGOEX6d4MfsC2XHI500VGN82ykuU2drG1C4CoYPe6DckLCIvbL+BUYcTk1pYN1LNVz@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB0QjymCQZtvWY7357OOpmz2eV/aonjr3vPZZQMlHDeFeKKpJb
+	w2FEgJ8fp7QiGpCIrInRQPUp6Wm2rtaooibOWxHviGhnC/lFQ/7ZY6aFK3RbZkWUHXaEpKZ1O7l
+	WQrI1UQ==
+X-Google-Smtp-Source: AGHT+IHFhgBrHzgkUSk+DJKlBY6YHJjdAJxwOsdN8kTtLoTak/dkQMUOAlEAe06z6JEmnyckm7jGXWgWufU=
+X-Received: from ilbee12.prod.google.com ([2002:a05:6e02:490c:b0:433:7cff:208c])
+ (user=avagin job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6820:1624:b0:65f:27dd:f565
+ with SMTP id 006d021491bc7-65f54ee9984mr2161961eaf.22.1767848871676; Wed, 07
+ Jan 2026 21:07:51 -0800 (PST)
+Date: Thu,  8 Jan 2026 05:07:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] overlayfs: mask d_type high bits before whiteout check
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: miklos@szeredi.hu, bschubert@ddn.com, linux-unionfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20260107034551.439-1-luochunsheng@ustc.edu>
- <CAOQ4uxhjWwTdENS2GqmOxtx4hdbv=N4f90iLVuxHNgH=NLem9w@mail.gmail.com>
-From: Chunsheng Luo <luochunsheng@ustc.edu>
-In-Reply-To: <CAOQ4uxhjWwTdENS2GqmOxtx4hdbv=N4f90iLVuxHNgH=NLem9w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9b9bb84f3703a2kunm00b0d9a22c51c
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZHUwfVklNTU9LT0tIH0sYT1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKS0pVSUlNVUpPSFVJT0xZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSktLVU
-	pCS0tZBg++
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.52.0.351.gbe84eed79e-goog
+Message-ID: <20260108050748.520792-1-avagin@google.com>
+Subject: [PATCH 0/3 v2] exec: inherit HWCAPs from the parent process
+From: Andrei Vagin <avagin@google.com>
+To: Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, criu@lists.linux.dev, 
+	Andrew Morton <akpm@linux-foundation.org>, Chen Ridong <chenridong@huawei.com>, 
+	Christian Brauner <brauner@kernel.org>, David Hildenbrand <david@kernel.org>, 
+	Eric Biederman <ebiederm@xmission.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Michal Koutny <mkoutny@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 
+This patch series introduces a mechanism to inherit hardware capabilities
+(AT_HWCAP, AT_HWCAP2, etc.) from a parent process when they have been
+modified via prctl.
 
+To support C/R operations (snapshots, live migration) in heterogeneous
+clusters, we must ensure that processes utilize CPU features available
+on all potential target nodes. To solve this, we need to advertise a
+common feature set across the cluster.
 
-On 1/8/26 4:43 AM, Amir Goldstein wrote:
-> On Wed, Jan 7, 2026 at 4:46 AM Chunsheng Luo <luochunsheng@ustc.edu> wrote:
->>
->> Commit c31f91c6af96 ("fuse: don't allow signals to interrupt getdents
->> copying") introduced the use of high bits in d_type as flags. However,
->> overlayfs was not adapted to handle this change.
->>
->> In ovl_cache_entry_new(), the code checks if d_type == DT_CHR to
->> determine if an entry might be a whiteout. When fuse is used as the
->> lower layer and sets high bits in d_type, this comparison fails,
->> causing whiteout files to not be recognized properly and resulting in
->> incorrect overlayfs behavior.
->>
->> Fix this by masking out the high bits with S_DT_MASK before checking.
->>
->> Fixes: c31f91c6af96 ("fuse: don't allow signals to interrupt getdents copying")
->> Link: https://github.com/containerd/stargz-snapshotter/issues/2214
->> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
-> 
-> Hi Chunsheng,
-> 
-> Thanks for the report and the suggested fix.
-> 
-> This time overlayfs was surprised by unexpected d_type flags and next
-> time it could be another user.
-> 
-> I prefer to fix this in a more profound way -
-> Instead of making overlafys aware of d_type flags, require the users that
-> use the d_type flags to opt-in for them.
-> 
-> Please test/review the attached patch.
-> 
-> Thanks,
-> Amir.
-> 
+Initially, a cgroup-based approach was considered, but it was decided
+that inheriting HWCAPs from a parent process that has set its own
+auxiliary vector via prctl is a simpler and more flexible solution.
 
-Thank you for the profound solution!
+This implementation adds a new mm flag MMF_USER_HWCAP, which is set when the
+auxiliary vector is modified via prctl(PR_SET_MM_AUXV). When execve() is
+called, if the current process has MMF_USER_HWCAP set, the HWCAP values are
+extracted from the current auxiliary vector and inherited by the new process.
 
-The attached patch has been tested and verified to effectively address 
-the d_type high bits usage issue by enforcing the opt-in mechanism.
+The first patch fixes AUXV size calculation for ELF_HWCAP3 and ELF_HWCAP4
+in binfmt_elf_fdpic and updates AT_VECTOR_SIZE_BASE.
 
-The variable `dt_flag_mask` might be clearer if renamed to 
-`dt_flags_mask` (plural "flags").
+The second patch implements the core inheritance logic in execve().
 
-Reviewed-by: Chunsheng Luo <luochunsheng@ustc.edu>
-Tested-by: Chunsheng Luo <luochunsheng@ustc.edu>
+The third patch adds a selftest to verify that HWCAPs are correctly
+inherited across execve().
 
-> 
->> ---
->>   fs/overlayfs/readdir.c | 15 +++++++++++++++
->>   1 file changed, 15 insertions(+)
->>
->> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
->> index 160960bb0ad0..a2ac47458bf9 100644
->> --- a/fs/overlayfs/readdir.c
->> +++ b/fs/overlayfs/readdir.c
->> @@ -246,6 +246,9 @@ static int ovl_fill_lowest(struct ovl_readdir_data *rdd,
->>   {
->>          struct ovl_cache_entry *p;
->>
->> +       /* Mask out high bits that may be used (e.g., fuse) */
->> +       d_type &= S_DT_MASK;
->> +
->>          p = ovl_cache_entry_find(rdd->root, c_name, c_len);
->>          if (p) {
->>                  list_move_tail(&p->l_node, &rdd->middle);
->> @@ -316,6 +319,9 @@ static bool ovl_fill_merge(struct dir_context *ctx, const char *name,
->>          char *cf_name = NULL;
->>          int c_len = 0, ret;
->>
->> +       /* Mask out high bits that may be used (e.g., fuse) */
->> +       d_type &= S_DT_MASK;
->> +
->>          if (ofs->casefold)
->>                  c_len = ovl_casefold(rdd, name, namelen, &cf_name);
->>
->> @@ -632,6 +638,9 @@ static bool ovl_fill_plain(struct dir_context *ctx, const char *name,
->>          struct ovl_readdir_data *rdd =
->>                  container_of(ctx, struct ovl_readdir_data, ctx);
->>
->> +       /* Mask out high bits that may be used (e.g., fuse) */
->> +       d_type &= S_DT_MASK;
->> +
->>          rdd->count++;
->>          p = ovl_cache_entry_new(rdd, name, namelen, NULL, 0, ino, d_type);
->>          if (p == NULL) {
->> @@ -755,6 +764,9 @@ static bool ovl_fill_real(struct dir_context *ctx, const char *name,
->>          struct dir_context *orig_ctx = rdt->orig_ctx;
->>          bool res;
->>
->> +       /* Mask out high bits that may be used (e.g., fuse) */
->> +       d_type &= S_DT_MASK;
->> +
->>          if (rdt->parent_ino && strcmp(name, "..") == 0) {
->>                  ino = rdt->parent_ino;
->>          } else if (rdt->cache) {
->> @@ -1144,6 +1156,9 @@ static bool ovl_check_d_type(struct dir_context *ctx, const char *name,
->>          struct ovl_readdir_data *rdd =
->>                  container_of(ctx, struct ovl_readdir_data, ctx);
->>
->> +       /* Mask out high bits that may be used (e.g., fuse) */
->> +       d_type &= S_DT_MASK;
->> +
->>          /* Even if d_type is not supported, DT_DIR is returned for . and .. */
->>          if (!strncmp(name, ".", namelen) || !strncmp(name, "..", namelen))
->>                  return true;
->> --
->> 2.43.0
->>
+v1: https://lkml.org/lkml/2025/12/5/65
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Chen Ridong <chenridong@huawei.com>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: David Hildenbrand <david@kernel.org>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Michal Koutny <mkoutny@suse.com>
+
+Andrei Vagin (3):
+  binfmt_elf_fdpic: fix AUXV size calculation for ELF_HWCAP3 and ELF_HWCAP4
+  exec: inherit HWCAPs from the parent process
+  selftests/exec: add test for HWCAP inheritance
+
+ fs/binfmt_elf.c                              |   8 +-
+ fs/binfmt_elf_fdpic.c                        |  14 ++-
+ fs/exec.c                                    |  58 +++++++++++
+ include/linux/auxvec.h                       |   2 +-
+ include/linux/binfmts.h                      |  11 ++
+ include/linux/mm_types.h                     |   2 +
+ kernel/fork.c                                |   3 +
+ kernel/sys.c                                 |   5 +-
+ tools/testing/selftests/exec/.gitignore      |   1 +
+ tools/testing/selftests/exec/Makefile        |   1 +
+ tools/testing/selftests/exec/hwcap_inherit.c | 102 +++++++++++++++++++
+ 11 files changed, 197 insertions(+), 10 deletions(-)
+ create mode 100644 tools/testing/selftests/exec/hwcap_inherit.c
+
+-- 
+2.52.0.351.gbe84eed79e-goog
 
 
