@@ -1,504 +1,354 @@
-Return-Path: <linux-fsdevel+bounces-72860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D59E2D03E7A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D49D03B9C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:17:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0EF963228FF3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:15:41 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E94A932380BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 14:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D529438B65F;
-	Thu,  8 Jan 2026 14:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQpYH1dj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4651DFDA1;
+	Thu,  8 Jan 2026 14:45:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44766227EA8
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 14:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4300B346FA4;
+	Thu,  8 Jan 2026 14:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767882737; cv=none; b=B6aLRzEKn/g6kkEkpi84QkA3NYOftEdnsVlIH78GNx51ofoNMeouXglT6m36s2TP46rGcZK6dkQebIzqZnRQuAVj/p4fAo4IuMztgRFAc0aw3XF13vO+GStMRZnMtWMtVSHhlM3uFbVuz7fPQTChLDo+KpXMWOviCh7srrum9iw=
+	t=1767883512; cv=none; b=tfIGJRA1/nnq5nczrxqfQ9OVJfue//kfgbLJunq1E6LNM9nqtIlLKg9oZcvM3rVer8AA3eLp/gsOynjA5udxHyZkmpyIFxWfRTfdxw4hfrpsFqm4Dt5fml9lBTPxcL721+GuWuhGMioEZR2QFqaUeE8q//vlqMeF0bW0YeULYIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767882737; c=relaxed/simple;
-	bh=pbqRtzJmnFz7qVgaziGfd6jJfZ3vd7LYJHqTLJj2IT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DqnmwKhdThEURoMV/EF1le7UJ1Ejed3mEpjMuXZKO+oVqBjUq4HaWmiLxowhwWJyB3R57iggFa/FHUVP60hBZAgjGMVVcksTxnWsCn/0m5IPEJlwPhgL+tYk05woFbX3VTHiqaiblMyeuTuVXu92p2nP8GKV5Qw+zkaxX/XKDiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQpYH1dj; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7c7613db390so1920169a34.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 06:32:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767882732; x=1768487532; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PcvhJVMJSLcgThl24zmnCju/8c8u6/w/mgJ2Q9NyyaM=;
-        b=YQpYH1djGTXIfWUC3rwfwUFGL+i6HHr81p7AjWRXKQjy1LsyDRutUnCOJT9kyzX7Bx
-         +IN/1yda815Lxkaj1PwX4L58I07FoHCjOrDkEi1TfCUFx1qCbxY5Dre61UzLeaOolaUz
-         S3RYw2o+yVt8XDs73fzsoE8dBVo19xhIUkU35+KA2kX7l/piVtmaGK6qlHjr1D2UndHj
-         H72BZZtTfQqNMJmBQWlSKGdkpqO0quA6//Jcl2Tjw6mEOijirgqu2/72MccFjzwuRXYH
-         0rGlp/6+S3A63TnTji5BJsu0U8s2WGIXyaVcz4HWbGeykUIrd8MUQgLYxQZq4TcnkICS
-         phGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767882732; x=1768487532;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PcvhJVMJSLcgThl24zmnCju/8c8u6/w/mgJ2Q9NyyaM=;
-        b=C+obe4sWSMOeCd7RIihaLrHsPFTsR5R/9QSQUfJkHSdRBZswerkmvG1KNxVxjJpoYj
-         3f9gPAJVDKVk7nLaAg5+vK3h25pqDJzmINjZIxTJ8RJBS875woaKqmN2JnwJHQ1ylDTb
-         yUGMLlhKskxfGzTNs1/W+h4Fpb17aK7lOUYrINo5gq+UDVonZRT9mNNIhuXWbpu6t7/y
-         qm/Y2mN7htBWPlBpbydcRmr1swSVK+h4wPYRryVyp6q62dh+sKQSR0bKHaeZdMnJFxkM
-         OW2d/CSmoBefm7upW2KD3Kr+qyayMtyZq5ROU4/VyXAMNVF6U5JOrAm13kBIN3aSaRaU
-         Gu5A==
-X-Forwarded-Encrypted: i=1; AJvYcCV/IcZiIsLE/9q0dVcg2H9KKhfggWO2lGV1fjSYze1YBuVY9w93I7v/8A/Zly65qEJGuyl2T5VVSvNzn2tS@vger.kernel.org
-X-Gm-Message-State: AOJu0YyavdtZEdRnX2cip21rvtMaiC6i1slYQh3xfyq/Z5yTSWupDM1A
-	zX8iTzCnPHbrcGThCOMR4is/DTr/j2k38i42Pa9gGYJHTv2Q7WuBnN7o
-X-Gm-Gg: AY/fxX6jSqhMtmbcV5GDdRLaOWNBLj1BEmW0Tc4fPChoKWYh2crvpOPXXX/8cLJJCS6
-	fLN2LEY0Ilo5yBPFFZ9hYWdAbjraFrIsHXjSCDAPCRmIxp5OlQz1t4j3pWgpdiP0lqp0k/PU9WV
-	R1zu4FfwUixWNHW91VOVhWUITs3Oq7hKR6aOsg+L0nxKTKf548upRl9u566+uP1m1lDzegZ++/b
-	Mwz7eRnByeJ7GDP51Ya6I37FYnYo8XqEQViJ8w4JuwcbqJKArlzKMIa8UfB6k+uT2P54ZMSSdlh
-	kEGh5YS05agL/zv8hnqdw7xsIBjatP8C+P0LX+g9MQN+0KJEqE3FiHwP0/47FFsHLyOl1xLZR0R
-	H65Vlab5iWi2OfKmUhpBJD/X5hjPCmo0bB7+YsNQO3IAgO032VgbcfMgZlDSmy7IG7DMWXVWbi1
-	U72CIOZ1mltgk5ZdnbIf6CQ0bJHbyCTL/3lwhlgIOv
-X-Google-Smtp-Source: AGHT+IEHvfV1Iw8iN3fDKTIAumG7RfgWLKSt/fkw13rZiQStoTVjQFDK3t+UOB8hh2x7AAzrKmk9bg==
-X-Received: by 2002:a4a:cb1a:0:b0:65f:5be8:285f with SMTP id 006d021491bc7-65f5be8290emr1186453eaf.37.1767882731888;
-        Thu, 08 Jan 2026 06:32:11 -0800 (PST)
-Received: from groves.net ([2603:8080:1500:3d89:902b:954a:a912:b0f5])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65f48bec1c4sm3254651eaf.8.2026.01.08.06.32.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 06:32:11 -0800 (PST)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Thu, 8 Jan 2026 08:32:09 -0600
-From: John Groves <John@groves.net>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Alison Schofield <alison.schofield@intel.com>, John Groves <jgroves@micron.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, David Hildenbrand <david@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
-	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Chen Linxuan <chenlinxuan@uniontech.com>, 
-	James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>, 
-	Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Gregory Price <gourry@gourry.net>, 
-	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, venkataravis@micron.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V3 02/21] dax: add fsdev.c driver for fs-dax on character
- dax
-Message-ID: <ypbz735oinozgm5bsxk7gyzgjpfpzzeb3k4f2fxq5ogm3hthb2@ict4rjvogy25>
+	s=arc-20240116; t=1767883512; c=relaxed/simple;
+	bh=F/eTu4pG1cXQKtRdSavDbkGAtm+jieNbVY55YIiuzzg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ebgkajd+Vu6x2tWhJTpheWBew9/9XKqK4fGjVtyoOELjBirNCPDa6UHfj0QF3jIB23JV55inC4pA15b6xqVZ2ikRmtnKMyojvfmUhqxtGFnJ8T2sF+R96Kg9iyoQNONWJ6NIT2EAERmhISUkr08hPGQt/pOsCnP8yXmWSXL6dQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dn73c3BqlzJ468v;
+	Thu,  8 Jan 2026 22:45:00 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 68A0440570;
+	Thu,  8 Jan 2026 22:45:05 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 8 Jan
+ 2026 14:45:03 +0000
+Date: Thu, 8 Jan 2026 14:45:02 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: John Groves <John@Groves.net>
+CC: Miklos Szeredi <miklos@szeredi.hu>, Dan Williams
+	<dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, "Alison
+ Schofield" <alison.schofield@intel.com>, John Groves <jgroves@micron.com>,
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan
+ Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, "David
+ Hildenbrand" <david@kernel.org>, Christian Brauner <brauner@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Stefan
+ Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef
+ Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Chen
+ Linxuan <chenlinxuan@uniontech.com>, "James Morse" <james.morse@arm.com>,
+	Fuad Tabba <tabba@google.com>, "Sean Christopherson" <seanjc@google.com>,
+	Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>,
+	Gregory Price <gourry@gourry.net>, Aravind Ramesh <arramesh@micron.com>, Ajay
+ Joshi <ajayjoshi@micron.com>, <venkataravis@micron.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V3 16/21] famfs_fuse: GET_DAXDEV message and
+ daxdev_table
+Message-ID: <20260108144502.000024e0@huawei.com>
+In-Reply-To: <20260107153332.64727-17-john@groves.net>
 References: <20260107153244.64703-1-john@groves.net>
- <20260107153332.64727-1-john@groves.net>
- <20260107153332.64727-3-john@groves.net>
- <20260108113134.000040fd@huawei.com>
+	<20260107153332.64727-1-john@groves.net>
+	<20260107153332.64727-17-john@groves.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260108113134.000040fd@huawei.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On 26/01/08 11:31AM, Jonathan Cameron wrote:
-> On Wed,  7 Jan 2026 09:33:11 -0600
-> John Groves <John@Groves.net> wrote:
-> 
-> > The new fsdev driver provides pages/folios initialized compatibly with
-> > fsdax - normal rather than devdax-style refcounting, and starting out
-> > with order-0 folios.
-> > 
-> > When fsdev binds to a daxdev, it is usually (always?) switching from the
-> > devdax mode (device.c), which pre-initializes compound folios according
-> > to its alignment. Fsdev uses fsdev_clear_folio_state() to switch the
-> > folios into a fsdax-compatible state.
-> > 
-> > A side effect of this is that raw mmap doesn't (can't?) work on an fsdev
-> > dax instance. Accordingly, The fsdev driver does not provide raw mmap -
-> > devices must be put in 'devdax' mode (drivers/dax/device.c) to get raw
-> > mmap capability.
-> > 
-> > In this commit is just the framework, which remaps pages/folios compatibly
-> > with fsdax.
-> > 
-> > Enabling dax changes:
-> > 
-> > * bus.h: add DAXDRV_FSDEV_TYPE driver type
-> > * bus.c: allow DAXDRV_FSDEV_TYPE drivers to bind to daxdevs
-> > * dax.h: prototype inode_dax(), which fsdev needs
-> > 
-> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> > Suggested-by: Gregory Price <gourry@gourry.net>
-> > Signed-off-by: John Groves <john@groves.net>
-> 
-> > diff --git a/drivers/dax/Kconfig b/drivers/dax/Kconfig
-> > index d656e4c0eb84..491325d914a8 100644
-> > --- a/drivers/dax/Kconfig
-> > +++ b/drivers/dax/Kconfig
-> > @@ -78,4 +78,21 @@ config DEV_DAX_KMEM
-> >  
-> >  	  Say N if unsure.
-> >  
-> > +config DEV_DAX_FS
-> > +	tristate "FSDEV DAX: fs-dax compatible device driver"
-> > +	depends on DEV_DAX
-> > +	default DEV_DAX
-> 
-> What's the logic for the default? Generally I'd not expect a
-> default for something new like this (so default of default == no)
-> 
-> > +	help
-> > +	  Support a device-dax driver mode that is compatible with fs-dax
-> 
-> ...
-> 
-> 
-> 
-> >  struct dax_device_driver {
-> > diff --git a/drivers/dax/fsdev.c b/drivers/dax/fsdev.c
-> > new file mode 100644
-> > index 000000000000..2a3249d1529c
-> > --- /dev/null
-> > +++ b/drivers/dax/fsdev.c
-> > @@ -0,0 +1,276 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright(c) 2026 Micron Technology, Inc. */
-> > +#include <linux/memremap.h>
-> > +#include <linux/pagemap.h>
-> > +#include <linux/module.h>
-> > +#include <linux/device.h>
-> > +#include <linux/cdev.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/dax.h>
-> > +#include <linux/fs.h>
-> > +#include <linux/mm.h>
-> > +#include "dax-private.h"
-> > +#include "bus.h"
-> 
-> ...
-> 
-> > +static void fsdev_cdev_del(void *cdev)
-> > +{
-> > +	cdev_del(cdev);
-> > +}
-> > +
-> > +static void fsdev_kill(void *dev_dax)
-> > +{
-> > +	kill_dev_dax(dev_dax);
-> > +}
-> 
-> ...
-> 
-> > +/*
-> > + * Clear any stale folio state from pages in the given range.
-> > + * This is necessary because device_dax pre-initializes compound folios
-> > + * based on vmemmap_shift, and that state may persist after driver unbind.
-> 
-> What's the argument for not cleaning these out in the unbind path for device_dax?
-> I can see that it might be an optimization if some other code path blindly
-> overwrites all this state.
+On Wed,  7 Jan 2026 09:33:25 -0600
+John Groves <John@Groves.net> wrote:
 
-I prefer this because it doesn't rely on some other module having done the
-right thing. Dax maintainers might have thoughts too though.
+> * The new GET_DAXDEV message/response is added
+> * The famfs.c:famfs_teardown() function is added as a primary teardown
+>   function for famfs.
+> * The command it triggered by the update_daxdev_table() call, if there
+>   are any daxdevs in the subject fmap that are not represented in the
+>   daxdev_table yet.
+> * fs/namei.c: export may_open_dev()
+> 
+> Signed-off-by: John Groves <john@groves.net>
+Hi John,
 
-> 
-> > + * Since fsdev_dax uses MEMORY_DEVICE_FS_DAX without vmemmap_shift, fs-dax
-> > + * expects to find clean order-0 folios that it can build into compound
-> > + * folios on demand.
-> > + *
-> > + * At probe time, no filesystem should be mounted yet, so all mappings
-> > + * are stale and must be cleared along with compound state.
-> > + */
-> > +static void fsdev_clear_folio_state(struct dev_dax *dev_dax)
-> > +{
-> > +	int i;
-> 
-> It's becoming increasingly common to declare loop variables as
-> for (int i = 0; i <...
-> 
-> and given that saves us a few lines here it seems worth doing.
+A few things inline
 
-Done thanks
+Thanks,
 
-> 
-> > +
-> > +	for (i = 0; i < dev_dax->nr_range; i++) {
-> > +		struct range *range = &dev_dax->ranges[i].range;
-> > +		unsigned long pfn, end_pfn;
-> > +
-> > +		pfn = PHYS_PFN(range->start);
-> > +		end_pfn = PHYS_PFN(range->end) + 1;
-> 
-> Might as well do
-> 		unsigned long pfn = PHY_PFN(range->start);
-> 		unsigned long end_pfn = PHYS_PFN(range->end) + 1;
+Jonathan
 
-Sounds good, done
-
-> > +
-> > +		while (pfn < end_pfn) {
-> > +			struct page *page = pfn_to_page(pfn);
-> > +			struct folio *folio = (struct folio *)page;
-> > +			struct dev_pagemap *pgmap = page_pgmap(page);
-> > +			int order = folio_order(folio);
-> > +
-> > +			/*
-> > +			 * Clear any stale mapping pointer. At probe time,
-> > +			 * no filesystem is mounted, so any mapping is stale.
-> > +			 */
-> > +			folio->mapping = NULL;
-> > +			folio->share = 0;
-> > +
-> > +			if (order > 0) {
-> > +				int j;
-> > +
-> > +				folio_reset_order(folio);
-> > +				for (j = 0; j < (1UL << order); j++) {
-> > +					struct page *p = page + j;
-> > +
-> > +					ClearPageHead(p);
-> > +					clear_compound_head(p);
-> > +					((struct folio *)p)->mapping = NULL;
+> ---
+>  fs/fuse/famfs.c           | 236 ++++++++++++++++++++++++++++++++++++++
+>  fs/fuse/famfs_kfmap.h     |  26 +++++
+>  fs/fuse/fuse_i.h          |  13 ++-
+>  fs/fuse/inode.c           |   4 +-
+>  fs/namei.c                |   1 +
+>  include/uapi/linux/fuse.h |  20 ++++
+>  6 files changed, 298 insertions(+), 2 deletions(-)
 > 
-> This code block is very similar to a chunk in dax_folio_put() in fs/dax.c
-> 
-> Can we create a helper for both to use?
-> 
-> I note that uses a local struct folio *new_folio to avoid multiple casts.
-> I'd do similar here even if it's a long line.
+> diff --git a/fs/fuse/famfs.c b/fs/fuse/famfs.c
+> index 2aabd1d589fd..b5cd1b5c1d6c 100644
+> --- a/fs/fuse/famfs.c
+> +++ b/fs/fuse/famfs.c
+> @@ -20,6 +20,239 @@
+>  #include "famfs_kfmap.h"
+>  #include "fuse_i.h"
 >  
-> If not possible to use a common helper, it is probably still worth
-> having a helper here for the stuff in the while loop just to reduce indent
-> and improve readability a little.
+> +/*
+> + * famfs_teardown()
+> + *
+> + * Deallocate famfs metadata for a fuse_conn
+> + */
+> +void
+> +famfs_teardown(struct fuse_conn *fc)
+> +{
+> +	struct famfs_dax_devlist *devlist = fc->dax_devlist;
+> +	int i;
+> +
+> +	kfree(fc->shadow);
+> +
+> +	fc->dax_devlist = NULL;
+> +
+> +	if (!devlist)
+> +		return;
+> +
+> +	if (!devlist->devlist)
 
-Good catch! You shall have a Suggested-by in the next version, which will
-inject a commit right before this that factors out dax_folio_reset_order()
-from dax_folio_put(). Then fsdev_clear_folio_state() will also call that.
+I'm going to assume that if this is true, devlist->nslots == 0?
+If so I'd skip this check and just let the rest of the code happen.
 
-> 
-> > +					((struct folio *)p)->share = 0;
-> > +					((struct folio *)p)->pgmap = pgmap;
-> > +				}
-> > +				pfn += (1UL << order);
-> > +			} else {
-> > +				folio->pgmap = pgmap;
-> > +				pfn++;
-> > +			}
-> > +		}
-> > +	}
-> > +}
-> > +
-> > +static int fsdev_open(struct inode *inode, struct file *filp)
-> > +{
-> > +	struct dax_device *dax_dev = inode_dax(inode);
-> > +	struct dev_dax *dev_dax = dax_get_private(dax_dev);
-> > +
-> > +	dev_dbg(&dev_dax->dev, "trace\n");
-> 
-> Hmm. This is a somewhat odd, but I see dax/device.c does
-> the same thing and I guess that's because you are using
-> dynamic debug with function names turned on to provide the
-> 'real' information.
+> +		goto out;
+> +
+> +	/* Close & release all the daxdevs in our table */
+> +	for (i = 0; i < devlist->nslots; i++) {
+> +		struct famfs_daxdev *dd = &devlist->devlist[i];
+> +
+> +		if (!dd->valid)
+> +			continue;
+> +
+> +		/* Release reference from dax_dev_get() */
+> +		if (dd->devp)
+> +			put_dax(dd->devp);
+> +
+> +		kfree(dd->name);
+> +	}
+> +	kfree(devlist->devlist);
+> +
+> +out:
+> +	kfree(devlist);
+> +}
 
-Actually I just have it from the gut-and-repurpose of device.c.
-Dropping from fsdev.c as I'm not using it.
+> +/**
+> + * famfs_fuse_get_daxdev() - Retrieve info for a DAX device from fuse server
+> + *
+> + * Send a GET_DAXDEV message to the fuse server to retrieve info on a
+> + * dax device.
+> + *
+> + * @fm:     fuse_mount
+> + * @index:  the index of the dax device; daxdevs are referred to by index
+> + *          in fmaps, and the server resolves the index to a particular daxdev
+> + *
+> + * Returns: 0=success
+> + *          -errno=failure
+> + */
+> +static int
+> +famfs_fuse_get_daxdev(struct fuse_mount *fm, const u64 index)
+> +{
+> +	struct fuse_daxdev_out daxdev_out = { 0 };
+> +	struct fuse_conn *fc = fm->fc;
+> +	struct famfs_daxdev *daxdev;
+> +	int err = 0;
+Always set before use so no need to init.
 
-> 
-> 
-> 
-> > +	filp->private_data = dev_dax;
-> > +
-> > +	return 0;
-> > +}
-> 
-> > +static int fsdev_dax_probe(struct dev_dax *dev_dax)
-> > +{
-> > +	struct dax_device *dax_dev = dev_dax->dax_dev;
-> > +	struct device *dev = &dev_dax->dev;
-> > +	struct dev_pagemap *pgmap;
-> > +	u64 data_offset = 0;
-> > +	struct inode *inode;
-> > +	struct cdev *cdev;
-> > +	void *addr;
-> > +	int rc, i;
-> > +
-> 
-> A bunch of this is cut and paste from dax/device.c
-> If it carries on looking like this, can we have a helper module that
-> both drivers use with the common code in it? That would make the
-> difference more obvious as well.
+> +
+> +	FUSE_ARGS(args);
+> +
+> +	/* Store the daxdev in our table */
+> +	if (index >= fc->dax_devlist->nslots) {
+> +		pr_err("%s: index(%lld) > nslots(%d)\n",
+> +		       __func__, index, fc->dax_devlist->nslots);
+> +		err = -EINVAL;
+> +		goto out;
 
-Makes sense. I'll wait for thoughts from the dax people before
-flipping bits on this though.
+I'd return here as nothing to do.
 
-> 
-> > +	if (static_dev_dax(dev_dax))  {
-> > +		if (dev_dax->nr_range > 1) {
-> > +			dev_warn(dev,
-> > +				"static pgmap / multi-range device conflict\n");
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		pgmap = dev_dax->pgmap;
-> > +	} else {
-> > +		if (dev_dax->pgmap) {
-> > +			dev_warn(dev,
-> > +				 "dynamic-dax with pre-populated page map\n");
-> Unless dax maintainers are very fussy about 80 chars, I'd go long on these as it's
-> only just over 80 chars on one line.
-> 
-> Given you are failing probe, not sure why dev_warn() is considered sufficient.
-> To me dev_err() seems more sensible. What you have matches dax/device.c though
-> so maybe there is a sound reason.
+> +	}
+> +
+> +	args.opcode = FUSE_GET_DAXDEV;
+> +	args.nodeid = index;
+> +
+> +	args.in_numargs = 0;
+> +
+> +	args.out_numargs = 1;
+> +	args.out_args[0].size = sizeof(daxdev_out);
+> +	args.out_args[0].value = &daxdev_out;
+> +
+> +	/* Send GET_DAXDEV command */
+> +	err = fuse_simple_request(fm, &args);
+> +	if (err) {
+> +		pr_err("%s: err=%d from fuse_simple_request()\n",
+> +		       __func__, err);
+> +		/*
 
-I'm personally a bit fussy about 80 column code, being kinda old and favoring
-80 column emacs windows :D - mulling it over.
+I'm not sure what local comment style is, but be consistent of
+whether there is a blank line or not.
 
-> 
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		pgmap = devm_kzalloc(dev,
-> > +			struct_size(pgmap, ranges, dev_dax->nr_range - 1),
-> > +				     GFP_KERNEL);
-> Pick an alignment style and stick to it.  Either.
-> 		pgmap = devm_kzalloc(dev,
-> 			struct_size(pgmap, ranges, dev_dax->nr_range - 1),
-> 			GFP_KERNEL);
-> 
-> or go long for readability and do
-> 		pgmap = devm_kzalloc(dev,
-> 				     struct_size(pgmap, ranges, dev_dax->nr_range - 1),
-> 				     GFP_KERNEL);
+> +		 * Error will be that the payload is smaller than FMAP_BUFSIZE,
+> +		 * which is the max we can handle. Empty payload handled below.
+> +		 */
+> +		goto out;
+return here is probably simpler.
 
-Will do something cleaner. This is the aforementioned 80 column curmudgeonliness
-at work...
+> +	}
+> +
+> +	down_write(&fc->famfs_devlist_sem);
+> +
+> +	daxdev = &fc->dax_devlist->devlist[index];
+> +
+> +	/* Abort if daxdev is now valid (race - another thread got it first) */
+> +	if (daxdev->valid) {
+> +		up_write(&fc->famfs_devlist_sem);
+> +		/* We already have a valid entry at this index */
+> +		pr_debug("%s: daxdev already known\n", __func__);
+> +		goto out;
+> +	}
+> +
+> +	/* Verify that the dev is valid and can be opened and gets the devno */
+> +	err = famfs_verify_daxdev(daxdev_out.name, &daxdev->devno);
+> +	if (err) {
+> +		up_write(&fc->famfs_devlist_sem);
+> +		pr_err("%s: err=%d from famfs_verify_daxdev()\n", __func__, err);
+> +		goto out;
+> +	}
+> +
+> +	/* This will fail if it's not a dax device */
+> +	daxdev->devp = dax_dev_get(daxdev->devno);
+> +	if (!daxdev->devp) {
+> +		up_write(&fc->famfs_devlist_sem);
 
-> 
-> 
-> 
-> > +		if (!pgmap)
-> > +			return -ENOMEM;
-> > +
-> > +		pgmap->nr_range = dev_dax->nr_range;
-> > +		dev_dax->pgmap = pgmap;
-> > +
-> > +		for (i = 0; i < dev_dax->nr_range; i++) {
-> > +			struct range *range = &dev_dax->ranges[i].range;
-> > +
-> > +			pgmap->ranges[i] = *range;
-> > +		}
-> > +	}
-> > +
-> > +	for (i = 0; i < dev_dax->nr_range; i++) {
-> > +		struct range *range = &dev_dax->ranges[i].range;
-> > +
-> > +		if (!devm_request_mem_region(dev, range->start,
-> > +					range_len(range), dev_name(dev))) {
-> > +			dev_warn(dev, "mapping%d: %#llx-%#llx could not reserve range\n",
-> > +					i, range->start, range->end);
-> > +			return -EBUSY;
-> > +		}
-> > +	}
-> > +
-> > +	/*
-> > +	 * FS-DAX compatible mode: Use MEMORY_DEVICE_FS_DAX type and
-> > +	 * do NOT set vmemmap_shift. This leaves folios at order-0,
-> > +	 * allowing fs-dax to dynamically create compound folios as needed
-> > +	 * (similar to pmem behavior).
-> > +	 */
-> > +	pgmap->type = MEMORY_DEVICE_FS_DAX;
-> > +	pgmap->ops = &fsdev_pagemap_ops;
-> > +	pgmap->owner = dev_dax;
-> > +
-> > +	/*
-> > +	 * CRITICAL DIFFERENCE from device.c:
-> > +	 * We do NOT set vmemmap_shift here, even if align > PAGE_SIZE.
-> > +	 * This ensures folios remain order-0 and are compatible with
-> > +	 * fs-dax's folio management.
-> > +	 */
-> > +
-> > +	addr = devm_memremap_pages(dev, pgmap);
-> > +	if (IS_ERR(addr))
-> > +		return PTR_ERR(addr);
-> > +
-> > +	/*
-> > +	 * Clear any stale compound folio state left over from a previous
-> > +	 * driver (e.g., device_dax with vmemmap_shift).
-> > +	 */
-> > +	fsdev_clear_folio_state(dev_dax);
-> > +
-> > +	/* Detect whether the data is at a non-zero offset into the memory */
-> > +	if (pgmap->range.start != dev_dax->ranges[0].range.start) {
-> > +		u64 phys = dev_dax->ranges[0].range.start;
-> > +		u64 pgmap_phys = dev_dax->pgmap[0].range.start;
-> > +
-> > +		if (!WARN_ON(pgmap_phys > phys))
-> > +			data_offset = phys - pgmap_phys;
-> > +
-> > +		pr_debug("%s: offset detected phys=%llx pgmap_phys=%llx offset=%llx\n",
-> > +		       __func__, phys, pgmap_phys, data_offset);
-> > +	}
-> > +
-> > +	inode = dax_inode(dax_dev);
-> > +	cdev = inode->i_cdev;
-> > +	cdev_init(cdev, &fsdev_fops);
-> > +	cdev->owner = dev->driver->owner;
-> > +	cdev_set_parent(cdev, &dev->kobj);
-> > +	rc = cdev_add(cdev, dev->devt, 1);
-> > +	if (rc)
-> > +		return rc;
-> > +
-> > +	rc = devm_add_action_or_reset(dev, fsdev_cdev_del, cdev);
-> > +	if (rc)
-> > +		return rc;
-> > +
-> > +	run_dax(dax_dev);
-> > +	return devm_add_action_or_reset(dev, fsdev_kill, dev_dax);
-> > +}
-> > +
-> > +static struct dax_device_driver fsdev_dax_driver = {
-> > +	.probe = fsdev_dax_probe,
-> > +	.type = DAXDRV_FSDEV_TYPE,
-> > +};
-> > +
-> > +static int __init dax_init(void)
-> > +{
-> > +	return dax_driver_register(&fsdev_dax_driver);
-> > +}
-> > +
-> > +static void __exit dax_exit(void)
-> > +{
-> > +	dax_driver_unregister(&fsdev_dax_driver);
-> > +}
-> If these don't get more complex, maybe it's time for a dax specific define
-> using module_driver()
+Move the label before the up_write, so you don't need to do it in each
+error case or use a guard()
 
-I'll defer to the dax folks here
+> +		pr_warn("%s: device %s not found or not dax\n",
+> +			__func__, daxdev_out.name);
+> +		err = -ENODEV;
+> +		goto out;
+> +	}
+> +
+> +	daxdev->name = kstrdup(daxdev_out.name, GFP_KERNEL);
+Can fail.
 
-> 
-> > +
-> > +MODULE_AUTHOR("John Groves");
-> > +MODULE_DESCRIPTION("FS-DAX Device: fs-dax compatible devdax driver");
-> > +MODULE_LICENSE("GPL");
-> > +module_init(dax_init);
-> > +module_exit(dax_exit);
-> > +MODULE_ALIAS_DAX_DEVICE(0);
-> 
-> Curious macro. Always has same parameter...  Maybe ripe for just dropping the parameter?
-> 
-> 
+> +	wmb(); /* all daxdev fields must be visible before marking it valid */
+> +	daxdev->valid = 1;
+> +
+> +	up_write(&fc->famfs_devlist_sem);
+> +
+> +out:
+> +	return err;
+> +}
+> +
+> +/**
+> + * famfs_update_daxdev_table() - Update the daxdev table
+> + * @fm   - fuse_mount
+> + * @meta - famfs_file_meta, in-memory format, built from a GET_FMAP response
+> + *
+> + * This function is called for each new file fmap, to verify whether all
+> + * referenced daxdevs are already known (i.e. in the table). Any daxdev
+> + * indices referenced in @meta but not in the table will be retrieved via
+> + * famfs_fuse_get_daxdev() and added to the table
+> + *
+> + * Return: 0=success
+> + *         -errno=failure
+> + */
+> +static int
+> +famfs_update_daxdev_table(
+> +	struct fuse_mount *fm,
+> +	const struct famfs_file_meta *meta)
+> +{
+> +	struct famfs_dax_devlist *local_devlist;
+> +	struct fuse_conn *fc = fm->fc;
+> +	int err;
+> +	int i;
 
-Thanks!
-John
+Might as well put those on one line or move i down to the loop init.
+
+> +
+> +	/* First time through we will need to allocate the dax_devlist */
+> +	if (unlikely(!fc->dax_devlist)) {
+
+I'd avoid unlikely markings unless you have good evidence they are needed.
+Let the branch predictors figure it out.
+
+> +		local_devlist = kcalloc(1, sizeof(*fc->dax_devlist), GFP_KERNEL);
+> +		if (!local_devlist)
+> +			return -ENOMEM;
+> +
+> +		local_devlist->nslots = MAX_DAXDEVS;
+> +
+> +		local_devlist->devlist = kcalloc(MAX_DAXDEVS,
+> +						 sizeof(struct famfs_daxdev),
+> +						 GFP_KERNEL);
+> +		if (!local_devlist->devlist) {
+> +			kfree(local_devlist);
+> +			return -ENOMEM;
+> +		}
+> +
+> +		/* We don't need famfs_devlist_sem here because we use cmpxchg */
+> +		if (cmpxchg(&fc->dax_devlist, NULL, local_devlist) != NULL) {
+> +			kfree(local_devlist->devlist);
+> +			kfree(local_devlist); /* another thread beat us to it */
+> +		}
+> +	}
+> +
+> +	down_read(&fc->famfs_devlist_sem);
+> +	for (i = 0; i < fc->dax_devlist->nslots; i++) {
+> +		if (!(meta->dev_bitmap & (1ULL << i)))
+
+Could you do for_each_set_bit() on that bitmap?
+Might end up clearer.
+
+> +			continue;
+> +
+> +		/* This file meta struct references devindex i
+> +		 * if devindex i isn't in the table; get it...
+> +		 */
+> +		if (!(fc->dax_devlist->devlist[i].valid)) {
+
+Maybe flip logic and do a continue as you do with the condition above.
+
+> +			up_read(&fc->famfs_devlist_sem);
+> +
+> +			err = famfs_fuse_get_daxdev(fm, i);
+> +			if (err)
+> +				pr_err("%s: failed to get daxdev=%d\n",
+> +				       __func__, i);
+> +
+> +			down_read(&fc->famfs_devlist_sem);
+> +		}
+> +	}
+> +	up_read(&fc->famfs_devlist_sem);
+> +
+> +	return 0;
+> +}
 
