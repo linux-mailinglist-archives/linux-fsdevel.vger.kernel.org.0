@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-72721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF467D04857
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:46:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C270ED0485C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:46:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C49123534AB4
+	by sea.lore.kernel.org (Postfix) with ESMTP id BD95433E3BD5
 	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D73341AA0;
-	Thu,  8 Jan 2026 07:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA8334252B;
+	Thu,  8 Jan 2026 07:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NikCwtMM"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="r1/6tcBq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827D230103F;
-	Thu,  8 Jan 2026 07:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AF6322C73;
+	Thu,  8 Jan 2026 07:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767857812; cv=none; b=Q7yus1o3tuYFTTnT0o7LwZuGMliNXqUK2uuu8G2TwHEcyFxgtvkWfbJdW7GjrjqtUy6yF9+wsjZOm2g5dnKFTt37NrWzuhj3SRgtB//bZAT8iK67S6zVuiNVoz8P6Mc6bhQqO5lFJvKraJNeSAqo8hU2RlDUhiN3l9b6EhSf1kE=
+	t=1767857814; cv=none; b=uN74emOq4n6VZmGF8chkXuXUNHqK/TlNGyj2dmiPl7JjGsRFUqOhI934VP778MO/C0RC3OBb0LRWzJu23pVxTlrlzzyhLYfViiThMyau+fFsq31dvpu6h/T7ZPi4D120OoLngqpYCFgK9rBAaZlPCUDDqewOTsAffv+XN6Yp46I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767857812; c=relaxed/simple;
-	bh=HNPcrjOGPdK+rUjKiP0RktSumxuu6OLS32qJgPhWCP4=;
+	s=arc-20240116; t=1767857814; c=relaxed/simple;
+	bh=F9Ac51sayJ3ZUx8voNJfIEbzwWMQM6cAMJSzRwkhDxA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bei2bchIkos06kKgkO4ubc4fiHM762J981qZ/rOL2C89in2kiwvhdIMR55OjBovB1Fa+W0Pyfn/tWlnSw81TpzV6co0RHTCHwcc7gLG/ZHjUSVY/5NUyO4I1btpOC0cTdg/QT+JZ5R2Y7NqI+EAJS9oWRFgV9LxJqklo5DeQocs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NikCwtMM; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=UznGott4TnqjXhJPzcrGsZ4KEKKi+Wj460VOvfXg+uiYulW/mzh7V6LMthRgvgIzvwv950ieS9jD0oDmTiUSCDqOc/+B4ou7pHgqdqH0vADlEUxhr2clPyCbe8M1cFn5QclWzDtV1lLDmSN1OqwCU7Ri39WliR94g6IyZgTtvrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=r1/6tcBq; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Inog8S2asLcYt8rxshEj7Ck1jbPHw2VzSX4bDPUW0B0=; b=NikCwtMM4rVzePgqTV6Yt32t0+
-	wM7ANV0KnBg7f2v49t0nWM8poqHMCK652fQ9hfbs1QTVo11XZ3MWpA64XLqXnfRTUZ2hbKOze+ZbZ
-	jaQcKa22dkCIcn0qcM/9nc6ymVuf2Ev5zd97u2F8vdjNv2/2HVTqRDSZtG3SWoz5O/pCa/o07Xyc/
-	p1WqCRfmh/8YrXJAWmM26WlqMMoUGoAnf0kZ4Yb0iODh5DFpnNFf7V2KnyKERa/HN5h0OSUxyYxIv
-	hmhpfwvkMS67RIjoqYUNHHWr1HpbdRNXmvCZqQBBo9lnUf4T9HO0KpLtJQpYphHk9TR8zNBRV22Zr
-	gBIiHUDg==;
+	bh=4+7lHyvfxwviiKYkc+HLIxJ+YC5af7rIWX4pEtm/rr4=; b=r1/6tcBqrDyiHKEarhjjQZLaw4
+	KagvvqyybGRa8WBROKoCjJ6PSI7DO5kBs0GmZqPtAfrk8lsjCU9jyhQ0i6CP+VF671e1PQy6YiwOH
+	hNv1I8Nxq3r7XVuYKRx10MPqnleUJbTLatnZpZgjTJrsYLq4gUS35/mSJmLVmIs45Lrzg/Z5Hn+Yj
+	eKZOwAzf9ZJ98ZdHpQJbegBLxqMrPDnlUymMJlt9nMwlvT2vLleOZXEy5phpN8+BmJYTE542X2deh
+	+3x8ugdhajaRkOk0ZibW3QPaPnqxQ1d7m+Sayz9/7lgciG4epl/uxUshlMs8Dyl2n4N/i9DW2dXUn
+	6pE2Ftlw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vdkaq-00000001mfM-1ubp;
-	Thu, 08 Jan 2026 07:38:04 +0000
+	id 1vdkas-00000001mim-1YK7;
+	Thu, 08 Jan 2026 07:38:06 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: torvalds@linux-foundation.org,
@@ -53,9 +53,9 @@ Cc: torvalds@linux-foundation.org,
 	audit@vger.kernel.org,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 06/59] chroot(2): import pathname only once
-Date: Thu,  8 Jan 2026 07:37:10 +0000
-Message-ID: <20260108073803.425343-7-viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 14/59] struct filename: use names_cachep only for getname() and friends
+Date: Thu,  8 Jan 2026 07:37:18 +0000
+Message-ID: <20260108073803.425343-15-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
 References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
@@ -68,44 +68,196 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Convert the user_path_at() call inside a retry loop into getname_flags() +
-filename_lookup() + putname() and leave only filename_lookup() inside
-the loop.
+        Instances of struct filename come from names_cachep (via
+__getname()).  That is done by getname_flags() and getname_kernel()
+and these two are the main callers of __getname().  However, there are
+other callers that simply want to allocate PATH_MAX bytes for uses that
+have nothing to do with struct filename.
 
-In this case we never pass LOOKUP_EMPTY, so getname_flags() is equivalent
-to plain getname().
+	We want saner allocation rules for long pathnames, so that struct
+filename would *always* come from names_cachep, with the out-of-line
+pathname getting kmalloc'ed.  For that we need to be able to change the
+size of objects allocated by getname_flags()/getname_kernel().
 
-The things could be further simplified by use of cleanup.h stuff, but
-let's not clutter the patch with that.
+	That requires the rest of __getname() users to stop using
+names_cachep; we could explicitly switch all of those to kmalloc(),
+but that would cause quite a bit of noise.  So the plan is to switch
+getname_...() to new helpers and turn __getname() into a wrapper for
+kmalloc().  Remaining __getname() users could be converted to explicit
+kmalloc() at leisure, hopefully along with figuring out what size do
+they really want - PATH_MAX is an overkill for some of them, used out
+of laziness ("we have a convenient helper that does 4K allocations and
+that's large enough, let's use it").
+
+	As a side benefit, names_cachep is no longer used outside
+of fs/namei.c, so we can move it there and be done with that.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/open.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/dcache.c        |  8 +-------
+ fs/internal.h      |  2 ++
+ fs/namei.c         | 37 ++++++++++++++++++++++++++++---------
+ include/linux/fs.h |  6 ++----
+ 4 files changed, 33 insertions(+), 20 deletions(-)
 
-diff --git a/fs/open.c b/fs/open.c
-index 67c114bdeac5..6f48fa9c756a 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -600,8 +600,9 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
- 	struct path path;
- 	int error;
- 	unsigned int lookup_flags = LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
-+	struct filename *name = getname(filename);
- retry:
--	error = user_path_at(AT_FDCWD, filename, lookup_flags, &path);
-+	error = filename_lookup(AT_FDCWD, name, lookup_flags, &path, NULL);
- 	if (error)
- 		goto out;
- 
-@@ -625,6 +626,7 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
- 		goto retry;
- 	}
- out:
-+	putname(name);
- 	return error;
+diff --git a/fs/dcache.c b/fs/dcache.c
+index dc2fff4811d1..cf865c12cdf9 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -3290,10 +3290,6 @@ static void __init dcache_init(void)
+ 	runtime_const_init(ptr, dentry_hashtable);
  }
  
+-/* SLAB cache for __getname() consumers */
+-struct kmem_cache *names_cachep __ro_after_init;
+-EXPORT_SYMBOL(names_cachep);
+-
+ void __init vfs_caches_init_early(void)
+ {
+ 	int i;
+@@ -3307,9 +3303,7 @@ void __init vfs_caches_init_early(void)
+ 
+ void __init vfs_caches_init(void)
+ {
+-	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
+-			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
+-
++	filename_init();
+ 	dcache_init();
+ 	inode_init();
+ 	files_init();
+diff --git a/fs/internal.h b/fs/internal.h
+index ab638d41ab81..e44146117a42 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -71,6 +71,8 @@ struct dentry *start_dirop(struct dentry *parent, struct qstr *name,
+ 			   unsigned int lookup_flags);
+ int lookup_noperm_common(struct qstr *qname, struct dentry *base);
+ 
++void __init filename_init(void);
++
+ /*
+  * namespace.c
+  */
+diff --git a/fs/namei.c b/fs/namei.c
+index 471e4db2dbdb..468e3db62f53 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -125,6 +125,25 @@
+ 
+ #define EMBEDDED_NAME_MAX	(PATH_MAX - offsetof(struct filename, iname))
+ 
++/* SLAB cache for struct filename instances */
++static struct kmem_cache *names_cachep __ro_after_init;
++
++void __init filename_init(void)
++{
++	names_cachep = kmem_cache_create_usercopy("names_cache", PATH_MAX, 0,
++			SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL);
++}
++
++static inline struct filename *alloc_filename(void)
++{
++	return kmem_cache_alloc(names_cachep, GFP_KERNEL);
++}
++
++static inline void free_filename(struct filename *p)
++{
++	kmem_cache_free(names_cachep, p);
++}
++
+ static inline void initname(struct filename *name)
+ {
+ 	name->aname = NULL;
+@@ -164,7 +183,7 @@ getname_flags(const char __user *filename, int flags)
+ 	char *kname;
+ 	int len;
+ 
+-	result = __getname();
++	result = alloc_filename();
+ 	if (unlikely(!result))
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -181,13 +200,13 @@ getname_flags(const char __user *filename, int flags)
+ 	 */
+ 	if (unlikely(len <= 0)) {
+ 		if (unlikely(len < 0)) {
+-			__putname(result);
++			free_filename(result);
+ 			return ERR_PTR(len);
+ 		}
+ 
+ 		/* The empty path is special. */
+ 		if (!(flags & LOOKUP_EMPTY)) {
+-			__putname(result);
++			free_filename(result);
+ 			return ERR_PTR(-ENOENT);
+ 		}
+ 	}
+@@ -201,7 +220,7 @@ getname_flags(const char __user *filename, int flags)
+ 	if (unlikely(len == EMBEDDED_NAME_MAX)) {
+ 		struct filename *p = getname_long(result, filename);
+ 		if (IS_ERR(p)) {
+-			__putname(result);
++			free_filename(result);
+ 			return p;
+ 		}
+ 		result = p;
+@@ -242,7 +261,7 @@ struct filename *getname_kernel(const char * filename)
+ 	struct filename *result;
+ 	int len = strlen(filename) + 1;
+ 
+-	result = __getname();
++	result = alloc_filename();
+ 	if (unlikely(!result))
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -254,13 +273,13 @@ struct filename *getname_kernel(const char * filename)
+ 
+ 		tmp = kmalloc(size, GFP_KERNEL);
+ 		if (unlikely(!tmp)) {
+-			__putname(result);
++			free_filename(result);
+ 			return ERR_PTR(-ENOMEM);
+ 		}
+ 		tmp->name = (char *)result;
+ 		result = tmp;
+ 	} else {
+-		__putname(result);
++		free_filename(result);
+ 		return ERR_PTR(-ENAMETOOLONG);
+ 	}
+ 	memcpy((char *)result->name, filename, len);
+@@ -287,10 +306,10 @@ void putname(struct filename *name)
+ 	}
+ 
+ 	if (unlikely(name->name != name->iname)) {
+-		__putname(name->name);
++		free_filename((struct filename *)name->name);
+ 		kfree(name);
+ 	} else
+-		__putname(name);
++		free_filename(name);
+ }
+ EXPORT_SYMBOL(putname);
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2244c54d3bfa..e906f157905c 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2533,10 +2533,8 @@ static inline int finish_open_simple(struct file *file, int error)
+ extern void __init vfs_caches_init_early(void);
+ extern void __init vfs_caches_init(void);
+ 
+-extern struct kmem_cache *names_cachep;
+-
+-#define __getname()		kmem_cache_alloc(names_cachep, GFP_KERNEL)
+-#define __putname(name)		kmem_cache_free(names_cachep, (void *)(name))
++#define __getname()		kmalloc(PATH_MAX, GFP_KERNEL)
++#define __putname(name)		kfree(name)
+ 
+ void emergency_thaw_all(void);
+ extern int sync_filesystem(struct super_block *);
 -- 
 2.47.3
 
