@@ -1,203 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-72854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736BAD03C97
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:23:31 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31CFFD0431B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:09:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 6CF23305178E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:19:00 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 88B8D30A3F30
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277F541463F;
-	Thu,  8 Jan 2026 14:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F45500BF3;
+	Thu,  8 Jan 2026 14:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a1jnOk+6"
+	dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b="vDTTDRWd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp01-ext2.udag.de (smtp01-ext2.udag.de [62.146.106.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC7D3B95ED;
-	Thu,  8 Jan 2026 14:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3281500BE9;
+	Thu,  8 Jan 2026 14:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767882102; cv=none; b=Lnjl9A7vNa11CTqtbgTjJIGcetdRDuw4eH+3xSkvQRuPs1nuMswO1KisdmuJvafkyid7atzRTutZqo+tRHVFkwrH5e+6KQvaLNFOm5PsNLvgGl+lAKNqdhoI2CPR8OqxqXawRozySknSE4IilwaCXM+NY7EIfYsTFZJVp/mZmYA=
+	t=1767882711; cv=none; b=qVLo8Ow3w5YfBkBkyzdJ2PH5fNdNuJX+M4HJVA0hQzzKsJOeehEodQlWu7LID2lzu7bp3yjcaK1lIcalJhiAxWDz7QBW4oDVDEK3UOTX0NY5V1FlIpZjeDxjpqU7/9l9PLQuMmX9PEjBkkDcdACzWqY0FjiiEDrUZo793ee3zZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767882102; c=relaxed/simple;
-	bh=mRKfo5ExoCgJ8FDLsjRx5hVoNPFZ6MRmdsWH7fHT2L8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KbHd1KKxVENnBxV2oHX71CJHSqqjbzqM2yHWENvmJeCh1IrnR5RobSRC2IXiHyLshihwSO3Yequ04W/VCKvkkgK74OuhfOVTfgv1Du9XWkLuj/U3ygHBnm7Bg3hcy/XwWBaPq5RwpVm4WZJybHEjVbhVByQwgbWfJ0H0bcVVU+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=a1jnOk+6; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=ZNgZylE5vQ7F5Owgq1aS4eySz6Su2CaSwk3GcY5mRvM=; b=a1jnOk+6S1HNR/haG4/jkAuO2B
-	N/YL5PkmJj/m7NUfso9AzhC7ylVartxq7W1sGU/JQzySbzVnxfw4699exq56Kv1bWcgdIQA9hySL4
-	yG4UVhDrpbXlAH1erahoTmoGIDhk4xMfR1o9MGTIP9o6iIjeJcE8wsJhMrMySGZ034RifeefzkhZC
-	1JgqsR/oqrKIxTjur/qlgzSdaPxRI8PCBge79cX8bmOQinMNHIFJLXKULLQJa8KS4zLnpYNBx14ee
-	NnoTD5nF/nMNk5AFjyd0CemX+CIDul8oZZvaJ8yc27KWacMd/wziNv/Io/oXteHw7HwJe5wSLRJCI
-	Ph13hrJw==;
-Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vdqtL-0000000HK0b-1bs7;
-	Thu, 08 Jan 2026 14:21:35 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	David Sterba <dsterba@suse.com>,
-	Jan Kara <jack@suse.cz>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Stefan Roesch <shr@fb.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	gfs2@lists.linux.dev,
-	io-uring@vger.kernel.org,
-	devel@lists.orangefs.org,
-	linux-unionfs@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-xfs@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH 10/11] xfs: implement ->sync_lazytime
-Date: Thu,  8 Jan 2026 15:19:10 +0100
-Message-ID: <20260108141934.2052404-11-hch@lst.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260108141934.2052404-1-hch@lst.de>
-References: <20260108141934.2052404-1-hch@lst.de>
+	s=arc-20240116; t=1767882711; c=relaxed/simple;
+	bh=GsXlnnfD/ARWqJs4ZJhEUczkVQITzAZ/JAwpXAGdqeU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nzkoD2a/NC9WsvNvipdXYdflhDJEDBhAeXujGOL2bd9fsKx0qeC1vx5o+mGohYBNZ1ityocy6D8cDqPG1F4fw4YaxwgvW5ImTZXdRfmRs4bp1tJn2KpZ9XrDqJtpEM00ZSSbQ566MhOdH896vByYSUKl416FjogA6ckn2cxIIA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.com; spf=pass smtp.mailfrom=birthelmer.com; dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b=vDTTDRWd; arc=none smtp.client-ip=62.146.106.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.com
+Received: from [127.0.1.1] (049-102-000-128.ip-addr.inexio.net [128.0.102.49])
+	by smtp01-ext2.udag.de (Postfix) with ESMTPA id F3F88E04D2;
+	Thu,  8 Jan 2026 15:23:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=birthelmer.com;
+	s=uddkim-202310; t=1767882222;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=D4aWng9wh2Y6jaY23RUEufxAnJvOVDBOxwLX3GZyC00=;
+	b=vDTTDRWdMa8n1G424L33yW7AVGZJkV5teQYHog6Z06G9fC03dOxJ63Fl4TmJQqLAEltm8H
+	TsuFKYWDXqO01QHCUA08tu758SOgqTttwzrNVqIVyi5R8TdOJXjUUC1I0p8min397PLWsv
+	DRBBqjWf4hH4LJCWTibgwmRgnlcF1VAvaOccVkgZpKF+KVveDZR19G0KNKtB0YNH5/jDa0
+	wbcNHVL2j5786YwH6pmPSbL0WvJ9FeL7az0hSMS4aFnTek5DG/dLIgzoHTv5laM8uGaGf9
+	5ipb07/TZdVAOaaKRM4uXrGtqLE/juQF9x7cQiBOYTkNAgSR3C5C4bb5Hznsag==
+Authentication-Results: smtp01-ext2.udag.de;
+	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.com
+From: horst@birthelmer.com
+Subject: [PATCH RFC v3 0/3] fuse: compound commands
+Date: Thu, 08 Jan 2026 15:23:33 +0100
+Message-Id: <20260108-fuse-compounds-upstream-v3-0-8dc91ebf3740@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOW9X2kC/43OvQ6CMBAH8FchN3uGfgDqZGLiA7gaB0oP6UBLW
+ mg0hHe36eKo4/8+fncrBPKGApyKFTxFE4yzKYhdAd3Q2ieh0SkDL3nFOBfYL4Gwc+PkFqsDLlO
+ YPbUjdodKSRJHJbSAtD156s0ry3e4XS/wSMXBhNn5d74WWW79hCPDEhvVaqprcZSNOmtt92kwi
+ 5H/qfCklH2jpKxY+pW+yrZtH1KQO5wHAQAA
+X-Change-ID: 20251223-fuse-compounds-upstream-c85b4e39b3d3
+To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
+ Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Horst Birthelmer <hbirthelmer@ddn.com>, syzbot@syzkaller.appspotmail.com
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1767882221; l=1925;
+ i=hbirthelmer@ddn.com; s=20251006; h=from:subject:message-id;
+ bh=GsXlnnfD/ARWqJs4ZJhEUczkVQITzAZ/JAwpXAGdqeU=;
+ b=LHX8xgxtdLlUr15KAtz5CsIO6umsz6l531mr/EAAnLJ+n5w3cnbA6R7AZ3XNiooPWoBlNdrgv
+ hW3rRYIRGsICUpcXfzu/2ISnOOxpZZX++f+94SbsnO5fj1P46yEHVbp
+X-Developer-Key: i=hbirthelmer@ddn.com; a=ed25519;
+ pk=v3BVDFoy16EzgHZ23ObqW+kbpURtjrwxgKu8YNDKjGg=
 
-Switch to the new explicit lazytime syncing method instead of trying
-to second guess what could be a lazytime update in ->dirty_inode.
+In the discussion about open+getattr here [1] Bernd and Miklos talked
+about the need for a compound command in fuse that could send multiple
+commands to a fuse server.
+    
+Here's a propsal for exactly that compound command with an example
+(the mentioned open+getattr).
+    
+[1] https://lore.kernel.org/linux-fsdevel/CAJfpegshcrjXJ0USZ8RRdBy=e0MxmBTJSCE0xnxG8LXgXy-xuQ@mail.gmail.com/
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
 ---
- fs/xfs/xfs_iops.c  | 20 ++++++++++++++++++++
- fs/xfs/xfs_super.c | 29 -----------------------------
- 2 files changed, 20 insertions(+), 29 deletions(-)
+Changes in v3:
+- simplified the data handling for compound commands
+- remove the validating functionality, since it was only a helper for
+  development
+- remove fuse_compound_request() and use fuse_simple_request()
+- add helper functions for creating args for open and attr
+- use the newly createn helper functions for arg creation for open and
+  getattr
+- Link to v2: https://lore.kernel.org/r/20251223-fuse-compounds-upstream-v2-0-0f7b4451c85e@ddn.com
 
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index aef5b05c1b76..338f3113f674 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1221,6 +1221,22 @@ xfs_vn_update_time(
- 	return xfs_trans_commit(tp);
- }
- 
-+static void
-+xfs_vn_sync_lazytime(
-+	struct inode		*inode)
-+{
-+	struct xfs_inode	*ip = XFS_I(inode);
-+	struct xfs_mount	*mp = ip->i_mount;
-+	struct xfs_trans	*tp;
-+
-+	if (xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp))
-+		return;
-+	xfs_ilock(ip, XFS_ILOCK_EXCL);
-+	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
-+	xfs_trans_log_inode(tp, ip, XFS_ILOG_TIMESTAMP);
-+	xfs_trans_commit(tp);
-+}
-+
- STATIC int
- xfs_vn_fiemap(
- 	struct inode		*inode,
-@@ -1264,6 +1280,7 @@ static const struct inode_operations xfs_inode_operations = {
- 	.listxattr		= xfs_vn_listxattr,
- 	.fiemap			= xfs_vn_fiemap,
- 	.update_time		= xfs_vn_update_time,
-+	.sync_lazytime		= xfs_vn_sync_lazytime,
- 	.fileattr_get		= xfs_fileattr_get,
- 	.fileattr_set		= xfs_fileattr_set,
- };
-@@ -1290,6 +1307,7 @@ static const struct inode_operations xfs_dir_inode_operations = {
- 	.setattr		= xfs_vn_setattr,
- 	.listxattr		= xfs_vn_listxattr,
- 	.update_time		= xfs_vn_update_time,
-+	.sync_lazytime		= xfs_vn_sync_lazytime,
- 	.tmpfile		= xfs_vn_tmpfile,
- 	.fileattr_get		= xfs_fileattr_get,
- 	.fileattr_set		= xfs_fileattr_set,
-@@ -1317,6 +1335,7 @@ static const struct inode_operations xfs_dir_ci_inode_operations = {
- 	.setattr		= xfs_vn_setattr,
- 	.listxattr		= xfs_vn_listxattr,
- 	.update_time		= xfs_vn_update_time,
-+	.sync_lazytime		= xfs_vn_sync_lazytime,
- 	.tmpfile		= xfs_vn_tmpfile,
- 	.fileattr_get		= xfs_fileattr_get,
- 	.fileattr_set		= xfs_fileattr_set,
-@@ -1328,6 +1347,7 @@ static const struct inode_operations xfs_symlink_inode_operations = {
- 	.setattr		= xfs_vn_setattr,
- 	.listxattr		= xfs_vn_listxattr,
- 	.update_time		= xfs_vn_update_time,
-+	.sync_lazytime		= xfs_vn_sync_lazytime,
- 	.fileattr_get		= xfs_fileattr_get,
- 	.fileattr_set		= xfs_fileattr_set,
- };
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index bc71aa9dcee8..094f257eff15 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -712,34 +712,6 @@ xfs_fs_destroy_inode(
- 	xfs_inode_mark_reclaimable(ip);
- }
- 
--static void
--xfs_fs_dirty_inode(
--	struct inode			*inode,
--	int				flags)
--{
--	struct xfs_inode		*ip = XFS_I(inode);
--	struct xfs_mount		*mp = ip->i_mount;
--	struct xfs_trans		*tp;
--
--	if (!(inode->i_sb->s_flags & SB_LAZYTIME))
--		return;
--
--	/*
--	 * Only do the timestamp update if the inode is dirty (I_DIRTY_SYNC)
--	 * and has dirty timestamp (I_DIRTY_TIME). I_DIRTY_TIME can be passed
--	 * in flags possibly together with I_DIRTY_SYNC.
--	 */
--	if ((flags & ~I_DIRTY_TIME) != I_DIRTY_SYNC || !(flags & I_DIRTY_TIME))
--		return;
--
--	if (xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp))
--		return;
--	xfs_ilock(ip, XFS_ILOCK_EXCL);
--	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
--	xfs_trans_log_inode(tp, ip, XFS_ILOG_TIMESTAMP);
--	xfs_trans_commit(tp);
--}
--
- /*
-  * Slab object creation initialisation for the XFS inode.
-  * This covers only the idempotent fields in the XFS inode;
-@@ -1304,7 +1276,6 @@ xfs_fs_show_stats(
- static const struct super_operations xfs_super_operations = {
- 	.alloc_inode		= xfs_fs_alloc_inode,
- 	.destroy_inode		= xfs_fs_destroy_inode,
--	.dirty_inode		= xfs_fs_dirty_inode,
- 	.drop_inode		= xfs_fs_drop_inode,
- 	.evict_inode		= xfs_fs_evict_inode,
- 	.put_super		= xfs_fs_put_super,
+Changes in v2:
+- fixed issues with error handling in the compounds as well as in the
+  open+getattr
+- Link to v1: https://lore.kernel.org/r/20251223-fuse-compounds-upstream-v1-0-7bade663947b@ddn.com
+
+---
+Horst Birthelmer (3):
+      fuse: add compound command to combine multiple requests
+      fuse: add an implementation of open+getattr
+      fuse: use the newly created helper functions
+
+ fs/fuse/Makefile          |   2 +-
+ fs/fuse/compound.c        | 276 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/fuse/dir.c             |   9 +-
+ fs/fuse/file.c            | 152 +++++++++++++++++++++----
+ fs/fuse/fuse_i.h          |  27 ++++-
+ fs/fuse/inode.c           |   6 +
+ fs/fuse/ioctl.c           |   2 +-
+ include/uapi/linux/fuse.h |  37 +++++++
+ 8 files changed, 476 insertions(+), 35 deletions(-)
+---
+base-commit: 9448598b22c50c8a5bb77a9103e2d49f134c9578
+change-id: 20251223-fuse-compounds-upstream-c85b4e39b3d3
+
+Best regards,
 -- 
-2.47.3
+Horst Birthelmer <hbirthelmer@ddn.com>
 
 
