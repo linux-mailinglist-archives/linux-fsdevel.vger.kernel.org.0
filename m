@@ -1,184 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-72810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B42D041C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 17:00:44 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D54BD03F22
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 16:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 4288C303B466
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:53:44 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C8D9734756B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 15:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71A9350A3C;
-	Thu,  8 Jan 2026 09:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E5835CBB4;
+	Thu,  8 Jan 2026 09:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="E5DfGP1L"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="S2xWMhad"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54103587A0;
-	Thu,  8 Jan 2026 09:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924DE3C1FDF
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 09:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767864711; cv=none; b=QVNsVuoIiDbH0HcQd126rEDry+3aytinz/Uy8J3vg+lq93r2vPHsQNV+hnqWR3dhaDyyUo3yPu+JqQiJpc9pohPDZCYIuAG/JqsTYYKZtq1pkmjNVhdav/MYM3hcQgCWp1Mh56nS9jQGuCjJ5UQjhKDQ2XZlfgcnDtOHwVUczmA=
+	t=1767865287; cv=none; b=Kg03ptVFYw8O/XQhdOzuaO5HsOjDh5k8LVKirwNjSYofKZVgGEms7io7OgY9Igzi3R2LVt2x7krf6YzOl8+DcFqCbvhYftc33ueUiM7pBjJUlr6TiInsrP9x2FVjYbe8IJ0E99Yy9j4aTa6wgSVi819hFWpb0fy65ghE1V/vIDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767864711; c=relaxed/simple;
-	bh=fxgDOrDHdxqUOe7bBTFXSZEfkUCLDjOLa7/YHi+rGG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CAslAnzaTNspI5GA3uRVOiPNeaDoMsnm6OFUuE7uwR1db4JjUBRHcbfg2ViGch0qZbQDY3jd4lDZofvvEQ3Z7RWxOynbAVMMFl/fsM4ArQNBXFOEEQKbZph4uYDoTBAybfkb4rDbrAHMhfMrxW2J0KADrjz+dYic8+nunm/Mri0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=E5DfGP1L; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1767864701; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=e8PS9uOvkWCdWHFIecWXheJ0mUjj4ZF8NqftcmWhWH8=;
-	b=E5DfGP1L2QGMUBGKyuRDN3invCkyN4aejzN2g3fxrMT5plnHiQXkheYB/HSTrMKeHJMD0VvVAhVswqsIHhy+FLscI/kst0l6iKbFdE80cM6CR4v3+vAnTyFkzY7Dnly+zbLSjczRdIP9VSaZ6OgL3tAQSBtC4QQjOX7Vp7LEWCw=
-Received: from 30.221.132.104(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wwc9TIX_1767864696 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 08 Jan 2026 17:31:41 +0800
-Message-ID: <a8bc6938-84d9-42d6-9928-7cdd13e3a4c8@linux.alibaba.com>
-Date: Thu, 8 Jan 2026 17:31:40 +0800
+	s=arc-20240116; t=1767865287; c=relaxed/simple;
+	bh=z8uuooh91RjFWtNJ78SLIUD278PPcKo7E5fB24ortS0=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=GLjAe6X5Jfx+a+dyGA9thH7zIedPHwt5F/EYSqv5/qkWLqTsfMSiM8I9f2IBslozUzy3YP6gvZ7vtKi2otjepk8ufUOBLFcSChX2Svy1bsWooTEby+huJ1eXNFGnnl9MPkUs0U7ltESWWH0iz3SweFL/oQL3Yuz4gltvJ7tCGs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=S2xWMhad; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1767865264; bh=kr+PGLZ1A3LBDxvkvV8WMVHWLNR4gVDepQz4ot11vNM=;
+	h=From:To:Cc:Subject:Date;
+	b=S2xWMhadO8dWEhHIyjrgRIk8SaNQlIIwIVd7UeDkqDsFX0bFRoNahKu+/h09BrkX1
+	 QJAbw6BOf7tqBvqCU3FUUc0vYB5j3p6EDY+YwdwvRYmqBVpjF7rHXz4ZbhizjkMAWW
+	 DT+hqlID2K5kY/u89DWm7B44aZiESShwBdDS/1QA=
+Received: from OptiPlex-9020.. ([58.32.209.43])
+	by newxmesmtplogicsvrszb43-0.qq.com (NewEsmtp) with SMTP
+	id A4286EB3; Thu, 08 Jan 2026 17:41:02 +0800
+X-QQ-mid: xmsmtpt1767865262t25jbo5av
+Message-ID: <tencent_E7EF2CBD4DBC5CC047C3EB74D3C52A55C905@qq.com>
+X-QQ-XMAILINFO: MeukCuWaRbQlDz5j7ZqL7yqk7qk8LsguH5PVOFjWhyXvMP0xIKbQJHkQfuFBcq
+	 /7jEamKkIKabmgwC6Hj+KwIx3baxybecDeWCChs5vd4YuKvW9sC0fiUdLuCgAyVaUQdVfka6WobG
+	 ZdzmxSEW8dDPYmqvFwGcle6p4z2BESzp+svwbiebfpzztUZOA5DMc14as19JGQJvHsGWQo9TAqwy
+	 wDlVpgEsIxvBXksOGYesiKiQ/dx1OlbftHSuUbuOTCgfLNchAUi4NbtjxhCtbbWJuxTdgahjyuB6
+	 nAjyr0YM8mazUGIlUtUKzVmzA59Pj+9Q5eGmXz3U6okDqzJLkjTNZscRnD3ACUJ/co5TdhtHweHD
+	 oPqzxfKUlTzCh0ViQVlsBowT3iA+Cl0i+YLwIqj4O4isTh64wSLa6Yk9Oj03R1Rm0MrjVstjkUhn
+	 JlTrKOKkXbjrWa0lwg+z9RVEjm745d75Yio6prR2gfSyv2oWm3TftSfPDCJdknM4HdK/PvUOdl5n
+	 /R6sbxucFS3YT2glF0+IAkdGGerhwC5w6M/s0mMEwrLZLtTstMDWJRwJxnsOpWRZgu49hRSa25/K
+	 dYXRm8LLn5IofNuAOZs5Q2LtMS9PTNsZzeej5HhEsAuqMSYrCivD34wjLleGW1At4Q3vlXCNv0zD
+	 m0BbiUHcYOI7LdTvXCH8bHPdt0mCT8t9sf1fxBZu/gPZckIqj7Ygq4omqakIPWRFgoGuYD3MF9ej
+	 UO9QQCUYTqcIwCbLfLaAP01mqe8uY349MzkmJQKtT32M2KvF80SKZEGQOMZtF1aatdnYENhSU5d1
+	 1NJPPC0XblykS7mYMbs1m3dRsqGdKL4duuqZoy1jsWZG0qwL7g4HI7jNcG3cUvG/Lw9MQSeUjxyZ
+	 lxgnLelB59lWGMdwIVz3COxYrpEi0Tth8xB26+2uiF69TXPqinJFL4wtpgvNLFrGpj2oZ6kNsK7b
+	 1WF7YQ1Yb/066+cZpew0iXCJR0C/aZWQjunUIakJoobtOmwT5BS1EdebPJol4DgQ1+YSVPcUqPk0
+	 DG+6IXCZ4UPsW5e0dH/7ivWRD0S3I=
+X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
+From: yuling-dong@qq.com
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com,
+	yuezhang.mo@sony.com
+Cc: linux-fsdevel@vger.kernel.org,
+	Yuling Dong <yuling-dong@qq.com>
+Subject: [PATCH v1] exfat: reduce unnecessary writes during mmap write
+Date: Thu,  8 Jan 2026 17:38:57 +0800
+X-OQ-MSGID: <20260108093857.462560-2-yuling-dong@qq.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 RESEND] erofs: don't bother with s_stack_depth
- increasing for now
-To: Zhiguo Niu <niuzhiguo84@gmail.com>
-Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Dusty Mabe <dusty@dustymabe.com>, =?UTF-8?Q?Timoth=C3=A9e_Ravier?=
- <tim@siosm.fr>, =?UTF-8?B?QWxla3PDqWkgTmFpZMOpbm92?= <an@digitaltide.io>,
- Amir Goldstein <amir73il@gmail.com>, Alexander Larsson <alexl@redhat.com>,
- Christian Brauner <brauner@kernel.org>, Miklos Szeredi
- <mszeredi@redhat.com>, Sheng Yong <shengyong1@xiaomi.com>
-References: <3acec686-4020-4609-aee4-5dae7b9b0093@gmail.com>
- <20260108030709.3305545-1-hsiangkao@linux.alibaba.com>
- <CAHJ8P3LMqKYZjmMdSWyKv5EQvWvvycfidJiTi02UUBoEhgtXzQ@mail.gmail.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <CAHJ8P3LMqKYZjmMdSWyKv5EQvWvvycfidJiTi02UUBoEhgtXzQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+From: Yuling Dong <yuling-dong@qq.com>
 
+During mmap write, exfat_page_mkwrite() currently extends
+valid_size to the end of the VMA range. For a large mapping,
+this can push valid_size far beyond the page that actually
+triggered the fault, resulting in unnecessary writes.
 
-On 2026/1/8 17:28, Zhiguo Niu wrote:
-> Gao Xiang <hsiangkao@linux.alibaba.com> 于2026年1月8日周四 11:07写道：
->>
->> Previously, commit d53cd891f0e4 ("erofs: limit the level of fs stacking
->> for file-backed mounts") bumped `s_stack_depth` by one to avoid kernel
->> stack overflow when stacking an unlimited number of EROFS on top of
->> each other.
->>
->> This fix breaks composefs mounts, which need EROFS+ovl^2 sometimes
->> (and such setups are already used in production for quite a long time).
->>
->> One way to fix this regression is to bump FILESYSTEM_MAX_STACK_DEPTH
->> from 2 to 3, but proving that this is safe in general is a high bar.
->>
->> After a long discussion on GitHub issues [1] about possible solutions,
->> one conclusion is that there is no need to support nesting file-backed
->> EROFS mounts on stacked filesystems, because there is always the option
->> to use loopback devices as a fallback.
->>
->> As a quick fix for the composefs regression for this cycle, instead of
->> bumping `s_stack_depth` for file backed EROFS mounts, we disallow
->> nesting file-backed EROFS over EROFS and over filesystems with
->> `s_stack_depth` > 0.
->>
->> This works for all known file-backed mount use cases (composefs,
->> containerd, and Android APEX for some Android vendors), and the fix is
->> self-contained.
->>
->> Essentially, we are allowing one extra unaccounted fs stacking level of
->> EROFS below stacking filesystems, but EROFS can only be used in the read
->> path (i.e. overlayfs lower layers), which typically has much lower stack
->> usage than the write path.
->>
->> We can consider increasing FILESYSTEM_MAX_STACK_DEPTH later, after more
->> stack usage analysis or using alternative approaches, such as splitting
->> the `s_stack_depth` limitation according to different combinations of
->> stacking.
->>
->> Fixes: d53cd891f0e4 ("erofs: limit the level of fs stacking for file-backed mounts")
->> Reported-and-tested-by: Dusty Mabe <dusty@dustymabe.com>
->> Reported-by: Timothée Ravier <tim@siosm.fr>
->> Closes: https://github.com/coreos/fedora-coreos-tracker/issues/2087 [1]
->> Reported-by: "Alekséi Naidénov" <an@digitaltide.io>
->> Closes: https://lore.kernel.org/r/CAFHtUiYv4+=+JP_-JjARWjo6OwcvBj1wtYN=z0QXwCpec9sXtg@mail.gmail.com
->> Acked-by: Amir Goldstein <amir73il@gmail.com>
->> Acked-by: Alexander Larsson <alexl@redhat.com>
->> Cc: Christian Brauner <brauner@kernel.org>
->> Cc: Miklos Szeredi <mszeredi@redhat.com>
->> Cc: Sheng Yong <shengyong1@xiaomi.com>
->> Cc: Zhiguo Niu <niuzhiguo84@gmail.com>
->> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
->> ---
->> v2->v3 RESEND:
->>   - Exclude bdev-backed EROFS mounts since it will be a real terminal fs
->>     as pointed out by Sheng Yong (APEX will rely on this);
->>
->>   - Preserve previous "Acked-by:" and "Tested-by:" since it's trivial.
->>
->>   fs/erofs/super.c | 19 +++++++++++++------
->>   1 file changed, 13 insertions(+), 6 deletions(-)
->>
->> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
->> index 937a215f626c..5136cda5972a 100644
->> --- a/fs/erofs/super.c
->> +++ b/fs/erofs/super.c
->> @@ -644,14 +644,21 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
->>                   * fs contexts (including its own) due to self-controlled RO
->>                   * accesses/contexts and no side-effect changes that need to
->>                   * context save & restore so it can reuse the current thread
->> -                * context.  However, it still needs to bump `s_stack_depth` to
->> -                * avoid kernel stack overflow from nested filesystems.
->> +                * context.
->> +                * However, we still need to prevent kernel stack overflow due
->> +                * to filesystem nesting: just ensure that s_stack_depth is 0
->> +                * to disallow mounting EROFS on stacked filesystems.
->> +                * Note: s_stack_depth is not incremented here for now, since
->> +                * EROFS is the only fs supporting file-backed mounts for now.
->> +                * It MUST change if another fs plans to support them, which
->> +                * may also require adjusting FILESYSTEM_MAX_STACK_DEPTH.
->>                   */
->>                  if (erofs_is_fileio_mode(sbi)) {
->> -                       sb->s_stack_depth =
->> -                               file_inode(sbi->dif0.file)->i_sb->s_stack_depth + 1;
->> -                       if (sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH) {
->> -                               erofs_err(sb, "maximum fs stacking depth exceeded");
->> +                       inode = file_inode(sbi->dif0.file);
->> +                       if ((inode->i_sb->s_op == &erofs_sops &&
->> +                            !inode->i_sb->s_bdev) ||
->> +                           inode->i_sb->s_stack_depth) {
->> +                               erofs_err(sb, "file-backed mounts cannot be applied to stacked fses");
-> Hi Xiang
-> Do we need to print s_stack_depth here to distinguish which specific
-> problem case it is?
+valid_size only needs to extend to the start of the page
+being written, because when the page is written, valid_size
+will be extended to the end of the page.
 
-.. I don't want to complex it (since it's just a short-term
-solution and erofs is unaccounted so s_stack_depth really
-mean nothing) unless it's really needed for Android vendors?
+Signed-off-by: Yuling Dong <yuling-dong@qq.com>
+---
+ fs/exfat/file.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-> Other LGTM based on my basic test. so
-> 
-> Reviewed-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-
-Thanks for this too.
-
-Thanks,
-Gao Xiang
-
-> Thanks！
->>                                  return -ENOTBLK;
->>                          }
->>                  }
->> --
->> 2.43.5
->>
+diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+index 536c8078f0c1..83f9bebb49f3 100644
+--- a/fs/exfat/file.c
++++ b/fs/exfat/file.c
+@@ -707,21 +707,17 @@ static ssize_t exfat_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ static vm_fault_t exfat_page_mkwrite(struct vm_fault *vmf)
+ {
+ 	int err;
+-	struct vm_area_struct *vma = vmf->vma;
+-	struct file *file = vma->vm_file;
+-	struct inode *inode = file_inode(file);
++	struct inode *inode = file_inode(vmf->vma->vm_file);
+ 	struct exfat_inode_info *ei = EXFAT_I(inode);
+-	loff_t start, end;
++	loff_t new_valid_size;
+ 
+ 	if (!inode_trylock(inode))
+ 		return VM_FAULT_RETRY;
+ 
+-	start = ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
+-	end = min_t(loff_t, i_size_read(inode),
+-			start + vma->vm_end - vma->vm_start);
++	new_valid_size = (loff_t)vmf->pgoff << PAGE_SHIFT;
+ 
+-	if (ei->valid_size < end) {
+-		err = exfat_extend_valid_size(inode, end);
++	if (ei->valid_size < new_valid_size) {
++		err = exfat_extend_valid_size(inode, new_valid_size);
+ 		if (err < 0) {
+ 			inode_unlock(inode);
+ 			return vmf_fs_error(err);
+-- 
+2.43.0
 
 
