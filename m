@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-72901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18CAD0562B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 19:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1703BD0571F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 08 Jan 2026 19:19:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7D92C3541492
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 17:21:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 895AB307F20A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 17:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F7F345CA6;
-	Thu,  8 Jan 2026 17:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7E53469E3;
+	Thu,  8 Jan 2026 17:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEjw0/vg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="seVFw8zU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4552DB7BC;
-	Thu,  8 Jan 2026 17:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0A72DB7BC;
+	Thu,  8 Jan 2026 17:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767892552; cv=none; b=Wr8Sfn+MyMlODGiKhc84UDCBfeFlF/5wYzcPlwuV5P7VDAoNIc2wrbQRZo4tTJ1xbCBXCnbGjWs5jUjsItaDgI51A95/Wnd1ZhczxJm3lTKL1/jCpzxbF5npnc1EGRqxx8R/1YU6Fg6GrUFwmbuPMpVtlVm6uqVuceOxSAE386g=
+	t=1767892560; cv=none; b=aSHJH0lt8QdKvCCXzAUCrP3YYVuexL45LDruHNu/PMEgjfglN875Wn9mf3p6NiyEw69VRGUpevoYJIq4pY78JQmDI9wqkr1XpyNZ5XtdCv6k3rvN5s5BfSzHoiZJ4fnETz264qf/swxZKFQa+xHv89tnTLB59Ys41OJCljMxU7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767892552; c=relaxed/simple;
-	bh=/QjFws5fePN18OBYa8bISKhX2yIiYoWbwKUyTsCKvi8=;
+	s=arc-20240116; t=1767892560; c=relaxed/simple;
+	bh=9+zOdW5lNGHcGX85wb9WeocgdTAcTrprGG0z5Bzi+RE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=faMo5q6b89OK/8eR2sJyF+RBH7coP6HGluLoe5NQClT1M/8Emymu/VdH2ltCBCNTUGaRfd6zrGiVBDI39FQVeF4Eu+QeICkNFiyfbboEMFtXEZDvFu9RQhqwWGx9IhJmr7bIrZBf0kB4qwP5ukwTLBvI08GmNvpc1y0cmA0/L1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEjw0/vg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74598C19424;
-	Thu,  8 Jan 2026 17:15:44 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=oTNeav4/E3c2ehpPcRTPv0A5uLo2ZsczWGLNQTSfhG483IawXMiuImiaSQfQ8SiWbG+g+1rd8OFKdIYd6c/BrlPPJ3Ebrtc6dSTwDPV0HclGY3ZLMz9hFII7xzeKQUb/fcJmR4BEdehWcNg1I1pUuqwuf2gtEulT9nbmSRdDoo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=seVFw8zU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06FABC19423;
+	Thu,  8 Jan 2026 17:15:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767892551;
-	bh=/QjFws5fePN18OBYa8bISKhX2yIiYoWbwKUyTsCKvi8=;
+	s=k20201202; t=1767892559;
+	bh=9+zOdW5lNGHcGX85wb9WeocgdTAcTrprGG0z5Bzi+RE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=PEjw0/vgT6GLsQDvxChTEJJWrZnAQSwT/oOYtarnEr1mnlXneb12dRn/+E7ODlH3e
-	 lEscuNaICbpX+q+/6dO9siSu+ISv3W0K9wwdJ/mDEw92/56eNocyUzJjpaC6QdgIyG
-	 TXJksMFDlSytDs24skqoMve70gF6oZNa7uvLK/sesVf1BfG3jX47nbuodaLg5SaXh5
-	 LmcwS/E2mZY6CTlzB8FWEcmq3mPVRu19tuFt5HFUJmWTID9UfJc3ZPIB70pwGbpr4f
-	 vHcBl/oxvixj+KEoGwXKpq84pv0rNzyvfBOZbbD9Nf9EOol0+LhwcwkX8AyEiOq27a
-	 b5nd9nZ8BtLsg==
+	b=seVFw8zUXzlt4ulIQql8YFbNPIjR9Rf/DPANtIaUVgMB7HrEOnOdJqRINwwlm0c8z
+	 AvANMGxK1reP6TvY6s1YHftUbyPa1a4D7XQr5wqGFyxwsTfK+cqKWqN9ST57dkVbsO
+	 SMKtfsN9QT6PXI/gKFQrYHJqE+Lk/Gs6kj6Hvg3XgESuxAUelqN0C73lD4B6KPr95m
+	 JpqHj+JRZQ0rAggZG1yobkaAZfi3PHEVb3k5rKu0rV7A0tLPvGctl/0eI3eBTKXMGS
+	 pd8AFhLZOqZHzJMNSVhNeDhMxSBfrogUoW8EaHeLTlg6D3ZEhNgHnFWQ5i2xZhNPw9
+	 lByRPSrHlyiUw==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 08 Jan 2026 12:13:12 -0500
-Subject: [PATCH 17/24] overlayfs: add setlease file operation
+Date: Thu, 08 Jan 2026 12:13:13 -0500
+Subject: [PATCH 18/24] squashfs: add setlease file operation
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260108-setlease-6-20-v1-17-ea4dec9b67fa@kernel.org>
+Message-Id: <20260108-setlease-6-20-v1-18-ea4dec9b67fa@kernel.org>
 References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
 In-Reply-To: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
 To: Luis de Bethencourt <luisbg@kernel.org>, 
@@ -107,73 +107,73 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1800; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=/QjFws5fePN18OBYa8bISKhX2yIiYoWbwKUyTsCKvi8=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpX+W87k4FcETAMephFZz/qe7wC4C41gmjqLLfA
- Q/kBv6HQmOJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaV/lvAAKCRAADmhBGVaC
- FYTHD/9CJrqt0jlrMR3MPzOXX6TESjSMY5U+1+dwGCcCtiGwGSBiK1ZY1GBC73psRJ+mYjVfSic
- MNCosL0YefLDvCp7QfNs9/ejLx7RUtyNCes+plJwrTahfnVJZ1uNYdK5DEZ44L2DqTFmrzcD4wQ
- oy1zj93AjNBYypMHV/k+qL1usyMtFr3jPnged5fSSsBkJ0C5Si0L3ZpP6TqWEWeOleYjDy2urwR
- fGkQUW+9Y6Xar5xRYHpGJwt5PKYAatcXU+SveMXOFbp35GKe+fnfNWZiABMI8W02Qp4Mf9CV2ZS
- 45JLWGX1Hhj/0H/KewEpFamsXAQz298u+NwRFRypHdABGYAFB1wzK1r/D5p2LnmLKqrTaQe5bmi
- 9Jgmywfj0M6wILCz2dDyEET+5PE0sipM9aPV9cHp/v/kpE/99FxGIVlFijqG1YuygTZ3CnEMEJu
- y6HITTLBUusNTrhTU0Khne6zJzbhrbr4Ank1yRCl3u3cBFZxLvFFUf7YuQpp9L+6yqXasB7W63h
- VKAGaSoSzMKxT87yMNEdOlgZcotY/MTm6wihQM7wiAsC80uzL7LVT26vWynyqiZeva+dO6UcZet
- rUCqoy4q+/P7Ir1xCA0rQQCgb99iKp2pznNbBKq1+cYFA4N3yihYKFOnTD8jO/9X9fRvFIvZWGS
- bhGnYs9Awrd5yCw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1734; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=9+zOdW5lNGHcGX85wb9WeocgdTAcTrprGG0z5Bzi+RE=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpX+W99/HrvAnnmzGcblpLXD7F4um4fHAJVhg4+
+ LzfwmzDW3eJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaV/lvQAKCRAADmhBGVaC
+ FUmtD/4jEvDoFR4qieUNgn8rr/UtKPrGyvRvQMWHMSrHBhqUd+/caCds+/vOgFJuPUUC8BBPKaN
+ PpWJr3+bB+63HgaLFL5kjBBI84UDuHXUsAdKojmsuX46XRIFCdY4HiLsBRwNlCL3EOFRZb7QMNA
+ CLXuPKbYzRdJ5vIeg0PfhFnEee9jhOdU7PhkAlUByzRLB4aRTSgqIksyQLdZtEcq43Mt4+08iOE
+ 03e8Lyi8MUEQ40+6qwWiOrSbb0RVCZtmy3jlJUPmrRBFnaaSbyXBwQ5pIpRC7Zpjtk9XwyatLAT
+ bE7MsYykcOYo7FuP+Eeb0IkX1pY5/khOn3jb8NDXsKQG0ExLeybRnT5n4UB74WPa1yl9VN+yqO3
+ QlSW3ny4UUjj19ZXN4Q7048K5CeEiAQBfXtwvEd5vIX7ErHKQXL+VAeFjO3jcXrMc2y9UCvEcfK
+ nDXsszCFcuM/T6/I/XGZXHHOGA/FUVvHC/oFF/nix3OCXccHGPKgcXJX8tHP1+t0xqnFretZz8d
+ 5CypPiszzqEX0oF54cIJjyIzVhzWNzjfhi47ao5Ab42Lu1n7ea420e2etzoD35ai1nWJURpgrC6
+ 9S21HSVhuCfUGGAqiahZXCHQPulLW/N1GNp7FFtV71kFlOoBok5C+bkbkjXp2uz+F7s/PU8fOEX
+ 9ml0VlbuQF2h4zA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Add the setlease file_operation to ovl_file_operations and
-ovl_dir_operations, pointing to generic_setlease.  A future patch will
-change the default behavior to reject lease attempts with -EINVAL when
-there is no setlease file operation defined. Add generic_setlease to
-retain the ability to set leases on this filesystem.
+Add the setlease file_operation pointing to generic_setlease to the
+squashfs file_operations structures. A future patch will change the
+default behavior to reject lease attempts with -EINVAL when there is no
+setlease file operation defined. Add generic_setlease to retain the
+ability to set leases on this filesystem.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/overlayfs/file.c    | 2 ++
- fs/overlayfs/readdir.c | 2 ++
- 2 files changed, 4 insertions(+)
+ fs/squashfs/dir.c  | 2 ++
+ fs/squashfs/file.c | 4 +++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index cbae894572348acb3ba6c2b6e7f84558379110c2..8269431ba3c66d49d2eea24c4ca63a3d2879580a 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -5,6 +5,7 @@
+diff --git a/fs/squashfs/dir.c b/fs/squashfs/dir.c
+index a2ade63eccdf38cd7829a1e79efbb6cb607fa54f..cd3598bd034f01c74eb2e840187e14cb05b640f3 100644
+--- a/fs/squashfs/dir.c
++++ b/fs/squashfs/dir.c
+@@ -15,6 +15,7 @@
+  */
  
- #include <linux/cred.h>
- #include <linux/file.h>
+ #include <linux/fs.h>
 +#include <linux/filelock.h>
- #include <linux/mount.h>
- #include <linux/xattr.h>
- #include <linux/uio.h>
-@@ -647,4 +648,5 @@ const struct file_operations ovl_file_operations = {
- 
- 	.copy_file_range	= ovl_copy_file_range,
- 	.remap_file_range	= ovl_remap_file_range,
-+	.setlease		= generic_setlease,
- };
-diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-index 160960bb0ad0b0cd219cb2d8e82d8bda08885af0..7fd415d7471ed58849710da9f8a414b2b7aca1b4 100644
---- a/fs/overlayfs/readdir.c
-+++ b/fs/overlayfs/readdir.c
-@@ -8,6 +8,7 @@
+ #include <linux/vfs.h>
  #include <linux/slab.h>
- #include <linux/namei.h>
- #include <linux/file.h>
+ 
+@@ -220,4 +221,5 @@ const struct file_operations squashfs_dir_ops = {
+ 	.read = generic_read_dir,
+ 	.iterate_shared = squashfs_readdir,
+ 	.llseek = generic_file_llseek,
++	.setlease = generic_setlease,
+ };
+diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
+index 1582e0637a7ec87c02afee845dce052259e6af1b..4be92206e755dc6b385bc9de456449c5ed4385b7 100644
+--- a/fs/squashfs/file.c
++++ b/fs/squashfs/file.c
+@@ -28,6 +28,7 @@
+  */
+ 
+ #include <linux/fs.h>
 +#include <linux/filelock.h>
- #include <linux/xattr.h>
- #include <linux/rbtree.h>
- #include <linux/security.h>
-@@ -1070,6 +1071,7 @@ const struct file_operations ovl_dir_operations = {
- 	.llseek		= ovl_dir_llseek,
- 	.fsync		= ovl_dir_fsync,
- 	.release	= ovl_dir_release,
+ #include <linux/vfs.h>
+ #include <linux/kernel.h>
+ #include <linux/slab.h>
+@@ -775,5 +776,6 @@ const struct file_operations squashfs_file_operations = {
+ 	.llseek		= squashfs_llseek,
+ 	.read_iter	= generic_file_read_iter,
+ 	.mmap_prepare	= generic_file_readonly_mmap_prepare,
+-	.splice_read	= filemap_splice_read
++	.splice_read	= filemap_splice_read,
 +	.setlease	= generic_setlease,
  };
- 
- int ovl_check_empty_dir(struct dentry *dentry, struct list_head *list)
 
 -- 
 2.52.0
