@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-73017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA57FD07F43
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 09:49:33 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3533D07FBE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 09:52:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9F6BA30471A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 08:48:55 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id BCC2E305CB1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 08:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C74352927;
-	Fri,  9 Jan 2026 08:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D455435292A;
+	Fri,  9 Jan 2026 08:49:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E806345CC8;
-	Fri,  9 Jan 2026 08:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87E7328B47;
+	Fri,  9 Jan 2026 08:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767948532; cv=none; b=UC7Z+q/taTmI3Dw4zEOfjsJNvN6iKiv9j2ncfaOiD/w0aSHpQgK0VASP7fnC8CgxNezaDpDdESZoVxhXTB59b6Ql9ZCxvwk9hRacir2/jzDyImrnlRzue7Dc/05SKmJIImUthN5ACHHcDDhehlqx1f5f7TeOUdNzzi1tcuQQ6pA=
+	t=1767948576; cv=none; b=ZBWR5SgItyCeULTsh1moDTkgnNDnuEMeQavad5ZNMMsu552j6Uhhff/JfF9cPOggbgvw0NbFBp6RmnrsIzVDcQJSq3wBD3SMvtFbjVzWGhLL1w0pGd+hoBXN6hp/IsEgALUHJxVL8RISJadOV14h0cZlCjnBfB/gDa+yevvwuTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767948532; c=relaxed/simple;
-	bh=4QaFFR8yQNvWu6hmP5ORiJ3JrOB69XBlmV1Bh4uLptA=;
+	s=arc-20240116; t=1767948576; c=relaxed/simple;
+	bh=+5novoBh6B9IW59hMlVDJmkiWusNTr2Ij2rjW4SLAH8=;
 	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=RTI6RDpj0d+48UigpR4L7Z68j4x8dcY/3/UmOjCb39M8+iGq8Y04CbnU/pX8QXT0fOgx6c1AIKMPCgNadqBjmILXD9ASZVPETKpoc7YgGkAD1ZFxHwVOjO3qoV3qmY2WsLwZ7NyY2D8cFsv5cI/JQwzTn5sRIMfWnK2R9njvX+I=
+	 MIME-Version:Content-Type; b=I88qDnlNlJs54ez2kLLXKwJLeWU+SfOii0uU/Puf+K1miU4SbILQ/g2YyeVd1ZVBtcEakjTPTcp3o3XXPk6hbMg6dHhlvXdiI7SxrLXFCNeMpkAfHAbernfH+hYWTk6GPV6X4Xn+SpvHIsIUjpkI7VBeZHJnpDs6w7koO3dMRLw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
 Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 6A19D29ABCA;
-	Fri,  9 Jan 2026 09:48:46 +0100 (CET)
+	by lithops.sigma-star.at (Postfix) with ESMTP id E3A1829ABCA;
+	Fri,  9 Jan 2026 09:49:32 +0100 (CET)
 Received: from lithops.sigma-star.at ([127.0.0.1])
 	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id Q5my43uhi71j; Fri,  9 Jan 2026 09:48:46 +0100 (CET)
+	with ESMTP id E_K9MHsfado2; Fri,  9 Jan 2026 09:49:32 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id D0BC029859E;
-	Fri,  9 Jan 2026 09:48:45 +0100 (CET)
+	by lithops.sigma-star.at (Postfix) with ESMTP id 8C83E29ABD6;
+	Fri,  9 Jan 2026 09:49:32 +0100 (CET)
 Received: from lithops.sigma-star.at ([127.0.0.1])
 	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Ys-NzouVpSJW; Fri,  9 Jan 2026 09:48:45 +0100 (CET)
+	with ESMTP id yaQO1WajF43l; Fri,  9 Jan 2026 09:49:32 +0100 (CET)
 Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 30C7B29859D;
-	Fri,  9 Jan 2026 09:48:45 +0100 (CET)
-Date: Fri, 9 Jan 2026 09:48:45 +0100 (CET)
+	by lithops.sigma-star.at (Postfix) with ESMTP id 2BED829ABCA;
+	Fri,  9 Jan 2026 09:49:32 +0100 (CET)
+Date: Fri, 9 Jan 2026 09:49:32 +0100 (CET)
 From: Richard Weinberger <richard@nod.at>
 To: Jeff Layton <jlayton@kernel.org>
 Cc: Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
@@ -113,10 +113,10 @@ Cc: Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>
 	linux-nfs <linux-nfs@vger.kernel.org>, 
 	linux-cifs <linux-cifs@vger.kernel.org>, 
 	samba-technical <samba-technical@lists.samba.org>
-Message-ID: <393733638.88534.1767948525135.JavaMail.zimbra@nod.at>
-In-Reply-To: <218403128.88322.1767944438487.JavaMail.zimbra@nod.at>
-References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org> <20260108-setlease-6-20-v1-12-ea4dec9b67fa@kernel.org> <218403128.88322.1767944438487.JavaMail.zimbra@nod.at>
-Subject: Re: [PATCH 12/24] jfs: add setlease file operation
+Message-ID: <235309114.88543.1767948572101.JavaMail.zimbra@nod.at>
+In-Reply-To: <20260108-setlease-6-20-v1-11-ea4dec9b67fa@kernel.org>
+References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org> <20260108-setlease-6-20-v1-11-ea4dec9b67fa@kernel.org>
+Subject: Re: [PATCH 11/24] jffs2: add setlease file operation
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -126,19 +126,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF146 (Linux)/8.8.12_GA_3809)
-Thread-Topic: add setlease file operation
-Thread-Index: Ijb4veyM6wDb0tIeqxd8skdz5qkIYBNsmijj
+Thread-Topic: jffs2: add setlease file operation
+Thread-Index: 1XfajkHy73ekR8RzfIWJ5jINW3wE1g==
 
 ----- Urspr=C3=BCngliche Mail -----
-> Von: "richard" <richard@nod.at>
->> ---
->> fs/jfs/file.c  | 2 ++
->> fs/jfs/namei.c | 2 ++
->> 2 files changed, 4 insertions(+)
->=20
-> Acked-by: Richard Weinberger <richard@nod.at>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> fs/jffs2/dir.c  | 2 ++
+> fs/jffs2/file.c | 2 ++
+> 2 files changed, 4 insertions(+)
 
-Whoops! I meant to reply to the jffs2 patch...
+Acked-by: Richard Weinberger <richard@nod.at>
 
 Thanks,
 //richard
