@@ -1,165 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-73045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id A62C1D09284
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 13:01:06 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B31D0A042
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 13:51:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id D683B300925B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 12:01:02 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E9ABD309321B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 12:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CF335A922;
-	Fri,  9 Jan 2026 12:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B1C35BDD9;
+	Fri,  9 Jan 2026 12:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jNMdYXPw"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="mBuea27j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9748E359FBB
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 12:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BA235B133
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 12:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767960059; cv=none; b=EZ6J9+b6E0aKSQeNGY1k+5rV+E9cubX4bZ+GUcZ8n+J55/NB93H16gIxJoALS8qu06myEjWbbe9RF2qn8P3yvUzvnzzexloMsVV7BqEaP0tNXVYJO7eIom9aOGkwGPACp2PLYCpi7BJ2qtHkYTYzq0++jfPw7XSTtLa4fcKC17w=
+	t=1767962325; cv=none; b=B/dYBPQA6A0mWGPsLabYErZ8niZW0UQ0vZ84O339rvmUi9BI3wp+6DWOZyKwkHbNtF/ceKEQJ+PdvrxFmVbZQ2idM521OTwp6fgxHRY1zGkfNLCs/e8gVfW0QGzY/1rpiQHq7Rz++NIOxlIQeEurd1KhplQKqRiHcGFK1Momrsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767960059; c=relaxed/simple;
-	bh=UznriGhvPdMXopWmxqdYE06e8kOqyoTAoTC4x2EkwLM=;
+	s=arc-20240116; t=1767962325; c=relaxed/simple;
+	bh=w0/bscQ7J6JUtueF0P2lJB2+eSYbcnb+3dMr7mj3YZY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mMxVLluIq+/7/GmdedEXBQus5EMAzp6dM0w4Y7myWs01gUA6DrMB/1RlLvGL3+GuLDM+RMWulOnboYtNN9IM1HHjWZTQGKW4P+7BBU7zpQQSjACylG/1zEUlFu7Qbwq0Gf6EIMummFV6zjNvLB8KuLZCzTHbJ+Flzfe/vpUgqNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jNMdYXPw; arc=none smtp.client-ip=74.125.82.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-121b14efeb8so382213c88.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 04:00:57 -0800 (PST)
+	 To:Cc:Content-Type; b=H1KDdY7tu3+jus5T/BMG+gKsLjPDBo9R5Qny4O4vQwp1Iw8llnFzZEj+J52B42RtzA4R5GLhc/6W6HblY7C44N9+6yJceQDo90ZglOv32p6xAjoArOMFIsJABTnrAbdN3K3t4k40U9bCOGei0pimKWVGNWMJems4EhzPZPurVZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=mBuea27j; arc=none smtp.client-ip=74.125.82.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-2b04a410f42so3444046eec.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 04:38:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1767960057; x=1768564857; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1767962322; x=1768567122; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8T/N0YjJdMPLkCw5fXXL5pxg8eGLGcQ3fujG7tmwcHw=;
-        b=jNMdYXPwHAkePPH57quq73z7jHRvkOS3WInF4J8dZ5MQixo2oE+Vzpj5MwDypGKBGl
-         V896nwkFyVBAHrgdjsvScsrSjCXPMnyZa4lYtv3vdeBsxeFSQny7t8IjCkpBCzUOSQuf
-         TdEo1hjfyh84A1DRPOKLBYqwczMXYl5HT333DFF8E1uOsxI87KKmN7hTYWrBQCkPRswk
-         H30rzjmXN6jR+6hyDg8RQblbk5t8E+H5Li1K6557uipY5Lu3szZy1jcxE+vgmkhiQiDj
-         NuzE0Bj2voyiUAnpGYUZUtenHwgODxZmMkjwyrRgyPQXoxClRzYDnFpMvUUEwKqZviCd
-         Ohxw==
+        bh=yQJsv4Dj4MBtqV/JXrC0+1HqqDkJYiYEpDs3inEn0Zk=;
+        b=mBuea27j6hUMOtBAWmX1mxXAM00Lk++Coa+vM3ghFU+frWaDFB5IE3vq9hp2/JwWVQ
+         QQHUKepGQZQvCJJQu0yxrXErteNZGPWw6CBZArYHZsPepSk7moWMFd1JkiERmmfXB4Kz
+         7RydAp4nntMTDYDooQqtdhhCBubvfAYj3DJdU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767960057; x=1768564857;
+        d=1e100.net; s=20230601; t=1767962322; x=1768567122;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8T/N0YjJdMPLkCw5fXXL5pxg8eGLGcQ3fujG7tmwcHw=;
-        b=g4RYmOYQfZK0u0fxCdhoXETA7KSgaTS9AhnBmSfDvZ4ZeHUtNrh9ggVg3lLWcmTvwn
-         l8eD5AmALp4gcLhe0THLIzHBU0HdKQRMQQ1DwQt4LX0fSB0x0Y9JOzx/Nael/UNNvrwv
-         Oc0+LZRcTUAHxnwLdHlaHmcE1r8ru8BffY+wLJiVDXcPD88NX8vFy3JP8fvKC6f+LMsR
-         91B4EkcRU/89iVJ4ymVg/O8t+59DueDsEV7RatQy2FLQVfDz+JR1xxl7WOEnVlYyGXQu
-         csSvi4EmhlXgLwJ6oKXlHUzRnnZE+eLfTB6iZ47Dtr0YVTPEXOoXqtvSkonXqSL05jMM
-         d1yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXsWCKwQjz2UuDb902+UFaL3ZJuNScIH2hD+GN0v17GWWfRw6YLyKCsc/BvwsD6BZhuZ+GvRWlly5ogUKL@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOESLPKu/F39iy2m8ynIYpEOm0yE8kiSNYCWO2WkC5in31rj+O
-	pAwt1dtyFIyyC+7YHDzZxCJrj1N81xAtia448d1quWW6G2MfKS/r0heLZlkZrnTVg1JjGQjrIyk
-	Sgm8Ik32RhMfKuJC8cW49e5+JoCzp8mH4b7MdimDw
-X-Gm-Gg: AY/fxX4Ab0sodQKyKAGU8rXbqXFtAOqywuNaEolV3ldSdX5ZbQ1GS2GmcfBEeQ739yy
-	Cpd7Z9D80s/VRROcvyPAdru+RhAhHHIVUePtPfIt7bJ2wNc9qZO9823Oty3RTJPKb8mChxSGCxD
-	wBhvggCUmf/dvT+E32s75AlCdtxIAu1FLEasXQEWcgu6LaC821EgitaceLXHrUf75yNZUI7+2Kf
-	54jYWXAzyOeL+0rpitW/e4c0cH8xZz3TBWwJZrXh6UAiGWUSNfx9GCUlRJkoVYVGTZbTh59GFcS
-	uLM0dixHuKsynadga2LxO8VAhe0=
-X-Google-Smtp-Source: AGHT+IHkqsIfmF0FluQuDu53MIRkzwgbeeQdzuawZsTGXquSsN/434sV7j/4310j+FEbQ9rNU7DnJdRzHaNlwPlcWDM=
-X-Received: by 2002:a05:7022:4199:b0:11b:ca88:c4f7 with SMTP id
- a92af1059eb24-121f8b67cc0mr8303949c88.40.1767960054556; Fri, 09 Jan 2026
- 04:00:54 -0800 (PST)
+        bh=yQJsv4Dj4MBtqV/JXrC0+1HqqDkJYiYEpDs3inEn0Zk=;
+        b=OKGHZYkakXAPcpnm4p0wd1nJ1tFVLpT2UX/Y/lHEc24lbVY/m7hYXtyTnMG3FvrrgO
+         hBzAyOOr1UdhizzvbxMu4nzin00XaHIi9jrlLI1ZGS5cAB0wEJ9vHpoK8CcQmDgh5OA7
+         cxqBB95/p+XHH5Z3lYmyI92VcOEflDdmuuS2f3b5BUPzR/MZYqn9xenN6+KN97nc6/Wk
+         R6Zp7aBAUojV/780QeTBEl9Oa7TyUKF+5CIn7d2nqkKThrfTb/jHZii7VQ3I7WsUaSGM
+         +1/38c0x7MpzYIfbPimzV0NAucQhwI/p4VkCiw2T70nHk+Cc7+ZSNJYk1PYzxRcxYl/X
+         PzIg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9yriyFovc2q72xJMil6mkeQZ7qu3l2G2LAb39Foyl/UH7KfaybAzDcPFQHjVVzQofAO7goWu1h77zBBN6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjVMPgkNCGQkAvGW/UmXG3RpUxmoZsUUBzTqMfikRv6OL8l8k2
+	I7e2xghusU9tIaB0Sqk5xVVD2BDVXDZN3W4HAhPXtBKs6kGD6m4Q6aivhBPpeGtb9rD5iJhZKjg
+	AR4C//ubJH3LoCjj/1XNP9tyfAxeNYF4BGDReuU+mUw==
+X-Gm-Gg: AY/fxX5K/RMOhYsbuD+Kdy/ljtIsSpRzpEUNizzcD6rAjqPnGrVyjn/uKselrQuleMG
+	3E9dCykBgF9s7FkfUD+SXlw8ADJiL2GfWKBnAqApUoLfiZ4vrBDL/5As6JZKy14JAyysdDi09jO
+	RFNVR4g8iZBjo9fwSu/Sy9HjXwTlJvgapXeZGUaLw5k/fRNco5a2MdYllttB8ecZ+F+CUjf2+ZR
+	JDB6OvcAc1bfXw/r640ZxPUFVz7tGS5RO795M/oLo2z6HgXp8B9CysZL/W/d84YipTa
+X-Google-Smtp-Source: AGHT+IE6RGTYNFGWr1bDZOwdfO45KsQF9cYcg9cUD8BreIfg65Hx4serUDRPPWTMuGgqfCqlww8Wrkbo+61sFryEDhY=
+X-Received: by 2002:a05:7301:7108:b0:2b0:5609:a593 with SMTP id
+ 5a478bee46e88-2b17d26717fmr5507307eec.16.1767962322041; Fri, 09 Jan 2026
+ 04:38:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251231-rwonce-v1-0-702a10b85278@google.com> <20251231151216.23446b64.gary@garyguo.net>
- <aVXFk0L-FegoVJpC@google.com> <OFUIwAYmy6idQxDq-A3A_s2zDlhfKE9JmkSgcK40K8okU1OE_noL1rN6nUZD03AX6ixo4Xgfhi5C4XLl5RJlfA==@protonmail.internalid>
- <aVXKP8vQ6uAxtazT@tardis-2.local> <87fr8ij4le.fsf@t14s.mail-host-address-is-not-set>
- <aV0JkZdrZn97-d7d@tardis-2.local> <20260106145622.GB3707837@noisy.programming.kicks-ass.net>
- <7fa2c07e-acf9-4f9a-b056-4d4254ea61e5@paulmck-laptop> <CANpmjNPdnuCNTfo=q5VPxAfdvpeAt8DhesQu0jy+9ZpH3DcUnQ@mail.gmail.com>
- <b0f3b2a6-e69c-4718-9f05-607b8c02d745@paulmck-laptop>
-In-Reply-To: <b0f3b2a6-e69c-4718-9f05-607b8c02d745@paulmck-laptop>
-From: Marco Elver <elver@google.com>
-Date: Fri, 9 Jan 2026 13:00:00 +0100
-X-Gm-Features: AQt7F2pBr33IaeEZzEbVtkwEGkq72MjCI-S9aarJ4oQjqFT6bTaIuZHUMWVHI0k
-Message-ID: <CANpmjNNSCNm+A=nKdeSDAkcgiKXMEdcQUeMb4PZxWoP2t-z=3A@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Add READ_ONCE and WRITE_ONCE to Rust
-To: paulmck@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Gary Guo <gary@garyguo.net>, Will Deacon <will@kernel.org>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Magnus Lindholm <linmag7@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Lyude Paul <lyude@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
-	linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	kasan-dev@googlegroups.com
+References: <20251212181254.59365-1-luis@igalia.com> <20251212181254.59365-5-luis@igalia.com>
+ <CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com> <87zf6nov6c.fsf@wotan.olymp>
+In-Reply-To: <87zf6nov6c.fsf@wotan.olymp>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 9 Jan 2026 13:38:29 +0100
+X-Gm-Features: AZwV_QhSIUxuWrzQVKaJgGZ_yHF7U9q04yphYG9kmea3ARSZEpjIOCP6bIrU9Uo
+Message-ID: <CAJfpegst6oha7-M+8v9cYpk7MR-9k_PZofJ3uzG39DnVoVXMkA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the FUSE_LOOKUP_HANDLE operation
+To: Luis Henriques <luis@igalia.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Bernd Schubert <bschubert@ddn.com>, Kevin Chen <kchen@ddn.com>, 
+	Horst Birthelmer <hbirthelmer@ddn.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Matt Harvey <mharvey@jumptrading.com>, 
+	kernel-dev@igalia.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 9 Jan 2026 at 03:09, Paul E. McKenney <paulmck@kernel.org> wrote:
->
-> On Tue, Jan 06, 2026 at 08:28:41PM +0100, Marco Elver wrote:
-> > On Tue, 6 Jan 2026 at 19:18, 'Paul E. McKenney' via kasan-dev
-> > <kasan-dev@googlegroups.com> wrote:
-> > > On Tue, Jan 06, 2026 at 03:56:22PM +0100, Peter Zijlstra wrote:
-> > > > On Tue, Jan 06, 2026 at 09:09:37PM +0800, Boqun Feng wrote:
-> > > >
-> > > > > Some C code believes a plain write to a properly aligned location is
-> > > > > atomic (see KCSAN_ASSUME_PLAIN_WRITES_ATOMIC, and no, this doesn't mean
-> > > > > it's recommended to assume such), and I guess that's the case for
-> > > > > hrtimer, if it's not much a trouble you can replace the plain write with
-> > > > > WRITE_ONCE() on C side ;-)
-> > > >
-> > > > GCC used to provide this guarantee, some of the older code was written
-> > > > on that. GCC no longer provides that guarantee (there are known cases
-> > > > where it breaks and all that) and newer code should not rely on this.
-> > > >
-> > > > All such places *SHOULD* be updated to use READ_ONCE/WRITE_ONCE.
-> > >
-> > > Agreed!
-> > >
-> > > In that vein, any objections to the patch shown below?
-> >
-> > I'd be in favor, as that's what we did in the very initial version of
-> > KCSAN (we started strict and then loosened things up).
-> >
-> > However, the fallout will be even more perceived "noise", despite
-> > being legitimate data races. These config knobs were added after much
-> > discussion in 2019/2020, somewhere around this discussion (I think
-> > that's the one that spawned KCSAN_REPORT_VALUE_CHANGE_ONLY, can't find
-> > the source for KCSAN_ASSUME_PLAIN_WRITES_ATOMIC):
-> > https://lore.kernel.org/all/CAHk-=wgu-QXU83ai4XBnh7JJUo2NBW41XhLWf=7wrydR4=ZP0g@mail.gmail.com/
->
-> Fair point!
->
-> > While the situation has gotten better since 2020, we still have latent
-> > data races that need some thought (given papering over things blindly
-> > with *ONCE is not right either). My recommendation these days is to
-> > just set CONFIG_KCSAN_STRICT=y for those who care (although I'd wish
-> > everyone cared the same amount :-)).
-> >
-> > Should you feel the below change is appropriate for 2026, feel free to
-> > carry it (consider this my Ack).
-> >
-> > However, I wasn't thinking of tightening the screws until the current
-> > set of known data races has gotten to a manageable amount (say below
-> > 50)
-> > https://syzkaller.appspot.com/upstream?manager=ci2-upstream-kcsan-gce
-> > Then again, on syzbot the config can remain unchanged.
->
-> Is there an easy way to map from a report to the SHA-1 that the
-> corresponding test ran against?  Probably me being blind, but I am not
-> seeing it.  Though I do very much like the symbolic names in those
-> stack traces!
+On Fri, 9 Jan 2026 at 12:57, Luis Henriques <luis@igalia.com> wrote:
 
-When viewing a report page, at the bottom in the "Crashes" table it's
-in the "Commit" column.
+> I've been trying to wrap my head around all the suggested changes, and
+> experimenting with a few options.  Since there are some major things that
+> need to be modified, I'd like to confirm that I got them right:
+>
+> 1. In the old FUSE_LOOKUP, the args->in_args[0] will continue to use the
+>    struct fuse_entry_out, which won't be changed and will continue to have
+>    a static size.
+
+Yes.
+
+> 2. FUSE_LOOKUP_HANDLE will add a new out_arg, which will be dynamically
+>    allocated (using your suggestion: 'args->out_var_alloc').  This will be
+>    a new struct fuse_entry_handle_out, similar to fuse_entry_out, but
+>    replacing the struct fuse_attr by a struct fuse_statx, and adding the
+>    file handle struct.
+
+Another idea: let's simplify the interface by removing the attributes
+from the lookup reply entirely.  To get back the previous
+functionality, compound requests can be used: LOOKUP_HANDLE + STATX.
+
+> 3. FUSE_LOOKUP_HANDLE will use the args->in_args[0] as an extension header
+
+No, extensions go after the regular request data: headers, payload,
+extension(s).
+
+We could think about changing that for uring, where it would make
+sense to put the extensions after the regular headers, but currently
+it doesn't work that way and goes into the payload section.
+
+In any case LOOKUP_HANDLE should follow the existing practice.
+
+>    (FUSE_EXT_HANDLE).  Note that other operations (e.g. those in function
+>    create_new_entry()) will actually need to *add* an extra extension
+>    header, as extension headers are already being used there.
+
+Right.
+
+>    This extension header will use the new struct fuse_entry_handle_out.
+
+Why _out?
+
+It should just be a struct fuse_ext_header followed by a struct
+fuse_file_handle.
+
+Thanks,
+Miklos
 
