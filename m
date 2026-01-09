@@ -1,76 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-72995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8565FD0744C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 06:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF5DD07482
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 06:59:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9BF08301EC5B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 05:56:25 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2B6203024D4F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 05:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4644288CA6;
-	Fri,  9 Jan 2026 05:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="N2A2KVbn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E066F299931;
+	Fri,  9 Jan 2026 05:59:00 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F986280312;
-	Fri,  9 Jan 2026 05:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7B728980E;
+	Fri,  9 Jan 2026 05:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767938184; cv=none; b=DGgiqhtPgFCeuCpcPkkxTNdM+NX9Yfg77xmBZ7Gy1TeU96WhE5NQ3/vylfYEKS2EpjkGa8dBM7qxrrdiwFMOfWUFoR6gv0g40N/gHxG5G3jofv4o16GHs/IwUc+t0GmPSAmD2HRbPdPGDq1Ln0S7t1WvCQlgCrNfRhfziLXpc0g=
+	t=1767938339; cv=none; b=dZKx/7eJ9VXkwWCCZIg/4aK541iPG+UWTUXCouf7ylZJM5/IAOFHaGtQxm1P85RqejbaxXcByw4RyNPFS0pymSkEqwFctId3mTHYxYtEmZ2PvT5c0Y4c3GVrNpMwjM8MCSiMKXDWU3Yo/xma+ptNjgrlxBuWuhtM6go7QeZ5rgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767938184; c=relaxed/simple;
-	bh=hyYX25MCWDg6rxTIAbrKlXz090v3lNti7+PlNrqkL98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UBMRdSPkMy3nbjUdIwpjgtV/eBF63chVg9q/2ILTEwxgnNsf2Puqar9QjEMATC9QdGEG/xd6mto1uzGjtMSqfGthD+YhCD8mXShRJmRXULdsckVUGU4BmyTmdv9YqHiktm86+8IXwC9r79tGytMV2j0UngnJcYwKu6+cKzTsD44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=N2A2KVbn; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1767938180; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=htMczdh8oSn3FZWxwjQi/ljmic3LiX154yV0o2PuC4w=;
-	b=N2A2KVbnTqWBWAWg8Q8ejCIYpwE3n6K5I3h5VCvx/xNUMGg0cc4KJck1sAeWHYqU1PA9T217OtEkjfOy80vMEib5TTrAPIg0AVowPEe2AmbE88o1/NKuvBAZIK4h0EryXW5dmF1b0vr8beAEL1UBg/ciYDPx3l/Gdqxfd5Ntw8A=
-Received: from 30.221.131.232(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wwf6bI-_1767938178 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 09 Jan 2026 13:56:19 +0800
-Message-ID: <97a97322-cf80-428b-a59c-d83080d16800@linux.alibaba.com>
-Date: Fri, 9 Jan 2026 13:56:18 +0800
+	s=arc-20240116; t=1767938339; c=relaxed/simple;
+	bh=4hdPP5MhlGBAu6qQNs0gC655H5dyFIDLruCW9JRtAtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CMyzzXThkinwq2zCzEp8ryx1p2CcEhLox1NYg/q47rDtuL7rv62qB5/gXJaTv+p4vf4ttnhgJJwXMQ8njgTVTm7aXY5kYzT5cp6wBTPnYecJ6kw3F4r2C/F3a/IMvZCtpIcpbNo7PQsRl65LwpeUEAKTNlzf8ntjtj8kppEEjY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id ADFF367373; Fri,  9 Jan 2026 06:58:52 +0100 (CET)
+Date: Fri, 9 Jan 2026 06:58:52 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
+	Vishal Verma <vishal1.verma@intel.com>, tushar.gohad@intel.com,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [RFC v2 01/11] file: add callback for pre-mapping dmabuf
+Message-ID: <20260109055852.GA5063@lst.de>
+References: <7b2017f4-02a3-482a-a173-bb16b895c0cb@amd.com> <20251204110709.GA22971@lst.de> <0571ca61-7b17-4167-83eb-4269bd0459fe@amd.com> <20251204131025.GA26860@lst.de> <aVnFnzRYWC_Y5zHg@fedora> <754b4cc9-20ab-4d87-85bf-eb56be058856@amd.com> <20260107160151.GA21887@lst.de> <aV8UJvkt7VGzHjxS@fedora> <20260108101703.GA24709@lst.de> <aWBjsa2RZ_uaO9Ns@fedora>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 09/10] erofs: support compressed inodes for page cache
- share
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: djwong@kernel.org, amir73il@gmail.com, hch@lst.de,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, Chao Yu <chao@kernel.org>,
- Christian Brauner <brauner@kernel.org>
-References: <20260109030140.594936-1-lihongbo22@huawei.com>
- <20260109030140.594936-10-lihongbo22@huawei.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20260109030140.594936-10-lihongbo22@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aWBjsa2RZ_uaO9Ns@fedora>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-
-
-On 2026/1/9 11:01, Hongbo Li wrote:
-> From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+On Fri, Jan 09, 2026 at 10:10:57AM +0800, Ming Lei wrote:
+> On Thu, Jan 08, 2026 at 11:17:03AM +0100, Christoph Hellwig wrote:
+> > On Thu, Jan 08, 2026 at 10:19:18AM +0800, Ming Lei wrote:
+> > > > The feature is in no way nvme specific.  nvme is just the initial
+> > > > underlying driver.  It makes total sense to support this for any high
+> > > > performance block device, and to pass it through file systems.
+> > > 
+> > > But why does FS care the dma buffer attachment? Since high performance
+> > > host controller is exactly the dma buffer attachment point.
+> > 
+> > I can't parse what you're trying to say here.
 > 
-> This patch adds page cache sharing functionality for compressed inodes.
-> 
-> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> dma buffer attachment is simply none of FS's business.
 
-Thanks,
-Gao Xiang
+The file systems should indeed never do a dma buffer attachment itself,
+but that's not the point.
+
+> > But even when not stacking, the registration still needs to go
+> > through the file system even for a single device, never mind multiple
+> > controlled by the file system.
+> 
+> dma_buf can have multiple importers, so why does it have to go through FS for
+> single device only?
+>
+> If the registered buffer is attached to single device before going
+> through FS, it can not support stacking block device, and it can't or not
+> easily to use for multiple block device, no matter if they are behind same
+> host controller or multiple.
+
+Because the file system, or the file_operations instance to be more
+specific, is the only entity that known what block device(s) or other DMA
+capable device(s) like (R)NIC a file maps to.
 
