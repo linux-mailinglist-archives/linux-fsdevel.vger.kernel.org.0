@@ -1,428 +1,626 @@
-Return-Path: <linux-fsdevel+bounces-73008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CEBCD07593
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 07:10:28 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBD70D07712
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 07:48:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id AC138306642E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 06:08:56 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D27AD300C296
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 06:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C13B2C11ED;
-	Fri,  9 Jan 2026 06:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B1C2E7BDC;
+	Fri,  9 Jan 2026 06:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="abPpl6UU"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="XsSqouvs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BBA273803;
-	Fri,  9 Jan 2026 06:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C54C17AE11;
+	Fri,  9 Jan 2026 06:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767938932; cv=none; b=BijIQH5OrpKqVmoReLJXlwbK1HcnJl+P6yZuvOar/+2l2iImeB1oigzd0WFfYwayuBRH/jZYPxzczO7aVnMZT7N5kZOWMwI/xfan/NpWE3DVTHlt5M3EEHhG2LLWQmUY9S3yw26of8y866TQID9x5YwpAiTys1ztXGAgkhVYwxY=
+	t=1767941284; cv=none; b=NdZyDeENlYoCj08j+eaexpnxGgZvjPa1SyR6/PFd8v48u5A/eK6vcods1iUyTFyvfYS3P5OUluT0NqoPiMVgfwZd4z867zv84vEZeLV5zASxvdDdAWywjhpgAeSJNiidjGgP/FpGtZlIl55S4M24UKaE+hI4CPl5WptjqXA41As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767938932; c=relaxed/simple;
-	bh=q+q0kAJkDcHxmiay2Q7KyhxsBWs1GxeZPAYbLxz8KPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bf7ubJvRyWlBvWQhWfyDyqllyoeLQkq2fAj4MQ/9LKNpUEuvR/imnmmRhryHBmuvi0IT9yZ5ZDg1sr3Hy7eJ69XPTwcjFPYyA4IwHASrVDlv7cbuwFrLGpKwGmVHPGLbTud4Pxj0TRMa/UxlReJYLHOXkwwhXy/TH/5XTDuQyoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=abPpl6UU; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=TKeVIOVvzGw1Nv5RkMVu5btUi6jsl1j0Qo4fryX+tQM=; b=abPpl6UUlVPWSmS4e6rdbQ1CCz
-	+7xJY4HNgqvM/zOMVIb3VLgdMlKjdYPJb5VJT7t1KWrun8sIut51ch7rF/zUdt3furq6oklSjxo6E
-	0caSMU+bwX3v4xeYbds9WHa8ZatmsjS5Kwa5qFjHMy5bgXKeCSr/mzPtukn+SSe/wbzgT0/82voKJ
-	nEmlghzCZVbMO+QaDgp80YfoCt+X5pu+/534zidIBZMpHWcG2K6h/J5SQjL5lPVL3HSJAwTmhZhBx
-	YocEFygzs3yvV5+F5tLINqdtI0AWWdQArJ+zTyix2QXQzzYnBscyZyqDj/91v5UOVlRSRZF+iCd1X
-	Nly1xkEw==;
-Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ve5g2-00000001WXu-1ZyQ;
-	Fri, 09 Jan 2026 06:08:50 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Jens Axboe <axboe@kernel.dk>,
-	Eric Biggers <ebiggers@kernel.org>
-Cc: linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org
-Subject: [PATCH 9/9] blk-crypto: handle the fallback above the block layer
-Date: Fri,  9 Jan 2026 07:07:49 +0100
-Message-ID: <20260109060813.2226714-10-hch@lst.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260109060813.2226714-1-hch@lst.de>
-References: <20260109060813.2226714-1-hch@lst.de>
+	s=arc-20240116; t=1767941284; c=relaxed/simple;
+	bh=0SQExbBElUyGS3ivSg08ii9xjD3v4Bqs7RdnDSehPk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ttABKFQimxZzkbUFaKxfr82DjA7jH/ymWQDVZ8g3f4UdIkQ9o+fGjeEeM0o41y3fTKWUhM9dQr5p6d8yOG0ZQ3J/axKxOeSMYng78Uixrk424zDQwvIxodV4/WfaOK+tROjMHtDpNsw6VqZCAe5yWhmmz6cbhQ4kaFBBRVuPZyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=XsSqouvs; arc=none smtp.client-ip=113.46.200.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=mOPwqnV5FlXCQydFh2PjnmkFhGz9MCnltBvnC1CKwVU=;
+	b=XsSqouvsJmqBHHG2Jw/5QJMwqEMStH2JGYsF+JHSMvEMFe6+Jmvf2JOHACkF/E521RMDx1zBj
+	Yo92csrFF0AOgJkS7pLqAfZ5lZQzeHheVXl9TFwxRcw09ziHa1QZWC19dcx/XFdTcGrjCFOCjYo
+	mD5dOyACH6WlbLcj00lVqA4=
+Received: from mail.maildlp.com (unknown [172.19.163.0])
+	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4dnXLY3Lj9zcZyH;
+	Fri,  9 Jan 2026 14:44:21 +0800 (CST)
+Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
+	by mail.maildlp.com (Postfix) with ESMTPS id B52D54056E;
+	Fri,  9 Jan 2026 14:47:56 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ kwepemr500015.china.huawei.com (7.202.195.162) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 9 Jan 2026 14:47:56 +0800
+Message-ID: <336e9041-7381-4073-b533-bfcb32d6485e@huawei.com>
+Date: Fri, 9 Jan 2026 14:47:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 07/10] erofs: introduce the page cache share feature
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+CC: <djwong@kernel.org>, <amir73il@gmail.com>, <hch@lst.de>,
+	<linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <brauner@kernel.org>, <chao@kernel.org>
+References: <20260109030140.594936-1-lihongbo22@huawei.com>
+ <20260109030140.594936-8-lihongbo22@huawei.com>
+ <8ed8ef13-e818-42e3-bece-2af1af238b62@linux.alibaba.com>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <8ed8ef13-e818-42e3-bece-2af1af238b62@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemr500015.china.huawei.com (7.202.195.162)
 
-Add a blk_crypto_submit_bio helper that either submits the bio when
-it is not encrypted or inline encryption is provided, but otherwise
-handles the encryption before going down into the low-level driver.
-This reduces the risk from bio reordering and keeps memory allocation
-as high up in the stack as possible.
+Hi, Xiang
 
-Note that if the submitter knows that inline enctryption is known to
-be supported by the underyling driver, it can still use plain
-submit_bio.
+On 2026/1/9 13:50, Gao Xiang wrote:
+> 
+> 
+> On 2026/1/9 11:01, Hongbo Li wrote:
+>> From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+>>
+>> Currently, reading files with different paths (or names) but the same
+>> content will consume multiple copies of the page cache, even if the
+>> content of these page caches is the same. For example, reading
+>> identical files (e.g., *.so files) from two different minor versions of
+>> container images will cost multiple copies of the same page cache,
+>> since different containers have different mount points. Therefore,
+>> sharing the page cache for files with the same content can save memory.
+>>
+>> This introduces the page cache share feature in erofs. It allocate a
+>> deduplicated inode and use its page cache as shared. Reads for files
+>> with identical content will ultimately be routed to the page cache of
+>> the deduplicated inode. In this way, a single page cache satisfies
+>> multiple read requests for different files with the same contents.
+>>
+>> We introduce inode_share mount option to enable the page sharing mode
+>> during mounting.
+>>
+>> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+>> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+>> ---
+>>   Documentation/filesystems/erofs.rst |   5 +
+>>   fs/erofs/Makefile                   |   1 +
+>>   fs/erofs/internal.h                 |  31 ++++++
+>>   fs/erofs/ishare.c                   | 161 ++++++++++++++++++++++++++++
+>>   fs/erofs/super.c                    |  53 ++++++++-
+>>   fs/erofs/xattr.c                    |  33 ++++++
+>>   fs/erofs/xattr.h                    |   3 +
+>>   7 files changed, 285 insertions(+), 2 deletions(-)
+>>   create mode 100644 fs/erofs/ishare.c
+>>
+>> diff --git a/Documentation/filesystems/erofs.rst 
+>> b/Documentation/filesystems/erofs.rst
+>> index 08194f194b94..27d3caa3c73c 100644
+>> --- a/Documentation/filesystems/erofs.rst
+>> +++ b/Documentation/filesystems/erofs.rst
+>> @@ -128,7 +128,12 @@ device=%s              Specify a path to an extra 
+>> device to be used together.
+>>   fsid=%s                Specify a filesystem image ID for Fscache 
+>> back-end.
+>>   domain_id=%s           Specify a domain ID in fscache mode so that 
+>> different images
+>>                          with the same blobs under a given domain ID 
+>> can share storage.
+>> +                       Also used for inode page sharing mode which 
+>> defines a sharing
+>> +                       domain.
+>>   fsoffset=%llu          Specify block-aligned filesystem offset for 
+>> the primary device.
+>> +inode_share            Enable inode page sharing for this 
+>> filesystem.  Inodes with
+>> +                       identical content within the same domain ID 
+>> can share the
+>> +                       page cache.
+>>   ===================    
+>> =========================================================
+>>   Sysfs Entries
+>> diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
+>> index 549abc424763..a80e1762b607 100644
+>> --- a/fs/erofs/Makefile
+>> +++ b/fs/erofs/Makefile
+>> @@ -10,3 +10,4 @@ erofs-$(CONFIG_EROFS_FS_ZIP_ZSTD) += 
+>> decompressor_zstd.o
+>>   erofs-$(CONFIG_EROFS_FS_ZIP_ACCEL) += decompressor_crypto.o
+>>   erofs-$(CONFIG_EROFS_FS_BACKED_BY_FILE) += fileio.o
+>>   erofs-$(CONFIG_EROFS_FS_ONDEMAND) += fscache.o
+>> +erofs-$(CONFIG_EROFS_FS_PAGE_CACHE_SHARE) += ishare.o
+>> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+>> index ec79e8b44d3b..6ef1cdd9d651 100644
+>> --- a/fs/erofs/internal.h
+>> +++ b/fs/erofs/internal.h
+>> @@ -179,6 +179,7 @@ struct erofs_sb_info {
+>>   #define EROFS_MOUNT_DAX_ALWAYS        0x00000040
+>>   #define EROFS_MOUNT_DAX_NEVER        0x00000080
+>>   #define EROFS_MOUNT_DIRECT_IO        0x00000100
+>> +#define EROFS_MOUNT_INODE_SHARE        0x00000200
+>>   #define clear_opt(opt, option)    ((opt)->mount_opt &= 
+>> ~EROFS_MOUNT_##option)
+>>   #define set_opt(opt, option)    ((opt)->mount_opt |= 
+>> EROFS_MOUNT_##option)
+>> @@ -269,6 +270,11 @@ static inline u64 erofs_nid_to_ino64(struct 
+>> erofs_sb_info *sbi, erofs_nid_t nid)
+>>   /* default readahead size of directories */
+>>   #define EROFS_DIR_RA_BYTES    16384
+>> +struct erofs_inode_fingerprint {
+>> +    u8 *opaque;
+>> +    int size;
+>> +};
+>> +
+>>   struct erofs_inode {
+>>       erofs_nid_t nid;
+>> @@ -304,6 +310,18 @@ struct erofs_inode {
+>>           };
+>>   #endif    /* CONFIG_EROFS_FS_ZIP */
+>>       };
+>> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
+>> +    struct list_head ishare_list;
+>> +    union {
+>> +        /* for each anon shared inode */
+>> +        struct {
+>> +            struct erofs_inode_fingerprint fingerprint;
+>> +            spinlock_t ishare_lock;
+>> +        };
+>> +        /* for each real inode */
+>> +        struct inode *sharedinode;
+>> +    };
+>> +#endif
+>>       /* the corresponding vfs inode */
+>>       struct inode vfs_inode;
+>>   };
+>> @@ -410,6 +428,7 @@ extern const struct inode_operations erofs_dir_iops;
+>>   extern const struct file_operations erofs_file_fops;
+>>   extern const struct file_operations erofs_dir_fops;
+>> +extern const struct file_operations erofs_ishare_fops;
+>>   extern const struct iomap_ops z_erofs_iomap_report_ops;
+>> @@ -541,6 +560,18 @@ static inline struct bio 
+>> *erofs_fscache_bio_alloc(struct erofs_map_dev *mdev) {
+>>   static inline void erofs_fscache_submit_bio(struct bio *bio) {}
+>>   #endif
+>> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
+>> +int __init erofs_init_ishare(void);
+>> +void erofs_exit_ishare(void);
+>> +bool erofs_ishare_fill_inode(struct inode *inode);
+>> +void erofs_ishare_free_inode(struct inode *inode);
+>> +#else
+>> +static inline int erofs_init_ishare(void) { return 0; }
+>> +static inline void erofs_exit_ishare(void) {}
+>> +static inline bool erofs_ishare_fill_inode(struct inode *inode) { 
+>> return false; }
+>> +static inline void erofs_ishare_free_inode(struct inode *inode) {}
+>> +#endif // CONFIG_EROFS_FS_PAGE_CACHE_SHARE
+>> +
+>>   long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long 
+>> arg);
+>>   long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
+>>               unsigned long arg);
+>> diff --git a/fs/erofs/ishare.c b/fs/erofs/ishare.c
+>> new file mode 100644
+>> index 000000000000..56a955aaeb18
+>> --- /dev/null
+>> +++ b/fs/erofs/ishare.c
+>> @@ -0,0 +1,161 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +/*
+>> + * Copyright (C) 2024, Alibaba Cloud
+>> + */
+>> +#include <linux/xxhash.h>
+>> +#include <linux/mount.h>
+>> +#include "internal.h"
+>> +#include "xattr.h"
+>> +
+>> +#include "../internal.h"
+>> +
+>> +static struct vfsmount *erofs_ishare_mnt;
+>> +
+>> +static int erofs_ishare_iget5_eq(struct inode *inode, void *data)
+>> +{
+>> +    struct erofs_inode_fingerprint *fp1 = &EROFS_I(inode)->fingerprint;
+>> +    struct erofs_inode_fingerprint *fp2 = data;
+>> +
+>> +    return fp1->size == fp2->size &&
+>> +        !memcmp(fp1->opaque, fp2->opaque, fp2->size);
+>> +}
+>> +
+>> +static int erofs_ishare_iget5_set(struct inode *inode, void *data)
+>> +{
+>> +    struct erofs_inode *vi = EROFS_I(inode);
+>> +
+>> +    vi->fingerprint = *(struct erofs_inode_fingerprint *)data;
+>> +    INIT_LIST_HEAD(&vi->ishare_list);
+>> +    spin_lock_init(&vi->ishare_lock);
+>> +    return 0;
+>> +}
+>> +
+>> +bool erofs_ishare_fill_inode(struct inode *inode)
+>> +{
+>> +    struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
+>> +    struct erofs_inode *vi = EROFS_I(inode);
+>> +    struct erofs_inode_fingerprint fp;
+>> +    struct inode *sharedinode;
+>> +    unsigned long hash;
+>> +
+>> +    if (erofs_xattr_fill_inode_fingerprint(&fp, inode, sbi->domain_id))
+>> +        return false;
+>> +    hash = xxh32(fp.opaque, fp.size, 0);
+>> +    sharedinode = iget5_locked(erofs_ishare_mnt->mnt_sb, hash,
+>> +                   erofs_ishare_iget5_eq, erofs_ishare_iget5_set,
+>> +                   &fp);
+>> +    if (!sharedinode) {
+>> +        kfree(fp.opaque);
+>> +        return false;
+>> +    }
+>> +
+>> +    vi->sharedinode = sharedinode;
+>> +    if (inode_state_read_once(sharedinode) & I_NEW) {
+>> +        if (erofs_inode_is_data_compressed(vi->datalayout))
+>> +            sharedinode->i_mapping->a_ops = &z_erofs_aops;
+>> +        else
+>> +            sharedinode->i_mapping->a_ops = &erofs_aops;
+>> +        sharedinode->i_mode = vi->vfs_inode.i_mode;
+>> +        sharedinode->i_size = vi->vfs_inode.i_size;
+>> +        unlock_new_inode(sharedinode);
+>> +    } else {
+>> +        kfree(fp.opaque);
+>> +    }
+>> +    INIT_LIST_HEAD(&vi->ishare_list);
+>> +    spin_lock(&EROFS_I(sharedinode)->ishare_lock);
+>> +    list_add(&vi->ishare_list, &EROFS_I(sharedinode)->ishare_list);
+>> +    spin_unlock(&EROFS_I(sharedinode)->ishare_lock);
+>> +    return true;
+>> +}
+>> +
+>> +void erofs_ishare_free_inode(struct inode *inode)
+>> +{
+>> +    struct erofs_inode *vi = EROFS_I(inode);
+>> +    struct inode *sharedinode = vi->sharedinode;
+>> +
+>> +    if (!sharedinode)
+>> +        return;
+>> +    spin_lock(&EROFS_I(sharedinode)->ishare_lock);
+>> +    list_del(&vi->ishare_list);
+>> +    spin_unlock(&EROFS_I(sharedinode)->ishare_lock);
+>> +    iput(sharedinode);
+>> +    vi->sharedinode = NULL;
+>> +}
+>> +
+>> +static int erofs_ishare_file_open(struct inode *inode, struct file 
+>> *file)
+>> +{
+>> +    struct inode *sharedinode;
+> 
+> just
+>      struct inode *sharedinode = EROFS_I(inode)->sharedinode;
+> 
+> here for simplicity.
+> 
+> `if (file->f_flags & O_DIRECT)` is an error case, so I don't bother
+> with the check.
+> 
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
----
- Documentation/block/inline-encryption.rst |  6 ++++++
- block/blk-core.c                          | 10 +++++++---
- block/blk-crypto-internal.h               | 19 +++++++++++--------
- block/blk-crypto.c                        | 23 ++++++-----------------
- fs/buffer.c                               |  3 ++-
- fs/crypto/bio.c                           |  2 +-
- fs/ext4/page-io.c                         |  3 ++-
- fs/ext4/readpage.c                        |  9 +++++----
- fs/f2fs/data.c                            |  4 ++--
- fs/f2fs/file.c                            |  3 ++-
- fs/iomap/direct-io.c                      |  3 ++-
- include/linux/blk-crypto.h                | 22 ++++++++++++++++++++++
- 12 files changed, 68 insertions(+), 39 deletions(-)
+Ok, I will adjust here in next version.
 
-diff --git a/Documentation/block/inline-encryption.rst b/Documentation/block/inline-encryption.rst
-index 6380e6ab492b..7e0703a12dfb 100644
---- a/Documentation/block/inline-encryption.rst
-+++ b/Documentation/block/inline-encryption.rst
-@@ -206,6 +206,12 @@ it to a bio, given the blk_crypto_key and the data unit number that will be used
- for en/decryption.  Users don't need to worry about freeing the bio_crypt_ctx
- later, as that happens automatically when the bio is freed or reset.
- 
-+To submit a bio that uses inline encryption, users must call
-+``blk_crypto_submit_bio()`` instead of the usual ``submit_bio()``.  This will
-+submit the bio to the underlying driver if it supports inline crypto, or else
-+call the blk-crypto fallback routines before submitting normal bios to the
-+underlying drivers.
-+
- Finally, when done using inline encryption with a blk_crypto_key on a
- block_device, users must call ``blk_crypto_evict_key()``.  This ensures that
- the key is evicted from all keyslots it may be programmed into and unlinked from
-diff --git a/block/blk-core.c b/block/blk-core.c
-index f87e5f1a101f..a0bf5174e9e9 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -628,9 +628,6 @@ static void __submit_bio(struct bio *bio)
- 	/* If plug is not used, add new plug here to cache nsecs time. */
- 	struct blk_plug plug;
- 
--	if (unlikely(!blk_crypto_bio_prep(bio)))
--		return;
--
- 	blk_start_plug(&plug);
- 
- 	if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO)) {
-@@ -794,6 +791,13 @@ void submit_bio_noacct(struct bio *bio)
- 	if ((bio->bi_opf & REQ_NOWAIT) && !bdev_nowait(bdev))
- 		goto not_supported;
- 
-+	if (bio_has_crypt_ctx(bio)) {
-+		if (WARN_ON_ONCE(!bio_has_data(bio)))
-+			goto end_io;
-+		if (!blk_crypto_supported(bio))
-+			goto not_supported;
-+	}
-+
- 	if (should_fail_bio(bio))
- 		goto end_io;
- 	bio_check_ro(bio);
-diff --git a/block/blk-crypto-internal.h b/block/blk-crypto-internal.h
-index d65023120341..742694213529 100644
---- a/block/blk-crypto-internal.h
-+++ b/block/blk-crypto-internal.h
-@@ -86,6 +86,12 @@ bool __blk_crypto_cfg_supported(struct blk_crypto_profile *profile,
- int blk_crypto_ioctl(struct block_device *bdev, unsigned int cmd,
- 		     void __user *argp);
- 
-+static inline bool blk_crypto_supported(struct bio *bio)
-+{
-+	return blk_crypto_config_supported_natively(bio->bi_bdev,
-+			&bio->bi_crypt_context->bc_key->crypto_cfg);
-+}
-+
- #else /* CONFIG_BLK_INLINE_ENCRYPTION */
- 
- static inline int blk_crypto_sysfs_register(struct gendisk *disk)
-@@ -139,6 +145,11 @@ static inline int blk_crypto_ioctl(struct block_device *bdev, unsigned int cmd,
- 	return -ENOTTY;
- }
- 
-+static inline bool blk_crypto_supported(struct bio *bio)
-+{
-+	return false;
-+}
-+
- #endif /* CONFIG_BLK_INLINE_ENCRYPTION */
- 
- void __bio_crypt_advance(struct bio *bio, unsigned int bytes);
-@@ -165,14 +176,6 @@ static inline void bio_crypt_do_front_merge(struct request *rq,
- #endif
- }
- 
--bool __blk_crypto_bio_prep(struct bio *bio);
--static inline bool blk_crypto_bio_prep(struct bio *bio)
--{
--	if (bio_has_crypt_ctx(bio))
--		return __blk_crypto_bio_prep(bio);
--	return true;
--}
--
- blk_status_t __blk_crypto_rq_get_keyslot(struct request *rq);
- static inline blk_status_t blk_crypto_rq_get_keyslot(struct request *rq)
- {
-diff --git a/block/blk-crypto.c b/block/blk-crypto.c
-index 0b2535d8dbcc..856d3c5b1fa0 100644
---- a/block/blk-crypto.c
-+++ b/block/blk-crypto.c
-@@ -242,25 +242,13 @@ void __blk_crypto_free_request(struct request *rq)
- 	rq->crypt_ctx = NULL;
- }
- 
--/**
-- * __blk_crypto_bio_prep - Prepare bio for inline encryption
-- * @bio: bio to prepare
-- *
-- * If the bio crypt context provided for the bio is supported by the underlying
-- * device's inline encryption hardware, do nothing.
-- *
-- * Otherwise, try to perform en/decryption for this bio by falling back to the
-- * kernel crypto API.  For encryption this means submitting newly allocated
-- * bios for the encrypted payload while keeping back the source bio until they
-- * complete, while for reads the decryption happens in-place by a hooked in
-- * completion handler.
-- *
-- * Caller must ensure bio has bio_crypt_ctx.
-+/*
-+ * Process a bio with a crypto context.  Returns true if the caller should
-+ * submit the passed in bio, false if the bio is consumed.
-  *
-- * Return: true if @bio should be submitted to the driver by the caller, else
-- * false.  Sets bio->bi_status, calls bio_endio and returns false on error.
-+ * See the kerneldoc comment for blk_crypto_submit_bio for further details.
-  */
--bool __blk_crypto_bio_prep(struct bio *bio)
-+bool __blk_crypto_submit_bio(struct bio *bio)
- {
- 	const struct blk_crypto_key *bc_key = bio->bi_crypt_context->bc_key;
- 	struct block_device *bdev = bio->bi_bdev;
-@@ -288,6 +276,7 @@ bool __blk_crypto_bio_prep(struct bio *bio)
- 
- 	return true;
- }
-+EXPORT_SYMBOL_GPL(__blk_crypto_submit_bio);
- 
- int __blk_crypto_rq_bio_prep(struct request *rq, struct bio *bio,
- 			     gfp_t gfp_mask)
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 838c0c571022..da18053f66e8 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -29,6 +29,7 @@
- #include <linux/slab.h>
- #include <linux/capability.h>
- #include <linux/blkdev.h>
-+#include <linux/blk-crypto.h>
- #include <linux/file.h>
- #include <linux/quotaops.h>
- #include <linux/highmem.h>
-@@ -2821,7 +2822,7 @@ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
- 		wbc_account_cgroup_owner(wbc, bh->b_folio, bh->b_size);
- 	}
- 
--	submit_bio(bio);
-+	blk_crypto_submit_bio(bio);
- }
- 
- void submit_bh(blk_opf_t opf, struct buffer_head *bh)
-diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-index c2b3ca100f8d..6da683ea69dc 100644
---- a/fs/crypto/bio.c
-+++ b/fs/crypto/bio.c
-@@ -105,7 +105,7 @@ static int fscrypt_zeroout_range_inline_crypt(const struct inode *inode,
- 		}
- 
- 		atomic_inc(&done.pending);
--		submit_bio(bio);
-+		blk_crypto_submit_bio(bio);
- 	}
- 
- 	fscrypt_zeroout_range_done(&done);
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index 39abfeec5f36..a8c95eee91b7 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -7,6 +7,7 @@
-  * Written by Theodore Ts'o, 2010.
-  */
- 
-+#include <linux/blk-crypto.h>
- #include <linux/fs.h>
- #include <linux/time.h>
- #include <linux/highuid.h>
-@@ -401,7 +402,7 @@ void ext4_io_submit(struct ext4_io_submit *io)
- 	if (bio) {
- 		if (io->io_wbc->sync_mode == WB_SYNC_ALL)
- 			io->io_bio->bi_opf |= REQ_SYNC;
--		submit_bio(io->io_bio);
-+		blk_crypto_submit_bio(io->io_bio);
- 	}
- 	io->io_bio = NULL;
- }
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index e7f2350c725b..49a6d36a8dba 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -36,6 +36,7 @@
- #include <linux/bio.h>
- #include <linux/fs.h>
- #include <linux/buffer_head.h>
-+#include <linux/blk-crypto.h>
- #include <linux/blkdev.h>
- #include <linux/highmem.h>
- #include <linux/prefetch.h>
-@@ -345,7 +346,7 @@ int ext4_mpage_readpages(struct inode *inode,
- 		if (bio && (last_block_in_bio != first_block - 1 ||
- 			    !fscrypt_mergeable_bio(bio, inode, next_block))) {
- 		submit_and_realloc:
--			submit_bio(bio);
-+			blk_crypto_submit_bio(bio);
- 			bio = NULL;
- 		}
- 		if (bio == NULL) {
-@@ -371,14 +372,14 @@ int ext4_mpage_readpages(struct inode *inode,
- 		if (((map.m_flags & EXT4_MAP_BOUNDARY) &&
- 		     (relative_block == map.m_len)) ||
- 		    (first_hole != blocks_per_folio)) {
--			submit_bio(bio);
-+			blk_crypto_submit_bio(bio);
- 			bio = NULL;
- 		} else
- 			last_block_in_bio = first_block + blocks_per_folio - 1;
- 		continue;
- 	confused:
- 		if (bio) {
--			submit_bio(bio);
-+			blk_crypto_submit_bio(bio);
- 			bio = NULL;
- 		}
- 		if (!folio_test_uptodate(folio))
-@@ -389,7 +390,7 @@ int ext4_mpage_readpages(struct inode *inode,
- 		; /* A label shall be followed by a statement until C23 */
- 	}
- 	if (bio)
--		submit_bio(bio);
-+		blk_crypto_submit_bio(bio);
- 	return 0;
- }
- 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index c30e69392a62..c3dd8a5c8589 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -513,7 +513,7 @@ void f2fs_submit_read_bio(struct f2fs_sb_info *sbi, struct bio *bio,
- 	trace_f2fs_submit_read_bio(sbi->sb, type, bio);
- 
- 	iostat_update_submit_ctx(bio, type);
--	submit_bio(bio);
-+	blk_crypto_submit_bio(bio);
- }
- 
- static void f2fs_submit_write_bio(struct f2fs_sb_info *sbi, struct bio *bio,
-@@ -522,7 +522,7 @@ static void f2fs_submit_write_bio(struct f2fs_sb_info *sbi, struct bio *bio,
- 	WARN_ON_ONCE(is_read_io(bio_op(bio)));
- 	trace_f2fs_submit_write_bio(sbi->sb, type, bio);
- 	iostat_update_submit_ctx(bio, type);
--	submit_bio(bio);
-+	blk_crypto_submit_bio(bio);
- }
- 
- static void __submit_merged_bio(struct f2fs_bio_info *io)
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index d7047ca6b98d..914790f37915 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-  */
-+#include <linux/blk-crypto.h>
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
- #include <linux/stat.h>
-@@ -5046,7 +5047,7 @@ static void f2fs_dio_write_submit_io(const struct iomap_iter *iter,
- 	enum temp_type temp = f2fs_get_segment_temp(sbi, type);
- 
- 	bio->bi_write_hint = f2fs_io_type_to_rw_hint(sbi, DATA, temp);
--	submit_bio(bio);
-+	blk_crypto_submit_bio(bio);
- }
- 
- static const struct iomap_dio_ops f2fs_iomap_dio_write_ops = {
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 8e273408453a..4000c8596d9b 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2010 Red Hat, Inc.
-  * Copyright (c) 2016-2025 Christoph Hellwig.
-  */
-+#include <linux/blk-crypto.h>
- #include <linux/fscrypt.h>
- #include <linux/pagemap.h>
- #include <linux/iomap.h>
-@@ -74,7 +75,7 @@ static void iomap_dio_submit_bio(const struct iomap_iter *iter,
- 		dio->dops->submit_io(iter, bio, pos);
- 	} else {
- 		WARN_ON_ONCE(iter->iomap.flags & IOMAP_F_ANON_WRITE);
--		submit_bio(bio);
-+		blk_crypto_submit_bio(bio);
- 	}
- }
- 
-diff --git a/include/linux/blk-crypto.h b/include/linux/blk-crypto.h
-index eb80df19be68..f7c3cb4a342f 100644
---- a/include/linux/blk-crypto.h
-+++ b/include/linux/blk-crypto.h
-@@ -181,6 +181,28 @@ static inline struct bio_crypt_ctx *bio_crypt_ctx(struct bio *bio)
- 
- #endif /* CONFIG_BLK_INLINE_ENCRYPTION */
- 
-+bool __blk_crypto_submit_bio(struct bio *bio);
-+
-+/**
-+ * blk_crypto_submit_bio - Submit a bio that may have a crypto context
-+ * @bio: bio to submit
-+ *
-+ * If @bio has no crypto context, or the crypt context attached to @bio is
-+ * supported by the underlying device's inline encryption hardware, just submit
-+ * @bio.
-+ *
-+ * Otherwise, try to perform en/decryption for this bio by falling back to the
-+ * kernel crypto API. For encryption this means submitting newly allocated
-+ * bios for the encrypted payload while keeping back the source bio until they
-+ * complete, while for reads the decryption happens in-place by a hooked in
-+ * completion handler.
-+ */
-+static inline void blk_crypto_submit_bio(struct bio *bio)
-+{
-+	if (!bio_has_crypt_ctx(bio) || __blk_crypto_submit_bio(bio))
-+		submit_bio(bio);
-+}
-+
- int __bio_crypt_clone(struct bio *dst, struct bio *src, gfp_t gfp_mask);
- /**
-  * bio_crypt_clone - clone bio encryption context
--- 
-2.47.3
+>> +    struct file *realfile;
+>> +
+>> +    if (file->f_flags & O_DIRECT)
+>> +        return -EINVAL;
+>> +    sharedinode = EROFS_I(inode)->sharedinode;
+>> +    realfile = alloc_empty_backing_file(O_RDONLY|O_NOATIME, 
+>> current_cred());
+>> +    if (IS_ERR(realfile))
+>> +        return PTR_ERR(realfile);
+>> +    ihold(sharedinode);
+>> +    realfile->f_op = &erofs_file_fops;
+>> +    realfile->f_inode = sharedinode;
+>> +    realfile->f_mapping = sharedinode->i_mapping;
+>> +    path_get(&file->f_path);
+>> +    backing_file_set_user_path(realfile, &file->f_path);
+>> +
+>> +    file_ra_state_init(&realfile->f_ra, file->f_mapping);
+>> +    realfile->private_data = EROFS_I(inode);
+>> +    file->private_data = realfile;
+>> +    return 0;
+>> +}
+>> +
+>> +static int erofs_ishare_file_release(struct inode *inode, struct file 
+>> *file)
+>> +{
+>> +    struct file *realfile = file->private_data;
+>> +
+>> +    iput(realfile->f_inode);
+>> +    fput(realfile);
+>> +    file->private_data = NULL;
+>> +    return 0;
+>> +}
+>> +
+>> +static ssize_t erofs_ishare_file_read_iter(struct kiocb *iocb,
+>> +                       struct iov_iter *to)
+>> +{
+>> +    struct file *realfile = iocb->ki_filp->private_data;
+>> +    struct kiocb dedup_iocb;
+>> +    ssize_t nread;
+>> +
+>> +    if (!iov_iter_count(to))
+>> +        return 0;
+>> +    kiocb_clone(&dedup_iocb, iocb, realfile);
+>> +    nread = filemap_read(&dedup_iocb, to, 0);
+>> +    iocb->ki_pos = dedup_iocb.ki_pos;
+>> +    return nread;
+>> +}
+>> +
+>> +static int erofs_ishare_mmap(struct file *file, struct vm_area_struct 
+>> *vma)
+>> +{
+>> +    struct file *realfile = file->private_data;
+>> +
+>> +    vma_set_file(vma, realfile);
+>> +    return generic_file_readonly_mmap(file, vma);
+>> +}
+>> +
+>> +const struct file_operations erofs_ishare_fops = {
+>> +    .open        = erofs_ishare_file_open,
+>> +    .llseek        = generic_file_llseek,
+>> +    .read_iter    = erofs_ishare_file_read_iter,
+>> +    .mmap        = erofs_ishare_mmap,
+>> +    .release    = erofs_ishare_file_release,
+>> +    .get_unmapped_area = thp_get_unmapped_area,
+>> +    .splice_read    = filemap_splice_read,
+>> +};
+>> +
+>> +int __init erofs_init_ishare(void)
+>> +{
+>> +    erofs_ishare_mnt = kern_mount(&erofs_anon_fs_type);
+>> +    return PTR_ERR_OR_ZERO(erofs_ishare_mnt);
+>> +}
+>> +
+>> +void erofs_exit_ishare(void)
+>> +{
+>> +    kern_unmount(erofs_ishare_mnt);
+>> +}
+>> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+>> index 960da62636ad..a851b47ee579 100644
+>> --- a/fs/erofs/super.c
+>> +++ b/fs/erofs/super.c
+>> @@ -396,6 +396,7 @@ static void erofs_default_options(struct 
+>> erofs_sb_info *sbi)
+>>   enum {
+>>       Opt_user_xattr, Opt_acl, Opt_cache_strategy, Opt_dax, Opt_dax_enum,
+>>       Opt_device, Opt_fsid, Opt_domain_id, Opt_directio, Opt_fsoffset,
+>> +    Opt_inode_share,
+>>   };
+>>   static const struct constant_table erofs_param_cache_strategy[] = {
+>> @@ -423,6 +424,7 @@ static const struct fs_parameter_spec 
+>> erofs_fs_parameters[] = {
+>>       fsparam_string("domain_id",    Opt_domain_id),
+>>       fsparam_flag_no("directio",    Opt_directio),
+>>       fsparam_u64("fsoffset",        Opt_fsoffset),
+>> +    fsparam_flag("inode_share",    Opt_inode_share),
+>>       {}
+>>   };
+>> @@ -551,6 +553,13 @@ static int erofs_fc_parse_param(struct fs_context 
+>> *fc,
+>>       case Opt_fsoffset:
+>>           sbi->dif0.fsoff = result.uint_64;
+>>           break;
+>> +    case Opt_inode_share:
+>> +#if defined(CONFIG_EROFS_FS_PAGE_CACHE_SHARE)
+>> +        set_opt(&sbi->opt, INODE_SHARE);
+>> +#else
+>> +        errorfc(fc, "%s option not supported", 
+>> erofs_fs_parameters[opt].name);
+>> +#endif
+>> +        break;
+>>       }
+>>       return 0;
+>>   }
+>> @@ -649,6 +658,11 @@ static int erofs_fc_fill_super(struct super_block 
+>> *sb, struct fs_context *fc)
+>>       sb->s_maxbytes = MAX_LFS_FILESIZE;
+>>       sb->s_op = &erofs_sops;
+>> +    if (test_opt(&sbi->opt, DAX_ALWAYS) && test_opt(&sbi->opt, 
+>> INODE_SHARE)) {
+>> +        errorfc(fc, "FSDAX is not allowed when inode_ishare is on");
+>> +        return -EINVAL;
+>> +    }
+>> +
+>>       sbi->blkszbits = PAGE_SHIFT;
+>>       if (!sb->s_bdev) {
+>>           /*
+>> @@ -719,6 +733,10 @@ static int erofs_fc_fill_super(struct super_block 
+>> *sb, struct fs_context *fc)
+>>           erofs_info(sb, "unsupported blocksize for DAX");
+>>           clear_opt(&sbi->opt, DAX_ALWAYS);
+>>       }
+>> +    if (test_opt(&sbi->opt, INODE_SHARE) && 
+>> !erofs_sb_has_ishare_xattrs(sbi)) {
+>> +        erofs_info(sb, "inode ishare is unavailable");
+> 
+>      erofs_info(sb, "on-disk ishare xattrs not found. Turning off 
+> inode_share.");
+> 
 
+thanks, will update.
+
+> 
+>> +        clear_opt(&sbi->opt, INODE_SHARE);
+>> +    }
+>>       sb->s_time_gran = 1;
+>>       sb->s_xattr = erofs_xattr_handlers;
+>> @@ -948,10 +966,31 @@ static struct file_system_type erofs_fs_type = {
+>>   };
+>>   MODULE_ALIAS_FS("erofs");
+>> -#if defined(CONFIG_EROFS_FS_ONDEMAND)
+>> +#if defined(CONFIG_EROFS_FS_ONDEMAND) || 
+>> defined(CONFIG_EROFS_FS_PAGE_CACHE_SHARE)
+>> +static void erofs_free_anon_inode(struct inode *inode)
+>> +{
+>> +    struct erofs_inode *vi = EROFS_I(inode);
+>> +
+>> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
+>> +    kfree(vi->fingerprint.opaque);
+>> +#endif
+> 
+> Drop `#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE` here for simplicity.
+> 
+
+The vi->fingerprint is only visiable when 
+CONFIG_EROFS_FS_PAGE_CACHE_SHARE is on, so we should keep this.
+
+Thanks,
+Hongbo
+
+>> +    kmem_cache_free(erofs_inode_cachep, vi);
+>> +}
+>> +
+>> +static const struct super_operations erofs_anon_sops = {
+>> +    .alloc_inode = erofs_alloc_inode,
+>> +    .free_inode = erofs_free_anon_inode,
+>> +};
+>> +
+>>   static int erofs_anon_init_fs_context(struct fs_context *fc)
+>>   {
+>> -    return init_pseudo(fc, EROFS_SUPER_MAGIC) ? 0 : -ENOMEM;
+>> +    struct pseudo_fs_context *ctx;
+>> +
+>> +    ctx = init_pseudo(fc, EROFS_SUPER_MAGIC);
+>> +    if (ctx)
+>> +        ctx->ops = &erofs_anon_sops;
+>> +
+>> +    return ctx ? 0 : -ENOMEM;
+> 
+>      ctx = init_pseudo(fc, EROFS_SUPER_MAGIC);
+>      if (!ctx)
+>          return -ENOMEM;
+>      ctx->ops = &erofs_anon_sops;
+>      return 0;
+> 
+
+ok, will update.
+
+>>   }
+>>   struct file_system_type erofs_anon_fs_type = {
+>> @@ -986,6 +1025,10 @@ static int __init erofs_module_init(void)
+>>       if (err)
+>>           goto sysfs_err;
+>> +    err = erofs_init_ishare();
+>> +    if (err)
+>> +        goto ishare_err;
+>> +
+>>       err = register_filesystem(&erofs_fs_type);
+>>       if (err)
+>>           goto fs_err;
+>> @@ -993,6 +1036,8 @@ static int __init erofs_module_init(void)
+>>       return 0;
+>>   fs_err:
+>> +    erofs_exit_ishare();
+>> +ishare_err:
+>>       erofs_exit_sysfs();
+>>   sysfs_err:
+>>       z_erofs_exit_subsystem();
+>> @@ -1010,6 +1055,7 @@ static void __exit erofs_module_exit(void)
+>>       /* Ensure all RCU free inodes / pclusters are safe to be 
+>> destroyed. */
+>>       rcu_barrier();
+>> +    erofs_exit_ishare();
+>>       erofs_exit_sysfs();
+>>       z_erofs_exit_subsystem();
+>>       erofs_exit_shrinker();
+>> @@ -1062,6 +1108,8 @@ static int erofs_show_options(struct seq_file 
+>> *seq, struct dentry *root)
+>>           seq_printf(seq, ",domain_id=%s", sbi->domain_id);
+>>       if (sbi->dif0.fsoff)
+>>           seq_printf(seq, ",fsoffset=%llu", sbi->dif0.fsoff);
+>> +    if (test_opt(opt, INODE_SHARE))
+>> +        seq_puts(seq, ",inode_share");
+>>       return 0;
+>>   }
+>> @@ -1072,6 +1120,7 @@ static void erofs_evict_inode(struct inode *inode)
+>>           dax_break_layout_final(inode);
+>>   #endif
+>> +    erofs_ishare_free_inode(inode);
+>>       truncate_inode_pages_final(&inode->i_data);
+>>       clear_inode(inode);
+>>   }
+>> diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
+>> index ae61f20cb861..290acbf89fa6 100644
+>> --- a/fs/erofs/xattr.c
+>> +++ b/fs/erofs/xattr.c
+>> @@ -577,3 +577,36 @@ struct posix_acl *erofs_get_acl(struct inode 
+>> *inode, int type, bool rcu)
+>>       return acl;
+>>   }
+>>   #endif
+>> +
+>> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
+>> +int erofs_xattr_fill_inode_fingerprint(struct erofs_inode_fingerprint 
+>> *fp,
+>> +                       struct inode *inode, const char *domain_id)
+>> +{
+>> +    struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
+>> +    struct erofs_xattr_prefix_item *prefix;
+>> +    const char *infix;
+>> +    int valuelen, base_index, domainlen;
+>> +
+>> +    if (!test_opt(&sbi->opt, INODE_SHARE))
+>> +        return -EOPNOTSUPP;
+>> +    prefix = sbi->xattr_prefixes + sbi->ishare_xattr_prefix_id;
+>> +    infix = prefix->prefix->infix;
+>> +    base_index = prefix->prefix->base_index;
+>> +    valuelen = erofs_getxattr(inode, base_index, infix, NULL, 0);
+>> +    if (valuelen <= 0 || valuelen > (1 << sbi->blkszbits))
+>> +        return -EFSCORRUPTED;
+> 
+>      fp->size = valuelen + (domain_id ? strlen(domain_id) : 0);
+>      fp->opaque = kmalloc(fp->size, GFP_KERNEL);
+>      ...
+> 
+> 
+>> +    memcpy(fp->opaque + valuelen, domain_id, domainlen);
+>> +    fp->size = valuelen + domainlen;
+> 
+> Then kill this line.
+> 
+
+thanks, will update.
+
+> Thanks,
+> Gao Xiang
+> 
+>> +    return 0;
+>> +}
+>> +#endif
+>> diff --git a/fs/erofs/xattr.h b/fs/erofs/xattr.h
+>> index 6317caa8413e..bf75a580b8f1 100644
+>> --- a/fs/erofs/xattr.h
+>> +++ b/fs/erofs/xattr.h
+>> @@ -67,4 +67,7 @@ struct posix_acl *erofs_get_acl(struct inode *inode, 
+>> int type, bool rcu);
+>>   #define erofs_get_acl    (NULL)
+>>   #endif
+>> +int erofs_xattr_fill_inode_fingerprint(struct erofs_inode_fingerprint 
+>> *fp,
+>> +                       struct inode *inode, const char *domain_id);
+>> +
+>>   #endif
+> 
 
