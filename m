@@ -1,294 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-73082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A8DD0BD45
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 19:28:32 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B27D0BD69
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 19:30:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 66319301AAA0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 18:27:39 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 61519303C610
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 18:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0971369964;
-	Fri,  9 Jan 2026 18:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8D5366546;
+	Fri,  9 Jan 2026 18:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b="qUvQ5Ld1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPJDQBRr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp01-ext2.udag.de (smtp01-ext2.udag.de [62.146.106.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E20368293;
-	Fri,  9 Jan 2026 18:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4944C365A1A
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 18:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767983241; cv=none; b=KcQNSPNaPBayztSL0BFls4uGuSUg4aHxfz6mT6OIM7rPSj7sIpVc09103BLlBhAtnw9QcbAWpivPCwALPLaPmYI2vsBnO8YVklC4RatNRRe2p54Erj7dwu1eZUJr0D/uVetGjMVKM9U3fW06iWzw3qNnLV/zpwCxKpE6JUliDFw=
+	t=1767983354; cv=none; b=JoBLt2fn4gaqOOKT6P9raLwtRHutmlRpCAlSjTYTvERvJeu1vvWAMc5WxqsEACLI2jt9OH1Fd11IXxgFgwI53dWpOZcxc/l5cf7ZnfppwXHYf7orSDAPT3DrqqbSXtJGTK/AIN94mh99ezOqHSWXhnLlhBvFx/sAIWKvPeowNs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767983241; c=relaxed/simple;
-	bh=BdfhQjAzF93Ljq+YaEpMJp4FRx79yzMRea+PO4tcf7Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C93tXW0c7iXOFLpuHzL06b/lXEpY6KTi2PVpSmuuPByieE3JBSaVeEBt7snqvtnlvqyEpF8edaSH7Q3eSFX2kfvj97VhAq50giuxfftecsZkvmsydzYQZ7Jpfax81CeaRr/hCTpx7ME5K8pzxbRtzmplmTw9lxVInLj9Fp/Gyps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.com; spf=pass smtp.mailfrom=birthelmer.com; dkim=pass (2048-bit key) header.d=birthelmer.com header.i=@birthelmer.com header.b=qUvQ5Ld1; arc=none smtp.client-ip=62.146.106.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.com
-Received: from [127.0.1.1] (049-102-000-128.ip-addr.inexio.net [128.0.102.49])
-	by smtp01-ext2.udag.de (Postfix) with ESMTPA id 8721EE0215;
-	Fri,  9 Jan 2026 19:27:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=birthelmer.com;
-	s=uddkim-202310; t=1767983229;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=001lqfZyaF5rz5UgMb2uv/QEnMbybV2OKoAuJetIMJA=;
-	b=qUvQ5Ld11XCzfACxlC3NNZU7UsbOLhjARuAiIb63JbWUB12b321CThEWPAyt/2SWhuM+lq
-	XlNStosh2nLhb2INCj+lt3jG+kTPfJulBkbPUOuJy/W8xVoqqFtMpxJfsXfzCpGsaDnU+g
-	8k4yG7uydesyzc8i8vOOttNHBXDLPIrf6Y5TooxSy+GUEeqKGeTH35rwjMFYl3WKkkPJlV
-	E2nOkrx0NziLjI1LqwwK7hvOE+J+0IUSR9oNqILG8+K5GKsBsE+hYkS8qYy+k1lp2krHTK
-	p19phQ5o1XUddhjXW5nfoptAFBoZc3iJf9KJCijEKB0lqe1BBf54DkN2VqRwsw==
-Authentication-Results: smtp01-ext2.udag.de;
-	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.com
-From: Horst Birthelmer <horst@birthelmer.com>
-Date: Fri, 09 Jan 2026 19:27:01 +0100
-Subject: [PATCH v4 3/3] fuse: add an implementation of open+getattr
+	s=arc-20240116; t=1767983354; c=relaxed/simple;
+	bh=gULrGtwXTAPRy+8OxBRogUTqQoGyIVHLqsdnpZks/kM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SG9cEj4w9X8FeXKsj4nZGQvvfHtGWrqNx7Es3AoURxhfIxKRrExLRi3F3CWCcn9pb1H/Xz4QQWEjPYJ7DCKxkDYbOkz7YILr7NOaNgN+GvZ0OrO6Uk+SrUywAC+WuSr7PcASVT6czzcrhoXltlEywHAFzh6RfvitmvPnHYFxEJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mPJDQBRr; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-64fabaf9133so8048991a12.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 10:29:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767983352; x=1768588152; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8LFlk87MY4BgVDFcPrcEaHbyHfSLfak2VXkUEp3KfkM=;
+        b=mPJDQBRrqgsGUZnyeXN5yzRnT+et2XTbLjDMe5ZDW+cyD+JUEb8GCutVJvUBn0OYYz
+         2W/ecs66/0ULobhnEAZLDKUETXM2Adj1VmhAP+LHPTv7KqXLCP83IVzU0CzkMPFYOr3u
+         96uVRogSWj0b+KJbEUzd52RmzDFVFYokOfzjOZ62jDWqcYLNKkQxgRXzXt24prbWdl8M
+         POJ6GT8Fsp//Q5bLWtRzrkR5wOIoc829TmGWttv8tqQS7SPQWij42esQW0yRiS2aSrt4
+         uQElOBnOR1e9tzNgY7CA/gFyZ1+kGDy75yXdoJmg6qOIFRM+CRND8NjMNRFRwxsV+1P4
+         St8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767983352; x=1768588152;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=8LFlk87MY4BgVDFcPrcEaHbyHfSLfak2VXkUEp3KfkM=;
+        b=CBa0xasj0tTeaGSrXsy4MXxQlheg/lvqsBG0IYGD+tb6i65MPxIwOilay98R9EVgC4
+         Q0wSgxRTZEY5CLSIxfANj0xxxqekvokn7ClSpz4wMojQVtmDG7cdxVHwAg6mpEK4ua/m
+         FIqdfIaWL72K4Qb/TbSyCXu2GAljXsdn0dI85j3vyg+/Fu9IATd/1AV2ZD2jN4Py+MN0
+         mYNUC8TaduOIAwItY8H5rOmNkRd3zckb2GZ9de8tH+cOi4yawz2wdTqiYWnv0eunE13S
+         uUrYG+dx2qc9X1e2udcWvGVlahvH9uZRua6VUZ6fOnit3M1Hw+HQ228eF0DvWB3cGc3k
+         2irQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3J3Ay2navmdCOQO5iVF1ekc8FUvHw2Ui6CWuG4VOPLtmzHuu+MkBCgZHvwBay0m1uHKa9/6nE/giA0d9l@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE9D+vVN24hd8/pU8scAsdrbzUBjYneuL6tpigvbWZI5u+1X57
+	13xKSCWKdJkA5Tk4rQqAxI4wS1qMXSozsTJTPS/EF0XBlX+Wr8u/3RFBGsl5nJSO0UWhLInBGDB
+	2cgDRX9rCXhrKV/8ztoD3Fr5Adqoco9Q=
+X-Gm-Gg: AY/fxX7PZgWLI7PJXfAkf78pw1ttxtMnr0rLqF/7fkXkBkaE1H489LlW/890JRDer+R
+	eGIDhjul4TicCJ5O+NSzPa7jUGpZ9eoVKJ3EQWVOislk4rmwcG24NbbpomhO7/pr7+HG7zLMAPt
+	h4PfStRGCVe9UyJYlIMFQg2RDm9JVIh7u+nVc//LAoPl1PrfaoxyPCSNzONDBKtBCNgdgUcAmVe
+	Y5E69eadngRVStAOziiru8cP0LIo5sYwjqKzoxh5Jtbt7dQFiY/Puv4NG4YwHM51CSICCjDus3q
+	K3d5V88wZcH/zruMcrZEbaQkUzfg0Q==
+X-Google-Smtp-Source: AGHT+IEGyTeRNohLfHt9UUB+haTpFFKkf6E65ilqjPe0/PKzLT4i9aQ5J3dRRn5IzivUSdWu2G1COcGRMoxPv/0T8CI=
+X-Received: by 2002:a05:6402:278c:b0:64b:7ab2:9f83 with SMTP id
+ 4fb4d7f45d1cf-65097e6b614mr8352336a12.31.1767983351630; Fri, 09 Jan 2026
+ 10:29:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260109-fuse-compounds-upstream-v4-3-0d3b82a4666f@ddn.com>
-References: <20260109-fuse-compounds-upstream-v4-0-0d3b82a4666f@ddn.com>
-In-Reply-To: <20260109-fuse-compounds-upstream-v4-0-0d3b82a4666f@ddn.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
- Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Horst Birthelmer <hbirthelmer@ddn.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1767983227; l=6485;
- i=hbirthelmer@ddn.com; s=20251006; h=from:subject:message-id;
- bh=dDxgmzy2WLXTQBLLyekP0mUPMBrqJXIWFWxigRtE+ZY=;
- b=3/Ti6uOLRUQ3OJRf35e6ujLlGHHTVrxTtAMIm/tFaIIFW+mzN5H2ImX0MlsI3Jf4tpPxi/Ere
- Q5fOUFJbdHQDAvN8VU37jo5etoD8MeSW3YTEHRMylCLesPJaqj/yE6m
-X-Developer-Key: i=hbirthelmer@ddn.com; a=ed25519;
- pk=v3BVDFoy16EzgHZ23ObqW+kbpURtjrwxgKu8YNDKjGg=
+References: <20251212181254.59365-1-luis@igalia.com> <20251212181254.59365-5-luis@igalia.com>
+ <CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com>
+ <87zf6nov6c.fsf@wotan.olymp> <CAJfpegst6oha7-M+8v9cYpk7MR-9k_PZofJ3uzG39DnVoVXMkA@mail.gmail.com>
+ <CAOQ4uxjXN0BNZaFmgs3U7g5jPmBOVV4HenJYgdfO_-6oV94ACw@mail.gmail.com>
+ <CAJfpegsS1gijE=hoaQCiR+i7vmHHxxhkguGJvMf6aJ2Ez9r1dw@mail.gmail.com> <b2582658-c5e9-4cf8-b673-5ccc78fe0d75@ddn.com>
+In-Reply-To: <b2582658-c5e9-4cf8-b673-5ccc78fe0d75@ddn.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 9 Jan 2026 19:29:00 +0100
+X-Gm-Features: AQt7F2oDZjQ-wkggomL1K6hbBcB9PbFjmcJhzGeKc3O-2yU4uVXIcdjCWv3dhOc
+Message-ID: <CAOQ4uxhMtz6WqLKPegRy+Do2UU6uJvDOqb8YU6=-jAy98E5Vfw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the FUSE_LOOKUP_HANDLE operation
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Luis Henriques <luis@igalia.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Kevin Chen <kchen@ddn.com>, 
+	Horst Birthelmer <hbirthelmer@ddn.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Matt Harvey <mharvey@jumptrading.com>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Horst Birthelmer <hbirthelmer@ddn.com>
+On Fri, Jan 9, 2026 at 4:56=E2=80=AFPM Bernd Schubert <bschubert@ddn.com> w=
+rote:
+>
+>
+>
+> On 1/9/26 16:37, Miklos Szeredi wrote:
+> > On Fri, 9 Jan 2026 at 16:03, Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> >> What about FUSE_CREATE? FUSE_TMPFILE?
+> >
+> > FUSE_CREATE could be decomposed to FUSE_MKOBJ_H + FUSE_STATX + FUSE_OPE=
+N.
+> >
+> > FUSE_TMPFILE is special, the create and open needs to be atomic.   So
+> > the best we can do is FUSE_TMPFILE_H + FUSE_STATX.
+> >
 
-The discussion about compound commands in fuse was
-started over an argument to add a new operation that
-will open a file and return its attributes in the same operation.
+I thought that the idea of FUSE_CREATE is that it is atomic_open()
+is it not?
+If we decompose that to FUSE_MKOBJ_H + FUSE_STATX + FUSE_OPEN
+it won't be atomic on the server, would it?
 
-Here is a demonstration of that use case with compound commands.
+> >> and more importantly READDIRPLUS dirents?
+> >
+> > I was never satisfied with FUSE_READDIRPLUS, I'd prefer something more
+> > flexible, where policy is moved from the kernel to the fuse server.
+> >
+> > How about a push style interface with FUSE_NOTIFY_ENTRY setting up the
+> > dentry and the inode?
+>
+> Feasible, but we should extend io-uring to FUSE_NOTIFY first, otherwise
+> this will have a painful overhead.
+>
+>
 
-Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
----
- fs/fuse/file.c   | 110 +++++++++++++++++++++++++++++++++++++++++++++++--------
- fs/fuse/fuse_i.h |   7 +++-
- fs/fuse/inode.c  |   6 +++
- fs/fuse/ioctl.c  |   2 +-
- 4 files changed, 107 insertions(+), 18 deletions(-)
+I admit that the guesswork with readdirplus auto is not always
+what serves users the best, but why change to push?
+If the server had actually written the dirents with some header
+it could just as well decide per dirent if it wants to return
+dirent or direntplus or direntplus_handle.
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 53744559455d..c0375b32967d 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -152,8 +152,66 @@ static void fuse_file_put(struct fuse_file *ff, bool sync)
- 	}
- }
- 
-+static int fuse_compound_open_getattr(struct fuse_mount *fm, u64 nodeid,
-+				      int flags, int opcode,
-+				      struct fuse_file *ff,
-+				      struct fuse_attr_out *outattrp,
-+				      struct fuse_open_out *outopenp)
-+{
-+	struct fuse_compound_req *compound;
-+	struct fuse_args open_args = {};
-+	struct fuse_args getattr_args = {};
-+	struct fuse_open_in open_in = {};
-+	struct fuse_getattr_in getattr_in = {};
-+	int err;
-+
-+	compound = fuse_compound_alloc(fm, 0);
-+	if (IS_ERR(compound))
-+		return PTR_ERR(compound);
-+
-+	open_in.flags = flags & ~(O_CREAT | O_EXCL | O_NOCTTY);
-+	if (!fm->fc->atomic_o_trunc)
-+		open_in.flags &= ~O_TRUNC;
-+
-+	if (fm->fc->handle_killpriv_v2 &&
-+	    (open_in.flags & O_TRUNC) && !capable(CAP_FSETID))
-+		open_in.open_flags |= FUSE_OPEN_KILL_SUIDGID;
-+
-+	fuse_open_args_fill(&open_args, nodeid, opcode, &open_in, outopenp);
-+
-+	err = fuse_compound_add(compound, &open_args);
-+	if (err)
-+		goto out;
-+
-+	fuse_getattr_args_fill(&getattr_args, nodeid, &getattr_in, outattrp);
-+
-+	err = fuse_compound_add(compound, &getattr_args);
-+	if (err)
-+		goto out;
-+
-+	err = fuse_compound_send(compound);
-+	if (err)
-+		goto out;
-+
-+	err = fuse_compound_get_error(compound, 0);
-+	if (err)
-+		goto out;
-+
-+	err = fuse_compound_get_error(compound, 1);
-+	if (err)
-+		goto out;
-+
-+	ff->fh = outopenp->fh;
-+	ff->open_flags = outopenp->open_flags;
-+
-+out:
-+	fuse_compound_free(compound);
-+	return err;
-+}
-+
- struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
--				 unsigned int open_flags, bool isdir)
-+				struct inode *inode,
-+				unsigned int open_flags, bool isdir)
- {
- 	struct fuse_conn *fc = fm->fc;
- 	struct fuse_file *ff;
-@@ -179,23 +237,44 @@ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
- 	if (open) {
- 		/* Store outarg for fuse_finish_open() */
- 		struct fuse_open_out *outargp = &ff->args->open_outarg;
--		int err;
-+		int err = -ENOSYS;
-+
-+		if (inode && fc->compound_open_getattr) {
-+			struct fuse_attr_out attr_outarg;
-+
-+			err = fuse_compound_open_getattr(fm, nodeid, open_flags,
-+							 opcode, ff,
-+							 &attr_outarg, outargp);
-+			if (!err)
-+				fuse_change_attributes(inode, &attr_outarg.attr,
-+						       NULL,
-+						       ATTR_TIMEOUT(&attr_outarg),
-+						       fuse_get_attr_version(fc));
-+		}
-+		if (err == -ENOSYS) {
-+			err = fuse_send_open(fm, nodeid, open_flags, opcode,
-+					     outargp);
-+			if (!err) {
-+				ff->fh = outargp->fh;
-+				ff->open_flags = outargp->open_flags;
-+			}
-+		}
- 
--		err = fuse_send_open(fm, nodeid, open_flags, opcode, outargp);
--		if (!err) {
--			ff->fh = outargp->fh;
--			ff->open_flags = outargp->open_flags;
--		} else if (err != -ENOSYS) {
--			fuse_file_free(ff);
--			return ERR_PTR(err);
--		} else {
--			if (isdir) {
-+		if (err) {
-+			if (err != -ENOSYS) {
-+				/* err is not ENOSYS */
-+				fuse_file_free(ff);
-+				return ERR_PTR(err);
-+			} else {
- 				/* No release needed */
- 				kfree(ff->args);
- 				ff->args = NULL;
--				fc->no_opendir = 1;
--			} else {
--				fc->no_open = 1;
-+
-+				/* we don't have open */
-+				if (isdir)
-+					fc->no_opendir = 1;
-+				else
-+					fc->no_open = 1;
- 			}
- 		}
- 	}
-@@ -211,11 +290,10 @@ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
- int fuse_do_open(struct fuse_mount *fm, u64 nodeid, struct file *file,
- 		 bool isdir)
- {
--	struct fuse_file *ff = fuse_file_open(fm, nodeid, file->f_flags, isdir);
-+	struct fuse_file *ff = fuse_file_open(fm, nodeid, file_inode(file), file->f_flags, isdir);
- 
- 	if (!IS_ERR(ff))
- 		file->private_data = ff;
--
- 	return PTR_ERR_OR_ZERO(ff);
- }
- EXPORT_SYMBOL_GPL(fuse_do_open);
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 98ea41f76623..e7828405e262 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -924,6 +924,9 @@ struct fuse_conn {
- 	/* Use io_uring for communication */
- 	unsigned int io_uring;
- 
-+	/* Does the filesystem support compound operations? */
-+	unsigned int compound_open_getattr:1;
-+
- 	/** Maximum stack depth for passthrough backing files */
- 	int max_stack_depth;
- 
-@@ -1563,7 +1566,9 @@ void fuse_file_io_release(struct fuse_file *ff, struct inode *inode);
- 
- /* file.c */
- struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
--				 unsigned int open_flags, bool isdir);
-+								struct inode *inode,
-+								unsigned int open_flags,
-+								bool isdir);
- void fuse_file_release(struct inode *inode, struct fuse_file *ff,
- 		       unsigned int open_flags, fl_owner_t id, bool isdir);
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 819e50d66622..a5fd721be96d 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -991,6 +991,12 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
- 	fc->blocked = 0;
- 	fc->initialized = 0;
- 	fc->connected = 1;
-+
-+	/* pretend fuse server supports compound operations
-+	 * until it tells us otherwise.
-+	 */
-+	fc->compound_open_getattr = 1;
-+
- 	atomic64_set(&fc->attr_version, 1);
- 	atomic64_set(&fc->evict_ctr, 1);
- 	get_random_bytes(&fc->scramble_key, sizeof(fc->scramble_key));
-diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
-index fdc175e93f74..07a02e47b2c3 100644
---- a/fs/fuse/ioctl.c
-+++ b/fs/fuse/ioctl.c
-@@ -494,7 +494,7 @@ static struct fuse_file *fuse_priv_ioctl_prepare(struct inode *inode)
- 	if (!S_ISREG(inode->i_mode) && !isdir)
- 		return ERR_PTR(-ENOTTY);
- 
--	return fuse_file_open(fm, get_node_id(inode), O_RDONLY, isdir);
-+	return fuse_file_open(fm, get_node_id(inode), NULL, O_RDONLY, isdir);
- }
- 
- static void fuse_priv_ioctl_cleanup(struct inode *inode, struct fuse_file *ff)
+What is the expected benefit of using push in this scenario?
 
--- 
-2.51.0
+My own take on READDIRPLUS is that it cries for a user API
+so that "ls" could opt-out and "ls -l" could opt-in to readdirplus.
 
+I hacked my own server to use open(O_SYNC) indication for
+directories as a signal to choose between readdirplus and
+kernel readdir passthrough (not plus) and I have applications
+that opt-out of readdirplus.
+
+Thanks,
+Amir.
 
