@@ -1,206 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-73020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73021-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8E1D080CA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 10:02:40 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8ACAD08193
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 10:08:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 3761230155AB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 09:02:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9DC09306B780
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 09:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A184330333;
-	Fri,  9 Jan 2026 09:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60ED6358D17;
+	Fri,  9 Jan 2026 09:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yc0keE12"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="xoBHJd02";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CFQ8vT01"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C972C0F8E
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 09:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A541358D21;
+	Fri,  9 Jan 2026 09:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767949344; cv=none; b=gPteVfSbekSyMmaB9Lac2sOmuOztpopljG1J+at/2GtOI4YYYkX5tPuCjfIwCd8YsYsCuqkOtjwlP0y4tb8fC9QjWkvuEVftqk4oU0Xi8lnIjqWTRlaOxAonTg/fbmKvRmsYejqh9l49yGynp8NDIQVqINdTKMu8nY2JUz493xQ=
+	t=1767949629; cv=none; b=jgmhct/6XAAvIDOlMOmknVdXPEoJo/sB3iX0yAnHNL4dSeoKpSKD4Q98meqALGhUAKSpGHW8bVM6K648lvujktzZ6eUE3pXLyWUMbASPm5NFZYqGNA4MvI5yVnSlnKOWbpAT3D5bTGkPL1p9uI3FEWiHEgO6gvYMa1UwOsKQku4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767949344; c=relaxed/simple;
-	bh=YtKupLIBJ9j000by1XXP7xXeK81yHBpalRt99DY2eK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZIig3RicDmDcdz2bc4mVAO0IbE2JzTwd/yywNjZJf0PVjkDVe6Gw8PWRpBMTn7tSjlyauT+fZ1V2/CR5Yf0qwUVUtgnN2eKI2DJkiuFTSTBEZlvoaqtFh+Nr+51dVKiQYR0MiYefAFAxED38Uu7E4MyKnDEL+vbLAbECL1oqNRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yc0keE12; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64b9b0b4d5dso8286056a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 01:02:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767949338; x=1768554138; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/4UEUK1qEdNz6L+bs7NXPJHFHW8lZNZC50cs9JtRGuI=;
-        b=Yc0keE12jJwH5bUYOPLDkfUOs6qqW/wsaWpYSG9kVtE/32cogN70DVu6cX1efQFvpn
-         nJfHm8O5MKY6Zx3ctUodm5AGSW/5CzYCvhVUWeOifI1dhYJuMNsA/ul5npulDvioxq1x
-         C4AVeesjT4+PYtDgJih2PDuKTulOXy09eFlHwTwnQbXeNtnOgELg96qpCYwib6ifvqnb
-         9RzUcbyhzFk9VlxCuD0mxqQcn9dwNZfRlUj+E1wWrXeBqv0xSXMm/Q6UaeRO0X952yoY
-         I/DCJWJhwHFmCADiD5OWkr4ji5o/T4UMWnYqwHD5eyE/e3Lmj3kLHJ00Jg2HRZPU+H0H
-         BsKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767949338; x=1768554138;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/4UEUK1qEdNz6L+bs7NXPJHFHW8lZNZC50cs9JtRGuI=;
-        b=iZe1Z9U4fFMDatTLZvqITah+F0Sn+9t6Er1Jxw/+8g75BlIeSv4cfZMr5P6ORNjQHM
-         1Tmdv+Aijqrpf7VBgSEfHrln4GZJRByNBsmlOGu3kUWP+j1vpz0AND9yFgMls1Nf0zxW
-         YYqbN2SUtpEwaILnjUVsRYqWvr9bAPl1b+kKGwHY0uCTrK66DP8Jn4PIHaIoyUqXGVN4
-         m+ZCS10lUVJI4HH3Z3hNP9fyHB9nV/L9YRIh5i7/8W62LaRGBLpYXuKTPEemSQN9W1br
-         y/GbSg45bFWkiwdeEhioQQnP8nf20vhFz44jHCPK2lrd/uJWnzJuv1s9U431G6JgNskE
-         Nx0g==
-X-Gm-Message-State: AOJu0YypfifZ4c9DRgRzuuXZoM5wmvVqMkASXZttTNC0GNzZBNgJZzHA
-	+vQvgeO0GXNOSaPt+Fb+Ai1qCdf/MaF26ARDBYy3R2QtR5611EZm0kZ3hKmS3uIuoSHD2pbUg+a
-	Hfz738OZ7Svd0I9CnILnVfRseFy1Bh7o=
-X-Gm-Gg: AY/fxX5eGxdsvULXbq2do+8WmEm4vH50+DYRt/kwcRgbGlTeRUnI3m6vNT+ueSJo0ol
-	nZ93AJmGpnLn9KIXO8ElHQBrh5pC+oLCpKRcNekVJK/e1l7lMgFtDq55qh7cr4HUhNVgjZ6Cb6Q
-	favXCO4HDt6ctt0/qcUxms99z2A0IQpRY8tBVtThxRiV6mYkH3uyj7AVzRKUOY68babwm7pHBUI
-	Llv8atO/c6Nd8ljrLQYRENkbu+CPZ3Aa/j8+8oSh8IOJhMmk8U7VzTWMuF+q5yHOC2o
-X-Google-Smtp-Source: AGHT+IGBDSt4Rc+CRQCQY6JXfMy3gLM+0zqVVmSkOCRpqDwk+CHAoizNQK6AhncYcO9l6U1JD5dpnvTNqepNL947k40=
-X-Received: by 2002:a17:907:d09:b0:b72:ddfd:bca7 with SMTP id
- a640c23a62f3a-b84453385d8mr890272666b.35.1767949337438; Fri, 09 Jan 2026
- 01:02:17 -0800 (PST)
+	s=arc-20240116; t=1767949629; c=relaxed/simple;
+	bh=WpHdn+9neg6SFNG/OOmOlstocJq7yoEdBjtscA+pMxE=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=MFNZVg1zY0gRzoar14NHqr4Y7uavyD2M8fJ1LKlBX24xNSxwbjFR1ut2x0/B/f+S3mcIF0V9w7HGKifWD+JWu1cPxW96b/Q2wJzKKrItnaEXBbfOYW+uXkNpt/yFMAXUs2/BWqBARhV+s9t0Zk0+CbF/sE+iDZO1/uM+hTmc8cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=xoBHJd02; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CFQ8vT01; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id BACC1EC00BD;
+	Fri,  9 Jan 2026 04:07:06 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Fri, 09 Jan 2026 04:07:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
+	1767949626; x=1768036026; bh=Ly5pm6xNlhmXVqIXoX888UMxH67D/f69oyX
+	NeTjvr98=; b=xoBHJd02Do7RQm3AlOKNDhdeUhY6eYr2IC6XG4K1Y7Qi6QngeUb
+	zUH2PQjGK8fAZ7LY8aArsl+jfew1Q2cppalINWPF5IQ3lDxXP/1IM445Xz/ZaOVJ
+	7DYsvTQT9ltfRTqL6TTzIjeRz7RQwiYRwUzD+2ef4NcCvjy+wJpGmvAXsfOe6sqf
+	OXIk/242+FQZrAT5zzJg5GeI+aHx/kKZy+OZxZJ9CFxn8ePPvvGMGDNu5IHJ+aj6
+	U59QDoY15TXZE4BEMGS1CrCJ8lUyi2spV+BiNY0gVsEAQELz5AyIBdgmIq52tShL
+	4cO13QHJdnb3GULKw2en6G27TDKLH1aQidQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1767949626; x=
+	1768036026; bh=Ly5pm6xNlhmXVqIXoX888UMxH67D/f69oyXNeTjvr98=; b=C
+	FQ8vT01U831hsmm+IidRPVCpXQBOz2/MqMKJc8kpdG1GjwFhEPAlBSjgTthRNJj3
+	EgZIBEJn8URnALfiCgY4IwR/Q6UONmC02lk9bRL+X0d2FLDRsUmIEf07DOERN3C0
+	qmG0RcP+6ROJ2a8M8Clytzz4qBHvl9xBnfAJ+YBToChfEO766b0ZXYhFvM6Pthoh
+	ApuMC+hnvGyEIpyV3OvO+aTIQsMZ6iPdvOMWaDsNS7I15vu2/IoOIVx8Nm7K0CI9
+	fY3Hf0f37bYKxiNyFdgb7EImRcBwr03+Ijgi+WAo2Xa7MWTyomzlmooy96OhiyoF
+	n9rAvjXPSjOEnFlaQdOjg==
+X-ME-Sender: <xms:OsVgabJo9W0lKdrIrwTsvYZoX0SvkurTf_O6oA1EhFgeHEJG1OW1kQ>
+    <xme:OsVgaZKdjqKdmJ3FVxDmq3S0OqpgOJeRt3P362I8FEhNrBfwsnCwG32Ut5NUqm3y6
+    O_SRrJ_c-uUxBUxIGBybEWT1mAuT2r0rlfDIs5_HDd9bCaZgkg>
+X-ME-Received: <xmr:OsVgaaXRIF-ySHS4peIdDaqIURfrJpfQiuGoKk03topmtpbSrw3Sv7btls-GR5kLGh2YTPhSpBXf-73hxU3YustPpA_fuSI-2Nd2FEqkKCh2>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddutdekgeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtjeertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epudetfefhudevhedvfeeufedvffekveekgfdtfefggfekheejgefhteeihffggfelnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphho
+    uhhtpdhrtghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtohepohhkoh
+    hrnhhivghvsehrvgguhhgrthdrtghomhdprhgtphhtthhopegurghirdhnghhosehorhgr
+    tghlvgdrtghomhdprhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtg
+    homhdprhgtphhtthhopehjlhgrhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pegtvghlsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:OsVgaSl_JzipIRKHLnptQtYo1u1UyDkuMXx4KBVUvf6_KqiNYJNIXg>
+    <xmx:OsVgaQlLn6_ZsgrjuznPFVkSsqXF3tUH856BQjc4CWVtIWYz4e3mXw>
+    <xmx:OsVgaSbpPBGH-5xnyaZV0_QhfYQg3ptViAXsbA9jHMqQvsDWxcd5EA>
+    <xmx:OsVgaSQ-jXpDDR6y06T-9bdjjAlJmPP36nSRNFgR_yEQc5V00tc0sg>
+    <xmx:OsVgaUOEUDgwl3i4rSFPrFgRVIqMOsX2vx6nc8Sl0YmA60tsAWUUYdAf>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 9 Jan 2026 04:07:04 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGmFzSc=YbHdaFbGQOrs_E4-MBXrM7QwXZ0DuKAGW1Ers2q=Rg@mail.gmail.com>
- <CAJnrk1ZOYnXpY0qf3yU41gQUHjyHOdBhAdyRPt_kaBmhvjr_9g@mail.gmail.com>
- <CAGmFzSdQ2Js5xUjb-s2vQkNB75Y5poOr_kTf4_8wqzeSgA6mJg@mail.gmail.com>
- <CAJnrk1Z=kqQc5SM2Z1ObgEMeCttT8J83LjeX19Ysc1jCjvA79A@mail.gmail.com>
- <CAGmFzSe3P3=daObU5tOWxzTQ3jgo_-XTsGE3UN5Z19djhYwhfg@mail.gmail.com>
- <CAJnrk1a1aT77GugkAVtUixypPpAwx7vUd92cMd3XWHgmHXjYCA@mail.gmail.com>
- <CAGmFzSc3hidao0aSD9nDT50J4a9ZY053MdEPRF-x_Xfkb730-g@mail.gmail.com>
- <CAGmFzSdmGLSC59vUjd=3d3bng+SQSHL=DMUQ+fpzAM2S12DcuA@mail.gmail.com>
- <CAJnrk1Z_1LO0uS=J5uca2tXUp_4Zc+O5D6XN-hdGEJFxTKyvyw@mail.gmail.com>
- <CAGmFzSci7dC5Fq77umzrCQVaKqDPiJ4NgMGTycjvMCnPXv6-zQ@mail.gmail.com>
- <CAJnrk1ZA2eAnV8tJMnCpaBphRXh3A+XtAYk_gRZ1ohKjaRhPyA@mail.gmail.com> <CAGmFzSdcPH1Q3x342YWgA-08578YSLB0iEY6KoAyapmEULd=VA@mail.gmail.com>
-In-Reply-To: <CAGmFzSdcPH1Q3x342YWgA-08578YSLB0iEY6KoAyapmEULd=VA@mail.gmail.com>
-From: Gang He <dchg2000@gmail.com>
-Date: Fri, 9 Jan 2026 17:02:05 +0800
-X-Gm-Features: AZwV_QgG4LhjxHnTYAIYEx6TSrNqDjg8ymzwygrqJILWTs_bkEuD_oe3iGybZl4
-Message-ID: <CAGmFzSd9gMCDYQR2u2NkrKArRA1rQKRWca93qwZ5ykjKSxc0Ew@mail.gmail.com>
-Subject: Re: feedback: fuse/io-uring: add kernel-managed buffer rings and zero-copy
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: NeilBrown <neilb@ownmail.net>
+To: "Chuck Lever" <cel@kernel.org>
+Cc: "Jeff Layton" <jlayton@kernel.org>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <dai.ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, linux-nfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, "Chuck Lever" <chuck.lever@oracle.com>
+Subject:
+ Re: [PATCH v2 5/6] nfsd: revoke NFSv4 state when filesystem is unmounted
+In-reply-to: <20260108004016.3907158-6-cel@kernel.org>
+References: <20260108004016.3907158-1-cel@kernel.org>,
+ <20260108004016.3907158-6-cel@kernel.org>
+Date: Fri, 09 Jan 2026 20:06:57 +1100
+Message-id: <176794961797.16766.6650655992486998763@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-Hi Joanne,
+On Thu, 08 Jan 2026, Chuck Lever wrote:
 
-Sorry for more information.
-it looks the root cause is "io-uring queue depth must be specified"
-In the past, I usually use the default value for this parameters.
 
-Thanks
-Gang
+> +
+> +	old = xa_cmpxchg(&nn->nfsd_sb_pins, (unsigned long)sb, NULL, new,
+> +			 GFP_KERNEL);
 
-Gang He <dchg2000@gmail.com> =E4=BA=8E2026=E5=B9=B41=E6=9C=889=E6=97=A5=E5=
-=91=A8=E4=BA=94 15:34=E5=86=99=E9=81=93=EF=BC=9A
->
-> Hi Joanne,
->
-> I applied your V3 25
-> patches(https://lore.kernel.org/linux-fsdevel/20251223003522.3055912-1-jo=
-annelkoong@gmail.com/T/#t)
-> in the kernel v6.19-rc3. I removed the existing liburing2 package
-> (dpkg --remove  --force-depends liburing2), and installed your
-> liburing2 (make install).
-> Then, built your libfuse code and example.
-> there was still a hanged problem when ls the related fuse mount directory=
-.
-> the ls command back traces are as follows,
-> [<0>] fuse_get_req+0x1fb/0x2e0
-> [<0>] __fuse_simple_request+0x41/0x320
-> [<0>] fuse_do_getattr+0x101/0x240
-> [<0>] fuse_update_get_attr+0x19a/0x1c0
-> [<0>] fuse_getattr+0x96/0xe0
-> [<0>] vfs_getattr_nosec+0xc4/0x110
-> [<0>] vfs_statx+0xa7/0x160
-> [<0>] do_statx+0x63/0xb0
-> [<0>] __x64_sys_statx+0xad/0x100
-> [<0>] x64_sys_call+0x10c9/0x2360
-> [<0>] do_syscall_64+0x81/0x500
-> [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
->
-> The hang problems are related to your new parameters(-o
-> io_uring_bufring -o io_uring_zero_copy).
-> If without these two parameters, the example binary files do work.
-> But there was not any kernel message printed.
->
-> Thanks
-> Gang
->
-> Joanne Koong <joannelkoong@gmail.com> =E4=BA=8E2026=E5=B9=B41=E6=9C=887=
-=E6=97=A5=E5=91=A8=E4=B8=89 05:12=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Mon, Jan 5, 2026 at 6:14=E2=80=AFPM Gang He <dchg2000@gmail.com> wro=
-te:
-> > >
-> > > Hi Joanne,
-> > >
-> > > Yes, I enabled /sys/module/fuse/parameters/enable_uring before doing
-> > > the testing.
-> > > I verified my libfuse include/fuse_kernel.h, the code looks like,
-> > > struct fuse_uring_cmd_req {
-> > >     uint64_t flags;
-> > >
-> > >     /* entry identifier for commits */
-> > >     uint64_t commit_id;
-> > >
-> > >     /* queue the command is for (queue index) */
-> > >     uint16_t qid;
-> > >
-> > >     union {
-> > >         struct {
-> > >             uint16_t flags;
-> > >             uint16_t queue_depth;
-> > >         } init;
-> > >     };
-> > >
-> > >     uint8_t padding[2];
-> > > };
-> > >
-> > > But, for my kernel source code fs/fuse/dev_uring.c:1522:21, the
-> > > detailed code lines are as follows,
-> > > 1518 static int fuse_uring_register(struct io_uring_cmd *cmd,
-> > > 1519                    unsigned int issue_flags, struct fuse_conn *f=
-c)
-> > > 1520 {
-> > > 1521     const struct fuse_uring_cmd_req *cmd_req =3D io_uring_sqe_cm=
-d(cmd->sqe);
-> > > 1522     bool use_bufring =3D READ_ONCE(cmd_req->init.use_bufring);  =
-  <<=3D=3D here
-> > > 1523     bool zero_copy =3D READ_ONCE(cmd_req->init.zero_copy);
-> > > 1524     struct fuse_ring *ring =3D smp_load_acquire(&fc->ring);
-> > > 1525     struct fuse_ring_queue *queue;
-> > >
-> > > The problem looks like the user space side does not pass the right
-> > > data structure to the kernel space side.
-> >
-> > Hi Gang,
-> >
-> > Are you sure the patches you applied were the ones from v3 [1]? I
-> > think you may have applied a previous version, as that 1522 line
-> > ("bool use_bufring =3D READ_ONCE(cmd_req->init.use_bufring);") does not
-> > exist in v3. v3 uses the init flags (" bool use_bufring =3D init_flags =
-&
-> > FUSE_URING_BUF_RING;").
-> >
-> > Thanks,
-> > Joanne
-> >
-> > [1] https://lore.kernel.org/linux-fsdevel/20251223003522.3055912-1-joan=
-nelkoong@gmail.com/
-> > >
-> > > Thanks
-> > > Gang
+As you don't need the "old" value, would xa_insert() be a better fit?
+
+> +	if (old) {
+> +		/*
+> +		 * Another task beat us to it. Even if the winner has not
+> +		 * yet called pin_insert_sb(), returning here is safe: the
+> +		 * caller holds an open file reference that prevents
+> +		 * unmount from completing until state creation finishes.
+> +		 */
+> +		put_net(new->net);
+> +		kfree(new);
+> +		return nfs_ok;
+> +	}
+
+....
+
+> +
+> +
+> +/**
+> + * nfsd_sb_pins_shutdown - shutdown superblock pins for a network namespace
+> + * @nn: nfsd_net for this network namespace
+> + *
+> + * Must be called during nfsd shutdown before tearing down client state.
+> + * Flushes any pending work and waits for RCU callbacks to complete.
+> + */
+> +void nfsd_sb_pins_shutdown(struct nfsd_net *nn)
+> +{
+> +	nfsd_sb_pins_destroy(nn);
+> +	flush_workqueue(nfsd_pin_wq);
+> +	/*
+> +	 * Wait for RCU callbacks from nfsd_sb_pins_destroy() to complete.
+> +	 * These callbacks release network namespace references via put_net()
+> +	 * which must happen before the namespace teardown continues.
+> +	 */
+
+This isn't called during namespace teardown.  It cannot be as the
+namespace cannot start being torn down while there are still references
+that need put_net() called on them.
+
+It is called from nfs4_state_shutdown_net() which is called from
+net_shutdown_net() when the last nfsd thread exits.
+
+I don't think there is any need for rcu_barrier() here.
+
+And I'm not entirely comfortable with the flush_workqueue() call.
+That could cause shutdown of nfsd in one namespace block due to an
+unresponsive exported filesystem in another namespace.
+
+Could nfsd_sb_pins_destroy() call cancel_work_sync() on the relevant
+work item.
+Then it would only wait on work for this namespace.
+
+Thanks,
+NeilBrown
+
+
+> +	rcu_barrier();
+> +}
 
