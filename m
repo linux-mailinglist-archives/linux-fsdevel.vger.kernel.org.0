@@ -1,230 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-73070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73069-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BABED0B881
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 18:10:44 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD65D0B933
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 18:17:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id A1BCD3027E76
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 17:08:12 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id BB6D33028E6D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 17:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81481365A06;
-	Fri,  9 Jan 2026 17:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15CB366569;
+	Fri,  9 Jan 2026 17:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ag3SD+HD"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="moZTw+pg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9E735CB85
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 17:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0A0365A08;
+	Fri,  9 Jan 2026 17:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767978447; cv=none; b=cGbS2fBPIq2e0WRqythh1bWvMo/06ufW+iv/8eJDHht7Ry4+aet4Kh06Xvtww30ZF/souwieAjST1Y1ZmvHR3vYmHtPZxlxyruN8UUvgWLXQk+XhOC2j153WnB87VJ3bMDAt5YmgOdVl8QgxGoF+pRDEn3Y4/+fA8xTV8qfNO9Q=
+	t=1767978447; cv=none; b=fMJcLi/dKwmVUFCmtgrFmdgcOmzsPQ3EXRHNlsc2o829YGUfxTVFtVwNxNkDK/avxV/r3aAGIGEjcJ6IEQqAVAiwnUbq+HA/VZDPuMLdDON4P0xFkhSoLtcZDTB/PovE0/BCQmB4nQZkP+/G/SBbiNLGYM3Ggc8gK42YBEfRMIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1767978447; c=relaxed/simple;
-	bh=XVJb+spUsOXmk3Ka32Q/lXdIj7zL97Hajw+2/Bfk4is=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UfihycjECCDRJN2Qs7NeWj5AKJXFsR95n2Id60tEMj1GmKmjcaTaikDWKkVv1O2Knh76YyksuSM8sp4ZDpRwCGa3cuHem7L/IBrlTaDNKUt+U/jBD9pm0/NzcC9W6xL1ljshlCblcnj+6CKgOii5hSmOIbQVoxhKLnVis+N0I1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ag3SD+HD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BE7FC19425
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 17:07:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767978447;
-	bh=XVJb+spUsOXmk3Ka32Q/lXdIj7zL97Hajw+2/Bfk4is=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ag3SD+HDBfARfsjqGeXq9p7f74iRI/L63NcdHz7lxyBeJXMwTMQl+7VseqmWSC4FR
-	 5vqI1tO8LMHjdUrmKEtnCg0K2L5TMXDuoiXhZbQl7prUlsFORJM0BKBQ+8uCy+LXbz
-	 8JdRgj2B1i7dDIHpFUXEAO9rYKeHzjSWTSBOEho/Br4fkKZfa+2TxcM+awYQtNGxZ8
-	 uTUKK9wAVMhdF7fIgHf1fL0IUMSHHK2vBM94tQSO4d3fRy7Gt+Zhu3vhDK6UDdQtWy
-	 pxJeX3lwoZelYEbPWrmu9gQ7drPM6lumWLWzOr100Dfh1aQ7M378XvD2bnD4aE7z1n
-	 ZM/NvPQkSnohg==
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b79ea617f55so893891566b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 09:07:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWC5N3TkUf6PpnvK/zS0TLdoXhJN9OrIuje+/PrL2xX7DKSlCBv4CpZgjwP9ngAl+0WUyjfTP7ogognVm9b@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8iGCjKUuMpS9yYJNrzp96/4Zqx7CrGX8lvHOIRBq5d5Q9Q265
-	bDMb1DEp6yzqU1LebBpu7BuqcdupeUjUPgUiRJ0+TWw4S3tFOtUENSMSJh8jTPekGrK0TMpDaIg
-	cLD7I2wER63Sn3dsiiR3uVYYoLYGtu8A=
-X-Google-Smtp-Source: AGHT+IHFEd/Cji7DPzPk6Q0cBLN926Pva19PuOn+kn33FVn6/MaIdCy6zJRKw3cfNEMg7xUNGSJUX33GisYNnMtjBsg=
-X-Received: by 2002:a17:907:9615:b0:b80:4119:2436 with SMTP id
- a640c23a62f3a-b8444d4ea89mr980899166b.7.1767978446098; Fri, 09 Jan 2026
- 09:07:26 -0800 (PST)
+	bh=m5Kc0cyE952elY02862Vfr28p78pQtCDhjd1hEFWs5c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Sc3ZKEjDx0XMYvW9amiIJnwHdS4lko+hIZoN1BNbQpjUpr3xIt0V25E+he/g+I+cwpw+qpw9Hp/JS30CAR2HW3ER02r7tTOCoHkl25YZO/O4WgvnpoYa6UP0Y2dZUlrhEIsg1DlllY6iVXSGGK/AtI2HERaYh0WKgGqPZq3b0cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=moZTw+pg; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Jhg+4nXh/yWpugQOihtjQzgGEo99a9CQxTXKQVRNjt8=; b=moZTw+pg+g1GOBWGywVSqi56Dj
+	vgvLypCGo8bdGoCT1m1VvqBxCLilUM2P8U3ot9y+jeFtgT62dkjpu4HYIoOoGf81to0sWHbvPlUQK
+	IksMFIJPSgc7wadct5T6j4W5FiqspvzbZN74QPlQ7aGGZsZmDqlAyQQ8Jtt5Iv83wAlajZohvgdYa
+	50dxaW8ATaaSiZq/sbC8KcxqzGgHxIRT83xEp15aS92mbwh6lIrtlKfKAV8q8DMgoQEwJ5LfLhQaT
+	Im/nZbeYoh3TDUvFhx/AV3ElJRQXAHkzJMn//JymNxJ3wNlWJOEHQlt2I9K5kyN9Gf+ldr584RAQZ
+	ML+BTDyA==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1veFx8-003VHq-Ub; Fri, 09 Jan 2026 18:07:11 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Horst Birthelmer <horst@birthelmer.de>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
+ <amir73il@gmail.com>,  "Darrick J. Wong" <djwong@kernel.org>,  Bernd
+ Schubert <bschubert@ddn.com>,  Kevin Chen <kchen@ddn.com>,  Horst
+ Birthelmer <hbirthelmer@ddn.com>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Matt Harvey <mharvey@jumptrading.com>,
+  kernel-dev@igalia.com
+Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the
+ FUSE_LOOKUP_HANDLE operation
+In-Reply-To: <aWEWVAqHlTpzsklJ@fedora> (Horst Birthelmer's message of "Fri, 9
+	Jan 2026 15:56:48 +0100")
+References: <20251212181254.59365-1-luis@igalia.com>
+	<20251212181254.59365-5-luis@igalia.com>
+	<CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com>
+	<87zf6nov6c.fsf@wotan.olymp>
+	<CAJfpegst6oha7-M+8v9cYpk7MR-9k_PZofJ3uzG39DnVoVXMkA@mail.gmail.com>
+	<87tswuq1z2.fsf@wotan.olymp> <aWEWVAqHlTpzsklJ@fedora>
+Date: Fri, 09 Jan 2026 17:07:10 +0000
+Message-ID: <87pl7i4sw1.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1767801889.git.fdmanana@suse.com> <46b13dc5c957deb72a7f085916757a20878a8e73.1767801889.git.fdmanana@suse.com>
- <20260108220505.GP21071@twin.jikos.cz>
-In-Reply-To: <20260108220505.GP21071@twin.jikos.cz>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Fri, 9 Jan 2026 17:06:48 +0000
-X-Gmail-Original-Message-ID: <CAL3q7H67kO2LLDPSZQePkC6J-F5SPT45zjLg_Y4rBo7kAJqhtA@mail.gmail.com>
-X-Gm-Features: AQt7F2qp9c9HYxqNlhVhsEIFw6qT9YzEVqAsgG2OIq2ycz_33z2wEPOq90T9_xI
-Message-ID: <CAL3q7H67kO2LLDPSZQePkC6J-F5SPT45zjLg_Y4rBo7kAJqhtA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] btrfs: use may_delete_dentry() in btrfs_ioctl_snap_destroy()
-To: dsterba@suse.cz
-Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	Filipe Manana <fdmanana@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 8, 2026 at 10:05=E2=80=AFPM David Sterba <dsterba@suse.cz> wrot=
-e:
+On Fri, Jan 09 2026, Horst Birthelmer wrote:
+
+> On Fri, Jan 09, 2026 at 02:45:21PM +0000, Luis Henriques wrote:
+>> On Fri, Jan 09 2026, Miklos Szeredi wrote:
+>>=20
+>> > On Fri, 9 Jan 2026 at 12:57, Luis Henriques <luis@igalia.com> wrote:
+>> >
+>> >> I've been trying to wrap my head around all the suggested changes, and
+>> >> experimenting with a few options.  Since there are some major things =
+that
+>> >> need to be modified, I'd like to confirm that I got them right:
+>> >>
+>> >> 1. In the old FUSE_LOOKUP, the args->in_args[0] will continue to use =
+the
+>> >>    struct fuse_entry_out, which won't be changed and will continue to=
+ have
+>> >>    a static size.
+>> >
+>> > Yes.
+>> >
+>> >> 2. FUSE_LOOKUP_HANDLE will add a new out_arg, which will be dynamical=
+ly
+>> >>    allocated (using your suggestion: 'args->out_var_alloc').  This wi=
+ll be
+>> >>    a new struct fuse_entry_handle_out, similar to fuse_entry_out, but
+>> >>    replacing the struct fuse_attr by a struct fuse_statx, and adding =
+the
+>> >>    file handle struct.
+>> >
+>> > Another idea: let's simplify the interface by removing the attributes
+>> > from the lookup reply entirely.  To get back the previous
+>> > functionality, compound requests can be used: LOOKUP_HANDLE + STATX.
+>>=20
+>> OK, interesting idea.  So, in that case we would have:
+>>=20
+>> struct fuse_entry_handle_out {
+>> 	uint64_t nodeid;
+>> 	uint64_t generation;
+>> 	uint64_t entry_valid;
+>> 	struct fuse_file_handle fh;
+>> }
+>>=20
+>> I'll then need to have a look at the compound requests closely. (I had
+>> previously skimmed through the patches that add open+getattr but didn't
+>> gone too deep into it.)
+>>=20
 >
-> On Thu, Jan 08, 2026 at 01:35:33PM +0000, fdmanana@kernel.org wrote:
-> > From: Filipe Manana <fdmanana@suse.com>
-> >
-> > There is no longer the need to use btrfs_may_delete(), which was a copy
-> > of the VFS private function may_delete(), since now that functionality
-> > is exported by the VFS as a function named may_delete_dentry(). In fact
-> > our local copy of may_delete() lacks an update that happened to that
-> > function which is point number 7 in that function's comment:
-> >
-> >   "7. If the victim has an unknown uid or gid we can't change the inode=
-."
-> >
-> > which corresponds to this code:
-> >
-> >       /* Inode writeback is not safe when the uid or gid are invalid. *=
-/
-> >       if (!vfsuid_valid(i_uid_into_vfsuid(idmap, inode)) ||
-> >           !vfsgid_valid(i_gid_into_vfsgid(idmap, inode)))
-> >               return -EOVERFLOW;
-> >
-> > As long as we keep a separate copy, duplicating code, we are also prone
-> > to updates to the VFS being missed in our local copy.
-> >
-> > So change btrfs_ioctl_snap_destroy() to use the VFS function and remove
-> > btrfs_may_delete().
-> >
-> > Signed-off-by: Filipe Manana <fdmanana@suse.com>
-> > ---
-> >  fs/btrfs/ioctl.c | 58 +-----------------------------------------------
-> >  1 file changed, 1 insertion(+), 57 deletions(-)
-> >
-> > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> > index d9e7dd317670..0cb3cd3d05a5 100644
-> > --- a/fs/btrfs/ioctl.c
-> > +++ b/fs/btrfs/ioctl.c
-> > @@ -815,62 +815,6 @@ static int create_snapshot(struct btrfs_root *root=
-, struct inode *dir,
-> >       return ret;
-> >  }
-> >
-> > -/*  copy of may_delete in fs/namei.c()
-> > - *   Check whether we can remove a link victim from directory dir, che=
-ck
-> > - *  whether the type of victim is right.
-> > - *  1. We can't do it if dir is read-only (done in permission())
-> > - *  2. We should have write and exec permissions on dir
-> > - *  3. We can't remove anything from append-only dir
-> > - *  4. We can't do anything with immutable dir (done in permission())
-> > - *  5. If the sticky bit on dir is set we should either
-> > - *   a. be owner of dir, or
-> > - *   b. be owner of victim, or
-> > - *   c. have CAP_FOWNER capability
-> > - *  6. If the victim is append-only or immutable we can't do anything =
-with
-> > - *     links pointing to it.
-> > - *  7. If we were asked to remove a directory and victim isn't one - E=
-NOTDIR.
-> > - *  8. If we were asked to remove a non-directory and victim isn't one=
- - EISDIR.
-> > - *  9. We can't remove a root or mountpoint.
-> > - * 10. We don't allow removal of NFS sillyrenamed files; it's handled =
-by
-> > - *     nfs_async_unlink().
-> > - */
-> > -
-> > -static int btrfs_may_delete(struct mnt_idmap *idmap,
-> > -                         struct inode *dir, struct dentry *victim, int=
- isdir)
-> > -{
-> > -     int ret;
->
-> There are some differences in VFS may_delete that I don't know if are
-> significant, they seem to be releated to stacked filesystems.
->
-> For example the associated inode of the victim dentry is obtained as
-> d_backing_inode() vs our simple d_inode().
->
-> > -
-> > -     if (d_really_is_negative(victim))
->
-> VFS does d_is_negative() which does not check for NULL pointer but some
-> other internal state.
->
-> > -             return -ENOENT;
-> > -
-> > -     /* The @victim is not inside @dir. */
-> > -     if (d_inode(victim->d_parent) !=3D dir)
-> > -             return -EINVAL;
->
-> We handle that properly, while VFS does BUG_ON, so this can be fixed
-> separeately in the VFS version.
+> I am preparing the pull request for libfuse today, so you can have a look=
+ at how it will be handled on the libfuse
+> side.=20
+> That contains a patch to passthrough_hp as well so it supports compounds =
+and you will have something to test, if you want to go that way.
 
-Yes, but it's one of those cases that should never happen.
-In fact we used to have the BUG_ON in btrfs too, you converted it to
-proper error handling in:
+Awesome, thanks for the hint, Horst.  I'll definitely have a look into it.
 
-commit 1686570265559ebfa828c1b784a31407ec2877bd
-Author: David Sterba <dsterba@suse.com>
-Date:   Fri Jan 19 20:23:56 2024 +0100
-
-    btrfs: handle directory and dentry mismatch in btrfs_may_delete()
-
-
-
->
-> There are no changes in the rest of the function (other than the
-> different way how inode is obtained).
-
-Yes, small differences like that. Some of those things seem to be
-because our btrfs copy was not updated.
-fstests pass with this patchset.
-
->
-> The original commit 4260f7c7516f4c ("Btrfs: allow subvol deletion by
-> unprivileged user with -o user_subvol_rm_allowed") adding this helper
-> says something about adding the write and exec checks and size checks
-> but I don't see what it's referring to, neither in the current nor in
-> the old code.
-
-I noticed that, but the VFS may_delete() does those checks, which is this l=
-ine:
-
-error =3D inode_permission(idmap, dir, MAY_WRITE | MAY_EXEC);
-
-Exactly the same as our btrfs copy.
-
-
->
-> > -     audit_inode_child(dir, victim, AUDIT_TYPE_CHILD_DELETE);
-> > -
-> > -     ret =3D inode_permission(idmap, dir, MAY_WRITE | MAY_EXEC);
-> > -     if (ret)
-> > -             return ret;
-> > -     if (IS_APPEND(dir))
-> > -             return -EPERM;
-> > -     if (check_sticky(idmap, dir, d_inode(victim)) ||
-> > -         IS_APPEND(d_inode(victim)) || IS_IMMUTABLE(d_inode(victim)) |=
-|
-> > -         IS_SWAPFILE(d_inode(victim)))
-> > -             return -EPERM;
-> > -     if (isdir) {
-> > -             if (!d_is_dir(victim))
-> > -                     return -ENOTDIR;
-> > -             if (IS_ROOT(victim))
-> > -                     return -EBUSY;
-> > -     } else if (d_is_dir(victim))
-> > -             return -EISDIR;
-> > -     if (IS_DEADDIR(dir))
-> > -             return -ENOENT;
-> > -     if (victim->d_flags & DCACHE_NFSFS_RENAMED)
-> > -             return -EBUSY;
-> > -     return 0;
-> > -}
+Cheer,
+--=20
+Lu=C3=ADs
 
