@@ -1,176 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-73010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1947D077BB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 08:01:25 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id C277DD078F1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 08:26:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 913ED3048621
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 07:01:21 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 31C7E301AB94
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 07:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14C82E7BDC;
-	Fri,  9 Jan 2026 07:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pjGalkW1"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0872EC55D;
+	Fri,  9 Jan 2026 07:26:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+Received: from smtp05-ext.udag.de (smtp05-ext.udag.de [62.146.106.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3216D1E511;
-	Fri,  9 Jan 2026 07:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B2B29CEB;
+	Fri,  9 Jan 2026 07:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767942077; cv=none; b=tBkN2Q8YWM0W2GwjeWSaqAn2iA+vfXW+H8eAiWZdexpFUwy7nDpWAK/eiiYBJqVc80e4jMB+p1NqltCpjejvO95LtXkmwcaw1bClZPJgL11t9D6nH8k61mBvpefFuC1JIWMhvwosbF42HZS+gCszlynUzC6ogdRJWz3kUNpGCrE=
+	t=1767943611; cv=none; b=QasRIM7021/gwttR2C4awajsiWRBOjsSxGCnm2hZ/jVfWOa8emvDv2jvEp3k0XT2C4wXTePWqxlIDgldq0iF829hIS17Q9YF3n9KWrv3tTj1apfo9VERJg79ipt+KNeQ8kzkC2zUtVyfCnAs9/PZZzESGlkeBs9pqq8qIqirnh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767942077; c=relaxed/simple;
-	bh=8zG6u3mXw5NcFdA9FL9qD5iAdkkam5pIZED0dvnzwVQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LSu6EcI7qjxuxfYJDRfAVC0A//2ukV7r7OAtQltroXvofUTA9pFWDCk3xnNmuyUx1rFB/SOQ2W1Y1esius1SOCOYKmOstgzyJWkFQAhBly6CyRlN+vnfeS4mEp99iOO308FB80/BITbt10Ulq7TcxlGvDOinQHZ5ng/mBmYhku4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pjGalkW1; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1767942070; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=R9EET8AOE1I0v+3n6GW12HAp6JQhapL2nHSNMXhwSaM=;
-	b=pjGalkW1pBQnMXDqZHRnyh1f7p0JkUi1p2B43Sept2YAZki9xU7YhjD/3mhwtyiJcaexMUav1PtP7O9PPhSF9BAyJ4yoscHS+8Z3URX0HDKevoTNaFOnvmmqIPrOx6sc2bPd/E9cY7OfbdMvdDKDszHdJPAYXYV2SZ799CaX/14=
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WwfE40Q_1767942070 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 09 Jan 2026 15:01:10 +0800
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-To: miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org,
-	bschubert@ddn.com
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v2] fuse: invalidate the page cache after direct write
-Date: Fri,  9 Jan 2026 15:01:10 +0800
-Message-Id: <20260109070110.18721-1-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
+	s=arc-20240116; t=1767943611; c=relaxed/simple;
+	bh=oMeV2HNYHn6tLEsnBAWyn8IEGHhXt9L8R/OYogECrJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dj9OdIAzHZRz2gv0RJ1iKqyRRZUWWRMjB1LwIJF03JReR9qdMZe7K+3TVZpqwPArd8iHnvTLxOAbT0/NAA4sZo0CJyeu0GSAM9D/f+DXdVdqk4LjavjsVOeK2gBz48KBw4A2N2oWa9MpCWQa1GFJsBAvM04kF494gVKE1dvCV84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
+Received: from localhost (049-102-000-128.ip-addr.inexio.net [128.0.102.49])
+	by smtp05-ext.udag.de (Postfix) with ESMTPA id 293DBE04A1;
+	Fri,  9 Jan 2026 08:20:54 +0100 (CET)
+Authentication-Results: smtp05-ext.udag.de;
+	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
+Date: Fri, 9 Jan 2026 08:20:53 +0100
+From: Horst Birthelmer <horst@birthelmer.de>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: horst@birthelmer.com, Miklos Szeredi <miklos@szeredi.hu>, 
+	Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Horst Birthelmer <hbirthelmer@ddn.com>
+Subject: Re: Re: [PATCH RFC v3 3/3] fuse: use the newly created helper
+ functions
+Message-ID: <aWCrRKV5zWW2vitk@fedora.fritz.box>
+References: <20260108-fuse-compounds-upstream-v3-0-8dc91ebf3740@ddn.com>
+ <20260108-fuse-compounds-upstream-v3-3-8dc91ebf3740@ddn.com>
+ <CAJnrk1Ynob-fqDUf_xrGkGwgj+=6kyhAB=qPVkKHW5ri5frsRQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1Ynob-fqDUf_xrGkGwgj+=6kyhAB=qPVkKHW5ri5frsRQ@mail.gmail.com>
 
-This fixes xfstests generic/451 (for both O_DIRECT and FOPEN_DIRECT_IO
-direct write).
+On Thu, Jan 08, 2026 at 02:19:10PM -0800, Joanne Koong wrote:
+> On Thu, Jan 8, 2026 at 6:23 AM <horst@birthelmer.com> wrote:
+> >
+> > From: Horst Birthelmer <hbirthelmer@ddn.com>
+> >
+> > new helper functions are:
+> > - fuse_getattr_args_fill()
+> > - fuse_open_args_fill()
+> >
+> > Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
+> > ---
+> >  fs/fuse/dir.c  | 9 +--------
+> >  fs/fuse/file.c | 9 +--------
+> >  2 files changed, 2 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> > index 4b6b3d2758ff..ca8b69282c60 100644
+> > --- a/fs/fuse/dir.c
+> > +++ b/fs/fuse/dir.c
+> > @@ -1493,14 +1493,7 @@ static int fuse_do_getattr(struct mnt_idmap *idmap, struct inode *inode,
+> >                 inarg.getattr_flags |= FUSE_GETATTR_FH;
+> >                 inarg.fh = ff->fh;
+> >         }
+> > -       args.opcode = FUSE_GETATTR;
+> > -       args.nodeid = get_node_id(inode);
+> > -       args.in_numargs = 1;
+> > -       args.in_args[0].size = sizeof(inarg);
+> > -       args.in_args[0].value = &inarg;
+> > -       args.out_numargs = 1;
+> > -       args.out_args[0].size = sizeof(outarg);
+> > -       args.out_args[0].value = &outarg;
+> > +       fuse_getattr_args_fill(&args, get_node_id(inode), &inarg, &outarg);
+> >         err = fuse_simple_request(fm, &args);
+> >         if (!err) {
+> >                 if (fuse_invalid_attr(&outarg.attr) ||
+> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > index 676f6bfde9f8..c0375b32967d 100644
+> > --- a/fs/fuse/file.c
+> > +++ b/fs/fuse/file.c
+> > @@ -73,14 +73,7 @@ static int fuse_send_open(struct fuse_mount *fm, u64 nodeid,
+> >                 inarg.open_flags |= FUSE_OPEN_KILL_SUIDGID;
+> >         }
+> >
+> > -       args.opcode = opcode;
+> > -       args.nodeid = nodeid;
+> > -       args.in_numargs = 1;
+> > -       args.in_args[0].size = sizeof(inarg);
+> > -       args.in_args[0].value = &inarg;
+> > -       args.out_numargs = 1;
+> > -       args.out_args[0].size = sizeof(*outargp);
+> > -       args.out_args[0].value = outargp;
+> > +       fuse_open_args_fill(&args, nodeid, opcode, &inarg, outargp);
+> >
+> >         return fuse_simple_request(fm, &args);
+> >  }
+> >
+> 
+> This is a very minor nit but imo the split is a bit nicer if patch 2/3
+> is this patch with your helper changes:
+> 
+> +/*
+> + * Helper function to initialize fuse_args for OPEN/OPENDIR operations
+> + */
+> +void fuse_open_args_fill(struct fuse_args *args, u64 nodeid, int opcode,
+> + struct fuse_open_in *inarg, struct fuse_open_out *outarg)
+> +{
+> + args->opcode = opcode;
+> ...
+> +}
+> +
+> +/*
+> + * Helper function to initialize fuse_args for GETATTR operations
+> + */
+> +void fuse_getattr_args_fill(struct fuse_args *args, u64 nodeid,
+> +     struct fuse_getattr_in *inarg,
+> +     struct fuse_attr_out *outarg)
+> +{
+> + args->opcode = FUSE_GETATTR;
+> ...
+> +}
+> +
+> 
+> and then patch 3 is your open+getattr changes. That way, it's easier
+> to see that the changes in this patch to fuse_do_getattr() and
+> fuse_send_open() have no functional changes in logic.
 
-Commit b359af8275a9 ("fuse: Invalidate the page cache after
-FOPEN_DIRECT_IO write") tries to fix the similar issue for
-FOPEN_DIRECT_IO write, which can be reproduced by xfstests generic/209.
-It only fixes the issue for synchronous direct write, while omitting
-the case for asynchronous direct write (exactly targeted by
-generic/451).
+My rational here was, that if people don't like the changes to those functions
+I can easily backtrack by just not providing this patch, so basically laziness.
 
-While for O_DIRECT direct write, it's somewhat more complicated.  For
-synchronous direct write, generic_file_direct_write() will invalidate
-the page cache after the write, and thus it can pass generic/209.  While
-for asynchronous direct write, the invalidation in
-generic_file_direct_write() is bypassed since the invalidation shall be
-done when the asynchronous IO completes.  This is omitted in FUSE and
-generic/451 fails whereby.
+I can easily change that.
 
-Fix this by conveying the invalidation for both synchronous and
-asynchronous write.
+Thanks for your explanation.
 
-- with FOPEN_DIRECT_IO
-  - sync write,  invalidate in fuse_send_write()
-  - async write, invalidate in fuse_aio_complete() with FUSE_ASYNC_DIO,
-		 fuse_send_write() otherwise
-- without FOPEN_DIRECT_IO
-  - sync write,  invalidate in generic_file_direct_write()
-  - async write, invalidate in fuse_aio_complete() with FUSE_ASYNC_DIO,
-		 fuse_send_write() otherwise
-
-Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
----
-changes since v1:
-- remove the redundant invalidation for synchronous write without
-  FOPEN_DIRECT_IO (Bernd)
-v1: https://yhbt.net/lore/all/20260106075234.63364-1-jefflexu@linux.alibaba.com/
----
- fs/fuse/file.c | 40 +++++++++++++++++++++++++++++-----------
- 1 file changed, 29 insertions(+), 11 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 01bc894e9c2b..9751482601ea 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -667,6 +667,18 @@ static void fuse_aio_complete(struct fuse_io_priv *io, int err, ssize_t pos)
- 			struct inode *inode = file_inode(io->iocb->ki_filp);
- 			struct fuse_conn *fc = get_fuse_conn(inode);
- 			struct fuse_inode *fi = get_fuse_inode(inode);
-+			struct address_space *mapping = io->iocb->ki_filp->f_mapping;
-+
-+			/*
-+			 * As in generic_file_direct_write(), invalidate after the
-+			 * write, to invalidate read-ahead cache that may have competed
-+			 * with the write.
-+			 */
-+			if (io->write && res && mapping->nrpages) {
-+				invalidate_inode_pages2_range(mapping,
-+						io->offset >> PAGE_SHIFT,
-+						(io->offset + res - 1) >> PAGE_SHIFT);
-+			}
- 
- 			spin_lock(&fi->lock);
- 			fi->attr_version = atomic64_inc_return(&fc->attr_version);
-@@ -1144,9 +1156,11 @@ static ssize_t fuse_send_write(struct fuse_io_args *ia, loff_t pos,
- {
- 	struct kiocb *iocb = ia->io->iocb;
- 	struct file *file = iocb->ki_filp;
-+	struct address_space *mapping = file->f_mapping;
- 	struct fuse_file *ff = file->private_data;
- 	struct fuse_mount *fm = ff->fm;
- 	struct fuse_write_in *inarg = &ia->write.in;
-+	ssize_t written;
- 	ssize_t err;
- 
- 	fuse_write_args_fill(ia, ff, pos, count);
-@@ -1160,10 +1174,23 @@ static ssize_t fuse_send_write(struct fuse_io_args *ia, loff_t pos,
- 		return fuse_async_req_send(fm, ia, count);
- 
- 	err = fuse_simple_request(fm, &ia->ap.args);
--	if (!err && ia->write.out.size > count)
-+	written = ia->write.out.size;
-+	if (!err && written > count)
- 		err = -EIO;
- 
--	return err ?: ia->write.out.size;
-+	/*
-+	 * As in generic_file_direct_write(), invalidate after the write, to
-+	 * invalidate read-ahead cache that may have competed with the write.
-+	 * Without FOPEN_DIRECT_IO, generic_file_direct_write() does the
-+	 * invalidation for synchronous write.
-+	 */
-+	if (!err && written && mapping->nrpages &&
-+	    ((ff->open_flags & FOPEN_DIRECT_IO) || !ia->io->blocking)) {
-+		invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT,
-+					(pos + written - 1) >> PAGE_SHIFT);
-+	}
-+
-+	return err ?: written;
- }
- 
- bool fuse_write_update_attr(struct inode *inode, loff_t pos, ssize_t written)
-@@ -1738,15 +1765,6 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
- 	if (res > 0)
- 		*ppos = pos;
- 
--	if (res > 0 && write && fopen_direct_io) {
--		/*
--		 * As in generic_file_direct_write(), invalidate after the
--		 * write, to invalidate read-ahead cache that may have competed
--		 * with the write.
--		 */
--		invalidate_inode_pages2_range(mapping, idx_from, idx_to);
--	}
--
- 	return res > 0 ? res : err;
- }
- EXPORT_SYMBOL_GPL(fuse_direct_io);
--- 
-2.19.1.6.gb485710b
-
+> 
+> 
+> Thanks,
+> Joanne
+> > --
+> > 2.51.0
+> >
 
