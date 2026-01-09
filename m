@@ -1,173 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-72961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A635D0689B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 00:25:52 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 059C7D0696F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 01:07:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id F1AFD300F242
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Jan 2026 23:25:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id F1CCD3027A4B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 00:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9AE33D4F5;
-	Thu,  8 Jan 2026 23:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D15249EB;
+	Fri,  9 Jan 2026 00:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="jzSeMPKY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OScpBk39"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6242133D4E5
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Jan 2026 23:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FCF946A
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 00:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767914744; cv=none; b=Ewo5uoMwcs3HcdBKWY2bQmTzxF2qjAAVGJsxPIKsGUHEYZAhkLbRzJ89JtpXPAZpeNRyhYDQggdrON8OGGOXmVFrlRRLKS4pmay/6RBmoQIIXGl+xSd7lTKfFtk3uMVmkAu9C5YCEw45LsUZDjU/jFwXH7wkyg9FTpi16v5EDQ0=
+	t=1767917250; cv=none; b=Q0PJ95pYG4sBjO7uHBxKk8y4tqi8szXB6S6K2Vv0blBjzcrNUS+OkY1zeTjgZ4yPHwq6w8OniQnCAVUrzF3f2gv4ymFTHY50YjAY76rDdUoeL6dWb840ldOf1pOcecQfwJWecUE1SvUF4oGWSnQ3aVgd4zYaA2qMfLtlMMmr/p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767914744; c=relaxed/simple;
-	bh=obLYyhrFsoB9oBqm7xL6fDhdB8wxBGKxiOySCPXnFrI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eYsmhSvcmsN4kT4GJsBEz3SurvAZxZoyoqbut0G3F3HVDqUJw7WowzRjCv0oWrUNYt1wt9I5SgH3D5DXXu6DUgZS1nhjt663asWUE23E/pSZyZfPgOGBMgCvVsJiW4TEkMpI+ZVxaR0TP5q1ssKTV/pRJFl5Gxf1jVBgGj9mEgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=jzSeMPKY; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-88fdac49a85so38903486d6.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 15:25:42 -0800 (PST)
+	s=arc-20240116; t=1767917250; c=relaxed/simple;
+	bh=At+ejiUVooGrDxCu7H9tDtKCxVkgAhpAMSZ/XVnNRH8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Abnz4+EPasDSqzorN+VJz3/pkjAnKYOggAxs7Dno1ygPMx22evswZ19xxrjCXRKojafVYFYwjhgTx66xvPJd6QqQAQtNbzi3dF9Y+4e+vNhINOVgUFvJKyVRya6yLWhLlDIcvqHKx9RQAZHz1ysqwZmfWJeJMrLke2h2jq20H7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OScpBk39; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4fc42188805so39268741cf.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 16:07:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1767914741; x=1768519541; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=055cXnB91pz5e1+jow3wyxxEvRh6YPpDHe6f2UW3p44=;
-        b=jzSeMPKY3rCpFqvzX79jd1jMCr1j1i5WwNHfa7dCqNQLbt+yEWIOJLKUznHAsbWMLu
-         21oyoEs4p12FZMXFkKAI8Fsec+X2NQfiNdN7Cuvjj6cDwjrZnog5g80W0CJ/YZ0Oj5Bf
-         f7b+RtP/phsREFUXsrfbNnA6NB1VhnWHZFaFRoAiiRTBcyijNPFuXpjaRdLSJXL0YV/2
-         fjetK3dfjmvm79EpW9DYI64r3DbEE5BhN07L6SvsFwkinLLBv33SXz9D7Q3IaYBQtCrW
-         acgw9oqkis7F8T9K7uJGbe3Lv8ZW+Ek3QbulZu0VUP/pikT067JStRKEskChNs42/vvZ
-         F+vw==
+        d=gmail.com; s=20230601; t=1767917248; x=1768522048; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mwcHH9y0yBhD7jk8OUEheUU1VNvpy74uQAsTiO0wLZw=;
+        b=OScpBk39KtESYlUHQSkkwzMaG+U06j7sJn3qtB565ezxRtcXvYK/SizKE6ft+Z4sui
+         Jp/yyJmgR4bJHSgga8wce2VRrSzJjvEjBOm7j/OJ8eoRc8hbo/GtCX/qY6IejlKg4aKT
+         q6cHMXvkW8MgGxXBsxxIgNQ9Q1v5z7lt/yLLJQWY9Yc13WkAIkKo3XXsLMPHYnLUo3YH
+         ioNL0o75T7/iaYwqc5FUalvK8kdhDSscGkzwZyPWlMvi8yImNmDRclUFc9HQgylLuVG/
+         n8Fij3I+gDAvBEQQZQ6eES76+q7YGUsAoCDnQXh98xTL2ljkzTzFqeA8frvbET1oQjJ7
+         A0Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767914741; x=1768519541;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=055cXnB91pz5e1+jow3wyxxEvRh6YPpDHe6f2UW3p44=;
-        b=ISPegrkL/1Bpb78Xt+bQ9nXC6YfGWz6Uan5Yn6Ac4O1J6XSNTZjqIweiyMiQaaY/7T
-         MHBPl6g+sVP1VppnXjofaxrcJU2KFl+IGcyNaEs1wVsabXKUtXFU+99K+a6IEF1v1rY3
-         RfNZFd2t5V3TEdDsyBo2idXaQqHcBcwQBX8sgCzLg3QbNbkmJi0vk1GrBjTVsHEwhWGA
-         G62av7vMVkaOcP+2/EjB2iWAUKuvfV5pIiGLZgtD1U3mdYWMGQAX9N7CHmpplP95ySJb
-         UsERpMnCbw49NiED9jLvE+89cQ7hnzCcKesuzfFz89nfG3JFzl8q/+i3rW6hLx5hJkht
-         xrQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUj/BSi2x4FHiPtbKHUz3+Cfs86Gnf1KQeYqdltnjwPDXZHBhtF/cmLXUubtm/rMMEwmOTddbh07kg76eIE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo+X23dFprScfTxtdAegoIfy4cgCPVLFUXzdF++VX63WByRuEd
-	UJtjci1gcpdUeNUs9MgExjET7VebnA/9lUCks/kPtN6TvwNT1/zRNK00ztu+JLjKe28=
-X-Gm-Gg: AY/fxX5Y26BkXpLeTqis+1gWW5cBodtrANFpwbUZt8JAOZ1vPaMBtWd68WJhAd5VisU
-	AAS1LjSwGi6Pe9kSW5o5f1bG6NSqhexPMiwlSd1i4amg70BBSrzXoX3h9guONwS+4fAKXMZ/Jbg
-	+Rvl0NfOZiuLRoEtQzrJBKBct1P0V7vL5gdqs/8dYiV/WHtTxoBiQR11eVdga8U2/dNm/YyDUiw
-	b2EWmYCjTHHrhpvPqlsxzB6VZwZul9ZZCe6NZmlblBw4AWqlUkqEAx8UmmOj5DsjyuL8/35xcU7
-	keu1aO7TJPFm8wRSLJuFndG4OyqJ+KKEjPlPzhwSJqcEBSJCyR3qB196jD7pJbeJLKIOBqT3tFZ
-	Z1CVi/T7CE+bNS6rslFp4BjemKrq+PUrp9WKZ4B5uWR4/8V/XqvGo87ROtQzRZ/v0Kaxsj41y3U
-	B/mC7Y/Sc1WoWig1CA4eqq0+2j6mEqOLM1ZV5A0JyNwh3ufYefk01uMjGE/RHut526a131zg==
-X-Google-Smtp-Source: AGHT+IH58K2fkRuNeCFONQo5PN3X5lTd6kkVRVrUL8HrgTghUwX32Msen1mn/KH+JIVLSLRjRmPpIQ==
-X-Received: by 2002:a05:6214:d0f:b0:88a:342f:32a with SMTP id 6a1803df08f44-89084185ec7mr128066396d6.14.1767914741275;
-        Thu, 08 Jan 2026 15:25:41 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-890772346e2sm66493856d6.33.2026.01.08.15.25.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 15:25:40 -0800 (PST)
-Date: Thu, 8 Jan 2026 18:25:05 -0500
-From: Gregory Price <gourry@gourry.net>
-To: John Groves <John@groves.net>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Bernd Schubert <bschubert@ddn.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	David Hildenbrand <david@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Stefan Hajnoczi <shajnocz@redhat.com>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Chen Linxuan <chenlinxuan@uniontech.com>,
-	James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Shivank Garg <shivankg@amd.com>,
-	Ackerley Tng <ackerleytng@google.com>,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>, venkataravis@micron.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V3 02/21] dax: add fsdev.c driver for fs-dax on character
- dax
-Message-ID: <aWA80edCywOLw0li@gourry-fedora-PF4VCD3F>
-References: <20260107153244.64703-1-john@groves.net>
- <20260107153332.64727-1-john@groves.net>
- <20260107153332.64727-3-john@groves.net>
- <20260108113134.000040fd@huawei.com>
- <6ibgx5e2lnzjqln2yrdtdt3vordyoaktn4nhwe3ojxradhattg@eo2pdrlcdrt2>
- <5hswaqyoz474uybw33arwtkojxrtyxrvlk57bdwnu2lnpao4aa@4vxygh226knw>
+        d=1e100.net; s=20230601; t=1767917248; x=1768522048;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=mwcHH9y0yBhD7jk8OUEheUU1VNvpy74uQAsTiO0wLZw=;
+        b=Vbth61RcZ4TWbkjvAdd2J1/fWhPSOLeVSxqY4MLnY4DLRcaENYZiiMAoSgYFJ0OOYC
+         HsyYovBwvyNS/UWi3Jr3H43jwpil4RGNf+LXE7Kr4QkktoqPJ+An66cGnMvnaTGjv387
+         nJlYh57bxfhJW9yAWOMjZb2qknjLLYmwLvTSoNMytTw12e4YllC50HVYlvnqrQIZixGW
+         QFCGAh7cuBxlyaeD4rxlf6SOOmXgIijQ5aUppEJCCgUAAC+bnA2aP8BEuoG6rIv2JT1G
+         gDA0hf4+vk1qDb5IpbePTIRIdCJWnyz75dBWVt5AtH9cOlfTrdYMWAWsa8c7LkZkeyx2
+         3gLg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2gmnRe3WM22GVo3On1NayoBwLztqnPHqYKI5GmDfxiH/hVRlHTQxoMY3EN1/VSemEsB/hk0kDAML9U+Z7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaT/9zx13hgnUrWE+G1KIRWs8GOjhxeJQ795DDiYvJ1pvAawyi
+	E0nkAcGOf5aiZkJblKrmLTKqW3HwwLtV0sihKlwIRPZplqLSRKGjmMlLMQVzLp2GbrcZiNOIxW+
+	WlALaSkD35ZZ8aGoAtx6XWxlMw0Ycg1OlIC4U
+X-Gm-Gg: AY/fxX5lIUJLo9BTl58Ghfz7dRfXeTvDXz9MZW66x3AaP2lbAUgtiTEMI8LcpFEi9N7
+	gAeZ7AJ5A+Wriqz17zXadjZ+j4DDSGQ9H6F9/HLXFce4QFOdTzrZV5KaiPEI3cGWC/ijddg/HCB
+	BCxOVj9KrmjlipQ3CTPdSO1VVXFKtSzPyEPmbTHowVsjgdyTlBlmJY4hp8hrct+tN7kaQ1TA89N
+	RgaQ28bmddUrs5Bn6S2oa2siiauExSgZj2eUtaEtjBXxcemjPP7quaEJplz+ZWrnqBxDA==
+X-Google-Smtp-Source: AGHT+IFTYUm8TBceK9AEALjEwyZjb5Ut5LIBeavM//pAxXT9DFybKze1RR/noQoH4SgtuTVmLdr2SsdEJwT6JgLYpKk=
+X-Received: by 2002:a05:622a:4ccd:b0:4ee:4a3a:bd00 with SMTP id
+ d75a77b69052e-4ffb4a26f43mr112332621cf.71.1767917247775; Thu, 08 Jan 2026
+ 16:07:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5hswaqyoz474uybw33arwtkojxrtyxrvlk57bdwnu2lnpao4aa@4vxygh226knw>
+References: <20251223003522.3055912-1-joannelkoong@gmail.com>
+ <20251223003522.3055912-25-joannelkoong@gmail.com> <CADUfDZpbNHtT7pvnj8E-A+5_phNnCMieu4RghdVzM93d-6_vxg@mail.gmail.com>
+In-Reply-To: <CADUfDZpbNHtT7pvnj8E-A+5_phNnCMieu4RghdVzM93d-6_vxg@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 8 Jan 2026 16:07:15 -0800
+X-Gm-Features: AQt7F2qjPAgCG3Ln_ZTHShPRrioe3v7M09o9oZXMt6pLnMdHbfEXRGtKcs3LrCY
+Message-ID: <CAJnrk1aC=mOexGtv=K2DenWCiBJnAbMfKxQGA-TY32YfxnMbXw@mail.gmail.com>
+Subject: Re: [PATCH v3 24/25] fuse: add zero-copy over io-uring
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 08, 2026 at 03:15:10PM -0600, John Groves wrote:
-> On 26/01/08 09:12AM, John Groves wrote:
-> > On 26/01/08 11:31AM, Jonathan Cameron wrote:
-> > > On Wed,  7 Jan 2026 09:33:11 -0600
-> > > John Groves <John@Groves.net> wrote:
-> 
-> [ ... ]
-> 
-> > > > diff --git a/drivers/dax/Kconfig b/drivers/dax/Kconfig
-> > > > index d656e4c0eb84..491325d914a8 100644
-> > > > --- a/drivers/dax/Kconfig
-> > > > +++ b/drivers/dax/Kconfig
-> > > > @@ -78,4 +78,21 @@ config DEV_DAX_KMEM
-> > > >  
-> > > >  	  Say N if unsure.
-> > > >  
-> > > > +config DEV_DAX_FS
-> > > > +	tristate "FSDEV DAX: fs-dax compatible device driver"
-> > > > +	depends on DEV_DAX
-> > > > +	default DEV_DAX
-> > > 
-> > > What's the logic for the default? Generally I'd not expect a
-> > > default for something new like this (so default of default == no)
-> > 
-> > My thinking is that this is harmless unless you use it, but if you
-> > need it you need it. So defaulting to include the module seems
-> > viable.
-> > 
-> > [ ... ]
-> 
-> On further deliberation, I think I'd like to get rid of 
-> CONFIG_DEV_DAX_FS, and just include the fsdev_dax driver if DEV_DAX
-> and FS_DAX are configured. Then CONFIG_FUSE_FAMFS_DAX (controlling the
-> famfs code in fuse) can just depend on DEV_DAX, FS_DAX and FUSE_FS. 
-> 
-> That's where I'm leaning for the next rev of the series...
-> 
-> John
+On Thu, Jan 8, 2026 at 1:15=E2=80=AFPM Caleb Sander Mateos
+<csander@purestorage.com> wrote:
 >
+> On Mon, Dec 22, 2025 at 4:37=E2=80=AFPM Joanne Koong <joannelkoong@gmail.=
+com> wrote:
+> >
+> > Implement zero-copy data transfer for fuse over io-uring, eliminating
+> > memory copies between kernel and userspace for read/write operations.
+> >
+> > This is only allowed on privileged servers and requires the server to
+> > preregister the following:
+> > a) a sparse buffer corresponding to the queue depth
+> > b) a fixed buffer at index queue_depth (the tail of the buffers)
+> > c) a kernel-managed buffer ring
+> >
+> > The sparse buffer is where the client's pages reside. The fixed buffer
+> > at the tail is where the headers (struct fuse_uring_req_header) are
+> > placed. The kernel-managed buffer ring is where any non-zero-copied arg=
+s
+> > reside (eg out headers).
+> >
+> > Benchmarks with bs=3D1M showed approximately the following differences =
+in
+> > throughput:
+> > direct randreads: ~20% increase (~2100 MB/s -> ~2600 MB/s)
+> > buffered randreads: ~25% increase (~1900 MB/s -> 2400 MB/s)
+> > direct randwrites: no difference (~750 MB/s)
+> > buffered randwrites: ~10% increase (950 MB/s -> 1050 MB/s)
+> >
+> > The benchmark was run using fio on the passthrough_hp server:
+> > fio --name=3Dtest_run --ioengine=3Dsync --rw=3Drand{read,write} --bs=3D=
+1M
+> > --size=3D1G --numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  fs/fuse/dev.c             |   7 +-
+> >  fs/fuse/dev_uring.c       | 176 +++++++++++++++++++++++++++++++-------
+> >  fs/fuse/dev_uring_i.h     |  11 +++
+> >  fs/fuse/fuse_dev_i.h      |   1 +
+> >  include/uapi/linux/fuse.h |   6 +-
+> >  5 files changed, 164 insertions(+), 37 deletions(-)
+> >
+> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > index ceb5d6a553c0..0f7f2d8b3951 100644
+> > --- a/fs/fuse/dev.c
+> > +++ b/fs/fuse/dev.c
+> > @@ -1229,8 +1229,11 @@ int fuse_copy_args(struct fuse_copy_state *cs, u=
+nsigned numargs,
+> >
+> >         for (i =3D 0; !err && i < numargs; i++)  {
+> >                 struct fuse_arg *arg =3D &args[i];
+> > -               if (i =3D=3D numargs - 1 && argpages)
+> > -                       err =3D fuse_copy_folios(cs, arg->size, zeroing=
+);
+> > +               if (i =3D=3D numargs - 1 && argpages) {
+> > +                       if (cs->skip_folio_copy)
+> > +                               return 0;
+> > +                       return fuse_copy_folios(cs, arg->size, zeroing)=
+;
+> > +               }
+> >                 else
+> >                         err =3D fuse_copy_one(cs, arg->value, arg->size=
+);
+> >         }
+> > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> > index e9905f09c3ad..d13fce2750e1 100644
+> > --- a/fs/fuse/dev_uring.c
+> > +++ b/fs/fuse/dev_uring.c
+> > @@ -89,8 +89,14 @@ static void fuse_uring_flush_bg(struct fuse_ring_que=
+ue *queue)
+> >         }
+> >  }
+> >
+> > +static bool can_zero_copy_req(struct fuse_ring_ent *ent, struct fuse_r=
+eq *req)
+> > +{
+> > +       return ent->queue->use_zero_copy &&
+> > +               (req->args->in_pages || req->args->out_pages);
+> > +}
+> > +
+> >  static void fuse_uring_req_end(struct fuse_ring_ent *ent, struct fuse_=
+req *req,
+> > -                              int error)
+> > +                              int error, unsigned issue_flags)
+> >  {
+> >         struct fuse_ring_queue *queue =3D ent->queue;
+> >         struct fuse_ring *ring =3D queue->ring;
+> > @@ -109,6 +115,12 @@ static void fuse_uring_req_end(struct fuse_ring_en=
+t *ent, struct fuse_req *req,
+> >
+> >         spin_unlock(&queue->lock);
+> >
+> > +       if (ent->zero_copied) {
+> > +               WARN_ON_ONCE(io_buffer_unregister(ent->cmd, ent->fixed_=
+buf_id,
+>
+> io_buffer_unregister() can fail if the registered buffer index has
+> been unregistered or updated with a userspace buffer since the call to
+> io_buffer_register_bvec(). So this WARN_ON_ONCE() can be triggered
+> from userspace. I think it would be preferable to ignore the error or
+> report it to the fuse server.
 
-Please do that for CXL_DAX or whatever because it's really annoying to
-have CXL and DAX configured but not have your dax device show up because
-CXL_DAX wasn't configured.
+Sounds good, this was a remnant from when registered buffers had been
+pinned. I'll remove this WARN_ON in v4.
 
-:P
-
-~Gregory
+Thanks,
+Joanne
+>
+> Best,
+> Caleb
+>
 
