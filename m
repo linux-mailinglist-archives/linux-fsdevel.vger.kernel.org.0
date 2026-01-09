@@ -1,142 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-73044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E48D09317
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 13:02:41 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62C1D09284
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 13:01:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 90D3B30A4267
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 11:57:48 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id D683B300925B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 12:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF613590C6;
-	Fri,  9 Jan 2026 11:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CF335A922;
+	Fri,  9 Jan 2026 12:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WTCq4LCt"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jNMdYXPw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D749432BF21;
-	Fri,  9 Jan 2026 11:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9748E359FBB
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 12:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767959867; cv=none; b=Ly942SbNL9mMdJpBTCdmShNyDIuO+N+9ZrTUJ42s/wUQp//k5a7Bhr7D8Nq9X8+sBTynrNWdDDlywfmKWVris2Jh9qckngZYkeUYEtXoUMCHAD4qcwVmUD6/mtbHtkD4aD0b2WsgB39sIFzi6hsyqc3tKDlMTUh90EDjmP9QqHA=
+	t=1767960059; cv=none; b=EZ6J9+b6E0aKSQeNGY1k+5rV+E9cubX4bZ+GUcZ8n+J55/NB93H16gIxJoALS8qu06myEjWbbe9RF2qn8P3yvUzvnzzexloMsVV7BqEaP0tNXVYJO7eIom9aOGkwGPACp2PLYCpi7BJ2qtHkYTYzq0++jfPw7XSTtLa4fcKC17w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767959867; c=relaxed/simple;
-	bh=QCZB8ASOw0589HqfkX15FUualvIn1+xleT0q12mvSFs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=I0yyQv56hNJmFrLIjowzFUVb8xEspl22dvPVtv7yjCAtSmMfBgPbaQmmlJWvmbjeElTLCuX9NcpjXSSDdjPn2owZszYevzcNoPntcvIwxs4h27k6WqGJubKfSNKgG7O8Fi1x5BOoubl76lS2f7sywH545oQ3dfiWg93oezfb2jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WTCq4LCt; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=i5sSJksnYgQS7OmiThH7LGvbiWHBznpFnHcSqiUZKlA=; b=WTCq4LCtXcfMLvlhTir6pffNZJ
-	JR9QwZF2Y8ZjMj7wNZ0hMm0rpSpjTKbjJPxH6NxDJjyoGVRyTF8Gp7TQVWahY1aWfvOt4WjKBVQTr
-	llL60ywyMDnHOSwk8KZECExBX7zkzKg7txeIkaj+ibDQfnoyrjepbfrJ6+0ufRO5cMWjiY9aWhYvo
-	GAkLjIrCjuA8ZnfqiyMHnOHWVnk2psqiZtDHFYYOlDnOnR9zAlWHKIYwaisNzxgWi6/ar4KdBdNj0
-	Zx5OaJqz0clHLROQi7gchXGwn5Wejy0u1yml9XQOF4XBu7FT7horoIcheH4Zo4HiDVyOQx2q5hk/3
-	gOITwENQ==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1veB7U-003Own-2c; Fri, 09 Jan 2026 12:57:32 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>,  "Darrick J. Wong"
- <djwong@kernel.org>,  Bernd Schubert <bschubert@ddn.com>,  Kevin Chen
- <kchen@ddn.com>,  Horst Birthelmer <hbirthelmer@ddn.com>,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Matt
- Harvey <mharvey@jumptrading.com>,  kernel-dev@igalia.com
-Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the
- FUSE_LOOKUP_HANDLE operation
-In-Reply-To: <CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com>
-	(Miklos Szeredi's message of "Tue, 16 Dec 2025 11:39:54 +0100")
-References: <20251212181254.59365-1-luis@igalia.com>
-	<20251212181254.59365-5-luis@igalia.com>
-	<CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com>
-Date: Fri, 09 Jan 2026 11:57:31 +0000
-Message-ID: <87zf6nov6c.fsf@wotan.olymp>
+	s=arc-20240116; t=1767960059; c=relaxed/simple;
+	bh=UznriGhvPdMXopWmxqdYE06e8kOqyoTAoTC4x2EkwLM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mMxVLluIq+/7/GmdedEXBQus5EMAzp6dM0w4Y7myWs01gUA6DrMB/1RlLvGL3+GuLDM+RMWulOnboYtNN9IM1HHjWZTQGKW4P+7BBU7zpQQSjACylG/1zEUlFu7Qbwq0Gf6EIMummFV6zjNvLB8KuLZCzTHbJ+Flzfe/vpUgqNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jNMdYXPw; arc=none smtp.client-ip=74.125.82.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-121b14efeb8so382213c88.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 04:00:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1767960057; x=1768564857; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8T/N0YjJdMPLkCw5fXXL5pxg8eGLGcQ3fujG7tmwcHw=;
+        b=jNMdYXPwHAkePPH57quq73z7jHRvkOS3WInF4J8dZ5MQixo2oE+Vzpj5MwDypGKBGl
+         V896nwkFyVBAHrgdjsvScsrSjCXPMnyZa4lYtv3vdeBsxeFSQny7t8IjCkpBCzUOSQuf
+         TdEo1hjfyh84A1DRPOKLBYqwczMXYl5HT333DFF8E1uOsxI87KKmN7hTYWrBQCkPRswk
+         H30rzjmXN6jR+6hyDg8RQblbk5t8E+H5Li1K6557uipY5Lu3szZy1jcxE+vgmkhiQiDj
+         NuzE0Bj2voyiUAnpGYUZUtenHwgODxZmMkjwyrRgyPQXoxClRzYDnFpMvUUEwKqZviCd
+         Ohxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767960057; x=1768564857;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8T/N0YjJdMPLkCw5fXXL5pxg8eGLGcQ3fujG7tmwcHw=;
+        b=g4RYmOYQfZK0u0fxCdhoXETA7KSgaTS9AhnBmSfDvZ4ZeHUtNrh9ggVg3lLWcmTvwn
+         l8eD5AmALp4gcLhe0THLIzHBU0HdKQRMQQ1DwQt4LX0fSB0x0Y9JOzx/Nael/UNNvrwv
+         Oc0+LZRcTUAHxnwLdHlaHmcE1r8ru8BffY+wLJiVDXcPD88NX8vFy3JP8fvKC6f+LMsR
+         91B4EkcRU/89iVJ4ymVg/O8t+59DueDsEV7RatQy2FLQVfDz+JR1xxl7WOEnVlYyGXQu
+         csSvi4EmhlXgLwJ6oKXlHUzRnnZE+eLfTB6iZ47Dtr0YVTPEXOoXqtvSkonXqSL05jMM
+         d1yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXsWCKwQjz2UuDb902+UFaL3ZJuNScIH2hD+GN0v17GWWfRw6YLyKCsc/BvwsD6BZhuZ+GvRWlly5ogUKL@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOESLPKu/F39iy2m8ynIYpEOm0yE8kiSNYCWO2WkC5in31rj+O
+	pAwt1dtyFIyyC+7YHDzZxCJrj1N81xAtia448d1quWW6G2MfKS/r0heLZlkZrnTVg1JjGQjrIyk
+	Sgm8Ik32RhMfKuJC8cW49e5+JoCzp8mH4b7MdimDw
+X-Gm-Gg: AY/fxX4Ab0sodQKyKAGU8rXbqXFtAOqywuNaEolV3ldSdX5ZbQ1GS2GmcfBEeQ739yy
+	Cpd7Z9D80s/VRROcvyPAdru+RhAhHHIVUePtPfIt7bJ2wNc9qZO9823Oty3RTJPKb8mChxSGCxD
+	wBhvggCUmf/dvT+E32s75AlCdtxIAu1FLEasXQEWcgu6LaC821EgitaceLXHrUf75yNZUI7+2Kf
+	54jYWXAzyOeL+0rpitW/e4c0cH8xZz3TBWwJZrXh6UAiGWUSNfx9GCUlRJkoVYVGTZbTh59GFcS
+	uLM0dixHuKsynadga2LxO8VAhe0=
+X-Google-Smtp-Source: AGHT+IHkqsIfmF0FluQuDu53MIRkzwgbeeQdzuawZsTGXquSsN/434sV7j/4310j+FEbQ9rNU7DnJdRzHaNlwPlcWDM=
+X-Received: by 2002:a05:7022:4199:b0:11b:ca88:c4f7 with SMTP id
+ a92af1059eb24-121f8b67cc0mr8303949c88.40.1767960054556; Fri, 09 Jan 2026
+ 04:00:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20251231-rwonce-v1-0-702a10b85278@google.com> <20251231151216.23446b64.gary@garyguo.net>
+ <aVXFk0L-FegoVJpC@google.com> <OFUIwAYmy6idQxDq-A3A_s2zDlhfKE9JmkSgcK40K8okU1OE_noL1rN6nUZD03AX6ixo4Xgfhi5C4XLl5RJlfA==@protonmail.internalid>
+ <aVXKP8vQ6uAxtazT@tardis-2.local> <87fr8ij4le.fsf@t14s.mail-host-address-is-not-set>
+ <aV0JkZdrZn97-d7d@tardis-2.local> <20260106145622.GB3707837@noisy.programming.kicks-ass.net>
+ <7fa2c07e-acf9-4f9a-b056-4d4254ea61e5@paulmck-laptop> <CANpmjNPdnuCNTfo=q5VPxAfdvpeAt8DhesQu0jy+9ZpH3DcUnQ@mail.gmail.com>
+ <b0f3b2a6-e69c-4718-9f05-607b8c02d745@paulmck-laptop>
+In-Reply-To: <b0f3b2a6-e69c-4718-9f05-607b8c02d745@paulmck-laptop>
+From: Marco Elver <elver@google.com>
+Date: Fri, 9 Jan 2026 13:00:00 +0100
+X-Gm-Features: AQt7F2pBr33IaeEZzEbVtkwEGkq72MjCI-S9aarJ4oQjqFT6bTaIuZHUMWVHI0k
+Message-ID: <CANpmjNNSCNm+A=nKdeSDAkcgiKXMEdcQUeMb4PZxWoP2t-z=3A@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Add READ_ONCE and WRITE_ONCE to Rust
+To: paulmck@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Gary Guo <gary@garyguo.net>, Will Deacon <will@kernel.org>, 
+	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Magnus Lindholm <linmag7@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Lyude Paul <lyude@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
+	linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	kasan-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Miklos,
-
-On Tue, Dec 16 2025, Miklos Szeredi wrote:
-
-> On Fri, 12 Dec 2025 at 19:12, Luis Henriques <luis@igalia.com> wrote:
->>
->> The implementation of LOOKUP_HANDLE modifies the LOOKUP operation to inc=
-lude
->> an extra inarg: the file handle for the parent directory (if it is
->> available).  Also, because fuse_entry_out now has a extra variable size
->> struct (the actual handle), it also sets the out_argvar flag to true.
+On Fri, 9 Jan 2026 at 03:09, Paul E. McKenney <paulmck@kernel.org> wrote:
 >
-> How about adding this as an extension header (FUSE_EXT_HANDLE)?  That
-> would allow any operation to take a handle instead of a nodeid.
+> On Tue, Jan 06, 2026 at 08:28:41PM +0100, Marco Elver wrote:
+> > On Tue, 6 Jan 2026 at 19:18, 'Paul E. McKenney' via kasan-dev
+> > <kasan-dev@googlegroups.com> wrote:
+> > > On Tue, Jan 06, 2026 at 03:56:22PM +0100, Peter Zijlstra wrote:
+> > > > On Tue, Jan 06, 2026 at 09:09:37PM +0800, Boqun Feng wrote:
+> > > >
+> > > > > Some C code believes a plain write to a properly aligned location is
+> > > > > atomic (see KCSAN_ASSUME_PLAIN_WRITES_ATOMIC, and no, this doesn't mean
+> > > > > it's recommended to assume such), and I guess that's the case for
+> > > > > hrtimer, if it's not much a trouble you can replace the plain write with
+> > > > > WRITE_ONCE() on C side ;-)
+> > > >
+> > > > GCC used to provide this guarantee, some of the older code was written
+> > > > on that. GCC no longer provides that guarantee (there are known cases
+> > > > where it breaks and all that) and newer code should not rely on this.
+> > > >
+> > > > All such places *SHOULD* be updated to use READ_ONCE/WRITE_ONCE.
+> > >
+> > > Agreed!
+> > >
+> > > In that vein, any objections to the patch shown below?
+> >
+> > I'd be in favor, as that's what we did in the very initial version of
+> > KCSAN (we started strict and then loosened things up).
+> >
+> > However, the fallout will be even more perceived "noise", despite
+> > being legitimate data races. These config knobs were added after much
+> > discussion in 2019/2020, somewhere around this discussion (I think
+> > that's the one that spawned KCSAN_REPORT_VALUE_CHANGE_ONLY, can't find
+> > the source for KCSAN_ASSUME_PLAIN_WRITES_ATOMIC):
+> > https://lore.kernel.org/all/CAHk-=wgu-QXU83ai4XBnh7JJUo2NBW41XhLWf=7wrydR4=ZP0g@mail.gmail.com/
 >
-> Yeah, the infrastructure for adding extensions is inadequate, but I
-> think the API is ready for this.
+> Fair point!
 >
->> @@ -181,8 +182,24 @@ static void fuse_lookup_init(struct fuse_conn *fc, =
-struct fuse_args *args,
->>         args->in_args[2].size =3D 1;
->>         args->in_args[2].value =3D "";
->>         args->out_numargs =3D 1;
->> -       args->out_args[0].size =3D sizeof(struct fuse_entry_out);
->> +       args->out_args[0].size =3D sizeof(*outarg) + outarg->fh.size;
->> +
->> +       if (fc->lookup_handle) {
->> +               struct fuse_inode *fi =3D NULL;
->> +
->> +               args->opcode =3D FUSE_LOOKUP_HANDLE;
->> +               args->out_argvar =3D true;
+> > While the situation has gotten better since 2020, we still have latent
+> > data races that need some thought (given papering over things blindly
+> > with *ONCE is not right either). My recommendation these days is to
+> > just set CONFIG_KCSAN_STRICT=y for those who care (although I'd wish
+> > everyone cared the same amount :-)).
+> >
+> > Should you feel the below change is appropriate for 2026, feel free to
+> > carry it (consider this my Ack).
+> >
+> > However, I wasn't thinking of tightening the screws until the current
+> > set of known data races has gotten to a manageable amount (say below
+> > 50)
+> > https://syzkaller.appspot.com/upstream?manager=ci2-upstream-kcsan-gce
+> > Then again, on syzbot the config can remain unchanged.
 >
-> How about allocating variable length arguments on demand?  That would
-> allow getting rid of max_handle_size negotiation.
->
->         args->out_var_alloc  =3D true;
->         args->out_args[1].size =3D MAX_HANDLE_SZ;
->         args->out_args[1].value =3D NULL; /* Will be allocated to the act=
-ual size of the handle */
+> Is there an easy way to map from a report to the SHA-1 that the
+> corresponding test ran against?  Probably me being blind, but I am not
+> seeing it.  Though I do very much like the symbolic names in those
+> stack traces!
 
-I've been trying to wrap my head around all the suggested changes, and
-experimenting with a few options.  Since there are some major things that
-need to be modified, I'd like to confirm that I got them right:
-
-1. In the old FUSE_LOOKUP, the args->in_args[0] will continue to use the
-   struct fuse_entry_out, which won't be changed and will continue to have
-   a static size.
-
-2. FUSE_LOOKUP_HANDLE will add a new out_arg, which will be dynamically
-   allocated (using your suggestion: 'args->out_var_alloc').  This will be
-   a new struct fuse_entry_handle_out, similar to fuse_entry_out, but
-   replacing the struct fuse_attr by a struct fuse_statx, and adding the
-   file handle struct.
-
-3. FUSE_LOOKUP_HANDLE will use the args->in_args[0] as an extension header
-   (FUSE_EXT_HANDLE).  Note that other operations (e.g. those in function
-   create_new_entry()) will actually need to *add* an extra extension
-   header, as extension headers are already being used there.
-   This extension header will use the new struct fuse_entry_handle_out.
-
-The above items seem to require some heavy changes on my current design.
-That's why I'd like to make sure I got those right so that v3 is on the
-right path.
-
-Thanks in advance for any feedback!
-
-Cheers,
---=20
-Lu=C3=ADs
+When viewing a report page, at the bottom in the "Crashes" table it's
+in the "Commit" column.
 
