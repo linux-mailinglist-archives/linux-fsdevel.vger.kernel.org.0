@@ -1,224 +1,424 @@
-Return-Path: <linux-fsdevel+bounces-72991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D877D07069
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 04:47:35 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DC6D06F7C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 04:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id C4235302008E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 03:46:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CC421309E45C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 03:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17DF17AE11;
-	Fri,  9 Jan 2026 03:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9DF33E37A;
+	Fri,  9 Jan 2026 03:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTJ6vPib"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="jO0ifP4+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA882236F3
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 03:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFC432ED3B;
+	Fri,  9 Jan 2026 03:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767930378; cv=none; b=VOP3zzSeKFxD3U6Rz5uNPIs144QUXjJorq40Iy4aQGNoJgaGFM9RAXrkPxWW88ucfxiX0/6W0CZ0upoTQNkmu++ek/DZs8qNp0iDI4OrPWsrC+E6/knrrIKhDhqSzgMGh/0cYDQp6+HgtvflO/5NBg8HgahdP6+EMPbX28O05Ho=
+	t=1767928502; cv=none; b=Qw2Nb/F3juj/h73PBAm7AJalUQS1ZkqoZe6mUlEj3Mzs44SxF+per2owra+xZrRjsrnLVOXc8JlwfzNue3J+mAZVdCa4wBa67KWbDU1q+lKed81mqQWqBLOo9bf7AXtFve7KEY2dVi+DiQWUQiT4PzPmCrNK10VbtP2K+EBM+r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767930378; c=relaxed/simple;
-	bh=4c8s/kx+oV/K2IKZou1YM6lkPttwcBvPrkfVDikA/4U=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=acxjhuPpWy3V5FFZRLq9NHkTm7yU9qvuoi6FfQ7DYRAH/xN3VMh/hPYt/wELwGK7yz5ejxPVu8gauRRil4swvIHjD2rv+VEPvF5/xNOcoAsgPBFpkwQLh5O4lSVp7cPY4+qQHQKbXayTUj18+IZvQKlWyTcTwUTTLCbAtCIrDNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HTJ6vPib; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-563686df549so95775e0c.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 19:46:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767930376; x=1768535176; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p9T2BPf5beEn8hyeDIg1uadDWypr2H9Q3xF9+zmP6OE=;
-        b=HTJ6vPibCmY7QdO0EJ93quuK7O6kFtfTCWl0c8/1pw29IOV9yX7dp0YhhT+K4mMWVe
-         XF2o4U6LuKbrlQ1JctjV1qkEQQ50iZFLO7llpN4ZfopD+QZmizntnCophaDtEC9DJjA0
-         NppJjsAxHpg5yHz3/EEs+aztxE80VIhAXE3BtpGi3v9KAxJdupsZdW1F8y6Qo3f9dP+Q
-         tXpMeNUHnUgw5YF1i81s/Q2m0l8qndrij//8dmcjsBDg6Sv1b917arACYkWJv+zo60Zu
-         M5/AAIwCHxJiKmjHExyxybaiVkiJgGVNyoYO9U2F11n/AnHODG53gbSZPsSDBpcx2FbG
-         0CWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767930376; x=1768535176;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p9T2BPf5beEn8hyeDIg1uadDWypr2H9Q3xF9+zmP6OE=;
-        b=LMXGkbKw56KfvbS8dLpKUwKb90d+9l0OBddpFhurgR0x9WW2AJ4fdnUOg4sqTRK+9l
-         XruWp0wtUSWrzvmwsguPl2bdyNBcvCBFlJm8OdSP4Zu7Cak1MU3F3kTdDnoT9kXEevJH
-         eu7yT1U/hd+fcUP+YocU7is5GcPdi1hIo7m5g+4tNNirkvdkkwMP5ySf68JusI6HuvqT
-         HHWry6NZ12lHnJYESr4C/iKbvDBme41lmbOny7pWxkkSVZUsHooEn/MUKGecl7fvJyMm
-         0j9M9IfdJsj4tEmmukp0JxIBAw9i0QwmCV+QI1VAxGARvVBn/Pw+Ov1x/mh629xrkj2+
-         Yh0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVbT2JRew+OH8/8+u4av3NVdxSak0RPflFhfhZkzNmX0plJaCXrM3y4UeYMRjFuubt/TwD4vqfHkS97GzT1@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa9rancDJFJQymhKyKFpZzM9bAxQNoc6/gPxjQHtsuY79HDRN3
-	ejbWckAAQXwjLpdD0yr9jNqqdqTjH4WmwVSELhlz58W/ehZIoAx+gp7rNUXAzw==
-X-Gm-Gg: AY/fxX57bPdCPjUHkmKfzHCeVZ7OFp/AnlSXRFhNEYBacwZHtmoloImqdBCJcQ5Wipx
-	SoeS4DKDh/Rog56bueUV81JBJFxw6K9b6DP7bJ/lcEW+r8jvsEB74slk4PY6M/D6aCEXYDoAoSx
-	aaWnlIu7/2vgJA5FEKMEJi8QCXIB4p7NlMTAyxnJTY02Q/3bSlOOf/3kO4dKGkNWy6JHI1wAOEP
-	NpDizaVesNT0VXS/Jap6ChDxf5dDpwPI9YzNaxOPAabc1nSlcUN948mZucR8O2teWjX+kmfvm/d
-	1hOX6FG5c9ETY1n06TXMrf275nO+cvfHLRX44fzEwvFuGsnRjK57Bfov5D/iyNjkkSdJZFHpqPf
-	UZg5o4q7A/dNe1AeASnIFQ3XQ/9YOMSwac+h5OG/K/C9DDlf/1NhwybJtwJYBbirs+S2zL+vU2j
-	06VjJ5p5ZyF4ngxNwERE0G/bVJGnuSJ/quY4EIul81Y8Ot9dGXegZpAHY14NFO0QU/zW9URnnUF
-	VtF8A==
-X-Google-Smtp-Source: AGHT+IHt+NS7u00xGrZ+95pdtQ5VgNDPq0qsP5mcbgbJ7rn8y9GOzh3GzuRv2Bv72b17iorfv7DOuQ==
-X-Received: by 2002:a17:902:c406:b0:2a0:9923:6954 with SMTP id d9443c01a7336-2a3ee48fbf3mr72625155ad.27.1767924633614;
-        Thu, 08 Jan 2026 18:10:33 -0800 (PST)
-Received: from localhost (p5342157-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.39.242.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a3e3c3a4f1sm87799265ad.8.2026.01.08.18.10.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 18:10:33 -0800 (PST)
-Date: Fri, 09 Jan 2026 11:10:25 +0900 (JST)
-Message-Id: <20260109.111025.1944772328156797586.fujita.tomonori@gmail.com>
-To: a.hindborg@kernel.org
-Cc: fujita.tomonori@gmail.com, aliceryhl@google.com, lyude@redhat.com,
- boqun.feng@gmail.com, will@kernel.org, peterz@infradead.org,
- richard.henderson@linaro.org, mattst88@gmail.com, linmag7@gmail.com,
- catalin.marinas@arm.com, ojeda@kernel.org, gary@garyguo.net,
- bjorn3_gh@protonmail.com, lossin@kernel.org, tmgross@umich.edu,
- dakr@kernel.org, mark.rutland@arm.com, frederic@kernel.org,
- tglx@linutronix.de, anna-maria@linutronix.de, jstultz@google.com,
- sboyd@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/5] rust: hrtimer: use READ_ONCE instead of
- read_volatile
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <87ms2pgu7c.fsf@t14s.mail-host-address-is-not-set>
-References: <WXFPsf9COQPV_obKoZg2bYwPL3k9TT0oBL3uxNppUFaIj5hxEX9UokzS_DJ5Kg5kXDzLrZ9ihALTZcf6ehljGw==@protonmail.internalid>
-	<20260107.202245.559061117523678561.fujita.tomonori@gmail.com>
-	<87ms2pgu7c.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1767928502; c=relaxed/simple;
+	bh=aw+Amz5LxKPX36YoG30SwlR4bCml7VdySSQYfKahDiw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rE7cnnTVW/G1L5cp3mplmA/ivDICCqlaImTS9WE9sY4Pb43fGMXlxK1LpBcvOebo0x+j9w770oC6uewHuQDHlRddYygBdZZXTYBKx9MUk5pO5QWkt6XpRm+/6+hirm9FtKZ0rQ7wJWlkHmf+lVOEP6VEJkXJ06Mjmr+cysbmD0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=jO0ifP4+; arc=none smtp.client-ip=113.46.200.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=4hwRRXgH7HVyfsclyc7QizO8MrCTsLZSYxC/QKUMR60=;
+	b=jO0ifP4+nDmI0dixMmYGN4zecQ7mg/O8CWnS+R9q8pO/BBi+QiLraGoXPWtWnUjkjy/DJ2bqx
+	MTRb3HZTFwIeVjTqG6hONdWp+grcM8zXhEoQ+gRZXc/2vAdLG99BCmU8/zKAQ6LDM2tbtr45f2Y
+	TZtyXeyGYsxBk5eEUiJfHt0=
+Received: from mail.maildlp.com (unknown [172.19.163.214])
+	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4dnRd22w3XzmVX4;
+	Fri,  9 Jan 2026 11:11:34 +0800 (CST)
+Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6E6C04056C;
+	Fri,  9 Jan 2026 11:14:51 +0800 (CST)
+Received: from huawei.com (10.67.174.162) by kwepemr500015.china.huawei.com
+ (7.202.195.162) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 9 Jan
+ 2026 11:14:50 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <hsiangkao@linux.alibaba.com>, <chao@kernel.org>, <brauner@kernel.org>
+CC: <djwong@kernel.org>, <amir73il@gmail.com>, <hch@lst.de>,
+	<linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <lihongbo22@huawei.com>
+Subject: [PATCH v13 00/10] erofs: Introduce page cache sharing feature
+Date: Fri, 9 Jan 2026 03:01:30 +0000
+Message-ID: <20260109030140.594936-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.22.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemr500015.china.huawei.com (7.202.195.162)
 
-On Wed, 07 Jan 2026 19:21:11 +0100
-Andreas Hindborg <a.hindborg@kernel.org> wrote:
+Enabling page cahe sharing in container scenarios has become increasingly
+crucial, as it can significantly reduce memory usage. In previous efforts,
+Hongzhen has done substantial work to push this feature into the EROFS
+mainline. Due to other commitments, he hasn't been able to continue his
+work recently, and I'm very pleased to build upon his work and continue
+to refine this implementation.
 
-> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
-> 
->> On Wed, 07 Jan 2026 11:11:43 +0100
->> Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>
->>> FUJITA Tomonori <fujita.tomonori@gmail.com> writes:
->>>
->>>> On Tue, 06 Jan 2026 13:37:34 +0100
->>>> Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>>>
->>>>> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
->>>>>
->>>>>> On Thu, 01 Jan 2026 11:11:23 +0900 (JST)
->>>>>> FUJITA Tomonori <fujita.tomonori@gmail.com> wrote:
->>>>>>
->>>>>>> On Wed, 31 Dec 2025 12:22:28 +0000
->>>>>>> Alice Ryhl <aliceryhl@google.com> wrote:
->>>>>>>
->>>>>>>> Using `READ_ONCE` is the correct way to read the `node.expires` field.
->>>>>>>>
->>>>>>>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->>>>>>>> ---
->>>>>>>>  rust/kernel/time/hrtimer.rs | 8 +++-----
->>>>>>>>  1 file changed, 3 insertions(+), 5 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
->>>>>>>> index 856d2d929a00892dc8eaec63cebdf547817953d3..e2b7a26f8aade972356c3eb5f6489bcda3e2e849 100644
->>>>>>>> --- a/rust/kernel/time/hrtimer.rs
->>>>>>>> +++ b/rust/kernel/time/hrtimer.rs
->>>>>>>> @@ -239,11 +239,9 @@ pub fn expires(&self) -> HrTimerInstant<T>
->>>>>>>>          // - Timers cannot have negative ktime_t values as their expiration time.
->>>>>>>>          // - There's no actual locking here, a racy read is fine and expected
->>>>>>>>          unsafe {
->>>>>>>> -            Instant::from_ktime(
->>>>>>>> -                // This `read_volatile` is intended to correspond to a READ_ONCE call.
->>>>>>>> -                // FIXME(read_once): Replace with `read_once` when available on the Rust side.
->>>>>>>> -                core::ptr::read_volatile(&raw const ((*c_timer_ptr).node.expires)),
->>>>>>>> -            )
->>>>>>>> +            Instant::from_ktime(kernel::sync::READ_ONCE(
->>>>>>>> +                &raw const (*c_timer_ptr).node.expires,
->>>>>>>> +            ))
->>>>>>>>          }
->>>>>>>
->>>>>>> Do we actually need READ_ONCE() here? I'm not sure but would it be
->>>>>>> better to call the C-side API?
->>>>>>>
->>>>>>> diff --git a/rust/helpers/time.c b/rust/helpers/time.c
->>>>>>> index 67a36ccc3ec4..73162dea2a29 100644
->>>>>>> --- a/rust/helpers/time.c
->>>>>>> +++ b/rust/helpers/time.c
->>>>>>> @@ -2,6 +2,7 @@
->>>>>>>
->>>>>>>  #include <linux/delay.h>
->>>>>>>  #include <linux/ktime.h>
->>>>>>> +#include <linux/hrtimer.h>
->>>>>>>  #include <linux/timekeeping.h>
->>>>>>>
->>>>>>>  void rust_helper_fsleep(unsigned long usecs)
->>>>>>> @@ -38,3 +39,8 @@ void rust_helper_udelay(unsigned long usec)
->>>>>>>  {
->>>>>>>  	udelay(usec);
->>>>>>>  }
->>>>>>> +
->>>>>>> +__rust_helper ktime_t rust_helper_hrtimer_get_expires(const struct hrtimer *timer)
->>>>>>> +{
->>>>>>> +	return timer->node.expires;
->>>>>>> +}
->>>>>>
->>>>>> Sorry, of course this should be:
->>>>>>
->>>>>> +__rust_helper ktime_t rust_helper_hrtimer_get_expires(const struct hrtimer *timer)
->>>>>> +{
->>>>>> +	return hrtimer_get_expires(timer);
->>>>>> +}
->>>>>>
->>>>>
->>>>> This is a potentially racy read. As far as I recall, we determined that
->>>>> using read_once is the proper way to handle the situation.
->>>>>
->>>>> I do not think it makes a difference that the read is done by C code.
->>>>
->>>> What does "racy read" mean here?
->>>>
->>>> The C side doesn't use WRITE_ONCE() or READ_ONCE for node.expires. How
->>>> would using READ_ONCE() on the Rust side make a difference?
->>>
->>> Data races like this are UB in Rust. As far as I understand, using this
->>> READ_ONCE implementation or a relaxed atomic read would make the read
->>> well defined. I am not aware if this is only the case if all writes to
->>> the location from C also use atomic operations or WRITE_ONCE. @Boqun?
->>
->> The C side updates node.expires without WRITE_ONCE()/atomics so a
->> Rust-side READ_ONCE() can still observe a torn value; I think that
->> this is still a data race / UB from Rust's perspective.
->>
->> And since expires is 64-bit, WRITE_ONCE() on 32-bit architectures does
->> not inherently guarantee tear-free stores either.
->>
->> I think that the expires() method should follow the same safety
->> requirements as raw_forward(): it should only be considered safe when
->> holding exclusive access to hrtimer or within the context of the timer
->> callback. Under those conditions, it would be fine to call C's
->> hrtimer_get_expires().
-> 
-> We can make it safe, please see my comment here [1].
-> 
-> Best regards,
-> Andreas Hindborg
-> 
-> [1] https://lore.kernel.org/r/87v7hdh9m4.fsf@t14s.mail-host-address-is-not-set
+This patch series is based on Hongzhen's original EROFS shared pagecache
+implementation which was posted about half a year ago:
+https://lore.kernel.org/all/20250301145002.2420830-1-hongzhen@linux.alibaba.com/T/#u
 
-I agree. My point was that expire() can be safe only under the same
-constraints as forward()/forward_now() so the API should require
-Pin<&mut Self> and expose it on HrTimerCallbackContext.
+I have already made several iterations based on this patch set, resolving
+some issues in the code and some pre-requisites.
+
+(A recap of Hongzhen's original cover letter is below, edited slightly
+for this serise:)
+
+Background
+==============
+Currently, reading files with different paths (or names) but the same
+content can consume multiple copies of the page cache, even if the
+content of these caches is identical. For example, reading identical
+files (e.g., *.so files) from two different minor versions of container
+images can result in multiple copies of the same page cache, since
+different containers have different mount points. Therefore, sharing
+the page cache for files with the same content can save memory.
+
+Proposal
+==============
+
+1. determining file identity
+----------------------------
+First, a way needs to be found to check whether the content of two files
+is the same. Here, the xattr values associated with the file
+fingerprints are assessed for consistency. When creating the EROFS
+image, users can specify the name of the xattr for file fingerprints,
+and the corresponding name will be stored in the packfile. The on-disk
+`ishare_key_start` indicates the index of the xattr name within the
+prefix xattrs:
+
+```
+struct erofs_super_block {
+	__u8 xattr_filter_reserved; /* reserved for xattr name filter */
+-	__u8 reserved[3];
++	__u8 ishare_xattr_prefix_id;
++	__u8 reserved[2];
+};
+```
+
+For example, users can specify the first long prefix as the name for the
+file fingerprint as follows:
+
+```
+mkfs.erofs --xattr-inode-digest=trusted.erofs.fingerprint [-zlz4hc] foo.erofs foo/
+```
+
+In this way, `trusted.erofs.fingerprint` serves as the name of the xattr
+for the file fingerprint. The relevant patch has been supported in erofs-utils
+experimental branch:
+
+```
+git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git -b experimental
+```
+
+At the same time, we introduce a new mount option which is inode_share to
+enable the feature. For security reasons, we allow sharing page cache only
+within the same domain by adding "-o domain_id=xxxx" during the mounting
+process:
+
+```
+mount -t erofs -o inode_share,domain_id=your_shared_domain_id erofs.img /mnt
+```
+
+If no domain ID is specified, it will share page cache in default none domain.
+
+2. Implementation
+==================
+
+2.1. file open & close
+----------------------
+When the file is opened, the ->private_data field of file A or file B is
+set to point to an internal deduplicated file. When the actual read
+occurs, the page cache of this deduplicated file will be accessed.
+
+When the file is opened, if the corresponding erofs inode is newly
+created, then perform the following actions:
+1. add the erofs inode to the backing list of the deduplicated inode;
+2. increase the reference count of the deduplicated inode.
+
+The purpose of step 1 above is to ensure that when a real I/O operation
+occurs, the deduplicated inode can locate one of the disk devices
+(as the deduplicated inode itself is not bound to a specific device).
+Step 2 is for managing the lifecycle of the deduplicated inode.
+
+When the erofs inode is destroyed, the opposite actions mentioned above
+will be taken.
+
+2.2. file reading
+-----------------
+Assuming the deduplication inode's page cache is PGCache_dedup, there
+are two possible scenarios when reading a file:
+1) the content being read is already present in PGCache_dedup;
+2) the content being read is not present in PGCache_dedup.
+
+In the second scenario, it involves the iomap operation to read from the
+disk.
+
+2.2.1. reading existing data in PGCache_dedup
+-------------------------------------------
+In this case, the overall read flowchart is as follows (take ksys_read()
+for example):
+
+         ksys_read
+             │
+             │
+             ▼
+            ...
+             │
+             │
+             ▼
+erofs_ishare_file_read_iter (switch to backing deduplicated file)
+             │
+             │
+             ▼
+
+ read PGCache_dedup & return
+
+At this point, the content in PGCache_dedup will be read directly and
+returned.
+
+2.2.2 reading non-existent content in PGCache_dedup
+---------------------------------------------------
+In this case, disk I/O operations will be involved. Taking the reading
+of an uncompressed file as an example, here is the reading process:
+
+         ksys_read
+             │
+             │
+             ▼
+            ...
+             │
+             │
+             ▼
+erofs_ishare_file_read_iter (switch to backing deduplicated file)
+             │
+             │
+             ▼
+            ... (allocate pages)
+             │
+             │
+             ▼
+erofs_read_folio/erofs_readahead
+             │
+             │
+             ▼
+            ... (iomap)
+             │
+             │
+             ▼
+        erofs_iomap_begin
+             │
+             │
+             ▼
+            ...
+
+Iomap and the layers below will involve disk I/O operations. As
+described in 2.1, the deduplicated inode itself is not bound to a
+specific device. The deduplicated inode will select an erofs inode from
+the backing list (by default, the first one) to complete the
+corresponding iomap operation.
+
+2.3. release page cache
+-----------------------
+Similar to overlayfs, when dropping the page cache via .fadvise, erofs
+locates the deduplicated file and applies vfs_fadvise to that specific
+file.
+
+Effect
+==================
+I conducted experiments on two aspects across two different minor
+versions of container images:
+
+1. reading all files in two different minor versions of container images
+
+2. run workloads or use the default entrypoint within the containers^[1]
+
+Below is the memory usage for reading all files in two different minor
+versions of container images:
+
++-------------------+------------------+-------------+---------------+
+|       Image       | Page Cache Share | Memory (MB) |    Memory     |
+|                   |                  |             | Reduction (%) |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     241     |       -       |
+|       redis       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     163     |      33%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     872     |       -       |
+|      postgres     +------------------+-------------+---------------+
+|    16.1 & 16.2    |        Yes       |     630     |      28%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     2771    |       -       |
+|     tensorflow    +------------------+-------------+---------------+
+|  2.11.0 & 2.11.1  |        Yes       |     2340    |      16%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     926     |       -       |
+|       mysql       +------------------+-------------+---------------+
+|  8.0.11 & 8.0.12  |        Yes       |     735     |      21%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     390     |       -       |
+|       nginx       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     219     |      44%      |
++-------------------+------------------+-------------+---------------+
+|       tomcat      |        No        |     924     |       -       |
+| 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+|                   |        Yes       |     474     |      49%      |
++-------------------+------------------+-------------+---------------+
+
+Additionally, the table below shows the runtime memory usage of the
+container:
+
++-------------------+------------------+-------------+---------------+
+|       Image       | Page Cache Share | Memory (MB) |    Memory     |
+|                   |                  |             | Reduction (%) |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     34.9    |       -       |
+|       redis       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     33.6    |       4%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |    149.1    |       -       |
+|      postgres     +------------------+-------------+---------------+
+|    16.1 & 16.2    |        Yes       |      95     |      37%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |    1027.9   |       -       |
+|     tensorflow    +------------------+-------------+---------------+
+|  2.11.0 & 2.11.1  |        Yes       |    934.3    |      10%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |    155.0    |       -       |
+|       mysql       +------------------+-------------+---------------+
+|  8.0.11 & 8.0.12  |        Yes       |    139.1    |      11%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     25.4    |       -       |
+|       nginx       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     18.8    |      26%      |
++-------------------+------------------+-------------+---------------+
+|       tomcat      |        No        |     186     |       -       |
+| 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+|                   |        Yes       |      99     |      47%      |
++-------------------+------------------+-------------+---------------+
+
+It can be observed that when reading all the files in the image, the
+reduced memory usage varies from 16% to 49%, depending on the specific
+image. Additionally, the container's runtime memory usage reduction
+ranges from 4% to 47%.
+
+[1] Below are the workload for these images:
+      - redis: redis-benchmark
+      - postgres: sysbench
+      - tensorflow: app.py of tensorflow.python.platform
+      - mysql: sysbench
+      - nginx: wrk
+      - tomcat: default entrypoint
+
+Changes from v12:
+    - Patch 5: add reviewed-by.
+    - Patch 7: only allow non-direct I/O in open for sharing feature, mask
+      INODE_SHARE if sb without ishare_xattrs, simplify the code and better
+      naming as suggested by Xiang.
+    - Patch 8: remove unuse macro as suggested by Xiang.
+    - Patch 9: minor cleanup as suggested by Xiang.
+
+Changes from v11:
+    - Patch 4: apply with Xiang's patch.
+    - Patch 5: do not mask the xattr_prefix_id in disk and fix the compiling
+      error when disable XATTR config.
+    - Patch 6,10: add reviewed-by.
+    - Patch 7,8: make inode_share excluded with DAX feature, do
+      some cleanup on typo and other code-style as suggested by Xiang.
+    - Patch 9: using realinode and shareinode in compressed case to access
+      metadata and page cache seperately, and remove some useless
+      code as suggested by Xiang.
+
+Changes from v10:
+    - add reviewed-by and acked-by.
+    - do some cleanup on typo, useless code and some helpers' name.
+    - use fingerprint struct and introduce inode_share mount option as
+      suggested by Xiang.
+
+Changes from v9:
+    - make shared page cache as a compatiable feature.
+    - refine code style as suggested by Xiang.
+    - init ishare mnt during the module init as suggested by Xiang.
+    - rebase the latest mainline and fix the comments in cover letter.
+
+Changes from v8:
+    - add review-by in patch 1 and patch 10.
+    - do some clean up in patch 2 and patch 4,6,9 as suggested by Xiang.
+    - add new patch 3 to export alloc_empty_backing_file.
+    - patch 5 only use xattr prefix id to record the ishare info, changed
+      config to EROFS_FS_PAGE_CACHE_SHARE and make it compatible.
+    - patch 7 use backing file helpers to alloc file when ishare file is
+      opened as suggested by Xiang.
+    - patch 8 remove erofs_read_{begin,end} as suggested by Xiang.
+
+v12: https://lore.kernel.org/all/20251231090118.541061-1-lihongbo22@huawei.com/
+v11: https://lore.kernel.org/all/20251224040932.496478-1-lihongbo22@huawei.com/
+v10: https://lore.kernel.org/all/20251223015618.485626-1-lihongbo22@huawei.com/
+v9: https://lore.kernel.org/all/20251117132537.227116-1-lihongbo22@huawei.com/
+v8: https://lore.kernel.org/all/20251114095516.207555-1-lihongbo22@huawei.com/
+v7: https://lore.kernel.org/all/20251021104815.70662-1-lihongbo22@huawei.com/
+v6: https://lore.kernel.org/all/20250301145002.2420830-1-hongzhen@linux.alibaba.com/T/#u
+v5: https://lore.kernel.org/all/20250105151208.3797385-1-hongzhen@linux.alibaba.com/
+v4: https://lore.kernel.org/all/20240902110620.2202586-1-hongzhen@linux.alibaba.com/
+v3: https://lore.kernel.org/all/20240828111959.3677011-1-hongzhen@linux.alibaba.com/
+v2: https://lore.kernel.org/all/20240731080704.678259-1-hongzhen@linux.alibaba.com/
+v1: https://lore.kernel.org/all/20240722065355.1396365-1-hongzhen@linux.alibaba.com/
+
+Gao Xiang (1):
+  erofs: decouple `struct erofs_anon_fs_type`
+
+Hongbo Li (4):
+  iomap: stash iomap read ctx in the private field of iomap_iter
+  erofs: hold read context in iomap_iter if needed
+  fs: Export alloc_empty_backing_file
+  erofs: support unencoded inodes for page cache share
+
+Hongzhen Luo (5):
+  erofs: support user-defined fingerprint name
+  erofs: support domain-specific page cache share
+  erofs: introduce the page cache share feature
+  erofs: support compressed inodes for page cache share
+  erofs: implement .fadvise for page cache share
+
+ Documentation/filesystems/erofs.rst |   5 +
+ fs/erofs/Kconfig                    |   9 ++
+ fs/erofs/Makefile                   |   1 +
+ fs/erofs/data.c                     |  89 ++++++++----
+ fs/erofs/erofs_fs.h                 |   5 +-
+ fs/erofs/fscache.c                  |  13 --
+ fs/erofs/inode.c                    |   2 +
+ fs/erofs/internal.h                 |  41 ++++++
+ fs/erofs/ishare.c                   | 201 ++++++++++++++++++++++++++++
+ fs/erofs/super.c                    |  78 ++++++++++-
+ fs/erofs/xattr.c                    |  46 +++++++
+ fs/erofs/xattr.h                    |   3 +
+ fs/erofs/zdata.c                    |  36 +++--
+ fs/file_table.c                     |   1 +
+ fs/fuse/file.c                      |   4 +-
+ fs/iomap/buffered-io.c              |   6 +-
+ include/linux/iomap.h               |   8 +-
+ 17 files changed, 485 insertions(+), 63 deletions(-)
+ create mode 100644 fs/erofs/ishare.c
+
+-- 
+2.22.0
 
 
