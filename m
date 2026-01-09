@@ -1,626 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-73009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD70D07712
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 07:48:12 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1947D077BB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 08:01:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D27AD300C296
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 06:48:06 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 913ED3048621
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 07:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B1C2E7BDC;
-	Fri,  9 Jan 2026 06:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14C82E7BDC;
+	Fri,  9 Jan 2026 07:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="XsSqouvs"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pjGalkW1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C54C17AE11;
-	Fri,  9 Jan 2026 06:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3216D1E511;
+	Fri,  9 Jan 2026 07:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767941284; cv=none; b=NdZyDeENlYoCj08j+eaexpnxGgZvjPa1SyR6/PFd8v48u5A/eK6vcods1iUyTFyvfYS3P5OUluT0NqoPiMVgfwZd4z867zv84vEZeLV5zASxvdDdAWywjhpgAeSJNiidjGgP/FpGtZlIl55S4M24UKaE+hI4CPl5WptjqXA41As=
+	t=1767942077; cv=none; b=tBkN2Q8YWM0W2GwjeWSaqAn2iA+vfXW+H8eAiWZdexpFUwy7nDpWAK/eiiYBJqVc80e4jMB+p1NqltCpjejvO95LtXkmwcaw1bClZPJgL11t9D6nH8k61mBvpefFuC1JIWMhvwosbF42HZS+gCszlynUzC6ogdRJWz3kUNpGCrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767941284; c=relaxed/simple;
-	bh=0SQExbBElUyGS3ivSg08ii9xjD3v4Bqs7RdnDSehPk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ttABKFQimxZzkbUFaKxfr82DjA7jH/ymWQDVZ8g3f4UdIkQ9o+fGjeEeM0o41y3fTKWUhM9dQr5p6d8yOG0ZQ3J/axKxOeSMYng78Uixrk424zDQwvIxodV4/WfaOK+tROjMHtDpNsw6VqZCAe5yWhmmz6cbhQ4kaFBBRVuPZyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=XsSqouvs; arc=none smtp.client-ip=113.46.200.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=mOPwqnV5FlXCQydFh2PjnmkFhGz9MCnltBvnC1CKwVU=;
-	b=XsSqouvsJmqBHHG2Jw/5QJMwqEMStH2JGYsF+JHSMvEMFe6+Jmvf2JOHACkF/E521RMDx1zBj
-	Yo92csrFF0AOgJkS7pLqAfZ5lZQzeHheVXl9TFwxRcw09ziHa1QZWC19dcx/XFdTcGrjCFOCjYo
-	mD5dOyACH6WlbLcj00lVqA4=
-Received: from mail.maildlp.com (unknown [172.19.163.0])
-	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4dnXLY3Lj9zcZyH;
-	Fri,  9 Jan 2026 14:44:21 +0800 (CST)
-Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id B52D54056E;
-	Fri,  9 Jan 2026 14:47:56 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- kwepemr500015.china.huawei.com (7.202.195.162) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 9 Jan 2026 14:47:56 +0800
-Message-ID: <336e9041-7381-4073-b533-bfcb32d6485e@huawei.com>
-Date: Fri, 9 Jan 2026 14:47:55 +0800
+	s=arc-20240116; t=1767942077; c=relaxed/simple;
+	bh=8zG6u3mXw5NcFdA9FL9qD5iAdkkam5pIZED0dvnzwVQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LSu6EcI7qjxuxfYJDRfAVC0A//2ukV7r7OAtQltroXvofUTA9pFWDCk3xnNmuyUx1rFB/SOQ2W1Y1esius1SOCOYKmOstgzyJWkFQAhBly6CyRlN+vnfeS4mEp99iOO308FB80/BITbt10Ulq7TcxlGvDOinQHZ5ng/mBmYhku4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pjGalkW1; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1767942070; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=R9EET8AOE1I0v+3n6GW12HAp6JQhapL2nHSNMXhwSaM=;
+	b=pjGalkW1pBQnMXDqZHRnyh1f7p0JkUi1p2B43Sept2YAZki9xU7YhjD/3mhwtyiJcaexMUav1PtP7O9PPhSF9BAyJ4yoscHS+8Z3URX0HDKevoTNaFOnvmmqIPrOx6sc2bPd/E9cY7OfbdMvdDKDszHdJPAYXYV2SZ799CaX/14=
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WwfE40Q_1767942070 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 09 Jan 2026 15:01:10 +0800
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+To: miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org,
+	bschubert@ddn.com
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2] fuse: invalidate the page cache after direct write
+Date: Fri,  9 Jan 2026 15:01:10 +0800
+Message-Id: <20260109070110.18721-1-jefflexu@linux.alibaba.com>
+X-Mailer: git-send-email 2.19.1.6.gb485710b
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 07/10] erofs: introduce the page cache share feature
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-CC: <djwong@kernel.org>, <amir73il@gmail.com>, <hch@lst.de>,
-	<linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <brauner@kernel.org>, <chao@kernel.org>
-References: <20260109030140.594936-1-lihongbo22@huawei.com>
- <20260109030140.594936-8-lihongbo22@huawei.com>
- <8ed8ef13-e818-42e3-bece-2af1af238b62@linux.alibaba.com>
-Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <8ed8ef13-e818-42e3-bece-2af1af238b62@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemr500015.china.huawei.com (7.202.195.162)
 
-Hi, Xiang
+This fixes xfstests generic/451 (for both O_DIRECT and FOPEN_DIRECT_IO
+direct write).
 
-On 2026/1/9 13:50, Gao Xiang wrote:
-> 
-> 
-> On 2026/1/9 11:01, Hongbo Li wrote:
->> From: Hongzhen Luo <hongzhen@linux.alibaba.com>
->>
->> Currently, reading files with different paths (or names) but the same
->> content will consume multiple copies of the page cache, even if the
->> content of these page caches is the same. For example, reading
->> identical files (e.g., *.so files) from two different minor versions of
->> container images will cost multiple copies of the same page cache,
->> since different containers have different mount points. Therefore,
->> sharing the page cache for files with the same content can save memory.
->>
->> This introduces the page cache share feature in erofs. It allocate a
->> deduplicated inode and use its page cache as shared. Reads for files
->> with identical content will ultimately be routed to the page cache of
->> the deduplicated inode. In this way, a single page cache satisfies
->> multiple read requests for different files with the same contents.
->>
->> We introduce inode_share mount option to enable the page sharing mode
->> during mounting.
->>
->> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
->> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
->> ---
->>   Documentation/filesystems/erofs.rst |   5 +
->>   fs/erofs/Makefile                   |   1 +
->>   fs/erofs/internal.h                 |  31 ++++++
->>   fs/erofs/ishare.c                   | 161 ++++++++++++++++++++++++++++
->>   fs/erofs/super.c                    |  53 ++++++++-
->>   fs/erofs/xattr.c                    |  33 ++++++
->>   fs/erofs/xattr.h                    |   3 +
->>   7 files changed, 285 insertions(+), 2 deletions(-)
->>   create mode 100644 fs/erofs/ishare.c
->>
->> diff --git a/Documentation/filesystems/erofs.rst 
->> b/Documentation/filesystems/erofs.rst
->> index 08194f194b94..27d3caa3c73c 100644
->> --- a/Documentation/filesystems/erofs.rst
->> +++ b/Documentation/filesystems/erofs.rst
->> @@ -128,7 +128,12 @@ device=%s              Specify a path to an extra 
->> device to be used together.
->>   fsid=%s                Specify a filesystem image ID for Fscache 
->> back-end.
->>   domain_id=%s           Specify a domain ID in fscache mode so that 
->> different images
->>                          with the same blobs under a given domain ID 
->> can share storage.
->> +                       Also used for inode page sharing mode which 
->> defines a sharing
->> +                       domain.
->>   fsoffset=%llu          Specify block-aligned filesystem offset for 
->> the primary device.
->> +inode_share            Enable inode page sharing for this 
->> filesystem.  Inodes with
->> +                       identical content within the same domain ID 
->> can share the
->> +                       page cache.
->>   ===================    
->> =========================================================
->>   Sysfs Entries
->> diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
->> index 549abc424763..a80e1762b607 100644
->> --- a/fs/erofs/Makefile
->> +++ b/fs/erofs/Makefile
->> @@ -10,3 +10,4 @@ erofs-$(CONFIG_EROFS_FS_ZIP_ZSTD) += 
->> decompressor_zstd.o
->>   erofs-$(CONFIG_EROFS_FS_ZIP_ACCEL) += decompressor_crypto.o
->>   erofs-$(CONFIG_EROFS_FS_BACKED_BY_FILE) += fileio.o
->>   erofs-$(CONFIG_EROFS_FS_ONDEMAND) += fscache.o
->> +erofs-$(CONFIG_EROFS_FS_PAGE_CACHE_SHARE) += ishare.o
->> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
->> index ec79e8b44d3b..6ef1cdd9d651 100644
->> --- a/fs/erofs/internal.h
->> +++ b/fs/erofs/internal.h
->> @@ -179,6 +179,7 @@ struct erofs_sb_info {
->>   #define EROFS_MOUNT_DAX_ALWAYS        0x00000040
->>   #define EROFS_MOUNT_DAX_NEVER        0x00000080
->>   #define EROFS_MOUNT_DIRECT_IO        0x00000100
->> +#define EROFS_MOUNT_INODE_SHARE        0x00000200
->>   #define clear_opt(opt, option)    ((opt)->mount_opt &= 
->> ~EROFS_MOUNT_##option)
->>   #define set_opt(opt, option)    ((opt)->mount_opt |= 
->> EROFS_MOUNT_##option)
->> @@ -269,6 +270,11 @@ static inline u64 erofs_nid_to_ino64(struct 
->> erofs_sb_info *sbi, erofs_nid_t nid)
->>   /* default readahead size of directories */
->>   #define EROFS_DIR_RA_BYTES    16384
->> +struct erofs_inode_fingerprint {
->> +    u8 *opaque;
->> +    int size;
->> +};
->> +
->>   struct erofs_inode {
->>       erofs_nid_t nid;
->> @@ -304,6 +310,18 @@ struct erofs_inode {
->>           };
->>   #endif    /* CONFIG_EROFS_FS_ZIP */
->>       };
->> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
->> +    struct list_head ishare_list;
->> +    union {
->> +        /* for each anon shared inode */
->> +        struct {
->> +            struct erofs_inode_fingerprint fingerprint;
->> +            spinlock_t ishare_lock;
->> +        };
->> +        /* for each real inode */
->> +        struct inode *sharedinode;
->> +    };
->> +#endif
->>       /* the corresponding vfs inode */
->>       struct inode vfs_inode;
->>   };
->> @@ -410,6 +428,7 @@ extern const struct inode_operations erofs_dir_iops;
->>   extern const struct file_operations erofs_file_fops;
->>   extern const struct file_operations erofs_dir_fops;
->> +extern const struct file_operations erofs_ishare_fops;
->>   extern const struct iomap_ops z_erofs_iomap_report_ops;
->> @@ -541,6 +560,18 @@ static inline struct bio 
->> *erofs_fscache_bio_alloc(struct erofs_map_dev *mdev) {
->>   static inline void erofs_fscache_submit_bio(struct bio *bio) {}
->>   #endif
->> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
->> +int __init erofs_init_ishare(void);
->> +void erofs_exit_ishare(void);
->> +bool erofs_ishare_fill_inode(struct inode *inode);
->> +void erofs_ishare_free_inode(struct inode *inode);
->> +#else
->> +static inline int erofs_init_ishare(void) { return 0; }
->> +static inline void erofs_exit_ishare(void) {}
->> +static inline bool erofs_ishare_fill_inode(struct inode *inode) { 
->> return false; }
->> +static inline void erofs_ishare_free_inode(struct inode *inode) {}
->> +#endif // CONFIG_EROFS_FS_PAGE_CACHE_SHARE
->> +
->>   long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long 
->> arg);
->>   long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
->>               unsigned long arg);
->> diff --git a/fs/erofs/ishare.c b/fs/erofs/ishare.c
->> new file mode 100644
->> index 000000000000..56a955aaeb18
->> --- /dev/null
->> +++ b/fs/erofs/ishare.c
->> @@ -0,0 +1,161 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * Copyright (C) 2024, Alibaba Cloud
->> + */
->> +#include <linux/xxhash.h>
->> +#include <linux/mount.h>
->> +#include "internal.h"
->> +#include "xattr.h"
->> +
->> +#include "../internal.h"
->> +
->> +static struct vfsmount *erofs_ishare_mnt;
->> +
->> +static int erofs_ishare_iget5_eq(struct inode *inode, void *data)
->> +{
->> +    struct erofs_inode_fingerprint *fp1 = &EROFS_I(inode)->fingerprint;
->> +    struct erofs_inode_fingerprint *fp2 = data;
->> +
->> +    return fp1->size == fp2->size &&
->> +        !memcmp(fp1->opaque, fp2->opaque, fp2->size);
->> +}
->> +
->> +static int erofs_ishare_iget5_set(struct inode *inode, void *data)
->> +{
->> +    struct erofs_inode *vi = EROFS_I(inode);
->> +
->> +    vi->fingerprint = *(struct erofs_inode_fingerprint *)data;
->> +    INIT_LIST_HEAD(&vi->ishare_list);
->> +    spin_lock_init(&vi->ishare_lock);
->> +    return 0;
->> +}
->> +
->> +bool erofs_ishare_fill_inode(struct inode *inode)
->> +{
->> +    struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
->> +    struct erofs_inode *vi = EROFS_I(inode);
->> +    struct erofs_inode_fingerprint fp;
->> +    struct inode *sharedinode;
->> +    unsigned long hash;
->> +
->> +    if (erofs_xattr_fill_inode_fingerprint(&fp, inode, sbi->domain_id))
->> +        return false;
->> +    hash = xxh32(fp.opaque, fp.size, 0);
->> +    sharedinode = iget5_locked(erofs_ishare_mnt->mnt_sb, hash,
->> +                   erofs_ishare_iget5_eq, erofs_ishare_iget5_set,
->> +                   &fp);
->> +    if (!sharedinode) {
->> +        kfree(fp.opaque);
->> +        return false;
->> +    }
->> +
->> +    vi->sharedinode = sharedinode;
->> +    if (inode_state_read_once(sharedinode) & I_NEW) {
->> +        if (erofs_inode_is_data_compressed(vi->datalayout))
->> +            sharedinode->i_mapping->a_ops = &z_erofs_aops;
->> +        else
->> +            sharedinode->i_mapping->a_ops = &erofs_aops;
->> +        sharedinode->i_mode = vi->vfs_inode.i_mode;
->> +        sharedinode->i_size = vi->vfs_inode.i_size;
->> +        unlock_new_inode(sharedinode);
->> +    } else {
->> +        kfree(fp.opaque);
->> +    }
->> +    INIT_LIST_HEAD(&vi->ishare_list);
->> +    spin_lock(&EROFS_I(sharedinode)->ishare_lock);
->> +    list_add(&vi->ishare_list, &EROFS_I(sharedinode)->ishare_list);
->> +    spin_unlock(&EROFS_I(sharedinode)->ishare_lock);
->> +    return true;
->> +}
->> +
->> +void erofs_ishare_free_inode(struct inode *inode)
->> +{
->> +    struct erofs_inode *vi = EROFS_I(inode);
->> +    struct inode *sharedinode = vi->sharedinode;
->> +
->> +    if (!sharedinode)
->> +        return;
->> +    spin_lock(&EROFS_I(sharedinode)->ishare_lock);
->> +    list_del(&vi->ishare_list);
->> +    spin_unlock(&EROFS_I(sharedinode)->ishare_lock);
->> +    iput(sharedinode);
->> +    vi->sharedinode = NULL;
->> +}
->> +
->> +static int erofs_ishare_file_open(struct inode *inode, struct file 
->> *file)
->> +{
->> +    struct inode *sharedinode;
-> 
-> just
->      struct inode *sharedinode = EROFS_I(inode)->sharedinode;
-> 
-> here for simplicity.
-> 
-> `if (file->f_flags & O_DIRECT)` is an error case, so I don't bother
-> with the check.
-> 
+Commit b359af8275a9 ("fuse: Invalidate the page cache after
+FOPEN_DIRECT_IO write") tries to fix the similar issue for
+FOPEN_DIRECT_IO write, which can be reproduced by xfstests generic/209.
+It only fixes the issue for synchronous direct write, while omitting
+the case for asynchronous direct write (exactly targeted by
+generic/451).
 
-Ok, I will adjust here in next version.
+While for O_DIRECT direct write, it's somewhat more complicated.  For
+synchronous direct write, generic_file_direct_write() will invalidate
+the page cache after the write, and thus it can pass generic/209.  While
+for asynchronous direct write, the invalidation in
+generic_file_direct_write() is bypassed since the invalidation shall be
+done when the asynchronous IO completes.  This is omitted in FUSE and
+generic/451 fails whereby.
 
->> +    struct file *realfile;
->> +
->> +    if (file->f_flags & O_DIRECT)
->> +        return -EINVAL;
->> +    sharedinode = EROFS_I(inode)->sharedinode;
->> +    realfile = alloc_empty_backing_file(O_RDONLY|O_NOATIME, 
->> current_cred());
->> +    if (IS_ERR(realfile))
->> +        return PTR_ERR(realfile);
->> +    ihold(sharedinode);
->> +    realfile->f_op = &erofs_file_fops;
->> +    realfile->f_inode = sharedinode;
->> +    realfile->f_mapping = sharedinode->i_mapping;
->> +    path_get(&file->f_path);
->> +    backing_file_set_user_path(realfile, &file->f_path);
->> +
->> +    file_ra_state_init(&realfile->f_ra, file->f_mapping);
->> +    realfile->private_data = EROFS_I(inode);
->> +    file->private_data = realfile;
->> +    return 0;
->> +}
->> +
->> +static int erofs_ishare_file_release(struct inode *inode, struct file 
->> *file)
->> +{
->> +    struct file *realfile = file->private_data;
->> +
->> +    iput(realfile->f_inode);
->> +    fput(realfile);
->> +    file->private_data = NULL;
->> +    return 0;
->> +}
->> +
->> +static ssize_t erofs_ishare_file_read_iter(struct kiocb *iocb,
->> +                       struct iov_iter *to)
->> +{
->> +    struct file *realfile = iocb->ki_filp->private_data;
->> +    struct kiocb dedup_iocb;
->> +    ssize_t nread;
->> +
->> +    if (!iov_iter_count(to))
->> +        return 0;
->> +    kiocb_clone(&dedup_iocb, iocb, realfile);
->> +    nread = filemap_read(&dedup_iocb, to, 0);
->> +    iocb->ki_pos = dedup_iocb.ki_pos;
->> +    return nread;
->> +}
->> +
->> +static int erofs_ishare_mmap(struct file *file, struct vm_area_struct 
->> *vma)
->> +{
->> +    struct file *realfile = file->private_data;
->> +
->> +    vma_set_file(vma, realfile);
->> +    return generic_file_readonly_mmap(file, vma);
->> +}
->> +
->> +const struct file_operations erofs_ishare_fops = {
->> +    .open        = erofs_ishare_file_open,
->> +    .llseek        = generic_file_llseek,
->> +    .read_iter    = erofs_ishare_file_read_iter,
->> +    .mmap        = erofs_ishare_mmap,
->> +    .release    = erofs_ishare_file_release,
->> +    .get_unmapped_area = thp_get_unmapped_area,
->> +    .splice_read    = filemap_splice_read,
->> +};
->> +
->> +int __init erofs_init_ishare(void)
->> +{
->> +    erofs_ishare_mnt = kern_mount(&erofs_anon_fs_type);
->> +    return PTR_ERR_OR_ZERO(erofs_ishare_mnt);
->> +}
->> +
->> +void erofs_exit_ishare(void)
->> +{
->> +    kern_unmount(erofs_ishare_mnt);
->> +}
->> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
->> index 960da62636ad..a851b47ee579 100644
->> --- a/fs/erofs/super.c
->> +++ b/fs/erofs/super.c
->> @@ -396,6 +396,7 @@ static void erofs_default_options(struct 
->> erofs_sb_info *sbi)
->>   enum {
->>       Opt_user_xattr, Opt_acl, Opt_cache_strategy, Opt_dax, Opt_dax_enum,
->>       Opt_device, Opt_fsid, Opt_domain_id, Opt_directio, Opt_fsoffset,
->> +    Opt_inode_share,
->>   };
->>   static const struct constant_table erofs_param_cache_strategy[] = {
->> @@ -423,6 +424,7 @@ static const struct fs_parameter_spec 
->> erofs_fs_parameters[] = {
->>       fsparam_string("domain_id",    Opt_domain_id),
->>       fsparam_flag_no("directio",    Opt_directio),
->>       fsparam_u64("fsoffset",        Opt_fsoffset),
->> +    fsparam_flag("inode_share",    Opt_inode_share),
->>       {}
->>   };
->> @@ -551,6 +553,13 @@ static int erofs_fc_parse_param(struct fs_context 
->> *fc,
->>       case Opt_fsoffset:
->>           sbi->dif0.fsoff = result.uint_64;
->>           break;
->> +    case Opt_inode_share:
->> +#if defined(CONFIG_EROFS_FS_PAGE_CACHE_SHARE)
->> +        set_opt(&sbi->opt, INODE_SHARE);
->> +#else
->> +        errorfc(fc, "%s option not supported", 
->> erofs_fs_parameters[opt].name);
->> +#endif
->> +        break;
->>       }
->>       return 0;
->>   }
->> @@ -649,6 +658,11 @@ static int erofs_fc_fill_super(struct super_block 
->> *sb, struct fs_context *fc)
->>       sb->s_maxbytes = MAX_LFS_FILESIZE;
->>       sb->s_op = &erofs_sops;
->> +    if (test_opt(&sbi->opt, DAX_ALWAYS) && test_opt(&sbi->opt, 
->> INODE_SHARE)) {
->> +        errorfc(fc, "FSDAX is not allowed when inode_ishare is on");
->> +        return -EINVAL;
->> +    }
->> +
->>       sbi->blkszbits = PAGE_SHIFT;
->>       if (!sb->s_bdev) {
->>           /*
->> @@ -719,6 +733,10 @@ static int erofs_fc_fill_super(struct super_block 
->> *sb, struct fs_context *fc)
->>           erofs_info(sb, "unsupported blocksize for DAX");
->>           clear_opt(&sbi->opt, DAX_ALWAYS);
->>       }
->> +    if (test_opt(&sbi->opt, INODE_SHARE) && 
->> !erofs_sb_has_ishare_xattrs(sbi)) {
->> +        erofs_info(sb, "inode ishare is unavailable");
-> 
->      erofs_info(sb, "on-disk ishare xattrs not found. Turning off 
-> inode_share.");
-> 
+Fix this by conveying the invalidation for both synchronous and
+asynchronous write.
 
-thanks, will update.
+- with FOPEN_DIRECT_IO
+  - sync write,  invalidate in fuse_send_write()
+  - async write, invalidate in fuse_aio_complete() with FUSE_ASYNC_DIO,
+		 fuse_send_write() otherwise
+- without FOPEN_DIRECT_IO
+  - sync write,  invalidate in generic_file_direct_write()
+  - async write, invalidate in fuse_aio_complete() with FUSE_ASYNC_DIO,
+		 fuse_send_write() otherwise
 
-> 
->> +        clear_opt(&sbi->opt, INODE_SHARE);
->> +    }
->>       sb->s_time_gran = 1;
->>       sb->s_xattr = erofs_xattr_handlers;
->> @@ -948,10 +966,31 @@ static struct file_system_type erofs_fs_type = {
->>   };
->>   MODULE_ALIAS_FS("erofs");
->> -#if defined(CONFIG_EROFS_FS_ONDEMAND)
->> +#if defined(CONFIG_EROFS_FS_ONDEMAND) || 
->> defined(CONFIG_EROFS_FS_PAGE_CACHE_SHARE)
->> +static void erofs_free_anon_inode(struct inode *inode)
->> +{
->> +    struct erofs_inode *vi = EROFS_I(inode);
->> +
->> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
->> +    kfree(vi->fingerprint.opaque);
->> +#endif
-> 
-> Drop `#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE` here for simplicity.
-> 
+Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+---
+changes since v1:
+- remove the redundant invalidation for synchronous write without
+  FOPEN_DIRECT_IO (Bernd)
+v1: https://yhbt.net/lore/all/20260106075234.63364-1-jefflexu@linux.alibaba.com/
+---
+ fs/fuse/file.c | 40 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 29 insertions(+), 11 deletions(-)
 
-The vi->fingerprint is only visiable when 
-CONFIG_EROFS_FS_PAGE_CACHE_SHARE is on, so we should keep this.
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 01bc894e9c2b..9751482601ea 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -667,6 +667,18 @@ static void fuse_aio_complete(struct fuse_io_priv *io, int err, ssize_t pos)
+ 			struct inode *inode = file_inode(io->iocb->ki_filp);
+ 			struct fuse_conn *fc = get_fuse_conn(inode);
+ 			struct fuse_inode *fi = get_fuse_inode(inode);
++			struct address_space *mapping = io->iocb->ki_filp->f_mapping;
++
++			/*
++			 * As in generic_file_direct_write(), invalidate after the
++			 * write, to invalidate read-ahead cache that may have competed
++			 * with the write.
++			 */
++			if (io->write && res && mapping->nrpages) {
++				invalidate_inode_pages2_range(mapping,
++						io->offset >> PAGE_SHIFT,
++						(io->offset + res - 1) >> PAGE_SHIFT);
++			}
+ 
+ 			spin_lock(&fi->lock);
+ 			fi->attr_version = atomic64_inc_return(&fc->attr_version);
+@@ -1144,9 +1156,11 @@ static ssize_t fuse_send_write(struct fuse_io_args *ia, loff_t pos,
+ {
+ 	struct kiocb *iocb = ia->io->iocb;
+ 	struct file *file = iocb->ki_filp;
++	struct address_space *mapping = file->f_mapping;
+ 	struct fuse_file *ff = file->private_data;
+ 	struct fuse_mount *fm = ff->fm;
+ 	struct fuse_write_in *inarg = &ia->write.in;
++	ssize_t written;
+ 	ssize_t err;
+ 
+ 	fuse_write_args_fill(ia, ff, pos, count);
+@@ -1160,10 +1174,23 @@ static ssize_t fuse_send_write(struct fuse_io_args *ia, loff_t pos,
+ 		return fuse_async_req_send(fm, ia, count);
+ 
+ 	err = fuse_simple_request(fm, &ia->ap.args);
+-	if (!err && ia->write.out.size > count)
++	written = ia->write.out.size;
++	if (!err && written > count)
+ 		err = -EIO;
+ 
+-	return err ?: ia->write.out.size;
++	/*
++	 * As in generic_file_direct_write(), invalidate after the write, to
++	 * invalidate read-ahead cache that may have competed with the write.
++	 * Without FOPEN_DIRECT_IO, generic_file_direct_write() does the
++	 * invalidation for synchronous write.
++	 */
++	if (!err && written && mapping->nrpages &&
++	    ((ff->open_flags & FOPEN_DIRECT_IO) || !ia->io->blocking)) {
++		invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT,
++					(pos + written - 1) >> PAGE_SHIFT);
++	}
++
++	return err ?: written;
+ }
+ 
+ bool fuse_write_update_attr(struct inode *inode, loff_t pos, ssize_t written)
+@@ -1738,15 +1765,6 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+ 	if (res > 0)
+ 		*ppos = pos;
+ 
+-	if (res > 0 && write && fopen_direct_io) {
+-		/*
+-		 * As in generic_file_direct_write(), invalidate after the
+-		 * write, to invalidate read-ahead cache that may have competed
+-		 * with the write.
+-		 */
+-		invalidate_inode_pages2_range(mapping, idx_from, idx_to);
+-	}
+-
+ 	return res > 0 ? res : err;
+ }
+ EXPORT_SYMBOL_GPL(fuse_direct_io);
+-- 
+2.19.1.6.gb485710b
 
-Thanks,
-Hongbo
-
->> +    kmem_cache_free(erofs_inode_cachep, vi);
->> +}
->> +
->> +static const struct super_operations erofs_anon_sops = {
->> +    .alloc_inode = erofs_alloc_inode,
->> +    .free_inode = erofs_free_anon_inode,
->> +};
->> +
->>   static int erofs_anon_init_fs_context(struct fs_context *fc)
->>   {
->> -    return init_pseudo(fc, EROFS_SUPER_MAGIC) ? 0 : -ENOMEM;
->> +    struct pseudo_fs_context *ctx;
->> +
->> +    ctx = init_pseudo(fc, EROFS_SUPER_MAGIC);
->> +    if (ctx)
->> +        ctx->ops = &erofs_anon_sops;
->> +
->> +    return ctx ? 0 : -ENOMEM;
-> 
->      ctx = init_pseudo(fc, EROFS_SUPER_MAGIC);
->      if (!ctx)
->          return -ENOMEM;
->      ctx->ops = &erofs_anon_sops;
->      return 0;
-> 
-
-ok, will update.
-
->>   }
->>   struct file_system_type erofs_anon_fs_type = {
->> @@ -986,6 +1025,10 @@ static int __init erofs_module_init(void)
->>       if (err)
->>           goto sysfs_err;
->> +    err = erofs_init_ishare();
->> +    if (err)
->> +        goto ishare_err;
->> +
->>       err = register_filesystem(&erofs_fs_type);
->>       if (err)
->>           goto fs_err;
->> @@ -993,6 +1036,8 @@ static int __init erofs_module_init(void)
->>       return 0;
->>   fs_err:
->> +    erofs_exit_ishare();
->> +ishare_err:
->>       erofs_exit_sysfs();
->>   sysfs_err:
->>       z_erofs_exit_subsystem();
->> @@ -1010,6 +1055,7 @@ static void __exit erofs_module_exit(void)
->>       /* Ensure all RCU free inodes / pclusters are safe to be 
->> destroyed. */
->>       rcu_barrier();
->> +    erofs_exit_ishare();
->>       erofs_exit_sysfs();
->>       z_erofs_exit_subsystem();
->>       erofs_exit_shrinker();
->> @@ -1062,6 +1108,8 @@ static int erofs_show_options(struct seq_file 
->> *seq, struct dentry *root)
->>           seq_printf(seq, ",domain_id=%s", sbi->domain_id);
->>       if (sbi->dif0.fsoff)
->>           seq_printf(seq, ",fsoffset=%llu", sbi->dif0.fsoff);
->> +    if (test_opt(opt, INODE_SHARE))
->> +        seq_puts(seq, ",inode_share");
->>       return 0;
->>   }
->> @@ -1072,6 +1120,7 @@ static void erofs_evict_inode(struct inode *inode)
->>           dax_break_layout_final(inode);
->>   #endif
->> +    erofs_ishare_free_inode(inode);
->>       truncate_inode_pages_final(&inode->i_data);
->>       clear_inode(inode);
->>   }
->> diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
->> index ae61f20cb861..290acbf89fa6 100644
->> --- a/fs/erofs/xattr.c
->> +++ b/fs/erofs/xattr.c
->> @@ -577,3 +577,36 @@ struct posix_acl *erofs_get_acl(struct inode 
->> *inode, int type, bool rcu)
->>       return acl;
->>   }
->>   #endif
->> +
->> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
->> +int erofs_xattr_fill_inode_fingerprint(struct erofs_inode_fingerprint 
->> *fp,
->> +                       struct inode *inode, const char *domain_id)
->> +{
->> +    struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
->> +    struct erofs_xattr_prefix_item *prefix;
->> +    const char *infix;
->> +    int valuelen, base_index, domainlen;
->> +
->> +    if (!test_opt(&sbi->opt, INODE_SHARE))
->> +        return -EOPNOTSUPP;
->> +    prefix = sbi->xattr_prefixes + sbi->ishare_xattr_prefix_id;
->> +    infix = prefix->prefix->infix;
->> +    base_index = prefix->prefix->base_index;
->> +    valuelen = erofs_getxattr(inode, base_index, infix, NULL, 0);
->> +    if (valuelen <= 0 || valuelen > (1 << sbi->blkszbits))
->> +        return -EFSCORRUPTED;
-> 
->      fp->size = valuelen + (domain_id ? strlen(domain_id) : 0);
->      fp->opaque = kmalloc(fp->size, GFP_KERNEL);
->      ...
-> 
-> 
->> +    memcpy(fp->opaque + valuelen, domain_id, domainlen);
->> +    fp->size = valuelen + domainlen;
-> 
-> Then kill this line.
-> 
-
-thanks, will update.
-
-> Thanks,
-> Gao Xiang
-> 
->> +    return 0;
->> +}
->> +#endif
->> diff --git a/fs/erofs/xattr.h b/fs/erofs/xattr.h
->> index 6317caa8413e..bf75a580b8f1 100644
->> --- a/fs/erofs/xattr.h
->> +++ b/fs/erofs/xattr.h
->> @@ -67,4 +67,7 @@ struct posix_acl *erofs_get_acl(struct inode *inode, 
->> int type, bool rcu);
->>   #define erofs_get_acl    (NULL)
->>   #endif
->> +int erofs_xattr_fill_inode_fingerprint(struct erofs_inode_fingerprint 
->> *fp,
->> +                       struct inode *inode, const char *domain_id);
->> +
->>   #endif
-> 
 
