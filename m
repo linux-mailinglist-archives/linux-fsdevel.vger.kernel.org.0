@@ -1,148 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-73068-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E6CD0B87B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 18:10:42 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BABED0B881
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 18:10:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2EF5130FCFA9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 17:04:04 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id A1BCD3027E76
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 17:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2741364EB6;
-	Fri,  9 Jan 2026 17:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81481365A06;
+	Fri,  9 Jan 2026 17:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ceboVegt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ag3SD+HD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6AD364EBA
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 17:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9E735CB85
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 17:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767978232; cv=none; b=ftvMy/8QxUFF7yXQpu50CIR50/MddXpTNKuSYU0HD6pDHxoWH1MkaNpTIgc0PDbG8OO+p+42A/O6+4wkkXEa4w6qWbW+GUhOnECfIUO6D6PHQpj1ZDnZGEDGyAi+O0hmvpw6TkF77tDEqnbNQ4XzyZP8y4FUIvLIS0A0g74MIzw=
+	t=1767978447; cv=none; b=cGbS2fBPIq2e0WRqythh1bWvMo/06ufW+iv/8eJDHht7Ry4+aet4Kh06Xvtww30ZF/souwieAjST1Y1ZmvHR3vYmHtPZxlxyruN8UUvgWLXQk+XhOC2j153WnB87VJ3bMDAt5YmgOdVl8QgxGoF+pRDEn3Y4/+fA8xTV8qfNO9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767978232; c=relaxed/simple;
-	bh=aXxH8KsFvCOcvxGrWrHWB8GtMC6vSUV/Y2dfp44NGeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AxNYgNx6oDokyuzbp91w8vDljnIfs16q+R4TmfO9Q040a6RIvjHZ+MRrHvDP52X8tSSbpY9kkO3IJkteSAc0wvibKvA0mf+34ZwnVT+g0ofOEsVmTT+c5rv08WHfT1LI8BjFNR6UskhIvuFO9Maio1qxgKerEcjkfi7c2U3LYys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ceboVegt; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-78fccbc683bso50740397b3.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 09:03:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1767978230; x=1768583030; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oyvnXFALVV85dAj0zPDPAtv4QErhsz/aJNW7Eaaf5yo=;
-        b=ceboVegtXCbOvmnNp2QmNW0oW6yOL+fOvMlu7QSUb5OKOXsY4gmoTlqnOdcyGyFOh3
-         ljn1LyUtiDHlU3YI87wJgJxraydAh3esLo6vpHOxwYpSYVZ59YcaeAAivzmoGdCcAe/H
-         SWqg6sHST3ebJsJblSLiodDIwpcJpflVJLh3gSPSYqqN5y0bYx6WJKiRCWe3F3vxkZi0
-         yJeoThQxo+ls5W5NZtwM+I/2nurnTsH+UzRVh7fV9fFvxbBuvFmhu6eWvQNmi8ShWRBJ
-         UEW5EHDLVmLx/QXv1eP1ru87TF7xf2jfQJzsUb9jNt/sbJvG1ZS3TcGr5XEHlqieR56t
-         C9Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767978230; x=1768583030;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oyvnXFALVV85dAj0zPDPAtv4QErhsz/aJNW7Eaaf5yo=;
-        b=uD5UKDcMKyC4YDrkyKGwjqL/PbviqV6a3dWHcQYVY5o06w3sC3MeVDYNyVF05yPzhy
-         7lABXS5cP6qRmZ5hPn26vcvNFOJngOsblK27YS7l1OFuTBvE6dOEz+N3wos9QEVjY+Bh
-         2bFT9uyLf5HAj2KcuHclabLIzEy225p+yanN4Xlfl3oDQu8P0ZX0YUz/F0LgQbIvuAXK
-         zC6cTyGmm4PCkD4pYy97RkA53elsBv/Tr2BsW+YnD3bJDdg7B5rdaruYI7hV72s4vtsY
-         8nUfefVI5veG02i80jgYhFJMZmNmNiqc4l3do++6SZEazl7rCBUtQazJ/hXML6DUV0LB
-         6m8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVapEGTYSbUEdyocbhcOdxhHYoG5+mIE+ljzAjBoe1lMI9rDlwA7r35MhjlCMteCxHhHHgPd5R5fk43NEpU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv1i9p1wdNm34psx5IyBiNoSZ/vVqw/eP6wazBOhQTPq7EpYiz
-	NWrRkAaMwgmp9gfMNUev8ugn2bIobN+F18O7tY7M0l24v1bSdcgdDPh45HDUGOipdkM=
-X-Gm-Gg: AY/fxX7vsR7ayGcegomz6mwmiXYNx+6D/OoSmdn9/b1Ef0saW62b1W4++OFfEFyDLJs
-	x8Yv8zFhXArKfyZMMAB2Bo+HkxvtVmoNJB8C3BsxoClGXNry0RIYdPpVG4khrMf8nRU72Q9+KMm
-	JgErMnCJ9+TXUfrXQZTwm9ygxnKT9DiOr7c3Na+y812Da3QFDbpMkStf96RX4UetWTC9Y68NrHf
-	PP47KGIvRV6k0WmeB9NsjFm7E8rqZejBjLBnLRikAjO9+DUgA0lx7YoQbGAcwDsE5Et3oa+gFaM
-	0NHP+AEfB3uxxsfi32qJUiFeQydv0DXy6yUD7rjyE6joF2xNpp24X8XnB0MRWuUITRnuwIuSMV7
-	Nvr0bPO0xMz9jZx8DJdaj/MhQWS2gPnp0dSP1u/mSHs9VbKUjCqQFyue4sezuPI3xejb/llz8qa
-	1Lf77FJLVxwifVr19TOoTRVf2TkMDrU6kYIIiiFtGWrxicyleZ+RdbhtLpEJ4ia+3JMM36KQ==
-X-Google-Smtp-Source: AGHT+IG5ur4wn6WRv+wDPnOobb9XgNDN4tAmFs6v5FHNYg3NZYd4D74cNfEP3p2oKp1wSQ0Qs+dvkA==
-X-Received: by 2002:a05:690e:4106:b0:63f:9cef:d5f4 with SMTP id 956f58d0204a3-64716ba363dmr7881450d50.36.1767978229938;
-        Fri, 09 Jan 2026 09:03:49 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8907710632asm77625366d6.24.2026.01.09.09.03.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jan 2026 09:03:49 -0800 (PST)
-Date: Fri, 9 Jan 2026 12:03:14 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
-	longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org,
-	mkoutny@suse.com, corbet@lwn.net, gregkh@linuxfoundation.org,
-	rafael@kernel.org, dakr@kernel.org, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com,
-	akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com,
-	mhocko@suse.com, jackmanb@google.com, ziy@nvidia.com,
-	david@kernel.org, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, rppt@kernel.org, axelrasmussen@google.com,
-	yuanchu@google.com, weixugc@google.com, yury.norov@gmail.com,
-	linux@rasmusvillemoes.dk, rientjes@google.com,
-	shakeel.butt@linux.dev, chrisl@kernel.org, kasong@tencent.com,
-	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, chengming.zhou@linux.dev,
-	roman.gushchin@linux.dev, muchun.song@linux.dev, osalvador@suse.de,
-	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
-	byungchul@sk.com, ying.huang@linux.alibaba.com, apopple@nvidia.com,
-	cl@gentwo.org, harry.yoo@oracle.com, zhengqi.arch@bytedance.com
-Subject: Re: [RFC PATCH v3 7/8] mm/zswap: compressed ram direct integration
-Message-ID: <aWE00tFHjyXnNmtD@gourry-fedora-PF4VCD3F>
-References: <20260108203755.1163107-1-gourry@gourry.net>
- <20260108203755.1163107-8-gourry@gourry.net>
- <i6o5k4xumd5i3ehl6ifk3554sowd2qe7yul7vhaqlh2zo6y7is@z2ky4m432wd6>
+	s=arc-20240116; t=1767978447; c=relaxed/simple;
+	bh=XVJb+spUsOXmk3Ka32Q/lXdIj7zL97Hajw+2/Bfk4is=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UfihycjECCDRJN2Qs7NeWj5AKJXFsR95n2Id60tEMj1GmKmjcaTaikDWKkVv1O2Knh76YyksuSM8sp4ZDpRwCGa3cuHem7L/IBrlTaDNKUt+U/jBD9pm0/NzcC9W6xL1ljshlCblcnj+6CKgOii5hSmOIbQVoxhKLnVis+N0I1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ag3SD+HD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BE7FC19425
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 17:07:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767978447;
+	bh=XVJb+spUsOXmk3Ka32Q/lXdIj7zL97Hajw+2/Bfk4is=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ag3SD+HDBfARfsjqGeXq9p7f74iRI/L63NcdHz7lxyBeJXMwTMQl+7VseqmWSC4FR
+	 5vqI1tO8LMHjdUrmKEtnCg0K2L5TMXDuoiXhZbQl7prUlsFORJM0BKBQ+8uCy+LXbz
+	 8JdRgj2B1i7dDIHpFUXEAO9rYKeHzjSWTSBOEho/Br4fkKZfa+2TxcM+awYQtNGxZ8
+	 uTUKK9wAVMhdF7fIgHf1fL0IUMSHHK2vBM94tQSO4d3fRy7Gt+Zhu3vhDK6UDdQtWy
+	 pxJeX3lwoZelYEbPWrmu9gQ7drPM6lumWLWzOr100Dfh1aQ7M378XvD2bnD4aE7z1n
+	 ZM/NvPQkSnohg==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b79ea617f55so893891566b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 09:07:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWC5N3TkUf6PpnvK/zS0TLdoXhJN9OrIuje+/PrL2xX7DKSlCBv4CpZgjwP9ngAl+0WUyjfTP7ogognVm9b@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8iGCjKUuMpS9yYJNrzp96/4Zqx7CrGX8lvHOIRBq5d5Q9Q265
+	bDMb1DEp6yzqU1LebBpu7BuqcdupeUjUPgUiRJ0+TWw4S3tFOtUENSMSJh8jTPekGrK0TMpDaIg
+	cLD7I2wER63Sn3dsiiR3uVYYoLYGtu8A=
+X-Google-Smtp-Source: AGHT+IHFEd/Cji7DPzPk6Q0cBLN926Pva19PuOn+kn33FVn6/MaIdCy6zJRKw3cfNEMg7xUNGSJUX33GisYNnMtjBsg=
+X-Received: by 2002:a17:907:9615:b0:b80:4119:2436 with SMTP id
+ a640c23a62f3a-b8444d4ea89mr980899166b.7.1767978446098; Fri, 09 Jan 2026
+ 09:07:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <i6o5k4xumd5i3ehl6ifk3554sowd2qe7yul7vhaqlh2zo6y7is@z2ky4m432wd6>
+References: <cover.1767801889.git.fdmanana@suse.com> <46b13dc5c957deb72a7f085916757a20878a8e73.1767801889.git.fdmanana@suse.com>
+ <20260108220505.GP21071@twin.jikos.cz>
+In-Reply-To: <20260108220505.GP21071@twin.jikos.cz>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Fri, 9 Jan 2026 17:06:48 +0000
+X-Gmail-Original-Message-ID: <CAL3q7H67kO2LLDPSZQePkC6J-F5SPT45zjLg_Y4rBo7kAJqhtA@mail.gmail.com>
+X-Gm-Features: AQt7F2qp9c9HYxqNlhVhsEIFw6qT9YzEVqAsgG2OIq2ycz_33z2wEPOq90T9_xI
+Message-ID: <CAL3q7H67kO2LLDPSZQePkC6J-F5SPT45zjLg_Y4rBo7kAJqhtA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] btrfs: use may_delete_dentry() in btrfs_ioctl_snap_destroy()
+To: dsterba@suse.cz
+Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	Filipe Manana <fdmanana@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 09, 2026 at 04:00:00PM +0000, Yosry Ahmed wrote:
-> On Thu, Jan 08, 2026 at 03:37:54PM -0500, Gregory Price wrote:
-> > If a private zswap-node is available, skip the entire software
-> > compression process and memcpy directly to a compressed memory
-> > folio, and store the newly allocated compressed memory page as
-> > the zswap entry->handle.
-> > 
-> > On decompress we do the opposite: copy directly from the stored
-> > page to the destination, and free the compressed memory page.
-> > 
-> > The driver callback is responsible for preventing run-away
-> > compression ratio failures by checking that the allocated page is
-> > safe to use (i.e. a compression ratio limit hasn't been crossed).
-> > 
-> > Signed-off-by: Gregory Price <gourry@gourry.net>
-> 
-> Hi Gregory,
-> 
-> Thanks for sending this, I have a lot of questions/comments below, but
-> from a high-level I am trying to understand the benefit of using a
-> compressed node for zswap rather than as a second tier.
+On Thu, Jan 8, 2026 at 10:05=E2=80=AFPM David Sterba <dsterba@suse.cz> wrot=
+e:
 >
+> On Thu, Jan 08, 2026 at 01:35:33PM +0000, fdmanana@kernel.org wrote:
+> > From: Filipe Manana <fdmanana@suse.com>
+> >
+> > There is no longer the need to use btrfs_may_delete(), which was a copy
+> > of the VFS private function may_delete(), since now that functionality
+> > is exported by the VFS as a function named may_delete_dentry(). In fact
+> > our local copy of may_delete() lacks an update that happened to that
+> > function which is point number 7 in that function's comment:
+> >
+> >   "7. If the victim has an unknown uid or gid we can't change the inode=
+."
+> >
+> > which corresponds to this code:
+> >
+> >       /* Inode writeback is not safe when the uid or gid are invalid. *=
+/
+> >       if (!vfsuid_valid(i_uid_into_vfsuid(idmap, inode)) ||
+> >           !vfsgid_valid(i_gid_into_vfsgid(idmap, inode)))
+> >               return -EOVERFLOW;
+> >
+> > As long as we keep a separate copy, duplicating code, we are also prone
+> > to updates to the VFS being missed in our local copy.
+> >
+> > So change btrfs_ioctl_snap_destroy() to use the VFS function and remove
+> > btrfs_may_delete().
+> >
+> > Signed-off-by: Filipe Manana <fdmanana@suse.com>
+> > ---
+> >  fs/btrfs/ioctl.c | 58 +-----------------------------------------------
+> >  1 file changed, 1 insertion(+), 57 deletions(-)
+> >
+> > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> > index d9e7dd317670..0cb3cd3d05a5 100644
+> > --- a/fs/btrfs/ioctl.c
+> > +++ b/fs/btrfs/ioctl.c
+> > @@ -815,62 +815,6 @@ static int create_snapshot(struct btrfs_root *root=
+, struct inode *dir,
+> >       return ret;
+> >  }
+> >
+> > -/*  copy of may_delete in fs/namei.c()
+> > - *   Check whether we can remove a link victim from directory dir, che=
+ck
+> > - *  whether the type of victim is right.
+> > - *  1. We can't do it if dir is read-only (done in permission())
+> > - *  2. We should have write and exec permissions on dir
+> > - *  3. We can't remove anything from append-only dir
+> > - *  4. We can't do anything with immutable dir (done in permission())
+> > - *  5. If the sticky bit on dir is set we should either
+> > - *   a. be owner of dir, or
+> > - *   b. be owner of victim, or
+> > - *   c. have CAP_FOWNER capability
+> > - *  6. If the victim is append-only or immutable we can't do anything =
+with
+> > - *     links pointing to it.
+> > - *  7. If we were asked to remove a directory and victim isn't one - E=
+NOTDIR.
+> > - *  8. If we were asked to remove a non-directory and victim isn't one=
+ - EISDIR.
+> > - *  9. We can't remove a root or mountpoint.
+> > - * 10. We don't allow removal of NFS sillyrenamed files; it's handled =
+by
+> > - *     nfs_async_unlink().
+> > - */
+> > -
+> > -static int btrfs_may_delete(struct mnt_idmap *idmap,
+> > -                         struct inode *dir, struct dentry *victim, int=
+ isdir)
+> > -{
+> > -     int ret;
+>
+> There are some differences in VFS may_delete that I don't know if are
+> significant, they seem to be releated to stacked filesystems.
+>
+> For example the associated inode of the victim dentry is obtained as
+> d_backing_inode() vs our simple d_inode().
+>
+> > -
+> > -     if (d_really_is_negative(victim))
+>
+> VFS does d_is_negative() which does not check for NULL pointer but some
+> other internal state.
+>
+> > -             return -ENOENT;
+> > -
+> > -     /* The @victim is not inside @dir. */
+> > -     if (d_inode(victim->d_parent) !=3D dir)
+> > -             return -EINVAL;
+>
+> We handle that properly, while VFS does BUG_ON, so this can be fixed
+> separeately in the VFS version.
 
-Don't think to hard about it - this is a stepping stone until we figure
-out the cram.c usage pattern.
+Yes, but it's one of those cases that should never happen.
+In fact we used to have the BUG_ON in btrfs too, you converted it to
+proper error handling in:
 
-unrestricted write access to compress-ram a reliability issue, so:
-  - zswap restricts both read and write.
-  - a cram.c service would restrict write but leave pages mapped read
+commit 1686570265559ebfa828c1b784a31407ec2877bd
+Author: David Sterba <dsterba@suse.com>
+Date:   Fri Jan 19 20:23:56 2024 +0100
 
-Have to step away, will come back to the rest of feedback a bit latter,
-thank you for the review.
+    btrfs: handle directory and dentry mismatch in btrfs_may_delete()
 
-~Gregory
+
+
+>
+> There are no changes in the rest of the function (other than the
+> different way how inode is obtained).
+
+Yes, small differences like that. Some of those things seem to be
+because our btrfs copy was not updated.
+fstests pass with this patchset.
+
+>
+> The original commit 4260f7c7516f4c ("Btrfs: allow subvol deletion by
+> unprivileged user with -o user_subvol_rm_allowed") adding this helper
+> says something about adding the write and exec checks and size checks
+> but I don't see what it's referring to, neither in the current nor in
+> the old code.
+
+I noticed that, but the VFS may_delete() does those checks, which is this l=
+ine:
+
+error =3D inode_permission(idmap, dir, MAY_WRITE | MAY_EXEC);
+
+Exactly the same as our btrfs copy.
+
+
+>
+> > -     audit_inode_child(dir, victim, AUDIT_TYPE_CHILD_DELETE);
+> > -
+> > -     ret =3D inode_permission(idmap, dir, MAY_WRITE | MAY_EXEC);
+> > -     if (ret)
+> > -             return ret;
+> > -     if (IS_APPEND(dir))
+> > -             return -EPERM;
+> > -     if (check_sticky(idmap, dir, d_inode(victim)) ||
+> > -         IS_APPEND(d_inode(victim)) || IS_IMMUTABLE(d_inode(victim)) |=
+|
+> > -         IS_SWAPFILE(d_inode(victim)))
+> > -             return -EPERM;
+> > -     if (isdir) {
+> > -             if (!d_is_dir(victim))
+> > -                     return -ENOTDIR;
+> > -             if (IS_ROOT(victim))
+> > -                     return -EBUSY;
+> > -     } else if (d_is_dir(victim))
+> > -             return -EISDIR;
+> > -     if (IS_DEADDIR(dir))
+> > -             return -ENOENT;
+> > -     if (victim->d_flags & DCACHE_NFSFS_RENAMED)
+> > -             return -EBUSY;
+> > -     return 0;
+> > -}
 
