@@ -1,143 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-72997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C1ED074B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 07:02:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE33BD07512
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 07:05:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id AC452302C8C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 06:01:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8BBC3302BA7C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 06:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFBD28D8DA;
-	Fri,  9 Jan 2026 06:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA2E29A9E9;
+	Fri,  9 Jan 2026 06:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nNw+ohOk"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="E9po9ShY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ECA50096F;
-	Fri,  9 Jan 2026 06:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF4E27FB32;
+	Fri,  9 Jan 2026 06:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767938480; cv=none; b=pctfDP5/Jf5KMo2OPuLgn5bPFw5NuqFhDdX1ohudpY5M5de/l6k/quGYpgJeCg57hUMde6eOe5pQMcolmSoGJ7oaZ5aUr6OQPwc6LPhwx9T61F75nMzNc6+nPXkAViXR+3xVPpuow0xjTLiOyos8na9ji/pBzG37tsHDITT1nHg=
+	t=1767938620; cv=none; b=SJNBCER0xA1tCc285kS5kwhfPF4XyB3cr1wYw01obCfIoHaaJLLPm+tkkxQw+9DmL/gftQZn0BmP9DqkvDAMRTCiu7blFjix3ldWkvw9lM3RT/CmRFa2uiQS7MPaX6D6QB6ZGfALfvJRWok76nLJpnSCc5wIcPI6QeA3Cmm9+mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767938480; c=relaxed/simple;
-	bh=wQJ8HMZrI0Wp5Ww12U2o6NrzJZ659709lYsHJqUYVrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m4yswJRdl6FSpbY1T4kAZfipeynwcHosCRDnjtS5Pge+2mf9G3YizmS7z1N3rbsF4iBCeZoh/QrLT4UkXVoeiSaAqygscm/3isJLW+oZzg85gQA1qTJqOneb6d9RqWud2kOhT/5S8+a9YuqLVDji5Z8o7937uhGj4LUTI7dXWuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nNw+ohOk; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=TVlnT2WiXW5nYG95M0tj3/pwuA98uZmz0fLtRU3VLPA=; b=nNw+ohOkHNWpQswvh+NdF9LHsu
-	PJ6XIUFJtAy/341ZJ9J92w/DrPqKhkxz3zTjI/OkCD5uCId/D9WwQgvpVYCFTlMBlisRY+uVtvIRe
-	REPMinKM/zRtj+mAGb6mG8h33I8v4EUxHd7wpMoL0MVUe5QELfPQU02i+BkEkkPD+IWuWUtmR9vj7
-	5PESqXWBa9hJrSIyYBcnAULtN9bqZwa9ct6avHgzAt8PQ8DJwQPVi9fHlBg9V+TF/Bau3F5xfjNlp
-	4gxLTxemKZWrMAqjEIaxZ8E5uEYuSvRgEMvz0VvHRFcwTeD7kP/g3KTcD027gjhOnTRYhsN0CtrV+
-	PA5MAVYw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ve5Y8-00000001VCt-1XPG;
-	Fri, 09 Jan 2026 06:00:40 +0000
-Date: Thu, 8 Jan 2026 22:00:40 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Luis de Bethencourt <luisbg@kernel.org>,
-	Salah Triki <salah.triki@gmail.com>,
-	Nicolas Pitre <nico@fluxnic.net>,
-	Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-	Anders Larsen <al@alarsen.net>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Chunhai Guo <guochunhai@vivo.com>, Jan Kara <jack@suse.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Dave Kleikamp <shaggy@kernel.org>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Phillip Lougher <phillip@squashfs.org.uk>,
-	Carlos Maiolino <cem@kernel.org>, Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	Yuezhang Mo <yuezhang.mo@sony.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Hans de Goede <hansg@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
-	linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-	ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
-	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-mm@kvack.org, gfs2@lists.linux.dev, linux-doc@vger.kernel.org,
-	v9fs@lists.linux.dev, ceph-devel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org
-Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to
- lease support
-Message-ID: <aWCZiFOmnY3D4oUl@infradead.org>
-References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
+	s=arc-20240116; t=1767938620; c=relaxed/simple;
+	bh=grGHqgFpfqMI3N2TJSrH8NfYKVEdLw29nJluqMQc7Ds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UG+jsuRkT4cYW28Ey3k+J7XZaWhTg7Zy2u9b/ji+7zdsswhIOgp6ZymXHebVc49GwgvYSr0WgL+f5UtP/tOkISvBxgnNaXzGWv9v50DAgJMYjkjo7veqyHh0ghJwp9LWI3qUe7FTb329WwVdIS0bRwRMTdC3DJrEGusix1uPBPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=E9po9ShY; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1767938609; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=WSn8tUN5ji0ImOXN+znur1HXqv1SL9DZ3ghCylvKI/M=;
+	b=E9po9ShYHg/Z3Zepkhl36gbtOA5nqX8HHJQAqSSj/JRQnEH2sQ6pQ6ShULNRHd1iSw62387yUFxAROey4IF49RZjnluuhEiVZePLU9vpoeg+tr+FhalcJfmfrOsIVFtw+scRdFBxAlYHhuu+R6bmD+foS22ETh1rdPfIwZWow8U=
+Received: from 30.221.131.232(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wwf8qgt_1767938608 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 09 Jan 2026 14:03:29 +0800
+Message-ID: <d1d84c90-9bca-4f14-a635-6199ce84df48@linux.alibaba.com>
+Date: Fri, 9 Jan 2026 14:03:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 01/10] iomap: stash iomap read ctx in the private
+ field of iomap_iter
+To: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
+ Christian Brauner <brauner@kernel.org>
+Cc: amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ Chao Yu <chao@kernel.org>, Hongbo Li <lihongbo22@huawei.com>
+References: <20260109030140.594936-1-lihongbo22@huawei.com>
+ <20260109030140.594936-2-lihongbo22@huawei.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20260109030140.594936-2-lihongbo22@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jan 08, 2026 at 12:12:55PM -0500, Jeff Layton wrote:
-> I mainly focused on filesystems that are NFS exportable, since NFS and
-> SMB are the main users of file leases, and they tend to end up exporting
-> the same filesystem types. Let me know if I've missed any.
+Hi Christoph, Darrick, Christian,
+
+On 2026/1/9 11:01, Hongbo Li wrote:
+> It's useful to get filesystem-specific information using the
+> existing private field in the @iomap_iter passed to iomap_{begin,end}
+> for advanced usage for iomap buffered reads, which is much like the
+> current iomap DIO.
 > 
-> [1]: https://lore.kernel.org/linux-fsdevel/20260107-setlease-6-19-v1-0-85f034abcc57@kernel.org/
+> For example, EROFS needs it to:
+> 
+>   - implement an efficient page cache sharing feature, since iomap
+>     needs to apply to anon inode page cache but we'd like to get the
+>     backing inode/fs instead, so filesystem-specific private data is
+>     needed to keep such information;
+> 
+>   - pass in both struct page * and void * for inline data to avoid
+>     kmap_to_page() usage (which is bogus).
+> 
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-That seems reasonable, and I like the approach here (without having the
-time to review every change right now):
+Could you help review or ack this patch?
 
-Acked-by: Christoph Hellwig <hch@lst.de>
+This feature is almost in shape for the upcoming cycle,
+I do hope this iomap patch could be reviewed, thanks!
 
-If it turns out we have people use leases on other file systems we'll
-have to wire up a few more instance as needed, but I think your initial
-set makes sense.
+Thanks,
+Gao Xiang
+
+> ---
+>   fs/fuse/file.c         | 4 ++--
+>   fs/iomap/buffered-io.c | 6 ++++--
+>   include/linux/iomap.h  | 8 ++++----
+>   3 files changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 01bc894e9c2b..f5d8887c1922 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -979,7 +979,7 @@ static int fuse_read_folio(struct file *file, struct folio *folio)
+>   		return -EIO;
+>   	}
+>   
+> -	iomap_read_folio(&fuse_iomap_ops, &ctx);
+> +	iomap_read_folio(&fuse_iomap_ops, &ctx, NULL);
+>   	fuse_invalidate_atime(inode);
+>   	return 0;
+>   }
+> @@ -1081,7 +1081,7 @@ static void fuse_readahead(struct readahead_control *rac)
+>   	if (fuse_is_bad(inode))
+>   		return;
+>   
+> -	iomap_readahead(&fuse_iomap_ops, &ctx);
+> +	iomap_readahead(&fuse_iomap_ops, &ctx, NULL);
+>   }
+>   
+>   static ssize_t fuse_cache_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index e5c1ca440d93..5f7dcbabbda3 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -555,13 +555,14 @@ static int iomap_read_folio_iter(struct iomap_iter *iter,
+>   }
+>   
+>   void iomap_read_folio(const struct iomap_ops *ops,
+> -		struct iomap_read_folio_ctx *ctx)
+> +		struct iomap_read_folio_ctx *ctx, void *private)
+>   {
+>   	struct folio *folio = ctx->cur_folio;
+>   	struct iomap_iter iter = {
+>   		.inode		= folio->mapping->host,
+>   		.pos		= folio_pos(folio),
+>   		.len		= folio_size(folio),
+> +		.private	= private,
+>   	};
+>   	size_t bytes_submitted = 0;
+>   	int ret;
+> @@ -620,13 +621,14 @@ static int iomap_readahead_iter(struct iomap_iter *iter,
+>    * the filesystem to be reentered.
+>    */
+>   void iomap_readahead(const struct iomap_ops *ops,
+> -		struct iomap_read_folio_ctx *ctx)
+> +		struct iomap_read_folio_ctx *ctx, void *private)
+>   {
+>   	struct readahead_control *rac = ctx->rac;
+>   	struct iomap_iter iter = {
+>   		.inode	= rac->mapping->host,
+>   		.pos	= readahead_pos(rac),
+>   		.len	= readahead_length(rac),
+> +		.private = private,
+>   	};
+>   	size_t cur_bytes_submitted;
+>   
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 520e967cb501..441d614e9fdf 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -341,9 +341,9 @@ ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+>   		const struct iomap_ops *ops,
+>   		const struct iomap_write_ops *write_ops, void *private);
+>   void iomap_read_folio(const struct iomap_ops *ops,
+> -		struct iomap_read_folio_ctx *ctx);
+> +		struct iomap_read_folio_ctx *ctx, void *private);
+>   void iomap_readahead(const struct iomap_ops *ops,
+> -		struct iomap_read_folio_ctx *ctx);
+> +		struct iomap_read_folio_ctx *ctx, void *private);
+>   bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
+>   struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len);
+>   bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
+> @@ -595,7 +595,7 @@ static inline void iomap_bio_read_folio(struct folio *folio,
+>   		.cur_folio	= folio,
+>   	};
+>   
+> -	iomap_read_folio(ops, &ctx);
+> +	iomap_read_folio(ops, &ctx, NULL);
+>   }
+>   
+>   static inline void iomap_bio_readahead(struct readahead_control *rac,
+> @@ -606,7 +606,7 @@ static inline void iomap_bio_readahead(struct readahead_control *rac,
+>   		.rac		= rac,
+>   	};
+>   
+> -	iomap_readahead(ops, &ctx);
+> +	iomap_readahead(ops, &ctx, NULL);
+>   }
+>   #endif /* CONFIG_BLOCK */
+>   
 
 
