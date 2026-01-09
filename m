@@ -1,54 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-72996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF5DD07482
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 06:59:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C1ED074B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 07:02:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2B6203024D4F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 05:59:04 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AC452302C8C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 06:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E066F299931;
-	Fri,  9 Jan 2026 05:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFBD28D8DA;
+	Fri,  9 Jan 2026 06:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nNw+ohOk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7B728980E;
-	Fri,  9 Jan 2026 05:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ECA50096F;
+	Fri,  9 Jan 2026 06:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767938339; cv=none; b=dZKx/7eJ9VXkwWCCZIg/4aK541iPG+UWTUXCouf7ylZJM5/IAOFHaGtQxm1P85RqejbaxXcByw4RyNPFS0pymSkEqwFctId3mTHYxYtEmZ2PvT5c0Y4c3GVrNpMwjM8MCSiMKXDWU3Yo/xma+ptNjgrlxBuWuhtM6go7QeZ5rgg=
+	t=1767938480; cv=none; b=pctfDP5/Jf5KMo2OPuLgn5bPFw5NuqFhDdX1ohudpY5M5de/l6k/quGYpgJeCg57hUMde6eOe5pQMcolmSoGJ7oaZ5aUr6OQPwc6LPhwx9T61F75nMzNc6+nPXkAViXR+3xVPpuow0xjTLiOyos8na9ji/pBzG37tsHDITT1nHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767938339; c=relaxed/simple;
-	bh=4hdPP5MhlGBAu6qQNs0gC655H5dyFIDLruCW9JRtAtQ=;
+	s=arc-20240116; t=1767938480; c=relaxed/simple;
+	bh=wQJ8HMZrI0Wp5Ww12U2o6NrzJZ659709lYsHJqUYVrg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMyzzXThkinwq2zCzEp8ryx1p2CcEhLox1NYg/q47rDtuL7rv62qB5/gXJaTv+p4vf4ttnhgJJwXMQ8njgTVTm7aXY5kYzT5cp6wBTPnYecJ6kw3F4r2C/F3a/IMvZCtpIcpbNo7PQsRl65LwpeUEAKTNlzf8ntjtj8kppEEjY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id ADFF367373; Fri,  9 Jan 2026 06:58:52 +0100 (CET)
-Date: Fri, 9 Jan 2026 06:58:52 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-	Vishal Verma <vishal1.verma@intel.com>, tushar.gohad@intel.com,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Sagi Grimberg <sagi@grimberg.me>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=m4yswJRdl6FSpbY1T4kAZfipeynwcHosCRDnjtS5Pge+2mf9G3YizmS7z1N3rbsF4iBCeZoh/QrLT4UkXVoeiSaAqygscm/3isJLW+oZzg85gQA1qTJqOneb6d9RqWud2kOhT/5S8+a9YuqLVDji5Z8o7937uhGj4LUTI7dXWuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nNw+ohOk; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=TVlnT2WiXW5nYG95M0tj3/pwuA98uZmz0fLtRU3VLPA=; b=nNw+ohOkHNWpQswvh+NdF9LHsu
+	PJ6XIUFJtAy/341ZJ9J92w/DrPqKhkxz3zTjI/OkCD5uCId/D9WwQgvpVYCFTlMBlisRY+uVtvIRe
+	REPMinKM/zRtj+mAGb6mG8h33I8v4EUxHd7wpMoL0MVUe5QELfPQU02i+BkEkkPD+IWuWUtmR9vj7
+	5PESqXWBa9hJrSIyYBcnAULtN9bqZwa9ct6avHgzAt8PQ8DJwQPVi9fHlBg9V+TF/Bau3F5xfjNlp
+	4gxLTxemKZWrMAqjEIaxZ8E5uEYuSvRgEMvz0VvHRFcwTeD7kP/g3KTcD027gjhOnTRYhsN0CtrV+
+	PA5MAVYw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ve5Y8-00000001VCt-1XPG;
+	Fri, 09 Jan 2026 06:00:40 +0000
+Date: Thu, 8 Jan 2026 22:00:40 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Luis de Bethencourt <luisbg@kernel.org>,
+	Salah Triki <salah.triki@gmail.com>,
+	Nicolas Pitre <nico@fluxnic.net>,
+	Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+	Anders Larsen <al@alarsen.net>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
+	David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Hongbo Li <lihongbo22@huawei.com>,
+	Chunhai Guo <guochunhai@vivo.com>, Jan Kara <jack@suse.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Dave Kleikamp <shaggy@kernel.org>,
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Mike Marshall <hubcap@omnibond.com>,
+	Martin Brandenburg <martin@omnibond.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Phillip Lougher <phillip@squashfs.org.uk>,
+	Carlos Maiolino <cem@kernel.org>, Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [RFC v2 01/11] file: add callback for pre-mapping dmabuf
-Message-ID: <20260109055852.GA5063@lst.de>
-References: <7b2017f4-02a3-482a-a173-bb16b895c0cb@amd.com> <20251204110709.GA22971@lst.de> <0571ca61-7b17-4167-83eb-4269bd0459fe@amd.com> <20251204131025.GA26860@lst.de> <aVnFnzRYWC_Y5zHg@fedora> <754b4cc9-20ab-4d87-85bf-eb56be058856@amd.com> <20260107160151.GA21887@lst.de> <aV8UJvkt7VGzHjxS@fedora> <20260108101703.GA24709@lst.de> <aWBjsa2RZ_uaO9Ns@fedora>
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	Yuezhang Mo <yuezhang.mo@sony.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Hans de Goede <hansg@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
+	linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
+	ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
+	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, gfs2@lists.linux.dev, linux-doc@vger.kernel.org,
+	v9fs@lists.linux.dev, ceph-devel@vger.kernel.org,
+	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org
+Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to
+ lease support
+Message-ID: <aWCZiFOmnY3D4oUl@infradead.org>
+References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,39 +121,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aWBjsa2RZ_uaO9Ns@fedora>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Jan 09, 2026 at 10:10:57AM +0800, Ming Lei wrote:
-> On Thu, Jan 08, 2026 at 11:17:03AM +0100, Christoph Hellwig wrote:
-> > On Thu, Jan 08, 2026 at 10:19:18AM +0800, Ming Lei wrote:
-> > > > The feature is in no way nvme specific.  nvme is just the initial
-> > > > underlying driver.  It makes total sense to support this for any high
-> > > > performance block device, and to pass it through file systems.
-> > > 
-> > > But why does FS care the dma buffer attachment? Since high performance
-> > > host controller is exactly the dma buffer attachment point.
-> > 
-> > I can't parse what you're trying to say here.
+On Thu, Jan 08, 2026 at 12:12:55PM -0500, Jeff Layton wrote:
+> I mainly focused on filesystems that are NFS exportable, since NFS and
+> SMB are the main users of file leases, and they tend to end up exporting
+> the same filesystem types. Let me know if I've missed any.
 > 
-> dma buffer attachment is simply none of FS's business.
+> [1]: https://lore.kernel.org/linux-fsdevel/20260107-setlease-6-19-v1-0-85f034abcc57@kernel.org/
 
-The file systems should indeed never do a dma buffer attachment itself,
-but that's not the point.
+That seems reasonable, and I like the approach here (without having the
+time to review every change right now):
 
-> > But even when not stacking, the registration still needs to go
-> > through the file system even for a single device, never mind multiple
-> > controlled by the file system.
-> 
-> dma_buf can have multiple importers, so why does it have to go through FS for
-> single device only?
->
-> If the registered buffer is attached to single device before going
-> through FS, it can not support stacking block device, and it can't or not
-> easily to use for multiple block device, no matter if they are behind same
-> host controller or multiple.
+Acked-by: Christoph Hellwig <hch@lst.de>
 
-Because the file system, or the file_operations instance to be more
-specific, is the only entity that known what block device(s) or other DMA
-capable device(s) like (R)NIC a file maps to.
+If it turns out we have people use leases on other file systems we'll
+have to wire up a few more instance as needed, but I think your initial
+set makes sense.
+
 
