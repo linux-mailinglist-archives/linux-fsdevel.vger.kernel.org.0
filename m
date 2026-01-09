@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-72966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9102ED06A7F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 01:55:33 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7157D06A95
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 01:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 8FBC030318EA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 00:55:32 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id B7BD0300ED8D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 00:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EF51F09B3;
-	Fri,  9 Jan 2026 00:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9421EFF9B;
+	Fri,  9 Jan 2026 00:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AjlL6kxg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cH/XF9pR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77671AF0AF
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 00:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4298A1EB5E1
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 00:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767920129; cv=none; b=Jv/BYCVskoEjYxOfB+2Kzoutztmz7YZGwECuPGs0Pte47KdESWWI10ET5ubpyPCJmarlkWSqO2gkgswjBC3StXgheenDhhFTy6jRDGgMXSb+qr4pbL0rPpnv36tquN4BzJWzheX5S7TY3hPjqfmqUNa6V87dIEnasnR58oSeOG4=
+	t=1767920188; cv=none; b=B7aRIdWiEW8i/p1KUIUh6cdH4sREMsIWMond9RobduFcXjX/Npa9Tx4tirZwJn2M6ZP9K120cjII922Ubl6t8YCYSS/uqzmGUaVFQKJgIst8TKEbb486CHCKQiZ042wp/oDKO30pE8Vg3CpOYPtCyenNbazGeA3WwyHKhsi7Zgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767920129; c=relaxed/simple;
-	bh=EXttu5V0AlVDTEJdsEajLfBbKh/usX+AZxj3KEDKK0I=;
+	s=arc-20240116; t=1767920188; c=relaxed/simple;
+	bh=EBkF+Awm/Gqu1SEHLfbkX23E/zsPQLY0n8LirwtqHYE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=co6EcqkGcvO+nUyRkozfDeOBgZTQNWDF+99uin7wrKcMjpnJ9Vh4/puhxrtzJknXg2w6HJOTv4D62dOHq7pYTQeP0Fwt2cyH2LVmNryLPLTGCE7p+5PwiJh/vXYjzEhPOugYaOsiWruYuwaoF5q9Vol4qYsi3AMsiRX6RemdoqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AjlL6kxg; arc=none smtp.client-ip=209.85.160.169
+	 To:Cc:Content-Type; b=VtZqeJYuad0oHD3JeEg5ShXu3SfbwWg42iaH+W7d5glEVNf050H7l+ygFj4hOVhsQajk2GXE1EkqUkpjd8rv1brHByWrE824srHyxn8K9waTpDRIdOqNrpIVWlXOg3K1tfXKDKK5Uo6rL/uhGbPScJmYYN6RVj64JE2CQwz2N1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cH/XF9pR; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4ed82ee9e57so47434791cf.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 16:55:27 -0800 (PST)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4ffbc2b861eso22069131cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 16:56:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767920127; x=1768524927; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767920186; x=1768524986; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9mHYLGF76I63Y0aeKQKybHEwwKROCpsPwXjzV5dOyf0=;
-        b=AjlL6kxgsU74yn0tatzGxQ/pPR1Ut7ofqbARl5SCtYJmB0QNY7cySslLmpOc/7gWU5
-         cwteU4MjHAqsb3mh0z3QpUAS2sZonOg8Fl65LhOLqNf1JfKJOk5ytHn6gHs5nVyrYf98
-         aRZjImTOwq2nSzvCqmZv8qJyQPgt2gpQDcppByZtVopBfVZ68q01okCgx/vrrVnFpsOV
-         H0DTMNDeAHLM8WlwBZudeheblcDdZ+uP+vbZ8WVNcCpDzJb57TBnlnLxxdXoiaepNEHM
-         CkG8XKnVT35r86twQNt3qpxpdINP6wNqVzxk7jIDMclqp6ak8W/TGVOn3BLHnawrVUw4
-         MbOg==
+        bh=nZ/0YYGMHBlLH0om92lw4uC68FUWffhQPiZKxR4SsLc=;
+        b=cH/XF9pRww1CYO5Vsj5YbJPaux9wn3sg/Xi8v681S6EbXD6YXQ7ywqvTBuHNJD3ppY
+         RID9Phewk7HGiwZBEfhotZaCHvfLXlNTARaQ7MkttkmyAcecohh6BLx8ri3KtOK1NKoC
+         CrSZ17sqRJ4SylAmAQ4+9a4xJv3MF6DXnJVbrmgH/kpHN5z8cZ8GxZOAFYRv5XegVmq1
+         TJ/c/TANwbtrlxpSI+UqDsBdcMDbgepEYZuOGJQmy0dbgOa7S3XZxwPD569u8vnUyN+9
+         74TBqpkeRkze9ujIc2mgHRD+eCMO3PCLAwWEnUYaZXAAX0GYJ1+6dH+/ws0g/0B+Mzdp
+         MAFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767920127; x=1768524927;
+        d=1e100.net; s=20230601; t=1767920186; x=1768524986;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=9mHYLGF76I63Y0aeKQKybHEwwKROCpsPwXjzV5dOyf0=;
-        b=UT10QsK4PP4ojdcZ5PriS7yjnLJrcCPaoYdFEA21ljj5+4cSToiFHKVdPzgNXFMqdU
-         pTtF0w516WebpgH1a04ipYysfEaqDj2rbzXHEHgqPlDhnWKp7VCYk5keNIKoQRbwx9oP
-         r/JDFiKirzVajYzeK7hmaF54PuohtyVNj0lBAMOcPyZsIe2l80TLVcY5rY5EbpCbwYgf
-         /AHheF4/EcQ8WoFaiwtIBXBuYH3rSMuDaV12LcTZv8WMSMD09Mr/iQzOa10h+D0GuRJF
-         b9ijhSTK2VpIKuMAz6p3ECaPgyxG67fLsVRvomR1yyXOTvPou0i75L8m65IXDGDkiOMB
-         oOSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTjt4BdvThTv8fdXshNrM8sclItCVCu2OGG45+KbYhLFeZnvhr/z3nn+fQXIIvaL/UiiwhQ3CM9m7xH1lD@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAdVTLQb3/e6exH9XnerBrH6Zwk0gFPmwIBZ8iw2k/zOho+TJJ
-	96k7aJJksdEDGizP4mb/4IimG+02TsdlQUdAHTBM19vi/U9wgcocKBxN3rvmccbzDFlpg9vHBw9
-	5uBfpaZYHf74qzwBmgy7hrVUWYUMmXbLq+6+u
-X-Gm-Gg: AY/fxX6gSLYyIVOh2J2Ifz1w/Olu60ZFbiyNr3e/67B2u4K0mB5twjiEM71hpTT7tMc
-	5RV5qNemIySOCLTS4XCYMvrTsaJxVFOVLKJ48d7Yepst0bzUYaDJR9xeiQInhhTHswHMFfjrDz/
-	gePG6Jh4IjGrwvblUhRGDjHzTbvkaAlTj7WbVVE311sh5J2OvOt/CV6fTbNAwKZwPg2F0RuX+aW
-	x482U3tLxUZPPWTSezTDXIzz8ZD0Zgwqvjw/g9mBwHiGD27UeAbBlZvWo6fHLGGkDhaiQ==
-X-Google-Smtp-Source: AGHT+IHji8ol9qOQt+esnNq6+xTKJsi3g+GCS7/wfxpHk8D4TUM3GHk9VC+OclwfUv+CeucdDYA6Xzn009yJzaHcxnk=
-X-Received: by 2002:ac8:7f54:0:b0:4fb:f92d:bc8b with SMTP id
- d75a77b69052e-4ffb4849f20mr107099261cf.18.1767920126789; Thu, 08 Jan 2026
- 16:55:26 -0800 (PST)
+        bh=nZ/0YYGMHBlLH0om92lw4uC68FUWffhQPiZKxR4SsLc=;
+        b=wkebdq8fXuX0NzC3mpYhuHQC/eXBBzyJS5Nvi2/1P1Z37BS8qEoytNbtnID9sfA8dk
+         F2qD5mFhy2eXwzKk3VU3kbUXooTe1EIru8t8iHUpfiXOankDZbgXG2QHiI+vcCKFjP9l
+         NnvlYAvsMw4N0wm0simo+A0r+GnLexVDVe9HD7kCngBrPgqcPb1FJvO+iAlJ3JoVq6zU
+         0b+EOkeMdMfJJ8GTt/uqh9mH9+a0ugvWbR465PaqeO/q5YZvuonOS/r5UeAMbCVzFpZv
+         L0vzX3IX3OLifoZegUy9mZ8gDO5dZXZCGtcQ1rGIf+3OY/+BLBKOwDDasBt1Sxxv235T
+         Rddg==
+X-Forwarded-Encrypted: i=1; AJvYcCUK36KEGZeumJEotC22YK9dO3bG4xG53bDeVtRjkoYVsMfAxSmk6fTZy5ypaOzLR9MGHfM9EDmLS12l+G2H@vger.kernel.org
+X-Gm-Message-State: AOJu0YxineqAZEgV2DCXaKaMLervTVCP1nIln6oo+9u+qwrjPnujOd/K
+	MEMUzw6gSAVvSd6GPlVje3stpQkkzLw2U77WDvZsGabv35cBTVEtruGpAW5cNLtv6BeShJyQ0UD
+	6j/DfIHuqXumpHKRKTSH6+I+LIKZ6u0Vwor+9
+X-Gm-Gg: AY/fxX5/4LMfLrgQjOIg6pV1+qjldCIvjKyrHvjY43y/dlCEpw9k6mvk0zYvYZhdsDg
+	ocPAYgAZHbI/HfITUIMhdMlt6QNW2YOLt6jw1wD+iDvs2g1Yj/4Rln31abckF1zWotNntOyCOhP
+	EqgkIevkUnSuA7qJAP4J4EZSuRmTH83bGkYC4c9KeU+3CcoJZUvCR90ONpIcSVItrBAEvxK0PPf
+	Yz8RvIuaUsqfPd+ksU1fCG2hDmp4a2QLXyGkPH9pEly7DaqeirDs6BTrZ7/vGCtmqVojA==
+X-Google-Smtp-Source: AGHT+IE94C+oU1bynUSZQ42aiUoed0EJgx76eNJo6jYvqsYd2ODpiOG2x3TpqgxZbyGy/A1cd8oCG19NtmxyD8rAgRk=
+X-Received: by 2002:ac8:5902:0:b0:4eb:9df6:5d6f with SMTP id
+ d75a77b69052e-4ffb4ab7c03mr125417781cf.74.1767920186142; Thu, 08 Jan 2026
+ 16:56:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,14 +74,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251223003522.3055912-1-joannelkoong@gmail.com>
- <20251223003522.3055912-9-joannelkoong@gmail.com> <CADUfDZpdNNYdNnrPWviGYPViQ6O_S4S0hB7Hg56+wnQDgnXwAQ@mail.gmail.com>
- <CADUfDZpo06_FNCvYy+s0hi+vtUbWozeASv6ojxERqv=LMtQK2w@mail.gmail.com>
-In-Reply-To: <CADUfDZpo06_FNCvYy+s0hi+vtUbWozeASv6ojxERqv=LMtQK2w@mail.gmail.com>
+ <20251223003522.3055912-6-joannelkoong@gmail.com> <CADUfDZqAWCWchX=tqJxy5Hcz1z1s=TO12teuEiz67vXvxATtKQ@mail.gmail.com>
+In-Reply-To: <CADUfDZqAWCWchX=tqJxy5Hcz1z1s=TO12teuEiz67vXvxATtKQ@mail.gmail.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 8 Jan 2026 16:55:15 -0800
-X-Gm-Features: AQt7F2qtVB5FILH8AiI3x5on-p6f1OKdL7i4mYVf_NmhEYA6f7gD0vlqUnJdxoc
-Message-ID: <CAJnrk1aC6x=NppNZX+3iit5weO-oPULfFEq2D=9vDAA-TBuFtw@mail.gmail.com>
-Subject: Re: [PATCH v3 08/25] io_uring: add io_uring_cmd_fixed_index_get() and io_uring_cmd_fixed_index_put()
+Date: Thu, 8 Jan 2026 16:56:15 -0800
+X-Gm-Features: AQt7F2oJUQO7xLzkBGXvISshFpEnsjM8troViowC22vKL3TlgssCuTmDs4iFn08
+Message-ID: <CAJnrk1ZdVaRa857nqkrH-O5eoZvHJhPfikmZ9+XvzX7sxgtiew@mail.gmail.com>
+Subject: Re: [PATCH v3 05/25] io_uring/kbuf: support kernel-managed buffer
+ rings in buffer selection
 To: Caleb Sander Mateos <csander@purestorage.com>
 Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
 	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
@@ -89,126 +89,110 @@ Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 8, 2026 at 12:44=E2=80=AFPM Caleb Sander Mateos
+On Sat, Jan 3, 2026 at 2:46=E2=80=AFPM Caleb Sander Mateos
 <csander@purestorage.com> wrote:
 >
-> On Thu, Jan 8, 2026 at 11:02=E2=80=AFAM Caleb Sander Mateos
-> <csander@purestorage.com> wrote:
+> On Mon, Dec 22, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmail.=
+com> wrote:
 > >
-> > On Mon, Dec 22, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
-l.com> wrote:
-> > >
-> > > Add two new helpers, io_uring_cmd_fixed_index_get() and
-> > > io_uring_cmd_fixed_index_put(). io_uring_cmd_fixed_index_get()
-> > > constructs an iter for a fixed buffer at a given index and acquires a
-> > > refcount on the underlying node. io_uring_cmd_fixed_index_put()
-> > > decrements this refcount. The caller is responsible for ensuring
-> > > io_uring_cmd_fixed_index_put() is properly called for releasing the
-> > > refcount after it is done using the iter it obtained through
-> > > io_uring_cmd_fixed_index_get().
-> > >
-> > > This is a preparatory patch needed for fuse-over-io-uring support, as
-> > > the metadata for fuse requests will be stored at the last index, whic=
-h
-> > > will be different from the buf index set on the sqe.
-> > >
-> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > ---
-> > >  include/linux/io_uring/cmd.h | 20 +++++++++++
-> > >  io_uring/rsrc.c              | 65 ++++++++++++++++++++++++++++++++++=
-++
-> > >  io_uring/rsrc.h              |  5 +++
-> > >  io_uring/uring_cmd.c         | 21 ++++++++++++
-> > >  4 files changed, 111 insertions(+)
-> > >
-> > > diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> > > index a63474b331bf..a141aaeb099d 100644
-> > > --- a/io_uring/rsrc.c
-> > > +++ b/io_uring/rsrc.c
-> > > @@ -1151,6 +1151,71 @@ int io_import_reg_buf(struct io_kiocb *req, st=
-ruct iov_iter *iter,
-> > >         return io_import_fixed(ddir, iter, node->buf, buf_addr, len);
-> > >  }
-> > >
-> > > +int io_reg_buf_index_get(struct io_kiocb *req, struct iov_iter *iter=
-,
-> > > +                        u16 buf_index, unsigned int off, size_t len,
-> > > +                        int ddir, unsigned issue_flags)
-> > > +{
-> > > +       struct io_ring_ctx *ctx =3D req->ctx;
-> > > +       struct io_rsrc_node *node;
-> > > +       struct io_mapped_ubuf *imu;
-> > > +       u64 addr;
-> > > +       int err;
-> > > +
-> > > +       io_ring_submit_lock(ctx, issue_flags);
-> > > +
-> > > +       node =3D io_rsrc_node_lookup(&ctx->buf_table, buf_index);
-> > > +       if (!node) {
-> > > +               io_ring_submit_unlock(ctx, issue_flags);
-> > > +               return -EINVAL;
-> > > +       }
-> > > +
-> > > +       node->refs++;
-> > > +
-> > > +       io_ring_submit_unlock(ctx, issue_flags);
-> > > +
-> > > +       imu =3D node->buf;
-> > > +       if (!imu) {
-> > > +               err =3D -EFAULT;
-> > > +               goto error;
-> > > +       }
-> > > +
-> > > +       if (check_add_overflow(imu->ubuf, off, &addr)) {
-> > > +               err =3D -EINVAL;
-> > > +               goto error;
-> > > +       }
-> > > +
-> > > +       err =3D io_import_fixed(ddir, iter, imu, addr, len);
-> > > +       if (err)
-> > > +               goto error;
-> > > +
-> > > +       return 0;
-> > > +
-> > > +error:
-> > > +       io_reg_buf_index_put(req, buf_index, issue_flags);
-> > > +       return err;
-> > > +}
-> > > +
-> > > +int io_reg_buf_index_put(struct io_kiocb *req, u16 buf_index,
-> > > +                        unsigned issue_flags)
-> > > +{
-> > > +       struct io_ring_ctx *ctx =3D req->ctx;
-> > > +       struct io_rsrc_node *node;
-> > > +
-> > > +       io_ring_submit_lock(ctx, issue_flags);
-> > > +
-> > > +       node =3D io_rsrc_node_lookup(&ctx->buf_table, buf_index);
+> > Allow kernel-managed buffers to be selected. This requires modifying th=
+e
+> > io_br_sel struct to separate the fields for address and val, since a
+> > kernel address cannot be distinguished from a negative val when error
+> > checking.
 > >
-> > Hmm, I don't think it's safe to assume this node looked up by
-> > buf_index matches the one obtained in io_reg_buf_index_get(). Since
-> > the uring_lock is released between io_reg_buf_index_get() and
-> > io_reg_buf_index_put(), an intervening IORING_REGISTER_BUFFERS_UPDATE
-> > operation may modify the node at buf_index in the buf_table. That
-> > could result in a reference decrement on the wrong node, resulting in
-> > the new node being freed while still in use.
-> > Can we return the struct io_rsrc_node * from io_reg_buf_index_get()
-> > and pass it to io_reg_buf_index_put() in place of buf_index?
+> > Auto-commit any selected kernel-managed buffer.
+> >
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  include/linux/io_uring_types.h |  8 ++++----
+> >  io_uring/kbuf.c                | 15 ++++++++++++---
+> >  2 files changed, 16 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_ty=
+pes.h
+> > index e1adb0d20a0a..36fac08db636 100644
+> > --- a/include/linux/io_uring_types.h
+> > +++ b/include/linux/io_uring_types.h
+> > @@ -93,13 +93,13 @@ struct io_mapped_region {
+> >   */
+> >  struct io_br_sel {
+> >         struct io_buffer_list *buf_list;
+> > -       /*
+> > -        * Some selection parts return the user address, others return =
+an error.
+> > -        */
+> >         union {
+> > +               /* for classic/ring provided buffers */
+> >                 void __user *addr;
+> > -               ssize_t val;
+> > +               /* for kernel-managed buffers */
+> > +               void *kaddr;
+> >         };
+> > +       ssize_t val;
+> >  };
+> >
+> >
+> > diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> > index 68469efe5552..8f63924bc9f7 100644
+> > --- a/io_uring/kbuf.c
+> > +++ b/io_uring/kbuf.c
+> > @@ -155,7 +155,8 @@ static int io_provided_buffers_select(struct io_kio=
+cb *req, size_t *len,
+> >         return 1;
+> >  }
+> >
+> > -static bool io_should_commit(struct io_kiocb *req, unsigned int issue_=
+flags)
+> > +static bool io_should_commit(struct io_kiocb *req, struct io_buffer_li=
+st *bl,
+> > +                            unsigned int issue_flags)
+> >  {
+> >         /*
+> >         * If we came in unlocked, we have no choice but to consume the
+> > @@ -170,7 +171,11 @@ static bool io_should_commit(struct io_kiocb *req,=
+ unsigned int issue_flags)
+> >         if (issue_flags & IO_URING_F_UNLOCKED)
+> >                 return true;
+> >
+> > -       /* uring_cmd commits kbuf upfront, no need to auto-commit */
+> > +       /* kernel-managed buffers are auto-committed */
+> > +       if (bl->flags & IOBL_KERNEL_MANAGED)
+> > +               return true;
+> > +
+> > +       /* multishot uring_cmd commits kbuf upfront, no need to auto-co=
+mmit */
+> >         if (!io_file_can_poll(req) && req->opcode !=3D IORING_OP_URING_=
+CMD)
+> >                 return true;
+> >         return false;
+> > @@ -201,8 +206,12 @@ static struct io_br_sel io_ring_buffer_select(stru=
+ct io_kiocb *req, size_t *len,
+> >         req->buf_index =3D READ_ONCE(buf->bid);
+> >         sel.buf_list =3D bl;
+> >         sel.addr =3D u64_to_user_ptr(READ_ONCE(buf->addr));
 >
-> Alternatively, store the struct io_rsrc_node * in the struct io_kiocb,
-> as io_find_buf_node() does? Then you wouldn't even need to call
-> io_reg_buf_index_put(); io_uring would automatically release the
-> buffer node reference upon completion of the request. The only reason
-> I can see why that wouldn't work is if a single fuse io_uring_cmd
-> needs to import multiple registered buffers. But it doesn't look like
-> that's the case from my quick skim of the fuse code.
+> Drop this assignment as it's overwritten by the assignments below?
 
-Good catch, I think I'll need to store that rsrc node pointer inside
-the fuse code then. I think we could store it inside the struct
-io_kiocb for the fuse use case but I think at an api level that ends
-up getting ugly with introducing unobvious relationships between
-io_uring_cmd_fixed_index_get() and io_uring_cmd_import_fixed().
+Ah yes, this is a duplicate. I'll remove this for v4.
 
 Thanks,
 Joanne
+>
+> Best,
+> Caleb
+>
+> > +       if (bl->flags & IOBL_KERNEL_MANAGED)
+> > +               sel.kaddr =3D (void *)(uintptr_t)buf->addr;
+> > +       else
+> > +               sel.addr =3D u64_to_user_ptr(READ_ONCE(buf->addr));
+> >
+> > -       if (io_should_commit(req, issue_flags)) {
+> > +       if (io_should_commit(req, bl, issue_flags)) {
+> >                 io_kbuf_commit(req, sel.buf_list, *len, 1);
+> >                 sel.buf_list =3D NULL;
+> >         }
+> > --
+> > 2.47.3
+> >
 
