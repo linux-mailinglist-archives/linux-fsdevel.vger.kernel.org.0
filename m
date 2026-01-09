@@ -1,68 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-73060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC42D0ADDB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 16:24:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E5C7D0B087
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 16:49:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EAA17308E9A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 15:20:39 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E5A24301FB68
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 15:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A84828B4FA;
-	Fri,  9 Jan 2026 15:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8242882A9;
+	Fri,  9 Jan 2026 15:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="UEOziobB"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="CXuuJCGv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A8D35E537
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 15:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6CA500946
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 15:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767972038; cv=none; b=LDGi4LEeNId/CQBFSA8U2YN661Wu7nlgQiBa4TD4gNHA3/N81iVChiTBVg3I6r0P23lrlsWpvHbiI1gc9Z24a2qLDOwohSE+cqV9chW493JpnrMqeZEngiTja5Nb3DThfMxJe0hTekgojpJKC5JJBJ8qUpgSd997bAJUBTASVr4=
+	t=1767973392; cv=none; b=PoZq3P2Y17ViRC/7QAKX/frWSz8/PVq9S07w+pPFTG70lrtwY10RB54iUyAEcy8jvOpH9RSjCZnYiuby4IjUM4zsyybCi0M4oIxq/vaTBno/AkZBVy5qp/HO8SfpAeD8D5+T0IC+MK3Mps6b3SDK8BbSxl+a7Hd8IVS1eK4ac7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767972038; c=relaxed/simple;
-	bh=t0M918K9SVLyelsdKL/u/NgMO/Qv4Dolk5CY8Pk6550=;
+	s=arc-20240116; t=1767973392; c=relaxed/simple;
+	bh=QNPOhk5Es1DDVi8HpjVAsH4iHy4P3eWp0+XjiS0I17w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EcOAFOxwS5lQ34odBLiQoyQIl/ZX4zE0v2Qqq8Glf5NzetvT7RqnUcXTVFMgDSdqCtnUijnzvv1qoutbIcofBQXkJ7a1QwUEJhp5rnBFOAP8v2rdukFmXqch+1UoYKgSUMyHs6c5JBoFLmjXQVPDBCQR82NThnjNoU75Zlnl7cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=UEOziobB; arc=none smtp.client-ip=209.85.160.171
+	 To:Cc:Content-Type; b=p4Jd2yF5N9i4/ePqO0+w9fnlFBDn4IRuinTfd/tGShAUqf2QjTmOLVF5NEQ3FfwHBGWm4h5UryC33YgEO5adEnIH4FHQoXBtJ1mL1JA6hGg0c5RXwbg2hZ3E8cXz3CAVoNgA5i+ethTuigFRkUsA67CbLMhMeu4yB74xfx9aTws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=CXuuJCGv; arc=none smtp.client-ip=74.125.82.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4ee1a3ef624so26592631cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 07:20:33 -0800 (PST)
+Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-11f42e971d6so2904949c88.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 07:43:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1767972033; x=1768576833; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1767973390; x=1768578190; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YcYpDoQkf6OKdwa34GPKr9MIobLa4irju6kImnykCbY=;
-        b=UEOziobBXpeWHqcnbvg5cu0zhikyq7JcYUXaVj8b8kl3rqTwHKqe/2bhr9NIQDlEbG
-         woVlgaT+EgiteOl7AV0Li3rXQ2b8T0uV2phMbut9kip7FyiLgexiFtc0bdonYLZfNFoW
-         qVfEInXY+JBGHYfdHizDEiMJb8dhVVsKVL8M4=
+        bh=YnOPVVAsjPQDWOaKaz9pR+f1JGQBc9UxTk4hwXiC1DQ=;
+        b=CXuuJCGvqMsDUPT16eI8KMWvJm7kKWlFAgNJm9MgYzlDK0MUeRzpwvJJbKv7U4fXok
+         oDSF4/Gsk9S3xqFVOC+QkuhCob7MC+DE9hV9IA09LeOUzsaZLmBLyfWGPuC99nk8TGoO
+         djyxpmDQHGqW902fqVHBCmxYihkLlIXgztcPs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767972033; x=1768576833;
+        d=1e100.net; s=20230601; t=1767973390; x=1768578190;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YcYpDoQkf6OKdwa34GPKr9MIobLa4irju6kImnykCbY=;
-        b=TEiUnu7duKstGHP+LfCHY1tC+XWtIdtjCO99keCQourtDEokQ1qlOU0EBD36TB1UH1
-         zf0VOmDaJmgtxF4vTbRje8WELcJChEwWreZUSIVbxOwPlM+lMmp8hO8RuGw/aeic1BAp
-         SDy3Qjl4YC1MvaG9iksdSgQSLv7cezDTSVCU9iUFv1ayuTjD6hY0SIlm5au9G29EA89T
-         BkUtDFRMJzWVIPLW97spBAXlGFhiwYA7qNey8gaPP/AI1LJyc32caVA4M+wgqWDg9tE/
-         mezcG0KXVMQTEfpZHXOBaUlujWnWryHUHrRlJsBomXUI/zj1XNw9Xfw0PbENqVt6MKTa
-         YjgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzPycHGqZwJUsWYS11QcsrWBaINGoTvlDeEvAECNREYmGZIz4tcK+Q3djwb8/mBfYXFYjlJaKLZq5BqWlM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu2sgV9HViDxGR097G648jDLr31MPtn+Wi4TQd4MMeFAOH7lG0
-	IiDMbMs3bUIs+ACxCmmeUej6kdb+6rsbPdbq8ICBsqrUSIKYK8rXXTzMlK4LxeDZ8jmYCfSS+CR
-	q9fQSRjRn5AY8JNqcWfdD2r9YnYYodM87uya7r5cdnA==
-X-Gm-Gg: AY/fxX5hUXEOP3tF8iDDNGdNjsYpBEbiselHnbWMUad4AKzRIiXgzNYykgsiqyNm6U8
-	thqH2qjkxZkgqid5JWnVO9mRiEjUzPEVzFf6jry7aIXiWnpWSoIK78oD9KJSnDAM42Go20sSkCd
-	lQOGzpGDOOaKHlh2LSJLlaE60mo+GrVCHAHNWZNXZfftev+ITE8YZZ8kDsCUzE21W4B6DVq69uP
-	mtswJri7j/z+ni2UDIE4Z6iMSNPUXA4U61u7bx1qg6urANNXY6jaUhOEDl2Zrt8mrxm
-X-Google-Smtp-Source: AGHT+IExD+zog7XtALe+us8rDRDLzU2jZJoXkIaFcPpMDWQeZn9nkARquzs6fB9TluMjjJ/JttzHLAT5wJ6zMPU7kl8=
-X-Received: by 2002:a05:622a:5c08:b0:4ee:3ece:a652 with SMTP id
- d75a77b69052e-4ffb4a44eedmr135408551cf.42.1767972032753; Fri, 09 Jan 2026
- 07:20:32 -0800 (PST)
+        bh=YnOPVVAsjPQDWOaKaz9pR+f1JGQBc9UxTk4hwXiC1DQ=;
+        b=RBzBi5/vidtv4xyDNs2xXRdYh1CCiQBh/+dGWNLUxVULyl889kGq1v8SJJD7M8YgTr
+         1kCd2gZdZ/GbAu8dDCZUoWfMqpsVGQOjj0/qaSIMbkBcEMJpCVzadBbGec/tdNT7PtSg
+         4insOxksHddEkQpwZmmXqTd4gizO66H0vNYCcy1ubid4Fwf1fpC3iaaKT3Usum29Nihg
+         +VnCFUXh2yuBUQHivUvMjcwsKbXD26xkHS1EYq49cuSY9SHssmOzLEm9PRKQHLkNqNwF
+         9B0BDR5oEp/TsUgdXxKtffOao4hm8tHONzJ5riNwfF31pUXg6kgpen2RJipI+Br703x7
+         CJPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUin4J0P8SNmW97osXqKkaBxNcRxoBpzIkQ0hnU5aQCLJ2o6ZkPdttVFwvgW8/moLD4M5gHLzrGx7MnNMT+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3YM8imsdvIlEyrRTADCx7tyQ00IenkzvMWY1bbJtBWntBghw4
+	/g/+3fyjrGPNMeugL6bPipTQC8aoeNuwfe5RH9EJclD5UHAPp1fQDWEnVXwDm287uUmbkNyqE2C
+	kLFc3YtUqoUEePmtmrT8EyEVwa7nojm7KS37+Wc/qXNNYFigdPqh9
+X-Gm-Gg: AY/fxX4zd0rgQluWG3xYd3ZgEjFAfcfa7E5XHR40/63BfePCzmCgWsjxfUHyTH6XEo5
+	be8S2NEjwxge6ZRuTE/oFasIvJs8RLivBXC3FU5jUsZBdzcGOmzXDVAXqnw7HtQ3vCD4xEyAay7
+	t1Wd3+RWNMg3ZjGAetNgyNQMnS6LNzMEkZjYTWXv94V40dDWtEAdVtvr9k8VM4ru0R5yuqycWfz
+	K3O1sxOcI2Z6vRhFpWAuf4Fe3FXwsx8onUU937ArePoNB7yuUbIaw5h8NzywRl2yTpp
+X-Google-Smtp-Source: AGHT+IGzUDL2kx53wRtM88vO/pFpYrhDOWVO1h4BnSpbjH3CvkBV25cTk22wta29mnlsLEkkg5pyW5N76x6e5a3YY1o=
+X-Received: by 2002:ac8:7d47:0:b0:4ed:67bc:50de with SMTP id
+ d75a77b69052e-4ffb4958b63mr148334791cf.24.1767973046585; Fri, 09 Jan 2026
+ 07:37:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,54 +72,37 @@ MIME-Version: 1.0
 References: <20251212181254.59365-1-luis@igalia.com> <20251212181254.59365-5-luis@igalia.com>
  <CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com>
  <87zf6nov6c.fsf@wotan.olymp> <CAJfpegst6oha7-M+8v9cYpk7MR-9k_PZofJ3uzG39DnVoVXMkA@mail.gmail.com>
- <87tswuq1z2.fsf@wotan.olymp>
-In-Reply-To: <87tswuq1z2.fsf@wotan.olymp>
+ <CAOQ4uxjXN0BNZaFmgs3U7g5jPmBOVV4HenJYgdfO_-6oV94ACw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjXN0BNZaFmgs3U7g5jPmBOVV4HenJYgdfO_-6oV94ACw@mail.gmail.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 9 Jan 2026 16:20:21 +0100
-X-Gm-Features: AQt7F2oGYtP6NNquWwawugC-ZB2MGxMjFyA4-T6COPWwPFmT41svigvhBAa74no
-Message-ID: <CAJfpeguMs60OCWvKRpnSizCLHKxYp+DFX9uWgqpWBL++0iwSqA@mail.gmail.com>
+Date: Fri, 9 Jan 2026 16:37:14 +0100
+X-Gm-Features: AQt7F2rJ8XmeMDm1w7IVauLrMMw8v9qKA44XIbz202N6LBff3QM8dCKnoUHMHZM
+Message-ID: <CAJfpegsS1gijE=hoaQCiR+i7vmHHxxhkguGJvMf6aJ2Ez9r1dw@mail.gmail.com>
 Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the FUSE_LOOKUP_HANDLE operation
-To: Luis Henriques <luis@igalia.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Luis Henriques <luis@igalia.com>, "Darrick J. Wong" <djwong@kernel.org>, 
 	Bernd Schubert <bschubert@ddn.com>, Kevin Chen <kchen@ddn.com>, 
 	Horst Birthelmer <hbirthelmer@ddn.com>, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, Matt Harvey <mharvey@jumptrading.com>, 
 	kernel-dev@igalia.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 9 Jan 2026 at 15:45, Luis Henriques <luis@igalia.com> wrote:
+On Fri, 9 Jan 2026 at 16:03, Amir Goldstein <amir73il@gmail.com> wrote:
 
-> struct fuse_entry_handle_out {
->         uint64_t nodeid;
->         uint64_t generation;
->         uint64_t entry_valid;
->         struct fuse_file_handle fh;
-> }
+> What about FUSE_CREATE? FUSE_TMPFILE?
 
-I'd do it this way:
+FUSE_CREATE could be decomposed to FUSE_MKOBJ_H + FUSE_STATX + FUSE_OPEN.
 
-struct fuse_entry2_out {
-        uint64_t nodeid;
-        uint64_t generation;
-        uint64_t entry_valid;
-        uint32_t entry_valid_nsec;
-        uint32_t flags;
-        uint64_t spare;
-};
+FUSE_TMPFILE is special, the create and open needs to be atomic.   So
+the best we can do is FUSE_TMPFILE_H + FUSE_STATX.
 
-and the file handle would be placed in out_args[1].
+> and more importantly READDIRPLUS dirents?
 
-> I'll then need to have a look at the compound requests closely. (I had
-> previously skimmed through the patches that add open+getattr but didn't
-> gone too deep into it.)
+I was never satisfied with FUSE_READDIRPLUS, I'd prefer something more
+flexible, where policy is moved from the kernel to the fuse server.
 
-It should work as two separate requests, just not as optimal.
-
-> And then the extension header would be created similarly to what's being
-> done for FUSE_EXT_GROUPS, using the same helper extend_arg().  That way, I
-> think we would have: headers - payload - extensions.
-
-Right.
+How about a push style interface with FUSE_NOTIFY_ENTRY setting up the
+dentry and the inode?
 
 Thanks,
 Miklos
