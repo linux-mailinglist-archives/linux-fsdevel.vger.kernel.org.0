@@ -1,165 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-73048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF2FD09DED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 13:43:00 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 659BAD08F60
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 12:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 5A7793049FED
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 12:30:50 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 41309308C8C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 11:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A147E35BDAB;
-	Fri,  9 Jan 2026 12:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38583375CB;
+	Fri,  9 Jan 2026 11:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="swga332A";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="co0wjBNm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D373E35B134;
-	Fri,  9 Jan 2026 12:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1D4328B5F;
+	Fri,  9 Jan 2026 11:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767961838; cv=none; b=q1H4tjWALW4ILAvbvJ4z0845fp8FZKc5ZMx6ONmMwpzM/3yd6GX5hiZCdWWyW9pv9BxtDaR46oXRLkS0TO0colhD4o+l273YnkrovSXc80AB6v7CiDfvjYVC4mFABIlVVI6cR/fxBEsNUYArAHFyQsbBu/7GbTxcgYP5ONEHQaQ=
+	t=1767958599; cv=none; b=oYB/57ZlVvUe8VJM5Fimj9eNlaUfh3cFVOq1PNQNLCHFwCLQcmUdmqMarrHyh5X7Bh7gQQo6qns0uPxwvwqUbcy1eD1KGkTnhQg7e/Al6YcFMRi21qh9UFrJUrnYmExdImyGrmS8eQfQ1zQKq3ZY7y4LhmOKOA3Al4RvN+k9GVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767961838; c=relaxed/simple;
-	bh=in5JvqRmDAdB6dX8FGI0EEgnQhCtsywKD5TDJBxjJjU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UWnRPWl/bxzc3etC+D/hDMXVL629tsfTQoVOMiMHr4DXgk7pPNAhdQZEUneOc/w+kape6VZVYxiHCW05KMIS/DXjn5TcPcQvRZnq3uYsadgoSz0KFqyDJd3ziYR/+Q/KsO8k3hcZNfEBbcMg9f9FA6lIFqBpWd7JloZTbe8Sngo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.83])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dnh1h1cXTzHnH7w;
-	Fri,  9 Jan 2026 20:30:16 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 48D4440572;
-	Fri,  9 Jan 2026 20:30:26 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Fri, 9 Jan
- 2026 12:30:24 +0000
-Date: Thu, 8 Jan 2026 16:10:13 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: John Groves <John@groves.net>
-CC: Miklos Szeredi <miklos@szeredi.hu>, Dan Williams
-	<dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, "Alison
- Schofield" <alison.schofield@intel.com>, John Groves <jgroves@micron.com>,
-	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan
- Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, "David
- Hildenbrand" <david@kernel.org>, Christian Brauner <brauner@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Stefan
- Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef
- Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Chen
- Linxuan <chenlinxuan@uniontech.com>, "James Morse" <james.morse@arm.com>,
-	Fuad Tabba <tabba@google.com>, "Sean Christopherson" <seanjc@google.com>,
-	Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>,
-	Gregory Price <gourry@gourry.net>, Aravind Ramesh <arramesh@micron.com>, Ajay
- Joshi <ajayjoshi@micron.com>, <venkataravis@micron.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH V3 04/21] dax: Add dax_operations for use by fs-dax on
- fsdev dax
-Message-ID: <20260108161013.00001916@huawei.com>
-In-Reply-To: <gqwlb6ept22edcuiwwzxkboeioin6l4afemn3lenbduuwbb357@tnkceo5764vf>
-References: <20260107153244.64703-1-john@groves.net>
-	<20260107153332.64727-1-john@groves.net>
-	<20260107153332.64727-5-john@groves.net>
-	<20260108115037.00003295@huawei.com>
-	<gqwlb6ept22edcuiwwzxkboeioin6l4afemn3lenbduuwbb357@tnkceo5764vf>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1767958599; c=relaxed/simple;
+	bh=YHJ2ldPBt/AEqru/kYn1w7AXOnQKTmeaA4j+gehfHd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dFj4KV0uZPq1EvJaQHIG6Gm2+tH341BWNR8OuTJC4J8LErHIEwm3R5bxDimFeCnqcMmglKcl/6F+BvmHuNr9qNPT41c8F5CzF8aJOlJwHKLAu1gWEHLKd8cyMPq8uIjkWI44cjuEW75tJZyAyDf0e2O0tdXJ1vAYKQe6758x8nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=swga332A; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=co0wjBNm; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id C873B1D00053;
+	Fri,  9 Jan 2026 06:36:36 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Fri, 09 Jan 2026 06:36:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1767958596;
+	 x=1768044996; bh=IJ5UPvJeatR6ooQ9Y+kTtGdHkVRZIsEyCpqQkMFnSPM=; b=
+	swga332AepvzxNT8KXmZ+Rb+NfTV0/d2Y1HPb0M3Lul+8FsApSfsrvYY8okJO7+j
+	yVLnNeAEL0qjztW+VTYOdJrCKKmw24SlNucj/zyh2v2xyJqwhxUB6JkCl/+/8dDz
+	mQUBq0etFAPC4oDSHcgWWFPz+1C31F3M35MoWzDf4tgFFcZjFwAZR1F/LhqXXIOQ
+	yMKekvhar5tNzMo8+uP8Vy6WbgnUdmfFFCv5Agov9yW8BP22KDhQ3KXAE9AOLRtM
+	4COXImQsrW+VkCqjY9hxxSRipr2HKNMknoAV7YgoMiVFcYQOfR5dpUg3WrJUtziD
+	N2vJqjAxqaCFkr3IfJ5Gtg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1767958596; x=
+	1768044996; bh=IJ5UPvJeatR6ooQ9Y+kTtGdHkVRZIsEyCpqQkMFnSPM=; b=c
+	o0wjBNm+XTyR/RqeJw8YM4Iv5mKQBsw0bhc0vpGQy73Hf9coYWMn7AZHAlsef82k
+	zMaOWNgAq4pwUnKcOeXB75yhfaRhy3DKykqZK11fkjtjq0yJzIqNn3fHMxr91FOy
+	Z2uxyb4wVI8WAbBwoXzkn9KHqKD3PEceQmCldkB0v98BpPZMit09bMreso6VVPOs
+	wcLyQ/L/IUPN89BA7lws5GmjbYFC0LVQiif9ECejLhgTc628t2jns+kgPHkwPOAB
+	xMBcBEgoIFUNZdbfC/tZKPHR5bQrwNB8dgCjhXyIBa4v17wRQSbvRwrC8lGXZ8Ic
+	HkUChhypqM1asKwF9/phw==
+X-ME-Sender: <xms:ROhgaWQiRwv-LtB__7DsvS7gNMrMHpNauNDsP0Eb4S2mZ-S5bY4Khg>
+    <xme:ROhgaVHsTAY2frmX5DJX7886SLkVGqTX4mfAMcdWMcRjuUF6xoKkExG7sNPcPto4L
+    VBaYfdx1ZGEK0UmgSNPZljQZ7GhSFK_IJOZO_6wvgUX-s5k3m52>
+X-ME-Received: <xmr:ROhgabEzM0o27h02lQtHoH2j1wNLM0CxxwDjaJotxkw-s6cRdPumwEzcDh8AV-jaeOJyMYKb2V1tYo2F38vLHwt5YO1OXgfy9Uy5okwZN1EMQv3umw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddutdekjedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeejffdutdeghfffgffgjeehteejueekieetieehveehteeuiefgieeuleek
+    jeekueenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
+    mhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepth
+    hhohhmrghsrdifvghishhsshgthhhuhheslhhinhhuthhrohhnihigrdguvgdprhgtphht
+    thhopegurghvihgurdhlrghighhhthdrlhhinhhugiesghhmrghilhdrtghomhdprhgtph
+    htthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtohepmhhikhhlohhssehsiigv
+    rhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:ROhgaTQnmkxP2H4mTfXrkEaFK7S7YDVhlrCWIbOndPcxQbRYC0-yRA>
+    <xmx:ROhgacLf02ZzUs8-qzlWccXB13mVV6IcS2DYeFjRN2LMid6p4nwGHg>
+    <xmx:ROhgaeaV5KS2h8UBGAtYO-hpwf1JJhG1hjR8-YyYWhLjD33okGekxw>
+    <xmx:ROhgae9STCPz6XCxSNmnZqnhB2HdXF5236ERLNgO3603ihO9EvC7YQ>
+    <xmx:ROhgaespeqy3RxDa9JVeoxHOnjhv8neEWtLCCDgQvZkICINQuOiPg_fj>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 9 Jan 2026 06:36:35 -0500 (EST)
+Message-ID: <519e25f7-ee5a-4458-b2cf-df3c3eb3694f@bsbernd.com>
+Date: Fri, 9 Jan 2026 12:36:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fuse: uapi: use UAPI types
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: David Laight <david.laight.linux@gmail.com>, Arnd Bergmann
+ <arnd@arndb.de>, Miklos Szeredi <miklos@szeredi.hu>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251230-uapi-fuse-v2-1-5a8788d62525@linutronix.de>
+ <8efcbf41-7c74-4baf-9d75-1512f4f3fb03@bsbernd.com>
+ <b975404f-fd6d-42aa-9743-c11e0088596b@bsbernd.com>
+ <20260105092847-f05669a4-f8a1-498d-a8b4-dc1c5a0ac1f8@linutronix.de>
+ <51731990-37fe-4821-9feb-7ee75829d3a0@bsbernd.com>
+ <2c1dc014-e5aa-4c1d-a301-e10f47c74c7d@app.fastmail.com>
+ <e22544a1-dea4-44d0-9a72-b60d38eeac19@bsbernd.com>
+ <20260109085917-e316ce57-5e78-4827-96d7-4a48a68aa752@linutronix.de>
+ <20260109103827.1dc704f2@pumpkin>
+ <ccdbf9b8-68d1-4af6-9ed4-f2259d1cecb4@bsbernd.com>
+ <20260109114918-1c5ea28d-f32d-49e5-affb-cc3c74c4dd5b@linutronix.de>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <20260109114918-1c5ea28d-f32d-49e5-affb-cc3c74c4dd5b@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 8 Jan 2026 09:59:08 -0600
-John Groves <John@groves.net> wrote:
 
-> On 26/01/08 11:50AM, Jonathan Cameron wrote:
-> > On Wed,  7 Jan 2026 09:33:13 -0600
-> > John Groves <John@Groves.net> wrote:
-> >   
-> > > From: John Groves <John@Groves.net>
-> > >   
-> > Hi John
-> > 
-> > The description should generally make sense without the title.
-> > Sometimes that means more or less repeating the title.
-> > 
-> > A few other things inline.  
+
+On 1/9/26 11:55, Thomas Weißschuh wrote:
+> On Fri, Jan 09, 2026 at 11:45:33AM +0100, Bernd Schubert wrote:
+>>
+>>
+>> On 1/9/26 11:38, David Laight wrote:
+>>> On Fri, 9 Jan 2026 09:11:28 +0100
+>>> Thomas Weißschuh <thomas.weissschuh@linutronix.de> wrote:
+>>>
+>>>> On Thu, Jan 08, 2026 at 11:12:29PM +0100, Bernd Schubert wrote:
+>>>>>
+>>>>>
+>>>>> On 1/5/26 13:09, Arnd Bergmann wrote:  
+>>>>>> On Mon, Jan 5, 2026, at 09:50, Bernd Schubert wrote:  
+>>> ...
+>>>>>> I don't think we'll find a solution that won't break somewhere,
+>>>>>> and using the kernel-internal types at least makes it consistent
+>>>>>> with the rest of the kernel headers.
+>>>>>>
+>>>>>> If we can rely on compiling with a modern compiler (any version of
+>>>>>> clang, or gcc-4.5+), it predefines a __UINT64_TYPE__ macro that
+>>>>>> could be used for custom typedef:
+>>>>>>
+>>>>>> #ifdef __UINT64_TYPE__
+>>>>>> typedef __UINT64_TYPE__		fuse_u64;
+>>>>>> typedef __INT64_TYPE__		fuse_s64;
+>>>>>> typedef __UINT32_TYPE__		fuse_u32;
+>>>>>> typedef __INT32_TYPE__		fuse_s32;
+>>>>>> ...
+>>>>>> #else
+>>>>>> #include <stdint.h>
+>>>>>> typedef uint64_t		fuse_u64;
+>>>>>> typedef int64_t			fuse_s64;
+>>>>>> typedef uint32_t		fuse_u32;
+>>>>>> typedef int32_t			fuse_s32;
+>>>>>> ...
+>>>>>> #endif  
+>>>>>
+>>>>> I personally like this version.  
+>>>>
+>>>> Ack, I'll use this. Although I am not sure why uint64_t and __UINT64_TYPE__
+>>>> should be guaranteed to be identical.
+>>>
+>>> Indeed, on 64bit the 64bit types could be 'long' or 'long long'.
+>>> You've still got the problem of the correct printf format specifier.
+>>> On 32bit the 32bit types could be 'int' or 'long'.
+>>>
+>>> stdint.h 'solves' the printf issue with the (horrid) PRIu64 defines.
+>>> But I don't know how you find out what gcc's format checking uses.
+>>> So you might have to cast all the values to underlying C types in
+>>> order pass the printf format checks.
+>>> At which point you might as well have:
+>>> typedef unsigned int fuse_u32;
+>>> typedef unsigned long long fuse_u64;
+>>> _Static_assert(sizeof (fuse_u32) == 4 && sizeof (fuse_u64) == 8);
+>>> And then use %x and %llx in the format strings.
 > 
-> Will do
+> These changes to format strings are what we are trying to avoid.
 > 
-> >   
-> > > * These methods are based on pmem_dax_ops from drivers/nvdimm/pmem.c
-> > > * fsdev_dax_direct_access() returns the hpa, pfn and kva. The kva was
-> > >   newly stored as dev_dax->virt_addr by dev_dax_probe().
-> > > * The hpa/pfn are used for mmap (dax_iomap_fault()), and the kva is used
-> > >   for read/write (dax_iomap_rw())
-> > > * fsdev_dax_recovery_write() and dev_dax_zero_page_range() have not been
-> > >   tested yet. I'm looking for suggestions as to how to test those.
-> > > * dax-private.h: add dev_dax->cached_size, which fsdev needs to
-> > >   remember. The dev_dax size cannot change while a driver is bound
-> > >   (dev_dax_resize returns -EBUSY if dev->driver is set). Caching the size
-> > >   at probe time allows fsdev's direct_access path can use it without
-> > >   acquiring dax_dev_rwsem (which isn't exported anyway).
-> > > 
-> > > Signed-off-by: John Groves <john@groves.net>  
-> >   
-> > > diff --git a/drivers/dax/fsdev.c b/drivers/dax/fsdev.c
-> > > index c5c660b193e5..9e2f83aa2584 100644
-> > > --- a/drivers/dax/fsdev.c
-> > > +++ b/drivers/dax/fsdev.c
-> > > @@ -27,6 +27,81 @@
-> > >   * - No mmap support - all access is through fs-dax/iomap
-> > >   */
-> > >  
-> > > +static void fsdev_write_dax(void *pmem_addr, struct page *page,
-> > > +		unsigned int off, unsigned int len)
-> > > +{
-> > > +	while (len) {
-> > > +		void *mem = kmap_local_page(page);  
-> > 
-> > I guess it's pretty simple, but do we care about HIGHMEM for this
-> > new feature?  Maybe it's just easier to support it than argue about it however ;)  
+>> The test PR from Thomas succeeds in compilation and build testing. Which
+>> includes 32-bit cross compilation
+>>
+>> https://github.com/libfuse/libfuse/pull/1417
 > 
-> I think this compiles to zero overhead, and is an established pattern -
-> but I'm ok following a consensus elsewhere...
+> Unforunately there might still be issues on configurations not tested by the CI
+> where the types between the compiler and libc won't match.
+> But if it works sufficiently for you, I'm fine with it.
 
-That's fair, probably just keep it.
+I don't have a problem to adopt libfuse - that is the simple part. The
+harder part are other fuse implementations that use the same header. And
+they will complain to Miklos if compilation fails.
+Which is why it is important that we catch beforehand as many issues as
+we can and then the commit message should explain very detailed the use
+case. I.e. if something breaks for others, we can still point to you use
+case that would be broken without these changes.
 
-> > > +static long __fsdev_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
-> > > +			long nr_pages, enum dax_access_mode mode, void **kaddr,
-> > > +			unsigned long *pfn)
-> > > +{
-> > > +	struct dev_dax *dev_dax = dax_get_private(dax_dev);
-> > > +	size_t size = nr_pages << PAGE_SHIFT;
-> > > +	size_t offset = pgoff << PAGE_SHIFT;
-> > > +	void *virt_addr = dev_dax->virt_addr + offset;
-> > > +	phys_addr_t phys;
-> > > +	unsigned long local_pfn;
-> > > +
-> > > +	WARN_ON(!dev_dax->virt_addr);
-> > > +
-> > > +	phys = dax_pgoff_to_phys(dev_dax, pgoff, nr_pages << PAGE_SHIFT);  
-> > 
-> > Use size given you already computed it.  
 > 
-> Not sure I follow. nr_pages is the size of the access or fault, not the size
-> of the device. 
+> Also with the proposal from Arnd there were format strings warnings when
+> building the kernel, so now I have this:
+> 
+> #if defined(__KERNEL__)
+> #include <linux/types.h>
+> typedef __u64		fuse_u64;
+> ...
+> 
+> #elif defined(__UINT64_TYPE__)
+> typedef __UINT64_TYPE__		fuse_u64;
+> ...
+> 
+> #else
+> #include <stdint.h>
+> typedef uint64_t		fuse_u64;
+> ...
+> #endif  
 
-Just above:
 
-size_t size = nr_pages << PAGE_SHIFT;
+I guess you can see why Miklos is resisting these changes without a good
+use case :)
 
-Jonathan
 
+Thanks,
+Bernd
 
