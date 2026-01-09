@@ -1,195 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-73026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1425AD08A82
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 11:43:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B5BD08B12
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 11:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id CE46F300BDB2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 10:40:20 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 76D99306DA9A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 10:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C2F339714;
-	Fri,  9 Jan 2026 10:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B0D339714;
+	Fri,  9 Jan 2026 10:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2QE0N4x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/S2tX9g"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573F23385A3;
-	Fri,  9 Jan 2026 10:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5FA33859E;
+	Fri,  9 Jan 2026 10:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767955216; cv=none; b=YYNa06zwLRD9ml33ZHvDXgFbSiFS/BGGhmHBzvcMWCtg7PcCRkynu28vt9QQ1xxDGzdX0lDY9BFQlxi0VfFjR153f8N9H5zUKMw6CeJIAhaAIDia6VrpkyN+dMYbn+AoDMj/EzTD+ESuI32Ch/mc/0lxaY3HQK06MDaH3Os8hYI=
+	t=1767955370; cv=none; b=fWaewg9khZBOhDT3DEP2NlCShgVb57bHzG5f2s8rJsl1MjUs4R2MpSu0Av526Zmf8lGCj5Rw2bBdlhlA002Lzx8f3S/+pKjAOzJNQDeSrghA4atHtbb2uGwyj4+AXISLrc0Wq0gQ5v7bwPRU8VJLJxmy0Kli2QPfqoYYsWfEhGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767955216; c=relaxed/simple;
-	bh=BGcYI9jqHXf7s/m+PSXbgbxK0T2s7hHg9CWJtKEqbLY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X9PF+dAy+BEorYskk1qmxrlkjQimTej5xH94/pRhAuPtKiwuD88kfNv09BEv89rX+ckvM4GYxIbgqct96PFZowdhVqlULLxRLqflWYRW3SZqmd8mfAAvtk4/+jI1hoPWldHuXGKsniotH2y+uO7gT4m/+7SV7h151L5wsELWHdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2QE0N4x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFB04C4CEF1;
-	Fri,  9 Jan 2026 10:40:14 +0000 (UTC)
+	s=arc-20240116; t=1767955370; c=relaxed/simple;
+	bh=ljBAA3J/WyBhweINmujp9S/1yjKDZav9rqCw5O4UKzE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YFKW0TW6azD5MQglwpc6O8s/QXFrY6uFchk+OO4sqJRafxVaeps4cn4ydrewOkAj/OWG6InNdEo2LmR2LE7GZzNkKuUJdGLhL8dXlvOcw4gSb/O4ShDtXQs84hYrf6fwDDWWZ9sH1GnhmZvavmKHcFJxXLwp++oAHo/98Kd48hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c/S2tX9g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4B7DC4CEF1;
+	Fri,  9 Jan 2026 10:42:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767955216;
-	bh=BGcYI9jqHXf7s/m+PSXbgbxK0T2s7hHg9CWJtKEqbLY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=U2QE0N4x5I1MI5JO7Ro03W6oDnAr5gh3z8Eu1gpvVZ6tvsJ4plTjiHB2A89hErPsI
-	 KZkHM5CGl54RSbRtQfWQ0FrkhBt6M84pQxKZt8q7S1f2yTry1/BFPjsj32C2sGQNvA
-	 Q5i5x0JoUk3dK9yuBdxbvI+KdulzJpLVWVSXoS9CI21RHxFaRh9fA8b//prXOi75z+
-	 Kwisr15nRk07ETYkPPwMJr2XqVdeRZkU5zjOFJD7BjdhcP2Civ8JtyKGuL5dROHbxl
-	 rBCfOceMmPVGmMpqPhpnI9bSRST7adnD/YGKtX5INaNmUGhInj8xC0Lc5GCkBZ8rkH
-	 81CxJM4l4hw4Q==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Fri,  9 Jan 2026 11:39:37 +0100
-Message-ID: <20260109-vfs-fixes-221725170b4e@brauner>
-X-Mailer: git-send-email 2.47.3
+	s=k20201202; t=1767955369;
+	bh=ljBAA3J/WyBhweINmujp9S/1yjKDZav9rqCw5O4UKzE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=c/S2tX9ggeLMjU5FqyBho/saF86TCn5TDETCH/P1hBLTLCv3wC3DwnkpTTGkYWdIO
+	 TVIiCiCvknT0dRKfTRDcSEBo2nK045Dl9f2ngT66a+T0YzDdPdwWMwQSvmJaKiJVj6
+	 2Ku4w063zO+hyzVYLRFlPV8edkFUgNUcs7Aorp2PPT5StPI8iLJYvYy8j/tm9ZH6T9
+	 FovjwJWxAcMtHxT0oSB/jEI7Qh4BevciqdxY3GmQLibGYROr+ovqfOnLpimRz85Cur
+	 s32o9HRbcZw6R4lWW0qv5ANPOjwYf0xyI7tKoERmEmS7ya5F13CKTJk1rqIKCBWnR2
+	 FqIuA2vBp0/eQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: fujita.tomonori@gmail.com, aliceryhl@google.com, lyude@redhat.com,
+ boqun.feng@gmail.com, will@kernel.org, peterz@infradead.org,
+ richard.henderson@linaro.org, mattst88@gmail.com, linmag7@gmail.com,
+ catalin.marinas@arm.com, ojeda@kernel.org, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, lossin@kernel.org, tmgross@umich.edu,
+ dakr@kernel.org, mark.rutland@arm.com, frederic@kernel.org,
+ tglx@linutronix.de, anna-maria@linutronix.de, jstultz@google.com,
+ sboyd@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, rust-for-linux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/5] rust: hrtimer: use READ_ONCE instead of read_volatile
+In-Reply-To: <20260109.111025.1944772328156797586.fujita.tomonori@gmail.com>
+References: <WXFPsf9COQPV_obKoZg2bYwPL3k9TT0oBL3uxNppUFaIj5hxEX9UokzS_DJ5Kg5kXDzLrZ9ihALTZcf6ehljGw==@protonmail.internalid>
+ <20260107.202245.559061117523678561.fujita.tomonori@gmail.com>
+ <87ms2pgu7c.fsf@t14s.mail-host-address-is-not-set>
+ <WYcxbOJ1udGdyPMUA8kKkahk7Ki9WxofI4h4jLV6blPUg_G6qoUP1C7FDkD_iU7Xd34u8HCn3nURARc1roTYxg==@protonmail.internalid>
+ <20260109.111025.1944772328156797586.fujita.tomonori@gmail.com>
+Date: Fri, 09 Jan 2026 11:42:38 +0100
+Message-ID: <87ldi7f4o1.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5321; i=brauner@kernel.org; h=from:subject:message-id; bh=BGcYI9jqHXf7s/m+PSXbgbxK0T2s7hHg9CWJtKEqbLY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQm3Pq8521wPotOUcr0nZnLVSfEHV925TfTy0ldVvlCX FWFGwP/dJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyE5wLD/9LM35UPQhs716kp rRTvz33EMH9DwH0Z46YZ+y9OuJpS/oyRYXdH6r8jkdencxWsaM0MK9zzdGN3OsM27Ybj+jJ7Wf0 +MgAA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hey Linus,
+"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
 
-/* Summary */
+> On Wed, 07 Jan 2026 19:21:11 +0100
+> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>
+>> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+>>
+>>> On Wed, 07 Jan 2026 11:11:43 +0100
+>>> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>>
+>>>> FUJITA Tomonori <fujita.tomonori@gmail.com> writes:
+>>>>
+>>>>> On Tue, 06 Jan 2026 13:37:34 +0100
+>>>>> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>>>>
+>>>>>> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+>>>>>>
+>>>>>>> On Thu, 01 Jan 2026 11:11:23 +0900 (JST)
+>>>>>>> FUJITA Tomonori <fujita.tomonori@gmail.com> wrote:
+>>>>>>>
+>>>>>>>> On Wed, 31 Dec 2025 12:22:28 +0000
+>>>>>>>> Alice Ryhl <aliceryhl@google.com> wrote:
+>>>>>>>>
+>>>>>>>>> Using `READ_ONCE` is the correct way to read the `node.expires` field.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>>>>>>>>> ---
+>>>>>>>>>  rust/kernel/time/hrtimer.rs | 8 +++-----
+>>>>>>>>>  1 file changed, 3 insertions(+), 5 deletions(-)
+>>>>>>>>>
+>>>>>>>>> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+>>>>>>>>> index 856d2d929a00892dc8eaec63cebdf547817953d3..e2b7a26f8aade972356c3eb5f6489bcda3e2e849 100644
+>>>>>>>>> --- a/rust/kernel/time/hrtimer.rs
+>>>>>>>>> +++ b/rust/kernel/time/hrtimer.rs
+>>>>>>>>> @@ -239,11 +239,9 @@ pub fn expires(&self) -> HrTimerInstant<T>
+>>>>>>>>>          // - Timers cannot have negative ktime_t values as their expiration time.
+>>>>>>>>>          // - There's no actual locking here, a racy read is fine and expected
+>>>>>>>>>          unsafe {
+>>>>>>>>> -            Instant::from_ktime(
+>>>>>>>>> -                // This `read_volatile` is intended to correspond to a READ_ONCE call.
+>>>>>>>>> -                // FIXME(read_once): Replace with `read_once` when available on the Rust side.
+>>>>>>>>> -                core::ptr::read_volatile(&raw const ((*c_timer_ptr).node.expires)),
+>>>>>>>>> -            )
+>>>>>>>>> +            Instant::from_ktime(kernel::sync::READ_ONCE(
+>>>>>>>>> +                &raw const (*c_timer_ptr).node.expires,
+>>>>>>>>> +            ))
+>>>>>>>>>          }
+>>>>>>>>
+>>>>>>>> Do we actually need READ_ONCE() here? I'm not sure but would it be
+>>>>>>>> better to call the C-side API?
+>>>>>>>>
+>>>>>>>> diff --git a/rust/helpers/time.c b/rust/helpers/time.c
+>>>>>>>> index 67a36ccc3ec4..73162dea2a29 100644
+>>>>>>>> --- a/rust/helpers/time.c
+>>>>>>>> +++ b/rust/helpers/time.c
+>>>>>>>> @@ -2,6 +2,7 @@
+>>>>>>>>
+>>>>>>>>  #include <linux/delay.h>
+>>>>>>>>  #include <linux/ktime.h>
+>>>>>>>> +#include <linux/hrtimer.h>
+>>>>>>>>  #include <linux/timekeeping.h>
+>>>>>>>>
+>>>>>>>>  void rust_helper_fsleep(unsigned long usecs)
+>>>>>>>> @@ -38,3 +39,8 @@ void rust_helper_udelay(unsigned long usec)
+>>>>>>>>  {
+>>>>>>>>  	udelay(usec);
+>>>>>>>>  }
+>>>>>>>> +
+>>>>>>>> +__rust_helper ktime_t rust_helper_hrtimer_get_expires(const struct hrtimer *timer)
+>>>>>>>> +{
+>>>>>>>> +	return timer->node.expires;
+>>>>>>>> +}
+>>>>>>>
+>>>>>>> Sorry, of course this should be:
+>>>>>>>
+>>>>>>> +__rust_helper ktime_t rust_helper_hrtimer_get_expires(const struct hrtimer *timer)
+>>>>>>> +{
+>>>>>>> +	return hrtimer_get_expires(timer);
+>>>>>>> +}
+>>>>>>>
+>>>>>>
+>>>>>> This is a potentially racy read. As far as I recall, we determined that
+>>>>>> using read_once is the proper way to handle the situation.
+>>>>>>
+>>>>>> I do not think it makes a difference that the read is done by C code.
+>>>>>
+>>>>> What does "racy read" mean here?
+>>>>>
+>>>>> The C side doesn't use WRITE_ONCE() or READ_ONCE for node.expires. How
+>>>>> would using READ_ONCE() on the Rust side make a difference?
+>>>>
+>>>> Data races like this are UB in Rust. As far as I understand, using this
+>>>> READ_ONCE implementation or a relaxed atomic read would make the read
+>>>> well defined. I am not aware if this is only the case if all writes to
+>>>> the location from C also use atomic operations or WRITE_ONCE. @Boqun?
+>>>
+>>> The C side updates node.expires without WRITE_ONCE()/atomics so a
+>>> Rust-side READ_ONCE() can still observe a torn value; I think that
+>>> this is still a data race / UB from Rust's perspective.
+>>>
+>>> And since expires is 64-bit, WRITE_ONCE() on 32-bit architectures does
+>>> not inherently guarantee tear-free stores either.
+>>>
+>>> I think that the expires() method should follow the same safety
+>>> requirements as raw_forward(): it should only be considered safe when
+>>> holding exclusive access to hrtimer or within the context of the timer
+>>> callback. Under those conditions, it would be fine to call C's
+>>> hrtimer_get_expires().
+>>
+>> We can make it safe, please see my comment here [1].
+>>
+>> Best regards,
+>> Andreas Hindborg
+>>
+>> [1] https://lore.kernel.org/r/87v7hdh9m4.fsf@t14s.mail-host-address-is-not-set
+>
+> I agree. My point was that expire() can be safe only under the same
+> constraints as forward()/forward_now() so the API should require
+> Pin<&mut Self> and expose it on HrTimerCallbackContext.
 
-This contains a few fixes for this cycle:
+Do you want to send a patch?
 
-- Remove incorrect __user annotation from struct xattr_args::value.
 
-- Documentation fix: Add missing kernel-doc description for the @isnew
-  parameter in ilookup5_nowait() to silence Sphinx warnings.
+Best regards,
+Andreas Hindborg
 
-- Documentation fix: Fix kernel-doc comment for __start_dirop() - the
-  function name in the comment was wrong and the @state parameter was
-  undocumented.
 
-- Replace dynamic folio_batch allocation with stack allocation in
-  iomap_zero_range(). The dynamic allocation was problematic for ext4-on-iomap
-  work (didn't handle allocation failure properly) and triggered lockdep
-  complaints. Uses a flag instead to control batch usage.
-
-- Re-add #ifdef guards around PIDFD_GET_<ns-type>_NAMESPACE ioctls. When a
-  namespace type is disabled, ns->ops is NULL, causes crashes during inode
-  eviction when closing the fd. The ifdefs were removed in a recent
-  simplification but are still needed.
-
-- Fixe a race where a folio could be unlocked before the trailing zeros (for
-  EOF within the page) were written.
-
-- Split out a dedicated lease_dispose_list() helper since lease code paths
-  always know they're disposing of leases. Removes unnecessary runtime flag
-  checks and prepares for upcoming lease_manager enhancements.
-
-- Fix userland delegation requests succeeding despite conflicting opens.
-  Previously, FL_LAYOUT and FL_DELEG leases bypassed conflict checks (a hack
-  for nfsd). Adds new ->lm_open_conflict() lease_manager operation so userland
-  delegations get proper conflict checking while nfsd can continue its own
-  conflict handling.
-
-- Fix LOOKUP_CACHED path lookups incorrectly falling through to the slow
-  path. After legitimize_links() calls were conditionally elided, the routine
-  would always fail with LOOKUP_CACHED regardless of whether there were any
-  links. Now the flag is checked at the two callsites before calling
-  legitimize_links().
-
-- Fix bug in media fd allocation in media_request_alloc().
-
-- Fix mismatched API calls in ecryptfs_mknod(): was calling end_removing()
-  instead of end_creating() after ecryptfs_start_creating_dentry().
-
-- Fix dentry reference count leak in ecryptfs_mkdir(): a dget() of the
-  lower parent dir was added but never dput()'d, causing BUG during lower
-  filesystem unmount due to the still-in-use dentry.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
-
-  Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.19-rc5.fixes
-
-for you to fetch changes up to 75ddaa4ddc86d31edb15e50152adf4ddee77a6ba:
-
-  pidfs: protect PIDFD_GET_* ioctls() via ifdef (2026-01-06 23:08:12 +0100)
-
-Please consider pulling these changes from the signed vfs-6.19-rc5.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.19-rc5.fixes
-
-----------------------------------------------------------------
-Al Viro (1):
-      get rid of bogus __user in struct xattr_args::value
-
-Bagas Sanjaya (2):
-      fs: Describe @isnew parameter in ilookup5_nowait()
-      VFS: fix __start_dirop() kernel-doc warnings
-
-Brian Foster (1):
-      iomap: replace folio_batch allocation with stack allocation
-
-Christian Brauner (3):
-      Merge patch series "filelock: fix conflict detection with userland file delegations"
-      Merge patch series "Fix two regressions from start_creating()/start_removing() conversion"
-      pidfs: protect PIDFD_GET_* ioctls() via ifdef
-
-David Howells (1):
-      netfs: Fix early read unlock of page with EOF in middle
-
-Jeff Layton (2):
-      filelock: add lease_dispose_list() helper
-      filelock: allow lease_managers to dictate what qualifies as a conflict
-
-Mateusz Guzik (1):
-      fs: make sure to fail try_to_unlazy() and try_to_unlazy() for LOOKUP_CACHED
-
-Mathias Krause (1):
-      media: mc: fix potential use-after-free in media_request_alloc()
-
-Tyler Hicks (2):
-      ecryptfs: Fix improper mknod pairing of start_creating()/end_removing()
-      ecryptfs: Release lower parent dentry after creating dir
-
- Documentation/filesystems/locking.rst |   1 +
- drivers/media/mc/mc-request.c         |   6 +-
- fs/ecryptfs/inode.c                   |   3 +-
- fs/inode.c                            |   3 +
- fs/iomap/buffered-io.c                |  50 +++++++++-----
- fs/iomap/iter.c                       |   6 +-
- fs/locks.c                            | 119 +++++++++++++++++-----------------
- fs/namei.c                            |  21 ++++--
- fs/netfs/read_collect.c               |   2 +-
- fs/nfsd/nfs4layouts.c                 |  23 ++++++-
- fs/nfsd/nfs4state.c                   |  19 ++++++
- fs/pidfs.c                            |  18 +++++
- fs/xfs/xfs_iomap.c                    |  11 ++--
- include/linux/filelock.h              |   1 +
- include/linux/iomap.h                 |   8 ++-
- include/uapi/linux/xattr.h            |   2 +-
- 16 files changed, 196 insertions(+), 97 deletions(-)
 
