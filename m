@@ -1,166 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-72979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC43D06E07
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 03:43:51 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D877D07069
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 04:47:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2D0F03019B43
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 02:43:38 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id C4235302008E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 03:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EBE316904;
-	Fri,  9 Jan 2026 02:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17DF17AE11;
+	Fri,  9 Jan 2026 03:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="OqYdaRkk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTJ6vPib"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4114E3164C7
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 02:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA882236F3
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 03:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767926616; cv=none; b=SUxebAUpG0yYqosOC0Lf1DFKmmSTUZHv+aGsnyFy5gnR9r+Oby+Xac779ZbuYBAOgjZJPB/iY0b1rHFhr7McZGp+7KY8sk2EzGNp7+Wa6KtMRwzjQAipKtAgxaJd4h07OSs/OxnXoXaflaYsxRuMv5aKQG07uM1xx4yprHTx8z4=
+	t=1767930378; cv=none; b=VOP3zzSeKFxD3U6Rz5uNPIs144QUXjJorq40Iy4aQGNoJgaGFM9RAXrkPxWW88ucfxiX0/6W0CZ0upoTQNkmu++ek/DZs8qNp0iDI4OrPWsrC+E6/knrrIKhDhqSzgMGh/0cYDQp6+HgtvflO/5NBg8HgahdP6+EMPbX28O05Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767926616; c=relaxed/simple;
-	bh=31vJYhUYTLE28Hpclzdc9C16YqvRvnCq+iuIWtrzsv4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VlTZfIP9HHNafAIr97KJm4DKR4/EGfamLCLzSgoYrZAn6HHuDUu6YhDP7ddHJd1pXnU3TB2C+QZrEO9CJOE6hHdV8mhNrTTf1CXmO0le62xeOT0B7Pro0VbZ/5YdMuz1OSoTYbTMPYswSyN1BUt/yLwpdHlFy3q3l3bgpL1gOb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=OqYdaRkk; arc=none smtp.client-ip=74.125.82.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-11bba84006dso364195c88.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 18:43:35 -0800 (PST)
+	s=arc-20240116; t=1767930378; c=relaxed/simple;
+	bh=4c8s/kx+oV/K2IKZou1YM6lkPttwcBvPrkfVDikA/4U=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=acxjhuPpWy3V5FFZRLq9NHkTm7yU9qvuoi6FfQ7DYRAH/xN3VMh/hPYt/wELwGK7yz5ejxPVu8gauRRil4swvIHjD2rv+VEPvF5/xNOcoAsgPBFpkwQLh5O4lSVp7cPY4+qQHQKbXayTUj18+IZvQKlWyTcTwUTTLCbAtCIrDNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HTJ6vPib; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-563686df549so95775e0c.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 19:46:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1767926614; x=1768531414; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KuIP2NVdq++SgGIo2WGA+xm04D3PzsWEchd6P2Jj/Xk=;
-        b=OqYdaRkkXujBFfwbPkw1wpC72S/frwwZYJgZRjIKV3EcuwhKD4t7ajT53anWj7JCZx
-         GeYje2uL4K6xsKxh5nOJoGqbz6lGLIyCrwje8SdZktDgG5HOGYJFVxDkMvwlEiFxmfr3
-         VPTLJOP6BnhCtX3wpdiSZawZsoB8ZucekEFHDayi8M5f2GwOdhnBg5+7oTNRdAJdun9z
-         yzVko28N0UuiFiqDAgKPfYxDn3nrYZOhdNrCvpZBd/JnK05htxXQ/4reGDD+G4i9vci0
-         iZ11DWMcBuySL+8prqDnANLxY2EAVttsx1lX9dugnJ2NyUsHcldFvXxs04Jb/RERnLmA
-         sS3A==
+        d=gmail.com; s=20230601; t=1767930376; x=1768535176; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p9T2BPf5beEn8hyeDIg1uadDWypr2H9Q3xF9+zmP6OE=;
+        b=HTJ6vPibCmY7QdO0EJ93quuK7O6kFtfTCWl0c8/1pw29IOV9yX7dp0YhhT+K4mMWVe
+         XF2o4U6LuKbrlQ1JctjV1qkEQQ50iZFLO7llpN4ZfopD+QZmizntnCophaDtEC9DJjA0
+         NppJjsAxHpg5yHz3/EEs+aztxE80VIhAXE3BtpGi3v9KAxJdupsZdW1F8y6Qo3f9dP+Q
+         tXpMeNUHnUgw5YF1i81s/Q2m0l8qndrij//8dmcjsBDg6Sv1b917arACYkWJv+zo60Zu
+         M5/AAIwCHxJiKmjHExyxybaiVkiJgGVNyoYO9U2F11n/AnHODG53gbSZPsSDBpcx2FbG
+         0CWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767926614; x=1768531414;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=KuIP2NVdq++SgGIo2WGA+xm04D3PzsWEchd6P2Jj/Xk=;
-        b=slJjEy8TaTD25PbwhaGpI2o/MPyyqjr1JDLJOpWtIMQXTfSyRSGYPcq0tKEnJS4rvh
-         EYyXLE5Vq4Ak0+XvXxW/JwA6zGwkKUjihBVsrDv9ICsnOL1z4Ixt6cYJHeWRSqjJg+QY
-         H6+edP/EpDjIM65QgWuT6PNkNIoe8AlrMfKpRqyb6bAO1IxlUtPvLtqPDYRejF72lhvB
-         xI4G89AmhPRWHRkvh03saiqo/jCqmlVIlmepUveFlQVm2tPBnipNWGDkLKZRCVggDxo+
-         efS5F6Xt/LP69WEayP2Ae9vhI7dssa5ce3drcDAysC7ned2JzgfAKRT/+zfdrN3b7/U9
-         i2ng==
-X-Forwarded-Encrypted: i=1; AJvYcCXG8H+4uoeI2M8gUBdSW5G9KInB2EFk70fxclxlSG07YNyNp9/SQh49cWrCgVxkOQlEr+hqDc5fBQKUjhX5@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwCFsqbWmX8YN36jIPq5Yaf+XFL7yGxM2EFP+T+X9RHdDfOOQO
-	9Py03A2mayPUrV+FZ4As7WEbfXrqGhkjmy5Pn5nihIzCTc5qtdBzFd/askm/C1YRM7GyRAmpO4M
-	F//ez8Xa/RzRyAGMUbTM1Ec2oi+HDPpIyYz1g9L7tBQ==
-X-Gm-Gg: AY/fxX7XVqna3s8HCIG17sCp3NnVHsXi7PB1nihuGjbm+p3XawxWT7aWg5LuaVekRhJ
-	04nR42QEmNUxsAYvk2wzqdvfYhfqosMqSvRzuX1JJwxtsTI7LA1pIMprTZSLeRpTeuWNuaDiNkj
-	+r1k+VbpdAvSKToShlkxq9NNNHs43d+j86rCeAYo5YbOHmy+PSyKmQv7wM01i0j3O6KcRmsnMcp
-	Kq8ZN5+RzVtrlUPJgHyOMlxPb0TBAgAlhiM9lVV8xCwvZlzmc9EXya85vfqaUUxpuIIgvsE1M6F
-	ksFjw3M=
-X-Google-Smtp-Source: AGHT+IFHht8LNLu9wC1vNjgcK5ZNYQwytH2g955mA0hstC5639tu7p4tomNGAaRkQ9kqG0TffnahHoCsCHzAzUgZkhY=
-X-Received: by 2002:a05:7022:2217:b0:11e:3e9:3e9b with SMTP id
- a92af1059eb24-121f8b60647mr3833271c88.6.1767926614213; Thu, 08 Jan 2026
- 18:43:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1767930376; x=1768535176;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p9T2BPf5beEn8hyeDIg1uadDWypr2H9Q3xF9+zmP6OE=;
+        b=LMXGkbKw56KfvbS8dLpKUwKb90d+9l0OBddpFhurgR0x9WW2AJ4fdnUOg4sqTRK+9l
+         XruWp0wtUSWrzvmwsguPl2bdyNBcvCBFlJm8OdSP4Zu7Cak1MU3F3kTdDnoT9kXEevJH
+         eu7yT1U/hd+fcUP+YocU7is5GcPdi1hIo7m5g+4tNNirkvdkkwMP5ySf68JusI6HuvqT
+         HHWry6NZ12lHnJYESr4C/iKbvDBme41lmbOny7pWxkkSVZUsHooEn/MUKGecl7fvJyMm
+         0j9M9IfdJsj4tEmmukp0JxIBAw9i0QwmCV+QI1VAxGARvVBn/Pw+Ov1x/mh629xrkj2+
+         Yh0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVbT2JRew+OH8/8+u4av3NVdxSak0RPflFhfhZkzNmX0plJaCXrM3y4UeYMRjFuubt/TwD4vqfHkS97GzT1@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa9rancDJFJQymhKyKFpZzM9bAxQNoc6/gPxjQHtsuY79HDRN3
+	ejbWckAAQXwjLpdD0yr9jNqqdqTjH4WmwVSELhlz58W/ehZIoAx+gp7rNUXAzw==
+X-Gm-Gg: AY/fxX57bPdCPjUHkmKfzHCeVZ7OFp/AnlSXRFhNEYBacwZHtmoloImqdBCJcQ5Wipx
+	SoeS4DKDh/Rog56bueUV81JBJFxw6K9b6DP7bJ/lcEW+r8jvsEB74slk4PY6M/D6aCEXYDoAoSx
+	aaWnlIu7/2vgJA5FEKMEJi8QCXIB4p7NlMTAyxnJTY02Q/3bSlOOf/3kO4dKGkNWy6JHI1wAOEP
+	NpDizaVesNT0VXS/Jap6ChDxf5dDpwPI9YzNaxOPAabc1nSlcUN948mZucR8O2teWjX+kmfvm/d
+	1hOX6FG5c9ETY1n06TXMrf275nO+cvfHLRX44fzEwvFuGsnRjK57Bfov5D/iyNjkkSdJZFHpqPf
+	UZg5o4q7A/dNe1AeASnIFQ3XQ/9YOMSwac+h5OG/K/C9DDlf/1NhwybJtwJYBbirs+S2zL+vU2j
+	06VjJ5p5ZyF4ngxNwERE0G/bVJGnuSJ/quY4EIul81Y8Ot9dGXegZpAHY14NFO0QU/zW9URnnUF
+	VtF8A==
+X-Google-Smtp-Source: AGHT+IHt+NS7u00xGrZ+95pdtQ5VgNDPq0qsP5mcbgbJ7rn8y9GOzh3GzuRv2Bv72b17iorfv7DOuQ==
+X-Received: by 2002:a17:902:c406:b0:2a0:9923:6954 with SMTP id d9443c01a7336-2a3ee48fbf3mr72625155ad.27.1767924633614;
+        Thu, 08 Jan 2026 18:10:33 -0800 (PST)
+Received: from localhost (p5342157-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.39.242.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a3e3c3a4f1sm87799265ad.8.2026.01.08.18.10.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Jan 2026 18:10:33 -0800 (PST)
+Date: Fri, 09 Jan 2026 11:10:25 +0900 (JST)
+Message-Id: <20260109.111025.1944772328156797586.fujita.tomonori@gmail.com>
+To: a.hindborg@kernel.org
+Cc: fujita.tomonori@gmail.com, aliceryhl@google.com, lyude@redhat.com,
+ boqun.feng@gmail.com, will@kernel.org, peterz@infradead.org,
+ richard.henderson@linaro.org, mattst88@gmail.com, linmag7@gmail.com,
+ catalin.marinas@arm.com, ojeda@kernel.org, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, lossin@kernel.org, tmgross@umich.edu,
+ dakr@kernel.org, mark.rutland@arm.com, frederic@kernel.org,
+ tglx@linutronix.de, anna-maria@linutronix.de, jstultz@google.com,
+ sboyd@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, rust-for-linux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/5] rust: hrtimer: use READ_ONCE instead of
+ read_volatile
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <87ms2pgu7c.fsf@t14s.mail-host-address-is-not-set>
+References: <WXFPsf9COQPV_obKoZg2bYwPL3k9TT0oBL3uxNppUFaIj5hxEX9UokzS_DJ5Kg5kXDzLrZ9ihALTZcf6ehljGw==@protonmail.internalid>
+	<20260107.202245.559061117523678561.fujita.tomonori@gmail.com>
+	<87ms2pgu7c.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251223003522.3055912-1-joannelkoong@gmail.com>
- <20251223003522.3055912-11-joannelkoong@gmail.com> <CADUfDZqHhVi1RY71dvEFbWsHmrzLbTSgev5o8yRXxExV5=XY2g@mail.gmail.com>
- <CAJnrk1ZQqgQmQyC8v47rpP0TrpcwGRzw6r9w4Z=TQO8EpQOF3g@mail.gmail.com>
-In-Reply-To: <CAJnrk1ZQqgQmQyC8v47rpP0TrpcwGRzw6r9w4Z=TQO8EpQOF3g@mail.gmail.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Thu, 8 Jan 2026 18:43:22 -0800
-X-Gm-Features: AQt7F2q-gqNpugddpUigjhF-0Ud4D2b2rNKxcVUgfWOMT58EjgRYljFXh3fQwR8
-Message-ID: <CADUfDZpjx2trr5GeyCjidZx=i_2YKW+V=Ec6Pk6um8yLU7KAQg@mail.gmail.com>
-Subject: Re: [PATCH v3 10/25] io_uring/kbuf: export io_ring_buffer_select()
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
-	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jan 8, 2026 at 4:38=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> On Thu, Jan 8, 2026 at 12:34=E2=80=AFPM Caleb Sander Mateos
-> <csander@purestorage.com> wrote:
-> >
-> > On Mon, Dec 22, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
-l.com> wrote:
-> > >
-> > > Export io_ring_buffer_select() so that it may be used by callers who
-> > > pass in a pinned bufring without needing to grab the io_uring mutex.
-> > >
-> > > This is a preparatory patch that will be needed by fuse io-uring, whi=
-ch
-> > > will need to select a buffer from a kernel-managed bufring while the
-> > > uring mutex may already be held by in-progress commits, and may need =
-to
-> > > select a buffer in atomic contexts.
-> > >
-> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > ---
-> > >  include/linux/io_uring/buf.h | 25 +++++++++++++++++++++++++
-> > >  io_uring/kbuf.c              |  8 +++++---
-> > >  2 files changed, 30 insertions(+), 3 deletions(-)
-> > >  create mode 100644 include/linux/io_uring/buf.h
-> > >
-> > > diff --git a/include/linux/io_uring/buf.h b/include/linux/io_uring/bu=
-f.h
-> > > new file mode 100644
-> > > index 000000000000..3f7426ced3eb
-> > > --- /dev/null
-> > > +++ b/include/linux/io_uring/buf.h
-> > > @@ -0,0 +1,25 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> > > +#ifndef _LINUX_IO_URING_BUF_H
-> > > +#define _LINUX_IO_URING_BUF_H
-> > > +
-> > > +#include <linux/io_uring_types.h>
-> > > +
-> > > +#if defined(CONFIG_IO_URING)
-> > > +struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t =
-*len,
-> >
-> > I think struct io_kiocb isn't intended to be exposed outside of
-> > io_uring internal code. Is there a reason not to instead expose a
-> > wrapper function that takes struct io_uring_cmd * instead?
->
-> Oh interesting... I see struct io_kiocb defined in
-> include/linux/io_uring_types.h, so I assumed this was fine to use.
+On Wed, 07 Jan 2026 19:21:11 +0100
+Andreas Hindborg <a.hindborg@kernel.org> wrote:
 
-Yeah, I see a lot of types that look io_uring-internal in
-include/linux/io_uring_types.h. I'm not sure why they're visible to
-the rest of the kernel rather than forward declared. But Jens please
-correct me if I'm misunderstanding whether these types are meant to be
-private to the io_uring subsystem.
+> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+> 
+>> On Wed, 07 Jan 2026 11:11:43 +0100
+>> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>
+>>> FUJITA Tomonori <fujita.tomonori@gmail.com> writes:
+>>>
+>>>> On Tue, 06 Jan 2026 13:37:34 +0100
+>>>> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>>>
+>>>>> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+>>>>>
+>>>>>> On Thu, 01 Jan 2026 11:11:23 +0900 (JST)
+>>>>>> FUJITA Tomonori <fujita.tomonori@gmail.com> wrote:
+>>>>>>
+>>>>>>> On Wed, 31 Dec 2025 12:22:28 +0000
+>>>>>>> Alice Ryhl <aliceryhl@google.com> wrote:
+>>>>>>>
+>>>>>>>> Using `READ_ONCE` is the correct way to read the `node.expires` field.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>>>>>>>> ---
+>>>>>>>>  rust/kernel/time/hrtimer.rs | 8 +++-----
+>>>>>>>>  1 file changed, 3 insertions(+), 5 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+>>>>>>>> index 856d2d929a00892dc8eaec63cebdf547817953d3..e2b7a26f8aade972356c3eb5f6489bcda3e2e849 100644
+>>>>>>>> --- a/rust/kernel/time/hrtimer.rs
+>>>>>>>> +++ b/rust/kernel/time/hrtimer.rs
+>>>>>>>> @@ -239,11 +239,9 @@ pub fn expires(&self) -> HrTimerInstant<T>
+>>>>>>>>          // - Timers cannot have negative ktime_t values as their expiration time.
+>>>>>>>>          // - There's no actual locking here, a racy read is fine and expected
+>>>>>>>>          unsafe {
+>>>>>>>> -            Instant::from_ktime(
+>>>>>>>> -                // This `read_volatile` is intended to correspond to a READ_ONCE call.
+>>>>>>>> -                // FIXME(read_once): Replace with `read_once` when available on the Rust side.
+>>>>>>>> -                core::ptr::read_volatile(&raw const ((*c_timer_ptr).node.expires)),
+>>>>>>>> -            )
+>>>>>>>> +            Instant::from_ktime(kernel::sync::READ_ONCE(
+>>>>>>>> +                &raw const (*c_timer_ptr).node.expires,
+>>>>>>>> +            ))
+>>>>>>>>          }
+>>>>>>>
+>>>>>>> Do we actually need READ_ONCE() here? I'm not sure but would it be
+>>>>>>> better to call the C-side API?
+>>>>>>>
+>>>>>>> diff --git a/rust/helpers/time.c b/rust/helpers/time.c
+>>>>>>> index 67a36ccc3ec4..73162dea2a29 100644
+>>>>>>> --- a/rust/helpers/time.c
+>>>>>>> +++ b/rust/helpers/time.c
+>>>>>>> @@ -2,6 +2,7 @@
+>>>>>>>
+>>>>>>>  #include <linux/delay.h>
+>>>>>>>  #include <linux/ktime.h>
+>>>>>>> +#include <linux/hrtimer.h>
+>>>>>>>  #include <linux/timekeeping.h>
+>>>>>>>
+>>>>>>>  void rust_helper_fsleep(unsigned long usecs)
+>>>>>>> @@ -38,3 +39,8 @@ void rust_helper_udelay(unsigned long usec)
+>>>>>>>  {
+>>>>>>>  	udelay(usec);
+>>>>>>>  }
+>>>>>>> +
+>>>>>>> +__rust_helper ktime_t rust_helper_hrtimer_get_expires(const struct hrtimer *timer)
+>>>>>>> +{
+>>>>>>> +	return timer->node.expires;
+>>>>>>> +}
+>>>>>>
+>>>>>> Sorry, of course this should be:
+>>>>>>
+>>>>>> +__rust_helper ktime_t rust_helper_hrtimer_get_expires(const struct hrtimer *timer)
+>>>>>> +{
+>>>>>> +	return hrtimer_get_expires(timer);
+>>>>>> +}
+>>>>>>
+>>>>>
+>>>>> This is a potentially racy read. As far as I recall, we determined that
+>>>>> using read_once is the proper way to handle the situation.
+>>>>>
+>>>>> I do not think it makes a difference that the read is done by C code.
+>>>>
+>>>> What does "racy read" mean here?
+>>>>
+>>>> The C side doesn't use WRITE_ONCE() or READ_ONCE for node.expires. How
+>>>> would using READ_ONCE() on the Rust side make a difference?
+>>>
+>>> Data races like this are UB in Rust. As far as I understand, using this
+>>> READ_ONCE implementation or a relaxed atomic read would make the read
+>>> well defined. I am not aware if this is only the case if all writes to
+>>> the location from C also use atomic operations or WRITE_ONCE. @Boqun?
+>>
+>> The C side updates node.expires without WRITE_ONCE()/atomics so a
+>> Rust-side READ_ONCE() can still observe a torn value; I think that
+>> this is still a data race / UB from Rust's perspective.
+>>
+>> And since expires is 64-bit, WRITE_ONCE() on 32-bit architectures does
+>> not inherently guarantee tear-free stores either.
+>>
+>> I think that the expires() method should follow the same safety
+>> requirements as raw_forward(): it should only be considered safe when
+>> holding exclusive access to hrtimer or within the context of the timer
+>> callback. Under those conditions, it would be fine to call C's
+>> hrtimer_get_expires().
+> 
+> We can make it safe, please see my comment here [1].
+> 
+> Best regards,
+> Andreas Hindborg
+> 
+> [1] https://lore.kernel.org/r/87v7hdh9m4.fsf@t14s.mail-host-address-is-not-set
 
-> Hmm, we could wrap this in io_uring_cmd * instead, but that adds an
-> extra layer and I think it clashes with the philosophy of io_uring_cmd
-> being a "general user interface" (or maybe my interpretation of
-> io_uring_cmd is incorrect) whereas this api is pretty io-uring
+I agree. My point was that expire() can be safe only under the same
+constraints as forward()/forward_now() so the API should require
+Pin<&mut Self> and expose it on HrTimerCallbackContext.
 
-That's my understanding of io_uring_cmd too.
-
-> internal specific (eg bypasses the io ring lock which means it'll be
-> responsible for having to do its own synchronization, passing the
-> io_buffer_list pointer directly, etc.).
-
-That's a good point. I wonder if there's a better way to encapsulate
-this for general usage outside of io_uring? I'm not that familiar with
-io_uring buffer rings, though.
-
-Best,
-Caleb
 
