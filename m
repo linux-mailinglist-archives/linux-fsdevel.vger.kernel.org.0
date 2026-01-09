@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-73034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A79DD08A4D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 11:42:09 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F198D08A6D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 11:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 71303301A20B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 10:41:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1C9C83075154
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 10:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C8433BBA5;
-	Fri,  9 Jan 2026 10:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A95433B6E8;
+	Fri,  9 Jan 2026 10:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Z24fuybK"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="XTt90r0W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3286F33893D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FBE3385A6;
 	Fri,  9 Jan 2026 10:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767955308; cv=none; b=QLmblceZfKc0uE6dCiMkD1RMDUSWlb2YScZhZ9oXsj46F7CpdO9GzUqUEO1KA61z8H9oqsQTI4yisKq/uZnAq8/Z809wRyYNE5SrhHMxrCMeErGBUo6yzZr8aTltp1gK3WP+oFxGybuOITobMymknXQvmbYSsmq2SDFXJAX5qxA=
+	t=1767955307; cv=none; b=Qq02wWSGQOjMaBMSCsB6sc9nhC6Tig/XRfCtGzHAqPzLiGrqdJTLfpT4Uteouy3Qi4xclERJCD/wAYMIhCGj/7XdYJAuyerjyJ8HFi1S6g8lQfzt6DVVInretmLQhJGnRSRvcv4MdyVvfH5/3uJQzswZLPAYoiPEVAMNTCS6Uxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767955308; c=relaxed/simple;
-	bh=XxmzXe2ALk+cJokJyZTcldvZKiFIjuJxnLZ347vbwf4=;
+	s=arc-20240116; t=1767955307; c=relaxed/simple;
+	bh=PYdNHSrXX5eN6ykaQblXrdXLRMXgyv5AEtSAZ3iXG4s=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YGrdoIwMhZOu/7mrCj+rs7Kk5fxraDSDJtwzDknDgK4MzK17ePJPfVgrYweFSHmcHy2yuJomWq8bHAST+fmae0Wfeo7zIk/BMwVX4q0DnLBPEVySSVnEmMv1oBWzn+/pDqZnaaktGS8NFoOHtTU1S1orIZT/u0idI5x1Jq6YGdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Z24fuybK; arc=none smtp.client-ip=113.46.200.226
+	 MIME-Version:Content-Type; b=GIpC+4IIyYMNKpOKe9uqcJM2PpiWAaqqKlIeoOhHyr/M7h8c8sN+b8CXE4ZxBjPGNyY6EpVHwa+ABPZITqLCBmTBSuV29j6512m04Tmecq5DfFLcBgu2basHJqChZ+ubOc7FjhKnsXDqlSzQeVPNwGas8Ebj/3fptaugAam7KE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=XTt90r0W; arc=none smtp.client-ip=113.46.200.221
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
 	c=relaxed/relaxed; q=dns/txt;
 	h=From;
-	bh=15hkKSfpgVy2Gef7Z9q+RsD0COZ3AO40LmW6kBeI3K8=;
-	b=Z24fuybKF60Tlz4KzAHSBpEOo5qJMuL4Lcgr6nwiTD95TkIijnNP8gBhL/2x9w+n9crNKf4Bu
-	Fl6VAoF9hEHUv2PIYRZIsVob3/1wfLZFXbzQH/+GvSqV7b7epC64q0NgC5+6b95Wryxkyij9tj6
-	ILln8auSlAxQip0Dup90qLA=
-Received: from mail.maildlp.com (unknown [172.19.162.92])
-	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dndXf4y6bzKm4b;
-	Fri,  9 Jan 2026 18:38:26 +0800 (CST)
+	bh=Prkh09N5bY6Pyt+qiNdP7r6JDJbv/0vdTFS2y1gv9ss=;
+	b=XTt90r0WLlDDbIGT19XniWLvF12SMqSxjxjUBxv58gwmoIMdR+3gNTPZQ+93jx2QFTQ5oRyWk
+	aftb3rp0pqhqRiD2A7nsHd9FUSJIaA5nCqDBXqXLI4Rox+KyHeKRiJPqrZ70Kx+mMtZYwDiKqYF
+	TlyOBfPmVKtSTql0j67mUAI=
+Received: from mail.maildlp.com (unknown [172.19.163.104])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4dndXg3Dx6zRhQg;
+	Fri,  9 Jan 2026 18:38:27 +0800 (CST)
 Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id 00FBB40562;
+	by mail.maildlp.com (Postfix) with ESMTPS id 59BC04056A;
 	Fri,  9 Jan 2026 18:41:44 +0800 (CST)
 Received: from huawei.com (10.67.174.162) by kwepemr500015.china.huawei.com
  (7.202.195.162) with Microsoft SMTP Server (version=TLS1_2,
@@ -51,9 +51,9 @@ To: <hsiangkao@linux.alibaba.com>, <chao@kernel.org>, <brauner@kernel.org>
 CC: <djwong@kernel.org>, <amir73il@gmail.com>, <hch@lst.de>,
 	<linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
 	<linux-kernel@vger.kernel.org>, <lihongbo22@huawei.com>
-Subject: [PATCH v14 09/10] erofs: support compressed inodes for page cache share
-Date: Fri, 9 Jan 2026 10:28:55 +0000
-Message-ID: <20260109102856.598531-10-lihongbo22@huawei.com>
+Subject: [PATCH v14 10/10] erofs: implement .fadvise for page cache share
+Date: Fri, 9 Jan 2026 10:28:56 +0000
+Message-ID: <20260109102856.598531-11-lihongbo22@huawei.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20260109102856.598531-1-lihongbo22@huawei.com>
 References: <20260109102856.598531-1-lihongbo22@huawei.com>
@@ -70,133 +70,43 @@ X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
 
 From: Hongzhen Luo <hongzhen@linux.alibaba.com>
 
-This patch adds page cache sharing functionality for compressed inodes.
+This patch implements the .fadvise interface for page cache share.
+Similar to overlayfs, it drops those clean, unused pages through
+vfs_fadvise().
 
 Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
 Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 ---
- fs/erofs/ishare.c |  2 --
- fs/erofs/zdata.c  | 38 ++++++++++++++++++++++++--------------
- 2 files changed, 24 insertions(+), 16 deletions(-)
+ fs/erofs/ishare.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/fs/erofs/ishare.c b/fs/erofs/ishare.c
-index 24bbd6a7a900..366f0d79e008 100644
+index 366f0d79e008..2258682b76cf 100644
 --- a/fs/erofs/ishare.c
 +++ b/fs/erofs/ishare.c
-@@ -44,8 +44,6 @@ bool erofs_ishare_fill_inode(struct inode *inode)
- 	struct inode *sharedinode;
- 	unsigned long hash;
- 
--	if (erofs_inode_is_data_compressed(vi->datalayout))
--		return false;
- 	if (erofs_xattr_fill_inode_fingerprint(&fp, inode, sbi->domain_id))
- 		return false;
- 	hash = xxh32(fp.opaque, fp.size, 0);
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 93ab6a481b64..59ee9a36d9eb 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -493,7 +493,7 @@ enum z_erofs_pclustermode {
- };
- 
- struct z_erofs_frontend {
--	struct inode *const inode;
-+	struct inode *inode, *sharedinode;
- 	struct erofs_map_blocks map;
- 	struct z_erofs_bvec_iter biter;
- 
-@@ -508,8 +508,8 @@ struct z_erofs_frontend {
- 	unsigned int icur;
- };
- 
--#define Z_EROFS_DEFINE_FRONTEND(fe, i, ho) struct z_erofs_frontend fe = { \
--	.inode = i, .head = Z_EROFS_PCLUSTER_TAIL, \
-+#define Z_EROFS_DEFINE_FRONTEND(fe, i, si, ho) struct z_erofs_frontend fe = { \
-+	.inode = i, .sharedinode = si, .head = Z_EROFS_PCLUSTER_TAIL, \
- 	.mode = Z_EROFS_PCLUSTER_FOLLOWED, .headoffset = ho }
- 
- static bool z_erofs_should_alloc_cache(struct z_erofs_frontend *fe)
-@@ -1866,7 +1866,7 @@ static void z_erofs_pcluster_readmore(struct z_erofs_frontend *f,
- 		pgoff_t index = cur >> PAGE_SHIFT;
- 		struct folio *folio;
- 
--		folio = erofs_grab_folio_nowait(inode->i_mapping, index);
-+		folio = erofs_grab_folio_nowait(f->sharedinode->i_mapping, index);
- 		if (!IS_ERR_OR_NULL(folio)) {
- 			if (folio_test_uptodate(folio))
- 				folio_unlock(folio);
-@@ -1883,11 +1883,13 @@ static void z_erofs_pcluster_readmore(struct z_erofs_frontend *f,
- 
- static int z_erofs_read_folio(struct file *file, struct folio *folio)
- {
--	struct inode *const inode = folio->mapping->host;
--	Z_EROFS_DEFINE_FRONTEND(f, inode, folio_pos(folio));
-+	struct inode *sharedinode = folio->mapping->host;
-+	bool need_iput;
-+	struct inode *realinode = erofs_real_inode(sharedinode, &need_iput);
-+	Z_EROFS_DEFINE_FRONTEND(f, realinode, sharedinode, folio_pos(folio));
- 	int err;
- 
--	trace_erofs_read_folio(inode, folio, false);
-+	trace_erofs_read_folio(realinode, folio, false);
- 	z_erofs_pcluster_readmore(&f, NULL, true);
- 	err = z_erofs_scan_folio(&f, folio, false);
- 	z_erofs_pcluster_readmore(&f, NULL, false);
-@@ -1896,23 +1898,28 @@ static int z_erofs_read_folio(struct file *file, struct folio *folio)
- 	/* if some pclusters are ready, need submit them anyway */
- 	err = z_erofs_runqueue(&f, 0) ?: err;
- 	if (err && err != -EINTR)
--		erofs_err(inode->i_sb, "read error %d @ %lu of nid %llu",
--			  err, folio->index, EROFS_I(inode)->nid);
-+		erofs_err(realinode->i_sb, "read error %d @ %lu of nid %llu",
-+			  err, folio->index, EROFS_I(realinode)->nid);
- 
- 	erofs_put_metabuf(&f.map.buf);
- 	erofs_release_pages(&f.pagepool);
-+
-+	if (need_iput)
-+		iput(realinode);
- 	return err;
+@@ -149,6 +149,13 @@ static int erofs_ishare_mmap(struct file *file, struct vm_area_struct *vma)
+ 	return generic_file_readonly_mmap(file, vma);
  }
  
- static void z_erofs_readahead(struct readahead_control *rac)
- {
--	struct inode *const inode = rac->mapping->host;
--	Z_EROFS_DEFINE_FRONTEND(f, inode, readahead_pos(rac));
-+	struct inode *sharedinode = rac->mapping->host;
-+	bool need_iput;
-+	struct inode *realinode = erofs_real_inode(sharedinode, &need_iput);
-+	Z_EROFS_DEFINE_FRONTEND(f, realinode, sharedinode, readahead_pos(rac));
- 	unsigned int nrpages = readahead_count(rac);
- 	struct folio *head = NULL, *folio;
- 	int err;
- 
--	trace_erofs_readahead(inode, readahead_index(rac), nrpages, false);
-+	trace_erofs_readahead(realinode, readahead_index(rac), nrpages, false);
- 	z_erofs_pcluster_readmore(&f, rac, true);
- 	while ((folio = readahead_folio(rac))) {
- 		folio->private = head;
-@@ -1926,8 +1933,8 @@ static void z_erofs_readahead(struct readahead_control *rac)
- 
- 		err = z_erofs_scan_folio(&f, folio, true);
- 		if (err && err != -EINTR)
--			erofs_err(inode->i_sb, "readahead error at folio %lu @ nid %llu",
--				  folio->index, EROFS_I(inode)->nid);
-+			erofs_err(realinode->i_sb, "readahead error at folio %lu @ nid %llu",
-+				  folio->index, EROFS_I(realinode)->nid);
- 	}
- 	z_erofs_pcluster_readmore(&f, rac, false);
- 	z_erofs_pcluster_end(&f);
-@@ -1935,6 +1942,9 @@ static void z_erofs_readahead(struct readahead_control *rac)
- 	(void)z_erofs_runqueue(&f, nrpages);
- 	erofs_put_metabuf(&f.map.buf);
- 	erofs_release_pages(&f.pagepool);
++static int erofs_ishare_fadvise(struct file *file, loff_t offset,
++				      loff_t len, int advice)
++{
++	return vfs_fadvise((struct file *)file->private_data,
++			   offset, len, advice);
++}
 +
-+	if (need_iput)
-+		iput(realinode);
- }
+ const struct file_operations erofs_ishare_fops = {
+ 	.open		= erofs_ishare_file_open,
+ 	.llseek		= generic_file_llseek,
+@@ -157,6 +164,7 @@ const struct file_operations erofs_ishare_fops = {
+ 	.release	= erofs_ishare_file_release,
+ 	.get_unmapped_area = thp_get_unmapped_area,
+ 	.splice_read	= filemap_splice_read,
++	.fadvise	= erofs_ishare_fadvise,
+ };
  
- const struct address_space_operations z_erofs_aops = {
+ struct inode *erofs_real_inode(struct inode *inode, bool *need_iput)
 -- 
 2.22.0
 
