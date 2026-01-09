@@ -1,122 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-73072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED9DD0B863
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 18:09:49 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FEB1D0B920
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 18:16:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C586630318CB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 17:09:34 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 0F657301D6AA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 17:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B96D364E92;
-	Fri,  9 Jan 2026 17:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F3CDDAB;
+	Fri,  9 Jan 2026 17:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqlIXH02"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Yrj0H7vh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D973830DEAD
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 17:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4C735A926;
+	Fri,  9 Jan 2026 17:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767978571; cv=none; b=d1Kvj34NrdAKuz9vJs53jU4aKZaXxvDbncjuNgHsa8j56q39bQVhSqJ5sd1iqiJ/f9+l4KjTknemqdlV2tCP7n93SA4sw+KpTfOxrQMd/3AZ5Rqhza/MGJp0AwYDjWDE5llxs24i5/HeY5ApksmlRLw6fO2Yf9wbGFgyY7/l/+Y=
+	t=1767978981; cv=none; b=id7SNMhhCYNRqiBz+lrzRoZshpAokegHCBv+ndc97KFXaKa3tEm2XbwQdoOOanuoCrvEn+epBccyeOWeYbI2288A5GzNSdz8ND+CqsptedfRrLNLJy9oMTttH77BFujs7fpx37kUJ3YWezxCGRtfGiOlhwWI15qfLBb8uBAPVjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767978571; c=relaxed/simple;
-	bh=CmmC3NzlCTnOQbz4Ij7QmBHDhBb/WMIocxB9pzKpeoQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZHmD7oZGLk7q/5ZaT4/K4WG4JYBRRWeJv0qjobGYMqgt6imCkMnGnfQkGzfnx1XuopHVitI0g7DumvtHolTvnlf4fAsQ/nsyCdQg00jNFKNrCV6uQ3dQxRPOtS6AoYIIyZzt2894yGVKzjPF5eaU5KfP2AzWZwk1zfwjkplRwEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqlIXH02; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B6B6C4CEF1
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 17:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767978571;
-	bh=CmmC3NzlCTnOQbz4Ij7QmBHDhBb/WMIocxB9pzKpeoQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NqlIXH02rDdtTYfTQ0NhQZYEpFm8uNgYTuql9ORmjvUoPG3aUxPsI5nnbvvVEPI+V
-	 jx1r+GtyyAF/9uxCylR2SwfxHSOBfjakDHRriK2D7/PtFwfMTNdaWKQ4ZHcsTFV8tq
-	 S2O7FS0XnV2xrEbzBvktV1UZuwl8OkFt7dNrFpfJOryTymQvWcM1qcVijCseicu+pt
-	 jMrAhYecI0m6Wr0ah/R0vzztuZp4P/P6U++/vW5fCshATYenl/wlGaZJf2fng/d1WN
-	 gMAJlNJ9bCUfODzt+pXAc2LnLyoXEt6+1ZQ4hg9Nk+/LoH6pdzZE+KKrFX2zY1K/70
-	 p9ADt5Tktdmgw==
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b7ffa5d1b80so672750666b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 09:09:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU9NVBRe+W/783FLl8PNycg69+py8XMb7VcLUaMN0gIk8EnHp2PrkVUIDM2l+X1ME6M980eG+XvYKqQz28f@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqSYLAhKFI7YwZ5CZ5eoNXiWz1HhW/AQCh7uHf70Wgq0mRE5WV
-	I9t4KGCK2mEQfqKQ7f0SVXQ7oxJMkFp+tCqHib5vm8GydWWz7Tbg2LfNNPsBSMCzFXFDclFttS4
-	BIW8PiQNluEcSyswrDae4GxVAl3oZcd0=
-X-Google-Smtp-Source: AGHT+IHtdU3Ba+HS2MP5A8puWjvbeDMt3AIgA6tutRjgeki7znqHviULA03UAFqEJgO1j+1H5uKJ6vF+kcwvIv8IVFU=
-X-Received: by 2002:a17:907:9603:b0:b73:210a:44e with SMTP id
- a640c23a62f3a-b8444f4f675mr984174866b.30.1767978570170; Fri, 09 Jan 2026
- 09:09:30 -0800 (PST)
+	s=arc-20240116; t=1767978981; c=relaxed/simple;
+	bh=ArAQ5ZiqCESPPsVWz+uaRx+FMRwyB7pAC2WKR8mtv7I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sV/2uld68ojRPi8mo3SjjQW4IPD7txP9gbVqrWPQsBYRih8aDs7r8PGd8iyxPz1vuV9KnC9vBLIYyj0T+VXwCivodCLhtjFj/yu9J0HxQMjf/W8P2SW7g01YRCta7q+TZQHe5jZWYCkMK7EWt0oTo4nC69kJ0Nk0Yc3xYc6mxwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Yrj0H7vh; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=5ZKww+Iwebeo8GFNHGn28wnzILsOtOLDWG3uxLZcZr4=; b=Yrj0H7vhb9o6oPMneIfWOkn/zA
+	OzM1geJ6VQZQbbZOxIgiYO0n2VZZYM997wCRAglkpMNL//Qj2+snzaxs81qYGJPGs9OFDqYT1AORL
+	afFkIMW1e1G6FJksaU0Xei2bGYRDwVzifGJhkJAWGc+FCu93I67DvMvykTKyKLg63ddfZGSNcVRTq
+	OtTAtMEOfnWBpAz9noXDVuqR/SOy061JEwVIwa7iKCKPhOS2VyfNrq5ZotQWdQ+A0TNBnaMH02hMk
+	t8ZWstkD+h1+V1uyt5QHKc+Bj1uPCGk5MKRDa8HX5x2zPOYvocBrSoNCG5qtp4iGMeVBIPXEma3Au
+	szokb/BQ==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1veG5o-003VU4-B5; Fri, 09 Jan 2026 18:16:08 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bschubert@ddn.com>,  Amir Goldstein
+ <amir73il@gmail.com>,  "Darrick J. Wong" <djwong@kernel.org>,  Kevin Chen
+ <kchen@ddn.com>,  Horst Birthelmer <hbirthelmer@ddn.com>,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Matt
+ Harvey <mharvey@jumptrading.com>,  kernel-dev@igalia.com
+Subject: Re: [RFC PATCH v2 4/6] fuse: implementation of the
+ FUSE_LOOKUP_HANDLE operation
+In-Reply-To: <CAJfpegvxLqpa0ttnEjY1W1Oqf5vpw3uKrrf8y5DdnuXcnQJzNg@mail.gmail.com>
+	(Miklos Szeredi's message of "Fri, 9 Jan 2026 17:28:30 +0100")
+References: <20251212181254.59365-1-luis@igalia.com>
+	<20251212181254.59365-5-luis@igalia.com>
+	<CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com>
+	<87zf6nov6c.fsf@wotan.olymp>
+	<CAJfpegst6oha7-M+8v9cYpk7MR-9k_PZofJ3uzG39DnVoVXMkA@mail.gmail.com>
+	<CAOQ4uxjXN0BNZaFmgs3U7g5jPmBOVV4HenJYgdfO_-6oV94ACw@mail.gmail.com>
+	<CAJfpegsS1gijE=hoaQCiR+i7vmHHxxhkguGJvMf6aJ2Ez9r1dw@mail.gmail.com>
+	<b2582658-c5e9-4cf8-b673-5ccc78fe0d75@ddn.com>
+	<CAJfpegvxLqpa0ttnEjY1W1Oqf5vpw3uKrrf8y5DdnuXcnQJzNg@mail.gmail.com>
+Date: Fri, 09 Jan 2026 17:16:07 +0000
+Message-ID: <87ldi64sh4.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1767801889.git.fdmanana@suse.com> <a56191f13dc946951f94ddec1dc714991576d38f.1767801889.git.fdmanana@suse.com>
- <20260108214838.GO21071@twin.jikos.cz>
-In-Reply-To: <20260108214838.GO21071@twin.jikos.cz>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Fri, 9 Jan 2026 17:08:52 +0000
-X-Gmail-Original-Message-ID: <CAL3q7H5svDGgRO5aMoB_bdWCQECvtPe1KMWv554ijTDw2y8k5g@mail.gmail.com>
-X-Gm-Features: AQt7F2pP5UnoyMr0w_5RW0_lm7rrUo3DIW4lBozNwDrYLOiy_XDmOApMceXvnK0
-Message-ID: <CAL3q7H5svDGgRO5aMoB_bdWCQECvtPe1KMWv554ijTDw2y8k5g@mail.gmail.com>
-Subject: Re: [PATCH 4/4] btrfs: use may_create_dentry() in btrfs_mksubvol()
-To: dsterba@suse.cz
-Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	Filipe Manana <fdmanana@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 8, 2026 at 9:48=E2=80=AFPM David Sterba <dsterba@suse.cz> wrote=
-:
->
-> On Thu, Jan 08, 2026 at 01:35:34PM +0000, fdmanana@kernel.org wrote:
-> > From: Filipe Manana <fdmanana@suse.com>
-> >
-> > There is no longer the need to use btrfs_may_create(), which was a copy
-> > of the VFS private function may_create(), since now that functionality
-> > is exported by the VFS as a function named may_create_dentry(). So chan=
-ge
-> > btrfs_mksubvol() to use the VFS function and remove btrfs_may_create().
-> >
-> > Signed-off-by: Filipe Manana <fdmanana@suse.com>
-> > ---
-> >  fs/btrfs/ioctl.c | 15 +--------------
-> >  1 file changed, 1 insertion(+), 14 deletions(-)
-> >
-> > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> > index 0cb3cd3d05a5..9cf37459ef6d 100644
-> > --- a/fs/btrfs/ioctl.c
-> > +++ b/fs/btrfs/ioctl.c
-> > @@ -815,19 +815,6 @@ static int create_snapshot(struct btrfs_root *root=
-, struct inode *dir,
-> >       return ret;
-> >  }
-> >
-> > -/* copy of may_create in fs/namei.c() */
-> > -static inline int btrfs_may_create(struct mnt_idmap *idmap,
-> > -                                struct inode *dir, const struct dentry=
- *child)
-> > -{
->
-> The difference to the VFS version is lack of audit_inode_child() in
-> this place, so this may be good to mention in the changelog.
-> Functionally the audit subsystem missed the event of subvolume creation.
+On Fri, Jan 09 2026, Miklos Szeredi wrote:
 
-I'll add that to the changelog in the next version, after getting
-comments from the VFS people.
-
+> On Fri, 9 Jan 2026 at 16:56, Bernd Schubert <bschubert@ddn.com> wrote:
 >
-> > -     if (d_really_is_positive(child))
-> > -             return -EEXIST;
-> > -     if (IS_DEADDIR(dir))
-> > -             return -ENOENT;
-> > -     if (!fsuidgid_has_mapping(dir->i_sb, idmap))
-> > -             return -EOVERFLOW;
-> > -     return inode_permission(idmap, dir, MAY_WRITE | MAY_EXEC);
-> > -}
+>> Feasible, but we should extend io-uring to FUSE_NOTIFY first, otherwise
+>> this will have a painful overhead.
+>
+> We don't want to do the lock/add/unlock for individual dentries
+> anyway, so might as well make this FUSE_NOTIFY_ENTRIES.  That would
+> lock the directory, add a bunch of dentries, then unlock.
+>
+> The fun part is that locking the directory must not be done from the
+> READDIR context, as rwsem read locks are apparently not nestable.
+> This would make the interface a pain to use.  We could work around
+> that by checking if a READDIR is currently in progress and then
+> synchronizing the two such that the entries are added with the
+> directory lock held.   It's a bit of complexity, but maybe worth it as
+> it's going to be the common usage.
+
+Yikes!  Things are not getting any simpler :-(
+
+OK, looks like there's a lot of things I'll need to figure out before
+proceeding.
+
+/me schedules some time to learn and play a bit with all this.
+
+Cheers,
+--=20
+Lu=C3=ADs
 
