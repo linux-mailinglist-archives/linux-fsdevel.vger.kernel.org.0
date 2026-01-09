@@ -1,190 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-72978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-72979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2A9AD06DE6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 03:39:10 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC43D06E07
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 03:43:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 9403D3011477
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 02:39:07 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2D0F03019B43
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 02:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9CA318149;
-	Fri,  9 Jan 2026 02:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EBE316904;
+	Fri,  9 Jan 2026 02:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="niFsaSMf"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="OqYdaRkk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB3322301;
-	Fri,  9 Jan 2026 02:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4114E3164C7
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Jan 2026 02:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767926342; cv=none; b=c6Uf/VH9EYw3Pjrcs/eTYoqsrWkpOwHcxVaRtLW7xJftFAbT6n3+t2uDrKLZejifBoMYFki8QruUiGLqyyMzl12yP7JpBJ57BTK22DoEFIgY9v0ejqfRv3CSO0r6MEv+9CrA45JltCEpbAXOG9h7j+7wDK3JADRWhGiMa/bDzig=
+	t=1767926616; cv=none; b=SUxebAUpG0yYqosOC0Lf1DFKmmSTUZHv+aGsnyFy5gnR9r+Oby+Xac779ZbuYBAOgjZJPB/iY0b1rHFhr7McZGp+7KY8sk2EzGNp7+Wa6KtMRwzjQAipKtAgxaJd4h07OSs/OxnXoXaflaYsxRuMv5aKQG07uM1xx4yprHTx8z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767926342; c=relaxed/simple;
-	bh=04fGF1+ghZ6RvkVd/ESe315VeZjZo+rMloGVOsdXvUU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HweExbFCJfG4jVpvRSR+tV+uDWTcxOyCxD3vOAaUlbmgjsJtYki8dJfOpXn8eowRc9hNs0aJJgGniZ+YpVmSz8bhbtOoThTRzRPNJBbJwRAk0PjJkpzoGVp/HnY90VMML7GmapacNhhzGHOEBpv2L4fhMN0Yx2k0CSUyhn59BrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=niFsaSMf; arc=none smtp.client-ip=113.46.200.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=v45CaW74gtQbABT87KH/GpFA7JPcXe3bMuQi3Z8F9+4=;
-	b=niFsaSMfPHZrrWm/z2+l+e1Af6eprepq6NfTKboYQnPFm7S0oP1ViMCJVzIsplIcb8hoI6ICO
-	iyeTB+f5SMDRjs6+lXLKUCAuppyYtNisUe6ZTsMMzws4f7B7PaMONtZbDK64HKVjm2bBcijvdUR
-	JnhJO/uebHJFRlAIBgGKMsk=
-Received: from mail.maildlp.com (unknown [172.19.162.144])
-	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4dnQqc61qkzRj1J;
-	Fri,  9 Jan 2026 10:35:40 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8A5DE40538;
-	Fri,  9 Jan 2026 10:38:57 +0800 (CST)
-Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 9 Jan
- 2026 10:38:56 +0800
-Message-ID: <e9a0aa3e-c4a6-40b3-a35a-aa017f94126e@huawei.com>
-Date: Fri, 9 Jan 2026 10:38:55 +0800
+	s=arc-20240116; t=1767926616; c=relaxed/simple;
+	bh=31vJYhUYTLE28Hpclzdc9C16YqvRvnCq+iuIWtrzsv4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VlTZfIP9HHNafAIr97KJm4DKR4/EGfamLCLzSgoYrZAn6HHuDUu6YhDP7ddHJd1pXnU3TB2C+QZrEO9CJOE6hHdV8mhNrTTf1CXmO0le62xeOT0B7Pro0VbZ/5YdMuz1OSoTYbTMPYswSyN1BUt/yLwpdHlFy3q3l3bgpL1gOb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=OqYdaRkk; arc=none smtp.client-ip=74.125.82.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-11bba84006dso364195c88.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Jan 2026 18:43:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1767926614; x=1768531414; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KuIP2NVdq++SgGIo2WGA+xm04D3PzsWEchd6P2Jj/Xk=;
+        b=OqYdaRkkXujBFfwbPkw1wpC72S/frwwZYJgZRjIKV3EcuwhKD4t7ajT53anWj7JCZx
+         GeYje2uL4K6xsKxh5nOJoGqbz6lGLIyCrwje8SdZktDgG5HOGYJFVxDkMvwlEiFxmfr3
+         VPTLJOP6BnhCtX3wpdiSZawZsoB8ZucekEFHDayi8M5f2GwOdhnBg5+7oTNRdAJdun9z
+         yzVko28N0UuiFiqDAgKPfYxDn3nrYZOhdNrCvpZBd/JnK05htxXQ/4reGDD+G4i9vci0
+         iZ11DWMcBuySL+8prqDnANLxY2EAVttsx1lX9dugnJ2NyUsHcldFvXxs04Jb/RERnLmA
+         sS3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767926614; x=1768531414;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=KuIP2NVdq++SgGIo2WGA+xm04D3PzsWEchd6P2Jj/Xk=;
+        b=slJjEy8TaTD25PbwhaGpI2o/MPyyqjr1JDLJOpWtIMQXTfSyRSGYPcq0tKEnJS4rvh
+         EYyXLE5Vq4Ak0+XvXxW/JwA6zGwkKUjihBVsrDv9ICsnOL1z4Ixt6cYJHeWRSqjJg+QY
+         H6+edP/EpDjIM65QgWuT6PNkNIoe8AlrMfKpRqyb6bAO1IxlUtPvLtqPDYRejF72lhvB
+         xI4G89AmhPRWHRkvh03saiqo/jCqmlVIlmepUveFlQVm2tPBnipNWGDkLKZRCVggDxo+
+         efS5F6Xt/LP69WEayP2Ae9vhI7dssa5ce3drcDAysC7ned2JzgfAKRT/+zfdrN3b7/U9
+         i2ng==
+X-Forwarded-Encrypted: i=1; AJvYcCXG8H+4uoeI2M8gUBdSW5G9KInB2EFk70fxclxlSG07YNyNp9/SQh49cWrCgVxkOQlEr+hqDc5fBQKUjhX5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwCFsqbWmX8YN36jIPq5Yaf+XFL7yGxM2EFP+T+X9RHdDfOOQO
+	9Py03A2mayPUrV+FZ4As7WEbfXrqGhkjmy5Pn5nihIzCTc5qtdBzFd/askm/C1YRM7GyRAmpO4M
+	F//ez8Xa/RzRyAGMUbTM1Ec2oi+HDPpIyYz1g9L7tBQ==
+X-Gm-Gg: AY/fxX7XVqna3s8HCIG17sCp3NnVHsXi7PB1nihuGjbm+p3XawxWT7aWg5LuaVekRhJ
+	04nR42QEmNUxsAYvk2wzqdvfYhfqosMqSvRzuX1JJwxtsTI7LA1pIMprTZSLeRpTeuWNuaDiNkj
+	+r1k+VbpdAvSKToShlkxq9NNNHs43d+j86rCeAYo5YbOHmy+PSyKmQv7wM01i0j3O6KcRmsnMcp
+	Kq8ZN5+RzVtrlUPJgHyOMlxPb0TBAgAlhiM9lVV8xCwvZlzmc9EXya85vfqaUUxpuIIgvsE1M6F
+	ksFjw3M=
+X-Google-Smtp-Source: AGHT+IFHht8LNLu9wC1vNjgcK5ZNYQwytH2g955mA0hstC5639tu7p4tomNGAaRkQ9kqG0TffnahHoCsCHzAzUgZkhY=
+X-Received: by 2002:a05:7022:2217:b0:11e:3e9:3e9b with SMTP id
+ a92af1059eb24-121f8b60647mr3833271c88.6.1767926614213; Thu, 08 Jan 2026
+ 18:43:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] ext4: fix e4b bitmap inconsistency reports
-Content-Language: en-GB
-To: <sunyongjian1@huawei.com>
-CC: <linux-ext4@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<tytso@mit.edu>, <jack@suse.cz>, <yangerkun@huawei.com>,
-	<yi.zhang@huawei.com>, <chengzhihao1@huawei.com>
-References: <20260106090820.836242-1-sunyongjian@huaweicloud.com>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20260106090820.836242-1-sunyongjian@huaweicloud.com>
+References: <20251223003522.3055912-1-joannelkoong@gmail.com>
+ <20251223003522.3055912-11-joannelkoong@gmail.com> <CADUfDZqHhVi1RY71dvEFbWsHmrzLbTSgev5o8yRXxExV5=XY2g@mail.gmail.com>
+ <CAJnrk1ZQqgQmQyC8v47rpP0TrpcwGRzw6r9w4Z=TQO8EpQOF3g@mail.gmail.com>
+In-Reply-To: <CAJnrk1ZQqgQmQyC8v47rpP0TrpcwGRzw6r9w4Z=TQO8EpQOF3g@mail.gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Thu, 8 Jan 2026 18:43:22 -0800
+X-Gm-Features: AQt7F2q-gqNpugddpUigjhF-0Ud4D2b2rNKxcVUgfWOMT58EjgRYljFXh3fQwR8
+Message-ID: <CADUfDZpjx2trr5GeyCjidZx=i_2YKW+V=Ec6Pk6um8yLU7KAQg@mail.gmail.com>
+Subject: Re: [PATCH v3 10/25] io_uring/kbuf: export io_ring_buffer_select()
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, axboe@kernel.dk, bschubert@ddn.com, 
+	asml.silence@gmail.com, io-uring@vger.kernel.org, xiaobing.li@samsung.com, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Content-Transfer-Encoding: quoted-printable
 
-On 2026-01-06 17:08, Yongjian Sun wrote:
-> From: Yongjian Sun <sunyongjian1@huawei.com>
+On Thu, Jan 8, 2026 at 4:38=E2=80=AFPM Joanne Koong <joannelkoong@gmail.com=
+> wrote:
 >
-> A bitmap inconsistency issue was observed during stress tests under
-> mixed huge-page workloads. Ext4 reported multiple e4b bitmap check
-> failures like:
+> On Thu, Jan 8, 2026 at 12:34=E2=80=AFPM Caleb Sander Mateos
+> <csander@purestorage.com> wrote:
+> >
+> > On Mon, Dec 22, 2025 at 4:36=E2=80=AFPM Joanne Koong <joannelkoong@gmai=
+l.com> wrote:
+> > >
+> > > Export io_ring_buffer_select() so that it may be used by callers who
+> > > pass in a pinned bufring without needing to grab the io_uring mutex.
+> > >
+> > > This is a preparatory patch that will be needed by fuse io-uring, whi=
+ch
+> > > will need to select a buffer from a kernel-managed bufring while the
+> > > uring mutex may already be held by in-progress commits, and may need =
+to
+> > > select a buffer in atomic contexts.
+> > >
+> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > ---
+> > >  include/linux/io_uring/buf.h | 25 +++++++++++++++++++++++++
+> > >  io_uring/kbuf.c              |  8 +++++---
+> > >  2 files changed, 30 insertions(+), 3 deletions(-)
+> > >  create mode 100644 include/linux/io_uring/buf.h
+> > >
+> > > diff --git a/include/linux/io_uring/buf.h b/include/linux/io_uring/bu=
+f.h
+> > > new file mode 100644
+> > > index 000000000000..3f7426ced3eb
+> > > --- /dev/null
+> > > +++ b/include/linux/io_uring/buf.h
+> > > @@ -0,0 +1,25 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> > > +#ifndef _LINUX_IO_URING_BUF_H
+> > > +#define _LINUX_IO_URING_BUF_H
+> > > +
+> > > +#include <linux/io_uring_types.h>
+> > > +
+> > > +#if defined(CONFIG_IO_URING)
+> > > +struct io_br_sel io_ring_buffer_select(struct io_kiocb *req, size_t =
+*len,
+> >
+> > I think struct io_kiocb isn't intended to be exposed outside of
+> > io_uring internal code. Is there a reason not to instead expose a
+> > wrapper function that takes struct io_uring_cmd * instead?
 >
-> ext4_mb_complex_scan_group:2508: group 350, 8179 free clusters as
-> per group info. But got 8192 blocks
->
-> Analysis and experimentation confirmed that the issue is caused by a
-> race condition between page migration and bitmap modification. Although
-> this timing window is extremely narrow, it is still hit in practice:
->
-> folio_lock                        ext4_mb_load_buddy
-> __migrate_folio
->   check ref count
->   folio_mc_copy                     __filemap_get_folio
->                                       folio_try_get(folio)
->                                   ......
->                                   mb_mark_used
->                                   ext4_mb_unload_buddy
->   __folio_migrate_mapping
->     folio_ref_freeze
-> folio_unlock
->
-> The root cause of this issue is that the fast path of load_buddy only
-> increments the folio's reference count, which is insufficient to prevent
-> concurrent folio migration. We observed that the folio migration process
-> acquires the folio lock. Therefore, we can determine whether to take the
-> fast path in load_buddy by checking the lock status. If the folio is
-> locked, we opt for the slow path (which acquires the lock) to close this
-> concurrency window.
->
-> Additionally, this change addresses the following issues:
->
-> When the DOUBLE_CHECK macro is enabled to inspect bitmap-related
-> issues, the following error may be triggered:
->
-> corruption in group 324 at byte 784(6272): f in copy != ff on
-> disk/prealloc
->
-> Analysis reveals that this is a false positive. There is a specific race
-> window where the bitmap and the group descriptor become momentarily
-> inconsistent, leading to this error report:
->
-> ext4_mb_load_buddy                   ext4_mb_load_buddy
->   __filemap_get_folio(create|lock)
->     folio_lock
->   ext4_mb_init_cache
->     folio_mark_uptodate
->                                      __filemap_get_folio(no lock)
->                                      ......
->                                      mb_mark_used
->                                        mb_mark_used_double
->   mb_cmp_bitmaps
->                                        mb_set_bits(e4b->bd_bitmap)
->   folio_unlock
->
-> The original logic assumed that since mb_cmp_bitmaps is called when the
-> bitmap is newly loaded from disk, the folio lock would be sufficient to
-> prevent concurrent access. However, this overlooks a specific race
-> condition: if another process attempts to load buddy and finds the folio
-> is already in an uptodate state, it will immediately begin using it without
-> holding folio lock.
->
-> Signed-off-by: Yongjian Sun <sunyongjian1@huawei.com>
+> Oh interesting... I see struct io_kiocb defined in
+> include/linux/io_uring_types.h, so I assumed this was fine to use.
 
-Looks good. Feel free to add:
+Yeah, I see a lot of types that look io_uring-internal in
+include/linux/io_uring_types.h. I'm not sure why they're visible to
+the rest of the kernel rather than forward declared. But Jens please
+correct me if I'm misunderstanding whether these types are meant to be
+private to the io_uring subsystem.
 
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
+> Hmm, we could wrap this in io_uring_cmd * instead, but that adds an
+> extra layer and I think it clashes with the philosophy of io_uring_cmd
+> being a "general user interface" (or maybe my interpretation of
+> io_uring_cmd is incorrect) whereas this api is pretty io-uring
 
-> ---
->  fs/ext4/mballoc.c | 21 +++++++++++----------
->  1 file changed, 11 insertions(+), 10 deletions(-)
->
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index 56d50fd3310b..de4cacb740b3 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -1706,16 +1706,17 @@ ext4_mb_load_buddy_gfp(struct super_block *sb, ext4_group_t group,
->  
->  	/* Avoid locking the folio in the fast path ... */
->  	folio = __filemap_get_folio(inode->i_mapping, pnum, FGP_ACCESSED, 0);
-> -	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-> +	if (IS_ERR(folio) || !folio_test_uptodate(folio) || folio_test_locked(folio)) {
-> +		/*
-> +		 * folio_test_locked is employed to detect ongoing folio
-> +		 * migrations, since concurrent migrations can lead to
-> +		 * bitmap inconsistency. And if we are not uptodate that
-> +		 * implies somebody just created the folio but is yet to
-> +		 * initialize it. We can drop the folio reference and
-> +		 * try to get the folio with lock in both cases to avoid
-> +		 * concurrency.
-> +		 */
->  		if (!IS_ERR(folio))
-> -			/*
-> -			 * drop the folio reference and try
-> -			 * to get the folio with lock. If we
-> -			 * are not uptodate that implies
-> -			 * somebody just created the folio but
-> -			 * is yet to initialize it. So
-> -			 * wait for it to initialize.
-> -			 */
->  			folio_put(folio);
->  		folio = __filemap_get_folio(inode->i_mapping, pnum,
->  				FGP_LOCK | FGP_ACCESSED | FGP_CREAT, gfp);
-> @@ -1764,7 +1765,7 @@ ext4_mb_load_buddy_gfp(struct super_block *sb, ext4_group_t group,
->  
->  	/* we need another folio for the buddy */
->  	folio = __filemap_get_folio(inode->i_mapping, pnum, FGP_ACCESSED, 0);
-> -	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-> +	if (IS_ERR(folio) || !folio_test_uptodate(folio) || folio_test_locked(folio)) {
->  		if (!IS_ERR(folio))
->  			folio_put(folio);
->  		folio = __filemap_get_folio(inode->i_mapping, pnum,
+That's my understanding of io_uring_cmd too.
 
+> internal specific (eg bypasses the io ring lock which means it'll be
+> responsible for having to do its own synchronization, passing the
+> io_buffer_list pointer directly, etc.).
 
+That's a good point. I wonder if there's a better way to encapsulate
+this for general usage outside of io_uring? I'm not that familiar with
+io_uring buffer rings, though.
+
+Best,
+Caleb
 
