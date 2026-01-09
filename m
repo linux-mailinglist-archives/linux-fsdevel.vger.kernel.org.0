@@ -1,111 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-73091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94215D0C1F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 20:55:28 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6504ED0C2C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 09 Jan 2026 21:19:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 2891E3014D5B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 19:55:14 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 2C27130392B4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Jan 2026 20:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B63F364E97;
-	Fri,  9 Jan 2026 19:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E34E368276;
+	Fri,  9 Jan 2026 20:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4YMfHZB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp01-ext2.udag.de (smtp01-ext2.udag.de [62.146.106.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6664E2E229F;
-	Fri,  9 Jan 2026 19:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73801A5B84;
+	Fri,  9 Jan 2026 20:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767988512; cv=none; b=pZ6rTWs4htJwPezMf9eT7SrnfQZSyC2nltxi+ssIcyNeJuZXi6/++ubUiRQWPM1qGIqla+0Qhgj4ZJ5IjCQ0CkbPAmAsxd7Lbng9UcdeWVXv0lHe/6cNTMryQfU8rF1QljsgVe3TTuFC7+fBxF5pB3+NWDSK+YIzpU8x4JEH7eQ=
+	t=1767989938; cv=none; b=rVhHSxiwT37V8fLYF1z1GT6iv87/zCWJ4/+q+20BdRLyd6jIYSez0ZeAaGz8YcrsYLCT4H5h1kz4JBu6qWXj6DNm7DMxsLPViDXt9qRQBJ24R86tCS+VHeq9BJQKmKKB2mol0eW4aEnD7rHL1ZQ5peqGSqkD6Jo6PbmNwvft8Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767988512; c=relaxed/simple;
-	bh=ygVqFmIlB6ZQuTW56hXZOjKyuZieIzxsv+VZWebUEgU=;
+	s=arc-20240116; t=1767989938; c=relaxed/simple;
+	bh=rhpHZ+U6MmkUr8n/dR1N+JKAxJQq5W5tojia0OytzPI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A+pFFZ0McFnxEGAEgB0hibJfbzuYcxJaIIKr1epJOyLkGjGyQFUdSFaeMxmhxNkFQXJ6yl4uBCgiCVcdZf+xKr4/7K+m7knch2ysDj5G31bFKz5iJf4Gp8bk8d4y3ZXLBj6vUK2b4m0TxGi5JeCJvtekxdWJL+DK9ZO+Q4MGFPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
-Received: from localhost (049-102-000-128.ip-addr.inexio.net [128.0.102.49])
-	by smtp01-ext2.udag.de (Postfix) with ESMTPA id 9B569E0434;
-	Fri,  9 Jan 2026 20:55:07 +0100 (CET)
-Authentication-Results: smtp01-ext2.udag.de;
-	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
-Date: Fri, 9 Jan 2026 20:55:06 +0100
-From: Horst Birthelmer <horst@birthelmer.de>
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Luis Henriques <luis@igalia.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Kevin Chen <kchen@ddn.com>, 
-	Horst Birthelmer <hbirthelmer@ddn.com>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Matt Harvey <mharvey@jumptrading.com>, 
-	"kernel-dev@igalia.com" <kernel-dev@igalia.com>
-Subject: Re: Re: [RFC PATCH v2 4/6] fuse: implementation of the
- FUSE_LOOKUP_HANDLE operation
-Message-ID: <aWFcmSNLq9XM8KjW@fedora>
-References: <20251212181254.59365-1-luis@igalia.com>
- <20251212181254.59365-5-luis@igalia.com>
- <CAJfpegszP+2XA=vADK4r09KU30BQd-r9sNu2Dog88yLG8iV7WQ@mail.gmail.com>
- <87zf6nov6c.fsf@wotan.olymp>
- <CAJfpegst6oha7-M+8v9cYpk7MR-9k_PZofJ3uzG39DnVoVXMkA@mail.gmail.com>
- <CAOQ4uxjXN0BNZaFmgs3U7g5jPmBOVV4HenJYgdfO_-6oV94ACw@mail.gmail.com>
- <CAJfpegsS1gijE=hoaQCiR+i7vmHHxxhkguGJvMf6aJ2Ez9r1dw@mail.gmail.com>
- <b2582658-c5e9-4cf8-b673-5ccc78fe0d75@ddn.com>
- <CAOQ4uxhMtz6WqLKPegRy+Do2UU6uJvDOqb8YU6=-jAy98E5Vfw@mail.gmail.com>
- <645edb96-e747-4f24-9770-8f7902c95456@ddn.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dhQP6x38sKvK1SPJINZ49dwtxrY9AUFeyK0bFV3ow6VGBgKnrnDEuW0rpq/K4uGQOGe9gkjshBF/1gkqsOBG0REBF0iGZkOwcqHClzcXHOoMzxb2laBxtaVM4ZyDkaSz8sC1dXuKWq/qDLqmeElXyg6xIkgHB3MXHI27FAmOACM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4YMfHZB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 254F7C4CEF1;
+	Fri,  9 Jan 2026 20:18:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767989938;
+	bh=rhpHZ+U6MmkUr8n/dR1N+JKAxJQq5W5tojia0OytzPI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q4YMfHZBJMZvMAYuLRy/0sLybq/QXKYd4p7GSbqVhUKgaqEkv93D3uGjCHBMuvUAi
+	 bxQFaRebDENZWtmA3ZjaR//I/SaDDgnhpuXMz/0oSqsKa0RpNjxZyRiV7IF/tzt4Qm
+	 ssRcQNygvXHGdNp0EjAFdINjdJ0Z8TAWiRogj6lnzuhkKhRxe8UdNNtzNsakvtQRti
+	 g7VbsCAycwcMozDu+NZlBWtNOsk7++g/tQJk7wjIS7UYr/WnceZMzUkFQ2T9YcHln9
+	 rNTyqsz31M7AU+6JYacUwYbME5+zn4SJUdLKZrsL6Gc0bIHgMJgJmata2+HPy+v/ss
+	 Ewvot0DycFpTA==
+Date: Fri, 9 Jan 2026 20:18:56 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org
+Subject: Re: move blk-crypto-fallback to sit above the block layer v5
+Message-ID: <20260109201856.GA2915893@google.com>
+References: <20260109060813.2226714-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <645edb96-e747-4f24-9770-8f7902c95456@ddn.com>
+In-Reply-To: <20260109060813.2226714-1-hch@lst.de>
 
-On Fri, Jan 09, 2026 at 07:12:41PM +0000, Bernd Schubert wrote:
-> On 1/9/26 19:29, Amir Goldstein wrote:
-> > On Fri, Jan 9, 2026 at 4:56 PM Bernd Schubert <bschubert@ddn.com> wrote:
-> >>
-> >>
-> >>
-> >> On 1/9/26 16:37, Miklos Szeredi wrote:
-> >>> On Fri, 9 Jan 2026 at 16:03, Amir Goldstein <amir73il@gmail.com> wrote:
-> >>>
-> >>>> What about FUSE_CREATE? FUSE_TMPFILE?
-> >>>
-> >>> FUSE_CREATE could be decomposed to FUSE_MKOBJ_H + FUSE_STATX + FUSE_OPEN.
-> >>>
-> >>> FUSE_TMPFILE is special, the create and open needs to be atomic.   So
-> >>> the best we can do is FUSE_TMPFILE_H + FUSE_STATX.
-> >>>
-> > 
-> > I thought that the idea of FUSE_CREATE is that it is atomic_open()
-> > is it not?
-> > If we decompose that to FUSE_MKOBJ_H + FUSE_STATX + FUSE_OPEN
-> > it won't be atomic on the server, would it?
+On Fri, Jan 09, 2026 at 07:07:40AM +0100, Christoph Hellwig wrote:
+> Hi all,
 > 
-> Horst just posted the libfuse PR for compounds
-> https://github.com/libfuse/libfuse/pull/1418
+> in the past we had various discussions that doing the blk-crypto fallback
+> below the block layer causes all kinds of problems due to very late
+> splitting and communicating up features.
 > 
-> You can make it atomic on the libfuse side with the compound
-> implementation. I.e. you have the option leave it to libfuse to handle
-> compound by compound as individual requests, or you handle the compound
-> yourself as one request.
+> This series turns that call chain upside down by requiring the caller to
+> call into blk-crypto using a new submit_bio wrapper instead so that only
+> hardware encryption bios are passed through the block layer as such.
 > 
-> I think we need to create an example with self handling of the compound,
-> even if it is just to ensure that we didn't miss anything in design.
+> While doings this I also noticed that the existing blk-crypto-fallback
+> code does various unprotected memory allocations which this converts to
+> mempools, or from loops of mempool allocations to the new safe batch
+> mempool allocator.
+> 
+> There might be future avenues for optimization by using high order
+> folio allocations that match the file systems preferred folio size,
+> but for that'd probably want a batch folio allocator first, in addition
+> to deferring it to avoid scope creep.
 
-I actually do have an example that would be suitable.
-I could implement the LOOKUP+CREATE as a pseudo atomic operation in passthrough_hp.
+Reviewed-by: Eric Biggers <ebiggers@kernel.org>
 
-> 
-> 
-> Thanks,
-> Bernd
+> Jens and Eric: I guess despite the fscrypt patches, the block tree
+> would probably be the best fit.  Or do we need a separate branch?
 
-Cheers,
-Horst
+Please go ahead and take these through the block tree.  Thanks!
+
+- Eric
 
