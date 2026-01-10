@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-73121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D61D0CEA4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 05:04:00 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C611D0CE5C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 05:01:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8671030285D2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 04:01:20 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id BA49030082F8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 04:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CCB286410;
-	Sat, 10 Jan 2026 04:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3F926E6F8;
+	Sat, 10 Jan 2026 04:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="f7gmULfr"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CtBErUQT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C6A1E5B95;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBC524886E;
 	Sat, 10 Jan 2026 04:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768017665; cv=none; b=epO55RM8p/PGZQc8fwlw5ml1Yz5y+5f1ZwtbhMfYQyTpS9I3yez2fTgKa3a4bagMGnq8OwZbiQ1cpXd48e4FqcelikzGCwGnvHAGMok7QnOJIMtyP5ff4SDxEPWH2jBc9uhrnInC+z47BWMAjmZdtNH58xFjJEl3iwL+HTD7uYo=
+	t=1768017663; cv=none; b=RNotleiCT/UgIJSLqABgEUNzupdrJ87ORK+e+XuPPkWMkskrY6EbX3Q2EqIizSG4cgMORcsK4l5V6+ouPJkJioCS7uPheF893Ve+GDGU6eAwS2t+UVciL3IEjQpbIh8YWgR1QXX+d+Tii9v+rNTTQqiQGS+vlpqnKy369+wFAKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768017665; c=relaxed/simple;
-	bh=1EBxgGRCUwO9vaV3rC9PJKIwxsWCiMe5NYVBWFnMIbo=;
+	s=arc-20240116; t=1768017663; c=relaxed/simple;
+	bh=IAZXWAAcaNEVY8U33HnNuOqtDlieHsk/IADRiAay1vg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xpi83ge56fLSqk0XmxlcVgNQi765VYgtfcsxIQSC6+N+7lF//yaFzbDGQhBNf1DRVN2FK9nZrp05HpKYlZhtsLeVgt8l9Z+IE0lu007qHm3eglq9ZrF5CItSyu6ovsqLj2Olzu3O1BIKGmTfsqXBy5nkauZhDEpV72O5nyxQguE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=f7gmULfr; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=qoQzFru/ma7h9SohcqK/+R79O94Dpjwdvm5x8/QcJa8+ymOVwBslpaiAcr9w3oF/Ihll4Eg/ZkcJzV/pqEiRb973zJYTJr7ERDeO+B/NoKp7VTVaAnVjSMgEONWd+NU/v4OJW+Cs6fh4D2vO9QAUAPC1PtygpUQtWqQxTpPkV3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CtBErUQT; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=l2LUE689TUBjRJhqWoI4FSTJJqCMuaDthYKZkiYtSho=; b=f7gmULfr1QczamnpQvpHORoB4Y
-	cZlsW62CiHl2hZNjtSkrAMYnzAg+3ee4NzKQD0cwRhquSK8F9gIfJ55AnPDVTVn9irnM/Z4tVByIo
-	mNFfBFW/wtmlpUsXUkMbOAMkVaYS+Plk/C56B9IAwv6/tGEwb/U8D4KAW4Rmy84/s1u/9SnOxy/Yg
-	OW32w/DQT73dGjLsm4GxcsQqJZJEflD08QiKHs0aH4w1/hmnRzseN7XuTSLbTjuX3oWpFMtUSiJhS
-	xuXBl4Li9Uu6V4rIOFZ2+yJcSbT9wwml/ntSivby0LL+rtss9AuCL2xRHuodRJy6wp38eRtGM5k4a
-	Qj0W5Xpw==;
+	bh=FrXzQAEQRN298A9NQXfa3gY+X4zzBUHVMqaG/R1D29c=; b=CtBErUQTAXH/3cLPj67RwvcyhW
+	ryWQnyPYSRafAowodNlS0AvWy733kBuE9+h7IhJiHjAQ9iU/yzwCBuEe8F9jJckk+7N3MRq5J+Cnc
+	6IwEOdL3DsgX8jug7rORJZdd8zNsU4/hbYM8jU8H3QZKyBgAiYLrC9TVmW8ZVYszNLtwTgdYBxV0b
+	nVsa1mbnwlBePuWqPJGK4vsLG5AP55DHst4o9End3tQgKWjANgtlkKkqy4fHB9DRjGYfXl5WXsOb+
+	tJnj58l3hruE99YoqpFDJxbiiAcPgVIcDL78yinTJkivfey8BoG2BHhvIRtgq7o9XpLtFHn3xyIgt
+	J6F7Pp9g==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1veQB9-000000085aJ-2fZG;
+	id 1veQB9-000000085b2-38Zo;
 	Sat, 10 Jan 2026 04:02:19 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-mm@kvack.org
@@ -52,9 +52,9 @@ Cc: Vlastimil Babka <vbabka@suse.cz>,
 	Jan Kara <jack@suse.cz>,
 	Mateusz Guzik <mguzik@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 12/15] turn task_struct_cachep static-duration
-Date: Sat, 10 Jan 2026 04:02:14 +0000
-Message-ID: <20260110040217.1927971-13-viro@zeniv.linux.org.uk>
+Subject: [RFC PATCH 13/15] turn fs_cachep static-duration
+Date: Sat, 10 Jan 2026 04:02:15 +0000
+Message-ID: <20260110040217.1927971-14-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260110040217.1927971-1-viro@zeniv.linux.org.uk>
 References: <20260110040217.1927971-1-viro@zeniv.linux.org.uk>
@@ -69,32 +69,46 @@ Sender: Al Viro <viro@ftp.linux.org.uk>
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- kernel/fork.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ include/linux/fs_struct.h | 3 ++-
+ kernel/fork.c             | 4 ++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/fs_struct.h b/include/linux/fs_struct.h
+index 0070764b790a..e8c9fac5b7b7 100644
+--- a/include/linux/fs_struct.h
++++ b/include/linux/fs_struct.h
+@@ -15,7 +15,8 @@ struct fs_struct {
+ 	struct path root, pwd;
+ } __randomize_layout;
+ 
+-extern struct kmem_cache *fs_cachep;
++extern struct kmem_cache_opaque fs_struct_cache;
++#define fs_cachep to_kmem_cache(&fs_struct_cache)
+ 
+ extern void exit_fs(struct task_struct *);
+ extern void set_fs_root(struct fs_struct *, const struct path *);
 diff --git a/kernel/fork.c b/kernel/fork.c
-index f83ca2f5826f..8f0dfefd82f0 100644
+index 8f0dfefd82f0..7262abd0d2a4 100644
 --- a/kernel/fork.c
 +++ b/kernel/fork.c
-@@ -178,7 +178,8 @@ void __weak arch_release_task_struct(struct task_struct *tsk)
- {
- }
+@@ -476,7 +476,7 @@ struct kmem_cache_opaque sighand_cache;
+ struct kmem_cache_opaque files_cache;
  
--static struct kmem_cache *task_struct_cachep;
-+static struct kmem_cache_opaque task_struct_cache;
-+#define task_struct_cachep to_kmem_cache(&task_struct_cache)
+ /* SLAB cache for fs_struct structures (tsk->fs) */
+-struct kmem_cache *fs_cachep;
++struct kmem_cache_opaque fs_struct_cache;
  
- static inline struct task_struct *alloc_task_struct_node(int node)
- {
-@@ -860,7 +861,7 @@ void __init fork_init(void)
- 
- 	/* create a slab on which task_structs can be allocated */
- 	task_struct_whitelist(&useroffset, &usersize);
--	task_struct_cachep = kmem_cache_create_usercopy("task_struct",
-+	kmem_cache_setup_usercopy(task_struct_cachep, "task_struct",
- 			arch_task_struct_size, align,
- 			SLAB_PANIC|SLAB_ACCOUNT,
- 			useroffset, usersize, NULL);
+ /* SLAB cache for mm_struct structures (tsk->mm) */
+ static struct kmem_cache_opaque mm_cache;
+@@ -3035,7 +3035,7 @@ void __init proc_caches_init(void)
+ 			sizeof(struct files_struct), 0,
+ 			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
+ 			NULL);
+-	fs_cachep = kmem_cache_create("fs_cache",
++	kmem_cache_setup(fs_cachep, "fs_cache",
+ 			sizeof(struct fs_struct), 0,
+ 			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
+ 			NULL);
 -- 
 2.47.3
 
