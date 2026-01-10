@@ -1,120 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-73110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF3A1D0CE6E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 05:02:13 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E2ED0CFE7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 06:34:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4E86C303B7B3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 04:01:10 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 841093013BE7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 05:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA90E279DC9;
-	Sat, 10 Jan 2026 04:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F37A33890D;
+	Sat, 10 Jan 2026 05:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="UCQfyOdz"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="h/+eanTw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AA9264612;
-	Sat, 10 Jan 2026 04:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217281DF736
+	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Jan 2026 05:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768017664; cv=none; b=T0JEky1itfShpnvX07tJp7xJdkpiGQIApTqVwEFTvlaeQGn1NvyaqwuKc8V6lVeDG/1XWG0myd4FRu706VUSnvZvrQmf/omwAuy47F66fIm8XSX7qBDh1zr29niyDvWKRWdylsXVW7JaAEePto98t0NKeaQlS/r0zIWst0I3HmU=
+	t=1768023243; cv=none; b=R71pDWqGL+uuOHkcOPT09YuocUrh1KeNr+wglPftnAVw1HRMJ2jU/084V3VfLxsC8yGq5x1+d9mVfK7hPgPmX9nypSAF/hSv0cdZ4yYx2YrVYJFdWW1R5ZobWhFxY7f6BQImSuq3LnVR23mLfOUXgWnokoAljD2LFwEV9dTicXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768017664; c=relaxed/simple;
-	bh=R3+dA4EAyRwrgvNP9FBPFL2sJ7/lrZCYooL51j5axck=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KQozPgniysSSd5e2MBI7oGPzwcoefZUUVG78QC1+Ko4UTRzPQAiorWhzwH8cYmdAJMxcXyhD0KRFJi6jvXzwnWetSyCj9qiy03FqIzvZ8kg/rMnGO2pPKyW9b2zP1KDsVQtuj8Y2ASyYbou0rqD+onQDAferSbb8sMg+V6sMvb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=UCQfyOdz; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=QCWdpDl4N4sktQZ+Ts9iZqQsXsj7d3665CaBWGAPwDA=; b=UCQfyOdzDZjFMBc1nym2fqKTz5
-	hEis14KZ+aFKVUiJ55w1Cjubl5boGYR+H5HZkYXoBp7+H7nn0gsaIrIRZuuItBCfabpEFtRGS9NCS
-	ImpKNwREPXgDlx4eUtYTNsxxQPZgnDet1kk77OBiNPZkxlZakSP+5VRmE6oX3Ymnd1wrcf5d4wyRP
-	dJprEz1xZYAvWD4W3XCZ7t/2QBEutEByZGtcso5I1zhbQg1+vZnJ3glOMXCTpmZ5Gy7DAzYj58Mb7
-	WeAv16ORuWZtjaZDHIBVFSaMqScRQJaM3cCP02UwkfY1xAuAmST5nTeyS60QfTLoKZuQR7UwH7iDE
-	d5ileZTw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1veQB9-000000085bK-3zxy;
-	Sat, 10 Jan 2026 04:02:19 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-mm@kvack.org
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Mateusz Guzik <mguzik@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 15/15] turn ufs_inode_cache static-duration
-Date: Sat, 10 Jan 2026 04:02:17 +0000
-Message-ID: <20260110040217.1927971-16-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260110040217.1927971-1-viro@zeniv.linux.org.uk>
-References: <20260110040217.1927971-1-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1768023243; c=relaxed/simple;
+	bh=6pwomIVnrR12zTpAtQFvRUZW4X7RJuoi5+P+H1COhLk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uL2LJOnH69IiHVD2WoAHlc13EzH6FiRbHXIZEIQypIKXq6Ugy7t1FW8qOgCKRtVYwIeBVoGb3XTJzX4O8KT5UcsqPeLGzKyqU/nC0HRXP+ImQzcNZygXyPVt8AHxaidLtqPLlStnUXOzLofjhpC+Y3iuDPEwrzUUt9Ew+4w17Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=h/+eanTw; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-64b9230f564so7004193a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 21:34:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1768023240; x=1768628040; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4wyW1DTuW/y7tVtllh5RzaabVaZZ0QjTpvnBZEV9Z4w=;
+        b=h/+eanTwwEJZM9lrNsk3peydXnCtVIY+mm1cnMpg4cf0NZlbvX0iO3W9qrVaWo/g3K
+         /COi1EbmBn5sC22nPZLfvcMVoU2EP7JfTslJ95/YjhBvGqdX1jM6y93wB9946+i/FNUS
+         uHsyocPO8rRza50CImtKZVfiOFmWyKm3KHJw8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768023240; x=1768628040;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4wyW1DTuW/y7tVtllh5RzaabVaZZ0QjTpvnBZEV9Z4w=;
+        b=ij69MNx+llTLz9sSWiYoy6oSeFYfsV66GRFu3pgbEn9buj6LlbJA8KYH9PtBJVJNOu
+         NGvTz+xUkvuzK0+Jef496fpAW5aHhNzGEAvAkSgWahehsLzjESWICFxDdmwM81CpUwf+
+         +cuqgQEIomf8FCoa2ZjvGt+VJkeODvf+kdcDJ0oYtjHsPK5unYlUpcGXwZ99D52NPn5x
+         Xxn1T6oSxxwENxeqq8+1ZN/LwghOPHwcRY9eRO4K3Ib+8SMvnIe1eAVGX5DmMjIKMS53
+         jCuMejoxL5r+e4y2XqOMQX+/c1KTfB28r9fDO44gl7voGrAw1zh0Kgd0qunxQe0MZw4p
+         Rmzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWS+p+k/+of7GKvP9mI81unuqQScTDvlfTaNx43aXlolT75JuZDaHSneaAHF/1IRd83qkJPG5npf0yCQDLo@vger.kernel.org
+X-Gm-Message-State: AOJu0YzinTRrdFx3hUK6sYcYbP+b2ATzL+Klraws9pGVTJAD/hcUcCOr
+	6OyE+o9h3xy/m24sZUUab5lEaOZdLAZMqNxtpxWYz437eLWuotOQbn1+6HtJnq4WwuG7swT+J1S
+	x1qLdeuo=
+X-Gm-Gg: AY/fxX5L6/Vq1wyRZaGN+xnjZMFBgJzRI6Z7CRQHIDaFMTjoJxeeo0/CmqyWTxBzcGz
+	rLncHR6tp5QvbTwa7G4OgTBfDabmu75IZQjwgSTR1b3/117gSPiPQ8qVvGPF7zwdSNkpMerkwR9
+	YmGNJL6PpHoeR5co0PRRIZ5auPFSTz59BGBUDqgO0ZWbi2HGIbqM/6UBzAfLplV1IQ8xB0K63JT
+	T3LstlaAw3pAxymNq5VXI30P+bwjWT8X3cUlhitnOFqlIYyje6JiX4fE22rH7DMeKOTiEo1KlHU
+	pPGk2vKkMSCKRF6nPq6oIs1mjQrO0Vm1SMYfAO06Gf5z9l0rVH8v5ZFPUP8zpcak2QSlsqza8X6
+	dxOtuInDDqWRYV0Da1VjrUgI0LH8GlCltegNCyPr3MaMi6+FB5SPy8wYCBQ6QJsuNLSLZvQZHKz
+	LaB6oKQFaOpTpN8ksY2VgqR8VUrQOPGYr4H+XgM0BM27T06RVX5UG7YcFIDA7h
+X-Google-Smtp-Source: AGHT+IFStmgtfBvT59PvItTGhdURiCmjN51pUPo1VFIXcC/IsNRcJsYOmZLuywUTZ+fYNjXQvpIsWw==
+X-Received: by 2002:a05:6402:35c3:b0:643:e2d:1d6c with SMTP id 4fb4d7f45d1cf-65097dd1042mr10089026a12.4.1768023240361;
+        Fri, 09 Jan 2026 21:34:00 -0800 (PST)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507be64efasm11513573a12.21.2026.01.09.21.33.57
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Jan 2026 21:33:59 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-64b7a38f07eso7593611a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Jan 2026 21:33:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW4TZYgiIQPtl9b0DsktWtoTU8Gpz3yab9DIRmCZWX9E+lIoB/8CWxDfv0CVrbLCg8AEQw6fw8ZMJ/TwIvz@vger.kernel.org
+X-Received: by 2002:a17:907:3e20:b0:b7a:1bde:1224 with SMTP id
+ a640c23a62f3a-b84451adc45mr1025593866b.65.1768023237683; Fri, 09 Jan 2026
+ 21:33:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20260110040217.1927971-1-viro@zeniv.linux.org.uk>
+In-Reply-To: <20260110040217.1927971-1-viro@zeniv.linux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 9 Jan 2026 19:33:41 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wiibHkNcsvsVpQLCMNJOh-dxEXNqXUxfQ63CTqX5w04Pg@mail.gmail.com>
+X-Gm-Features: AZwV_Qj8IjwLAZBCGylKcDX863bYH6zw4Q89VsNZ53a8fR2SwhwzXKAkrSSBlRw
+Message-ID: <CAHk-=wiibHkNcsvsVpQLCMNJOh-dxEXNqXUxfQ63CTqX5w04Pg@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/15] kmem_cache instances with static storage duration
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Mateusz Guzik <mguzik@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-A modular example I used for testing...
+On Fri, 9 Jan 2026 at 18:01, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>         There's an alternative approach applicable at least to the caches
+> that are never destroyed, which covers a lot of them.  No matter what,
+> runtime_const for pointers is not going to be faster than plain &,
+> so if we had struct kmem_cache instances with static storage duration, we
+> would be at least no worse off than we are with runtime_const variants.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/ufs/super.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+I like it. Much better than runtime_const for these things.
 
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index 6e4585169f94..440229a5b6c9 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -90,6 +90,7 @@
- #include <linux/log2.h>
- #include <linux/seq_file.h>
- #include <linux/iversion.h>
-+#include <linux/slab-static.h>
- 
- #include "ufs_fs.h"
- #include "ufs.h"
-@@ -1354,7 +1355,8 @@ static int ufs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	return 0;
- }
- 
--static struct kmem_cache * ufs_inode_cachep;
-+static struct kmem_cache_opaque ufs_inode_cache;
-+#define ufs_inode_cachep to_kmem_cache(&ufs_inode_cache)
- 
- static struct inode *ufs_alloc_inode(struct super_block *sb)
- {
-@@ -1384,16 +1386,13 @@ static void init_once(void *foo)
- 
- static int __init init_inodecache(void)
- {
--	ufs_inode_cachep = kmem_cache_create_usercopy("ufs_inode_cache",
-+	return kmem_cache_setup_usercopy(ufs_inode_cachep, "ufs_inode_cache",
- 				sizeof(struct ufs_inode_info), 0,
- 				(SLAB_RECLAIM_ACCOUNT | SLAB_ACCOUNT),
- 				offsetof(struct ufs_inode_info, i_u1.i_symlink),
- 				sizeof_field(struct ufs_inode_info,
- 					i_u1.i_symlink),
- 				init_once);
--	if (ufs_inode_cachep == NULL)
--		return -ENOMEM;
--	return 0;
- }
- 
- static void destroy_inodecache(void)
--- 
-2.47.3
+That said, I don't love the commit messages. "turn xyzzy
+static-duration" reads very oddly to me, and because I saw the emails
+out of order originally it just made me go "whaa?"
 
+So can we please explain this some more obvious way. Maybe just "Make
+xyz be statically allocated". Yes, I'm nitpicking, but I feel like
+explaining core patches is worth the effort.
+
+And maybe that's for the sad reason that I read more explanations than
+code these days '/
+
+                Linus
 
