@@ -1,235 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-73135-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73136-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7010FD0D8AC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 16:31:47 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E583DD0D922
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 17:30:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 71234301D971
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 15:31:38 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 05D383025588
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 16:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973FB347BBF;
-	Sat, 10 Jan 2026 15:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853E81F03D2;
+	Sat, 10 Jan 2026 16:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="RLxqTbj3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="q5IL6WtD"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YiED6Shy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345E5346AE1
-	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Jan 2026 15:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF52225397
+	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Jan 2026 16:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768059094; cv=none; b=ZS+g4JC9YgmEHp9VGmDsSWZnAQCB/AAEHJlxGjbuD5FLg8OLpiRYRDv04iAUoQG7DVYCTfoHgXz/oX5NooH5jp+XATNzdplYZNhUF+rRJGKDCjKxcELcZUQIDJxgT7CZKZqJ+6L0jt7ZunkqehxksP9d+GOby6X9w+Ugk6L3NiM=
+	t=1768062636; cv=none; b=f5lupBMy4IMJbbX9Cvfh7aXsWL5mRsiDKK8ELp59gGslmezikQV78wT4Fctg32x177uDK6vhHw74gjEA8NG7VaMFKIcvCbR3cjBPQqlakHwO1dH0GwtGBH9N3NOBiPoRx4HOnBLSEPIrFF73wy5vUgXPtlhyJhIYo5rb1CMW0yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768059094; c=relaxed/simple;
-	bh=C269jfdK8QwCwMJ3ueG0LoAawbfi69wy0rUN7wMytXs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uBbQ5NCpqczzj+iAYNQ7+h5ASXBfwaA5jU3Qapiqbj9CAPJ0Pub3i1pZQ5Oq2KVt+/RZmgiWyVAF/E8F52Ji0ab+oH67HjekH7J4c1Vv6zjiy6D56HQHyDsTt0i1zDs0qrS/9TANGSJSJVm1DSJQcOPh7h2Jw61P22iu7ieTZLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=RLxqTbj3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=q5IL6WtD; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 3B58B7A008E;
-	Sat, 10 Jan 2026 10:31:31 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Sat, 10 Jan 2026 10:31:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1768059091;
-	 x=1768145491; bh=2xnPw8kDbk1FnC17fO636ah57YcMdXKnjMD8FyXDqDU=; b=
-	RLxqTbj3JlBtQ5+lW+9o8DdlRmQ/Zqx0C/Tgt+zI02MIv1ZTBhAzDmavRNoy9DLG
-	kb4aZsb3+K0iMcTEAnqg/yvFiUFF23v/Zklfgd42oA9LSrm78VUqxtMN9sxvY5by
-	9oIoKxG62Iy5uFXt4ul71K/cWcdgYKdJegfni+d3pB0hXbOsKtQz6qJ5RGWWtEuW
-	SCg2TAHJpmIGJu96sz/W3Q97J8hOjzT93Y82Gry/vWSU8iMMpAr59fG/cQopSYLn
-	owFhBKy/lkhn4CrXst2bEt7Fx0KiljY3+4ozE7mChSkc8Y2s+Y+efN/b5K3K1X02
-	IjKgQAD2Mfkg3HL8w/0xog==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1768059091; x=
-	1768145491; bh=2xnPw8kDbk1FnC17fO636ah57YcMdXKnjMD8FyXDqDU=; b=q
-	5IL6WtDmfh04neTlaIzT2RxE8oNm7SETDbRxy5JaYBS+ah0y2XuYu4PbkMeYbMCW
-	CKYKCa1zwwae1f6EStwlGW3GR20n5dBtz9ZNayEPalgxrzFHXPRkZEMu0Y60QHHH
-	RmlFPJJ2teYEiiPpnunKuBT3ZxYYm3jJtmp1iR4ON4ycfeB8s6r5grX4UD3xy4lE
-	TdOTLfdQieKwMhr0LRFDaZGZHfBkNeBfiG4UqBR85YhLhW8yX/ohCZQbosdQCjKa
-	Liq760yNaXZ4zbOqCKExwSZi/U7H54neaNQK4jGoGCf1fJ5U/L77sOCkDb5SNUUy
-	fb3WWmRa5L8lOiW92zQhg==
-X-ME-Sender: <xms:0nBiadOfjl1D8kGZmKw8b734EEvIjcG8LcVUsffXTQju4Q0lYK-ZQQ>
-    <xme:0nBiafCZPtiAqB-BwbwIGEmqREyyI73Jp3si-P3nD7XmF2RGSvgai5EPfYwFOUa2m
-    dG12H6G6xwEBjLOURGTx0k7ZdkAugP0RApejev5k6GTPBqJv9oZ>
-X-ME-Received: <xmr:0nBiaSfpwe2RMy0auHYh4I8T5kRnqe5MQYLIFRb820nZG9nbzdM0Nkgk9GCV7VZSDaNQHnHGmiHjAH6ietvtAXQabJUoIc_KtutSXr8dN_5A9tMcDQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduuddvtdeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffhvfevfhgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpeelleegudduueffuddvteegffehudeuieffledtudehkeehffegteegfeeh
-    vedtteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeekpdhmohguvgep
-    shhmthhpohhuthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtg
-    homhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohep
-    hhgsihhrthhhvghlmhgvrhesuggunhdrtghomhdprhgtphhtthhopehlihhnuhigqdhfsh
-    guvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhlhies
-    ihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouh
-    hnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdho
-    rhhgpdhrtghpthhtohepuggrvhhiugeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:0nBiaWNt5qm8FkukJb0OEphNK3P5UW0Fzwa0VGicN0392RAfqhN_3w>
-    <xmx:0nBiaaIT5jZX0e1jTv1ZlweEsMOHkQYZX2lpDOwNTibyzdpTxpEfsw>
-    <xmx:0nBiaeLlqYuA5mYVT1b9U4e5pJY56ZgwM9KLl1hxURkM_T-xsiPL7w>
-    <xmx:0nBiac49-4bJd7CYrZ-BMz_IPyS70nuuZNhFKhPbgbqpEmw0EmirTA>
-    <xmx:03BiaUYOknfCuYnHPT-zBoifes7Or69uFOQUrCyibILyD8xIVY4W50DL>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 10 Jan 2026 10:31:29 -0500 (EST)
-Message-ID: <b7b72183-f9e1-4e58-b40f-45a267cc6831@bsbernd.com>
-Date: Sat, 10 Jan 2026 16:31:28 +0100
+	s=arc-20240116; t=1768062636; c=relaxed/simple;
+	bh=ozbJZp4+0mIbMyfnt5QOg/HiZ9oYTBoj41aDI8WgpYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iN3NytbMA6ucJdZo6oTXL3SvMFWNJ5RV6brxlB3O5oPG8btO7eXcs7iP7kU2j39r6A3oAwxDfsags4dA9RKvcVvTxN8OI+U/EPxCdD3g+Vp22CLqy4ViK5wHMgmjnyF+wt5B7Urnlj9iwQfwbtZPZhYk+ER8PX+CPC4G+eOc+bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YiED6Shy; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UKdNQinLdfkQ5ZjIhnHbKnawUimweEFVSRdn+zzu4Ck=; b=YiED6ShyrW/Jomgy26B8DzLXHP
+	E7TYHMotPXdP8MCQ32/eMItOuyzLZhWnTnn/PxvUsiVVjr7Fnzi4tmKNcJ3lfSRuAeY0IosQShC2g
+	+tYAncMiSoMUGVg2Shm+JRv4YOdYKQDcMLx/CBmrOyD3G4Bl7TJLdSabaa07LXYYPVWku2RmfDac7
+	+nERb8LxtuajjysfONvYqXcnwPaN/+BB9MNrBKsbUVBpH4vil0kaejDgJai5PJRMo7QfpTYDYDZZk
+	BwhKhknhJrntXyvk0gUBdKFZ/poaHj+Z73UAbndNVaeUZmr0YV+scrOFAKsqoSyYo4xBZqyIkrE1V
+	vRFK8jQA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vebrA-00000000pLa-1too;
+	Sat, 10 Jan 2026 16:30:28 +0000
+Date: Sat, 10 Jan 2026 16:30:28 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Bernd Schubert <bernd@bsbernd.com>, Jan Kara <jack@suse.cz>
+Cc: Joanne Koong <joannelkoong@gmail.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Horst Birthelmer <hbirthelmer@ddn.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"David Hildenbrand (Red Hat)" <david@kernel.org>
+Subject: Re: __folio_end_writeback() lockdep issue
+Message-ID: <aWJ-pHIY8Y8sjLeC@casper.infradead.org>
+References: <9b845a47-9aee-43dd-99bc-1a82bea00442@bsbernd.com>
+ <b7b72183-f9e1-4e58-b40f-45a267cc6831@bsbernd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: __folio_end_writeback() lockdep issue
-From: Bernd Schubert <bernd@bsbernd.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Horst Birthelmer
- <hbirthelmer@ddn.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "David Hildenbrand (Red Hat)" <david@kernel.org>
-References: <9b845a47-9aee-43dd-99bc-1a82bea00442@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <9b845a47-9aee-43dd-99bc-1a82bea00442@bsbernd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7b72183-f9e1-4e58-b40f-45a267cc6831@bsbernd.com>
 
+On Sat, Jan 10, 2026 at 04:31:28PM +0100, Bernd Schubert wrote:
+> [  872.499480]  Possible interrupt unsafe locking scenario:
+> [  872.499480] 
+> [  872.500326]        CPU0                    CPU1
+> [  872.500906]        ----                    ----
+> [  872.501464]   lock(&p->sequence);
+> [  872.501923]                                local_irq_disable();
+> [  872.502615]                                lock(&xa->xa_lock#4);
+> [  872.503327]                                lock(&p->sequence);
+> [  872.504116]   <Interrupt>
+> [  872.504513]     lock(&xa->xa_lock#4);
+> 
+> 
+> Which is introduced by commit 2841808f35ee for all file systems. 
+> The should be rather generic - I shouldn't be the only one seeing
+> it?
 
+Oh wow, 2841808f35ee has a very confusing commit message.  It implies
+that _no_ filesystem uses BDI_CAP_WRITEBACK_ACCT, but what it really
+means is that no filesystem now _clears_ BDI_CAP_WRITEBACK_ACCT, so
+all filesystems do use this code path and therefore the flag can be
+removed.  And that matches the code change.
 
-On 1/10/26 15:05, Bernd Schubert wrote:
-> Hi Joanne,
+So you should be able to reproduce this problem with commit 494d2f508883
+as well?
+
+That tells me that this is something fuse-specific.  Other filesystems
+aren't seeing this.  Wonder why ...
+
+__wb_writeout_add() or its predecessor __wb_writeout_inc() have been in
+that spot since 2015 or earlier.  
+
+The sequence lock itself is taken inside fprop_new_period() called from
+writeout_period() which has been there since 2012, so that's not it.
+
+Looking at fprop_new_period() is more interesting.  Commit a91befde3503
+removed an earlier call to local_irq_save().  It was then replaced with
+preempt_disable() in 9458e0a78c45 but maybe removing it was just
+erroneous?
+
+Anyway, that was 2022, so it doesn't answer "why is this only showing up
+now and only for fuse?"  But maybe replacing the preempt-disable with
+irq-disable in fprop_new_period() is the right solution, regardless.
+
+> So this?
 > 
-> I run in lockdep issues on testing 6.19. And I think it is due to
-> holding fi->lock in fuse_writepage_end() until fuse_writepage_finish() is
-> complete
+> mm: fix HARDIRQ-safe -> HARDIRQ-unsafe lock order in __folio_end_writeback()
 > 
-> Proposed patch is
+> __wb_writeout_add() is called while holding xa_lock (HARDIRQ-safe),
+> but it eventually calls fprop_fraction_percpu() which acquires
+> p->sequence (HARDIRQ-unsafe via seqcount), creating a lock ordering
+> violation.
 > 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 01bc894e9c2b..b2cd270c75d8 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -2000,8 +2000,8 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
->                 fuse_invalidate_attr_mask(inode, FUSE_STATX_MODIFY);
->         spin_lock(&fi->lock);
->         fi->writectr--;
-> -       fuse_writepage_finish(wpa);
->         spin_unlock(&fi->lock);
-> +       fuse_writepage_finish(wpa);
->         fuse_writepage_free(wpa);
->  }
+> Call trace:
+>   __folio_end_writeback()
+>     xa_lock_irqsave(&mapping->i_pages)     <- HARDIRQ-safe
+>       __wb_writeout_add()
+>         wb_domain_writeout_add()
+>           __fprop_add_percpu_max()
+>             fprop_fraction_percpu()
+>               read_seqcount_begin(&p->sequence)  <- HARDIRQ-unsafe
+> 
+> Possible deadlock scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(p->sequence)
+>                                local_irq_disable()
+>                                lock(xa_lock)
+>                                lock(p->sequence)
+>   <hardirq>
+>     lock(xa_lock)
+> 
+>                    *** DEADLOCK ***
+> 
+> Fix by moving __wb_writeout_add() outside the xa_lock critical section.
+> It only accesses percpu counters and global writeback domain structures,
+> none of which require xa_lock protection.
+> 
+> Fixes: 2841808f35ee ("mm: remove BDI_CAP_WRITEBACK_ACCT")
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> 
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index ccdeb0e84d39..ab83e3cbbf94 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -2994,7 +2994,6 @@ bool __folio_end_writeback(struct folio *folio)
 >  
+>                 wb = inode_to_wb(inode);
+>                 wb_stat_mod(wb, WB_WRITEBACK, -nr);
+> -               __wb_writeout_add(wb, nr);
+>                 if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK)) {
+>                         wb_inode_writeback_end(wb);
+>                         if (mapping->host)
+> @@ -3002,6 +3001,7 @@ bool __folio_end_writeback(struct folio *folio)
+>                 }
+>  
+>                 xa_unlock_irqrestore(&mapping->i_pages, flags);
+> +               __wb_writeout_add(wb, nr);
+>         } else {
+>                 ret = folio_xor_flags_has_waiters(folio, 1 << PG_writeback);
+>         }
 > 
-> But then there is this comment in fuse_writepage_finish
-> 
-> 		/*
-> 		 * Benchmarks showed that ending writeback within the
-> 		 * scope of the fi->lock alleviates xarray lock
-> 		 * contention and noticeably improves performance.
-> 		 */
 > 
 > 
-
-
-Hmm, actually the critical part is
-
-[  872.499480]  Possible interrupt unsafe locking scenario:
-[  872.499480] 
-[  872.500326]        CPU0                    CPU1
-[  872.500906]        ----                    ----
-[  872.501464]   lock(&p->sequence);
-[  872.501923]                                local_irq_disable();
-[  872.502615]                                lock(&xa->xa_lock#4);
-[  872.503327]                                lock(&p->sequence);
-[  872.504116]   <Interrupt>
-[  872.504513]     lock(&xa->xa_lock#4);
-
-
-Which is introduced by commit 2841808f35ee for all file systems. 
-The should be rather generic - I shouldn't be the only one seeing
-it?
-
-So this?
-
-mm: fix HARDIRQ-safe -> HARDIRQ-unsafe lock order in __folio_end_writeback()
-
-__wb_writeout_add() is called while holding xa_lock (HARDIRQ-safe),
-but it eventually calls fprop_fraction_percpu() which acquires
-p->sequence (HARDIRQ-unsafe via seqcount), creating a lock ordering
-violation.
-
-Call trace:
-  __folio_end_writeback()
-    xa_lock_irqsave(&mapping->i_pages)     <- HARDIRQ-safe
-      __wb_writeout_add()
-        wb_domain_writeout_add()
-          __fprop_add_percpu_max()
-            fprop_fraction_percpu()
-              read_seqcount_begin(&p->sequence)  <- HARDIRQ-unsafe
-
-Possible deadlock scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(p->sequence)
-                               local_irq_disable()
-                               lock(xa_lock)
-                               lock(p->sequence)
-  <hardirq>
-    lock(xa_lock)
-
-                   *** DEADLOCK ***
-
-Fix by moving __wb_writeout_add() outside the xa_lock critical section.
-It only accesses percpu counters and global writeback domain structures,
-none of which require xa_lock protection.
-
-Fixes: 2841808f35ee ("mm: remove BDI_CAP_WRITEBACK_ACCT")
-Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index ccdeb0e84d39..ab83e3cbbf94 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2994,7 +2994,6 @@ bool __folio_end_writeback(struct folio *folio)
- 
-                wb = inode_to_wb(inode);
-                wb_stat_mod(wb, WB_WRITEBACK, -nr);
--               __wb_writeout_add(wb, nr);
-                if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK)) {
-                        wb_inode_writeback_end(wb);
-                        if (mapping->host)
-@@ -3002,6 +3001,7 @@ bool __folio_end_writeback(struct folio *folio)
-                }
- 
-                xa_unlock_irqrestore(&mapping->i_pages, flags);
-+               __wb_writeout_add(wb, nr);
-        } else {
-                ret = folio_xor_flags_has_waiters(folio, 1 << PG_writeback);
-        }
-
-
-
-Thanks,
-Bernd
-
-
-
+> Thanks,
+> Bernd
+> 
+> 
+> 
 
