@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-73101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3C8D0CC06
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 02:46:01 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4D1D0CC4E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 02:48:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 5F36C302FCED
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 01:45:50 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0C86C304DE07
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 01:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC9523AB88;
-	Sat, 10 Jan 2026 01:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDB72472BA;
+	Sat, 10 Jan 2026 01:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1hwaVl4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aS1PPg/D"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CDC19F40B;
-	Sat, 10 Jan 2026 01:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829D572631;
+	Sat, 10 Jan 2026 01:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768009545; cv=none; b=l+SScOaxMb4GXlsqErdZFuBNaOsZ8KqWt92wPolNaD2lHIsM1Qh5PCDRD3RD0Xvu+RnUR9zSDkqr4r0Q0q+w7MLVRWbq4pB5t2Vfh4kvT5eoDGPXE40IRHyh2FZ1M9Z8duaPXWo9mHTV373wc+N1EIBuhf5Je0ksAV7nodYdZCE=
+	t=1768009653; cv=none; b=Y+kfeEXHI+mM4M6D5NzSQG7pZkt2c62IZ8me7LirJBoHYqR3jUzMrCzAw7pycXte5f6aw45TPPCI6w+XhwwXoQS4DqUNJhr1v7vw2W8TRckDEJHfPx/SbIoNdNwSGrgrka0snQWZSKjlFABQG6B/8lWM1zKvi9awXsaiip2aXVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768009545; c=relaxed/simple;
-	bh=nueUKQeE8eABviDIYLH468NZYrZZr1YRYAGw27ULbJ0=;
+	s=arc-20240116; t=1768009653; c=relaxed/simple;
+	bh=OKPFCC1ojmEDlLwUQA1PrvgWaqI/QFfkYIRaHHjgLI8=;
 	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cbUPsdhB7t7i6zqE68/3LIMjA3xBGQThaSawLIE4To1lBSz1Kw67Uk9NaStGBq3sIKF1RlmIRnsgO2TF90wyy4L84oKHkmSRz99er0+chyM9ere7ug4a5at54FCeFIJ6lmBo6Q1WEsAmXsUziKtYog/zs08b83SLjGLzAHp8hKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1hwaVl4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 041DBC4CEF1;
-	Sat, 10 Jan 2026 01:45:41 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=b2HcEjXvYMhCcA21bcdAIxeK4citXtWJSWPJbpwe0qxWIjxyVarqeYgN7XITksO5jPx3GIY4tQThDWuwTa/fkuftPr36WOMSXYnpXqEPsA8TbdJvg4hMerOEtd4DiimlPZZZGpMxDj2V8pj2M6HuHAiDle8wKYufDUFdgBe8pZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aS1PPg/D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD9FBC4CEF1;
+	Sat, 10 Jan 2026 01:47:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768009545;
-	bh=nueUKQeE8eABviDIYLH468NZYrZZr1YRYAGw27ULbJ0=;
+	s=k20201202; t=1768009653;
+	bh=OKPFCC1ojmEDlLwUQA1PrvgWaqI/QFfkYIRaHHjgLI8=;
 	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=i1hwaVl4RJlM92xX9Gl1Q/jvG9XgiWwW7RVb7fbPOhlUGj8SN80KzLjFvAIcGWcyj
-	 X6o4J03LzA+ZElKxt7+E173ywxHVhc1GAL3Uyb74Qy/IVMSd0qJm4dlfr4VVFyNtyw
-	 C/TRbSzmtJS4qk8yjU43lgVsDR/CgixjSphafixIx0JQEvQ+3b6Zedj6IOdTYk4pNe
-	 SoRC2x6jmVS2ZOaY5sMxgBng56rYZf0USTqg+9BE9cDtkLfbdwC5q28B4foRm8z26m
-	 JOUg8J22zimKg1a3s5WOkS4zqCLFzvQpytPrbiCkuF8cDsmDZfTFAn/HiqG80bYDyO
-	 ZFXjJ61UlitEA==
-Message-ID: <8d82106d-cb20-4034-aab2-3696dd5486c7@kernel.org>
-Date: Sat, 10 Jan 2026 09:45:56 +0800
+	b=aS1PPg/Dg2j3WlAEK5nHwD5i8kCTebxLR+i8vwa1Umz+Wef0tfIentBS0klMYZA/0
+	 jcNMCTW2byAj+2+1CuaM8xxEVkIBoJHlppRtjIGo5fLkKKWAuHZa5JPyHvx4sw6t+e
+	 +SwwuwOcEtWTrjgtkf/FhomVQK8mNq+RpWJtAVY8ZEyUrj+ucRRxGYTYp7Xp/qex4E
+	 afNMjdvfkLqjaXQpbL974EbmrZMtjQ5HekIFhOGbzOSFgVlWcBwV3eO4AhalhUZOEB
+	 rsyBo6s8Gp7OWORYRudl7fUPvCO3D2sc+9CFLGsHY1Zv/TiLZVK9d43+cGel2wVRPX
+	 PWiI+/c4aq5zQ==
+Message-ID: <35b959e6-a91a-409b-ac3e-f78aaf60148a@kernel.org>
+Date: Sat, 10 Jan 2026 09:47:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -48,74 +48,73 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Dusty Mabe <dusty@dustymabe.com>, =?UTF-8?Q?Timoth=C3=A9e_Ravier?=
- <tim@siosm.fr>, =?UTF-8?B?QWxla3PDqWkgTmFpZMOpbm92?= <an@digitaltide.io>,
- Amir Goldstein <amir73il@gmail.com>, Alexander Larsson <alexl@redhat.com>,
- Christian Brauner <brauner@kernel.org>, Miklos Szeredi
- <mszeredi@redhat.com>, Sheng Yong <shengyong1@xiaomi.com>,
- Zhiguo Niu <niuzhiguo84@gmail.com>
-Subject: Re: [PATCH v3 RESEND] erofs: don't bother with s_stack_depth
- increasing for now
-To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
-References: <3acec686-4020-4609-aee4-5dae7b9b0093@gmail.com>
- <20260108030709.3305545-1-hsiangkao@linux.alibaba.com>
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org,
+ jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org,
+ ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+ devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-mm@kvack.org, gfs2@lists.linux.dev,
+ linux-doc@vger.kernel.org, v9fs@lists.linux.dev, ceph-devel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org
+Subject: Re: [PATCH 04/24] erofs: add setlease file operation
+To: Jeff Layton <jlayton@kernel.org>, Luis de Bethencourt
+ <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>,
+ Nicolas Pitre <nico@fluxnic.net>, Christoph Hellwig <hch@infradead.org>,
+ Jan Kara <jack@suse.cz>, Anders Larsen <al@alarsen.net>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, David Sterba <dsterba@suse.com>,
+ Chris Mason <clm@fb.com>, Gao Xiang <xiang@kernel.org>,
+ Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+ Sandeep Dhavale <dhavale@google.com>, Hongbo Li <lihongbo22@huawei.com>,
+ Chunhai Guo <guochunhai@vivo.com>, Jan Kara <jack@suse.com>,
+ Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Jaegeuk Kim <jaegeuk@kernel.org>,
+ OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+ David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>,
+ Dave Kleikamp <shaggy@kernel.org>,
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+ Viacheslav Dubeyko <slava@dubeyko.com>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, Mike Marshall
+ <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
+ Phillip Lougher <phillip@squashfs.org.uk>, Carlos Maiolino <cem@kernel.org>,
+ Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>,
+ Yuezhang Mo <yuezhang.mo@sony.com>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>,
+ Andreas Gruenbacher <agruenba@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
+ <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>, Xiubo Li
+ <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Bharath SM <bharathsm@microsoft.com>, Hans de Goede <hansg@kernel.org>
+References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
+ <20260108-setlease-6-20-v1-4-ea4dec9b67fa@kernel.org>
 Content-Language: en-US
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20260108030709.3305545-1-hsiangkao@linux.alibaba.com>
+In-Reply-To: <20260108-setlease-6-20-v1-4-ea4dec9b67fa@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 1/8/2026 11:07 AM, Gao Xiang wrote:
-> Previously, commit d53cd891f0e4 ("erofs: limit the level of fs stacking
-> for file-backed mounts") bumped `s_stack_depth` by one to avoid kernel
-> stack overflow when stacking an unlimited number of EROFS on top of
-> each other.
+On 1/9/2026 1:12 AM, Jeff Layton wrote:
+> Add the setlease file_operation to erofs_file_fops and erofs_dir_fops,
+> pointing to generic_setlease.  A future patch will change the default
+> behavior to reject lease attempts with -EINVAL when there is no
+> setlease file operation defined. Add generic_setlease to retain the
+> ability to set leases on this filesystem.
 > 
-> This fix breaks composefs mounts, which need EROFS+ovl^2 sometimes
-> (and such setups are already used in production for quite a long time).
-> 
-> One way to fix this regression is to bump FILESYSTEM_MAX_STACK_DEPTH
-> from 2 to 3, but proving that this is safe in general is a high bar.
-> 
-> After a long discussion on GitHub issues [1] about possible solutions,
-> one conclusion is that there is no need to support nesting file-backed
-> EROFS mounts on stacked filesystems, because there is always the option
-> to use loopback devices as a fallback.
-> 
-> As a quick fix for the composefs regression for this cycle, instead of
-> bumping `s_stack_depth` for file backed EROFS mounts, we disallow
-> nesting file-backed EROFS over EROFS and over filesystems with
-> `s_stack_depth` > 0.
-> 
-> This works for all known file-backed mount use cases (composefs,
-> containerd, and Android APEX for some Android vendors), and the fix is
-> self-contained.
-> 
-> Essentially, we are allowing one extra unaccounted fs stacking level of
-> EROFS below stacking filesystems, but EROFS can only be used in the read
-> path (i.e. overlayfs lower layers), which typically has much lower stack
-> usage than the write path.
-> 
-> We can consider increasing FILESYSTEM_MAX_STACK_DEPTH later, after more
-> stack usage analysis or using alternative approaches, such as splitting
-> the `s_stack_depth` limitation according to different combinations of
-> stacking.
-> 
-> Fixes: d53cd891f0e4 ("erofs: limit the level of fs stacking for file-backed mounts")
-> Reported-and-tested-by: Dusty Mabe <dusty@dustymabe.com>
-> Reported-by: Timothée Ravier <tim@siosm.fr>
-> Closes: https://github.com/coreos/fedora-coreos-tracker/issues/2087 [1]
-> Reported-by: "Alekséi Naidénov" <an@digitaltide.io>
-> Closes: https://lore.kernel.org/r/CAFHtUiYv4+=+JP_-JjARWjo6OwcvBj1wtYN=z0QXwCpec9sXtg@mail.gmail.com
-> Acked-by: Amir Goldstein <amir73il@gmail.com>
-> Acked-by: Alexander Larsson <alexl@redhat.com>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Miklos Szeredi <mszeredi@redhat.com>
-> Cc: Sheng Yong <shengyong1@xiaomi.com>
-> Cc: Zhiguo Niu <niuzhiguo84@gmail.com>
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
 
