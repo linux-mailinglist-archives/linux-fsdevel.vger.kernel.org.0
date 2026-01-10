@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-73116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAFB0D0CE8F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 05:03:21 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1732AD0CE9B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 05:03:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 54C6D30657B6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 04:01:17 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 180523072E84
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 04:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C835E284670;
-	Sat, 10 Jan 2026 04:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020EF28506A;
+	Sat, 10 Jan 2026 04:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uIeicvqc"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ph0ALkCK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD1A25DAEA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCB3257821;
 	Sat, 10 Jan 2026 04:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768017664; cv=none; b=hcgjFevz7ShA5wECXeoutP5Hh36/A6c+Gwdk4h9UBTSzVBpLZvldBuJO6XbRRPczoKwkRLGEObICW0592bBPc1m9B7JEWpHbQZ3fqpUPjzFCT2T6WWmUGfFu2QgOFw5kG7FU2Pk6G5M1gFXjNbQJ5ToA9Fu049N3mHjmjVYv5dA=
+	t=1768017665; cv=none; b=fD9+gJRBVyIz9VgYmHxT9Fz2dZG2eGRwbj7VMMbzhuSxjT8rIhLtKFmH3zPb1M4J0QNqTac9V9drucY5Hqlj+71VfzZkKtV4Obeb2a9juAPpCyYRqA2NghB2jXnv4Q3pJmqO14u/hVLZOMpxFmDVcVTLy8ONE9afpH1qxrlAl+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768017664; c=relaxed/simple;
-	bh=1z70lKRknlSdqIBwT8PCoJx1AjZFc/zasivWeZ/Xl+Y=;
+	s=arc-20240116; t=1768017665; c=relaxed/simple;
+	bh=nIq7e+rawtNUm9rzBQBhgYlmP2Kc8+05Ksj6TyvdJPA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sjxAJTtsWwhEQpibRkTCtWT4qCzMANowJaSYkOYjfqcnqBM3L5n1HGLhTgoX6N9II1ZzeCJpeF0W8LU85uY1+igPVbCN0AVibi2SywVC4ES34flxrbo0w5f/EaJfmHzGLHEFnemzsItsuqlAlG3nkM554BijPlj6zoL5reioKIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uIeicvqc; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=MxBfOxELbjhjpbHo2QJ4XKWdUMsXH3Q12URz2vfbGx4iOD5GXaH6CwWQaZp5gujdOO5z/Q74mjRB8V87Dptd9lG0D3wXrtkcqf/qn5Hda0nwwqdIF0LhUj8uKhsLgO7urnS3Mj3Ghb4D8JqmpQ5vnjEnT2XglzrLzi6CvQeW1YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ph0ALkCK; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=C4O95Yl5s9/wxYDLNk10/lpMX9to528i2PgDiiXFfe4=; b=uIeicvqcAdjQez8e5XGTZuq3uz
-	6pS0Ua/0N3dsxZ2P0OYuhho5eQYhm8j5ts0/CncmYHbn2ywGNTTy5KC3FHlhWVGZn2wyYThkjwQQ0
-	cE0FyzqFQ2kKz1tX0H6hqCLWfhEb0ON24pcs/3/u/pkkck/NsFbbQl/3HMm01OEdHVC7dlv5T46Qb
-	nR1lUjs3EuFSE1COSZX0yzMLd/O8jVHjHoFsVjoX/6y5oBwuyQWrixRMI2puUEPJv46OI20VFefKP
-	3zW/jVVbFNBDQlVmIihiNwNBe/IGLJldpZ27pFYSW9GvdZhX3I8upLGg45KAl59J/3Psr+vg0vJ3M
-	Z2X0m9Ww==;
+	bh=yUfjq/cQTQJkqeTRHOq+fL1zvjNTzJMLDYauRTOdnO4=; b=Ph0ALkCKCYTptUv3Vhh2Nuf1mQ
+	UzC/xvzrJz+R3J3N/IkPvbgNT1VUADc/P60p4M/p/Tfq6b9AXo6PGR3Of00BGb+nbV9qVolGywIbS
+	4qlo33yOoLuLmpyw2pOMWqa7n9v2oYj6UNpSK8TyJ6IALmXPL1V6S4wGvXIRu3c2PHMAszgXra1Zx
+	RDyZOAVhrtqim+rwGW5UZwP8r462a3XK7qSyBsjUm18blsC9tazRwWxQ0q9Xo3rZJ1umbB3Y4ABzA
+	Ng6Ot50qgrd/rdusNTPlFmP8ns+Dg58Djbg2pW6P5sCBpbxN/X4RCmKJDjInPW6qJ88rFRRYXE8Rh
+	V7y4NNhA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1veQB8-000000085Zh-4B9a;
+	id 1veQB9-000000085Zl-0In6;
 	Sat, 10 Jan 2026 04:02:19 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-mm@kvack.org
@@ -52,9 +52,9 @@ Cc: Vlastimil Babka <vbabka@suse.cz>,
 	Jan Kara <jack@suse.cz>,
 	Mateusz Guzik <mguzik@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 06/15] turn bh_cachep static-duration
-Date: Sat, 10 Jan 2026 04:02:08 +0000
-Message-ID: <20260110040217.1927971-7-viro@zeniv.linux.org.uk>
+Subject: [RFC PATCH 07/15] turn dentry_cache static-duration
+Date: Sat, 10 Jan 2026 04:02:09 +0000
+Message-ID: <20260110040217.1927971-8-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260110040217.1927971-1-viro@zeniv.linux.org.uk>
 References: <20260110040217.1927971-1-viro@zeniv.linux.org.uk>
@@ -67,42 +67,63 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
+No need to bother with runtime_const() for it anymore...
+
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/buffer.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/dcache.c                       | 8 ++++----
+ include/asm-generic/vmlinux.lds.h | 3 +--
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 838c0c571022..c8ec1b440880 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -50,6 +50,7 @@
- #include <linux/fscrypt.h>
- #include <linux/fsverity.h>
- #include <linux/sched/isolation.h>
+diff --git a/fs/dcache.c b/fs/dcache.c
+index dc2fff4811d1..43d3b4fbedcc 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -32,6 +32,7 @@
+ #include <linux/bit_spinlock.h>
+ #include <linux/rculist_bl.h>
+ #include <linux/list_lru.h>
 +#include <linux/slab-static.h>
- 
  #include "internal.h"
+ #include "mount.h"
  
-@@ -2990,7 +2991,8 @@ EXPORT_SYMBOL(try_to_free_buffers);
- /*
-  * Buffer-head allocation
-  */
--static struct kmem_cache *bh_cachep __ro_after_init;
-+static struct kmem_cache_opaque bh_cache;
-+#define bh_cachep to_kmem_cache(&bh_cache)
+@@ -86,8 +87,8 @@ __cacheline_aligned_in_smp DEFINE_SEQLOCK(rename_lock);
  
- /*
-  * Once the number of bh's in the machine exceeds this level, we start
-@@ -3149,7 +3151,7 @@ void __init buffer_init(void)
- 	unsigned long nrpages;
- 	int ret;
+ EXPORT_SYMBOL(rename_lock);
  
--	bh_cachep = KMEM_CACHE(buffer_head,
-+	KMEM_CACHE_SETUP(bh_cachep, buffer_head,
- 				SLAB_RECLAIM_ACCOUNT|SLAB_PANIC);
- 	/*
- 	 * Limit the bh occupancy to 10% of ZONE_NORMAL
+-static struct kmem_cache *__dentry_cache __ro_after_init;
+-#define dentry_cache runtime_const_ptr(__dentry_cache)
++static struct kmem_cache_opaque __dentry_cache;
++#define dentry_cache to_kmem_cache(&__dentry_cache)
+ 
+ const struct qstr empty_name = QSTR_INIT("", 0);
+ EXPORT_SYMBOL(empty_name);
+@@ -3265,10 +3266,9 @@ static void __init dcache_init(void)
+ 	 * but it is probably not worth it because of the cache nature
+ 	 * of the dcache.
+ 	 */
+-	__dentry_cache = KMEM_CACHE_USERCOPY(dentry,
++	KMEM_CACHE_SETUP_USERCOPY(dentry_cache, dentry,
+ 		SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|SLAB_ACCOUNT,
+ 		d_shortname.string);
+-	runtime_const_init(ptr, __dentry_cache);
+ 
+ 	/* Hash may have been set up in dcache_init_early */
+ 	if (!hashdist)
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 8ca130af301f..6997f6301260 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -971,8 +971,7 @@
+ 
+ #define RUNTIME_CONST_VARIABLES						\
+ 		RUNTIME_CONST(shift, d_hash_shift)			\
+-		RUNTIME_CONST(ptr, dentry_hashtable)			\
+-		RUNTIME_CONST(ptr, __dentry_cache)
++		RUNTIME_CONST(ptr, dentry_hashtable)
+ 
+ /* Alignment must be consistent with (kunit_suite *) in include/kunit/test.h */
+ #define KUNIT_TABLE()							\
 -- 
 2.47.3
 
