@@ -1,82 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-73108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08159D0CE50
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 04:58:10 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1CE8D0CE95
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 05:03:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id ACB7A301B5A8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 03:57:11 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 529AF306C775
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Jan 2026 04:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745ED26561E;
-	Sat, 10 Jan 2026 03:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6B428489B;
+	Sat, 10 Jan 2026 04:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="MaRoKkOl";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="krBU9/Yc"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="A02pHIap"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6971725A645
-	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Jan 2026 03:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB522475F7;
+	Sat, 10 Jan 2026 04:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768017425; cv=none; b=ZMRFfcmCiETH+8gs+t6aTBishq5NN20StkO5n3UCwA6zmnkgwncU+LIAwqcsWXjA8yZrLdwY69TmfUyA1XBmKFupwbGqtVcr/LPY5yE15Cg0vU+iJc9Ej2VVZ9Xzv5BKtc6KNXgOdYhGhvrtxnRGGRk3xrfpRg8hFILYkOxHgk8=
+	t=1768017664; cv=none; b=kGp8zxluW1cp+rTERNNvukDAJ0JGxzhh6iT3Qn37BzWeo2wnDDUPjcTo5PaIfZp31WmccqpenySqAeJi3LKDegiw0fkEQyyahA+9GHZ8/O+rOARxZCIzo31haRyzDC4njFTo8sP85IDCmnZGOOAAWhJXaPwdW9Fprw6eb2shok4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768017425; c=relaxed/simple;
-	bh=zrLkyxR4WKZTXoCpqFRBNNn9Mo3kbp46VbldVjSL5wI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ViAgp4g6dd04KUd1+edMHZ6I1WxDj1PB5QSZ99zE/RNlKfDSBdE9F+0ykDjzm6TVbEnISHRJwSuviGCRr3yISEEP9lSiLgL4Alk4rbbSC52wfyf/58V2DpXTAHVmzJTy/1h1bLokESIJSbeM85OF9GlwiB9X5xT+XwRHcB+vV4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=MaRoKkOl; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=krBU9/Yc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E43CF5BD4F;
-	Sat, 10 Jan 2026 03:56:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1768017407; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3wbutnzV9eZIALfLzM0C1Q8Sqw2lOekYO9LFPItKA0g=;
-	b=MaRoKkOlRpkozbBPWLyRJ58D5/51rfTsbZt/sCizdLV9dWxyQdb/bYiyAIrP2BIL15BjJc
-	uTdRS2aOINCDuy8PZiO2NE2PVxJacq7aiYZ/aIGXVYFeIVsYoccMl4PUGbGO6tYkb9D3AL
-	/WJoH3ixK1yd8d9ATkIIWSDNOV8KJi0=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b="krBU9/Yc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1768017406; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3wbutnzV9eZIALfLzM0C1Q8Sqw2lOekYO9LFPItKA0g=;
-	b=krBU9/YcDtm7j9qKxigqapchgqEM+OhyRZ3gsd1HeuVxQgIPVeZZiRVsjiiSAXPxzzKrMO
-	//ZLVpBOn9Sw4wQYfMNlna9s7l+C17Dcj2yv4dxeOqYVVasQ6bgyu1Jp1yXvtGEj4kURd3
-	E7XpWGI+ibwGiFjPkb6VhPonPEfuO30=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6E2323EA63;
-	Sat, 10 Jan 2026 03:56:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IM9eDP3NYWlqLgAAD6G6ig
-	(envelope-from <wqu@suse.com>); Sat, 10 Jan 2026 03:56:45 +0000
-From: Qu Wenruo <wqu@suse.com>
-To: linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1768017664; c=relaxed/simple;
+	bh=e1e6kOPFGoChN8QBCG4b3cerzmCBOm6lgCcFKkZMO4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dc8k3hmEGN5DmLOrCudwGy9JvC4+0hBN1Pa/ea315lnCufFdKHV8POmj5h49LMT/5GgB51wHlM9r0GkTwi9yMUZfXUns0IGokoYboxfdemUalyeyfYpouF+nOM5Vsr1Cayb7u5PwYu4bThtlhjnV7V2LflheTWtnr41UNNWLSuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=A02pHIap; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=SAMItpZq/8UWwpFL77MgX7nTOQ8V2DCdFRU+BfI9C6U=; b=A02pHIapz+/ZRHrStmehokVOoO
+	VrM1ZLnvCP3Q2kmEX3nK3l1OP3VQ1WxkbQGHjtUPpyriiZ7wcoMt1lytyeKMIINPNAiwWGWoTmiWj
+	dw4AL7A6B14n03dfwWtkawM8nT6XYOHGgEUfxDhyWg/xrhEpXMZqCsYsNgADDRGtUSKyd7BSm60JY
+	Sfq2WNTWQ+il7s9LXlyLT/K5fh8/WDuC2tMPXoVIuO2lZCg6FgGy6FvGvNdPuOSsyLUq4NJM3sJg/
+	BHX+G73hbNfZecrdNUSrjMu5/13gf0SPfH5JtUJ4Nbjh4pZ9oaOww9w1e0VzKCAyogDcK5GZPRyVz
+	hlbGvAyA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1veQB7-000000085Yf-1opA;
+	Sat, 10 Jan 2026 04:02:17 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-mm@kvack.org
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Harry Yoo <harry.yoo@oracle.com>,
 	linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Mateusz Guzik <mguzik@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] mm/filemap: remove read_cache_page_gfp()
-Date: Sat, 10 Jan 2026 14:26:21 +1030
-Message-ID: <a5ffadf18dca846d6f8086b29366288e794a24b6.1768017091.git.wqu@suse.com>
+Subject: [RFC PATCH 00/15] kmem_cache instances with static storage duration
+Date: Sat, 10 Jan 2026 04:02:02 +0000
+Message-ID: <20260110040217.1927971-1-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1768017091.git.wqu@suse.com>
-References: <cover.1768017091.git.wqu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,98 +62,146 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -3.01
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCPT_COUNT_THREE(0.00)[4];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: E43CF5BD4F
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The last user of this function is btrfs, which has migrated to use
-bdev_rw_virt().
+        kmem_cache_create() and friends create new instances of
+struct kmem_cache and return pointers to those.  Quite a few things in
+core kernel are allocated from such caches; each allocation involves
+dereferencing an assign-once pointer and for sufficiently hot ones that
+dereferencing does show in profiles.
 
-So there is no need to keep that function.
+        There had been patches floating around switching some of those
+to runtime_const infrastructure.  Unfortunately, it's arch-specific
+and most of the architectures lack it.
 
-Signed-off-by: Qu Wenruo <wqu@suse.com>
----
- include/linux/pagemap.h |  2 --
- mm/filemap.c            | 23 -----------------------
- 2 files changed, 25 deletions(-)
+        There's an alternative approach applicable at least to the caches
+that are never destroyed, which covers a lot of them.  No matter what,
+runtime_const for pointers is not going to be faster than plain &,
+so if we had struct kmem_cache instances with static storage duration, we
+would be at least no worse off than we are with runtime_const variants.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 31a848485ad9..2efbf6c55a96 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -1002,8 +1002,6 @@ struct folio *mapping_read_folio_gfp(struct address_space *, pgoff_t index,
- 		gfp_t flags);
- struct page *read_cache_page(struct address_space *, pgoff_t index,
- 		filler_t *filler, struct file *file);
--extern struct page * read_cache_page_gfp(struct address_space *mapping,
--				pgoff_t index, gfp_t gfp_mask);
- 
- static inline struct page *read_mapping_page(struct address_space *mapping,
- 				pgoff_t index, struct file *file)
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ebd75684cb0a..cd167aa45934 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -4173,29 +4173,6 @@ struct page *read_cache_page(struct address_space *mapping,
- }
- EXPORT_SYMBOL(read_cache_page);
- 
--/**
-- * read_cache_page_gfp - read into page cache, using specified page allocation flags.
-- * @mapping:	the page's address_space
-- * @index:	the page index
-- * @gfp:	the page allocator flags to use if allocating
-- *
-- * This is the same as "read_mapping_page(mapping, index, NULL)", but with
-- * any new page allocations done using the specified allocation flags.
-- *
-- * If the page does not get brought uptodate, return -EIO.
-- *
-- * The function expects mapping->invalidate_lock to be already held.
-- *
-- * Return: up to date page on success, ERR_PTR() on failure.
-- */
--struct page *read_cache_page_gfp(struct address_space *mapping,
--				pgoff_t index,
--				gfp_t gfp)
--{
--	return do_read_cache_page(mapping, index, NULL, NULL, gfp);
--}
--EXPORT_SYMBOL(read_cache_page_gfp);
--
- /*
-  * Warn about a page cache invalidation failure during a direct I/O write.
-  */
+        There are obstacles to doing that, but they turn out to be easy
+to deal with.
+
+1) as it is, struct kmem_cache is opaque for anything outside of a few
+files in mm/*; that avoids serious headache with header dependencies,
+etc., and it's not something we want to lose.  Solution: struct
+kmem_cache_opaque, with the size and alignment identical to struct
+kmem_cache.  Calculation of size and alignment can be done via the same
+mechanism we use for asm-offsets.h and rq-offsets.h, with build-time
+check for mismatches.  With that done, we get an opaque type defined in
+linux/slab-static.h that can be used for declaring those caches.
+In linux/slab.h we add a forward declaration of kmem_cache_opaque +
+helper (to_kmem_cache()) converting a pointer to kmem_cache_opaque
+into pointer to kmem_cache.
+
+2) real constructor of kmem_cache needs to be taught to deal with
+preallocated instances.  That turns out to be easy - we already pass an
+obscene amount of optional arguments via struct kmem_cache_args, so we
+can stash the pointer to preallocated instance in there.  Changes in
+mm/slab_common.c are very minor - we should treat preallocated caches
+as unmergable, use the instance passed to us instead of allocating a
+new one and we should not free them.  That's it.
+
+	A set of helpers parallel to kmem_cache_create() and friends
+(kmem_cache_setup(), etc.) is provided in the same linux/slab-static.h;
+generally, conversion affects only a few lines.
+
+	Note that slab-static.h is needed only in places that create
+such instances; all users need only slab.h (and they can be modular,
+unlike runtime_const-based approach).
+
+
+	That covers the instances that never get destroyed.  Quite a few
+fall into that category, but there's a major exception - anything in
+modules must be destroyed before the module gets removed.  Note that
+unlike runtime_constant-based approach, cache _uses_ in a module are
+fine - if kmem_cache_opaque instance is exported, its address is available
+to modules without any problems.  It's caches _created_ in a module
+that offer an extra twist.
+
+	Teaching kmem_cache_destroy() to skip actual freeing of given
+kmem_cache instance is trivial; the problem is that kmem_cache_destroy()
+may overlap with sysfs access to attributes of that cache.  In that
+case kmem_cache_destroy() may return before the instance gets freed -
+freeing (from slab_kmem_cache_release()) happens when the refcount of
+embedded kobject drops to zero.  That's fine, since all references
+to data structures in module's memory are already gone by the time
+kmem_cache_destroy() returns.  That, however, relies upon the struct
+kmem_cache itself not being in module's memory; getting it unmapped
+before slab_kmem_cache_release() has run needs to be avoided.
+
+	It's not hard to deal with, though.  We need to make sure that
+instance in a module will get to slab_kmem_cache_release() before the
+module data gets freed.  That's only a problem on sysfs setups -
+otherwise it'll definitely be finished before kmem_cache_destroy()
+returns.
+
+	Note that modules themselves have sysfs-exposed attributes,
+so a similar problem already exists there.  That's dealt with by
+having mod_sysfs_teardown() wait for refcount of module->mkobj.kobj
+reaching zero.  Let's make use of that - have static-duration-in-module
+kmem_cache instances grab a reference to that kobject upon setup and
+drop it in the end of slab_kmem_cache_release().
+
+	Let setup helpers store the kobjetct to be pinned in
+kmem_cache_args->owner (for preallocated; if somebody manually sets it
+for non-preallocated case, it'll be ignored).  That would be
+&THIS_MODULE->mkobj.kobj for a module and NULL in built-in.
+
+	If sysfs is enabled and we are dealing with preallocated instance,
+let create_cache() grab and stash that reference in kmem_cache->owner
+and let slab_kmem_cache_release() drop it instead of freeing kmem_cache
+instance.
+
+
+	Costs:
+* a bit (SLAB_PREALLOCATED) is stolen from slab_flags_t
+* such caches can't be merged.  If you want them mergable, don't use that
+technics.
+* you can't do kmem_cache_setup()/kmem_cache_destroy()/kmem_cache_setup()
+on the same instance.  Just don't do that.
+
+Al Viro (15):
+  static kmem_cache instances for core caches
+  allow static-duration kmem_cache in modules
+  make mnt_cache static-duration
+  turn thread_cache static-duration
+  turn signal_cache static-duration
+  turn bh_cachep static-duration
+  turn dentry_cache static-duration
+  turn files_cachep static-duration
+  make filp and bfilp caches static-duration
+  turn sighand_cache static-duration
+  turn mm_cachep static-duration
+  turn task_struct_cachep static-duration
+  turn fs_cachep static-duration
+  turn inode_cachep static-duration
+  turn ufs_inode_cache static-duration
+
+ Kbuild                            | 13 +++++-
+ fs/buffer.c                       |  6 ++-
+ fs/dcache.c                       |  8 ++--
+ fs/file_table.c                   | 32 +++++++-------
+ fs/inode.c                        |  6 ++-
+ fs/namespace.c                    |  6 ++-
+ fs/ufs/super.c                    |  9 ++--
+ include/asm-generic/vmlinux.lds.h |  3 +-
+ include/linux/fdtable.h           |  3 +-
+ include/linux/fs_struct.h         |  3 +-
+ include/linux/signal.h            |  3 +-
+ include/linux/slab-static.h       | 69 +++++++++++++++++++++++++++++++
+ include/linux/slab.h              | 11 +++++
+ kernel/fork.c                     | 37 ++++++++++-------
+ mm/kmem_cache_size.c              | 20 +++++++++
+ mm/slab.h                         |  1 +
+ mm/slab_common.c                  | 44 +++++++++++++-------
+ mm/slub.c                         |  7 ++++
+ 18 files changed, 214 insertions(+), 67 deletions(-)
+ create mode 100644 include/linux/slab-static.h
+ create mode 100644 mm/kmem_cache_size.c
+
 -- 
-2.52.0
+2.47.3
 
 
