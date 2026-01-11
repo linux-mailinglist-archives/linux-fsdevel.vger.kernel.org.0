@@ -1,133 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-73176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BFDD0FB64
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jan 2026 20:56:48 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100CFD0FDBA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jan 2026 21:59:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E636C302653A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jan 2026 19:56:38 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id A025030142ED
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jan 2026 20:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C839D352FBF;
-	Sun, 11 Jan 2026 19:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A0D263C8C;
+	Sun, 11 Jan 2026 20:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Sx3fkkWV"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KCr9Phyf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC298349B1E
-	for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jan 2026 19:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520EC248F57;
+	Sun, 11 Jan 2026 20:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768161397; cv=none; b=mf4Do0EdCu88eVkOxK8b48BRvA1X2vRg8TnrcO5VOgygG/9Rj3sli+WgkR7Xev1CpEJIAJFwP4A9rJxQ+3UrrqbrGeJr2YJGUNtokCCAgKOxHc72azrzBH23SFKffeeIk4Z2hZ1t50l8BGl5vFCgVlWggZka/qoGqG/JCv4+ook=
+	t=1768165146; cv=none; b=Aqi+s6yL4hKUKk7Un3fvHCZdRvMmE7SyRSeHk/M8rFmWZsrXAOPqQIahlxEhZYa429iXEIAIdj2w3WQ/TFQmmQKbQlqDsIYraVyogtGEKXopzda2IonDqwS2AX1mJ3QH6x31CRUeLMOHULa9J4LP90HPl/ASMyF5NMj/9yi+iZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768161397; c=relaxed/simple;
-	bh=QHl7x7hOeSAon2QJW6cSB8X7QgA6HF5XK1F2xB7PV18=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=YRFld8K+7wQJQ5DChH2vMGY23KLZ0rC241+e+bWLr731q7MY4l//d/KO8R3mcy9mBGMB7ujcbzlp7Fb+tMCGCOx+bSFbfzjBP/vtmU6+U0FGrHH6Ubnm9PFOA/ZYPYU6yiSmDA7KJexGFsZgYSdUTua7ljehE/A0fa1YKWNZMzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Sx3fkkWV; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-657490df6f3so3036037eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jan 2026 11:56:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768161393; x=1768766193; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fGVfI0/8+u4L//09+zks70nTh/iqSyXGMYjvkVqtgSo=;
-        b=Sx3fkkWVBZHHJM9n3IWzYWTNAd2N+/izn1DcVhnV+Wmjk4Rghjlq3gSRADQ7AQeeqz
-         oacE+X2y/0yWzZ8ASy63UfQd38q0z/m8SJHcXKoEMfA/HAeONmanViEoJYDHnrwVhN3K
-         gnsmAhviinhaWy/CpHl4EYjKOcvuFM2nLLcNB5geM3geKuJwq3oXV15i2cw3VzPx2iOh
-         pioNQsvF5/2eufmkwAYVErcunNfUqi0F0w2GKlHqt1TEk2AP59jxSjgCl8btmv02HYvp
-         tYshpkcVVox6fmV6u8IVBo2OiZ/ODgsZt98nDLVUtUIeCGbxmfBnNOyqZwBZo5EBDsor
-         27WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768161393; x=1768766193;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=fGVfI0/8+u4L//09+zks70nTh/iqSyXGMYjvkVqtgSo=;
-        b=hKVOUxtq9SdsOaafpDooEpeEoWgfsKdCgYwCdskPZ76nOzJg2YBPhMZd51W8X7TUhp
-         6ju0aBgmzWutIwK/GrBT7lJaThNviORaAVaknX2U6JzNzZSQ0L5cbfJDKP89mMDzLieV
-         9KdG6G2SvGp4+yCgZspkYmy67LkPzbYkYMV1cFf25WaKiPsSTlad+ZF94b3xmV6/MCfd
-         FJYLqii7vY6il241LDPV5SCBOFgueF/L7IV+lwwjFBPLd2Yzw7g4RdNOIBa7QZNQM/Z2
-         PahhU9xeFsyUnfViRgXOAKprm6y+3HlQXa0eM+GtJLtiaJQvQsYebNcwIHhYd53pza3M
-         QYHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU36xAt28mKsH6bZyB6fG27dBmCFsBCpzKHL/sJ9HtpHKKf/y4YJce77QieqaXnnINvtjHh+WWAE8/nrVnA@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL76cHtWIGy/fgmEtrDfGAMfShSmHE7/AeW+TI2dulpwSTotIC
-	oMBwPVHaTdPtUuIL78HkFpByLYPu2+E0VbIZu48gSIW3PMP4mhbQOVbhtxhTgxNtt2U=
-X-Gm-Gg: AY/fxX5H3KwKKJ1lkYCqahuCRcebEw7sBHkfkF9ANh1TMbiGF0JJai1BNsU7Dh3x5HZ
-	K64HIFsNwYedvrmAsX9bZMs85Y5Ty+Kz4uOXChc6+w5e0oF0MiqoA5OnnDGph0hEpQCuWxp23Hi
-	k7i8FLupGvRVE2XL4omtuyEpwaetBIMZedQTbtS6Qpeyjoj5MY4ATkBDKblF8dpi2zNARzKUcKa
-	0Ygc571ubqv1WFPqRSwbCswpJIk/SN1ZiYRO5hnGLVsYXjPsHqIDiv8Zti8hh1l4IB3+f437Cpw
-	+e+xbX1qVeJK+WdriJkppxQ0/4agLAKyUmgQfMpm9izfO+CqbHsa/3O51DGoQg8GJKtj1PkOwFS
-	ow7gePLESyimWSClB4XRkjS51IhCtzM4J98yE7gYE1C1SXDi3O4IYW0YaoEo12lB91eVBfbnd2P
-	EdUl1J5rkdO/HVlw==
-X-Google-Smtp-Source: AGHT+IGBtFi/oNMknJ7q23MRiHrgmzqkvOyQcIAGMR95gDlAmxm0egBAU8gy6B6FNAE/n6bQHA+jKg==
-X-Received: by 2002:a05:6820:168d:b0:65f:674e:f1ca with SMTP id 006d021491bc7-65f674ef243mr4958633eaf.35.1768161393624;
-        Sun, 11 Jan 2026 11:56:33 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65f48ccfbdcsm6306629eaf.15.2026.01.11.11.56.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Jan 2026 11:56:32 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Eric Biggers <ebiggers@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-fscrypt@vger.kernel.org
-In-Reply-To: <20260109060813.2226714-1-hch@lst.de>
-References: <20260109060813.2226714-1-hch@lst.de>
-Subject: Re: move blk-crypto-fallback to sit above the block layer v5
-Message-Id: <176816139201.218180.16174213874094266429.b4-ty@kernel.dk>
-Date: Sun, 11 Jan 2026 12:56:32 -0700
+	s=arc-20240116; t=1768165146; c=relaxed/simple;
+	bh=JowSG+4tQQyTE47Rbtpcgaez8ldKvXlCh+DCDwat3uA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MYeQN6G71qlOhlDmWAlvRQ55mlPgt2OijqIzYzTVbKVOdDfw0ilTFRa8zeZ2LeG/6/aWZRSIOcZb0wONkqFUvxCN+H/EejSit7GVI2MCw8sS0/73QLNVvnE9DQCTo02GJ7z8K+EVNCrDGqRQ7TH3XVreiuD1VsDZkXpx8IYoF6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KCr9Phyf; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1768165146; x=1799701146;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JowSG+4tQQyTE47Rbtpcgaez8ldKvXlCh+DCDwat3uA=;
+  b=KCr9PhyfERHVC0FFL5f0bUnE3VBF21GzZpnAjMAEHSHGUNj4X7Jm2EGl
+   VFilqUcSVnIwPkpWjd7hqBrKVMahXaa9YJbdJILBKrGQLJmjnOpG2eOPw
+   ikQgRZStF+jT3w5YWGcPtxb4T9hVTXL2Bd0T+HNhYp/+L1aQFbgJgrCiZ
+   2ceIyJ/X907T9eoDxrv4WDdvTw1Vd+Oe7J6QNQ8b9//uMD9CRPWv6ty4L
+   AmvClJoQCX74BlkxIVUB1P5fxuSriiV/lJThwnBbrmrm3qvdFdeekJwls
+   8N1kYtUAvDP5IhtYmGWSTk177GpTV5OyWfR+2zmM/NRixi/nXE5ob2x+P
+   A==;
+X-CSE-ConnectionGUID: pXognCDHRciUFwXvRmQ7cQ==
+X-CSE-MsgGUID: n+Bu35e4Q1OImcri7IQnOA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11668"; a="80904651"
+X-IronPort-AV: E=Sophos;i="6.21,219,1763452800"; 
+   d="scan'208";a="80904651"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2026 12:59:05 -0800
+X-CSE-ConnectionGUID: D5xpyBpvRRC3zs7F9qTySg==
+X-CSE-MsgGUID: /4GjZEskTMOj7ia6RpYfqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,219,1763452800"; 
+   d="scan'208";a="208419944"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO fdugast-desk.home) ([10.245.245.11])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2026 12:58:55 -0800
+From: Francois Dugast <francois.dugast@intel.com>
+To: intel-xe@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org,
+	Francois Dugast <francois.dugast@intel.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Felix Kuehling <Felix.Kuehling@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	David Hildenbrand <david@kernel.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Balbir Singh <balbirs@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	linuxppc-dev@lists.ozlabs.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-pci@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org,
+	nvdimm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 0/7] Enable THP support in drm_pagemap
+Date: Sun, 11 Jan 2026 21:55:39 +0100
+Message-ID: <20260111205820.830410-1-francois.dugast@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Use Balbir Singh's series for device-private THP support [1] and
+previous preparation work in drm_pagemap [2] to add 2MB/THP support
+in xe. This leads to significant performance improvements when using
+SVM with 2MB pages.
 
-On Fri, 09 Jan 2026 07:07:40 +0100, Christoph Hellwig wrote:
-> in the past we had various discussions that doing the blk-crypto fallback
-> below the block layer causes all kinds of problems due to very late
-> splitting and communicating up features.
-> 
-> This series turns that call chain upside down by requiring the caller to
-> call into blk-crypto using a new submit_bio wrapper instead so that only
-> hardware encryption bios are passed through the block layer as such.
-> 
-> [...]
+[1] https://lore.kernel.org/linux-mm/20251001065707.920170-1-balbirs@nvidia.com/
+[2] https://patchwork.freedesktop.org/series/151754/
 
-Applied, thanks!
+v2:
+- rebase on top of multi-device SVM
+- add drm_pagemap_cpages() with temporary patch
+- address other feedback from Matt Brost on v1
 
-[1/9] fscrypt: pass a real sector_t to fscrypt_zeroout_range_inline_crypt
-      commit: c22756a9978e8f5917ff41cf17fc8db00d09e776
-[2/9] fscrypt: keep multiple bios in flight in fscrypt_zeroout_range_inline_crypt
-      commit: bc26e2efa2c5bb9289fa894834446840dea0bc31
-[3/9] blk-crypto: add a bio_crypt_ctx() helper
-      commit: a3cc978e61f5c909ca94a38d2daeeddc051a18e0
-[4/9] blk-crypto: submit the encrypted bio in blk_crypto_fallback_bio_prep
-      commit: aefc2a1fa2edc2a486aaf857e48b3fd13062b0eb
-[5/9] blk-crypto: optimize bio splitting in blk_crypto_fallback_encrypt_bio
-      commit: b37fbce460ad60b0c4449c1c7566cf24f3016713
-[6/9] blk-crypto: use on-stack skcipher requests for fallback en/decryption
-      commit: 2f655dcb2d925b55deb8c1ec8f42b522c6bc5698
-[7/9] blk-crypto: use mempool_alloc_bulk for encrypted bio page allocation
-      commit: 3d939695e68218d420be2b5dbb2fa39ccb7e97ed
-[8/9] blk-crypto: optimize data unit alignment checking
-      commit: 66e5a11d2ed6d58006d5cd8276de28751daaa230
-[9/9] blk-crypto: handle the fallback above the block layer
-      commit: bb8e2019ad613dd023a59bf91d1768018d17e09b
+v3:
+The major change is to remove the dependency to the mm/huge_memory
+helper migrate_device_split_page() that was called explicitely when
+a 2M buddy allocation backed by a large folio would be later reused
+for a smaller allocation (4K or 64K). Instead, the first 3 patches
+provided by Matthew Brost ensure large folios are split at the time
+of freeing.
 
-Best regards,
+v4:
+- add order argument to folio_free callback
+- send complete series to linux-mm and MM folks as requested (Zi Yan
+  and Andrew Morton) and cover letter to anyone receiving at least
+  one of the patches (Liam R. Howlett)
+
+Cc: Zi Yan <ziy@nvidia.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Alistair Popple <apopple@nvidia.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: "Christian König" <christian.koenig@amd.com>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Danilo Krummrich <dakr@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Cc: David Hildenbrand <david@kernel.org>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Leon Romanovsky <leon@kernel.org>
+Cc: Balbir Singh <balbirs@nvidia.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: amd-gfx@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: nouveau@lists.freedesktop.org
+Cc: linux-pci@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-cxl@vger.kernel.org
+Cc: nvdimm@lists.linux.dev
+Cc: linux-fsdevel@vger.kernel.org
+
+Francois Dugast (3):
+  drm/pagemap: Unlock and put folios when possible
+  drm/pagemap: Add helper to access zone_device_data
+  drm/pagemap: Enable THP support for GPU memory migration
+
+Matthew Brost (4):
+  mm/zone_device: Add order argument to folio_free callback
+  mm/zone_device: Add free_zone_device_folio_prepare() helper
+  fs/dax: Use free_zone_device_folio_prepare() helper
+  drm/pagemap: Correct cpages calculation for migrate_vma_setup
+
+ arch/powerpc/kvm/book3s_hv_uvmem.c       |   2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_migrate.c |   2 +-
+ drivers/gpu/drm/drm_gpusvm.c             |   7 +-
+ drivers/gpu/drm/drm_pagemap.c            | 165 ++++++++++++++++++-----
+ drivers/gpu/drm/nouveau/nouveau_dmem.c   |   4 +-
+ drivers/pci/p2pdma.c                     |   2 +-
+ fs/dax.c                                 |  24 +---
+ include/drm/drm_pagemap.h                |  15 +++
+ include/linux/memremap.h                 |   8 +-
+ lib/test_hmm.c                           |   4 +-
+ mm/memremap.c                            |  60 ++++++++-
+ 11 files changed, 227 insertions(+), 66 deletions(-)
+
 -- 
-Jens Axboe
-
-
+2.43.0
 
 
