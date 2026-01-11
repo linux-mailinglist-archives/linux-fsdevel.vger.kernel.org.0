@@ -1,213 +1,437 @@
-Return-Path: <linux-fsdevel+bounces-73155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E38D0EBCB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jan 2026 12:48:28 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD398D0F0D9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jan 2026 15:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 636E1300429D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jan 2026 11:48:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 22A1B302105B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jan 2026 14:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD59E3382CE;
-	Sun, 11 Jan 2026 11:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="J/IJvli/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B0333E357;
+	Sun, 11 Jan 2026 14:06:19 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outbound-ip191a.ess.barracuda.com (outbound-ip191a.ess.barracuda.com [209.222.82.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41574B640;
-	Sun, 11 Jan 2026 11:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768132105; cv=fail; b=oD6OAiu/bm2YEjGPupEOzGJwTv8VYIjnLq18xny21n7usB+b2rZH+PvU0DDlxjksogXdK+zpkJzqeABO7amNxkxQEqWgWlujfpLE5RYgZEl7UBR1Iwf5vDpybFfAAT5VANi+TehVxcDEl8qPaWQYhuzIGoTD44a7tHcZEcfcyXg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768132105; c=relaxed/simple;
-	bh=raQAemcR1wX95qQJw8IYGmuoCqsNLcjcatg7IAbgd0A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gYsL7/9XD3wGlVqGPy/XU7YFiwQUijpJG595X5EmtduIrHVAGELoDbJ6wzG0zo7R3W2W8jz7VOcHP7vZ61mUFkfUJ0vumxv3RLlqdSMIy0n8g6kHvd75dZq4/sv/MbPyKceA+wmZsu3hhhtlrqIIzc2dtMhBdR68qru51J99Hsw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=J/IJvli/; arc=fail smtp.client-ip=209.222.82.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11021088.outbound.protection.outlook.com [52.101.52.88]) by mx-outbound43-48.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Sun, 11 Jan 2026 11:48:15 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VCvXtwcMHQfPh96TIYFMzfKAjbZnydnoyp7s4HdoOGmKq0SHaG5c5fS2fBHt8uD/g2HOSOIlYeiEv2N2jnpMG0027hEeQOY3VkYP2NPVAoTdCZPx+QP31UdwsCMKXP+6IQXp5XIuybnPoZhpjj9H24ohpAILgN7eqbM6/xIpQou1yAPOZO7Mz0jhDIOgzgXkuiLWvIwVBhqhCe2k0mLVZrG7ORDqQEVQx0ALsRAqsxBStjFffWtdPn1DsgekZcnTny+OcY0FUSsLow1jE+a/g3ppF/siMAeZ3XMVncL/ndk7JGNEhNuf3I6o+VaheCeCEnNNDkR0B2KZ1PildECEeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ca6sbpfQD6U+Vq5C3P88ZrMtNMeI/tpD577wDbBgRww=;
- b=sLR3owf2MEbNbYWcwZe/yyTayoSGIKuubbsGQaE2S76tKPwSEjPvEtzmF5Z4KmS2yFgdiYiB+IHVjAzdyCmHMS2OH3j4qgyZUyQSTwBpGOFrcHu6x8DCU1sVPa2fzJeBSWbBXMZSz9rJ3VJd1sf7pubo0YxMR4KpwfCgD55iBE0dYHbCx6RFAQi2M54SSaP/9GRft5yc/56JaELi1lOOY0OCJ/I4Jv2Ia/TzAJqGOE3+7EynE5ipKxjebOhC5xvZsP8OW/AmW9ygyGgDiVW3xUSeq0HzCn+Y4WBCCY5Dtluk42k43wQ/GIGJMla+x/HIPk+S2EUmtJ22NQQZUppTxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ca6sbpfQD6U+Vq5C3P88ZrMtNMeI/tpD577wDbBgRww=;
- b=J/IJvli/MXdmr7PchdlOCvuRRiBhZUETC9WIOXuM2jdQ8WmO8fkVHbCII+22BPSwIgJhFgcsX+x0WGi78d0CuHo/iSxyKarANhXqdIkUB32QImA/C9Ud2Dc7MUWAODKJUdTNojbJJIPIbyGOHGEWCDYxed36qHAc0ulo998FwYA=
-Received: from PH8P221CA0033.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:346::10)
- by CH8PR19MB9024.namprd19.prod.outlook.com (2603:10b6:610:254::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.7; Sun, 11 Jan
- 2026 11:48:11 +0000
-Received: from CO1PEPF000044FA.namprd21.prod.outlook.com
- (2603:10b6:510:346:cafe::43) by PH8P221CA0033.outlook.office365.com
- (2603:10b6:510:346::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9499.7 via Frontend Transport; Sun,
- 11 Jan 2026 11:48:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
- smtp.mailfrom=ddn.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ddn.com;
-Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
- 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
- client-ip=50.222.100.11; helo=uww-mrp-01.datadirectnet.com; pr=C
-Received: from uww-mrp-01.datadirectnet.com (50.222.100.11) by
- CO1PEPF000044FA.mail.protection.outlook.com (10.167.241.200) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9542.0
- via Frontend Transport; Sun, 11 Jan 2026 11:48:10 +0000
-Received: from localhost (unknown [10.68.0.8])
-	by uww-mrp-01.datadirectnet.com (Postfix) with ESMTP id 018BD98E;
-	Sun, 11 Jan 2026 11:48:09 +0000 (UTC)
-From: Bernd Schubert <bschubert@ddn.com>
-Date: Sun, 11 Jan 2026 12:48:07 +0100
-Subject: [PATCH] fuse: Check for large folio with SPLICE_F_MOVE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E2631A7F2
+	for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jan 2026 14:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768140379; cv=none; b=fSibXAAzy/vgV5HXcIaqJuNaCahe8u8YmRA7+OgCxFTiBOddIgvdpHcC4aTjVRfoMMQan0Ra9obZnKhSvMEtzLCPZ2ehFVfJ3gJPgMyaOVMTE9unpl2xwnz5IXW0sE3khRHaFqmMWTemADZ9jg1VY52LJ4G/SfQdDPBxWr1UGc0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768140379; c=relaxed/simple;
+	bh=nBBAsUN9U04joM2Ol6B8lIoOHsS7e4WG97c/pVQWpB0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=CJ/TIAczHDUQEyzc61mCutybafcbakMVC0zTE1VYL/Eau3SfcWNdJbvQi1KwiC7EOsiQwdfroPPvIT1NnJMeO58fwHbOJCr42yIU1VA/xhNdr7SN6Rnjl7Dq3cxJF0BPq4igKgBavCB2ganQ0YC2X6CjSLA09cd2tTnP51trFUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-34ccdcbe520so2281358a91.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jan 2026 06:06:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768140377; x=1768745177;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QarTHLZmRmT27z1oFHQhbssHzUSK28X4/Hqufq8mF2w=;
+        b=rEn/plLctsVUKeP5osj+xiQB39RzzQxHFrfSVd6WN9ctAB3iGRlUdC4qCHNSLxSZNI
+         wY5QbfWypRNGI8lYx4ZJEAV8k8N9EkjpHOt6mqZcRBD9AZhRs4ekVy+VvulNZ4mekXuC
+         KQflFe6eOaubbXBmE/iiin8rB2wps47DCjt7rc2GebUS0oPfzY8p1rBDUm48XuutODSw
+         lu1vCrv1Bx3CPiQFFPkJ2ElcosrTMa0nicM+MP1N4ymo3LoPzx0I3gS90gfqlFL88kWT
+         hZ/ajti56cvQBbDgbzpoAyHuA6r5iiSkKuSYSJ7ijsFozAUzE0oHQNpk+hmt5Yawknsc
+         GBig==
+X-Gm-Message-State: AOJu0YxSns5JgBjF3Yf7VMcXJ8qOXl2qDR67XWI1wdqgbcFAGliuKrc/
+	yt5QygV5q5IVtEhjn/a/+NWmgMg+yz9NWYVRSOQyjpEl7hqgMhD4rGY7
+X-Gm-Gg: AY/fxX5QQWzbZTF0zxi+y2ChuOaz6o7itwQfBuzjCy3dgWErCykT+4i0WjJqXTtc926
+	lpeB6O/YU52dr0a82knb52M2v882tQB9nnzrp6nXq1bZPuFr8RYxbOcHOEZhNOQ48V0UtY/JD04
+	GU0PYSx6BEl/XVyvCkn3pILu7Nxkp3wJ3sV/VTglVcsVP0SWA6TXt2k2x1BW1BGapL7DW7OCvyD
+	x795MO2GTizqyaM2qrz6aT13H4xv/X3Bqkkw5Ht7TLgEyl/UEwTkOwvO+9Nw8S1Bsj7frtQiIxH
+	ixNH5EZ3vSDW+CfIcsGBG+r28lO/Vb9GNgEGlyfGyoJQl5c20Lz+YgNgzrxW2o5GsdIg510oxiJ
+	SgAfO+sYAaV20sQ+0ukXIDIDEFutiOXLGyQ5YefM+k7nm8iw4EU7uysHDNQZKmIOVktUZg8hQo+
+	U+zy8eAvhTN9EqlxlEN5Gra2LmdA==
+X-Google-Smtp-Source: AGHT+IGlkrRI//wk8LZhTdqeg9bpHESghEDhMcUIVQeNnELuh4kdKxr7X9EfCYp0DmzBa8lMUENCDQ==
+X-Received: by 2002:a17:90b:1a89:b0:340:29a3:800f with SMTP id 98e67ed59e1d1-34f5f928758mr17019837a91.15.1768140377131;
+        Sun, 11 Jan 2026 06:06:17 -0800 (PST)
+Received: from localhost.localdomain ([1.227.206.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c4cc02ecfccsm14887077a12.13.2026.01.11.06.06.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Jan 2026 06:06:16 -0800 (PST)
+From: Namjae Jeon <linkinjeon@kernel.org>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	hch@lst.de,
+	tytso@mit.edu,
+	willy@infradead.org,
+	jack@suse.cz,
+	djwong@kernel.org,
+	josef@toxicpanda.com,
+	sandeen@sandeen.net,
+	rgoldwyn@suse.com,
+	xiang@kernel.org,
+	dsterba@suse.com,
+	pali@kernel.org,
+	ebiggers@kernel.org,
+	neil@brown.name,
+	amir73il@gmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	iamjoonsoo.kim@lge.com,
+	cheol.lee@lge.com,
+	jay.sim@lge.com,
+	gunho.lee@lge.com,
+	Namjae Jeon <linkinjeon@kernel.org>
+Subject: [PATCH v5 00/14] ntfs filesystem remake
+Date: Sun, 11 Jan 2026 23:03:30 +0900
+Message-Id: <20260111140345.3866-1-linkinjeon@kernel.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260111-fuse_try_move_folio-check-large-folio-v1-1-04921ecf466f@ddn.com>
-X-B4-Tracking: v=1; b=H4sIAPaNY2kC/yWNUQqDMBAFryL73UASUWqvIiXouqlLrZGNiiLe3
- WA/5zG8OSCSMEV4ZQcIrRw5jAnMIwPsm/FDirvEYLUttTFG+SWSm2V3v7CS82HgoLAn/KqhkaT
- /l6fN26oqOtQlQvqahDxvd6d+n+cF1lNHPHcAAAA=
-X-Change-ID: 20260111-fuse_try_move_folio-check-large-folio-823b995dc06c
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
- Bernd Schubert <bschubert@ddn.com>, Horst Birthelmer <hbirthelmer@ddn.com>
-X-Mailer: b4 0.15-dev-2a633
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1768132089; l=1284;
- i=bschubert@ddn.com; s=20240529; h=from:subject:message-id;
- bh=raQAemcR1wX95qQJw8IYGmuoCqsNLcjcatg7IAbgd0A=;
- b=VKu/DL9VYibI2j/VRSYjuJnfhejGxq1zJZLiLnEoZ4XQAWXCpX7Ud9NeoGpYTDGQ3sGjARG22
- tJWTcSGZgXJBEKe/vPz9sz3Vji2X7V7478TJV8y+PyVRgF8+JIUS/0b
-X-Developer-Key: i=bschubert@ddn.com; a=ed25519;
- pk=EZVU4bq64+flgoWFCVQoj0URAs3Urjno+1fIq9ZJx8Y=
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044FA:EE_|CH8PR19MB9024:EE_
-X-MS-Office365-Filtering-Correlation-Id: 70f4f1e0-df4c-4c2f-2b3b-08de51074b95
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|36860700013|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N01VMXFhSE56cGxCa1I1ajhIWGRDY1hQSVp3VE40eXZUMkdOMjlRblVCNU1V?=
- =?utf-8?B?ZVo5Mkh3eUxUSFhmU1lpenpnTi9XTjlBcytzSDhZVjBjVWQxRnRNU2ZPTjRW?=
- =?utf-8?B?ZHJNaVdhblE0ZlBtNUwyY1FKWGpQSXJLNDgvczNiOWZjbWt1cFJOeURBblIv?=
- =?utf-8?B?dWZtYjc2K2VNUStKZFlDczdMVlNuS092NXRDMlBlRklZVWZvMU04aGtwN1l6?=
- =?utf-8?B?dU9aQ1VxVEt4NU5BK1c2UGh6WjBiWFBvRHQ1ZmdoWkNLNEkyaThpU1VlMmVs?=
- =?utf-8?B?QWo4WnRxdFZpbENXaTNoMnVRVThDVVdkTUo3amdPc3hjMTE2RmxNNGpMOXI4?=
- =?utf-8?B?NXAvNFNQNTFrdDJMR0FtL0RjanBZRngwYkhwbFFsV0dSekloZ2ZkVk5pQVZh?=
- =?utf-8?B?YUgzQ2JTR0JQVGtjRitGcTlnUDlXK0dCWFpFMGU3R3pYbUJ6ME1FQWd5aUVs?=
- =?utf-8?B?YmhrdTdTMisrdnBLSWhIZkdvQWo2RldzVXBQV1ppdVR0SDlzN3ZEOGpVeUNO?=
- =?utf-8?B?U01zM3kvU1VVUHpKb1ptYVh5eVloTlErR1RSU1FLMHZBdlI4T1V6OCtqajZz?=
- =?utf-8?B?Y3RZM0lCMlljV0cyNEJWZUFEK3QxTjJzQlJhKzdGYThRWGU4Ykc4Q1JMT2Yx?=
- =?utf-8?B?elA2aGhkZUpPZ0grZEdrajV5Tk14UkttVWVNRjlyemtHR1cybmpwT2YyS0g3?=
- =?utf-8?B?NzJUanVWVG9QYythaVFZd0JNMjVZY2FSR0dNb09TOURyVGMzYlg1SUN3Q2dJ?=
- =?utf-8?B?K1AyS29kbjU4U09odjZvb3I4K0NUZTM2RThQT3hqSFFFbDQ5QTdwNTNRWlRt?=
- =?utf-8?B?WEd3K1pacTkwWWpzREtqWHVCeGR5NFowdkZ1SDE4K1FZYVJ4Z3g2ZVc3TW5N?=
- =?utf-8?B?Y0NyQjNUUU5UbWdYSDV0dlVpbmo4VUlzZEVDSXovVHNhdWhLU0N2RXU3bE1K?=
- =?utf-8?B?Q0hLWEY4bndGSjNNVHR2QTVaQUhxQzk1RkhhU2s5UWxHUjhMSDMwMzBnNkJk?=
- =?utf-8?B?WEV1MlR2TW5venk4WVJzVVVYUmFhUmxUY1c5UFFqZDc2WkhqSUs3T0V3SUla?=
- =?utf-8?B?RVhpNjBOcUl3OXRRZmxXcUQrWkxMSHZ2THY1UVI1bVhERU9BUURFeW9oenNq?=
- =?utf-8?B?S1l5M0FWbFpVVkxJdFZrVXl5V0tqY2hSTW11ZUoyVG8wcEJLbUt5V3ExbVFq?=
- =?utf-8?B?NzN1WHRRMXppR3VmK3NnUmszMm4xTys1eVVvZ01vZ29tRzdPZHR2TlJvRENx?=
- =?utf-8?B?aW44bVErNVc5S2ZXd0ZJT3VsN01iN2kxOWdKb24xY2VFMElrOHZpVlV4REJF?=
- =?utf-8?B?aXNDdUJIRUhGSXBRa3dvOWUrdG1LNno3SlVXZzFpN2QvUHE3OUFYVGRDdTRH?=
- =?utf-8?B?QVhhR0UzYlRCZU9YenVZMzN1YjlUMFJ6eGZ3V0E1QUZ3SUVUS2ZhOERpdytk?=
- =?utf-8?B?UFMraFdpQ294cE1VaVIxRCs3Z1N2UVNoOEE1LzdFNWlqRzJnTTB5dkpOaGMv?=
- =?utf-8?B?aWRQUFZPY09Gdm1ZVHg5cHVteko0U05MQzdwd3I4US80RnRPOVRJQURvQnRr?=
- =?utf-8?B?eXhQMUFveEF4Q2ZlOE03Vmcra3RWamVkNUswb0hWMk8za3R2ZHBsd3ptRUxD?=
- =?utf-8?B?Mm5wM3YvVnNJcU9TSEZQTHl1Q1Z2TUY2RGVtWW1yaUozdWJvaUxBdjQ0THh1?=
- =?utf-8?B?Q2ZxUUxCUmp3Rk5oakEwczRnTjNIZ0dlSTJobk1tQnl3d3FjN05Zcjc0WUIz?=
- =?utf-8?B?UkUrc1ZvdmhvU3JndjR2Y3UyZmRtTE8xbys3QXdvSmhPRnYvNEZnMlNuakYw?=
- =?utf-8?B?Mnpxb1M2SmRuSFdJTmJGN0I1Tkp1WFBOdVUwTXVQN2g4bXJmSllPWFdTVDFm?=
- =?utf-8?B?Z1JQRFAvVCt2RnBPQ0FXRnRoTGJzVEhiNUw1RWt3NGVMQlR5UmxpaE9KY0lz?=
- =?utf-8?B?YmVyNTdjQndSMGdac2cyYVdUNHBXOElnZExPZ21uYVYrMExSOWxQeU1JeFVy?=
- =?utf-8?B?MkZCajRRdmtQeHBxWTFaMnR1K2s1VGV1dThnckVicGVYUXNKTTArVzZBOG9r?=
- =?utf-8?B?UXpWQmRHL2QydWxEYkdXUmRBQkxFdWpwdzlpa0pHN3VJRXVEZExrbWFacmRL?=
- =?utf-8?Q?dHXY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mrp-01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(19092799006)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	sNPCdsRguKUi91zj4E1edi3sACJSblsVv0iieucrj2dFA0jiAKuguSaKELgnoTOzLl4RI24AFzmBTyeypgCZUDNAQk0BeBJqaH+ATYVdAj5a7Q/yf8UdAS+tI8uS1PHfyEluH+Y5DIrSY5mCpSwkrW17Eid1medSYsTYpdmdFqHrmj+MVTwlHMzLZ3vieG7zJn7RSwSYyYCUCZtjS5RgwjPVIcv/9YALdhdLJehOWszr21VQIDPFpX+MstxURwce4+CSR5y2ZZpI/18dAM7q6zFuer0kUsIn+45w44BHpGwwarBmfqPA/0SAUbE+dEdTc+UJ3knLsRAcvCgOZy5vpMKk0BTy/wLLQArJdyN+IndcQspqI9IsPjY5KT6qqrv00EPyfysM27Pj8g9rDdYxAsBgOLZpYEd8IpFD5ciVaxZ7DFDdww0azmXPJx3+r7hYaoGSOPOee9ICrMgy+3pEORe0koG6sqoxXgvwzgLitIEi96l6O2Iyz/fdqFfNz41GOw5BMu4Ks/t6MAbI1A5IHlbD5GqSsyrosIIoUe1hOZHp7r8RGv94r8XG3X/KT2xUENNUHd/42/IfGlSfEuZn88Ruxn0uQg+JJJEKbPRcaNIV0hr2e8+LLHLJ+2+s8wsbvDzMrIMkEsyJWCQlI/6URw==
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jan 2026 11:48:10.6941
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70f4f1e0-df4c-4c2f-2b3b-08de51074b95
-X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mrp-01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044FA.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR19MB9024
-X-BESS-ID: 1768132095-111056-12969-28677-1
-X-BESS-VER: 2019.1_20251217.1707
-X-BESS-Apparent-Source-IP: 52.101.52.88
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoZGJmZAVgZQ0CjZ1MQwySTVzD
-	AxzcjA0Nw0zcg01dDMNDXR0CLJ3MJCqTYWAPOcRO5BAAAA
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.270319 [from 
-	cloudscan12-144.us-east-2a.ess.aws.cudaops.com]
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status:1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-xfstest generic/074 and generic/075 complain result in kernel
-warning messages / page dumps.
-This is easily reproducible (on 6.19) with
-CONFIG_TRANSPARENT_HUGEPAGE_SHMEM_HUGE_ALWAYS=y
-CONFIG_TRANSPARENT_HUGEPAGE_TMPFS_HUGE_ALWAYS=y
+Introduction
+============
 
-This just adds a test for large folios fuse_try_move_folio
-with the same page copy fallback, but to avoid the warnings
-from fuse_check_folio().
+The NTFS filesystem[1] still remains the default filesystem for Windows
+and The well-maintained NTFS driver in the Linux kernel enhances
+interoperability with Windows devices, making it easier for Linux users
+to work with NTFS-formatted drives. Currently, ntfs support in Linux was
+the long-neglected NTFS Classic (read-only), which has been removed from
+the Linux kernel, leaving the poorly maintained ntfs3. ntfs3 still has
+many problems and is poorly maintained, so users and distributions are
+still using the old legacy ntfs-3g.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
----
- fs/fuse/dev.c | 3 +++
- 1 file changed, 3 insertions(+)
+The remade ntfs is an implementation that supports write and the essential
+requirements(iomap, no buffer-head, utilities, xfstests test result) based
+on read-only classic NTFS.
+The old read-only ntfs code is much cleaner, with extensive comments,
+offers readability that makes understanding NTFS easier. This is why
+new ntfs was developed on old read-only NTFS base.
+The target is to provide current trends(iomap, no buffer head, folio),
+enhanced performance, stable maintenance, utility support including fsck.
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 6d59cbc877c6ad06deb6b02eba05a9015228cd05..1f1071d621441b334573ab42b6d820d996bdb00d 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1011,6 +1011,9 @@ static int fuse_try_move_folio(struct fuse_copy_state *cs, struct folio **foliop
- 	folio_clear_uptodate(newfolio);
- 	folio_clear_mappedtodisk(newfolio);
- 
-+	if (folio_test_large(newfolio))
-+		goto out_fallback_unlock;
-+
- 	if (fuse_check_folio(newfolio) != 0)
- 		goto out_fallback_unlock;
- 
 
----
-base-commit: 755bc1335e3b116b702205b72eb57b7b8aef2bb2
-change-id: 20260111-fuse_try_move_folio-check-large-folio-823b995dc06c
+Key Features
+============
 
-Best regards,
+- Write support:
+   Implement write support on classic read-only NTFS. Additionally,
+   integrate delayed allocation to enhance write performance through
+   multi-cluster allocation and minimized fragmentation of cluster bitmap.
+
+- Switch to using iomap:
+   Use iomap for buffered IO writes, reads, direct IO, file extent mapping,
+   readpages, writepages operations.
+
+- Stop using the buffer head:
+   The use of buffer head in old ntfs and switched to use folio instead.
+   As a result, CONFIG_BUFFER_HEAD option enable is removed in Kconfig also.
+
+- Public utilities include fsck[2]:
+   While ntfs-3g includes ntfsprogs as a component, it notably lacks
+   the fsck implementation. So we have launched a new ntfs utilitiies
+   project called ntfsprogs-plus by forking from ntfs-3g after removing
+   unnecessary ntfs fuse implementation. fsck.ntfs can be used for ntfs
+   testing with xfstests as well as for recovering corrupted NTFS device.
+
+- Performance Enhancements:
+
+   - ntfs vs. ntfs3:
+
+     * Performance was benchmarked using iozone with various chunk size.
+        - In single-thread(1T) write tests, ntfs show approximately
+          3~5% better performance.
+        - In multi-thread(4T) write tests, ntfs show approximately
+          35~110% better performance.
+        - Read throughput is identical for both ntfs implementations.
+
+     1GB file      size:4096           size:16384           size:65536
+     MB/sec       ntfs | ntfs3        ntfs | ntfs3        ntfs | ntfs3
+     ─────────────────────────────────────────────────────────────────
+     read          399 | 399           426 | 424           429 | 430
+     ─────────────────────────────────────────────────────────────────
+     write(1T)     291 | 276           325 | 305           333 | 317
+     write(4T)     105 | 50            113 | 78            114 | 99.6
+
+
+     * File list browsing performance. (about 12~14% faster)
+
+                  files:100000        files:200000        files:400000
+     Sec          ntfs | ntfs3        ntfs | ntfs3        ntfs | ntfs3
+     ─────────────────────────────────────────────────────────────────
+     ls -lR       7.07 | 8.10        14.03 | 16.35       28.27 | 32.86
+
+
+     * mount time.
+
+             parti_size:1TB      parti_size:2TB      parti_size:4TB
+     Sec          ntfs | ntfs3        ntfs | ntfs3        ntfs | ntfs3
+     ─────────────────────────────────────────────────────────────────
+     mount        0.38 | 2.03         0.39 | 2.25         0.70 | 4.51
+
+   The following are the reasons why ntfs performance is higher
+    compared to ntfs3:
+     - Use iomap aops.
+     - Delayed allocation support.
+     - Optimize zero out for newly allocated clusters.
+     - Optimize runlist merge overhead with small chunck size.
+     - pre-load mft(inode) blocks and index(dentry) blocks to improve
+       readdir + stat performance.
+     - Load lcn bitmap on background.
+
+- Stability improvement:
+   a. Pass more xfstests tests:
+      ntfs passed 308 tests, significantly higher than ntfs3's 235.
+      ntfs passed tests are a complete superset of the tests passed
+      by ntfs3. ntfs implement fallocate, idmapped mount and permission,
+      etc, resulting in a significantly high number of xfstests passing
+      compared to ntfs3.
+   b. Bonnie++ issue[3]:
+      The Bonnie++ benchmark fails on ntfs3 with a "Directory not empty"
+      error during file deletion. ntfs3 currently iterates directory
+      entries by reading index blocks one by one. When entries are deleted
+      concurrently, index block merging or entry relocation can cause
+      readdir() to skip some entries, leaving files undeleted in
+      workloads(bonnie++) that mix unlink and directory scans.
+      ntfs implement leaf chain traversal in readdir to avoid entry skip
+      on deletion.
+
+- Journaling support:
+   ntfs3 does not provide full journaling support. It only implement journal
+   replay[4], which in our testing did not function correctly. My next task
+   after upstreaming will be to add full journal support to ntfs.
+
+
+The feature comparison summary
+==============================
+
+Feature                               ntfs       ntfs3
+===================================   ========   ===========
+Write support                         Yes        Yes
+iomap support                         Yes        No
+No buffer head                        Yes        No
+Public utilities(mkfs, fsck, etc.)    Yes        No
+xfstests passed                       308        235
+Idmapped mount                        Yes        No
+Delayed allocation                    Yes        No
+Bonnie++                              Pass       Fail
+Journaling                            Planned    Inoperative
+===================================   ========   ===========
+
+
+References
+==========
+[1] https://en.wikipedia.org/wiki/NTFS
+[2] https://github.com/ntfsprogs-plus/ntfsprogs-plus
+[3] https://lore.kernel.org/ntfs3/CAOZgwEd7NDkGEpdF6UQTcbYuupDavaHBoj4WwTy3Qe4Bqm6V0g@mail.gmail.com/
+[4] https://marc.info/?l=linux-fsdevel&m=161738417018673&q=mbox
+
+
+Available in the Git repository at:
+===================================
+git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/ntfs.git ntfs-next
+
+
+v5:
+ - Update outdated comments to match implementation.
+ - Remove unused types.h and endians.h.
+ - Replace submit_bio_wait() with submit_bio().
+ - Fix lockdep warnings caused by the latest xfstets and scratch_mkfs_sized support.
+ - Rename ntfs_convert_folio_index_into_lcn() to lcn_from_index().
+ - Fix warnings reported by Smatch static checker.
+ - Fix typos patch description of MAINTAINERS.
+
+v4:
+ - remove choice variable in fs/Kconfig and make ntfs and ntfs3 mutually
+   exclusive in simpler way.
+ - Original revert commit includes MAINTAINERS and CREDITS and update ntfs
+   entry in MAITAINERS and Anton's info in CREDITS.
+ - Original revert commit include documentation and update it instead of
+   adding a new one.
+ - Fix generic/401 test failure and indicate that ntfs passed tests are
+   a complete superset of those for ntfs3.
+ - Remove unnecessary comments and warning options from Makefile.
+ - Add patch description to original revert patch and the patch that
+   remove legacy ntfs driver related codes in ntfs.
+ - Support timestamps prior to epoch (fix generic/258).
+ - Fix xfstests generic/683, 684, 686, 687, 688.
+
+v3:
+ - Add generic helpers to convert cluster to folio index, cluster to
+   byte, byte to sector, etc.
+ - Remove bio null check and ntfs_setup_bio().
+ - Remove unneeded extra handling from old ntfs leftover.
+ - Allow readahead for $MFT file.
+ - Change memcpy to memcpy_from_folio or memcpy_to_folio.
+ - Never switche between compressed and non-compressed for live inodes.
+ - Add the comments for iomap_valid and iomap_put_folio.
+ - Split the resident and non-resident cases into separate helpers.
+ - Use kmalloc instead of page allocation for iomap inline data.
+ - Use iomap_zero_range instead of ntfs_buffered_zero_clusters.
+ - Use blkdev_issue_zeroout instead of ntfs_zero_clusters.
+ - Remove 2TB limitation on 32-bit system.
+ - Rename ntfsplus to ntfs.
+ - Remove -EINTR handing for read_mapping_folio.
+ - Rename ntfs_iomap.c to iomap.c
+ - Revert alias for the legacy ntfs driver in ntfs3.
+ - Restrict built-in NTFS seclection to one driver, allow both as
+   modules.
+ - Use static_assert() instead of the sizeof comments.
+ - Update the wrong iocharset comments in ntfs.rst.
+
+v2:
+ - Add ntfs3-compatible mount options(sys_immutable, nohidden,
+   hide_dot_files, nocase, acl, windows_names, disable_sparse, discard).
+ - Add iocharset mount option.
+ - Add ntfs3-compatible dos attribute and ntfs attribute load/store
+   in setxattr/getattr().
+ - Add support for FS_IOC_{GET,SET}FSLABEL ioctl.
+ - Add support for FITRIM ioctl.
+ - Fix the warnings(duplicate symbol, __divdi3, etc) from kernel test robot.
+ - Prefix pr_xxx() with ntfsplus.
+ - Add support for $MFT File extension.
+ - Add Documentation/filesystems/ntfsplus.rst.
+ - Mark experimental.
+ - Remove BUG traps warnings from checkpatch.pl.
+
+Namjae Jeon (14):
+  Revert "fs: Remove NTFS classic"
+  ntfs: update in-memory, on-disk structures and headers
+  ntfs: update super block operations
+  ntfs: update inode operations
+  ntfs: update directory operations
+  ntfs: update file operations
+  ntfs: update iomap and address space operations
+  ntfs: update attrib operations
+  ntfs: update runlist handling and cluster allocator
+  ntfs: add reparse and ea operations
+  ntfs: update misc operations
+  ntfs3: remove legacy ntfs driver support
+  ntfs: add Kconfig and Makefile
+  MAINTAINERS: update ntfs filesystem entry
+
+ CREDITS                             |    9 +-
+ Documentation/filesystems/index.rst |    1 +
+ Documentation/filesystems/ntfs.rst  |  203 +
+ MAINTAINERS                         |    9 +
+ fs/Kconfig                          |    1 +
+ fs/Makefile                         |    1 +
+ fs/ntfs/Kconfig                     |   45 +
+ fs/ntfs/Makefile                    |   13 +
+ fs/ntfs/aops.c                      |  549 +++
+ fs/ntfs/aops.h                      |   25 +
+ fs/ntfs/attrib.c                    | 5389 +++++++++++++++++++++++++++
+ fs/ntfs/attrib.h                    |  159 +
+ fs/ntfs/attrlist.c                  |  285 ++
+ fs/ntfs/attrlist.h                  |   21 +
+ fs/ntfs/bitmap.c                    |  292 ++
+ fs/ntfs/bitmap.h                    |   93 +
+ fs/ntfs/collate.c                   |  178 +
+ fs/ntfs/collate.h                   |   37 +
+ fs/ntfs/compress.c                  | 1559 ++++++++
+ fs/ntfs/debug.c                     |  171 +
+ fs/ntfs/debug.h                     |   63 +
+ fs/ntfs/dir.c                       | 1232 ++++++
+ fs/ntfs/dir.h                       |   33 +
+ fs/ntfs/ea.c                        |  933 +++++
+ fs/ntfs/ea.h                        |   25 +
+ fs/ntfs/file.c                      | 1143 ++++++
+ fs/ntfs/index.c                     | 2115 +++++++++++
+ fs/ntfs/index.h                     |  127 +
+ fs/ntfs/inode.c                     | 3793 +++++++++++++++++++
+ fs/ntfs/inode.h                     |  354 ++
+ fs/ntfs/iomap.c                     |  754 ++++
+ fs/ntfs/iomap.h                     |   22 +
+ fs/ntfs/layout.h                    | 2291 ++++++++++++
+ fs/ntfs/lcnalloc.c                  | 1035 +++++
+ fs/ntfs/lcnalloc.h                  |  127 +
+ fs/ntfs/logfile.c                   |  775 ++++
+ fs/ntfs/logfile.h                   |  316 ++
+ fs/ntfs/malloc.h                    |   99 +
+ fs/ntfs/mft.c                       | 2652 +++++++++++++
+ fs/ntfs/mft.h                       |   92 +
+ fs/ntfs/mst.c                       |  195 +
+ fs/ntfs/namei.c                     | 1684 +++++++++
+ fs/ntfs/ntfs.h                      |  200 +
+ fs/ntfs/quota.c                     |   97 +
+ fs/ntfs/quota.h                     |   16 +
+ fs/ntfs/reparse.c                   |  550 +++
+ fs/ntfs/reparse.h                   |   15 +
+ fs/ntfs/runlist.c                   | 1983 ++++++++++
+ fs/ntfs/runlist.h                   |   93 +
+ fs/ntfs/super.c                     | 2777 ++++++++++++++
+ fs/ntfs/sysctl.c                    |   56 +
+ fs/ntfs/sysctl.h                    |   27 +
+ fs/ntfs/time.h                      |   87 +
+ fs/ntfs/unistr.c                    |  478 +++
+ fs/ntfs/upcase.c                    |   73 +
+ fs/ntfs/volume.h                    |  254 ++
+ fs/ntfs3/Kconfig                    |   10 +-
+ fs/ntfs3/dir.c                      |    9 -
+ fs/ntfs3/file.c                     |   10 -
+ fs/ntfs3/inode.c                    |   16 +-
+ fs/ntfs3/ntfs_fs.h                  |   11 -
+ fs/ntfs3/super.c                    |   59 +-
+ include/uapi/linux/ntfs.h           |   23 +
+ 63 files changed, 35628 insertions(+), 116 deletions(-)
+ create mode 100644 Documentation/filesystems/ntfs.rst
+ create mode 100644 fs/ntfs/Kconfig
+ create mode 100644 fs/ntfs/Makefile
+ create mode 100644 fs/ntfs/aops.c
+ create mode 100644 fs/ntfs/aops.h
+ create mode 100644 fs/ntfs/attrib.c
+ create mode 100644 fs/ntfs/attrib.h
+ create mode 100644 fs/ntfs/attrlist.c
+ create mode 100644 fs/ntfs/attrlist.h
+ create mode 100644 fs/ntfs/bitmap.c
+ create mode 100644 fs/ntfs/bitmap.h
+ create mode 100644 fs/ntfs/collate.c
+ create mode 100644 fs/ntfs/collate.h
+ create mode 100644 fs/ntfs/compress.c
+ create mode 100644 fs/ntfs/debug.c
+ create mode 100644 fs/ntfs/debug.h
+ create mode 100644 fs/ntfs/dir.c
+ create mode 100644 fs/ntfs/dir.h
+ create mode 100644 fs/ntfs/ea.c
+ create mode 100644 fs/ntfs/ea.h
+ create mode 100644 fs/ntfs/file.c
+ create mode 100644 fs/ntfs/index.c
+ create mode 100644 fs/ntfs/index.h
+ create mode 100644 fs/ntfs/inode.c
+ create mode 100644 fs/ntfs/inode.h
+ create mode 100644 fs/ntfs/iomap.c
+ create mode 100644 fs/ntfs/iomap.h
+ create mode 100644 fs/ntfs/layout.h
+ create mode 100644 fs/ntfs/lcnalloc.c
+ create mode 100644 fs/ntfs/lcnalloc.h
+ create mode 100644 fs/ntfs/logfile.c
+ create mode 100644 fs/ntfs/logfile.h
+ create mode 100644 fs/ntfs/malloc.h
+ create mode 100644 fs/ntfs/mft.c
+ create mode 100644 fs/ntfs/mft.h
+ create mode 100644 fs/ntfs/mst.c
+ create mode 100644 fs/ntfs/namei.c
+ create mode 100644 fs/ntfs/ntfs.h
+ create mode 100644 fs/ntfs/quota.c
+ create mode 100644 fs/ntfs/quota.h
+ create mode 100644 fs/ntfs/reparse.c
+ create mode 100644 fs/ntfs/reparse.h
+ create mode 100644 fs/ntfs/runlist.c
+ create mode 100644 fs/ntfs/runlist.h
+ create mode 100644 fs/ntfs/super.c
+ create mode 100644 fs/ntfs/sysctl.c
+ create mode 100644 fs/ntfs/sysctl.h
+ create mode 100644 fs/ntfs/time.h
+ create mode 100644 fs/ntfs/unistr.c
+ create mode 100644 fs/ntfs/upcase.c
+ create mode 100644 fs/ntfs/volume.h
+ create mode 100644 include/uapi/linux/ntfs.h
+
 -- 
-Bernd Schubert <bschubert@ddn.com>
+2.25.1
 
 
