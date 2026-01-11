@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-73163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id A92DED0F130
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jan 2026 15:14:51 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB1DD0F156
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jan 2026 15:16:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D72DE3009C3F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jan 2026 14:14:48 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3EB8930242B4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Jan 2026 14:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510D1341ACA;
-	Sun, 11 Jan 2026 14:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7035C346AC6;
+	Sun, 11 Jan 2026 14:15:59 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8C7331A4B
-	for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jan 2026 14:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3215F1A9F84
+	for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jan 2026 14:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768140884; cv=none; b=NjB7IxUh1wHRoIW47rKgXozEJ2fD+7py2ec4dAb0oM7em0Cho0xK/9bd41kX/aZeq2xN0wiH+qIgu3PcDgpEa9qK2vOaAb98EudEgZYToRUC2T0A0p80QJw2bq7NwyRPmJgfW+Ne81LH36eIJfUuqRHQdEZiWbnlP66wx4aF/MU=
+	t=1768140958; cv=none; b=PiXqe5ifqYDoyT6fvll9fJbu3L+8NEghVHBgXpkfdJfaSJLEXaKIf0AtGgciMg4Szb+ZkQo74YDMwvcqxvnrfTH5lbndsFE8Px0viRnQbJU3oI1RIpF5EjZKZqnRFwyY5TsUc6ZhQXJ0gfvVEDDmJD9jQ2c5WZv5DgmIwBNmFZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768140884; c=relaxed/simple;
-	bh=73qpmsZL0CnJUvSxYIE9j8QWRVTfJ5A04zkQGPMnfl8=;
+	s=arc-20240116; t=1768140958; c=relaxed/simple;
+	bh=G7NIWUeQqaXMAc2mlnCrhSi92OEN/ihHTb76W6SJayk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mHLjvBTk7mo+IhAKfA9bx8cGsdO/voWOiSg7VAYrfbXJzuZRUBQDBbRs975TVND+W8X+0fEGH+pra+MzOdtBST/og2owQyZLjO8V8zYHaXOcBqFoqe8jjHGrHP0u9Il7U7FX6ywg2nouWjIpBQUyzsq+0y+MbD+1AHLj5rzd/gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.172
+	 MIME-Version; b=a8tUksgtdecrKWQqeXTP2N8An1oxxurDV0UGQHcYxbTzOz93q5MnY61MblJSoLGqo9p3ooFZvCnx8Cv1f11h/SVFFQl7wwD63WnUKjS7PGW0hUg7dJbxJH0bLK4XTg5TC0M3xPm2y9qmR49beV956ixqU8MGEAdjvv5RC4LztvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-81e98a1f55eso923525b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jan 2026 06:14:40 -0800 (PST)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-81dab89f286so1152013b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jan 2026 06:15:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768140880; x=1768745680;
+        d=1e100.net; s=20230601; t=1768140949; x=1768745749;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=rjKsrsLLetIzi7Ltfsf7VOHX7bBdAAdY/Iw5rV914cA=;
-        b=thuXH7kheDs6JK8MZ/czOgKDV2RzpZZj3kf/9XA6ZZzDxx/ZVRD6qzIBiShXa7C/nt
-         udu42uHTUscBiCNBhvU1wFth3ypyFQR9Udq3HUWtF2Tt+v/f81TVn3NuO0qtYAlJ+Si+
-         cnZNK7MRi4sLgRWfXoetrBhYGfFv1FtyvpSLD9NZMdRaPi13ZJDhkmsbxvNlkNN5kdNX
-         r3kegh0EINBRQU4Y8HTILH+1NK8w87xvlJS4C0GE56DmmSpIqNmXNtJyixS0Pwzz9mu/
-         A2M/lpWz83hQs+JxVEXO+FdKnCfJb52qch2PiyxB92TquBT81HDdX2mlXo/MolDKGtNP
-         uscg==
-X-Gm-Message-State: AOJu0YzYfVOCQhkCeS9f/uudFLuXO74GWjsWjBO8utvmnmUyCfKKZOvZ
-	6jLjokRkFMV6cMtgCauv9uvM2IeVB3xrGETRsDHZRpNJZBpVxYwYxi3s
-X-Gm-Gg: AY/fxX7M2hSTsszkr3rFAS/xbGMDI2MXN140/Rd4xW4wzy9OeGnZs+zk/7mbPrcmdbL
-	74yqLKh3Mlx1HmeuLZwnks44ivgbSDNSbksQzvqK03hILdtWXWz/jBxhXzl9BoelrecQEwsF7Zj
-	wuGYXaAGTGTTfvcP23ObJMN4QBtiUZBhMCNkm16RRFNVgHc6UZZk1J7Unad3V/oohWBYT9pDNmo
-	MrcqpsmJP2z4Ij+VmyuDrRCiWl32PQD+7VNNT2KDNMuEg3bocV+JG9RcGkEf4SwDGH7s2+unvwe
-	OFb8slgSdvbNftYqI8TyssXtedbB8c47msXznsqcHoa4kNaP6rhfy+9AG1TWST5Q/3VXdnmBzBn
-	XyZivhErW01lUDOxzKW5q37KoLj5br52/V4fde5Tn10ne+AYf3QzjKTck6KAAJu1UsBZM3lbxDP
-	7gg4qI8hAlS/oGG95wMOTYsKI6GQ==
-X-Google-Smtp-Source: AGHT+IFYyPsjC92hIC7zw8szNYmzYWGerEQc43XBqsyr+zLGhiJuEs8MHSyHONrfqdo6syinA/tpXA==
-X-Received: by 2002:a05:6a20:7490:b0:389:8f3f:50ce with SMTP id adf61e73a8af0-3898f9af60amr13630477637.56.1768140879688;
-        Sun, 11 Jan 2026 06:14:39 -0800 (PST)
+        bh=mpgNuaK5wMGv3wZM3nAc0zEeKR7SQksmC3cx545i/ps=;
+        b=C00vq4VDHv28NfYyJCYELM9mHFrklOQVINBYxSXg33s8XJBw6QbSQora9toG3rNzuu
+         HBKlt5bVS8thlD2Jjprx4dRoaoQjhkIPV4tpcXw27ZxEhigFSK5yvJvftDxHxNzRypRP
+         Sd92T1snmy31QTYQMpjCzdQOX8/0mot+by8TnyFCWYN2E6wOiHUvLoWBWwxxunkyWKR3
+         ERNTALmYfVsEI3PD42LolfBPgzBWYhTz4kHY0ZJhYRLQDbU/CPR2/SdA7wCyL8HfYc0O
+         2stunnu/KPvU8r5jIbozYRpoh9lJZD5kTWGbM+6naOAfsJbKEIlgdVdbCVW9e8SKMVyF
+         hmig==
+X-Gm-Message-State: AOJu0YzWDKunAKcczsZJltIM23MA5VouBku5veo1tuhi3PJW3UbynzRb
+	NhAKEF0k25qesSTZMgL07L6MGIk0DpnpyPu0VgZhOij3+LHAwKTxf5Pp
+X-Gm-Gg: AY/fxX5x+cDn012RP3ovs6XYmMmX22msp8y2r4gs0FkcAgsOK0+uRHRUpLz1sGmzeZA
+	4QC2OuzI27W0iK7GR2HgbHNEF3YPproT0PuwOs529gTqgzJpjc11XreCXgrqwJ0iJ41WqUpi5Xk
+	ObiuJnkGXwsDxHES7dqMtJBn9BBKNpYwlzUhqCMpl9/NVl0YGdPh5y9h/d8ggoPzQJL59l744CZ
+	aNFK11YPpK98XR2Wf5myCq4DJ1DWAcl7LPmJmkAIwto1s3C1Dd/wRgvwy9aPFiMZ1WR8hQQD0Hm
+	AIvUgNtraWasfwOsqaQYt1eIeNyB56R4Gs6bFkPq1q91+0BP0ISPI3X4lu5SPEHcqIQ0DqSmbUN
+	dvCOnu6bP9LVkOlYdLusZw1au64LBz6oVFVliRtA4xfrvJqIryht4OBee+8LtRguYR6rB46QQd+
+	1KSLY6dCKC2UZsPRSVKN+JyA86dw==
+X-Google-Smtp-Source: AGHT+IEerNXygW6NdzWoU6PQOyHbz2QKd4c/w0u572kXkYMOD7WULL9yMhLOq41haKjZ/JP2PH7aEA==
+X-Received: by 2002:a05:6a20:3d90:b0:2cc:acef:95ee with SMTP id adf61e73a8af0-3898f99b4e6mr14203918637.52.1768140948286;
+        Sun, 11 Jan 2026 06:15:48 -0800 (PST)
 Received: from localhost.localdomain ([1.227.206.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c4cc02ecfccsm14887077a12.13.2026.01.11.06.14.33
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c4cc02ecfccsm14887077a12.13.2026.01.11.06.15.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Jan 2026 06:14:38 -0800 (PST)
+        Sun, 11 Jan 2026 06:15:47 -0800 (PST)
 From: Namjae Jeon <linkinjeon@kernel.org>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -82,9 +82,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	gunho.lee@lge.com,
 	Namjae Jeon <linkinjeon@kernel.org>,
 	Hyunchul Lee <hyc.lee@gmail.com>
-Subject: [PATCH v5 07/14] ntfs: update iomap and address space operations
-Date: Sun, 11 Jan 2026 23:03:37 +0900
-Message-Id: <20260111140345.3866-8-linkinjeon@kernel.org>
+Subject: [PATCH v5 08/14] ntfs: update attrib operations
+Date: Sun, 11 Jan 2026 23:03:38 +0900
+Message-Id: <20260111140345.3866-9-linkinjeon@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260111140345.3866-1-linkinjeon@kernel.org>
 References: <20260111140345.3866-1-linkinjeon@kernel.org>
@@ -96,1606 +96,2324 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This updates the implementation of iomap and address space operations.
+This updates the implementation of attrib operations
 
 Signed-off-by: Hyunchul Lee <hyc.lee@gmail.com>
 Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
 ---
- fs/ntfs/aops.c  | 1891 +++++++++--------------------------------------
- fs/ntfs/iomap.c |  754 +++++++++++++++++++
- 2 files changed, 1102 insertions(+), 1543 deletions(-)
- create mode 100644 fs/ntfs/iomap.c
+ fs/ntfs/attrib.c   | 5409 +++++++++++++++++++++++++++++++++-----------
+ fs/ntfs/attrlist.c |  285 +++
+ fs/ntfs/compress.c | 1021 +++++++--
+ 3 files changed, 5187 insertions(+), 1528 deletions(-)
+ create mode 100644 fs/ntfs/attrlist.c
 
-diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
-index 2d01517a2d59..3b60797176d6 100644
---- a/fs/ntfs/aops.c
-+++ b/fs/ntfs/aops.c
-@@ -1,407 +1,59 @@
+diff --git a/fs/ntfs/attrib.c b/fs/ntfs/attrib.c
+index f79408f9127a..058780093817 100644
+--- a/fs/ntfs/attrib.c
++++ b/fs/ntfs/attrib.c
+@@ -1,25 +1,35 @@
  // SPDX-License-Identifier: GPL-2.0-or-later
  /*
-- * aops.c - NTFS kernel address space operations and page cache handling.
-+ * NTFS kernel address space operations and page cache handling.
+- * attrib.c - NTFS attribute operations.  Part of the Linux-NTFS project.
++ * NTFS attribute operations. Part of the Linux-NTFS project.
   *
-  * Copyright (c) 2001-2014 Anton Altaparmakov and Tuxera Inc.
+  * Copyright (c) 2001-2012 Anton Altaparmakov and Tuxera Inc.
   * Copyright (c) 2002 Richard Russon
 + * Copyright (c) 2025 LG Electronics Co., Ltd.
++ *
++ * Part of this file is based on code from the NTFS-3G project.
++ * and is copyrighted by the respective authors below:
++ * Copyright (c) 2000-2010 Anton Altaparmakov
++ * Copyright (c) 2002-2005 Richard Russon
++ * Copyright (c) 2002-2008 Szabolcs Szakacsits
++ * Copyright (c) 2004-2007 Yura Pakhuchiy
++ * Copyright (c) 2007-2021 Jean-Pierre Andre
++ * Copyright (c) 2010 Erik Larsson
   */
  
--#include <linux/errno.h>
--#include <linux/fs.h>
--#include <linux/gfp.h>
--#include <linux/mm.h>
--#include <linux/pagemap.h>
--#include <linux/swap.h>
 -#include <linux/buffer_head.h>
+-#include <linux/sched.h>
+-#include <linux/slab.h>
+-#include <linux/swap.h>
  #include <linux/writeback.h>
--#include <linux/bit_spinlock.h>
--#include <linux/bio.h>
-+#include <linux/mpage.h>
-+#include <linux/uio.h>
++#include <linux/iomap.h>
  
- #include "aops.h"
  #include "attrib.h"
 -#include "debug.h"
--#include "inode.h"
- #include "mft.h"
--#include "runlist.h"
--#include "types.h"
- #include "ntfs.h"
+-#include "layout.h"
++#include "attrlist.h"
+ #include "lcnalloc.h"
+-#include "malloc.h"
 +#include "debug.h"
+ #include "mft.h"
+ #include "ntfs.h"
+-#include "types.h"
++#include "aops.h"
 +#include "iomap.h"
- 
--/**
-- * ntfs_end_buffer_async_read - async io completion for reading attributes
-- * @bh:		buffer head on which io is completed
-- * @uptodate:	whether @bh is now uptodate or not
-- *
-- * Asynchronous I/O completion handler for reading pages belonging to the
-- * attribute address space of an inode.  The inodes can either be files or
-- * directories or they can be fake inodes describing some attribute.
-- *
-- * If NInoMstProtected(), perform the post read mst fixups when all IO on the
-- * page has been completed and mark the page uptodate or set the error bit on
-- * the page.  To determine the size of the records that need fixing up, we
-- * cheat a little bit by setting the index_block_size in ntfs_inode to the ntfs
-- * record size, and index_block_size_bits, to the log(base 2) of the ntfs
-- * record size.
-- */
--static void ntfs_end_buffer_async_read(struct buffer_head *bh, int uptodate)
-+static s64 lcn_from_index(struct ntfs_volume *vol, struct ntfs_inode *ni,
-+		unsigned long index)
- {
--	unsigned long flags;
--	struct buffer_head *first, *tmp;
--	struct page *page;
--	struct inode *vi;
--	ntfs_inode *ni;
--	int page_uptodate = 1;
--
--	page = bh->b_page;
--	vi = page->mapping->host;
--	ni = NTFS_I(vi);
--
--	if (likely(uptodate)) {
--		loff_t i_size;
--		s64 file_ofs, init_size;
--
--		set_buffer_uptodate(bh);
--
--		file_ofs = ((s64)page->index << PAGE_SHIFT) +
--				bh_offset(bh);
--		read_lock_irqsave(&ni->size_lock, flags);
--		init_size = ni->initialized_size;
--		i_size = i_size_read(vi);
--		read_unlock_irqrestore(&ni->size_lock, flags);
--		if (unlikely(init_size > i_size)) {
--			/* Race with shrinking truncate. */
--			init_size = i_size;
--		}
--		/* Check for the current buffer head overflowing. */
--		if (unlikely(file_ofs + bh->b_size > init_size)) {
--			int ofs;
--			void *kaddr;
--
--			ofs = 0;
--			if (file_ofs < init_size)
--				ofs = init_size - file_ofs;
--			kaddr = kmap_atomic(page);
--			memset(kaddr + bh_offset(bh) + ofs, 0,
--					bh->b_size - ofs);
--			flush_dcache_page(page);
--			kunmap_atomic(kaddr);
--		}
--	} else {
--		clear_buffer_uptodate(bh);
--		SetPageError(page);
--		ntfs_error(ni->vol->sb, "Buffer I/O error, logical block "
--				"0x%llx.", (unsigned long long)bh->b_blocknr);
--	}
--	first = page_buffers(page);
--	spin_lock_irqsave(&first->b_uptodate_lock, flags);
--	clear_buffer_async_read(bh);
--	unlock_buffer(bh);
--	tmp = bh;
--	do {
--		if (!buffer_uptodate(tmp))
--			page_uptodate = 0;
--		if (buffer_async_read(tmp)) {
--			if (likely(buffer_locked(tmp)))
--				goto still_busy;
--			/* Async buffers must be locked. */
--			BUG();
--		}
--		tmp = tmp->b_this_page;
--	} while (tmp != bh);
--	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
--	/*
--	 * If none of the buffers had errors then we can set the page uptodate,
--	 * but we first have to perform the post read mst fixups, if the
--	 * attribute is mst protected, i.e. if NInoMstProteced(ni) is true.
--	 * Note we ignore fixup errors as those are detected when
--	 * map_mft_record() is called which gives us per record granularity
--	 * rather than per page granularity.
--	 */
--	if (!NInoMstProtected(ni)) {
--		if (likely(page_uptodate && !PageError(page)))
--			SetPageUptodate(page);
--	} else {
--		u8 *kaddr;
--		unsigned int i, recs;
--		u32 rec_size;
--
--		rec_size = ni->itype.index.block_size;
--		recs = PAGE_SIZE / rec_size;
--		/* Should have been verified before we got here... */
--		BUG_ON(!recs);
--		kaddr = kmap_atomic(page);
--		for (i = 0; i < recs; i++)
--			post_read_mst_fixup((NTFS_RECORD*)(kaddr +
--					i * rec_size), rec_size);
--		kunmap_atomic(kaddr);
--		flush_dcache_page(page);
--		if (likely(page_uptodate && !PageError(page)))
--			SetPageUptodate(page);
--	}
--	unlock_page(page);
--	return;
--still_busy:
--	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
--	return;
--}
-+	s64 vcn;
-+	s64 lcn;
- 
--/**
-- * ntfs_read_block - fill a @folio of an address space with data
-- * @folio:	page cache folio to fill with data
-- *
-- * We read each buffer asynchronously and when all buffers are read in, our io
-- * completion handler ntfs_end_buffer_read_async(), if required, automatically
-- * applies the mst fixups to the folio before finally marking it uptodate and
-- * unlocking it.
-- *
-- * We only enforce allocated_size limit because i_size is checked for in
-- * generic_file_read().
-- *
-- * Return 0 on success and -errno on error.
-- *
-- * Contains an adapted version of fs/buffer.c::block_read_full_folio().
-- */
--static int ntfs_read_block(struct folio *folio)
--{
--	loff_t i_size;
--	VCN vcn;
--	LCN lcn;
--	s64 init_size;
--	struct inode *vi;
--	ntfs_inode *ni;
--	ntfs_volume *vol;
--	runlist_element *rl;
--	struct buffer_head *bh, *head, *arr[MAX_BUF_PER_PAGE];
--	sector_t iblock, lblock, zblock;
--	unsigned long flags;
--	unsigned int blocksize, vcn_ofs;
--	int i, nr;
--	unsigned char blocksize_bits;
-+	vcn = NTFS_PIDX_TO_CLU(vol, index);
- 
--	vi = folio->mapping->host;
--	ni = NTFS_I(vi);
--	vol = ni->vol;
--
--	/* $MFT/$DATA must have its complete runlist in memory at all times. */
--	BUG_ON(!ni->runlist.rl && !ni->mft_no && !NInoAttr(ni));
--
--	blocksize = vol->sb->s_blocksize;
--	blocksize_bits = vol->sb->s_blocksize_bits;
--
--	head = folio_buffers(folio);
--	if (!head)
--		head = create_empty_buffers(folio, blocksize, 0);
--	bh = head;
-+	down_read(&ni->runlist.lock);
-+	lcn = ntfs_attr_vcn_to_lcn_nolock(ni, vcn, false);
-+	up_read(&ni->runlist.lock);
- 
--	/*
--	 * We may be racing with truncate.  To avoid some of the problems we
--	 * now take a snapshot of the various sizes and use those for the whole
--	 * of the function.  In case of an extending truncate it just means we
--	 * may leave some buffers unmapped which are now allocated.  This is
--	 * not a problem since these buffers will just get mapped when a write
--	 * occurs.  In case of a shrinking truncate, we will detect this later
--	 * on due to the runlist being incomplete and if the folio is being
--	 * fully truncated, truncate will throw it away as soon as we unlock
--	 * it so no need to worry what we do with it.
--	 */
--	iblock = (s64)folio->index << (PAGE_SHIFT - blocksize_bits);
--	read_lock_irqsave(&ni->size_lock, flags);
--	lblock = (ni->allocated_size + blocksize - 1) >> blocksize_bits;
--	init_size = ni->initialized_size;
--	i_size = i_size_read(vi);
--	read_unlock_irqrestore(&ni->size_lock, flags);
--	if (unlikely(init_size > i_size)) {
--		/* Race with shrinking truncate. */
--		init_size = i_size;
--	}
--	zblock = (init_size + blocksize - 1) >> blocksize_bits;
--
--	/* Loop through all the buffers in the folio. */
--	rl = NULL;
--	nr = i = 0;
--	do {
--		int err = 0;
--
--		if (unlikely(buffer_uptodate(bh)))
--			continue;
--		if (unlikely(buffer_mapped(bh))) {
--			arr[nr++] = bh;
--			continue;
--		}
--		bh->b_bdev = vol->sb->s_bdev;
--		/* Is the block within the allowed limits? */
--		if (iblock < lblock) {
--			bool is_retry = false;
--
--			/* Convert iblock into corresponding vcn and offset. */
--			vcn = (VCN)iblock << blocksize_bits >>
--					vol->cluster_size_bits;
--			vcn_ofs = ((VCN)iblock << blocksize_bits) &
--					vol->cluster_size_mask;
--			if (!rl) {
--lock_retry_remap:
--				down_read(&ni->runlist.lock);
--				rl = ni->runlist.rl;
--			}
--			if (likely(rl != NULL)) {
--				/* Seek to element containing target vcn. */
--				while (rl->length && rl[1].vcn <= vcn)
--					rl++;
--				lcn = ntfs_rl_vcn_to_lcn(rl, vcn);
--			} else
--				lcn = LCN_RL_NOT_MAPPED;
--			/* Successful remap. */
--			if (lcn >= 0) {
--				/* Setup buffer head to correct block. */
--				bh->b_blocknr = ((lcn << vol->cluster_size_bits)
--						+ vcn_ofs) >> blocksize_bits;
--				set_buffer_mapped(bh);
--				/* Only read initialized data blocks. */
--				if (iblock < zblock) {
--					arr[nr++] = bh;
--					continue;
--				}
--				/* Fully non-initialized data block, zero it. */
--				goto handle_zblock;
--			}
--			/* It is a hole, need to zero it. */
--			if (lcn == LCN_HOLE)
--				goto handle_hole;
--			/* If first try and runlist unmapped, map and retry. */
--			if (!is_retry && lcn == LCN_RL_NOT_MAPPED) {
--				is_retry = true;
--				/*
--				 * Attempt to map runlist, dropping lock for
--				 * the duration.
--				 */
--				up_read(&ni->runlist.lock);
--				err = ntfs_map_runlist(ni, vcn);
--				if (likely(!err))
--					goto lock_retry_remap;
--				rl = NULL;
--			} else if (!rl)
--				up_read(&ni->runlist.lock);
--			/*
--			 * If buffer is outside the runlist, treat it as a
--			 * hole.  This can happen due to concurrent truncate
--			 * for example.
--			 */
--			if (err == -ENOENT || lcn == LCN_ENOENT) {
--				err = 0;
--				goto handle_hole;
--			}
--			/* Hard error, zero out region. */
--			if (!err)
--				err = -EIO;
--			bh->b_blocknr = -1;
--			folio_set_error(folio);
--			ntfs_error(vol->sb, "Failed to read from inode 0x%lx, "
--					"attribute type 0x%x, vcn 0x%llx, "
--					"offset 0x%x because its location on "
--					"disk could not be determined%s "
--					"(error code %i).", ni->mft_no,
--					ni->type, (unsigned long long)vcn,
--					vcn_ofs, is_retry ? " even after "
--					"retrying" : "", err);
--		}
--		/*
--		 * Either iblock was outside lblock limits or
--		 * ntfs_rl_vcn_to_lcn() returned error.  Just zero that portion
--		 * of the folio and set the buffer uptodate.
--		 */
--handle_hole:
--		bh->b_blocknr = -1UL;
--		clear_buffer_mapped(bh);
--handle_zblock:
--		folio_zero_range(folio, i * blocksize, blocksize);
--		if (likely(!err))
--			set_buffer_uptodate(bh);
--	} while (i++, iblock++, (bh = bh->b_this_page) != head);
--
--	/* Release the lock if we took it. */
--	if (rl)
--		up_read(&ni->runlist.lock);
--
--	/* Check we have at least one buffer ready for i/o. */
--	if (nr) {
--		struct buffer_head *tbh;
--
--		/* Lock the buffers. */
--		for (i = 0; i < nr; i++) {
--			tbh = arr[i];
--			lock_buffer(tbh);
--			tbh->b_end_io = ntfs_end_buffer_async_read;
--			set_buffer_async_read(tbh);
--		}
--		/* Finally, start i/o on the buffers. */
--		for (i = 0; i < nr; i++) {
--			tbh = arr[i];
--			if (likely(!buffer_uptodate(tbh)))
--				submit_bh(REQ_OP_READ, tbh);
--			else
--				ntfs_end_buffer_async_read(tbh, 1);
--		}
--		return 0;
--	}
--	/* No i/o was scheduled on any of the buffers. */
--	if (likely(!folio_test_error(folio)))
--		folio_mark_uptodate(folio);
--	else /* Signal synchronous i/o error. */
--		nr = -EIO;
--	folio_unlock(folio);
--	return nr;
-+	return lcn;
- }
++#include "malloc.h"
++
++__le16 AT_UNNAMED[] = { cpu_to_le16('\0') };
  
  /**
-- * ntfs_read_folio - fill a @folio of a @file with data from the device
-+ * ntfs_read_folio - Read data for a folio from the device
-  * @file:	open file to which the folio @folio belongs or NULL
-  * @folio:	page cache folio to fill with data
-  *
-- * For non-resident attributes, ntfs_read_folio() fills the @folio of the open
-- * file @file by calling the ntfs version of the generic block_read_full_folio()
-- * function, ntfs_read_block(), which in turn creates and reads in the buffers
-- * associated with the folio asynchronously.
-+ * This function handles reading data into the page cache. It first checks
-+ * for specific ntfs attribute type like encryption and compression.
-  *
-- * For resident attributes, OTOH, ntfs_read_folio() fills @folio by copying the
-- * data from the mft record (which at this stage is most likely in memory) and
-- * fills the remainder with zeroes. Thus, in this case, I/O is synchronous, as
-- * even if the mft record is not cached at this point in time, we need to wait
-- * for it to be read in before we can do the copy.
-+ * - If the attribute is encrypted, access is denied (-EACCES) because
-+ *   decryption is not supported in this path.
-+ * - If the attribute is non-resident and compressed, the read operation is
-+ *   delegated to ntfs_read_compressed_block().
-+ * - For normal resident or non-resident attribute, it utilizes the generic
-+ *   iomap infrastructure via iomap_bio_read_folio() to perform the I/O.
-  *
-- * Return 0 on success and -errno on error.
-+ * Return: 0 on success, or -errno on error.
+  * ntfs_map_runlist_nolock - map (a part of) a runlist of an ntfs inode
+@@ -43,42 +53,22 @@
+  * ntfs_map_runlist_nolock(), you will probably want to do:
+  *	m = ctx->mrec;
+  *	a = ctx->attr;
+- * Assuming you cache ctx->attr in a variable @a of type ATTR_RECORD * and that
+- * you cache ctx->mrec in a variable @m of type MFT_RECORD *.
+- *
+- * Return 0 on success and -errno on error.  There is one special error code
+- * which is not an error as such.  This is -ENOENT.  It means that @vcn is out
+- * of bounds of the runlist.
+- *
+- * Note the runlist can be NULL after this function returns if @vcn is zero and
+- * the attribute has zero allocated size, i.e. there simply is no runlist.
+- *
+- * WARNING: If @ctx is supplied, regardless of whether success or failure is
+- *	    returned, you need to check IS_ERR(@ctx->mrec) and if 'true' the @ctx
+- *	    is no longer valid, i.e. you need to either call
+- *	    ntfs_attr_reinit_search_ctx() or ntfs_attr_put_search_ctx() on it.
+- *	    In that case PTR_ERR(@ctx->mrec) will give you the error code for
+- *	    why the mapping of the old inode failed.
+- *
+- * Locking: - The runlist described by @ni must be locked for writing on entry
+- *	      and is locked on return.  Note the runlist will be modified.
+- *	    - If @ctx is NULL, the base mft record of @ni must not be mapped on
+- *	      entry and it will be left unmapped on return.
+- *	    - If @ctx is not NULL, the base mft record must be mapped on entry
+- *	      and it will be left mapped on return.
++ * Assuming you cache ctx->attr in a variable @a of type attr_record * and that
++ * you cache ctx->mrec in a variable @m of type struct mft_record *.
   */
- static int ntfs_read_folio(struct file *file, struct folio *folio)
+-int ntfs_map_runlist_nolock(ntfs_inode *ni, VCN vcn, ntfs_attr_search_ctx *ctx)
++int ntfs_map_runlist_nolock(struct ntfs_inode *ni, s64 vcn, struct ntfs_attr_search_ctx *ctx)
  {
--	struct page *page = &folio->page;
--	loff_t i_size;
--	struct inode *vi;
--	ntfs_inode *ni, *base_ni;
--	u8 *addr;
--	ntfs_attr_search_ctx *ctx;
--	MFT_RECORD *mrec;
--	unsigned long flags;
--	u32 attr_len;
--	int err = 0;
--
--retry_readpage:
--	BUG_ON(!PageLocked(page));
--	vi = page->mapping->host;
--	i_size = i_size_read(vi);
--	/* Is the page fully outside i_size? (truncate in progress) */
--	if (unlikely(page->index >= (i_size + PAGE_SIZE - 1) >>
--			PAGE_SHIFT)) {
--		zero_user(page, 0, PAGE_SIZE);
--		ntfs_debug("Read outside i_size - truncated?");
--		goto done;
--	}
--	/*
--	 * This can potentially happen because we clear PageUptodate() during
--	 * ntfs_writepage() of MstProtected() attributes.
--	 */
--	if (PageUptodate(page)) {
--		unlock_page(page);
--		return 0;
--	}
--	ni = NTFS_I(vi);
-+	struct ntfs_inode *ni = NTFS_I(folio->mapping->host);
-+
- 	/*
- 	 * Only $DATA attributes can be encrypted and only unnamed $DATA
- 	 * attributes can be compressed.  Index root can have the flags set but
-@@ -413,1099 +65,201 @@ static int ntfs_read_folio(struct file *file, struct folio *folio)
- 	if (ni->type != AT_INDEX_ALLOCATION) {
- 		/* If attribute is encrypted, deny access, just like NT4. */
- 		if (NInoEncrypted(ni)) {
--			BUG_ON(ni->type != AT_DATA);
--			err = -EACCES;
--			goto err_out;
-+			folio_unlock(folio);
-+			return -EACCES;
- 		}
- 		/* Compressed data streams are handled in compress.c. */
--		if (NInoNonResident(ni) && NInoCompressed(ni)) {
--			BUG_ON(ni->type != AT_DATA);
--			BUG_ON(ni->name_len);
--			return ntfs_read_compressed_block(page);
--		}
--	}
--	/* NInoNonResident() == NInoIndexAllocPresent() */
--	if (NInoNonResident(ni)) {
--		/* Normal, non-resident data stream. */
--		return ntfs_read_block(folio);
--	}
--	/*
--	 * Attribute is resident, implying it is not compressed or encrypted.
--	 * This also means the attribute is smaller than an mft record and
--	 * hence smaller than a page, so can simply zero out any pages with
--	 * index above 0.  Note the attribute can actually be marked compressed
--	 * but if it is resident the actual data is not compressed so we are
--	 * ok to ignore the compressed flag here.
--	 */
--	if (unlikely(page->index > 0)) {
--		zero_user(page, 0, PAGE_SIZE);
--		goto done;
-+		if (NInoNonResident(ni) && NInoCompressed(ni))
-+			return ntfs_read_compressed_block(folio);
- 	}
--	if (!NInoAttr(ni))
--		base_ni = ni;
--	else
--		base_ni = ni->ext.base_ntfs_ino;
--	/* Map, pin, and lock the mft record. */
--	mrec = map_mft_record(base_ni);
--	if (IS_ERR(mrec)) {
--		err = PTR_ERR(mrec);
--		goto err_out;
--	}
--	/*
--	 * If a parallel write made the attribute non-resident, drop the mft
--	 * record and retry the read_folio.
--	 */
--	if (unlikely(NInoNonResident(ni))) {
--		unmap_mft_record(base_ni);
--		goto retry_readpage;
--	}
--	ctx = ntfs_attr_get_search_ctx(base_ni, mrec);
--	if (unlikely(!ctx)) {
--		err = -ENOMEM;
--		goto unm_err_out;
--	}
--	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
--			CASE_SENSITIVE, 0, NULL, 0, ctx);
--	if (unlikely(err))
--		goto put_unm_err_out;
--	attr_len = le32_to_cpu(ctx->attr->data.resident.value_length);
--	read_lock_irqsave(&ni->size_lock, flags);
--	if (unlikely(attr_len > ni->initialized_size))
--		attr_len = ni->initialized_size;
--	i_size = i_size_read(vi);
--	read_unlock_irqrestore(&ni->size_lock, flags);
--	if (unlikely(attr_len > i_size)) {
--		/* Race with shrinking truncate. */
--		attr_len = i_size;
--	}
--	addr = kmap_atomic(page);
--	/* Copy the data to the page. */
--	memcpy(addr, (u8*)ctx->attr +
--			le16_to_cpu(ctx->attr->data.resident.value_offset),
--			attr_len);
--	/* Zero the remainder of the page. */
--	memset(addr + attr_len, 0, PAGE_SIZE - attr_len);
--	flush_dcache_page(page);
--	kunmap_atomic(addr);
--put_unm_err_out:
--	ntfs_attr_put_search_ctx(ctx);
--unm_err_out:
--	unmap_mft_record(base_ni);
--done:
--	SetPageUptodate(page);
--err_out:
--	unlock_page(page);
--	return err;
--}
- 
--#ifdef NTFS_RW
-+	iomap_bio_read_folio(folio, &ntfs_read_iomap_ops);
-+	return 0;
-+}
- 
--/**
-- * ntfs_write_block - write a @folio to the backing store
-- * @folio:	page cache folio to write out
-- * @wbc:	writeback control structure
-- *
-- * This function is for writing folios belonging to non-resident, non-mst
-- * protected attributes to their backing store.
-- *
-- * For a folio with buffers, map and write the dirty buffers asynchronously
-- * under folio writeback. For a folio without buffers, create buffers for the
-- * folio, then proceed as above.
-- *
-- * If a folio doesn't have buffers the folio dirty state is definitive. If
-- * a folio does have buffers, the folio dirty state is just a hint,
-- * and the buffer dirty state is definitive. (A hint which has rules:
-- * dirty buffers against a clean folio is illegal. Other combinations are
-- * legal and need to be handled. In particular a dirty folio containing
-- * clean buffers for example.)
-- *
-- * Return 0 on success and -errno on error.
-- *
-- * Based on ntfs_read_block() and __block_write_full_folio().
-- */
--static int ntfs_write_block(struct folio *folio, struct writeback_control *wbc)
-+void ntfs_bio_end_io(struct bio *bio)
- {
--	VCN vcn;
--	LCN lcn;
--	s64 initialized_size;
--	loff_t i_size;
--	sector_t block, dblock, iblock;
--	struct inode *vi;
--	ntfs_inode *ni;
--	ntfs_volume *vol;
+-	VCN end_vcn;
++	s64 end_vcn;
+ 	unsigned long flags;
+-	ntfs_inode *base_ni;
+-	MFT_RECORD *m;
+-	ATTR_RECORD *a;
 -	runlist_element *rl;
--	struct buffer_head *bh, *head;
--	unsigned long flags;
--	unsigned int blocksize, vcn_ofs;
--	int err;
--	bool need_end_writeback;
--	unsigned char blocksize_bits;
--
--	vi = folio->mapping->host;
--	ni = NTFS_I(vi);
--	vol = ni->vol;
--
--	ntfs_debug("Entering for inode 0x%lx, attribute type 0x%x, page index "
--			"0x%lx.", ni->mft_no, ni->type, folio->index);
-+	if (bio->bi_private)
-+		folio_put((struct folio *)bio->bi_private);
-+	bio_put(bio);
-+}
- 
--	BUG_ON(!NInoNonResident(ni));
--	BUG_ON(NInoMstProtected(ni));
--	blocksize = vol->sb->s_blocksize;
--	blocksize_bits = vol->sb->s_blocksize_bits;
--	head = folio_buffers(folio);
--	if (!head) {
--		BUG_ON(!folio_test_uptodate(folio));
--		head = create_empty_buffers(folio, blocksize,
--				(1 << BH_Uptodate) | (1 << BH_Dirty));
-+static int ntfs_write_mft_block(struct ntfs_inode *ni, struct folio *folio,
-+		struct writeback_control *wbc)
-+{
-+	struct inode *vi = VFS_I(ni);
-+	struct ntfs_volume *vol = ni->vol;
-+	u8 *kaddr;
-+	struct ntfs_inode *locked_nis[PAGE_SIZE / NTFS_BLOCK_SIZE];
-+	int nr_locked_nis = 0, err = 0, mft_ofs, prev_mft_ofs;
-+	struct bio *bio = NULL;
-+	unsigned long mft_no;
-+	struct ntfs_inode *tni;
-+	s64 lcn;
-+	s64 vcn = NTFS_PIDX_TO_CLU(vol, folio->index);
-+	s64 end_vcn = NTFS_B_TO_CLU(vol, ni->allocated_size);
-+	unsigned int folio_sz;
+-	struct page *put_this_page = NULL;
++	struct ntfs_inode *base_ni;
++	struct mft_record *m;
++	struct attr_record *a;
 +	struct runlist_element *rl;
-+
-+	ntfs_debug("Entering for inode 0x%lx, attribute type 0x%x, folio index 0x%lx.",
-+			vi->i_ino, ni->type, folio->index);
-+
-+	lcn = lcn_from_index(vol, ni, folio->index);
-+	if (lcn <= LCN_HOLE) {
-+		folio_start_writeback(folio);
-+		folio_unlock(folio);
-+		folio_end_writeback(folio);
-+		return -EIO;
- 	}
--	bh = head;
--
--	/* NOTE: Different naming scheme to ntfs_read_block()! */
--
--	/* The first block in the folio. */
--	block = (s64)folio->index << (PAGE_SHIFT - blocksize_bits);
--
--	read_lock_irqsave(&ni->size_lock, flags);
--	i_size = i_size_read(vi);
--	initialized_size = ni->initialized_size;
--	read_unlock_irqrestore(&ni->size_lock, flags);
--
--	/* The first out of bounds block for the data size. */
--	dblock = (i_size + blocksize - 1) >> blocksize_bits;
--
--	/* The last (fully or partially) initialized block. */
--	iblock = initialized_size >> blocksize_bits;
--
--	/*
--	 * Be very careful.  We have no exclusion from block_dirty_folio
--	 * here, and the (potentially unmapped) buffers may become dirty at
--	 * any time.  If a buffer becomes dirty here after we've inspected it
--	 * then we just miss that fact, and the folio stays dirty.
--	 *
--	 * Buffers outside i_size may be dirtied by block_dirty_folio;
--	 * handle that here by just cleaning them.
--	 */
--
--	/*
--	 * Loop through all the buffers in the folio, mapping all the dirty
--	 * buffers to disk addresses and handling any aliases from the
--	 * underlying block device's mapping.
--	 */
--	rl = NULL;
--	err = 0;
--	do {
--		bool is_retry = false;
--
--		if (unlikely(block >= dblock)) {
--			/*
--			 * Mapped buffers outside i_size will occur, because
--			 * this folio can be outside i_size when there is a
--			 * truncate in progress. The contents of such buffers
--			 * were zeroed by ntfs_writepage().
--			 *
--			 * FIXME: What about the small race window where
--			 * ntfs_writepage() has not done any clearing because
--			 * the folio was within i_size but before we get here,
--			 * vmtruncate() modifies i_size?
--			 */
--			clear_buffer_dirty(bh);
--			set_buffer_uptodate(bh);
--			continue;
--		}
++	struct folio *put_this_folio = NULL;
+ 	int err = 0;
+-	bool ctx_is_temporary, ctx_needs_reset;
+-	ntfs_attr_search_ctx old_ctx = { NULL, };
++	bool ctx_is_temporary = false, ctx_needs_reset;
++	struct ntfs_attr_search_ctx old_ctx = { NULL, };
++	size_t new_rl_count;
  
--		/* Clean buffers are not written out, so no need to map them. */
--		if (!buffer_dirty(bh))
--			continue;
-+	/* Map folio so we can access its contents. */
-+	kaddr = kmap_local_folio(folio, 0);
-+	/* Clear the page uptodate flag whilst the mst fixups are applied. */
-+	folio_clear_uptodate(folio);
-+
-+	for (mft_ofs = 0; mft_ofs < PAGE_SIZE && vcn < end_vcn;
-+	     mft_ofs += vol->mft_record_size) {
-+		/* Get the mft record number. */
-+		mft_no = (((s64)folio->index << PAGE_SHIFT) + mft_ofs) >>
-+			vol->mft_record_size_bits;
-+		vcn = NTFS_MFT_NR_TO_CLU(vol, mft_no);
-+		/* Check whether to write this mft record. */
-+		tni = NULL;
-+		if (ntfs_may_write_mft_record(vol, mft_no,
-+					(struct mft_record *)(kaddr + mft_ofs), &tni)) {
-+			unsigned int mft_record_off = 0;
-+			s64 vcn_off = vcn;
- 
--		/* Make sure we have enough initialized size. */
--		if (unlikely((block >= iblock) &&
--				(initialized_size < i_size))) {
--			/*
--			 * If this folio is fully outside initialized
--			 * size, zero out all folios between the current
--			 * initialized size and the current folio. Just
--			 * use ntfs_read_folio() to do the zeroing
--			 * transparently.
--			 */
--			if (block > iblock) {
--				// TODO:
--				// For each folio do:
--				// - read_cache_folio()
--				// Again for each folio do:
--				// - wait_on_folio_locked()
--				// - Check (folio_test_uptodate(folio) &&
--				//		!folio_test_error(folio))
--				// Update initialized size in the attribute and
--				// in the inode.
--				// Again, for each folio do:
--				//	block_dirty_folio();
--				// folio_put()
--				// We don't need to wait on the writes.
--				// Update iblock.
--			}
- 			/*
--			 * The current folio straddles initialized size. Zero
--			 * all non-uptodate buffers and set them uptodate (and
--			 * dirty?). Note, there aren't any non-uptodate buffers
--			 * if the folio is uptodate.
--			 * FIXME: For an uptodate folio, the buffers may need to
--			 * be written out because they were not initialized on
--			 * disk before.
-+			 * Skip $MFT extent mft records and let them being written
-+			 * by writeback to avioid deadlocks. the $MFT runlist
-+			 * lock must be taken before $MFT extent mrec_lock is taken.
- 			 */
--			if (!folio_test_uptodate(folio)) {
--				// TODO:
--				// Zero any non-uptodate buffers up to i_size.
--				// Set them uptodate and dirty.
--			}
--			// TODO:
--			// Update initialized size in the attribute and in the
--			// inode (up to i_size).
--			// Update iblock.
--			// FIXME: This is inefficient. Try to batch the two
--			// size changes to happen in one go.
--			ntfs_error(vol->sb, "Writing beyond initialized size "
--					"is not supported yet. Sorry.");
--			err = -EOPNOTSUPP;
--			break;
--			// Do NOT set_buffer_new() BUT DO clear buffer range
--			// outside write request range.
--			// set_buffer_uptodate() on complete buffers as well as
--			// set_buffer_dirty().
--		}
--
--		/* No need to map buffers that are already mapped. */
--		if (buffer_mapped(bh))
--			continue;
--
--		/* Unmapped, dirty buffer. Need to map it. */
--		bh->b_bdev = vol->sb->s_bdev;
--
--		/* Convert block into corresponding vcn and offset. */
--		vcn = (VCN)block << blocksize_bits;
--		vcn_ofs = vcn & vol->cluster_size_mask;
--		vcn >>= vol->cluster_size_bits;
--		if (!rl) {
--lock_retry_remap:
--			down_read(&ni->runlist.lock);
--			rl = ni->runlist.rl;
--		}
--		if (likely(rl != NULL)) {
--			/* Seek to element containing target vcn. */
--			while (rl->length && rl[1].vcn <= vcn)
--				rl++;
--			lcn = ntfs_rl_vcn_to_lcn(rl, vcn);
--		} else
--			lcn = LCN_RL_NOT_MAPPED;
--		/* Successful remap. */
--		if (lcn >= 0) {
--			/* Setup buffer head to point to correct block. */
--			bh->b_blocknr = ((lcn << vol->cluster_size_bits) +
--					vcn_ofs) >> blocksize_bits;
--			set_buffer_mapped(bh);
--			continue;
--		}
--		/* It is a hole, need to instantiate it. */
--		if (lcn == LCN_HOLE) {
--			u8 *kaddr;
--			unsigned long *bpos, *bend;
--
--			/* Check if the buffer is zero. */
--			kaddr = kmap_local_folio(folio, bh_offset(bh));
--			bpos = (unsigned long *)kaddr;
--			bend = (unsigned long *)(kaddr + blocksize);
--			do {
--				if (unlikely(*bpos))
--					break;
--			} while (likely(++bpos < bend));
--			kunmap_local(kaddr);
--			if (bpos == bend) {
--				/*
--				 * Buffer is zero and sparse, no need to write
--				 * it.
--				 */
--				bh->b_blocknr = -1;
--				clear_buffer_dirty(bh);
-+			if (tni && tni->nr_extents < 0 &&
-+				tni->ext.base_ntfs_ino == NTFS_I(vol->mft_ino)) {
-+				mutex_unlock(&tni->mrec_lock);
-+				atomic_dec(&tni->count);
-+				iput(vol->mft_ino);
- 				continue;
- 			}
--			// TODO: Instantiate the hole.
--			// clear_buffer_new(bh);
--			// clean_bdev_bh_alias(bh);
--			ntfs_error(vol->sb, "Writing into sparse regions is "
--					"not supported yet. Sorry.");
--			err = -EOPNOTSUPP;
--			break;
--		}
--		/* If first try and runlist unmapped, map and retry. */
--		if (!is_retry && lcn == LCN_RL_NOT_MAPPED) {
--			is_retry = true;
--			/*
--			 * Attempt to map runlist, dropping lock for
--			 * the duration.
--			 */
--			up_read(&ni->runlist.lock);
--			err = ntfs_map_runlist(ni, vcn);
--			if (likely(!err))
--				goto lock_retry_remap;
--			rl = NULL;
--		} else if (!rl)
--			up_read(&ni->runlist.lock);
--		/*
--		 * If buffer is outside the runlist, truncate has cut it out
--		 * of the runlist.  Just clean and clear the buffer and set it
--		 * uptodate so it can get discarded by the VM.
--		 */
--		if (err == -ENOENT || lcn == LCN_ENOENT) {
--			bh->b_blocknr = -1;
--			clear_buffer_dirty(bh);
--			folio_zero_range(folio, bh_offset(bh), blocksize);
--			set_buffer_uptodate(bh);
--			err = 0;
--			continue;
--		}
--		/* Failed to map the buffer, even after retrying. */
--		if (!err)
--			err = -EIO;
--		bh->b_blocknr = -1;
--		ntfs_error(vol->sb, "Failed to write to inode 0x%lx, "
--				"attribute type 0x%x, vcn 0x%llx, offset 0x%x "
--				"because its location on disk could not be "
--				"determined%s (error code %i).", ni->mft_no,
--				ni->type, (unsigned long long)vcn,
--				vcn_ofs, is_retry ? " even after "
--				"retrying" : "", err);
--		break;
--	} while (block++, (bh = bh->b_this_page) != head);
--
--	/* Release the lock if we took it. */
--	if (rl)
--		up_read(&ni->runlist.lock);
--
--	/* For the error case, need to reset bh to the beginning. */
--	bh = head;
--
--	/* Just an optimization, so ->read_folio() is not called later. */
--	if (unlikely(!folio_test_uptodate(folio))) {
--		int uptodate = 1;
--		do {
--			if (!buffer_uptodate(bh)) {
--				uptodate = 0;
--				bh = head;
--				break;
--			}
--		} while ((bh = bh->b_this_page) != head);
--		if (uptodate)
--			folio_mark_uptodate(folio);
--	}
- 
--	/* Setup all mapped, dirty buffers for async write i/o. */
--	do {
--		if (buffer_mapped(bh) && buffer_dirty(bh)) {
--			lock_buffer(bh);
--			if (test_clear_buffer_dirty(bh)) {
--				BUG_ON(!buffer_uptodate(bh));
--				mark_buffer_async_write(bh);
--			} else
--				unlock_buffer(bh);
--		} else if (unlikely(err)) {
--			/*
--			 * For the error case. The buffer may have been set
--			 * dirty during attachment to a dirty folio.
--			 */
--			if (err != -ENOMEM)
--				clear_buffer_dirty(bh);
--		}
--	} while ((bh = bh->b_this_page) != head);
--
--	if (unlikely(err)) {
--		// TODO: Remove the -EOPNOTSUPP check later on...
--		if (unlikely(err == -EOPNOTSUPP))
--			err = 0;
--		else if (err == -ENOMEM) {
--			ntfs_warning(vol->sb, "Error allocating memory. "
--					"Redirtying folio so we try again "
--					"later.");
- 			/*
--			 * Put the folio back on mapping->dirty_pages, but
--			 * leave its buffer's dirty state as-is.
-+			 * The record should be written.  If a locked ntfs
-+			 * inode was returned, add it to the array of locked
-+			 * ntfs inodes.
- 			 */
--			folio_redirty_for_writepage(wbc, folio);
--			err = 0;
--		} else
--			folio_set_error(folio);
--	}
-+			if (tni)
-+				locked_nis[nr_locked_nis++] = tni;
- 
--	BUG_ON(folio_test_writeback(folio));
--	folio_start_writeback(folio);	/* Keeps try_to_free_buffers() away. */
-+			if (bio && (mft_ofs != prev_mft_ofs + vol->mft_record_size)) {
-+flush_bio:
-+				flush_dcache_folio(folio);
-+				bio->bi_end_io = ntfs_bio_end_io;
-+				submit_bio(bio);
-+				bio = NULL;
-+			}
- 
--	/* Submit the prepared buffers for i/o. */
--	need_end_writeback = true;
--	do {
--		struct buffer_head *next = bh->b_this_page;
--		if (buffer_async_write(bh)) {
--			submit_bh(REQ_OP_WRITE, bh);
--			need_end_writeback = false;
--		}
--		bh = next;
--	} while (bh != head);
--	folio_unlock(folio);
-+			if (vol->cluster_size < folio_size(folio)) {
-+				down_write(&ni->runlist.lock);
-+				rl = ntfs_attr_vcn_to_rl(ni, vcn_off, &lcn);
-+				up_write(&ni->runlist.lock);
-+				if (IS_ERR(rl) || lcn < 0) {
-+					err = -EIO;
-+					goto unm_done;
-+				}
- 
--	/* If no i/o was started, need to end writeback here. */
--	if (unlikely(need_end_writeback))
--		folio_end_writeback(folio);
-+				if (bio &&
-+				   (bio_end_sector(bio) >> (vol->cluster_size_bits - 9)) !=
-+				    lcn) {
-+					flush_dcache_folio(folio);
-+					bio->bi_end_io = ntfs_bio_end_io;
-+					submit_bio(bio);
-+					bio = NULL;
-+				}
-+			}
- 
--	ntfs_debug("Done.");
--	return err;
--}
-+			if (!bio) {
-+				unsigned int off;
- 
--/**
-- * ntfs_write_mst_block - write a @page to the backing store
-- * @page:	page cache page to write out
-- * @wbc:	writeback control structure
-- *
-- * This function is for writing pages belonging to non-resident, mst protected
-- * attributes to their backing store.  The only supported attributes are index
-- * allocation and $MFT/$DATA.  Both directory inodes and index inodes are
-- * supported for the index allocation case.
-- *
-- * The page must remain locked for the duration of the write because we apply
-- * the mst fixups, write, and then undo the fixups, so if we were to unlock the
-- * page before undoing the fixups, any other user of the page will see the
-- * page contents as corrupt.
-- *
-- * We clear the page uptodate flag for the duration of the function to ensure
-- * exclusion for the $MFT/$DATA case against someone mapping an mft record we
-- * are about to apply the mst fixups to.
-- *
-- * Return 0 on success and -errno on error.
-- *
-- * Based on ntfs_write_block(), ntfs_mft_writepage(), and
-- * write_mft_record_nolock().
-- */
--static int ntfs_write_mst_block(struct page *page,
--		struct writeback_control *wbc)
--{
--	sector_t block, dblock, rec_block;
--	struct inode *vi = page->mapping->host;
--	ntfs_inode *ni = NTFS_I(vi);
--	ntfs_volume *vol = ni->vol;
--	u8 *kaddr;
--	unsigned int rec_size = ni->itype.index.block_size;
--	ntfs_inode *locked_nis[PAGE_SIZE / NTFS_BLOCK_SIZE];
--	struct buffer_head *bh, *head, *tbh, *rec_start_bh;
--	struct buffer_head *bhs[MAX_BUF_PER_PAGE];
--	runlist_element *rl;
--	int i, nr_locked_nis, nr_recs, nr_bhs, max_bhs, bhs_per_rec, err, err2;
--	unsigned bh_size, rec_size_bits;
--	bool sync, is_mft, page_is_dirty, rec_is_dirty;
--	unsigned char bh_size_bits;
--
--	if (WARN_ON(rec_size < NTFS_BLOCK_SIZE))
--		return -EINVAL;
--
--	ntfs_debug("Entering for inode 0x%lx, attribute type 0x%x, page index "
--			"0x%lx.", vi->i_ino, ni->type, page->index);
--	BUG_ON(!NInoNonResident(ni));
--	BUG_ON(!NInoMstProtected(ni));
--	is_mft = (S_ISREG(vi->i_mode) && !vi->i_ino);
--	/*
--	 * NOTE: ntfs_write_mst_block() would be called for $MFTMirr if a page
--	 * in its page cache were to be marked dirty.  However this should
--	 * never happen with the current driver and considering we do not
--	 * handle this case here we do want to BUG(), at least for now.
--	 */
--	BUG_ON(!(is_mft || S_ISDIR(vi->i_mode) ||
--			(NInoAttr(ni) && ni->type == AT_INDEX_ALLOCATION)));
--	bh_size = vol->sb->s_blocksize;
--	bh_size_bits = vol->sb->s_blocksize_bits;
--	max_bhs = PAGE_SIZE / bh_size;
--	BUG_ON(!max_bhs);
--	BUG_ON(max_bhs > MAX_BUF_PER_PAGE);
--
--	/* Were we called for sync purposes? */
--	sync = (wbc->sync_mode == WB_SYNC_ALL);
--
--	/* Make sure we have mapped buffers. */
--	bh = head = page_buffers(page);
--	BUG_ON(!bh);
--
--	rec_size_bits = ni->itype.index.block_size_bits;
--	BUG_ON(!(PAGE_SIZE >> rec_size_bits));
--	bhs_per_rec = rec_size >> bh_size_bits;
--	BUG_ON(!bhs_per_rec);
--
--	/* The first block in the page. */
--	rec_block = block = (sector_t)page->index <<
--			(PAGE_SHIFT - bh_size_bits);
--
--	/* The first out of bounds block for the data size. */
--	dblock = (i_size_read(vi) + bh_size - 1) >> bh_size_bits;
--
--	rl = NULL;
--	err = err2 = nr_bhs = nr_recs = nr_locked_nis = 0;
--	page_is_dirty = rec_is_dirty = false;
--	rec_start_bh = NULL;
--	do {
--		bool is_retry = false;
--
--		if (likely(block < rec_block)) {
--			if (unlikely(block >= dblock)) {
--				clear_buffer_dirty(bh);
--				set_buffer_uptodate(bh);
--				continue;
--			}
--			/*
--			 * This block is not the first one in the record.  We
--			 * ignore the buffer's dirty state because we could
--			 * have raced with a parallel mark_ntfs_record_dirty().
--			 */
--			if (!rec_is_dirty)
--				continue;
--			if (unlikely(err2)) {
--				if (err2 != -ENOMEM)
--					clear_buffer_dirty(bh);
--				continue;
--			}
--		} else /* if (block == rec_block) */ {
--			BUG_ON(block > rec_block);
--			/* This block is the first one in the record. */
--			rec_block += bhs_per_rec;
--			err2 = 0;
--			if (unlikely(block >= dblock)) {
--				clear_buffer_dirty(bh);
--				continue;
--			}
--			if (!buffer_dirty(bh)) {
--				/* Clean records are not written out. */
--				rec_is_dirty = false;
--				continue;
--			}
--			rec_is_dirty = true;
--			rec_start_bh = bh;
--		}
--		/* Need to map the buffer if it is not mapped already. */
--		if (unlikely(!buffer_mapped(bh))) {
--			VCN vcn;
--			LCN lcn;
--			unsigned int vcn_ofs;
--
--			bh->b_bdev = vol->sb->s_bdev;
--			/* Obtain the vcn and offset of the current block. */
--			vcn = (VCN)block << bh_size_bits;
--			vcn_ofs = vcn & vol->cluster_size_mask;
--			vcn >>= vol->cluster_size_bits;
--			if (!rl) {
--lock_retry_remap:
--				down_read(&ni->runlist.lock);
--				rl = ni->runlist.rl;
-+				off = ((mft_no << vol->mft_record_size_bits) +
-+				       mft_record_off) & vol->cluster_size_mask;
-+
-+				bio = bio_alloc(vol->sb->s_bdev, 1, REQ_OP_WRITE,
-+						GFP_NOIO);
-+				bio->bi_iter.bi_sector =
-+					NTFS_B_TO_SECTOR(vol, NTFS_CLU_TO_B(vol, lcn) + off);
- 			}
--			if (likely(rl != NULL)) {
--				/* Seek to element containing target vcn. */
--				while (rl->length && rl[1].vcn <= vcn)
--					rl++;
--				lcn = ntfs_rl_vcn_to_lcn(rl, vcn);
--			} else
--				lcn = LCN_RL_NOT_MAPPED;
--			/* Successful remap. */
--			if (likely(lcn >= 0)) {
--				/* Setup buffer head to correct block. */
--				bh->b_blocknr = ((lcn <<
--						vol->cluster_size_bits) +
--						vcn_ofs) >> bh_size_bits;
--				set_buffer_mapped(bh);
--			} else {
--				/*
--				 * Remap failed.  Retry to map the runlist once
--				 * unless we are working on $MFT which always
--				 * has the whole of its runlist in memory.
--				 */
--				if (!is_mft && !is_retry &&
--						lcn == LCN_RL_NOT_MAPPED) {
--					is_retry = true;
--					/*
--					 * Attempt to map runlist, dropping
--					 * lock for the duration.
--					 */
--					up_read(&ni->runlist.lock);
--					err2 = ntfs_map_runlist(ni, vcn);
--					if (likely(!err2))
--						goto lock_retry_remap;
--					if (err2 == -ENOMEM)
--						page_is_dirty = true;
--					lcn = err2;
--				} else {
--					err2 = -EIO;
--					if (!rl)
--						up_read(&ni->runlist.lock);
--				}
--				/* Hard error.  Abort writing this record. */
--				if (!err || err == -ENOMEM)
--					err = err2;
--				bh->b_blocknr = -1;
--				ntfs_error(vol->sb, "Cannot write ntfs record "
--						"0x%llx (inode 0x%lx, "
--						"attribute type 0x%x) because "
--						"its location on disk could "
--						"not be determined (error "
--						"code %lli).",
--						(long long)block <<
--						bh_size_bits >>
--						vol->mft_record_size_bits,
--						ni->mft_no, ni->type,
--						(long long)lcn);
--				/*
--				 * If this is not the first buffer, remove the
--				 * buffers in this record from the list of
--				 * buffers to write and clear their dirty bit
--				 * if not error -ENOMEM.
--				 */
--				if (rec_start_bh != bh) {
--					while (bhs[--nr_bhs] != rec_start_bh)
--						;
--					if (err2 != -ENOMEM) {
--						do {
--							clear_buffer_dirty(
--								rec_start_bh);
--						} while ((rec_start_bh =
--								rec_start_bh->
--								b_this_page) !=
--								bh);
--					}
--				}
--				continue;
-+
-+			if (vol->cluster_size == NTFS_BLOCK_SIZE &&
-+			    (mft_record_off ||
-+			     rl->length - (vcn_off - rl->vcn) == 1 ||
-+			     mft_ofs + NTFS_BLOCK_SIZE >= PAGE_SIZE))
-+				folio_sz = NTFS_BLOCK_SIZE;
-+			else
-+				folio_sz = vol->mft_record_size;
-+			if (!bio_add_folio(bio, folio, folio_sz,
-+					   mft_ofs + mft_record_off)) {
-+				err = -EIO;
-+				bio_put(bio);
-+				goto unm_done;
- 			}
--		}
--		BUG_ON(!buffer_uptodate(bh));
--		BUG_ON(nr_bhs >= max_bhs);
--		bhs[nr_bhs++] = bh;
--	} while (block++, (bh = bh->b_this_page) != head);
--	if (unlikely(rl))
--		up_read(&ni->runlist.lock);
--	/* If there were no dirty buffers, we are done. */
--	if (!nr_bhs)
--		goto done;
--	/* Map the page so we can access its contents. */
--	kaddr = kmap(page);
--	/* Clear the page uptodate flag whilst the mst fixups are applied. */
--	BUG_ON(!PageUptodate(page));
--	ClearPageUptodate(page);
--	for (i = 0; i < nr_bhs; i++) {
--		unsigned int ofs;
--
--		/* Skip buffers which are not at the beginning of records. */
--		if (i % bhs_per_rec)
--			continue;
--		tbh = bhs[i];
--		ofs = bh_offset(tbh);
--		if (is_mft) {
--			ntfs_inode *tni;
--			unsigned long mft_no;
--
--			/* Get the mft record number. */
--			mft_no = (((s64)page->index << PAGE_SHIFT) + ofs)
--					>> rec_size_bits;
--			/* Check whether to write this mft record. */
--			tni = NULL;
--			if (!ntfs_may_write_mft_record(vol, mft_no,
--					(MFT_RECORD*)(kaddr + ofs), &tni)) {
--				/*
--				 * The record should not be written.  This
--				 * means we need to redirty the page before
--				 * returning.
--				 */
--				page_is_dirty = true;
--				/*
--				 * Remove the buffers in this mft record from
--				 * the list of buffers to write.
--				 */
--				do {
--					bhs[i] = NULL;
--				} while (++i % bhs_per_rec);
--				continue;
-+			mft_record_off += folio_sz;
-+
-+			if (mft_record_off != vol->mft_record_size) {
-+				vcn_off++;
-+				goto flush_bio;
- 			}
--			/*
--			 * The record should be written.  If a locked ntfs
--			 * inode was returned, add it to the array of locked
--			 * ntfs inodes.
--			 */
--			if (tni)
--				locked_nis[nr_locked_nis++] = tni;
--		}
--		/* Apply the mst protection fixups. */
--		err2 = pre_write_mst_fixup((NTFS_RECORD*)(kaddr + ofs),
--				rec_size);
--		if (unlikely(err2)) {
--			if (!err || err == -ENOMEM)
--				err = -EIO;
--			ntfs_error(vol->sb, "Failed to apply mst fixups "
--					"(inode 0x%lx, attribute type 0x%x, "
--					"page index 0x%lx, page offset 0x%x)!"
--					"  Unmount and run chkdsk.", vi->i_ino,
--					ni->type, page->index, ofs);
--			/*
--			 * Mark all the buffers in this record clean as we do
--			 * not want to write corrupt data to disk.
--			 */
--			do {
--				clear_buffer_dirty(bhs[i]);
--				bhs[i] = NULL;
--			} while (++i % bhs_per_rec);
--			continue;
--		}
--		nr_recs++;
--	}
--	/* If no records are to be written out, we are done. */
--	if (!nr_recs)
--		goto unm_done;
--	flush_dcache_page(page);
--	/* Lock buffers and start synchronous write i/o on them. */
--	for (i = 0; i < nr_bhs; i++) {
--		tbh = bhs[i];
--		if (!tbh)
--			continue;
--		if (!trylock_buffer(tbh))
--			BUG();
--		/* The buffer dirty state is now irrelevant, just clean it. */
--		clear_buffer_dirty(tbh);
--		BUG_ON(!buffer_uptodate(tbh));
--		BUG_ON(!buffer_mapped(tbh));
--		get_bh(tbh);
--		tbh->b_end_io = end_buffer_write_sync;
--		submit_bh(REQ_OP_WRITE, tbh);
--	}
--	/* Synchronize the mft mirror now if not @sync. */
--	if (is_mft && !sync)
--		goto do_mirror;
--do_wait:
--	/* Wait on i/o completion of buffers. */
--	for (i = 0; i < nr_bhs; i++) {
--		tbh = bhs[i];
--		if (!tbh)
--			continue;
--		wait_on_buffer(tbh);
--		if (unlikely(!buffer_uptodate(tbh))) {
--			ntfs_error(vol->sb, "I/O error while writing ntfs "
--					"record buffer (inode 0x%lx, "
--					"attribute type 0x%x, page index "
--					"0x%lx, page offset 0x%lx)!  Unmount "
--					"and run chkdsk.", vi->i_ino, ni->type,
--					page->index, bh_offset(tbh));
--			if (!err || err == -ENOMEM)
--				err = -EIO;
--			/*
--			 * Set the buffer uptodate so the page and buffer
--			 * states do not become out of sync.
--			 */
--			set_buffer_uptodate(tbh);
--		}
--	}
--	/* If @sync, now synchronize the mft mirror. */
--	if (is_mft && sync) {
--do_mirror:
--		for (i = 0; i < nr_bhs; i++) {
--			unsigned long mft_no;
--			unsigned int ofs;
-+			prev_mft_ofs = mft_ofs;
- 
--			/*
--			 * Skip buffers which are not at the beginning of
--			 * records.
--			 */
--			if (i % bhs_per_rec)
--				continue;
--			tbh = bhs[i];
--			/* Skip removed buffers (and hence records). */
--			if (!tbh)
--				continue;
--			ofs = bh_offset(tbh);
--			/* Get the mft record number. */
--			mft_no = (((s64)page->index << PAGE_SHIFT) + ofs)
--					>> rec_size_bits;
- 			if (mft_no < vol->mftmirr_size)
- 				ntfs_sync_mft_mirror(vol, mft_no,
--						(MFT_RECORD*)(kaddr + ofs),
--						sync);
-+						(struct mft_record *)(kaddr + mft_ofs));
+ 	ntfs_debug("Mapping runlist part containing vcn 0x%llx.",
+ 			(unsigned long long)vcn);
+@@ -97,16 +87,17 @@ int ntfs_map_runlist_nolock(ntfs_inode *ni, VCN vcn, ntfs_attr_search_ctx *ctx)
+ 			goto err_out;
  		}
--		if (!sync)
--			goto do_wait;
-+
+ 	} else {
+-		VCN allocated_size_vcn;
++		s64 allocated_size_vcn;
+ 
+-		BUG_ON(IS_ERR(ctx->mrec));
++		WARN_ON(IS_ERR(ctx->mrec));
+ 		a = ctx->attr;
+-		BUG_ON(!a->non_resident);
+-		ctx_is_temporary = false;
+-		end_vcn = sle64_to_cpu(a->data.non_resident.highest_vcn);
++		if (!a->non_resident) {
++			err = -EIO;
++			goto err_out;
++		}
++		end_vcn = le64_to_cpu(a->data.non_resident.highest_vcn);
+ 		read_lock_irqsave(&ni->size_lock, flags);
+-		allocated_size_vcn = ni->allocated_size >>
+-				ni->vol->cluster_size_bits;
++		allocated_size_vcn = NTFS_B_TO_CLU(ni->vol, ni->allocated_size);
+ 		read_unlock_irqrestore(&ni->size_lock, flags);
+ 		if (!a->data.non_resident.lowest_vcn && end_vcn <= 0)
+ 			end_vcn = allocated_size_vcn - 1;
+@@ -119,9 +110,9 @@ int ntfs_map_runlist_nolock(ntfs_inode *ni, VCN vcn, ntfs_attr_search_ctx *ctx)
+ 		 */
+ 		if (vcn >= allocated_size_vcn || (a->type == ni->type &&
+ 				a->name_length == ni->name_len &&
+-				!memcmp((u8*)a + le16_to_cpu(a->name_offset),
++				!memcmp((u8 *)a + le16_to_cpu(a->name_offset),
+ 				ni->name, ni->name_len) &&
+-				sle64_to_cpu(a->data.non_resident.lowest_vcn)
++				le64_to_cpu(a->data.non_resident.lowest_vcn)
+ 				<= vcn && end_vcn >= vcn))
+ 			ctx_needs_reset = false;
+ 		else {
+@@ -137,8 +128,8 @@ int ntfs_map_runlist_nolock(ntfs_inode *ni, VCN vcn, ntfs_attr_search_ctx *ctx)
+ 			 */
+ 			if (old_ctx.base_ntfs_ino && old_ctx.ntfs_ino !=
+ 					old_ctx.base_ntfs_ino) {
+-				put_this_page = old_ctx.ntfs_ino->page;
+-				get_page(put_this_page);
++				put_this_folio = old_ctx.ntfs_ino->folio;
++				folio_get(put_this_folio);
+ 			}
+ 			/*
+ 			 * Reinitialize the search context so we can lookup the
+@@ -156,7 +147,7 @@ int ntfs_map_runlist_nolock(ntfs_inode *ni, VCN vcn, ntfs_attr_search_ctx *ctx)
+ 				err = -EIO;
+ 			goto err_out;
+ 		}
+-		BUG_ON(!ctx->attr->non_resident);
++		WARN_ON(!ctx->attr->non_resident);
  	}
--	/* Remove the mst protection fixups again. */
--	for (i = 0; i < nr_bhs; i++) {
--		if (!(i % bhs_per_rec)) {
--			tbh = bhs[i];
--			if (!tbh)
--				continue;
--			post_write_mst_fixup((NTFS_RECORD*)(kaddr +
--					bh_offset(tbh)));
--		}
-+
-+	if (bio) {
-+		flush_dcache_folio(folio);
-+		bio->bi_end_io = ntfs_bio_end_io;
-+		submit_bio(bio);
+ 	a = ctx->attr;
+ 	/*
+@@ -165,16 +156,18 @@ int ntfs_map_runlist_nolock(ntfs_inode *ni, VCN vcn, ntfs_attr_search_ctx *ctx)
+ 	 * we then try to map the already mapped runlist fragment and
+ 	 * ntfs_mapping_pairs_decompress() fails.
+ 	 */
+-	end_vcn = sle64_to_cpu(a->data.non_resident.highest_vcn) + 1;
++	end_vcn = le64_to_cpu(a->data.non_resident.highest_vcn) + 1;
+ 	if (unlikely(vcn && vcn >= end_vcn)) {
+ 		err = -ENOENT;
+ 		goto err_out;
  	}
--	flush_dcache_page(page);
-+	flush_dcache_folio(folio);
- unm_done:
-+	folio_mark_uptodate(folio);
-+	kunmap_local(kaddr);
-+
-+	folio_start_writeback(folio);
-+	folio_unlock(folio);
-+	folio_end_writeback(folio);
-+
- 	/* Unlock any locked inodes. */
- 	while (nr_locked_nis-- > 0) {
--		ntfs_inode *tni, *base_tni;
--		
-+		struct ntfs_inode *base_tni;
-+
- 		tni = locked_nis[nr_locked_nis];
-+		mutex_unlock(&tni->mrec_lock);
-+
- 		/* Get the base inode. */
- 		mutex_lock(&tni->extent_lock);
- 		if (tni->nr_extents >= 0)
- 			base_tni = tni;
--		else {
-+		else
- 			base_tni = tni->ext.base_ntfs_ino;
--			BUG_ON(!base_tni);
--		}
- 		mutex_unlock(&tni->extent_lock);
- 		ntfs_debug("Unlocking %s inode 0x%lx.",
- 				tni == base_tni ? "base" : "extent",
- 				tni->mft_no);
--		mutex_unlock(&tni->mrec_lock);
- 		atomic_dec(&tni->count);
- 		iput(VFS_I(base_tni));
+-	rl = ntfs_mapping_pairs_decompress(ni->vol, a, ni->runlist.rl);
++	rl = ntfs_mapping_pairs_decompress(ni->vol, a, &ni->runlist, &new_rl_count);
+ 	if (IS_ERR(rl))
+ 		err = PTR_ERR(rl);
+-	else
++	else {
+ 		ni->runlist.rl = rl;
++		ni->runlist.count = new_rl_count;
++	}
+ err_out:
+ 	if (ctx_is_temporary) {
+ 		if (likely(ctx))
+@@ -203,18 +196,16 @@ int ntfs_map_runlist_nolock(ntfs_inode *ni, VCN vcn, ntfs_attr_search_ctx *ctx)
+ 						ctx->base_ntfs_ino) {
+ 					unmap_extent_mft_record(ctx->ntfs_ino);
+ 					ctx->mrec = ctx->base_mrec;
+-					BUG_ON(!ctx->mrec);
++					WARN_ON(!ctx->mrec);
+ 				}
+ 				/*
+ 				 * If the old mapped inode is not the base
+ 				 * inode, map it.
+ 				 */
+ 				if (old_ctx.base_ntfs_ino &&
+-						old_ctx.ntfs_ino !=
+-						old_ctx.base_ntfs_ino) {
++				    old_ctx.ntfs_ino !=	old_ctx.base_ntfs_ino) {
+ retry_map:
+-					ctx->mrec = map_mft_record(
+-							old_ctx.ntfs_ino);
++					ctx->mrec = map_mft_record(old_ctx.ntfs_ino);
+ 					/*
+ 					 * Something bad has happened.  If out
+ 					 * of memory retry till it succeeds.
+@@ -226,24 +217,22 @@ int ntfs_map_runlist_nolock(ntfs_inode *ni, VCN vcn, ntfs_attr_search_ctx *ctx)
+ 					 * search context safely.
+ 					 */
+ 					if (IS_ERR(ctx->mrec)) {
+-						if (PTR_ERR(ctx->mrec) ==
+-								-ENOMEM) {
++						if (PTR_ERR(ctx->mrec) == -ENOMEM) {
+ 							schedule();
+ 							goto retry_map;
+ 						} else
+ 							old_ctx.ntfs_ino =
+-								old_ctx.
+-								base_ntfs_ino;
++								old_ctx.base_ntfs_ino;
+ 					}
+ 				}
+ 			}
+ 			/* Update the changed pointers in the saved context. */
+ 			if (ctx->mrec != old_ctx.mrec) {
+ 				if (!IS_ERR(ctx->mrec))
+-					old_ctx.attr = (ATTR_RECORD*)(
+-							(u8*)ctx->mrec +
+-							((u8*)old_ctx.attr -
+-							(u8*)old_ctx.mrec));
++					old_ctx.attr = (struct attr_record *)(
++							(u8 *)ctx->mrec +
++							((u8 *)old_ctx.attr -
++							(u8 *)old_ctx.mrec));
+ 				old_ctx.mrec = ctx->mrec;
+ 			}
+ 		}
+@@ -260,8 +249,8 @@ int ntfs_map_runlist_nolock(ntfs_inode *ni, VCN vcn, ntfs_attr_search_ctx *ctx)
+ 		 * immediately and mark the volume dirty for chkdsk to pick up
+ 		 * the pieces anyway.
+ 		 */
+-		if (put_this_page)
+-			put_page(put_this_page);
++		if (put_this_folio)
++			folio_put(put_this_folio);
  	}
--	SetPageUptodate(page);
--	kunmap(page);
--done:
--	if (unlikely(err && err != -ENOMEM)) {
--		/*
--		 * Set page error if there is only one ntfs record in the page.
--		 * Otherwise we would loose per-record granularity.
--		 */
--		if (ni->itype.index.block_size == PAGE_SIZE)
--			SetPageError(page);
-+
-+	if (unlikely(err && err != -ENOMEM))
- 		NVolSetErrors(vol);
--	}
--	if (page_is_dirty) {
--		ntfs_debug("Page still contains one or more dirty ntfs "
--				"records.  Redirtying the page starting at "
--				"record 0x%lx.", page->index <<
--				(PAGE_SHIFT - rec_size_bits));
--		redirty_page_for_writepage(wbc, page);
--		unlock_page(page);
--	} else {
--		/*
--		 * Keep the VM happy.  This must be done otherwise the
--		 * radix-tree tag PAGECACHE_TAG_DIRTY remains set even though
--		 * the page is clean.
--		 */
--		BUG_ON(PageWriteback(page));
--		set_page_writeback(page);
--		unlock_page(page);
--		end_page_writeback(page);
--	}
- 	if (likely(!err))
- 		ntfs_debug("Done.");
+ 	return err;
+ }
+@@ -272,16 +261,8 @@ int ntfs_map_runlist_nolock(ntfs_inode *ni, VCN vcn, ntfs_attr_search_ctx *ctx)
+  * @vcn:	map runlist part containing this vcn
+  *
+  * Map the part of a runlist containing the @vcn of the ntfs inode @ni.
+- *
+- * Return 0 on success and -errno on error.  There is one special error code
+- * which is not an error as such.  This is -ENOENT.  It means that @vcn is out
+- * of bounds of the runlist.
+- *
+- * Locking: - The runlist must be unlocked on entry and is unlocked on return.
+- *	    - This function takes the runlist lock for writing and may modify
+- *	      the runlist.
+  */
+-int ntfs_map_runlist(ntfs_inode *ni, VCN vcn)
++int ntfs_map_runlist(struct ntfs_inode *ni, s64 vcn)
+ {
+ 	int err = 0;
+ 
+@@ -294,6 +275,37 @@ int ntfs_map_runlist(ntfs_inode *ni, VCN vcn)
  	return err;
  }
  
--/**
-- * ntfs_writepage - write a @page to the backing store
-- * @page:	page cache page to write out
-- * @wbc:	writeback control structure
++struct runlist_element *ntfs_attr_vcn_to_rl(struct ntfs_inode *ni, s64 vcn, s64 *lcn)
++{
++	struct runlist_element *rl;
++	int err;
++	bool is_retry = false;
++
++	rl = ni->runlist.rl;
++	if (!rl) {
++		err = ntfs_attr_map_whole_runlist(ni);
++		if (err)
++			return ERR_PTR(-ENOENT);
++		rl = ni->runlist.rl;
++	}
++
++remap_rl:
++	/* Seek to element containing target vcn. */
++	while (rl->length && rl[1].vcn <= vcn)
++		rl++;
++	*lcn = ntfs_rl_vcn_to_lcn(rl, vcn);
++
++	if (*lcn <= LCN_RL_NOT_MAPPED && is_retry == false) {
++		is_retry = true;
++		if (!ntfs_map_runlist_nolock(ni, vcn, NULL)) {
++			rl = ni->runlist.rl;
++			goto remap_rl;
++		}
++	}
++
++	return rl;
++}
++
+ /**
+  * ntfs_attr_vcn_to_lcn_nolock - convert a vcn into a lcn given an ntfs inode
+  * @ni:			ntfs inode of the attribute whose runlist to search
+@@ -324,19 +336,16 @@ int ntfs_map_runlist(ntfs_inode *ni, VCN vcn)
+  *	      the lock may be dropped inside the function so you cannot rely on
+  *	      the runlist still being the same when this function returns.
+  */
+-LCN ntfs_attr_vcn_to_lcn_nolock(ntfs_inode *ni, const VCN vcn,
++s64 ntfs_attr_vcn_to_lcn_nolock(struct ntfs_inode *ni, const s64 vcn,
+ 		const bool write_locked)
+ {
+-	LCN lcn;
++	s64 lcn;
+ 	unsigned long flags;
+ 	bool is_retry = false;
+ 
+-	BUG_ON(!ni);
+ 	ntfs_debug("Entering for i_ino 0x%lx, vcn 0x%llx, %s_locked.",
+ 			ni->mft_no, (unsigned long long)vcn,
+ 			write_locked ? "write" : "read");
+-	BUG_ON(!NInoNonResident(ni));
+-	BUG_ON(vcn < 0);
+ 	if (!ni->runlist.rl) {
+ 		read_lock_irqsave(&ni->size_lock, flags);
+ 		if (!ni->allocated_size) {
+@@ -390,6 +399,61 @@ LCN ntfs_attr_vcn_to_lcn_nolock(ntfs_inode *ni, const VCN vcn,
+ 	return lcn;
+ }
+ 
++struct runlist_element *__ntfs_attr_find_vcn_nolock(struct runlist *runlist, const s64 vcn)
++{
++	size_t lower_idx, upper_idx, idx;
++	struct runlist_element *run;
++	int rh = runlist->rl_hint;
++
++	if (runlist->count <= 1)
++		return ERR_PTR(-ENOENT);
++
++	if (runlist->count - 1 > rh && runlist->rl[rh].vcn <= vcn) {
++		if (vcn < runlist->rl[rh].vcn + runlist->rl[rh].length)
++			return &runlist->rl[rh];
++		if (runlist->count - 2 == rh)
++			return ERR_PTR(-ENOENT);
++
++		lower_idx = rh + 1;
++	} else {
++		run = &runlist->rl[0];
++		if (vcn < run->vcn)
++			return ERR_PTR(-ENOENT);
++		else if (vcn < run->vcn + run->length) {
++			runlist->rl_hint = 0;
++			return run;
++		}
++
++		lower_idx = 1;
++	}
++
++	run = &runlist->rl[runlist->count - 2];
++	if (vcn >= run->vcn && vcn < run->vcn + run->length) {
++		runlist->rl_hint = runlist->count - 2;
++		return run;
++	}
++	if (vcn >= run->vcn + run->length)
++		return ERR_PTR(-ENOENT);
++
++	upper_idx = runlist->count - 2;
++
++	while (lower_idx <= upper_idx) {
++		idx = (lower_idx + upper_idx) >> 1;
++		run = &runlist->rl[idx];
++
++		if (vcn < run->vcn)
++			upper_idx = idx - 1;
++		else if (vcn >= run->vcn + run->length)
++			lower_idx = idx + 1;
++		else {
++			runlist->rl_hint = idx;
++			return run;
++		}
++	}
++
++	return ERR_PTR(-ENOENT);
++}
++
+ /**
+  * ntfs_attr_find_vcn_nolock - find a vcn in the runlist of an ntfs inode
+  * @ni:		ntfs inode describing the runlist to search
+@@ -416,50 +480,22 @@ LCN ntfs_attr_vcn_to_lcn_nolock(ntfs_inode *ni, const VCN vcn,
+  * ntfs_attr_find_vcn_nolock(), you will probably want to do:
+  *	m = ctx->mrec;
+  *	a = ctx->attr;
+- * Assuming you cache ctx->attr in a variable @a of type ATTR_RECORD * and that
+- * you cache ctx->mrec in a variable @m of type MFT_RECORD *.
++ * Assuming you cache ctx->attr in a variable @a of type attr_record * and that
++ * you cache ctx->mrec in a variable @m of type struct mft_record *.
+  * Note you need to distinguish between the lcn of the returned runlist element
+  * being >= 0 and LCN_HOLE.  In the later case you have to return zeroes on
+  * read and allocate clusters on write.
 - *
-- * This is called from the VM when it wants to have a dirty ntfs page cache
-- * page cleaned.  The VM has already locked the page and marked it clean.
+- * Return the runlist element containing the @vcn on success and
+- * ERR_PTR(-errno) on error.  You need to test the return value with IS_ERR()
+- * to decide if the return is success or failure and PTR_ERR() to get to the
+- * error code if IS_ERR() is true.
 - *
-- * For non-resident attributes, ntfs_writepage() writes the @page by calling
-- * the ntfs version of the generic block_write_full_folio() function,
-- * ntfs_write_block(), which in turn if necessary creates and writes the
-- * buffers associated with the page asynchronously.
+- * The possible error return codes are:
+- *	-ENOENT - No such vcn in the runlist, i.e. @vcn is out of bounds.
+- *	-ENOMEM - Not enough memory to map runlist.
+- *	-EIO	- Critical error (runlist/file is corrupt, i/o error, etc).
 - *
-- * For resident attributes, OTOH, ntfs_writepage() writes the @page by copying
-- * the data to the mft record (which at this stage is most likely in memory).
-- * The mft record is then marked dirty and written out asynchronously via the
-- * vfs inode dirty code path for the inode the mft record belongs to or via the
-- * vm page dirty code path for the page the mft record is in.
+- * WARNING: If @ctx is supplied, regardless of whether success or failure is
+- *	    returned, you need to check IS_ERR(@ctx->mrec) and if 'true' the @ctx
+- *	    is no longer valid, i.e. you need to either call
+- *	    ntfs_attr_reinit_search_ctx() or ntfs_attr_put_search_ctx() on it.
+- *	    In that case PTR_ERR(@ctx->mrec) will give you the error code for
+- *	    why the mapping of the old inode failed.
 - *
-- * Based on ntfs_read_folio() and fs/buffer.c::block_write_full_folio().
-- *
-- * Return 0 on success and -errno on error.
-- */
--static int ntfs_writepage(struct page *page, struct writeback_control *wbc)
--{
--	struct folio *folio = page_folio(page);
--	loff_t i_size;
--	struct inode *vi = folio->mapping->host;
--	ntfs_inode *base_ni = NULL, *ni = NTFS_I(vi);
--	char *addr;
--	ntfs_attr_search_ctx *ctx = NULL;
--	MFT_RECORD *m = NULL;
--	u32 attr_len;
--	int err;
+- * Locking: - The runlist described by @ni must be locked for writing on entry
+- *	      and is locked on return.  Note the runlist may be modified when
+- *	      needed runlist fragments need to be mapped.
+- *	    - If @ctx is NULL, the base mft record of @ni must not be mapped on
+- *	      entry and it will be left unmapped on return.
+- *	    - If @ctx is not NULL, the base mft record must be mapped on entry
+- *	      and it will be left mapped on return.
+  */
+-runlist_element *ntfs_attr_find_vcn_nolock(ntfs_inode *ni, const VCN vcn,
+-		ntfs_attr_search_ctx *ctx)
++struct runlist_element *ntfs_attr_find_vcn_nolock(struct ntfs_inode *ni, const s64 vcn,
++		struct ntfs_attr_search_ctx *ctx)
+ {
+ 	unsigned long flags;
+-	runlist_element *rl;
++	struct runlist_element *rl;
+ 	int err = 0;
+ 	bool is_retry = false;
+ 
+-	BUG_ON(!ni);
+ 	ntfs_debug("Entering for i_ino 0x%lx, vcn 0x%llx, with%s ctx.",
+ 			ni->mft_no, (unsigned long long)vcn, ctx ? "" : "out");
+-	BUG_ON(!NInoNonResident(ni));
+-	BUG_ON(vcn < 0);
+ 	if (!ni->runlist.rl) {
+ 		read_lock_irqsave(&ni->size_lock, flags);
+ 		if (!ni->allocated_size) {
+@@ -468,32 +504,24 @@ runlist_element *ntfs_attr_find_vcn_nolock(ntfs_inode *ni, const VCN vcn,
+ 		}
+ 		read_unlock_irqrestore(&ni->size_lock, flags);
+ 	}
++
+ retry_remap:
+ 	rl = ni->runlist.rl;
+ 	if (likely(rl && vcn >= rl[0].vcn)) {
+-		while (likely(rl->length)) {
+-			if (unlikely(vcn < rl[1].vcn)) {
+-				if (likely(rl->lcn >= LCN_HOLE)) {
+-					ntfs_debug("Done.");
+-					return rl;
+-				}
+-				break;
+-			}
+-			rl++;
+-		}
+-		if (likely(rl->lcn != LCN_RL_NOT_MAPPED)) {
+-			if (likely(rl->lcn == LCN_ENOENT))
+-				err = -ENOENT;
+-			else
+-				err = -EIO;
+-		}
++		rl = __ntfs_attr_find_vcn_nolock(&ni->runlist, vcn);
++		if (IS_ERR(rl))
++			err = PTR_ERR(rl);
++		else if (rl->lcn >= LCN_HOLE)
++			return rl;
++		else if (rl->lcn <= LCN_ENOENT)
++			err = -EIO;
+ 	}
+ 	if (!err && !is_retry) {
+ 		/*
+ 		 * If the search context is invalid we cannot map the unmapped
+ 		 * region.
+ 		 */
+-		if (IS_ERR(ctx->mrec))
++		if (ctx && IS_ERR(ctx->mrec))
+ 			err = PTR_ERR(ctx->mrec);
+ 		else {
+ 			/*
+@@ -572,14 +600,15 @@ runlist_element *ntfs_attr_find_vcn_nolock(ntfs_inode *ni, const VCN vcn,
+  * Warning: Never use @val when looking for attribute types which can be
+  *	    non-resident as this most likely will result in a crash!
+  */
+-static int ntfs_attr_find(const ATTR_TYPE type, const ntfschar *name,
+-		const u32 name_len, const IGNORE_CASE_BOOL ic,
+-		const u8 *val, const u32 val_len, ntfs_attr_search_ctx *ctx)
++static int ntfs_attr_find(const __le32 type, const __le16 *name,
++		const u32 name_len, const u32 ic,
++		const u8 *val, const u32 val_len, struct ntfs_attr_search_ctx *ctx)
+ {
+-	ATTR_RECORD *a;
+-	ntfs_volume *vol = ctx->ntfs_ino->vol;
+-	ntfschar *upcase = vol->upcase;
++	struct attr_record *a;
++	struct ntfs_volume *vol = ctx->ntfs_ino->vol;
++	__le16 *upcase = vol->upcase;
+ 	u32 upcase_len = vol->upcase_len;
++	unsigned int space;
+ 
+ 	/*
+ 	 * Iterate over attributes in mft record starting at @ctx->attr, or the
+@@ -589,80 +618,72 @@ static int ntfs_attr_find(const ATTR_TYPE type, const ntfschar *name,
+ 		a = ctx->attr;
+ 		ctx->is_first = false;
+ 	} else
+-		a = (ATTR_RECORD*)((u8*)ctx->attr +
++		a = (struct attr_record *)((u8 *)ctx->attr +
+ 				le32_to_cpu(ctx->attr->length));
+-	for (;;	a = (ATTR_RECORD*)((u8*)a + le32_to_cpu(a->length))) {
+-		u8 *mrec_end = (u8 *)ctx->mrec +
+-		               le32_to_cpu(ctx->mrec->bytes_allocated);
+-		u8 *name_end;
 -
--retry_writepage:
--	BUG_ON(!folio_test_locked(folio));
--	i_size = i_size_read(vi);
--	/* Is the folio fully outside i_size? (truncate in progress) */
--	if (unlikely(folio->index >= (i_size + PAGE_SIZE - 1) >>
--			PAGE_SHIFT)) {
--		/*
--		 * The folio may have dirty, unmapped buffers.  Make them
--		 * freeable here, so the page does not leak.
--		 */
--		block_invalidate_folio(folio, 0, folio_size(folio));
--		folio_unlock(folio);
--		ntfs_debug("Write outside i_size - truncated?");
+-		/* check whether ATTR_RECORD wrap */
+-		if ((u8 *)a < (u8 *)ctx->mrec)
+-			break;
+-
+-		/* check whether Attribute Record Header is within bounds */
+-		if ((u8 *)a > mrec_end ||
+-		    (u8 *)a + sizeof(ATTR_RECORD) > mrec_end)
++	for (;;	a = (struct attr_record *)((u8 *)a + le32_to_cpu(a->length))) {
++		if ((u8 *)a < (u8 *)ctx->mrec || (u8 *)a > (u8 *)ctx->mrec +
++				le32_to_cpu(ctx->mrec->bytes_allocated))
+ 			break;
+ 
+-		/* check whether ATTR_RECORD's name is within bounds */
+-		name_end = (u8 *)a + le16_to_cpu(a->name_offset) +
+-			   a->name_length * sizeof(ntfschar);
+-		if (name_end > mrec_end)
++		space = le32_to_cpu(ctx->mrec->bytes_in_use) - ((u8 *)a - (u8 *)ctx->mrec);
++		if ((space < offsetof(struct attr_record, data.resident.reserved) + 1 ||
++		      space < le32_to_cpu(a->length)) && (space < 4 || a->type != AT_END))
+ 			break;
+ 
+ 		ctx->attr = a;
+-		if (unlikely(le32_to_cpu(a->type) > le32_to_cpu(type) ||
+-				a->type == AT_END))
++		if (((type != AT_UNUSED) && (le32_to_cpu(a->type) > le32_to_cpu(type))) ||
++				a->type == AT_END)
+ 			return -ENOENT;
+ 		if (unlikely(!a->length))
+ 			break;
+-
+-		/* check whether ATTR_RECORD's length wrap */
+-		if ((u8 *)a + le32_to_cpu(a->length) < (u8 *)a)
+-			break;
+-		/* check whether ATTR_RECORD's length is within bounds */
+-		if ((u8 *)a + le32_to_cpu(a->length) > mrec_end)
+-			break;
+-
++		if (type == AT_UNUSED)
++			return 0;
+ 		if (a->type != type)
+ 			continue;
+ 		/*
+ 		 * If @name is present, compare the two names.  If @name is
+ 		 * missing, assume we want an unnamed attribute.
+ 		 */
+-		if (!name) {
++		if (!name || name == AT_UNNAMED) {
+ 			/* The search failed if the found attribute is named. */
+ 			if (a->name_length)
+ 				return -ENOENT;
+-		} else if (!ntfs_are_names_equal(name, name_len,
+-			    (ntfschar*)((u8*)a + le16_to_cpu(a->name_offset)),
+-			    a->name_length, ic, upcase, upcase_len)) {
+-			register int rc;
++		} else {
++			if (a->name_length && ((le16_to_cpu(a->name_offset) +
++					       a->name_length * sizeof(__le16)) >
++						le32_to_cpu(a->length))) {
++				ntfs_error(vol->sb, "Corrupt attribute name in MFT record %lld\n",
++					   (long long)ctx->ntfs_ino->mft_no);
++				break;
++			}
+ 
+-			rc = ntfs_collate_names(name, name_len,
+-					(ntfschar*)((u8*)a +
+-					le16_to_cpu(a->name_offset)),
+-					a->name_length, 1, IGNORE_CASE,
+-					upcase, upcase_len);
+-			/*
+-			 * If @name collates before a->name, there is no
+-			 * matching attribute.
+-			 */
+-			if (rc == -1)
+-				return -ENOENT;
+-			/* If the strings are not equal, continue search. */
+-			if (rc)
+-				continue;
+-			rc = ntfs_collate_names(name, name_len,
+-					(ntfschar*)((u8*)a +
+-					le16_to_cpu(a->name_offset)),
+-					a->name_length, 1, CASE_SENSITIVE,
+-					upcase, upcase_len);
+-			if (rc == -1)
+-				return -ENOENT;
+-			if (rc)
+-				continue;
++			if (!ntfs_are_names_equal(name, name_len,
++					(__le16 *)((u8 *)a + le16_to_cpu(a->name_offset)),
++					a->name_length, ic, upcase, upcase_len)) {
++				register int rc;
++
++				rc = ntfs_collate_names(name, name_len,
++						(__le16 *)((u8 *)a + le16_to_cpu(a->name_offset)),
++						a->name_length, 1, IGNORE_CASE,
++						upcase, upcase_len);
++				/*
++				 * If @name collates before a->name, there is no
++				 * matching attribute.
++				 */
++				if (rc == -1)
++					return -ENOENT;
++				/* If the strings are not equal, continue search. */
++				if (rc)
++					continue;
++				rc = ntfs_collate_names(name, name_len,
++						(__le16 *)((u8 *)a + le16_to_cpu(a->name_offset)),
++						a->name_length, 1, CASE_SENSITIVE,
++						upcase, upcase_len);
++				if (rc == -1)
++					return -ENOENT;
++				if (rc)
++					continue;
++			}
+ 		}
+ 		/*
+ 		 * The names match or @name not present and attribute is
+@@ -675,7 +696,7 @@ static int ntfs_attr_find(const ATTR_TYPE type, const ntfschar *name,
+ 		else {
+ 			register int rc;
+ 
+-			rc = memcmp(val, (u8*)a + le16_to_cpu(
++			rc = memcmp(val, (u8 *)a + le16_to_cpu(
+ 					a->data.resident.value_offset),
+ 					min_t(u32, val_len, le32_to_cpu(
+ 					a->data.resident.value_length)));
+@@ -686,8 +707,7 @@ static int ntfs_attr_find(const ATTR_TYPE type, const ntfschar *name,
+ 			if (!rc) {
+ 				register u32 avl;
+ 
+-				avl = le32_to_cpu(
+-						a->data.resident.value_length);
++				avl = le32_to_cpu(a->data.resident.value_length);
+ 				if (val_len == avl)
+ 					return 0;
+ 				if (val_len < avl)
+@@ -701,117 +721,80 @@ static int ntfs_attr_find(const ATTR_TYPE type, const ntfschar *name,
+ 	return -EIO;
+ }
+ 
+-/**
+- * load_attribute_list - load an attribute list into memory
+- * @vol:		ntfs volume from which to read
+- * @runlist:		runlist of the attribute list
+- * @al_start:		destination buffer
+- * @size:		size of the destination buffer in bytes
+- * @initialized_size:	initialized size of the attribute list
+- *
+- * Walk the runlist @runlist and load all clusters from it copying them into
+- * the linear buffer @al. The maximum number of bytes copied to @al is @size
+- * bytes. Note, @size does not need to be a multiple of the cluster size. If
+- * @initialized_size is less than @size, the region in @al between
+- * @initialized_size and @size will be zeroed and not read from disk.
+- *
+- * Return 0 on success or -errno on error.
+- */
+-int load_attribute_list(ntfs_volume *vol, runlist *runlist, u8 *al_start,
+-		const s64 size, const s64 initialized_size)
++void ntfs_attr_name_free(unsigned char **name)
+ {
+-	LCN lcn;
+-	u8 *al = al_start;
+-	u8 *al_end = al + initialized_size;
+-	runlist_element *rl;
+-	struct buffer_head *bh;
+-	struct super_block *sb;
+-	unsigned long block_size;
+-	unsigned long block, max_block;
+-	int err = 0;
+-	unsigned char block_size_bits;
++	if (*name) {
++		ntfs_free(*name);
++		*name = NULL;
++	}
++}
+ 
+-	ntfs_debug("Entering.");
+-	if (!vol || !runlist || !al || size <= 0 || initialized_size < 0 ||
+-			initialized_size > size)
++char *ntfs_attr_name_get(const struct ntfs_volume *vol, const __le16 *uname,
++		const int uname_len)
++{
++	unsigned char *name = NULL;
++	int name_len;
++
++	name_len = ntfs_ucstonls(vol, uname, uname_len, &name, 0);
++	if (name_len < 0) {
++		ntfs_error(vol->sb, "ntfs_ucstonls error");
++		/* This function when returns -1, memory for name might
++		 * be allocated. So lets free this memory.
++		 */
++		ntfs_attr_name_free(&name);
++		return NULL;
++
++	} else if (name_len > 0)
++		return name;
++
++	ntfs_attr_name_free(&name);
++	return NULL;
++}
++
++int load_attribute_list(struct ntfs_inode *base_ni, u8 *al_start, const s64 size)
++{
++	struct inode *attr_vi = NULL;
++	u8 *al;
++	struct attr_list_entry *ale;
++
++	if (!al_start || size <= 0)
+ 		return -EINVAL;
+-	if (!initialized_size) {
+-		memset(al, 0, size);
 -		return 0;
++
++	attr_vi = ntfs_attr_iget(VFS_I(base_ni), AT_ATTRIBUTE_LIST, AT_UNNAMED, 0);
++	if (IS_ERR(attr_vi)) {
++		ntfs_error(base_ni->vol->sb,
++			   "Failed to open an inode for Attribute list, mft = %ld",
++			   base_ni->mft_no);
++		return PTR_ERR(attr_vi);
+ 	}
+-	sb = vol->sb;
+-	block_size = sb->s_blocksize;
+-	block_size_bits = sb->s_blocksize_bits;
+-	down_read(&runlist->lock);
+-	rl = runlist->rl;
+-	if (!rl) {
+-		ntfs_error(sb, "Cannot read attribute list since runlist is "
+-				"missing.");
+-		goto err_out;	
 -	}
+-	/* Read all clusters specified by the runlist one run at a time. */
+-	while (rl->length) {
+-		lcn = ntfs_rl_vcn_to_lcn(rl, rl->vcn);
+-		ntfs_debug("Reading vcn = 0x%llx, lcn = 0x%llx.",
+-				(unsigned long long)rl->vcn,
+-				(unsigned long long)lcn);
+-		/* The attribute list cannot be sparse. */
+-		if (lcn < 0) {
+-			ntfs_error(sb, "ntfs_rl_vcn_to_lcn() failed.  Cannot "
+-					"read attribute list.");
+-			goto err_out;
+-		}
+-		block = lcn << vol->cluster_size_bits >> block_size_bits;
+-		/* Read the run from device in chunks of block_size bytes. */
+-		max_block = block + (rl->length << vol->cluster_size_bits >>
+-				block_size_bits);
+-		ntfs_debug("max_block = 0x%lx.", max_block);
+-		do {
+-			ntfs_debug("Reading block = 0x%lx.", block);
+-			bh = sb_bread(sb, block);
+-			if (!bh) {
+-				ntfs_error(sb, "sb_bread() failed. Cannot "
+-						"read attribute list.");
+-				goto err_out;
+-			}
+-			if (al + block_size >= al_end)
+-				goto do_final;
+-			memcpy(al, bh->b_data, block_size);
+-			brelse(bh);
+-			al += block_size;
+-		} while (++block < max_block);
+-		rl++;
++
++	if (ntfs_inode_attr_pread(attr_vi, 0, size, al_start) != size) {
++		iput(attr_vi);
++		ntfs_error(base_ni->vol->sb,
++			   "Failed to read attribute list, mft = %ld",
++			   base_ni->mft_no);
++		return -EIO;
+ 	}
+-	if (initialized_size < size) {
+-initialize:
+-		memset(al_start + initialized_size, 0, size - initialized_size);
++	iput(attr_vi);
++
++	for (al = al_start; al < al_start + size; al += le16_to_cpu(ale->length)) {
++		ale = (struct attr_list_entry *)al;
++		if (ale->name_offset != sizeof(struct attr_list_entry))
++			break;
++		if (le16_to_cpu(ale->length) <= ale->name_offset + ale->name_length ||
++		    al + le16_to_cpu(ale->length) > al_start + size)
++			break;
++		if (ale->type == AT_UNUSED)
++			break;
++		if (MSEQNO_LE(ale->mft_reference) == 0)
++			break;
+ 	}
+-done:
+-	up_read(&runlist->lock);
+-	return err;
+-do_final:
+-	if (al < al_end) {
+-		/*
+-		 * Partial block.
+-		 *
+-		 * Note: The attribute list can be smaller than its allocation
+-		 * by multiple clusters.  This has been encountered by at least
+-		 * two people running Windows XP, thus we cannot do any
+-		 * truncation sanity checking here. (AIA)
+-		 */
+-		memcpy(al, bh->b_data, al_end - al);
+-		brelse(bh);
+-		if (initialized_size < size)
+-			goto initialize;
+-		goto done;
+-	}
+-	brelse(bh);
+-	/* Real overflow! */
+-	ntfs_error(sb, "Attribute list buffer overflow. Read attribute list "
+-			"is truncated.");
+-err_out:
+-	err = -EIO;
+-	goto done;
++	if (al != al_start + size) {
++		ntfs_error(base_ni->vol->sb, "Corrupt attribute list, mft = %ld",
++			   base_ni->mft_no);
++		return -EIO;
++	}
++	return 0;
+ }
+ 
+ /**
+@@ -864,18 +847,19 @@ int load_attribute_list(ntfs_volume *vol, runlist *runlist, u8 *al_start,
+  * On actual error, ntfs_external_attr_find() returns -EIO.  In this case
+  * @ctx->attr is undefined and in particular do not rely on it not changing.
+  */
+-static int ntfs_external_attr_find(const ATTR_TYPE type,
+-		const ntfschar *name, const u32 name_len,
+-		const IGNORE_CASE_BOOL ic, const VCN lowest_vcn,
+-		const u8 *val, const u32 val_len, ntfs_attr_search_ctx *ctx)
++static int ntfs_external_attr_find(const __le32 type,
++		const __le16 *name, const u32 name_len,
++		const u32 ic, const s64 lowest_vcn,
++		const u8 *val, const u32 val_len, struct ntfs_attr_search_ctx *ctx)
+ {
+-	ntfs_inode *base_ni, *ni;
+-	ntfs_volume *vol;
+-	ATTR_LIST_ENTRY *al_entry, *next_al_entry;
++	struct ntfs_inode *base_ni, *ni;
++	struct ntfs_volume *vol;
++	struct attr_list_entry *al_entry, *next_al_entry;
+ 	u8 *al_start, *al_end;
+-	ATTR_RECORD *a;
+-	ntfschar *al_name;
++	struct attr_record *a;
++	__le16 *al_name;
+ 	u32 al_name_len;
++	bool is_first_search = false;
+ 	int err = 0;
+ 	static const char *es = " Unmount and run chkdsk.";
+ 
+@@ -886,6 +870,7 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 		/* First call happens with the base mft record. */
+ 		base_ni = ctx->base_ntfs_ino = ctx->ntfs_ino;
+ 		ctx->base_mrec = ctx->mrec;
++		ctx->mapped_base_mrec = ctx->mapped_mrec;
+ 	}
+ 	if (ni == base_ni)
+ 		ctx->base_attr = ctx->attr;
+@@ -894,8 +879,10 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 	vol = base_ni->vol;
+ 	al_start = base_ni->attr_list;
+ 	al_end = al_start + base_ni->attr_list_size;
+-	if (!ctx->al_entry)
+-		ctx->al_entry = (ATTR_LIST_ENTRY*)al_start;
++	if (!ctx->al_entry) {
++		ctx->al_entry = (struct attr_list_entry *)al_start;
++		is_first_search = true;
++	}
+ 	/*
+ 	 * Iterate over entries in attribute list starting at @ctx->al_entry,
+ 	 * or the entry following that, if @ctx->is_first is 'true'.
+@@ -903,36 +890,128 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 	if (ctx->is_first) {
+ 		al_entry = ctx->al_entry;
+ 		ctx->is_first = false;
+-	} else
+-		al_entry = (ATTR_LIST_ENTRY*)((u8*)ctx->al_entry +
++		/*
++		 * If an enumeration and the first attribute is higher than
++		 * the attribute list itself, need to return the attribute list
++		 * attribute.
++		 */
++		if ((type == AT_UNUSED) && is_first_search &&
++				le32_to_cpu(al_entry->type) >
++				le32_to_cpu(AT_ATTRIBUTE_LIST))
++			goto find_attr_list_attr;
++	} else {
++		/* Check for small entry */
++		if (((al_end - (u8 *)ctx->al_entry) <
++		      (long)offsetof(struct attr_list_entry, name)) ||
++		    (le16_to_cpu(ctx->al_entry->length) & 7) ||
++		    (le16_to_cpu(ctx->al_entry->length) < offsetof(struct attr_list_entry, name)))
++			goto corrupt;
++
++		al_entry = (struct attr_list_entry *)((u8 *)ctx->al_entry +
+ 				le16_to_cpu(ctx->al_entry->length));
++
++		if ((u8 *)al_entry == al_end)
++			goto not_found;
++
++		/* Preliminary check for small entry */
++		if ((al_end - (u8 *)al_entry) <
++		    (long)offsetof(struct attr_list_entry, name))
++			goto corrupt;
++
++		/*
++		 * If this is an enumeration and the attribute list attribute
++		 * is the next one in the enumeration sequence, just return the
++		 * attribute list attribute from the base mft record as it is
++		 * not listed in the attribute list itself.
++		 */
++		if ((type == AT_UNUSED) && le32_to_cpu(ctx->al_entry->type) <
++				le32_to_cpu(AT_ATTRIBUTE_LIST) &&
++				le32_to_cpu(al_entry->type) >
++				le32_to_cpu(AT_ATTRIBUTE_LIST)) {
++find_attr_list_attr:
++
++			/* Check for bogus calls. */
++			if (name || name_len || val || val_len || lowest_vcn)
++				return -EINVAL;
++
++			/* We want the base record. */
++			if (ctx->ntfs_ino != base_ni)
++				unmap_mft_record(ctx->ntfs_ino);
++			ctx->ntfs_ino = base_ni;
++			ctx->mapped_mrec = ctx->mapped_base_mrec;
++			ctx->mrec = ctx->base_mrec;
++			ctx->is_first = true;
++
++			/* Sanity checks are performed elsewhere. */
++			ctx->attr = (struct attr_record *)((u8 *)ctx->mrec +
++					le16_to_cpu(ctx->mrec->attrs_offset));
++
++			/* Find the attribute list attribute. */
++			err = ntfs_attr_find(AT_ATTRIBUTE_LIST, NULL, 0,
++					IGNORE_CASE, NULL, 0, ctx);
++
++			/*
++			 * Setup the search context so the correct
++			 * attribute is returned next time round.
++			 */
++			ctx->al_entry = al_entry;
++			ctx->is_first = true;
++
++			/* Got it. Done. */
++			if (!err)
++				return 0;
++
++			/* Error! If other than not found return it. */
++			if (err != -ENOENT)
++				return err;
++
++			/* Not found?!? Absurd! */
++			ntfs_error(ctx->ntfs_ino->vol->sb, "Attribute list wasn't found");
++			return -EIO;
++		}
++	}
+ 	for (;; al_entry = next_al_entry) {
+ 		/* Out of bounds check. */
+-		if ((u8*)al_entry < base_ni->attr_list ||
+-				(u8*)al_entry > al_end)
++		if ((u8 *)al_entry < base_ni->attr_list ||
++				(u8 *)al_entry > al_end)
+ 			break;	/* Inode is corrupt. */
+ 		ctx->al_entry = al_entry;
+ 		/* Catch the end of the attribute list. */
+-		if ((u8*)al_entry == al_end)
++		if ((u8 *)al_entry == al_end)
+ 			goto not_found;
+-		if (!al_entry->length)
+-			break;
+-		if ((u8*)al_entry + 6 > al_end || (u8*)al_entry +
+-				le16_to_cpu(al_entry->length) > al_end)
+-			break;
+-		next_al_entry = (ATTR_LIST_ENTRY*)((u8*)al_entry +
++
++		if ((((u8 *)al_entry + offsetof(struct attr_list_entry, name)) > al_end) ||
++		    ((u8 *)al_entry + le16_to_cpu(al_entry->length) > al_end) ||
++		    (le16_to_cpu(al_entry->length) & 7) ||
++		    (le16_to_cpu(al_entry->length) <
++		     offsetof(struct attr_list_entry, name_length)) ||
++		    (al_entry->name_length && ((u8 *)al_entry + al_entry->name_offset +
++					       al_entry->name_length * sizeof(__le16)) > al_end))
++			break; /* corrupt */
++
++		next_al_entry = (struct attr_list_entry *)((u8 *)al_entry +
+ 				le16_to_cpu(al_entry->length));
+-		if (le32_to_cpu(al_entry->type) > le32_to_cpu(type))
+-			goto not_found;
+-		if (type != al_entry->type)
+-			continue;
++		if (type != AT_UNUSED) {
++			if (le32_to_cpu(al_entry->type) > le32_to_cpu(type))
++				goto not_found;
++			if (type != al_entry->type)
++				continue;
++		}
+ 		/*
+ 		 * If @name is present, compare the two names.  If @name is
+ 		 * missing, assume we want an unnamed attribute.
+ 		 */
+ 		al_name_len = al_entry->name_length;
+-		al_name = (ntfschar*)((u8*)al_entry + al_entry->name_offset);
+-		if (!name) {
++		al_name = (__le16 *)((u8 *)al_entry + al_entry->name_offset);
++
++		/*
++		 * If !@type we want the attribute represented by this
++		 * attribute list entry.
++		 */
++		if (type == AT_UNUSED)
++			goto is_enumeration;
++
++		if (!name || name == AT_UNNAMED) {
+ 			if (al_name_len)
+ 				goto not_found;
+ 		} else if (!ntfs_are_names_equal(al_name, al_name_len, name,
+@@ -951,14 +1030,7 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 			/* If the strings are not equal, continue search. */
+ 			if (rc)
+ 				continue;
+-			/*
+-			 * FIXME: Reverse engineering showed 0, IGNORE_CASE but
+-			 * that is inconsistent with ntfs_attr_find().  The
+-			 * subsequent rc checks were also different.  Perhaps I
+-			 * made a mistake in one of the two.  Need to recheck
+-			 * which is correct or at least see what is going on...
+-			 * (AIA)
+-			 */
++
+ 			rc = ntfs_collate_names(name, name_len, al_name,
+ 					al_name_len, 1, CASE_SENSITIVE,
+ 					vol->upcase, vol->upcase_len);
+@@ -973,27 +1045,28 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 		 * next attribute list entry still fits @lowest_vcn.  Otherwise
+ 		 * we have reached the right one or the search has failed.
+ 		 */
+-		if (lowest_vcn && (u8*)next_al_entry >= al_start	    &&
+-				(u8*)next_al_entry + 6 < al_end		    &&
+-				(u8*)next_al_entry + le16_to_cpu(
+-					next_al_entry->length) <= al_end    &&
+-				sle64_to_cpu(next_al_entry->lowest_vcn) <=
+-					lowest_vcn			    &&
+-				next_al_entry->type == al_entry->type	    &&
+-				next_al_entry->name_length == al_name_len   &&
+-				ntfs_are_names_equal((ntfschar*)((u8*)
++		if (lowest_vcn && (u8 *)next_al_entry >= al_start &&
++				(u8 *)next_al_entry + 6 < al_end &&
++				(u8 *)next_al_entry + le16_to_cpu(
++					next_al_entry->length) <= al_end &&
++				le64_to_cpu(next_al_entry->lowest_vcn) <=
++					lowest_vcn &&
++				next_al_entry->type == al_entry->type &&
++				next_al_entry->name_length == al_name_len &&
++				ntfs_are_names_equal((__le16 *)((u8 *)
+ 					next_al_entry +
+ 					next_al_entry->name_offset),
+ 					next_al_entry->name_length,
+ 					al_name, al_name_len, CASE_SENSITIVE,
+ 					vol->upcase, vol->upcase_len))
+ 			continue;
++
++is_enumeration:
+ 		if (MREF_LE(al_entry->mft_reference) == ni->mft_no) {
+ 			if (MSEQNO_LE(al_entry->mft_reference) != ni->seq_no) {
+-				ntfs_error(vol->sb, "Found stale mft "
+-						"reference in attribute list "
+-						"of base inode 0x%lx.%s",
+-						base_ni->mft_no, es);
++				ntfs_error(vol->sb,
++					"Found stale mft reference in attribute list of base inode 0x%lx.%s",
++					base_ni->mft_no, es);
+ 				err = -EIO;
+ 				break;
+ 			}
+@@ -1006,18 +1079,16 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 					base_ni->mft_no) {
+ 				ni = ctx->ntfs_ino = base_ni;
+ 				ctx->mrec = ctx->base_mrec;
++				ctx->mapped_mrec = ctx->mapped_base_mrec;
+ 			} else {
+ 				/* We want an extent record. */
+ 				ctx->mrec = map_extent_mft_record(base_ni,
+ 						le64_to_cpu(
+ 						al_entry->mft_reference), &ni);
+ 				if (IS_ERR(ctx->mrec)) {
+-					ntfs_error(vol->sb, "Failed to map "
+-							"extent mft record "
+-							"0x%lx of base inode "
+-							"0x%lx.%s",
+-							MREF_LE(al_entry->
+-							mft_reference),
++					ntfs_error(vol->sb,
++							"Failed to map extent mft record 0x%lx of base inode 0x%lx.%s",
++							MREF_LE(al_entry->mft_reference),
+ 							base_ni->mft_no, es);
+ 					err = PTR_ERR(ctx->mrec);
+ 					if (err == -ENOENT)
+@@ -1027,10 +1098,12 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 					break;
+ 				}
+ 				ctx->ntfs_ino = ni;
++				ctx->mapped_mrec = true;
++
+ 			}
+-			ctx->attr = (ATTR_RECORD*)((u8*)ctx->mrec +
+-					le16_to_cpu(ctx->mrec->attrs_offset));
+ 		}
++		a = ctx->attr = (struct attr_record *)((u8 *)ctx->mrec +
++					le16_to_cpu(ctx->mrec->attrs_offset));
+ 		/*
+ 		 * ctx->vfs_ino, ctx->mrec, and ctx->attr now point to the
+ 		 * mft record containing the attribute represented by the
+@@ -1046,17 +1119,16 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 		 * entry above, the comparison can now be optimized.  So it is
+ 		 * worth re-implementing a simplified ntfs_attr_find() here.
+ 		 */
+-		a = ctx->attr;
+ 		/*
+ 		 * Use a manual loop so we can still use break and continue
+ 		 * with the same meanings as above.
+ 		 */
+ do_next_attr_loop:
+-		if ((u8*)a < (u8*)ctx->mrec || (u8*)a > (u8*)ctx->mrec +
++		if ((u8 *)a < (u8 *)ctx->mrec || (u8 *)a > (u8 *)ctx->mrec +
+ 				le32_to_cpu(ctx->mrec->bytes_allocated))
+ 			break;
+ 		if (a->type == AT_END)
+-			break;
++			continue;
+ 		if (!a->length)
+ 			break;
+ 		if (al_entry->instance != a->instance)
+@@ -1068,7 +1140,7 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 		 */
+ 		if (al_entry->type != a->type)
+ 			break;
+-		if (!ntfs_are_names_equal((ntfschar*)((u8*)a +
++		if (!ntfs_are_names_equal((__le16 *)((u8 *)a +
+ 				le16_to_cpu(a->name_offset)), a->name_length,
+ 				al_name, al_name_len, CASE_SENSITIVE,
+ 				vol->upcase, vol->upcase_len))
+@@ -1078,9 +1150,9 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 		 * If no @val specified or @val specified and it matches, we
+ 		 * have found it!
+ 		 */
+-		if (!val || (!a->non_resident && le32_to_cpu(
++		if ((type == AT_UNUSED) || !val || (!a->non_resident && le32_to_cpu(
+ 				a->data.resident.value_length) == val_len &&
+-				!memcmp((u8*)a +
++				!memcmp((u8 *)a +
+ 				le16_to_cpu(a->data.resident.value_offset),
+ 				val, val_len))) {
+ 			ntfs_debug("Done, found.");
+@@ -1088,22 +1160,27 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 		}
+ do_next_attr:
+ 		/* Proceed to the next attribute in the current mft record. */
+-		a = (ATTR_RECORD*)((u8*)a + le32_to_cpu(a->length));
++		a = (struct attr_record *)((u8 *)a + le32_to_cpu(a->length));
+ 		goto do_next_attr_loop;
+ 	}
+-	if (!err) {
+-		ntfs_error(vol->sb, "Base inode 0x%lx contains corrupt "
+-				"attribute list attribute.%s", base_ni->mft_no,
+-				es);
+-		err = -EIO;
+-	}
++
++corrupt:
+ 	if (ni != base_ni) {
+ 		if (ni)
+ 			unmap_extent_mft_record(ni);
+ 		ctx->ntfs_ino = base_ni;
+ 		ctx->mrec = ctx->base_mrec;
+ 		ctx->attr = ctx->base_attr;
++		ctx->mapped_mrec = ctx->mapped_base_mrec;
++	}
++
++	if (!err) {
++		ntfs_error(vol->sb,
++			"Base inode 0x%lx contains corrupt attribute list attribute.%s",
++			base_ni->mft_no, es);
++		err = -EIO;
+ 	}
++
+ 	if (err != -ENOMEM)
+ 		NVolSetErrors(vol);
+ 	return err;
+@@ -1112,7 +1189,7 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 	 * If we were looking for AT_END, we reset the search context @ctx and
+ 	 * use ntfs_attr_find() to seek to the end of the base mft record.
+ 	 */
+-	if (type == AT_END) {
++	if (type == AT_UNUSED || type == AT_END) {
+ 		ntfs_attr_reinit_search_ctx(ctx);
+ 		return ntfs_attr_find(AT_END, name, name_len, ic, val, val_len,
+ 				ctx);
+@@ -1133,13 +1210,14 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+ 	if (ni != base_ni)
+ 		unmap_extent_mft_record(ni);
+ 	ctx->mrec = ctx->base_mrec;
+-	ctx->attr = (ATTR_RECORD*)((u8*)ctx->mrec +
++	ctx->attr = (struct attr_record *)((u8 *)ctx->mrec +
+ 			le16_to_cpu(ctx->mrec->attrs_offset));
+ 	ctx->is_first = true;
+ 	ctx->ntfs_ino = base_ni;
+ 	ctx->base_ntfs_ino = NULL;
+ 	ctx->base_mrec = NULL;
+ 	ctx->base_attr = NULL;
++	ctx->mapped_mrec = ctx->mapped_base_mrec;
+ 	/*
+ 	 * In case there are multiple matches in the base mft record, need to
+ 	 * keep enumerating until we get an attribute not found response (or
+@@ -1190,26 +1268,21 @@ static int ntfs_external_attr_find(const ATTR_TYPE type,
+  * collates just after the attribute list entry of the attribute being searched
+  * for, i.e. if one wants to add the attribute to the mft record this is the
+  * correct place to insert its attribute list entry into.
+- *
+- * When -errno != -ENOENT, an error occurred during the lookup.  @ctx->attr is
+- * then undefined and in particular you should not rely on it not changing.
+  */
+-int ntfs_attr_lookup(const ATTR_TYPE type, const ntfschar *name,
+-		const u32 name_len, const IGNORE_CASE_BOOL ic,
+-		const VCN lowest_vcn, const u8 *val, const u32 val_len,
+-		ntfs_attr_search_ctx *ctx)
++int ntfs_attr_lookup(const __le32 type, const __le16 *name,
++		const u32 name_len, const u32 ic,
++		const s64 lowest_vcn, const u8 *val, const u32 val_len,
++		struct ntfs_attr_search_ctx *ctx)
+ {
+-	ntfs_inode *base_ni;
++	struct ntfs_inode *base_ni;
+ 
+ 	ntfs_debug("Entering.");
+-	BUG_ON(IS_ERR(ctx->mrec));
+ 	if (ctx->base_ntfs_ino)
+ 		base_ni = ctx->base_ntfs_ino;
+ 	else
+ 		base_ni = ctx->ntfs_ino;
+ 	/* Sanity check, just for debugging really. */
+-	BUG_ON(!base_ni);
+-	if (!NInoAttrList(base_ni) || type == AT_ATTRIBUTE_LIST)
++	if (!base_ni || !NInoAttrList(base_ni) || type == AT_ATTRIBUTE_LIST)
+ 		return ntfs_attr_find(type, name, name_len, ic, val, val_len,
+ 				ctx);
+ 	return ntfs_external_attr_find(type, name, name_len, ic, lowest_vcn,
+@@ -1218,23 +1291,35 @@ int ntfs_attr_lookup(const ATTR_TYPE type, const ntfschar *name,
+ 
+ /**
+  * ntfs_attr_init_search_ctx - initialize an attribute search context
+- * @ctx:	attribute search context to initialize
+- * @ni:		ntfs inode with which to initialize the search context
+- * @mrec:	mft record with which to initialize the search context
++ * @ctx:        attribute search context to initialize
++ * @ni:         ntfs inode with which to initialize the search context
++ * @mrec:       mft record with which to initialize the search context
+  *
+  * Initialize the attribute search context @ctx with @ni and @mrec.
+  */
+-static inline void ntfs_attr_init_search_ctx(ntfs_attr_search_ctx *ctx,
+-		ntfs_inode *ni, MFT_RECORD *mrec)
++static bool ntfs_attr_init_search_ctx(struct ntfs_attr_search_ctx *ctx,
++		struct ntfs_inode *ni, struct mft_record *mrec)
+ {
+-	*ctx = (ntfs_attr_search_ctx) {
+-		.mrec = mrec,
+-		/* Sanity checks are performed elsewhere. */
+-		.attr = (ATTR_RECORD*)((u8*)mrec +
+-				le16_to_cpu(mrec->attrs_offset)),
+-		.is_first = true,
+-		.ntfs_ino = ni,
+-	};
++	if (!mrec) {
++		mrec = map_mft_record(ni);
++		if (IS_ERR(mrec))
++			return false;
++		ctx->mapped_mrec = true;
++	} else {
++		ctx->mapped_mrec = false;
++	}
++
++	ctx->mrec = mrec;
++	/* Sanity checks are performed elsewhere. */
++	ctx->attr = (struct attr_record *)((u8 *)mrec + le16_to_cpu(mrec->attrs_offset));
++	ctx->is_first = true;
++	ctx->ntfs_ino = ni;
++	ctx->al_entry = NULL;
++	ctx->base_ntfs_ino = NULL;
++	ctx->base_mrec = NULL;
++	ctx->base_attr = NULL;
++	ctx->mapped_base_mrec = false;
++	return true;
+ }
+ 
+ /**
+@@ -1247,13 +1332,15 @@ static inline void ntfs_attr_init_search_ctx(ntfs_attr_search_ctx *ctx,
+  * This is used when a search for a new attribute is being started to reset
+  * the search context to the beginning.
+  */
+-void ntfs_attr_reinit_search_ctx(ntfs_attr_search_ctx *ctx)
++void ntfs_attr_reinit_search_ctx(struct ntfs_attr_search_ctx *ctx)
+ {
++	bool mapped_mrec;
++
+ 	if (likely(!ctx->base_ntfs_ino)) {
+ 		/* No attribute list. */
+ 		ctx->is_first = true;
+ 		/* Sanity checks are performed elsewhere. */
+-		ctx->attr = (ATTR_RECORD*)((u8*)ctx->mrec +
++		ctx->attr = (struct attr_record *)((u8 *)ctx->mrec +
+ 				le16_to_cpu(ctx->mrec->attrs_offset));
+ 		/*
+ 		 * This needs resetting due to ntfs_external_attr_find() which
+@@ -1262,10 +1349,12 @@ void ntfs_attr_reinit_search_ctx(ntfs_attr_search_ctx *ctx)
+ 		ctx->al_entry = NULL;
+ 		return;
+ 	} /* Attribute list. */
+-	if (ctx->ntfs_ino != ctx->base_ntfs_ino)
++	if (ctx->ntfs_ino != ctx->base_ntfs_ino && ctx->ntfs_ino)
+ 		unmap_extent_mft_record(ctx->ntfs_ino);
++
++	mapped_mrec = ctx->mapped_base_mrec;
+ 	ntfs_attr_init_search_ctx(ctx, ctx->base_ntfs_ino, ctx->base_mrec);
+-	return;
++	ctx->mapped_mrec = mapped_mrec;
+ }
+ 
+ /**
+@@ -1276,13 +1365,21 @@ void ntfs_attr_reinit_search_ctx(ntfs_attr_search_ctx *ctx)
+  * Allocate a new attribute search context, initialize it with @ni and @mrec,
+  * and return it. Return NULL if allocation failed.
+  */
+-ntfs_attr_search_ctx *ntfs_attr_get_search_ctx(ntfs_inode *ni, MFT_RECORD *mrec)
++struct ntfs_attr_search_ctx *ntfs_attr_get_search_ctx(struct ntfs_inode *ni,
++		struct mft_record *mrec)
+ {
+-	ntfs_attr_search_ctx *ctx;
++	struct ntfs_attr_search_ctx *ctx;
++	bool init;
+ 
+ 	ctx = kmem_cache_alloc(ntfs_attr_ctx_cache, GFP_NOFS);
+-	if (ctx)
+-		ntfs_attr_init_search_ctx(ctx, ni, mrec);
++	if (ctx) {
++		init = ntfs_attr_init_search_ctx(ctx, ni, mrec);
++		if (init == false) {
++			kmem_cache_free(ntfs_attr_ctx_cache, ctx);
++			ctx = NULL;
++		}
++	}
++
+ 	return ctx;
+ }
+ 
+@@ -1293,16 +1390,17 @@ ntfs_attr_search_ctx *ntfs_attr_get_search_ctx(ntfs_inode *ni, MFT_RECORD *mrec)
+  * Release the attribute search context @ctx, unmapping an associated extent
+  * mft record if present.
+  */
+-void ntfs_attr_put_search_ctx(ntfs_attr_search_ctx *ctx)
++void ntfs_attr_put_search_ctx(struct ntfs_attr_search_ctx *ctx)
+ {
+-	if (ctx->base_ntfs_ino && ctx->ntfs_ino != ctx->base_ntfs_ino)
+-		unmap_extent_mft_record(ctx->ntfs_ino);
++	if (ctx->mapped_mrec)
++		unmap_mft_record(ctx->ntfs_ino);
++
++	if (ctx->mapped_base_mrec && ctx->base_ntfs_ino &&
++	    ctx->ntfs_ino != ctx->base_ntfs_ino)
++		unmap_extent_mft_record(ctx->base_ntfs_ino);
+ 	kmem_cache_free(ntfs_attr_ctx_cache, ctx);
+-	return;
+ }
+ 
+-#ifdef NTFS_RW
+-
+ /**
+  * ntfs_attr_find_in_attrdef - find an attribute in the $AttrDef system file
+  * @vol:	ntfs volume to which the attribute belongs
+@@ -1313,14 +1411,13 @@ void ntfs_attr_put_search_ctx(ntfs_attr_search_ctx *ctx)
+  *
+  * Return the attribute type definition record if found and NULL if not found.
+  */
+-static ATTR_DEF *ntfs_attr_find_in_attrdef(const ntfs_volume *vol,
+-		const ATTR_TYPE type)
++static struct attr_def *ntfs_attr_find_in_attrdef(const struct ntfs_volume *vol,
++		const __le32 type)
+ {
+-	ATTR_DEF *ad;
++	struct attr_def *ad;
+ 
+-	BUG_ON(!vol->attrdef);
+-	BUG_ON(!type);
+-	for (ad = vol->attrdef; (u8*)ad - (u8*)vol->attrdef <
++	WARN_ON(!type);
++	for (ad = vol->attrdef; (u8 *)ad - (u8 *)vol->attrdef <
+ 			vol->attrdef_size && ad->type; ++ad) {
+ 		/* We have not found it yet, carry on searching. */
+ 		if (likely(le32_to_cpu(ad->type) < le32_to_cpu(type)))
+@@ -1345,16 +1442,15 @@ static ATTR_DEF *ntfs_attr_find_in_attrdef(const ntfs_volume *vol,
+  *
+  * Check whether the @size in bytes is valid for an attribute of @type on the
+  * ntfs volume @vol.  This information is obtained from $AttrDef system file.
+- *
+- * Return 0 if valid, -ERANGE if not valid, or -ENOENT if the attribute is not
+- * listed in $AttrDef.
+  */
+-int ntfs_attr_size_bounds_check(const ntfs_volume *vol, const ATTR_TYPE type,
++int ntfs_attr_size_bounds_check(const struct ntfs_volume *vol, const __le32 type,
+ 		const s64 size)
+ {
+-	ATTR_DEF *ad;
++	struct attr_def *ad;
++
++	if (size < 0)
++		return -EINVAL;
+ 
+-	BUG_ON(size < 0);
+ 	/*
+ 	 * $ATTRIBUTE_LIST has a maximum size of 256kiB, but this is not
+ 	 * listed in $AttrDef.
+@@ -1366,10 +1462,10 @@ int ntfs_attr_size_bounds_check(const ntfs_volume *vol, const ATTR_TYPE type,
+ 	if (unlikely(!ad))
+ 		return -ENOENT;
+ 	/* Do the bounds check. */
+-	if (((sle64_to_cpu(ad->min_size) > 0) &&
+-			size < sle64_to_cpu(ad->min_size)) ||
+-			((sle64_to_cpu(ad->max_size) > 0) && size >
+-			sle64_to_cpu(ad->max_size)))
++	if (((le64_to_cpu(ad->min_size) > 0) &&
++			size < le64_to_cpu(ad->min_size)) ||
++			((le64_to_cpu(ad->max_size) > 0) && size >
++			le64_to_cpu(ad->max_size)))
+ 		return -ERANGE;
+ 	return 0;
+ }
+@@ -1381,13 +1477,11 @@ int ntfs_attr_size_bounds_check(const ntfs_volume *vol, const ATTR_TYPE type,
+  *
+  * Check whether the attribute of @type on the ntfs volume @vol is allowed to
+  * be non-resident.  This information is obtained from $AttrDef system file.
+- *
+- * Return 0 if the attribute is allowed to be non-resident, -EPERM if not, and
+- * -ENOENT if the attribute is not listed in $AttrDef.
+  */
+-int ntfs_attr_can_be_non_resident(const ntfs_volume *vol, const ATTR_TYPE type)
++static int ntfs_attr_can_be_non_resident(const struct ntfs_volume *vol,
++		const __le32 type)
+ {
+-	ATTR_DEF *ad;
++	struct attr_def *ad;
+ 
+ 	/* Find the attribute definition record in $AttrDef. */
+ 	ad = ntfs_attr_find_in_attrdef(vol, type);
+@@ -1417,7 +1511,7 @@ int ntfs_attr_can_be_non_resident(const ntfs_volume *vol, const ATTR_TYPE type)
+  *	    check for this here as we do not know which inode's $Bitmap is
+  *	    being asked about so the caller needs to special case this.
+  */
+-int ntfs_attr_can_be_resident(const ntfs_volume *vol, const ATTR_TYPE type)
++int ntfs_attr_can_be_resident(const struct ntfs_volume *vol, const __le32 type)
+ {
+ 	if (type == AT_INDEX_ALLOCATION)
+ 		return -EPERM;
+@@ -1432,37 +1526,45 @@ int ntfs_attr_can_be_resident(const ntfs_volume *vol, const ATTR_TYPE type)
+  *
+  * Resize the attribute record @a, i.e. the resident part of the attribute, in
+  * the mft record @m to @new_size bytes.
+- *
+- * Return 0 on success and -errno on error.  The following error codes are
+- * defined:
+- *	-ENOSPC	- Not enough space in the mft record @m to perform the resize.
+- *
+- * Note: On error, no modifications have been performed whatsoever.
+- *
+- * Warning: If you make a record smaller without having copied all the data you
+- *	    are interested in the data may be overwritten.
+  */
+-int ntfs_attr_record_resize(MFT_RECORD *m, ATTR_RECORD *a, u32 new_size)
++int ntfs_attr_record_resize(struct mft_record *m, struct attr_record *a, u32 new_size)
+ {
+-	ntfs_debug("Entering for new_size %u.", new_size);
++	u32 old_size, alloc_size, attr_size;
++
++	old_size   = le32_to_cpu(m->bytes_in_use);
++	alloc_size = le32_to_cpu(m->bytes_allocated);
++	attr_size  = le32_to_cpu(a->length);
++
++	ntfs_debug("Sizes: old=%u alloc=%u attr=%u new=%u\n",
++			(unsigned int)old_size, (unsigned int)alloc_size,
++			(unsigned int)attr_size, (unsigned int)new_size);
++
+ 	/* Align to 8 bytes if it is not already done. */
+ 	if (new_size & 7)
+ 		new_size = (new_size + 7) & ~7;
+ 	/* If the actual attribute length has changed, move things around. */
+-	if (new_size != le32_to_cpu(a->length)) {
++	if (new_size != attr_size) {
+ 		u32 new_muse = le32_to_cpu(m->bytes_in_use) -
+-				le32_to_cpu(a->length) + new_size;
++				attr_size + new_size;
+ 		/* Not enough space in this mft record. */
+ 		if (new_muse > le32_to_cpu(m->bytes_allocated))
+ 			return -ENOSPC;
++
++		if (a->type == AT_INDEX_ROOT && new_size > attr_size &&
++			new_muse + 120 > alloc_size && old_size + 120 <= alloc_size) {
++			ntfs_debug("Too big struct index_root (%u > %u)\n",
++					new_muse, alloc_size);
++			return -ENOSPC;
++		}
++
+ 		/* Move attributes following @a to their new location. */
+-		memmove((u8*)a + new_size, (u8*)a + le32_to_cpu(a->length),
+-				le32_to_cpu(m->bytes_in_use) - ((u8*)a -
+-				(u8*)m) - le32_to_cpu(a->length));
++		memmove((u8 *)a + new_size, (u8 *)a + le32_to_cpu(a->length),
++				le32_to_cpu(m->bytes_in_use) - ((u8 *)a -
++				(u8 *)m) - attr_size);
+ 		/* Adjust @m to reflect the change in used space. */
+ 		m->bytes_in_use = cpu_to_le32(new_muse);
+ 		/* Adjust @a to reflect the new size. */
+-		if (new_size >= offsetof(ATTR_REC, length) + sizeof(a->length))
++		if (new_size >= offsetof(struct attr_record, length) + sizeof(a->length))
+ 			a->length = cpu_to_le32(new_size);
+ 	}
+ 	return 0;
+@@ -1476,17 +1578,8 @@ int ntfs_attr_record_resize(MFT_RECORD *m, ATTR_RECORD *a, u32 new_size)
+  *
+  * Resize the value of the attribute @a in the mft record @m to @new_size bytes.
+  * If the value is made bigger, the newly allocated space is cleared.
+- *
+- * Return 0 on success and -errno on error.  The following error codes are
+- * defined:
+- *	-ENOSPC	- Not enough space in the mft record @m to perform the resize.
+- *
+- * Note: On error, no modifications have been performed whatsoever.
+- *
+- * Warning: If you make a record smaller without having copied all the data you
+- *	    are interested in the data may be overwritten.
+  */
+-int ntfs_resident_attr_value_resize(MFT_RECORD *m, ATTR_RECORD *a,
++int ntfs_resident_attr_value_resize(struct mft_record *m, struct attr_record *a,
+ 		const u32 new_size)
+ {
+ 	u32 old_size;
+@@ -1501,7 +1594,7 @@ int ntfs_resident_attr_value_resize(MFT_RECORD *m, ATTR_RECORD *a,
+ 	 */
+ 	old_size = le32_to_cpu(a->data.resident.value_length);
+ 	if (new_size > old_size)
+-		memset((u8*)a + le16_to_cpu(a->data.resident.value_offset) +
++		memset((u8 *)a + le16_to_cpu(a->data.resident.value_offset) +
+ 				old_size, 0, new_size - old_size);
+ 	/* Finally update the length of the attribute value. */
+ 	a->data.resident.value_length = cpu_to_le32(new_size);
+@@ -1521,100 +1614,43 @@ int ntfs_resident_attr_value_resize(MFT_RECORD *m, ATTR_RECORD *a,
+  * always know it.  The reason we cannot simply read the size from the vfs
+  * inode i_size is that this is not necessarily uptodate.  This happens when
+  * ntfs_attr_make_non_resident() is called in the ->truncate call path(s).
+- *
+- * Return 0 on success and -errno on error.  The following error return codes
+- * are defined:
+- *	-EPERM	- The attribute is not allowed to be non-resident.
+- *	-ENOMEM	- Not enough memory.
+- *	-ENOSPC	- Not enough disk space.
+- *	-EINVAL	- Attribute not defined on the volume.
+- *	-EIO	- I/o error or other error.
+- * Note that -ENOSPC is also returned in the case that there is not enough
+- * space in the mft record to do the conversion.  This can happen when the mft
+- * record is already very full.  The caller is responsible for trying to make
+- * space in the mft record and trying again.  FIXME: Do we need a separate
+- * error return code for this kind of -ENOSPC or is it always worth trying
+- * again in case the attribute may then fit in a resident state so no need to
+- * make it non-resident at all?  Ho-hum...  (AIA)
+- *
+- * NOTE to self: No changes in the attribute list are required to move from
+- *		 a resident to a non-resident attribute.
+- *
+- * Locking: - The caller must hold i_mutex on the inode.
+  */
+-int ntfs_attr_make_non_resident(ntfs_inode *ni, const u32 data_size)
++int ntfs_attr_make_non_resident(struct ntfs_inode *ni, const u32 data_size)
+ {
+ 	s64 new_size;
+ 	struct inode *vi = VFS_I(ni);
+-	ntfs_volume *vol = ni->vol;
+-	ntfs_inode *base_ni;
+-	MFT_RECORD *m;
+-	ATTR_RECORD *a;
+-	ntfs_attr_search_ctx *ctx;
+-	struct page *page;
+-	runlist_element *rl;
++	struct ntfs_volume *vol = ni->vol;
++	struct ntfs_inode *base_ni;
++	struct mft_record *m;
++	struct attr_record *a;
++	struct ntfs_attr_search_ctx *ctx;
++	struct folio *folio;
++	struct runlist_element *rl;
+ 	u8 *kaddr;
+ 	unsigned long flags;
+ 	int mp_size, mp_ofs, name_ofs, arec_size, err, err2;
+ 	u32 attr_size;
+ 	u8 old_res_attr_flags;
+ 
++	if (NInoNonResident(ni)) {
++		ntfs_warning(vol->sb,
++			"Trying to make non-resident attribute non-resident.  Aborting...\n");
++		return -EINVAL;
++	}
++
+ 	/* Check that the attribute is allowed to be non-resident. */
+ 	err = ntfs_attr_can_be_non_resident(vol, ni->type);
+ 	if (unlikely(err)) {
+ 		if (err == -EPERM)
+-			ntfs_debug("Attribute is not allowed to be "
+-					"non-resident.");
++			ntfs_debug("Attribute is not allowed to be non-resident.");
+ 		else
+-			ntfs_debug("Attribute not defined on the NTFS "
+-					"volume!");
++			ntfs_debug("Attribute not defined on the NTFS volume!");
+ 		return err;
+ 	}
 -	/*
--	 * Only $DATA attributes can be encrypted and only unnamed $DATA
--	 * attributes can be compressed.  Index root can have the flags set but
--	 * this means to create compressed/encrypted files, not that the
--	 * attribute is compressed/encrypted.  Note we need to check for
--	 * AT_INDEX_ALLOCATION since this is the type of both directory and
--	 * index inodes.
+-	 * FIXME: Compressed and encrypted attributes are not supported when
+-	 * writing and we should never have gotten here for them.
 -	 */
--	if (ni->type != AT_INDEX_ALLOCATION) {
--		/* If file is encrypted, deny access, just like NT4. */
--		if (NInoEncrypted(ni)) {
--			folio_unlock(folio);
--			BUG_ON(ni->type != AT_DATA);
--			ntfs_debug("Denying write access to encrypted file.");
--			return -EACCES;
+-	BUG_ON(NInoCompressed(ni));
+-	BUG_ON(NInoEncrypted(ni));
+-	/*
+-	 * The size needs to be aligned to a cluster boundary for allocation
+-	 * purposes.
+-	 */
+-	new_size = (data_size + vol->cluster_size - 1) &
+-			~(vol->cluster_size - 1);
+-	if (new_size > 0) {
+-		/*
+-		 * Will need the page later and since the page lock nests
+-		 * outside all ntfs locks, we need to get the page now.
+-		 */
+-		page = find_or_create_page(vi->i_mapping, 0,
+-				mapping_gfp_mask(vi->i_mapping));
+-		if (unlikely(!page))
+-			return -ENOMEM;
+-		/* Start by allocating clusters to hold the attribute value. */
+-		rl = ntfs_cluster_alloc(vol, 0, new_size >>
+-				vol->cluster_size_bits, -1, DATA_ZONE, true);
+-		if (IS_ERR(rl)) {
+-			err = PTR_ERR(rl);
+-			ntfs_debug("Failed to allocate cluster%s, error code "
+-					"%i.", (new_size >>
+-					vol->cluster_size_bits) > 1 ? "s" : "",
+-					err);
+-			goto page_err_out;
 -		}
--		/* Compressed data streams are handled in compress.c. */
--		if (NInoNonResident(ni) && NInoCompressed(ni)) {
--			BUG_ON(ni->type != AT_DATA);
--			BUG_ON(ni->name_len);
--			// TODO: Implement and replace this with
--			// return ntfs_write_compressed_block(page);
--			folio_unlock(folio);
--			ntfs_error(vi->i_sb, "Writing to compressed files is "
--					"not supported yet.  Sorry.");
--			return -EOPNOTSUPP;
--		}
--		// TODO: Implement and remove this check.
--		if (NInoNonResident(ni) && NInoSparse(ni)) {
--			folio_unlock(folio);
--			ntfs_error(vi->i_sb, "Writing to sparse files is not "
--					"supported yet.  Sorry.");
--			return -EOPNOTSUPP;
--		}
+-	} else {
+-		rl = NULL;
+-		page = NULL;
 -	}
--	/* NInoNonResident() == NInoIndexAllocPresent() */
+-	/* Determine the size of the mapping pairs array. */
+-	mp_size = ntfs_get_size_for_mapping_pairs(vol, rl, 0, -1);
+-	if (unlikely(mp_size < 0)) {
+-		err = mp_size;
+-		ntfs_debug("Failed to get size for mapping pairs array, error "
+-				"code %i.", err);
+-		goto rl_err_out;
+-	}
+-	down_write(&ni->runlist.lock);
++
++	if (NInoEncrypted(ni))
++		return -EIO;
++
+ 	if (!NInoAttr(ni))
+ 		base_ni = ni;
+ 	else
+@@ -1640,47 +1676,105 @@ int ntfs_attr_make_non_resident(ntfs_inode *ni, const u32 data_size)
+ 	}
+ 	m = ctx->mrec;
+ 	a = ctx->attr;
+-	BUG_ON(NInoNonResident(ni));
+-	BUG_ON(a->non_resident);
++
++	/*
++	 * The size needs to be aligned to a cluster boundary for allocation
++	 * purposes.
++	 */
++	new_size = (data_size + vol->cluster_size - 1) &
++			~(vol->cluster_size - 1);
++	if (new_size > 0) {
++		if ((a->flags & ATTR_COMPRESSION_MASK) == ATTR_IS_COMPRESSED) {
++			/* must allocate full compression blocks */
++			new_size =
++				((new_size - 1) |
++				 ((1L << (STANDARD_COMPRESSION_UNIT +
++					  vol->cluster_size_bits)) - 1)) + 1;
++		}
++
++		/*
++		 * Will need folio later and since folio lock nests
++		 * outside all ntfs locks, we need to get the folio now.
++		 */
++		folio = __filemap_get_folio(vi->i_mapping, 0,
++					    FGP_CREAT | FGP_LOCK,
++					    mapping_gfp_mask(vi->i_mapping));
++		if (IS_ERR(folio)) {
++			err = -ENOMEM;
++			goto err_out;
++		}
++
++		/* Start by allocating clusters to hold the attribute value. */
++		rl = ntfs_cluster_alloc(vol, 0, NTFS_B_TO_CLU(vol, new_size),
++				-1, DATA_ZONE, true,
++				false, false);
++		if (IS_ERR(rl)) {
++			err = PTR_ERR(rl);
++			ntfs_debug("Failed to allocate cluster%s, error code %i.",
++					(NTFS_B_TO_CLU(vol, new_size)) > 1 ? "s" : "",
++					err);
++			goto folio_err_out;
++		}
++	} else {
++		rl = NULL;
++		folio = NULL;
++	}
++
++	down_write(&ni->runlist.lock);
++	/* Determine the size of the mapping pairs array. */
++	mp_size = ntfs_get_size_for_mapping_pairs(vol, rl, 0, -1, -1);
++	if (unlikely(mp_size < 0)) {
++		err = mp_size;
++		ntfs_debug("Failed to get size for mapping pairs array, error code %i.\n", err);
++		goto rl_err_out;
++	}
++
++	if (NInoNonResident(ni) || a->non_resident) {
++		err = -EIO;
++		goto rl_err_out;
++	}
++
+ 	/*
+ 	 * Calculate new offsets for the name and the mapping pairs array.
+ 	 */
+ 	if (NInoSparse(ni) || NInoCompressed(ni))
+-		name_ofs = (offsetof(ATTR_REC,
++		name_ofs = (offsetof(struct attr_record,
+ 				data.non_resident.compressed_size) +
+ 				sizeof(a->data.non_resident.compressed_size) +
+ 				7) & ~7;
+ 	else
+-		name_ofs = (offsetof(ATTR_REC,
++		name_ofs = (offsetof(struct attr_record,
+ 				data.non_resident.compressed_size) + 7) & ~7;
+-	mp_ofs = (name_ofs + a->name_length * sizeof(ntfschar) + 7) & ~7;
++	mp_ofs = (name_ofs + a->name_length * sizeof(__le16) + 7) & ~7;
+ 	/*
+ 	 * Determine the size of the resident part of the now non-resident
+ 	 * attribute record.
+ 	 */
+ 	arec_size = (mp_ofs + mp_size + 7) & ~7;
+ 	/*
+-	 * If the page is not uptodate bring it uptodate by copying from the
++	 * If the folio is not uptodate bring it uptodate by copying from the
+ 	 * attribute value.
+ 	 */
+ 	attr_size = le32_to_cpu(a->data.resident.value_length);
+-	BUG_ON(attr_size != data_size);
+-	if (page && !PageUptodate(page)) {
+-		kaddr = kmap_atomic(page);
+-		memcpy(kaddr, (u8*)a +
++	WARN_ON(attr_size != data_size);
++	if (folio && !folio_test_uptodate(folio)) {
++		kaddr = kmap_local_folio(folio, 0);
++		memcpy(kaddr, (u8 *)a +
+ 				le16_to_cpu(a->data.resident.value_offset),
+ 				attr_size);
+ 		memset(kaddr + attr_size, 0, PAGE_SIZE - attr_size);
+-		kunmap_atomic(kaddr);
+-		flush_dcache_page(page);
+-		SetPageUptodate(page);
++		kunmap_local(kaddr);
++		flush_dcache_folio(folio);
++		folio_mark_uptodate(folio);
+ 	}
++
+ 	/* Backup the attribute flag. */
+ 	old_res_attr_flags = a->data.resident.flags;
+ 	/* Resize the resident part of the attribute record. */
+ 	err = ntfs_attr_record_resize(m, a, arec_size);
+ 	if (unlikely(err))
+-		goto err_out;
++		goto rl_err_out;
++
+ 	/*
+ 	 * Convert the resident part of the attribute record to describe a
+ 	 * non-resident attribute.
+@@ -1688,20 +1782,19 @@ int ntfs_attr_make_non_resident(ntfs_inode *ni, const u32 data_size)
+ 	a->non_resident = 1;
+ 	/* Move the attribute name if it exists and update the offset. */
+ 	if (a->name_length)
+-		memmove((u8*)a + name_ofs, (u8*)a + le16_to_cpu(a->name_offset),
+-				a->name_length * sizeof(ntfschar));
++		memmove((u8 *)a + name_ofs, (u8 *)a + le16_to_cpu(a->name_offset),
++				a->name_length * sizeof(__le16));
+ 	a->name_offset = cpu_to_le16(name_ofs);
+ 	/* Setup the fields specific to non-resident attributes. */
+ 	a->data.non_resident.lowest_vcn = 0;
+-	a->data.non_resident.highest_vcn = cpu_to_sle64((new_size - 1) >>
+-			vol->cluster_size_bits);
++	a->data.non_resident.highest_vcn = cpu_to_le64(NTFS_B_TO_CLU(vol, new_size - 1));
+ 	a->data.non_resident.mapping_pairs_offset = cpu_to_le16(mp_ofs);
+ 	memset(&a->data.non_resident.reserved, 0,
+ 			sizeof(a->data.non_resident.reserved));
+-	a->data.non_resident.allocated_size = cpu_to_sle64(new_size);
++	a->data.non_resident.allocated_size = cpu_to_le64(new_size);
+ 	a->data.non_resident.data_size =
+ 			a->data.non_resident.initialized_size =
+-			cpu_to_sle64(attr_size);
++			cpu_to_le64(attr_size);
+ 	if (NInoSparse(ni) || NInoCompressed(ni)) {
+ 		a->data.non_resident.compression_unit = 0;
+ 		if (NInoCompressed(ni) || vol->major_ver < 3)
+@@ -1711,23 +1804,29 @@ int ntfs_attr_make_non_resident(ntfs_inode *ni, const u32 data_size)
+ 	} else
+ 		a->data.non_resident.compression_unit = 0;
+ 	/* Generate the mapping pairs array into the attribute record. */
+-	err = ntfs_mapping_pairs_build(vol, (u8*)a + mp_ofs,
+-			arec_size - mp_ofs, rl, 0, -1, NULL);
++	err = ntfs_mapping_pairs_build(vol, (u8 *)a + mp_ofs,
++			arec_size - mp_ofs, rl, 0, -1, NULL, NULL, NULL);
+ 	if (unlikely(err)) {
+-		ntfs_debug("Failed to build mapping pairs, error code %i.",
++		ntfs_error(vol->sb, "Failed to build mapping pairs, error code %i.",
+ 				err);
+ 		goto undo_err_out;
+ 	}
++
+ 	/* Setup the in-memory attribute structure to be non-resident. */
+ 	ni->runlist.rl = rl;
++	if (rl) {
++		for (ni->runlist.count = 1; rl->length != 0; rl++)
++			ni->runlist.count++;
++	} else
++		ni->runlist.count = 0;
+ 	write_lock_irqsave(&ni->size_lock, flags);
+ 	ni->allocated_size = new_size;
+ 	if (NInoSparse(ni) || NInoCompressed(ni)) {
+ 		ni->itype.compressed.size = ni->allocated_size;
+ 		if (a->data.non_resident.compression_unit) {
+-			ni->itype.compressed.block_size = 1U << (a->data.
+-					non_resident.compression_unit +
+-					vol->cluster_size_bits);
++			ni->itype.compressed.block_size = 1U <<
++				(a->data.non_resident.compression_unit +
++				 vol->cluster_size_bits);
+ 			ni->itype.compressed.block_size_bits =
+ 					ffs(ni->itype.compressed.block_size) -
+ 					1;
+@@ -1749,16 +1848,16 @@ int ntfs_attr_make_non_resident(ntfs_inode *ni, const u32 data_size)
+ 	 * this switch, which is another reason to do this last.
+ 	 */
+ 	NInoSetNonResident(ni);
++	NInoSetFullyMapped(ni);
+ 	/* Mark the mft record dirty, so it gets written back. */
+-	flush_dcache_mft_record_page(ctx->ntfs_ino);
+ 	mark_mft_record_dirty(ctx->ntfs_ino);
+ 	ntfs_attr_put_search_ctx(ctx);
+ 	unmap_mft_record(base_ni);
+ 	up_write(&ni->runlist.lock);
+-	if (page) {
+-		set_page_dirty(page);
+-		unlock_page(page);
+-		put_page(page);
++	if (folio) {
++		iomap_dirty_folio(vi->i_mapping, folio);
++		folio_unlock(folio);
++		folio_put(folio);
+ 	}
+ 	ntfs_debug("Done.");
+ 	return 0;
+@@ -1766,12 +1865,12 @@ int ntfs_attr_make_non_resident(ntfs_inode *ni, const u32 data_size)
+ 	/* Convert the attribute back into a resident attribute. */
+ 	a->non_resident = 0;
+ 	/* Move the attribute name if it exists and update the offset. */
+-	name_ofs = (offsetof(ATTR_RECORD, data.resident.reserved) +
++	name_ofs = (offsetof(struct attr_record, data.resident.reserved) +
+ 			sizeof(a->data.resident.reserved) + 7) & ~7;
+ 	if (a->name_length)
+-		memmove((u8*)a + name_ofs, (u8*)a + le16_to_cpu(a->name_offset),
+-				a->name_length * sizeof(ntfschar));
+-	mp_ofs = (name_ofs + a->name_length * sizeof(ntfschar) + 7) & ~7;
++		memmove((u8 *)a + name_ofs, (u8 *)a + le16_to_cpu(a->name_offset),
++				a->name_length * sizeof(__le16));
++	mp_ofs = (name_ofs + a->name_length * sizeof(__le16) + 7) & ~7;
+ 	a->name_offset = cpu_to_le16(name_ofs);
+ 	arec_size = (mp_ofs + attr_size + 7) & ~7;
+ 	/* Resize the resident part of the attribute record. */
+@@ -1782,25 +1881,18 @@ int ntfs_attr_make_non_resident(ntfs_inode *ni, const u32 data_size)
+ 		 * could happen in theory), but deal with it as well as we can.
+ 		 * If the old size is too small, truncate the attribute,
+ 		 * otherwise simply give it a larger allocated size.
+-		 * FIXME: Should check whether chkdsk complains when the
+-		 * allocated size is much bigger than the resident value size.
+ 		 */
+ 		arec_size = le32_to_cpu(a->length);
+ 		if ((mp_ofs + attr_size) > arec_size) {
+ 			err2 = attr_size;
+ 			attr_size = arec_size - mp_ofs;
+-			ntfs_error(vol->sb, "Failed to undo partial resident "
+-					"to non-resident attribute "
+-					"conversion.  Truncating inode 0x%lx, "
+-					"attribute type 0x%x from %i bytes to "
+-					"%i bytes to maintain metadata "
+-					"consistency.  THIS MEANS YOU ARE "
+-					"LOSING %i BYTES DATA FROM THIS %s.",
++			ntfs_error(vol->sb,
++				"Failed to undo partial resident to non-resident attribute conversion.  Truncating inode 0x%lx, attribute type 0x%x from %i bytes to %i bytes to maintain metadata consistency.  THIS MEANS YOU ARE LOSING %i BYTES DATA FROM THIS %s.",
+ 					vi->i_ino,
+-					(unsigned)le32_to_cpu(ni->type),
++					(unsigned int)le32_to_cpu(ni->type),
+ 					err2, attr_size, err2 - attr_size,
+ 					((ni->type == AT_DATA) &&
+-					!ni->name_len) ? "FILE": "ATTRIBUTE");
++					!ni->name_len) ? "FILE" : "ATTRIBUTE");
+ 			write_lock_irqsave(&ni->size_lock, flags);
+ 			ni->initialized_size = attr_size;
+ 			i_size_write(vi, attr_size);
+@@ -1813,812 +1905,3485 @@ int ntfs_attr_make_non_resident(ntfs_inode *ni, const u32 data_size)
+ 	a->data.resident.flags = old_res_attr_flags;
+ 	memset(&a->data.resident.reserved, 0,
+ 			sizeof(a->data.resident.reserved));
+-	/* Copy the data from the page back to the attribute value. */
+-	if (page) {
+-		kaddr = kmap_atomic(page);
+-		memcpy((u8*)a + mp_ofs, kaddr, attr_size);
+-		kunmap_atomic(kaddr);
+-	}
++	/* Copy the data from folio back to the attribute value. */
++	if (folio)
++		memcpy_from_folio((u8 *)a + mp_ofs, folio, 0, attr_size);
+ 	/* Setup the allocated size in the ntfs inode in case it changed. */
+ 	write_lock_irqsave(&ni->size_lock, flags);
+ 	ni->allocated_size = arec_size - mp_ofs;
+ 	write_unlock_irqrestore(&ni->size_lock, flags);
+ 	/* Mark the mft record dirty, so it gets written back. */
+-	flush_dcache_mft_record_page(ctx->ntfs_ino);
+ 	mark_mft_record_dirty(ctx->ntfs_ino);
+-err_out:
+-	if (ctx)
+-		ntfs_attr_put_search_ctx(ctx);
+-	if (m)
+-		unmap_mft_record(base_ni);
+-	ni->runlist.rl = NULL;
+-	up_write(&ni->runlist.lock);
+ rl_err_out:
++	up_write(&ni->runlist.lock);
+ 	if (rl) {
+ 		if (ntfs_cluster_free_from_rl(vol, rl) < 0) {
+-			ntfs_error(vol->sb, "Failed to release allocated "
+-					"cluster(s) in error code path.  Run "
+-					"chkdsk to recover the lost "
+-					"cluster(s).");
++			ntfs_error(vol->sb,
++				"Failed to release allocated cluster(s) in error code path.  Run chkdsk to recover the lost cluster(s).");
+ 			NVolSetErrors(vol);
+ 		}
+ 		ntfs_free(rl);
+-page_err_out:
+-		unlock_page(page);
+-		put_page(page);
++folio_err_out:
++		folio_unlock(folio);
++		folio_put(folio);
+ 	}
++err_out:
++	if (ctx)
++		ntfs_attr_put_search_ctx(ctx);
++	if (m)
++		unmap_mft_record(base_ni);
++	ni->runlist.rl = NULL;
++
+ 	if (err == -EINVAL)
+ 		err = -EIO;
+ 	return err;
+ }
+ 
+ /**
+- * ntfs_attr_extend_allocation - extend the allocated space of an attribute
+- * @ni:			ntfs inode of the attribute whose allocation to extend
+- * @new_alloc_size:	new size in bytes to which to extend the allocation to
+- * @new_data_size:	new size in bytes to which to extend the data to
+- * @data_start:		beginning of region which is required to be non-sparse
+- *
+- * Extend the allocated space of an attribute described by the ntfs inode @ni
+- * to @new_alloc_size bytes.  If @data_start is -1, the whole extension may be
+- * implemented as a hole in the file (as long as both the volume and the ntfs
+- * inode @ni have sparse support enabled).  If @data_start is >= 0, then the
+- * region between the old allocated size and @data_start - 1 may be made sparse
+- * but the regions between @data_start and @new_alloc_size must be backed by
+- * actual clusters.
+- *
+- * If @new_data_size is -1, it is ignored.  If it is >= 0, then the data size
+- * of the attribute is extended to @new_data_size.  Note that the i_size of the
+- * vfs inode is not updated.  Only the data size in the base attribute record
+- * is updated.  The caller has to update i_size separately if this is required.
+- * WARNING: It is a BUG() for @new_data_size to be smaller than the old data
+- * size as well as for @new_data_size to be greater than @new_alloc_size.
+- *
+- * For resident attributes this involves resizing the attribute record and if
+- * necessary moving it and/or other attributes into extent mft records and/or
+- * converting the attribute to a non-resident attribute which in turn involves
+- * extending the allocation of a non-resident attribute as described below.
+- *
+- * For non-resident attributes this involves allocating clusters in the data
+- * zone on the volume (except for regions that are being made sparse) and
+- * extending the run list to describe the allocated clusters as well as
+- * updating the mapping pairs array of the attribute.  This in turn involves
+- * resizing the attribute record and if necessary moving it and/or other
+- * attributes into extent mft records and/or splitting the attribute record
+- * into multiple extent attribute records.
+- *
+- * Also, the attribute list attribute is updated if present and in some of the
+- * above cases (the ones where extent mft records/attributes come into play),
+- * an attribute list attribute is created if not already present.
+- *
+- * Return the new allocated size on success and -errno on error.  In the case
+- * that an error is encountered but a partial extension at least up to
+- * @data_start (if present) is possible, the allocation is partially extended
+- * and this is returned.  This means the caller must check the returned size to
+- * determine if the extension was partial.  If @data_start is -1 then partial
+- * allocations are not performed.
+- *
+- * WARNING: Do not call ntfs_attr_extend_allocation() for $MFT/$DATA.
+- *
+- * Locking: This function takes the runlist lock of @ni for writing as well as
+- * locking the mft record of the base ntfs inode.  These locks are maintained
+- * throughout execution of the function.  These locks are required so that the
+- * attribute can be resized safely and so that it can for example be converted
+- * from resident to non-resident safely.
+- *
+- * TODO: At present attribute list attribute handling is not implemented.
+- *
+- * TODO: At present it is not safe to call this function for anything other
+- * than the $DATA attribute(s) of an uncompressed and unencrypted file.
++ * ntfs_attr_set - fill (a part of) an attribute with a byte
++ * @ni:		ntfs inode describing the attribute to fill
++ * @ofs:	offset inside the attribute at which to start to fill
++ * @cnt:	number of bytes to fill
++ * @val:	the unsigned 8-bit value with which to fill the attribute
++ *
++ * Fill @cnt bytes of the attribute described by the ntfs inode @ni starting at
++ * byte offset @ofs inside the attribute with the constant byte @val.
++ *
++ * This function is effectively like memset() applied to an ntfs attribute.
++ * Note thie function actually only operates on the page cache pages belonging
++ * to the ntfs attribute and it marks them dirty after doing the memset().
++ * Thus it relies on the vm dirty page write code paths to cause the modified
++ * pages to be written to the mft record/disk.
+  */
+-s64 ntfs_attr_extend_allocation(ntfs_inode *ni, s64 new_alloc_size,
+-		const s64 new_data_size, const s64 data_start)
++int ntfs_attr_set(struct ntfs_inode *ni, s64 ofs, s64 cnt, const u8 val)
+ {
+-	VCN vcn;
+-	s64 ll, allocated_size, start = data_start;
+-	struct inode *vi = VFS_I(ni);
+-	ntfs_volume *vol = ni->vol;
+-	ntfs_inode *base_ni;
+-	MFT_RECORD *m;
+-	ATTR_RECORD *a;
+-	ntfs_attr_search_ctx *ctx;
+-	runlist_element *rl, *rl2;
+-	unsigned long flags;
+-	int err, mp_size;
+-	u32 attr_len = 0; /* Silence stupid gcc warning. */
+-	bool mp_rebuilt;
+-
+-#ifdef DEBUG
+-	read_lock_irqsave(&ni->size_lock, flags);
+-	allocated_size = ni->allocated_size;
+-	read_unlock_irqrestore(&ni->size_lock, flags);
+-	ntfs_debug("Entering for i_ino 0x%lx, attribute type 0x%x, "
+-			"old_allocated_size 0x%llx, "
+-			"new_allocated_size 0x%llx, new_data_size 0x%llx, "
+-			"data_start 0x%llx.", vi->i_ino,
+-			(unsigned)le32_to_cpu(ni->type),
+-			(unsigned long long)allocated_size,
+-			(unsigned long long)new_alloc_size,
+-			(unsigned long long)new_data_size,
+-			(unsigned long long)start);
+-#endif
+-retry_extend:
+-	/*
+-	 * For non-resident attributes, @start and @new_size need to be aligned
+-	 * to cluster boundaries for allocation purposes.
+-	 */
 -	if (NInoNonResident(ni)) {
--		/* We have to zero every time due to mmap-at-end-of-file. */
--		if (folio->index >= (i_size >> PAGE_SHIFT)) {
--			/* The folio straddles i_size. */
--			unsigned int ofs = i_size & (folio_size(folio) - 1);
--			folio_zero_segment(folio, ofs, folio_size(folio));
--		}
--		/* Handle mst protected attributes. */
--		if (NInoMstProtected(ni))
--			return ntfs_write_mst_block(page, wbc);
--		/* Normal, non-resident data stream. */
--		return ntfs_write_block(folio, wbc);
+-		if (start > 0)
+-			start &= ~(s64)vol->cluster_size_mask;
+-		new_alloc_size = (new_alloc_size + vol->cluster_size - 1) &
+-				~(s64)vol->cluster_size_mask;
 -	}
--	/*
--	 * Attribute is resident, implying it is not compressed, encrypted, or
--	 * mst protected.  This also means the attribute is smaller than an mft
--	 * record and hence smaller than a folio, so can simply return error on
--	 * any folios with index above 0.  Note the attribute can actually be
--	 * marked compressed but if it is resident the actual data is not
--	 * compressed so we are ok to ignore the compressed flag here.
--	 */
--	BUG_ON(folio_buffers(folio));
--	BUG_ON(!folio_test_uptodate(folio));
--	if (unlikely(folio->index > 0)) {
--		ntfs_error(vi->i_sb, "BUG()! folio->index (0x%lx) > 0.  "
--				"Aborting write.", folio->index);
--		BUG_ON(folio_test_writeback(folio));
--		folio_start_writeback(folio);
--		folio_unlock(folio);
--		folio_end_writeback(folio);
--		return -EIO;
--	}
+-	BUG_ON(new_data_size >= 0 && new_data_size > new_alloc_size);
+-	/* Check if new size is allowed in $AttrDef. */
+-	err = ntfs_attr_size_bounds_check(vol, ni->type, new_alloc_size);
+-	if (unlikely(err)) {
+-		/* Only emit errors when the write will fail completely. */
+-		read_lock_irqsave(&ni->size_lock, flags);
+-		allocated_size = ni->allocated_size;
+-		read_unlock_irqrestore(&ni->size_lock, flags);
+-		if (start < 0 || start >= allocated_size) {
+-			if (err == -ERANGE) {
+-				ntfs_error(vol->sb, "Cannot extend allocation "
+-						"of inode 0x%lx, attribute "
+-						"type 0x%x, because the new "
+-						"allocation would exceed the "
+-						"maximum allowed size for "
+-						"this attribute type.",
+-						vi->i_ino, (unsigned)
+-						le32_to_cpu(ni->type));
+-			} else {
+-				ntfs_error(vol->sb, "Cannot extend allocation "
+-						"of inode 0x%lx, attribute "
+-						"type 0x%x, because this "
+-						"attribute type is not "
+-						"defined on the NTFS volume.  "
+-						"Possible corruption!  You "
+-						"should run chkdsk!",
+-						vi->i_ino, (unsigned)
+-						le32_to_cpu(ni->type));
+-			}
++	struct address_space *mapping = VFS_I(ni)->i_mapping;
++	struct folio *folio;
++	pgoff_t index;
++	u8 *addr;
++	unsigned long offset;
++	size_t attr_len;
++	int ret = 0;
++
++	index = ofs >> PAGE_SHIFT;
++	while (cnt) {
++		folio = read_mapping_folio(mapping, index, NULL);
++		if (IS_ERR(folio)) {
++			ret = PTR_ERR(folio);
++			ntfs_error(VFS_I(ni)->i_sb, "Failed to read a page %lu for attr %#x: %ld",
++				   index, ni->type, PTR_ERR(folio));
++			break;
+ 		}
+-		/* Translate error code to be POSIX conformant for write(2). */
+-		if (err == -ERANGE)
+-			err = -EFBIG;
++
++		offset = offset_in_folio(folio, ofs);
++		attr_len = min_t(size_t, (size_t)cnt, folio_size(folio) - offset);
++
++		folio_lock(folio);
++		addr = kmap_local_folio(folio, offset);
++		memset(addr, val, attr_len);
++		kunmap_local(addr);
++
++		flush_dcache_folio(folio);
++		folio_mark_dirty(folio);
++		folio_unlock(folio);
++		folio_put(folio);
++
++		ofs += attr_len;
++		cnt -= attr_len;
++		index++;
++		cond_resched();
++	}
++
++	return ret;
++}
++
++int ntfs_attr_set_initialized_size(struct ntfs_inode *ni, loff_t new_size)
++{
++	struct ntfs_attr_search_ctx *ctx;
++	int err = 0;
++
++	if (!NInoNonResident(ni))
++		return -EINVAL;
++
++	ctx = ntfs_attr_get_search_ctx(ni, NULL);
++	if (!ctx)
++		return -ENOMEM;
++
++	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
++			       CASE_SENSITIVE, 0, NULL, 0, ctx);
++	if (err)
++		goto out_ctx;
++
++	ctx->attr->data.non_resident.initialized_size = cpu_to_le64(new_size);
++	ni->initialized_size = new_size;
++	mark_mft_record_dirty(ctx->ntfs_ino);
++out_ctx:
++	ntfs_attr_put_search_ctx(ctx);
++	return err;
++}
++
++/**
++ * ntfs_make_room_for_attr - make room for an attribute inside an mft record
++ * @m:		mft record
++ * @pos:	position at which to make space
++ * @size:	byte size to make available at this position
++ *
++ * @pos points to the attribute in front of which we want to make space.
++ */
++static int ntfs_make_room_for_attr(struct mft_record *m, u8 *pos, u32 size)
++{
++	u32 biu;
++
++	ntfs_debug("Entering for pos 0x%x, size %u.\n",
++			(int)(pos - (u8 *)m), (unsigned int) size);
++
++	/* Make size 8-byte alignment. */
++	size = (size + 7) & ~7;
++
++	/* Rigorous consistency checks. */
++	if (!m || !pos || pos < (u8 *)m) {
++		pr_err("%s: pos=%p  m=%p", __func__, pos, m);
++		return -EINVAL;
++	}
++
++	/* The -8 is for the attribute terminator. */
++	if (pos - (u8 *)m > (int)le32_to_cpu(m->bytes_in_use) - 8)
++		return -EINVAL;
++	/* Nothing to do. */
++	if (!size)
++		return 0;
++
++	biu = le32_to_cpu(m->bytes_in_use);
++	/* Do we have enough space? */
++	if (biu + size > le32_to_cpu(m->bytes_allocated) ||
++	    pos + size > (u8 *)m + le32_to_cpu(m->bytes_allocated)) {
++		ntfs_debug("No enough space in the MFT record\n");
++		return -ENOSPC;
++	}
++	/* Move everything after pos to pos + size. */
++	memmove(pos + size, pos, biu - (pos - (u8 *)m));
++	/* Update mft record. */
++	m->bytes_in_use = cpu_to_le32(biu + size);
++	return 0;
++}
++
++/**
++ * ntfs_resident_attr_record_add - add resident attribute to inode
++ * @ni:		opened ntfs inode to which MFT record add attribute
++ * @type:	type of the new attribute
++ * @name:	name of the new attribute
++ * @name_len:	name length of the new attribute
++ * @val:	value of the new attribute
++ * @size:	size of new attribute (length of @val, if @val != NULL)
++ * @flags:	flags of the new attribute
++ */
++int ntfs_resident_attr_record_add(struct ntfs_inode *ni, __le32 type,
++		__le16 *name, u8 name_len, u8 *val, u32 size,
++		__le16 flags)
++{
++	struct ntfs_attr_search_ctx *ctx;
++	u32 length;
++	struct attr_record *a;
++	struct mft_record *m;
++	int err, offset;
++	struct ntfs_inode *base_ni;
++
++	ntfs_debug("Entering for inode 0x%llx, attr 0x%x, flags 0x%x.\n",
++			(long long) ni->mft_no, (unsigned int) le32_to_cpu(type),
++			(unsigned int) le16_to_cpu(flags));
++
++	if (!ni || (!name && name_len))
++		return -EINVAL;
++
++	err = ntfs_attr_can_be_resident(ni->vol, type);
++	if (err) {
++		if (err == -EPERM)
++			ntfs_debug("Attribute can't be resident.\n");
+ 		else
+-			err = -EIO;
++			ntfs_debug("ntfs_attr_can_be_resident failed.\n");
+ 		return err;
+ 	}
 -	if (!NInoAttr(ni))
 -		base_ni = ni;
 -	else
 -		base_ni = ni->ext.base_ntfs_ino;
--	/* Map, pin, and lock the mft record. */
+-	/*
+-	 * We will be modifying both the runlist (if non-resident) and the mft
+-	 * record so lock them both down.
+-	 */
+-	down_write(&ni->runlist.lock);
 -	m = map_mft_record(base_ni);
 -	if (IS_ERR(m)) {
 -		err = PTR_ERR(m);
@@ -1703,550 +2421,1429 @@ index 2d01517a2d59..3b60797176d6 100644
 -		ctx = NULL;
 -		goto err_out;
 -	}
--	/*
--	 * If a parallel write made the attribute non-resident, drop the mft
--	 * record and retry the writepage.
--	 */
--	if (unlikely(NInoNonResident(ni))) {
--		unmap_mft_record(base_ni);
--		goto retry_writepage;
--	}
 -	ctx = ntfs_attr_get_search_ctx(base_ni, m);
 -	if (unlikely(!ctx)) {
 -		err = -ENOMEM;
 -		goto err_out;
--	}
--	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
--			CASE_SENSITIVE, 0, NULL, 0, ctx);
--	if (unlikely(err))
--		goto err_out;
++
++	/* Locate place where record should be. */
++	ctx = ntfs_attr_get_search_ctx(ni, NULL);
++	if (!ctx) {
++		ntfs_error(ni->vol->sb, "%s: Failed to get search context",
++				__func__);
++		return -ENOMEM;
+ 	}
+-	read_lock_irqsave(&ni->size_lock, flags);
+-	allocated_size = ni->allocated_size;
+-	read_unlock_irqrestore(&ni->size_lock, flags);
+ 	/*
+-	 * If non-resident, seek to the last extent.  If resident, there is
+-	 * only one extent, so seek to that.
++	 * Use ntfs_attr_find instead of ntfs_attr_lookup to find place for
++	 * attribute in @ni->mrec, not any extent inode in case if @ni is base
++	 * file record.
+ 	 */
+-	vcn = NInoNonResident(ni) ? allocated_size >> vol->cluster_size_bits :
+-			0;
 -	/*
--	 * Keep the VM happy.  This must be done otherwise
--	 * PAGECACHE_TAG_DIRTY remains set even though the folio is clean.
+-	 * Abort if someone did the work whilst we waited for the locks.  If we
+-	 * just converted the attribute from resident to non-resident it is
+-	 * likely that exactly this has happened already.  We cannot quite
+-	 * abort if we need to update the data size.
 -	 */
--	BUG_ON(folio_test_writeback(folio));
--	folio_start_writeback(folio);
--	folio_unlock(folio);
--	attr_len = le32_to_cpu(ctx->attr->data.resident.value_length);
--	i_size = i_size_read(vi);
--	if (unlikely(attr_len > i_size)) {
--		/* Race with shrinking truncate or a failed truncate. */
--		attr_len = i_size;
+-	if (unlikely(new_alloc_size <= allocated_size)) {
+-		ntfs_debug("Allocated size already exceeds requested size.");
+-		new_alloc_size = allocated_size;
+-		if (new_data_size < 0)
+-			goto done;
 -		/*
--		 * If the truncate failed, fix it up now.  If a concurrent
--		 * truncate, we do its job, so it does not have to do anything.
+-		 * We want the first attribute extent so that we can update the
+-		 * data size.
 -		 */
--		err = ntfs_resident_attr_value_resize(ctx->mrec, ctx->attr,
--				attr_len);
--		/* Shrinking cannot fail. */
--		BUG_ON(err);
+-		vcn = 0;
++	err = ntfs_attr_find(type, name, name_len, CASE_SENSITIVE, val, size, ctx);
++	if (!err) {
++		err = -EEXIST;
++		ntfs_debug("Attribute already present.\n");
++		goto put_err_out;
+ 	}
+-	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
+-			CASE_SENSITIVE, vcn, NULL, 0, ctx);
+-	if (unlikely(err)) {
+-		if (err == -ENOENT)
+-			err = -EIO;
+-		goto err_out;
++	if (err != -ENOENT) {
++		err = -EIO;
++		goto put_err_out;
+ 	}
+-	m = ctx->mrec;
+ 	a = ctx->attr;
+-	/* Use goto to reduce indentation. */
+-	if (a->non_resident)
+-		goto do_non_resident_extend;
+-	BUG_ON(NInoNonResident(ni));
+-	/* The total length of the attribute value. */
+-	attr_len = le32_to_cpu(a->data.resident.value_length);
+-	/*
+-	 * Extend the attribute record to be able to store the new attribute
+-	 * size.  ntfs_attr_record_resize() will not do anything if the size is
+-	 * not changing.
+-	 */
+-	if (new_alloc_size < vol->mft_record_size &&
+-			!ntfs_attr_record_resize(m, a,
+-			le16_to_cpu(a->data.resident.value_offset) +
+-			new_alloc_size)) {
+-		/* The resize succeeded! */
+-		write_lock_irqsave(&ni->size_lock, flags);
+-		ni->allocated_size = le32_to_cpu(a->length) -
+-				le16_to_cpu(a->data.resident.value_offset);
+-		write_unlock_irqrestore(&ni->size_lock, flags);
+-		if (new_data_size >= 0) {
+-			BUG_ON(new_data_size < attr_len);
+-			a->data.resident.value_length =
+-					cpu_to_le32((u32)new_data_size);
+-		}
+-		goto flush_done;
++	m = ctx->mrec;
++
++	/* Make room for attribute. */
++	length = offsetof(struct attr_record, data.resident.reserved) +
++			  sizeof(a->data.resident.reserved) +
++		((name_len * sizeof(__le16) + 7) & ~7) +
++		((size + 7) & ~7);
++	err = ntfs_make_room_for_attr(ctx->mrec, (u8 *) ctx->attr, length);
++	if (err) {
++		ntfs_debug("Failed to make room for attribute.\n");
++		goto put_err_out;
+ 	}
+-	/*
+-	 * We have to drop all the locks so we can call
+-	 * ntfs_attr_make_non_resident().  This could be optimised by try-
+-	 * locking the first page cache page and only if that fails dropping
+-	 * the locks, locking the page, and redoing all the locking and
+-	 * lookups.  While this would be a huge optimisation, it is not worth
+-	 * it as this is definitely a slow code path.
+-	 */
++
++	/* Setup record fields. */
++	offset = ((u8 *)a - (u8 *)m);
++	a->type = type;
++	a->length = cpu_to_le32(length);
++	a->non_resident = 0;
++	a->name_length = name_len;
++	a->name_offset =
++		name_len ? cpu_to_le16((offsetof(struct attr_record, data.resident.reserved) +
++				sizeof(a->data.resident.reserved))) : cpu_to_le16(0);
++
++	a->flags = flags;
++	a->instance = m->next_attr_instance;
++	a->data.resident.value_length = cpu_to_le32(size);
++	a->data.resident.value_offset = cpu_to_le16(length - ((size + 7) & ~7));
++	if (val)
++		memcpy((u8 *)a + le16_to_cpu(a->data.resident.value_offset), val, size);
++	else
++		memset((u8 *)a + le16_to_cpu(a->data.resident.value_offset), 0, size);
++	if (type == AT_FILE_NAME)
++		a->data.resident.flags = RESIDENT_ATTR_IS_INDEXED;
++	else
++		a->data.resident.flags = 0;
++	if (name_len)
++		memcpy((u8 *)a + le16_to_cpu(a->name_offset),
++				name, sizeof(__le16) * name_len);
++	m->next_attr_instance =
++		cpu_to_le16((le16_to_cpu(m->next_attr_instance) + 1) & 0xffff);
++	if (ni->nr_extents == -1)
++		base_ni = ni->ext.base_ntfs_ino;
++	else
++		base_ni = ni;
++	if (type != AT_ATTRIBUTE_LIST && NInoAttrList(base_ni)) {
++		err = ntfs_attrlist_entry_add(ni, a);
++		if (err) {
++			ntfs_attr_record_resize(m, a, 0);
++			mark_mft_record_dirty(ctx->ntfs_ino);
++			ntfs_debug("Failed add attribute entry to ATTRIBUTE_LIST.\n");
++			goto put_err_out;
++		}
++	}
++	mark_mft_record_dirty(ni);
+ 	ntfs_attr_put_search_ctx(ctx);
+-	unmap_mft_record(base_ni);
+-	up_write(&ni->runlist.lock);
+-	/*
+-	 * Not enough space in the mft record, try to make the attribute
+-	 * non-resident and if successful restart the extension process.
+-	 */
+-	err = ntfs_attr_make_non_resident(ni, attr_len);
+-	if (likely(!err))
+-		goto retry_extend;
+-	/*
+-	 * Could not make non-resident.  If this is due to this not being
+-	 * permitted for this attribute type or there not being enough space,
+-	 * try to make other attributes non-resident.  Otherwise fail.
+-	 */
+-	if (unlikely(err != -EPERM && err != -ENOSPC)) {
+-		/* Only emit errors when the write will fail completely. */
+-		read_lock_irqsave(&ni->size_lock, flags);
+-		allocated_size = ni->allocated_size;
+-		read_unlock_irqrestore(&ni->size_lock, flags);
+-		if (start < 0 || start >= allocated_size)
+-			ntfs_error(vol->sb, "Cannot extend allocation of "
+-					"inode 0x%lx, attribute type 0x%x, "
+-					"because the conversion from resident "
+-					"to non-resident attribute failed "
+-					"with error code %i.", vi->i_ino,
+-					(unsigned)le32_to_cpu(ni->type), err);
+-		if (err != -ENOMEM)
+-			err = -EIO;
+-		goto conv_err_out;
 -	}
--	addr = kmap_local_folio(folio, 0);
--	/* Copy the data from the folio to the mft record. */
--	memcpy((u8*)ctx->attr +
--			le16_to_cpu(ctx->attr->data.resident.value_offset),
--			addr, attr_len);
--	/* Zero out of bounds area in the page cache folio. */
--	memset(addr + attr_len, 0, folio_size(folio) - attr_len);
--	kunmap_local(addr);
--	flush_dcache_folio(folio);
+-	/* TODO: Not implemented from here, abort. */
+-	read_lock_irqsave(&ni->size_lock, flags);
+-	allocated_size = ni->allocated_size;
+-	read_unlock_irqrestore(&ni->size_lock, flags);
+-	if (start < 0 || start >= allocated_size) {
+-		if (err == -ENOSPC)
+-			ntfs_error(vol->sb, "Not enough space in the mft "
+-					"record/on disk for the non-resident "
+-					"attribute value.  This case is not "
+-					"implemented yet.");
+-		else /* if (err == -EPERM) */
+-			ntfs_error(vol->sb, "This attribute type may not be "
+-					"non-resident.  This case is not "
+-					"implemented yet.");
+-	}
+-	err = -EOPNOTSUPP;
+-	goto conv_err_out;
+-#if 0
+-	// TODO: Attempt to make other attributes non-resident.
+-	if (!err)
+-		goto do_resident_extend;
+-	/*
+-	 * Both the attribute list attribute and the standard information
+-	 * attribute must remain in the base inode.  Thus, if this is one of
+-	 * these attributes, we have to try to move other attributes out into
+-	 * extent mft records instead.
+-	 */
+-	if (ni->type == AT_ATTRIBUTE_LIST ||
+-			ni->type == AT_STANDARD_INFORMATION) {
+-		// TODO: Attempt to move other attributes into extent mft
+-		// records.
+-		err = -EOPNOTSUPP;
+-		if (!err)
+-			goto do_resident_extend;
+-		goto err_out;
++	return offset;
++put_err_out:
++	ntfs_attr_put_search_ctx(ctx);
++	return -EIO;
++}
++
++/**
++ * ntfs_non_resident_attr_record_add - add extent of non-resident attribute
++ * @ni:			opened ntfs inode to which MFT record add attribute
++ * @type:		type of the new attribute extent
++ * @name:		name of the new attribute extent
++ * @name_len:		name length of the new attribute extent
++ * @lowest_vcn:		lowest vcn of the new attribute extent
++ * @dataruns_size:	dataruns size of the new attribute extent
++ * @flags:		flags of the new attribute extent
++ */
++static int ntfs_non_resident_attr_record_add(struct ntfs_inode *ni, __le32 type,
++		__le16 *name, u8 name_len, s64 lowest_vcn, int dataruns_size,
++		__le16 flags)
++{
++	struct ntfs_attr_search_ctx *ctx;
++	u32 length;
++	struct attr_record *a;
++	struct mft_record *m;
++	struct ntfs_inode *base_ni;
++	int err, offset;
++
++	ntfs_debug("Entering for inode 0x%llx, attr 0x%x, lowest_vcn %lld, dataruns_size %d, flags 0x%x.\n",
++			(long long) ni->mft_no, (unsigned int) le32_to_cpu(type),
++			(long long) lowest_vcn, dataruns_size,
++			(unsigned int) le16_to_cpu(flags));
++
++	if (!ni || dataruns_size <= 0 || (!name && name_len))
++		return -EINVAL;
++
++	err = ntfs_attr_can_be_non_resident(ni->vol, type);
++	if (err) {
++		if (err == -EPERM)
++			pr_err("Attribute can't be non resident");
++		else
++			pr_err("ntfs_attr_can_be_non_resident failed");
++		return err;
+ 	}
+-	// TODO: Attempt to move this attribute to an extent mft record, but
+-	// only if it is not already the only attribute in an mft record in
+-	// which case there would be nothing to gain.
+-	err = -EOPNOTSUPP;
+-	if (!err)
+-		goto do_resident_extend;
+-	/* There is nothing we can do to make enough space. )-: */
+-	goto err_out;
+-#endif
+-do_non_resident_extend:
+-	BUG_ON(!NInoNonResident(ni));
+-	if (new_alloc_size == allocated_size) {
+-		BUG_ON(vcn);
+-		goto alloc_done;
++
++	/* Locate place where record should be. */
++	ctx = ntfs_attr_get_search_ctx(ni, NULL);
++	if (!ctx) {
++		pr_err("%s: Failed to get search context", __func__);
++		return -ENOMEM;
+ 	}
+ 	/*
+-	 * If the data starts after the end of the old allocation, this is a
+-	 * $DATA attribute and sparse attributes are enabled on the volume and
+-	 * for this inode, then create a sparse region between the old
+-	 * allocated size and the start of the data.  Otherwise simply proceed
+-	 * with filling the whole space between the old allocated size and the
+-	 * new allocated size with clusters.
++	 * Use ntfs_attr_find instead of ntfs_attr_lookup to find place for
++	 * attribute in @ni->mrec, not any extent inode in case if @ni is base
++	 * file record.
+ 	 */
+-	if ((start >= 0 && start <= allocated_size) || ni->type != AT_DATA ||
+-			!NVolSparseEnabled(vol) || NInoSparseDisabled(ni))
+-		goto skip_sparse;
+-	// TODO: This is not implemented yet.  We just fill in with real
+-	// clusters for now...
+-	ntfs_debug("Inserting holes is not-implemented yet.  Falling back to "
+-			"allocating real clusters instead.");
+-skip_sparse:
+-	rl = ni->runlist.rl;
+-	if (likely(rl)) {
+-		/* Seek to the end of the runlist. */
+-		while (rl->length)
+-			rl++;
+-	}
+-	/* If this attribute extent is not mapped, map it now. */
+-	if (unlikely(!rl || rl->lcn == LCN_RL_NOT_MAPPED ||
+-			(rl->lcn == LCN_ENOENT && rl > ni->runlist.rl &&
+-			(rl-1)->lcn == LCN_RL_NOT_MAPPED))) {
+-		if (!rl && !allocated_size)
+-			goto first_alloc;
+-		rl = ntfs_mapping_pairs_decompress(vol, a, ni->runlist.rl);
+-		if (IS_ERR(rl)) {
+-			err = PTR_ERR(rl);
+-			if (start < 0 || start >= allocated_size)
+-				ntfs_error(vol->sb, "Cannot extend allocation "
+-						"of inode 0x%lx, attribute "
+-						"type 0x%x, because the "
+-						"mapping of a runlist "
+-						"fragment failed with error "
+-						"code %i.", vi->i_ino,
+-						(unsigned)le32_to_cpu(ni->type),
+-						err);
+-			if (err != -ENOMEM)
+-				err = -EIO;
+-			goto err_out;
+-		}
+-		ni->runlist.rl = rl;
+-		/* Seek to the end of the runlist. */
+-		while (rl->length)
+-			rl++;
++	err = ntfs_attr_find(type, name, name_len, CASE_SENSITIVE, NULL, 0, ctx);
++	if (!err) {
++		err = -EEXIST;
++		pr_err("Attribute 0x%x already present", type);
++		goto put_err_out;
+ 	}
+-	/*
+-	 * We now know the runlist of the last extent is mapped and @rl is at
+-	 * the end of the runlist.  We want to begin allocating clusters
+-	 * starting at the last allocated cluster to reduce fragmentation.  If
+-	 * there are no valid LCNs in the attribute we let the cluster
+-	 * allocator choose the starting cluster.
+-	 */
+-	/* If the last LCN is a hole or simillar seek back to last real LCN. */
+-	while (rl->lcn < 0 && rl > ni->runlist.rl)
+-		rl--;
+-first_alloc:
+-	// FIXME: Need to implement partial allocations so at least part of the
+-	// write can be performed when start >= 0.  (Needed for POSIX write(2)
+-	// conformance.)
+-	rl2 = ntfs_cluster_alloc(vol, allocated_size >> vol->cluster_size_bits,
+-			(new_alloc_size - allocated_size) >>
+-			vol->cluster_size_bits, (rl && (rl->lcn >= 0)) ?
+-			rl->lcn + rl->length : -1, DATA_ZONE, true);
+-	if (IS_ERR(rl2)) {
+-		err = PTR_ERR(rl2);
+-		if (start < 0 || start >= allocated_size)
+-			ntfs_error(vol->sb, "Cannot extend allocation of "
+-					"inode 0x%lx, attribute type 0x%x, "
+-					"because the allocation of clusters "
+-					"failed with error code %i.", vi->i_ino,
+-					(unsigned)le32_to_cpu(ni->type), err);
+-		if (err != -ENOMEM && err != -ENOSPC)
+-			err = -EIO;
+-		goto err_out;
++	if (err != -ENOENT) {
++		pr_err("ntfs_attr_find failed");
++		err = -EIO;
++		goto put_err_out;
+ 	}
+-	rl = ntfs_runlists_merge(ni->runlist.rl, rl2);
+-	if (IS_ERR(rl)) {
+-		err = PTR_ERR(rl);
+-		if (start < 0 || start >= allocated_size)
+-			ntfs_error(vol->sb, "Cannot extend allocation of "
+-					"inode 0x%lx, attribute type 0x%x, "
+-					"because the runlist merge failed "
+-					"with error code %i.", vi->i_ino,
+-					(unsigned)le32_to_cpu(ni->type), err);
+-		if (err != -ENOMEM)
+-			err = -EIO;
+-		if (ntfs_cluster_free_from_rl(vol, rl2)) {
+-			ntfs_error(vol->sb, "Failed to release allocated "
+-					"cluster(s) in error code path.  Run "
+-					"chkdsk to recover the lost "
+-					"cluster(s).");
+-			NVolSetErrors(vol);
+-		}
+-		ntfs_free(rl2);
+-		goto err_out;
++	a = ctx->attr;
++	m = ctx->mrec;
++
++	/* Make room for attribute. */
++	dataruns_size = (dataruns_size + 7) & ~7;
++	length = offsetof(struct attr_record, data.non_resident.compressed_size) +
++		((sizeof(__le16) * name_len + 7) & ~7) + dataruns_size +
++		((flags & (ATTR_IS_COMPRESSED | ATTR_IS_SPARSE)) ?
++		 sizeof(a->data.non_resident.compressed_size) : 0);
++	err = ntfs_make_room_for_attr(ctx->mrec, (u8 *) ctx->attr, length);
++	if (err) {
++		pr_err("Failed to make room for attribute");
++		goto put_err_out;
+ 	}
+-	ni->runlist.rl = rl;
+-	ntfs_debug("Allocated 0x%llx clusters.", (long long)(new_alloc_size -
+-			allocated_size) >> vol->cluster_size_bits);
+-	/* Find the runlist element with which the attribute extent starts. */
+-	ll = sle64_to_cpu(a->data.non_resident.lowest_vcn);
+-	rl2 = ntfs_rl_find_vcn_nolock(rl, ll);
+-	BUG_ON(!rl2);
+-	BUG_ON(!rl2->length);
+-	BUG_ON(rl2->lcn < LCN_HOLE);
+-	mp_rebuilt = false;
+-	/* Get the size for the new mapping pairs array for this extent. */
+-	mp_size = ntfs_get_size_for_mapping_pairs(vol, rl2, ll, -1);
+-	if (unlikely(mp_size <= 0)) {
+-		err = mp_size;
+-		if (start < 0 || start >= allocated_size)
+-			ntfs_error(vol->sb, "Cannot extend allocation of "
+-					"inode 0x%lx, attribute type 0x%x, "
+-					"because determining the size for the "
+-					"mapping pairs failed with error code "
+-					"%i.", vi->i_ino,
+-					(unsigned)le32_to_cpu(ni->type), err);
+-		err = -EIO;
+-		goto undo_alloc;
++
++	/* Setup record fields. */
++	a->type = type;
++	a->length = cpu_to_le32(length);
++	a->non_resident = 1;
++	a->name_length = name_len;
++	a->name_offset = cpu_to_le16(offsetof(struct attr_record,
++					      data.non_resident.compressed_size) +
++			((flags & (ATTR_IS_COMPRESSED | ATTR_IS_SPARSE)) ?
++			 sizeof(a->data.non_resident.compressed_size) : 0));
++	a->flags = flags;
++	a->instance = m->next_attr_instance;
++	a->data.non_resident.lowest_vcn = cpu_to_le64(lowest_vcn);
++	a->data.non_resident.mapping_pairs_offset = cpu_to_le16(length - dataruns_size);
++	a->data.non_resident.compression_unit =
++		(flags & ATTR_IS_COMPRESSED) ? STANDARD_COMPRESSION_UNIT : 0;
++	/* If @lowest_vcn == 0, than setup empty attribute. */
++	if (!lowest_vcn) {
++		a->data.non_resident.highest_vcn = cpu_to_le64(-1);
++		a->data.non_resident.allocated_size = 0;
++		a->data.non_resident.data_size = 0;
++		a->data.non_resident.initialized_size = 0;
++		/* Set empty mapping pairs. */
++		*((u8 *)a + le16_to_cpu(a->data.non_resident.mapping_pairs_offset)) = 0;
+ 	}
+-	/* Extend the attribute record to fit the bigger mapping pairs array. */
+-	attr_len = le32_to_cpu(a->length);
+-	err = ntfs_attr_record_resize(m, a, mp_size +
+-			le16_to_cpu(a->data.non_resident.mapping_pairs_offset));
+-	if (unlikely(err)) {
+-		BUG_ON(err != -ENOSPC);
+-		// TODO: Deal with this by moving this extent to a new mft
+-		// record or by starting a new extent in a new mft record,
+-		// possibly by extending this extent partially and filling it
+-		// and creating a new extent for the remainder, or by making
+-		// other attributes non-resident and/or by moving other
+-		// attributes out of this mft record.
+-		if (start < 0 || start >= allocated_size)
+-			ntfs_error(vol->sb, "Not enough space in the mft "
+-					"record for the extended attribute "
+-					"record.  This case is not "
+-					"implemented yet.");
+-		err = -EOPNOTSUPP;
+-		goto undo_alloc;
+-	}
+-	mp_rebuilt = true;
+-	/* Generate the mapping pairs array directly into the attr record. */
+-	err = ntfs_mapping_pairs_build(vol, (u8*)a +
+-			le16_to_cpu(a->data.non_resident.mapping_pairs_offset),
+-			mp_size, rl2, ll, -1, NULL);
+-	if (unlikely(err)) {
+-		if (start < 0 || start >= allocated_size)
+-			ntfs_error(vol->sb, "Cannot extend allocation of "
+-					"inode 0x%lx, attribute type 0x%x, "
+-					"because building the mapping pairs "
+-					"failed with error code %i.", vi->i_ino,
+-					(unsigned)le32_to_cpu(ni->type), err);
+-		err = -EIO;
+-		goto undo_alloc;
++	if (name_len)
++		memcpy((u8 *)a + le16_to_cpu(a->name_offset),
++				name, sizeof(__le16) * name_len);
++	m->next_attr_instance =
++		cpu_to_le16((le16_to_cpu(m->next_attr_instance) + 1) & 0xffff);
++	if (ni->nr_extents == -1)
++		base_ni = ni->ext.base_ntfs_ino;
++	else
++		base_ni = ni;
++	if (type != AT_ATTRIBUTE_LIST && NInoAttrList(base_ni)) {
++		err = ntfs_attrlist_entry_add(ni, a);
++		if (err) {
++			pr_err("Failed add attr entry to attrlist");
++			ntfs_attr_record_resize(m, a, 0);
++			goto put_err_out;
++		}
+ 	}
+-	/* Update the highest_vcn. */
+-	a->data.non_resident.highest_vcn = cpu_to_sle64((new_alloc_size >>
+-			vol->cluster_size_bits) - 1);
++	mark_mft_record_dirty(ni);
+ 	/*
+-	 * We now have extended the allocated size of the attribute.  Reflect
+-	 * this in the ntfs_inode structure and the attribute record.
++	 * Locate offset from start of the MFT record where new attribute is
++	 * placed. We need relookup it, because record maybe moved during
++	 * update of attribute list.
+ 	 */
+-	if (a->data.non_resident.lowest_vcn) {
+-		/*
+-		 * We are not in the first attribute extent, switch to it, but
+-		 * first ensure the changes will make it to disk later.
+-		 */
+-		flush_dcache_mft_record_page(ctx->ntfs_ino);
+-		mark_mft_record_dirty(ctx->ntfs_ino);
+-		ntfs_attr_reinit_search_ctx(ctx);
+-		err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
+-				CASE_SENSITIVE, 0, NULL, 0, ctx);
+-		if (unlikely(err))
+-			goto restore_undo_alloc;
+-		/* @m is not used any more so no need to set it. */
+-		a = ctx->attr;
+-	}
+-	write_lock_irqsave(&ni->size_lock, flags);
+-	ni->allocated_size = new_alloc_size;
+-	a->data.non_resident.allocated_size = cpu_to_sle64(new_alloc_size);
+-	/*
+-	 * FIXME: This would fail if @ni is a directory, $MFT, or an index,
+-	 * since those can have sparse/compressed set.  For example can be
+-	 * set compressed even though it is not compressed itself and in that
+-	 * case the bit means that files are to be created compressed in the
+-	 * directory...  At present this is ok as this code is only called for
+-	 * regular files, and only for their $DATA attribute(s).
+-	 * FIXME: The calculation is wrong if we created a hole above.  For now
+-	 * it does not matter as we never create holes.
+-	 */
+-	if (NInoSparse(ni) || NInoCompressed(ni)) {
+-		ni->itype.compressed.size += new_alloc_size - allocated_size;
+-		a->data.non_resident.compressed_size =
+-				cpu_to_sle64(ni->itype.compressed.size);
+-		vi->i_blocks = ni->itype.compressed.size >> 9;
+-	} else
+-		vi->i_blocks = new_alloc_size >> 9;
+-	write_unlock_irqrestore(&ni->size_lock, flags);
+-alloc_done:
+-	if (new_data_size >= 0) {
+-		BUG_ON(new_data_size <
+-				sle64_to_cpu(a->data.non_resident.data_size));
+-		a->data.non_resident.data_size = cpu_to_sle64(new_data_size);
+-	}
+-flush_done:
+-	/* Ensure the changes make it to disk. */
 -	flush_dcache_mft_record_page(ctx->ntfs_ino);
--	/* We are done with the folio. */
--	folio_end_writeback(folio);
--	/* Finally, mark the mft record dirty, so it gets written back. */
 -	mark_mft_record_dirty(ctx->ntfs_ino);
+-done:
 -	ntfs_attr_put_search_ctx(ctx);
 -	unmap_mft_record(base_ni);
--	return 0;
--err_out:
--	if (err == -ENOMEM) {
--		ntfs_warning(vi->i_sb, "Error allocating memory. Redirtying "
--				"page so we try again later.");
+-	up_write(&ni->runlist.lock);
+-	ntfs_debug("Done, new_allocated_size 0x%llx.",
+-			(unsigned long long)new_alloc_size);
+-	return new_alloc_size;
+-restore_undo_alloc:
+-	if (start < 0 || start >= allocated_size)
+-		ntfs_error(vol->sb, "Cannot complete extension of allocation "
+-				"of inode 0x%lx, attribute type 0x%x, because "
+-				"lookup of first attribute extent failed with "
+-				"error code %i.", vi->i_ino,
+-				(unsigned)le32_to_cpu(ni->type), err);
+-	if (err == -ENOENT)
+-		err = -EIO;
+ 	ntfs_attr_reinit_search_ctx(ctx);
+-	if (ntfs_attr_lookup(ni->type, ni->name, ni->name_len, CASE_SENSITIVE,
+-			allocated_size >> vol->cluster_size_bits, NULL, 0,
+-			ctx)) {
+-		ntfs_error(vol->sb, "Failed to find last attribute extent of "
+-				"attribute in error code path.  Run chkdsk to "
+-				"recover.");
+-		write_lock_irqsave(&ni->size_lock, flags);
+-		ni->allocated_size = new_alloc_size;
 -		/*
--		 * Put the folio back on mapping->dirty_pages, but leave its
--		 * buffers' dirty state as-is.
+-		 * FIXME: This would fail if @ni is a directory...  See above.
+-		 * FIXME: The calculation is wrong if we created a hole above.
+-		 * For now it does not matter as we never create holes.
 -		 */
--		folio_redirty_for_writepage(wbc, folio);
--		err = 0;
--	} else {
--		ntfs_error(vi->i_sb, "Resident attribute write failed with "
--				"error %i.", err);
--		folio_set_error(folio);
--		NVolSetErrors(ni->vol);
--	}
--	folio_unlock(folio);
+-		if (NInoSparse(ni) || NInoCompressed(ni)) {
+-			ni->itype.compressed.size += new_alloc_size -
+-					allocated_size;
+-			vi->i_blocks = ni->itype.compressed.size >> 9;
+-		} else
+-			vi->i_blocks = new_alloc_size >> 9;
+-		write_unlock_irqrestore(&ni->size_lock, flags);
++	err = ntfs_attr_lookup(type, name, name_len, CASE_SENSITIVE,
++				lowest_vcn, NULL, 0, ctx);
++	if (err) {
++		pr_err("%s: attribute lookup failed", __func__);
+ 		ntfs_attr_put_search_ctx(ctx);
+-		unmap_mft_record(base_ni);
+-		up_write(&ni->runlist.lock);
+-		/*
+-		 * The only thing that is now wrong is the allocated size of the
+-		 * base attribute extent which chkdsk should be able to fix.
+-		 */
+-		NVolSetErrors(vol);
+ 		return err;
++
+ 	}
+-	ctx->attr->data.non_resident.highest_vcn = cpu_to_sle64(
+-			(allocated_size >> vol->cluster_size_bits) - 1);
+-undo_alloc:
+-	ll = allocated_size >> vol->cluster_size_bits;
+-	if (ntfs_cluster_free(ni, ll, -1, ctx) < 0) {
+-		ntfs_error(vol->sb, "Failed to release allocated cluster(s) "
+-				"in error code path.  Run chkdsk to recover "
+-				"the lost cluster(s).");
+-		NVolSetErrors(vol);
++	offset = (u8 *)ctx->attr - (u8 *)ctx->mrec;
++	ntfs_attr_put_search_ctx(ctx);
++	return offset;
++put_err_out:
++	ntfs_attr_put_search_ctx(ctx);
++	return -1;
++}
++
++/**
++ * ntfs_attr_record_rm - remove attribute extent
++ * @ctx:	search context describing the attribute which should be removed
++ *
++ * If this function succeed, user should reinit search context if he/she wants
++ * use it anymore.
++ */
++int ntfs_attr_record_rm(struct ntfs_attr_search_ctx *ctx)
++{
++	struct ntfs_inode *base_ni, *ni;
++	__le32 type;
++	int err;
++
++	if (!ctx || !ctx->ntfs_ino || !ctx->mrec || !ctx->attr)
++		return -EINVAL;
++
++	ntfs_debug("Entering for inode 0x%llx, attr 0x%x.\n",
++			(long long) ctx->ntfs_ino->mft_no,
++			(unsigned int) le32_to_cpu(ctx->attr->type));
++	type = ctx->attr->type;
++	ni = ctx->ntfs_ino;
++	if (ctx->base_ntfs_ino)
++		base_ni = ctx->base_ntfs_ino;
++	else
++		base_ni = ctx->ntfs_ino;
++
++	/* Remove attribute itself. */
++	if (ntfs_attr_record_resize(ctx->mrec, ctx->attr, 0)) {
++		ntfs_debug("Couldn't remove attribute record. Bug or damaged MFT record.\n");
++		return -EIO;
+ 	}
+-	m = ctx->mrec;
+-	a = ctx->attr;
++	mark_mft_record_dirty(ni);
++
+ 	/*
+-	 * If the runlist truncation fails and/or the search context is no
+-	 * longer valid, we cannot resize the attribute record or build the
+-	 * mapping pairs array thus we mark the inode bad so that no access to
+-	 * the freed clusters can happen.
++	 * Remove record from $ATTRIBUTE_LIST if present and we don't want
++	 * delete $ATTRIBUTE_LIST itself.
+ 	 */
+-	if (ntfs_rl_truncate_nolock(vol, &ni->runlist, ll) || IS_ERR(m)) {
+-		ntfs_error(vol->sb, "Failed to %s in error code path.  Run "
+-				"chkdsk to recover.", IS_ERR(m) ?
+-				"restore attribute search context" :
+-				"truncate attribute runlist");
+-		NVolSetErrors(vol);
+-	} else if (mp_rebuilt) {
+-		if (ntfs_attr_record_resize(m, a, attr_len)) {
+-			ntfs_error(vol->sb, "Failed to restore attribute "
+-					"record in error code path.  Run "
+-					"chkdsk to recover.");
+-			NVolSetErrors(vol);
+-		} else /* if (success) */ {
+-			if (ntfs_mapping_pairs_build(vol, (u8*)a + le16_to_cpu(
+-					a->data.non_resident.
+-					mapping_pairs_offset), attr_len -
+-					le16_to_cpu(a->data.non_resident.
+-					mapping_pairs_offset), rl2, ll, -1,
+-					NULL)) {
+-				ntfs_error(vol->sb, "Failed to restore "
+-						"mapping pairs array in error "
+-						"code path.  Run chkdsk to "
+-						"recover.");
+-				NVolSetErrors(vol);
++	if (NInoAttrList(base_ni) && type != AT_ATTRIBUTE_LIST) {
++		err = ntfs_attrlist_entry_rm(ctx);
++		if (err) {
++			ntfs_debug("Couldn't delete record from $ATTRIBUTE_LIST.\n");
++			return err;
++		}
++	}
++
++	/* Post $ATTRIBUTE_LIST delete setup. */
++	if (type == AT_ATTRIBUTE_LIST) {
++		if (NInoAttrList(base_ni) && base_ni->attr_list)
++			ntfs_free(base_ni->attr_list);
++		base_ni->attr_list = NULL;
++		NInoClearAttrList(base_ni);
++	}
++
++	/* Free MFT record, if it doesn't contain attributes. */
++	if (le32_to_cpu(ctx->mrec->bytes_in_use) -
++			le16_to_cpu(ctx->mrec->attrs_offset) == 8) {
++		if (ntfs_mft_record_free(ni->vol, ni)) {
++			ntfs_debug("Couldn't free MFT record.\n");
++			return -EIO;
++		}
++		/* Remove done if we freed base inode. */
++		if (ni == base_ni)
++			return 0;
++		ntfs_inode_close(ni);
++		ctx->ntfs_ino = ni = NULL;
++	}
++
++	if (type == AT_ATTRIBUTE_LIST || !NInoAttrList(base_ni))
++		return 0;
++
++	/* Remove attribute list if we don't need it any more. */
++	if (!ntfs_attrlist_need(base_ni)) {
++		struct ntfs_attr na;
++		struct inode *attr_vi;
++
++		ntfs_attr_reinit_search_ctx(ctx);
++		if (ntfs_attr_lookup(AT_ATTRIBUTE_LIST, NULL, 0, CASE_SENSITIVE,
++					0, NULL, 0, ctx)) {
++			ntfs_debug("Couldn't find attribute list. Succeed anyway.\n");
++			return 0;
++		}
++		/* Deallocate clusters. */
++		if (ctx->attr->non_resident) {
++			struct runlist_element *al_rl;
++			size_t new_rl_count;
++
++			al_rl = ntfs_mapping_pairs_decompress(base_ni->vol,
++					ctx->attr, NULL, &new_rl_count);
++			if (IS_ERR(al_rl)) {
++				ntfs_debug("Couldn't decompress attribute list runlist. Succeed anyway.\n");
++				return 0;
+ 			}
+-			flush_dcache_mft_record_page(ctx->ntfs_ino);
+-			mark_mft_record_dirty(ctx->ntfs_ino);
++			if (ntfs_cluster_free_from_rl(base_ni->vol, al_rl))
++				ntfs_debug("Leaking clusters! Run chkdsk. Couldn't free clusters from attribute list runlist.\n");
++			ntfs_free(al_rl);
++		}
++		/* Remove attribute record itself. */
++		if (ntfs_attr_record_rm(ctx)) {
++			ntfs_debug("Couldn't remove attribute list. Succeed anyway.\n");
++			return 0;
+ 		}
++
++		na.mft_no = VFS_I(base_ni)->i_ino;
++		na.type = AT_ATTRIBUTE_LIST;
++		na.name = NULL;
++		na.name_len = 0;
++
++		attr_vi = ilookup5(VFS_I(base_ni)->i_sb, VFS_I(base_ni)->i_ino,
++				   ntfs_test_inode, &na);
++		if (attr_vi) {
++			clear_nlink(attr_vi);
++			iput(attr_vi);
++		}
++
+ 	}
+-err_out:
 -	if (ctx)
 -		ntfs_attr_put_search_ctx(ctx);
 -	if (m)
 -		unmap_mft_record(base_ni);
+-	up_write(&ni->runlist.lock);
+-conv_err_out:
+-	ntfs_debug("Failed.  Returning error code %i.", err);
 -	return err;
--}
--
--#endif	/* NTFS_RW */
--
- /**
-  * ntfs_bmap - map logical file block to physical device block
-  * @mapping:	address space mapping to which the block to be mapped belongs
-@@ -1533,26 +287,24 @@ static sector_t ntfs_bmap(struct address_space *mapping, sector_t block)
- {
- 	s64 ofs, size;
- 	loff_t i_size;
--	LCN lcn;
-+	s64 lcn;
- 	unsigned long blocksize, flags;
--	ntfs_inode *ni = NTFS_I(mapping->host);
--	ntfs_volume *vol = ni->vol;
--	unsigned delta;
--	unsigned char blocksize_bits, cluster_size_shift;
-+	struct ntfs_inode *ni = NTFS_I(mapping->host);
-+	struct ntfs_volume *vol = ni->vol;
-+	unsigned int delta;
-+	unsigned char blocksize_bits;
- 
- 	ntfs_debug("Entering for mft_no 0x%lx, logical block 0x%llx.",
- 			ni->mft_no, (unsigned long long)block);
--	if (ni->type != AT_DATA || !NInoNonResident(ni) || NInoEncrypted(ni)) {
--		ntfs_error(vol->sb, "BMAP does not make sense for %s "
--				"attributes, returning 0.",
-+	if (ni->type != AT_DATA || !NInoNonResident(ni) || NInoEncrypted(ni) ||
-+	    NInoMstProtected(ni)) {
-+		ntfs_error(vol->sb, "BMAP does not make sense for %s attributes, returning 0.",
- 				(ni->type != AT_DATA) ? "non-data" :
- 				(!NInoNonResident(ni) ? "resident" :
- 				"encrypted"));
- 		return 0;
- 	}
- 	/* None of these can happen. */
--	BUG_ON(NInoCompressed(ni));
--	BUG_ON(NInoMstProtected(ni));
- 	blocksize = vol->sb->s_blocksize;
- 	blocksize_bits = vol->sb->s_blocksize_bits;
- 	ofs = (s64)block << blocksize_bits;
-@@ -1567,9 +319,8 @@ static sector_t ntfs_bmap(struct address_space *mapping, sector_t block)
- 	 */
- 	if (unlikely(ofs >= size || (ofs + blocksize > size && size < i_size)))
- 		goto hole;
--	cluster_size_shift = vol->cluster_size_bits;
- 	down_read(&ni->runlist.lock);
--	lcn = ntfs_attr_vcn_to_lcn_nolock(ni, ofs >> cluster_size_shift, false);
-+	lcn = ntfs_attr_vcn_to_lcn_nolock(ni, NTFS_B_TO_CLU(vol, ofs), false);
- 	up_read(&ni->runlist.lock);
- 	if (unlikely(lcn < LCN_HOLE)) {
- 		/*
-@@ -1589,14 +340,14 @@ static sector_t ntfs_bmap(struct address_space *mapping, sector_t block)
- 			 */
- 			goto hole;
- 		case LCN_ENOMEM:
--			ntfs_error(vol->sb, "Not enough memory to complete "
--					"mapping for inode 0x%lx.  "
--					"Returning 0.", ni->mft_no);
-+			ntfs_error(vol->sb,
-+				"Not enough memory to complete mapping for inode 0x%lx. Returning 0.",
-+				ni->mft_no);
- 			break;
- 		default:
--			ntfs_error(vol->sb, "Failed to complete mapping for "
--					"inode 0x%lx.  Run chkdsk.  "
--					"Returning 0.", ni->mft_no);
-+			ntfs_error(vol->sb,
-+				"Failed to complete mapping for inode 0x%lx.  Run chkdsk. Returning 0.",
-+				ni->mft_no);
- 			break;
- 		}
- 		return 0;
-@@ -1613,132 +364,186 @@ static sector_t ntfs_bmap(struct address_space *mapping, sector_t block)
- 	 */
- 	delta = ofs & vol->cluster_size_mask;
- 	if (unlikely(sizeof(block) < sizeof(lcn))) {
--		block = lcn = ((lcn << cluster_size_shift) + delta) >>
-+		block = lcn = (NTFS_CLU_TO_B(vol, lcn) + delta) >>
- 				blocksize_bits;
- 		/* If the block number was truncated return 0. */
- 		if (unlikely(block != lcn)) {
--			ntfs_error(vol->sb, "Physical block 0x%llx is too "
--					"large to be returned, returning 0.",
--					(long long)lcn);
-+			ntfs_error(vol->sb,
-+				"Physical block 0x%llx is too large to be returned, returning 0.",
-+				(long long)lcn);
- 			return 0;
- 		}
- 	} else
--		block = ((lcn << cluster_size_shift) + delta) >>
-+		block = (NTFS_CLU_TO_B(vol, lcn) + delta) >>
- 				blocksize_bits;
- 	ntfs_debug("Done (returning block 0x%llx).", (unsigned long long)lcn);
- 	return block;
++	return 0;
  }
  
--/*
-- * ntfs_normal_aops - address space operations for normal inodes and attributes
-- *
-- * Note these are not used for compressed or mst protected inodes and
-- * attributes.
-- */
--const struct address_space_operations ntfs_normal_aops = {
--	.read_folio	= ntfs_read_folio,
--#ifdef NTFS_RW
--	.writepage	= ntfs_writepage,
--	.dirty_folio	= block_dirty_folio,
--#endif /* NTFS_RW */
--	.bmap		= ntfs_bmap,
--	.migrate_folio	= buffer_migrate_folio,
--	.is_partially_uptodate = block_is_partially_uptodate,
--	.error_remove_folio = generic_error_remove_folio,
--};
-+static void ntfs_readahead(struct readahead_control *rac)
-+{
-+	struct address_space *mapping = rac->mapping;
-+	struct inode *inode = mapping->host;
-+	struct ntfs_inode *ni = NTFS_I(inode);
- 
--/*
-- * ntfs_compressed_aops - address space operations for compressed inodes
-- */
--const struct address_space_operations ntfs_compressed_aops = {
--	.read_folio	= ntfs_read_folio,
--#ifdef NTFS_RW
--	.writepage	= ntfs_writepage,
--	.dirty_folio	= block_dirty_folio,
--#endif /* NTFS_RW */
--	.migrate_folio	= buffer_migrate_folio,
--	.is_partially_uptodate = block_is_partially_uptodate,
--	.error_remove_folio = generic_error_remove_folio,
--};
-+	if (!NInoNonResident(ni) || NInoCompressed(ni)) {
-+		/* No readahead for resident and compressed. */
-+		return;
+ /**
+- * ntfs_attr_set - fill (a part of) an attribute with a byte
+- * @ni:		ntfs inode describing the attribute to fill
+- * @ofs:	offset inside the attribute at which to start to fill
+- * @cnt:	number of bytes to fill
+- * @val:	the unsigned 8-bit value with which to fill the attribute
++ * ntfs_attr_add - add attribute to inode
++ * @ni:		opened ntfs inode to which add attribute
++ * @type:	type of the new attribute
++ * @name:	name in unicode of the new attribute
++ * @name_len:	name length in unicode characters of the new attribute
++ * @val:	value of new attribute
++ * @size:	size of the new attribute / length of @val (if specified)
+  *
+- * Fill @cnt bytes of the attribute described by the ntfs inode @ni starting at
+- * byte offset @ofs inside the attribute with the constant byte @val.
++ * @val should always be specified for always resident attributes (eg. FILE_NAME
++ * attribute), for attributes that can become non-resident @val can be NULL
++ * (eg. DATA attribute). @size can be specified even if @val is NULL, in this
++ * case data size will be equal to @size and initialized size will be equal
++ * to 0.
+  *
+- * This function is effectively like memset() applied to an ntfs attribute.
+- * Note this function actually only operates on the page cache pages belonging
+- * to the ntfs attribute and it marks them dirty after doing the memset().
+- * Thus it relies on the vm dirty page write code paths to cause the modified
+- * pages to be written to the mft record/disk.
++ * If inode haven't got enough space to add attribute, add attribute to one of
++ * it extents, if no extents present or no one of them have enough space, than
++ * allocate new extent and add attribute to it.
++ *
++ * If on one of this steps attribute list is needed but not present, than it is
++ * added transparently to caller. So, this function should not be called with
++ * @type == AT_ATTRIBUTE_LIST, if you really need to add attribute list call
++ * ntfs_inode_add_attrlist instead.
+  *
+- * Return 0 on success and -errno on error.  An error code of -ESPIPE means
+- * that @ofs + @cnt were outside the end of the attribute and no write was
+- * performed.
++ * On success return 0. On error return -1 with errno set to the error code.
+  */
+-int ntfs_attr_set(ntfs_inode *ni, const s64 ofs, const s64 cnt, const u8 val)
++int ntfs_attr_add(struct ntfs_inode *ni, __le32 type,
++		__le16 *name, u8 name_len, u8 *val, s64 size)
+ {
+-	ntfs_volume *vol = ni->vol;
+-	struct address_space *mapping;
+-	struct page *page;
+-	u8 *kaddr;
+-	pgoff_t idx, end;
+-	unsigned start_ofs, end_ofs, size;
+-
+-	ntfs_debug("Entering for ofs 0x%llx, cnt 0x%llx, val 0x%hx.",
+-			(long long)ofs, (long long)cnt, val);
+-	BUG_ON(ofs < 0);
+-	BUG_ON(cnt < 0);
+-	if (!cnt)
+-		goto done;
++	struct super_block *sb;
++	u32 attr_rec_size;
++	int err, i, offset;
++	bool is_resident;
++	bool can_be_non_resident = false;
++	struct ntfs_inode *attr_ni;
++	struct inode *attr_vi;
++	struct mft_record *ni_mrec;
++
++	if (!ni || size < 0 || type == AT_ATTRIBUTE_LIST)
++		return -EINVAL;
++
++	ntfs_debug("Entering for inode 0x%llx, attr %x, size %lld.\n",
++			(long long) ni->mft_no, type, size);
++
++	if (ni->nr_extents == -1)
++		ni = ni->ext.base_ntfs_ino;
++
++	/* Check the attribute type and the size. */
++	err = ntfs_attr_size_bounds_check(ni->vol, type, size);
++	if (err) {
++		if (err == -ENOENT)
++			err = -EIO;
++		return err;
 +	}
++
++	sb = ni->vol->sb;
++	/* Sanity checks for always resident attributes. */
++	err = ntfs_attr_can_be_non_resident(ni->vol, type);
++	if (err) {
++		if (err != -EPERM) {
++			ntfs_error(sb, "ntfs_attr_can_be_non_resident failed");
++			goto err_out;
++		}
++		/* @val is mandatory. */
++		if (!val) {
++			ntfs_error(sb,
++				"val is mandatory for always resident attributes");
++			return -EINVAL;
++		}
++		if (size > ni->vol->mft_record_size) {
++			ntfs_error(sb, "Attribute is too big");
++			return -ERANGE;
++		}
++	} else
++		can_be_non_resident = true;
++
+ 	/*
+-	 * FIXME: Compressed and encrypted attributes are not supported when
+-	 * writing and we should never have gotten here for them.
++	 * Determine resident or not will be new attribute. We add 8 to size in
++	 * non resident case for mapping pairs.
+ 	 */
+-	BUG_ON(NInoCompressed(ni));
+-	BUG_ON(NInoEncrypted(ni));
+-	mapping = VFS_I(ni)->i_mapping;
+-	/* Work out the starting index and page offset. */
+-	idx = ofs >> PAGE_SHIFT;
+-	start_ofs = ofs & ~PAGE_MASK;
+-	/* Work out the ending index and page offset. */
+-	end = ofs + cnt;
+-	end_ofs = end & ~PAGE_MASK;
+-	/* If the end is outside the inode size return -ESPIPE. */
+-	if (unlikely(end > i_size_read(VFS_I(ni)))) {
+-		ntfs_error(vol->sb, "Request exceeds end of attribute.");
+-		return -ESPIPE;
+-	}
+-	end >>= PAGE_SHIFT;
+-	/* If there is a first partial page, need to do it the slow way. */
+-	if (start_ofs) {
+-		page = read_mapping_page(mapping, idx, NULL);
+-		if (IS_ERR(page)) {
+-			ntfs_error(vol->sb, "Failed to read first partial "
+-					"page (error, index 0x%lx).", idx);
+-			return PTR_ERR(page);
++	err = ntfs_attr_can_be_resident(ni->vol, type);
++	if (!err) {
++		is_resident = true;
++	} else {
++		if (err != -EPERM) {
++			ntfs_error(sb, "ntfs_attr_can_be_resident failed");
++			goto err_out;
+ 		}
+-		/*
+-		 * If the last page is the same as the first page, need to
+-		 * limit the write to the end offset.
+-		 */
+-		size = PAGE_SIZE;
+-		if (idx == end)
+-			size = end_ofs;
+-		kaddr = kmap_atomic(page);
+-		memset(kaddr + start_ofs, val, size - start_ofs);
+-		flush_dcache_page(page);
+-		kunmap_atomic(kaddr);
+-		set_page_dirty(page);
+-		put_page(page);
+-		balance_dirty_pages_ratelimited(mapping);
+-		cond_resched();
+-		if (idx == end)
+-			goto done;
+-		idx++;
+-	}
+-	/* Do the whole pages the fast way. */
+-	for (; idx < end; idx++) {
+-		/* Find or create the current page.  (The page is locked.) */
+-		page = grab_cache_page(mapping, idx);
+-		if (unlikely(!page)) {
+-			ntfs_error(vol->sb, "Insufficient memory to grab "
+-					"page (index 0x%lx).", idx);
+-			return -ENOMEM;
++		is_resident = false;
++	}
++
++	/* Calculate attribute record size. */
++	if (is_resident)
++		attr_rec_size = offsetof(struct attr_record, data.resident.reserved) +
++			1 +
++			((name_len * sizeof(__le16) + 7) & ~7) +
++			((size + 7) & ~7);
++	else
++		attr_rec_size = offsetof(struct attr_record, data.non_resident.compressed_size) +
++			((name_len * sizeof(__le16) + 7) & ~7) + 8;
++
++	/*
++	 * If we have enough free space for the new attribute in the base MFT
++	 * record, then add attribute to it.
++	 */
++retry:
++	ni_mrec = map_mft_record(ni);
++	if (IS_ERR(ni_mrec)) {
++		err = -EIO;
++		goto err_out;
++	}
++
++	if (le32_to_cpu(ni_mrec->bytes_allocated) -
++			le32_to_cpu(ni_mrec->bytes_in_use) >= attr_rec_size) {
++		attr_ni = ni;
++		unmap_mft_record(ni);
++		goto add_attr_record;
++	}
++	unmap_mft_record(ni);
++
++	/* Try to add to extent inodes. */
++	err = ntfs_inode_attach_all_extents(ni);
++	if (err) {
++		ntfs_error(sb, "Failed to attach all extents to inode");
++		goto err_out;
++	}
++
++	for (i = 0; i < ni->nr_extents; i++) {
++		attr_ni = ni->ext.extent_ntfs_inos[i];
++		ni_mrec = map_mft_record(attr_ni);
++		if (IS_ERR(ni_mrec)) {
++			err = -EIO;
++			goto err_out;
+ 		}
+-		kaddr = kmap_atomic(page);
+-		memset(kaddr, val, PAGE_SIZE);
+-		flush_dcache_page(page);
+-		kunmap_atomic(kaddr);
+-		/*
+-		 * If the page has buffers, mark them uptodate since buffer
+-		 * state and not page state is definitive in 2.6 kernels.
+-		 */
+-		if (page_has_buffers(page)) {
+-			struct buffer_head *bh, *head;
  
--/*
-- * ntfs_mst_aops - general address space operations for mst protecteed inodes
-- *			  and attributes
-- */
--const struct address_space_operations ntfs_mst_aops = {
--	.read_folio	= ntfs_read_folio,	/* Fill page with data. */
--#ifdef NTFS_RW
--	.writepage	= ntfs_writepage,	/* Write dirty page to disk. */
--	.dirty_folio	= filemap_dirty_folio,
--#endif /* NTFS_RW */
--	.migrate_folio	= buffer_migrate_folio,
--	.is_partially_uptodate	= block_is_partially_uptodate,
--	.error_remove_folio = generic_error_remove_folio,
--};
-+	iomap_bio_readahead(rac, &ntfs_read_iomap_ops);
-+}
- 
--#ifdef NTFS_RW
-+static int ntfs_mft_writepage(struct folio *folio, struct writeback_control *wbc)
-+{
-+	struct address_space *mapping = folio->mapping;
-+	struct inode *vi = mapping->host;
-+	struct ntfs_inode *ni = NTFS_I(vi);
-+	loff_t i_size;
-+	int ret;
- 
--/**
-- * mark_ntfs_record_dirty - mark an ntfs record dirty
-- * @page:	page containing the ntfs record to mark dirty
-- * @ofs:	byte offset within @page at which the ntfs record begins
-- *
-- * Set the buffers and the page in which the ntfs record is located dirty.
-- *
-- * The latter also marks the vfs inode the ntfs record belongs to dirty
-- * (I_DIRTY_PAGES only).
-- *
-- * If the page does not have buffers, we create them and set them uptodate.
-- * The page may not be locked which is why we need to handle the buffers under
-- * the mapping->i_private_lock.  Once the buffers are marked dirty we no longer
-- * need the lock since try_to_free_buffers() does not free dirty buffers.
-- */
--void mark_ntfs_record_dirty(struct page *page, const unsigned int ofs) {
--	struct address_space *mapping = page->mapping;
--	ntfs_inode *ni = NTFS_I(mapping->host);
--	struct buffer_head *bh, *head, *buffers_to_free = NULL;
--	unsigned int end, bh_size, bh_ofs;
--
--	BUG_ON(!PageUptodate(page));
--	end = ofs + ni->itype.index.block_size;
--	bh_size = VFS_I(ni)->i_sb->s_blocksize;
--	spin_lock(&mapping->i_private_lock);
--	if (unlikely(!page_has_buffers(page))) {
--		spin_unlock(&mapping->i_private_lock);
--		bh = head = alloc_page_buffers(page, bh_size, true);
--		spin_lock(&mapping->i_private_lock);
--		if (likely(!page_has_buffers(page))) {
--			struct buffer_head *tail;
--
+-			bh = head = page_buffers(page);
 -			do {
 -				set_buffer_uptodate(bh);
--				tail = bh;
--				bh = bh->b_this_page;
--			} while (bh);
--			tail->b_this_page = head;
--			attach_page_private(page, head);
--		} else
--			buffers_to_free = bh;
-+	i_size = i_size_read(vi);
+-			} while ((bh = bh->b_this_page) != head);
++		if (le32_to_cpu(ni_mrec->bytes_allocated) -
++				le32_to_cpu(ni_mrec->bytes_in_use) >=
++				attr_rec_size) {
++			unmap_mft_record(attr_ni);
++			goto add_attr_record;
++		}
++		unmap_mft_record(attr_ni);
++	}
 +
-+	/* We have to zero every time due to mmap-at-end-of-file. */
-+	if (folio->index >= (i_size >> PAGE_SHIFT)) {
-+		/* The page straddles i_size. */
-+		unsigned int ofs = i_size & ~PAGE_MASK;
++	/* There is no extent that contain enough space for new attribute. */
++	if (!NInoAttrList(ni)) {
++		/* Add attribute list not present, add it and retry. */
++		err = ntfs_inode_add_attrlist(ni);
++		if (err) {
++			ntfs_error(sb, "Failed to add attribute list");
++			goto err_out;
++		}
++		goto retry;
++	}
 +
-+		folio_zero_segment(folio, ofs, PAGE_SIZE);
- 	}
--	bh = head = page_buffers(page);
--	BUG_ON(!bh);
--	do {
--		bh_ofs = bh_offset(bh);
--		if (bh_ofs + bh_size <= ofs)
--			continue;
--		if (unlikely(bh_ofs >= end))
--			break;
--		set_buffer_dirty(bh);
--	} while ((bh = bh->b_this_page) != head);
--	spin_unlock(&mapping->i_private_lock);
--	filemap_dirty_folio(mapping, page_folio(page));
--	if (unlikely(buffers_to_free)) {
--		do {
--			bh = buffers_to_free->b_this_page;
--			free_buffer_head(buffers_to_free);
--			buffers_to_free = bh;
--		} while (buffers_to_free);
++	attr_ni = NULL;
++	/* Allocate new extent. */
++	err = ntfs_mft_record_alloc(ni->vol, 0, &attr_ni, ni, NULL);
++	if (err) {
++		ntfs_error(sb, "Failed to allocate extent record");
++		goto err_out;
++	}
++	unmap_mft_record(attr_ni);
 +
-+	ret = ntfs_write_mft_block(ni, folio, wbc);
-+	mapping_set_error(mapping, ret);
-+	return ret;
-+}
++add_attr_record:
++	if (is_resident) {
++		/* Add resident attribute. */
++		offset = ntfs_resident_attr_record_add(attr_ni, type, name,
++				name_len, val, size, 0);
++		if (offset < 0) {
++			if (offset == -ENOSPC && can_be_non_resident)
++				goto add_non_resident;
++			err = offset;
++			ntfs_error(sb, "Failed to add resident attribute");
++			goto free_err_out;
++		}
++		return 0;
++	}
 +
-+static int ntfs_writepages(struct address_space *mapping,
-+		struct writeback_control *wbc)
-+{
-+	struct inode *inode = mapping->host;
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	struct iomap_writepage_ctx wpc = {
-+		.inode		= mapping->host,
-+		.wbc		= wbc,
-+		.ops		= &ntfs_writeback_ops,
-+	};
++add_non_resident:
++	/* Add non resident attribute. */
++	offset = ntfs_non_resident_attr_record_add(attr_ni, type, name,
++			name_len, 0, 8, 0);
++	if (offset < 0) {
++		err = offset;
++		ntfs_error(sb, "Failed to add non resident attribute");
++		goto free_err_out;
++	}
 +
-+	if (NVolShutdown(ni->vol))
-+		return -EIO;
-+
-+	if (!NInoNonResident(ni))
++	/* If @size == 0, we are done. */
++	if (!size)
 +		return 0;
 +
-+	if (NInoMstProtected(ni) && ni->mft_no == FILE_MFT) {
-+		struct folio *folio = NULL;
-+		int error;
++	/* Open new attribute and resize it. */
++	attr_vi = ntfs_attr_iget(VFS_I(ni), type, name, name_len);
++	if (IS_ERR(attr_vi)) {
++		ntfs_error(sb, "Failed to open just added attribute");
++		goto rm_attr_err_out;
++	}
++	attr_ni = NTFS_I(attr_vi);
 +
-+		while ((folio = writeback_iter(mapping, wbc, folio, &error)))
-+			error = ntfs_mft_writepage(folio, wbc);
-+		return error;
++	/* Resize and set attribute value. */
++	if (ntfs_attr_truncate(attr_ni, size) ||
++		(val && (ntfs_inode_attr_pwrite(attr_vi, 0, size, val, false) != size))) {
++		err = -EIO;
++		ntfs_error(sb, "Failed to initialize just added attribute");
++		if (ntfs_attr_rm(attr_ni))
++			ntfs_error(sb, "Failed to remove just added attribute");
++		iput(attr_vi);
++		goto err_out;
++	}
++	iput(attr_vi);
++	return 0;
++
++rm_attr_err_out:
++	/* Remove just added attribute. */
++	ni_mrec = map_mft_record(attr_ni);
++	if (!IS_ERR(ni_mrec)) {
++		if (ntfs_attr_record_resize(ni_mrec,
++					(struct attr_record *)((u8 *)ni_mrec + offset), 0))
++			ntfs_error(sb, "Failed to remove just added attribute #2");
++		unmap_mft_record(attr_ni);
++	} else
++		pr_err("EIO when try to remove new added attr\n");
++
++free_err_out:
++	/* Free MFT record, if it doesn't contain attributes. */
++	ni_mrec = map_mft_record(attr_ni);
++	if (!IS_ERR(ni_mrec)) {
++		int attr_size;
++
++		attr_size = le32_to_cpu(ni_mrec->bytes_in_use) -
++			le16_to_cpu(ni_mrec->attrs_offset);
++		unmap_mft_record(attr_ni);
++		if (attr_size == 8) {
++			if (ntfs_mft_record_free(attr_ni->vol, attr_ni))
++				ntfs_error(sb, "Failed to free MFT record");
++			if (attr_ni->nr_extents < 0)
++				ntfs_inode_close(attr_ni);
++		}
++	} else
++		pr_err("EIO when testing mft record is free-able\n");
++
++err_out:
++	return err;
++}
++
++/**
++ * __ntfs_attr_init - primary initialization of an ntfs attribute structure
++ * @ni:		ntfs attribute inode to initialize
++ * @ni:		ntfs inode with which to initialize the ntfs attribute
++ * @type:	attribute type
++ * @name:	attribute name in little endian Unicode or NULL
++ * @name_len:	length of attribute @name in Unicode characters (if @name given)
++ *
++ * Initialize the ntfs attribute @na with @ni, @type, @name, and @name_len.
++ */
++static void __ntfs_attr_init(struct ntfs_inode *ni,
++		const __le32 type, __le16 *name, const u32 name_len)
++{
++	ni->runlist.rl = NULL;
++	ni->type = type;
++	ni->name = name;
++	if (name)
++		ni->name_len = name_len;
++	else
++		ni->name_len = 0;
++}
++
++/**
++ * ntfs_attr_init - initialize an ntfs_attr with data sizes and status
++ * Final initialization for an ntfs attribute.
++ */
++static void ntfs_attr_init(struct ntfs_inode *ni, const bool non_resident,
++		const bool compressed, const bool encrypted, const bool sparse,
++		const s64 allocated_size, const s64 data_size,
++		const s64 initialized_size, const s64 compressed_size,
++		const u8 compression_unit)
++{
++	if (non_resident)
++		NInoSetNonResident(ni);
++	if (compressed) {
++		NInoSetCompressed(ni);
++		ni->flags |= FILE_ATTR_COMPRESSED;
++	}
++	if (encrypted) {
++		NInoSetEncrypted(ni);
++		ni->flags |= FILE_ATTR_ENCRYPTED;
++	}
++	if (sparse) {
++		NInoSetSparse(ni);
++		ni->flags |= FILE_ATTR_SPARSE_FILE;
++	}
++	ni->allocated_size = allocated_size;
++	ni->data_size = data_size;
++	ni->initialized_size = initialized_size;
++	if (compressed || sparse) {
++		struct ntfs_volume *vol = ni->vol;
++
++		ni->itype.compressed.size = compressed_size;
++		ni->itype.compressed.block_clusters = 1 << compression_unit;
++		ni->itype.compressed.block_size = 1 << (compression_unit +
++				vol->cluster_size_bits);
++		ni->itype.compressed.block_size_bits = ffs(
++				ni->itype.compressed.block_size) - 1;
++	}
++}
++
++/**
++ * ntfs_attr_open - open an ntfs attribute for access
++ * @ni:		open ntfs inode in which the ntfs attribute resides
++ * @type:	attribute type
++ * @name:	attribute name in little endian Unicode or AT_UNNAMED or NULL
++ * @name_len:	length of attribute @name in Unicode characters (if @name given)
++ */
++int ntfs_attr_open(struct ntfs_inode *ni, const __le32 type,
++		__le16 *name, u32 name_len)
++{
++	struct ntfs_attr_search_ctx *ctx;
++	__le16 *newname = NULL;
++	struct attr_record *a;
++	bool cs;
++	struct ntfs_inode *base_ni;
++	int err;
++
++	ntfs_debug("Entering for inode %lld, attr 0x%x.\n",
++			(unsigned long long)ni->mft_no, type);
++
++	if (!ni || !ni->vol)
++		return -EINVAL;
++
++	if (NInoAttr(ni))
++		base_ni = ni->ext.base_ntfs_ino;
++	else
++		base_ni = ni;
++
++	if (name && name != AT_UNNAMED && name != I30) {
++		name = ntfs_ucsndup(name, name_len);
++		if (!name) {
++			err = -ENOMEM;
++			goto err_out;
++		}
++		newname = name;
 +	}
 +
-+	/* If file is encrypted, deny access, just like NT4. */
-+	if (NInoEncrypted(ni)) {
-+		ntfs_debug("Denying write access to encrypted file.");
-+		return -EACCES;
++	ctx = ntfs_attr_get_search_ctx(base_ni, NULL);
++	if (!ctx) {
++		err = -ENOMEM;
++		pr_err("%s: Failed to get search context", __func__);
++		goto err_out;
 +	}
 +
-+	return iomap_writepages(&wpc);
-+}
++	err = ntfs_attr_lookup(type, name, name_len, 0, 0, NULL, 0, ctx);
++	if (err)
++		goto put_err_out;
 +
-+static int ntfs_swap_activate(struct swap_info_struct *sis,
-+		struct file *swap_file, sector_t *span)
-+{
-+	return iomap_swapfile_activate(sis, swap_file, span,
-+			&ntfs_read_iomap_ops);
-+}
++	a = ctx->attr;
 +
-+const struct address_space_operations ntfs_aops = {
-+	.read_folio		= ntfs_read_folio,
-+	.readahead		= ntfs_readahead,
-+	.writepages		= ntfs_writepages,
-+	.direct_IO		= noop_direct_IO,
-+	.dirty_folio		= iomap_dirty_folio,
-+	.bmap			= ntfs_bmap,
-+	.migrate_folio		= filemap_migrate_folio,
-+	.is_partially_uptodate	= iomap_is_partially_uptodate,
-+	.error_remove_folio	= generic_error_remove_folio,
-+	.release_folio		= iomap_release_folio,
-+	.invalidate_folio	= iomap_invalidate_folio,
-+	.swap_activate          = ntfs_swap_activate,
-+};
++	if (!name) {
++		if (a->name_length) {
++			name = ntfs_ucsndup((__le16 *)((u8 *)a + le16_to_cpu(a->name_offset)),
++					    a->name_length);
++			if (!name)
++				goto put_err_out;
++			newname = name;
++			name_len = a->name_length;
++		} else {
++			name = AT_UNNAMED;
++			name_len = 0;
+ 		}
+-		/* Now that buffers are uptodate, set the page uptodate, too. */
+-		SetPageUptodate(page);
++	}
 +
-+void mark_ntfs_record_dirty(struct folio *folio)
-+{
-+	iomap_dirty_folio(folio->mapping, folio);
-+}
++	__ntfs_attr_init(ni, type, name, name_len);
 +
-+int ntfs_dev_read(struct super_block *sb, void *buf, loff_t start, loff_t size)
-+{
-+	pgoff_t idx, idx_end;
-+	loff_t offset, end = start + size;
-+	u32 from, to, buf_off = 0;
-+	struct folio *folio;
++	/*
++	 * Wipe the flags in case they are not zero for an attribute list
++	 * attribute.  Windows does not complain about invalid flags and chkdsk
++	 * does not detect or fix them so we need to cope with it, too.
++	 */
++	if (type == AT_ATTRIBUTE_LIST)
++		a->flags = 0;
 +
-+	idx = start >> PAGE_SHIFT;
-+	idx_end = end >> PAGE_SHIFT;
-+	from = start & ~PAGE_MASK;
++	if ((type == AT_DATA) &&
++	    (a->non_resident ? !a->data.non_resident.initialized_size :
++	     !a->data.resident.value_length)) {
+ 		/*
+-		 * Set the page and all its buffers dirty and mark the inode
+-		 * dirty, too.  The VM will write the page later on.
++		 * Define/redefine the compression state if stream is
++		 * empty, based on the compression mark on parent
++		 * directory (for unnamed data streams) or on current
++		 * inode (for named data streams). The compression mark
++		 * may change any time, the compression state can only
++		 * change when stream is wiped out.
++		 *
++		 * Also prevent compression on NTFS version < 3.0
++		 * or cluster size > 4K or compression is disabled
+ 		 */
+-		set_page_dirty(page);
+-		/* Finally unlock and release the page. */
+-		unlock_page(page);
+-		put_page(page);
+-		balance_dirty_pages_ratelimited(mapping);
+-		cond_resched();
++		a->flags &= ~ATTR_COMPRESSION_MASK;
++		if (NInoCompressed(ni)
++				&& (ni->vol->major_ver >= 3)
++				&& NVolCompression(ni->vol)
++				&& (ni->vol->cluster_size <= MAX_COMPRESSION_CLUSTER_SIZE))
++			a->flags |= ATTR_IS_COMPRESSED;
+ 	}
+-	/* If there is a last partial page, need to do it the slow way. */
+-	if (end_ofs) {
+-		page = read_mapping_page(mapping, idx, NULL);
+-		if (IS_ERR(page)) {
+-			ntfs_error(vol->sb, "Failed to read last partial page "
+-					"(error, index 0x%lx).", idx);
+-			return PTR_ERR(page);
+-		}
+-		kaddr = kmap_atomic(page);
+-		memset(kaddr, val, end_ofs);
+-		flush_dcache_page(page);
+-		kunmap_atomic(kaddr);
+-		set_page_dirty(page);
+-		put_page(page);
+-		balance_dirty_pages_ratelimited(mapping);
+-		cond_resched();
 +
-+	if (idx == idx_end)
-+		idx_end++;
++	cs = a->flags & (ATTR_IS_COMPRESSED | ATTR_IS_SPARSE);
 +
-+	for (; idx < idx_end; idx++, from = 0) {
-+		folio = read_mapping_folio(sb->s_bdev->bd_mapping, idx, NULL);
-+		if (IS_ERR(folio)) {
-+			ntfs_error(sb, "Unable to read %ld page", idx);
-+			return PTR_ERR(folio);
++	if (ni->type == AT_DATA && ni->name == AT_UNNAMED &&
++	    ((!(a->flags & ATTR_IS_COMPRESSED) != !NInoCompressed(ni)) ||
++	     (!(a->flags & ATTR_IS_SPARSE)     != !NInoSparse(ni)) ||
++	     (!(a->flags & ATTR_IS_ENCRYPTED)  != !NInoEncrypted(ni)))) {
++		err = -EIO;
++		pr_err("Inode %lld has corrupt attribute flags (0x%x <> 0x%x)\n",
++				(unsigned long long)ni->mft_no,
++				a->flags, ni->flags);
++		goto put_err_out;
+ 	}
+-done:
+-	ntfs_debug("Done.");
+-	return 0;
++
++	if (a->non_resident) {
++		if (((a->flags & ATTR_COMPRESSION_MASK) || a->data.non_resident.compression_unit) &&
++				(ni->vol->major_ver < 3)) {
++			err = -EIO;
++			pr_err("Compressed inode %lld not allowed  on NTFS %d.%d\n",
++					(unsigned long long)ni->mft_no,
++					ni->vol->major_ver,
++					ni->vol->major_ver);
++			goto put_err_out;
 +		}
 +
-+		offset = (loff_t)idx << PAGE_SHIFT;
-+		to = min_t(u32, end - offset, PAGE_SIZE);
++		if ((a->flags & ATTR_IS_COMPRESSED) && !a->data.non_resident.compression_unit) {
++			err = -EIO;
++			pr_err("Compressed inode %lld attr 0x%x has no compression unit\n",
++					(unsigned long long)ni->mft_no, type);
++			goto put_err_out;
++		}
++		if ((a->flags & ATTR_COMPRESSION_MASK) &&
++		    (a->data.non_resident.compression_unit != STANDARD_COMPRESSION_UNIT)) {
++			err = -EIO;
++			pr_err("Compressed inode %lld attr 0x%lx has an unsupported compression unit %d\n",
++					(unsigned long long)ni->mft_no,
++					(long)le32_to_cpu(type),
++					(int)a->data.non_resident.compression_unit);
++			goto put_err_out;
++		}
++		ntfs_attr_init(ni, true, a->flags & ATTR_IS_COMPRESSED,
++				a->flags & ATTR_IS_ENCRYPTED,
++				a->flags & ATTR_IS_SPARSE,
++				le64_to_cpu(a->data.non_resident.allocated_size),
++				le64_to_cpu(a->data.non_resident.data_size),
++				le64_to_cpu(a->data.non_resident.initialized_size),
++				cs ? le64_to_cpu(a->data.non_resident.compressed_size) : 0,
++				cs ? a->data.non_resident.compression_unit : 0);
++	} else {
++		s64 l = le32_to_cpu(a->data.resident.value_length);
 +
-+		memcpy_from_folio(buf + buf_off, folio, from, to);
-+		buf_off += to;
-+		folio_put(folio);
- 	}
++		ntfs_attr_init(ni, false, a->flags & ATTR_IS_COMPRESSED,
++				a->flags & ATTR_IS_ENCRYPTED,
++				a->flags & ATTR_IS_SPARSE, (l + 7) & ~7, l, l,
++				cs ? (l + 7) & ~7 : 0, 0);
++	}
++	ntfs_attr_put_search_ctx(ctx);
++out:
++	ntfs_debug("\n");
++	return err;
 +
-+	return 0;
++put_err_out:
++	ntfs_attr_put_search_ctx(ctx);
++err_out:
++	ntfs_free(newname);
++	goto out;
++}
++
++/**
++ * ntfs_attr_close - free an ntfs attribute structure
++ * @ni:		ntfs inode to free
++ *
++ * Release all memory associated with the ntfs attribute @na and then release
++ * @na itself.
++ */
++void ntfs_attr_close(struct ntfs_inode *ni)
++{
++	if (NInoNonResident(ni) && ni->runlist.rl)
++		ntfs_free(ni->runlist.rl);
++	/* Don't release if using an internal constant. */
++	if (ni->name != AT_UNNAMED && ni->name != I30)
++		ntfs_free(ni->name);
  }
  
 -#endif /* NTFS_RW */
-+int ntfs_dev_write(struct super_block *sb, void *buf, loff_t start,
-+			loff_t size, bool wait)
-+{
-+	pgoff_t idx, idx_end;
-+	loff_t offset, end = start + size;
-+	u32 from, to, buf_off = 0;
-+	struct folio *folio;
-+
-+	idx = start >> PAGE_SHIFT;
-+	idx_end = end >> PAGE_SHIFT;
-+	from = start & ~PAGE_MASK;
-+
-+	if (idx == idx_end)
-+		idx_end++;
-+
-+	for (; idx < idx_end; idx++, from = 0) {
-+		folio = read_mapping_folio(sb->s_bdev->bd_mapping, idx, NULL);
-+		if (IS_ERR(folio)) {
-+			ntfs_error(sb, "Unable to read %ld page", idx);
-+			return PTR_ERR(folio);
-+		}
-+
-+		offset = (loff_t)idx << PAGE_SHIFT;
-+		to = min_t(u32, end - offset, PAGE_SIZE);
-+
-+		memcpy_to_folio(folio, from, buf + buf_off, to);
-+		buf_off += to;
-+		folio_mark_uptodate(folio);
-+		folio_mark_dirty(folio);
-+		if (wait)
-+			folio_wait_stable(folio);
-+		folio_put(folio);
-+	}
-+
-+	return 0;
-+}
-diff --git a/fs/ntfs/iomap.c b/fs/ntfs/iomap.c
-new file mode 100644
-index 000000000000..3c3492e632e7
---- /dev/null
-+++ b/fs/ntfs/iomap.c
-@@ -0,0 +1,754 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * iomap callack functions
++/**
++ * ntfs_attr_map_whole_runlist - map the whole runlist of an ntfs attribute
++ * @ni:		ntfs inode for which to map the runlist
 + *
-+ * Copyright (c) 2025 LG Electronics Co., Ltd.
++ * Map the whole runlist of the ntfs attribute @na.  For an attribute made up
++ * of only one attribute extent this is the same as calling
++ * ntfs_map_runlist(ni, 0) but for an attribute with multiple extents this
++ * will map the runlist fragments from each of the extents thus giving access
++ * to the entirety of the disk allocation of an attribute.
 + */
-+
-+#include <linux/writeback.h>
-+#include <linux/mpage.h>
-+#include <linux/uio.h>
-+
-+#include "aops.h"
-+#include "attrib.h"
-+#include "mft.h"
-+#include "ntfs.h"
-+#include "malloc.h"
-+#include "iomap.h"
-+
-+/*
-+ * ioomap_zero_range is called for an area beyond the initialized size,
-+ * garbage values can be read, so zeroing out is needed.
-+ */
-+static void ntfs_iomap_put_folio(struct inode *inode, loff_t pos,
-+		unsigned int len, struct folio *folio)
++int ntfs_attr_map_whole_runlist(struct ntfs_inode *ni)
 +{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	unsigned long sector_size = 1UL << inode->i_blkbits;
-+	loff_t start_down, end_up, init;
-+
-+	if (!NInoNonResident(ni))
-+		goto out;
-+
-+	start_down = round_down(pos, sector_size);
-+	end_up = (pos + len - 1) | (sector_size - 1);
-+	init = ni->initialized_size;
-+
-+	if (init >= start_down && init <= end_up) {
-+		if (init < pos) {
-+			loff_t offset = offset_in_folio(folio, pos + len);
-+
-+			if (offset == 0)
-+				offset = folio_size(folio);
-+			folio_zero_segments(folio,
-+					    offset_in_folio(folio, init),
-+					    offset_in_folio(folio, pos),
-+					    offset,
-+					    folio_size(folio));
-+
-+		} else  {
-+			loff_t offset = max_t(loff_t, pos + len, init);
-+
-+			offset = offset_in_folio(folio, offset);
-+			if (offset == 0)
-+				offset = folio_size(folio);
-+			folio_zero_segment(folio,
-+					   offset,
-+					   folio_size(folio));
-+		}
-+	} else if (init <= pos) {
-+		loff_t offset = 0, offset2 = offset_in_folio(folio, pos + len);
-+
-+		if ((init >> folio_shift(folio)) == (pos >> folio_shift(folio)))
-+			offset = offset_in_folio(folio, init);
-+		if (offset2 == 0)
-+			offset2 = folio_size(folio);
-+		folio_zero_segments(folio,
-+				    offset,
-+				    offset_in_folio(folio, pos),
-+				    offset2,
-+				    folio_size(folio));
-+	}
-+
-+out:
-+	folio_unlock(folio);
-+	folio_put(folio);
-+}
-+
-+const struct iomap_write_ops ntfs_iomap_folio_ops = {
-+	.put_folio = ntfs_iomap_put_folio,
-+};
-+
-+static int ntfs_read_iomap_begin_resident(struct inode *inode, loff_t offset,
-+		unsigned int flags, struct iomap *iomap)
-+{
-+	struct ntfs_inode *base_ni, *ni = NTFS_I(inode);
++	s64 next_vcn, last_vcn, highest_vcn;
 +	struct ntfs_attr_search_ctx *ctx;
-+	loff_t i_size;
-+	u32 attr_len;
-+	int err = 0;
-+	char *kattr;
++	struct ntfs_volume *vol = ni->vol;
++	struct super_block *sb = vol->sb;
++	struct attr_record *a;
++	int err;
++	struct ntfs_inode *base_ni;
++	int not_mapped;
++	size_t new_rl_count;
++
++	ntfs_debug("Entering for inode 0x%llx, attr 0x%x.\n",
++			(unsigned long long)ni->mft_no, ni->type);
++
++	if (NInoFullyMapped(ni) && ni->runlist.rl)
++		return 0;
 +
 +	if (NInoAttr(ni))
 +		base_ni = ni->ext.base_ntfs_ino;
@@ -2255,662 +3852,4100 @@ index 000000000000..3c3492e632e7
 +
 +	ctx = ntfs_attr_get_search_ctx(base_ni, NULL);
 +	if (!ctx) {
-+		err = -ENOMEM;
-+		goto out;
++		ntfs_error(sb, "%s: Failed to get search context", __func__);
++		return -ENOMEM;
 +	}
 +
-+	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
-+			CASE_SENSITIVE, 0, NULL, 0, ctx);
-+	if (unlikely(err))
-+		goto out;
++	/* Map all attribute extents one by one. */
++	next_vcn = last_vcn = highest_vcn = 0;
++	a = NULL;
++	while (1) {
++		struct runlist_element *rl;
 +
-+	attr_len = le32_to_cpu(ctx->attr->data.resident.value_length);
-+	if (unlikely(attr_len > ni->initialized_size))
-+		attr_len = ni->initialized_size;
-+	i_size = i_size_read(inode);
++		not_mapped = 0;
++		if (ntfs_rl_vcn_to_lcn(ni->runlist.rl, next_vcn) == LCN_RL_NOT_MAPPED)
++			not_mapped = 1;
 +
-+	if (unlikely(attr_len > i_size)) {
-+		/* Race with shrinking truncate. */
-+		attr_len = i_size;
-+	}
++		err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
++					CASE_SENSITIVE, next_vcn, NULL, 0, ctx);
++		if (err)
++			break;
 +
-+	if (offset >= attr_len) {
-+		if (flags & IOMAP_REPORT)
++		a = ctx->attr;
++
++		if (not_mapped) {
++			/* Decode the runlist. */
++			rl = ntfs_mapping_pairs_decompress(ni->vol, a, &ni->runlist,
++							   &new_rl_count);
++			if (IS_ERR(rl)) {
++				err = PTR_ERR(rl);
++				goto err_out;
++			}
++			ni->runlist.rl = rl;
++			ni->runlist.count = new_rl_count;
++		}
++
++		/* Are we in the first extent? */
++		if (!next_vcn) {
++			if (a->data.non_resident.lowest_vcn) {
++				err = -EIO;
++				ntfs_error(sb,
++					"First extent of inode %llu attribute has non-zero lowest_vcn",
++					(unsigned long long)ni->mft_no);
++				goto err_out;
++			}
++			/* Get the last vcn in the attribute. */
++			last_vcn = NTFS_B_TO_CLU(vol,
++					le64_to_cpu(a->data.non_resident.allocated_size));
++		}
++
++		/* Get the lowest vcn for the next extent. */
++		highest_vcn = le64_to_cpu(a->data.non_resident.highest_vcn);
++		next_vcn = highest_vcn + 1;
++
++		/* Only one extent or error, which we catch below. */
++		if (next_vcn <= 0) {
 +			err = -ENOENT;
-+		else
-+			err = -EFAULT;
-+		goto out;
++			break;
++		}
++
++		/* Avoid endless loops due to corruption. */
++		if (next_vcn < le64_to_cpu(a->data.non_resident.lowest_vcn)) {
++			err = -EIO;
++			ntfs_error(sb, "Inode %llu has corrupt attribute list",
++					(unsigned long long)ni->mft_no);
++			goto err_out;
++		}
++	}
++	if (!a) {
++		ntfs_error(sb, "Couldn't find attribute for runlist mapping");
++		goto err_out;
++	}
++	if (not_mapped && highest_vcn && highest_vcn != last_vcn - 1) {
++		err = -EIO;
++		ntfs_error(sb,
++			"Failed to load full runlist: inode: %llu highest_vcn: 0x%llx last_vcn: 0x%llx",
++			(unsigned long long)ni->mft_no,
++			(long long)highest_vcn, (long long)last_vcn);
++		goto err_out;
++	}
++	ntfs_attr_put_search_ctx(ctx);
++	if (err == -ENOENT) {
++		NInoSetFullyMapped(ni);
++		return 0;
 +	}
 +
-+	kattr = (u8 *)ctx->attr + le16_to_cpu(ctx->attr->data.resident.value_offset);
++	return err;
 +
-+	iomap->inline_data = kmemdup(kattr, attr_len, GFP_KERNEL);
-+	if (!iomap->inline_data) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	iomap->type = IOMAP_INLINE;
-+	iomap->offset = 0;
-+	iomap->length = min_t(loff_t, attr_len, PAGE_SIZE);
-+
-+out:
-+	if (ctx)
-+		ntfs_attr_put_search_ctx(ctx);
-+
++err_out:
++	ntfs_attr_put_search_ctx(ctx);
 +	return err;
 +}
 +
-+static int ntfs_read_iomap_begin_non_resident(struct inode *inode, loff_t offset,
-+		loff_t length, unsigned int flags, struct iomap *iomap)
++/**
++ * ntfs_attr_record_move_to - move attribute record to target inode
++ * @ctx:	attribute search context describing the attribute record
++ * @ni:		opened ntfs inode to which move attribute record
++ */
++int ntfs_attr_record_move_to(struct ntfs_attr_search_ctx *ctx, struct ntfs_inode *ni)
 +{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	s64 vcn;
-+	s64 lcn;
-+	struct runlist_element *rl;
-+	struct ntfs_volume *vol = ni->vol;
-+	loff_t vcn_ofs;
-+	loff_t rl_length;
++	struct ntfs_attr_search_ctx *nctx;
++	struct attr_record *a;
++	int err;
++	struct mft_record *ni_mrec;
++	struct super_block *sb;
 +
-+	vcn = NTFS_B_TO_CLU(vol, offset);
-+	vcn_ofs = NTFS_B_TO_CLU_OFS(vol, offset);
-+
-+	down_write(&ni->runlist.lock);
-+	rl = ntfs_attr_vcn_to_rl(ni, vcn, &lcn);
-+	if (IS_ERR(rl)) {
-+		up_write(&ni->runlist.lock);
-+		return PTR_ERR(rl);
-+	}
-+
-+	if (flags & IOMAP_REPORT) {
-+		if (lcn < LCN_HOLE) {
-+			up_write(&ni->runlist.lock);
-+			return -ENOENT;
-+		}
-+	} else if (lcn < LCN_ENOENT) {
-+		up_write(&ni->runlist.lock);
++	if (!ctx || !ctx->attr || !ctx->ntfs_ino || !ni) {
++		ntfs_debug("Invalid arguments passed.\n");
 +		return -EINVAL;
 +	}
 +
-+	iomap->bdev = inode->i_sb->s_bdev;
-+	iomap->offset = offset;
++	sb = ni->vol->sb;
++	ntfs_debug("Entering for ctx->attr->type 0x%x, ctx->ntfs_ino->mft_no 0x%llx, ni->mft_no 0x%llx.\n",
++			(unsigned int) le32_to_cpu(ctx->attr->type),
++			(long long) ctx->ntfs_ino->mft_no,
++			(long long) ni->mft_no);
 +
-+	if (lcn <= LCN_DELALLOC) {
-+		if (lcn == LCN_DELALLOC)
-+			iomap->type = IOMAP_DELALLOC;
-+		else
-+			iomap->type = IOMAP_HOLE;
-+		iomap->addr = IOMAP_NULL_ADDR;
-+	} else {
-+		if (!(flags & IOMAP_ZERO) && offset >= ni->initialized_size)
-+			iomap->type = IOMAP_UNWRITTEN;
-+		else
-+			iomap->type = IOMAP_MAPPED;
-+		iomap->addr = NTFS_CLU_TO_B(vol, lcn) + vcn_ofs;
++	if (ctx->ntfs_ino == ni)
++		return 0;
++
++	if (!ctx->al_entry) {
++		ntfs_debug("Inode should contain attribute list to use this function.\n");
++		return -EINVAL;
 +	}
 +
-+	rl_length = NTFS_CLU_TO_B(vol, rl->length - (vcn - rl->vcn));
-+
-+	if (rl_length == 0 && rl->lcn > LCN_DELALLOC) {
-+		ntfs_error(inode->i_sb,
-+				"runlist(vcn : %lld, length : %lld, lcn : %lld) is corrupted\n",
-+				rl->vcn, rl->length, rl->lcn);
-+		up_write(&ni->runlist.lock);
-+		return -EIO;
++	/* Find place in MFT record where attribute will be moved. */
++	a = ctx->attr;
++	nctx = ntfs_attr_get_search_ctx(ni, NULL);
++	if (!nctx) {
++		ntfs_error(sb, "%s: Failed to get search context", __func__);
++		return -ENOMEM;
 +	}
 +
-+	if (rl_length && length > rl_length - vcn_ofs)
-+		iomap->length = rl_length - vcn_ofs;
-+	else
-+		iomap->length = length;
-+	up_write(&ni->runlist.lock);
-+
-+	if (!(flags & IOMAP_ZERO) &&
-+			iomap->type == IOMAP_MAPPED &&
-+			iomap->offset < ni->initialized_size &&
-+			iomap->offset + iomap->length > ni->initialized_size) {
-+		iomap->length = round_up(ni->initialized_size, 1 << inode->i_blkbits) -
-+			iomap->offset;
++	/*
++	 * Use ntfs_attr_find instead of ntfs_attr_lookup to find place for
++	 * attribute in @ni->mrec, not any extent inode in case if @ni is base
++	 * file record.
++	 */
++	err = ntfs_attr_find(a->type, (__le16 *)((u8 *)a + le16_to_cpu(a->name_offset)),
++				a->name_length, CASE_SENSITIVE, NULL,
++				0, nctx);
++	if (!err) {
++		ntfs_debug("Attribute of such type, with same name already present in this MFT record.\n");
++		err = -EEXIST;
++		goto put_err_out;
 +	}
-+	iomap->flags |= IOMAP_F_MERGED;
-+
-+	return 0;
-+}
-+
-+static int ntfs_read_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
-+		unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
-+{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	int ret;
-+
-+	if (NInoNonResident(ni))
-+		ret = ntfs_read_iomap_begin_non_resident(inode, offset, length,
-+				flags, iomap);
-+	else
-+		ret = ntfs_read_iomap_begin_resident(inode, offset, flags, iomap);
-+
-+	return ret;
-+}
-+
-+static int ntfs_read_iomap_end(struct inode *inode, loff_t pos, loff_t length,
-+		ssize_t written, unsigned int flags, struct iomap *iomap)
-+{
-+	if (iomap->type == IOMAP_INLINE)
-+		kfree(iomap->inline_data);
-+
-+	return written;
-+}
-+
-+const struct iomap_ops ntfs_read_iomap_ops = {
-+	.iomap_begin = ntfs_read_iomap_begin,
-+	.iomap_end = ntfs_read_iomap_end,
-+};
-+
-+/*
-+ * Check that the cached iomap still matches the NTFS runlist before
-+ * iomap_zero_range() is called. if the runlist changes while iomap is
-+ * iterating a cached iomap, iomap_zero_range() may overwrite folios
-+ * that have been already written with valid data.
-+ */
-+static bool ntfs_iomap_valid(struct inode *inode, const struct iomap *iomap)
-+{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	struct runlist_element *rl;
-+	s64 vcn, lcn;
-+
-+	if (!NInoNonResident(ni))
-+		return false;
-+
-+	vcn = iomap->offset >> ni->vol->cluster_size_bits;
-+
-+	down_read(&ni->runlist.lock);
-+	rl = __ntfs_attr_find_vcn_nolock(&ni->runlist, vcn);
-+	if (IS_ERR(rl)) {
-+		up_read(&ni->runlist.lock);
-+		return false;
-+	}
-+	lcn = ntfs_rl_vcn_to_lcn(rl, vcn);
-+	up_read(&ni->runlist.lock);
-+	return lcn == LCN_DELALLOC;
-+}
-+
-+const struct iomap_write_ops ntfs_zero_iomap_folio_ops = {
-+	.put_folio = ntfs_iomap_put_folio,
-+	.iomap_valid = ntfs_iomap_valid,
-+};
-+
-+static int ntfs_zero_read_iomap_end(struct inode *inode, loff_t pos, loff_t length,
-+		ssize_t written, unsigned int flags, struct iomap *iomap)
-+{
-+	if ((flags & IOMAP_ZERO) && (iomap->flags & IOMAP_F_STALE))
-+		return -EPERM;
-+	return written;
-+}
-+
-+const struct iomap_ops ntfs_zero_read_iomap_ops = {
-+	.iomap_begin = ntfs_read_iomap_begin,
-+	.iomap_end = ntfs_zero_read_iomap_end,
-+};
-+
-+int ntfs_zero_range(struct inode *inode, loff_t offset, loff_t length, bool bdirect)
-+{
-+	if (bdirect) {
-+		if ((offset | length) & (SECTOR_SIZE - 1))
-+			return -EINVAL;
-+
-+		return  blkdev_issue_zeroout(inode->i_sb->s_bdev,
-+					     offset >> SECTOR_SHIFT,
-+					     length >> SECTOR_SHIFT,
-+					     GFP_NOFS,
-+					     BLKDEV_ZERO_NOUNMAP);
++	if (err != -ENOENT) {
++		ntfs_debug("Attribute lookup failed.\n");
++		goto put_err_out;
 +	}
 +
-+	return iomap_zero_range(inode,
-+				offset, length,
-+				NULL,
-+				&ntfs_zero_read_iomap_ops,
-+				&ntfs_zero_iomap_folio_ops,
-+				NULL);
-+}
-+
-+static int ntfs_write_iomap_begin_non_resident(struct inode *inode, loff_t offset,
-+		loff_t length, struct iomap *iomap)
-+{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	struct ntfs_volume *vol = ni->vol;
-+	loff_t vcn_ofs, rl_length;
-+	struct runlist_element *rl, *rlc;
-+	bool is_retry = false;
-+	int err;
-+	s64 vcn, lcn;
-+	s64 max_clu_count =
-+		NTFS_B_TO_CLU(vol, round_up(length, vol->cluster_size));
-+
-+	vcn = NTFS_B_TO_CLU(vol, offset);
-+	vcn_ofs = NTFS_B_TO_CLU_OFS(vol, offset);
-+
-+	down_read(&ni->runlist.lock);
-+	rl = ni->runlist.rl;
-+	if (!rl) {
-+		up_read(&ni->runlist.lock);
-+		err = ntfs_map_runlist(ni, vcn);
-+		if (err) {
-+			mutex_unlock(&ni->mrec_lock);
-+			return -ENOENT;
-+		}
-+		down_read(&ni->runlist.lock);
-+		rl = ni->runlist.rl;
-+	}
-+	up_read(&ni->runlist.lock);
-+
-+	down_write(&ni->runlist.lock);
-+remap_rl:
-+	/* Seek to element containing target vcn. */
-+	rl = __ntfs_attr_find_vcn_nolock(&ni->runlist, vcn);
-+	if (IS_ERR(rl)) {
-+		up_write(&ni->runlist.lock);
-+		mutex_unlock(&ni->mrec_lock);
-+		return -EIO;
-+	}
-+	lcn = ntfs_rl_vcn_to_lcn(rl, vcn);
-+
-+	if (lcn <= LCN_RL_NOT_MAPPED && is_retry == false) {
-+		is_retry = true;
-+		if (!ntfs_map_runlist_nolock(ni, vcn, NULL)) {
-+			rl = ni->runlist.rl;
-+			goto remap_rl;
-+		}
++	/* Make space and move attribute. */
++	ni_mrec = map_mft_record(ni);
++	if (IS_ERR(ni_mrec)) {
++		err = -EIO;
++		goto put_err_out;
 +	}
 +
-+	max_clu_count = min(max_clu_count, rl->length - (vcn - rl->vcn));
-+	if (max_clu_count == 0) {
-+		ntfs_error(inode->i_sb,
-+				"runlist(vcn : %lld, length : %lld) is corrupted\n",
-+				rl->vcn, rl->length);
-+		up_write(&ni->runlist.lock);
-+		mutex_unlock(&ni->mrec_lock);
-+		return -EIO;
-+	}
-+
-+	iomap->bdev = inode->i_sb->s_bdev;
-+	iomap->offset = offset;
-+
-+	if (lcn <= LCN_DELALLOC) {
-+		if (lcn < LCN_DELALLOC) {
-+			max_clu_count =
-+				ntfs_available_clusters_count(vol, max_clu_count);
-+			if (max_clu_count < 0) {
-+				err = max_clu_count;
-+				up_write(&ni->runlist.lock);
-+				mutex_unlock(&ni->mrec_lock);
-+				return err;
-+			}
-+		}
-+
-+		iomap->type = IOMAP_DELALLOC;
-+		iomap->addr = IOMAP_NULL_ADDR;
-+
-+		if (lcn <= LCN_HOLE) {
-+			size_t new_rl_count;
-+
-+			rlc = ntfs_malloc_nofs(sizeof(struct runlist_element) * 2);
-+			if (!rlc) {
-+				up_write(&ni->runlist.lock);
-+				mutex_unlock(&ni->mrec_lock);
-+				return -ENOMEM;
-+			}
-+
-+			rlc->vcn = vcn;
-+			rlc->lcn = LCN_DELALLOC;
-+			rlc->length = max_clu_count;
-+
-+			rlc[1].vcn = vcn + max_clu_count;
-+			rlc[1].lcn = LCN_RL_NOT_MAPPED;
-+			rlc[1].length = 0;
-+
-+			rl = ntfs_runlists_merge(&ni->runlist, rlc, 0,
-+					&new_rl_count);
-+			if (IS_ERR(rl)) {
-+				ntfs_error(vol->sb, "Failed to merge runlists");
-+				up_write(&ni->runlist.lock);
-+				mutex_unlock(&ni->mrec_lock);
-+				ntfs_free(rlc);
-+				return PTR_ERR(rl);
-+			}
-+
-+			ni->runlist.rl = rl;
-+			ni->runlist.count = new_rl_count;
-+			ni->i_dealloc_clusters += max_clu_count;
-+		}
-+		up_write(&ni->runlist.lock);
-+		mutex_unlock(&ni->mrec_lock);
-+
-+		if (lcn < LCN_DELALLOC)
-+			ntfs_hold_dirty_clusters(vol, max_clu_count);
-+
-+		rl_length = NTFS_CLU_TO_B(vol, max_clu_count);
-+		if (length > rl_length - vcn_ofs)
-+			iomap->length = rl_length - vcn_ofs;
-+		else
-+			iomap->length = length;
-+
-+		iomap->flags = IOMAP_F_NEW;
-+		if (lcn <= LCN_HOLE) {
-+			loff_t end = offset + length;
-+
-+			if (vcn_ofs || ((vol->cluster_size > iomap->length) &&
-+					end < ni->initialized_size)) {
-+				loff_t z_start, z_end;
-+
-+				z_start = vcn << vol->cluster_size_bits;
-+				z_end = min_t(loff_t, z_start + vol->cluster_size,
-+					      i_size_read(inode));
-+				if (z_end > z_start)
-+					err = ntfs_zero_range(inode,
-+							      z_start,
-+							      z_end - z_start,
-+							      false);
-+			}
-+			if ((!err || err == -EPERM) &&
-+			    max_clu_count > 1 &&
-+			    (iomap->length & vol->cluster_size_mask &&
-+			     end < ni->initialized_size)) {
-+				loff_t z_start, z_end;
-+
-+				z_start = (vcn + max_clu_count - 1) <<
-+					vol->cluster_size_bits;
-+				z_end = min_t(loff_t, z_start + vol->cluster_size,
-+					      i_size_read(inode));
-+				if (z_end > z_start)
-+					err = ntfs_zero_range(inode,
-+							      z_start,
-+							      z_end - z_start,
-+							      false);
-+			}
-+
-+			if (err == -EPERM)
-+				err = 0;
-+			if (err) {
-+				ntfs_release_dirty_clusters(vol, max_clu_count);
-+				return err;
-+			}
-+		}
-+	} else {
-+		up_write(&ni->runlist.lock);
-+		mutex_unlock(&ni->mrec_lock);
-+
-+		iomap->type = IOMAP_MAPPED;
-+		iomap->addr = NTFS_CLU_TO_B(vol, lcn) + vcn_ofs;
-+
-+		rl_length = NTFS_CLU_TO_B(vol, max_clu_count);
-+		if (length > rl_length - vcn_ofs)
-+			iomap->length = rl_length - vcn_ofs;
-+		else
-+			iomap->length = length;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ntfs_write_da_iomap_begin_non_resident(struct inode *inode, loff_t offset,
-+		loff_t length, unsigned int flags, struct iomap *iomap, bool mapped)
-+{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	struct ntfs_volume *vol = ni->vol;
-+	loff_t vcn_ofs, rl_length;
-+	s64 vcn, start_lcn, lcn_count;
-+	bool balloc = false, update_mp;
-+	int err;
-+	s64 max_clu_count =
-+		NTFS_B_TO_CLU(vol, round_up(length, vol->cluster_size));
-+
-+	vcn = NTFS_B_TO_CLU(vol, offset);
-+	vcn_ofs = NTFS_B_TO_CLU_OFS(vol, offset);
-+
-+	update_mp = (flags & IOMAP_DIRECT) || mapped ||
-+		NInoAttr(ni) || ni->mft_no < FILE_first_user;
-+	down_write(&ni->runlist.lock);
-+	err = ntfs_attr_map_cluster(ni, vcn, &start_lcn, &lcn_count,
-+			max_clu_count, &balloc, update_mp,
-+			!(flags & IOMAP_DIRECT) && !mapped);
-+	up_write(&ni->runlist.lock);
-+	mutex_unlock(&ni->mrec_lock);
++	err = ntfs_make_room_for_attr(ni_mrec, (u8 *) nctx->attr,
++				le32_to_cpu(a->length));
 +	if (err) {
-+		ni->i_dealloc_clusters = 0;
++		ntfs_debug("Couldn't make space for attribute.\n");
++		unmap_mft_record(ni);
++		goto put_err_out;
++	}
++	memcpy(nctx->attr, a, le32_to_cpu(a->length));
++	nctx->attr->instance = nctx->mrec->next_attr_instance;
++	nctx->mrec->next_attr_instance =
++		cpu_to_le16((le16_to_cpu(nctx->mrec->next_attr_instance) + 1) & 0xffff);
++	ntfs_attr_record_resize(ctx->mrec, a, 0);
++	mark_mft_record_dirty(ctx->ntfs_ino);
++	mark_mft_record_dirty(ni);
++
++	/* Update attribute list. */
++	ctx->al_entry->mft_reference =
++		MK_LE_MREF(ni->mft_no, le16_to_cpu(ni_mrec->sequence_number));
++	ctx->al_entry->instance = nctx->attr->instance;
++	unmap_mft_record(ni);
++put_err_out:
++	ntfs_attr_put_search_ctx(nctx);
++	return err;
++}
++
++/**
++ * ntfs_attr_record_move_away - move away attribute record from it's mft record
++ * @ctx:	attribute search context describing the attribute record
++ * @extra:	minimum amount of free space in the new holder of record
++ */
++int ntfs_attr_record_move_away(struct ntfs_attr_search_ctx *ctx, int extra)
++{
++	struct ntfs_inode *base_ni, *ni = NULL;
++	struct mft_record *m;
++	int i, err;
++	struct super_block *sb;
++
++	if (!ctx || !ctx->attr || !ctx->ntfs_ino || extra < 0)
++		return -EINVAL;
++
++	ntfs_debug("Entering for attr 0x%x, inode %llu\n",
++			(unsigned int) le32_to_cpu(ctx->attr->type),
++			(unsigned long long)ctx->ntfs_ino->mft_no);
++
++	if (ctx->ntfs_ino->nr_extents == -1)
++		base_ni = ctx->base_ntfs_ino;
++	else
++		base_ni = ctx->ntfs_ino;
++
++	sb = ctx->ntfs_ino->vol->sb;
++	if (!NInoAttrList(base_ni)) {
++		ntfs_error(sb, "Inode %llu has no attrlist",
++				(unsigned long long)base_ni->mft_no);
++		return -EINVAL;
++	}
++
++	err = ntfs_inode_attach_all_extents(ctx->ntfs_ino);
++	if (err) {
++		ntfs_error(sb, "Couldn't attach extents, inode=%llu",
++			(unsigned long long)base_ni->mft_no);
 +		return err;
 +	}
 +
-+	iomap->bdev = inode->i_sb->s_bdev;
-+	iomap->offset = offset;
++	mutex_lock(&base_ni->extent_lock);
++	/* Walk through all extents and try to move attribute to them. */
++	for (i = 0; i < base_ni->nr_extents; i++) {
++		ni = base_ni->ext.extent_ntfs_inos[i];
 +
-+	rl_length = NTFS_CLU_TO_B(vol, lcn_count);
-+	if (length > rl_length - vcn_ofs)
-+		iomap->length = rl_length - vcn_ofs;
-+	else
-+		iomap->length = length;
-+
-+	if (start_lcn == LCN_HOLE)
-+		iomap->type = IOMAP_HOLE;
-+	else
-+		iomap->type = IOMAP_MAPPED;
-+	if (balloc == true)
-+		iomap->flags = IOMAP_F_NEW;
-+
-+	iomap->addr = NTFS_CLU_TO_B(vol, start_lcn) + vcn_ofs;
-+
-+	if (balloc == true) {
-+		if (flags & IOMAP_DIRECT || mapped == true) {
-+			loff_t end = offset + length;
-+
-+			if (vcn_ofs || ((vol->cluster_size > iomap->length) &&
-+						end < ni->initialized_size))
-+				err = ntfs_zero_range(inode,
-+						      start_lcn <<
-+						      vol->cluster_size_bits,
-+						      vol->cluster_size,
-+						      true);
-+			if (!err && lcn_count > 1 &&
-+					(iomap->length & vol->cluster_size_mask &&
-+					 end < ni->initialized_size))
-+				err = ntfs_zero_range(inode,
-+						      (start_lcn + lcn_count - 1) <<
-+						      vol->cluster_size_bits,
-+						      vol->cluster_size,
-+						      true);
-+		} else {
-+			if (lcn_count > ni->i_dealloc_clusters)
-+				ni->i_dealloc_clusters = 0;
-+			else
-+				ni->i_dealloc_clusters -= lcn_count;
++		if (ctx->ntfs_ino->mft_no == ni->mft_no)
++			continue;
++		m = map_mft_record(ni);
++		if (IS_ERR(m)) {
++			ntfs_error(sb, "Can not map mft record for mft_no %lld",
++					(unsigned long long)ni->mft_no);
++			mutex_unlock(&base_ni->extent_lock);
++			return -EIO;
 +		}
-+		if (err < 0)
-+			return err;
-+	}
++		if (le32_to_cpu(m->bytes_allocated) -
++		    le32_to_cpu(m->bytes_in_use) < le32_to_cpu(ctx->attr->length) + extra) {
++			unmap_mft_record(ni);
++			continue;
++		}
++		unmap_mft_record(ni);
 +
-+	if (mapped && iomap->offset + iomap->length >
-+			ni->initialized_size) {
-+		err = ntfs_attr_set_initialized_size(ni, iomap->offset +
-+				iomap->length);
++		/*
++		 * ntfs_attr_record_move_to can fail if extent with other lowest
++		 * s64 already present in inode we trying move record to. So,
++		 * do not return error.
++		 */
++		if (!ntfs_attr_record_move_to(ctx, ni)) {
++			mutex_unlock(&base_ni->extent_lock);
++			return 0;
++		}
 +	}
++	mutex_unlock(&base_ni->extent_lock);
++
++	/*
++	 * Failed to move attribute to one of the current extents, so allocate
++	 * new extent and move attribute to it.
++	 */
++	ni = NULL;
++	err = ntfs_mft_record_alloc(base_ni->vol, 0, &ni, base_ni, NULL);
++	if (err) {
++		ntfs_error(sb, "Couldn't allocate MFT record, err : %d", err);
++		return err;
++	}
++	unmap_mft_record(ni);
++
++	err = ntfs_attr_record_move_to(ctx, ni);
++	if (err)
++		ntfs_error(sb, "Couldn't move attribute to MFT record");
 +
 +	return err;
 +}
 +
-+static int ntfs_write_iomap_begin_resident(struct inode *inode, loff_t offset,
-+		struct iomap *iomap)
++/*
++ * If we are in the first extent, then set/clean sparse bit,
++ * update allocated and compressed size.
++ */
++static int ntfs_attr_update_meta(struct attr_record *a, struct ntfs_inode *ni,
++		struct mft_record *m, struct ntfs_attr_search_ctx *ctx)
 +{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	struct attr_record *a;
-+	struct ntfs_attr_search_ctx *ctx;
-+	u32 attr_len;
-+	int err = 0;
-+	char *kattr;
++	int sparse, err = 0;
++	struct ntfs_inode *base_ni;
++	struct super_block *sb = ni->vol->sb;
 +
-+	ctx = ntfs_attr_get_search_ctx(ni, NULL);
-+	if (!ctx) {
-+		err = -ENOMEM;
++	ntfs_debug("Entering for inode 0x%llx, attr 0x%x\n",
++			(unsigned long long)ni->mft_no, ni->type);
++
++	if (NInoAttr(ni))
++		base_ni = ni->ext.base_ntfs_ino;
++	else
++		base_ni = ni;
++
++	if (a->data.non_resident.lowest_vcn)
++		goto out;
++
++	a->data.non_resident.allocated_size = cpu_to_le64(ni->allocated_size);
++
++	sparse = ntfs_rl_sparse(ni->runlist.rl);
++	if (sparse < 0) {
++		err = -EIO;
 +		goto out;
 +	}
 +
-+	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
-+			CASE_SENSITIVE, 0, NULL, 0, ctx);
++	/* Attribute become sparse. */
++	if (sparse && !(a->flags & (ATTR_IS_SPARSE | ATTR_IS_COMPRESSED))) {
++		/*
++		 * Move attribute to another mft record, if attribute is too
++		 * small to add compressed_size field to it and we have no
++		 * free space in the current mft record.
++		 */
++		if ((le32_to_cpu(a->length) -
++		     le16_to_cpu(a->data.non_resident.mapping_pairs_offset) == 8) &&
++		    !(le32_to_cpu(m->bytes_allocated) - le32_to_cpu(m->bytes_in_use))) {
++
++			if (!NInoAttrList(base_ni)) {
++				err = ntfs_inode_add_attrlist(base_ni);
++				if (err)
++					goto out;
++				err = -EAGAIN;
++				goto out;
++			}
++			err = ntfs_attr_record_move_away(ctx, 8);
++			if (err) {
++				ntfs_error(sb, "Failed to move attribute");
++				goto out;
++			}
++
++			err = ntfs_attrlist_update(base_ni);
++			if (err)
++				goto out;
++			err = -EAGAIN;
++			goto out;
++		}
++		if (!(le32_to_cpu(a->length) -
++		    le16_to_cpu(a->data.non_resident.mapping_pairs_offset))) {
++			err = -EIO;
++			ntfs_error(sb, "Mapping pairs space is 0");
++			goto out;
++		}
++
++		NInoSetSparse(ni);
++		ni->flags |= FILE_ATTR_SPARSE_FILE;
++		a->flags |= ATTR_IS_SPARSE;
++		a->data.non_resident.compression_unit = 0;
++
++		memmove((u8 *)a + le16_to_cpu(a->name_offset) + 8,
++				(u8 *)a + le16_to_cpu(a->name_offset),
++				a->name_length * sizeof(__le16));
++
++		a->name_offset = cpu_to_le16(le16_to_cpu(a->name_offset) + 8);
++
++		a->data.non_resident.mapping_pairs_offset =
++			cpu_to_le16(le16_to_cpu(a->data.non_resident.mapping_pairs_offset) + 8);
++	}
++
++	/* Attribute no longer sparse. */
++	if (!sparse && (a->flags & ATTR_IS_SPARSE) &&
++	    !(a->flags & ATTR_IS_COMPRESSED)) {
++		NInoClearSparse(ni);
++		ni->flags &= ~FILE_ATTR_SPARSE_FILE;
++		a->flags &= ~ATTR_IS_SPARSE;
++		a->data.non_resident.compression_unit = 0;
++
++		memmove((u8 *)a + le16_to_cpu(a->name_offset) - 8,
++				(u8 *)a + le16_to_cpu(a->name_offset),
++				a->name_length * sizeof(__le16));
++
++		if (le16_to_cpu(a->name_offset) >= 8)
++			a->name_offset = cpu_to_le16(le16_to_cpu(a->name_offset) - 8);
++
++		a->data.non_resident.mapping_pairs_offset =
++			cpu_to_le16(le16_to_cpu(a->data.non_resident.mapping_pairs_offset) - 8);
++	}
++
++	/* Update compressed size if required. */
++	if (NInoFullyMapped(ni) && (sparse || NInoCompressed(ni))) {
++		s64 new_compr_size;
++
++		new_compr_size = ntfs_rl_get_compressed_size(ni->vol, ni->runlist.rl);
++		if (new_compr_size < 0) {
++			err = new_compr_size;
++			goto out;
++		}
++
++		ni->itype.compressed.size = new_compr_size;
++		a->data.non_resident.compressed_size = cpu_to_le64(new_compr_size);
++	}
++
++	if (NInoSparse(ni) || NInoCompressed(ni))
++		VFS_I(base_ni)->i_blocks = ni->itype.compressed.size >> 9;
++	else
++		VFS_I(base_ni)->i_blocks = ni->allocated_size >> 9;
++	/*
++	 * Set FILE_NAME dirty flag, to update sparse bit and
++	 * allocated size in the index.
++	 */
++	if (ni->type == AT_DATA && ni->name == AT_UNNAMED)
++		NInoSetFileNameDirty(ni);
++out:
++	return err;
++}
++
++#define NTFS_VCN_DELETE_MARK -2
++/**
++ * ntfs_attr_update_mapping_pairs - update mapping pairs for ntfs attribute
++ * @ni:		non-resident ntfs inode for which we need update
++ * @from_vcn:	update runlist starting this VCN
++ *
++ * Build mapping pairs from @na->rl and write them to the disk. Also, this
++ * function updates sparse bit, allocated and compressed size (allocates/frees
++ * space for this field if required).
++ *
++ * @na->allocated_size should be set to correct value for the new runlist before
++ * call to this function. Vice-versa @na->compressed_size will be calculated and
++ * set to correct value during this function.
++ */
++int ntfs_attr_update_mapping_pairs(struct ntfs_inode *ni, s64 from_vcn)
++{
++	struct ntfs_attr_search_ctx *ctx;
++	struct ntfs_inode *base_ni;
++	struct mft_record *m;
++	struct attr_record *a;
++	s64 stop_vcn;
++	int err = 0, mp_size, cur_max_mp_size, exp_max_mp_size;
++	bool finished_build;
++	bool first_updated = false;
++	struct super_block *sb;
++	struct runlist_element *start_rl;
++	unsigned int de_cluster_count = 0;
++
++retry:
++	if (!ni || !ni->runlist.rl)
++		return -EINVAL;
++
++	ntfs_debug("Entering for inode %llu, attr 0x%x\n",
++			(unsigned long long)ni->mft_no, ni->type);
++
++	sb = ni->vol->sb;
++	if (!NInoNonResident(ni)) {
++		ntfs_error(sb, "%s: resident attribute", __func__);
++		return -EINVAL;
++	}
++
++	if (ni->nr_extents == -1)
++		base_ni = ni->ext.base_ntfs_ino;
++	else
++		base_ni = ni;
++
++	ctx = ntfs_attr_get_search_ctx(base_ni, NULL);
++	if (!ctx) {
++		ntfs_error(sb, "%s: Failed to get search context", __func__);
++		return -ENOMEM;
++	}
++
++	/* Fill attribute records with new mapping pairs. */
++	stop_vcn = 0;
++	finished_build = false;
++	start_rl = ni->runlist.rl;
++	while (!(err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
++				CASE_SENSITIVE, from_vcn, NULL, 0, ctx))) {
++		unsigned int de_cnt = 0;
++
++		a = ctx->attr;
++		m = ctx->mrec;
++		if (!a->data.non_resident.lowest_vcn)
++			first_updated = true;
++
++		/*
++		 * If runlist is updating not from the beginning, then set
++		 * @stop_vcn properly, i.e. to the lowest vcn of record that
++		 * contain @from_vcn. Also we do not need @from_vcn anymore,
++		 * set it to 0 to make ntfs_attr_lookup enumerate attributes.
++		 */
++		if (from_vcn) {
++			s64 first_lcn;
++
++			stop_vcn = le64_to_cpu(a->data.non_resident.lowest_vcn);
++			from_vcn = 0;
++			/*
++			 * Check whether the first run we need to update is
++			 * the last run in runlist, if so, then deallocate
++			 * all attrubute extents starting this one.
++			 */
++			first_lcn = ntfs_rl_vcn_to_lcn(ni->runlist.rl, stop_vcn);
++			if (first_lcn == LCN_EINVAL) {
++				err = -EIO;
++				ntfs_error(sb, "Bad runlist");
++				goto put_err_out;
++			}
++			if (first_lcn == LCN_ENOENT ||
++			    first_lcn == LCN_RL_NOT_MAPPED)
++				finished_build = true;
++		}
++
++		/*
++		 * Check whether we finished mapping pairs build, if so mark
++		 * extent as need to delete (by setting highest vcn to
++		 * NTFS_VCN_DELETE_MARK (-2), we shall check it later and
++		 * delete extent) and continue search.
++		 */
++		if (finished_build) {
++			ntfs_debug("Mark attr 0x%x for delete in inode 0x%lx.\n",
++				(unsigned int)le32_to_cpu(a->type), ctx->ntfs_ino->mft_no);
++			a->data.non_resident.highest_vcn = cpu_to_le64(NTFS_VCN_DELETE_MARK);
++			mark_mft_record_dirty(ctx->ntfs_ino);
++			continue;
++		}
++
++		err = ntfs_attr_update_meta(a, ni, m, ctx);
++		if (err < 0) {
++			if (err == -EAGAIN) {
++				ntfs_attr_put_search_ctx(ctx);
++				goto retry;
++			}
++			goto put_err_out;
++		}
++
++		/*
++		 * Determine maximum possible length of mapping pairs,
++		 * if we shall *not* expand space for mapping pairs.
++		 */
++		cur_max_mp_size = le32_to_cpu(a->length) -
++			le16_to_cpu(a->data.non_resident.mapping_pairs_offset);
++		/*
++		 * Determine maximum possible length of mapping pairs in the
++		 * current mft record, if we shall expand space for mapping
++		 * pairs.
++		 */
++		exp_max_mp_size = le32_to_cpu(m->bytes_allocated) -
++			le32_to_cpu(m->bytes_in_use) + cur_max_mp_size;
++
++		/* Get the size for the rest of mapping pairs array. */
++		mp_size = ntfs_get_size_for_mapping_pairs(ni->vol, start_rl,
++				stop_vcn, -1, exp_max_mp_size);
++		if (mp_size <= 0) {
++			err = mp_size;
++			ntfs_error(sb, "%s: get MP size failed", __func__);
++			goto put_err_out;
++		}
++		/* Test mapping pairs for fitting in the current mft record. */
++		if (mp_size > exp_max_mp_size) {
++			/*
++			 * Mapping pairs of $ATTRIBUTE_LIST attribute must fit
++			 * in the base mft record. Try to move out other
++			 * attributes and try again.
++			 */
++			if (ni->type == AT_ATTRIBUTE_LIST) {
++				ntfs_attr_put_search_ctx(ctx);
++				if (ntfs_inode_free_space(base_ni, mp_size -
++							cur_max_mp_size)) {
++					ntfs_debug("Attribute list is too big. Defragment the volume\n");
++					return -ENOSPC;
++				}
++				if (ntfs_attrlist_update(base_ni))
++					return -EIO;
++				goto retry;
++			}
++
++			/* Add attribute list if it isn't present, and retry. */
++			if (!NInoAttrList(base_ni)) {
++				ntfs_attr_put_search_ctx(ctx);
++				if (ntfs_inode_add_attrlist(base_ni)) {
++					ntfs_error(sb, "Can not add attrlist");
++					return -EIO;
++				}
++				goto retry;
++			}
++
++			/*
++			 * Set mapping pairs size to maximum possible for this
++			 * mft record. We shall write the rest of mapping pairs
++			 * to another MFT records.
++			 */
++			mp_size = exp_max_mp_size;
++		}
++
++		/* Change space for mapping pairs if we need it. */
++		if (((mp_size + 7) & ~7) != cur_max_mp_size) {
++			if (ntfs_attr_record_resize(m, a,
++					le16_to_cpu(a->data.non_resident.mapping_pairs_offset) +
++						mp_size)) {
++				err = -EIO;
++				ntfs_error(sb, "Failed to resize attribute");
++				goto put_err_out;
++			}
++		}
++
++		/* Update lowest vcn. */
++		a->data.non_resident.lowest_vcn = cpu_to_le64(stop_vcn);
++		mark_mft_record_dirty(ctx->ntfs_ino);
++		if ((ctx->ntfs_ino->nr_extents == -1 || NInoAttrList(ctx->ntfs_ino)) &&
++		    ctx->attr->type != AT_ATTRIBUTE_LIST) {
++			ctx->al_entry->lowest_vcn = cpu_to_le64(stop_vcn);
++			err = ntfs_attrlist_update(base_ni);
++			if (err)
++				goto put_err_out;
++		}
++
++		/*
++		 * Generate the new mapping pairs array directly into the
++		 * correct destination, i.e. the attribute record itself.
++		 */
++		err = ntfs_mapping_pairs_build(ni->vol,
++				(u8 *)a + le16_to_cpu(a->data.non_resident.mapping_pairs_offset),
++				mp_size, start_rl, stop_vcn, -1, &stop_vcn, &start_rl, &de_cnt);
++		if (!err)
++			finished_build = true;
++		if (!finished_build && err != -ENOSPC) {
++			ntfs_error(sb, "Failed to build mapping pairs");
++			goto put_err_out;
++		}
++		a->data.non_resident.highest_vcn = cpu_to_le64(stop_vcn - 1);
++		mark_mft_record_dirty(ctx->ntfs_ino);
++		de_cluster_count += de_cnt;
++	}
++
++	/* Check whether error occurred. */
++	if (err && err != -ENOENT) {
++		ntfs_error(sb, "%s: Attribute lookup failed", __func__);
++		goto put_err_out;
++	}
++
++	/*
++	 * If the base extent was skipped in the above process,
++	 * we still may have to update the sizes.
++	 */
++	if (!first_updated) {
++		ntfs_attr_reinit_search_ctx(ctx);
++		err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
++				CASE_SENSITIVE, 0, NULL, 0, ctx);
++		if (!err) {
++			a = ctx->attr;
++			a->data.non_resident.allocated_size = cpu_to_le64(ni->allocated_size);
++			if (NInoCompressed(ni) || NInoSparse(ni))
++				a->data.non_resident.compressed_size =
++					cpu_to_le64(ni->itype.compressed.size);
++			/* Updating sizes taints the extent holding the attr */
++			if (ni->type == AT_DATA && ni->name == AT_UNNAMED)
++				NInoSetFileNameDirty(ni);
++			mark_mft_record_dirty(ctx->ntfs_ino);
++		} else {
++			ntfs_error(sb, "Failed to update sizes in base extent\n");
++			goto put_err_out;
++		}
++	}
++
++	/* Deallocate not used attribute extents and return with success. */
++	if (finished_build) {
++		ntfs_attr_reinit_search_ctx(ctx);
++		ntfs_debug("Deallocate marked extents.\n");
++		while (!(err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
++				CASE_SENSITIVE, 0, NULL, 0, ctx))) {
++			if (le64_to_cpu(ctx->attr->data.non_resident.highest_vcn) !=
++					NTFS_VCN_DELETE_MARK)
++				continue;
++			/* Remove unused attribute record. */
++			err = ntfs_attr_record_rm(ctx);
++			if (err) {
++				ntfs_error(sb, "Could not remove unused attr");
++				goto put_err_out;
++			}
++			ntfs_attr_reinit_search_ctx(ctx);
++		}
++		if (err && err != -ENOENT) {
++			ntfs_error(sb, "%s: Attr lookup failed", __func__);
++			goto put_err_out;
++		}
++		ntfs_debug("Deallocate done.\n");
++		ntfs_attr_put_search_ctx(ctx);
++		goto out;
++	}
++	ntfs_attr_put_search_ctx(ctx);
++	ctx = NULL;
++
++	/* Allocate new MFT records for the rest of mapping pairs. */
++	while (1) {
++		struct ntfs_inode *ext_ni = NULL;
++		unsigned int de_cnt = 0;
++
++		/* Allocate new mft record. */
++		err = ntfs_mft_record_alloc(ni->vol, 0, &ext_ni, base_ni, NULL);
++		if (err) {
++			ntfs_error(sb, "Failed to allocate extent record");
++			goto put_err_out;
++		}
++		unmap_mft_record(ext_ni);
++
++		m = map_mft_record(ext_ni);
++		if (IS_ERR(m)) {
++			ntfs_error(sb, "Could not map new MFT record");
++			if (ntfs_mft_record_free(ni->vol, ext_ni))
++				ntfs_error(sb, "Could not free MFT record");
++			ntfs_inode_close(ext_ni);
++			err = -ENOMEM;
++			ext_ni = NULL;
++			goto put_err_out;
++		}
++		/*
++		 * If mapping size exceed available space, set them to
++		 * possible maximum.
++		 */
++		cur_max_mp_size = le32_to_cpu(m->bytes_allocated) -
++			le32_to_cpu(m->bytes_in_use) -
++			(sizeof(struct attr_record) +
++			 ((NInoCompressed(ni) || NInoSparse(ni)) ?
++			  sizeof(a->data.non_resident.compressed_size) : 0)) -
++			((sizeof(__le16) * ni->name_len + 7) & ~7);
++
++		/* Calculate size of rest mapping pairs. */
++		mp_size = ntfs_get_size_for_mapping_pairs(ni->vol,
++				start_rl, stop_vcn, -1, cur_max_mp_size);
++		if (mp_size <= 0) {
++			unmap_mft_record(ext_ni);
++			ntfs_inode_close(ext_ni);
++			err = mp_size;
++			ntfs_error(sb, "%s: get mp size failed", __func__);
++			goto put_err_out;
++		}
++
++		if (mp_size > cur_max_mp_size)
++			mp_size = cur_max_mp_size;
++		/* Add attribute extent to new record. */
++		err = ntfs_non_resident_attr_record_add(ext_ni, ni->type,
++				ni->name, ni->name_len, stop_vcn, mp_size, 0);
++		if (err < 0) {
++			ntfs_error(sb, "Could not add attribute extent");
++			unmap_mft_record(ext_ni);
++			if (ntfs_mft_record_free(ni->vol, ext_ni))
++				ntfs_error(sb, "Could not free MFT record");
++			ntfs_inode_close(ext_ni);
++			goto put_err_out;
++		}
++		a = (struct attr_record *)((u8 *)m + err);
++
++		err = ntfs_mapping_pairs_build(ni->vol, (u8 *)a +
++				le16_to_cpu(a->data.non_resident.mapping_pairs_offset),
++				mp_size, start_rl, stop_vcn, -1, &stop_vcn, &start_rl,
++				&de_cnt);
++		if (err < 0 && err != -ENOSPC) {
++			ntfs_error(sb, "Failed to build MP");
++			unmap_mft_record(ext_ni);
++			if (ntfs_mft_record_free(ni->vol, ext_ni))
++				ntfs_error(sb, "Couldn't free MFT record");
++			goto put_err_out;
++		}
++		a->data.non_resident.highest_vcn = cpu_to_le64(stop_vcn - 1);
++		mark_mft_record_dirty(ext_ni);
++		unmap_mft_record(ext_ni);
++
++		de_cluster_count += de_cnt;
++		/* All mapping pairs has been written. */
++		if (!err)
++			break;
++	}
++out:
++	if (from_vcn == 0)
++		ni->i_dealloc_clusters = de_cluster_count;
++	return 0;
++
++put_err_out:
++	if (ctx)
++		ntfs_attr_put_search_ctx(ctx);
++	return err;
++}
++
++/**
++ * ntfs_attr_make_resident - convert a non-resident to a resident attribute
++ * @ni:		open ntfs attribute to make resident
++ * @ctx:	ntfs search context describing the attribute
++ *
++ * Convert a non-resident ntfs attribute to a resident one.
++ */
++static int ntfs_attr_make_resident(struct ntfs_inode *ni, struct ntfs_attr_search_ctx *ctx)
++{
++	struct ntfs_volume *vol = ni->vol;
++	struct super_block *sb = vol->sb;
++	struct attr_record *a = ctx->attr;
++	int name_ofs, val_ofs, err;
++	s64 arec_size;
++
++	ntfs_debug("Entering for inode 0x%llx, attr 0x%x.\n",
++			(unsigned long long)ni->mft_no, ni->type);
++
++	/* Should be called for the first extent of the attribute. */
++	if (le64_to_cpu(a->data.non_resident.lowest_vcn)) {
++		ntfs_debug("Eeek!  Should be called for the first extent of the attribute.  Aborting...\n");
++		return -EINVAL;
++	}
++
++	/* Some preliminary sanity checking. */
++	if (!NInoNonResident(ni)) {
++		ntfs_debug("Eeek!  Trying to make resident attribute resident. Aborting...\n");
++		return -EINVAL;
++	}
++
++	/* Make sure this is not $MFT/$BITMAP or Windows will not boot! */
++	if (ni->type == AT_BITMAP && ni->mft_no == FILE_MFT)
++		return -EPERM;
++
++	/* Check that the attribute is allowed to be resident. */
++	err = ntfs_attr_can_be_resident(vol, ni->type);
++	if (err)
++		return err;
++
++	if (NInoCompressed(ni) || NInoEncrypted(ni)) {
++		ntfs_debug("Making compressed or encrypted files resident is not implemented yet.\n");
++		return -EOPNOTSUPP;
++	}
++
++	/* Work out offsets into and size of the resident attribute. */
++	name_ofs = 24; /* = sizeof(resident_struct attr_record); */
++	val_ofs = (name_ofs + a->name_length * sizeof(__le16) + 7) & ~7;
++	arec_size = (val_ofs + ni->data_size + 7) & ~7;
++
++	/* Sanity check the size before we start modifying the attribute. */
++	if (le32_to_cpu(ctx->mrec->bytes_in_use) - le32_to_cpu(a->length) +
++	    arec_size > le32_to_cpu(ctx->mrec->bytes_allocated)) {
++		ntfs_debug("Not enough space to make attribute resident\n");
++		return -ENOSPC;
++	}
++
++	/* Read and cache the whole runlist if not already done. */
++	err = ntfs_attr_map_whole_runlist(ni);
++	if (err)
++		return err;
++
++	/* Move the attribute name if it exists and update the offset. */
++	if (a->name_length) {
++		memmove((u8 *)a + name_ofs, (u8 *)a + le16_to_cpu(a->name_offset),
++				a->name_length * sizeof(__le16));
++	}
++	a->name_offset = cpu_to_le16(name_ofs);
++
++	/* Resize the resident part of the attribute record. */
++	if (ntfs_attr_record_resize(ctx->mrec, a, arec_size) < 0) {
++		/*
++		 * Bug, because ntfs_attr_record_resize should not fail (we
++		 * already checked that attribute fits MFT record).
++		 */
++		ntfs_error(ctx->ntfs_ino->vol->sb, "BUG! Failed to resize attribute record. ");
++		return -EIO;
++	}
++
++	/* Convert the attribute record to describe a resident attribute. */
++	a->non_resident = 0;
++	a->flags = 0;
++	a->data.resident.value_length = cpu_to_le32(ni->data_size);
++	a->data.resident.value_offset = cpu_to_le16(val_ofs);
++	/*
++	 * File names cannot be non-resident so we would never see this here
++	 * but at least it serves as a reminder that there may be attributes
++	 * for which we do need to set this flag. (AIA)
++	 */
++	if (a->type == AT_FILE_NAME)
++		a->data.resident.flags = RESIDENT_ATTR_IS_INDEXED;
++	else
++		a->data.resident.flags = 0;
++	a->data.resident.reserved = 0;
++
++	/*
++	 * Deallocate clusters from the runlist.
++	 *
++	 * NOTE: We can use ntfs_cluster_free() because we have already mapped
++	 * the whole run list and thus it doesn't matter that the attribute
++	 * record is in a transiently corrupted state at this moment in time.
++	 */
++	err = ntfs_cluster_free(ni, 0, -1, ctx);
++	if (err) {
++		ntfs_error(sb, "Eeek! Failed to release allocated clusters");
++		ntfs_debug("Ignoring error and leaving behind wasted clusters.\n");
++	}
++
++	/* Throw away the now unused runlist. */
++	ntfs_free(ni->runlist.rl);
++	ni->runlist.rl = NULL;
++	ni->runlist.count = 0;
++	/* Update in-memory struct ntfs_attr. */
++	NInoClearNonResident(ni);
++	NInoClearCompressed(ni);
++	ni->flags &= ~FILE_ATTR_COMPRESSED;
++	NInoClearSparse(ni);
++	ni->flags &= ~FILE_ATTR_SPARSE_FILE;
++	NInoClearEncrypted(ni);
++	ni->flags &= ~FILE_ATTR_ENCRYPTED;
++	ni->initialized_size = ni->data_size;
++	ni->allocated_size = ni->itype.compressed.size = (ni->data_size + 7) & ~7;
++	ni->itype.compressed.block_size = 0;
++	ni->itype.compressed.block_size_bits = ni->itype.compressed.block_clusters = 0;
++	return 0;
++}
++
++/**
++ * ntfs_non_resident_attr_shrink - shrink a non-resident, open ntfs attribute
++ * @ni:		non-resident ntfs attribute to shrink
++ * @newsize:	new size (in bytes) to which to shrink the attribute
++ *
++ * Reduce the size of a non-resident, open ntfs attribute @na to @newsize bytes.
++ */
++static int ntfs_non_resident_attr_shrink(struct ntfs_inode *ni, const s64 newsize)
++{
++	struct ntfs_volume *vol;
++	struct ntfs_attr_search_ctx *ctx;
++	s64 first_free_vcn;
++	s64 nr_freed_clusters;
++	int err;
++	struct ntfs_inode *base_ni;
++
++	ntfs_debug("Inode 0x%llx attr 0x%x new size %lld\n",
++		(unsigned long long)ni->mft_no, ni->type, (long long)newsize);
++
++	vol = ni->vol;
++
++	if (NInoAttr(ni))
++		base_ni = ni->ext.base_ntfs_ino;
++	else
++		base_ni = ni;
++
++	/*
++	 * Check the attribute type and the corresponding minimum size
++	 * against @newsize and fail if @newsize is too small.
++	 */
++	err = ntfs_attr_size_bounds_check(vol, ni->type, newsize);
++	if (err) {
++		if (err == -ERANGE)
++			ntfs_debug("Eeek! Size bounds check failed. Aborting...\n");
++		else if (err == -ENOENT)
++			err = -EIO;
++		return err;
++	}
++
++	/* The first cluster outside the new allocation. */
++	if (NInoCompressed(ni))
++		/*
++		 * For compressed files we must keep full compressions blocks,
++		 * but currently we do not decompress/recompress the last
++		 * block to truncate the data, so we may leave more allocated
++		 * clusters than really needed.
++		 */
++		first_free_vcn = NTFS_B_TO_CLU(vol,
++				((newsize - 1) | (ni->itype.compressed.block_size - 1)) + 1);
++	else
++		first_free_vcn = NTFS_B_TO_CLU(vol, newsize + vol->cluster_size - 1);
++
++	if (first_free_vcn < 0)
++		return -EINVAL;
++	/*
++	 * Compare the new allocation with the old one and only deallocate
++	 * clusters if there is a change.
++	 */
++	if (NTFS_B_TO_CLU(vol, ni->allocated_size) != first_free_vcn) {
++		struct ntfs_attr_search_ctx *ctx;
++
++		err = ntfs_attr_map_whole_runlist(ni);
++		if (err) {
++			ntfs_debug("Eeek! ntfs_attr_map_whole_runlist failed.\n");
++			return err;
++		}
++
++		ctx = ntfs_attr_get_search_ctx(ni, NULL);
++		if (!ctx) {
++			ntfs_error(vol->sb, "%s: Failed to get search context", __func__);
++			return -ENOMEM;
++		}
++
++		/* Deallocate all clusters starting with the first free one. */
++		nr_freed_clusters = ntfs_cluster_free(ni, first_free_vcn, -1, ctx);
++		if (nr_freed_clusters < 0) {
++			ntfs_debug("Eeek! Freeing of clusters failed. Aborting...\n");
++			ntfs_attr_put_search_ctx(ctx);
++			return (int)nr_freed_clusters;
++		}
++		ntfs_attr_put_search_ctx(ctx);
++
++		/* Truncate the runlist itself. */
++		if (ntfs_rl_truncate_nolock(vol, &ni->runlist, first_free_vcn)) {
++			/*
++			 * Failed to truncate the runlist, so just throw it
++			 * away, it will be mapped afresh on next use.
++			 */
++			ntfs_free(ni->runlist.rl);
++			ni->runlist.rl = NULL;
++			ntfs_error(vol->sb, "Eeek! Run list truncation failed.\n");
++			return -EIO;
++		}
++
++		/* Prepare to mapping pairs update. */
++		ni->allocated_size = NTFS_CLU_TO_B(vol, first_free_vcn);
++
++		if (NInoSparse(ni) || NInoCompressed(ni)) {
++			if (nr_freed_clusters) {
++				ni->itype.compressed.size -=
++					NTFS_CLU_TO_B(vol, nr_freed_clusters);
++				VFS_I(base_ni)->i_blocks = ni->itype.compressed.size >> 9;
++			}
++		} else
++			VFS_I(base_ni)->i_blocks = ni->allocated_size >> 9;
++
++		/* Write mapping pairs for new runlist. */
++		err = ntfs_attr_update_mapping_pairs(ni, 0 /*first_free_vcn*/);
++		if (err) {
++			ntfs_debug("Eeek! Mapping pairs update failed. Leaving inconstant metadata. Run chkdsk.\n");
++			return err;
++		}
++	}
++
++	/* Get the first attribute record. */
++	ctx = ntfs_attr_get_search_ctx(base_ni, NULL);
++	if (!ctx) {
++		ntfs_error(vol->sb, "%s: Failed to get search context", __func__);
++		return -ENOMEM;
++	}
++
++	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len, CASE_SENSITIVE,
++				0, NULL, 0, ctx);
 +	if (err) {
 +		if (err == -ENOENT)
++			err = -EIO;
++		ntfs_debug("Eeek! Lookup of first attribute extent failed. Leaving inconstant metadata.\n");
++		goto put_err_out;
++	}
++
++	/* Update data and initialized size. */
++	ni->data_size = newsize;
++	ctx->attr->data.non_resident.data_size = cpu_to_le64(newsize);
++	if (newsize < ni->initialized_size) {
++		ni->initialized_size = newsize;
++		ctx->attr->data.non_resident.initialized_size = cpu_to_le64(newsize);
++	}
++	/* Update data size in the index. */
++	if (ni->type == AT_DATA && ni->name == AT_UNNAMED)
++		NInoSetFileNameDirty(ni);
++
++	/* If the attribute now has zero size, make it resident. */
++	if (!newsize && !NInoEncrypted(ni) && !NInoCompressed(ni)) {
++		err = ntfs_attr_make_resident(ni, ctx);
++		if (err) {
++			/* If couldn't make resident, just continue. */
++			if (err != -EPERM)
++				ntfs_error(ni->vol->sb,
++					"Failed to make attribute resident. Leaving as is...\n");
++		}
++	}
++
++	/* Set the inode dirty so it is written out later. */
++	mark_mft_record_dirty(ctx->ntfs_ino);
++	/* Done! */
++	ntfs_attr_put_search_ctx(ctx);
++	return 0;
++put_err_out:
++	ntfs_attr_put_search_ctx(ctx);
++	return err;
++}
++
++/**
++ * ntfs_non_resident_attr_expand - expand a non-resident, open ntfs attribute
++ * @ni:			non-resident ntfs attribute to expand
++ * @prealloc_size:	preallocation size (in bytes) to which to expand the attribute
++ * @newsize:		new size (in bytes) to which to expand the attribute
++ *
++ * Expand the size of a non-resident, open ntfs attribute @na to @newsize bytes,
++ * by allocating new clusters.
++ */
++static int ntfs_non_resident_attr_expand(struct ntfs_inode *ni, const s64 newsize,
++		const s64 prealloc_size, unsigned int holes, bool need_lock)
++{
++	s64 lcn_seek_from;
++	s64 first_free_vcn;
++	struct ntfs_volume *vol;
++	struct ntfs_attr_search_ctx *ctx = NULL;
++	struct runlist_element *rl, *rln;
++	s64 org_alloc_size, org_compressed_size;
++	int err, err2;
++	struct ntfs_inode *base_ni;
++	struct super_block *sb = ni->vol->sb;
++	size_t new_rl_count;
++
++	ntfs_debug("Inode 0x%llx, attr 0x%x, new size %lld old size %lld\n",
++			(unsigned long long)ni->mft_no, ni->type,
++			(long long)newsize, (long long)ni->data_size);
++
++	vol = ni->vol;
++
++	if (NInoAttr(ni))
++		base_ni = ni->ext.base_ntfs_ino;
++	else
++		base_ni = ni;
++
++	/*
++	 * Check the attribute type and the corresponding maximum size
++	 * against @newsize and fail if @newsize is too big.
++	 */
++	err = ntfs_attr_size_bounds_check(vol, ni->type, newsize);
++	if (err	< 0) {
++		ntfs_error(sb, "%s: bounds check failed", __func__);
++		return err;
++	}
++
++	/* Save for future use. */
++	org_alloc_size = ni->allocated_size;
++	org_compressed_size = ni->itype.compressed.size;
++
++	/* The first cluster outside the new allocation. */
++	if (prealloc_size)
++		first_free_vcn = NTFS_B_TO_CLU(vol, prealloc_size + vol->cluster_size - 1);
++	else
++		first_free_vcn = NTFS_B_TO_CLU(vol, newsize + vol->cluster_size - 1);
++	if (first_free_vcn < 0)
++		return -EFBIG;
++
++	/*
++	 * Compare the new allocation with the old one and only allocate
++	 * clusters if there is a change.
++	 */
++	if (NTFS_B_TO_CLU(vol, ni->allocated_size) < first_free_vcn) {
++		err = ntfs_attr_map_whole_runlist(ni);
++		if (err) {
++			ntfs_error(sb, "ntfs_attr_map_whole_runlist failed");
++			return err;
++		}
++
++		/*
++		 * If we extend $DATA attribute on NTFS 3+ volume, we can add
++		 * sparse runs instead of real allocation of clusters.
++		 */
++		if ((ni->type == AT_DATA && (vol->major_ver >= 3 || !NInoSparseDisabled(ni))) &&
++		    (holes != HOLES_NO)) {
++			if (NInoCompressed(ni)) {
++				int last = 0, i = 0;
++				s64 alloc_size;
++				u64 more_entries = round_up(first_free_vcn -
++						 NTFS_B_TO_CLU(vol, ni->allocated_size),
++						 ni->itype.compressed.block_clusters);
++
++				do_div(more_entries, ni->itype.compressed.block_clusters);
++
++				while (ni->runlist.rl[last].length)
++					last++;
++
++				rl = ntfs_rl_realloc(ni->runlist.rl, last + 1,
++						last + more_entries + 1);
++				if (IS_ERR(rl)) {
++					err = -ENOMEM;
++					goto put_err_out;
++				}
++
++				alloc_size = ni->allocated_size;
++				while (i++ < more_entries) {
++					rl[last].vcn = NTFS_B_TO_CLU(vol,
++							round_up(alloc_size, vol->cluster_size));
++					rl[last].length = ni->itype.compressed.block_clusters -
++						(rl[last].vcn &
++						 (ni->itype.compressed.block_clusters - 1));
++					rl[last].lcn = LCN_HOLE;
++					last++;
++					alloc_size += ni->itype.compressed.block_size;
++				}
++
++				rl[last].vcn = first_free_vcn;
++				rl[last].lcn = LCN_ENOENT;
++				rl[last].length = 0;
++
++				ni->runlist.rl = rl;
++				ni->runlist.count += more_entries;
++			} else {
++				rl = ntfs_malloc_nofs(sizeof(struct runlist_element) * 2);
++				if (!rl) {
++					err = -ENOMEM;
++					goto put_err_out;
++				}
++
++				rl[0].vcn = NTFS_B_TO_CLU(vol, ni->allocated_size);
++				rl[0].lcn = LCN_HOLE;
++				rl[0].length = first_free_vcn -
++					NTFS_B_TO_CLU(vol, ni->allocated_size);
++				rl[1].vcn = first_free_vcn;
++				rl[1].lcn = LCN_ENOENT;
++				rl[1].length = 0;
++			}
++		} else {
++			/*
++			 * Determine first after last LCN of attribute.
++			 * We will start seek clusters from this LCN to avoid
++			 * fragmentation.  If there are no valid LCNs in the
++			 * attribute let the cluster allocator choose the
++			 * starting LCN.
++			 */
++			lcn_seek_from = -1;
++			if (ni->runlist.rl->length) {
++				/* Seek to the last run list element. */
++				for (rl = ni->runlist.rl; (rl + 1)->length; rl++)
++					;
++				/*
++				 * If the last LCN is a hole or similar seek
++				 * back to last valid LCN.
++				 */
++				while (rl->lcn < 0 && rl != ni->runlist.rl)
++					rl--;
++				/*
++				 * Only set lcn_seek_from it the LCN is valid.
++				 */
++				if (rl->lcn >= 0)
++					lcn_seek_from = rl->lcn + rl->length;
++			}
++
++			rl = ntfs_cluster_alloc(vol, NTFS_B_TO_CLU(vol, ni->allocated_size),
++					first_free_vcn - NTFS_B_TO_CLU(vol, ni->allocated_size),
++					lcn_seek_from, DATA_ZONE, false, false, false);
++			if (IS_ERR(rl)) {
++				ntfs_debug("Cluster allocation failed (%lld)",
++						(long long)first_free_vcn -
++						NTFS_B_TO_CLU(vol, ni->allocated_size));
++				return PTR_ERR(rl);
++			}
++		}
++
++		if (!NInoCompressed(ni)) {
++			/* Append new clusters to attribute runlist. */
++			rln = ntfs_runlists_merge(&ni->runlist, rl, 0, &new_rl_count);
++			if (IS_ERR(rln)) {
++				/* Failed, free just allocated clusters. */
++				ntfs_error(sb, "Run list merge failed");
++				ntfs_cluster_free_from_rl(vol, rl);
++				ntfs_free(rl);
++				return -EIO;
++			}
++			ni->runlist.rl = rln;
++			ni->runlist.count = new_rl_count;
++		}
++
++		/* Prepare to mapping pairs update. */
++		ni->allocated_size = NTFS_CLU_TO_B(vol, first_free_vcn);
++		err = ntfs_attr_update_mapping_pairs(ni, 0);
++		if (err) {
++			ntfs_debug("Mapping pairs update failed");
++			goto rollback;
++		}
++	}
++
++	ctx = ntfs_attr_get_search_ctx(base_ni, NULL);
++	if (!ctx) {
++		err = -ENOMEM;
++		if (ni->allocated_size == org_alloc_size)
++			return err;
++		goto rollback;
++	}
++
++	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len, CASE_SENSITIVE,
++			       0, NULL, 0, ctx);
++	if (err) {
++		if (err == -ENOENT)
++			err = -EIO;
++		if (ni->allocated_size != org_alloc_size)
++			goto rollback;
++		goto put_err_out;
++	}
++
++	/* Update data size. */
++	ni->data_size = newsize;
++	ctx->attr->data.non_resident.data_size = cpu_to_le64(newsize);
++	/* Update data size in the index. */
++	if (ni->type == AT_DATA && ni->name == AT_UNNAMED)
++		NInoSetFileNameDirty(ni);
++	/* Set the inode dirty so it is written out later. */
++	mark_mft_record_dirty(ctx->ntfs_ino);
++	/* Done! */
++	ntfs_attr_put_search_ctx(ctx);
++	return 0;
++rollback:
++	/* Free allocated clusters. */
++	err2 = ntfs_cluster_free(ni, NTFS_B_TO_CLU(vol, org_alloc_size),
++				-1, ctx);
++	if (err2)
++		ntfs_debug("Leaking clusters");
++
++	/* Now, truncate the runlist itself. */
++	if (need_lock)
++		down_write(&ni->runlist.lock);
++	err2 = ntfs_rl_truncate_nolock(vol, &ni->runlist, NTFS_B_TO_CLU(vol, org_alloc_size));
++	if (need_lock)
++		up_write(&ni->runlist.lock);
++	if (err2) {
++		/*
++		 * Failed to truncate the runlist, so just throw it away, it
++		 * will be mapped afresh on next use.
++		 */
++		ntfs_free(ni->runlist.rl);
++		ni->runlist.rl = NULL;
++		ntfs_error(sb, "Couldn't truncate runlist. Rollback failed");
++	} else {
++		/* Prepare to mapping pairs update. */
++		ni->allocated_size = org_alloc_size;
++		/* Restore mapping pairs. */
++		if (need_lock)
++			down_read(&ni->runlist.lock);
++		if (ntfs_attr_update_mapping_pairs(ni, 0))
++			ntfs_error(sb, "Failed to restore old mapping pairs");
++		if (need_lock)
++			up_read(&ni->runlist.lock);
++
++		if (NInoSparse(ni) || NInoCompressed(ni)) {
++			ni->itype.compressed.size =  org_compressed_size;
++			VFS_I(base_ni)->i_blocks = ni->itype.compressed.size >> 9;
++		} else
++			VFS_I(base_ni)->i_blocks = ni->allocated_size >> 9;
++	}
++	if (ctx)
++		ntfs_attr_put_search_ctx(ctx);
++	return err;
++put_err_out:
++	if (ctx)
++		ntfs_attr_put_search_ctx(ctx);
++	return err;
++}
++
++/**
++ * ntfs_resident_attr_resize - resize a resident, open ntfs attribute
++ * @attr_ni:		resident ntfs inode to resize
++ * @prealloc_size:	preallocation size (in bytes) to which to resize the attribute
++ * @newsize:		new size (in bytes) to which to resize the attribute
++ *
++ * Change the size of a resident, open ntfs attribute @na to @newsize bytes.
++ */
++static int ntfs_resident_attr_resize(struct ntfs_inode *attr_ni, const s64 newsize,
++		const s64 prealloc_size, unsigned int holes)
++{
++	struct ntfs_attr_search_ctx *ctx;
++	struct ntfs_volume *vol = attr_ni->vol;
++	struct super_block *sb = vol->sb;
++	int err = -EIO;
++	struct ntfs_inode *base_ni, *ext_ni = NULL;
++
++attr_resize_again:
++	ntfs_debug("Inode 0x%llx attr 0x%x new size %lld\n",
++			(unsigned long long)attr_ni->mft_no, attr_ni->type,
++			(long long)newsize);
++
++	if (NInoAttr(attr_ni))
++		base_ni = attr_ni->ext.base_ntfs_ino;
++	else
++		base_ni = attr_ni;
++
++	/* Get the attribute record that needs modification. */
++	ctx = ntfs_attr_get_search_ctx(base_ni, NULL);
++	if (!ctx) {
++		ntfs_error(sb, "%s: Failed to get search context", __func__);
++		return -ENOMEM;
++	}
++	err = ntfs_attr_lookup(attr_ni->type, attr_ni->name, attr_ni->name_len,
++			0, 0, NULL, 0, ctx);
++	if (err) {
++		ntfs_error(sb, "ntfs_attr_lookup failed");
++		goto put_err_out;
++	}
++
++	/*
++	 * Check the attribute type and the corresponding minimum and maximum
++	 * sizes against @newsize and fail if @newsize is out of bounds.
++	 */
++	err = ntfs_attr_size_bounds_check(vol, attr_ni->type, newsize);
++	if (err) {
++		if (err == -ENOENT)
++			err = -EIO;
++		ntfs_debug("%s: bounds check failed", __func__);
++		goto put_err_out;
++	}
++	/*
++	 * If @newsize is bigger than the mft record we need to make the
++	 * attribute non-resident if the attribute type supports it. If it is
++	 * smaller we can go ahead and attempt the resize.
++	 */
++	if (newsize < vol->mft_record_size) {
++		/* Perform the resize of the attribute record. */
++		err = ntfs_resident_attr_value_resize(ctx->mrec, ctx->attr,
++					newsize);
++		if (!err) {
++			/* Update attribute size everywhere. */
++			attr_ni->data_size = attr_ni->initialized_size = newsize;
++			attr_ni->allocated_size = (newsize + 7) & ~7;
++			if (NInoCompressed(attr_ni) || NInoSparse(attr_ni))
++				attr_ni->itype.compressed.size = attr_ni->allocated_size;
++			if (attr_ni->type == AT_DATA && attr_ni->name == AT_UNNAMED)
++				NInoSetFileNameDirty(attr_ni);
++			goto resize_done;
++		}
++
++		/* Prefer AT_INDEX_ALLOCATION instead of AT_ATTRIBUTE_LIST */
++		if (err == -ENOSPC && ctx->attr->type == AT_INDEX_ROOT)
++			goto put_err_out;
++
++	}
++	/* There is not enough space in the mft record to perform the resize. */
++
++	/* Make the attribute non-resident if possible. */
++	err = ntfs_attr_make_non_resident(attr_ni,
++			le32_to_cpu(ctx->attr->data.resident.value_length));
++	if (!err) {
++		mark_mft_record_dirty(ctx->ntfs_ino);
++		ntfs_attr_put_search_ctx(ctx);
++		/* Resize non-resident attribute */
++		return ntfs_non_resident_attr_expand(attr_ni, newsize, prealloc_size, holes, true);
++	} else if (err != -ENOSPC && err != -EPERM) {
++		ntfs_error(sb, "Failed to make attribute non-resident");
++		goto put_err_out;
++	}
++
++	/* Try to make other attributes non-resident and retry each time. */
++	ntfs_attr_reinit_search_ctx(ctx);
++	while (!(err = ntfs_attr_lookup(AT_UNUSED, NULL, 0, 0, 0, NULL, 0, ctx))) {
++		struct inode *tvi;
++		struct attr_record *a;
++
++		a = ctx->attr;
++		if (a->non_resident || a->type == AT_ATTRIBUTE_LIST)
++			continue;
++
++		if (ntfs_attr_can_be_non_resident(vol, a->type))
++			continue;
++
++		/*
++		 * Check out whether convert is reasonable. Assume that mapping
++		 * pairs will take 8 bytes.
++		 */
++		if (le32_to_cpu(a->length) <= (sizeof(struct attr_record) - sizeof(s64)) +
++				((a->name_length * sizeof(__le16) + 7) & ~7) + 8)
++			continue;
++
++		if (a->type == AT_DATA)
++			tvi = ntfs_iget(sb, base_ni->mft_no);
++		else
++			tvi = ntfs_attr_iget(VFS_I(base_ni), a->type,
++				(__le16 *)((u8 *)a + le16_to_cpu(a->name_offset)),
++				a->name_length);
++		if (IS_ERR(tvi)) {
++			ntfs_error(sb, "Couldn't open attribute");
++			continue;
++		}
++
++		if (ntfs_attr_make_non_resident(NTFS_I(tvi),
++		    le32_to_cpu(ctx->attr->data.resident.value_length))) {
++			iput(tvi);
++			continue;
++		}
++
++		mark_mft_record_dirty(ctx->ntfs_ino);
++		iput(tvi);
++		ntfs_attr_put_search_ctx(ctx);
++		goto attr_resize_again;
++	}
++
++	/* Check whether error occurred. */
++	if (err != -ENOENT) {
++		ntfs_error(sb, "%s: Attribute lookup failed 1", __func__);
++		goto put_err_out;
++	}
++
++	/*
++	 * The standard information and attribute list attributes can't be
++	 * moved out from the base MFT record, so try to move out others.
++	 */
++	if (attr_ni->type == AT_STANDARD_INFORMATION ||
++	    attr_ni->type == AT_ATTRIBUTE_LIST) {
++		ntfs_attr_put_search_ctx(ctx);
++
++		if (!NInoAttrList(base_ni)) {
++			err = ntfs_inode_add_attrlist(base_ni);
++			if (err)
++				return err;
++		}
++
++		err = ntfs_inode_free_space(base_ni, sizeof(struct attr_record));
++		if (err) {
++			err = -ENOSPC;
++			ntfs_error(sb,
++				"Couldn't free space in the MFT record to make attribute list non resident");
++			return err;
++		}
++		err = ntfs_attrlist_update(base_ni);
++		if (err)
++			return err;
++		goto attr_resize_again;
++	}
++
++	/*
++	 * Move the attribute to a new mft record, creating an attribute list
++	 * attribute or modifying it if it is already present.
++	 */
++
++	/* Point search context back to attribute which we need resize. */
++	ntfs_attr_reinit_search_ctx(ctx);
++	err = ntfs_attr_lookup(attr_ni->type, attr_ni->name, attr_ni->name_len,
++			CASE_SENSITIVE, 0, NULL, 0, ctx);
++	if (err) {
++		ntfs_error(sb, "%s: Attribute lookup failed 2", __func__);
++		goto put_err_out;
++	}
++
++	/*
++	 * Check whether attribute is already single in this MFT record.
++	 * 8 added for the attribute terminator.
++	 */
++	if (le32_to_cpu(ctx->mrec->bytes_in_use) ==
++	    le16_to_cpu(ctx->mrec->attrs_offset) + le32_to_cpu(ctx->attr->length) + 8) {
++		err = -ENOSPC;
++		ntfs_debug("MFT record is filled with one attribute\n");
++		goto put_err_out;
++	}
++
++	/* Add attribute list if not present. */
++	if (!NInoAttrList(base_ni)) {
++		ntfs_attr_put_search_ctx(ctx);
++		err = ntfs_inode_add_attrlist(base_ni);
++		if (err)
++			return err;
++		goto attr_resize_again;
++	}
++
++	/* Allocate new mft record. */
++	err = ntfs_mft_record_alloc(base_ni->vol, 0, &ext_ni, base_ni, NULL);
++	if (err) {
++		ntfs_error(sb, "Couldn't allocate MFT record");
++		goto put_err_out;
++	}
++	unmap_mft_record(ext_ni);
++
++	/* Move attribute to it. */
++	err = ntfs_attr_record_move_to(ctx, ext_ni);
++	if (err) {
++		ntfs_error(sb, "Couldn't move attribute to new MFT record");
++		err = -ENOMEM;
++		goto put_err_out;
++	}
++
++	err = ntfs_attrlist_update(base_ni);
++	if (err < 0)
++		goto put_err_out;
++
++	ntfs_attr_put_search_ctx(ctx);
++	/* Try to perform resize once again. */
++	goto attr_resize_again;
++
++resize_done:
++	/*
++	 * Set the inode (and its base inode if it exists) dirty so it is
++	 * written out later.
++	 */
++	mark_mft_record_dirty(ctx->ntfs_ino);
++	ntfs_attr_put_search_ctx(ctx);
++	return 0;
++
++put_err_out:
++	ntfs_attr_put_search_ctx(ctx);
++	return err;
++}
++
++int __ntfs_attr_truncate_vfs(struct ntfs_inode *ni, const s64 newsize,
++		const s64 i_size)
++{
++	int err = 0;
++
++	if (newsize < 0 ||
++	    (ni->mft_no == FILE_MFT && ni->type == AT_DATA)) {
++		ntfs_debug("Invalid arguments passed.\n");
++		return -EINVAL;
++	}
++
++	ntfs_debug("Entering for inode 0x%llx, attr 0x%x, size %lld\n",
++			(unsigned long long)ni->mft_no, ni->type, newsize);
++
++	if (NInoNonResident(ni)) {
++		if (newsize > i_size) {
++			down_write(&ni->runlist.lock);
++			err = ntfs_non_resident_attr_expand(ni, newsize, 0,
++							    NVolDisableSparse(ni->vol) ?
++							    HOLES_NO : HOLES_OK,
++							    false);
++			up_write(&ni->runlist.lock);
++		} else
++			err = ntfs_non_resident_attr_shrink(ni, newsize);
++	} else
++		err = ntfs_resident_attr_resize(ni, newsize, 0,
++						NVolDisableSparse(ni->vol) ?
++						HOLES_NO : HOLES_OK);
++	ntfs_debug("Return status %d\n", err);
++	return err;
++}
++
++int ntfs_attr_expand(struct ntfs_inode *ni, const s64 newsize, const s64 prealloc_size)
++{
++	int err = 0;
++
++	if (newsize < 0 ||
++	    (ni->mft_no == FILE_MFT && ni->type == AT_DATA)) {
++		ntfs_debug("Invalid arguments passed.\n");
++		return -EINVAL;
++	}
++
++	ntfs_debug("Entering for inode 0x%llx, attr 0x%x, size %lld\n",
++			(unsigned long long)ni->mft_no, ni->type, newsize);
++
++	if (ni->data_size == newsize) {
++		ntfs_debug("Size is already ok\n");
++		return 0;
++	}
++
++	/*
++	 * Encrypted attributes are not supported. We return access denied,
++	 * which is what Windows NT4 does, too.
++	 */
++	if (NInoEncrypted(ni)) {
++		pr_err("Failed to truncate encrypted attribute");
++		return -EACCES;
++	}
++
++	if (NInoNonResident(ni)) {
++		if (newsize > ni->data_size)
++			err = ntfs_non_resident_attr_expand(ni, newsize, prealloc_size,
++							    NVolDisableSparse(ni->vol) ?
++							    HOLES_NO : HOLES_OK, true);
++	} else
++		err = ntfs_resident_attr_resize(ni, newsize, prealloc_size,
++						NVolDisableSparse(ni->vol) ?
++						HOLES_NO : HOLES_OK);
++	if (!err)
++		i_size_write(VFS_I(ni), newsize);
++	ntfs_debug("Return status %d\n", err);
++	return err;
++}
++
++/**
++ * ntfs_attr_truncate_i - resize an ntfs attribute
++ * @ni:		open ntfs inode to resize
++ * @newsize:	new size (in bytes) to which to resize the attribute
++ *
++ * Change the size of an open ntfs attribute @na to @newsize bytes. If the
++ * attribute is made bigger and the attribute is resident the newly
++ * "allocated" space is cleared and if the attribute is non-resident the
++ * newly allocated space is marked as not initialised and no real allocation
++ * on disk is performed.
++ */
++int ntfs_attr_truncate_i(struct ntfs_inode *ni, const s64 newsize, unsigned int holes)
++{
++	int err;
++
++	if (newsize < 0 ||
++	    (ni->mft_no == FILE_MFT && ni->type == AT_DATA)) {
++		ntfs_debug("Invalid arguments passed.\n");
++		return -EINVAL;
++	}
++
++	ntfs_debug("Entering for inode 0x%llx, attr 0x%x, size %lld\n",
++			(unsigned long long)ni->mft_no, ni->type, newsize);
++
++	if (ni->data_size == newsize) {
++		ntfs_debug("Size is already ok\n");
++		return 0;
++	}
++
++	/*
++	 * Encrypted attributes are not supported. We return access denied,
++	 * which is what Windows NT4 does, too.
++	 */
++	if (NInoEncrypted(ni)) {
++		pr_err("Failed to truncate encrypted attribute");
++		return -EACCES;
++	}
++
++	if (NInoCompressed(ni)) {
++		pr_err("Failed to truncate compressed attribute");
++		return -EOPNOTSUPP;
++	}
++
++	if (NInoNonResident(ni)) {
++		if (newsize > ni->data_size)
++			err = ntfs_non_resident_attr_expand(ni, newsize, 0, holes, true);
++		else
++			err = ntfs_non_resident_attr_shrink(ni, newsize);
++	} else
++		err = ntfs_resident_attr_resize(ni, newsize, 0, holes);
++	ntfs_debug("Return status %d\n", err);
++	return err;
++}
++
++/*
++ * Resize an attribute, creating a hole if relevant
++ */
++int ntfs_attr_truncate(struct ntfs_inode *ni, const s64 newsize)
++{
++	return ntfs_attr_truncate_i(ni, newsize,
++				    NVolDisableSparse(ni->vol) ?
++				    HOLES_NO : HOLES_OK);
++}
++
++int ntfs_attr_map_cluster(struct ntfs_inode *ni, s64 vcn_start, s64 *lcn_start,
++		s64 *lcn_count, s64 max_clu_count, bool *balloc, bool update_mp,
++		bool skip_holes)
++{
++	struct ntfs_volume *vol = ni->vol;
++	struct ntfs_attr_search_ctx *ctx;
++	struct runlist_element *rl, *rlc;
++	s64 vcn = vcn_start, lcn, clu_count;
++	s64 lcn_seek_from = -1;
++	int err = 0;
++	size_t new_rl_count;
++
++	err = ntfs_attr_map_whole_runlist(ni);
++	if (err)
++		return err;
++
++	if (NInoAttr(ni))
++		ctx = ntfs_attr_get_search_ctx(ni->ext.base_ntfs_ino, NULL);
++	else
++		ctx = ntfs_attr_get_search_ctx(ni, NULL);
++	if (!ctx) {
++		ntfs_error(vol->sb, "%s: Failed to get search context", __func__);
++		return -ENOMEM;
++	}
++
++	err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
++			CASE_SENSITIVE, vcn, NULL, 0, ctx);
++	if (err) {
++		ntfs_error(vol->sb,
++			   "ntfs_attr_lookup failed, ntfs inode(mft_no : %ld) type : 0x%x, err : %d",
++			   ni->mft_no, ni->type, err);
++		goto out;
++	}
++
++	rl = ntfs_attr_find_vcn_nolock(ni, vcn, ctx);
++	if (IS_ERR(rl)) {
++		ntfs_error(vol->sb, "Failed to find run after mapping runlist.");
++		err = PTR_ERR(rl);
++		goto out;
++	}
++
++	lcn = ntfs_rl_vcn_to_lcn(rl, vcn);
++	clu_count = min(max_clu_count, rl->length - (vcn - rl->vcn));
++	if (lcn >= LCN_HOLE) {
++		if (lcn > LCN_DELALLOC ||
++		    (lcn == LCN_HOLE && skip_holes)) {
++			*lcn_start = lcn;
++			*lcn_count = clu_count;
++			*balloc = false;
++			goto out;
++		}
++	} else {
++		WARN_ON(lcn == LCN_RL_NOT_MAPPED);
++		if (lcn == LCN_ENOENT)
++			err = -ENOENT;
++		else
 +			err = -EIO;
 +		goto out;
 +	}
 +
-+	a = ctx->attr;
-+	/* The total length of the attribute value. */
-+	attr_len = le32_to_cpu(a->data.resident.value_length);
-+	kattr = (u8 *)a + le16_to_cpu(a->data.resident.value_offset);
++	/* Search backwards to find the best lcn to start seek from. */
++	rlc = rl;
++	while (rlc->vcn) {
++		rlc--;
++		if (rlc->lcn >= 0) {
++			/*
++			 * avoid fragmenting a compressed file
++			 * Windows does not do that, and that may
++			 * not be desirable for files which can
++			 * be updated
++			 */
++			if (NInoCompressed(ni))
++				lcn_seek_from = rlc->lcn + rlc->length;
++			else
++				lcn_seek_from = rlc->lcn + (vcn - rlc->vcn);
++			break;
++		}
++	}
 +
-+	iomap->inline_data = kmemdup(kattr, attr_len, GFP_KERNEL);
-+	if (!iomap->inline_data) {
++	if (lcn_seek_from == -1) {
++		/* Backwards search failed, search forwards. */
++		rlc = rl;
++		while (rlc->length) {
++			rlc++;
++			if (rlc->lcn >= 0) {
++				lcn_seek_from = rlc->lcn - (rlc->vcn - vcn);
++				if (lcn_seek_from < -1)
++					lcn_seek_from = -1;
++				break;
++			}
++		}
++	}
++
++	if (lcn_seek_from == -1 && ni->lcn_seek_trunc != LCN_RL_NOT_MAPPED) {
++		lcn_seek_from = ni->lcn_seek_trunc;
++		ni->lcn_seek_trunc = LCN_RL_NOT_MAPPED;
++	}
++
++	rlc = ntfs_cluster_alloc(vol, vcn, clu_count, lcn_seek_from, DATA_ZONE,
++			false, true, true);
++	if (IS_ERR(rlc)) {
++		err = PTR_ERR(rlc);
++		goto out;
++	}
++
++	WARN_ON(rlc->vcn != vcn);
++	lcn = rlc->lcn;
++	clu_count = rlc->length;
++
++	rl = ntfs_runlists_merge(&ni->runlist, rlc, 0, &new_rl_count);
++	if (IS_ERR(rl)) {
++		ntfs_error(vol->sb, "Failed to merge runlists");
++		err = PTR_ERR(rl);
++		if (ntfs_cluster_free_from_rl(vol, rlc))
++			ntfs_error(vol->sb, "Failed to free hot clusters.");
++		ntfs_free(rlc);
++		goto out;
++	}
++	ni->runlist.rl = rl;
++	ni->runlist.count = new_rl_count;
++
++	if (!update_mp) {
++		u64 free = atomic64_read(&vol->free_clusters) * 100;
++
++		do_div(free, vol->nr_clusters);
++		if (free <= 5)
++			update_mp = true;
++	}
++
++	if (update_mp) {
++		ntfs_attr_reinit_search_ctx(ctx);
++		err = ntfs_attr_update_mapping_pairs(ni, 0);
++		if (err) {
++			int err2;
++
++			err2 = ntfs_cluster_free(ni, vcn, clu_count, ctx);
++			if (err2 < 0)
++				ntfs_error(vol->sb,
++					   "Failed to free cluster allocation. Leaving inconstant metadata.\n");
++			goto out;
++		}
++	} else {
++		VFS_I(ni)->i_blocks += clu_count << (vol->cluster_size_bits - 9);
++		NInoSetRunlistDirty(ni);
++		mark_mft_record_dirty(ni);
++	}
++
++	*lcn_start = lcn;
++	*lcn_count = clu_count;
++	*balloc = true;
++out:
++	ntfs_attr_put_search_ctx(ctx);
++	return err;
++}
++
++/**
++ * ntfs_attr_rm - remove attribute from ntfs inode
++ * @ni:		opened ntfs attribute to delete
++ *
++ * Remove attribute and all it's extents from ntfs inode. If attribute was non
++ * resident also free all clusters allocated by attribute.
++ */
++int ntfs_attr_rm(struct ntfs_inode *ni)
++{
++	struct ntfs_attr_search_ctx *ctx;
++	int err = 0, ret = 0;
++	struct ntfs_inode *base_ni;
++	struct super_block *sb = ni->vol->sb;
++
++	if (NInoAttr(ni))
++		base_ni = ni->ext.base_ntfs_ino;
++	else
++		base_ni = ni;
++
++	ntfs_debug("Entering for inode 0x%llx, attr 0x%x.\n",
++			(long long) ni->mft_no, ni->type);
++
++	/* Free cluster allocation. */
++	if (NInoNonResident(ni)) {
++		struct ntfs_attr_search_ctx *ctx;
++
++		err = ntfs_attr_map_whole_runlist(ni);
++		if (err)
++			return err;
++		ctx = ntfs_attr_get_search_ctx(ni, NULL);
++		if (!ctx) {
++			ntfs_error(sb, "%s: Failed to get search context", __func__);
++			return -ENOMEM;
++		}
++
++		ret = ntfs_cluster_free(ni, 0, -1, ctx);
++		if (ret < 0)
++			ntfs_error(sb,
++				"Failed to free cluster allocation. Leaving inconstant metadata.\n");
++		ntfs_attr_put_search_ctx(ctx);
++	}
++
++	/* Search for attribute extents and remove them all. */
++	ctx = ntfs_attr_get_search_ctx(base_ni, NULL);
++	if (!ctx) {
++		ntfs_error(sb, "%s: Failed to get search context", __func__);
++		return -ENOMEM;
++	}
++	while (!(err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
++				CASE_SENSITIVE, 0, NULL, 0, ctx))) {
++		err = ntfs_attr_record_rm(ctx);
++		if (err) {
++			ntfs_error(sb,
++				"Failed to remove attribute extent. Leaving inconstant metadata.\n");
++			ret = err;
++		}
++		ntfs_attr_reinit_search_ctx(ctx);
++	}
++	ntfs_attr_put_search_ctx(ctx);
++	if (err != -ENOENT) {
++		ntfs_error(sb, "Attribute lookup failed. Probably leaving inconstant metadata.\n");
++		ret = err;
++	}
++
++	return ret;
++}
++
++int ntfs_attr_exist(struct ntfs_inode *ni, const __le32 type, __le16 *name,
++		u32 name_len)
++{
++	struct ntfs_attr_search_ctx *ctx;
++	int ret;
++
++	ntfs_debug("Entering\n");
++
++	ctx = ntfs_attr_get_search_ctx(ni, NULL);
++	if (!ctx) {
++		ntfs_error(ni->vol->sb, "%s: Failed to get search context",
++				__func__);
++		return 0;
++	}
++
++	ret = ntfs_attr_lookup(type, name, name_len, CASE_SENSITIVE,
++			0, NULL, 0, ctx);
++	ntfs_attr_put_search_ctx(ctx);
++
++	return !ret;
++}
++
++int ntfs_attr_remove(struct ntfs_inode *ni, const __le32 type, __le16 *name,
++		u32 name_len)
++{
++	struct super_block *sb;
++	int err;
++	struct inode *attr_vi;
++	struct ntfs_inode *attr_ni;
++
++	ntfs_debug("Entering\n");
++
++	sb = ni->vol->sb;
++	if (!ni) {
++		ntfs_error(sb, "NULL inode pointer\n");
++		return -EINVAL;
++	}
++
++	attr_vi = ntfs_attr_iget(VFS_I(ni), type, name, name_len);
++	if (IS_ERR(attr_vi)) {
++		err = PTR_ERR(attr_vi);
++		ntfs_error(sb, "Failed to open attribute 0x%02x of inode 0x%llx",
++				type, (unsigned long long)ni->mft_no);
++		return err;
++	}
++	attr_ni = NTFS_I(attr_vi);
++
++	err = ntfs_attr_rm(attr_ni);
++	if (err)
++		ntfs_error(sb, "Failed to remove attribute 0x%02x of inode 0x%llx",
++				type, (unsigned long long)ni->mft_no);
++	iput(attr_vi);
++	return err;
++}
++
++/**
++ * ntfs_attr_readall - read the entire data from an ntfs attribute
++ * @ni:		open ntfs inode in which the ntfs attribute resides
++ * @type:	attribute type
++ * @name:	attribute name in little endian Unicode or AT_UNNAMED or NULL
++ * @name_len:	length of attribute @name in Unicode characters (if @name given)
++ * @data_size:	if non-NULL then store here the data size
++ *
++ * This function will read the entire content of an ntfs attribute.
++ * If @name is AT_UNNAMED then look specifically for an unnamed attribute.
++ * If @name is NULL then the attribute could be either named or not.
++ * In both those cases @name_len is not used at all.
++ *
++ * On success a buffer is allocated with the content of the attribute
++ * and which needs to be freed when it's not needed anymore. If the
++ * @data_size parameter is non-NULL then the data size is set there.
++ */
++void *ntfs_attr_readall(struct ntfs_inode *ni, const __le32 type,
++		__le16 *name, u32 name_len, s64 *data_size)
++{
++	struct ntfs_inode *bmp_ni;
++	struct inode *bmp_vi;
++	void *data, *ret = NULL;
++	s64 size;
++	struct super_block *sb = ni->vol->sb;
++
++	ntfs_debug("Entering\n");
++
++	bmp_vi = ntfs_attr_iget(VFS_I(ni), type, name, name_len);
++	if (IS_ERR(bmp_vi)) {
++		ntfs_debug("ntfs_attr_iget failed");
++		goto err_exit;
++	}
++	bmp_ni = NTFS_I(bmp_vi);
++
++	data = ntfs_malloc_nofs(bmp_ni->data_size);
++	if (!data) {
++		ntfs_error(sb, "ntfs_malloc_nofs failed");
++		goto out;
++	}
++
++	size = ntfs_inode_attr_pread(VFS_I(bmp_ni), 0, bmp_ni->data_size,
++			(u8 *)data);
++	if (size != bmp_ni->data_size) {
++		ntfs_error(sb, "ntfs_attr_pread failed");
++		ntfs_free(data);
++		goto out;
++	}
++	ret = data;
++	if (data_size)
++		*data_size = size;
++out:
++	iput(bmp_vi);
++err_exit:
++	ntfs_debug("\n");
++	return ret;
++}
++
++int ntfs_non_resident_attr_insert_range(struct ntfs_inode *ni, s64 start_vcn, s64 len)
++{
++	struct ntfs_volume *vol = ni->vol;
++	struct runlist_element *hole_rl, *rl;
++	struct ntfs_attr_search_ctx *ctx;
++	int ret;
++	size_t new_rl_count;
++
++	if (NInoAttr(ni) || ni->type != AT_DATA)
++		return -EOPNOTSUPP;
++	if (start_vcn > NTFS_B_TO_CLU(vol, ni->allocated_size))
++		return -EINVAL;
++
++	hole_rl = ntfs_malloc_nofs(sizeof(*hole_rl) * 2);
++	if (!hole_rl)
++		return -ENOMEM;
++	hole_rl[0].vcn = start_vcn;
++	hole_rl[0].lcn = LCN_HOLE;
++	hole_rl[0].length = len;
++	hole_rl[1].vcn = start_vcn + len;
++	hole_rl[1].lcn = LCN_ENOENT;
++	hole_rl[1].length = 0;
++
++	down_write(&ni->runlist.lock);
++	ret = ntfs_attr_map_whole_runlist(ni);
++	if (ret) {
++		up_write(&ni->runlist.lock);
++		return ret;
++	}
++
++	rl = ntfs_rl_find_vcn_nolock(ni->runlist.rl, start_vcn);
++	if (!rl) {
++		up_write(&ni->runlist.lock);
++		ntfs_free(hole_rl);
++		return -EIO;
++	}
++
++	rl = ntfs_rl_insert_range(ni->runlist.rl, (int)ni->runlist.count,
++				  hole_rl, 1, &new_rl_count);
++	if (IS_ERR(rl)) {
++		up_write(&ni->runlist.lock);
++		ntfs_free(hole_rl);
++		return PTR_ERR(rl);
++	}
++	ni->runlist.rl =  rl;
++	ni->runlist.count = new_rl_count;
++
++	ni->allocated_size += NTFS_CLU_TO_B(vol, len);
++	ni->data_size += NTFS_CLU_TO_B(vol, len);
++	if (NTFS_CLU_TO_B(vol, start_vcn) < ni->initialized_size)
++		ni->initialized_size += NTFS_CLU_TO_B(vol, len);
++	ret = ntfs_attr_update_mapping_pairs(ni, 0);
++	up_write(&ni->runlist.lock);
++	if (ret)
++		return ret;
++
++	ctx = ntfs_attr_get_search_ctx(ni, NULL);
++	if (!ctx) {
++		ret = -ENOMEM;
++		return ret;
++	}
++
++	ret = ntfs_attr_lookup(ni->type, ni->name, ni->name_len, CASE_SENSITIVE,
++			       0, NULL, 0, ctx);
++	if (ret) {
++		ntfs_attr_put_search_ctx(ctx);
++		return ret;
++	}
++
++	ctx->attr->data.non_resident.data_size = cpu_to_le64(ni->data_size);
++	ctx->attr->data.non_resident.initialized_size = cpu_to_le64(ni->initialized_size);
++	if (ni->type == AT_DATA && ni->name == AT_UNNAMED)
++		NInoSetFileNameDirty(ni);
++	mark_mft_record_dirty(ctx->ntfs_ino);
++	ntfs_attr_put_search_ctx(ctx);
++	return ret;
++}
++
++int ntfs_non_resident_attr_collapse_range(struct ntfs_inode *ni, s64 start_vcn, s64 len)
++{
++	struct ntfs_volume *vol = ni->vol;
++	struct runlist_element *punch_rl, *rl;
++	struct ntfs_attr_search_ctx *ctx = NULL;
++	s64 end_vcn;
++	int dst_cnt;
++	int ret;
++	size_t new_rl_cnt;
++
++	if (NInoAttr(ni) || ni->type != AT_DATA)
++		return -EOPNOTSUPP;
++
++	end_vcn = NTFS_B_TO_CLU(vol, ni->allocated_size);
++	if (start_vcn >= end_vcn)
++		return -EINVAL;
++
++	down_write(&ni->runlist.lock);
++	ret = ntfs_attr_map_whole_runlist(ni);
++	if (ret)
++		return ret;
++
++	len = min(len, end_vcn - start_vcn);
++	for (rl = ni->runlist.rl, dst_cnt = 0; rl && rl->length; rl++)
++		dst_cnt++;
++	rl = ntfs_rl_find_vcn_nolock(ni->runlist.rl, start_vcn);
++	if (!rl) {
++		up_write(&ni->runlist.lock);
++		return -EIO;
++	}
++
++	rl = ntfs_rl_collapse_range(ni->runlist.rl, dst_cnt + 1,
++				    start_vcn, len, &punch_rl, &new_rl_cnt);
++	if (IS_ERR(rl)) {
++		up_write(&ni->runlist.lock);
++		return PTR_ERR(rl);
++	}
++	ni->runlist.rl = rl;
++	ni->runlist.count = new_rl_cnt;
++
++	ni->allocated_size -= NTFS_CLU_TO_B(vol, len);
++	if (ni->data_size > NTFS_CLU_TO_B(vol, start_vcn)) {
++		if (ni->data_size > NTFS_CLU_TO_B(vol, (start_vcn + len)))
++			ni->data_size -= NTFS_CLU_TO_B(vol, len);
++		else
++			ni->data_size = NTFS_CLU_TO_B(vol, start_vcn);
++	}
++	if (ni->initialized_size > NTFS_CLU_TO_B(vol, start_vcn)) {
++		if (ni->initialized_size >
++		    NTFS_CLU_TO_B(vol, start_vcn + len))
++			ni->initialized_size -= NTFS_CLU_TO_B(vol, len);
++		else
++			ni->initialized_size = NTFS_CLU_TO_B(vol, start_vcn);
++	}
++
++	if (ni->allocated_size > 0) {
++		ret = ntfs_attr_update_mapping_pairs(ni, 0);
++		if (ret) {
++			up_write(&ni->runlist.lock);
++			goto out_rl;
++		}
++	}
++	up_write(&ni->runlist.lock);
++
++	ctx = ntfs_attr_get_search_ctx(ni, NULL);
++	if (!ctx) {
++		ret = -ENOMEM;
++		goto out_rl;
++	}
++
++	ret = ntfs_attr_lookup(ni->type, ni->name, ni->name_len, CASE_SENSITIVE,
++			       0, NULL, 0, ctx);
++	if (ret)
++		goto out_ctx;
++
++	ctx->attr->data.non_resident.data_size = cpu_to_le64(ni->data_size);
++	ctx->attr->data.non_resident.initialized_size = cpu_to_le64(ni->initialized_size);
++	if (ni->allocated_size == 0)
++		ntfs_attr_make_resident(ni, ctx);
++	mark_mft_record_dirty(ctx->ntfs_ino);
++
++	ret = ntfs_cluster_free_from_rl(vol, punch_rl);
++	if (ret)
++		ntfs_error(vol->sb, "Freeing of clusters failed");
++out_ctx:
++	if (ctx)
++		ntfs_attr_put_search_ctx(ctx);
++out_rl:
++	ntfs_free(punch_rl);
++	mark_mft_record_dirty(ni);
++	return ret;
++}
++
++int ntfs_non_resident_attr_punch_hole(struct ntfs_inode *ni, s64 start_vcn, s64 len)
++{
++	struct ntfs_volume *vol = ni->vol;
++	struct runlist_element *punch_rl, *rl;
++	s64 end_vcn;
++	int dst_cnt;
++	int ret;
++	size_t new_rl_count;
++
++	if (NInoAttr(ni) || ni->type != AT_DATA)
++		return -EOPNOTSUPP;
++
++	end_vcn = NTFS_B_TO_CLU(vol, ni->allocated_size);
++	if (start_vcn >= end_vcn)
++		return -EINVAL;
++
++	down_write(&ni->runlist.lock);
++	ret = ntfs_attr_map_whole_runlist(ni);
++	if (ret) {
++		up_write(&ni->runlist.lock);
++		return ret;
++	}
++
++	len = min(len, end_vcn - start_vcn + 1);
++	for (rl = ni->runlist.rl, dst_cnt = 0; rl && rl->length; rl++)
++		dst_cnt++;
++	rl = ntfs_rl_find_vcn_nolock(ni->runlist.rl, start_vcn);
++	if (!rl) {
++		up_write(&ni->runlist.lock);
++		return -EIO;
++	}
++
++	rl = ntfs_rl_punch_hole(ni->runlist.rl, dst_cnt + 1,
++				start_vcn, len, &punch_rl, &new_rl_count);
++	if (IS_ERR(rl)) {
++		up_write(&ni->runlist.lock);
++		return PTR_ERR(rl);
++	}
++	ni->runlist.rl = rl;
++	ni->runlist.count = new_rl_count;
++
++	ret = ntfs_attr_update_mapping_pairs(ni, 0);
++	up_write(&ni->runlist.lock);
++	if (ret) {
++		ntfs_free(punch_rl);
++		return ret;
++	}
++
++	ret = ntfs_cluster_free_from_rl(vol, punch_rl);
++	if (ret)
++		ntfs_error(vol->sb, "Freeing of clusters failed");
++
++	ntfs_free(punch_rl);
++	mark_mft_record_dirty(ni);
++	return ret;
++}
++
++int ntfs_attr_fallocate(struct ntfs_inode *ni, loff_t start, loff_t byte_len, bool keep_size)
++{
++	struct ntfs_volume *vol = ni->vol;
++	struct mft_record *mrec;
++	struct ntfs_attr_search_ctx *ctx;
++	s64 old_data_size;
++	s64 vcn_start, vcn_end, vcn_uninit, vcn, try_alloc_cnt;
++	s64 lcn, alloc_cnt;
++	int err = 0;
++	struct runlist_element *rl;
++	bool balloc;
++
++	if (NInoAttr(ni) || ni->type != AT_DATA)
++		return -EINVAL;
++
++	if (NInoNonResident(ni) && !NInoFullyMapped(ni)) {
++		down_write(&ni->runlist.lock);
++		err = ntfs_attr_map_whole_runlist(ni);
++		up_write(&ni->runlist.lock);
++		if (err)
++			return err;
++	}
++
++	mutex_lock_nested(&ni->mrec_lock, NTFS_INODE_MUTEX_NORMAL);
++	mrec = map_mft_record(ni);
++	if (IS_ERR(mrec)) {
++		mutex_unlock(&ni->mrec_lock);
++		return PTR_ERR(mrec);
++	}
++
++	ctx = ntfs_attr_get_search_ctx(ni, mrec);
++	if (!ctx) {
++		err = -ENOMEM;
++		goto out_unmap;
++	}
++
++	err = ntfs_attr_lookup(AT_DATA, AT_UNNAMED, 0, 0, 0, NULL, 0, ctx);
++	if (err) {
++		err = -EIO;
++		goto out_unmap;
++	}
++
++	old_data_size = ni->data_size;
++	if (start + byte_len > ni->data_size) {
++		err = ntfs_attr_truncate(ni, start + byte_len);
++		if (err)
++			goto out_unmap;
++		if (keep_size) {
++			ntfs_attr_reinit_search_ctx(ctx);
++			err = ntfs_attr_lookup(AT_DATA, AT_UNNAMED, 0, 0, 0, NULL, 0, ctx);
++			if (err) {
++				err = -EIO;
++				goto out_unmap;
++			}
++			ni->data_size = old_data_size;
++			if (NInoNonResident(ni))
++				ctx->attr->data.non_resident.data_size =
++					cpu_to_le64(old_data_size);
++			else
++				ctx->attr->data.resident.value_length =
++					cpu_to_le64(old_data_size);
++			mark_mft_record_dirty(ni);
++		}
++	}
++
++	ntfs_attr_put_search_ctx(ctx);
++	unmap_mft_record(ni);
++	mutex_unlock(&ni->mrec_lock);
++
++	if (!NInoNonResident(ni))
++		goto out;
++
++	vcn_start = (s64)NTFS_B_TO_CLU(vol, start);
++	vcn_end = (s64)NTFS_B_TO_CLU(vol, round_up(start + byte_len, vol->cluster_size));
++	vcn_uninit = (s64)NTFS_B_TO_CLU(vol, round_up(ni->initialized_size, vol->cluster_size));
++	vcn_uninit = min_t(s64, vcn_uninit, vcn_end);
++
++	/*
++	 * we have to allocate clusters for holes and delayed within initialized_size,
++	 * and zero out the clusters only for the holes.
++	 */
++	vcn = vcn_start;
++	while (vcn < vcn_uninit) {
++		down_read(&ni->runlist.lock);
++		rl = ntfs_attr_find_vcn_nolock(ni, vcn, NULL);
++		up_read(&ni->runlist.lock);
++		if (IS_ERR(rl)) {
++			err = PTR_ERR(rl);
++			goto out;
++		}
++
++		if (rl->lcn > 0) {
++			vcn += rl->length - (vcn - rl->vcn);
++		} else if (rl->lcn == LCN_DELALLOC || rl->lcn == LCN_HOLE) {
++			try_alloc_cnt = min(rl->length - (vcn - rl->vcn),
++					    vcn_uninit - vcn);
++
++			if (rl->lcn == LCN_DELALLOC) {
++				vcn += try_alloc_cnt;
++				continue;
++			}
++
++			while (try_alloc_cnt > 0) {
++				mutex_lock_nested(&ni->mrec_lock, NTFS_INODE_MUTEX_NORMAL);
++				down_write(&ni->runlist.lock);
++				err = ntfs_attr_map_cluster(ni, vcn, &lcn, &alloc_cnt,
++							    try_alloc_cnt, &balloc, false, false);
++				up_write(&ni->runlist.lock);
++				mutex_unlock(&ni->mrec_lock);
++				if (err)
++					goto out;
++
++				err = ntfs_zero_range(VFS_I(ni),
++						      lcn << vol->cluster_size_bits,
++						      alloc_cnt << vol->cluster_size_bits,
++						      true);
++				if (err > 0)
++					goto out;
++
++				if (signal_pending(current))
++					goto out;
++
++				vcn += alloc_cnt;
++				try_alloc_cnt -= alloc_cnt;
++			}
++		} else {
++			err = -EIO;
++			goto out;
++		}
++	}
++
++	/* allocate clusters outside of initialized_size */
++	try_alloc_cnt = vcn_end - vcn;
++	while (try_alloc_cnt > 0) {
++		mutex_lock_nested(&ni->mrec_lock, NTFS_INODE_MUTEX_NORMAL);
++		down_write(&ni->runlist.lock);
++		err = ntfs_attr_map_cluster(ni, vcn, &lcn, &alloc_cnt,
++					    try_alloc_cnt, &balloc, false, false);
++		up_write(&ni->runlist.lock);
++		mutex_unlock(&ni->mrec_lock);
++		if (err || signal_pending(current))
++			goto out;
++
++		vcn += alloc_cnt;
++		try_alloc_cnt -= alloc_cnt;
++		cond_resched();
++	}
++
++	if (NInoRunlistDirty(ni)) {
++		mutex_lock_nested(&ni->mrec_lock, NTFS_INODE_MUTEX_NORMAL);
++		down_write(&ni->runlist.lock);
++		err = ntfs_attr_update_mapping_pairs(ni, 0);
++		if (err)
++			ntfs_error(ni->vol->sb, "Updating mapping pairs failed");
++		else
++			NInoClearRunlistDirty(ni);
++		up_write(&ni->runlist.lock);
++		mutex_unlock(&ni->mrec_lock);
++	}
++	return err;
++out_unmap:
++	if (ctx)
++		ntfs_attr_put_search_ctx(ctx);
++	unmap_mft_record(ni);
++	mutex_unlock(&ni->mrec_lock);
++out:
++	return err >= 0 ? 0 : err;
++}
+diff --git a/fs/ntfs/attrlist.c b/fs/ntfs/attrlist.c
+new file mode 100644
+index 000000000000..447e3029ba77
+--- /dev/null
++++ b/fs/ntfs/attrlist.c
+@@ -0,0 +1,285 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Attribute list attribute handling code.  Originated from the Linux-NTFS
++ * project.
++ * Part of this file is based on code from the NTFS-3G project.
++ *
++ * Copyright (c) 2004-2005 Anton Altaparmakov
++ * Copyright (c) 2004-2005 Yura Pakhuchiy
++ * Copyright (c)      2006 Szabolcs Szakacsits
++ * Copyright (c) 2025 LG Electronics Co., Ltd.
++ */
++
++#include "mft.h"
++#include "attrib.h"
++#include "malloc.h"
++#include "attrlist.h"
++
++/**
++ * ntfs_attrlist_need - check whether inode need attribute list
++ * @ni:	opened ntfs inode for which perform check
++ *
++ * Check whether all are attributes belong to one MFT record, in that case
++ * attribute list is not needed.
++ */
++int ntfs_attrlist_need(struct ntfs_inode *ni)
++{
++	struct attr_list_entry *ale;
++
++	if (!ni) {
++		ntfs_debug("Invalid arguments.\n");
++		return -EINVAL;
++	}
++	ntfs_debug("Entering for inode 0x%llx.\n", (long long) ni->mft_no);
++
++	if (!NInoAttrList(ni)) {
++		ntfs_debug("Inode haven't got attribute list.\n");
++		return -EINVAL;
++	}
++
++	if (!ni->attr_list) {
++		ntfs_debug("Corrupt in-memory struct.\n");
++		return -EINVAL;
++	}
++
++	ale = (struct attr_list_entry *)ni->attr_list;
++	while ((u8 *)ale < ni->attr_list + ni->attr_list_size) {
++		if (MREF_LE(ale->mft_reference) != ni->mft_no)
++			return 1;
++		ale = (struct attr_list_entry *)((u8 *)ale + le16_to_cpu(ale->length));
++	}
++	return 0;
++}
++
++int ntfs_attrlist_update(struct ntfs_inode *base_ni)
++{
++	struct inode *attr_vi;
++	struct ntfs_inode *attr_ni;
++	int err;
++
++	attr_vi = ntfs_attr_iget(VFS_I(base_ni), AT_ATTRIBUTE_LIST, AT_UNNAMED, 0);
++	if (IS_ERR(attr_vi)) {
++		err = PTR_ERR(attr_vi);
++		return err;
++	}
++	attr_ni = NTFS_I(attr_vi);
++
++	err = ntfs_attr_truncate_i(attr_ni, base_ni->attr_list_size, HOLES_NO);
++	if (err == -ENOSPC && attr_ni->mft_no == FILE_MFT) {
++		err = ntfs_attr_truncate(attr_ni, 0);
++		if (err || ntfs_attr_truncate_i(attr_ni, base_ni->attr_list_size, HOLES_NO) != 0) {
++			iput(attr_vi);
++			ntfs_error(base_ni->vol->sb,
++					"Failed to truncate attribute list of inode %#llx",
++					(long long)base_ni->mft_no);
++			return -EIO;
++		}
++	} else if (err) {
++		iput(attr_vi);
++		ntfs_error(base_ni->vol->sb,
++			   "Failed to truncate attribute list of inode %#llx",
++			   (long long)base_ni->mft_no);
++		return -EIO;
++	}
++
++	i_size_write(attr_vi, base_ni->attr_list_size);
++
++	if (NInoNonResident(attr_ni) && !NInoAttrListNonResident(base_ni))
++		NInoSetAttrListNonResident(base_ni);
++
++	if (ntfs_inode_attr_pwrite(attr_vi, 0, base_ni->attr_list_size,
++				   base_ni->attr_list, false) !=
++	    base_ni->attr_list_size) {
++		iput(attr_vi);
++		ntfs_error(base_ni->vol->sb,
++			   "Failed to write attribute list of inode %#llx",
++			   (long long)base_ni->mft_no);
++		return -EIO;
++	}
++
++	NInoSetAttrListDirty(base_ni);
++	iput(attr_vi);
++	return 0;
++}
++
++/**
++ * ntfs_attrlist_entry_add - add an attribute list attribute entry
++ * @ni:	opened ntfs inode, which contains that attribute
++ * @attr: attribute record to add to attribute list
++ */
++int ntfs_attrlist_entry_add(struct ntfs_inode *ni, struct attr_record *attr)
++{
++	struct attr_list_entry *ale;
++	__le64 mref;
++	struct ntfs_attr_search_ctx *ctx;
++	u8 *new_al;
++	int entry_len, entry_offset, err;
++	struct mft_record *ni_mrec;
++	u8 *old_al;
++
++	ntfs_debug("Entering for inode 0x%llx, attr 0x%x.\n",
++			(long long) ni->mft_no,
++			(unsigned int) le32_to_cpu(attr->type));
++
++	if (!ni || !attr) {
++		ntfs_debug("Invalid arguments.\n");
++		return -EINVAL;
++	}
++
++	ni_mrec = map_mft_record(ni);
++	if (IS_ERR(ni_mrec)) {
++		ntfs_debug("Invalid arguments.\n");
++		return -EIO;
++	}
++
++	mref = MK_LE_MREF(ni->mft_no, le16_to_cpu(ni_mrec->sequence_number));
++	unmap_mft_record(ni);
++
++	if (ni->nr_extents == -1)
++		ni = ni->ext.base_ntfs_ino;
++
++	if (!NInoAttrList(ni)) {
++		ntfs_debug("Attribute list isn't present.\n");
++		return -ENOENT;
++	}
++
++	/* Determine size and allocate memory for new attribute list. */
++	entry_len = (sizeof(struct attr_list_entry) + sizeof(__le16) *
++			attr->name_length + 7) & ~7;
++	new_al = ntfs_malloc_nofs(ni->attr_list_size + entry_len);
++	if (!new_al)
++		return -ENOMEM;
++
++	/* Find place for the new entry. */
++	ctx = ntfs_attr_get_search_ctx(ni, NULL);
++	if (!ctx) {
++		err = -ENOMEM;
++		ntfs_error(ni->vol->sb, "Failed to get search context");
++		goto err_out;
++	}
++
++	err = ntfs_attr_lookup(attr->type, (attr->name_length) ? (__le16 *)
++			((u8 *)attr + le16_to_cpu(attr->name_offset)) :
++			AT_UNNAMED, attr->name_length, CASE_SENSITIVE,
++			(attr->non_resident) ? le64_to_cpu(attr->data.non_resident.lowest_vcn) :
++			0, (attr->non_resident) ? NULL : ((u8 *)attr +
++			le16_to_cpu(attr->data.resident.value_offset)), (attr->non_resident) ?
++			0 : le32_to_cpu(attr->data.resident.value_length), ctx);
++	if (!err) {
++		/* Found some extent, check it to be before new extent. */
++		if (ctx->al_entry->lowest_vcn == attr->data.non_resident.lowest_vcn) {
++			err = -EEXIST;
++			ntfs_debug("Such attribute already present in the attribute list.\n");
++			ntfs_attr_put_search_ctx(ctx);
++			goto err_out;
++		}
++		/* Add new entry after this extent. */
++		ale = (struct attr_list_entry *)((u8 *)ctx->al_entry +
++				le16_to_cpu(ctx->al_entry->length));
++	} else {
++		/* Check for real errors. */
++		if (err != -ENOENT) {
++			ntfs_debug("Attribute lookup failed.\n");
++			ntfs_attr_put_search_ctx(ctx);
++			goto err_out;
++		}
++		/* No previous extents found. */
++		ale = ctx->al_entry;
++	}
++	/* Don't need it anymore, @ctx->al_entry points to @ni->attr_list. */
++	ntfs_attr_put_search_ctx(ctx);
++
++	/* Determine new entry offset. */
++	entry_offset = ((u8 *)ale - ni->attr_list);
++	/* Set pointer to new entry. */
++	ale = (struct attr_list_entry *)(new_al + entry_offset);
++	memset(ale, 0, entry_len);
++	/* Form new entry. */
++	ale->type = attr->type;
++	ale->length = cpu_to_le16(entry_len);
++	ale->name_length = attr->name_length;
++	ale->name_offset = offsetof(struct attr_list_entry, name);
++	if (attr->non_resident)
++		ale->lowest_vcn = attr->data.non_resident.lowest_vcn;
++	else
++		ale->lowest_vcn = 0;
++	ale->mft_reference = mref;
++	ale->instance = attr->instance;
++	memcpy(ale->name, (u8 *)attr + le16_to_cpu(attr->name_offset),
++			attr->name_length * sizeof(__le16));
++
++	/* Copy entries from old attribute list to new. */
++	memcpy(new_al, ni->attr_list, entry_offset);
++	memcpy(new_al + entry_offset + entry_len, ni->attr_list +
++			entry_offset, ni->attr_list_size - entry_offset);
++
++	/* Set new runlist. */
++	old_al = ni->attr_list;
++	ni->attr_list = new_al;
++	ni->attr_list_size = ni->attr_list_size + entry_len;
++
++	err = ntfs_attrlist_update(ni);
++	if (err) {
++		ni->attr_list = old_al;
++		ni->attr_list_size -= entry_len;
++		goto err_out;
++	}
++	ntfs_free(old_al);
++	return 0;
++err_out:
++	ntfs_free(new_al);
++	return err;
++}
++
++/**
++ * ntfs_attrlist_entry_rm - remove an attribute list attribute entry
++ * @ctx:	attribute search context describing the attribute list entry
++ *
++ * Remove the attribute list entry @ctx->al_entry from the attribute list.
++ */
++int ntfs_attrlist_entry_rm(struct ntfs_attr_search_ctx *ctx)
++{
++	u8 *new_al;
++	int new_al_len;
++	struct ntfs_inode *base_ni;
++	struct attr_list_entry *ale;
++
++	if (!ctx || !ctx->ntfs_ino || !ctx->al_entry) {
++		ntfs_debug("Invalid arguments.\n");
++		return -EINVAL;
++	}
++
++	if (ctx->base_ntfs_ino)
++		base_ni = ctx->base_ntfs_ino;
++	else
++		base_ni = ctx->ntfs_ino;
++	ale = ctx->al_entry;
++
++	ntfs_debug("Entering for inode 0x%llx, attr 0x%x, lowest_vcn %lld.\n",
++			(long long)ctx->ntfs_ino->mft_no,
++			(unsigned int)le32_to_cpu(ctx->al_entry->type),
++			(long long)le64_to_cpu(ctx->al_entry->lowest_vcn));
++
++	if (!NInoAttrList(base_ni)) {
++		ntfs_debug("Attribute list isn't present.\n");
++		return -ENOENT;
++	}
++
++	/* Allocate memory for new attribute list. */
++	new_al_len = base_ni->attr_list_size - le16_to_cpu(ale->length);
++	new_al = ntfs_malloc_nofs(new_al_len);
++	if (!new_al)
++		return -ENOMEM;
++
++	/* Copy entries from old attribute list to new. */
++	memcpy(new_al, base_ni->attr_list, (u8 *)ale - base_ni->attr_list);
++	memcpy(new_al + ((u8 *)ale - base_ni->attr_list), (u8 *)ale + le16_to_cpu(
++				ale->length), new_al_len - ((u8 *)ale - base_ni->attr_list));
++
++	/* Set new runlist. */
++	ntfs_free(base_ni->attr_list);
++	base_ni->attr_list = new_al;
++	base_ni->attr_list_size = new_al_len;
++
++	return ntfs_attrlist_update(base_ni);
++}
+diff --git a/fs/ntfs/compress.c b/fs/ntfs/compress.c
+index 761aaa0195d6..dcd90248dadc 100644
+--- a/fs/ntfs/compress.c
++++ b/fs/ntfs/compress.c
+@@ -1,14 +1,22 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+- * compress.c - NTFS kernel compressed attributes handling.
+- *		Part of the Linux-NTFS project.
++ * NTFS kernel compressed attributes handling.
++ * Part of the Linux-NTFS project.
+  *
+  * Copyright (c) 2001-2004 Anton Altaparmakov
+  * Copyright (c) 2002 Richard Russon
++ * Copyright (c) 2025 LG Electronics Co., Ltd.
++ *
++ * Part of this file is based on code from the NTFS-3G project.
++ * and is copyrighted by the respective authors below:
++ * Copyright (c) 2004-2005 Anton Altaparmakov
++ * Copyright (c) 2004-2006 Szabolcs Szakacsits
++ * Copyright (c)      2005 Yura Pakhuchiy
++ * Copyright (c) 2009-2014 Jean-Pierre Andre
++ * Copyright (c)      2014 Eric Biggers
+  */
+ 
+ #include <linux/fs.h>
+-#include <linux/buffer_head.h>
+ #include <linux/blkdev.h>
+ #include <linux/vmalloc.h>
+ #include <linux/slab.h>
+@@ -17,11 +25,15 @@
+ #include "inode.h"
+ #include "debug.h"
+ #include "ntfs.h"
++#include "malloc.h"
++#include "aops.h"
++#include "lcnalloc.h"
++#include "mft.h"
+ 
+ /**
+- * ntfs_compression_constants - enum of constants used in the compression code
++ * enum of constants used in the compression code
+  */
+-typedef enum {
++enum {
+ 	/* Token types and access mask. */
+ 	NTFS_SYMBOL_TOKEN	=	0,
+ 	NTFS_PHRASE_TOKEN	=	1,
+@@ -39,17 +51,17 @@ typedef enum {
+ 	 * initializing the compression buffer.
+ 	 */
+ 	NTFS_MAX_CB_SIZE	= 64 * 1024,
+-} ntfs_compression_constants;
++};
+ 
+-/*
++/**
+  * ntfs_compression_buffer - one buffer for the decompression engine
+  */
+ static u8 *ntfs_compression_buffer;
+ 
+-/*
+- * ntfs_cb_lock - spinlock which protects ntfs_compression_buffer
++/**
++ * ntfs_cb_lock - mutex lock which protects ntfs_compression_buffer
+  */
+-static DEFINE_SPINLOCK(ntfs_cb_lock);
++static DEFINE_MUTEX(ntfs_cb_lock);
+ 
+ /**
+  * allocate_compression_buffers - allocate the decompression buffers
+@@ -60,7 +72,8 @@ static DEFINE_SPINLOCK(ntfs_cb_lock);
+  */
+ int allocate_compression_buffers(void)
+ {
+-	BUG_ON(ntfs_compression_buffer);
++	if (ntfs_compression_buffer)
++		return 0;
+ 
+ 	ntfs_compression_buffer = vmalloc(NTFS_MAX_CB_SIZE);
+ 	if (!ntfs_compression_buffer)
+@@ -75,9 +88,15 @@ int allocate_compression_buffers(void)
+  */
+ void free_compression_buffers(void)
+ {
+-	BUG_ON(!ntfs_compression_buffer);
++	mutex_lock(&ntfs_cb_lock);
++	if (!ntfs_compression_buffer) {
++		mutex_unlock(&ntfs_cb_lock);
++		return;
++	}
++
+ 	vfree(ntfs_compression_buffer);
+ 	ntfs_compression_buffer = NULL;
++	mutex_unlock(&ntfs_cb_lock);
+ }
+ 
+ /**
+@@ -90,13 +109,12 @@ static void zero_partial_compressed_page(struct page *page,
+ 	unsigned int kp_ofs;
+ 
+ 	ntfs_debug("Zeroing page region outside initialized size.");
+-	if (((s64)page->index << PAGE_SHIFT) >= initialized_size) {
++	if (((s64)page->__folio_index << PAGE_SHIFT) >= initialized_size) {
+ 		clear_page(kp);
+ 		return;
+ 	}
+ 	kp_ofs = initialized_size & ~PAGE_MASK;
+ 	memset(kp + kp_ofs, 0, PAGE_SIZE - kp_ofs);
+-	return;
+ }
+ 
+ /**
+@@ -105,10 +123,9 @@ static void zero_partial_compressed_page(struct page *page,
+ static inline void handle_bounds_compressed_page(struct page *page,
+ 		const loff_t i_size, const s64 initialized_size)
+ {
+-	if ((page->index >= (initialized_size >> PAGE_SHIFT)) &&
++	if ((page->__folio_index >= (initialized_size >> PAGE_SHIFT)) &&
+ 			(initialized_size < i_size))
+ 		zero_partial_compressed_page(page, initialized_size);
+-	return;
+ }
+ 
+ /**
+@@ -161,18 +178,16 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
+ 	 */
+ 	u8 *cb_end = cb_start + cb_size; /* End of cb. */
+ 	u8 *cb = cb_start;	/* Current position in cb. */
+-	u8 *cb_sb_start;	/* Beginning of the current sb in the cb. */
++	u8 *cb_sb_start = cb;	/* Beginning of the current sb in the cb. */
+ 	u8 *cb_sb_end;		/* End of current sb / beginning of next sb. */
+ 
+ 	/* Variables for uncompressed data / destination. */
+ 	struct page *dp;	/* Current destination page being worked on. */
+ 	u8 *dp_addr;		/* Current pointer into dp. */
+ 	u8 *dp_sb_start;	/* Start of current sub-block in dp. */
+-	u8 *dp_sb_end;		/* End of current sb in dp (dp_sb_start +
+-				   NTFS_SB_SIZE). */
++	u8 *dp_sb_end;		/* End of current sb in dp (dp_sb_start + NTFS_SB_SIZE). */
+ 	u16 do_sb_start;	/* @dest_ofs when starting this sub-block. */
+-	u16 do_sb_end;		/* @dest_ofs of end of this sb (do_sb_start +
+-				   NTFS_SB_SIZE). */
++	u16 do_sb_end;		/* @dest_ofs of end of this sb (do_sb_start + NTFS_SB_SIZE). */
+ 
+ 	/* Variables for tag and token parsing. */
+ 	u8 tag;			/* Current tag. */
+@@ -192,7 +207,7 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
+ 	 * position in the compression block is one byte before its end so the
+ 	 * first two checks do not detect it.
+ 	 */
+-	if (cb == cb_end || !le16_to_cpup((le16*)cb) ||
++	if (cb == cb_end || !le16_to_cpup((__le16 *)cb) ||
+ 			(*dest_index == dest_max_index &&
+ 			*dest_ofs == dest_max_ofs)) {
+ 		int i;
+@@ -201,7 +216,7 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
+ 		err = 0;
+ return_error:
+ 		/* We can sleep from now on, so we drop lock. */
+-		spin_unlock(&ntfs_cb_lock);
++		mutex_unlock(&ntfs_cb_lock);
+ 		/* Second stage: finalize completed pages. */
+ 		if (nr_completed_pages > 0) {
+ 			for (i = 0; i < nr_completed_pages; i++) {
+@@ -215,7 +230,7 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
+ 				handle_bounds_compressed_page(dp, i_size,
+ 						initialized_size);
+ 				flush_dcache_page(dp);
+-				kunmap(dp);
++				kunmap_local(page_address(dp));
+ 				SetPageUptodate(dp);
+ 				unlock_page(dp);
+ 				if (di == xpage)
+@@ -242,7 +257,7 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
+ 
+ 	/* Setup the current sub-block source pointers and validate range. */
+ 	cb_sb_start = cb;
+-	cb_sb_end = cb_sb_start + (le16_to_cpup((le16*)cb) & NTFS_SB_SIZE_MASK)
++	cb_sb_end = cb_sb_start + (le16_to_cpup((__le16 *)cb) & NTFS_SB_SIZE_MASK)
+ 			+ 3;
+ 	if (cb_sb_end > cb_end)
+ 		goto return_overflow;
+@@ -261,10 +276,10 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
+ 	}
+ 
+ 	/* We have a valid destination page. Setup the destination pointers. */
+-	dp_addr = (u8*)page_address(dp) + do_sb_start;
++	dp_addr = (u8 *)page_address(dp) + do_sb_start;
+ 
+ 	/* Now, we are ready to process the current sub-block (sb). */
+-	if (!(le16_to_cpup((le16*)cb) & NTFS_SB_IS_COMPRESSED)) {
++	if (!(le16_to_cpup((__le16 *)cb) & NTFS_SB_IS_COMPRESSED)) {
+ 		ntfs_debug("Found uncompressed sub-block.");
+ 		/* This sb is not compressed, just copy it into destination. */
+ 
+@@ -281,7 +296,8 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
+ 
+ 		/* Advance destination position to next sub-block. */
+ 		*dest_ofs += NTFS_SB_SIZE;
+-		if (!(*dest_ofs &= ~PAGE_MASK)) {
++		*dest_ofs &= ~PAGE_MASK;
++		if (!(*dest_ofs)) {
+ finalize_page:
+ 			/*
+ 			 * First stage: add current page index to array of
+@@ -308,14 +324,14 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
+ 		if (dp_addr < dp_sb_end) {
+ 			int nr_bytes = do_sb_end - *dest_ofs;
+ 
+-			ntfs_debug("Filling incomplete sub-block with "
+-					"zeroes.");
++			ntfs_debug("Filling incomplete sub-block with zeroes.");
+ 			/* Zero remainder and update destination position. */
+ 			memset(dp_addr, 0, nr_bytes);
+ 			*dest_ofs += nr_bytes;
+ 		}
+ 		/* We have finished the current sub-block. */
+-		if (!(*dest_ofs &= ~PAGE_MASK))
++		*dest_ofs &= ~PAGE_MASK;
++		if (!(*dest_ofs))
+ 			goto finalize_page;
+ 		goto do_next_sb;
+ 	}
+@@ -329,8 +345,8 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
+ 
+ 	/* Parse the eight tokens described by the tag. */
+ 	for (token = 0; token < 8; token++, tag >>= 1) {
+-		u16 lg, pt, length, max_non_overlap;
+ 		register u16 i;
++		u16 lg, pt, length, max_non_overlap;
+ 		u8 *dp_back_addr;
+ 
+ 		/* Check if we are done / still in range. */
+@@ -369,7 +385,7 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
+ 			lg++;
+ 
+ 		/* Get the phrase token into i. */
+-		pt = le16_to_cpup((le16*)cb);
++		pt = le16_to_cpup((__le16 *)cb);
+ 
+ 		/*
+ 		 * Calculate starting position of the byte sequence in
+@@ -426,7 +442,7 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
+ 
+ /**
+  * ntfs_read_compressed_block - read a compressed block into the page cache
+- * @page:	locked page in the compression block(s) we need to read
++ * @folio:	locked folio in the compression block(s) we need to read
+  *
+  * When we are called the page has already been verified to be locked and the
+  * attribute is known to be non-resident, not encrypted, but compressed.
+@@ -441,86 +457,65 @@ static int ntfs_decompress(struct page *dest_pages[], int completed_pages[],
+  * Warning: We have to be careful what we do about existing pages. They might
+  * have been written to so that we would lose data if we were to just overwrite
+  * them with the out-of-date uncompressed data.
+- *
+- * FIXME: For PAGE_SIZE > cb_size we are not doing the Right Thing(TM) at
+- * the end of the file I think. We need to detect this case and zero the out
+- * of bounds remainder of the page in question and mark it as handled. At the
+- * moment we would just return -EIO on such a page. This bug will only become
+- * apparent if pages are above 8kiB and the NTFS volume only uses 512 byte
+- * clusters so is probably not going to be seen by anyone. Still this should
+- * be fixed. (AIA)
+- *
+- * FIXME: Again for PAGE_SIZE > cb_size we are screwing up both in
+- * handling sparse and compressed cbs. (AIA)
+- *
+- * FIXME: At the moment we don't do any zeroing out in the case that
+- * initialized_size is less than data_size. This should be safe because of the
+- * nature of the compression algorithm used. Just in case we check and output
+- * an error message in read inode if the two sizes are not equal for a
+- * compressed file. (AIA)
+  */
+-int ntfs_read_compressed_block(struct page *page)
++int ntfs_read_compressed_block(struct folio *folio)
+ {
++	struct page *page = &folio->page;
+ 	loff_t i_size;
+ 	s64 initialized_size;
+ 	struct address_space *mapping = page->mapping;
+-	ntfs_inode *ni = NTFS_I(mapping->host);
+-	ntfs_volume *vol = ni->vol;
++	struct ntfs_inode *ni = NTFS_I(mapping->host);
++	struct ntfs_volume *vol = ni->vol;
+ 	struct super_block *sb = vol->sb;
+-	runlist_element *rl;
+-	unsigned long flags, block_size = sb->s_blocksize;
+-	unsigned char block_size_bits = sb->s_blocksize_bits;
++	struct runlist_element *rl;
++	unsigned long flags;
+ 	u8 *cb, *cb_pos, *cb_end;
+-	struct buffer_head **bhs;
+-	unsigned long offset, index = page->index;
++	unsigned long offset, index = page->__folio_index;
+ 	u32 cb_size = ni->itype.compressed.block_size;
+ 	u64 cb_size_mask = cb_size - 1UL;
+-	VCN vcn;
+-	LCN lcn;
++	s64 vcn;
++	s64 lcn;
+ 	/* The first wanted vcn (minimum alignment is PAGE_SIZE). */
+-	VCN start_vcn = (((s64)index << PAGE_SHIFT) & ~cb_size_mask) >>
++	s64 start_vcn = (((s64)index << PAGE_SHIFT) & ~cb_size_mask) >>
+ 			vol->cluster_size_bits;
+ 	/*
+ 	 * The first vcn after the last wanted vcn (minimum alignment is again
+ 	 * PAGE_SIZE.
+ 	 */
+-	VCN end_vcn = ((((s64)(index + 1UL) << PAGE_SHIFT) + cb_size - 1)
++	s64 end_vcn = ((((s64)(index + 1UL) << PAGE_SHIFT) + cb_size - 1)
+ 			& ~cb_size_mask) >> vol->cluster_size_bits;
+ 	/* Number of compression blocks (cbs) in the wanted vcn range. */
+-	unsigned int nr_cbs = (end_vcn - start_vcn) << vol->cluster_size_bits
+-			>> ni->itype.compressed.block_size_bits;
++	unsigned int nr_cbs = NTFS_CLU_TO_B(vol, end_vcn - start_vcn) >>
++		ni->itype.compressed.block_size_bits;
+ 	/*
+ 	 * Number of pages required to store the uncompressed data from all
+ 	 * compression blocks (cbs) overlapping @page. Due to alignment
+ 	 * guarantees of start_vcn and end_vcn, no need to round up here.
+ 	 */
+-	unsigned int nr_pages = (end_vcn - start_vcn) <<
+-			vol->cluster_size_bits >> PAGE_SHIFT;
+-	unsigned int xpage, max_page, cur_page, cur_ofs, i;
++	unsigned int nr_pages = NTFS_CLU_TO_PIDX(vol, end_vcn - start_vcn);
++	unsigned int xpage, max_page, cur_page, cur_ofs, i, page_ofs, page_index;
+ 	unsigned int cb_clusters, cb_max_ofs;
+-	int block, max_block, cb_max_page, bhs_size, nr_bhs, err = 0;
++	int cb_max_page, err = 0;
+ 	struct page **pages;
+ 	int *completed_pages;
+ 	unsigned char xpage_done = 0;
++	struct page *lpage;
+ 
+-	ntfs_debug("Entering, page->index = 0x%lx, cb_size = 0x%x, nr_pages = "
+-			"%i.", index, cb_size, nr_pages);
++	ntfs_debug("Entering, page->index = 0x%lx, cb_size = 0x%x, nr_pages = %i.",
++			index, cb_size, nr_pages);
+ 	/*
+ 	 * Bad things happen if we get here for anything that is not an
+ 	 * unnamed $DATA attribute.
+ 	 */
+-	BUG_ON(ni->type != AT_DATA);
+-	BUG_ON(ni->name_len);
++	if (ni->type != AT_DATA || ni->name_len) {
++		unlock_page(page);
++		return -EIO;
++	}
+ 
+ 	pages = kmalloc_array(nr_pages, sizeof(struct page *), GFP_NOFS);
+ 	completed_pages = kmalloc_array(nr_pages + 1, sizeof(int), GFP_NOFS);
+ 
+-	/* Allocate memory to store the buffer heads we need. */
+-	bhs_size = cb_size / block_size * sizeof(struct buffer_head *);
+-	bhs = kmalloc(bhs_size, GFP_NOFS);
+-
+-	if (unlikely(!pages || !bhs || !completed_pages)) {
+-		kfree(bhs);
++	if (unlikely(!pages || !completed_pages)) {
+ 		kfree(pages);
+ 		kfree(completed_pages);
+ 		unlock_page(page);
+@@ -532,7 +527,7 @@ int ntfs_read_compressed_block(struct page *page)
+ 	 * We have already been given one page, this is the one we must do.
+ 	 * Once again, the alignment guarantees keep it simple.
+ 	 */
+-	offset = start_vcn << vol->cluster_size_bits >> PAGE_SHIFT;
++	offset = NTFS_CLU_TO_PIDX(vol, start_vcn);
+ 	xpage = index - offset;
+ 	pages[xpage] = page;
+ 	/*
+@@ -547,10 +542,9 @@ int ntfs_read_compressed_block(struct page *page)
+ 			offset;
+ 	/* Is the page fully outside i_size? (truncate in progress) */
+ 	if (xpage >= max_page) {
+-		kfree(bhs);
+ 		kfree(pages);
+ 		kfree(completed_pages);
+-		zero_user(page, 0, PAGE_SIZE);
++		zero_user_segments(page, 0, PAGE_SIZE, 0, 0);
+ 		ntfs_debug("Compressed read outside i_size - truncated?");
+ 		SetPageUptodate(page);
+ 		unlock_page(page);
+@@ -558,6 +552,7 @@ int ntfs_read_compressed_block(struct page *page)
+ 	}
+ 	if (nr_pages < max_page)
+ 		max_page = nr_pages;
++
+ 	for (i = 0; i < max_page; i++, offset++) {
+ 		if (i != xpage)
+ 			pages[i] = grab_cache_page_nowait(mapping, offset);
+@@ -568,10 +563,8 @@ int ntfs_read_compressed_block(struct page *page)
+ 			 * in and/or dirty or we would be losing data or at
+ 			 * least wasting our time.
+ 			 */
+-			if (!PageDirty(page) && (!PageUptodate(page) ||
+-					PageError(page))) {
+-				ClearPageError(page);
+-				kmap(page);
++			if (!PageDirty(page) && (!PageUptodate(page))) {
++				kmap_local_page(page);
+ 				continue;
+ 			}
+ 			unlock_page(page);
+@@ -589,9 +582,19 @@ int ntfs_read_compressed_block(struct page *page)
+ 	cb_clusters = ni->itype.compressed.block_clusters;
+ do_next_cb:
+ 	nr_cbs--;
+-	nr_bhs = 0;
+ 
+-	/* Read all cb buffer heads one cluster at a time. */
++	mutex_lock(&ntfs_cb_lock);
++	if (!ntfs_compression_buffer)
++		if (allocate_compression_buffers()) {
++			mutex_unlock(&ntfs_cb_lock);
++			goto err_out;
++		}
++
++
++	cb = ntfs_compression_buffer;
++	cb_pos = cb;
++	cb_end = cb + cb_size;
++
+ 	rl = NULL;
+ 	for (vcn = start_vcn, start_vcn += cb_clusters; vcn < start_vcn;
+ 			vcn++) {
+@@ -619,8 +622,10 @@ int ntfs_read_compressed_block(struct page *page)
+ 			 */
+ 			if (lcn == LCN_HOLE)
+ 				break;
+-			if (is_retry || lcn != LCN_RL_NOT_MAPPED)
++			if (is_retry || lcn != LCN_RL_NOT_MAPPED) {
++				mutex_unlock(&ntfs_cb_lock);
+ 				goto rl_err;
++			}
+ 			is_retry = true;
+ 			/*
+ 			 * Attempt to map runlist, dropping lock for the
+@@ -629,88 +634,36 @@ int ntfs_read_compressed_block(struct page *page)
+ 			up_read(&ni->runlist.lock);
+ 			if (!ntfs_map_runlist(ni, vcn))
+ 				goto lock_retry_remap;
++			mutex_unlock(&ntfs_cb_lock);
+ 			goto map_rl_err;
+ 		}
+-		block = lcn << vol->cluster_size_bits >> block_size_bits;
+-		/* Read the lcn from device in chunks of block_size bytes. */
+-		max_block = block + (vol->cluster_size >> block_size_bits);
+-		do {
+-			ntfs_debug("block = 0x%x.", block);
+-			if (unlikely(!(bhs[nr_bhs] = sb_getblk(sb, block))))
+-				goto getblk_err;
+-			nr_bhs++;
+-		} while (++block < max_block);
+-	}
+ 
+-	/* Release the lock if we took it. */
+-	if (rl)
+-		up_read(&ni->runlist.lock);
+-
+-	/* Setup and initiate io on all buffer heads. */
+-	for (i = 0; i < nr_bhs; i++) {
+-		struct buffer_head *tbh = bhs[i];
++		page_ofs = NTFS_CLU_TO_POFS(vol, lcn);
++		page_index = NTFS_CLU_TO_PIDX(vol, lcn);
+ 
+-		if (!trylock_buffer(tbh))
+-			continue;
+-		if (unlikely(buffer_uptodate(tbh))) {
+-			unlock_buffer(tbh);
+-			continue;
++		lpage = read_mapping_page(sb->s_bdev->bd_mapping,
++					  page_index, NULL);
++		if (IS_ERR(lpage)) {
++			err = PTR_ERR(lpage);
++			mutex_unlock(&ntfs_cb_lock);
++			goto read_err;
+ 		}
+-		get_bh(tbh);
+-		tbh->b_end_io = end_buffer_read_sync;
+-		submit_bh(REQ_OP_READ, tbh);
+-	}
+-
+-	/* Wait for io completion on all buffer heads. */
+-	for (i = 0; i < nr_bhs; i++) {
+-		struct buffer_head *tbh = bhs[i];
+ 
+-		if (buffer_uptodate(tbh))
+-			continue;
+-		wait_on_buffer(tbh);
+-		/*
+-		 * We need an optimization barrier here, otherwise we start
+-		 * hitting the below fixup code when accessing a loopback
+-		 * mounted ntfs partition. This indicates either there is a
+-		 * race condition in the loop driver or, more likely, gcc
+-		 * overoptimises the code without the barrier and it doesn't
+-		 * do the Right Thing(TM).
+-		 */
+-		barrier();
+-		if (unlikely(!buffer_uptodate(tbh))) {
+-			ntfs_warning(vol->sb, "Buffer is unlocked but not "
+-					"uptodate! Unplugging the disk queue "
+-					"and rescheduling.");
+-			get_bh(tbh);
+-			io_schedule();
+-			put_bh(tbh);
+-			if (unlikely(!buffer_uptodate(tbh)))
+-				goto read_err;
+-			ntfs_warning(vol->sb, "Buffer is now uptodate. Good.");
+-		}
++		lock_page(lpage);
++		memcpy(cb_pos, page_address(lpage) + page_ofs,
++		       vol->cluster_size);
++		unlock_page(lpage);
++		put_page(lpage);
++		cb_pos += vol->cluster_size;
+ 	}
+ 
+-	/*
+-	 * Get the compression buffer. We must not sleep any more
+-	 * until we are finished with it.
+-	 */
+-	spin_lock(&ntfs_cb_lock);
+-	cb = ntfs_compression_buffer;
+-
+-	BUG_ON(!cb);
+-
+-	cb_pos = cb;
+-	cb_end = cb + cb_size;
+-
+-	/* Copy the buffer heads into the contiguous buffer. */
+-	for (i = 0; i < nr_bhs; i++) {
+-		memcpy(cb_pos, bhs[i]->b_data, block_size);
+-		cb_pos += block_size;
+-	}
++	/* Release the lock if we took it. */
++	if (rl)
++		up_read(&ni->runlist.lock);
+ 
+ 	/* Just a precaution. */
+ 	if (cb_pos + 2 <= cb + cb_size)
+-		*(u16*)cb_pos = 0;
++		*(u16 *)cb_pos = 0;
+ 
+ 	/* Reset cb_pos back to the beginning. */
+ 	cb_pos = cb;
+@@ -731,7 +684,7 @@ int ntfs_read_compressed_block(struct page *page)
+ 		/* Sparse cb, zero out page range overlapping the cb. */
+ 		ntfs_debug("Found sparse compression block.");
+ 		/* We can sleep from now on, so we drop lock. */
+-		spin_unlock(&ntfs_cb_lock);
++		mutex_unlock(&ntfs_cb_lock);
+ 		if (cb_max_ofs)
+ 			cb_max_page--;
+ 		for (; cur_page < cb_max_page; cur_page++) {
+@@ -744,7 +697,7 @@ int ntfs_read_compressed_block(struct page *page)
+ 							PAGE_SIZE -
+ 							cur_ofs);
+ 				flush_dcache_page(page);
+-				kunmap(page);
++				kunmap_local(page_address(page));
+ 				SetPageUptodate(page);
+ 				unlock_page(page);
+ 				if (cur_page == xpage)
+@@ -778,16 +731,6 @@ int ntfs_read_compressed_block(struct page *page)
+ 
+ 		ntfs_debug("Found uncompressed compression block.");
+ 		/* Uncompressed cb, copy it to the destination pages. */
+-		/*
+-		 * TODO: As a big optimization, we could detect this case
+-		 * before we read all the pages and use block_read_full_folio()
+-		 * on all full pages instead (we still have to treat partial
+-		 * pages especially but at least we are getting rid of the
+-		 * synchronous io for the majority of pages.
+-		 * Or if we choose not to do the read-ahead/-behind stuff, we
+-		 * could just return block_read_full_folio(pages[xpage]) as long
+-		 * as PAGE_SIZE <= cb_size.
+-		 */
+ 		if (cb_max_ofs)
+ 			cb_max_page--;
+ 		/* First stage: copy data into destination pages. */
+@@ -811,7 +754,7 @@ int ntfs_read_compressed_block(struct page *page)
+ 			cur_ofs = cb_max_ofs;
+ 		}
+ 		/* We can sleep from now on, so drop lock. */
+-		spin_unlock(&ntfs_cb_lock);
++		mutex_unlock(&ntfs_cb_lock);
+ 		/* Second stage: finalize pages. */
+ 		for (; cur2_page < cb_max_page; cur2_page++) {
+ 			page = pages[cur2_page];
+@@ -823,7 +766,7 @@ int ntfs_read_compressed_block(struct page *page)
+ 				handle_bounds_compressed_page(page, i_size,
+ 						initialized_size);
+ 				flush_dcache_page(page);
+-				kunmap(page);
++				kunmap_local(page_address(page));
+ 				SetPageUptodate(page);
+ 				unlock_page(page);
+ 				if (cur2_page == xpage)
+@@ -851,16 +794,15 @@ int ntfs_read_compressed_block(struct page *page)
+ 		 * ntfs_decompress().
+ 		 */
+ 		if (err) {
+-			ntfs_error(vol->sb, "ntfs_decompress() failed in inode "
+-					"0x%lx with error code %i. Skipping "
+-					"this compression block.",
+-					ni->mft_no, -err);
++			ntfs_error(vol->sb,
++				"ntfs_decompress() failed in inode 0x%lx with error code %i. Skipping this compression block.",
++				ni->mft_no, -err);
+ 			/* Release the unfinished pages. */
+ 			for (; prev_cur_page < cur_page; prev_cur_page++) {
+ 				page = pages[prev_cur_page];
+ 				if (page) {
+ 					flush_dcache_page(page);
+-					kunmap(page);
++					kunmap_local(page_address(page));
+ 					unlock_page(page);
+ 					if (prev_cur_page != xpage)
+ 						put_page(page);
+@@ -870,27 +812,19 @@ int ntfs_read_compressed_block(struct page *page)
+ 		}
+ 	}
+ 
+-	/* Release the buffer heads. */
+-	for (i = 0; i < nr_bhs; i++)
+-		brelse(bhs[i]);
+-
+ 	/* Do we have more work to do? */
+ 	if (nr_cbs)
+ 		goto do_next_cb;
+ 
+-	/* We no longer need the list of buffer heads. */
+-	kfree(bhs);
+-
+ 	/* Clean up if we have any pages left. Should never happen. */
+ 	for (cur_page = 0; cur_page < max_page; cur_page++) {
+ 		page = pages[cur_page];
+ 		if (page) {
+-			ntfs_error(vol->sb, "Still have pages left! "
+-					"Terminating them with extreme "
+-					"prejudice.  Inode 0x%lx, page index "
+-					"0x%lx.", ni->mft_no, page->index);
++			ntfs_error(vol->sb,
++				"Still have pages left! Terminating them with extreme prejudice.  Inode 0x%lx, page index 0x%lx.",
++				ni->mft_no, page->__folio_index);
+ 			flush_dcache_page(page);
+-			kunmap(page);
++			kunmap_local(page_address(page));
+ 			unlock_page(page);
+ 			if (cur_page != xpage)
+ 				put_page(page);
+@@ -910,35 +844,25 @@ int ntfs_read_compressed_block(struct page *page)
+ 			"EOVERFLOW" : (!err ? "EIO" : "unknown error"));
+ 	return err < 0 ? err : -EIO;
+ 
+-read_err:
+-	ntfs_error(vol->sb, "IO error while reading compressed data.");
+-	/* Release the buffer heads. */
+-	for (i = 0; i < nr_bhs; i++)
+-		brelse(bhs[i]);
+-	goto err_out;
+-
+ map_rl_err:
+-	ntfs_error(vol->sb, "ntfs_map_runlist() failed. Cannot read "
+-			"compression block.");
++	ntfs_error(vol->sb, "ntfs_map_runlist() failed. Cannot read compression block.");
+ 	goto err_out;
+ 
+ rl_err:
+ 	up_read(&ni->runlist.lock);
+-	ntfs_error(vol->sb, "ntfs_rl_vcn_to_lcn() failed. Cannot read "
+-			"compression block.");
++	ntfs_error(vol->sb, "ntfs_rl_vcn_to_lcn() failed. Cannot read compression block.");
+ 	goto err_out;
+ 
+-getblk_err:
++read_err:
+ 	up_read(&ni->runlist.lock);
+-	ntfs_error(vol->sb, "getblk() failed. Cannot read compression block.");
++	ntfs_error(vol->sb, "IO error while reading compressed data.");
+ 
+ err_out:
+-	kfree(bhs);
+ 	for (i = cur_page; i < max_page; i++) {
+ 		page = pages[i];
+ 		if (page) {
+ 			flush_dcache_page(page);
+-			kunmap(page);
++			kunmap_local(page_address(page));
+ 			unlock_page(page);
+ 			if (i != xpage)
+ 				put_page(page);
+@@ -948,3 +872,688 @@ int ntfs_read_compressed_block(struct page *page)
+ 	kfree(completed_pages);
+ 	return -EIO;
+ }
++
++/*
++ * Match length at or above which ntfs_best_match() will stop searching for
++ * longer matches.
++ */
++#define NICE_MATCH_LEN		18
++
++/*
++ * Maximum number of potential matches that ntfs_best_match() will consider at
++ * each position.
++ */
++#define MAX_SEARCH_DEPTH	24
++
++/* log base 2 of the number of entries in the hash table for match-finding.  */
++#define HASH_SHIFT		14
++
++/* Constant for the multiplicative hash function.  */
++#define HASH_MULTIPLIER		0x1E35A7BD
++
++struct COMPRESS_CONTEXT {
++	const unsigned char *inbuf;
++	int bufsize;
++	int size;
++	int rel;
++	int mxsz;
++	s16 head[1 << HASH_SHIFT];
++	s16 prev[NTFS_SB_SIZE];
++};
++
++/*
++ * Hash the next 3-byte sequence in the input buffer
++ */
++static inline unsigned int ntfs_hash(const u8 *p)
++{
++	u32 str;
++	u32 hash;
++
++	/*
++	 * Unaligned access allowed, and little endian CPU.
++	 * Callers ensure that at least 4 (not 3) bytes are remaining.
++	 */
++	str = *(const u32 *)p & 0xFFFFFF;
++	hash = str * HASH_MULTIPLIER;
++
++	/* High bits are more random than the low bits.  */
++	return hash >> (32 - HASH_SHIFT);
++}
++
++/*
++ * Search for the longest sequence matching current position
++ *
++ * A hash table, each entry of which points to a chain of sequence
++ * positions sharing the corresponding hash code, is maintained to speed up
++ * searching for matches.  To maintain the hash table, either
++ * ntfs_best_match() or ntfs_skip_position() has to be called for each
++ * consecutive position.
++ *
++ * This function is heavily used; it has to be optimized carefully.
++ *
++ * This function sets pctx->size and pctx->rel to the length and offset,
++ * respectively, of the longest match found.
++ *
++ * The minimum match length is assumed to be 3, and the maximum match
++ * length is assumed to be pctx->mxsz.  If this function produces
++ * pctx->size < 3, then no match was found.
++ *
++ * Note: for the following reasons, this function is not guaranteed to find
++ * *the* longest match up to pctx->mxsz:
++ *
++ *      (1) If this function finds a match of NICE_MATCH_LEN bytes or greater,
++ *          it ends early because a match this long is good enough and it's not
++ *          worth spending more time searching.
++ *
++ *      (2) If this function considers MAX_SEARCH_DEPTH matches with a single
++ *          position, it ends early and returns the longest match found so far.
++ *          This saves a lot of time on degenerate inputs.
++ */
++static void ntfs_best_match(struct COMPRESS_CONTEXT *pctx, const int i,
++		int best_len)
++{
++	const u8 * const inbuf = pctx->inbuf;
++	const u8 * const strptr = &inbuf[i]; /* String we're matching against */
++	s16 * const prev = pctx->prev;
++	const int max_len = min(pctx->bufsize - i, pctx->mxsz);
++	const int nice_len = min(NICE_MATCH_LEN, max_len);
++	int depth_remaining = MAX_SEARCH_DEPTH;
++	const u8 *best_matchptr = strptr;
++	unsigned int hash;
++	s16 cur_match;
++	const u8 *matchptr;
++	int len;
++
++	if (max_len < 4)
++		goto out;
++
++	/* Insert the current sequence into the appropriate hash chain. */
++	hash = ntfs_hash(strptr);
++	cur_match = pctx->head[hash];
++	prev[i] = cur_match;
++	pctx->head[hash] = i;
++
++	if (best_len >= max_len) {
++		/*
++		 * Lazy match is being attempted, but there aren't enough length
++		 * bits remaining to code a longer match.
++		 */
++		goto out;
++	}
++
++	/* Search the appropriate hash chain for matches. */
++
++	for (; cur_match >= 0 && depth_remaining--; cur_match = prev[cur_match]) {
++		matchptr = &inbuf[cur_match];
++
++		/*
++		 * Considering the potential match at 'matchptr':  is it longer
++		 * than 'best_len'?
++		 *
++		 * The bytes at index 'best_len' are the most likely to differ,
++		 * so check them first.
++		 *
++		 * The bytes at indices 'best_len - 1' and '0' are less
++		 * important to check separately.  But doing so still gives a
++		 * slight performance improvement, at least on x86_64, probably
++		 * because they create separate branches for the CPU to predict
++		 * independently of the branches in the main comparison loops.
++		 */
++		if (matchptr[best_len] != strptr[best_len] ||
++				matchptr[best_len - 1] != strptr[best_len - 1] ||
++				matchptr[0] != strptr[0])
++			goto next_match;
++
++		for (len = 1; len < best_len - 1; len++)
++			if (matchptr[len] != strptr[len])
++				goto next_match;
++
++		/*
++		 * The match is the longest found so far ---
++		 * at least 'best_len' + 1 bytes.  Continue extending it.
++		 */
++
++		best_matchptr = matchptr;
++
++		do {
++			if (++best_len >= nice_len) {
++				/*
++				 * 'nice_len' reached; don't waste time
++				 * searching for longer matches.  Extend the
++				 * match as far as possible and terminate the
++				 * search.
++				 */
++				while (best_len < max_len &&
++				       (best_matchptr[best_len] ==
++					strptr[best_len]))
++					best_len++;
++				goto out;
++			}
++		} while (best_matchptr[best_len] == strptr[best_len]);
++
++		/* Found a longer match, but 'nice_len' not yet reached.  */
++
++next_match:
++		/* Continue to next match in the chain.  */
++		;
++	}
++
++	/*
++	 * Reached end of chain, or ended early due to reaching the maximum
++	 * search depth.
++	 */
++
++out:
++	/* Return the longest match we were able to find.  */
++	pctx->size = best_len;
++	pctx->rel = best_matchptr - strptr; /* given as a negative number! */
++}
++
++/*
++ * Advance the match-finder, but don't search for matches.
++ */
++static void ntfs_skip_position(struct COMPRESS_CONTEXT *pctx, const int i)
++{
++	unsigned int hash;
++
++	if (pctx->bufsize - i < 4)
++		return;
++
++	/* Insert the current sequence into the appropriate hash chain.  */
++	hash = ntfs_hash(pctx->inbuf + i);
++	pctx->prev[i] = pctx->head[hash];
++	pctx->head[hash] = i;
++}
++
++/*
++ * Compress a 4096-byte block
++ *
++ * Returns a header of two bytes followed by the compressed data.
++ * If compression is not effective, the header and an uncompressed
++ * block is returned.
++ *
++ * Note : two bytes may be output before output buffer overflow
++ * is detected, so a 4100-bytes output buffer must be reserved.
++ *
++ * Returns the size of the compressed block, including the
++ * header (minimal size is 2, maximum size is 4098)
++ * 0 if an error has been met.
++ */
++static unsigned int ntfs_compress_block(const char *inbuf, const int bufsize,
++		char *outbuf)
++{
++	struct COMPRESS_CONTEXT *pctx;
++	int i; /* current position */
++	int j; /* end of best match from current position */
++	int k; /* end of best match from next position */
++	int offs; /* offset to best match */
++	int bp; /* bits to store offset */
++	int bp_cur; /* saved bits to store offset at current position */
++	int mxoff; /* max match offset : 1 << bp */
++	unsigned int xout;
++	unsigned int q; /* aggregated offset and size */
++	int have_match; /* do we have a match at the current position? */
++	char *ptag; /* location reserved for a tag */
++	int tag;    /* current value of tag */
++	int ntag;   /* count of bits still undefined in tag */
++
++	pctx = ntfs_malloc_nofs(sizeof(struct COMPRESS_CONTEXT));
++	if (!pctx)
++		return -ENOMEM;
++
++	/*
++	 * All hash chains start as empty.  The special value '-1' indicates the
++	 * end of each hash chain.
++	 */
++	memset(pctx->head, 0xFF, sizeof(pctx->head));
++
++	pctx->inbuf = (const unsigned char *)inbuf;
++	pctx->bufsize = bufsize;
++	xout = 2;
++	i = 0;
++	bp = 4;
++	mxoff = 1 << bp;
++	pctx->mxsz = (1 << (16 - bp)) + 2;
++	have_match = 0;
++	tag = 0;
++	ntag = 8;
++	ptag = &outbuf[xout++];
++
++	while ((i < bufsize) && (xout < (NTFS_SB_SIZE + 2))) {
++
++		/*
++		 * This implementation uses "lazy" parsing: it always chooses
++		 * the longest match, unless the match at the next position is
++		 * longer.  This is the same strategy used by the high
++		 * compression modes of zlib.
++		 */
++		if (!have_match) {
++			/*
++			 * Find the longest match at the current position.  But
++			 * first adjust the maximum match length if needed.
++			 * (This loop might need to run more than one time in
++			 * the case that we just output a long match.)
++			 */
++			while (mxoff < i) {
++				bp++;
++				mxoff <<= 1;
++				pctx->mxsz = (pctx->mxsz + 2) >> 1;
++			}
++			ntfs_best_match(pctx, i, 2);
++		}
++
++		if (pctx->size >= 3) {
++			/* Found a match at the current position.  */
++			j = i + pctx->size;
++			bp_cur = bp;
++			offs = pctx->rel;
++
++			if (pctx->size >= NICE_MATCH_LEN) {
++				/* Choose long matches immediately.  */
++				q = (~offs << (16 - bp_cur)) + (j - i - 3);
++				outbuf[xout++] = q & 255;
++				outbuf[xout++] = (q >> 8) & 255;
++				tag |= (1 << (8 - ntag));
++
++				if (j == bufsize) {
++					/*
++					 * Shortcut if the match extends to the
++					 * end of the buffer.
++					 */
++					i = j;
++					--ntag;
++					break;
++				}
++				i += 1;
++				do {
++					ntfs_skip_position(pctx, i);
++				} while (++i != j);
++				have_match = 0;
++			} else {
++				/*
++				 * Check for a longer match at the next
++				 * position.
++				 */
++
++				/*
++				 * Doesn't need to be while() since we just
++				 * adjusted the maximum match length at the
++				 * previous position.
++				 */
++				if (mxoff < i + 1) {
++					bp++;
++					mxoff <<= 1;
++					pctx->mxsz = (pctx->mxsz + 2) >> 1;
++				}
++				ntfs_best_match(pctx, i + 1, pctx->size);
++				k = i + 1 + pctx->size;
++
++				if (k > (j + 1)) {
++					/*
++					 * Next match is longer.
++					 * Output a literal.
++					 */
++					outbuf[xout++] = inbuf[i++];
++					have_match = 1;
++				} else {
++					/*
++					 * Next match isn't longer.
++					 * Output the current match.
++					 */
++					q = (~offs << (16 - bp_cur)) +
++						(j - i - 3);
++					outbuf[xout++] = q & 255;
++					outbuf[xout++] = (q >> 8) & 255;
++					tag |= (1 << (8 - ntag));
++
++					/*
++					 * The minimum match length is 3, and
++					 * we've run two bytes through the
++					 * matchfinder already.  So the minimum
++					 * number of positions we need to skip
++					 * is 1.
++					 */
++					i += 2;
++					do {
++						ntfs_skip_position(pctx, i);
++					} while (++i != j);
++					have_match = 0;
++				}
++			}
++		} else {
++			/* No match at current position.  Output a literal. */
++			outbuf[xout++] = inbuf[i++];
++			have_match = 0;
++		}
++
++		/* Store the tag if fully used. */
++		if (!--ntag) {
++			*ptag = tag;
++			ntag = 8;
++			ptag = &outbuf[xout++];
++			tag = 0;
++		}
++	}
++
++	/* Store the last tag if partially used. */
++	if (ntag == 8)
++		xout--;
++	else
++		*ptag = tag;
++
++	/* Determine whether to store the data compressed or uncompressed. */
++	if ((i >= bufsize) && (xout < (NTFS_SB_SIZE + 2))) {
++		/* Compressed. */
++		outbuf[0] = (xout - 3) & 255;
++		outbuf[1] = 0xb0 + (((xout - 3) >> 8) & 15);
++	} else {
++		/* Uncompressed.  */
++		memcpy(&outbuf[2], inbuf, bufsize);
++		if (bufsize < NTFS_SB_SIZE)
++			memset(&outbuf[bufsize + 2], 0, NTFS_SB_SIZE - bufsize);
++		outbuf[0] = 0xff;
++		outbuf[1] = 0x3f;
++		xout = NTFS_SB_SIZE + 2;
++	}
++
++	/*
++	 * Free the compression context and return the total number of bytes
++	 * written to 'outbuf'.
++	 */
++	ntfs_free(pctx);
++	return xout;
++}
++
++static int ntfs_write_cb(struct ntfs_inode *ni, loff_t pos, struct page **pages,
++		int pages_per_cb)
++{
++	struct ntfs_volume *vol = ni->vol;
++	char *outbuf = NULL, *pbuf, *inbuf;
++	u32 compsz, p, insz = pages_per_cb << PAGE_SHIFT;
++	s32 rounded, bio_size;
++	unsigned int sz, bsz;
++	bool fail = false, allzeroes;
++	/* a single compressed zero */
++	static char onezero[] = {0x01, 0xb0, 0x00, 0x00};
++	/* a couple of compressed zeroes */
++	static char twozeroes[] = {0x02, 0xb0, 0x00, 0x00, 0x00};
++	/* more compressed zeroes, to be followed by some count */
++	static char morezeroes[] = {0x03, 0xb0, 0x02, 0x00};
++	struct page **pages_disk = NULL, *pg;
++	s64 bio_lcn;
++	struct runlist_element *rlc, *rl;
++	int i, err;
++	int pages_count = (round_up(ni->itype.compressed.block_size + 2 *
++		(ni->itype.compressed.block_size / NTFS_SB_SIZE) + 2, PAGE_SIZE)) / PAGE_SIZE;
++	size_t new_rl_count;
++	struct bio *bio = NULL;
++	loff_t new_length;
++	s64 new_vcn;
++
++	inbuf = vmap(pages, pages_per_cb, VM_MAP, PAGE_KERNEL_RO);
++	if (!inbuf)
++		return -ENOMEM;
++
++	/* may need 2 extra bytes per block and 2 more bytes */
++	pages_disk = kcalloc(pages_count, sizeof(struct page *), GFP_NOFS);
++	if (!pages_disk) {
++		vunmap(inbuf);
++		return -ENOMEM;
++	}
++
++	for (i = 0; i < pages_count; i++) {
++		pg = alloc_page(GFP_KERNEL);
++		if (!pg) {
++			err = -ENOMEM;
++			goto out;
++		}
++		pages_disk[i] = pg;
++		lock_page(pg);
++		kmap_local_page(pg);
++	}
++
++	outbuf = vmap(pages_disk, pages_count, VM_MAP, PAGE_KERNEL);
++	if (!outbuf) {
 +		err = -ENOMEM;
 +		goto out;
 +	}
 +
-+	iomap->type = IOMAP_INLINE;
-+	iomap->offset = 0;
-+	/* iomap requires there is only one INLINE_DATA extent */
-+	iomap->length = attr_len;
++	compsz = 0;
++	allzeroes = true;
++	for (p = 0; (p < insz) && !fail; p += NTFS_SB_SIZE) {
++		if ((p + NTFS_SB_SIZE) < insz)
++			bsz = NTFS_SB_SIZE;
++		else
++			bsz = insz - p;
++		pbuf = &outbuf[compsz];
++		sz = ntfs_compress_block(&inbuf[p], bsz, pbuf);
++		/* fail if all the clusters (or more) are needed */
++		if (!sz || ((compsz + sz + vol->cluster_size + 2) >
++			    ni->itype.compressed.block_size))
++			fail = true;
++		else {
++			if (allzeroes) {
++				/* check whether this is all zeroes */
++				switch (sz) {
++				case 4:
++					allzeroes = !memcmp(pbuf, onezero, 4);
++					break;
++				case 5:
++					allzeroes = !memcmp(pbuf, twozeroes, 5);
++					break;
++				case 6:
++					allzeroes = !memcmp(pbuf, morezeroes, 4);
++					break;
++				default:
++					allzeroes = false;
++					break;
++				}
++			}
++			compsz += sz;
++		}
++	}
 +
++	if (!fail && !allzeroes) {
++		outbuf[compsz++] = 0;
++		outbuf[compsz++] = 0;
++		rounded = ((compsz - 1) | (vol->cluster_size - 1)) + 1;
++		memset(&outbuf[compsz], 0, rounded - compsz);
++		bio_size = rounded;
++		pages = pages_disk;
++	} else if (allzeroes) {
++		err = 0;
++		goto out;
++	} else {
++		bio_size = insz;
++	}
++
++	new_vcn = NTFS_B_TO_CLU(vol, pos & ~(ni->itype.compressed.block_size - 1));
++	new_length = NTFS_B_TO_CLU(vol, round_up(bio_size, vol->cluster_size));
++
++	err = ntfs_non_resident_attr_punch_hole(ni, new_vcn, ni->itype.compressed.block_clusters);
++	if (err < 0)
++		goto out;
++
++	rlc = ntfs_cluster_alloc(vol, new_vcn, new_length, -1, DATA_ZONE,
++			false, true, true);
++	if (IS_ERR(rlc)) {
++		err = PTR_ERR(rlc);
++		goto out;
++	}
++
++	bio_lcn = rlc->lcn;
++	down_write(&ni->runlist.lock);
++	rl = ntfs_runlists_merge(&ni->runlist, rlc, 0, &new_rl_count);
++	if (IS_ERR(rl)) {
++		up_write(&ni->runlist.lock);
++		ntfs_error(vol->sb, "Failed to merge runlists");
++		err = PTR_ERR(rl);
++		if (ntfs_cluster_free_from_rl(vol, rlc))
++			ntfs_error(vol->sb, "Failed to free hot clusters.");
++		ntfs_free(rlc);
++		goto out;
++	}
++
++	ni->runlist.count = new_rl_count;
++	ni->runlist.rl = rl;
++
++	err = ntfs_attr_update_mapping_pairs(ni, 0);
++	up_write(&ni->runlist.lock);
++	if (err) {
++		err = -EIO;
++		goto out;
++	}
++
++	i = 0;
++	while (bio_size > 0) {
++		int page_size;
++
++		if (bio_size >= PAGE_SIZE) {
++			page_size = PAGE_SIZE;
++			bio_size -= PAGE_SIZE;
++		} else {
++			page_size = bio_size;
++			bio_size = 0;
++		}
++
++setup_bio:
++		if (!bio) {
++			bio = bio_alloc(vol->sb->s_bdev, 1, REQ_OP_WRITE,
++					GFP_NOIO);
++			bio->bi_iter.bi_sector =
++				NTFS_B_TO_SECTOR(vol, NTFS_CLU_TO_B(vol, bio_lcn + i));
++		}
++
++		if (!bio_add_page(bio, pages[i], page_size, 0)) {
++			err = submit_bio_wait(bio);
++			bio_put(bio);
++			if (err)
++				goto out;
++			bio = NULL;
++			goto setup_bio;
++		}
++		i++;
++	}
++
++	err = submit_bio_wait(bio);
++	bio_put(bio);
 +out:
-+	if (ctx)
-+		ntfs_attr_put_search_ctx(ctx);
-+	mutex_unlock(&ni->mrec_lock);
++	vunmap(outbuf);
++	for (i = 0; i < pages_count; i++) {
++		pg = pages_disk[i];
++		if (pg) {
++			kunmap_local(page_address(pg));
++			unlock_page(pg);
++			put_page(pg);
++		}
++	}
++	kfree(pages_disk);
++	vunmap(inbuf);
++	NInoSetFileNameDirty(ni);
++	mark_mft_record_dirty(ni);
++
 +	return err;
 +}
 +
-+static int __ntfs_write_iomap_begin(struct inode *inode, loff_t offset,
-+				    loff_t length, unsigned int flags,
-+				    struct iomap *iomap, bool da, bool mapped)
++int ntfs_compress_write(struct ntfs_inode *ni, loff_t pos, size_t count,
++		struct iov_iter *from)
 +{
-+	struct ntfs_inode *ni = NTFS_I(inode);
-+	int ret;
++	struct folio *folio;
++	struct page **pages = NULL, *page;
++	int pages_per_cb = ni->itype.compressed.block_size >> PAGE_SHIFT;
++	int cb_size = ni->itype.compressed.block_size, cb_off, err = 0;
++	int i, ip;
++	size_t written = 0;
++	struct address_space *mapping = VFS_I(ni)->i_mapping;
 +
-+	if (NVolShutdown(ni->vol))
-+		return -EIO;
++	pages = kmalloc_array(pages_per_cb, sizeof(struct page *), GFP_NOFS);
++	if (!pages)
++		return -ENOMEM;
 +
-+	mutex_lock(&ni->mrec_lock);
-+	if (NInoNonResident(ni)) {
-+		if (da)
-+			ret = ntfs_write_da_iomap_begin_non_resident(inode,
-+					offset, length, flags, iomap, mapped);
-+		else
-+			ret = ntfs_write_iomap_begin_non_resident(inode, offset,
-+					length, iomap);
-+	} else
-+		ret = ntfs_write_iomap_begin_resident(inode, offset, iomap);
-+	return ret;
-+}
++	while (count) {
++		pgoff_t index;
++		size_t copied, bytes;
++		int off;
 +
-+static int ntfs_write_iomap_begin(struct inode *inode, loff_t offset,
-+				  loff_t length, unsigned int flags,
-+				  struct iomap *iomap, struct iomap *srcmap)
-+{
-+	return __ntfs_write_iomap_begin(inode, offset, length, flags, iomap,
-+			false, false);
-+}
++		off = pos & (cb_size - 1);
++		bytes = cb_size - off;
++		if (bytes > count)
++			bytes = count;
 +
-+static int ntfs_write_iomap_end(struct inode *inode, loff_t pos, loff_t length,
-+		ssize_t written, unsigned int flags, struct iomap *iomap)
-+{
-+	if (iomap->type == IOMAP_INLINE) {
-+		struct ntfs_inode *ni = NTFS_I(inode);
-+		struct ntfs_attr_search_ctx *ctx;
-+		u32 attr_len;
-+		int err;
-+		char *kattr;
++		cb_off = pos & ~(cb_size - 1);
++		index = cb_off >> PAGE_SHIFT;
 +
-+		mutex_lock(&ni->mrec_lock);
-+		ctx = ntfs_attr_get_search_ctx(ni, NULL);
-+		if (!ctx) {
-+			written = -ENOMEM;
-+			mutex_unlock(&ni->mrec_lock);
++		if (unlikely(fault_in_iov_iter_readable(from, bytes))) {
++			err = -EFAULT;
 +			goto out;
 +		}
 +
-+		err = ntfs_attr_lookup(ni->type, ni->name, ni->name_len,
-+				CASE_SENSITIVE, 0, NULL, 0, ctx);
-+		if (err) {
-+			if (err == -ENOENT)
-+				err = -EIO;
-+			written = err;
-+			goto err_out;
++		for (i = 0; i < pages_per_cb; i++) {
++			folio = read_mapping_folio(mapping, index + i, NULL);
++			if (IS_ERR(folio)) {
++				for (ip = 0; ip < i; ip++) {
++					folio_unlock(page_folio(pages[ip]));
++					folio_put(page_folio(pages[ip]));
++				}
++				err = PTR_ERR(folio);
++				goto out;
++			}
++
++			folio_lock(folio);
++			pages[i] = folio_page(folio, 0);
 +		}
 +
-+		/* The total length of the attribute value. */
-+		attr_len = le32_to_cpu(ctx->attr->data.resident.value_length);
-+		if (pos >= attr_len || pos + written > attr_len)
-+			goto err_out;
++		WARN_ON(!bytes);
++		copied = 0;
++		ip = off >> PAGE_SHIFT;
++		off = offset_in_page(pos);
 +
-+		kattr = (u8 *)ctx->attr + le16_to_cpu(ctx->attr->data.resident.value_offset);
-+		memcpy(kattr + pos, iomap_inline_data(iomap, pos), written);
-+		mark_mft_record_dirty(ctx->ntfs_ino);
-+err_out:
-+		ntfs_attr_put_search_ctx(ctx);
-+		kfree(iomap->inline_data);
-+		mutex_unlock(&ni->mrec_lock);
++		for (;;) {
++			size_t cp, tail = PAGE_SIZE - off;
++
++			page = pages[ip];
++			cp = copy_folio_from_iter_atomic(page_folio(page), off,
++					min(tail, bytes), from);
++			flush_dcache_page(page);
++
++			copied += cp;
++			bytes -= cp;
++			if (!bytes || !cp)
++				break;
++
++			if (cp < tail) {
++				off += cp;
++			} else {
++				ip++;
++				off = 0;
++			}
++		}
++
++		err = ntfs_write_cb(ni, pos, pages, pages_per_cb);
++
++		for (i = 0; i < pages_per_cb; i++) {
++			folio = page_folio(pages[i]);
++			if (i < ip) {
++				folio_clear_dirty(folio);
++				folio_mark_uptodate(folio);
++			}
++			folio_unlock(folio);
++			folio_put(folio);
++		}
++
++		if (err)
++			goto out;
++
++		cond_resched();
++		pos += copied;
++		written += copied;
++		count = iov_iter_count(from);
 +	}
 +
 +out:
++	kfree(pages);
++	if (err < 0)
++		written = err;
++
 +	return written;
 +}
-+
-+const struct iomap_ops ntfs_write_iomap_ops = {
-+	.iomap_begin		= ntfs_write_iomap_begin,
-+	.iomap_end		= ntfs_write_iomap_end,
-+};
-+
-+static int ntfs_page_mkwrite_iomap_begin(struct inode *inode, loff_t offset,
-+				  loff_t length, unsigned int flags,
-+				  struct iomap *iomap, struct iomap *srcmap)
-+{
-+	return __ntfs_write_iomap_begin(inode, offset, length, flags, iomap,
-+			true, true);
-+}
-+
-+const struct iomap_ops ntfs_page_mkwrite_iomap_ops = {
-+	.iomap_begin		= ntfs_page_mkwrite_iomap_begin,
-+	.iomap_end		= ntfs_write_iomap_end,
-+};
-+
-+static int ntfs_dio_iomap_begin(struct inode *inode, loff_t offset,
-+				  loff_t length, unsigned int flags,
-+				  struct iomap *iomap, struct iomap *srcmap)
-+{
-+	return __ntfs_write_iomap_begin(inode, offset, length, flags, iomap,
-+			true, false);
-+}
-+
-+const struct iomap_ops ntfs_dio_iomap_ops = {
-+	.iomap_begin		= ntfs_dio_iomap_begin,
-+	.iomap_end		= ntfs_write_iomap_end,
-+};
-+
-+static ssize_t ntfs_writeback_range(struct iomap_writepage_ctx *wpc,
-+		struct folio *folio, u64 offset, unsigned int len, u64 end_pos)
-+{
-+	if (offset < wpc->iomap.offset ||
-+	    offset >= wpc->iomap.offset + wpc->iomap.length) {
-+		int error;
-+
-+		error = __ntfs_write_iomap_begin(wpc->inode, offset,
-+				NTFS_I(wpc->inode)->allocated_size - offset,
-+				IOMAP_WRITE, &wpc->iomap, true, false);
-+		if (error)
-+			return error;
-+	}
-+
-+	return iomap_add_to_ioend(wpc, folio, offset, end_pos, len);
-+}
-+
-+const struct iomap_writeback_ops ntfs_writeback_ops = {
-+	.writeback_range	= ntfs_writeback_range,
-+	.writeback_submit	= iomap_ioend_writeback_submit,
-+};
 -- 
 2.25.1
 
