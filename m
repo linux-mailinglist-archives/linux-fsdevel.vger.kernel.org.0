@@ -1,193 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-73320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318C7D158B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 23:18:37 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEA33D158C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 23:18:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 46B4D302D5D1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 22:18:34 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id C38F9301F7CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 22:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E35E28466F;
-	Mon, 12 Jan 2026 22:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1CC274B32;
+	Mon, 12 Jan 2026 22:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2qLLqk0O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXWnB7bU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858B62749CF
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 22:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.182
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768256312; cv=pass; b=nF4qm5WtPk6zWX/5LQksMcPWguDu6UcKM+crDsmgMMqapLWrNSMwOcdQEAdnOsbraxaPZGLJ2oKlfOBj+uCw7H9BS0OCS592iml4X5gwU0FfiddFThbOi8omb8jYWNlQLDD0Vs+7xsAiGD6O0Awc90jIgAlgQ+ldREMLEAqIEq0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768256312; c=relaxed/simple;
-	bh=s2faJVeXwOJzRSusfeu8mBj4+CZbPROWwKb0cmB2nuc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jddq7tsPW589+VYQtoN23TIBuSDyiKf6A30flt5I2O7MgTHEC5vT6Tp6rhBj14WUlTlwegvm0laQ6EgUnl5OEl9xOFqBMpNFuxiKWeXP1TQJlLtfMSmysquSX2KSxG48GNEZ+v2bwOb/FgH9XsELY18m5XCkfODM/s6YUKoIKSQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2qLLqk0O; arc=pass smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4edb8d6e98aso108401cf.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 14:18:31 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1768256310; cv=none;
-        d=google.com; s=arc-20240605;
-        b=AfAPHmiXYbU6lhUJItxG3tiK5HehJy6BHWdVCUBZqWQbU8Ar2j9yNYF4/gcRipXy9A
-         uhVhAYtDkMWg/1yX+Vq8H4+/SS9ncii2ZS3NkBhZZPQdBIT/FGOuklfYV/v/geOAZUKW
-         +EnkEx6jmoskGHVFQ3eGdq8EPe/oCxNOHHPvJI2bBlsEEKqJUDmbNUhbdBZRuZ63z2tT
-         w/VtRfH9sbME7U5P2A/i2o4fJETHON7NWvg/hd4ABg7bZUuRYOEDhGuxO5JRF9X4UK13
-         mhZ2gm8ryrYZEDSOEFr2dzfmhfhhzZdzOMiZz6aLtc3aEBUGoAANQpopvZeAjD+Vqym7
-         0+lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=pqx6ovJNZlQMxRNZ6xtrUrvyplQ/Aq0eWptvKJzLwh4=;
-        fh=KdwyYQUcp3fBpC41v1OyhtcsD2Fz6I6HQgDsQmEZvnc=;
-        b=avAVCR6RNMW/LKUiUzQrj3XohOGx26pbt33eQ8fiQFnFYHLHyygvxsq5Ea0ORkOM/g
-         O/DeIpCZpUHnpjTrrj8SrkqfnhzAbR5c0ecSx6g9Ay08ARZKl3ZdqPoAkuvo6rj6aU9f
-         QbjVqogAzkV1hVRK3IUETh+eQji/BstEgEo/0E+xKFq+aSUOlXqYgnVisoyoaNYzeWuW
-         eGqXQv7X+2PJ7I0Pew4L7CZWfMA3lHTXyfavaKcAjAeXj9QXIsXrwN03LyiSFlwOymKX
-         y5v0ag8QXJ50GklRZObUvH4KerOQlQ2K5ePAu/9LaZ6T6DV1Ctiky2kjK+Ho/5noElga
-         5IHA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1768256310; x=1768861110; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pqx6ovJNZlQMxRNZ6xtrUrvyplQ/Aq0eWptvKJzLwh4=;
-        b=2qLLqk0O+DHYl2h8V+5QBQEF/uz7wO38wCD8kBLYXkxlNIMvxOz3pTL0FGHu2VSrKw
-         427SNiCP0anLsA4kQw/yhISJv7VorcfTApM0OsMNma+w/0O9GvubLgmQrOzcpK8GbfWm
-         jL5I9ObvzyhH2Ji+Fde0bIz2ZXDC/kRam4IWCHcUWgZnyh2lH/XRckRUJpbqjvcFF2pN
-         WaYTNLIKbjLyJbvkP4KUpwHc12ssgaefNXPZbf8ZZgNytM0Pi6CuCIbQk+KsEj5gt/3s
-         14/4M/NAO0z6suPM0UxgZTUnU2uJrboCxF497FGKyYtLPVu4xXtia2wCCa83tvQp0c8d
-         SQow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768256310; x=1768861110;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pqx6ovJNZlQMxRNZ6xtrUrvyplQ/Aq0eWptvKJzLwh4=;
-        b=Vnznl9LSQhHiMfop4Fxy0Ulyi4VSgZ6u16zTeyfcPWHOa8LPhlIgAkCjhCHX98IG4P
-         WCNnlzYhMSzjPbiQAg/8/7Kc+yO+3y0QLikZG4EFbQCjCfxUSxA1lZ5k/ag1tP3N7oC9
-         e2A9k8hkNxsW9Uy7Mnzx916XCGzkAyoRVlLloVjW+j8RQWSp41axeo0FWryHQ2BKjXDD
-         FLTwK0V5AGeXHgkSYLGTBy4G0Iv/bJYWFNJ7O9c/daT4QSAibG8ZTbqoDtdJT1HRgxmP
-         oEvT+rTq7Imafahi7ykh86ZHN2zZ9P67+k8jolUK+HMKDSFW1KrBXy0hZdg1MEu4ISqR
-         pvsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqydpCp0eVS2/6PZSo5h9weD6iPoeQvX+3lQSPsVgmxdzg/w8QJpD3+ZQhKEhFxKEfi9xLhLutWHJFu3sg@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzOTVbvy6z/rJr3qt2Wqlqxoc+qoGMtAHpKIp4Oqtn6bRtAmi0
-	UVKkE15BnPvxX11k7tZqvq6y3NJdEnDOLefOoL/FNIk17qXirbqyjNflP1qlzTVdij8kNvLlb3e
-	g9HxZFOV3vs/0wpjZO34oPXxDPhFkJFijGfJzEnsXNps3infieCbqu9qnwPNXgg==
-X-Gm-Gg: AY/fxX7jz1lrQvBmKEzNGImQj8dGJT0SL7JHwLuASq/4FbV1LTp7NG4SyStRGNsPdMX
-	v2YDhR0XR1Ckh6gJJM1kaXi+T+EbM9Z0m26E7YXHgFtfMJFSivB25dvJx57Uy+OqLfkIfMf/CpC
-	UOJxaVOfzY0ZDqeNtj+mb3uxuviwhBG0VazJo1NuZNxbFfKmQpBsROG+0cZ04Q+m38iYaj0CZeg
-	/ydz3HlYbsqPnMuyuJI4XPzq88ETW2w4ZNsgpIL8IYRq4KI3aqRJVflmfv6+lNRMPBeehRK
-X-Received: by 2002:a05:622a:1b88:b0:4f4:bb86:504f with SMTP id
- d75a77b69052e-5013a3984bfmr3348061cf.16.1768256310151; Mon, 12 Jan 2026
- 14:18:30 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593FB2777F3;
+	Mon, 12 Jan 2026 22:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768256334; cv=none; b=f3LELC4ouMNy5z9MTl3gZaxjdg6xX5Y0ZTbthg/uPaHUvWIJH/kwHDaWOEHdLm5FKdRxKhHxCCVwYyGe90mdWyl4O/qsZgVCVJCOG1XCYLul6Uc51wBhyTrM2369ZNaOa1Et0ej2YwcBoRFevZJAlJr4jB5QeXQmZCT+iFePV6o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768256334; c=relaxed/simple;
+	bh=aSkvTxQ8xQvcD+/rSk/ljj81MlYXjvJC/9/nkbaBhCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gG71kmWZKZvAbmd8rizv4PK0T2Km9IRcRWNVU0l0w90W60N21Ay7PHLblhPCeeEqPwsg3oh5wLm4HM8SF1s3LlVkQWE3y5UIqMHcYmQj5lclWetykq/pUeqhjKCZjDSlCIaKG9QBjLle1HSjh5r87cbx6B1zE20i2DWyeiFeTh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXWnB7bU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E97B6C116D0;
+	Mon, 12 Jan 2026 22:18:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768256334;
+	bh=aSkvTxQ8xQvcD+/rSk/ljj81MlYXjvJC/9/nkbaBhCg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aXWnB7bUMeiTPTTpmTk6wAirYZBBbWIyEsvl5PoNXB6JtWxcCvh0fHiA/otmvgfJ9
+	 2OoQd/YkXq9unmqs5u1WdazS4zxyCNigeUK3oGKzUrecckX/zyCEEOyT7sQ6lDPbzk
+	 jSkNQnTDbQEyePFFD2/wvpU3uL2EBQ6cRceNqBgnC9k8Qr87jtD8gZPSk1p0kmBGLS
+	 nV6UlftZ0MjK2VVUVKS1LCPIMROhNtU2FbIOz7O7SsLIaIX5gs9JaHQXyt/NNRUAW7
+	 8Sw8d7/NJQLTf7PnftsQH8EvFqFVm2G2R//GqwLv4k+rOuu8mountTC75Vew0SwuC3
+	 pQgzlhY5W2/tQ==
+Date: Mon, 12 Jan 2026 14:18:53 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+	ebiggers@kernel.org, linux-fsdevel@vger.kernel.org,
+	aalbersh@kernel.org, david@fromorbit.com, hch@lst.de
+Subject: Re: [PATCH v2 3/22] iomap: introduce IOMAP_F_BEYOND_EOF
+Message-ID: <20260112221853.GI15551@frogsfrogsfrogs>
+References: <cover.1768229271.patch-series@thinky>
+ <d5fc72ldfwyzbgiypzlhn5diiqyijxaicpa3w6obx4iismuko3@kttpcgqjy6i5>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260108050748.520792-1-avagin@google.com> <20260108050748.520792-3-avagin@google.com>
- <wfl47fj3l4xhffrwuqfn5pgtrrn3s64lxxodnz5forx7d4x443@spsi3sx33lnf>
-In-Reply-To: <wfl47fj3l4xhffrwuqfn5pgtrrn3s64lxxodnz5forx7d4x443@spsi3sx33lnf>
-From: Andrei Vagin <avagin@google.com>
-Date: Mon, 12 Jan 2026 14:18:18 -0800
-X-Gm-Features: AZwV_QgFDLRZ2CO39u42hYQfjphtOd--py_KaLDidq3C2V9cruvBn8uqBMP31xw
-Message-ID: <CAEWA0a4s+Uhm405CnvNsE61ed5_xJ8PUZqL74zfeZnivw1BChA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] exec: inherit HWCAPs from the parent process
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, criu@lists.linux.dev, 
-	Andrew Morton <akpm@linux-foundation.org>, Chen Ridong <chenridong@huawei.com>, 
-	Christian Brauner <brauner@kernel.org>, David Hildenbrand <david@kernel.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d5fc72ldfwyzbgiypzlhn5diiqyijxaicpa3w6obx4iismuko3@kttpcgqjy6i5>
 
-On Mon, Jan 12, 2026 at 4:46=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.co=
-m> wrote:
->
-> On Thu, Jan 08, 2026 at 05:07:47AM +0000, Andrei Vagin <avagin@google.com=
-> wrote:
-> > @@ -1780,6 +1791,50 @@ static int bprm_execve(struct linux_binprm *bprm=
-)
-> >       return retval;
-> >  }
-> >
-> > +static void inherit_hwcap(struct linux_binprm *bprm)
-> > +{
-> > +     int i, n;
-> > +
-> > +#ifdef ELF_HWCAP4
-> > +     n =3D 4;
-> > +#elif defined(ELF_HWCAP3)
-> > +     n =3D 3;
-> > +#elif defined(ELF_HWCAP2)
-> > +     n =3D 2;
-> > +#else
-> > +     n =3D 1;
-> > +#endif
->
-> Is it guaranteed that HWCAP n+1 exists only when n does?
-> (To make this work.)
->
+On Mon, Jan 12, 2026 at 03:50:05PM +0100, Andrey Albershteyn wrote:
+> Flag to indicate to iomap that read/write is happening beyond EOF and no
+> isize checks/update is needed.
+> 
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> ---
+>  fs/iomap/buffered-io.c | 13 ++++++++-----
+>  fs/iomap/trace.h       |  3 ++-
+>  include/linux/iomap.h  |  5 +++++
+>  3 files changed, 15 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index e5c1ca440d..cc1cbf2a4c 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -533,7 +533,8 @@
 
-It is true for all existing arch-es. I can't imagine why we would want to
-define ELF_HWCAP{n+1} without having ELF_HWCAP{n}. If you think we need
-to handle this case, I can address it in the next version.
+(Does your diff program not set --show-c-function?  That makes reviewing
+harder because I have to search on the comment text to figure out which
+function this is)
 
-It is just a small optimization to stop iterating after handling all
-entries. The code will work correctly even when HWCAP n+1 exists but n
-doesn't.
+>  			return 0;
+>  
+>  		/* zero post-eof blocks as the page may be mapped */
+> -		if (iomap_block_needs_zeroing(iter, pos)) {
+> +		if (iomap_block_needs_zeroing(iter, pos) &&
+> +		    !(iomap->flags & IOMAP_F_BEYOND_EOF)) {
 
->
-> > +
-> > +     for (i =3D 0; n && i < AT_VECTOR_SIZE; i +=3D 2) {
-> > +             long val =3D current->mm->saved_auxv[i + 1];
-> > +
-> > +             switch (current->mm->saved_auxv[i]) {
-> > +             case AT_HWCAP:
-> > +                     bprm->hwcap =3D val & ELF_HWCAP;
-> > +                     break;
-> > +#ifdef ELF_HWCAP2
-> > +             case AT_HWCAP2:
-> > +                     bprm->hwcap2 =3D val & ELF_HWCAP2;
-> > +                     break;
-> > +#endif
-> > +#ifdef ELF_HWCAP3
-> > +             case AT_HWCAP3:
-> > +                     bprm->hwcap3 =3D val & ELF_HWCAP3;
-> > +                     break;
-> > +#endif
-> > +#ifdef ELF_HWCAP4
-> > +             case AT_HWCAP4:
-> > +                     bprm->hwcap4 =3D val & ELF_HWCAP4;
-> > +                     break;
-> > +#endif
-> > +             default:
-> > +                     continue;
-> > +             }
-> > +             n--;
-> > +     }
-> > +     mm_flags_set(MMF_USER_HWCAP, bprm->mm);
->
-> Will this work when mm->saved_auxv isn't set by the prctl (it is
-> zeroes?)?
+Hrm.  The last test in iomap_block_needs_zeroing is if pos is at or
+beyond EOF, and iomap_adjust_read_range takes great pains to reduce plen
+so that poff/plen never cross EOF.  I think the intent of that code is
+to ensure that we always zero the post-EOF part of a folio when reading
+it in from disk.
 
-The inherit_hwcap function is only called if MMF_USER_HWCAP is set (auxv wa=
-s
-modified via prctl). However, even if mm->saved_auxv hasn't been
-modified, it still
-contains valid values.
+For verity I can see why you don't want to zero the merkle tree blocks
+beyond EOF, but I think this code can expose unwritten junk in the
+post-EOF part of the EOF block on disk.
 
-Thanks,
-Andrei
+Would it be more correct to do:
 
-ps: Please ignore the html version I mistakenly sent.
+static inline bool
+iomap_block_needs_zeroing(
+	const struct iomap_iter *iter,
+	struct folio *folio,
+	loff_t pos)
+{
+	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+
+	if (srcmap->type != IOMAP_MAPPED)
+		return true;
+	if (srcmap->flags & IOMAP_F_NEW);
+		return true;
+
+	/*
+	 * Merkle tree exists in a separate folio beyond EOF, so
+	 * only zero if this is the EOF folio.
+	 */
+	if (iomap->flags & IOMAP_F_BEYOND_EOF)
+		return folio_pos(folio) == i_size_read(iter->inode);
+
+	return pos >= i_size_read(iter->inode);
+}
+
+>  			folio_zero_range(folio, poff, plen);
+>  			iomap_set_range_uptodate(folio, poff, plen);
+>  		} else {
+> @@ -1130,13 +1131,14 @@
+>  		 * unlock and release the folio.
+>  		 */
+>  		old_size = iter->inode->i_size;
+> -		if (pos + written > old_size) {
+> +		if (pos + written > old_size &&
+> +		    !(iter->flags & IOMAP_F_BEYOND_EOF)) {
+>  			i_size_write(iter->inode, pos + written);
+>  			iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
+>  		}
+>  		__iomap_put_folio(iter, write_ops, written, folio);
+>  
+> -		if (old_size < pos)
+> +		if (old_size < pos && !(iter->flags & IOMAP_F_BEYOND_EOF))
+>  			pagecache_isize_extended(iter->inode, old_size, pos);
+>  
+>  		cond_resched();
+> @@ -1815,8 +1817,9 @@
+>  
+>  	trace_iomap_writeback_folio(inode, pos, folio_size(folio));
+>  
+> -	if (!iomap_writeback_handle_eof(folio, inode, &end_pos))
+> -		return 0;
+> +	if (!(wpc->iomap.flags & IOMAP_F_BEYOND_EOF) &&
+> +	    !iomap_writeback_handle_eof(folio, inode, &end_pos))
+
+Hrm.  I /think/ this might break post-eof zeroing on writeback if
+BEYOND_EOF is set.  For verity this isn't a problem because there's no
+writeback, but it's a bit of a logic bomb if someone ever tries to set
+BEYOND_EOF on a non-verity file.
+
+--D
+
+> + 		return 0;
+>  	WARN_ON_ONCE(end_pos <= pos);
+>  
+>  	if (i_blocks_per_folio(inode, folio) > 1) {
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> index 532787277b..f1895f7ae5 100644
+> --- a/fs/iomap/trace.h
+> +++ b/fs/iomap/trace.h
+> @@ -118,7 +118,8 @@
+>  	{ IOMAP_F_ATOMIC_BIO,	"ATOMIC_BIO" }, \
+>  	{ IOMAP_F_PRIVATE,	"PRIVATE" }, \
+>  	{ IOMAP_F_SIZE_CHANGED,	"SIZE_CHANGED" }, \
+> -	{ IOMAP_F_STALE,	"STALE" }
+> +	{ IOMAP_F_STALE,	"STALE" }, \
+> +	{ IOMAP_F_BEYOND_EOF,	"BEYOND_EOF" }
+>  
+>  
+>  #define IOMAP_DIO_STRINGS \
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 520e967cb5..7a7e31c499 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -86,6 +86,11 @@
+>  #define IOMAP_F_PRIVATE		(1U << 12)
+>  
+>  /*
+> + * IO happens beyound inode EOF
+
+s/beyound/beyond/
+
+> + */
+> +#define IOMAP_F_BEYOND_EOF	(1U << 13)
+> +
+> +/*
+>   * Flags set by the core iomap code during operations:
+>   *
+>   * IOMAP_F_SIZE_CHANGED indicates to the iomap_end method that the file size
+> 
+> -- 
+> - Andrey
+> 
+> 
 
