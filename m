@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-73298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61FACD148C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 18:52:24 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221E6D14A26
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 19:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id A2598303CAA7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 17:49:57 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 93F6A307C9DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 17:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57CE387574;
-	Mon, 12 Jan 2026 17:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC0437F8BB;
+	Mon, 12 Jan 2026 17:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctgSG6So"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTgRgnsL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA3E37F749;
-	Mon, 12 Jan 2026 17:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A00437F8A5;
+	Mon, 12 Jan 2026 17:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768240035; cv=none; b=QpeyTGLOXFgvzj/9/DEbAWX1jasfdTDN7NeU0sd18RXbRBCvguAw2/bSqMqR6QBg8duY8muQyaYSPa7qmor3jqZAGQSRsveXbRU6JQru02Qt4IaAbhgY+mobxs6uD3M9HcFAB9DXntPU9fTcq7Sb7+/rU/Gme217DW3MAvuMmY4=
+	t=1768240037; cv=none; b=PuPKvl/w0ZjN4O9gxx704zaRpmEvHOUwAoLOQvyMuFjVTL5mBRL36fUgigObpohMY3xSfRxn3iaDosDVF4ivvrZcajft4lW8KT0unBqjXUz6KPTq5RVrSptVtH9aEVvWbVbeoSjElgoAVjjkGXi5Zv36FQhZyNewXVijuzWUhOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768240035; c=relaxed/simple;
-	bh=dTIl6HtOSjKpxVPEQOWVBhUGtcTm9fsYwG/kaN8wdrk=;
+	s=arc-20240116; t=1768240037; c=relaxed/simple;
+	bh=7CV8d5ZLjZnsixivTyttzKYK+F3Fykxp76GMWvkN/D4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U9igIaUmlBq5ZMKVFm7REEqGb3m9d6TVeKOdtPT7tO9vzQsAtjEsUscysHB8Pzc6bGXpYNpbsitwmMHC7qucJE3v0r/VYlIsIMzz29OLAfvl3uOTIc/voGZxzwsbZS0r2q3FkyFHHaoHqC38XJZzwM3tKLQuJ4zsVfX+iRZbRcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctgSG6So; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E321C19422;
-	Mon, 12 Jan 2026 17:47:12 +0000 (UTC)
+	 MIME-Version; b=I9ULnNTYTa/kuRpOjQFVcqjPPQwTrgLmzVO81S4i9DfjriYhXSf1dt3bcL6Flu5p0Pcrdy6EuLs2PTscebntKyZuHqTT1u7D7a2Zd4dCy9TGpxtV0efv5qaIWCnq0yLNVJ8L3RJPGVqavIvVoIxvwzq3tf3BwM/tPle7InY550M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTgRgnsL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C6FAC19425;
+	Mon, 12 Jan 2026 17:47:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768240034;
-	bh=dTIl6HtOSjKpxVPEQOWVBhUGtcTm9fsYwG/kaN8wdrk=;
+	s=k20201202; t=1768240037;
+	bh=7CV8d5ZLjZnsixivTyttzKYK+F3Fykxp76GMWvkN/D4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ctgSG6SoKRR3nDkUU2dZG0zD/SKUTLtTp5egmSc0JovFDpcVQBH+7HqRuGRshK1ni
-	 uKO3zE+YNETzRmc/QGoeoOiY4lwVn7N7hwciXHbMURBeTHF6s1u6N377zHIuo8SPWY
-	 wXmdMq7igkqT4CnusSjHx0UsmIMJ9eC3e4uTa1p2khlNiVBLvdN/3+6ynVuU7wqC+T
-	 KKqwIrRCMAQCBuHE/MViPEJ6dRxTNWaNj5Hr2kkAHEABYHNRdtKuqb4fT9hj/r+PdQ
-	 H/GJ13/aZ0FGw7GKfngmlZdpEAVzGG+PWJstwWTpznXKaN+y32vf9ZbwEwaCXCibwf
-	 LGoA8IfypR7Yg==
+	b=aTgRgnsLIoHdfPZ7yUZk1X/iiP+32IhZKLwoqdUUFGafNUBLN24n7VykD2UAKgLzh
+	 g3/B9h94Nlm3hReKMPuS5PD7kZDuX+DkPJmVzmE+MQKg7jUelRju6q9Gu42VJ/8VOL
+	 FvFsTK5nM3QnM/vQjaPk4ASdRJ/7OiFgvhmDZpFJr5byy1sHFJvZ/pZx0ygv9qlc/9
+	 G4hld9ftSDKcjfhAHEI3soKcPqgCuXJRFNYIaLfQqsF3/POXznYw7tmuxgvOpWcota
+	 znYTlLgv/VmymYtK3G55pJO88ys77Fs+imwAg7lmSsVTpyRaP/zW60ZNipesBXBP1y
+	 RcDXNiV38SE3A==
 From: Chuck Lever <cel@kernel.org>
 To: vira@web.codeaurora.org, Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>
@@ -70,9 +70,9 @@ Cc: <linux-fsdevel@vger.kernel.org>,
 	hansg@kernel.org,
 	senozhatsky@chromium.org,
 	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH v3 15/16] nfsd: Implement NFSv4 FATTR4_CASE_INSENSITIVE and FATTR4_CASE_PRESERVING
-Date: Mon, 12 Jan 2026 12:46:28 -0500
-Message-ID: <20260112174629.3729358-16-cel@kernel.org>
+Subject: [PATCH v3 16/16] ksmbd: Report filesystem case sensitivity via FS_ATTRIBUTE_INFORMATION
+Date: Mon, 12 Jan 2026 12:46:29 -0500
+Message-ID: <20260112174629.3729358-17-cel@kernel.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260112174629.3729358-1-cel@kernel.org>
 References: <20260112174629.3729358-1-cel@kernel.org>
@@ -86,90 +86,77 @@ Content-Transfer-Encoding: 8bit
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-NFSD currently provides NFSv4 clients with hard-coded responses
-indicating all exported filesystems are case-sensitive and
-case-preserving. This is incorrect for case-insensitive filesystems
-and ext4 directories with casefold enabled.
+ksmbd hard-codes FILE_CASE_SENSITIVE_SEARCH and
+FILE_CASE_PRESERVED_NAMES in FS_ATTRIBUTE_INFORMATION responses,
+incorrectly indicating all exports are case-sensitive. This breaks
+clients accessing case-insensitive filesystems like exFAT or
+ext4/f2fs directories with casefold enabled.
 
-Query the underlying filesystem's actual case sensitivity via
-nfsd_get_case_info() and return accurate values to clients. This
-supports per-directory settings for filesystems that allow mixing
-case-sensitive and case-insensitive directories within an export.
+Query actual case behavior via vfs_fileattr_get() and report accurate
+attributes to SMB clients. Filesystems without ->fileattr_get continue
+reporting default POSIX behavior (case-sensitive, case-preserving).
+
+SMB's FS_ATTRIBUTE_INFORMATION reports per-share attributes from the
+share root, not per-file. Shares mixing casefold and non-casefold
+directories report the root directory's behavior.
 
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/nfsd/nfs4xdr.c | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
+ fs/smb/server/smb2pdu.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index 51ef97c25456..167bede81273 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -2933,6 +2933,8 @@ struct nfsd4_fattr_args {
- 	u32			rdattr_err;
- 	bool			contextsupport;
- 	bool			ignore_crossmnt;
-+	bool			case_insensitive;
-+	bool			case_preserving;
- };
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index 2fcd0d4d1fb0..2db189fef4da 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -13,6 +13,7 @@
+ #include <linux/falloc.h>
+ #include <linux/mount.h>
+ #include <linux/filelock.h>
++#include <linux/fileattr.h>
  
- typedef __be32(*nfsd4_enc_attr)(struct xdr_stream *xdr,
-@@ -3131,6 +3133,18 @@ static __be32 nfsd4_encode_fattr4_acl(struct xdr_stream *xdr,
- 	return nfs_ok;
- }
+ #include "glob.h"
+ #include "smbfsctl.h"
+@@ -5486,16 +5487,33 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
+ 	case FS_ATTRIBUTE_INFORMATION:
+ 	{
+ 		FILE_SYSTEM_ATTRIBUTE_INFO *info;
++		struct file_kattr fa = {};
+ 		size_t sz;
++		u32 attrs;
++		int err;
  
-+static __be32 nfsd4_encode_fattr4_case_insensitive(struct xdr_stream *xdr,
-+					const struct nfsd4_fattr_args *args)
-+{
-+	return nfsd4_encode_bool(xdr, args->case_insensitive);
-+}
+ 		info = (FILE_SYSTEM_ATTRIBUTE_INFO *)rsp->Buffer;
+-		info->Attributes = cpu_to_le32(FILE_SUPPORTS_OBJECT_IDS |
+-					       FILE_PERSISTENT_ACLS |
+-					       FILE_UNICODE_ON_DISK |
+-					       FILE_CASE_PRESERVED_NAMES |
+-					       FILE_CASE_SENSITIVE_SEARCH |
+-					       FILE_SUPPORTS_BLOCK_REFCOUNTING);
++		attrs = FILE_SUPPORTS_OBJECT_IDS |
++			FILE_PERSISTENT_ACLS |
++			FILE_UNICODE_ON_DISK |
++			FILE_SUPPORTS_BLOCK_REFCOUNTING;
+ 
++		err = vfs_fileattr_get(path.dentry, &fa);
++		if (err && err != -ENOIOCTLCMD) {
++			path_put(&path);
++			return err;
++		}
++		if (err == -ENOIOCTLCMD) {
++			/* Default POSIX: case-sensitive and case-preserving */
++			fa.case_insensitive = false;
++			fa.case_preserving = true;
++		}
++		if (!fa.case_insensitive)
++			attrs |= FILE_CASE_SENSITIVE_SEARCH;
++		if (fa.case_preserving)
++			attrs |= FILE_CASE_PRESERVED_NAMES;
 +
-+static __be32 nfsd4_encode_fattr4_case_preserving(struct xdr_stream *xdr,
-+					const struct nfsd4_fattr_args *args)
-+{
-+	return nfsd4_encode_bool(xdr, args->case_preserving);
-+}
-+
- static __be32 nfsd4_encode_fattr4_filehandle(struct xdr_stream *xdr,
- 					     const struct nfsd4_fattr_args *args)
- {
-@@ -3487,8 +3501,8 @@ static const nfsd4_enc_attr nfsd4_enc_fattr4_encode_ops[] = {
- 	[FATTR4_ACLSUPPORT]		= nfsd4_encode_fattr4_aclsupport,
- 	[FATTR4_ARCHIVE]		= nfsd4_encode_fattr4__noop,
- 	[FATTR4_CANSETTIME]		= nfsd4_encode_fattr4__true,
--	[FATTR4_CASE_INSENSITIVE]	= nfsd4_encode_fattr4__false,
--	[FATTR4_CASE_PRESERVING]	= nfsd4_encode_fattr4__true,
-+	[FATTR4_CASE_INSENSITIVE]	= nfsd4_encode_fattr4_case_insensitive,
-+	[FATTR4_CASE_PRESERVING]	= nfsd4_encode_fattr4_case_preserving,
- 	[FATTR4_CHOWN_RESTRICTED]	= nfsd4_encode_fattr4__true,
- 	[FATTR4_FILEHANDLE]		= nfsd4_encode_fattr4_filehandle,
- 	[FATTR4_FILEID]			= nfsd4_encode_fattr4_fileid,
-@@ -3674,8 +3688,9 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
- 		if (err)
- 			goto out_nfserr;
- 	}
--	if ((attrmask[0] & (FATTR4_WORD0_FILEHANDLE | FATTR4_WORD0_FSID)) &&
--	    !fhp) {
-+	if ((attrmask[0] & (FATTR4_WORD0_FILEHANDLE | FATTR4_WORD0_FSID |
-+			    FATTR4_WORD0_CASE_INSENSITIVE |
-+			    FATTR4_WORD0_CASE_PRESERVING)) && !fhp) {
- 		tempfh = kmalloc(sizeof(struct svc_fh), GFP_KERNEL);
- 		status = nfserr_jukebox;
- 		if (!tempfh)
-@@ -3687,6 +3702,13 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
- 		args.fhp = tempfh;
- 	} else
- 		args.fhp = fhp;
-+	if (attrmask[0] & (FATTR4_WORD0_CASE_INSENSITIVE |
-+			   FATTR4_WORD0_CASE_PRESERVING)) {
-+		status = nfsd_get_case_info(args.fhp, &args.case_insensitive,
-+					    &args.case_preserving);
-+		if (status != nfs_ok)
-+			goto out;
-+	}
++		info->Attributes = cpu_to_le32(attrs);
+ 		info->Attributes |= cpu_to_le32(server_conf.share_fake_fscaps);
  
- 	if (attrmask[0] & FATTR4_WORD0_ACL) {
- 		err = nfsd4_get_nfs4_acl(rqstp, dentry, &args.acl);
+ 		if (test_share_config_flag(work->tcon->share_conf,
 -- 
 2.52.0
 
