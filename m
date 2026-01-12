@@ -1,98 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-73218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F19D124E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 12:31:19 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 668AAD12617
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 12:47:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 70CC73013BC3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 11:31:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8F4873085A7D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 11:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5C2199230;
-	Mon, 12 Jan 2026 11:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7309356A36;
+	Mon, 12 Jan 2026 11:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QprfuJkW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ipgtzgmb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QprfuJkW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ipgtzgmb"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xmYIxAo5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pulubb06";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xmYIxAo5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pulubb06"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B9A354AF3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 11:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC85A280309
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 11:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768217470; cv=none; b=JjNRH7mmr5leGJPwZAPFog+DARqyNER/2jBsdR5BcMYQCq6IuPu8yOjsNx/yf380p59NgA4jDh4/zCETmLeLYb92vunm09WLUX+lADAQTETNxmSx34p/AC0IzPGbcDsSVOoHFbThq7t7GbjPSI3xd2d0mQjQihsbTtm8ZXN2K0Y=
+	t=1768218445; cv=none; b=GlPaDp5XW20Elzn7XufrDn+XcZNuWDkzXRIwwGii1GtzweNOFMzmrE9CzxW0/14m0gP44V4dRCakwywm0gLbNBPGDh4znZpxf4svZwpB92VYt7rA8MgigFXZCLX3oSKNHmyDYGalGAge/TKAqhyy89tBUBYjmuGbyMo14CFUu2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768217470; c=relaxed/simple;
-	bh=AyVOWbxQiztaKcYTYtYbh8258D9zmBrBOGIn2hHF4GA=;
+	s=arc-20240116; t=1768218445; c=relaxed/simple;
+	bh=YkqjyN8WME87j4ypoPUn82LSoorCUFzeTb7Ce4AHsnI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hO7l7kPKsk62VquryPyxOiymIagetCdxTIRXx+xVZRxlD/4D8DUn5VGanjzUL+lPin8CHbiEWqxtRvuXWTICRjx3LsRld27XlKn9yD0Oe2kQBy+jxVBqW+syt1DhUufXHOgSBdE2a0QFLHSnTga4KVYFcLdkkL7OENVL4IaFkTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QprfuJkW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ipgtzgmb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QprfuJkW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ipgtzgmb; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=ixB+gA0W0b9r+ZRRl9wHGuIoN1H9NjdXGb1EhV5iCuIGWo6DoyARrdy/PpjSExwdCr/9BPVRTQqEtLi1etqwCb2b0HsshB7Cghof03oNL7ux+FPjLLWOp+G4KYbHFLpu6CvCBnJpkZGzRS8T3XmFMUHTssry6zvz0JsJG3ZrIno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xmYIxAo5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pulubb06; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xmYIxAo5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pulubb06; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3E9E45BD78;
-	Mon, 12 Jan 2026 11:31:04 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1F69C33731;
+	Mon, 12 Jan 2026 11:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768217464; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1768218442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DdrCnZwVPl0EIgOFrYlUhH/OF0W0bDAW0dPCL+G/8bw=;
-	b=QprfuJkWmqTVDtyuQVJXqP+9GQNMfZlWqCn4akPuquEnWPt3x/Ix+OyMsrLIlPYak8s38U
-	C5XWFAS3Kf+D17ut3u1x4ruzV9syEv1WVNJLXU6v7pcaYMhSUmIzdgZDGF1t80Ib857bFu
-	WwIUW+ifgSAAzvxCqs1S5LfIHFiEvgs=
+	bh=i+6OXiyg/YFPs7lZyX3PudwloLdm4MyI3XfGdWd2DKM=;
+	b=xmYIxAo50nLAXi1DXL3ZwACFEITXSQ0Hph5OJ1r9PtBULgDQa0Gopasgddu3HyFCpp9WTQ
+	VWmd/ItWApOAW0pjVM1yAz9acxeFeZVHYt5I/wWecNfgYnVEY5FYhNQiuRjZ+FxdRWyAek
+	1LbTqaQovayCZMrxicpQbUCaitOJxHE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768217464;
+	s=susede2_ed25519; t=1768218442;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DdrCnZwVPl0EIgOFrYlUhH/OF0W0bDAW0dPCL+G/8bw=;
-	b=ipgtzgmbSot6bMVAo1rPo6LZyLj/OrFN9990+I8atVpwuB0bqktXa8yu20x/pbZMmES8Bt
-	+xixvhGB08zy+ZCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QprfuJkW;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ipgtzgmb
+	bh=i+6OXiyg/YFPs7lZyX3PudwloLdm4MyI3XfGdWd2DKM=;
+	b=Pulubb0623wv98T7HSrBRgsi9zpQMIRwL2zwMaXLpdYRm6Z5JI5zZ7pVkeBzIvXJhdxW60
+	4JIpbh/E3l8cMiBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=xmYIxAo5;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Pulubb06
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768217464; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1768218442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DdrCnZwVPl0EIgOFrYlUhH/OF0W0bDAW0dPCL+G/8bw=;
-	b=QprfuJkWmqTVDtyuQVJXqP+9GQNMfZlWqCn4akPuquEnWPt3x/Ix+OyMsrLIlPYak8s38U
-	C5XWFAS3Kf+D17ut3u1x4ruzV9syEv1WVNJLXU6v7pcaYMhSUmIzdgZDGF1t80Ib857bFu
-	WwIUW+ifgSAAzvxCqs1S5LfIHFiEvgs=
+	bh=i+6OXiyg/YFPs7lZyX3PudwloLdm4MyI3XfGdWd2DKM=;
+	b=xmYIxAo50nLAXi1DXL3ZwACFEITXSQ0Hph5OJ1r9PtBULgDQa0Gopasgddu3HyFCpp9WTQ
+	VWmd/ItWApOAW0pjVM1yAz9acxeFeZVHYt5I/wWecNfgYnVEY5FYhNQiuRjZ+FxdRWyAek
+	1LbTqaQovayCZMrxicpQbUCaitOJxHE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768217464;
+	s=susede2_ed25519; t=1768218442;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DdrCnZwVPl0EIgOFrYlUhH/OF0W0bDAW0dPCL+G/8bw=;
-	b=ipgtzgmbSot6bMVAo1rPo6LZyLj/OrFN9990+I8atVpwuB0bqktXa8yu20x/pbZMmES8Bt
-	+xixvhGB08zy+ZCw==
+	bh=i+6OXiyg/YFPs7lZyX3PudwloLdm4MyI3XfGdWd2DKM=;
+	b=Pulubb0623wv98T7HSrBRgsi9zpQMIRwL2zwMaXLpdYRm6Z5JI5zZ7pVkeBzIvXJhdxW60
+	4JIpbh/E3l8cMiBg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 32AAD3EA63;
-	Mon, 12 Jan 2026 11:31:04 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 15C533EA63;
+	Mon, 12 Jan 2026 11:47:22 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zzL6C3jbZGkRNgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 12 Jan 2026 11:31:04 +0000
+	id +CROBUrfZGnpRQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 12 Jan 2026 11:47:22 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D88E6A0A7E; Mon, 12 Jan 2026 12:31:03 +0100 (CET)
-Date: Mon, 12 Jan 2026 12:31:03 +0100
+	id BFC7EA0A7E; Mon, 12 Jan 2026 12:47:21 +0100 (CET)
+Date: Mon, 12 Jan 2026 12:47:21 +0100
 From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: move initializing f_mode before file_ref_init()
-Message-ID: <3wzb7fku35m73rdmphtytszl5vafixxpt32q4ewzcqqlx4gweh@fhjo7ab6ytib>
-References: <20260109211536.3565697-1-amir73il@gmail.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: make insert_inode_locked() wait for inode destruction
+Message-ID: <o2ypypbtb6jjlditunp67nir52qb3q7jr262nawh4cn5hfxlca@cgg3mshbsg77>
+References: <20260111083843.651167-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -101,93 +101,102 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260109211536.3565697-1-amir73il@gmail.com>
+In-Reply-To: <20260111083843.651167-1-mjguzik@gmail.com>
 X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email]
 X-Spam-Flag: NO
 X-Spam-Score: -4.01
-X-Rspamd-Queue-Id: 3E9E45BD78
+X-Rspamd-Queue-Id: 1F69C33731
 X-Rspamd-Action: no action
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Spam-Level: 
 
-On Fri 09-01-26 22:15:36, Amir Goldstein wrote:
-> The comment above file_ref_init() says:
-> "We're SLAB_TYPESAFE_BY_RCU so initialize f_ref last."
-> but file_set_fsnotify_mode() was added after file_ref_init().
+On Sun 11-01-26 09:38:42, Mateusz Guzik wrote:
+> This is the only routine which instead skipped instead of waiting.
 > 
-> Move it right after setting f_mode, where it makes more sense.
+> The current behavior is arguably a bug as it results in a corner case
+> where the inode hash can have *two* matching inodes, one of which is on
+> its way out.
 > 
-> Fixes: 711f9b8fbe4f4 ("fsnotify: disable pre-content and permission events by default")
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Ironing out this difference is an incremental step towards sanitizing
+> the API.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-I agree logically this place makes more sense (although functionally it
-doesn't really matter). Feel free to add:
+Agreed, it's an odd difference between the two inode insertion apis. Feel
+free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
 > ---
->  fs/file_table.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>  fs/inode.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index cd4a3db4659ac..34244fccf2edf 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -176,6 +176,11 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
->  
->  	f->f_flags	= flags;
->  	f->f_mode	= OPEN_FMODE(flags);
-> +	/*
-> +	 * Disable permission and pre-content events for all files by default.
-> +	 * They may be enabled later by fsnotify_open_perm_and_set_mode().
-> +	 */
-> +	file_set_fsnotify_mode(f, FMODE_NONOTIFY_PERM);
->  
->  	f->f_op		= NULL;
->  	f->f_mapping	= NULL;
-> @@ -197,11 +202,6 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
->  	 * refcount bumps we should reinitialize the reused file first.
->  	 */
->  	file_ref_init(&f->f_ref, 1);
-> -	/*
-> -	 * Disable permission and pre-content events for all files by default.
-> -	 * They may be enabled later by fsnotify_open_perm_and_set_mode().
-> -	 */
-> -	file_set_fsnotify_mode(f, FMODE_NONOTIFY_PERM);
->  	return 0;
->  }
->  
+> diff --git a/fs/inode.c b/fs/inode.c
+> index f8904f813372..3b838f07cb40 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1832,16 +1832,13 @@ int insert_inode_locked(struct inode *inode)
+>  	while (1) {
+>  		struct inode *old = NULL;
+>  		spin_lock(&inode_hash_lock);
+> +repeat:
+>  		hlist_for_each_entry(old, head, i_hash) {
+>  			if (old->i_ino != ino)
+>  				continue;
+>  			if (old->i_sb != sb)
+>  				continue;
+>  			spin_lock(&old->i_lock);
+> -			if (inode_state_read(old) & (I_FREEING | I_WILL_FREE)) {
+> -				spin_unlock(&old->i_lock);
+> -				continue;
+> -			}
+>  			break;
+>  		}
+>  		if (likely(!old)) {
+> @@ -1852,6 +1849,11 @@ int insert_inode_locked(struct inode *inode)
+>  			spin_unlock(&inode_hash_lock);
+>  			return 0;
+>  		}
+> +		if (inode_state_read(old) & (I_FREEING | I_WILL_FREE)) {
+> +			__wait_on_freeing_inode(old, true);
+> +			old = NULL;
+> +			goto repeat;
+> +		}
+>  		if (unlikely(inode_state_read(old) & I_CREATING)) {
+>  			spin_unlock(&old->i_lock);
+>  			spin_unlock(&inode_hash_lock);
 > -- 
-> 2.52.0
+> 2.48.1
 > 
 -- 
 Jan Kara <jack@suse.com>
