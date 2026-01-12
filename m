@@ -1,91 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-73183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF80FD10900
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 05:24:15 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F911D109F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 06:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A61AB3045CE4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 04:24:07 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0B5813032112
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 05:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A47430C614;
-	Mon, 12 Jan 2026 04:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF4C30F536;
+	Mon, 12 Jan 2026 05:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7O/EH/k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7B83A1DB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 04:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59C129AAF7;
+	Mon, 12 Jan 2026 05:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768191845; cv=none; b=DzQSgxTRENRM4mBPbKfpv4fJARu6WRi3MTB3oXgQL5EWoiQH9KlfMLNJ/THdwCsu2rs2cbncnVpEDT1IesVCuBwKMJrq26GefTmH6Ef0fRej6usvQdIPCdlQpUEDsWWAoEOA70vwM22kaNKoqwXX2FpjsNyUF1/PW4dRfUGspwo=
+	t=1768195469; cv=none; b=hzRlCQ3lqQq/taOv63ve9R4wJPn83Qu5G3L6d4ob2nDVIaWrSXDb/BA0ZwNBl42nrNDWew0JBcntskdWQheZ+O6W6MLBXLviiNVdfndyehy4EofB/om58Ol6cqJkSIZIsf95dHq5H0cr2Z38QEjNT+KRJDFWje4sRsKx1+zW73s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768191845; c=relaxed/simple;
-	bh=EinE8VXPB/8qmAOFx/VpltNzx9AP07UT8BMXb4BYv0E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nxeW+BKQBhO83bZmosw5XJuEAI3Z9oan5KD3KV5H6xf/h8L2s76BTq0AobV8ZmIg4XEjPXJRV41VKEoJFl7pZPuV5u8dk6zP5n+goSDDRbsKsor4JaIhFLylezKcwDvPbD6r0lY6xtlVFU8KQfizE4/e3JXgKhQXeWA2LziS2Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-65f66b8be64so8415018eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jan 2026 20:24:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768191843; x=1768796643;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2gl4hyoj6qGuCf2ibDRbBT7jnl2QJhFrlpft2pTxKy4=;
-        b=Wyurjxh6wYFW8eAxAnj0rBOszHnbwrsN53VsFeGQfFkbPPf1p+wH9BbTbzvwC4zPXT
-         3LqprWhJZWYrBByRSzO6c21pdWkJqpfU5/dxs2sPJUrc9O1URl2uOomcs6lyX0i71u6t
-         k1Gwy/KaASAnovziHdqzZRZacB6v6UFUDmP4omLingObBeRfBSO6PMsQDheiZSym7gpI
-         +umKQFVXawWjk4kkAakfxXCWTP/OkM0Ib37+YydygnKrxfd8g6iDNLqaChmx6ikUzibS
-         ++LPY0upqIuWmITB2BGXI/dwBo6gJ41H+nxTg12GyPzsoB1LNtimbEAL1MsTjRTPBSJE
-         ELLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9/VtMIxolDOUF+5EwN/Tj+IuHUaXiWUWhH8QJHbFaXYARhnswuvpIfh17ZXWbhSrLPiZJhMrVVrNTSC/c@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9QjD3lNhNZKr8O8D0G0yW902RjUR2YdZoJ+GZw3pJ2Ql/lOCd
-	6sQCO2AQopunaGDE3mUA0hH9PbvEmluMK95z3IDX8VEfiBE0yxpAx2GCO1pxtEbJJW3Gl1B0c6t
-	M2v88KUamY3iC/eSbHv3h0sscpcmpfRYGb69+iX7SFfXrwi9FCdAnHmEbLMU=
-X-Google-Smtp-Source: AGHT+IHUtJwBE1oSbGEiycxJ3xgLhYek8IyrgHwvrP+9hbIvo18Bdnj/pC/g+V+PZJN5/WGsvp0J9+Hi6eqnTelqmMh+knT5+eiw
+	s=arc-20240116; t=1768195469; c=relaxed/simple;
+	bh=BFXpRR9U0MJ1H8dJiXVZcQ8bHI0ASUrqPtXn4C8lJu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wrh3lmkwcqtBKdsukM1HMhZhhbo9+8lUVbFqFbQK0+gStHqdV/S5DBELFwliF1vvPi9Rewn9JUQiQ418RupzA8wIGKv14h1dM7vPBAVxbyshaMSC/fqBYyrNS8J2qUJEcb0C0SdcyBpBhrena6/bcQ6YBTwuS3pOu+WA+UHk07Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7O/EH/k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3217BC116D0;
+	Mon, 12 Jan 2026 05:24:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768195469;
+	bh=BFXpRR9U0MJ1H8dJiXVZcQ8bHI0ASUrqPtXn4C8lJu0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D7O/EH/kK3r8x31QovuilYoGLn1p6m7eDYTuIRsc9snE2g+nEFQZDaLpZUO2shesN
+	 9f5ZbIKWXykRjz0iQHLJ/vyiaI1M4o+eEEVHXxCsuKinuCA6yKMPPx4o/Q40bQof5u
+	 aXJ1niwoo5Rtm7PBairp9elk5LCQC1tTcRdesBNO7JEAESnBupIDC6+TSFr5k+bUBE
+	 lFYwP+dei9ZybrVnqHZOrfrRF7MRJwzE/Mn2YwKFJau2afbENmCw4WE6iZooFl6nqB
+	 jQz8AZqFIasBOTD2e/il8ZjAsmcXQEX1f5h8Yip5+FNeoKriJCJhoopopPCeRrQisY
+	 8PoXfpkgd3KRQ==
+Date: Sun, 11 Jan 2026 21:24:28 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Chaitanya Kulkarni <kch@nvidia.com>
+Subject: Re: [PATCH 11/11] xfs: add media error reporting ioctl
+Message-ID: <20260112052428.GB15551@frogsfrogsfrogs>
+References: <176766637179.774337.3663793412524347917.stgit@frogsfrogsfrogs>
+ <176766637485.774337.16716764027357885673.stgit@frogsfrogsfrogs>
+ <20260107093611.GC24264@lst.de>
+ <20260107163035.GA15551@frogsfrogsfrogs>
+ <20260108102559.GA25394@lst.de>
+ <20260108160929.GH15551@frogsfrogsfrogs>
+ <20260108161404.GA10766@lst.de>
+ <20260108161817.GI15551@frogsfrogsfrogs>
+ <20260108162032.GA11429@lst.de>
+ <20260108165347.GE15583@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a4a:bb07:0:b0:65c:fc22:3a64 with SMTP id
- 006d021491bc7-65f54f746a9mr6283705eaf.46.1768191843345; Sun, 11 Jan 2026
- 20:24:03 -0800 (PST)
-Date: Sun, 11 Jan 2026 20:24:03 -0800
-In-Reply-To: <6740d107.050a0220.3c9d61.0195.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69647763.050a0220.eaf7.0084.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in minix_unlink
-From: syzbot <syzbot+320c57a47bdabc1f294b@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, jkoolstra@xs4all.nl, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	surajsonawane0215@gmail.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260108165347.GE15583@frogsfrogsfrogs>
 
-syzbot suspects this issue was fixed by commit:
+On Thu, Jan 08, 2026 at 08:53:47AM -0800, Darrick J. Wong wrote:
+> On Thu, Jan 08, 2026 at 05:20:32PM +0100, Christoph Hellwig wrote:
+> > On Thu, Jan 08, 2026 at 08:18:17AM -0800, Darrick J. Wong wrote:
+> > > > All the partition mapping can be trivially undone.  I still think
+> > > > issuing the commands on the block device instead of from the file
+> > > > system feels wrong.
+> > > 
+> > > "From the filesystem"?  That gives me an idea: what if xfs_scrub instead
+> > > opens the root dir, calls an ioctl that does the verify work, and that
+> > > ioctl then reports the result to userspace and xfs_healthmon?
+> > > 
+> > > As opposed to this kind of stupid reporting ioctl?
+> > 
+> > Yes, that's what I've been trying to push for.  I guess I didn't really
+> > express that clearly enough.
+> 
+> Aha, ok.  I'm glad I finally caught up; I'll take a look at this today.
 
-commit 009a2ba40303cb1e3556c41233338e609ac509ea
-Author: Jori Koolstra <jkoolstra@xs4all.nl>
-Date:   Tue Nov 4 14:30:05 2025 +0000
+Here's my first attempt to create a media verify ioctl, based on the
+stupid strategy of reading into a page and letting the storage device
+tell us if it thinks it succeeded:
 
-    Fix a drop_nlink warning in minix_rename
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=health-monitoring_2026-01-11&id=b3c128fae37102fca55eae50fa9f610d04b39973
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=152d65fa580000
-start commit:   c0c9379f235d Merge tag 'usb-6.16-rc1' of git://git.kernel...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d9ebb51ccc2ec42f
-dashboard link: https://syzkaller.appspot.com/bug?extid=320c57a47bdabc1f294b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f409d4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1044ec0c580000
+and some changes to xfs_scrub to use it:
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/commit/?h=health-monitoring_2026-01-11&id=5cd7b8549bd766080c3e7048ed3ad237934e0c53
 
-If the result looks correct, please mark the issue as fixed by replying with:
+(This is exactly the same as what xfs_scrub phase6 currently does, but
+with even more context switching and memory allocation overhead.)
 
-#syz fix: Fix a drop_nlink warning in minix_rename
+--D
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> > > > > simply does direct reads to a throwaway page, to work around willy's
+> > > > > objection that the existing scsi verify command doesn't require proof
+> > > > > that the device actually did anything (and some of them clearly don't).
+> > > > 
+> > > > We could do that, although I'd make it conditional.  For the kind of
+> > > > storage you want to store your data on it does work, as the customer
+> > > > would get very unhappy otherwise.
+> > > 
+> > > Heheh.  It's really too bad that I have a bunch of Very Expensive RAID
+> > > controllers that lie... and it's the crappy Samsung QVO SSDs that
+> > > actually do the work.
+> > 
+> > Well, we can have versions of the ioctls that do verify vs a real read..
+> 
+> <nod> seeing as there's no block layer function for verify anyway, I'll
+> have to start with submit_bio to a dummy page anyway.
+> 
+> --D
+> 
 
