@@ -1,57 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-73203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26B2D11993
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 10:48:46 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26269D119B4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 10:49:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id DA2063059924
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 09:46:00 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 6B8363016228
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 09:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A042749D2;
-	Mon, 12 Jan 2026 09:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A33277CBF;
+	Mon, 12 Jan 2026 09:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EH3TaVVu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kovjAz4K"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6416F27145F;
-	Mon, 12 Jan 2026 09:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B05F274B59;
+	Mon, 12 Jan 2026 09:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768211153; cv=none; b=iQdsHQYHNkAfJyBj3nrL21AzJ7ctKby5hs7Qa+DiK5XDquXP6WdubQ84yHGoaGljNe4UWh3kqUcpd2i70TbHvGofHhIt+IgkrbW8SSqRc7uaNz5Plx/43gW3SvVOD0zwX0+DGJMgAaeBMpfcJC2zqk96aahwkpXuXhpOhslIEYw=
+	t=1768211376; cv=none; b=MOTvxBI1YuyjQ6gvfX+4HVhe72CbP4yt4MYLF43g1zK/WDZng64na/lIgWu0mFuymgPzvUt7S67Ml5M7UpkgZB5lKBpxX8yif40N176YBrF9ZzFdqzZhsq/1awhIvyuD++KttDb8aT+8fYob3fMHrHrEsVAmU/hqyub/+BI6xtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768211153; c=relaxed/simple;
-	bh=cHg0HkRiQ+aLyaTwC6nw3bp9LBVMtpjUHYe2eJQf2N8=;
+	s=arc-20240116; t=1768211376; c=relaxed/simple;
+	bh=m8zAICgnxs6xkW3AmfrwI3a0ispTdY6AQGss0vAXdME=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nKj0lLFczYlDMqE1tMX6jLeHHg9mIf5eGDn9QbkXKdJUO7LwGIF84X26F/s9qqkdt3kIjPVYLw+yc911cz3KzotmTRVkiXh8dFyQoS5MIX46x3sNuQCqjMToViVIqt74tZ4aNf3S1OWyxQnx7DRuT2QAODE6nFhlR87dh+PtPGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EH3TaVVu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E819C116D0;
-	Mon, 12 Jan 2026 09:45:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=q3NGPeSk7a6CvIe4nVvFvvSnbK5NVJaYkh+JHB1QwFtdQCPgilSDFlMkOl6W2KzB/eGVQH7f3OmakECiQ7Q618apQJurEN+dJAbZkhpCEvsrOZoErmuj5UE8GOKObjGF+OnoSvzUZOexu3kkKoaEBN3gxKdvi8+UtRLI9qsGb6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kovjAz4K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECD38C116D0;
+	Mon, 12 Jan 2026 09:49:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768211152;
-	bh=cHg0HkRiQ+aLyaTwC6nw3bp9LBVMtpjUHYe2eJQf2N8=;
+	s=k20201202; t=1768211375;
+	bh=m8zAICgnxs6xkW3AmfrwI3a0ispTdY6AQGss0vAXdME=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EH3TaVVuw+RtKndrI239BmeJJ0+rGrf+JKyDBVJAJEUr7eHmqHktORY6C2bkv7uKT
-	 fbTMbxPbT5W0JQCt2fhDz7QosNhfHDIQvqX7kqz31YOVRard1mUAZJgiDqXJECEUxH
-	 Tu4jknDaawzupGpAJjTPqrB5u68Eb+saECE6bVfDdtFLvXYrnTrzQeaI/c6P0TR2vT
-	 lfI0HqOAbl1M0gX9B6d+qRq+4J6HJR159HvfNKQc0N/JYj+K8wInqfhRt/sP9Hbqv4
-	 HIa4j9ZK7Xz7X1n1Y4hq4QvkpK8pP+esDTtLfQSYJ3IMnoUIH8UmZ7kk6H7vdrRAK7
-	 pGlCq9q0gs7cQ==
-Date: Mon, 12 Jan 2026 10:45:49 +0100
+	b=kovjAz4KC5mAD7YrC6t2czYMjBWRcZIetUzNRdlwl4Z1rGgyp9glYOLbnOZypWAbx
+	 YcmUJCp6E8w+KmTy2i5WzHpX9fHwe2RpJgFtTNA95cnxyqlkjOQ7JUeU62APvVqkZH
+	 Y3/3WTlqh+tsw7Ls6NjRbDo/fUnqsYd/eTTthVLhPJ/V7Q9k3YIeMunOn+RktLYgES
+	 ul3EQIBMmxhQ+r6sMjogrCPwB0I4vKTgz3PxtAbmBEyff/p4uJORPrLFe5LDSB0Hni
+	 RZIrOX4UDngsOGqfziwhf24VBmArYe5xbo5TLnA7nB4zBdXfiNr6kFAgXt4Ej7biQ5
+	 RxoAJIZnapRSw==
+Date: Mon, 12 Jan 2026 10:49:16 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Bernd Schubert <bernd@bsbernd.com>, 
-	Thorsten Leemhuis <linux@leemhuis.info>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Linux kernel regressions list <regressions@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [REGRESSION] fuse: xdg-document-portal gets stuck and causes
- suspend to fail in mainline
-Message-ID: <20260112-textil-bepflanzen-c6225a477747@brauner>
-References: <7d4ac21f-491f-4f0a-bc50-7601cd1140ca@leemhuis.info>
- <ff46166e-6795-4cab-bfef-d0724200bc62@bsbernd.com>
- <176819030053.16766.15730807505551833487@noble.neil.brown.name>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
+	Nicolas Pitre <nico@fluxnic.net>, Christoph Hellwig <hch@infradead.org>, 
+	Anders Larsen <al@alarsen.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>, Gao Xiang <xiang@kernel.org>, 
+	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
+	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, Jan Kara <jack@suse.com>, 
+	Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, 
+	Dave Kleikamp <shaggy@kernel.org>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+	Viacheslav Dubeyko <slava@dubeyko.com>, Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
+	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, Mike Marshall <hubcap@omnibond.com>, 
+	Martin Brandenburg <martin@omnibond.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Phillip Lougher <phillip@squashfs.org.uk>, Carlos Maiolino <cem@kernel.org>, 
+	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
+	Andreas Gruenbacher <agruenba@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
+	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Christian Schoenebeck <linux_oss@crudebyte.com>, Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Hans de Goede <hansg@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, 
+	jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev, 
+	ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-mm@kvack.org, gfs2@lists.linux.dev, 
+	linux-doc@vger.kernel.org, v9fs@lists.linux.dev, ceph-devel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to
+ lease support
+Message-ID: <20260112-gemeldet-gelitten-7d48bae7ef3f@brauner>
+References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
+ <m3mywef74xhcakianlrovrnaadnhzhfqjfusulkcnyioforfml@j2xnk7dzkmv4>
+ <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
+ <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,142 +94,81 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <176819030053.16766.15730807505551833487@noble.neil.brown.name>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
 
-On Mon, Jan 12, 2026 at 02:58:20PM +1100, NeilBrown wrote:
-> On Mon, 12 Jan 2026, Bernd Schubert wrote:
-> > 
-> > On 1/11/26 12:37, Thorsten Leemhuis wrote:
-> > > Lo! I can reliably get xdg-document-portal stuck on latest -mainline
-> > > (and -next, too; 6.18.4. works fine) trough the Signal flatpak, which
-> > > then causes suspend to fail:
-> > > 
-> > > """
-> > >> [  194.439381] PM: suspend entry (s2idle)
-> > >> [  194.454708] Filesystems sync: 0.015 seconds
-> > >> [  194.696767] Freezing user space processes
-> > >> [  214.700978] Freezing user space processes failed after 20.004 seconds (1 tasks refusing to freeze, wq_busy=0):
-> > >> [  214.701143] task:xdg-document-po state:D stack:0     pid:2651  tgid:2651  ppid:1939   task_flags:0x400000 flags:0x00080002
-> > >> [  214.701151] Call Trace:
-> > >> [  214.701154]  <TASK>
-> > >> [  214.701167]  __schedule+0x2b8/0x5e0
-> > >> [  214.701181]  schedule+0x27/0x80
-> > >> [  214.701188]  request_wait_answer+0xce/0x260 [fuse]
-> > >> [  214.701202]  ? __pfx_autoremove_wake_function+0x10/0x10
-> > >> [  214.701212]  __fuse_simple_request+0x120/0x340 [fuse]
-> > >> [  214.701219]  fuse_lookup_name+0xc3/0x210 [fuse]
-> > >> [  214.701235]  fuse_lookup+0x99/0x1c0 [fuse]
-> > >> [  214.701242]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > >> [  214.701247]  ? fuse_dentry_init+0x23/0x50 [fuse]
-> > >> [  214.701257]  lookup_one_qstr_excl+0xa8/0xf0
-> > 
-> > Introduced by c9ba789dad15 ("VFS: introduce start_creating_noperm() and
-> > start_removing_noperm()")?
-> > 
-> > Why is the new code doing a lookup on an entry that is about to be
-> > invalidated?
-> > 
-> > 
-> > In order to handle this at least one fuse server process needs to be
-> > available, but for this specific case the lookup still doesn't make sense.
-> > 
-> > We could do something like this
-> > 
-> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> > index 4b6b3d2758ff..7edbace7eddc 100644
-> > --- a/fs/fuse/dir.c
-> > +++ b/fs/fuse/dir.c
-> > @@ -1599,6 +1599,15 @@ int fuse_reverse_inval_entry(struct fuse_conn
-> > *fc, u64 parent_nodeid,
-> >         if (!dir)
-> >                 goto put_parent;
-> > 
-> > +       /* Check dcache first - if not cached, nothing to invalidate */
-> > +       name->hash = full_name_hash(dir, name->name, name->len);
-> > +       entry = d_lookup(dir, name);
-> > +       if (!entry) {
-> > +               err = 0;
-> > +               dput(dir);
-> > +               goto put_parent;
-> > +       }
-> > +
-> >         entry = start_removing_noperm(dir, name);
-> >         dput(dir);
-> >         if (IS_ERR(entry))
-> > 
-> > 
-> > But let's assume the dentry exists - start_removing_noperm() will now
-> > trigger a revalidate and get the same issue. From my point of view the
-> > above commit should be reverted for fuse.
-> > 
-> > 
-> > >> [  214.701264]  start_removing_noperm+0x59/0x80
-> > >> [  214.701268]  ? d_find_alias+0x82/0xd0
-> > >> [  214.701273]  fuse_reverse_inval_entry+0x7d/0x1f0 [fuse]
-> > >> [  214.701280]  ? fuse_copy_do+0x5f/0xa0 [fuse]
-> > >> [  214.701287]  fuse_notify+0x4a1/0x750 [fuse]
-> > >> [  214.701295]  ? iov_iter_get_pages2+0x1d/0x40
-> > >> [  214.701301]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > >> [  214.701305]  fuse_dev_do_write+0x2e4/0x440 [fuse]
-> > >> [  214.701313]  fuse_dev_write+0x6b/0xa0 [fuse]
-> > >> [  214.701320]  do_iter_readv_writev+0x161/0x260
-> > >> [  214.701327]  vfs_writev+0x168/0x3c0
-> > >> [  214.701334]  ? ksys_write+0xcd/0xf0
-> > >> [  214.701338]  ? do_writev+0x7f/0x110
-> > >> [  214.701341]  do_writev+0x7f/0x110
-> > >> [  214.701344]  do_syscall_64+0x7e/0x6b0
-> > >> [  214.701350]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > >> [  214.701352]  ? __handle_mm_fault+0x445/0x690
-> > >> [  214.701359]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > >> [  214.701363]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > >> [  214.701365]  ? count_memcg_events+0xd6/0x210
-> > >> [  214.701371]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > >> [  214.701373]  ? handle_mm_fault+0x212/0x340
-> > >> [  214.701377]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > >> [  214.701379]  ? do_user_addr_fault+0x2b4/0x7b0
-> > >> [  214.701387]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > >> [  214.701389]  ? irqentry_exit+0x6d/0x540
-> > >> [  214.701393]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > >> [  214.701395]  ? exc_page_fault+0x7e/0x1a0
-> > >> [  214.701398]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > >> [  214.701402] RIP: 0033:0x7f3c144f9982
-> > >> [  214.701467] RSP: 002b:00007fff80e2f388 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
-> > >> [  214.701470] RAX: ffffffffffffffda RBX: 00007f3bec000cf0 RCX: 00007f3c144f9982
-> > >> [  214.701472] RDX: 0000000000000003 RSI: 00007fff80e2f460 RDI: 0000000000000007
-> > >> [  214.701474] RBP: 00007fff80e2f3b0 R08: 0000000000000000 R09: 0000000000000000
-> > >> [  214.701475] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> > >> [  214.701477] R13: 00007f3bec000cf0 R14: 00007f3c14bb8280 R15: 00007f3be8001200
-> > >> [  214.701481]  </TASK>
-> > > """
-> > > 
-> > > Killing the mentioned process using "kill -9" doesn't help. I can
-> > > reliably trigger this in -mainline and -next using the Signal flatpak on
-> > > Fedora 43 by trying to send a picture (which gets xdg-document-portal
-> > > involved). It works the first time, but trying again won't and will
-> > > cause Signal to get stuck for a few seconds. Works fine in 6.18.4.
-> > > 
-> > > Is this maybe known already or does anybody have an idea what's wrong?
-> > > If not I guess I'll have to bisect this.
-> > > 
-> > > Ciao, Thorsten
-> > > 
-> > > #regzbot introduced: v6.18..
-> > > #regzbot title: fuse: xdg-document-portal gets stuck and causes suspend
-> > > to fail
-> > > 
-> > > 
-> > 
-> > Thanks,
-> > Bernd
-> > 
+On Fri, Jan 09, 2026 at 07:52:57PM +0100, Amir Goldstein wrote:
+> On Thu, Jan 8, 2026 at 7:57 PM Jeff Layton <jlayton@kernel.org> wrote:
+> >
+> > On Thu, 2026-01-08 at 18:40 +0100, Jan Kara wrote:
+> > > On Thu 08-01-26 12:12:55, Jeff Layton wrote:
+> > > > Yesterday, I sent patches to fix how directory delegation support is
+> > > > handled on filesystems where the should be disabled [1]. That set is
+> > > > appropriate for v6.19. For v7.0, I want to make lease support be more
+> > > > opt-in, rather than opt-out:
+> > > >
+> > > > For historical reasons, when ->setlease() file_operation is set to NULL,
+> > > > the default is to use the kernel-internal lease implementation. This
+> > > > means that if you want to disable them, you need to explicitly set the
+> > > > ->setlease() file_operation to simple_nosetlease() or the equivalent.
+> > > >
+> > > > This has caused a number of problems over the years as some filesystems
+> > > > have inadvertantly allowed leases to be acquired simply by having left
+> > > > it set to NULL. It would be better if filesystems had to opt-in to lease
+> > > > support, particularly with the advent of directory delegations.
+> > > >
+> > > > This series has sets the ->setlease() operation in a pile of existing
+> > > > local filesystems to generic_setlease() and then changes
+> > > > kernel_setlease() to return -EINVAL when the setlease() operation is not
+> > > > set.
+> > > >
+> > > > With this change, new filesystems will need to explicitly set the
+> > > > ->setlease() operations in order to provide lease and delegation
+> > > > support.
+> > > >
+> > > > I mainly focused on filesystems that are NFS exportable, since NFS and
+> > > > SMB are the main users of file leases, and they tend to end up exporting
+> > > > the same filesystem types. Let me know if I've missed any.
+> > >
+> > > So, what about kernfs and fuse? They seem to be exportable and don't have
+> > > .setlease set...
+> > >
+> >
+> > Yes, FUSE needs this too. I'll add a patch for that.
+> >
+> > As far as kernfs goes: AIUI, that's basically what sysfs and resctrl
+> > are built on. Do we really expect people to set leases there?
+> >
+> > I guess it's technically a regression since you could set them on those
+> > sorts of files earlier, but people don't usually export kernfs based
+> > filesystems via NFS or SMB, and that seems like something that could be
+> > used to make mischief.
+> >
+> > AFAICT, kernfs_export_ops is mostly to support open_by_handle_at(). See
+> > commit aa8188253474 ("kernfs: add exportfs operations").
+> >
+> > One idea: we could add a wrapper around generic_setlease() for
+> > filesystems like this that will do a WARN_ONCE() and then call
+> > generic_setlease(). That would keep leases working on them but we might
+> > get some reports that would tell us who's setting leases on these files
+> > and why.
 > 
-> I post a fix
+> IMO, you are being too cautious, but whatever.
 > 
->   https://lore.kernel.org/all/176454037897.634289.3566631742434963788@noble.neil.brown.name/
+> It is not accurate that kernfs filesystems are NFS exportable in general.
+> Only cgroupfs has KERNFS_ROOT_SUPPORT_EXPORTOP.
 > 
-> a while ago.  There was some talk in that thread of reverting the
-> breaking change instead.  I seems nothing happened.
+> If any application is using leases on cgroup files, it must be some
+> very advanced runtime (i.e. systemd), so we should know about the
+> regression sooner rather than later.
+> 
+> There are also the recently added nsfs and pidfs export_operations.
+> 
+> I have a recollection about wanting to be explicit about not allowing
+> those to be exportable to NFS (nsfs specifically), but I can't see where
+> and if that restriction was done.
+> 
+> Christian? Do you remember?
 
-I pinged a bunch of times but nobody ever responded.
-So then let's just apply your patch. I picked it up.
+I don't think it does.
 
