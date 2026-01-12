@@ -1,120 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-73201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19041D118AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 10:41:20 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30DBED11966
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 10:46:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2D723305D9B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 09:40:59 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 65963301F32F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 09:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FF434A78D;
-	Mon, 12 Jan 2026 09:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBD22765C4;
+	Mon, 12 Jan 2026 09:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="hILrfsK6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUeEQbxO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pdx-out-015.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-015.esa.us-west-2.outbound.mail-perimeter.amazon.com [50.112.246.219])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EB6349B01;
-	Mon, 12 Jan 2026 09:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=50.112.246.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4FF26FDBF;
+	Mon, 12 Jan 2026 09:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768210854; cv=none; b=kE/ife0Z6bRFgRC6eLDvV9LPbxeraiMQyXlcFn/CWy0p6tJaGosYK2DyOUIpjZpAyK+ioiXJnvyScv8aOA1ZaSOd1V423wM7lH/lNjNijjRSPWEUvGNtp0/xd29bQZe0X/MMvwR/esP0pC+1XePPrNxDt+dxnIpt3J0wSObVT8U=
+	t=1768211146; cv=none; b=Zpu7aumk7FrxXDUkusCAL/axkiNItv9nqcLPB8t4GW0Q3XzwKZ0SnJ4G0QdNPFA8x8SSwuQFAmLcNXMuxASAuxI4q5sSMzvPye9+Y7LZe06KvoxocWT14itzbYRu/YjaGfwpKnASrlHYQUHUthtF1uP3Kc4R91heqCtc/Tm8cMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768210854; c=relaxed/simple;
-	bh=9Tnd54ccK/SEyrhDqdu0sR6BOb88u6CYAQ7GQqFz6PU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l0odYWqpgeUJ98BZNvxjbPcwxeC5pE5nBdlpoGTf26FsF1VgeGtI3E0tCSr3TF+xhWn4ZqDnKTM+9icQ3Blrux0HXRVlLD7LvADG2vDfZy9pdVbYwqEnsWcG4+SwBKFgOBnX/eDF5RFjCwucMx00Ylhn+ub/VRN+1/L8OQIu1O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=hILrfsK6; arc=none smtp.client-ip=50.112.246.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1768210852; x=1799746852;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=46Ky87W6PsIzO2xwYH31+q/xQevV13LL6yLzYIEoe9I=;
-  b=hILrfsK6Vtt5Ytal5LfKQ8Xbg/Hrtnjm8bjWKmmk/LlhLI9ANVwtoW1d
-   uBATNmCfcD8NSyCB9VxGlSWvjqH8/sqQL1wwLTDsU12chxOZ09sy6TPZu
-   hijHYKG0k4hEOYduFocFj/PA/SR1iKuiU+3/iToKApDWQhspR/znNEvb5
-   eX/XZ+ljpFEtYSpFft3JOrTp7eK6X7dqyAAngVQeCaQkoxJCNOvDIBcva
-   aBOebCw7veDeJZ9XR3HB1q+80tOy69Pdr2CPy8tGXqUu4KH8a/L//4asM
-   NY9WwCD0qalATDYdCLD5B+E35jeirZ7W3XrkkiBCFy5/szHlJhMXSAGk6
-   A==;
-X-CSE-ConnectionGUID: XosqesVkSVqQj3B9uDwMww==
-X-CSE-MsgGUID: FSf+tNWnQ9aSxR6gXLLWKA==
-X-IronPort-AV: E=Sophos;i="6.21,219,1763424000"; 
-   d="scan'208";a="10493313"
-Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
-  by internal-pdx-out-015.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2026 09:40:48 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [205.251.233.111:9853]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.48.99:2525] with esmtp (Farcaster)
- id 68855ca0-6d20-4a7d-a073-a0d0e1bc8e75; Mon, 12 Jan 2026 09:40:48 +0000 (UTC)
-X-Farcaster-Flow-ID: 68855ca0-6d20-4a7d-a073-a0d0e1bc8e75
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.35;
- Mon, 12 Jan 2026 09:40:48 +0000
-Received: from c889f3b07a0a.amazon.com (10.106.82.30) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.35;
- Mon, 12 Jan 2026 09:40:46 +0000
-From: Yuto Ohnuki <ytohnuki@amazon.com>
-To: <mjguzik@gmail.com>
-CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
-	<ytohnuki@amazon.com>
-Subject: Re: [PATCH v2] fs: improve dump_inode() to safely access inode fields.
-Date: Mon, 12 Jan 2026 09:40:38 +0000
-Message-ID: <20260112094038.71100-1-ytohnuki@amazon.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <tno2xwbsdiq674hlvcfxmzo357wia3b6b2jxddgh4u2yvygmic@ygtdea6prr33>
-References: <tno2xwbsdiq674hlvcfxmzo357wia3b6b2jxddgh4u2yvygmic@ygtdea6prr33>
+	s=arc-20240116; t=1768211146; c=relaxed/simple;
+	bh=DxZZGzK74wIR5W3ofx2JM6E8wyCgaH8nZoYwWgX+eR8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KK1tySqf/RA2cpWWpA/AZWNYS5ClU0Ec5mWt++mHODuOMLxjX150D8O8RPeSzenEA3mDr25wXGT98Mz3Punj9E8NZrutLYCB4QaYvBDQFqMtGTzSAh/JmQvaCe59tVU3pCWs0ojhjAD/gTsyGSeRSd8RNGueyT+4+HRKfGBtk24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUeEQbxO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05681C19422;
+	Mon, 12 Jan 2026 09:45:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768211146;
+	bh=DxZZGzK74wIR5W3ofx2JM6E8wyCgaH8nZoYwWgX+eR8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qUeEQbxO/1bJOSJmWeCdO+VjleNy8B0ViluvHBno5gr59qB8VEEYWEF1rbAie3EAq
+	 0lBRAdHEvYyqkAHaFwEQSYJO7qICSgJMwVU+ZEnKnom6kmsD+MVv/kP2W50TNqRina
+	 kmDueNMdchfAb950mTM+K2bF8wYvPkz2bL6iZxf1vIrUkGWdBvVMPGbx9pJEtEUBfV
+	 IM3Dxy7GJeSsVnoP849ryUv7V8KBbcs5OYRuU/u3ZZJmvVfKYLY9RHyEOjm2pR6/Iw
+	 silI5tXIpzTrN8O2PvgT967TZ9iXPpt9mOUwWRmfeNSwvLi1wbJ+xb2XzRmSgGte9Z
+	 9hI9tmM6jxdEA==
+From: Christian Brauner <brauner@kernel.org>
+To: NeilBrown <neilb@ownmail.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	Jeff Layton <jlayton@kernel.org>,
+	Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>,
+	David Howells <dhowells@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Tyler Hicks <code@tyhicks.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <smfrench@gmail.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	netfs@lists.linux.dev,
+	ecryptfs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Val Packett <val@packett.cool>
+Subject: Re: [PATCH] fuse: fix conversion of fuse_reverse_inval_entry() to start_removing()
+Date: Mon, 12 Jan 2026 10:45:29 +0100
+Message-ID: <20260112-sonnen-diagramm-ae37279f315f@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <176454037897.634289.3566631742434963788@noble.neil.brown.name>
+References: <176454037897.634289.3566631742434963788@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D043UWA002.ant.amazon.com (10.13.139.53) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1363; i=brauner@kernel.org; h=from:subject:message-id; bh=DxZZGzK74wIR5W3ofx2JM6E8wyCgaH8nZoYwWgX+eR8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmHNp3YLliou6j/3Ff/idODOBi2hrnHJFm6HLce0lit usnvUPLO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbStoDhf+ApldVTH+9ump0Q 4sQyPVufZcfFQim/qg0H5pYcsWTsvsPIsItlrpnjleU7v1yNkzy16KEws3jZzJDTbjWb3t+wXH5 wHicA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-> It would be good to avoid duplication of the pr_warn stuff as the format
-> string is expected to change over time. I guess you could retain
-> "<invalid>" for the case where sb was unreadable? Or even denote it,
-> perhaps with "<unknown, sb unreadable>" or similar.
+On Mon, 01 Dec 2025 09:06:18 +1100, NeilBrown wrote:
+> The recent conversion of fuse_reverse_inval_entry() to use
+> start_removing() was wrong.
+> As Val Packett points out the original code did not call ->lookup
+> while the new code does.  This can lead to a deadlock.
 > 
+> Rather than using full_name_hash() and d_lookup() as the old code
+> did, we can use try_lookup_noperm() which combines these.  Then
+> the result can be given to start_removing_dentry() to get the required
+> locks for removal.  We then double check that the name hasn't
+> changed.
 > 
-> I don't really care as long as tere is one pr_warn dumping the state.
-> 
-> This bit:
-> +	pr_warn("invalid inode:%px\n", inode);
-> 
-> could still print the passed reason. "invalid inode:" is a little
-> misleaing, perhaps "unreadable inode" would be better?
-> 
-> As a side note I was told kernel printk supports %# for printing hash
-> values, perhaps a good opportunity to squeeze this in intead of 0x. One
-> will have to test it indeed gives the expected result.
+> [...]
 
-Thank you for the review and suggestions.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Yes, I intended to denote the situation where sb is unreadable, so I've
-adopted "<unknown, sb unreadable>" in v3.
-I'll address all the other points as well and send out v3.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Best regards,
-Yuto
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-Amazon Web Services EMEA SARL, 38 avenue John F. Kennedy, L-1855 Luxembourg, R.C.S. Luxembourg B186284
-
-Amazon Web Services EMEA SARL, Irish Branch, One Burlington Plaza, Burlington Road, Dublin 4, Ireland, branch registration number 908705
-
-
-
+[1/1] fuse: fix conversion of fuse_reverse_inval_entry() to start_removing()
+      https://git.kernel.org/vfs/vfs/c/cab012375122
 
