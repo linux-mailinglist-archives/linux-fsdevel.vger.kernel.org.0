@@ -1,228 +1,652 @@
-Return-Path: <linux-fsdevel+bounces-73330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA58BD15B09
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 23:55:05 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26794D15B9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 00:06:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id CDEF5300BFA0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 22:54:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0B605303E654
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 23:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458C02C21F7;
-	Mon, 12 Jan 2026 22:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93C92836BE;
+	Mon, 12 Jan 2026 23:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="S2wYuRTm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbYkn1QO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010042.outbound.protection.outlook.com [40.93.198.42])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4141428C866;
-	Mon, 12 Jan 2026 22:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768258491; cv=fail; b=pznCT9v7iF6c3EHRfqGVdt9ocJEsXe2eDTEWFKs+FOU9jtT2OEj7YAUssHhhRB5JwUvdNB/PqI0ZPgW5IHhGMrpuyvPX1UuWYKpkdirrY859c76HTlt2ar0IlOOUntvIfQvs+fCIielexB9D+SXCD2d+I1KuFk7nJDbBoUYDAkE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768258491; c=relaxed/simple;
-	bh=gCpLBgl0sLJIAdtDf/dKEOIwt0T/uaklGaFAFmpLIoc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bbH9s6WLs+tkuPOfNZxYC17CFwjnUd5eCHe0mcUIxO6NKkhCd2iOgS46FryCfIe8jYe/DlTRMoGuAIQVPHHWPHqehxRQmhLOxiLfYhL+ne+RENrsdKgmqzcOu/HKz2fhqTaCbIsmuheTSO5T2zkzzTxNPE55yW7YdZmengWLsBo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=S2wYuRTm; arc=fail smtp.client-ip=40.93.198.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LdT27useTC6Y3m4lNAT/vACHoMJ+NiOakNiYvniArd11vPuPE6AK7/h9RoCnWIO5HdBbVHbJj8MOqwqcKOC/oUwTbZTihOyja3l0ispo7RrG2xwYtsxO3k71dAXcWRImGAY0aXdd5aVREQbBnIJfDwAPP/2XDZebYvrOh7D4LnAQ29T8QNXnmoYGLJj/1vDP4L24RTLFVPzbY2fkj7pOeO+ayb20aOZLznxrTHjvAuqbv3xxviGHm1icQvQaMEVqqjv7R49QTPwkNwCtIzDh8U+lJFRxQhToN8dkrGOSm01uVdOh2Y0ctH80cUxnFlnaunE72LrK7RRMklqbLM9AMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fJP5GgSYoDfCvPIcvFRQTY1Exn6RFIdQSrWeHu29c/o=;
- b=GRKvn+oQu7ErEGpFL3WG2dXzM4JRFM9e7DgGnsp5jbIEIu09RiJSowWptqBmuOLXJu9HchuGAZ6sph+r8g6qJ2lojRCGxPBwGn2Ta9/kv5Te5emZRXiB+vTWZonXotkFGBPE++hHwhUCYjHCnSC4oZBMEBOtzxgEjl9+YNYYLU3CxZSXD42vmMsKe4e9mDtE83dsvovHPofu9AUjXYjzZAWvAoNUj2DQjSoSM3gYfwOo7cNxa0PEPp9S3DdZlrKwEX7hUn3uYZqHmS8ZPpchr2v4UAfasQXW9V+Qr/P3/ne3z9kkpyWfnr/LP2I5pMdFfXnpOp74TLqEC/qeWX4Eog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fJP5GgSYoDfCvPIcvFRQTY1Exn6RFIdQSrWeHu29c/o=;
- b=S2wYuRTm6J9n4v4rkG8Wp1x4iN/6evPpxejEzgwovGB+UK4pv2W5B5B1asNd8TAMSmBGlRacRBcTghNVy8r2ntYbjrK+GbQqlEs4Tl1ugAoRnQOIchduouqt1YAlOGeg5iYtZxYtOzyP6zavziBOta2SgrcE4LQnC1mDqWRFivJN8NMZYOV4QE4V9VhZ2Arr9EG0YL4dRhGhG6+OnUr3cB6hBfjqB8uIYXET6pgeaZ4KVI9KV5Xd0D9VucNJV6ZiroP8OlANRApCqa+cbUKPBHFao+7keILjoyC3DnZYqZeSq8LoYOYq+SQ61aHV1B2OzK/bPQm5rDkcBdXIhYJmMA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by LV2PR12MB5846.namprd12.prod.outlook.com (2603:10b6:408:175::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.7; Mon, 12 Jan
- 2026 22:54:46 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::2920:e6d9:4461:e2b4]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::2920:e6d9:4461:e2b4%5]) with mapi id 15.20.9499.005; Mon, 12 Jan 2026
- 22:54:46 +0000
-Message-ID: <966ce77a-c055-4ab8-9c40-d02de7b67895@nvidia.com>
-Date: Tue, 13 Jan 2026 09:54:32 +1100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 0/8] mm,numa: N_PRIVATE node isolation for
- device-managed memory
-To: dan.j.williams@intel.com, Yury Norov <ynorov@nvidia.com>,
- Gregory Price <gourry@gourry.net>
-Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, kernel-team@meta.com, longman@redhat.com,
- tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com, corbet@lwn.net,
- gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
- dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
- akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com,
- mhocko@suse.com, jackmanb@google.com, ziy@nvidia.com, david@kernel.org,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
- axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
- yury.norov@gmail.com, linux@rasmusvillemoes.dk, rientjes@google.com,
- shakeel.butt@linux.dev, chrisl@kernel.org, kasong@tencent.com,
- shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com,
- baohua@kernel.org, yosry.ahmed@linux.dev, chengming.zhou@linux.dev,
- roman.gushchin@linux.dev, muchun.song@linux.dev, osalvador@suse.de,
- matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
- byungchul@sk.com, ying.huang@linux.alibaba.com, apopple@nvidia.com,
- cl@gentwo.org, harry.yoo@oracle.com, zhengqi.arch@bytedance.com
-References: <20260108203755.1163107-1-gourry@gourry.net>
- <6604d787-1744-4acf-80c0-e428fee1677e@nvidia.com>
- <aWUHAboKw28XepWr@gourry-fedora-PF4VCD3F> <aWUs8Fx2CG07F81e@yury>
- <696566a1e228d_2071810076@dwillia2-mobl4.notmuch>
- <e635e534-5aa6-485a-bd5c-7a0bc69f14f2@nvidia.com>
- <696571507b075_20718100d4@dwillia2-mobl4.notmuch>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <696571507b075_20718100d4@dwillia2-mobl4.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY3PR05CA0041.namprd05.prod.outlook.com
- (2603:10b6:a03:39b::16) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255E227B34C;
+	Mon, 12 Jan 2026 23:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768259150; cv=none; b=rHwj0KVpMj4NxdwkQRPP3qRXX7ZntzEodpfobKVLA9kRLXaYrveT/vwi0hiUw7LWtGxa5okgSKeeWvnkXp21UzpGZL3dpmg75pTrPleyEsFUX3JMKESKza2KdNriP05laIqn8CJTD0MMZ6gylsb/62klS6Q4Rxf3yY9zSg2BrXc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768259150; c=relaxed/simple;
+	bh=Ve0JkHkX+AvWd1KXZpKO7yeNc+xBH8kR/3ptNsaLxa4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KTGq6tduO5pof5p5ObGfVMcpvdFziQupGt2haoUeS07Dy9ptObb36oaRf7yQndjydYe5kKhidGvXOC+Ap70XV3C8DvZYWa9YmqdhpATTEhqcV7Isq8F4TlhVB2pz40hKa1JzL6m13HSToaAJgKEdg9x4QDdTNAKrD8JtTNuTkeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbYkn1QO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F28C2BCAF;
+	Mon, 12 Jan 2026 23:05:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768259149;
+	bh=Ve0JkHkX+AvWd1KXZpKO7yeNc+xBH8kR/3ptNsaLxa4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CbYkn1QOpgoifH/vuyNEIXJpitfVYanX1QMyhAco4+XqornIAO5KwyuJpeT88XfqK
+	 jcUx50OSJW73HPKZMPokIK57dcFaooFlWL/ZV2ZsRyMRnGiLEs2jgewVgI9btwefPc
+	 huE5/Ejsd2A7+ATe+ossU1ZmnnF5dO0fyMRehKJOIyoy/v6H4UsLfBL/PA9LkD029v
+	 bvqfxoKQPMIVv+xBZftN11brRAvSeTprodZhL/ez3wljHZ7h8ibDezm4uFv30ChF3I
+	 yAcDjUKoLHHJYocrZqwa6dMig9JYnAhj1QZRYoEp9zorzMebFAMkH25WmqaIKIbGJY
+	 pgBtcSsGflFTg==
+Date: Mon, 12 Jan 2026 15:05:48 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+	ebiggers@kernel.org, linux-fsdevel@vger.kernel.org,
+	aalbersh@kernel.org, david@fromorbit.com, hch@lst.de
+Subject: Re: [PATCH v2 16/22] xfs: add fs-verity support
+Message-ID: <20260112230548.GR15551@frogsfrogsfrogs>
+References: <cover.1768229271.patch-series@thinky>
+ <p4vwqbgks2zr5i4f4d2t2i3gs2l4tnsmi2eijay5jba5y4kx6e@g3k4uk4ia4es>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|LV2PR12MB5846:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae932fb4-6222-48f6-9680-08de522d9543
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|7416014|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c1V0eXBhVWkrZ1lpbEZlQ0hPZ01LQW1FbGRybE1VWFQxcmtPSHZybzBKRjVU?=
- =?utf-8?B?UHlDK1crTUkzbFdndWFVcncxdzh0a05WY3pqM0x0ZGE1MWpnc3VRQTd0RWJl?=
- =?utf-8?B?V3VMWUxyL0gxbkRtM0pYcDRFYWJKTXY1N2RHNnVVazlkSHVEV1h1OTR1Rmdt?=
- =?utf-8?B?cmZ1TjNXMmIwRVpVanNvNGJyQ3lXMHhtWTFpc1N1SmpTVm5mdzhzTXh3bFpZ?=
- =?utf-8?B?T1lRcUZzTzUvVTdqRCtNWVRyVG40eVhCaWpXb21NWHYycGtEdFgwT09BMUV3?=
- =?utf-8?B?aWFvUE5iR1JDT1JVcDhGWUw2Sit4cXFzZkh5Z09KMlcxTnJpS1paNmVrVzJv?=
- =?utf-8?B?d201aTFjSE51MjREZW1aOGlvc09FNlFvMCt1Z3JyQVhwVnljcjdXK3RSSmxj?=
- =?utf-8?B?aDZVTFF5SmlKUTFrTWNlUEhFcjBLY1VpQ28rVTJFRlhWaUpNcG9tNFFybklV?=
- =?utf-8?B?S1BSUEI2TEpXcmlDTlVNODhOV29VTWcxYjdhaEZZUkxBUTlwd0Jia09QOVhm?=
- =?utf-8?B?Q2dqc3hBazJWQU8zQXA5OVdkekhRdzlSL25MdS9qTU04Z1M4Y3JMMW1XN2l0?=
- =?utf-8?B?RXNIUFIvMXR3NlBKakRsSWl2S1drSjJhdEpVRkYzVUVWQ2JDNS95N0JQNnF5?=
- =?utf-8?B?OTVwQUlKS1FRUHJrcFQyK2cxOTY0VzFNSVBZQWEvcjVzN2J0V1ZrSmI0TDAv?=
- =?utf-8?B?dWl5NVZ5Q0xOdCtmUFU2dGdMdEI1VFBnVWNyc2VESElLZ2tZL2lSOFYwK3ov?=
- =?utf-8?B?ZExWNVRDWDlacFdBdmJlSlpIVGVxb000N1B3cE9VS0d6cElKUnpiY1hGSjlT?=
- =?utf-8?B?WGdZRzcvdGtVbTFDeGFKc2FjQWU5YjUrQ2VaTzlxNFh5N3Z0TzlvclRPcVZo?=
- =?utf-8?B?SkxBN0FldVBYTmdXRnIxSTQyaXZldUJOOW0xQXNHV2lOQ0hWYU1ndnVJN05l?=
- =?utf-8?B?TEVQeThHMUIyZnJDQzgwZVNxOVpxVEx5UTRYSE5zck5rU1BGbTZWLzZmSlRF?=
- =?utf-8?B?U1YyZzdXMEZwQlAvWmgrMlV6azJCWjNGeVVJN1E1M1o2ejhqNGFsc2NzODhT?=
- =?utf-8?B?TzVFcFRvMkxkVXkvREVESmVQejAzQ3MzT0s2TUlwVjZEYkNxMkpMZ0htMjN6?=
- =?utf-8?B?emRJWmhuUmdJSEFtTG5RNm5BS1J5cVJtSlVlWEpzNW93aWo2NU8zYkY3L1ZY?=
- =?utf-8?B?ek03SmFFY0xFS1ZvRzN6b3A3L3pRTXl2REhMNGVadG81d2RIUXhxeXhoUnlE?=
- =?utf-8?B?cnpMeWxqN3Y0Um1TaUlOTVJ0dEtEV0tnWDA5dGFvZTRpM1JZWFVDaE5SbENs?=
- =?utf-8?B?ZEhjU2FiSnJPT0RhZHVrMUY4SjVzT1h5czRkVGVVSUIvVWY5d3NiNHhMTDh1?=
- =?utf-8?B?Zk1CWnFpM1FydjV2cmVJenFpRDFycFJqbTZLUGJGZkJDdVpxSnZrK3Q1WGwv?=
- =?utf-8?B?RTFKU25Tc1ZQbGhKU1JzRXM0dTB0K2lNMysxeFdoNnpYZnZvbjI1OEJSQWZj?=
- =?utf-8?B?cG15Wk1LaDNVeXMrWEc4THlmQVlFOXIzUXVzQVpXOXh4cm5STEpvSzZiRUU5?=
- =?utf-8?B?N0xCYnQxbFZXeWJ4ZElFZTBoYVU4WFdsd1ViVTZiSjNjYWNBckZ3eGxYQm5R?=
- =?utf-8?B?WWxqcmVhckovVmh5QXRSRTEyb1N4L0d4T2tRRVBMSDg3RUkwWVNSVUVHMk5R?=
- =?utf-8?B?K0dFb3UwSzhMcW1rWndhc2NIZm5pem1PWkRKTHk2NmxuN1ZXZ1FBZVRyOUQ1?=
- =?utf-8?B?SU9SSkxpeXUwcTFiQXMzcE01WEU1Zm8wY3RhK1dZSThOajJYV1BUaTRIKzN1?=
- =?utf-8?B?U0pwMi9ZUi9MdlpBaGxIdUdPdnhnZmZCUmpzbXVrajZVdzVxcHUzeXZGZWNx?=
- =?utf-8?B?SmxndEtSaW1PakRpZWdzdTNaZTdBNlpjWlNkbTVPKytHcDlZektESGtTdXRw?=
- =?utf-8?Q?7dRFJkvds1oGxGkTCSqtjlPg9emB6l/6?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VXpqQWhjODZRcWVDc0g4c3JGa0hFU3F1SUhCUDhDMWc4SUFzcG4rSmg0aUxS?=
- =?utf-8?B?SFR3VEpaVDB4QmJFN3JKRDFQTHJwM0xtVGtZTTN0ZnhEWlJvZHRGSmpHWXZ3?=
- =?utf-8?B?Tld0M05NYTdNbTIvVGpEbFp0S3lFbmRkVUJrbW5lWXRvNEJXeE9DNzF1VkVH?=
- =?utf-8?B?cHB2R1lvWUdxNDE4MzNKamNrMmlLZjNIb3puZ1BFaVRHaXc0QnB1MnZXTUtT?=
- =?utf-8?B?UWc1eGo3NnIrNDY4ODg1clVDU1BYRkxSeGI1TzRabDg1eEJCbjRjcFdsUkw0?=
- =?utf-8?B?NlZaNDEwaTVjM3BRQmgxSVZXL2FQZWt0NnRNL1ZDclRCTm11dmd1c2U4Nk1D?=
- =?utf-8?B?V3JFeHluYW1HYUovRzhyQzVxWUxOSGp1Q3liM0JJMmp3YVl6OVU0b0xHRTE3?=
- =?utf-8?B?TS9JL0VIdEtMT1hURDl4SEZxa0hYSGgyOEJwL29WRjAzNlNLWmhSajh5VDBr?=
- =?utf-8?B?ZGMxckFyU24yU2NFdUhMTEl0VXBQQ0svdUxwQ2EzTmJPMW9ubEpKM2pFSG1n?=
- =?utf-8?B?UXZpOExvdkNrVFhjelZaK3pMQVFqL2JGU2tNcWdwZFp6QXM1MTBkdW9MU2pZ?=
- =?utf-8?B?SGFrYkYrdWxUbVZoRU5CeWZtbzdoTythUWJsQThhM3Z2SFNMVFVlYXVVYlU5?=
- =?utf-8?B?aXVlNzNwWGF2MktJNVZlU25nWFRKa3dmbTFocG94NTZuZHZWQzVLNzZnbDJv?=
- =?utf-8?B?RVhvWHRRMldkMUIrdzgzUWoxcjMxL1hIT3VFL3N3WC81R2F2QXlpUVNRNnJZ?=
- =?utf-8?B?eW1YVFpaYlFQQUIzZVFjYkZTTkJqZElRWUcrSjJqUVVqWlRKdUJrY2NGZURG?=
- =?utf-8?B?Nkd6T0FLZmtTZ1h0S3dldnN1U0o4RUR0VDFvNVZrQWx6ZzVMV0N5WmtPSzl1?=
- =?utf-8?B?VTNnOFg1emJWNUVFUFZhaHUyZDIwQkRlbHVZbWp0NVNLRzdOUm40K1ZEcHFM?=
- =?utf-8?B?OFFnc3FOZ0dVb3lNYk9aSWJ2VUxWWW5UekpJckRUSE9iY3RrVXlrU2V1QWJZ?=
- =?utf-8?B?RjIvaDJZcVJEdE9maXU1amFDUE9NeVdjUWw3V2xxMXNXendpWWxmYVlDMkh3?=
- =?utf-8?B?QVk1QklsZkQ3c2Q0eEh3YldabEVBVVdEQzlDVHhyZERzSUhCVHBzZmttaS9h?=
- =?utf-8?B?NXlJbWhKVDhCRDZSc2ttcDI5Y1lwWlpva1NyaTh3bGFOYWl3TlZVWmtKSTlZ?=
- =?utf-8?B?QnFERVZJV2s5dVBnOFpPY3RsU1VpRWE5QzY3Rks3bGg4OCtSS1lhcFQwNmlV?=
- =?utf-8?B?NWpmZE1KbnZXZ1BzdmhrZ3RMcFNBYTk2R0lHTEE2WEhEN25WNGdmTFo1U1hZ?=
- =?utf-8?B?cElZN3FwMmNrTzU2STB5TnM0Ny9BMS94STlxOVBSc0F6Qk56b0FUQ2cvRW5B?=
- =?utf-8?B?R2hkL3VyVGcxOGtING51ZEZiazkvVlhPd2d3SW5UYjZpYzRIZGUxOVk1OUFW?=
- =?utf-8?B?S3lXcWRFM3NGWG43UlFBSUdnaVBGVWNJbXFoVjVvdFVoRkpWVk5JMjFyank1?=
- =?utf-8?B?NHBBQThZTzNXWHVMbVNVa0RJOWtjRVdxUjFud3YyWkpkVEVBWk15aHJzVlpw?=
- =?utf-8?B?N05UTzJ3a3Bwa2MwNklpc1BTNjFVQ3VuaDJCc3krUHZxOXFGRjNFTFZtd2ww?=
- =?utf-8?B?MFRHR0dlcWFQLytHTU9hVThrQmp0L0s1aCt4TkJ6cmRvY0I1THFtWTlzVnVD?=
- =?utf-8?B?VGNUOXpqQ2t2VlRRYUFEYXhJVjFQbkFVdmllUTdnUERmVmpFZFVNMGN6RkhX?=
- =?utf-8?B?OW00OEVVV2YrTXhUU0kzcEJqNDloQmk2OTVJc0plTzNpeTAySUZlSFZZdDlK?=
- =?utf-8?B?UlFrbW4xR3NETEVnQTFOK1ppenRadE10VVEwNWdqV25iZ0FpNnpkQ3VmYjc3?=
- =?utf-8?B?emdlK0xjT200N0thc0k5ZHRpOVI2R1E3VkNvTjMvdjdIdm4yY2hGY09WemUx?=
- =?utf-8?B?WGtvZUFmbnNXTEU1ckU5T2pZN1hMNHBqUERONnpxL0hPV1dTN2NJd2IrL2VI?=
- =?utf-8?B?TGY0eERCeis2NFBRVlRZcS9ocy9UTyt3YkVURFFkelc4d0dwYUswS3BnRStJ?=
- =?utf-8?B?R1NYOHMvSnBXZEpOWElxSzVyeDdrUjRXUXd1cVgvNnpTV0M1T3pFZThhT09B?=
- =?utf-8?B?Tnh2R2lEelVEcGI1OHFlZnh0TzZEdHozRGYyR3VPSXBObjByb1ZXbGNOQ0sv?=
- =?utf-8?B?OUtEc2t1eHFCUEVFa0lkTWQrU2ExTlRwY290SVJTdFIvWXJLUjRGeCsxUHYy?=
- =?utf-8?B?azJ2UnRLTlZDZm1PTzZoNzFEYkpJamhxVXFqUzdNZkorSWFFbThxeFE1NjVl?=
- =?utf-8?B?d29qWGorNmlOTVlJMEtxRFpvWGt3RWU1TzUxbnd6RzQ0aFVRWTNBaWhGaFJo?=
- =?utf-8?Q?tggANKRuv6nwXI6HM9u+x+4xK/Qu03YA3OpTKQlSB9tcX?=
-X-MS-Exchange-AntiSpam-MessageData-1: 8MJa63H25ElJHw==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae932fb4-6222-48f6-9680-08de522d9543
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2026 22:54:46.5589
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GklsSvXB9vKeC9sOfLzgB7NT2NZ0W57l6/v3E2DLp4dnWDX5JXQeTob8gG3wbNEL3A3sIPwT5WeQhg6a8LgiIg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5846
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <p4vwqbgks2zr5i4f4d2t2i3gs2l4tnsmi2eijay5jba5y4kx6e@g3k4uk4ia4es>
 
-On 1/13/26 08:10, dan.j.williams@intel.com wrote:
-> Balbir Singh wrote:
-> [..]
->>> I agree with Gregory the name does not matter as much as the
->>> documentation explaining what the name means. I am ok if others do not
->>> sign onto the rationale for why not include _MEMORY, but lets capture
->>> something that tries to clarify that this is a unique node state that
->>> can have "all of the above" memory types relative to the existing
->>> _MEMORY states.
->>>
->>
->> To me, N_ is a common prefix, we do have N_HIGH_MEMORY, N_NORMAL_MEMORY.
->> N_PRIVATE does not tell me if it's CPU or memory related.
+On Mon, Jan 12, 2026 at 03:51:43PM +0100, Andrey Albershteyn wrote:
+> Add integration with fs-verity. XFS stores fs-verity descriptor and
+> Merkle tree in the inode data fork at offset file offset (1 << 53).
 > 
-> True that confusion about whether N_PRIVATE can apply to CPUs is there.
-> How about split the difference and call this:
+> The Merkle tree reading/writing is done through iomap interface. The
+> data itself are read to the inode's page cache. When XFS reads from this
+> region iomap doesn't call into fsverity to verify it against Merkle
+> tree. For data, verification is done on BIO completion in a workqueue.
 > 
->     N_MEM_PRIVATE
-> 
-> To make it both distinct from _MEMORY and _HIGH_MEMORY which describe
-> ZONE limitations and distinct from N_CPU.
+> When fs-verity is enabled on an inode, the XFS_IVERITY_CONSTRUCTION
+> flag is set meaning that the Merkle tree is being build. The
+> initialization ends with storing of verity descriptor and setting
+> inode on-disk flag (XFS_DIFLAG2_VERITY).
 
-I'd be open to that name, how about N_MEMORY_PRIVATE? So then N_MEMORY
-becomes (N_MEMORY_PUBLIC by default)
+Might want to mention that XFS_DIFLAG2_VERITY sets S_VERITY, and that
+XFS_IVERITY_CONSTRUCTION gets dropped after construction ends.
 
-Balbir
+> The descriptor is stored in a new block after the last Merkle tree
+> block. The size of the descriptor is stored at the end of the last
+> descriptor block (descriptor can be multiple blocks).
+
+Huh, I would have thought the descriptor would go at 1<<53 and the
+merkle tree goes immediately afterwards but eh, whatever. :)
+
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> ---
+>  fs/xfs/Makefile        |   1 +
+>  fs/xfs/xfs_bmap_util.c |   7 +
+>  fs/xfs/xfs_fsverity.c  | 376 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/xfs/xfs_fsverity.h  |  12 +
+>  fs/xfs/xfs_message.c   |   4 +
+>  fs/xfs/xfs_message.h   |   1 +
+>  fs/xfs/xfs_super.c     |  14 +
+>  7 files changed, 415 insertions(+), 0 deletions(-)
+> 
+> diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
+> index 5bf501cf82..ad66439db7 100644
+> --- a/fs/xfs/Makefile
+> +++ b/fs/xfs/Makefile
+> @@ -147,6 +147,7 @@
+>  xfs-$(CONFIG_SYSCTL)		+= xfs_sysctl.o
+>  xfs-$(CONFIG_COMPAT)		+= xfs_ioctl32.o
+>  xfs-$(CONFIG_EXPORTFS_BLOCK_OPS)	+= xfs_pnfs.o
+> +xfs-$(CONFIG_FS_VERITY)		+= xfs_fsverity.o
+>  
+>  # notify failure
+>  ifeq ($(CONFIG_MEMORY_FAILURE),y)
+> diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+> index 2208a720ec..79a255a3ac 100644
+> --- a/fs/xfs/xfs_bmap_util.c
+> +++ b/fs/xfs/xfs_bmap_util.c
+> @@ -31,6 +31,7 @@
+>  #include "xfs_rtbitmap.h"
+>  #include "xfs_rtgroup.h"
+>  #include "xfs_zone_alloc.h"
+> +#include <linux/fsverity.h>
+>  
+>  /* Kernel only BMAP related definitions and functions */
+>  
+> @@ -554,6 +555,12 @@
+>  		return false;
+>  
+>  	/*
+> +	 * Nothing to clean on fsverity inodes as they are read-only
+> +	 */
+> +	if (IS_VERITY(VFS_I(ip)))
+> +		return false;
+> +
+> +	/*
+>  	 * Check if there is an post-EOF extent to free.  If there are any
+>  	 * delalloc blocks attached to the inode (data fork delalloc
+>  	 * reservations or CoW extents of any kind), we need to free them so
+> diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
+> new file mode 100644
+> index 0000000000..691dc60778
+> --- /dev/null
+> +++ b/fs/xfs/xfs_fsverity.c
+> @@ -0,0 +1,376 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2025 Red Hat, Inc.
+> + */
+> +#include "xfs.h"
+> +#include "xfs_shared.h"
+> +#include "xfs_format.h"
+> +#include "xfs_trans_resv.h"
+> +#include "xfs_mount.h"
+> +#include "xfs_da_format.h"
+> +#include "xfs_da_btree.h"
+> +#include "xfs_inode.h"
+> +#include "xfs_log_format.h"
+> +#include "xfs_bmap_util.h"
+> +#include "xfs_log_format.h"
+> +#include "xfs_trans.h"
+> +#include "xfs_trace.h"
+> +#include "xfs_quota.h"
+> +#include "xfs_fsverity.h"
+> +#include "xfs_iomap.h"
+> +#include <linux/fsverity.h>
+> +#include <linux/pagemap.h>
+> +
+> +static int
+> +xfs_fsverity_read(
+> +	struct inode	*inode,
+> +	void		*buf,
+> +	size_t		count,
+> +	loff_t		pos)
+> +{
+> +	struct folio	*folio;
+> +	size_t		n;
+> +
+> +	while (count) {
+> +		folio = read_mapping_folio(inode->i_mapping, pos >> PAGE_SHIFT,
+> +					 NULL);
+> +		if (IS_ERR(folio))
+> +			return PTR_ERR(folio);
+> +
+> +		n = memcpy_from_file_folio(buf, folio, pos, count);
+> +		folio_put(folio);
+> +
+> +		buf += n;
+> +		pos += n;
+> +		count -= n;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int
+> +xfs_fsverity_write(
+> +	struct xfs_inode	*ip,
+> +	loff_t			pos,
+> +	size_t			length,
+> +	const void		*buf)
+> +{
+> +	int			ret;
+> +	struct iov_iter		iter;
+> +	struct kvec		kvec = {
+> +		.iov_base	= (void *)buf,
+> +		.iov_len	= length,
+> +	};
+> +	struct kiocb		iocb = {
+> +		/* 
+> +		 * We don't have file here, but iomap_file_buffered_write uses
+> +		 * it only to obtain inode, so, pass inode as private arg
+> +		 * directly
+> +		 */
+
+Oh, it occurs to me that fsverity doesn't take the struct file and pass
+it through to the per-fs implementation.  And that's why you had to
+resort to the trick of passing the struct inode in as "private" earlier.
+
+I think that needs to get fixed, unfortunately it's a treewide change.
+What if you wrote a iomap_write_iter wrapper that skips all the iocb
+junk and just takes the inode/pos/len directly?
+
+> +		.ki_filp = NULL,
+> +		.ki_ioprio = get_current_ioprio(),
+> +		.ki_pos = pos,
+> +	};
+> +
+> +	iov_iter_kvec(&iter, WRITE, &kvec, 1, length);
+> +	ret = iomap_file_buffered_write(&iocb, &iter,
+> +			&xfs_buffered_write_iomap_ops, &xfs_iomap_write_ops,
+> +			VFS_I(ip));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Retrieve the verity descriptor.
+> + */
+> +static int
+> +xfs_fsverity_get_descriptor(
+> +	struct inode		*inode,
+> +	void			*buf,
+> +	size_t			buf_size)
+> +{
+> +	struct xfs_inode	*ip = XFS_I(inode);
+> +	__be32			d_desc_size;
+> +	u32			desc_size;
+> +	u64			desc_size_pos;
+> +	int			error;
+> +	u64			desc_pos;
+> +	struct xfs_bmbt_irec	rec;
+> +	int			is_empty;
+> +	uint32_t		blocksize = i_blocksize(VFS_I(ip));
+> +	xfs_fileoff_t		last_block;
+> +
+> +	ASSERT(inode->i_flags & S_VERITY);
+> +	error = xfs_bmap_last_extent(NULL, ip, XFS_DATA_FORK, &rec, &is_empty);
+> +	if (error)
+> +		return error;
+> +
+> +	if (is_empty)
+> +		return -ENODATA;
+> +
+> +	last_block = (rec.br_startoff + rec.br_blockcount);
+> +	desc_size_pos = (last_block << ip->i_mount->m_sb.sb_blocklog) -
+> +			sizeof(__be32);
+> +	error = xfs_fsverity_read(inode, (char *)&d_desc_size,
+> +				  sizeof(d_desc_size), desc_size_pos);
+> +	if (error)
+> +		return error;
+> +
+> +	desc_size = be32_to_cpu(d_desc_size);
+> +	if (desc_size > FS_VERITY_MAX_DESCRIPTOR_SIZE || desc_size > desc_size_pos)
+> +		return -ERANGE;
+> +
+> +	if (!buf_size)
+> +		return desc_size;
+> +
+> +	if (desc_size > buf_size)
+> +		return -ERANGE;
+> +
+> +	desc_pos = round_down(desc_size_pos - desc_size, blocksize);
+> +	error = xfs_fsverity_read(inode, buf, desc_size, desc_pos);
+> +	if (error)
+> +		return error;
+> +
+> +	return desc_size;
+> +}
+
+You might want to wrap the integrity checks through XFS_IS_CORRUPT so
+that we get some logging on corrupt fsverity data.  Also, if descriptor
+corruption doesn't prevent iget from completing, then we ought to define
+a new health state for the xfs_inode so that it can report those kinds
+of failures via bulkstat.
+
+> +
+> +static int
+> +xfs_fsverity_write_descriptor(
+> +	struct xfs_inode	*ip,
+> +	const void		*desc,
+> +	u32			desc_size,
+> +	u64			merkle_tree_size)
+> +{
+> +	int			error;
+> +	unsigned int		blksize = ip->i_mount->m_attr_geo->blksize;
+> +	u64			desc_pos = round_up(
+> +			XFS_FSVERITY_REGION_START | merkle_tree_size, blksize);
+> +	u64			desc_end = desc_pos + desc_size;
+> +	__be32			desc_size_disk = cpu_to_be32(desc_size);
+> +	u64			desc_size_pos =
+> +			round_up(desc_end + sizeof(desc_size_disk), blksize) -
+> +			sizeof(desc_size_disk);
+> +
+> +	error = xfs_fsverity_write(ip, desc_size_pos,
+> +				   sizeof(__be32),
+> +				   (const void *)&desc_size_disk);
+> +	if (error)
+> +		return error;
+> +
+> +	error = xfs_fsverity_write(ip, desc_pos, desc_size, desc);
+> +
+> +	return error;
+> +}
+> +
+> +/*
+> + * Try to remove all the fsverity metadata after a failed enablement.
+> + */
+> +static int
+> +xfs_fsverity_delete_metadata(
+> +	struct xfs_inode	*ip)
+> +{
+> +	struct xfs_trans	*tp;
+> +	struct xfs_mount	*mp = ip->i_mount;
+> +	int			error;
+> +
+> +	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, 0, 0, 0, &tp);
+> +	if (error)
+> +		return error;
+> +
+> +	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
+
+The MMAPLOCK should be taken before the transaction allocation like
+everything else in xfs.
+
+> +	error = xfs_truncate_page(ip, XFS_ISIZE(ip), NULL, NULL);
+> +	xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
+> +
+> +	xfs_ilock(ip, XFS_ILOCK_EXCL);
+> +	xfs_trans_ijoin(tp, ip, 0);
+> +
+> +	/*
+> +	 * We removing post EOF data, no need to update i_size
+> +	 */
+> +	error = xfs_itruncate_extents(&tp, ip, XFS_DATA_FORK, XFS_ISIZE(ip));
+> +	if (error)
+> +		goto err_cancel;
+> +
+> +	error = xfs_trans_commit(tp);
+> +	if (error)
+> +		goto err_cancel;
+> +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+> +
+> +	return error;
+> +
+> +err_cancel:
+> +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+> +	xfs_trans_cancel(tp);
+> +	return error;
+> +}
+> +
+> +
+> +/*
+> + * Prepare to enable fsverity by clearing old metadata.
+> + */
+> +static int
+> +xfs_fsverity_begin_enable(
+> +	struct file		*filp)
+> +{
+> +	struct inode		*inode = file_inode(filp);
+> +	struct xfs_inode	*ip = XFS_I(inode);
+> +	int			error;
+> +
+> +	xfs_assert_ilocked(ip, XFS_IOLOCK_EXCL);
+> +
+> +	if (IS_DAX(inode))
+> +		return -EINVAL;
+> +
+> +	if (inode->i_size > XFS_FSVERITY_REGION_START)
+> +		return -EFBIG;
+> +
+> +	if (xfs_iflags_test_and_set(ip, XFS_VERITY_CONSTRUCTION))
+> +		return -EBUSY;
+> +
+> +	error = xfs_qm_dqattach(ip);
+> +	if (error)
+> +		return error;
+> +
+> +	/*
+> +	 * Flush pagecache before building Merkle tree. Inode is locked and no
+> +	 * further writes will happen to the file except fsverity metadata
+
+Don't we need to take the MMAPLOCK to prevent concurrent write faults?
+
+> +	 */
+> +	error = filemap_write_and_wait(inode->i_mapping);
+> +	if (error)
+> +		return error;
+> +
+> +	return xfs_fsverity_delete_metadata(ip);
+> +}
+> +
+> +/*
+> + * Complete (or fail) the process of enabling fsverity.
+> + */
+> +static int
+> +xfs_fsverity_end_enable(
+> +	struct file		*filp,
+> +	const void		*desc,
+> +	size_t			desc_size,
+> +	u64			merkle_tree_size)
+> +{
+> +	struct inode		*inode = file_inode(filp);
+> +	struct xfs_inode	*ip = XFS_I(inode);
+> +	struct xfs_mount	*mp = ip->i_mount;
+> +	struct xfs_trans	*tp;
+> +	int			error = 0;
+> +
+> +	xfs_assert_ilocked(ip, XFS_IOLOCK_EXCL);
+> +
+> +	/* fs-verity failed, just cleanup */
+> +	if (desc == NULL)
+> +		goto out;
+> +
+> +	error = xfs_fsverity_write_descriptor(ip, desc, desc_size,
+> +					      merkle_tree_size);
+> +	if (error)
+> +		goto out;
+> +
+> +	/*
+> +	 * Wait for Merkle tree get written to disk before setting on-disk inode
+> +	 * flag and clearing XFS_VERITY_CONSTRUCTION
+> +	 */
+> +	error = filemap_write_and_wait(inode->i_mapping);
+> +	if (error)
+> +		goto out;
+> +
+> +	/*
+> +	 * Set fsverity inode flag
+> +	 */
+> +	error = xfs_trans_alloc_inode(ip, &M_RES(mp)->tr_ichange,
+> +			0, 0, false, &tp);
+> +	if (error)
+> +		goto out;
+> +
+> +	/*
+> +	 * Ensure that we've persisted the verity information before we enable
+> +	 * it on the inode and tell the caller we have sealed the inode.
+> +	 */
+> +	ip->i_diflags2 |= XFS_DIFLAG2_VERITY;
+> +
+> +	xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
+> +	xfs_trans_set_sync(tp);
+> +
+> +	error = xfs_trans_commit(tp);
+> +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+> +
+> +	if (!error)
+> +		inode->i_flags |= S_VERITY;
+> +
+> +out:
+> +	if (error) {
+> +		int	error2;
+> +
+> +		error2 = xfs_fsverity_delete_metadata(ip);
+> +		if (error2)
+> +			xfs_alert(ip->i_mount,
+> +"ino 0x%llx failed to clean up new fsverity metadata, err %d",
+> +					ip->i_ino, error2);
+> +	}
+> +
+> +	xfs_iflags_clear(ip, XFS_VERITY_CONSTRUCTION);
+> +	return error;
+> +}
+> +
+> +/*
+> + * Retrieve a merkle tree block.
+> + */
+> +static struct page *
+> +xfs_fsverity_read_merkle(
+> +	struct inode		*inode,
+> +	pgoff_t			index,
+> +	unsigned long		num_ra_pages)
+> +{
+> +	struct folio            *folio;
+> +	pgoff_t			offset =
+> +			index | (XFS_FSVERITY_REGION_START >> PAGE_SHIFT);
+> +
+> +	folio = __filemap_get_folio(inode->i_mapping, offset, FGP_ACCESSED, 0);
+> +	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
+> +		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, offset);
+> +
+> +		if (!IS_ERR(folio))
+> +			folio_put(folio);
+> +		else if (num_ra_pages > 1)
+> +			page_cache_ra_unbounded(&ractl, num_ra_pages, 0);
+> +		folio = read_mapping_folio(inode->i_mapping, offset, NULL);
+> +		if (IS_ERR(folio))
+> +			return ERR_CAST(folio);
+> +	}
+> +	return folio_file_page(folio, offset);
+
+Shouldn't this be some _BEYOND_EOF variant of generic_file_read_iter?
+
+> +}
+> +
+> +/*
+> + * Write a merkle tree block.
+> + */
+> +static int
+> +xfs_fsverity_write_merkle(
+> +	struct inode		*inode,
+> +	const void		*buf,
+> +	u64			pos,
+> +	unsigned int		size)
+> +{
+> +	struct xfs_inode	*ip = XFS_I(inode);
+> +	loff_t			position = pos | XFS_FSVERITY_REGION_START;
+> +
+> +	if (position + size > inode->i_sb->s_maxbytes)
+> +		return -EFBIG;
+> +
+> +	return xfs_fsverity_write(ip, position, size, buf);
+> +}
+> +
+> +const ptrdiff_t info_offs = (int)offsetof(struct xfs_inode, i_verity_info) -
+> +			    (int)offsetof(struct xfs_inode, i_vnode);
+
+I ... wow.
+
+Not blaming you for writing this, just surprised that the common code
+makes you do that.
+
+> +const struct fsverity_operations xfs_fsverity_ops = {
+> +	.inode_info_offs		= info_offs,
+> +	.begin_enable_verity		= xfs_fsverity_begin_enable,
+> +	.end_enable_verity		= xfs_fsverity_end_enable,
+> +	.get_verity_descriptor		= xfs_fsverity_get_descriptor,
+> +	.read_merkle_tree_page		= xfs_fsverity_read_merkle,
+> +	.write_merkle_tree_block	= xfs_fsverity_write_merkle,
+> +};
+> diff --git a/fs/xfs/xfs_fsverity.h b/fs/xfs/xfs_fsverity.h
+> new file mode 100644
+> index 0000000000..8b0d7ef456
+> --- /dev/null
+> +++ b/fs/xfs/xfs_fsverity.h
+> @@ -0,0 +1,12 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2022 Red Hat, Inc.
+> + */
+> +#ifndef __XFS_FSVERITY_H__
+> +#define __XFS_FSVERITY_H__
+> +
+> +#ifdef CONFIG_FS_VERITY
+> +extern const struct fsverity_operations xfs_fsverity_ops;
+> +#endif	/* CONFIG_FS_VERITY */
+> +
+> +#endif	/* __XFS_FSVERITY_H__ */
+> diff --git a/fs/xfs/xfs_message.c b/fs/xfs/xfs_message.c
+> index 19aba2c3d5..17f0f0ca7b 100644
+> --- a/fs/xfs/xfs_message.c
+> +++ b/fs/xfs/xfs_message.c
+> @@ -161,6 +161,10 @@
+>  			.opstate	= XFS_OPSTATE_WARNED_ZONED,
+>  			.name		= "zoned RT device",
+>  		},
+> +		[XFS_EXPERIMENTAL_FSVERITY] = {
+> +			.opstate	= XFS_OPSTATE_WARNED_ZONED,
+> +			.name		= "fsverity",
+> +		},
+>  	};
+>  	ASSERT(feat >= 0 && feat < XFS_EXPERIMENTAL_MAX);
+>  	BUILD_BUG_ON(ARRAY_SIZE(features) != XFS_EXPERIMENTAL_MAX);
+> diff --git a/fs/xfs/xfs_message.h b/fs/xfs/xfs_message.h
+> index d68e72379f..1647d32ea4 100644
+> --- a/fs/xfs/xfs_message.h
+> +++ b/fs/xfs/xfs_message.h
+> @@ -96,6 +96,7 @@
+>  	XFS_EXPERIMENTAL_LBS,
+>  	XFS_EXPERIMENTAL_METADIR,
+>  	XFS_EXPERIMENTAL_ZONED,
+> +	XFS_EXPERIMENTAL_FSVERITY,
+>  
+>  	XFS_EXPERIMENTAL_MAX,
+>  };
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index 10c6fc8d20..42a16b15a6 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -30,6 +30,7 @@
+>  #include "xfs_filestream.h"
+>  #include "xfs_quota.h"
+>  #include "xfs_sysfs.h"
+> +#include "xfs_fsverity.h"
+>  #include "xfs_ondisk.h"
+>  #include "xfs_rmap_item.h"
+>  #include "xfs_refcount_item.h"
+> @@ -54,6 +55,7 @@
+>  #include <linux/fs_context.h>
+>  #include <linux/fs_parser.h>
+>  #include <linux/fsverity.h>
+> +#include <linux/iomap.h>
+>  
+>  static const struct super_operations xfs_super_operations;
+>  
+> @@ -1706,6 +1708,9 @@
+>  	sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP | QTYPE_MASK_PRJ;
+>  #endif
+>  	sb->s_op = &xfs_super_operations;
+> +#ifdef CONFIG_FS_VERITY
+> +	sb->s_vop = &xfs_fsverity_ops;
+> +#endif
+>  
+>  	/*
+>  	 * Delay mount work if the debug hook is set. This is debug
+> @@ -1959,10 +1964,19 @@
+>  		xfs_set_resuming_quotaon(mp);
+>  	mp->m_qflags &= ~XFS_QFLAGS_MNTOPTS;
+>  
+> +	if (xfs_has_verity(mp))
+> +		xfs_warn_experimental(mp, XFS_EXPERIMENTAL_FSVERITY);
+> +
+>  	error = xfs_mountfs(mp);
+>  	if (error)
+>  		goto out_filestream_unmount;
+>  
+> +#ifdef CONFIG_FS_VERITY
+> +	error = iomap_fsverity_init_bioset();
+
+if (xfs_has_verity()) ?
+
+--D
+
+> +	if (error)
+> +		goto out_unmount;
+> +#endif
+> +
+>  	root = igrab(VFS_I(mp->m_rootip));
+>  	if (!root) {
+>  		error = -ENOENT;
+> 
+> -- 
+> - Andrey
+> 
+> 
 
