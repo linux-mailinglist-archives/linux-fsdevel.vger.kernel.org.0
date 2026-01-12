@@ -1,419 +1,294 @@
-Return-Path: <linux-fsdevel+bounces-73234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73235-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0700D12CAB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 14:28:33 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30847D12D95
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 14:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 1E3DF3008994
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 13:28:33 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id E3CCB3035047
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 13:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958543590C5;
-	Mon, 12 Jan 2026 13:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1943D359F88;
+	Mon, 12 Jan 2026 13:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qUYHC2bA";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="bEIKhRH1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eub6fteq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093C432A3C8;
-	Mon, 12 Jan 2026 13:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768224509; cv=fail; b=ZXi8ZTRKZ7l5CTapr1UeIvuQo25fdIo7ohRZVU9L5GYpq5p3jid1HoN1bz3sxj5xh7savkUfBUvVBjukUJ4u3aJZ4apeEavdggOiAyDye317Wtjm/UttlhANW+fi5U+3m1QWf/nEE7L+eJK1xKQ3YUvWRbwBi+rkHSQI7p53iMI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768224509; c=relaxed/simple;
-	bh=/C02l/6dw2UOieSUZZx/8WbJqA+M9PVzIfV1G/0Qho0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=X6Bbnf5nBLbLOFLJodSSqhq+1SwpboE1LUrqyBilopCzjxFW68PnymUppioadXhQjHW/FRBdhA+nXRADtJjrRvKk2LNbtjg5QfiXgcn+2c4GdXXqqVLSM2y+3W7GvmXMJUgIaCAYd4BO1cHQCjk03Mmxr2Bg4afsCUX0d3ygl4Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=qUYHC2bA; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=bEIKhRH1; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60C1RXjl346070;
-	Mon, 12 Jan 2026 13:28:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=giQUPoB9+KnnRpn2IM
-	wnI5yXPgcUkUqAXVVp3SG5r2M=; b=qUYHC2bAE9vNy8iHfyhp9m4MFWWj4ksV1S
-	7EJISIPftdFxHyE6WTpMrOOO2akidMYr0n0NcAcBQPoUa6jnM5MGuLSjNL0z928C
-	t56KJbLwj6XIPQcT+uG+IhaSGfxYTbLSHlL8dhPgpZncGcuXf4s+HHYV0YLXp22d
-	32TtQJD4Inv2pnvy317mOqzjPkHO1YaxqBTUqj2OyTM/m8nOf8iyHc+8Rwhl3Ssn
-	/gOW0x5eDlgQfCp0vqwYNjIzbXMZ1VlWr4FvXDxBnFQZphS51QLH07ifXT/b/bKy
-	1JzQ2l9CQbjmjFKMLfPiTC6Ow3kGREXyGpzYwh1fxkEgARXKxKiA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4bkrr89k61-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 Jan 2026 13:28:19 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60CCDVPx035374;
-	Mon, 12 Jan 2026 13:28:18 GMT
-Received: from ch5pr02cu005.outbound.protection.outlook.com (mail-northcentralusazon11012052.outbound.protection.outlook.com [40.107.200.52])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4bkd77e19u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 Jan 2026 13:28:18 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JUVOPBLxlu8dAZ1vqydJNXcXzrlHcVYEZIyAuTDRIKMACxeLzws3ec0khRvfWZGcPf9AFvvlbSo1zsa2/3mYX+vm9IJiICbV3eNhZiPim6kEwNZeyk9oGvNQycyUZ8khgvUgf5ETmU1MqRIVJDO5+7hp1j5KZwV8MW5sKr4UruoTbjC2K5t9PdT8+h4eqUutZzxVM4sNR8EH2gRgOnZhouMrdo0GlC2YsoXPOT2N8kaNXerKIBIcxK0r13RSvP3wwl3Q86kZYlQXlUpmoJOUYOEZcNBsZjPxCo+McS+tNwcIuCaHKQR1vLamFN0d3WFYUL04v8ALFVdr3dwQwGvSmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=giQUPoB9+KnnRpn2IMwnI5yXPgcUkUqAXVVp3SG5r2M=;
- b=bLRzEJskc/W1E3Q54tNzWLvcKZ0TLXPrSW3H59K8yAsTurcl+zTHQnrHja73b1AQm35ce9yEsVmNEpFG9ARNIAlsqjPnyhU+uL6rgogGL2La3+2SypB0BIL29xmqgf+nnbJFY9da/6YZ8GxOSnDMmtxr2Fh6GYsDFTNwKhxtJ4khG0TYfjzWpiBAQkGByfzdYeDuUhSYdwi829AC96HxnhUxn+3GApnNoTJWN2T4TqDXloX2ejDyKuJW8VlKhyu6DE7c3HLkg4K1bpWrFkRDXdctuv/hTOUxZEDpzLM7mw1c63ugGHCHotrDCLE5ruuW737pwDQULHD3/dK/4oRb6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=giQUPoB9+KnnRpn2IMwnI5yXPgcUkUqAXVVp3SG5r2M=;
- b=bEIKhRH1lRuseaiV0z0PTOs1s++VERdfApEUN3fu21m/RR4zpFAWSJPdSyJneeY0g+PXCX2aqwCmJgM+lZdR0/MxszXFPz8DmvOOYcNKIDK+RrzRsU4i9Y+g0YmQak9fxOB/hk4wwpupBWlSm8/SGvWvoPysOYS9TVzfAji0z5Y=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by SJ0PR10MB6432.namprd10.prod.outlook.com (2603:10b6:a03:486::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.7; Mon, 12 Jan
- 2026 13:28:15 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::f3ea:674e:7f2e:b711]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::f3ea:674e:7f2e:b711%6]) with mapi id 15.20.9499.005; Mon, 12 Jan 2026
- 13:28:14 +0000
-Date: Mon, 12 Jan 2026 13:28:17 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: syzbot <syzbot+bf5de69ebb4bdf86f59f@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [fs?] memory leak in __shmem_file_setup
-Message-ID: <654b5d28-5e1b-4773-aca6-ef650fdb0e60@lucifer.local>
-References: <6964a92b.050a0220.eaf7.008a.GAE@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6964a92b.050a0220.eaf7.008a.GAE@google.com>
-X-ClientProxiedBy: LO4P265CA0271.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:37a::7) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDA0481DD;
+	Mon, 12 Jan 2026 13:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768224882; cv=none; b=tj8o1GG0pDzL6surkgDYEYP/dZXAIP1cUmtBLZEnusbis3iyw/TBI6F6c7/jg6M+XHrLqsAziOh7Gml+pvDFYfrmVMq+yp6U1VXFn5qiwcS9HeG7dGNnX70OXevB0bQYnCZFkzhy3r2xQS8iIpv47kufby2ytnJFNAQo7hHDQnM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768224882; c=relaxed/simple;
+	bh=2IWjz6hy9QWDfK8PS9oJROunKPChMHL7qfV31VPVLc4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cowzTLJQ0B41aO2bNC+jp1SBg8QQknZIfDbmwfuWu2qqL5iauyMUZru4/jye1ibo3rYYReuXcoy5wMeq0DViK7jIkXapNBnUVckMmPYf0wS0u4QDua8ldHWrfTwEkYvgL2X1joNXUM57dfqTOu3elqE+t92voYAPSm0gyY+UIOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eub6fteq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B799C16AAE;
+	Mon, 12 Jan 2026 13:34:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768224882;
+	bh=2IWjz6hy9QWDfK8PS9oJROunKPChMHL7qfV31VPVLc4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Eub6fteqKg51fUIyfYVPjfhq/dGe6jfgS3PHv2l7MuA2WDBxKZKxgFa5iRUXrerE4
+	 NCDfR5WTUYhS8J67WAWAmkd7wi8z2WBr/unFGD/j9A3HRlgZuYFxhDYeqpg/Y1bU6/
+	 SVT4kUxc50g2D5vpTAtyIVlTS+as0gFRzWLZ02UbzUZeSu6J5eEbhGiEYd3lon2fp0
+	 KkfaggLwX518zDD6XsrnqOlVeAdN0tJub+uJ3Abtv1Ckas/zTj5F1B2IkOKkCZ6Z03
+	 RX8UGZkCCS9waUpnYfWVYwZWgUGVolplz9DFfjeEDAvXKx21pciDOX3tlhE3yfdLJM
+	 xsxcPK1mHfrww==
+Message-ID: <ec78bf021fa1f6243798945943541ba171e337e7.camel@kernel.org>
+Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to
+ lease support
+From: Jeff Layton <jlayton@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>, Christian Brauner
+ <brauner@kernel.org>,  Chuck Lever <chuck.lever@oracle.com>
+Cc: Jan Kara <jack@suse.cz>, Luis de Bethencourt <luisbg@kernel.org>, Salah
+ Triki <salah.triki@gmail.com>, Nicolas Pitre <nico@fluxnic.net>, Christoph
+ Hellwig	 <hch@infradead.org>, Anders Larsen <al@alarsen.net>, Alexander
+ Viro	 <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Chris
+ Mason	 <clm@fb.com>, Gao Xiang <xiang@kernel.org>, Chao Yu
+ <chao@kernel.org>, Yue Hu	 <zbestahu@gmail.com>, Jeffle Xu
+ <jefflexu@linux.alibaba.com>, Sandeep Dhavale	 <dhavale@google.com>, Hongbo
+ Li <lihongbo22@huawei.com>, Chunhai Guo	 <guochunhai@vivo.com>, Jan Kara
+ <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger
+ <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA
+ Hirofumi	 <hirofumi@mail.parknet.co.jp>, David Woodhouse
+ <dwmw2@infradead.org>,  Richard Weinberger	 <richard@nod.at>, Dave Kleikamp
+ <shaggy@kernel.org>, Ryusuke Konishi	 <konishi.ryusuke@gmail.com>,
+ Viacheslav Dubeyko <slava@dubeyko.com>,  Konstantin Komarov
+ <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>,
+ Joel Becker	 <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
+ Mike Marshall	 <hubcap@omnibond.com>, Martin Brandenburg
+ <martin@omnibond.com>, Miklos Szeredi	 <miklos@szeredi.hu>, Phillip Lougher
+ <phillip@squashfs.org.uk>, Carlos Maiolino	 <cem@kernel.org>, Hugh Dickins
+ <hughd@google.com>, Baolin Wang	 <baolin.wang@linux.alibaba.com>, Andrew
+ Morton <akpm@linux-foundation.org>,  Namjae Jeon <linkinjeon@kernel.org>,
+ Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo	 <yuezhang.mo@sony.com>,
+ Chuck Lever <chuck.lever@oracle.com>, Alexander Aring	
+ <alex.aring@gmail.com>, Andreas Gruenbacher <agruenba@redhat.com>, Jonathan
+ Corbet <corbet@lwn.net>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Eric Van Hensbergen	 <ericvh@kernel.org>, Latchesar Ionkov
+ <lucho@ionkov.net>, Dominique Martinet	 <asmadeus@codewreck.org>, Christian
+ Schoenebeck <linux_oss@crudebyte.com>,  Xiubo Li <xiubli@redhat.com>, Ilya
+ Dryomov <idryomov@gmail.com>, Trond Myklebust <trondmy@kernel.org>,  Anna
+ Schumaker	 <anna@kernel.org>, Steve French <sfrench@samba.org>, Paulo
+ Alcantara	 <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N	 <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Bharath SM	 <bharathsm@microsoft.com>, Hans de Goede <hansg@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, 
+	linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
+ ocfs2-devel@lists.linux.dev, 	devel@lists.orangefs.org,
+ linux-unionfs@vger.kernel.org, 	linux-xfs@vger.kernel.org,
+ linux-mm@kvack.org, gfs2@lists.linux.dev, 	linux-doc@vger.kernel.org,
+ v9fs@lists.linux.dev, ceph-devel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org
+Date: Mon, 12 Jan 2026 08:34:33 -0500
+In-Reply-To: <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
+References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
+	 <m3mywef74xhcakianlrovrnaadnhzhfqjfusulkcnyioforfml@j2xnk7dzkmv4>
+	 <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
+	 <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB6432:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5fbd7f2c-22dc-41a7-3f79-08de51de702e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|7142099003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hGZaYPuvlfnjg2EE5DAeGnfwmX4+oiFu5Wwf4XV8zcMe8EW1234qScGJD5Uz?=
- =?us-ascii?Q?/MOSR5P5HC4cZbAGMQGrBGrutulAGwBqIoDk1vlbrkz9kfBAuvkydh8XNc92?=
- =?us-ascii?Q?kL9OHIk/iTADnQZSwV7/fFTWjibj1rQc7R3e0COP8K3DmOtp5zCQA+wU7e1E?=
- =?us-ascii?Q?gu7umL7jpw/M+/p3XTnhtrPx6ntNwCo+UqoUNfI9/F7QUESLP8yW2PZnSasj?=
- =?us-ascii?Q?l55eUhULWB26U5fFDOjg7vIteTl9mZOmPK2pBPcRqUpR1dvCc8leoiynHXBl?=
- =?us-ascii?Q?9ujlfaH0wyjaCFbwRim3d2nbUKwukZHpmKu5OHoNb1IZQ96bCUQmhxLBfTeU?=
- =?us-ascii?Q?bjvn50dr0g4tMUYj73AbxhRjlJurxnF62YvnUNrpmuszGdGrQ2ZoMoCn6RcK?=
- =?us-ascii?Q?WSzxUWVuAiuZ0FnLpboZj9TZrIaO3mhIyQTcEvesxeaoMlMc9GMpHM1OHRZj?=
- =?us-ascii?Q?S+IcjxhJbKDL30XRxndEt9J31mgJgONjwzDTmmQb3h3GjpCOSSAjvYV8wAmx?=
- =?us-ascii?Q?mw6HgXudpsMupRKsU2QOoGgX+VGb83Gtm1maOMeYSVUGnagOUS01PFMo+Z8I?=
- =?us-ascii?Q?RBO4PB2fKE4ORF2CkS+QKJ11E3ofQldxLBCI4XNlRpDU1GPfvkSNLcbtQ8kH?=
- =?us-ascii?Q?r+kL/p8NVqAFRi2UkZbJtILfDsAOCrgmPOfupHzHBlBc5eOOd31nKirN9v7O?=
- =?us-ascii?Q?wM9Va/muM5w4FzJZtF3IeARHe9l9M+qBt6Jxc1cV/pot6vFpswcJ/OLocqwR?=
- =?us-ascii?Q?27q+UU5eBEm+WULBbTW3QJH0CJpENMYzLUb//m7Jl4PMWzbx6Wu+/fBwbfeC?=
- =?us-ascii?Q?luXM1rt54GqBu1s+lbXbrTTH/0o67TWEL0nZAnleA3T43rqiaAZ+ORTent1T?=
- =?us-ascii?Q?ASj8NmxG2Hs7nYvqPqsvWFVCAHKbETNXCca9lFSecopISY8nl5WZ1pIoSymu?=
- =?us-ascii?Q?HBkAhCzS2zI38UjJc2I8jqlcgATzyz+PPevsDgt58UOIfLQmsfjNy8dAFuEE?=
- =?us-ascii?Q?has5jDYP8zTn4dktFHHfsYHHFV7rlAjpVQJHUOdd5hQHH8KnMFpH3f6g68Aq?=
- =?us-ascii?Q?lOLcJGrsXrNrgmR0h0/tA8AsZfUbYs54elkfMmmEYoYi/vQM0QwS94SeGUKB?=
- =?us-ascii?Q?qts9ynikP89VfU2Lh0EdF8wRbwLB5M80qG5heXNzW7vwx6qpxb0/6tGP6leL?=
- =?us-ascii?Q?iuLTfWx4e+3R7wHNGDK81gDsweC+mATpF0KFp4Nvti0tQH62QIewdnQ764Q/?=
- =?us-ascii?Q?mW9RO+o+tGbcUz4L2uRanXuOegiH0cPJU9zObOdwDTOc3+8AaRD3gtuyytyR?=
- =?us-ascii?Q?KcSLVZDVxzylmXP2KJxuat52GVA4G1rO4bwFo31dVP9k9zYjE3aqW8hVrlSV?=
- =?us-ascii?Q?w3gtNXS8q9hVp5w6k3pukh73+ihj+KRDIwl/gujCdLaBgV78aA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7142099003)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?dkS7HwDW8g12qJgajDxPnWUBmLS5UU1DienvftxDulc+fvjAl8O2STNBj39T?=
- =?us-ascii?Q?d+VTZxmtTZaGCKpQIaFyhN15bKdL4ZAjfLgbdfFHtl5ap6pdoHcUiav+wB2b?=
- =?us-ascii?Q?/NV7/WU/t2M1UBLdA35KtjlvcIIwG1/sVD5c5PrLOCpM9L4xQ7zVaJxnpFZK?=
- =?us-ascii?Q?d+sF2OUjjm+h2NyfEppQAHREUrIc+52WWW8c2aJpPNDgxVwCoQjZg9U7pPxq?=
- =?us-ascii?Q?7DzuiaRm0wu3cbs9AVgtzSNZXgbu9klIrWXuKnWzudnnvSDfksX7rOACcBny?=
- =?us-ascii?Q?M8wrwmO0qMPWxjaLM+sgRaoKQ6AHteYRrRQGffRTpxIB0ey7Rxxdu7o9uaP2?=
- =?us-ascii?Q?V4lV44iSlRJJ7Xn2QShje7kpGrc5QJUtA0pQtd/DHr5DZiKTFaj5TJGPGvm8?=
- =?us-ascii?Q?MVmublGvqXfhOKQcECraKTpdeqZKHycg1QRE4lkcemTCUzVEs8lDHsBMz/en?=
- =?us-ascii?Q?acNeSbK38EgXZZNy2h79NUgj+uqrsGzeOZCzV06Cuvxk0VnX8G7k6Q3rPXDe?=
- =?us-ascii?Q?cq5Nl0DdZvuV6pzkYJBk0IcuWFUhf8+225EmMzBdoDmAhHbx98//T5GAv1qr?=
- =?us-ascii?Q?+K92gkNR1yWIde/Z4sHRCBXqV8E0/9II4lJANO2zON0cz06Z5iyv/URGK4Ed?=
- =?us-ascii?Q?sR/YvYhwjCbP89D4tbxi1sKTmQ/vCWnWY4BYucOB4EBhgTeCEPaWo41zKW8Z?=
- =?us-ascii?Q?avGoOyASWrvq1GL6H0Tjv2KLPUiIlFjGkqKovHZxxH3sCuJLBF2K5vVfMQss?=
- =?us-ascii?Q?uoM4jveZx7BGPF57mq8caTfYgLbrcEIul1Qo8pnw9FPNtzjKU9Bumr8fhu+U?=
- =?us-ascii?Q?+5hzNfWbienuS3Dw7+i03OWv7iqiu6ePD6I65TzjjxbxtuwdzT81ykxfXPRL?=
- =?us-ascii?Q?YmBIDd6Jsxzjrogk3eYGieGsoYJqvYWJy++rpsgyET0+3Qpfh3Slf/skSj34?=
- =?us-ascii?Q?Knme6acRn5h451dsaeylSNDsGdosjxp3Mp0x6pgDnUE2xQboitPxb6FiGM7Q?=
- =?us-ascii?Q?3ml1ZwAJz6gdRof+RXahj67T7BZfR0ADjuPNVxEzAMAJ1dL3fH3kL2XSK6vj?=
- =?us-ascii?Q?x6tX0zhMiUgc0I+lulTpOX++zD4z9LzbdriV/vTayMcQrsHVD2Z91kmbeO7I?=
- =?us-ascii?Q?7DCFdziCt0qjBu9WmtaYStkRATeUxL87Z7sk/SXGS1OMmIyjC3uIuB4Dzdkq?=
- =?us-ascii?Q?EtCYeELxb+sWg96XPI3Fupmc34SaXogygkOd0789oc85xacqADu888rMDele?=
- =?us-ascii?Q?mHyNyULY0iqApfR66XziKQOreuPBOtey0MEpAbbB+fgf9Gpi6D++gFPpfwWy?=
- =?us-ascii?Q?ERexfvLON0hyvZwVG+QE7mXBMxdvjoGG0R4fMEt+219Sg0hfBTHkalGB1nbc?=
- =?us-ascii?Q?OJR5Vmj4y/WWAnh5U+s+5JS7Rv+zC/NrFY2qlUswQj42oqqyI1jswV645DEP?=
- =?us-ascii?Q?iyIC7WwxYM2YDfS9QgdMPrC4AAg1HHA+ErrLfheNXIlI1UeYkn+SkcIKjpGa?=
- =?us-ascii?Q?ACjABnepV41C4pywyfpt0blUs6KbjrzCwnwY+SsvQtJSOW41dp34IW4mMFWB?=
- =?us-ascii?Q?ECp/q6lpRUqc5pFXdQ6fJoeDFEgreZKx3d9IQ5kUvbX3dNFRqQDJ9rM1KoKg?=
- =?us-ascii?Q?/MRA9dcCCWiC3mJBlW4F+JRVGweOk7jRXJuZ4HnIvzFJkymSm5OtX0Rr02d/?=
- =?us-ascii?Q?aCA1wc1jQml4oB5ZqDTWnm9yQ8QqLRgAOQ+2jPFUQGloyjYCSEKZHuob3JGy?=
- =?us-ascii?Q?QYwC2XfVxif1+xqWiVaeY0tNemwckqs=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	84JP24LxFv3pK0ocSP3iT0EB0LZ9nPqhwDzIJ997owYDbJntuZ7NJkkGIS1MtyAPDwX6hdJzyLctxBu6f6+vw7//LhbERlb9Jsty2YcaljOX/uNqt5AF7LR3x4u6CPdlD0Itqk+VodwLF6EAlNI4J7anHFDuO8z+b1oIMTJ52B/6pUxXdNb5ETLEV3riHq3Os2KEgI9sZR9uxXppZ3aEuOAWT4+g3MZOvZv8gHglgf8Yw3kuLhe4HvCEIL5QeZ3756IZxBiZF30fuoLb6avL6ygIHnVpvZZaf0f6TuscHv3twTphMDoViTbEOUUdRUkKvqMpqwohg2PhWec2S3YoRIaLU+nxsBAYTGCzNHTgCVT8cbP/n73FvE/N8wH+K+CODaJOuzfwyW7WY6NlyGMbwJhwlfvHFtlkgtmieIWcFEXCuI3BNOKfGWXE4Cls0eDDLG5Fx+B8wenBvF5w59iiapJCP6Hl3oi3/oZJwks7zq3JMluRLyKW/LJSCLVngkJ37krTWAVw0Z9sEIWPRo0vEDXAMo4rca6aXzYnBe9wpCTo9bh5LDHsVxnxAHXRnd4XcAGXiMr7m0OqAVtWKncGpysif16qKG2tLd9jktBwsA4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5fbd7f2c-22dc-41a7-3f79-08de51de702e
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2026 13:28:14.9475
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +6kr3AIPTHjOb+Vzs5IfS0r3DaWKB1eY97uy12DyDzltQ1QmL+7ZEnvRLYINcvdT7Sn0BmWwk/Xin6G+4UKDl1d51L6suIGeAT5bw3RLHKU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB6432
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-12_04,2026-01-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 suspectscore=0
- mlxlogscore=999 bulkscore=0 malwarescore=0 phishscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2512120000
- definitions=main-2601120108
-X-Proofpoint-ORIG-GUID: fB7Bg8SztNe9lP_Dd8vOS31scqlK1LsX
-X-Proofpoint-GUID: fB7Bg8SztNe9lP_Dd8vOS31scqlK1LsX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTEyMDEwOCBTYWx0ZWRfX4ip+3k0Ijp1R
- wKMs6i/ROL2BCvcJSBX6zclK2yOX1JkOR7m5/dCj1xM6W4u+DVzOnNcrzC6oLBBJ0xzNZRBLOLZ
- VSig3ytUwbDKPA7HYE019Xc3mIml4r7RsUBDk/OoLiq9aJX3I6++mwKcLOnbHlsvVMrRBjm18B5
- Y42qF6vBduNuq48vCEkFg7pH7q1Weami/0jy+fEzSnaHUs/Pvd54EXQT9L66cvOEzO5CIUEDza9
- EtoXm1Ex/98zYcvY9eSpfh5CW3qgO9G2UNaIIO+WctDfoGWjQPgIuQ3hEzjRDFTBmfnrupn/v6V
- O7DBJNn6Uasx2bHfJiiDnsBbBN9AuEKJLBE4eOVDfXd9nvZ4hgrxJjaMvYGhUh5xg+punT3E5G7
- Vm8triThaaeROeH4me4iVBxB+9iRBlP61olojWAANGG436c5wirA5/vDWSmJ9G/A0FqUNdnzysY
- JfHWmBgiIseKtGdifbw==
-X-Authority-Analysis: v=2.4 cv=QIllhwLL c=1 sm=1 tr=0 ts=6964f6f3 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=vUbySO9Y5rIA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=edf1wS77AAAA:8 a=3g80flMcAAAA:8 a=oHvirCaBAAAA:8 a=hSkVLCK3AAAA:8
- a=4RBUngkUAAAA:8 a=P82eWFCzbfU5FSlCyqAA:9 a=BhMdqm2Wqc4Q2JL7t0yJfBCtM/Y=:19
- a=CjuIK1q_8ugA:10 a=slFVYn995OdndYK6izCD:22 a=DcSpbTIhAlouE1Uv7lRv:22
- a=3urWGuTZa-U-TZ_dHwj2:22 a=cQPPKAXgyycSBL8etih5:22 a=_sbA2Q-Kp09kWB8D3iXc:22
 
-Hi all,
+On Fri, 2026-01-09 at 19:52 +0100, Amir Goldstein wrote:
+> On Thu, Jan 8, 2026 at 7:57=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
+rote:
+> >=20
+> > On Thu, 2026-01-08 at 18:40 +0100, Jan Kara wrote:
+> > > On Thu 08-01-26 12:12:55, Jeff Layton wrote:
+> > > > Yesterday, I sent patches to fix how directory delegation support i=
+s
+> > > > handled on filesystems where the should be disabled [1]. That set i=
+s
+> > > > appropriate for v6.19. For v7.0, I want to make lease support be mo=
+re
+> > > > opt-in, rather than opt-out:
+> > > >=20
+> > > > For historical reasons, when ->setlease() file_operation is set to =
+NULL,
+> > > > the default is to use the kernel-internal lease implementation. Thi=
+s
+> > > > means that if you want to disable them, you need to explicitly set =
+the
+> > > > ->setlease() file_operation to simple_nosetlease() or the equivalen=
+t.
+> > > >=20
+> > > > This has caused a number of problems over the years as some filesys=
+tems
+> > > > have inadvertantly allowed leases to be acquired simply by having l=
+eft
+> > > > it set to NULL. It would be better if filesystems had to opt-in to =
+lease
+> > > > support, particularly with the advent of directory delegations.
+> > > >=20
+> > > > This series has sets the ->setlease() operation in a pile of existi=
+ng
+> > > > local filesystems to generic_setlease() and then changes
+> > > > kernel_setlease() to return -EINVAL when the setlease() operation i=
+s not
+> > > > set.
+> > > >=20
+> > > > With this change, new filesystems will need to explicitly set the
+> > > > ->setlease() operations in order to provide lease and delegation
+> > > > support.
+> > > >=20
+> > > > I mainly focused on filesystems that are NFS exportable, since NFS =
+and
+> > > > SMB are the main users of file leases, and they tend to end up expo=
+rting
+> > > > the same filesystem types. Let me know if I've missed any.
+> > >=20
+> > > So, what about kernfs and fuse? They seem to be exportable and don't =
+have
+> > > .setlease set...
+> > >=20
+> >=20
+> > Yes, FUSE needs this too. I'll add a patch for that.
+> >=20
+> > As far as kernfs goes: AIUI, that's basically what sysfs and resctrl
+> > are built on. Do we really expect people to set leases there?
+> >=20
+> > I guess it's technically a regression since you could set them on those
+> > sorts of files earlier, but people don't usually export kernfs based
+> > filesystems via NFS or SMB, and that seems like something that could be
+> > used to make mischief.
+> >=20
+> > AFAICT, kernfs_export_ops is mostly to support open_by_handle_at(). See
+> > commit aa8188253474 ("kernfs: add exportfs operations").
+> >=20
+> > One idea: we could add a wrapper around generic_setlease() for
+> > filesystems like this that will do a WARN_ONCE() and then call
+> > generic_setlease(). That would keep leases working on them but we might
+> > get some reports that would tell us who's setting leases on these files
+> > and why.
+>=20
+> IMO, you are being too cautious, but whatever.
+>=20
+> It is not accurate that kernfs filesystems are NFS exportable in general.
+> Only cgroupfs has KERNFS_ROOT_SUPPORT_EXPORTOP.
+>=20
+> If any application is using leases on cgroup files, it must be some
+> very advanced runtime (i.e. systemd), so we should know about the
+> regression sooner rather than later.
+>=20
 
-I have bisected this to commit ab04945f91bc ("mm: update mem char driver to use
-mmap_prepare"), i.e. my patch, so apologies for that.
+I think so too. For now, I think I'll not bother with the WARN_ONCE().
+Let's just leave kernfs out of the set until someone presents a real
+use-case.
 
-Will figure out what's happening here and come up with a hotfix.
+> There are also the recently added nsfs and pidfs export_operations.
+>=20
+> I have a recollection about wanting to be explicit about not allowing
+> those to be exportable to NFS (nsfs specifically), but I can't see where
+> and if that restriction was done.
+>=20
+> Christian? Do you remember?
+>=20
 
-When I saw /dev/zero I did suspect this exact commit, would have saved me some
-bisecting had I just tested it first but there we are :P
+(cc'ing Chuck)
 
-Cheers, Lorenzo
+FWIW, you can currently export and mount /sys/fs/cgroup via NFS. The
+directory doesn't show up when you try to get to it via NFSv4, but you
+can mount it using v3 and READDIR works. The files are all empty when
+you try to read them. I didn't try to do any writes.
 
-On Sun, Jan 11, 2026 at 11:56:27PM -0800, syzbot wrote:
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    f0b9d8eb98df Merge tag 'nfsd-6.19-3' of git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12ec819a580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d60836e327fd6756
-> dashboard link: https://syzkaller.appspot.com/bug?extid=bf5de69ebb4bdf86f59f
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ec819a580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11bcc19a580000
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/aad2d47ff01d/disk-f0b9d8eb.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/c31e7ae85c07/vmlinux-f0b9d8eb.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/5525fab81561/bzImage-f0b9d8eb.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+bf5de69ebb4bdf86f59f@syzkaller.appspotmail.com
->
-> 2026/01/08 07:49:49 executed programs: 5
-> BUG: memory leak
-> unreferenced object 0xffff888112c4b240 (size 184):
->   comm "syz.0.17", pid 6070, jiffies 4294944898
->   hex dump (first 32 bytes):
->     00 00 00 00 07 00 0e 02 00 e4 66 85 ff ff ff ff  ..........f.....
->     98 38 89 09 81 88 ff ff 00 00 00 00 00 00 00 00  .8..............
->   backtrace (crc 987747be):
->     kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
->     slab_post_alloc_hook mm/slub.c:4958 [inline]
->     slab_alloc_node mm/slub.c:5263 [inline]
->     kmem_cache_alloc_noprof+0x3b4/0x590 mm/slub.c:5270
->     alloc_empty_file+0x51/0x1a0 fs/file_table.c:237
->     alloc_file fs/file_table.c:354 [inline]
->     alloc_file_pseudo+0xae/0x140 fs/file_table.c:383
->     __shmem_file_setup+0x11a/0x210 mm/shmem.c:5846
->     shmem_kernel_file_setup mm/shmem.c:5865 [inline]
->     __shmem_zero_setup mm/shmem.c:5905 [inline]
->     shmem_zero_setup_desc+0x33/0x90 mm/shmem.c:5936
->     mmap_zero_prepare+0x4e/0x60 drivers/char/mem.c:524
->     vfs_mmap_prepare include/linux/fs.h:2058 [inline]
->     call_mmap_prepare mm/vma.c:2596 [inline]
->     __mmap_region+0x8b8/0x13e0 mm/vma.c:2692
->     mmap_region+0x19f/0x1e0 mm/vma.c:2786
->     do_mmap+0x6a3/0xb60 mm/mmap.c:558
->     vm_mmap_pgoff+0x1a6/0x2d0 mm/util.c:581
->     ksys_mmap_pgoff+0x233/0x2d0 mm/mmap.c:604
->     __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
->     __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
->     __x64_sys_mmap+0x6f/0xa0 arch/x86/kernel/sys_x86_64.c:82
->     do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->     do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
->     entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> BUG: memory leak
-> unreferenced object 0xffff888101e46ca8 (size 40):
->   comm "syz.0.17", pid 6070, jiffies 4294944898
->   hex dump (first 32 bytes):
->     ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 f8 52 86 00 81 88 ff ff  .........R......
->   backtrace (crc 2d2a393c):
->     kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
->     slab_post_alloc_hook mm/slub.c:4958 [inline]
->     slab_alloc_node mm/slub.c:5263 [inline]
->     kmem_cache_alloc_noprof+0x3b4/0x590 mm/slub.c:5270
->     lsm_file_alloc security/security.c:169 [inline]
->     security_file_alloc+0x30/0x240 security/security.c:2380
->     init_file+0x3e/0x160 fs/file_table.c:159
->     alloc_empty_file+0x6f/0x1a0 fs/file_table.c:241
->     alloc_file fs/file_table.c:354 [inline]
->     alloc_file_pseudo+0xae/0x140 fs/file_table.c:383
->     __shmem_file_setup+0x11a/0x210 mm/shmem.c:5846
->     shmem_kernel_file_setup mm/shmem.c:5865 [inline]
->     __shmem_zero_setup mm/shmem.c:5905 [inline]
->     shmem_zero_setup_desc+0x33/0x90 mm/shmem.c:5936
->     mmap_zero_prepare+0x4e/0x60 drivers/char/mem.c:524
->     vfs_mmap_prepare include/linux/fs.h:2058 [inline]
->     call_mmap_prepare mm/vma.c:2596 [inline]
->     __mmap_region+0x8b8/0x13e0 mm/vma.c:2692
->     mmap_region+0x19f/0x1e0 mm/vma.c:2786
->     do_mmap+0x6a3/0xb60 mm/mmap.c:558
->     vm_mmap_pgoff+0x1a6/0x2d0 mm/util.c:581
->     ksys_mmap_pgoff+0x233/0x2d0 mm/mmap.c:604
->     __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
->     __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
->     __x64_sys_mmap+0x6f/0xa0 arch/x86/kernel/sys_x86_64.c:82
->     do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->     do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
->     entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> BUG: memory leak
-> unreferenced object 0xffff888108f03840 (size 184):
->   comm "syz-executor", pid 5988, jiffies 4294944899
->   hex dump (first 32 bytes):
->     01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace (crc 5869ffdf):
->     kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
->     slab_post_alloc_hook mm/slub.c:4958 [inline]
->     slab_alloc_node mm/slub.c:5263 [inline]
->     kmem_cache_alloc_noprof+0x3b4/0x590 mm/slub.c:5270
->     prepare_creds+0x22/0x5e0 kernel/cred.c:185
->     copy_creds+0x44/0x290 kernel/cred.c:286
->     copy_process+0x979/0x2860 kernel/fork.c:2086
->     kernel_clone+0x119/0x6c0 kernel/fork.c:2651
->     __do_sys_clone+0x7b/0xb0 kernel/fork.c:2792
->     do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->     do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
->     entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> BUG: memory leak
-> unreferenced object 0xffff888109a7b8e0 (size 32):
->   comm "syz-executor", pid 5988, jiffies 4294944899
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     f8 52 86 00 81 88 ff ff 00 00 00 00 00 00 00 00  .R..............
->   backtrace (crc 336e1c5f):
->     kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
->     slab_post_alloc_hook mm/slub.c:4958 [inline]
->     slab_alloc_node mm/slub.c:5263 [inline]
->     __do_kmalloc_node mm/slub.c:5656 [inline]
->     __kmalloc_noprof+0x3e0/0x660 mm/slub.c:5669
->     kmalloc_noprof include/linux/slab.h:961 [inline]
->     kzalloc_noprof include/linux/slab.h:1094 [inline]
->     lsm_blob_alloc+0x4d/0x70 security/security.c:192
->     lsm_cred_alloc security/security.c:209 [inline]
->     security_prepare_creds+0x2f/0x270 security/security.c:2763
->     prepare_creds+0x385/0x5e0 kernel/cred.c:215
->     copy_creds+0x44/0x290 kernel/cred.c:286
->     copy_process+0x979/0x2860 kernel/fork.c:2086
->     kernel_clone+0x119/0x6c0 kernel/fork.c:2651
->     __do_sys_clone+0x7b/0xb0 kernel/fork.c:2792
->     do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->     do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
->     entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> BUG: memory leak
-> unreferenced object 0xffff888109b169c0 (size 184):
->   comm "syz.0.18", pid 6072, jiffies 4294944899
->   hex dump (first 32 bytes):
->     00 00 00 00 07 00 0e 02 00 e4 66 85 ff ff ff ff  ..........f.....
->     68 e6 05 0e 81 88 ff ff 00 00 00 00 00 00 00 00  h...............
->   backtrace (crc 86e9bbaa):
->     kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
->     slab_post_alloc_hook mm/slub.c:4958 [inline]
->     slab_alloc_node mm/slub.c:5263 [inline]
->     kmem_cache_alloc_noprof+0x3b4/0x590 mm/slub.c:5270
->     alloc_empty_file+0x51/0x1a0 fs/file_table.c:237
->     alloc_file fs/file_table.c:354 [inline]
->     alloc_file_pseudo+0xae/0x140 fs/file_table.c:383
->     __shmem_file_setup+0x11a/0x210 mm/shmem.c:5846
->     shmem_kernel_file_setup mm/shmem.c:5865 [inline]
->     __shmem_zero_setup mm/shmem.c:5905 [inline]
->     shmem_zero_setup_desc+0x33/0x90 mm/shmem.c:5936
->     mmap_zero_prepare+0x4e/0x60 drivers/char/mem.c:524
->     vfs_mmap_prepare include/linux/fs.h:2058 [inline]
->     call_mmap_prepare mm/vma.c:2596 [inline]
->     __mmap_region+0x8b8/0x13e0 mm/vma.c:2692
->     mmap_region+0x19f/0x1e0 mm/vma.c:2786
->     do_mmap+0x6a3/0xb60 mm/mmap.c:558
->     vm_mmap_pgoff+0x1a6/0x2d0 mm/util.c:581
->     ksys_mmap_pgoff+0x233/0x2d0 mm/mmap.c:604
->     __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
->     __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
->     __x64_sys_mmap+0x6f/0xa0 arch/x86/kernel/sys_x86_64.c:82
->     do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->     do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
->     entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
+Should we add a mechanism to prevent exporting these sorts of
+filesystems?
+
+Even better would be to make nfsd exporting explicitly opt-in. What if
+we were to add a EXPORT_OP_NFSD flag that explicitly allows filesystems
+to opt-in to NFS exporting, and check for that in __fh_verify()? We'd
+have to add it to a bunch of existing filesystems, but that's fairly
+simple to do with an LLM.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
