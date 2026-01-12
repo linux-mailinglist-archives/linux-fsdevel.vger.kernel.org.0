@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-73270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3203D13C9B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 16:48:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB6FD13CA1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 16:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0BB8230223E8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 15:47:31 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7CDFA304485E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 15:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77191363C4B;
-	Mon, 12 Jan 2026 15:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EDD361660;
+	Mon, 12 Jan 2026 15:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXkAcNx8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmYXBrP7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDD330498E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 15:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BAB29BD80
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 15:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768232844; cv=none; b=Dm+HzJxtdQE10hyeGhkbzAc2VryYX8YELTEEaaDIHcfz+G9fy4no5P+rZ0uKV7EPbfkySddregvOswM6psU2g5JWSotKpUeDcCdfwXAC+ZYP6P3rZ8kPzuYO/9qQ5oQv6lMCu+Ye2mgOObLg8tVp7cqVGTnC/1qfmlCGVNpqPB0=
+	t=1768232847; cv=none; b=VSW7tflzaHbj6u/5cUS2zKEVVpIHr3INZjCgZcOHAk4J141WoOEkB3KtUU/60yZDLANOoQyUjZwS1UdpS1uhsjC27rQEu+Ed4ya4aai6CJh+BsoZFiR6+513lx96rCgoder2YUzOSvcix3CJw/GNrVGvJBqVIIxFJTWnKATWm98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768232844; c=relaxed/simple;
-	bh=Z7N63LQLlfdYPAkEQalMJeaHIQecczkrDpo9remg+94=;
+	s=arc-20240116; t=1768232847; c=relaxed/simple;
+	bh=Zcefr/clUNYpkIskByW8SES2RNUM6i5RESRdePue7lo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=u3JpPpHZluHIPxef8C1KBETT9pj015bgWFZ7nOWPJtOvCticcZui36bnNPUT7C1sB9kD6bT+1md9Bf9F+mHNZafXaooW2wFO61a9rAvHeelXedIPMZDBeQv2KmgpZoHp72mWbIW/pHLsdo8+rdFXH5FZ+Y5FYg+4Ocr2VyvRsk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXkAcNx8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9FAEC19423;
-	Mon, 12 Jan 2026 15:47:22 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=aiR/wziXbCvcpurrrckhJTO4IlwF0hrMLjOW9Bm1Jq8tFiU/QDrbAVB7e9K2CAlZMCpDp7JlnBTGm6831yrxKu4/VzO4VFnPGoUAXy+auYvTwaKFsD4Ay0C2PsN43MJ6JSgIKkyRa/qQBzB76pRJBVdJe8CZPuMtvWbPHzGAPTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmYXBrP7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 048FEC19422;
+	Mon, 12 Jan 2026 15:47:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768232844;
-	bh=Z7N63LQLlfdYPAkEQalMJeaHIQecczkrDpo9remg+94=;
+	s=k20201202; t=1768232846;
+	bh=Zcefr/clUNYpkIskByW8SES2RNUM6i5RESRdePue7lo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=rXkAcNx8EUrCu689GfikHNcXusp7AOY8IZJD2/eoXmgppwZ5Ad2KxSC/2R0PDMm/o
-	 QO2Nq/hCrDGr8B9gu2lpnH/NapmCgNU+Lgb+DJU1dawl5/nS0lPuzFQG6pRqCasW/S
-	 cLqAyQ/jEajyw3PJKE/P8t2yO/aTimchIjlwAOrhApiK/nu48Eb4k1a8aSxW6feLPE
-	 oeJW6reAM0EXsKkSuMo4hfawe9yoeeo/foIPUqGxGIwySiW77qUAXRL8DDiW+OTnwp
-	 c25VCQNmmITIe1cmg5yLm1bwrkA3VozxIYfcbBwwsQ7UfYcfGzFApEeycsWZQZzZtO
-	 u93JNzyxGqAIg==
+	b=rmYXBrP7iAEglelqo75qrXOFLRkI5PuFUPtY47E5xj3hPUY9P1HEwwqYlFqzWB6u1
+	 tbfg8MzK+hnA4zg8suZfHZnpBxjvO55d+d/6+bx0kdzGuR0KzBnW1oGsiPAYkP5uPi
+	 lh++764C7zb6AJNCzmNpJ8+ZKpDzoy3ETlfkggy9ksu+VzFR5N+uq7WV4x5IFm4S61
+	 4o2gCx36vkRHgB/T0AvqC0G5MVLVh9v48LiDoxhLLsNxq6ck6vPRQPI7lcrworE4dW
+	 qWcWEWTZBpk2awuFvoJyqytYBva2AK6V85WRN7mUQ4zFNFjnuBYfK6s0VkCWdux1xW
+	 IoQxEaDGzaM3w==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 12 Jan 2026 16:47:09 +0100
-Subject: [PATCH v2 2/4] fs: add init_pivot_root()
+Date: Mon, 12 Jan 2026 16:47:10 +0100
+Subject: [PATCH v2 3/4] fs: add immutable rootfs
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260112-work-immutable-rootfs-v2-2-88dd1c34a204@kernel.org>
+Message-Id: <20260112-work-immutable-rootfs-v2-3-88dd1c34a204@kernel.org>
 References: <20260112-work-immutable-rootfs-v2-0-88dd1c34a204@kernel.org>
 In-Reply-To: <20260112-work-immutable-rootfs-v2-0-88dd1c34a204@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -60,234 +60,327 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
  =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
  Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8371; i=brauner@kernel.org;
- h=from:subject:message-id; bh=Z7N63LQLlfdYPAkEQalMJeaHIQecczkrDpo9remg+94=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmirfezDL+YafvtGPV3ky5vuKI4olGNsk671ss7rZ79
- AmI9Yp2lLIwiHExyIopsji0m4TLLeep2GyUqQEzh5UJZAgDF6cATOS6PSPDs28/5ObvF9cQubix
- 0GXZ5gl3eX3EFmsoiQSHqK5/uvjnA4a/spusbjhGimwx3mD4c9GzWdenJF0vP+spXfbkGpNHvt0
- 1NgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9994; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=Zcefr/clUNYpkIskByW8SES2RNUM6i5RESRdePue7lo=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmirees8tcvkh1kdaG7Fn2c1O94/MEzqUsaPzw/HaEJ
+ 4P6IotPHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOJe87IcHXz9CUaETUfLRxC
+ Nk7ZcHt+ateGCBsPhd09XzpKVxfwbGNkaFpi2PH5VdTZu2f05u/s2zT1uLdOweY8k5mKL4pPPN+
+ pxwsA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-We will soon be able to pivot_root() with the introduction of the
-immutable rootfs. Add a wrapper for kernel internal usage.
+Currently pivot_root() doesn't work on the real rootfs because it
+cannot be unmounted. Userspace has to do a recursive removal of the
+initramfs contents manually before continuing the boot.
+
+Really all we want from the real rootfs is to serve as the parent mount
+for anything that is actually useful such as the tmpfs or ramfs for
+initramfs unpacking or the rootfs itself. There's no need for the real
+rootfs to actually be anything meaningful or useful. Add a immutable
+rootfs called "nullfs" that can be selected via the "nullfs_rootfs"
+kernel command line option.
+
+The kernel will mount a tmpfs/ramfs on top of it, unpack the initramfs
+and fire up userspace which mounts the rootfs and can then just do:
+
+  chdir(rootfs);
+  pivot_root(".", ".");
+  umount2(".", MNT_DETACH);
+
+and be done with it. (Ofc, userspace can also choose to retain the
+initramfs contents by using something like pivot_root(".", "/initramfs")
+without unmounting it.)
+
+Technically this also means that the rootfs mount in unprivileged
+namespaces doesn't need to become MNT_LOCKED anymore as it's guaranteed
+that the immutable rootfs remains permanently empty so there cannot be
+anything revealed by unmounting the covering mount.
+
+In the future this will also allow us to create completely empty mount
+namespaces without risking to leak anything.
+
+systemd already handles this all correctly as it tries to pivot_root()
+first and falls back to MS_MOVE only when that fails.
+
+This goes back to various discussion in previous years and a LPC 2024
+presentation about this very topic.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/init.c                     |  17 +++++++
- fs/internal.h                 |   1 +
- fs/namespace.c                | 101 ++++++++++++++++++++++--------------------
- include/linux/init_syscalls.h |   1 +
- 4 files changed, 73 insertions(+), 47 deletions(-)
+ fs/Makefile                |  2 +-
+ fs/mount.h                 |  1 +
+ fs/namespace.c             | 82 +++++++++++++++++++++++++++++++++++++++-------
+ fs/nullfs.c                | 70 +++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/magic.h |  1 +
+ init/do_mounts.c           | 14 ++++++++
+ init/do_mounts.h           |  1 +
+ 7 files changed, 159 insertions(+), 12 deletions(-)
 
-diff --git a/fs/init.c b/fs/init.c
-index e0f5429c0a49..e33b2690d851 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -13,6 +13,23 @@
- #include <linux/security.h>
- #include "internal.h"
+diff --git a/fs/Makefile b/fs/Makefile
+index a04274a3c854..becf133e4791 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -16,7 +16,7 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+ 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+ 		fs_dirent.o fs_context.o fs_parser.o fsopen.o init.o \
+ 		kernel_read_file.o mnt_idmapping.o remap_range.o pidfs.o \
+-		file_attr.o
++		file_attr.o nullfs.o
  
-+int __init init_pivot_root(const char *new_root, const char *put_old)
-+{
-+	struct path new_path __free(path_put) = {};
-+	struct path old_path __free(path_put) = {};
-+	int ret;
-+
-+	ret = kern_path(new_root, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &new_path);
-+	if (ret)
-+		return ret;
-+
-+	ret = kern_path(put_old, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &old_path);
-+	if (ret)
-+		return ret;
-+
-+	return path_pivot_root(&new_path, &old_path);
-+}
-+
- int __init init_mount(const char *dev_name, const char *dir_name,
- 		const char *type_page, unsigned long flags, void *data_page)
- {
-diff --git a/fs/internal.h b/fs/internal.h
-index ab638d41ab81..4b27a4b0fdef 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -90,6 +90,7 @@ extern bool may_mount(void);
- int path_mount(const char *dev_name, const struct path *path,
- 		const char *type_page, unsigned long flags, void *data_page);
- int path_umount(const struct path *path, int flags);
-+int path_pivot_root(struct path *new, struct path *old);
+ obj-$(CONFIG_BUFFER_HEAD)	+= buffer.o mpage.o
+ obj-$(CONFIG_PROC_FS)		+= proc_namespace.o
+diff --git a/fs/mount.h b/fs/mount.h
+index 2d28ef2a3aed..e0816c11a198 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -5,6 +5,7 @@
+ #include <linux/ns_common.h>
+ #include <linux/fs_pin.h>
  
- int show_path(struct seq_file *m, struct dentry *root);
++extern struct file_system_type nullfs_fs_type;
+ extern struct list_head notify_list;
  
+ struct mnt_namespace {
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 8b082b1de7f3..9261f56ccc81 100644
+index 9261f56ccc81..a44ebb2f1161 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -4498,36 +4498,8 @@ bool path_is_under(const struct path *path1, const struct path *path2)
- }
- EXPORT_SYMBOL(path_is_under);
+@@ -75,6 +75,17 @@ static int __init initramfs_options_setup(char *str)
  
--/*
-- * pivot_root Semantics:
-- * Moves the root file system of the current process to the directory put_old,
-- * makes new_root as the new root file system of the current process, and sets
-- * root/cwd of all processes which had them on the current root to new_root.
-- *
-- * Restrictions:
-- * The new_root and put_old must be directories, and  must not be on the
-- * same file  system as the current process root. The put_old  must  be
-- * underneath new_root,  i.e. adding a non-zero number of /.. to the string
-- * pointed to by put_old must yield the same directory as new_root. No other
-- * file system may be mounted on put_old. After all, new_root is a mountpoint.
-- *
+ __setup("initramfs_options=", initramfs_options_setup);
+ 
++bool nullfs_rootfs = false;
++
++static int __init nullfs_rootfs_setup(char *str)
++{
++	if (*str)
++		return 0;
++	nullfs_rootfs = true;
++	return 1;
++}
++__setup("nullfs_rootfs", nullfs_rootfs_setup);
++
+ static u64 event;
+ static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
+ static DEFINE_IDA(mnt_group_ida);
+@@ -4582,8 +4593,9 @@ int path_pivot_root(struct path *new, struct path *old)
+  * pointed to by put_old must yield the same directory as new_root. No other
+  * file system may be mounted on put_old. After all, new_root is a mountpoint.
+  *
 - * Also, the current root cannot be on the 'rootfs' (initial ramfs) filesystem.
 - * See Documentation/filesystems/ramfs-rootfs-initramfs.rst for alternatives
-- * in this situation.
-- *
-- * Notes:
-- *  - we don't move root/cwd if they are not at the root (reason: if something
-- *    cared enough to change them, it's probably wrong to force them elsewhere)
-- *  - it's okay to pick a root that isn't the root of a file system, e.g.
-- *    /nfs/my_root where /nfs is the mount point. It must be a mountpoint,
-- *    though, so you may need to say mount --bind /nfs/my_root /nfs/my_root
-- *    first.
-- */
--SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
--		const char __user *, put_old)
-+int path_pivot_root(struct path *new, struct path *old)
++ * Also, the current root cannot be on the 'rootfs' (initial ramfs) filesystem
++ * unless the kernel was booted with "nullfs_rootfs". See
++ * Documentation/filesystems/ramfs-rootfs-initramfs.rst for alternatives
+  * in this situation.
+  *
+  * Notes:
+@@ -5976,24 +5988,72 @@ struct mnt_namespace init_mnt_ns = {
+ 
+ static void __init init_mount_tree(void)
  {
--	struct path new __free(path_put) = {};
--	struct path old __free(path_put) = {};
- 	struct path root __free(path_put) = {};
- 	struct mount *new_mnt, *root_mnt, *old_mnt, *root_parent, *ex_parent;
- 	int error;
-@@ -4535,28 +4507,18 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
- 	if (!may_mount())
- 		return -EPERM;
+-	struct vfsmount *mnt;
+-	struct mount *m;
++	struct vfsmount *mnt, *nullfs_mnt;
++	struct mount *mnt_root;
+ 	struct path root;
  
--	error = user_path_at(AT_FDCWD, new_root,
--			     LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &new);
--	if (error)
--		return error;
++	/*
++	 * When nullfs is used, we create two mounts:
++	 *
++	 * (1) nullfs with mount id 1
++	 * (2) mutable rootfs with mount id 2
++	 *
++	 * with (2) mounted on top of (1).
++	 */
++	if (nullfs_rootfs) {
++		nullfs_mnt = vfs_kern_mount(&nullfs_fs_type, 0, "nullfs", NULL);
++		if (IS_ERR(nullfs_mnt))
++			panic("VFS: Failed to create nullfs");
++	}
++
+ 	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", initramfs_options);
+ 	if (IS_ERR(mnt))
+ 		panic("Can't create rootfs");
+ 
+-	m = real_mount(mnt);
+-	init_mnt_ns.root = m;
+-	init_mnt_ns.nr_mounts = 1;
+-	mnt_add_to_ns(&init_mnt_ns, m);
++	if (nullfs_rootfs) {
++		VFS_WARN_ON_ONCE(real_mount(nullfs_mnt)->mnt_id != 1);
++		VFS_WARN_ON_ONCE(real_mount(mnt)->mnt_id != 2);
++
++		/* The namespace root is the nullfs mnt. */
++		mnt_root		= real_mount(nullfs_mnt);
++		init_mnt_ns.root	= mnt_root;
++
++		/* Mount mutable rootfs on top of nullfs. */
++		root.mnt		= nullfs_mnt;
++		root.dentry		= nullfs_mnt->mnt_root;
++
++		LOCK_MOUNT_EXACT(mp, &root);
++		if (unlikely(IS_ERR(mp.parent)))
++			panic("VFS: Failed to mount rootfs on nullfs");
++		scoped_guard(mount_writer)
++			attach_mnt(real_mount(mnt), mp.parent, mp.mp);
++
++		pr_info("VFS: Finished mounting rootfs on nullfs\n");
++	} else {
++		VFS_WARN_ON_ONCE(real_mount(mnt)->mnt_id != 1);
++
++		/* The namespace root is the mutable rootfs. */
++		mnt_root		= real_mount(mnt);
++		init_mnt_ns.root	= mnt_root;
++	}
++
++	/*
++	 * We've dropped all locks here but that's fine. Not just are we
++	 * the only task that's running, there's no other mount
++	 * namespace in existence and the initial mount namespace is
++	 * completely empty until we add the mounts we just created.
++	 */
++	for (struct mount *p = mnt_root; p; p = next_mnt(p, mnt_root)) {
++		mnt_add_to_ns(&init_mnt_ns, p);
++		init_mnt_ns.nr_mounts++;
++	}
++
+ 	init_task.nsproxy->mnt_ns = &init_mnt_ns;
+ 	get_mnt_ns(&init_mnt_ns);
+ 
+-	root.mnt = mnt;
+-	root.dentry = mnt->mnt_root;
 -
--	error = user_path_at(AT_FDCWD, put_old,
--			     LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &old);
--	if (error)
--		return error;
--
--	error = security_sb_pivotroot(&old, &new);
-+	error = security_sb_pivotroot(old, new);
- 	if (error)
- 		return error;
++	/* The root and pwd always point to the mutable rootfs. */
++	root.mnt	= mnt;
++	root.dentry	= mnt->mnt_root;
+ 	set_fs_pwd(current->fs, &root);
+ 	set_fs_root(current->fs, &root);
  
- 	get_fs_root(current->fs, &root);
- 
--	LOCK_MOUNT(old_mp, &old);
-+	LOCK_MOUNT(old_mp, old);
- 	old_mnt = old_mp.parent;
- 	if (IS_ERR(old_mnt))
- 		return PTR_ERR(old_mnt);
- 
--	new_mnt = real_mount(new.mnt);
-+	new_mnt = real_mount(new->mnt);
- 	root_mnt = real_mount(root.mnt);
- 	ex_parent = new_mnt->mnt_parent;
- 	root_parent = root_mnt->mnt_parent;
-@@ -4568,7 +4530,7 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
- 		return -EINVAL;
- 	if (new_mnt->mnt.mnt_flags & MNT_LOCKED)
- 		return -EINVAL;
--	if (d_unlinked(new.dentry))
-+	if (d_unlinked(new->dentry))
- 		return -ENOENT;
- 	if (new_mnt == root_mnt || old_mnt == root_mnt)
- 		return -EBUSY; /* loop, on the same file system  */
-@@ -4576,15 +4538,15 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
- 		return -EINVAL; /* not a mountpoint */
- 	if (!mnt_has_parent(root_mnt))
- 		return -EINVAL; /* absolute root */
--	if (!path_mounted(&new))
-+	if (!path_mounted(new))
- 		return -EINVAL; /* not a mountpoint */
- 	if (!mnt_has_parent(new_mnt))
- 		return -EINVAL; /* absolute root */
- 	/* make sure we can reach put_old from new_root */
--	if (!is_path_reachable(old_mnt, old_mp.mp->m_dentry, &new))
-+	if (!is_path_reachable(old_mnt, old_mp.mp->m_dentry, new))
- 		return -EINVAL;
- 	/* make certain new is below the root */
--	if (!is_path_reachable(new_mnt, new.dentry, &root))
-+	if (!is_path_reachable(new_mnt, new->dentry, &root))
- 		return -EINVAL;
- 	lock_mount_hash();
- 	umount_mnt(new_mnt);
-@@ -4603,10 +4565,55 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
- 	unlock_mount_hash();
- 	mnt_notify_add(root_mnt);
- 	mnt_notify_add(new_mnt);
--	chroot_fs_refs(&root, &new);
-+	chroot_fs_refs(&root, new);
- 	return 0;
- }
- 
-+/*
-+ * pivot_root Semantics:
-+ * Moves the root file system of the current process to the directory put_old,
-+ * makes new_root as the new root file system of the current process, and sets
-+ * root/cwd of all processes which had them on the current root to new_root.
-+ *
-+ * Restrictions:
-+ * The new_root and put_old must be directories, and  must not be on the
-+ * same file  system as the current process root. The put_old  must  be
-+ * underneath new_root,  i.e. adding a non-zero number of /.. to the string
-+ * pointed to by put_old must yield the same directory as new_root. No other
-+ * file system may be mounted on put_old. After all, new_root is a mountpoint.
-+ *
-+ * Also, the current root cannot be on the 'rootfs' (initial ramfs) filesystem.
-+ * See Documentation/filesystems/ramfs-rootfs-initramfs.rst for alternatives
-+ * in this situation.
-+ *
-+ * Notes:
-+ *  - we don't move root/cwd if they are not at the root (reason: if something
-+ *    cared enough to change them, it's probably wrong to force them elsewhere)
-+ *  - it's okay to pick a root that isn't the root of a file system, e.g.
-+ *    /nfs/my_root where /nfs is the mount point. It must be a mountpoint,
-+ *    though, so you may need to say mount --bind /nfs/my_root /nfs/my_root
-+ *    first.
-+ */
-+SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
-+		const char __user *, put_old)
+diff --git a/fs/nullfs.c b/fs/nullfs.c
+new file mode 100644
+index 000000000000..fdbd3e5d3d71
+--- /dev/null
++++ b/fs/nullfs.c
+@@ -0,0 +1,70 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/* Copyright (c) 2026 Christian Brauner <brauner@kernel.org> */
++#include <linux/fs/super_types.h>
++#include <linux/fs_context.h>
++#include <linux/magic.h>
++
++static const struct super_operations nullfs_super_operations = {
++	.statfs	= simple_statfs,
++};
++
++static int nullfs_fs_fill_super(struct super_block *s, struct fs_context *fc)
 +{
-+	struct path new __free(path_put) = {};
-+	struct path old __free(path_put) = {};
-+	int error;
++	struct inode *inode;
 +
-+	error = user_path_at(AT_FDCWD, new_root,
-+			     LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &new);
-+	if (error)
-+		return error;
++	s->s_maxbytes		= MAX_LFS_FILESIZE;
++	s->s_blocksize		= PAGE_SIZE;
++	s->s_blocksize_bits	= PAGE_SHIFT;
++	s->s_magic		= NULL_FS_MAGIC;
++	s->s_op			= &nullfs_super_operations;
++	s->s_export_op		= NULL;
++	s->s_xattr		= NULL;
++	s->s_time_gran		= 1;
++	s->s_d_flags		= 0;
 +
-+	error = user_path_at(AT_FDCWD, put_old,
-+			     LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &old);
-+	if (error)
-+		return error;
++	inode = new_inode(s);
++	if (!inode)
++		return -ENOMEM;
 +
-+	return path_pivot_root(&new, &old);
++	/* nullfs is permanently empty... */
++	make_empty_dir_inode(inode);
++	simple_inode_init_ts(inode);
++	inode->i_ino	= 1;
++	/* ... and immutable. */
++	inode->i_flags |= S_IMMUTABLE;
++
++	s->s_root = d_make_root(inode);
++	if (!s->s_root)
++		return -ENOMEM;
++
++	return 0;
 +}
 +
- static unsigned int recalc_flags(struct mount_kattr *kattr, struct mount *mnt)
++/*
++ * For now this is a single global instance. If needed we can make it
++ * mountable by userspace at which point we will need to make it
++ * multi-instance.
++ */
++static int nullfs_fs_get_tree(struct fs_context *fc)
++{
++	return get_tree_single(fc, nullfs_fs_fill_super);
++}
++
++static const struct fs_context_operations nullfs_fs_context_ops = {
++	.get_tree	= nullfs_fs_get_tree,
++};
++
++static int nullfs_init_fs_context(struct fs_context *fc)
++{
++	fc->ops		= &nullfs_fs_context_ops;
++	fc->global	= true;
++	fc->sb_flags	= SB_NOUSER;
++	fc->s_iflags	= SB_I_NOEXEC | SB_I_NODEV;
++	return 0;
++}
++
++struct file_system_type nullfs_fs_type = {
++	.name			= "nullfs",
++	.init_fs_context	= nullfs_init_fs_context,
++	.kill_sb		= kill_anon_super,
++};
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index 638ca21b7a90..4f2da935a76c 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -104,5 +104,6 @@
+ #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
+ #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
+ #define GUEST_MEMFD_MAGIC	0x474d454d	/* "GMEM" */
++#define NULL_FS_MAGIC		0x4E554C4C	/* "NULL" */
+ 
+ #endif /* __LINUX_MAGIC_H__ */
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index defbbf1d55f7..675397c8a7a4 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -492,6 +492,20 @@ void __init prepare_namespace(void)
+ 	mount_root(saved_root_name);
+ out:
+ 	devtmpfs_mount();
++
++	if (nullfs_rootfs) {
++		if (init_pivot_root(".", ".")) {
++			pr_err("VFS: Failed to pivot into new rootfs\n");
++			return;
++		}
++		if (init_umount(".", MNT_DETACH)) {
++			pr_err("VFS: Failed to unmount old rootfs\n");
++			return;
++		}
++		pr_info("VFS: Pivoted into new rootfs\n");
++		return;
++	}
++
+ 	init_mount(".", "/", NULL, MS_MOVE, NULL);
+ 	init_chroot(".");
+ }
+diff --git a/init/do_mounts.h b/init/do_mounts.h
+index 6069ea3eb80d..fbfee810aa89 100644
+--- a/init/do_mounts.h
++++ b/init/do_mounts.h
+@@ -15,6 +15,7 @@
+ void  mount_root_generic(char *name, char *pretty_name, int flags);
+ void  mount_root(char *root_device_name);
+ extern int root_mountflags;
++extern bool nullfs_rootfs;
+ 
+ static inline __init int create_dev(char *name, dev_t dev)
  {
- 	unsigned int flags = mnt->mnt.mnt_flags;
-diff --git a/include/linux/init_syscalls.h b/include/linux/init_syscalls.h
-index 92045d18cbfc..28776ee28d8e 100644
---- a/include/linux/init_syscalls.h
-+++ b/include/linux/init_syscalls.h
-@@ -17,3 +17,4 @@ int __init init_mkdir(const char *pathname, umode_t mode);
- int __init init_rmdir(const char *pathname);
- int __init init_utimes(char *filename, struct timespec64 *ts);
- int __init init_dup(struct file *file);
-+int __init init_pivot_root(const char *new_root, const char *put_old);
 
 -- 
 2.47.3
