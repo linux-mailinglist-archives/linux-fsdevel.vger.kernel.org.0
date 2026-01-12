@@ -1,132 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-73277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B18D14294
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 17:49:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0DFD1450C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 18:21:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 231283059699
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 16:47:09 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 70FB23168559
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 17:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5BC36B07D;
-	Mon, 12 Jan 2026 16:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C9C3793B5;
+	Mon, 12 Jan 2026 17:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVNtrd9w"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="P64DBTfX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="awRxqMr0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="P64DBTfX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="awRxqMr0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFDB30DECC
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 16:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9730537A480
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 17:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768236417; cv=none; b=TmweZo71brVIe3I52gs2PmXJb/G/2/S31xR2KLiTPh00lLknXB+4zm3lMZYWE2EYJLTYuc58XnPDFAYDNBvtLpesFNlTck434Y3k7F6Xvao/NWDmih1JRSTUDmI8xSn/jvO+RHT1WJ2qSGIWhpiskdpxht2TL6eYWAUwy3QQP5w=
+	t=1768237502; cv=none; b=ciRfehq74TMRQVTk06z7UHT6E5l5dutB1KXqA9iKIHOcBH/91dgIFommLFRKKhcTWEZVsnuir3MjTpS45fc967FUlLUGV97Gqz6QXczeUm+ySuv+aDEg8z+CkPalVGYh50z3jqh3/DITSUwHEQrH5AAKnlEaN9Qk28aV9y8eieE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768236417; c=relaxed/simple;
-	bh=8lgp9tnyFzGocHb8jl6w1NG/N7Zcs3J+oUbbLZskDQQ=;
+	s=arc-20240116; t=1768237502; c=relaxed/simple;
+	bh=kPgy+GkRbWl8K8v+3CSwgn4Fbt0J8obwjsTPR/Pi/HI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=du9zBdpFGlxbrRI4rfTe94p/GoKr1c+iCoNjee5WlTMbGvJIEaw1xJE68np3L90eCm4ndjcutJ9z12S/CdkO+XiWwIhRW96cpflhhQsjCLUlrmdQPxnyYBs0hYogRjBfT9fGqz9lUvNOlfSi1DRhOSo1BeWq/dhuNZbj9tOUilU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FVNtrd9w; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7c6dbdaced8so5498955a34.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 08:46:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768236405; x=1768841205; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n6deLDrT44WMlKVvRfzJXPGGgj/xg0j1HG9++H6LUz0=;
-        b=FVNtrd9wO5lp/y8ML5TJtEg2LVNoKpMuvXUTY8BKHqCPebt7zyvkOdNSz2l9+PqKFo
-         g1dosaCKVbNh7nUAtxpC2VtVFARScgjWXE5Pz+6Uo/4nrd/IExc7v7gWNOC22kbRMvAU
-         U36Y+xhtUulxquh0ORokEYUGuGNP+XSQOzgVwv9S9ON1yGVWuBmbCV7ALcPPYMWtjDwP
-         sNHUg7roftqLGiWVbgqkQVdPdaZMytBn4QK+AXfgkuR72v2is+0n0Gcco/vlTwyt/XVd
-         EelSYEx3zxMxi1BNWTzDtUiWRxiu+YdbC+09h3mMg5fQItDlIRyxROasaNCaV6pVlHwE
-         Gj3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768236405; x=1768841205;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=n6deLDrT44WMlKVvRfzJXPGGgj/xg0j1HG9++H6LUz0=;
-        b=VBJsOqVUISgVnlztFGv0NRcPE3KGbN+XBX4GxsxFUpjdI3UdaEhYnUDyuHuj766pIq
-         yHRVUd2HhjBp5+Ym1IXzCEXFvzzF4Z3iXXRTNIIc9XuryrUnobvgwKa8MIwWyow6Ly+6
-         24v0f3tCRrAaWaRP1FQ74pp0PjTfrI4H7856mYfTuLUXS+R2DsC2RtfjDGQDPZ4kwX74
-         C7LG+8QTx3zB1fqDd2rTw36xojBydstH7ePQn1z/HzaqqfUFgrtEPldIZ5MwiceHjHp7
-         az2d0pcJEyuvVJNLUVjcJIdwsGMNnjLcVYMY9aTpbkjAQIhxixpphEtA6EhSI1m1MKfM
-         X3jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMg756aqWxCNgRga+Mop3jCKmgy6vU58wfTSI//cYHGk3Px+f3DntH5ncQZ5gqcbV0ZIO2dINTpMGYKomB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVfQETrKjqlPmnx0sWsR21LV5epZzsX8WlPQhuVTx4Vs+iz/lu
-	RZ5YhCaFLTQFWJrh7qUyo43sB+TyC8nuaN+s//nQF1igQJowHnds+PTI
-X-Gm-Gg: AY/fxX4BLLQAw2FoZnytoMoTk4kO54H40vF6PgpaL3RwaGyK1+lgqagITvrE6RhmpqR
-	JfCZWt9aG9T6ZrYBKYTxo7pncfuDUQVG+M0/GwADeRTlPjtLgf32NpQcd5/u2kGZENRO0KEGURH
-	a425JqKsZxsDxVYvshr4mZb+6bfokuaC4PUgkJ42vI9COUWqlaBB2at/kxUmvuxqvEsFemIi+35
-	ujHGjPHLSa9WOzvPfhMglqvFfhoE6fCnkJO+5d8YqdPIV5oasx5QF59DxSZIf5nnhM6h9H5s6pm
-	7sjWroNFR/nAiQZdxO/xgokr/ZfCjLa91f+FpTbIAGY4OnNIhf5DMYOppxTifzPAQtY9Ar2A1Lm
-	8Isj6t4KDAYcQ2yPmwngmVuh3fxcegvwA16fFfGspY9au1ZNkYNKBS8k7CaISdr+mP9tKWYPQbW
-	ReD7rYxqMX7b3GK6HK9lSAUdQeDzoKyw==
-X-Google-Smtp-Source: AGHT+IGkPS/NCs2Mk5Oq2bbD5I5Nrr2IjEdlrsoDxvBDNYRoKgitfj+LmMDnnes+e1yquAKJv+M8AA==
-X-Received: by 2002:a05:6830:2e07:b0:7cb:1270:1255 with SMTP id 46e09a7af769-7ce50932573mr13073106a34.16.1768236405392;
-        Mon, 12 Jan 2026 08:46:45 -0800 (PST)
-Received: from groves.net ([2603:8080:1500:3d89:b02d:f13b:7588:7191])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ce4781c286sm14241471a34.8.2026.01.12.08.46.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jan 2026 08:46:45 -0800 (PST)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Mon, 12 Jan 2026 10:46:42 -0600
-From: John Groves <John@groves.net>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Alison Schofield <alison.schofield@intel.com>, John Groves <jgroves@micron.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, David Hildenbrand <david@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
-	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Chen Linxuan <chenlinxuan@uniontech.com>, 
-	James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>, 
-	Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Gregory Price <gourry@gourry.net>, 
-	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, venkataravis@micron.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V3 10/21] famfs_fuse: Kconfig
-Message-ID: <26sfkgpuqdle2nmj4kcv7j2bgnrlpfo3wglfzqiuagjucnufx5@b4ggxnalmcwr>
-References: <20260107153244.64703-1-john@groves.net>
- <20260107153332.64727-1-john@groves.net>
- <20260107153332.64727-11-john@groves.net>
- <20260108123638.0000442e@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=K81E0rYyDwFLVnZNlLV/arSlFKXn6Mtfwr0iFQySCOuptVbtNFcY1Kg3vvSpJiH1p8T6CNhSViAVhgLkC5y3h+CsxGpLWmOB6gSAvInyREqap4kFEgCd4zXxGyN7YywwvpPBkws0J3Imqk7dClqD2cxaFUy0IC7CMYWwKHJbHm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=P64DBTfX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=awRxqMr0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=P64DBTfX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=awRxqMr0; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0531A5BCCA;
+	Mon, 12 Jan 2026 17:04:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1768237499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/IXu27wphLmF3IpnHNL6mk/rCkepaFM+R+4ydOLIFsE=;
+	b=P64DBTfXH3WS5H8Z2my81xHmfFAfjKOx0+sTDCqvSV7S54xkWXX9v18qC8qKqEZtyOuA4B
+	HKBpYXga7qxFAHxWqS0NlIsnDrNkwVBOqqvd6HZHv3QewyuRA3a9cvb55UDXm9Pjauk31d
+	arHeNeu+RYxUkNH2jIkIy6m6p1goEaE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1768237499;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/IXu27wphLmF3IpnHNL6mk/rCkepaFM+R+4ydOLIFsE=;
+	b=awRxqMr0j2r4NGShEEw35590SdYgIasWSrvfpnDhzvGkqxJ4nL6dJim9qgKuoluqVyigqC
+	kaVg7mmpLoi4HEDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1768237499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/IXu27wphLmF3IpnHNL6mk/rCkepaFM+R+4ydOLIFsE=;
+	b=P64DBTfXH3WS5H8Z2my81xHmfFAfjKOx0+sTDCqvSV7S54xkWXX9v18qC8qKqEZtyOuA4B
+	HKBpYXga7qxFAHxWqS0NlIsnDrNkwVBOqqvd6HZHv3QewyuRA3a9cvb55UDXm9Pjauk31d
+	arHeNeu+RYxUkNH2jIkIy6m6p1goEaE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1768237499;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/IXu27wphLmF3IpnHNL6mk/rCkepaFM+R+4ydOLIFsE=;
+	b=awRxqMr0j2r4NGShEEw35590SdYgIasWSrvfpnDhzvGkqxJ4nL6dJim9qgKuoluqVyigqC
+	kaVg7mmpLoi4HEDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EF7723EA63;
+	Mon, 12 Jan 2026 17:04:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vSByOropZWlmAgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 12 Jan 2026 17:04:58 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9B747A09FC; Mon, 12 Jan 2026 18:04:50 +0100 (CET)
+Date: Mon, 12 Jan 2026 18:04:50 +0100
+From: Jan Kara <jack@suse.cz>
+To: Matt Fleming <matt@readmodwrite.com>
+Cc: Jan Kara <jack@suse.cz>, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, kernel-team@cloudflare.com
+Subject: Re: [REGRESSION] 6.12: Workqueue lockups in inode_switch_wbs_work_fn
+ (suspect commit 66c14dccd810)
+Message-ID: <isa6ohzad6b6l55kbdqa35r5fsp4wnifpncx3kit6m35266d7z@463ckwplt5w3>
+References: <20260112111804.3773280-1-matt@readmodwrite.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260108123638.0000442e@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260112111804.3773280-1-matt@readmodwrite.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-On 26/01/08 12:36PM, Jonathan Cameron wrote:
-> On Wed,  7 Jan 2026 09:33:19 -0600
-> John Groves <John@Groves.net> wrote:
+Hi Matt!
+
+On Mon 12-01-26 11:18:04, Matt Fleming wrote:
+> I’m writing to report a regression we are observing in our production
+> environment running kernel 6.12. We are seeing severe workqueue lockups
+> that appear to be triggered by high-volume cgroup destruction. We have
+> isolated the issue to 66c14dccd810 ("writeback: Avoid softlockup when
+> switching many inodes").
 > 
-> > Add FUSE_FAMFS_DAX config parameter, to control compilation of famfs
-> > within fuse.
-> > 
-> > Signed-off-by: John Groves <john@groves.net>
+> We're seeing stalled tasks in the inode_switch_wbs workqueue. The worker
+> appears to be CPU-bound within inode_switch_wbs_work_fn, leading to RCU
+> stalls and eventual system lockups.
+
+I agree we are CPU bound in inode_switch_wbs_work_fn() but I don't think we
+are really hogging the CPU. The backtrace below indicates the worker just
+got rescheduled in cond_resched() to give other tasks a chance to run. Is
+the machine dying completely or does it eventually finish the cgroup
+teardown?
+
+> Here is a representative trace from a stalled CPU-bound worker pool:
 > 
-> A separate commit for this doesn't obviously add anything over combining
-> it with first place the CONFIG_xxx is used.
+> [1437023.584832][    C0] Showing backtraces of running workers in stalled CPU-bound worker pools:
+> [1437023.733923][    C0] pool 358:
+> [1437023.733924][    C0] task:kworker/89:0    state:R  running task     stack:0     pid:3136989 tgid:3136989 ppid:2      task_flags:0x4208060 flags:0x00004000
+> [1437023.733929][    C0] Workqueue: inode_switch_wbs inode_switch_wbs_work_fn
+> [1437023.733933][    C0] Call Trace:
+> [1437023.733934][    C0]  <TASK>
+> [1437023.733937][    C0]  __schedule+0x4fb/0xbf0
+> [1437023.733942][    C0]  __cond_resched+0x33/0x60
+> [1437023.733944][    C0]  inode_switch_wbs_work_fn+0x481/0x710
+> [1437023.733948][    C0]  process_one_work+0x17b/0x330
+> [1437023.733950][    C0]  worker_thread+0x2ce/0x3f0
 > 
-> Maybe it's a convention for fs/fuse though. If it is ignore me.
+> Our environment makes heavy use of cgroup-based services. When these
+> services -- specifically our caching layer -- are shut down, they can
+> trigger the offlining of a massive number of inodes (approx. 200k-250k+
+> inodes per service).
 
-I've squashed this into the first commit that uses FUSE_FAMFS_DAX,
-which is 2 commits later...
+Well, these changes were introduced because some services are switching
+over 1m inodes on their exit and they were softlocking up the machine :).
+So there's some commonality, just something in that setup behaves
+differently from your setup. Are the inodes clean, dirty, or only with
+dirty timestamps? Also since you mention 6.12 kernel but this series was
+only merged in 6.18, do you carry full series ending with merge commit
+9426414f0d42f?
 
-Thanks,
-John
+> We have verified that reverting 66c14dccd810 completely eliminates these
+> lockups in our production environment.
+> 
+> I am currently working on creating a synthetic reproduction case in the
+> lab to replicate the inode/cgroup density required to trigger this on
+> demand. In the meantime, I wanted to share these findings to see if you
+> have any insights.
 
+Yes, having the reproducer would certainly simplify debugging what exactly
+is going on that your system is locking up. Because I was able to tear down
+a cgroup doing switching of millions of inodes in couple of seconds without
+any issue in my testing...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
