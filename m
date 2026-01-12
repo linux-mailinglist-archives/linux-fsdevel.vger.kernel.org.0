@@ -1,194 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-73267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32313D13AA5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 16:29:25 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7540AD13D70
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 16:57:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id A080E30336BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 15:26:31 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 63110303ABDA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 15:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1602F39B1;
-	Mon, 12 Jan 2026 15:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFB7345CDF;
+	Mon, 12 Jan 2026 15:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="IYbYov2W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YydbnGqq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f194.google.com (mail-qk1-f194.google.com [209.85.222.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBC02F3C02
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 15:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223E1266581;
+	Mon, 12 Jan 2026 15:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768231584; cv=none; b=pC7RkC6AMYFUNdDM/HRaSedF87S0w+mJJbJUAgSd2rtZP9Gft/Xfg4KMH5zDBtBz9V4GT49dXlvcaT4F7REiIbeKJxq4fqMmNL+1XiU14UY4EA19wYrSDaWFFKZF4/pbvL2bmMDruYNXNrr6nmquQKONRLDKNa1XooE/HANrP/M=
+	t=1768232840; cv=none; b=nbKCbjGqTqd8SwHMQ/OWywTDnF35/Xji9VI9u6BppsRZ5DMYnUKiK/H0VW6jYBgbK579rGSvmYmPRvuoQjV+5rjeNUXdHh7uTavS72ENRRaaCBO9//vBnczRzLskQtkjIMhs2nWSu4JYRJy3cfgK9cbP0uij/BHkcqvRRPM4Y9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768231584; c=relaxed/simple;
-	bh=EULRbDh2eWrxKTzxeqVj7dyOdGXNsrU4bT7mvwNID8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DJyTr69OOOfwKQaxOXyDeqH71bTatDlDYMVCeFD0Q+YPFS+PqxMJLweCQvGcrHChBzsmATr6M4T8rtcYQEOcZeAukvntZZK+llSVDmxf6gTXhImYCKwIGNU3il8+TghBmNZqeh+6Fv007c7u2ZS1eenuBwbWAv8hUaFOI+Fscuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=IYbYov2W; arc=none smtp.client-ip=209.85.222.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f194.google.com with SMTP id af79cd13be357-8ba3ffd54dbso975793685a.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 07:26:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1768231579; x=1768836379; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=57UuhljdncFCr/JytocOWEZRWmlPR6Nv3ccaWVm2VXI=;
-        b=IYbYov2W9czkLWI6VyMzlenE6G8F92zW/RL6fC79g8xfvBcwtysPEjGuxKdft9iGWt
-         tPc4NFzIep1NbXA3rC5KnCqzwbz93sfzLwFimFf82zEBPuJDW18oNGlnG11+SJylEfha
-         ek8hwl2288dHGcvZQIiwTGuuVJnrRzLfXZBOS/OOpkGQc/EwI+slj+Crm9PdFvSEGJ+W
-         IhdbfwBt2T/r+E7mMyvlfXrbedq+H6dIzsQDT2yfCXXvUdpVtZbg1VzBt4o8bUJ/YCZ4
-         vlHA+WkSbs6rb0PYrAJRtA7JepyDZCMgLLek3WRknkhaGnE5n5XC+PTwfc96/ckeR0lS
-         4F+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768231579; x=1768836379;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=57UuhljdncFCr/JytocOWEZRWmlPR6Nv3ccaWVm2VXI=;
-        b=oiqwimvBBSNZKiAuACZtuPjY/VLVWBNfZ+Y0K4yZcCBJYLf/eqpzOVgUwAsHP+qb4r
-         MQzU+3tPNUbdXzYiKLyWacUcwiIpfrNJyySeiUm4LALW8YKyAHs+0xFfC6qrsnezgKUD
-         0hqK3fYcXkoBmCdkPjVt4XTe99ZnUtHg9FRW/+VPbNeJvAC8XOoe9NkWg51Qk8vpHmtB
-         DzpemO4NWhX8aC9fu7alWsMCZPzDM4q8zp0UrpI6EnQEPnm6KdvGNL5Xl/6Ntmwt9TdP
-         ePGf6stkbMl2pmWY9xW5/uU2Q9q43TZQHXXz4626yovVK9KtEiSpIdKi8PGwSrBKQRFz
-         zcCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWL6gKKv8NJoIi5xBjObbmZu5nDtngAzZ4v7DUa1raYibshMkmZlO+YLxu7FwmXlGGSR3UJ+J+g9/r/0mrm@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUbNohj48Al2mqRWppp4ZSu22X9VIoiDEs+dGid8aD/+IZo0kl
-	Jw4813UykZ7KOwS6aIhWxDvvWl/0yaRWcfCrZ6qGfS/EG0f7jIk+k9t8WdcKXPylSyY=
-X-Gm-Gg: AY/fxX4e6S4GuqEgOzWSbv8aVeF9UOnHJIHft+Nk/ePybYFFFntJRrZcVkkx5yn465l
-	1wq80zW31AEyYAxo1+RLbFsh9W0GQ+7i2EiRq/Yo+8NvWHH8pFF7pBvCchVah8KH2XraoNZAZm2
-	t5Et0+ipsfJfxNRYkU/XcltQw42sYjenXV5/YcHNCJvTsEfrUfeu38siQzLBiOuojiw6f1Culvv
-	RrPZyDt1gjTSO/FcB6vY1jJSpC0nwxkIdIqH/JXVk8UlsTDG8EHN/FUvqIooGTt30pX69dnNQK8
-	drvdkoP9yBVPK5/MlrqJBQQZM9dLT3qztiUPfcdzcsbUhh8aGundOP2e6LC1IyTfiG6OnHGK0cM
-	oOBaDnw4+5e4spc3MvrZSOGuhywzJF6pn7p3OeUu8UcNP+5bPWoLK95s3EaoEH1v7628tTeXCRl
-	weJWhTe1DwY2XA0KJUGB/4RAbY4JahkBVSZ47KzDFvJnxuWVOzKQszOJZGGjiLgW3mlPfVTfNRm
-	QxAIPJR
-X-Google-Smtp-Source: AGHT+IF7YU4wyH5DCnIa1xHNwfOTUxRN3Z3UmWPqqY8/JzoeuGL9L4VducxuPGVH8SICTsnA4+h6Uw==
-X-Received: by 2002:a05:620a:318a:b0:8b4:ebbe:ae04 with SMTP id af79cd13be357-8c3893a5c0bmr2745515485a.35.1768231579175;
-        Mon, 12 Jan 2026 07:26:19 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c37f5439cbsm1508794985a.55.2026.01.12.07.26.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jan 2026 07:26:18 -0800 (PST)
-Date: Mon, 12 Jan 2026 10:25:44 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
-	longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org,
-	corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org,
-	dakr@kernel.org, dave@stgolabs.net, jonathan.cameron@huawei.com,
-	dave.jiang@intel.com, alison.schofield@intel.com,
-	vishal.l.verma@intel.com, ira.weiny@intel.com,
-	dan.j.williams@intel.com, akpm@linux-foundation.org, vbabka@suse.cz,
-	surenb@google.com, mhocko@suse.com, jackmanb@google.com,
-	ziy@nvidia.com, david@kernel.org, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, rppt@kernel.org, axelrasmussen@google.com,
-	yuanchu@google.com, weixugc@google.com, yury.norov@gmail.com,
-	linux@rasmusvillemoes.dk, rientjes@google.com,
-	shakeel.butt@linux.dev, chrisl@kernel.org, kasong@tencent.com,
-	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, yosry.ahmed@linux.dev, chengming.zhou@linux.dev,
-	roman.gushchin@linux.dev, muchun.song@linux.dev, osalvador@suse.de,
-	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
-	byungchul@sk.com, ying.huang@linux.alibaba.com, apopple@nvidia.com,
-	cl@gentwo.org, harry.yoo@oracle.com, zhengqi.arch@bytedance.com
-Subject: Re: [RFC PATCH v3 5/8] Documentation/admin-guide/cgroups: update
- docs for mems_allowed
-Message-ID: <aWUSeFzxouq2vwg8@gourry-fedora-PF4VCD3F>
-References: <20260108203755.1163107-1-gourry@gourry.net>
- <20260108203755.1163107-6-gourry@gourry.net>
- <o6eky3g4jyvtc2cy6lk7rjc6or6tcvwbhdarrlpn4geuibvrul@65fygkf6vg44>
+	s=arc-20240116; t=1768232840; c=relaxed/simple;
+	bh=LvO60yDzjyxVBqGNXihhd8BocpvRUQMWP1sY/h4+IXM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YVhxvmCn6364HTQy9Rg7Jq8pnmXGHXf49bmsSSR/xnOMBN2/uk782GBr7ZuwIpIRKeLoEvTutNl0IVwpOvg6Pod5oSa2l1Sdu0vOcBNKUD8fVdzLODRJsHnFz1L9pF+C6jL5YHOurQq6Mpho3kphaif91X8ETqU2kQEZevKAbwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YydbnGqq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7668C19422;
+	Mon, 12 Jan 2026 15:47:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768232839;
+	bh=LvO60yDzjyxVBqGNXihhd8BocpvRUQMWP1sY/h4+IXM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=YydbnGqqxQHGhJt7YTdzTYqsBJuJYOyBtRONDTDRIyxLPJVMxU8ht6RDZfOI2TdSa
+	 otGVKclF36RmNos507GYHZm6SwFg/L4mtC1d3N2JDzr8LBLZGquT/scMEFXuW4SX3f
+	 UW0KynmU+K4hYHVFBz53mu51KMANM+3VRQUnE6+RAHh8BmdSQWDgKZcoVrnoPhcl+j
+	 pHuWqCemrKR1L9TNBUsTNbX1vYM8GXCdTbaKfKon+/qAFlIELXH+fZmcTEfgHoroAN
+	 cyyfegEBMoivJZ4AqgGRN+RSZmiqK1tTKgcYecfephjIaKywc9tQaKxUZVoA2R8Dbw
+	 RV51zR0mcKRNQ==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 0/4] fs: add immutable rootfs
+Date: Mon, 12 Jan 2026 16:47:07 +0100
+Message-Id: <20260112-work-immutable-rootfs-v2-0-88dd1c34a204@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <o6eky3g4jyvtc2cy6lk7rjc6or6tcvwbhdarrlpn4geuibvrul@65fygkf6vg44>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHsXZWkC/4WOQQ6CMBBFr0K6dkg7BIiuvIdh0cIUGqA1U0QN4
+ e4WLuDyLd77fxOR2FEUt2wTTKuLLvgEeMlEO2jfE7gusUCJlVQS4R14BDfPr0WbiYBDWGwEU1o
+ sSNpSYy2S+2Sy7nN2H01ioyOBYe3b4ajNOi7E+Vrl6grcqkMZXFwCf88nqzrEf6OrAgkWZV0Y7
+ FQl8T4Se5rywL1o9n3/AVJBBj7eAAAA
+X-Change-ID: 20260102-work-immutable-rootfs-b5f23e0f5a27
+To: linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+ Lennart Poettering <lennart@poettering.net>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2905; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=LvO60yDzjyxVBqGNXihhd8BocpvRUQMWP1sY/h4+IXM=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmirf6Vsl/vnFw/8Zvq3rCd7769P/Fo2NWyxRETdWvx
+ 9gWzPzg3FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjAROSlGhvnsj7MVLR/uytMX
+ rdjbtaX+eMPZs9NnRBwvjn6W1XJsxTFGhh9qOxm/7rF898/73s8Hcy/lHNhrJ3i8T+p+VUnGsn6
+ h99wA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Mon, Jan 12, 2026 at 03:30:26PM +0100, Michal Koutný wrote:
-> Hello.
-> 
-> On Thu, Jan 08, 2026 at 03:37:52PM -0500, Gregory Price <gourry@gourry.net> wrote:
-> > --- a/Documentation/admin-guide/cgroup-v2.rst
-> > +++ b/Documentation/admin-guide/cgroup-v2.rst
-> > @@ -2530,8 +2530,11 @@ Cpuset Interface Files
-> >  	cpuset-enabled cgroups.
-> >  
-> >  	It lists the onlined memory nodes that are actually granted to
-> > -	this cgroup by its parent. These memory nodes are allowed to
-> > -	be used by tasks within the current cgroup.
-> > +	this cgroup by its parent.  This includes both regular SystemRAM
-> > +	nodes (N_MEMORY) and Private Nodes (N_PRIVATE) that provide
-> > +	device-specific memory not intended for general consumption.
-> > +	Tasks within this cgroup may access Private Nodes using explicit
-> > +	__GFP_THISNODE allocations if the node is in this mask.
-> 
-> Notice that these files are exposed for userspace. Hence I'm not sure
-> they'd be able to ask for allocations like this (or even need to know
-> about this implementation detail).
->
+Currently pivot_root() doesn't work on the real rootfs because it
+cannot be unmounted. Userspace has to do a recursive removal of the
+initramfs contents manually before continuing the boot.
 
-Fair, I can drop this, the intent is actually to limit user-space
-knowledge of this at all.
+Really all we want from the real rootfs is to serve as the parent mount
+for anything that is actually useful such as the tmpfs or ramfs for
+initramfs unpacking or the rootfs itself. There's no need for the real
+rootfs to actually be anything meaningful or useful. Add a immutable
+rootfs called "nullfs" that can be selected via the "nullfs_rootfs"
+kernel command line option.
 
-> >  
-> >  	If "cpuset.mems" is empty, it shows all the memory nodes from the
-> >  	parent cgroup that will be available to be used by this cgroup.
-> > @@ -2541,6 +2544,25 @@ Cpuset Interface Files
-> >  
-> >  	Its value will be affected by memory nodes hotplug events.
-> >  
-> > +  cpuset.mems.sysram
-> > +	A read-only multiple values file which exists on all
-> > +	cpuset-enabled cgroups.
-> > +
-> > +	It lists the SystemRAM nodes (N_MEMORY) that are available for
-> > +	general memory allocation by tasks within this cgroup.  This is
-> > +	a subset of "cpuset.mems.effective" that excludes Private Nodes.
-> > +
-> > +	Normal page allocations are restricted to nodes in this mask.
-> > +	The kernel page allocator, slab allocator, and compaction only
-> > +	consider SystemRAM nodes when allocating memory for tasks.
-> > +
-> > +	Private Nodes are excluded from this mask because their memory
-> > +	is managed by device drivers for specific purposes (e.g., CXL
-> > +	compressed memory, accelerator memory) and should not be used
-> > +	for general allocations.
-> 
-> So I wonder whether the N_PRIVATE nodes should be included in
-> cpuset.mems[.effective] at all.
+The kernel will mount a tmpfs/ramfs on top of it, unpack the initramfs
+and fire up userspace which mounts the rootfs and can then just do:
 
-I think it makes the control path easier (both more intuitive and easier
-to write in the cpuset code), but I can take another look at this.
+  chdir(rootfs);
+  pivot_root(".", ".");
+  umount2(".", MNT_DETACH);
 
-Although omitting them from .effective i think prevents the user from
-controlling whether their memory ends up on that node. 
+and be done with it. (Ofc, userspace can also choose to retain the
+initramfs contents by using something like pivot_root(".", "/initramfs")
+without unmounting it.)
 
-i.e. the user might be aware that they have compressed memory on node N,
-and they have a cgroup that they don't want on node N - not having it
-included in mems.allowed / mems.effective means they can't control this.
+Technically this also means that the rootfs mount in unprivileged
+namespaces doesn't need to become MNT_LOCKED anymore as it's guaranteed
+that the immutable rootfs remains permanently empty so there cannot be
+anything revealed by unmounting the covering mount.
 
-> (It resembles CPU isolation to me a bit ~ cpuset.cpus.isolated.)
-> Maybe you only want to expose it on the root cpuset cg and inverted like
-> cpuset.mems.private?
->
+In the future this will also allow us to create completely empty mount
+namespaces without risking to leak anything.
 
-Hm, I had not considered adding the separate mask for .private as
-opposed to sysram.
+systemd already handles this all correctly as it tries to pivot_root()
+first and falls back to MS_MOVE only when that fails.
 
-If all we actually need to change is the allowed() callback to check an
-additional nodemask, that might end up cleaner.
+This goes back to various discussion in previous years and a LPC 2024
+presentation about this very topic.
 
-Thank you, I'll take another look at this piece.
+Now in vfs-7.0.nullfs.
 
-~Gregory
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v2:
+- Rename to "nullfs".
+- Update documentation.
+- Link to v1: https://patch.msgid.link/20260102-work-immutable-rootfs-v1-0-f2073b2d1602@kernel.org
+
+---
+Christian Brauner (4):
+      fs: ensure that internal tmpfs mount gets mount id zero
+      fs: add init_pivot_root()
+      fs: add immutable rootfs
+      docs: mention nullfs
+
+ .../filesystems/ramfs-rootfs-initramfs.rst         |  32 +++-
+ fs/Makefile                                        |   2 +-
+ fs/init.c                                          |  17 ++
+ fs/internal.h                                      |   1 +
+ fs/mount.h                                         |   1 +
+ fs/namespace.c                                     | 181 ++++++++++++++-------
+ fs/nullfs.c                                        |  70 ++++++++
+ include/linux/init_syscalls.h                      |   1 +
+ include/uapi/linux/magic.h                         |   1 +
+ init/do_mounts.c                                   |  14 ++
+ init/do_mounts.h                                   |   1 +
+ 11 files changed, 254 insertions(+), 67 deletions(-)
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20260102-work-immutable-rootfs-b5f23e0f5a27
+
 
