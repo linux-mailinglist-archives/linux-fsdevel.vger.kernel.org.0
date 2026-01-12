@@ -1,155 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-73276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF45D13F34
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 17:21:14 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B18D14294
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 17:49:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 7589D300501A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 16:21:09 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 231283059699
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 16:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124C7364E92;
-	Mon, 12 Jan 2026 16:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5BC36B07D;
+	Mon, 12 Jan 2026 16:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="M3WpSvEy";
-	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="SW6lEjmm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVNtrd9w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C3D2D8DD4;
-	Mon, 12 Jan 2026 16:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFDB30DECC
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 16:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768234864; cv=none; b=D6M1jHxbuQYhstOKfiDraVnCXfRUKmIgn/TJ0tLXi2Dz2sJG7CkgSyRe+WoXuNFe670eOcuqO0XxsD5PxvuhPj67cWDi41RZF4VWHMgE5UznJqEqhm7rlz3IMvselwkJjyxNKizzvNamFqtfBdWgHehL/zIHltG9TW+7hwui9os=
+	t=1768236417; cv=none; b=TmweZo71brVIe3I52gs2PmXJb/G/2/S31xR2KLiTPh00lLknXB+4zm3lMZYWE2EYJLTYuc58XnPDFAYDNBvtLpesFNlTck434Y3k7F6Xvao/NWDmih1JRSTUDmI8xSn/jvO+RHT1WJ2qSGIWhpiskdpxht2TL6eYWAUwy3QQP5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768234864; c=relaxed/simple;
-	bh=lK8ZvD5KSxVpbR6oeoCLUQSDP1N5og5AsP3csxy4dj0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MEDnWHEk/xTlcKcCWKgmDfb+nqBfrdHi5LIQbtOHXf6/HdQP+SpG/93Z2VcMZvW/d/oRKJxZnwHp6Tf5xFGwYCkGNOrzRmovbClk1npq72bl1CeOUwZUVTLW7CT1DdxOxwAdCMh6/mCDuRQNebchvl2aonuc0XlVpOabg6pr+HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=M3WpSvEy; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=SW6lEjmm; arc=none smtp.client-ip=210.171.160.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-	by mail.parknet.co.jp (Postfix) with ESMTPSA id 1CE7320A0176;
-	Tue, 13 Jan 2026 01:21:00 +0900 (JST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
-	s=20250114; t=1768234860;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVyphRkBzqFzCcw7fXGK5ylS+InfhGEy9ejNCmI2poM=;
-	b=M3WpSvEyApUrkDLAs2CyAlOMFX504HjAPAoNs7oGpMJZpQBH6PCuJ70x4iRF1dSkcbIjBu
-	CbCMIz7865yBj/cA83L8+tKBVkG4HpcszaDuyJxpaFBAItASGh1NCiTJ881l2xEW/ah+wu
-	XaJbNchqrUDniSuPSMxv2mBag5+Fz+ALfyPEL6lC0+9BHLXmaa4I8Lo72Jvo/fO0d7lAJS
-	ujVeZ+OF0u+IOAjRZCgZoeCXIrncw6jTc8om/FMNXT8dwYL6dTccSeue1uaV90gMShwJXj
-	MvQdc7VBwuRotteBfSsbkw8koT3cYs0WgIaoi03zyl/BXh3OQZ0I0BKCm+CEdg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
-	s=20250114-ed25519; t=1768234860;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVyphRkBzqFzCcw7fXGK5ylS+InfhGEy9ejNCmI2poM=;
-	b=SW6lEjmmzYw5MeeonpFUw2UvMPVEvDsuRo37SrjZ6SKcc221V0seg1ej1djxvEqPy0JdxU
-	LxIBDaKfBuBTwkDA==
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-7) with ESMTPS id 60CGKwRF010901
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 13 Jan 2026 01:20:59 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-7) with ESMTPS id 60CGKwBH019403
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 13 Jan 2026 01:20:58 +0900
-Received: (from hirofumi@localhost)
-	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 60CGKwaP019400;
-	Tue, 13 Jan 2026 01:20:58 +0900
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Zhiyu Zhang <zhiyuzhang999@gmail.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fat: avoid parent link count underflow in rmdir
-In-Reply-To: <87secph8yi.fsf@mail.parknet.co.jp>
-References: <20260101111148.1437-1-zhiyuzhang999@gmail.com>
-	<87secph8yi.fsf@mail.parknet.co.jp>
-Date: Tue, 13 Jan 2026 01:20:58 +0900
-Message-ID: <87ms2idcph.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1768236417; c=relaxed/simple;
+	bh=8lgp9tnyFzGocHb8jl6w1NG/N7Zcs3J+oUbbLZskDQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=du9zBdpFGlxbrRI4rfTe94p/GoKr1c+iCoNjee5WlTMbGvJIEaw1xJE68np3L90eCm4ndjcutJ9z12S/CdkO+XiWwIhRW96cpflhhQsjCLUlrmdQPxnyYBs0hYogRjBfT9fGqz9lUvNOlfSi1DRhOSo1BeWq/dhuNZbj9tOUilU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FVNtrd9w; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7c6dbdaced8so5498955a34.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 08:46:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768236405; x=1768841205; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n6deLDrT44WMlKVvRfzJXPGGgj/xg0j1HG9++H6LUz0=;
+        b=FVNtrd9wO5lp/y8ML5TJtEg2LVNoKpMuvXUTY8BKHqCPebt7zyvkOdNSz2l9+PqKFo
+         g1dosaCKVbNh7nUAtxpC2VtVFARScgjWXE5Pz+6Uo/4nrd/IExc7v7gWNOC22kbRMvAU
+         U36Y+xhtUulxquh0ORokEYUGuGNP+XSQOzgVwv9S9ON1yGVWuBmbCV7ALcPPYMWtjDwP
+         sNHUg7roftqLGiWVbgqkQVdPdaZMytBn4QK+AXfgkuR72v2is+0n0Gcco/vlTwyt/XVd
+         EelSYEx3zxMxi1BNWTzDtUiWRxiu+YdbC+09h3mMg5fQItDlIRyxROasaNCaV6pVlHwE
+         Gj3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768236405; x=1768841205;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=n6deLDrT44WMlKVvRfzJXPGGgj/xg0j1HG9++H6LUz0=;
+        b=VBJsOqVUISgVnlztFGv0NRcPE3KGbN+XBX4GxsxFUpjdI3UdaEhYnUDyuHuj766pIq
+         yHRVUd2HhjBp5+Ym1IXzCEXFvzzF4Z3iXXRTNIIc9XuryrUnobvgwKa8MIwWyow6Ly+6
+         24v0f3tCRrAaWaRP1FQ74pp0PjTfrI4H7856mYfTuLUXS+R2DsC2RtfjDGQDPZ4kwX74
+         C7LG+8QTx3zB1fqDd2rTw36xojBydstH7ePQn1z/HzaqqfUFgrtEPldIZ5MwiceHjHp7
+         az2d0pcJEyuvVJNLUVjcJIdwsGMNnjLcVYMY9aTpbkjAQIhxixpphEtA6EhSI1m1MKfM
+         X3jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMg756aqWxCNgRga+Mop3jCKmgy6vU58wfTSI//cYHGk3Px+f3DntH5ncQZ5gqcbV0ZIO2dINTpMGYKomB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVfQETrKjqlPmnx0sWsR21LV5epZzsX8WlPQhuVTx4Vs+iz/lu
+	RZ5YhCaFLTQFWJrh7qUyo43sB+TyC8nuaN+s//nQF1igQJowHnds+PTI
+X-Gm-Gg: AY/fxX4BLLQAw2FoZnytoMoTk4kO54H40vF6PgpaL3RwaGyK1+lgqagITvrE6RhmpqR
+	JfCZWt9aG9T6ZrYBKYTxo7pncfuDUQVG+M0/GwADeRTlPjtLgf32NpQcd5/u2kGZENRO0KEGURH
+	a425JqKsZxsDxVYvshr4mZb+6bfokuaC4PUgkJ42vI9COUWqlaBB2at/kxUmvuxqvEsFemIi+35
+	ujHGjPHLSa9WOzvPfhMglqvFfhoE6fCnkJO+5d8YqdPIV5oasx5QF59DxSZIf5nnhM6h9H5s6pm
+	7sjWroNFR/nAiQZdxO/xgokr/ZfCjLa91f+FpTbIAGY4OnNIhf5DMYOppxTifzPAQtY9Ar2A1Lm
+	8Isj6t4KDAYcQ2yPmwngmVuh3fxcegvwA16fFfGspY9au1ZNkYNKBS8k7CaISdr+mP9tKWYPQbW
+	ReD7rYxqMX7b3GK6HK9lSAUdQeDzoKyw==
+X-Google-Smtp-Source: AGHT+IGkPS/NCs2Mk5Oq2bbD5I5Nrr2IjEdlrsoDxvBDNYRoKgitfj+LmMDnnes+e1yquAKJv+M8AA==
+X-Received: by 2002:a05:6830:2e07:b0:7cb:1270:1255 with SMTP id 46e09a7af769-7ce50932573mr13073106a34.16.1768236405392;
+        Mon, 12 Jan 2026 08:46:45 -0800 (PST)
+Received: from groves.net ([2603:8080:1500:3d89:b02d:f13b:7588:7191])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ce4781c286sm14241471a34.8.2026.01.12.08.46.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jan 2026 08:46:45 -0800 (PST)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Mon, 12 Jan 2026 10:46:42 -0600
+From: John Groves <John@groves.net>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Alison Schofield <alison.schofield@intel.com>, John Groves <jgroves@micron.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, David Hildenbrand <david@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Chen Linxuan <chenlinxuan@uniontech.com>, 
+	James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>, 
+	Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Gregory Price <gourry@gourry.net>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, venkataravis@micron.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V3 10/21] famfs_fuse: Kconfig
+Message-ID: <26sfkgpuqdle2nmj4kcv7j2bgnrlpfo3wglfzqiuagjucnufx5@b4ggxnalmcwr>
+References: <20260107153244.64703-1-john@groves.net>
+ <20260107153332.64727-1-john@groves.net>
+ <20260107153332.64727-11-john@groves.net>
+ <20260108123638.0000442e@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260108123638.0000442e@huawei.com>
 
-Ping?
+On 26/01/08 12:36PM, Jonathan Cameron wrote:
+> On Wed,  7 Jan 2026 09:33:19 -0600
+> John Groves <John@Groves.net> wrote:
+> 
+> > Add FUSE_FAMFS_DAX config parameter, to control compilation of famfs
+> > within fuse.
+> > 
+> > Signed-off-by: John Groves <john@groves.net>
+> 
+> A separate commit for this doesn't obviously add anything over combining
+> it with first place the CONFIG_xxx is used.
+> 
+> Maybe it's a convention for fs/fuse though. If it is ignore me.
 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> writes:
+I've squashed this into the first commit that uses FUSE_FAMFS_DAX,
+which is 2 commits later...
 
-> Zhiyu Zhang <zhiyuzhang999@gmail.com> writes:
->
->> Corrupted FAT images can leave a directory inode with an incorrect
->> i_nlink (e.g. 2 even though subdirectories exist). rmdir then
->> unconditionally calls drop_nlink(dir) and can drive i_nlink to 0,
->> triggering the WARN_ON in drop_nlink().
->>
->> Add a sanity check in vfat_rmdir() and msdos_rmdir(): only drop the
->> parent link count when it is at least 3, otherwise report a filesystem
->> error.
->>
->> Fixes: 9a53c3a783c2 ("[PATCH] r/o bind mounts: unlink: monitor i_nlink")
->> Reported-by: Zhiyu Zhang <zhiyuzhang999@gmail.com>
->> Closes: https://lore.kernel.org/linux-fsdevel/aVN06OKsKxZe6-Kv@casper.infradead.org/T/#t
->> Tested-by: Zhiyu Zhang <zhiyuzhang999@gmail.com>
->> Signed-off-by: Zhiyu Zhang <zhiyuzhang999@gmail.com>
->
-> Looks good. Thanks.
->
-> Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
->
->> ---
->>  fs/fat/namei_msdos.c | 7 ++++++-
->>  fs/fat/namei_vfat.c  | 7 ++++++-
->>  2 files changed, 12 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
->> index 0b920ee40a7f..262ec1b790b5 100644
->> --- a/fs/fat/namei_msdos.c
->> +++ b/fs/fat/namei_msdos.c
->> @@ -325,7 +325,12 @@ static int msdos_rmdir(struct inode *dir, struct dentry *dentry)
->>  	err = fat_remove_entries(dir, &sinfo);	/* and releases bh */
->>  	if (err)
->>  		goto out;
->> -	drop_nlink(dir);
->> +	if (dir->i_nlink >= 3)
->> +		drop_nlink(dir);
->> +	else {
->> +		fat_fs_error(sb, "parent dir link count too low (%u)",
->> +			dir->i_nlink);
->> +	}
->>  
->>  	clear_nlink(inode);
->>  	fat_truncate_time(inode, NULL, S_CTIME);
->> diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
->> index 5dbc4cbb8fce..47ff083cfc7e 100644
->> --- a/fs/fat/namei_vfat.c
->> +++ b/fs/fat/namei_vfat.c
->> @@ -803,7 +803,12 @@ static int vfat_rmdir(struct inode *dir, struct dentry *dentry)
->>  	err = fat_remove_entries(dir, &sinfo);	/* and releases bh */
->>  	if (err)
->>  		goto out;
->> -	drop_nlink(dir);
->> +	if (dir->i_nlink >= 3)
->> +		drop_nlink(dir);
->> +	else {
->> +		fat_fs_error(sb, "parent dir link count too low (%u)",
->> +			dir->i_nlink);
->> +	}
->>  
->>  	clear_nlink(inode);
->>  	fat_truncate_time(inode, NULL, S_ATIME|S_MTIME);
+Thanks,
+John
 
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
