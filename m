@@ -1,150 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-73221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1719D1292D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 13:38:43 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E64D1294E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 13:44:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id A71763004C85
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 12:38:38 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 593343076751
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 12:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C823357A22;
-	Mon, 12 Jan 2026 12:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045A1357A20;
+	Mon, 12 Jan 2026 12:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TDq65CEt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZCKVwpc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553CD356A0D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 12:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADFC3570D4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 12:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768221513; cv=none; b=YVl0KwmfTBX/YRkZsNEUQW2g55YRmnGUcyHu1r8cuNU2AAE1g3CtMfFQOu/QFxGBz1epNuHSdUN1QS5Zvue6jBc74aaq7T6fujvh1mkCTBvX8O73jlUAd5NsnUkERRmUj920RFWMkNnnrnP8B1flGdYDtePjeO2yZK6ZFW9Ovcc=
+	t=1768221853; cv=none; b=PBsIJCvsLi08pqNjMU0h1sAXIuxFMbLUJepND1+io+kI37ZjPI+DaPacRjN/BU7wUFEyxUunYLV86ZvcYKBcgXail7D4q39I9tMfA+Frg1DRIrGwMBDfXIgioLLlid/5yXqZFtPRypRxEUtDfqN3jBLVfQQj0Z9YECYwEe5V85w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768221513; c=relaxed/simple;
-	bh=6nA956yGa0BghtyYESxhz9Ih4PxRdINWeXXn0MESRlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J/u9W8aC5TyjK9dcm1nYHALFVSgSMlqzaDw9nMIuVNztBAZxA1Xaje8JoZgBJpLi7X7kJaY9nLFugyx4FeHFzzj12+nEjiK+8eTE07UgZsRemOyOvvd4e6FGtcnnjJgSkstVYzHn3e7F3kM5mRGAZN3O0j5SxU9UjEMrCdmkZi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TDq65CEt; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47774d3536dso44941165e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 04:38:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1768221511; x=1768826311; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MJPyM+iSl9+gUHGXGEFui1PKAGNb9Q5bbO0rp//iqF8=;
-        b=TDq65CEt5sY1wwpVGBXlTYKQ1wly9GPG33SkGbiZU/1FSSkrzGNPa8t0ENJA0d8/ND
-         we1nGniLMad0YWg62cBnPWImHNV/6GZjIYwhSkV7uBBzVuE89MnhLXZ6qxVfOEv3ugy6
-         bOT4vy9AbwOakHaGbc2TOOnVCPOkqEvAZ6UZLzKYOtC+ccpPRzssvkXpdOfKIDD+YNNy
-         pVF2yu/a2Q9+eEhTB21orOB9kDKZdGwzAAzijvabkUg8og2Mw7PPosBZ+2noHYVAf8HQ
-         fl4zi0ymU8AOCMpU06Ba15xr481n17E8CONcHLCXcX58ellm/cbHP3hSYB8BLzLBG+1t
-         CmhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768221511; x=1768826311;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MJPyM+iSl9+gUHGXGEFui1PKAGNb9Q5bbO0rp//iqF8=;
-        b=wNf2ECwLLZFE3oCMNhMMYFGXKBLPSeCbuOW2LyAKrvkcODLMR+rumzPjcvFAv+zGzc
-         0M/60NJK6E/y0E0I+09+mgKhE03E6qobCdFyashgYGRN10KGCD5iWZxC7smpsZ9YcbzZ
-         voOwlb/b2zRNjLwBzredoyTDfYMeo1+ZM/8TDH2o+6xbpSI/vHDjsoFdexy8zo4oVhue
-         HveCH5wZKmBGNV6bBpCPT1aRauBhpKquYsRTVALPu9B5Z3f3YSQAiIO43gARsGbewwGZ
-         fd3GFk8gY0GBgcXqtCHJEzaS89g5S7Dx8bT8ObvIwF4FFQIewSjV2cqbpeyMnyaCvtcq
-         larg==
-X-Forwarded-Encrypted: i=1; AJvYcCXyobybVvuUTOR307P21kuhxa48ZzSvfS+HXneqCI727S0psU46+9Z5sS7z4yyednOTAlarFVdhOY33kykK@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNvIzN79v8hLBNpKeJwGlFE/Rfl/egmggbCUc75+N2iQUAlhA+
-	lh8ElwjHgAhPCvgJSLlJ1aRsaryxxhI+16AiHkLJebw1Q1n5CxNV6NPlbNaFOiUD0RM=
-X-Gm-Gg: AY/fxX5edQUoHv6wPGJ6zUkDjmJ14C+x7qc/q5DO6GBsDWnLUbVFYE/Su9aJU9I2vzi
-	v/JeVZpU2jAsmVLOPXNdI2zcAift7fZyJkV/9eXkA5P7sFh3LlBYJiWggSRLL/dEtDc/+/lA2jj
-	PFhpOcu2kpAG19GHRkLqbKP35jOFlVPehXy9IZYqjjJE0yxzjRZkca4ek0F0D6srwVvfZVm4hTV
-	In9ZhejKOTXF+jCC2Glbce6ZOfqbtHDSf8wqfmn/8uqXZtd4CijhXQcXdGKXPpKa+05QX5G1Z4S
-	9OBpPw6EA9xGVz4VOI6QQ4Jn8WNEE+TPtcYH2FcFsnDniOb43r7oXAY8GEWIPp0pF6/lmObnBsm
-	mG4vpKArNz/RuZwQpjQD49BuIWoTUCP+0dnUFPas9/K7ZKJh1dX3A/xc67dtjtb0ofz7H9ccIie
-	82+pv0Ge5DcPXMRBBgkrQM5v6TVYbOMdw=
-X-Google-Smtp-Source: AGHT+IEBX9O7r4RZ13L+NusGM/ZK0yEzZLDAA/V+uZ60+JG+kl3g0xr47hSKM+50E8bFxfdYpRdsWw==
-X-Received: by 2002:a05:600c:681b:b0:477:a219:cdc3 with SMTP id 5b1f17b1804b1-47d8486d5e6mr184013565e9.12.1768221510694;
-        Mon, 12 Jan 2026 04:38:30 -0800 (PST)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5df9afsm40784010f8f.24.2026.01.12.04.38.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jan 2026 04:38:30 -0800 (PST)
-Date: Mon, 12 Jan 2026 13:38:28 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Andrei Vagin <avagin@google.com>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, criu@lists.linux.dev, 
-	Andrew Morton <akpm@linux-foundation.org>, Chen Ridong <chenridong@huawei.com>, 
-	Christian Brauner <brauner@kernel.org>, David Hildenbrand <david@kernel.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Mark Brown <broonie@kernel.org>, Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 1/3] binfmt_elf_fdpic: fix AUXV size calculation for
- ELF_HWCAP3 and ELF_HWCAP4
-Message-ID: <zt6p77wtnc2rrw3hko3ppl2sruy64fhrz2mhgyahvpjuzitpga@tpjsfhxmwrep>
-References: <20260108050748.520792-1-avagin@google.com>
- <20260108050748.520792-2-avagin@google.com>
+	s=arc-20240116; t=1768221853; c=relaxed/simple;
+	bh=H4qWGA0HiEkGsIhZuto2PZy2IA3OGIgKnCWv31xS09o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pO1gRxU5S9lhBcRhobD0VSqn6wmg+B6F0Qh0JYhsmFh6r9qnDsUWVzNFvI1u7Ox+IEsd68MNNGKQjlPtzKuJ1KMKgncggdFLRjTjtqctlw3A4+rlLgwImNZcQBdNMHvSEEWdOkNiY0TsA9JiuLyqeNKyLFqKNl/tZ7nqC/w2WLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZCKVwpc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFFA5C16AAE;
+	Mon, 12 Jan 2026 12:44:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768221853;
+	bh=H4qWGA0HiEkGsIhZuto2PZy2IA3OGIgKnCWv31xS09o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lZCKVwpcT8MK/DzAJ3tL5Ov8KM8tCnvzggFO9Moc+YLj9jWbR/IMI11C3GGWE2sqm
+	 4aNi/TYyW/1OsnobB3++kYYk8l5VkucRgWbILE6QZPe6jZ12WLee3eIYKN6cN9198e
+	 f43C11IjiH8+jd7TnAp9WXMaR+Ay6TxGH/Bqz+LN51qxf9YHPO3Xb1CrLHn6XbrNgS
+	 IYtePrBWtKXoyE/8DT7EUgfZMS6NdN1TcFnaTLuANsSkx1UVFb+AOug56X1OXpWaz3
+	 +cL21r4ZrDTw+Lw7VM/IqyKdIoQKEqRXM0sUrUWSHpETrMsVuvRL6MlsLOC22H5zs6
+	 XEbkFP2SplPRA==
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: move initializing f_mode before file_ref_init()
+Date: Mon, 12 Jan 2026 13:44:08 +0100
+Message-ID: <20260112-essverhalten-grabkammer-c5344306ca09@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260109211536.3565697-1-amir73il@gmail.com>
+References: <20260109211536.3565697-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="s2pgxkol6rb2nun4"
-Content-Disposition: inline
-In-Reply-To: <20260108050748.520792-2-avagin@google.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1087; i=brauner@kernel.org; h=from:subject:message-id; bh=H4qWGA0HiEkGsIhZuto2PZy2IA3OGIgKnCWv31xS09o=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmvJm5ZLZWaORxY/vZd1fsSzuy98S6GsbSEK+P2Xu2C 75x290u3lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR2CRGhothTyY9ff5aa+rF qvvOsxVrll88u9zHZGP5JofpS4+zBlQz/M9nKBBNsT+x26xzQgR3yZIl/ac/iMZL3WF/K/Sihl2 anQ0A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+On Fri, 09 Jan 2026 22:15:36 +0100, Amir Goldstein wrote:
+> The comment above file_ref_init() says:
+> "We're SLAB_TYPESAFE_BY_RCU so initialize f_ref last."
+> but file_set_fsnotify_mode() was added after file_ref_init().
+> 
+> Move it right after setting f_mode, where it makes more sense.
+> 
+> 
+> [...]
 
---s2pgxkol6rb2nun4
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/3] binfmt_elf_fdpic: fix AUXV size calculation for
- ELF_HWCAP3 and ELF_HWCAP4
-MIME-Version: 1.0
+Applied to the vfs-7.0.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-7.0.misc branch should appear in linux-next soon.
 
-On Thu, Jan 08, 2026 at 05:07:46AM +0000, Andrei Vagin <avagin@google.com> =
-wrote:
-> Commit 4e6e8c2b757f ("binfmt_elf: Wire up AT_HWCAP3 at AT_HWCAP4") added
-> support for AT_HWCAP3 and AT_HWCAP4, but it missed updating the AUX
-> vector size calculation in create_elf_fdpic_tables() and
-> AT_VECTOR_SIZE_BASE in include/linux/auxvec.h.
->=20
-> Similar to the fix for ELF_HWCAP2 in commit c6a09e342f8e
-> ("binfmt_elf_fdpic: fix AUXV size calculation when ELF_HWCAP2 is defined"=
-),
-> this omission leads to a mismatch between the reserved space and the
-> actual number of AUX entries, eventually triggering a kernel BUG_ON(csp !=
-=3D sp).
->=20
-> Fix this by incrementing nitems when ELF_HWCAP3 or ELF_HWCAP4 are defined
-> and updating AT_VECTOR_SIZE_BASE.
->=20
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Max Filippov <jcmvbkbc@gmail.com>
-> Fixes: 4e6e8c2b757f ("binfmt_elf: Wire up AT_HWCAP3 at AT_HWCAP4")
-> Signed-off-by: Andrei Vagin <avagin@google.com>
-> ---
->  fs/binfmt_elf_fdpic.c  | 6 ++++++
->  include/linux/auxvec.h | 2 +-
->  2 files changed, 7 insertions(+), 1 deletion(-)
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Good catch.
-Reviewed-by: Michal Koutn=FD <mkoutny@suse.com>
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
---s2pgxkol6rb2nun4
-Content-Type: application/pgp-signature; name="signature.asc"
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
------BEGIN PGP SIGNATURE-----
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-7.0.misc
 
-iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaWTrPhsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AgZTQD/fZEPNQXq4wayVRf5UJeP
-yCKrUVfm0ZVJbogI5yyUiKsBAPYaPoop6oDIbDmy08Fmb8Y8MICFtI5C8agrNBfO
-CYYM
-=f8Iv
------END PGP SIGNATURE-----
-
---s2pgxkol6rb2nun4--
+[1/1] fs: move initializing f_mode before file_ref_init()
+      https://git.kernel.org/vfs/vfs/c/cb3e4998cb16
 
