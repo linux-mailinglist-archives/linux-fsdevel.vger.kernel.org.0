@@ -1,97 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-73207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44621D11A7A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 10:58:21 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id B405AD11AD5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 11:01:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id BE63530024F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 09:58:20 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id CFFCD3054808
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 10:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42AC277CBF;
-	Mon, 12 Jan 2026 09:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A7928B4FE;
+	Mon, 12 Jan 2026 10:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBhmQSNm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bDO/f+uj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A37E26A088;
-	Mon, 12 Jan 2026 09:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBF7281531;
+	Mon, 12 Jan 2026 10:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768211899; cv=none; b=NS3NGfi5PQzLQ5G8O+Y/u/iZSd0472mTiKmJ4JYaChhfAyu4DRPZF4+VdlF0/ss8mMCha7cqUz33g9zwqso3VPH6x3nb9mn9ycrPbGkGTNPlXMpb4ptP7Tgty7jtb+cAzi/hxie63Me096mENWKgDlXfWwRSP5GLBezMMz9Bxkk=
+	t=1768212015; cv=none; b=SjQu0CYa0fkhND3nlYv9yAH1imKuTDJsIRp5FwpVPcdvVqrIQrIu+CnKeR6C/v67jIBPwqrZ1b/xgSLI0h4KvPNJKLp6TF2JYqDckzDGXgZQhUCYFbO3Pn5FrGNX9mwsQGscyt9zu1D/rnFpFFP2VMazUM0VeY8iNPwgNaRuB6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768211899; c=relaxed/simple;
-	bh=5n5GuH+MxuRBT0mkOvhFt3RZ1H+0aOuOjjNMlHl7qsM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ABwGfLUgtwuHirE/egiB04dhGvmPvAUq479xpj4XJKlRXnFbpFEhNGbLxaCF1ZF0V7dU+p23bntMULElxg/6q1FlKzPlRmrGu/qDnQ/lGVKGskDDy0GfvW+F8ngceM41867jcpYdfRkP0+DX10MvKO7tRtPBk+nMCy1mDQyrA90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBhmQSNm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 348B7C116D0;
-	Mon, 12 Jan 2026 09:58:16 +0000 (UTC)
+	s=arc-20240116; t=1768212015; c=relaxed/simple;
+	bh=k6Qq4YmJVqbqE4gAtcaB7VytqgVUJn3lvub+moTNfJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HtHvEar0Y+aNV2Nwl/RpUHaQEUu7PaVhs2iCiL3LsBZZvTjDVDlBKiMovqTLxxeP8GUIJ3mkXZ9nR2QQ74/EtlIO8SnQyUV6BT9UArrX43uNmvLXf1qKcAl1k4SCkcEjW7g5c7U2XMbeVy5SAuxctRE30WFdjNvgRA55ds543sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bDO/f+uj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E467FC19421;
+	Mon, 12 Jan 2026 10:00:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768211898;
-	bh=5n5GuH+MxuRBT0mkOvhFt3RZ1H+0aOuOjjNMlHl7qsM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rBhmQSNmSLxXOx1kJRNHlokjr18yZOLstHJeVk4n2bnIoJI2AHL7NPJqjhYHy4BP+
-	 fERQ2rP8lrvXGcyMHJtInAxK4pkBkf2QQ3/9Pg+8t9NAkzex4LFseG4V1XzsvD+i+i
-	 Gu2toBNAWz9ept9Ejj/PL3ZfhxG4MxmmL9mFvgdrQF+QGdaF5V8/HFnr1nSlaLsDGF
-	 tK7do25Qh/oPoS/AZEqpoi/HJm+2NJ0wdXiP/G51UKCBywTSsao9bHBXIt0X4uOsKe
-	 CE+Safh9aHVAO9qck5T1PGqjpXOqN2wFQmiDtvfvgrkOSgGAyVQ6Dvr1gyKc86SHhJ
-	 bHX4JqakrPpdg==
+	s=k20201202; t=1768212015;
+	bh=k6Qq4YmJVqbqE4gAtcaB7VytqgVUJn3lvub+moTNfJw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bDO/f+ujXdt4gCQdEo3X0tWsgc84Jp+eGkgzg3ZB/Eegp57dACkvbzw/eoX/Pfur/
+	 jPrVJ1sKnvaF4yIX8qRNSfOyQFHVYWiLqgiBaUcUSg9ErLygxBO6wUEaLEI0hzse9l
+	 nmLsIfFOTtn96E482IhJphXUb4bOKHe0ciRItETkYp+ZZt6dmq4m0zJ+TnNvyCV7P0
+	 HKtbps1Q3sOlZODongujk4Y4CdYoPPsf9pLzYAq7Tf9gIi+zr9vz9vbA2okp51A4LB
+	 9m0ufhQnUayvGYBl09z7vBq/qfPUiCceTwf4cqcoIzGhnIMDBiBWB46jMeWTQZkNm7
+	 kR+1Srbqttqlg==
+Date: Mon, 12 Jan 2026 11:00:10 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	Chunsheng Luo <luochunsheng@ustc.edu>
-Subject: Re: [PATCH v2] readdir: require opt-in for d_type flags
-Date: Mon, 12 Jan 2026 10:58:13 +0100
-Message-ID: <20260112-antworten-moment-fd4b39fc7a20@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260108074522.3400998-1-amir73il@gmail.com>
-References: <20260108074522.3400998-1-amir73il@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org, 
+	jack@suse.cz, mjguzik@gmail.com, paul@paul-moore.com, axboe@kernel.dk, 
+	audit@vger.kernel.org, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/8] experimental struct filename followups
+Message-ID: <20260112-manifest-benimm-be85417d4f06@brauner>
+References: <20260108074201.435280-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1343; i=brauner@kernel.org; h=from:subject:message-id; bh=5n5GuH+MxuRBT0mkOvhFt3RZ1H+0aOuOjjNMlHl7qsM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmHN2mse7D82t3HA9KFkecZTgivKquv0SpeW6K2ewJl nfWGz7Y21HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRLV8Z/kq+2WcmL1iR+eLi tUORSyyzlM98Xt2f8YalXKplxpXnlrEMf+V55kkG/VwSP1tw+cFJ9/aIFQrp1a3cEu1/9N/UjMu b5NkA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260108074201.435280-1-viro@zeniv.linux.org.uk>
 
-On Thu, 08 Jan 2026 08:45:22 +0100, Amir Goldstein wrote:
-> Commit c31f91c6af96 ("fuse: don't allow signals to interrupt getdents
-> copying") introduced the use of high bits in d_type as flags. However,
-> overlayfs was not adapted to handle this change.
+On Thu, Jan 08, 2026 at 07:41:53AM +0000, Al Viro wrote:
+> This series switches the filename-consuming primitives to variants
+> that leave dropping the reference(s) to caller.  These days it's
+> fairly painless, and results look simpler wrt lifetime rules:
+> 	* with 3 exceptions, all instances have constructors and destructors
+> happen in the same scope (via CLASS(filename...), at that)
+> 	* CLASS(filename_consume) has no users left, could be dropped.
+> 	* exceptions are:
+> 		* audit dropping the references it stashed in audit_names
+> 		* fsconfig(2) creating and dropping references in two subcommands
+> 		* fs_lookup_param() playing silly buggers.
+> 	  That's it.
+> If we go that way, this will certainly get reordered back into the main series
+> and have several commits in there ripped apart and folded into these ones.
+> E.g. no sense to convert do_renameat2() et.al. to filename_consume, only to
+> have that followed by the first 6 commits here, etc.
 > 
-> In ovl_cache_entry_new(), the code checks if d_type == DT_CHR to
-> determine if an entry might be a whiteout. When fuse is used as the
-> lower layer and sets high bits in d_type, this comparison fails,
-> causing whiteout files to not be recognized properly and resulting in
-> incorrect overlayfs behavior.
-> 
-> [...]
+> For now I've put those into #experimental.filename, on top of #work.filename.
+> Comments would be very welcome...
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] readdir: require opt-in for d_type flags
-      https://git.kernel.org/vfs/vfs/c/c644bce62b9c
+Yeah, that looks nice. I like this a lot more than having calleee
+consume it.
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
