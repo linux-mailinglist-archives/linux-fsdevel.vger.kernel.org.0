@@ -1,217 +1,377 @@
-Return-Path: <linux-fsdevel+bounces-73312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9EE6D1557F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 21:59:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57DA6D1564F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 22:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7DB3A3037CD1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 20:59:17 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0A9353029E90
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 21:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91024358D21;
-	Mon, 12 Jan 2026 20:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1257D318B9B;
+	Mon, 12 Jan 2026 21:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="VpM+IqTK"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rIJaUqIg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB922147E6
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 20:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B908F31691A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 21:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768251556; cv=none; b=qkAtWAG80f8SZ5Pt3qpdJMl/DDzIIhAfWjgrxqM0R8Z2Z/zUgkWQD0qSWnIrV2lAMHpE9/Fji8O1JhqgNg8bro6v8iWQO0Sr/RcJInVgn5nDo77re6PMSWalzeCMnK6uF914fZBLnCk7SJQKvlwJZJzXY3Zfl43ly5+fNVrS+vM=
+	t=1768252435; cv=none; b=UcozL96mYPwBIeU+Q8XJbwy9E23GAygpXkxkbKPKGvksRyODcpgSeV5WotPNvhHeeKs0Q/JPZ9/69MmNrk15FtcZRYEDsPgmPZ8gD0hlnTbOeBsAlxgocbokpQ9ZYRfhCAAC5YIgXSZVBhyNr/0rrxvUEbbwbKvdegSkSyvoGHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768251556; c=relaxed/simple;
-	bh=xKYRLKpuM+sQImj23PBCnkebqVm/eqDdchxej7U9Apw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oia+wLavDmmH9+OQqB6tgCCM57wHCuQiH3lodtrtV+ygDSQ+Wt2Dc6nSIFA/5TMuc7/tX3CP+XL/l7BeZYava5gq7SmrzBOcMIGnnMcsdM7qLCMlgCk/qBJOdjT2l1/eUk1eN//faUU0JT8TObfFW974bS9Y7hC6SHTa1HEiLlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=VpM+IqTK; arc=none smtp.client-ip=74.125.224.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-6455a60c12bso6521247d50.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 12:59:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1768251552; x=1768856352; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dvo6+EsDKRRfc3HTMCn0lfwSOccr6CCC/pevgcIHrpQ=;
-        b=VpM+IqTKMl7hGiKphf26TwaoqpRXCtvwNfZaZOcFRFgA5LVXiLxaPgNsHiM42Zq8Yn
-         ApiCjKmF6MJAv20k99Fuj72rxJJl96I3sMsXoTgIFekMZzxkoOB06WFWV8k05bNQDlww
-         W/lvsLoTXskPBRd/CuHQv/vTAIIiTAm2DOyjZxi5M/7Ux1Wmu72gKUwADE8wJrXVsFr/
-         EMQKqH9EX+oOl0xaE5AooYPFgyRkne/yJfIEhwww165C2DDkGOVu4g3r1yZuMRW+tkhi
-         hFcu4Wj78HcHXQJk06QYHJetXnXJ5EVmDa2N8R4KD90msqivGmSY/11zJSfLqkJy+yVL
-         7mpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768251552; x=1768856352;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dvo6+EsDKRRfc3HTMCn0lfwSOccr6CCC/pevgcIHrpQ=;
-        b=PQG1W0kosekBp9jg+zsu1fgnGULtI9+5LU40RzFQxWkB0MYKcZzxlSnmjvEbayhHGa
-         teMa6/Zk9TTQrUMMWZVrUwDRD7md869VsGS9dv2mpTnMvClOGO2Rd8FVrvqb7hgQFCux
-         6cTD9yh6fgPKRiGnzSAspnn7pJzOFTeoaHrPJGZcnjuWtC3xHElJ2L0+kQ5mnPN3j9ji
-         JqgzH95t1sj+RJove0PI/iIQSUSp9lYo5L2bOLFGl7bf9rBDMPE5pyS6tu/a76b68fDf
-         7njQL3l72sAD5pjkcG4zsTgWTf2VNqtYQ5cOVc1F++1ILvedaUXu7sGLA/M+VE9nu0sw
-         he6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUyKgEjA+SJi9phAXKVwqRJuK9oIuAoxba5q8/4tP9DBiGx+t1EHG7jeYQjAjbYCQCN9K79diwrAEptoa37@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUSGoEwOkfiaDH9mBQJmcfd0hWQmkwEb7zQ+M4Hy2Ypwfxyd/t
-	++rKTpZoL3uepQwoXMkyRRDZbDjwyzC9/qDLIIkJ2FWKbnE62PnQa2y6xwEW4Fh07wU=
-X-Gm-Gg: AY/fxX6NcYj1JlTNtLmfJsKS5G6X2vkxytntNhjPuOO9LvL+FD8F6BWgdl9SVjiUN2V
-	KzSQdDVOs3q8Vxx/dJH6hexRms69K3AB1novSkytIG2wJahLfmkBb6NjbalAZ1P9799aXtNDZt5
-	0JbDRuOEXfmDle27aNzggODKv59UlhZAnn+Jvt6rAvPEmEC9XG3kRp2jTkSaw1BLYhlNK9afyg3
-	U91Be+rJaLYFd/YPCi4ETvPR+EKpHKhoOu3h+9b/Ib3xcVH1xoMn+51tGjX7AIrJ5KIKb8l8aN5
-	Z+3na3OZj8LlUG5iOhAgg7LIEU1Z5h0tNXKpa9xAb3iF2sL1ci+eN2r+KT5ZyIQnNPpfosrbWxd
-	iD++1csOqlHP5OUllYvv8oC2DgyqkxwoWUEngeLWezH/hZszll+94t70dum9unX5DpGFxwHSvzN
-	HzvZhnJZCzj+0oMnLIrv79icDLHAajQsSGNIlQLuD9TrU/0eAcFDIVn7Ay8BfMAELlfHhJFC8zJ
-	1DxfITmZhlJAv047r0=
-X-Google-Smtp-Source: AGHT+IENxy+5x2i2xgYMrz0SKExm/H8Y6u2iabD+v8jPA4ysG46WOfa8D8B0YhZSz4/3C2jKDn1FJQ==
-X-Received: by 2002:a05:690e:400a:b0:646:e68a:c886 with SMTP id 956f58d0204a3-64716b34ac7mr16215312d50.19.1768251551980;
-        Mon, 12 Jan 2026 12:59:11 -0800 (PST)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:5da1:5daf:bcea:9f2c])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6470d7f7c04sm8475793d50.2.2026.01.12.12.59.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jan 2026 12:59:11 -0800 (PST)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: util-linux@vger.kernel.org,
-	kzak@redhat.com
-Cc: ceph-devel@vger.kernel.org,
-	idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com,
-	vdubeyko@redhat.com,
-	Pavan.Rallabhandi@ibm.com
-Subject: [PATCH] mount: (manpage) add CephFS kernel client mount options
-Date: Mon, 12 Jan 2026 12:58:38 -0800
-Message-ID: <20260112205837.975869-2-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1768252435; c=relaxed/simple;
+	bh=ggG5otyr6hrHjCUwnIZsxSdaH42ASz9soK9i2TalIrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JlIAwYIfSRp69NATHsyXENgbau4QVlQ+HOdTiK7LZ2ouRgeIcH6q2p4MTvPGYJunrvTdNakdO/WBGDh6owXhhjU43lNaoxYZ3/ViitvRqn3vwxm/JSEv+UdieDMt15OfbMfKaIrY6gMbFJ4iLZhTR2FHdMQeVCeXOpnKFyFoDqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rIJaUqIg; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 12 Jan 2026 21:13:26 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1768252421;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sxPTgY1hS6x3WN8fauxCi7vpyRV4r7loXaP/CZeSb+8=;
+	b=rIJaUqIgDAVioiRw4U9QgiumQcnjPGjKJ9/mbByHkJAw9oZ943bySHt7+JysGEPB1McR7d
+	tYyBINte+eUsXxuu7yaBc+L1H2NtxuZujoTwUKMbSudAAQTfhunwyqGYidXNFtJ+dgKtBM
+	eV+5UBDmFHCd59rZOGjVHyLYwZj/9LQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Gregory Price <gourry@gourry.net>
+Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	kernel-team@meta.com, longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, 
+	mkoutny@suse.com, corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	dakr@kernel.org, dave@stgolabs.net, jonathan.cameron@huawei.com, 
+	dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com, 
+	ira.weiny@intel.com, dan.j.williams@intel.com, akpm@linux-foundation.org, 
+	vbabka@suse.cz, surenb@google.com, mhocko@suse.com, jackmanb@google.com, 
+	ziy@nvidia.com, david@kernel.org, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, rppt@kernel.org, axelrasmussen@google.com, yuanchu@google.com, 
+	weixugc@google.com, yury.norov@gmail.com, linux@rasmusvillemoes.dk, 
+	rientjes@google.com, shakeel.butt@linux.dev, chrisl@kernel.org, kasong@tencent.com, 
+	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com, baohua@kernel.org, 
+	chengming.zhou@linux.dev, roman.gushchin@linux.dev, muchun.song@linux.dev, 
+	osalvador@suse.de, matthew.brost@intel.com, joshua.hahnjy@gmail.com, 
+	rakie.kim@sk.com, byungchul@sk.com, ying.huang@linux.alibaba.com, 
+	apopple@nvidia.com, cl@gentwo.org, harry.yoo@oracle.com, zhengqi.arch@bytedance.com
+Subject: Re: [RFC PATCH v3 7/8] mm/zswap: compressed ram direct integration
+Message-ID: <4ftthovin57fi4blr2mardw4elwfsiv6vrkhrjqjsfvvuuugjj@uivjc5uzj5ys>
+References: <20260108203755.1163107-1-gourry@gourry.net>
+ <20260108203755.1163107-8-gourry@gourry.net>
+ <i6o5k4xumd5i3ehl6ifk3554sowd2qe7yul7vhaqlh2zo6y7is@z2ky4m432wd6>
+ <aWF1uDdP75gOCGLm@gourry-fedora-PF4VCD3F>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aWF1uDdP75gOCGLm@gourry-fedora-PF4VCD3F>
+X-Migadu-Flow: FLOW_OUT
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+On Fri, Jan 09, 2026 at 04:40:08PM -0500, Gregory Price wrote:
+> On Fri, Jan 09, 2026 at 04:00:00PM +0000, Yosry Ahmed wrote:
+> > On Thu, Jan 08, 2026 at 03:37:54PM -0500, Gregory Price wrote:
+> > 
+> > If the memory is byte-addressable, using it as a second tier makes it
+> > directly accessible without page faults, so the access latency is much
+> > better than a swapped out page in zswap.
+> > 
+> > Are there some HW limitations that allow a node to be used as a backend
+> > for zswap but not a second tier?
+> >
+> 
+> Coming back around - presumably any compressed node capable of hosting a
+> proper tier would be compatible with zswap, but you might have hardware
+> which is sufficiently slow(er than dram, faster than storage) that using
+> it as a proper tier may be less efficient than incurring faults.
+> 
+> The standard I've been using is 500ns+ cacheline fetches, but this is
+> somewhat arbitrary.  Even 500ns might be better than accessing multi-us
+> storage, but then when you add compression you might hit 600ns-1us.
+> 
+> This is besides the point, and apologies for the wall of text below,
+> feel free to skip this next section - writing out what hardware-specific
+> details I can share for the sake of completeness.
 
-Currently, manpage for generic mount tool doesn't contain
-explanation of CephFS kernel client mount options. This patch
-adds the description of CephFS mount options into
-file system specific mount options section.
+The wall of text is very helpful :)
 
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
----
- sys-utils/mount.8.adoc | 86 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+> 
+> 
+> Some hardware details
+> =====================
+> The way every proposed piece of compressed memory hardware I have seen
+> would operate is essentially by lying about its capacity to the
+> operating system - and then providing mechanisms to determine when the
+> compression ratio becomes is dropping to dangerous levels.
+> 
+> Hardware Says : 8GB
+> Hardware Has  : 1GB
+> Node Capacity : 8GB
+> 
+> The capacity numbers are static.  Even with hotplug, they must be
+> considered static - because the runtime compression ratio can change.
+> 
+> If the device fails to achieve a 4:1 compression ratio, and real usage
+> starts to exceed real capacity - the system will fail.
+> (dropped writes, poisons, machine checks, etc).
+> 
+> We can mitigate this with strong write-controls and querying the device
+> for compression ratio data prior to actually migrating a page. 
 
-diff --git a/sys-utils/mount.8.adoc b/sys-utils/mount.8.adoc
-index 4571bd2bfd16..191a3fabf501 100644
---- a/sys-utils/mount.8.adoc
-+++ b/sys-utils/mount.8.adoc
-@@ -853,6 +853,7 @@ This section lists options that are specific to particular filesystems. Where po
- |===
- |*Filesystem(s)* |*Manual page*
- |btrfs |*btrfs*(5)
-+|cephfs |*mount.ceph*(8)
- |cifs |*mount.cifs*(8)
- |ext2, ext3, ext4 |*ext4*(5)
- |fuse |*fuse*(8)
-@@ -913,6 +914,91 @@ Give blocksize. Allowed values are 512, 1024, 2048, 4096.
- **grpquota**|**noquota**|**quota**|*usrquota*::
- These options are accepted but ignored. (However, quota utilities may react to such strings in _/etc/fstab_.)
- 
-+=== Mount options for ceph
-+
-+CephFS is a POSIX-compliant distributed filesystem provided by Ceph. For more information, see the Linux kernel documentation at _Documentation/filesystems/ceph.rst_ or the Ceph documentation at _https://docs.ceph.com/_.
-+
-+**mon_addr=**__ip_address__[**:**__port__][**/**__ip_address__[**:**__port__]]::
-+Monitor address(es) to bootstrap the connection to the Ceph cluster. Multiple monitor addresses can be specified, separated by forward slashes. If a port is not specified, the default port 6789 is used.
-+
-+**fsid=**__cluster-id__::
-+The cluster FSID (unique identifier). This can be obtained via the *ceph fsid* command.
-+
-+**ip=**__A.B.C.D__[**:**__N__]::
-+Specifies the local IP address and optionally the port that the client should bind to.
-+
-+**conf=**__path__::
-+Path to a _ceph.conf_ configuration file. This can be used for auto-discovery of monitor addresses and authentication secrets.
-+
-+**secret=**__key__::
-+The CephX secret key for authentication. This option is insecure because it exposes the secret on the command line. Use *secretfile* instead when possible.
-+
-+**secretfile=**__path__::
-+Path to a file containing the CephX secret key. This is the preferred method for providing authentication credentials.
-+
-+**fs=**__name__ or **mds_namespace=**__name__::
-+Specify a non-default Ceph filesystem to mount. The *mds_namespace* option is the older syntax.
-+
-+**mount_timeout=**__seconds__::
-+Timeout value for mount operations in seconds. Default is 60 seconds.
-+
-+**wsize=**__bytes__::
-+Maximum write size in bytes. Default is 67108864 (64 MB).
-+
-+**rsize=**__bytes__::
-+Maximum read size in bytes. Default is 67108864 (64 MB).
-+
-+**rasize=**__bytes__::
-+Maximum readahead size in bytes. Default is 8388608 (8 MB).
-+
-+**caps_max=**__number__::
-+Maximum number of capabilities (caps) to retain. When this limit is exceeded, unused caps are released. Default is 0 (no limit).
-+
-+*rbytes*::
-+When *stat*(2) is called on a directory, set the *st_size* field to 'rbytes', the summation of file sizes over all files nested beneath that directory. This is the default behavior.
-+
-+*norbytes*::
-+When *stat*(2) is called on a directory, set the *st_size* field to the number of entries in that directory instead of the recursive byte count.
-+
-+*dcache*::
-+Enable directory entry cache (dcache) for negative lookup caching and readdir operations. This is the default behavior.
-+
-+*nodcache*::
-+Disable directory entry cache usage. This disables negative lookup caching and dcache-assisted readdir operations.
-+
-+*noasyncreaddir*::
-+Disable asynchronous readdir operations that use the dcache.
-+
-+*nocrc*::
-+Disable CRC32C calculation for data writes. If set, the storage nodes must rely on TCP's error correction to detect data corruption in the data payload.
-+
-+**snapdirname=**__name__::
-+Sets the name of the hidden snapshots directory. Default is _.snap_.
-+
-+*dirstat*::
-+Enable reading of directory stats via *cat* on the directory.
-+
-+*nodirstat*::
-+Disable reading of directory stats via *cat* on the directory.
-+
-+*noquotadf*::
-+Report overall filesystem usage in statfs instead of the quota for the root directory.
-+
-+*nocopyfrom*::
-+Disable the use of RADOS copy-from operations in *copy_file_range*(2). The RADOS copy-from operation allows the copy to be performed server-side, which can be more efficient.
-+
-+**recover_session=**{**no**|*clean*}::
-+Control the auto-reconnect behavior when the client has been blocklisted. The default is *no*, which prevents reconnection. The *clean* option (available since Linux kernel 5.4) reconnects automatically when blocklisted, but discards any dirty data and invalidates all caches. This can result in data loss.
-+
-+**ms_mode=**{**legacy**|**crc**|**secure**|**prefer-crc**|*prefer-secure*}::
-+Select the connection transport protocol. *legacy* uses the v1 protocol. *crc* uses the v2 protocol without encryption. *secure* uses the v2 protocol with encryption. *prefer-crc* and *prefer-secure* indicate a preference but will fall back if the preferred mode is not available.
-+
-+*wsync*::
-+Execute namespace operations (file/directory creations, deletions, etc.) synchronously.
-+
-+*nowsync*::
-+Execute namespace operations asynchronously. This is the default behavior since Linux kernel 5.7.
-+
- === Mount options for debugfs
- 
- The debugfs filesystem is a pseudo filesystem, traditionally mounted on _/sys/kernel/debug_. As of kernel version 3.4, debugfs has the following options:
--- 
-2.52.0
+I am a little bit confused about this. Why do we only need to query the
+device before migrating the page?
 
+Are we checking if the device has enough memory for the worst case
+scenario (i.e. PAGE_SIZE)?
+
+Or are we checking if the device can compress this specific page and
+checking if it can compress it and store it? This seems like it could be
+racy and there might be some throwaway work.
+
+I guess my question is: why not just give the page to the device and get
+either: successfully compressed and stored OR failed?
+
+Another question, can the device or driver be configured such that we
+reject pages that compress poorly to avoid wasting memory and BW on the
+device for little savings?
+
+> 
+> Why Zswap to start
+> ==================
+> ZSwap is an existing, clean read and write control path control.
+>    - We fault on all accesses.
+>    - It otherwise uses system memory under the hood (kmalloc)
+> 
+> I decided to use zswap as a proving ground for the concept.  While the
+> design in this patch is simplistic (and as you suggest below, can
+> clearly be improved), it demonstrates the entire concept:
+> 
+> on demotion:
+> - allocate a page from private memory
+> - ask the driver if it's safe to use
+> - if safe -> migrate
+>   if unsafe -> fallback
+> 
+> on memory access:
+> - "promote" to a real page
+> - inform the driver the page has been released (zero or discard)
+> 
+> As you point out, the real value in byte-accessible memory is leaving
+> the memory mapped, the only difference on cram.c and zswap.c in the
+> above pattern would be:
+> 
+> on demotion:
+> - allocate a page from private memory
+> - ask the driver if it's safe to use
+> - if safe -> migrate and remap the page as RO in page tables
+>   if unsafe
+>      -> trigger reclaim on cram node
+>      -> fallback to another demotion
+> 
+> on *write* access:
+> - promote to real page
+> - clean up the compressed page
+
+This makes sense. I am assuming the main benefit of zswap.c over cram.c
+in this scenario is limiting read accesses as well.
+
+[..]
+> > So the CXL code tells zswap what nodes are usable, then zswap tries
+> > getting a page from these nodes and checking them using APIs provided by
+> > the CXL code.
+> > 
+> > Wouldn't it be a better abstraction if the nodemask lived in the CXL
+> > code and an API was exposed to zswap just to allocate a page to copy to?
+> > Or we can abstract the copy as well and provide an API that directly
+> > tries to copy the page to the compressible node.
+> >
+> > IOW move zswap_compress_direct() (probably under a different name?) and
+> > zswap_direct_nodes into CXL code since it's not really zswap logic.
+> > 
+> > Also, I am not sure if the zswap_compress_direct() call and check would
+> > introduce any latency, since almost all existing callers will pay for it
+> > without benefiting.
+> > 
+> > If we move the function into CXL code, we could probably have an inline
+> > wrapper in a header with a static key guarding it to make there is no
+> > overhead for existing users.
+> > 
+> 
+> 
+> CXL is also the wrong place to put it - cxl is just one potential
+> source of such a node.  We'd want that abstracted...
+> 
+> So this looks like a good use of memor-tiers.c - do dispatch there and
+> have it set static branches for various features on node registration.
+> 
+> struct page* mt_migrate_page_to(NODE_TYPE, src, &size);
+> -> on success return dst page and the size of the page on hardware
+>    (target_size would address your accounting notes below)
+> 
+> Then have the migrate function in mt do all the node_private callbacks.
+> 
+> So that would limit the zswap internal change to
+> 
+> if (zswap_node_check()) { /* static branch check */
+>     cpage = mt_migrate_page_to(NODE_PRIVATE_ZSWAP, src, &size);
+>     if (compressed_page) {
+>         entry->page_handle = cpage;
+>         entry->length = size;
+>         entry->direct = true;
+> 	return true;
+>     }
+> }
+> /* Fallthrough */
+
+Yeah I didn't necessarily mean CXL code, but whatever layer is
+responsible for keeping track of which nodes can be used for what.
+
+> 
+> ack. this is all great, thank you.
+> 
+> ... snip ...
+> > > entry->length = size
+> >
+> > I don't think this works. Setting entry->length = PAGE_SIZE will cause a
+> > few problems, off the top of my head:
+> > 
+> > 1. An entire page of memory will be charged to the memcg, so swapping
+> > out the page won't reduce the memcg usage, which will cause thrashing
+> > (reclaim with no progress when hitting the limit).
+> >
+> > Ideally we'd get the compressed length from HW and record it here to
+> > charge it appropriately, but I am not sure how we actually want to
+> > charge memory on a compressed node. Do we charge the compressed size as
+> > normal memory? Does it need separate charging and a separate limit?
+> > 
+> > There are design discussions to be had before we commit to something.
+> 
+> I have a feeling tracking individual page usage would be way too
+> granular / inefficient, but I will consult with some folks on whether
+> this can be quieried.  If so, we can add way to get that info.
+> 
+> node_private_page_size(page) -> returns device reported page size.
+> 
+> or work it directly into the migrate() call like above
+> 
+> --- assuming there isn't a way and we have to deal with fuzzy math ---
+> 
+> The goal should definitely be to leave the charging statistics the same
+> from the perspective of services - i.e zswap should charge a whole page,
+> because according to the OS it just used a whole page.
+> 
+> What this would mean is memcg would have to work with fuzzy data.
+> If 1GB is charged and the compression ratio is 4:1, reclaim should
+> operate (by way of callback) like it has used 256MB.
+> 
+> I think this is the best you can do without tracking individual pages.
+
+This part needs more thought. Zswap cannot charge a full page because
+then from the memcg perspective reclaim is not making any progress.
+OTOH, as you mention, from the system perspective we just consumed a
+full page, so not charging that would be inconsistent.
+
+This is not a zswap-specific thing though, even with cram.c we have to
+figure out how to charge memory on the compressed node to the memcg.
+It's perhaps not as much of a problem as with zswap because we are not
+dealing with reclaim not making progress.
+
+Maybe the memcg limits need to be "enlightened" about different tiers?
+We did have such discussions in the past outside the context of
+compressed memory, for memory tiering in general.
+
+Not sure if this is the right place to discuss this, but I see the memcg
+folks CC'd so maybe it is :)
+
+> 
+> > 
+> > 2. The page will be incorrectly counted in
+> > zswap_stored_incompressible_pages.
+> > 
+> 
+> If we can track individual page size, then we can fix that.
+> 
+> If we can't, then we'd need zswap_stored_direct_pages and to do the
+> accounting a bit differently.  Probably want direct_pages accounting
+> anyway, so i might just add that.
+
+Yeah probably the easiest way to deal with this, assuming we keep
+entry->length as PAGE_SIZE.
+
+> 
+> > Aside from that, zswap_total_pages() will be wrong now, as it gets the
+> > pool size from zsmalloc and these pages are not allocated from zsmalloc.
+> > This is used when checking the pool limits and is exposed in stats.
+> >
+> 
+> This is ignorance of zswap on my part, and yeah good point.  Will look
+> into this accounting a little more.
+
+This is similar-ish to the memcg charging problem, how do we count the
+compressed memory usage toward the global zswap limit? Do we keep this
+limit for the top-tier? If not, do we charge full size for pages in
+c.zswap or compressed size?
+
+Do we need a separate limit for c.zswap? Probably not if the whole node
+is dedicated for zswap usage.
+
+> 
+> > > +		memcpy_folio(folio, 0, zfolio, 0, PAGE_SIZE);
+> > 
+> > Why are we using memcpy_folio() here but copy_mc_highpage() on the
+> > compression path? Are they equivalent?
+> > 
+> 
+> both are in include/linux/highmem.h
+> 
+> I was avoiding page->folio conversions in the compression path because
+> I had a struct page already.
+> 
+> tl;dr: I'm still looking for the "right" way to do this.  I originally
+> had a "HACK:" tag here previously but seems I definitely dropped it
+> prematurely.
+
+Not a big deal. An RFC or HACK or whatever tag just usually helps signal
+to everyone (and more importantly, to Andrew) that this should not be
+merged as-is.
+
+> 
+> (I also think this code can be pushed into mt_ or callbacks)
+
+Agreed.
+
+> 
+> > > +	if (entry->direct) {
+> > > +		struct page *freepage = (struct page *)entry->handle;
+> > > +
+> > > +		node_private_freed(freepage);
+> > > +		__free_page(freepage);
+> > > +	} else
+> > > +		zs_free(pool->zs_pool, entry->handle);
+> > 
+> > This code is repeated in zswap_entry_free(), we should probably wrap it
+> > in a helper that frees the private page or the zsmalloc entry based on
+> > entry->direct.
+> >
+> 
+> ack.
+> 
+> Thank you again for taking a look, this has been enlightening.  Good
+> takeaways for the rest of the N_PRIVATE design.
+
+Thanks for kicking off the discussion here, an interesting problem to
+solve for sure :)
+
+> 
+> I think we can minimize zswap changes even further given this.
+> 
+> ~Gregory
 
