@@ -1,88 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-73333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73334-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3E2D15D18
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 00:34:07 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A23D15D6D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 00:41:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 29E4A302048F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 23:33:57 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 73E0E3028D7D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 23:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62E42BE632;
-	Mon, 12 Jan 2026 23:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B3529D29D;
+	Mon, 12 Jan 2026 23:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="nKYxL5EI"
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="pjMhlaYP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF24E29D277
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 23:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6966629B8E5
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 23:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768260835; cv=none; b=WsZYInyGBklCmofbFjOQon2RjiF5rvfg1Y37uJIRxtHGCAr750POfntQ2UQc6XJZBbDgxT/yTN3Onx9Zgdtp+Jyvb1PaXTiSPW7T9rhQTmvfbeAu4SzHhLQKrY2JdefU8YLHwHllsGuFfGKjEp4PnG0balKEEG530kHIJUlft7M=
+	t=1768261259; cv=none; b=gZXOQNIKHVEyuD8/ML9wvyt8vdzCLuT+dtHG9h/9Oy3PTavRJYbXdOHj5LZwIe/iLiZf4md2/h7kFBiXuQlEhvCzcAmXklO8F1oQsMIHn0YOitWrj1kCHoKEoRpxXkG4hxURKsKYLV5gAazP58H8uL+GokRAMktjyeXPS3e1EGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768260835; c=relaxed/simple;
-	bh=qpnYu3RZu0npDqni/vDmcAtbszwl3elDVt5O1kmcSag=;
+	s=arc-20240116; t=1768261259; c=relaxed/simple;
+	bh=AUWLVB42LRP3Zrefwivb6vdVAhUxvr7KXl/fEwzONGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IiYp+GX/CP/Qt2kV0l76iCaaVYu8fQzsYO7XhBeby09epNL/FmB5uWqR6yl2Kbs5VG7KU+Qx6NMiWrWWIZ15elr4o9W5S5Pbr0MknuWtjFZaLZzJGFbTJUENbS/QNfnSynABxo0RJJNfWhqvzCnfoJ+2/4NelJTbgdjBjNbdIkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=nKYxL5EI; arc=none smtp.client-ip=209.85.222.182
+	 Content-Type:Content-Disposition:In-Reply-To; b=jvwV5on7OLeVlD0JDMa6LjydA8QCSpNQoDilmH7/q3/fzFJVFKCTXSwos2cZpzZV7aRyIJZujNPL3dDUZRjd4Vt7afzZXVrdJiRdGPLgJEp4rylnbUqulq3FsbCfJ0D32sjFJvBtSUaSNsuNYSuwkXXWbIU1Hu4biqd6ilNBq5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=pjMhlaYP; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8bb6a27d390so443229785a.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 15:33:52 -0800 (PST)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-8887f43b224so109598766d6.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 15:40:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1768260832; x=1768865632; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1768261256; x=1768866056; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LVpfFj6hka/DJY/5ODmGKfI4Kx1XNOYSlSR7awzDNx4=;
-        b=nKYxL5EIxU2v+iCB19kwQQnOy+vW24/Xw/AzrtkM7mHG4L951O3bqaGLbTCqUFDoCh
-         YH1IZBV0wXrTOSAL94et7/ozyxHm2eqzKB2Srl3801JeNeZH1ymx86ZNbGa5mSZxITIS
-         vwQiuefAmVfzXF6i4RD0ieE1UQiBUE2rV4S64786DvejfgJDvhKqu+ZfkUK6iUYuOIQ/
-         af5nlTC1rXSxZrYVjpsKxr+yJKpo8Zogc7u+CdBgVHeNV1tCV7oAgFvemLFUKWXiZmGq
-         Wz6CgOX8n933hCxmuiqRQlBgSGtMjgqq+vbvUVwv1ghjpbUjJnJrxdousHrE+pbQcdJc
-         JpEw==
+        bh=CMPIlr+0naNU5kMo2DwX+nChgxcRBVo8GV+FHyiHDrM=;
+        b=pjMhlaYPyxVVaBwbmKoshuhidOVjixLdPdFvDYawO1J7Xs2m13FfOZ1I17yIuFhUJy
+         WUT2j2HgcuQu0Oj7ylWEeDQ1lino9psab+M9wXypwGuesRYHHzFs0FtBYd88OgMwNVgS
+         t5GeYt5lr3CiPDJLTt9219egn8uw1UmceGEQvJnehROkpt1zkMm1W09BdtKyU6pbyTKY
+         iuLPomhI7uNwIAalTLEw4mqS7ViG7fimbNsP12w2DNXdziX6KrNagP7luJnubuhUM8Vh
+         qRSo0n9CKY8PigVwWmMYOwY9VY/3Qygua1hb+/2OiTyxG1+kDDIHVLOJ5HN48drlEhRq
+         jnPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768260832; x=1768865632;
+        d=1e100.net; s=20230601; t=1768261256; x=1768866056;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LVpfFj6hka/DJY/5ODmGKfI4Kx1XNOYSlSR7awzDNx4=;
-        b=KpeE8BEDS8X0nOaIre2ne/8lBfjByH5qgoaX+/TYtPsGXTzaq+AaxaQsSBJ0ws/eXU
-         W03iOjQB5053P5hXXOoGT6doy5eCPyC2NfhgJvRSBypFAf4aibdF1gOrvy9uvM5IIWLL
-         ky30NRlO/anDtVDiDpV5SP0SOqtCWK56sxXfBlUrMu3gq1UMiOFvQFjGnwRePMAE6Xd7
-         PNoPRzucC52/R0Xj+ojWHloTKoiBMmpl7yS2KdKxxqIOe26wKJXjrDZloj1DXjn0gQPO
-         zVzeXDxh+cLSxqv5JzXKfzj1EpRMZJ+ijLzyz9ezFgFSyDm064PHiHxPFqY0wI/8hK+g
-         N+8g==
-X-Forwarded-Encrypted: i=1; AJvYcCULy5pXUF+zO6EYKZBuSmEcZZTHx6NfgSE5qQ+eIHFz1W8XNqV53V88v3NqWVlY++3yby9O/ByPN4PYTcU5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza+KnLZkHH1OK6IfNlj7tL75t7gIPKmxj4yllGRZAH0WJe430S
-	XPliLUTgkV+8D6EjZuUYqkDLOmm53GolmaEKa94QNcxz6MhpyGjd3mYzJglr2TeszpI=
-X-Gm-Gg: AY/fxX6zuzDE5RdVZzKVt73gvyK1KSBraE9Yg7docrgHeL4MfhMN6xN6+anN4Wv4khF
-	0KEaYhCe4icT/MbcF2aswPP3B1AYh70WaG5h0E/FUZBhN98SeQ/x5NH7XGi72rHXVq4sp04Dh4+
-	civ3Or/T5NKZOwPueWrR4894LYcfp/zbr3KFnFx/25RtiyI1SB9R2KtDAEpsVkbz/5kAwxirzSv
-	rwFZ2DKrfq/R7T4Y+qxT5zdzFnqPCCweFqYlhenRD/XB/v/uW+xskLDaYlWbvlNyQLlzctWby9n
-	PsDO/gKLRduasNUI/5bqMZ0R+W0Z/RZZqMPQgBNJiVTeZnaKw5X+C71ROei1b0cbCSAkU3LccJZ
-	/4c9KBbT8KddzInqi9sNsIGUc6+rUBBHBQ0boqag/3WTdYV/8NJl/MWTPm2LcK1MHQXA5W2lKbw
-	lIeuNeFoJeJywKa80XfGzmcGhpQovX4u4J4cAP1pzDWlkWflKCIiu/a6cjoZh6+nWPiM/Cdw==
-X-Google-Smtp-Source: AGHT+IHMBCCAecFcwqDPXZCmjtmCZLckRO4RmA0iVdHt93P2StieqUO9Nzjvt39n7Nz2NJh9b9wqbQ==
-X-Received: by 2002:a05:620a:690d:b0:8b3:83b:6e9c with SMTP id af79cd13be357-8c38940e5efmr2586340785a.90.1768260831556;
-        Mon, 12 Jan 2026 15:33:51 -0800 (PST)
+        bh=CMPIlr+0naNU5kMo2DwX+nChgxcRBVo8GV+FHyiHDrM=;
+        b=RzwXmAzaakYA60DNDcmPT6bhnBrhBpgGSR4jgY/4W4ZDniKEkWGKI6HlJlA+ecrX5y
+         0rjcpHw9FDKUeVDj0uaCev7fyBHKJ+5xI1SA01LhIIuozlejmusafa8D63vcNkRbGtco
+         t4w8Gp2wHwjl751L3nz5rn4YA7b6e+1w2bFEjsrQe1A0sideBpP79ZrZyZNMs6OuMTZu
+         23SPB2oAkG/KvSS7Xvlx0KkuxJfRske4kgDAcy4BAf23wybk9XbUe7ZzWLSk6eTEK0gT
+         Rm5S+QMKGsoLO7pZ7N8bu3re/yt7VUN2pfzhv9y04DgX3bBdREmwVO30kAahTDM/IdEW
+         sxig==
+X-Forwarded-Encrypted: i=1; AJvYcCVTrcjeWkEcul0Tg8RxAVXYAWnG+QIW97f/nE5OdbovO+ceOpFXi49YRC4EuGvKyoaATBtu9HFp+LSxlLV/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4MmtdyJyTBKqEg//CDsUya9AZ6gDzS3ZjKTXMdxdRSK3OnDAx
+	IOUh0i2enLqXi0Mdza97dd7o+F8zVyF8coLCBNmq4P/QuuCbTkVkDYziPoXYK2QCpBc=
+X-Gm-Gg: AY/fxX6yleflQG9vmXx9ZsaEl4ksfNLYetbOL2B6Oc3BZaIAhpCcl+um4m69PaZkv0m
+	yQ0rNKlKmNyFldB2eMrE/1qv1UjFkt6GHKupa/8r5MGbBt0NRU9D/MZL8q1y/7+wAz9LWtea4Xw
+	+oSvY/r9RjYW81ZtWM926xywKbddqKVWi6+6aDTzN2rajhwitsopidgf56Znhme8T3UTory9yji
+	t+TtZJmyRBAja71JBxhW0L6iFkiewIdfDYm97jg5ggnUr4Um6lDjQr+acykyF+O5kMoYHSeIIPB
+	4ZNIqVUJtid3R8EJigkwRhAGUw57aZvD9uNNvupYwYMYuGuLSgubjX8tq/Jq4BQY62jS6QIVitg
+	XgzR1VBPZXxRk5g5QGw2l1v81ewbMxxLTZ5ZCmaxjZvNsQOpyIKsHSpr9oFN78ta2hMrTykOaIg
+	dI03tXz8RFcZcQ2W3nqfq+YzdXxww/7S7LtogMhpij7yxNj0U3NX2GG0NSAiiE+YwLXioEmw==
+X-Google-Smtp-Source: AGHT+IFzyx3JnI+bFcbUp+3l5iKXvAuxuT7zO7857F9qVshwDcYCVr5Df5mi4k65Skb1cKr5CB/URA==
+X-Received: by 2002:a05:6214:5901:b0:880:4690:3bb8 with SMTP id 6a1803df08f44-8908420e7dcmr284078116d6.18.1768261256343;
+        Mon, 12 Jan 2026 15:40:56 -0800 (PST)
 Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c37f4b92a0sm1574077885a.13.2026.01.12.15.33.48
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-890770e8cfasm146393266d6.21.2026.01.12.15.40.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jan 2026 15:33:50 -0800 (PST)
-Date: Mon, 12 Jan 2026 18:33:16 -0500
+        Mon, 12 Jan 2026 15:40:54 -0800 (PST)
+Date: Mon, 12 Jan 2026 18:40:21 -0500
 From: Gregory Price <gourry@gourry.net>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
-	longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org,
-	mkoutny@suse.com, corbet@lwn.net, gregkh@linuxfoundation.org,
-	rafael@kernel.org, dakr@kernel.org, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com,
+To: Balbir Singh <balbirs@nvidia.com>
+Cc: dan.j.williams@intel.com, Yury Norov <ynorov@nvidia.com>,
+	linux-mm@kvack.org, cgroups@vger.kernel.org,
+	linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kernel-team@meta.com, longman@redhat.com, tj@kernel.org,
+	hannes@cmpxchg.org, mkoutny@suse.com, corbet@lwn.net,
+	gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com,
 	akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com,
 	mhocko@suse.com, jackmanb@google.com, ziy@nvidia.com,
 	david@kernel.org, lorenzo.stoakes@oracle.com,
@@ -91,18 +92,22 @@ Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, linux-cxl@vger.kernel.org,
 	linux@rasmusvillemoes.dk, rientjes@google.com,
 	shakeel.butt@linux.dev, chrisl@kernel.org, kasong@tencent.com,
 	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, chengming.zhou@linux.dev,
+	baohua@kernel.org, yosry.ahmed@linux.dev, chengming.zhou@linux.dev,
 	roman.gushchin@linux.dev, muchun.song@linux.dev, osalvador@suse.de,
 	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
 	byungchul@sk.com, ying.huang@linux.alibaba.com, apopple@nvidia.com,
 	cl@gentwo.org, harry.yoo@oracle.com, zhengqi.arch@bytedance.com
-Subject: Re: [RFC PATCH v3 7/8] mm/zswap: compressed ram direct integration
-Message-ID: <aWWEvAaUmpA_0ERP@gourry-fedora-PF4VCD3F>
+Subject: Re: [RFC PATCH v3 0/8] mm,numa: N_PRIVATE node isolation for
+ device-managed memory
+Message-ID: <aWWGZVsY84D7YNu1@gourry-fedora-PF4VCD3F>
 References: <20260108203755.1163107-1-gourry@gourry.net>
- <20260108203755.1163107-8-gourry@gourry.net>
- <i6o5k4xumd5i3ehl6ifk3554sowd2qe7yul7vhaqlh2zo6y7is@z2ky4m432wd6>
- <aWF1uDdP75gOCGLm@gourry-fedora-PF4VCD3F>
- <4ftthovin57fi4blr2mardw4elwfsiv6vrkhrjqjsfvvuuugjj@uivjc5uzj5ys>
+ <6604d787-1744-4acf-80c0-e428fee1677e@nvidia.com>
+ <aWUHAboKw28XepWr@gourry-fedora-PF4VCD3F>
+ <aWUs8Fx2CG07F81e@yury>
+ <696566a1e228d_2071810076@dwillia2-mobl4.notmuch>
+ <e635e534-5aa6-485a-bd5c-7a0bc69f14f2@nvidia.com>
+ <696571507b075_20718100d4@dwillia2-mobl4.notmuch>
+ <966ce77a-c055-4ab8-9c40-d02de7b67895@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -111,172 +116,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4ftthovin57fi4blr2mardw4elwfsiv6vrkhrjqjsfvvuuugjj@uivjc5uzj5ys>
+In-Reply-To: <966ce77a-c055-4ab8-9c40-d02de7b67895@nvidia.com>
 
-On Mon, Jan 12, 2026 at 09:13:26PM +0000, Yosry Ahmed wrote:
-> On Fri, Jan 09, 2026 at 04:40:08PM -0500, Gregory Price wrote:
-> > On Fri, Jan 09, 2026 at 04:00:00PM +0000, Yosry Ahmed wrote:
-> > > On Thu, Jan 08, 2026 at 03:37:54PM -0500, Gregory Price wrote:
+On Tue, Jan 13, 2026 at 09:54:32AM +1100, Balbir Singh wrote:
+> On 1/13/26 08:10, dan.j.williams@intel.com wrote:
+> > Balbir Singh wrote:
+> > [..]
+> >>> I agree with Gregory the name does not matter as much as the
+> >>> documentation explaining what the name means. I am ok if others do not
+> >>> sign onto the rationale for why not include _MEMORY, but lets capture
+> >>> something that tries to clarify that this is a unique node state that
+> >>> can have "all of the above" memory types relative to the existing
+> >>> _MEMORY states.
+> >>>
+> >>
+> >> To me, N_ is a common prefix, we do have N_HIGH_MEMORY, N_NORMAL_MEMORY.
+> >> N_PRIVATE does not tell me if it's CPU or memory related.
 > > 
-> > Hardware Says : 8GB
-> > Hardware Has  : 1GB
-> > Node Capacity : 8GB
+> > True that confusion about whether N_PRIVATE can apply to CPUs is there.
+> > How about split the difference and call this:
 > > 
-> > The capacity numbers are static.  Even with hotplug, they must be
-> > considered static - because the runtime compression ratio can change.
+> >     N_MEM_PRIVATE
 > > 
-> > If the device fails to achieve a 4:1 compression ratio, and real usage
-> > starts to exceed real capacity - the system will fail.
-> > (dropped writes, poisons, machine checks, etc).
-> > 
-> > We can mitigate this with strong write-controls and querying the device
-> > for compression ratio data prior to actually migrating a page. 
+> > To make it both distinct from _MEMORY and _HIGH_MEMORY which describe
+> > ZONE limitations and distinct from N_CPU.
 > 
-> I am a little bit confused about this. Why do we only need to query the
-> device before migrating the page?
+> I'd be open to that name, how about N_MEMORY_PRIVATE? So then N_MEMORY
+> becomes (N_MEMORY_PUBLIC by default)
 >
 
-Because there is no other interposition point at which we could.
-Everything is memory semantic - it reduces to memcpy().
+N_MEMORY_PUBLIC is forcing everyone else to change for the sake a new
+feature, better to keep it N_MEM[ORY]_PRIVATE if anything
 
-The actual question you're asking is "What happens if we write the page
-and we're out of memory?"
-
-The answer is:  The page gets poisoned and the write gets dropped.
-
-That's it.  The writer does not get notified.  The next reader of that
-memory will hit POISON and the failure process will happen (MCE or
-SIGBUS, essentially).
-
-> Are we checking if the device has enough memory for the worst case
-> scenario (i.e. PAGE_SIZE)?
-> 
-> Or are we checking if the device can compress this specific page and
-> checking if it can compress it and store it? This seems like it could be
-> racy and there might be some throwaway work.
-> 
-
-We essentially need to capture the current compression ratio and
-real-usage to determine whether there's another page available.
-
-It is definitely racey, and the best we can do is set reasonable
-real-memory-usage limits to prevent ever finding ourselves in that
-scenario.  That most likely means requiring the hardware send an
-interrupt when usage and/or ratio hit some threshhold and setting a
-"NO ALLOCATION ALLOWED" bit.
-
-But in software we can also try to query/track this as well, but we may
-not be able to query the device at allocation time (or at least that
-would be horribly non-performant).
-
-So yeah, it's racy.
-
-> I guess my question is: why not just give the page to the device and get
-> either: successfully compressed and stored OR failed?
-> 
-
-Yeah this is what I meant by this whole thing being sunk into the
-callback.  I think that's reasonable.
-
-> Another question, can the device or driver be configured such that we
-> reject pages that compress poorly to avoid wasting memory and BW on the
-> device for little savings?
-> 
-
-Memory semantics :]
-
-memcpy(dst, src) -> no indication of compression ratio
-
-> > on *write* access:
-> > - promote to real page
-> > - clean up the compressed page
-> 
-> This makes sense. I am assuming the main benefit of zswap.c over cram.c
-> in this scenario is limiting read accesses as well.
->
-
-For the first go, yeah.  A cram.c would need special page table handling
-bits that will take a while to get right.  We can make use of the
-hardware differently in the meantime.
-
-> > --- assuming there isn't a way and we have to deal with fuzzy math ---
-> > 
-> > The goal should definitely be to leave the charging statistics the same
-> > from the perspective of services - i.e zswap should charge a whole page,
-> > because according to the OS it just used a whole page.
-> > 
-> > What this would mean is memcg would have to work with fuzzy data.
-> > If 1GB is charged and the compression ratio is 4:1, reclaim should
-> > operate (by way of callback) like it has used 256MB.
-> > 
-> > I think this is the best you can do without tracking individual pages.
-> 
-> This part needs more thought. Zswap cannot charge a full page because
-> then from the memcg perspective reclaim is not making any progress.
-> OTOH, as you mention, from the system perspective we just consumed a
-> full page, so not charging that would be inconsistent.
-> 
-> This is not a zswap-specific thing though, even with cram.c we have to
-> figure out how to charge memory on the compressed node to the memcg.
-> It's perhaps not as much of a problem as with zswap because we are not
-> dealing with reclaim not making progress.
->
-> Maybe the memcg limits need to be "enlightened" about different tiers?
-> We did have such discussions in the past outside the context of
-> compressed memory, for memory tiering in general.
-> 
-> Not sure if this is the right place to discuss this, but I see the memcg
-> folks CC'd so maybe it is :)
->
-
-I will probably need some help to get the accounting right if I'm being
-honest.  I can't say I fully understanding the implications here, but
-what you describe makes sense.
-
-One of the assumptions you have in zswap is that there's some known
-REAL chunk of memory X-GB, and the compression ratio dictates that you
-get to cram more than X-GB of data in there.
-
-This device flips that on its head.  It lies to the system and says
-there's X-GB, and you can only actually use a fraction of it in the
-worst case - and in the best case you use all of it.
-
-So in that sense, zswap has "infinite upside" (if you're infinitely
-compressible), whereas this device has "limited upside" (node capacity).
-
-That changes how you account for things entirely, and that's why
-entry->length always has to be PAGE_SIZE.  Even if the device can tell
-us the real size, i'm not sure how useful that is - you still have to
-charge for an entire `struct page`.
-
-Time for a good long :think:
-
-> > 
-> > This is ignorance of zswap on my part, and yeah good point.  Will look
-> > into this accounting a little more.
-> 
-> This is similar-ish to the memcg charging problem, how do we count the
-> compressed memory usage toward the global zswap limit? Do we keep this
-> limit for the top-tier? If not, do we charge full size for pages in
-> c.zswap or compressed size?
-> 
-> Do we need a separate limit for c.zswap? Probably not if the whole node
-> is dedicated for zswap usage.
->
-
-Since we're accounting for entire `struct page` usage vs the hard cap of
-(device_capcity / PAGE_SIZE) - then this might actually be the answer.
-
-> > 
-> > Thank you again for taking a look, this has been enlightening.  Good
-> > takeaways for the rest of the N_PRIVATE design.
-> 
-> Thanks for kicking off the discussion here, an interesting problem to
-> solve for sure :)
-> 
-
-One of the more interesting ones i've had in a few years :]
-
-Cheers,
 ~Gregory
 
