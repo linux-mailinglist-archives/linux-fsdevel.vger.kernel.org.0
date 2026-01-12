@@ -1,104 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-73280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3388D14509
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 18:21:41 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E39D14668
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 18:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 12C99302249A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 17:20:43 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 17056300CA03
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 17:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1A5378D7A;
-	Mon, 12 Jan 2026 17:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE3337E31A;
+	Mon, 12 Jan 2026 17:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wtin3mX0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tMZ0cW9H";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wtin3mX0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tMZ0cW9H"
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="hSSKPtJp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E94376BF0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 17:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D618364045
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 17:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768238439; cv=none; b=IbqMLoPH14w0DSn9omoyiPxOZRsTDZEQa4xj+bdO3TEiF8lua8/oWj9ImiQHZnncbuqZu36/RA2IfqoaUdAf7dtbf+ztQmOSUTNzWIoAPx6Vtm9ymLPhEhaQm/IJ6GgIK5/pANV9t72nR1kNDeRH7WHKZV5fg2aRNMhMmDpUSZo=
+	t=1768239412; cv=none; b=dvMzV/Ei6s0FY+8VFNvopmeyzjatKzquNzaPo3H0EzLhDly7GKmj8A00Nu3NOZxOjxVvHcc05sag7LgR9U265EdiKpSz01yFnLbbNXFwx5T/hb+NV+iKqvAjHu9gS2y0I6ia4RIVY0GD58NyDx6B15DDOoNBBB6p4SWNs5WUkoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768238439; c=relaxed/simple;
-	bh=cVL+J3fxXmTBoo+x92ix2ravorUB8Av9vGkLfiFDCSs=;
+	s=arc-20240116; t=1768239412; c=relaxed/simple;
+	bh=QzyYc3RXX8zVo3g9H6ehLJVIhE0FG7hrH0ndqq+y8qg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ANFrxh4ErYZAh5qwI2XISeHMQTFKuZo1NLhWVIPWo+CpHwEk7neTWt2kD6fl5vw9vU6Pm8bkrLTB0MeGDxq5f4WsjkPN5YbNGsMZ+AXka1qCJlWCzGHHFB8r1j/QY/1PnTLMhkHgXN1K1fnc4ALzsAOxquAFZcu7EH9tEAAngeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wtin3mX0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tMZ0cW9H; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wtin3mX0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tMZ0cW9H; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4044D3368F;
-	Mon, 12 Jan 2026 17:20:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768238436; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1PoHnkFvFVa85D90IbSeAH892zq7+97wrja4nCJtn2k=;
-	b=Wtin3mX0Ev7yYdelfKhLUxmjbtFSl4hsIDm6uQ4DYV50Q+w55Em/pEngJOOOW8VKj0kxox
-	tQzY0RYwWga+TJ4cn/TGBNGosX9Hhw1cRHrK4mRrTg//BNGD7H96ngce+vljJUCg2oqu6D
-	sXAt5D814qFW8Kc+f/4rZCI6E4E4PBQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768238436;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1PoHnkFvFVa85D90IbSeAH892zq7+97wrja4nCJtn2k=;
-	b=tMZ0cW9HguNUeOf9mQzFGesnecprQvYJ3p20DA2XZO039FzTR18IwSNT4oiw+Tea9P28jY
-	UWMDmJuNHhSlzEBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768238436; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1PoHnkFvFVa85D90IbSeAH892zq7+97wrja4nCJtn2k=;
-	b=Wtin3mX0Ev7yYdelfKhLUxmjbtFSl4hsIDm6uQ4DYV50Q+w55Em/pEngJOOOW8VKj0kxox
-	tQzY0RYwWga+TJ4cn/TGBNGosX9Hhw1cRHrK4mRrTg//BNGD7H96ngce+vljJUCg2oqu6D
-	sXAt5D814qFW8Kc+f/4rZCI6E4E4PBQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768238436;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1PoHnkFvFVa85D90IbSeAH892zq7+97wrja4nCJtn2k=;
-	b=tMZ0cW9HguNUeOf9mQzFGesnecprQvYJ3p20DA2XZO039FzTR18IwSNT4oiw+Tea9P28jY
-	UWMDmJuNHhSlzEBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 302053EA63;
-	Mon, 12 Jan 2026 17:20:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AGW4C2QtZWkwEQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 12 Jan 2026 17:20:36 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D774AA09FC; Mon, 12 Jan 2026 18:20:35 +0100 (CET)
-Date: Mon, 12 Jan 2026 18:20:35 +0100
-From: Jan Kara <jack@suse.cz>
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
-	Joanne Koong <joannelkoong@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Horst Birthelmer <hbirthelmer@ddn.com>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"David Hildenbrand (Red Hat)" <david@kernel.org>
-Subject: Re: __folio_end_writeback() lockdep issue
-Message-ID: <yovlpjhao5gymqcdmg25w5tqxq4gduq3ccbrnsx4nssp4v2xs5@bflx5zxxb5l3>
-References: <9b845a47-9aee-43dd-99bc-1a82bea00442@bsbernd.com>
- <b7b72183-f9e1-4e58-b40f-45a267cc6831@bsbernd.com>
- <aWJ-pHIY8Y8sjLeC@casper.infradead.org>
- <wu7mu22kgr7pmzrneq6rkivhwvpbximyrkouciktl7wf5w7wur@rsyqyczopba2>
- <fc67afac-2345-43bf-a67e-c36f2d9f04c3@bsbernd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jJ7rXItJWz3vWJ0fK7BVS5OUAKNplsA3Sua0WWaFgqZ4gUUy0WO9FtzDhdIiIaT3qFY+92OboaAME2I26pz2q/hsBRV9hs6D7YGCGfl/abJKQgrOZ2CdmQkzOxMBDg0msmITowcKIiKYwzRf9NGI/oqjTALD1ZnwPY1MkbgBbzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=hSSKPtJp; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4f4cd02f915so49301971cf.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 09:36:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1768239410; x=1768844210; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iIrzuD3V8mK4XZdD49Fp4+4pZSOoDd5AA8lqEVpgoJQ=;
+        b=hSSKPtJpm9XKpKmlVkiF9I0Ekq5ZXgr3bjDAtmrluR0I3ebjJAnobvxmSHzbqhiGvU
+         qYWTXJnsUHCT+s44nF6TPX4gCMPtgGLF2ZlwUKnIOnQHdpYFkhEAmCdSjeaqTswY3n3a
+         RkVuDw0e/47RJTRSsNdkURc17KTDpzO9XL5SWbPGsjb0HiDv2pJs32VIes/uCq4M2awm
+         SbqLYEJ/ns/jzCoXpjcgev9zUZIDfqM9+eICIyCPDJj0RF7TiIk1cLHpZLJr/RKg7Wjq
+         Q1P5HJyLDXi6n8stxt/1HBWzdgKUNIrxAk5tBZZs2mcvhw7jnMJYzPoX7DqqKMpgrJ+j
+         ttXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768239410; x=1768844210;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iIrzuD3V8mK4XZdD49Fp4+4pZSOoDd5AA8lqEVpgoJQ=;
+        b=qeiwn/hh+7Q4kV86rJTWXZRQyp6zPFef0lt5yp4qYrglZzkdV4VI/qZwug5510NJS0
+         5bDftOBJRtgE9Roon7fRXJEZ3FrSFJpzs6S4oeG/JA+Ap4IQ8Swir0gTO0HSgqVg/NGo
+         EkMspXLNjdUyWkwAUFLGrgDX5dPssy6xZ8LRon8zf7LvH8rfXs6upSSrwqVRTz5M0SWl
+         Sk5kGbm07dwGLd4D9W+aDaUJ0VlwTRdswP5tUVMZ1dDoAAhAQeYonxXCPFHaGUbEUD95
+         fYEmaXGtWkMA5VqFzjDnQWWyQr7LDTZgu1mF3jvpCvdEoMIda/2oXaVp1tyHqhIpdEyP
+         QeEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBWJVyh+tHFQfdcZOQ81or4KMLKlivJDzC01b8hdgakhKGdpwCqp5S1KB1o4hjw7hZ3scQ/1WlMhoOIVdS@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxHSzGvc9QipCrNwOY9p1zepXsOzA37lBjsaXB8rikl7OTQpGu
+	z2f21PhbENdj1uGHD4T3Za2mZQFW3680VTCXGLiBGCL27to+A3Rt6/XCJjWCmgOZc0I=
+X-Gm-Gg: AY/fxX7ui5qxFfSEG/n/dSiJefH/SGTFVoh1haExfCh/l88g8yPDk5Z6X7Fu15l09cd
+	59652gqv2MvQtpiaEiKYt4TpxzwXZ/v9NZnLkGSOTy3iZ5r5LyWLsIX+qwibyMFYJ29wJzo8B5I
+	t3kvBL6eSjtcZQsTiHXjdfRA7wEn5/M+zKIHs7S7vX7iADxefQc9oCWteU9ktdoiOYREC1pPFFy
+	nrEsdooiGJ7Q05mj5GF68inq+SIMgiHwsTWJVYRamizTDOahbYElvfmqgDVIs3z6AaBMf/9fZFB
+	4sjENhx4wSO5aKsNfWrAdDHLO/Ly7xM1CWkdNZsJ2wp4tD7w3iIm0vpV+pB5XEe9UGJhJH5qv3e
+	O6hjSfy9mw/0Y1bg8n7qwzjD3A4Ox+m8c/poiRYtk6IuA+n1ddQg0aS4etcYWMFAOtUp1rDTxeR
+	H21L1WtOqWl6JEOUUoD5VI9P5I07fG8UOancIz4U/5ilApRjqCstu1GemIdxacyViqRPoFYg==
+X-Google-Smtp-Source: AGHT+IFIkZj0kkQefVdB6/+qxt7dAorkKD4y+wc4fxceCP23QaEoHwxiHll6IFZYaJtBeI5hcZkdtA==
+X-Received: by 2002:a05:622a:1b8c:b0:4ec:f6d5:ee46 with SMTP id d75a77b69052e-4ffb4af497fmr238029601cf.78.1768239410022;
+        Mon, 12 Jan 2026 09:36:50 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ffa8d39230sm131000681cf.6.2026.01.12.09.36.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jan 2026 09:36:49 -0800 (PST)
+Date: Mon, 12 Jan 2026 12:36:15 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Yury Norov <ynorov@nvidia.com>
+Cc: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
+	longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org,
+	mkoutny@suse.com, corbet@lwn.net, gregkh@linuxfoundation.org,
+	rafael@kernel.org, dakr@kernel.org, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dan.j.williams@intel.com,
+	akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com,
+	mhocko@suse.com, jackmanb@google.com, ziy@nvidia.com,
+	david@kernel.org, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, rppt@kernel.org, axelrasmussen@google.com,
+	yuanchu@google.com, weixugc@google.com, yury.norov@gmail.com,
+	linux@rasmusvillemoes.dk, rientjes@google.com,
+	shakeel.butt@linux.dev, chrisl@kernel.org, kasong@tencent.com,
+	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com,
+	baohua@kernel.org, yosry.ahmed@linux.dev, chengming.zhou@linux.dev,
+	roman.gushchin@linux.dev, muchun.song@linux.dev, osalvador@suse.de,
+	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
+	byungchul@sk.com, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+	cl@gentwo.org, harry.yoo@oracle.com, zhengqi.arch@bytedance.com
+Subject: Re: [RFC PATCH v3 0/8] mm,numa: N_PRIVATE node isolation for
+ device-managed memory
+Message-ID: <aWUxD6yPyCbUVjlw@gourry-fedora-PF4VCD3F>
+References: <20260108203755.1163107-1-gourry@gourry.net>
+ <6604d787-1744-4acf-80c0-e428fee1677e@nvidia.com>
+ <aWUHAboKw28XepWr@gourry-fedora-PF4VCD3F>
+ <aWUs8Fx2CG07F81e@yury>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -107,121 +112,107 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fc67afac-2345-43bf-a67e-c36f2d9f04c3@bsbernd.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,infradead.org,gmail.com,szeredi.hu,ddn.com,vger.kernel.org,linux-foundation.org,kvack.org,kernel.org];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
+In-Reply-To: <aWUs8Fx2CG07F81e@yury>
 
-On Mon 12-01-26 14:13:26, Bernd Schubert wrote:
+On Mon, Jan 12, 2026 at 12:18:40PM -0500, Yury Norov wrote:
+> On Mon, Jan 12, 2026 at 09:36:49AM -0500, Gregory Price wrote:
+> > 
+> > Dan Williams convinced me to go with N_PRIVATE, but this is really a
+> > bikeshed topic
 > 
+> No it's not. To me (OK, an almost random reader in this discussion),
+> N_PRIVATE is a pretty confusing name. It doesn't answer the question:
+> private what? N_PRIVATE_MEMORY is better in that department, isn't?
 > 
-> On 1/12/26 14:06, Jan Kara wrote:
-> > On Sat 10-01-26 16:30:28, Matthew Wilcox wrote:
-> >> On Sat, Jan 10, 2026 at 04:31:28PM +0100, Bernd Schubert wrote:
-> >>> [  872.499480]  Possible interrupt unsafe locking scenario:
-> >>> [  872.499480] 
-> >>> [  872.500326]        CPU0                    CPU1
-> >>> [  872.500906]        ----                    ----
-> >>> [  872.501464]   lock(&p->sequence);
-> >>> [  872.501923]                                local_irq_disable();
-> >>> [  872.502615]                                lock(&xa->xa_lock#4);
-> >>> [  872.503327]                                lock(&p->sequence);
-> >>> [  872.504116]   <Interrupt>
-> >>> [  872.504513]     lock(&xa->xa_lock#4);
-> >>>
-> >>>
-> >>> Which is introduced by commit 2841808f35ee for all file systems. 
-> >>> The should be rather generic - I shouldn't be the only one seeing
-> >>> it?
-> >>
-> >> Oh wow, 2841808f35ee has a very confusing commit message.  It implies
-> >> that _no_ filesystem uses BDI_CAP_WRITEBACK_ACCT, but what it really
-> >> means is that no filesystem now _clears_ BDI_CAP_WRITEBACK_ACCT, so
-> >> all filesystems do use this code path and therefore the flag can be
-> >> removed.  And that matches the code change.
-> >>
-> >> So you should be able to reproduce this problem with commit 494d2f508883
-> >> as well?
-> >>
-> >> That tells me that this is something fuse-specific.  Other filesystems
-> >> aren't seeing this.  Wonder why ...
-> >>
-> >> __wb_writeout_add() or its predecessor __wb_writeout_inc() have been in
-> >> that spot since 2015 or earlier.  
-> >>
-> >> The sequence lock itself is taken inside fprop_new_period() called from
-> >> writeout_period() which has been there since 2012, so that's not it.
-> >>
-> >> Looking at fprop_new_period() is more interesting.  Commit a91befde3503
-> >> removed an earlier call to local_irq_save().  It was then replaced with
-> >> preempt_disable() in 9458e0a78c45 but maybe removing it was just
-> >> erroneous?
-> >>
-> >> Anyway, that was 2022, so it doesn't answer "why is this only showing up
-> >> now and only for fuse?"  But maybe replacing the preempt-disable with
-> >> irq-disable in fprop_new_period() is the right solution, regardless.
-> > 
-> > So I don't have a great explanation why it is showing up only now and only
-> > for FUSE. It seems the fprop code is unsafe wrt interrupts because
-> > fprop_new_period() grabs
-> > 
-> >         write_seqcount_begin(&p->sequence);
-> > 
-> > and if IO completion interrupt on this CPU comes while p->sequence is odd,
-> > the call to
-> > 
-> > 	read_seqcount_begin(&p->sequence);
-> > 
-> > in __folio_end_writeback() -> __wb_writeout_add() -> wb_domain_writeout_add()
-> > -> __fprop_add_percpu_max() -> fprop_fraction_percpu() will loop
-> > indefinitely. *However* this isn't in fact possible because
-> > fprop_new_period() is only called from a timer code and thus in softirq
-> > context and thus IO completion softirq cannot really preempt it.
-> > 
-> > But for the same reason I don't think what lockdep complains about is
-> > really possible because xa_lock gets only used from IO completion softirq as
-> > well. Or can we really acquire it from some hard irq context? Based on
-> > lockdep report at least lockdep things IO completion runs in hardirq
-> > context but then I don't see why we're not seeing complaints like this all
-> > the time and even deadlocks I've described above. I guess I'll have to do
-> > some experimentation to refresh how these things behave these days...
+> But taking into account isolcpus, maybe N_ISOLMEM?
+>
+> > - we could call it N_BOBERT until we find consensus.
 > 
-> Is there anything that speaks about the patch I had posted?
-> __wb_writeout_add() doesn't need the xa lock?
+> Please give it the right name well describing the scope and purpose of
+> the new restriction policy before moving forward.
+>  
 
-That's a bit hairy question :) because currently xa lock is what makes sure
-the wb we've got from the inode is still valid. Now that you've forced me
-to think about it: If we move __wb_writeout_add() from under xa lock, inode
-could be switched to different wb after we release xa lock and before we
-call __wb_writeout_add(). I don't think there is anything that would
-protect the wb from being freed in that case before __wb_writeout_add() and
-thus we could create UAF issue if I'm not mistaken.
+"The right name" is a matter of opinion, of which there will be many.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+It's been through 3 naming cycles already:
+
+Protected -> SPM -> Private
+
+It'll probably go through 3 more.
+
+I originally named v3 N_PRIVATE_MEMORY, but Dan convinced me to drop to
+N_PRIVATE.  We can always %s/N_PRIVATE/N_PRIVATE_MEMORY.
+
+> > > >   enum private_memtype {
+> > > >       NODE_MEM_NOTYPE,      /* No type assigned (invalid state) */
+> > > >       NODE_MEM_ZSWAP,       /* Swap compression target */
+> > > >       NODE_MEM_COMPRESSED,  /* General compressed RAM */
+> > > >       NODE_MEM_ACCELERATOR, /* Accelerator-attached memory */
+> > > >       NODE_MEM_DEMOTE_ONLY, /* Memory-tier demotion target only */
+> > > >       NODE_MAX_MEMTYPE,
+> > > >   };
+> > > > 
+> > > > These types serve as policy hints for subsystems:
+> > > > 
+> > > 
+> > > Do these nodes have fallback(s)? Are these nodes prone to OOM when memory is exhausted
+> > > in one class of N_PRIVATE node(s)?
+> > > 
+> > 
+> > Right now, these nodes do not have fallbacks, and even if they did the
+> > use of __GFP_THISNODE would prevent this.  That's intended.
+> > 
+> > In theory you could have nodes of similar types fall back to each other,
+> > but that feels like increased complexity for questionable value.  The
+> > service requested __GFP_THISNODE should be aware that it needs to manage
+> > fallback.
+> 
+> Yeah, and most GFP_THISNODE users also pass GFP_NOWARN, which makes it
+> looking more like an emergency feature. Maybe add a symmetric GFP_PRIVATE
+> flag that would allow for more flexibility, and highlight the intention
+> better?
+> 
+
+I originally added __GFP_SPM_NODE (v2 - equivalient to your suggestion)
+and it was requested I try to use __GFP_THISNODE at LPC 2025 in December.
+
+v3 makes this attempt.
+
+This is good feedback to suggest maybe that's not the best and maybe we
+should keep __GFP_SPM_NODE -> __GFP_PRIVATE
+
+> > > What about page cache allocation form these nodes? Since default allocations
+> > > never use them, a file system would need to do additional work to allocate
+> > > on them, if there was ever a desire to use them. 
+> > 
+> > Yes, in-fact that is the intent.  Anything requesting memory from these
+> > nodes would need to be aware of how to manage them.
+> > 
+> > Similar to ZONE_DEVICE memory - which is wholly unmanaged by the page
+> 
+> This is quite opposite to what you are saying in the motivation
+> section:
+> 
+>   Several emerging memory technologies require kernel memory management
+>   services but should not be used for general allocations
+> 
+> So, is it completely unmanaged node, or only general allocation isolated?
+> 
+
+Sorry, that wording is definitely confusing. I should have said "can
+make use of kernel memory management services".
+
+It's an unmanaged node from the perspecting of any existing user (no
+existing core service user is exposed to this memory).  But this really
+means that it's general-allocation-isolated.
+
+ZONE_DEVICE is an unmanaged zone on a node, while this memory would be
+onlined in ZONE_MOVABLE or below (i.e. it otherwise looks like normal
+memory, just it can't be allocated).  In theory, we could re-use
+ZONE_DEVICE for this, but that's probably a few more RFCs away.
+
+I'm still trying to refine the language around this, thanks for pointing
+this out.
+
+~Gregory
 
