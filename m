@@ -1,64 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-73188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FA73D1101B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 08:57:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DECD11443
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 09:37:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D798230A5986
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 07:56:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 35AA53097D6D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Jan 2026 08:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD5833B6EB;
-	Mon, 12 Jan 2026 07:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F36E340DB2;
+	Mon, 12 Jan 2026 08:35:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f79.google.com (mail-oo1-f79.google.com [209.85.161.79])
+Received: from mail-ot1-f78.google.com (mail-ot1-f78.google.com [209.85.210.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6063382FD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 07:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7D6331214
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 08:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768204590; cv=none; b=WgOafCJSKqs12JXuujoG0jD9aZRJMATXZJWK6ouhWK31qvvt5PeWpHyLUyCRSJdBTMlNFVR7r0KdjShBFrulpZH+Gq9F1cU/Q2tLazwDokTca9McicJt9BoSLlsx09o+lA2KSBtHAhLWXGnboSuCKrZZPyYc3wExCm16Sy7I6c8=
+	t=1768206927; cv=none; b=dMf6yzuUYnxf0+LJld3TqR9WWELhwB7CcHVTE8BhXke+g/IxnpzZWh4GQxLoRcgNYBA/cImEoj+tyEJgXb9QS0xQr6XJqMv02zPU0tXMyrdBK7pjry8okgWQzUrxzNtvmBhcqqf4A9e1bFdCdNQmWSmFmpCskIOj3eey6fMt8Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768204590; c=relaxed/simple;
-	bh=hmiPfrqHtA9MRDz+OStJmt96J9abT+qnxUk6juVoQo4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=U/mpTO2mZKqXDx4q4b6ghuU8B3GPT+5Z6Gz/PbKqyqaKoC5pz+4vNqxwKw02n8tVV1e/BnR4lsgsSpg0AbK/1B0EisudhFOF9wsRoyIdUlmMN4ryTOHNZ4Zq0cuxTZFF/iJy7oRxsSF5xNUGiqjzmufHFY1cTVquTgrbFN6keV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.79
+	s=arc-20240116; t=1768206927; c=relaxed/simple;
+	bh=WTVtOpumTFGYus15qkA/UfC7BQZWnNNRbPYkbxx03Fc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kocQFTiTMOXoyYFai9XMEWX75eAXPXW8z8tm4qGcecgo78iuitBpK5m13lWvlu6holu/UveJnqmX4eCEl6SrjmkVwBOr0H8t6d/YJ3oblcVFIVZIANMCBVoT8qmeyXlq1BpKyvTMW9n82b5AIWNvNTWqxL4jg7/m2fgUJhARUCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f79.google.com with SMTP id 006d021491bc7-656c35cd5b4so8127525eaf.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Jan 2026 23:56:28 -0800 (PST)
+Received: by mail-ot1-f78.google.com with SMTP id 46e09a7af769-7c7599a6f1fso20117619a34.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Jan 2026 00:35:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768204588; x=1768809388;
+        d=1e100.net; s=20230601; t=1768206924; x=1768811724;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=DHbo52SolRDYc7VKQ6DvhA24krT9bje640hz5kjnhos=;
-        b=AoTOq0DbKjbo6cvRj/a3aVAsVMqe5AGGh+9gTS7AuKz0Gxkg8WnDooeZoS6VLYfENQ
-         0Nv18oSaHK1cplxPHfEYs+39MyJhnCi9fAdBAoUWfQmKqXGxop2VPQmPIOw/f+JSfE7e
-         y7EVXVOk2xqsvLOiM++mTm5tBiwRE+y5V2DMYh7+0zxKqeNFKhZR0Z0iioIogSIrY+Ml
-         29lCRW7WWecPajcthF9FJAwYyzTGdgJV7IgDoDb+rdAjs6dC8b+lSVjQpt/Pc4gQ5avx
-         sVW1+IDA6dTPyFrsQsIDtI224ad7OfqNQcnIUVfuvaQ8KzjTRBK9l6S9ZwrkwdnCA/by
-         eE0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVJIo+1B47xkNXEWXr8IC9ElyEdHKpSLwKzAsvIF6uJQ9dgKUynGUQWwxIJgPgJDe10Wy9QYIIDsgCanhC5@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvIshCfR82b0FFtwIN14uHCc5jopoe6zaI7QBvUKIW9PI/Ref5
-	syjdA9++Cv1yeUu17vv3ixnXk3gKUsji27UNt2+noLcRu7dUSy04cg3oGCR1YI0lwgYLTYBzwUQ
-	Ybsoq0o0EBpXomL3tK3VtGudB9ROJ4Dp2RZuP3+Rfhwsv2RpPr4BZyeFMVp0=
-X-Google-Smtp-Source: AGHT+IFmybVARW5r3S9t0aHvzSaaN2LLKQ42PWkGUZeKXngaJCx2HSQ7uziJ7FJqrBF8EvjDnDY/CKezFKGhq8kOPLHnoEi4MEgs
+        bh=hf3hK9th7s0xLdXJi+JD7lyNJWbgkO4+mlWuq40DxgM=;
+        b=BKmBsI3GjOhAaHpjNtpOinND7ZeqAlDGcy7MjtAN9LnbWwk+gwaoo6wzH6g60orNAH
+         gAdpYMr0OIzQAUnJljTKtDaTnalmH+3hiq8FkGpkCOgs05tBNwCOylPwiNxW0BXQmSId
+         QcHCN9GDuVRs/+xVZUz9C82LVjVik09RXWhvNXticwFrvuM7XX0lMuM2XW92FLT9XLM7
+         DJ+ZqE+zN4d94tmD56wqfGbyJAhmzxQw1U4sAAvys/d/v1nF2hQRUKPEZJqzSsovBJw+
+         tpdoJj9t62VMVbWr/slPh4pA6T1XFxdLm1MnsZl3otkQ8GWBlpqWsJ+TaBUO9+IG37dv
+         PEdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXk/+rk95cCfePrctLvNIIrBVj8s8yVlqqr+4ZrzdbzUBRfw61JQPSU7b9QSwlaxBHZCdLVkHK5f/AnYiOn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKIhbz6iV3Q9JYvAwCsdbtDSf5tuYUIK19W4XuRkVxhiocA3oW
+	Xn/yEixYa/xOyceN7QUApXnGfq6shbQpVbm1yiINL7kqhfEXJMNFUxi9/SsnVRWMEuH8p56u1S6
+	pJddSJWeGdxUS8Oy7wOqrj7EfErg7OkUqgl8ogLRhhKbjxc/Hxn6wtPquIMI=
+X-Google-Smtp-Source: AGHT+IGUBTzCVtkq1XytkujkGpc6qNJJMsapUeXnQMUoes11HO8TAbYTEw0IuI25LJU+AbHgw2+GiOe8jbB0gzetAv7glJC1Kf8A
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:2203:b0:65d:697:3ae8 with SMTP id
- 006d021491bc7-65f55083c6dmr8724874eaf.72.1768204587808; Sun, 11 Jan 2026
- 23:56:27 -0800 (PST)
-Date: Sun, 11 Jan 2026 23:56:27 -0800
+X-Received: by 2002:a05:6820:6101:b0:65c:fa23:2cf7 with SMTP id
+ 006d021491bc7-65f54f7e6b0mr6082478eaf.65.1768206924493; Mon, 12 Jan 2026
+ 00:35:24 -0800 (PST)
+Date: Mon, 12 Jan 2026 00:35:24 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6964a92b.050a0220.eaf7.008a.GAE@google.com>
-Subject: [syzbot] [fs?] memory leak in __shmem_file_setup
-From: syzbot <syzbot+bf5de69ebb4bdf86f59f@syzkaller.appspotmail.com>
+Message-ID: <6964b24c.050a0220.eaf7.008b.GAE@google.com>
+Subject: [syzbot] [fs?] KMSAN: kernel-infoleak-after-free in anon_pipe_read
+From: syzbot <syzbot+175753aff92b396b1f30@syzkaller.appspotmail.com>
 To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
 	viro@zeniv.linux.org.uk
@@ -68,173 +68,109 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    f0b9d8eb98df Merge tag 'nfsd-6.19-3' of git://git.kernel.o..
+HEAD commit:    7f98ab9da046 Merge tag 'for-6.19-rc4-tag' of git://git.ker..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12ec819a580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d60836e327fd6756
-dashboard link: https://syzkaller.appspot.com/bug?extid=bf5de69ebb4bdf86f59f
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ec819a580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11bcc19a580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1334af92580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b3903bdf68407a14
+dashboard link: https://syzkaller.appspot.com/bug?extid=175753aff92b396b1f30
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/aad2d47ff01d/disk-f0b9d8eb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c31e7ae85c07/vmlinux-f0b9d8eb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5525fab81561/bzImage-f0b9d8eb.xz
+disk image: https://storage.googleapis.com/syzbot-assets/c40942ffda39/disk-7f98ab9d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/63f72388d8d6/vmlinux-7f98ab9d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/751895685a54/bzImage-7f98ab9d.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bf5de69ebb4bdf86f59f@syzkaller.appspotmail.com
+Reported-by: syzbot+175753aff92b396b1f30@syzkaller.appspotmail.com
 
-2026/01/08 07:49:49 executed programs: 5
-BUG: memory leak
-unreferenced object 0xffff888112c4b240 (size 184):
-  comm "syz.0.17", pid 6070, jiffies 4294944898
-  hex dump (first 32 bytes):
-    00 00 00 00 07 00 0e 02 00 e4 66 85 ff ff ff ff  ..........f.....
-    98 38 89 09 81 88 ff ff 00 00 00 00 00 00 00 00  .8..............
-  backtrace (crc 987747be):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4958 [inline]
-    slab_alloc_node mm/slub.c:5263 [inline]
-    kmem_cache_alloc_noprof+0x3b4/0x590 mm/slub.c:5270
-    alloc_empty_file+0x51/0x1a0 fs/file_table.c:237
-    alloc_file fs/file_table.c:354 [inline]
-    alloc_file_pseudo+0xae/0x140 fs/file_table.c:383
-    __shmem_file_setup+0x11a/0x210 mm/shmem.c:5846
-    shmem_kernel_file_setup mm/shmem.c:5865 [inline]
-    __shmem_zero_setup mm/shmem.c:5905 [inline]
-    shmem_zero_setup_desc+0x33/0x90 mm/shmem.c:5936
-    mmap_zero_prepare+0x4e/0x60 drivers/char/mem.c:524
-    vfs_mmap_prepare include/linux/fs.h:2058 [inline]
-    call_mmap_prepare mm/vma.c:2596 [inline]
-    __mmap_region+0x8b8/0x13e0 mm/vma.c:2692
-    mmap_region+0x19f/0x1e0 mm/vma.c:2786
-    do_mmap+0x6a3/0xb60 mm/mmap.c:558
-    vm_mmap_pgoff+0x1a6/0x2d0 mm/util.c:581
-    ksys_mmap_pgoff+0x233/0x2d0 mm/mmap.c:604
-    __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
-    __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
-    __x64_sys_mmap+0x6f/0xa0 arch/x86/kernel/sys_x86_64.c:82
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+=====================================================
+BUG: KMSAN: kernel-infoleak-after-free in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak-after-free in copy_to_user_iter lib/iov_iter.c:24 [inline]
+BUG: KMSAN: kernel-infoleak-after-free in iterate_ubuf include/linux/iov_iter.h:30 [inline]
+BUG: KMSAN: kernel-infoleak-after-free in iterate_and_advance2 include/linux/iov_iter.h:302 [inline]
+BUG: KMSAN: kernel-infoleak-after-free in iterate_and_advance include/linux/iov_iter.h:330 [inline]
+BUG: KMSAN: kernel-infoleak-after-free in _copy_to_iter+0xef3/0x33f0 lib/iov_iter.c:197
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ copy_to_user_iter lib/iov_iter.c:24 [inline]
+ iterate_ubuf include/linux/iov_iter.h:30 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:302 [inline]
+ iterate_and_advance include/linux/iov_iter.h:330 [inline]
+ _copy_to_iter+0xef3/0x33f0 lib/iov_iter.c:197
+ copy_page_to_iter+0x482/0x910 lib/iov_iter.c:374
+ anon_pipe_read+0x769/0x1e80 fs/pipe.c:343
+ new_sync_read fs/read_write.c:491 [inline]
+ vfs_read+0x8ed/0xf90 fs/read_write.c:572
+ ksys_read fs/read_write.c:715 [inline]
+ __do_sys_read fs/read_write.c:724 [inline]
+ __se_sys_read fs/read_write.c:722 [inline]
+ __ia32_sys_read+0x1f9/0x4d0 fs/read_write.c:722
+ ia32_sys_call+0x191f/0x4340 arch/x86/include/generated/asm/syscalls_32.h:4
+ do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+ __do_fast_syscall_32+0x154/0x320 arch/x86/entry/syscall_32.c:307
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:332
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:370
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
 
-BUG: memory leak
-unreferenced object 0xffff888101e46ca8 (size 40):
-  comm "syz.0.17", pid 6070, jiffies 4294944898
-  hex dump (first 32 bytes):
-    ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 f8 52 86 00 81 88 ff ff  .........R......
-  backtrace (crc 2d2a393c):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4958 [inline]
-    slab_alloc_node mm/slub.c:5263 [inline]
-    kmem_cache_alloc_noprof+0x3b4/0x590 mm/slub.c:5270
-    lsm_file_alloc security/security.c:169 [inline]
-    security_file_alloc+0x30/0x240 security/security.c:2380
-    init_file+0x3e/0x160 fs/file_table.c:159
-    alloc_empty_file+0x6f/0x1a0 fs/file_table.c:241
-    alloc_file fs/file_table.c:354 [inline]
-    alloc_file_pseudo+0xae/0x140 fs/file_table.c:383
-    __shmem_file_setup+0x11a/0x210 mm/shmem.c:5846
-    shmem_kernel_file_setup mm/shmem.c:5865 [inline]
-    __shmem_zero_setup mm/shmem.c:5905 [inline]
-    shmem_zero_setup_desc+0x33/0x90 mm/shmem.c:5936
-    mmap_zero_prepare+0x4e/0x60 drivers/char/mem.c:524
-    vfs_mmap_prepare include/linux/fs.h:2058 [inline]
-    call_mmap_prepare mm/vma.c:2596 [inline]
-    __mmap_region+0x8b8/0x13e0 mm/vma.c:2692
-    mmap_region+0x19f/0x1e0 mm/vma.c:2786
-    do_mmap+0x6a3/0xb60 mm/mmap.c:558
-    vm_mmap_pgoff+0x1a6/0x2d0 mm/util.c:581
-    ksys_mmap_pgoff+0x233/0x2d0 mm/mmap.c:604
-    __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
-    __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
-    __x64_sys_mmap+0x6f/0xa0 arch/x86/kernel/sys_x86_64.c:82
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Uninit was stored to memory at:
+ memcpy_to_folio include/linux/highmem.h:518 [inline]
+ zswap_decompress+0x2bd/0x1000 mm/zswap.c:946
+ zswap_load+0x262/0x570 mm/zswap.c:1627
+ swap_read_folio+0x662/0x3050 mm/page_io.c:637
+ swap_cluster_readahead+0x725/0xb20 mm/swap_state.c:652
+ shmem_swapin_cluster mm/shmem.c:1745 [inline]
+ shmem_swapin_folio+0x1fd9/0x3ee0 mm/shmem.c:2329
+ shmem_get_folio_gfp+0x92a/0x1fc0 mm/shmem.c:2489
+ shmem_get_folio mm/shmem.c:2662 [inline]
+ shmem_file_splice_read+0x350/0x11e0 mm/shmem.c:3567
+ do_splice_read fs/splice.c:982 [inline]
+ splice_file_to_pipe+0x5b4/0x8f0 fs/splice.c:1292
+ do_splice+0x29d8/0x30d0 fs/splice.c:1376
+ __do_splice fs/splice.c:1433 [inline]
+ __do_sys_splice fs/splice.c:1636 [inline]
+ __se_sys_splice+0x549/0x8c0 fs/splice.c:1618
+ __ia32_sys_splice+0x112/0x1a0 fs/splice.c:1618
+ ia32_sys_call+0x31a6/0x4340 arch/x86/include/generated/asm/syscalls_32.h:314
+ do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+ __do_fast_syscall_32+0x154/0x320 arch/x86/entry/syscall_32.c:307
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:332
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:370
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
 
-BUG: memory leak
-unreferenced object 0xffff888108f03840 (size 184):
-  comm "syz-executor", pid 5988, jiffies 4294944899
-  hex dump (first 32 bytes):
-    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace (crc 5869ffdf):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4958 [inline]
-    slab_alloc_node mm/slub.c:5263 [inline]
-    kmem_cache_alloc_noprof+0x3b4/0x590 mm/slub.c:5270
-    prepare_creds+0x22/0x5e0 kernel/cred.c:185
-    copy_creds+0x44/0x290 kernel/cred.c:286
-    copy_process+0x979/0x2860 kernel/fork.c:2086
-    kernel_clone+0x119/0x6c0 kernel/fork.c:2651
-    __do_sys_clone+0x7b/0xb0 kernel/fork.c:2792
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Uninit was created at:
+ free_pages_prepare mm/page_alloc.c:1328 [inline]
+ free_unref_folios+0x26a/0x29a0 mm/page_alloc.c:3000
+ folios_put_refs+0xaac/0xb10 mm/swap.c:1002
+ folios_put include/linux/mm.h:1671 [inline]
+ __folio_batch_release+0xe1/0x100 mm/swap.c:1062
+ folio_batch_release include/linux/pagevec.h:101 [inline]
+ shmem_undo_range+0x929/0x20c0 mm/shmem.c:1137
+ shmem_truncate_range mm/shmem.c:1249 [inline]
+ shmem_evict_inode+0x22c/0xed0 mm/shmem.c:1379
+ evict+0x6a9/0xca0 fs/inode.c:837
+ iput_final fs/inode.c:1951 [inline]
+ iput+0xc6f/0x1070 fs/inode.c:2003
+ do_unlinkat+0x58a/0xd80 fs/namei.c:5443
+ __do_sys_unlink fs/namei.c:5474 [inline]
+ __se_sys_unlink fs/namei.c:5472 [inline]
+ __ia32_sys_unlink+0x70/0xa0 fs/namei.c:5472
+ ia32_sys_call+0x1e4a/0x4340 arch/x86/include/generated/asm/syscalls_32.h:11
+ do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+ __do_fast_syscall_32+0x154/0x320 arch/x86/entry/syscall_32.c:307
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:332
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:370
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
 
-BUG: memory leak
-unreferenced object 0xffff888109a7b8e0 (size 32):
-  comm "syz-executor", pid 5988, jiffies 4294944899
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    f8 52 86 00 81 88 ff ff 00 00 00 00 00 00 00 00  .R..............
-  backtrace (crc 336e1c5f):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4958 [inline]
-    slab_alloc_node mm/slub.c:5263 [inline]
-    __do_kmalloc_node mm/slub.c:5656 [inline]
-    __kmalloc_noprof+0x3e0/0x660 mm/slub.c:5669
-    kmalloc_noprof include/linux/slab.h:961 [inline]
-    kzalloc_noprof include/linux/slab.h:1094 [inline]
-    lsm_blob_alloc+0x4d/0x70 security/security.c:192
-    lsm_cred_alloc security/security.c:209 [inline]
-    security_prepare_creds+0x2f/0x270 security/security.c:2763
-    prepare_creds+0x385/0x5e0 kernel/cred.c:215
-    copy_creds+0x44/0x290 kernel/cred.c:286
-    copy_process+0x979/0x2860 kernel/fork.c:2086
-    kernel_clone+0x119/0x6c0 kernel/fork.c:2651
-    __do_sys_clone+0x7b/0xb0 kernel/fork.c:2792
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Bytes 0-1023 of 1024 are uninitialized
+Memory access of size 1024 starts at ffff8880731d2000
+Data copied to user address 0000000056912be0
 
-BUG: memory leak
-unreferenced object 0xffff888109b169c0 (size 184):
-  comm "syz.0.18", pid 6072, jiffies 4294944899
-  hex dump (first 32 bytes):
-    00 00 00 00 07 00 0e 02 00 e4 66 85 ff ff ff ff  ..........f.....
-    68 e6 05 0e 81 88 ff ff 00 00 00 00 00 00 00 00  h...............
-  backtrace (crc 86e9bbaa):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4958 [inline]
-    slab_alloc_node mm/slub.c:5263 [inline]
-    kmem_cache_alloc_noprof+0x3b4/0x590 mm/slub.c:5270
-    alloc_empty_file+0x51/0x1a0 fs/file_table.c:237
-    alloc_file fs/file_table.c:354 [inline]
-    alloc_file_pseudo+0xae/0x140 fs/file_table.c:383
-    __shmem_file_setup+0x11a/0x210 mm/shmem.c:5846
-    shmem_kernel_file_setup mm/shmem.c:5865 [inline]
-    __shmem_zero_setup mm/shmem.c:5905 [inline]
-    shmem_zero_setup_desc+0x33/0x90 mm/shmem.c:5936
-    mmap_zero_prepare+0x4e/0x60 drivers/char/mem.c:524
-    vfs_mmap_prepare include/linux/fs.h:2058 [inline]
-    call_mmap_prepare mm/vma.c:2596 [inline]
-    __mmap_region+0x8b8/0x13e0 mm/vma.c:2692
-    mmap_region+0x19f/0x1e0 mm/vma.c:2786
-    do_mmap+0x6a3/0xb60 mm/mmap.c:558
-    vm_mmap_pgoff+0x1a6/0x2d0 mm/util.c:581
-    ksys_mmap_pgoff+0x233/0x2d0 mm/mmap.c:604
-    __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
-    __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
-    __x64_sys_mmap+0x6f/0xa0 arch/x86/kernel/sys_x86_64.c:82
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xa4/0xf80 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
+CPU: 1 UID: 0 PID: 5779 Comm: syz-executor Tainted: G        W           syzkaller #0 PREEMPT(none) 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
+=====================================================
 
 
 ---
@@ -247,10 +183,6 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
