@@ -1,150 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-73371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8C6FD16848
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 04:34:40 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 191F2D1698C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 05:09:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 64F9F3039847
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 03:33:40 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 42C4D3015955
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 04:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BB034B1A6;
-	Tue, 13 Jan 2026 03:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DF034F48F;
+	Tue, 13 Jan 2026 04:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpmp715a"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BNCFRz4e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC0E284B54;
-	Tue, 13 Jan 2026 03:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34E12F39DD;
+	Tue, 13 Jan 2026 04:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768275213; cv=none; b=ft+HZIf6YaFtVrDz1/Ir6oTRVgA+Xlv+u7CQbfbxtc5isDtOHaqaijWY1ZVwENPg38xE0I4DtQ6hlAXGVP6oJOzrabSEZoAFJjIqSxrfa4tasGdzkXx9tVovsPhsYZqyKyzynTq1ffazwgcE9ClqWLhwTf48H6oRyEir6UpZ3NA=
+	t=1768277391; cv=none; b=PzWuircG29u2+U3LT+xxY69F+EtceHsIf7L7rZgOzZD0HdgrQkfgpUHOvGAZ8AhHCwNKknrC9KFZnXXK2kRefYoieu85meQKIWalamLfdFLc1zmZHawVBL5kQ6XOYjunj8PAWT/2KjoXPVt5ep2vAcLxo068hb9eRdp6Hs5i9Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768275213; c=relaxed/simple;
-	bh=sgTKCfGG+ujwKC4Dd64UEjm0eoToqgRObMoSTSjLZXI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=t2b7Dj2EPA5xhyfLouDgq2zHJuZuvbra/66hdgn56aPHKeDgEV6p0c2zAG8MxwwlDCQppdvvHbgwp0JD5kYYho5a1spPyw8G8U//axnD07U6BPDn2M04a87pCIsb/vwpbt1kOabyUaWpsmqFLbSrbRvJom06eDUKDH3tRTexFnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpmp715a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD5A1C4AF09;
-	Tue, 13 Jan 2026 03:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768275213;
-	bh=sgTKCfGG+ujwKC4Dd64UEjm0eoToqgRObMoSTSjLZXI=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=gpmp715aEfjdGQRP1Lsy2r9WnRwxooF4LBHteETys7E9S/B4AasmzbM9fCX6h+3sG
-	 mx+e2/0p7Drd8yIuHQZFr1ulX314ftQQqLwD9zVG5P7rS3XnOhA0AF2jiawsCSmcl3
-	 vfR5mn0VnFPR8lGZy1csRlIAU84Mz27Lg8HaO/tXRO/aXyMxst5MC1reJS9E55YnIe
-	 ufSLK3aXwEchtOBEMHe+xnG8RegKllS1ZXNu8I0CxBJ3aAXaPyO8gQZplqnX6kQwVp
-	 O0RIDZOTjlSCeamfAwdPviopfRpZNcfSn9TxofFA0k+eFJd+ylTEPlMWCG1nQT/Upw
-	 iLtQVk4ax3o6g==
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id DF59FF40068;
-	Mon, 12 Jan 2026 22:33:31 -0500 (EST)
-Received: from phl-imap-15 ([10.202.2.104])
-  by phl-compute-10.internal (MEProxy); Mon, 12 Jan 2026 22:33:31 -0500
-X-ME-Sender: <xms:C71laZTSvFftyQUq7Fso7o5Q4dyoUTE-4uhN5qTY6WsLIadic9rAuA>
-    <xme:C71ladl0lVRJEtiaQ2kMNsU9UPlgPiOOc3YeANP_pNL_b-Zo_mMEp3GUiqHbZIN_e
-    YBU0cqLZffQ7nXHdzMYNBUX2hCua-ogzwXOGy66PgaqhfKkT4TNvg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduudelvdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedfvehhuhgt
-    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
-    hnpefghfeguedtieeiveeugfevtdejfedukeevgfeggfeugfetgfeltdetueelleelteen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
-    hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
-    leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
-    hilhdrtghomhdpnhgspghrtghpthhtohepudelpdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopehnvghilhessghrohifnhdrnhgrmhgvpdhrtghpthhtoheprghmihhrjeefih
-    hlsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvggrlhhmvghiugesihhgrghl
-    ihgrrdgtohhmpdhrtghpthhtohepkhgvrhhnvghlqdguvghvsehighgrlhhirgdrtghomh
-    dprhgtphhtthhopegrnhhnrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrrghu
-    nhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepthhrohhnughmhieskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheptghorhgsvghtsehlfihnrdhnvght
-X-ME-Proxy: <xmx:C71laX12KT62jCgJVH1DIh3MjTLZqmVvD7KKznDP-_MfRQvSvwD_JQ>
-    <xmx:C71laUeryqxK-dQw6SWpNK8ZYdAb-Yay47668xkP5zFLem9ILWbMkw>
-    <xmx:C71laT5wDJuAa36sVzQWEcl8ELv0IbbgbfxZfLseOECNaZL1dX5gxw>
-    <xmx:C71laf8Upy7a_7AaLZ1nTEfYaFx87F05uNvr_-bs8VXWCSx_CQ14Zg>
-    <xmx:C71laSIs34B4Pu6cEkSUTR-BMI_avWjiKs710G9gCqzctDGwpMgQ3ZyJ>
-Feedback-ID: ifa6e4810:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id ADA6E780054; Mon, 12 Jan 2026 22:33:31 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1768277391; c=relaxed/simple;
+	bh=N0X9/sHsBwg9h1LNqOoNIP9nFu35oohAUENJLRSsPkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvm7rfEwhD3osCt7hwz1eQD5F19x3vPz/bGoltV9wyiU2h8bLERljswTh0QbqQpqaNJn7UibcG6EhAub3AS2d+VCHbUl5RfxKQ0XgrTSznoppaPAJERda42mtiOmu9Gxs3Ipg+9ah3SttyErKdFrBpZseby/Erok0vqU8cpaEug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BNCFRz4e; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FPDQONHKCDgnwEfmCCHE8B+Ej5UJEZq2JA2LN4UYypE=; b=BNCFRz4eLPfjfJ2qSh7zUCS74o
+	bFnDkG7iJVpZ2s9CBjxdIUij2tzii6zrVYCbKLHO+VGwUu/CUClk23pdIocqw/M6Rq7mZpMLsWzX7
+	bIKm4Nl8uqKm/AhDeG0DsGp7NTnjLZljLE4ger/3aHHhciCon0dtnvLTZ8J4UyVgfvzgBmRxnhmL7
+	gs+Zox18mKEyIDYgY0/cqB9p7y+TShFjBurWNOfdoloBeQRZ3Xv18CpKV2aH85tpswuBtINJicd2b
+	UbXVDTMDgo38U4yotEd1u4Gyr2opDj1G5KzLqL/rBqdpus4oATKhc75EHYuF2b4wd6Jiwl58fewAr
+	G96bLBtg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vfViX-00000004Chu-3eJI;
+	Tue, 13 Jan 2026 04:09:17 +0000
+Date: Tue, 13 Jan 2026 04:09:17 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Ye Liu <ye.liu@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Ye Liu <liuye@kylinos.cn>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm: remove redundant page parameter from do_set_pmd()
+Message-ID: <aWXFbZJl7Z-9INVp@casper.infradead.org>
+References: <20260113014130.922385-1-ye.liu@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AkghU2ftp2PN
-Date: Mon, 12 Jan 2026 22:33:11 -0500
-From: "Chuck Lever" <cel@kernel.org>
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Amir Goldstein" <amir73il@gmail.com>, NeilBrown <neil@brown.name>,
- "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>, "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>, "Jonathan Corbet" <corbet@lwn.net>,
- "Christian Brauner" <brauner@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com
-Message-Id: <7ac583b8-3480-4a54-bcd7-9b1a8689a7f7@app.fastmail.com>
-In-Reply-To: <20260112-tonyk-fs_uuid-v1-0-acc1889de772@igalia.com>
-References: <20260112-tonyk-fs_uuid-v1-0-acc1889de772@igalia.com>
-Subject: Re: [PATCH 0/4] exportfs: Some kernel-doc fixes
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260113014130.922385-1-ye.liu@linux.dev>
 
+On Tue, Jan 13, 2026 at 09:41:29AM +0800, Ye Liu wrote:
+> The page parameter passed to do_set_pmd() was always overwritten with
+> &folio->page immediately upon function entry (line 5369 in memory.c),
+> making the parameter completely redundant. This confused callers who
+> computed different page values only to have them ignored.
 
+No.  It's an accident of the implementation that we currently only
+support folios up to the size of PMDs.  That is not the long-term plan.
+We always want to specify exactly which pages of the folio to map.
 
-On Mon, Jan 12, 2026, at 8:51 PM, Andr=C3=A9 Almeida wrote:
-> This short series removes some duplicated documentation and address so=
-me
-> kernel-doc issues:
->
-> WARNING: ../include/linux/exportfs.h:289 struct member 'get_uuid' not=20
-> described in 'export_operations'
-> WARNING: ../include/linux/exportfs.h:289 struct member 'map_blocks' no=
-t=20
-> described in 'export_operations'
-> WARNING: ../include/linux/exportfs.h:289 struct member 'commit_blocks'=20
-> not described in 'export_operations'
-> WARNING: ../include/linux/exportfs.h:289 struct member 'permission' no=
-t=20
-> described in 'export_operations'
-> WARNING: ../include/linux/exportfs.h:289 struct member 'open' not=20
-> described in 'export_operations'
-> WARNING: ../include/linux/exportfs.h:289 struct member 'flags' not=20
-> described in 'export_operations'
->
-> ---
-> Andr=C3=A9 Almeida (4):
->       exportfs: Fix kernel-doc output for get_name()
->       exportfs: Mark struct export_operations functions at kernel-doc
->       exportfs: Complete kernel-doc for struct export_operations
->       docs: exportfs: Use source code struct documentation
->
->  Documentation/filesystems/nfs/exporting.rst | 42 ++++----------------=
----------
->  include/linux/exportfs.h                    | 33 ++++++++++++++++----=
----
->  2 files changed, 28 insertions(+), 47 deletions(-)
-> ---
-> base-commit: 9c7ef209cd0f7c1a92ed61eed3e835d6e4abc66c
-> change-id: 20260112-tonyk-fs_uuid-973d5fdfc76f
->
-> Best regards,
-> --=20
-> Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
-
-
---=20
-Chuck Lever
 
