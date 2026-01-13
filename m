@@ -1,114 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-73510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B42FD1B1A2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 20:48:16 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B51CD1B2BE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 21:17:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0707F30318E7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 19:48:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E05543053321
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 20:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6418C3491C7;
-	Tue, 13 Jan 2026 19:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6162F3636;
+	Tue, 13 Jan 2026 20:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="YJgWeCx5"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="Hwam6yh+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309833126C2
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jan 2026 19:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E11A1B3925
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jan 2026 20:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768333693; cv=none; b=em+DVF5kN1k1t2tiGeHsJGmpZeU7GSWTA0aNxFQ7gLb0fbQfYJV4s8uSjAzkqpRt44j9hx5OY5AaxhP8Ie3vum27UeCOtR27UK8k1OH8Hd1GPFvs1pDglCbwnd/XY8ouR3k82aOX/QE8uaf8xsE4g9KY2o8/vhaResJboP2XOv8=
+	t=1768335413; cv=none; b=he03wp/ldy8XK+PGp7KFLgEVh0lPHhUXpUJ0PmVzZUksBghHYEzazG7kaSEKJ6HKX4O+1Vg5atFcZLKlZuywTrJ+p295S4TlkJKqTxt4zily+19zW/FDBb8ft4hi9BMUeKqTSWlxWJfs7xJf+iynhwt+UMqxZHdW879ktJrFJ5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768333693; c=relaxed/simple;
-	bh=MuEJ/lvaNOAA9bhSFzP9w2fhccVtKgiDbgRx3JzqOxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UD8Hz11k61vWnFKh1iqqNsDAXPoxc9Fb9SQpxIKbkXTXDuDgCj1Bh+VyHNl+3cnCwCGL4hIxFQbaRh5eNjJkUntsQFoCg/U37k5rXjLtKohasZpMeu5R8VXhjK/aJYRmpduqcamNw7L45lExT6OND8hCuj/bOjtj5YYNphnkkb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=YJgWeCx5; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=fHylp8jH5KZ7OVUeiARBt6GlHeZR7Ql4vpJE35s0Duo=; b=YJgWeCx5kzaJOdCT3m3j5DsSHC
-	sJxUmacx9GHzzwINBV46c2/J7LtkqIR/8BtY2u/AFvR3rExrNJfT2vm3kNMGSIB1iZYdazY+1Vd+R
-	56oMLvA+ah3NTTjBpACZgXLNWD3FrXm3xaz4gPHSvtkm0d1bMBY98+1avt6SF+/HsefbrMAGtubAC
-	AeLZ+CG/D16ermNcB8kijBDxeQ/nVb1QYKOjXnTzleBPvYgRWvXdLqhDGFmDHFrrHuVSbA8NIWbOE
-	QnE+UVO1BfMnnJirW6n/jZ82SxFku3ahMm78o6BnaLAf3PJz2uvAk+c6VB8pccgawJJkTHQ5kMG5f
-	NkkcxkcA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vfkOW-0000000FX0e-3NHr;
-	Tue, 13 Jan 2026 19:49:37 +0000
-Date: Tue, 13 Jan 2026 19:49:36 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: ltp@lists.linux.it
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [LTP][PATCH] lack of ENAMETOOLONG testcases for pathnames longer
- than PATH_MAX
-Message-ID: <20260113194936.GQ3634291@ZenIV>
+	s=arc-20240116; t=1768335413; c=relaxed/simple;
+	bh=i7Q0cppGHnXoJlzKDTPAA4Ox8F1xyo7tsBiGT/yZWUc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HmMkc7ghBL8IAri4ctkjmEnoqzOib107tO4+62/56h8e8HV8k4lLh1tpwxgKGo+d4BTjq5i2V/V/+uW6i1CwseSWPy6BDVV6ZCIQ4vu/ukOCb/bkA1jHJFofBhl4C0UHUym42Af8toZvMdJWsRu8sH8r6fnMWWQhulP+r0XNaUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=Hwam6yh+; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-78d6a3c3b77so2600047b3.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jan 2026 12:16:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1768335410; x=1768940210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PxakD1KmYQa92a3vZ7/OlBVuBUSn3nQs6Us3iV3sL6Y=;
+        b=Hwam6yh+pF05hqzfKu0TuhGJGLYhBSjVPC6FWINo7k0J/IPSg3/lgBQEAPSnyMukeB
+         sgFz0HM5E89y13JPankrblWGAWXyE9ycWQif9EIJEWLoevFfssnMcIFKQsvrp1CG++uK
+         6Lry/CRqNthQR73KNRXeNLBgn+oA+dNgbMojghyqwIeNWN+1MgxFKpxCtnZ6LOAYwWvM
+         mmMfv6wt96ebEGUGckz/7jrWz4s5G8EbkM9xPftCEfZWvR6aDy67Kl10vlG9kE4aosZw
+         ehZkeUctbmwMU42oM2R1ANwpdBR525/2rAuKujlJJPJ8AefJ9bHNHurWTzJmZ5A6esKC
+         2S2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768335410; x=1768940210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PxakD1KmYQa92a3vZ7/OlBVuBUSn3nQs6Us3iV3sL6Y=;
+        b=UEtUcpyuYhaJhZSV8XAuvu49gECYlRgZ4siKLA4XcyPl9dRwIUvq5dGYbSGPjWdrLP
+         XUOgcELIxfa9KaGqs5Kp6WbBISdVfMFGhYr2wTLDQwwYRWtwVcN/2YMtA96cLdPgewbs
+         zLd+IB4uOZvBDapsPKQyZY1J3Q+cLmX5l+iXevO7qibKZTC0Jwa1ie4wwwKfvXVrio2n
+         fKcOfEQeRU3EG31xCUUa1W/OvUKz1PviZq66LBpA/ikEXBFe73/mHYaPou8sKnfGD5OC
+         pLpKZmrA/SOlQxUyNU9qpcQ/IOcVura9JursrVvBUbOB/4tjPRz3dcJ+1MDlnQU/22J4
+         kSug==
+X-Forwarded-Encrypted: i=1; AJvYcCVjWVAG946ssp1ZJjdV+JxFA/7AD5k3uTJYY3TN+/jaWb4JeAGj93tAkMfL6KZjCFR4IAVkBtbF5s14dhWV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcTUVd8VNR0JRmJizYmk4/51VbzBenmw19ImkNK6A656wMG2DO
+	E7tebdd6ZvJjQL1iCuLbxMoz8HY4ZXBuayPzeVGdIKewzrb7P3gMXh7VwrDtslJT97U=
+X-Gm-Gg: AY/fxX6Py8h5ToIhmDyT1TNd68FQc04ip1ZK8J7fS5LYynujg/k39b29MAvN86umF79
+	JkkYCinPzoVxCeh1JWcVhzyAXUHneQ96p0OaZ0I+2OvZNFz7oqO7RDkp4k0HSQtVDXBDeF1byva
+	ogldkE36lwm/qppYhqQOLf5yeqed5QrC4xBp4xR7fb08AC/+/dk7whB2AZEZIuhOfbs34CmUbDH
+	QHGLjFrz6SeJHH/uSbw2iVHT6frDW+00dFvOEanEExZ+ysVZSr49XWAcCbgkDYAsvSiVPDRK/yz
+	hzUV4WOwIjYidDn2Yb5sZcUGkHOmgBzFQ8Gpz+AZBRgemDuwc/kP7Nd5o6MNNrKxwbOiPOVpTO3
+	42xIyEkLPjLdIr4DAUCey9sO+74drvFi9NQYhqJ7UHm6ov436TaMrKGbqqwYUuC/InMnTX650yX
+	7qHmkAQ0bM5bmBcsReWvEd/X2OTtb2c/Bs5ZcNqRZlgLQ0P+Dv259FJte1z+TBtzSk1C0xWbKue
+	4EYsA37G+QEaWvGGbw=
+X-Received: by 2002:a53:8543:0:b0:645:5297:3e5d with SMTP id 956f58d0204a3-648f638c88cmr2981073d50.46.1768335410350;
+        Tue, 13 Jan 2026 12:16:50 -0800 (PST)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:cf4e:ea8f:19ac:63a0])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6470d80be64sm9666151d50.6.2026.01.13.12.16.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Jan 2026 12:16:49 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: util-linux@vger.kernel.org,
+	kzak@redhat.com
+Cc: ceph-devel@vger.kernel.org,
+	idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com,
+	vdubeyko@redhat.com,
+	Pavan.Rallabhandi@ibm.com
+Subject: [PATCH v2] mount: (manpage) add CephFS filesystem-specific manual page
+Date: Tue, 13 Jan 2026 12:16:37 -0800
+Message-ID: <20260113201636.993219-2-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-	There are different causes of ENAMETOOLONG.  It might come from
-filesystem rejecting an excessively long pathname component, but there's
-also "pathname is longer than PATH_MAX bytes, including terminating NUL"
-and that doesn't get checked anywhere.
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-	Ran into that when a braino in kernel patch broke that logics
-(ending up with cutoff too low) and that didn't get caught by LTP run.
+Currently, manpage for generic mount tool doesn't contain
+mentioning of CephFS kernel client filesystem-specific
+manual page. This patch adds the mount.ceph(8) mentioning into
+file system specific mount options section.
 
-	Patch below adds the checks to one of the tests that do deal
-with the other source of ENAMETOOLONG; it almost certainly not the
-right use of infrastructure, though.
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 ---
-diff --git a/testcases/kernel/syscalls/chdir/chdir04.c b/testcases/kernel/syscalls/chdir/chdir04.c
-index 6e53b7fef..e8dd5121d 100644
---- a/testcases/kernel/syscalls/chdir/chdir04.c
-+++ b/testcases/kernel/syscalls/chdir/chdir04.c
-@@ -11,6 +11,8 @@
- #include "tst_test.h"
- 
- static char long_dir[] = "abcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyz";
-+static char long_path[PATH_MAX+1];
-+static char shorter_path[PATH_MAX];
- static char noexist_dir[] = "noexistdir";
- 
- static struct tcase {
-@@ -20,16 +22,23 @@ static struct tcase {
- 	{long_dir, ENAMETOOLONG},
- 	{noexist_dir, ENOENT},
- 	{0, EFAULT}, // bad_addr
-+	{long_path, ENAMETOOLONG},
-+	{shorter_path, 0},
- };
- 
- static void verify_chdir(unsigned int i)
- {
--	TST_EXP_FAIL(chdir(tcases[i].dir), tcases[i].exp_errno, "chdir()");
-+	if (tcases[i].exp_errno)
-+		TST_EXP_FAIL(chdir(tcases[i].dir), tcases[i].exp_errno, "chdir()");
-+	else
-+		TST_EXP_PASS(chdir(tcases[i].dir), "chdir()");
- }
- 
- static void setup(void)
- {
- 	tcases[2].dir = tst_get_bad_addr(NULL);
-+	memset(long_path, '/', PATH_MAX);
-+	memset(shorter_path, '/', PATH_MAX - 1);
- }
- 
- static struct tst_test test = {
+ sys-utils/mount.8.adoc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sys-utils/mount.8.adoc b/sys-utils/mount.8.adoc
+index 4571bd2bfd16..43d2ef9a58a4 100644
+--- a/sys-utils/mount.8.adoc
++++ b/sys-utils/mount.8.adoc
+@@ -853,6 +853,7 @@ This section lists options that are specific to particular filesystems. Where po
+ |===
+ |*Filesystem(s)* |*Manual page*
+ |btrfs |*btrfs*(5)
++|cephfs |*mount.ceph*(8)
+ |cifs |*mount.cifs*(8)
+ |ext2, ext3, ext4 |*ext4*(5)
+ |fuse |*fuse*(8)
+-- 
+2.52.0
+
 
