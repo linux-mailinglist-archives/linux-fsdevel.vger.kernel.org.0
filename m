@@ -1,43 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-73425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D03ED18EA1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 13:50:31 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB7ED18E83
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 13:49:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 6350C3103737
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 12:41:33 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 5CCCD304C00A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 12:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2B038F941;
-	Tue, 13 Jan 2026 12:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3F13904E8;
+	Tue, 13 Jan 2026 12:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ppz3sDaX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUl+VT07"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3792BEFF1;
-	Tue, 13 Jan 2026 12:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478C43904CF;
+	Tue, 13 Jan 2026 12:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768308000; cv=none; b=ZBk5zj6fBp9CwCAPpRQX0YX8out4OahN/8BFvZ1f5d+zEsLqVBbFOybYrN1NTWF7nV8p7VWzJb0sfmOCRUuTfunr5oxkipPLvekYNoC2qVG9/YS3MWAINJOY5yXS1eNwgkQvE7Ah583JpZanw9p/JOCtSL6JXFnypytVCIbPXdI=
+	t=1768308002; cv=none; b=jThwqRLQFpqZr03asax18qzlymRqs85dWZMYFluovGdX/dRtqNHAHYw0WBwxJg/lYn25GkMR19ajrXvzFYNvy4RD/Kh5fkM7Y5zNu52s04qi5KZcQEmGjjmFvLsDC1/y0tSjiXxeHgNxLy87gYK3JgEDaLFGS5vj/nzYAxvRqNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768308000; c=relaxed/simple;
-	bh=xWoBSdW0O5D/CecARft63tZx73gkTbnOeqBAQ0roan0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o0BJOvR8dPZMKplRrmHWj9jJz7tEuNiLtVeeNV9eUJITs5OryFn7MacxQuaTmsyzzzxAiR2c/YQjKbQkjg1IhSj2AbV0lk7PEDAX+s+P3Eik3QLqFJwGfzOfIWu9LQ+bnudiQC0+bp+jt212T+tE+QH6FvRewDhm8+Q3i+O9H0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ppz3sDaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA7E0C16AAE;
-	Tue, 13 Jan 2026 12:39:58 +0000 (UTC)
+	s=arc-20240116; t=1768308002; c=relaxed/simple;
+	bh=CziPONQGMZ6pGNhZmKWF+1FWgqqVSfYV591RzVNuX9g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qO7RJ6uYSWdfXW6Eer3uQZ4FifCNfUW5yt6XTYq8uMT6Faadx6RUdiNIR2/QMHSCKTp5zJqLznuyykPy6OB4ft3pn+by1yxB9TEDPl0u/EYoqaM1/fg3+2jU77Pqr3TUowmDmE2iOxfkKh0274QOcXbcITnLGSLxZVoqazIXid0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QUl+VT07; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA2E7C16AAE;
+	Tue, 13 Jan 2026 12:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768308000;
-	bh=xWoBSdW0O5D/CecARft63tZx73gkTbnOeqBAQ0roan0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ppz3sDaXyPKnP0f7cdKZv3E1dYy2Er3m7Ijpj10RQDcY7U5dGudKdG8djW1g4IFuK
-	 j/7yxJ3ClqLkhM4jbGwd67fDVmWlJ8zjogA748KFrh7tX8Ngu+QFmriTisvH3yL5Vs
-	 6GL+OOEq6Sw3A/tmuvlDp4500BXjtYblJsUQfNrQftx6Pk3z0Cd+HLWCtRtoD7oOjj
-	 NrAsGfEQ0xLPPHnly+isCVOCUDUeJgMQjtfUsRm6YjMtnuf4sQwUlp17nJOoRKUjuG
-	 PoLuQXLdtBHSwvMLLTX0w3NIBwUY4K8yFNjGEVflRkqVyUeoAXJpIBwnUOXQPUbbjd
-	 Ph4IKGhUVIHxQ==
+	s=k20201202; t=1768308002;
+	bh=CziPONQGMZ6pGNhZmKWF+1FWgqqVSfYV591RzVNuX9g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QUl+VT07tJvLLKmrzGcs9sUzLcql8qP/sqKwsa/isyrTkMXYM8JPBojETs5WPDVf0
+	 56ijxzI30Pzp2ArWJNxhlJ3pziz3fnLN0li1Bo8LYKwfkLD2bcgPU/YwjbJwNQ+qxC
+	 QEoZhw10FXJJCUgQRkSodDJde8F/KxLpd/DAHJefQ3xKww8xDE41sUIHY4TPb9BnE9
+	 n72v6ZxvwI2RSoD5gTNVRw39sZVfCSmkTSU1snWvE1tkBPTLFr3cAFP4dHzd91KHyC
+	 c7rUENv50t6ZGNIVj1pDBLvaRBgMQhPelSpTugDFES49tTZmSep2alJtOL6dYIlnCD
+	 4YyhgbD55hKJg==
 From: fdmanana@kernel.org
 To: linux-btrfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -45,10 +46,12 @@ Cc: linux-fsdevel@vger.kernel.org,
 	viro@zeniv.linux.org.uk,
 	dsterba@suse.com,
 	Filipe Manana <fdmanana@suse.com>
-Subject: [PATCH v2 0/4] btrfs: stop duplicating VFS code for subvolume/snapshot dentry
-Date: Tue, 13 Jan 2026 12:39:49 +0000
-Message-ID: <cover.1768307858.git.fdmanana@suse.com>
+Subject: [PATCH v2 1/4] fs: export may_delete() as may_delete_dentry()
+Date: Tue, 13 Jan 2026 12:39:50 +0000
+Message-ID: <e09128fd53f01b19d0a58f0e7d24739f79f47f6d.1768307858.git.fdmanana@suse.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <cover.1768307858.git.fdmanana@suse.com>
+References: <cover.1768307858.git.fdmanana@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,27 +62,101 @@ Content-Transfer-Encoding: 8bit
 
 From: Filipe Manana <fdmanana@suse.com>
 
-Currently btrfs has copies of two unexported functions from fs/namei.c
-used in the snapshot/subvolume creation and deletion. This patchset
-exports those functions and makes btrfs use them, to avoid duplication
-and the burden of keeping the copies up to date.
+For many years btrfs as been using a copy of may_delete() in
+fs/btrfs/ioctl.c:btrfs_may_delete(). Everytime may_delete() is updated we
+need to update the btrfs copy, and this is a maintenance burden. Currently
+there are minor differences between both because the btrfs side lacks
+updates done in may_delete().
 
-V2: Updated changelog of patch 4/4 to mention the btrfs copy misses a
-    call to audit_inode_child().
+Export may_delete() so that btrfs can use it and with the less generic
+name may_delete_dentry(). While at it change the calls in vfs_rmdir() to
+pass a boolean literal instead of 1 and 0 as the last argument since the
+argument has a bool type.
 
-Link to V1: https://lore.kernel.org/linux-btrfs/cover.1767801889.git.fdmanana@suse.com/
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+---
+ fs/namei.c         | 17 +++++++++--------
+ include/linux/fs.h |  3 +++
+ 2 files changed, 12 insertions(+), 8 deletions(-)
 
-Filipe Manana (4):
-  fs: export may_delete() as may_delete_dentry()
-  fs: export may_create() as may_create_dentry()
-  btrfs: use may_delete_dentry() in btrfs_ioctl_snap_destroy()
-  btrfs: use may_create_dentry() in btrfs_mksubvol()
-
- fs/btrfs/ioctl.c   | 73 ++--------------------------------------------
- fs/namei.c         | 36 ++++++++++++-----------
- include/linux/fs.h |  5 ++++
- 3 files changed, 26 insertions(+), 88 deletions(-)
-
+diff --git a/fs/namei.c b/fs/namei.c
+index bf0f66f0e9b9..28aebc786e8f 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3604,7 +3604,7 @@ EXPORT_SYMBOL(__check_sticky);
+  * 11. We don't allow removal of NFS sillyrenamed files; it's handled by
+  *     nfs_async_unlink().
+  */
+-static int may_delete(struct mnt_idmap *idmap, struct inode *dir,
++int may_delete_dentry(struct mnt_idmap *idmap, struct inode *dir,
+ 		      struct dentry *victim, bool isdir)
+ {
+ 	struct inode *inode = d_backing_inode(victim);
+@@ -3646,6 +3646,7 @@ static int may_delete(struct mnt_idmap *idmap, struct inode *dir,
+ 		return -EBUSY;
+ 	return 0;
+ }
++EXPORT_SYMBOL(may_delete_dentry);
+ 
+ /*	Check whether we can create an object with dentry child in directory
+  *  dir.
+@@ -5209,7 +5210,7 @@ SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
+ int vfs_rmdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	      struct dentry *dentry, struct delegated_inode *delegated_inode)
+ {
+-	int error = may_delete(idmap, dir, dentry, 1);
++	int error = may_delete_dentry(idmap, dir, dentry, true);
+ 
+ 	if (error)
+ 		return error;
+@@ -5344,7 +5345,7 @@ int vfs_unlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	       struct dentry *dentry, struct delegated_inode *delegated_inode)
+ {
+ 	struct inode *target = dentry->d_inode;
+-	int error = may_delete(idmap, dir, dentry, 0);
++	int error = may_delete_dentry(idmap, dir, dentry, false);
+ 
+ 	if (error)
+ 		return error;
+@@ -5816,7 +5817,7 @@ int vfs_rename(struct renamedata *rd)
+ 	if (source == target)
+ 		return 0;
+ 
+-	error = may_delete(rd->mnt_idmap, old_dir, old_dentry, is_dir);
++	error = may_delete_dentry(rd->mnt_idmap, old_dir, old_dentry, is_dir);
+ 	if (error)
+ 		return error;
+ 
+@@ -5826,11 +5827,11 @@ int vfs_rename(struct renamedata *rd)
+ 		new_is_dir = d_is_dir(new_dentry);
+ 
+ 		if (!(flags & RENAME_EXCHANGE))
+-			error = may_delete(rd->mnt_idmap, new_dir,
+-					   new_dentry, is_dir);
++			error = may_delete_dentry(rd->mnt_idmap, new_dir,
++						  new_dentry, is_dir);
+ 		else
+-			error = may_delete(rd->mnt_idmap, new_dir,
+-					   new_dentry, new_is_dir);
++			error = may_delete_dentry(rd->mnt_idmap, new_dir,
++						  new_dentry, new_is_dir);
+ 	}
+ 	if (error)
+ 		return error;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f5c9cf28c4dc..319aaeb876fd 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2657,6 +2657,9 @@ static inline int path_permission(const struct path *path, int mask)
+ int __check_sticky(struct mnt_idmap *idmap, struct inode *dir,
+ 		   struct inode *inode);
+ 
++int may_delete_dentry(struct mnt_idmap *idmap, struct inode *dir,
++		      struct dentry *victim, bool isdir);
++
+ static inline bool execute_ok(struct inode *inode)
+ {
+ 	return (inode->i_mode & S_IXUGO) || S_ISDIR(inode->i_mode);
 -- 
 2.47.2
 
