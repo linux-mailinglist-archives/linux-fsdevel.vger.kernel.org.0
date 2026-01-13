@@ -1,53 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-73337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63ADD160B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 01:35:43 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692D6D160C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 01:35:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 20E6E308DEAB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 00:32:14 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 354E63048C66
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 00:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D599E2773CB;
-	Tue, 13 Jan 2026 00:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F219527F18B;
+	Tue, 13 Jan 2026 00:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jv4ejlQK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KEAqWscR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4296C2356D9;
-	Tue, 13 Jan 2026 00:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D532367B8;
+	Tue, 13 Jan 2026 00:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768264270; cv=none; b=Th5mwm2rJqC0GPOO0n/R5OmVzL9oJ0992q216DpBLi2lcPN3tkBPI28xBO4nelOExnLwXitDd0cH0kzD1mMvkoBhNlxqooMnBiPsq7K959zRc9Wb8G48v56FLO1OKCIyNXwJRPRTwpEm65mMl1wsgvj870yGkWrPevb3cxCiJ30=
+	t=1768264286; cv=none; b=ZUK03bzjkXH6OafFNce6Kt3J95Zf+yzWecBwSvPOjHj1FfqQI4NuNVDNHKuaQ8aRHU5o5FvwuAM5S42kET/HC2q6CUoOHUJxpUWuflHmT9BnpfkxaO5B4HNHFrNJ/kGTEXyvqcvFlDcDqiRe/X3BIYo+IQtyEVMSIRmWPri/NYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768264270; c=relaxed/simple;
-	bh=ZPckDpRfG8ORfLU4FNGuuMYIlizi5W5YBrJn3nGo74Q=;
+	s=arc-20240116; t=1768264286; c=relaxed/simple;
+	bh=NsPm8rAKGcZQgZOVJ6nIPVneie3IexBMdRBs3GBvgRI=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GhJZPS2+zLCibFJ5Ugi6ay2EuBp/HWH+awgs7bbZUY98iZs+z4kW5WzjXOCnWNr/COoQ8mru56+W7K/Qq8mRoGmUmhhFHWesyGtXQASkDkxOiMeq90zmsHDruQIi1xqwHBzWV1z6oK5o47gQp/utGhTbJmBhl7DTe1PuOgM6Dy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jv4ejlQK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD2CC116D0;
-	Tue, 13 Jan 2026 00:31:10 +0000 (UTC)
+	 MIME-Version:Content-Type; b=jKoXpcXU8Puerx9MRY3w0XheiuPvtNdQ8FBsjKo8epi0onN+iIg3OgU7BLyMDk9JsPWfqR8e6S61VHqDMu6ReHuSeipPCwuNf2a9H9IyuQ7KnSsfGaR8RXJJPRIE02I6SXdASR01WYk5EobYuCZ61yR3F/mEeBFnNI/CduOz8Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KEAqWscR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5FDFC116D0;
+	Tue, 13 Jan 2026 00:31:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768264270;
-	bh=ZPckDpRfG8ORfLU4FNGuuMYIlizi5W5YBrJn3nGo74Q=;
+	s=k20201202; t=1768264285;
+	bh=NsPm8rAKGcZQgZOVJ6nIPVneie3IexBMdRBs3GBvgRI=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Jv4ejlQKkROtemjY6mtP4NtEkHdUn9d9XMqV8dwq2ONiRltStDMaOYWqkzcU7xSA5
-	 kD5nKcLRag4RYzahQsYLB7VbdXxW9sYPMZEmn0uX/9pH1vAjbuAfImA3le0No21Q2E
-	 vSbOv70nTLUGGfuuk3BC4b1T1FnxZewRiatjcnlg+yhHcndqAs79W5SSu/WqdQAQcM
-	 7Lxa8CAtqPsaD3g8VBkv+lmYl6FKzhrSII2Yf89Ra1wWpz9bHzGBgBS4ItAeALdMUU
-	 wMY4hSxvZfWQfuMLiY9U/BnzmCjjTUBppv/yp7786cPR2pyniUAddgfc3CF6znTs8n
-	 qZYrvuyTj0tPQ==
-Date: Mon, 12 Jan 2026 16:31:09 -0800
-Subject: [PATCH 1/6] uapi: promote EFSCORRUPTED and EUCLEAN to errno.h
+	b=KEAqWscReMdd/3YdwQt8MiWBrca2sUOYKXC0FsEPa/3eB/r8uFwFbi1uUsjdyILEW
+	 ZGhbtb8dG1KgGgtMH4ebXJZ+X1O2U/U8nhiS15pbjmFFod3EkA5sdCPpEZhzOiNXbE
+	 FRTNVDsn9ZYZVFyxjaH93sOV/AFCCasr/iIuqzqJFkkD8DqT8wjmweBjwItY/8rxrJ
+	 xUekmc1y0kOx3Yfg6xEnRuILlP9udixTCySfZLheBHUzAifchgJC8Xb73/K+Cdb1ml
+	 y0XubeliYrXZWN3Os8h6ZMb3tyY0LiSI8lccBRFJl03pCHnVA6avtl9DQWzjEZaH8a
+	 mQz9Nj0QTbAvQ==
+Date: Mon, 12 Jan 2026 16:31:25 -0800
+Subject: [PATCH 2/6] fs: report filesystem and file I/O errors to fsnotify
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, brauner@kernel.org
-Cc: hch@lst.de, hsiangkao@linux.alibaba.com, jack@suse.cz,
- linux-api@vger.kernel.org, linux-xfs@vger.kernel.org, jack@suse.cz,
+Cc: hch@lst.de, jack@suse.cz, linux-xfs@vger.kernel.org, jack@suse.cz,
  linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  gabriel@krisman.be, hch@lst.de, amir73il@gmail.com
-Message-ID: <176826402587.3490369.17659117524205214600.stgit@frogsfrogsfrogs>
+Message-ID: <176826402610.3490369.4378391061533403171.stgit@frogsfrogsfrogs>
 In-Reply-To: <176826402528.3490369.2415315475116356277.stgit@frogsfrogsfrogs>
 References: <176826402528.3490369.2415315475116356277.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,331 +60,395 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Stop definining these privately and instead move them to the uapi
-errno.h so that they become canonical instead of copy pasta.
+Create some wrapper code around struct super_block so that filesystems
+have a standard way to queue filesystem metadata and file I/O error
+reports to have them sent to fsnotify.
 
-Cc: linux-api@vger.kernel.org
+If a filesystem wants to provide an error number, it must supply only
+negative error numbers.  These are stored internally as negative
+numbers, but they are converted to positive error numbers before being
+passed to fanotify, per the fanotify(7) manpage.  Implementations of
+super_operations::report_error are passed the raw internal event data.
+
+Note that we have to play some shenanigans with mempools and queue_work
+so that the error handling doesn't happen outside of process context,
+and the event handler functions (both ->report_error and fsnotify) can
+handle file I/O error messages without having to worry about whatever
+locks might be held.  This asynchronicity requires that unmount wait for
+pending events to clear.
+
+Add a new callback to the superblock operations structure so that
+filesystem drivers can themselves respond to file I/O errors if they so
+desire.  This will be used for an upcoming self-healing patchset for
+XFS.
+
+Suggested-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- arch/alpha/include/uapi/asm/errno.h        |    2 ++
- arch/mips/include/uapi/asm/errno.h         |    2 ++
- arch/parisc/include/uapi/asm/errno.h       |    2 ++
- arch/sparc/include/uapi/asm/errno.h        |    2 ++
- fs/erofs/internal.h                        |    2 --
- fs/ext2/ext2.h                             |    1 -
- fs/ext4/ext4.h                             |    3 ---
- fs/f2fs/f2fs.h                             |    3 ---
- fs/minix/minix.h                           |    2 --
- fs/udf/udf_sb.h                            |    2 --
- fs/xfs/xfs_linux.h                         |    2 --
- include/linux/jbd2.h                       |    3 ---
- include/uapi/asm-generic/errno.h           |    2 ++
- tools/arch/alpha/include/uapi/asm/errno.h  |    2 ++
- tools/arch/mips/include/uapi/asm/errno.h   |    2 ++
- tools/arch/parisc/include/uapi/asm/errno.h |    2 ++
- tools/arch/sparc/include/uapi/asm/errno.h  |    2 ++
- tools/include/uapi/asm-generic/errno.h     |    2 ++
- 18 files changed, 20 insertions(+), 18 deletions(-)
+ include/linux/fs/super_types.h |    7 +
+ include/linux/fserror.h        |   75 +++++++++++++++
+ fs/Makefile                    |    2 
+ fs/fserror.c                   |  194 ++++++++++++++++++++++++++++++++++++++++
+ fs/super.c                     |    3 +
+ 5 files changed, 280 insertions(+), 1 deletion(-)
+ create mode 100644 include/linux/fserror.h
+ create mode 100644 fs/fserror.c
 
 
-diff --git a/arch/alpha/include/uapi/asm/errno.h b/arch/alpha/include/uapi/asm/errno.h
-index 3d265f6babaf0a..6791f6508632ee 100644
---- a/arch/alpha/include/uapi/asm/errno.h
-+++ b/arch/alpha/include/uapi/asm/errno.h
-@@ -55,6 +55,7 @@
- #define	ENOSR		82	/* Out of streams resources */
- #define	ETIME		83	/* Timer expired */
- #define	EBADMSG		84	/* Not a data message */
-+#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
- #define	EPROTO		85	/* Protocol error */
- #define	ENODATA		86	/* No data available */
- #define	ENOSTR		87	/* Device not a stream */
-@@ -96,6 +97,7 @@
- #define	EREMCHG		115	/* Remote address changed */
+diff --git a/include/linux/fs/super_types.h b/include/linux/fs/super_types.h
+index 6bd3009e09b3b8..97a8552d8f2bc9 100644
+--- a/include/linux/fs/super_types.h
++++ b/include/linux/fs/super_types.h
+@@ -35,6 +35,7 @@ struct user_namespace;
+ struct workqueue_struct;
+ struct writeback_control;
+ struct xattr_handler;
++struct fserror_event;
  
- #define	EUCLEAN		117	/* Structure needs cleaning */
-+#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
- #define	ENOTNAM		118	/* Not a XENIX named type file */
- #define	ENAVAIL		119	/* No XENIX semaphores available */
- #define	EISNAM		120	/* Is a named type file */
-diff --git a/arch/mips/include/uapi/asm/errno.h b/arch/mips/include/uapi/asm/errno.h
-index 2fb714e2d6d8fc..c01ed91b1ef44b 100644
---- a/arch/mips/include/uapi/asm/errno.h
-+++ b/arch/mips/include/uapi/asm/errno.h
-@@ -50,6 +50,7 @@
- #define EDOTDOT		73	/* RFS specific error */
- #define EMULTIHOP	74	/* Multihop attempted */
- #define EBADMSG		77	/* Not a data message */
-+#define EFSBADCRC	EBADMSG	/* Bad CRC detected */
- #define ENAMETOOLONG	78	/* File name too long */
- #define EOVERFLOW	79	/* Value too large for defined data type */
- #define ENOTUNIQ	80	/* Name not unique on network */
-@@ -88,6 +89,7 @@
- #define EISCONN		133	/* Transport endpoint is already connected */
- #define ENOTCONN	134	/* Transport endpoint is not connected */
- #define EUCLEAN		135	/* Structure needs cleaning */
-+#define EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
- #define ENOTNAM		137	/* Not a XENIX named type file */
- #define ENAVAIL		138	/* No XENIX semaphores available */
- #define EISNAM		139	/* Is a named type file */
-diff --git a/arch/parisc/include/uapi/asm/errno.h b/arch/parisc/include/uapi/asm/errno.h
-index 8d94739d75c67c..8cbc07c1903e4c 100644
---- a/arch/parisc/include/uapi/asm/errno.h
-+++ b/arch/parisc/include/uapi/asm/errno.h
-@@ -36,6 +36,7 @@
+ extern struct super_block *blockdev_superblock;
  
- #define	EDOTDOT		66	/* RFS specific error */
- #define	EBADMSG		67	/* Not a data message */
-+#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
- #define	EUSERS		68	/* Too many users */
- #define	EDQUOT		69	/* Quota exceeded */
- #define	ESTALE		70	/* Stale file handle */
-@@ -62,6 +63,7 @@
- #define	ERESTART	175	/* Interrupted system call should be restarted */
- #define	ESTRPIPE	176	/* Streams pipe error */
- #define	EUCLEAN		177	/* Structure needs cleaning */
-+#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
- #define	ENOTNAM		178	/* Not a XENIX named type file */
- #define	ENAVAIL		179	/* No XENIX semaphores available */
- #define	EISNAM		180	/* Is a named type file */
-diff --git a/arch/sparc/include/uapi/asm/errno.h b/arch/sparc/include/uapi/asm/errno.h
-index 81a732b902ee38..4a41e7835fd5b8 100644
---- a/arch/sparc/include/uapi/asm/errno.h
-+++ b/arch/sparc/include/uapi/asm/errno.h
-@@ -48,6 +48,7 @@
- #define	ENOSR		74	/* Out of streams resources */
- #define	ENOMSG		75	/* No message of desired type */
- #define	EBADMSG		76	/* Not a data message */
-+#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
- #define	EIDRM		77	/* Identifier removed */
- #define	EDEADLK		78	/* Resource deadlock would occur */
- #define	ENOLCK		79	/* No record locks available */
-@@ -91,6 +92,7 @@
- #define	ENOTUNIQ	115	/* Name not unique on network */
- #define	ERESTART	116	/* Interrupted syscall should be restarted */
- #define	EUCLEAN		117	/* Structure needs cleaning */
-+#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
- #define	ENOTNAM		118	/* Not a XENIX named type file */
- #define	ENAVAIL		119	/* No XENIX semaphores available */
- #define	EISNAM		120	/* Is a named type file */
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index f7f622836198da..d06e99baf5d5ae 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -541,6 +541,4 @@ long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
- long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
- 			unsigned long arg);
+@@ -124,6 +125,9 @@ struct super_operations {
+ 	 */
+ 	int (*remove_bdev)(struct super_block *sb, struct block_device *bdev);
+ 	void (*shutdown)(struct super_block *sb);
++
++	/* Report a filesystem error */
++	void (*report_error)(const struct fserror_event *event);
+ };
  
--#define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
--
- #endif	/* __EROFS_INTERNAL_H */
-diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-index cf97b76e9fd3e9..5e0c6c5fcb6cd6 100644
---- a/fs/ext2/ext2.h
-+++ b/fs/ext2/ext2.h
-@@ -357,7 +357,6 @@ struct ext2_inode {
-  */
- #define	EXT2_VALID_FS			0x0001	/* Unmounted cleanly */
- #define	EXT2_ERROR_FS			0x0002	/* Errors detected */
--#define	EFSCORRUPTED			EUCLEAN	/* Filesystem is corrupted */
+ struct super_block {
+@@ -268,6 +272,9 @@ struct super_block {
+ 	spinlock_t				s_inode_wblist_lock;
+ 	struct list_head			s_inodes_wb;	/* writeback inodes */
+ 	long					s_min_writeback_pages;
++
++	/* number of fserrors that are being sent to fsnotify/filesystems */
++	refcount_t				s_pending_errors;
+ } __randomize_layout;
  
  /*
-  * Mount flags
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 56112f201cace7..62c091b52bacdf 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3938,7 +3938,4 @@ extern int ext4_block_write_begin(handle_t *handle, struct folio *folio,
- 				  get_block_t *get_block);
- #endif	/* __KERNEL__ */
+diff --git a/include/linux/fserror.h b/include/linux/fserror.h
+new file mode 100644
+index 00000000000000..5e1ad78c346e27
+--- /dev/null
++++ b/include/linux/fserror.h
+@@ -0,0 +1,75 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (c) 2025 Oracle.  All Rights Reserved.
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#ifndef _LINUX_FSERROR_H__
++#define _LINUX_FSERROR_H__
++
++void fserror_mount(struct super_block *sb);
++void fserror_unmount(struct super_block *sb);
++
++enum fserror_type {
++	/* pagecache I/O failed */
++	FSERR_BUFFERED_READ,
++	FSERR_BUFFERED_WRITE,
++
++	/* direct I/O failed */
++	FSERR_DIRECTIO_READ,
++	FSERR_DIRECTIO_WRITE,
++
++	/* out of band media error reported */
++	FSERR_DATA_LOST,
++
++	/* filesystem metadata */
++	FSERR_METADATA,
++};
++
++struct fserror_event {
++	struct work_struct work;
++	struct super_block *sb;
++	struct inode *inode;
++	loff_t pos;
++	u64 len;
++	enum fserror_type type;
++
++	/* negative error number */
++	int error;
++};
++
++void fserror_report(struct super_block *sb, struct inode *inode,
++		    enum fserror_type type, loff_t pos, u64 len, int error,
++		    gfp_t gfp);
++
++static inline void fserror_report_io(struct inode *inode,
++				     enum fserror_type type, loff_t pos,
++				     u64 len, int error, gfp_t gfp)
++{
++	fserror_report(inode->i_sb, inode, type, pos, len, error, gfp);
++}
++
++static inline void fserror_report_data_lost(struct inode *inode, loff_t pos,
++					    u64 len, gfp_t gfp)
++{
++	fserror_report(inode->i_sb, inode, FSERR_DATA_LOST, pos, len, -EIO,
++		       gfp);
++}
++
++static inline void fserror_report_file_metadata(struct inode *inode, int error,
++						gfp_t gfp)
++{
++	fserror_report(inode->i_sb, inode, FSERR_METADATA, 0, 0, error, gfp);
++}
++
++static inline void fserror_report_metadata(struct super_block *sb, int error,
++					   gfp_t gfp)
++{
++	fserror_report(sb, NULL, FSERR_METADATA, 0, 0, error, gfp);
++}
++
++static inline void fserror_report_shutdown(struct super_block *sb, gfp_t gfp)
++{
++	fserror_report(sb, NULL, FSERR_METADATA, 0, 0, -ESHUTDOWN, gfp);
++}
++
++#endif /* _LINUX_FSERROR_H__ */
+diff --git a/fs/Makefile b/fs/Makefile
+index a04274a3c85420..f238cc5ea2e9d7 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -16,7 +16,7 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+ 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+ 		fs_dirent.o fs_context.o fs_parser.o fsopen.o init.o \
+ 		kernel_read_file.o mnt_idmapping.o remap_range.o pidfs.o \
+-		file_attr.o
++		file_attr.o fserror.o
  
--#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
--
- #endif	/* _EXT4_H */
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 20edbb99b814a7..9f3aa3c7f12613 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -5004,7 +5004,4 @@ static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
- 	f2fs_invalidate_compress_pages_range(sbi, blkaddr, len);
- }
- 
--#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
--
- #endif /* _LINUX_F2FS_H */
-diff --git a/fs/minix/minix.h b/fs/minix/minix.h
-index 2bfaf377f2086c..7e1f652f16d311 100644
---- a/fs/minix/minix.h
-+++ b/fs/minix/minix.h
-@@ -175,6 +175,4 @@ static inline int minix_test_bit(int nr, const void *vaddr)
- 	__minix_error_inode((inode), __func__, __LINE__,	\
- 			    (fmt), ##__VA_ARGS__)
- 
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
--
- #endif /* FS_MINIX_H */
-diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
-index 08ec8756b9487b..8399accc788dea 100644
---- a/fs/udf/udf_sb.h
-+++ b/fs/udf/udf_sb.h
-@@ -55,8 +55,6 @@
- #define MF_DUPLICATE_MD		0x01
- #define MF_MIRROR_FE_LOADED	0x02
- 
--#define EFSCORRUPTED EUCLEAN
--
- struct udf_meta_data {
- 	__u32	s_meta_file_loc;
- 	__u32	s_mirror_file_loc;
-diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-index 4dd747bdbccab2..55064228c4d574 100644
---- a/fs/xfs/xfs_linux.h
-+++ b/fs/xfs/xfs_linux.h
-@@ -121,8 +121,6 @@ typedef __u32			xfs_nlink_t;
- 
- #define ENOATTR		ENODATA		/* Attribute not found */
- #define EWRONGFS	EINVAL		/* Mount with wrong filesystem type */
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
--#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
- 
- #define __return_address __builtin_return_address(0)
- 
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index f5eaf76198f377..a53a00d36228ce 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -1815,7 +1815,4 @@ static inline int jbd2_handle_buffer_credits(handle_t *handle)
- 
- #endif	/* __KERNEL__ */
- 
--#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
--#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
--
- #endif	/* _LINUX_JBD2_H */
-diff --git a/include/uapi/asm-generic/errno.h b/include/uapi/asm-generic/errno.h
-index cf9c51ac49f97e..92e7ae493ee315 100644
---- a/include/uapi/asm-generic/errno.h
-+++ b/include/uapi/asm-generic/errno.h
-@@ -55,6 +55,7 @@
- #define	EMULTIHOP	72	/* Multihop attempted */
- #define	EDOTDOT		73	/* RFS specific error */
- #define	EBADMSG		74	/* Not a data message */
-+#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
- #define	EOVERFLOW	75	/* Value too large for defined data type */
- #define	ENOTUNIQ	76	/* Name not unique on network */
- #define	EBADFD		77	/* File descriptor in bad state */
-@@ -98,6 +99,7 @@
- #define	EINPROGRESS	115	/* Operation now in progress */
- #define	ESTALE		116	/* Stale file handle */
- #define	EUCLEAN		117	/* Structure needs cleaning */
-+#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
- #define	ENOTNAM		118	/* Not a XENIX named type file */
- #define	ENAVAIL		119	/* No XENIX semaphores available */
- #define	EISNAM		120	/* Is a named type file */
-diff --git a/tools/arch/alpha/include/uapi/asm/errno.h b/tools/arch/alpha/include/uapi/asm/errno.h
-index 3d265f6babaf0a..6791f6508632ee 100644
---- a/tools/arch/alpha/include/uapi/asm/errno.h
-+++ b/tools/arch/alpha/include/uapi/asm/errno.h
-@@ -55,6 +55,7 @@
- #define	ENOSR		82	/* Out of streams resources */
- #define	ETIME		83	/* Timer expired */
- #define	EBADMSG		84	/* Not a data message */
-+#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
- #define	EPROTO		85	/* Protocol error */
- #define	ENODATA		86	/* No data available */
- #define	ENOSTR		87	/* Device not a stream */
-@@ -96,6 +97,7 @@
- #define	EREMCHG		115	/* Remote address changed */
- 
- #define	EUCLEAN		117	/* Structure needs cleaning */
-+#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
- #define	ENOTNAM		118	/* Not a XENIX named type file */
- #define	ENAVAIL		119	/* No XENIX semaphores available */
- #define	EISNAM		120	/* Is a named type file */
-diff --git a/tools/arch/mips/include/uapi/asm/errno.h b/tools/arch/mips/include/uapi/asm/errno.h
-index 2fb714e2d6d8fc..c01ed91b1ef44b 100644
---- a/tools/arch/mips/include/uapi/asm/errno.h
-+++ b/tools/arch/mips/include/uapi/asm/errno.h
-@@ -50,6 +50,7 @@
- #define EDOTDOT		73	/* RFS specific error */
- #define EMULTIHOP	74	/* Multihop attempted */
- #define EBADMSG		77	/* Not a data message */
-+#define EFSBADCRC	EBADMSG	/* Bad CRC detected */
- #define ENAMETOOLONG	78	/* File name too long */
- #define EOVERFLOW	79	/* Value too large for defined data type */
- #define ENOTUNIQ	80	/* Name not unique on network */
-@@ -88,6 +89,7 @@
- #define EISCONN		133	/* Transport endpoint is already connected */
- #define ENOTCONN	134	/* Transport endpoint is not connected */
- #define EUCLEAN		135	/* Structure needs cleaning */
-+#define EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
- #define ENOTNAM		137	/* Not a XENIX named type file */
- #define ENAVAIL		138	/* No XENIX semaphores available */
- #define EISNAM		139	/* Is a named type file */
-diff --git a/tools/arch/parisc/include/uapi/asm/errno.h b/tools/arch/parisc/include/uapi/asm/errno.h
-index 8d94739d75c67c..8cbc07c1903e4c 100644
---- a/tools/arch/parisc/include/uapi/asm/errno.h
-+++ b/tools/arch/parisc/include/uapi/asm/errno.h
+ obj-$(CONFIG_BUFFER_HEAD)	+= buffer.o mpage.o
+ obj-$(CONFIG_PROC_FS)		+= proc_namespace.o
+diff --git a/fs/fserror.c b/fs/fserror.c
+new file mode 100644
+index 00000000000000..06ca86adab9b76
+--- /dev/null
++++ b/fs/fserror.c
+@@ -0,0 +1,194 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (c) 2025 Oracle.  All Rights Reserved.
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#include <linux/fs.h>
++#include <linux/fsnotify.h>
++#include <linux/mempool.h>
++#include <linux/fserror.h>
++
++#define FSERROR_DEFAULT_EVENT_POOL_SIZE		(32)
++
++static struct mempool fserror_events_pool;
++
++void fserror_mount(struct super_block *sb)
++{
++	/*
++	 * The pending error counter is biased by 1 so that we don't wake_var
++	 * until we're actually trying to unmount.
++	 */
++	refcount_set(&sb->s_pending_errors, 1);
++}
++
++void fserror_unmount(struct super_block *sb)
++{
++	/*
++	 * If we don't drop the pending error count to zero, then wait for it
++	 * to drop below 1, which means that the pending errors cleared and
++	 * hopefully we didn't saturate with 1 billion+ concurrent events.
++	 */
++	if (!refcount_dec_and_test(&sb->s_pending_errors))
++		wait_var_event(&sb->s_pending_errors,
++			       refcount_read(&sb->s_pending_errors) < 1);
++}
++
++static inline void fserror_pending_dec(struct super_block *sb)
++{
++	if (refcount_dec_and_test(&sb->s_pending_errors))
++		wake_up_var(&sb->s_pending_errors);
++}
++
++static inline void fserror_free_event(struct fserror_event *event)
++{
++	fserror_pending_dec(event->sb);
++	mempool_free(event, &fserror_events_pool);
++}
++
++static void fserror_worker(struct work_struct *work)
++{
++	struct fserror_event *event =
++			container_of(work, struct fserror_event, work);
++	struct super_block *sb = event->sb;
++
++	if (sb->s_flags & SB_ACTIVE) {
++		struct fs_error_report report = {
++			/* send positive error number to userspace */
++			.error = -event->error,
++			.inode = event->inode,
++			.sb = event->sb,
++		};
++
++		if (sb->s_op->report_error)
++			sb->s_op->report_error(event);
++
++		fsnotify(FS_ERROR, &report, FSNOTIFY_EVENT_ERROR, NULL, NULL,
++			 NULL, 0);
++	}
++
++	iput(event->inode);
++	fserror_free_event(event);
++}
++
++static inline struct fserror_event *fserror_alloc_event(struct super_block *sb,
++							gfp_t gfp_flags)
++{
++	struct fserror_event *event = NULL;
++
++	/*
++	 * If pending_errors already reached zero or is no longer active,
++	 * the superblock is being deactivated so there's no point in
++	 * continuing.
++	 *
++	 * The order of the check of s_pending_errors and SB_ACTIVE are
++	 * mandated by order of accesses in generic_shutdown_super and
++	 * fserror_unmount.  Barriers are implicitly provided by the refcount
++	 * manipulations in this function and fserror_unmount.
++	 */
++	if (!refcount_inc_not_zero(&sb->s_pending_errors))
++		return NULL;
++	if (!(sb->s_flags & SB_ACTIVE))
++		goto out_pending;
++
++	event = mempool_alloc(&fserror_events_pool, gfp_flags);
++	if (!event)
++		goto out_pending;
++
++	/* mempool_alloc doesn't support GFP_ZERO */
++	memset(event, 0, sizeof(*event));
++	event->sb = sb;
++	INIT_WORK(&event->work, fserror_worker);
++
++	return event;
++
++out_pending:
++	fserror_pending_dec(sb);
++	return NULL;
++}
++
++/**
++ * fserror_report - report a filesystem error of some kind
++ *
++ * @sb:		superblock of the filesystem
++ * @inode:	inode within that filesystem, if applicable
++ * @type:	type of error encountered
++ * @pos:	start of inode range affected, if applicable
++ * @len:	length of inode range affected, if applicable
++ * @error:	error number encountered, must be negative
++ * @gfp:	memory allocation flags for conveying the event to a worker,
++ *		since this function can be called from atomic contexts
++ *
++ * Report details of a filesystem error to the super_operations::report_error
++ * callback if present; and to fsnotify for distribution to userspace.  @sb,
++ * @gfp, @type, and @error must all be specified.  For file I/O errors, the
++ * @inode, @pos, and @len fields must also be specified.  For file metadata
++ * errors, @inode must be specified.  If @inode is not NULL, then @inode->i_sb
++ * must point to @sb.
++ *
++ * Reporting work is deferred to a workqueue to ensure that ->report_error is
++ * called from process context without any locks held.  An active reference to
++ * the inode is maintained until event handling is complete, and unmount will
++ * wait for queued events to drain.
++ */
++void fserror_report(struct super_block *sb, struct inode *inode,
++		    enum fserror_type type, loff_t pos, u64 len, int error,
++		    gfp_t gfp)
++{
++	struct fserror_event *event;
++
++	/* sb and inode must be from the same filesystem */
++	WARN_ON_ONCE(inode && inode->i_sb != sb);
++
++	/* error number must be negative */
++	WARN_ON_ONCE(error >= 0);
++
++	event = fserror_alloc_event(sb, gfp);
++	if (!event)
++		goto lost;
++
++	event->type = type;
++	event->pos = pos;
++	event->len = len;
++	event->error = error;
++
++	/*
++	 * Can't iput from non-sleeping context, so grabbing another reference
++	 * to the inode must be the last thing before submitting the event.
++	 */
++	if (inode) {
++		event->inode = igrab(inode);
++		if (!event->inode)
++			goto lost_event;
++	}
++
++	/*
++	 * Use schedule_work here even if we're already in process context so
++	 * that fsnotify and super_operations::report_error implementations are
++	 * guaranteed to run in process context without any locks held.  Since
++	 * errors are supposed to be rare, the overhead shouldn't kill us any
++	 * more than the failing device will.
++	 */
++	schedule_work(&event->work);
++	return;
++
++lost_event:
++	fserror_free_event(event);
++lost:
++	if (inode)
++		pr_err_ratelimited(
++ "%s: lost file I/O error report for ino %lu type %u pos 0x%llx len 0x%llx error %d",
++		       sb->s_id, inode->i_ino, type, pos, len, error);
++	else
++		pr_err_ratelimited(
++ "%s: lost filesystem error report for type %u error %d",
++		       sb->s_id, type, error);
++}
++EXPORT_SYMBOL_GPL(fserror_report);
++
++static int __init fserror_init(void)
++{
++	return mempool_init_kmalloc_pool(&fserror_events_pool,
++					 FSERROR_DEFAULT_EVENT_POOL_SIZE,
++					 sizeof(struct fserror_event));
++}
++fs_initcall(fserror_init);
+diff --git a/fs/super.c b/fs/super.c
+index 3d85265d14001d..b13c1fd6a6f422 100644
+--- a/fs/super.c
++++ b/fs/super.c
 @@ -36,6 +36,7 @@
+ #include <linux/lockdep.h>
+ #include <linux/user_namespace.h>
+ #include <linux/fs_context.h>
++#include <linux/fserror.h>
+ #include <uapi/linux/mount.h>
+ #include "internal.h"
  
- #define	EDOTDOT		66	/* RFS specific error */
- #define	EBADMSG		67	/* Not a data message */
-+#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
- #define	EUSERS		68	/* Too many users */
- #define	EDQUOT		69	/* Quota exceeded */
- #define	ESTALE		70	/* Stale file handle */
-@@ -62,6 +63,7 @@
- #define	ERESTART	175	/* Interrupted system call should be restarted */
- #define	ESTRPIPE	176	/* Streams pipe error */
- #define	EUCLEAN		177	/* Structure needs cleaning */
-+#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
- #define	ENOTNAM		178	/* Not a XENIX named type file */
- #define	ENAVAIL		179	/* No XENIX semaphores available */
- #define	EISNAM		180	/* Is a named type file */
-diff --git a/tools/arch/sparc/include/uapi/asm/errno.h b/tools/arch/sparc/include/uapi/asm/errno.h
-index 81a732b902ee38..4a41e7835fd5b8 100644
---- a/tools/arch/sparc/include/uapi/asm/errno.h
-+++ b/tools/arch/sparc/include/uapi/asm/errno.h
-@@ -48,6 +48,7 @@
- #define	ENOSR		74	/* Out of streams resources */
- #define	ENOMSG		75	/* No message of desired type */
- #define	EBADMSG		76	/* Not a data message */
-+#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
- #define	EIDRM		77	/* Identifier removed */
- #define	EDEADLK		78	/* Resource deadlock would occur */
- #define	ENOLCK		79	/* No record locks available */
-@@ -91,6 +92,7 @@
- #define	ENOTUNIQ	115	/* Name not unique on network */
- #define	ERESTART	116	/* Interrupted syscall should be restarted */
- #define	EUCLEAN		117	/* Structure needs cleaning */
-+#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
- #define	ENOTNAM		118	/* Not a XENIX named type file */
- #define	ENAVAIL		119	/* No XENIX semaphores available */
- #define	EISNAM		120	/* Is a named type file */
-diff --git a/tools/include/uapi/asm-generic/errno.h b/tools/include/uapi/asm-generic/errno.h
-index cf9c51ac49f97e..92e7ae493ee315 100644
---- a/tools/include/uapi/asm-generic/errno.h
-+++ b/tools/include/uapi/asm-generic/errno.h
-@@ -55,6 +55,7 @@
- #define	EMULTIHOP	72	/* Multihop attempted */
- #define	EDOTDOT		73	/* RFS specific error */
- #define	EBADMSG		74	/* Not a data message */
-+#define	EFSBADCRC	EBADMSG	/* Bad CRC detected */
- #define	EOVERFLOW	75	/* Value too large for defined data type */
- #define	ENOTUNIQ	76	/* Name not unique on network */
- #define	EBADFD		77	/* File descriptor in bad state */
-@@ -98,6 +99,7 @@
- #define	EINPROGRESS	115	/* Operation now in progress */
- #define	ESTALE		116	/* Stale file handle */
- #define	EUCLEAN		117	/* Structure needs cleaning */
-+#define	EFSCORRUPTED	EUCLEAN	/* Filesystem is corrupted */
- #define	ENOTNAM		118	/* Not a XENIX named type file */
- #define	ENAVAIL		119	/* No XENIX semaphores available */
- #define	EISNAM		120	/* Is a named type file */
+@@ -363,6 +364,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
+ 	spin_lock_init(&s->s_inode_list_lock);
+ 	INIT_LIST_HEAD(&s->s_inodes_wb);
+ 	spin_lock_init(&s->s_inode_wblist_lock);
++	fserror_mount(s);
+ 
+ 	s->s_count = 1;
+ 	atomic_set(&s->s_active, 1);
+@@ -622,6 +624,7 @@ void generic_shutdown_super(struct super_block *sb)
+ 		sync_filesystem(sb);
+ 		sb->s_flags &= ~SB_ACTIVE;
+ 
++		fserror_unmount(sb);
+ 		cgroup_writeback_umount(sb);
+ 
+ 		/* Evict all inodes with zero refcount. */
 
 
