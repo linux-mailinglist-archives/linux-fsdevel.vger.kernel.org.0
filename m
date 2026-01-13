@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-73344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F67D1607D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 01:34:56 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id E296BD16083
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 01:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 10E443022F03
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 00:33:17 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 1D846302EC7D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 00:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421CB255F5E;
-	Tue, 13 Jan 2026 00:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8296823535E;
+	Tue, 13 Jan 2026 00:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kK0LjHrj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ry4D7ngc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F049C251791;
-	Tue, 13 Jan 2026 00:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87832AF00;
+	Tue, 13 Jan 2026 00:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768264370; cv=none; b=QGq+ehM99GLaGn1jK3UBhJ+b2geoupp+qaIYTRmcCY7K2CaHS9/z9nZ2KdW3cRYdRHs8YcB7UnZxg3Rsora50KQzd3jUS/OZKfOxFZajqPEiGUV+QZKUUpGWBtPApeOLs2/QC80JEm0GF0rpGzQmMbhj9b6pcpUtmDzksPlkL0k=
+	t=1768264386; cv=none; b=i2cR3hE7JdxdMZP9cpptqOFaSYANXuty983050VexZvddOAiF8gxLsJbMOfk1zw1V4k+f/lPr0uSxCcaD8E73glqFtj6+sg7bND021Yq3A3MwBafwIkxbOr8BC0oUjjbm3J04n10BiXSKmX2CE4e0StVdR2YskY941jgfgpwJRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768264370; c=relaxed/simple;
-	bh=X+i5rnMomZAs0YbYECy7mLWgsEiI9tsRFi60fovYD/Q=;
+	s=arc-20240116; t=1768264386; c=relaxed/simple;
+	bh=b5OtKOicecZ9Jy3ToIkyjiIFR3rqMulkbv0PO72dCHg=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X9OPINt0OsXKjNJO5pYSH1ZFTsDv3DHMjmqT68kbySCDNZITrmpXw2YB2AtVNy6C0/3GQltwJ69VuxvbwJX1iUmf28nNOlpSJ1H/PRDEaKKbSpaKhAKaw7fsX2Y6B8elXYT91tSucup7K4a9BySCKrlQINMZ6MdU9vkPN9ynKCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kK0LjHrj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9AA4C116D0;
-	Tue, 13 Jan 2026 00:32:49 +0000 (UTC)
+	 MIME-Version:Content-Type; b=jBwv4Qa76LA6fIkr4+RQ3r2UO2E0ZrmzjBwCUVLLCEdItaOb/mu4PSiMsXR8E9U+kkbfQ9MMHAugNpXXdt7GgYji+XL0Sv+i8LNVoseJVfyRWoRO1dHgBVLPpCm1s8ZZWbbv8w5IlezoT7fuL+yk+j1KdtX2/ZWnpf4cpUXBWgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ry4D7ngc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A1F8C116D0;
+	Tue, 13 Jan 2026 00:33:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768264369;
-	bh=X+i5rnMomZAs0YbYECy7mLWgsEiI9tsRFi60fovYD/Q=;
+	s=k20201202; t=1768264385;
+	bh=b5OtKOicecZ9Jy3ToIkyjiIFR3rqMulkbv0PO72dCHg=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=kK0LjHrjMSphdUgdM3liPlzD4HPAZPXvIQ1lxZlaiiIydUP9BgvGdlwsRXNF+45F+
-	 7s3RGbC8G+fvzkjNy3mI0Yc3nE+ihCk08n1xnrcgD+gp8qzmwc0riQuDqW4taTatak
-	 yeaEteDsdWB1282ce8OJmlFl7+yrknF7Pd0ZfapRPLKihKH4IMPixumgmkiFeMrKpe
-	 /56eX2orQMidnBzM15Lw9KXohgXuyU49bLtpW7Qd4J7xpXB8jaISmrJWhJLMDNBIo9
-	 h7C0egcrsgiQ6M37l/4IApCrOIsLXeaQT45fYZexYHxCp6QqWS45F55+CEdREQikml
-	 yTLF9vHBKrOog==
-Date: Mon, 12 Jan 2026 16:32:49 -0800
-Subject: [PATCH 01/11] docs: discuss autonomous self healing in the xfs online
- repair design doc
+	b=ry4D7ngc4TcsxJG4jAyzPyFFsqy01a7FjGZfXs3xRhldI+2mOkVO7rbT4uIDI7+B+
+	 wxOEz4mUVJZVQ/0hn4n2xf5N5wM9bWiHzBsv3qzanJKYqetKYCEFvekXC62bUBg4H0
+	 UVbYVrPFl9PaqlVzpC1Cg+xo6uDkAOf90kUcCAZLkxKBHCUg1fxyzMm88OWQzQE+Dg
+	 ojnnKkpbkP+XvKZsERNMK0j6lArZ4ER5uhcJCiEH8kcie5wPqpbm9YmGVLuI3pbXhk
+	 Hagvq0My76P9DeohYiOPm6F3+ow4VEisFcfp3UasoDSyAGKUTW7d4A+J4VHoz7iOvZ
+	 oBr6c6ptqhUUw==
+Date: Mon, 12 Jan 2026 16:33:05 -0800
+Subject: [PATCH 02/11] xfs: start creating infrastructure for health
+ monitoring
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, cem@kernel.org
 Cc: hch@lst.de, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Message-ID: <176826412730.3493441.2877993876987708286.stgit@frogsfrogsfrogs>
+Message-ID: <176826412751.3493441.12925222831409584922.stgit@frogsfrogsfrogs>
 In-Reply-To: <176826412644.3493441.536177954776056129.stgit@frogsfrogsfrogs>
 References: <176826412644.3493441.536177954776056129.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -59,219 +59,449 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Update the XFS online repair document to describe the motivation and
-design of the autonomous filesystem healing agent known as xfs_healer.
+Start creating helper functions and infrastructure to pass filesystem
+health events to a health monitoring file.  Since this is an
+administrative interface, we only support a single health monitor
+process per filesystem, so we don't need to use anything fancy such as
+notifier chains (== tons of indirect calls).
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- .../filesystems/xfs/xfs-online-fsck-design.rst     |  153 ++++++++++++++++++++
- 1 file changed, 151 insertions(+), 2 deletions(-)
+ fs/xfs/libxfs/xfs_fs.h |    7 +
+ fs/xfs/xfs_healthmon.h |   36 +++++++
+ fs/xfs/xfs_mount.h     |    4 +
+ fs/xfs/Makefile        |    1 
+ fs/xfs/xfs_health.c    |    1 
+ fs/xfs/xfs_healthmon.c |  262 ++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/xfs/xfs_ioctl.c     |    4 +
+ fs/xfs/xfs_mount.c     |    2 
+ 8 files changed, 317 insertions(+)
+ create mode 100644 fs/xfs/xfs_healthmon.h
+ create mode 100644 fs/xfs/xfs_healthmon.c
 
 
-diff --git a/Documentation/filesystems/xfs/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
-index 3d9233f403dbb1..fd936d1b7a32a2 100644
---- a/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
-+++ b/Documentation/filesystems/xfs/xfs-online-fsck-design.rst
-@@ -166,9 +166,12 @@ The current XFS tools leave several problems unsolved:
-    malicious actors **exploit quirks of Unicode** to place misleading names
-    in directories.
+diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+index 12463ba766da05..c58e55b3df4099 100644
+--- a/fs/xfs/libxfs/xfs_fs.h
++++ b/fs/xfs/libxfs/xfs_fs.h
+@@ -1003,6 +1003,12 @@ struct xfs_rtgroup_geometry {
+ #define XFS_RTGROUP_GEOM_SICK_RMAPBT	(1U << 3)  /* reverse mappings */
+ #define XFS_RTGROUP_GEOM_SICK_REFCNTBT	(1U << 4)  /* reference counts */
  
-+8. **Site Reliability and Support Engineers** would like to reduce the
-+   frequency of incidents requiring **manual intervention**.
++struct xfs_health_monitor {
++	__u64	flags;		/* flags */
++	__u8	format;		/* output format */
++	__u8	pad[23];	/* zeroes */
++};
 +
- Given this definition of the problems to be solved and the actors who would
- benefit, the proposed solution is a third fsck tool that acts on a running
--filesystem.
-+filesystem, and an autononmous agent that fixes problems as they arise.
+ /*
+  * ioctl commands that are used by Linux filesystems
+  */
+@@ -1042,6 +1048,7 @@ struct xfs_rtgroup_geometry {
+ #define XFS_IOC_GETPARENTS_BY_HANDLE _IOWR('X', 63, struct xfs_getparents_by_handle)
+ #define XFS_IOC_SCRUBV_METADATA	_IOWR('X', 64, struct xfs_scrub_vec_head)
+ #define XFS_IOC_RTGROUP_GEOMETRY _IOWR('X', 65, struct xfs_rtgroup_geometry)
++#define XFS_IOC_HEALTH_MONITOR	_IOW ('X', 68, struct xfs_health_monitor)
  
- This new third program has three components: an in-kernel facility to check
- metadata, an in-kernel facility to repair metadata, and a userspace driver
-@@ -203,6 +206,13 @@ Even if a piece of filesystem metadata can only be regenerated by scanning the
- entire system, the scan can still be done in the background while other file
- operations continue.
+ /*
+  * ioctl commands that replace IRIX syssgi()'s
+diff --git a/fs/xfs/xfs_healthmon.h b/fs/xfs/xfs_healthmon.h
+new file mode 100644
+index 00000000000000..218d5aac87b012
+--- /dev/null
++++ b/fs/xfs/xfs_healthmon.h
+@@ -0,0 +1,36 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (c) 2024-2026 Oracle.  All Rights Reserved.
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#ifndef __XFS_HEALTHMON_H__
++#define __XFS_HEALTHMON_H__
++
++struct xfs_healthmon {
++	/*
++	 * Weak reference to the xfs filesystem that is being monitored.  It
++	 * will be set to zero when the filesystem detaches from the monitor.
++	 * Do not dereference this pointer.
++	 */
++	uintptr_t			mount_cookie;
++
++	/*
++	 * Device number of the filesystem being monitored.  This is for
++	 * consistent tracing even after unmount.
++	 */
++	dev_t				dev;
++
++	/*
++	 * Reference count of this structure.  The open healthmon fd holds one
++	 * ref, the xfs_mount holds another ref if it points to this object,
++	 * and running event handlers hold their own refs.
++	 */
++	refcount_t			ref;
++};
++
++void xfs_healthmon_unmount(struct xfs_mount *mp);
++
++long xfs_ioc_health_monitor(struct file *file,
++		struct xfs_health_monitor __user *arg);
++
++#endif /* __XFS_HEALTHMON_H__ */
+diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+index b871dfde372b52..61c71128d171cb 100644
+--- a/fs/xfs/xfs_mount.h
++++ b/fs/xfs/xfs_mount.h
+@@ -13,6 +13,7 @@ struct xfs_ail;
+ struct xfs_quotainfo;
+ struct xfs_da_geometry;
+ struct xfs_perag;
++struct xfs_healthmon;
  
-+The autonomous self healing agent should listen for metadata health impact
-+reports coming from the kernel and automatically schedule repairs for the
-+damaged metadata.
-+If the required repairs are larger in scope than a single metadata structure,
-+``xfs_scrub`` should be invoked to perform a full analysis.
-+``xfs_healer`` is the name of this program.
-+
- In summary, online fsck takes advantage of resource sharding and redundant
- metadata to enable targeted checking and repair operations while the system
- is running.
-@@ -850,11 +860,16 @@ variable in the following service files:
- * ``xfs_scrub_all_fail.service``
+ /* dynamic preallocation free space thresholds, 5% down to 1% */
+ enum {
+@@ -342,6 +343,9 @@ typedef struct xfs_mount {
  
- The decision to enable the background scan is left to the system administrator.
--This can be done by enabling either of the following services:
-+This can be done system-wide by enabling either of the following services:
+ 	/* Hook to feed dirent updates to an active online repair. */
+ 	struct xfs_hooks	m_dir_update_hooks;
++
++	/* Private data referring to a health monitor object. */
++	struct xfs_healthmon	*m_healthmon;
+ } xfs_mount_t;
  
- * ``xfs_scrub_all.timer`` on systemd systems
- * ``xfs_scrub_all.cron`` on non-systemd systems
+ #define M_IGEO(mp)		(&(mp)->m_ino_geo)
+diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
+index 5bf501cf827172..1b7385e23b3463 100644
+--- a/fs/xfs/Makefile
++++ b/fs/xfs/Makefile
+@@ -88,6 +88,7 @@ xfs-y				+= xfs_aops.o \
+ 				   xfs_globals.o \
+ 				   xfs_handle.o \
+ 				   xfs_health.o \
++				   xfs_healthmon.o \
+ 				   xfs_icache.o \
+ 				   xfs_ioctl.o \
+ 				   xfs_iomap.o \
+diff --git a/fs/xfs/xfs_health.c b/fs/xfs/xfs_health.c
+index fbb8886c72fe5e..3d50397f8f7c00 100644
+--- a/fs/xfs/xfs_health.c
++++ b/fs/xfs/xfs_health.c
+@@ -19,6 +19,7 @@
+ #include "xfs_da_btree.h"
+ #include "xfs_quota_defs.h"
+ #include "xfs_rtgroup.h"
++#include "xfs_healthmon.h"
  
-+To enable online repair for specific filesystems, the ``autofsck``
-+filesystem property should be set to ``repair``.
-+To enable only scanning, the property should be set to ``check``.
-+To disable online fsck entirely, the property should be set to ``none``.
-+
- This automatic weekly scan is configured out of the box to perform an
- additional media scan of all file data once per month.
- This is less foolproof than, say, storing file data block checksums, but much
-@@ -897,6 +912,36 @@ notifications and initiate a repair?
- *Answer*: These questions remain unanswered, but should be a part of the
- conversation with early adopters and potential downstream users of XFS.
+ #include <linux/fserror.h>
  
-+Autonomous Self Healing
-+-----------------------
+diff --git a/fs/xfs/xfs_healthmon.c b/fs/xfs/xfs_healthmon.c
+new file mode 100644
+index 00000000000000..b7095ea55897c5
+--- /dev/null
++++ b/fs/xfs/xfs_healthmon.c
+@@ -0,0 +1,262 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (c) 2024-2026 Oracle.  All Rights Reserved.
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#include "xfs.h"
++#include "xfs_fs.h"
++#include "xfs_shared.h"
++#include "xfs_format.h"
++#include "xfs_log_format.h"
++#include "xfs_trans_resv.h"
++#include "xfs_mount.h"
++#include "xfs_inode.h"
++#include "xfs_trace.h"
++#include "xfs_ag.h"
++#include "xfs_btree.h"
++#include "xfs_da_format.h"
++#include "xfs_da_btree.h"
++#include "xfs_quota_defs.h"
++#include "xfs_rtgroup.h"
++#include "xfs_healthmon.h"
 +
-+The autonomous self healing agent is a background system service that starts
-+when the filesystem is mounted and runs until unmount.
-+When starting up, the agent opens a special pseudofile under the specific
-+mount.
-+When the filesystem generates new adverse health events, the events will be
-+made available for reading via the special pseudofile.
-+The events need not be limited to metadata concerns; they can also reflect
-+events outside of the filesystem's direct control such as file I/O errors.
++#include <linux/anon_inodes.h>
++#include <linux/eventpoll.h>
++#include <linux/poll.h>
 +
-+The agent reads these events in a loop and responds to the events
-+appropriately.
-+For a single trouble report about metadata, the agent initiates a targeted
-+repair of the specific structure.
-+If that repair fails or the agent observes too many metadata trouble reports
-+over a short interval, it should then initiate a full scan of the filesystem
-+via the ``xfs_scrub`` service.
++/*
++ * Live Health Monitoring
++ * ======================
++ *
++ * Autonomous self-healing of XFS filesystems requires a means for the kernel
++ * to send filesystem health events to a monitoring daemon in userspace.  To
++ * accomplish this, we establish a thread_with_file kthread object to handle
++ * translating internal events about filesystem health into a format that can
++ * be parsed easily by userspace.  When those internal events occur, the core
++ * filesystem code calls this health monitor to convey the events to userspace.
++ * Userspace reads events from the file descriptor returned by the ioctl.
++ *
++ * The healthmon abstraction has a weak reference to the host filesystem mount
++ * so that the queueing and processing of the events do not pin the mount and
++ * cannot slow down the main filesystem.  The healthmon object can exist past
++ * the end of the filesystem mount.
++ */
 +
-+The decision to enable the background scan is left to the system administrator.
-+This can be done system-wide by enabling the following services:
++/* sign of a detached health monitor */
++#define DETACHED_MOUNT_COOKIE		((uintptr_t)0)
 +
-+* ``xfs_healer@.service`` on systemd systems
++/* spinlock for atomically updating xfs_mount <-> xfs_healthmon pointers */
++static DEFINE_SPINLOCK(xfs_healthmon_lock);
 +
-+To enable autonomous healing for specific filesystems, the ``autofsck``
-+filesystem property should be set to ``repair``.
-+To disable self healing, the property should be set to ``check``,
-+``optimize``, or ``none``.
++/* Grab a reference to the healthmon object for a given mount, if any. */
++static struct xfs_healthmon *
++xfs_healthmon_get(
++	struct xfs_mount		*mp)
++{
++	struct xfs_healthmon		*hm;
 +
- 5. Kernel Algorithms and Data Structures
- ========================================
++	rcu_read_lock();
++	hm = mp->m_healthmon;
++	if (hm && !refcount_inc_not_zero(&hm->ref))
++		hm = NULL;
++	rcu_read_unlock();
++
++	return hm;
++}
++
++/*
++ * Release the reference to a healthmon object.  If there are no more holders,
++ * free the health monitor after an RCU grace period to eliminate possibility
++ * of races with xfs_healthmon_get.
++ */
++static void
++xfs_healthmon_put(
++	struct xfs_healthmon		*hm)
++{
++	if (refcount_dec_and_test(&hm->ref))
++		kfree_rcu_mightsleep(hm);
++}
++
++/* Attach a health monitor to an xfs_mount.  Only one allowed at a time. */
++STATIC int
++xfs_healthmon_attach(
++	struct xfs_mount	*mp,
++	struct xfs_healthmon	*hm)
++{
++	spin_lock(&xfs_healthmon_lock);
++	if (mp->m_healthmon != NULL) {
++		spin_unlock(&xfs_healthmon_lock);
++		return -EEXIST;
++	}
++
++	refcount_inc(&hm->ref);
++	mp->m_healthmon = hm;
++	hm->mount_cookie = (uintptr_t)mp->m_super;
++	spin_unlock(&xfs_healthmon_lock);
++
++	return 0;
++}
++
++/* Detach a xfs mount from a specific healthmon instance. */
++STATIC void
++xfs_healthmon_detach(
++	struct xfs_healthmon	*hm)
++{
++	spin_lock(&xfs_healthmon_lock);
++	if (hm->mount_cookie == DETACHED_MOUNT_COOKIE) {
++		spin_unlock(&xfs_healthmon_lock);
++		return;
++	}
++
++	XFS_M((struct super_block *)hm->mount_cookie)->m_healthmon = NULL;
++	hm->mount_cookie = DETACHED_MOUNT_COOKIE;
++	spin_unlock(&xfs_healthmon_lock);
++
++	xfs_healthmon_put(hm);
++}
++
++/* Detach the xfs mount from this healthmon instance. */
++void
++xfs_healthmon_unmount(
++	struct xfs_mount		*mp)
++{
++	struct xfs_healthmon		*hm = xfs_healthmon_get(mp);
++
++	if (!hm)
++		return;
++
++	xfs_healthmon_detach(hm);
++	xfs_healthmon_put(hm);
++}
++
++STATIC ssize_t
++xfs_healthmon_read_iter(
++	struct kiocb		*iocb,
++	struct iov_iter		*to)
++{
++	return -EIO;
++}
++
++/* Free the health monitoring information. */
++STATIC int
++xfs_healthmon_release(
++	struct inode		*inode,
++	struct file		*file)
++{
++	struct xfs_healthmon	*hm = file->private_data;
++
++	/*
++	 * We might be closing the healthmon file before the filesystem
++	 * unmounts, because userspace processes can terminate at any time and
++	 * for any reason.  Null out xfs_mount::m_healthmon so that another
++	 * process can create another health monitor file.
++	 */
++	xfs_healthmon_detach(hm);
++
++	xfs_healthmon_put(hm);
++	return 0;
++}
++
++/* Validate ioctl parameters. */
++static inline bool
++xfs_healthmon_validate(
++	const struct xfs_health_monitor	*hmo)
++{
++	if (hmo->flags)
++		return false;
++	if (hmo->format)
++		return false;
++	if (memchr_inv(&hmo->pad, 0, sizeof(hmo->pad)))
++		return false;
++	return true;
++}
++
++/* Emit some data about the health monitoring fd. */
++static void
++xfs_healthmon_show_fdinfo(
++	struct seq_file		*m,
++	struct file		*file)
++{
++	struct xfs_healthmon	*hm = file->private_data;
++
++	seq_printf(m, "state:\t%s\ndev:\t%d:%d\n",
++			hm->mount_cookie == DETACHED_MOUNT_COOKIE ?
++				"dead" : "alive",
++			MAJOR(hm->dev), MINOR(hm->dev));
++}
++
++static const struct file_operations xfs_healthmon_fops = {
++	.owner		= THIS_MODULE,
++	.show_fdinfo	= xfs_healthmon_show_fdinfo,
++	.read_iter	= xfs_healthmon_read_iter,
++	.release	= xfs_healthmon_release,
++};
++
++/*
++ * Create a health monitoring file.  Returns an index to the fd table or a
++ * negative errno.
++ */
++long
++xfs_ioc_health_monitor(
++	struct file			*file,
++	struct xfs_health_monitor __user *arg)
++{
++	struct xfs_health_monitor	hmo;
++	struct xfs_healthmon		*hm;
++	struct xfs_inode		*ip = XFS_I(file_inode(file));
++	struct xfs_mount		*mp = ip->i_mount;
++	int				ret;
++
++	/*
++	 * The only intended user of the health monitoring system should be the
++	 * xfs_healer daemon running on behalf of the whole filesystem in the
++	 * initial user namespace.  IOWs, we don't allow unprivileged userspace
++	 * (they can use fsnotify) nor do we allow containers.
++	 */
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++	if (ip->i_ino != mp->m_sb.sb_rootino)
++		return -EPERM;
++	if (current_user_ns() != &init_user_ns)
++		return -EPERM;
++
++	if (copy_from_user(&hmo, arg, sizeof(hmo)))
++		return -EFAULT;
++
++	if (!xfs_healthmon_validate(&hmo))
++		return -EINVAL;
++
++	hm = kzalloc(sizeof(*hm), GFP_KERNEL);
++	if (!hm)
++		return -ENOMEM;
++	hm->dev = mp->m_super->s_dev;
++	refcount_set(&hm->ref, 1);
++
++	/*
++	 * Try to attach this health monitor to the xfs_mount.  The monitor is
++	 * considered live and will receive events if this succeeds.
++	 */
++	ret = xfs_healthmon_attach(mp, hm);
++	if (ret)
++		goto out_hm;
++
++	/*
++	 * Create the anonymous file and install a fd for it.  If it succeeds,
++	 * the file owns hm and can go away at any time, so we must not access
++	 * it again.  This must go last because we can't undo a fd table
++	 * installation.
++	 */
++	ret = anon_inode_getfd("xfs_healthmon", &xfs_healthmon_fops, hm,
++			O_CLOEXEC | O_RDONLY);
++	if (ret < 0)
++		goto out_mp;
++
++	return ret;
++
++out_mp:
++	xfs_healthmon_detach(hm);
++out_hm:
++	ASSERT(refcount_read(&hm->ref) == 1);
++	xfs_healthmon_put(hm);
++	return ret;
++}
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 59eaad77437181..c04c41ca924e37 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -41,6 +41,7 @@
+ #include "xfs_exchrange.h"
+ #include "xfs_handle.h"
+ #include "xfs_rtgroup.h"
++#include "xfs_healthmon.h"
  
-@@ -4780,6 +4825,70 @@ Orphaned files are adopted by the orphanage as follows:
- 7. If a runtime error happens, call ``xrep_adoption_cancel`` to release all
-    resources.
+ #include <linux/mount.h>
+ #include <linux/fileattr.h>
+@@ -1419,6 +1420,9 @@ xfs_file_ioctl(
+ 	case XFS_IOC_COMMIT_RANGE:
+ 		return xfs_ioc_commit_range(filp, arg);
  
-+Health Monitoring
-+-----------------
++	case XFS_IOC_HEALTH_MONITOR:
++		return xfs_ioc_health_monitor(filp, arg);
 +
-+A self-correcting filesystem responds to observations of problems by scheduling
-+repairs of the affected areas.
-+The filesystem must therefore create event objects in response to stimuli
-+(metadata corruption, file I/O errors, etc.) and dispatch these events to
-+downstream consumers.
-+
-+However, the decision to translate an adverse metadata health report into a
-+repair should be made by userspace, and the actual scheduling done by userspace.
-+Some users (e.g. containers) would prefer to fast-fail the container and restart
-+it on another node at a previous checkpoint.
-+For workloads running in isolation, repairs may be preferable; either way this
-+is something the system administrator knows, and not the kernel.
-+A userspace agent (``xfs_healer``, described later) will collect events from the
-+kernel and dispatch them appropriately.
-+
-+Exporting health events to userspace requires the creation of a new component,
-+known as the health monitor.
-+Because the monitor exposes itself to userspace to deliver information, a file
-+descriptor is the natural abstraction to use here.
-+The health monitor hooks all the relevant sources of metadata health events.
-+Upon activation of the hook, a new event object is created and added to a queue.
-+When the agent reads from the fd, event objects are pulled from the start of the
-+queue and formatted into the user's buffer.
-+The events are freed, and the read call returns to userspace to allow the agent
-+to perform some work.
-+Memory usage is constrained on a per-fd basis to prevent memory exhaustion; if
-+an event must be discarded, a special "lost event" event is delivered to the
-+agent.
-+
-+In short, health events are captured, queued, and eventually copied out to
-+userspace for dispatching.
-+
-++----------------------------------------------------------------------+
-+| **Sidebar**:                                                         |
-++----------------------------------------------------------------------+
-+| **Question**: Why use a pseudofile and not use existing notification |
-+| methods such as fanotify?                                            |
-+|                                                                      |
-+| *Answer*: The pseudofile is a private filesystem interface only      |
-+| available to processes with the CAP_SYS_ADMIN priviledge and the     |
-+| ability to open the root directory of an XFS filesystem.             |
-+| Using a pseudofile gives the kernel and ``xfs_healer`` the           |
-+| flexibility to expose XFS-specific filesystem details to a special   |
-+| userspace daemon without cluttering up fanotify's userspace ABI.     |
-+| Normal userpace programs are not expected to subscribe to the XFS    |
-+| events in this manner.                                               |
-+| Instead, they should subscribe to the generic events provided by     |
-+| fanotify.                                                            |
-+|                                                                      |
-+| The pseudofile can also accept ioctls, which gives the userspace     |
-+| ``xfs_healer`` program a programmatic means to validate that prior   |
-+| to a repair, its reopened mountpoint is actually the same filesystem |
-+| that is being monitored.                                             |
-+|                                                                      |
-+| Finally, on an implementation level, fsnotify provides rather little |
-+| in the way of an actual event queue implementation; it's really more |
-+| of an event dispatcher.                                              |
-+| This means there's little advantage in terms of the quantity of new  |
-+| code added since we still have to write our own queuing discipline!  |
-++----------------------------------------------------------------------+
-+
- 6. Userspace Algorithms and Data Structures
- ===========================================
+ 	default:
+ 		return -ENOTTY;
+ 	}
+diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+index 0953f6ae94abc8..ab67c91915384c 100644
+--- a/fs/xfs/xfs_mount.c
++++ b/fs/xfs/xfs_mount.c
+@@ -41,6 +41,7 @@
+ #include "xfs_rtrefcount_btree.h"
+ #include "scrub/stats.h"
+ #include "xfs_zone_alloc.h"
++#include "xfs_healthmon.h"
  
-@@ -5071,6 +5180,46 @@ and report what has been lost.
- For media errors in blocks owned by files, parent pointers can be used to
- construct file paths from inode numbers for user-friendly reporting.
+ static DEFINE_MUTEX(xfs_uuid_table_mutex);
+ static int xfs_uuid_table_size;
+@@ -625,6 +626,7 @@ xfs_unmount_flush_inodes(
+ 	cancel_delayed_work_sync(&mp->m_reclaim_work);
+ 	xfs_reclaim_inodes(mp);
+ 	xfs_health_unmount(mp);
++	xfs_healthmon_unmount(mp);
+ }
  
-+Autonomous Self Healing
-+-----------------------
-+
-+When a filesystem mounts, the Linux kernel initiates a fsnotify event
-+describing the mount point and the path to the data device.
-+A separate ``xfs_healer_start`` systemd service listens for these mount
-+events via fanotify, and starts a mountpoint-specific ``xfs_healer``
-+service instance.
-+The ``xfs_healer`` service opens the mountpoint and issues the
-+XFS_IOC_HEALTH_MONITOR ioctl to open a special health monitoring file.
-+After that is set up, the mountpoint is closed to avoid pinning the mount.
-+
-+The health monitoring file hooks certain points of the filesystem so that it
-+may receive events about metadata health, filesystem shutdowns, media errors,
-+file I/O errors, and unmounting of the filesystem.
-+Events are queued up for each health monitor file and encoded into a
-+``struct xfs_health_monitor_event`` object when the agent calls ``read()`` on
-+the file.
-+All health events are dispatched to a background threadpool to reduce stalls
-+in the main event loop.
-+Events can be logged into the system log for further analysis.
-+
-+For metadata health events, the specific details are used to construct a call
-+to the scrub ioctl.
-+The filesystem mountpoint is reopened, and the kernel is called.
-+If events are lost or the repairs fail, a full scan will be initiated by
-+starting up an ``xfs_scrub@.service`` for the given mountpoint.
-+
-+A filesystem shutdown causes all future repair work to cease, and an unmount
-+causes the agent to exit.
-+
-+**Future Work Question**: Should the healer daemon also register a dbus
-+listener and publish events there?
-+
-+*Answer*: This is unclear -- if there's a demand for system monitoring daemons
-+to consume this information and make decisions, then yes, this could be wired
-+up in ``xfs_healer``.
-+On the other hand, systemd is in the middle of a transition to varlink, so
-+it makes more sense to wait and see what happens.
-+
- 7. Conclusion and Future Work
- =============================
- 
+ static void
 
 
