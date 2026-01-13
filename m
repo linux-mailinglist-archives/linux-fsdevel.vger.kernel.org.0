@@ -1,59 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-73451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5900DD19F3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 16:38:41 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8D8D1A044
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 16:50:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 0606B30012CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 15:38:39 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 2AFF530312C8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 15:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7193939B7;
-	Tue, 13 Jan 2026 15:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403B02773F0;
+	Tue, 13 Jan 2026 15:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fcnvYsok"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCQjwVTm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67580313E05;
-	Tue, 13 Jan 2026 15:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6446E3033FE;
+	Tue, 13 Jan 2026 15:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768318713; cv=none; b=E0FQe3YupqSqwHIuPah1T3HF7T1DtmE4ffDvJMfbywFsoKh5yhepdMzBZeN7MccXyPnqgocLrXxUhIlSSCTSyY6XRF+GKk0NOsfvig/0/zYPOWHs3Qyo4I+YeXsB9C+5LMn4SBIqKT5i1jsmZMHdr0V+py17A/S4bxJdyDRhaH8=
+	t=1768319337; cv=none; b=Bfovnnut9rWKGTN6T8dtx4ZMEnMczFyLEblvJAiY4uGhmobkNT8wJtfUSY+Ks/U52eZ9QjSgoYRwsRRMsXxs1g8CYZlXKLmwXohxlPBK63nuK0goNC4jtAi/QbXj9ldd2By1fiHVJGf/smuTS+IbA31TNYWLB4Z7MKyUGE0PqBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768318713; c=relaxed/simple;
-	bh=JV45WpGgkA1gkSKDj9H7W5qSLrG8YKyW24LsReSJPDE=;
+	s=arc-20240116; t=1768319337; c=relaxed/simple;
+	bh=ioqawy1jaBtw650mwYkMf22BmHRepy+95f08DFuvNvs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ynw6iDkAKX+vzxPqc5jxeXUEwluNJZEavra9u1IDMp0RIhDnTBIpVjASPoCR6eXhaOia3ZSESLsGlVeEbzShrpRibxb5KDNTOHlWSUvEkZRlDVYEK7FlpvXgJCUVokp4uTZb017PaEAFoMLMUa/qjUeFFkni0/ywJWA5Ly69cTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fcnvYsok; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Tz5Q+c5vqDuIgduq1msZrWvHsIIB7/fDbpEbXxUeUkc=; b=fcnvYsokalJKb45vHYaPBoEF6e
-	xQFcnDNym6MYTryK2DEpoAOPVJbxA/CTFfgCJ3o6+g+dIRYllyBMqJRwMNgwfwrccTuQ8qxlLUnmC
-	PTIMLzxETEy+ULLpCYnn9c42DJ2Qez7XSQQgiMRzkMcCssOh0J4GR+nfk6yiuGXJP0WfObcL/FjIR
-	cA07IJ4gLWbjkm+GW0hmj60GbBOZH51AMuoihhwsXb6gKbtMviO8TRUu3gYle8IuX4Be59LpSbhpL
-	E5vTSfm+xwO+Ix7E+qsL0ZSgp31NiYfy03jzyoFzTWoAuVR/VBIJrH9demxgt7bEkB3Dz7EUDa0C/
-	UDbahjYQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vfgUr-0000000FDmI-2qCF;
-	Tue, 13 Jan 2026 15:39:53 +0000
-Date: Tue, 13 Jan 2026 15:39:53 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-	brauner@kernel.org, jack@suse.cz, mjguzik@gmail.com,
-	paul@paul-moore.com, axboe@kernel.dk, audit@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 15/59] struct filename: saner handling of long names
-Message-ID: <20260113153953.GN3634291@ZenIV>
-References: <20260108073803.425343-1-viro@zeniv.linux.org.uk>
- <20260108073803.425343-16-viro@zeniv.linux.org.uk>
- <dc5b3808-6006-4eb1-baec-0b11c361db37@sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=maSokjHdxiGPcFbpqq5TrTPZiBf7eXzWWf0+DwHhBuKZ33TkgDydM+o3sHbWNFoz3rrw59HpEBLLwwFsCc07/Yhh1m6fFT8MrIOA1UOeJ8Ut0r+viVKqJFUEDgZbDb9f8XXjf6z6vp5TE6v8+zph2qyTTG4Tb0PyF5S9EKuJr+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCQjwVTm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83A06C116C6;
+	Tue, 13 Jan 2026 15:48:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768319336;
+	bh=ioqawy1jaBtw650mwYkMf22BmHRepy+95f08DFuvNvs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iCQjwVTm9M+gc5PjZ4MeZAQD1VGblUPkHG6mH6z3VdSOzYRQ3ZjPWXcyszc3w/64m
+	 FFrjphgobeaqsObunVLjPkIjTHq5zowMbV5VnwAq2sf9c85FX5Zj3TeDxCP9QhV0Lc
+	 /g9lhmbeOnw9eU+g2xGhgMKYqianh+J4Nf+xNP/tqsKrykF5LrAm6bwZ/AU23seB4q
+	 IFXk3Jg/f0GfLjE+Ec4i9/RGsqFJonSxZKPsWDcyJVMJwlib+Jdwv40gtmJTBXq2gj
+	 xxQEKYSVH8YiR2X39BsfUDumvfGGKi+oFHWGZMHdMteSo80ddCaOP4wEE4s2KTu2lr
+	 LtvOkVFyLI9gg==
+Date: Tue, 13 Jan 2026 07:48:55 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: brauner@kernel.org, bfoster@redhat.com, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] iomap: wait for batched folios to be stable in
+ __iomap_get_folio
+Message-ID: <20260113154855.GH15583@frogsfrogsfrogs>
+References: <20260113153943.3323869-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,34 +56,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dc5b3808-6006-4eb1-baec-0b11c361db37@sirena.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20260113153943.3323869-1-hch@lst.de>
 
-On Tue, Jan 13, 2026 at 03:31:14PM +0000, Mark Brown wrote:
-
-> I'm seeing a regression in -next in the execveat kselftest which bisects
-> to 2a0db5f7653b ("struct filename: saner handling of long names").  The
-> test triggers two new failures with very long filenames for tests that
-> previously succeeded:
+On Tue, Jan 13, 2026 at 04:39:17PM +0100, Christoph Hellwig wrote:
+> __iomap_get_folio needs to wait for writeback to finish if the file
+> requires folios to be stable for writes.  For the regular path this is
+> taken care of by __filemap_get_folio, but for the newly added batch
+> lookup it has to be done manually.
 > 
-> # # Failed to open length 4094 filename, errno=36 (File name too long)
-> # # Invoke exec via root_dfd and relative filename
-> # # child execveat() failed, rc=-1 errno=36 (File name too long)
-> # # child 9501 exited with 36 neither 99 nor 99
-> # not ok 48 Check success of execveat(8, 'opt/kselftest/exec/x...yyyyyyyyyyyyyyyyyyyy', 0)... 
-> # # Failed to open length 4094 filename, errno=36 (File name too long)
-> # # Invoke script via root_dfd and relative filename
-> # # child execveat() failed, rc=-1 errno=36 (File name too long)
-> # # child 9502 exited with 36 neither 127 nor 126
-> # not ok 49 Check success of execveat(8, 'opt/kselftest/exec/x...yyyyyyyyyyyyyyyyyyyy', 0)... 
+> This fixes xfs/131 failures when running on PI-capable hardware.
+> 
+> Fixes: 395ed1ef0012 ("iomap: optional zero range dirty folio processing")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/buffered-io.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index fd9a2cf95620..6beb876658c0 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -851,6 +851,7 @@ static struct folio *__iomap_get_folio(struct iomap_iter *iter,
+>  		}
+>  
+>  		folio_get(folio);
+> +		folio_wait_stable(folio);
 
-Could you check if replacing (in include/linux/fs.h)
+Heh, oops.  That's a little too easy to miss. :(
 
-#define EMBEDDED_NAME_MAX       192 - sizeof(struct __filename_head)
+I wonder if we ought to have a filemap_fbatch_next() that would take
+care of the relocking, revalidation, and stabilization... but this spot
+fix is good as-is.
 
-with
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-#define EMBEDDED_NAME_MAX       (192 - sizeof(struct __filename_head))
+--D
 
-is sufficient for fixing that reproducer?
+>  		return folio;
+>  	}
+>  
+> -- 
+> 2.47.3
+> 
 
