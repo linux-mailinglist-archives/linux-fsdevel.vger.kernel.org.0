@@ -1,219 +1,264 @@
-Return-Path: <linux-fsdevel+bounces-73516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1861D1BAC4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 00:14:02 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id C546DD1BAF9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 00:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id EC8703040286
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 23:13:57 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 766053006E1C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 23:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6783A36AB6D;
-	Tue, 13 Jan 2026 23:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA7F35EDD2;
+	Tue, 13 Jan 2026 23:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="ggUe5AZi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PioHGiMV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FC626B74A;
-	Tue, 13 Jan 2026 23:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B3B241690;
+	Tue, 13 Jan 2026 23:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768346032; cv=none; b=Tpbn1M8VLWMAp+Deg6zNq/FL/Opl46Q6o9h0dYkNocz7mxy3kUZz1+25Gy6sGhnqy3pozjGMxS/4YzZhbIiLaz6fUo45LqbD2C43EmE09IwCpxwG3SoEqx5IvnnPgkONt7tCZWuWOq+boqvDzyXk1aUXodbiFFdlMNsPYO50pAY=
+	t=1768346474; cv=none; b=lBPJEZzvEBAe74IzQFXyP+ls+593xtVzJZYUNqTyyTV0z5lw2XSeHOH2kZChIcTQjDLuVib7Kd9UN6oTW7Y9nYJNA70lY+pHmvQdt647Wq1vHyV6aBil9hB7XlcUTLynVjTf7N2Vp5NokdCdxCZP8cRas8vWH+kz/UwaE6xOBdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768346032; c=relaxed/simple;
-	bh=pL6O0xc9qxnlWkXFaYtPJbO1YELosPyh9YQ4IOndaXQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m0UMEKJ3HRVh3mxxV2CA0TIoupQFHfITJyflUD6oUmMyLclcEgmwkwdk498gCb8Z0eIHkLy8i+dGh3ony03+GmEZn0JpLb+DK39tG9T7fZyr0QmPukUe5ldJMsPVV40S4avRyA3xJK8f1nqCltq/egHQf7zAs4KzZ8fH4vlOFV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=ggUe5AZi; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60DJdo4X3597538;
-	Tue, 13 Jan 2026 15:13:14 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=6b8lhji3oxV30DYJl9hk8PPRW00E8IBcoZn7eC/2TZ0=; b=ggUe5AZiRPYJ
-	M5Ht6Qu+EbaTJTqAcfGlNPDca8SGxU6MU7GhWm6lm6ZewM9R9nnjfnX5xZP5WOoa
-	jUGkKFNIEghdQuCPqhFZdH5mlPP/AWFbU6Zl6ImP2U3xsqpXotxbrGj93ke/Bqsq
-	lx5BJ6EXIPFE2tRKAt5eMwz4fZLsjuAGjugTsKC0E17iGNsGNSP5ZJy6TWvZqHpZ
-	CuihkxRZUjjC6vLbbdyM8RMNdmT8vC1gqxp2zbCSzoM0nJxk4wNefdtkdVH0GWVt
-	jt//M7N/POX8bCqn0BvU/eGc9OjOqWgTPOOQh2rcIiubinbgeFHQZ+ASUwftJQaY
-	I6qeLCODHA==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4bnqktmu4q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 13 Jan 2026 15:13:13 -0800 (PST)
-Received: from devbig003.atn7.facebook.com (2620:10d:c085:108::150d) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Tue, 13 Jan 2026 23:13:11 +0000
-From: Chris Mason <clm@meta.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-CC: Chris Mason <clm@meta.com>, Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
-        "Liam
- R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Masami
- Hiramatsu" <mhiramat@kernel.org>,
-        Mathieu Desnoyers
-	<mathieu.desnoyers@efficios.com>,
-        Jann Horn <jannh@google.com>, Pedro Falcato
-	<pfalcato@suse.de>,
-        Zi Yan <ziy@nvidia.com>, Baolin Wang
-	<baolin.wang@linux.alibaba.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts
-	<ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song
-	<baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-trace-kernel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, Andrei Vagin <avagin@gmail.com>
-Subject: Re: [PATCH v4 5/9] mm: introduce copy-on-fork VMAs and make VM_MAYBE_GUARD one
-Date: Tue, 13 Jan 2026 15:12:55 -0800
-Message-ID: <20260113231257.3002271-1-clm@meta.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <5d41b24e7bc622cda0af92b6d558d7f4c0d1bc8c.1763460113.git.lorenzo.stoakes@oracle.com>
-References:
+	s=arc-20240116; t=1768346474; c=relaxed/simple;
+	bh=UsNDol6n9tcvpC/ws30F5OOraDnyBN5fhodZEr2rS6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxDMXnSApKzsJf/aSsup6BaGmRuIAaECJpJqpaYqTgQwD1Ue27a9CnF3umh+mQmVNnTsXW2tECCJxCWjMvWphCmfonkHZoU7yYbUL9YC3hk2yxiByOU2qSsxfSoWpuNLWMQXy3ezInuzYQTMRlZ1QK1HAP19xDcIv+jZ0y/clAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PioHGiMV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56C8BC116C6;
+	Tue, 13 Jan 2026 23:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768346474;
+	bh=UsNDol6n9tcvpC/ws30F5OOraDnyBN5fhodZEr2rS6w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PioHGiMVf1SW4n3Uz5896+9PHlkJAQhRpvTN7831D46CifFGng2/J7ckCbuSfsETF
+	 Mw+zoB+3lQE/0ES5cj//pNAGRCUx/TVFf2kmyTzcapVjACyLNX+yo0RREwmlC9a1Eh
+	 vvN8kQ5lYwGq8T4BdNg/geuJUbgl1ygXD9zmNBo+D7Np9azXBFiiYpbOlchquOcoJX
+	 giR043uAn2FX3qTsEawWXnbjvcwoT+BwxE3QuFFhzWSHOyX4GDSowSxTnw5FCARA7E
+	 O7/EIDLGNVNXUjg+TaXntSdNUfcsvd0gXMYBY+9zWpY94m54qBkV7yMy2gOTcU87HX
+	 KogRwAm+YwNOQ==
+Date: Tue, 13 Jan 2026 15:21:13 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: cem@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 11/11] xfs: add media verification ioctl
+Message-ID: <20260113232113.GD15551@frogsfrogsfrogs>
+References: <176826412644.3493441.536177954776056129.stgit@frogsfrogsfrogs>
+ <176826412941.3493441.8359506127711497025.stgit@frogsfrogsfrogs>
+ <20260113155701.GA3489@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=M89A6iws c=1 sm=1 tr=0 ts=6966d189 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=K3mAnt_iSIqV1N-OikAA:9
-X-Proofpoint-GUID: 5-CcFQBuNngsaUgw3TgiRUAET30XzMDq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTEzMDE4OCBTYWx0ZWRfX2DhGmdnpVK4A
- LH9faNP4/xk97+1ec61zl/gKesEZTMzKwF6k//6ncpB1RaeYymPjCSpxJ2jEETu4T6gnYwJtU54
- dCwogLU/Q5/xmR5fK6UN4t2MiJawyueXAkZxe2JhOIpCHtoLoChUAEp1Q978J5aUsRTT54fXXCb
- t//mqC+Wss6Uei+7zmlvdgyGai3YYItrHWylZL6bWh93e1NzYhgcrC8OwtP0uc4YaVy0xk0E/ew
- 5lMnpZ5m1uEStBT0eIYFluWR8uKtLQGQZEljmswk8De8/R0v817ts8rGwdem4EtuzHqnXZpGUZt
- hJ2a+EgsGXYZ9brFHP5PkXFK9nJ55WexMz96w3yMLDjEJuyuVLlFzxoi3+ZP2CLDcdGo2YG543E
- vGDTJ5RNMtJMQcwkxZzJAqV3L09aYdLn+a2xisbuVVTHDsD2f7m1SCWF9PeLUo6Ka6XaKaNnEG/
- nKjXIdXrS1R7qgsJg0Q==
-X-Proofpoint-ORIG-GUID: 5-CcFQBuNngsaUgw3TgiRUAET30XzMDq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-13_04,2026-01-09_02,2025-10-01_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260113155701.GA3489@lst.de>
 
-On Tue, 18 Nov 2025 10:17:47 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-
-> Gather all the VMA flags whose presence implies that page tables must be
-> copied on fork into a single bitmap - VM_COPY_ON_FORK - and use this
-> rather than specifying individual flags in vma_needs_copy().
+On Tue, Jan 13, 2026 at 04:57:01PM +0100, Christoph Hellwig wrote:
+> On Mon, Jan 12, 2026 at 04:35:25PM -0800, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
+> > 
+> > Add a new privileged ioctl so that xfs_scrub can ask the kernel to
+> > verify the media of the devices backing an xfs filesystem, and have any
+> > resulting media errors reported to fsnotify and xfs_healer.
 > 
-> We also add VM_MAYBE_GUARD to this list, as it being set on a VMA implies
-> that there may be metadata contained in the page tables (that is - guard
-> markers) which would will not and cannot be propagated upon fork.
+> Hmm, the description is a bit sparse?
 > 
-> This was already being done manually previously in vma_needs_copy(), but
-> this makes it very explicit, alongside VM_PFNMAP, VM_MIXEDMAP and
-> VM_UFFD_WP all of which imply the same.
+> > +/* Verify the media of the underlying devices */
+> > +struct xfs_verify_media {
+> > +	__u32	dev;		/* I: XFS_VERIFY_*DEV */
 > 
-> Note that VM_STICKY flags ought generally to be marked VM_COPY_ON_FORK too
-> - because equally a flag being VM_STICKY indicates that the VMA contains
-> metadat that is not propagated by being faulted in - i.e.  that the VMA
-> metadata does not fully describe the VMA alone, and thus we must propagate
-> whatever metadata there is on a fork.
+> This should probably use the enum xfs_device values?
+
+Yes, that's a good point.
+
+> > +#define XFS_VERIFY_TO_EOD	(~0ULL)	/* end of disk */
 > 
-> However, for maximum flexibility, we do not make this necessarily the case
-> here.
+> Is there much of a point in this flag?  scrub/healer really should
+> know the device size, shouldn't they?
+
+Yes, scrub and healer both know the size they want to verify.  I put
+that in for the sake of xfs_io so that it wouldn't have to figure out
+the device size, but as the ioctl always decreases @end_daddr to the
+actual EOD, I think it'd be ok if xfs_io blindly wrote in ~0ULL.
+
+> > diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
+> > index 1edc4ddd10cdb2..5ef4109cc062d2 100644
+> > --- a/fs/xfs/xfs_notify_failure.c
+> > +++ b/fs/xfs/xfs_notify_failure.c
 > 
+> There's basically no overlap with the existing code in this file,
+> why not add a new one?
 
-Hi Lorenzo, one more from the review automation:
+Good idea!  I didn't even realize that it shares nothing now.
 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index fea113d1d723c..af2904aeb1631 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -555,6 +555,32 @@ extern unsigned int kobjsize(const void *objp);
->  */
-> #define VM_IGNORE_MERGE (VM_SOFTDIRTY | VM_STICKY)
->
-> +/*
-> + * Flags which should result in page tables being copied on fork. These are
-> + * flags which indicate that the VMA maps page tables which cannot be
-> + * reconsistuted upon page fault, so necessitate page table copying upon
-> + *
-> + * VM_PFNMAP / VM_MIXEDMAP - These contain kernel-mapped data which cannot be
-> + *                           reasonably reconstructed on page fault.
-> + *
-> + *              VM_UFFD_WP - Encodes metadata about an installed uffd
-> + *                           write protect handler, which cannot be
-> + *                           reconstructed on page fault.
-> + *
-> + *                           We always copy pgtables when dst_vma has uffd-wp
-                                                           ^^^^^^^
-The comment says "dst_vma" but the new code in vma_needs_copy() checks
-src_vma->vm_flags. Is this intentional?
+> > +	const unsigned int	iosize = BIO_MAX_VECS << PAGE_SHIFT;
+> > +	unsigned int		bufsize = iosize;
+> 
+> That's a pretty gigantic buffer size.  In general a low number of
+> MB should max out most current devices, and for a background scrub
+> you generally do not want to actually max out the device..
 
-The old code checked userfaultfd_wp(dst_vma), which tests whether the
-child VMA has VM_UFFD_WP set. After dup_userfaultfd() clears VM_UFFD_WP
-from the child when !UFFD_FEATURE_EVENT_FORK, the old code would skip
-page table copying since the child no longer needs uffd-wp protection.
+256 * 4k (= 1MB) is too large a buffer?
 
-The new code checks src_vma->vm_flags & VM_COPY_ON_FORK, which includes
-VM_UFFD_WP. Since the parent VMA still has VM_UFFD_WP set, this will now
-force page table copying even when the child has had VM_UFFD_WP cleared.
+I guess that /is/ 16M on a 64k-page system.
 
-For file-backed VMAs (e.g., shmem) with uffd-wp but !UFFD_FEATURE_EVENT_FORK,
-this appears to cause unnecessary page table copying where the old code
-would have allowed the child to fault pages in fresh.
+Maybe I need to reset my expectations. :)
 
-The call chain is:
+> The in the background is also a good point here - we probably want
+> a way to tune the size as it might put too much of a load onto the
+> system pretty easily, and we need a way to dial it back.
 
-    dup_mmap()
-      -> vm_area_dup(mpnt)                  // child gets same flags
-      -> dup_userfaultfd(tmp, &uf)          // may clear VM_UFFD_WP from child
-      -> copy_page_range(tmp, mpnt)
-           -> vma_needs_copy(dst_vma=tmp, src_vma=mpnt)
+I guess I could add a u32 max_io_size to constrain iosize; and a u16
+rest_us that would enforce a sleep in between each submit_bio.
 
-> + *                           enabled even if it's file-backed
-> + *                           (e.g. shmem). Because when uffd-wp is enabled,
-> + *                           pgtable contains uffd-wp protection information,
-> + *                           that's something we can't retrieve from page cache,
-> + *                           and skip copying will lose those info.
-> + *
-> + *          VM_MAYBE_GUARD - Could contain page guard region markers which
-> + *                           by design are a property of the page tables
-> + *                           only and thus cannot be reconstructed on page
-> + *                           fault.
-> + */
-> +#define VM_COPY_ON_FORK (VM_PFNMAP | VM_MIXEDMAP | VM_UFFD_WP | VM_MAYBE_GUARD)
+For xfs_scrub@.service I rely on systemd to set the io and cpu priority
+and the kernel not to schedule xfs_scrub for resource usage control.
 
-[ ... ]
-
-> diff --git a/mm/memory.c b/mm/memory.c
-> index d1728d0538d64..27bc457b32c2e 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1463,25 +1463,15 @@ copy_p4d_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
-> static bool
-> vma_needs_copy(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+> > +	folio = folio_alloc(GFP_KERNEL, get_order(bufsize));
+> > +	if (!folio)
+> 
+> That first folio_alloc will cause nasty stack traces when it fails.
+> 
+> > +		folio = folio_alloc(GFP_KERNEL, 0);
+> 
+> .. and then we fall back to just a single page.  This is what I ended
+> up writing for an about to submitted series elsewhere:
+> 
+> static struct folio *folio_alloc_greedy(gfp_t gfp, size_t *size)
 > {
-> +	if (src_vma->vm_flags & VM_COPY_ON_FORK)
-        ^^^^^^^^
-Was the change from checking dst_vma to src_vma for VM_UFFD_WP intentional?
+>         struct folio *folio;
+>                 
+>         while (*size > PAGE_SIZE) {
+>                 folio = folio_alloc(gfp | __GFP_NORETRY, get_order(*size));
+>                 if (folio)
+>                         return folio;
+>                 *size = rounddown_pow_of_two(*size - 1);
+>         }
+> 
+>         return folio_alloc(gfp, get_order(*size));
+> }               
 
-The old code was:
+<nod>
 
-    if (userfaultfd_wp(dst_vma))
-        return true;
+> although that is a bit more complicated as we never want to round
+> up the actual size.
 
-which expanded to:
+I made a simpler version that does
 
-    if (dst_vma->vm_flags & VM_UFFD_WP)
-        return true;
+for (order = get_order(); order > 0; order--)
+	folio = folio_alloc(...);
 
+
+> > +		for (i = 0; i < nr_vecs; i++) {
+> > +			unsigned int	vec_sects =
+> > +				min(nr_sects, bufsize >> SECTOR_SHIFT);
+> > +
+> > +			bio_add_folio_nofail(bio, folio,
+> > +					vec_sects << SECTOR_SHIFT, 0);
+> > +
+> > +			bio_daddr += vec_sects;
+> > +			bio_bbcount -= vec_sects;
+> > +			bio_submitted += vec_sects;
+> > +		}
+> 
+> A single folio is always just a single vetor in the bio.  No need
+> for any of the looping here.
+
+If we have to fall back to a single base page, shouldn't we still try to
+create a larger bio?  A subtle assumption here is that it's ok to have
+all the bvecs pointing to the same memory, and that the device won't
+screw up if someone asks it to DMA to the same page simultaneously.
+
+Obviously that all goes away with REQ_OP_VERIFY.
+
+> > +		/* Don't let too many IOs accumulate */
+> > +		if (bio_submitted > SZ_256M >> SECTOR_SHIFT) {
+> > +			blk_finish_plug(&plug);
+> > +			error = submit_bio_wait(bio);
+> 
+> Also the building up and chaining here seems harmful.  If you're
+> on SSDs you want to fire things off ASAP if you have large I/O.
+> On a HDD we'll take care of it below, but the bios will usually
+> actually be split, not merged anyway as they are beyond the
+> supported I/O size of the HBAs.
+
+Hrm, maybe I should query the block device for max_sectors_kb then?
+
+Though curiously the nvme devices all report 128K for that, and the
+spinning rust reports 1M.
+
+Anyway I've changed the loop body to allocate a bio, add up to iosize
+worth of meory to it, submit it, and wait.  This avoids building up huge
+chains of bios, and now I ask the device what's the biggest IO that it
+supports:
+
+iosize = min(queue_max_bytes(bdev_get_queue(btp->bt_bdev)), SZ_1M);
+if (me->me_maxio && iosize > me->me_maxio)
+	iosize = me->me_maxio;
+if (iosize < SECTOR_SIZE)
+	iosize = SECTOR_SIZE;
+
+...
+
+while (bio_bbcount > 0) {
+	struct bio		*bio;
+	unsigned int		nr_sects =
+		min_t(sector_t, bio_bbcount, iosize >> SECTOR_SHIFT);
+	const unsigned int	nr_vecs =
+		howmany(nr_sects << SECTOR_SHIFT, bufsize);
+	unsigned int		bio_submitted = 0;
+	unsigned int		i;
+
+	bio = bio_alloc(btp->bt_bdev, nr_vecs, REQ_OP_READ, GFP_KERNEL);
+	if (!bio) {
+		error = -ENOMEM;
+		break;
+	}
+	bio->bi_iter.bi_sector = bio_daddr;
+
+	for (i = 0; i < nr_vecs; i++) {
+		unsigned int	vec_sects =
+			min(nr_sects, bufsize >> SECTOR_SHIFT);
+
+		bio_add_folio_nofail(bio, folio,
+				vec_sects << SECTOR_SHIFT, 0);
+
+		bio_daddr += vec_sects;
+		bio_bbcount -= vec_sects;
+		bio_submitted += vec_sects;
+	}
+
+	error = submit_bio_wait(bio);
+	bio_put(bio);
+	bio = NULL;
+	if (error) {
+		xfs_verify_media_error(mp, me, btp, fdev,
+				new_start_daddr, bio_submitted, error);
+		error = 0;
+		break;
+	}
+
+	cond_resched();
+	new_start_daddr += bio_submitted;
+}
+
+The only downside of this simple loop is that we can't pipeline read
+requests, but maybe we don't want to flood the device with IO requests
+anyway.
+
+However, in the case where memory is fragmented and we can only get
+(say) a single base page, it'll still try to load up the bio with as
+many vecs as it can to try to keep the io size large, because issuing
+256x 4k IOs is a lot slower than issuing 1x 1M IO with the same page
+added 256 times.
+
+I wonder if nr_vecs ought to be capped by queue_max_segments?
+
+--D
 
