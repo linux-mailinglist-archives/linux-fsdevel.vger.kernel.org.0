@@ -1,56 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-73488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CDCCD1ACC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 19:09:14 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17E5D1AD6A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 19:28:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E026D30402D3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 18:08:55 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 5623A3010520
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 18:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37281322B61;
-	Tue, 13 Jan 2026 18:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A17C34DCEE;
+	Tue, 13 Jan 2026 18:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqG7ZMVW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UK0t/RGR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9DF1FC110;
-	Tue, 13 Jan 2026 18:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC79342CB1;
+	Tue, 13 Jan 2026 18:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768327734; cv=none; b=PCKn+QDHs5ZiSiGNKX+SDYO8+zJ1KETvr4GRTWrN1V15EYC3kCOmJityP6ZZMPXkoCnU1HUUgrayi8hnt2PklQReSWKHOtyEpYXFDq7ZxwiHJr8Hp907P4cU0yhOb5tMJ8TdnsMBTjRrl6WTMDWMZwrtf2vN54aMnmrjzBmqv5M=
+	t=1768328885; cv=none; b=nOmPqVEcm+BURd/5fJK6WDhpRwJeUFjkYm0XriFkaQuW/FZjFu+S0ZW47KhVKm6WgBEHk9aRBvMfjG6do9fvR5b53GRIQmhiszts6aBHy6hCwoWWtgw7dk8Rbfbku12Fzi6wQ4h6rJFder8Rdzj2xiQ3F/yPys9LUTf3gViCutM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768327734; c=relaxed/simple;
-	bh=Z7UFeJxH9fAu0zwJC/E6Z0wszNyDx4E5zPTxEkKMBnQ=;
+	s=arc-20240116; t=1768328885; c=relaxed/simple;
+	bh=Iv1rLkD62cgCbajLhZPKx5rPMv2NqyBVU6clCTQq5q0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kN1zFKeKne12xgMkVd2RNYi32atqEjYwZyxRez68j+uoXLpARmiRQy77egPxeuwbePNg9X20uLTZP6hANQAq/fy3AYAZ77V9Cqzu3r76xE7PZBlF2KKfpDY6v7ik4UDnphu+yYTSU8h70QnLn19ypcC40ukydW8V5hvbO4BX0vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqG7ZMVW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 413A1C116C6;
-	Tue, 13 Jan 2026 18:08:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jngf8zolhcAmxj82s13rjyqa1zy2KCsXN6EE6uvaooiW4MwtXjoUXGkIREuEZCOTVVQIryqiroMA1gMEitLYAZONZj+2YgkIOOak23IsmZgXSaoPX9+R0OHmpG9SyAlbaWPfyrOkASfXDo/Y16sTTjXuTXkkRS8ClK1VCpDjnx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UK0t/RGR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CB89C116C6;
+	Tue, 13 Jan 2026 18:28:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768327734;
-	bh=Z7UFeJxH9fAu0zwJC/E6Z0wszNyDx4E5zPTxEkKMBnQ=;
+	s=k20201202; t=1768328884;
+	bh=Iv1rLkD62cgCbajLhZPKx5rPMv2NqyBVU6clCTQq5q0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pqG7ZMVWRlROjpw2vDnWsG5+VCxvCwEyM+f8R+asXvoByf73fFiXXUIjPMb1AZc1E
-	 BS2p00QB8ufXUNCR38H46pTtJMsEMyaUgh1OlpyhXGNg/Aea1BofwH2M/iWDv6T9MN
-	 XQDwGsqS6skiOK32x/lB0ZUY4LVEU5zM6N1DnXtDglAk54D3uFiDurOpYFJohNZRPO
-	 /rrFz4SsnGC0G1BxR4cinSclqCEBatsuIQVAvFpUKJDoRPn5Ir7DGATyqBJkxA0xhh
-	 nxFl9D3T1/FSMa2+wZsqt4FlJCuB0BJ+HbNQpgrnKRISK7jWEy8Rqo4R+uUtnCcSYX
-	 9SQxOBPIj7egQ==
-Date: Tue, 13 Jan 2026 10:08:53 -0800
+	b=UK0t/RGRZRR//gpjWoXGseN1JNgTwgWTQUV8tCrfAHqNsSYBvFMyhWY4MAtZyNGeT
+	 GgpNj8UJQp5TGcmZTdlosCaUbx3zEEQGpQVyBIMJk2QmHChR7jBb5RYSKe83Q5aB4V
+	 FWNYXJPb4df4fI1lSjJh0wOva7xmfGsAhAGbMjGywGnWb+6Y7s3QLYAdZQC3Aglh2/
+	 KQ9sox7D89A4fumBToqBsQvmNjX2AFg89w8mO9maq+QcOz7yy0atePZ6aQSvA0n+pB
+	 gUaR3BPcFQc+36hO0+vHsb7dLqBeHqgX2G61FH56w4tNOJQ45kSmKAeOF6lHhVWtbm
+	 bkX4tN6gvAAHA==
+Date: Tue, 13 Jan 2026 10:28:04 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Brian Foster <bfoster@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>, brauner@kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] iomap: wait for batched folios to be stable in
- __iomap_get_folio
-Message-ID: <20260113180853.GZ15551@frogsfrogsfrogs>
-References: <20260113153943.3323869-1-hch@lst.de>
- <20260113154855.GH15583@frogsfrogsfrogs>
- <20260113155805.GA3726@lst.de>
- <aWZu0TxyoyHFTqXi@bfoster>
+To: Christoph Hellwig <hch@lst.de>
+Cc: cem@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 09/11] xfs: allow reconfiguration of the health
+ monitoring device
+Message-ID: <20260113182804.GC15532@frogsfrogsfrogs>
+References: <176826412644.3493441.536177954776056129.stgit@frogsfrogsfrogs>
+ <176826412900.3493441.14037373299121437005.stgit@frogsfrogsfrogs>
+ <20260113161715.GC5025@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,28 +58,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aWZu0TxyoyHFTqXi@bfoster>
+In-Reply-To: <20260113161715.GC5025@lst.de>
 
-On Tue, Jan 13, 2026 at 11:12:01AM -0500, Brian Foster wrote:
-> On Tue, Jan 13, 2026 at 04:58:05PM +0100, Christoph Hellwig wrote:
-> > On Tue, Jan 13, 2026 at 07:48:55AM -0800, Darrick J. Wong wrote:
-> > > I wonder if we ought to have a filemap_fbatch_next() that would take
-> > > care of the relocking, revalidation, and stabilization... but this spot
-> > > fix is good as-is.
+On Tue, Jan 13, 2026 at 05:17:15PM +0100, Christoph Hellwig wrote:
+> On Mon, Jan 12, 2026 at 04:34:54PM -0800, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
 > > 
-> > Let's wait until we have another user or two.  Premature refactoring
-> > tends to backfire.
-> > 
+> > Make it so that we can reconfigure the health monitoring device by
+> > calling the XFS_IOC_HEALTH_MONITOR ioctl on it.  As of right now we can
+> > only toggle the verbose flag, but this is less annoying than having to
+> > closing the monitor fd and reopen it.
 > 
-> I agree on not being too aggressive on that... I do like the idea
-> though, so I'll try to keep it in mind if this happens to expand down
-> the road. Thanks for the fix.
+> "reconfiguration" stills sounds rather pretentious for toggling the
+> verbose flag, but the code looks good:
 
-<nod> Making the second user do the refactoring is ok with me. :)
+I'll change the title to:
+
+"xfs: allow toggling verbose logging on the health monitoring file"
+
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+
+Thanks!
 
 --D
-
-> Brian
-> 
-> 
 
