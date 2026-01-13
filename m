@@ -1,45 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-73381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92A6ED173F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 09:20:46 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF781D1743D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 09:24:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id BDC9E30090DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 08:20:45 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B3B313041A62
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 08:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584EE37FF62;
-	Tue, 13 Jan 2026 08:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116A137FF5E;
+	Tue, 13 Jan 2026 08:22:03 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C340537C11D;
-	Tue, 13 Jan 2026 08:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B5F37FF5B;
+	Tue, 13 Jan 2026 08:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768292444; cv=none; b=dZEr9BPyFpw7Mt50nz4CGsvQdJYY4JzAXUe1xbwGJ253RYoZy/B0eULXBP2od/v99IFjwYCiqlpA8Rgo6mx2k2wPC9ljJVEimY0isxvDI3zf3gG8zpFvBBDCl1Rsze34rO9Li8Du23NqOk//glKHmagbWbY1B28r61Dn68d8Yo4=
+	t=1768292522; cv=none; b=hSojpmpQKnBetsLDOblIl3EcdjO0w7bt5gXnMm/dD1KtX3sAMei0HP9QXNSIbB5ufNUP29Ul+baXHu93XkS486ITOKb+aUHl2GAAk0b9cosEVx/v1kZ2yqLuMpM3h33BPVaZB5SyOdBe6S5wiqg2JJxQtn3j7tNXNp5y2UZmEQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768292444; c=relaxed/simple;
-	bh=ItblKe1dpBNtiNh/o2vkCVVVDmYDKNW5eds1PrHJgOY=;
+	s=arc-20240116; t=1768292522; c=relaxed/simple;
+	bh=Ez7Gw/b9KBWZuEzjd8U20ewpCJDt+YPo4r5oAnRP66Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G/zWFbWHMHHxmZb9a5ugdIxt2bWQSIbzeIREyh9SDdgYY8GHMFVdRSmT9QLB+UBS/z4nzYX4zapR3GlMSGjiErL4wjtgHSpqxg6cgXAJ2LqmVlEgLW+pcb9pSMRup/IxUD+m2EI1H/VGs7EVep8YCRSzICNrAFQZADD/9j55BLo=
+	 Content-Type:Content-Disposition:In-Reply-To; b=YX02DR2ub+ZpVfvCOTdAolH5qnUbiw5WZfkNyHotNXJLxYAjKxTi07SW+F9G36wZcJbinvQNhxtbzh1ojATGG1JrU+UafhcvCsx8QD/8gMSIWRNMjArYxtH3apQFtt0tABT4gH96wr/yztHgppKVpP+91HvlI/mhoUP+5WiHPxc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id DEA34227AA8; Tue, 13 Jan 2026 09:20:39 +0100 (CET)
-Date: Tue, 13 Jan 2026 09:20:39 +0100
+	id 9594B227AA8; Tue, 13 Jan 2026 09:21:58 +0100 (CET)
+Date: Tue, 13 Jan 2026 09:21:58 +0100
 From: Christoph Hellwig <hch@lst.de>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
-	ebiggers@kernel.org, linux-fsdevel@vger.kernel.org,
-	aalbersh@kernel.org, djwong@kernel.org, david@fromorbit.com,
-	hch@lst.de
-Subject: Re: [PATCH v2 10/22] xfs: disable direct read path for fs-verity
- files
-Message-ID: <20260113082039.GE30809@lst.de>
-References: <cover.1768229271.patch-series@thinky> <6rsqoybslyv6cguyk4usq5k2noetozrj3k67ygv5ko5fc57lvn@zv67vcnds7ts>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
+	linux-xfs@vger.kernel.org, ebiggers@kernel.org,
+	linux-fsdevel@vger.kernel.org, aalbersh@kernel.org,
+	david@fromorbit.com, hch@lst.de
+Subject: Re: [PATCH v2 11/22] xfs: add verity info pointer to xfs inode
+Message-ID: <20260113082158.GF30809@lst.de>
+References: <cover.1768229271.patch-series@thinky> <7s5yzeey3dmnqwz4wkdjp4dwz2bi33c75aiqjjglfdpeh6o656@i32x5x3xfilp> <20260112223938.GM15551@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -48,33 +47,26 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6rsqoybslyv6cguyk4usq5k2noetozrj3k67ygv5ko5fc57lvn@zv67vcnds7ts>
+In-Reply-To: <20260112223938.GM15551@frogsfrogsfrogs>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Jan 12, 2026 at 03:51:03PM +0100, Andrey Albershteyn wrote:
->  	if (IS_DAX(inode))
->  		ret = xfs_file_dax_read(iocb, to);
-> -	else if (iocb->ki_flags & IOCB_DIRECT)
-> +	else if ((iocb->ki_flags & IOCB_DIRECT) && !fsverity_active(inode))
->  		ret = xfs_file_dio_read(iocb, to);
-> -	else
-> +	else {
-> +		/*
-> +		 * In case fs-verity is enabled, we also fallback to the
-> +		 * buffered read from the direct read path. Therefore,
-> +		 * IOCB_DIRECT is set and need to be cleared (see
-> +		 * generic_file_read_iter())
-> +		 */
-> +		iocb->ki_flags &= ~IOCB_DIRECT;
->  		ret = xfs_file_buffered_read(iocb, to);
-> +	}
+On Mon, Jan 12, 2026 at 02:39:38PM -0800, Darrick J. Wong wrote:
+> On Mon, Jan 12, 2026 at 03:51:10PM +0100, Andrey Albershteyn wrote:
+> > Add the fsverity_info pointer into the filesystem-specific part of the
+> > inode by adding the field xfs_inode->i_verity_info and configuring
+> > fsverity_operations::inode_info_offs accordingly.
+> > 
+> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> 
+> I kinda don't like adding another pointer to struct xfs_inode
 
-I think this might actuall be easier as:
+Me neither.
 
-	if (fsverity_active(inode))
-		iocb->ki_flags &= ~IOCB_DIRECT;
+> but I can't see a better solution.
 
-	...
-	<existing if/else>
+Well, I suggested just making the fsverity_info a standalone object,
+and looking it up using a rhastable based on the ino.  Eric didn't
+seem overly existed about that, but I think it would be really helpful
+to not bloat all the common inodes for fsverity.
 
 
