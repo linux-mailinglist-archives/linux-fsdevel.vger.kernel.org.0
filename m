@@ -1,193 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-73361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9350FD16301
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 02:42:14 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D867D16394
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 02:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3664C30285C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 01:42:10 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0B45C3027A40
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 01:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0049D274B40;
-	Tue, 13 Jan 2026 01:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E61284896;
+	Tue, 13 Jan 2026 01:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qQdsLnNT"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="cff/cI6a"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1106157480
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jan 2026 01:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C061C5F1B;
+	Tue, 13 Jan 2026 01:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768268529; cv=none; b=Kd0EuZEnlMqNqQ/pDFYRqRoMfWLX9fbc9Xh8i+lyIfEqCOvZ42ZPeQKHlpWoabRqW/PVp98qHVWdzdGK9Ey5Da5lQ/VvcANh0wTReTxUoSfSs7/fX7ua1CHXEIfFdf+VTO2PCcpL2g309QUSl+2a0fNw5upZT68xoKuExs5A6yc=
+	t=1768269107; cv=none; b=Fxc4ue9wP63Gooa4bM828N1Hxr+1RrEZLmoJ74bBYhTw0OxVYxPvnnwLQ0khdphlzr5ggGKbEz2jbnf2x0uteOaoN9deqwJ7sYl6d+Ar2VsNwClidH92uLXb7eXbV/VVifSKqfElwy8qbkkxoKegFGqj3yz2dZWx+siIzspU5Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768268529; c=relaxed/simple;
-	bh=aVNLfXxdDxvhVX/V/4QOVKkhNsGsbhUT7XvuFA4ovr0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CmOdw2YkCsm1cytytGpU7SqjdAGjiMsJ5zsardCNLYjDldE/oohoQ8l5taY8JtUkgu5/u8cKqy8ZT3klpeoAeZbJ+WFXxCzx9uQwHVuIfb3SGCoLzQ2nSfoVZudlnzap8C6UjXw2vfw2qRC1Ab73qGA6PMjRAbL2GNl1ne6Epns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qQdsLnNT; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1768268522;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nSg0Sr0i9/iYvNCth7dJcLGX3q29Co2e1nhK6hxIKwk=;
-	b=qQdsLnNTTE+YrJwkG2yOWnHtvAm+Yz6NIIuLvq5zg9JTyNYbGlCgXhoeb5qUBlwb9WF/xf
-	OY0BqSuNvMAROtLhxwfgff4ioqYEtWiVQa2DghEqknCoeia4Mzah4p9rNONsa1zMjqlijp
-	/fh+8UELvGXP/yEGj7x6BG3MHVAL470=
-From: Ye Liu <ye.liu@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Ye Liu <liuye@kylinos.cn>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] mm: remove redundant page parameter from do_set_pmd()
-Date: Tue, 13 Jan 2026 09:41:29 +0800
-Message-ID: <20260113014130.922385-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1768269107; c=relaxed/simple;
+	bh=TAvbEnI/DvkXyMDso4H4FDdDNY6uhde78Ux+0q7rwz4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dWTkRcfa0M8tfb1vSMsFIfVFp++bMsHJRDoO8HcbkQIVm5gvpLX8DRlwDRBfdeW35Xon5Hf7ku3EB702Q5kBDl6QMZ2bcmFCbg0dH1tuGzqZiNsVC3s1c7lWMROY31yJQxgs26pHiTlirfH5mAfzeS9Ls8lWY5EXj7XywvrYaTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=cff/cI6a; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=DhTjBcdiZRUilQtgtS0QtmDGeyHuytznejgROAj6GY4=; b=cff/cI6aAel0HiFo8xzp+O64io
+	ntA3jizviterNL+AZ/apokyp/becn/6qLDAXivX7BVIPXQSTmmasAhRlJPfZbFxbDtKIJIUtMUAgB
+	QD/reVGWGmRTZwwhNzCl+/XyBj5sIsWK7YPHjAPusj3YwKnCoBzTZLJkph1g445zkbqk+U3QolIZk
+	8hKnUUAPxzYcRJHUIbDfppdARRHeeKqZfcuTTdM4ZKsIEJD6Arjesibv1pOFZs/yrKj7zc2J/8T+f
+	MfWHtGmG65fb4ZoA5ZOb1uztWu/+JTc5lANdLoiS95iIUCzJZxPakrNAv8KIBhOsb7J9AH+imPRdS
+	EbRWlvhw==;
+Received: from [179.118.187.16] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vfTZJ-004eIK-Mp; Tue, 13 Jan 2026 02:51:37 +0100
+From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH 0/4] exportfs: Some kernel-doc fixes
+Date: Mon, 12 Jan 2026 22:51:23 -0300
+Message-Id: <20260112-tonyk-fs_uuid-v1-0-acc1889de772@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-B4-Tracking: v=1; b=H4sIABulZWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDQ0Mj3ZL8vMps3bTi+NLSzBRdS3PjFNO0lLRkc7M0JaCegqLUtMwKsHn
+ RsbW1AP0FXGtfAAAA
+X-Change-ID: 20260112-tonyk-fs_uuid-973d5fdfc76f
+To: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+ Amir Goldstein <amir73il@gmail.com>, NeilBrown <neil@brown.name>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
+ Anna Schumaker <anna@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-dev@igalia.com, 
+ =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+X-Mailer: b4 0.14.3
 
-From: Ye Liu <liuye@kylinos.cn>
+This short series removes some duplicated documentation and address some
+kernel-doc issues:
 
-The page parameter passed to do_set_pmd() was always overwritten with
-&folio->page immediately upon function entry (line 5369 in memory.c),
-making the parameter completely redundant. This confused callers who
-computed different page values only to have them ignored.
+WARNING: ../include/linux/exportfs.h:289 struct member 'get_uuid' not described in 'export_operations'
+WARNING: ../include/linux/exportfs.h:289 struct member 'map_blocks' not described in 'export_operations'
+WARNING: ../include/linux/exportfs.h:289 struct member 'commit_blocks' not described in 'export_operations'
+WARNING: ../include/linux/exportfs.h:289 struct member 'permission' not described in 'export_operations'
+WARNING: ../include/linux/exportfs.h:289 struct member 'open' not described in 'export_operations'
+WARNING: ../include/linux/exportfs.h:289 struct member 'flags' not described in 'export_operations'
 
-Changes:
-- Convert page from a function parameter to a local variable
-- Update function signature in both implementations and stub
-- Remove unnecessary folio_file_page() calculation in filemap.c
-- Update all three call sites to remove the page argument
-
-This simplifies the API since folio already contains all the page
-information needed. The function still uses &folio->page internally
-for cache flushing and rmap operations.
-
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
 ---
- include/linux/mm.h | 2 +-
- mm/filemap.c       | 3 +--
- mm/khugepaged.c    | 6 +++---
- mm/memory.c        | 7 ++++---
- 4 files changed, 9 insertions(+), 9 deletions(-)
+André Almeida (4):
+      exportfs: Fix kernel-doc output for get_name()
+      exportfs: Mark struct export_operations functions at kernel-doc
+      exportfs: Complete kernel-doc for struct export_operations
+      docs: exportfs: Use source code struct documentation
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 710d20fc954b..cb1fe75575c3 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1490,7 +1490,7 @@ static inline pte_t maybe_mkwrite(pte_t pte, struct vm_area_struct *vma)
- 	return pte;
- }
- 
--vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio, struct page *page);
-+vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio);
- void set_pte_range(struct vm_fault *vmf, struct folio *folio,
- 		struct page *page, unsigned int nr, unsigned long addr);
- 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ebd75684cb0a..4be5f3f5b8d6 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3678,8 +3678,7 @@ static bool filemap_map_pmd(struct vm_fault *vmf, struct folio *folio,
- 	}
- 
- 	if (pmd_none(*vmf->pmd) && folio_test_pmd_mappable(folio)) {
--		struct page *page = folio_file_page(folio, start);
--		vm_fault_t ret = do_set_pmd(vmf, folio, page);
-+		vm_fault_t ret = do_set_pmd(vmf, folio);
- 		if (!ret) {
- 			/* The page is mapped successfully, reference consumed. */
- 			folio_unlock(folio);
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 9f790ec34400..2d7b23efa11b 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1442,7 +1442,7 @@ static void collect_mm_slot(struct mm_slot *slot)
- 
- /* folio must be locked, and mmap_lock must be held */
- static enum scan_result set_huge_pmd(struct vm_area_struct *vma, unsigned long addr,
--				     pmd_t *pmdp, struct folio *folio, struct page *page)
-+				     pmd_t *pmdp, struct folio *folio)
- {
- 	struct mm_struct *mm = vma->vm_mm;
- 	struct vm_fault vmf = {
-@@ -1470,7 +1470,7 @@ static enum scan_result set_huge_pmd(struct vm_area_struct *vma, unsigned long a
- 	}
- 
- 	vmf.pmd = pmdp;
--	if (do_set_pmd(&vmf, folio, page))
-+	if (do_set_pmd(&vmf, folio))
- 		return SCAN_FAIL;
- 
- 	folio_get(folio);
-@@ -1678,7 +1678,7 @@ static enum scan_result try_collapse_pte_mapped_thp(struct mm_struct *mm, unsign
- maybe_install_pmd:
- 	/* step 5: install pmd entry */
- 	result = install_pmd
--			? set_huge_pmd(vma, haddr, pmd, folio, &folio->page)
-+			? set_huge_pmd(vma, haddr, pmd, folio)
- 			: SCAN_SUCCEED;
- 	goto drop_folio;
- abort:
-diff --git a/mm/memory.c b/mm/memory.c
-index 30a897018482..8b29ecbfe7fa 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5342,8 +5342,9 @@ static void deposit_prealloc_pte(struct vm_fault *vmf)
- 	vmf->prealloc_pte = NULL;
- }
- 
--vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio, struct page *page)
-+vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio)
- {
-+	struct page *page;
- 	struct vm_area_struct *vma = vmf->vma;
- 	bool write = vmf->flags & FAULT_FLAG_WRITE;
- 	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
-@@ -5418,7 +5419,7 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio, struct page *pa
- 	return ret;
- }
- #else
--vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio, struct page *page)
-+vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio)
- {
- 	return VM_FAULT_FALLBACK;
- }
-@@ -5542,7 +5543,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
- 
- 	if (pmd_none(*vmf->pmd)) {
- 		if (!needs_fallback && folio_test_pmd_mappable(folio)) {
--			ret = do_set_pmd(vmf, folio, page);
-+			ret = do_set_pmd(vmf, folio);
- 			if (ret != VM_FAULT_FALLBACK)
- 				return ret;
- 		}
+ Documentation/filesystems/nfs/exporting.rst | 42 ++++-------------------------
+ include/linux/exportfs.h                    | 33 ++++++++++++++++-------
+ 2 files changed, 28 insertions(+), 47 deletions(-)
+---
+base-commit: 9c7ef209cd0f7c1a92ed61eed3e835d6e4abc66c
+change-id: 20260112-tonyk-fs_uuid-973d5fdfc76f
+
+Best regards,
 -- 
-2.43.0
+André Almeida <andrealmeid@igalia.com>
 
 
