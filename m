@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-73392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8916AD176A4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 09:56:40 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0DAD176C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 09:58:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 0B16B3008154
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 08:56:35 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 0ABE0303F741
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 08:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F2D37FF5D;
-	Tue, 13 Jan 2026 08:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EEAA3806C3;
+	Tue, 13 Jan 2026 08:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EilG7YmI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DrnTrxD2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359C21F3B87;
-	Tue, 13 Jan 2026 08:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62BE1F3B87;
+	Tue, 13 Jan 2026 08:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768294590; cv=none; b=hg4bQ3qw0LE8byE16q8gSwLebBcS6RwVTRdAvtf2VIqz4BF2BX5fQ6jMOtPWAjlqzmDDNuHn4VfWL8CGhC37WPEjl8Mm1+OJgmvCEYZT7NwFqWpigAip3HOl7VcntWrVztg0ELpYoWdTAcVK4R1PnbSftITUUnAJmL4qEGzjQyE=
+	t=1768294651; cv=none; b=s/mVwCgrKH5LNpU/MmowLAG7YYqO2gni8TAihFzBe5gciaMvtCw3Z4+uNMrZgQ9EcJMHnw/H3izdIwb2mYWUJl43XifV5znsZAo0mQOpsMtBQcirA8PjUBJ2Xrc9yjNm6TJwIHm09y0hAZrgtC4hP2RyY1cTnxlcmkIVxfXNoCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768294590; c=relaxed/simple;
-	bh=B64P/qB/7IkbfSBNLxWQc7ldjiDE6wn5TC1lDSe0uNU=;
+	s=arc-20240116; t=1768294651; c=relaxed/simple;
+	bh=QBk9+V2SxJ4A4LG0A/um8XxD/QOaGgBVRWzxaYODJto=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zl1qSWtBvrTTgZzqDlChyOUBohjpIEipcA9npTOj2/0Ys6rIUMz/xfwSiilSMRn4dmjhwtNkYMQMathnwUfCaaTlyk+qtW+MKrAvtj6bDY35hctSKKGGPVdNiL2gqksW3EgMpJ5fnQ1TcIJ3Cz3H+E0rotKia5maA23ulw0eueg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EilG7YmI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D0E5C116C6;
-	Tue, 13 Jan 2026 08:56:28 +0000 (UTC)
+	 MIME-Version:Content-Type; b=XB7hwAllXGpzqSIbFjVHc0aeoftfNZMqJo+pKak1s2ZZBQif42nAIoe+Sn4Oaa9butQuXloz0rFMtxmlbrJnP5Ow+iruDi4N0/FLSj5FZnM3yDkOPVg+CoGr0bofZ7IMkO+31OabRVLf4pSB+0MlDZARrt6x9BkfXfuwDC7ICuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DrnTrxD2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8614C19422;
+	Tue, 13 Jan 2026 08:57:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768294589;
-	bh=B64P/qB/7IkbfSBNLxWQc7ldjiDE6wn5TC1lDSe0uNU=;
+	s=k20201202; t=1768294650;
+	bh=QBk9+V2SxJ4A4LG0A/um8XxD/QOaGgBVRWzxaYODJto=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EilG7YmIIiXyrzlfKrXo6BdVo+ORsqpFKPdKF3aIaHMlcYl4AaugnYE92AczJ1nnE
-	 KyBLwjAQxQd1ivNy85fXXlrgR8gx6lazGdH50GC8xJ9y6VBwPHgC1Tf/EulZPp4jwf
-	 qQkm1TBflUKnLr6dsZ9CeqZjfJqD4G4nLNJVykTCshKfdPhftjAixv9jlVd/nAOpXg
-	 7JfL6sykme/TNTBI5axCUvzIlSmcaCsqLdyxc8ufyT15WYNedWeOu72RP3cmm9KD38
-	 imi3WNSqOCT/vW9XqUpqCrsuhXAO+QSuIBB3oPzAj83B2bHjUYdN872K3/w4u6bCnK
-	 oSUPB0OewLoVA==
+	b=DrnTrxD2gExaNIbJH9PBzkswZXIdZX8gQyfvC+Ug9NyPBSFdPFEfimIWQeVBERZYl
+	 hw9yp45G8sXcPYDInNrsjlGOfCNnXZBVqWQbAM/HQiw2f0e+vzLMC4pmvYGP4Z8HZH
+	 f2ujGcR2xSklnirZGlbwFPsjZRXOz5zR6FbEIbOKNbwKnXhi5WTMj6dvCCtsZFHPQX
+	 07GJqWzFJoIblKZQfulbq8UiOSg/kh1JHRp6M0dSqE7TzyggLRgPsQUMPngA/X+92j
+	 Qqb+Lb9pObgb4lTrvyl2uKgYEWIanp4MWdJI5BozbEqFRBNMn4WF8UX7ciYFR8tfSO
+	 7T7m8td2PS7iA==
 From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
+To: Deepanshu Kartikey <kartikey406@gmail.com>
 Cc: Christian Brauner <brauner@kernel.org>,
-	miklos@szeredi.hu,
+	mjguzik@gmail.com,
+	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	jack@suse.com,
-	viro@zeniv.linux.org.uk,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fuse: add setlease file operation
-Date: Tue, 13 Jan 2026 09:56:23 +0100
-Message-ID: <20260113-sprudeln-stornieren-5498b93e01d8@brauner>
+	syzbot+9c4e33e12283d9437c25@syzkaller.appspotmail.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] romfs: check sb_set_blocksize() return value
+Date: Tue, 13 Jan 2026 09:57:17 +0100
+Message-ID: <20260113-wetten-rachsucht-b852bf113d6b@brauner>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260112130121.25965-1-jlayton@kernel.org>
-References: <20260112130121.25965-1-jlayton@kernel.org>
+In-Reply-To: <20260113084037.1167887-1-kartikey406@gmail.com>
+References: <20260113084037.1167887-1-kartikey406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,22 +60,23 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1152; i=brauner@kernel.org; h=from:subject:message-id; bh=B64P/qB/7IkbfSBNLxWQc7ldjiDE6wn5TC1lDSe0uNU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmcezoVArMPL+jdWFov6G1x4wSTVmf23ZOhYtEWnJSv 865IGvbUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBGmP4wMt3IXrF6n+Pe31CHm 2ewxP4RfavkuOtwplat27sb93PY30Qz/dDa+4hczChTbMH395ZTtVZts5As/a8/nbFnCc7zm1od MZgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1194; i=brauner@kernel.org; h=from:subject:message-id; bh=QBk9+V2SxJ4A4LG0A/um8XxD/QOaGgBVRWzxaYODJto=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmcXzVXOeY8kL68bdXz/dq8Gnp7FUN3KP9dor/zkzd0 LD+f6anO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbSz8XwV/ban2d+TQYtK270 TY/9/2D63IAlb4rOnk/l9eXKSvqypp7hn7Vig3nY5BtelxJsmpbOWrJ0Zf3jrKrEGO45KhaL084 3cwIA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Mon, 12 Jan 2026 08:01:21 -0500, Jeff Layton wrote:
-> Add the setlease file_operation to fuse_file_operations, pointing to
-> generic_setlease.  A future patch will change the default behavior to
-> reject lease attempts with -EINVAL when there is no setlease file
-> operation defined. Add generic_setlease to retain the ability to set
-> leases on this filesystem.
+On Tue, 13 Jan 2026 14:10:37 +0530, Deepanshu Kartikey wrote:
+> romfs_fill_super() ignores the return value of sb_set_blocksize(), which
+> can fail if the requested block size is incompatible with the block
+> device's configuration.
 > 
+> This can be triggered by setting a loop device's block size larger than
+> PAGE_SIZE using ioctl(LOOP_SET_BLOCK_SIZE, 32768), then mounting a romfs
+> filesystem on that device.
 > 
 > [...]
 
-Applied to the vfs-7.0.leases branch of the vfs/vfs.git tree.
-Patches in the vfs-7.0.leases branch should appear in linux-next soon.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
 Please report any outstanding bugs that were missed during review in a
 new review to the original patch series allowing us to drop it.
@@ -87,8 +88,8 @@ Note that commit hashes shown below are subject to change due to rebase,
 trailer updates or similar. If in doubt, please check the listed branch.
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-7.0.leases
+branch: vfs.fixes
 
-[1/1] fuse: add setlease file operation
-      https://git.kernel.org/vfs/vfs/c/056a96e65f3e
+[1/1] romfs: check sb_set_blocksize() return value
+      https://git.kernel.org/vfs/vfs/c/ab7ad7abb366
 
