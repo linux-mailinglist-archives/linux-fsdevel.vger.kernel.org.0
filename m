@@ -1,124 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-73511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B51CD1B2BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 21:17:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C03DD1B31E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 21:24:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E05543053321
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 20:16:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E817230783FB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 20:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6162F3636;
-	Tue, 13 Jan 2026 20:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FFC36AB40;
+	Tue, 13 Jan 2026 20:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="Hwam6yh+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hAYQN5bU";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="lGISTEJw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E11A1B3925
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jan 2026 20:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A035F320CB3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jan 2026 20:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768335413; cv=none; b=he03wp/ldy8XK+PGp7KFLgEVh0lPHhUXpUJ0PmVzZUksBghHYEzazG7kaSEKJ6HKX4O+1Vg5atFcZLKlZuywTrJ+p295S4TlkJKqTxt4zily+19zW/FDBb8ft4hi9BMUeKqTSWlxWJfs7xJf+iynhwt+UMqxZHdW879ktJrFJ5k=
+	t=1768335823; cv=none; b=SwLe3Lo6ed1sx0KL+RE+J5QLnCevjxl7rHmLGG9Ml9NgMqrdAxTTUuSEAIVRRMQlhjgTR56rnmYdK8/X6Rns0Rru8eAb4iIAqYACVVCzOv+eBE1sCw4OCo+4dRB9X4i6Ummy8aNJ/p1P5sior7IMvO45cveJT9EujfLfSahikHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768335413; c=relaxed/simple;
-	bh=i7Q0cppGHnXoJlzKDTPAA4Ox8F1xyo7tsBiGT/yZWUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HmMkc7ghBL8IAri4ctkjmEnoqzOib107tO4+62/56h8e8HV8k4lLh1tpwxgKGo+d4BTjq5i2V/V/+uW6i1CwseSWPy6BDVV6ZCIQ4vu/ukOCb/bkA1jHJFofBhl4C0UHUym42Af8toZvMdJWsRu8sH8r6fnMWWQhulP+r0XNaUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=Hwam6yh+; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-78d6a3c3b77so2600047b3.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jan 2026 12:16:51 -0800 (PST)
+	s=arc-20240116; t=1768335823; c=relaxed/simple;
+	bh=XlE+bCW80iW5/YA8FQw4HMEkrwj/cUseo/dNGbfLUdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bxCVZMNNyH5s+G4/NlGhWgLi4x4+uqGclGiZLREiXjFncScwCHwtPOnZQj+p9wFJBtL2Yt+YbvfXCWa9VEbic22kR34cnRpGyOHaZ3Ix16EPdj1dM2m6NA1E48RkL9IKaCNBXi5H5z7rbD65bTYV7SPIp4kTAikl/zTwSLKqGB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hAYQN5bU; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=lGISTEJw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768335821;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LoKrgEsjVmaXB8RR+lgvPaiMnjoQkqTVAO9hkcrceb0=;
+	b=hAYQN5bUpbsjc47fwYM9jbVB4VHj5Ng9nBSYCGbexp582tVcKyc/EvaXIObODufKGu+6sp
+	Usq+/v1aaGY1eOtRR6hBp+o4eshaiFq4uETssFWo8Ibne3hkTWqqtv00buwj90EwZXvy4B
+	RRoL7vKztwOrfycXMXDi8YfPEs/owus=
+Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
+ [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-673-MfgpXDVxNI-yLXvMQNq_Lw-1; Tue, 13 Jan 2026 15:23:37 -0500
+X-MC-Unique: MfgpXDVxNI-yLXvMQNq_Lw-1
+X-Mimecast-MFC-AGG-ID: MfgpXDVxNI-yLXvMQNq_Lw_1768335817
+Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-93f568048ccso10391361241.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jan 2026 12:23:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1768335410; x=1768940210; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PxakD1KmYQa92a3vZ7/OlBVuBUSn3nQs6Us3iV3sL6Y=;
-        b=Hwam6yh+pF05hqzfKu0TuhGJGLYhBSjVPC6FWINo7k0J/IPSg3/lgBQEAPSnyMukeB
-         sgFz0HM5E89y13JPankrblWGAWXyE9ycWQif9EIJEWLoevFfssnMcIFKQsvrp1CG++uK
-         6Lry/CRqNthQR73KNRXeNLBgn+oA+dNgbMojghyqwIeNWN+1MgxFKpxCtnZ6LOAYwWvM
-         mmMfv6wt96ebEGUGckz/7jrWz4s5G8EbkM9xPftCEfZWvR6aDy67Kl10vlG9kE4aosZw
-         ehZkeUctbmwMU42oM2R1ANwpdBR525/2rAuKujlJJPJ8AefJ9bHNHurWTzJmZ5A6esKC
-         2S2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768335410; x=1768940210;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1768335817; x=1768940617; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PxakD1KmYQa92a3vZ7/OlBVuBUSn3nQs6Us3iV3sL6Y=;
-        b=UEtUcpyuYhaJhZSV8XAuvu49gECYlRgZ4siKLA4XcyPl9dRwIUvq5dGYbSGPjWdrLP
-         XUOgcELIxfa9KaGqs5Kp6WbBISdVfMFGhYr2wTLDQwwYRWtwVcN/2YMtA96cLdPgewbs
-         zLd+IB4uOZvBDapsPKQyZY1J3Q+cLmX5l+iXevO7qibKZTC0Jwa1ie4wwwKfvXVrio2n
-         fKcOfEQeRU3EG31xCUUa1W/OvUKz1PviZq66LBpA/ikEXBFe73/mHYaPou8sKnfGD5OC
-         pLpKZmrA/SOlQxUyNU9qpcQ/IOcVura9JursrVvBUbOB/4tjPRz3dcJ+1MDlnQU/22J4
-         kSug==
-X-Forwarded-Encrypted: i=1; AJvYcCVjWVAG946ssp1ZJjdV+JxFA/7AD5k3uTJYY3TN+/jaWb4JeAGj93tAkMfL6KZjCFR4IAVkBtbF5s14dhWV@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcTUVd8VNR0JRmJizYmk4/51VbzBenmw19ImkNK6A656wMG2DO
-	E7tebdd6ZvJjQL1iCuLbxMoz8HY4ZXBuayPzeVGdIKewzrb7P3gMXh7VwrDtslJT97U=
-X-Gm-Gg: AY/fxX6Py8h5ToIhmDyT1TNd68FQc04ip1ZK8J7fS5LYynujg/k39b29MAvN86umF79
-	JkkYCinPzoVxCeh1JWcVhzyAXUHneQ96p0OaZ0I+2OvZNFz7oqO7RDkp4k0HSQtVDXBDeF1byva
-	ogldkE36lwm/qppYhqQOLf5yeqed5QrC4xBp4xR7fb08AC/+/dk7whB2AZEZIuhOfbs34CmUbDH
-	QHGLjFrz6SeJHH/uSbw2iVHT6frDW+00dFvOEanEExZ+ysVZSr49XWAcCbgkDYAsvSiVPDRK/yz
-	hzUV4WOwIjYidDn2Yb5sZcUGkHOmgBzFQ8Gpz+AZBRgemDuwc/kP7Nd5o6MNNrKxwbOiPOVpTO3
-	42xIyEkLPjLdIr4DAUCey9sO+74drvFi9NQYhqJ7UHm6ov436TaMrKGbqqwYUuC/InMnTX650yX
-	7qHmkAQ0bM5bmBcsReWvEd/X2OTtb2c/Bs5ZcNqRZlgLQ0P+Dv259FJte1z+TBtzSk1C0xWbKue
-	4EYsA37G+QEaWvGGbw=
-X-Received: by 2002:a53:8543:0:b0:645:5297:3e5d with SMTP id 956f58d0204a3-648f638c88cmr2981073d50.46.1768335410350;
-        Tue, 13 Jan 2026 12:16:50 -0800 (PST)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:cf4e:ea8f:19ac:63a0])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6470d80be64sm9666151d50.6.2026.01.13.12.16.48
+        bh=LoKrgEsjVmaXB8RR+lgvPaiMnjoQkqTVAO9hkcrceb0=;
+        b=lGISTEJwYmj8D+TnRE9L60yJiwvWykSz8S46SdyBWapWszqAXmEgNcNdLiUwSUv5WU
+         B9N2c1gaLwdQrTqAfEX4O0tPtS16oLplC3LBiTJpuXOg0ABmTbVJz1BatUGK5FkVTBD+
+         N9Oxjuc+iWyUtBRwJHCqO9XQZqyHjikkwkS20BbMsQm/etImLeHOSu0gosDXvRwNQ2sr
+         PpjysVW5TSPvKLBlAEiA+Zj0lGoy52ulN42NTSiIEX9Uy3xbA/ce/yRdq+sbVSxzz04Y
+         6p5H1ibDBG1enRwaurfWqVoaUxzz8whci7oFA/xVN3lajbtnQNAxKKKfQ/QcC7lGLH0c
+         Rylw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768335817; x=1768940617;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=LoKrgEsjVmaXB8RR+lgvPaiMnjoQkqTVAO9hkcrceb0=;
+        b=qaZPSX5fT0XGnWzLZFKu+3XZIYc55ShrDE5y/m15DOAAp566/6r5mpNFWIrCMrJF2P
+         X4IEUv1Y48dvCJIAUNwXGOn2UgK3NTR93qX6HI1EQzYsCf8rjxA2jPbFDN8JAAPyOHCk
+         lNFrmMAOXKjp17PSAHvXWvN05zJ0aaKHgmd7BMhe3Bh16u2I4ZTlmdOHxDt3AJegKy/x
+         e55DILqyQm1rYN9Q1yan+YLCUDhJlDN5OFRlVhVQtKU1nTiM5aewGKku51uVjBIKoqNi
+         4YsS+1oZPKt3GLpi5deE/R4RSk47RUBVwwHVJw5mEWhZ4UcdLHOymrwS9fJzqUljBsrD
+         JZjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkgLGnjKkLtYB2BczmZ+6B2vznH/n76Ef3ZgHCoA2RLXfkkFAWFvvjrSEh3xHZ/DursQlUJn5cYXnPi6qb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6nLd0HsAwQKp3Sp7jPURPeK+dttO8yfmmC2lwKeyhTNVvGVwi
+	C1SXwy4eteAp7gLmcysr6IsfRlhfO1aWQBiC28E8JFoPCr0VBadGtA0j++nTxpRyQH3iBar8qzt
+	pxnCyRnLqWlJ3j4UTm2Nf8asWIY1slWzWQNp50fHOK0QW4UhONVe/EdWBwYgT1auKmO4=
+X-Gm-Gg: AY/fxX6TiSIHv9wXjDDoX3PUyijklNhC78YeiOL4AmRodfCVoWJgFjjD3ZZsKB23lx0
+	dxoINQREFGJjE+R1hHhnjlWANSqQv/hWqWD/oEngMREwOb6Ux28ZCER25t4MzqkfrGA4S2Hpy3Y
+	4ea0WNJKGxq1IQ15GhiK9FI8t7V1qwrgDAsIX70ZjShIefAkI+q6JRA90rMHdPUZTlqzCfGCWAS
+	+XZJt5zqICTH/y9d/SgtxOJ/2w6C5HjRwUdAUYICFxkN1k+HgBUS15SbgUYyVSr4yie+QuV7ExX
+	zAMHNiu7ziPva9VmBpl/1D1qFQU0P9vtIq4r04IJAPkq3nZkKaezNHMpfGkYwl0YbBJupMTuVEr
+	PWKCxR9MKbP8GGaFZ/KBBuQvv6nqJX3jNEIv2J/hPH7LG
+X-Received: by 2002:a05:6122:546:b0:55b:305b:4e46 with SMTP id 71dfb90a1353d-563a0a2ea9bmr192512e0c.18.1768335817348;
+        Tue, 13 Jan 2026 12:23:37 -0800 (PST)
+X-Received: by 2002:a05:6122:546:b0:55b:305b:4e46 with SMTP id 71dfb90a1353d-563a0a2ea9bmr192499e0c.18.1768335816996;
+        Tue, 13 Jan 2026 12:23:36 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5636f19be3csm12170952e0c.4.2026.01.13.12.23.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jan 2026 12:16:49 -0800 (PST)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: util-linux@vger.kernel.org,
-	kzak@redhat.com
-Cc: ceph-devel@vger.kernel.org,
-	idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com,
-	vdubeyko@redhat.com,
-	Pavan.Rallabhandi@ibm.com
-Subject: [PATCH v2] mount: (manpage) add CephFS filesystem-specific manual page
-Date: Tue, 13 Jan 2026 12:16:37 -0800
-Message-ID: <20260113201636.993219-2-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+        Tue, 13 Jan 2026 12:23:36 -0800 (PST)
+Date: Tue, 13 Jan 2026 15:23:19 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: david.laight.linux@gmail.com
+Cc: Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Miklos Szeredi <miklos@szeredi.hu>, Mark Brown <broonie@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Kees Cook <kees@kernel.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH next] fuse: Fix 'min: signedness error' in fuse_wr_pages()
+Message-ID: <aWapt9vh8EEGdFUG@redhat.com>
+References: <20260113192243.73983-1-david.laight.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260113192243.73983-1-david.laight.linux@gmail.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+On Tue, Jan 13, 2026 at 07:22:43PM +0000, david.laight.linux@gmail.com wrote:
+> From: David Laight <david.laight.linux@gmail.com>
+> 
+> On 32bit systems 'pos' is s64 and everything else is 32bit so the
+> first argument to min() is signed - generating a warning.
+> On 64bit systems 'len' is 64bit unsigned forcing everything to unsigned.
+> 
+> Fix by reworking the exprssion to completely avoid 64bit maths on 32bit.
+> Use DIV_ROUND_UP() instead of open-coding something equivalent.
+> 
+> Note that the 32bit 'len' cannot overflow because the syscall interface
+> limits read/write (etc) to (INT_MAX - PAGE_SIZE) bytes (even on 64bit).
+> 
+> Fixes: 0f5bb0cfb0b4 ("fs: use min() or umin() instead of min_t()")
+> Signed-off-by: David Laight <david.laight.linux@gmail.com>
 
-Currently, manpage for generic mount tool doesn't contain
-mentioning of CephFS kernel client filesystem-specific
-manual page. This patch adds the mount.ceph(8) mentioning into
-file system specific mount options section.
+Reported-by: Brian Masney <bmasney@redhat.com>
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
----
- sys-utils/mount.8.adoc | 1 +
- 1 file changed, 1 insertion(+)
+This fixes the MIPS cross compiler error on arm64 that I reported. I
+also tested a native arm64 build.
 
-diff --git a/sys-utils/mount.8.adoc b/sys-utils/mount.8.adoc
-index 4571bd2bfd16..43d2ef9a58a4 100644
---- a/sys-utils/mount.8.adoc
-+++ b/sys-utils/mount.8.adoc
-@@ -853,6 +853,7 @@ This section lists options that are specific to particular filesystems. Where po
- |===
- |*Filesystem(s)* |*Manual page*
- |btrfs |*btrfs*(5)
-+|cephfs |*mount.ceph*(8)
- |cifs |*mount.cifs*(8)
- |ext2, ext3, ext4 |*ext4*(5)
- |fuse |*fuse*(8)
--- 
-2.52.0
+Brian
 
 
