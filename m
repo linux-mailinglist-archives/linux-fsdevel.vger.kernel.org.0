@@ -1,63 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-73396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560DAD177C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 10:06:50 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3780AD17967
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 10:24:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id F18863020251
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 09:05:13 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AB672304A92E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 09:20:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028463815EE;
-	Tue, 13 Jan 2026 09:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C1538A721;
+	Tue, 13 Jan 2026 09:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CnYA8E2G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QAo2cDnY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196B33815C5;
-	Tue, 13 Jan 2026 09:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C985631D72D;
+	Tue, 13 Jan 2026 09:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768295105; cv=none; b=kXfxl1LfTnznGS2RJCoOGO/MC4bJWLETrTkBWEewkqKIuCAqXP2NImTvm+abelTN9PQ07IZHbbsV7HsE8KmRbBJ0Z4xtwQ7zcnK7enLqq9jUdOiRuc0jroPLPc0U+IMmOgWg4B0BhrPK14cTbD8XWRSCtmXhx+5L6G9uNT+C4FQ=
+	t=1768296020; cv=none; b=Le2s3KYHVPp2sPgETQ4W9Dvk3MhlbqW5S3tNa5+NTg3kwUIXisFL1DcuH26zgdYmSrgk1UDwgIIcui2UfMG48NLMSiESMkXcPiRhcawCJHBqjY7BlRbv0Yl9O9DWEHg9AcooU177UihTgtvX4ZNWuIWRvCPnHmce61weS93dE9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768295105; c=relaxed/simple;
-	bh=JI/qrCCxv4pysbre1tzQVlevGeAvi+n57KXP24R0MJ8=;
+	s=arc-20240116; t=1768296020; c=relaxed/simple;
+	bh=q8A4bDhi22pwhQ+jihqXhH+oXB2ePdZdau55pPBPme0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GqJsw86YNVunkbbTqeKCrHQ3LvMHjKjvSsmFsOT0yBIL9cF/xestaVLWaZ9F1ZYPhHGeC9j+ByDxNPgmhed3dUeUa2q1NLKbSss1eFBMt5AGkgc63A8oCmaltBvkqhf8ujDkI1SHdk1uU1fSOyU7uyo7ZtlH5Kesa0dXCDJCpmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CnYA8E2G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 590E3C116C6;
-	Tue, 13 Jan 2026 09:04:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bYe6hCyz802xDgvnyMltmrJjFRe+fceTUtaJbpBV+ciq78hXr1TEVY7IzS2FVhkxVzZ4wUaA++ijQ0r0pNdM63N5Hzb6aMGpoIyJJ2QCqn2jxhTVpKc9mkS6FlW8oZgpSaSZLyruo6WmwZwwfR7nBYpPB/ffjH8O94Hp8CX86ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QAo2cDnY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0261C116C6;
+	Tue, 13 Jan 2026 09:20:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768295104;
-	bh=JI/qrCCxv4pysbre1tzQVlevGeAvi+n57KXP24R0MJ8=;
+	s=k20201202; t=1768296019;
+	bh=q8A4bDhi22pwhQ+jihqXhH+oXB2ePdZdau55pPBPme0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CnYA8E2Gu31DQPhrYzsWX1t22ob14451gLqFOUSl/SinV1rCBAzfiU2sahsoSGqOJ
-	 VBY02ntXi5Q5SDRV6HiepZptbFX8F8AdQP9xqgFf93/WwlkU+hWr0R4I5VjLMPKGGh
-	 U63jcqRtJja7FTR60WIPOokx5BkhnvnMPEzZ6j/MWTva/UYy8Ec6zsUGcxVJ8qBV3d
-	 J0Pn7u7oEcRus23vOvWhgT6/IhNmgT+6zo1fnbZqkL3DArx+SuMnTVPWXLBOzp6o8n
-	 DGLZDjd1epIDdLleBOrWoaUzY0JtB4p/+CMsY57fIDfjqu7TMsTaI0xiwXgeHkL3Uq
-	 h5R7PZE9FG1xQ==
-Date: Tue, 13 Jan 2026 10:04:56 +0100
+	b=QAo2cDnY7o9wrg0sR1RKux8ykUxvt3AbOqbL/AyoEL+mcoC/90rdHEFPZ+gfyjssr
+	 7Drx8K3zUrVkGguOPi78TzCZeitUp+JMjOrlequGdkRj//IXQhWHz/aX02qix/c5AM
+	 cJ397YmrRYh+mNozHtQvHW6mzHcYBXARy4mO8jYKdNZ47NrTQUW1NEyNuJfiPVm6Iw
+	 tABmfY07cydoqT2g9nmyCmxmpywX0cqO5A9cuAxc3DXndgOjoi++f39lNSygCtYIxM
+	 lJ/k5jnuNsUxsONycZYaT6ARlz44k8E2wnn3bd8wgDoIz6z3RLQGzCIEJwQ1FQDjrQ
+	 JobbYacTT1Vhg==
+Date: Tue, 13 Jan 2026 10:20:15 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Chuck Lever <cel@kernel.org>
-Cc: vira@so61.smtp.subspace.kernel.org, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
-	sj1557.seo@samsung.com, yuezhang.mo@sony.com,
-	almaz.alexandrovich@paragon-software.com, slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de, frank.li@vivo.com, tytso@mit.edu,
-	adilger.kernel@dilger.ca, cem@kernel.org, sfrench@samba.org,
-	pc@manguebit.org, ronniesahlberg@gmail.com, sprasad@microsoft.com,
-	trondmy@kernel.org, anna@kernel.org, jaegeuk@kernel.org,
-	chao@kernel.org, hansg@kernel.org, senozhatsky@chromium.org,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: Re: [PATCH v3 00/16] Exposing case folding behavior
-Message-ID: <20260113-vorort-pudding-ef90f426d5cf@brauner>
-References: <20260112174629.3729358-1-cel@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	Zhiyu Zhang <zhiyuzhang999@gmail.com>, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Subject: Re: [PATCH] fat: avoid parent link count underflow in rmdir
+Message-ID: <20260113-rammen-unsinn-d9d5929ca2a0@brauner>
+References: <20260101111148.1437-1-zhiyuzhang999@gmail.com>
+ <87secph8yi.fsf@mail.parknet.co.jp>
+ <87ms2idcph.fsf@mail.parknet.co.jp>
+ <CALf2hKu=M8TALyqv=Tv9Vu98UKUcFjWix1n5D9raMKYqqZtY5A@mail.gmail.com>
+ <20260112095230.167359094e9c48577b387e18@linux-foundation.org>
+ <87cy3ed7c9.fsf@mail.parknet.co.jp>
+ <20260112103959.e5e956cd0d8b6f904e21827a@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,38 +62,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260112174629.3729358-1-cel@kernel.org>
+In-Reply-To: <20260112103959.e5e956cd0d8b6f904e21827a@linux-foundation.org>
 
-On Mon, Jan 12, 2026 at 12:46:13PM -0500, Chuck Lever wrote:
-> From: Chuck Lever <chuck.lever@oracle.com>
+On Mon, Jan 12, 2026 at 10:39:59AM -0800, Andrew Morton wrote:
+> On Tue, 13 Jan 2026 03:16:54 +0900 OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> wrote:
 > 
-> Following on from
+> > Andrew Morton <akpm@linux-foundation.org> writes:
+> > 
+> > > On Tue, 13 Jan 2026 01:45:18 +0800 Zhiyu Zhang <zhiyuzhang999@gmail.com> wrote:
+> > >
+> > >> Hi OGAWA,
+> > >> 
+> > >> Sorry, I thought the further merge request would be done by the maintainers.
+> > >> 
+> > >> What should I do then?
+> > >
+> > > That's OK - I have now taken a copy of the patch mainly to keep track
+> > > of it.  It won't get lost.
+> > >
+> > > I thought Christian was handling fat patches now, but perhaps that's a
+> > > miscommunication?
+> > 
+> > Hm, I was thinking Andrew is still handling the fat specific patch, and
+> > Christian is only handling patches when vfs related.
+> > 
+> > Let me know if I need to do something.
 > 
-> https://lore.kernel.org/linux-nfs/20251021-zypressen-bazillus-545a44af57fd@brauner/T/#m0ba197d75b7921d994cf284f3cef3a62abb11aaa
-> 
-> I'm attempting to implement enough support in the Linux VFS to
-> enable file services like NFSD and ksmbd (and user space
-> equivalents) to provide the actual status of case folding support
-> in local file systems. The default behavior for local file systems
-> not explicitly supported in this series is to reflect the usual
-> POSIX behaviors:
-> 
->   case-insensitive = false
->   case-preserving = true
-> 
-> The case-insensitivity and case-preserving booleans can be consumed
-> immediately by NFSD. These two booleans have been part of the NFSv3
-> and NFSv4 protocols for decades, in order to support NFS clients on
-> non-POSIX systems.
-> 
-> Support for user space file servers is why this series exposes case
-> folding information via a user-space API. I don't know of any other
-> category of user-space application that requires access to case
-> folding info.
+> OK, thanks, seems I misremembered.
 
-This all looks good to me.
-Just one question: This reads like you are exposing the new file attr
-bits via userspace but I can only see changes to the kernel internal
-headers not the uapi headers. So are you intentionally not exposing this
-as a new uapi extension to file attr or is this an accident?
+I prefer to take anything that touches fs/ - apart from reasonable
+exceptions - to go through vfs tree. So I would prefer to take this
+patch.
 
