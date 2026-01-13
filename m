@@ -1,153 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-73514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55046D1B62C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 22:25:13 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF04D1B9DF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 23:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E6239301D5B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 21:24:56 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 51F7930131D4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Jan 2026 22:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7D3329E7E;
-	Tue, 13 Jan 2026 21:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326EF354AE9;
+	Tue, 13 Jan 2026 22:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zAHXw+yz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ut5XmWOq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zAHXw+yz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ut5XmWOq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OlihZ6ZL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B6B2EDD45
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jan 2026 21:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2B3280335
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Jan 2026 22:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768339494; cv=none; b=McXz+A+4BL7894HePvV7HiUCYZS2caM1erD9HmcnTZJLPI8IzKpixb1jP8WA1jnJlcPDACPT8lL74IYhyVEXyuLoZhYrVaS++IrSpazL9N58v6s7dw/SpGVeUGoe+20bqE/riL1RFP2I+Tu9FCEUVU5E/6lqyrbxuuh2PYjCeI8=
+	t=1768344065; cv=none; b=tvh96oY1eqyDOUJemT36rGSRsQVTryr9h12lZ06m6m0dd+NnT4lUUXJu+1VAjm4M97ZYL+aoSQChOlQg4TkY9Dcf2flpMh43Fm1mRuD3/H5t5lDfuO3yF8CPVka+GqUJs/fVn4GtyrpHCYkNXK9bScRfhXNQ7A2sNvKP3PWPusM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768339494; c=relaxed/simple;
-	bh=uVM8E5K8SyMkz2Vb23Vk0V2k2g0gG9sRz7WbONugAPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jo3I+XL3q+La3afmvpjgF/XklnZxmuF/Ci3gpaRHbbI/W/OYCJk69rbxjc0+dgCh4c2ShMhYMMj+v1FRT9HnvdLcHNptwfCqvzNxojWKmJyOBeswST4BlE13ZPKOpu6D1C/2VPHsLUf5Ba2D6HQqy0DpyjG1nOI6vCOT8UZ5GC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zAHXw+yz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ut5XmWOq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zAHXw+yz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ut5XmWOq; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1768344065; c=relaxed/simple;
+	bh=6UO7RtOmPTz6IQwg8pbgCpoAZeNmofgqWMXaxtGQj1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BkdcgzV/lRzfDlq+fIbersoBWEUlb1VVPCfGGWvzSO+alIMssnvTX1BOlV1lv7cS4R6mwyWuE4X7HT9osOevS2EIvOGtN+Wlb270BxiIvDH8rd/wEb/ekG31UOA1EbSneHMlPszZK0M07n2Ts9uX5yB/dpcPeJk89WIwlqaV8G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OlihZ6ZL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768344063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=qykxqAbNrQoKnh3wHNIvgCs7cUxVfs/Z+IQXcKZ2nJo=;
+	b=OlihZ6ZLBb18AlvEWxBNfYj4emKhEJvmts8LTAxNHKVei/bP1P46fN45iyT3oExmjRtf1A
+	8cKJrzz1Z30fkOiskiY8MCkjWok0YuQ1ZdH7Irtga6hZmorBpC7UGJ0eUP2/6v0QMsug+G
+	rlIm+dlhZz2Xj2gOK87ASATicSVMceA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-228--IVogaX4NS6MTJHiQBq_XA-1; Tue,
+ 13 Jan 2026 17:41:02 -0500
+X-MC-Unique: -IVogaX4NS6MTJHiQBq_XA-1
+X-Mimecast-MFC-AGG-ID: -IVogaX4NS6MTJHiQBq_XA_1768344061
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 38386336B1;
-	Tue, 13 Jan 2026 21:24:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768339491;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aBeaCgwapimJJ5j24O6e37UmEpMn7TZLbjKK2UNpCXU=;
-	b=zAHXw+yzxki8EaRv8pIoV8pqvGM1amJDuwoeGhAQqIGW/92iLVY1FpbKSAFGri8MgHFSJc
-	BYOOj/idfwS7UzwzzKf2aIhlCPLJSxYs/Nb2eOzUlQh96AW0Q2Y5Gb5RNzZzowCwn5DlmT
-	rQZnJwwe02JphO5C4o/63XO5FuIU80M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768339491;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aBeaCgwapimJJ5j24O6e37UmEpMn7TZLbjKK2UNpCXU=;
-	b=ut5XmWOqQSZhtqlFc5+WKaoB/bYR9KaQBlJ6IzBEZTGzCCP62w7rJoeFFQ5hV/4TzWSwhL
-	MPzlSpC1XPBSgDCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768339491;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aBeaCgwapimJJ5j24O6e37UmEpMn7TZLbjKK2UNpCXU=;
-	b=zAHXw+yzxki8EaRv8pIoV8pqvGM1amJDuwoeGhAQqIGW/92iLVY1FpbKSAFGri8MgHFSJc
-	BYOOj/idfwS7UzwzzKf2aIhlCPLJSxYs/Nb2eOzUlQh96AW0Q2Y5Gb5RNzZzowCwn5DlmT
-	rQZnJwwe02JphO5C4o/63XO5FuIU80M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768339491;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aBeaCgwapimJJ5j24O6e37UmEpMn7TZLbjKK2UNpCXU=;
-	b=ut5XmWOqQSZhtqlFc5+WKaoB/bYR9KaQBlJ6IzBEZTGzCCP62w7rJoeFFQ5hV/4TzWSwhL
-	MPzlSpC1XPBSgDCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1DABF3EA63;
-	Tue, 13 Jan 2026 21:24:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +D8RByO4ZmkpYwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 13 Jan 2026 21:24:51 +0000
-Date: Tue, 13 Jan 2026 22:24:49 +0100
-From: David Sterba <dsterba@suse.cz>
-To: fdmanana@kernel.org
-Cc: linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com,
-	Filipe Manana <fdmanana@suse.com>
-Subject: Re: [PATCH v2 0/4] btrfs: stop duplicating VFS code for
- subvolume/snapshot dentry
-Message-ID: <20260113212449.GA26902@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <cover.1768307858.git.fdmanana@suse.com>
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CFE1418005B4;
+	Tue, 13 Jan 2026 22:41:00 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.17])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 404B330001A8;
+	Tue, 13 Jan 2026 22:40:58 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Al Viro <viro@zeniv.linux.org.uk>,
+ David Howells <dhowells@redhat.com>, DJ Delorie <dj@redhat.com>
+Subject: O_CLOEXEC use for OPEN_TREE_CLOEXEC
+Date: Tue, 13 Jan 2026 23:40:55 +0100
+Message-ID: <lhupl7dcf0o.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1768307858.git.fdmanana@suse.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Jan 13, 2026 at 12:39:49PM +0000, fdmanana@kernel.org wrote:
-> From: Filipe Manana <fdmanana@suse.com>
-> 
-> Currently btrfs has copies of two unexported functions from fs/namei.c
-> used in the snapshot/subvolume creation and deletion. This patchset
-> exports those functions and makes btrfs use them, to avoid duplication
-> and the burden of keeping the copies up to date.
-> 
-> V2: Updated changelog of patch 4/4 to mention the btrfs copy misses a
->     call to audit_inode_child().
-> 
-> Link to V1: https://lore.kernel.org/linux-btrfs/cover.1767801889.git.fdmanana@suse.com/
-> 
-> Filipe Manana (4):
->   fs: export may_delete() as may_delete_dentry()
->   fs: export may_create() as may_create_dentry()
->   btrfs: use may_delete_dentry() in btrfs_ioctl_snap_destroy()
->   btrfs: use may_create_dentry() in btrfs_mksubvol()
+In <linux/mount.h>, we have this:
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+#define OPEN_TREE_CLOEXEC      O_CLOEXEC       /* Close the file on execve() */
+
+This causes a few pain points for us to on the glibc side when we mirror
+this into <linux/mount.h> becuse O_CLOEXEC is defined in <fcntl.h>,
+which is one of the headers that's completely incompatible with the UAPI
+headers.
+
+The reason why this is painful is because O_CLOEXEC has at least three
+different values across architectures: 0x80000, 0x200000, 0x400000
+
+Even for the UAPI this isn't ideal because it effectively burns three
+open_tree flags, unless the flags are made architecture-specific, too.
+
+Thanks,
+Florian
+
 
