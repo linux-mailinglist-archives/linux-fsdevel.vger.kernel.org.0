@@ -1,170 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-73639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6CBED1D16D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 09:24:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD19D1D248
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 09:36:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 8E879304FD9A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 08:21:21 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 5E59730090F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 08:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF80737F740;
-	Wed, 14 Jan 2026 08:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0BF35E551;
+	Wed, 14 Jan 2026 08:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HFMuzEED";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="tSsrfM6u"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="G039VSQZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F7C37F0F7
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 08:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A8B37B407
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 08:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768378848; cv=none; b=MBBtN48qVP22LnqiLxJh4fHOJkDdK55Wc1jKZhEOwmQ/y/abrL/5M0g/ZdldPTAXVvxKP+NviVRxsQkvleNzJ7tZ7HJvIl4UvRb2IqNIufAFM1Cw37f4txxzPxXrYiVRpFlOOASKxtLzfJVPZKyVuXrpDkL/SITNNX9F2GIYPug=
+	t=1768379756; cv=none; b=eB08ktPCRQ3U8b0FctHrXiakt50Czvz9/dTx8f4gh89DjWCXTMtIkDTDkPzy6kdk2/VSWFMry30JsO/KaiDt3dAe72i8JqtOcSS7ml/07U0iMjHMZ6bSo0CHWo5bUA20UuLKpVad3oUg9AakxdFsYpdr/ew1fLRyovHyblpQZ2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768378848; c=relaxed/simple;
-	bh=RTcjpEqOm45gmsFr+TBc5Irtq01dJ5bQ4/uCScFzUhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NSR86gXZv3DErDugBJNP6P0w5Xk8cqb6mjPV3ULKvFU1FfJMK34S5wm9o9oKmjyeO0wOs7cGOJJzub+nKM7oqn7IO/BTzveh34OhCpkt+gWndYI3y63v4TqfPG4vn+Fmgk+AM5MS2s+3hKyeiV8vl0nBmAXUhMLlcXVRYEbaklQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HFMuzEED; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=tSsrfM6u; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768378839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VYnnUZghf6HwJqXJDWVaeOjjdjMBw+O6FSttE0RsUb8=;
-	b=HFMuzEEDs8AaIF8lrTS9aYfsxZ+Z8ZFvPJ5Wv1/BJkK392gIsykS9We5hScBqZ3QPoqlcA
-	4dLJllRf9KM8mTHKbouBMTEWBhK7naIvlaMEJrItlJhmy0ub9VDkNNoc4yG4q5sDjmTRm0
-	IECu3JZSzvaebi5kMs875iBl9qQwrEw=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-47-2f2uVY89NcScGBrDfXWuzg-1; Wed, 14 Jan 2026 03:20:38 -0500
-X-MC-Unique: 2f2uVY89NcScGBrDfXWuzg-1
-X-Mimecast-MFC-AGG-ID: 2f2uVY89NcScGBrDfXWuzg_1768378837
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-47d28e7960fso83981555e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 00:20:37 -0800 (PST)
+	s=arc-20240116; t=1768379756; c=relaxed/simple;
+	bh=g7UxWR6zNuQUmm2GVSrSH6RwgetKAzX/Hd9cqIclbxM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=RS4IoFaSngyGTjhjknPicJqu7/Gswffv8AZU0Jmk4SIl8p5lpzA1AZrdwH1TMUKoVtM369oF/PXYXlfj/uBvjXwe5JcpQQ4ZjCAFgvcuLIhdZRi3GjuEKfWFjJHwugtZxbRakN/JAAMYdmgA4dlK+dCt/7HbTXFiaUfofFZvoXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=G039VSQZ; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-64c893f3a94so1116453a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 00:35:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1768378836; x=1768983636; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VYnnUZghf6HwJqXJDWVaeOjjdjMBw+O6FSttE0RsUb8=;
-        b=tSsrfM6uYu7AIxRByUcEBVOeLfPOcP9BGmVZ50zkVCNLGzmuCqQ6bbiNrVKaS/2DXD
-         EO3SHNACogAtJ+CnJFe+Xy/ghgDve5f3S1DSjd5D6zuQMC3dfDlRIuosXhtWMSm1ANEi
-         hpDj24+49I3SIegIs8RaCi2tj4MjBxs/ce+paWtUqYarsTFDPCtcxsTEh4Fl/aqj/d//
-         +CE+Clfe1n9q2b+61R4zx3EmZX8f3k3LVa8O8HAwWBt/20Xv8Sr0nXHS8w/5HsPQ9TAZ
-         wqgvOh+oEOyyIExQdjmLCUWVKKWJtDu/1e974tV4dWt0LE0wyeOBDp1jtI9dLrZ3Bj+w
-         FwZw==
+        d=suse.com; s=google; t=1768379749; x=1768984549; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XPPloNl7llTdagSQiWBgrN0JSa6mGncDJ/7BeD2LLwI=;
+        b=G039VSQZaZoLCdJVFfvZ0KviLMt9qUaR6Mb+y7I5IlOwiGthsJzj1+iNPGCyvuTdFz
+         G6Mdbhw+HxGVbkvIDbXJ0JyLQ+gk7jaEGFDWnlFVlaW/DuDUyrxHIOgNUCNWArr+h5ZY
+         gOi3wikMxMNVLGmQ04GN0IPMuQXRDgrm30FIJmGGpVaTztaX8ers0MyezkXht4+z5pa8
+         5Zi2jJfUKpmRjF6CZmmv26Qov+nlcpjxh4mBpiUYaXIb3EaJ7yin8/S5qyktTchOEciS
+         lojD0kdkPJMtQfiruQJavaKKtaC/AlNwrrGenM6UnJg+I+HumsLrrNHgEWxh++YrcuSi
+         voGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768378836; x=1768983636;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VYnnUZghf6HwJqXJDWVaeOjjdjMBw+O6FSttE0RsUb8=;
-        b=PqY8eqFEOWUK1E7GJOZFh8QZH4w763HWd78cki5oFlvQ0XIlToxv6FNiNgS4UAIStb
-         LapD4SyGGLeP7KJB57YsaCAxiAeYLM2TJPB2mr40SOeF6Ye5zAJFng1OLfre+T+EP/sd
-         Jqn2qWTIiUvFCpTIEFF0fQ3ywPv2HMn/ApFhoEItdf8Fsw67H7ZzR5Je5A9ZW7MbaBc7
-         HoHRIbq3WqVDNATcpzgRkgPY0X8qfKHkqB2NO/BnrVVKMu584XJJ6LjSJ2RlPBRMVDtL
-         q/UgI+5Il0EBdDp1cI7I3pmw7Wtsohis/u6OM8o+PAhN0bwKaAGSLYSTvv73VThDZGYr
-         uJQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVc+1X9n2iDNXdbF0Zy+6h5S0d+GFeYfTZcXOccOJUeqEZIyqx2zSB5N6dMuZMYsN0CnKc5AyB9r4ZsvmNR@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsrl3RxFyhMrxV8EQs/qj1HcpD44WYpkYGQNiaM3TRPqYztNlx
-	V2hlZqr2W3/REP0iW+RYl9YdNrr8l9gWQny32U9VNNIU32KjST/qzTol8eFlx2ODhXE/V6XwVjD
-	AkrG7DXR+wY6j+2MmYnpUKS2ZQd8NocPRoNFXMOf7tq0V6Ho4sZnqE7oXbwEpHLYWyAHy6c4A8w
-	==
-X-Gm-Gg: AY/fxX7ItAmGIT2qIrH+v6O4aj3FzhFcHQTeynYQphzzOem/YixetCKVNbpsYm47zMm
-	CV6RqnNvCY7EGCEZaN+g5FNwi/7aPK2WZ0eNg/W/PlaPnLLebl5wyXn9sB7lEhHYKU2WY2p4l9g
-	D/XsQ7JW4T+FR9rf3800ujC+JZ2s4hB86QleNpcRUBRVkrXIiN/UhT2rsO3rIdDcBLoGdt/1WFK
-	Dx6wEK9SisByCNRzBAqu9lcaLOsNU07Y1cIHdYen2/MH4BhQbRkjo5TLbzniMiXuFtcmBqWXp5f
-	YrfDR5COpbYUi35x2yS37IWyn6EeKAv4H5RS0ALQd7Wfst7bx1w1Wrhq1LrasfW+ILWPjbYLiXg
-	=
-X-Received: by 2002:a05:600c:3555:b0:47b:e2a9:2bd7 with SMTP id 5b1f17b1804b1-47ee3363c12mr21824065e9.19.1768378836238;
-        Wed, 14 Jan 2026 00:20:36 -0800 (PST)
-X-Received: by 2002:a05:600c:3555:b0:47b:e2a9:2bd7 with SMTP id 5b1f17b1804b1-47ee3363c12mr21823815e9.19.1768378835799;
-        Wed, 14 Jan 2026 00:20:35 -0800 (PST)
-Received: from thinky ([217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5edb7esm48605635f8f.30.2026.01.14.00.20.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 00:20:35 -0800 (PST)
-Date: Wed, 14 Jan 2026 09:20:34 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, fsverity@lists.linux.dev, 
-	linux-xfs@vger.kernel.org, ebiggers@kernel.org, linux-fsdevel@vger.kernel.org, 
-	aalbersh@kernel.org, david@fromorbit.com, hch@lst.de
-Subject: Re: [PATCH v2 0/23] fs-verity support for XFS with post EOF merkle
- tree
-Message-ID: <5z5r6jizgxqz5axvzwbdmtkadehgdf7semqy2oxsfytmzzu6ik@zfvhexcp3fz2>
-References: <cover.1768229271.patch-series@thinky>
- <aWZ0nJNVTnyuFTmM@casper.infradead.org>
- <op5poqkjoachiv2qfwizunoeg7h6w5x2rxdvbs4vhryr3aywbt@cul2yevayijl>
- <aWci_1Uu5XndYNkG@casper.infradead.org>
- <20260114061536.GG15551@frogsfrogsfrogs>
+        d=1e100.net; s=20230601; t=1768379749; x=1768984549;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XPPloNl7llTdagSQiWBgrN0JSa6mGncDJ/7BeD2LLwI=;
+        b=eS2Vql4EAqE+YznxxbqpjCdmh1I0VkEaZAA9roj/0FuJQaaQn/cZmWtnwdzBHgks6Y
+         Q6v6at3ijAPUwQU2D4JjFxqozUBhNhimB/F8XAchpRUOERWGPkpM55utK7Uh3LvjSDHs
+         wuXNljyAs9gnK6K/YJ4O8BMNrcDzXoF5wJvYfBtUH7pwFXVZ4tBjunReUo8MpVehiKHv
+         jfKItkcdGYVHomZdRiulG4Fmv/zTHdZDqRZsPWEGoisb3Xvf2dPQPBtzxMrNlLo1d1z3
+         6WjeaxEqDw51IDI3WO3kypPFLIKTpsazpeqmSbWs95hnWniaOpmnsyCAwfzfu9fRvg2D
+         s7cw==
+X-Gm-Message-State: AOJu0Yzvf6hVpR/kD0EvnmQgooxkSl6rp9eFwgu2bVV564yJ9I+na87a
+	7a2t6osZ8J0W+c1Itc5uZLGjGEcYi2qoGsuP3R7/ytGOHCz3huc/cFlJ9b2PEMjvfu1bck38fY8
+	4LdxJVLUYXg==
+X-Gm-Gg: AY/fxX7pOUSP5O+a+qH3Vq1wRiZY2Uiy2ets1xbD1JdrUZ40wqkOtpUH63ufaGqp4Cj
+	OaqyjuGTz/evpje/+FXaqlFLhkhr2UZrkx703IoEZFjsaHj7NIP+N2IQL2b5R2za0FBibIUFJfx
+	J4331FoDo15I627iFhwOrho9VJJyvJ6FUMItRVJlEkmdo8/kglfIR2BLur4HUXVkR7Edr2g+g6F
+	XXZn/yUs/c7RGi7V86Xhn9v/ChiaFdLR3z9zYFYCHi7X5h2ynEi95mZpRletBI1BhSqflutxEDa
+	B6NU2ot88AR9wHbC2RHOeGFPoYiLjRcfJqcOYCFTfGBC60u4RFNiMOj6CdViSJNfVvZ91XgUcVI
+	uycsI4Xawrdo2kR6Ys0OlHhFey2mst03ykFqVBUlFHTGVOGYc/R4SD7sN6fW+9/ztvh3pkHEwAH
+	QMPdiJAFbPfKbXRgTKAih8bqIBqpTDGcLyFZIa7XkH+M0bTHJLS4fZ81BK1/ODjFpjVUL8bzdGP
+	fO3sPI=
+X-Received: by 2002:a17:907:6d17:b0:b87:2abc:4a2a with SMTP id a640c23a62f3a-b8761be4dc8mr132227166b.1.1768379749303;
+        Wed, 14 Jan 2026 00:35:49 -0800 (PST)
+Received: from localhost (p200300ef2f1649001c626999955e52c8.dip0.t-ipconnect.de. [2003:ef:2f16:4900:1c62:6999:955e:52c8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b842a56c547sm2437958966b.69.2026.01.14.00.35.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Jan 2026 00:35:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260114061536.GG15551@frogsfrogsfrogs>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 14 Jan 2026 09:35:48 +0100
+Message-Id: <DFO6AXBPYYE4.2BD108FK6ACXE@suse.com>
+From: "Andrea Cervesato" <andrea.cervesato@suse.com>
+To: "Al Viro" <viro@zeniv.linux.org.uk>, <ltp@lists.linux.it>
+Cc: <linux-fsdevel@vger.kernel.org>
+Subject: Re: [LTP] [PATCH] lack of ENAMETOOLONG testcases for pathnames
+ longer than PATH_MAX
+X-Mailer: aerc 0.18.2
+References: <20260113194936.GQ3634291@ZenIV>
+In-Reply-To: <20260113194936.GQ3634291@ZenIV>
 
-On 2026-01-13 22:15:36, Darrick J. Wong wrote:
-> On Wed, Jan 14, 2026 at 05:00:47AM +0000, Matthew Wilcox wrote:
-> > On Tue, Jan 13, 2026 at 07:45:47PM +0100, Andrey Albershteyn wrote:
-> > > On 2026-01-13 16:36:44, Matthew Wilcox wrote:
-> > > > On Mon, Jan 12, 2026 at 03:49:44PM +0100, Andrey Albershteyn wrote:
-> > > > > The tree is read by iomap into page cache at offset 1 << 53. This is far
-> > > > > enough to handle any supported file size.
-> > > > 
-> > > > What happens on 32-bit systems?  (I presume you mean "offset" as
-> > > > "index", so this is 1 << 65 bytes on machines with a 4KiB page size)
-> > > > 
-> > > it's in bytes, yeah I missed 32-bit systems, I think I will try to
-> > > convert this offset to something lower on 32-bit in iomap, as
-> > > Darrick suggested.
-> > 
-> > Hm, we use all 32 bits of folio->index on 32-bit plaftorms.  That's
-> > MAX_LFS_FILESIZE.  Are you proposing reducing that?
-> > 
-> > There are some other (performance) penalties to using 1<<53 as the lowest
-> > index for metadata on 64-bit.  The radix tree is going to go quite high;
-> > we use 6 bits at each level, so if you have a folio at 0 and a folio at
-> > 1<<53, you'll have a tree of height 9 and use 17 nodes.
-> > 
-> > That's going to be a lot of extra cache misses when walking the XArray
-> > to find any given folio.  Allowing the filesystem to decide where the
-> > metadata starts for any given file really is an important optimisation.
-> > Even if it starts at index 1<<29, you'll almost halve the number of
-> > nodes needed.
+Hi!
 
-Thanks for this overview!
+On Tue Jan 13, 2026 at 8:49 PM CET, Al Viro wrote:
+> 	There are different causes of ENAMETOOLONG.  It might come from
+> filesystem rejecting an excessively long pathname component, but there's
+> also "pathname is longer than PATH_MAX bytes, including terminating NUL"
+> and that doesn't get checked anywhere.
+>
+> 	Ran into that when a braino in kernel patch broke that logics
+> (ending up with cutoff too low) and that didn't get caught by LTP run.
+>
+> 	Patch below adds the checks to one of the tests that do deal
+> with the other source of ENAMETOOLONG; it almost certainly not the
+> right use of infrastructure, though.
 
-> 
-> 1<<53 is only the location of the fsverity metadata in the ondisk
-> mapping.  For the incore mapping, in theory we could load the fsverity
-> anywhere in the post-EOF part of the pagecache to save some bits.
-> 
-> roundup(i_size_read(), 1<<folio_max_order)) would work, right?
+The description is not well formatted, spaces at the beginning of the
+phrases should be removed.
 
-Then, there's probably no benefits to have ondisk mapping differ,
-no?
+Also, we can make it slightly more clear, by saying that error can be
+caused by a path name that is bigger than NAME_MAX, if relative, or
+bigger than PATH_MAX, if absolute (when we use '/').
 
-> 
-> > Adding this ability to support RW merkel trees is certainly coming at
-> > a cost.  Is it worth it?  I haven't seen a user need for that articulated,
-> > but I haven't been paying close attention.
-> 
-> I think the pagecache writes of fsverity metadata are only performed
-> once, while enabling fsverity for a file.
+In this test we only verifies if relative paths are longer than
+NAME_MAX (we give 273 bytes instead of 255 max), but we don't test if
+path name is bigger than PATH_MAX.
 
-yes
+We should correctly distinguish these two cases inside the test with
+proper names as well. Check below..
 
--- 
-- Andrey
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+> diff --git a/testcases/kernel/syscalls/chdir/chdir04.c b/testcases/kernel=
+/syscalls/chdir/chdir04.c
+> index 6e53b7fef..e8dd5121d 100644
+> --- a/testcases/kernel/syscalls/chdir/chdir04.c
+> +++ b/testcases/kernel/syscalls/chdir/chdir04.c
+> @@ -11,6 +11,8 @@
+>  #include "tst_test.h"
+> =20
+>  static char long_dir[] =3D "abcdefghijklmnopqrstmnopqrstuvwxyzabcdefghij=
+klmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopq=
+rstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnop=
+qrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvw=
+xyz";
+> +static char long_path[PATH_MAX+1];
+> +static char shorter_path[PATH_MAX];
+>  static char noexist_dir[] =3D "noexistdir";
+
+When it comes to syscall testing, it's better to use guarded buffers.
+This is easy to do: please check tst_test.bufs usage in here:
+
+https://linux-test-project.readthedocs.io/en/latest/developers/api_c_tests.=
+html#guarded-buffers-introduction
+
+Many old tests are not using these buffers, but it's better to
+introduce them when a test is refactored or fixed, like in this case.
+
+You need to define:
+
+static char *long_rel_path;
+static char *long_abs_path;
+
+...
+
+static void setup(void) {
+	..
+	// initialize long_rel_path content
+	// initialize long_abs_path content
+}
+
+static struct tst_test test =3D {
+	..
+	.bufs =3D (struct tst_buffer []) {
+		{&long_rel_path, .size =3D NAME_MAX + 10},
+		{&long_abs_path, .size =3D PATH_MAX + 10},
+		{}
+	}
+};
+
+> =20
+>  static struct tcase {
+> @@ -20,16 +22,23 @@ static struct tcase {
+>  	{long_dir, ENAMETOOLONG},
+>  	{noexist_dir, ENOENT},
+>  	{0, EFAULT}, // bad_addr
+> +	{long_path, ENAMETOOLONG},
+> +	{shorter_path, 0},
+>  };
+> =20
+>  static void verify_chdir(unsigned int i)
+>  {
+> -	TST_EXP_FAIL(chdir(tcases[i].dir), tcases[i].exp_errno, "chdir()");
+> +	if (tcases[i].exp_errno)
+> +		TST_EXP_FAIL(chdir(tcases[i].dir), tcases[i].exp_errno, "chdir()");
+> +	else
+> +		TST_EXP_PASS(chdir(tcases[i].dir), "chdir()");
+
+In this test we only verify errors, so TST_EXP_PASS is not needed.
+
+--=20
+Andrea Cervesato
+SUSE QE Automation Engineer Linux
+andrea.cervesato@suse.com
 
 
