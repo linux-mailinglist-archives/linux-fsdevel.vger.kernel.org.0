@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-73732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1847D1F704
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:29:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A86F5D1F71F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:29:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C52A33025115
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:29:15 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id C73E530509C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402212F6184;
-	Wed, 14 Jan 2026 14:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901882DECD3;
+	Wed, 14 Jan 2026 14:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEor/8DU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFVHD1wJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACBC280331;
-	Wed, 14 Jan 2026 14:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5FE286416;
+	Wed, 14 Jan 2026 14:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768400947; cv=none; b=ms1oafNzNUa+a+gN18uPtnbdX9E3bGU4Nr5fwLlSZTFDvamXg8kSv5H74SYcmFaq8c9QGZY1ptJaz3caBFN5xsAANgz4aDO3cJTwLthdD3niroKv+5VRfF0GxqtWMLWMINcTySkSdGj9GxgeF4xDxBOm4gAsnwRyDASHeWGgyuo=
+	t=1768400950; cv=none; b=pomcUW/w19uMu/RFbRBfOUxIdGe/IfN02eLIYFT+ZRehPcz3VAOQkwkRL/do5X5W9206r10cI9gNYNKRGl8Z/M5F4pCnGm6ZiF0XPbbqOZl/6ZsMFAgyRd52gbzQyA4FdQsL52zcfEzS3n+QLMgMv4XwMhGdvhpZ8tsEvjEGDt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768400947; c=relaxed/simple;
-	bh=JM+3cMG6B8NA0iuUXm4oGZhY/McI+7luuVb2gvnc7FU=;
+	s=arc-20240116; t=1768400950; c=relaxed/simple;
+	bh=i223I+ockRowXCqbkrPhV8opVdKBt6a7uVOnPd3VBQ8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gquJ5BnTXOu3F8hmi2gEujJy3yI4lK6J4oD4giSsftPdf0rAWSgb6V34ABr4rfUphNsqgRJWromT2lO+Cqn2crPiQ/Ex8hsgcyQ7vLWGDyJ1FPJ7uJ/j8gKRIaJd4H8uq+odVEHjSXxnyuuPHu/eoms2+jgpu3z7PPMwMf4OTlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEor/8DU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1129C19422;
-	Wed, 14 Jan 2026 14:29:04 +0000 (UTC)
+	 MIME-Version; b=FWseEGcPU/4F4x6LcYfGBCYpROfmfaxm3iFp0b7JH3yVe6g4I/RqVeii3zoj1jhNRWRRAsTPIQNBSCz+DJzDW/PQMPvD9WDzod18Wg4jVThm7B2VHmIHqkSRFUd+Flouw6bzzwAqUV8b99elrq4Rd1C0yvMD3VoYwi9bflvbNcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFVHD1wJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 682DCC2BC9E;
+	Wed, 14 Jan 2026 14:29:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768400947;
-	bh=JM+3cMG6B8NA0iuUXm4oGZhY/McI+7luuVb2gvnc7FU=;
+	s=k20201202; t=1768400949;
+	bh=i223I+ockRowXCqbkrPhV8opVdKBt6a7uVOnPd3VBQ8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WEor/8DU2qfPmoPVltEIdCnBhluYfw+cSbQL7sCPTr16T4ETQWQ7Fx3CYq1X6EYVd
-	 P8O+h2p0rSGsu9vxPge/0c6iX2PqlCaeORxOfpnIhlIxHytFbPNcixdDatzopJAYOs
-	 olQYhTFbtJg4etm+0+UYcflUqdrI4y9mMLqN8pfRoS5LVzFDC0lsxb6DgcoV8ZtyCE
-	 bueAXkc4YTpinlDAysDL1daUqJVYl7jkUq4ZG80k4w7p7SUS6sdgqkpehKkgZ2GPGy
-	 OHHaQFI+fA8g+H5NdW+lUoj3GzqqI4ShrJbYLRoJUzpIi70kVrw7Bobe8xCm+caqZs
-	 GXXyDo3wJ1A/A==
+	b=eFVHD1wJ41bC/qVLbdkMw5XGGxRHrqXZYwuZnnRc6pK05icdT1dLG8iA5dKDP0Idw
+	 XtCfSLjo3bYmv3ZOtyFmqQkBupR4lTG2RoEKN8bLQNlOs+OPt3ehDKa0WNU7ppEShd
+	 aBflXOO4liCTP4LWn8oeaJQAP7Y7nsJdEuoYy0VCLjXj0On2tqle6VvNaSjjxrnWF0
+	 +eB+Dmwl7AYoH48Rg36RheuC2SXq07OodMh9gO7g29GMSrs2SJN/tohEk3FNxosX9d
+	 5W8TKf5Fy8MfdA6NqP1k+27yQBth1ti5guHrn4syJlF7LkOhUO6bZOCCv/S1MjUTKG
+	 Hm6wm1OsvSu+Q==
 From: Chuck Lever <cel@kernel.org>
 To: vira@web.codeaurora.org, Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>
@@ -70,9 +70,9 @@ Cc: <linux-fsdevel@vger.kernel.org>,
 	hansg@kernel.org,
 	senozhatsky@chromium.org,
 	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH v4 01/16] fs: Add case sensitivity info to file_kattr
-Date: Wed, 14 Jan 2026 09:28:44 -0500
-Message-ID: <20260114142900.3945054-2-cel@kernel.org>
+Subject: [PATCH v4 02/16] fat: Implement fileattr_get for case sensitivity
+Date: Wed, 14 Jan 2026 09:28:45 -0500
+Message-ID: <20260114142900.3945054-3-cel@kernel.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260114142900.3945054-1-cel@kernel.org>
 References: <20260114142900.3945054-1-cel@kernel.org>
@@ -86,107 +86,112 @@ Content-Transfer-Encoding: 8bit
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-Enable upper layers such as NFSD to retrieve case sensitivity
-information from file systems by adding case_insensitive and
-case_nonpreserving boolean fields to struct file_kattr.
+Report FAT's case sensitivity behavior via the file_kattr boolean
+fields. FAT filesystems are case-insensitive by default.
 
-These fields default to false (POSIX semantics: case-sensitive and
-case-preserving), allowing filesystems to set them only when
-behavior differs from the default.
+MSDOS supports a 'nocase' mount option that enables case-sensitive
+behavior; check this option when reporting case sensitivity.
+
+VFAT long filename entries preserve case; without VFAT, only
+uppercased 8.3 short names are stored. Check the isvfat option when
+reporting case preservation.
 
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/file_attr.c           | 14 ++++++++++++++
- include/linux/fileattr.h |  3 +++
- include/uapi/linux/fs.h  | 12 +++++++++++-
- 3 files changed, 28 insertions(+), 1 deletion(-)
+ fs/fat/fat.h         |  3 +++
+ fs/fat/file.c        | 19 +++++++++++++++++++
+ fs/fat/namei_msdos.c |  1 +
+ fs/fat/namei_vfat.c  |  1 +
+ 4 files changed, 24 insertions(+)
 
-diff --git a/fs/file_attr.c b/fs/file_attr.c
-index 13cdb31a3e94..df4b2fc68532 100644
---- a/fs/file_attr.c
-+++ b/fs/file_attr.c
-@@ -84,6 +84,8 @@ int vfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
- 	struct inode *inode = d_inode(dentry);
- 	int error;
+diff --git a/fs/fat/fat.h b/fs/fat/fat.h
+index d3e426de5f01..9e208eeb46c4 100644
+--- a/fs/fat/fat.h
++++ b/fs/fat/fat.h
+@@ -10,6 +10,8 @@
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
  
-+	memset(fa, 0, sizeof(*fa));
++struct file_kattr;
 +
- 	if (!inode->i_op->fileattr_get)
- 		return -ENOIOCTLCMD;
+ /*
+  * vfat shortname flags
+  */
+@@ -407,6 +409,7 @@ extern void fat_truncate_blocks(struct inode *inode, loff_t offset);
+ extern int fat_getattr(struct mnt_idmap *idmap,
+ 		       const struct path *path, struct kstat *stat,
+ 		       u32 request_mask, unsigned int flags);
++int fat_fileattr_get(struct dentry *dentry, struct file_kattr *fa);
+ extern int fat_file_fsync(struct file *file, loff_t start, loff_t end,
+ 			  int datasync);
  
-@@ -106,6 +108,10 @@ static void fileattr_to_file_attr(const struct file_kattr *fa,
- 	fattr->fa_nextents = fa->fsx_nextents;
- 	fattr->fa_projid = fa->fsx_projid;
- 	fattr->fa_cowextsize = fa->fsx_cowextsize;
-+	if (fa->case_insensitive)
-+		fattr->fa_case_behavior |= FS_CASE_INSENSITIVE;
-+	if (fa->case_nonpreserving)
-+		fattr->fa_case_behavior |= FS_CASE_NONPRESERVING;
+diff --git a/fs/fat/file.c b/fs/fat/file.c
+index 4fc49a614fb8..655b0a650149 100644
+--- a/fs/fat/file.c
++++ b/fs/fat/file.c
+@@ -16,6 +16,7 @@
+ #include <linux/fsnotify.h>
+ #include <linux/security.h>
+ #include <linux/falloc.h>
++#include <linux/fileattr.h>
+ #include "fat.h"
+ 
+ static long fat_fallocate(struct file *file, int mode,
+@@ -395,6 +396,23 @@ void fat_truncate_blocks(struct inode *inode, loff_t offset)
+ 	fat_flush_inodes(inode->i_sb, inode, NULL);
  }
  
- /**
-@@ -382,6 +388,10 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
- 
- 	BUILD_BUG_ON(sizeof(struct file_attr) < FILE_ATTR_SIZE_VER0);
- 	BUILD_BUG_ON(sizeof(struct file_attr) != FILE_ATTR_SIZE_LATEST);
-+	BUILD_BUG_ON(offsetofend(struct file_attr, fa_cowextsize) !=
-+		     FILE_ATTR_SIZE_VER0);
-+	BUILD_BUG_ON(offsetofend(struct file_attr, fa_reserved) !=
-+		     FILE_ATTR_SIZE_VER1);
- 
- 	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
- 		return -EINVAL;
-@@ -439,6 +449,10 @@ SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
- 
- 	BUILD_BUG_ON(sizeof(struct file_attr) < FILE_ATTR_SIZE_VER0);
- 	BUILD_BUG_ON(sizeof(struct file_attr) != FILE_ATTR_SIZE_LATEST);
-+	BUILD_BUG_ON(offsetofend(struct file_attr, fa_cowextsize) !=
-+		     FILE_ATTR_SIZE_VER0);
-+	BUILD_BUG_ON(offsetofend(struct file_attr, fa_reserved) !=
-+		     FILE_ATTR_SIZE_VER1);
- 
- 	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
- 		return -EINVAL;
-diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
-index f89dcfad3f8f..086f28b90734 100644
---- a/include/linux/fileattr.h
-+++ b/include/linux/fileattr.h
-@@ -51,6 +51,9 @@ struct file_kattr {
- 	/* selectors: */
- 	bool	flags_valid:1;
- 	bool	fsx_valid:1;
-+	/* case sensitivity behavior: */
-+	bool	case_insensitive:1;
-+	bool	case_nonpreserving:1;
- };
- 
- int copy_fsxattr_to_user(const struct file_kattr *fa, struct fsxattr __user *ufa);
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 66ca526cf786..07286d34b48b 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -229,10 +229,20 @@ struct file_attr {
- 	__u32 fa_nextents;	/* nextents field value (get)   */
- 	__u32 fa_projid;	/* project identifier (get/set) */
- 	__u32 fa_cowextsize;	/* CoW extsize field value (get/set) */
-+	/* VER1 additions: */
-+	__u32 fa_case_behavior;	/* case sensitivity (get) */
-+	__u32 fa_reserved;
- };
- 
- #define FILE_ATTR_SIZE_VER0 24
--#define FILE_ATTR_SIZE_LATEST FILE_ATTR_SIZE_VER0
-+#define FILE_ATTR_SIZE_VER1 32
-+#define FILE_ATTR_SIZE_LATEST FILE_ATTR_SIZE_VER1
++int fat_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
++{
++	struct msdos_sb_info *sbi = MSDOS_SB(dentry->d_sb);
 +
-+/*
-+ * Case sensitivity flags for fa_case_behavior
-+ */
-+#define FS_CASE_INSENSITIVE	0x00000001	/* case-insensitive lookups */
-+#define FS_CASE_NONPRESERVING	0x00000002	/* case not preserved */
++	/*
++	 * FAT filesystems are case-insensitive by default. MSDOS
++	 * supports a 'nocase' mount option for case-sensitive behavior.
++	 *
++	 * VFAT long filename entries preserve case. Without VFAT, only
++	 * uppercased 8.3 short names are stored.
++	 */
++	fa->case_insensitive = !sbi->options.nocase;
++	fa->case_nonpreserving = !sbi->options.isvfat;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(fat_fileattr_get);
++
+ int fat_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 		struct kstat *stat, u32 request_mask, unsigned int flags)
+ {
+@@ -574,5 +592,6 @@ EXPORT_SYMBOL_GPL(fat_setattr);
+ const struct inode_operations fat_file_inode_operations = {
+ 	.setattr	= fat_setattr,
+ 	.getattr	= fat_getattr,
++	.fileattr_get	= fat_fileattr_get,
+ 	.update_time	= fat_update_time,
+ };
+diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
+index 0b920ee40a7f..380add5c6c66 100644
+--- a/fs/fat/namei_msdos.c
++++ b/fs/fat/namei_msdos.c
+@@ -640,6 +640,7 @@ static const struct inode_operations msdos_dir_inode_operations = {
+ 	.rename		= msdos_rename,
+ 	.setattr	= fat_setattr,
+ 	.getattr	= fat_getattr,
++	.fileattr_get	= fat_fileattr_get,
+ 	.update_time	= fat_update_time,
+ };
  
- /*
-  * Flags for the fsx_xflags field
+diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+index 5dbc4cbb8fce..6cf513f97afa 100644
+--- a/fs/fat/namei_vfat.c
++++ b/fs/fat/namei_vfat.c
+@@ -1180,6 +1180,7 @@ static const struct inode_operations vfat_dir_inode_operations = {
+ 	.rename		= vfat_rename2,
+ 	.setattr	= fat_setattr,
+ 	.getattr	= fat_getattr,
++	.fileattr_get	= fat_fileattr_get,
+ 	.update_time	= fat_update_time,
+ };
+ 
 -- 
 2.52.0
 
