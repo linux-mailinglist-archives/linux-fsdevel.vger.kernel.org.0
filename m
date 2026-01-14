@@ -1,58 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-73609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0075ED1CA5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 07:15:52 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E0FD1CA61
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 07:16:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id E3D6530006C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:15:49 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CEDAC300F8B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFCC34846E;
-	Wed, 14 Jan 2026 06:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZXDfK9O"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE42436A024;
+	Wed, 14 Jan 2026 06:16:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5202BE64A;
-	Wed, 14 Jan 2026 06:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF221531C8;
+	Wed, 14 Jan 2026 06:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768371337; cv=none; b=JFXk26q4EMCw8sqv+D4oucSVV7+Ky2Styp3YYY6DbxUH7ETMOcK8BGPbzJeoWBrLY0WEYKyQ+My+6fT4uBOalgruZ4xiNd6gMxeGYSF9cA4HSw4Wm0K0hNMVuwRX0ZqYK4plBxE3M0EHLiMHLKL4YbAvj+WQxsutmWrnM421jkc=
+	t=1768371372; cv=none; b=ZwLG94u1hIRAax2+DC622WAfdAx7T/JWO7zs5JfPJ69KK1TSLXfRZztLM35IeFqnfYw0W7ndIsmXXbfXlYgyJcJa6/JV5FfIdhj+XxeavAbBesjCmBy4rPF6C6VSEoVakreAnTQsaRu0WX1yAdjHeWVKKd8610ZQqirK8EwEwqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768371337; c=relaxed/simple;
-	bh=0iqekaHVK+2ijH4G+z+YGDBjBjZbUBYkebJj3HsANBw=;
+	s=arc-20240116; t=1768371372; c=relaxed/simple;
+	bh=UvSCkCDkzow8qwTADBwA1wwYNxe0B8t1atfZ2xkipi8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ognpf+L4Lf1qr0S3giKis8W3K/opKzeyip3Ya6D5l/1ZRmHIXasrVEQJTHymql45eRnJ/y6y5i0OPrya3GcDBHY5e/2zt6Eihl56vb7ohIIH1pJRpvRUHXFkbMeQo4Ws+hsLVDYv3qGiw0h2OVMxnjjmxefKOAMKpHVrAAxlvnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZXDfK9O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F25FC4CEF7;
-	Wed, 14 Jan 2026 06:15:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768371336;
-	bh=0iqekaHVK+2ijH4G+z+YGDBjBjZbUBYkebJj3HsANBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IZXDfK9OhJal+gou4WtykyK2lJRuzraSDvdm1/gIN92Xe2Fb1FpyD5gUaRWkfYDFk
-	 O02Hq6ncVcbjVdveAaHCBU1cjAJzs40kUzS92nwnLkV8qeubGuxmb5rNA1a7QLMheQ
-	 vzEGrgdko2g+pF0l3VoQOTfMkIs7yhLuXiGydLwvd3UTp68EJG/9yFnsnDTlaaXz5r
-	 +DQI1cHS5MLdAP2wK3hqUACap3Eebvz7DPnBT+Nq43MvQ6wwtJ6hdbf7ZKhtRMweiC
-	 e+13174bE45LAYNggbDJfk+MaR3ciF3Z9nb9UCJbS4STg83ohEO+Hqykbr9TbEGrs8
-	 5qnEb0nprjndQ==
-Date: Tue, 13 Jan 2026 22:15:36 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
-	linux-xfs@vger.kernel.org, ebiggers@kernel.org,
-	linux-fsdevel@vger.kernel.org, aalbersh@kernel.org,
-	david@fromorbit.com, hch@lst.de
-Subject: Re: [PATCH v2 0/23] fs-verity support for XFS with post EOF merkle
- tree
-Message-ID: <20260114061536.GG15551@frogsfrogsfrogs>
-References: <cover.1768229271.patch-series@thinky>
- <aWZ0nJNVTnyuFTmM@casper.infradead.org>
- <op5poqkjoachiv2qfwizunoeg7h6w5x2rxdvbs4vhryr3aywbt@cul2yevayijl>
- <aWci_1Uu5XndYNkG@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mYlmtXJF3XJ3FmLA5JhHFsvlUxJynloLX8rtNbK5oSRGXsikUwjhR7AXFIAxnw9T6H6+a6bQhPL/F0OCv1aneGYr9ZyLFpm0YWoYbsArMB/T0DMH3bci69qhDBn/ycLuu9B/p/VE2yOlSRkhEg0BvwCcf3XWVxLCGh+O0DRFzVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 2B9DE227A8E; Wed, 14 Jan 2026 07:16:00 +0100 (CET)
+Date: Wed, 14 Jan 2026 07:15:59 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, cem@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 11/11] xfs: add media verification ioctl
+Message-ID: <20260114061559.GA10613@lst.de>
+References: <176826412644.3493441.536177954776056129.stgit@frogsfrogsfrogs> <176826412941.3493441.8359506127711497025.stgit@frogsfrogsfrogs> <20260113155701.GA3489@lst.de> <20260113232113.GD15551@frogsfrogsfrogs> <20260114060214.GA10372@lst.de> <20260114060705.GK15583@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,48 +45,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aWci_1Uu5XndYNkG@casper.infradead.org>
+In-Reply-To: <20260114060705.GK15583@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Jan 14, 2026 at 05:00:47AM +0000, Matthew Wilcox wrote:
-> On Tue, Jan 13, 2026 at 07:45:47PM +0100, Andrey Albershteyn wrote:
-> > On 2026-01-13 16:36:44, Matthew Wilcox wrote:
-> > > On Mon, Jan 12, 2026 at 03:49:44PM +0100, Andrey Albershteyn wrote:
-> > > > The tree is read by iomap into page cache at offset 1 << 53. This is far
-> > > > enough to handle any supported file size.
-> > > 
-> > > What happens on 32-bit systems?  (I presume you mean "offset" as
-> > > "index", so this is 1 << 65 bytes on machines with a 4KiB page size)
-> > > 
-> > it's in bytes, yeah I missed 32-bit systems, I think I will try to
-> > convert this offset to something lower on 32-bit in iomap, as
-> > Darrick suggested.
+On Tue, Jan 13, 2026 at 10:07:05PM -0800, Darrick J. Wong wrote:
+> > a tunable is a better choice here at least for now.
 > 
-> Hm, we use all 32 bits of folio->index on 32-bit plaftorms.  That's
-> MAX_LFS_FILESIZE.  Are you proposing reducing that?
+> <nod> I'll set iosize to 1MB by default and userspace can decrease it if
+> it so desires.
 > 
-> There are some other (performance) penalties to using 1<<53 as the lowest
-> index for metadata on 64-bit.  The radix tree is going to go quite high;
-> we use 6 bits at each level, so if you have a folio at 0 and a folio at
-> 1<<53, you'll have a tree of height 9 and use 17 nodes.
-> 
-> That's going to be a lot of extra cache misses when walking the XArray
-> to find any given folio.  Allowing the filesystem to decide where the
-> metadata starts for any given file really is an important optimisation.
-> Even if it starts at index 1<<29, you'll almost halve the number of
-> nodes needed.
+> Also it occurs to me that max_hw_sectors_kb seems to be 128K for all of
+> my consumer nvme devices, and the fancy Intel ones too.  Funny that the
+> sata ssds set it to 4MB, but I guess capping at 128k is one way to
+> reduce the command latency...?  (Or the kernel's broken?  I can't figure
+> out how to get mpsmin with nvme-cli...)
 
-1<<53 is only the location of the fsverity metadata in the ondisk
-mapping.  For the incore mapping, in theory we could load the fsverity
-anywhere in the post-EOF part of the pagecache to save some bits.
+mpsmin is basically always 4k.
 
-roundup(i_size_read(), 1<<folio_max_order)) would work, right?
 
-> Adding this ability to support RW merkel trees is certainly coming at
-> a cost.  Is it worth it?  I haven't seen a user need for that articulated,
-> but I haven't been paying close attention.
-
-I think the pagecache writes of fsverity metadata are only performed
-once, while enabling fsverity for a file.
-
---D
+On something unrelated:  SSDs remap all the time by definition, and
+HDDs are really good at remapping bad sectors these days as well.
+So verifying blocks that do not actually contain file system (meta)data
+is pretty pointless.   Can we come up with a way to verify only blocks
+that have valid data in them, while still being resonably sequential?
+I.e. walk the rmap?
 
