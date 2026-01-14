@@ -1,184 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-73650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 607ADD1D9D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 10:40:01 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E4BD1DB04
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 10:47:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2DAFF3024597
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 09:39:37 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 32FD4300558E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 09:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BFB38944F;
-	Wed, 14 Jan 2026 09:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7CE36B042;
+	Wed, 14 Jan 2026 09:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SuW8rI32";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="I30ihIpg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SuW8rI32";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="I30ihIpg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V9qpQBi7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59120199D8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 09:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C795034D4F9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 09:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768383573; cv=none; b=q3C/iSqBVL1PhIDBGoiQoi7d36dapvkI7DIBugvxp1CM+IFcUzl6ycA1rYRh5+lz6Cq1IvbPlwk13F7f6jC2/ZX5dY/xH44TVCG2GKfTS1uewOkMLnX6467U8rdaKF1EGio5Oy6xDqDWiM22yghOSO1C6B/HuuE2y2gTylDQgYI=
+	t=1768384046; cv=none; b=GsJqSk3Ne4Dk0nMxkQW3qAh0ZUoEFOIPL2FGWajkR4AywiaqQlL95Lb/t+SsTcw+vchBgMW5YKIoJ4mEfAF/Vge2ZgIusXXulwFr1vIzmlYO9a/wtT4mZrz/G5XQHUUebxbTQaxMNcDFlv1V7C+cEKFLzng+dlVWd8zBc0E8vp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768383573; c=relaxed/simple;
-	bh=cYxbapg/YMhOyoLNJzPJcKbRyAB4G7LmFIPpL0hAOCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aT/DO8FZwiwpeuJyhel3Tl8DhzXiRf7LAGmU8z+puLumXKeUerKMnD/fRJcncFAhHrYX8X0Heczv51VebjvAjdX4I96nokHAb0z1oInXIcYOapzdHEA09T1TY6j4gYO0hc1L/Cvc/snKWqyH5l5ebfegPIis3x/XrHFPcXfh/MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SuW8rI32; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=I30ihIpg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SuW8rI32; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=I30ihIpg; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5C0385C06F;
-	Wed, 14 Jan 2026 09:39:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768383570; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Een1KJjpb6oQyGGausabj4o6lIakkKKgNl583lemC/o=;
-	b=SuW8rI32QMkPgSeYMPzsrg5hu+POx+rGjvF+lqGb1eiBlDTZrxvBdQbuKhNkmvoacRRXeI
-	fr4z7q9ZJvSg2VEz+MId/RjCU6eduwigGD91gdMiP0SNLNQ4zJBEfG1dDQbFInoIxCGbel
-	8LGPpfbqjGNhRVJFuIdeWvpQt0K/6p0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768383570;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Een1KJjpb6oQyGGausabj4o6lIakkKKgNl583lemC/o=;
-	b=I30ihIpgQpm5EDRlNHTVnJeud/RiiL+nyZaleHF0gGQiR0x/gMj6Wjcq58uVD0+IAIeXbF
-	yAZ2g1hqU6CaHwBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768383570; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Een1KJjpb6oQyGGausabj4o6lIakkKKgNl583lemC/o=;
-	b=SuW8rI32QMkPgSeYMPzsrg5hu+POx+rGjvF+lqGb1eiBlDTZrxvBdQbuKhNkmvoacRRXeI
-	fr4z7q9ZJvSg2VEz+MId/RjCU6eduwigGD91gdMiP0SNLNQ4zJBEfG1dDQbFInoIxCGbel
-	8LGPpfbqjGNhRVJFuIdeWvpQt0K/6p0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768383570;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Een1KJjpb6oQyGGausabj4o6lIakkKKgNl583lemC/o=;
-	b=I30ihIpgQpm5EDRlNHTVnJeud/RiiL+nyZaleHF0gGQiR0x/gMj6Wjcq58uVD0+IAIeXbF
-	yAZ2g1hqU6CaHwBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C4483EA63;
-	Wed, 14 Jan 2026 09:39:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sveLLFFkZ2lHGAAAD6G6ig
-	(envelope-from <chrubis@suse.cz>); Wed, 14 Jan 2026 09:39:29 +0000
-Date: Wed, 14 Jan 2026 10:40:43 +0100
-From: Cyril Hrubis <chrubis@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: ltp@lists.linux.it, linux-fsdevel@vger.kernel.org
-Subject: Re: [LTP] [PATCH] lack of ENAMETOOLONG testcases for pathnames
- longer than PATH_MAX
-Message-ID: <aWdkmzC8pdtqVqk3@yuki.lan>
-References: <20260113194936.GQ3634291@ZenIV>
+	s=arc-20240116; t=1768384046; c=relaxed/simple;
+	bh=7lPFQylPXc3CQb5CpLAmjWiXpGsB0agm+Fa00+nsTSQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gyzf7LjzSLLihmThh1a2UuGPyXZWPFW89g52tvR0fwlQQvyPsa4iusOVCopsjifv3HGprzUIesdsfxeUaGXIjJPt/Jo5WE5wpC/HeFu1OBSCZiMO1DBcavl1A0nEX2x5XJj2YO5kYnnkgqwxQgeyEQfkyanIGQT3PNCN8JNTQc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V9qpQBi7; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64b8123c333so13582916a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 01:47:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768384043; x=1768988843; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZTMoV76WS/2nFd0nWu1noI9EQv5QDwFEJLeNSydz65s=;
+        b=V9qpQBi7KTeytPukGoSdbDS9tEiT5h6P/CzIuEg9FxWoIP/kLJwXiUynJKIMbLHmYl
+         nqFDOwrvw8881rRQIpUQEdQKBqgK5WKNXAMU8xcJCdaG47zjyhr0tnf5I6MeTF9LXn3/
+         eeeDrIqYsMgHtJIorDq+uGsbVPj60fC4V0ItBtkuvQBWKGLz52/g1tO4mpASlXMPCgaT
+         09pbGPOhOKl/uyt1+W/6/ebqU2SoUIeUMcWRruV9W7pAmScjGJxShBlwX7Ll1Bu/oyBE
+         70jp3SUV5udkA9bgd99iKOAe6yW3pg2jmvjBnDyyTjE52pLB51o2Tm0WVNABe7G3UtCa
+         yGqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768384043; x=1768988843;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZTMoV76WS/2nFd0nWu1noI9EQv5QDwFEJLeNSydz65s=;
+        b=NeASMvvoHeCLrMqYfMhLfJjHME3TDonFsG44hesXAWXArjUCqo5sCan3tgfuN+4C0K
+         ti3nHbQgVgpoDT7k/zdc2R2VigXcK2/yrmabzie0eHTZOq6ituIdWHFUZJIGd+i9yzZ6
+         ztIyJ57FVfcqz1Ie1eP9uOTjk5Xf44TuDec7C0sHnjNlXB5B3mrEaKnA4ampRAAJAHNE
+         pMZu1dIvLaxKyB6mJ8NXfT7IRQRsoNADlo5DPiS1v7r+9+yWjhT6KTEA4lOwY0f2Onb8
+         n96MGxSMLbEQdpyvPWNe0/xYRzk56ZNC2YRVwEEz/N1O3/xmLc9YuTD7Y3LuQiixr9kN
+         tXqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaqFFM7wLWsyILkq3RPjA3quZUJreeVi+cPV2/SO77JWLY5AGBSiPzNv7m11d4uCyKXUCK29q/Tea9TlQm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvIY1p7mqAttOgzYGTxWlp7sF7Y7YROWBZa3YI2rSW4/oNFZJR
+	GpzpzDf0OdW8gidiEp4FyvPutHUjygxhtq3L8NVkgBn4VzBkCCf5qEAX
+X-Gm-Gg: AY/fxX6MmoiC7U5y1aK7i0f0gTBe9MgiKvaQAjjd8bcsMZPPQX9SNH8+kAGspEp10Hu
+	TK6I7NtngoUwCCQIlItfyeV8Rw9jwll50e/pVMZHU+xYAvzWJCD4LlBH2oMc3DAG5K09Q8VSiij
+	TAszXndm6Uh2xIiSeQksVWhncAVd23rWcJhN4HcZgq/hI7gKv76TNmjvjIDDE3kJ7DBZydc4+ko
+	1YTNDDP+6iCwhMWgCQZsWVLSe4behoenA41p5Xz7MwJyhTs2iHd5NB0g4+d9AFbcRKQ5LjRyecc
+	2kRkMSH8qoGXmfx4NBPpGM6ZTpZvglwhqfdZzoT3LmbdytNCf+lUT211cFmAh16eyLrD1PiA6/z
+	yKHseRH5X3WoucOaKYa9dNfN2yK/rOav4koGyOrchh0khc+Uc0/9sbSB6nORo4sZWTz0lkrxqwd
+	bYdW4boyE8QZtIkpBFvhUAUybpE4NUNmqH7/RHy1HmbpDXZEhsFOj/pEULZwg=
+X-Received: by 2002:a17:907:26cd:b0:b87:3395:7f05 with SMTP id a640c23a62f3a-b87613da2a6mr170071166b.62.1768384042822;
+        Wed, 14 Jan 2026 01:47:22 -0800 (PST)
+Received: from f.. (cst-prg-93-36.cust.vodafone.cz. [46.135.93.36])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b87162bf433sm931732266b.33.2026.01.14.01.47.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jan 2026 01:47:22 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	yi1.lai@linux.intel.com,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] fs: make insert_inode_locked() wait for inode destruction
+Date: Wed, 14 Jan 2026 10:47:16 +0100
+Message-ID: <20260114094717.236202-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260113194936.GQ3634291@ZenIV>
-X-Spamd-Result: default: False [-8.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,linux.org.uk:email,yuki.lan:mid];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -8.30
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-Hi!
-> 	There are different causes of ENAMETOOLONG.  It might come from
-> filesystem rejecting an excessively long pathname component, but there's
-> also "pathname is longer than PATH_MAX bytes, including terminating NUL"
-> and that doesn't get checked anywhere.
+This is the only routine which instead skipped instead of waiting.
 
-We do have a couple of tests that checks that names over PATH_MAX are
-rejected, there is no reason to add these kind of tests, however I do
-not think that we tests that check that names that are just under the
-limit work fine, that needs to be added.
+The current behavior is arguably a bug as it results in a corner case
+where the inode hash can have *two* matching inodes, one of which is on
+its way out.
 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
-> diff --git a/testcases/kernel/syscalls/chdir/chdir04.c b/testcases/kernel/syscalls/chdir/chdir04.c
-> index 6e53b7fef..e8dd5121d 100644
-> --- a/testcases/kernel/syscalls/chdir/chdir04.c
-> +++ b/testcases/kernel/syscalls/chdir/chdir04.c
-> @@ -11,6 +11,8 @@
->  #include "tst_test.h"
->  
->  static char long_dir[] = "abcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyz";
-> +static char long_path[PATH_MAX+1];
-> +static char shorter_path[PATH_MAX];
->  static char noexist_dir[] = "noexistdir";
->  
->  static struct tcase {
-> @@ -20,16 +22,23 @@ static struct tcase {
->  	{long_dir, ENAMETOOLONG},
->  	{noexist_dir, ENOENT},
->  	{0, EFAULT}, // bad_addr
-> +	{long_path, ENAMETOOLONG},
+Ironing out this difference is an incremental step towards sanitizing
+the API.
 
-This test already exists in the form of long_dir just three lines above.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-> +	{shorter_path, 0},
-
-What about we add a separate test (chdir02.c) for paths that shouldn't
-be rejected. Something as:
-
-char path[PATH_MAX];
-int i;
-
-...
-	for (i = 1; i < PATH_MAX; i++) {
-		memset(path, 0, sizeof(path));
-		memset(path, '/', i);
-		TST_EXP_PASS(chdir(path), "chdir() len=%i", i);
-	}
-...
+v2:
+- add a way to avoid the rcu dance in __wait_on_freeing_inode
 
 
-That would make sure that all lenghts of paths that are valid are
-accepted.
+ fs/inode.c | 41 ++++++++++++++++++++++++-----------------
+ 1 file changed, 24 insertions(+), 17 deletions(-)
 
+diff --git a/fs/inode.c b/fs/inode.c
+index 8a47c4da603f..a4cfe9182a7c 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1028,19 +1028,20 @@ long prune_icache_sb(struct super_block *sb, struct shrink_control *sc)
+ 	return freed;
+ }
+ 
+-static void __wait_on_freeing_inode(struct inode *inode, bool is_inode_hash_locked);
++static void __wait_on_freeing_inode(struct inode *inode, bool hash_locked, bool rcu_locked);
++
+ /*
+  * Called with the inode lock held.
+  */
+ static struct inode *find_inode(struct super_block *sb,
+ 				struct hlist_head *head,
+ 				int (*test)(struct inode *, void *),
+-				void *data, bool is_inode_hash_locked,
++				void *data, bool hash_locked,
+ 				bool *isnew)
+ {
+ 	struct inode *inode = NULL;
+ 
+-	if (is_inode_hash_locked)
++	if (hash_locked)
+ 		lockdep_assert_held(&inode_hash_lock);
+ 	else
+ 		lockdep_assert_not_held(&inode_hash_lock);
+@@ -1054,7 +1055,7 @@ static struct inode *find_inode(struct super_block *sb,
+ 			continue;
+ 		spin_lock(&inode->i_lock);
+ 		if (inode_state_read(inode) & (I_FREEING | I_WILL_FREE)) {
+-			__wait_on_freeing_inode(inode, is_inode_hash_locked);
++			__wait_on_freeing_inode(inode, hash_locked, true);
+ 			goto repeat;
+ 		}
+ 		if (unlikely(inode_state_read(inode) & I_CREATING)) {
+@@ -1078,11 +1079,11 @@ static struct inode *find_inode(struct super_block *sb,
+  */
+ static struct inode *find_inode_fast(struct super_block *sb,
+ 				struct hlist_head *head, unsigned long ino,
+-				bool is_inode_hash_locked, bool *isnew)
++				bool hash_locked, bool *isnew)
+ {
+ 	struct inode *inode = NULL;
+ 
+-	if (is_inode_hash_locked)
++	if (hash_locked)
+ 		lockdep_assert_held(&inode_hash_lock);
+ 	else
+ 		lockdep_assert_not_held(&inode_hash_lock);
+@@ -1096,7 +1097,7 @@ static struct inode *find_inode_fast(struct super_block *sb,
+ 			continue;
+ 		spin_lock(&inode->i_lock);
+ 		if (inode_state_read(inode) & (I_FREEING | I_WILL_FREE)) {
+-			__wait_on_freeing_inode(inode, is_inode_hash_locked);
++			__wait_on_freeing_inode(inode, hash_locked, true);
+ 			goto repeat;
+ 		}
+ 		if (unlikely(inode_state_read(inode) & I_CREATING)) {
+@@ -1832,16 +1833,13 @@ int insert_inode_locked(struct inode *inode)
+ 	while (1) {
+ 		struct inode *old = NULL;
+ 		spin_lock(&inode_hash_lock);
++repeat:
+ 		hlist_for_each_entry(old, head, i_hash) {
+ 			if (old->i_ino != ino)
+ 				continue;
+ 			if (old->i_sb != sb)
+ 				continue;
+ 			spin_lock(&old->i_lock);
+-			if (inode_state_read(old) & (I_FREEING | I_WILL_FREE)) {
+-				spin_unlock(&old->i_lock);
+-				continue;
+-			}
+ 			break;
+ 		}
+ 		if (likely(!old)) {
+@@ -1852,6 +1850,11 @@ int insert_inode_locked(struct inode *inode)
+ 			spin_unlock(&inode_hash_lock);
+ 			return 0;
+ 		}
++		if (inode_state_read(old) & (I_FREEING | I_WILL_FREE)) {
++			__wait_on_freeing_inode(old, true, false);
++			old = NULL;
++			goto repeat;
++		}
+ 		if (unlikely(inode_state_read(old) & I_CREATING)) {
+ 			spin_unlock(&old->i_lock);
+ 			spin_unlock(&inode_hash_lock);
+@@ -2522,16 +2525,18 @@ EXPORT_SYMBOL(inode_needs_sync);
+  * wake_up_bit(&inode->i_state, __I_NEW) after removing from the hash list
+  * will DTRT.
+  */
+-static void __wait_on_freeing_inode(struct inode *inode, bool is_inode_hash_locked)
++static void __wait_on_freeing_inode(struct inode *inode, bool hash_locked, bool rcu_locked)
+ {
+ 	struct wait_bit_queue_entry wqe;
+ 	struct wait_queue_head *wq_head;
+ 
++	VFS_BUG_ON(!hash_locked && !rcu_locked);
++
+ 	/*
+ 	 * Handle racing against evict(), see that routine for more details.
+ 	 */
+ 	if (unlikely(inode_unhashed(inode))) {
+-		WARN_ON(is_inode_hash_locked);
++		WARN_ON(hash_locked);
+ 		spin_unlock(&inode->i_lock);
+ 		return;
+ 	}
+@@ -2539,14 +2544,16 @@ static void __wait_on_freeing_inode(struct inode *inode, bool is_inode_hash_lock
+ 	wq_head = inode_bit_waitqueue(&wqe, inode, __I_NEW);
+ 	prepare_to_wait_event(wq_head, &wqe.wq_entry, TASK_UNINTERRUPTIBLE);
+ 	spin_unlock(&inode->i_lock);
+-	rcu_read_unlock();
+-	if (is_inode_hash_locked)
++	if (rcu_locked)
++		rcu_read_unlock();
++	if (hash_locked)
+ 		spin_unlock(&inode_hash_lock);
+ 	schedule();
+ 	finish_wait(wq_head, &wqe.wq_entry);
+-	if (is_inode_hash_locked)
++	if (hash_locked)
+ 		spin_lock(&inode_hash_lock);
+-	rcu_read_lock();
++	if (rcu_locked)
++		rcu_read_lock();
+ }
+ 
+ static __initdata unsigned long ihash_entries;
 -- 
-Cyril Hrubis
-chrubis@suse.cz
+2.48.1
+
 
