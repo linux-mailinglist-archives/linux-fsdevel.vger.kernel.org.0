@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-73820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F12D215B0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:35:05 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46290D215BC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:35:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 129733015EDA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 21:34:33 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 1CBF13031798
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 21:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E0A361DBC;
-	Wed, 14 Jan 2026 21:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB866362131;
+	Wed, 14 Jan 2026 21:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SjcMuL4d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EpvHmTlk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662A92E8B8F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 21:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873D53624BE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 21:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768426468; cv=none; b=gSX7g0vm7VQ0e5M0DKWU7IHfnDKfMJTRZz1KlZg3R6MfRUMoWAKJ+2VaTyQrVuW/IMt2NmwBv0PX3tbGB+eVN0lsmlgV104rz8v9pRBPDNZDJCYkEyhbZQ7loNNjiQ2QLwVlxfVQpt5AE+oXcluUBrIZOlRCAyDC/A7dh0pNvF0=
+	t=1768426504; cv=none; b=C6yMkEiYPJ0eBZSm1mJfvOc+CgT14amFxGbnWSrWlhCZQKD+cVTXH0EjAlPwTdHQMh0jjwDXxDmzRYXjQKNols6m7bugwyAEW7AfGLnd6wqqk5wywDpyx1iUUoDAFF8/pDCTP/vSxlM59IJHvLW96wgNeCt17e+rYKu9IXPOcSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768426468; c=relaxed/simple;
-	bh=9in78rjKHXFfg7w69sXqer35Ki4r88+O4RkMgHiDMEE=;
+	s=arc-20240116; t=1768426504; c=relaxed/simple;
+	bh=VJhZh7W86znk6T4YU4zDAnr6xplKZCmyhBUSPOyJHg8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cn+oXJ2rictlJ8kHuYIQeppeDehbHaIwWex403nGNbrliGMITkEXbpgNQSHuwo1/TkB+9brI8Amvs0TR1cPuWOvlzfjnOGfIBwBn5X/8zgFK+AthC6rSwhRX234jQxrPuiQQYJh+ot0BfgSUD+Ea9T0Ij2AxMDldzeeE9hNoxYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SjcMuL4d; arc=none smtp.client-ip=209.85.210.41
+	 MIME-Version; b=YO7fzCaFKoBEWmcJuI1WLoeZVvZ7d6siCsUPu9m9lfwzClBtc0IkXnIbX5r5prxA3xNaApNhJWEP175E/Q3FwKcr7GRzNQ94wymIOHqYbN3kcAdHtebuKadX7OP9bI/Ig0PymIq2R2AruydC3Mf2e/XBmBtnvjodkTTUiGYneS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EpvHmTlk; arc=none smtp.client-ip=209.85.210.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7cfd5d34817so70293a34.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 13:34:25 -0800 (PST)
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7c78d30649aso187531a34.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 13:34:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768426464; x=1769031264; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768426497; x=1769031297; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U7XgQVWhUwcysFnko8qRq5dHQ4c7d0Rm3BbWfFJ4FJk=;
-        b=SjcMuL4deu1NsK0EMJDaqTXuowbQGPPxISLQJuXZf5Qyl8iDkJo2P1taJR2AvaWizz
-         aMG6IlDShoxm5DW/m/bmqEdP8GT3kSypfZ3yNbRCgVe/b9+zp+VPmHkZ9TlIOBXKKT7Q
-         V9YmKhAgl0gqxIqvYns+F8AlYo3TMV7A4idahPi0fpL3A1Rut0Z/fsYXBAVCTnPFLPTj
-         fyuVlnMWWRNaSU2up977pIGsGwy8nVeg4B8NDmTnL3qDo8ToUJ/8inuWObz1ACdrKoCc
-         0gJiYg4OGvNG1Tnlul19cusDKGY7lkN3iX5Hb1XUSvPLBCW7/Oxv04EANxgwaAtoXC9l
-         jXBg==
+        bh=vZsKBgwQfRTYfl5tr8Q6BwcIVeayQIJR9+JPKX7ldDM=;
+        b=EpvHmTlkd4h43mRZ/zud+Xdm6bUE6hs/6lONcTdqZt98vIpx7ZNhOhP7gcZz4Qfis3
+         I+RwfhEtdQ3zRZAXEBaQxpVWPw8NGx8D36u3WYoRvMn0mxbGQuAIo94V1RM1LM+DPQhs
+         lwLbFi+ohtx1uSjXVrKDp9hI4KGs1OxXyleaZ9RFNhaeJJRaSnHU3TiIDYNZY5Cj8hKI
+         423LISk6X9Yo4IGOLgJ4KrfPmrDQxMLVrEPlkzHWODTA4iqY6CJtMQx9vltbMhmJACTr
+         /0tDyyrUzeI4pJ+YBqonvFKy5bzLa6yy+iQ/7hGO8pAW6GhfjoF2rseTast8sbx1V/jY
+         FlVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768426464; x=1769031264;
+        d=1e100.net; s=20230601; t=1768426497; x=1769031297;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U7XgQVWhUwcysFnko8qRq5dHQ4c7d0Rm3BbWfFJ4FJk=;
-        b=lwIdesdHst3JZih3CPl6osOXOJ3jXSG05n9nDFg5iJgxwbu9xVcAfNvvOl8rUwrnXf
-         rU9u8ZhfNANodX6KLLCY7gzVg8gjvoqIEMf+D/Iaxe4/J5UXSdPsQkIRVgXy+6aY+zV3
-         ThRqeIn07wHLb/JFzpNyFrW7ZzDOTJHt870YcB3fuuxqNCMFhMSUs1J9e22GqnsTNDWi
-         wARzQ3U9zR9H+qslpqPd/01kR3U1DQNH9QcQOt3+VTVGUET8vHQYgreDLyYBr/tjnsUE
-         EgQSRpBo+vqfKxApyniAf4cUbyjX/pZV1/PxtkJUR0hG6wbi1bREPjWLIDFRq0KODI8I
-         dg/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXzq8A/q8mi/uoHoHFWrX9w486y8f1Q7mnmIqZ/iIM14SXjTyYeJydaoi40UYvDnau6Aua0uAxyA/G728sv@vger.kernel.org
-X-Gm-Message-State: AOJu0YySlGhrksoantJWQBq+O8rmjb57Zuwq7cof1IDVvbytr7JR/aRX
-	2G7MANhYlTVo5IJg3+YK7Nn/fy8BA6AE6oPpS9rgwCgVyTt32eGDGv16
-X-Gm-Gg: AY/fxX5GPItZVhg/YgNH/s1QinDXDZoPNNFEiwTNJuw0AqhHzp/Dsy4HD1DC9/KZXPE
-	R7CEolfPEXJSZcqCzK6+Hm4T9gLeO56o/7aVH5aHn5MaeuvJa3JN0u009L+Me/p2sLZhQFzn2tS
-	Wj7rXxTsJS/ek0O90K+9O2n2qyfl2in6/BXIabTLJBYrRV5TEuLQqohblfw/FTUrazWrDxoz0SD
-	jvT8KHvymnjZj5m9DS9RrZZkkTZ/XqlskX2Lx5TQjCxaHSDB8VE1MuJasiUcpaU0rpR3wFeWVtm
-	Y7GWP88bfN5atH7Xry40bSr1qknBV1GhJo6BhV2s9hHYTci2ngxYaMgqMP7793JEjSa5uCcYrWn
-	h4EXqCyjPB2vkFvft7LdoWsDa6j17ZwWSof/7FVEwpCbQkuR3MkYhr0PGJ0ZopcT10ERm26VVk4
-	YmfjOevUKzxJ4ncFXHDnqVQZXoueKRfrCBsj23UX8IxeDP
-X-Received: by 2002:a05:6830:1cc2:b0:79d:eccc:96eb with SMTP id 46e09a7af769-7cfc8b3a75amr2512388a34.26.1768426464258;
-        Wed, 14 Jan 2026 13:34:24 -0800 (PST)
+        bh=vZsKBgwQfRTYfl5tr8Q6BwcIVeayQIJR9+JPKX7ldDM=;
+        b=QrqG2RwcRf9AE0xEZaiqazwdlINQdNUiIkdDeQUaWDs/wuTDVpu3LFoTUpmswaOcz4
+         r/LOnJS/iZQ862C0niINK2AuXX1m9Z8LnWJE7e1nLpzStjwBwrwuQjI823BPQEbQQTWL
+         WMrMy3Y73hdUQaCP9ekm16j5ZPjrYFMNk6OPn3YnNtJElXhMzLTzS/pvRX/g3wqL4eEA
+         qk33W9BHuMWMAmLFIDQurYtzrv2adrXXOfZDzo1GrdWvnUbe5iDryK9SYbUXVD0I/ZP1
+         Eh9hLoqTqIwf8X/bXcIHofGGbHTu8CfC98bv7sjjH85yecP0Ke4puaq3S/6ZijmD7fjs
+         mRlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3l5skXLyddoqVFz7PaoV2WfRs71X16simGDMIejtirIM3lV6FnP+ITIzojnqgjTDd33Edu/EpQyFqyU14@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlxI2kJj0/A7pIh+dh6++UyvHwsQ7WYDfGrBWR2LV5tQeGcSWi
+	r7qp+fLcbLze8ev/Y4LaK4fNTnEFydIsPamHH5tmmeeYKRYoXNBVUy7J
+X-Gm-Gg: AY/fxX74By+HIbLXtYuXaS7AK5Z2Iwnu5A9nVv6CAWv0/7Wzzfq6iy5oj/dhUF4R8pl
+	isFnz/7Ubt7jTZY5PFuBqm4IYbzyfpZEBfhCCYd9SftYlRwdDqZxKEU2dGS7qgrQAHBbb/kqFxd
+	N1An05emeKOaZD+uVrS4rUKPLBOYQYtbSIK6zL4U0PM86AcAsGRylxeeohoFDaXLkmZO3oRimtT
+	xUhrju3t2te+OSc5euB4Xsi3qiV2ToG9kTRY24VotW70Fi1tcDXMvYK6yc098ddqPiQAAkFVLMf
+	rNvm3ilR9/mQ7q+KeNvq3UFoF7ExVL3gNcQt1pCn0tkmNMkHpwepJGP/7AzGEvI2eEIcHre6hwz
+	WMlm68A1joq7KcVAb3pXMsM1mknyS3CZFbNjbsNa5Pd+kR98TUZVhoUyB2SPBQcGYJuCjN1PlgM
+	AIMNDIHEm7+6KDtLGsoEgXcBqRbbTepMxueU7aoYNRHnzmVu+dZqWydbI=
+X-Received: by 2002:a05:6830:4124:b0:7cf:d18e:706e with SMTP id 46e09a7af769-7cfd18e7074mr1365370a34.5.1768426497284;
+        Wed, 14 Jan 2026 13:34:57 -0800 (PST)
 Received: from localhost.localdomain ([2603:8080:1500:3d89:4c85:2962:e438:72c4])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ce478d9c2esm19771776a34.21.2026.01.14.13.34.21
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfd447151csm542661a34.14.2026.01.14.13.34.55
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 14 Jan 2026 13:34:23 -0800 (PST)
+        Wed, 14 Jan 2026 13:34:56 -0800 (PST)
 Sender: John Groves <grovesaustin@gmail.com>
 From: John Groves <John@Groves.net>
 X-Google-Original-From: John Groves <john@groves.net>
@@ -111,9 +111,9 @@ Cc: John Groves <jgroves@micron.com>,
 	nvdimm@lists.linux.dev,
 	linux-cxl@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH V4 04/19] dax: Save the kva from memremap
-Date: Wed, 14 Jan 2026 15:31:51 -0600
-Message-ID: <20260114213209.29453-5-john@groves.net>
+Subject: [PATCH V4 05/19] dax: Add dax_operations for use by fs-dax on fsdev dax
+Date: Wed, 14 Jan 2026 15:31:52 -0600
+Message-ID: <20260114213209.29453-6-john@groves.net>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260114213209.29453-1-john@groves.net>
 References: <20260114153133.29420.compound@groves.net>
@@ -126,56 +126,139 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Save the kva from memremap because we need it for iomap rw support.
+From: John Groves <John@Groves.net>
 
-Prior to famfs, there were no iomap users of /dev/dax - so the virtual
-address from memremap was not needed.
+fsdev: Add dax_operations for use by famfs
+
+- These methods are based on pmem_dax_ops from drivers/nvdimm/pmem.c
+- fsdev_dax_direct_access() returns the hpa, pfn and kva. The kva was
+  newly stored as dev_dax->virt_addr by dev_dax_probe().
+- The hpa/pfn are used for mmap (dax_iomap_fault()), and the kva is used
+  for read/write (dax_iomap_rw())
+- fsdev_dax_recovery_write() and dev_dax_zero_page_range() have not been
+  tested yet. I'm looking for suggestions as to how to test those.
+- dax-private.h: add dev_dax->cached_size, which fsdev needs to
+  remember. The dev_dax size cannot change while a driver is bound
+  (dev_dax_resize returns -EBUSY if dev->driver is set). Caching the size
+  at probe time allows fsdev's direct_access path can use it without
+  acquiring dax_dev_rwsem (which isn't exported anyway).
 
 Signed-off-by: John Groves <john@groves.net>
 ---
- drivers/dax/dax-private.h | 9 +++++++--
- drivers/dax/fsdev.c       | 1 +
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ drivers/dax/dax-private.h |  1 +
+ drivers/dax/fsdev.c       | 80 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 81 insertions(+)
 
 diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
-index 0867115aeef2..f3cf0a664f1b 100644
+index f3cf0a664f1b..164dd5b9d933 100644
 --- a/drivers/dax/dax-private.h
 +++ b/drivers/dax/dax-private.h
-@@ -67,8 +67,12 @@ struct dev_dax_range {
- /**
-  * struct dev_dax - instance data for a subdivision of a dax region, and
-  * data while the device is activated in the driver.
-- * @region - parent region
-- * @dax_dev - core dax functionality
-+<<<<<<< Conflict 1 of 1
-++++++++ Contents of side #1
-+ * @region: parent region
-+ * @dax_dev: core dax functionality
-+ * @virt_addr: kva from memremap; used by fsdev_dax
-+ * @align: alignment of this instance
-  * @target_node: effective numa node if dev_dax memory range is onlined
-  * @dyn_id: is this a dynamic or statically created instance
-  * @id: ida allocated id when the dax_region is not static
-@@ -81,6 +85,7 @@ struct dev_dax_range {
- struct dev_dax {
+@@ -86,6 +86,7 @@ struct dev_dax {
  	struct dax_region *region;
  	struct dax_device *dax_dev;
-+	void *virt_addr;
+ 	void *virt_addr;
++	u64 cached_size;
  	unsigned int align;
  	int target_node;
  	bool dyn_id;
 diff --git a/drivers/dax/fsdev.c b/drivers/dax/fsdev.c
-index 29b7345f65b1..72f78f606e06 100644
+index 72f78f606e06..f58c88de7a4d 100644
 --- a/drivers/dax/fsdev.c
 +++ b/drivers/dax/fsdev.c
-@@ -201,6 +201,7 @@ static int fsdev_dax_probe(struct dev_dax *dev_dax)
- 		pr_debug("%s: offset detected phys=%llx pgmap_phys=%llx offset=%llx\n",
- 		       __func__, phys, pgmap_phys, data_offset);
- 	}
-+	dev_dax->virt_addr = addr + data_offset;
+@@ -28,6 +28,81 @@
+  * - No mmap support - all access is through fs-dax/iomap
+  */
  
- 	inode = dax_inode(dax_dev);
- 	cdev = inode->i_cdev;
++static void fsdev_write_dax(void *pmem_addr, struct page *page,
++		unsigned int off, unsigned int len)
++{
++	while (len) {
++		void *mem = kmap_local_page(page);
++		unsigned int chunk = min_t(unsigned int, len, PAGE_SIZE - off);
++
++		memcpy_flushcache(pmem_addr, mem + off, chunk);
++		kunmap_local(mem);
++		len -= chunk;
++		off = 0;
++		page++;
++		pmem_addr += chunk;
++	}
++}
++
++static long __fsdev_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
++			long nr_pages, enum dax_access_mode mode, void **kaddr,
++			unsigned long *pfn)
++{
++	struct dev_dax *dev_dax = dax_get_private(dax_dev);
++	size_t size = nr_pages << PAGE_SHIFT;
++	size_t offset = pgoff << PAGE_SHIFT;
++	void *virt_addr = dev_dax->virt_addr + offset;
++	phys_addr_t phys;
++	unsigned long local_pfn;
++
++	WARN_ON(!dev_dax->virt_addr);
++
++	phys = dax_pgoff_to_phys(dev_dax, pgoff, nr_pages << PAGE_SHIFT);
++
++	if (kaddr)
++		*kaddr = virt_addr;
++
++	local_pfn = PHYS_PFN(phys);
++	if (pfn)
++		*pfn = local_pfn;
++
++	/*
++	 * Use cached_size which was computed at probe time. The size cannot
++	 * change while the driver is bound (resize returns -EBUSY).
++	 */
++	return PHYS_PFN(min(size, dev_dax->cached_size - offset));
++}
++
++static int fsdev_dax_zero_page_range(struct dax_device *dax_dev,
++			pgoff_t pgoff, size_t nr_pages)
++{
++	void *kaddr;
++
++	WARN_ONCE(nr_pages > 1, "%s: nr_pages > 1\n", __func__);
++	__fsdev_dax_direct_access(dax_dev, pgoff, 1, DAX_ACCESS, &kaddr, NULL);
++	fsdev_write_dax(kaddr, ZERO_PAGE(0), 0, PAGE_SIZE);
++	return 0;
++}
++
++static long fsdev_dax_direct_access(struct dax_device *dax_dev,
++		  pgoff_t pgoff, long nr_pages, enum dax_access_mode mode,
++		  void **kaddr, unsigned long *pfn)
++{
++	return __fsdev_dax_direct_access(dax_dev, pgoff, nr_pages, mode,
++					 kaddr, pfn);
++}
++
++static size_t fsdev_dax_recovery_write(struct dax_device *dax_dev, pgoff_t pgoff,
++		void *addr, size_t bytes, struct iov_iter *i)
++{
++	return _copy_from_iter_flushcache(addr, bytes, i);
++}
++
++static const struct dax_operations dev_dax_ops = {
++	.direct_access = fsdev_dax_direct_access,
++	.zero_page_range = fsdev_dax_zero_page_range,
++	.recovery_write = fsdev_dax_recovery_write,
++};
+ 
+ static void fsdev_cdev_del(void *cdev)
+ {
+@@ -163,6 +238,11 @@ static int fsdev_dax_probe(struct dev_dax *dev_dax)
+ 		}
+ 	}
+ 
++	/* Cache size now; it cannot change while driver is bound */
++	dev_dax->cached_size = 0;
++	for (i = 0; i < dev_dax->nr_range; i++)
++		dev_dax->cached_size += range_len(&dev_dax->ranges[i].range);
++
+ 	/*
+ 	 * FS-DAX compatible mode: Use MEMORY_DEVICE_FS_DAX type and
+ 	 * do NOT set vmemmap_shift. This leaves folios at order-0,
 -- 
 2.52.0
 
