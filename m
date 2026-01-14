@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-73736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A364D1F76C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:31:26 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DDDD1F72A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:30:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B9625306044F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:29:32 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 2B03B3015443
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D937737F8AF;
-	Wed, 14 Jan 2026 14:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2C2389464;
+	Wed, 14 Jan 2026 14:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMHK6Rp7"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nijd/OMG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476122D94BB;
-	Wed, 14 Jan 2026 14:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A041D2DCC04;
+	Wed, 14 Jan 2026 14:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768400957; cv=none; b=O3LnLq6T/ga7lFETujA0C41IJQwasAH97z7Dw9OxjfB0S8qSXgEiML9WU1grVLSPlvajh/JN3l79vfzh+CgY77g3lV9OotSMfDnUOQwaIJ+WjYl6iyn9CJWylndRo4HXW0L4Lpgj5qxGMpZzzNlv8MPz4v/tBNF+KSEFtBIjgIY=
+	t=1768400959; cv=none; b=fZLuUEfr+tBlfn5G+NhgGb1ZMFNXqFIdjnCHRLwoT0gsStPFSrOLpgry5kpxI5APX2cmyba1doxKxWqVwUAIuYZtu5K+kkwG24IIXBJ4Q8kWr/sZEv0KWkjDNI7oTvsu/IWeQT8uFHU6PTn86D7uAvjSShgpuq/bh5lyrIiE75c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768400957; c=relaxed/simple;
-	bh=gRv+sO1S3hrUFLKI3T4D9s/Q8NW2IImgEOr3ucFDdXg=;
+	s=arc-20240116; t=1768400959; c=relaxed/simple;
+	bh=7L4KjJ52/tlODNs/DbrL8VR4WdJ76Ryp9p91k5Grblo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TvIQmTNHunLaXdXPC1pLvZ2jGiAzsLVKjhOiDGcvSes5sdEHdCFkrtnFyZqVsqyFsjDHKFHNdLLKlB9AX1Ldctid6ZSiDu+X++STAsZRJm9rdm0DXD2oPUb3kmP764DCrfyGiXGiufBwI8/Rmkjq8pRK+/cq8p7gNcJeZmkZj8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMHK6Rp7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FFD2C4CEF7;
-	Wed, 14 Jan 2026 14:29:14 +0000 (UTC)
+	 MIME-Version; b=jU8gNX0qaTsq284HsJTEEJCtdk73G8oXopTRVf021cTxoSGVHBVCXiaToDNB0hERSJgEf4cOKwBo/O3PxrQyZA8mq7NLwUC3eiqMI0I4qdEINNgI6NUj9cW2m5mGE18U6P5YL/E/NRtaU+3F4gyx5JZFbE0ruLk3E2C+zS8lRjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nijd/OMG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C839C16AAE;
+	Wed, 14 Jan 2026 14:29:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768400956;
-	bh=gRv+sO1S3hrUFLKI3T4D9s/Q8NW2IImgEOr3ucFDdXg=;
+	s=k20201202; t=1768400959;
+	bh=7L4KjJ52/tlODNs/DbrL8VR4WdJ76Ryp9p91k5Grblo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JMHK6Rp7ljpQjifdF7vPQsTOMGAiTsVjXwAZTRJT0RoS+qcCo3UMvkC7xDa/IjB1d
-	 BZF/nqe+pL3+eCH9paYgA0gY618lalhSvgiyvDbeaubSLhSUfe8RSbcEypZCEe2oxe
-	 bUinciITMuW9VlVPuW+Y3UVWLizCdbDxGXpwEYhFxtVuNmI5cNygcYpGHBbitMJLG9
-	 aYwHkruvGsR2g57wqLFEYJcvuPwVIk/alUeuykmec+lie6OpeIYTSjAKYHtVFEBxND
-	 6DmS4qEbQ/SczibCpJVCa5NSEmfLjoNLLQpxS6R6bKukvvIHCkb0qTvbPNgd4qWyHC
-	 4jp8k5bA+cnSA==
+	b=Nijd/OMGAs7q2xnoLkc+Xv35DQEOlxxlx1WfpNMDoAxq6z6rNJdOuLYyjWSmLM9qf
+	 gKzkGHwhU8tzxq7iw5AraLTJW5NK+drjvgEhrGKAQDLXYE8gQQrXeWaAa89p7S3Tm+
+	 qziEp4BuZhbaaqM0ly2WLJoSz6XJhF51ZXJ+CAMb1rlnAUb52/ej//ZQkK5FneEtic
+	 U0UHEZo/WX4UHuWrm4qR6LJMBWi/657wnDS3VIKPUucs2CIvDdfmkQFT8GzDvqI/gB
+	 31Juf/lcf4sNgee2/1+aL0GoQMc3SE+hdj1k4r6OokRXSe4BIQOT3nXXfIyCIqTd15
+	 o5UEvAz20pVNQ==
 From: Chuck Lever <cel@kernel.org>
 To: vira@web.codeaurora.org, Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>
@@ -70,9 +70,9 @@ Cc: <linux-fsdevel@vger.kernel.org>,
 	hansg@kernel.org,
 	senozhatsky@chromium.org,
 	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH v4 05/16] hfs: Implement fileattr_get for case sensitivity
-Date: Wed, 14 Jan 2026 09:28:48 -0500
-Message-ID: <20260114142900.3945054-6-cel@kernel.org>
+Subject: [PATCH v4 06/16] hfsplus: Report case sensitivity in fileattr_get
+Date: Wed, 14 Jan 2026 09:28:49 -0500
+Message-ID: <20260114142900.3945054-7-cel@kernel.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260114142900.3945054-1-cel@kernel.org>
 References: <20260114142900.3945054-1-cel@kernel.org>
@@ -86,76 +86,44 @@ Content-Transfer-Encoding: 8bit
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-Report HFS case sensitivity behavior via the file_kattr boolean
-fields. HFS is always case-insensitive (using Mac OS Roman case
-folding) and always preserves case at rest.
+Add case sensitivity reporting to the existing hfsplus_fileattr_get()
+function. HFS+ always preserves case at rest.
+
+Case sensitivity depends on how the volume was formatted: HFSX
+volumes may be either case-sensitive or case-insensitive, indicated
+by the HFSPLUS_SB_CASEFOLD superblock flag.
 
 Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/hfs/dir.c    |  1 +
- fs/hfs/hfs_fs.h |  2 ++
- fs/hfs/inode.c  | 12 ++++++++++++
- 3 files changed, 15 insertions(+)
+ fs/hfsplus/inode.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
-index 86a6b317b474..552156896105 100644
---- a/fs/hfs/dir.c
-+++ b/fs/hfs/dir.c
-@@ -321,4 +321,5 @@ const struct inode_operations hfs_dir_inode_operations = {
- 	.rmdir		= hfs_remove,
- 	.rename		= hfs_rename,
- 	.setattr	= hfs_inode_setattr,
-+	.fileattr_get	= hfs_fileattr_get,
- };
-diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
-index e94dbc04a1e4..a25cdda8ab34 100644
---- a/fs/hfs/hfs_fs.h
-+++ b/fs/hfs/hfs_fs.h
-@@ -177,6 +177,8 @@ extern int hfs_get_block(struct inode *inode, sector_t block,
- extern const struct address_space_operations hfs_aops;
- extern const struct address_space_operations hfs_btree_aops;
+diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+index 7ae6745ca7ae..7889d37f5c85 100644
+--- a/fs/hfsplus/inode.c
++++ b/fs/hfsplus/inode.c
+@@ -694,6 +694,7 @@ int hfsplus_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
+ {
+ 	struct inode *inode = d_inode(dentry);
+ 	struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
++	struct hfsplus_sb_info *sbi = HFSPLUS_SB(inode->i_sb);
+ 	unsigned int flags = 0;
  
-+struct file_kattr;
-+int hfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa);
- int hfs_write_begin(const struct kiocb *iocb, struct address_space *mapping,
- 		    loff_t pos, unsigned int len, struct folio **foliop,
- 		    void **fsdata);
-diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-index 524db1389737..c52bc52712eb 100644
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -18,6 +18,7 @@
- #include <linux/uio.h>
- #include <linux/xattr.h>
- #include <linux/blkdev.h>
-+#include <linux/fileattr.h>
+ 	if (inode->i_flags & S_IMMUTABLE)
+@@ -705,6 +706,12 @@ int hfsplus_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
  
- #include "hfs_fs.h"
- #include "btree.h"
-@@ -698,6 +699,16 @@ static int hfs_file_fsync(struct file *filp, loff_t start, loff_t end,
- 	return ret;
+ 	fileattr_fill_flags(fa, flags);
+ 
++	/*
++	 * HFS+ preserves case (the default). Case sensitivity depends
++	 * on how the filesystem was formatted: HFSX volumes may be
++	 * either case-sensitive or case-insensitive.
++	 */
++	fa->case_insensitive = test_bit(HFSPLUS_SB_CASEFOLD, &sbi->flags);
+ 	return 0;
  }
  
-+int hfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
-+{
-+	/*
-+	 * HFS is always case-insensitive (using Mac OS Roman case
-+	 * folding). Case is preserved at rest (the default).
-+	 */
-+	fa->case_insensitive = true;
-+	return 0;
-+}
-+
- static const struct file_operations hfs_file_operations = {
- 	.llseek		= generic_file_llseek,
- 	.read_iter	= generic_file_read_iter,
-@@ -714,4 +725,5 @@ static const struct inode_operations hfs_file_inode_operations = {
- 	.lookup		= hfs_file_lookup,
- 	.setattr	= hfs_inode_setattr,
- 	.listxattr	= generic_listxattr,
-+	.fileattr_get	= hfs_fileattr_get,
- };
 -- 
 2.52.0
 
