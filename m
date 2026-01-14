@@ -1,286 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-73658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B4BD1E1BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 11:35:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55634D1E36D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 11:49:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8CDB83062CC7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 10:32:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3836E3109ADD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 10:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5559138FF16;
-	Wed, 14 Jan 2026 10:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963D8395248;
+	Wed, 14 Jan 2026 10:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jR5eF6ui"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/qJeu6H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D7238B7C4
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 10:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D05F38F230
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 10:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768386753; cv=none; b=adnydZtWPyJ/P+fZkVPtwf0i4n8Os4f8WhfYNdDUsM1yw/kT4WnY62Na88fzu6UZLOjaAL4fOzu8gbcptKxCjmvFF6cbgAo0MQCvhdsTW6irQl68ajC0mOVJZKcjhn0XnAKApBiiribsq9w75nsPRVQZmTd3lwxVbLFt2e30MeA=
+	t=1768387321; cv=none; b=NWsiCXpQzOam7vvpWfZm4POa2B69c0EUadMakuJOP4+izhWPPhX08olQjO6zyClifD155Tbi89k6Vkcznloq+6NJTj0ZZDp1UNM4wPg2ITUnOqMioF9YmhHfWMCgh7qRG4LgUnrc8hmDe+OiSPblGKuXr5Tz8ffSka4IiYr1DFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768386753; c=relaxed/simple;
-	bh=qS93f7lFYw30L9021OWayewYrdgNAkKUeMA372FLjwY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BoJPkQmsE1o4KwGS6/mQRZLWxlp8jRGOruFOr5e/w1FfJR2OWUuvb6PHDUDEuAqydWdf+4/mcJnocCursbukM2+TmtDgjWYbkS/PN+E/UCvLZ4jBn7QlEl4va5OMTt6VRicR5LZ9CGiYCqXZZwvLgpiuZX0a7BfRDKYtLpb6xn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jR5eF6ui; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F64FC19423;
-	Wed, 14 Jan 2026 10:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768386752;
-	bh=qS93f7lFYw30L9021OWayewYrdgNAkKUeMA372FLjwY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jR5eF6uitew7Cbmvkp+lf1NegW67DCHfvc8r1IzkYB4DHqrwjZqjriNwzc+80yDgp
-	 BetTiwxKJvCFnbpsW7Vpvul35Hl/G5h8PGrH2K6Z4hxjzUhM0XM1H2HhVc+sSyAgOW
-	 pxKZ2geolSQzYrUxIzRIr9M6JKAhtw794Xg4kSG4zmrlcsZKukBsoa1T5UfcxQDZCy
-	 B4zTCQHdUXMLP8jPSN42ftXmyjM5C2hl4JfvPqm7/c2gpMhUdGAp3wyt+j3ZoUxxDJ
-	 SMLTlIMRlU9m9l/IbrL31SIZdq3Z7fz1DC9sE1YsmLN+i0UlySt1M7q0n1PRjkomzd
-	 dvwYNSgaRYREg==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Lennart Poettering <lennart@poettering.net>,
-	=?UTF-8?q?Zbigniew=20J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: [RFC PATCH 5/4] fs: use nullfs unconditionally as the real rootfs
-Date: Wed, 14 Jan 2026 11:32:11 +0100
-Message-ID: <20260114-nennwert-pixeln-da3a611f7c40@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260114-zarte-zerrbild-0e20b46eb1a6@brauner>
-References: <20260114-zarte-zerrbild-0e20b46eb1a6@brauner>
+	s=arc-20240116; t=1768387321; c=relaxed/simple;
+	bh=i4yytTNmVkmFiF7VhC12SD5qcVKeMJU0ABCzZO/63xY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uzcwS7+rch6teid+MW1RKH6n5CxqqD5YtRnFkCse2a00UKBs27+pY+2wSjHKn770etvJz83Rat8fonVylsZiFPkpCl3LF1WzNJhDpGT4e9O6knHYYKM6KBht98Q1bRRV8ZagZ8DWeACYMWW0CxQHfkx0106vId0JemrfslTD0F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R/qJeu6H; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4779a4fc95aso4542255e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 02:41:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768387318; x=1768992118; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/Lk7QsQj8+PnAUAXKejIhRlWfGoAntY1XiyL3gVs6yI=;
+        b=R/qJeu6HoJthZFgQ5jwvjuATd3NFsmZb0XPMd/3F+SxJRrh2rPEO9ILbrihFG86CxY
+         kxJlueg7RZwNhdTfsnCtnEE9JqKk2U6nbDWV9wqX3DJZHmEq2eISv4piq6rXKkCduOW7
+         nNCFB7Zn5HO9slncITH8kfyBBWlbvmhBLSxTLSE6JduzvNTqSkagb7PIC+hzNJdLHLai
+         XU0zf5tjMPqOHLUjVsf8EWQThT4XU/eKfioSn8paOW38Ux+tHVkKPBUvUXHkuiC0nHDD
+         /YBEI954s7ocE6RUUoOxS3s7Uh8aL4DKkSytJJ79+gA2uPCWRiFQFe45iXBeTeK5W4qE
+         E04Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768387318; x=1768992118;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/Lk7QsQj8+PnAUAXKejIhRlWfGoAntY1XiyL3gVs6yI=;
+        b=sUgL5CtQIdRelNIwZobFwUGXgNQFC/ihU9eySyLZDV9trbJAp30Uwtghn2YtLvwRvD
+         vsyvaz+Hk57fPV4oW/4EUOz1J+wpGup03hF7siujDwGFjXVB4ER10GexGBthLU6uasTq
+         2A+wk2iSN1PRZiRZV0vwKlfLNiSLHyws6sa48QEurmsfyvLg7MgSNhICHKcEpgmS/xxY
+         VN9yFgAUTP17/EqI+uHOteD/0O9nyJvL7ujTbbkyy1fenaITSlB9bOAu5gKd8Ti+diLX
+         kV0AOjAYuO1pDHnkGEEQ/K9weQf3GOPk6qSzbfVENGo1Zl5SXbMW8aCW8ywIiUYSsC/A
+         HIFg==
+X-Gm-Message-State: AOJu0Yx8REi3N5R1x3TqPAQk6M7EUJd8+D6fuOAZtOiAVvn8hS2yBfvK
+	fdNeMHPN8XghJ06HA2KnXboso4M5aWUxGjj98BJ3ww3sYG8pqlNjQb4g
+X-Gm-Gg: AY/fxX7YH/4x1+WaMeU9v6tlMLx5BwV58dY1Pksoe1RH3A99IxwrtcuECeDAf4NGZOl
+	UlVGie/RCVZYgszQCuBqridXTbhXbPEspIztfx/NqhlpkHI+7yXwAoFzWnOynF/BnFdZvTV3vDW
+	d8FCLVyHsIvXxaItzhDRcdBPKcJdYYl77yzaXI5S8DzxNKqXRHzhzpACsVyGZOXbvpDr01g8x5f
+	L2DEQODYbz1l0V0tZHB+uv3PReEX9f9dJ20G4gmUVnJu400v/cRvxoykZLSWb5chA7I/7tD7CO7
+	/WaJ3Mgtl+gIITaiF1ue3A7/p++qKhFjV9wxR84+3ioNab2Nb0+gJmUMpQJyNRsf4qUZYtxKbG0
+	qH7RcrxKklbsD771elaW7WsqbO3E9UzGLHecBIDtGFyVdL5LZeZWKEiu11FM7d8MU80iSBfuxQK
+	MC5W4AidKH7q6L6RimHiwELZlenVGU7TV7i0mgYDu6ytkUuOcXwcoD
+X-Received: by 2002:a05:600c:1c02:b0:46e:2815:8568 with SMTP id 5b1f17b1804b1-47ee37a440bmr25926025e9.10.1768387317582;
+        Wed, 14 Jan 2026 02:41:57 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47ee5910fc2sm20776235e9.13.2026.01.14.02.41.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jan 2026 02:41:57 -0800 (PST)
+Date: Wed, 14 Jan 2026 10:41:55 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, Mateusz Guzik <mjguzik@gmail.com>, Paul Moore
+ <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>, audit@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 68/68] sysfs(2): fs_index() argument is _not_ a
+ pathname
+Message-ID: <20260114104155.708180fc@pumpkin>
+In-Reply-To: <20260114043310.3885463-69-viro@zeniv.linux.org.uk>
+References: <20260114043310.3885463-1-viro@zeniv.linux.org.uk>
+	<20260114043310.3885463-69-viro@zeniv.linux.org.uk>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8347; i=brauner@kernel.org; h=from:subject:message-id; bh=qS93f7lFYw30L9021OWayewYrdgNAkKUeMA372FLjwY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmF6y9a+kXY7ez0KCHf2+sg/p+j60c76Vq8+o95544z 5o359TEjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImkljD804o/s31b28mlLowX NXY63b2V/G+G2UWpRdMid7S3MwTyJjAy/NPP/OI0/YBr0GW39uf6eb6b2I86NsV0XO2/d2ni+vt FfAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Remove the "nullfs_rootfs" boot parameter and try to simply always use
-nullfs. The mutable rootfs will be mounted on top of it. Systems that
-don't use pivot_root() to pivot away from the real rootfs will have an
-additional mount stick around but that shouldn't be a problem at all. If
-it is we'll rever this commit.
+On Wed, 14 Jan 2026 04:33:10 +0000
+Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-This also simplifies the boot process and removes the need for the
-traditional switch_root workarounds.
+> ... it's a filesystem type name.
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  fs/filesystems.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/filesystems.c b/fs/filesystems.c
+> index 95e5256821a5..0c7d2b7ac26c 100644
+> --- a/fs/filesystems.c
+> +++ b/fs/filesystems.c
+> @@ -132,24 +132,21 @@ EXPORT_SYMBOL(unregister_filesystem);
+>  static int fs_index(const char __user * __name)
+>  {
+>  	struct file_system_type * tmp;
+> -	struct filename *name;
+> +	char *name __free(kfree) = strndup_user(__name, PATH_MAX);
+>  	int err, index;
+>  
+> -	name = getname(__name);
+> -	err = PTR_ERR(name);
+>  	if (IS_ERR(name))
+> -		return err;
+> +		return PTR_ERR(name);
 
-Suggested-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- .../filesystems/ramfs-rootfs-initramfs.rst    | 24 ++-----
- fs/namespace.c                                | 64 ++++++-------------
- init/do_mounts.c                              | 20 ++----
- init/do_mounts.h                              |  1 -
- 4 files changed, 32 insertions(+), 77 deletions(-)
+Doesn't that end up calling kfree(name) and the check in kfree() doesn't
+seem to exclude error values.
 
-diff --git a/Documentation/filesystems/ramfs-rootfs-initramfs.rst b/Documentation/filesystems/ramfs-rootfs-initramfs.rst
-index a8899f849e90..165117a721ce 100644
---- a/Documentation/filesystems/ramfs-rootfs-initramfs.rst
-+++ b/Documentation/filesystems/ramfs-rootfs-initramfs.rst
-@@ -76,13 +76,8 @@ What is rootfs?
- ---------------
- 
- Rootfs is a special instance of ramfs (or tmpfs, if that's enabled), which is
--always present in 2.6 systems.  Traditionally, you can't unmount rootfs for
--approximately the same reason you can't kill the init process; rather than
--having special code to check for and handle an empty list, it's smaller and
--simpler for the kernel to just make sure certain lists can't become empty.
--
--However, if the kernel is booted with "nullfs_rootfs", an immutable empty
--filesystem called nullfs is used as the true root, with the mutable rootfs
-+always present in Linux systems.  The kernel uses an immutable empty filesystem
-+called nullfs as the true root of the VFS hierarchy, with the mutable rootfs
- (tmpfs/ramfs) mounted on top of it.  This allows pivot_root() and unmounting
- of the initramfs to work normally.
- 
-@@ -126,25 +121,14 @@ All this differs from the old initrd in several ways:
-     program.  See the switch_root utility, below.)
- 
-   - When switching another root device, initrd would pivot_root and then
--    umount the ramdisk.  Traditionally, initramfs is rootfs: you can neither
--    pivot_root rootfs, nor unmount it.  Instead delete everything out of
--    rootfs to free up the space (find -xdev / -exec rm '{}' ';'), overmount
--    rootfs with the new root (cd /newmount; mount --move . /; chroot .),
--    attach stdin/stdout/stderr to the new /dev/console, and exec the new init.
--
--    Since this is a remarkably persnickety process (and involves deleting
--    commands before you can run them), the klibc package introduced a helper
--    program (utils/run_init.c) to do all this for you.  Most other packages
--    (such as busybox) have named this command "switch_root".
--
--    However, if the kernel is booted with "nullfs_rootfs", pivot_root() works
-+    umount the ramdisk.  With nullfs as the true root, pivot_root() works
-     normally from the initramfs.  Userspace can simply do::
- 
-       chdir(new_root);
-       pivot_root(".", ".");
-       umount2(".", MNT_DETACH);
- 
--    This is the preferred method when nullfs_rootfs is enabled.
-+    This is the preferred method for switching root filesystems.
- 
- Populating initramfs:
- ---------------------
-diff --git a/fs/namespace.c b/fs/namespace.c
-index a44ebb2f1161..53d1055c1825 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -75,17 +75,6 @@ static int __init initramfs_options_setup(char *str)
- 
- __setup("initramfs_options=", initramfs_options_setup);
- 
--bool nullfs_rootfs = false;
--
--static int __init nullfs_rootfs_setup(char *str)
--{
--	if (*str)
--		return 0;
--	nullfs_rootfs = true;
--	return 1;
--}
--__setup("nullfs_rootfs", nullfs_rootfs_setup);
--
- static u64 event;
- static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
- static DEFINE_IDA(mnt_group_ida);
-@@ -4593,10 +4582,9 @@ int path_pivot_root(struct path *new, struct path *old)
-  * pointed to by put_old must yield the same directory as new_root. No other
-  * file system may be mounted on put_old. After all, new_root is a mountpoint.
-  *
-- * Also, the current root cannot be on the 'rootfs' (initial ramfs) filesystem
-- * unless the kernel was booted with "nullfs_rootfs". See
-- * Documentation/filesystems/ramfs-rootfs-initramfs.rst for alternatives
-- * in this situation.
-+ * The immutable nullfs filesystem is mounted as the true root of the VFS
-+ * hierarchy. The mutable rootfs (tmpfs/ramfs) is layered on top of this,
-+ * allowing pivot_root() to work normally from initramfs.
-  *
-  * Notes:
-  *  - we don't move root/cwd if they are not at the root (reason: if something
-@@ -5993,49 +5981,39 @@ static void __init init_mount_tree(void)
- 	struct path root;
- 
- 	/*
--	 * When nullfs is used, we create two mounts:
-+	 * We create two mounts:
- 	 *
- 	 * (1) nullfs with mount id 1
- 	 * (2) mutable rootfs with mount id 2
- 	 *
- 	 * with (2) mounted on top of (1).
- 	 */
--	if (nullfs_rootfs) {
--		nullfs_mnt = vfs_kern_mount(&nullfs_fs_type, 0, "nullfs", NULL);
--		if (IS_ERR(nullfs_mnt))
--			panic("VFS: Failed to create nullfs");
--	}
-+	nullfs_mnt = vfs_kern_mount(&nullfs_fs_type, 0, "nullfs", NULL);
-+	if (IS_ERR(nullfs_mnt))
-+		panic("VFS: Failed to create nullfs");
- 
- 	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", initramfs_options);
- 	if (IS_ERR(mnt))
- 		panic("Can't create rootfs");
- 
--	if (nullfs_rootfs) {
--		VFS_WARN_ON_ONCE(real_mount(nullfs_mnt)->mnt_id != 1);
--		VFS_WARN_ON_ONCE(real_mount(mnt)->mnt_id != 2);
-+	VFS_WARN_ON_ONCE(real_mount(nullfs_mnt)->mnt_id != 1);
-+	VFS_WARN_ON_ONCE(real_mount(mnt)->mnt_id != 2);
- 
--		/* The namespace root is the nullfs mnt. */
--		mnt_root		= real_mount(nullfs_mnt);
--		init_mnt_ns.root	= mnt_root;
-+	/* The namespace root is the nullfs mnt. */
-+	mnt_root		= real_mount(nullfs_mnt);
-+	init_mnt_ns.root	= mnt_root;
- 
--		/* Mount mutable rootfs on top of nullfs. */
--		root.mnt		= nullfs_mnt;
--		root.dentry		= nullfs_mnt->mnt_root;
-+	/* Mount mutable rootfs on top of nullfs. */
-+	root.mnt		= nullfs_mnt;
-+	root.dentry		= nullfs_mnt->mnt_root;
- 
--		LOCK_MOUNT_EXACT(mp, &root);
--		if (unlikely(IS_ERR(mp.parent)))
--			panic("VFS: Failed to mount rootfs on nullfs");
--		scoped_guard(mount_writer)
--			attach_mnt(real_mount(mnt), mp.parent, mp.mp);
-+	LOCK_MOUNT_EXACT(mp, &root);
-+	if (unlikely(IS_ERR(mp.parent)))
-+		panic("VFS: Failed to mount rootfs on nullfs");
-+	scoped_guard(mount_writer)
-+		attach_mnt(real_mount(mnt), mp.parent, mp.mp);
- 
--		pr_info("VFS: Finished mounting rootfs on nullfs\n");
--	} else {
--		VFS_WARN_ON_ONCE(real_mount(mnt)->mnt_id != 1);
--
--		/* The namespace root is the mutable rootfs. */
--		mnt_root		= real_mount(mnt);
--		init_mnt_ns.root	= mnt_root;
--	}
-+	pr_info("VFS: Finished mounting rootfs on nullfs\n");
- 
- 	/*
- 	 * We've dropped all locks here but that's fine. Not just are we
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 675397c8a7a4..df6847bcf1f2 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -493,21 +493,15 @@ void __init prepare_namespace(void)
- out:
- 	devtmpfs_mount();
- 
--	if (nullfs_rootfs) {
--		if (init_pivot_root(".", ".")) {
--			pr_err("VFS: Failed to pivot into new rootfs\n");
--			return;
--		}
--		if (init_umount(".", MNT_DETACH)) {
--			pr_err("VFS: Failed to unmount old rootfs\n");
--			return;
--		}
--		pr_info("VFS: Pivoted into new rootfs\n");
-+	if (init_pivot_root(".", ".")) {
-+		pr_err("VFS: Failed to pivot into new rootfs\n");
- 		return;
- 	}
--
--	init_mount(".", "/", NULL, MS_MOVE, NULL);
--	init_chroot(".");
-+	if (init_umount(".", MNT_DETACH)) {
-+		pr_err("VFS: Failed to unmount old rootfs\n");
-+		return;
-+	}
-+	pr_info("VFS: Pivoted into new rootfs\n");
- }
- 
- static bool is_tmpfs;
-diff --git a/init/do_mounts.h b/init/do_mounts.h
-index fbfee810aa89..6069ea3eb80d 100644
---- a/init/do_mounts.h
-+++ b/init/do_mounts.h
-@@ -15,7 +15,6 @@
- void  mount_root_generic(char *name, char *pretty_name, int flags);
- void  mount_root(char *root_device_name);
- extern int root_mountflags;
--extern bool nullfs_rootfs;
- 
- static inline __init int create_dev(char *name, dev_t dev)
- {
--- 
-2.47.3
+Changing:
+#define ZERO_OR_NULL_PTR(x) ((unsigned long)(x) <= \
+				(unsigned long)ZERO_SIZE_PTR)
+to:
+#define ZERO_OR_NULL_PTR(x) (4096 + (unsigned long)(x) <= \
+				4096 + (unsigned long)ZERO_SIZE_PTR)
+would fix it at minimal cost.
+
+	David
+
+
+>  
+>  	err = -EINVAL;
+>  	read_lock(&file_systems_lock);
+>  	for (tmp=file_systems, index=0 ; tmp ; tmp=tmp->next, index++) {
+> -		if (strcmp(tmp->name, name->name) == 0) {
+> +		if (strcmp(tmp->name, name) == 0) {
+>  			err = index;
+>  			break;
+>  		}
+>  	}
+>  	read_unlock(&file_systems_lock);
+> -	putname(name);
+>  	return err;
+>  }
+>  
 
 
