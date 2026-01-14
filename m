@@ -1,91 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-73604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D2CD1C98C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:40:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1398DD1C9E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 7DED030CE21C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 05:40:37 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 64FD330B7F2B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 05:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA17F36B076;
-	Wed, 14 Jan 2026 05:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F8C36BCF6;
+	Wed, 14 Jan 2026 05:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzCxjfCo"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IstCCbD3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5414433F38C;
-	Wed, 14 Jan 2026 05:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783291CD1E4;
+	Wed, 14 Jan 2026 05:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768369224; cv=none; b=tkMfnSfkW5NhPdFf3tblotDPRUbhuDCCMUD73lKZMszSN/1bSJkWdT8g4Q57C9vDYyDTXqP9Xan6TCk0E7GZIf72icUlheOxNqjvHJg2+BXrPPbvPQbwOQXoxnkLqAoOPSsaeBAGxKa0+EB2RQc1UusDj7lS2NZBGYKtrxqy94c=
+	t=1768370193; cv=none; b=PN1KObr8vFFOU5nywrxJSIq7L68V2owY+Q/bJf54nP69XRW4qBkv/543QpU3rdA49+LSmxR7QdtuR3EJq0FyY/3PmDKup3SuwtSdvz15lA3Zma4StUAdyso1ng7XulXm5eRLkru7wF7d0z7LMVlfBqX04uvlDP69nOKQdKPI8Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768369224; c=relaxed/simple;
-	bh=9vLvCSTWKCZ5vGof7ihP7jdqhcsELpmSAiSLQXvIb8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ke3gfOJ4IWXxcn2reOsP+PUxeBxLxvF1Loo4SvANGsmRXa17ZCd8UJnFf8Mw821Vn1c9DlpMgK2wZ9myTG72BvSMhf2yzOw0DrZEzlMCifpjvUbI1HyAZi0oRksoV3U7TLgPJ9Eg82jmdg8jIlfreXSYjdX2UWtDHwh2yO3JV/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzCxjfCo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0950C4CEF7;
-	Wed, 14 Jan 2026 05:40:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768369222;
-	bh=9vLvCSTWKCZ5vGof7ihP7jdqhcsELpmSAiSLQXvIb8w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JzCxjfCoq6WKmkStJwPnGYJYoHj/W3a+myxk7BP+TN0lDcucBaD5wutCsrx1Xu5TP
-	 kGAZ9FuUpZUiZMlYCD7Jk/9sxXpWI55dHLrLvDAO+XKjkGWvnPAPMpCwHtTtvYHoXa
-	 glKZb1W3D5vDa8oU2wJ5Wr1XxBANfbpIz2lv6nc8p4nzAxMspwJpNt+SW79p7qDtmQ
-	 Ab9TrNsMwMqtolXUlp7RrvWk4j2QY0eqeR1cXZ2aovIQxCmMG+fjI+noHOuTz8lwtT
-	 AaWRwd2DUMpB/iSl4jGn9tXfY/xO4frF5syflaz6YT4Q+sFq0qDx3FmrkbqnpZDyxJ
-	 CHkyYxFcS9XGw==
-Date: Tue, 13 Jan 2026 21:40:21 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: cem@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 11/11] xfs: add media verification ioctl
-Message-ID: <20260114054021.GE15551@frogsfrogsfrogs>
-References: <176826412644.3493441.536177954776056129.stgit@frogsfrogsfrogs>
- <176826412941.3493441.8359506127711497025.stgit@frogsfrogsfrogs>
- <20260113155701.GA3489@lst.de>
- <20260113232113.GD15551@frogsfrogsfrogs>
+	s=arc-20240116; t=1768370193; c=relaxed/simple;
+	bh=Y/NqgNU+RzXHdq+jyrX0/QIiUtJ6yYt8n3IZ8dfuNtg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nUaPx5MP1GR3UcK1yKySLbaqoIUGyFJyIJ+lyPg9ZznmUP73lzQE3HTcYx+7Bk5Rnj25dwMe2069/V1wD/sV9C6O9gPv1GOMmP4VKdnh9P8Xyh+oyz4Yleyd3S5GQrOnm5h8c/FFZDE8I4+tlNrbe4zbO5IGVivkZXaybjlgfHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IstCCbD3; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1768370176; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=4oSebG9dbymzCO5r09ecbpgUKefMLVyvEkILvccjlwM=;
+	b=IstCCbD34bmxp53YjOnk5tEuDLHfYynBeBrQCsyRw/Cla4TGCrFPn3QEYOxM1viar5q39tcyR6j/6woszVss0I4JnzYbEWGl8SivGlTDfv/lWoICrTSZ0qVMGCXDN5zY6Z60CXHMdNu0X/hquVzJ33XYR+bfuvyhYrunVj9JTvI=
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Wx1EJy4_1768370175 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 14 Jan 2026 13:56:15 +0800
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+To: miklos@szeredi.hu,
+	joannelkoong@gmail.com,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] ak: fuse: fix premature writetrhough request for large folio
+Date: Wed, 14 Jan 2026 13:56:15 +0800
+Message-Id: <20260114055615.17903-1-jefflexu@linux.alibaba.com>
+X-Mailer: git-send-email 2.19.1.6.gb485710b
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260113232113.GD15551@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jan 13, 2026 at 03:21:13PM -0800, Darrick J. Wong wrote:
-> On Tue, Jan 13, 2026 at 04:57:01PM +0100, Christoph Hellwig wrote:
-> > On Mon, Jan 12, 2026 at 04:35:25PM -0800, Darrick J. Wong wrote:
-> > > From: Darrick J. Wong <djwong@kernel.org>
-> > > 
-> > > Add a new privileged ioctl so that xfs_scrub can ask the kernel to
-> > > verify the media of the devices backing an xfs filesystem, and have any
-> > > resulting media errors reported to fsnotify and xfs_healer.
-> > 
-> > Hmm, the description is a bit sparse?
-> > 
-> > > +/* Verify the media of the underlying devices */
-> > > +struct xfs_verify_media {
-> > > +	__u32	dev;		/* I: XFS_VERIFY_*DEV */
-> > 
-> > This should probably use the enum xfs_device values?
-> 
-> Yes, that's a good point.
+When large folio is enabled and the initial folio offset exceeds
+PAGE_SIZE, e.g. the position resides in the second page of a large
+folio, after the folio copying the offset (in the page) won't be updated
+to 0 even though the expected range is successfully copied until the end
+of the folio.  In this case fuse_fill_write_pages() exits prematurelly
+before the request has reached the max_write/max_pages limit.
 
-FYI, today's draft of this ioctl can be read here:
-https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=health-monitoring_2026-01-13&id=e3fee7d7ead8b3e630845304b9030b5c7c5f27da
+Fix this by eliminating page offset entirely and use folio offset
+instead.
 
-It contains all the alterations I talked about earlier today.
+Fixes: d60a6015e1a2 ("fuse: support large folios for writethrough writes")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+---
+ fs/fuse/file.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-(I might be coming down with a cold, so I thought it best to git push
-now and find out if I'm at all coherent tomorrow.)
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 625d236b881b..6aafb32338b6 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1272,7 +1272,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
+ {
+ 	struct fuse_args_pages *ap = &ia->ap;
+ 	struct fuse_conn *fc = get_fuse_conn(mapping->host);
+-	unsigned offset = pos & (PAGE_SIZE - 1);
+ 	size_t count = 0;
+ 	unsigned int num;
+ 	int err = 0;
+@@ -1299,7 +1298,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
+ 		if (mapping_writably_mapped(mapping))
+ 			flush_dcache_folio(folio);
+ 
+-		folio_offset = ((index - folio->index) << PAGE_SHIFT) + offset;
++		folio_offset = offset_in_folio(folio, pos);
+ 		bytes = min(folio_size(folio) - folio_offset, num);
+ 
+ 		tmp = copy_folio_from_iter_atomic(folio, folio_offset, bytes, ii);
+@@ -1329,9 +1328,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
+ 		count += tmp;
+ 		pos += tmp;
+ 		num -= tmp;
+-		offset += tmp;
+-		if (offset == folio_size(folio))
+-			offset = 0;
+ 
+ 		/* If we copied full folio, mark it uptodate */
+ 		if (tmp == folio_size(folio))
+@@ -1343,7 +1339,9 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
+ 			ia->write.folio_locked = true;
+ 			break;
+ 		}
+-		if (!fc->big_writes || offset != 0)
++		if (!fc->big_writes)
++			break;
++		if (folio_offset + tmp != folio_size(folio))
+ 			break;
+ 	}
+ 
+-- 
+2.19.1.6.gb485710b
 
---D
 
