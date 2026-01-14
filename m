@@ -1,201 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-73750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2A5D1F8E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:54:32 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54764D1F8FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:56:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 76CCA3063FAC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:53:07 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 995AE302E06C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4054B30CD94;
-	Wed, 14 Jan 2026 14:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7D530C37B;
+	Wed, 14 Jan 2026 14:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZ4y7792"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CZCkbl+7";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="f7tG72KS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EBE30C631;
-	Wed, 14 Jan 2026 14:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0D3238D42
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 14:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768402384; cv=none; b=djbru0v6EVlR8oJZyOhXNchLMX8Nb2+hCMsevEpzhsF33yY+mNoek/CfPY2ycMyZuFFztoYxMwPGoUQgPcWvMq5D9Zx0eHExcVfLstvlt1g4eyqgCDfAqz2Hb8rJMamFPRMUR80Rf81X8H3fwq9tjwXeYmRDwcnsuWvAEBlJGsw=
+	t=1768402431; cv=none; b=BGoQx/Si83z6h5LfqvFTwweyilwAxu6maYPJfWhPTzTgUbJOFvKRIt38hXy1m56YmqRtFUigHG2VCfr/GZmIzN9+hQ44VSXfLvHkjkkbsabTbdIT3hBx+ipSGc0ASYrHPS9ZWpUYRw8RkS/Tjy8X+UUFCmY0UEvI0GD20am96E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768402384; c=relaxed/simple;
-	bh=xKp2mRX639Xrl1hAH25cMUgzI8E+8kaOkrWTmDZ9gJI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=YMmya/k8dSEAnCSie24RsVRkb2damN2yIE+Mee+yAAb743cqIc6k7NuTzmHOJGL9Vsmg9quykgnFpBsmjtGImafLlIZyOFVHlr6STsKURmT4mb+NhgG7LwG+onz4B5yKF51v478RU/dfmnl481NpDh8wgu3cvpwu50mK03SdHRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZ4y7792; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A572C4CEF7;
-	Wed, 14 Jan 2026 14:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768402384;
-	bh=xKp2mRX639Xrl1hAH25cMUgzI8E+8kaOkrWTmDZ9gJI=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=DZ4y7792kI2/4eE5VVTlEy1lwDXzIzeNr2iEGyaqqLMYTsvcSbwt8Bo54fNz4FJrn
-	 0CjwDI0jj4BZuie48fZ7X8+pogo2m9xuuz5ZkTKqUIWIWMb2aIahe3YDQ1OihTAsyY
-	 /kSWP/W66gnEfc8gA/3bKKHjBBbzoJWIQmXxEVECLl86oIEVeZwN3rPLewdZXpBLNQ
-	 4fSATB6J5Q9DEK8WPOow5IHJKdW2q5kckZv1zfwvc/Rackn2AgyYEGYSEHyTHq4m0k
-	 xzDo6EcWHnQhpPR7xCjV8fvC1tdohxaCsjAOcYPGoYZ1/+HzD4MzDToJBxFdCh/tru
-	 OSjQsEWq0CzTg==
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 32C9EF4006B;
-	Wed, 14 Jan 2026 09:53:02 -0500 (EST)
-Received: from phl-imap-15 ([10.202.2.104])
-  by phl-compute-10.internal (MEProxy); Wed, 14 Jan 2026 09:53:02 -0500
-X-ME-Sender: <xms:zq1naRMKLB-vQH7IFdq2onnRojQkLatu-C-zvbT0T438TRsV4tP_4A>
-    <xme:zq1naewv4HVLitXOfBmI7UE_Y2gurDnKovxNhXptVvlpsUh9pO0bvYw7t9SjEJlzT
-    sLy2LuSF83BZ36FBNWcuJt0cuqdzsP2xJUgTbLRAhgnTSmlJulk9m0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduvdefgeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedfvehhuhgt
-    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
-    hnpefghfeguedtieeiveeugfevtdejfedukeevgfeggfeugfetgfeltdetueelleelteen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
-    hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
-    leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
-    hilhdrtghomhdpnhgspghrtghpthhtohepfeeipdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopehlihhnuhigqdhfvdhfshdquggvvhgvlheslhhishhtshdrshhouhhrtggvfh
-    horhhgvgdrnhgvthdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphht
-    thhopehhihhrohhfuhhmihesmhgrihhlrdhprghrkhhnvghtrdgtohdrjhhppdhrtghpth
-    htohepphgtsehmrghnghhuvggsihhtrdhorhhgpdhrtghpthhtohepsghhrghrrghthhhs
-    mhesmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopehsphhrrghsrggusehmihgtrh
-    hoshhofhhtrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphht
-    thhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehhuhgstggrphesohhmnh
-    hisghonhgurdgtohhm
-X-ME-Proxy: <xmx:zq1naTkRbv9ZdmB81QztDlnhdErqtX9JaPCkPbhVF7A2EF4siXWTKA>
-    <xmx:zq1naQMdIxjnxtmT6iFO3dvBra_cikPt2rs9udjIX9hM3quVc1o8wg>
-    <xmx:zq1naSyL6jo-51wpIBye7R4H1uQkRJTayNYX4HLBSWa4OjKE3tRIjg>
-    <xmx:zq1naen3U34rfR84UbpLxCNVQHHeUcJBEJes8dFgznAte5TxzT705Q>
-    <xmx:zq1nab_H0tCK8W4yIFxCou46A5ZL-g9ECWVg-JI1en9AksHOVnvPNIgI>
-Feedback-ID: ifa6e4810:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id F2C75780070; Wed, 14 Jan 2026 09:53:01 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1768402431; c=relaxed/simple;
+	bh=wp+PsH0UB1MjwYRfcdp6HdV6Sk9LdvrI3EmO43MUesw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PWCYwfC2DtC9vld5XEGHd624vtPKLP7AIQHtMBNoPXVpLUt3E1avamo5STDg98/1BiLy8LMO/sYo2jVij+capVvDTZC/1Lmj0+H+6kPbpwS+Rfb0+0O5g1AK4EGRFfBUppEdATjfc9svhtoQYviw9LMah5Iz2XDVyEvlB9fjlTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CZCkbl+7; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=f7tG72KS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768402429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vs+isBp9RPsPc+5rMsn92hn06p3CWCqMw2jOHDFkIvA=;
+	b=CZCkbl+7yGNqlIn8Y8uboQ/nd25AS5oAagWUmXQuzK76OsJYm2ajjwnT2bBeMLE2WQc4Y5
+	Iqypx7QkR6l4JDIB6y4dSu+5Lh57c0GrGzNGVsglkqPYBfqDG5LXA8iLxivijASn1ze7HQ
+	LW3kSTgADl1NOPQ7YLEnxyYJgV16zxk=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-302-rcw_ka5AMfmCz8hVXCVHfw-1; Wed, 14 Jan 2026 09:53:48 -0500
+X-MC-Unique: rcw_ka5AMfmCz8hVXCVHfw-1
+X-Mimecast-MFC-AGG-ID: rcw_ka5AMfmCz8hVXCVHfw_1768402427
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-64d53a7817eso12013448a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 06:53:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1768402427; x=1769007227; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vs+isBp9RPsPc+5rMsn92hn06p3CWCqMw2jOHDFkIvA=;
+        b=f7tG72KSHMrqdL0+xEFXqX3eFKS6fzOvolFCg7jeO7gpGxJ877em1qQmOmarchCWU1
+         BV0PT0rpHbmNIit3THTnjiC5rCCvtIJwtAdvrVfo8CbtRSnQVvNolUVpbLzVxXXR10D/
+         hqTHn2zqaCt0GtyC+CqwaMmvCSAusiDVeH1j7VR5NCBA9qrvlU8OTWWIPMkShtdQMo49
+         nji+VUz1VLUF89F0qQ44IcgTHdA61N4Yrwt5PD5TR5+kSPnpn7CN0Pht2LIB+8psMRo3
+         vZByMWA4A5wTq+CmX/+Ro0tN3/ZJ4c37gs1Cyg3STBb/lT9oaxvnwzPnD/FjMdY5z1Yg
+         gDVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768402427; x=1769007227;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vs+isBp9RPsPc+5rMsn92hn06p3CWCqMw2jOHDFkIvA=;
+        b=mQy789LxR8o21PsUxE4ksZnRKL1w2gGqeQ07GNTRTvTYUnIkXoMgQe3LPE55etX/cm
+         hxshTsVCVP4LOYpWoSbVxvvS41Tgx9OjbXBDahp/mrQHAhqA/8z3dYEmJb+fsl2A+EFN
+         +q7ki5ANLdpdBqQfmPcAceYUId7PqRYkgM2aLRQI3hZOBbzkUb8YmLVG8njYa29Yxkna
+         YIN/1YEgjWaclFI03K2iOU9s0MW1l3al8OJel3p4OZYrzhi5VN1rjTP5hBiMsvIhShTF
+         aSXE5CovZ0jsiuXQBWmtkgGhOiBcCYxphugVFOeZm19HqqLAQWjOQVa1+7aLbQWa3osi
+         H2tg==
+X-Gm-Message-State: AOJu0YwW6qr333DewVXNonslhatka3gUNDBCswiOu1eqoi0X65Zc2HYB
+	s7qxYhFeNQawcYDQfykJ8hmAamr41UI2w1Po5qHrHOk/jEYGvukssJn0+TvDLiLn9l8ey8zErLp
+	6/+N8Ah6Z22C2gpDKu8mREbcNSpH1JugnnUwbYgUxpkbSSNbfkmghPr/PMhBl8LdiYJY1d7YcVO
+	96l8I0W0KteYD41Y0VcEgQW2GRbSSvn3sHs9RJOGPh5h4g6NY9aMY=
+X-Gm-Gg: AY/fxX6ZzkvF3RIfnoUogGknFq1y46J3Htzh5e8VwIk/XUgnLt2I32/Rwc5cILxdsUx
+	cL7vkSZlUR5rHPD2za5tveEr4Zfd0bRJadT4ICmsEvzWxxoU7v3M7MFi/1C/4qA4jGSix5U5Pv6
+	3HLUoroEosx4XXvKQsLEZYprF1O3L1uMP2wrFHq4mKN13S/H50BQouNyE67Nl7vKQFimR7NN7pn
+	K2jojVP3Mu28YK+P67loouCFA1wHX8OLmwAB9ng0Sarf4QP6g1u2NKx9IBrXlgyNzmg0SK5rOvz
+	RPMkGRj/rk0uztzK7BkBeZgaw6AWIxvGiac7UbthsOnXtUeda5+NH0JsdhVvC46d5Y1CW8xGWAX
+	ewy3+kDCpccO0o20f31gs7VAAxlm+1GkGJ2+2fT3s5ofxkr8WhUgm7oFOpeNUhuKZ
+X-Received: by 2002:a05:6402:1473:b0:640:96fe:c7bb with SMTP id 4fb4d7f45d1cf-653ee2ac9b6mr1961555a12.28.1768402426871;
+        Wed, 14 Jan 2026 06:53:46 -0800 (PST)
+X-Received: by 2002:a05:6402:1473:b0:640:96fe:c7bb with SMTP id 4fb4d7f45d1cf-653ee2ac9b6mr1961536a12.28.1768402426467;
+        Wed, 14 Jan 2026 06:53:46 -0800 (PST)
+Received: from maszat.piliscsaba.szeredi.hu (193-226-246-7.pool.digikabel.hu. [193.226.246.7])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507bf6d5absm23059608a12.33.2026.01.14.06.53.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jan 2026 06:53:46 -0800 (PST)
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Luis Henriques <luis@igalia.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 0/6] fuse: fixes and cleanups for expired dentry eviction
+Date: Wed, 14 Jan 2026 15:53:37 +0100
+Message-ID: <20260114145344.468856-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: ArEQL-Tet5yZ
-Date: Wed, 14 Jan 2026 09:52:34 -0500
-From: "Chuck Lever" <cel@kernel.org>
-To: "Amir Goldstein" <amir73il@gmail.com>, "Jeff Layton" <jlayton@kernel.org>
-Cc: "Christoph Hellwig" <hch@infradead.org>,
- "Christian Brauner" <brauner@kernel.org>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jan Kara" <jack@suse.cz>,
- "Luis de Bethencourt" <luisbg@kernel.org>,
- "Salah Triki" <salah.triki@gmail.com>,
- "Nicolas Pitre" <nico@fluxnic.net>, "Anders Larsen" <al@alarsen.net>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "David Sterba" <dsterba@suse.com>, "Chris Mason" <clm@fb.com>,
- "Gao Xiang" <xiang@kernel.org>, "Chao Yu" <chao@kernel.org>,
- "Yue Hu" <zbestahu@gmail.com>, "Jeffle Xu" <jefflexu@linux.alibaba.com>,
- "Sandeep Dhavale" <dhavale@google.com>,
- "Hongbo Li" <lihongbo22@huawei.com>, "Chunhai Guo" <guochunhai@vivo.com>,
- "Jan Kara" <jack@suse.com>, "Theodore Tso" <tytso@mit.edu>,
- "Andreas Dilger" <adilger.kernel@dilger.ca>,
- "Jaegeuk Kim" <jaegeuk@kernel.org>,
- "OGAWA Hirofumi" <hirofumi@mail.parknet.co.jp>,
- "David Woodhouse" <dwmw2@infradead.org>,
- "Richard Weinberger" <richard@nod.at>,
- "Dave Kleikamp" <shaggy@kernel.org>,
- "Ryusuke Konishi" <konishi.ryusuke@gmail.com>,
- "Viacheslav Dubeyko" <slava@dubeyko.com>,
- "Konstantin Komarov" <almaz.alexandrovich@paragon-software.com>,
- "Mark Fasheh" <mark@fasheh.com>, "Joel Becker" <jlbec@evilplan.org>,
- "Joseph Qi" <joseph.qi@linux.alibaba.com>,
- "Mike Marshall" <hubcap@omnibond.com>,
- "Martin Brandenburg" <martin@omnibond.com>,
- "Miklos Szeredi" <miklos@szeredi.hu>,
- "Phillip Lougher" <phillip@squashfs.org.uk>,
- "Carlos Maiolino" <cem@kernel.org>, "Hugh Dickins" <hughd@google.com>,
- "Baolin Wang" <baolin.wang@linux.alibaba.com>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Namjae Jeon" <linkinjeon@kernel.org>,
- "Sungjong Seo" <sj1557.seo@samsung.com>,
- "Yuezhang Mo" <yuezhang.mo@sony.com>,
- "Alexander Aring" <alex.aring@gmail.com>,
- "Andreas Gruenbacher" <agruenba@redhat.com>,
- "Jonathan Corbet" <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- "Eric Van Hensbergen" <ericvh@kernel.org>,
- "Latchesar Ionkov" <lucho@ionkov.net>,
- "Dominique Martinet" <asmadeus@codewreck.org>,
- "Christian Schoenebeck" <linux_oss@crudebyte.com>,
- "Xiubo Li" <xiubli@redhat.com>, "Ilya Dryomov" <idryomov@gmail.com>,
- "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>, "Steve French" <sfrench@samba.org>,
- "Paulo Alcantara" <pc@manguebit.org>,
- "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
- "Shyam Prasad N" <sprasad@microsoft.com>, "Tom Talpey" <tom@talpey.com>,
- "Bharath SM" <bharathsm@microsoft.com>,
- "Hans de Goede" <hansg@kernel.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org,
- jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org,
- ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
- devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-mm@kvack.org, gfs2@lists.linux.dev,
- linux-doc@vger.kernel.org, v9fs@lists.linux.dev,
- ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
-Message-Id: <5a1730f3-30ff-403c-a460-09a81f9616c5@app.fastmail.com>
-In-Reply-To: 
- <CAOQ4uxhDwR7dteLaqURX+9CooGM1hA7PL6KnVmSwX11ZdKxZTA@mail.gmail.com>
-References: <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
- <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
- <ec78bf021fa1f6243798945943541ba171e337e7.camel@kernel.org>
- <cb5d2da6-2090-4639-ad96-138342bba56d@oracle.com>
- <ce700ee20834631eceededc8cd15fc5d00fee28e.camel@kernel.org>
- <20260113-mondlicht-raven-82fc4eb70e9d@brauner>
- <aWZcoyQLvbJKUxDU@infradead.org>
- <ce418800f06aa61a7f47f0d19394988f87a3da07.camel@kernel.org>
- <aWc3mwBNs8LNFN4W@infradead.org>
- <CAOQ4uxhMjitW_DC9WK9eku51gE1Ft+ENhD=qq3uehwrHO=RByA@mail.gmail.com>
- <aWeUv2UUJ_NdgozS@infradead.org>
- <c40862cd65a059ad45fa88f5473722ea5c5f70a5.camel@kernel.org>
- <CAOQ4uxhDwR7dteLaqURX+9CooGM1hA7PL6KnVmSwX11ZdKxZTA@mail.gmail.com>
-Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to lease
- support
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+This mini series fixes issues with the stale dentry cleanup patches added
+in this cycle.  In particular commit ab84ad597386 ("fuse: new work queue to
+periodically invalidate expired dentries") allowed a race resulting in UAF.
 
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
 
-On Wed, Jan 14, 2026, at 9:14 AM, Amir Goldstein wrote:
-> On Wed, Jan 14, 2026 at 2:41=E2=80=AFPM Jeff Layton <jlayton@kernel.or=
-g> wrote:
+Miklos Szeredi (6):
+  fuse: fix race when disposing stale dentries
+  fuse: make sure dentry is evicted if stale
+  fuse: add need_resched() before unlocking bucket
+  fuse: clean up fuse_dentry_tree_work()
+  fuse: shrink once after all buckets have been scanned
+  vfs: document d_dispose_if_unused()
 
-> Very well then.
-> How about EXPORT_OP_PERSISTENT_HANDLES?
->
-> This terminology is from the NFS protocol spec and it is also used
-> to describe the same trait in SMB protocol.
->
->> The problem there is that we very much do want to keep tmpfs
->> exportable, but it doesn't have stable handles (per-se).
->
-> Thinking out loud -
-> It would be misguided to declare tmpfs as
-> EXPORT_OP_PERSISTENT_HANDLES
-> and regressing exports of tmpfs will surely not go unnoticed.
->
-> How about adding an exportfs option "persistent_handles",
-> use it as default IFF neither options fsid=3D, uuid=3D are used,
-> so that at least when exporting tmpfs, exportfs -v will show
-> "no_persistent_handles" explicitly?
+ fs/dcache.c   | 10 ++++++++++
+ fs/fuse/dir.c | 29 ++++++++++++++---------------
+ 2 files changed, 24 insertions(+), 15 deletions(-)
 
-I think we need to be careful. tmpfs filehandles align quite
-well with the traditional definition of persistent filehandles.
-tmpfs filehandles live as long as tmpfs files do, and that is
-all that is required to be considered "persistent".
+-- 
+2.52.0
 
-
---=20
-Chuck Lever
 
