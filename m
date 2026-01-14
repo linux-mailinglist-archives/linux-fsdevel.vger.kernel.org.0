@@ -1,56 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-73730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C57D1F6B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:29:02 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B592D1F7F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 80A203005323
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:29:01 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4BA49302E05F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B372DC320;
-	Wed, 14 Jan 2026 14:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264C42EE5F5;
+	Wed, 14 Jan 2026 14:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="lq358vOq"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="f3bGrPVr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4952DC359
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 14:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A361722B5A5;
+	Wed, 14 Jan 2026 14:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768400938; cv=none; b=tc0g6efa80QtTObxdi4xmuyPE++SsT9Wgh+wnHqUVZ0NKyTVZhWlZBQ8Nd7dM4vsKvWD9yLD/7H88JTTn7K9S607C7X8TdS5tH1sIOz8Pg9LFrpSWFpgUVA1/iIIha9wdBOSid5It9dw4FOAWQrJ3z+2sOk8kmUNLhxRR05yVCE=
+	t=1768401272; cv=none; b=lldvE1sCGhjB98DbqKDgLcwijzOJw8NyOGCma7vdlOO+0ZOa3W824lfnwaWWhudgwLBQl6J0VE8DcubnoIyu1aD3HFVlJGOPiFahak9AhtVFaVOgRYSOzqQjuuXWogXD4Vtp+p95/sTCoITXwnDf+i/qM7ieHNHMaIHkTkivjH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768400938; c=relaxed/simple;
-	bh=UojViaU56pXUxWouNvjF1vVrui2idCwIBHYqDGuqvf8=;
+	s=arc-20240116; t=1768401272; c=relaxed/simple;
+	bh=ZQCFuaMuCZ3Fu7pNmusE4ZOKXKRidmsWIk+RMzHZ0b0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OSHyRse8TYriyFttDL8RSAxCbkAuGdYAcRyIGwpyxhoPlMuy4Ol/EV2JTDHcJYK+09FbSHQoGckL9Jc7kl+EXEftIVvh5Tr7vsPLZduEXhjmlmP1mZ/oNMfu7RSCJy7y+20BNpu1mZInUTqTzY0SMPS8vRejn2F1dTy8lzfbvq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=lq358vOq; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=Su8UQ0gTUoPMMRqre8y75zRwvbjGclAbeT7tqeLF7d3MqlX5vIWna9QajuT+ZGzvyxH7khz4WmmWhqZIy1Oa2ODWzS9IP8OhB1AKOLQCFIETy8qZFYXR0aaRpS/frtxkf1zPZkrEuIme/Zr1tyCwmiH7x8bffvu3BxxzteecZ84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=f3bGrPVr; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MDq7CnLwcVfHk/Yxuues6u7FOlIZmPjkJM3N9g6aVQw=; b=lq358vOqh9ZIA0cr9603vjg572
-	cFUKi9fun0XBLnC5oQll+iEFnk/nla13/637NiGoVhV35lUHK5sVVSMyQOMrnpOUSNLlBD99s2DJv
-	fRXblW1HaesVIaOVRQNchu0j4R6F5ZbiNt82N6Xz67cbzqyAs40Pdq6/EgnWlDyVi2KAkqbUju+Rw
-	BQzygleAw/VBXaYVa4Svm448mCStQrmoSa/9DZM3ulToYHRYiH3LhnhKMGfUs4spJiIIcLCwSGf34
-	bH0IkcPDuvTLhkuM2Xbd7PceqC14+9gS9gndcqI/KfmjiYAPcfKevgEIZ2ImZ3Jnmqh43xQKaqd4s
-	SatiUeXw==;
+	bh=JxQTzize1ybaWGG7/nlCFJTtSbJaJEnLC2I8YdrbeGg=; b=f3bGrPVrmYamelS0/7LRAc7CXk
+	v28l1qrBt9urctNj/Np9fcuZ3dA1gdP/pOTbWAKzlF7Xv+E+N61qE9Hg1b60SW4kfKTi+88KGAyJy
+	Fsd1NuOpb3EYmYdSlS0CKZV4UkUgg5ogKMVZWEjHRrDGR66ZYlZVqJuEo0Bl4fj9l0H6xfE0XJoCo
+	T7bYZtyPIguza0GYdpzPbbivC6U+4gWAhQPVz+T03QW43e2+FyHlDGWzEW3cfGYn/JgM6dAC3UmZc
+	5/j1XgUddqn6oeqGGv1esdPCOUB1UwCJFyHBPqxj9PHHzpUYXbmovM3Lp/gYGOcjNgBhZBnxV3XyU
+	jeNBWzUA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vg1t7-0000000HZij-2qV1;
-	Wed, 14 Jan 2026 14:30:21 +0000
-Date: Wed, 14 Jan 2026 14:30:21 +0000
+	id 1vg1yV-0000000HZwl-30yI;
+	Wed, 14 Jan 2026 14:35:55 +0000
+Date: Wed, 14 Jan 2026 14:35:55 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
-To: Andrea Cervesato <andrea.cervesato@suse.com>
-Cc: ltp@lists.linux.it, linux-fsdevel@vger.kernel.org
-Subject: Re: [LTP] [PATCH] lack of ENAMETOOLONG testcases for pathnames
- longer than PATH_MAX
-Message-ID: <20260114143021.GU3634291@ZenIV>
-References: <20260113194936.GQ3634291@ZenIV>
- <DFO6AXBPYYE4.2BD108FK6ACXE@suse.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Mateusz Guzik <mjguzik@gmail.com>, Paul Moore <paul@paul-moore.com>,
+	Jens Axboe <axboe@kernel.dk>, audit@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 68/68] sysfs(2): fs_index() argument is _not_ a
+ pathname
+Message-ID: <20260114143555.GV3634291@ZenIV>
+References: <20260114043310.3885463-1-viro@zeniv.linux.org.uk>
+ <20260114043310.3885463-69-viro@zeniv.linux.org.uk>
+ <20260114104155.708180fc@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,87 +65,42 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DFO6AXBPYYE4.2BD108FK6ACXE@suse.com>
+In-Reply-To: <20260114104155.708180fc@pumpkin>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Jan 14, 2026 at 09:35:48AM +0100, Andrea Cervesato wrote:
-> Hi!
+On Wed, Jan 14, 2026 at 10:41:55AM +0000, David Laight wrote:
+> On Wed, 14 Jan 2026 04:33:10 +0000
+> Al Viro <viro@zeniv.linux.org.uk> wrote:
 > 
-> On Tue Jan 13, 2026 at 8:49 PM CET, Al Viro wrote:
-> > 	There are different causes of ENAMETOOLONG.  It might come from
-> > filesystem rejecting an excessively long pathname component, but there's
-> > also "pathname is longer than PATH_MAX bytes, including terminating NUL"
-> > and that doesn't get checked anywhere.
-> >
-> > 	Ran into that when a braino in kernel patch broke that logics
-> > (ending up with cutoff too low) and that didn't get caught by LTP run.
-> >
-> > 	Patch below adds the checks to one of the tests that do deal
-> > with the other source of ENAMETOOLONG; it almost certainly not the
-> > right use of infrastructure, though.
+> > ... it's a filesystem type name.
+> > 
+> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > ---
+> >  fs/filesystems.c | 9 +++------
+> >  1 file changed, 3 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/fs/filesystems.c b/fs/filesystems.c
+> > index 95e5256821a5..0c7d2b7ac26c 100644
+> > --- a/fs/filesystems.c
+> > +++ b/fs/filesystems.c
+> > @@ -132,24 +132,21 @@ EXPORT_SYMBOL(unregister_filesystem);
+> >  static int fs_index(const char __user * __name)
+> >  {
+> >  	struct file_system_type * tmp;
+> > -	struct filename *name;
+> > +	char *name __free(kfree) = strndup_user(__name, PATH_MAX);
+> >  	int err, index;
+> >  
+> > -	name = getname(__name);
+> > -	err = PTR_ERR(name);
+> >  	if (IS_ERR(name))
+> > -		return err;
+> > +		return PTR_ERR(name);
 > 
-> The description is not well formatted, spaces at the beginning of the
-> phrases should be removed.
-> 
-> Also, we can make it slightly more clear, by saying that error can be
-> caused by a path name that is bigger than NAME_MAX, if relative, or
-> bigger than PATH_MAX, if absolute (when we use '/').
+> Doesn't that end up calling kfree(name) and the check in kfree() doesn't
+> seem to exclude error values.
 
-Huh?  Absolute pathname is the one that _starts_ with '/'; e.g. "../include"
-is relative, not absolute, despite having a '/' in it.
+include/linux/slab.h:523:DEFINE_FREE(kfree, void *, if (!IS_ERR_OR_NULL(_T)) kfree(_T))
 
-> In this test we only verifies if relative paths are longer than
-> NAME_MAX (we give 273 bytes instead of 255 max), but we don't test if
-> path name is bigger than PATH_MAX.
-> 
-> We should correctly distinguish these two cases inside the test with
-> proper names as well. Check below..
-
-> https://linux-test-project.readthedocs.io/en/latest/developers/api_c_tests.html#guarded-buffers-introduction
-> 
-> Many old tests are not using these buffers, but it's better to
-> introduce them when a test is refactored or fixed, like in this case.
-> 
-> You need to define:
-> 
-> static char *long_rel_path;
-> static char *long_abs_path;
-> 
-> ...
-> 
-> static void setup(void) {
-> 	..
-> 	// initialize long_rel_path content
-> 	// initialize long_abs_path content
-> }
-> 
-> static struct tst_test test = {
-> 	..
-> 	.bufs = (struct tst_buffer []) {
-> 		{&long_rel_path, .size = NAME_MAX + 10},
-> 		{&long_abs_path, .size = PATH_MAX + 10},
-> 		{}
-> 	}
-> };
-
-> > -	TST_EXP_FAIL(chdir(tcases[i].dir), tcases[i].exp_errno, "chdir()");
-> > +	if (tcases[i].exp_errno)
-> > +		TST_EXP_FAIL(chdir(tcases[i].dir), tcases[i].exp_errno, "chdir()");
-> > +	else
-> > +		TST_EXP_PASS(chdir(tcases[i].dir), "chdir()");
-> 
-> In this test we only verify errors, so TST_EXP_PASS is not needed.
-
-Er...  Intent was to verify two things: that anything longer than PATH_MAX triggers
-ENAMETOOLONG, but anything up to PATH_MAX does not.  Having a pathname of exactly
-4095 '/' (or interleaved . and / in the same amount, etc.) be rejected with ENAMETOOLONG
-is just as much of a failure as not triggering ENAMETOOLONG on anything longer...
-
-FWIW, I considered something like
-	mkdir("subdirectory", 0700);
-concatenating enough copies of "subdirectory/../" to get just under PATH_MAX and appending
-"././././././././" to the end, so that truncation to PATH_MAX and to PATH_MAX-1 would
-both be otherwise valid paths; decided that it's better to keep it simpler - a pile of
-slashes is easier to produce and would resolve to a valid directory if not for the
-total length restrictions.
+kfree() the function won't be even called in that case...
 
