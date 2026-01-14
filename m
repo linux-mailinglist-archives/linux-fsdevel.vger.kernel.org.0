@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-73835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 010F2D216CD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:47:50 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41CE1D2169D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:44:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 471BA3022025
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 21:44:16 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id B85733021954
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 21:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7075D39447C;
-	Wed, 14 Jan 2026 21:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD57C38E5D1;
+	Wed, 14 Jan 2026 21:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DwAksuye"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mccnpc0p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8593638F242
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 21:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D0C38B7BF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 21:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768427049; cv=none; b=a/Kd86/Eoy5+YAMf0dGJd8V3dOd9D2hr8b7d8EplPrlGMgsd0vg36HEi8t6m+GVROxLmeK8QOiQHUoknMn0teyHfJMziXUwNkTfER1aELMykIjfrFJ7zwZDNe9rZbWyHOYxekjJlhNRXu0PtQ+JkbbJa2eGDmA46rRe4EtdBbzI=
+	t=1768427063; cv=none; b=rVQ2qkK3RJ2ge46XqF+BtzohQuH06sv+FCOv0UG3ewTlqxUbpqNlXqdjJ4hwXCWZ8PB578H22F73tWsprKh4XRoup+AogqWTmOEtiwSFT16ot+5ysjh6Ql6054Vc0GrauxwB7zpGmnIIuO0na2OCuka3oXU76+ePrl0wAskpf+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768427049; c=relaxed/simple;
-	bh=6IXyikUrXXga0w+XTOVh8PGo9rM6Mf6O+h0Sd4yHab4=;
+	s=arc-20240116; t=1768427063; c=relaxed/simple;
+	bh=1w3TFMU+/vaY5sE0p34dspzPaMtaVRyYHuyJ2SCiYhE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sN0RuOGIvCEEcbuSJjiBmz9Tsi9F2Kf5f0iSaVfMVgZIRfGRbSq4QmjUbpZfmClZMaO33wLdh6eD8++f5Y0CJeNMbQ7HcjWoH01K68cUxtISEVciWAHGRIo6q0FoYADvl22GKBcAaHoiBpC44HExJUNxpNGOr/X/2c0bG2aVfas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DwAksuye; arc=none smtp.client-ip=209.85.210.42
+	 MIME-Version; b=OgH3FrICNcCoGh5FnBgcBUKwJIkmRJQyTfFY1GmoLMu9NfcI/VsEnVYZzFGAGxGwjuXA6AvDq8EQwk8w0ZqtqY1cQMgMqiRrm+QlIzWguukYOt5DTG9pb711OCAyYqUTt/q1nYr9w9+spo9EzFepetA/69Szw2Xt03/FHditApc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mccnpc0p; arc=none smtp.client-ip=209.85.210.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7c6da42fbd4so169467a34.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 13:43:44 -0800 (PST)
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7c750b10e14so119934a34.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 13:44:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768427023; x=1769031823; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768427056; x=1769031856; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KokXwqCF3cjj7h8MwPrV07VxZRdfFYCa5Cm5tvCoTf0=;
-        b=DwAksuyem4fEXByAYX/OKg/0P0/Ha1dtdmlvYZE+UKXX7YyZhN6fgvtGrdB1rdORUR
-         JYGbLkRMbFZiHz2y/aRbCY+WLcRwNL7CXT0eUHAYgo6HV+q8lpX1KviYMFS/BE7mNHGk
-         uyH986y0xx/kzFtWryKbAN9a5V1E+Jl3Mm7y5ym+XXz5kbjSeR2t3iwG40PFZZElLFHn
-         26IlsFBc5TWc/7ZiOL422nsR/U8knSTp40kFKtyt2oAWo9N5sNTgSgPA/2ieckJvpcJD
-         yQ70eaExuqB3Xs/c0UplQHbP9DgRJGwkfpx2CiMo0vveGX7b6miuFZlcKRl1iwukA1KD
-         ZCuQ==
+        bh=mT0uh5MNFRoQeuCeqp5qm4knejXoLQDh1fSqDovZOWM=;
+        b=Mccnpc0pVnLhNwDZQJrJ6mln4SCQM13N86i+Ev3J4ZMyAQkOGgUy7nk0v6IRWV8tfs
+         0hmi4MtFvYJljqi4Y3D3C/UpH9+TS1IphPUC97J1+UNeoo5OJOgXJ1RivfdhNYclGeqE
+         J1vBk5dedT07Sw6inRNrMHKR61K5FuXn8gu99+UFlmakRZBLjhoszTbiwlJH8vhDZijW
+         NzGbwqtdGJTgdPSW0Y3zzttHEHQppEqtWDVr0svXeP65sEcYLDm2ezpLhYkK99CPs3Tl
+         lnXyeIiNutOXhzRgCR4iN5WSVwk7h8IJutlJTHvBkxVMj18hByWZ40oSWG5Wu4nRZi/L
+         NXtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768427023; x=1769031823;
+        d=1e100.net; s=20230601; t=1768427056; x=1769031856;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KokXwqCF3cjj7h8MwPrV07VxZRdfFYCa5Cm5tvCoTf0=;
-        b=FpAZxUIuseN4jM+ltxDAhnGqz7EC8x+Q2gF2DVV+mmkhdshcQ8jMIsWGXEwBclqvWV
-         qGPs+LwnTzcGs0m3HTu2CvCLXskXldvrjnacs/s9XnS+L3UyjOMeoQSENr3n1hrimmJy
-         Y2hsQ2wnfvPuCIsdh8C9pAURanVxTam6+m+VsLCA8rc6teHPDHs7rA35eX+DonMfiUht
-         qCUM4crnA6yDVBPJe5inPUCQXfdzCD74BhAQUYI1t+Veg4Z2LF5i4kcWCdrQKO3gmNCf
-         Zj/ohNZomRjisokfY306EqxhF4S+Xdk6ctfRh3UQN5Fd9DdfAbiitY7W4T9c7YwsHKSB
-         2sYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIOSGnOZt+UcbZ4UNuFQDViqFlDlw/A1SPkn57axkqIurBB+LGOmOrNjyGbdgNJBVb/MtuJr4vJzyxWHil@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoSuRhw9kq4xncrAGP8UEdVzyKshp6SUQ71QR7j0FUcsk7NQyA
-	9t7BcjsDUfyVDeVdS76DXdT2juCMiDg03xOTOivjG5kKuIiFPAT+3wNC
-X-Gm-Gg: AY/fxX5WlLJrV2CmPvCETkvhFXrhT6WGFRi5HfxtNWBHVwqieRNaQj/EFuNmJhDUahV
-	YEF7mg2QMr3YkTnpXOG6YN/SNoP4fO+JP02oHBIiy3xIWxjvQV4EYmtfvH66Hq3F5PGT9HN60O+
-	835ux1ZzDv16srgg4U2DvgKgfot0Lf6Ih2fkimHvlurkboxFx9Jt6E68Zl/RXtzOqa9n7UqOuZb
-	f6PkmqeO3OBLOSIHObCw3EFaLFzOdGGqWNLGcLUg6MELeCUBFu8EVCyD80Xf1gRTwHuZlP1K+Lk
-	3RyJE14FBLGj42IjqrICw4aH98x4Ca7I+CfxhfH/++QtMcCcMe6Q3loDMDkOScu7xVf06tpnf5e
-	NpRZBhsE2Dny6DAdtUAvTzv4vQcRYfWT4eV4rqCZ8yOeZPqYxA+fF8M07vR3MwgztLhk74Yw7eQ
-	+wQxd/tYi9F6GPHtlTMTRz2oZijil9u6if+xBLEG6KIFsE
-X-Received: by 2002:a05:6808:229f:b0:450:ad22:f9ee with SMTP id 5614622812f47-45c712da165mr2717268b6e.10.1768427023109;
-        Wed, 14 Jan 2026 13:43:43 -0800 (PST)
+        bh=mT0uh5MNFRoQeuCeqp5qm4knejXoLQDh1fSqDovZOWM=;
+        b=DDSof0j33FYPspZf3dhuqzKCh708LrIX5oTeAjnI/vJrQlBJbuQKccNqBQlC+YOddF
+         8tcYp5WBmsqQqe4u6Xt+WgbeDE/74jLkwnnZjvH2OZae8TDE25XnZ+Ni8b9UaZ++XvKG
+         GVmJm0ZSxbiqUtadpLr/QGId6+scgPkhTyV23zxcuU7UdTkiuJL9kzLpHCNaPeWKMGe0
+         UzNa/1LrHZ8beg6yLku9Q9NCAWorAUQa8cLQRLQpor8PajFypT2uK9Qb6KQH5500YBxL
+         0rhb7h64fghOFlrSVIZ6jsAODCgb2VY6cSLiKW7XeTl4sCaPKSDtBwTngHi9JZGBZxnV
+         sDoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzMctWwZCxM6sl9QQmHTIR5WiWfAXUYVR2WD+AKCrVvLtJ0QRs/45ToNURd+ay10EpoHV39aoacRR2g3bm@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMVXwtCOFB4XN4GKA2AEGP/Z+zVAavAVB5XFiZYxDdmoK1iDvN
+	sVrAc0tZZFrAP4MOqWx6h2Ixhxq0jXfx1EL3sIDY7Tsri0CJEMEjFj3q
+X-Gm-Gg: AY/fxX5lp5jLjOX3puhickLEMNDR0E2/N3T0j2LzCB4SpRqoN3sfkUvoZj2TAH+zscE
+	m0ZWYAbOh1Js7sUL1XRWWVKr3CdpMXQrFz/ZawPUtkVeGnwyH21q+yhuTGpVjxTMJGpC2DhQL3K
+	oJVbs3OQVb9gQLUNiUMecZxydgpZFYpUZ3oAR5YmknH0SkrmO4Hzl8pP6lJm67+HCZOUrgZcMJT
+	aAuMXBGR05o0vjjqa0W+3YuAGFrPdW6dou4Xn8DHR+zn/x+MSc5uO6MtVtT5C++kp8h8akw/9Jj
+	jbe4BPdXyczBTKuHEtAemzoZQgJQKmNKiH+Re0/9+w6kkcAQ90m4jGfNipbYkHr05EB4MuJpI7o
+	o0YXJHvyWoAxdB4/F29axEpyciugiPqBJwqi26elcpQQIkP5CKJ/Hw4rWqT+ksSLiun5EYCG4s5
+	LYW/SfwsnG/OEcV/MPPXxmG/d8zlIIjxhEzb1LWxd+HagR
+X-Received: by 2002:a05:6830:8410:b0:7c7:65f4:1120 with SMTP id 46e09a7af769-7cfcb65e6efmr1926180a34.23.1768427056116;
+        Wed, 14 Jan 2026 13:44:16 -0800 (PST)
 Received: from localhost.localdomain ([2603:8080:1500:3d89:4c85:2962:e438:72c4])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa515f4dasm17619569fac.21.2026.01.14.13.43.41
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfcd061ac6sm1958801a34.13.2026.01.14.13.44.13
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 14 Jan 2026 13:43:42 -0800 (PST)
+        Wed, 14 Jan 2026 13:44:15 -0800 (PST)
 Sender: John Groves <grovesaustin@gmail.com>
 From: John Groves <John@Groves.net>
 X-Google-Original-From: John Groves <john@groves.net>
@@ -111,9 +111,9 @@ Cc: John Groves <jgroves@micron.com>,
 	nvdimm@lists.linux.dev,
 	linux-cxl@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH V4 1/3] fuse_kernel.h: bring up to baseline 6.19
-Date: Wed, 14 Jan 2026 15:43:05 -0600
-Message-ID: <20260114214307.29893-2-john@groves.net>
+Subject: [PATCH V4 2/3] fuse_kernel.h: add famfs DAX fmap protocol definitions
+Date: Wed, 14 Jan 2026 15:43:06 -0600
+Message-ID: <20260114214307.29893-3-john@groves.net>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260114214307.29893-1-john@groves.net>
 References: <20260114153133.29420.compound@groves.net>
@@ -126,55 +126,158 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is copied from include/uapi/linux/fuse.h in 6.19 with no changes.
+Add FUSE protocol version 7.46 definitions for famfs DAX file mapping:
+
+Capability flag:
+  - FUSE_DAX_FMAP (bit 43): kernel supports DAX fmap operations
+
+New opcodes:
+  - FUSE_GET_FMAP (54): retrieve file extent map for DAX mapping
+  - FUSE_GET_DAXDEV (55): retrieve DAX device info by index
+
+New structures for GET_FMAP reply:
+  - struct fuse_famfs_fmap_header: file map header with type and extent info
+  - struct fuse_famfs_simple_ext: simple extent (device, offset, length)
+  - struct fuse_famfs_iext: interleaved extent for striped allocations
+
+New structures for GET_DAXDEV:
+  - struct fuse_get_daxdev_in: request DAX device by index
+  - struct fuse_daxdev_out: DAX device name response
+
+Supporting definitions:
+  - enum fuse_famfs_file_type: regular, superblock, or log file
+  - enum famfs_ext_type: simple or interleaved extent type
 
 Signed-off-by: John Groves <john@groves.net>
 ---
- include/fuse_kernel.h | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ include/fuse_kernel.h | 88 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
 
 diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
-index 94621f6..c13e1f9 100644
+index c13e1f9..7fdfc30 100644
 --- a/include/fuse_kernel.h
 +++ b/include/fuse_kernel.h
-@@ -239,6 +239,7 @@
-  *  7.45
+@@ -240,6 +240,19 @@
   *  - add FUSE_COPY_FILE_RANGE_64
   *  - add struct fuse_copy_file_range_out
-+ *  - add FUSE_NOTIFY_PRUNE
+  *  - add FUSE_NOTIFY_PRUNE
++ *
++ *  7.46
++ *    - Add FUSE_DAX_FMAP capability - ability to handle in-kernel fsdax maps
++ *    - Add the following structures for the GET_FMAP message reply components:
++ *      - struct fuse_famfs_simple_ext
++ *      - struct fuse_famfs_iext
++ *      - struct fuse_famfs_fmap_header
++ *    - Add the following structs for the GET_DAXDEV message and reply
++ *      - struct fuse_get_daxdev_in
++ *      - struct fuse_get_daxdev_out
++ *    - Add the following enumerated types
++ *      - enum fuse_famfs_file_type
++ *      - enum famfs_ext_type
   */
  
  #ifndef _LINUX_FUSE_H
-@@ -680,7 +681,7 @@ enum fuse_notify_code {
- 	FUSE_NOTIFY_DELETE = 6,
- 	FUSE_NOTIFY_RESEND = 7,
- 	FUSE_NOTIFY_INC_EPOCH = 8,
--	FUSE_NOTIFY_CODE_MAX,
-+	FUSE_NOTIFY_PRUNE = 9,
+@@ -448,6 +461,7 @@ struct fuse_file_lock {
+  * FUSE_OVER_IO_URING: Indicate that client supports io-uring
+  * FUSE_REQUEST_TIMEOUT: kernel supports timing out requests.
+  *			 init_out.request_timeout contains the timeout (in secs)
++ * FUSE_DAX_FMAP:        kernel supports dev_dax_iomap (aka famfs) fmaps
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -495,6 +509,7 @@ struct fuse_file_lock {
+ #define FUSE_ALLOW_IDMAP	(1ULL << 40)
+ #define FUSE_OVER_IO_URING	(1ULL << 41)
+ #define FUSE_REQUEST_TIMEOUT	(1ULL << 42)
++#define FUSE_DAX_FMAP		(1ULL << 43)
+ 
+ /**
+  * CUSE INIT request/reply flags
+@@ -664,6 +679,10 @@ enum fuse_opcode {
+ 	FUSE_STATX		= 52,
+ 	FUSE_COPY_FILE_RANGE_64	= 53,
+ 
++	/* Famfs / devdax opcodes */
++	FUSE_GET_FMAP           = 54,
++	FUSE_GET_DAXDEV         = 55,
++
+ 	/* CUSE specific operations */
+ 	CUSE_INIT		= 4096,
+ 
+@@ -1308,4 +1327,73 @@ struct fuse_uring_cmd_req {
+ 	uint8_t padding[6];
  };
  
- /* The read buffer is required to be at least 8k, but may be much larger */
-@@ -1119,6 +1120,12 @@ struct fuse_notify_retrieve_in {
- 	uint64_t	dummy4;
- };
- 
-+struct fuse_notify_prune_out {
-+	uint32_t	count;
-+	uint32_t	padding;
-+	uint64_t	spare;
++/* Famfs fmap message components */
++
++#define FAMFS_FMAP_VERSION 1
++
++#define FAMFS_FMAP_MAX 32768 /* Largest supported fmap message */
++#define FUSE_FAMFS_MAX_EXTENTS 32
++#define FUSE_FAMFS_MAX_STRIPS 32
++
++enum fuse_famfs_file_type {
++	FUSE_FAMFS_FILE_REG,
++	FUSE_FAMFS_FILE_SUPERBLOCK,
++	FUSE_FAMFS_FILE_LOG,
 +};
 +
- struct fuse_backing_map {
- 	int32_t		fd;
- 	uint32_t	flags;
-@@ -1131,6 +1138,7 @@ struct fuse_backing_map {
- #define FUSE_DEV_IOC_BACKING_OPEN	_IOW(FUSE_DEV_IOC_MAGIC, 1, \
- 					     struct fuse_backing_map)
- #define FUSE_DEV_IOC_BACKING_CLOSE	_IOW(FUSE_DEV_IOC_MAGIC, 2, uint32_t)
-+#define FUSE_DEV_IOC_SYNC_INIT		_IO(FUSE_DEV_IOC_MAGIC, 3)
- 
- struct fuse_lseek_in {
- 	uint64_t	fh;
++enum famfs_ext_type {
++	FUSE_FAMFS_EXT_SIMPLE = 0,
++	FUSE_FAMFS_EXT_INTERLEAVE = 1,
++};
++
++struct fuse_famfs_simple_ext {
++	uint32_t se_devindex;
++	uint32_t reserved;
++	uint64_t se_offset;
++	uint64_t se_len;
++};
++
++struct fuse_famfs_iext { /* Interleaved extent */
++	uint32_t ie_nstrips;
++	uint32_t ie_chunk_size;
++	uint64_t ie_nbytes; /* Total bytes for this interleaved_ext;
++			     * sum of strips may be more
++			     */
++	uint64_t reserved;
++};
++
++struct fuse_famfs_fmap_header {
++	uint8_t file_type; /* enum famfs_file_type */
++	uint8_t reserved;
++	uint16_t fmap_version;
++	uint32_t ext_type; /* enum famfs_log_ext_type */
++	uint32_t nextents;
++	uint32_t reserved0;
++	uint64_t file_size;
++	uint64_t reserved1;
++};
++
++struct fuse_get_daxdev_in {
++	uint32_t        daxdev_num;
++};
++
++#define DAXDEV_NAME_MAX 256
++
++/* fuse_daxdev_out has enough space for a uuid if we need it */
++struct fuse_daxdev_out {
++	uint16_t index;
++	uint16_t reserved;
++	uint32_t reserved2;
++	uint64_t reserved3;
++	uint64_t reserved4;
++	char name[DAXDEV_NAME_MAX];
++};
++
++static __inline__ int32_t fmap_msg_min_size(void)
++{
++	/* Smallest fmap message is a header plus one simple extent */
++	return (sizeof(struct fuse_famfs_fmap_header)
++		+ sizeof(struct fuse_famfs_simple_ext));
++}
++
+ #endif /* _LINUX_FUSE_H */
 -- 
 2.52.0
 
