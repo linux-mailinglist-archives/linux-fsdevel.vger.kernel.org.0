@@ -1,77 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-73640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD19D1D248
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 09:36:01 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35CBFD1D272
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 09:37:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 5E59730090F1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 08:36:01 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 204D13004EF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 08:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0BF35E551;
-	Wed, 14 Jan 2026 08:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D5137E31F;
+	Wed, 14 Jan 2026 08:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="G039VSQZ"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Jd0eSMaR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A8B37B407
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 08:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3622437BE77
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 08:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768379756; cv=none; b=eB08ktPCRQ3U8b0FctHrXiakt50Czvz9/dTx8f4gh89DjWCXTMtIkDTDkPzy6kdk2/VSWFMry30JsO/KaiDt3dAe72i8JqtOcSS7ml/07U0iMjHMZ6bSo0CHWo5bUA20UuLKpVad3oUg9AakxdFsYpdr/ew1fLRyovHyblpQZ2c=
+	t=1768379857; cv=none; b=adWJppMGDMz/CsJSl9I2+7EEdxcGFzQDL5hF2TzTPKkRZ1USei1COa90yX56giYAriCtvofD8JGxV7TSpN5dfVb+N3crDNkxkNCFiKSgWrV+ElJMdJGVt8SyNl3WxLg2lWVEJepHsQ6oFRNmi7KvBAHWPfNGvx91BnWoHEIE4ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768379756; c=relaxed/simple;
-	bh=g7UxWR6zNuQUmm2GVSrSH6RwgetKAzX/Hd9cqIclbxM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=RS4IoFaSngyGTjhjknPicJqu7/Gswffv8AZU0Jmk4SIl8p5lpzA1AZrdwH1TMUKoVtM369oF/PXYXlfj/uBvjXwe5JcpQQ4ZjCAFgvcuLIhdZRi3GjuEKfWFjJHwugtZxbRakN/JAAMYdmgA4dlK+dCt/7HbTXFiaUfofFZvoXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=G039VSQZ; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1768379857; c=relaxed/simple;
+	bh=MUWJsFB4yW8EouHM0/GRly+FbEJrtjXUmqA/Ymb25XE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=kJg8Tqu4KBeD+ZES3fhKx99JNgI5wVCXpBNXwAYGvSiwgrY5MRdelUP3+JFHA7Vyr+SLKb8elWX9nlxhMCVWS9QwIuIoZYAXHA7DoiQm/N5ORsgOpowH5dG1Z9L4NIt/WxhH/+Dl+2qD+yy5Jnud6kfT8hoUM3VbhKNc9vhQ4TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Jd0eSMaR; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-64c893f3a94so1116453a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 00:35:51 -0800 (PST)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b8710c9cddbso478374866b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 00:37:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1768379749; x=1768984549; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
+        d=suse.com; s=google; t=1768379849; x=1768984649; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
          :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XPPloNl7llTdagSQiWBgrN0JSa6mGncDJ/7BeD2LLwI=;
-        b=G039VSQZaZoLCdJVFfvZ0KviLMt9qUaR6Mb+y7I5IlOwiGthsJzj1+iNPGCyvuTdFz
-         G6Mdbhw+HxGVbkvIDbXJ0JyLQ+gk7jaEGFDWnlFVlaW/DuDUyrxHIOgNUCNWArr+h5ZY
-         gOi3wikMxMNVLGmQ04GN0IPMuQXRDgrm30FIJmGGpVaTztaX8ers0MyezkXht4+z5pa8
-         5Zi2jJfUKpmRjF6CZmmv26Qov+nlcpjxh4mBpiUYaXIb3EaJ7yin8/S5qyktTchOEciS
-         lojD0kdkPJMtQfiruQJavaKKtaC/AlNwrrGenM6UnJg+I+HumsLrrNHgEWxh++YrcuSi
-         voGQ==
+        bh=MUWJsFB4yW8EouHM0/GRly+FbEJrtjXUmqA/Ymb25XE=;
+        b=Jd0eSMaR7MydkWBe0yKwLUGrcY7wjwJetUkP2+yb7lxoZKAuPdzRvE/Uv8bGY0Lvli
+         2LAzAZx1ek9RSvD+9iAv+1UpWrCHiu6BVZcmGBPEMszSws+rz0VJkwfrnvv3CTjl7Cqy
+         1FyZgJ409fUlZr7fETLoUqi1k1kbbQCVYWnR1IcIQBzO0NtLML2cwHgwDAXFkRC//4Jo
+         BRias5K8yBP19/yFrsYsy5F+3QhiwpbiX6ONs/zjTuvJ1cdSioV6wD1EZV8TbSQRBAH4
+         Ne2XENgX00UDLmdPMmx4fRl0LZdXhxS8J+YRSk3UuGiUzMX9wfpPliSZZk91+m62Lui2
+         FELQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768379749; x=1768984549;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
+        d=1e100.net; s=20230601; t=1768379849; x=1768984649;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
          :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XPPloNl7llTdagSQiWBgrN0JSa6mGncDJ/7BeD2LLwI=;
-        b=eS2Vql4EAqE+YznxxbqpjCdmh1I0VkEaZAA9roj/0FuJQaaQn/cZmWtnwdzBHgks6Y
-         Q6v6at3ijAPUwQU2D4JjFxqozUBhNhimB/F8XAchpRUOERWGPkpM55utK7Uh3LvjSDHs
-         wuXNljyAs9gnK6K/YJ4O8BMNrcDzXoF5wJvYfBtUH7pwFXVZ4tBjunReUo8MpVehiKHv
-         jfKItkcdGYVHomZdRiulG4Fmv/zTHdZDqRZsPWEGoisb3Xvf2dPQPBtzxMrNlLo1d1z3
-         6WjeaxEqDw51IDI3WO3kypPFLIKTpsazpeqmSbWs95hnWniaOpmnsyCAwfzfu9fRvg2D
-         s7cw==
-X-Gm-Message-State: AOJu0Yzvf6hVpR/kD0EvnmQgooxkSl6rp9eFwgu2bVV564yJ9I+na87a
-	7a2t6osZ8J0W+c1Itc5uZLGjGEcYi2qoGsuP3R7/ytGOHCz3huc/cFlJ9b2PEMjvfu1bck38fY8
-	4LdxJVLUYXg==
-X-Gm-Gg: AY/fxX7pOUSP5O+a+qH3Vq1wRiZY2Uiy2ets1xbD1JdrUZ40wqkOtpUH63ufaGqp4Cj
-	OaqyjuGTz/evpje/+FXaqlFLhkhr2UZrkx703IoEZFjsaHj7NIP+N2IQL2b5R2za0FBibIUFJfx
-	J4331FoDo15I627iFhwOrho9VJJyvJ6FUMItRVJlEkmdo8/kglfIR2BLur4HUXVkR7Edr2g+g6F
-	XXZn/yUs/c7RGi7V86Xhn9v/ChiaFdLR3z9zYFYCHi7X5h2ynEi95mZpRletBI1BhSqflutxEDa
-	B6NU2ot88AR9wHbC2RHOeGFPoYiLjRcfJqcOYCFTfGBC60u4RFNiMOj6CdViSJNfVvZ91XgUcVI
-	uycsI4Xawrdo2kR6Ys0OlHhFey2mst03ykFqVBUlFHTGVOGYc/R4SD7sN6fW+9/ztvh3pkHEwAH
-	QMPdiJAFbPfKbXRgTKAih8bqIBqpTDGcLyFZIa7XkH+M0bTHJLS4fZ81BK1/ODjFpjVUL8bzdGP
-	fO3sPI=
-X-Received: by 2002:a17:907:6d17:b0:b87:2abc:4a2a with SMTP id a640c23a62f3a-b8761be4dc8mr132227166b.1.1768379749303;
-        Wed, 14 Jan 2026 00:35:49 -0800 (PST)
+        bh=MUWJsFB4yW8EouHM0/GRly+FbEJrtjXUmqA/Ymb25XE=;
+        b=QmJYiFNZ6CsVW9MIQddUaYF0lGU7hvqwoTBADz3vZnVU+yBzH1cXwJv3zVSWpRTenu
+         GOxIII+svLl5uqNY0kSpi8vE64bf//jlLt3SUJPNGEKPOmjUY9fuFoGZQXyDpH9zY+ml
+         HFkqPyqvOuGgdXW/s6Z2HEe7KOTdD4nsqRoji51OiBz22F7ruNRIPpxpupvKM1cmzCN/
+         yo1Aa529eRStMKgmw9//5ZYvPOhIkV3xOPMifH51OLrPBvgMnKckr7eTqiPekY9phuEu
+         iuGpbP5bachtLnQ5Fmom5nn5sDW165eUp7O1nlV/x/i1BN2rAWgc/96leYQcttfXk+Bp
+         3lgg==
+X-Gm-Message-State: AOJu0Yy7aPCEg446FZEHqFqPanz8Mk9i8Nf/OUEDwOpGlltYNcx13XZn
+	fytygGkWgc94htfPNaH7WthZF3eAzrzEz8RagNQu3QG3Qd5pUEa0Aa3rujHe34cJYZs=
+X-Gm-Gg: AY/fxX6TU+D133sKYdkA2WYTRxl6fYAWqpsAZ332qlptzGxPICPuKiPZF6UZ/Ew9ewl
+	2rmJniK2g7qfIwwDppqZ9UXGIzMLTShZefdcpYy7K0vpXJRmxPCUkln5UksAlbfGUJZ814v5uiu
+	LI0wRR3SRDFRYxrbiNi8v+aEiF93Kbfq82SCOF9+e5vV5yRYKhyi5pWOEWNJtAmpGts4aacW7xg
+	sU/4lATlFLOLdPJIAv7plW3LNG1iL7KG6KE2PD+HKgJmbu25I/WjyzM3Oz29qhpteP1ZO893xra
+	pGZ9F2ma1MtwZbtwpdrOga72RkIj+o6npxrDBBm0+l2ZN0iwEyRx9CXUcCKY0CAMO/3e7BQbR2i
+	oBU4ZN5+QMR5phWFTFfndC1pMuZxdKAbqPFaPnVe8kWQttlT1Oh/17A1dgREiwNpHzvHOMEC0gL
+	DwIe9OT3KU+/zoyX0jztf/maaa6ChIh2oJyBo2gyKVfFDd39kOvnYn5ZrOKvWiK0TGfOuIrJNbb
+	3yd/y4=
+X-Received: by 2002:a17:907:9629:b0:b74:9833:306c with SMTP id a640c23a62f3a-b876127f271mr142666166b.47.1768379848724;
+        Wed, 14 Jan 2026 00:37:28 -0800 (PST)
 Received: from localhost (p200300ef2f1649001c626999955e52c8.dip0.t-ipconnect.de. [2003:ef:2f16:4900:1c62:6999:955e:52c8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b842a56c547sm2437958966b.69.2026.01.14.00.35.48
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b842a27cc6bsm2456622466b.23.2026.01.14.00.37.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Jan 2026 00:35:48 -0800 (PST)
+        Wed, 14 Jan 2026 00:37:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,117 +79,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 14 Jan 2026 09:35:48 +0100
-Message-Id: <DFO6AXBPYYE4.2BD108FK6ACXE@suse.com>
-From: "Andrea Cervesato" <andrea.cervesato@suse.com>
-To: "Al Viro" <viro@zeniv.linux.org.uk>, <ltp@lists.linux.it>
+Date: Wed, 14 Jan 2026 09:37:27 +0100
+Message-Id: <DFO6C71QX72K.5V39YITRN86I@suse.com>
 Cc: <linux-fsdevel@vger.kernel.org>
 Subject: Re: [LTP] [PATCH] lack of ENAMETOOLONG testcases for pathnames
  longer than PATH_MAX
+From: "Andrea Cervesato" <andrea.cervesato@suse.com>
+To: "Andrea Cervesato" <andrea.cervesato@suse.com>, "Al Viro"
+ <viro@zeniv.linux.org.uk>, <ltp@lists.linux.it>
 X-Mailer: aerc 0.18.2
 References: <20260113194936.GQ3634291@ZenIV>
-In-Reply-To: <20260113194936.GQ3634291@ZenIV>
+ <DFO6AXBPYYE4.2BD108FK6ACXE@suse.com>
+In-Reply-To: <DFO6AXBPYYE4.2BD108FK6ACXE@suse.com>
 
-Hi!
+I forgot to mention that guarded buffers should be introduced for
+`noexist_dir` as well.
 
-On Tue Jan 13, 2026 at 8:49 PM CET, Al Viro wrote:
-> 	There are different causes of ENAMETOOLONG.  It might come from
-> filesystem rejecting an excessively long pathname component, but there's
-> also "pathname is longer than PATH_MAX bytes, including terminating NUL"
-> and that doesn't get checked anywhere.
->
-> 	Ran into that when a braino in kernel patch broke that logics
-> (ending up with cutoff too low) and that didn't get caught by LTP run.
->
-> 	Patch below adds the checks to one of the tests that do deal
-> with the other source of ENAMETOOLONG; it almost certainly not the
-> right use of infrastructure, though.
-
-The description is not well formatted, spaces at the beginning of the
-phrases should be removed.
-
-Also, we can make it slightly more clear, by saying that error can be
-caused by a path name that is bigger than NAME_MAX, if relative, or
-bigger than PATH_MAX, if absolute (when we use '/').
-
-In this test we only verifies if relative paths are longer than
-NAME_MAX (we give 273 bytes instead of 255 max), but we don't test if
-path name is bigger than PATH_MAX.
-
-We should correctly distinguish these two cases inside the test with
-proper names as well. Check below..
-
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
-> diff --git a/testcases/kernel/syscalls/chdir/chdir04.c b/testcases/kernel=
-/syscalls/chdir/chdir04.c
-> index 6e53b7fef..e8dd5121d 100644
-> --- a/testcases/kernel/syscalls/chdir/chdir04.c
-> +++ b/testcases/kernel/syscalls/chdir/chdir04.c
-> @@ -11,6 +11,8 @@
->  #include "tst_test.h"
-> =20
->  static char long_dir[] =3D "abcdefghijklmnopqrstmnopqrstuvwxyzabcdefghij=
-klmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopq=
-rstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnop=
-qrstuvwxyzabcdefghijklmnopqrstmnopqrstuvwxyzabcdefghijklmnopqrstmnopqrstuvw=
-xyz";
-> +static char long_path[PATH_MAX+1];
-> +static char shorter_path[PATH_MAX];
->  static char noexist_dir[] =3D "noexistdir";
-
-When it comes to syscall testing, it's better to use guarded buffers.
-This is easy to do: please check tst_test.bufs usage in here:
-
-https://linux-test-project.readthedocs.io/en/latest/developers/api_c_tests.=
-html#guarded-buffers-introduction
-
-Many old tests are not using these buffers, but it's better to
-introduce them when a test is refactored or fixed, like in this case.
-
-You need to define:
-
-static char *long_rel_path;
-static char *long_abs_path;
-
-...
-
-static void setup(void) {
-	..
-	// initialize long_rel_path content
-	// initialize long_abs_path content
-}
-
-static struct tst_test test =3D {
-	..
-	.bufs =3D (struct tst_buffer []) {
-		{&long_rel_path, .size =3D NAME_MAX + 10},
-		{&long_abs_path, .size =3D PATH_MAX + 10},
-		{}
-	}
-};
-
-> =20
->  static struct tcase {
-> @@ -20,16 +22,23 @@ static struct tcase {
->  	{long_dir, ENAMETOOLONG},
->  	{noexist_dir, ENOENT},
->  	{0, EFAULT}, // bad_addr
-> +	{long_path, ENAMETOOLONG},
-> +	{shorter_path, 0},
->  };
-> =20
->  static void verify_chdir(unsigned int i)
->  {
-> -	TST_EXP_FAIL(chdir(tcases[i].dir), tcases[i].exp_errno, "chdir()");
-> +	if (tcases[i].exp_errno)
-> +		TST_EXP_FAIL(chdir(tcases[i].dir), tcases[i].exp_errno, "chdir()");
-> +	else
-> +		TST_EXP_PASS(chdir(tcases[i].dir), "chdir()");
-
-In this test we only verify errors, so TST_EXP_PASS is not needed.
-
+Kind regards,
 --=20
 Andrea Cervesato
 SUSE QE Automation Engineer Linux
