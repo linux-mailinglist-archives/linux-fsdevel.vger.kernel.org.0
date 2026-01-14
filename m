@@ -1,152 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-73790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A4C3D20928
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 18:36:05 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46330D20A30
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 18:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 217C8302E30F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 17:35:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7AFF73016AF2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 17:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26DC30B527;
-	Wed, 14 Jan 2026 17:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHdLZvum"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2486332B98D;
+	Wed, 14 Jan 2026 17:50:03 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240673033F1;
-	Wed, 14 Jan 2026 17:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEEC31B833;
+	Wed, 14 Jan 2026 17:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768412145; cv=none; b=sLhPgswAdfhk4GIH5sR/ZtbCbQiXWI9KJI+1ygG1Of6tEa1Zljs74G2Tn7/gU2xI1z7LmwpcxW7br/H36x9oPLUJx/3+hKA6C4oPmnzA9Br8UxxkC6+p6e3gwmYy3TqjQqwa0Z84qyXXT1to/m7UQUUrZnYm823qA/9QsYFlUtk=
+	t=1768413002; cv=none; b=KKm3Ochra3P3KmdAAiR7KsQZR/210ANLPkZ4AGcUkXXuiSlctsJZ7MFRJJLVxhg3OEd3IDcsVrnNYFDLXRMQa9bJyG+sP6mnmsGWNaeZkB1eYuO/qIHe7n8Xp6OFRafpbMRFl//pUP/2OI6X9ygtd3rTAs5zWFP+pc17vZNva28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768412145; c=relaxed/simple;
-	bh=keTbcQdGaBPEh0rD0E9o/NIZZW2dTCXvbS17oGc3BGg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VVoD9zOYULeijavX/LmSTEmqsyFZPcL18+ZBGxAtryUHwPmmg90mIMh8ncNT5hD0XfSsPuOn7GaSPNtJ6iZuSyHgmTrx34L4rBjriZJNCVOW71nG0iDEKyRiaNjGcbcC//Zt3+yYyW/TiqczM/jM6ML06jAWJFM2MiMxlFmLviU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHdLZvum; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F01C4CEF7;
-	Wed, 14 Jan 2026 17:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768412144;
-	bh=keTbcQdGaBPEh0rD0E9o/NIZZW2dTCXvbS17oGc3BGg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MHdLZvumfNpRYDY/owAP2VJP7dCI9O/3W+1/O8M4p4NZ7H19C5lrXady7k9glTuhY
-	 fWldlKuOWiyDc2Jy2B1X5JLBJNMo3rNuEvvxBLe5+kQk2nDra1sIHFyHiCilhfFbch
-	 sCEh5rrNOxe8Mz+01KxESpStVUZOo2rZZGNpavU+j6t7ytzOWqZRgVxPRZ0/Wdo1UW
-	 hJ7Bphte7M8eiqFoW8+h0Y8+Z8vkBXF+LQljiKL31UbMExtx/I3XuQBKrpFOxSVjWS
-	 n+6yUoGkvY7GM9aZRGRiFepLXAHVamgPIg2xdVpgUL2vDQurm+kfSLJ7WkkRGlG6Bo
-	 FwgRkZOHcrNcA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 14 Jan 2026 12:35:25 -0500
-Subject: [PATCH man-pages v2 2/2] man/man2const: clean up the F_GETLEASE
- manpage
+	s=arc-20240116; t=1768413002; c=relaxed/simple;
+	bh=/AHMpb4+3MfzIhYBPESp8KGt8HTeUy14LUGKGDaY7Jc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=nBeQrihhaDleCCWuyxeduYxg7evMbIJNgoVClRxJgOX4ITqvz+qSDazmEDESBIVtSuJXNFWHmWB5PixOmVb0iySpyNAEec8BH4EKTlLMwsSdI1GCI5AVhJH2plxUxSvbwQa26OKq9GiHmMpNmXmjz2z/RH1rinWpkb3FNVhXigM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F3F21515;
+	Wed, 14 Jan 2026 09:49:52 -0800 (PST)
+Received: from [10.1.37.132] (unknown [10.1.37.132])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0CA253F59E;
+	Wed, 14 Jan 2026 09:49:57 -0800 (PST)
+Message-ID: <18af3213-6c46-4611-ba75-da5be5a1c9b0@arm.com>
+Date: Wed, 14 Jan 2026 17:49:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260114-master-v2-2-719f5b47dfe2@kernel.org>
-References: <20260114-master-v2-0-719f5b47dfe2@kernel.org>
-In-Reply-To: <20260114-master-v2-0-719f5b47dfe2@kernel.org>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2263; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=keTbcQdGaBPEh0rD0E9o/NIZZW2dTCXvbS17oGc3BGg=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpZ9Pu2WN/TOOOXjppkaLst77ulVFzmTs9ZftG7
- r1uL3Kzs2WJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaWfT7gAKCRAADmhBGVaC
- FdTVD/9zb2tmJLi52pX5H1QscuzEr68dzTTFlo6EdvvqQe51dJtUIcjedlSaDlYxRVmur6+OMzS
- LQoBgNqZMibljbMzmct8u0Kb0+6XqYXs/3mkcEJe5kc/OaFgEPQOHdzFsq4kA6zs15M/bNLExtO
- UDB/Oqr0VEoA7LnqzSwdcUbtH0lyHDF8qGAA1tJefJ7b4dyFvybcrBTIDXStcyeN6xA17nlgX7v
- lyDPgZd8id/lNHBd5joB214U03ghGhNaSqhtdqtIpJF8aRJ+YL2dFyxHd1kCbxukUJccYIJ7hn1
- 96gYlHN/CFjueNYZ09eHazf0NNPHPCxTb6Rouao/aUJ25s42PdkcdjfIQTZpfYcTy7M9UPXCtsj
- gj2m+m2Gs1CZy6C4R9VHnPVEPaxCm4esF4mzLCrT+XVvv9stHHK4Xv80JpqbfznSdQIvAmekwER
- Gh/jCWM8IsoLUp5kpQgbliZx+M82eIOSzQmOzIDQJwv5NLZsgBVqslBqXk/vMsYLGDxBoT/Hxc2
- dSG5SumqCN5M9cFTwrsOFdHmBEvZRBSbZP86GBI4K4LmDLJS9TanHF2H5ZFx9yeQ/MpNK63U6KQ
- 1583tN3XJduOel5IZExciocfcOoHcfIb3S3pjSr1rqkDQAFoarLC1oPvx4D8IEXww3iZioDvCtf
- Va4DjqZbsFj219g==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+ dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
+ Nick.Connolly@arm.com, ffidencio@nvidia.com
+From: Seunguk Shin <seunguk.shin@arm.com>
+Subject: [PATCH] fs/dax: check zero or empty entry before converting xarray
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-- Remove a redundant subsection heading
-- Add in the lease-specific error codes
-- Clean up some semantic newline warts
+Trying to convert zero or empty xarray entry causes kernel panic.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+[    0.737679] EXT4-fs (pmem0p1): mounted filesystem 
+79676804-7c8b-491a-b2a6-9bae3c72af70 ro with ordered data mode. Quota 
+mode: disabled.
+[    0.737891] VFS: Mounted root (ext4 filesystem) readonly on device 259:1.
+[    0.739119] devtmpfs: mounted
+[    0.739476] Freeing unused kernel memory: 1920K
+[    0.740156] Run /sbin/init as init process
+[    0.740229]   with arguments:
+[    0.740286]     /sbin/init
+[    0.740321]   with environment:
+[    0.740369]     HOME=/
+[    0.740400]     TERM=linux
+[    0.743162] Unable to handle kernel paging request at virtual address 
+fffffdffbf000008
+[    0.743285] Mem abort info:
+[    0.743316]   ESR = 0x0000000096000006
+[    0.743371]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    0.743444]   SET = 0, FnV = 0
+[    0.743489]   EA = 0, S1PTW = 0
+[    0.743545]   FSC = 0x06: level 2 translation fault
+[    0.743610] Data abort info:
+[    0.743656]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+[    0.743720]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[    0.743785]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    0.743848] swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000000b9d17000
+[    0.743931] [fffffdffbf000008] pgd=10000000bfa3d403, 
+p4d=10000000bfa3d403, pud=1000000040bfe403, pmd=0000000000000000
+[    0.744070] Internal error: Oops: 0000000096000006 [#1]  SMP
+[    0.748888] CPU: 0 UID: 0 PID: 1 Comm: init Not tainted 6.18.4 #1 NONE
+[    0.749421] pstate: 004000c5 (nzcv daIF +PAN -UAO -TCO -DIT -SSBS 
+BTYPE=--)
+[    0.749969] pc : dax_disassociate_entry.constprop.0+0x20/0x50
+[    0.750444] lr : dax_insert_entry+0xcc/0x408
+[    0.750802] sp : ffff80008000b9e0
+[    0.751083] x29: ffff80008000b9e0 x28: 0000000000000000 x27: 
+0000000000000000
+[    0.751682] x26: 0000000001963d01 x25: ffff0000004f7d90 x24: 
+0000000000000000
+[    0.752264] x23: 0000000000000000 x22: ffff80008000bcc8 x21: 
+0000000000000011
+[    0.752836] x20: ffff80008000ba90 x19: 0000000001963d01 x18: 
+0000000000000000
+[    0.753407] x17: 0000000000000000 x16: 0000000000000000 x15: 
+0000000000000000
+[    0.753970] x14: ffffbf3154b9ae70 x13: 0000000000000000 x12: 
+ffffbf3154b9ae70
+[    0.754548] x11: ffffffffffffffff x10: 0000000000000000 x9 : 
+0000000000000000
+[    0.755122] x8 : 000000000000000d x7 : 000000000000001f x6 : 
+0000000000000000
+[    0.755707] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 
+fffffdffc0000000
+[    0.756287] x2 : 0000000000000008 x1 : 0000000040000000 x0 : 
+fffffdffbf000000
+[    0.756871] Call trace:
+[    0.757107]  dax_disassociate_entry.constprop.0+0x20/0x50 (P)
+[    0.757592]  dax_iomap_pte_fault+0x4fc/0x808
+[    0.757951]  dax_iomap_fault+0x28/0x30
+[    0.758258]  ext4_dax_huge_fault+0x80/0x2dc
+[    0.758594]  ext4_dax_fault+0x10/0x3c
+[    0.758892]  __do_fault+0x38/0x12c
+[    0.759175]  __handle_mm_fault+0x530/0xcf0
+[    0.759518]  handle_mm_fault+0xe4/0x230
+[    0.759833]  do_page_fault+0x17c/0x4dc
+[    0.760144]  do_translation_fault+0x30/0x38
+[    0.760483]  do_mem_abort+0x40/0x8c
+[    0.760771]  el0_ia+0x4c/0x170
+[    0.761032]  el0t_64_sync_handler+0xd8/0xdc
+[    0.761371]  el0t_64_sync+0x168/0x16c
+[    0.761677] Code: f9453021 f2dfbfe3 cb813080 8b001860 (f9400401)
+[    0.762168] ---[ end trace 0000000000000000 ]---
+[    0.762550] note: init[1] exited with irqs disabled
+[    0.762631] Kernel panic - not syncing: Attempted to kill init! 
+exitcode=0x0000000b
+
+This patch just reorders checking and converting.
+
+Signed-off-by: Seunguk Shin <seunguk.shin@arm.com>
 ---
- man/man2const/F_GETLEASE.2const | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+  fs/dax.c | 9 ++++++---
+  1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/man/man2const/F_GETLEASE.2const b/man/man2const/F_GETLEASE.2const
-index 10f7ac7a89a70b83be10a381462d879cff813471..e841f7f8c7c64ba8c6868e68d493716040e3dec2 100644
---- a/man/man2const/F_GETLEASE.2const
-+++ b/man/man2const/F_GETLEASE.2const
-@@ -20,7 +20,6 @@ Standard C library
- .BI "int fcntl(int " fd ", F_GETLEASE);"
- .fi
- .SH DESCRIPTION
--.SS Leases
- .B F_SETLEASE
- and
- .B F_GETLEASE
-@@ -43,7 +42,7 @@ values is specified in the integer
- .RS
- .TP
- .B F_RDLCK
--Take out a read lease.
-+Establish a read lease.
- This will cause the calling process to be notified when
- the file is opened for writing or is truncated.
- .\" The following became true in Linux 2.6.10:
-@@ -52,7 +51,7 @@ A read lease can be placed only on a file descriptor that
- is opened read-only.
- .TP
- .B F_WRLCK
--Take out a write lease.
-+Establish a write lease.
- This will cause the caller to be notified when
- the file is opened for reading or writing or is truncated.
- A write lease may be placed on a file only if there are no
-@@ -86,8 +85,11 @@ capability may take out leases on arbitrary files.
- Indicates what type of lease is associated with the file descriptor
- .I fd
- by returning either
--.BR F_RDLCK ", " F_WRLCK ", or " F_UNLCK ,
--indicating, respectively, a read lease , a write lease, or no lease.
-+.BR F_RDLCK,
-+.BR F_WRLCK,
-+or
-+.BR F_UNLCK,
-+indicating, respectively, a read lease, a write lease, or no lease.
- .I arg
- is ignored.
- .P
-@@ -196,6 +198,16 @@ is set to indicate the error.
- .SH ERRORS
- See
- .BR fcntl (2).
-+These operations can also fail with the following error codes:
-+.TP
-+.B EAGAIN
-+The operation is prohibited because the file is open in a way that conflicts with the requested lease.
-+.TP
-+.B EINVAL
-+The operation is prohibited because the underlying filesystem doesn't support leases,
-+or because
-+.I fd
-+does not represent a regular file.
- .SH STANDARDS
- Linux.
- .SH HISTORY
+diff --git a/fs/dax.c b/fs/dax.c
+index 289e6254aa30..de316be2cc4e 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -443,11 +443,12 @@ static void dax_associate_entry(void *entry, 
+struct address_space *mapping,
+                                 unsigned long address, bool shared)
+  {
+         unsigned long size = dax_entry_size(entry), index;
+-       struct folio *folio = dax_to_folio(entry);
++       struct folio *folio;
 
--- 
-2.52.0
+         if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry))
+                 return;
+
++       folio = dax_to_folio(entry);
+         index = linear_page_index(vma, address & ~(size - 1));
+         if (shared && (folio->mapping || dax_folio_is_shared(folio))) {
+                 if (folio->mapping)
+@@ -468,21 +469,23 @@ static void dax_associate_entry(void *entry, 
+struct address_space *mapping,
+  static void dax_disassociate_entry(void *entry, struct address_space 
+*mapping,
+                                 bool trunc)
+  {
+-       struct folio *folio = dax_to_folio(entry);
++       struct folio *folio;
+
+         if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry))
+                 return;
+
++       folio = dax_to_folio(entry);
+         dax_folio_put(folio);
+  }
+
+  static struct page *dax_busy_page(void *entry)
+  {
+-       struct folio *folio = dax_to_folio(entry);
++       struct folio *folio;
+
+         if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry))
+                 return NULL;
+
++       folio = dax_to_folio(entry);
+         if (folio_ref_count(folio) - folio_mapcount(folio))
+                 return &folio->page;
+         else
+--
+2.34.1
 
 
