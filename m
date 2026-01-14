@@ -1,40 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-73612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D68F9D1CA9B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 07:25:14 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529B9D1CAB9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 07:26:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 4B0BD30B58A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:25:01 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 4D6A930B97CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D58736C0CA;
-	Wed, 14 Jan 2026 06:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72AB36CDF5;
+	Wed, 14 Jan 2026 06:26:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D1136A01A;
-	Wed, 14 Jan 2026 06:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4077F36921F;
+	Wed, 14 Jan 2026 06:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768371886; cv=none; b=EBm8dZJvM9DG2Uh6Fu0zK4NtMmz4b8wZHja7wHC8ZYQsCEqo0RqDpiiPZwi3xKg5OG5rql0VZgVvpUi7//j+J4OLW6Lb9TD+f2myPutzuRsomVMbWpK4BkjdkoPXfFZxrD4+NS2e6DTvvStAYIqS/UrAoJWRAQVw/e+DPmQ/fsY=
+	t=1768371985; cv=none; b=OcItQ/Pmff4y5ek5LA4o9VRim21+qsUcQx61kkWvbi0FRz1c28++uZcNPyMKjDL02rSHf6mVrFMsnCoPPHYFmmVjx4yL5LPFPBOp6Jxg92M8uzKfVd6hAt+1U7eVBydMolE4ocuIfuiW93EMXM1If284GarbCIocg4HpmEl74sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768371886; c=relaxed/simple;
-	bh=dbDwZkiE8c6tNRmN3UTuhszmm+CVdjyMON2Q0PftGp8=;
+	s=arc-20240116; t=1768371985; c=relaxed/simple;
+	bh=6EnF4tUaG1VaMKSTZrmuQ4yYsptmXi6Pql0FfVi/aAA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yf0P1E93BxTLbKtcZHKQZXKH0c4yjpLK3TUzEq9MRnEFK/SopRsRMK1pjnjqOAtJStcSgFGC+9LknhlJhFtZwS4teA9sqYQLT0uxeZ0eBHGDEwLVeJAVoUzotw+g3vXN7SjBJcyya8VdAN81yyld6RGldB6Y+RS28zjD0kF41NQ=
+	 Content-Type:Content-Disposition:In-Reply-To; b=qulIBrCru7yruNDythcGY6MrzjObUKGGlLkBJWaLVEcpEnc+1sCTCL3ntO+jbaFZVLar7rgrPjlF0gVS69a3gOxFqCRXvmlDTjMY3J6dsmnI8xzZIGHMlJBI9cLXzZZtZ/WhB1l1J0RIByDA0A07gBhRwTY3DV0kD2qHOxQQjaY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id 6DEFD227A8E; Wed, 14 Jan 2026 07:24:25 +0100 (CET)
-Date: Wed, 14 Jan 2026 07:24:24 +0100
+	id 8D87E227A8E; Wed, 14 Jan 2026 07:26:08 +0100 (CET)
+Date: Wed, 14 Jan 2026 07:26:08 +0100
 From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Chuck Lever <chuck.lever@oracle.com>,
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
+Cc: Christoph Hellwig <hch@lst.de>, Chuck Lever <chuck.lever@oracle.com>,
 	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
 	Olga Kornievskaia <okorniev@redhat.com>,
 	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
@@ -47,9 +45,9 @@ Cc: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
 	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
 	kernel-dev@igalia.com
-Subject: Re: [PATCH 1/3] exportfs: Rename get_uuid() to get_disk_uuid()
-Message-ID: <20260114062424.GA10805@lst.de>
-References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com> <20260114-tonyk-get_disk_uuid-v1-1-e6a319e25d57@igalia.com> <20260114061028.GF15551@frogsfrogsfrogs>
+Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
+Message-ID: <20260114062608.GB10805@lst.de>
+References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com> <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,30 +57,18 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260114061028.GF15551@frogsfrogsfrogs>
+In-Reply-To: <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Jan 13, 2026 at 10:10:28PM -0800, Darrick J. Wong wrote:
-> On Wed, Jan 14, 2026 at 01:31:41AM -0300, André Almeida wrote:
-> > To make clear which UUID is being returned, rename get_uuid() to
-> > get_disk_uuid(). Expand the function documentation to note that this
-> > function can be also used for filesystem that supports cloned devices
-> > that might have different UUIDs for userspace tools, while having the
-> > same UUID for internal usage.
-> 
-> I'm not sure what a "disk uuid" is -- XFS can store two of them in the
-> ondisk superblock: the admin-modifiable one that blkid reports, and the
-> secret one that's stamped in all the metadata and cannot change.
+On Wed, Jan 14, 2026 at 01:31:43AM -0300, André Almeida wrote:
+> Some filesystem, like btrfs, supports mounting cloned images, but assign
+> random UUIDs for them to avoid conflicts. This breaks overlayfs "index"
+> check, given that every time the same image is mounted, it get's
+> assigned a new UUID.
 
-It isn't.  Totally independent of the rest of the discussion, the
-get_uuid exportfs operation is not useful for anything but the original
-pNFS block layout.  Which is actually pretty broken and should be slowly
-phased out.
-
-> IIRC XFS only shares the user-visible UUID, but they're both from the
-> disk.   Also I'm not sure what a non-disk filesystem is supposed to
-> provide here?
-
-Yeah.
+... and the fix is to not assign random uuid, but to assign a new uuid
+to the cloned image that is persisted.  That might need a new field
+to distintguish the stamped into the format uuid from the visible
+uuid like the xfs metauuid, but not hacks like this.
 
 
