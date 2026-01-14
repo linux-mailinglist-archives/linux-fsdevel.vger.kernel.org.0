@@ -1,104 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-73787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0038CD20620
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 17:59:36 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6E9BD20699
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 18:05:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 5F70B3008CAE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 16:59:28 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9DD3A30E42C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 16:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D178D3A7848;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367723A7845;
 	Wed, 14 Jan 2026 16:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ETr3Yzvb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r5rGUtxb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BB73A4F2E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 16:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDBB3A4AD6;
+	Wed, 14 Jan 2026 16:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768409957; cv=none; b=SG7K+s2OiDNxtde2tCiEETD4/0roUhpWcNGiP+aQ+X/92p2bsCYE9EeI2jnuTFasoz7RWAiRr48xzUR5+3vVnsT4ilAiKS0C5FKiWKDE6O37IvxjMiDyaCjjRQjzpQdjbtnSA5XSXZ1mH+E8WTqBiwsi2UW2FbhPAidewLMrx1M=
+	t=1768409956; cv=none; b=VQH0cNKaqP+ohCHLlLRW9H1lo8x04IpRk1sNRNqPK5lKzrZB8PFrhTIBGwjw7hsLmmn8VYWmJ1zek1tP6fKMkQmqHbBJ7KurlKhIOZ2ZBWR6u+b9p3xHqyYyFFCOFEFTst2KjashzkbA+K1yQH7IQW0mrCQJyKHXZVjE/57U4oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768409957; c=relaxed/simple;
-	bh=zjgZSPqvTqiaPZsuOegnP5LqJm31sl7fayZaSh35Xfw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pxBnsDbjAUrTOnECOYBTfBFqPBNMPxFtbtFzGTil1uTYC6PuYsJxXObfEaAXOqDhK2xhaozOlpWVLF6ht0r9pv5dxg7FcaENgPYw9Ha3PtsAVr/IcfQ4k0dEr13gR9JRyVnPan5va94wTi/yu6OhjlUf8SQBCGw49b6wy82upBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ETr3Yzvb; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=tsshhCdj3z+i7gDvTnyTAmu79VNyppmr/IQoED7aHws=; b=ETr3Yzvbu/4MDkheI5Ao9VteYb
-	nSPe0XIUR4aAtaMMTqd8VH/kwLdZCthUwLarpwbbKxuGvhXX4DpHamjrpd7SnFGrsfjlPP+T0//4W
-	yYYrlzwjhRIyHyi3Gk1ROzjxI7OieIEIHOSkJKLk0KhWwDfJNbefzKx2VlQ/ZVbcG1gSpiqzUYD9r
-	35+LUCgVkiVJjhI8Dq1nqNaxUNkiqXZ0/oegxcI7LkzZoltKx3o9fSYAnxlb7eW1B7ByQZvylr3OT
-	u+8hVS5Ga9OFRJ+S61tgq9QuL/q0YQzX6Tzsm8MawczEIwDraid74ECfFLo3xADmZ0dT9MaPqpWvt
-	j7VLo15w==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vg4D3-005MkT-Po; Wed, 14 Jan 2026 17:59:05 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Christian Brauner <brauner@kernel.org>,  Miklos Szeredi
- <mszeredi@redhat.com>,  linux-fsdevel@vger.kernel.org,  Al Viro
- <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 0/6] fuse: fixes and cleanups for expired dentry eviction
-In-Reply-To: <CAJfpeguq9Kq+8D9e2Ph0-T6xrwBD42V7a2hhP7NkOapcRNZq4Q@mail.gmail.com>
-	(Miklos Szeredi's message of "Wed, 14 Jan 2026 16:43:14 +0100")
-References: <20260114145344.468856-1-mszeredi@redhat.com>
-	<20260114-frohnatur-umwegen-8e4ce0e3fc4b@brauner>
-	<CAJfpeguq9Kq+8D9e2Ph0-T6xrwBD42V7a2hhP7NkOapcRNZq4Q@mail.gmail.com>
-Date: Wed, 14 Jan 2026 16:59:04 +0000
-Message-ID: <87pl7c2krr.fsf@wotan.olymp>
+	s=arc-20240116; t=1768409956; c=relaxed/simple;
+	bh=B0iF/dvyn/kec3053bYjCb0vU7YgriPK61h7HY9oPK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DyS6DKzFVo5grsJlZZxf2t8IADrF1HiKBF0tG07lhjikNjk9DuTHT7nYzQodDuyFjdQ1lDsq2YAbhCxLEBP9E7HV5O+vdWIkKSc3hLJ/8X+KABmoMqIprDkIDqxHiaVxnDavPJcyU9/G9EeF02nFoZxQnF6koiHtUKpJDRq3jjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r5rGUtxb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84DD4C4CEF7;
+	Wed, 14 Jan 2026 16:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768409956;
+	bh=B0iF/dvyn/kec3053bYjCb0vU7YgriPK61h7HY9oPK0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r5rGUtxbTEFRVIwKmrHc2xHpl8euv4Jw61qaIMJHTpRKz2a4Wpu0xrGEmM+eetht/
+	 4kyUSIxUQSya+dfCBPaIyUSuOepCAXBVpCLeUw9fXTaK0jHnNxz6JsxoBI0MeNnHe/
+	 vId4RJ2fHC56O9ppqki5yeCg8P2YagaI8NbnorlgkUhxqq4FrrxrB8qQpQ47T0KUNW
+	 eYsitdf330m4rKkulB74dq5rn6lk3DOk5FWv5qS9Wio7TIXz3v9cpvERGIp6LF6tfC
+	 3Ws/w2epkFANtwCr7qac4IeIbQNoqU3eltzoWZlT5jAI12pCtBM4YHIACXBKdiJhyN
+	 3eE40h0j90mxw==
+Date: Wed, 14 Jan 2026 18:58:51 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Chris Mason <clm@meta.com>, Pratyush Yadav <pratyush@kernel.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, jasonmiu@google.com,
+	graf@amazon.com, dmatlack@google.com, rientjes@google.com,
+	corbet@lwn.net, rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, linux@weissschuh.net,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
+	skhawaja@google.com, chrisl@kernel.org
+Subject: Re: [PATCH v8 14/18] mm: memfd_luo: allow preserving memfd
+Message-ID: <aWfLS48tG7XInpNN@kernel.org>
+References: <20251125165850.3389713-15-pasha.tatashin@soleen.com>
+ <20260113140927.1074142-1-clm@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260113140927.1074142-1-clm@meta.com>
 
-On Wed, Jan 14 2026, Miklos Szeredi wrote:
+On Tue, Jan 13, 2026 at 06:09:23AM -0800, Chris Mason wrote:
+> On Tue, 25 Nov 2025 11:58:44 -0500 Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
+> 
+> Hi everyone,
+> 
+> I'm running the v6.19 mm commits through patch review automation, and this
+> commit was flagged.  I don't know this code well, but it looks like it
+> might be a real bug.
+> 
+> [AI review output below]
+> 
+> > diff --git a/mm/memfd_luo.c b/mm/memfd_luo.c
+> > new file mode 100644
+> > index 0000000000000..4f6ba63b43105
+> > --- /dev/null
+> > +++ b/mm/memfd_luo.c
+> 
+> [ ... ]
+> 
+> > +static int memfd_luo_retrieve_folios(struct file *file,
+> > +				     struct memfd_luo_folio_ser *folios_ser,
+> > +				     u64 nr_folios)
+> > +{
+> > +	struct inode *inode = file_inode(file);
+> > +	struct address_space *mapping = inode->i_mapping;
+> > +	struct folio *folio;
+> > +	int err = -EIO;
+> > +	long i;
+> > +
+> > +	for (i = 0; i < nr_folios; i++) {
+> 
+> [ ... ]
+> 
+> > +		err = shmem_add_to_page_cache(folio, mapping, index, NULL,
+> > +					      mapping_gfp_mask(mapping));
+> > +		if (err) {
+> > +			pr_err("shmem: failed to add to page cache folio index %ld: %d\n",
+> > +			       i, err);
+> > +			goto unlock_folio;
+> > +		}
+> > +
+> > +		if (flags & MEMFD_LUO_FOLIO_UPTODATE)
+> > +			folio_mark_uptodate(folio);
+> > +		if (flags & MEMFD_LUO_FOLIO_DIRTY)
+> > +			folio_mark_dirty(folio);
+> > +
+> > +		err = shmem_inode_acct_blocks(inode, 1);
+> > +		if (err) {
+> > +			pr_err("shmem: failed to account folio index %ld: %d\n",
+> > +			       i, err);
+> > +			goto unlock_folio;
+> > +		}
+> 
+> When shmem_inode_acct_blocks() fails here, the folio has already been
+> added to the page cache by shmem_add_to_page_cache(). Should the folio be
+> removed from the page cache before going to unlock_folio?
+> 
+> Looking at shmem_alloc_and_add_folio() in mm/shmem.c, when
+> shmem_inode_acct_blocks() fails after the folio has been added, it calls
+> filemap_remove_folio() to remove it:
+> 
+>     error = shmem_inode_acct_blocks(inode, pages);
+>     if (error) {
+>         ...
+>         if (error) {
+>             filemap_remove_folio(folio);
+>             goto unlock;
+>         }
+>     }
+> 
+> Without this, the folio remains in the page cache (counted in
+> mapping->nrpages) but info->alloced is not incremented (since
+> shmem_recalc_inode is not called). This could cause shmem accounting
+> inconsistency.
+ 
+My understanding that if anything fails in memfd_luo_retrieve_folios() the
+file is destroyed anyway and the accounting wouldn't matter.
 
-> On Wed, 14 Jan 2026 at 16:37, Christian Brauner <brauner@kernel.org> wrot=
-e:
->>
->> On Wed, Jan 14, 2026 at 03:53:37PM +0100, Miklos Szeredi wrote:
->> > This mini series fixes issues with the stale dentry cleanup patches ad=
-ded
->> > in this cycle.  In particular commit ab84ad597386 ("fuse: new work que=
-ue to
->> > periodically invalidate expired dentries") allowed a race resulting in=
- UAF.
->> >
->> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->> > ---
->>
->> Do you want me to route those via vfs.fixes?
->
-> Yes, please.
->
->> Btw, the Link: you provided in the first patch points to nothing on lore.
->
-> It works for me.  How can that happen?
+But to be on the safe side we should fix the error handling here.
+@Pratyush, what do you say?
 
-Yikes!  I totally missed that discussion (the link works for me too btw).
-I remember seeing the fuse pull request for 6.19 but not the discussion
-that followed.
-
-I'm still reading through that thread, but these patches look sensible.
-Thanks a lot for fixing these issues, Miklos!
-
-Cheers,
---=20
-Lu=C3=ADs
+-- 
+Sincerely yours,
+Mike.
 
