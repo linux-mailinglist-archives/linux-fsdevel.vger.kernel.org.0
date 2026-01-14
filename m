@@ -1,91 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-73775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B598D20234
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 17:17:21 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2B6D201F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 17:15:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 7EEF530161E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 16:14:37 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 7057C300A79F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 16:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0653A1E64;
-	Wed, 14 Jan 2026 16:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F8E3A35A5;
+	Wed, 14 Jan 2026 16:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVMDyZrD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T7kr3TH5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF8F3A1A2B;
-	Wed, 14 Jan 2026 16:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899E53A1E6F;
+	Wed, 14 Jan 2026 16:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768407275; cv=none; b=T/UuuVVtWhyn5/bJA/c98lA+TXV8AN8PzsMJejadiMj65d4vGAA4Mm0qAGar36H+NlgLonQIvOBI/TrpTSQjpMOwSytmhDW21mz9/mErWKWFk8xLon6lzbI+C/zVoxam8mFB9283mRuvbdV9M4e96tK4MCeiI2cZbHro0Q0/rnI=
+	t=1768407317; cv=none; b=mL29Iy9mkHemdGekey0Y8bDTwuoDOSqj+C+ww3Wm1QtvYhoBr06HcLQfW3p+976VpYaCS8vfJ/MFI4+7mKx/jt2FfU6l+Ry4cOm6/Hgj0/SMgH5VERXTV14/b2uFPnoOHWPw/O1Uu50AkaT5rb5GylIJBhUFNiGv6yRUdlOV9rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768407275; c=relaxed/simple;
-	bh=W1jYo763i1aFlR8wYqpGFkD1e7V8qWDCB9eJbLX3G+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pTshU6J75+iHmmzJVURrF0rtWOqlioB/wWWHQCyVtcrmkuMNIf0Zm504KCUkZT+JYM6t1kiC0BT6lCYXKfDp85Saq/N/hGm5kjbZQCNYjocmSjHHlYiyCox1so59OD5K/AJ4pxzC/+CYPN9UtZCMks7W54NgtLrCsmsRQHorZdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVMDyZrD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B58DC4CEF7;
-	Wed, 14 Jan 2026 16:14:33 +0000 (UTC)
+	s=arc-20240116; t=1768407317; c=relaxed/simple;
+	bh=xxSoV+yyVboiMCzis/a8clEBZUeKrIPyC+H4oUFWIyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SRVfX3ibJFMfqpmqRMWK8tq2aufmSd5Z+25gyW7RS6vUkTf/QHHWgZpx0MfqvAEyFnozFmGk8h0x9PU9Xt6GV6ujwG26/XvNbva06bh1dZnvvor4PL0GMl1dXUNwVeIO7+6SO65Bv5yjSdaTP4YL1pQmuIgfgKdiDrKrVVi/gjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T7kr3TH5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AC88C4CEF7;
+	Wed, 14 Jan 2026 16:15:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768407275;
-	bh=W1jYo763i1aFlR8wYqpGFkD1e7V8qWDCB9eJbLX3G+s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TVMDyZrDIRWw1dw3GoeZsk7uZjnjZdP+kkYatTZk7BCUkjXOMpxaArRd2lImQkHao
-	 nOZmBZqaq2ZQSdI9zl09YsyMUeXDZDOaMsnvlDSxPIpA/oVR8VplAmCKrfZHVX5SKI
-	 7PrtfLCl4THL/LZqIpPZBBkU44p5nR9iZ5WPIv/tui3vl692FrrJU8WgK/knHm8JsJ
-	 b7JlSUO0jnPjIPRs4wInwXIcHM13MiBZ6frI0juw0AH0dHRHqfJX7x85mvEgUqTtuC
-	 vOfXq9E6nGUR4vddEsdxLkCHmMl8H0bcB3ve6SewWP6x8GPBXMVDzLYix/CZ5IgB9r
-	 8pANJQNiK0Crg==
+	s=k20201202; t=1768407317;
+	bh=xxSoV+yyVboiMCzis/a8clEBZUeKrIPyC+H4oUFWIyY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T7kr3TH5bldd1edzHjx//e957/pF3NDF/A7Cyw/wRkqvtHAc0e6BjvkDpOhuxMypE
+	 WuXlYBi66kvAlL+cRUZYs8Mvf+MtAKDfIv2YXaUYtuqkQB2GSvgXWuqX73hlnRlARv
+	 lEyHmM6+5dxAf/toJgDiU8HSS4nMiEiwx2dXCR4ITCHq1T1eDzfnRrA3k/JCXXfyw9
+	 dGxSxIEroDOmSyVHlvaN5j3MkLElrLsQIxXIkU+iD+fGJ4kNhI8IwvAUR4cVBOIQAp
+	 30scBqQ2GTQP8lb499Uh506v/KfAlxe3wfTTgwOMs0M0ecmABJfNlScXI0exxKssmn
+	 1qbND0Q6w0OEA==
+Date: Wed, 14 Jan 2026 17:15:13 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Zhao Mengmeng <zhaomzhao@126.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	zhaomengmeng@kylinos.cn,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz
-Subject: Re: [vfs/vfs.all PATCH] writeback: use round_jiffies_relative for dirtytime_work
-Date: Wed, 14 Jan 2026 17:14:19 +0100
-Message-ID: <20260114-endet-umgewandelt-a639352d24d7@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260113082614.231580-1-zhaomzhao@126.com>
-References: <20260113082614.231580-1-zhaomzhao@126.com>
+To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Zhiyu Zhang <zhiyuzhang999@gmail.com>, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Subject: Re: [PATCH] fat: avoid parent link count underflow in rmdir
+Message-ID: <20260114-bestzeit-sparen-9f4247ba30f7@brauner>
+References: <20260101111148.1437-1-zhiyuzhang999@gmail.com>
+ <87secph8yi.fsf@mail.parknet.co.jp>
+ <87ms2idcph.fsf@mail.parknet.co.jp>
+ <CALf2hKu=M8TALyqv=Tv9Vu98UKUcFjWix1n5D9raMKYqqZtY5A@mail.gmail.com>
+ <20260112095230.167359094e9c48577b387e18@linux-foundation.org>
+ <87cy3ed7c9.fsf@mail.parknet.co.jp>
+ <20260112103959.e5e956cd0d8b6f904e21827a@linux-foundation.org>
+ <20260113-rammen-unsinn-d9d5929ca2a0@brauner>
+ <87y0m1bzax.fsf@mail.parknet.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1055; i=brauner@kernel.org; h=from:subject:message-id; bh=W1jYo763i1aFlR8wYqpGFkD1e7V8qWDCB9eJbLX3G+s=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmH3i20tDnb+3Pu9nPomTW8oavd2A4eLabTVSi9lFbx PZFxTrLO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaiIsLwT3mnZD3vmfPFZUdW x/HEckkoOvQZs+b6rGoRmFzTe10zlOG/z+M1O69MnPI9yOwZzylJE33F6PMffmrf/mj+LDfq0sp HTAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87y0m1bzax.fsf@mail.parknet.co.jp>
 
-On Tue, 13 Jan 2026 16:26:14 +0800, Zhao Mengmeng wrote:
-> The dirtytime_work is a background housekeeping task that flushes dirty
-> inodes, using round_jiffies_relative() will allow kernel to batch this
-> work with other aligned system tasks, reducing power consumption.
+On Tue, Jan 13, 2026 at 07:08:06PM +0900, OGAWA Hirofumi wrote:
+> Christian Brauner <brauner@kernel.org> writes:
 > 
+> > On Mon, Jan 12, 2026 at 10:39:59AM -0800, Andrew Morton wrote:
+> >> On Tue, 13 Jan 2026 03:16:54 +0900 OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> wrote:
+> >> 
+> >> > Andrew Morton <akpm@linux-foundation.org> writes:
+> >> > 
+> >> > > On Tue, 13 Jan 2026 01:45:18 +0800 Zhiyu Zhang <zhiyuzhang999@gmail.com> wrote:
+> >> > >
+> >> > >> Hi OGAWA,
+> >> > >> 
+> >> > >> Sorry, I thought the further merge request would be done by the maintainers.
+> >> > >> 
+> >> > >> What should I do then?
+> >> > >
+> >> > > That's OK - I have now taken a copy of the patch mainly to keep track
+> >> > > of it.  It won't get lost.
+> >> > >
+> >> > > I thought Christian was handling fat patches now, but perhaps that's a
+> >> > > miscommunication?
+> >> > 
+> >> > Hm, I was thinking Andrew is still handling the fat specific patch, and
+> >> > Christian is only handling patches when vfs related.
+> >> > 
+> >> > Let me know if I need to do something.
+> >> 
+> >> OK, thanks, seems I misremembered.
+> >
+> > I prefer to take anything that touches fs/ - apart from reasonable
+> > exceptions - to go through vfs tree. So I would prefer to take this
+> > patch.
 > 
+> OK. I will add you to To: (with Acked-by) instead of Andrew next time?
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] writeback: use round_jiffies_relative for dirtytime_work
-      https://git.kernel.org/vfs/vfs/c/e93b31d08162
+Yes please. Thank you!
 
