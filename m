@@ -1,125 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-73596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C79D1C89D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:05:49 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EBFD1C910
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:19:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id BEBA330A77F7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 04:37:14 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7BDEF3048BB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 04:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE18352C3B;
-	Wed, 14 Jan 2026 04:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E8932B997;
+	Wed, 14 Jan 2026 04:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="q6eDnMVG"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z1hVU+SL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD29328626;
-	Wed, 14 Jan 2026 04:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3370314A61;
+	Wed, 14 Jan 2026 04:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768365122; cv=none; b=Bg67TuEXD5LGXNcAGMR4DnxjoTwHVNWmZT/8UYGLloQzISSh1a+WAdeItCgijLWh+OueSgh8YDRr6GuYoE3+PDG/VjjU/m3FMtmt/8m6AOZwR2zsdje6rw0LwQMfjwsHB/oZZ8uKVBVKdNE944rTtOVrN1SeV0Vfq+WTnhdHWUQ=
+	t=1768366208; cv=none; b=EczAl0qwSfBn7iwjAh9pO1wixFJvhe1zuh+oEr3c1Mqr8vwzgzk+2XJez3vob8BlUL/eKPKPpA7c/3uEMMQ7N9+pUAfaCVAhJVLQdcGxjOQNWBV6l+0Ne75bT8qFvH/rNcm/+ycLG7lC+QOdxqJAX/jENmCLWZI70nsK8DbANWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768365122; c=relaxed/simple;
-	bh=D/4Kpd2bYKbkRLQSN5eQLKG4OXd7jN3AcvumkEOaeMI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s/VEe1u73YcJaWBN+a11tKwHE5Xom/gtW5Oph+uSbJ75hA2R0gZD4mfFqNutESQCW5sNfBiqqs36Fs6qJs2sNpUkCFQTufBRSQlzD4zIvU6w+YItJZHKaj8Liz5XpBi0cPGpXGOpaAnJgacRJOdfTCxHxxzRtdIZjZoLA9Ws0kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=q6eDnMVG; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1768366208; c=relaxed/simple;
+	bh=zV4f8H5Axw5y7PX5oxaqR32N7N6x1IHRZCt4jHST8rM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XtgIz8QKmXKPSk7EW+9uYjTJ6037hVFyTv43tcXnsjev8W2qsjBIAadW9FjxYkNXcPSmFpI0UUU6MyAoaQ7Ep2njc90riG7e/m0VXfdVowagvcX6Zj1SmTVp84WYiUWJ3VbKekTxK0xFs4z2GLVssHpySdA6wEiMfGqG9kVi44s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z1hVU+SL; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=yl4N9qiPKC+robz7RIG19DtsqLRtLo4jXB61e6cJSfg=; b=q6eDnMVGCue82S/H/esM2+3jZc
-	6KBSWimbIIsHZFZvq/DkOP5nJeUWVRYSV7mXQzPMcxXaaBZzjw15Rd6HDR7BoBvd2eAAk3TrddjSG
-	9KMeRzO2odb+BjUR9XFGAVioYH5P+6Joc9Xys2gX4k3PVA26jSpgtPAycQjWPsyq7MnFdAbJl94eZ
-	gmHoL3Kv4bqh5ZaLy79mLaADD71yO3CKyK76HI8YrONkydr+f5dVlTLDiKJt3ih8xAoclS+xZGfx0
-	iNDQQX5v+5KkYmpKSELOf7eZ0r1E+YWbYMYQCsuHqy7WFhPa060UwuHhkKf/XNrs4+s4dZaa4SM/7
-	tWBZqHsQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
-	id 1vfsZO-0000000GJ0O-2VGS;
-	Wed, 14 Jan 2026 04:33:22 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	audit@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 66/68] ksmbd: use CLASS(filename_kernel)
-Date: Wed, 14 Jan 2026 04:33:08 +0000
-Message-ID: <20260114043310.3885463-67-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260114043310.3885463-1-viro@zeniv.linux.org.uk>
-References: <20260114043310.3885463-1-viro@zeniv.linux.org.uk>
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IP+nt6hD0O0/EB/beIlzLBVMr0+7HCcw1mvVyCPM45Q=; b=Z1hVU+SLBG8v7sqGjxR4xeQ465
+	hc5v85RX/6rCGtnSrQMmEqmVEyKWmM4r3vF3AMUSbHCDU7CtEP3vRKm2HX/RY5hN5EQ30WZeG40aP
+	DnOdqEecPyxP3Rk0DmGeXAi3aq+zbfoSdl+HmdvqiahuWuWhsebbk2tnFOgf07wA82krGjC34YxZW
+	3mcpKVrhEJ8R31k1uESVNM58sfp3Y8iEgIAxgCIyxFIbdSUVhlgriXxPhY3/Mlj65E+Fd4wiX9cK/
+	0bgbMprLAYZIrh9gCBbPcLFdKVGVt9nL+dfKE6LieLD4FhxzhmhlbHoWFh7q77WKAi0tW9Oilr9UW
+	lGz8ZMng==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vfspK-00000005hRc-3fQF;
+	Wed, 14 Jan 2026 04:49:50 +0000
+Date: Wed, 14 Jan 2026 04:49:50 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
+	linux-xfs@vger.kernel.org, ebiggers@kernel.org,
+	linux-fsdevel@vger.kernel.org, aalbersh@kernel.org,
+	david@fromorbit.com
+Subject: Re: [PATCH v2 4/22] iomap: allow iomap_file_buffered_write() take
+ iocb without file
+Message-ID: <aWcgbov1FmPTO2LD@casper.infradead.org>
+References: <cover.1768229271.patch-series@thinky>
+ <kibhid6bipmrndfn774tlbm6wcitya5qydhjws3n6tnjvbd4a3@bui63p535b3q>
+ <20260112222215.GJ15551@frogsfrogsfrogs>
+ <20260113081535.GC30809@lst.de>
+ <aWZ2RL3oBQGUmLvF@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aWZ2RL3oBQGUmLvF@casper.infradead.org>
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/smb/server/vfs.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+On Tue, Jan 13, 2026 at 04:43:48PM +0000, Matthew Wilcox wrote:
+> On Tue, Jan 13, 2026 at 09:15:35AM +0100, Christoph Hellwig wrote:
+> > On Mon, Jan 12, 2026 at 02:22:15PM -0800, Darrick J. Wong wrote:
+> > > > +		iter.inode = iocb->ki_filp->f_mapping->host;
+> > > > +	} else {
+> > > > +		iter.inode = (struct inode *)private;
+> > > 
+> > > @private is for the filesystem implementation to access, not the generic
+> > > iomap code.  If this is intended for fsverity, then shouldn't merkle
+> > > tree construction be the only time that fsverity writes to the file?
+> > > And shouldn't fsverity therefore have access to the struct file?
+> > 
+> > It's not passed down, but I think it could easily.
+> 
+> willy@deadly:~/kernel/linux$ git grep ki_filp |grep file_inode | wc
+>     109     575    7766
+> willy@deadly:~/kernel/linux$ git grep ki_filp |wc
+>     367    1920   23371
+> 
+> I think there's a pretty strong argument for adding ki_inode to
+> struct kiocb.  What do you think?
 
-diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index 30b65b667b96..523bc7f942ad 100644
---- a/fs/smb/server/vfs.c
-+++ b/fs/smb/server/vfs.c
-@@ -54,7 +54,6 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_config *share_conf,
- 				 struct path *path, bool for_remove)
- {
- 	struct qstr last;
--	struct filename *filename __free(putname) = NULL;
- 	const struct path *root_share_path = &share_conf->vfs_path;
- 	int err, type;
- 	struct dentry *d;
-@@ -66,7 +65,7 @@ static int ksmbd_vfs_path_lookup(struct ksmbd_share_config *share_conf,
- 		flags |= LOOKUP_BENEATH;
- 	}
- 
--	filename = getname_kernel(pathname);
-+	CLASS(filename_kernel, filename)(pathname);
- 	err = vfs_path_parent_lookup(filename, flags,
- 				     path, &last, &type,
- 				     root_share_path);
-@@ -664,7 +663,6 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
- 	struct path new_path;
- 	struct qstr new_last;
- 	struct renamedata rd;
--	struct filename *to;
- 	struct ksmbd_share_config *share_conf = work->tcon->share_conf;
- 	struct ksmbd_file *parent_fp;
- 	int new_type;
-@@ -673,7 +671,7 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
- 	if (ksmbd_override_fsids(work))
- 		return -ENOMEM;
- 
--	to = getname_kernel(newname);
-+	CLASS(filename_kernel, to)(newname);
- 
- retry:
- 	err = vfs_path_parent_lookup(to, lookup_flags | LOOKUP_BENEATH,
-@@ -732,7 +730,6 @@ int ksmbd_vfs_rename(struct ksmbd_work *work, const struct path *old_path,
- 		goto retry;
- 	}
- out1:
--	putname(to);
- 	ksmbd_revert_fsids(work);
- 	return err;
- }
--- 
-2.47.3
+Regardless of this, I think it's an architectural mistake to not have
+struct file available for reading fsverity metadata.  We do have it in
+fsverity_ioctl_read_metadata but we don't have it in verify_bh().
 
+But reading the merkel tree block from the verify_bh() completion handler
+is bad for performance anyway.  We should submit the metadata reads at
+the same time we submit the data reads.  And there, we would have the
+struct file.
+
+If we ever have ambitions to support merkel trees on network filesystems,
+we'll need to figure out some way to pass the struct file in, so maybe
+we should just bite the bullet and do this now?
 
