@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-73623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 374A4D1CE65
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 08:42:40 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id B86E7D1CE6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 08:42:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id A3EE83015AC3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 07:42:27 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 5E3E33019B9D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 07:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7A237A492;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0E637BE65;
 	Wed, 14 Jan 2026 07:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0b5LLbjH"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CkoxT4l0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43263328B6A;
-	Wed, 14 Jan 2026 07:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AF735FF41;
+	Wed, 14 Jan 2026 07:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768376528; cv=none; b=Ty3zksWkZrkvOU4XbvlICgnhYdUBo4pG3mA50xqGWBaDnGWfcNMD69rD4gpRfS//zpLjRVog2p7/UXLDtRVgcNSYiMZ6p25hI3i99Ut0Z4hoZXMI3LNH38/z6YQQ4RDACRkTRJ8RQpo9UKXSbRasz9dbC1PR6Msco77omG8dUtc=
+	t=1768376529; cv=none; b=DvrF17mophDzirXLscQbZKFcMhfHYrPDl8IDAL80x++ykF9HvgKPz+SdQ2sslUhGFV/XWEDir1aoHjuAQK5yS57mI1l+UISXjxGVeZ1/9zCYVdEgqt4L9kwLWQ2Z7qaNAE6CQQuY0Z6M0Gb9hih4XZV6NtJysd4AquN2SA43bBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768376528; c=relaxed/simple;
-	bh=maB5/GPSmi2l7kagwVdpBl9mnqgF2594JGrtgDOb4x0=;
+	s=arc-20240116; t=1768376529; c=relaxed/simple;
+	bh=3QI2OO74LcnVbEedP0aMj12D2ZfFiFKrrb/nAJ0+f7E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jEvej3mtL5a3+HTLjFP1hpUQ1PZ5mn35IqSCDHYE2ghbw24X4bc+7vr0CJ4DOvLuZmxENK8Nm1C4zIsx3IYdHM1TgClUPzqcdUKtKn5+mIC1xNi5nMd1xixcZjWbteYkOz3d6ej0T3Jj1VHfdKfAC3hZW3fs6Zn6wUWEqFOAtSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0b5LLbjH; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=tArt4QFjmZzoL8v4nsxnRY2+hwkfBiFMgW7QhZdLjAdacPbNKiIBO/IYG2SoA2L7DgMy3AoPnh9qMduYERm6UJdIiXZS5bohEj+MvartwvtCKOy8u6/+UoMzpITfClGdmAB3OPprbzxC6uzlHNZwFwO1Ppq3vQhm4aYEKWlxEfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CkoxT4l0; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=7Ut16tkEOCcj980qUp1bVamKVu6n2WjZb4ANJhSlfn0=; b=0b5LLbjHhYehh/qe0EKKId5qex
-	KK3lM/ACGyK1KSGh6cjhotCiJNWn7VzhZDYK1zCCxZEVyDL0BQyYBgKu06H5T5ZGyMVJyciSSZjSn
-	i6iagCoFovSAxSq78ZIkOGm58LAS7dhegFBQKuf672eJus2L2tdKCVQ3rLIULmK3Kb5IUTInn3UPC
-	IjB49yu+JojKRM5SriLPlP3lo+Oe/Q5JjHr286dtpMl0eV0P2ZKOudT49+fUId5WkUxF8ZQ+KRuS5
-	IY6vHx+qt9wYige0SSB/z4vqE9cwTMoR7gB9FUwJ8nEU9x7c8phzXoHE3YljIQKC5tV8TnFUO02zJ
-	5YZ21gTg==;
+	bh=xhB7qOXlkIRSnyXgwM2xYIn6O20yDEwPG+xHcKOTJb8=; b=CkoxT4l0D7vsNGv3IEQ4D+8oLq
+	aZOhLbLNlWWO7jQYen9htChc2L3OsMKzEfPUlAYE1WSxyN6+yMo4yuPPU1swkKBnCC8gkgyZCSJK+
+	pNcIVYBgKPmiQcwEsAECmUrFTQzOuU5NqCWuKAD1zjK2TRo/RWzdQ44+ZsS7iznJM+WOq8B13u1am
+	QQtsaMB2AmS6oRMF+awEeh7+wTDQaQ4A89D84hKDtsOKiTluWdOyAjB6UNw7dKrhz2/XodjGDxFLP
+	sqX8e6AIBTRKn18Fi/QCfvuIojmZ3UhvNmWg9kZBzjZ00TlimRNfj4wJGZQILG0UpsLHzIMnr4RAh
+	ck/0DnRg==;
 Received: from 85-127-106-146.dsl.dynamic.surfer.at ([85.127.106.146] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vfvVq-00000008DmT-2rQR;
-	Wed, 14 Jan 2026 07:41:57 +0000
+	id 1vfvVy-00000008Dnu-2jG2;
+	Wed, 14 Jan 2026 07:42:03 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>,
 	Christian Brauner <brauner@kernel.org>
@@ -53,9 +53,9 @@ Cc: "Darrick J. Wong" <djwong@kernel.org>,
 	linux-block@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 01/14] block: refactor get_contig_folio_len
-Date: Wed, 14 Jan 2026 08:40:59 +0100
-Message-ID: <20260114074145.3396036-2-hch@lst.de>
+Subject: [PATCH 02/14] block: open code bio_add_page and fix handling of mismatching P2P ranges
+Date: Wed, 14 Jan 2026 08:41:00 +0100
+Message-ID: <20260114074145.3396036-3-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260114074145.3396036-1-hch@lst.de>
 References: <20260114074145.3396036-1-hch@lst.de>
@@ -68,121 +68,110 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Move all of the logic to find the contigous length inside a folio into
-get_contig_folio_len instead of keeping some of it in the caller.
+bio_add_page fails to add data to the bio when mixing P2P with non-P2P
+ranges, or ranges that map to different P2P providers.  In that case
+it will trigger that WARN_ON and return an error up the chain instead of
+simply starting a new bio as intended.  Fix this by open coding
+bio_add_page and handling this case explicitly.  While doing so, stop
+merging physical contiguous data that belongs to multiple folios.  While
+this merge could lead to more efficient bio packing in some case,
+dropping will allow to remove handling of this corner case in other
+places and make the code more robust.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/bio.c | 62 +++++++++++++++++++++++------------------------------
- 1 file changed, 27 insertions(+), 35 deletions(-)
+ block/bio.c | 37 +++++++++++++------------------------
+ 1 file changed, 13 insertions(+), 24 deletions(-)
 
 diff --git a/block/bio.c b/block/bio.c
-index e726c0e280a8..e22b7cf9b2bc 100644
+index e22b7cf9b2bc..48d9f1592313 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -1169,33 +1169,35 @@ void bio_iov_bvec_set(struct bio *bio, const struct iov_iter *iter)
- 	bio_set_flag(bio, BIO_CLONED);
- }
- 
--static unsigned int get_contig_folio_len(unsigned int *num_pages,
--					 struct page **pages, unsigned int i,
--					 struct folio *folio, size_t left,
-+static unsigned int get_contig_folio_len(struct page **pages,
-+					 unsigned int *num_pages, size_t left,
- 					 size_t offset)
+@@ -1213,7 +1213,7 @@ static unsigned int get_contig_folio_len(struct page **pages,
+  * For a multi-segment *iter, this function only adds pages from the next
+  * non-empty segment of the iov iterator.
+  */
+-static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
++static ssize_t __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
  {
--	size_t bytes = left;
--	size_t contig_sz = min_t(size_t, PAGE_SIZE - offset, bytes);
--	unsigned int j;
-+	struct folio *folio = page_folio(pages[0]);
-+	size_t contig_sz = min_t(size_t, PAGE_SIZE - offset, left);
-+	unsigned int max_pages, i;
-+	size_t folio_offset, len;
-+
-+	folio_offset = PAGE_SIZE * folio_page_idx(folio, pages[0]) + offset;
-+	len = min(folio_size(folio) - folio_offset, left);
- 
- 	/*
--	 * We might COW a single page in the middle of
--	 * a large folio, so we have to check that all
--	 * pages belong to the same folio.
-+	 * We might COW a single page in the middle of a large folio, so we have
-+	 * to check that all pages belong to the same folio.
- 	 */
--	bytes -= contig_sz;
--	for (j = i + 1; j < i + *num_pages; j++) {
--		size_t next = min_t(size_t, PAGE_SIZE, bytes);
-+	left -= contig_sz;
-+	max_pages = DIV_ROUND_UP(offset + len, PAGE_SIZE);
-+	for (i = 1; i < max_pages; i++) {
-+		size_t next = min_t(size_t, PAGE_SIZE, left);
- 
--		if (page_folio(pages[j]) != folio ||
--		    pages[j] != pages[j - 1] + 1) {
-+		if (page_folio(pages[i]) != folio ||
-+		    pages[i] != pages[i - 1] + 1)
- 			break;
--		}
- 		contig_sz += next;
--		bytes -= next;
-+		left -= next;
- 	}
--	*num_pages = j - i;
- 
-+	*num_pages = i;
- 	return contig_sz;
- }
- 
-@@ -1219,8 +1221,8 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 	struct bio_vec *bv = bio->bi_io_vec + bio->bi_vcnt;
- 	struct page **pages = (struct page **)bv;
+ 	iov_iter_extraction_t extraction_flags = 0;
+ 	unsigned short nr_pages = bio->bi_max_vecs - bio->bi_vcnt;
+@@ -1223,7 +1223,6 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
  	ssize_t size;
--	unsigned int num_pages, i = 0;
--	size_t offset, folio_offset, left, len;
-+	unsigned int i = 0;
-+	size_t offset, left, len;
- 	int ret = 0;
+ 	unsigned int i = 0;
+ 	size_t offset, left, len;
+-	int ret = 0;
  
  	/*
-@@ -1241,23 +1243,12 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 		return size ? size : -EFAULT;
+ 	 * Move page array up in the allocated memory for the bio vecs as far as
+@@ -1244,37 +1243,26 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
  
  	nr_pages = DIV_ROUND_UP(offset + size, PAGE_SIZE);
--	for (left = size, i = 0; left > 0; left -= len, i += num_pages) {
--		struct page *page = pages[i];
--		struct folio *folio = page_folio(page);
-+	for (left = size; left > 0; left -= len) {
- 		unsigned int old_vcnt = bio->bi_vcnt;
-+		unsigned int nr_to_add;
+ 	for (left = size; left > 0; left -= len) {
+-		unsigned int old_vcnt = bio->bi_vcnt;
+ 		unsigned int nr_to_add;
  
--		folio_offset = ((size_t)folio_page_idx(folio, page) <<
--			       PAGE_SHIFT) + offset;
--
--		len = min(folio_size(folio) - folio_offset, left);
--
--		num_pages = DIV_ROUND_UP(offset + len, PAGE_SIZE);
--
--		if (num_pages > 1)
--			len = get_contig_folio_len(&num_pages, pages, i,
--						   folio, left, offset);
--
--		if (!bio_add_folio(bio, folio, len, folio_offset)) {
-+		len = get_contig_folio_len(&pages[i], &nr_to_add, left, offset);
-+		if (!bio_add_page(bio, pages[i], len, offset)) {
- 			WARN_ON_ONCE(1);
- 			ret = -EINVAL;
- 			goto out;
-@@ -1272,8 +1263,9 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 			 * single pin per page.
- 			 */
- 			if (offset && bio->bi_vcnt == old_vcnt)
--				unpin_user_folio(folio, 1);
-+				unpin_user_folio(page_folio(pages[i]), 1);
+-		len = get_contig_folio_len(&pages[i], &nr_to_add, left, offset);
+-		if (!bio_add_page(bio, pages[i], len, offset)) {
+-			WARN_ON_ONCE(1);
+-			ret = -EINVAL;
+-			goto out;
+-		}
++		if (bio->bi_vcnt > 0) {
++			struct bio_vec *prev = &bio->bi_io_vec[bio->bi_vcnt - 1];
+ 
+-		if (bio_flagged(bio, BIO_PAGE_PINNED)) {
+-			/*
+-			 * We're adding another fragment of a page that already
+-			 * was part of the last segment.  Undo our pin as the
+-			 * page was pinned when an earlier fragment of it was
+-			 * added to the bio and __bio_release_pages expects a
+-			 * single pin per page.
+-			 */
+-			if (offset && bio->bi_vcnt == old_vcnt)
+-				unpin_user_folio(page_folio(pages[i]), 1);
++			if (!zone_device_pages_have_same_pgmap(prev->bv_page,
++					pages[i]))
++				break;
  		}
-+		i += nr_to_add;
++
++		len = get_contig_folio_len(&pages[i], &nr_to_add, left, offset);
++		__bio_add_page(bio, pages[i], len, offset);
+ 		i += nr_to_add;
  		offset = 0;
  	}
  
+ 	iov_iter_revert(iter, left);
+-out:
+ 	while (i < nr_pages)
+ 		bio_release_page(bio, pages[i++]);
+-
+-	return ret;
++	return size - left;
+ }
+ 
+ /*
+@@ -1334,7 +1322,7 @@ static int bio_iov_iter_align_down(struct bio *bio, struct iov_iter *iter,
+ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter,
+ 			   unsigned len_align_mask)
+ {
+-	int ret = 0;
++	ssize_t ret;
+ 
+ 	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
+ 		return -EIO;
+@@ -1347,9 +1335,10 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter,
+ 
+ 	if (iov_iter_extract_will_pin(iter))
+ 		bio_set_flag(bio, BIO_PAGE_PINNED);
++
+ 	do {
+ 		ret = __bio_iov_iter_get_pages(bio, iter);
+-	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
++	} while (ret > 0 && iov_iter_count(iter) && !bio_full(bio, 0));
+ 
+ 	if (bio->bi_vcnt)
+ 		return bio_iov_iter_align_down(bio, iter, len_align_mask);
 -- 
 2.47.3
 
