@@ -1,231 +1,267 @@
-Return-Path: <linux-fsdevel+bounces-73728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19F7D1F588
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:16:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8437FD1F655
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:23:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1F764301EF98
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:14:37 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E6BBF3042298
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBBE2D7DD3;
-	Wed, 14 Jan 2026 14:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905FD2E1F02;
+	Wed, 14 Jan 2026 14:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATDvkPvs"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HHqfcaHC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354272D661C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 14:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1EB2D8764
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 14:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768400073; cv=none; b=LHdA/AW073Sv2WwTz1hQcc+2wJHd/7cb858Undl+5mmC66cXOA8WtOgyXPvGDveTL3IA7pNAw++CgXBaO99o+TMJecFy4K3b/KXA1FzhJ1fBgO2RivTeJ2n0mtajXeCJZr10YTgi90Hc3eZannKUxW66qGH6qfea3Gpj2ncRT9g=
+	t=1768400586; cv=none; b=PpNLYeyDU41+Mop6/IGhSY22wKbNQN/3wyAIbEaIWt1jMpZePPC0CaUAaHThtA6xKXm/hCWlYUjnA7NyjToXqwFM58wPjLtQzaw3BSLBs5LXwJm6YJxAlOSv0DqCse3IohSlK39ic/zVqmNEXqtRYO209WLfmpY4HEP7Cb3goR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768400073; c=relaxed/simple;
-	bh=EVxOIndNclLVBz66EPG+/56lwGCRWQUQFbefqx9zJEA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p/IZ8TfJN94OGLCruBOAR2wW0dvl7f+kNLJIKC2EexWioOAzszDED6AKNCvuVlZwLFcEU7BacD4NcIo2LMkUPFPpLtMhqWDEfN+9GEnk5TIvRNWhuotM4ifw6GOqPFAQTWa4MRRajnmAlpCvhxpTybajMCC3PA8p6mSyYlThj+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATDvkPvs; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6505d3adc3aso13498761a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 06:14:28 -0800 (PST)
+	s=arc-20240116; t=1768400586; c=relaxed/simple;
+	bh=DfrdswblHy1q9UZ6D1iDapX7djYN6NrxRY58tdu4Ov8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bjAWIShbQTOt8pFlr6f+G7GO0w/qpP2EJrjBBrDZLfV1DCVsoNAdqx6ba/UEl5wdmt+SrL5EK2jylcDJysqDhpxSprhpwWMKsSI9nvK3hMZ13NEHLVlmDeoB348nmXHgnnBItHtzNw6xuOlJz0NmswkevuF96QftVdySl4V6qH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HHqfcaHC; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-47ee301a06aso8892405e9.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 06:23:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768400067; x=1769004867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LXI/JsxBbKF9LcEy7WQN83dkdhDN53l6d1BjVlfpBx8=;
-        b=ATDvkPvsgMJyP3EIhSx+waeN9em7laMQLBeBB3nIO+P3DLVzV5+OaA+5w7ya7SWhN8
-         wxwHQhvJgPAWmt6bUYWUHbmYg+0uA+NXPZ27hecPI96gQRzBbIIMHPS88+NAz+S2onWh
-         IITOWoxVIC/1im6BVMkfcl6YB9fPp9i7tIlNEeE+z1DHFBYIlBTQXnVMON5eCvNh29i2
-         gui/dtbkxpTqMyfBpOA8f7X1MzRlvBCgmW/njxfFa4ST5kIbk7NQ8bL7m07qTToF/Mmq
-         kPMZz0eQcj4/Yi8GH6Zjk8I6SVs2qWA0kbfAyllVjXHX6l8TuerIvVK9OcJa+huOZOJx
-         fxlw==
+        d=suse.com; s=google; t=1768400583; x=1769005383; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rjJ0doliNf6plVmMYQkV7IlLiBwqr6x+viyB7m/anSs=;
+        b=HHqfcaHCDZ4C/25aiu2LLUMRB6a3JGJWGhQfFT6QaEtcdkNlMy33Eg5S1g6VGmzYXo
+         hpfCXuvsZWvysbszR52KoZ2Hm1zuNEeCpDbVwfZG4XIIepu7J6DwkkZTdV4+WvGZUfb2
+         J50i9CArQzRD7a32Tos9uS2iTNN+n78n5NdtroiOypIe6+cM2D5E/4P5BmzBG0Y1OMZi
+         TF2vHM81yG5bimXpDBncf/8rbHqG0I7eJ966s7d0iQ2MM9s31pdW7eDgXOSxl6kdp6c/
+         Y/on+swJawD0gJ25otHcu9wX57o6bpwey1K2T1Em/Ha1Hnr4ql+oU5YXD54Y+M9nX783
+         +Gyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768400067; x=1769004867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=LXI/JsxBbKF9LcEy7WQN83dkdhDN53l6d1BjVlfpBx8=;
-        b=k65D37/DNORntMqnEW/JOStdP6tvTJItj+DY+EVRHWhm76VBakOMg97LaIPBLK+95K
-         2FTK4xbzgfCMxhendpfqFIMDG0A2fAu16Dcn3g5v7rHU9qWiS3Yc+X+MLT+P4aoVY+I1
-         gVgrZE+fGsJI509hlS/20FzOnYlXMkSWntz7SYd02bJ0wsH9IRxi+dB6+1vMboHfLk2w
-         Y+tynpWJ1OKGoWzA3M+VynimGJgozBEYfQILI+MaWx3ofPG5+cw7tVpoU1wMZY3rZUTB
-         1J37WbJ5qoV7cerGLOdgVVvX5kJ1TB+v6yN2R6QSlVCfI/Pgt3iaA/4JgV2CHA3nfoDm
-         FPUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwnLdJQ30GgvQBQtqaXWQbx2PnQnLyndFloSw3WRfqt+3StISMd37rMHsA4+qFz7mRu8IcYaYRKRPWXCc1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXLTfh0aO00PElD9KWQjbWSKiHe74LX9zcAZfrsA55yFJRP9IE
-	wWGRihEVdwB3AlIRlbSmODzAwMP7pswg3KnQ/IlO868RolGnQ436kIRizN3V8NatcdgliMDYHyq
-	FmXabfdodpCQ6IA2H+RHfIRvE+/Ock+c=
-X-Gm-Gg: AY/fxX5YMyB2vMtMm30Qzc/2ACoVYFBt4SzWm82EWJfxz9BEB901xBxgr0aR9iEByvL
-	WhAMtfeqzNG1pG66EBSPOZf1J9/C48Shjkf0nZH1e1pHUhG/3PyqxUJbQYuZduOtc+QugKT6d7n
-	YH31Yd/+X6aE9QxL3CbIb2YqKQkYUOCZzqsZjxSPks7bZOL0nAyri0Q6uEj9Y6EVpexQB5bwnP1
-	fzflFQ4OzqBtRmSlON6Ey/UtKNK1TPqN7VbghEE6AclUtXwcna+cc4x1Tt6vU09DBnQlcPjWWUZ
-	HYY4IDFCr+DSrj9nbhz2LVSrOaZdhA==
-X-Received: by 2002:a05:6402:210c:b0:64b:42a6:3946 with SMTP id
- 4fb4d7f45d1cf-653ec10b2c1mr2391600a12.7.1768400066360; Wed, 14 Jan 2026
- 06:14:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1768400583; x=1769005383;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rjJ0doliNf6plVmMYQkV7IlLiBwqr6x+viyB7m/anSs=;
+        b=nLB1J8zHOzPkBg2HlMcIJAZwk/exjaglpfk2Ie3LI2Tp+dAf0UBXt80Hj7CpoJcF+P
+         xcHovFWHQpoVVTtCckXeksuWy7Qgo43ccyc5NoEb6tJyEXWHvtcixJL/wK3P7NJ+4gcU
+         kKP+EXikqb28xzN0kU3W6kONA13/VKiGvRJu7gzaZTmS2n3f5SSCuIwV0hHTR4PMUg0f
+         lT3RnhrGjzDOCt3TxdsFxckDwcQ0V6BoG18ttM2k87eReeRVKFlgVb6ZZlOLbHnVastW
+         JHjQcwP5AQNp/WuktfSyYdyPGR/Ni0SGgrSZbcGw0bsccCtdXA/lQlLM1xeKXubsmZtl
+         Pcbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmv+f4COpe7IrbKgAExSwEjS9vHOu9qSTyjVlHEZ0s5XsFTNdLEapg4aQhliZTb+0WigyyPUerdZYnoYwV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlTrMAUjcsfzi4a3iQjTbMBgY8xQdhjHsg/amDb495z7KAGJ8l
+	olikVdGlMxJ5DTm405jD9NtJMaFW9gCZa48zAP0cWnrpT46rjPFX03Xq/tFV0Y1vNGY=
+X-Gm-Gg: AY/fxX5AQ3VgFhSkNSNNNPodp672LlTwSH0e70hDV2iZQBSFbSicUxFdbJsIr/GlKTa
+	+k45WiWsjyItTMCcmU7pNRJB6goubjHMnonEHSvPP+w4Oh6d90/wh6c52KK08/YIDyR+GCwkmFU
+	WfEz1qjqlIqVQ1vODVvM1HG723fk4yr+5KagAtX26cklqivsurwiOJl7ViGZ0RtWyZSOmN0kcpO
+	piBMtFd45R0wcgeT94A1QDOMrlwKU2ps2/KaiNZEQH5tdORCz1WmLJwiH+gIQE7UcLYHhOk9ul4
+	QXHaB2xqHl77M/ce4DV6f6kjF05FF2/fvbQyf9PCFhiy7YFjKhvHXA/XXnCBdcq9SR3Xfvg54p9
+	VBiW6TxtPXTozwDQCIJ8SLy0uOqbbiSKfj2pMmgSCJdrFY4Ra3MXAj0dV6c2gT9dQr/wBYj5KBO
+	hUYwqXbYAGFomStA==
+X-Received: by 2002:a05:6000:3105:b0:431:104:6dd5 with SMTP id ffacd0b85a97d-4342c5728e2mr3256518f8f.58.1768400582935;
+        Wed, 14 Jan 2026 06:23:02 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd0dacd1sm49446446f8f.4.2026.01.14.06.23.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jan 2026 06:23:02 -0800 (PST)
+Date: Wed, 14 Jan 2026 15:22:59 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Breno Leitao <leitao@debian.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
+	netdev@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-hardening@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 06/19] printk: Introduce register_console_force
+Message-ID: <aWemw2ZCwtAd17I1@pathway.suse.cz>
+References: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
+ <20251227-printk-cleanup-part3-v1-6-21a291bcf197@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
- <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
- <ec78bf021fa1f6243798945943541ba171e337e7.camel@kernel.org>
- <cb5d2da6-2090-4639-ad96-138342bba56d@oracle.com> <ce700ee20834631eceededc8cd15fc5d00fee28e.camel@kernel.org>
- <20260113-mondlicht-raven-82fc4eb70e9d@brauner> <aWZcoyQLvbJKUxDU@infradead.org>
- <ce418800f06aa61a7f47f0d19394988f87a3da07.camel@kernel.org>
- <aWc3mwBNs8LNFN4W@infradead.org> <CAOQ4uxhMjitW_DC9WK9eku51gE1Ft+ENhD=qq3uehwrHO=RByA@mail.gmail.com>
- <aWeUv2UUJ_NdgozS@infradead.org> <c40862cd65a059ad45fa88f5473722ea5c5f70a5.camel@kernel.org>
-In-Reply-To: <c40862cd65a059ad45fa88f5473722ea5c5f70a5.camel@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 14 Jan 2026 15:14:13 +0100
-X-Gm-Features: AZwV_QgcgdaBnds1gv_V4-TD2P8OEmx8uWYCKQoKmrAoITMmwNZxXsYhEeLI48A
-Message-ID: <CAOQ4uxhDwR7dteLaqURX+9CooGM1hA7PL6KnVmSwX11ZdKxZTA@mail.gmail.com>
-Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to
- lease support
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Christian Brauner <brauner@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>, 
-	Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
-	Nicolas Pitre <nico@fluxnic.net>, Anders Larsen <al@alarsen.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>, 
-	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
-	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, Jan Kara <jack@suse.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Dave Kleikamp <shaggy@kernel.org>, 
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>, Viacheslav Dubeyko <slava@dubeyko.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, 
-	Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
-	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Phillip Lougher <phillip@squashfs.org.uk>, 
-	Carlos Maiolino <cem@kernel.org>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>, 
-	Yuezhang Mo <yuezhang.mo@sony.com>, Alexander Aring <alex.aring@gmail.com>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Christian Schoenebeck <linux_oss@crudebyte.com>, Xiubo Li <xiubli@redhat.com>, 
-	Ilya Dryomov <idryomov@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Hans de Goede <hansg@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, 
-	jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org, 
-	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org, 
-	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-mm@kvack.org, 
-	gfs2@lists.linux.dev, linux-doc@vger.kernel.org, v9fs@lists.linux.dev, 
-	ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251227-printk-cleanup-part3-v1-6-21a291bcf197@suse.com>
 
-On Wed, Jan 14, 2026 at 2:41=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> On Wed, 2026-01-14 at 05:06 -0800, Christoph Hellwig wrote:
-> > On Wed, Jan 14, 2026 at 10:34:04AM +0100, Amir Goldstein wrote:
-> > > On Wed, Jan 14, 2026 at 7:28=E2=80=AFAM Christoph Hellwig <hch@infrad=
-ead.org> wrote:
-> > > >
-> > > > On Tue, Jan 13, 2026 at 12:06:42PM -0500, Jeff Layton wrote:
-> > > > > Fair point, but it's not that hard to conceive of a situation whe=
-re
-> > > > > someone inadvertantly exports cgroupfs or some similar filesystem=
-:
-> > > >
-> > > > Sure.  But how is this worse than accidentally exporting private da=
-ta
-> > > > or any other misconfiguration?
-> > > >
-> > >
-> > > My POV is that it is less about security (as your question implies), =
-and
-> > > more about correctness.
-> >
-> > I was just replying to Jeff.
-> >
-> > > The special thing about NFS export, as opposed to, say, ksmbd, is
-> > > open by file handle, IOW, the export_operations.
-> > >
-> > > I perceive this as a very strange and undesired situation when NFS
-> > > file handles do not behave as persistent file handles.
-> >
-> > That is not just very strange, but actually broken (discounting the
-> > obscure volatile file handles features not implemented in Linux NFS
-> > and NFSD).  And the export ops always worked under the assumption
-> > that these file handles are indeed persistent.  If they're not we
-> > do have a problem.
-> >
-> > >
-> > > cgroupfs, pidfs, nsfs, all gained open_by_handle_at() capability for
-> > > a known reason, which was NOT NFS export.
-> > >
-> > > If the author of open_by_handle_at() support (i.e. brauner) does not
-> > > wish to imply that those fs should be exported to NFS, why object?
-> >
-> > Because "want to export" is a stupid category.
-> >
-> > OTOH "NFS exporting doesn't actually properly work because someone
-> > overloaded export_ops with different semantics" is a valid category.
-> >
->
-> cgroupfs definitely doesn't behave as expected when exported via NFS.
-> The files aren't readable, at least. I'd also be surprised if the
-> filehandles were stable across a reboot, which is sort of necessary for
-> proper operation. I didn't test writing, but who knows whether that
-> might also just not work, crash the box, or do something else entirely.
->
-> I imagine this is the case for all sorts of filesystems like /proc,
-> /sys, etc. Those aren't exportable today (to my knowledge), but we're
-> growing export_operations across a wide range of fs's these days.
->
-> I'd prefer that we require someone to take the deliberate step to say
-> "yes, allow nfsd to access this type of filesystem".
->
-> > > We could have the opt-in/out of NFS export fixes per EXPORT_OP_
-> > > flags and we could even think of allowing admin to make this decision
-> > > per vfsmount (e.g. for cgroupfs).
-> > >
-> > > In any case, I fail to see how objecting to the possibility of NFS ex=
-port
-> > > opt-out serves anyone.
-> >
-> > You're still think of it the wrong way.  If we do have file systems
-> > that break the original exportfs semantics we need to fix that, and
-> > something like a "stable handles" flag will work well for that.  But
-> > a totally arbitrary "is exportable" flag is total nonsense.
->
+On Sat 2025-12-27 09:16:13, Marcos Paulo de Souza wrote:
+> The register_console_force function will register a console even if it
+> wasn't specified on boot. The new function will act like all consoles
+> being registered were using the CON_ENABLED flag.
 
-Very well then.
-How about EXPORT_OP_PERSISTENT_HANDLES?
+I am a bit confused by the last sentence. It might be bacause I am not
+a native speaker. I wonder if the following is more clear:
 
-This terminology is from the NFS protocol spec and it is also used
-to describe the same trait in SMB protocol.
+<proposal>
+The register_console_force() function will register a console even if it
+wasn't preferred via the command line, SPCR, or device tree. Currently,
+certain drivers pre-set the CON_ENABLE flag to achieve this.
+</proposal>
 
-> The problem there is that we very much do want to keep tmpfs
-> exportable, but it doesn't have stable handles (per-se).
+> The CON_ENABLED flag will be removed in the following patches and the
+> drivers that use it will migrate to register_console_force instead.
+> 
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -3858,7 +3858,7 @@ static int console_call_setup(struct console *newcon, char *options)
+>   * enabled such as netconsole
+>   */
+>  static int try_enable_preferred_console(struct console *newcon,
+> -					bool user_specified)
+> +					bool user_specified, bool force)
+>  {
+>  	struct console_cmdline *c;
+>  	int i, err;
+> @@ -3896,12 +3896,15 @@ static int try_enable_preferred_console(struct console *newcon,
+>  		return 0;
+>  	}
+>  
+> +	if (force)
+> +		newcon->flags |= CON_ENABLED;
+> +
 
-Thinking out loud -
-It would be misguided to declare tmpfs as
-EXPORT_OP_PERSISTENT_HANDLES
-and regressing exports of tmpfs will surely not go unnoticed.
+This makes sense because the pre-enabled CON_ENABLED flag is handled
+right below.
 
-How about adding an exportfs option "persistent_handles",
-use it as default IFF neither options fsid=3D, uuid=3D are used,
-so that at least when exporting tmpfs, exportfs -v will show
-"no_persistent_handles" explicitly?
+>  	/*
+>  	 * Some consoles, such as pstore and netconsole, can be enabled even
+>  	 * without matching. Accept the pre-enabled consoles only when match()
+>  	 * and setup() had a chance to be called.
+>  	 */
+> -	if (newcon->flags & CON_ENABLED && c->user_specified ==	user_specified)
+> +	if (newcon->flags & CON_ENABLED && c->user_specified == user_specified)
+>  		return 0;
 
-Thanks,
-Amir.
+But this location was not a good idea in the first place. It hides an unexpected
+side-effect into this function. It is easy to miss. A good example is
+the regression caused by the last patch in this patch set, see
+https://lore.kernel.org/all/89409a0f48e6998ff6dd2245691b9954f0e1e435.camel@suse.com/
+
+I actually have a patch removing this side-effect:
+
+From d24cd6b812967669900f9866f6202e8b0b65325a Mon Sep 17 00:00:00 2001
+From: Petr Mladek <pmladek@suse.com>
+Date: Mon, 24 Nov 2025 17:34:25 +0100
+Subject: [PATCH] printk/console: Do not rely on
+ try_enable_preferred_console() for pre-enabled consoles
+
+try_enable_preferred_console() has non-obvious side effects. It returns
+success for pre-enabled consoles.
+
+Move the check for pre-enabled consoles to register_console(). It makes
+the handling of pre-enabled consoles more obvious.
+
+Also it will allow call try_enable_preferred_console() only when there
+is an entry in preferred_consoles[] array. But it would need some more
+changes.
+
+It is part of the code clean up. It should not change the existing
+behavior.
+
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+---
+ kernel/printk/printk.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index abf1b93de056..d6b1d0a26217 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -3826,14 +3826,6 @@ static int try_enable_preferred_console(struct console *newcon,
+ 		return 0;
+ 	}
+ 
+-	/*
+-	 * Some consoles, such as pstore and netconsole, can be enabled even
+-	 * without matching. Accept the pre-enabled consoles only when match()
+-	 * and setup() had a chance to be called.
+-	 */
+-	if (newcon->flags & CON_ENABLED && pc->user_specified == user_specified)
+-		return 0;
+-
+ 	return -ENOENT;
+ }
+ 
+@@ -4022,6 +4014,14 @@ void register_console(struct console *newcon)
+ 	if (err == -ENOENT)
+ 		err = try_enable_preferred_console(newcon, false);
+ 
++	/*
++	 * Some consoles, such as pstore and netconsole, can be enabled even
++	 * without matching. Accept them at this stage when they had a chance
++	 * to match() and call setup().
++	 */
++	if (err == -ENOENT && (newcon->flags & CON_ENABLED))
++		err = 0;
++
+ 	/* printk() messages are not printed to the Braille console. */
+ 	if (err || newcon->flags & CON_BRL) {
+ 		if (newcon->flags & CON_NBCON)
+-- 
+2.52.0
+
+
+It would be better to do the above change 1st. Then the @force
+parameter might be checked in __register_console() directly, like:
+
+	/*
+	 * Some consoles, such as pstore and netconsole, can be enabled even
+	 * without matching. Accept them at this stage when they had a chance
+	 * to match() and call setup().
+	 */
+	if (err == -ENOENT && (force || newcon->flags & CON_ENABLED))
+		err = 0;
+
+You might just remove the check of CON_ENABLED in the last patch.
+I think that this should actually fix the regression. It will
+handle also the case when the console was enabled by
+try_enable_default_console() and try_enable_preferred_console()
+returned -ENOENT.
+
+Note: I have some more patches which clean up this mess. But they are
+      more complicated because of how the Braille console support
+      is wired. They still need some love. Anyway, the above patch should
+      be good enough for removing CON_ENABLED flag.
+
+Best Regards,
+Petr
 
