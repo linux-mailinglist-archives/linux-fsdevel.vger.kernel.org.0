@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-73837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07ED0D216AF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:46:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A74B7D216C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:47:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B8E6D305819B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 21:45:37 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id E6DB23065948
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 21:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8151392C5F;
-	Wed, 14 Jan 2026 21:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8622038F954;
+	Wed, 14 Jan 2026 21:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MbGKgdOT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1x22Y2N"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C3338A9BD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 21:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8E3399A73
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 21:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768427129; cv=none; b=bb4bvv5cV9EE4lK9e6N3uT23dS8t2jCM22fE5J+jcOu1ubRTtYEC5VoSLDvwYkxhevwlBjX6Ix6IQLF7gQVfTbWf2nX4aKhHaocNx1XE1GD9EalpWmWiS6B4WlrMXjGSLOu1+YAwlZ4WaBxhtIzTDABu9sosraT/7yVFcVxHKmI=
+	t=1768427219; cv=none; b=duuEc/IJ+7C+P76quiEt74YYUWOdlEi2ejI94QyaCaZ/4Wiyjp0Nm3XG0mxo0dGxZnTmeKedsnvz6i9Vnp8F2tOl9ifQWxxJN3qHhLhCb8FVmugysRlEcwtc0so8Vo+88r5BIFT4bCJu3EZtWXx6EcB9sJCnm0OqONns7DCzwgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768427129; c=relaxed/simple;
-	bh=64imX2M1jBYG4Gju+wyYxzFrGS9hKawBE1V6rd+WCwk=;
+	s=arc-20240116; t=1768427219; c=relaxed/simple;
+	bh=UH7UVmm/ifZMz2a7ctzEVAj9QL1YqJfv9TEsJAmqvl0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bQgDC1QMQV1xlp9AqL1gCeQTxbbWK9dNWSziqL01lwmdK4LLlor7I2KJt4ubE0Kv1i4SK58eNV79pJXzsv3xKNcuKLNdLEnGj3R0DqIGAHLS24YBvvAE/3J1yfl59MuuelD/oP4zNbC5sBOWjyLBfio/7BimdIeoeOHNNeJheOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MbGKgdOT; arc=none smtp.client-ip=209.85.210.49
+	 MIME-Version; b=o2qaqRT+m8CvQ3q46s7jUfJV7PQxdVsRp/4QgJoJZ6Q60K2QAV5/eD+qRneh7A2bLF7SDVqxBEJpriNmytl9D8gsQSWDT2BBujAYlwszJXyFL0SfujvcwPYDaySGLyc+A50txcxAqXQR8XY4jwptADwWNpnlsYyUDYUrGpXJ/PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U1x22Y2N; arc=none smtp.client-ip=209.85.210.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7cfd2be567bso185283a34.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 13:44:51 -0800 (PST)
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7cdae63171aso211493a34.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 13:46:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768427089; x=1769031889; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768427188; x=1769031988; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zCMfzYseGdgpcfKs/nbqdFGXhkfjkf3otWuk3WOoJPo=;
-        b=MbGKgdOTyaVzus5T0n2oCJF2FlfdxZERuQaae79BIw6gj3XXzAM4w6zlDlvLrtdIRB
-         eqO5gZV3uw49rpkISrFHcaTJa70piad/3Pp5T2/JzhkwtmjY4K7eajAcbOZQvNHlbLWZ
-         UEUPYHgYo893UBPoZeFXkX91sTuhuMbLAW6FGEfcgLFPbZd19vOVg/tIWSDTVVn3iKuI
-         q8eDgy2cfYoRk+WA4yuoA3jXcH5+p6NroPUikQwdJsDFNs57GMRmGzWc2XPlb3De9UoT
-         8TGPzi3wkqLOkLOMDRf4x5+p9B4DHDAi3S1QYaqI26YbU4g8+cYPZuXXfem5i3arczz8
-         lgFw==
+        bh=ezmCIUYTCpc47N9MRFviC1UdzpKfkRUPsUPtXb573Uk=;
+        b=U1x22Y2NCadasD+0/b0bPw8Jn26D+SpJIsuZ4rfvGJuun0FUtpy0yEVTNC3SEZP49O
+         kQVrOW6VEUFevmJ8Tfwfloc26DmUxyJoZ481dP5SY8Vnr0yaGCBUcA9VTM7MT7dob2CR
+         oiiiZipKAFt6EypCdSmvuGhN7YU6+rNC/Omt2OxUb6Bpqs/brbeXxwniyW2pSoKXlr1j
+         5Nmyyb9fjC0sh1XqduP4U+K+mNhMYvlCQ/YkkA6Ud9AjV5bJHdFrgw5fg/85+1DcnwsH
+         sECOWV2MlG2C9LRm5loBKJOi81lh/7zVpq8T+4On6fvrdPc3x9pbcjsq464wKeTHGJhD
+         hpWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768427089; x=1769031889;
+        d=1e100.net; s=20230601; t=1768427188; x=1769031988;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zCMfzYseGdgpcfKs/nbqdFGXhkfjkf3otWuk3WOoJPo=;
-        b=HxdIZEuUcuO6WWm9JeYuq42qU7kz30r5SO2b+XuOVSTdLQDcVYVC+aV84oROCCi2lq
-         uUVnibhYe0sLwHd15uW6uHIlB17xfx/EfumJZxIZ+BTP2vfiCOkdm2aCJC4HOUoeWnHZ
-         rDoBypGVSJd1FLdfTWEYNn6h7OfKbXfyH7p5a9eYr0uVXscNkmJD9EHFE/fyd/O437xj
-         PNfd1asHQHRVfHRGkYWYGAjmXzFDOqVwBxY/ylH08LYKwdHlB4E1V6JdGtE7ABu40+u1
-         lKdpfk8s+Lduy/hgLa/Purde852UbKvGhap7QK2nCyJZ3234SreV11E7rmhljjnOSgos
-         rpWA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0J9J8Jq/xb2dRePvZWjmKzwWka2kLC/EZiPKYdISz3iaR4nvl62yy3sMuf9MGHJhicNOOJ+wHO8CUTUTa@vger.kernel.org
-X-Gm-Message-State: AOJu0YziXblrgRMX8L+Fo5da7teH1YNivOHGvkK1JiuPA4gqARXpnNSI
-	UUPhiW6OmiPlD1jXiMeGAXIanB37ViPnn1klC1VNYsMOYRqBVdrUKgIc
-X-Gm-Gg: AY/fxX432L68Tt6LxI+ZclhdirXKH41sGvVTXC+EAEjUTyBHMcicuLGtFd+mE13Yxu6
-	884MHAbroDD08ENJcYJKRmJNZyk2BiSSvvkCSEBYKi3NYSU1L5oq7PaOOplra9vpHV2ip+r2cRy
-	BXdHg0iAv3TEnFhVtmzqh6hPC9jTb3iQkvEf7ETakGDeUHWByFb6FMvU9Pn1EvJzKKeeB8yzA0O
-	o81zRe5gxwxO/sV31h0PVw6Zlf3fXzjLHCUxWGk+VQanFVk4+iY3DBno8VGkDDAjNxn/nDwkYoC
-	Rf8Zd89W02xGtSF3tLbUaJc5xIbH4AU8xuchK+e1jdSlnaemXAyxkajLxhpgdgOpW+XSBlYpEcF
-	n6M7rbcSy5Phq/7OAkVm8rI+6MEQiVlG8AMkwBibcJ9fRci3VK3MlFj+HG5G1qK4yeJZqrVXUub
-	1D/jiKWO1t6fqIULKNu+d4EqDRpc9Ez2uh4VcnwuPpJhh8
-X-Received: by 2002:a05:6808:158f:b0:45a:8cdc:102e with SMTP id 5614622812f47-45c714aa671mr2464387b6e.23.1768427088755;
-        Wed, 14 Jan 2026 13:44:48 -0800 (PST)
+        bh=ezmCIUYTCpc47N9MRFviC1UdzpKfkRUPsUPtXb573Uk=;
+        b=grEKxNb8s5V+1XMzsP3NgxYxFO6spscx2zdQxKX2QtBUxXgGOg2nSlpXEuJVBVbIz8
+         VwlgjajLLp75yaj9gL/M8FiqNDRp4ibKF6zu6h/zH46Ki2Z815aHUlpImQ1g2Al3frlN
+         JsEtzXHuVKVdw+wuKKiezc6T7g9VzZsnb7zuKXcRmiVo61fLuOSyw4L+Hv5hjiZkCN5H
+         ciXrutVFbFofWZHlP8fIajgL9ry2UF+4rm+ZL4+41deUvDxf2SbkLbM2mP3HdqP/grQS
+         Jj8R9T+ubDh5UP3SX8LtlTVkfk2J79XQRc5mEQZxOdrIi7LrlkVN5q/1+N22by2RAw7e
+         zB8w==
+X-Forwarded-Encrypted: i=1; AJvYcCW4/DiajUQZ5hHZVa1I4owUsKA7TPWtDWCSVQ+4iYUDPqYlVnPXMGpVyvFXQZcBG2qaUS2In0P+W5Zqgj7c@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw91MSIZ9YmMT/CkIalI/bZ0Lei7NajdZVmz/YqqmMmCjFJFLg
+	elYpaYNWeZAuh5P5m0+DwUrf7Ls+txqyrlgJYmA8J8h7ybiwu2e97S5P
+X-Gm-Gg: AY/fxX5d/Lu9Jy3bhwuStVCb39Onljk708N2If3Ef4UpzWA2HWH8PUg8tC65xWu+Djy
+	/yZqxg8/vo4JwHSOYQaoMiXtWuXfIyuZxwISjRFBlkUDwgaOZnmHiJ6MllbW3deGUF2fp39TLFV
+	lpaWv06uDTJunPYineA35gs+yBsvrmT9kSgRB/ekf+oV5vWAmz2b46qm0k/PfoVPn0zFdvpExPE
+	/cWIE5OhSHSor0b4MKi5Dgut58zXB0kJO4euMr+xdOIL1ntJq+373/pFGjO6iEldUVtu2pMOnYK
+	4jvdAxztnayrwCHNJx4ybW65YSJ6OQqsAojzhwSv0Jao9h90cTcJzis7AxOvUg2In7pSnip5XIw
+	YOYypzKnMFHa1p9ypuHczU2aa0KwZiSpKtsgMi+Gd23DgYyb9NKBkpZUcsd/1VhtveFXlDNTw9+
+	rdUZmjeXMXu1xLEtyZlsW035lcpw84WI8KFJ3qu5AgdStE
+X-Received: by 2002:a05:6830:2541:b0:7cf:cc11:f7cc with SMTP id 46e09a7af769-7cfcc11f982mr2409830a34.36.1768427188084;
+        Wed, 14 Jan 2026 13:46:28 -0800 (PST)
 Received: from localhost.localdomain ([2603:8080:1500:3d89:4c85:2962:e438:72c4])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-45a5e17cd0esm11964602b6e.3.2026.01.14.13.44.46
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfc3692f3asm3936197a34.10.2026.01.14.13.46.25
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 14 Jan 2026 13:44:48 -0800 (PST)
+        Wed, 14 Jan 2026 13:46:27 -0800 (PST)
 Sender: John Groves <grovesaustin@gmail.com>
 From: John Groves <John@Groves.net>
 X-Google-Original-From: John Groves <john@groves.net>
@@ -111,13 +111,13 @@ Cc: John Groves <jgroves@micron.com>,
 	nvdimm@lists.linux.dev,
 	linux-cxl@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH V4 3/3] fuse: add famfs DAX fmap support
-Date: Wed, 14 Jan 2026 15:43:07 -0600
-Message-ID: <20260114214307.29893-4-john@groves.net>
+Subject: [PATCH V2 2/2] Add test/daxctl-famfs.sh to test famfs mode transitions:
+Date: Wed, 14 Jan 2026 15:45:19 -0600
+Message-ID: <20260114214519.29999-3-john@groves.net>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260114214307.29893-1-john@groves.net>
+In-Reply-To: <20260114214519.29999-1-john@groves.net>
 References: <20260114153133.29420.compound@groves.net>
- <20260114214307.29893-1-john@groves.net>
+ <20260114214519.29999-1-john@groves.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -126,163 +126,303 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add new FUSE operations and capability for famfs DAX file mapping:
+From: John Groves <John@Groves.net>
 
-- FUSE_CAP_DAX_FMAP: New capability flag at bit 32 (using want_ext/capable_ext
-  fields) to indicate kernel and userspace support for DAX fmaps
+- devdax <-> famfs mode switches
+- Verify famfs -> system-ram is rejected (must go via devdax)
+- Test JSON output shows correct mode
+- Test error handling for invalid modes
 
-- GET_FMAP: New operation to retrieve a file map for DAX-mapped files.
-  Returns a fuse_famfs_fmap_header followed by simple or interleaved
-  extent descriptors. The kernel passes the file size as an argument.
-
-- GET_DAXDEV: New operation to retrieve DAX device info by index.
-  Called when GET_FMAP returns an fmap referencing a previously
-  unknown DAX device.
-
-These operations enable FUSE filesystems to provide direct access
-mappings to persistent memory, allowing the kernel to map files
-directly to DAX devices without page cache intermediation.
+The test is added to the destructive test suite since it
+modifies device modes.
 
 Signed-off-by: John Groves <john@groves.net>
 ---
- include/fuse_common.h   |  5 +++++
- include/fuse_lowlevel.h | 37 +++++++++++++++++++++++++++++++++++++
- lib/fuse_lowlevel.c     | 31 ++++++++++++++++++++++++++++++-
- patch/maintainers.txt   |  0
- 4 files changed, 72 insertions(+), 1 deletion(-)
- create mode 100644 patch/maintainers.txt
+ test/daxctl-famfs.sh | 253 +++++++++++++++++++++++++++++++++++++++++++
+ test/meson.build     |   2 +
+ 2 files changed, 255 insertions(+)
+ create mode 100755 test/daxctl-famfs.sh
 
-diff --git a/include/fuse_common.h b/include/fuse_common.h
-index 041188e..23b24e8 100644
---- a/include/fuse_common.h
-+++ b/include/fuse_common.h
-@@ -512,6 +512,11 @@ struct fuse_loop_config_v1 {
-  */
- #define FUSE_CAP_OVER_IO_URING (1UL << 31)
- 
-+/**
-+ * handle files that use famfs dax fmaps
-+ */
-+#define FUSE_CAP_DAX_FMAP (1UL << 32)
+diff --git a/test/daxctl-famfs.sh b/test/daxctl-famfs.sh
+new file mode 100755
+index 0000000..12fbfef
+--- /dev/null
++++ b/test/daxctl-famfs.sh
+@@ -0,0 +1,253 @@
++#!/bin/bash -Ex
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (C) 2025 Micron Technology, Inc. All rights reserved.
++#
++# Test daxctl famfs mode transitions and mode detection
 +
- /**
-  * Ioctl flags
-  *
-diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
-index 016f831..a94436a 100644
---- a/include/fuse_lowlevel.h
-+++ b/include/fuse_lowlevel.h
-@@ -1341,6 +1341,43 @@ struct fuse_lowlevel_ops {
- 	 */
- 	void (*statx)(fuse_req_t req, fuse_ino_t ino, int flags, int mask,
- 		      struct fuse_file_info *fi);
++rc=77
++. $(dirname $0)/common
 +
-+	/**
-+	 * Get a famfs/devdax/fsdax fmap
-+	 *
-+	 * Retrieve a file map (aka fmap) for a previously looked-up file.
-+	 * The fmap is serialized into the buffer, anchored by
-+	 * struct fuse_famfs_fmap_header, followed by one or more
-+	 * structs fuse_famfs_simple_ext, or fuse_famfs_iext (which itself
-+	 * is followed by one or more fuse_famfs_simple_ext...
-+	 *
-+	 * Valid replies:
-+	 *    fuse_reply_buf  (TODO: variable-size reply)
-+	 *    fuse_reply_err
-+	 *
-+	 * @param req request handle
-+	 * @param ino the inode number
-+	 */
-+	void (*get_fmap) (fuse_req_t req, fuse_ino_t ino, size_t size);
++trap 'cleanup $LINENO' ERR
 +
-+	/**
-+	 * Get a daxdev by index
-+	 *
-+	 * Retrieve info on a daxdev by index. This will be called any time
-+	 * GET_FMAP has returned a file map that references a previously
-+	 * unused daxdev. struct famfs_simple_ext, which is used for all
-+	 * resolutions to daxdev offsets, references daxdevs by index.
-+	 * In user space we maintain a master list of all referenced daxdevs
-+	 * by index, which is queried by get_daxdev.
-+	 *
-+	 * Valid replies:
-+	 *    fuse_reply_buf
-+	 *    fuse_reply_err
-+	 *
-+	 * @param req request handle
-+	 * @param ino the index of the daxdev
-+	 */
-+	void (*get_daxdev) (fuse_req_t req, int daxdev_index);
- };
- 
- /**
-diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
-index 0cde3d4..ac78233 100644
---- a/lib/fuse_lowlevel.c
-+++ b/lib/fuse_lowlevel.c
-@@ -2769,7 +2769,8 @@ _do_init(fuse_req_t req, const fuse_ino_t nodeid, const void *op_in,
- 			se->conn.capable_ext |= FUSE_CAP_NO_EXPORT_SUPPORT;
- 		if (inargflags & FUSE_OVER_IO_URING)
- 			se->conn.capable_ext |= FUSE_CAP_OVER_IO_URING;
--
-+		if (inargflags & FUSE_DAX_FMAP)
-+			se->conn.capable_ext |= FUSE_CAP_DAX_FMAP;
- 	} else {
- 		se->conn.max_readahead = 0;
- 	}
-@@ -2932,6 +2933,8 @@ _do_init(fuse_req_t req, const fuse_ino_t nodeid, const void *op_in,
- 		outargflags |= FUSE_REQUEST_TIMEOUT;
- 		outarg.request_timeout = se->conn.request_timeout;
- 	}
-+	if (se->conn.want_ext & FUSE_CAP_DAX_FMAP)
-+		outargflags |= FUSE_DAX_FMAP;
- 
- 	outarg.max_readahead = se->conn.max_readahead;
- 	outarg.max_write = se->conn.max_write;
-@@ -3035,6 +3038,30 @@ static void do_destroy(fuse_req_t req, fuse_ino_t nodeid, const void *inarg)
- 	_do_destroy(req, nodeid, inarg, NULL);
- }
- 
-+static void
-+do_get_fmap(fuse_req_t req, fuse_ino_t nodeid, const void *inarg)
++daxdev=""
++original_mode=""
++
++cleanup()
 +{
-+	struct fuse_session *se = req->se;
-+	struct fuse_getxattr_in *arg = (struct fuse_getxattr_in *) inarg;
-+
-+	if (se->op.get_fmap)
-+		se->op.get_fmap(req, nodeid, arg->size);
-+	else
-+		fuse_reply_err(req, -EOPNOTSUPP);
++	printf "Error at line %d\n" "$1"
++	# Try to restore to original mode if we know it
++	if [[ $daxdev && $original_mode ]]; then
++		"$DAXCTL" reconfigure-device -f -m "$original_mode" "$daxdev" 2>/dev/null || true
++	fi
++	exit $rc
 +}
 +
-+static void
-+do_get_daxdev(fuse_req_t req, fuse_ino_t nodeid, const void *inarg)
++# Check if fsdev_dax module is available
++check_fsdev_dax()
 +{
-+	struct fuse_session *se = req->se;
-+	(void)inarg;
-+
-+	if (se->op.get_daxdev)
-+		se->op.get_daxdev(req, nodeid); /* Use nodeid as daxdev_index */
-+	else
-+		fuse_reply_err(req, -EOPNOTSUPP);
++	if modinfo fsdev_dax &>/dev/null; then
++		return 0
++	fi
++	if grep -qF "fsdev_dax" "/lib/modules/$(uname -r)/modules.builtin" 2>/dev/null; then
++		return 0
++	fi
++	printf "fsdev_dax module not available, skipping\n"
++	exit 77
 +}
 +
- static void list_del_nreq(struct fuse_notify_req *nreq)
- {
- 	struct fuse_notify_req *prev = nreq->prev;
-@@ -3470,6 +3497,8 @@ static struct {
- 	[FUSE_LSEEK]	   = { do_lseek,       "LSEEK"	     },
- 	[FUSE_STATX]	   = { do_statx,       "STATX"	     },
- 	[CUSE_INIT]	   = { cuse_lowlevel_init, "CUSE_INIT"   },
-+	[FUSE_GET_FMAP]	   = { do_get_fmap, "GET_FMAP"       },
-+	[FUSE_GET_DAXDEV]  = { do_get_daxdev, "GET_DAXDEV"   },
- };
++# Check if kmem module is available (needed for system-ram mode tests)
++check_kmem()
++{
++	if modinfo kmem &>/dev/null; then
++		return 0
++	fi
++	if grep -qF "kmem" "/lib/modules/$(uname -r)/modules.builtin" 2>/dev/null; then
++		return 0
++	fi
++	printf "kmem module not available, skipping system-ram tests\n"
++	return 1
++}
++
++# Find an existing dax device to test with
++find_daxdev()
++{
++	# Look for any available dax device
++	daxdev=$("$DAXCTL" list | jq -er '.[0].chardev // empty' 2>/dev/null) || true
++
++	if [[ ! $daxdev ]]; then
++		printf "No dax device found, skipping\n"
++		exit 77
++	fi
++
++	# Save the original mode so we can restore it
++	original_mode=$("$DAXCTL" list -d "$daxdev" | jq -er '.[].mode')
++
++	printf "Found dax device: %s (current mode: %s)\n" "$daxdev" "$original_mode"
++}
++
++daxctl_get_mode()
++{
++	"$DAXCTL" list -d "$1" | jq -er '.[].mode'
++}
++
++# Ensure device is in devdax mode for testing
++ensure_devdax_mode()
++{
++	local mode
++	mode=$(daxctl_get_mode "$daxdev")
++
++	if [[ "$mode" == "devdax" ]]; then
++		return 0
++	fi
++
++	if [[ "$mode" == "system-ram" ]]; then
++		printf "Device is in system-ram mode, attempting to convert to devdax...\n"
++		"$DAXCTL" reconfigure-device -f -m devdax "$daxdev"
++	elif [[ "$mode" == "famfs" ]]; then
++		printf "Device is in famfs mode, converting to devdax...\n"
++		"$DAXCTL" reconfigure-device -m devdax "$daxdev"
++	else
++		printf "Device is in unknown mode: %s\n" "$mode"
++		return 1
++	fi
++
++	[[ $(daxctl_get_mode "$daxdev") == "devdax" ]]
++}
++
++#
++# Test basic mode transitions involving famfs
++#
++test_famfs_mode_transitions()
++{
++	printf "\n=== Testing famfs mode transitions ===\n"
++
++	# Ensure starting in devdax mode
++	ensure_devdax_mode
++	[[ $(daxctl_get_mode "$daxdev") == "devdax" ]]
++	printf "Initial mode: devdax - OK\n"
++
++	# Test: devdax -> famfs
++	printf "Testing devdax -> famfs... "
++	"$DAXCTL" reconfigure-device -m famfs "$daxdev"
++	[[ $(daxctl_get_mode "$daxdev") == "famfs" ]]
++	printf "OK\n"
++
++	# Test: famfs -> famfs (re-enable in same mode)
++	printf "Testing famfs -> famfs (re-enable)... "
++	"$DAXCTL" reconfigure-device -m famfs "$daxdev"
++	[[ $(daxctl_get_mode "$daxdev") == "famfs" ]]
++	printf "OK\n"
++
++	# Test: famfs -> devdax
++	printf "Testing famfs -> devdax... "
++	"$DAXCTL" reconfigure-device -m devdax "$daxdev"
++	[[ $(daxctl_get_mode "$daxdev") == "devdax" ]]
++	printf "OK\n"
++
++	# Test: devdax -> devdax (re-enable in same mode)
++	printf "Testing devdax -> devdax (re-enable)... "
++	"$DAXCTL" reconfigure-device -m devdax "$daxdev"
++	[[ $(daxctl_get_mode "$daxdev") == "devdax" ]]
++	printf "OK\n"
++}
++
++#
++# Test mode transitions with system-ram (requires kmem)
++#
++test_system_ram_transitions()
++{
++	printf "\n=== Testing system-ram transitions with famfs ===\n"
++
++	# Ensure we start in devdax mode
++	ensure_devdax_mode
++	[[ $(daxctl_get_mode "$daxdev") == "devdax" ]]
++
++	# Test: devdax -> system-ram
++	printf "Testing devdax -> system-ram... "
++	"$DAXCTL" reconfigure-device -N -m system-ram "$daxdev"
++	[[ $(daxctl_get_mode "$daxdev") == "system-ram" ]]
++	printf "OK\n"
++
++	# Test: system-ram -> famfs should fail
++	printf "Testing system-ram -> famfs (should fail)... "
++	if "$DAXCTL" reconfigure-device -m famfs "$daxdev" 2>/dev/null; then
++		printf "FAILED - should have been rejected\n"
++		return 1
++	fi
++	printf "OK (correctly rejected)\n"
++
++	# Test: system-ram -> devdax -> famfs (proper path)
++	printf "Testing system-ram -> devdax -> famfs... "
++	"$DAXCTL" reconfigure-device -f -m devdax "$daxdev"
++	[[ $(daxctl_get_mode "$daxdev") == "devdax" ]]
++	"$DAXCTL" reconfigure-device -m famfs "$daxdev"
++	[[ $(daxctl_get_mode "$daxdev") == "famfs" ]]
++	printf "OK\n"
++
++	# Restore to devdax for subsequent tests
++	"$DAXCTL" reconfigure-device -m devdax "$daxdev"
++}
++
++#
++# Test JSON output shows correct mode
++#
++test_json_output()
++{
++	printf "\n=== Testing JSON output for mode field ===\n"
++
++	# Test devdax mode in JSON
++	ensure_devdax_mode
++	printf "Testing JSON output for devdax mode... "
++	mode=$("$DAXCTL" list -d "$daxdev" | jq -er '.[].mode')
++	[[ "$mode" == "devdax" ]]
++	printf "OK\n"
++
++	# Test famfs mode in JSON
++	"$DAXCTL" reconfigure-device -m famfs "$daxdev"
++	printf "Testing JSON output for famfs mode... "
++	mode=$("$DAXCTL" list -d "$daxdev" | jq -er '.[].mode')
++	[[ "$mode" == "famfs" ]]
++	printf "OK\n"
++
++	# Restore to devdax
++	"$DAXCTL" reconfigure-device -m devdax "$daxdev"
++}
++
++#
++# Test error messages for invalid transitions
++#
++test_error_handling()
++{
++	printf "\n=== Testing error handling ===\n"
++
++	# Ensure we're in famfs mode
++	"$DAXCTL" reconfigure-device -m famfs "$daxdev"
++
++	# Test that invalid mode is rejected
++	printf "Testing invalid mode rejection... "
++	if "$DAXCTL" reconfigure-device -m invalidmode "$daxdev" 2>/dev/null; then
++		printf "FAILED - invalid mode should be rejected\n"
++		return 1
++	fi
++	printf "OK (correctly rejected)\n"
++
++	# Restore to devdax
++	"$DAXCTL" reconfigure-device -m devdax "$daxdev"
++}
++
++#
++# Main test sequence
++#
++main()
++{
++	check_fsdev_dax
++	find_daxdev
++
++	rc=1  # From here on, failures are real failures
++
++	test_famfs_mode_transitions
++	test_json_output
++	test_error_handling
++
++	# System-ram tests require kmem module
++	if check_kmem; then
++		# Save and disable online policy for system-ram tests
++		saved_policy="$(cat /sys/devices/system/memory/auto_online_blocks)"
++		echo "offline" > /sys/devices/system/memory/auto_online_blocks
++
++		test_system_ram_transitions
++
++		# Restore online policy
++		echo "$saved_policy" > /sys/devices/system/memory/auto_online_blocks
++	fi
++
++	# Restore original mode
++	printf "\nRestoring device to original mode: %s\n" "$original_mode"
++	"$DAXCTL" reconfigure-device -f -m "$original_mode" "$daxdev"
++
++	printf "\n=== All famfs tests passed ===\n"
++
++	exit 0
++}
++
++main
+diff --git a/test/meson.build b/test/meson.build
+index 615376e..ad1d393 100644
+--- a/test/meson.build
++++ b/test/meson.build
+@@ -209,6 +209,7 @@ if get_option('destructive').enabled()
+   device_dax_fio = find_program('device-dax-fio.sh')
+   daxctl_devices = find_program('daxctl-devices.sh')
+   daxctl_create = find_program('daxctl-create.sh')
++  daxctl_famfs = find_program('daxctl-famfs.sh')
+   dm = find_program('dm.sh')
+   mmap_test = find_program('mmap.sh')
  
- static struct {
-diff --git a/patch/maintainers.txt b/patch/maintainers.txt
-new file mode 100644
-index 0000000..e69de29
+@@ -226,6 +227,7 @@ if get_option('destructive').enabled()
+     [ 'device-dax-fio.sh', device_dax_fio, 'dax'   ],
+     [ 'daxctl-devices.sh', daxctl_devices, 'dax'   ],
+     [ 'daxctl-create.sh',  daxctl_create,  'dax'   ],
++    [ 'daxctl-famfs.sh',   daxctl_famfs,   'dax'   ],
+     [ 'dm.sh',             dm,		   'dax'   ],
+     [ 'mmap.sh',           mmap_test,	   'dax'   ],
+   ]
 -- 
-2.52.0
+2.49.0
 
 
