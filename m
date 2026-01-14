@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-73819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8ABD215A1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:34:03 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F12D215B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:35:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 12572300EDA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 21:33:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 129733015EDA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 21:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E513587C9;
-	Wed, 14 Jan 2026 21:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E0A361DBC;
+	Wed, 14 Jan 2026 21:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WnAUNbpd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SjcMuL4d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473B030FC39
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 21:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662A92E8B8F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 21:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768426434; cv=none; b=Fp3R+X74Yl0V/D2dnBVlUxbX7UC0ExbquvZs62EbdVjxL1i214xUxR+FBNve3sO0Ys6UqkjsIjTWv6bx2FZySeuVdzWGBzGDcS/zZAVIWYq5Mk76RIf2btyvrIoXql8O7i7iT7oKAWRl0jxSO/v1M1873NVLi6WFjYQXe80OrMs=
+	t=1768426468; cv=none; b=gSX7g0vm7VQ0e5M0DKWU7IHfnDKfMJTRZz1KlZg3R6MfRUMoWAKJ+2VaTyQrVuW/IMt2NmwBv0PX3tbGB+eVN0lsmlgV104rz8v9pRBPDNZDJCYkEyhbZQ7loNNjiQ2QLwVlxfVQpt5AE+oXcluUBrIZOlRCAyDC/A7dh0pNvF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768426434; c=relaxed/simple;
-	bh=6iOFQQ79bqcXSs59hkqRnd5nZOGBqQUL3wkhxD/TGyw=;
+	s=arc-20240116; t=1768426468; c=relaxed/simple;
+	bh=9in78rjKHXFfg7w69sXqer35Ki4r88+O4RkMgHiDMEE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uWBDcdh/sR4v4YgXgk/NiGWn+Pm0wA5DZRxK7faGxcO76pV1O/pysd2CPmeiKE7WFA4xko27uPuGH5Nw896vNBwnUyEYSY9icQWfSRlfLey85iBob8w5clip8yw5jQa2d5+9y86CQvs4EWkZtwUTGvGsG5G4T992h7k+rYV8PRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WnAUNbpd; arc=none smtp.client-ip=209.85.210.44
+	 MIME-Version; b=Cn+oXJ2rictlJ8kHuYIQeppeDehbHaIwWex403nGNbrliGMITkEXbpgNQSHuwo1/TkB+9brI8Amvs0TR1cPuWOvlzfjnOGfIBwBn5X/8zgFK+AthC6rSwhRX234jQxrPuiQQYJh+ot0BfgSUD+Ea9T0Ij2AxMDldzeeE9hNoxYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SjcMuL4d; arc=none smtp.client-ip=209.85.210.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7cdd651c884so168206a34.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 13:33:52 -0800 (PST)
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7cfd5d34817so70293a34.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 13:34:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768426431; x=1769031231; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768426464; x=1769031264; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8ijPsfKwe0kUKVbjzVLoDsQmd/A3/O0Ncsl7+mSklls=;
-        b=WnAUNbpdwUK1GCck0j0WCxjDGIUZCkrDc0xYWvheF7FfTFY/vkdKkq7IlwkAMXWlxO
-         eREC/PMgVcRyAQQtTkXuPJlfyhs5Sd6ksOC5tjWTQqqbtrwy8QDMxVid+DZHM1vOxK7R
-         PQOWvBD7f6chP+Mtz8j6kAH4aq0uvlt2VtAoSvbwsM101LCoZJLbwqYLm8iDZ6mU24zG
-         k3Gk+9KY4L0Elr6rjshbTHXATLbuiTMOpbrqJo2lBTn8PQIYM09lnfj0zfQ0djJybdvK
-         5wAB32/7T5zSu1mkYNuoG+rgVms31jN/bn2uaBg6BRuqmu6HHuesSrNwEkUR2BbE341o
-         p8zg==
+        bh=U7XgQVWhUwcysFnko8qRq5dHQ4c7d0Rm3BbWfFJ4FJk=;
+        b=SjcMuL4deu1NsK0EMJDaqTXuowbQGPPxISLQJuXZf5Qyl8iDkJo2P1taJR2AvaWizz
+         aMG6IlDShoxm5DW/m/bmqEdP8GT3kSypfZ3yNbRCgVe/b9+zp+VPmHkZ9TlIOBXKKT7Q
+         V9YmKhAgl0gqxIqvYns+F8AlYo3TMV7A4idahPi0fpL3A1Rut0Z/fsYXBAVCTnPFLPTj
+         fyuVlnMWWRNaSU2up977pIGsGwy8nVeg4B8NDmTnL3qDo8ToUJ/8inuWObz1ACdrKoCc
+         0gJiYg4OGvNG1Tnlul19cusDKGY7lkN3iX5Hb1XUSvPLBCW7/Oxv04EANxgwaAtoXC9l
+         jXBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768426431; x=1769031231;
+        d=1e100.net; s=20230601; t=1768426464; x=1769031264;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ijPsfKwe0kUKVbjzVLoDsQmd/A3/O0Ncsl7+mSklls=;
-        b=P0j2349IRgbDS7yBUzBpAHFs2ZWitB/fo03Fk8vAisMyQj/1Y9QM6q9RFTOu4MB9Zc
-         zeu4uODt8bPrG5rLGPQfNkeI3xe1fm7zZwRY/lVAFBRiprOH6E4PIPmxhAAK03dvSWg0
-         0P6JkuCjH2XxLX4Q9wusMMHt9ikBwPrEuR8hqfcSY5rHFlwUgkTQczMm2O6sM2CZsIe1
-         gseaDmDiqzrdH27SqVww3grsJHDEtD+IZsa83iFN+JfDYClKvu8xWhAgcOcaign8IgDN
-         oxHssdvfsL1R0Bll9a4K+AuyArwq/3sM9LNP9kj1dZgAWmLxIXflyXHaUixZieRrdh5Z
-         iEVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHoe52hcKG7nYRk4qwBYWxpns5FGQgQPNlrQQNciO8fOzMZfBChECqNpcBdCvYCdDNgjltvzC71Dnux2q1@vger.kernel.org
-X-Gm-Message-State: AOJu0YziEIg4lMh2f5pEg0bRIwo6zEXle0XyqKbsrgSKIKDnZGTlMXl6
-	ibP7WzYRpXLOf3JHVed8VpOyUcLL6dENThQlfv0TEcJGUn6tVKjxHjk+
-X-Gm-Gg: AY/fxX55Qx+KQashY1godX+xSoCwePmXwuPUSq6/q1KVdHCQ4Hf9/icLo+YmjRJgdaI
-	+83luLNiHDX4UsgNJfCzZVB3cMCpQdG9Ijkn5UgClaUQQVWq7Mtz8h7Dlrf5fLF8K/garOFR23u
-	9ZH0UPKHM4QiXMHFwCFkwkKstuBM4oYGSZ99BjZzlZVeci77KSsTAXOX8fWBwkcoWhy8aPY4qmC
-	k3MykwJ4bcyid8uGnt5XR2v1rb0g7eLyhZkCwCuUlkydeOZuwYp/0xlgmxPxzlb+gkqJl3xDUzC
-	+LnslPoh3OypPAynHz0ot63v41QjSNjq6zmKou7Alu1RfgZ858vpkjcQdrMUIizvyk7Jmq14bfR
-	CfsA6yPMoJUA0B8PWfDQwIg7s06IqmATon1E4Ic+XceauROs5tV6gW1962IQm28zs3wxsbzwpZe
-	08vPaTnacR2t1z3AmJ1Gs+vdaW65ytgh+B/8dQB5KvdQws
-X-Received: by 2002:a05:6830:81c9:b0:7c7:1a6:6a09 with SMTP id 46e09a7af769-7cfd469cf11mr643762a34.17.1768426431072;
-        Wed, 14 Jan 2026 13:33:51 -0800 (PST)
+        bh=U7XgQVWhUwcysFnko8qRq5dHQ4c7d0Rm3BbWfFJ4FJk=;
+        b=lwIdesdHst3JZih3CPl6osOXOJ3jXSG05n9nDFg5iJgxwbu9xVcAfNvvOl8rUwrnXf
+         rU9u8ZhfNANodX6KLLCY7gzVg8gjvoqIEMf+D/Iaxe4/J5UXSdPsQkIRVgXy+6aY+zV3
+         ThRqeIn07wHLb/JFzpNyFrW7ZzDOTJHt870YcB3fuuxqNCMFhMSUs1J9e22GqnsTNDWi
+         wARzQ3U9zR9H+qslpqPd/01kR3U1DQNH9QcQOt3+VTVGUET8vHQYgreDLyYBr/tjnsUE
+         EgQSRpBo+vqfKxApyniAf4cUbyjX/pZV1/PxtkJUR0hG6wbi1bREPjWLIDFRq0KODI8I
+         dg/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXzq8A/q8mi/uoHoHFWrX9w486y8f1Q7mnmIqZ/iIM14SXjTyYeJydaoi40UYvDnau6Aua0uAxyA/G728sv@vger.kernel.org
+X-Gm-Message-State: AOJu0YySlGhrksoantJWQBq+O8rmjb57Zuwq7cof1IDVvbytr7JR/aRX
+	2G7MANhYlTVo5IJg3+YK7Nn/fy8BA6AE6oPpS9rgwCgVyTt32eGDGv16
+X-Gm-Gg: AY/fxX5GPItZVhg/YgNH/s1QinDXDZoPNNFEiwTNJuw0AqhHzp/Dsy4HD1DC9/KZXPE
+	R7CEolfPEXJSZcqCzK6+Hm4T9gLeO56o/7aVH5aHn5MaeuvJa3JN0u009L+Me/p2sLZhQFzn2tS
+	Wj7rXxTsJS/ek0O90K+9O2n2qyfl2in6/BXIabTLJBYrRV5TEuLQqohblfw/FTUrazWrDxoz0SD
+	jvT8KHvymnjZj5m9DS9RrZZkkTZ/XqlskX2Lx5TQjCxaHSDB8VE1MuJasiUcpaU0rpR3wFeWVtm
+	Y7GWP88bfN5atH7Xry40bSr1qknBV1GhJo6BhV2s9hHYTci2ngxYaMgqMP7793JEjSa5uCcYrWn
+	h4EXqCyjPB2vkFvft7LdoWsDa6j17ZwWSof/7FVEwpCbQkuR3MkYhr0PGJ0ZopcT10ERm26VVk4
+	YmfjOevUKzxJ4ncFXHDnqVQZXoueKRfrCBsj23UX8IxeDP
+X-Received: by 2002:a05:6830:1cc2:b0:79d:eccc:96eb with SMTP id 46e09a7af769-7cfc8b3a75amr2512388a34.26.1768426464258;
+        Wed, 14 Jan 2026 13:34:24 -0800 (PST)
 Received: from localhost.localdomain ([2603:8080:1500:3d89:4c85:2962:e438:72c4])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ce47802551sm18803253a34.1.2026.01.14.13.33.48
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ce478d9c2esm19771776a34.21.2026.01.14.13.34.21
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 14 Jan 2026 13:33:50 -0800 (PST)
+        Wed, 14 Jan 2026 13:34:23 -0800 (PST)
 Sender: John Groves <grovesaustin@gmail.com>
 From: John Groves <John@Groves.net>
 X-Google-Original-From: John Groves <john@groves.net>
@@ -111,9 +111,9 @@ Cc: John Groves <jgroves@micron.com>,
 	nvdimm@lists.linux.dev,
 	linux-cxl@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH V4 03/19] dax: add fsdev.c driver for fs-dax on character dax
-Date: Wed, 14 Jan 2026 15:31:50 -0600
-Message-ID: <20260114213209.29453-4-john@groves.net>
+Subject: [PATCH V4 04/19] dax: Save the kva from memremap
+Date: Wed, 14 Jan 2026 15:31:51 -0600
+Message-ID: <20260114213209.29453-5-john@groves.net>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260114213209.29453-1-john@groves.net>
 References: <20260114153133.29420.compound@groves.net>
@@ -126,393 +126,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The new fsdev driver provides pages/folios initialized compatibly with
-fsdax - normal rather than devdax-style refcounting, and starting out
-with order-0 folios.
+Save the kva from memremap because we need it for iomap rw support.
 
-When fsdev binds to a daxdev, it is usually (always?) switching from the
-devdax mode (device.c), which pre-initializes compound folios according
-to its alignment. Fsdev uses fsdev_clear_folio_state() to switch the
-folios into a fsdax-compatible state.
+Prior to famfs, there were no iomap users of /dev/dax - so the virtual
+address from memremap was not needed.
 
-A side effect of this is that raw mmap doesn't (can't?) work on an fsdev
-dax instance. Accordingly, The fsdev driver does not provide raw mmap -
-devices must be put in 'devdax' mode (drivers/dax/device.c) to get raw
-mmap capability.
-
-In this commit is just the framework, which remaps pages/folios compatibly
-with fsdax.
-
-Enabling dax changes:
-
-- bus.h: add DAXDRV_FSDEV_TYPE driver type
-- bus.c: allow DAXDRV_FSDEV_TYPE drivers to bind to daxdevs
-- dax.h: prototype inode_dax(), which fsdev needs
-
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
-Suggested-by: Gregory Price <gourry@gourry.net>
 Signed-off-by: John Groves <john@groves.net>
 ---
- MAINTAINERS          |   8 ++
- drivers/dax/Makefile |   6 ++
- drivers/dax/bus.c    |   4 +
- drivers/dax/bus.h    |   1 +
- drivers/dax/fsdev.c  | 242 +++++++++++++++++++++++++++++++++++++++++++
- fs/dax.c             |   1 +
- include/linux/dax.h  |   5 +
- 7 files changed, 267 insertions(+)
- create mode 100644 drivers/dax/fsdev.c
+ drivers/dax/dax-private.h | 9 +++++++--
+ drivers/dax/fsdev.c       | 1 +
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0d044a58cbfe..10aa5120d93f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7188,6 +7188,14 @@ L:	linux-cxl@vger.kernel.org
- S:	Supported
- F:	drivers/dax/
- 
-+DEVICE DIRECT ACCESS (DAX) [fsdev_dax]
-+M:	John Groves <jgroves@micron.com>
-+M:	John Groves <John@Groves.net>
-+L:	nvdimm@lists.linux.dev
-+L:	linux-cxl@vger.kernel.org
-+S:	Supported
-+F:	drivers/dax/fsdev.c
-+
- DEVICE FREQUENCY (DEVFREQ)
- M:	MyungJoo Ham <myungjoo.ham@samsung.com>
- M:	Kyungmin Park <kyungmin.park@samsung.com>
-diff --git a/drivers/dax/Makefile b/drivers/dax/Makefile
-index 5ed5c39857c8..3bae252fd1bf 100644
---- a/drivers/dax/Makefile
-+++ b/drivers/dax/Makefile
-@@ -5,10 +5,16 @@ obj-$(CONFIG_DEV_DAX_KMEM) += kmem.o
- obj-$(CONFIG_DEV_DAX_PMEM) += dax_pmem.o
- obj-$(CONFIG_DEV_DAX_CXL) += dax_cxl.o
- 
-+# fsdev_dax: fs-dax compatible devdax driver (needs DEV_DAX and FS_DAX)
-+ifeq ($(CONFIG_FS_DAX),y)
-+obj-$(CONFIG_DEV_DAX) += fsdev_dax.o
-+endif
-+
- dax-y := super.o
- dax-y += bus.o
- device_dax-y := device.o
- dax_pmem-y := pmem.o
- dax_cxl-y := cxl.o
-+fsdev_dax-y := fsdev.o
- 
- obj-y += hmem/
-diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-index a73f54eac567..e79daf825b52 100644
---- a/drivers/dax/bus.c
-+++ b/drivers/dax/bus.c
-@@ -81,6 +81,10 @@ static int dax_match_type(const struct dax_device_driver *dax_drv, struct device
- 	    !IS_ENABLED(CONFIG_DEV_DAX_KMEM))
- 		return 1;
- 
-+	/* fsdev driver can also bind to device-type dax devices */
-+	if (dax_drv->type == DAXDRV_FSDEV_TYPE && type == DAXDRV_DEVICE_TYPE)
-+		return 1;
-+
- 	return 0;
- }
- 
-diff --git a/drivers/dax/bus.h b/drivers/dax/bus.h
-index cbbf64443098..880bdf7e72d7 100644
---- a/drivers/dax/bus.h
-+++ b/drivers/dax/bus.h
-@@ -31,6 +31,7 @@ struct dev_dax *devm_create_dev_dax(struct dev_dax_data *data);
- enum dax_driver_type {
- 	DAXDRV_KMEM_TYPE,
- 	DAXDRV_DEVICE_TYPE,
-+	DAXDRV_FSDEV_TYPE,
- };
- 
- struct dax_device_driver {
+diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
+index 0867115aeef2..f3cf0a664f1b 100644
+--- a/drivers/dax/dax-private.h
++++ b/drivers/dax/dax-private.h
+@@ -67,8 +67,12 @@ struct dev_dax_range {
+ /**
+  * struct dev_dax - instance data for a subdivision of a dax region, and
+  * data while the device is activated in the driver.
+- * @region - parent region
+- * @dax_dev - core dax functionality
++<<<<<<< Conflict 1 of 1
+++++++++ Contents of side #1
++ * @region: parent region
++ * @dax_dev: core dax functionality
++ * @virt_addr: kva from memremap; used by fsdev_dax
++ * @align: alignment of this instance
+  * @target_node: effective numa node if dev_dax memory range is onlined
+  * @dyn_id: is this a dynamic or statically created instance
+  * @id: ida allocated id when the dax_region is not static
+@@ -81,6 +85,7 @@ struct dev_dax_range {
+ struct dev_dax {
+ 	struct dax_region *region;
+ 	struct dax_device *dax_dev;
++	void *virt_addr;
+ 	unsigned int align;
+ 	int target_node;
+ 	bool dyn_id;
 diff --git a/drivers/dax/fsdev.c b/drivers/dax/fsdev.c
-new file mode 100644
-index 000000000000..29b7345f65b1
---- /dev/null
+index 29b7345f65b1..72f78f606e06 100644
+--- a/drivers/dax/fsdev.c
 +++ b/drivers/dax/fsdev.c
-@@ -0,0 +1,242 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright(c) 2026 Micron Technology, Inc. */
-+#include <linux/memremap.h>
-+#include <linux/pagemap.h>
-+#include <linux/module.h>
-+#include <linux/device.h>
-+#include <linux/cdev.h>
-+#include <linux/slab.h>
-+#include <linux/dax.h>
-+#include <linux/uio.h>
-+#include <linux/fs.h>
-+#include <linux/mm.h>
-+#include "dax-private.h"
-+#include "bus.h"
-+
-+/*
-+ * FS-DAX compatible devdax driver
-+ *
-+ * Unlike drivers/dax/device.c which pre-initializes compound folios based
-+ * on device alignment (via vmemmap_shift), this driver leaves folios
-+ * uninitialized similar to pmem. This allows fs-dax filesystems like famfs
-+ * to work without needing special handling for pre-initialized folios.
-+ *
-+ * Key differences from device.c:
-+ * - pgmap type is MEMORY_DEVICE_FS_DAX (not MEMORY_DEVICE_GENERIC)
-+ * - vmemmap_shift is NOT set (folios remain order-0)
-+ * - fs-dax can dynamically create compound folios as needed
-+ * - No mmap support - all access is through fs-dax/iomap
-+ */
-+
-+
-+static void fsdev_cdev_del(void *cdev)
-+{
-+	cdev_del(cdev);
-+}
-+
-+static void fsdev_kill(void *dev_dax)
-+{
-+	kill_dev_dax(dev_dax);
-+}
-+
-+/*
-+ * Page map operations for FS-DAX mode
-+ * Similar to fsdax_pagemap_ops in drivers/nvdimm/pmem.c
-+ *
-+ * Note: folio_free callback is not needed for MEMORY_DEVICE_FS_DAX.
-+ * The core mm code in free_zone_device_folio() handles the wake_up_var()
-+ * directly for this memory type.
-+ */
-+static int fsdev_pagemap_memory_failure(struct dev_pagemap *pgmap,
-+		unsigned long pfn, unsigned long nr_pages, int mf_flags)
-+{
-+	struct dev_dax *dev_dax = pgmap->owner;
-+	u64 offset = PFN_PHYS(pfn) - dev_dax->ranges[0].range.start;
-+	u64 len = nr_pages << PAGE_SHIFT;
-+
-+	return dax_holder_notify_failure(dev_dax->dax_dev, offset,
-+					 len, mf_flags);
-+}
-+
-+static const struct dev_pagemap_ops fsdev_pagemap_ops = {
-+	.memory_failure		= fsdev_pagemap_memory_failure,
-+};
-+
-+/*
-+ * Clear any stale folio state from pages in the given range.
-+ * This is necessary because device_dax pre-initializes compound folios
-+ * based on vmemmap_shift, and that state may persist after driver unbind.
-+ * Since fsdev_dax uses MEMORY_DEVICE_FS_DAX without vmemmap_shift, fs-dax
-+ * expects to find clean order-0 folios that it can build into compound
-+ * folios on demand.
-+ *
-+ * At probe time, no filesystem should be mounted yet, so all mappings
-+ * are stale and must be cleared along with compound state.
-+ */
-+static void fsdev_clear_folio_state(struct dev_dax *dev_dax)
-+{
-+	for (int i = 0; i < dev_dax->nr_range; i++) {
-+		struct range *range = &dev_dax->ranges[i].range;
-+		unsigned long pfn = PHYS_PFN(range->start);
-+		unsigned long end_pfn = PHYS_PFN(range->end) + 1;
-+
-+		while (pfn < end_pfn) {
-+			struct folio *folio = pfn_folio(pfn);
-+			int order = dax_folio_reset_order(folio);
-+
-+			pfn += 1UL << order;
-+		}
-+	}
-+}
-+
-+static int fsdev_open(struct inode *inode, struct file *filp)
-+{
-+	struct dax_device *dax_dev = inode_dax(inode);
-+	struct dev_dax *dev_dax = dax_get_private(dax_dev);
-+
-+	filp->private_data = dev_dax;
-+
-+	return 0;
-+}
-+
-+static int fsdev_release(struct inode *inode, struct file *filp)
-+{
-+	return 0;
-+}
-+
-+static const struct file_operations fsdev_fops = {
-+	.llseek = noop_llseek,
-+	.owner = THIS_MODULE,
-+	.open = fsdev_open,
-+	.release = fsdev_release,
-+};
-+
-+static int fsdev_dax_probe(struct dev_dax *dev_dax)
-+{
-+	struct dax_device *dax_dev = dev_dax->dax_dev;
-+	struct device *dev = &dev_dax->dev;
-+	struct dev_pagemap *pgmap;
-+	u64 data_offset = 0;
-+	struct inode *inode;
-+	struct cdev *cdev;
-+	void *addr;
-+	int rc, i;
-+
-+	if (static_dev_dax(dev_dax))  {
-+		if (dev_dax->nr_range > 1) {
-+			dev_warn(dev, "static pgmap / multi-range device conflict\n");
-+			return -EINVAL;
-+		}
-+
-+		pgmap = dev_dax->pgmap;
-+	} else {
-+		size_t pgmap_size;
-+
-+		if (dev_dax->pgmap) {
-+			dev_warn(dev, "dynamic-dax with pre-populated page map\n");
-+			return -EINVAL;
-+		}
-+
-+		pgmap_size = struct_size(pgmap, ranges, dev_dax->nr_range - 1);
-+		pgmap = devm_kzalloc(dev, pgmap_size,  GFP_KERNEL);
-+		if (!pgmap)
-+			return -ENOMEM;
-+
-+		pgmap->nr_range = dev_dax->nr_range;
-+		dev_dax->pgmap = pgmap;
-+
-+		for (i = 0; i < dev_dax->nr_range; i++) {
-+			struct range *range = &dev_dax->ranges[i].range;
-+
-+			pgmap->ranges[i] = *range;
-+		}
-+	}
-+
-+	for (i = 0; i < dev_dax->nr_range; i++) {
-+		struct range *range = &dev_dax->ranges[i].range;
-+
-+		if (!devm_request_mem_region(dev, range->start,
-+					range_len(range), dev_name(dev))) {
-+			dev_warn(dev, "mapping%d: %#llx-%#llx could not reserve range\n",
-+				 i, range->start, range->end);
-+			return -EBUSY;
-+		}
-+	}
-+
-+	/*
-+	 * FS-DAX compatible mode: Use MEMORY_DEVICE_FS_DAX type and
-+	 * do NOT set vmemmap_shift. This leaves folios at order-0,
-+	 * allowing fs-dax to dynamically create compound folios as needed
-+	 * (similar to pmem behavior).
-+	 */
-+	pgmap->type = MEMORY_DEVICE_FS_DAX;
-+	pgmap->ops = &fsdev_pagemap_ops;
-+	pgmap->owner = dev_dax;
-+
-+	/*
-+	 * CRITICAL DIFFERENCE from device.c:
-+	 * We do NOT set vmemmap_shift here, even if align > PAGE_SIZE.
-+	 * This ensures folios remain order-0 and are compatible with
-+	 * fs-dax's folio management.
-+	 */
-+
-+	addr = devm_memremap_pages(dev, pgmap);
-+	if (IS_ERR(addr))
-+		return PTR_ERR(addr);
-+
-+	/*
-+	 * Clear any stale compound folio state left over from a previous
-+	 * driver (e.g., device_dax with vmemmap_shift).
-+	 */
-+	fsdev_clear_folio_state(dev_dax);
-+
-+	/* Detect whether the data is at a non-zero offset into the memory */
-+	if (pgmap->range.start != dev_dax->ranges[0].range.start) {
-+		u64 phys = dev_dax->ranges[0].range.start;
-+		u64 pgmap_phys = dev_dax->pgmap[0].range.start;
-+
-+		if (!WARN_ON(pgmap_phys > phys))
-+			data_offset = phys - pgmap_phys;
-+
-+		pr_debug("%s: offset detected phys=%llx pgmap_phys=%llx offset=%llx\n",
-+		       __func__, phys, pgmap_phys, data_offset);
-+	}
-+
-+	inode = dax_inode(dax_dev);
-+	cdev = inode->i_cdev;
-+	cdev_init(cdev, &fsdev_fops);
-+	cdev->owner = dev->driver->owner;
-+	cdev_set_parent(cdev, &dev->kobj);
-+	rc = cdev_add(cdev, dev->devt, 1);
-+	if (rc)
-+		return rc;
-+
-+	rc = devm_add_action_or_reset(dev, fsdev_cdev_del, cdev);
-+	if (rc)
-+		return rc;
-+
-+	run_dax(dax_dev);
-+	return devm_add_action_or_reset(dev, fsdev_kill, dev_dax);
-+}
-+
-+static struct dax_device_driver fsdev_dax_driver = {
-+	.probe = fsdev_dax_probe,
-+	.type = DAXDRV_FSDEV_TYPE,
-+};
-+
-+static int __init dax_init(void)
-+{
-+	return dax_driver_register(&fsdev_dax_driver);
-+}
-+
-+static void __exit dax_exit(void)
-+{
-+	dax_driver_unregister(&fsdev_dax_driver);
-+}
-+
-+MODULE_AUTHOR("John Groves");
-+MODULE_DESCRIPTION("FS-DAX Device: fs-dax compatible devdax driver");
-+MODULE_LICENSE("GPL");
-+module_init(dax_init);
-+module_exit(dax_exit);
-+MODULE_ALIAS_DAX_DEVICE(0);
-diff --git a/fs/dax.c b/fs/dax.c
-index 7d7bbfb32c41..85a4b428e72b 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -416,6 +416,7 @@ int dax_folio_reset_order(struct folio *folio)
+@@ -201,6 +201,7 @@ static int fsdev_dax_probe(struct dev_dax *dev_dax)
+ 		pr_debug("%s: offset detected phys=%llx pgmap_phys=%llx offset=%llx\n",
+ 		       __func__, phys, pgmap_phys, data_offset);
+ 	}
++	dev_dax->virt_addr = addr + data_offset;
  
- 	return order;
- }
-+EXPORT_SYMBOL_GPL(dax_folio_reset_order);
- 
- static inline unsigned long dax_folio_put(struct folio *folio)
- {
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 9d624f4d9df6..fe1315135fdd 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -51,6 +51,10 @@ struct dax_holder_operations {
- 
- #if IS_ENABLED(CONFIG_DAX)
- struct dax_device *alloc_dax(void *private, const struct dax_operations *ops);
-+
-+#if IS_ENABLED(CONFIG_DEV_DAX_FS)
-+struct dax_device *inode_dax(struct inode *inode);
-+#endif
- void *dax_holder(struct dax_device *dax_dev);
- void put_dax(struct dax_device *dax_dev);
- void kill_dax(struct dax_device *dax_dev);
-@@ -153,6 +157,7 @@ static inline void fs_put_dax(struct dax_device *dax_dev, void *holder)
- #if IS_ENABLED(CONFIG_FS_DAX)
- int dax_writeback_mapping_range(struct address_space *mapping,
- 		struct dax_device *dax_dev, struct writeback_control *wbc);
-+int dax_folio_reset_order(struct folio *folio);
- 
- struct page *dax_layout_busy_page(struct address_space *mapping);
- struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
+ 	inode = dax_inode(dax_dev);
+ 	cdev = inode->i_cdev;
 -- 
 2.52.0
 
