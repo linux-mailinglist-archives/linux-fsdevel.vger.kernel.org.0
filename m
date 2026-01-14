@@ -1,204 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-73800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A5BD20DD6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 19:41:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3A1D20E3F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 19:49:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A4FC43038F56
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 18:41:22 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 845803043912
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 18:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987B63396E4;
-	Wed, 14 Jan 2026 18:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E387632571F;
+	Wed, 14 Jan 2026 18:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="No4lJjc9"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T8lTOmn9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3532E7F1D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 18:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768416081; cv=pass; b=qfgHqNnSglbAPgRb2RXFXcYpFafiSCvWSlQGJ8upANyO/pFmV2u8yM/3AQljQ8BtA5dIvAWvoSgGKMMxzN7EaikmMke7/Gtb4+/WpfKOI94aPb2t6l/wHf18svLXRx1SMF1oNYV2gvpPTa0cuzcx6q9kD9Klt/qE15oQnsQcCjY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768416081; c=relaxed/simple;
-	bh=cO7AvlZ6VHaU8aIyizjiqGRmHzdgM+G7L3XPoh+b6pg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pGJtwObDuWzkSsdoczM0NdWQ6/TC2ls+C2Q/jN1ct4AvvNtKIvIh0MkJDkJPQbGNSrJQBcgmaQkT/tm9ASdaNewkTrtU/VFdnbUV2a+aVolB1GewQOXbxTCu1f+554kdPL/n56lWGbdTvUSSI8iADDBYfECHdHy1GLCvLwn/21M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=No4lJjc9; arc=pass smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-5013c1850bdso914721cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 10:41:19 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1768416078; cv=none;
-        d=google.com; s=arc-20240605;
-        b=jlcVhJfrjB+5mckOa+lQBqVz5NOYnV83hijAg9e1m7kysgNeM3uFAuBPtUorScJnie
-         oizbsJ4B9TF3zoYjUni5v+vk9vu/AMr6DgIuUiwPZNW84VuEthJ6xAgsArpjyd5wMTS4
-         ReNcEE8XxcF1OABaXiiSvluTSSo0L2J9GPnzP2v9WkLC/V9IcRv4lB9Bzby8Z6UAmhOT
-         AjHnAIV0JsfXD0crPPbPvtnSS07VlbtIj1C66eF4qqBJmgoBaSVSXEBrtt68xrPCzffi
-         aDmk+fOfr7bM7iydnZ+HtFEBr2K+o44XU4QmSDg+rVGlu82P41+/XNKqLrStJ0B+Vsye
-         dEHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=0nvtzfay+8PXzMSSNBi8aYxXpOB59iGxr6aJMbTKSHg=;
-        fh=daWkBFEV+SAwfIBgLBoUTJZDwdEnCTTHXHKrER8Wgdk=;
-        b=QMsfOVYYl8cmDU0uf+hVi+2ySOpy+/aqrjc/c76zMlsJQwEr7otrxv0CYxKnew3H+F
-         It14WG4e+RG2gdAXUE4BMMV70J7w831a4nIYrNgi2Olf0sOSVHYZptAfEOt3Mfzy2xeN
-         jQR/URqyXbyI8qCaum5oYzhwnJoQbg3LrKm+FLDXhmvo2z7A7YK6m98d8Nw6Yc6WpLpn
-         I12Pmfr0i+owX1mwpKiRxcTHJGOOlkdRiGinjA3SfSL9/9bUtre0nLSxV/DxVI3a6cW8
-         r23jPBa1P+X/anKPn0cVjpsJYNbvg47yPhTAtl+K3WQCp44ZhAbBgMhDAwwKPEQh1011
-         J+kQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768416078; x=1769020878; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0nvtzfay+8PXzMSSNBi8aYxXpOB59iGxr6aJMbTKSHg=;
-        b=No4lJjc98Sqg6BdbIBCOenXF4p+LkXNzpEYAwzwd+LuBDOUTSFfRnanKo7Etm2d/6b
-         UlrVJMBtc/3srbqBy3vN+rcIg0bff4yV3wvFDCqxOcKO1pF5tpgs32CJufw9x7pk+Ypf
-         5f/bqFvVSOjMZsS7K48VGes8PTcqHHPj/qk1p79mnMu8rwnyayq/s7RubpPi4DGDZAQB
-         Rjey9QgdoToZMa8RG9ANurHDvWC5yP4cc6nL4617twkSzYwfOQHytPE94QTppDKa0oVa
-         ZSjt07AeuVxQ3QmPNrQGR82UJ0L4WlWu0dLDzlBXjXV4OHeumvay9DF7+4jrPnccfuuv
-         uM1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768416078; x=1769020878;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0nvtzfay+8PXzMSSNBi8aYxXpOB59iGxr6aJMbTKSHg=;
-        b=ZcJ3goj8n5JJlDnn1A7I/RdFzkD9hzUBJtSey+6+2x0B1NQ8B9PmdJRn3og8JPKd9L
-         SVssCNZosqfAmEo4vg7ldjZB2ULfENFkZrWrwdn53YPqeGWYKEEEsgjhSs9K48JGUurW
-         HyGEuANyR0I/sStgbVtzwTnkvyY6BlJcmD3aYRqolAcUO7eXfAckX/HmXT/b/jjfBH12
-         /GzahbggLJ24DuzC7vtIYnCy5cbTnFgYKX0tKgFiktb8SD7PuIQ44DFGm71wPqdGUSI4
-         Bx0d8r0JLwnRpUgigJAuwQniWNAj9dm9YlSspzU9MNYlV+eVPESZfi7PZV/M4yK0tbYh
-         Ox4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUniRrGBZb++WeDU44MiEiRowlp6tdgd3Rp4Oy4iwPZbn/odEAq/iJ9K3jOBG0EXstM2YFWNMK/p1acaLKk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSqof7fcY+R0Eq/k7svlH/4ED+da/r3ldA2n1JBc8Prao6Ccfm
-	wmLfFUjKI/omlLtNNJ0MbNybbGVwCbPgRZ3o328iTx6tAf4aOiIbLq9YhS79rZTLTK9bH6hFJ4F
-	Ye2zjh1qvyOet/BwdWpEzfvnb89NlV+8=
-X-Gm-Gg: AY/fxX4JBil8K60YDOh9ypKeqQY5H0je3YxxmQ/u2EcCCiZE7qhiKy/8c0lNegg9dpS
-	fF6qpFd9lm90e0p6KMLTiCCX2WZGLWwfbr+eBFaGdtPGQUycHDKnWHMfn+bf1/MMTTc+Bi7kfen
-	bAkd9U2LugQn+2g59CW4LShqZsCm7dltTl6q5zQsbuMVG1X5l5Ylp5fuQ334PJhOhjLm+/MPCzL
-	95oKjJJ8oXsKli93PuMPEtoAfKEbGpO6AJxuCyaXFQM9syg4FSGomWBTSpDQiFr8nBaXw==
-X-Received: by 2002:a05:622a:1342:b0:4ee:7ee:df70 with SMTP id
- d75a77b69052e-501484adbd2mr49198291cf.80.1768416078449; Wed, 14 Jan 2026
- 10:41:18 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6C9296BB7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 18:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768416499; cv=none; b=ObxA7Y10XOXQ8LH1kmICpK2zd4EV6eJQjHi7binWeVWFGcQOb0u51hhFnQy8JHMOECHBp2v6fDXR8GSapdMH1heA/YTAhzVz9E4S8PoSECaxUhcFpsoMr5FFun0S1mmGAaZui+824Qv10w97h1rSMuoQofSoXmE29nn50hLRVm0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768416499; c=relaxed/simple;
+	bh=4CoRtm0i0BS2ZEUP+Fn5tOoBw3+OB4VGgXnt+rmOGQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lR0NxSUepbpW7vT5F8GjeUQ/xNepAm5wx3MmPk+yZSURAfcUN2RvrI6vgwRKvS2AY0qvURa/p//4vPknZ1AC4JuqbeLFF1HLtgVrT5gudx2bR4MNufThCIkvVOhwmEksQ44D5CK9epy0jmJjkbkxSFTCgpIP+G2zSdD1nv25W+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T8lTOmn9; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5frLD+2rxNstV3zU4wbe4fBThMmD1jGs55/ZE2A/WY8=; b=T8lTOmn9EACRWy+733m+QZae9X
+	dgUFMCyuenZVeQ1yhHenM6+14F7hf/Y4Z2CAkTc9TogomKIHx3OxcCbJdPkATd2f1zPVaE2tNvXdy
+	QZ/n4tb00LQdO712RXW1kjTT1+RzEry93p9aWWad3My75XJHRwqhNGJH5sO2a95u/deQ/3c7PPQnx
+	dI/jGpjJarRcFTxRZ4ziBVdKzbx622YeBXxcVeRNisNziwLmt5FI1q0LDxzvMO5qEopNiB68mqptU
+	kTbQ27OaN8xp8MSUV1QBxXYrdtSF4U27IDsvKI3FQobQjxukBr7QA0y0GAC4IUWQXANkYuExHJpAa
+	i3gt879Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vg5uf-00000006bGX-3gqT;
+	Wed, 14 Jan 2026 18:48:13 +0000
+Date: Wed, 14 Jan 2026 18:48:13 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: brauner@kernel.org, djwong@kernel.org, hch@infradead.org,
+	bfoster@redhat.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] iomap: fix readahead folio refcounting race
+Message-ID: <aWfk7T4sCjAhOVZ9@casper.infradead.org>
+References: <20260114180255.3043081-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260114124514.62998-1-jefflexu@linux.alibaba.com>
-In-Reply-To: <20260114124514.62998-1-jefflexu@linux.alibaba.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 14 Jan 2026 10:41:07 -0800
-X-Gm-Features: AZwV_QjlpXxbIficdAys7I8i3vb1w29UoaCEDS8rOaf-pPSe3PP3rOJUWEu-WPg
-Message-ID: <CAJnrk1bjxyUw58WyiwsyBcJ0CcsBJZKNkcm_U+A+2KSmNqvjyQ@mail.gmail.com>
-Subject: Re: [PATCH v2] fuse: fix premature writetrhough request for large folio
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, horst@birthelmer.de, 
-	joseph.qi@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260114180255.3043081-1-joannelkoong@gmail.com>
 
-On Wed, Jan 14, 2026 at 4:45=E2=80=AFAM Jingbo Xu <jefflexu@linux.alibaba.c=
-om> wrote:
->
-> When large folio is enabled and the initial folio offset exceeds
-> PAGE_SIZE, e.g. the position resides in the second page of a large
-> folio, after the folio copying the offset (in the page) won't be updated
-> to 0 even though the expected range is successfully copied until the end
-> of the folio.  In this case fuse_fill_write_pages() exits prematurelly
-> before the request has reached the max_write/max_pages limit.
->
-> Fix this by eliminating page offset entirely and use folio offset
-> instead.
->
-> Fixes: d60a6015e1a2 ("fuse: support large folios for writethrough writes"=
-)
-> Cc: stable@vger.kernel.org
+On Wed, Jan 14, 2026 at 10:02:55AM -0800, Joanne Koong wrote:
+> readahead_folio() returns the next folio from the readahead control
+> (rac) but it also drops the refcount on the folio that had been held by
+> the rac. As such, there is only one refcount remaining on the folio
+> (which is held by the page cache) after this returns.
+> 
+> This is problematic because this opens a race where if the folio does
+> not have an iomap_folio_state struct attached to it and the folio gets
+> read in by the filesystem's IO helper, folio_end_read() may have already
+> been called on the folio (which will unlock the folio) which allows the
+> page cache to evict the folio (dropping the refcount and leading to the
+> folio being freed) by the time iomap_read_end() runs.
+> 
+> Switch to __readahead_folio(), which returns the folio with a reference
+> held for the caller, and add explicit folio_put() calls when done with
+> the folio.
 
-This should not need the stable tag or any backports. The bug cannot
-trigger until the future patch for turning on large folios lands.
+No.  The direction we're going in is that there's no refcount held at
+this point.  I just want to get this ANCK out before Christian applies
+the patch; I'll send a followup with a better fix imminently.
 
-> Reviewed-by: Horst Birthelmer <hbirthelmer@ddn.com>
-> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-
-This LGTM, thanks for spotting this.
-
-Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
-
-Btw, are your prod systems running fuse with large folios enabled? If
-so, are your servers using writeback caching too?
-
-Thanks,
-Joanne
-
+> Fixes: d43558ae6729 ("iomap: track pending read bytes more optimally")
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > ---
-> changes since v1:
-> - add Reviewed-by tag (Horst)
->
-> v1: https://yhbt.net/lore/all/20260114055615.17903-1-jefflexu@linux.aliba=
-ba.com/
-> ---
->  fs/fuse/file.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 625d236b881b..6aafb32338b6 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1272,7 +1272,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_io=
-_args *ia,
->  {
->         struct fuse_args_pages *ap =3D &ia->ap;
->         struct fuse_conn *fc =3D get_fuse_conn(mapping->host);
-> -       unsigned offset =3D pos & (PAGE_SIZE - 1);
->         size_t count =3D 0;
->         unsigned int num;
->         int err =3D 0;
-> @@ -1299,7 +1298,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_io=
-_args *ia,
->                 if (mapping_writably_mapped(mapping))
->                         flush_dcache_folio(folio);
->
-> -               folio_offset =3D ((index - folio->index) << PAGE_SHIFT) +=
- offset;
-> +               folio_offset =3D offset_in_folio(folio, pos);
->                 bytes =3D min(folio_size(folio) - folio_offset, num);
->
->                 tmp =3D copy_folio_from_iter_atomic(folio, folio_offset, =
-bytes, ii);
-> @@ -1329,9 +1328,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_io=
-_args *ia,
->                 count +=3D tmp;
->                 pos +=3D tmp;
->                 num -=3D tmp;
-> -               offset +=3D tmp;
-> -               if (offset =3D=3D folio_size(folio))
-> -                       offset =3D 0;
->
->                 /* If we copied full folio, mark it uptodate */
->                 if (tmp =3D=3D folio_size(folio))
-> @@ -1343,7 +1339,9 @@ static ssize_t fuse_fill_write_pages(struct fuse_io=
-_args *ia,
->                         ia->write.folio_locked =3D true;
->                         break;
->                 }
-> -               if (!fc->big_writes || offset !=3D 0)
-> +               if (!fc->big_writes)
-> +                       break;
-> +               if (folio_offset + tmp !=3D folio_size(folio))
->                         break;
->         }
->
-> --
-> 2.19.1.6.gb485710b
->
+>  fs/iomap/buffered-io.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index fd9a2cf95620..96fab015371b 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -588,10 +588,11 @@ static int iomap_readahead_iter(struct iomap_iter *iter,
+>  		if (ctx->cur_folio &&
+>  		    offset_in_folio(ctx->cur_folio, iter->pos) == 0) {
+>  			iomap_read_end(ctx->cur_folio, *cur_bytes_submitted);
+> +			folio_put(ctx->cur_folio);
+>  			ctx->cur_folio = NULL;
+>  		}
+>  		if (!ctx->cur_folio) {
+> -			ctx->cur_folio = readahead_folio(ctx->rac);
+> +			ctx->cur_folio = __readahead_folio(ctx->rac);
+>  			if (WARN_ON_ONCE(!ctx->cur_folio))
+>  				return -EINVAL;
+>  			*cur_bytes_submitted = 0;
+> @@ -639,8 +640,10 @@ void iomap_readahead(const struct iomap_ops *ops,
+>  	if (ctx->ops->submit_read)
+>  		ctx->ops->submit_read(ctx);
+>  
+> -	if (ctx->cur_folio)
+> +	if (ctx->cur_folio) {
+>  		iomap_read_end(ctx->cur_folio, cur_bytes_submitted);
+> +		folio_put(ctx->cur_folio);
+> +	}
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_readahead);
+>  
+> -- 
+> 2.47.3
+> 
+> 
 
