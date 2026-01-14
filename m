@@ -1,188 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-73599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DCDD1C904
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:17:40 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A2ED1C897
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:05:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2A76D31D6A74
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 04:48:43 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 2E79930A433D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 04:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2026032ABF9;
-	Wed, 14 Jan 2026 04:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D409733C532;
+	Wed, 14 Jan 2026 04:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="sydw1VNi"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fD1HkbKM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7887C2ECD32;
-	Wed, 14 Jan 2026 04:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205AE32862F;
+	Wed, 14 Jan 2026 04:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768365166; cv=none; b=FB0wqHXToKnjvA6g2YIA7IMDjuktjQDrwVzZRySb3ofgDhZu6SaO4CSgynzvtJ1dtYBEsjiy3XN+ygZ6M9M56fKPgTus1IA0QezWfO6U7Vu0dLTo812S6J4hlwwRq9boZFJGizyX7SFG3nmQAk1tBLqNIx07Hn/wsVg201hkfog=
+	t=1768365123; cv=none; b=WEwP7dSx0BeRtVAQRc3cNnMNNdeDmvcozT9ILCOluGt/3tjrzeyJwIkiWDVViIHmdhSgEyxctRaWmSkRiOPJkkSKxXhDLRfgP9cHeUmmGF24tzA2kO31pYrDB0/MLyPMf4tS4Mkme4NtVbqyc+UE6XISa0BoYmaIUen9x6/toos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768365166; c=relaxed/simple;
-	bh=dE58klLdJyYeLgmYgH2S9UY8ti9ZdbpVbR2JG3eQ58s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Pv0tQv7xFPpZ7Q84rmqaURCkz81S5mYNTbPBHhm9WUPDnqR1B51MknQjZLfC11kV1dxmQ30+fZ/XaXAOexxyJ9S/cpZnEfSAJnNTKjUH1s1mPFKjVM4VnZsOSksTq8kIAffKWgDBY5Wbmx7QGLTLOjkQJvjLkFIz5IE8oqNSiNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=sydw1VNi; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=NoKL1OH7YXcP+lrXLXeIuIs7vol+bgLYWcjnamU1jiw=; b=sydw1VNiFb7DVAa9E1+U17CpJc
-	jlx9yqIBUtkJFonN/bbjdrl5pxrwEwonpw+81suoKR9Ss14c6LM40rxZ4aM9DSU1pdmB5mqONmf6Y
-	e8DH98O3v+IDOwIocQNTzKDuNvF1mduFTb5a1kOu1W2R9y0coS39h7ohYsK7IH4i+GLNkmOS2ONy0
-	lUKgHn4l+1eGxAq+ZRgxNZTb6aGT9559DI7Rz5Kw84srvxDTbJ6Ef+WEeJlhjNxRmiTaJzYjjuGIG
-	lH+aC2EjuzXfM5P/ieRqYx4bbkjuKnbI/rNWqNzdM5rH87nFG1/DoHek81fis3zusa7SrADMbewS2
-	1RBfnIDw==;
-Received: from [177.139.22.247] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vfsYT-0057lT-Rz; Wed, 14 Jan 2026 05:32:26 +0100
-From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Wed, 14 Jan 2026 01:31:41 -0300
-Subject: [PATCH 1/3] exportfs: Rename get_uuid() to get_disk_uuid()
+	s=arc-20240116; t=1768365123; c=relaxed/simple;
+	bh=ml4RNN/VCnYi1f5kE1GxmfC7TyVm/T5H+RGWeGZ6lPE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=C5N1BmQHMsRuLDOgktdmcnFVpQhOryyZL+a7OUNPvbBwBKHsOp9wFLZ7X88SlyqDh9nU0g/xRLQW65ut141YVrGZzcyblzU998N3QqvVHDulMfU0xvr+B41sCBkfkTvSQTOcxbJbvunq2E3c9SEcAVXliTqpgZUEqrtg1baLBm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fD1HkbKM; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=8u3Dw0scZ1Xzc2uavtsf6xcpNT1HTgSA1P3hF8Kuknw=; b=fD1HkbKMlykyUBoNy1c4M8nLib
+	IDD1+76YH/xAsKLBziRgc4SkwAm2B2mZTmv5jm1kFX63ie5jKtN/KXsyuN8WIdFzZTJhoZaX0qUnb
+	g32H28QMN7dT87q7+zluHnVA2ssydZoloJmQY8+rjKPpHirliw/szoindwpOYMjMJ8BevM2L1hqLL
+	plMAvnSh/qWycB8OVMctA4glwWwY1/yrmRSQ6bJf9LVq2BqB68pgi5d/u+dHLYA6SZryjGlnLSsvH
+	qRqaWZvtLVezm60Xt0EOLzBQ4PNgcr1oJLOtB8Qgn0TEiuk1FY6nD31kxd7U7VYxEAnCOtB+viTWO
+	DkSRDbuA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vfsZO-0000000GIzw-0P7d;
+	Wed, 14 Jan 2026 04:33:22 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	audit@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 64/68] user_statfs(): switch to CLASS(filename)
+Date: Wed, 14 Jan 2026 04:33:06 +0000
+Message-ID: <20260114043310.3885463-65-viro@zeniv.linux.org.uk>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260114043310.3885463-1-viro@zeniv.linux.org.uk>
+References: <20260114043310.3885463-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260114-tonyk-get_disk_uuid-v1-1-e6a319e25d57@igalia.com>
-References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
-In-Reply-To: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
-To: Christoph Hellwig <hch@lst.de>, Chuck Lever <chuck.lever@oracle.com>, 
- Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Carlos Maiolino <cem@kernel.org>, 
- Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>, 
- David Sterba <dsterba@suse.com>, Miklos Szeredi <miklos@szeredi.hu>, 
- Christian Brauner <brauner@kernel.org>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
- kernel-dev@igalia.com, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-X-Mailer: b4 0.14.3
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-To make clear which UUID is being returned, rename get_uuid() to
-get_disk_uuid(). Expand the function documentation to note that this
-function can be also used for filesystem that supports cloned devices
-that might have different UUIDs for userspace tools, while having the
-same UUID for internal usage.
-
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/nfsd/blocklayout.c    | 2 +-
- fs/nfsd/nfs4layouts.c    | 2 +-
- fs/xfs/xfs_export.c      | 2 +-
- fs/xfs/xfs_pnfs.c        | 2 +-
- fs/xfs/xfs_pnfs.h        | 2 +-
- include/linux/exportfs.h | 8 +++++---
- 6 files changed, 10 insertions(+), 8 deletions(-)
+ fs/statfs.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
-index afa16d7a8013..713a1f69f8fe 100644
---- a/fs/nfsd/blocklayout.c
-+++ b/fs/nfsd/blocklayout.c
-@@ -218,7 +218,7 @@ nfsd4_block_get_device_info_simple(struct super_block *sb,
- 
- 	b->type = PNFS_BLOCK_VOLUME_SIMPLE;
- 	b->simple.sig_len = PNFS_BLOCK_UUID_LEN;
--	return sb->s_export_op->get_uuid(sb, b->simple.sig, &b->simple.sig_len,
-+	return sb->s_export_op->get_disk_uuid(sb, b->simple.sig, &b->simple.sig_len,
- 			&b->simple.offset);
+diff --git a/fs/statfs.c b/fs/statfs.c
+index a5671bf6c7f0..377bcef7a561 100644
+--- a/fs/statfs.c
++++ b/fs/statfs.c
+@@ -99,7 +99,7 @@ int user_statfs(const char __user *pathname, struct kstatfs *st)
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT;
+-	struct filename *name = getname(pathname);
++	CLASS(filename, name)(pathname);
+ retry:
+ 	error = filename_lookup(AT_FDCWD, name, lookup_flags, &path, NULL);
+ 	if (!error) {
+@@ -110,7 +110,6 @@ int user_statfs(const char __user *pathname, struct kstatfs *st)
+ 			goto retry;
+ 		}
+ 	}
+-	putname(name);
+ 	return error;
  }
  
-diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
-index ad7af8cfcf1f..50bb29b2017c 100644
---- a/fs/nfsd/nfs4layouts.c
-+++ b/fs/nfsd/nfs4layouts.c
-@@ -136,7 +136,7 @@ void nfsd4_setup_layout_type(struct svc_export *exp)
- 	exp->ex_layout_types |= 1 << LAYOUT_FLEX_FILES;
- #endif
- #ifdef CONFIG_NFSD_BLOCKLAYOUT
--	if (sb->s_export_op->get_uuid &&
-+	if (sb->s_export_op->get_disk_uuid &&
- 	    sb->s_export_op->map_blocks &&
- 	    sb->s_export_op->commit_blocks)
- 		exp->ex_layout_types |= 1 << LAYOUT_BLOCK_VOLUME;
-diff --git a/fs/xfs/xfs_export.c b/fs/xfs/xfs_export.c
-index 201489d3de08..d09570ba7445 100644
---- a/fs/xfs/xfs_export.c
-+++ b/fs/xfs/xfs_export.c
-@@ -244,7 +244,7 @@ const struct export_operations xfs_export_operations = {
- 	.get_parent		= xfs_fs_get_parent,
- 	.commit_metadata	= xfs_fs_nfs_commit_metadata,
- #ifdef CONFIG_EXPORTFS_BLOCK_OPS
--	.get_uuid		= xfs_fs_get_uuid,
-+	.get_disk_uuid		= xfs_fs_get_disk_uuid,
- 	.map_blocks		= xfs_fs_map_blocks,
- 	.commit_blocks		= xfs_fs_commit_blocks,
- #endif
-diff --git a/fs/xfs/xfs_pnfs.c b/fs/xfs/xfs_pnfs.c
-index afe7497012d4..6ef7b29c4060 100644
---- a/fs/xfs/xfs_pnfs.c
-+++ b/fs/xfs/xfs_pnfs.c
-@@ -50,7 +50,7 @@ xfs_break_leased_layouts(
-  * the exported device.
-  */
- int
--xfs_fs_get_uuid(
-+xfs_fs_get_disk_uuid(
- 	struct super_block	*sb,
- 	u8			*buf,
- 	u32			*len,
-diff --git a/fs/xfs/xfs_pnfs.h b/fs/xfs/xfs_pnfs.h
-index 940c6c2ad88c..df82a6ba1a11 100644
---- a/fs/xfs/xfs_pnfs.h
-+++ b/fs/xfs/xfs_pnfs.h
-@@ -3,7 +3,7 @@
- #define _XFS_PNFS_H 1
- 
- #ifdef CONFIG_EXPORTFS_BLOCK_OPS
--int xfs_fs_get_uuid(struct super_block *sb, u8 *buf, u32 *len, u64 *offset);
-+int xfs_fs_get_disk_uuid(struct super_block *sb, u8 *buf, u32 *len, u64 *offset);
- int xfs_fs_map_blocks(struct inode *inode, loff_t offset, u64 length,
- 		struct iomap *iomap, bool write, u32 *device_generation);
- int xfs_fs_commit_blocks(struct inode *inode, struct iomap *maps, int nr_maps,
-diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-index 262e24d83313..dc7029949a62 100644
---- a/include/linux/exportfs.h
-+++ b/include/linux/exportfs.h
-@@ -252,8 +252,10 @@ struct handle_to_path_ctx {
-  * @commit_metadata:
-  *    @commit_metadata should commit metadata changes to stable storage.
-  *
-- * @get_uuid:
-- *    Get a filesystem unique signature exposed to clients.
-+ * @get_disk_uuid:
-+ *    Get a filesystem unique signature exposed to clients. It's also useful for
-+ *    filesystems that support mounting cloned disks and export different UUIDs
-+ *    for userspace, while being internally the same.
-  *
-  * @map_blocks:
-  *    Map and, if necessary, allocate blocks for a layout.
-@@ -282,7 +284,7 @@ struct export_operations {
- 	struct dentry * (*get_parent)(struct dentry *child);
- 	int (*commit_metadata)(struct inode *inode);
- 
--	int (*get_uuid)(struct super_block *sb, u8 *buf, u32 *len, u64 *offset);
-+	int (*get_disk_uuid)(struct super_block *sb, u8 *buf, u32 *len, u64 *offset);
- 	int (*map_blocks)(struct inode *inode, loff_t offset,
- 			  u64 len, struct iomap *iomap,
- 			  bool write, u32 *device_generation);
-
 -- 
-2.52.0
+2.47.3
 
 
