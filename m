@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-73632-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB72AD1CEB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 08:43:57 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9E2D1CEEF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 08:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 2B2273020B34
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 07:43:18 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 392533026A42
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 07:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9B537BE6B;
-	Wed, 14 Jan 2026 07:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C24437A48D;
+	Wed, 14 Jan 2026 07:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v7dsYq6c"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QmvlzNkh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AC83624C8;
-	Wed, 14 Jan 2026 07:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4FE37A4BA;
+	Wed, 14 Jan 2026 07:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768376572; cv=none; b=WnpM7dZJNlXBWrEzt5wTsmUqaU1c86hJzWR3V6daOf5js2IpjvDbcbwfqp/x0x+onZ+ztYSuyndvE72Qnb91bIvHFR+IkoiA7pnmVlm+7ZTgimd+fFcjF3MrGM/euenVBYSi0plLjAqzdJSLvpSvpFGCHEGRDU7vxHGYCplX+nk=
+	t=1768376576; cv=none; b=t8RJP7hU3a+ox2FDGeJzcMN8PQbxi3CPIwzCYzyMQjHNdPbHNFoDEMXK41Mg2JSc4o5PYscHwDeDBkURhi1gDKl+GKEHvqMlA2o7pTv5lzOfi5L0H+2iwXffo5QjNKgB0ogc+spUrf+48P2tedLizTsJ5RDWSWQfDbZvgta7oTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768376572; c=relaxed/simple;
-	bh=lFHOq5zcAUT9skn7UbYHank3JEDXUEbGSn5g4xs9uIQ=;
+	s=arc-20240116; t=1768376576; c=relaxed/simple;
+	bh=5VQgOGXiZXcrRwSJPx/MNAnwonvazbXL90avC/MZJQc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eccjgHJMQ2kb9D/Wp4zFZqs7AMO6Fy3pHiNxpkQM7FjDGXo9Ycd/LS67dJ/Po/vfJXIeqwSEsYj30HnZiCle98e6G67Xs+OpA7iJukoG4Q3S+1t7WUpjRFUumGshb7J4oHLu38GrxYTF0YwqmZ1LhxX7gMhtZ+Fxr1WQJc14HEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=v7dsYq6c; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=R+YprgZD8kwPdzhehv0FMgvWtQiFjI4jozWcz3rjAoBLblkEYwxTQKFAeEEqv8859YWXMYwbB/N9uTb4UnWT12w8lRnmt8+Dv7DwMP6OCN+pVeX/u0o9EefTcELx2H759f3j9ttSFQGdZUmXRPa/BaF7DesXVRifEsTpxwzjPyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QmvlzNkh; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=8d/tggncu64cFV4CP2ADjx9YqThgLhoAl4ilAm0UBvs=; b=v7dsYq6cqY1ixSkTUc8PG2PANT
-	DwnuDmKCzQxK4pn6Pq97MLMKVHCDsW3YINv3MvDw2NMYd0nDxkfZlSNNr1Bal94sQvLQcFB7lWw/X
-	g/QVzqsqrSB0qiyzgObrAO3MecAPjQRqSGuGR1gbpXdIOnKAnziCwm3lB44Jg/3OkkZD/Bv/pdqAG
-	tOGWMzVP57JYH6j3uV2DgcYaij0682r2yp5rdXCYWL9hnXSEIy6dsj4RWfxJNew4r/bp9F1uiMLew
-	cbvTJUX/VLDgdJEpWLfZvL9Gtov1cWQPNcutOMADKh9gzVi7rPlL/HEp1iigoqvw3V/qCheb6rRGz
-	xmpCXqZg==;
+	bh=NVd/w2lP89V0pNSIqN7l1P0a3hfcAKXMuZIg+thPkfk=; b=QmvlzNkhTsRk30K0c9n2TaS3mj
+	WFgohdGTQ0u4YLGiMeEwfoIdKEKFCxXmuZzbTJtD5/LDVdI5gTkyefRzsTiMVG6Eguy08iX9Pzgeo
+	eQKMvHTasc1tR1PTNkR1hq67aJfwnoZD+3AbhFPZUU4B/c75jhSZsILSnZ8C8O1pvwyF/+8saKL5X
+	1EFGcb/a6TFN2E9DmvjGd9xjOO+PurM/m33oeBYI2FzG7KN3b6ghCoC/rKN2GFb47tK6nV5QboA86
+	g/hvacWcVg6tKPzfLeNIsL4ryJfvRgJ1S4aUHFFROUjsGcNnoXVw2+rFEL3pzxqaNO5QHY6/hiF6P
+	ZG6oYPcg==;
 Received: from 85-127-106-146.dsl.dynamic.surfer.at ([85.127.106.146] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vfvWf-00000008DxP-07OR;
-	Wed, 14 Jan 2026 07:42:47 +0000
+	id 1vfvWk-00000008Dyp-3L48;
+	Wed, 14 Jan 2026 07:42:51 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>,
 	Christian Brauner <brauner@kernel.org>
@@ -53,9 +53,9 @@ Cc: "Darrick J. Wong" <djwong@kernel.org>,
 	linux-block@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 10/14] iomap: free the bio before completing the dio
-Date: Wed, 14 Jan 2026 08:41:08 +0100
-Message-ID: <20260114074145.3396036-11-hch@lst.de>
+Subject: [PATCH 11/14] iomap: rename IOMAP_DIO_DIRTY to IOMAP_DIO_USER_BACKED
+Date: Wed, 14 Jan 2026 08:41:09 +0100
+Message-ID: <20260114074145.3396036-12-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260114074145.3396036-1-hch@lst.de>
 References: <20260114074145.3396036-1-hch@lst.de>
@@ -68,49 +68,54 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-There are good arguments for processing the user completions ASAP vs.
-freeing resources ASAP, but freeing the bio first here removes potential
-use after free hazards when checking flags, and will simplify the
-upcoming bounce buffer support.
+Match the more descriptive iov_iter terminology instead of encoding
+what we do with them for reads only.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/direct-io.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ fs/iomap/direct-io.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index bf59241a090b..6f7036e72b23 100644
+index 6f7036e72b23..3f552245ecc2 100644
 --- a/fs/iomap/direct-io.c
 +++ b/fs/iomap/direct-io.c
-@@ -213,7 +213,13 @@ static void iomap_dio_done(struct iomap_dio *dio)
- static void __iomap_dio_bio_end_io(struct bio *bio, bool inline_completion)
+@@ -21,7 +21,7 @@
+ #define IOMAP_DIO_WRITE_THROUGH	(1U << 28)
+ #define IOMAP_DIO_NEED_SYNC	(1U << 29)
+ #define IOMAP_DIO_WRITE		(1U << 30)
+-#define IOMAP_DIO_DIRTY		(1U << 31)
++#define IOMAP_DIO_USER_BACKED	(1U << 31)
+ 
+ struct iomap_dio {
+ 	struct kiocb		*iocb;
+@@ -214,7 +214,7 @@ static void __iomap_dio_bio_end_io(struct bio *bio, bool inline_completion)
  {
  	struct iomap_dio *dio = bio->bi_private;
--	bool should_dirty = (dio->flags & IOMAP_DIO_DIRTY);
-+
-+	if (dio->flags & IOMAP_DIO_DIRTY) {
-+		bio_check_pages_dirty(bio);
-+	} else {
-+		bio_release_pages(bio, false);
-+		bio_put(bio);
-+	}
  
- 	if (atomic_dec_and_test(&dio->ref)) {
- 		/*
-@@ -224,13 +230,6 @@ static void __iomap_dio_bio_end_io(struct bio *bio, bool inline_completion)
- 			dio->flags &= ~IOMAP_DIO_COMP_WORK;
- 		iomap_dio_done(dio);
- 	}
--
--	if (should_dirty) {
--		bio_check_pages_dirty(bio);
--	} else {
--		bio_release_pages(bio, false);
--		bio_put(bio);
--	}
- }
+-	if (dio->flags & IOMAP_DIO_DIRTY) {
++	if (dio->flags & IOMAP_DIO_USER_BACKED) {
+ 		bio_check_pages_dirty(bio);
+ 	} else {
+ 		bio_release_pages(bio, false);
+@@ -330,7 +330,7 @@ static ssize_t iomap_dio_bio_iter_one(struct iomap_iter *iter,
  
- void iomap_dio_bio_end_io(struct bio *bio)
+ 	if (dio->flags & IOMAP_DIO_WRITE)
+ 		task_io_account_write(ret);
+-	else if (dio->flags & IOMAP_DIO_DIRTY)
++	else if (dio->flags & IOMAP_DIO_USER_BACKED)
+ 		bio_set_pages_dirty(bio);
+ 
+ 	/*
+@@ -676,7 +676,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 			goto out_free_dio;
+ 
+ 		if (user_backed_iter(iter))
+-			dio->flags |= IOMAP_DIO_DIRTY;
++			dio->flags |= IOMAP_DIO_USER_BACKED;
+ 
+ 		ret = kiocb_write_and_wait(iocb, iomi.len);
+ 		if (ret)
 -- 
 2.47.3
 
