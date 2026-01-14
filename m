@@ -1,331 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-73759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C181D1F919
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:57:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2A5D1F8E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:54:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0C4F7301F5D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:57:03 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 76CCA3063FAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C8F30E839;
-	Wed, 14 Jan 2026 14:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4054B30CD94;
+	Wed, 14 Jan 2026 14:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZF2n5HHl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZ4y7792"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E492DCF61;
-	Wed, 14 Jan 2026 14:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EBE30C631;
+	Wed, 14 Jan 2026 14:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768402621; cv=none; b=Klt0ApaqnpBWk5BGAJ7o9eMyu2L9ocpacRvDRfOSDEFCbmndzss2IIjdNeos8QZwP2Lig3giUSSmbqjvGQ619sRXAU7S9oOkJZOUQvdOiwphEiGuVn3X8+yh88w+El1zwOzIOmFiEQPg18QSNa3li2aSo1jPv5lMrYQTme2g09U=
+	t=1768402384; cv=none; b=djbru0v6EVlR8oJZyOhXNchLMX8Nb2+hCMsevEpzhsF33yY+mNoek/CfPY2ycMyZuFFztoYxMwPGoUQgPcWvMq5D9Zx0eHExcVfLstvlt1g4eyqgCDfAqz2Hb8rJMamFPRMUR80Rf81X8H3fwq9tjwXeYmRDwcnsuWvAEBlJGsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768402621; c=relaxed/simple;
-	bh=2drGeW3rb/glmM47EtWUS4WA1UF6n3Ks9yUbhmLB21A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UXRW8EcA7vlq8RcPD2EQe1RlgwV641k88q6m2tXsULVEBKxho2EPAQybekYpSg2OPlgobnjxZ/Ph705pAi0WGOXWQeeck7xB52+1Ux0YYIddHG3iVBP5gKFDxq1gKjrP0GqXxSjSAzWk+SOKIYvTNC8ldzlUvmfjSXGneqtpmcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZF2n5HHl; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1768402617; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=tKEiYyztp7rnSuLNkwLOusLX/k6l5Kw33OzxJI4VSF0=;
-	b=ZF2n5HHlmXu8jo66pugRCSYjLvLGz11mR8vTBo+AeT7f7KjwLmwywbUp+WViRoZwh6HnxD2FNMYtwBz8yZkQwVbw5eYuKyZH9CmlI1l5fXS2Oqsw+wt6lkPUw1R1GIcuky+02U/kXqXNVYZH3hkca/umifbK/M6UAdECC9noLFQ=
-Received: from 30.180.182.138(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wx2jw0M_1768402294 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 14 Jan 2026 22:51:34 +0800
-Message-ID: <2d33cc2f-8188-4e62-b0be-bf985237bf24@linux.alibaba.com>
-Date: Wed, 14 Jan 2026 22:51:33 +0800
+	s=arc-20240116; t=1768402384; c=relaxed/simple;
+	bh=xKp2mRX639Xrl1hAH25cMUgzI8E+8kaOkrWTmDZ9gJI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=YMmya/k8dSEAnCSie24RsVRkb2damN2yIE+Mee+yAAb743cqIc6k7NuTzmHOJGL9Vsmg9quykgnFpBsmjtGImafLlIZyOFVHlr6STsKURmT4mb+NhgG7LwG+onz4B5yKF51v478RU/dfmnl481NpDh8wgu3cvpwu50mK03SdHRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZ4y7792; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A572C4CEF7;
+	Wed, 14 Jan 2026 14:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768402384;
+	bh=xKp2mRX639Xrl1hAH25cMUgzI8E+8kaOkrWTmDZ9gJI=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=DZ4y7792kI2/4eE5VVTlEy1lwDXzIzeNr2iEGyaqqLMYTsvcSbwt8Bo54fNz4FJrn
+	 0CjwDI0jj4BZuie48fZ7X8+pogo2m9xuuz5ZkTKqUIWIWMb2aIahe3YDQ1OihTAsyY
+	 /kSWP/W66gnEfc8gA/3bKKHjBBbzoJWIQmXxEVECLl86oIEVeZwN3rPLewdZXpBLNQ
+	 4fSATB6J5Q9DEK8WPOow5IHJKdW2q5kckZv1zfwvc/Rackn2AgyYEGYSEHyTHq4m0k
+	 xzDo6EcWHnQhpPR7xCjV8fvC1tdohxaCsjAOcYPGoYZ1/+HzD4MzDToJBxFdCh/tru
+	 OSjQsEWq0CzTg==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 32C9EF4006B;
+	Wed, 14 Jan 2026 09:53:02 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-10.internal (MEProxy); Wed, 14 Jan 2026 09:53:02 -0500
+X-ME-Sender: <xms:zq1naRMKLB-vQH7IFdq2onnRojQkLatu-C-zvbT0T438TRsV4tP_4A>
+    <xme:zq1naewv4HVLitXOfBmI7UE_Y2gurDnKovxNhXptVvlpsUh9pO0bvYw7t9SjEJlzT
+    sLy2LuSF83BZ36FBNWcuJt0cuqdzsP2xJUgTbLRAhgnTSmlJulk9m0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduvdefgeejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedfvehhuhgt
+    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+    hnpefghfeguedtieeiveeugfevtdejfedukeevgfeggfeugfetgfeltdetueelleelteen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
+    hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
+    leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
+    hilhdrtghomhdpnhgspghrtghpthhtohepfeeipdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehlihhnuhigqdhfvdhfshdquggvvhgvlheslhhishhtshdrshhouhhrtggvfh
+    horhhgvgdrnhgvthdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphht
+    thhopehhihhrohhfuhhmihesmhgrihhlrdhprghrkhhnvghtrdgtohdrjhhppdhrtghpth
+    htohepphgtsehmrghnghhuvggsihhtrdhorhhgpdhrtghpthhtohepsghhrghrrghthhhs
+    mhesmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopehsphhrrghsrggusehmihgtrh
+    hoshhofhhtrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphht
+    thhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehhuhgstggrphesohhmnh
+    hisghonhgurdgtohhm
+X-ME-Proxy: <xmx:zq1naTkRbv9ZdmB81QztDlnhdErqtX9JaPCkPbhVF7A2EF4siXWTKA>
+    <xmx:zq1naQMdIxjnxtmT6iFO3dvBra_cikPt2rs9udjIX9hM3quVc1o8wg>
+    <xmx:zq1naSyL6jo-51wpIBye7R4H1uQkRJTayNYX4HLBSWa4OjKE3tRIjg>
+    <xmx:zq1naen3U34rfR84UbpLxCNVQHHeUcJBEJes8dFgznAte5TxzT705Q>
+    <xmx:zq1nab_H0tCK8W4yIFxCou46A5ZL-g9ECWVg-JI1en9AksHOVnvPNIgI>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id F2C75780070; Wed, 14 Jan 2026 09:53:01 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 08/10] erofs: support unencoded inodes for page cache
- share
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: djwong@kernel.org, amir73il@gmail.com, hch@lst.de,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, Chao Yu <chao@kernel.org>,
- Christian Brauner <brauner@kernel.org>
-References: <20260109102856.598531-1-lihongbo22@huawei.com>
- <20260109102856.598531-9-lihongbo22@huawei.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20260109102856.598531-9-lihongbo22@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-ThreadId: ArEQL-Tet5yZ
+Date: Wed, 14 Jan 2026 09:52:34 -0500
+From: "Chuck Lever" <cel@kernel.org>
+To: "Amir Goldstein" <amir73il@gmail.com>, "Jeff Layton" <jlayton@kernel.org>
+Cc: "Christoph Hellwig" <hch@infradead.org>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jan Kara" <jack@suse.cz>,
+ "Luis de Bethencourt" <luisbg@kernel.org>,
+ "Salah Triki" <salah.triki@gmail.com>,
+ "Nicolas Pitre" <nico@fluxnic.net>, "Anders Larsen" <al@alarsen.net>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "David Sterba" <dsterba@suse.com>, "Chris Mason" <clm@fb.com>,
+ "Gao Xiang" <xiang@kernel.org>, "Chao Yu" <chao@kernel.org>,
+ "Yue Hu" <zbestahu@gmail.com>, "Jeffle Xu" <jefflexu@linux.alibaba.com>,
+ "Sandeep Dhavale" <dhavale@google.com>,
+ "Hongbo Li" <lihongbo22@huawei.com>, "Chunhai Guo" <guochunhai@vivo.com>,
+ "Jan Kara" <jack@suse.com>, "Theodore Tso" <tytso@mit.edu>,
+ "Andreas Dilger" <adilger.kernel@dilger.ca>,
+ "Jaegeuk Kim" <jaegeuk@kernel.org>,
+ "OGAWA Hirofumi" <hirofumi@mail.parknet.co.jp>,
+ "David Woodhouse" <dwmw2@infradead.org>,
+ "Richard Weinberger" <richard@nod.at>,
+ "Dave Kleikamp" <shaggy@kernel.org>,
+ "Ryusuke Konishi" <konishi.ryusuke@gmail.com>,
+ "Viacheslav Dubeyko" <slava@dubeyko.com>,
+ "Konstantin Komarov" <almaz.alexandrovich@paragon-software.com>,
+ "Mark Fasheh" <mark@fasheh.com>, "Joel Becker" <jlbec@evilplan.org>,
+ "Joseph Qi" <joseph.qi@linux.alibaba.com>,
+ "Mike Marshall" <hubcap@omnibond.com>,
+ "Martin Brandenburg" <martin@omnibond.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>,
+ "Phillip Lougher" <phillip@squashfs.org.uk>,
+ "Carlos Maiolino" <cem@kernel.org>, "Hugh Dickins" <hughd@google.com>,
+ "Baolin Wang" <baolin.wang@linux.alibaba.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Sungjong Seo" <sj1557.seo@samsung.com>,
+ "Yuezhang Mo" <yuezhang.mo@sony.com>,
+ "Alexander Aring" <alex.aring@gmail.com>,
+ "Andreas Gruenbacher" <agruenba@redhat.com>,
+ "Jonathan Corbet" <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ "Eric Van Hensbergen" <ericvh@kernel.org>,
+ "Latchesar Ionkov" <lucho@ionkov.net>,
+ "Dominique Martinet" <asmadeus@codewreck.org>,
+ "Christian Schoenebeck" <linux_oss@crudebyte.com>,
+ "Xiubo Li" <xiubli@redhat.com>, "Ilya Dryomov" <idryomov@gmail.com>,
+ "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>, "Steve French" <sfrench@samba.org>,
+ "Paulo Alcantara" <pc@manguebit.org>,
+ "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
+ "Shyam Prasad N" <sprasad@microsoft.com>, "Tom Talpey" <tom@talpey.com>,
+ "Bharath SM" <bharathsm@microsoft.com>,
+ "Hans de Goede" <hansg@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org,
+ jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org,
+ ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+ devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-mm@kvack.org, gfs2@lists.linux.dev,
+ linux-doc@vger.kernel.org, v9fs@lists.linux.dev,
+ ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
+Message-Id: <5a1730f3-30ff-403c-a460-09a81f9616c5@app.fastmail.com>
+In-Reply-To: 
+ <CAOQ4uxhDwR7dteLaqURX+9CooGM1hA7PL6KnVmSwX11ZdKxZTA@mail.gmail.com>
+References: <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
+ <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
+ <ec78bf021fa1f6243798945943541ba171e337e7.camel@kernel.org>
+ <cb5d2da6-2090-4639-ad96-138342bba56d@oracle.com>
+ <ce700ee20834631eceededc8cd15fc5d00fee28e.camel@kernel.org>
+ <20260113-mondlicht-raven-82fc4eb70e9d@brauner>
+ <aWZcoyQLvbJKUxDU@infradead.org>
+ <ce418800f06aa61a7f47f0d19394988f87a3da07.camel@kernel.org>
+ <aWc3mwBNs8LNFN4W@infradead.org>
+ <CAOQ4uxhMjitW_DC9WK9eku51gE1Ft+ENhD=qq3uehwrHO=RByA@mail.gmail.com>
+ <aWeUv2UUJ_NdgozS@infradead.org>
+ <c40862cd65a059ad45fa88f5473722ea5c5f70a5.camel@kernel.org>
+ <CAOQ4uxhDwR7dteLaqURX+9CooGM1hA7PL6KnVmSwX11ZdKxZTA@mail.gmail.com>
+Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to lease
+ support
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
 
-On 2026/1/9 18:28, Hongbo Li wrote:
-> This patch adds inode page cache sharing functionality for unencoded
-> files.
-> 
-> I conducted experiments in the container environment. Below is the
-> memory usage for reading all files in two different minor versions
-> of container images:
-> 
-> +-------------------+------------------+-------------+---------------+
-> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
-> |                   |                  |             | Reduction (%) |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     241     |       -       |
-> |       redis       +------------------+-------------+---------------+
-> |   7.2.4 & 7.2.5   |        Yes       |     163     |      33%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     872     |       -       |
-> |      postgres     +------------------+-------------+---------------+
-> |    16.1 & 16.2    |        Yes       |     630     |      28%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     2771    |       -       |
-> |     tensorflow    +------------------+-------------+---------------+
-> |  2.11.0 & 2.11.1  |        Yes       |     2340    |      16%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     926     |       -       |
-> |       mysql       +------------------+-------------+---------------+
-> |  8.0.11 & 8.0.12  |        Yes       |     735     |      21%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     390     |       -       |
-> |       nginx       +------------------+-------------+---------------+
-> |   7.2.4 & 7.2.5   |        Yes       |     219     |      44%      |
-> +-------------------+------------------+-------------+---------------+
-> |       tomcat      |        No        |     924     |       -       |
-> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
-> |                   |        Yes       |     474     |      49%      |
-> +-------------------+------------------+-------------+---------------+
-> 
-> Additionally, the table below shows the runtime memory usage of the
-> container:
-> 
-> +-------------------+------------------+-------------+---------------+
-> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
-> |                   |                  |             | Reduction (%) |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |      35     |       -       |
-> |       redis       +------------------+-------------+---------------+
-> |   7.2.4 & 7.2.5   |        Yes       |      28     |      20%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     149     |       -       |
-> |      postgres     +------------------+-------------+---------------+
-> |    16.1 & 16.2    |        Yes       |      95     |      37%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     1028    |       -       |
-> |     tensorflow    +------------------+-------------+---------------+
-> |  2.11.0 & 2.11.1  |        Yes       |     930     |      10%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |     155     |       -       |
-> |       mysql       +------------------+-------------+---------------+
-> |  8.0.11 & 8.0.12  |        Yes       |     132     |      15%      |
-> +-------------------+------------------+-------------+---------------+
-> |                   |        No        |      25     |       -       |
-> |       nginx       +------------------+-------------+---------------+
-> |   7.2.4 & 7.2.5   |        Yes       |      20     |      20%      |
-> +-------------------+------------------+-------------+---------------+
-> |       tomcat      |        No        |     186     |       -       |
-> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
-> |                   |        Yes       |      98     |      48%      |
-> +-------------------+------------------+-------------+---------------+
-> 
-> Co-developed-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> ---
->   fs/erofs/data.c              | 32 +++++++++++++++++++++++---------
->   fs/erofs/fileio.c            | 25 ++++++++++++++++---------
->   fs/erofs/inode.c             |  2 ++
->   fs/erofs/internal.h          |  6 ++++++
->   fs/erofs/ishare.c            | 34 ++++++++++++++++++++++++++++++++++
->   fs/erofs/zdata.c             |  2 +-
->   include/trace/events/erofs.h | 10 +++++-----
->   7 files changed, 87 insertions(+), 24 deletions(-)
-> 
-> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-> index 71e23d91123d..7bbd94781170 100644
-> --- a/fs/erofs/data.c
-> +++ b/fs/erofs/data.c
-> @@ -269,6 +269,7 @@ void erofs_onlinefolio_end(struct folio *folio, int err, bool dirty)
->   struct erofs_iomap_iter_ctx {
->   	struct page *page;
->   	void *base;
-> +	struct inode *realinode;
->   };
->   
->   static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
-> @@ -276,14 +277,15 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->   {
->   	struct iomap_iter *iter = container_of(iomap, struct iomap_iter, iomap);
->   	struct erofs_iomap_iter_ctx *ctx = iter->private;
-> -	struct super_block *sb = inode->i_sb;
-> +	struct inode *realinode = ctx ? ctx->realinode : inode;
-> +	struct super_block *sb = realinode->i_sb;
->   	struct erofs_map_blocks map;
->   	struct erofs_map_dev mdev;
->   	int ret;
->   
->   	map.m_la = offset;
->   	map.m_llen = length;
-> -	ret = erofs_map_blocks(inode, &map);
-> +	ret = erofs_map_blocks(realinode, &map);
->   	if (ret < 0)
->   		return ret;
->   
-> @@ -296,7 +298,7 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->   		return 0;
->   	}
->   
-> -	if (!(map.m_flags & EROFS_MAP_META) || !erofs_inode_in_metabox(inode)) {
-> +	if (!(map.m_flags & EROFS_MAP_META) || !erofs_inode_in_metabox(realinode)) {
->   		mdev = (struct erofs_map_dev) {
->   			.m_deviceid = map.m_deviceid,
->   			.m_pa = map.m_pa,
-> @@ -322,7 +324,7 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->   			void *ptr;
->   
->   			ptr = erofs_read_metabuf(&buf, sb, map.m_pa,
-> -						 erofs_inode_in_metabox(inode));
-> +						 erofs_inode_in_metabox(realinode));
->   			if (IS_ERR(ptr))
->   				return PTR_ERR(ptr);
->   			iomap->inline_data = ptr;
-> @@ -383,11 +385,16 @@ static int erofs_read_folio(struct file *file, struct folio *folio)
->   		.ops		= &iomap_bio_read_ops,
->   		.cur_folio	= folio,
->   	};
-> -	struct erofs_iomap_iter_ctx iter_ctx = {};
-> +	bool need_iput;
-> +	struct erofs_iomap_iter_ctx iter_ctx = {
-> +		.realinode = erofs_real_inode(folio_inode(folio), &need_iput),
-> +	};
->   
-> -	trace_erofs_read_folio(folio, true);
-> +	trace_erofs_read_folio(iter_ctx.realinode, folio, true);
->   
->   	iomap_read_folio(&erofs_iomap_ops, &read_ctx, &iter_ctx);
-> +	if (need_iput)
-> +		iput(iter_ctx.realinode);
->   	return 0;
->   }
->   
-> @@ -397,12 +404,17 @@ static void erofs_readahead(struct readahead_control *rac)
->   		.ops		= &iomap_bio_read_ops,
->   		.rac		= rac,
->   	};
-> -	struct erofs_iomap_iter_ctx iter_ctx = {};
-> +	bool need_iput;
-> +	struct erofs_iomap_iter_ctx iter_ctx = {
-> +		.realinode = erofs_real_inode(rac->mapping->host, &need_iput),
-> +	};
->   
-> -	trace_erofs_readahead(rac->mapping->host, readahead_index(rac),
-> +	trace_erofs_readahead(iter_ctx.realinode, readahead_index(rac),
->   					readahead_count(rac), true);
+On Wed, Jan 14, 2026, at 9:14 AM, Amir Goldstein wrote:
+> On Wed, Jan 14, 2026 at 2:41=E2=80=AFPM Jeff Layton <jlayton@kernel.or=
+g> wrote:
 
-Is it possible to add a commit to update the tracepoints
-to add the new realinode first?
+> Very well then.
+> How about EXPORT_OP_PERSISTENT_HANDLES?
+>
+> This terminology is from the NFS protocol spec and it is also used
+> to describe the same trait in SMB protocol.
+>
+>> The problem there is that we very much do want to keep tmpfs
+>> exportable, but it doesn't have stable handles (per-se).
+>
+> Thinking out loud -
+> It would be misguided to declare tmpfs as
+> EXPORT_OP_PERSISTENT_HANDLES
+> and regressing exports of tmpfs will surely not go unnoticed.
+>
+> How about adding an exportfs option "persistent_handles",
+> use it as default IFF neither options fsid=3D, uuid=3D are used,
+> so that at least when exporting tmpfs, exportfs -v will show
+> "no_persistent_handles" explicitly?
 
-Also please fix the indentation in that commit together.
+I think we need to be careful. tmpfs filehandles align quite
+well with the traditional definition of persistent filehandles.
+tmpfs filehandles live as long as tmpfs files do, and that is
+all that is required to be considered "persistent".
 
->   
->   	iomap_readahead(&erofs_iomap_ops, &read_ctx, &iter_ctx);
-> +	if (need_iput)
-> +		iput(iter_ctx.realinode);
->   }
->   
->   static sector_t erofs_bmap(struct address_space *mapping, sector_t block)
-> @@ -423,7 +435,9 @@ static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->   		return dax_iomap_rw(iocb, to, &erofs_iomap_ops);
->   #endif
->   	if ((iocb->ki_flags & IOCB_DIRECT) && inode->i_sb->s_bdev) {
-> -		struct erofs_iomap_iter_ctx iter_ctx = {};
-> +		struct erofs_iomap_iter_ctx iter_ctx = {
-> +			.realinode = inode,
-> +		};
->   
->   		return iomap_dio_rw(iocb, to, &erofs_iomap_ops,
->   				    NULL, 0, &iter_ctx, 0);
-> diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
-> index 932e8b353ba1..c1d0081609dc 100644
-> --- a/fs/erofs/fileio.c
-> +++ b/fs/erofs/fileio.c
-> @@ -88,9 +88,9 @@ void erofs_fileio_submit_bio(struct bio *bio)
->   						   bio));
->   }
->   
-> -static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
-> +static int erofs_fileio_scan_folio(struct erofs_fileio *io,
-> +				   struct inode *inode, struct folio *folio)
->   {
-> -	struct inode *inode = folio_inode(folio);
->   	struct erofs_map_blocks *map = &io->map;
->   	unsigned int cur = 0, end = folio_size(folio), len, attached = 0;
->   	loff_t pos = folio_pos(folio), ofs;
-> @@ -158,31 +158,38 @@ static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
->   
->   static int erofs_fileio_read_folio(struct file *file, struct folio *folio)
->   {
-> +	bool need_iput;
-> +	struct inode *realinode = erofs_real_inode(folio_inode(folio), &need_iput);
->   	struct erofs_fileio io = {};
->   	int err;
->   
-> -	trace_erofs_read_folio(folio, true);
-> -	err = erofs_fileio_scan_folio(&io, folio);
-> +	trace_erofs_read_folio(realinode, folio, true);
-> +	err = erofs_fileio_scan_folio(&io, realinode, folio);
->   	erofs_fileio_rq_submit(io.rq);
-> +	if (need_iput)
-> +		iput(realinode);
->   	return err;
->   }
->   
->   static void erofs_fileio_readahead(struct readahead_control *rac)
->   {
-> -	struct inode *inode = rac->mapping->host;
-> +	bool need_iput;
-> +	struct inode *realinode = erofs_real_inode(rac->mapping->host, &need_iput);
->   	struct erofs_fileio io = {};
->   	struct folio *folio;
->   	int err;
->   
-> -	trace_erofs_readahead(inode, readahead_index(rac),
-> +	trace_erofs_readahead(realinode, readahead_index(rac),
->   			      readahead_count(rac), true);
->   	while ((folio = readahead_folio(rac))) {
-> -		err = erofs_fileio_scan_folio(&io, folio);
-> +		err = erofs_fileio_scan_folio(&io, realinode, folio);
->   		if (err && err != -EINTR)
-> -			erofs_err(inode->i_sb, "readahead error at folio %lu @ nid %llu",
-> -				  folio->index, EROFS_I(inode)->nid);
-> +			erofs_err(realinode->i_sb, "readahead error at folio %lu @ nid %llu",
-> +				  folio->index, EROFS_I(realinode)->nid);
->   	}
->   	erofs_fileio_rq_submit(io.rq);
-> +	if (need_iput)
-> +		iput(realinode);
->   }
->   
->   const struct address_space_operations erofs_fileio_aops = {
-> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-> index bce98c845a18..52179b706b5b 100644
-> --- a/fs/erofs/inode.c
-> +++ b/fs/erofs/inode.c
-> @@ -215,6 +215,8 @@ static int erofs_fill_inode(struct inode *inode)
->   	case S_IFREG:
->   		inode->i_op = &erofs_generic_iops;
->   		inode->i_fop = &erofs_file_fops;
-> +		if (erofs_ishare_fill_inode(inode))
-> +			inode->i_fop = &erofs_ishare_fops;
 
-		inode->i_fop = erofs_ishare_fill_inode(inode) ?
-			&erofs_ishare_fops : &erofs_file_fops;
-
-Otherwise it looks good to me.
-
-Thanks,
-Gao Xiang
+--=20
+Chuck Lever
 
