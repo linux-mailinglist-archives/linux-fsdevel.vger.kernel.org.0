@@ -1,141 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-73646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B1ED1D718
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 10:16:55 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37B6D1D6CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 10:14:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 165C330BBDEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 09:06:07 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 170FB3063E68
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 09:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02DE3816F0;
-	Wed, 14 Jan 2026 09:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817AD38736B;
+	Wed, 14 Jan 2026 09:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qaJLD1Fo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hrp0W5Mi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA48837FF7C;
-	Wed, 14 Jan 2026 09:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B333378D86
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 09:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768381563; cv=none; b=k7BVIqvC1/xZR+lfYkeP+ugHE2wn0FP85VM5uaxp2oG6mjKFs75kQDS3tdtJ0VrJyHdTocoQNoQwsrvqGAyPTvYTgQBqD6lmLi/d2Kr+zD9+IjPVGa66ZsYcj8Ao0GYxfiCHFGg5i4hdFUM0F4+/LuvOhrsL1YbI1Eun9qXMjr8=
+	t=1768381916; cv=none; b=OTZrzIkNqx+fH7IhAabMmDSlrjk2zNTTK5tAwyM+7ZWaIeRGNCYT9IanDl1p0aEQ4XAy0xBKO874usLtx+SqKQ4Z9Fe1hBw0zIH6VsITXpfruhi63X13sKYiU8HKIGWhAh/ipRV0yJVCMw692CSH4X0Io6Hcz1mUyFiRSHL9fZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768381563; c=relaxed/simple;
-	bh=Z/c5xzA8GsX9mu/B0hzCKBFGxJax0635OBr+LZaU52k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cnQ0dPB8ber64MuVmVrPEqa6zhrjMAj63z66iUuTIS0aor4D92D65alJD9xR+PIbDERFHwdJTWNN+eJcYGIVD1XD0m1oDS1dsoWe4hgRK/RhD6cDkdyG4zxyCaiUOWRn+VDN3cSSKLLyF1Nw7RLj2uU/hoivMrpqplMR2OFYFrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qaJLD1Fo; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1768381552; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=EyFwIrf9sSF50zf02WWt1cpGq8zTuT3XybAEwTZBtdg=;
-	b=qaJLD1FokQcbIujrOG8yhVHejgXw3xUXNFfAwV33tZffCV5m4nOV3fxSWoWpJ3kaFG1nRFQRT6E3t8kEtOLEA0Cmiss9QWlkjp6Oca/iwMO0JNxp6vT7E11LYPAFZmg+T5PJ/QVkVbdcUhSkcJFLZFzKKtTPwy1ZzpTbj28aDsA=
-Received: from 30.221.147.158(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Wx1jSBj_1768381551 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 14 Jan 2026 17:05:52 +0800
-Message-ID: <03d69c33-e7c9-4160-890f-3b7f65de37d5@linux.alibaba.com>
-Date: Wed, 14 Jan 2026 17:05:51 +0800
+	s=arc-20240116; t=1768381916; c=relaxed/simple;
+	bh=82+bG8c9NT2v5lvFUlTPce4HUGNH29G5+7a0UjgWE7s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sQHNE4pjjUgxBeiVcJPFETOT/GYbNFS9mhBgj2dl1Pjq1X2bMSTLlkEP80/Ai7LXn13m5Qb+drbC4b3vyUX5ne2zy+CSu0+V/zynVfunlhfqnwC+6tvofhKg4WukA8f+rVUeTC41RG/yCSCb8GXy67ACOs7nlkN5/5gZBiZu2do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hrp0W5Mi; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-64b5ed53d0aso12490793a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 01:11:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768381913; x=1768986713; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ss8hxxmHbCJow5+qT+SG2ycgD4rdwI0VgjVuMPCS33M=;
+        b=hrp0W5Mi+xWM566DbM6WDb+H9l4pJOiMqZAQWtY/CHg4uxf3TkOIiOxi+rkoMuAsgf
+         ec/hT/dSRpYErc9UxFuLPOi4o5g2N+E//4SRqHYgvpFIYs4D6bedQf/r/lkDNqQ//P52
+         +DO1pqP32vRSGfcUeIDn/OGRqKANm+agPYNwdeFct+L7R1+XMHh2ISeDvAHoN23WuHAg
+         g25eFC8j4+vfq6LO8jQXQbv+w1oAE3fqNBaoiGMdYtc0Svz/65Fsuci2oYr0qjA0TOzJ
+         4VAd6DtZj8rpZdDJjdB3VQ45iTJTDpn9OPjrFqydD00OYyrnSaDzk0QfUsmclRQGp1p1
+         ZOwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768381913; x=1768986713;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Ss8hxxmHbCJow5+qT+SG2ycgD4rdwI0VgjVuMPCS33M=;
+        b=n4JDS0jA5Jqy+4Jbgyjl5uHxySNQBEDOtOOrldPbMJu8QUBevR61lNFV3wmFKT5Wpl
+         w4NHcmc+EpLV9aLRB5QmC+EqwnG85daJyYIf+rLl3fXDQv01X0FxPiUwtmxRN++UWjMK
+         qcR3Mxib3q4xgQ02mBYBDzLLTdpraODj/ov8+4M1v5DlK3V7oPY9l1hmtO7OdEiF7ZC+
+         tbJFNfYkdNYvesIR+NBdsldViSS0d83O4bWpKz9wd/qaLZRs8jMkwDAx8Zk3sEq4R8mW
+         rWifRwWSG+Z2ZewtXKTuzj5CBUL+1iVt2w7fAXRxPZfbpVFgAc5g/hTx72lXw2/7o9DU
+         tJig==
+X-Forwarded-Encrypted: i=1; AJvYcCXdfnKYGxXB7wdtvZY9+XDJKHHohRv+GDMdivUe0+FeBOqrRbwuLW05zhWokQGeGtWulHlbFV7glfub3Xry@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJgQJ9xVNTxWtLhgDZsNp5W9QedY+3OkKfrqSnJkSVrNhkrTxr
+	W0V6Apaalaeukepb/nGx5qJoSSIDyPKzDcAFM1Q+4MwjusIoySy0rAMB4KF9eSQBvcYEyVdPs8z
+	Xul6JWulYGIju3Lpohm8eDIl4nHzJDxQmkQ==
+X-Gm-Gg: AY/fxX41cTkOkBqDQuNsBww3HaFuOyseD2SORpLnGYsDtGm7XH37a7jj5eY0To3qQ3+
+	3bq/4lGpNCNOscJIq44//qZWvvFEm2yENhCWPQqgWuHgMN43Piip3zFCqrD6L2ej1XJPMFZSf2l
+	ilEOLw3Sto17UxYKC3X81pM/E4JQ9zoVc4BbIa8gHG1LA6pVFVBVU0TOUoI6Tlv6Wg1viQ8Begj
+	6Ty9VY/K3VsF5R/JbEJ9PCJhXW4ljWhGL0BfGfwo0ujyKubA1EtUupugno0fzdGCIjY9H51hJ2r
+	mxD+1a/QYiC8UCaTC++zQr9BfQ==
+X-Received: by 2002:a05:6402:22f6:b0:653:b83b:a68c with SMTP id
+ 4fb4d7f45d1cf-653ec10fc47mr1100386a12.12.1768381912635; Wed, 14 Jan 2026
+ 01:11:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ak: fuse: fix premature writetrhough request for large
- folio
-To: Horst Birthelmer <horst@birthelmer.de>
-Cc: miklos@szeredi.hu, joannelkoong@gmail.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260114055615.17903-1-jefflexu@linux.alibaba.com>
- <aWdYxTEO29S91qp-@fedora.fritz.box>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <aWdYxTEO29S91qp-@fedora.fritz.box>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260111083843.651167-1-mjguzik@gmail.com> <aWb+7/g7Nz1zfFSp@ly-workstation>
+In-Reply-To: <aWb+7/g7Nz1zfFSp@ly-workstation>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 14 Jan 2026 10:11:40 +0100
+X-Gm-Features: AZwV_Qh-jI-bo2PSE0uYhowSlLohfPRnG_fjsuzC7Pl6T7leUQ1plTfWgIoDlNI
+Message-ID: <CAGudoHHYTP7vwOMG5R1L_TDMrHkD01QjJxK5JitEMigccbOXJw@mail.gmail.com>
+Subject: Re: [PATCH] fs: make insert_inode_locked() wait for inode destruction
+To: "Lai, Yi" <yi1.lai@linux.intel.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jan 14, 2026 at 3:27=E2=80=AFAM Lai, Yi <yi1.lai@linux.intel.com> w=
+rote:
+> I used Syzkaller and found that there is WARNING: bad unlock balance in _=
+_wait_on_freeing_inode in linux-next next-20260113.
+>
+> [   57.741960] -------------------------------------
+> [   57.742317] repro/663 is trying to release lock (rcu_read_lock) at:
+> [   57.742831] [<ffffffff821343ea>] __wait_on_freeing_inode+0x13a/0x3b0
+> [   57.743361] but there are no more locks to release!
+
+uh. I made sure the hash lock dance + retry is fine, I missed the
+obvious rcu problem
+
+Figuring out a way to fix it is a matter of taste, so I'm going to
+chew on it a little bit.
 
 
-
-On 1/14/26 4:58 PM, Horst Birthelmer wrote:
-> 
-> Hi Jingbo,
-> 
-> On Wed, Jan 14, 2026 at 01:56:15PM +0800, Jingbo Xu wrote:
->> When large folio is enabled and the initial folio offset exceeds
->> PAGE_SIZE, e.g. the position resides in the second page of a large
->> folio, after the folio copying the offset (in the page) won't be updated
->> to 0 even though the expected range is successfully copied until the end
->> of the folio.  In this case fuse_fill_write_pages() exits prematurelly
->> before the request has reached the max_write/max_pages limit.
->>
->> Fix this by eliminating page offset entirely and use folio offset
->> instead.
->>
->> Fixes: d60a6015e1a2 ("fuse: support large folios for writethrough writes")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
->> ---
->>  fs/fuse/file.c | 10 ++++------
->>  1 file changed, 4 insertions(+), 6 deletions(-)
->>
->> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->> index 625d236b881b..6aafb32338b6 100644
->> --- a/fs/fuse/file.c
->> +++ b/fs/fuse/file.c
->> @@ -1272,7 +1272,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
->>  {
->>  	struct fuse_args_pages *ap = &ia->ap;
->>  	struct fuse_conn *fc = get_fuse_conn(mapping->host);
->> -	unsigned offset = pos & (PAGE_SIZE - 1);
->>  	size_t count = 0;
->>  	unsigned int num;
->>  	int err = 0;
->> @@ -1299,7 +1298,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
->>  		if (mapping_writably_mapped(mapping))
->>  			flush_dcache_folio(folio);
->>  
->> -		folio_offset = ((index - folio->index) << PAGE_SHIFT) + offset;
->> +		folio_offset = offset_in_folio(folio, pos);
->>  		bytes = min(folio_size(folio) - folio_offset, num);
->>  
->>  		tmp = copy_folio_from_iter_atomic(folio, folio_offset, bytes, ii);
->> @@ -1329,9 +1328,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
->>  		count += tmp;
->>  		pos += tmp;
->>  		num -= tmp;
->> -		offset += tmp;
->> -		if (offset == folio_size(folio))
->> -			offset = 0;
->>  
->>  		/* If we copied full folio, mark it uptodate */
->>  		if (tmp == folio_size(folio))
->> @@ -1343,7 +1339,9 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
->>  			ia->write.folio_locked = true;
->>  			break;
->>  		}
->> -		if (!fc->big_writes || offset != 0)
->> +		if (!fc->big_writes)
->> +			break;
->> +		if (folio_offset + tmp != folio_size(folio))
->>  			break;
->>  	}
->>  
->> -- 
->> 2.19.1.6.gb485710b
->>
->>
-> 
-> 
-> I think this might have been an oversight when moving from pages to folios.
-> 
-> Reviewed-by: Horst Birthelmer <hbirthelmer@ddn.com>
-
-Right, it's not triggered until large folio is enabled.
-
-Thanks for the review :)
+thanks for the report!
 
