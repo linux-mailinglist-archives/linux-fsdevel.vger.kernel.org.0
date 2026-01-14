@@ -1,232 +1,547 @@
-Return-Path: <linux-fsdevel+bounces-73661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E61ED1E716
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 12:36:24 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D58D1E82D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 12:47:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6510930935C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 11:32:43 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B2A2D3032CF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 11:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3949A395DA4;
-	Wed, 14 Jan 2026 11:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="g4pDEuJX";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="jT77bYsN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82F9396B6F;
+	Wed, 14 Jan 2026 11:47:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F38355811;
-	Wed, 14 Jan 2026 11:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768390361; cv=fail; b=WNWZvi78YB0CUB94DBh93oSB44Y3FUMX6Q5xcIwlv+FASaA/2YGxpaJ+KFJ9HGE7LCsTZ0i69lEqQ0LxLgnn40x/vbYCM6nJuciH3/x2hNA7nTHvYzR/+v6Efapywf0crMwficEyZBE/NLGi4lSr0/mMGsf7QerkDkmr0FHrUnA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768390361; c=relaxed/simple;
-	bh=ZBCm1IIm/X1zCpjVZoH2R7dFtOhHakhNKijqCMsKVYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Jg1Fhxx6vr/vtwxrVQnejrzcsKiLHJrQCeId9fR0lwKVG1NGY5RZT2mWDItu3e3ZOoo0CmYjAKvCIwjNKFDit04RhCHhzI+KYhbFe4MlMbuqIGZ/8KWhTak63h/txX055vZX9qaYVTT9lG/xoqbxxSr/jvQs/NDqL4tffXAusVI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=g4pDEuJX; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=jT77bYsN; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60E4DdHm1098168;
-	Wed, 14 Jan 2026 11:32:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=ZBCm1IIm/X1zCpjVZo
-	H2R7dFtOhHakhNKijqCMsKVYo=; b=g4pDEuJXcfQeMweMr8UxiYx/AercQcC9Jw
-	irL6ylim7VB7VDvfgnCBkDzrZLz/uIzfEKfboiumEawbdt/be/5scjUsZJ7rC8Ht
-	Le9j/PDU4ue7PkvwRDpb9fZe+eeH8VAXKx6FVh8+vMbOp5qaoifIIdSnx3djKMkd
-	5l+VOHYSiSJrdC7xKyZUGSm7a6Z8Z8VHY7AHT9MEB8+u6d8NKfEYQSM3U5DK9MoE
-	FpDr+W9vj3ZeHR1QAXv3bSZ5WLZjKYbIvBXfp7EJdVRc8Cb8G3tv7TCOLEb6qdcs
-	oJ3tGLG+fjyKCWlJdzfTjXTrFst3/23rUvnOCvFpIC3CHUcAQ/GQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4bkntb52wg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Jan 2026 11:32:13 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60EAMn9h001848;
-	Wed, 14 Jan 2026 11:32:12 GMT
-Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazon11010040.outbound.protection.outlook.com [52.101.61.40])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4bkd79wtcj-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Jan 2026 11:32:12 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NtWp2tmEO+9Lekuuj85LUV6l+6jTot9yZImtmDwiXPsytmB9elF+IGDX6WoV8dan7J67HQOKevyLtUz8SflNzeTUXLGJV9rhcX/EGjVebPQWf1MAPcYNMnq3YUCLMSqUF5+QFWWezvqwVsiQswugxXjvU/kGJ3XsSjhWIAIH4qojzEGqfVh4K5tPZMIOJI9nY3AQjPq1KolU+N7k8PRqPV3sYFrvao0Bhg2SVJbPldFzDLze8OskFtKgUF2SbS2d1EBTf1zmmBcPYLme1tpLeIgQbgsYj6Oqa/lQoHREPtV7OT7Ku2I6OwBlUHGlOEcDCa31htM2YTgP92Q6nguwGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZBCm1IIm/X1zCpjVZoH2R7dFtOhHakhNKijqCMsKVYo=;
- b=Psz6FE6d1p6ZZLhJcUu/fBp6q3cVCF41WHJByCXRKxzAO7iB3XH6KQZRCnpFfw17nZpxXhbAETUHcsjNfb6px3uXsHUwdRgP/x7ON/CubvyJGAhnAimoEjcydhukpcPOXyi0GNzZKPq+oMwQwq2pl4Xlq6JEpTeKAOe5vJtYYySqLxTCpcf7/tnulbw5dkQTtZSyn3GE3VHWCYqmVXV+yN7WVUkHrZDXGFCF9116GsxzwOUDJKkOfzOK5NyuX8bU6v5oTXSCFtOY4Em+iuj3xLdDh+x5dthhVXYOH9DsMBJZMKXgrPlbgOzOe/YnbyqcpgTjqXmTiHAhGkaTOFKmlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZBCm1IIm/X1zCpjVZoH2R7dFtOhHakhNKijqCMsKVYo=;
- b=jT77bYsN1gunR9DCkTwnm5C2uBDr9AV0FDuVQQ6hznHdvEnYFYE/Lc/8jYIe7XYQ5xVi6TiOcl6dNmApLvnog63v3K5M4xHpOB8+OAWdruLPwCyDt5Wo0zUqiEkBgwnZC6OBtI1rhORyKzzW9VimeYKAY6t5cyhV21EYWtWZno0=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by SJ0PR10MB4782.namprd10.prod.outlook.com (2603:10b6:a03:2dc::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.7; Wed, 14 Jan
- 2026 11:32:08 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::f3ea:674e:7f2e:b711]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::f3ea:674e:7f2e:b711%6]) with mapi id 15.20.9499.005; Wed, 14 Jan 2026
- 11:32:08 +0000
-Date: Wed, 14 Jan 2026 11:32:12 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Chris Mason <clm@meta.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
-        Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, Andrei Vagin <avagin@gmail.com>
-Subject: Re: [PATCH v4 5/9] mm: introduce copy-on-fork VMAs and make
- VM_MAYBE_GUARD one
-Message-ID: <2456b1fb-3ea9-4632-8757-b8e0ea16dc29@lucifer.local>
-References: <5d41b24e7bc622cda0af92b6d558d7f4c0d1bc8c.1763460113.git.lorenzo.stoakes@oracle.com>
- <20260113231257.3002271-1-clm@meta.com>
- <955cd0d6-8977-4bd1-8f16-a21063a5a95f@lucifer.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <955cd0d6-8977-4bd1-8f16-a21063a5a95f@lucifer.local>
-X-ClientProxiedBy: LO4P265CA0202.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:318::8) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBA6343D8F;
+	Wed, 14 Jan 2026 11:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768391250; cv=none; b=EU2F/zURrmovNvg14TTMdfP6Mddr9lXViqjBXjj5e2sF31ZiXMPPkwmumQc5+zxZxjloyijiQ4EJkYjrdRQfq56T66U9vv/0IUX5MiVeJRu9Aab/4RHcMFE87ijSp/R/C80nd5cB61VFwNQlUSSU/X4IIVrIx2SOfrwzqzecHR8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768391250; c=relaxed/simple;
+	bh=tRmJmq0DwJjk8bbEa3VCzzxzz4BRiEPaWxOUDfrzLz4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dD2+JWYxMsshXl5CsjyNCNhujHEO3q8uktinh+JOme1K/uUhYjcCjNE8YFLXCdvXbAb7pYIuUrs7jNUKANH6cg562mdRLeX+cQe/4QaT/Cp5805YpOh2u5BC2Je17EqZsvp4j7i0cGdAfT3aOy+e5eRrTRkOPSP5aXZjPu/GCTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43078339;
+	Wed, 14 Jan 2026 03:47:14 -0800 (PST)
+Received: from pluto.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49D523F59E;
+	Wed, 14 Jan 2026 03:47:17 -0800 (PST)
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: sudeep.holla@arm.com,
+	james.quinlan@broadcom.com,
+	f.fainelli@gmail.com,
+	vincent.guittot@linaro.org,
+	etienne.carriere@st.com,
+	peng.fan@oss.nxp.com,
+	michal.simek@amd.com,
+	dan.carpenter@linaro.org,
+	d-gole@ti.com,
+	jonathan.cameron@huawei.com,
+	elif.topuz@arm.com,
+	lukasz.luba@arm.com,
+	philip.radford@arm.com,
+	souvik.chakravarty@arm.com,
+	Cristian Marussi <cristian.marussi@arm.com>
+Subject: [PATCH v2 00/17] Introduce SCMI Telemetry FS support
+Date: Wed, 14 Jan 2026 11:46:04 +0000
+Message-ID: <20260114114638.2290765-1-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB4782:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8562e975-774b-4b5b-5bb5-08de53608d1e
-X-LD-Processed: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?Sa40luhuY8jONFEAKbe1KMWzXy1tdeGI8ld7rfJLWTdTOwYGFp7mRvWTu2Oe?=
- =?us-ascii?Q?hu5pC0ngm2iYJaqm6EkakrGgFw9cVQDJZIrfYBEjrL2aEs8QHDGcExtp7JNb?=
- =?us-ascii?Q?gT8k0DBZ4h1fIwyUTFWfnCCpMPigcwlZz+i5B3wYfSu3p8gcKXRsDp7ZYCtw?=
- =?us-ascii?Q?LuH7ba2pwnGzZwuLKG+J4iOIJxmZJAb3z11/P8/gmMFPb7GcYhidPH/DOBBE?=
- =?us-ascii?Q?1nX4pjr8cuaf10IWyPEPS9XXrj8RZWH6/k9Bs13DHK1i2vDhlDmmq9g78QI4?=
- =?us-ascii?Q?TG324rnRm6nSwGOTM5TFrKhIGJUadeI2+tdxmw+k+P0DuitBdKt8OHY6NF6c?=
- =?us-ascii?Q?ozPs+j4qVjaJY7XNcYRlC6VyH/qvJJGGvVQ0a2do6F8SwqboDadqZ92GpV6g?=
- =?us-ascii?Q?joheS9EUV3wUbJFkLssIWTuxOOdKSsGLVfNLN/NgkxWLCZgBMKRtgAuGEYkC?=
- =?us-ascii?Q?YXrQIxBZdHZW4VBojbvlNjE0qtKR+IyiuPboHLWenbXvvi8/k37xmDxnCVS+?=
- =?us-ascii?Q?TiHg0HT24VwsG6L2mmLLM54fxqJRwleATSwmDB3UAGnKpDLMLa+NuIz4k6qo?=
- =?us-ascii?Q?iddJM9Zy3VhcEpTXngT+aInq1lQTQ5aUAXiT8XW0ofmjMAexPlWvLu6/fMLi?=
- =?us-ascii?Q?p+HUj3zzL3Oeu7MQVVRStLCmNQmDTV2wH/OJztVO/vB7czIKn5/6YgUxsck0?=
- =?us-ascii?Q?pexSMdnXDg8WPyzwY7J6ZbvJ9q+oHPwXDEuFs23oBOqVONFAI8/07C47AzH3?=
- =?us-ascii?Q?UnI3Ii385NrE1sFqwLhCQbolWywrOWPLgln2gXRIVpnOdYJgaKvvE0CsLyMQ?=
- =?us-ascii?Q?fKDbfrQ08OL84EdBVQfZF4bsDhjly6ordlLGDZAIgyb9oeTf8+HGbAUsndkO?=
- =?us-ascii?Q?92VxK1Dc9YY7qj4LyMsAbTMUj5wx2zUYMRpepgZoEXO0lRW5ymn5nSMHD4dJ?=
- =?us-ascii?Q?2wWAo4P2kzMfy2XJGSrviHjvex0/wnlOzFT5NeM0sXQOeiHTdNdA+h64OfRz?=
- =?us-ascii?Q?dzUJ2vv6QV6c18FMue1cUINUSlzbVzF5o29v6JAs+1k6jM3KuW5JTKsrU5tq?=
- =?us-ascii?Q?qYo/sx1k9Fz++vtEsgsg65KlNr/NmNDhl2D4xhych5PNzLyGHyp0rLWVjheP?=
- =?us-ascii?Q?z5+faP62/wnmPji/hVy3BfUT8Wc0A75HsO+1ljWW5DhlHD9K/lEMnUkvppqk?=
- =?us-ascii?Q?Yvqc3bkRR+QjXR9SmDIY8MexiZt3AWe8iywqGEENdm1mohgjOYPU8BjoZ/is?=
- =?us-ascii?Q?u08yJzLP0gWg28+BuNJp4mbzoKnVLbZ/PqYXHl/wqScawJe+xQmuuAGUunwB?=
- =?us-ascii?Q?yXGGw4E7hDqhUX/TCMRZcjkQJPP01x5MTp3MU1PG6i3tzyY/bUgjloKC4Tzw?=
- =?us-ascii?Q?S5vUQK+rp7L8f59l9Ylcc7qYGWMZDzzc45y2+KiVZZ+6IR/GylT66MPLc2RG?=
- =?us-ascii?Q?RnLuVqIB/jAZBh2kbviFKQ2vV4J2Jo/qT9Yaan2FO/4GtJrmkpX+Q7ymDn8i?=
- =?us-ascii?Q?wNptvJwahWcdfw65J9NLxNecPKGhPNtbIQ0jlsXEZfBm4xrxf7UzkAJcBIHu?=
- =?us-ascii?Q?/J4Oh8sqJsHZoMap3Nc=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?RyZoYlap0YeBefptfNX4TOb9hZ6KnFntCMghFcWeo266sSzUxrTDjtK9qm9K?=
- =?us-ascii?Q?AczCBc5xIRLSppHY8b6DFlDdhvZBLEDDwoK7EpcjLBqqBxXDv1fK3MqzsKcD?=
- =?us-ascii?Q?3A49WhSb1KcIxkQ6AdfTeSgJGD4JMRK7kx6yJGGAbbEAfSqBgVfh+EfQy6sp?=
- =?us-ascii?Q?+e6BkiGatKv4dq/VGhA+Y80USQRcTeVHRLLO/CxgakvB7Nr/YBANluHHvBQt?=
- =?us-ascii?Q?BOVNlU4fCYIvE71Lcr7FBTomWU2WcM4YEuiWX3JXdKiy4yQVycjB02GM1bSV?=
- =?us-ascii?Q?L23ofM24xITZsCQc0POfauYI4Lsjb+8ft/NQ/BVbN3r1KzrhzwYEeE/wCU8t?=
- =?us-ascii?Q?Lum9s8N4lj+eiIx33ohmUk2S3l0h5Ix63JauaJ1lvR7bu+Kyb+VXQgtPoXHx?=
- =?us-ascii?Q?AZQdkC1m1uy8ETQRoZrCzvwUPsBPAyKJu/tUPrfHJMatBwg4N/tRytaV3Xe1?=
- =?us-ascii?Q?LMI+MiIAWKbD7CK05pLmGQcqEsv+FZBsdpKTHbw4IrV5DWqFcQbdRNCMfGgH?=
- =?us-ascii?Q?uXYbXriqid/Knm+EBiLea2mPJYkiqNPl+ieTvRIQOeBz5xKBdZiniLvKY/um?=
- =?us-ascii?Q?WJ+QrliVeiAbnBsgOPRYYjTAE0R1xYTweaLav2fmI5VQf0FPURg5dJIIHjr1?=
- =?us-ascii?Q?RQK/3sITW30tq1NfL0apZDWOfABdy5SQFWaDeK/vtT89NsqC0r6BDk2akrbx?=
- =?us-ascii?Q?y/y59djoMnKwGeI5jZY/Y/ACa+1iqTcsSBAhy1oLE7GzDdtiqeA6kiCUgGLe?=
- =?us-ascii?Q?ruSpHdbn7I1o7zFZhPhjfNJrM5x6ZqdlXKRMUI4ZqLNAOm2MxjTODtlS/NeF?=
- =?us-ascii?Q?x/7vdHK3xaj+uaf/a2Pzzto1hS2r1hsUBSR1+20JGPzjNdtMWW6it+lIuaQX?=
- =?us-ascii?Q?NOynguHTrm1Ocsdebv+3EkXJ2Vm+kykcr/3IBdME+LRHUGvQAcdr+TLK3H1d?=
- =?us-ascii?Q?SQ1Fj1d7yv9gaI2DWEMaUE6McpwTnAdsjoM76aqZSGlk4FyGGQmfKTLc/09I?=
- =?us-ascii?Q?6ixEzZcwvy090/MJsnwW2ubSqqJCe/zQmRz/jMWounMyEDY64k6xnlQTeaOy?=
- =?us-ascii?Q?kZ1Xsl9cLe9nidrm5xDGMVgvQQU0JkatOSa4vCOEbayIrzI90vPTy6ymLLtn?=
- =?us-ascii?Q?1rHODog11/1VofdJONaDZOMXHdnm9C4zpukJf2KUyz8RvtQ5f/F3Q3Mtk5MF?=
- =?us-ascii?Q?2fqRhDz7jqCnhe9V9r5gSAW1HPdUpz6Xr+2WDzLn90Zzh4+5rlN0ryXeYBRv?=
- =?us-ascii?Q?M93cv/9iaXPOrX2oHpl8c6Ob/Avi/vXUsrCeL16YHuo7xF+sLsmEkJfOLGsd?=
- =?us-ascii?Q?ysUxePXHJYXB1pVx2CbXTpoxuKFVowO7pBdS+nSvFbIGENWRa7+AqCNpPu+n?=
- =?us-ascii?Q?LGP9b9Pa3JjQfTQ9UJ7BRtDs/ZKE/FLtzJjW+KsJL33dAmxnjVB5gX/zGcgH?=
- =?us-ascii?Q?MZ3qptFoDKlZvlAJ4lB0MnuObDYvp2QEblRPf6LLLYCaOHTxMM//Q0IWoBVY?=
- =?us-ascii?Q?Aehq6dbZwoT5bo1+ho5SrHRq9leGuoXB6D4vBy+38yqJqPW2K5E7N7TRiBGp?=
- =?us-ascii?Q?05kMHX8WNn0O9qtwQfDM/7vy1V9AWyHtw4W8iNC0MciYITnFOF+fUF9JTcxs?=
- =?us-ascii?Q?8Lw+A0GDE7oBUTe46+/7RuMsKCdkrDzCSDjpGVf8j4U3W1SO9hcR5sjdNnyp?=
- =?us-ascii?Q?eGcq2VFhLcWcPHOla3yW2ul3e3kYHknUxeFaCL2CTAN6l+baPZScvMNNlOP5?=
- =?us-ascii?Q?CvDbJaT/ICMtjAtZwC45RRgE9hd3VRc=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	kVWc/53SkuGHk05etoVJP8BGL7PDgcXk9XuGiBofU2ATiaz+XVJs9Y7JKYa/MRGTJidfCLtVikxjrUG1fH1+I3mdovD2N1G0XIgy7k5nEzlEa4OsCuwe8yJC2Ya15+JKD/ZZjpz4ktNc9vo/23Bi6Vs8gE2rk74OcVs4RUqtGARk2lWh3MidiO7cfsiEpyrml6Zt8LXgRsH5Wk1kPdjuL7VM29Dw7NMrLGQf1ZmVDW6fcCYcsIIJw1Gj60a6R7twBxZtLnxwHwi+qPXuddFMICF3o7PoW41DWsg4Yo/BMmqozw7mUswFavq1m4IT4FsxBL96oL4KUFNLALe7445+gRlQkVKsVGRqXuLA3qeeC45nUZ+OY4RE2ALfooJQ3eGHICZdQ2y/2iN86xF2tkwWjfYR7q74dgM1rQGRXRP+7T+bH+YkLW7YOORct1a4Nr4yBGzw9ceLomPGPWsX+wqbHt5qGYxW75tN3trIRRuiVEdSzMVWCZIQrWMlT8XqSbjlOCxqdvWEOYPzBmfLe+U5V67fW8pRHnk9z3BSFHwqUcB1NbHLFyQOSDgXl3Wot9MwkY+5VaDjE20nreYZ4FswuVWObUtqPB1ZU2D6NN4NAJE=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8562e975-774b-4b5b-5bb5-08de53608d1e
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jan 2026 11:32:08.4209
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tNc7PjRkhxs0oUsWAplTUo0ahSAn4UBbouA8yOGT/udj0womWN2iiEJqfaML8HioJes77HNzKsnRHRkg0LL2zpLk7hHm4Yc7xWtLgWVVS9Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4782
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-14_03,2026-01-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 phishscore=0
- mlxlogscore=620 adultscore=0 suspectscore=0 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2512120000
- definitions=main-2601140095
-X-Proofpoint-GUID: duh3YWLubxffgQbJKo9NkBO4QVTWN2h9
-X-Proofpoint-ORIG-GUID: duh3YWLubxffgQbJKo9NkBO4QVTWN2h9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE0MDA5NSBTYWx0ZWRfX/r1tTUDWPYu9
- 0XSupmCMc/idwxyM4JTID2J2rWdu46LOSGXXQj5uLfwt6ZtIb1NCIS9fkyF/UcFPJuuQW2PK55C
- AMo4HB5HcoJWHFpQs60w4y/nMELI3OSqggRiEyehTo+mZMpGhaPp/Tkw4OKsDq5dNGeEy30YwjE
- Lk2wUQzUxbM/QI7tWXsiHdVJ3eEHrmwbqZiHGk5W4u/XDvlBAREBvm7a4Q0AjBvFON/qOn+3h0g
- Wv/GT0s8AyYrJY7GMXsA85Nb8GTi0iWztBo5kE5QWDsLkjTS+VLoYfYgk/PMh/8fpZAxphFLiq8
- rHCBWr9rIeO50Q6aC3EJwmdyhOpxVvagjLZjuWQG7vVuTNu4Rd2Wm39Zzg93l1Sj7lEEwwteYKh
- h1kx889G7vRyLYKz7q+PnISFx8uHisDmqNkYv0h1GPQzel8UWiifnl1Z/8sjV+oCUeaj41mnWAD
- I9hXFAF29mvNDhVQlUg==
-X-Authority-Analysis: v=2.4 cv=fIc0HJae c=1 sm=1 tr=0 ts=69677ebd cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=vUbySO9Y5rIA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=vPONcj0NVKw7j5KBOh8A:9 a=CjuIK1q_8ugA:10 a=M91JV_wKSCcA:10
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 14, 2026 at 10:27:24AM +0000, Lorenzo Stoakes wrote:
-> I'll send a fix.
+Hi all,
 
-Actually it's clear that assert is just wrong, so I'll drop it. we don't
-assert elsewhere, this seems to be a 'nice to have', and I'd rather not
-bother with a 'mmap or VMA lock' check here as it doesn't seem worth it.
+the upcoming SCMI v4.0 specification [0] introduces a new SCMI protocol
+dedicated to System Telemetry.
 
-Will send shortly.
+In a nutshell, the SCMI Telemetry protocol allows an agent to discover at
+runtime the set of Telemetry Data Events (DEs) available on a specific
+platform and provides the means to configure the set of DEs that a user is
+interested into, while reading them back using the collection method that
+is deeemd more suitable for the usecase at hand. (amongst the various
+collection methods allowed by SCMI specification)
+
+Without delving into the gory details of the whole SCMI Telemetry protocol
+let's just say that the SCMI platform firmware advertises a number of
+Telemetry Data Events, each one identified by a 32bit unique ID, and an
+agent, like Linux, can discover them and read back at will the associated
+data value in a number of ways.
+Data collection is mainly intended to happen on demand via shared memory
+areas exposed by the platform firmware, discovered dynamically via SCMI
+Telemetry and accessed by Linux on-demand, but some DE can also be reported
+via SCMI Notifications or direct dedicated FastChannels (another kind of
+SCMI MMIO): all of this underlying mechanism is anyway hidden to the user
+since it is mediated by the kernel which will return the proper data value
+when queried.
+
+Anyway, the set of well-known architected DE IDs defined by the spec is
+limited to a dozen IDs, which means that the vast majority of DE IDs are
+customizable per-platform: as a consequence the same ID, say '0x1234',
+could represent completely different things on different systems.
+
+Precise definitions and semantic of such custom Data Event IDs are out of
+the scope of the SCMI Telemetry specification and of this implementation:
+they are supposed to be provided using some kind of JSON-like description
+file that will have to be consumed by a userspace tool which would be
+finally in charge of making sense of the set of available DEs.
+
+IOW, in turn, this means that even though the DEs enumerated via SCMI come
+with some sort of topological and qualitative description provided by the
+protocol (like unit of measurements, name, topology info etc), kernel-wise
+we CANNOT be completely sure of "what is what" without being fed-back some
+sort of information about the DEs by the above mentioned userspace tool.
+
+For these reasons, currently this series does NOT attempt to register any
+of these DEs with any of the usual in-kernel subsystems (like HWMON IIO,
+PERF etc), simply because we cannot be sure which DE is suitable or even
+desirable for a given subsystem. This also means there are NO in-kernel
+users of these Telemetry data events as of now.
+
+So, while we do not exclude, in the future, to feed/register some of the
+discovered DEs with some of the above mentioned Kernel subsystems, as of
+now we have ONLY modeled a custom userspace API to make SCMI Telemetry
+available to userspace tools.
+
+In deciding which kind of interface to expose SCMI Telemetry data to a
+user, this new SCMI Telemetry driver aims at satisfying 2 main reqs:
+
+ - exposing some sort of FS-based human-readable interface that can be used
+   to discover, configure and access our Telemetry data directly from the
+   shell
+
+ - exposing alternative machine-friendly, more-performant, binary
+   interfaces that can be used to avoid the overhead of multiple accesses
+   to the VFS and that can be more suitable to be accessed with a custom
+   tool
+
+In the initial RFC posted a few months ago [2], the above was achieved
+with a combination of a SysFS interface, for the human-readable side of
+the story, and a classic chardev/ioctl for the plain binary access.
+
+Since V1, instead, we moved away from this combined approach, especially
+away from SysFS, for the following reason:
+
+ 1. "Abusing SysFS": SysFS is a handy way to expose device related
+      properties in a common way, using a few common helpers built on
+      kernfs; this means, though, that unfortunately in our scenario I had
+      to generate a dummy simple device for EACH SCMI Telemetry DataEvent
+      that I got to discover at runtime and attach to them, all of the
+      properties I need.
+      This by itself seemed to me abusing the SysFS framework, but even
+      ignoring this, the impact on the system when we have to deal with
+      hundreds or tens of thousands od DEs is sensible.
+      In some test scenario I ended with 50k devices and half-a-millon
+      related property files ... O_o
+
+ 2. "SysFS constraints": SysFS usage itself has its well-known constraints
+      and best practices, like the one-file/one-value rule, and due to the
+      fact that any virtual file with a complex structure or handling logic
+      is frowned upon, you can forget about IOTCLs and mmap'ing to provide
+      a more performant interface, which is the reason why, in the previous
+      RFC, there was an additional alternative chardev interface.
+      These latter limitations around the implementation of files with a
+      more complex semantic (i.e. with a broader set of file_operations)
+      derive from the underlying KernFS support, so KernFS is equally not
+      suitable as a building block for our implementation.
+
+ 2. "Chardev limitations": Given the nature of the protocol, the hybrid
+      approach employing character devices was itself problematic: first
+      of all because there is an upper limit on the number of chardev we
+      can create, dictated by the range of available minor numbers and
+      then because the fact itself to have to maintain 2 completely
+      different interfaces (FS + chardev) is a pain.
+
+As a final remark, please NOTE THAT all of this is supposed to be available
+in production systems across a number of heterogeneous platforms: for these
+reasons the easy choice, debugFS, is not an option.
+
+Due to the above reasoning, since V1 we opted for a new approach with the
+proposed interfaces now based on a full fledged, unified, virtual pseudo
+filesystem implemented from scratch so that we can:
+
+ - expose all the DEs property we like as before with SysFS, but without
+   any of the constraint imposed by the usage of SysFs or kernfs.
+
+ - easily expose additional alternative views of the same set of DEs
+   using symlinking capabilities (e.g. alternative topological view)
+
+ - additionally expose a few alternative and more performant interfaces
+   by embedding in that same FS, a few special virtual files:
+
+   + 'control': to issue IOCTLs for quicker discovery and on-demand access
+   		to data
+   + 'pipe' [TBD]: to provide a stream of events using a virtual
+		   infinite-style file
+   + 'raw_<N>' [TBD]: to provide direct memory mapped access to the raw
+   		      SCMI Telemetry data
+
+ - use a mount option to enable a lazy enumeration operation mode to delay
+   SCMI related background discovery activities to the effective point in
+   time when the user needs it (if ever)
+
+
+INTERFACES
+===========
+
+We propose a couple of interfaces, both rooted in the same unified
+SCMI Telemetry Filesystem STLMFS, which can be mounted with:
+
+	mount -t stlmfs none /sys/fs/arm_telemetry/
+
+In a nutshell, we expose the following interfaces, rooted at different
+points in the FS:
+
+ 1. a FS based human-readable API tree
+
+   This API present the discovered DEs and DEs-groups rooted under a
+   structrure like this:
+
+	/sys/fs/arm_telemetry/tlm_0/
+	|-- all_des_enable
+	|-- all_des_tstamp_enable
+	|-- available_update_intervals_ms
+	|-- current_update_interval_ms
+	|-- de_implementation_version
+	|-- des
+	|   |-- 0x00000000
+	|   |-- 0x00000016
+	|   |-- 0x00001010
+	|   |-- 0x0000A000
+	|   |-- 0x0000A001
+	|   |-- 0x0000A002
+	|   |-- 0x0000A005
+	|   |-- 0x0000A007
+	|   |-- 0x0000A008
+	|   |-- 0x0000A00A
+	|   |-- 0x0000A00B
+	|   |-- 0x0000A00C
+	|   `-- 0x0000A010
+	|-- des_bulk_read
+	|-- des_single_sample_read
+	|-- groups
+	|   |-- 0
+	|   `-- 1
+	|-- intervals_discrete
+	|-- reset
+	|-- tlm_enable
+	`-- version
+
+	At the top level we have general configuration knobs to:
+
+	- enable/disable all DEs with or without tstamp
+	- configure the update interval that the platform will use
+	- enable Telemetry as a whole rest the whole stack
+	- read all the enabled DEs in a buffer one-per-line
+		<DE_ID> <TIMESTAMP> <DATA_VALUE>
+	- des_single_sample_read to request an immediate updated read of
+	  all the enabled DEs in a single buffer one-per-line:
+		<DE_ID> <TIMESTAMP> <DATA_VALUE>
+        
+	where each DE in turn is represented by a flat subtree like:
+
+	tlm_0/des/0xA001/
+	|-- compo_instance_id
+	|-- compo_type
+	|-- enable
+	|-- instance_id
+	|-- name
+	|-- persistent
+	|-- tstamp_enable
+	|-- tstamp_exp
+	|-- type
+	|-- unit
+	|-- unit_exp
+	`-- value
+
+	where, beside a bunch of description items, you can:
+
+	- enable/disable a single DE
+	- read back its tstamp and data from 'value' as in:
+		<TIMESTAMP>: <DATA_VALUE>
+
+	then for each discovered group of DEs:
+
+	scmi_tlm_0/groups/0/
+	|-- available_update_intervals_ms
+	|-- composing_des
+	|-- current_update_interval_ms
+	|-- des_bulk_read
+	|-- des_single_sample_read
+	|-- enable
+	|-- intervals_discrete
+	`-- tstamp_enable
+
+	you can find the knobs to:
+	
+	- enable/disable the group as a whole
+	- lookup group composition
+	- set a per-group update interval (if supported)
+	- des_bulk_read to read all the enabled DEs for this group in a
+	  single buffer one-per-line:
+		<DE_ID> <TIMESTAMP> <DATA_VALUE>
+	- des_single_sample_read to request an immediate updated read of
+	  all the enabled DEs for this group in a single buffer
+	  one-per-line:
+		<DE_ID> <TIMESTAMP> <DATA_VALUE>
+
+ 2. Leveraging the capabilities of a full-fledged filesystem and the
+    topological information provided by SCMI Telemetry we expose also
+    and alternative view of the above tree, by symlinking a few of the
+    same entries above under another, topologically sorted, subtree:
+
+    components/
+    |-- cpu
+    |   |-- 0
+    |   |   |-- celsius
+    |   |   |   `-- 0
+    |   |   |       `-- 0x0001
+    |   |   |           |-- compo_instance_id
+    |   |   |           |-- compo_type
+    |   |   |           |-- enable
+    |   |   |           |-- instance_id
+    |   |   |           |-- name
+    |   |   |           |-- persistent
+    |   |   |           |-- tstamp_enable
+    |   |   |           |-- tstamp_exp
+    |   |   |           |-- type
+    |   |   |           |-- unit
+    |   |   |           |-- unit_exp
+    |   |   |           `-- value
+    |   |   `-- cycles
+    |   |       |-- 0
+    |   |       |   `-- 0x1010
+    |   |	    |    ....
+	.................
+	...............
+    |   |-- 1
+    |   |   `-- celsius
+    |   |       `-- 0
+    |   |           `-- 0x0002
+    |   |           .........
+    |   `-- 2
+    |       `-- celsius
+    |           `-- 0
+    |               `-- 0x0003
+    |-- interconnnect
+    |   `-- 0
+    |       `-- hertz
+    |           `-- 0
+    |               |-- 0xA008
+    |               `-- 0xA00B
+    |-- mem_cntrl
+    |   `-- 0
+    |       |-- bps
+    |       |   `-- 0
+    |       |       `-- 0xA00A
+    |       |-- celsius
+    |       |   `-- 0
+    |       |       `-- 0xA007
+    |       `-- joules
+    |           `-- 0
+    |               `-- 0xA002
+    |-- periph
+    |   |-- 0
+    |   |   `-- messages
+    |   |       `-- 0
+    |   |           `-- 0x0016
+    |   |-- 1
+    |   |   `-- messages
+    |   |       `-- 0
+    |   |           `-- 0x0017
+    |   `-- 2
+    |       `-- messages
+    |           `-- 0
+    |               `-- 0x0018
+    `-- unspec
+    `-- 0
+    |-- celsius
+    |   `-- 0
+    |       `-- 0xA005
+
+
+   ...so as to provide the human user with a more understandable layout.
+
+
+All of this is nice and fancy human-readable, easily scriptable, but
+certainly not the fastest possible to access especially on huge trees...
+
+ ... so for the afore-mentioned reasons we alternatively expose also:
+
+ 3. a more performant API based on IOCTLs as described fully in:
+
+	include/uapi/linux/scmi.h
+
+   As described succinctly in the above UAPI header too, this API is meant
+   to be called on a few special files named 'control' that are populated
+   into the tree:
+
+   .
+   |-- all_des_enable
+   .....
+   |-- components
+   |   |-- cpu
+   |   |-- ...
+   |   |-- periph
+   |   `-- unspec
+   |-- control                   <<<<<<<<<<<<<<
+   .....................
+
+   |-- groups
+   |   |-- 0
+   |   |   |-- available_update_intervals_ms
+   |   |   |-- composing_des
+   |   |   |-- control           <<<<<<<<<<<<<<
+   .....................
+   |   |-- 1
+   |   |   |-- available_update_intervals_ms
+   |   |   |-- composing_des
+   |   |   |-- control           <<<<<<<<<<<<<<
+   .....................
+   |   `-- 2
+   |       |-- available_update_intervals_ms
+   |       |-- composing_des
+   |       |-- control           <<<<<<<<<<<<<<
+   .....................
+
+  This will allow a tool to:
+
+   - use some IOCTLs to configure a set of properties equivalent to the
+     ones above in FS
+   - use some other IOCTLs for direct access to data in binary format
+     for a single DEs or all of them
+
+ 4. [FUTURE/NOT IN THIS V2]
+    Another alternative and completely binary direct raw access interface
+    accessible via a new set of memory .mmap'able special files so as to
+    allow userspace tools to access SCMI Telemetry data directly in binary
+    form without any kernel mediation.
+
+
+NOTE THAT this series, though, at the firmware interface level still
+supports ONLY the previous SCMI Telemetry ALPHA_0 [1] specification NOT the
+new recently released BETA [0].
+
+
+Missing feats & next steps
+--------------------------
+ - support SCMI v4.0 BETA
+ - add direct access interface via mmap-able 'raw' files
+ - add streaming mode interface via 'pipe' file (tentative)
+ - evolve/enhance app in tools/testing/scmi/stlm to be interactive
+ 
+
+KNOWN ISSUES
+------------
+ - STLMFS code layout and location...nothing lives in fs/ and no FS Kconfig
+ - lazy filesystem population implementation is dubious (albeit simpler:D)
+ - Documentation is still incomplete
+ - residual sparse/smatch static analyzers errors
+ - stlm tool utility is minimal for testing or development
+
+Based on V6.19-rc3, tested on an emulated setup.
+
+Any feedback welcome,
+
+Thanks,
+Cristian
+
+----
+
+V1 --> V2
+---
+ - rebased on v6.19-rc3
+ - harden TDCF shared memory areas accesses by using proper accessors
+ - reworked protocol resources lifecycle to allow lazy enumeration
+ - using NEW FS mount API
+ - reworked FS inode allocation to use a std kmem_cache
+ - fixed a few IOCTLs support routine to support lazy enumeration
+ - added (RFC) a new FS lazy mount option to support lazily population of
+   some subtrees of the FS (des/ groups/ components/)
+ - reworked implementation of components/ alternative FS view to use
+   symlinks instead of hardlinks
+ - added a basic simple (RFC) testing tool to exercise UAPI ioctls interface
+ - hardened Telmetry protocol and driver to support partial out-of-spec FW
+   lacking some cmds (best effort)
+ - reworked probing races handling
+ - reviewed behaviour on unmount/unload
+ - added support for Boot_ON Telemetry by supporting SCMI Telemetry cmds:
+   + DE_ENABLED_LIST
+   + CONFIG_GET
+ - added FS and ABI docs
+
+RFC --> V1
+---
+ - moved from SysFS/chardev to a full fledged FS
+ - added support for SCMI Telemetry BLK timestamps
+
+
+Thanks,
+Cristian
+
+[0]: https://developer.arm.com/documentation/den0056/fb/?lang=en
+[1]: https://developer.arm.com/documentation/den0056/f/?lang=en
+[2]: https://lore.kernel.org/arm-scmi/20250620192813.2463367-1-cristian.marussi@arm.com/
+
+
+Cristian Marussi (17):
+  firmware: arm_scmi: Define a common SCMI_MAX_PROTOCOLS value
+  firmware: arm_scmi: Reduce the scope of protocols mutex
+  firmware: arm_scmi: Allow protocols to register for notifications
+  uapi: Add ARM SCMI definitions
+  firmware: arm_scmi: Add Telemetry protocol support
+  include: trace: Add Telemetry trace events
+  firmware: arm_scmi: Use new Telemetry traces
+  firmware: arm_scmi: Add System Telemetry driver
+  fs/stlmfs: Document ARM SCMI Telemetry filesystem
+  firmware: arm_scmi: Add System Telemetry ioctls support
+  fs/stlmfs: Document alternative ioctl based binary interface
+  firmware: arm_scmi: Add Telemetry components view
+  fs/stlmfs: Document alternative topological view
+  [RFC] docs: stlmfs: Document ARM SCMI Telemetry FS ABI
+  [RFC] firmware: arm_scmi: Add lazy population support to Telemetry FS
+  fs/stlmfs: Document lazy mode and related mount option
+  [RFC] tools/scmi: Add SCMI Telemetry testing tool
+
+ Documentation/ABI/testing/stlmfs              |  153 +
+ Documentation/filesystems/stlmfs.rst          |  311 ++
+ MAINTAINERS                                   |    1 +
+ drivers/firmware/arm_scmi/Kconfig             |   10 +
+ drivers/firmware/arm_scmi/Makefile            |    3 +-
+ drivers/firmware/arm_scmi/common.h            |    4 +
+ drivers/firmware/arm_scmi/driver.c            |   64 +-
+ drivers/firmware/arm_scmi/notify.c            |   32 +-
+ drivers/firmware/arm_scmi/notify.h            |    8 +-
+ drivers/firmware/arm_scmi/protocols.h         |    7 +
+ .../firmware/arm_scmi/scmi_system_telemetry.c | 2927 +++++++++++++++++
+ drivers/firmware/arm_scmi/telemetry.c         | 2710 +++++++++++++++
+ include/linux/scmi_protocol.h                 |  191 +-
+ include/trace/events/scmi.h                   |   48 +-
+ include/uapi/linux/scmi.h                     |  287 ++
+ tools/testing/scmi/Makefile                   |   25 +
+ tools/testing/scmi/stlm.c                     |  385 +++
+ 17 files changed, 7125 insertions(+), 41 deletions(-)
+ create mode 100644 Documentation/ABI/testing/stlmfs
+ create mode 100644 Documentation/filesystems/stlmfs.rst
+ create mode 100644 drivers/firmware/arm_scmi/scmi_system_telemetry.c
+ create mode 100644 drivers/firmware/arm_scmi/telemetry.c
+ create mode 100644 include/uapi/linux/scmi.h
+ create mode 100644 tools/testing/scmi/Makefile
+ create mode 100644 tools/testing/scmi/stlm.c
+
+-- 
+2.52.0
+
 
