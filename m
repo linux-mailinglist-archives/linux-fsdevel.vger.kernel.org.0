@@ -1,54 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-73703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAAC1D1EFDE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:11:46 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D07D1F048
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:17:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 5E0D1300B375
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 13:11:43 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AEFDD30AEEDB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 13:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B53139A802;
-	Wed, 14 Jan 2026 13:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3782739A81F;
+	Wed, 14 Jan 2026 13:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L1iB/yNj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D67D395258;
-	Wed, 14 Jan 2026 13:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB7A39A803
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 13:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768396300; cv=none; b=ew5nyOY0FtrIFSn9PQtfSbYSe6KqYfHhlL/0KIFeI5FWn9AJf+WA5Fmct9bmU8PncvK0mAsUhoIiBp/aBzkkJ0ODk5AL8GQyD+fH9+a35uIfNRJnvGQDbNqs8kQryo8UrWl2BZx0ylO8Flr0Z5DGfjNWipVtAjWJEZIUKKrGcm8=
+	t=1768396346; cv=none; b=EiubRhZFZlFBnTQoRHWOCbEbnK4rI3b6dDOT8mWk0NRaZSOSzjLzz1LvcJvQ4fwxiODmKFplrA0jVRR4mPXiHU2U+qrWtyOT9i4tc75YWWtqX7BX+HC64TlQXYeU19y16kTvadZe8FiqIS6KlXcX/kmYraBn4WLAgdgL2UaPqQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768396300; c=relaxed/simple;
-	bh=nGwwqYJxl+g/pUXafEirWSZUjEO28AN4wMRhrLA7NMg=;
+	s=arc-20240116; t=1768396346; c=relaxed/simple;
+	bh=qVQVDrDK8GQt0EFjDkN2BeDB9NxS3hqaAC/BXhJUBXA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EJjBl9KR9Gt44qLRwFxsFgQq27dD4VknCGmEd7Qw18YlvJa2jkev/qrVJkqbjSqqsJ3+hI3rOF2689DZZSsVJK0t8FChinWP8rEsAkfDR9MWdf5vi5h9ncGA5RJCvlRlajvvzWOclBCKEuAQPE8lGGnbN+8XYe14yjiq6S4piYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id DD70F227AAA; Wed, 14 Jan 2026 14:11:31 +0100 (CET)
-Date: Wed, 14 Jan 2026 14:11:30 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Carlos Maiolino <cem@kernel.org>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	kernel-dev@igalia.com
-Subject: Re: [PATCH 1/3] exportfs: Rename get_uuid() to get_disk_uuid()
-Message-ID: <20260114131130.GA6967@lst.de>
-References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com> <20260114-tonyk-get_disk_uuid-v1-1-e6a319e25d57@igalia.com> <20260114061028.GF15551@frogsfrogsfrogs> <20260114062424.GA10805@lst.de> <CAOQ4uxjUKnD3-PHW5fOiTCeFVEvLkbVuviLAQc7tsKrN36Rm+A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VDvtgNbCk1aqgyy6TtRqx0/ZqM+9lRAS6dANC/PK1+t9eFvvOQWdT1BoSZWb8n/BfiGp0CysOi8xcFzpLKq/Dwf7zrvHO9jO9wCgRtqIMAZho2NV1xIuI5/01Lze0TST1ohBEGeA+n6ENFXI8uOVPORfXQFyAYT6K6gdqr+9iQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L1iB/yNj; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so64648075e9.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 05:12:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1768396343; x=1769001143; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ucpTGToIn8N6Wm60fm7MZ05SRRlKYptl+ek5X25PfwQ=;
+        b=L1iB/yNjYqm3FvqWymV6AoNf5MtA+Y6/OWs/RJg3e7CYxfZqQFULHvSUfTEk4onLe3
+         K8kZuPagmhqvDJFtw9c9UTxqcd+qJZkw4PQl4BUg5k4yF9scQKi9RHMwyVcofMOLNmf9
+         pbhNXDMXDshXlT74Wh0bXiV5vvKeLUf6p39IJ8wY5dpK6KBsy4W3IFGstIqmYoUCnIw4
+         nqRilxwC37pzPLIWVgJsrDbAi5fP08rSd1LIYgBshYGZ1PcyNhk5nl3IPlrRV45sac/Z
+         Yxfv6Z4RUlHmbXdVWT3j7gI66pAgzx3k3AqR7HGarevdhb1crqPGqGHXY8Pe43pEFeZ4
+         oD0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768396343; x=1769001143;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ucpTGToIn8N6Wm60fm7MZ05SRRlKYptl+ek5X25PfwQ=;
+        b=tgTbRKYyf7CUVu7vFS3zAfIVufCUFuZ2BghkcEbXNJr95mgw0HNGs2eN0tf7lZa65i
+         mFklxNx9en/q+2r/YHWK4nd+2NuIdRRQUlrINDbdoMnMeXG2Wpx2UnYOofFQEbnyk6gv
+         70QBQ4G7vaBAZYVZXXfQcOq4GYDEN+Y7RoJRbHba8S0MsSYyKJvfaC0oi1vCfvpL1A1U
+         bV28Bq9Btt3JvEbjWrYiP9G39mPOV/0tgDKSdqEEksHHgvtXoHdjv8opZEwtzUMBC59z
+         gSVSx7bi0KmePBAMRJAVC/2BY1IrJQdfapJlr6FbFOPGU7IspiEQ2aTilJM4IkEhdajW
+         BpUA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4RsHT0vs4XL7H3Inn25gJ1msEAoTRsZ1LPLf1k8iFQJbPP4ntqjRu2x12+/+aszRwzZVrDS++yHOhdgCg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2FcAL1HG5ioBl7jUkicH7ocHSYHfzgstMLSTFyjqdhDpi4Q0J
+	b/xG0scIDSA+kKq5jhP5mFZbUUkQgsVyYP7tt8MLJABmHslC/ZZM4IY39zH7sWRRfgc=
+X-Gm-Gg: AY/fxX5SfQDFCIi7ME4Cq1gnlMyYTr855mzDPgjTWk26p+Z088qDZBPXOO6eQGAG7R5
+	wQf9XE2AvZtFoFoWhlbn8MAQONyBgmMaRaxZ4gvJQFkYcVq9kLmIuBHL93NSI8vvQkucQFm8P0s
+	ZSXqcpsHLZJ4m54EX3rfzbaKJj7ivzRi76p7W6YopW4vF05Uf5t/puBit6zLIriUxMSFvC3hI2J
+	M4cyQYNsbAqvjgquaX8+Jo6zTxskg4uZ/vN9mUMxSbBBrmxMdPlu6vW5m+D7EzfWkw2dg8d3lGd
+	JxAWdCevMdCgBGWEXB7O9uTH2vXxtoXHNlkdq385qaSxyaeeUhDi5aRKRZ6s4n6x/AnYB8Bw3f3
+	z+ObKnYARMqSWCgl87nfyI1RBQddvKYLZDF11ux28fFfLL3U1PuOI4uQfkGEKzavTbTCNdicvKl
+	KfwNbYOvqLLRPsVqXrIub80Mmt
+X-Received: by 2002:a05:600c:5490:b0:479:3876:22a8 with SMTP id 5b1f17b1804b1-47ee3356d5dmr36820375e9.16.1768396341643;
+        Wed, 14 Jan 2026 05:12:21 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47ee54b8c9bsm27274065e9.3.2026.01.14.05.12.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jan 2026 05:12:21 -0800 (PST)
+Date: Wed, 14 Jan 2026 14:12:18 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Breno Leitao <leitao@debian.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
+	netdev@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-hardening@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/19] printk: Reintroduce consoles_suspended global state
+Message-ID: <aWeWMga1VaT0sYwj@pathway.suse.cz>
+References: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
+ <20251227-printk-cleanup-part3-v1-4-21a291bcf197@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,32 +121,78 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjUKnD3-PHW5fOiTCeFVEvLkbVuviLAQc7tsKrN36Rm+A@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20251227-printk-cleanup-part3-v1-4-21a291bcf197@suse.com>
 
-On Wed, Jan 14, 2026 at 11:12:17AM +0100, Amir Goldstein wrote:
-> In the context of overlayfs index and "origin" xattr, this is exactly what is
-> needed - to validate that the object's copy up source is reliable for
-> the generation of a unique overlayfs object id.
+On Sat 2025-12-27 09:16:11, Marcos Paulo de Souza wrote:
+> This change partially reverts commit 9e70a5e109a4
+> ("printk: Add per-console suspended state"). The intent of the original
+> commit was to move the management of the console suspended state to the
+> consoles themselves to be able to use SRCU instead of console lock.
+> 
+> But having a global state is still useful when checking if the global
+> suspend was triggered by power management. This way, instead of setting
+> the state of each individual console, the code would only set/read from the
+> global state.
+> 
+> Along with this change, two more fixes are necessary: change
+> console_{suspend,resume} to set/clear CON_SUSPEND instead of setting
+> CON_ENABLED and change show_cons_active to call __console_is_usable to
+> check console usefulness.
 
-And that's what is in sb->s_uuid.  And it better be persistent.
+I would invert the logic a bit. I think that the main motivation
+is to replace CON_ENABLE -> CON_SUSPEND.
 
-> TBH, I am not sure if the file handle domain is invariant to XFS admin
-> change of uuid. How likely it is to get an identical file handles for two
-> different objects, with XFS fs which have diverged by an LVM clone?
-> I think it's quite likely.
+<proposal>
+The flag CON_ENABLE is cleared when serial drivers get suspended. This
+"hack" has been added by the commit 33c0d1b0c3ebb6 ("[PATCH] Serial
+driver stuff") back in v2.5.28.
 
-Of course it is, unlike you explicitly change it using xfs_admin.  Note
-that to even mount two clones/snapshots you need to mount with nouuid,
-so it doesn't happen accidentally.
+Stop hijacking CON_ENABLE flag and use the CON_SUSPEND flag instead.
 
-> Whether or not we should repurpose the existing get_uuid() I don't
-> know - that depends whether pNFS expects the same UUID from an
-> "xfs clone" as overlayfs would.
+Still allow to distinguish when:
 
-That method does not just return an uuid, but in fact a uniqueue
-identifier of the file systems choice and the offset/len where to
-look for it on disk, as that is how pnfs/block finds the matching
-device.  It is a dangerous concept and should not spread further.
+  - the backing device is being suspended, see console_suspend().
 
+  - the power management wants to calm down all consoles using
+    a big-hammer, see console_suspend_all().
+
+And restore the global "consoles_suspended" flag which was removed
+by the commit 9e70a5e109a4 ("printk: Add per-console suspended state").
+
+The difference is that accesses to the new global flag are
+synchronized the same way as to the CON_SUSPEND flag. It allows
+to read it under console_srcu_read_lock().
+
+Finally, use __console_is_usable() in show_cons_active(). It is the
+last location where the CON_ENABLED flag was checked directly.
+
+The patch should not change the existing behavior because all users check
+the state of the console using console_is_usable().
+</proposal>
+
+> diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+> index e2d92cf70eb7..7d2bded75b75 100644
+> --- a/drivers/tty/tty_io.c
+> +++ b/drivers/tty/tty_io.c
+> @@ -3552,9 +3552,9 @@ static ssize_t show_cons_active(struct device *dev,
+>  	for_each_console(c) {
+>  		if (!c->device)
+>  			continue;
+> -		if (!(c->flags & CON_NBCON) && !c->write)
+> -			continue;
+> -		if ((c->flags & CON_ENABLED) == 0)
+> +		if (!__console_is_usable(c, c->flags,
+> +					 consoles_suspended,
+> +					 NBCON_USE_ANY))
+
+It would be better to move this into a separate patch.
+
+>  			continue;
+>  		cs[i++] = c;
+>  		if (i >= ARRAY_SIZE(cs))
+
+Otherwise, it looks good.
+
+Best Regards,
+Petr
 
