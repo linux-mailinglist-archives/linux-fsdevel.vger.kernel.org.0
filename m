@@ -1,63 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-73602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3EBFD1C910
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:19:33 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640B7D1C8BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:08:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 7BDEF3048BB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 04:50:56 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 827A2306B757
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 05:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E8932B997;
-	Wed, 14 Jan 2026 04:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB4630B501;
+	Wed, 14 Jan 2026 05:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z1hVU+SL"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rlITGBJo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3370314A61;
-	Wed, 14 Jan 2026 04:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109FD33ADA5;
+	Wed, 14 Jan 2026 05:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768366208; cv=none; b=EczAl0qwSfBn7iwjAh9pO1wixFJvhe1zuh+oEr3c1Mqr8vwzgzk+2XJez3vob8BlUL/eKPKPpA7c/3uEMMQ7N9+pUAfaCVAhJVLQdcGxjOQNWBV6l+0Ne75bT8qFvH/rNcm/+ycLG7lC+QOdxqJAX/jENmCLWZI70nsK8DbANWQ=
+	t=1768366863; cv=none; b=kdLJ0cQQJQdS18Qh3//Nuf3WOR3BoBfM6IYiHESxYZCOBQgMlb5qplnfjXLsDUz4ZGyUFgaJAgZoQozkaznytmcy78uyPqehaw4qRxJb8FoH4T4RRy06byLxfG7jBZ3sB5YomcvYdbczrZbSSXPyMBs3t/hJ4GqKhKvcExNhQyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768366208; c=relaxed/simple;
-	bh=zV4f8H5Axw5y7PX5oxaqR32N7N6x1IHRZCt4jHST8rM=;
+	s=arc-20240116; t=1768366863; c=relaxed/simple;
+	bh=4BKTaDv2D5YkNA73YpOclK8poiBgtZbrwGXtFc0K6g0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XtgIz8QKmXKPSk7EW+9uYjTJ6037hVFyTv43tcXnsjev8W2qsjBIAadW9FjxYkNXcPSmFpI0UUU6MyAoaQ7Ep2njc90riG7e/m0VXfdVowagvcX6Zj1SmTVp84WYiUWJ3VbKekTxK0xFs4z2GLVssHpySdA6wEiMfGqG9kVi44s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z1hVU+SL; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=sarABY+W3d95g0+7eD60ZVlPcc0UUFVhp7mzXMdZ7wTpK+bFsSLOq/qw9jyHR7eKKf3Io8TdSqO69uEieCXpyAQHSz30R063N5yKO4d2jq6Oe45auLAWusOBMLWZBUTPsyQOke/DUgf7YhoCbN/lOAd2tpe+jL2AYOwu+RYVLuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rlITGBJo; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IP+nt6hD0O0/EB/beIlzLBVMr0+7HCcw1mvVyCPM45Q=; b=Z1hVU+SLBG8v7sqGjxR4xeQ465
-	hc5v85RX/6rCGtnSrQMmEqmVEyKWmM4r3vF3AMUSbHCDU7CtEP3vRKm2HX/RY5hN5EQ30WZeG40aP
-	DnOdqEecPyxP3Rk0DmGeXAi3aq+zbfoSdl+HmdvqiahuWuWhsebbk2tnFOgf07wA82krGjC34YxZW
-	3mcpKVrhEJ8R31k1uESVNM58sfp3Y8iEgIAxgCIyxFIbdSUVhlgriXxPhY3/Mlj65E+Fd4wiX9cK/
-	0bgbMprLAYZIrh9gCBbPcLFdKVGVt9nL+dfKE6LieLD4FhxzhmhlbHoWFh7q77WKAi0tW9Oilr9UW
-	lGz8ZMng==;
+	bh=s7ksIaZ0R9GnpNVGzvI6paWd7X8ijDFbueiXkHm4znU=; b=rlITGBJoLP5VsQV4bw/44oRAHv
+	S3C7NE7l4t/4kTcfkul/CK8HL9jMkRgWhsHNSlQ+9btadkR0itSd0nvvdrhdgy/ENSikSItuqnkTn
+	eIQeaY302Dh6d0kosIo0gjtyU6DCOD7MyfnNxUe91W5E3ua28WfwRD8fa26Ijtz5U0JuOqeetPCoz
+	K66iLLMeJsuidNyO7Jn+5YCZLafqVowhMMwNZ7x8chy3SIpsba9ChfGLTTHhiHar8IrLb+HfwJbTM
+	psdfTQQRSHMt8G2YOqEkmucSCQL16vFIehEwgX1d8EeRzy2owtihQH7jcOBVxeWUfUtVZ4VkuSSme
+	A3SqvbBQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vfspK-00000005hRc-3fQF;
-	Wed, 14 Jan 2026 04:49:50 +0000
-Date: Wed, 14 Jan 2026 04:49:50 +0000
+	id 1vfszw-00000005iFi-04XG;
+	Wed, 14 Jan 2026 05:00:48 +0000
+Date: Wed, 14 Jan 2026 05:00:47 +0000
 From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
-	linux-xfs@vger.kernel.org, ebiggers@kernel.org,
-	linux-fsdevel@vger.kernel.org, aalbersh@kernel.org,
-	david@fromorbit.com
-Subject: Re: [PATCH v2 4/22] iomap: allow iomap_file_buffered_write() take
- iocb without file
-Message-ID: <aWcgbov1FmPTO2LD@casper.infradead.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+	ebiggers@kernel.org, linux-fsdevel@vger.kernel.org,
+	aalbersh@kernel.org, djwong@kernel.org, david@fromorbit.com,
+	hch@lst.de
+Subject: Re: [PATCH v2 0/23] fs-verity support for XFS with post EOF merkle
+ tree
+Message-ID: <aWci_1Uu5XndYNkG@casper.infradead.org>
 References: <cover.1768229271.patch-series@thinky>
- <kibhid6bipmrndfn774tlbm6wcitya5qydhjws3n6tnjvbd4a3@bui63p535b3q>
- <20260112222215.GJ15551@frogsfrogsfrogs>
- <20260113081535.GC30809@lst.de>
- <aWZ2RL3oBQGUmLvF@casper.infradead.org>
+ <aWZ0nJNVTnyuFTmM@casper.infradead.org>
+ <op5poqkjoachiv2qfwizunoeg7h6w5x2rxdvbs4vhryr3aywbt@cul2yevayijl>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,40 +63,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aWZ2RL3oBQGUmLvF@casper.infradead.org>
+In-Reply-To: <op5poqkjoachiv2qfwizunoeg7h6w5x2rxdvbs4vhryr3aywbt@cul2yevayijl>
 
-On Tue, Jan 13, 2026 at 04:43:48PM +0000, Matthew Wilcox wrote:
-> On Tue, Jan 13, 2026 at 09:15:35AM +0100, Christoph Hellwig wrote:
-> > On Mon, Jan 12, 2026 at 02:22:15PM -0800, Darrick J. Wong wrote:
-> > > > +		iter.inode = iocb->ki_filp->f_mapping->host;
-> > > > +	} else {
-> > > > +		iter.inode = (struct inode *)private;
-> > > 
-> > > @private is for the filesystem implementation to access, not the generic
-> > > iomap code.  If this is intended for fsverity, then shouldn't merkle
-> > > tree construction be the only time that fsverity writes to the file?
-> > > And shouldn't fsverity therefore have access to the struct file?
+On Tue, Jan 13, 2026 at 07:45:47PM +0100, Andrey Albershteyn wrote:
+> On 2026-01-13 16:36:44, Matthew Wilcox wrote:
+> > On Mon, Jan 12, 2026 at 03:49:44PM +0100, Andrey Albershteyn wrote:
+> > > The tree is read by iomap into page cache at offset 1 << 53. This is far
+> > > enough to handle any supported file size.
 > > 
-> > It's not passed down, but I think it could easily.
-> 
-> willy@deadly:~/kernel/linux$ git grep ki_filp |grep file_inode | wc
->     109     575    7766
-> willy@deadly:~/kernel/linux$ git grep ki_filp |wc
->     367    1920   23371
-> 
-> I think there's a pretty strong argument for adding ki_inode to
-> struct kiocb.  What do you think?
+> > What happens on 32-bit systems?  (I presume you mean "offset" as
+> > "index", so this is 1 << 65 bytes on machines with a 4KiB page size)
+> > 
+> it's in bytes, yeah I missed 32-bit systems, I think I will try to
+> convert this offset to something lower on 32-bit in iomap, as
+> Darrick suggested.
 
-Regardless of this, I think it's an architectural mistake to not have
-struct file available for reading fsverity metadata.  We do have it in
-fsverity_ioctl_read_metadata but we don't have it in verify_bh().
+Hm, we use all 32 bits of folio->index on 32-bit plaftorms.  That's
+MAX_LFS_FILESIZE.  Are you proposing reducing that?
 
-But reading the merkel tree block from the verify_bh() completion handler
-is bad for performance anyway.  We should submit the metadata reads at
-the same time we submit the data reads.  And there, we would have the
-struct file.
+There are some other (performance) penalties to using 1<<53 as the lowest
+index for metadata on 64-bit.  The radix tree is going to go quite high;
+we use 6 bits at each level, so if you have a folio at 0 and a folio at
+1<<53, you'll have a tree of height 9 and use 17 nodes.
 
-If we ever have ambitions to support merkel trees on network filesystems,
-we'll need to figure out some way to pass the struct file in, so maybe
-we should just bite the bullet and do this now?
+That's going to be a lot of extra cache misses when walking the XArray
+to find any given folio.  Allowing the filesystem to decide where the
+metadata starts for any given file really is an important optimisation.
+Even if it starts at index 1<<29, you'll almost halve the number of
+nodes needed.
+
+Adding this ability to support RW merkel trees is certainly coming at
+a cost.  Is it worth it?  I haven't seen a user need for that articulated,
+but I haven't been paying close attention.
 
