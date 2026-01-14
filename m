@@ -1,186 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-73791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46330D20A30
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 18:50:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AAA9D20A3F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 18:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 7AFF73016AF2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 17:50:07 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 5DF783016AED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 17:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2486332B98D;
-	Wed, 14 Jan 2026 17:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808E932B997;
+	Wed, 14 Jan 2026 17:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAK2bRz2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEEC31B833;
-	Wed, 14 Jan 2026 17:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-yw1-f193.google.com (mail-yw1-f193.google.com [209.85.128.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825672FFDD5
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 17:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768413002; cv=none; b=KKm3Ochra3P3KmdAAiR7KsQZR/210ANLPkZ4AGcUkXXuiSlctsJZ7MFRJJLVxhg3OEd3IDcsVrnNYFDLXRMQa9bJyG+sP6mnmsGWNaeZkB1eYuO/qIHe7n8Xp6OFRafpbMRFl//pUP/2OI6X9ygtd3rTAs5zWFP+pc17vZNva28=
+	t=1768413053; cv=none; b=ktiOWEoEoKu8BD/UhBWshmLYy8k1/qJ/gJCuVF5QJ3ZUe7c0Hw95ugVLVOoCOzJgYjzXCzJQuzRx8mNgeSg/yeVfnfHrdbVWHt6M9+mULzFiolcGmw1u6hSwsXDQGpRirO31RAQPoTvm7Ue1/rhrVFkPcyT3XKbQADucXP4fy4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768413002; c=relaxed/simple;
-	bh=/AHMpb4+3MfzIhYBPESp8KGt8HTeUy14LUGKGDaY7Jc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=nBeQrihhaDleCCWuyxeduYxg7evMbIJNgoVClRxJgOX4ITqvz+qSDazmEDESBIVtSuJXNFWHmWB5PixOmVb0iySpyNAEec8BH4EKTlLMwsSdI1GCI5AVhJH2plxUxSvbwQa26OKq9GiHmMpNmXmjz2z/RH1rinWpkb3FNVhXigM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F3F21515;
-	Wed, 14 Jan 2026 09:49:52 -0800 (PST)
-Received: from [10.1.37.132] (unknown [10.1.37.132])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0CA253F59E;
-	Wed, 14 Jan 2026 09:49:57 -0800 (PST)
-Message-ID: <18af3213-6c46-4611-ba75-da5be5a1c9b0@arm.com>
-Date: Wed, 14 Jan 2026 17:49:30 +0000
+	s=arc-20240116; t=1768413053; c=relaxed/simple;
+	bh=4HugxS99JATPZh7UtegD00ahZepCflNCES68LB5SC/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jNHmNco68iE8WEFSBa5INUBLKFTw1EpzgNU4AfE3Cm6MVg5HWtmRTjneHQfBaStsn8lWM4e6aaNnV8P/0HDBwQPueBx8Gghrc1E6rFpAuCb5piUz6eb4NabEmaLn7GM39RiiwguQPIcPV2r+lLhmkf++fcNMItpi3+on9yHRfAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QAK2bRz2; arc=none smtp.client-ip=209.85.128.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f193.google.com with SMTP id 00721157ae682-792815157f3so17517b3.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 09:50:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768413051; x=1769017851; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D/yJE0mQv4t06ZIh/iLWxjHHlzd+ByfHco7ny6pUeOw=;
+        b=QAK2bRz2Ud4s9PCofHoykgImszSWztLvBzhM92og1yVKpRd0GOKDXA/Vb+U+gP/+LC
+         sE0K65eQYQ6lV3UZoP/pPrxT8YSGn9YilfwM+QsRuz74XjnUG1rDYXeQ4gsjNxiWBUYK
+         Uv0t47Y9RfMuN5cr5zZgf6Tg+2qrDdbPBYS66zY07v8z/LewZmS621/g84b/r5zwSePG
+         jwuyrUQipA2+9zAb0yjJrJhMv6gmUkACAtbSN3JzUVVyq3obLXG5MmyzgyU/ePxivncC
+         21RE8LVZTCcsQ4O3vF8JW/ZGWyuRNFtxHhipnX6pFLysXojCsWSb83FFkX2nQvA/kbro
+         MwPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768413051; x=1769017851;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D/yJE0mQv4t06ZIh/iLWxjHHlzd+ByfHco7ny6pUeOw=;
+        b=bJvzV7X5ruKXYhzf/5I6JInnXY/8S9rjxZYRqmKdVHCKadcaXuyjm1qN/2WmqC5P6f
+         4/GRHo0SeTrn1Mb/3eBqd9VGNRC6DWIbTMq1Cy4CoEr5Rx+jeGTgXIV63bqVZLWuNUqV
+         oepl2bAPs9WpHLOSwQYc98fcBfmJRfjemD6kjQFeAQEez0k/datOrOLAJiy7FAhBWDox
+         EZvoOVKBh+RNtg8xlg64EEV9YRcI9YrMFUCOzoqw90QRQ8YPGQxy3vhAZ7m5QQuGwsFK
+         POOzkZmpr3e+WqQ/yeCnaUXmO+fz9OmFkbvnlVH9D3WGo/+gcO4faZa2Tv9aizHp0CCi
+         Sa3A==
+X-Forwarded-Encrypted: i=1; AJvYcCW2Bp+jJvoAf5d8Vc9BE4qGY4aADJihhnGhkXQ9L0OuKTPh1TLnhbMIjXlCAfbhLyb9XM4byDzzy4wyAiYu@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKgRFAZF7dLUIYDGOg0iFMStwfup6+d2AhzKjEX9FQmZTRRJnU
+	4ET8PG4rbBjoPy/10QcbPKbohuoNgJF/iDVNbzyBk+puD0eaFMnC4W0C
+X-Gm-Gg: AY/fxX5BWGpwVWUFGkGcY71TJBmkrHhAS6NnYLG5/HtngOh5LnFODNOdztO/yHj5S1/
+	lqxIuC8QPO1vKxJD+VxgMKPBVE6MSyBtgU4Kq2kRLzrwG//ClYnL2+z+r6qiaHB8NgtyTbnK226
+	5z7aOl5xZ1u2HSZjSlJhEfjIASN900GfT49OFl1+twzjOqeRB89mzy5DU1MdTzP2yeZEeyKOQMm
+	DKLChNRATuu3ZBZYawsfGNfLvUQpJFPMZxzO4+Oql/J9q5UtTOf7Kfx4brOxpxCYJnmVHVGYQB1
+	ipxxzDO8tBPc4d+xh7d9izZ+nkSfM5DytmLsYNbEuMitvSKwB5gRA4/WJk+qfW6l8yeKRpfXCRj
+	J5qEQE4Vl24modx9lq/4z07kC7OI/Q7tdhWaJEJi2JCBf2LZ6lXcOdvXCkOs+MxDKLsjm509deo
+	YK
+X-Received: by 2002:a05:690e:11c4:b0:641:f5bc:694b with SMTP id 956f58d0204a3-64901b11096mr2568941d50.79.1768413051341;
+        Wed, 14 Jan 2026 09:50:51 -0800 (PST)
+Received: from illithid ([2600:1702:7cd0:e980::48])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-790aa679385sm93186017b3.32.2026.01.14.09.50.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jan 2026 09:50:50 -0800 (PST)
+Date: Wed, 14 Jan 2026 11:50:48 -0600
+From: "G. Branden Robinson" <g.branden.robinson@gmail.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alejandro Colomar <alx@kernel.org>, linux-man@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH man-pages v2 1/2] man/man2const: document the new
+ F_SETDELEG and F_GETDELEG constants
+Message-ID: <20260114175048.krre2hmydplaluty@illithid>
+References: <20260114-master-v2-0-719f5b47dfe2@kernel.org>
+ <20260114-master-v2-1-719f5b47dfe2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
- dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
- Nick.Connolly@arm.com, ffidencio@nvidia.com
-From: Seunguk Shin <seunguk.shin@arm.com>
-Subject: [PATCH] fs/dax: check zero or empty entry before converting xarray
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jkasqkgh4pwlr6xn"
+Content-Disposition: inline
+In-Reply-To: <20260114-master-v2-1-719f5b47dfe2@kernel.org>
 
-Trying to convert zero or empty xarray entry causes kernel panic.
 
-[    0.737679] EXT4-fs (pmem0p1): mounted filesystem 
-79676804-7c8b-491a-b2a6-9bae3c72af70 ro with ordered data mode. Quota 
-mode: disabled.
-[    0.737891] VFS: Mounted root (ext4 filesystem) readonly on device 259:1.
-[    0.739119] devtmpfs: mounted
-[    0.739476] Freeing unused kernel memory: 1920K
-[    0.740156] Run /sbin/init as init process
-[    0.740229]   with arguments:
-[    0.740286]     /sbin/init
-[    0.740321]   with environment:
-[    0.740369]     HOME=/
-[    0.740400]     TERM=linux
-[    0.743162] Unable to handle kernel paging request at virtual address 
-fffffdffbf000008
-[    0.743285] Mem abort info:
-[    0.743316]   ESR = 0x0000000096000006
-[    0.743371]   EC = 0x25: DABT (current EL), IL = 32 bits
-[    0.743444]   SET = 0, FnV = 0
-[    0.743489]   EA = 0, S1PTW = 0
-[    0.743545]   FSC = 0x06: level 2 translation fault
-[    0.743610] Data abort info:
-[    0.743656]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-[    0.743720]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[    0.743785]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[    0.743848] swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000000b9d17000
-[    0.743931] [fffffdffbf000008] pgd=10000000bfa3d403, 
-p4d=10000000bfa3d403, pud=1000000040bfe403, pmd=0000000000000000
-[    0.744070] Internal error: Oops: 0000000096000006 [#1]  SMP
-[    0.748888] CPU: 0 UID: 0 PID: 1 Comm: init Not tainted 6.18.4 #1 NONE
-[    0.749421] pstate: 004000c5 (nzcv daIF +PAN -UAO -TCO -DIT -SSBS 
-BTYPE=--)
-[    0.749969] pc : dax_disassociate_entry.constprop.0+0x20/0x50
-[    0.750444] lr : dax_insert_entry+0xcc/0x408
-[    0.750802] sp : ffff80008000b9e0
-[    0.751083] x29: ffff80008000b9e0 x28: 0000000000000000 x27: 
-0000000000000000
-[    0.751682] x26: 0000000001963d01 x25: ffff0000004f7d90 x24: 
-0000000000000000
-[    0.752264] x23: 0000000000000000 x22: ffff80008000bcc8 x21: 
-0000000000000011
-[    0.752836] x20: ffff80008000ba90 x19: 0000000001963d01 x18: 
-0000000000000000
-[    0.753407] x17: 0000000000000000 x16: 0000000000000000 x15: 
-0000000000000000
-[    0.753970] x14: ffffbf3154b9ae70 x13: 0000000000000000 x12: 
-ffffbf3154b9ae70
-[    0.754548] x11: ffffffffffffffff x10: 0000000000000000 x9 : 
-0000000000000000
-[    0.755122] x8 : 000000000000000d x7 : 000000000000001f x6 : 
-0000000000000000
-[    0.755707] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 
-fffffdffc0000000
-[    0.756287] x2 : 0000000000000008 x1 : 0000000040000000 x0 : 
-fffffdffbf000000
-[    0.756871] Call trace:
-[    0.757107]  dax_disassociate_entry.constprop.0+0x20/0x50 (P)
-[    0.757592]  dax_iomap_pte_fault+0x4fc/0x808
-[    0.757951]  dax_iomap_fault+0x28/0x30
-[    0.758258]  ext4_dax_huge_fault+0x80/0x2dc
-[    0.758594]  ext4_dax_fault+0x10/0x3c
-[    0.758892]  __do_fault+0x38/0x12c
-[    0.759175]  __handle_mm_fault+0x530/0xcf0
-[    0.759518]  handle_mm_fault+0xe4/0x230
-[    0.759833]  do_page_fault+0x17c/0x4dc
-[    0.760144]  do_translation_fault+0x30/0x38
-[    0.760483]  do_mem_abort+0x40/0x8c
-[    0.760771]  el0_ia+0x4c/0x170
-[    0.761032]  el0t_64_sync_handler+0xd8/0xdc
-[    0.761371]  el0t_64_sync+0x168/0x16c
-[    0.761677] Code: f9453021 f2dfbfe3 cb813080 8b001860 (f9400401)
-[    0.762168] ---[ end trace 0000000000000000 ]---
-[    0.762550] note: init[1] exited with irqs disabled
-[    0.762631] Kernel panic - not syncing: Attempted to kill init! 
-exitcode=0x0000000b
+--jkasqkgh4pwlr6xn
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH man-pages v2 1/2] man/man2const: document the new
+ F_SETDELEG and F_GETDELEG constants
+MIME-Version: 1.0
 
-This patch just reorders checking and converting.
+Hi Jeff,
 
-Signed-off-by: Seunguk Shin <seunguk.shin@arm.com>
----
-  fs/dax.c | 9 ++++++---
-  1 file changed, 6 insertions(+), 3 deletions(-)
+The following observation is not a blocker.
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 289e6254aa30..de316be2cc4e 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -443,11 +443,12 @@ static void dax_associate_entry(void *entry, 
-struct address_space *mapping,
-                                 unsigned long address, bool shared)
-  {
-         unsigned long size = dax_entry_size(entry), index;
--       struct folio *folio = dax_to_folio(entry);
-+       struct folio *folio;
+At 2026-01-14T12:35:24-0500, Jeff Layton wrote:
+[...]
+> +.P
+> +A file delegation is a mechanism whereby
+> +the process holding the delegation (the "delegation holder")
+> +is notified (via delivery of a signal)
+> +when a process (the "delegation breaker") tries to
 
-         if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry))
-                 return;
+I recommend use of typographer's quotes marks in prose (contrast code).
 
-+       folio = dax_to_folio(entry);
-         index = linear_page_index(vma, address & ~(size - 1));
-         if (shared && (folio->mapping || dax_folio_is_shared(folio))) {
-                 if (folio->mapping)
-@@ -468,21 +469,23 @@ static void dax_associate_entry(void *entry, 
-struct address_space *mapping,
-  static void dax_disassociate_entry(void *entry, struct address_space 
-*mapping,
-                                 bool trunc)
-  {
--       struct folio *folio = dax_to_folio(entry);
-+       struct folio *folio;
+groff_man_style(7):
+     \[lq]
+     \[rq]  Left and right double quotation marks.  Use these for paired
+            directional double quotes, =E2=80=9Clike this=E2=80=9D.
 
-         if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry))
-                 return;
+These look better in typeset output (like PDF) and on UTF-8 terminals,
+and avoid collisions with `"` when searching man(7) documents in source
+and, on the aforemented devices, as rendered too.
 
-+       folio = dax_to_folio(entry);
-         dax_folio_put(folio);
-  }
+Regards,
+Branden
 
-  static struct page *dax_busy_page(void *entry)
-  {
--       struct folio *folio = dax_to_folio(entry);
-+       struct folio *folio;
+--jkasqkgh4pwlr6xn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-         if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry))
-                 return NULL;
+-----BEGIN PGP SIGNATURE-----
 
-+       folio = dax_to_folio(entry);
-         if (folio_ref_count(folio) - folio_mapcount(folio))
-                 return &folio->page;
-         else
---
-2.34.1
+iQIzBAABCAAdFiEEh3PWHWjjDgcrENwa0Z6cfXEmbc4FAmln13EACgkQ0Z6cfXEm
+bc4PdQ//UVGUE3EDEF5ndu5zEhHXj/hcMFfM+I7PMz8pM0T8VyAW6b5BulvfNTJ6
+vwV6/huGJJm0YsC8+nJ/amMBKQCqVgExqfeAZtJhS6U+KPylj2NpCWTwBUSFSXV4
+6shjPzlLhoZCvj2pQ09qtryXVHeUhXC/SUDcyB9bBYQH4/ts7a+cmwZIy+cHbtFz
+Qo8GSRM2DenWszaXvi/TknAHxZDpi2cIKMd4oPVtPSwbfCRAN/a2max+UBgoAAxZ
+F88uVdAVtFdA784Rc79Mop6BxRkC5sRJ3+7zjXo5UpEMqNa9o8coJKL1fEGHScEc
+OlCtHCx7n30JzNS6w2P11J32KD1gPnN2WMJuRN2Q75pauyroDyD2mDUQtEl6Qteb
+C5HG5VBxdOSdDnJwNBvcmRmSD95pft0MdtC3OCPf0wFu2TO/IMTOBPeq+Foeny7w
+bHdI+CruKKT/Jn6T17ai7044yX4UqigF+GDaZPqTwSwCpFnLd77qpeCb/ofsQogM
+sAfc9xOpl1xHDHBHPk+gAVlOMdGLsC1G6GfFV1+5GF8RjSDb55N3qydUSnhcdLh6
+qpYExh8bzVGmLktw/3XZBkb/CQ8aI9pyAgDoEV3a1v/vmsdW3fadIurKw8a/wZjy
+6XSmbGkB3FbhfsDgFMz1YVJGMPP/L/epkqtb5U9BowkRO4gAArA=
+=t2j9
+-----END PGP SIGNATURE-----
 
+--jkasqkgh4pwlr6xn--
 
