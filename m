@@ -1,160 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-73813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA608D21269
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 21:18:49 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF694D214F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:20:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C5DB63026F1F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 20:18:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3A292304F14E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 21:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C53F330D43;
-	Wed, 14 Jan 2026 20:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C271A361657;
+	Wed, 14 Jan 2026 21:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/k4z6vv"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="hpQUXxbI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1158130F92D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 20:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B411830DEA2;
+	Wed, 14 Jan 2026 21:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768421925; cv=none; b=AJV0kXDOrBkEovQoLWiHQkosKdsLox6RiMNjjt+F9OtiivYnlA7eXqBaHXtOpXyOqDesxy90FYjoGIbCfDO3usC/uvDd644qHeAdtUbQ9SFnzU5na02yUMwWLqZa1kd+gZWJICj2/x72EjxudtIMUuy+nphOPSaXKylzKPicKos=
+	t=1768425536; cv=none; b=suHp1sQ39btfim3JLpHm425X7UCbOOPraukf83z1DiW3WKmFhgWsbd3M9TZsYm6wiAWbEWSO7mu5FJkNH+d9ycG3y/qmMPKP3EoFdPsxRPFnqsxqu4XY2j2sudXudd3TEGnUTb8cWkyqVgU3EmsXshnTAJnzDuHarSs2oIRbdIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768421925; c=relaxed/simple;
-	bh=tmZAdxRx/ZruVvFeEgH+7L30drSCYb8LRpwBpLyDhuM=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=THaCAdp974mwwuyM2G+yrQjRGYK1l1sJv5ruW/2wjoSVMEFMZElGfZ4CZLPnQ/9RIHI9Yv+rsbyw2Tok73Odc5xzWlsQ959misN1iYW8kCM+TKqkJTH5+zE4UGsOUMNW1pzCPATpEq0Crj1Y6K3qBPGfC991U74d/OytUB+ODRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/k4z6vv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 672D6C4CEF7;
-	Wed, 14 Jan 2026 20:18:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768421924;
-	bh=tmZAdxRx/ZruVvFeEgH+7L30drSCYb8LRpwBpLyDhuM=;
-	h=Subject:From:To:Cc:Date:From;
-	b=j/k4z6vvfYN1slMoZ6UqXKMrfXgjsrlxgZdrYzyNZo/Nflj7lrfN0pqfMXsv8QBEj
-	 GSZ/Vsh1dzDd6Sja3cChIWs2hG8SN9HxhvmNIMap3irYEjG2r25rUxT7+k1kPC86eE
-	 2Eos4/VWIxLDlvdL9EjAk/KImvH484CINaWAUo7c4T/+ivLcHNE7Z9SxNmIucSxacI
-	 W+N95Kb7SVNoKe6NKyII4pSCC1X4eYUJh5iYzEkhx025zytZJ538gd8XgjVLZpUX3A
-	 5KPTKhxXV5ynk6d220sS+1D35IipsZ0VpWRGr7k1uR66aJn5DhCEKmre66X2JjEDYq
-	 8kzyq/6aaMAZA==
-Message-ID: <d75659aacc92d1d3f617c4b3b60211252cd496cc.camel@kernel.org>
-Subject: NFSv4 delegation support in Linux kernel v6.19
-From: Jeff Layton <jlayton@kernel.org>
-To: samba-technical@lists.samba.org, devel@lists.nfs-ganesha.org
-Cc: linux-fsdevel@vger.kernel.org
-Date: Wed, 14 Jan 2026 15:18:43 -0500
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
+	s=arc-20240116; t=1768425536; c=relaxed/simple;
+	bh=9sFGLl2vCZAA7nUjghXYdeA0+AuIpchUPP0Zmj6oWYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KmI2TB+3hqUM4Rqt6c1hXh6VsYfQFnz/L8cAhHHyc9rL3pubNKVkR4n0tkWxffeVZWkXM1hd1GXmTIvxn9nDXUyGqEAFEQSrP5cekXoC3GbYx/kxz7NHfmMXyw0huvkh04YoIF9QZp+TSnLkDwFjrnZGzJ4bSp1/PBkOGj6jgiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=hpQUXxbI; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4drzW63NLdz9ttW;
+	Wed, 14 Jan 2026 22:18:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1768425522;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fIAKT58banHucBToU7l4G8MTS+dB+f+gFGwKSkJo90w=;
+	b=hpQUXxbIdiin0oEzTbQ+6mfLvyGK2a3A7GENroD4oQBs+qO0XdQSfGhQ64b5PLX3A23ZJc
+	BkYyc2+6sidQw7+uS9sZJcoA1MugBTLKzis2r4g1yMWkv6/h2AzsE5RIqeoAejcEv8YbEn
+	yDcFxbE3OUps3HicdJ8w52/c0PxuB2QjoPuKGBzsEmQayVpDkzD8AlVQC238NPcxpyK6A7
+	E1wtEqxlyLmsrNRT2lQOdgl38FMf/wn5yomhvbcgkfvt1cSGKpksjrhRXXyIIykMzJBIcl
+	k6vGseysOp1sZ6pmmwMSZvMJB+ZAT9nOjNtn8vwKAmKhX8UiZOV9x2z3eEw7RA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Wed, 14 Jan 2026 22:18:38 +0100
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Florian Weimer <fweimer@redhat.com>, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
+	David Howells <dhowells@redhat.com>, DJ Delorie <dj@redhat.com>
+Subject: Re: O_CLOEXEC use for OPEN_TREE_CLOEXEC
+Message-ID: <2026-01-14-pushy-weedy-weapons-linguini-Vz3I33@cyphar.com>
+References: <lhupl7dcf0o.fsf@oldenburg.str.redhat.com>
+ <20260114-alias-riefen-2cb8c09d0ded@brauner>
+ <CALCETrWMWs3_G5JhJb7+h+JQjpqXxqOh2vNcQaG1HuXjaeCqQw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="o5y7y2m7lspkzwlf"
+Content-Disposition: inline
+In-Reply-To: <CALCETrWMWs3_G5JhJb7+h+JQjpqXxqOh2vNcQaG1HuXjaeCqQw@mail.gmail.com>
+X-Rspamd-Queue-Id: 4drzW63NLdz9ttW
 
-I wanted to reach out to the Samba and Ganesha development communities
-to advertise that we're adding support for new F_SETDELEG and
-F_GETDELEG fcntl() commands in Linux v6.19:
 
-    https://lore.kernel.org/linux-nfs/20251111-dir-deleg-ro-v6-0-52f3feebb2=
-f2@kernel.org/
+--o5y7y2m7lspkzwlf
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: O_CLOEXEC use for OPEN_TREE_CLOEXEC
+MIME-Version: 1.0
 
-They work like leases, but are broken in more situations, to conform to
-the needs of NFSv4 delegations.
+On 2026-01-14, Andy Lutomirski <luto@amacapital.net> wrote:
+> On Wed, Jan 14, 2026 at 8:09=E2=80=AFAM Christian Brauner <brauner@kernel=
+=2Eorg> wrote:
+> >
+> > On Tue, Jan 13, 2026 at 11:40:55PM +0100, Florian Weimer wrote:
+> > > In <linux/mount.h>, we have this:
+> > >
+> > > #define OPEN_TREE_CLOEXEC      O_CLOEXEC       /* Close the file on e=
+xecve() */
+> > >
+> > > This causes a few pain points for us to on the glibc side when we mir=
+ror
+> > > this into <linux/mount.h> becuse O_CLOEXEC is defined in <fcntl.h>,
+> > > which is one of the headers that's completely incompatible with the U=
+API
+> > > headers.
+> > >
+> > > The reason why this is painful is because O_CLOEXEC has at least three
+> > > different values across architectures: 0x80000, 0x200000, 0x400000
+> > >
+> > > Even for the UAPI this isn't ideal because it effectively burns three
+> > > open_tree flags, unless the flags are made architecture-specific, too.
+> >
+> > I think that just got cargo-culted... A long time ago some API define as
+> > O_CLOEXEC and now a lot of APIs have done the same. I'm pretty sure we
+> > can't change that now but we can document that this shouldn't be ifdefed
+> > and instead be a separate per-syscall bit. But I think that's the best
+> > we can do right now.
+> >
+>=20
+> How about, for future syscalls, we make CLOEXEC unconditional?  If
+> anyone wants an ofd to get inherited across exec, they can F_SETFD it
+> themselves.
 
-For files, these should expose the correct semantics for NFSv4
-delegation support: namely that they are also broken if the dentry is
-renamed or unlinked.
+I believe newer interfaces have already started doing that (e.g., all of
+the pidfd stuff is O_CLOEXEC by default) but we should definitely update
+the documentation in Documentation/process/adding-syscalls.rst to stop
+recommending the inclusion of the O_CLOEXEC flag.
 
-You can now take out a delegation on a directory, and it will be broken
-when a dentry is added, deleted or renamed within the directory.
+The funniest thing about open_tree(2) is that it actually borrows flag
+bits from three distinct namespaces! It has an OPEN_TREE_* namespace,
+the AT_* namespace (which now has a concept of "per-syscall flags"), and
+O_CLOEXEC. What a fun interface!
 
-My main impetus for adding this interface was so that this stuff could
-more easily be tested, but it did occur to me that this facility might
-be useful for the existing users of F_SETLEASE.
-
-The manpage patch is here:
-
-    https://lore.kernel.org/linux-man/20260114-master-v2-1-719f5b47dfe2@ker=
-nel.org
-
-Please do reach out if you have questions!
 --=20
-Jeff Layton <jlayton@kernel.org>
+Aleksa Sarai
+https://www.cyphar.com/
+
+--o5y7y2m7lspkzwlf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaWgIKxsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG9PvgEAvm5Uht4Khdsqz7Fz3JDB
+jSmpQw9vQYJ1Gl2iS5HVRngA/jQBDhdVmcTHKczcj7iMbxtZXyQTghXPgJCpCCW2
+crYH
+=GaGW
+-----END PGP SIGNATURE-----
+
+--o5y7y2m7lspkzwlf--
 
