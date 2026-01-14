@@ -1,172 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-73761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id D829FD1FB67
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 16:22:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E97DD1FBFD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 16:30:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 00EE1306C568
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:20:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 27E683112E6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53F6399A6C;
-	Wed, 14 Jan 2026 15:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EAA399035;
+	Wed, 14 Jan 2026 15:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqipJ8Fc"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="P7VmpZYe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746A9396B65;
-	Wed, 14 Jan 2026 15:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE8739524D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 15:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768404032; cv=none; b=jzwTq6t6VUXff8gUFr+SqJBEW9vqrL0KVyiw5wc1bD/HZiynoDPGGASiVY40eD9XkJ0IrMbLwQoy4IOY2sRHqqgo4f/qXk0BbIcMdo4D/fhSfA/yfSZcJZVNKG1Rlq0zuSG8K0gvp0Sg16OfEjSFfJUqSDuh1uFS/KavajgtVbA=
+	t=1768404199; cv=none; b=PyR4a203Oee4mkU2Rki/3HmCBd8ZIzdRq2MvQq+FPqz0tjObThUGnMprwePyp8Iv75WWlimrNGkLLuLP4akjb75loKdDuL0iSFibsc+oabsM8bJ3Sg+e4hCC0bhgtVw1ztju7gbmIqJ7c3VZCLCIq8mRGsN9BZn/ohW1V6znXPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768404032; c=relaxed/simple;
-	bh=95l5NkW0A/27kpGYcRaUumPREirLPSD0h/i7bikH9bU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eviGL2viWqaNYDIxEq1kWrQs92MsJrCYKJaKBktkK9OEL/nqxakyPqC+fssxyWKk1KYHFhx6Hvz1Rb3SkUZelu2tXcZJPADduMxCbXyLD3eXc937TPIOD2P9x3EAnbUP3urZAV0stu4HY036CqzptZv5s/qsdM7P2wk83Ncm8uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqipJ8Fc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C66C4CEF7;
-	Wed, 14 Jan 2026 15:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768404032;
-	bh=95l5NkW0A/27kpGYcRaUumPREirLPSD0h/i7bikH9bU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FqipJ8Fclg/c7qbEuyuUoO5LnexEwFkZgygpoboZW7ULcYAGY34jzrJax6uIrAgGb
-	 FUepiZcAjlgA0R6fvdFVWwhV9jk0Bth6JPV5psDXj3fKzojOCwDT/rEZzcVE5OnNcB
-	 fkG5ZlQLelxcsKpIOTgMpMe11bGcKCWvNYmxvgnzxn2ZC8L7s2dKJy1mrpvPNu7Z7A
-	 UqZxpjIOgw/V7XPIA/1Y2FN9yOrK13WyoEdrmVdFpCQbw6zTva9Pkh2JqEgk58ngiJ
-	 5S6BKkDUQrDweGrzgYJLMr/YFieOsQM7bFBSWWwVpgpU92+aZuVuBVHfvvOSCo18FZ
-	 sKemGEnojFw5A==
-Date: Wed, 14 Jan 2026 16:20:13 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>, Luis de Bethencourt <luisbg@kernel.org>, 
-	Salah Triki <salah.triki@gmail.com>, Nicolas Pitre <nico@fluxnic.net>, Anders Larsen <al@alarsen.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>, 
-	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
-	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, Jan Kara <jack@suse.com>, 
-	Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, 
-	Dave Kleikamp <shaggy@kernel.org>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
-	Viacheslav Dubeyko <slava@dubeyko.com>, Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
-	Joseph Qi <joseph.qi@linux.alibaba.com>, Mike Marshall <hubcap@omnibond.com>, 
-	Martin Brandenburg <martin@omnibond.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Phillip Lougher <phillip@squashfs.org.uk>, Carlos Maiolino <cem@kernel.org>, 
-	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Andreas Gruenbacher <agruenba@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>, 
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Hans de Goede <hansg@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, 
-	jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev, 
-	ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org, gfs2@lists.linux.dev, 
-	linux-doc@vger.kernel.org, v9fs@lists.linux.dev, ceph-devel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
-Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to
- lease support
-Message-ID: <20260114-klarstellen-blamieren-0b7d40182800@brauner>
-References: <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
- <ec78bf021fa1f6243798945943541ba171e337e7.camel@kernel.org>
- <cb5d2da6-2090-4639-ad96-138342bba56d@oracle.com>
- <ce700ee20834631eceededc8cd15fc5d00fee28e.camel@kernel.org>
- <20260113-mondlicht-raven-82fc4eb70e9d@brauner>
- <aWZcoyQLvbJKUxDU@infradead.org>
- <ce418800f06aa61a7f47f0d19394988f87a3da07.camel@kernel.org>
- <aWc3mwBNs8LNFN4W@infradead.org>
- <CAOQ4uxhMjitW_DC9WK9eku51gE1Ft+ENhD=qq3uehwrHO=RByA@mail.gmail.com>
- <aWeUv2UUJ_NdgozS@infradead.org>
+	s=arc-20240116; t=1768404199; c=relaxed/simple;
+	bh=LvIHDIw3tGVPhlqpQEplDDfrrBikoo5Yhft+fju9D8Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hbUCEe0L2rPqH7R2dswz4M1zl6syqeGfUMssRYCEOwLnisgh41ep9kecv3OV8EjY4lk2JIgnaJRzz/n9Rn3TGUwGxgHPpODy2JUJFakAxlgNFxOL3KYPcIYeDaducG+osnv78MylQ7j6khzy3QfqGyTZ6mz1UhioJmttIihloK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=P7VmpZYe; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4ee257e56aaso11287161cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 07:23:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1768404196; x=1769008996; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oyW+GT5tc517r9Y1yj/TSxRQgH25fLsbDOzF6uKatGQ=;
+        b=P7VmpZYezNggeYK8LagcTLmGSFvvST/nTM0Zv+Zsm0EjsaUnAVjlEtFfnMH0x9sGYP
+         oZmDcYMGOCEKJJt+wGNxsHbfhGgTBDIPIbksxFMf7iL2oBbtktpaNYs+cfpQgVHVR6Ae
+         FIOdtXyW/9F76mAgInJmO/1gqPkTB5K64CysQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768404196; x=1769008996;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oyW+GT5tc517r9Y1yj/TSxRQgH25fLsbDOzF6uKatGQ=;
+        b=hYAip4tPl/+UqU32604i5fk9ULX877MmFV73E8TBeOvlPL4WJsWuf6YbRe0ODZwQNO
+         Yz+m/QoflcRX/1ZhqT98vMFRJ91pXPtlQH7iCfO2VLMIq0sHMTCLdNmJOhoLKQVGSoUs
+         /c7sLZ77v+h9YhKLPKBNpLnjSPNTL+OHVAzQ+Ag8gUeZdT1149+Rkg3+RTuJtcy5AYAK
+         Z5QhzFGG++sktWviSvv1jF8E/AVh1EOnXqzzfcMuVg4ULuZ7lhJbv2l54LwzJ7RKhU+/
+         uZxdGdGNZ55n7xtdV043sqRMnbgy9aOqZZcjmgmdaOh+RJmW8PYPxR6AE+YwfpO5T4zG
+         UP6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUkGqkCkfhySRmPT8JSLlvteH8WqKw+rdTbRAeOe5zeEydkxejW/Molr//shNpx8gvDpgp97QB8yBOB+Jfd@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5jSZ4uN9rsL3g95Su43R4yrRTarZjqqczcDp9YVfZv9UeppqE
+	e5sID6x92XhGLRmzcFIAV9Jz0jotxmA3bYrWZRYzGK9wds+2fPpfcn9WnqMAzOiLCF2ea6rd8Rj
+	2XMmsFJXlCB/m6tOdtGtevL+rbsuNK2h+56e3/Bla+Q==
+X-Gm-Gg: AY/fxX5RFz79F0XdjEJqcr7xhKxY/eMlGoCuY6rnx3VNgmP63jjiN+Xgk3V7vDPQEvs
+	WBRVIteFYNUji5dsMnuYvFefb3ZrtmtuAsNtb/zCwqjSy0DL0P6URuaipmnWA4it20mdB8Ji4Oc
+	uM6fqulbR6DZITDZgjnNWLt4hbJdSq/6/Aag9fjNlkGqmmOXfwTIXemTh9PORxBLvwu6DReIYsr
+	RrxGPhxpf/1xl2uw3L5dl6ic0pFva/kL27paJiLiyf9b6Mu9SnK7vh83iosOh9nqLGG/Ps=
+X-Received: by 2002:ac8:7d94:0:b0:4f1:8bfd:bdc0 with SMTP id
+ d75a77b69052e-501397f7cf8mr97081381cf.39.1768404196094; Wed, 14 Jan 2026
+ 07:23:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aWeUv2UUJ_NdgozS@infradead.org>
+References: <CAJfpegunwB28WKqxNWCQyd5zrMfSif_YmBFp+_m-ZsDap9+G7Q@mail.gmail.com>
+ <CAHk-=wht097GMgEuH870PU4dMfBCinZ5_qvxpqK2Q9PP=QRdTA@mail.gmail.com>
+ <20251206014242.GO1712166@ZenIV> <CAHk-=wg8KJbcPuoRBFmD9c42awaeb4anXsC4evEOj0_QVKg0QQ@mail.gmail.com>
+ <20251206022826.GP1712166@ZenIV> <CAHk-=wgBU3MQniRBmbKi2yj0fRrWQjViViNvNJ6sqjEB-3r4XA@mail.gmail.com>
+ <20251206035403.GR1712166@ZenIV> <20251206042242.GS1712166@ZenIV>
+In-Reply-To: <20251206042242.GS1712166@ZenIV>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 14 Jan 2026 16:23:04 +0100
+X-Gm-Features: AZwV_QhDobZRTM8acMVUQadhk0ivZk3t5rYM8YerLOR7FIvYElOEjYZWOyKIf4g
+Message-ID: <CAJfpegtsDZW7v=YDhs+gPq25G+QOh-5mjiaXT04DDW=iU+R75A@mail.gmail.com>
+Subject: Re: [GIT PULL] fuse update for 6.19
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jan 14, 2026 at 05:06:07AM -0800, Christoph Hellwig wrote:
-> On Wed, Jan 14, 2026 at 10:34:04AM +0100, Amir Goldstein wrote:
-> > On Wed, Jan 14, 2026 at 7:28 AM Christoph Hellwig <hch@infradead.org> wrote:
+On Sat, 6 Dec 2025 at 05:22, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Sat, Dec 06, 2025 at 03:54:03AM +0000, Al Viro wrote:
+> > On Fri, Dec 05, 2025 at 07:29:13PM -0800, Linus Torvalds wrote:
+> > > On Fri, 5 Dec 2025 at 18:28, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > > >
+> > > > Sure, ->d_prune() would take it out of the rbtree, but what if it hits
 > > >
-> > > On Tue, Jan 13, 2026 at 12:06:42PM -0500, Jeff Layton wrote:
-> > > > Fair point, but it's not that hard to conceive of a situation where
-> > > > someone inadvertantly exports cgroupfs or some similar filesystem:
+> > > Ahh.
 > > >
-> > > Sure.  But how is this worse than accidentally exporting private data
-> > > or any other misconfiguration?
+> > > Maybe increase the d_count before releasing that rbtree lock?
 > > >
-> > 
-> > My POV is that it is less about security (as your question implies), and
-> > more about correctness.
-> 
-> I was just replying to Jeff.
-> 
-> > The special thing about NFS export, as opposed to, say, ksmbd, is
-> > open by file handle, IOW, the export_operations.
-> > 
-> > I perceive this as a very strange and undesired situation when NFS
-> > file handles do not behave as persistent file handles.
-> 
-> That is not just very strange, but actually broken (discounting the
-> obscure volatile file handles features not implemented in Linux NFS
-> and NFSD).  And the export ops always worked under the assumption
-> that these file handles are indeed persistent.  If they're not we
-> do have a problem.
-> 
-> > 
-> > cgroupfs, pidfs, nsfs, all gained open_by_handle_at() capability for
-> > a known reason, which was NOT NFS export.
-> > 
-> > If the author of open_by_handle_at() support (i.e. brauner) does not
-> > wish to imply that those fs should be exported to NFS, why object?
-> 
-> Because "want to export" is a stupid category.
-> 
-> OTOH "NFS exporting doesn't actually properly work because someone
-> overloaded export_ops with different semantics" is a valid category.
-> 
-> > We could have the opt-in/out of NFS export fixes per EXPORT_OP_
-> > flags and we could even think of allowing admin to make this decision
-> > per vfsmount (e.g. for cgroupfs).
-> > 
-> > In any case, I fail to see how objecting to the possibility of NFS export
-> > opt-out serves anyone.
-> 
-> You're still think of it the wrong way.  If we do have file systems
-> that break the original exportfs semantics we need to fix that, and
-> something like a "stable handles" flag will work well for that.  But
-> a totally arbitrary "is exportable" flag is total nonsense.
+> > > Or yeah, maybe moving it to d_release. Miklos?
+> >
+> > Moving it to ->d_release() would be my preference, TBH.  Then
+> > we could simply dget() the sucker under the lock and follow
+> > that with existing dput_to_list() after dropping the lock...
+>
+> s/dget/grab ->d_lock, increment ->d_count if not negative,
+> drop ->d_lock/ - we need to deal with the possibility of
+> the victim just going into __dentry_kill() as we find it.
+>
+> And yes, it would be better off with something like
+> lockref_get_if_zero(struct lockref *lockref)
+> {
+>         bool retval = false;
+>         CMPXCHG_LOOP(
+>                 new.count++;
+>                 if (old_count != 0)
+>                         return false;
+>         ,
+>                 return true;
+>         );
+>         spin_lock(&lockref->lock);
+>         if (lockref->count == 0)
+>                 lockref->count = 1;
+>                 retval = true;
+>         }
+>         spin_unlock(&lockref->lock);
+>         return retval;
+> }
+>
+> with
+>                 while (node) {
+>                         fd = rb_entry(node, struct fuse_dentry, node);
+>                         if (!time_after64(get_jiffies_64(), fd->time))
+>                                 break;
+>                         rb_erase(&fd->node, &dentry_hash[i].tree);
+>                         RB_CLEAR_NODE(&fd->node);
+>                         if (lockref_get_if_zero(&dentry->d_lockref))
+>                                 dput_to_list(dentry);
+>                         if (need_resched()) {
+>                                 spin_unlock(&dentry_hash[i].lock);
+>                                 schedule();
+>                                 spin_lock(&dentry_hash[i].lock);
+>                         }
+>                         node = rb_first(&dentry_hash[i].tree);
+>                 }
 
-File handles can legitimately be conceptualized independently of
-exporting a filesystem. If we wanted to tear those concepts apart
-implementation wise we could.
+Posted a short patchset fixing this.
 
-It is complete nonsense to expect the kernel to support exporting any
-arbitrary internal filesystem or to not support file handles at all.
+I really think there's no point in doing the get-ref, drop-ref dance.
+ Retrieving the dentry from any source will require locking and that
+needs to nest d_lock with or without the refcount manipulation.
 
-How that is achieved is completely irrelevant to that core part of the
-argument. The point Jeff and Amir are making that it is sensible to
-allow one without the other.
+So I kept the d_dispose_if_unused() API, but added a note to the
+function doc that additional locking is necessary to prevent eviction.
 
-Whether or not some userspace crap allows you to achieve the same thing
-is entirely irrelevant and does not at all imply we have to allow the
-same crap in the kernel.
+Thanks,
+Miklos
 
