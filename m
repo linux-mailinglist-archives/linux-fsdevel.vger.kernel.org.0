@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-73827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34578D2162E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:40:37 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED6ED21670
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:42:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 862023013BE1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 21:39:32 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id F2999308D516
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 21:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3F3378D82;
-	Wed, 14 Jan 2026 21:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F9F387379;
+	Wed, 14 Jan 2026 21:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NXgcD/fi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MLNxLl3Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059E836E482
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 21:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA2137BE8C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 21:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768426734; cv=none; b=aUqLnRzqz7Ic9SsdekcxyVFIe404wJVFusCk7a6THNQu2NNUi+mq8jQB7AOfCreJaXNfFFggdVoAi+87Zx9WOz55Li1hrNiWt+Sntar0rhiLsWJFsVbge5euXvNJtDlTc0yZqc3AljdO+2bpbyO00WkFHszwmtZCIGLaxcUV5wA=
+	t=1768426768; cv=none; b=IJxU7wWdYwwABb2aNAcAMkDUvdfSG7APna/ooOMC/IomIayArlg/EVV0Ci8J0a6r0Hxgnm+ELFzA3JirLpbO+zwuH9Ha/iBygSxrcH9KDm/R4MGjjl0IAwUX/yUVltd0pRuv6enRl9teUDsBxxB6vQ9uf1UeNU2J9IrY5bqSmp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768426734; c=relaxed/simple;
-	bh=Myxyb2rDcBHr+xqknzGDwrg3ZSxy55A1mHw+gpZxb+w=;
+	s=arc-20240116; t=1768426768; c=relaxed/simple;
+	bh=Am6K2RI/T0WTjL4m6/ZaxMTAl8sLgl+eiAVbx7GUx1c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K+L5rylCmEcbZmMbr4fmpb7fjgtRyYmbN4P7rienqorGK0W2Vm//UwXfCKl10wuaGtW0dFPS3636WeHHnHsoOHKwjGeNQZmAKX38JalDPgJku53DRrEY4Wzrr8kDAd6xdDz8p8KwRqXF14uCEpqtWWKhp4F/wuSaGHB5CgrzkdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NXgcD/fi; arc=none smtp.client-ip=209.85.160.50
+	 MIME-Version; b=BuUyiMcHHukPWRjENdwevcoowzga0+bOV+/Xh5bRDWFuiIGDhbPOd4q3sgxR7UXQbwdQ8iBoKMYdwlRGtYcUsue4HsTt99333+0HPHjTAG48a4lEqJEcVXudsYRYBL4FzxGo66BoZrxD4C4ru3IBRYoNt/TKsG4xYslhRypSbQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MLNxLl3Z; arc=none smtp.client-ip=209.85.210.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-3ffbfebae12so93004fac.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 13:38:15 -0800 (PST)
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7cdae63171aso207947a34.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 13:38:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768426694; x=1769031494; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768426727; x=1769031527; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KtiQrLd8slGpp7/JWfnN4t75EcUXAx+gZvq0QNgV39M=;
-        b=NXgcD/fi2em+OwuRcVGe0ltnj15i6JiXi4otxYXoLz3yEzAm7V1KCaSZQdbvJINsak
-         Dn161oPSAFWJp6upDOmDPXmR8PMF8aIb2C3oa/i/SklURs7K67XBDsWn48aINPH3SoiO
-         uSq+MEBAms+92BzmHaNZbGQDbepcq5sM5nna/LMYw7BOKdRuX8txgQ6Wr5PBaWxjkztD
-         y+UwI4B62pu3YHhUQDdTT+pBiV3djnpBa3/KfsPNbbta1+H01SoVXDoLZH8ONaaaqi9X
-         SHraDNOqsv8P7XIwy/DfCbHjsgiMYoL/2C+jfb7LTkKPCqe4gMK2xFj+At58VED2aFZ+
-         DzZQ==
+        bh=zTclrm2YHSjptEa7cEmYEVwW7wN9R+aHS7mg59BgCxk=;
+        b=MLNxLl3Ze2nQNDScxzPYayKsy6qS850EqM/IRVaW4qBjRsjxPNi8bvneN4zSruspPc
+         YeTRpLJGeeNmy/FJ82prWhN4ynBmF3bnmnvPGatoq9phJVYUpJpUZnf0Gxqr2fnipBeu
+         LSpO+QmqAIAmMrXRr1U2ZjFLcjyMeR/9TSlOS6oy+4vdqvyD/1XWhoZpSKo/SIByuTX+
+         yDYyRGABJYE2vRC7bg4zp3/6SJCxtIeTacZGuM0JHKH5ICvN17OyZPu2VdDjyFbXvQV5
+         pz4jIrTWspEzHqLkFyLNyBfcEVG9XdPCNWNni5nAUdjXagXNfCS0U09CcQ1McoVdMKur
+         bStQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768426694; x=1769031494;
+        d=1e100.net; s=20230601; t=1768426727; x=1769031527;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KtiQrLd8slGpp7/JWfnN4t75EcUXAx+gZvq0QNgV39M=;
-        b=JNGM+7bwBSfwDfMSlCdag94VNoFVn1BLFwEvhOMFjp16YS3GQRCwgsU1HBldl2q2Or
-         1ev9dx0wzy+PWrweC9iMCEHXBg8PpxgGL+j1v4b84g4oFh6EBKRtZ18tMIygKb3GLRq5
-         Kr/REakvhXCNjzRpvBImbjWuEPxH9knWQV8AujYtRif2l5YnifRtA6lfMfyUl6ax3Rh8
-         sq6CoJ/yeWHEqHD6ACFcQO0vHZPJSyw0LFBxL3Oymg6VmbiiCTs8SDn6CO1x845eZ9OT
-         DTMzd20FGXcqWeXkdisMUVdSO43ONt2wn7MgwRzkw3rS9SinuoQo2aIPu52Ro10KrXZO
-         hcZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULB07IgvrcGHhkg4pb9unnGM7sa7e3CGIfYwSkLA0p6wf900JKhbjh24CPFpj8wuiFMwOKX5pT4B2e4qxq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3sNEAu/s/uzI7VVFEVtvm9kwRRYDDjrgcShoax2VKsEt3o2dp
-	8bUYcXbaYd+HX/gDMIQsoC4Ho5R6RNd65tJ0hyfHPqWlM94fIidJ8eAb
-X-Gm-Gg: AY/fxX5AzElvfOS4nB1Nu7+KYFAE7WVtB+DiZntaO2sf5iJxa2/rZHTJf8RL3T/xyu3
-	TiaHX/ANwzf1MA7Y8R1YmiiZ7W2sQwRfYPcKb4CU9GY/waLQh47wl4bjBFcWeJ8QiZtwPkpEq6O
-	LfzQucUQc19mpIVG0vJgixxMkaF7FTcW8sXdzv7KGPOabv02BisGfeTqH6m2/26y3cGrtzz53yo
-	UMRfZdwrQNZoNvllyfUnwjLs77LmE1GHtNeYq0isQlvKhRoZ5JFYKL6JT7Bd3YoPV6L35EtlqXP
-	62aChNC5eSPflWRkAU7KGA72eJGEzJODXTrQn9PDMZos97VQkIoyQDvug7PJdD23kjIJSpto4Nx
-	KLJvsWiI5E4ZXQyQGto/29nc2f0cT8l9MjgAIYne81AibXdBOFRoIpCTvVBOXRd81Bftn/WtDOL
-	on+QVJx/C6mu/YUHurYJ5H+jYEiH+uJy2GE6sX4FtuoSDT
-X-Received: by 2002:a05:6871:3a2c:b0:3d3:7288:fe44 with SMTP id 586e51a60fabf-4040ba24643mr2524454fac.11.1768426694295;
-        Wed, 14 Jan 2026 13:38:14 -0800 (PST)
+        bh=zTclrm2YHSjptEa7cEmYEVwW7wN9R+aHS7mg59BgCxk=;
+        b=P4KbC2sYebAgEh8opk1KxX1JJkX852Exs6iJlCx93bYst6xsqzJkMTGRo7g3Ss9g/h
+         0l8Icwu+ULVPxyyAyaomskk2ajuByw9ccJSi2GFvhhZ+/9KOkUbGnYqmx/8piA3mHBG5
+         2ttUqFyb8ssCV59aGDS0AwRSZJcTJ0TGgKdBzvbDgA+DP3q8T4u3iRFJI94ZDB2TZc+N
+         ZgZ4XXa8AQn/SHoQGW5CqWawdO41iQVSafftd35RUQPKmvI3Y6F0+9+XLnyxQ/613CY5
+         TJvPjM2j9aS1n+OZA2UP2dnOhegYaIu3QYLoM5dwtk6pHutlrDZYU7K7pZOb9P9E7KZ9
+         1TeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIvtaGcbLVYd3gcYRijC5lCQY8l0tCeMO0JDhnCzKKWUI8lesy9piSOk2rvW3x792/vQOPCvATvwHliyig@vger.kernel.org
+X-Gm-Message-State: AOJu0YxypL60ByPa4Ob56oTQitcohmC9ziXw0+3/95dapUReOcxFlcu9
+	PwEJmtal26QQ1lQ/zhG/jiLW9af5sAKG9d8G2Htf+grtTNiwjypGc7Mv
+X-Gm-Gg: AY/fxX4wFPs1EusAwYIRac5ippw4SspU790/Tbq8SEqGDc9fDehSVr6q2k5QH+Rf4sM
+	LkSg+d77CTZte8KDUxAKFedxdWHGbTfsC5gk6sDGV1a32FTSzUpbYOGy5CgOJHK+ps8S13mNcHV
+	Nld8KrMkX0tgLfvqT+v4GHJPmWcL/LrNBQOidLJmQrr5FSi3+5GR+4qwn2HZ2afawT07K7rx4v4
+	MqgzHSH7Gs70nnOl/bTnGv/Z3zr4bJtbRufd2hQwKGkU+vK7hGsaXGCAsdPOlmWEmsYF6apWyKo
+	jaKXt3NDNcsKGhhLMHbfpJacTOGfcu8x9RC+nBB4XGF/erPI66je5ALp8USFuEMxW7O1NsTRSFO
+	wI7SmQeMhZkeNj8PQY0MwJUgJ5fXD+EWh4Iifac8OSOVvwmv9QpPZLItrwEK/PGqR9WQPyRvAD7
+	z9nPbgba98jXV4/G5otyRqeAC7unB3CKnKi+7AwRvfOimL
+X-Received: by 2002:a05:6808:221a:b0:450:af35:8b1c with SMTP id 5614622812f47-45c7153d0c1mr2533479b6e.38.1768426726864;
+        Wed, 14 Jan 2026 13:38:46 -0800 (PST)
 Received: from localhost.localdomain ([2603:8080:1500:3d89:4c85:2962:e438:72c4])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa50721a6sm17711247fac.10.2026.01.14.13.38.11
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-45a5e183ac3sm11473603b6e.4.2026.01.14.13.38.45
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 14 Jan 2026 13:38:13 -0800 (PST)
+        Wed, 14 Jan 2026 13:38:46 -0800 (PST)
 Sender: John Groves <grovesaustin@gmail.com>
 From: John Groves <John@Groves.net>
 X-Google-Original-From: John Groves <john@groves.net>
@@ -111,9 +111,9 @@ Cc: John Groves <jgroves@micron.com>,
 	nvdimm@lists.linux.dev,
 	linux-cxl@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH V4 11/19] famfs_fuse: Basic fuse kernel ABI enablement for famfs
-Date: Wed, 14 Jan 2026 15:31:58 -0600
-Message-ID: <20260114213209.29453-12-john@groves.net>
+Subject: [PATCH V4 12/19] famfs_fuse: Plumb the GET_FMAP message/response
+Date: Wed, 14 Jan 2026 15:31:59 -0600
+Message-ID: <20260114213209.29453-13-john@groves.net>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260114213209.29453-1-john@groves.net>
 References: <20260114153133.29420.compound@groves.net>
@@ -126,113 +126,332 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch starts the kernel ABI enablement of famfs in fuse.
+Upon completion of an OPEN, if we're in famfs-mode we do a GET_FMAP to
+retrieve and cache up the file-to-dax map in the kernel. If this
+succeeds, read/write/mmap are resolved direct-to-dax with no upcalls.
 
-- Kconfig: Add FUSE_FAMFS_DAX config parameter, to control
-  compilation of famfs within fuse.
-- FUSE_DAX_FMAP flag in INIT request/reply
-- fuse_conn->famfs_iomap (enable famfs-mapped files) to denote a
-  famfs-enabled connection
-
-Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
 Signed-off-by: John Groves <john@groves.net>
 ---
- fs/fuse/Kconfig           | 14 ++++++++++++++
- fs/fuse/fuse_i.h          |  3 +++
- fs/fuse/inode.c           |  6 ++++++
- include/uapi/linux/fuse.h |  5 +++++
- 4 files changed, 28 insertions(+)
+ MAINTAINERS               |  8 +++++
+ fs/fuse/Makefile          |  1 +
+ fs/fuse/famfs.c           | 74 +++++++++++++++++++++++++++++++++++++++
+ fs/fuse/file.c            | 14 +++++++-
+ fs/fuse/fuse_i.h          | 70 +++++++++++++++++++++++++++++++++---
+ fs/fuse/inode.c           |  8 ++++-
+ fs/fuse/iomode.c          |  2 +-
+ include/uapi/linux/fuse.h |  7 ++++
+ 8 files changed, 176 insertions(+), 8 deletions(-)
+ create mode 100644 fs/fuse/famfs.c
 
-diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
-index 3a4ae632c94a..5ca9fae62c7b 100644
---- a/fs/fuse/Kconfig
-+++ b/fs/fuse/Kconfig
-@@ -76,3 +76,17 @@ config FUSE_IO_URING
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 10aa5120d93f..e3d0aa5eb361 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10379,6 +10379,14 @@ F:	fs/fuse/
+ F:	include/uapi/linux/fuse.h
+ F:	tools/testing/selftests/filesystems/fuse/
  
- 	  If you want to allow fuse server/client communication through io-uring,
- 	  answer Y
++FUSE [FAMFS Fabric-Attached Memory File System]
++M:	John Groves <jgroves@micron.com>
++M:	John Groves <John@Groves.net>
++L:	linux-cxl@vger.kernel.org
++L:	linux-fsdevel@vger.kernel.org
++S:	Supported
++F:	fs/fuse/famfs.c
 +
-+config FUSE_FAMFS_DAX
-+	bool "FUSE support for fs-dax filesystems backed by devdax"
-+	depends on FUSE_FS
-+	depends on DEV_DAX
-+	depends on FS_DAX
-+	default FUSE_FS
-+	help
-+	  This enables the fabric-attached memory file system (famfs),
-+	  which enables formatting devdax memory as a file system. Famfs
-+	  is primarily intended for scale-out shared access to
-+	  disaggregated memory.
+ FUTEX SUBSYSTEM
+ M:	Thomas Gleixner <tglx@kernel.org>
+ M:	Ingo Molnar <mingo@redhat.com>
+diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+index 22ad9538dfc4..3f8dcc8cbbd0 100644
+--- a/fs/fuse/Makefile
++++ b/fs/fuse/Makefile
+@@ -17,5 +17,6 @@ fuse-$(CONFIG_FUSE_DAX) += dax.o
+ fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o backing.o
+ fuse-$(CONFIG_SYSCTL) += sysctl.o
+ fuse-$(CONFIG_FUSE_IO_URING) += dev_uring.o
++fuse-$(CONFIG_FUSE_FAMFS_DAX) += famfs.o
+ 
+ virtiofs-y := virtio_fs.o
+diff --git a/fs/fuse/famfs.c b/fs/fuse/famfs.c
+new file mode 100644
+index 000000000000..615819cc922d
+--- /dev/null
++++ b/fs/fuse/famfs.c
+@@ -0,0 +1,74 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * famfs - dax file system for shared fabric-attached memory
++ *
++ * Copyright 2023-2026 Micron Technology, Inc.
++ *
++ * This file system, originally based on ramfs the dax support from xfs,
++ * is intended to allow multiple host systems to mount a common file system
++ * view of dax files that map to shared memory.
++ */
 +
-+	  To enable famfs or other fuse/fs-dax file systems, answer Y
++#include <linux/cleanup.h>
++#include <linux/fs.h>
++#include <linux/mm.h>
++#include <linux/dax.h>
++#include <linux/iomap.h>
++#include <linux/path.h>
++#include <linux/namei.h>
++#include <linux/string.h>
++
++#include "fuse_i.h"
++
++
++#define FMAP_BUFSIZE PAGE_SIZE
++
++int
++fuse_get_fmap(struct fuse_mount *fm, struct inode *inode)
++{
++	void *fmap_buf __free(kfree) = NULL;
++	struct fuse_inode *fi = get_fuse_inode(inode);
++	size_t fmap_bufsize = FMAP_BUFSIZE;
++	u64 nodeid = get_node_id(inode);
++	ssize_t fmap_size;
++	int rc;
++
++	FUSE_ARGS(args);
++
++	/* Don't retrieve if we already have the famfs metadata */
++	if (fi->famfs_meta)
++		return 0;
++
++	fmap_buf = kzalloc(FMAP_BUFSIZE, GFP_KERNEL);
++	if (!fmap_buf)
++		return -EIO;
++
++	args.opcode = FUSE_GET_FMAP;
++	args.nodeid = nodeid;
++
++	/* Variable-sized output buffer
++	 * this causes fuse_simple_request() to return the size of the
++	 * output payload
++	 */
++	args.out_argvar = true;
++	args.out_numargs = 1;
++	args.out_args[0].size = fmap_bufsize;
++	args.out_args[0].value = fmap_buf;
++
++	/* Send GET_FMAP command */
++	rc = fuse_simple_request(fm, &args);
++	if (rc < 0) {
++		pr_err("%s: err=%d from fuse_simple_request()\n",
++		       __func__, rc);
++		return rc;
++	}
++	fmap_size = rc;
++
++	/* We retrieved the "fmap" (the file's map to memory), but
++	 * we haven't used it yet. A call to famfs_file_init_dax() will be added
++	 * here in a subsequent patch, when we add the ability to attach
++	 * fmaps to files.
++	 */
++
++	return 0;
++}
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 093569033ed1..1f64bf68b5ee 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -277,6 +277,16 @@ static int fuse_open(struct inode *inode, struct file *file)
+ 	err = fuse_do_open(fm, get_node_id(inode), file, false);
+ 	if (!err) {
+ 		ff = file->private_data;
++
++		if ((fm->fc->famfs_iomap) && (S_ISREG(inode->i_mode))) {
++			/* Get the famfs fmap - failure is fatal */
++			err = fuse_get_fmap(fm, inode);
++			if (err) {
++				fuse_sync_release(fi, ff, file->f_flags);
++				goto out_nowrite;
++			}
++		}
++
+ 		err = fuse_finish_open(inode, file);
+ 		if (err)
+ 			fuse_sync_release(fi, ff, file->f_flags);
+@@ -284,12 +294,14 @@ static int fuse_open(struct inode *inode, struct file *file)
+ 			fuse_truncate_update_attr(inode, file);
+ 	}
+ 
++out_nowrite:
+ 	if (is_wb_truncate || dax_truncate)
+ 		fuse_release_nowrite(inode);
+ 	if (!err) {
+ 		if (is_truncate)
+ 			truncate_pagecache(inode, 0);
+-		else if (!(ff->open_flags & FOPEN_KEEP_CACHE))
++		else if (!(ff->open_flags & FOPEN_KEEP_CACHE) &&
++			 !fuse_file_famfs(fi))
+ 			invalidate_inode_pages2(inode->i_mapping);
+ 	}
+ 	if (dax_truncate)
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 45e108dec771..2839efb219a9 100644
+index 2839efb219a9..b66b5ca0bc11 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -921,6 +921,9 @@ struct fuse_conn {
- 	/* Is synchronous FUSE_INIT allowed? */
- 	unsigned int sync_init:1;
- 
-+	/* dev_dax_iomap support for famfs */
-+	unsigned int famfs_iomap:1;
+@@ -223,6 +223,14 @@ struct fuse_inode {
+ 	 * so preserve the blocksize specified by the server.
+ 	 */
+ 	u8 cached_i_blkbits;
 +
- 	/* Use io_uring for communication */
- 	unsigned int io_uring;
++#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
++	/* Pointer to the file's famfs metadata. Primary content is the
++	 * in-memory version of the fmap - the map from file's offset range
++	 * to DAX memory
++	 */
++	void *famfs_meta;
++#endif
+ };
  
+ /** FUSE inode state bits */
+@@ -1511,11 +1519,8 @@ void fuse_free_conn(struct fuse_conn *fc);
+ 
+ /* dax.c */
+ 
+-static inline bool fuse_file_famfs(struct fuse_inode *fuse_inode) /* Will be superseded */
+-{
+-	(void)fuse_inode;
+-	return false;
+-}
++static inline int fuse_file_famfs(struct fuse_inode *fi); /* forward */
++
+ #define FUSE_IS_VIRTIO_DAX(fuse_inode) (IS_ENABLED(CONFIG_FUSE_DAX)	\
+ 					&& IS_DAX(&fuse_inode->inode)  \
+ 					&& !fuse_file_famfs(fuse_inode))
+@@ -1634,4 +1639,59 @@ extern void fuse_sysctl_unregister(void);
+ #define fuse_sysctl_unregister()	do { } while (0)
+ #endif /* CONFIG_SYSCTL */
+ 
++/* famfs.c */
++
++#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
++void __famfs_meta_free(void *map);
++
++/* Set fi->famfs_meta = NULL regardless of prior value */
++static inline void famfs_meta_init(struct fuse_inode *fi)
++{
++	fi->famfs_meta = NULL;
++}
++
++/* Set fi->famfs_meta iff the current value is NULL */
++static inline struct fuse_backing *famfs_meta_set(struct fuse_inode *fi,
++						  void *meta)
++{
++	return cmpxchg(&fi->famfs_meta, NULL, meta);
++}
++
++static inline void famfs_meta_free(struct fuse_inode *fi)
++{
++	famfs_meta_set(fi, NULL);
++}
++
++static inline int fuse_file_famfs(struct fuse_inode *fi)
++{
++	return (READ_ONCE(fi->famfs_meta) != NULL);
++}
++
++int fuse_get_fmap(struct fuse_mount *fm, struct inode *inode);
++
++#else /* !CONFIG_FUSE_FAMFS_DAX */
++
++static inline struct fuse_backing *famfs_meta_set(struct fuse_inode *fi,
++						  void *meta)
++{
++	return NULL;
++}
++
++static inline void famfs_meta_free(struct fuse_inode *fi)
++{
++}
++
++static inline int fuse_file_famfs(struct fuse_inode *fi)
++{
++	return 0;
++}
++
++static inline int
++fuse_get_fmap(struct fuse_mount *fm, struct inode *inode)
++{
++	return 0;
++}
++
++#endif /* CONFIG_FUSE_FAMFS_DAX */
++
+ #endif /* _FS_FUSE_I_H */
 diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index ed667920997f..acabf92a11f8 100644
+index acabf92a11f8..f2d742d723dc 100644
 --- a/fs/fuse/inode.c
 +++ b/fs/fuse/inode.c
-@@ -1456,6 +1456,10 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
- 
- 			if (flags & FUSE_REQUEST_TIMEOUT)
- 				timeout = arg->request_timeout;
-+
-+			if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
-+			    flags & FUSE_DAX_FMAP)
-+				fc->famfs_iomap = 1;
- 		} else {
- 			ra_pages = fc->max_read / PAGE_SIZE;
- 			fc->no_lock = 1;
-@@ -1517,6 +1521,8 @@ static struct fuse_init_args *fuse_new_init(struct fuse_mount *fm)
- 		flags |= FUSE_SUBMOUNTS;
+@@ -120,6 +120,9 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
  	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
- 		flags |= FUSE_PASSTHROUGH;
+ 		fuse_inode_backing_set(fi, NULL);
+ 
 +	if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
-+		flags |= FUSE_DAX_FMAP;
++		famfs_meta_set(fi, NULL);
++
+ 	return &fi->inode;
+ 
+ out_free_forget:
+@@ -141,6 +144,9 @@ static void fuse_free_inode(struct inode *inode)
+ 	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+ 		fuse_backing_put(fuse_inode_backing(fi));
+ 
++	if (S_ISREG(inode->i_mode) && fuse_file_famfs(fi))
++		famfs_meta_free(fi);
++
+ 	kmem_cache_free(fuse_inode_cachep, fi);
+ }
+ 
+@@ -162,7 +168,7 @@ static void fuse_evict_inode(struct inode *inode)
+ 	/* Will write inode on close/munmap and in all other dirtiers */
+ 	WARN_ON(inode_state_read_once(inode) & I_DIRTY_INODE);
+ 
+-	if (FUSE_IS_VIRTIO_DAX(fi))
++	if (FUSE_IS_VIRTIO_DAX(fi) || fuse_file_famfs(fi))
+ 		dax_break_layout_final(inode);
+ 
+ 	truncate_inode_pages_final(&inode->i_data);
+diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
+index 31ee7f3304c6..948148316ef0 100644
+--- a/fs/fuse/iomode.c
++++ b/fs/fuse/iomode.c
+@@ -203,7 +203,7 @@ int fuse_file_io_open(struct file *file, struct inode *inode)
+ 	 * io modes are not relevant with DAX and with server that does not
+ 	 * implement open.
+ 	 */
+-	if (FUSE_IS_VIRTIO_DAX(fi) || !ff->args)
++	if (FUSE_IS_VIRTIO_DAX(fi) || fuse_file_famfs(fi) || !ff->args)
+ 		return 0;
  
  	/*
- 	 * This is just an information flag for fuse server. No need to check
 diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index c13e1f9a2f12..25686f088e6a 100644
+index 25686f088e6a..9eff9083d3b5 100644
 --- a/include/uapi/linux/fuse.h
 +++ b/include/uapi/linux/fuse.h
-@@ -240,6 +240,9 @@
-  *  - add FUSE_COPY_FILE_RANGE_64
-  *  - add struct fuse_copy_file_range_out
-  *  - add FUSE_NOTIFY_PRUNE
-+ *
-+ *  7.46
-+ *  - Add FUSE_DAX_FMAP capability - ability to handle in-kernel fsdax maps
-  */
+@@ -669,6 +669,9 @@ enum fuse_opcode {
+ 	FUSE_STATX		= 52,
+ 	FUSE_COPY_FILE_RANGE_64	= 53,
  
- #ifndef _LINUX_FUSE_H
-@@ -448,6 +451,7 @@ struct fuse_file_lock {
-  * FUSE_OVER_IO_URING: Indicate that client supports io-uring
-  * FUSE_REQUEST_TIMEOUT: kernel supports timing out requests.
-  *			 init_out.request_timeout contains the timeout (in secs)
-+ * FUSE_DAX_FMAP: kernel supports dev_dax_iomap (aka famfs) fmaps
-  */
- #define FUSE_ASYNC_READ		(1 << 0)
- #define FUSE_POSIX_LOCKS	(1 << 1)
-@@ -495,6 +499,7 @@ struct fuse_file_lock {
- #define FUSE_ALLOW_IDMAP	(1ULL << 40)
- #define FUSE_OVER_IO_URING	(1ULL << 41)
- #define FUSE_REQUEST_TIMEOUT	(1ULL << 42)
-+#define FUSE_DAX_FMAP		(1ULL << 43)
++	/* Famfs / devdax opcodes */
++	FUSE_GET_FMAP           = 54,
++
+ 	/* CUSE specific operations */
+ 	CUSE_INIT		= 4096,
  
- /**
-  * CUSE INIT request/reply flags
+@@ -1313,4 +1316,8 @@ struct fuse_uring_cmd_req {
+ 	uint8_t padding[6];
+ };
+ 
++/* Famfs fmap message components */
++
++#define FAMFS_FMAP_MAX 32768 /* Largest supported fmap message */
++
+ #endif /* _LINUX_FUSE_H */
 -- 
 2.52.0
 
