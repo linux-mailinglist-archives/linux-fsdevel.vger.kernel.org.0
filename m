@@ -1,118 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-73605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1398DD1C9E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:56:47 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C26D1CA04
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 07:02:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 64FD330B7F2B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 05:56:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8A85930388B3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F8C36BCF6;
-	Wed, 14 Jan 2026 05:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IstCCbD3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E6D36657B;
+	Wed, 14 Jan 2026 06:02:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783291CD1E4;
-	Wed, 14 Jan 2026 05:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE8934D3B6;
+	Wed, 14 Jan 2026 06:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768370193; cv=none; b=PN1KObr8vFFOU5nywrxJSIq7L68V2owY+Q/bJf54nP69XRW4qBkv/543QpU3rdA49+LSmxR7QdtuR3EJq0FyY/3PmDKup3SuwtSdvz15lA3Zma4StUAdyso1ng7XulXm5eRLkru7wF7d0z7LMVlfBqX04uvlDP69nOKQdKPI8Cc=
+	t=1768370547; cv=none; b=OPd7PLcTh/cFp7kxjA4HxW2J9Py/o6tYgbgR5CPyxHPJDDJLydUuY4tHmnyFTdncm0CE+Pvjl4x84Kaaltk3g4vu3W4TldSGAuohej74nDM6/TwIxwvMYOIt7ukZge9SVy7PRB/8KOBaTJOSLLgD0TvpqvSTzIpNNAtp7q1eOvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768370193; c=relaxed/simple;
-	bh=Y/NqgNU+RzXHdq+jyrX0/QIiUtJ6yYt8n3IZ8dfuNtg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nUaPx5MP1GR3UcK1yKySLbaqoIUGyFJyIJ+lyPg9ZznmUP73lzQE3HTcYx+7Bk5Rnj25dwMe2069/V1wD/sV9C6O9gPv1GOMmP4VKdnh9P8Xyh+oyz4Yleyd3S5GQrOnm5h8c/FFZDE8I4+tlNrbe4zbO5IGVivkZXaybjlgfHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IstCCbD3; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1768370176; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=4oSebG9dbymzCO5r09ecbpgUKefMLVyvEkILvccjlwM=;
-	b=IstCCbD34bmxp53YjOnk5tEuDLHfYynBeBrQCsyRw/Cla4TGCrFPn3QEYOxM1viar5q39tcyR6j/6woszVss0I4JnzYbEWGl8SivGlTDfv/lWoICrTSZ0qVMGCXDN5zY6Z60CXHMdNu0X/hquVzJ33XYR+bfuvyhYrunVj9JTvI=
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Wx1EJy4_1768370175 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 14 Jan 2026 13:56:15 +0800
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-To: miklos@szeredi.hu,
-	joannelkoong@gmail.com,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] ak: fuse: fix premature writetrhough request for large folio
-Date: Wed, 14 Jan 2026 13:56:15 +0800
-Message-Id: <20260114055615.17903-1-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
+	s=arc-20240116; t=1768370547; c=relaxed/simple;
+	bh=mhOChSG+AU7XbWnntZlRA9SUUTijr6y6Q+4tfIQ3ugQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DZPAtxpUmMc/2ClYEBmDxo6w2FbkyGuyhZxD8TrCgbnXNiQ8/w8NpBk27CNbgMJq6JtF8KsUsgm+/Je3enyOn6dsbxePWfAS7Jlqe2tGC+IFLjFUqgSqn9mnLIWAm7x3hAGEXzm/n7VWxXbhQva1cmG/qppnIt8pZy0R7QAIKS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 61DB7227A8E; Wed, 14 Jan 2026 07:02:14 +0100 (CET)
+Date: Wed, 14 Jan 2026 07:02:14 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, cem@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 11/11] xfs: add media verification ioctl
+Message-ID: <20260114060214.GA10372@lst.de>
+References: <176826412644.3493441.536177954776056129.stgit@frogsfrogsfrogs> <176826412941.3493441.8359506127711497025.stgit@frogsfrogsfrogs> <20260113155701.GA3489@lst.de> <20260113232113.GD15551@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260113232113.GD15551@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-When large folio is enabled and the initial folio offset exceeds
-PAGE_SIZE, e.g. the position resides in the second page of a large
-folio, after the folio copying the offset (in the page) won't be updated
-to 0 even though the expected range is successfully copied until the end
-of the folio.  In this case fuse_fill_write_pages() exits prematurelly
-before the request has reached the max_write/max_pages limit.
+On Tue, Jan 13, 2026 at 03:21:13PM -0800, Darrick J. Wong wrote:
+> > > +#define XFS_VERIFY_TO_EOD	(~0ULL)	/* end of disk */
+> > 
+> > Is there much of a point in this flag?  scrub/healer really should
+> > know the device size, shouldn't they?
+> 
+> Yes, scrub and healer both know the size they want to verify.  I put
+> that in for the sake of xfs_io so that it wouldn't have to figure out
+> the device size, but as the ioctl always decreases @end_daddr to the
+> actual EOD, I think it'd be ok if xfs_io blindly wrote in ~0ULL.
 
-Fix this by eliminating page offset entirely and use folio offset
-instead.
+That's the best of both worlds.
 
-Fixes: d60a6015e1a2 ("fuse: support large folios for writethrough writes")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
----
- fs/fuse/file.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+> > > +	const unsigned int	iosize = BIO_MAX_VECS << PAGE_SHIFT;
+> > > +	unsigned int		bufsize = iosize;
+> > 
+> > That's a pretty gigantic buffer size.  In general a low number of
+> > MB should max out most current devices, and for a background scrub
+> > you generally do not want to actually max out the device..
+> 
+> 256 * 4k (= 1MB) is too large a buffer?
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 625d236b881b..6aafb32338b6 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1272,7 +1272,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
- {
- 	struct fuse_args_pages *ap = &ia->ap;
- 	struct fuse_conn *fc = get_fuse_conn(mapping->host);
--	unsigned offset = pos & (PAGE_SIZE - 1);
- 	size_t count = 0;
- 	unsigned int num;
- 	int err = 0;
-@@ -1299,7 +1298,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
- 		if (mapping_writably_mapped(mapping))
- 			flush_dcache_folio(folio);
- 
--		folio_offset = ((index - folio->index) << PAGE_SHIFT) + offset;
-+		folio_offset = offset_in_folio(folio, pos);
- 		bytes = min(folio_size(folio) - folio_offset, num);
- 
- 		tmp = copy_folio_from_iter_atomic(folio, folio_offset, bytes, ii);
-@@ -1329,9 +1328,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
- 		count += tmp;
- 		pos += tmp;
- 		num -= tmp;
--		offset += tmp;
--		if (offset == folio_size(folio))
--			offset = 0;
- 
- 		/* If we copied full folio, mark it uptodate */
- 		if (tmp == folio_size(folio))
-@@ -1343,7 +1339,9 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
- 			ia->write.folio_locked = true;
- 			break;
- 		}
--		if (!fc->big_writes || offset != 0)
-+		if (!fc->big_writes)
-+			break;
-+		if (folio_offset + tmp != folio_size(folio))
- 			break;
- 	}
- 
--- 
-2.19.1.6.gb485710b
+No, my reading comprehension just sucks :)  And of course the way
+it's written isn't very helpful either.
+
+> I guess that /is/ 16M on a 64k-page system.
+
+Yeah, just stick to SZ_1M.
+
+> > > +				min(nr_sects, bufsize >> SECTOR_SHIFT);
+> > > +
+> > > +			bio_add_folio_nofail(bio, folio,
+> > > +					vec_sects << SECTOR_SHIFT, 0);
+> > > +
+> > > +			bio_daddr += vec_sects;
+> > > +			bio_bbcount -= vec_sects;
+> > > +			bio_submitted += vec_sects;
+> > > +		}
+> > 
+> > A single folio is always just a single vetor in the bio.  No need
+> > for any of the looping here.
+> 
+> If we have to fall back to a single base page, shouldn't we still try to
+> create a larger bio?
+
+How do you create a larger bio if you only have a single bio available?
+
+> A subtle assumption here is that it's ok to have
+> all the bvecs pointing to the same memory, and that the device won't
+> screw up if someone asks it to DMA to the same page simultaneously.
+
+Ooooh.  Yes, that will screw up badly when using PI.
+
+> > > +		/* Don't let too many IOs accumulate */
+> > > +		if (bio_submitted > SZ_256M >> SECTOR_SHIFT) {
+> > > +			blk_finish_plug(&plug);
+> > > +			error = submit_bio_wait(bio);
+> > 
+> > Also the building up and chaining here seems harmful.  If you're
+> > on SSDs you want to fire things off ASAP if you have large I/O.
+> > On a HDD we'll take care of it below, but the bios will usually
+> > actually be split, not merged anyway as they are beyond the
+> > supported I/O size of the HBAs.
+> 
+> Hrm, maybe I should query the block device for max_sectors_kb then?
+
+No.  max_sectors_kb is kida stupid.  I think a sensible default and
+a tunable is a better choice here at least for now.
+
+> However, in the case where memory is fragmented and we can only get
+> (say) a single base page, it'll still try to load up the bio with as
+> many vecs as it can to try to keep the io size large, because issuing
+> 256x 4k IOs is a lot slower than issuing 1x 1M IO with the same page
+> added 256 times.
+
+Yeah.  But seriously, if the MM is pretty good and is getting better
+at finding large allocations.  We need to start relying on that.
+
+> I wonder if nr_vecs ought to be capped by queue_max_segments?
+
+No, leave all that splitting to the block layer.  max_segments is
+an implementation detail.
 
 
