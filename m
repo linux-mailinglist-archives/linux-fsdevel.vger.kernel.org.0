@@ -1,96 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-73777-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB0ED202E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 17:23:08 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCB6D20330
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 17:25:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 95BB7308F84D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 16:17:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0508C309FA71
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 16:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406413A35BF;
-	Wed, 14 Jan 2026 16:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EA93A35AE;
+	Wed, 14 Jan 2026 16:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="OcsDdENr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGNg14+I"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C90D39E6E3;
-	Wed, 14 Jan 2026 16:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44163396D06;
+	Wed, 14 Jan 2026 16:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768407475; cv=none; b=YY2PiJVTFvacqy44wq2FsY0rhcZURWf/Afh9utYFC/+F90mybXVwsZqyOSWiLwQ4sprkVdei+iNlJrS2n4L6Oabr6UnwUhMe0keXB2VHdvMznZRfn1b8kgSMrEwazA1gy2TXsXARKjI5HAWbTXxJ+3e4j/GyG7+LUKSMENNvmqs=
+	t=1768407576; cv=none; b=PoxH/J0P2jljcl/eAS1UnuVKupkpTxB4qQJ2cDRNOF3RMxNbt7DCWFo0GuPbqExGIVgJwmuS2rka5aHfCR0Hvb3opaUMS9vlJi4UdI7szQyNKdzr1YmLLNxwIZ7TdK5s4VpbbwXAUiDCm9YKqyVkmKxUg8DWkMnKTleK47fIwqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768407475; c=relaxed/simple;
-	bh=avV6DdjDrtuFKREDh7dX8ULQNvaPCX6uL3Qy8HX2D5U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d6jvvkoJbOBNsKQ26q8r3gmP58ljqyweB6jd2XWoPHLssNiHblcow48rPYT84kXwe4zkjZP58MMc1d/78H301jq6EBwkr2g4GAhoFnKog2bebEfeW6VSXbGyPW0P4BfxqUp113/jviE1XOwkUdMqKoizB1CLm607U4GBjPUHPVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=OcsDdENr; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=HpQaoCUPT6wdxz4f7lIznu8aR6PeVr63P5GrMsQT2F8=; b=OcsDdENrSHsJ/1ut8FlIWKp2QS
-	C+gkAkCbSozPUltRTogIib69+Q5pTZgaYnmchsaNUB1Y2ktTb6eGJQKJ6uSjGxrupnZqUHe18jucF
-	9BR8mgKVtOpjOzK0ycGaD/bdztc9CFSWKUesUYAgwOkM9egQvkw0yKhN/yKa4gLzBO+/LRkD1I+mX
-	Epzc4LTzPUeXlCLromTD02rQ6ZFZuWT6JUDbf8XdGpOE6Zuz1QuI4QgW5jIur4uKYJFQ/OSJa7Hqs
-	WnQjg2ZQjkVw1nYS7Io5VyF+6EFgfBHV0YXFO76+H80STX38GdWrtlWSuFEVkYdo1laJpaBKS88K9
-	XcCDdWDg==;
-Received: from [177.139.22.247] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1vg3Yi-005Lm6-3R; Wed, 14 Jan 2026 17:17:24 +0100
-Message-ID: <5334ebc6-ceee-4262-b477-6b161c5ca704@igalia.com>
-Date: Wed, 14 Jan 2026 13:17:15 -0300
+	s=arc-20240116; t=1768407576; c=relaxed/simple;
+	bh=SmImQF86IKtX1OdHY1e2OsOrS6wpUoN3wvvnIh2lE9M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ckb27JQuY+1dkGy5UGS/ei/BgVXDrIX0xxlwtFInOgy0IukL82dAT7g6gETG67ziJKbP5TuBW6TxchfMC3Jr8eiOomGcB4xlRc8rowTGzxL8aAQ4PB9G4xjXMhJfda/ISI3QhWpKDTv+/PYzsECWRuOlObFEcJPlXu25nZfNUuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGNg14+I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42E81C4CEF7;
+	Wed, 14 Jan 2026 16:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768407576;
+	bh=SmImQF86IKtX1OdHY1e2OsOrS6wpUoN3wvvnIh2lE9M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oGNg14+IUoLjNNlQxAG3eOUNKP/DxcVDnGlkuUjUuGoxVp6oJCr0ILsLL1yAv9tMg
+	 byF8laYnuc1QMY9274qGIJ43KFxXZcut+cucHyvAjPtnNPjlJ+FDeG6AjNh1JTkyoG
+	 Kon+pDUlJGnWx4Ie/gVSLdeECWb0yWjEw80lTCv1Xv3OTzyQ1tEZtlVXaFzqPehxJu
+	 CA4Jr7pfrvdUKbwAP3kwXuf2+EyqvUTxsGqnzp0sBD/ev5747ye352XsiKi8uQuKeB
+	 /MobT8Tj3y2uomeeEPGy+Ma5iP+YuqySnf7RFulXwfK/lc1Qz/RRbR+Cl2pPgOdSH1
+	 Ii8vCmDZKt/sA==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-btrfs@vger.kernel.org,
+	fdmanana@kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	dsterba@suse.com,
+	Filipe Manana <fdmanana@suse.com>
+Subject: Re: [PATCH v2 0/4] btrfs: stop duplicating VFS code for subvolume/snapshot dentry
+Date: Wed, 14 Jan 2026 17:18:57 +0100
+Message-ID: <20260114-holprig-flaggen-f8c095e1a439@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1768307858.git.fdmanana@suse.com>
+References: <cover.1768307858.git.fdmanana@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
-To: Christoph Hellwig <hch@lst.de>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>,
- Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
- Carlos Maiolino <cem@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
- Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
- Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- kernel-dev@igalia.com
-References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
- <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com>
- <20260114062608.GB10805@lst.de>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20260114062608.GB10805@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1507; i=brauner@kernel.org; h=from:subject:message-id; bh=hatMQr9kUalUIKt2eiq0edk4r5N5XyE2FAERtymbezs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmH/z+Sn5Lvuoc1SCftxONFrsKyPcGrXCtUNafuvun/ s2y7Kx1HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNhi2BkOO848WCjXMNxnyO9 c0JM5W/H/Vw8KZ5hw96fDStrM+PStjMyzFTrsL7mP/un/+acvQrpR0/y7bN6LZ23ctUZ7hlbflq ocQEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Em 14/01/2026 03:26, Christoph Hellwig escreveu:
-> On Wed, Jan 14, 2026 at 01:31:43AM -0300, André Almeida wrote:
->> Some filesystem, like btrfs, supports mounting cloned images, but assign
->> random UUIDs for them to avoid conflicts. This breaks overlayfs "index"
->> check, given that every time the same image is mounted, it get's
->> assigned a new UUID.
+On Tue, 13 Jan 2026 12:39:49 +0000, fdmanana@kernel.org wrote:
+> From: Filipe Manana <fdmanana@suse.com>
 > 
-> ... and the fix is to not assign random uuid, but to assign a new uuid
-> to the cloned image that is persisted.  That might need a new field
-> to distintguish the stamped into the format uuid from the visible
-> uuid like the xfs metauuid, but not hacks like this.
+> Currently btrfs has copies of two unexported functions from fs/namei.c
+> used in the snapshot/subvolume creation and deletion. This patchset
+> exports those functions and makes btrfs use them, to avoid duplication
+> and the burden of keeping the copies up to date.
 > 
+> [...]
 
-How can I create this non random and persisting UUID? I was thinking of 
-doing some operation on top the original UUID, like a circular shift, 
-some sort of rearrangement of the original value that we can always 
-reproduce. Is this in the right direction do you think?
+This is on a separate branch. I'm not going to touch it again.
+So if you end up having to rely on it this can easily be arranged.
+
+---
+
+Applied to the vfs-7.0.btrfs branch of the vfs/vfs.git tree.
+Patches in the vfs-7.0.btrfs branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-7.0.btrfs
+
+[1/4] fs: export may_delete() as may_delete_dentry()
+      https://git.kernel.org/vfs/vfs/c/173e93755243
+[2/4] fs: export may_create() as may_create_dentry()
+      https://git.kernel.org/vfs/vfs/c/26aab3a485d5
+[3/4] btrfs: use may_delete_dentry() in btrfs_ioctl_snap_destroy()
+      https://git.kernel.org/vfs/vfs/c/5f84a1092dee
+[4/4] btrfs: use may_create_dentry() in btrfs_mksubvol()
+      https://git.kernel.org/vfs/vfs/c/6c91c776a923
 
