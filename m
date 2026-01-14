@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-73598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67380D1C809
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 05:55:46 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC72D1C852
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:02:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7559E3110A86
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 04:48:25 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 1678C31E7428
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 04:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A08329E65;
-	Wed, 14 Jan 2026 04:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE0A32C928;
+	Wed, 14 Jan 2026 04:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="GMgTl0Aq"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="M3dMvsPn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788002EA731;
-	Wed, 14 Jan 2026 04:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCBB326951;
+	Wed, 14 Jan 2026 04:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768365165; cv=none; b=PAHIoyQWOpR+pUWw0SRz/nzY4MGDJkw4ZUzxS0n46AM+uoCDxqd1w3+wlwORPnlbmSgkaq2V251Nbv2wqVz//dZY7vJQLKta6jXbYNdCWQW12B4wQW8KAxTOzTa6NgsmFay6ZYXg34bu+s2506kihby+sCTnO8b383nQgasln8M=
+	t=1768365175; cv=none; b=KlO94seM68soCdwLCMlMKK3MhxzitBFss+3CcTJUQquvOcXiUx7PUXlnoI1YsmZcA7b/zQqPUW6gmVa4VhbpaR53trCk5TJzc1RMhY5gxwsexWyYmLWDvzdWFrSfZE1QVh+u3ENq1ha9l+w69wye8ZyhC8ad5JyLyy4VobJJ1ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768365165; c=relaxed/simple;
-	bh=3bqQoNek4pRxFqezsA2+g8zptv+Ik6YnPNJcq2bN3XM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K4gJaBHnJhDZVDmn5meOXCVX1SoPo/PtQsAlQdqdSgWPd5Wd5HUFIq6plzBP7mFHnAxCI6YiXzaNVcL6fxp7NCadaNDMlwqihxTUT+pl+eGb5W4SBGwtyEOle5vmlH9recXf8CbPR5cgCHk9G7uu6lpBvYNUcvKY10e73d60HI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=GMgTl0Aq; arc=none smtp.client-ip=213.97.179.56
+	s=arc-20240116; t=1768365175; c=relaxed/simple;
+	bh=RpYdlUyxv1m9KBTMQMhcFdZfnQX6+KM2DDV3JhZbmFE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=CA2e3KRYRHKdl3bHhxPPxcUMnu47OFnIJHXOzox7dT2Or6/fAKClcIgF04uQdhBBPlhxNrkI1g/wWX/aKCxEpet10CVgjuPY9urPUae1m3vd1vNn9HoigfXuTu/zJ1xBp8piiga+u1Uwya7gP+cfNqVoW1JZ0/q4IRoeL++/tO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=M3dMvsPn; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
-	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=PGZcLNgD2fLtRQC4vTg/9LPDYxs+kOJKJt/oECjLmSQ=; b=GMgTl0AqzoP4xsQQ5nlvusBqYw
-	WNFHaxEgjT2CHbBr/vWX/PNgMb0EY0srxkSkS4VmQsiylvyR7IuAGFrtXN0Suwo2evNjgMam0UgWn
-	ZWo4qUWKR3UWvjigItXSbxXMfF7UAiJRUXZqlI63x3HksaxE8XkGAEOtVXDF6jmqNy/TVEZb4YYcE
-	DPb2sDH8712VJVH+32nEg+9ckLtt8Uw4OWSbosjC3pLWZYgMO1UYInzcZK9X30TjfLzL+HWXxMoi2
-	1wjnED3VRSm5f2i4jsVifVTb9IJjRopufbxckKNcEFOvJHcR8AJPlFfNvgFOmXfzd+gimOVmM1U8C
-	HE1+8QGg==;
+	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=4mbTK5RSQYergtgPKWt7Z+qG+/ykqryRCZrQNU2VHZA=; b=M3dMvsPnnu+FYdOlweB93GGuxe
+	hLKxw0/bDaMe/qtQfNxg3sGB2bS39IVAV8UowTmb638MIuTL8iWWQq6FyRac4S8r1um7E3F+IYLXc
+	zSH2UM0Z+TB1J3L4NaecEsQBmqkeBq3gyqm4fw1Y88XADoOV3bWGsQ5+MDfpShsBq/jS9fMofDBaH
+	4rLPcF23LQ9aOAFsUS0kqA6pBBZK4z9GerzpKxFsiT2HKsj8YkILJPZSz1sQmhrf73+zarDCeW2By
+	jF16iUJ5as0wlj4RGJf7pD2VNmnk0UKoY60lpYq3w28V8E6A578e+C/II5RpzKgYD7yGCAzQr/YkG
+	0oil3DPQ==;
 Received: from [177.139.22.247] (helo=[192.168.15.100])
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vfsYO-0057lT-OX; Wed, 14 Jan 2026 05:32:20 +0100
+	id 1vfsYY-0057lT-Vb; Wed, 14 Jan 2026 05:32:31 +0100
 From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH 0/3] fs: Support btrfs cloned images and overlayfs
-Date: Wed, 14 Jan 2026 01:31:40 -0300
-Message-Id: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
+Date: Wed, 14 Jan 2026 01:31:42 -0300
+Subject: [PATCH 2/3] btrfs: Implement get_disk_uuid()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,10 +56,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAC0cZ2kC/x3MTQqAIBBA4avIrBM0+oGuEiHhjDYEFlpRhHdPW
- n6L915IFJkSDOKFSBcn3kKBrgTYZQ6eJGMx1KrulNaNPLbwrNLTYZDTas6TUTqFTd8S6l5ZKOU
- eyfH9X8cp5w8GaC2xZQAAAA==
-X-Change-ID: 20260114-tonyk-get_disk_uuid-f0d475ed170c
+Message-Id: <20260114-tonyk-get_disk_uuid-v1-2-e6a319e25d57@igalia.com>
+References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
+In-Reply-To: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
 To: Christoph Hellwig <hch@lst.de>, Chuck Lever <chuck.lever@oracle.com>, 
  Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>, 
  Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
@@ -75,59 +74,69 @@ Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
  =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
 X-Mailer: b4 0.14.3
 
-Hi everyone,
+Every time btrfs mounts a image that it's already mounted (cloned
+images), it will assign a new random UUID to it to avoid conflicts.
+However, for some internal kernel usage, it's important to access the
+original UUID of a given image.
 
-As I reported some time ago, btrfs cloned images support and overlayfs
-"index" check don't get along together[1]. Every time the same image
-cloned is mounted, btrfs assigns a new random UUID for it to avoid
-clashing with the exist UUID. This UUID is then used by overlayfs origin
-check, to avoid reusing the same directory for a different filesystem.
-Remounting the same filesystem in the same directory is supported, but
-the different random UUIDs will make the check fail.
+For instance, overlayfs' "index" feature keeps track of the UUID of the
+mounted filesystem on it's upper layer, to avoid being remounted with a
+different filesystem. However, overlayfs uses the same random UUID
+exposed to userspace, so the "index" check will fail when trying to
+remount the very same filesystem.
 
-In an attempt to solve this, I reused export_operations::get_uuid() for
-this purpose, to get the "real" UUID of a image, regardless of the
-random UUID being exposed to userspace. overlayfs then use this UUID
-internally for the origin check, and the remounting finally works.
+Implement export operation get_disk_uuid() to export the real image
+UUID.
 
-I understand that not everyone is happy about repurposing get_uuid() for
-that, but I'm totally open for going in another direction for solving
-this problem not only for the combination of btrfs+overlayfs, but for
-any filesytem that have similar issues with random UUIDs.
-
-Using `btrfstune -m` or similar to change the cloned image UUID doesn't
-work for the SteamOS use case, as we, well... use the UUIDs to identify
-unmounted images and check if they are the same.
-
-This series is based on top of another series[2], that should be available
-at vfs-7.0.misc by now.
-
-Thanks!
-
-[1] https://lore.kernel.org/lkml/20251014015707.129013-1-andrealmeid@igalia.com/
-[2] https://lore.kernel.org/lkml/20260112-tonyk-fs_uuid-v1-0-acc1889de772@igalia.com/
-
+Signed-off-by: André Almeida <andrealmeid@igalia.com>
 ---
-André Almeida (3):
-      exportfs: Rename get_uuid() to get_disk_uuid()
-      btrfs: Implement get_disk_uuid()
-      ovl: Use real disk UUID for origin file handles
+ fs/btrfs/export.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
- fs/btrfs/export.c        | 20 ++++++++++++++++++++
- fs/nfsd/blocklayout.c    |  2 +-
- fs/nfsd/nfs4layouts.c    |  2 +-
- fs/overlayfs/copy_up.c   | 22 ++++++++++++++++++++--
- fs/xfs/xfs_export.c      |  2 +-
- fs/xfs/xfs_pnfs.c        |  2 +-
- fs/xfs/xfs_pnfs.h        |  2 +-
- include/linux/exportfs.h |  8 +++++---
- 8 files changed, 50 insertions(+), 10 deletions(-)
----
-base-commit: 336cebc7376296b2c25cf8433ff62b71fe929b0d
-change-id: 20260114-tonyk-get_disk_uuid-f0d475ed170c
+diff --git a/fs/btrfs/export.c b/fs/btrfs/export.c
+index 230d9326b685..09f9ef8c1b1e 100644
+--- a/fs/btrfs/export.c
++++ b/fs/btrfs/export.c
+@@ -8,6 +8,7 @@
+ #include "export.h"
+ #include "accessors.h"
+ #include "super.h"
++#include "volumes.h"
+ 
+ #define BTRFS_FID_SIZE_NON_CONNECTABLE (offsetof(struct btrfs_fid, \
+ 						 parent_objectid) / 4)
+@@ -298,10 +299,29 @@ static int btrfs_get_name(struct dentry *parent, char *name,
+ 	return 0;
+ }
+ 
++static int btrfs_get_disk_uuid(struct super_block *sb, u8 *buf, u32 *len,
++			       u64 *offset)
++{
++	struct btrfs_fs_devices *fs_dev = btrfs_sb(sb)->fs_devices;
++
++	if (fs_dev->temp_fsid)
++		return -ENODATA;
++
++	if (*len < sizeof(uuid_t))
++		return -EINVAL;
++
++	memcpy(buf, &fs_dev->metadata_uuid, sizeof(uuid_t));
++	*offset = offsetof(struct btrfs_fs_devices, metadata_uuid);
++	*len = sizeof(uuid_t);
++
++	return 0;
++}
++
+ const struct export_operations btrfs_export_ops = {
+ 	.encode_fh	= btrfs_encode_fh,
+ 	.fh_to_dentry	= btrfs_fh_to_dentry,
+ 	.fh_to_parent	= btrfs_fh_to_parent,
+ 	.get_parent	= btrfs_get_parent,
+ 	.get_name	= btrfs_get_name,
++	.get_disk_uuid  = btrfs_get_disk_uuid,
+ };
 
-Best regards,
 -- 
-André Almeida <andrealmeid@igalia.com>
+2.52.0
 
 
