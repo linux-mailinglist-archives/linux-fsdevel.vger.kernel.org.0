@@ -1,162 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-73851-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id F040CD21C1B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 00:26:48 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8526D21B23
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 00:05:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 71222300B9E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 23:26:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id BDDE33044875
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6CD3563F4;
-	Wed, 14 Jan 2026 23:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D264B38E5C1;
+	Wed, 14 Jan 2026 22:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WL5Ia4H1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CuiEJrl/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2494538E5D8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 23:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F056135505B;
+	Wed, 14 Jan 2026 22:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768433197; cv=none; b=h38634RquXH/2oouS6jQ6oln/vIHw/uaLOl9X1NI5YlIgtb4objlmIXNRvi05CSmhtbiwu7D1djyO4vNflhawyKpBeDN7GMY1s8+++b4pf1hAs7P6RTE7LLRZoqkLI8NRzFelqjfu8I40pkKyfNTGc/O7pQruVGSTiPwRJ8PUlE=
+	t=1768431586; cv=none; b=cGRvg1Rp35rU9RENzSV5JLKHvdt8WFss5kLdajjW170dEQ913Gt/CTKXpVQ2Wdd2jvijAmDWv/JEBoZmR5CaBwn7laWKZXMlYxUA5tgXx3KnqVHPScSqM/W0+EpKGkccxzCjddtOAbrrgnq3ExbLvORmL/uorX1TjKQ3Fo6znfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768433197; c=relaxed/simple;
-	bh=EHMwJPD2Vt6csWKDxVM2bpGH+6rPVOBI0T+ZdejS8PM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I/drOpJafdjJ3ZXnAIqqXkGMeOGXNv2RaHByyckgtr/pCPrXOPWS4KaTjuXA6yQPyMMVSs9b9S9uXNASibceqkjJjA+8RIZ2SyPfAYp8R/3lLSHDioyH1FvrP4lERXyX50mSclgcFd8YA1dHJ9wH2kOAJA95AAq9+3XGLYwLRr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WL5Ia4H1; arc=none smtp.client-ip=74.125.82.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-12336c0a8b6so626148c88.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 15:26:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768433184; x=1769037984; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WIEMUdHe6tYyV62gaPFR8QpHnKQnU3PaCpWSzsgNDe8=;
-        b=WL5Ia4H1xvnSRBomcg/Q+pw6GDIYyz/ajvnymi7Vl40JU1fGac4GniuTfDMVs8NgrJ
-         AFS4MyvYIuyWmg/isDF/fp0jZ/K1tyEPAu5eWPyA4wizvEoNPkMbx9MZW5YA3u0+HExy
-         IgyzkqQNuUNDUywj30p0QMvOu2Z7RvCJfNR0/KXEGx0T86VYBOK7PTHV8rQ0UzJObr6d
-         q6aO0xSDIbyAgcjjfUT33NIHcE4/gUoNudCu9Vv4OjIVbDRgJAOYfS7tg5OUfvQmZ5hy
-         dql7bIoMcOu0mZ/B5Q4I2IGZGGIdVUgFkuXMn+LgVQTvFRPId1k5vE/nrKDOHZkGCgH8
-         u+QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768433184; x=1769037984;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WIEMUdHe6tYyV62gaPFR8QpHnKQnU3PaCpWSzsgNDe8=;
-        b=NYumU5VpkIaGRRDnyk1MhZ3NJJYINGoSRgHMRNplQ7WPeQPH39uWQnd7kG+m1nz/Hj
-         MoeIbcDzHPj0T21csCMDlpaQOTv99lgEJek5kdXNLCaVs1zIHQmM1TvEbqXl458QOBai
-         uvo0aQ2nhb0Dn3U+71YI8sdzPWX6ToxheFSbefDjWifmB+Y5Fs9CydYw/YoJvBQj+Nu2
-         ifF1gwxjhbyFtdaN8jR6HDGKF5JPsoq9QJ4A31Bv4OE9DLFGU9ttX95DSrP3naNKz3iZ
-         dfrlyIYuuaKLyLWOGgM33dm7RAcMe1DUbU3ZRMR2Fp09e1rp5lRrdhou4bbRcMAot6Gs
-         k+VA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtRrzJx6OjvAzqMeITdDb3/uNY5TXa3U02FNq76I5RHDPTse+XwxvxI1ji/HT48Q7/a6TPPLYVkhFpyz81@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfEtVdd4M8WvTCejL575+2fTGgLp3amUI36BSm9HmVWl0ViFvr
-	zYj3N103Yo6eFC51RBgJecTD802nSGY+YslLnqf6q0Jo/Mmkxa7k2CuA+lU6fw==
-X-Gm-Gg: AY/fxX5KwEf5+W3cZoSZh+ijaaSQSXkXdJ3KciSBRt5RrNXHpB/9TyeERPxRIMl6Wwa
-	JppHhnB6Ci2OuqyxWjOIbI8GqZGee8BoZleofugELzXb/ZDqW+nZj/AT+hV5IlZQTNDWWkOQmkU
-	YlQPMrBTQQYp3zDUfaRoPSlQrdWUOJEjfyz8a5Hn0qZPbygSRv9ZJk+edjs6tmqCYigHkyc4vEr
-	wIy/hvRNVwU/JDAtg+5brv7lfeMlXZA7A3BG3recZdGIaEhLw+6HOA/6uEVomBDb/SiqTk/+fEO
-	0MD+EZngq7kDm8jxzU7dAz9JP4Cl421jqB04qXj+ep/vUMY9MnsXQymNGYDkXEDo23wxC8Boizu
-	KjFbx5NKAnv3+mfjOy0iMedpERoCPd5i2nN4rqzx3mHdodP3hAaLk/GNzoN6VCieFiwItYQ6REw
-	fyiHEaH30UR5/GKmA1V/xJrFwehjqVsuj4TN95hv00CvaQBSr5ro12gTw=
-X-Received: by 2002:a05:6871:7817:b0:3e0:9188:8f10 with SMTP id 586e51a60fabf-40406c5d030mr2965148fac.0.1768427121522;
-        Wed, 14 Jan 2026 13:45:21 -0800 (PST)
-Received: from localhost.localdomain ([2603:8080:1500:3d89:4c85:2962:e438:72c4])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa4de55ffsm17644773fac.2.2026.01.14.13.45.19
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 14 Jan 2026 13:45:21 -0800 (PST)
-Sender: John Groves <grovesaustin@gmail.com>
-From: John Groves <John@Groves.net>
-X-Google-Original-From: John Groves <john@groves.net>
-To: John Groves <John@Groves.net>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Bernd Schubert <bschubert@ddn.com>,
-	Alison Schofield <alison.schofield@intel.com>
-Cc: John Groves <jgroves@micron.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	David Hildenbrand <david@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Stefan Hajnoczi <shajnocz@redhat.com>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	James Morse <james.morse@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Shivank Garg <shivankg@amd.com>,
-	Ackerley Tng <ackerleytng@google.com>,
-	Gregory Price <gourry@gourry.net>,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>,
-	venkataravis@micron.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH V2 0/2] ndctl: Add daxctl support for the new "famfs" mode of devdax
-Date: Wed, 14 Jan 2026 15:45:17 -0600
-Message-ID: <20260114214519.29999-1-john@groves.net>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260114153133.29420.compound@groves.net>
-References: <20260114153133.29420.compound@groves.net>
+	s=arc-20240116; t=1768431586; c=relaxed/simple;
+	bh=aJHfGzglx7DLvolxkYQlpNPkyOlW72olO2USzFCqUDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qX7iLg6hLU5v2CtC/6bZvO/WNJuyP+3DEMKaSYzbfzTMIvavp1f4LZBZZhseroXOYZVze5KI3Ky7/zfqFWm9PzxG3jv4VA9P/Xutk1xX6tqlAQRDX2HUUDS7w01oZvwBNXUf7+7tZJ4Fsr2D+DiST+jlnlT3bs6EuM30tYKY4Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CuiEJrl/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50932C4CEF7;
+	Wed, 14 Jan 2026 22:59:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768431585;
+	bh=aJHfGzglx7DLvolxkYQlpNPkyOlW72olO2USzFCqUDg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CuiEJrl/YXw9Mze4T1zWymFCw40R/Zut5rDuZHmJ/O5Upho1cgD/OIx9tTcmjFSQ6
+	 NkOIchFGxVfjrtzBZTodWflLH4rxG1B+VXLc5xtNWTWIrFz/lBGamCgWTJrzt7sjIS
+	 zXHSa9ytZILxyAsHvio3N3pTfqflkzKOEOUBYCGfCIagRFmLZtRbo6ncDEr1lgXK8Y
+	 7pzsdBcTR/J4sN+9S15uEexZNRykSwYdERFIL2Y15P4BEREW/w68S+LIlF+r5opcWZ
+	 OyNjt+NWi2U3GuR7xMTvaVdtEZIVDmn5nANiObDEnHfgoit9REbD1voTMVJaLNPuo/
+	 WZEbF35/HkyrA==
+Date: Wed, 14 Jan 2026 14:59:44 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>, Qu Wenruo <wqu@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-block@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 13/14] iomap: add a flag to bounce buffer direct I/O
+Message-ID: <20260114225944.GR15551@frogsfrogsfrogs>
+References: <20260114074145.3396036-1-hch@lst.de>
+ <20260114074145.3396036-14-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260114074145.3396036-14-hch@lst.de>
 
-No change since V1 - reposting as v2 to keep this with the related
-kernel (dax and fuse) patches and libfuse patches.
+On Wed, Jan 14, 2026 at 08:41:11AM +0100, Christoph Hellwig wrote:
+> Add a new flag that request bounce buffering for direct I/O.  This is
+> needed to provide the stable pages requirement requested by devices
+> that need to calculate checksums or parity over the data and allows
+> file systems to properly work with things like T10 protection
+> information.  The implementation just calls out to the new bio bounce
+> buffering helpers.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-This short series adds support and tests to daxctl for famfs[1]. The
-famfs kernel patch series, under the same "compound cover" as this
-series, adds a new 'fsdev_dax' driver for devdax. When that driver
-is bound (instead of device_dax), the device is in 'famfs' mode rather
-than 'devdax' mode.
+This seems pretty sensible, assuming bio_iov_iter_bounce does what I
+think it does (sets up the bio with the bounce buffer pages instead of
+the user-backed pages for a zero-copy IO) right?
 
-References
+If so, then
 
-[1] - https://famfs.org
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
+--D
 
-John Groves (2):
-  daxctl: Add support for famfs mode
-  Add test/daxctl-famfs.sh to test famfs mode transitions:
-
- daxctl/device.c                | 126 ++++++++++++++--
- daxctl/json.c                  |   6 +-
- daxctl/lib/libdaxctl-private.h |   2 +
- daxctl/lib/libdaxctl.c         |  77 ++++++++++
- daxctl/lib/libdaxctl.sym       |   7 +
- daxctl/libdaxctl.h             |   3 +
- test/daxctl-famfs.sh           | 253 +++++++++++++++++++++++++++++++++
- test/meson.build               |   2 +
- 8 files changed, 465 insertions(+), 11 deletions(-)
- create mode 100755 test/daxctl-famfs.sh
-
-
-base-commit: 4f7a1c63b3305c97013d3c46daa6c0f76feff10d
--- 
-2.49.0
-
+> ---
+>  fs/iomap/direct-io.c  | 30 ++++++++++++++++++++----------
+>  include/linux/iomap.h |  9 +++++++++
+>  2 files changed, 29 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 3f552245ecc2..83fef3210e2b 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -214,7 +214,11 @@ static void __iomap_dio_bio_end_io(struct bio *bio, bool inline_completion)
+>  {
+>  	struct iomap_dio *dio = bio->bi_private;
+>  
+> -	if (dio->flags & IOMAP_DIO_USER_BACKED) {
+> +	if (dio->flags & IOMAP_DIO_BOUNCE) {
+> +		bio_iov_iter_unbounce(bio, !!dio->error,
+> +				dio->flags & IOMAP_DIO_USER_BACKED);
+> +		bio_put(bio);
+> +	} else if (dio->flags & IOMAP_DIO_USER_BACKED) {
+>  		bio_check_pages_dirty(bio);
+>  	} else {
+>  		bio_release_pages(bio, false);
+> @@ -300,12 +304,16 @@ static ssize_t iomap_dio_bio_iter_one(struct iomap_iter *iter,
+>  		struct iomap_dio *dio, loff_t pos, unsigned int alignment,
+>  		blk_opf_t op)
+>  {
+> +	unsigned int nr_vecs;
+>  	struct bio *bio;
+>  	ssize_t ret;
+>  
+> -	bio = iomap_dio_alloc_bio(iter, dio,
+> -			bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS),
+> -			op);
+> +	if (dio->flags & IOMAP_DIO_BOUNCE)
+> +		nr_vecs = bio_iov_bounce_nr_vecs(dio->submit.iter, op);
+> +	else
+> +		nr_vecs = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
+> +
+> +	bio = iomap_dio_alloc_bio(iter, dio, nr_vecs, op);
+>  	fscrypt_set_bio_crypt_ctx(bio, iter->inode,
+>  			pos >> iter->inode->i_blkbits, GFP_KERNEL);
+>  	bio->bi_iter.bi_sector = iomap_sector(&iter->iomap, pos);
+> @@ -314,7 +322,11 @@ static ssize_t iomap_dio_bio_iter_one(struct iomap_iter *iter,
+>  	bio->bi_private = dio;
+>  	bio->bi_end_io = iomap_dio_bio_end_io;
+>  
+> -	ret = bio_iov_iter_get_pages(bio, dio->submit.iter, alignment - 1);
+> +	if (dio->flags & IOMAP_DIO_BOUNCE)
+> +		ret = bio_iov_iter_bounce(bio, dio->submit.iter);
+> +	else
+> +		ret = bio_iov_iter_get_pages(bio, dio->submit.iter,
+> +					     alignment - 1);
+>  	if (unlikely(ret))
+>  		goto out_put_bio;
+>  	ret = bio->bi_iter.bi_size;
+> @@ -330,7 +342,8 @@ static ssize_t iomap_dio_bio_iter_one(struct iomap_iter *iter,
+>  
+>  	if (dio->flags & IOMAP_DIO_WRITE)
+>  		task_io_account_write(ret);
+> -	else if (dio->flags & IOMAP_DIO_USER_BACKED)
+> +	else if ((dio->flags & IOMAP_DIO_USER_BACKED) &&
+> +		 !(dio->flags & IOMAP_DIO_BOUNCE))
+>  		bio_set_pages_dirty(bio);
+>  
+>  	/*
+> @@ -659,7 +672,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	dio->i_size = i_size_read(inode);
+>  	dio->dops = dops;
+>  	dio->error = 0;
+> -	dio->flags = 0;
+> +	dio->flags = dio_flags & (IOMAP_DIO_FSBLOCK_ALIGNED | IOMAP_DIO_BOUNCE);
+>  	dio->done_before = done_before;
+>  
+>  	dio->submit.iter = iter;
+> @@ -668,9 +681,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+>  		iomi.flags |= IOMAP_NOWAIT;
+>  
+> -	if (dio_flags & IOMAP_DIO_FSBLOCK_ALIGNED)
+> -		dio->flags |= IOMAP_DIO_FSBLOCK_ALIGNED;
+> -
+>  	if (iov_iter_rw(iter) == READ) {
+>  		if (iomi.pos >= dio->i_size)
+>  			goto out_free_dio;
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 6bb941707d12..ea79ca9c2d6b 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -566,6 +566,15 @@ struct iomap_dio_ops {
+>   */
+>  #define IOMAP_DIO_FSBLOCK_ALIGNED	(1 << 3)
+>  
+> +/*
+> + * Bounce buffer instead of using zero copy access.
+> + *
+> + * This is needed if the device needs stable data to checksum or generate
+> + * parity.  The file system must hook into the I/O submission and offload
+> + * completions to user context for reads when this is set.
+> + */
+> +#define IOMAP_DIO_BOUNCE		(1 << 4)
+> +
+>  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+>  		unsigned int dio_flags, void *private, size_t done_before);
+> -- 
+> 2.47.3
+> 
+> 
 
