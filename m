@@ -1,131 +1,331 @@
-Return-Path: <linux-fsdevel+bounces-73749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E398BD1F829
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:38:14 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C181D1F919
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:57:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 67F8030101E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:38:14 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0C4F7301F5D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B52523504B;
-	Wed, 14 Jan 2026 14:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C8F30E839;
+	Wed, 14 Jan 2026 14:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Qzms4aOJ"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZF2n5HHl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4588B2BFC85
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 14:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E492DCF61;
+	Wed, 14 Jan 2026 14:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768401490; cv=none; b=YpTXSPcGVJRDAAQSBW7aFsxb9Vv6as+f+t5yxxifP5M2yF98nprm1TFhmIryReHyasP5cBg1by9IYhESPAj34DMusUYwpqt/F0lJWdFy8lQt89Z3aXc++XexM4B5uuqEdJJRUfDFnsdtCi4unMJO0DtUI+3OzomH5G0fjGBBKT0=
+	t=1768402621; cv=none; b=Klt0ApaqnpBWk5BGAJ7o9eMyu2L9ocpacRvDRfOSDEFCbmndzss2IIjdNeos8QZwP2Lig3giUSSmbqjvGQ619sRXAU7S9oOkJZOUQvdOiwphEiGuVn3X8+yh88w+El1zwOzIOmFiEQPg18QSNa3li2aSo1jPv5lMrYQTme2g09U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768401490; c=relaxed/simple;
-	bh=N3NyuhV/JvPd1pHoHeJFTXaQ8/5D703ByX/j56nM+a8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Lzt+8qNzprICCYIfrvTLXAyV2LmyZCeEh3ITsDLevx1fxTYlJt9+X6/rAjr/lQLo3+z8pjYmDpR3j9sPpStqnQy1xvsB/2//eFl82cMOgZDaVE0IEzsqqdVcpNpFNvo6BDcm0J2FXYq7a1aInb2v/IW4SzeBo67vUlQMfhkmyUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Qzms4aOJ; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47d5e021a53so65990375e9.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 06:38:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1768401487; x=1769006287; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xXuxpCB+C200gDac6NFfMYpeaCyypHjDHET7hpKl7Hg=;
-        b=Qzms4aOJvGHAbLMHemv7yyyamV55sBWHx4NSCriVXopiHUy/FJ+W65GPyRlh2niZYl
-         NT6RzscwZv2aoDSW4jHXMv+AkFjuFK0WCs+ESv001erBoXPVqtW0Qgvj/Gx5WxXfVY0/
-         CH1Xi/JVsHVxZNUd29C44edqU9DBfSi2npXYW73TURjUhceYLc2GV7BA1WrKRBNnybOe
-         6wkBug1N4r6tIfAmDpgRtpdNE3plSTnOXYmGWclNkP4bjg80alwTyMXKUTLXOYbOV3v1
-         hEyja2X88zkNvAMPtbdsGGeVg0DN8RYmxMOTpBObybcWHr+R7lLSt7VwBb2ODoGbcSNs
-         uARw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768401487; x=1769006287;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xXuxpCB+C200gDac6NFfMYpeaCyypHjDHET7hpKl7Hg=;
-        b=tlzE9LzQzZC/xSbCiL28YLKKpjGfkKkIx3icVQuTOD0J+sSwIM4OH/lByWKef3EV3/
-         7lJUEdCX007YkC21TRlVB1ejMQbEcv0Tw+LUJ0ejIOUn3O08xvgIHUb/dhjqsvAFxyYH
-         kEOVv8JTCb0tMuI5/FR/YTc4RgYE0zppZw3v5fdwhCUsKEIdWKpGEhVtfZz/8OaHaHne
-         t3dGDXzC2q5aqVfuncTfL+FePy+Z39EtsfiPdQIKpn1AiDRw0rF6QOtouZudfLcJvHpd
-         C1uU9+LMK3fp0dv9N0PkzozhCYw+UfQNYwGbdbbfZZKL5Rb5oZ2Q9OrRI1woKPyDcX0w
-         J9OA==
-X-Forwarded-Encrypted: i=1; AJvYcCWb/fuxdjFczM73dMzKFX+VFFvDaD1NIsL4fQCqNbB5odr0Lw9OZDzodMeW/YIoH8Y6T2TLcY9jvadymS6M@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo+MyhWfaXUHkm11Kqu/Og1ijMNwgttj2bk5Mf8kQg3UTrQ4rS
-	oZPD6u1BrtzBXIzmEFg5h5Ch6z1KZlKNA0753opZvaEBTad1+kcvlFMVK/NLaK6mBqZekcGD6ej
-	zsfdq+gE=
-X-Gm-Gg: AY/fxX41tceXJyWb4kPhs7fmH5ciTfPQK0Xn6UwDYOJlAQnbtGPjDcwa0/Zilz1PXpO
-	YZgTlIgewOxrI8+POO+9j/9Em+60gFbwgWmPXuck/oY7fqzhvd37lLf7/TOedP7CMBEtD1KYiI6
-	K3K1rj7HVGEBIROlQelwDCjSkKMItbrWVFbI3EBPptOhPEnX7Zcdn2mi+gNEdcoGqdEn/zNu9vC
-	GANT+fsjDTuGX6S3hkm2XSvwnI0C3XnK8iuSH+PxN8bZdcf6Ts5N180JJ04tnb7daxgooxstVau
-	8GCDWKQcktzQ/IHcq2wwRhzDbG+KLOg26OKQ/rsk8+BJunT2ZksfQYc5ViiR+kEFU7U/9GKe+YS
-	I6SjPRKvHAF+9NOiLctulkbBPUyptUMsS2O6p8q+UyEWTieeT2FyPzxsCzKbXTe/KmDDETkXa7d
-	0NH6rN4UYaee39pKafg2PrjqlirrPv29yt6oZQAxhzKj2zG3eIBlI8xXWLNBw9omFBMtHGDDvUe
-	akV
-X-Received: by 2002:a05:600d:17:b0:47e:e8de:7420 with SMTP id 5b1f17b1804b1-47ee8de7443mr9820425e9.22.1768401486562;
-        Wed, 14 Jan 2026 06:38:06 -0800 (PST)
-Received: from localhost (p200300ff0f0b7b017e458f16f8082810.dip0.t-ipconnect.de. [2003:ff:f0b:7b01:7e45:8f16:f808:2810])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47ee2a5e48asm20271865e9.20.2026.01.14.06.38.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Jan 2026 06:38:06 -0800 (PST)
+	s=arc-20240116; t=1768402621; c=relaxed/simple;
+	bh=2drGeW3rb/glmM47EtWUS4WA1UF6n3Ks9yUbhmLB21A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UXRW8EcA7vlq8RcPD2EQe1RlgwV641k88q6m2tXsULVEBKxho2EPAQybekYpSg2OPlgobnjxZ/Ph705pAi0WGOXWQeeck7xB52+1Ux0YYIddHG3iVBP5gKFDxq1gKjrP0GqXxSjSAzWk+SOKIYvTNC8ldzlUvmfjSXGneqtpmcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZF2n5HHl; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1768402617; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=tKEiYyztp7rnSuLNkwLOusLX/k6l5Kw33OzxJI4VSF0=;
+	b=ZF2n5HHlmXu8jo66pugRCSYjLvLGz11mR8vTBo+AeT7f7KjwLmwywbUp+WViRoZwh6HnxD2FNMYtwBz8yZkQwVbw5eYuKyZH9CmlI1l5fXS2Oqsw+wt6lkPUw1R1GIcuky+02U/kXqXNVYZH3hkca/umifbK/M6UAdECC9noLFQ=
+Received: from 30.180.182.138(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wx2jw0M_1768402294 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 14 Jan 2026 22:51:34 +0800
+Message-ID: <2d33cc2f-8188-4e62-b0be-bf985237bf24@linux.alibaba.com>
+Date: Wed, 14 Jan 2026 22:51:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 14 Jan 2026 15:38:05 +0100
-Message-Id: <DFOE0BC22OI4.1TO4CKB63W9M0@suse.com>
-Cc: <ltp@lists.linux.it>, <linux-fsdevel@vger.kernel.org>
-Subject: Re: [LTP] [PATCH] lack of ENAMETOOLONG testcases for pathnames
- longer than PATH_MAX
-From: "Andrea Cervesato" <andrea.cervesato@suse.com>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-X-Mailer: aerc 0.18.2
-References: <20260113194936.GQ3634291@ZenIV>
- <DFO6AXBPYYE4.2BD108FK6ACXE@suse.com> <20260114143021.GU3634291@ZenIV>
-In-Reply-To: <20260114143021.GU3634291@ZenIV>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 08/10] erofs: support unencoded inodes for page cache
+ share
+To: Hongbo Li <lihongbo22@huawei.com>
+Cc: djwong@kernel.org, amir73il@gmail.com, hch@lst.de,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, Chao Yu <chao@kernel.org>,
+ Christian Brauner <brauner@kernel.org>
+References: <20260109102856.598531-1-lihongbo22@huawei.com>
+ <20260109102856.598531-9-lihongbo22@huawei.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20260109102856.598531-9-lihongbo22@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
->
-> Er...  Intent was to verify two things: that anything longer than PATH_MA=
-X triggers
-> ENAMETOOLONG, but anything up to PATH_MAX does not.  Having a pathname of=
- exactly
-> 4095 '/' (or interleaved . and / in the same amount, etc.) be rejected wi=
-th ENAMETOOLONG
-> is just as much of a failure as not triggering ENAMETOOLONG on anything l=
-onger...
 
-In this case we need a new test verifying that PATH_MAX is actually
-handled well, as Cyril suggested. But in this test we should only
-verifying errors.
 
->
-> FWIW, I considered something like
-> 	mkdir("subdirectory", 0700);
-> concatenating enough copies of "subdirectory/../" to get just under PATH_=
-MAX and appending
-> "././././././././" to the end, so that truncation to PATH_MAX and to PATH=
-_MAX-1 would
-> both be otherwise valid paths; decided that it's better to keep it simple=
-r - a pile of
-> slashes is easier to produce and would resolve to a valid directory if no=
-t for the
-> total length restrictions.
+On 2026/1/9 18:28, Hongbo Li wrote:
+> This patch adds inode page cache sharing functionality for unencoded
+> files.
+> 
+> I conducted experiments in the container environment. Below is the
+> memory usage for reading all files in two different minor versions
+> of container images:
+> 
+> +-------------------+------------------+-------------+---------------+
+> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
+> |                   |                  |             | Reduction (%) |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     241     |       -       |
+> |       redis       +------------------+-------------+---------------+
+> |   7.2.4 & 7.2.5   |        Yes       |     163     |      33%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     872     |       -       |
+> |      postgres     +------------------+-------------+---------------+
+> |    16.1 & 16.2    |        Yes       |     630     |      28%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     2771    |       -       |
+> |     tensorflow    +------------------+-------------+---------------+
+> |  2.11.0 & 2.11.1  |        Yes       |     2340    |      16%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     926     |       -       |
+> |       mysql       +------------------+-------------+---------------+
+> |  8.0.11 & 8.0.12  |        Yes       |     735     |      21%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     390     |       -       |
+> |       nginx       +------------------+-------------+---------------+
+> |   7.2.4 & 7.2.5   |        Yes       |     219     |      44%      |
+> +-------------------+------------------+-------------+---------------+
+> |       tomcat      |        No        |     924     |       -       |
+> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+> |                   |        Yes       |     474     |      49%      |
+> +-------------------+------------------+-------------+---------------+
+> 
+> Additionally, the table below shows the runtime memory usage of the
+> container:
+> 
+> +-------------------+------------------+-------------+---------------+
+> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
+> |                   |                  |             | Reduction (%) |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |      35     |       -       |
+> |       redis       +------------------+-------------+---------------+
+> |   7.2.4 & 7.2.5   |        Yes       |      28     |      20%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     149     |       -       |
+> |      postgres     +------------------+-------------+---------------+
+> |    16.1 & 16.2    |        Yes       |      95     |      37%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     1028    |       -       |
+> |     tensorflow    +------------------+-------------+---------------+
+> |  2.11.0 & 2.11.1  |        Yes       |     930     |      10%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     155     |       -       |
+> |       mysql       +------------------+-------------+---------------+
+> |  8.0.11 & 8.0.12  |        Yes       |     132     |      15%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |      25     |       -       |
+> |       nginx       +------------------+-------------+---------------+
+> |   7.2.4 & 7.2.5   |        Yes       |      20     |      20%      |
+> +-------------------+------------------+-------------+---------------+
+> |       tomcat      |        No        |     186     |       -       |
+> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+> |                   |        Yes       |      98     |      48%      |
+> +-------------------+------------------+-------------+---------------+
+> 
+> Co-developed-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> ---
+>   fs/erofs/data.c              | 32 +++++++++++++++++++++++---------
+>   fs/erofs/fileio.c            | 25 ++++++++++++++++---------
+>   fs/erofs/inode.c             |  2 ++
+>   fs/erofs/internal.h          |  6 ++++++
+>   fs/erofs/ishare.c            | 34 ++++++++++++++++++++++++++++++++++
+>   fs/erofs/zdata.c             |  2 +-
+>   include/trace/events/erofs.h | 10 +++++-----
+>   7 files changed, 87 insertions(+), 24 deletions(-)
+> 
+> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+> index 71e23d91123d..7bbd94781170 100644
+> --- a/fs/erofs/data.c
+> +++ b/fs/erofs/data.c
+> @@ -269,6 +269,7 @@ void erofs_onlinefolio_end(struct folio *folio, int err, bool dirty)
+>   struct erofs_iomap_iter_ctx {
+>   	struct page *page;
+>   	void *base;
+> +	struct inode *realinode;
+>   };
+>   
+>   static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+> @@ -276,14 +277,15 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>   {
+>   	struct iomap_iter *iter = container_of(iomap, struct iomap_iter, iomap);
+>   	struct erofs_iomap_iter_ctx *ctx = iter->private;
+> -	struct super_block *sb = inode->i_sb;
+> +	struct inode *realinode = ctx ? ctx->realinode : inode;
+> +	struct super_block *sb = realinode->i_sb;
+>   	struct erofs_map_blocks map;
+>   	struct erofs_map_dev mdev;
+>   	int ret;
+>   
+>   	map.m_la = offset;
+>   	map.m_llen = length;
+> -	ret = erofs_map_blocks(inode, &map);
+> +	ret = erofs_map_blocks(realinode, &map);
+>   	if (ret < 0)
+>   		return ret;
+>   
+> @@ -296,7 +298,7 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>   		return 0;
+>   	}
+>   
+> -	if (!(map.m_flags & EROFS_MAP_META) || !erofs_inode_in_metabox(inode)) {
+> +	if (!(map.m_flags & EROFS_MAP_META) || !erofs_inode_in_metabox(realinode)) {
+>   		mdev = (struct erofs_map_dev) {
+>   			.m_deviceid = map.m_deviceid,
+>   			.m_pa = map.m_pa,
+> @@ -322,7 +324,7 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>   			void *ptr;
+>   
+>   			ptr = erofs_read_metabuf(&buf, sb, map.m_pa,
+> -						 erofs_inode_in_metabox(inode));
+> +						 erofs_inode_in_metabox(realinode));
+>   			if (IS_ERR(ptr))
+>   				return PTR_ERR(ptr);
+>   			iomap->inline_data = ptr;
+> @@ -383,11 +385,16 @@ static int erofs_read_folio(struct file *file, struct folio *folio)
+>   		.ops		= &iomap_bio_read_ops,
+>   		.cur_folio	= folio,
+>   	};
+> -	struct erofs_iomap_iter_ctx iter_ctx = {};
+> +	bool need_iput;
+> +	struct erofs_iomap_iter_ctx iter_ctx = {
+> +		.realinode = erofs_real_inode(folio_inode(folio), &need_iput),
+> +	};
+>   
+> -	trace_erofs_read_folio(folio, true);
+> +	trace_erofs_read_folio(iter_ctx.realinode, folio, true);
+>   
+>   	iomap_read_folio(&erofs_iomap_ops, &read_ctx, &iter_ctx);
+> +	if (need_iput)
+> +		iput(iter_ctx.realinode);
+>   	return 0;
+>   }
+>   
+> @@ -397,12 +404,17 @@ static void erofs_readahead(struct readahead_control *rac)
+>   		.ops		= &iomap_bio_read_ops,
+>   		.rac		= rac,
+>   	};
+> -	struct erofs_iomap_iter_ctx iter_ctx = {};
+> +	bool need_iput;
+> +	struct erofs_iomap_iter_ctx iter_ctx = {
+> +		.realinode = erofs_real_inode(rac->mapping->host, &need_iput),
+> +	};
+>   
+> -	trace_erofs_readahead(rac->mapping->host, readahead_index(rac),
+> +	trace_erofs_readahead(iter_ctx.realinode, readahead_index(rac),
+>   					readahead_count(rac), true);
 
-It's up to you how you create the string that will trigger the error.
-Also, you probably need to take a look at tst_test.needs_tmpdir.
+Is it possible to add a commit to update the tracepoints
+to add the new realinode first?
 
---=20
-Andrea Cervesato
-SUSE QE Automation Engineer Linux
-andrea.cervesato@suse.com
+Also please fix the indentation in that commit together.
 
+>   
+>   	iomap_readahead(&erofs_iomap_ops, &read_ctx, &iter_ctx);
+> +	if (need_iput)
+> +		iput(iter_ctx.realinode);
+>   }
+>   
+>   static sector_t erofs_bmap(struct address_space *mapping, sector_t block)
+> @@ -423,7 +435,9 @@ static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   		return dax_iomap_rw(iocb, to, &erofs_iomap_ops);
+>   #endif
+>   	if ((iocb->ki_flags & IOCB_DIRECT) && inode->i_sb->s_bdev) {
+> -		struct erofs_iomap_iter_ctx iter_ctx = {};
+> +		struct erofs_iomap_iter_ctx iter_ctx = {
+> +			.realinode = inode,
+> +		};
+>   
+>   		return iomap_dio_rw(iocb, to, &erofs_iomap_ops,
+>   				    NULL, 0, &iter_ctx, 0);
+> diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
+> index 932e8b353ba1..c1d0081609dc 100644
+> --- a/fs/erofs/fileio.c
+> +++ b/fs/erofs/fileio.c
+> @@ -88,9 +88,9 @@ void erofs_fileio_submit_bio(struct bio *bio)
+>   						   bio));
+>   }
+>   
+> -static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
+> +static int erofs_fileio_scan_folio(struct erofs_fileio *io,
+> +				   struct inode *inode, struct folio *folio)
+>   {
+> -	struct inode *inode = folio_inode(folio);
+>   	struct erofs_map_blocks *map = &io->map;
+>   	unsigned int cur = 0, end = folio_size(folio), len, attached = 0;
+>   	loff_t pos = folio_pos(folio), ofs;
+> @@ -158,31 +158,38 @@ static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
+>   
+>   static int erofs_fileio_read_folio(struct file *file, struct folio *folio)
+>   {
+> +	bool need_iput;
+> +	struct inode *realinode = erofs_real_inode(folio_inode(folio), &need_iput);
+>   	struct erofs_fileio io = {};
+>   	int err;
+>   
+> -	trace_erofs_read_folio(folio, true);
+> -	err = erofs_fileio_scan_folio(&io, folio);
+> +	trace_erofs_read_folio(realinode, folio, true);
+> +	err = erofs_fileio_scan_folio(&io, realinode, folio);
+>   	erofs_fileio_rq_submit(io.rq);
+> +	if (need_iput)
+> +		iput(realinode);
+>   	return err;
+>   }
+>   
+>   static void erofs_fileio_readahead(struct readahead_control *rac)
+>   {
+> -	struct inode *inode = rac->mapping->host;
+> +	bool need_iput;
+> +	struct inode *realinode = erofs_real_inode(rac->mapping->host, &need_iput);
+>   	struct erofs_fileio io = {};
+>   	struct folio *folio;
+>   	int err;
+>   
+> -	trace_erofs_readahead(inode, readahead_index(rac),
+> +	trace_erofs_readahead(realinode, readahead_index(rac),
+>   			      readahead_count(rac), true);
+>   	while ((folio = readahead_folio(rac))) {
+> -		err = erofs_fileio_scan_folio(&io, folio);
+> +		err = erofs_fileio_scan_folio(&io, realinode, folio);
+>   		if (err && err != -EINTR)
+> -			erofs_err(inode->i_sb, "readahead error at folio %lu @ nid %llu",
+> -				  folio->index, EROFS_I(inode)->nid);
+> +			erofs_err(realinode->i_sb, "readahead error at folio %lu @ nid %llu",
+> +				  folio->index, EROFS_I(realinode)->nid);
+>   	}
+>   	erofs_fileio_rq_submit(io.rq);
+> +	if (need_iput)
+> +		iput(realinode);
+>   }
+>   
+>   const struct address_space_operations erofs_fileio_aops = {
+> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+> index bce98c845a18..52179b706b5b 100644
+> --- a/fs/erofs/inode.c
+> +++ b/fs/erofs/inode.c
+> @@ -215,6 +215,8 @@ static int erofs_fill_inode(struct inode *inode)
+>   	case S_IFREG:
+>   		inode->i_op = &erofs_generic_iops;
+>   		inode->i_fop = &erofs_file_fops;
+> +		if (erofs_ishare_fill_inode(inode))
+> +			inode->i_fop = &erofs_ishare_fops;
+
+		inode->i_fop = erofs_ishare_fill_inode(inode) ?
+			&erofs_ishare_fops : &erofs_file_fops;
+
+Otherwise it looks good to me.
+
+Thanks,
+Gao Xiang
 
