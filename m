@@ -1,36 +1,36 @@
-Return-Path: <linux-fsdevel+bounces-73665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04765D1E865
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 12:49:03 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891CBD1E842
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 12:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B257F305F381
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 11:47:53 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id AC1CC301A223
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 11:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEE3396B7B;
-	Wed, 14 Jan 2026 11:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7528F397AA6;
+	Wed, 14 Jan 2026 11:47:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144C0396D0B;
-	Wed, 14 Jan 2026 11:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E6E395263;
+	Wed, 14 Jan 2026 11:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768391254; cv=none; b=W3bv9fkHqQHNZrSsdisVSDz0KjT4C1o6zEg1oiX8bZDpt5TWcGB4PZkP9Zh09of2jMXYGE0js5sAsSTwBLw9bamRoQScSCW5OZJ41+ydmhKTz1/IRnmNlTF/yEir/Mrql0eEIg6f9/Yh/DviSPMwPL8++1b3XG7SfMZrE74WOhU=
+	t=1768391258; cv=none; b=kiezfaHEd57Tjpg1BivHS5f2aNyrPrc/knt1KYz+Du/8LMHIsLl4frkK+nl5ErMz+ZnpTudfrsRajxSPSHDP2/ca9bLxP1kIhS2YSOT/jaj7GvYfHMp92nxakN5nmKjpCfKd3ZsyjaUMxntZ7DS2J+WRqL/AqRcLatyHXrXOZwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768391254; c=relaxed/simple;
-	bh=S9I3UhAClWcqsGV6B1ZKFE6EF344tHX0qpPTnzW7EQM=;
+	s=arc-20240116; t=1768391258; c=relaxed/simple;
+	bh=dUcNvpWFfrmBTMkcoYTsFq6XSacuMpXHDicNGslXPwI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kc2L6324FPE940TTXemMzg0HGTwykgyGjAOjCZXa75DqY5dWITTMuEVpvkgWjGn9Y59Kr1Y+yJubbVggTDoyS8rdS4j/PHJhuwDFfBoaK6m4G8NvcW+2F+bpyk3tqylC0YCjAqQ3W3ftaldMo49W2etGWtPKsHDn1mKA3sPkAHs=
+	 MIME-Version; b=enmeIV7a5EWdOa0Y6E4ObCo68Ygl6T3+201Q5nx1XFbRy63Yyd2QOGVymAymKxpd15rx2eauLP0lVRnzJehYaQDtZajNOgaBSBOmnMq4ESqqkMPQcAoNKXnVDYuG64L/klzpkmwxa7xbqfJd3NXkrZN063VyfxQY96dBvrh4i5c=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D22D8339;
-	Wed, 14 Jan 2026 03:47:25 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2C79497;
+	Wed, 14 Jan 2026 03:47:29 -0800 (PST)
 Received: from pluto.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 134D23F59E;
-	Wed, 14 Jan 2026 03:47:28 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6C8D3F59E;
+	Wed, 14 Jan 2026 03:47:32 -0800 (PST)
 From: Cristian Marussi <cristian.marussi@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
@@ -51,9 +51,9 @@ Cc: sudeep.holla@arm.com,
 	philip.radford@arm.com,
 	souvik.chakravarty@arm.com,
 	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH v2 03/17] firmware: arm_scmi: Allow protocols to register for notifications
-Date: Wed, 14 Jan 2026 11:46:07 +0000
-Message-ID: <20260114114638.2290765-4-cristian.marussi@arm.com>
+Subject: [PATCH v2 04/17] uapi: Add ARM SCMI definitions
+Date: Wed, 14 Jan 2026 11:46:08 +0000
+Message-ID: <20260114114638.2290765-5-cristian.marussi@arm.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260114114638.2290765-1-cristian.marussi@arm.com>
 References: <20260114114638.2290765-1-cristian.marussi@arm.com>
@@ -65,192 +65,326 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Allow protocols themselves to register for their own notifications and
-providing their own notifier callbacks. While at that, allow for a protocol
-to register events with compilation-time unknown report/event sizes: such
-events will use the maximum transport size.
+Add a number of structures and ioctls definitions used by the ARM
+SCMI Telemetry protocol.
 
 Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
-v1-->v2
- - Fixed multiline comment format
+v1 --> v2
+ - Added proper __counted_by marks
+ - Fixed a few dox comments
+ - Renamed reserved[] fields to pad[]
 ---
- drivers/firmware/arm_scmi/common.h    |  4 ++++
- drivers/firmware/arm_scmi/driver.c    | 12 ++++++++++++
- drivers/firmware/arm_scmi/notify.c    | 28 ++++++++++++++++++++-------
- drivers/firmware/arm_scmi/notify.h    |  8 ++++++--
- drivers/firmware/arm_scmi/protocols.h |  6 ++++++
- 5 files changed, 49 insertions(+), 9 deletions(-)
+ MAINTAINERS               |   1 +
+ include/uapi/linux/scmi.h | 287 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 288 insertions(+)
+ create mode 100644 include/uapi/linux/scmi.h
 
-diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
-index 3b24831094b6..9f9a5a4bcf35 100644
---- a/drivers/firmware/arm_scmi/common.h
-+++ b/drivers/firmware/arm_scmi/common.h
-@@ -17,6 +17,7 @@
- #include <linux/hashtable.h>
- #include <linux/list.h>
- #include <linux/module.h>
-+#include <linux/notifier.h>
- #include <linux/refcount.h>
- #include <linux/scmi_protocol.h>
- #include <linux/spinlock.h>
-@@ -527,5 +528,8 @@ static struct platform_driver __drv = {					       \
- void scmi_notification_instance_data_set(const struct scmi_handle *handle,
- 					 void *priv);
- void *scmi_notification_instance_data_get(const struct scmi_handle *handle);
-+int scmi_notifier_register(const struct scmi_handle *handle, u8 proto_id,
-+			   u8 evt_id, const u32 *src_id,
-+			   struct notifier_block *nb);
- int scmi_inflight_count(const struct scmi_handle *handle);
- #endif /* _SCMI_COMMON_H */
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index b198c58da1dd..1085c70ca457 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -1657,6 +1657,17 @@ static void *scmi_get_protocol_priv(const struct scmi_protocol_handle *ph)
- 	return pi->priv;
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 12f49de7fe03..1c0ccaddc3f3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -25392,6 +25392,7 @@ F:	drivers/regulator/scmi-regulator.c
+ F:	drivers/reset/reset-scmi.c
+ F:	include/linux/sc[mp]i_protocol.h
+ F:	include/trace/events/scmi.h
++F:	include/uapi/linux/scmi.h
+ F:	include/uapi/linux/virtio_scmi.h
  
-+static int
-+scmi_register_instance_notifier(const struct scmi_protocol_handle *ph,
-+				u8 evt_id, const u32 *src_id,
-+				struct notifier_block *nb)
-+{
-+	const struct scmi_protocol_instance *pi = ph_to_pi(ph);
+ SYSTEM CONTROL MANAGEMENT INTERFACE (SCMI) i.MX Extension Message Protocol drivers
+diff --git a/include/uapi/linux/scmi.h b/include/uapi/linux/scmi.h
+new file mode 100644
+index 000000000000..e4e9939a1bf8
+--- /dev/null
++++ b/include/uapi/linux/scmi.h
+@@ -0,0 +1,287 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/*
++ * Copyright (C) 2026 ARM Ltd.
++ */
++#ifndef _UAPI_LINUX_SCMI_H
++#define _UAPI_LINUX_SCMI_H
 +
-+	return scmi_notifier_register(pi->handle, pi->proto->id,
-+				      evt_id, src_id, nb);
-+}
++/*
++ * Userspace interface SCMI Telemetry
++ */
 +
- static const struct scmi_xfer_ops xfer_ops = {
- 	.version_get = version_get,
- 	.xfer_get_init = xfer_get_init,
-@@ -2156,6 +2167,7 @@ scmi_alloc_init_protocol_instance(struct scmi_info *info,
- 	pi->ph.hops = &helpers_ops;
- 	pi->ph.set_priv = scmi_set_protocol_priv;
- 	pi->ph.get_priv = scmi_get_protocol_priv;
-+	pi->ph.notifier_register = scmi_register_instance_notifier;
- 	refcount_set(&pi->users, 1);
- 	/* proto->init is assured NON NULL by scmi_protocol_register */
- 	ret = pi->proto->instance_init(&pi->ph);
-diff --git a/drivers/firmware/arm_scmi/notify.c b/drivers/firmware/arm_scmi/notify.c
-index 78e9e27dc9ec..e84b4dbefe82 100644
---- a/drivers/firmware/arm_scmi/notify.c
-+++ b/drivers/firmware/arm_scmi/notify.c
-@@ -593,7 +593,13 @@ int scmi_notify(const struct scmi_handle *handle, u8 proto_id, u8 evt_id,
- 	if (!r_evt)
- 		return -EINVAL;
- 
--	if (len > r_evt->evt->max_payld_sz) {
-+	/*
-+	 * Events with a zero max_payld_sz are sized to be of the maximum
-+	 * size allowed by the transport: no need to be size-checked here
-+	 * since the transport layer would have already dropped such
-+	 * over-sized messages.
-+	 */
-+	if (r_evt->evt->max_payld_sz && len > r_evt->evt->max_payld_sz) {
- 		dev_err(handle->dev, "discard badly sized message\n");
- 		return -EINVAL;
- 	}
-@@ -752,7 +758,7 @@ int scmi_register_protocol_events(const struct scmi_handle *handle, u8 proto_id,
- 				  const struct scmi_protocol_handle *ph,
- 				  const struct scmi_protocol_events *ee)
- {
--	int i;
-+	int i, max_msg_sz;
- 	unsigned int num_sources;
- 	size_t payld_sz = 0;
- 	struct scmi_registered_events_desc *pd;
-@@ -767,6 +773,8 @@ int scmi_register_protocol_events(const struct scmi_handle *handle, u8 proto_id,
- 	if (!ni)
- 		return -ENOMEM;
- 
-+	max_msg_sz = ph->hops->get_max_msg_size(ph);
++#include <linux/ioctl.h>
++#include <linux/types.h>
 +
- 	/* num_sources cannot be <= 0 */
- 	if (ee->num_sources) {
- 		num_sources = ee->num_sources;
-@@ -779,8 +787,13 @@ int scmi_register_protocol_events(const struct scmi_handle *handle, u8 proto_id,
- 	}
- 
- 	evt = ee->evts;
--	for (i = 0; i < ee->num_events; i++)
-+	for (i = 0; i < ee->num_events; i++) {
-+		if (evt[i].max_payld_sz == 0) {
-+			payld_sz = max_msg_sz;
-+			break;
-+		}
- 		payld_sz = max_t(size_t, payld_sz, evt[i].max_payld_sz);
-+	}
- 	payld_sz += sizeof(struct scmi_event_header);
- 
- 	pd = scmi_allocate_registered_events_desc(ni, proto_id, ee->queue_sz,
-@@ -809,7 +822,8 @@ int scmi_register_protocol_events(const struct scmi_handle *handle, u8 proto_id,
- 		mutex_init(&r_evt->sources_mtx);
- 
- 		r_evt->report = devm_kzalloc(ni->handle->dev,
--					     evt->max_report_sz, GFP_KERNEL);
-+					     evt->max_report_sz ?: max_msg_sz,
-+					     GFP_KERNEL);
- 		if (!r_evt->report)
- 			return -ENOMEM;
- 
-@@ -1373,9 +1387,9 @@ static int scmi_event_handler_enable_events(struct scmi_event_handler *hndl)
-  *
-  * Return: 0 on Success
-  */
--static int scmi_notifier_register(const struct scmi_handle *handle,
--				  u8 proto_id, u8 evt_id, const u32 *src_id,
--				  struct notifier_block *nb)
-+int scmi_notifier_register(const struct scmi_handle *handle,
-+			   u8 proto_id, u8 evt_id, const u32 *src_id,
-+			   struct notifier_block *nb)
- {
- 	int ret = 0;
- 	u32 evt_key;
-diff --git a/drivers/firmware/arm_scmi/notify.h b/drivers/firmware/arm_scmi/notify.h
-index 76758a736cf4..ecfa4b746487 100644
---- a/drivers/firmware/arm_scmi/notify.h
-+++ b/drivers/firmware/arm_scmi/notify.h
-@@ -18,8 +18,12 @@
- /**
-  * struct scmi_event  - Describes an event to be supported
-  * @id: Event ID
-- * @max_payld_sz: Max possible size for the payload of a notification message
-- * @max_report_sz: Max possible size for the report of a notification message
-+ * @max_payld_sz: Max possible size for the payload of a notification message.
-+ *		  Set to zero to use the maximum payload size allowed by the
-+ *		  transport.
-+ * @max_report_sz: Max possible size for the report of a notification message.
-+ *		  Set to zero to use the maximum payload size allowed by the
-+ *		  transport.
-  *
-  * Each SCMI protocol, during its initialization phase, can describe the events
-  * it wishes to support in a few struct scmi_event and pass them to the core
-diff --git a/drivers/firmware/arm_scmi/protocols.h b/drivers/firmware/arm_scmi/protocols.h
-index d62c4469d1fd..afca1336267b 100644
---- a/drivers/firmware/arm_scmi/protocols.h
-+++ b/drivers/firmware/arm_scmi/protocols.h
-@@ -163,6 +163,9 @@ struct scmi_proto_helpers_ops;
-  *	  can be used by the protocol implementation to generate SCMI messages.
-  * @set_priv: A method to set protocol private data for this instance.
-  * @get_priv: A method to get protocol private data previously set.
-+ * @notifier_register: A method to register interest for notifications from
-+ *		       within a protocol implementation unit: notifiers can
-+ *		       be registered only for the same protocol.
-  *
-  * This structure represents a protocol initialized against specific SCMI
-  * instance and it will be used as follows:
-@@ -182,6 +185,9 @@ struct scmi_protocol_handle {
- 	int (*set_priv)(const struct scmi_protocol_handle *ph, void *priv,
- 			u32 version);
- 	void *(*get_priv)(const struct scmi_protocol_handle *ph);
-+	int (*notifier_register)(const struct scmi_protocol_handle *ph,
-+				 u8 evt_id, const u32 *src_id,
-+				 struct notifier_block *nb);
- };
- 
- /**
++#define SCMI_TLM_DE_IMPL_MAX_DWORDS	4
++
++#define SCMI_TLM_GRP_INVALID            0xFFFFFFFF
++
++/**
++ * scmi_tlm_base_info - Basic info about an instance
++ *
++ * @version: SCMI Telemetry protocol version
++ * @de_impl_version: SCMI Telemetry DE implementation revision
++ * @num_de: Number of defined DEs
++ * @num_groups Number of defined DEs groups
++ * @num_intervals: Number of update intervals available (instance-level)
++ * @flags: Instance specific feature-support bitmap
++ *
++ * Used by:
++ *	RO - SCMI_TLM_GET_INFO
++ *
++ * Supported by:
++ *	control/
++ */
++struct scmi_tlm_base_info {
++	__u32 version;
++	__u32 de_impl_version[SCMI_TLM_DE_IMPL_MAX_DWORDS];
++	__u32 num_des;
++	__u32 num_groups;
++	__u32 num_intervals;
++	__u32 flags;
++#define SCMI_TLM_CAN_RESET	(1 << 0)
++};
++
++/**
++ * scmi_tlm_config  - Whole instance or group configuration
++ *
++ * @enable: Enable/Disable Telemetry for the whole instance or the group.
++ * @t_enable: Enable/Disable timestamping for all the DEs belonging to a group.
++ * @pad: Padding fields to enforce alignment.
++ * @current_update_interval: Get/Set currently active update interval for the
++ *			     whole instance or a group.
++ *
++ * Used by:
++ *	RO - SCMI_TLM_GET_CFG
++ *	WO - SCMI_TLM_SET_CFG
++ *
++ * Supported by:
++ *	control/
++ *	groups/<N>/control
++ */
++struct scmi_tlm_config {
++	__u8 enable;
++	__u8 t_enable;
++	__u8 pad[2];
++	__u32 current_update_interval;
++};
++
++/**
++ * scmi_tlm_intervals  - Update intervals descriptor
++ *
++ * @discrete: Flag to indicate the nature of the intervals described in
++ *	      @update_intervals.
++ *	      When 'false' @update_intervals is a triplet: min/max/step
++ * @pad: Padding fields to enforce alignment.
++ * @num: Number of entries of @update_intervals
++ * @update_intervals: A variably-sized array containing the update intervals
++ *
++ * Used by:
++ *	RW - SCMI_TLM_GET_INTRVS
++ *
++ * Supported by:
++ *	control/
++ *	groups/<N>/control
++ */
++struct scmi_tlm_intervals {
++	__u8 discrete;
++	__u8 pad[3];
++	__u32 num;
++#define SCMI_TLM_UPDATE_INTVL_SEGMENT_LOW	0
++#define SCMI_TLM_UPDATE_INTVL_SEGMENT_HIGH	1
++#define SCMI_TLM_UPDATE_INTVL_SEGMENT_STEP	2
++	__u32 update_intervals[] __counted_by(num);
++};
++
++/**
++ * scmi_tlm_de_config  - DE configuration
++ *
++ * @id: Identifier of the DE to act upon (ignored by SCMI_TLM_SET_ALL_CFG)
++ * @enable: A boolean to enable/disable the DE
++ * @t_enable: A boolean to enable/disable the timestamp for this DE
++ *	      (if supported)
++ *
++ * Used by:
++ *	RW - SCMI_TLM_GET_DE_CFG
++ *	RW - SCMI_TLM_SET_DE_CFG
++ *	WO - SCMI_TLM_SET_ALL_CFG
++ *
++ * Supported by:
++ *	control/
++ */
++struct scmi_tlm_de_config {
++	__u32 id;
++	__u32 enable;
++	__u32 t_enable;
++};
++
++/**
++ * scmi_tlm_de_info  - DE Descriptor
++ *
++ * @id: DE identifier
++ * @grp_id: Identifier of the group which this DE belongs to; reported as
++ *	    SCMI_TLM_GRP_INVALID when not part of any group
++ * @data_sz: DE data size in bytes
++ * @type: DE type
++ * @unit: DE unit of measurements
++ * @unit_exp: Power-of-10 multiplier for DE unit
++ * @tstamp_exp: Power-of-10 multiplier for DE timestamp (if supported)
++ * @instance_id: DE instance ID
++ * @compo_instance_id: DE component instance ID
++ * @compo_type: Type of component which is associated to this DE
++ * @persistent: Data value for this DE survives reboot (non-cold ones)
++ * @name: Optional name of this DE
++ *
++ * Used to get the full description of a DE: it reflects DE Descriptors
++ * definitions in 3.12.4.6.
++ *
++ * Used by:
++ *	RW - SCMI_TLM_GET_DE_INFO
++ *
++ * Supported by:
++ *	control/
++ */
++struct scmi_tlm_de_info {
++	__u32 id;
++	__u32 grp_id;
++	__u32 data_sz;
++	__u32 type;
++	__u32 unit;
++	__s32 unit_exp;
++	__s32 tstamp_exp;
++	__u32 instance_id;
++	__u32 compo_instance_id;
++	__u32 compo_type;
++	__u32 persistent;
++	__u8 name[16];
++};
++
++/**
++ * scmi_tlm_des_list  - List of all defined DEs
++ *
++ * @num_des: Number of entries in @des
++ * @des: An array containing descriptors for all defined DEs
++ *
++ * Used by:
++ *	RW - SCMI_TLM_GET_DE_LIST
++ *
++ * Supported by:
++ *	control/
++ */
++struct scmi_tlm_des_list {
++	__u32 num_des;
++	struct scmi_tlm_de_info des[] __counted_by(num_des);
++};
++
++/**
++ * scmi_tlm_de_sample - A DE reading
++ *
++ * @id: DE identifier
++ * @tstamp: DE reading timestamp (equal 0 is NOT supported)
++ * @val: Reading of the DE data value
++ *
++ * Used by:
++ *	RW - SCMI_TLM_GET_DE_VALUE
++ *
++ * Supported by:
++ *	control/
++ */
++struct scmi_tlm_de_sample {
++	__u32 id;
++	__u64 tstamp;
++	__u64 val;
++};
++
++/**
++ * scmi_tlm_data_read - Bulk read of multiple DEs
++ *
++ * @num_samples: Number of entries returned in @samples
++ * @samples: An array of samples containing an entry for each DE that was
++ *	     enabled when the single sample read request was issued.
++ *
++ * Used by:
++ *	RW - SCMI_TLM_SINGLE_SAMPLE
++ *	RW - SCMI_TLM_BULK_READ
++ *
++ * Supported by:
++ *	control/
++ *	groups/<N>/control
++ */
++struct scmi_tlm_data_read {
++	__u32 num_samples;
++	struct scmi_tlm_de_sample samples[] __counted_by(num_samples);
++};
++
++/**
++ * scmi_tlm_grp_info  - DE-group descriptor
++ *
++ * @id: Group ID number
++ * @num_des: Number of DEs part of this group
++ * @num_intervals: Number of update intervals supported. Zero if group does not
++ *		   support per-group update interval configuration.
++ *
++ * Used by:
++ *	RO - SCMI_TLM_GET_GRP_INFO
++ *
++ * Supported by:
++ *	groups/<N>control/
++ */
++struct scmi_tlm_grp_info {
++	__u32 id;
++	__u32 num_des;
++	__u32 num_intervals;
++};
++
++/**
++ * scmi_tlm_grps_list  - DE-groups List
++ *
++ * @num_grps: Number of entries returned in @grps
++ * @grps: An array containing descriptors for all defined DE Groups
++ *
++ * Used by:
++ *	RW - SCMI_TLM_GET_GRP_LIST
++ *
++ * Supported by:
++ *	control/
++ */
++struct scmi_tlm_grps_list {
++	__u32 num_grps;
++	struct scmi_tlm_grp_info grps[] __counted_by(num_grps);
++};
++
++/**
++ * scmi_tlm_grp_desc  - Group descriptor
++ *
++ * @num_des: Number of DEs part of this group
++ * @composing_des: An array containing the DE IDs that belongs to this group.
++ *
++ * Used by:
++ *	RW - SCMI_TLM_GET_GRP_DESC
++ *
++ * Supported by:
++ *	groups/<N>control/
++ */
++struct scmi_tlm_grp_desc {
++	__u32 num_des;
++	__u32 composing_des[] __counted_by(num_des);
++};
++
++#define SCMI 0xF1
++
++#define SCMI_TLM_GET_INFO	_IOR(SCMI,  0x00, struct scmi_tlm_base_info)
++#define SCMI_TLM_GET_CFG	_IOR(SCMI,  0x01, struct scmi_tlm_config)
++#define SCMI_TLM_SET_CFG	_IOW(SCMI,  0x02, struct scmi_tlm_config)
++#define SCMI_TLM_GET_INTRVS	_IOWR(SCMI, 0x03, struct scmi_tlm_intervals)
++#define SCMI_TLM_GET_DE_CFG	_IOWR(SCMI, 0x04, struct scmi_tlm_de_config)
++#define SCMI_TLM_SET_DE_CFG	_IOWR(SCMI, 0x05, struct scmi_tlm_de_config)
++#define SCMI_TLM_GET_DE_INFO	_IOWR(SCMI, 0x06, struct scmi_tlm_de_info)
++#define SCMI_TLM_GET_DE_LIST	_IOWR(SCMI, 0x07, struct scmi_tlm_des_list)
++#define SCMI_TLM_GET_DE_VALUE	_IOWR(SCMI, 0x08, struct scmi_tlm_de_sample)
++#define SCMI_TLM_SET_ALL_CFG	_IOW(SCMI,  0x09, struct scmi_tlm_de_config)
++#define SCMI_TLM_GET_GRP_LIST	_IOWR(SCMI, 0x0A, struct scmi_tlm_grps_list)
++#define SCMI_TLM_GET_GRP_INFO	_IOR(SCMI,  0x0B, struct scmi_tlm_grp_info)
++#define SCMI_TLM_GET_GRP_DESC	_IOWR(SCMI, 0x0C, struct scmi_tlm_grp_desc)
++#define SCMI_TLM_SINGLE_SAMPLE	_IOWR(SCMI, 0x0D, struct scmi_tlm_data_read)
++#define SCMI_TLM_BULK_READ	_IOWR(SCMI, 0x0E, struct scmi_tlm_data_read)
++
++#endif /* _UAPI_LINUX_SCMI_H */
 -- 
 2.52.0
 
