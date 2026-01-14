@@ -1,56 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-73680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73681-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13DBD1E981
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 12:58:20 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AE6D1EA3A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 13:05:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A809D302C4C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 11:58:18 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 27D8A303EBA9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 12:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5856396B99;
-	Wed, 14 Jan 2026 11:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD73939527B;
+	Wed, 14 Jan 2026 12:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPg7BEJ6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dHd56cTA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A381B3939D2;
-	Wed, 14 Jan 2026 11:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDA439341C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 12:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768391888; cv=none; b=Coay2K0ek9q6I/nb43tVSQgDIez9RSf7mxsfJccNNaYbJmWb0HHAl5frd//8Qp/b5htUq923952tV5bWX5XWrCEzAhTPFHfqLi/SlAg0tnT0EfgN6xtuFObbYPzbRrOUoTyCsIu+VvsPQlBMPiHbqDVpBdTWcbke7CGbTw5nBzQ=
+	t=1768392329; cv=none; b=WxE/TH29KAZQmO3gBlzL9ayqgZpNTR52wUVPkkFHl/0VKndlnlB9eNEL3TluASx915tzJtXEeYLcs3HfCbLQq88vN7A3gBmHdf9/eDAcATCxW4A4/RlWbdZIeUadGpBCErHI6nm446imqaevIgkiHQhkmIntu2GiXNcMbUhPsaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768391888; c=relaxed/simple;
-	bh=rBqX7MoUIT8XreEqsY7XNZra/DqyVkBTSjeD4Q7iwl8=;
+	s=arc-20240116; t=1768392329; c=relaxed/simple;
+	bh=gV7woxEs+0wXMp6l0WwKDc4T7x+yRLaAFmqguzjaFWQ=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ThW3MGNN3eiR0+X0PZb28O8G0jXnEBIf7PcYgn2mW03JDsT3m6ZEl7wIgMZCpqjmh7uRM6EbtRZiGBFi4Br5BPjB/HlhVGpOYX/HrNAELO3/f14+UDMpoukZh/qRapL8X089XBnypH0NoFOQsC2YCBl/S/j7l/8rM+VYKhEJ7Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPg7BEJ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC0DC4CEF7;
-	Wed, 14 Jan 2026 11:58:05 +0000 (UTC)
+	 Content-Type:MIME-Version; b=sWrkSV+edtvpwoRG7aj1QNd+Pb1TIQZ0QK7GO4oV2O+QyhumUZAM6NsvYp9QVt5DCbmwbpwESipkc2M7+pPWTkcmF74Xxz7PRB+IXR9Dtu+o6aL8YuzzEx2y9cJPs3BFWOXRgRh6Z4OH0NefpSUwNg3BfYe99uyfKEj7G/IHyNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dHd56cTA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4045FC4CEF7;
+	Wed, 14 Jan 2026 12:05:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768391887;
-	bh=rBqX7MoUIT8XreEqsY7XNZra/DqyVkBTSjeD4Q7iwl8=;
+	s=k20201202; t=1768392329;
+	bh=gV7woxEs+0wXMp6l0WwKDc4T7x+yRLaAFmqguzjaFWQ=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=rPg7BEJ6ZXqo4hg9hV+KyS+9SoOWfe2Z8qnsbUX0/RM8Ujq2EhZQ0IDLCVNRklzMZ
-	 n9P/FafmbQP7r76O/WmkrNI0u3YUlBf4PJGPmPMbtaB892psgdPJET17RklQ+/N+Jx
-	 EY7a4si3JsabtHLvHKwvvTOCIKbYosoV7BSBKzRBwJQh6UNUYewNsr7v4R0V3dWx5A
-	 PW5NZv4R8FwSEAJUCuG10BMqrYl7fpLNPTwPwwDummScELFl+EhcjP0LfmtqQD7r6a
-	 i2Vz3xY3L7r0OPnjCYfxmll0aVizQLBq2vxMOZ0L8ogSqRw+lfziPRdfthBttw0s2i
-	 iFALL6VsgNxPw==
-Message-ID: <00814663a5df16795d1eef6fab139b2d65e8d467.camel@kernel.org>
-Subject: Re: [PATCH v2 0/4] fs: add immutable rootfs
+	b=dHd56cTAplYkuCBzdrzYgmGzJozpomyTckALaqU6ILsdgytAvD/LMYQ7npF860gon
+	 PltwvDxWbbCGmL/fBJ3vu80b5x6iFjs4cwfSxgax+VgLbKbHmdr6gnWO4Vy7PkLL02
+	 xjlQ/9VwN9J8gYSJ4GvzbG+TH0iIl4T13USJNBu2bT7FpjWvUtt7V+pKJvkOdqWdWA
+	 yFkzwZyoQv8RUGZolPIDJMW8UdHJyqJ6LT4wqBug1fbNyYZX+FB8MFLp8rud4BSwW5
+	 lgX3eo0Td8QCyk37eTtE5bvMfcdnNaaZWQRzblioPYfF8XXnVTi04k6Qk+igRv7gPW
+	 lXY5ejHwhZ7VQ==
+Message-ID: <e26aace854f9aa6a7aab35a2705aaa5a95732775.camel@kernel.org>
+Subject: Re: [RFC PATCH 5/4] fs: use nullfs unconditionally as the real
+ rootfs
 From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Amir
- Goldstein <amir73il@gmail.com>, Lennart Poettering
- <lennart@poettering.net>, Zbigniew =?UTF-8?Q?J=C4=99drzejewski-Szmek?=	
- <zbyszek@in.waw.pl>, Josef Bacik <josef@toxicpanda.com>,
- stable@vger.kernel.org
-Date: Wed, 14 Jan 2026 06:58:04 -0500
-In-Reply-To: <20260112-work-immutable-rootfs-v2-0-88dd1c34a204@kernel.org>
-References: <20260112-work-immutable-rootfs-v2-0-88dd1c34a204@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+  Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Lennart
+ Poettering	 <lennart@poettering.net>, Zbigniew
+ =?UTF-8?Q?J=C4=99drzejewski-Szmek?=	 <zbyszek@in.waw.pl>, Josef Bacik
+ <josef@toxicpanda.com>
+Date: Wed, 14 Jan 2026 07:05:27 -0500
+In-Reply-To: <20260114-nennwert-pixeln-da3a611f7c40@brauner>
+References: <20260114-zarte-zerrbild-0e20b46eb1a6@brauner>
+	 <20260114-nennwert-pixeln-da3a611f7c40@brauner>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -135,76 +137,257 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Mon, 2026-01-12 at 16:47 +0100, Christian Brauner wrote:
-> Currently pivot_root() doesn't work on the real rootfs because it
-> cannot be unmounted. Userspace has to do a recursive removal of the
-> initramfs contents manually before continuing the boot.
+On Wed, 2026-01-14 at 11:32 +0100, Christian Brauner wrote:
+> Remove the "nullfs_rootfs" boot parameter and try to simply always use
+> nullfs. The mutable rootfs will be mounted on top of it. Systems that
+> don't use pivot_root() to pivot away from the real rootfs will have an
+> additional mount stick around but that shouldn't be a problem at all. If
+> it is we'll rever this commit.
 >=20
-> Really all we want from the real rootfs is to serve as the parent mount
-> for anything that is actually useful such as the tmpfs or ramfs for
-> initramfs unpacking or the rootfs itself. There's no need for the real
-> rootfs to actually be anything meaningful or useful. Add a immutable
-> rootfs called "nullfs" that can be selected via the "nullfs_rootfs"
-> kernel command line option.
+> This also simplifies the boot process and removes the need for the
+> traditional switch_root workarounds.
 >=20
-> The kernel will mount a tmpfs/ramfs on top of it, unpack the initramfs
-> and fire up userspace which mounts the rootfs and can then just do:
->=20
->   chdir(rootfs);
->   pivot_root(".", ".");
->   umount2(".", MNT_DETACH);
->=20
-> and be done with it. (Ofc, userspace can also choose to retain the
-> initramfs contents by using something like pivot_root(".", "/initramfs")
-> without unmounting it.)
->=20
-> Technically this also means that the rootfs mount in unprivileged
-> namespaces doesn't need to become MNT_LOCKED anymore as it's guaranteed
-> that the immutable rootfs remains permanently empty so there cannot be
-> anything revealed by unmounting the covering mount.
->=20
-> In the future this will also allow us to create completely empty mount
-> namespaces without risking to leak anything.
->=20
-> systemd already handles this all correctly as it tries to pivot_root()
-> first and falls back to MS_MOVE only when that fails.
->=20
-> This goes back to various discussion in previous years and a LPC 2024
-> presentation about this very topic.
->=20
-> Now in vfs-7.0.nullfs.
->=20
+> Suggested-by: Jeff Layton <jlayton@kernel.org>
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
-> Changes in v2:
-> - Rename to "nullfs".
-> - Update documentation.
-> - Link to v1: https://patch.msgid.link/20260102-work-immutable-rootfs-v1-=
-0-f2073b2d1602@kernel.org
+>  .../filesystems/ramfs-rootfs-initramfs.rst    | 24 ++-----
+>  fs/namespace.c                                | 64 ++++++-------------
+>  init/do_mounts.c                              | 20 ++----
+>  init/do_mounts.h                              |  1 -
+>  4 files changed, 32 insertions(+), 77 deletions(-)
 >=20
-> ---
-> Christian Brauner (4):
->       fs: ensure that internal tmpfs mount gets mount id zero
->       fs: add init_pivot_root()
->       fs: add immutable rootfs
->       docs: mention nullfs
->=20
->  .../filesystems/ramfs-rootfs-initramfs.rst         |  32 +++-
->  fs/Makefile                                        |   2 +-
->  fs/init.c                                          |  17 ++
->  fs/internal.h                                      |   1 +
->  fs/mount.h                                         |   1 +
->  fs/namespace.c                                     | 181 ++++++++++++++-=
-------
->  fs/nullfs.c                                        |  70 ++++++++
->  include/linux/init_syscalls.h                      |   1 +
->  include/uapi/linux/magic.h                         |   1 +
->  init/do_mounts.c                                   |  14 ++
->  init/do_mounts.h                                   |   1 +
->  11 files changed, 254 insertions(+), 67 deletions(-)
-> ---
-> base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-> change-id: 20260102-work-immutable-rootfs-b5f23e0f5a27
+> diff --git a/Documentation/filesystems/ramfs-rootfs-initramfs.rst b/Docum=
+entation/filesystems/ramfs-rootfs-initramfs.rst
+> index a8899f849e90..165117a721ce 100644
+> --- a/Documentation/filesystems/ramfs-rootfs-initramfs.rst
+> +++ b/Documentation/filesystems/ramfs-rootfs-initramfs.rst
+> @@ -76,13 +76,8 @@ What is rootfs?
+>  ---------------
+> =20
+>  Rootfs is a special instance of ramfs (or tmpfs, if that's enabled), whi=
+ch is
+> -always present in 2.6 systems.  Traditionally, you can't unmount rootfs =
+for
+> -approximately the same reason you can't kill the init process; rather th=
+an
+> -having special code to check for and handle an empty list, it's smaller =
+and
+> -simpler for the kernel to just make sure certain lists can't become empt=
+y.
+> -
+> -However, if the kernel is booted with "nullfs_rootfs", an immutable empt=
+y
+> -filesystem called nullfs is used as the true root, with the mutable root=
+fs
+> +always present in Linux systems.  The kernel uses an immutable empty fil=
+esystem
+> +called nullfs as the true root of the VFS hierarchy, with the mutable ro=
+otfs
+>  (tmpfs/ramfs) mounted on top of it.  This allows pivot_root() and unmoun=
+ting
+>  of the initramfs to work normally.
+> =20
+> @@ -126,25 +121,14 @@ All this differs from the old initrd in several way=
+s:
+>      program.  See the switch_root utility, below.)
+> =20
+>    - When switching another root device, initrd would pivot_root and then
+> -    umount the ramdisk.  Traditionally, initramfs is rootfs: you can nei=
+ther
+> -    pivot_root rootfs, nor unmount it.  Instead delete everything out of
+> -    rootfs to free up the space (find -xdev / -exec rm '{}' ';'), overmo=
+unt
+> -    rootfs with the new root (cd /newmount; mount --move . /; chroot .),
+> -    attach stdin/stdout/stderr to the new /dev/console, and exec the new=
+ init.
+> -
+> -    Since this is a remarkably persnickety process (and involves deletin=
+g
+> -    commands before you can run them), the klibc package introduced a he=
+lper
+> -    program (utils/run_init.c) to do all this for you.  Most other packa=
+ges
+> -    (such as busybox) have named this command "switch_root".
+> -
+> -    However, if the kernel is booted with "nullfs_rootfs", pivot_root() =
+works
+> +    umount the ramdisk.  With nullfs as the true root, pivot_root() work=
+s
+>      normally from the initramfs.  Userspace can simply do::
+> =20
+>        chdir(new_root);
+>        pivot_root(".", ".");
+>        umount2(".", MNT_DETACH);
+> =20
+> -    This is the preferred method when nullfs_rootfs is enabled.
+> +    This is the preferred method for switching root filesystems.
+> =20
+>  Populating initramfs:
+>  ---------------------
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index a44ebb2f1161..53d1055c1825 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -75,17 +75,6 @@ static int __init initramfs_options_setup(char *str)
+> =20
+>  __setup("initramfs_options=3D", initramfs_options_setup);
+> =20
+> -bool nullfs_rootfs =3D false;
+> -
+> -static int __init nullfs_rootfs_setup(char *str)
+> -{
+> -	if (*str)
+> -		return 0;
+> -	nullfs_rootfs =3D true;
+> -	return 1;
+> -}
+> -__setup("nullfs_rootfs", nullfs_rootfs_setup);
+> -
+>  static u64 event;
+>  static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
+>  static DEFINE_IDA(mnt_group_ida);
+> @@ -4593,10 +4582,9 @@ int path_pivot_root(struct path *new, struct path =
+*old)
+>   * pointed to by put_old must yield the same directory as new_root. No o=
+ther
+>   * file system may be mounted on put_old. After all, new_root is a mount=
+point.
+>   *
+> - * Also, the current root cannot be on the 'rootfs' (initial ramfs) file=
+system
+> - * unless the kernel was booted with "nullfs_rootfs". See
+> - * Documentation/filesystems/ramfs-rootfs-initramfs.rst for alternatives
+> - * in this situation.
+> + * The immutable nullfs filesystem is mounted as the true root of the VF=
+S
+> + * hierarchy. The mutable rootfs (tmpfs/ramfs) is layered on top of this=
+,
+> + * allowing pivot_root() to work normally from initramfs.
+>   *
+>   * Notes:
+>   *  - we don't move root/cwd if they are not at the root (reason: if som=
+ething
+> @@ -5993,49 +5981,39 @@ static void __init init_mount_tree(void)
+>  	struct path root;
+> =20
+>  	/*
+> -	 * When nullfs is used, we create two mounts:
+> +	 * We create two mounts:
+>  	 *
+>  	 * (1) nullfs with mount id 1
+>  	 * (2) mutable rootfs with mount id 2
+>  	 *
+>  	 * with (2) mounted on top of (1).
+>  	 */
+> -	if (nullfs_rootfs) {
+> -		nullfs_mnt =3D vfs_kern_mount(&nullfs_fs_type, 0, "nullfs", NULL);
+> -		if (IS_ERR(nullfs_mnt))
+> -			panic("VFS: Failed to create nullfs");
+> -	}
+> +	nullfs_mnt =3D vfs_kern_mount(&nullfs_fs_type, 0, "nullfs", NULL);
+> +	if (IS_ERR(nullfs_mnt))
+> +		panic("VFS: Failed to create nullfs");
+> =20
+>  	mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", initramfs_options)=
+;
+>  	if (IS_ERR(mnt))
+>  		panic("Can't create rootfs");
+> =20
+> -	if (nullfs_rootfs) {
+> -		VFS_WARN_ON_ONCE(real_mount(nullfs_mnt)->mnt_id !=3D 1);
+> -		VFS_WARN_ON_ONCE(real_mount(mnt)->mnt_id !=3D 2);
+> +	VFS_WARN_ON_ONCE(real_mount(nullfs_mnt)->mnt_id !=3D 1);
+> +	VFS_WARN_ON_ONCE(real_mount(mnt)->mnt_id !=3D 2);
+> =20
+> -		/* The namespace root is the nullfs mnt. */
+> -		mnt_root		=3D real_mount(nullfs_mnt);
+> -		init_mnt_ns.root	=3D mnt_root;
+> +	/* The namespace root is the nullfs mnt. */
+> +	mnt_root		=3D real_mount(nullfs_mnt);
+> +	init_mnt_ns.root	=3D mnt_root;
+> =20
+> -		/* Mount mutable rootfs on top of nullfs. */
+> -		root.mnt		=3D nullfs_mnt;
+> -		root.dentry		=3D nullfs_mnt->mnt_root;
+> +	/* Mount mutable rootfs on top of nullfs. */
+> +	root.mnt		=3D nullfs_mnt;
+> +	root.dentry		=3D nullfs_mnt->mnt_root;
+> =20
+> -		LOCK_MOUNT_EXACT(mp, &root);
+> -		if (unlikely(IS_ERR(mp.parent)))
+> -			panic("VFS: Failed to mount rootfs on nullfs");
+> -		scoped_guard(mount_writer)
+> -			attach_mnt(real_mount(mnt), mp.parent, mp.mp);
+> +	LOCK_MOUNT_EXACT(mp, &root);
+> +	if (unlikely(IS_ERR(mp.parent)))
+> +		panic("VFS: Failed to mount rootfs on nullfs");
+> +	scoped_guard(mount_writer)
+> +		attach_mnt(real_mount(mnt), mp.parent, mp.mp);
+> =20
+> -		pr_info("VFS: Finished mounting rootfs on nullfs\n");
+> -	} else {
+> -		VFS_WARN_ON_ONCE(real_mount(mnt)->mnt_id !=3D 1);
+> -
+> -		/* The namespace root is the mutable rootfs. */
+> -		mnt_root		=3D real_mount(mnt);
+> -		init_mnt_ns.root	=3D mnt_root;
+> -	}
+> +	pr_info("VFS: Finished mounting rootfs on nullfs\n");
+> =20
+>  	/*
+>  	 * We've dropped all locks here but that's fine. Not just are we
+> diff --git a/init/do_mounts.c b/init/do_mounts.c
+> index 675397c8a7a4..df6847bcf1f2 100644
+> --- a/init/do_mounts.c
+> +++ b/init/do_mounts.c
+> @@ -493,21 +493,15 @@ void __init prepare_namespace(void)
+>  out:
+>  	devtmpfs_mount();
+> =20
+> -	if (nullfs_rootfs) {
+> -		if (init_pivot_root(".", ".")) {
+> -			pr_err("VFS: Failed to pivot into new rootfs\n");
+> -			return;
+> -		}
+> -		if (init_umount(".", MNT_DETACH)) {
+> -			pr_err("VFS: Failed to unmount old rootfs\n");
+> -			return;
+> -		}
+> -		pr_info("VFS: Pivoted into new rootfs\n");
+> +	if (init_pivot_root(".", ".")) {
+> +		pr_err("VFS: Failed to pivot into new rootfs\n");
+>  		return;
+>  	}
+> -
+> -	init_mount(".", "/", NULL, MS_MOVE, NULL);
+> -	init_chroot(".");
+> +	if (init_umount(".", MNT_DETACH)) {
+> +		pr_err("VFS: Failed to unmount old rootfs\n");
+> +		return;
+> +	}
+> +	pr_info("VFS: Pivoted into new rootfs\n");
+>  }
+> =20
+>  static bool is_tmpfs;
+> diff --git a/init/do_mounts.h b/init/do_mounts.h
+> index fbfee810aa89..6069ea3eb80d 100644
+> --- a/init/do_mounts.h
+> +++ b/init/do_mounts.h
+> @@ -15,7 +15,6 @@
+>  void  mount_root_generic(char *name, char *pretty_name, int flags);
+>  void  mount_root(char *root_device_name);
+>  extern int root_mountflags;
+> -extern bool nullfs_rootfs;
+> =20
+>  static inline __init int create_dev(char *name, dev_t dev)
+>  {
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+I like the idea of getting rid of the command-line option. Anything we
+can do to make this more automatic seems like a good idea.
+
+If you're worried about it, you could flip the command-line option
+around: do the new method by default, but allow a command-line option=20
+that makes it set up the rootfs the old way.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
