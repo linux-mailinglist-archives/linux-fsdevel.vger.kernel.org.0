@@ -1,109 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-73839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7EBD219F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 23:39:00 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE61D21A5E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 23:46:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 799C6301D1C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:36:56 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id E50043007530
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 22:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFE83B5312;
-	Wed, 14 Jan 2026 22:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9C533EB0C;
+	Wed, 14 Jan 2026 22:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeTB3veu"
+	dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b="eFUj2+SZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-244120.protonmail.ch (mail-244120.protonmail.ch [109.224.244.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307DA35502A;
-	Wed, 14 Jan 2026 22:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C6B34217C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 22:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768430160; cv=none; b=OnmVyg0c0byOGh0WupfPEXctnSsL6LwQZPK2QXTtrfR0U1kba2PDfcbZ/qpVVcNOWYIz0QX+wCRpjTQJXRkLKHw0/5OxlvS6Eq5Q8akIBW6/IZpdI7R/d8XtRW/50hWyqr7cnAELEXFVwSDajOSyOEfUlxsJ2J0sHpmHz5TAp14=
+	t=1768430772; cv=none; b=SYPjhYdcubUh+UKoe25S6PtCgRP59m9IUsqlZ07cEXwWEBbI+0j6AT91xrEH0BsfL/bzqk3aJPxqA0N7Q7mG/Fo8w2rvvAbq8zsmi8tdx7gK9ixkYnwZ1o7YTwm21NEvrmwgC5rF+6i0MykdtfvMtX42rcLXX1EWHFcdd1eq39k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768430160; c=relaxed/simple;
-	bh=b5/3DQjQA9EXl8io9tA//lDMRsaMGLjSrpkfvbD0DYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atpBUvo2ADARdhRNUuDmwrcRRtwPz1FJp6A1JUh6Pfnlf0WQ2mB5YBxixvNOIBkM0O+e9ccQ1C1Tbwn0nps0ciG0dI1tBTlmYSBO9g+lu/hrRzgGfpD5PTJCtlC4QI9pjpgJbtkcNknpCq8C7D7NtKYw/wgzxQuH775cttx2bv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AeTB3veu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A35CEC4CEF7;
-	Wed, 14 Jan 2026 22:35:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768430158;
-	bh=b5/3DQjQA9EXl8io9tA//lDMRsaMGLjSrpkfvbD0DYY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AeTB3veulDOxVFJA7q/2kxNU/YOfNDPHu6RWoNwbDb+p52Lqp2vufat85saIIZbG4
-	 a70VwG02F+CwP/YQo+ALxKJXoIlIZICbdotxgLb3Hq3M2w9oCAxB7JJy4wEBJ3fyUE
-	 gqINc4CIzOOj/K7fTPLWP9NL4IAcqebt1QnbpGcwmZ19mrTaw5+Q8e9/TCqDDuRVF4
-	 r1yiAWVnJLrWxqgufgOn5ligfu34K6+YwW3R3NGCtEFh1sD2swvknfS8ErF2jbknIr
-	 +nTcRcYGw+5vHLr3linYgLbDJyzc1aUHNcTuiXOr+w2+gZ00CKCHZlojcKG+e0BuHL
-	 Wtf0oHrXpl6Hw==
-Date: Wed, 14 Jan 2026 14:35:58 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>, Qu Wenruo <wqu@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-block@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 06/14] iomap: fix submission side handling of completion
- side errors
-Message-ID: <20260114223558.GK15551@frogsfrogsfrogs>
-References: <20260114074145.3396036-1-hch@lst.de>
- <20260114074145.3396036-7-hch@lst.de>
+	s=arc-20240116; t=1768430772; c=relaxed/simple;
+	bh=rjUINxRg3lij1vjSj2qQ2xhM44Ragv9fEYuNPxN3ll8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B+Qe1G4n6dKxztFeeRiYTkMCRT4x02kI2/JkoQZYADrbBSelq2aR8V5mKyLLondnOsE8mXZn+QAJpJp+6f8+wbTGHRlK0XKYI+eFjaX8lQACW+by7wS8zBWSiAlw51lj9NqUU/9SL6SGuFZdbJNp0LfJcn1jtfn/utAkViDGCZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link; spf=pass smtp.mailfrom=spawn.link; dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b=eFUj2+SZ; arc=none smtp.client-ip=109.224.244.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spawn.link
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=spawn.link;
+	s=protonmail; t=1768430754; x=1768689954;
+	bh=rjUINxRg3lij1vjSj2qQ2xhM44Ragv9fEYuNPxN3ll8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=eFUj2+SZtQLEg353szH9QR5TwPcaqEm0Uw8aJO+jAP0aANErktl7Mzte24oGp9C6k
+	 8MK8FtVCfX6Hxp1Gl5vDL+PvkkkuM5kE6eMIkeW79kK880PVJOjFRVpOU9mRfomdD5
+	 oEg64l42TcRO2B0o2TfsiR8d399eG9E3BFvXjd2d6164e6TLb0TU7UKXsGqpXNy7J2
+	 7Rnhc3DkkycXzoUTdslM71Q37Py91zQvLvi8U3mIzTLuqzMgE2STLyirEB/yWEJKIo
+	 87SVDUudLu+o7acn6n0dR2VwzYtpMidLbQDF3M/omjpKx1SG8Azrip6jFv2CskjQ2a
+	 MZUK4rzrGqObw==
+Date: Wed, 14 Jan 2026 22:45:52 +0000
+To: Trond Myklebust <trondmy@kernel.org>
+From: Antonio SJ Musumeci <trapexit@spawn.link>
+Cc: linux-fsdevel@vger.kernel.org, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, Miklos Szeredi <miklos@szeredi.hu>, "j.schueth@jotschi.de" <j.schueth@jotschi.de>
+Subject: Re: NFSv4 + FUSE xattr user namespace regression/change?
+Message-ID: <e5-exnk0NS5Bsw0Ir_wplkePzOzCUPSsez9oqF7OVAAq3DASvNJ62B9EuQbvIqHitDgxtVnu74QYDYVEQ8rCCU74p4YupWxaKZNN34EPKUY=@spawn.link>
+In-Reply-To: <8f5bb04853073dc620b5a6ebc116942a9b0a2b5c.camel@kernel.org>
+References: <32Xtx4IaYj8nhPIXtt0gPimTRQy4RNjzmsqI1vQB1YBpRes0TEgu6zVzWbBEcn2U6ZxB14BD9vakmezNyhdXDt3CVGO8WYGxHSZZ1qtQVy8=@spawn.link> <8f5bb04853073dc620b5a6ebc116942a9b0a2b5c.camel@kernel.org>
+Feedback-ID: 55718373:user:proton
+X-Pm-Message-ID: fa18c74e426bd7f87776fc9df0629b8f8443b585
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260114074145.3396036-7-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 14, 2026 at 08:41:04AM +0100, Christoph Hellwig wrote:
-> The "if (dio->error)" in iomap_dio_bio_iter exists to stop submitting
-> more bios when a completion already return an error.  Commit cfe057f7db1f
-> ("iomap_dio_actor(): fix iov_iter bugs") made it revert the iov by
-> "copied", which is very wrong given that we've already consumed that
-> range and submitted a bio for it.
+The user (cc'ed) said they have tested numerous recent releases including 6=
+.18.5 (on both client and server.)
 
-Is it possible for the error to be ENOTBLK and the caller wants to fall
-back to buffered IO?  I /think/ the answer is "no" because only the
-->iomap_begin methods (and therefore iomap_iter()) should be doing that,
-and we mask the ENOTBLK and pretend it's a short write.  Right?
 
---D
 
-> Fixes: cfe057f7db1f ("iomap_dio_actor(): fix iov_iter bugs")
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/iomap/direct-io.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 8e273408453a..6ec4940e019c 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -442,9 +442,13 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
->  	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
->  	do {
->  		size_t n;
-> -		if (dio->error) {
-> -			iov_iter_revert(dio->submit.iter, copied);
-> -			copied = ret = 0;
-> +
-> +		/*
-> +		 * If completions already occurred and reported errors, give up now and
-> +		 * don't bother submitting more bios.
-> +		 */
-> +		if (unlikely(data_race(dio->error))) {
-> +			ret = 0;
->  			goto out;
->  		}
->  
-> -- 
-> 2.47.3
-> 
-> 
+On Wednesday, January 14th, 2026 at 1:27 PM, Trond Myklebust <trondmy@kerne=
+l.org> wrote:
+
+>=20
+>=20
+> On Wed, 2026-01-14 at 19:18 +0000, Antonio SJ Musumeci wrote:
+>=20
+> > You don't often get email from trapexit@spawn.link.
+> > Learn why this is important
+> >=20
+> > Forgive me but I've not had the chance to investigate this in detail
+> > but according to a user of mine[0] after a commit[1] between 6.15.10
+> > and 6.15.11 user namespaced xattr requests now return EOPNOSUPP when
+> > the FUSE filesystem is exported via NFS. It was replicated with other
+> > FUSE filesystems.
+> >=20
+> > Was this intentional? If "yes", what would be the proper way to
+> > support this?
+> >=20
+> > -Antonio
+> >=20
+> > [0] https://github.com/trapexit/mergerfs/issues/1607
+> > [1]
+> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/comm
+> > it/?id=3Da8ffee4abd8ec9d7a64d394e0306ae64ba139fd2
+>=20
+>=20
+> You should upgrade to a newer stable kernel.
+>=20
+> This issue has already been reported and fixed by commit 31f1a960ad1a
+> ("NFSv4: Don't clear capabilities that won't be reset").
+>=20
+>=20
+> --
+> Trond Myklebust
+> Linux NFS client maintainer, Hammerspace
+> trondmy@kernel.org, trond.myklebust@hammerspace.com
 
