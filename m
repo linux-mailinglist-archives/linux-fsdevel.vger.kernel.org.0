@@ -1,102 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-73755-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8C5D1F8D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:54:04 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC87D1F904
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 6CE63301E6B7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:53:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 60BEB308E603
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A13030EF63;
-	Wed, 14 Jan 2026 14:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD72A30C631;
+	Wed, 14 Jan 2026 14:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HDRMdjdt";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="BG3paoVW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CgJP9dG/";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="IhFhZqbn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F513093C6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 14:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B5330E0F0
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 14:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768402437; cv=none; b=cgo5C7NRudn8QU37CaRXel+9zA47+NY5Inu1IlClz7ihOEAETkQ3sRFRXYABTmoT0w8I6jYkK21yP/RybyaRlAlR+5FAouZcUwpTsjcB+X5tsUlRnndDKFHkJqtrzZtWDgQENSD/lkXOQ0r45sK4l38IZRNAvoFKGfFjBmg4DS4=
+	t=1768402439; cv=none; b=DgJ7ow1sDNVjfJ5ucsk34ptQpVqDTrc2Ag8PCeJx58zNUYTSYlcgBX7uuy2cchfDpsCEDCvz+BtpFw0yN0fKN3lY2gACetIbaTiC5OoJURY3mz719e0CRUaMdl7FJOotig9zQ4tN3emq9MG74pxPQAx6QeivRsuiiVPN01o5jrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768402437; c=relaxed/simple;
-	bh=3dvD91x1gqfTrKXdU+a3dgSQsKxVq8IhFA1l4oYjdL4=;
+	s=arc-20240116; t=1768402439; c=relaxed/simple;
+	bh=TeFpHi3OadLODwTeU3cLvwWccEE5trzQ3l72/BRpWCk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IzlnzRBc4VEZIL0G5ecdNteN76gHyvTwFM2uMpLvlMAWN5Ch0mN/2c94YvrP9vtdqDYOO0jvCeG531xqf2p2+RCu3Mh+PWN8nAUMHF5UWepED8kV8a6yG9LMvlNAupLOL4KbLfUH+ykOnS4K3e2Np5y/0fZBaQyluKT951hbKDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HDRMdjdt; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=BG3paoVW; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=DyPvKSDt9XBWJWnOlFaAe9aUdw0RqCQKAUBgGvU7Zskl/yN3wdIVaAas0Wh/N9l5MVslsI/7ED0ib+a5ByP4cPIluODu0yxEumJrOaI9+GUMcF4hG5P9MbYFiFlYyllqdDcbBmeXqbDjG/lOmfYTPN7vP9HsKa5Vd83ugIufvE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CgJP9dG/; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=IhFhZqbn; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768402434;
+	s=mimecast20190719; t=1768402436;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gWJB21+Zee85RGLzi70gGPDCJxYb/AI28Z0CqCfd5+M=;
-	b=HDRMdjdt0EkR3WdxBL0qk7uUglxLhC3rOZOvYEUqO6NzVGEgygBZt7LLGhQSVvDHfNdwrM
-	LrTX8Fr/Jld01pwMP7Ax9LHxqTYwcc1TO2RR4vkvb5qdL+AZ3967fsImsT98DM53JnIwHZ
-	tjfjOCnDfkoIOcc90AL5o2vhd1eFv+c=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=l/MdpdF6O35DO5R69+eDuTZv5XXA0pHiEm5pcvnzXwY=;
+	b=CgJP9dG/JsRhs9GTxylJEIViZ21eALGhtxJVnJpyinSycALNNqKLNTJ5RbibQRMmXI7pje
+	3TQx5Vk/21Kl5i8aN2nFrb66C+X4q/QlNpvsEUzAfMMN4HjTRBze7QQnSTDsMlKHvvsi+L
+	HBSxZYBfiE9hCImsaxWgCEMbGfOlWZU=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-529-kv-dF1I1MumvgK31aOf3eA-1; Wed, 14 Jan 2026 09:53:53 -0500
-X-MC-Unique: kv-dF1I1MumvgK31aOf3eA-1
-X-Mimecast-MFC-AGG-ID: kv-dF1I1MumvgK31aOf3eA_1768402432
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-650a191e47cso9125942a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 06:53:53 -0800 (PST)
+ us-mta-539-0aQrE59mPo2uFEcHL0tpxQ-1; Wed, 14 Jan 2026 09:53:54 -0500
+X-MC-Unique: 0aQrE59mPo2uFEcHL0tpxQ-1
+X-Mimecast-MFC-AGG-ID: 0aQrE59mPo2uFEcHL0tpxQ_1768402433
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b7fe37056e1so915471466b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 06:53:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1768402432; x=1769007232; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1768402433; x=1769007233; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gWJB21+Zee85RGLzi70gGPDCJxYb/AI28Z0CqCfd5+M=;
-        b=BG3paoVWtaHzekGgcOTDDhQ503yBMFWdW3zP74toM//qvaQH2Ar0f0aSIDAF9kfj57
-         pJPLfDBWQ2G4U2M7b2yyKryYEKm/K4zoa+5KeLx9thp1fZSzgng//D9Q2OSvHQUZD+fp
-         AI0L/q2j0/DH//IV9WzrYLWya39DDrV0AikoHveARzg4lpHxpx/3aKPym+96UwGwUG0/
-         96EsK0FpntWbm6zTv1lR9q4MTWsquMWonomOHLqPYZYaa7nFY8DuEqiTBJqk6bLqbK74
-         Xkn+JG1oPqRRmXjv7w4B5gvfLb/zH+YQjXTaqZ0vA1Kxlny7hOPHBtaiuY+iipVADnRm
-         8NPQ==
+        bh=l/MdpdF6O35DO5R69+eDuTZv5XXA0pHiEm5pcvnzXwY=;
+        b=IhFhZqbnMfvS9n2UQk+A1fKsiROOftudHucHBchmy9M3UUh2JbIQQ1rRc29mYsn1Ri
+         Febj5NdPS2kjW2JdIugYylYP4GAokJQRQ6yudnfl6R6DZ8h9CV7QweZ2ieIW8+kh52lP
+         Itun3QZAQj7aOH/B8BmSlsAOskomLArMBy5asyWR7yz7iXKhqyS6tiE+DFdZDreP2Kjv
+         xIbQ70DG1oxSuZiuvwTt2cVCXydbcEMqr2IOOkAf8XotRt4ijAUn/tdy9eij8zic1HnS
+         /ajGOUjo3B1Suf7PTxbpY7jsW/z66Q7NIqiC3r8AE+lSrjmuvUKyn+LZvqzBJ30SBv2H
+         T9bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768402432; x=1769007232;
+        d=1e100.net; s=20230601; t=1768402433; x=1769007233;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=gWJB21+Zee85RGLzi70gGPDCJxYb/AI28Z0CqCfd5+M=;
-        b=TkXoqN2Docd3YJJmQqHibsbsESloB6+km+Bp5YNOXLRmNLjDp0cRcMwE5Zg2uuE8f4
-         tWynbkYkOmFnL1Xgz7P9gn0ctOsZ7WatW/N/6q/x0b3SH2uoYG/08lUcwqNXV0usfu/b
-         GCNLeKqYqIydaRzBHyLFGFNL5/JUxhfdB1QlkAmqWFYeki9xQDsKVnioWPTCcpx8c4Ye
-         31a2cmNdKagPS1WMndPuVOVqDd1LI+/bYFBcYgfVeN32jEtSzXlHhA0C5FC47aFLqlNN
-         XZO090MiYo1c98B6vr46YzV5NOvVQFl952JMTCbVtrrZt+YDhYw1zYsCRAsw5Lu8p3o9
-         0XSw==
-X-Gm-Message-State: AOJu0YydRhJnNk/QcEnxeEKPJvSLL48LsGGS6I+wyV9GuUncktbH0Jmn
-	R7JgNdncIzIepldryQdFvf/lgJ17DJrAHrR4O5Zgbo5iDWlluP9VJyH1CVJeJLBG+1lYj7bv5IT
-	dZPMJ9YYimn8uaI4q+c7RIvzYigoI23w6uPgR60vO9DXWNoVncsBMK/6CNHWwRXcaWBAdSLOU8b
-	owCubSkHp8XXeOZtcStmpgcsx4bWM6/00FC2iLna5Me2z7MZqBUqU=
-X-Gm-Gg: AY/fxX7Dnwqr6cpziMcbNOFmnPtrMF04J6k4DINgXFxEZpOb+zN1JSzhzpOyNb/p6V1
-	3JvoAidTMxpCnYxn5l0ceb8pDiZXd7ETp8yY7rf9YVOZz8UcM93CRclbITLIFKEn0sPKFBm5HYd
-	wd9vMxkn5hjMvjBy5hQc8AgaWIfP1UOQLrtrJjMA6f/EMSzCFdvettRkAFwxG4krFfjSaVnZUCM
-	KYAUimuVGa03i4T7boKV12LxQ/agpV8uep1phXphC9lWfkaaOOMJwOJqi9nXy2qYGSPq/F6R3RB
-	YAH+f9tlb0FEp/pO07QyJtUB1d1V3prOhad79HCqPnsH0gXirJIOKhsYQnG79DqEVXsnahNx2he
-	qaPFIR7CObI+feUdORaXKVikn6vosRQBEVCesjgoyjanbJavIRljnNp1syqNdtSov
-X-Received: by 2002:a05:6402:3592:b0:640:cdad:d2c0 with SMTP id 4fb4d7f45d1cf-653ee1b1c24mr2018078a12.25.1768402432255;
+        bh=l/MdpdF6O35DO5R69+eDuTZv5XXA0pHiEm5pcvnzXwY=;
+        b=Vb+T4kJz0obJG/hp809hJPRMELzbMgUCRNY8QtQOoaHv/B1HE1WTC5wsx9iLVs2AFL
+         l+upOkgyP5EWc2Mb9otdWOKrzW9TXg5arubaZVdwSnITMSMfZZz8iJUrHhqB9SqLcz/y
+         qS0V1Q3XuIPqTtdwBUGCm2HybcRXQesLdaswJ8zpXvkfhxgZ8OQ2O8OWRV+BQRS+rdSw
+         0xuu6d+8EVcxGN35sT5nB5reRAwEmowdV0vix4XiYGp2VSDqINctzqtv2zygTtp94phO
+         gNQ5FOBCb++d8aCt0KqrOXvHt0R5FiTAJiu8/0cgJbXQL+vve5a+w6AEYsXB+Z1pGa/B
+         STVQ==
+X-Gm-Message-State: AOJu0YwI/7VRvBCYfnl/6NMqMgdNftTQ46qIJaQ1E0BnbsmXbD7Xd5B4
+	nLvXkpt8eN61jvYokOFaUL9uYh3ic2VqJdAIJdnZWVvM4IK/CldGDewcLUWtS0vuenCcwJjjWuK
+	XNSY4FAH9vxCMxm/XWixIKR/UjdR9Bcq4mrdrLteyhZeAHoiq/pbft1OF1kuVZCgOFrz6O/+1hi
+	6CDredVngeqgi2XPZU9jPvCXZj46c3MuvsLLOnSTt61bUtLhEr2Ow=
+X-Gm-Gg: AY/fxX60tm9BR62+ZAuCLxJyeJqHhx2F6pijUqn108KKZvOiK1xJIM0C7FnR0vMGXPe
+	AXLUIB7VIM5nmWWbcicMQUs0JY6LqJo0LpyNe5zvSRWxfKBOXv6FSBDuoUqbTBUvSXJmLhbakzL
+	OTEYc1KcAD/XmRnJfi2n1spima5F8xqgtAUMRA1AvP1VjOYNK3Ot665lNpPO9Ex3baq/gOgTQTt
+	U/IDiAbpsSEAJV7hUE+KpbR2Eq9v8wFwqSOL1ehTC3ky2lKBrrQsBYNUbUzOFziBJIq3EE10uX2
+	yCDVdUrfjgsOJ8m+nFVxZTY4QYirSPsmwA3AEFFrf+aTNmyNB5xrXKZL2IapqGCz7HliNuwjYdu
+	I9nutFVsrRW7mfqrr1uO8IVw/s6D7/hfCZTDPoxnHJnAiHWFXQYjTroOb81YKhuzO
+X-Received: by 2002:a17:906:4fcb:b0:b86:fd46:724 with SMTP id a640c23a62f3a-b8760f94c82mr257264766b.13.1768402433232;
+        Wed, 14 Jan 2026 06:53:53 -0800 (PST)
+X-Received: by 2002:a17:906:4fcb:b0:b86:fd46:724 with SMTP id a640c23a62f3a-b8760f94c82mr257262066b.13.1768402432716;
         Wed, 14 Jan 2026 06:53:52 -0800 (PST)
-X-Received: by 2002:a05:6402:3592:b0:640:cdad:d2c0 with SMTP id 4fb4d7f45d1cf-653ee1b1c24mr2018058a12.25.1768402431843;
-        Wed, 14 Jan 2026 06:53:51 -0800 (PST)
 Received: from maszat.piliscsaba.szeredi.hu (193-226-246-7.pool.digikabel.hu. [193.226.246.7])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507bf6d5absm23059608a12.33.2026.01.14.06.53.50
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507bf6d5absm23059608a12.33.2026.01.14.06.53.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 06:53:51 -0800 (PST)
+        Wed, 14 Jan 2026 06:53:52 -0800 (PST)
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: Luis Henriques <luis@igalia.com>,
 	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4/6] fuse: clean up fuse_dentry_tree_work()
-Date: Wed, 14 Jan 2026 15:53:41 +0100
-Message-ID: <20260114145344.468856-5-mszeredi@redhat.com>
+Subject: [PATCH 5/6] fuse: shrink once after all buckets have been scanned
+Date: Wed, 14 Jan 2026 15:53:42 +0100
+Message-ID: <20260114145344.468856-6-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260114145344.468856-1-mszeredi@redhat.com>
 References: <20260114145344.468856-1-mszeredi@redhat.com>
@@ -108,57 +108,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-- Change time_after64() time_before64(), since the latter is exclusively
-  used in this file to compare dentry/inode timeout with current time.
+In fuse_dentry_tree_work() move the shrink_dentry_list() out from the loop.
 
-- Move the break statement from the else branch to the if branch, reducing
-  indentation.
-
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/fuse/dir.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ fs/fuse/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 3910c5a53835..d8dd515d4bd6 100644
+index d8dd515d4bd6..fc1734758c8a 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -169,21 +169,21 @@ static void fuse_dentry_tree_work(struct work_struct *work)
- 		node = rb_first(&dentry_hash[i].tree);
- 		while (node) {
- 			fd = rb_entry(node, struct fuse_dentry, node);
--			if (time_after64(get_jiffies_64(), fd->time)) {
--				rb_erase(&fd->node, &dentry_hash[i].tree);
--				RB_CLEAR_NODE(&fd->node);
--				spin_lock(&fd->dentry->d_lock);
--				/* If dentry is still referenced, let next dput release it */
--				fd->dentry->d_flags |= DCACHE_OP_DELETE;
--				spin_unlock(&fd->dentry->d_lock);
--				d_dispose_if_unused(fd->dentry, &dispose);
--				if (need_resched()) {
--					spin_unlock(&dentry_hash[i].lock);
--					cond_resched();
--					spin_lock(&dentry_hash[i].lock);
--				}
--			} else
-+			if (!time_before64(fd->time, get_jiffies_64()))
- 				break;
-+
-+			rb_erase(&fd->node, &dentry_hash[i].tree);
-+			RB_CLEAR_NODE(&fd->node);
-+			spin_lock(&fd->dentry->d_lock);
-+			/* If dentry is still referenced, let next dput release it */
-+			fd->dentry->d_flags |= DCACHE_OP_DELETE;
-+			spin_unlock(&fd->dentry->d_lock);
-+			d_dispose_if_unused(fd->dentry, &dispose);
-+			if (need_resched()) {
-+				spin_unlock(&dentry_hash[i].lock);
-+				cond_resched();
-+				spin_lock(&dentry_hash[i].lock);
-+			}
+@@ -187,8 +187,8 @@ static void fuse_dentry_tree_work(struct work_struct *work)
  			node = rb_first(&dentry_hash[i].tree);
  		}
  		spin_unlock(&dentry_hash[i].lock);
+-		shrink_dentry_list(&dispose);
+ 	}
++	shrink_dentry_list(&dispose);
+ 
+ 	if (inval_wq)
+ 		schedule_delayed_work(&dentry_tree_work,
 -- 
 2.52.0
 
