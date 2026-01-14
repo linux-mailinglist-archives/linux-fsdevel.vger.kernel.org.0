@@ -1,36 +1,36 @@
-Return-Path: <linux-fsdevel+bounces-73670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 320A9D1E8D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 12:51:53 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3978DD1E8D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 12:52:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B23B9308E47A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 11:48:30 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 552FB3054C35
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 11:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE995396B9D;
-	Wed, 14 Jan 2026 11:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B887C399020;
+	Wed, 14 Jan 2026 11:48:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B7E396B7A;
-	Wed, 14 Jan 2026 11:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4B2397AA1;
+	Wed, 14 Jan 2026 11:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768391282; cv=none; b=E6+N1/t98M8uStD178Jh1V1zatkly6Y6psgmFGicKnLpfrvZ1R1ji9WILF4+phUEOdfG4Zh/8EQS2qj80L2BU7PLOBj/JR2H6MhU/9tBTlyQ/0i/AGhsLJkIoFhvPWY2GeQnXQL4DrU8Nfc16uUH4NhJyAiwYh0cEnexbhzwJsM=
+	t=1768391284; cv=none; b=gczZgdwPscvFBMNRiIsJXGY2t2IY/qXdcgZe0hmS4ImTaNvttXif9RyY21ZJTZoV8znC15qOZ4jV4Esi7rCIbnG5XsloCjBhd9CH5ArNfdxwZx5O7eKlWQEOP83S73KpStuiQtBPL2ntuQp6Cy9VQW+Soul7cmEdC1G9J6M//uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768391282; c=relaxed/simple;
-	bh=MTufYMwq/JeNdgK8txWNeCfSGGYSMI7enP91UUkaen4=;
+	s=arc-20240116; t=1768391284; c=relaxed/simple;
+	bh=sb8GSx2KVdCaDVSv8YzQ0hF6IsADgcr7Wff0YgVsrgM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kGk/gzrd6FrT8XXWuNHrm1cafEr5NTCx6+ggbY2UEckwz+Yo2jOvfymrPJRdHhkbypiRe0GA42fmcEcY2+G1aDoAsnE6DH92wwaCjdr9D74oPYLRueXQRzDQBfd/3kiTgdop8RoJznsYJ6I2zCEYw1vGuGufSUlETgEJzzW45CE=
+	 MIME-Version; b=bYUNckcG1aZast4ELpuAC4njuzJVijc7SkpfFJ9x+GfZqTMU606xRzV7QRjrKHpimdIEQayB1i0YwiY5btOb+lK1jHHjwEVczmANKGWmuWuWJg6eJA1nyNUR5GZAzTCOJ+PI6S67vl/8lSvGKG8NslVfigYoqISOXXhiYZjiJyc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D657497;
-	Wed, 14 Jan 2026 03:47:49 -0800 (PST)
-Received: from pluto.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 646DC3F59E;
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DEAB11424;
 	Wed, 14 Jan 2026 03:47:52 -0800 (PST)
+Received: from pluto.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45AC63F59E;
+	Wed, 14 Jan 2026 03:47:56 -0800 (PST)
 From: Cristian Marussi <cristian.marussi@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
@@ -51,9 +51,9 @@ Cc: sudeep.holla@arm.com,
 	philip.radford@arm.com,
 	souvik.chakravarty@arm.com,
 	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH v2 09/17] fs/stlmfs: Document ARM SCMI Telemetry filesystem
-Date: Wed, 14 Jan 2026 11:46:13 +0000
-Message-ID: <20260114114638.2290765-10-cristian.marussi@arm.com>
+Subject: [PATCH v2 10/17] firmware: arm_scmi: Add System Telemetry ioctls support
+Date: Wed, 14 Jan 2026 11:46:14 +0000
+Message-ID: <20260114114638.2290765-11-cristian.marussi@arm.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260114114638.2290765-1-cristian.marussi@arm.com>
 References: <20260114114638.2290765-1-cristian.marussi@arm.com>
@@ -65,218 +65,460 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce initial ARM SCMI Telemetry filesystem documentation.
+Extend the filesystem based interface with special 'control' files that can
+be used to configure and retrieve SCMI Telemetry data in binary form using
+the ioctls-based ABI described in uapi/linux/scmi.h.
+
+This alternative ABI is meant to provide a more performant access to SCMI
+Telemetry configuration and data events, without the hassle of navigating
+the human readable VFS based intwerface.
 
 Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
- Documentation/filesystems/stlmfs.rst | 198 +++++++++++++++++++++++++++
- 1 file changed, 198 insertions(+)
- create mode 100644 Documentation/filesystems/stlmfs.rst
+v1 --> v2
+ - Use new res_get() operation which use new resource accessors
+ - Use new de_lookup() tlm_ops
+ - Using cleanup.h
+---
+ .../firmware/arm_scmi/scmi_system_telemetry.c | 404 ++++++++++++++++++
+ 1 file changed, 404 insertions(+)
 
-diff --git a/Documentation/filesystems/stlmfs.rst b/Documentation/filesystems/stlmfs.rst
-new file mode 100644
-index 000000000000..7ea8878098f7
---- /dev/null
-+++ b/Documentation/filesystems/stlmfs.rst
-@@ -0,0 +1,198 @@
-+.. SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/firmware/arm_scmi/scmi_system_telemetry.c b/drivers/firmware/arm_scmi/scmi_system_telemetry.c
+index b48f2d4eecae..721de615bec3 100644
+--- a/drivers/firmware/arm_scmi/scmi_system_telemetry.c
++++ b/drivers/firmware/arm_scmi/scmi_system_telemetry.c
+@@ -24,6 +24,8 @@
+ #include <linux/string.h>
+ #include <linux/uaccess.h>
+ 
++#include <uapi/linux/scmi.h>
 +
-+=============================================
-+STLMFS - Arm SCMI Telemetry Pseudo Filesystem
-+=============================================
+ #define TLM_FS_MAGIC		0x75C01C80
+ #define TLM_FS_NAME		"stlmfs"
+ #define TLM_FS_MNT		"arm_telemetry"
+@@ -1056,6 +1058,406 @@ DEFINE_TLM_CLASS(grp_available_interval_tlmo, "available_update_intervals_ms",
+ DEFINE_TLM_CLASS(grp_intervals_discrete_tlmo, "intervals_discrete",
+ 		 TLM_IS_GROUP, S_IFREG | S_IRUSR, &intrv_discrete_fops, NULL);
+ 
++static long
++scmi_tlm_info_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	const struct scmi_telemetry_info *info = tlmi->priv;
++	void * __user uptr = (void * __user)arg;
 +
-+.. contents::
++	if (copy_to_user(uptr, &info->base, sizeof(info->base)))
++		return -EFAULT;
 +
-+Overview
-+========
++	return 0;
++}
 +
-+ARM SCMI is a System and Configuration Management protocol, based on a
-+client-server model, that defines a number of messages that allows a
-+client/agent like Linux to discover, configure and make use of services
-+provided by the server/platform firmware.
++static long
++scmi_tlm_intervals_get_ioctl(const struct scmi_tlm_inode *tlmi,
++			     unsigned long arg, bool is_group)
++{
++	struct scmi_tlm_intervals ivs, *tlm_ivs;
++	void * __user uptr = (void * __user)arg;
 +
-+SCMI v4.0 introduced support for System Telemetry, through which an agent
-+can dynamically enumerate configure and collect Telemetry Data Events (DE)
-+exposed by the platform.
++	if (copy_from_user(&ivs, uptr, sizeof(ivs)))
++		return -EFAULT;
 +
-+This filesystem, in turn, exposes to userspace the set of discovered DEs
-+allowing for their configuration and retrieval.
++	if (!is_group) {
++		const struct scmi_telemetry_info *info = tlmi->priv;
 +
-+Rationale
-+=========
++		tlm_ivs = info->intervals;
++	} else {
++		const struct scmi_telemetry_group *grp = tlmi->priv;
 +
-+**Why not using SysFS/KernFS or DebugFS ?**
++		tlm_ivs = grp->intervals;
++	}
 +
-+The provided userspace interface aims to satisfy 2 main concurrent
-+requirements:
++	if (ivs.num != tlm_ivs->num)
++		return -EINVAL;
 +
-+ - expose an FS-based human-readable interface that can be used to
-+   discover, configure and access Telemetry data directly from the
-+   shell
++	if (copy_to_user(uptr, tlm_ivs,
++			 sizeof(*tlm_ivs) + sizeof(u32) * ivs.num))
++		return -EFAULT;
 +
-+ - allow also alternative machine-friendly, more-performant, binary
-+   interfaces that can be used by custom tools without the overhead of
-+   multiple accesses through the VFS layers and the hassle of navigating
-+   vast filesystem tree structures
++	return 0;
++}
 +
-+All of the above is meant to be available on production systems, not
-+simply as a tool for development or testing, so no debugFS option here.
++static long
++scmi_tlm_de_config_set_ioctl(const struct scmi_tlm_inode *tlmi,
++			     unsigned long arg, bool all)
++{
++	const struct scmi_telemetry_res_info *rinfo;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_setup *tsp = tlmi->tsp;
++	struct scmi_tlm_de_config tcfg = {};
++	int ret;
 +
-+An initial design based on SysFS and chardev/ioctl based interfaces was
-+dropped in favour of this full-fledged filesystem implementation since:
++	if (copy_from_user(&tcfg, uptr, sizeof(tcfg)))
++		return -EFAULT;
 +
-+- SysFS is a standard way to expose device related properties using a few
-+  common helpers built on kernfs; this means, though, that unfortunately in
-+  our scenario we would have to generate a dummy simple device for each
-+  discovered DE.
-+  This by itself seems an abuse of the SysFS framework, but even ignoring
-+  this, the sheer number of potentially discoverable DEs (in the order of
-+  tens of thousands easily) would have led to the creation of a sensibly
-+  vast number of dummy DE devices.
++	if (!all)
++		return tsp->ops->state_set(tsp->ph, false, tcfg.id,
++					   (bool *)&tcfg.enable,
++					   (bool *)&tcfg.t_enable);
 +
-+- SysFS usage itself has its well-known constraints and best practices,
-+  like the one-file/one-value rule, that hardly cope with SCMI Telemetry
-+  needs.
++	rinfo = scmi_telemetry_res_info_get(tsp);
++	for (int i = 0; i < rinfo->num_des; i++) {
++		ret = tsp->ops->state_set(tsp->ph, false,
++					  rinfo->des[i]->info->id,
++					  (bool *)&tcfg.enable,
++					  (bool *)&tcfg.t_enable);
++		if (ret)
++			return ret;
++	}
 +
-+- The need to implement more complex file operations (ioctls/mmap) in
-+  order to support the alternative binary interfaces does not fit with
-+  SysFS/kernFS facilities.
++	return 0;
++}
 +
-+- Given the nature of the Telemetry protocol, the hybrid approach with
-+  chardev/ioctl was itself problematic: on one side being upper-limited
-+  in the number of chardev potentially created by the minor numbers
-+  availability, on the other side the hassle of having to maintain a
-+  completely different interface on the side of a FS based one.
++static long
++scmi_tlm_de_config_get_ioctl(const struct scmi_tlm_inode *tlmi,
++			     unsigned long arg)
++{
++	struct scmi_tlm_setup *tsp = tlmi->tsp;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_de_config tcfg = {};
++	int ret;
 +
-+Design
-+======
++	if (copy_from_user(&tcfg, uptr, sizeof(tcfg)))
++		return -EFAULT;
 +
-+STLMFS is a pseudo filesystem used to expose ARM SCMI Telemetry data
-+discovered dynamically at run-time via SCMI.
++	ret = tsp->ops->state_get(tsp->ph, tcfg.id,
++				  (bool *)&tcfg.enable, (bool *)&tcfg.t_enable);
++	if (ret)
++		return ret;
 +
-+Inodes are all dynamically created at mount-time from a dedicated
-+kmem_cache based on the gathered available SCMI Telemetry information.
++	if (copy_to_user(uptr, &tcfg, sizeof(tcfg)))
++		return -EFAULT;
 +
-+Since inodes represent the discovered Telemetry entities, which in turn are
-+statically defined at the platform level and immutable throughout the same
-+session (boot), allocated inodes are freed only at unmount-time and the
-+user is not allowed to delete or create any kind of file within the STLMFS
-+filesystem after mount has completed.
++	return 0;
++}
 +
-+A single instance of STLMFS is created at the filesystem level, using
-+get_single_tree(), given that the same SCMI backend entities will be
-+involved no matter how many times you mount it.
++static long
++scmi_tlm_config_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg,
++			  bool is_group)
++{
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_config cfg;
 +
-+Mountpoints
-+===========
++	if (!is_group) {
++		const struct scmi_telemetry_info *info = tlmi->priv;
 +
-+A pre-defined mountpoint is available at::
++		cfg.enable = !!info->enabled;
++		cfg.current_update_interval = info->active_update_interval;
++	} else {
++		const struct scmi_telemetry_group *grp = tlmi->priv;
 +
-+	/sys/fs/arm_telemetry/
++		cfg.enable = !!grp->enabled;
++		cfg.t_enable = !!grp->tstamp_enabled;
++		cfg.current_update_interval = grp->active_update_interval;
++	}
 +
-+Usage
-+=====
++	if (copy_to_user(uptr, &cfg, sizeof(cfg)))
++		return -EFAULT;
 +
-+.. Note::
-+	See Documentation/ABI/testing/stlmfs for a detailed description of
-+	this ABI.
++	return 0;
++}
 +
-+The filesystem can be typically mounted with::
++static long
++scmi_tlm_config_set_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg,
++			  bool is_group)
++{
++	struct scmi_tlm_setup *tsp = tlmi->tsp;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_config cfg = {};
++	bool grp_ignore;
++	int res_id;
 +
-+	mount -t stlmfs none /sys/fs/arm_telemetry
++	if (copy_from_user(&cfg, uptr, sizeof(cfg)))
++		return -EFAULT;
 +
-+It will proceed to create a top subdirectory for each of the discovered
-+SCMI Telemetry instances named as 'tlm_<N>' under which it will create
-+the following directory structure::
++	if (!is_group) {
++		res_id = SCMI_TLM_GRP_INVALID;
++		grp_ignore = true;
++	} else {
++		const struct scmi_telemetry_group *grp = tlmi->priv;
++		int ret;
 +
-+	/sys/fs/arm_telemetry/tlm_0/
-+	|-- all_des_enable
-+	|-- all_des_tstamp_enable
-+	|-- available_update_intervals_ms
-+	|-- current_update_interval_ms
-+	|-- de_implementation_version
-+	|-- des/
-+	|   |-- ...
-+	|   |-- ...
-+	|   `-- ...
-+	|-- des_bulk_read
-+	|-- des_single_sample_read
-+	|-- groups
-+	|   |-- ...
-+	|   |-- ...
-+	|   `-- ...
-+	|-- intervals_discrete
-+	|-- reset
-+	|-- tlm_enable
-+	`-- version
++		res_id = grp->info->id;
++		grp_ignore = false;
++		ret = tsp->ops->state_set(tsp->ph, true, res_id,
++					  (bool *)&cfg.enable,
++					  (bool *)&cfg.t_enable);
++		if (ret)
++			return ret;
++	}
 +
-+Each subdirectory is defined as follows.
++	return tsp->ops->collection_configure(tsp->ph, res_id, grp_ignore,
++					      (bool *)&cfg.enable,
++					      &cfg.current_update_interval,
++					      NULL);
++}
 +
-+des/
-+----
-+A subtree containing in turn one subdirectory for each discovered DE and
-+named by Data Event ID in hexadecimal form as in::
++static long
++scmi_tlm_de_info_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	struct scmi_tlm_setup *tsp = tlmi->tsp;
++	void * __user uptr = (void * __user)arg;
++	const struct scmi_telemetry_de *de;
++	struct scmi_tlm_de_info dei;
 +
-+	|-- des
-+	|   |-- 0x00000000
-+	|   |-- 0x00000016
-+	|   |-- 0x00001010
-+	|   |-- 0x0000A000
-+	|   |-- 0x0000A001
-+	|   |-- 0x0000A002
-+	|   |-- 0x0000A005
-+	|   |-- ..........
-+	|   |-- ..........
-+	|   |-- 0x0000A007
-+	|   |-- 0x0000A008
-+	|   |-- 0x0000A00A
-+	|   |-- 0x0000A00B
-+	|   |-- 0x0000A00C
-+	|   `-- 0x0000A010
++	if (copy_from_user(&dei, uptr, sizeof(dei)))
++		return -EFAULT;
 +
-+where each dedicated DE subdirectory in turn will contain files used to
-+describe some DE characteristics, configure it, or read its current data
-+value as in::
++	de = tsp->ops->de_lookup(tsp->ph, dei.id);
++	if (!de)
++		return -EINVAL;
 +
-+	tlm_0/des/0xA001/
-+	|-- compo_instance_id
-+	|-- compo_type
-+	|-- enable
-+	|-- instance_id
-+	|-- name
-+	|-- persistent
-+	|-- tstamp_enable
-+	|-- tstamp_exp
-+	|-- type
-+	|-- unit
-+	|-- unit_exp
-+	`-- value
++	if (copy_to_user(uptr, de->info, sizeof(*de->info)))
++		return -EFAULT;
 +
-+groups/
-+-------
++	return 0;
++}
 +
-+An optional subtree containing in turn one subdirectory for each discovered
-+Group and named by Group ID as in::
++static long
++scmi_tlm_des_list_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	struct scmi_tlm_setup *tsp = tlmi->tsp;
++	const struct scmi_telemetry_res_info *rinfo;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_des_list dsl;
 +
-+	|-- groups
-+	|   |-- 0
-+	|   |-- ..
-+	|   `-- 1
++	rinfo = scmi_telemetry_res_info_get(tsp);
++	if (copy_from_user(&dsl, uptr, sizeof(dsl)))
++		return -EFAULT;
 +
-+where each dedicated GROUP subdirectory in turn will contain files used to
-+describe some Group characteristics, configure it, or read its current data
-+values, as in::
++	if (dsl.num_des < rinfo->num_des)
++		return -EINVAL;
 +
-+	scmi_tlm_0/groups/0/
-+	|-- available_update_intervals_ms
-+	|-- composing_des
-+	|-- current_update_interval_ms
-+	|-- des_bulk_read
-+	|-- des_single_sample_read
-+	|-- enable
-+	|-- intervals_discrete
-+	`-- tstamp_enable
++	if (copy_to_user(uptr, &rinfo->num_des, sizeof(rinfo->num_des)))
++		return -EFAULT;
 +
++	if (copy_to_user(uptr + sizeof(rinfo->num_des), rinfo->dei_store,
++			 rinfo->num_des * sizeof(*rinfo->dei_store)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long
++scmi_tlm_de_value_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	struct scmi_tlm_setup *tsp = tlmi->tsp;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_de_sample sample;
++	int ret;
++
++	if (copy_from_user(&sample, uptr, sizeof(sample)))
++		return -EFAULT;
++
++	ret = tsp->ops->de_data_read(tsp->ph,
++				     (struct scmi_telemetry_de_sample *)&sample);
++	if (ret)
++		return ret;
++
++	if (copy_to_user(uptr, &sample, sizeof(sample)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long
++scmi_tlm_grp_info_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	const struct scmi_telemetry_group *grp = tlmi->priv;
++	void * __user uptr = (void * __user)arg;
++
++	if (copy_to_user(uptr, grp->info, sizeof(*grp->info)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long
++scmi_tlm_grp_desc_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	const struct scmi_telemetry_group *grp = tlmi->priv;
++	unsigned int num_des = grp->info->num_des;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_grp_desc grp_desc;
++
++	if (copy_from_user(&grp_desc, uptr, sizeof(grp_desc)))
++		return -EFAULT;
++
++	if (grp_desc.num_des < num_des)
++		return -EINVAL;
++
++	if (copy_to_user(uptr, &num_des, sizeof(num_des)))
++		return -EFAULT;
++
++	if (copy_to_user(uptr + sizeof(num_des), grp->des,
++			 sizeof(*grp->des) * num_des))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long
++scmi_tlm_grps_list_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	struct scmi_tlm_setup *tsp = tlmi->tsp;
++	const struct scmi_telemetry_res_info *rinfo;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_grps_list gsl;
++
++	if (copy_from_user(&gsl, uptr, sizeof(gsl)))
++		return -EFAULT;
++
++	rinfo = scmi_telemetry_res_info_get(tsp);
++	if (gsl.num_grps < rinfo->num_groups)
++		return -EINVAL;
++
++	if (copy_to_user(uptr, &rinfo->num_groups, sizeof(rinfo->num_groups)))
++		return -EFAULT;
++
++	if (copy_to_user(uptr + sizeof(rinfo->num_groups), rinfo->grps_store,
++			 rinfo->num_groups * sizeof(*rinfo->grps_store)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long scmi_tlm_des_read_ioctl(const struct scmi_tlm_inode *tlmi,
++				    unsigned long arg, bool single,
++				    bool is_group)
++{
++	struct scmi_tlm_setup *tsp = tlmi->tsp;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_data_read bulk;
++	int ret, grp_id = SCMI_TLM_GRP_INVALID;
++
++	if (copy_from_user(&bulk, uptr, sizeof(bulk)))
++		return -EFAULT;
++
++	struct scmi_tlm_data_read *bulk_ptr __free(kfree) =
++		kzalloc(struct_size(bulk_ptr, samples, bulk.num_samples),
++			GFP_KERNEL);
++	if (!bulk_ptr)
++		return -ENOMEM;
++
++	if (is_group) {
++		const struct scmi_telemetry_group *grp = tlmi->priv;
++
++		grp_id = grp->info->id;
++	}
++
++	bulk_ptr->num_samples = bulk.num_samples;
++	if (!single)
++		ret = tsp->ops->des_bulk_read(tsp->ph, grp_id,
++					      &bulk_ptr->num_samples,
++			  (struct scmi_telemetry_de_sample *)bulk_ptr->samples);
++	else
++		ret = tsp->ops->des_sample_get(tsp->ph, grp_id,
++					       &bulk_ptr->num_samples,
++					       (struct scmi_telemetry_de_sample *)bulk_ptr->samples);
++	if (ret)
++		return ret;
++
++	if (copy_to_user(uptr, bulk_ptr, sizeof(*bulk_ptr) +
++			 bulk_ptr->num_samples * sizeof(bulk_ptr->samples[0])))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long scmi_tlm_unlocked_ioctl(struct file *filp, unsigned int cmd,
++				    unsigned long arg)
++{
++	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
++	bool is_group = IS_GROUP(tlmi->cls->flags);
++
++	switch (cmd) {
++	case SCMI_TLM_GET_INFO:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_info_get_ioctl(tlmi, arg);
++	case SCMI_TLM_GET_CFG:
++		return scmi_tlm_config_get_ioctl(tlmi, arg, is_group);
++	case SCMI_TLM_SET_CFG:
++		return scmi_tlm_config_set_ioctl(tlmi, arg, is_group);
++	case SCMI_TLM_GET_INTRVS:
++		return scmi_tlm_intervals_get_ioctl(tlmi, arg, is_group);
++	case SCMI_TLM_GET_DE_CFG:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_de_config_get_ioctl(tlmi, arg);
++	case SCMI_TLM_SET_DE_CFG:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_de_config_set_ioctl(tlmi, arg, false);
++	case SCMI_TLM_GET_DE_INFO:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_de_info_get_ioctl(tlmi, arg);
++	case SCMI_TLM_GET_DE_LIST:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_des_list_get_ioctl(tlmi, arg);
++	case SCMI_TLM_GET_DE_VALUE:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_de_value_get_ioctl(tlmi, arg);
++	case SCMI_TLM_SET_ALL_CFG:
++		return scmi_tlm_de_config_set_ioctl(tlmi, arg, true);
++	case SCMI_TLM_GET_GRP_LIST:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_grps_list_get_ioctl(tlmi, arg);
++	case SCMI_TLM_GET_GRP_INFO:
++		if (!is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_grp_info_get_ioctl(tlmi, arg);
++	case SCMI_TLM_GET_GRP_DESC:
++		if (!is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_grp_desc_get_ioctl(tlmi, arg);
++	case SCMI_TLM_SINGLE_SAMPLE:
++		return scmi_tlm_des_read_ioctl(tlmi, arg, true, is_group);
++	case SCMI_TLM_BULK_READ:
++		return scmi_tlm_des_read_ioctl(tlmi, arg, false, is_group);
++	default:
++		return -ENOTTY;
++	}
++}
++
++static const struct file_operations scmi_tlm_ctrl_fops = {
++	.owner = THIS_MODULE,
++	.open = nonseekable_open,
++	.unlocked_ioctl = scmi_tlm_unlocked_ioctl,
++};
++
++DEFINE_TLM_CLASS(ctrl_tlmo, "control", 0,
++		 S_IFREG | S_IRUSR | S_IWUSR, &scmi_tlm_ctrl_fops, NULL);
++DEFINE_TLM_CLASS(grp_ctrl_tlmo, "control", TLM_IS_GROUP,
++		 S_IFREG | S_IRUSR | S_IWUSR, &scmi_tlm_ctrl_fops, NULL);
++
+ static int scmi_telemetry_groups_initialize(struct scmi_tlm_instance *ti)
+ {
+ 	const struct scmi_telemetry_res_info *rinfo;
+@@ -1095,6 +1497,7 @@ static int scmi_telemetry_groups_initialize(struct scmi_tlm_instance *ti)
+ 		stlmfs_create_dentry(sb, tsp, grp_dir_dentry,
+ 				     &grp_composing_des_tlmo, grp->des_str);
+ 
++		stlmfs_create_dentry(sb, tsp, grp_dir_dentry, &grp_ctrl_tlmo, grp);
+ 		stlmfs_create_dentry(sb, tsp, grp_dir_dentry, &grp_data_tlmo, grp);
+ 		stlmfs_create_dentry(sb, tsp, grp_dir_dentry,
+ 				     &grp_single_sample_tlmo, grp);
+@@ -1279,6 +1682,7 @@ static int scmi_tlm_root_dentries_initialize(struct scmi_tlm_instance *ti)
+ 			     &ti->info->base.version);
+ 	stlmfs_create_dentry(sb, tsp, ti->top_dentry, &data_tlmo, ti->info);
+ 	stlmfs_create_dentry(sb, tsp, ti->top_dentry, &single_sample_tlmo, ti->info);
++	stlmfs_create_dentry(sb, tsp, ti->top_dentry, &ctrl_tlmo, ti->info);
+ 	ti->des_dentry =
+ 		stlmfs_create_dentry(sb, tsp, ti->top_dentry, &des_dir_cls, NULL);
+ 	ti->grps_dentry =
 -- 
 2.52.0
 
