@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-73738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id E57B2D1F799
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:32:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8436AD1F7A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:32:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 86576306DABF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:29:41 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 152EA3074286
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B452E7186;
-	Wed, 14 Jan 2026 14:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E30F392C4D;
+	Wed, 14 Jan 2026 14:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5o/KVYR"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qTHCGKF9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2882E0914;
-	Wed, 14 Jan 2026 14:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EC12DECDF;
+	Wed, 14 Jan 2026 14:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768400962; cv=none; b=kCLWjbHxDJCJr3Ll6kt6yLxzx41HkrWqyuB903IhkawalvcvJAI7nEhT52e9yb4hNVz5GXvf81YDcsth6WdIW+zCIMr8LdULfM6fQpiUAFX53oiMBi0E3KzXiodIV8f2P71CJdvKEC9KHZGq4kvBeArEPBoAsLQ0nZTyoyWL5Ok=
+	t=1768400964; cv=none; b=F05P1NWec8f0P+kZkl3kIQu5qTEehwBUCKsIYqu2zS7rll0To99+wAlkN88HSePGBt2inmDE4KBMHTBKMxW9F6vOT0b4XRl7M7z7E7oAzJqqQLscPS2+CznRk722RzwLWCTMbkyWq2jCkGpxtEIKUMUaGflZCB5gKab7yQwPjnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768400962; c=relaxed/simple;
-	bh=tyhvqqIS+ku3U7Hk/wztpIFyA6yZTojJ9ILKjB/tyUU=;
+	s=arc-20240116; t=1768400964; c=relaxed/simple;
+	bh=a4XIY9jP7DHeDPNkP9IdkH0ovCnkdRclS4Bjo7NcH8g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XbV6w5X0OqxP5qKLHzPY8Lk0/0VaYcaxv3bg9dMPKBVjWa0WpfeIB81UBhYWAg0HLf+A0yqh89mM3hg/BytnfHwcKf5BzwWc7INOUSLj/50UfdDoIoXVTuEeH4+b8WbYZBfO5xuh+eDn1ecUu5r048Dn2StpJ/8JVQ+v6Wtisto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5o/KVYR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83FDDC4CEF7;
-	Wed, 14 Jan 2026 14:29:19 +0000 (UTC)
+	 MIME-Version; b=E0k76BIRh6qzdUGM91oSjDGGMkf+RgNtoHtJCgRqSEjMNF1uDiX23Wboy47Wh5bzG4iToXr2ajTb/Ara64In7einZvHWlK4pLy3FexmNgWoOadiiuo7BDiF+p/7Q4zNvJaVFuvE5uH5cYfOOQ+QunAkTFA+gxDL0i0qPZaGcklQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qTHCGKF9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE446C16AAE;
+	Wed, 14 Jan 2026 14:29:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768400961;
-	bh=tyhvqqIS+ku3U7Hk/wztpIFyA6yZTojJ9ILKjB/tyUU=;
+	s=k20201202; t=1768400964;
+	bh=a4XIY9jP7DHeDPNkP9IdkH0ovCnkdRclS4Bjo7NcH8g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=f5o/KVYR2qw51QFacfAcALWIWChjp/BgoANnkbmY9kg52Kze5zGJ/wsJJ85AQwirL
-	 fd0uv3imNWaXdYgytnHWUNor9uwG9vKFN2KyETkKtYLEegNZMTKK+MnUEAXQhc/AXQ
-	 2BMstvLzcAzyKtigpf/cNO9sAFDSe8WYsQwlaqWDHmOuCsWhuUWqyP8kheGLu3I727
-	 jIYUYcW2W26pTuCcIxVcpMImGDTTfm6c/FE8SdAzB1IZ/e4QJaDtm+0G4TJ6AIBXum
-	 Bz+0XFjRi1BpcazHUAq0E8ZuEKN2fKT3YMGmdsCYWSn2OCAS2rwXt7e4JNGMGLwJFb
-	 ixLnCYf3ixjfA==
+	b=qTHCGKF9yeARZQmE1ZqRCeP5MmjvZ5sRY0tGJnIVmEWqFyWXgoJBAWcWzyop5WBB2
+	 ZKqzBRi/x5pLGgOc09aSTy3aWIg1nYfuAxNRtPKoOnbLz/5f+ZGKaGOy+8oC2yJHJH
+	 TReKEPRfj7SghmfbTemEzCKLsdmCAH92kp9qWH2XamHhH0VLyICT1m7KPHfY7KrCTf
+	 RMCvsBxfHyU6fvKOF5zsonVKTu7iSGc5SYuWkEvQd4aDUyGakoBp61NeaLcYow69PX
+	 UylU/jxqN0XKtHjGzYRWWzSF0NlI0/XxIOazsl/2cXExIf6SXkD6jvktRYeG7gBHF+
+	 hGmOt8auD3A3Q==
 From: Chuck Lever <cel@kernel.org>
 To: vira@web.codeaurora.org, Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>
@@ -69,10 +69,11 @@ Cc: <linux-fsdevel@vger.kernel.org>,
 	chao@kernel.org,
 	hansg@kernel.org,
 	senozhatsky@chromium.org,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH v4 07/16] ext4: Report case sensitivity in fileattr_get
-Date: Wed, 14 Jan 2026 09:28:50 -0500
-Message-ID: <20260114142900.3945054-8-cel@kernel.org>
+	Chuck Lever <chuck.lever@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>
+Subject: [PATCH v4 08/16] xfs: Report case sensitivity in fileattr_get
+Date: Wed, 14 Jan 2026 09:28:51 -0500
+Message-ID: <20260114142900.3945054-9-cel@kernel.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260114142900.3945054-1-cel@kernel.org>
 References: <20260114142900.3945054-1-cel@kernel.org>
@@ -86,33 +87,32 @@ Content-Transfer-Encoding: 8bit
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-Report ext4's case sensitivity behavior via file_kattr boolean
-fields. ext4 always preserves case at rest.
+Upper layers such as NFSD need to query whether a filesystem is
+case-sensitive. Populate the case_insensitive and case_preserving
+fields in xfs_fileattr_get(). XFS always preserves case. XFS is
+case-sensitive by default, but supports ASCII case-insensitive
+lookups when formatted with the ASCIICI feature flag.
 
-Case sensitivity is a per-directory setting in ext4. If the queried
-inode is a casefolded directory, report case-insensitive; otherwise
-report case-sensitive (standard POSIX behavior).
-
-Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/ext4/ioctl.c | 6 ++++++
+ fs/xfs/xfs_ioctl.c | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index 7ce0fc40aec2..213769d217c3 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -996,6 +996,12 @@ int ext4_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
- 	if (ext4_has_feature_project(inode->i_sb))
- 		fa->fsx_projid = from_kprojid(&init_user_ns, ei->i_projid);
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 59eaad774371..e8061fe109e9 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -516,6 +516,12 @@ xfs_fileattr_get(
+ 	xfs_fill_fsxattr(ip, XFS_DATA_FORK, fa);
+ 	xfs_iunlock(ip, XFS_ILOCK_SHARED);
  
 +	/*
-+	 * ext4 preserves case (the default). If this inode is a
-+	 * casefolded directory, report case-insensitive; otherwise
-+	 * report case-sensitive (standard POSIX behavior).
++	 * XFS preserves case (the default). It is case-sensitive by
++	 * default, but can be formatted with ASCII case-insensitive
++	 * mode enabled.
 +	 */
-+	fa->case_insensitive = IS_CASEFOLDED(inode);
++	fa->case_insensitive = xfs_has_asciici(ip->i_mount);
  	return 0;
  }
  
