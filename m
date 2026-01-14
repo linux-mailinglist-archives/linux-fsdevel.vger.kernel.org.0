@@ -1,93 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-73611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F4DD1CA80
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 07:19:43 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68F9D1CA9B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 07:25:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 837AC301591F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:19:37 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 4B0BD30B58A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 06:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23712356A37;
-	Wed, 14 Jan 2026 06:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aaQYoP7J"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D58736C0CA;
+	Wed, 14 Jan 2026 06:24:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159A733B6C7;
-	Wed, 14 Jan 2026 06:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D1136A01A;
+	Wed, 14 Jan 2026 06:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768371572; cv=none; b=oCssPeLhTuoyw0LfSwrp6LU90bx+UhjtdRLUEdGdNhuY7tZpdkkPi3Av9vQcs4iZ6tuEQ/seTjV2uLrXQH8e9ZJb8SNkuWkzjxcwVqVJa+JFEcVOtSZlu4rnUl5a7fUitxOZFbBg9Z/jCKsKeWdcR9N7TX3NR0w94eZRFEl5oKs=
+	t=1768371886; cv=none; b=EBm8dZJvM9DG2Uh6Fu0zK4NtMmz4b8wZHja7wHC8ZYQsCEqo0RqDpiiPZwi3xKg5OG5rql0VZgVvpUi7//j+J4OLW6Lb9TD+f2myPutzuRsomVMbWpK4BkjdkoPXfFZxrD4+NS2e6DTvvStAYIqS/UrAoJWRAQVw/e+DPmQ/fsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768371572; c=relaxed/simple;
-	bh=Nj7+2r6aMmpWFZausLp8hDZ4m5xNZMEQ7qo9UQJO29s=;
+	s=arc-20240116; t=1768371886; c=relaxed/simple;
+	bh=dbDwZkiE8c6tNRmN3UTuhszmm+CVdjyMON2Q0PftGp8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sy0kMog92wihZr3PxFXgwUhv/1dDY9fvqWcYqJBIgCZP0xeMzA14sKQoZhY5Ep5hmYaF2101xm43K+d1X2K+RsyCrUBcATLXIo4aaUfUapik+JsPUufELEiRgFQKQZrpI6jyjHyX/blqIbXB5JVtyl6jCU7YWZPL0LMuplrMMVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aaQYoP7J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17173C4CEF7;
-	Wed, 14 Jan 2026 06:19:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768371571;
-	bh=Nj7+2r6aMmpWFZausLp8hDZ4m5xNZMEQ7qo9UQJO29s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aaQYoP7Jam3BpX+UsBkkkN2N0mdP5O6qZbG9mIll5CBv9i84+TOk+oSU26m9hvwug
-	 v+guNuIYMD+qH6NRXg4Q11onlqW+jPhSHYpa6bSOvV5d9fwNVpHsViAq9WkfZXwjDY
-	 TjV1d6n9UtWvKJd5kEtgudOFhrwrU5Tqlbphr/fkOvUDZOQfus3MPQQoov2cb4wpPA
-	 epyU12qsyhS4wEU3eX/QjNt/iMgKW8y2fm6MwSck7vqIrDtybZD6wwsoGBwKrUdkUL
-	 Qr3pEiaOrbwwyfwPRZU84Fv5eROC510ZFY4FQhbbdN+tQYQzVwFZeojy2+Gq7xOUFS
-	 av/jq6KFvqt+Q==
-Date: Tue, 13 Jan 2026 22:19:30 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: cem@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 11/11] xfs: add media verification ioctl
-Message-ID: <20260114061930.GL15583@frogsfrogsfrogs>
-References: <176826412644.3493441.536177954776056129.stgit@frogsfrogsfrogs>
- <176826412941.3493441.8359506127711497025.stgit@frogsfrogsfrogs>
- <20260113155701.GA3489@lst.de>
- <20260113232113.GD15551@frogsfrogsfrogs>
- <20260114060214.GA10372@lst.de>
- <20260114060705.GK15583@frogsfrogsfrogs>
- <20260114061559.GA10613@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yf0P1E93BxTLbKtcZHKQZXKH0c4yjpLK3TUzEq9MRnEFK/SopRsRMK1pjnjqOAtJStcSgFGC+9LknhlJhFtZwS4teA9sqYQLT0uxeZ0eBHGDEwLVeJAVoUzotw+g3vXN7SjBJcyya8VdAN81yyld6RGldB6Y+RS28zjD0kF41NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 6DEFD227A8E; Wed, 14 Jan 2026 07:24:25 +0100 (CET)
+Date: Wed, 14 Jan 2026 07:24:24 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+	kernel-dev@igalia.com
+Subject: Re: [PATCH 1/3] exportfs: Rename get_uuid() to get_disk_uuid()
+Message-ID: <20260114062424.GA10805@lst.de>
+References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com> <20260114-tonyk-get_disk_uuid-v1-1-e6a319e25d57@igalia.com> <20260114061028.GF15551@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20260114061559.GA10613@lst.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260114061028.GF15551@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Jan 14, 2026 at 07:15:59AM +0100, Christoph Hellwig wrote:
-> On Tue, Jan 13, 2026 at 10:07:05PM -0800, Darrick J. Wong wrote:
-> > > a tunable is a better choice here at least for now.
-> > 
-> > <nod> I'll set iosize to 1MB by default and userspace can decrease it if
-> > it so desires.
-> > 
-> > Also it occurs to me that max_hw_sectors_kb seems to be 128K for all of
-> > my consumer nvme devices, and the fancy Intel ones too.  Funny that the
-> > sata ssds set it to 4MB, but I guess capping at 128k is one way to
-> > reduce the command latency...?  (Or the kernel's broken?  I can't figure
-> > out how to get mpsmin with nvme-cli...)
+On Tue, Jan 13, 2026 at 10:10:28PM -0800, Darrick J. Wong wrote:
+> On Wed, Jan 14, 2026 at 01:31:41AM -0300, André Almeida wrote:
+> > To make clear which UUID is being returned, rename get_uuid() to
+> > get_disk_uuid(). Expand the function documentation to note that this
+> > function can be also used for filesystem that supports cloned devices
+> > that might have different UUIDs for userspace tools, while having the
+> > same UUID for internal usage.
 > 
-> mpsmin is basically always 4k.
-> 
-> 
-> On something unrelated:  SSDs remap all the time by definition, and
-> HDDs are really good at remapping bad sectors these days as well.
-> So verifying blocks that do not actually contain file system (meta)data
-> is pretty pointless.   Can we come up with a way to verify only blocks
-> that have valid data in them, while still being resonably sequential?
-> I.e. walk the rmap?
+> I'm not sure what a "disk uuid" is -- XFS can store two of them in the
+> ondisk superblock: the admin-modifiable one that blkid reports, and the
+> secret one that's stamped in all the metadata and cannot change.
 
-xfs_scrub phase6 already calls getfsmap to figure out which parts of the
-disk actually contain written data of any kind and are worth verifying.
+It isn't.  Totally independent of the rest of the discussion, the
+get_uuid exportfs operation is not useful for anything but the original
+pNFS block layout.  Which is actually pretty broken and should be slowly
+phased out.
 
---D
+> IIRC XFS only shares the user-visible UUID, but they're both from the
+> disk.   Also I'm not sure what a non-disk filesystem is supposed to
+> provide here?
+
+Yeah.
+
 
