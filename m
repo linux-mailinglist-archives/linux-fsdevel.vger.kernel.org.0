@@ -1,267 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-73729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8437FD1F655
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:23:25 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D8ED1F6D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 15:29:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E6BBF3042298
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:23:08 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id B56963003FDF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 14:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905FD2E1F02;
-	Wed, 14 Jan 2026 14:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3A12E7186;
+	Wed, 14 Jan 2026 14:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HHqfcaHC"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOcb1eLo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1EB2D8764
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 14:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153FF280331;
+	Wed, 14 Jan 2026 14:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768400586; cv=none; b=PpNLYeyDU41+Mop6/IGhSY22wKbNQN/3wyAIbEaIWt1jMpZePPC0CaUAaHThtA6xKXm/hCWlYUjnA7NyjToXqwFM58wPjLtQzaw3BSLBs5LXwJm6YJxAlOSv0DqCse3IohSlK39ic/zVqmNEXqtRYO209WLfmpY4HEP7Cb3goR4=
+	t=1768400945; cv=none; b=l0KL2Y1ROfKsUJWW6dFQ53DIX4jK+0FmNyfjLDqXdZ04eNvDyZJpHcWAs3rrb1HGkia8zAQfkAJbtumwyr2pXCqkAm6uOJ7JXkfCLRdDd8hqKv4pabCWmz/lOqFkwsxKlgBsxpQnI6TJXctZHGvnfMbrpOLWFAKiL6KTcF2+TWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768400586; c=relaxed/simple;
-	bh=DfrdswblHy1q9UZ6D1iDapX7djYN6NrxRY58tdu4Ov8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bjAWIShbQTOt8pFlr6f+G7GO0w/qpP2EJrjBBrDZLfV1DCVsoNAdqx6ba/UEl5wdmt+SrL5EK2jylcDJysqDhpxSprhpwWMKsSI9nvK3hMZ13NEHLVlmDeoB348nmXHgnnBItHtzNw6xuOlJz0NmswkevuF96QftVdySl4V6qH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HHqfcaHC; arc=none smtp.client-ip=209.85.128.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-47ee301a06aso8892405e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 06:23:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1768400583; x=1769005383; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rjJ0doliNf6plVmMYQkV7IlLiBwqr6x+viyB7m/anSs=;
-        b=HHqfcaHCDZ4C/25aiu2LLUMRB6a3JGJWGhQfFT6QaEtcdkNlMy33Eg5S1g6VGmzYXo
-         hpfCXuvsZWvysbszR52KoZ2Hm1zuNEeCpDbVwfZG4XIIepu7J6DwkkZTdV4+WvGZUfb2
-         J50i9CArQzRD7a32Tos9uS2iTNN+n78n5NdtroiOypIe6+cM2D5E/4P5BmzBG0Y1OMZi
-         TF2vHM81yG5bimXpDBncf/8rbHqG0I7eJ966s7d0iQ2MM9s31pdW7eDgXOSxl6kdp6c/
-         Y/on+swJawD0gJ25otHcu9wX57o6bpwey1K2T1Em/Ha1Hnr4ql+oU5YXD54Y+M9nX783
-         +Gyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768400583; x=1769005383;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rjJ0doliNf6plVmMYQkV7IlLiBwqr6x+viyB7m/anSs=;
-        b=nLB1J8zHOzPkBg2HlMcIJAZwk/exjaglpfk2Ie3LI2Tp+dAf0UBXt80Hj7CpoJcF+P
-         xcHovFWHQpoVVTtCckXeksuWy7Qgo43ccyc5NoEb6tJyEXWHvtcixJL/wK3P7NJ+4gcU
-         kKP+EXikqb28xzN0kU3W6kONA13/VKiGvRJu7gzaZTmS2n3f5SSCuIwV0hHTR4PMUg0f
-         lT3RnhrGjzDOCt3TxdsFxckDwcQ0V6BoG18ttM2k87eReeRVKFlgVb6ZZlOLbHnVastW
-         JHjQcwP5AQNp/WuktfSyYdyPGR/Ni0SGgrSZbcGw0bsccCtdXA/lQlLM1xeKXubsmZtl
-         Pcbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmv+f4COpe7IrbKgAExSwEjS9vHOu9qSTyjVlHEZ0s5XsFTNdLEapg4aQhliZTb+0WigyyPUerdZYnoYwV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlTrMAUjcsfzi4a3iQjTbMBgY8xQdhjHsg/amDb495z7KAGJ8l
-	olikVdGlMxJ5DTm405jD9NtJMaFW9gCZa48zAP0cWnrpT46rjPFX03Xq/tFV0Y1vNGY=
-X-Gm-Gg: AY/fxX5AQ3VgFhSkNSNNNPodp672LlTwSH0e70hDV2iZQBSFbSicUxFdbJsIr/GlKTa
-	+k45WiWsjyItTMCcmU7pNRJB6goubjHMnonEHSvPP+w4Oh6d90/wh6c52KK08/YIDyR+GCwkmFU
-	WfEz1qjqlIqVQ1vODVvM1HG723fk4yr+5KagAtX26cklqivsurwiOJl7ViGZ0RtWyZSOmN0kcpO
-	piBMtFd45R0wcgeT94A1QDOMrlwKU2ps2/KaiNZEQH5tdORCz1WmLJwiH+gIQE7UcLYHhOk9ul4
-	QXHaB2xqHl77M/ce4DV6f6kjF05FF2/fvbQyf9PCFhiy7YFjKhvHXA/XXnCBdcq9SR3Xfvg54p9
-	VBiW6TxtPXTozwDQCIJ8SLy0uOqbbiSKfj2pMmgSCJdrFY4Ra3MXAj0dV6c2gT9dQr/wBYj5KBO
-	hUYwqXbYAGFomStA==
-X-Received: by 2002:a05:6000:3105:b0:431:104:6dd5 with SMTP id ffacd0b85a97d-4342c5728e2mr3256518f8f.58.1768400582935;
-        Wed, 14 Jan 2026 06:23:02 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd0dacd1sm49446446f8f.4.2026.01.14.06.23.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 06:23:02 -0800 (PST)
-Date: Wed, 14 Jan 2026 15:22:59 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>
-Cc: Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Breno Leitao <leitao@debian.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
-	netdev@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-hardening@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	sparclinux@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 06/19] printk: Introduce register_console_force
-Message-ID: <aWemw2ZCwtAd17I1@pathway.suse.cz>
-References: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
- <20251227-printk-cleanup-part3-v1-6-21a291bcf197@suse.com>
+	s=arc-20240116; t=1768400945; c=relaxed/simple;
+	bh=lG4dAfkVc8RtTo/QiqdyMm8AEyoqFXxos9P3jbZVgMU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pD63JiyE4Lv9mSt/FnH7A97+/iTZaZ5Xt9B63w1Z82emm5AqnQZm02VUctDuGcL+wpTYAr/PSfZ7oet0g56D6Tob5LHC61czXOewIE16m+aGEtiirr/2krOdCQeF5E4s+OHiZS+VTzPFUNFr5a0oA21WET+IqdHUqcBXeWQLYkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOcb1eLo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 847DDC4CEF7;
+	Wed, 14 Jan 2026 14:29:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768400944;
+	bh=lG4dAfkVc8RtTo/QiqdyMm8AEyoqFXxos9P3jbZVgMU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oOcb1eLoFA29/NdZIGcLa8fT0tcT+hmajcwbpxx/gLhTctESeAKQ++wCgmr7K56T1
+	 lbzMBShoUEscWtddNyAy3fAysiy4FcdV9TyUbEZxb5FNktoXUe8XvhAhnU4QKhWkrA
+	 yclq6pTcuNQ/mgRfZp3rbErQHWmRxzRFYdMeduS6MKz2XXrQudTwNgzUAQURcKO1eU
+	 LevwmvQG+ei6MIDKNo4CJEP9saopuQGCtHVhXj39ftcRAHA+hWrUk5gM9oi/IZS2rj
+	 0P9PhIwZJPsRhC+rN2o8rn8oXNc+qjpOR1AFloAIvYoUXiUjhvTwcAe9hF8gReVlpq
+	 sL8KIsJeB1dtQ==
+From: Chuck Lever <cel@kernel.org>
+To: vira@web.codeaurora.org, Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: <linux-fsdevel@vger.kernel.org>,
+	linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org,
+	<linux-nfs@vger.kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net,
+	hirofumi@mail.parknet.co.jp,
+	linkinjeon@kernel.org,
+	sj1557.seo@samsung.com,
+	yuezhang.mo@sony.com,
+	almaz.alexandrovich@paragon-software.com,
+	slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de,
+	frank.li@vivo.com,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	cem@kernel.org,
+	sfrench@samba.org,
+	pc@manguebit.org,
+	ronniesahlberg@gmail.com,
+	sprasad@microsoft.com,
+	trondmy@kernel.org,
+	anna@kernel.org,
+	jaegeuk@kernel.org,
+	chao@kernel.org,
+	hansg@kernel.org,
+	senozhatsky@chromium.org,
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: [PATCH v4 00/16] Exposing case folding behavior
+Date: Wed, 14 Jan 2026 09:28:43 -0500
+Message-ID: <20260114142900.3945054-1-cel@kernel.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251227-printk-cleanup-part3-v1-6-21a291bcf197@suse.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat 2025-12-27 09:16:13, Marcos Paulo de Souza wrote:
-> The register_console_force function will register a console even if it
-> wasn't specified on boot. The new function will act like all consoles
-> being registered were using the CON_ENABLED flag.
+From: Chuck Lever <chuck.lever@oracle.com>
 
-I am a bit confused by the last sentence. It might be bacause I am not
-a native speaker. I wonder if the following is more clear:
+Following on from
 
-<proposal>
-The register_console_force() function will register a console even if it
-wasn't preferred via the command line, SPCR, or device tree. Currently,
-certain drivers pre-set the CON_ENABLE flag to achieve this.
-</proposal>
+https://lore.kernel.org/linux-nfs/20251021-zypressen-bazillus-545a44af57fd@brauner/T/#m0ba197d75b7921d994cf284f3cef3a62abb11aaa
 
-> The CON_ENABLED flag will be removed in the following patches and the
-> drivers that use it will migrate to register_console_force instead.
-> 
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -3858,7 +3858,7 @@ static int console_call_setup(struct console *newcon, char *options)
->   * enabled such as netconsole
->   */
->  static int try_enable_preferred_console(struct console *newcon,
-> -					bool user_specified)
-> +					bool user_specified, bool force)
->  {
->  	struct console_cmdline *c;
->  	int i, err;
-> @@ -3896,12 +3896,15 @@ static int try_enable_preferred_console(struct console *newcon,
->  		return 0;
->  	}
->  
-> +	if (force)
-> +		newcon->flags |= CON_ENABLED;
-> +
+I'm attempting to implement enough support in the Linux VFS to
+enable file services like NFSD and ksmbd (and user space
+equivalents) to provide the actual status of case folding support
+in local file systems. The default behavior for local file systems
+not explicitly supported in this series is to reflect the usual
+POSIX behaviors:
 
-This makes sense because the pre-enabled CON_ENABLED flag is handled
-right below.
+  case-insensitive = false
+  case-nonpreserving = false
 
->  	/*
->  	 * Some consoles, such as pstore and netconsole, can be enabled even
->  	 * without matching. Accept the pre-enabled consoles only when match()
->  	 * and setup() had a chance to be called.
->  	 */
-> -	if (newcon->flags & CON_ENABLED && c->user_specified ==	user_specified)
-> +	if (newcon->flags & CON_ENABLED && c->user_specified == user_specified)
->  		return 0;
+The case-insensitivity and case-nonpreserving booleans can be
+consumed immediately by NFSD. These two attributes have been part of
+the NFSv3 and NFSv4 protocols for decades, in order to support NFS
+client implementations on non-POSIX systems.
 
-But this location was not a good idea in the first place. It hides an unexpected
-side-effect into this function. It is easy to miss. A good example is
-the regression caused by the last patch in this patch set, see
-https://lore.kernel.org/all/89409a0f48e6998ff6dd2245691b9954f0e1e435.camel@suse.com/
+Support for user space file servers is why this series exposes case
+folding information via a user-space API. I don't know of any other
+category of user-space application that requires access to case
+folding info.
 
-I actually have a patch removing this side-effect:
 
-From d24cd6b812967669900f9866f6202e8b0b65325a Mon Sep 17 00:00:00 2001
-From: Petr Mladek <pmladek@suse.com>
-Date: Mon, 24 Nov 2025 17:34:25 +0100
-Subject: [PATCH] printk/console: Do not rely on
- try_enable_preferred_console() for pre-enabled consoles
+The Linux NFS community has a growing interest in supporting NFS
+clients on Windows and MacOS platforms, where file name behavior does
+not align with traditional POSIX semantics.
 
-try_enable_preferred_console() has non-obvious side effects. It returns
-success for pre-enabled consoles.
+One example of a Windows-based NFS client is [1]. This client
+implementation explicitly requires servers to report
+FATTR4_WORD0_CASE_INSENSITIVE = TRUE for proper operation, a hard
+requirement for Windows client interoperability because Windows
+applications expect case-insensitive behavior. When an NFS client
+knows the server is case-insensitive, it can avoid issuing multiple
+LOOKUP/READDIR requests to search for case variants, and applications
+like Win32 programs work correctly without manual workarounds or
+code changes.
 
-Move the check for pre-enabled consoles to register_console(). It makes
-the handling of pre-enabled consoles more obvious.
+Even the Linux client can take advantage of this information. Trond
+merged patches 4 years ago [2] that introduce support for case
+insensitivity, in support of the Hammerspace NFS server. In
+particular, when a client detects a case-insensitive NFS share,
+negative dentry caching must be disabled (a lookup for "FILE.TXT"
+failing shouldn't cache a negative entry when "file.txt" exists)
+and directory change invalidation must clear all cached case-folded
+file name variants.
 
-Also it will allow call try_enable_preferred_console() only when there
-is an entry in preferred_consoles[] array. But it would need some more
-changes.
+Hammerspace servers and several other NFS server implementations
+operate in multi-protocol environments, where a single file service
+instance caters to both NFS and SMB clients. In those cases, things
+work more smoothly for everyone when the NFS client can see and adapt
+to the case folding behavior that SMB users rely on and expect. NFSD
+needs to support the case-insensitivity and case-nonpreserving
+booleans properly in order to participate as a first-class citizen
+in such environments.
 
-It is part of the code clean up. It should not change the existing
-behavior.
+[1] https://github.com/kofemann/ms-nfs41-client
 
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+[2] https://patchwork.kernel.org/project/linux-nfs/cover/20211217203658.439352-1-trondmy@kernel.org/
+
 ---
- kernel/printk/printk.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index abf1b93de056..d6b1d0a26217 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -3826,14 +3826,6 @@ static int try_enable_preferred_console(struct console *newcon,
- 		return 0;
- 	}
- 
--	/*
--	 * Some consoles, such as pstore and netconsole, can be enabled even
--	 * without matching. Accept the pre-enabled consoles only when match()
--	 * and setup() had a chance to be called.
--	 */
--	if (newcon->flags & CON_ENABLED && pc->user_specified == user_specified)
--		return 0;
--
- 	return -ENOENT;
- }
- 
-@@ -4022,6 +4014,14 @@ void register_console(struct console *newcon)
- 	if (err == -ENOENT)
- 		err = try_enable_preferred_console(newcon, false);
- 
-+	/*
-+	 * Some consoles, such as pstore and netconsole, can be enabled even
-+	 * without matching. Accept them at this stage when they had a chance
-+	 * to match() and call setup().
-+	 */
-+	if (err == -ENOENT && (newcon->flags & CON_ENABLED))
-+		err = 0;
-+
- 	/* printk() messages are not printed to the Braille console. */
- 	if (err || newcon->flags & CON_BRL) {
- 		if (newcon->flags & CON_NBCON)
+Changes since v3:
+- Change fa->case_preserving to fa_case_nonpreserving
+- VFAT is case preserving
+- Make new fields available to user space
+
+Changes since v2:
+- Remove unicode labels
+- Replace vfs_get_case_info
+- Add support for several more local file system implementations
+- Add support for in-kernel SMB server
+
+Changes since RFC:
+- Use file_getattr instead of statx
+- Postpone exposing Unicode version until later
+- Support NTFS and ext4 in addition to FAT
+- Support NFSv4 fattr4 in addition to NFSv3 PATHCONF
+
+
+Chuck Lever (16):
+  fs: Add case sensitivity info to file_kattr
+  fat: Implement fileattr_get for case sensitivity
+  exfat: Implement fileattr_get for case sensitivity
+  ntfs3: Implement fileattr_get for case sensitivity
+  hfs: Implement fileattr_get for case sensitivity
+  hfsplus: Report case sensitivity in fileattr_get
+  ext4: Report case sensitivity in fileattr_get
+  xfs: Report case sensitivity in fileattr_get
+  cifs: Implement fileattr_get for case sensitivity
+  nfs: Implement fileattr_get for case sensitivity
+  f2fs: Add case sensitivity reporting to fileattr_get
+  vboxsf: Implement fileattr_get for case sensitivity
+  isofs: Implement fileattr_get for case sensitivity
+  nfsd: Report export case-folding via NFSv3 PATHCONF
+  nfsd: Implement NFSv4 FATTR4_CASE_INSENSITIVE and
+    FATTR4_CASE_PRESERVING
+  ksmbd: Report filesystem case sensitivity via FS_ATTRIBUTE_INFORMATION
+
+ fs/exfat/exfat_fs.h      |  2 ++
+ fs/exfat/file.c          | 16 ++++++++++++++--
+ fs/exfat/namei.c         |  1 +
+ fs/ext4/ioctl.c          |  6 ++++++
+ fs/f2fs/file.c           |  6 ++++++
+ fs/fat/fat.h             |  3 +++
+ fs/fat/file.c            | 19 +++++++++++++++++++
+ fs/fat/namei_msdos.c     |  1 +
+ fs/fat/namei_vfat.c      |  1 +
+ fs/file_attr.c           | 14 ++++++++++++++
+ fs/hfs/dir.c             |  1 +
+ fs/hfs/hfs_fs.h          |  2 ++
+ fs/hfs/inode.c           | 12 ++++++++++++
+ fs/hfsplus/inode.c       |  7 +++++++
+ fs/isofs/dir.c           | 11 +++++++++++
+ fs/nfs/client.c          |  9 +++++++--
+ fs/nfs/inode.c           | 18 ++++++++++++++++++
+ fs/nfs/internal.h        |  3 +++
+ fs/nfs/nfs3proc.c        |  2 ++
+ fs/nfs/nfs3xdr.c         |  7 +++++--
+ fs/nfs/nfs4proc.c        |  2 ++
+ fs/nfs/proc.c            |  3 +++
+ fs/nfs/symlink.c         |  3 +++
+ fs/nfsd/nfs3proc.c       | 18 ++++++++++--------
+ fs/nfsd/nfs4xdr.c        | 30 ++++++++++++++++++++++++++----
+ fs/nfsd/vfs.c            | 25 +++++++++++++++++++++++++
+ fs/nfsd/vfs.h            |  2 ++
+ fs/ntfs3/file.c          | 22 ++++++++++++++++++++++
+ fs/ntfs3/inode.c         |  1 +
+ fs/ntfs3/namei.c         |  2 ++
+ fs/ntfs3/ntfs_fs.h       |  1 +
+ fs/smb/client/cifsfs.c   | 18 ++++++++++++++++++
+ fs/smb/server/smb2pdu.c  | 25 +++++++++++++++++++------
+ fs/vboxsf/dir.c          |  1 +
+ fs/vboxsf/file.c         |  6 ++++--
+ fs/vboxsf/super.c        |  4 ++++
+ fs/vboxsf/utils.c        | 30 ++++++++++++++++++++++++++++++
+ fs/vboxsf/vfsmod.h       |  6 ++++++
+ fs/xfs/xfs_ioctl.c       |  6 ++++++
+ include/linux/fileattr.h |  3 +++
+ include/linux/nfs_xdr.h  |  2 ++
+ include/uapi/linux/fs.h  | 12 +++++++++++-
+ 42 files changed, 336 insertions(+), 27 deletions(-)
+
 -- 
 2.52.0
 
-
-It would be better to do the above change 1st. Then the @force
-parameter might be checked in __register_console() directly, like:
-
-	/*
-	 * Some consoles, such as pstore and netconsole, can be enabled even
-	 * without matching. Accept them at this stage when they had a chance
-	 * to match() and call setup().
-	 */
-	if (err == -ENOENT && (force || newcon->flags & CON_ENABLED))
-		err = 0;
-
-You might just remove the check of CON_ENABLED in the last patch.
-I think that this should actually fix the regression. It will
-handle also the case when the console was enabled by
-try_enable_default_console() and try_enable_preferred_console()
-returned -ENOENT.
-
-Note: I have some more patches which clean up this mess. But they are
-      more complicated because of how the Braille console support
-      is wired. They still need some love. Anyway, the above patch should
-      be good enough for removing CON_ENABLED flag.
-
-Best Regards,
-Petr
 
