@@ -1,57 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-73774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3035D2014B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 17:09:28 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B598D20234
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 17:17:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DD7043018F7F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 16:06:18 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7EEF530161E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 16:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4164D34F24F;
-	Wed, 14 Jan 2026 16:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0653A1E64;
+	Wed, 14 Jan 2026 16:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PW2wSB5h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVMDyZrD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F00B184;
-	Wed, 14 Jan 2026 16:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF8F3A1A2B;
+	Wed, 14 Jan 2026 16:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768406777; cv=none; b=CJPyZZJcXvp0vVJdlPBNlCwOtse+Lnwwgl/GAUB99fH+ifBaQ3KsTWzXukDXnHs6u4m08ATGnfutd04gViYFMbcHXE1wAGp7hXjNfND9admBiEV4fz7XppLyqBfA5oUnjCwNNB2vt+PX2dGPb2y9+Mo08rbpHJnRsmwP5HoznsI=
+	t=1768407275; cv=none; b=T/UuuVVtWhyn5/bJA/c98lA+TXV8AN8PzsMJejadiMj65d4vGAA4Mm0qAGar36H+NlgLonQIvOBI/TrpTSQjpMOwSytmhDW21mz9/mErWKWFk8xLon6lzbI+C/zVoxam8mFB9283mRuvbdV9M4e96tK4MCeiI2cZbHro0Q0/rnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768406777; c=relaxed/simple;
-	bh=GyDq+6eaoZkVZqBLxT6jqTugU3KCXYVJYLg9IeFm+ek=;
+	s=arc-20240116; t=1768407275; c=relaxed/simple;
+	bh=W1jYo763i1aFlR8wYqpGFkD1e7V8qWDCB9eJbLX3G+s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gcHxfW/8iQbtMD/ks+ylC9FQo17+aBWROqzKOxb0VytIQ/DKM/oieb0qJw8mezClFKvv0zwrwQzGpnWyiXWcD+H01ZgqPg/2II0VI0CElvK195aKoeMFdBFSDmZ++glkyY/bnPmPLwLTJjLEu2n42V4GUnrzNGxR+Qj+MO9Q3ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PW2wSB5h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DCA8C4CEF7;
-	Wed, 14 Jan 2026 16:06:15 +0000 (UTC)
+	 MIME-Version:Content-Type; b=pTshU6J75+iHmmzJVURrF0rtWOqlioB/wWWHQCyVtcrmkuMNIf0Zm504KCUkZT+JYM6t1kiC0BT6lCYXKfDp85Saq/N/hGm5kjbZQCNYjocmSjHHlYiyCox1so59OD5K/AJ4pxzC/+CYPN9UtZCMks7W54NgtLrCsmsRQHorZdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVMDyZrD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B58DC4CEF7;
+	Wed, 14 Jan 2026 16:14:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768406777;
-	bh=GyDq+6eaoZkVZqBLxT6jqTugU3KCXYVJYLg9IeFm+ek=;
+	s=k20201202; t=1768407275;
+	bh=W1jYo763i1aFlR8wYqpGFkD1e7V8qWDCB9eJbLX3G+s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PW2wSB5h/YUGeuN8mZBP0EIeN1h0JdZEWtHrU4S6iRqcMv9jTmOeKhP4M95MhqEch
-	 S/sBK3qq+pV/2Lx/gPWJpQgIqHsp+wj/mvb4FKYBZBMRw2gx1KCGSLkPvU1oi+B3kB
-	 gst/5hg1EL0KkFQRgHG3Y3xZOzl/7G6eWANn848TdJd8gPZbNXEZrSSOvPZjb7nIdI
-	 JH/rNfE/kskLg7r1Sy50KoP5HQZm/J0bwyCmUJmollx3DsgK5MlGR+eefUqiGlZJR5
-	 Ro3FqBDbmSgaV1bqpJ3iWb24zX2IH5fnYVf5hhLjyWl3iV1cCnV5Gw77RP/zGTP5Mz
-	 gXQ+TMZuPsH1w==
+	b=TVMDyZrDIRWw1dw3GoeZsk7uZjnjZdP+kkYatTZk7BCUkjXOMpxaArRd2lImQkHao
+	 nOZmBZqaq2ZQSdI9zl09YsyMUeXDZDOaMsnvlDSxPIpA/oVR8VplAmCKrfZHVX5SKI
+	 7PrtfLCl4THL/LZqIpPZBBkU44p5nR9iZ5WPIv/tui3vl692FrrJU8WgK/knHm8JsJ
+	 b7JlSUO0jnPjIPRs4wInwXIcHM13MiBZ6frI0juw0AH0dHRHqfJX7x85mvEgUqTtuC
+	 vOfXq9E6nGUR4vddEsdxLkCHmMl8H0bcB3ve6SewWP6x8GPBXMVDzLYix/CZ5IgB9r
+	 8pANJQNiK0Crg==
 From: Christian Brauner <brauner@kernel.org>
-To: djwong@kernel.org,
-	Christoph Hellwig <hch@lst.de>
+To: Zhao Mengmeng <zhaomzhao@126.com>
 Cc: Christian Brauner <brauner@kernel.org>,
-	bfoster@redhat.com,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] iomap: wait for batched folios to be stable in __iomap_get_folio
-Date: Wed, 14 Jan 2026 17:06:12 +0100
-Message-ID: <20260114-abmessungen-pyjama-0d0b08449efc@brauner>
+	zhaomengmeng@kylinos.cn,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz
+Subject: Re: [vfs/vfs.all PATCH] writeback: use round_jiffies_relative for dirtytime_work
+Date: Wed, 14 Jan 2026 17:14:19 +0100
+Message-ID: <20260114-endet-umgewandelt-a639352d24d7@brauner>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260113153943.3323869-1-hch@lst.de>
-References: <20260113153943.3323869-1-hch@lst.de>
+In-Reply-To: <20260113082614.231580-1-zhaomzhao@126.com>
+References: <20260113082614.231580-1-zhaomzhao@126.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,19 +60,16 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1180; i=brauner@kernel.org; h=from:subject:message-id; bh=GyDq+6eaoZkVZqBLxT6jqTugU3KCXYVJYLg9IeFm+ek=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSm7/sqP3FFgUQ3e/xigUORU3qeHHgUfe/iyZhb5azz9 npuPR7D2lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCReXyMDJt4JQ369DemFm2P OLJtVc31hIcbZ7J1hW1l3LZo4kQjJm6gig2MM9PdNjxxbIqKUu5boLV6LkPwzFfyS2Yu5t/k/y2 RCQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1055; i=brauner@kernel.org; h=from:subject:message-id; bh=W1jYo763i1aFlR8wYqpGFkD1e7V8qWDCB9eJbLX3G+s=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSmH3i20tDnb+3Pu9nPomTW8oavd2A4eLabTVSi9lFbx PZFxTrLO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaiIsLwT3mnZD3vmfPFZUdW x/HEckkoOvQZs+b6rGoRmFzTe10zlOG/z+M1O69MnPI9yOwZzylJE33F6PMffmrf/mj+LDfq0sp HTAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Tue, 13 Jan 2026 16:39:17 +0100, Christoph Hellwig wrote:
-> __iomap_get_folio needs to wait for writeback to finish if the file
-> requires folios to be stable for writes.  For the regular path this is
-> taken care of by __filemap_get_folio, but for the newly added batch
-> lookup it has to be done manually.
+On Tue, 13 Jan 2026 16:26:14 +0800, Zhao Mengmeng wrote:
+> The dirtytime_work is a background housekeeping task that flushes dirty
+> inodes, using round_jiffies_relative() will allow kernel to batch this
+> work with other aligned system tasks, reducing power consumption.
 > 
-> This fixes xfs/131 failures when running on PI-capable hardware.
 > 
-> [...]
 
 Applied to the vfs.fixes branch of the vfs/vfs.git tree.
 Patches in the vfs.fixes branch should appear in linux-next soon.
@@ -88,6 +86,6 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs.fixes
 
-[1/1] iomap: wait for batched folios to be stable in __iomap_get_folio
-      https://git.kernel.org/vfs/vfs/c/561940a7ee81
+[1/1] writeback: use round_jiffies_relative for dirtytime_work
+      https://git.kernel.org/vfs/vfs/c/e93b31d08162
 
