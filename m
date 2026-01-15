@@ -1,176 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-73901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731C4D23298
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 09:34:16 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832F2D234F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 09:58:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D6AFE3066331
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 08:33:44 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9A42B3098BD7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 08:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE2533AD83;
-	Thu, 15 Jan 2026 08:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313B933FE12;
+	Thu, 15 Jan 2026 08:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c+60rQr7"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CgrlSOPv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8488B330B2E;
-	Thu, 15 Jan 2026 08:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0B2335074
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 08:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768466014; cv=none; b=OaGmKuIAjiVDhBoB/6KdUISjBgoA44eWGG4YJyZ85MsznRlZ7DOCvO44CuWn9Gqv9srYoTvvdBZ1zZ54JB0uBtMG7qAciwt73DAL3dXFhu7AaQXNo86ykAYuu+OQvrtbe4ZNHEZQESrwjT4ae+2mMSIOLtz9vQs7MPeZ2qTWw0U=
+	t=1768467322; cv=none; b=W8RwehNu5NFWmCl/qVuOWBw1/mDy9rjWlrQPw591JIA2CjbOXrpRyQ7v2dMG+cmVII1mIE2ySxWLgOVhP3VN0eISj7lcWZj4+gSzE0cmVKTq7aSN1n8eaHf1FRZwMsOXv1OOVbOPWsS/5VJG0pMmDZwJ7Jb4KdEfsfbKeTV1yRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768466014; c=relaxed/simple;
-	bh=oLbUH2DPO45fSX51Lz273E+gwrE4TYXAmwzWRgKxagE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oE4DcCVvskeMkzzPMqouUqsG7F50mRMZRdYSp0FgQ+S/9+6gHE89h+oIs2lWuRLh/fSeIgfPIdu+t1NTPU0ci++IdZQVkyadHTC9LsxrJWblCv0jC1vvNFPtQpehQYnNwxW50c1b4+HsVnvGihsC8593hZljqm9xv2pFM1KEvvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=c+60rQr7; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ggIby7ZJJhhdPb6y5rH3a2GAOEpyxb4btFDkRofMARo=; b=c+60rQr76h1PsKAd5LgZT9hsxs
-	aNKhr+6hZylxOZstJG/1DgKDn3jLBV6CLqh93j+WnurQG7htCVWPbVvx6tOOUVmORqsU2McpPOkHx
-	u9JemdngkpC4GOWQM49sG2cFmQXbWsrsABlaLCyNQvNPEl+M5kVweygSwI21MwVsu9pML78e/uHxP
-	vmIIVXx4fyMCNx3hPFAoWaY/UvrDQx3Aoog9gQ+mt7L4rBcvXKQQLFteJUrzRcG5+ThbjMMlIeFyn
-	n6rc9wHtWg+gNCftYd7qw5Q1lztuERemrK6iJ3CvqvoWgP9e6ucBOBNhWhZlZCMCcpDFLJa8qwA8J
-	WF22tmyA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vgImu-0000000C08y-0V2p;
-	Thu, 15 Jan 2026 08:33:04 +0000
-Date: Thu, 15 Jan 2026 00:33:04 -0800
-From: Christoph Hellwig <hch@infradead.org>
+	s=arc-20240116; t=1768467322; c=relaxed/simple;
+	bh=ffj/jRTGzTCOVYgGqmN2gY/iOTYh7jIS8TI0C1aMKjY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uJcaRCFv8U7rgNUgWTpPhHpZYLkkEVvbPu6l2Pu2Bq5QTnwit5W/s+qUPavkjjBNsks6j+0bkSUpqpPex40QBvGD3au39W+Z+ikHWJY/EUpWLF4YRd+SdPf7wMrbnlbwRJWp6nTLI10CrPq8k2xHaLcbqT2hXaImm3m+zsEDwdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CgrlSOPv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768467320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=np0kZryYhlNwz2DI8X6SSdFuDYHtUMZFO1fEp73uKrI=;
+	b=CgrlSOPvCvovLxqOLqbuGREzVimL3MonOaEsZCBPcSiRgde7L5xIQUJBGfcoC07jRVAbIu
+	yYGsOzRuSBAvkrDlblPOhRZm7hHY66o/sov0SInp6w+MLZ5+a4wEx04IjidQOG4OGHRZqT
+	CwdyEMIIvH/jAzFhfepY6bDoIIoha3E=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-602-xk91a9JvM1ioxjdG4pfkiA-1; Thu,
+ 15 Jan 2026 03:55:16 -0500
+X-MC-Unique: xk91a9JvM1ioxjdG4pfkiA-1
+X-Mimecast-MFC-AGG-ID: xk91a9JvM1ioxjdG4pfkiA_1768467315
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5FFB21954B0C;
+	Thu, 15 Jan 2026 08:55:15 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.224.202])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 129EE1955F22;
+	Thu, 15 Jan 2026 08:55:12 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
 To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-	Luis de Bethencourt <luisbg@kernel.org>,
-	Salah Triki <salah.triki@gmail.com>,
-	Nicolas Pitre <nico@fluxnic.net>, Anders Larsen <al@alarsen.net>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Chunhai Guo <guochunhai@vivo.com>, Jan Kara <jack@suse.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Dave Kleikamp <shaggy@kernel.org>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Phillip Lougher <phillip@squashfs.org.uk>,
-	Carlos Maiolino <cem@kernel.org>, Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	Yuezhang Mo <yuezhang.mo@sony.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Hans de Goede <hansg@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
-	linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-	ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
-	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-mm@kvack.org, gfs2@lists.linux.dev, linux-doc@vger.kernel.org,
-	v9fs@lists.linux.dev, ceph-devel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org
-Subject: Re: [PATCH 00/24] vfs: require filesystems to explicitly opt-in to
- lease support
-Message-ID: <aWimQEokuib7fXjY@infradead.org>
-References: <ce700ee20834631eceededc8cd15fc5d00fee28e.camel@kernel.org>
- <20260113-mondlicht-raven-82fc4eb70e9d@brauner>
- <aWZcoyQLvbJKUxDU@infradead.org>
- <ce418800f06aa61a7f47f0d19394988f87a3da07.camel@kernel.org>
- <aWc3mwBNs8LNFN4W@infradead.org>
- <CAOQ4uxhMjitW_DC9WK9eku51gE1Ft+ENhD=qq3uehwrHO=RByA@mail.gmail.com>
- <aWeUv2UUJ_NdgozS@infradead.org>
- <20260114-klarstellen-blamieren-0b7d40182800@brauner>
- <aWiMaMwI6nYGX9Bq@infradead.org>
- <20260115-inspektion-kochbuch-505d8f94829e@brauner>
+Cc: linux-fsdevel@vger.kernel.org,  linux-api@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Al Viro <viro@zeniv.linux.org.uk>,  David
+ Howells <dhowells@redhat.com>,  DJ Delorie <dj@redhat.com>
+Subject: Re: O_CLOEXEC use for OPEN_TREE_CLOEXEC
+In-Reply-To: <20260114-alias-riefen-2cb8c09d0ded@brauner> (Christian Brauner's
+	message of "Wed, 14 Jan 2026 17:03:17 +0100")
+References: <lhupl7dcf0o.fsf@oldenburg.str.redhat.com>
+	<20260114-alias-riefen-2cb8c09d0ded@brauner>
+Date: Thu, 15 Jan 2026 09:55:10 +0100
+Message-ID: <lhuwm1ji7bl.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260115-inspektion-kochbuch-505d8f94829e@brauner>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, Jan 15, 2026 at 09:14:06AM +0100, Christian Brauner wrote:
-> On Wed, Jan 14, 2026 at 10:42:48PM -0800, Christoph Hellwig wrote:
-> > On Wed, Jan 14, 2026 at 04:20:13PM +0100, Christian Brauner wrote:
-> > > > You're still think of it the wrong way.  If we do have file systems
-> > > > that break the original exportfs semantics we need to fix that, and
-> > > > something like a "stable handles" flag will work well for that.  But
-> > > > a totally arbitrary "is exportable" flag is total nonsense.
-> > > 
-> > > File handles can legitimately be conceptualized independently of
-> > > exporting a filesystem. If we wanted to tear those concepts apart
-> > > implementation wise we could.
-> > > 
-> > > It is complete nonsense to expect the kernel to support exporting any
-> > > arbitrary internal filesystem or to not support file handles at all.
-> > 
-> > You are going even further down the path of entirely missing the point
-> > (or the two points by now).
-> 
-> You're arguing for the sake of arguing imho. You're getting exactly what
-> we're all saying as evidenced by the last paragraph in your mail: it is
-> entirely what this whole thing is about.
+* Christian Brauner:
 
-I can't even parse what you mean.  And no, I hate these stupid
-arguments, and I have much better things to do than dragging this on.
+> On Tue, Jan 13, 2026 at 11:40:55PM +0100, Florian Weimer wrote:
+>> In <linux/mount.h>, we have this:
+>> 
+>> #define OPEN_TREE_CLOEXEC      O_CLOEXEC       /* Close the file on execve() */
+>> 
+>> This causes a few pain points for us to on the glibc side when we mirror
+>> this into <linux/mount.h> becuse O_CLOEXEC is defined in <fcntl.h>,
+>> which is one of the headers that's completely incompatible with the UAPI
+>> headers.
+>> 
+>> The reason why this is painful is because O_CLOEXEC has at least three
+>> different values across architectures: 0x80000, 0x200000, 0x400000
+>> 
+>> Even for the UAPI this isn't ideal because it effectively burns three
+>> open_tree flags, unless the flags are made architecture-specific, too.
+>
+> I think that just got cargo-culted... A long time ago some API define as
+> O_CLOEXEC and now a lot of APIs have done the same.
 
-> > If a file systems meets all technical requirements of being nfsd
-> > exportable and the users asks for it, it is not our job to make an
-> > arbitrary policy decision to say no.
-> 
-> This is an entirely irrelevant point because we're talking about
-> cgroupfs, nsfs, and pidfs. And they don't meet this criteria. cgroupfs
-> is a _local resource management filesystem_ why would we ever want to
-> support exporting it over the network. It allows to break the local
-> delegation model as I've explained. cgroupfs shows _local processes_. So
-> a server will see completely nonsensical PID identifiers listed in
-> cgroup files and it can fsck around with processes in a remote system.
+Yes, it looks like inotify is in the same boat.
 
-None of that is a technical argument.  The lack of stable file handles
-would be one, and I think we came to the conclusion yesterday that
-this is the case.
+> I'm pretty sure we can't change that now but we can document that this
+> shouldn't be ifdefed and instead be a separate per-syscall bit. But I
+> think that's the best we can do right now.
+
+Maybe add something like this as a safety measure, to ensure that the
+flags don't overlap?
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index c58674a20cad..5bbfd379ec44 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3069,6 +3069,9 @@ static struct file *vfs_open_tree(int dfd, const char __user *filename, unsigned
+ 	bool detached = flags & OPEN_TREE_CLONE;
+ 
+ 	BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
++	BUILD_BUG_IN(!(O_CLOEXEC & OPEN_TREE_CLONE));
++	BUILD_BUG_ON(!((AT_EMPTY_PATH | AT_NO_AUTOMOUNT | AT_RECURSIVE | AT_SYMLINK_NOFOLLOW) &
++		       (O_CLOEXEC | OPEN_TREE_CLONE)));
+ 
+ 	if (flags & ~(AT_EMPTY_PATH | AT_NO_AUTOMOUNT | AT_RECURSIVE |
+ 		      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE |
+@@ -3100,7 +3103,7 @@ static struct file *vfs_open_tree(int dfd, const char __user *filename, unsigned
+ 
+ SYSCALL_DEFINE3(open_tree, int, dfd, const char __user *, filename, unsigned, flags)
+ {
+-	return FD_ADD(flags, vfs_open_tree(dfd, filename, flags));
++	return FD_ADD(flags & O_CLOEXEC, vfs_open_tree(dfd, filename, flags));
+ }
+ 
+ /*
+
+(Completely untested.)
+
+Passing the mix of flags to FD_ADD isn't really future-proof if FD_ADD
+ever recognizes more than just O_CLOEXEC.
+
+Thanks,
+Florian
 
 
