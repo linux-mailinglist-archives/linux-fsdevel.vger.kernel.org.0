@@ -1,171 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-73935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8AAAD25866
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 16:57:09 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C343D259DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 17:10:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0795330A2553
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 15:55:35 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 118C5304669D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 16:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EB83B5312;
-	Thu, 15 Jan 2026 15:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1A53BC4D4;
+	Thu, 15 Jan 2026 16:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O2rIC7Vp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VxkV/2AH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466FA3A1E63;
-	Thu, 15 Jan 2026 15:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9F73BC4C3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 16:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768492532; cv=none; b=VTm1VYFFIx/JI+mw9sjDh+mB8/NgDwo8PrXsxw4CjtUqs5JTu36ov1eAbK9BJCYSrst+KlMaMM/+mksTs1bo/7H0QfX6Z63q1kushony8HRgji/CJNIuV2jCh/+x3J+O7LZRlsoUENNvJcMwo68451BU3eN9GOjKVygx8Lab6nc=
+	t=1768493262; cv=none; b=eRW8NZy06YHdsaPXOmtkYb6Ng9xGZnZIfQbqbBBR9GjvK15RANJsqcmfS1dPEQ0M0Wdvw5z0X574S3MDyTxy1ZINuuI533D2bYJu41bdqDzDvHbAajOq8x35CLshYz/Di5o4XzIqy5DWAyi/oWZfCzWDrR62pVavAeC4VBnwlWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768492532; c=relaxed/simple;
-	bh=46BFkTdwtLapqZHArkx23WouduY4BLv38XWs7Y82E7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECueSyTIRNEWFH7spDB5ZT7QqlZNIDoxw4jdj6pGePkKhKvzd80g8YJuSfZNRiByUwzoV3u/qOonvCOJMjKkByRffWebxQEtRFWqPCy21wxpgPShTGZv4pKhEap+/0l0rXM4UYeveRlj5h0UkOpAssQYFWYa8wHEL6/v6fRhB/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O2rIC7Vp; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=q5bkL3Phvitbtx1bT4hfJIq6tZnmxPD0rFJlAMAShJ4=; b=O2rIC7VppOmyI4NJVqpXeNx1ps
-	9E8lXOJndmHISi9czu2yHfSrQTRbYobUU55b39rEMzyDlLR6z+C4bKlMldkk0zKZcDtVQyRXirthW
-	KI1r01BntklxKvuUMRRrhgmfBmFnpmdmRgaKJwlaz+Qr95fzmRdU8AMMwVYhCB/fCB/gyfRfTEhdL
-	oCCHfn5loLBrr7rjqMykoBHhlmKOfS1Z5lF7LMiDAfY3TLvCDDF6etTTuk+ncZAGMIu/wScOPq3Qt
-	ysh0B8nLJ2h3UIs60lSbHici2O7xcYYlHYyatawLyoOOL6mJoOtWjhMKRYG6tjN8XoPCMrGZHt0W7
-	BP1PTC9g==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vgPgp-00000007w8N-2zaT;
-	Thu, 15 Jan 2026 15:55:15 +0000
-Date: Thu, 15 Jan 2026 15:55:15 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"kernel@xen0n.name" <kernel@xen0n.name>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"maz@kernel.org" <maz@kernel.org>,
-	"oupton@kernel.org" <oupton@kernel.org>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"luto@kernel.org" <luto@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"david@kernel.org" <david@kernel.org>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"vbabka@suse.cz" <vbabka@suse.cz>,
-	"rppt@kernel.org" <rppt@kernel.org>,
-	"surenb@google.com" <surenb@google.com>,
-	"mhocko@suse.com" <mhocko@suse.com>,
-	"ast@kernel.org" <ast@kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"andrii@kernel.org" <andrii@kernel.org>,
-	"martin.lau@linux.dev" <martin.lau@linux.dev>,
-	"eddyz87@gmail.com" <eddyz87@gmail.com>,
-	"song@kernel.org" <song@kernel.org>,
-	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"kpsingh@kernel.org" <kpsingh@kernel.org>,
-	"sdf@fomichev.me" <sdf@fomichev.me>,
-	"haoluo@google.com" <haoluo@google.com>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>,
-	"peterx@redhat.com" <peterx@redhat.com>,
-	"jannh@google.com" <jannh@google.com>,
-	"pfalcato@suse.de" <pfalcato@suse.de>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"riel@surriel.com" <riel@surriel.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"jgross@suse.com" <jgross@suse.com>,
-	"yu-cheng.yu@intel.com" <yu-cheng.yu@intel.com>,
-	"kas@kernel.org" <kas@kernel.org>,
-	"coxu@redhat.com" <coxu@redhat.com>,
-	"kevin.brodsky@arm.com" <kevin.brodsky@arm.com>,
-	"ackerleytng@google.com" <ackerleytng@google.com>,
-	"maobibo@loongson.cn" <maobibo@loongson.cn>,
-	"prsampat@amd.com" <prsampat@amd.com>,
-	"mlevitsk@redhat.com" <mlevitsk@redhat.com>,
-	"jmattson@google.com" <jmattson@google.com>,
-	"jthoughton@google.com" <jthoughton@google.com>,
-	"agordeev@linux.ibm.com" <agordeev@linux.ibm.com>,
-	"alex@ghiti.fr" <alex@ghiti.fr>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>,
-	"chenhuacai@kernel.org" <chenhuacai@kernel.org>,
-	"dev.jain@arm.com" <dev.jain@arm.com>,
-	"gor@linux.ibm.com" <gor@linux.ibm.com>,
-	"hca@linux.ibm.com" <hca@linux.ibm.com>,
-	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"pjw@kernel.org" <pjw@kernel.org>,
-	"shijie@os.amperecomputing.com" <shijie@os.amperecomputing.com>,
-	"svens@linux.ibm.com" <svens@linux.ibm.com>,
-	"thuth@redhat.com" <thuth@redhat.com>,
-	"wyihan@google.com" <wyihan@google.com>,
-	"yang@os.amperecomputing.com" <yang@os.amperecomputing.com>,
-	"vannapurve@google.com" <vannapurve@google.com>,
-	"jackmanb@google.com" <jackmanb@google.com>,
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
-	"patrick.roy@linux.dev" <patrick.roy@linux.dev>,
-	"Thomson, Jack" <jackabt@amazon.co.uk>,
-	"Itazuri, Takahiro" <itazur@amazon.co.uk>,
-	"Manwaring, Derek" <derekmn@amazon.com>,
-	"Cali, Marco" <xmarcalx@amazon.co.uk>
-Subject: Re: [PATCH v9 01/13] set_memory: add folio_{zap,restore}_direct_map
- helpers
-Message-ID: <aWkN4yzwPtotaTeq@casper.infradead.org>
-References: <20260114134510.1835-1-kalyazin@amazon.com>
- <20260114134510.1835-2-kalyazin@amazon.com>
+	s=arc-20240116; t=1768493262; c=relaxed/simple;
+	bh=x596PaRllNdpIS5h9hbxK5VONKk86ckOfrPn2xRuoYU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rI9giCEYQYwck2BY2ZDgPjcLis62EBx9ftl2636t5amExlpdDIlDnC4N2JzFPecgEFtp3hIj3/61bpWL3LjLEVe+QnLqxPkAqg6gCiJmiCgHroe4Iqtc1iwO+qCURsNA1zIc8x6H5xZft4pNfmvoUtOAxj34+J+LZqnbmbZPUzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VxkV/2AH; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-42fb6ce71c7so968257f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 08:07:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768493256; x=1769098056; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bL4KgiUjakccFp8GDyIgH1rXwphyq4QxNLCwr+nqA/M=;
+        b=VxkV/2AHa5JQBaAQICa5sas+eHcjykHVbERA704p8HnhoB2mMgb2rXtLkj//IoI3AC
+         btn2Bo5JoPN2LhEwuy2ibPdWaRYrkxUqhWKpHXYu25u25lBKAdozXbYixKpAMtZ02Slu
+         JDCQ+F2JeKsgrI2ECJhZmapjAM6rD1QMf0a1zcDwvvTHhTF/e4Grrujl3C0HJWL/fueg
+         zchtSCwwaxIcmPAZlJqJGfqrQOC37L/Efl7Qg+KF2AnkfZtpGUdhgm+mw96D5jkAgJcR
+         k3Kyx1PWB8XnuzwCmwkhZdLLB5YFkYUOgi1FOGKxlbpnPHLOvuZnm5rPR8enVS/t8dJz
+         t8AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768493256; x=1769098056;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=bL4KgiUjakccFp8GDyIgH1rXwphyq4QxNLCwr+nqA/M=;
+        b=HrrrQBz0bCJt4PkXLk6fsWv2ZTP6TE5uuIUPHjSsp9Rosr3Omfg3XaL12XdBb8p2eN
+         MZKP/ULwIb8kSSsiIgA6I8HUKKpXQc/JmRR68NY2Vda+gOLxUGwmZxNNOpC7jdTlU0a2
+         k+M6YQCxGEt6BPkhvBT7THYLx5d7bVumz+BDwo9V6AVPf9ZcCh19sMyiC+Kee1i9oRsE
+         pys6N2hI+qiMT2ohHEJxo6kFez1DtXxahNcGIdeZV3UkaGjlGkJyPBCh3IZyHdqqTCBR
+         Z6pa9ZTc92Fcls6WQQYCES0Tmfwxr4VC38cGXR7mh1Drdf5EN8XG0dyDw5ERmsanPNC2
+         o0/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXGWRM39eJdGEXkqQ4fWPKWhrXl3V7OyFpMoywtAUzMHugAKnehLs2OGXVYTByp3PVhblXj9YkJ4gYAD4UD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDLQ18qLVyVCR87GaSOAFtlFrw65Qbm/DMw1eziRvGba3HGVvg
+	Yp6eggCg2XCsFBmrPedNP23c8xHuZ5tibucbk/40cETN5yfTdHeOQxg3VfiO8+WkK0G5Ehs3S8a
+	vKX/h9jNHrlV7SwKV323C8Wrs+SGec7Y=
+X-Gm-Gg: AY/fxX7ScsQ5Nv3bz3MPip+avNr4+2USfqo/LSgX9kul0dbC+A81WGEiU4yJmBjK9AF
+	AwVUKyu1gMkmgIR74AwEx06oaMOm/4Wo5AcoFj77awGaGstzSmXi2QGBPqwoTZ55cgSLZOKTCB6
+	09WO6+bHRfhPwy5UvYn85WYRsdPQqvh0gd+Bq1TPlTIDkEYZsv0MUQsnX8gyG+kX/q5mtlZcjId
+	gGWN4SvFadjSH5ARxCfdytHBkRWt1wXqAxP+2wDDOmXM2cnOW/wshVtEwDt+gnWDLL9eb/vLHU5
+	gUElugf36DztRtM6xT+bLWISapSatg==
+X-Received: by 2002:a05:6000:2303:b0:42f:a025:92b3 with SMTP id
+ ffacd0b85a97d-4342d3895a7mr7282018f8f.2.1768493256065; Thu, 15 Jan 2026
+ 08:07:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260114134510.1835-2-kalyazin@amazon.com>
+References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
+ <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com>
+ <20260114062608.GB10805@lst.de> <5334ebc6-ceee-4262-b477-6b161c5ca704@igalia.com>
+ <20260115062944.GA9590@lst.de> <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com>
+ <20260115072311.GA10352@lst.de> <22b16e24-d10e-43f6-bc2b-eeaa94310e3a@igalia.com>
+In-Reply-To: <22b16e24-d10e-43f6-bc2b-eeaa94310e3a@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 15 Jan 2026 17:07:24 +0100
+X-Gm-Features: AZwV_QiiOfVz5MjHOOW7TnQI8q-5ZkSKoahnBApAROcQQgB7iPXfsZHV_rRz004
+Message-ID: <CAOQ4uxhbz7=XT=C3R8XqL0K_o7KwLKsoNwgk=qJGuw2375MTJw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Christoph Hellwig <hch@lst.de>, Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Tom Talpey <tom@talpey.com>, Carlos Maiolino <cem@kernel.org>, Chris Mason <clm@fb.com>, 
+	David Sterba <dsterba@suse.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 14, 2026 at 01:45:23PM +0000, Kalyazin, Nikita wrote:
-> +int folio_zap_direct_map(struct folio *folio)
-> +{
-> +	return set_direct_map_valid_noflush(folio_page(folio, 0),
-> +					    folio_nr_pages(folio), false);
-> +}
+On Thu, Jan 15, 2026 at 4:42=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
+>
+> Em 15/01/2026 04:23, Christoph Hellwig escreveu:
+>
+> [...]
+>
+> >
+> > I still wonder what the use case is here.  Looking at Andr=C3=A9's orig=
+inal
+> > mail it states:
+> >
+> > "However, btrfs mounts may have volatiles UUIDs. When mounting the exac=
+t same
+> > disk image with btrfs, a random UUID is assigned for the following disk=
+s each
+> > time they are mounted, stored at temp_fsid and used across the kernel a=
+s the
+> > disk UUID. `btrfs filesystem show` presents that. Calling statfs() howe=
+ver
+> > shows the original (and duplicated) UUID for all disks."
+> >
+> > and this doesn't even talk about multiple mounts, but looking at
+> > device_list_add it seems to only set the temp_fsid flag when set
+> > same_fsid_diff_dev is set by find_fsid_by_device, which isn't documente=
+d
+> > well, but does indeed seem to be done transparently when two file syste=
+ms
+> > with the same fsid are mounted.
+> >
+> > So Andr=C3=A9, can you confirm this what you're worried about?  And btr=
+fs
+> > developers, I think the main problem is indeed that btrfs simply allows
+> > mounting the same fsid twice.  Which is really fatal for anything using
+> > the fsid/uuid, such NFS exports, mount by fs uuid or any sb->s_uuid use=
+r.
+> >
+>
+> Yes, I'm would like to be able to mount two cloned btrfs images and to
+> use overlayfs with them. This is useful for SteamOS A/B partition scheme.
+>
+> >> If so, I think it's time to revert the behavior before it's too late.
+> >> Currently the main usage of such duplicated fsids is for Steam deck to
+> >> maintain A/B partitions, I think they can accept a new compat_ro flag =
+for
+> >> that.
+> >
+> > What's an A/B partition?  And how are these safely used at the same tim=
+e?
+> >
+>
+> The Steam Deck have two main partitions to install SteamOS updates
+> atomically. When you want to update the device, assuming that you are
+> using partition A, the updater will write the new image in partition B,
+> and vice versa. Then after the reboot, the system will mount the new
+> image on B.
+>
 
-The implementation isn't the greatest.  None of the implementations
-of set_direct_map_valid_noflush() actually do anything with the struct
-page; they all call page_address() or page_to_virt() (fundamentally the
-same thing).  So converting folio->page->address is a bit inefficient.
+And what do you expect to happen wrt overlayfs when switching from
+image A to B?
 
-It feels like we should change set_direct_map_valid_noflush() to take a
-const void * and pass either page_address() or folio_address(), depending
-whether the caller has a page or a folio.  What do you think?
+What are the origin file handles recorded in overlayfs index from image A
+lower worth when the lower image is B?
+
+Is there any guarantee that file handles are relevant and point to the
+same objects?
+
+The whole point of the overlayfs index feature is that overlayfs inodes
+can have a unique id across copy-up.
+
+Please explain in more details exactly which overlayfs setup you are
+trying to do with index feature.
+
+FWIW, the setup you are describing sounds very familiar.
+I am pretty sure that a similar setup with squashfs and OpenWRT [1]
+was the use case to add the uuid=3Doff overlayfs mount options.
+
+Thanks,
+Amir.
+
+[1] https://lore.kernel.org/linux-unionfs/32532923.JtPX5UtSzP@fgdesktop/
 
