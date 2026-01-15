@@ -1,807 +1,273 @@
-Return-Path: <linux-fsdevel+bounces-73941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7039DD25E0C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 17:53:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6684D25E9E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 17:55:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id E7AA330060CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 16:53:15 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 702E53007F06
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 16:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D651F3ACEFF;
-	Thu, 15 Jan 2026 16:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE04D274B43;
+	Thu, 15 Jan 2026 16:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OTNicD5S";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Rq3sSbsn";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OTNicD5S";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Rq3sSbsn"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OkCmGmZT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A5F25228D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 16:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5E23BF2EF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 16:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768495994; cv=none; b=A7qeN8R5YTDVf66Sx1enIBintpJPMd9GPvqgPaUu/R6l9cQcX9S5sJd2/hP4mwslvqtOiEh70LmRqohCnWkLAz1dne7R8e9+wGY158xJqrpt+J1RvugnVC8V1Jx0DheuCPVtpI461E0BU3ehB+kYieWh/CC7vqH2xq3PAYrCBQg=
+	t=1768496147; cv=none; b=QdByuuzEFznY94Zd+Ilpb6s2NXmOt46SBRKZUGaQcjYRzB5iGXyx7p6a+jyXmF/OP4G/K/C11DwMpTB+u5pJGLAT4wPgeCfjRCJuV76ZqJCQUYHvO8XmlpLtGfVWfBjmvvJADQEpwRzvlEXOgPuwykF28Sxbl9IdJ4RgTi44N2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768495994; c=relaxed/simple;
-	bh=DlUpTgBVOZ7hdfU5MaDQtdbs1Q+/fhjP1nMdDgPBHyA=;
+	s=arc-20240116; t=1768496147; c=relaxed/simple;
+	bh=/HlGffZbbOZ/1UXb3mvKKFsmx2gpC5HpF9dKR3nVclw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EP+WYnqBHmECqn6whZohSRUoj8gy5kh7bx8eQ5e1BkhrNVV0RxPH7mHJtmI85YlOl0LK3avR4Ata/+f0MuzxgsHcu11K0DpsWoh8FjKM9brfGBQuPgjmswCvqjJnvo2BMyaKXj2prrXIBLehyuLoD63vNAY6BMoIew7cCKRdgH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OTNicD5S; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Rq3sSbsn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OTNicD5S; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Rq3sSbsn; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 37FA733747;
-	Thu, 15 Jan 2026 16:53:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1768495990; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j5fg0IL2cVZDMMwLDSVz6ikd7nOikRwctBfYjuzBMz/BExX1B6WXYOnJmsNXV3zXbYHZEBPIhrvZ8NXVnNTXzRaG9J4hKEM1xuoBfgrYf41RDqfOPAr78Dr+NyyDZ8tMazOwL981uaEKokBViwSfD8b7NWfRnPHYjCXxqg2PDO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OkCmGmZT; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 15 Jan 2026 16:55:22 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1768496138;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EUp7vJBm5RwTWETMhegI0NKFZOuxIWgQjM+/1VZyAiY=;
-	b=OTNicD5S+DnlFt+w5IcceK3Vn14l/uA40FtWy5tIg8sWyD11mfpxPgq2WL6N0mHDvd1qkR
-	LR30OsKREqTv+luTdQW4EA2X510iFBHGrdARcqijSaQIrTb4iSOaTpO0Ju7q2zItXKxvgt
-	NFQ4+262AFNwApEIgBL3x5Pz7HE+xfA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1768495990;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EUp7vJBm5RwTWETMhegI0NKFZOuxIWgQjM+/1VZyAiY=;
-	b=Rq3sSbsn83NZPdMF10wiY3L7b1jz87k2ealxcBy+5DKXgHhR/f3iKFE3qE3b5R70peyeHg
-	wE3ki/ZMwNgvcXDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=OTNicD5S;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Rq3sSbsn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1768495990; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EUp7vJBm5RwTWETMhegI0NKFZOuxIWgQjM+/1VZyAiY=;
-	b=OTNicD5S+DnlFt+w5IcceK3Vn14l/uA40FtWy5tIg8sWyD11mfpxPgq2WL6N0mHDvd1qkR
-	LR30OsKREqTv+luTdQW4EA2X510iFBHGrdARcqijSaQIrTb4iSOaTpO0Ju7q2zItXKxvgt
-	NFQ4+262AFNwApEIgBL3x5Pz7HE+xfA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1768495990;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EUp7vJBm5RwTWETMhegI0NKFZOuxIWgQjM+/1VZyAiY=;
-	b=Rq3sSbsn83NZPdMF10wiY3L7b1jz87k2ealxcBy+5DKXgHhR/f3iKFE3qE3b5R70peyeHg
-	wE3ki/ZMwNgvcXDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 54FC43EA63;
-	Thu, 15 Jan 2026 16:53:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PAr6BnUbaWnicAAAD6G6ig
-	(envelope-from <ematsumiya@suse.de>); Thu, 15 Jan 2026 16:53:09 +0000
-Date: Thu, 15 Jan 2026 13:53:06 -0300
-From: Enzo Matsumiya <ematsumiya@suse.de>
-To: David Howells <dhowells@redhat.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	henrique.carvalho@suse.com
-Subject: Re: [PATCH 00/37] cifs: Scripted header file cleanup and SMB1 split
-Message-ID: <sijmvmcozfmtp3rkamjbgr6xk7ola2wlxc2wvs4t4lcanjsaza@w4bcxcxkmyfc>
-References: <20251222223006.1075635-1-dhowells@redhat.com>
+	bh=oN0TuaNOYXt16rCu+jFV5kzSUAKS5IS1k0m12m1o9aA=;
+	b=OkCmGmZTlnLaXdUsV+HoNugWY3ZhFbdWednaJHtUzZ1vPpgYt21cQJubRfzCCYlcKC/B+6
+	7B0kXUT18tvaZ/7o/q+dIgKTf2MKrNG5GPlQs0MKcv1mOfmD7Md5NF3K4sREyoozvSzTlV
+	FkEqH9n+WmZgm82NA56jWhAADHzOb9E=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Gregory Price <gourry@gourry.net>
+Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	kernel-team@meta.com, longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, 
+	mkoutny@suse.com, corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	dakr@kernel.org, dave@stgolabs.net, jonathan.cameron@huawei.com, 
+	dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com, 
+	ira.weiny@intel.com, dan.j.williams@intel.com, akpm@linux-foundation.org, 
+	vbabka@suse.cz, surenb@google.com, mhocko@suse.com, jackmanb@google.com, 
+	ziy@nvidia.com, david@kernel.org, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, rppt@kernel.org, axelrasmussen@google.com, yuanchu@google.com, 
+	weixugc@google.com, yury.norov@gmail.com, linux@rasmusvillemoes.dk, 
+	rientjes@google.com, shakeel.butt@linux.dev, chrisl@kernel.org, kasong@tencent.com, 
+	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com, baohua@kernel.org, 
+	chengming.zhou@linux.dev, roman.gushchin@linux.dev, muchun.song@linux.dev, 
+	osalvador@suse.de, matthew.brost@intel.com, joshua.hahnjy@gmail.com, 
+	rakie.kim@sk.com, byungchul@sk.com, ying.huang@linux.alibaba.com, 
+	apopple@nvidia.com, cl@gentwo.org, harry.yoo@oracle.com, zhengqi.arch@bytedance.com
+Subject: Re: [RFC PATCH v3 7/8] mm/zswap: compressed ram direct integration
+Message-ID: <fkxcxh4eilncsbtwt7jmuiaxrfvuidlnbovesa6m7eoif5tmxc@r34c5zy4nr4y>
+References: <20260108203755.1163107-1-gourry@gourry.net>
+ <20260108203755.1163107-8-gourry@gourry.net>
+ <i6o5k4xumd5i3ehl6ifk3554sowd2qe7yul7vhaqlh2zo6y7is@z2ky4m432wd6>
+ <aWF1uDdP75gOCGLm@gourry-fedora-PF4VCD3F>
+ <4ftthovin57fi4blr2mardw4elwfsiv6vrkhrjqjsfvvuuugjj@uivjc5uzj5ys>
+ <aWWEvAaUmpA_0ERP@gourry-fedora-PF4VCD3F>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251222223006.1075635-1-dhowells@redhat.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Rspamd-Queue-Id: 37FA733747
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spam-Level: 
+In-Reply-To: <aWWEvAaUmpA_0ERP@gourry-fedora-PF4VCD3F>
+X-Migadu-Flow: FLOW_OUT
 
-On 12/22, David Howells wrote:
->Hi Steve,
->
->Could you consider taking these patches?  There are two parts to the set.
->
->The first part cleans up the formatting of declarations in the header file.
->They remove the externs, (re)name the arguments in the declarations to
->match those in the C file and format them to wrap at 79 chars (this is
->configurable - search for 79 in the script), aligning all the first
->argument on each line with the char after the opening bracket.
->
->I've attached the script below so that you can also run it yourself.  It
->does all the git manipulation to generate one commit per header file
->changed.  Run as:
->
->	./cifs.pl fs/smb/client/*.[ch]
->
->in the kernel source root dir.
->
->The script can be rerun later to readjust any added changes.
->
->Paulo has given his R-b for this subset (labelled cifs: Scripted clean up).
->
->The second part splits the SMB1 parts of cifs protocol layer out into their
->own files.  cifstransport.c is renamed to smb1transport.c also for
->consistency, though cifssmb.c is left unrenamed (I could rename that to
->smb1pdu.c).  This is pretty much all moving stuff around and few actual
->code changes.  There is one bugfix, though, to cifs_dump_mids().
->
->I've left the splitting of the SMB1 parts of the cifs filesystem layer for
->a future set of patches as that's would involve removing embedded parts of
->functions and is easier to get wrong.
->
->The patches can be found here also:
->
->	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=cifs-cleanup
->
->Thanks,
->David
+On Mon, Jan 12, 2026 at 06:33:16PM -0500, Gregory Price wrote:
+> On Mon, Jan 12, 2026 at 09:13:26PM +0000, Yosry Ahmed wrote:
+> > On Fri, Jan 09, 2026 at 04:40:08PM -0500, Gregory Price wrote:
+> > > On Fri, Jan 09, 2026 at 04:00:00PM +0000, Yosry Ahmed wrote:
+> > > > On Thu, Jan 08, 2026 at 03:37:54PM -0500, Gregory Price wrote:
+> > > 
+> > > Hardware Says : 8GB
+> > > Hardware Has  : 1GB
+> > > Node Capacity : 8GB
+> > > 
+> > > The capacity numbers are static.  Even with hotplug, they must be
+> > > considered static - because the runtime compression ratio can change.
+> > > 
+> > > If the device fails to achieve a 4:1 compression ratio, and real usage
+> > > starts to exceed real capacity - the system will fail.
+> > > (dropped writes, poisons, machine checks, etc).
+> > > 
+> > > We can mitigate this with strong write-controls and querying the device
+> > > for compression ratio data prior to actually migrating a page. 
+> > 
+> > I am a little bit confused about this. Why do we only need to query the
+> > device before migrating the page?
+> >
+> 
+> Because there is no other interposition point at which we could.
+> Everything is memory semantic - it reduces to memcpy().
+> 
+> The actual question you're asking is "What happens if we write the page
+> and we're out of memory?"
+> 
+> The answer is:  The page gets poisoned and the write gets dropped.
+> 
+> That's it.  The writer does not get notified.  The next reader of that
+> memory will hit POISON and the failure process will happen (MCE or
+> SIGBUS, essentially).
+> 
+> > Are we checking if the device has enough memory for the worst case
+> > scenario (i.e. PAGE_SIZE)?
+> > 
+> > Or are we checking if the device can compress this specific page and
+> > checking if it can compress it and store it? This seems like it could be
+> > racy and there might be some throwaway work.
+> > 
+> 
+> We essentially need to capture the current compression ratio and
+> real-usage to determine whether there's another page available.
+> 
+> It is definitely racey, and the best we can do is set reasonable
+> real-memory-usage limits to prevent ever finding ourselves in that
+> scenario.  That most likely means requiring the hardware send an
+> interrupt when usage and/or ratio hit some threshhold and setting a
+> "NO ALLOCATION ALLOWED" bit.
+> 
+> But in software we can also try to query/track this as well, but we may
+> not be able to query the device at allocation time (or at least that
+> would be horribly non-performant).
+> 
+> So yeah, it's racy.
 
-Acked-by: Enzo Matsumiya <ematsumiya@suse.de>
+Yeah I think we should track it in software if possible to completely
+avoid the poison scenario you describe above. Relying on setting a
+reasonable limit and a certain compression ratio doesn't sound too
+comforting.
 
+> 
+> > I guess my question is: why not just give the page to the device and get
+> > either: successfully compressed and stored OR failed?
+> > 
+> 
+> Yeah this is what I meant by this whole thing being sunk into the
+> callback.  I think that's reasonable.
+> 
+> > Another question, can the device or driver be configured such that we
+> > reject pages that compress poorly to avoid wasting memory and BW on the
+> > device for little savings?
+> > 
+> 
+> Memory semantics :]
+> 
+> memcpy(dst, src) -> no indication of compression ratio
 
-Cheers,
+Right..
 
-Enzo
+> 
+> > > on *write* access:
+> > > - promote to real page
+> > > - clean up the compressed page
+> > 
+> > This makes sense. I am assuming the main benefit of zswap.c over cram.c
+> > in this scenario is limiting read accesses as well.
+> >
+> 
+> For the first go, yeah.  A cram.c would need special page table handling
+> bits that will take a while to get right.  We can make use of the
+> hardware differently in the meantime.
 
->---
->	#!/usr/bin/perl -w
->	use strict;
->	unless (@ARGV) {
->	    die "Usage: $0 <c_file1> [<c_file2> ...]\n";
->	}
->
->	# Data tracking
->	my %funcs = ();		# Func name => { func prototype }
->	my %headers = ();	# Header filename => { header content }
->	my %c_files = ();	# C filename => { ordered func list, header pref }
->	my %cmarkers = ();	# C filename marker => { header filename it's in }
->
->	# Parse state
->	my $pathname = "-";
->	my $lineno = 0;
->
->	sub error(@) {
->	    print STDERR $pathname, ":", $lineno, ": ", @_, "\n";
->	    exit(1);
->	}
->
->	sub pad($) {
->	    # Reindent the function arguments to line the arguments up with the char
->	    # after the opening bracket on the func argument list
->	    my ($lines) = @_;
->	    return $lines if ($#{$lines} <= 0);
->	    my $has_empty = 0;
->	    for (my $i = 0; $i <= $#{$lines}; $i++) {
->		$lines->[$i] =~ s/^[ \t]+//;
->		$has_empty = 1 if ($lines->[$i] eq "");
->	    }
->
->	    if ($has_empty) {
->		my @clean = grep /.+/, @{$lines};
->		$lines = \@clean;
->	    }
->
->	    my $indlen = index($lines->[0], "(");
->	    return $lines if ($indlen < 0);
->	    my $indent = "";
->	    $indlen++;
->	    $indent .= "\t" x ($indlen / 8);
->	    $indent .= " " x ($indlen % 8);
->
->	    my @padded = ();
->	    my $acc = "";
->	    my $len = -$indlen;
->	    for (my $i = 0; $i <= $#{$lines}; $i++) {
->		my $argument = $lines->[$i];
->		my $arglen = length($argument);
->		my $last = ($i == $#{$lines} ? 1 : 0);
->
->		if ($i == 0 ||
->		    $i == 1) {
->		    $acc .= $argument;
->		    $acc .= ";" if ($last);
->		    $len += $arglen + $last;
->		    next;
->		}
->		if (!$acc) {
->		    $acc = $indent . $argument;
->		    $acc .= ";" if ($last);
->		    $len += $arglen + $last;
->		    next;
->		}
->		if ($indlen + $len + 1 + $arglen + $last > 79) {
->		    push @padded, $acc;
->		    $acc = $indent . $argument;
->		    $acc .= ";" if ($last);
->		    $len = $arglen + $last;
->		    next;
->		}
->
->		$acc .= " " . $argument;
->		$acc .= ";" if ($last);
->		$len += 1 + $arglen + $last;
->	    }
->	    push @padded, $acc if ($acc);
->	    return \@padded;
->	}
->
->	sub earliest(@) {
->	    my $ret = -1;
->	    foreach (@_) {
->		$ret = $_ if ($ret < 0 || ($_ >= 0 && $_ < $ret));
->	    }
->	    return $ret;
->	}
->
->	foreach my $file (@ARGV) {
->	    # Open the file for reading.
->	    next if $file =~ /trace[.]h$/;
->	    next if $file =~ /smbdirect[.][ch]$/;
->	    open my $fh, "<$file"
->		or die "Could not open file '$file'";
->	    $pathname = $file;
->	    $lineno = 0;
->
->	    my $filename;
->	    my @file_content = ();
->	    my @copy = ();
->
->	    my $state = 0;
->	    my $qual = "";
->	    my $type = "";
->	    my $funcname = "";
->	    my @funcdef = ();
->	    my $bracket = 0;
->	    my $comment = 0;
->	    my $smb1 = 0;
->	    my $header = 0;
->	    my $inline = 0;
->	    my $file_marker = "";
->	    my $config = "";
->	    my $c_file = 0;
->
->	    $filename = $pathname;
->	    $filename =~ s!.*/!!;
->
->	    if ($file =~ m!.h$!) {
->		my %new_h_file = (
->		    path    => $pathname,
->		    fname   => $filename,
->		    content => [],
->		    );
->		$header = \%new_h_file;
->		$headers{$filename} = \%new_h_file;
->	    } elsif ($file =~ m!.c$!) {
->		my %new_c_file = (
->		    path  => $pathname,
->		    fname => $filename,
->		    funcs => [],
->		    );
->		$c_file = \%new_c_file;
->		$c_files{$filename} = \%new_c_file;
->	    } else {
->		warn("Ignoring unexpected file $file\n");
->		next;
->	    }
->
->	    $smb1 = 1 if ($file =~ m!/smb1ops.c|/cifssmb.c|/cifstransport.c!);
->
->	    foreach my $line (<$fh>) {
->		$lineno++;
->		chomp($line);
->		push @copy, $line;
->		if (!$line) {
->		    # Blank line
->		    push @file_content, @copy;
->		    @copy = ();
->		    next;
->		}
->
->		# Handle continuation or end of block comment.  Look for C file
->		# prototype insertion point markers.
->		if ($comment) {
->		    if ($line =~ m![*]/!) {
->			if ($comment == 2 && $file_marker) {
->			    $cmarkers{$file_marker} = $file_marker;
->			    push @copy, "#C_MARKER " . $filename;
->			    $file_marker = 0;
->			}
->			$comment = 0;
->		    } else {
->			$comment++;
->			if ($comment == 2 && $line =~ m! [*] ([a-z][a-z_0-9]*[.][c])$!) {
->			    $file_marker = $1;
->			    print("Found file marker ", $file_marker, " in ", $filename, "\n");
->			}
->		    }
->		    push @file_content, @copy;
->		    @copy = ();
->		    next;
->		}
->
->		# Check cpp directives, particularly looking for SMB1 bits
->		if ($line =~ /^[#]/) {
->		    if ($header) {
->			if ($line =~ /ifdef.*(CONFIG_[A-Z0-9_])/) {
->			    error("multiconfig") if $config;
->			    $config = $1;
->			    $smb1++ if ($config eq "CONFIG_CIFS_ALLOW_INSECURE_LEGACY");
->			} elsif ($line =~ /endif/) {
->			    $smb1-- if ($config eq "CONFIG_CIFS_ALLOW_INSECURE_LEGACY");
->			    $config = "";
->			}
->		    }
->		    push @file_content, @copy;
->		    @copy = ();
->		    next;
->		}
->
->		# Exclude interference in finding func names and return types
->		if ($line =~ /^[{]/ ||
->		    $line =~ /##/ ||
->		    $line =~ /^[_a-z0-9A-Z]+:$/ || # goto label
->		    $line =~ /^do [{]/ ||
->		    $line =~ m!^//!) {
->		    push @file_content, @copy;
->		    @copy = ();
->		    next;
->		}
->
->		# Start of a block comment
->		if ($line =~ m!^/[*]!) {
->		    $comment = 1 unless ($line =~ m![*]/!);
->		    push @file_content, @copy;
->		    @copy = ();
->		    next;
->		}
->
->		# End of a braced section, such as a function implementation
->		if ($line =~ /^[}]/) {
->			$type = "";
->			$qual = "";
->			$funcname = "";
->			@funcdef = ();
->			push @file_content, @copy;
->			@copy = ();
->			next;
->		}
->
->		if ($line =~ /^typedef/) {
->		    $type = "";
->		    $qual = "";
->		    $funcname = "";
->		    @funcdef = ();
->		    push @file_content, @copy;
->		    @copy = ();
->		    next;
->		}
->
->		# Extract function qualifiers.  There may be multiple of these in more
->		# or less any order.  Some of them cause the func to be skipped (e.g. inline).
->
->		if ($line =~ /^(static|extern|inline|noinline|noinline_for_stack|__always_inline)\W/ ||
->		    $line =~ /^(static|extern|inline|noinline|noinline_for_stack|__always_inline)$/) {
->		    error("Unexpected qualifier '$1'") if ($state != 0);
->		    while ($line =~ /^(static|extern|inline|noinline|noinline_for_stack|__always_inline)\W/ ||
->			   $line =~ /^(static|extern|inline|noinline|noinline_for_stack|__always_inline)$/) {
->			$qual .= " " if ($qual);
->			$qual .= $1;
->			$inline = 1 if ($1 eq "inline");
->			$inline = 1 if ($1 eq "__always_inline");
->			$line = substr($line, length($1));
->			$line =~ s/^\s+//;
->		    }
->		}
->
->		if ($state == 0) {
->		    # Extract what we assume to be the return type
->		    if ($line =~ /^\s/) {
->			push @file_content, @copy;
->			@copy = ();
->			next;
->		    }
->		    while ($line =~ /^(unsigned|signed|bool|char|short|int|long|void|const|volatile|(struct|union|enum)\s+[_a-zA-Z][_a-zA-Z0-9]*|[*]|__init|__exit|__le16|__le32|__le64|__be16|__be32|__be64)/) {
->			$type .= " " if $type;
->			$type .= $1;
->			$line = substr($line, length($1));
->			$line =~ s/^\s+//;
->		    }
->		    if ($line =~ /^struct [{]/) {
->			# Ignore structure definitions
->			$type = "";
->			$qual = "";
->			$funcname = "";
->			@funcdef = ();
->			push @file_content, @copy;
->			@copy = ();
->			next;
->		    }
->		    if (index($line, "=") >= 0) {
->			# Ignore assignments
->			$type = "";
->			$qual = "";
->			$funcname = "";
->			@funcdef = "";
->			push @file_content, @copy;
->			@copy = ();
->			next;
->		    }
->
->		    # Try and extract a function's type and name
->		    while ($line =~ /(^[_a-zA-Z][_a-zA-Z0-9]*)/) {
->			my $name = $1;
->			$line = substr($line, length($name));
->			next if ($line =~ /^[{]/);
->			$line =~ s/^\s+//;
->
->			my $ch = substr($line, 0, 1);
->			last if ($ch eq "[" || $ch eq ";"); # Global variables
->
->			if ($ch eq "(") {
->			    # Found the function name
->			    $state = 1;
->			    $line = substr($line, 1);
->			    $funcname = $name;
->			    my $tmp = $qual . $type . " " . $funcname . "(";
->			    $tmp =~ s/[*] /*/;
->			    push @funcdef, $tmp;
->			    $bracket = 1;
->			    last;
->			}
->
->			if ($type) {
->			    last if (index($line, ";") >= 0 && index($line, "(") == -1);
->			    error("Unexpected name '$name' after '$type'");
->			}
->
->			$type .= " " if $type;
->			$type .= $name;
->			if ($line =~ /^(\s*[*]+)/) {
->			    my $ptr = $1;
->			    $type .= $ptr;
->			    $line = substr($line, length($ptr));
->			}
->		    }
->		}
->
->		# Try and extract a function's argument list
->		my $from = 0;
->		if ($state == 1) {
->		    while (1) {
->			my $o = index($line, "(", $from);
->			my $c = index($line, ")", $from);
->			my $m = index($line, ",", $from);
->
->			my $b = earliest($o, $c, $m);
->			if ($b < 0) {
->			    push @funcdef, $line
->				unless ($line eq "");
->			    last;
->			}
->			my $ch = substr($line, $b, 1);
->
->			# Push the arguments separately on to the list
->			if ($ch eq ",") {
->			    push @funcdef, substr($line, 0, $b + 1);
->			    $line = substr($line, $b + 1);
->			    $from = 0;
->			} elsif ($ch eq "(") {
->			    # Handle brackets in the argument list (e.g. function
->			    # pointers)
->			    $bracket++;
->			    $from = $b + 1;
->			} elsif ($ch eq ")") {
->			    $bracket--;
->			    if ($bracket == 0) {
->				push @funcdef, substr($line, 0, $b + 1);
->				$line = substr($line, $b + 1);
->				$state = 2;
->				last;
->			    }
->			    $from = $b + 1;
->			}
->		    }
->		}
->
->		if ($state == 2) {
->		    $inline = 1 if ($qual =~ /inline/);
->		    #print("QUAL $qual $type $funcname $inline ", $#funcdef, "\n");
->		    if (!$header &&
->			$qual !~ /static/ &&
->			$funcname ne "__acquires" &&
->			$funcname ne "__releases" &&
->			$funcname ne "module_init" &&
->			$funcname ne "module_exit" &&
->			$funcname ne "module_param" &&
->			$funcname ne "module_param_call" &&
->			$funcname ne "PROC_FILE_DEFINE" &&
->			$funcname !~ /MODULE_/ &&
->			$funcname !~ /DEFINE_/) {
->
->			# Okay, we appear to have a function implementation
->			my $func;
->
->			if (exists($funcs{$funcname})) {
->			    $func = $funcs{$funcname};
->			    $func->{body} = pad(\@funcdef);
->			} else {
->			    my %new_func = (
->				name => $funcname,
->				cond => "",
->				);
->			    $func = \%new_func;
->			    $funcs{$funcname} = $func;
->			    $func->{body} = pad(\@funcdef);
->			}
->			$func->{body} = pad(\@funcdef);
->
->			if ($funcname eq "cifs_inval_name_dfs_link_error") {
->			    $func->{cond} = "#ifdef CONFIG_CIFS_DFS_UPCALL";
->			} elsif ($funcname eq "cifs_listxattr") {
->			    $func->{cond} = "#ifdef CONFIG_CIFS_XATTR";
->			}
->
->			push @{$c_file->{funcs}}, $func;
->		    } elsif (!$header || $inline) {
->			# Ignore inline function implementations and other weirdies
->			push @file_content, @copy;
->		    } elsif ($header && !$inline) {
->			push @file_content, "#FUNCPROTO " . $funcname;
->
->			my $func;
->
->			if (exists($funcs{$funcname})) {
->			    $func = $funcs{$funcname};
->			    $func->{lineno} = $lineno;
->			    $func->{pathname} = $pathname;
->			} else {
->			    my %new_func = (
->				name => $funcname,
->				cond => "",
->				lineno => $lineno,
->				pathname => $pathname,
->				);
->			    $func = \%new_func;
->			    $funcs{$funcname} = $func;
->			}
->		    }
->
->		    @funcdef = ();
->		    $type = "";
->		    $qual = "";
->		    $funcname = "";
->		    $inline = 0;
->		    $state = 0;
->		    @copy = ();
->		}
->		if ($line =~ /;/) {
->		    $type = "";
->		    $qual = "";
->		    $funcname = "";
->		    @funcdef = ();
->		    $state = 0;
->		    push @file_content, @copy;
->		    @copy = ();
->		}
->	    }
->	    close($fh);
->
->	    if ($header) {
->		$header->{content} = \@file_content;
->	    }
->	}
->
->	sub write_header($)
->	{
->	    my ($header) = @_;
->	    my $path = $header->{path};
->
->	    my @output = ();
->
->	    foreach my $line (@{$header->{content}}) {
->		if ($line =~ "^[#]C_MARKER (.*)") {
->		    next;
->		} elsif ($line =~ "^[#]FUNCPROTO ([_a-zA-Z0-9]+)") {
->		    my $funcname = $1;
->		    my $func = $funcs{$funcname};
->		    if (!$func->{body}) {
->			print($func->{pathname}, ":", $func->{lineno}, ": '", $funcname,
->			      "' dead prototype\n");
->			next;
->		    }
->		    #push @output, $line;
->		    push @output, @{$func->{body}};
->		} else {
->		    push @output, $line;
->		}
->	    }
->
->	    open my $fh, ">$path"
->		or die "Could not open file '$path' for writing";
->	    foreach my $f (@output) {
->		print($fh $f, "\n") or die $path;
->	    }
->	    close($fh) or die $path;
->
->	    print("Git $path\n");
->	    if (system("git diff -s --exit-code $path") == 0) {
->		print("- no changes, skipping\n");
->		return;
->	    }
->
->	    if (system("git add $path") != 0) {
->		die("'git add $path' failed\n");
->	    }
->
->	    open $fh, ">.commit_message"
->		or die "Could not open file '.commit_message' for writing";
->	    print($fh
->		  qq/
->	cifs: Scripted clean up $path
->
->	Remove externs, correct argument names and reformat declarations.
->
->	Signed-off-by: David Howells <dhowells\@redhat.com>
->	cc: Steve French <sfrench\@samba.org>
->	cc: Paulo Alcantara <pc\@manguebit.org>
->	cc: Enzo Matsumiya <ematsumiya\@suse.de>
->	cc: linux-cifs\@vger.kernel.org
->	cc: linux-fsdevel\@vger.kernel.org
->	cc: linux-kernel\@vger.kernel.org
->	/);
->	    close($fh) or die ".commit_message";
->
->	    if (system("git commit -F .commit_message") != 0) {
->		die("'git commit $path' failed\n");
->	    }
->	}
->
->	foreach my $h (keys(%headers)) {
->	    write_header($headers{$h});
->	}
->
->David Howells (37):
->  cifs: Scripted clean up fs/smb/client/cached_dir.h
->  cifs: Scripted clean up fs/smb/client/dfs.h
->  cifs: Scripted clean up fs/smb/client/cifsproto.h
->  cifs: Scripted clean up fs/smb/client/cifs_unicode.h
->  cifs: Scripted clean up fs/smb/client/netlink.h
->  cifs: Scripted clean up fs/smb/client/cifsfs.h
->  cifs: Scripted clean up fs/smb/client/dfs_cache.h
->  cifs: Scripted clean up fs/smb/client/dns_resolve.h
->  cifs: Scripted clean up fs/smb/client/cifsglob.h
->  cifs: Scripted clean up fs/smb/client/fscache.h
->  cifs: Scripted clean up fs/smb/client/fs_context.h
->  cifs: Scripted clean up fs/smb/client/cifs_spnego.h
->  cifs: Scripted clean up fs/smb/client/compress.h
->  cifs: Scripted clean up fs/smb/client/cifs_swn.h
->  cifs: Scripted clean up fs/smb/client/cifs_debug.h
->  cifs: Scripted clean up fs/smb/client/smb2proto.h
->  cifs: Scripted clean up fs/smb/client/reparse.h
->  cifs: Scripted clean up fs/smb/client/ntlmssp.h
->  cifs: SMB1 split: Rename cifstransport.c
->  cifs: SMB1 split: Create smb1proto.h for SMB1 declarations
->  cifs: SMB1 split: Separate out SMB1 decls into smb1proto.h
->  cifs: SMB1 split: Move some SMB1 receive bits to smb1transport.c
->  cifs: SMB1 split: Move some SMB1 received PDU checking bits to
->    smb1transport.c
->  cifs: SMB1 split: Add some #includes
->  cifs: SMB1 split: Split SMB1 protocol defs into smb1pdu.h
->  cifs: SMB1 split: Adjust #includes
->  cifs: SMB1 split: Move BCC access functions
->  cifs: SMB1 split: Don't return smb_hdr from cifs_{,small_}buf_get()
->  cifs: Fix cifs_dump_mids() to call ->dump_detail
->  cifs: SMB1 split: Move inline funcs
->  cifs: SMB1 split: cifs_debug.c
->  cifs: SMB1 split: misc.c
->  cifs: SMB1 split: netmisc.c
->  cifs: SMB1 split: cifsencrypt.c
->  cifs: SMB1 split: sess.c
->  cifs: SMB1 split: connect.c
->  cifs: SMB1 split: Make BCC accessors conditional
->
-> fs/smb/client/Makefile        |   10 +-
-> fs/smb/client/cached_dir.h    |   30 +-
-> fs/smb/client/cifs_debug.c    |   18 +-
-> fs/smb/client/cifs_debug.h    |    1 -
-> fs/smb/client/cifs_spnego.h   |    4 +-
-> fs/smb/client/cifs_swn.h      |   10 +-
-> fs/smb/client/cifs_unicode.c  |    1 -
-> fs/smb/client/cifs_unicode.h  |   17 +-
-> fs/smb/client/cifsacl.c       |    1 -
-> fs/smb/client/cifsencrypt.c   |  124 --
-> fs/smb/client/cifsfs.c        |    1 -
-> fs/smb/client/cifsfs.h        |  114 +-
-> fs/smb/client/cifsglob.h      |   29 +-
-> fs/smb/client/cifspdu.h       | 2377 +--------------------------------
-> fs/smb/client/cifsproto.h     |  780 ++++-------
-> fs/smb/client/cifssmb.c       |  147 +-
-> fs/smb/client/cifstransport.c |  263 ----
-> fs/smb/client/compress.h      |    3 +-
-> fs/smb/client/connect.c       |  252 ----
-> fs/smb/client/dfs.h           |    3 +-
-> fs/smb/client/dfs_cache.h     |   19 +-
-> fs/smb/client/dir.c           |    1 -
-> fs/smb/client/dns_resolve.h   |    4 +-
-> fs/smb/client/file.c          |    1 -
-> fs/smb/client/fs_context.c    |    1 -
-> fs/smb/client/fs_context.h    |   16 +-
-> fs/smb/client/fscache.h       |   17 +-
-> fs/smb/client/inode.c         |    1 -
-> fs/smb/client/ioctl.c         |    1 -
-> fs/smb/client/link.c          |    1 -
-> fs/smb/client/misc.c          |  302 +----
-> fs/smb/client/netlink.h       |    4 +-
-> fs/smb/client/netmisc.c       |  824 +-----------
-> fs/smb/client/ntlmssp.h       |   15 +-
-> fs/smb/client/readdir.c       |    1 -
-> fs/smb/client/reparse.h       |   14 +-
-> fs/smb/client/sess.c          |  982 --------------
-> fs/smb/client/smb1debug.c     |   25 +
-> fs/smb/client/smb1encrypt.c   |  139 ++
-> fs/smb/client/smb1maperror.c  |  825 ++++++++++++
-> fs/smb/client/smb1misc.c      |  189 +++
-> fs/smb/client/smb1ops.c       |  279 ++--
-> fs/smb/client/smb1pdu.h       | 2354 ++++++++++++++++++++++++++++++++
-> fs/smb/client/smb1proto.h     |  336 +++++
-> fs/smb/client/smb1session.c   |  995 ++++++++++++++
-> fs/smb/client/smb1transport.c |  561 ++++++++
-> fs/smb/client/smb2file.c      |    2 +-
-> fs/smb/client/smb2inode.c     |    2 +-
-> fs/smb/client/smb2pdu.c       |    2 +-
-> fs/smb/client/smb2proto.h     |  468 +++----
-> fs/smb/client/smbencrypt.c    |    1 -
-> fs/smb/client/transport.c     |    1 -
-> fs/smb/client/xattr.c         |    1 -
-> fs/smb/common/smb2pdu.h       |    3 +
-> 54 files changed, 6310 insertions(+), 6262 deletions(-)
-> delete mode 100644 fs/smb/client/cifstransport.c
-> create mode 100644 fs/smb/client/smb1debug.c
-> create mode 100644 fs/smb/client/smb1encrypt.c
-> create mode 100644 fs/smb/client/smb1maperror.c
-> create mode 100644 fs/smb/client/smb1misc.c
-> create mode 100644 fs/smb/client/smb1pdu.h
-> create mode 100644 fs/smb/client/smb1proto.h
-> create mode 100644 fs/smb/client/smb1session.c
-> create mode 100644 fs/smb/client/smb1transport.c
->
+Makes sense.
+
+I just want to point out that using compressed memory with zswap doesn't
+buy us much in terms of reclaim latency, so the main goal here is just
+saving memory on the top tier, not improving performance, right?
+
+> 
+> > > --- assuming there isn't a way and we have to deal with fuzzy math ---
+> > > 
+> > > The goal should definitely be to leave the charging statistics the same
+> > > from the perspective of services - i.e zswap should charge a whole page,
+> > > because according to the OS it just used a whole page.
+> > > 
+> > > What this would mean is memcg would have to work with fuzzy data.
+> > > If 1GB is charged and the compression ratio is 4:1, reclaim should
+> > > operate (by way of callback) like it has used 256MB.
+> > > 
+> > > I think this is the best you can do without tracking individual pages.
+> > 
+> > This part needs more thought. Zswap cannot charge a full page because
+> > then from the memcg perspective reclaim is not making any progress.
+> > OTOH, as you mention, from the system perspective we just consumed a
+> > full page, so not charging that would be inconsistent.
+> > 
+> > This is not a zswap-specific thing though, even with cram.c we have to
+> > figure out how to charge memory on the compressed node to the memcg.
+> > It's perhaps not as much of a problem as with zswap because we are not
+> > dealing with reclaim not making progress.
+> >
+> > Maybe the memcg limits need to be "enlightened" about different tiers?
+> > We did have such discussions in the past outside the context of
+> > compressed memory, for memory tiering in general.
+> > 
+> > Not sure if this is the right place to discuss this, but I see the memcg
+> > folks CC'd so maybe it is :)
+> >
+> 
+> I will probably need some help to get the accounting right if I'm being
+> honest.  I can't say I fully understanding the implications here, but
+> what you describe makes sense.
+> 
+> One of the assumptions you have in zswap is that there's some known
+> REAL chunk of memory X-GB, and the compression ratio dictates that you
+> get to cram more than X-GB of data in there.
+> 
+> This device flips that on its head.  It lies to the system and says
+> there's X-GB, and you can only actually use a fraction of it in the
+> worst case - and in the best case you use all of it.
+> 
+> So in that sense, zswap has "infinite upside" (if you're infinitely
+> compressible), whereas this device has "limited upside" (node capacity).
+> 
+> That changes how you account for things entirely, and that's why
+> entry->length always has to be PAGE_SIZE.  Even if the device can tell
+> us the real size, i'm not sure how useful that is - you still have to
+> charge for an entire `struct page`.
+> 
+> Time for a good long :think:
+
+Yeah it's counter-intuitive. Zswap needs to charge less than PAGE_SIZE
+so that memcg tracking continues to make sense with reclaim (i.e. usage
+goes down), but if zswap consumed a full page from the system
+perspective, the math won't math.
+
+Separate limits *could* be the answer, but it's harder to configure and
+existing configuration won't "just work" with compressed memory.
+
+> 
+> > > 
+> > > This is ignorance of zswap on my part, and yeah good point.  Will look
+> > > into this accounting a little more.
+> > 
+> > This is similar-ish to the memcg charging problem, how do we count the
+> > compressed memory usage toward the global zswap limit? Do we keep this
+> > limit for the top-tier? If not, do we charge full size for pages in
+> > c.zswap or compressed size?
+> > 
+> > Do we need a separate limit for c.zswap? Probably not if the whole node
+> > is dedicated for zswap usage.
+> >
+> 
+> Since we're accounting for entire `struct page` usage vs the hard cap of
+> (device_capcity / PAGE_SIZE) - then this might actually be the answer.
+> 
+> > > 
+> > > Thank you again for taking a look, this has been enlightening.  Good
+> > > takeaways for the rest of the N_PRIVATE design.
+> > 
+> > Thanks for kicking off the discussion here, an interesting problem to
+> > solve for sure :)
+> > 
+> 
+> One of the more interesting ones i've had in a few years :]
+> 
+> Cheers,
+> ~Gregory
 
