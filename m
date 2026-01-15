@@ -1,134 +1,248 @@
-Return-Path: <linux-fsdevel+bounces-74024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2809D2916A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 23:47:27 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4861BD2969B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 01:29:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 720343046980
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 22:47:23 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7230A303806E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 00:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB762E22B5;
-	Thu, 15 Jan 2026 22:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4A02F6931;
+	Fri, 16 Jan 2026 00:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y4wNpOb4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLLjZa6J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AD9215055
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 22:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA71261B9F
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 00:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768517242; cv=none; b=eDhOBZ+WOtWoFqPHaISyxHTeH246H4SjhzgiFbIGZGjZth2dSyQaziL46CHhcZQFIeMmPl0ja8z9LSvFEu+7yS+q8lqyUNFZEsASPmwTsM3tdzybk8LVrUFEJVCKlVBCI9iRFFO0BDUvoPC9CKAp8KQOM2MQPXVH8TRr1CvOZTQ=
+	t=1768523294; cv=none; b=XRewfu42DwQFOsaDKBX163IZfXMR15lbZUqW5SMPjTx7bUIS5/CQVUCK6BycHJjF5bm+rH0EY7DgIj11ntp5xGyc/DfQWxnXRpgPJjMa/RTzPIl7wkZJpiXWMNur2I5fx4kN4vzK7C3QXgcJBkI8aq7G3RiPjoCunjLd4+6yeys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768517242; c=relaxed/simple;
-	bh=NyuUVj5QrIjopuwqQPjikd5PjXu4iYddZhGtjoXfZwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Idl4JxQv03qbQRMy3e/deEas6cQYWaWigHzSmpylJz78+zL0w4QvgXbRQ60j8jm0xsbM6dxWv1yZ9LU6pqhrnYwfxjmhmzrMBh6OD0htlHnvIZp/KdTCedGPNJU2ttsek+MD/vN+bk/oabaMljnd1Fg3ZUpo5eYIGOJpPPiqsxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y4wNpOb4; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768517241; x=1800053241;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NyuUVj5QrIjopuwqQPjikd5PjXu4iYddZhGtjoXfZwA=;
-  b=Y4wNpOb4H7Kj7FkmaE+V2SppXom/4oIfl1BYPkJMvK+pxe/ZokccRS/Z
-   mIvMHY+6dY7y/g/O69QpA0z8DeVHtYSn/a/3xjmtD5D/IeflhVclXVrag
-   TnnDjaANhnn2JkrWvf3bzYfdHWrX+zuUOcqUuE/i42xD5D/gCX8THvhuK
-   mhSqJ7BgMEv4a5ii+74s9Ay9fijla4/w5eiKY+Kamx1eyGJifWiEDxG4b
-   X1RPtMJjd63VCpxH/4thvEU4U9yPUvwQKuQ905yjB1NjYDs7Om3xDZuH5
-   9Sx9AO+CESbM2d5iWYFJIsqXSLYjdjX6VznXqUSt38EokWuuIZPz1N3nc
-   g==;
-X-CSE-ConnectionGUID: vcsT3yIjT4mYQsAXbk+UZQ==
-X-CSE-MsgGUID: Z9LxqDZ9TuashBHGQSCTGQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11672"; a="73678737"
-X-IronPort-AV: E=Sophos;i="6.21,229,1763452800"; 
-   d="scan'208";a="73678737"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2026 14:47:20 -0800
-X-CSE-ConnectionGUID: gbMbEkvzRaqXXJLIvsq/Og==
-X-CSE-MsgGUID: iGVcOU/jRMOhHYlbatZgug==
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 15 Jan 2026 14:47:19 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vgW7Y-00000000K4i-3OxB;
-	Thu, 15 Jan 2026 22:47:16 +0000
-Date: Fri, 16 Jan 2026 06:46:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH] posix_acl: make posix_acl_to_xattr() alloc the buffer
-Message-ID: <202601160622.QW5z6XIJ-lkp@intel.com>
-References: <20260115122341.556026-1-mszeredi@redhat.com>
+	s=arc-20240116; t=1768523294; c=relaxed/simple;
+	bh=wyZTSNaahlwJAh0cMf67fv0LFlau0J3pldiB0gJ7Ut0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZbGuEoN6MBfQp6MBdKMuuNtHb6hpG6BjmnrWPyzp774MDA8Ms5FijpaxOedTyyS+AJBb08XAAmrd8FMeqBTc6lWYlXcTCoSWYyxxujU6QGJdwxYbLohPvk8u9otLybGGy59VGTrrlZTgQaHbWYcy1OBb/YQkAi0RWRl1fHsw3Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hLLjZa6J; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b8765b7f4c0so250085666b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 16:28:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768523291; x=1769128091; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LuYXJTx9p8g5I9PbL+x4hBzLoIE63ueUkinqkyb6yNs=;
+        b=hLLjZa6JbWmfotEx6HjcqCkzUaw7dLCiW1VISKEAL+ijRMH5fzpwEGbRsH4MQkOU2+
+         Jr7horaekn+Gr/lSiDYBwtExnIIMb6L7hyU+BJ8Ks2b4qhp5WnFZT+ylpJrqRRRb04Jb
+         /Rn8iHgKA/TRMDaqb3IIF6UvMU+owlTIGRSNVBawA3mfKgYbDEJfxCqnvDV3JfuOT98T
+         I9DRJs73SCISJjrKP9slxhGu+MI4g5yl8FjW8HaeA1VYcvs/gI5NqA2N66U2vmePglG+
+         EzHYfSLptjNh7lrnZ6g6LUbd0GSJ+kzC/5zW8pnTNnqYz+lY1jBUELkIgJIlnLpgEv/J
+         xyIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768523291; x=1769128091;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=LuYXJTx9p8g5I9PbL+x4hBzLoIE63ueUkinqkyb6yNs=;
+        b=SjwRCTeVUqlMashYiF6MrOXHW5WsLtVy077/xF2CnqaW2axLyI5dACC43/sMTCKmEL
+         G9JxL3JIQAtyY5E/9Ud7MMlSkyoOYobXxruZ9wLHcE/xjSdMQTfO0+iRqOgSr2EmJhIN
+         PiMjFN5i7RrVo28MKr170hEc0uGXTZuXislE1LzGWL/+jsauAtHa16U8asyDKGzyQfw9
+         onPDd1gqdJKdwB5qjC2UoLFnFuCHIRjP3ctxMaMkAxAH+gpH4zF1v7VtbHXDJ8m64QwG
+         MNMlg7e5P5b7kKsmWHNkobWV0+sqztKicD7VTHy3Sq6HuyXdhdqZHYhOLQ52xmpvWTgq
+         D1Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCVZZUoQR8MOGW7cVQ7l0Dat7MlDJ0GYC+lWg0Xbvc14MOO6PHsr8bHa8g8FQ7r4piuTxsDLnlenfnSh5tCC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMzl667/6d01OUDoiEM7s+hb1DD/lMogLfs8OyPC2eqi+nFFfX
+	tEBDNsrfExadWFPqvmXZm95XUWntExJs5jtdSu4nzyFoa8SCBez1SBsK
+X-Gm-Gg: AY/fxX6DInzcG8S8WuBswYczKTZOTweN4nRtS5AXR//iEMrWiP7rC3TEFzdNrl9TiXx
+	EYLNV9nrqJEZ5ubqfdckKJzVee7fud40oc6ZU6O/oDvcz3mi5Oe7Od8Yqk2dVseEIckYuwNg+ij
+	OEXnRfyWlYWFQbm2jcs+M7fa3y08DZyVIR9eDqPrAh//7Kx48b+hxMcbUKdYtJ1MxqZ3Q1eAKLM
+	qBNg3k/uA1dF5h1T0kv76NbskBjDB8xFmqhMTohJo7a6IuCsLjp1D3YGU9wVk9yQJoGflF6fXQy
+	mKP1mngvfsmvKqi/c4Au1iE93h6E8Hfpz+ZZWDHIGG53cdT6Q29B0enqS5o63MtTIMFlenA4SV/
+	plWpOvk87cNUNBevPVqNJb+bcYfPTcvlkxR8M4X6cD1eey37UT8ymJfU6WJg1SJMkZWV+LzTbJ+
+	U6bylnRS7YQAj27NqO71MGnyjGpCvyK8gcbjwYGHl51hs5bnSqfaVp
+X-Received: by 2002:a05:600d:8445:10b0:480:1a22:fce8 with SMTP id 5b1f17b1804b1-4801e3494acmr11682565e9.26.1768516821247;
+        Thu, 15 Jan 2026 14:40:21 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356996dad0sm1443737f8f.27.2026.01.15.14.40.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jan 2026 14:40:20 -0800 (PST)
+Date: Thu, 15 Jan 2026 22:40:18 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: "Chuck Lever" <cel@kernel.org>
+Cc: "Dave Chinner" <david@fromorbit.com>, "Amir Goldstein"
+ <amir73il@gmail.com>, "Jeff Layton" <jlayton@kernel.org>, "Christian
+ Brauner" <brauner@kernel.org>, "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Chuck Lever" <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, "Olga
+ Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>, "Tom
+ Talpey" <tom@talpey.com>, "Hugh Dickins" <hughd@google.com>, "Baolin Wang"
+ <baolin.wang@linux.alibaba.com>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Theodore Tso" <tytso@mit.edu>, "Andreas
+ Dilger" <adilger.kernel@dilger.ca>, "Jan Kara" <jack@suse.com>, "Gao Xiang"
+ <xiang@kernel.org>, "Chao Yu" <chao@kernel.org>, "Yue Hu"
+ <zbestahu@gmail.com>, "Jeffle Xu" <jefflexu@linux.alibaba.com>, "Sandeep
+ Dhavale" <dhavale@google.com>, "Hongbo Li" <lihongbo22@huawei.com>,
+ "Chunhai Guo" <guochunhai@vivo.com>, "Carlos Maiolino" <cem@kernel.org>,
+ "Ilya Dryomov" <idryomov@gmail.com>, "Alex Markuze" <amarkuze@redhat.com>,
+ "Viacheslav Dubeyko" <slava@dubeyko.com>, "Chris Mason" <clm@fb.com>,
+ "David Sterba" <dsterba@suse.com>, "Luis de Bethencourt"
+ <luisbg@kernel.org>, "Salah Triki" <salah.triki@gmail.com>, "Phillip
+ Lougher" <phillip@squashfs.org.uk>, "Steve French" <sfrench@samba.org>,
+ "Paulo Alcantara" <pc@manguebit.org>, "Ronnie Sahlberg"
+ <ronniesahlberg@gmail.com>, "Shyam Prasad N" <sprasad@microsoft.com>,
+ "Bharath SM" <bharathsm@microsoft.com>, "Miklos Szeredi"
+ <miklos@szeredi.hu>, "Mike Marshall" <hubcap@omnibond.com>, "Martin
+ Brandenburg" <martin@omnibond.com>, "Mark Fasheh" <mark@fasheh.com>, "Joel
+ Becker" <jlbec@evilplan.org>, "Joseph Qi" <joseph.qi@linux.alibaba.com>,
+ "Konstantin Komarov" <almaz.alexandrovich@paragon-software.com>, "Ryusuke
+ Konishi" <konishi.ryusuke@gmail.com>, "Trond Myklebust"
+ <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>, "Dave Kleikamp"
+ <shaggy@kernel.org>, "David Woodhouse" <dwmw2@infradead.org>, "Richard
+ Weinberger" <richard@nod.at>, "Jan Kara" <jack@suse.cz>, "Andreas
+ Gruenbacher" <agruenba@redhat.com>, "OGAWA Hirofumi"
+ <hirofumi@mail.parknet.co.jp>, "Jaegeuk Kim" <jaegeuk@kernel.org>,
+ "Christoph Hellwig" <hch@infradead.org>, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-ext4@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-xfs@vger.kernel.org,
+ ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ linux-unionfs@vger.kernel.org, devel@lists.orangefs.org,
+ ocfs2-devel@lists.linux.dev, ntfs3@lists.linux.dev,
+ linux-nilfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
+ linux-mtd@lists.infradead.org, gfs2@lists.linux.dev,
+ linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH 00/29] fs: require filesystems to explicitly opt-in to
+ nfsd export support
+Message-ID: <20260115224018.2988ca25@pumpkin>
+In-Reply-To: <06dcc4b6-7457-4094-a1c6-586ce518020f@app.fastmail.com>
+References: <20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org>
+	<CAOQ4uxjOJMwv_hRVTn3tJHDLMQHbeaCGsdLupiZYcwm7M2rm3g@mail.gmail.com>
+	<d486fdb8-686c-4426-9fac-49b7dbc28765@app.fastmail.com>
+	<CAOQ4uxhnoTC6KBmRVx2xhvTXYg1hRkCJWrq2eoBQGHKC3sv3Hw@mail.gmail.com>
+	<4d9967cc-a454-46cf-909b-b8ab2d18358d@kernel.org>
+	<aWlXfBImnC_jhTw4@dread.disaster.area>
+	<06dcc4b6-7457-4094-a1c6-586ce518020f@app.fastmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260115122341.556026-1-mszeredi@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Miklos,
+On Thu, 15 Jan 2026 16:37:27 -0500
+"Chuck Lever" <cel@kernel.org> wrote:
 
-kernel test robot noticed the following build warnings:
+> On Thu, Jan 15, 2026, at 4:09 PM, Dave Chinner wrote:
+> > On Thu, Jan 15, 2026 at 02:37:09PM -0500, Chuck Lever wrote: =20
+> >> On 1/15/26 2:14 PM, Amir Goldstein wrote: =20
+> >> > On Thu, Jan 15, 2026 at 7:32=E2=80=AFPM Chuck Lever <cel@kernel.org>=
+ wrote: =20
+> >> >>
+> >> >>
+> >> >>
+> >> >> On Thu, Jan 15, 2026, at 1:17 PM, Amir Goldstein wrote: =20
+> >> >>> On Thu, Jan 15, 2026 at 6:48=E2=80=AFPM Jeff Layton <jlayton@kerne=
+l.org> wrote: =20
+> >> >>>>
+> >> >>>> In recent years, a number of filesystems that can't present stable
+> >> >>>> filehandles have grown struct export_operations. They've mostly d=
+one
+> >> >>>> this for local use-cases (enabling open_by_handle_at() and the li=
+ke).
+> >> >>>> Unfortunately, having export_operations is generally sufficient t=
+o make
+> >> >>>> a filesystem be considered exportable via nfsd, but that requires=
+ that
+> >> >>>> the server present stable filehandles. =20
+> >> >>>
+> >> >>> Where does the term "stable file handles" come from? and what does=
+ it mean?
+> >> >>> Why not "persistent handles", which is described in NFS and SMB sp=
+ecs?
+> >> >>>
+> >> >>> Not to mention that EXPORT_OP_PERSISTENT_HANDLES was Acked
+> >> >>> by both Christoph and Christian:
+> >> >>>
+> >> >>> https://lore.kernel.org/linux-fsdevel/20260115-rundgang-leihgabe-1=
+2018e93c00c@brauner/
+> >> >>>
+> >> >>> Am I missing anything? =20
+> >> >>
+> >> >> PERSISTENT generally implies that the file handle is saved on
+> >> >> persistent storage. This is not true of tmpfs. =20
+> >> >=20
+> >> > That's one way of interpreting "persistent".
+> >> > Another way is "continuing to exist or occur over a prolonged period=
+."
+> >> > which works well for tmpfs that is mounted for a long time. =20
+> >>=20
+> >> I think we can be a lot more precise about the guarantee: The file
+> >> handle does not change for the life of the inode it represents. It =20
+> >
+> > <pedantic mode engaged>
+> >
+> > File handles most definitely change over the life of a /physical/
+> > inode. Unlinking a file does not require ending the life of the
+> > physical object that provides the persistent data store for the
+> > file.
+> >
+> > e.g. XFS dynamically allocates physical inodes might in a life cycle
+> > that looks somewhat life this:
+> >
+> > 	allocate physical inode
+> > 	insert record into allocated inode index
+> > 	mark inode as free
+> >
+> > 	while (don't need to free physical inode) {
+> > 		...
+> > 		allocate inode for a new file
+> > 		update persistent inode metadata to generate new filehandle
+> > 		mark inode in use
+> > 		...
+> > 		unlink file
+> > 		mark inode free
+> > 	}
+> >
+> > 	remove inode from allocated inode index
+> > 	free physical inode
+> >
+> > i.e. a free inode is still an -allocated, indexed inode- in the
+> > filesystem, and until we physically remove it from the filesystem
+> > the inode life cycle has not ended.
+> >
+> > IOWs, the physical (persistent) inode lifetime can span the lifetime
+> > of -many- files. However, the filesystem guarantees that the handle
+> > generated for that inode is different for each file it represents
+> > over the whole inode life time.
+> >
+> > Hence I think that file handle stability/persistence needs to be
+> > defined in terms of -file lifetimes-, not the lifetimes of the
+> > filesystem objects implement the file's persistent data store. =20
+>=20
+> Fair enough, "inode" is the wrong term to use here.
 
-[auto build test WARNING on brauner-vfs/vfs.all]
-[also build test WARNING on kdave/for-next ceph-client/testing mszeredi-fuse/for-next gfs2/for-next linus/master v6.19-rc5 next-20260115]
-[cannot apply to ceph-client/for-linus kleikamp-shaggy/jfs-next ericvh-v9fs/for-next hubcap/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Usually there is 'generation number' changes when the inode is used for
+a new file.
+IIRC the original nfs file handle was the major/minor for the disk partitio=
+n,
+the index into the 'on-disk inode table' (the inode number) and the
+'generation number' (but I'm sure the length was a power of 2...).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Miklos-Szeredi/posix_acl-make-posix_acl_to_xattr-alloc-the-buffer/20260115-202602
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20260115122341.556026-1-mszeredi%40redhat.com
-patch subject: [PATCH] posix_acl: make posix_acl_to_xattr() alloc the buffer
-config: arm-randconfig-r131-20260116 (https://download.01.org/0day-ci/archive/20260116/202601160622.QW5z6XIJ-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260116/202601160622.QW5z6XIJ-lkp@intel.com/reproduce)
+It's not surprising Unix uses inode number and file handles.
+K&R would have used RSM-11/M where 'file directory lookup' was a userspace
+operation and the kernel only supported 'open by file handle'.
+Although that got lost between there and ntfs.
+(Windows IO is definitely based on RSM-11/M though.)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202601160622.QW5z6XIJ-lkp@intel.com/
+	David
 
-sparse warnings: (new ones prefixed by >>)
->> fs/gfs2/acl.c:87:22: sparse: sparse: Using plain integer as NULL pointer
 
-vim +87 fs/gfs2/acl.c
-
-    82	
-    83	int __gfs2_set_acl(struct inode *inode, struct posix_acl *acl, int type)
-    84	{
-    85		int error;
-    86		size_t len = 0;
-  > 87		char *data = 0;
-    88		const char *name = gfs2_acl_name(type);
-    89	
-    90		if (acl) {
-    91			data = posix_acl_to_xattr(&init_user_ns, acl, &len, GFP_NOFS);
-    92			if (data == NULL)
-    93				return -ENOMEM;
-    94		}
-    95	
-    96		error = __gfs2_xattr_set(inode, name, data, len, 0, GFS2_EATYPE_SYS);
-    97		if (error)
-    98			goto out;
-    99		set_cached_acl(inode, type, acl);
-   100	out:
-   101		kfree(data);
-   102		return error;
-   103	}
-   104	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
