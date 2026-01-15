@@ -1,86 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-73918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D06AD2472F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 13:25:41 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A014D24780
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 13:29:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6DC7230B4723
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 12:23:53 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7C59530B23AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 12:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10FF339525A;
-	Thu, 15 Jan 2026 12:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5013396B92;
+	Thu, 15 Jan 2026 12:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfaZBxEd"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AavSW8zD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3488A38A9AB
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 12:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F40F394469
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 12:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768479831; cv=none; b=jx58NRsxCVM5VcIKKbCXTL0NJSrUSu85z3pDcimT4DX5ff0CUiEFCcUKk6z/eqItzyOuiboZ107x4GhHF5HdAtTxr7AVghUbH41Xb3UDEQqp4AiOeBqhF3YWhuEywsvZ8lTxgkGJzRpy1vHjyrDbVOdyH2qM7PgpTn3A9rRKdn8=
+	t=1768479886; cv=none; b=NOHwG8zilmHWEZ6PCRPIVgCIW06syhquq3F1RFoRQK9UVKfw6ZYLG5C5LxRiG1QOKH0V4becJRm3gE/iCMmoH5BaXw57vRik4SjkogXGkHVGpbBDnaWLCpjpYOeO38UuPgmSy/PEFn+dzlJgUEqYx/gz6iVCwwiQ3w779bVD+aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768479831; c=relaxed/simple;
-	bh=YFlZi3jstUpTBbnPJHTzHfT6rNDin50tP0aHOiJ210Q=;
+	s=arc-20240116; t=1768479886; c=relaxed/simple;
+	bh=L1TTyH0HQfm7i7n+eqeYhrSGiuwmELmvtw7QQ3GNH2Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gItTXcPyB3Yl3MT4kzf7FOk9EhlOQ3jPEatSN0v7HxgNhhfcRMoiMuDEjznAkAbHuxyxKiMBsexuyPkoV4FnONjR448mR89dKN+Au02Dj7QOrE0m/ezj1yn5g7G2oG1YzzaXAXkRhGXFetnQ4iZ+s4RYZmB0TS/VkKkg40R0ISk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GfaZBxEd; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-64b921d9e67so1370672a12.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 04:23:47 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJTgVFWp6XqWBZHm5yK2Uxo3C0olNZlzwK68XSYkkI7tShmM5rhkD+PfU3yEL99mAn/6MAbzfW76ThUK2tMsqYaYv+YKWNbAOsXU+Bl4jJieDZ1B0oQBn8axQ4WX5jNs/d4JDKk/RM2RrMuK23r70gw9NVuCX2P35S6RRoRDJUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AavSW8zD; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-430f5ecaa08so435786f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 04:24:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768479826; x=1769084626; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1768479883; x=1769084683; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Jg8Pr84HZTwL4Chvghj+kThuTRFhOG//CjvHWmAwzw=;
-        b=GfaZBxEd/gUuVrW+fp77GklUDJkMIlFzrqKs+kg1gSTs0b1+nI1PWyWzWGPSoEoJmY
-         9LH0LnGX0p6P8b70F+bOFUIRoywYFp+VQRpIBifQ8iOxTM2coJjlkrgZ/LaBiYQiiNgN
-         jeC9xiXq9irLUd89egEAoK+2ncMVk7MUq4XwvSzlZ5j9dXW+abdZB6Inbf2nbKzH+xFo
-         tu0XAJtq+8USWplZxpvdUWsgeIgHaiM5qcbILRCPS5CUtdJZGxjWSLPS4+LgtrFvzzBl
-         cEpgQ1iJbhqByzkPQnWAf4KPblHHpWpTT+jpnPujr5N31x6codIwR6HIGSfgfmwTV6Ke
-         cVcw==
+        bh=jS491F7pY/6VV44vwrzsFaAyA9RjAqjEAkamZCNInAE=;
+        b=AavSW8zDa7wyUQOrKCsE5mEiLhCbCgtNLUJDLiygsCIz5MtcNfL5qg5hmiFSH/hnLF
+         dY1NM5kxU9pSW9DgohxUfSzAVt+iLYuHkRY/WkdFE1XVmgvI8pljiAwerID8UL6g7PU/
+         eolJwYFX6Yj0B7yZch1EvVk8qqbK6y7rtIhghbakTGjeNT0IeZm0hOjwyUU0ncWi7Ohd
+         fORx/nYcwlXu0aeT6z2nysNJs2vxMwjVnQi03RkyIvPvmebQbr0uJa/GOMbQXodXURQ6
+         +ZErOfCH6CKBneuJM1DXIQJeb7qxioDN+X5ZyEYo1486PL/QTstgRmV32S5n4c6fMV9G
+         3dqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768479826; x=1769084626;
+        d=1e100.net; s=20230601; t=1768479883; x=1769084683;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/Jg8Pr84HZTwL4Chvghj+kThuTRFhOG//CjvHWmAwzw=;
-        b=LYu4WCbR66e0CiZzquHjypHiM56mA9Dtv6z4I7DWbgcfpMgz4tnfbLzu1/442GMopC
-         pK22XNNq0JfqvWZrgOQ2T7VOZiJfB5juBbiZYxO+DuW6kz9ouyMkr68L/K1No494iSVR
-         p4MjtaT1sUSfWqWiy+jUFL1pOop06HO3XNV9Jxf06gqP7Z1BHKKuujSwZb1E2dSqC3GP
-         cPwCFexLBLg37wpl4G6P9g0JgeJuVxLRDNqd6mI1uu0+epEssrtpSJ8VQjAasRouluGZ
-         C5TM6Qj8rxX4Dy0+8S0rMtE7bHoWCyms+0C7GoBRBr9mModxEyX1OR3aWGWK8QuHz2sV
-         FNuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCFupAx2aYgKkcDyBmv5V4rEhcZERSLD+iEHDfcWfqMPb+qbueJxKwBD8c+lFkQVGZB8RDJZEVuLEQWd+L@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPEFyAnRILRW+v1eTnWDNZm2qlb5keacFZPQkqP4W/SJPgCq3m
-	cKCCENKZ37wXpKjuv1rW47YhVXnWIB3SINBC9Zm5OUG8x+eVFJ24NGOg
-X-Gm-Gg: AY/fxX5uCykbs+zDgjQBcBPaPD8CvadhtWBulXEy0sBHF7AKrh8K+152WrQgCFK9e/V
-	m59XJ9FVlFigCD/uBpyQGBI4nWb/Nz3TX24NJJwH89YVvLvyzLXaQgT+lq6KjTSRf/VeTjUxCZV
-	OJ8MYhdoVOT9UVIz64qPd32rBfNS/a4eYSW+5R71i4Ovf9nj1z2q/1Knk1Z7/DX2jtwHeE5yzPK
-	XDcqXq6o5c3UvQmJOlX50kKwfIwrWQBsvN822ylNj/VtwsSrzZsHxvaeizUcsfunqQ8TvdWwhCZ
-	xWX0HknYrzP66G9YMMKdoBu5LcL1CBByDs4apxPFzbLMZFCL+NZHizx8rwFJVaHtMHJFsLOXZXC
-	PLt+8BtweTGAwJilBQs9HN8yvkK2ByhsvDPX/4ocGCAcYL+TJHxpdw5CG+qODhBrZXbRgyzblGE
-	82oZxxbB1nQnKl+d7rh1m/nfrtwcdQ5/T5mX8hfjV2m8UAPbJ0E/697PvoA3QsJazKCmtR6hlWC
-	YX9OYnpU63aQ3Vg
-X-Received: by 2002:a05:6402:210d:b0:64c:584c:556c with SMTP id 4fb4d7f45d1cf-653ec46b3e5mr4990788a12.30.1768479826209;
-        Thu, 15 Jan 2026 04:23:46 -0800 (PST)
-Received: from localhost (2001-1c00-570d-ee00-7a88-ab31-60c0-33c9.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:7a88:ab31:60c0:33c9])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6541209ce83sm2328405a12.32.2026.01.15.04.23.45
+        bh=jS491F7pY/6VV44vwrzsFaAyA9RjAqjEAkamZCNInAE=;
+        b=LnDfzD+RlIzzLB9I/1a3rjHSjwA8QiCeoYgepBZGIcy+bKIOqrasYH4vyggykXYRbN
+         H7TaaBBLmgeEKPsNi0WBPIitJi7pT+UYTQcfVRUcbufKxF2wLH/xug7fL++hMP54VVSM
+         AipCsq9UjAECblUwQWTEz1eO94A5HlN4yP170Ixhb3HjbsjOjUYU7O0OOdTXfZrf4IKz
+         MSf3+r2AgI5cu1CFzybexDvuabgTZ9yJxbM9ekB0jG9pLz1COldM3KS5Ga+LEbvWD7uT
+         nyP8AwkAkAMp+Uu92LeQJ+A2GT10ygT1QuhgNVQbjeaxSn6UGhpvQOOhRGgUoTlLmbEB
+         EeTg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7TTPkHY5F04BUZRJyvu1B+GPO63LjYgZlwww3ifLjSAIWregJH5s6e7wN4JLy5ygBYkuTuNkRSC93L6O+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2C4pIovNhoMcCPN0EKVJJjLONMXO0vfCLM6XjA37fbDzgnGlA
+	sFf5BwV1/FvRH2GIbrkPdoSmOZsTp1qfJiK0n5E5LHw7d7QCxaRgj0ohn14T+vMVSsE=
+X-Gm-Gg: AY/fxX55zYIaMp4qhTBuAAunWaCnWbeFy2X3Wx9N6UgtztD2lrcezOWIZOJrimhEXjp
+	8zVJUzyZhbAMi5541sCDlt2QBXRavwuF+MWrhVI8VQMxnEJ8dzw67JuBEDuySdjuvxdr1wbxqgK
+	qBa8Qfr/AQ7tiWEEWx9/x1pf1/yvbagkhrwOTGXMsDtJDG6Kc142Z2UBThphKdwvV4EEYPYdr8C
+	qk0vUVrh6dIl5LUkrWgcd1Uo2OouuY53M5O6qFZb4OuJZooj/LlvgMgS/wN6JUvZ01+vAQFSc84
+	v7vm3YXMbCBy0u/CWtrvYmaPiQo58z6eDKUmfVRRBNEuY5vsCTyXOAy4A0lCoYFWj+Y18Rtlo8i
+	JDIsaC4HQk6rbtEDHHzgJtZhXIMub9F5bt4A97Tmf/es+fA18HTu8orKHZKYYNsRUf1oKDkesq5
+	ViQm7euW9Z+InXdQ==
+X-Received: by 2002:a05:6000:1789:b0:432:5c43:64 with SMTP id ffacd0b85a97d-4342c547aa9mr7495008f8f.41.1768479882771;
+        Thu, 15 Jan 2026 04:24:42 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-434af64a650sm5653238f8f.4.2026.01.15.04.24.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 04:23:45 -0800 (PST)
-Date: Thu, 15 Jan 2026 13:23:43 +0100
-From: Amir Goldstein <amir73il@gmail.com>
-To: Chunsheng Luo <luochunsheng@ustc.edu>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC 1/2] fuse: add close all in passthrough backing close for
- crash recovery
-Message-ID: <aWjcT6snaivGXvxq@amir-ThinkPad-T480>
-References: <20260115072032.402-1-luochunsheng@ustc.edu>
- <20260115072032.402-2-luochunsheng@ustc.edu>
+        Thu, 15 Jan 2026 04:24:42 -0800 (PST)
+Date: Thu, 15 Jan 2026 13:24:39 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Breno Leitao <leitao@debian.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>, linux-um@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
+	linux-serial@vger.kernel.org, netdev@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org, linux-hardening@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 13/19] um: drivers: mconsole_kern.c: Migrate to
+ register_console_force helper
+Message-ID: <aWjch-EcYm7tkF0t@pathway.suse.cz>
+References: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
+ <20251227-printk-cleanup-part3-v1-13-21a291bcf197@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,79 +120,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260115072032.402-2-luochunsheng@ustc.edu>
+In-Reply-To: <20251227-printk-cleanup-part3-v1-13-21a291bcf197@suse.com>
 
-On Thu, Jan 15, 2026 at 03:20:30PM +0800, Chunsheng Luo wrote:
-> Simplify FUSE daemon crash recovery by avoiding persistence of
-> backing_ids, thereby improving availability and reducing performance
-> overhead.
+On Sat 2025-12-27 09:16:20, Marcos Paulo de Souza wrote:
+> The register_console_force function was introduced to register consoles
+> even on the presence of default consoles, replacing the CON_ENABLE flag
+> that was forcing the same behavior.
 > 
-> Non-persistent backing_ids after crash recovery may lead to resource
-> leaks if backing file resources are not properly cleaned up during
-> daemon restart.
+> No functional changes.
 > 
-> Add a close_all handler to the backing close operation. This ensures
-> comprehensive cleanup of all backing file resources when the FUSE
-> daemon restarts, preventing resource leaks while maintaining the
-> simplified recovery approach.
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 
-Am I correct to assume that you are referring to FUSE server restart
-where the /dev/fuse fd is stored in an external fd store and reused by
-the new FUSE server instance?
+LGTM, nice cleanup!
 
-> 
-> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
-> ---
->  fs/fuse/backing.c | 14 ++++++++++++++
->  fs/fuse/dev.c     |  5 +++++
->  fs/fuse/fuse_i.h  |  1 +
->  3 files changed, 20 insertions(+)
-> 
-> diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
-> index 4afda419dd14..34d0ea62fb9b 100644
-> --- a/fs/fuse/backing.c
-> +++ b/fs/fuse/backing.c
-> @@ -166,6 +166,20 @@ int fuse_backing_close(struct fuse_conn *fc, int backing_id)
->  	return err;
->  }
->  
-> +static int fuse_backing_close_one(int id, void *p, void *data)
-> +{
-> +	struct fuse_conn *fc = data;
-> +
-> +	fuse_backing_close(fc, id);
-> +
-> +	return 0;
-> +}
-> +
-> +void fuse_backing_close_all(struct fuse_conn *fc)
-> +{
-> +	idr_for_each(&fc->backing_files_map, fuse_backing_close_one, fc);
-> +}
-> +
->  struct fuse_backing *fuse_backing_lookup(struct fuse_conn *fc, int backing_id)
->  {
->  	struct fuse_backing *fb;
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 6d59cbc877c6..25f6bb58623d 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -2651,6 +2651,11 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
->  	if (get_user(backing_id, argp))
->  		return -EFAULT;
->  
-> +	if (backing_id == -1) {
-> +		fuse_backing_close_all(fud->fc);
-> +		return 0;
-> +	}
-> +
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-I think that an explicit new ioctl FUSE_DEV_IOC_BACKING_CLOSE_ALL
-is called for this very intrusive operation.
-
-Sending FUSE_DEV_IOC_BACKING_CLOSE with backing_id -1 could
-just as well happen by mistake.
-
-Thanks,
-Amir.
+Best Regards,
+Petr
 
