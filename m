@@ -1,168 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-73938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61BCD25B57
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 17:22:54 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA985D25C1D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 17:29:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id F0F84305D8B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 16:18:49 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 331DC3045DD2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 16:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446893B52F1;
-	Thu, 15 Jan 2026 16:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA5C3BB9F2;
+	Thu, 15 Jan 2026 16:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jotschi-de.20230601.gappssmtp.com header.i=@jotschi-de.20230601.gappssmtp.com header.b="OLi1G+H2"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PPZfacP/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A793B8BC5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 16:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A753B9614
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 16:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768493926; cv=none; b=cCQTdJf65gQG+6j8BxG7kyS9/xlHw+PWBL9JwwW5aFeSl6zKqCS0X9djlEkZaFu4xQhrVxpX/Dbkk9fLESeNcdreM0irgXCwt2Y7EnMup7d5T24hjKyG4zbXodjKHWXVgNxTCEAPJm7V8uB8WTLNemuwhGBRSNjE+5wWL3xVJgE=
+	t=1768494534; cv=none; b=gSzyyZPvC9sHzaeRPIqP1fM9OnnqBNaih1puL+VKpJc4FQ2D/eoSI/ePJlLDnj7gRnN/4JOsL90a+aSu5JA1ZvU8EeRRrOBLU3YOG2mN8lobNk8JQANKo9VVABs1kn350IbNiMeBza00M4ReLQUa/p7tRRtOrZUX8OWneJ2eizs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768493926; c=relaxed/simple;
-	bh=azcvOTdMsPuvumr7JrSghmHGgkDpj7od9aEKJ3Dyb94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UuU5EZa9Ft9LJr1EE+VdbkjDxMCkJodgchstyd+bo7bbg4ja6sSs2kQkK4PTvxVlU1ANB4EsAv/sjZlVKvl4c51sIK4Iw9bcehNbzlDNjf21ifPPZCCWgKXV+mej1pRaOEud5DY8tvO0u8EBEU5CGn4M587Y1MCUjRv67yYFqyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jotschi.de; spf=none smtp.mailfrom=jotschi.de; dkim=pass (2048-bit key) header.d=jotschi-de.20230601.gappssmtp.com header.i=@jotschi-de.20230601.gappssmtp.com header.b=OLi1G+H2; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jotschi.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=jotschi.de
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-34c1d98ba11so810922a91.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 08:18:35 -0800 (PST)
+	s=arc-20240116; t=1768494534; c=relaxed/simple;
+	bh=JFb4SbeyltssbTkVrC2fePq+++qLD9rMapcGslFduHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SHsJDH81oLL1ZqoSGl3ew8bCPiLNvvvFswlC8w8HihTIVgs9fpqfVvhZGJpolTX/jUVfR2Y2tnSGf0KrfwulBtBZ9kKgJcea6PTCvElmkhz1ccGNNpXNnKw18rv95bB4EoshRkzW+G5d8VsHdNYXVZRN+3qcQTenYH6+pMQl2p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PPZfacP/; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-42fbc305914so725325f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 08:28:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jotschi-de.20230601.gappssmtp.com; s=20230601; t=1768493914; x=1769098714; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=azcvOTdMsPuvumr7JrSghmHGgkDpj7od9aEKJ3Dyb94=;
-        b=OLi1G+H20B+oMcRd+VyiIYDPUxS13UTqT8sNdJpQm1M4fujZb2dH61wQeVcyw6y2Jh
-         Sxi/LOyVMuQrU7+dVjaPQRcd4Xtpvd6Wvm5Zrhf/fU8FaYQVR+Wlo5vCPGCWgzIywFCt
-         /VT2rxx++E8LZvUAPPYfSLyp1UKdUrwKmzFmNd5jhYuc9m/OfjYTzpBIOXzKhYDpkqp+
-         VOFRo2/FCl41EhHa76is671kKOgYwQOyX7eGNxNi002sX1qwIQHoOyn9ucotIoYJ7L5u
-         lyL2FqCi6AqOYKDNu7JS6jShdl1+SFT+3qWuzKEmPr7ylK7BCbnsUeB05Lsmbd6mbqKM
-         BfwA==
+        d=suse.com; s=google; t=1768494529; x=1769099329; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=URJX5xTHolO9FC46ryjpGruJ5TGEDEyfrbwATuqwgLQ=;
+        b=PPZfacP/bGzplc0450JH455dYiEUnNfUxQqSjlpjqIKonKjZZywOVZdLqzEqshSlls
+         Ng7iaUezeoXcgC+iB7m0WMJ6ykwFWxA8At1owBUUOwZAxNVxjbgWzjhlXwNMYvqZi2OE
+         1qLM/T5yL/TBaIDqILptRNIvkdq6D6rKbWpYKWU4BDWKEnYE4+NZWzUF6Y9lq57tHzDw
+         Axkb44kDQ4rki3qmMn5r1sROBVEhjCLZfJOCj4iqJnE0/pl5vp5aJ9SiE7GDxUnHkjis
+         zWUX/6b8cJF2C2PSJU45/ekSzDP88TQ0YgX721XUAeD0HKGBg8j+H+zy+GVab8afwPsu
+         0QUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768493914; x=1769098714;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=azcvOTdMsPuvumr7JrSghmHGgkDpj7od9aEKJ3Dyb94=;
-        b=V4OXbH9uah0LYDVJFVUHromjlXaaNSJosuEtImLyyT206YwB8BALYbmRiBNlGnoCU5
-         cQoibh7jjpdLnWtAmZLmMlNpVYn247BZZSvAile9hHCtMGqGT57o/6Vg33JtJdOxhcGf
-         t+vD7rSDUiuA9x3RPemv65a9IZnWX3mne39k4zjh/9Ua5Os8BlTAXgoqQ9MQ7ffWIvyM
-         UBP1ezE63NKaXyNMdPzJKaKGuM4MVvMy/9Uj1X2xZSmQdbngo1OhM+G7EpTUwfuDhuzV
-         pGBb0UrRzLApfAQL1k7CklgoRs19jML9lhvNOFgWrhYdTlzYsLYP+18Iug7tG8i7VIb/
-         xkxA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7BOF29t1uPtnfgFENBPlQVe3o7KeYU4jauMCu2CKUB1B4VoEaiqeOiPHvSQJJjL7kmsWwdVVsDKJK8tMn@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdjR3pMam1sIxxZQw9+xTQQm3ba6Uzr6PqHOY1R0Yw0iVH6lpU
-	Vjm+mpTd29JUzDT9T+cWo4LPbVvngaAzdRR+UvRIQ48OoOkLlQ3zmIKjXWqsxhlUrQUVRybwYeE
-	lx6eLKiOfwrK7pl63svs5w96b20VOdDTXpjhWGJqI
-X-Gm-Gg: AY/fxX6W/DgAN+5FGb5Ah5+muLuAfARyldCr4pRwEZzmE2v060Mn8qJo+j5YKDfwmwE
-	FHeWcmydkLVUwfq83NCvTS1cR/ST/uFC0rr9ElmP/0hwnToyGAEtQf0KoLEpdlswH/Eiy/mPTVe
-	rB7j1uvDqRBSglYnHucqr5pBKjNAdJAYeaSc/KNgM3HuZB+ZOjvzxn9V70tq0/On57J5lenA/Hv
-	G/gPZVo9jsiQyD0v3JU9z0W70RKwU60A1FCSfJ0s7u4r5P4PAX9DMa174ZQBY/IDj9dWPP2XzwK
-	XZl2
-X-Received: by 2002:a17:90b:2250:b0:34c:a29d:992f with SMTP id
- 98e67ed59e1d1-3510913e074mr6692916a91.31.1768493914410; Thu, 15 Jan 2026
- 08:18:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1768494529; x=1769099329;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=URJX5xTHolO9FC46ryjpGruJ5TGEDEyfrbwATuqwgLQ=;
+        b=qDfL04GJL1KYK7ZC2CmhAkUMj/H/YnPivEIEaDgkgE1/7+3LUJl0sSLpyCkyPxKjwO
+         G0dkXKI2NGyp8pUFJQOXmkrsWHaCUup2FA+oWq0E9dY/Wnn5i9r/mOsEoEYQcsto9KKZ
+         RcZwIznF25ZX/fo4HB1hcd/Op+aq1ntrW6E4bhmYbF8ieGvIugtD5HGcQCwFUTaAyWGr
+         9bPynnrdhrDc6Nw7ybad46uRJD4nT9yQdq6qBCr2G9jZiggdfQ1SF7uDR38dF7LA/69M
+         IVxO8cmOTuSTow08yEzQhoFXdIlillIAALCS498rwW94SZiAPVmGpemV7vLR1rAeyiB+
+         J4lA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZahop2kcnyTXRID08RUO85zLkxEC86yqZiZ/BCUKh765pwWafo9qO5X+km+xSAhPuUVlimsyDs6Mq/OKp@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywob5OQx783XXZ/0u/G24t5xpuKVmY04oJDeZ2zdgVNU258oOIc
+	IP8SFCh5DDfunreSdYp1ZVtGNOged+v8reZId8YYtNWoRxgJZhQ8YJbNyDCpo1Jj7kI=
+X-Gm-Gg: AY/fxX6bts78k15AHq+Dwr4Kxs4/87EvbmVzhdM9bIA9JoSj3IbnKcxEfih5w8J8JAb
+	vnsoelZsWdatYmH27vsBFezWDrj8E88FgJzy+BsYia8WrBXYsbnl15KV6mPhKnLOQAKAklY7lSW
+	fiWkddChBIDFONooLXgkTiWO7O+fqr4trjzo29fBl5k0Vn6Pf0CrrlIb03mZzzFag5DD7YpdPiD
+	X7+ipOMnMkCUBHJct5d5X32ppuMTGIHPzhxuRgiM0tdZGIqMYBxu27UT4VGo7f9xRSem+wpJSDV
+	6YWk2tRaM3DDpjIm4Vl/2hCqaLGjHrSbbhGXB6VBnlzKRa+YdnWRDIDHF0c0l9/xP6UOvOuIgv9
+	dr9Zu2m9Oh9SZWhWDmOTiq6jC6zAoSfNZemOMIQEJAFlzGKeimfly0ulOPHHbqwWnDDY2br8JVm
+	M9TWDXiLrrkqkldA==
+X-Received: by 2002:a5d:64c5:0:b0:430:fd0f:2910 with SMTP id ffacd0b85a97d-4342c501a57mr9777353f8f.26.1768494528600;
+        Thu, 15 Jan 2026 08:28:48 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-434af6e148bsm6604069f8f.33.2026.01.15.08.28.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jan 2026 08:28:47 -0800 (PST)
+Date: Thu, 15 Jan 2026 17:28:44 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Breno Leitao <leitao@debian.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>, linux-um@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
+	linux-serial@vger.kernel.org, netdev@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org, linux-hardening@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 16/19] drivers: tty: serial: ma35d1_serial: Migrate to
+ register_console_force helper
+Message-ID: <aWkVvCu74HhV7W9s@pathway.suse.cz>
+References: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
+ <20251227-printk-cleanup-part3-v1-16-21a291bcf197@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <32Xtx4IaYj8nhPIXtt0gPimTRQy4RNjzmsqI1vQB1YBpRes0TEgu6zVzWbBEcn2U6ZxB14BD9vakmezNyhdXDt3CVGO8WYGxHSZZ1qtQVy8=@spawn.link>
- <8f5bb04853073dc620b5a6ebc116942a9b0a2b5c.camel@kernel.org>
- <e5-exnk0NS5Bsw0Ir_wplkePzOzCUPSsez9oqF7OVAAq3DASvNJ62B9EuQbvIqHitDgxtVnu74QYDYVEQ8rCCU74p4YupWxaKZNN34EPKUY=@spawn.link>
- <9ceb6cbcef39f8e82ab979b3d617b521aa0fcf83.camel@kernel.org>
-In-Reply-To: <9ceb6cbcef39f8e82ab979b3d617b521aa0fcf83.camel@kernel.org>
-From: =?UTF-8?Q?Johannes_Sch=C3=BCth?= <j.schueth@jotschi.de>
-Date: Thu, 15 Jan 2026 17:18:23 +0100
-X-Gm-Features: AZwV_QgPnpxcRztEbfCr85Hbb66HOYuKjtmYlWJkawDPk4AswjlQT9ZkgIte-98
-Message-ID: <CA+zj3DKAraQASpyVfkcDyGXu_oaR9SnYY18pDkN+jDgi54kRMQ@mail.gmail.com>
-Subject: Re: NFSv4 + FUSE xattr user namespace regression/change?
-To: Trond Myklebust <trondmy@kernel.org>
-Cc: Antonio SJ Musumeci <trapexit@spawn.link>, linux-fsdevel@vger.kernel.org, 
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251227-printk-cleanup-part3-v1-16-21a291bcf197@suse.com>
 
-Here are the two requested dumps:
-https://www.jotschi.de/files/fuse_nfs_mount_6_18_5.pcap
-https://www.jotschi.de/files/fuse_nfs_setfattr_6_18_5.pcap
+On Sat 2025-12-27 09:16:23, Marcos Paulo de Souza wrote:
+> The register_console_force function was introduced to register consoles
+> even on the presence of default consoles, replacing the CON_ENABLE flag
+> that was forcing the same behavior.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> ---
+>  drivers/tty/serial/ma35d1_serial.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/ma35d1_serial.c b/drivers/tty/serial/ma35d1_serial.c
+> index 285b0fe41a86..d1e03dee5579 100644
+> --- a/drivers/tty/serial/ma35d1_serial.c
+> +++ b/drivers/tty/serial/ma35d1_serial.c
+> @@ -633,7 +633,7 @@ static struct console ma35d1serial_console = {
+>  	.write   = ma35d1serial_console_write,
+>  	.device  = uart_console_device,
+>  	.setup   = ma35d1serial_console_setup,
+> -	.flags   = CON_PRINTBUFFER | CON_ENABLED,
+> +	.flags   = CON_PRINTBUFFER,
+>  	.index   = -1,
+>  	.data    = &ma35d1serial_reg,
+>  };
+> @@ -657,7 +657,7 @@ static void ma35d1serial_console_init_port(void)
+>  static int __init ma35d1serial_console_init(void)
+>  {
+>  	ma35d1serial_console_init_port();
+> -	register_console(&ma35d1serial_console);
+> +	register_console_force(&ma35d1serial_console);
 
-I see XAW (xattr write?) being denied on nfs mount:
-Opcode: ACCESS (3), [Access Denied: MD XT DL XAW], [Allowed: RD LU XAR XAL]
+Sigh, I am afraid that this is not enough.
 
-Testing system/security xattr was just a test. My userland code only
-uses user.* xattr.
+I double checked how "ma35d1serial_console" was used. I guess
+that it could get registered also via the generic uart device
+driver code. I see the following:
 
-Am Do., 15. Jan. 2026 um 00:32 Uhr schrieb Trond Myklebust <trondmy@kernel.org>:
->
-> On Wed, 2026-01-14 at 22:45 +0000, Antonio SJ Musumeci wrote:
-> > The user (cc'ed) said they have tested numerous recent releases
-> > including 6.18.5 (on both client and server.)
-> >
-> >
->
-> Can you supply a wireshark/tcpdump trace taken on the client that shows
-> the mount process and an example of a failed setfattr of a user xattr
-> on the 6.18.5 kernel?
->
-> Note that trying to access system level xattrs (I see your github issue
-> tracker notes trying to read "system.nfs4_acl") has never been allowed.
-> The NFSv4.2 xattr protocol extension explicitly bans the practice of
-> using xattrs to construct private filesystem APIs.
->
-> IOW: Reading, writing and listing of user xattrs on the remote server
-> is the only mode that is supported by the NFSv4.2 protocol extension.
->
-> >
-> > On Wednesday, January 14th, 2026 at 1:27 PM, Trond Myklebust
-> > <trondmy@kernel.org> wrote:
-> >
-> > >
-> > >
-> > > On Wed, 2026-01-14 at 19:18 +0000, Antonio SJ Musumeci wrote:
-> > >
-> > > > You don't often get email from trapexit@spawn.link.
-> > > > Learn why this is important
-> > > >
-> > > > Forgive me but I've not had the chance to investigate this in
-> > > > detail
-> > > > but according to a user of mine[0] after a commit[1] between
-> > > > 6.15.10
-> > > > and 6.15.11 user namespaced xattr requests now return EOPNOSUPP
-> > > > when
-> > > > the FUSE filesystem is exported via NFS. It was replicated with
-> > > > other
-> > > > FUSE filesystems.
-> > > >
-> > > > Was this intentional? If "yes", what would be the proper way to
-> > > > support this?
-> > > >
-> > > > -Antonio
-> > > >
-> > > > [0] https://github.com/trapexit/mergerfs/issues/1607
-> > > > [1]
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/comm
-> > > > it/?id=a8ffee4abd8ec9d7a64d394e0306ae64ba139fd2
-> > >
-> > >
-> > > You should upgrade to a newer stable kernel.
-> > >
-> > > This issue has already been reported and fixed by commit
-> > > 31f1a960ad1a
-> > > ("NFSv4: Don't clear capabilities that won't be reset").
-> > >
-> > >
-> > > --
-> > > Trond Myklebust
-> > > Linux NFS client maintainer, Hammerspace
-> > > trondmy@kernel.org, trond.myklebust@hammerspace.com
->
-> --
-> Trond Myklebust
-> Linux NFS client maintainer, Hammerspace
-> trondmy@kernel.org, trond.myklebust@hammerspace.com
+#ifdef CONFIG_SERIAL_NUVOTON_MA35D1_CONSOLE
+[...]
+#define MA35D1SERIAL_CONSOLE    (&ma35d1serial_console)
+#else
+#define MA35D1SERIAL_CONSOLE    NULL
+#endif
+
+static struct uart_driver ma35d1serial_reg = {
+[...]
+	.cons         = MA35D1SERIAL_CONSOLE,
+[...]
+};
+
+static int __init ma35d1serial_init(void)
+{
+[...]
+	ret = uart_register_driver(&ma35d1serial_reg);
+[...]
+	ret = platform_driver_register(&ma35d1serial_driver);
+[...]
+}
+
+And the gneric code:
+
+uart_configure_port(struct uart_driver *drv, struct uart_state *state,
+		    struct uart_port *port)
+{
+[...]
+		/*
+		 * If this driver supports console, and it hasn't been
+		 * successfully registered yet, try to re-register it.
+		 * It may be that the port was not available.
+		 */
+		if (port->cons && !console_is_registered(port->cons))
+			register_console(port->cons);
+
+[...]
+}
+
+, which can called via from:
+
+  + mux_probe()
+    + uart_add_one_port()
+      + serial_ctrl_register_port()
+	+serial_core_register_port()
+	  + serial_core_add_one_port()
+	    + uart_configure_port()
+	      + register_console()
+
+
+Honestly, I am not 100% sure. The struct console is assigned to
+.cons in struct uart_driver. And uart_configure_port() function
+passes port->cons from struct uart_port *port. But I believe
+that they can get assigned somewhere in the maze of
+the init/probe code.
+
+I would feel more comfortable if we kept the information as
+as flag in struct console so that even the generic callbacks
+could use it.
+
+Anyway, it makes sense to create a sepate flag for this
+purpose, e.g. CON_FORCE or CON_FORCE_ENABLE.
+
+>  	return 0;
+>  }
+>  console_initcall(ma35d1serial_console_init);
+
+Best Regards,
+Petr
 
