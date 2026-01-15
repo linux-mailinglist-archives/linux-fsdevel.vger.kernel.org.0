@@ -1,525 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-73917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E316BD24729
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 13:25:16 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D06AD2472F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 13:25:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 768F130A50DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 12:23:51 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6DC7230B4723
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 12:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CD6394469;
-	Thu, 15 Jan 2026 12:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10FF339525A;
+	Thu, 15 Jan 2026 12:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aNhtvKk8";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q4VCCU0L"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfaZBxEd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D39A3939AE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 12:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3488A38A9AB
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 12:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768479830; cv=none; b=gJRRp8XMjVTlwh0q+zifc+35Bmm6ktKW3iL0H65HNMBn1ce3kL3PSvfZIYtYt0iV48p3PyaRFd61ly8b0Vmrj36je+OM5r6HhNXaK3zGQis9eRYsc/s6yfBZfVHD6byJSFM0QBFAxh3oKmTTI8P6Bg9Vxhj8r9vyEu9uyrYlfPg=
+	t=1768479831; cv=none; b=jx58NRsxCVM5VcIKKbCXTL0NJSrUSu85z3pDcimT4DX5ff0CUiEFCcUKk6z/eqItzyOuiboZ107x4GhHF5HdAtTxr7AVghUbH41Xb3UDEQqp4AiOeBqhF3YWhuEywsvZ8lTxgkGJzRpy1vHjyrDbVOdyH2qM7PgpTn3A9rRKdn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768479830; c=relaxed/simple;
-	bh=yDcX+VR2ZB913VlzCxRsLl9YdwKzo5YmvjuBxTGHcpE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jOMQ4yYp6j5ar5dtkGXKvI2yDKFbgwwJu4KAYfzN4blXtpwAb0ZsXoasgRNtI+pVbs7NSlC98AJ4dfNGZe92lj5cojtY0bqx6Svjg9w0B96I4BM3Yu8/bKNhZpyGqAlVTlIlBCOiFFaaDATRPXSIymt3ThZWJbfdXn727YXYu4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aNhtvKk8; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q4VCCU0L; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768479827;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IKdL8/BtMTOi7PdLWRnF+aOaLZ+7pT0H4c/cXghhhKc=;
-	b=aNhtvKk85QYdmkp1wBfHOxYtqWxN4KstBcXLGvR99hLXmbOehWrgfzof2YlxjSYFq+AeGf
-	OMgm9CDzpVHuX3QeB99upueWGq7RMQEnWTDp3jLF27fZbtP/G1N4hkQXh5nkl+cIfIJdI9
-	VcUTxTW553G7RQJtV/NMVMDLvHcbxjQ=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-12-7Nn9si7PNE6A8BpzTgtgsA-1; Thu, 15 Jan 2026 07:23:45 -0500
-X-MC-Unique: 7Nn9si7PNE6A8BpzTgtgsA-1
-X-Mimecast-MFC-AGG-ID: 7Nn9si7PNE6A8BpzTgtgsA_1768479825
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-64c7242a456so1369513a12.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 04:23:45 -0800 (PST)
+	s=arc-20240116; t=1768479831; c=relaxed/simple;
+	bh=YFlZi3jstUpTBbnPJHTzHfT6rNDin50tP0aHOiJ210Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gItTXcPyB3Yl3MT4kzf7FOk9EhlOQ3jPEatSN0v7HxgNhhfcRMoiMuDEjznAkAbHuxyxKiMBsexuyPkoV4FnONjR448mR89dKN+Au02Dj7QOrE0m/ezj1yn5g7G2oG1YzzaXAXkRhGXFetnQ4iZ+s4RYZmB0TS/VkKkg40R0ISk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GfaZBxEd; arc=none smtp.client-ip=209.85.208.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-64b921d9e67so1370672a12.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 04:23:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1768479824; x=1769084624; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IKdL8/BtMTOi7PdLWRnF+aOaLZ+7pT0H4c/cXghhhKc=;
-        b=Q4VCCU0LGnZGv+nf/9PljxcsT6H3+Tfn64KJWmRlxkNAzwdNjc1Fzwo+d6a8wMYzjP
-         5hd/49k73GzNkGVG1xDnihKbhl9rd9q1j1JChlupCkmqXZU0qegU9LTyoFp52jYqERGG
-         6jywZ8dTYjm8SbPUy1kjOk5M+E4qG9K0prnYKOyJye4aBmjEdVf7hVIzb+UhyMF3IHXO
-         cRCmoySzngMKGzDm1W02domdSVeWXdHQah/eoSwBN+vYxTJ8qesSOTO/uyVdLi9jcv1i
-         DqDdYVESlj91cqU6cgKFKSccI8X+T6qBW+RXEXXN+ON2uYjFaA280DOcV1YZON9M3MHl
-         thXg==
+        d=gmail.com; s=20230601; t=1768479826; x=1769084626; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Jg8Pr84HZTwL4Chvghj+kThuTRFhOG//CjvHWmAwzw=;
+        b=GfaZBxEd/gUuVrW+fp77GklUDJkMIlFzrqKs+kg1gSTs0b1+nI1PWyWzWGPSoEoJmY
+         9LH0LnGX0p6P8b70F+bOFUIRoywYFp+VQRpIBifQ8iOxTM2coJjlkrgZ/LaBiYQiiNgN
+         jeC9xiXq9irLUd89egEAoK+2ncMVk7MUq4XwvSzlZ5j9dXW+abdZB6Inbf2nbKzH+xFo
+         tu0XAJtq+8USWplZxpvdUWsgeIgHaiM5qcbILRCPS5CUtdJZGxjWSLPS4+LgtrFvzzBl
+         cEpgQ1iJbhqByzkPQnWAf4KPblHHpWpTT+jpnPujr5N31x6codIwR6HIGSfgfmwTV6Ke
+         cVcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768479824; x=1769084624;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IKdL8/BtMTOi7PdLWRnF+aOaLZ+7pT0H4c/cXghhhKc=;
-        b=NsXazL8QMexaxk8xlfudMwBm7nBPqOc9MvhBU8k1uG1DBvNSVi6LhFCoqI1neiY610
-         CSjSB1qCU1l3Z4yHH0yrxtWvLOj7gjiFlOZCkgbEA/cKRyN+py3MqAti9EbtDVtJjb9a
-         OueY6N1037YmtYwe43y6wJq6FVWjscVahInIr3jgJFLvymbd7DUd3BVXZDRrASYtTh4r
-         I3TqTzBw2b6aSWADLEFASexCaptxGWb4vI+6P4NlfGAdlvNVhy/bMTXeFaHvtEmamVy5
-         L/CvGY+rPnSmqenE+eZxTX8RnQwQ+dvLRyJqXOjDjxPpx3D3SmMnzfssPDq7GZ+sfsfo
-         JP0A==
-X-Gm-Message-State: AOJu0Yx8ZECPV8THl89ECz2MW5NpscwkIsF7008BG+18BFjT0RlLx5r5
-	UhYfhz2VFOryc97ALlMgfNfpNhCPoWMl5301jJvZEotUfCpXaW/WP8dae9FerU6AM/KPhgNHj9K
-	+lsWnCXHRDZ2ROdKKGEVrPYDSL5/Jtcgp2O6MfUhAngWvlslwcz6N0uOF4/OlsaypdLsGsMiJ+n
-	EnmQlbPIcMa5ZTTV+hZQXViWVEC0SzKPty3z5vYK6OvsQ5+yXFVZU=
-X-Gm-Gg: AY/fxX6jAaK6+ELF8n1I5Yn1kTi5yD2FFfGMHsTVDe77ooLcK4qa8tK4rktgu4glmhW
-	2ZZOr9Kwp8B85n1MbyQMo0MktVXXmRAouBcMQKP9rHQDSdnO0sv80zi6NxB0pRd9v+2k+3/1upD
-	zUFqcIlC+jm/mO3A51GQZl6W3BfIHPOhCwQtlPMym37DqBLIvGIkFpPTc6m3Z1qfiA53Tvg/alk
-	bQsHMnWmrWcuG40zrLeKnO4axDqi7iGH0UC5ZoFADkf2edq747LdATaqOs9eS8WpRPWJv9gMfbe
-	DRkCZRBCFInIZeRvej++WbssuCmPloOB+Yy3LLCXVQ4qdj8/n5uEt13r+5qGTmnx354lo/wIFn2
-	mPGQPasiIATFhlA8z25s1v0cpf4GVaR/GDTT0eN6JK594/jZlYFOwWO2F9jf1Ijo6
-X-Received: by 2002:a17:906:7312:b0:b7c:f5b6:bb52 with SMTP id a640c23a62f3a-b87612c0dffmr508690066b.43.1768479824092;
-        Thu, 15 Jan 2026 04:23:44 -0800 (PST)
-X-Received: by 2002:a17:906:7312:b0:b7c:f5b6:bb52 with SMTP id a640c23a62f3a-b87612c0dffmr508688166b.43.1768479823532;
-        Thu, 15 Jan 2026 04:23:43 -0800 (PST)
-Received: from maszat.piliscsaba.szeredi.hu (193-226-246-7.pool.digikabel.hu. [193.226.246.7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b871081b04bsm1272398266b.53.2026.01.15.04.23.42
+        d=1e100.net; s=20230601; t=1768479826; x=1769084626;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/Jg8Pr84HZTwL4Chvghj+kThuTRFhOG//CjvHWmAwzw=;
+        b=LYu4WCbR66e0CiZzquHjypHiM56mA9Dtv6z4I7DWbgcfpMgz4tnfbLzu1/442GMopC
+         pK22XNNq0JfqvWZrgOQ2T7VOZiJfB5juBbiZYxO+DuW6kz9ouyMkr68L/K1No494iSVR
+         p4MjtaT1sUSfWqWiy+jUFL1pOop06HO3XNV9Jxf06gqP7Z1BHKKuujSwZb1E2dSqC3GP
+         cPwCFexLBLg37wpl4G6P9g0JgeJuVxLRDNqd6mI1uu0+epEssrtpSJ8VQjAasRouluGZ
+         C5TM6Qj8rxX4Dy0+8S0rMtE7bHoWCyms+0C7GoBRBr9mModxEyX1OR3aWGWK8QuHz2sV
+         FNuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCFupAx2aYgKkcDyBmv5V4rEhcZERSLD+iEHDfcWfqMPb+qbueJxKwBD8c+lFkQVGZB8RDJZEVuLEQWd+L@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPEFyAnRILRW+v1eTnWDNZm2qlb5keacFZPQkqP4W/SJPgCq3m
+	cKCCENKZ37wXpKjuv1rW47YhVXnWIB3SINBC9Zm5OUG8x+eVFJ24NGOg
+X-Gm-Gg: AY/fxX5uCykbs+zDgjQBcBPaPD8CvadhtWBulXEy0sBHF7AKrh8K+152WrQgCFK9e/V
+	m59XJ9FVlFigCD/uBpyQGBI4nWb/Nz3TX24NJJwH89YVvLvyzLXaQgT+lq6KjTSRf/VeTjUxCZV
+	OJ8MYhdoVOT9UVIz64qPd32rBfNS/a4eYSW+5R71i4Ovf9nj1z2q/1Knk1Z7/DX2jtwHeE5yzPK
+	XDcqXq6o5c3UvQmJOlX50kKwfIwrWQBsvN822ylNj/VtwsSrzZsHxvaeizUcsfunqQ8TvdWwhCZ
+	xWX0HknYrzP66G9YMMKdoBu5LcL1CBByDs4apxPFzbLMZFCL+NZHizx8rwFJVaHtMHJFsLOXZXC
+	PLt+8BtweTGAwJilBQs9HN8yvkK2ByhsvDPX/4ocGCAcYL+TJHxpdw5CG+qODhBrZXbRgyzblGE
+	82oZxxbB1nQnKl+d7rh1m/nfrtwcdQ5/T5mX8hfjV2m8UAPbJ0E/697PvoA3QsJazKCmtR6hlWC
+	YX9OYnpU63aQ3Vg
+X-Received: by 2002:a05:6402:210d:b0:64c:584c:556c with SMTP id 4fb4d7f45d1cf-653ec46b3e5mr4990788a12.30.1768479826209;
+        Thu, 15 Jan 2026 04:23:46 -0800 (PST)
+Received: from localhost (2001-1c00-570d-ee00-7a88-ab31-60c0-33c9.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:7a88:ab31:60c0:33c9])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6541209ce83sm2328405a12.32.2026.01.15.04.23.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 04:23:43 -0800 (PST)
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH] posix_acl: make posix_acl_to_xattr() alloc the buffer
-Date: Thu, 15 Jan 2026 13:23:40 +0100
-Message-ID: <20260115122341.556026-1-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.52.0
+        Thu, 15 Jan 2026 04:23:45 -0800 (PST)
+Date: Thu, 15 Jan 2026 13:23:43 +0100
+From: Amir Goldstein <amir73il@gmail.com>
+To: Chunsheng Luo <luochunsheng@ustc.edu>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC 1/2] fuse: add close all in passthrough backing close for
+ crash recovery
+Message-ID: <aWjcT6snaivGXvxq@amir-ThinkPad-T480>
+References: <20260115072032.402-1-luochunsheng@ustc.edu>
+ <20260115072032.402-2-luochunsheng@ustc.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260115072032.402-2-luochunsheng@ustc.edu>
 
-Without exception all caller do that.  So move the allocation into the
-helper.
+On Thu, Jan 15, 2026 at 03:20:30PM +0800, Chunsheng Luo wrote:
+> Simplify FUSE daemon crash recovery by avoiding persistence of
+> backing_ids, thereby improving availability and reducing performance
+> overhead.
+> 
+> Non-persistent backing_ids after crash recovery may lead to resource
+> leaks if backing file resources are not properly cleaned up during
+> daemon restart.
+> 
+> Add a close_all handler to the backing close operation. This ensures
+> comprehensive cleanup of all backing file resources when the FUSE
+> daemon restarts, preventing resource leaks while maintaining the
+> simplified recovery approach.
 
-This reduces boilerplate and removes unnecessary error checking.
+Am I correct to assume that you are referring to FUSE server restart
+where the /dev/fuse fd is stored in an external fd store and reused by
+the new FUSE server instance?
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
-Tested fuse only.
+> 
+> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
+> ---
+>  fs/fuse/backing.c | 14 ++++++++++++++
+>  fs/fuse/dev.c     |  5 +++++
+>  fs/fuse/fuse_i.h  |  1 +
+>  3 files changed, 20 insertions(+)
+> 
+> diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
+> index 4afda419dd14..34d0ea62fb9b 100644
+> --- a/fs/fuse/backing.c
+> +++ b/fs/fuse/backing.c
+> @@ -166,6 +166,20 @@ int fuse_backing_close(struct fuse_conn *fc, int backing_id)
+>  	return err;
+>  }
+>  
+> +static int fuse_backing_close_one(int id, void *p, void *data)
+> +{
+> +	struct fuse_conn *fc = data;
+> +
+> +	fuse_backing_close(fc, id);
+> +
+> +	return 0;
+> +}
+> +
+> +void fuse_backing_close_all(struct fuse_conn *fc)
+> +{
+> +	idr_for_each(&fc->backing_files_map, fuse_backing_close_one, fc);
+> +}
+> +
+>  struct fuse_backing *fuse_backing_lookup(struct fuse_conn *fc, int backing_id)
+>  {
+>  	struct fuse_backing *fb;
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 6d59cbc877c6..25f6bb58623d 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -2651,6 +2651,11 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
+>  	if (get_user(backing_id, argp))
+>  		return -EFAULT;
+>  
+> +	if (backing_id == -1) {
+> +		fuse_backing_close_all(fud->fc);
+> +		return 0;
+> +	}
+> +
 
- fs/9p/acl.c                     | 16 ++---------
- fs/btrfs/acl.c                  | 10 ++-----
- fs/ceph/acl.c                   | 51 ++++++++++++++-------------------
- fs/fuse/acl.c                   | 12 +++-----
- fs/gfs2/acl.c                   | 13 ++-------
- fs/jfs/acl.c                    |  9 ++----
- fs/ntfs3/xattr.c                |  6 +---
- fs/orangefs/acl.c               |  8 +-----
- fs/posix_acl.c                  | 21 +++++++-------
- include/linux/posix_acl_xattr.h |  5 ++--
- 10 files changed, 53 insertions(+), 98 deletions(-)
+I think that an explicit new ioctl FUSE_DEV_IOC_BACKING_CLOSE_ALL
+is called for this very intrusive operation.
 
-diff --git a/fs/9p/acl.c b/fs/9p/acl.c
-index 633da5e37299..ae7e7cf7523a 100644
---- a/fs/9p/acl.c
-+++ b/fs/9p/acl.c
-@@ -167,17 +167,11 @@ int v9fs_iop_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 		if (retval)
- 			goto err_out;
- 
--		size = posix_acl_xattr_size(acl->a_count);
--
--		value = kzalloc(size, GFP_NOFS);
-+		value = posix_acl_to_xattr(&init_user_ns, acl, &size, GFP_NOFS);
- 		if (!value) {
- 			retval = -ENOMEM;
- 			goto err_out;
- 		}
--
--		retval = posix_acl_to_xattr(&init_user_ns, acl, value, size);
--		if (retval < 0)
--			goto err_out;
- 	}
- 
- 	/*
-@@ -257,13 +251,10 @@ static int v9fs_set_acl(struct p9_fid *fid, int type, struct posix_acl *acl)
- 		return 0;
- 
- 	/* Set a setxattr request to server */
--	size = posix_acl_xattr_size(acl->a_count);
--	buffer = kmalloc(size, GFP_KERNEL);
-+	buffer = posix_acl_to_xattr(&init_user_ns, acl, &size, GFP_KERNEL);
- 	if (!buffer)
- 		return -ENOMEM;
--	retval = posix_acl_to_xattr(&init_user_ns, acl, buffer, size);
--	if (retval < 0)
--		goto err_free_out;
-+
- 	switch (type) {
- 	case ACL_TYPE_ACCESS:
- 		name = XATTR_NAME_POSIX_ACL_ACCESS;
-@@ -275,7 +266,6 @@ static int v9fs_set_acl(struct p9_fid *fid, int type, struct posix_acl *acl)
- 		BUG();
- 	}
- 	retval = v9fs_fid_xattr_set(fid, name, buffer, size, 0);
--err_free_out:
- 	kfree(buffer);
- 	return retval;
- }
-diff --git a/fs/btrfs/acl.c b/fs/btrfs/acl.c
-index c336e2ab7f8a..e55b686fe1ab 100644
---- a/fs/btrfs/acl.c
-+++ b/fs/btrfs/acl.c
-@@ -57,7 +57,8 @@ struct posix_acl *btrfs_get_acl(struct inode *inode, int type, bool rcu)
- int __btrfs_set_acl(struct btrfs_trans_handle *trans, struct inode *inode,
- 		    struct posix_acl *acl, int type)
- {
--	int ret, size = 0;
-+	int ret;
-+	size_t size = 0;
- 	const char *name;
- 	char AUTO_KFREE(value);
- 
-@@ -77,20 +78,15 @@ int __btrfs_set_acl(struct btrfs_trans_handle *trans, struct inode *inode,
- 	if (acl) {
- 		unsigned int nofs_flag;
- 
--		size = posix_acl_xattr_size(acl->a_count);
- 		/*
- 		 * We're holding a transaction handle, so use a NOFS memory
- 		 * allocation context to avoid deadlock if reclaim happens.
- 		 */
- 		nofs_flag = memalloc_nofs_save();
--		value = kmalloc(size, GFP_KERNEL);
-+		value = posix_acl_to_xattr(&init_user_ns, acl, &size, GFP_KERNEL);
- 		memalloc_nofs_restore(nofs_flag);
- 		if (!value)
- 			return -ENOMEM;
--
--		ret = posix_acl_to_xattr(&init_user_ns, acl, value, size);
--		if (ret < 0)
--			return ret;
- 	}
- 
- 	if (trans)
-diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
-index 1564eacc253d..34e853fdd0a9 100644
---- a/fs/ceph/acl.c
-+++ b/fs/ceph/acl.c
-@@ -90,7 +90,8 @@ struct posix_acl *ceph_get_acl(struct inode *inode, int type, bool rcu)
- int ceph_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 		 struct posix_acl *acl, int type)
- {
--	int ret = 0, size = 0;
-+	int ret = 0;
-+	size_t size = 0;
- 	const char *name = NULL;
- 	char *value = NULL;
- 	struct iattr newattrs;
-@@ -126,16 +127,11 @@ int ceph_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 	}
- 
- 	if (acl) {
--		size = posix_acl_xattr_size(acl->a_count);
--		value = kmalloc(size, GFP_NOFS);
-+		value = posix_acl_to_xattr(&init_user_ns, acl, &size, GFP_NOFS);
- 		if (!value) {
- 			ret = -ENOMEM;
- 			goto out;
- 		}
--
--		ret = posix_acl_to_xattr(&init_user_ns, acl, value, size);
--		if (ret < 0)
--			goto out_free;
- 	}
- 
- 	if (new_mode != old_mode) {
-@@ -172,7 +168,7 @@ int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
- 	struct posix_acl *acl, *default_acl;
- 	size_t val_size1 = 0, val_size2 = 0;
- 	struct ceph_pagelist *pagelist = NULL;
--	void *tmp_buf = NULL;
-+	void *tmp_buf1 = NULL, *tmp_buf2 = NULL;
- 	int err;
- 
- 	err = posix_acl_create(dir, mode, &default_acl, &acl);
-@@ -192,15 +188,6 @@ int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
- 	if (!default_acl && !acl)
- 		return 0;
- 
--	if (acl)
--		val_size1 = posix_acl_xattr_size(acl->a_count);
--	if (default_acl)
--		val_size2 = posix_acl_xattr_size(default_acl->a_count);
--
--	err = -ENOMEM;
--	tmp_buf = kmalloc(max(val_size1, val_size2), GFP_KERNEL);
--	if (!tmp_buf)
--		goto out_err;
- 	pagelist = ceph_pagelist_alloc(GFP_KERNEL);
- 	if (!pagelist)
- 		goto out_err;
-@@ -213,34 +200,39 @@ int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
- 
- 	if (acl) {
- 		size_t len = strlen(XATTR_NAME_POSIX_ACL_ACCESS);
-+
-+		err = -ENOMEM;
-+		tmp_buf1 = posix_acl_to_xattr(&init_user_ns, acl,
-+					      &val_size1, GFP_KERNEL);
-+		if (!tmp_buf1)
-+			goto out_err;
- 		err = ceph_pagelist_reserve(pagelist, len + val_size1 + 8);
- 		if (err)
- 			goto out_err;
- 		ceph_pagelist_encode_string(pagelist, XATTR_NAME_POSIX_ACL_ACCESS,
- 					    len);
--		err = posix_acl_to_xattr(&init_user_ns, acl,
--					 tmp_buf, val_size1);
--		if (err < 0)
--			goto out_err;
- 		ceph_pagelist_encode_32(pagelist, val_size1);
--		ceph_pagelist_append(pagelist, tmp_buf, val_size1);
-+		ceph_pagelist_append(pagelist, tmp_buf1, val_size1);
- 	}
- 	if (default_acl) {
- 		size_t len = strlen(XATTR_NAME_POSIX_ACL_DEFAULT);
-+
-+		err = -ENOMEM;
-+		tmp_buf2 = posix_acl_to_xattr(&init_user_ns, default_acl,
-+					      &val_size2, GFP_KERNEL);
-+		if (!tmp_buf2)
-+			goto out_err;
- 		err = ceph_pagelist_reserve(pagelist, len + val_size2 + 8);
- 		if (err)
- 			goto out_err;
- 		ceph_pagelist_encode_string(pagelist,
- 					  XATTR_NAME_POSIX_ACL_DEFAULT, len);
--		err = posix_acl_to_xattr(&init_user_ns, default_acl,
--					 tmp_buf, val_size2);
--		if (err < 0)
--			goto out_err;
- 		ceph_pagelist_encode_32(pagelist, val_size2);
--		ceph_pagelist_append(pagelist, tmp_buf, val_size2);
-+		ceph_pagelist_append(pagelist, tmp_buf2, val_size2);
- 	}
- 
--	kfree(tmp_buf);
-+	kfree(tmp_buf1);
-+	kfree(tmp_buf2);
- 
- 	as_ctx->acl = acl;
- 	as_ctx->default_acl = default_acl;
-@@ -250,7 +242,8 @@ int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
- out_err:
- 	posix_acl_release(acl);
- 	posix_acl_release(default_acl);
--	kfree(tmp_buf);
-+	kfree(tmp_buf1);
-+	kfree(tmp_buf2);
- 	if (pagelist)
- 		ceph_pagelist_release(pagelist);
- 	return err;
-diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
-index 8f484b105f13..cbde6ac1add3 100644
---- a/fs/fuse/acl.c
-+++ b/fs/fuse/acl.c
-@@ -122,20 +122,16 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 		 * them to be refreshed the next time they are used,
- 		 * and it also updates i_ctime.
- 		 */
--		size_t size = posix_acl_xattr_size(acl->a_count);
-+		size_t size;
- 		void *value;
- 
--		if (size > PAGE_SIZE)
--			return -E2BIG;
--
--		value = kmalloc(size, GFP_KERNEL);
-+		value = posix_acl_to_xattr(fc->user_ns, acl, &size, GFP_KERNEL);
- 		if (!value)
- 			return -ENOMEM;
- 
--		ret = posix_acl_to_xattr(fc->user_ns, acl, value, size);
--		if (ret < 0) {
-+		if (size > PAGE_SIZE) {
- 			kfree(value);
--			return ret;
-+			return -E2BIG;
- 		}
- 
- 		/*
-diff --git a/fs/gfs2/acl.c b/fs/gfs2/acl.c
-index 443640e6fb9c..01789c23e31c 100644
---- a/fs/gfs2/acl.c
-+++ b/fs/gfs2/acl.c
-@@ -83,21 +83,14 @@ struct posix_acl *gfs2_get_acl(struct inode *inode, int type, bool rcu)
- int __gfs2_set_acl(struct inode *inode, struct posix_acl *acl, int type)
- {
- 	int error;
--	size_t len;
--	char *data;
-+	size_t len = 0;
-+	char *data = 0;
- 	const char *name = gfs2_acl_name(type);
- 
- 	if (acl) {
--		len = posix_acl_xattr_size(acl->a_count);
--		data = kmalloc(len, GFP_NOFS);
-+		data = posix_acl_to_xattr(&init_user_ns, acl, &len, GFP_NOFS);
- 		if (data == NULL)
- 			return -ENOMEM;
--		error = posix_acl_to_xattr(&init_user_ns, acl, data, len);
--		if (error < 0)
--			goto out;
--	} else {
--		data = NULL;
--		len = 0;
- 	}
- 
- 	error = __gfs2_xattr_set(inode, name, data, len, 0, GFS2_EATYPE_SYS);
-diff --git a/fs/jfs/acl.c b/fs/jfs/acl.c
-index 1de3602c98de..16b71a23ff1e 100644
---- a/fs/jfs/acl.c
-+++ b/fs/jfs/acl.c
-@@ -61,7 +61,7 @@ static int __jfs_set_acl(tid_t tid, struct inode *inode, int type,
- {
- 	char *ea_name;
- 	int rc;
--	int size = 0;
-+	size_t size = 0;
- 	char *value = NULL;
- 
- 	switch (type) {
-@@ -76,16 +76,11 @@ static int __jfs_set_acl(tid_t tid, struct inode *inode, int type,
- 	}
- 
- 	if (acl) {
--		size = posix_acl_xattr_size(acl->a_count);
--		value = kmalloc(size, GFP_KERNEL);
-+		value = posix_acl_to_xattr(&init_user_ns, acl, &size, GFP_KERNEL);
- 		if (!value)
- 			return -ENOMEM;
--		rc = posix_acl_to_xattr(&init_user_ns, acl, value, size);
--		if (rc < 0)
--			goto out;
- 	}
- 	rc = __jfs_setxattr(tid, inode, ea_name, value, size, 0);
--out:
- 	kfree(value);
- 
- 	if (!rc)
-diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-index c93df55e98d0..37a69a75ce68 100644
---- a/fs/ntfs3/xattr.c
-+++ b/fs/ntfs3/xattr.c
-@@ -641,13 +641,9 @@ static noinline int ntfs_set_acl_ex(struct mnt_idmap *idmap,
- 		value = NULL;
- 		flags = XATTR_REPLACE;
- 	} else {
--		size = posix_acl_xattr_size(acl->a_count);
--		value = kmalloc(size, GFP_NOFS);
-+		value = posix_acl_to_xattr(&init_user_ns, acl, &size, GFP_NOFS);
- 		if (!value)
- 			return -ENOMEM;
--		err = posix_acl_to_xattr(&init_user_ns, acl, value, size);
--		if (err < 0)
--			goto out;
- 		flags = 0;
- 	}
- 
-diff --git a/fs/orangefs/acl.c b/fs/orangefs/acl.c
-index 5aefb705bcc8..a01ef0c1b1bf 100644
---- a/fs/orangefs/acl.c
-+++ b/fs/orangefs/acl.c
-@@ -90,14 +90,9 @@ int __orangefs_set_acl(struct inode *inode, struct posix_acl *acl, int type)
- 		     type);
- 
- 	if (acl) {
--		size = posix_acl_xattr_size(acl->a_count);
--		value = kmalloc(size, GFP_KERNEL);
-+		value = posix_acl_to_xattr(&init_user_ns, acl, &size, GFP_KERNEL);
- 		if (!value)
- 			return -ENOMEM;
--
--		error = posix_acl_to_xattr(&init_user_ns, acl, value, size);
--		if (error < 0)
--			goto out;
- 	}
- 
- 	gossip_debug(GOSSIP_ACL_DEBUG,
-@@ -111,7 +106,6 @@ int __orangefs_set_acl(struct inode *inode, struct posix_acl *acl, int type)
- 	 */
- 	error = orangefs_inode_setxattr(inode, name, value, size, 0);
- 
--out:
- 	kfree(value);
- 	if (!error)
- 		set_cached_acl(inode, type, acl);
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 768f027c1428..4ef6f9d2b8d6 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -829,19 +829,19 @@ EXPORT_SYMBOL (posix_acl_from_xattr);
- /*
-  * Convert from in-memory to extended attribute representation.
-  */
--int
-+void *
- posix_acl_to_xattr(struct user_namespace *user_ns, const struct posix_acl *acl,
--		   void *buffer, size_t size)
-+		   size_t *sizep, gfp_t gfp)
- {
--	struct posix_acl_xattr_header *ext_acl = buffer;
-+	struct posix_acl_xattr_header *ext_acl;
- 	struct posix_acl_xattr_entry *ext_entry;
--	int real_size, n;
-+	size_t size;
-+	int n;
- 
--	real_size = posix_acl_xattr_size(acl->a_count);
--	if (!buffer)
--		return real_size;
--	if (real_size > size)
--		return -ERANGE;
-+	size = posix_acl_xattr_size(acl->a_count);
-+	ext_acl = kmalloc(size, gfp);
-+	if (!ext_acl)
-+		return NULL;
- 
- 	ext_entry = (void *)(ext_acl + 1);
- 	ext_acl->a_version = cpu_to_le32(POSIX_ACL_XATTR_VERSION);
-@@ -864,7 +864,8 @@ posix_acl_to_xattr(struct user_namespace *user_ns, const struct posix_acl *acl,
- 			break;
- 		}
- 	}
--	return real_size;
-+	*sizep = size;
-+	return ext_acl;
- }
- EXPORT_SYMBOL (posix_acl_to_xattr);
- 
-diff --git a/include/linux/posix_acl_xattr.h b/include/linux/posix_acl_xattr.h
-index e86f3b731da2..9e1892525eac 100644
---- a/include/linux/posix_acl_xattr.h
-+++ b/include/linux/posix_acl_xattr.h
-@@ -44,8 +44,9 @@ posix_acl_from_xattr(struct user_namespace *user_ns, const void *value,
- }
- #endif
- 
--int posix_acl_to_xattr(struct user_namespace *user_ns,
--		       const struct posix_acl *acl, void *buffer, size_t size);
-+extern void *posix_acl_to_xattr(struct user_namespace *user_ns, const struct posix_acl *acl,
-+				size_t *sizep, gfp_t gfp);
-+
- static inline const char *posix_acl_xattr_name(int type)
- {
- 	switch (type) {
--- 
-2.52.0
+Sending FUSE_DEV_IOC_BACKING_CLOSE with backing_id -1 could
+just as well happen by mistake.
 
+Thanks,
+Amir.
 
