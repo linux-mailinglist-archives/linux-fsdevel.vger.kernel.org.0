@@ -1,154 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-73991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724F1D27D38
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 19:55:06 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A77D27DA7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 19:56:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id C61AB301FD3F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 18:54:48 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 97AF130428C2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 18:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47013D1CD7;
-	Thu, 15 Jan 2026 18:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6093D1CDE;
+	Thu, 15 Jan 2026 18:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSUUWslM"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="KC+OAuUW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489DB3C00B7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 18:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1181D3D1CCF;
+	Thu, 15 Jan 2026 18:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768503274; cv=none; b=Lr6p7ob1pr4iF1+N2ZmLCWYsuqr+DN9Kw8/YodaGm9sV+lEekNsuHLKKa204XGY8y66v7S5cRJusDOoOcDAHyd+b3vHXGoso02Xw/vOyn5etW5ZsWlj6mJbyfLE8Qa+gg1DKZTmpRsncXmhaYpLUiUBaIIaKD3E/eVRh1tLcy44=
+	t=1768503357; cv=none; b=i5nMEZP1CaoX2lpJ0z/eMXBQc8DMnSormophwnDDdduaEUbV+DKqXj4yYTNlfwBuyigcBKK62rXjHqiGlBWb4k713ZZA+O/iYTQ449Kq0ttHq6TgRcolN+uykAE+GgPbUnjvo9gzInlox8WHI50F2mJkxiaQB572hw/qSMydgl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768503274; c=relaxed/simple;
-	bh=AgB8BlDrSqCt2vWmdgQdkVNbgorviCbIMxtlMVxqyDU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mWFSj0Q4sz0hmlaHUaykWSqQc7EWmBxmryOHoyy2Zs3V1zFly5D/3rHjlXD5JYTFpx+UDv3YKnK2UMnlSexnW3hFX2Fq7TXe07UIRgCXwq8kQ1cw4Lc3+kiLFDwlKBKFfO1xg7fduXsIZ465KmvLRptjvVskF80y62WwJsW+Glc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MSUUWslM; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42fed090e5fso668536f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 10:54:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768503269; x=1769108069; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R/pIR9g5xBWqOZmQj/jDCO8xKQONNisoQQHHakrcMdk=;
-        b=MSUUWslM7So/8e5qCKM9JU2cE4putYAvpi8UdtuonqryPMUNC+1PUocWSNmRX6iGft
-         Llsnn4u2ChuSQFRjdQYh1n4dcKLsda/c9h8OBQlFkmYO6AbGHtLLYM0SAWhirNpaoF4n
-         lakVf7f1knSaC/T5LidHJsjH0TVakBR0PiniEdlaUsoRuFln+7VFqUwQfgRz0i4x4AvS
-         ZYRXMKaX2NnbWxFRzsRhO2KaJ3DxCOuFwkiLa7v70xNShq3EGNuiEqzLBa7apuvs8Ev8
-         8lR89uWCNysQXzJycZ3fgJA46czSOxtOhpmR8aUQ39pBmNkdExztbB4bfrrOFL9eSKRt
-         1A2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768503269; x=1769108069;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=R/pIR9g5xBWqOZmQj/jDCO8xKQONNisoQQHHakrcMdk=;
-        b=hyVdkO2n6vv3S0QfxBwSq5nY1/fX5//YySAM39dOO2dskLUM4G/j94nf5E6xQGTz9z
-         aK3JibHwND986gQUE48X8P2vVLDD/MmH5V2M9/H2191xl+lbTINHftGdJ+cVDEyG2juN
-         bpPTZr1xk+Cs+9qXVH3DbehdwH7TIMGWEavLMe5wTOCbHW6dH9Kw17U8qJCp6CUZObOV
-         2aNPzRL618zKX9x1ffs7cQsLnNt2AEGcGpt0e/0fw6o4tCmPPDDhv/x6JfTvj5J9b/gb
-         eIl7Hc4+ycCx28BdgRVCR81yICZz9xYWX+1FZ4hzcH77yaNfUAeqrAcw/f7jyXKxPvPw
-         2bPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxmT0MMN7dn3CffciG+ZnLAoALaEZ/32npj6uEHNYa/NCy1wnQH0wKJytPD++bex1PAuSfI1IxozhS2N8R@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvT8f/On/xHpEyzUOog5XUed+ZkS8jIkK3+z2e+KNrMRHFlL+s
-	EI5H+GUcvKG3H/hWdDKVWAstd8ihaaSOx8n1UKaL7SzFPFZff+tgLI9pMqpGCHRWpxICVgThYXY
-	j2n48zBoxpn1Yseu7snMU90UfD3VNroA=
-X-Gm-Gg: AY/fxX6/lgXj/NUwrVTuUsCta0lFFUSU7RmP0ePYJ3p33lg3OO3rVnpr+g9uRj1ckMh
-	gJR76rEQLJ+xBpuNGE3R3s/zyXZFy/zTFELh7gETs+3whcoukKhGVVfYRtvvrLqoV7B91wnaktq
-	YZ2YiwvzuYrBBpg+Y2UvkMAOQej7wnrBoMbtZ8yT8nt6rsRdwml/cy/RTpFJnfoEbgYpI5Mlmip
-	3A/PouI4Uhnx6yLidp1VQZ+XfkliQhpq7DGVzYxMNqrrn4EMr9og+cR7+Vb2h50ymPz18In6VH3
-	xW9LjU2XPz5czA3ExKfILFtMK790rg==
-X-Received: by 2002:a05:6000:2313:b0:432:5c43:76 with SMTP id
- ffacd0b85a97d-43569bc17ebmr434376f8f.39.1768503268480; Thu, 15 Jan 2026
- 10:54:28 -0800 (PST)
+	s=arc-20240116; t=1768503357; c=relaxed/simple;
+	bh=x7tV2Kg6T6yguuR4G+iuaiQWXGoeovKBD2Ho4ravFDk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YwHtpHsf59Sw8fd1uB5fyC2Uz8B5mCNir3u7TULtvNHO8Nch/q/O6wnSQzWoXMBMqftb4/3yG4oTanztEP/kDaHgSS05xVwxsB9o4zP7uxzrWAkSn12Msx+RPaQTC4Wbd0mhppbCpOwbgIUW0AmeFRdGGfbFpU95vx08hKLQsmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=KC+OAuUW; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Tezj/QPgefijpDh5A49YjiGfEhluXoplws9cLThVWEU=; b=KC+OAuUWjc1CzO51ISKH+bjJKq
+	+3Vit+dKYS0cWzzGslXgaCPEzbEi7FrpMRxR2IpqrtIpPpCkxSBW41LlIoc34AO1A2qd9Qu11KgNu
+	wuE/M4y98Y1H3TzXKD8KmPVLQfvNtRFAAdv6BnVsgZY9Ci5VMeqDFP5/9Mywz0p6QU3F65tgpw4Ur
+	eL2cH+LdY/yC1PN2fn8bACQxVFMt44hm/ZYmjk20mMRCoYGNLLSBA6lD2yCv7KCtKKTrHEWej3A36
+	txiN4FWn4s+qwXvyTMN1PISBIjVigUyDcDa5Z1cMDpUS5+n/tqJKbBY9p5KS4CJEiDCO/NXPll1Xb
+	1cE64arg==;
+Received: from [177.139.22.247] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1vgSVB-005ru5-3N; Thu, 15 Jan 2026 19:55:25 +0100
+Message-ID: <0241e2c4-bf11-4372-9eda-cccaba4a6d7d@igalia.com>
+Date: Thu, 15 Jan 2026 15:55:15 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org> <20260115-exportfs-nfsd-v1-26-8e80160e3c0c@kernel.org>
-In-Reply-To: <20260115-exportfs-nfsd-v1-26-8e80160e3c0c@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 15 Jan 2026 19:54:17 +0100
-X-Gm-Features: AZwV_QgNgqINU2MW0ct-_EKOImgQ1uAwJfq7nKBHPoIgHpyzlMCSNbXGV-6zTEg
-Message-ID: <CAOQ4uxh4VaVL9PD7-_Op9Xs-z5Qrx8g6x2x5FccujQX-Cw9RqQ@mail.gmail.com>
-Subject: Re: [PATCH 26/29] fuse: add EXPORT_OP_STABLE_HANDLES flag to export operations
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, Gao Xiang <xiang@kernel.org>, 
-	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
-	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, 
-	Carlos Maiolino <cem@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>, 
-	Viacheslav Dubeyko <slava@dubeyko.com>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
-	Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
-	Phillip Lougher <phillip@squashfs.org.uk>, Steve French <sfrench@samba.org>, 
-	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Mike Marshall <hubcap@omnibond.com>, 
-	Martin Brandenburg <martin@omnibond.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
-	Joseph Qi <joseph.qi@linux.alibaba.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Dave Kleikamp <shaggy@kernel.org>, 
-	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Jan Kara <jack@suse.cz>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, Christoph Hellwig <hch@infradead.org>, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
-	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-unionfs@vger.kernel.org, 
-	devel@lists.orangefs.org, ocfs2-devel@lists.linux.dev, ntfs3@lists.linux.dev, 
-	linux-nilfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net, 
-	linux-mtd@lists.infradead.org, gfs2@lists.linux.dev, 
-	linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, Chuck Lever <chuck.lever@oracle.com>,
+ Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Tom Talpey <tom@talpey.com>, Carlos Maiolino <cem@kernel.org>,
+ Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, kernel-dev@igalia.com
+References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
+ <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com>
+ <20260114062608.GB10805@lst.de>
+ <5334ebc6-ceee-4262-b477-6b161c5ca704@igalia.com>
+ <20260115062944.GA9590@lst.de>
+ <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com>
+ <20260115072311.GA10352@lst.de>
+ <22b16e24-d10e-43f6-bc2b-eeaa94310e3a@igalia.com>
+ <CAOQ4uxhbz7=XT=C3R8XqL0K_o7KwLKsoNwgk=qJGuw2375MTJw@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <CAOQ4uxhbz7=XT=C3R8XqL0K_o7KwLKsoNwgk=qJGuw2375MTJw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 15, 2026 at 6:50=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> Add the EXPORT_OP_STABLE_HANDLES flag to fuse export operations to indica=
-te
-> that this filesystem can be exported via NFS.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/fuse/inode.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 819e50d666224a6201cfc7f450e0bd37bfe32810..1652a98db639fd75e8201b681=
-a29c68b4eab093c 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1208,6 +1208,7 @@ static struct dentry *fuse_get_parent(struct dentry=
- *child)
->  /* only for fid encoding; no support for file handle */
->  static const struct export_operations fuse_export_fid_operations =3D {
->         .encode_fh      =3D fuse_encode_fh,
-> +       .flags          =3D EXPORT_OP_STABLE_HANDLES,
->  };
+Em 15/01/2026 13:07, Amir Goldstein escreveu:
+> On Thu, Jan 15, 2026 at 4:42 PM André Almeida <andrealmeid@igalia.com> wrote:
+>>
+>> Em 15/01/2026 04:23, Christoph Hellwig escreveu:
+>>
+>> [...]
+>>
+>>>
+>>> I still wonder what the use case is here.  Looking at André's original
+>>> mail it states:
+>>>
+>>> "However, btrfs mounts may have volatiles UUIDs. When mounting the exact same
+>>> disk image with btrfs, a random UUID is assigned for the following disks each
+>>> time they are mounted, stored at temp_fsid and used across the kernel as the
+>>> disk UUID. `btrfs filesystem show` presents that. Calling statfs() however
+>>> shows the original (and duplicated) UUID for all disks."
+>>>
+>>> and this doesn't even talk about multiple mounts, but looking at
+>>> device_list_add it seems to only set the temp_fsid flag when set
+>>> same_fsid_diff_dev is set by find_fsid_by_device, which isn't documented
+>>> well, but does indeed seem to be done transparently when two file systems
+>>> with the same fsid are mounted.
+>>>
+>>> So André, can you confirm this what you're worried about?  And btrfs
+>>> developers, I think the main problem is indeed that btrfs simply allows
+>>> mounting the same fsid twice.  Which is really fatal for anything using
+>>> the fsid/uuid, such NFS exports, mount by fs uuid or any sb->s_uuid user.
+>>>
+>>
+>> Yes, I'm would like to be able to mount two cloned btrfs images and to
+>> use overlayfs with them. This is useful for SteamOS A/B partition scheme.
+>>
+>>>> If so, I think it's time to revert the behavior before it's too late.
+>>>> Currently the main usage of such duplicated fsids is for Steam deck to
+>>>> maintain A/B partitions, I think they can accept a new compat_ro flag for
+>>>> that.
+>>>
+>>> What's an A/B partition?  And how are these safely used at the same time?
+>>>
+>>
+>> The Steam Deck have two main partitions to install SteamOS updates
+>> atomically. When you want to update the device, assuming that you are
+>> using partition A, the updater will write the new image in partition B,
+>> and vice versa. Then after the reboot, the system will mount the new
+>> image on B.
+>>
+> 
+> And what do you expect to happen wrt overlayfs when switching from
+> image A to B?
+> 
+> What are the origin file handles recorded in overlayfs index from image A
+> lower worth when the lower image is B?
+> 
+> Is there any guarantee that file handles are relevant and point to the
+> same objects?
+> 
+> The whole point of the overlayfs index feature is that overlayfs inodes
+> can have a unique id across copy-up.
+> 
+> Please explain in more details exactly which overlayfs setup you are
+> trying to do with index feature.
+> 
 
-These are used when the server declares FUSE_NO_EXPORT_SUPPORT
-so do not opt in for NFS export.
+The problem happens _before_ switching from A to B, it happens when 
+trying to install the same image from A on B.
 
-The sad thing w.r.t FUSE is that in most likelihood server does not provide
-persistent handles also when it does not declare FUSE_NO_EXPORT_SUPPORT
-but we are stuck with that.
-
-Thanks,
-Amir.
+During the image installation process, while running in A, the B image 
+will be mounted more than once for some setup steps, and overlayfs is 
+used for this. Because A have the same UUID, each time B is remouted 
+will get a new UUID and then the installation scripts fails mounting the 
+image.
 
