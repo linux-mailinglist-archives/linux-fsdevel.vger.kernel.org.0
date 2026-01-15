@@ -1,104 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-73990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94060D27C42
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 19:49:33 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724F1D27D38
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 19:55:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id BF61B30146E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 18:45:37 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id C61AB301FD3F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 18:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEEA3C1974;
-	Thu, 15 Jan 2026 18:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47013D1CD7;
+	Thu, 15 Jan 2026 18:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwfO90dr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSUUWslM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E3D3624AC
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 18:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489DB3C00B7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 18:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768502736; cv=none; b=Lz+eyBplYbzz/4AcD3KMhTXRl3no1q8M015xZi2Q8Y1lCukUxzd1wG4iyuTN9rCAjI4WibkRCAAEVDJ9nU+APMBT2c5uVC7LTNfLr3uMPmVZQKPDiZ17/5kFQ5EhAEe+u1ThJYxN27Q6fpkP9sYyAh78f4zimKzD/P6IkJat428=
+	t=1768503274; cv=none; b=Lr6p7ob1pr4iF1+N2ZmLCWYsuqr+DN9Kw8/YodaGm9sV+lEekNsuHLKKa204XGY8y66v7S5cRJusDOoOcDAHyd+b3vHXGoso02Xw/vOyn5etW5ZsWlj6mJbyfLE8Qa+gg1DKZTmpRsncXmhaYpLUiUBaIIaKD3E/eVRh1tLcy44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768502736; c=relaxed/simple;
-	bh=w1Vj8qHAEnA5QAG21ZJWEKJRh9+kbTjA2GDGlgG2chU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=n8yVgWA3a0tKklnoy1Xb0mLHZHDNO6Fp1rMexI2aFbAvvGN7Fbh8hxamimgwc579/ZlL1IX4AaTMUcD3oBCOjLyu7SwFa/jeMsuWxQ0eORYfKbniqUqYZPxnwtpLl41ObubYMJbh0Axx/XFVQtzyT8eEqKl772LI5v6wm0G/5ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwfO90dr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A38C16AAE;
-	Thu, 15 Jan 2026 18:45:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768502735;
-	bh=w1Vj8qHAEnA5QAG21ZJWEKJRh9+kbTjA2GDGlgG2chU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=TwfO90drENo5jbFJVdaiSZo89C7Vr73mdbYYWSupjIHaRyz8ptxOoO3kW3Y75CV2L
-	 Xxu+fjOGUfTTGjbAZaJCtbMxxQndbym/Zc2Ui2NmJA7Z7KbhMT2CZH+IVcBaw+epLk
-	 eWoVnh2CDd0CmlwlPcxmHWz5yCCK3i2MEASYKWSwF4WgWlAtfevEf2XIkDD+qHnNPC
-	 H8kxFPe/jA63WbWdJEGSR93qHmmgECnthmmR1363cxODG9G8UVThXIDCKr27kIfpdQ
-	 UgJ+VIFldKgA59rC6AFqp0CjyFbws5RNilzPm/doaygzlMNKQw5kNI8fEyJe6hxMrr
-	 sJvvFCskVr8Ag==
-Message-ID: <998f6d6819c2e0c3745599d61d8452c3bc478765.camel@kernel.org>
-Subject: Re: NFSv4 + FUSE xattr user namespace regression/change?
-From: Trond Myklebust <trondmy@kernel.org>
-To: Johannes =?ISO-8859-1?Q?Sch=FCth?= <j.schueth@jotschi.de>
-Cc: Antonio SJ Musumeci <trapexit@spawn.link>,
- linux-fsdevel@vger.kernel.org,  "gregkh@linuxfoundation.org"	
- <gregkh@linuxfoundation.org>, Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 15 Jan 2026 13:45:34 -0500
-In-Reply-To: <CA+zj3DKAraQASpyVfkcDyGXu_oaR9SnYY18pDkN+jDgi54kRMQ@mail.gmail.com>
-References: 
-	<32Xtx4IaYj8nhPIXtt0gPimTRQy4RNjzmsqI1vQB1YBpRes0TEgu6zVzWbBEcn2U6ZxB14BD9vakmezNyhdXDt3CVGO8WYGxHSZZ1qtQVy8=@spawn.link>
-	 <8f5bb04853073dc620b5a6ebc116942a9b0a2b5c.camel@kernel.org>
-	 <e5-exnk0NS5Bsw0Ir_wplkePzOzCUPSsez9oqF7OVAAq3DASvNJ62B9EuQbvIqHitDgxtVnu74QYDYVEQ8rCCU74p4YupWxaKZNN34EPKUY=@spawn.link>
-	 <9ceb6cbcef39f8e82ab979b3d617b521aa0fcf83.camel@kernel.org>
-	 <CA+zj3DKAraQASpyVfkcDyGXu_oaR9SnYY18pDkN+jDgi54kRMQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
+	s=arc-20240116; t=1768503274; c=relaxed/simple;
+	bh=AgB8BlDrSqCt2vWmdgQdkVNbgorviCbIMxtlMVxqyDU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mWFSj0Q4sz0hmlaHUaykWSqQc7EWmBxmryOHoyy2Zs3V1zFly5D/3rHjlXD5JYTFpx+UDv3YKnK2UMnlSexnW3hFX2Fq7TXe07UIRgCXwq8kQ1cw4Lc3+kiLFDwlKBKFfO1xg7fduXsIZ465KmvLRptjvVskF80y62WwJsW+Glc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MSUUWslM; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42fed090e5fso668536f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 10:54:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768503269; x=1769108069; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R/pIR9g5xBWqOZmQj/jDCO8xKQONNisoQQHHakrcMdk=;
+        b=MSUUWslM7So/8e5qCKM9JU2cE4putYAvpi8UdtuonqryPMUNC+1PUocWSNmRX6iGft
+         Llsnn4u2ChuSQFRjdQYh1n4dcKLsda/c9h8OBQlFkmYO6AbGHtLLYM0SAWhirNpaoF4n
+         lakVf7f1knSaC/T5LidHJsjH0TVakBR0PiniEdlaUsoRuFln+7VFqUwQfgRz0i4x4AvS
+         ZYRXMKaX2NnbWxFRzsRhO2KaJ3DxCOuFwkiLa7v70xNShq3EGNuiEqzLBa7apuvs8Ev8
+         8lR89uWCNysQXzJycZ3fgJA46czSOxtOhpmR8aUQ39pBmNkdExztbB4bfrrOFL9eSKRt
+         1A2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768503269; x=1769108069;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=R/pIR9g5xBWqOZmQj/jDCO8xKQONNisoQQHHakrcMdk=;
+        b=hyVdkO2n6vv3S0QfxBwSq5nY1/fX5//YySAM39dOO2dskLUM4G/j94nf5E6xQGTz9z
+         aK3JibHwND986gQUE48X8P2vVLDD/MmH5V2M9/H2191xl+lbTINHftGdJ+cVDEyG2juN
+         bpPTZr1xk+Cs+9qXVH3DbehdwH7TIMGWEavLMe5wTOCbHW6dH9Kw17U8qJCp6CUZObOV
+         2aNPzRL618zKX9x1ffs7cQsLnNt2AEGcGpt0e/0fw6o4tCmPPDDhv/x6JfTvj5J9b/gb
+         eIl7Hc4+ycCx28BdgRVCR81yICZz9xYWX+1FZ4hzcH77yaNfUAeqrAcw/f7jyXKxPvPw
+         2bPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxmT0MMN7dn3CffciG+ZnLAoALaEZ/32npj6uEHNYa/NCy1wnQH0wKJytPD++bex1PAuSfI1IxozhS2N8R@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvT8f/On/xHpEyzUOog5XUed+ZkS8jIkK3+z2e+KNrMRHFlL+s
+	EI5H+GUcvKG3H/hWdDKVWAstd8ihaaSOx8n1UKaL7SzFPFZff+tgLI9pMqpGCHRWpxICVgThYXY
+	j2n48zBoxpn1Yseu7snMU90UfD3VNroA=
+X-Gm-Gg: AY/fxX6/lgXj/NUwrVTuUsCta0lFFUSU7RmP0ePYJ3p33lg3OO3rVnpr+g9uRj1ckMh
+	gJR76rEQLJ+xBpuNGE3R3s/zyXZFy/zTFELh7gETs+3whcoukKhGVVfYRtvvrLqoV7B91wnaktq
+	YZ2YiwvzuYrBBpg+Y2UvkMAOQej7wnrBoMbtZ8yT8nt6rsRdwml/cy/RTpFJnfoEbgYpI5Mlmip
+	3A/PouI4Uhnx6yLidp1VQZ+XfkliQhpq7DGVzYxMNqrrn4EMr9og+cR7+Vb2h50ymPz18In6VH3
+	xW9LjU2XPz5czA3ExKfILFtMK790rg==
+X-Received: by 2002:a05:6000:2313:b0:432:5c43:76 with SMTP id
+ ffacd0b85a97d-43569bc17ebmr434376f8f.39.1768503268480; Thu, 15 Jan 2026
+ 10:54:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org> <20260115-exportfs-nfsd-v1-26-8e80160e3c0c@kernel.org>
+In-Reply-To: <20260115-exportfs-nfsd-v1-26-8e80160e3c0c@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 15 Jan 2026 19:54:17 +0100
+X-Gm-Features: AZwV_QgNgqINU2MW0ct-_EKOImgQ1uAwJfq7nKBHPoIgHpyzlMCSNbXGV-6zTEg
+Message-ID: <CAOQ4uxh4VaVL9PD7-_Op9Xs-z5Qrx8g6x2x5FccujQX-Cw9RqQ@mail.gmail.com>
+Subject: Re: [PATCH 26/29] fuse: add EXPORT_OP_STABLE_HANDLES flag to export operations
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, Gao Xiang <xiang@kernel.org>, 
+	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
+	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, 
+	Carlos Maiolino <cem@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>, 
+	Viacheslav Dubeyko <slava@dubeyko.com>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
+	Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
+	Phillip Lougher <phillip@squashfs.org.uk>, Steve French <sfrench@samba.org>, 
+	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Mike Marshall <hubcap@omnibond.com>, 
+	Martin Brandenburg <martin@omnibond.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Dave Kleikamp <shaggy@kernel.org>, 
+	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Jan Kara <jack@suse.cz>, 
+	Andreas Gruenbacher <agruenba@redhat.com>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	Jaegeuk Kim <jaegeuk@kernel.org>, Christoph Hellwig <hch@infradead.org>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
+	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-unionfs@vger.kernel.org, 
+	devel@lists.orangefs.org, ocfs2-devel@lists.linux.dev, ntfs3@lists.linux.dev, 
+	linux-nilfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net, 
+	linux-mtd@lists.infradead.org, gfs2@lists.linux.dev, 
+	linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2026-01-15 at 17:18 +0100, Johannes Sch=C3=BCth wrote:
-> Here are the two requested dumps:
-> https://www.jotschi.de/files/fuse_nfs_mount_6_18_5.pcap
-> https://www.jotschi.de/files/fuse_nfs_setfattr_6_18_5.pcap
->=20
-> I see XAW (xattr write?) being denied on nfs mount:
-> Opcode: ACCESS (3), [Access Denied: MD XT DL XAW], [Allowed: RD LU
-> XAR XAL]
->=20
-> Testing system/security xattr was just a test. My userland code only
-> uses user.* xattr.
->=20
+On Thu, Jan 15, 2026 at 6:50=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> Add the EXPORT_OP_STABLE_HANDLES flag to fuse export operations to indica=
+te
+> that this filesystem can be exported via NFS.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/fuse/inode.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 819e50d666224a6201cfc7f450e0bd37bfe32810..1652a98db639fd75e8201b681=
+a29c68b4eab093c 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1208,6 +1208,7 @@ static struct dentry *fuse_get_parent(struct dentry=
+ *child)
+>  /* only for fid encoding; no support for file handle */
+>  static const struct export_operations fuse_export_fid_operations =3D {
+>         .encode_fh      =3D fuse_encode_fh,
+> +       .flags          =3D EXPORT_OP_STABLE_HANDLES,
+>  };
 
-If you look at frame #103, when the client is querying the properties
-of the filesystem mounted under "merged": it asks for the value of the
-attribute "Xattr_support", and the server responds with a value "0"
-(i.e. "No").
+These are used when the server declares FUSE_NO_EXPORT_SUPPORT
+so do not opt in for NFS export.
 
-So as far as I can see, the client behaviour you are observing is the
-correct one, given the response from the server.
+The sad thing w.r.t FUSE is that in most likelihood server does not provide
+persistent handles also when it does not declare FUSE_NO_EXPORT_SUPPORT
+but we are stuck with that.
 
-Now as to the question about why the server is reporting "No", it looks
-as if it bases that information on the reply from the VFS call to
-xattr_supports_user_prefix() on the root inode for that filesystem. I
-guess in this case, FUSE is disallowing setting a "user" xattr on that
-inode.
-
-So this is not a regression from the point of view of the NFS client,
-but rather that commit a8ffee4abd8e ("NFS: Fix the setting of
-capabilities when automounting a new filesystem") fixed the bug that
-was masking the actual server response for this FUSE filesystem.
-
->=20
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trondmy@kernel.org, trond.myklebust@hammerspace.com
+Thanks,
+Amir.
 
