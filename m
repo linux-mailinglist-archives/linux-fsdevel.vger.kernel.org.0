@@ -1,311 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-74010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21899D288C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 21:54:59 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20514D28A29
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 22:07:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 04B4C30268D4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 20:54:27 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 03C983015818
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 21:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EBC3254A8;
-	Thu, 15 Jan 2026 20:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9D2320A1A;
+	Thu, 15 Jan 2026 21:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4XJgfLQP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from CWXP265CU009.outbound.protection.outlook.com (mail-ukwestazon11021090.outbound.protection.outlook.com [52.101.100.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15FF2E92C3;
-	Thu, 15 Jan 2026 20:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.100.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394FC322B90
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 21:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768510459; cv=fail; b=CbzuIYCFD9c4Y/r5N98mjh+QjMJ8frEykgY7ZhDkV9hOCsZuva4SnULnrS56M5EGSzZia5y9tpMXrTmthnJ1USxOeYrTPim0jjp77R4GjvdQK2r38aO9WrQpIqGavVlTd1dKGJkwAtIdBysEFTWbT06T1pAH5YQGxmr6iZw008I=
+	t=1768511230; cv=pass; b=OsSJZNnYRv8PAoU/UE4lKhk4brQEIMcf8O1kg84IVPBWuYAQfdFn/cP+A1L/KlW8fVY+kWn6dYXYSg1xVIhplCBeDCSfFtMLr1kOY6p7sI8LxUmHUMeglRf1TUdYlCDeUN2FqFw4cDSDer4CVQgBODPyCV5kTse3E+kS1zIk2UE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768510459; c=relaxed/simple;
-	bh=G1/+Cmg+XOBdBJhdeaex2pqKofX6R4Y9Q6AEe8AYm7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UcjjxbfOUQfUx79ZbRGqRwE9dCx1oMoNUErfg45G+IAUKCWyym67XDFQqHSErx+BKQMS2tNr+6okx9SkkeOjz3k1eIITVj0iKtRvRXciHO0KXS/bH6wydysxyk05j0A+vZRvLbaGdv/Y/o1YHH9wGHt/wmsLi71OBIfUZA2aR2c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.100.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QaiNC/3dJ9ztXME6UM/DCaF7QSVPMuDRXGJDb+Qs9pVU7mHUtSP4uLEbdpdvdrR380EhOLKaJ9WQhvBgjhZY1qSph0k5g+QPumjFX9zD6pRpZe00c7KIq0Ko4zQQeuM8HQEdooBQCwyT3VZIX8Z1PwwXcGqygP56xkG+TVqX7uDaqlg/+Ktaidm7gbQxEct0Ghc1PGMNH7jChrIvetEsCVpgTs5z8lrXZD7BT4vx9gIXLnmLW4u7q+f8zHxyML7IWAGUjvcf3g4TOjfeFv7j7Pe8b0ezHMuZqzrWPuOi3Bw1YzIjn5ElB5x4NJnUnWtc92Y3bgj3vUHlImQMgrAq+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N4Xk3nE+QqhH7JM/TenPFhAxTYecLP++UKhJzrDJBj8=;
- b=j2qwISXmkFft/4xEJWTDkEtSBQeLQsV4cp0HtI4IJ0lZdXxxZz+GxWyro6eAzGTiKRxZSvKHyWBJrvy+HYpfX2H9BIx+UGK6B5zLFySgcueTpRTTjbLLTZuff2XpGwubu3YAlBjT2liwmcz6VlYpHikSswc/YHU/sjIEXAyIzBb4Cejbc9QPN5xZmpfULfYoGSWeQwk/azJkrtj+TZVMr1u20uwjejcSPEMG9OCGjGmZFGDbnMDATyxVGZA0ZNF2kTOTrl+vN7e2uEoHV0PDAr+X/Nf9hFqlTg2SbQp1aOX5e8pI38NHBI0Nkzk+AxfFIY2uSzkwoQGJd0yx9g3ZTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
- dkim=pass header.d=atomlin.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=atomlin.com;
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
- by LOAP123MB8226.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:43c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.6; Thu, 15 Jan
- 2026 20:54:16 +0000
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf%5]) with mapi id 15.20.9520.003; Thu, 15 Jan 2026
- 20:54:16 +0000
-From: Aaron Tomlin <atomlin@atomlin.com>
-To: oleg@redhat.com,
-	akpm@linux-foundation.org,
-	gregkh@linuxfoundation.org,
-	david@kernel.org,
-	brauner@kernel.org,
-	mingo@kernel.org
-Cc: neelx@suse.com,
-	sean@ashe.io,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [v3 PATCH 1/1] fs/proc: Expose mm_cpumask in /proc/[pid]/status
-Date: Thu, 15 Jan 2026 15:54:07 -0500
-Message-ID: <20260115205407.3050262-2-atomlin@atomlin.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260115205407.3050262-1-atomlin@atomlin.com>
-References: <20260115205407.3050262-1-atomlin@atomlin.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR18CA0027.namprd18.prod.outlook.com
- (2603:10b6:208:23c::32) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:70::10)
+	s=arc-20240116; t=1768511230; c=relaxed/simple;
+	bh=Yj5Px6CBHG4dfhDnY0aiL+o/Xd3AGh3M1dNNpc7+Hj0=;
+	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OIcSzXahC9405z+EfPz+iuZNsR8TyXV+FLmNcjQry1pVppmelTiw1ScFmUolRFynLlX76wfxjElMlHJ+LhZAZAuzUKSCvDVEIXH3vphtH7zx4xnEKc0Q6j6kZVLmpuYgP5jiGdUrVAe0RmNNZxECjJ5z//VoJjRxfDQ4BtzyPqw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4XJgfLQP; arc=pass smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5ebb6392f58so456502137.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 13:07:08 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1768511227; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Ae9CDJsnmQi0dYo54ES3ey9z4/RJC1egerQAd7LzMMHnAytHZKkcSWBRKypYELkxeV
+         MjA4H10G2ssH7uJa28jS7HBhkt18foQuAL7KpPDNNdfHAF0u6BcJlGLnkoNydZe60Ejw
+         Z11beYxL7kykl7pBGiLgbHANZE5Mx0WMzehG5SCLWCoY0XrFxtsNE9O0117y1TWJ19uU
+         ViD9YK10ehH6vC6iq5Z+WcYxiqOnIi6RYN/5n9uAbN/IQ8XboEOi8EyIycjjZJZCs9yv
+         ta1uRBfT/JqMuV9r1FC0RRDok5LE6brFdu+Xl5zShjwWNdB6TcvKumuQuZauZcw3bgXf
+         CQ1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:dkim-signature;
+        bh=y4BwArZ5FLhyM5BEN34gjuDvwbvdpN2Nxoskvco/5nM=;
+        fh=UHNpbxQvFZE+9oYCDP6Fs7svNugHmAVrplAFvCL4Nq4=;
+        b=CM19sv61IPcQ6f/w8oj7u481V22TPTj8PyLso0fDhxG+44nfqTcigDn4glPpI3noZG
+         BbmpUHju8z1ydcJqOcn5ACl2yVZjanYDVnDZYIG2JnbFUwR5/NIMyt1/2LS+AXEGZj7+
+         QXNBKxCckfqd5KsN0CAZEuuMdlJCQUeByWQZC42/wPg1+DuGs9njIlTCOGMzpi20yL+1
+         +efiN50Alnu1dfjyEfy6TTH856dvbucDlpqWS+b6p9kpiL6vyBM8Ii9VvnZFvuxetMfk
+         PLfHdq/g7P0fkwHR1thhhEab2hdoyEFEdVkx3FNtMSxoMzsBLhVtMLFvzmhfNJpk1xQJ
+         +9hA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1768511227; x=1769116027; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y4BwArZ5FLhyM5BEN34gjuDvwbvdpN2Nxoskvco/5nM=;
+        b=4XJgfLQPzxM5FXWJkEQS/kXTzEqlaoNNsykVgVssx9ILv7rH2f0RPJB0Dsm8qrAms2
+         ca1bhsEOHx0BFLwVRFmof0lTpYymrpbdRKK/1/bgNnjBFJ1AA+33K9xdNQSiAbvhG8Vy
+         kL1ZSO+dansx6NIyFH+a86drC/+BMsplkmTtJSR9nFM0y3dL3IKx8KoAfTFU2xpZZJqf
+         kXdl+n+ILpES0C/0nzoY1zoUXovu+P1soJ4YMJl215plLGiz7WqYtLuFdstWhf3zf/0K
+         vN6yKSUSFWHjiVS56FlbC+Rx9vxZCxMtufdgDE6UWoEzY472DLjt5vOicDkHTSjO/ErR
+         NXzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768511227; x=1769116027;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y4BwArZ5FLhyM5BEN34gjuDvwbvdpN2Nxoskvco/5nM=;
+        b=ax33mgqfS/OVgm2jAUCp3c+kabSEafhVYKh94wIxKSXcRoHnuH6tFJsuM55pg2Ep4V
+         gZjBnmII2zVYetgVde6cKZmiP5AsqHfLRK/8BYmjd2EY1LMiU3YLsDOGAwjgFHQqzX5I
+         zJBq8PQWn37vWPI0oRQUwrYvsTbhwQypeoF4wN29T6AgpFPpfAQP6zf+pYDGpsv+z1kS
+         mIM9D6OwZeZ3XI31Uuhis8/z2q1KQrVtZGuLV2NgSt5m5tCY1GYYpIHPGw1mwYflOmTi
+         gG1K3xt/fh+ATV+ethT0W7GMJ0/UF6ySuMpkC4ky0p0epL8/tFfYvr00L4uo1M838Kzy
+         t1Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUs+u+1EG0sFtbTu8POzrx/Hxggfhx6y5j7CL74+i03rIjroFbpWbHOjlpRmpY7BUPPCmfXOJKSnaG8FxfZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3cjSaJZeKrm0WccsZwqpamcCjxXv6Wel4gl2GRY5jw7pwEsqm
+	8c02RebTYvHdjkHc2BNM+f6mqnj3epv/4uNZkMQ5XBG0E0St79+J2meiohNrHUzqFkrptVL8UIV
+	LMv60GQqhx6zrSKuGFkhtMTGEOZ4r5Q0fRf/PTu9H
+X-Gm-Gg: AY/fxX5XntA4kXgz08NgK4ndHi4ACka2uulhAOPaVQGQPs8wIJqrTOu5RIwMCxWxScK
+	xRJ1SLueJLjAD4yN+xYq4mHbe29bEVd89aBG0YXtmpt3O21xKGTg3jMSB6pBZRsQBV1F9UQbDew
+	nFhX+E9b4ooUTeKgyGW5UNiSyNtKPT6n4QfOgm7zJvPfyfAqmjjZlLqCvpEDutZAPpMDQ7LIVxD
+	zrUya5um8wNMGfsgBHI/Mk5LodUpwY+CxLj66NfAELvpPdj/n4PhQ/fq9HLvEwOvBLFqAVcF4xS
+	ydrvlrpoiEBGptZYoviDg/eEDA==
+X-Received: by 2002:a05:6102:945:b0:5df:aff3:c41c with SMTP id
+ ada2fe7eead31-5f1a719e362mr155618137.30.1768511226367; Thu, 15 Jan 2026
+ 13:07:06 -0800 (PST)
+Received: from 176938342045 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 15 Jan 2026 13:07:05 -0800
+Received: from 176938342045 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 15 Jan 2026 13:07:05 -0800
+From: Ackerley Tng <ackerleytng@google.com>
+In-Reply-To: <20260114134510.1835-2-kalyazin@amazon.com>
+References: <20260114134510.1835-1-kalyazin@amazon.com> <20260114134510.1835-2-kalyazin@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|LOAP123MB8226:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0dd1cd69-ee73-48fc-d5f8-08de54783eb3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UxxsZ59scPpfvTJhBsdy8YAEvFjMMlvvbyAgzZhyZgPdi+Olk/n7aYyRxMC5?=
- =?us-ascii?Q?zwQjnUHuqLPwFzMalOQzQZ9HiIn3lZq8d4qModPyyqEkU2o0T2UfB72L1NER?=
- =?us-ascii?Q?ROGTh8ehvkQqP/1EmlKrPoWaNUa4pU/BXu+X24T5Z09qWYzIOnuBGjuIout0?=
- =?us-ascii?Q?Xo/07FVgZ4ABB9oSmolozfRzQTHCycIiplFfk+GGLWj+ohJBfz2pMtuNyLgg?=
- =?us-ascii?Q?QK6/PUS4D6PtLc0oAvpexkTkKsudGAC1vS4MLkYFPZcI5CEBDH2zmSttxqEO?=
- =?us-ascii?Q?HgMwolII8vfD2Bc7OCnjtHgFvDA177Ck/S+OHw9W8dDcqXPgcN8i2XjXi2hf?=
- =?us-ascii?Q?zsGNXMUQkf/BsbvK8mKNuonPI8Fff00w/7XaTiaPutTpEfLaI41DKm54Qm5R?=
- =?us-ascii?Q?cgDX2b3oRtq7DrDpXtMqYRbqdU1Hkb2b++t9Y+k/29+l1p4P/dGaThpKhGR5?=
- =?us-ascii?Q?jwKWlb+8tEq3rDvpVmt+QLbKZ9mY/aXj9bQMZ9HJrG9q8EKki3iHQhJAj9mG?=
- =?us-ascii?Q?nj5QsHg4Gmix2HHZkknGjkv2VStZbJ9Iuh/Jgq8ZAEMWECI8nurWnajWNEj8?=
- =?us-ascii?Q?XbcXjNCmMSOmP45ku/ha0IJSpF/vEtLxxK5+KJkv7wOzlW/cS+A06AYxwfSK?=
- =?us-ascii?Q?h5IK/fUHiP7u73HcUoMsioKnHcpINQB/UYTz82tTCdUs0oEAi/sbvhlSdRcI?=
- =?us-ascii?Q?psz1rbamAslUq9g2xCz+upXAbuUuxl0wRoIp3X+gt7v4ETlTHoyVu8FbWPs+?=
- =?us-ascii?Q?7zhw8IJBaTg72BtsHcrqi6lvRGTJk5Vu+C/5vM5PfLNKldMgaIU9PQaqSxgF?=
- =?us-ascii?Q?1Jb7CIPm4K4e+7f2e+r2SHoLSJ0IJOUYcewr8/3M1n8rjyh6wb7kvNbxsk8H?=
- =?us-ascii?Q?g3rJCgoyMRNFEc61u3UoR44Bf2sNiY2jvPugcOR/KWbtY2kRMV8a5PGYn05V?=
- =?us-ascii?Q?KP1mdt7Dc2gzrJcmAa5VCX1NnIHCRj2Fo1SVEqH455lDwp0OAD2PZu0XIRTQ?=
- =?us-ascii?Q?/dJfZeKfzVLHZNj3e2/LDQcaLU8VVpc2HOZKAvG6LzSBg+XqB/hPUfmPFNN8?=
- =?us-ascii?Q?R9bR8DAnx7M2kJG2DpHnqkPaNAGfEVQRlpApHWkRMNZvtzAdN+urzE6RtI8C?=
- =?us-ascii?Q?AVCsQmVSBV59qCEQWuIYDRvMHTAsVsjhELTl5Eg4M+DJb0RNRHnrsMNq0HkI?=
- =?us-ascii?Q?041H0OuKXhR2vmhf9qfUZy8Giux7Fbk9OYEXNrms7afG0x7aEFGKiDwM5uU4?=
- =?us-ascii?Q?TaI0epz8rIheoOuRgj1chEOQ62T1MJoSks18rwNpLq7Ss1/V/nO6BUuSdYu6?=
- =?us-ascii?Q?YuAmDM8ZfGkqit0E3dWoaWnTa/9yqAUbAhcUDFy0zbybEbFi8JSLlgtnxI+b?=
- =?us-ascii?Q?k2FPT3fw54o9LrY1MfykLOwe+NQdPER1IgM4CcI7r6Awo2U4Na6KN/ZUEYPs?=
- =?us-ascii?Q?T3NMic8gO0bfWfU2qOTcsSK2MEsxJD66MuvrrMAebKdSUTSvnriDVjEYh0P2?=
- =?us-ascii?Q?dxxaq+lZRb6GQLF1+JbjqqeNtYLQLK0Gx/sWWlem1nX978UVYU8VkhTZ6exJ?=
- =?us-ascii?Q?Id8Tg8Wc8qMrKxIsZ24=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4ox+NBXk0d5QeJt9t6yqNSu1OE6R/zgtDAAI+ew5KX/y5Kql+HE+owEDhbHw?=
- =?us-ascii?Q?JebPe8CdHOKZmgnHmyjNnl+y/DmhfL4Ur8sL4h1mTtRgBe7qES/vO1m9H3jv?=
- =?us-ascii?Q?FNMOqcV2DIA4Y2SpfOrTHULHe+KYuFIot3pqF2L14P4JQXy2imNg85dIINVL?=
- =?us-ascii?Q?0WCG9ljfDRQIqQm2fBxSRzq+VTc0WDpoRRzqEofAPT+rQa1frDR8pAWCWCDH?=
- =?us-ascii?Q?kG4SsD3niqgrO5Ql7SkQUYOqDkbcKA1C3eFO0gix+HXuoeUC5oyncla4y/0J?=
- =?us-ascii?Q?VJznKGdRhgBuzpoJiTPJWrcfc1TInbs+s3snYkZgzAOq3nP0sCyy1hPvl7dw?=
- =?us-ascii?Q?m7BDJwiTCzvbNy5eww/Imb/qVKdSJ7EaQFgRU2AA2pOdrNic3Qa7uKEFhWEu?=
- =?us-ascii?Q?ah1xxS7Nje2R3U0p6hCrBRaNGvPDLrfzioh+Fu40QujIflvTeqWH+YiAmoDW?=
- =?us-ascii?Q?2mzTIczjvOFVHVhCpBWdbJycviyBNbYRx4PdR9BwwW1LIx5nN52BorWJvbra?=
- =?us-ascii?Q?izx5mPTxoh9q6CfIXQY1fYJyei043uUJc4VwRniUPxc4udDUdSIdt6u/CTea?=
- =?us-ascii?Q?NjBUHg5/9Kw4cW1z2mJ8OS57L56RxWtND///5OSAik4A7dsDrKcbXh/Sf/Jj?=
- =?us-ascii?Q?7WbdEOwpOPjMxtF+XKU2RzJ/pm6FZWmetOCG550Prz+8Ef3Ia6a8NNNBqgat?=
- =?us-ascii?Q?b4Dp6MKa2C11jKY9msss0BWMnQ9xXFNIFhx8WaIpLa5VC0NbmvwWK4pj+7Eh?=
- =?us-ascii?Q?Hl2bFoorGEkvV7vxKfIQnyrPcl745Hgpj72dc0MdKz6Pb4dSbg/NDdTiUceT?=
- =?us-ascii?Q?Tjmdd+V4gMZl07mdkBusF2AfM2zHmNkKEW4HUXahqQqUIY7cTId8PpG81NwP?=
- =?us-ascii?Q?XZe0qegGqhqi6dqGSuJaGwxYK22aexxbmc7nLV3QSx8fVK+/QCkAVnnDOJ8z?=
- =?us-ascii?Q?LxV/sgODg2xxpZeP/KZwjmG6k8SC2RpUmZa0kGfObD8T5j5/FeKYZgMZe2sP?=
- =?us-ascii?Q?/9D9NNbKgb52c2t6xI8ahvSKCjxITHiHcSCb7RmXu+8irmC005GrdxWUjzdK?=
- =?us-ascii?Q?CjSk4XujOVFLAchw8g+cVcoUzsqlIuBwDfCAYVLlCUSdsjd0Nx2yUH2gvDBn?=
- =?us-ascii?Q?7W0heKbJMJx8w5AyU9Wk/7BIGMfnhFF4zJgKF0DmppvmAlNyMING6aIdy3JB?=
- =?us-ascii?Q?bcMor/rnkSUP0GSTYSr/86zN0uq7uAv0MRNjWjcUZZbNuzSe8GFCfozvOPlK?=
- =?us-ascii?Q?6X8evr/5hwL/uEOZogH+PlrcYAoDzBHUN0BX5Om3xu/gP+YG7tHHK8Jmx8nE?=
- =?us-ascii?Q?neE+Fkg7A/zszVCJaZgugiQrD5SVFze8Qm07WcgDQBLRAm8TMrba5RSgnHgB?=
- =?us-ascii?Q?horWaV9OnGO9U31vqRGTd9RBJY2wsSkrIB6W1Uugt/k4aa4oRRnMFRvUWarj?=
- =?us-ascii?Q?0Y/oC5u2GZxlLC+hJOjh4lou5aRIkRjfmnr1vmrobANDI3kC40kRJBHkn4iN?=
- =?us-ascii?Q?S4Myac8vN4H2nmUIa64veOtia/WtK+b5HZIEYqf6WXuHeGahFccqDxT7dkx+?=
- =?us-ascii?Q?clIrfAvGwMzNspdMKG8Sr7oPcCqwBcLp7Ar1pSacbHOM3XF9Vcveo+ZUTYKM?=
- =?us-ascii?Q?qIi4MKAeYiri1GZZ50+Ei+X2E2iDfgnZo6nV11r7jExE70YshntZDk1KXxt/?=
- =?us-ascii?Q?PQ1+6Fqd4EqJtG5r3yErub8ui89EpdYasDynkwI8U2TQ+NAF/LtQH1z9NKt3?=
- =?us-ascii?Q?e0YzgJWufg=3D=3D?=
-X-OriginatorOrg: atomlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dd1cd69-ee73-48fc-d5f8-08de54783eb3
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2026 20:54:16.0763
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ENLgsAmde2+uVzshPDwkeMvni7e1DVnS/dQ8GwqfWOxQB5aoRLkZwUcM8EK/+YBxAtTioEq5UimHiZcayez19A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LOAP123MB8226
+Date: Thu, 15 Jan 2026 13:07:05 -0800
+X-Gm-Features: AZwV_QitN6L4bb0XJb_ZZH7nFdRT7CH1pyddv4cbgutSArI7UeCs00Q7KzDEw7c
+Message-ID: <CAEvNRgGXeow48BUJYyuAOUp8qK97v1LdF4KdTB=Nbk7pTs9tfw@mail.gmail.com>
+Subject: Re: [PATCH v9 01/13] set_memory: add folio_{zap,restore}_direct_map helpers
+To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "kernel@xen0n.name" <kernel@xen0n.name>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
+	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>, 
+	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>, 
+	"maz@kernel.org" <maz@kernel.org>, "oupton@kernel.org" <oupton@kernel.org>, 
+	"joey.gouly@arm.com" <joey.gouly@arm.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
+	"will@kernel.org" <will@kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"hpa@zytor.com" <hpa@zytor.com>, "luto@kernel.org" <luto@kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "willy@infradead.org" <willy@infradead.org>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "david@kernel.org" <david@kernel.org>, 
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>, 
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz" <vbabka@suse.cz>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com" <surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"eddyz87@gmail.com" <eddyz87@gmail.com>, "song@kernel.org" <song@kernel.org>, 
+	"yonghong.song@linux.dev" <yonghong.song@linux.dev>, 
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"sdf@fomichev.me" <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>, 
+	"jolsa@kernel.org" <jolsa@kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com" <peterx@redhat.com>, 
+	"jannh@google.com" <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "riel@surriel.com" <riel@surriel.com>, 
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "jgross@suse.com" <jgross@suse.com>, 
+	"yu-cheng.yu@intel.com" <yu-cheng.yu@intel.com>, "kas@kernel.org" <kas@kernel.org>, 
+	"coxu@redhat.com" <coxu@redhat.com>, "kevin.brodsky@arm.com" <kevin.brodsky@arm.com>, 
+	"maobibo@loongson.cn" <maobibo@loongson.cn>, "prsampat@amd.com" <prsampat@amd.com>, 
+	"mlevitsk@redhat.com" <mlevitsk@redhat.com>, "jmattson@google.com" <jmattson@google.com>, 
+	"jthoughton@google.com" <jthoughton@google.com>, "agordeev@linux.ibm.com" <agordeev@linux.ibm.com>, 
+	"alex@ghiti.fr" <alex@ghiti.fr>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
+	"borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>, "chenhuacai@kernel.org" <chenhuacai@kernel.org>, 
+	"dev.jain@arm.com" <dev.jain@arm.com>, "gor@linux.ibm.com" <gor@linux.ibm.com>, 
+	"hca@linux.ibm.com" <hca@linux.ibm.com>, 
+	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	"pjw@kernel.org" <pjw@kernel.org>, 
+	"shijie@os.amperecomputing.com" <shijie@os.amperecomputing.com>, "svens@linux.ibm.com" <svens@linux.ibm.com>, 
+	"thuth@redhat.com" <thuth@redhat.com>, "wyihan@google.com" <wyihan@google.com>, 
+	"yang@os.amperecomputing.com" <yang@os.amperecomputing.com>, 
+	"vannapurve@google.com" <vannapurve@google.com>, "jackmanb@google.com" <jackmanb@google.com>, 
+	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>, "patrick.roy@linux.dev" <patrick.roy@linux.dev>, 
+	"Thomson, Jack" <jackabt@amazon.co.uk>, "Itazuri, Takahiro" <itazur@amazon.co.uk>, 
+	"Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco" <xmarcalx@amazon.co.uk>
+Content-Type: text/plain; charset="UTF-8"
 
-This patch introduces two new fields to /proc/[pid]/status to display the
-set of CPUs, representing the CPU affinity of the process's active
-memory context, in both mask and list format: "Cpus_active_mm" and
-"Cpus_active_mm_list". The mm_cpumask is primarily used for TLB and
-cache synchronisation.
+"Kalyazin, Nikita" <kalyazin@amazon.co.uk> writes:
 
-Exposing this information allows userspace to easily describe the
-relationship between CPUs where a memory descriptor is "active" and the
-CPUs where the thread is allowed to execute. The primary intent is to
-provide visibility into the "memory footprint" across CPUs, which is
-invaluable for debugging performance issues related to IPI storms and
-TLB shootdowns in large-scale NUMA systems. The CPU-affinity sets the
-boundary; the mm_cpumask records the arrival; they complement each
-other.
+> From: Nikita Kalyazin <kalyazin@amazon.com>
+>
+> These allow guest_memfd to remove its memory from the direct map.
+> Only implement them for architectures that have direct map.
+> In folio_zap_direct_map(), flush TLB on architectures where
+> set_direct_map_valid_noflush() does not flush it internally.
+>
+> The new helpers need to be accessible to KVM on architectures that
+> support guest_memfd (x86 and arm64).  Since arm64 does not support
+> building KVM as a module, only export them on x86.
+>
+> Direct map removal gives guest_memfd the same protection that
+> memfd_secret does, such as hardening against Spectre-like attacks
+> through in-kernel gadgets.
+>
+> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
+> ---
+>  arch/arm64/include/asm/set_memory.h     |  2 ++
+>  arch/arm64/mm/pageattr.c                | 12 ++++++++++++
+>  arch/loongarch/include/asm/set_memory.h |  2 ++
+>  arch/loongarch/mm/pageattr.c            | 16 ++++++++++++++++
+>  arch/riscv/include/asm/set_memory.h     |  2 ++
+>  arch/riscv/mm/pageattr.c                | 16 ++++++++++++++++
+>  arch/s390/include/asm/set_memory.h      |  2 ++
+>  arch/s390/mm/pageattr.c                 | 18 ++++++++++++++++++
+>  arch/x86/include/asm/set_memory.h       |  2 ++
+>  arch/x86/mm/pat/set_memory.c            | 20 ++++++++++++++++++++
+>  include/linux/set_memory.h              | 10 ++++++++++
+>  11 files changed, 102 insertions(+)
+>
+> diff --git a/arch/arm64/include/asm/set_memory.h b/arch/arm64/include/asm/set_memory.h
+> index 90f61b17275e..d949f1deb701 100644
+> --- a/arch/arm64/include/asm/set_memory.h
+> +++ b/arch/arm64/include/asm/set_memory.h
+> @@ -14,6 +14,8 @@ int set_memory_valid(unsigned long addr, int numpages, int enable);
+>  int set_direct_map_invalid_noflush(struct page *page);
+>  int set_direct_map_default_noflush(struct page *page);
+>  int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool valid);
+> +int folio_zap_direct_map(struct folio *folio);
+> +int folio_restore_direct_map(struct folio *folio);
+>  bool kernel_page_present(struct page *page);
+>
+>  int set_memory_encrypted(unsigned long addr, int numpages);
+> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+> index f0e784b963e6..a94eff324dda 100644
+> --- a/arch/arm64/mm/pageattr.c
+> +++ b/arch/arm64/mm/pageattr.c
+> @@ -357,6 +357,18 @@ int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool valid)
+>  	return set_memory_valid(addr, nr, valid);
+>  }
+>
+> +int folio_zap_direct_map(struct folio *folio)
+> +{
+> +	return set_direct_map_valid_noflush(folio_page(folio, 0),
+> +					    folio_nr_pages(folio), false);
+> +}
+> +
+> +int folio_restore_direct_map(struct folio *folio)
+> +{
+> +	return set_direct_map_valid_noflush(folio_page(folio, 0),
+> +					    folio_nr_pages(folio), true);
+> +}
+> +
 
-Frequent mm_cpumask changes may indicate instability in placement
-policies or excessive task migration overhead.
+Was going to suggest a _noflush suffix to these functions, but saw
+Aneesh's comment that these functions actually do flush_tlb_kernel [1]
 
-These fields are exposed only on architectures that explicitly opt-in
-via CONFIG_ARCH_WANT_PROC_CPUS_ACTIVE_MM. This is necessary because
-mm_cpumask semantics vary significantly across architectures; some
-(e.g., x86) actively maintain the mask for coherency, while others may
-never clear bits, rendering the data misleading for this specific use
-case. x86 is updated to select this feature by default.
+[1] https://lore.kernel.org/all/yq5ajz07czvz.fsf@kernel.org/
 
-The implementation reads the mask directly without introducing additional
-locks or snapshots. While this implies that the hex mask and list format
-could theoretically observe slightly different states on a rapidly
-changing system, this "best-effort" approach aligns with the standard
-design philosophy of /proc and avoids imposing locking overhead on
-critical memory management paths.
+Reviewed-by: Ackerley Tng <ackerleytng@google.com>
 
-Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
----
- Documentation/filesystems/proc.rst |  7 +++++++
- arch/x86/Kconfig                   |  1 +
- fs/proc/Kconfig                    | 14 ++++++++++++++
- fs/proc/array.c                    | 28 +++++++++++++++++++++++++++-
- 4 files changed, 49 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 8256e857e2d7..c6ced84c5c68 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -291,12 +291,19 @@ It's slow but very precise.
-  SpeculationIndirectBranch   indirect branch speculation mode
-  Cpus_allowed                mask of CPUs on which this process may run
-  Cpus_allowed_list           Same as previous, but in "list format"
-+ Cpus_active_mm              mask of CPUs on which this process has an active
-+                             memory context
-+ Cpus_active_mm_list         Same as previous, but in "list format"
-  Mems_allowed                mask of memory nodes allowed to this process
-  Mems_allowed_list           Same as previous, but in "list format"
-  voluntary_ctxt_switches     number of voluntary context switches
-  nonvoluntary_ctxt_switches  number of non voluntary context switches
-  ==========================  ===================================================
- 
-+Note "Cpus_active_mm" is currently only supported on x86. Its semantics are
-+architecture-dependent; on x86, it represents the set of CPUs that may hold
-+stale TLB entries for the process and thus require IPI-based TLB shootdowns to
-+maintain coherency.
- 
- .. table:: Table 1-3: Contents of the statm fields (as of 2.6.8-rc3)
- 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 80527299f859..f0997791dbdb 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -152,6 +152,7 @@ config X86
- 	select ARCH_WANTS_THP_SWAP		if X86_64
- 	select ARCH_HAS_PARANOID_L1D_FLUSH
- 	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
-+	select ARCH_WANT_PROC_CPUS_ACTIVE_MM
- 	select BUILDTIME_TABLE_SORT
- 	select CLKEVT_I8253
- 	select CLOCKSOURCE_WATCHDOG
-diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
-index 6ae966c561e7..952c40cf3baa 100644
---- a/fs/proc/Kconfig
-+++ b/fs/proc/Kconfig
-@@ -127,3 +127,17 @@ config PROC_PID_ARCH_STATUS
- config PROC_CPU_RESCTRL
- 	def_bool n
- 	depends on PROC_FS
-+
-+config ARCH_WANT_PROC_CPUS_ACTIVE_MM
-+	bool
-+	depends on PROC_FS
-+	help
-+	  Selected by architectures that reliably maintain mm_cpumask for TLB
-+	  and cache synchronisation and wish to expose it in
-+	  /proc/[pid]/status. Exposing this information allows userspace to
-+	  easily describe the relationship between CPUs where a memory
-+	  descriptor is "active" and the CPUs where the thread is allowed to
-+	  execute. The primary intent is to provide visibility into the
-+	  "memory footprint" across CPUs, which is invaluable for debugging
-+	  performance issues related to IPI storms and TLB shootdowns in
-+	  large-scale NUMA systems.
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 42932f88141a..c16aad59e0a7 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -409,6 +409,29 @@ static void task_cpus_allowed(struct seq_file *m, struct task_struct *task)
- 		   cpumask_pr_args(&task->cpus_mask));
- }
- 
-+/**
-+ * task_cpus_active_mm - Show the mm_cpumask for a process
-+ * @m: The seq_file structure for the /proc/PID/status output
-+ * @mm: The memory descriptor of the process
-+ *
-+ * Prints the set of CPUs, representing the CPU affinity of the process's
-+ * active memory context, in both mask and list format. This mask is
-+ * primarily used for TLB and cache synchronisation.
-+ */
-+#ifdef CONFIG_ARCH_WANT_PROC_CPUS_ACTIVE_MM
-+static void task_cpus_active_mm(struct seq_file *m, struct mm_struct *mm)
-+{
-+	seq_printf(m, "Cpus_active_mm:\t%*pb\n",
-+		   cpumask_pr_args(mm_cpumask(mm)));
-+	seq_printf(m, "Cpus_active_mm_list:\t%*pbl\n",
-+		   cpumask_pr_args(mm_cpumask(mm)));
-+}
-+#else
-+static inline void task_cpus_active_mm(struct seq_file *m, struct mm_struct *mm)
-+{
-+}
-+#endif
-+
- static inline void task_core_dumping(struct seq_file *m, struct task_struct *task)
- {
- 	seq_put_decimal_ull(m, "CoreDumping:\t", !!task->signal->core_state);
-@@ -450,12 +473,15 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
- 		task_core_dumping(m, task);
- 		task_thp_status(m, mm);
- 		task_untag_mask(m, mm);
--		mmput(mm);
- 	}
- 	task_sig(m, task);
- 	task_cap(m, task);
- 	task_seccomp(m, task);
- 	task_cpus_allowed(m, task);
-+	if (mm) {
-+		task_cpus_active_mm(m, mm);
-+		mmput(mm);
-+	}
- 	cpuset_task_status_allowed(m, task);
- 	task_context_switch_counts(m, task);
- 	arch_proc_pid_thread_features(m, task);
--- 
-2.51.0
-
+>  #ifdef CONFIG_DEBUG_PAGEALLOC
+>  /*
+>   * This is - apart from the return value - doing the same
+>
+> [...snip...]
+>
 
