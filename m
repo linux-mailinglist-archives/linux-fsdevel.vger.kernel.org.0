@@ -1,140 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-73908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F62D23EEE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 11:26:49 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C5CD23F00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 11:29:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 123693042FCE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 10:26:32 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 371783019046
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 10:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F4035FF44;
-	Thu, 15 Jan 2026 10:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8D73624D9;
+	Thu, 15 Jan 2026 10:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="J/1izd82"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="juimNJTS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B6D35502E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 10:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45613624BE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 10:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768472790; cv=none; b=buZe6FVOitR4ptBqYgZjzJcJRBFHy1FU21pmu9bgg/FkEoq1lfOIY9b0g8r1NhLjARxELudcLW9QfGJMwFl7VDeVrV8Pix/r/2cMKurV75iyV/h0EmIzN433r7nImehyndEPVrlgONUN0B2LBFTiWm5CbYisIjM/yoVcb8bLLBw=
+	t=1768472958; cv=none; b=ds3EdkI44uSiFMChvOXo6SuOkGA+R6LndnBzHQG+pYzgDpyJTiAn6/q/ARf55SGamtooYcdhLirYOZYdk9x43mtByHm1GcBlxIF25LBmZ5lpyWx1DPA52Yiy6gyq15M362VXpwtbuLW2vaTl4dStF49uiGSAERtRoeX1Zzty1YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768472790; c=relaxed/simple;
-	bh=cTvHKPGvKDvdv3CW2phXagRp3ofYcYf6SwlYtKmyZc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FJ1piay7tCNnmWMrQb3qMmQlY5uTMn2I0dHa17Jf0962748in5Pm/gW0lWodli2ohqE7mwQivAsFj0AvZBxxvY0Pq2Zpmq9FzugjHsQtOzOIiSZcwhrN+EeJDqJgMHiYnxPORQL2aWlc+gD89U/+8k/WMj9ktWXTcYrQv4w5EyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=J/1izd82; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-480142406b3so2386395e9.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 02:26:28 -0800 (PST)
+	s=arc-20240116; t=1768472958; c=relaxed/simple;
+	bh=RcORP5wCUNlsEmyWgZeI+a5gXDp4vee8ZqAGxOg2NgM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WQyWleSIdnFWUaIatDFC4H/PzJKsSo8AVVxFpmUxUbvOGNUs1lRvRIl0O1y8gW4mPMD0WA+p+ifew+XWaazs4e2n+V10UqvHkwl5lx80XrcABSOph4wPUNMAW4I4+SIKrqFQzUesjQ5BRkYoGNyXNOQNoIlmYHLIXPnAt5Vkims=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=juimNJTS; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-650854c473fso1291560a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 02:29:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1768472787; x=1769077587; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JLly7CGERK95lIS5prsdJ95HAbwiiwFAFGJDvTd/YQs=;
-        b=J/1izd8202qGaEeoRfsgTbdNxGufyL/cwhFUjAPYTm0bu9tQpJGJoov2DY7UW3yv+k
-         Ypk2IyteZoLy0Ofn43OPQzcJVdgCeFDdQROt5G/Ewr6MOecTqVDBDgQ+mtU9x0UAGyP2
-         K+Hc/kMSUrrtITjz1+pKJas3OsP96nR2f7CQ/7VW/vygG1IugjSJNRCp1bJNrtx1XBNd
-         lPade4Vb8ZX+T5T70bvoHGBQisN85xX4JdzqvTH7CqfVIah5867/eoV1gJgMA1WWNRti
-         0RHH0X8T51pG7D9cK58LNI7ZdVv4wubDbEgPodpVF47rKp4sEj9URWJac9sTSlOjNXYS
-         C4pw==
+        d=gmail.com; s=20230601; t=1768472955; x=1769077755; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i1Msyc6ss4re1LefO4+sWBd6FCSYfKgbvEFYJE40EDI=;
+        b=juimNJTS+NCZhqKcx4rj6T9I3HIwNTnac17/kolAoFRAjUao0tVBV8rFyguwI2337N
+         EZj3t2NCtfY3oSxbzEodkAqUQB1xfzp5rKB2Me5B5Te7kDdORj9H0du9AwcRmXxMXyZI
+         31Jcf9kJWwR7bt34N2hacFZpv0RaJDC77RFAY1+cNtGkn8V/j8kwiInGsNfxYYhgle8Y
+         xlD4sPjRhpdH3BITEJjEWJ87K+FqD+7FeUyvcVWcWd4y/01g6DKnWDv6KlPZXyrhlzzM
+         bAvnzHs313N0K8fHcTHTaou0OJ6fJhDl0V3WV3/oKfKjfJDyu0gsFJUeJtI3venjAKR6
+         jQng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768472787; x=1769077587;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JLly7CGERK95lIS5prsdJ95HAbwiiwFAFGJDvTd/YQs=;
-        b=kSEwB+7lUzEX4qsHdT6G8iSSThakIXpuAesgO3S5puOA82jam/mYFdetBHdoThvE0i
-         SrtT2i5wCKTcEdabipeYbqLHkK90eCqotHxgI9h0MDOmRsD+LEAmArU9GExpd5jeKV/a
-         ff3DkDSWRmmddOOLlMFs1ICYJ1CvwVh3HYt18XIymqzV3z9bPEn2IIWJpWne5kqCIBvM
-         0t+xLaSNqzv2bPfamY20d3AJIl9mQzlvzoL6eWArcW6lT4ie5mwMpE98GSj+DXhe4Sxh
-         oQ2R+lNP3tvkH0DesAiZQWT7N/YHIGU/61A5TBqVN+ZCyQc7W55d9wQ/aJyH2os0C7Ec
-         1H8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXLqos689Umc/QgKtEp+u+EWMwuq20aDXVrVDh4ZA3wonKxkkcTSU73PeEcMtd8flEnr5Zq/8pefC3XZqlM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6PoTzMPQPAn7b2KVAIZgtBQihF714wiUqAzDY3jZKT31D9K/a
-	nEoK5m0bzrX6OLG2KUKyIsPPJ1indhjHwzIa8ws0rURB8qv3yOCUBMvNushQG/GVyRY=
-X-Gm-Gg: AY/fxX5zwoD/6DvmhHy3+qbFV/ulAV3nlH207lRG62DSXlZaunrH7Bf2puyKxHEL+J1
-	ss+ZB3VjCYk8Dth/jFqH2CWhSnglZrOfddf5qQDyOl1q1xY5NoJ5Ng9UEGngHvuxFIKLji0Cr5a
-	FdzcbyStpwdYDCOrIkxNhOGBIR1Hrd/wvLM2IMYkQVDitexWNQ5wF0D1EkPxYVEdHLnM/eyxrNi
-	ElBjK00V3mbfsWbEdf79/zUkd7bVUIDV+wsBzHOBAHAc3RPVdTn6qqab7TDuxJxEcImQj5Sj8+t
-	rKNe0EBD+tp1PupjPtrEMzFkT40kzxYwNc7gnnNej8izB7q8XfRg1CbSnVW8tnhvSAKhna+4ZYk
-	9OTplszyF2iJHieFMvtgYr4NI6lVm4LOfFOifVYv7FdoJDDDIYEmBRhHht6Hc3e381fT0k16Y0S
-	ImbEZ+l4NhwiNzhA==
-X-Received: by 2002:a05:600c:8b77:b0:477:afc5:fb02 with SMTP id 5b1f17b1804b1-47ee4819d6emr64067955e9.21.1768472787399;
-        Thu, 15 Jan 2026 02:26:27 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-434af6d90aasm4935338f8f.29.2026.01.15.02.26.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 02:26:26 -0800 (PST)
-Date: Thu, 15 Jan 2026 11:26:18 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>
-Cc: Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Breno Leitao <leitao@debian.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>, linux-um@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
-	linux-serial@vger.kernel.org, netdev@vger.kernel.org,
-	linux-m68k@lists.linux-m68k.org, linux-hardening@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 09/19] m68k: emu: nfcon.c: Migrate to
- register_console_force helper
-Message-ID: <aWjAysWXHUOHSisl@pathway.suse.cz>
-References: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
- <20251227-printk-cleanup-part3-v1-9-21a291bcf197@suse.com>
+        d=1e100.net; s=20230601; t=1768472955; x=1769077755;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=i1Msyc6ss4re1LefO4+sWBd6FCSYfKgbvEFYJE40EDI=;
+        b=SR7orZcPvIl7FMvoqBNPmqqSHzqj0xTZazPaJUcqEhmOTYCTjdTrgO5tYo0pGJcpCp
+         vdFpyXHYY0m+lrRE4oWnJhpmndYOI7crGFm1KiqD5yglb59M9se53mlG6F9LezIafL9m
+         yK1wylGElRiju3sdhQ/WYTeE7BDKanlyfft79WaoZlVtN/eTYykMSes5yjphUXSFefPg
+         M7IoNldVYOKPbUQti4/cd09illRanm8SG/GBlRRCIwTO6jhWLqSijAFzBMvLvdlGSpbW
+         xhz+YUDEYm0vrAaSIg8fluFft51oFNIQJVyJfXMhk1N56TZkckg59lNseEOBsb9AJLGQ
+         7sOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqvPcwQfaWEvXbckUo6xWLKz903zfUpLhko/isUAyUzkiiQm71xO+LdtrmR38qeMNsSrXGi9yMF+a6yMJ2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIV2LtV6jT/4ks/GXi1YuSoJVGJEL6s8BGG/eEKn8zquk5h6fE
+	w4HrSlMHgOVn+LnRXcRrr/c1RmeCTUu/+0m9PLiogFYW1bpR43EyKecO8MZtE1Kbob638ro7Iis
+	TbcTsaL61dvPWYacu9KROJu9jBy8D/qg=
+X-Gm-Gg: AY/fxX6QKXYXqPS4vZDkYl8kYIcjTHUJX1h1J1FOiDzBXASgMp+z1QG2DAGUhTheZDL
+	mD+Bj9lDz1dbUr8UVGUhlPPIbFlAoUTIaDF1BLk/ErtPY4/1kyua9ZVyAOF6ipffommE6qHVw7f
+	+FFk8Ro0tY5+gNUFw5qk107nvu2XD6ncBUtzhrFgf9tZyIKHhiTDcld9LSQcKq5GArU/WK//IgU
+	HaRJiRGatjC8fLpzPubdcHErFsyfJR7w15RDCNmvoBYv1j4XmVXfteZu0HrCOp8i+V5CaMYviYr
+	Cyf9IOHX5ShjCJjTudrs17FUPeLtJmuExabkLD2h
+X-Received: by 2002:aa7:da10:0:b0:649:81d7:581c with SMTP id
+ 4fb4d7f45d1cf-65412e189cfmr1602357a12.1.1768472954969; Thu, 15 Jan 2026
+ 02:29:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251227-printk-cleanup-part3-v1-9-21a291bcf197@suse.com>
+References: <CAOdxtTZ=SuV2GMPuqQJe6h-h-CDiG5yBW+07f1QYEw+kTA4-2w@mail.gmail.com>
+ <CAOQ4uxggQekxqavkt+RiJd9s9cdDgXZuVfQrL_qNciBNf=4Lww@mail.gmail.com> <CAOdxtTas63Wky=NeKVMFBfTanCqhGS-9cX-kwc7wFx9COSD+Zw@mail.gmail.com>
+In-Reply-To: <CAOdxtTas63Wky=NeKVMFBfTanCqhGS-9cX-kwc7wFx9COSD+Zw@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 15 Jan 2026 11:29:03 +0100
+X-Gm-Features: AZwV_QiTl64YC5_a7mLksOPc6z0bNmcXmeG5YoA8AfI5jFIaOJdmNdhIT1WCjLI
+Message-ID: <CAOQ4uxhhj4k3pVv_AzgNeO1x2uiZKLXdhvXMykM5H-JkgLqC1Q@mail.gmail.com>
+Subject: Re: [Regression 6.12] NULL pointer dereference in submit_bio_noacct
+ via backing_file_read_iter
+To: Chenglong Tang <chenglongtang@google.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat 2025-12-27 09:16:16, Marcos Paulo de Souza wrote:
-> The register_console_force function was introduced to register consoles
-> even on the presence of default consoles, replacing the CON_ENABLE flag
-> that was forcing the same behavior.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+On Thu, Jan 15, 2026 at 2:04=E2=80=AFAM Chenglong Tang <chenglongtang@googl=
+e.com> wrote:
+>
+> Hi Amir,
+>
+> Thanks for the suggestion. I followed your advice and cherry-picked
+> the 4 recommended commits (plus the backing-file cleanup and a fix for
+> it)
 
-LGTM, nice cleanup!
+Yes, good catch.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+> onto 6.12.
+>
+> However, the system now panics immediately during boot with a NULL
+> pointer dereference.
+>
+> The commit chain applied:
+>
+> ovl: allocate a container struct ovl_file for ovl private context (87a8a7=
+6c34a2)
+> ovl: store upper real file in ovl_file struct (18e48d0e2c7b)
+> ovl: do not open non-data lower file for fsync (c2c54b5f34f6)
+> ovl: use wrapper ovl_revert_creds() (fc5a1d2287bf)
+> backing-file: clean up the API (48b50624aec4)
+> fs/backing_file: fix wrong argument in callback (2957fa4931a3)
 
-Best Regards,
-Petr
+Stange listing the commits out of cherry-pick order.
+When you send to stable list, pls send in correct order.
+
+>
+> The Crash: The panic occurs in backing_file_read_iter because it
+> receives a NULL file pointer from ovl_read_iter.
+>
+> [    7.443266] #PF: error_code(0x0000) - not-present page
+> [    7.444208] PGD 0 P4D 0
+> [    7.445270] Oops: Oops: 0000 [#1] SMP PTI
+> [    7.446175] CPU: 0 UID: 0 PID: 423 Comm: sudo Tainted: G
+> O       6.12.55+ #1
+> [    7.447669] Tainted: [O]=3DOOT_MODULE
+> [    7.448330] Hardware name: Google Google Compute Engine/Google
+> Compute Engine, BIOS Google 10/25/2025
+> [    7.449825] RIP: 0010:backing_file_read_iter+0x1a/0x250
+> [    7.450810] Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+> f3 0f 1e fa 0f 1f 44 00 00 55 48 89 e5 41 57 41 56 41 55 41 54 53 48
+> 83 ec 10 <8b> 47 0c a9 00 00 00 02 0f 84 d9 01 00 00 49 89 f6 48 83 7e
+> 18 00
+> [    7.453754] RSP: 0018:ffff9e95407b7db0 EFLAGS: 00010282
+> [    7.454694] RAX: 0000000000000000 RBX: ffff9e95407b7e78 RCX: 000000000=
+0000000
+> [    7.455892] RDX: ffff9e95407b7e78 RSI: ffff9e95407b7e50 RDI: 000000000=
+0000000
+> [    7.457158] RBP: ffff9e95407b7de8 R08: ffff9e95407b7df8 R09: 000000000=
+0000001
+> [    7.458331] R10: 0000000000000000 R11: 0000000000000000 R12: 000000000=
+0000000
+> [    7.459593] R13: 0000000000001000 R14: ffff9e95407b7e50 R15: 000000000=
+0000000
+> [    7.460968] FS:  00007a330957cb80(0000) GS:ffff9cb0ac000000(0000)
+> knlGS:0000000000000000
+> [    7.463015] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    7.464268] CR2: 000000000000000c CR3: 000000010bfc0003 CR4: 000000000=
+03706f0
+> [    7.465453] Call Trace:
+> [    7.465994]  <TASK>
+> [    7.466487]  ovl_read_iter+0x9a/0xe0
+> [    7.467424]  ? __pfx_ovl_file_accessed+0x10/0x10
+> [    7.468353]  vfs_read+0x2b1/0x300
+> [    7.469137]  ksys_read+0x75/0xe0
+> [    7.469894]  do_syscall_64+0x61/0x130
+> [    7.470603]  ? clear_bhb_loop+0x40/0x90
+> [    7.471381]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [    7.472486] RIP: 0033:0x7a330967221d
+>
+> It appears ovl: store upper real file in ovl_file struct introduces a
+> bug when backported to 6.12. In ovl_real_fdget_path, the code
+> initializes real->word =3D 0. If ovl_change_flags is called and
+> succeeds, it returns 0 immediately. However, because of the early
+> return, real->word is never assigned the realfile pointer (which
+> happens at the bottom of the function). The caller sees success but
+> gets a NULL file pointer.
+>
+
+Correct analysis.
+There was a mid series regression, but it wasn't made available
+in any kernel release.
+
+> I wonder is there an upstream commit that corrects this logic, or does
+> this dependency chain require the larger ovl_real_file refactor from
+> 6.13 to work correctly?
+
+The upstream commit that fixes the mid series regression is
+4333e42ed4444 ovl: convert ovl_real_fdget_path() callers to ovl_real_file_p=
+ath()
+
+It's not a must to apply the entire refactoring to fix the problem, but in =
+fact
+the refactoring is a correct logical cleanup following 18e48d0e2c7b,
+so I think it is better to include the two refactoring patches in the backp=
+orts
+series rather than diverging from upstream with a custom stable kernel fix.
+
+Please include these two patches in the backports set:
+
+d66907b51ba07 ovl: convert ovl_real_fdget() callers to ovl_real_file()
+4333e42ed4444 ovl: convert ovl_real_fdget_path() callers to ovl_real_file_p=
+ath()
+
+Please send the entire backports set as a patch series to the stable mainta=
+iners
+or let me know if you want me to do that after you tested the backports.
+
+Thanks,
+Amir.
 
