@@ -1,140 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-73951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41E2D26DFB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 18:52:29 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30ACDD26E30
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 18:53:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 23BE932F956A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 17:34:47 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D2AD630B53C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 17:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C423C0099;
-	Thu, 15 Jan 2026 17:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BAE3C00B7;
+	Thu, 15 Jan 2026 17:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="DDIQUtMP"
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="qB+41U6q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fra-out-010.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-010.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.178.143.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40DD1A2389
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 17:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25DF3C0087;
+	Thu, 15 Jan 2026 17:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.178.143.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768498400; cv=none; b=U/EbkPJCywonL01kaow6GYIVQ5w1UTNMpWnKc/HwStPZvzrxbP0DIhd+xuvKtGRIzPXqYQG3+1T6Fpnomd2b/2d9iMPcSIB7tFwlcUlaKXchfqoDAKvjuOaxeeIAugs0jgAxhzF2ESMNWyD5eS8hM5Q0B5iG3/7605UxmQzD/30=
+	t=1768499178; cv=none; b=NTe+bV/AH3OtQJZe15y2UAZN2WL9TArDuoczLdSuNBtw/ue9ozxmwP2ZW8cmeRdnOOShffSu4dJ0/ImpBo22GV6BsHHcRYfG8uwwpamAWzivmSyNIimFTu4PlnPoQPpvM1N/Q+8yIvWPReqBlATRQZgXlZ1VLDzhsK4QWJ6gHaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768498400; c=relaxed/simple;
-	bh=gmWxAy5uTUT/UhmfH7kZ4VlAnV5ZizQ7PRjs0zDcgrw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sOHOa+53J9VEczZtZ+azuvYnZ8/oA/q2GkohMyf+yWIZPKNlmCS+YR+d/bDE3ALWTgSbB4c8neNzC0q1s5sGY24jZDssHDZ7T1iBGamymL3OHed7AqKdmO8lyJfGiYhn9Ivv/NCdiAEnbzdb6k/QpVT7V1zX2dkwhbM0gW0p6Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=DDIQUtMP; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-88888c41a13so16289276d6.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 09:33:18 -0800 (PST)
+	s=arc-20240116; t=1768499178; c=relaxed/simple;
+	bh=qtUAulfTwQotnNV2eCERFGBmXc11oEOyEFJE9Mbe1u0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c2CKbDeTdg2pFZLwCVkuLaAaC7jK/tNx+IZmuSigJQP6oPwFTLbrbI1mIfJ/aQdMWZcGUTIi7G6akNmv5aOBJdJUrdXS9hFn/5iN0eujIq4KQgTEQGiirLRhUf/rRr2pJsqH7vhbcBjaPCtuJ1FtpbirKQcLsR4TAHJ3WBwT8kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=qB+41U6q; arc=none smtp.client-ip=63.178.143.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1768498398; x=1769103198; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HELVBq+JbyCXR2ZFI5M9lAV4vG/kM2Ay1hf/o0jB9SU=;
-        b=DDIQUtMPS6qsYgGC4olHxdA2og7hiboMmzlbdkYOPfrQTvla0yrc0UEt7U0a7jUvpL
-         JlUSmDECkpRXSGxaapxEyApW/eTYlXf4e/RhQI/ueH/vC9vHEO8TpXRK/JmOaEsxk/8V
-         dRqvb1+sPOCkYfume+xdaF9zZhDuHyQWmWLiS9Az9jd7JyjO5JFgNYzWGR0YR0vq6p7g
-         L+yqOpuYCyesOqFnbRg5Rea+bHmHwOtJzfIHA7Qv9WGVy9Z9KyVt4H5Yz2vZKQrQkAeU
-         ntn7bxStqacS+ix2hXl/3p8oeI5HZd5zJY+6+h6ZsHN0WPWWT0R99Dx8z2+bKie+e4VL
-         Zc0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768498398; x=1769103198;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HELVBq+JbyCXR2ZFI5M9lAV4vG/kM2Ay1hf/o0jB9SU=;
-        b=rmD774qJJBF4lDwKt5b8bY/DvHH/uAtclPjqYXvzC3Vy6KuKBLS+RgjUyXkKYaABbt
-         3nvxkq6H2+zI+AATwCjUnT3ikZGdz+pIBtdsNylY7HFrRwxleRij0Mr0l5xUIhU+hWRa
-         XST1zZrKJLplPSzhLcBBtQoWe+pqmPCmpq2HJoja4twt4Je9zTeUjmVV75Jdgaq8jfHM
-         7dOcZLjfGaVUJg60MsGEK3cpkwfeA7uNGO0Pjfj+iZ4q95LJk6+HKC3SavRRRhfI2wc7
-         irhP2xaw2bRIgr657FDvhQjBa+GQ2Zdan9tWKBnAuoCawIJiS/9UR0HjdntE/cWPFdGt
-         ou8g==
-X-Forwarded-Encrypted: i=1; AJvYcCW+73/1XlCUhdt6dvT/noY97iysz72vVKuqGmDumCY7oG1hhaP/VztsZEeckReatH/7E9TnnkIybBDRBlk2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE+P2Eb8kw+BH5k5gTeXvnwvQwesG5KKJuLbxU1ZlWC0ez0bCw
-	S+kUXt+2psEjyEyWuMqy/O6wRPXRvZBsbPsRIV2KqsQMS+KuU7labF+9b6lx3JyuEdU=
-X-Gm-Gg: AY/fxX7xA+dx9qkSs/jmUz3aUnOMILgsaSFxT6bKNZeAxhtJAPFAahG9nwAKPWxazu0
-	hoHLi7gkZ3P//+HquYjmHTVQOpEu5ehAQa632/ZZjnOVvnxxJg822jDawy2buxu8/sQlZw4ebCx
-	50F0ZzEEFJw/RlUNRS4YrgY8WOd1Xijj8HsP8btp5VYL+0e5F1TNwC3GNQl8tyxvgVTN93wAybD
-	Fs+UqoFIJHMguuN8Uo0rKyvRCXxCg9QYEH88wHoAL0et+d2sl4DnPr1LXg/TlyFhETNJfgnenzB
-	dyDmqVsGkFAI6tsvCiO0YCL6qhYnpOhiRlJydl7kA69P4R7P3yT9PUDkvJwAk0Xk/A36+K3lQuK
-	C2Yder83twV+GtY9MVxhjkDRkb21bDfUorM3oFC535hXfYF3S5hNKMe5GRThZzf95IxqbAF7GfA
-	rfyMw5OHN2l+YURYp0rSZsh9hN6d0CRqcIaDBWgi5sdvht5Az1lqgpKc/Az0ZNfNRU7mobAg==
-X-Received: by 2002:ad4:5f8e:0:b0:880:541c:8243 with SMTP id 6a1803df08f44-8942dd060f8mr2986496d6.1.1768498397481;
-        Thu, 15 Jan 2026 09:33:17 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8942e47d897sm548586d6.0.2026.01.15.09.33.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 09:33:15 -0800 (PST)
-Date: Thu, 15 Jan 2026 12:32:41 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Nhat Pham <nphamcs@gmail.com>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
-	longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org,
-	mkoutny@suse.com, corbet@lwn.net, gregkh@linuxfoundation.org,
-	rafael@kernel.org, dakr@kernel.org, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com,
-	akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com,
-	mhocko@suse.com, jackmanb@google.com, ziy@nvidia.com,
-	david@kernel.org, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, rppt@kernel.org, axelrasmussen@google.com,
-	yuanchu@google.com, weixugc@google.com, yury.norov@gmail.com,
-	linux@rasmusvillemoes.dk, rientjes@google.com,
-	shakeel.butt@linux.dev, chrisl@kernel.org, kasong@tencent.com,
-	shikemeng@huaweicloud.com, bhe@redhat.com, baohua@kernel.org,
-	chengming.zhou@linux.dev, roman.gushchin@linux.dev,
-	muchun.song@linux.dev, osalvador@suse.de, matthew.brost@intel.com,
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
-	ying.huang@linux.alibaba.com, apopple@nvidia.com, cl@gentwo.org,
-	harry.yoo@oracle.com, zhengqi.arch@bytedance.com
-Subject: Re: [RFC PATCH v3 7/8] mm/zswap: compressed ram direct integration
-Message-ID: <aWkkuaYt0cEyvbGj@gourry-fedora-PF4VCD3F>
-References: <20260108203755.1163107-1-gourry@gourry.net>
- <20260108203755.1163107-8-gourry@gourry.net>
- <i6o5k4xumd5i3ehl6ifk3554sowd2qe7yul7vhaqlh2zo6y7is@z2ky4m432wd6>
- <aWF1uDdP75gOCGLm@gourry-fedora-PF4VCD3F>
- <4ftthovin57fi4blr2mardw4elwfsiv6vrkhrjqjsfvvuuugjj@uivjc5uzj5ys>
- <CAKEwX=MftJXOE8H=m1C=_RVL8cu516efixTwcaQMBB9pdj=K+g@mail.gmail.com>
- <CAKEwX=M8=vDO_pg5EJWiaNnJQpob8=NWvbZzssKKPpzs24wj+A@mail.gmail.com>
- <e6eydzdvuiktmalhcmoiwsgzjbw5v7t4532fkbroylwr5cqetx@v6pgjaoxgmyz>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1768499176; x=1800035176;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=m/H+6KLBn2aGntJJ8JBW+O36kdoVRhTXFh0DlSdS7kQ=;
+  b=qB+41U6qnQEH/k8iSLvNEvt4qCnhYF/jLgKeWaqqeHFZsvx8SvTNdVu2
+   8rLkmKHSXC3Vn2xen1KZjXd6oL3mZbndImFfiPBnXsBZ60Clz4tA+nq4m
+   FXHFFw9gKztAf+AhMdZKPlVT74KI9LzV9PmRIV/mCgWIRD5+fiHxXhB3J
+   5039ZHp6UansEQCJuKeeQv60f2FNMUnO20U/9QIJLD+zbquTSHFIvpsM+
+   EWHQwyfbQoGvENkbepoRtLgvg+7fFX0oJV/mwbtboR/RafyDgitiou16v
+   LgngTYrTmfDx0nTmfA/Kitt12o1wD1fjdDHDN2fXV73fiyOu7D2VhGIgk
+   Q==;
+X-CSE-ConnectionGUID: UZboAnEGTqq8ocdnm/l8TA==
+X-CSE-MsgGUID: oh7w6HfgSl2x9siR+geNHw==
+X-IronPort-AV: E=Sophos;i="6.21,228,1763424000"; 
+   d="scan'208";a="7872674"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-010.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jan 2026 17:45:56 +0000
+Received: from EX19MTAEUC001.ant.amazon.com [54.240.197.233:5968]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.2.33:2525] with esmtp (Farcaster)
+ id df1a6986-76b5-4a71-8d9f-e42e7d836f1e; Thu, 15 Jan 2026 17:45:56 +0000 (UTC)
+X-Farcaster-Flow-ID: df1a6986-76b5-4a71-8d9f-e42e7d836f1e
+Received: from EX19D005EUB003.ant.amazon.com (10.252.51.31) by
+ EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.35;
+ Thu, 15 Jan 2026 17:45:53 +0000
+Received: from [192.168.15.69] (10.106.82.11) by EX19D005EUB003.ant.amazon.com
+ (10.252.51.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.35; Thu, 15 Jan 2026
+ 17:45:49 +0000
+Message-ID: <34b246e9-0f7a-4ed6-9e43-845c4238bf41@amazon.com>
+Date: Thu, 15 Jan 2026 17:45:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6eydzdvuiktmalhcmoiwsgzjbw5v7t4532fkbroylwr5cqetx@v6pgjaoxgmyz>
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH v9 01/13] set_memory: add folio_{zap, restore}_direct_map
+ helpers
+To: Matthew Wilcox <willy@infradead.org>, "Kalyazin, Nikita"
+	<kalyazin@amazon.co.uk>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"kernel@xen0n.name" <kernel@xen0n.name>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>, "linux-s390@vger.kernel.org"
+	<linux-s390@vger.kernel.org>, "loongarch@lists.linux.dev"
+	<loongarch@lists.linux.dev>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"corbet@lwn.net" <corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>,
+	"oupton@kernel.org" <oupton@kernel.org>, "joey.gouly@arm.com"
+	<joey.gouly@arm.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
+	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"luto@kernel.org" <luto@kernel.org>, "peterz@infradead.org"
+	<peterz@infradead.org>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "david@kernel.org" <david@kernel.org>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz"
+	<vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com"
+	<surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, "ast@kernel.org"
+	<ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"andrii@kernel.org" <andrii@kernel.org>, "martin.lau@linux.dev"
+	<martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>,
+	"song@kernel.org" <song@kernel.org>, "yonghong.song@linux.dev"
+	<yonghong.song@linux.dev>, "john.fastabend@gmail.com"
+	<john.fastabend@gmail.com>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
+	"sdf@fomichev.me" <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>,
+	"jolsa@kernel.org" <jolsa@kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com"
+	<peterx@redhat.com>, "jannh@google.com" <jannh@google.com>,
+	"pfalcato@suse.de" <pfalcato@suse.de>, "shuah@kernel.org" <shuah@kernel.org>,
+	"riel@surriel.com" <riel@surriel.com>, "ryan.roberts@arm.com"
+	<ryan.roberts@arm.com>, "jgross@suse.com" <jgross@suse.com>,
+	"yu-cheng.yu@intel.com" <yu-cheng.yu@intel.com>, "kas@kernel.org"
+	<kas@kernel.org>, "coxu@redhat.com" <coxu@redhat.com>,
+	"kevin.brodsky@arm.com" <kevin.brodsky@arm.com>, "ackerleytng@google.com"
+	<ackerleytng@google.com>, "maobibo@loongson.cn" <maobibo@loongson.cn>,
+	"prsampat@amd.com" <prsampat@amd.com>, "mlevitsk@redhat.com"
+	<mlevitsk@redhat.com>, "jmattson@google.com" <jmattson@google.com>,
+	"jthoughton@google.com" <jthoughton@google.com>, "agordeev@linux.ibm.com"
+	<agordeev@linux.ibm.com>, "alex@ghiti.fr" <alex@ghiti.fr>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "borntraeger@linux.ibm.com"
+	<borntraeger@linux.ibm.com>, "chenhuacai@kernel.org" <chenhuacai@kernel.org>,
+	"dev.jain@arm.com" <dev.jain@arm.com>, "gor@linux.ibm.com"
+	<gor@linux.ibm.com>, "hca@linux.ibm.com" <hca@linux.ibm.com>,
+	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, "pjw@kernel.org" <pjw@kernel.org>,
+	"shijie@os.amperecomputing.com" <shijie@os.amperecomputing.com>,
+	"svens@linux.ibm.com" <svens@linux.ibm.com>, "thuth@redhat.com"
+	<thuth@redhat.com>, "wyihan@google.com" <wyihan@google.com>,
+	"yang@os.amperecomputing.com" <yang@os.amperecomputing.com>,
+	"vannapurve@google.com" <vannapurve@google.com>, "jackmanb@google.com"
+	<jackmanb@google.com>, "aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
+	"patrick.roy@linux.dev" <patrick.roy@linux.dev>, "Thomson, Jack"
+	<jackabt@amazon.co.uk>, "Itazuri, Takahiro" <itazur@amazon.co.uk>,
+	"Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco"
+	<xmarcalx@amazon.co.uk>
+References: <20260114134510.1835-1-kalyazin@amazon.com>
+ <20260114134510.1835-2-kalyazin@amazon.com>
+ <aWkN4yzwPtotaTeq@casper.infradead.org>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <aWkN4yzwPtotaTeq@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D004EUC003.ant.amazon.com (10.252.51.249) To
+ EX19D005EUB003.ant.amazon.com (10.252.51.31)
 
-On Thu, Jan 15, 2026 at 05:00:04PM +0000, Yosry Ahmed wrote:
-> > 
-> > 2. Just enable zswap shrinker and have memory reclaim move these pages
-> > into disk swap. This will have a much more drastic performance
-> > implications though :)
+
+
+On 15/01/2026 15:55, Matthew Wilcox wrote:
+> On Wed, Jan 14, 2026 at 01:45:23PM +0000, Kalyazin, Nikita wrote:
+>> +int folio_zap_direct_map(struct folio *folio)
+>> +{
+>> +     return set_direct_map_valid_noflush(folio_page(folio, 0),
+>> +                                         folio_nr_pages(folio), false);
+>> +}
 > 
-> I think what you're getting it as that we can still make forward
-> progress after memory lands in compressed cxl. But moving memory to
-> compressed cxl is already forward progress that reclaim won't capture if
-> we charge memory as a full page. I think this is the crux of the issue.
+> The implementation isn't the greatest.  None of the implementations
+> of set_direct_map_valid_noflush() actually do anything with the struct
+> page; they all call page_address() or page_to_virt() (fundamentally the
+> same thing).  So converting folio->page->address is a bit inefficient.
 > 
-> We need to figure out how to make accounting work such that moving
-> memory to compressed cxl is forward progress, but make sure we don't
-> break the overall accounting consisteny. If we only charge the actual
-> compressed size, then from the system perspective there is a page that
-> is only partially charged and the rest of it is more-or-less leaked.
+> It feels like we should change set_direct_map_valid_noflush() to take a
+> const void * and pass either page_address() or folio_address(), depending
+> whether the caller has a page or a folio.  What do you think?
 
-Which is comically fine - because the actual capacity of the node is
-functionally a lie anyway :D
+I have nothing against that.  execmem_set_direct_map_valid() appears to 
+be the only other user of set_direct_map_valid_noflush() so it isn't 
+going to be a broad change.
 
-~Gregory
 
