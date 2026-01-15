@@ -1,205 +1,406 @@
-Return-Path: <linux-fsdevel+bounces-73909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C5CD23F00
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 11:29:20 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7653D24069
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 11:54:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 371783019046
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 10:29:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0D9523025A55
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 10:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8D73624D9;
-	Thu, 15 Jan 2026 10:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F18936E476;
+	Thu, 15 Jan 2026 10:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="juimNJTS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKNzmbfk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45613624BE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 10:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07152362130
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 10:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768472958; cv=none; b=ds3EdkI44uSiFMChvOXo6SuOkGA+R6LndnBzHQG+pYzgDpyJTiAn6/q/ARf55SGamtooYcdhLirYOZYdk9x43mtByHm1GcBlxIF25LBmZ5lpyWx1DPA52Yiy6gyq15M362VXpwtbuLW2vaTl4dStF49uiGSAERtRoeX1Zzty1YI=
+	t=1768474479; cv=none; b=hWidq5WiHKY2oEzBMo+WLxcTmPHI+5+QzhsMkR9m/fNEzBixEkAejuLMWrxiDRz4wq6zBinCYnjr6FBgX7iQ+FKt8hIJek+jC4fBH9Uxe6DqafWCpo/3z/O/2Mp+jkQu0XHzX5AZuXzDqGLUGwvFLCZlfucSXru8l2f4TqEo/08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768472958; c=relaxed/simple;
-	bh=RcORP5wCUNlsEmyWgZeI+a5gXDp4vee8ZqAGxOg2NgM=;
+	s=arc-20240116; t=1768474479; c=relaxed/simple;
+	bh=/1KAtvLvvLMpDi9CfvfFJ6x5SY4Jp+t4QyV0IUSlh0I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WQyWleSIdnFWUaIatDFC4H/PzJKsSo8AVVxFpmUxUbvOGNUs1lRvRIl0O1y8gW4mPMD0WA+p+ifew+XWaazs4e2n+V10UqvHkwl5lx80XrcABSOph4wPUNMAW4I4+SIKrqFQzUesjQ5BRkYoGNyXNOQNoIlmYHLIXPnAt5Vkims=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=juimNJTS; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-650854c473fso1291560a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 02:29:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768472955; x=1769077755; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i1Msyc6ss4re1LefO4+sWBd6FCSYfKgbvEFYJE40EDI=;
-        b=juimNJTS+NCZhqKcx4rj6T9I3HIwNTnac17/kolAoFRAjUao0tVBV8rFyguwI2337N
-         EZj3t2NCtfY3oSxbzEodkAqUQB1xfzp5rKB2Me5B5Te7kDdORj9H0du9AwcRmXxMXyZI
-         31Jcf9kJWwR7bt34N2hacFZpv0RaJDC77RFAY1+cNtGkn8V/j8kwiInGsNfxYYhgle8Y
-         xlD4sPjRhpdH3BITEJjEWJ87K+FqD+7FeUyvcVWcWd4y/01g6DKnWDv6KlPZXyrhlzzM
-         bAvnzHs313N0K8fHcTHTaou0OJ6fJhDl0V3WV3/oKfKjfJDyu0gsFJUeJtI3venjAKR6
-         jQng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768472955; x=1769077755;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=i1Msyc6ss4re1LefO4+sWBd6FCSYfKgbvEFYJE40EDI=;
-        b=SR7orZcPvIl7FMvoqBNPmqqSHzqj0xTZazPaJUcqEhmOTYCTjdTrgO5tYo0pGJcpCp
-         vdFpyXHYY0m+lrRE4oWnJhpmndYOI7crGFm1KiqD5yglb59M9se53mlG6F9LezIafL9m
-         yK1wylGElRiju3sdhQ/WYTeE7BDKanlyfft79WaoZlVtN/eTYykMSes5yjphUXSFefPg
-         M7IoNldVYOKPbUQti4/cd09illRanm8SG/GBlRRCIwTO6jhWLqSijAFzBMvLvdlGSpbW
-         xhz+YUDEYm0vrAaSIg8fluFft51oFNIQJVyJfXMhk1N56TZkckg59lNseEOBsb9AJLGQ
-         7sOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqvPcwQfaWEvXbckUo6xWLKz903zfUpLhko/isUAyUzkiiQm71xO+LdtrmR38qeMNsSrXGi9yMF+a6yMJ2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIV2LtV6jT/4ks/GXi1YuSoJVGJEL6s8BGG/eEKn8zquk5h6fE
-	w4HrSlMHgOVn+LnRXcRrr/c1RmeCTUu/+0m9PLiogFYW1bpR43EyKecO8MZtE1Kbob638ro7Iis
-	TbcTsaL61dvPWYacu9KROJu9jBy8D/qg=
-X-Gm-Gg: AY/fxX6QKXYXqPS4vZDkYl8kYIcjTHUJX1h1J1FOiDzBXASgMp+z1QG2DAGUhTheZDL
-	mD+Bj9lDz1dbUr8UVGUhlPPIbFlAoUTIaDF1BLk/ErtPY4/1kyua9ZVyAOF6ipffommE6qHVw7f
-	+FFk8Ro0tY5+gNUFw5qk107nvu2XD6ncBUtzhrFgf9tZyIKHhiTDcld9LSQcKq5GArU/WK//IgU
-	HaRJiRGatjC8fLpzPubdcHErFsyfJR7w15RDCNmvoBYv1j4XmVXfteZu0HrCOp8i+V5CaMYviYr
-	Cyf9IOHX5ShjCJjTudrs17FUPeLtJmuExabkLD2h
-X-Received: by 2002:aa7:da10:0:b0:649:81d7:581c with SMTP id
- 4fb4d7f45d1cf-65412e189cfmr1602357a12.1.1768472954969; Thu, 15 Jan 2026
- 02:29:14 -0800 (PST)
+	 To:Cc:Content-Type; b=JbaM27BsE/1tml8MkGCo3Fb98+uKAG7R/GTW7Q1dTv9rofTrTVPudqGVELy5LjAI4kEGkJ321h16KAAeclQuf53FzREYLc40edRogXTuQgNKAowLMU9oKTN13En8HdaULGNSBUdSP+EBBbGwpNbxZCij0j1NepQ6eoGngvnZAx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKNzmbfk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 823B3C19422
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 10:54:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768474478;
+	bh=/1KAtvLvvLMpDi9CfvfFJ6x5SY4Jp+t4QyV0IUSlh0I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QKNzmbfk137GH9cQf861KFuI/s73C1BD2S3Hmbu7L4olXN8PPEoplOGPC3Dn+Fghq
+	 d7NNig4oWCpOSIeBtNStaJwz3bg7aVQZat7qFuMIPU0kjjV1Zxa7gbFsWnix0oDnv7
+	 ZRKHmxfl/AQ8POyX8V98RhNoPE/yFC0oqIg1E0MtXDoMOAKelQtsVvb3FGZixoZivK
+	 Rp7oq4fmbL4nC88WdaO1cINXanI8SNdp86XjdW3uyKEa9nEnZpVBxgV/GT7DBxWNJz
+	 MGAMiMltUcK9PHqa/Jgmr9mFgqF0Q1rQRYaIL9ClhIG7TJqwK/Gl5opvhFbV6wah/U
+	 wsGtLw2eFS8rQ==
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b872b588774so115461766b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 02:54:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWYPIPQbyIAJio4lQTzo0cUetV9NM/D5MDoLJJJfg7kRRyTaCxBIWsBiAUShkteR62xGfKCp91DLdwaeWtR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1vBd2x0cHyT5hCXYW7g7vC53dye8JxlJUwUkzM7NIXR7a8uTd
+	ama4W7OZT2gPbj2wylThyLvvEE487P/fF8pqai8XU6qmOS48CHzUDCNHvflV+UCe0RLVkfHzHIy
+	Sg6LWwS+99xrO+S25aS6/ueM4zzh59YQ=
+X-Received: by 2002:a17:907:742:b0:b80:4103:537e with SMTP id
+ a640c23a62f3a-b87614066e3mr530726366b.53.1768474476869; Thu, 15 Jan 2026
+ 02:54:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOdxtTZ=SuV2GMPuqQJe6h-h-CDiG5yBW+07f1QYEw+kTA4-2w@mail.gmail.com>
- <CAOQ4uxggQekxqavkt+RiJd9s9cdDgXZuVfQrL_qNciBNf=4Lww@mail.gmail.com> <CAOdxtTas63Wky=NeKVMFBfTanCqhGS-9cX-kwc7wFx9COSD+Zw@mail.gmail.com>
-In-Reply-To: <CAOdxtTas63Wky=NeKVMFBfTanCqhGS-9cX-kwc7wFx9COSD+Zw@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 15 Jan 2026 11:29:03 +0100
-X-Gm-Features: AZwV_QiTl64YC5_a7mLksOPc6z0bNmcXmeG5YoA8AfI5jFIaOJdmNdhIT1WCjLI
-Message-ID: <CAOQ4uxhhj4k3pVv_AzgNeO1x2uiZKLXdhvXMykM5H-JkgLqC1Q@mail.gmail.com>
-Subject: Re: [Regression 6.12] NULL pointer dereference in submit_bio_noacct
- via backing_file_read_iter
-To: Chenglong Tang <chenglongtang@google.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu
+References: <20260114134510.1835-1-kalyazin@amazon.com> <20260114134510.1835-2-kalyazin@amazon.com>
+In-Reply-To: <20260114134510.1835-2-kalyazin@amazon.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 15 Jan 2026 18:54:27 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6S4bVdpwbER84-iwSE+bQrFu_gF=Ww-bCFxThJ7WiUwQ@mail.gmail.com>
+X-Gm-Features: AZwV_QhNEeWPSp4pau3pJiv_muGT_zHnXI7A5fP4Fz_wHAvUMBfJQxrRqBdZrqI
+Message-ID: <CAAhV-H6S4bVdpwbER84-iwSE+bQrFu_gF=Ww-bCFxThJ7WiUwQ@mail.gmail.com>
+Subject: Re: [PATCH v9 01/13] set_memory: add folio_{zap,restore}_direct_map helpers
+To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "kernel@xen0n.name" <kernel@xen0n.name>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
+	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>, 
+	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"corbet@lwn.net" <corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>, "oupton@kernel.org" <oupton@kernel.org>, 
+	"joey.gouly@arm.com" <joey.gouly@arm.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
+	"will@kernel.org" <will@kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"hpa@zytor.com" <hpa@zytor.com>, "luto@kernel.org" <luto@kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "willy@infradead.org" <willy@infradead.org>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "david@kernel.org" <david@kernel.org>, 
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>, 
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz" <vbabka@suse.cz>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com" <surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"eddyz87@gmail.com" <eddyz87@gmail.com>, "song@kernel.org" <song@kernel.org>, 
+	"yonghong.song@linux.dev" <yonghong.song@linux.dev>, 
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"sdf@fomichev.me" <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>, 
+	"jolsa@kernel.org" <jolsa@kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com" <peterx@redhat.com>, 
+	"jannh@google.com" <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "riel@surriel.com" <riel@surriel.com>, 
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "jgross@suse.com" <jgross@suse.com>, 
+	"yu-cheng.yu@intel.com" <yu-cheng.yu@intel.com>, "kas@kernel.org" <kas@kernel.org>, 
+	"coxu@redhat.com" <coxu@redhat.com>, "kevin.brodsky@arm.com" <kevin.brodsky@arm.com>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, "maobibo@loongson.cn" <maobibo@loongson.cn>, 
+	"prsampat@amd.com" <prsampat@amd.com>, "mlevitsk@redhat.com" <mlevitsk@redhat.com>, 
+	"jmattson@google.com" <jmattson@google.com>, "jthoughton@google.com" <jthoughton@google.com>, 
+	"agordeev@linux.ibm.com" <agordeev@linux.ibm.com>, "alex@ghiti.fr" <alex@ghiti.fr>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
+	"borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>, "dev.jain@arm.com" <dev.jain@arm.com>, 
+	"gor@linux.ibm.com" <gor@linux.ibm.com>, "hca@linux.ibm.com" <hca@linux.ibm.com>, 
+	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	"pjw@kernel.org" <pjw@kernel.org>, 
+	"shijie@os.amperecomputing.com" <shijie@os.amperecomputing.com>, "svens@linux.ibm.com" <svens@linux.ibm.com>, 
+	"thuth@redhat.com" <thuth@redhat.com>, "wyihan@google.com" <wyihan@google.com>, 
+	"yang@os.amperecomputing.com" <yang@os.amperecomputing.com>, 
+	"vannapurve@google.com" <vannapurve@google.com>, "jackmanb@google.com" <jackmanb@google.com>, 
+	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>, "patrick.roy@linux.dev" <patrick.roy@linux.dev>, 
+	"Thomson, Jack" <jackabt@amazon.co.uk>, "Itazuri, Takahiro" <itazur@amazon.co.uk>, 
+	"Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco" <xmarcalx@amazon.co.uk>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 15, 2026 at 2:04=E2=80=AFAM Chenglong Tang <chenglongtang@googl=
-e.com> wrote:
+Hi, Nikita,
+
+On Wed, Jan 14, 2026 at 9:45=E2=80=AFPM Kalyazin, Nikita <kalyazin@amazon.c=
+o.uk> wrote:
 >
-> Hi Amir,
+> From: Nikita Kalyazin <kalyazin@amazon.com>
 >
-> Thanks for the suggestion. I followed your advice and cherry-picked
-> the 4 recommended commits (plus the backing-file cleanup and a fix for
-> it)
-
-Yes, good catch.
-
-> onto 6.12.
+> These allow guest_memfd to remove its memory from the direct map.
+> Only implement them for architectures that have direct map.
+> In folio_zap_direct_map(), flush TLB on architectures where
+> set_direct_map_valid_noflush() does not flush it internally.
 >
-> However, the system now panics immediately during boot with a NULL
-> pointer dereference.
+> The new helpers need to be accessible to KVM on architectures that
+> support guest_memfd (x86 and arm64).  Since arm64 does not support
+> building KVM as a module, only export them on x86.
 >
-> The commit chain applied:
+> Direct map removal gives guest_memfd the same protection that
+> memfd_secret does, such as hardening against Spectre-like attacks
+> through in-kernel gadgets.
 >
-> ovl: allocate a container struct ovl_file for ovl private context (87a8a7=
-6c34a2)
-> ovl: store upper real file in ovl_file struct (18e48d0e2c7b)
-> ovl: do not open non-data lower file for fsync (c2c54b5f34f6)
-> ovl: use wrapper ovl_revert_creds() (fc5a1d2287bf)
-> backing-file: clean up the API (48b50624aec4)
-> fs/backing_file: fix wrong argument in callback (2957fa4931a3)
-
-Stange listing the commits out of cherry-pick order.
-When you send to stable list, pls send in correct order.
-
+> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
+> ---
+>  arch/arm64/include/asm/set_memory.h     |  2 ++
+>  arch/arm64/mm/pageattr.c                | 12 ++++++++++++
+>  arch/loongarch/include/asm/set_memory.h |  2 ++
+>  arch/loongarch/mm/pageattr.c            | 16 ++++++++++++++++
+>  arch/riscv/include/asm/set_memory.h     |  2 ++
+>  arch/riscv/mm/pageattr.c                | 16 ++++++++++++++++
+>  arch/s390/include/asm/set_memory.h      |  2 ++
+>  arch/s390/mm/pageattr.c                 | 18 ++++++++++++++++++
+>  arch/x86/include/asm/set_memory.h       |  2 ++
+>  arch/x86/mm/pat/set_memory.c            | 20 ++++++++++++++++++++
+>  include/linux/set_memory.h              | 10 ++++++++++
+>  11 files changed, 102 insertions(+)
 >
-> The Crash: The panic occurs in backing_file_read_iter because it
-> receives a NULL file pointer from ovl_read_iter.
+> diff --git a/arch/arm64/include/asm/set_memory.h b/arch/arm64/include/asm=
+/set_memory.h
+> index 90f61b17275e..d949f1deb701 100644
+> --- a/arch/arm64/include/asm/set_memory.h
+> +++ b/arch/arm64/include/asm/set_memory.h
+> @@ -14,6 +14,8 @@ int set_memory_valid(unsigned long addr, int numpages, =
+int enable);
+>  int set_direct_map_invalid_noflush(struct page *page);
+>  int set_direct_map_default_noflush(struct page *page);
+>  int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool va=
+lid);
+> +int folio_zap_direct_map(struct folio *folio);
+> +int folio_restore_direct_map(struct folio *folio);
+>  bool kernel_page_present(struct page *page);
 >
-> [    7.443266] #PF: error_code(0x0000) - not-present page
-> [    7.444208] PGD 0 P4D 0
-> [    7.445270] Oops: Oops: 0000 [#1] SMP PTI
-> [    7.446175] CPU: 0 UID: 0 PID: 423 Comm: sudo Tainted: G
-> O       6.12.55+ #1
-> [    7.447669] Tainted: [O]=3DOOT_MODULE
-> [    7.448330] Hardware name: Google Google Compute Engine/Google
-> Compute Engine, BIOS Google 10/25/2025
-> [    7.449825] RIP: 0010:backing_file_read_iter+0x1a/0x250
-> [    7.450810] Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-> f3 0f 1e fa 0f 1f 44 00 00 55 48 89 e5 41 57 41 56 41 55 41 54 53 48
-> 83 ec 10 <8b> 47 0c a9 00 00 00 02 0f 84 d9 01 00 00 49 89 f6 48 83 7e
-> 18 00
-> [    7.453754] RSP: 0018:ffff9e95407b7db0 EFLAGS: 00010282
-> [    7.454694] RAX: 0000000000000000 RBX: ffff9e95407b7e78 RCX: 000000000=
-0000000
-> [    7.455892] RDX: ffff9e95407b7e78 RSI: ffff9e95407b7e50 RDI: 000000000=
-0000000
-> [    7.457158] RBP: ffff9e95407b7de8 R08: ffff9e95407b7df8 R09: 000000000=
-0000001
-> [    7.458331] R10: 0000000000000000 R11: 0000000000000000 R12: 000000000=
-0000000
-> [    7.459593] R13: 0000000000001000 R14: ffff9e95407b7e50 R15: 000000000=
-0000000
-> [    7.460968] FS:  00007a330957cb80(0000) GS:ffff9cb0ac000000(0000)
-> knlGS:0000000000000000
-> [    7.463015] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    7.464268] CR2: 000000000000000c CR3: 000000010bfc0003 CR4: 000000000=
-03706f0
-> [    7.465453] Call Trace:
-> [    7.465994]  <TASK>
-> [    7.466487]  ovl_read_iter+0x9a/0xe0
-> [    7.467424]  ? __pfx_ovl_file_accessed+0x10/0x10
-> [    7.468353]  vfs_read+0x2b1/0x300
-> [    7.469137]  ksys_read+0x75/0xe0
-> [    7.469894]  do_syscall_64+0x61/0x130
-> [    7.470603]  ? clear_bhb_loop+0x40/0x90
-> [    7.471381]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [    7.472486] RIP: 0033:0x7a330967221d
+>  int set_memory_encrypted(unsigned long addr, int numpages);
+> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+> index f0e784b963e6..a94eff324dda 100644
+> --- a/arch/arm64/mm/pageattr.c
+> +++ b/arch/arm64/mm/pageattr.c
+> @@ -357,6 +357,18 @@ int set_direct_map_valid_noflush(struct page *page, =
+unsigned nr, bool valid)
+>         return set_memory_valid(addr, nr, valid);
+>  }
 >
-> It appears ovl: store upper real file in ovl_file struct introduces a
-> bug when backported to 6.12. In ovl_real_fdget_path, the code
-> initializes real->word =3D 0. If ovl_change_flags is called and
-> succeeds, it returns 0 immediately. However, because of the early
-> return, real->word is never assigned the realfile pointer (which
-> happens at the bottom of the function). The caller sees success but
-> gets a NULL file pointer.
+> +int folio_zap_direct_map(struct folio *folio)
+> +{
+> +       return set_direct_map_valid_noflush(folio_page(folio, 0),
+> +                                           folio_nr_pages(folio), false)=
+;
+> +}
+> +
+> +int folio_restore_direct_map(struct folio *folio)
+> +{
+> +       return set_direct_map_valid_noflush(folio_page(folio, 0),
+> +                                           folio_nr_pages(folio), true);
+> +}
+> +
+>  #ifdef CONFIG_DEBUG_PAGEALLOC
+>  /*
+>   * This is - apart from the return value - doing the same
+> diff --git a/arch/loongarch/include/asm/set_memory.h b/arch/loongarch/inc=
+lude/asm/set_memory.h
+> index 55dfaefd02c8..9bc80ac420a9 100644
+> --- a/arch/loongarch/include/asm/set_memory.h
+> +++ b/arch/loongarch/include/asm/set_memory.h
+> @@ -18,5 +18,7 @@ bool kernel_page_present(struct page *page);
+>  int set_direct_map_default_noflush(struct page *page);
+>  int set_direct_map_invalid_noflush(struct page *page);
+>  int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool va=
+lid);
+> +int folio_zap_direct_map(struct folio *folio);
+> +int folio_restore_direct_map(struct folio *folio);
 >
+>  #endif /* _ASM_LOONGARCH_SET_MEMORY_H */
+> diff --git a/arch/loongarch/mm/pageattr.c b/arch/loongarch/mm/pageattr.c
+> index f5e910b68229..14bd322dd112 100644
+> --- a/arch/loongarch/mm/pageattr.c
+> +++ b/arch/loongarch/mm/pageattr.c
+> @@ -236,3 +236,19 @@ int set_direct_map_valid_noflush(struct page *page, =
+unsigned nr, bool valid)
+>
+>         return __set_memory(addr, 1, set, clear);
+>  }
+> +
+> +int folio_zap_direct_map(struct folio *folio)
+> +{
+> +       int ret;
+> +
+> +       ret =3D set_direct_map_valid_noflush(folio_page(folio, 0),
+> +                                          folio_nr_pages(folio), false);
+> +
+> +       return ret;
+Why not use a single statement which is the same as the ARM64 version?
+The RISCV version has the same problem.
 
-Correct analysis.
-There was a mid series regression, but it wasn't made available
-in any kernel release.
+Huacai
 
-> I wonder is there an upstream commit that corrects this logic, or does
-> this dependency chain require the larger ovl_real_file refactor from
-> 6.13 to work correctly?
-
-The upstream commit that fixes the mid series regression is
-4333e42ed4444 ovl: convert ovl_real_fdget_path() callers to ovl_real_file_p=
-ath()
-
-It's not a must to apply the entire refactoring to fix the problem, but in =
-fact
-the refactoring is a correct logical cleanup following 18e48d0e2c7b,
-so I think it is better to include the two refactoring patches in the backp=
-orts
-series rather than diverging from upstream with a custom stable kernel fix.
-
-Please include these two patches in the backports set:
-
-d66907b51ba07 ovl: convert ovl_real_fdget() callers to ovl_real_file()
-4333e42ed4444 ovl: convert ovl_real_fdget_path() callers to ovl_real_file_p=
-ath()
-
-Please send the entire backports set as a patch series to the stable mainta=
-iners
-or let me know if you want me to do that after you tested the backports.
-
-Thanks,
-Amir.
+> +}
+> +
+> +int folio_restore_direct_map(struct folio *folio)
+> +{
+> +       return set_direct_map_valid_noflush(folio_page(folio, 0),
+> +                                           folio_nr_pages(folio), true);
+> +}
+> diff --git a/arch/riscv/include/asm/set_memory.h b/arch/riscv/include/asm=
+/set_memory.h
+> index 87389e93325a..16557b70c830 100644
+> --- a/arch/riscv/include/asm/set_memory.h
+> +++ b/arch/riscv/include/asm/set_memory.h
+> @@ -43,6 +43,8 @@ static inline int set_kernel_memory(char *startp, char =
+*endp,
+>  int set_direct_map_invalid_noflush(struct page *page);
+>  int set_direct_map_default_noflush(struct page *page);
+>  int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool va=
+lid);
+> +int folio_zap_direct_map(struct folio *folio);
+> +int folio_restore_direct_map(struct folio *folio);
+>  bool kernel_page_present(struct page *page);
+>
+>  #endif /* __ASSEMBLER__ */
+> diff --git a/arch/riscv/mm/pageattr.c b/arch/riscv/mm/pageattr.c
+> index 3f76db3d2769..2c218868114b 100644
+> --- a/arch/riscv/mm/pageattr.c
+> +++ b/arch/riscv/mm/pageattr.c
+> @@ -401,6 +401,22 @@ int set_direct_map_valid_noflush(struct page *page, =
+unsigned nr, bool valid)
+>         return __set_memory((unsigned long)page_address(page), nr, set, c=
+lear);
+>  }
+>
+> +int folio_zap_direct_map(struct folio *folio)
+> +{
+> +       int ret;
+> +
+> +       ret =3D set_direct_map_valid_noflush(folio_page(folio, 0),
+> +                                          folio_nr_pages(folio), false);
+> +
+> +       return ret;
+> +}
+> +
+> +int folio_restore_direct_map(struct folio *folio)
+> +{
+> +       return set_direct_map_valid_noflush(folio_page(folio, 0),
+> +                                           folio_nr_pages(folio), true);
+> +}
+> +
+>  #ifdef CONFIG_DEBUG_PAGEALLOC
+>  static int debug_pagealloc_set_page(pte_t *pte, unsigned long addr, void=
+ *data)
+>  {
+> diff --git a/arch/s390/include/asm/set_memory.h b/arch/s390/include/asm/s=
+et_memory.h
+> index 94092f4ae764..fc73652e5715 100644
+> --- a/arch/s390/include/asm/set_memory.h
+> +++ b/arch/s390/include/asm/set_memory.h
+> @@ -63,6 +63,8 @@ __SET_MEMORY_FUNC(set_memory_4k, SET_MEMORY_4K)
+>  int set_direct_map_invalid_noflush(struct page *page);
+>  int set_direct_map_default_noflush(struct page *page);
+>  int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool va=
+lid);
+> +int folio_zap_direct_map(struct folio *folio);
+> +int folio_restore_direct_map(struct folio *folio);
+>  bool kernel_page_present(struct page *page);
+>
+>  #endif
+> diff --git a/arch/s390/mm/pageattr.c b/arch/s390/mm/pageattr.c
+> index d3ce04a4b248..df4a487b484d 100644
+> --- a/arch/s390/mm/pageattr.c
+> +++ b/arch/s390/mm/pageattr.c
+> @@ -412,6 +412,24 @@ int set_direct_map_valid_noflush(struct page *page, =
+unsigned nr, bool valid)
+>         return __set_memory((unsigned long)page_to_virt(page), nr, flags)=
+;
+>  }
+>
+> +int folio_zap_direct_map(struct folio *folio)
+> +{
+> +       unsigned long addr =3D (unsigned long)folio_address(folio);
+> +       int ret;
+> +
+> +       ret =3D set_direct_map_valid_noflush(folio_page(folio, 0),
+> +                                          folio_nr_pages(folio), false);
+> +       flush_tlb_kernel_range(addr, addr + folio_size(folio));
+> +
+> +       return ret;
+> +}
+> +
+> +int folio_restore_direct_map(struct folio *folio)
+> +{
+> +       return set_direct_map_valid_noflush(folio_page(folio, 0),
+> +                                           folio_nr_pages(folio), true);
+> +}
+> +
+>  bool kernel_page_present(struct page *page)
+>  {
+>         unsigned long addr;
+> diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set=
+_memory.h
+> index 61f56cdaccb5..7208af609121 100644
+> --- a/arch/x86/include/asm/set_memory.h
+> +++ b/arch/x86/include/asm/set_memory.h
+> @@ -90,6 +90,8 @@ int set_pages_rw(struct page *page, int numpages);
+>  int set_direct_map_invalid_noflush(struct page *page);
+>  int set_direct_map_default_noflush(struct page *page);
+>  int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool va=
+lid);
+> +int folio_zap_direct_map(struct folio *folio);
+> +int folio_restore_direct_map(struct folio *folio);
+>  bool kernel_page_present(struct page *page);
+>
+>  extern int kernel_set_to_readonly;
+> diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+> index 6c6eb486f7a6..3f0fc30eb320 100644
+> --- a/arch/x86/mm/pat/set_memory.c
+> +++ b/arch/x86/mm/pat/set_memory.c
+> @@ -2656,6 +2656,26 @@ int set_direct_map_valid_noflush(struct page *page=
+, unsigned nr, bool valid)
+>         return __set_pages_np(page, nr);
+>  }
+>
+> +int folio_zap_direct_map(struct folio *folio)
+> +{
+> +       unsigned long addr =3D (unsigned long)folio_address(folio);
+> +       int ret;
+> +
+> +       ret =3D set_direct_map_valid_noflush(folio_page(folio, 0),
+> +                                          folio_nr_pages(folio), false);
+> +       flush_tlb_kernel_range(addr, addr + folio_size(folio));
+> +
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_FOR_MODULES(folio_zap_direct_map, "kvm");
+> +
+> +int folio_restore_direct_map(struct folio *folio)
+> +{
+> +       return set_direct_map_valid_noflush(folio_page(folio, 0),
+> +                                           folio_nr_pages(folio), true);
+> +}
+> +EXPORT_SYMBOL_FOR_MODULES(folio_restore_direct_map, "kvm");
+> +
+>  #ifdef CONFIG_DEBUG_PAGEALLOC
+>  void __kernel_map_pages(struct page *page, int numpages, int enable)
+>  {
+> diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
+> index 3030d9245f5a..8d1c8a7f7d79 100644
+> --- a/include/linux/set_memory.h
+> +++ b/include/linux/set_memory.h
+> @@ -40,6 +40,16 @@ static inline int set_direct_map_valid_noflush(struct =
+page *page,
+>         return 0;
+>  }
+>
+> +static inline int folio_zap_direct_map(struct folio *folio)
+> +{
+> +       return 0;
+> +}
+> +
+> +static inline int folio_restore_direct_map(struct folio *folio)
+> +{
+> +       return 0;
+> +}
+> +
+>  static inline bool kernel_page_present(struct page *page)
+>  {
+>         return true;
+> --
+> 2.50.1
+>
+>
 
