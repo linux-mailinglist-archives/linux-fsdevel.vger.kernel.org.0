@@ -1,173 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-73920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E589ED24753
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 13:26:50 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79095D2490C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 13:39:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 39AC4308BA48
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 12:25:38 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CB52730B65E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 12:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7977395268;
-	Thu, 15 Jan 2026 12:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99F039E16E;
+	Thu, 15 Jan 2026 12:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="BNfncaCx"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YWoqPUwR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B298D38F244
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 12:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B9C397AA8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 12:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768479936; cv=none; b=SzxGlxdjoy0WCyRb5Ff+Nv1GTdipmbBQffeG04yDm/TPwFljmKcUsUY1ssz+/CgQ7N52D8TIUT6F4zVDNK5VP0XsnsQuI9zuq9NyIsjP2SxXxzdQAMOZy75xbokiW8pWlWlzLxkUQp6wv5UxI6IlgOSKfU7Y6P49B7uTCqVLxLQ=
+	t=1768480185; cv=none; b=ZIhbfgUFf0YN4EM3WXZrDDxIkPZOCAEbfcY4xVEmn2RyXv00suyWyeag225w4uvVSNMM1neZAJBe63SxiW15k76R5QsigUIzNJ1+PhWg6uvp9yJ/Lya85vNRNG0D+3xdrU0wdlwR4FDTNRBDnAFd63C5bupgCOWgApAkvZSTJJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768479936; c=relaxed/simple;
-	bh=etPKXtHCKEvPTG4ROUavwgWdckq17JRZUEjh8R0kcaU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=i3Y73ihRqNGbCDk09xIeZnNeLWKcIQLEjv1Ji/6QKlE9D3TsEr3h1hNssuCDKnlkA9sRs9bKoz/Gh5Qmc4CfcDqM8/uyfePxWY14HXTl0k2jcrTqA/KM+l95ZGH2Tm8jsOnKF6wMSEVNZEAXJ7G461LFpbZLfN1c3DQsPwZoD2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=BNfncaCx; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-3ec47e4c20eso646342fac.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 04:25:30 -0800 (PST)
+	s=arc-20240116; t=1768480185; c=relaxed/simple;
+	bh=vYsdvT7Esg+O4+yVXNphLK0YKxhLuEHhcRTW8Mb/9K8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rSJsIEKoG8fhNss0Bzuyrohq2Dg1X74hwzRFzZKCrIxvjPtYdmf+swm6KqK8UyTUl8irIr5NbgzmQYLd87XTvD3nsa+vMKoEUKGB+o9eXoEC+pBcSIthh4LDZEOzKxRO2wGsDyPWEUUxm5APF+cHmOBxDWx4LyHf0pGaWl1uBsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YWoqPUwR; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43246af170aso453538f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 04:29:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1768479930; x=1769084730; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I4FJZkv1O9333QAICtsYPXc5rbuwh1kULVRZezBOP4A=;
-        b=BNfncaCxvdrX4YIejDrgKW1B795zI7dAm0uGvfUFW4cZpOewgQffLyY06qRzyya77A
-         cARK4ZwQEy+G6BBNTC4N8yJ61IbnaJPmHBPW04nnWzNxPLb55M4T24647o1L6TwFDb6B
-         a4ONT/rTxDITor64RNKnxhttCeM3R9Eem2DG45aDtE+Q3q6WoGK6K7nfNPRuBWpNrhkb
-         uCSjYsMH6+i7M+JCNgeD4+icA5d64e/lSALf3ml2u/8Lcgn6fFxpvmTmJeKb9jBs0joB
-         CfqvC9jnfknTQOe2pFcz6wkG8i2H0ICz22xJNw0KcYo1tyeAxAU2V218Kv81/CKGOuZs
-         XJEQ==
+        d=suse.com; s=google; t=1768480181; x=1769084981; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ld+As4KXLNBvjLuNePKBkF4h3CZ3gGNkmAsVzP6KebE=;
+        b=YWoqPUwRhFjDNetwPJSdKBHF/sh7S1EgP7tlt+wR//RGEkO9N4XmFTkKsELsXCN+Wh
+         tAaa3ENOSjTUpPILgZg/y++6goGL+uSgamekIXw8LmEugXqkm+977/byxDPFL1eoqlch
+         cGOXGBs3zphBNNZNyLq/ZN0EehjhFZAUYOQqw+DHgPeteIljG+U4TPt1rzkLOeMvmZ27
+         1O7Yw5joixwU3lRrqJFdpDK0eX4HermI+x+n3JLmTrJSvtJqL+AZ+HvmrKi9QhTt/+v6
+         TP50tRwd+Z2mmYQDTI3Bo6Q51iA8Biw9ePX1ylXoopdCQ6oTxMlph+beE7QlfFLDppB4
+         0k0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768479930; x=1769084730;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I4FJZkv1O9333QAICtsYPXc5rbuwh1kULVRZezBOP4A=;
-        b=U5vCzR+MCgAGKkIULRxrgD36FdetUZL7AvEyoGhDL6HFcdWs3RA5Z1+54+hxQJfkRG
-         +x25FjwE46mhiAX+9WhER+nV09o2rF5YUj/kFugnkhJ3DNIqvj085cu9mRL/1iCiEWPJ
-         0vCwVkRuQrV3cAbZP5zq6D2udNJsPpqoOl2sRAb7leXU7yMNMB4CvDJBD9I/uBjoOzWP
-         TB1WGOTCof6YKnutzSvO6E5BR6TNBGXMaoXcHwzS4VfIWqDXy8N+I6/SpIPyqnoCoDN1
-         J/LYjRgRg7u1iov679QuoBCCUu2PJPj6WJdfq0uH9IMgP203n0yMKIzUvcWDKEOHNdPc
-         dyeA==
-X-Gm-Message-State: AOJu0YxzVUhrqpXT6Zp52Wehec7eI7/zC0jGvCM2/rT4LPq/Q8205Srv
-	XGh9yocidzRidrW8aln+Subz06u9QWb13xonc7Hg5YQPUij/Rio0xJfSjtHDmdKs/2tRKlDjvzD
-	WMJYl
-X-Gm-Gg: AY/fxX5ORAMCPYrAcU2t8KoglRtKuWfh6oQuLJzYiNkSsSiIp72ObSoXHmIE2wTS/BI
-	LRjqOWtQDjeJpJsaE4Qmx2Cqx3Ru2wY7TzhW1CoXgrUn7YACRGAqyMmnDEukDRuQrGyjsEvNisb
-	3j1yiiMBmSOgg20wUz0H3P6S6Haed4EwmSTo0r9bt0mSiPheUUWXheS0d2ZJmYChCmrwvbdSA29
-	HSlapQr00HLOYqfY2j+jcF/pxUJc8O97DT1fVF9qt3keogcRdTAivzNrh8KX2sf6uvI5Ul77WIn
-	nfIBF/ALVb7/x8NDsZM1WR9GULvZICkXkpzDb1AHsIvKUXcRPNSoKLM7v/645WreD8FbAbuk9Og
-	VRvizTVBk7SzmvoqGuROQLUM9AG6XbjOCnKmGl4iGuxUuieBXKvBGYB8NFAw1qNC7A4VtjK8/NY
-	+gv73lQxLG
-X-Received: by 2002:a05:6870:478a:b0:3e7:d2b3:7a3 with SMTP id 586e51a60fabf-4040ba80820mr3306621fac.15.1768479929760;
-        Thu, 15 Jan 2026 04:25:29 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-40414c5d332sm3178044fac.20.2026.01.15.04.25.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Jan 2026 04:25:29 -0800 (PST)
-Message-ID: <195c9525-281c-4302-9549-f3d9259416c6@kernel.dk>
-Date: Thu, 15 Jan 2026 05:25:28 -0700
+        d=1e100.net; s=20230601; t=1768480181; x=1769084981;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ld+As4KXLNBvjLuNePKBkF4h3CZ3gGNkmAsVzP6KebE=;
+        b=BIqGRe1CDwUcZV1uxFWAotj16EL/fU33y7IO2eNcr2mhxICXgV6ap481xeNo+I9i1R
+         Geo5xswwXbDafWpYdNajG+t6nixVA1+l4yvUrVNpKdCBkNnXCeot3KcXas4npnpXuU4r
+         yJwkndxcfeYSs8PT9l2b6hy4qgCwkuc/fweoKgS2zacVCuAm0pmE3Wgv3aZ6lOJ4awCR
+         2IPCT6tHRlndAUTRLNwCXKTDD6QVc+AFMjd7knn5YA5ND1bqN6dfVdbiB9OjF+nemcat
+         obk0GRMXR78aCNB5yez17h/qvtHLyag6T5OIulDlUHCFRzAsXzyP834IM+OzVH/LkgTS
+         Cdeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzQkS/jY+b2hRB7Hmx3aat1Viw3phfRwGzmlTh3vPhui8Myye4JiuuWZEzyVf7ysimqw8OkW1wMUvFuvHO@vger.kernel.org
+X-Gm-Message-State: AOJu0YyueX+Lu9niUUiy2MEtNgOJk5G/knr6qgXfv7O3deVNhV0IVV/1
+	3KvvqN5nw02sUY4vU2KEMCmo2fvdheiFzciTBSHldGIq2dzZMBRTXoun7tGc+kmyVKc=
+X-Gm-Gg: AY/fxX5jzTOmSMx+hd1qMwmZJ7TC+o9VQDdMMqWFBQ6LbKhZevSgNDOxsQ48aRySfRt
+	LqB/Dqq7IGjccWCoWpQP8B896Z4GLZ83aJE8J5DKxvVixNh4zV3fOvbZ2NoOijjOg+wLHZ9ENVk
+	u74it3bwmhOIzo2JuxKZcEv+PZl5cCh80MV2L0qCVXFK1McQqlawP3VlcP4ZFM5G0WIgxd/lDTY
+	rh7uNFSRcydqgHVf7BUU+iEZnOvFcxtrr6IlBF4XO59vNBbmWpVvxW4de1lABgqxYlH/E4ZtM+Y
+	scyTdvUKS/5plFDr0P3J0q4G7U2a1ANLvkbVi9G2pOWcE35ol4/OIG9mVLv/ig+L11kmEG5MW+r
+	qnhlDLxDhRMI0MONpHVpRGCD0L/pFambhYU61WPjQ0AtmrX+idTDwVIY8PRA5jnPnOsTg3LRytl
+	516Vd0JXr/tusikQ==
+X-Received: by 2002:a05:6000:420a:b0:42f:f627:3a88 with SMTP id ffacd0b85a97d-434ce7324b4mr3823468f8f.4.1768480180633;
+        Thu, 15 Jan 2026 04:29:40 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-434af653576sm5965022f8f.17.2026.01.15.04.29.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jan 2026 04:29:40 -0800 (PST)
+Date: Thu, 15 Jan 2026 13:29:37 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Breno Leitao <leitao@debian.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>, linux-um@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
+	linux-serial@vger.kernel.org, netdev@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org, linux-hardening@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 14/19] drivers: hwtracing: stm: console.c: Migrate to
+ register_console_force helper
+Message-ID: <aWjdsbYev_5zfKEC@pathway.suse.cz>
+References: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
+ <20251227-printk-cleanup-part3-v1-14-21a291bcf197@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] fuse: use private naming for fuse hash size
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251227-printk-cleanup-part3-v1-14-21a291bcf197@suse.com>
 
-With a mix of include dependencies, the compiler warns that:
+On Sat 2025-12-27 09:16:21, Marcos Paulo de Souza wrote:
+> The register_console_force function was introduced to register consoles
+> even on the presence of default consoles, replacing the CON_ENABLE flag
+> that was forcing the same behavior.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 
-fs/fuse/dir.c:35:9: warning: ?HASH_BITS? redefined
-   35 | #define HASH_BITS       5
-      |         ^~~~~~~~~
-In file included from ./include/linux/io_uring_types.h:5,
-                 from ./include/linux/bpf.h:34,
-                 from ./include/linux/security.h:35,
-                 from ./include/linux/fs_context.h:14,
-                 from fs/fuse/dir.c:13:
-./include/linux/hashtable.h:28:9: note: this is the location of the previous definition
-   28 | #define HASH_BITS(name) ilog2(HASH_SIZE(name))
-      |         ^~~~~~~~~
-fs/fuse/dir.c:36:9: warning: ?HASH_SIZE? redefined
-   36 | #define HASH_SIZE       (1 << HASH_BITS)
-      |         ^~~~~~~~~
-./include/linux/hashtable.h:27:9: note: this is the location of the previous definition
-   27 | #define HASH_SIZE(name) (ARRAY_SIZE(name))
-      |         ^~~~~~~~~
+LGTM, nice cleanup!
 
-Hence rename the HASH_SIZE/HASH_BITS in fuse, by prefixing them with
-FUSE_ instead.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 4b6b3d2758ff..05ba065e4b40 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -32,9 +32,9 @@ struct dentry_bucket {
- 	spinlock_t lock;
- };
- 
--#define HASH_BITS	5
--#define HASH_SIZE	(1 << HASH_BITS)
--static struct dentry_bucket dentry_hash[HASH_SIZE];
-+#define FUSE_HASH_BITS	5
-+#define FUSE_HASH_SIZE	(1 << FUSE_HASH_BITS)
-+static struct dentry_bucket dentry_hash[FUSE_HASH_SIZE];
- struct delayed_work dentry_tree_work;
- 
- /* Minimum invalidation work queue frequency */
-@@ -83,7 +83,7 @@ MODULE_PARM_DESC(inval_wq,
- 
- static inline struct dentry_bucket *get_dentry_bucket(struct dentry *dentry)
- {
--	int i = hash_ptr(dentry, HASH_BITS);
-+	int i = hash_ptr(dentry, FUSE_HASH_BITS);
- 
- 	return &dentry_hash[i];
- }
-@@ -164,7 +164,7 @@ static void fuse_dentry_tree_work(struct work_struct *work)
- 	struct rb_node *node;
- 	int i;
- 
--	for (i = 0; i < HASH_SIZE; i++) {
-+	for (i = 0; i < FUSE_HASH_SIZE; i++) {
- 		spin_lock(&dentry_hash[i].lock);
- 		node = rb_first(&dentry_hash[i].tree);
- 		while (node) {
-@@ -213,7 +213,7 @@ void fuse_dentry_tree_init(void)
- {
- 	int i;
- 
--	for (i = 0; i < HASH_SIZE; i++) {
-+	for (i = 0; i < FUSE_HASH_SIZE; i++) {
- 		spin_lock_init(&dentry_hash[i].lock);
- 		dentry_hash[i].tree = RB_ROOT;
- 	}
-@@ -227,7 +227,7 @@ void fuse_dentry_tree_cleanup(void)
- 	inval_wq = 0;
- 	cancel_delayed_work_sync(&dentry_tree_work);
- 
--	for (i = 0; i < HASH_SIZE; i++)
-+	for (i = 0; i < FUSE_HASH_SIZE; i++)
- 		WARN_ON_ONCE(!RB_EMPTY_ROOT(&dentry_hash[i].tree));
- }
- 
--- 
-Jens Axboe
-
+Best Regards,
+Petr
 
