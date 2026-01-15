@@ -1,139 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-74002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB7FAD28303
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 20:45:17 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FF5D2834A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 20:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B394330215EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 19:40:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 47087309BCBE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 19:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B6631A55B;
-	Thu, 15 Jan 2026 19:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAC931A55B;
+	Thu, 15 Jan 2026 19:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oasis-open-org.20230601.gappssmtp.com header.i=@oasis-open-org.20230601.gappssmtp.com header.b="cBa6cpUL"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="evK83rBN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E2A31A041
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 19:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BDC2D47F4;
+	Thu, 15 Jan 2026 19:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768506041; cv=none; b=RsvCLsngUXQSim2V7wYiHnTtkrY1qNY/0fgyq+OehioXf1X3I86rHPPAdvErfI7pdaIQarumtTjEvPZl5fSh6dtYVKAMEdQBSPOfKS/7aMhbloq1qyf4Z/68JBnxd/9tnOBDKoX9jFqbayVVmok/7rApk2YlXaQzgsi0FPPewVo=
+	t=1768506208; cv=none; b=O4aft43SUqahlm940noLg3nR3dICz5K+fyjBidxAaQmUbP5QTJgBPXPeruRbIvkkJqIIk5CYBUOa69GgzbJ7viQTXdLTjjyg3dJahgxObq7EcF2G5MNorBw88CRIt6BJF48S7j5yT/sEVTUzyxCPFQ5nPFA8WT7eqpFdLfFhsyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768506041; c=relaxed/simple;
-	bh=BVuRcIp9C9aDs7YujmRCIsJWyiCOSqmqC7FZNs5wMUU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=SSq0uz6tvsr8PiaYRi2YtCMWz4s2uMEN6+6M18IsF+03+bImMEoVsNWO7ekpGvkPdeDxip0IJX92/hqq8I3BbxnnXWp3jFoY9htDVNUa9pVfaTOJDXRWhv8kO+iid2ucDBxTXo8BuKxPMTEO7/KaEwc9TEB8Qlkq2kfLmhjYb+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oasis-open.org; spf=pass smtp.mailfrom=oasis-open.org; dkim=pass (2048-bit key) header.d=oasis-open-org.20230601.gappssmtp.com header.i=@oasis-open-org.20230601.gappssmtp.com header.b=cBa6cpUL; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oasis-open.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oasis-open.org
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-50146483bf9so19925361cf.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 11:40:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oasis-open-org.20230601.gappssmtp.com; s=20230601; t=1768506038; x=1769110838; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BVuRcIp9C9aDs7YujmRCIsJWyiCOSqmqC7FZNs5wMUU=;
-        b=cBa6cpULbHFrO/0izDmT3TqDOsQkVfwOsLb9DD6CziTmK55gReuDfXT7yWaI2kcdNP
-         COVpc8LfH9D/OXWdDPBmIxQ5CPYZlpgjaPY9Bbqo9v/++OaWb5o1sGd7RW6DdVlVeQpN
-         ciwe/w08bjxz/bjXmyIVLn0CqWUpVLLiMdGZUCZ1XTWiADVCMgQ4+kOEx2yZoZfHjyEC
-         navSSYrkzE/I7XonJe88KgtvMsxGspuKXDz7XbsiqIVgPWJicDhYRrtQf5gi34fE0C9v
-         H2TmoLpCuLibIx9wQrawAlSClMUGk1rhEuxYdjnG51FfZRl97NyrCEjWWLOXZI39PlFb
-         HDww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768506038; x=1769110838;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BVuRcIp9C9aDs7YujmRCIsJWyiCOSqmqC7FZNs5wMUU=;
-        b=tMWtvsL4wAmVKpTCEhrUY+I+dkrq/jUQg6V7VZpOm0SUXv4t8pm0W2YcoRhPca+BFs
-         5RDEX5KUWbhN6pS+GgUZ5L9Xc6kHTdx0Z270hTX2Wps5L3V1LPwGeuFVgaqpuBf73+rr
-         I8V68yGl10gnGJQNBD11/f/+3wLbn6i5e+LYLERXEVkhYNmUTB2CZbPIcQIcgMsPwAQv
-         WaKDaxRutlWcDrEJedmpgyTEkDfcpImYtvJo3U+i8ey8Om0VPKm9fXopn8rSA9t+Lwxc
-         Y3ZT6+dcDSC6ID4PGVuwCOHQniKAe235P8OFYK5Zk2DW4URwzKxR+t67Bi6BS2wT/m4g
-         CDWw==
-X-Gm-Message-State: AOJu0Yz1IqmFA3yc/toKKwZOXHlkdOrb/5SiCJ1wlicchQRsNp2xAV/m
-	eDmCf03mF6sJ8YYroS4gY7OvNJtOnstsoch4IFOfkjik2RzGBbBv2NPNF+/bvcRYXco8wKQIivz
-	gfwe9wSwVg7CNu5pDGjUQ6fWdLSZJPBWDM5zd/ZFRQBq9H4UCBE+09Ls=
-X-Gm-Gg: AY/fxX6YW8WZfuasK1iM4CeOmcUeHn7ZHkTtYqmtPTrhTg/uhOfANBwxbrakKkhoU+q
-	R2KETCltBrToTowRuLPq8QR/iCY+xeaFyxCV4US089fqLPFLNphapCeO757lWoeWE6xNEx4Wi36
-	d6jfTbJeJ/mlq3XoUDZ1D/pCAUjWieyvDKeTB1xcDhAqhrXuiFHK+de2DC491im8BN/+SPZyE6f
-	+YoNouoK2rGzjWTwq8BEjXpL0hnacibCku873NsfdcH8koz8bsxib234Ba/9TTVW9N5/luuIygA
-	+KB3Wf1d+IFMTQA9mTOzd+KU+krTFWn8qTgFPjPcDtNK17SMEpgtHZjH41wB
-X-Received: by 2002:ac8:7f56:0:b0:501:5184:4b64 with SMTP id
- d75a77b69052e-502a16b3088mr8412161cf.49.1768506038125; Thu, 15 Jan 2026
- 11:40:38 -0800 (PST)
+	s=arc-20240116; t=1768506208; c=relaxed/simple;
+	bh=J/i0zM4xYyjjZ4XNZu9Wcc/shtujryOp7RV0PnnL0h8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o4IvblmsVKT6v+oMQmrno4XbiF8Q7ceX2n3TM6UaUhCSsDeTBj42mxWqdnxGeEJiy1bxg01v/UG8GAZzsR6LxztcVEIu0IJ2VAXYTzPa7+ps2cbRCqbR4XB26hu21nHLu7dBBCWj6sNeclj4IN9/PU3yyllVZ9SpsZbCPCGXCqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=evK83rBN; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=A23V1QRMEvs5cA8OvtUBzyK5zu+Y6qwqjP41AnCooiw=; b=evK83rBNBmurb078aDPg0RCpe5
+	lBegr58Fcbk5MC+bakyDeXD3jhwiYBs8JKTAdfCioAd9gwHOydNi/1JhvqQ6xQSdWrncKN4rB+bfU
+	mTNAnm6fdzc+68gQX5nqz5slJy7F8I+DUiA8XM7TB6135ZWJdNNtGLQ7ryIOGKlstTGrIkkyNH4ud
+	hpVK8rQd1i63UxCsMT6n5ecuybCO+5+EmxNdKr1CdSzBPm4QXAjKo9lyvCuVY1N807YsGqpwTZJj6
+	JJzlzjc17yVqocbJ2Q7Ymg52LUIeqNo0p6XKgkY+td698I58vUVYgy3gJ6Mnw8O+woybuwuV4TWOb
+	VVFPcVwg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1vgTH0-00000002NbF-3BWn;
+	Thu, 15 Jan 2026 19:44:50 +0000
+Date: Thu, 15 Jan 2026 19:44:50 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
+	Harry Yoo <harry.yoo@oracle.com>, linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Mateusz Guzik <mguzik@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 00/15] kmem_cache instances with static storage
+ duration
+Message-ID: <20260115194450.GA3634291@ZenIV>
+References: <20260110040217.1927971-1-viro@zeniv.linux.org.uk>
+ <0727b5a1-078f-0055-fc52-61b80bc5d59e@gentwo.org>
+ <20260115020850.GX3634291@ZenIV>
+ <806cbde4-fc0b-7bf7-d22a-2205b46eaa96@gentwo.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Kelly Cullinane <kelly.cullinane@oasis-open.org>
-Date: Thu, 15 Jan 2026 14:40:01 -0500
-X-Gm-Features: AZwV_Qhxqx_5ROv9K9PsiovYrLYZMkOLkyk3WzE5Ry3lsxafg9alkrJOkt4pqAA
-Message-ID: <CAAiF603Qdf+fdcLpiLUG4NqzVroOOtqZr3w5Kze0g5VpkRe-Yw@mail.gmail.com>
-Subject: Invitation to comment on VIRTIO v1.4 CSD01
-To: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <806cbde4-fc0b-7bf7-d22a-2205b46eaa96@gentwo.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-OASIS members and other interested parties,
+On Thu, Jan 15, 2026 at 11:10:00AM -0800, Christoph Lameter (Ampere) wrote:
 
-OASIS and the VIRTIO TC are pleased to announce that VIRTIO v1.4 CSD01
-is now available for public review and comment.
+> Internal functions exist in the slab allocator that do what you want if
+> the opaqueness requirement is dropped. F.e. for the creation of kmalloc
+> caches we use do_kmem_cache_create():
 
-VIRTIO TC aims to enhance the performance of virtual devices by
-standardizing key features of the VIRTIO (Virtual I/O) Device
-Specification.
-
-Virtual I/O Device (VIRTIO) Version 1.4
-Committee Specification Draft 01 / Public Review Draft 01
-09 December 2025
-
-TEX: https://docs.oasis-open.org/virtio/virtio/v1.4/csprd01/virtio-v1.4-csp=
-rd01.html
-(Authoritative)
-HTML: https://docs.oasis-open.org/virtio/virtio/v1.4/csprd01/virtio-v1.4-cs=
-prd01.html
-PDF: https://docs.oasis-open.org/virtio/virtio/v1.4/csprd01/virtio-v1.4-csp=
-rd01.pdf
-
-The ZIP containing the complete files of this release is found in the direc=
-tory:
-https://docs.oasis-open.org/virtio/virtio/v1.4/csprd01/virtio-v1.4-csprd01.=
-zip
-
-How to Provide Feedback
-OASIS and the VIRTIO TC value your feedback. We solicit input from
-developers, users and others, whether OASIS members or not, for the
-sake of improving the interoperability and quality of its technical
-work.
-
-The public review is now open and ends Friday, February 13 2026 at 23:59 UT=
-C.
-
-Comments may be submitted to the project=E2=80=99s comment mailing list at
-virtio-comment@lists.linux.dev. You can subscribe to the list by
-sending an email to
-virtio-comment+subscribe@lists.linux.dev.
-
-All comments submitted to OASIS are subject to the OASIS Feedback
-License, which ensures that the feedback you provide carries the same
-obligations at least as the obligations of the TC members. In
-connection with this public review, we call your attention to the
-OASIS IPR Policy applicable especially to the work of this technical
-committee. All members of the TC should be familiar with this
-document, which may create obligations regarding the disclosure and
-availability of a member's patent, copyright, trademark and license
-rights that read on an approved OASIS specification.
-
-OASIS invites any persons who know of any such claims to disclose
-these if they may be essential to the implementation of the above
-specification, so that notice of them may be posted to the notice page
-for this TC's work.
-
-Additional information about the specification and the VIRTIO TC can
-be found at the TC=E2=80=99s public homepage.
+Yes, I know.  Do you really want to expose e.g. slab_caches and slab_mutex
+to the rest of the kernel?  Surgery needed to have __kmem_cache_create()
+do everything is not large - see the mm/slab_common.c parts in the first
+two commits in this series.
 
