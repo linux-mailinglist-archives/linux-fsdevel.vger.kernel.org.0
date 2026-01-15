@@ -1,132 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-73852-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73853-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16A9D21C48
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 00:32:16 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B200D21E3E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 01:46:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D41FA30230EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Jan 2026 23:32:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C7C643028DAA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 00:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBC12FD1DC;
-	Wed, 14 Jan 2026 23:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A28D1D8E01;
+	Thu, 15 Jan 2026 00:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVOtEo+9"
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="e0i1+i/u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8D532AAD3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 23:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EF81C5486;
+	Thu, 15 Jan 2026 00:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768433523; cv=none; b=pkJESAdenoFH7U7Z5kAx6EjMHJQ4CPKR558IaXAQg/3h1z9W069bnMNvorDl1+L+getPHOk+b1gXks45RiO371AfR7R9EaWveuwjnEcQnR1qxp4muV9mBh4ejW4y77/A6hitVSaNZhuJfjeCmLP8epVirnQ55agasVLvOlcGZ58=
+	t=1768437974; cv=none; b=scZNKvA6ET5r0h46ntcEXjxJAJGQOajL/qEAw8a7ty+tO5tw0QY2ys8s9aB/9dxwi6+X2EgFClFrKp60W9d6YaZiUNa96FPwsszuHBkof6VgQONFiIc50jIjzjZ1W9Kd8utI45lF0yDpwccpwZJXSvBtlRsCOPAti0BhGs2TDL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768433523; c=relaxed/simple;
-	bh=s2S6SwaonRR1sCNihKBhdU2jKYVj30ZMw/drW+9F2Xk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UALew2g35Ib2A2rIS+8r/xpnTX2uUSqZqhapUjm/CFe57RekjZoWPUIGchW0B/YUPnLSYesRGdDBVOE81ll0DeI4vPxJkagJsADEGeM26wIEjylyMTIdpwy4EirVpa3y5yOb0LRn17YxJxVYTVdrlI0ny0xm2TQuEXVNhnLi+kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVOtEo+9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9D6BC4CEF7;
-	Wed, 14 Jan 2026 23:32:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768433522;
-	bh=s2S6SwaonRR1sCNihKBhdU2jKYVj30ZMw/drW+9F2Xk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=pVOtEo+9gwZvMGDTEBhH7bNJnZZvdWmTDN0xNbYKvC8aFLzCKfP8l3gOYi9dtWfG+
-	 lfW+/PnTYNmpYy5k7p8rzjnvRZzxMgNqxlecXnedGD/5mJxTeStc9S/T6fGUdvgn8Q
-	 c7jhXteFTn14WVYtFmto+jaTkNJpUPKg23iB+aIzvKiMP4f6Jw+MNm6ZTiHuSe3SPG
-	 lTZqEqkfGOupXHWCJ0MFjbHSFBPxQjjlaaQ4Lo4zCv0Hbw/fqJgvnubuPUjKiGDEp5
-	 LcuotOag1g7b6d3YrxGVr0CHI4IAWMFZPKvdjC+vdnmDCLQWLeqATmhFt19HecGehl
-	 mn3Ihg/eYet+w==
-Message-ID: <9ceb6cbcef39f8e82ab979b3d617b521aa0fcf83.camel@kernel.org>
-Subject: Re: NFSv4 + FUSE xattr user namespace regression/change?
-From: Trond Myklebust <trondmy@kernel.org>
-To: Antonio SJ Musumeci <trapexit@spawn.link>
-Cc: linux-fsdevel@vger.kernel.org, "gregkh@linuxfoundation.org"
-	 <gregkh@linuxfoundation.org>, Miklos Szeredi <miklos@szeredi.hu>, 
- "j.schueth@jotschi.de"
-	 <j.schueth@jotschi.de>
-Date: Wed, 14 Jan 2026 18:32:00 -0500
-In-Reply-To: <e5-exnk0NS5Bsw0Ir_wplkePzOzCUPSsez9oqF7OVAAq3DASvNJ62B9EuQbvIqHitDgxtVnu74QYDYVEQ8rCCU74p4YupWxaKZNN34EPKUY=@spawn.link>
-References: 
-	<32Xtx4IaYj8nhPIXtt0gPimTRQy4RNjzmsqI1vQB1YBpRes0TEgu6zVzWbBEcn2U6ZxB14BD9vakmezNyhdXDt3CVGO8WYGxHSZZ1qtQVy8=@spawn.link>
-	 <8f5bb04853073dc620b5a6ebc116942a9b0a2b5c.camel@kernel.org>
-	 <e5-exnk0NS5Bsw0Ir_wplkePzOzCUPSsez9oqF7OVAAq3DASvNJ62B9EuQbvIqHitDgxtVnu74QYDYVEQ8rCCU74p4YupWxaKZNN34EPKUY=@spawn.link>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
+	s=arc-20240116; t=1768437974; c=relaxed/simple;
+	bh=W3U4m/oqLfESSPENXjy5hyjsmBe+zWiBlc3RcXGMd8g=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=hfBl9J3CJyPUizM0OrSwJBhT19KVghZ/8akEWF0NrtjGayzrVrP18IYOcfdwb9SWreJFp4F10u77KPNkxHigTjm1REKnD++CxMx7s3mmGZsq6pNHLcesjzWQRtFTEfyXoRo0UoE+OtPptJtgtsxfvk9PWpSrbtTLvqiDp3iIWEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=e0i1+i/u; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1768437964;
+	bh=W3U4m/oqLfESSPENXjy5hyjsmBe+zWiBlc3RcXGMd8g=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=e0i1+i/uEUncxqqlVSxjtdOjgwzzxD//BL1vgaxa3bbLJeDye+Jw/ZF8D8QoQZDX0
+	 GzvRBOnBk+STTOemYCD/Y5tbKJXDRwJJ+hEFOfd7v0UuXGWvJcwmcCyGTAWGPMB2Km
+	 HX1TVWsrVBTLVE5/+B3DyWd6WlR+LcVZmjfgCaug=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 6DDBF402BD; Wed, 14 Jan 2026 16:46:04 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 6B4EA401F6;
+	Wed, 14 Jan 2026 16:46:04 -0800 (PST)
+Date: Wed, 14 Jan 2026 16:46:04 -0800 (PST)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+cc: linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>, 
+    Harry Yoo <harry.yoo@oracle.com>, linux-fsdevel@vger.kernel.org, 
+    Linus Torvalds <torvalds@linux-foundation.org>, 
+    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+    Mateusz Guzik <mguzik@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 00/15] kmem_cache instances with static storage
+ duration
+In-Reply-To: <20260110040217.1927971-1-viro@zeniv.linux.org.uk>
+Message-ID: <0727b5a1-078f-0055-fc52-61b80bc5d59e@gentwo.org>
+References: <20260110040217.1927971-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, 2026-01-14 at 22:45 +0000, Antonio SJ Musumeci wrote:
-> The user (cc'ed) said they have tested numerous recent releases
-> including 6.18.5 (on both client and server.)
->=20
->=20
+On Sat, 10 Jan 2026, Al Viro wrote:
 
-Can you supply a wireshark/tcpdump trace taken on the client that shows
-the mount process and an example of a failed setfattr of a user xattr
-on the 6.18.5 kernel?
+> 1) as it is, struct kmem_cache is opaque for anything outside of a few
+> files in mm/*; that avoids serious headache with header dependencies,
+> etc., and it's not something we want to lose.  Solution: struct
+> kmem_cache_opaque, with the size and alignment identical to struct
+> kmem_cache.  Calculation of size and alignment can be done via the same
+> mechanism we use for asm-offsets.h and rq-offsets.h, with build-time
+> check for mismatches.  With that done, we get an opaque type defined in
+> linux/slab-static.h that can be used for declaring those caches.
+> In linux/slab.h we add a forward declaration of kmem_cache_opaque +
+> helper (to_kmem_cache()) converting a pointer to kmem_cache_opaque
+> into pointer to kmem_cache.
 
-Note that trying to access system level xattrs (I see your github issue
-tracker notes trying to read "system.nfs4_acl") has never been allowed.
-The NFSv4.2 xattr protocol extension explicitly bans the practice of
-using xattrs to construct private filesystem APIs.
+Hmmm. A new kernel infrastructure feature: Opaque objects
 
-IOW: Reading, writing and listing of user xattrs on the remote server
-is the only mode that is supported by the NFSv4.2 protocol extension.
+Would that an deserve a separate abstraction so it is usable by other
+subsystems?
 
->=20
-> On Wednesday, January 14th, 2026 at 1:27 PM, Trond Myklebust
-> <trondmy@kernel.org> wrote:
->=20
-> >=20
-> >=20
-> > On Wed, 2026-01-14 at 19:18 +0000, Antonio SJ Musumeci wrote:
-> >=20
-> > > You don't often get email from trapexit@spawn.link.
-> > > Learn why this is important
-> > >=20
-> > > Forgive me but I've not had the chance to investigate this in
-> > > detail
-> > > but according to a user of mine[0] after a commit[1] between
-> > > 6.15.10
-> > > and 6.15.11 user namespaced xattr requests now return EOPNOSUPP
-> > > when
-> > > the FUSE filesystem is exported via NFS. It was replicated with
-> > > other
-> > > FUSE filesystems.
-> > >=20
-> > > Was this intentional? If "yes", what would be the proper way to
-> > > support this?
-> > >=20
-> > > -Antonio
-> > >=20
-> > > [0] https://github.com/trapexit/mergerfs/issues/1607
-> > > [1]
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/comm
-> > > it/?id=3Da8ffee4abd8ec9d7a64d394e0306ae64ba139fd2
-> >=20
-> >=20
-> > You should upgrade to a newer stable kernel.
-> >=20
-> > This issue has already been reported and fixed by commit
-> > 31f1a960ad1a
-> > ("NFSv4: Don't clear capabilities that won't be reset").
-> >=20
-> >=20
-> > --
-> > Trond Myklebust
-> > Linux NFS client maintainer, Hammerspace
-> > trondmy@kernel.org, trond.myklebust@hammerspace.com
-
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trondmy@kernel.org, trond.myklebust@hammerspace.com
 
