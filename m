@@ -1,152 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-73889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF9D1D22C9F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 08:22:06 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E4BD22CC3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 08:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 98DFC30B6810
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 07:20:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id DBF1C3059463
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 07:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AAB329E62;
-	Thu, 15 Jan 2026 07:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED2A328605;
+	Thu, 15 Jan 2026 07:23:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B484242D6A;
-	Thu, 15 Jan 2026 07:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED1131328D;
+	Thu, 15 Jan 2026 07:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768461647; cv=none; b=kD3rl3vEi0cE5JwaIZHzIKmYMz3+lJsk1XWxtHt6SH8KjAk+iGVgZZ2/nh/Ug2gdRB+z5IUkzCvwEbONk5ufxrQdEA7PbgatDk7UhmR6vQxsmXyxeaOaZVDMXZVoXsDfrCqFwkppTr/peq5HSj7cItojvTH0nLLZ2XHS6wDQSAc=
+	t=1768461802; cv=none; b=IF/R/8qEsLd2lptjlL8ejEsaEbsn0vyeOdTZuUwiO39aFuf7F4MItcn15AQYP02SFpU2tPCwQUwpq5VuJ1kg8dJQMtF2mVCiHtm+D5m2zJ8uK6FIYFWG7VcVMAENoJNokXQs9DGn1Pzap1pPkCIAW5JXgbOmX+RH8YAPxMdJJKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768461647; c=relaxed/simple;
-	bh=D6xqF55KyEZmNte4+zYNhke3ZQp4WwZxQ2TZUQyQiYg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NnRyR5sGhN927eUwd7S+4K2zwqPkT1ndg0qHyEmSxnSgfZsusN30kRS92WqmLGzcSYKj+Hv/czkUwoHBVR6sItlXO8BaGefJIdpclY0Bmhh6Y2QdAnpYly/BbFZ7qlKXP3eTxGOXAYT6D4MURSI+HmWp+JOPw6LWWrrXpD9YkP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
-Received: from localhost (unknown [14.22.11.161])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 30be6f324;
-	Thu, 15 Jan 2026 15:20:36 +0800 (GMT+08:00)
-From: Chunsheng Luo <luochunsheng@ustc.edu>
-To: miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chunsheng Luo <luochunsheng@ustc.edu>
-Subject: [RFC 2/2] fuse: Add new flag to reuse the backing file of fuse_inode
-Date: Thu, 15 Jan 2026 15:20:31 +0800
-Message-ID: <20260115072032.402-3-luochunsheng@ustc.edu>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260115072032.402-1-luochunsheng@ustc.edu>
-References: <20260115072032.402-1-luochunsheng@ustc.edu>
+	s=arc-20240116; t=1768461802; c=relaxed/simple;
+	bh=O1BNHKLn5erkcEmGXQ2si3MlRqbzcIIYuajlpLP7xkM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tlq14n0dvqXhrCFMQZYwxLt4CXszRTG0tlMCrR+L0pc4DTtcBo6pjwyhH5DnGT871SlNaT2yGR183iCuiOkAy/sgllKqcjw+tmkskR0eKlSN1tlss8IhSOlS7Sy9eqNuuwgSD6d6GaEbhZuxM6mY/RhCOXWY4hHA3PDDDwafROI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 630AD227AA8; Thu, 15 Jan 2026 08:23:12 +0100 (CET)
+Date: Thu, 15 Jan 2026 08:23:12 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+	kernel-dev@igalia.com
+Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
+Message-ID: <20260115072311.GA10352@lst.de>
+References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com> <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com> <20260114062608.GB10805@lst.de> <5334ebc6-ceee-4262-b477-6b161c5ca704@igalia.com> <20260115062944.GA9590@lst.de> <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9bc087132903a2kunm2b0de46421065c
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTEkdVhgZSk1JSxpDSBlNH1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKT1VJSVVKSlVKTUpZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
+In-Reply-To: <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-To simplify crash recovery and reduce performance impact, backing_ids
-are not persisted across daemon restarts. However, this creates a
-problem: when the daemon restarts and a process opens the same FUSE
-file, a new backing_id may be allocated for the same backing file. If
-the inode already has a cached backing file from before the restart,
-subsequent open requests with the new backing_id will fail in
-fuse_inode_uncached_io_start() due to fb mismatch, even though both
-IDs reference the identical underlying file.
+On Thu, Jan 15, 2026 at 05:21:04PM +1030, Qu Wenruo wrote:
+> So that means let btrfs to convert the temp fsid into metadata uuid, which 
+> I think is fine.
 
-Introduce the FOPEN_PASSTHROUGH_INODE_CACHE flag to address this
-issue. When set, the kernel reuses the backing file already cached in
-the inode.
+At least in XFS terms, that metadata uuid is the persistent, never
+changing uuid in the metadata headrs.
 
-Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
----
- fs/fuse/iomode.c          |  2 +-
- fs/fuse/passthrough.c     | 11 +++++++++++
- include/uapi/linux/fuse.h |  2 ++
- 3 files changed, 14 insertions(+), 1 deletion(-)
+> But the problem is that will change the fsid of the new fs, which may or 
+> may not be what's expected for the current temp fsid user (they really want 
+> two btrfs with the same fsid).
 
-diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
-index 3728933188f3..b200bb248598 100644
---- a/fs/fuse/iomode.c
-+++ b/fs/fuse/iomode.c
-@@ -163,7 +163,7 @@ static void fuse_file_uncached_io_release(struct fuse_file *ff,
-  */
- #define FOPEN_PASSTHROUGH_MASK \
- 	(FOPEN_PASSTHROUGH | FOPEN_DIRECT_IO | FOPEN_PARALLEL_DIRECT_WRITES | \
--	 FOPEN_NOFLUSH)
-+	 FOPEN_NOFLUSH | FOPEN_PASSTHROUGH_INODE_CACHE)
- 
- static int fuse_file_passthrough_open(struct inode *inode, struct file *file)
- {
-diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
-index 72de97c03d0e..fde4ac0c5737 100644
---- a/fs/fuse/passthrough.c
-+++ b/fs/fuse/passthrough.c
-@@ -147,16 +147,26 @@ ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma)
- /*
-  * Setup passthrough to a backing file.
-  *
-+ * If fuse inode backing is provided and FOPEN_PASSTHROUGH_INODE_CACHE flag
-+ * is set, try to reuse it first before looking up backing_id.
-+ *
-  * Returns an fb object with elevated refcount to be stored in fuse inode.
-  */
- struct fuse_backing *fuse_passthrough_open(struct file *file, int backing_id)
- {
- 	struct fuse_file *ff = file->private_data;
- 	struct fuse_conn *fc = ff->fm->fc;
-+	struct fuse_inode *fi = get_fuse_inode(file->f_inode);
- 	struct fuse_backing *fb = NULL;
- 	struct file *backing_file;
- 	int err;
- 
-+	if (ff->open_flags & FOPEN_PASSTHROUGH_INODE_CACHE) {
-+		fb = fuse_backing_get(fuse_inode_backing(fi));
-+		if (fb)
-+			goto do_open;
-+	}
-+
- 	err = -EINVAL;
- 	if (backing_id <= 0)
- 		goto out;
-@@ -166,6 +176,7 @@ struct fuse_backing *fuse_passthrough_open(struct file *file, int backing_id)
- 	if (!fb)
- 		goto out;
- 
-+do_open:
- 	/* Allocate backing file per fuse file to store fuse path */
- 	backing_file = backing_file_open(&file->f_path, file->f_flags,
- 					 &fb->file->f_path, fb->cred);
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index c13e1f9a2f12..3b681d502fc1 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -383,6 +383,7 @@ struct fuse_file_lock {
-  * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
-  * FOPEN_PARALLEL_DIRECT_WRITES: Allow concurrent direct writes on the same inode
-  * FOPEN_PASSTHROUGH: passthrough read/write io for this open file
-+ * FOPEN_PASSTHROUGH_INODE_CACHE: reuse the backing file for passthrough reads/writes
-  */
- #define FOPEN_DIRECT_IO		(1 << 0)
- #define FOPEN_KEEP_CACHE	(1 << 1)
-@@ -392,6 +393,7 @@ struct fuse_file_lock {
- #define FOPEN_NOFLUSH		(1 << 5)
- #define FOPEN_PARALLEL_DIRECT_WRITES	(1 << 6)
- #define FOPEN_PASSTHROUGH	(1 << 7)
-+#define FOPEN_PASSTHROUGH_INODE_CACHE	(1 << 8)
- 
- /**
-  * INIT request/reply flags
--- 
-2.43.0
+Which is really dangerous and should not be used in normal operation.
+For XFS with support it with a nouuid option, mostly for historic
+reasons and to be able to change the uuid transactional using an
+ioctl.
+
+> My initial idea for this problem is to let btrfs not generate a tempfsid 
+> automatically, but put some special flag (e.g. SINGLE_DEV compat ro flag) 
+> on those fses that want duplicated fsid.
+>
+> Then for those SINGLE_DEV fses, disable any multi-device related features, 
+> and use their dev_t to distinguish different fses just like EXT4/XFS, 
+> without bothering the current tempfsid hack, and just return the same fsid.
+
+dev_t is not related to the uuid in any way for XFS, and while I'm not
+an expert there I'm pretty sure ext4 uses the same not dev related uuid
+generation.
+
+> I'm wondering will that behavior (returning the same fsid) be acceptable 
+> for overlayfs?
+
+I still wonder what the use case is here.  Looking at André's original
+mail it states:
+
+"However, btrfs mounts may have volatiles UUIDs. When mounting the exact same
+disk image with btrfs, a random UUID is assigned for the following disks each
+time they are mounted, stored at temp_fsid and used across the kernel as the
+disk UUID. `btrfs filesystem show` presents that. Calling statfs() however
+shows the original (and duplicated) UUID for all disks."
+
+and this doesn't even talk about multiple mounts, but looking at
+device_list_add it seems to only set the temp_fsid flag when set
+same_fsid_diff_dev is set by find_fsid_by_device, which isn't documented
+well, but does indeed seem to be done transparently when two file systems
+with the same fsid are mounted.
+
+So André, can you confirm this what you're worried about?  And btrfs
+developers, I think the main problem is indeed that btrfs simply allows
+mounting the same fsid twice.  Which is really fatal for anything using
+the fsid/uuid, such NFS exports, mount by fs uuid or any sb->s_uuid user.
+
+> If so, I think it's time to revert the behavior before it's too late.
+> Currently the main usage of such duplicated fsids is for Steam deck to 
+> maintain A/B partitions, I think they can accept a new compat_ro flag for 
+> that.
+
+What's an A/B partition?  And how are these safely used at the same time?
 
 
