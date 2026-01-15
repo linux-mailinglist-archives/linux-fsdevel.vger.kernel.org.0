@@ -1,53 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-73856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AEF5D220A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 02:36:24 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6BEAD220E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 02:44:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id CF076302510D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 01:36:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AFF99306B787
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 01:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F58246798;
-	Thu, 15 Jan 2026 01:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6A925BF13;
+	Thu, 15 Jan 2026 01:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="5Aqrc6hM"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XFvKan/B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410322745C;
-	Thu, 15 Jan 2026 01:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6D027456;
+	Thu, 15 Jan 2026 01:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768440976; cv=none; b=rulu1NsNJP5THzD8Dp5Q9omMnFV9gzsWF93u5V+5vinowDrE1TpR/xvUhfpdnx3tDTzRYIB3JL2/0dHZ9uqhwPolulbgE8hlmHX6DMf5mI8hfuOk7FS9a7JljrxOnZktGc1kyelGC1aWEutTfGCRJSNnLVSGNCDCfNTchwFHLG8=
+	t=1768441434; cv=none; b=q1egvIPYtN6aYpfCNRvvE1m0Ak0aP4C2YvIDEsdl72iHwQRlNu8ZqewRh06HOEBuTMHbZxYdHfQWs1fy3oPV5siaY4wHA3iFhhnpnb9YHHTFbr41Vnxq9yiLI3bvX2waF/vP76nZWDCsSGKqIxpT8ouaBdMLtoAyitAuEbeWc8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768440976; c=relaxed/simple;
-	bh=0XBeZzNPeN3JM7RP2yW3y73LYfPE5WJGmuYip0PKvtE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=j6lPRDaU6giHALklQCOrECJaK7lepaer1Viwtt/MpofUOyWSDmgcmiLSSiST5wMXN5Dae3rKcnuhShN0J96s/VMQgQCFAIoHoQChrWQVetdNpD0yWwS+VoTXGrZErHrn99hnmhLi3GIKYJiivw8Aupr2mKOThMZZLk93EKJaqYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=5Aqrc6hM; arc=none smtp.client-ip=113.46.200.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=63L59MWlYvf8NPePrI0+yVoNuGGGBNGasjBzGUBsKy8=;
-	b=5Aqrc6hMyfywSV+uvMIIpEAmEvd64pc8GcZzEaUVBFMh441qIl4iIPugyvygZGyfajbB1R1E1
-	Z4xPvTKZL8RdtDb1Ouqagp8120iU3svliTy+wjVZkJB7V1dFHu04kvDM7UAPug5egobgG4pPlHC
-	o8fYXWROchvABb1wfGodbAM=
-Received: from mail.maildlp.com (unknown [172.19.163.0])
-	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4ds58B1nPkz1prmM;
-	Thu, 15 Jan 2026 09:32:42 +0800 (CST)
-Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2EE6140537;
-	Thu, 15 Jan 2026 09:36:04 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- kwepemr500015.china.huawei.com (7.202.195.162) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 15 Jan 2026 09:36:03 +0800
-Message-ID: <4152e93b-3f7d-4861-aad9-b7dc1ef71470@huawei.com>
-Date: Thu, 15 Jan 2026 09:36:02 +0800
+	s=arc-20240116; t=1768441434; c=relaxed/simple;
+	bh=U2oQyKelXBRdvp4rwjd/UwBcJoT/KPgH3btBzVrCZLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rt1Er/NuLCoK2QFkPcYnpY+yjVDtdEN1hGaGxRdZmKeuyZR2l2i3o+ga5jjEbITXoBvjTWKIPxtcguzOpGnOwZ4RNeMtgd+IFx88QaWy7mOsoC09ukyq+W2jykuEo0AXQe6msxKynqoBJax2DW9DzbPli1Z/LY0gssfwlq6DiC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XFvKan/B; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1768441429; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=VOr47FbS0wDXn2jkEdscUYJCk7XAlkjlew+1NUKh7yE=;
+	b=XFvKan/BejbRUI0Y57sC1I+XnObqSZyQ/xp5xfaWQ2QNhqgpx8O40kiVBw45eVJmCEaS1M4QfWigTjES3wAbHxsupggZOaHqzsnrdGchu63s5vzpUltBz3v5ex9y7rVCPhNSiOigLkx96oqdRqYEsHOOZAAV0hmIFMijNROKgYg=
+Received: from 30.221.132.28(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wx4jmrW_1768441428 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 15 Jan 2026 09:43:49 +0800
+Message-ID: <2f378658-ec10-4091-9f8d-02b19351cd44@linux.alibaba.com>
+Date: Thu, 15 Jan 2026 09:43:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,115 +46,99 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 08/10] erofs: support unencoded inodes for page cache
- share
-Content-Language: en-US
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-CC: <djwong@kernel.org>, <amir73il@gmail.com>, <hch@lst.de>,
-	<linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, Chao Yu <chao@kernel.org>, Christian Brauner
-	<brauner@kernel.org>
+Subject: Re: [PATCH v14 07/10] erofs: introduce the page cache share feature
+To: Hongbo Li <lihongbo22@huawei.com>
+Cc: djwong@kernel.org, amir73il@gmail.com, hch@lst.de,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, Chao Yu <chao@kernel.org>,
+ Christian Brauner <brauner@kernel.org>
 References: <20260109102856.598531-1-lihongbo22@huawei.com>
- <20260109102856.598531-9-lihongbo22@huawei.com>
- <2d33cc2f-8188-4e62-b0be-bf985237bf24@linux.alibaba.com>
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <2d33cc2f-8188-4e62-b0be-bf985237bf24@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <20260109102856.598531-8-lihongbo22@huawei.com>
+ <6defede0-2d2f-4193-8eb1-a1e1d842a8e3@linux.alibaba.com>
+ <6ccc0f3f-56a5-4edb-a4c9-72d6e5090b7b@huawei.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <6ccc0f3f-56a5-4edb-a4c9-72d6e5090b7b@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemr500015.china.huawei.com (7.202.195.162)
 
-Hi,Xiang
 
-On 2026/1/14 22:51, Gao Xiang wrote:
+
+On 2026/1/15 09:21, Hongbo Li wrote:
+> Hi,Xiang
 > 
-> 
-> On 2026/1/9 18:28, Hongbo Li wrote:
->> This patch adds inode page cache sharing functionality for unencoded
->> files.
+> On 2026/1/14 18:18, Gao Xiang wrote:
 >>
->> I conducted experiments in the container environment. Below is the
-
-...
->>               iomap->inline_data = ptr;
->> @@ -383,11 +385,16 @@ static int erofs_read_folio(struct file *file, 
->> struct folio *folio)
->>           .ops        = &iomap_bio_read_ops,
->>           .cur_folio    = folio,
->>       };
->> -    struct erofs_iomap_iter_ctx iter_ctx = {};
->> +    bool need_iput;
->> +    struct erofs_iomap_iter_ctx iter_ctx = {
->> +        .realinode = erofs_real_inode(folio_inode(folio), &need_iput),
->> +    };
->> -    trace_erofs_read_folio(folio, true);
->> +    trace_erofs_read_folio(iter_ctx.realinode, folio, true);
->>       iomap_read_folio(&erofs_iomap_ops, &read_ctx, &iter_ctx);
->> +    if (need_iput)
->> +        iput(iter_ctx.realinode);
->>       return 0;
->>   }
->> @@ -397,12 +404,17 @@ static void erofs_readahead(struct 
->> readahead_control *rac)
->>           .ops        = &iomap_bio_read_ops,
->>           .rac        = rac,
->>       };
->> -    struct erofs_iomap_iter_ctx iter_ctx = {};
->> +    bool need_iput;
->> +    struct erofs_iomap_iter_ctx iter_ctx = {
->> +        .realinode = erofs_real_inode(rac->mapping->host, &need_iput),
->> +    };
->> -    trace_erofs_readahead(rac->mapping->host, readahead_index(rac),
->> +    trace_erofs_readahead(iter_ctx.realinode, readahead_index(rac),
->>                       readahead_count(rac), true);
+>>
+>> On 2026/1/9 18:28, Hongbo Li wrote:
+>>> From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+>>>
+> ...
 > 
-> Is it possible to add a commit to update the tracepoints
-> to add the new realinode first?
+>>> +
+>>> +static int erofs_ishare_iget5_set(struct inode *inode, void *data)
+>>> +{
+>>> +    struct erofs_inode *vi = EROFS_I(inode);
+>>> +
+>>> +    vi->fingerprint = *(struct erofs_inode_fingerprint *)data;
+>>> +    INIT_LIST_HEAD(&vi->ishare_list);
+>>> +    spin_lock_init(&vi->ishare_lock);
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +bool erofs_ishare_fill_inode(struct inode *inode)
+>>> +{
+>>> +    struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
+>>> +    struct erofs_inode *vi = EROFS_I(inode);
+>>> +    struct erofs_inode_fingerprint fp;
+>>> +    struct inode *sharedinode;
+>>> +    unsigned long hash;
+>>> +
+>>> +    if (erofs_xattr_fill_inode_fingerprint(&fp, inode, sbi->domain_id))
+>>> +        return false;
+>>> +    hash = xxh32(fp.opaque, fp.size, 0);
+>>> +    sharedinode = iget5_locked(erofs_ishare_mnt->mnt_sb, hash,
+>>> +                   erofs_ishare_iget5_eq, erofs_ishare_iget5_set,
+>>> +                   &fp);
+>>> +    if (!sharedinode) {
+>>> +        kfree(fp.opaque);
+>>> +        return false;
+>>> +    }
+>>> +
+>>> +    vi->sharedinode = sharedinode;
+>>> +    if (inode_state_read_once(sharedinode) & I_NEW) {
+>>> +        if (erofs_inode_is_data_compressed(vi->datalayout)) {
+>>> +            sharedinode->i_mapping->a_ops = &z_erofs_aops;
+>>
+>> It seems that it caused a build warning:
+>> https://lore.kernel.org/r/202601130827.dHbGXL3Y-lkp@intel.com
+>>
+>>> +        } else {
+>>> +            sharedinode->i_mapping->a_ops = &erofs_aops;
+>>> +#ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
+>>> +            if (erofs_is_fileio_mode(sbi))
+>>> +                sharedinode->i_mapping->a_ops = &erofs_fileio_aops;
+>>> +#endif
+>>> +        }
+>>
+>> Can we introduce a new helper for those aops setting? such as:
+>>
+>> void erofs_inode_set_aops(struct erofs_inode *inode,
+>>                struct erofs_inode *realinode, bool no_fscache)
+> 
+> Yeah, good idea. So it also can be reuse in erofs_fill_inode.
+> 
+> And how about declearing it as "int erofs_iode_set_aops(struct erofs_inode *inode, struct erofs_inode *realinode, bool no_fscache)"; because the compressed case may return -EOPNOTSUPP and it seems we cannot break this in advance.
 
-Yeah, so should we put the update on trace_erofs_read_folio and 
-trace_erofs_readahead in a single patch after "[PATCH v14 03/10] fs: 
-Export alloc_empty_backing_file"?
+yes, `int` return is good.
 
-  Since the first two patches in this series has merged in vfs tree 
-(thanks Christian), should we reorder the left patches?
+>  And can we mark it inline?
+
+you could move this one to internal.h.
 
 Thanks,
-Hongbo
+Gao Xiang
 
-
-> 
-> Also please fix the indentation in that commit together.
-> 
->>       iomap_readahead(&erofs_iomap_ops, &read_ctx, &iter_ctx);
->> +    if (need_iput)
->> +        iput(iter_ctx.realinode);
->>   }
->>   static sector_t erofs_bmap(struct address_space *mapping, sector_t 
->> block)
->> @@ -423,7 +435,9 @@ static ssize_t erofs_file_read_iter(struct kiocb 
-
-...
->>   }
->>   const struct address_space_operations erofs_fileio_aops = {
->> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
->> index bce98c845a18..52179b706b5b 100644
->> --- a/fs/erofs/inode.c
->> +++ b/fs/erofs/inode.c
->> @@ -215,6 +215,8 @@ static int erofs_fill_inode(struct inode *inode)
->>       case S_IFREG:
->>           inode->i_op = &erofs_generic_iops;
->>           inode->i_fop = &erofs_file_fops;
->> +        if (erofs_ishare_fill_inode(inode))
->> +            inode->i_fop = &erofs_ishare_fops;
-> 
->          inode->i_fop = erofs_ishare_fill_inode(inode) ?
->              &erofs_ishare_fops : &erofs_file_fops;
-
-Ok, will update.
-
-> 
-> Otherwise it looks good to me.
 > 
 > Thanks,
-> Gao Xiang
+> Hongbo
 
