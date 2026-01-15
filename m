@@ -1,148 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-73946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFD1D2605A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 18:02:37 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA426D268EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 18:38:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id BD355306DA96
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 17:00:24 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 6634A307E917
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 17:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD53839B4BF;
-	Thu, 15 Jan 2026 17:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104433BC4F2;
+	Thu, 15 Jan 2026 17:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wT445DsQ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZkMk3BoJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965882D3733
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 17:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7865921CC5A;
+	Thu, 15 Jan 2026 17:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768496422; cv=none; b=sKUs+awQ0IBftN05P3b9yTjVUC1pfB2CTwYNB4KERZs6i5E7sqDGlB6PSI6K6/Ous2Im9Xnq5uZBKnkzklCVQKkrorSCOErAPKZHIGTJ3REeUzfoYl2HozAcyLq2/+ow3UaBLpM6SjhpmCR5zAAz9cWG9ueK7FATXSGM94Aq2Ng=
+	t=1768497824; cv=none; b=Ya8PLU4dOMh1iBpBtbMQbcgxd8H+Q3Yb1XE8wnDMCdP60QmYGbscqdYrOhX3P1PWqm6f/9j1I8gCK6pBtV1FmPSskpAqLCYCiYPk6/6bsbFOH+qSzpSFPNMyID8XWI1/R68vGDL0YJjencYZwib0k6BddnxWvwTrMIEsVpMnaBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768496422; c=relaxed/simple;
-	bh=BtokHh4+lGUXhkRc80WbQQozqtSuNo+ZLaEDaAPJVvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XgfOrwf+e9RDNQ5bhTn5Pbod6IUNROaXIZgWMwn+MehlV6ZIX52KYeSr4H9tGTrMWdC6Pn2+gJB09Xsb05B4s+1/VHIf+yCW3lBYfrYVHGRcoxcDZnLEMyNzenPfllZdo79HdumfXiFyV0GpvmSbDYb9dWiVRKVkLq5+yuR4tp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wT445DsQ; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 15 Jan 2026 17:00:04 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1768496417;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VFhntWShXHgOAIorUq2E/j9pvFsqctkiMpQmDw8UuZQ=;
-	b=wT445DsQd4/3Xmj+RvJ2Ntg8GFkTgTIfwuwltdPW2wrMKBYK1L/wQAA7vFELJHski3hyGh
-	MmBUfmpJyjXE7E7f69igcg9ZrmSZjp6krqT/hyIEEmg+mPBDUzac1RCa+KgWCgebP2ws3G
-	mIFyVcZuKu0Q3CLBz6F5nVMY3RU3Z6Y=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: Gregory Price <gourry@gourry.net>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-team@meta.com, 
-	longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com, 
-	corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, 
-	dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com, 
-	alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com, 
-	dan.j.williams@intel.com, akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com, 
-	mhocko@suse.com, jackmanb@google.com, ziy@nvidia.com, david@kernel.org, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com, yury.norov@gmail.com, 
-	linux@rasmusvillemoes.dk, rientjes@google.com, shakeel.butt@linux.dev, chrisl@kernel.org, 
-	kasong@tencent.com, shikemeng@huaweicloud.com, bhe@redhat.com, baohua@kernel.org, 
-	chengming.zhou@linux.dev, roman.gushchin@linux.dev, muchun.song@linux.dev, 
-	osalvador@suse.de, matthew.brost@intel.com, joshua.hahnjy@gmail.com, 
-	rakie.kim@sk.com, byungchul@sk.com, ying.huang@linux.alibaba.com, 
-	apopple@nvidia.com, cl@gentwo.org, harry.yoo@oracle.com, zhengqi.arch@bytedance.com
-Subject: Re: [RFC PATCH v3 7/8] mm/zswap: compressed ram direct integration
-Message-ID: <e6eydzdvuiktmalhcmoiwsgzjbw5v7t4532fkbroylwr5cqetx@v6pgjaoxgmyz>
-References: <20260108203755.1163107-1-gourry@gourry.net>
- <20260108203755.1163107-8-gourry@gourry.net>
- <i6o5k4xumd5i3ehl6ifk3554sowd2qe7yul7vhaqlh2zo6y7is@z2ky4m432wd6>
- <aWF1uDdP75gOCGLm@gourry-fedora-PF4VCD3F>
- <4ftthovin57fi4blr2mardw4elwfsiv6vrkhrjqjsfvvuuugjj@uivjc5uzj5ys>
- <CAKEwX=MftJXOE8H=m1C=_RVL8cu516efixTwcaQMBB9pdj=K+g@mail.gmail.com>
- <CAKEwX=M8=vDO_pg5EJWiaNnJQpob8=NWvbZzssKKPpzs24wj+A@mail.gmail.com>
+	s=arc-20240116; t=1768497824; c=relaxed/simple;
+	bh=xNZV2rjWU8AJVcpuiDjRkANG358phhfsXyjNpxmLiI4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=d7YYHAtsAP0IR/s0Snb2dtGl/hLOntWRev3bPcjAfAZ3GsH81U93OaZvnVtD5fBn3i1Bm/24nXY1zh2WQqzptDCjQxdEIeLeKghi/o3CBR7y4Xnm53qYXu4swTN6Lsn7CQ3eFx7lznBu5mqju3NvOpQgN1b2w1kxjwfVwI7CkDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZkMk3BoJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 002BEC116D0;
+	Thu, 15 Jan 2026 17:23:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1768497824;
+	bh=xNZV2rjWU8AJVcpuiDjRkANG358phhfsXyjNpxmLiI4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZkMk3BoJHTfqlD6ayweDOZG5P+a+s7sLELeELwXjwWwDz/gLryhMbh6nNBbDsGXg3
+	 PlkV4COBPS1+fweLZuR3pArpyJ4lPSgDPD60Ko2w7s9EAbsU+w5PoMRNLjmoSr8y0K
+	 EO5jbRStqnpCBUYckNdokrTqyhxzvWymXYOiMLO4=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Yangtao Li <frank.li@vivo.com>,
+	linux-fsdevel@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.15 217/554] hfsplus: fix volume corruption issue for generic/070
+Date: Thu, 15 Jan 2026 17:44:43 +0100
+Message-ID: <20260115164254.104176818@linuxfoundation.org>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260115164246.225995385@linuxfoundation.org>
+References: <20260115164246.225995385@linuxfoundation.org>
+User-Agent: quilt/0.69
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKEwX=M8=vDO_pg5EJWiaNnJQpob8=NWvbZzssKKPpzs24wj+A@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jan 13, 2026 at 04:49:20PM +0900, Nhat Pham wrote:
-> On Tue, Jan 13, 2026 at 4:35 PM Nhat Pham <nphamcs@gmail.com> wrote:
-> >
-> > > This part needs more thought. Zswap cannot charge a full page because
-> > > then from the memcg perspective reclaim is not making any progress.
-> > > OTOH, as you mention, from the system perspective we just consumed a
-> > > full page, so not charging that would be inconsistent.
-> > >
-> > > This is not a zswap-specific thing though, even with cram.c we have to
-> > > figure out how to charge memory on the compressed node to the memcg.
-> > > It's perhaps not as much of a problem as with zswap because we are not
-> > > dealing with reclaim not making progress.
-> > >
-> > > Maybe the memcg limits need to be "enlightened" about different tiers?
-> > > We did have such discussions in the past outside the context of
-> > > compressed memory, for memory tiering in general.
-> >
-> > What if we add a reclaim flag that says "hey, we are hitting actual
-> > memory limit and need to make memory reclaim forward progress".
-> >
-> > Then, we can have zswap skip compressed cxl backend and fall back to
-> > real compression.
-> >
-> > (Maybe also demotion, which only move memory from one node to another,
-> > as well as the new cram.c stuff? This will technically also save some
-> > wasted work, as in the status quo we will need to do a demotion pass
-> > first, before having to reclaiom memory from the bottom tier anyway?
-> > But not sure if we want this).
-> 
-> Some more thoughts - right now demotion is kinda similar, right? We
-> move pages from one node (fast tier) to another (slow tier). This
-> frees up space in the fast tier, but it actually doesn't change the
-> memcg memory usage. So we are not making "forward progress" with this
-> either.
-> 
-> I suppose this is fine-ish, because reclaim subsystem can then proceed
-> by reclaiming from the bottom tier, which will now go to disk swap,
-> zswap, etc.
-> 
-> Can we achieve the same effect by making pages in
-> zswap-backed-by-compressed-cxl reclaimable:
-> 
-> 1. Recompression - take them off compressed cxl and store them in
-> zswap proper (i.e in-memory compression).
+5.15-stable review patch.  If anyone has any objections, please let me know.
 
-I think the whole point of using compressed cxl with zswap is saving
-memory in the top-tier, so this would be counter-productive (probably
-even if we use slightly less memory in the top-tier).
+------------------
 
-> 
-> 2. Just enable zswap shrinker and have memory reclaim move these pages
-> into disk swap. This will have a much more drastic performance
-> implications though :)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
 
-I think what you're getting it as that we can still make forward
-progress after memory lands in compressed cxl. But moving memory to
-compressed cxl is already forward progress that reclaim won't capture if
-we charge memory as a full page. I think this is the crux of the issue.
+[ Upstream commit ed490f36f439b877393c12a2113601e4145a5a56 ]
 
-We need to figure out how to make accounting work such that moving
-memory to compressed cxl is forward progress, but make sure we don't
-break the overall accounting consisteny. If we only charge the actual
-compressed size, then from the system perspective there is a page that
-is only partially charged and the rest of it is more-or-less leaked.
+The xfstests' test-case generic/070 leaves HFS+ volume
+in corrupted state:
+
+sudo ./check generic/070
+FSTYP -- hfsplus
+PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.17.0-rc1+ #4 SMP PREEMPT_DYNAMIC Wed Oct 1 15:02:44 PDT 2025
+MKFS_OPTIONS -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+
+generic/070 _check_generic_filesystem: filesystem on /dev/loop50 is inconsistent
+(see xfstests-dev/results//generic/070.full for details)
+
+Ran: generic/070
+Failures: generic/070
+Failed 1 of 1 tests
+
+sudo fsck.hfsplus -d /dev/loop50
+** /dev/loop50
+Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
+Executing fsck_hfs (version 540.1-Linux).
+** Checking non-journaled HFS Plus Volume.
+The volume name is test
+** Checking extents overflow file.
+Unused node is not erased (node = 1)
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+Verify Status: VIStat = 0x0000, ABTStat = 0x0000 EBTStat = 0x0004
+CBTStat = 0x0000 CatStat = 0x00000000
+** Repairing volume.
+** Rechecking volume.
+** Checking non-journaled HFS Plus Volume.
+The volume name is test
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking multi-linked files.
+** Checking catalog hierarchy.
+** Checking extended attributes file.
+** Checking volume bitmap.
+** Checking volume information.
+** The volume test was repaired successfully.
+
+It is possible to see that fsck.hfsplus detected not
+erased and unused node for the case of extents overflow file.
+The HFS+ logic has special method that defines if the node
+should be erased:
+
+bool hfs_bnode_need_zeroout(struct hfs_btree *tree)
+{
+	struct super_block *sb = tree->inode->i_sb;
+	struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
+	const u32 volume_attr = be32_to_cpu(sbi->s_vhdr->attributes);
+
+	return tree->cnid == HFSPLUS_CAT_CNID &&
+		volume_attr & HFSPLUS_VOL_UNUSED_NODE_FIX;
+}
+
+However, it is possible to see that this method works
+only for the case of catalog file. But debugging of the issue
+has shown that HFSPLUS_VOL_UNUSED_NODE_FIX attribute has been
+requested for the extents overflow file too:
+
+catalog file
+kernel: hfsplus: node 4, num_recs 0, flags 0x10
+kernel: hfsplus: tree->cnid 4, volume_attr 0x80000800
+
+extents overflow file
+kernel: hfsplus: node 1, num_recs 0, flags 0x10
+kernel: hfsplus: tree->cnid 3, volume_attr 0x80000800
+
+This patch modifies the hfs_bnode_need_zeroout() by checking
+only volume_attr but not the b-tree ID because node zeroing
+can be requested for all HFS+ b-tree types.
+
+sudo ./check generic/070
+FSTYP         -- hfsplus
+PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.18.0-rc3+ #79 SMP PREEMPT_DYNAMIC Fri Oct 31 16:07:42 PDT 2025
+MKFS_OPTIONS  -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+
+generic/070 33s ...  34s
+Ran: generic/070
+Passed all 1 tests
+
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/20251101001229.247432-1-slava@dubeyko.com
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/hfsplus/bnode.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
+index e566cea238279..358294726ff17 100644
+--- a/fs/hfsplus/bnode.c
++++ b/fs/hfsplus/bnode.c
+@@ -717,6 +717,5 @@ bool hfs_bnode_need_zeroout(struct hfs_btree *tree)
+ 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
+ 	const u32 volume_attr = be32_to_cpu(sbi->s_vhdr->attributes);
+ 
+-	return tree->cnid == HFSPLUS_CAT_CNID &&
+-		volume_attr & HFSPLUS_VOL_UNUSED_NODE_FIX;
++	return volume_attr & HFSPLUS_VOL_UNUSED_NODE_FIX;
+ }
+-- 
+2.51.0
+
+
+
 
