@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-74020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74021-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045ECD28D44
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 22:47:44 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48177D28DDA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 22:51:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 4B76A300E43C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 21:47:39 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 80E6A30C7BB4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 21:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A60432C92E;
-	Thu, 15 Jan 2026 21:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB66C32C316;
+	Thu, 15 Jan 2026 21:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ow6+L3Jv"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cqSIEd9q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68B730F539
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 21:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DDA32BF5D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 21:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768513653; cv=none; b=h1zwMGz2ISKZ0EXrAeGLpZMGbHgojk342FXGPfsflCfcWFwHlYt5Clzcnia4hF1LcYL6KS6dFpAIr2hEV/3mf6KBHms5CYajtq9/ruoxQ6+v7JS08RQRrHztkKunPXh1g3eOQ2LYaQKyWIFORdsyKwg7XTeXYvMrppGvKdzC5eU=
+	t=1768513693; cv=none; b=q9/yrMEDSi3hDJRJCO2mz2+ANtqeFw+pDVw24KGs8r3bJyAylKcg/dqMP09EY+QCKUqmSTUp1kNVnEp5N1Bf4izwrpQ6/h7ziCAQUSloqgR8mTguHWmC7iM75hG0llQ9R/LrupOhVkx3DXzB1DOvR2hY58xKUphKDkDlQnoYVjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768513653; c=relaxed/simple;
-	bh=v118hUkz4tlXR7MqYZI3xl/4gAf6dCbuf95gCRXXIrU=;
+	s=arc-20240116; t=1768513693; c=relaxed/simple;
+	bh=MU9UbiYSxwq7GU1nltEpbwVASUYpa31Sn9dlFINSwh0=;
 	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BoF4d1y8S6lltXQhZidpDp/5LMrj269lSfBGVr0NbQzkQIzfY1pj/rZvAu1dKJGXhYIZ4yQCIuhgB8Ngxrn0hrdnbM6xx2SPYQllButNDJgetBKiDrg95hUi7OAel4hnI8bmZM3HsMyJrqTRvEbGxC+Z+xavOeoa8/GALW4r39A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ow6+L3Jv; arc=none smtp.client-ip=209.85.221.169
+	 To:Cc:Content-Type; b=hgR2D4kB4f5y3xRjSwSkFrRYmT+IygeFvsD7cuBjFbr+GsvDplmp1o/UZSW9vbZG8ksfxA1dO/bYa6qlI9INTTA74CHnmZPcBS8ge7XPC8VTwqSsUmpvyVBb8RfAZ3B34bu288PQTPIMfl6pvcl3PyNnvURcw6lcssogJoMPjb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cqSIEd9q; arc=none smtp.client-ip=209.85.217.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-55b219b2242so901597e0c.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 13:47:30 -0800 (PST)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5ef31a77afbso1723966137.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 13:48:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1768513650; x=1769118450; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1768513690; x=1769118490; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
          :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YBmCHfpLlL8iGEYc8icjykZfZHQFfzihdrkSCqexEsw=;
-        b=ow6+L3Jv9a/FkO+DpFkWjzwxsnboP7BDQZScRUf4BezPwQCrkSMSMdYf1Eqf6BvGoH
-         pGP7EH9rXmLpU7QEe2PXrWahO7DW6ZE8yy0GGGakUxCd2ObgGyBsCvBtqGIgZMwrBkJU
-         m5Lr3KT/UxOUCiTfJ5fdryYau02usZAzhAxSq7cnbduQBogZc2JrNCex9HxiBKdhrOE4
-         x6jn5u3DMpCyqlToH6Kata50cPEWXrWlmfoXz2Abj74/usGSAMd5Bs5RWA7YRrG/LSCU
-         mPSUTpEsrng87GMRSWr+bQ4IiCpqJ0CRkyzc94YAR3798ZRpFEM+pzCznojcUZvgjqsL
-         bIeg==
+        bh=z1tpnpSOuS/Js87YOF2H5fRocDrhGRoFky0mpImVftk=;
+        b=cqSIEd9qiHPgHv9gnqDiu3reQxfeO0tkgd+5NyxqoUiXxTTY1xYs5N+D/Yx2VTOgAw
+         oZhH50bnPM0uhtaWpNGAtaAjBrF9FHEA6YxnaaZr7riCjv1BNC6qtFmk69RNE7r53SHx
+         VKXyzCi9Y0qQdep1iIB8vbfhubd3t1YJARk+m+3+wPLxcE0/tRfVXdnm1ll2ORSvmMwY
+         3xsuvbANRR0TTYvFAw4FJATQ4OkmIw7nTyMGisctV+OhlabYE21bB5FivmZSc+CqXZ/B
+         vvEqYQtxJl+71+fJSkloq9e0rjHwNgX9T+y+ekloRmiVSCZPQUApt7UCEsBuXHbYG+Qf
+         rykQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768513650; x=1769118450;
+        d=1e100.net; s=20230601; t=1768513690; x=1769118490;
         h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
          :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YBmCHfpLlL8iGEYc8icjykZfZHQFfzihdrkSCqexEsw=;
-        b=YelFXoxnFFGLyzMI5EOTsyCDw6e9OsBmazooth6xFJ4YvEAcSgGPjuPtOxvRHgF6Fv
-         MhEsHv6Fqv6nCUhd30uGKfixz2xb24491jdnkPSPUfp6BHY/tjQXrt/8IY06f0k4uZIs
-         2MKxqxBjJWh5rfJTLnlDdS0ly4TfN2+CjySbS+WEyyz4gh2M7wf0aejOs/vkjOfOoMeK
-         g60WAoS7yVvGDSPdniAXMjA/vup22AbktDZu6DTc5HdVGg5xAu6l6gzFFr7URFz9jI0d
-         XL0hP9COkXGSRnULmv7hQ+I7E0wbN88FNkexD6kXftbW1TL8UYcw/1eGbbroi0QzE2mE
-         lv+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUqdDgeIKN0lWLmJ9jd5RH2DAxN6y8l+yAB8pJ3SPsN+b8olcOy4MSJT0zSX7Gj6/IuxqZR70ISvpRlgQvC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6q2RplLn9yldUXEwKI5muw9VD0nNYrqLupoU3dvJlolo4Y6tv
-	kd7uhNeyPHXh81zThYPJk4OSQFuIOYbkwO8973E4YC3HB9I1nPdSDbmkpY240lskVYQSQcoEQi3
-	39yB34JGZnaf2OHQqLnJM1v3gni4Noa/i1ithynOG
-X-Gm-Gg: AY/fxX5qXiKxX6OgwDdxh1YL8VnYcjLZtHFV29fq5MztgTxjlqhI0yWTMMvTRzNa8mH
-	gwCK+p6vhe+QRDzhj1JiRXcu8sj565RTFMaYEqe96p2Ees3JzJZwgvRJa0CUm4O83x0qx2UBD4W
-	K8T+fD74mkbnCMyQ22SfOwHRWeDxaoXvEoOQRgWSbNi4M+yIx29LlVBRJkmB+MlS4js+HsQj8kB
-	fAbbafF3dF8ZkfXxMbZRjPGzFXW3nv6zkx0DXtP/XWVR1z3H6Bf35s+sUKkeDhlGPoEGjYHgH26
-	C63E6idqCbSOP9U2OxpACCdDQQ==
-X-Received: by 2002:a05:6122:500a:b0:563:466c:2 with SMTP id
- 71dfb90a1353d-563aa9aae66mr1528951e0c.5.1768513649399; Thu, 15 Jan 2026
- 13:47:29 -0800 (PST)
+        bh=z1tpnpSOuS/Js87YOF2H5fRocDrhGRoFky0mpImVftk=;
+        b=oY/2VrekMBF1DKU2wIVjYggFO0h9XUnh/jD8xE0OUqssl8lFvby04GUTp1TlVliWJz
+         mwomUHa8/OMK7+1BuH3Ifm8Nz1aDCBswmwp+W60FsHDHiXw8DXe/V2OsUSehQQQr8r7I
+         R4Fu4iLVKSC32SON7v+kbgzGTsQxG4jFCVs1wga8Gkt1N66XdL55PEOBgQKmJBeorLe9
+         ROP5rcQzgoY5IoVN4QeWCyH4PgrZ4Qhn00wMnM42I1+qIAjW+9VIRgK1XZkC6La2fUSk
+         YoHOAm7/755t8utWuZ2zkI0McMmUwxmbaO9JX6my2GTxcD1N0QuYenhMypQb9oQ33c7x
+         vHLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVw0sw9DJdXjNbozbEBjKknr3KZ3VaR2IU2p22m83Gk5TvXgsFaEn45Jufh5nQ0W0x5udx517WtwPmFXckN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4CBZ6DVhbI2b+Z73nEDxMhzTUxDKB6735zXCd7U8J5CgYI2cE
+	sfFHjspRmisAd0NRK95TL+loh5fiMvf1g47VUd8MTSzdBafx89HXCSbHxJBwM7ePvNTKL/RdMwQ
+	1d1E3k+uvbRYJbA3fBBHx8DriXz+2BwnkBb2ZmxGM
+X-Gm-Gg: AY/fxX51rLQz00YccKJJ0UNUg/3WfdE3SnqCwaBo2AIcgxoQOJmuzjHsG40Pk//i6LT
+	AYhErnFSpJtzp+VYEqXMW+xlaZ4xfzlvx8fa2p90Rol35UoPABZO0qTarzySTJVTB2WAVYRM2NX
+	hJB4a6CGIwqFsTmf8vYntBPlQGvaLLQkQ4YGpOQPFYZEPy/rOIrD9/J4LS3fALLNrXa5a1qb/l1
+	tvS0UbxzPvwLW3/WDdX41uyUom5cFzKk0Eo3YOIhfuvqmGeuiBC0rKwJAkHVDb37Nwk9UGpsEqZ
+	aWkrX13Kno9P4lLc8JAuhVZzG3VQ9jvKaYgQ
+X-Received: by 2002:a05:6102:f13:b0:5ec:3107:6b71 with SMTP id
+ ada2fe7eead31-5f192508297mr1821684137.14.1768513689093; Thu, 15 Jan 2026
+ 13:48:09 -0800 (PST)
 Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 15 Jan 2026 13:47:28 -0800
+ HTTPREST; Thu, 15 Jan 2026 13:48:08 -0800
 Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 15 Jan 2026 13:47:28 -0800
+ HTTPREST; Thu, 15 Jan 2026 13:48:08 -0800
 From: Ackerley Tng <ackerleytng@google.com>
-In-Reply-To: <20260114134510.1835-5-kalyazin@amazon.com>
-References: <20260114134510.1835-1-kalyazin@amazon.com> <20260114134510.1835-5-kalyazin@amazon.com>
+In-Reply-To: <20260114134510.1835-6-kalyazin@amazon.com>
+References: <20260114134510.1835-1-kalyazin@amazon.com> <20260114134510.1835-6-kalyazin@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 15 Jan 2026 13:47:28 -0800
-X-Gm-Features: AZwV_QiX95-0WFEZIhu3a0jzKlg7ft8DnUjTu2uxi7sdZ3xYcaUb3m6pe5q87wE
-Message-ID: <CAEvNRgFihTZg_-R8yEytDLVxbiF34nFgTEsghMp6tzBvazVqoA@mail.gmail.com>
-Subject: Re: [PATCH v9 04/13] KVM: guest_memfd: Add stub for kvm_arch_gmem_invalidate
+Date: Thu, 15 Jan 2026 13:48:08 -0800
+X-Gm-Features: AZwV_QhGkMBioMKFssSOB50hq7Zm3qSZq1aP9Of9c8wem-vUHGjRo2vWaCWRwKU
+Message-ID: <CAEvNRgEhcTE70RLiQo2C_XUdF31qSkQ6yHwpUiXPWb6+6mmA0A@mail.gmail.com>
+Subject: Re: [PATCH v9 05/13] KVM: x86: define kvm_arch_gmem_supports_no_direct_map()
 To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
 	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
@@ -142,66 +142,42 @@ Content-Type: text/plain; charset="UTF-8"
 
 > From: Patrick Roy <patrick.roy@linux.dev>
 >
-> Add a no-op stub for kvm_arch_gmem_invalidate if
-> CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE=n. This allows defining
-> kvm_gmem_free_folio without ifdef-ery, which allows more cleanly using
-> guest_memfd's free_folio callback for non-arch-invalidation related
-> code.
+> x86 supports GUEST_MEMFD_FLAG_NO_DIRECT_MAP whenever direct map
+> modifications are possible (which is always the case).
 >
-> Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
 > Signed-off-by: Patrick Roy <patrick.roy@linux.dev>
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 > Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
 > ---
->  include/linux/kvm_host.h | 2 ++
->  virt/kvm/guest_memfd.c   | 4 ----
->  2 files changed, 2 insertions(+), 4 deletions(-)
+>  arch/x86/include/asm/kvm_host.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 >
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index d93f75b05ae2..27796a09d29b 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -2589,6 +2589,8 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t gfn, void __user *src, long npages
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 5a3bfa293e8b..68bd29a52f24 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -28,6 +28,7 @@
+>  #include <linux/sched/vhost_task.h>
+>  #include <linux/call_once.h>
+>  #include <linux/atomic.h>
+> +#include <linux/set_memory.h>
 >
->  #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
->  void kvm_arch_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end);
-> +#else
-> +static inline void kvm_arch_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end) { }
->  #endif
->
->  #ifdef CONFIG_KVM_GENERIC_PRE_FAULT_MEMORY
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index fdaea3422c30..92e7f8c1f303 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -527,7 +527,6 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
->  	return MF_DELAYED;
+>  #include <asm/apic.h>
+>  #include <asm/pvclock-abi.h>
+> @@ -2481,4 +2482,12 @@ static inline bool kvm_arch_has_irq_bypass(void)
+>  	return enable_device_posted_irqs;
 >  }
 >
-> -#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
->  static void kvm_gmem_free_folio(struct folio *folio)
->  {
->  	struct page *page = folio_page(folio, 0);
-> @@ -536,15 +535,12 @@ static void kvm_gmem_free_folio(struct folio *folio)
->
->  	kvm_arch_gmem_invalidate(pfn, pfn + (1ul << order));
->  }
-> -#endif
->
->  static const struct address_space_operations kvm_gmem_aops = {
->  	.dirty_folio = noop_dirty_folio,
->  	.migrate_folio	= kvm_gmem_migrate_folio,
->  	.error_remove_folio = kvm_gmem_error_folio,
-> -#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
->  	.free_folio = kvm_gmem_free_folio,
-> -#endif
->  };
->
->  static int kvm_gmem_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+> +#ifdef CONFIG_KVM_GUEST_MEMFD
+> +static inline bool kvm_arch_gmem_supports_no_direct_map(void)
+> +{
+> +	return can_set_direct_map();
+> +}
+> +#define kvm_arch_gmem_supports_no_direct_map kvm_arch_gmem_supports_no_direct_map
+> +#endif /* CONFIG_KVM_GUEST_MEMFD */
+> +
+>  #endif /* _ASM_X86_KVM_HOST_H */
 > --
 > 2.50.1
-
-Like this change, thanks!
 
 Reviewed-by: Ackerley Tng <ackerleytng@google.com>
 
