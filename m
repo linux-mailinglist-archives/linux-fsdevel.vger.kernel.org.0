@@ -1,127 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-73866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47FB0D22247
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 03:36:39 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9BB0D22256
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 03:38:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id B4BC13015A49
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 02:36:22 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 57367303C80F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 02:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D066B260569;
-	Thu, 15 Jan 2026 02:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9674426ED25;
+	Thu, 15 Jan 2026 02:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cSKy71o1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FpD4vkM2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1E4258ED7;
-	Thu, 15 Jan 2026 02:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C14023ABBF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 02:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768444578; cv=none; b=q01nLnbEF1A/1tWtsYrr8if8RRvSSo8M2JLecKC0RwzIBf0BrfnK469f9mbHMk3UQ6WVsUncveAvjUWZYe6o6yxPwPY7JlVmexg1TCTGlgUi9xdZUgI6xbPt5Ps0UNHD9TCMfzAWSW4GLD+9bRi5XtxuU4Yw5uRiT/KY1njZdws=
+	t=1768444682; cv=none; b=Sgg2SG5oYmDI3ts8yQlEw28+FIWzY0UBNMXmvPOeV4bSeOVZRdFHvNjMT+WlxcyW/sf3m2UmviCradDrvZ41esKUCcI0YxthAqLXVgeUNJ1bkr4d584ozED1SU7ej41bPE3dlSHSaPWh2aSYH43GCWf3OUDKOat2AMCPuX4S76c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768444578; c=relaxed/simple;
-	bh=KZpinX3RiivWcfdAw7wQOKcAUe67ijTBUBtKTqVy9K0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FpfIIGHuHHVg2afRmTFx1kdQ0ocrGIDn40Mr0owJVdjPEn9uBKXFR2AJAjyfJrYLCHyR9LvH3WsFFjmCrSR/aY+lLahdDNJaabG0/rbNqywzG+CX32nDchqnwI2mwz0Nwl+k1Fs5a5WZCAkC4NWuhm8O1EqZOvWhMaY+VN2mKxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cSKy71o1; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1768444568; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=IgRImgNWDmTVO+fH6eIxyTunq1UJJ6/Ba6iabchJk2c=;
-	b=cSKy71o1oosR5lUAhuU7V531gZSbQdZPK/sAnk9Qk9q8BIo6CJMD2udcgrW2FHeQ4TbzKAbKwvQPWEBrOO2a+MzTMIAxzokgan7FLLZotWo3re33JBubPBtKcXnj7dsnXGLuk7JUShxG97VsTmFUaybJ7jClRNcGNfaSQsbJ1sQ=
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Wx4vaSl_1768444567 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 15 Jan 2026 10:36:08 +0800
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-To: miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org,
-	joannelkoong@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	horst@birthelmer.de,
-	joseph.qi@linux.alibaba.com
-Subject: [PATCH v3] fuse: fix premature writetrhough request for large folio
-Date: Thu, 15 Jan 2026 10:36:07 +0800
-Message-Id: <20260115023607.77349-1-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
+	s=arc-20240116; t=1768444682; c=relaxed/simple;
+	bh=ZyTV8v3kJsnWNNopSIKvamZVH6nq3QsgjYdvF1pX7HI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SaipOQeO0OW77Z3Mtu2eMY8PBY7Bec+7cLhHdzjoffXjccv/HBGHfrQWo8BZXHU2zlw9bldNmjRd2dGxEOdWQMjtQ1MwjZ60ljWqTZaj9mE8Mfz3zeK75APcWJQTIVBu/G/RkTCeD75yrFK92qFsezWk3j8GdQmF0FAb7IS0n/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FpD4vkM2; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-50146fcf927so12587041cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 18:38:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768444679; x=1769049479; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tpTqbj9eVEKEyMAUgGaXErqkh+1ZH5X37iNQJIuNlIM=;
+        b=FpD4vkM2VoofVkoUzJJCpmGb+q9oIeFJpV/YfogrQai/y7NNopGx0nzxUws/0oGsT4
+         +Wi/7Rdu+dV7D7CnhUowRDsgVlt4D9YS8Lp2fJ3QOb+UUVC8oXutZ+USw8UGSZlonnP7
+         wqkHbIVdScuKjlATzHCUmEatBaRTi33tsuXeCGyUpEmr/cPwX7eCxocx/GOgDwk6GrVQ
+         TgYtwco+hOSIVJbQnvikJh0nObcJ1187Q08kyPOFtJQs6ZIbWda8weCJ9RQVe0y4ag/a
+         yiPEOugH3/cdZB5tP4cmZ4qf6a7yQUU6CQnyYltgwjIKMdjmZljSf6OpagqbtRjxXc8j
+         CAjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768444679; x=1769049479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=tpTqbj9eVEKEyMAUgGaXErqkh+1ZH5X37iNQJIuNlIM=;
+        b=l/VF8Rw43DES1lG5m6iY0Rpv4OyX52Bbs54cIeSA+PKbTHpnhi5t0LC9TegLB0AnEu
+         g+Lt2napJwVAiXc9aJiG0JyVK+/REIUwkdlBNGEm7vkw3i9a3nh93X/XyRZ2p/52uRvk
+         i9cjH75740i7HlysymVG/Gsx0htpzYbypn8Ggn9Uv9SMS+b0mGTgcNlO8DnzAhJ3fLFR
+         SAD6UGsTBptb4biFaGFG+JnJZ0XuUWaVsGeWVCB908/z56ewKRPVgZzQytS5lQ1kDDNk
+         T3mEXDZmIu7Sgvw+TcjVZQHMdFv/ORfelosAhNqPDRfaPlAhlzj2g3uoIjbZaWewsIE4
+         i5rg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8uIgByfp5u8op17cSkUWw5zcZPwEQy39Mo3xyo2XSlPZiL3GpvfxjqntoJ5GyMe2Mtn8Gpe+VxgZfGUAL@vger.kernel.org
+X-Gm-Message-State: AOJu0YxutGP3O55zHdtx8oc6S5cFGjK/fpj4jDrKOipcF+WsN99oYNrF
+	zTIq63U2Nx8RvM70nyhS6uKHCxBAO5I4RA1eKhi86NZpI2tnx16iklTmxdfHacDp5P1/ZIGXbYj
+	fOT0PELM7RgQbIgpw2rCNEj567XUtGnAG1mmMOfU=
+X-Gm-Gg: AY/fxX4dRFln2sv/rIf1PGFomae3q11M3iy5E74FA3w5s+QGP/dH4+3K4IyILHIxsuB
+	3LsaFRsgtGmIj909uZHxay98zd4DRWXjwEp25o8HrbwW5op9V1A3z+MVmaEuaDoYg4fr8J1RQr2
+	m85WoLLbp+i8QQkN8+ojxd9UjL0jGizDEHD1ywcdTxxn1c2036Ot5XtGYpScCXf7PQ/UAAf7ErM
+	pOrzabq9Z8hpTFMoLMhcoqDzWoXiWKgV5lz4sn/1EPnegQpFAeRzCNvV+AWehbkbEKA1g==
+X-Received: by 2002:a05:622a:2443:b0:4ff:82aa:d845 with SMTP id
+ d75a77b69052e-5019f901a4fmr25448841cf.41.1768444679300; Wed, 14 Jan 2026
+ 18:37:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260109-fuse-compounds-upstream-v4-0-0d3b82a4666f@ddn.com> <20260109-fuse-compounds-upstream-v4-2-0d3b82a4666f@ddn.com>
+In-Reply-To: <20260109-fuse-compounds-upstream-v4-2-0d3b82a4666f@ddn.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 14 Jan 2026 18:37:48 -0800
+X-Gm-Features: AZwV_QhdtDkaBozF4fWC8yra3ouwZeWjSJVoTrW0FeTagjijSR6Ytel8fT2wA9E
+Message-ID: <CAJnrk1aS=zJvBNwUFmM+vos36i3nY2UaZzZv96vDikuHr8SLqA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] fuse: create helper functions for filling in fuse
+ args for open and getattr
+To: Horst Birthelmer <horst@birthelmer.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Horst Birthelmer <hbirthelmer@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When large folio is enabled and the initial folio offset exceeds
-PAGE_SIZE, e.g. the position resides in the second page of a large
-folio, after the folio copying the offset (in the page) won't be updated
-to 0 even though the expected range is successfully copied until the end
-of the folio.  In this case fuse_fill_write_pages() exits prematurelly
-before the request has reached the max_write/max_pages limit.
+On Fri, Jan 9, 2026 at 10:27=E2=80=AFAM Horst Birthelmer <horst@birthelmer.=
+com> wrote:
+>
+> From: Horst Birthelmer <hbirthelmer@ddn.com>
+>
+> create fuse_getattr_args_fill() and fuse_open_args_fill() to fill in
+> the parameters for the open and getattr calls.
+>
+> This is in preparation for implementing open+getattr and does not
+> represent any functional change.
+>
+> Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
+> ---
+>  fs/fuse/dir.c    |  9 +--------
+>  fs/fuse/file.c   | 42 ++++++++++++++++++++++++++++++++++--------
+>  fs/fuse/fuse_i.h |  8 ++++++++
+>  3 files changed, 43 insertions(+), 16 deletions(-)
+>
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 4b6b3d2758ff..ca8b69282c60 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -1493,14 +1493,7 @@ static int fuse_do_getattr(struct mnt_idmap *idmap=
+, struct inode *inode,
+>                 inarg.getattr_flags |=3D FUSE_GETATTR_FH;
+>                 inarg.fh =3D ff->fh;
+>         }
+> -       args.opcode =3D FUSE_GETATTR;
+> -       args.nodeid =3D get_node_id(inode);
+> -       args.in_numargs =3D 1;
+> -       args.in_args[0].size =3D sizeof(inarg);
+> -       args.in_args[0].value =3D &inarg;
+> -       args.out_numargs =3D 1;
+> -       args.out_args[0].size =3D sizeof(outarg);
+> -       args.out_args[0].value =3D &outarg;
+> +       fuse_getattr_args_fill(&args, get_node_id(inode), &inarg, &outarg=
+);
+>         err =3D fuse_simple_request(fm, &args);
+>         if (!err) {
+>                 if (fuse_invalid_attr(&outarg.attr) ||
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 01bc894e9c2b..53744559455d 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -23,6 +23,39 @@
+>  #include <linux/task_io_accounting_ops.h>
+>  #include <linux/iomap.h>
+>
+> +/*
+> + * Helper function to initialize fuse_args for OPEN/OPENDIR operations
+> + */
+> +void fuse_open_args_fill(struct fuse_args *args, u64 nodeid, int opcode,
+> +                        struct fuse_open_in *inarg, struct fuse_open_out=
+ *outarg)
+> +{
+> +       args->opcode =3D opcode;
+> +       args->nodeid =3D nodeid;
+> +       args->in_numargs =3D 1;
+> +       args->in_args[0].size =3D sizeof(*inarg);
+> +       args->in_args[0].value =3D inarg;
+> +       args->out_numargs =3D 1;
+> +       args->out_args[0].size =3D sizeof(*outarg);
+> +       args->out_args[0].value =3D outarg;
+> +}
+> +
+> +/*
+> + * Helper function to initialize fuse_args for GETATTR operations
+> + */
+> +void fuse_getattr_args_fill(struct fuse_args *args, u64 nodeid,
+> +                            struct fuse_getattr_in *inarg,
+> +                            struct fuse_attr_out *outarg)
+> +{
+> +       args->opcode =3D FUSE_GETATTR;
+> +       args->nodeid =3D nodeid;
+> +       args->in_numargs =3D 1;
+> +       args->in_args[0].size =3D sizeof(*inarg);
+> +       args->in_args[0].value =3D inarg;
+> +       args->out_numargs =3D 1;
+> +       args->out_args[0].size =3D sizeof(*outarg);
+> +       args->out_args[0].value =3D outarg;
+> +}
 
-Fix this by eliminating page offset entirely and use folio offset
-instead.
+sorry to be so nitpicky but I think we should move this to the
+fuse/dir.c file since that's where the main fuse_do_getattr() function
+lives
 
-Fixes: d60a6015e1a2 ("fuse: support large folios for writethrough writes")
-Reviewed-by: Horst Birthelmer <hbirthelmer@ddn.com>
-Reviewed-by: Joanne Koong <joannelkoong@gmail.com>
-Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
----
-changes since v2:
-- drop stable CC tag; add Reviewed-by tag by Joanne
+> +
+>  static int fuse_send_open(struct fuse_mount *fm, u64 nodeid,
+>                           unsigned int open_flags, int opcode,
+>                           struct fuse_open_out *outargp)
+> @@ -40,14 +73,7 @@ static int fuse_send_open(struct fuse_mount *fm, u64 n=
+odeid,
+>                 inarg.open_flags |=3D FUSE_OPEN_KILL_SUIDGID;
+>         }
+>
+> -       args.opcode =3D opcode;
+> -       args.nodeid =3D nodeid;
+> -       args.in_numargs =3D 1;
+> -       args.in_args[0].size =3D sizeof(inarg);
+> -       args.in_args[0].value =3D &inarg;
+> -       args.out_numargs =3D 1;
+> -       args.out_args[0].size =3D sizeof(*outargp);
+> -       args.out_args[0].value =3D outargp;
+> +       fuse_open_args_fill(&args, nodeid, opcode, &inarg, outargp);
+>
+>         return fuse_simple_request(fm, &args);
+>  }
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 6dddbe2b027b..98ea41f76623 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -1179,6 +1179,14 @@ struct fuse_io_args {
+>  void fuse_read_args_fill(struct fuse_io_args *ia, struct file *file, lof=
+f_t pos,
+>                          size_t count, int opcode);
+>
+> +/*
+> + * Helper functions to initialize fuse_args for common operations
+> + */
+> +void fuse_open_args_fill(struct fuse_args *args, u64 nodeid, int opcode,
+> +                        struct fuse_open_in *inarg, struct fuse_open_out=
+ *outarg);
 
-v1: https://lore.kernel.org/all/20260114055615.17903-1-jefflexu@linux.alibaba.com/
-v2: https://lore.kernel.org/all/20260114124514.62998-1-jefflexu@linux.alibaba.com/
----
- fs/fuse/file.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+I don't think we need this for fuse_open_args_fill() here since it'll
+be used only in the scope of fuse/file.c
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 625d236b881b..6aafb32338b6 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1272,7 +1272,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
- {
- 	struct fuse_args_pages *ap = &ia->ap;
- 	struct fuse_conn *fc = get_fuse_conn(mapping->host);
--	unsigned offset = pos & (PAGE_SIZE - 1);
- 	size_t count = 0;
- 	unsigned int num;
- 	int err = 0;
-@@ -1299,7 +1298,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
- 		if (mapping_writably_mapped(mapping))
- 			flush_dcache_folio(folio);
- 
--		folio_offset = ((index - folio->index) << PAGE_SHIFT) + offset;
-+		folio_offset = offset_in_folio(folio, pos);
- 		bytes = min(folio_size(folio) - folio_offset, num);
- 
- 		tmp = copy_folio_from_iter_atomic(folio, folio_offset, bytes, ii);
-@@ -1329,9 +1328,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
- 		count += tmp;
- 		pos += tmp;
- 		num -= tmp;
--		offset += tmp;
--		if (offset == folio_size(folio))
--			offset = 0;
- 
- 		/* If we copied full folio, mark it uptodate */
- 		if (tmp == folio_size(folio))
-@@ -1343,7 +1339,9 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
- 			ia->write.folio_locked = true;
- 			break;
- 		}
--		if (!fc->big_writes || offset != 0)
-+		if (!fc->big_writes)
-+			break;
-+		if (folio_offset + tmp != folio_size(folio))
- 			break;
- 	}
- 
--- 
-2.19.1.6.gb485710b
+Thanks,
+Joanne
 
+> +void fuse_getattr_args_fill(struct fuse_args *args, u64 nodeid,
+> +                           struct fuse_getattr_in *inarg,
+> +                           struct fuse_attr_out *outarg);
+>
+>  struct fuse_file *fuse_file_alloc(struct fuse_mount *fm, bool release);
+>  void fuse_file_free(struct fuse_file *ff);
+>
+> --
+> 2.51.0
+>
 
