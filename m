@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-74007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC27D284CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 21:06:08 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265C9D284D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 21:06:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C50C23085A78
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 20:05:19 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id EA68F3021684
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 20:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85778321F3E;
-	Thu, 15 Jan 2026 20:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047D3322B7B;
+	Thu, 15 Jan 2026 20:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTa8MIJd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9u0J1eI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECD22E2DD2;
-	Thu, 15 Jan 2026 20:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D84C31AF17;
+	Thu, 15 Jan 2026 20:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768507517; cv=none; b=Km92HHgyVcegSJ+LAiBUKFcfzTJiHeLhie1Ok4gQEXtzA/Y/v1cZK9tATaA3m2q9wrPY8J72zj1WNomy7rZJr5AnAakOwdh/m3gikQNHJ2yVq3fw77aQz1TpilUWywdvRK1M9jYlIOwg482FybjnB9GNsyp9WgNotwucbc/LgMY=
+	t=1768507560; cv=none; b=TA0Xu2cbxx9oEB755jMBNI4Z3awfG4PSffNXXOaobW7OYdQiWi6p2RIotORtb0A4509wlMWHiW/BW2eW2P4nXnSdNv8ED473qRyaQxqxwXl0b10YufIoTVHFV/b7TSzYjfKvmC5vBIjTelA5sWRO1WG7850erYLxjduFLbUYCLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768507517; c=relaxed/simple;
-	bh=lQjunlFmWyMO2lfyt6MHYKOuxFN86jW9uoYrdok36A8=;
+	s=arc-20240116; t=1768507560; c=relaxed/simple;
+	bh=/Lm/cQ9KIdEqaaWKki03cmuum9MrucbonYVIjYH818M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jIDVOpDs/ItQAF4RIVRPHB4EyHq0Zc4krPZMfYALZepDqOZoGuovbY9f4SdVf13Sjqmgh+z0YdhtBs6csY2FOqJIoBNrk3nKYe8H/wCayg1Xa/okVSaFF/fgCL5k+Nu1M2SewjmMkSyDcf/pZ2C7tOK+m4oOCY14brYt6+VCkFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTa8MIJd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E28F2C116D0;
-	Thu, 15 Jan 2026 20:04:55 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=r6pgnrZZwOnvPXdPsd9TA2t0UukUwoSUm4Vd987CZAPRdB6Z2inUr+02OMPxl+olO9GEbNITKw1gCgD4O3bKnd7Qk3dOU75zkZ2HYXk2/e2bY4eJ7Cb8kkjYsb6KauGlbyc9rQAnOGvKUipHT1mSSUbZ+vclHHeIEIjWDIZMOpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9u0J1eI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 916F3C16AAE;
+	Thu, 15 Jan 2026 20:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768507516;
-	bh=lQjunlFmWyMO2lfyt6MHYKOuxFN86jW9uoYrdok36A8=;
+	s=k20201202; t=1768507560;
+	bh=/Lm/cQ9KIdEqaaWKki03cmuum9MrucbonYVIjYH818M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZTa8MIJdGFVQHgLEluZ/7czewla0UppxdIHdajnxQJ86ydTVGfwKSu4XthtERI+Vz
-	 S7jrcXlBas27eS2MD4ilzRDMMXPl6T6E9jYdkN/V3bG/5qyCeBpbvRRFaNhMqR87Hm
-	 yrOWl7tr7bFwfCbSmttXaEGvHuYhAhBIYs9iTNdkypXcZ/3ehKbdUJ5MQS1tZScIOZ
-	 Lz9G5U6aHuy7cuX5bsreQjYhVzcGgutkYcdoBCPkgmmWwt3c+xpapY6koSIGNeH02C
-	 QufrTuCkot6ZMrQ56wj3oSRSVREgueyuJyGpm1FzrzpV7YI01LIlEB9EnK1pBzpzlg
-	 IStbdOwUJqRaA==
-Message-ID: <e00da5d6-3589-481d-adb0-6c57e727486b@kernel.org>
-Date: Thu, 15 Jan 2026 21:04:53 +0100
+	b=O9u0J1eIRihxKr5zUB4ypIjP14vCCSOt21wOcHu1CjjTUe4M2/FwpBFEeZFhTeiiN
+	 JpaYWCpuQfRoQvHUmsJSQ/x4Gem9BP4aeYu0ESw4FG+nbCfU2XB1eb42KSzHf0CChu
+	 /w/MGvvPPKIB1faCQ/snYVf2ogs3ndSI1dQgZpekp6GnmHaXSVwAD8G7R6tlxlWqWr
+	 8QpKSe0qBPrxHhF3H5cwPuTQVeobV4EG/CoX7uWK8O31hJINQw1IlbbCxfZ4SKLqWE
+	 s6odfsHBjSloFK+AYdCE8jAWn9P5kaxB/0XRHh6xgj1z3nFOrjdQx6FsL25eGM5OIK
+	 2KevP7wjRCs+w==
+Message-ID: <2219ec0f-edc4-4267-b251-ee060fd951e2@kernel.org>
+Date: Thu, 15 Jan 2026 21:05:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -48,10 +48,11 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 02/13] mm/gup: drop secretmem optimization from
- gup_fast_folio_allowed
-To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+Subject: Re: [PATCH v9 01/13] set_memory: add folio_{zap, restore}_direct_map
+ helpers
+To: kalyazin@amazon.com, Matthew Wilcox <willy@infradead.org>,
+ "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
  "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
  "linux-arm-kernel@lists.infradead.org"
@@ -64,9 +65,9 @@ To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
  "kernel@xen0n.name" <kernel@xen0n.name>,
  "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
  "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
- "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "corbet@lwn.net" <corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>,
+ "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net"
+ <corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>,
  "oupton@kernel.org" <oupton@kernel.org>,
  "joey.gouly@arm.com" <joey.gouly@arm.com>,
  "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
@@ -79,7 +80,6 @@ Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
  "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
  "luto@kernel.org" <luto@kernel.org>,
  "peterz@infradead.org" <peterz@infradead.org>,
- "willy@infradead.org" <willy@infradead.org>,
  "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
  "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
  "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
@@ -134,7 +134,9 @@ Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
  "Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco"
  <xmarcalx@amazon.co.uk>
 References: <20260114134510.1835-1-kalyazin@amazon.com>
- <20260114134510.1835-3-kalyazin@amazon.com>
+ <20260114134510.1835-2-kalyazin@amazon.com>
+ <aWkN4yzwPtotaTeq@casper.infradead.org>
+ <34b246e9-0f7a-4ed6-9e43-845c4238bf41@amazon.com>
 From: "David Hildenbrand (Red Hat)" <david@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
@@ -180,30 +182,35 @@ Autocrypt: addr=david@kernel.org; keydata=
  cFAM8nBWrEmNU2vvIGJzjJ/NVYYIY0TgOc5bS9wh6jKHL2+chrfDW5neLJjY2x3snF8q7U9G
  EIbBfNHDlOV8SyhEjtX0DyKxQKioTYPOHcW9gdV5fhSz5tEv+ipqt4kIgWqBgzK8ePtDTqRM
  qZq457g1/SXSoSQi4jN+gsneqvlTJdzaEu1bJP0iv6ViVf15+qHuY5iojCz8fa0=
-In-Reply-To: <20260114134510.1835-3-kalyazin@amazon.com>
+In-Reply-To: <34b246e9-0f7a-4ed6-9e43-845c4238bf41@amazon.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 1/14/26 14:45, Kalyazin, Nikita wrote:
-> From: Patrick Roy <patrick.roy@linux.dev>
+On 1/15/26 18:45, Nikita Kalyazin wrote:
 > 
-> This drops an optimization in gup_fast_folio_allowed() where
-> secretmem_mapping() was only called if CONFIG_SECRETMEM=y. secretmem is
-> enabled by default since commit b758fe6df50d ("mm/secretmem: make it on
-> by default"), so the secretmem check did not actually end up elided in
-> most cases anymore anyway.
 > 
-> This is in preparation of the generalization of handling mappings where
-> direct map entries of folios are set to not present.  Currently,
-> mappings that match this description are secretmem mappings
-> (memfd_secret()).  Later, some guest_memfd configurations will also fall
-> into this category.
+> On 15/01/2026 15:55, Matthew Wilcox wrote:
+>> On Wed, Jan 14, 2026 at 01:45:23PM +0000, Kalyazin, Nikita wrote:
+>>> +int folio_zap_direct_map(struct folio *folio)
+>>> +{
+>>> +     return set_direct_map_valid_noflush(folio_page(folio, 0),
+>>> +                                         folio_nr_pages(folio), false);
+>>> +}
+>>
+>> The implementation isn't the greatest.  None of the implementations
+>> of set_direct_map_valid_noflush() actually do anything with the struct
+>> page; they all call page_address() or page_to_virt() (fundamentally the
+>> same thing).  So converting folio->page->address is a bit inefficient.
+>>
+>> It feels like we should change set_direct_map_valid_noflush() to take a
+>> const void * and pass either page_address() or folio_address(), depending
+>> whether the caller has a page or a folio.  What do you think?
 > 
-> Signed-off-by: Patrick Roy <patrick.roy@linux.dev>
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
+> I have nothing against that.  execmem_set_direct_map_valid() appears to
+> be the only other user of set_direct_map_valid_noflush() so it isn't
+> going to be a broad change.
 
-Acked-by: David Hildenbrand (Red Hat) <david@kernel.org>
+Makes perfect sense to me :)
 
 -- 
 Cheers
