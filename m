@@ -1,123 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-73890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E4BD22CC3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 08:23:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81047D22FFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 09:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id DBF1C3059463
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 07:23:24 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 5989A301503D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 08:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED2A328605;
-	Thu, 15 Jan 2026 07:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40AB032B9BB;
+	Thu, 15 Jan 2026 08:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="CNBb5r92"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED1131328D;
-	Thu, 15 Jan 2026 07:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289F12DC781
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 08:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768461802; cv=none; b=IF/R/8qEsLd2lptjlL8ejEsaEbsn0vyeOdTZuUwiO39aFuf7F4MItcn15AQYP02SFpU2tPCwQUwpq5VuJ1kg8dJQMtF2mVCiHtm+D5m2zJ8uK6FIYFWG7VcVMAENoJNokXQs9DGn1Pzap1pPkCIAW5JXgbOmX+RH8YAPxMdJJKs=
+	t=1768464363; cv=none; b=lxC5lrcP3IS+LwVZQ0nP6j4vEI2aV8tRc4acYZMHZIXH4CIkU7SXHy5Lcy9IhYBs6u49M+KNkZzFEGp6ibvVHYMY56Bs35sXyG/LgWPqk4V6GfdMV08fSbzlFVTjFvu+DztNm3fCudUSXbiCUDAi/4YAFm1iHSyZwlySdDDSZAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768461802; c=relaxed/simple;
-	bh=O1BNHKLn5erkcEmGXQ2si3MlRqbzcIIYuajlpLP7xkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tlq14n0dvqXhrCFMQZYwxLt4CXszRTG0tlMCrR+L0pc4DTtcBo6pjwyhH5DnGT871SlNaT2yGR183iCuiOkAy/sgllKqcjw+tmkskR0eKlSN1tlss8IhSOlS7Sy9eqNuuwgSD6d6GaEbhZuxM6mY/RhCOXWY4hHA3PDDDwafROI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 630AD227AA8; Thu, 15 Jan 2026 08:23:12 +0100 (CET)
-Date: Thu, 15 Jan 2026 08:23:12 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Qu Wenruo <wqu@suse.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	kernel-dev@igalia.com
-Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
-Message-ID: <20260115072311.GA10352@lst.de>
-References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com> <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com> <20260114062608.GB10805@lst.de> <5334ebc6-ceee-4262-b477-6b161c5ca704@igalia.com> <20260115062944.GA9590@lst.de> <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com>
+	s=arc-20240116; t=1768464363; c=relaxed/simple;
+	bh=Pke2mtwVAhr+tf/SMwTMuDM2D4BIZ9xVMuSa0st1F5A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NXY4IxVPuc1b+o0vjEEzt9t2CUFVIEubgrbhDphxDPEJi2jzuvOKorXerldbCJhRucznCpijAEJK6BYG8xmlzipciUsgLUk8jDMCPv1pgcTfrKa+A3Dlt3dVJU5ZswP6KD3q7nFIGy1mqUFX8x+KLRB1NpBlag+ZMRAJCj6JUzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=CNBb5r92; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1768463982;
+	bh=Pke2mtwVAhr+tf/SMwTMuDM2D4BIZ9xVMuSa0st1F5A=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=CNBb5r92qMUKm885rC5HkbYAu4MdCpe4mw0KzWQwcwer+KiR58PMd3+5DJxC5lDWJ
+	 n7eQWnEsZPAy6oClMIo/L089oQqomUYRsYd6YGfeBBOQFvrQFfVSwSKVIJIHd+Jo8w
+	 TXrqvy54YhXTqXNZ34crbiQzVzERO/graow9TdaQ=
+Received: from [127.0.0.1] (2607-8700-5500-e873-0000-0000-0000-1001.16clouds.com [IPv6:2607:8700:5500:e873::1001])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id BC2B066CE6;
+	Thu, 15 Jan 2026 02:59:41 -0500 (EST)
+Message-ID: <7b964b35e86d73816a395e72bac7e2e73ff8dd6d.camel@xry111.site>
+Subject: Behavior difference of copy_file_range of compat syscall vs. real
+ 32-bit kernel (was: [PATCH 0/3] Fix and improve tst-copy_file_range on
+ Linux >= 6.18)
+From: Xi Ruoyao <xry111@xry111.site>
+To: Miklos Szeredi <mszeredi@redhat.com>, Adhemerval Zanella Netto
+	 <adhemerval.zanella@linaro.org>, Stefan Liebler <stli@linux.ibm.com>, 
+	libc-alpha@sourceware.org
+Cc: linux-fsdevel@vger.kernel.org
+Date: Thu, 15 Jan 2026 15:59:39 +0800
+In-Reply-To: <68ad3720281ba534a5fdb3f5c5251dc5426f23db.camel@xry111.site>
+References: <20260108072756.47858-1-xry111@xry111.site>
+	 <7467585.QJadu78ljV@kona>
+	 <f1942599cc16166b56e08927c53c2471d0bea477.camel@xry111.site>
+	 <8357318.ejJDZkT8p0@kona>
+	 <e05fd602-1267-4419-aa3a-24254b7b5ee0@linux.ibm.com>
+	 <bd764907-b130-426d-bc8d-d042fb4afea4@linaro.org>
+	 <68ad3720281ba534a5fdb3f5c5251dc5426f23db.camel@xry111.site>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, Jan 15, 2026 at 05:21:04PM +1030, Qu Wenruo wrote:
-> So that means let btrfs to convert the temp fsid into metadata uuid, which 
-> I think is fine.
+On Wed, 2026-01-14 at 10:40 +0800, Xi Ruoyao wrote:
+> On Tue, 2026-01-13 at 10:45 -0300, Adhemerval Zanella Netto wrote:
+>=20
+> > > But in 32bit-compat mode (on i686 and s390), they still fail on linux
+> > > > =3D6.18:
+> > > ../sysdeps/unix/sysv/linux/tst-copy_file_range-large.c:201: numeric
+> > > comparison failure (widths 32 and 64)
+> > > =C2=A0=C2=A0 left: 2147479552 (0x7ffff000); from: copied
+> > > =C2=A0 right: 2147483647 (0x7fffffff); from: size
+> > > ...
+> > > error: 6 test failures
+> > >=20
+> > > Without the exact comparison ...
+> > > =C2=A0 if (atomic_load (&fuse_has_copy_file_range_64))
+> > > =C2=A0=C2=A0=C2=A0 TEST_COMPARE (copied, size);
+> > >=20
+> > > ... there are no fails and thus it also passes the follow-on comparis=
+on:
+> > > =C2=A0=C2=A0=C2=A0=C2=A0 We must AND the expression with SSIZE_MAX fo=
+r 32-bit platforms where
+> > > =C2=A0=C2=A0=C2=A0=C2=A0 SSIZE_MAX is less than UINT_MAX.
+> > > =C2=A0 */
+> > > =C2=A0 if (copied !=3D size)
+> > > =C2=A0=C2=A0=C2=A0 TEST_COMPARE (copied, (UINT_MAX & ~(getpagesize ()=
+ - 1)) & SSIZE_MAX);
+> > >=20
+> > >=20
+> > > Do you also see those fails?
+> >=20
+> > I have tested only on x86_64 and aarch64; but I can confirm that at lea=
+st
+> > with i686 the test still fails.
+>=20
+> Oops, in compat syscall the length is already clamped in fs/read_write.c
+> by the kernel:
+>=20
+> =C2=A0=C2=A0=C2=A0 /*
+> =C2=A0=C2=A0=C2=A0=C2=A0 * Make sure return value doesn't overflow in 32b=
+it compat mode.=C2=A0 Also
+> =C2=A0=C2=A0=C2=A0=C2=A0 * limit the size for all cases except when calli=
+ng ->copy_file_range().
+> =C2=A0=C2=A0=C2=A0=C2=A0 */
+> =C2=A0=C2=A0=C2=A0 if (splice || !file_out->f_op->copy_file_range || in_c=
+ompat_syscall())
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 len =3D min_t(size_t, MAX_RW_C=
+OUNT, len);
+>=20
+> But then FUSE still uses COPY_FILE_RANGE_64, thus our
+> fuse_has_copy_file_range_64 flag is still raised.=C2=A0 Maybe we should j=
+ust
+> skip setting fuse_has_copy_file_range_64 on 32-bit.
+>=20
+> Also I'm unsure if the check in kernel is really sufficient: what will
+> happen if we call copy_file_range() on a real 32-bit kernel instead of
+> as a compat syscall?
 
-At least in XFS terms, that metadata uuid is the persistent, never
-changing uuid in the metadata headrs.
+Hmm, we indeed have a behavior difference here.
 
-> But the problem is that will change the fsid of the new fs, which may or 
-> may not be what's expected for the current temp fsid user (they really want 
-> two btrfs with the same fsid).
+On a real 32-bit kernel, when len is in (0x7ffff000, 0x80000000), the
+value is used as-is; and when len is 0x80000000 or larger, EINVAL is
+returned.
 
-Which is really dangerous and should not be used in normal operation.
-For XFS with support it with a nouuid option, mostly for historic
-reasons and to be able to change the uuid transactional using an
-ioctl.
+For a compat syscall on a 64-bit kernel, when len is 0x7ffff001 or
+larger, it's clamped to 0x7ffff000.
 
-> My initial idea for this problem is to let btrfs not generate a tempfsid 
-> automatically, but put some special flag (e.g. SINGLE_DEV compat ro flag) 
-> on those fses that want duplicated fsid.
->
-> Then for those SINGLE_DEV fses, disable any multi-device related features, 
-> and use their dev_t to distinguish different fses just like EXT4/XFS, 
-> without bothering the current tempfsid hack, and just return the same fsid.
+I think I'll adapt the Glibc test case for the difference, but I'm
+unsure if we need to strictly keep the behavior aligned on real 32-bit
+kernel and for the compat syscall on 64-bit (maybe it can be considered
+a "bug-level compatibility" that we never guarantee but I'm just
+unsure).
 
-dev_t is not related to the uuid in any way for XFS, and while I'm not
-an expert there I'm pretty sure ext4 uses the same not dev related uuid
-generation.
-
-> I'm wondering will that behavior (returning the same fsid) be acceptable 
-> for overlayfs?
-
-I still wonder what the use case is here.  Looking at André's original
-mail it states:
-
-"However, btrfs mounts may have volatiles UUIDs. When mounting the exact same
-disk image with btrfs, a random UUID is assigned for the following disks each
-time they are mounted, stored at temp_fsid and used across the kernel as the
-disk UUID. `btrfs filesystem show` presents that. Calling statfs() however
-shows the original (and duplicated) UUID for all disks."
-
-and this doesn't even talk about multiple mounts, but looking at
-device_list_add it seems to only set the temp_fsid flag when set
-same_fsid_diff_dev is set by find_fsid_by_device, which isn't documented
-well, but does indeed seem to be done transparently when two file systems
-with the same fsid are mounted.
-
-So André, can you confirm this what you're worried about?  And btrfs
-developers, I think the main problem is indeed that btrfs simply allows
-mounting the same fsid twice.  Which is really fatal for anything using
-the fsid/uuid, such NFS exports, mount by fs uuid or any sb->s_uuid user.
-
-> If so, I think it's time to revert the behavior before it's too late.
-> Currently the main usage of such duplicated fsids is for Steam deck to 
-> maintain A/B partitions, I think they can accept a new compat_ro flag for 
-> that.
-
-What's an A/B partition?  And how are these safely used at the same time?
-
+--=20
+Xi Ruoyao <xry111@xry111.site>
 
