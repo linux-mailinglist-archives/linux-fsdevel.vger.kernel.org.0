@@ -1,89 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-73871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C402D2248D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 04:20:34 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CFFD224FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 04:34:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id CFB0C30060F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 03:20:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C3F22302BA4C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 03:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB51B2749DF;
-	Thu, 15 Jan 2026 03:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB77F2BD59C;
+	Thu, 15 Jan 2026 03:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="btlUjL16"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTxM/Hu9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E797B2641C6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 03:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABB4200113
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 03:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768447223; cv=none; b=s7wmfWIqR8wM5qlRAfbc4Xt3YUMzhFB8VgYMAVLZxWvCPSXbAZt4dsWRbSPvXP1etRaBwIKFgdzGAvFGa9swTFTva6QUREXXjL4Z2ZefBWkcUaCJgftE2IPrxJp2skPrEvSHxV+pR2hq7DEagr6Pfsw1e69MpsQjuWzFt2ytFp4=
+	t=1768448076; cv=none; b=rLKti+HFWE9F9HjYEwoQ5OqmYvKPXN+dtv09YmT0u6ffSvl7gp89qzlQO6ArrxowREN5dk1kk4ct8D2qf9JpERNZXBb4U+Ihi7YhpCnHAV45f7Vbd+Q3II8/tWp3vf5pbtsQHHfE29YzjstFCsz89/LpZliNheaUZf8sGhJlMaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768447223; c=relaxed/simple;
-	bh=upkeY48wkxEI/Uops1fgvv5r4MWDRauu4M3UNZQqQZY=;
+	s=arc-20240116; t=1768448076; c=relaxed/simple;
+	bh=TgVo0YpssYH9bEiZz1EwIQbCyPcuH1+ffxTaU/WHhmY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UMBF9Bf3UtF4RZWXDtVU0cPaY/iJ37uZJN/ez3TE4XZVsR4D1IYF0V1yzicBOFQ4aTOD/OWWOpXSkwbxOpMYtoOA8cKSoch+GcuhXOkKnV2B6S5iknj4KOGTZsCnpVt7o4RgTZtN2337ER679nuep2duC8/HW6yHvLN0PIucKMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=btlUjL16; arc=none smtp.client-ip=209.85.210.170
+	 Content-Type:Content-Disposition:In-Reply-To; b=dE+tLIPkkom8l0+mqD0XGBbCtmHrmMRVpW03ghjyO3ZXNII41RNwe8tQgxDHLepKOfyQjaZFUy3DFqKCn/o6DgJGz4ofVQ2VRO7e5kT5FArtZwRxWlHkzZpUNeHU3ftXqun+blhFoMFTwPy5DGRv9vY/Lwiakk8zoOwF/OG+dUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTxM/Hu9; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-81f4ba336b4so361039b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 19:20:20 -0800 (PST)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-81e9d0cd082so380799b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Jan 2026 19:34:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768447220; x=1769052020; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768448074; x=1769052874; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Trq+zKapUs2OXgXptR+lx0STbGwE8yhsbG9H7N7gDZA=;
-        b=btlUjL16twScFn4A5mn6NDY4QczL9O5+hgCpTWqWgP0Fm+QhZ8IeDEJburpKEvHyf0
-         dIS5HX0X7tETeNGzU72migLV6cU/VSZ4CUFWyrJ2exhQd3MFYddhnfCdkdSoCbwBGHv/
-         Y93JaGGB197EFHPw7e1+CfELPVtDGJR7WBBzr9/hOw1/6dTGYOslQoycIkPB4vtT9kCW
-         jl+/l2/SQETYQWG8F97qThthLk/BuMpT5DAvz89BMtEcAd+EmsoGyzGadaRHAk69i+RN
-         K4z34s+kX6O3UeYEAppuSIF2Wv9W9hEsvptatc4Cgga1e4wD0tNMcbDbu9UK6m1oYnkt
-         /5zg==
+        bh=KxjY31Wg2k8545z5USR1MFEogPbC/XcNxb3Lodh6pgk=;
+        b=MTxM/Hu9FrgIEQceOqabvaGxUeSDTB0WZfAxuW0my50cJ4DN7R8RufjSSbdiay31wp
+         5rWsWgdaofEg5rzQ2xA7w/iSTonGUqSadFvsr/KgpP5TE6XNMTIywSq403/4aXeYqElA
+         hwMHvN08mtzRGsCWJQJOjCzfYngTAnDDa7Icx0fgUPR7XKLug/QDI+Bau8b9+QI9mZ4F
+         oc3HcmaVDFBQw79llRNNYGPwOzxtAXqQ8qAcM5oxOjsjtr8cjVsQJnMyTjdVUALPMFTA
+         RgEO7I7YiWKtcQtnVCw9JZYPuzD9ERB1wNOjCkztSQAnPJP+xGvGAafLO2jUXqZTwqod
+         IFmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768447220; x=1769052020;
+        d=1e100.net; s=20230601; t=1768448074; x=1769052874;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Trq+zKapUs2OXgXptR+lx0STbGwE8yhsbG9H7N7gDZA=;
-        b=oEv8PqDAJjxroATfMwwequ0LqhwZdzSCVOEzdBrB4ozD2MPMAfDBjUoNZNyHc4I3g5
-         JVwo7pXdiBINuafi1pcGglcJLZQO7sykV8mBTXV5D1DIJCOK7Lj++x/KaoSRAfWH+Jy4
-         C9O49h6OgnttoX+pvqaUhVraNS1MENUTH3kjDcpY7lOA5pJXtBiH2FMhgpMjgLGu/fyi
-         uimFs3/1osX/0hemRq2NGKZ88OEKMlpTtU74SRvRwK/Q93pe1E5wnL9LxjX1iOg7b3XX
-         GFIdQATbRYEDDwZ4MAIA+e0n6AQYcVJb6OOgeWacmrJ/DJjmrZ99MWavqHNEbLsThqF0
-         kBSA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/M+TgD4amxPTNexMj1iwpSGYm+bll0uUfQkT0bRCRhsnYJ4QtdeaRHyEZGb81remKNiet3ngb/9dL1FI9@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxRx7dwHZQ/Rys9pkszm2RzD+BpTLAq21zqu0+x3HIA/MKCCKb
-	NHHKkuTyLn/EYtqYujuI7olseW9+Zi9+dgL9kskN2mmVuLglilLlsYwm
-X-Gm-Gg: AY/fxX6UsOKuvQH3sXkmXOvcCG7rxEmCelJc9HphmaImDT99gVcMMZpPr2cLfjZKM12
-	5Y3EVB7sd6SoY/ypBkDtD4Bne2kL+Ul8o4HT+Fg2IFySz9BXrB4zUF5qjHqJ6jqDZ7VbWwgVKDn
-	jf/eDFWs2DcCwdvfKuPVwYHpGyA14eikUTH5Hl4Maic5/s9ZvBSI8lyTHmsOl/hOXOkmIeUbGMP
-	V+XYJE4kbIWUiV5cNlDT0kg0H/8vwgcXNhDaaUnOE+KdC9aUyEXYHB2bqxAlXVyFbFPLy0i8g8j
-	/OSzF67xR78soEXTWnkBKJl4AosvrBlaT5wsRPLTrn6bITL/keDh9+eevYJx2ejmA/JKiC0czGH
-	wmme6TAlawT8V6Rda7AU+WwhTGMxwuKZw165wB9fmhU3cSx95fYIrBbknq5ErtJ/p580FQv2nla
-	E3X3cSf7PFzes=
-X-Received: by 2002:a05:6a00:a24c:b0:81f:4063:f1ef with SMTP id d2e1a72fcca58-81f83d5e4b5mr3914019b3a.54.1768447220095;
-        Wed, 14 Jan 2026 19:20:20 -0800 (PST)
-Received: from inspiron ([111.125.235.106])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-81f8e381d7csm963637b3a.0.2026.01.14.19.20.15
+        bh=KxjY31Wg2k8545z5USR1MFEogPbC/XcNxb3Lodh6pgk=;
+        b=PzUlkR8+nJDiKeH6qrf9/UEoKX+tnv5rgjTG96p1RXLskhKV81M9Y7GcVuEU4jravP
+         jI5jCrzWcY0td5EKumjweRRwSArp4ba7l6W9Gib/ZwKivVt/zwzVhIjRAYQtYkP2FG5c
+         v9nzFZ+0E5YzkuNS7ws+MPZY1RE+LV3mEYdRXjgRk/iDEASYQl46o8qmrbJIeAzbrMVE
+         I4s9Iwcz5AOTTiHzwgyTWGEGSr/+gO3FohH840lfzwHRzwQkQN1UYnr7uR4JBCjhG3XH
+         +dOEhMRgcrwqo4VYtRgY2GdawH05ABODagkMMouN3OqJHAeIe/Dj0wX1WPombHSrGw9Z
+         /rkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXV44EvQEeihiYmpxJUK/BsDECrE9Gmh3lfq+Fj69x23oXVW4JoKsct96I8qZtunxQK6o9qIdSHnw2A95Rj@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCmF4EJ+i/1fX6+sBz5mDpP3PJwbS1Ts1seX4bjn06x0jOr/40
+	dIa7ohE4osJy4KSquYGnP88kXTnQ3TtfVMXo+y6q6gv0QMxDfIAtStYD
+X-Gm-Gg: AY/fxX4sBDcW2SAT5xIA18DUZbqmaTGEuAsBjVduMGkHTSXd7Zge9LgCErrX6orfOab
+	kMRE7OA7oWXVIy3eaQdViKIavNWdKTdGiyd28Xr8BYDfTEHqEbIZC2GHIAWpkY2OGrhFkIWeiWB
+	CKyTy73bCSV7/SLO6Ebg8jzYz3Dw3hhrA0fSYPr6uKGc3oJfd7IEQfwfrb/VVdCVNK5nRIUI6EX
+	NFVVj+FlrxFHGbTscwi8y5a+OL+MMHLLQjyBxTIMVIWTUWdsVGhRyFeMAivgGTZPhBfZ1t56i7L
+	Q2XfQsZPJ5r1rnWEJPpzbIS/FKX171nNkt1Dww0blh3yjPjOWEBVPHGgRlGfHzKUVzsTqh9Ekz7
+	AsSNaLJuNARcM8TKsCCLW00jXyXrnF+HonrOa/13N2rp0nj2CkcDgjgdNbgUD35GQKbKLomAIUj
+	vTi7GQYt46VReZs2ePUoGNM72m9A==
+X-Received: by 2002:a05:6a00:8011:b0:81f:38f4:d774 with SMTP id d2e1a72fcca58-81f81d0d522mr4395523b3a.27.1768448074036;
+        Wed, 14 Jan 2026 19:34:34 -0800 (PST)
+Received: from localhost ([45.142.165.150])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-81f8e676ca8sm931045b3a.50.2026.01.14.19.34.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 19:20:19 -0800 (PST)
-Date: Thu, 15 Jan 2026 08:50:12 +0530
-From: Prithvi <activprithvi@gmail.com>
-To: martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hch@lst.de, jlbec@evilplan.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	syzbot+f6e8174215573a84b797@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] scsi: target: Fix recursive locking in
- __configfs_open_file()
-Message-ID: <20260115032012.yb5ylmumcirrmsbr@inspiron>
-References: <20260108191523.303114-1-activprithvi@gmail.com>
+        Wed, 14 Jan 2026 19:34:33 -0800 (PST)
+Date: Thu, 15 Jan 2026 11:34:29 +0800
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+	"frank.li@vivo.com" <frank.li@vivo.com>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"syzbot+1e3ff4b07c16ca0f6fe2@syzkaller.appspotmail.com" <syzbot+1e3ff4b07c16ca0f6fe2@syzkaller.appspotmail.com>
+Subject: Re: [RFC PATCH] fs/hfs: fix ABBA deadlock in hfs_mdb_commit
+Message-ID: <aWhgNujuXujxSg3E@ndev>
+References: <68b0240f.a00a0220.1337b0.0006.GAE@google.com>
+ <20260113081952.2431735-1-wangjinchao600@gmail.com>
+ <a2b8144a25206fba69e59e805d93c05444080132.camel@ibm.com>
+ <aWcHhTiUrDppotRg@ndev>
+ <d382b5c97a71d769598fd32bc22cae9f960fea70.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -92,95 +94,187 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260108191523.303114-1-activprithvi@gmail.com>
+In-Reply-To: <d382b5c97a71d769598fd32bc22cae9f960fea70.camel@ibm.com>
 
-On Fri, Jan 09, 2026 at 12:45:23AM +0530, Prithvi Tambewagh wrote:
-> In flush_write_buffer, &p->frag_sem is acquired and then the loaded store
-> function is called, which, here, is target_core_item_dbroot_store().
-> This function called filp_open(), following which these functions were
-> called (in reverse order), according to the call trace:
+On Wed, Jan 14, 2026 at 07:29:45PM +0000, Viacheslav Dubeyko wrote:
+> On Wed, 2026-01-14 at 11:03 +0800, Jinchao Wang wrote:
+> > On Tue, Jan 13, 2026 at 08:52:45PM +0000, Viacheslav Dubeyko wrote:
+> > > On Tue, 2026-01-13 at 16:19 +0800, Jinchao Wang wrote:
+> > > > syzbot reported a hung task in hfs_mdb_commit where a deadlock occurs
+> > > > between the MDB buffer lock and the folio lock.
+> > > > 
+> > > > The deadlock happens because hfs_mdb_commit() holds the mdb_bh
+> > > > lock while calling sb_bread(), which attempts to acquire the lock
+> > > > on the same folio.
+> > > 
+> > > I don't quite to follow to your logic. We have only one sb_bread() [1] in
+> > > hfs_mdb_commit(). This read is trying to extract the volume bitmap. How is it
+> > > possible that superblock and volume bitmap is located at the same folio? Are you
+> > > sure? Which size of the folio do you imply here?
+> > > 
+> > > Also, it your logic is correct, then we never could be able to mount/unmount or
+> > > run any operations on HFS volumes because of likewise deadlock. However, I can
+> > > run xfstests on HFS volume.
+> > > 
+> > > [1] https://elixir.bootlin.com/linux/v6.19-rc5/source/fs/hfs/mdb.c#L324  
+> > 
+> > Hi Viacheslav,
+> > 
+> > After reviewing your feedback, I realized that my previous RFC was not in
+> > the correct format. It was not intended to be a final, merge-ready patch,
+> > but rather a record of the analysis and trial fixes conducted so far.
+> > I apologize for the confusion caused by my previous email.
+> > 
+> > The details are reorganized as follows:
+> > 
+> > - Observation
+> > - Analysis
+> > - Verification
+> > - Conclusion
+> > 
+> > Observation
+> > ============
+> > 
+> > Syzbot report: https://syzkaller.appspot.com/bug?extid=1e3ff4b07c16ca0f6fe2  
+> > 
+> > For this version:
+> > > time             |  kernel    | Commit       | Syzkaller |
+> > > 2025/12/20 17:03 | linux-next | cc3aa43b44bd | d6526ea3  |
+> > 
+> > Crash log: https://syzkaller.appspot.com/text?tag=CrashLog&x=12909b1a580000  
+> > 
+> > The report indicates hung tasks within the hfs context.
+> > 
+> > Analysis
+> > ========
+> > In the crash log, the lockdep information requires adjustment based on the call stack.
+> > After adjustment, a deadlock is identified:
+> > 
+> > task syz.1.1902:8009
+> > - held &disk->open_mutex
+> > - held foio lock
+> > - wait lock_buffer(bh)
+> > Partial call trace:
+> > ->blkdev_writepages()
+> >         ->writeback_iter()
+> >                 ->writeback_get_folio()
+> >                         ->folio_lock(folio)
+> >         ->block_write_full_folio()
+> >                 __block_write_full_folio()
+> >                         ->lock_buffer(bh)
+> > 
+> > task syz.0.1904:8010
+> > - held &type->s_umount_key#66 down_read
+> > - held lock_buffer(HFS_SB(sb)->mdb_bh);
+> > - wait folio
+> > Partial call trace:
+> > hfs_mdb_commit
+> >         ->lock_buffer(HFS_SB(sb)->mdb_bh);
+> >         ->bh = sb_bread(sb, block);
+> >                 ...->folio_lock(folio)
+> > 
+> > 
+> > Other hung tasks are secondary effects of this deadlock. The issue
+> > is reproducible in my local environment usuing the syz-reproducer.
+> > 
+> > Verification
+> > ==============
+> > 
+> > Two patches are verified against the syz-reproducer.
+> > Neither reproduce the deadlock.
+> > 
+> > Option 1: Removing `un/lock_buffer(HFS_SB(sb)->mdb_bh)`
+> > ------------------------------------------------------
+> > 
+> > diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
+> > index 53f3fae60217..c641adb94e6f 100644
+> > --- a/fs/hfs/mdb.c
+> > +++ b/fs/hfs/mdb.c
+> > @@ -268,7 +268,6 @@ void hfs_mdb_commit(struct super_block *sb)
+> >         if (sb_rdonly(sb))
+> >                 return;
+> > 
+> > -       lock_buffer(HFS_SB(sb)->mdb_bh);
+> >         if (test_and_clear_bit(HFS_FLG_MDB_DIRTY, &HFS_SB(sb)->flags)) {
+> >                 /* These parameters may have been modified, so write them back */
+> >                 mdb->drLsMod = hfs_mtime();
+> > @@ -340,7 +339,6 @@ void hfs_mdb_commit(struct super_block *sb)
+> >                         size -= len;
+> >                 }
+> >         }
+> > -       unlock_buffer(HFS_SB(sb)->mdb_bh);
+> >  }
+> > 
+> > 
+> > Options 2: Moving `unlock_buffer(HFS_SB(sb)->mdb_bh)`
+> > --------------------------------------------------------
+> > 
+> > diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
+> > index 53f3fae60217..ec534c630c7e 100644
+> > --- a/fs/hfs/mdb.c
+> > +++ b/fs/hfs/mdb.c
+> > @@ -309,6 +309,7 @@ void hfs_mdb_commit(struct super_block *sb)
+> >                 sync_dirty_buffer(HFS_SB(sb)->alt_mdb_bh);
+> >         }
+> >  
+> > +       unlock_buffer(HFS_SB(sb)->mdb_bh);
+> >         if (test_and_clear_bit(HFS_FLG_BITMAP_DIRTY, &HFS_SB(sb)->flags)) {
+> >                 struct buffer_head *bh;
+> >                 sector_t block;
+> > @@ -340,7 +341,6 @@ void hfs_mdb_commit(struct super_block *sb)
+> >                         size -= len;
+> >                 }
+> >         }
+> > -       unlock_buffer(HFS_SB(sb)->mdb_bh);
+> >  }
+> > 
+> > Conclusion
+> > ==========
+> > 
+> > The analysis and verification confirms that the hung tasks are caused by
+> > the deadlock between `lock_buffer(HFS_SB(sb)->mdb_bh)` and `sb_bread(sb, block)`.
 > 
-> down_read
-> __configfs_open_file
-> do_dentry_open
-> vfs_open
-> do_open
-> path_openat
-> do_filp_open
-> file_open_name
-> filp_open
-> target_core_item_dbroot_store
-> flush_write_buffer
-> configfs_write_iter
+> First of all, we need to answer this question: How is it
+> possible that superblock and volume bitmap is located at the same folio or
+> logical block? In normal case, the superblock and volume bitmap should not be
+> located in the same logical block. It sounds to me that you have corrupted
+> volume and this is why this logic [1] finally overlap with superblock location:
 > 
-> Hence ultimately, __configfs_open_file() was called, indirectly by
-> target_core_item_dbroot_store(), and it also attempted to acquire
-> &p->frag_sem, which was already held by the same thread, acquired earlier
-> in flush_write_buffer. This poses a possibility of recursive locking,
-> which triggers the lockdep warning.
+> block = be16_to_cpu(HFS_SB(sb)->mdb->drVBMSt) + HFS_SB(sb)->part_start;
+> off = (block << HFS_SECTOR_SIZE_BITS) & (sb->s_blocksize - 1);
+> block >>= sb->s_blocksize_bits - HFS_SECTOR_SIZE_BITS;
 > 
-> Fix this by modifying target_core_item_dbroot_store() to use kern_path()
-> instead of filp_open() to avoid opening the file using filesystem-specific
-> function __configfs_open_file(), and further modifying it to make this
-> fix compatible.
+> I assume that superblock is corrupted and the mdb->drVBMSt [2] has incorrect
+> metadata. As a result, we have this deadlock situation. The fix should be not
+> here but we need to add some sanity check of mdb->drVBMSt somewhere in
+> hfs_fill_super() workflow.
 > 
-> Reported-by: syzbot+f6e8174215573a84b797@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=f6e8174215573a84b797
-> Tested-by: syzbot+f6e8174215573a84b797@syzkaller.appspotmail.com
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Prithvi Tambewagh <activprithvi@gmail.com>
-> ---
->  drivers/target/target_core_configfs.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
+> Could you please check my vision?
 > 
-> diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
-> index b19acd662726..f29052e6a87d 100644
-> --- a/drivers/target/target_core_configfs.c
-> +++ b/drivers/target/target_core_configfs.c
-> @@ -108,8 +108,8 @@ static ssize_t target_core_item_dbroot_store(struct config_item *item,
->  					const char *page, size_t count)
->  {
->  	ssize_t read_bytes;
-> -	struct file *fp;
->  	ssize_t r = -EINVAL;
-> +	struct path path = {};
->  
->  	mutex_lock(&target_devices_lock);
->  	if (target_devices) {
-> @@ -131,17 +131,18 @@ static ssize_t target_core_item_dbroot_store(struct config_item *item,
->  		db_root_stage[read_bytes - 1] = '\0';
->  
->  	/* validate new db root before accepting it */
-> -	fp = filp_open(db_root_stage, O_RDONLY, 0);
-> -	if (IS_ERR(fp)) {
-> +	r = kern_path(db_root_stage, LOOKUP_FOLLOW, &path);
-> +	if (r) {
->  		pr_err("db_root: cannot open: %s\n", db_root_stage);
->  		goto unlock;
->  	}
-> -	if (!S_ISDIR(file_inode(fp)->i_mode)) {
-> -		filp_close(fp, NULL);
-> +	if (!d_is_dir(path.dentry)) {
-> +		path_put(&path);
->  		pr_err("db_root: not a directory: %s\n", db_root_stage);
-> +		r = -ENOTDIR;
->  		goto unlock;
->  	}
-> -	filp_close(fp, NULL);
-> +	path_put(&path);
->  
->  	strscpy(db_root, db_root_stage);
->  	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
+> Thanks,
+> Slava.
 > 
-> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> -- 
-> 2.34.1
-> 
+> [1] https://elixir.bootlin.com/linux/v6.19-rc5/source/fs/hfs/mdb.c#L318
+> [2]
+> https://elixir.bootlin.com/linux/v6.19-rc5/source/include/linux/hfs_common.h#L196
 
-Hello all,
+Hi Slava,
 
-Just a gentle ping on this thread.
+I have traced the values during the hang. Here are the values observed:
 
-Thanks, 
-Prithvi
+- MDB: blocknr=2
+- Volume Bitmap (drVBMSt): 3
+- s_blocksize: 512 bytes
+
+This confirms a circular dependency between the folio lock and
+the buffer lock. The writeback thread holds the 4KB folio lock and 
+waits for the MDB buffer lock (block 2). Simultaneously, the HFS sync 
+thread holds the MDB buffer lock and waits for the same folio lock 
+to read the bitmap (block 3).
+
+
+Since block 2 and block 3 share the same folio, this locking 
+inversion occurs. I would appreciate your thoughts on whether 
+hfs_fill_super() should validate drVBMSt to ensure the bitmap 
+does not reside in the same folio as the MDB.
 
