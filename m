@@ -1,206 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-73947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-73950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E9DD26542
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 18:23:07 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D994CD26B73
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 18:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id A9284309D9A7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 17:15:51 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 68BE230299F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Jan 2026 17:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765943C1985;
-	Thu, 15 Jan 2026 17:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DF83BF31F;
+	Thu, 15 Jan 2026 17:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="SoK39rXk"
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="YEhU+4Ug"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA3C3BF307;
-	Thu, 15 Jan 2026 17:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93C43C0090
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 17:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768497299; cv=none; b=jJskUdd56kdD5AqrujtgS3dO3LjOiBe8jtpPiwmfYgO6cNVhacnUCzEZUbDFbqVYM50JePePEU94Aw8gY9tlRTMOFTn84bHM7Ntn2PjlXUhOlZjV1urt0uzEhb6e/6mXnQRVU97e7Rtu7XLr+Y8dJwYkgcLOZ3qIGcAzC5QB92o=
+	t=1768498039; cv=none; b=Zxmls+g1oBeyriuc3+krZ3ZMdJEvqzohElOQ7qLlbFgO6JvRwOXktAtwV5zRwyh5kMHwGmrQTvXPDjGsP1CVfJRoO8eyAgafElS8wef4rx76DNmgz2cTKqAwfOyBQ00zRR17Wd2cfKSbn9gc7xVZyvIvjUPotnb1wzHBUfSVDCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768497299; c=relaxed/simple;
-	bh=ie94QjaOlOWX68+fNUphYUGkQebp6sOQwNKDHG51oEQ=;
-	h=From:To:Cc:Subject:In-Reply-To:Message-ID:References:Date:
-	 MIME-Version:Content-Type; b=nIHxVLpuE37sWJ3XePdGN//91Uto6KDFECfVoZGTXocP7Ad/SSPDCmY2d3wEPWhKYYPKYVGXKi81Izw3TnpvzrloPy6JEA0mr8U8XHHQZaLfE8SiQFhexpJIxWCLhpiXPz1+jiATGRwFSoAxHhFASsYHRdLF3LiRdXyzAkm6LSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=SoK39rXk; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	References:Message-ID:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=DoOMMuoT5cAAWyt3qZcAYOl6yoaf/Q3EEjGWl24xIfs=; b=SoK39rXkA2iWb/Gd3y09HKtllW
-	gfPu/PaQHfxQ7q6i+lKE0+/Z/Oz7XtjJYcGbZWvbspItLPaVjnYCsDeZ81LkM0uhHGyiKjz2LTYk0
-	7Tf2oMby5TWIwKwdYWB1T3Q0Yft2gZrvkmSvZhNlU2Q7aiG2no45/0mwCl6AZTQjZZsbUuyKIUHc3
-	W68W6N3AmAXge5ol9DqdeobP2b968jFAhI53Q26qW8gLgdPAAhidmuOrbG/y/XV4dmqTuHn4Qrivo
-	j1NNUlM1NM+53Ne9JG8hZCIFw8nbl5BKOA3O4Bj2FGy/hLd2zXyHY2RLX+HBTa1ViMcSPDoARqQL+
-	R3yStliA==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vgQvk-005pkZ-8i; Thu, 15 Jan 2026 18:14:44 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Horst Birthelmer <horst@birthelmer.de>
-Cc: Bernd Schubert <bernd@bsbernd.com>,  Joanne Koong
- <joannelkoong@gmail.com>,  Horst Birthelmer <horst@birthelmer.com>,
-  Miklos Szeredi <miklos@szeredi.hu>,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  Horst Birthelmer <hbirthelmer@ddn.com>
-Subject: Re: [PATCH v4 3/3] fuse: add an implementation of open+getattr
-In-Reply-To: <aWkEWEgerlDv0bt6@fedora> (Horst Birthelmer's message of "Thu, 15
-	Jan 2026 16:25:32 +0100")
-Message-ID: <87qzrq4xdw.fsf@wotan.olymp>
-References: <20260109-fuse-compounds-upstream-v4-0-0d3b82a4666f@ddn.com>
-	<20260109-fuse-compounds-upstream-v4-3-0d3b82a4666f@ddn.com>
-	<CAJnrk1ZtS4VfYo03UFO_khcaA6ugHiwtWQqaObB5P_ozFtsCHA@mail.gmail.com>
-	<aWjteRMwc_KIN4pt@fedora.fritz.box>
-	<3223f464-9f76-4c37-b62b-f61f6b1fc1f6@bsbernd.com>
-	<aWju_kqgdiOZt8gn@fedora.fritz.box> <87wm1i52si.fsf@wotan.olymp>
-	<aWkEWEgerlDv0bt6@fedora>
-Date: Thu, 15 Jan 2026 17:14:43 +0000
+	s=arc-20240116; t=1768498039; c=relaxed/simple;
+	bh=3UGXrZkeYXLx8IoVJrtniFV8BFbMiKk7p6uPdTyK/0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lo19aIWQneKj97EPXTWG/CrQU4flGeM+VPgnP1fIJs4UsAejhJWiHA2LJT+Wdjlfsgc3D0ysPsaM5Wq+vmkMjoex2UKPxGj1IwqoqPMJIxK7mTGhhu4Zm90lD5Ln8rpIhLASH+CDIWrpXIj3YmXMujWMOxuDMVmCOB6GKe0vBWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=YEhU+4Ug; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-8888a1c50e8so13858916d6.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Jan 2026 09:27:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1768498037; x=1769102837; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9FK61OSEd0UmY2wqnN+WlOD2t6xQO8MJ1jOlEc9XBMg=;
+        b=YEhU+4UglXlQQlfuFffLzOxZF1W221ljq75jkYmrgBTttcp18/A9wRTucjN8uHZtlg
+         ECvh9hd6KBcOEx5heMRX5nNm9jvWUip0I/pctmUUaMroCrdAqRq5x6SccwevxqlziUcX
+         +/H3LgzsFU/oXZERrYrlk9fp5ZgtSrDK7Q00NJ/t2elprpDeGFR6002oruyaRiElcG5d
+         sUAF/nbeMvK1ehey4jpZKskRdfYrstJtw2//Isjg4oQ2OxNVZwAyWwQEvJPHttBKAazQ
+         AW4x6bPH1/49pR8zfHAOhwzWWvy5zr4cmG3+34Ds4SsQxIP76DcO9Ic4xLpCdBW617IF
+         5soQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768498037; x=1769102837;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9FK61OSEd0UmY2wqnN+WlOD2t6xQO8MJ1jOlEc9XBMg=;
+        b=By0ujr6AKVzMjyNk+ylFXPiUO03XlUnOoDMM539MT8yqE66kgSv6W1bwJtj8ztSmj5
+         tPmfCHEsHkC6KzJlR+kCeLSH00Wq+8HT1kXUHTjN4c9BPSnIvXykGXnqZRFqCgwNz6Sd
+         mJ92cwDPDwm+FEm/EBX/auhKhNL1V+sUgiz0Rjj9xFJM3BMLXUktKaFy/MtFHokdcp4R
+         xz7gczyA7qX0PrNWizoHrUhvro/rF91cANQT+Ui3z1PiDNcWR56tY+v/z9StiHkVcyDY
+         hvH/RQJXJQZa87jbN6nGXff26xhUZI+BbzaHsGAfOLu8PmS533PuwtbqnoFFozTcPt1u
+         0kFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqYMoX4RxzllJCen9H7eqHAx2cjY3DSXvUiCm7BuilT74LK6NQCt82C71WxhslkJtp35F+MIH9s8+fnxVY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLPtTEn/TUK2cSBM7x+lLVhZ3hr06jaNqGrSShTiflkpd1dDp7
+	768hWHDbbWLE4I7BkKzqDYI99kHsXzsExSsx0IK5/u5ejZ62g5ppg9+YGkNDo45OW0w=
+X-Gm-Gg: AY/fxX6+yMbWZBvjRhzWJQje7zRN8kAav+Ki93YcUojUuhiRbuXgMmIs8TecmhhUsks
+	5lfxbYPsvJVU2mSKqrLYt6kkRShc0BA6qHR/XtjyIN1i2DreivYbqn2GMuhvedNOpqFBTccN4Hp
+	U78g1zCb+YcUOb3TB4+b1vY0B2AO2RBvzIs5Yea/99vj7W9k53X3/vkM3okzKM89jj8Rl7mETDv
+	8Qt9nFgix4IE+PtILEv5BUio1P+aeQBOZ8zoLWywe1GXWxyK3ruHesHkODaqlcfMdmrSgAIDonl
+	LopSPKN4isQp928m53C1/o5xjYpExtk3AkttlA+hFhyVoWblErNnMhPnU/pXsdbQFRhdq8trOdf
+	jIaJ4djfDjabHwrXOORdc6EOGsdSmLZ1IVQLvY1DkS/3uyGN8aVKNJkQ9Ne53KJrxb/ru5BUcdY
+	l4DFPfoYcVUu6GCGLS7GUokRuwrJU8E+OwkISs7KJ3owotDqrqCiztLe8Vs0xZHPevCfXBWg==
+X-Received: by 2002:a05:6214:4007:b0:889:b6f1:1f30 with SMTP id 6a1803df08f44-8942dbf5199mr2798016d6.18.1768498036628;
+        Thu, 15 Jan 2026 09:27:16 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89077253305sm219364246d6.41.2026.01.15.09.27.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jan 2026 09:27:14 -0800 (PST)
+Date: Thu, 15 Jan 2026 12:26:41 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com,
+	longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org,
+	mkoutny@suse.com, corbet@lwn.net, gregkh@linuxfoundation.org,
+	rafael@kernel.org, dakr@kernel.org, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dan.j.williams@intel.com,
+	akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com,
+	mhocko@suse.com, jackmanb@google.com, ziy@nvidia.com,
+	david@kernel.org, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, rppt@kernel.org, axelrasmussen@google.com,
+	yuanchu@google.com, weixugc@google.com, yury.norov@gmail.com,
+	linux@rasmusvillemoes.dk, rientjes@google.com,
+	shakeel.butt@linux.dev, chrisl@kernel.org, kasong@tencent.com,
+	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com,
+	baohua@kernel.org, chengming.zhou@linux.dev,
+	roman.gushchin@linux.dev, muchun.song@linux.dev, osalvador@suse.de,
+	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
+	byungchul@sk.com, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+	cl@gentwo.org, harry.yoo@oracle.com, zhengqi.arch@bytedance.com
+Subject: Re: [RFC PATCH v3 7/8] mm/zswap: compressed ram direct integration
+Message-ID: <aWkjUXpyLEJyc-C0@gourry-fedora-PF4VCD3F>
+References: <20260108203755.1163107-1-gourry@gourry.net>
+ <20260108203755.1163107-8-gourry@gourry.net>
+ <i6o5k4xumd5i3ehl6ifk3554sowd2qe7yul7vhaqlh2zo6y7is@z2ky4m432wd6>
+ <aWF1uDdP75gOCGLm@gourry-fedora-PF4VCD3F>
+ <4ftthovin57fi4blr2mardw4elwfsiv6vrkhrjqjsfvvuuugjj@uivjc5uzj5ys>
+ <aWWEvAaUmpA_0ERP@gourry-fedora-PF4VCD3F>
+ <fkxcxh4eilncsbtwt7jmuiaxrfvuidlnbovesa6m7eoif5tmxc@r34c5zy4nr4y>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fkxcxh4eilncsbtwt7jmuiaxrfvuidlnbovesa6m7eoif5tmxc@r34c5zy4nr4y>
 
-Hi Horst,
-
-On Thu, Jan 15 2026, Horst Birthelmer wrote:
-
-> Hi Luis,
+> > For the first go, yeah.  A cram.c would need special page table handling
+> > bits that will take a while to get right.  We can make use of the
+> > hardware differently in the meantime.
+> 
+> Makes sense.
+> 
+> I just want to point out that using compressed memory with zswap doesn't
+> buy us much in terms of reclaim latency, so the main goal here is just
+> saving memory on the top tier, not improving performance, right?
 >
-> thanks for looking at this.
+
+Yeah first goal is to just demonstrate such an accelerator can even work
+as a top-tier memory saving mechanism.  But hard to say whether reclaim
+latency will be affected appreciably - won't know until we get there :]
+
+I'm totally prepared for this to be a science experiment that gets
+thrown away.
+
+> > 
+> > I will probably need some help to get the accounting right if I'm being
+> > honest.  I can't say I fully understanding the implications here, but
+> > what you describe makes sense.
+> > 
+> 
+> Yeah it's counter-intuitive. Zswap needs to charge less than PAGE_SIZE
+> so that memcg tracking continues to make sense with reclaim (i.e. usage
+> goes down), but if zswap consumed a full page from the system
+> perspective, the math won't math.
+> 
+> Separate limits *could* be the answer, but it's harder to configure and
+> existing configuration won't "just work" with compressed memory.
 >
-> On Thu, Jan 15, 2026 at 03:11:25PM +0000, Luis Henriques wrote:
->> On Thu, Jan 15 2026, Horst Birthelmer wrote:
->>=20
->> > On Thu, Jan 15, 2026 at 02:41:49PM +0100, Bernd Schubert wrote:
->> >>=20
->> >>=20
->> >> On 1/15/26 14:38, Horst Birthelmer wrote:
->> >> > On Wed, Jan 14, 2026 at 06:29:26PM -0800, Joanne Koong wrote:
->> >> >> On Fri, Jan 9, 2026 at 10:27=E2=80=AFAM Horst Birthelmer <horst@bi=
-rthelmer.com> wrote:
->> >> >>>
->> >> >>> +
->> >> >>> +       err =3D fuse_compound_send(compound);
->> >> >>> +       if (err)
->> >> >>> +               goto out;
->> >> >>> +
->> >> >>> +       err =3D fuse_compound_get_error(compound, 0);
->> >> >>> +       if (err)
->> >> >>> +               goto out;
->> >> >>> +
->> >> >>> +       err =3D fuse_compound_get_error(compound, 1);
->> >> >>> +       if (err)
->> >> >>> +               goto out;
->> >> >>
->> >> >> Hmm, if the open succeeds but the getattr fails, why not process it
->> >> >> kernel-side as a success for the open? Especially since on the ser=
-ver
->> >> >> side, libfuse will disassemble the compound request into separate
->> >> >> ones, so the server has no idea the open is even part of a compoun=
-d.
->> >> >>
->> >> >> I haven't looked at the rest of the patch yet but this caught my
->> >> >> attention when i was looking at how fuse_compound_get_error() gets
->> >> >> used.
->> >> >>
->> >> > After looking at this again ...
->> >> > Do you think it would make sense to add an example of lookup+create=
-, or would that just convolute things?
->> >>=20
->> >>=20
->> >> I think that will be needed with the LOOKUP_HANDLE from Luis, if we go
->> >> the way Miklos proposes. To keep things simple, maybe not right now?
->> >
->> > I was thinking more along the lines of ... we would have more than one=
- example
->> > especially for the error handling. Otherwise it is easy to miss someth=
-ing
->> > because the given example just doesn't need that special case.
->> > Like the case above. There we would be perfectly fine with a function =
-returning
->> > the first error, which in the case of lookup+create is the opposite of=
- success
->> > and you would need to access every single error to check what actually=
- happened.
->>=20
->> Not sure if I can add a lot to this discussion, but I've been playing a
->> bit with your patchset.
-> You already do ;-)
->
->>=20
->> I was trying to understand how to implement the LOOKUP_HANDLE+STATX, and
->> it doesn't look too difficult at the moment.  But I guess it'll take me =
-some
->> more time to figure out all the other unknowns (e.g. other operations su=
-ch
->> as readdirplus).
->>=20
->> Anyway, the interface for compound operations seem to be quite usable in
->> general.  I'll try to do a proper review soon, but regarding the specific
->> comment of error handling, I find the interface a bit clumsy.  Have you
->> thought about using something like an iterator?  Or maybe some sort of
->> macro such as foreach_compound_error()?
-> Not in those terms, no.
-> But I don't think it would get any better. Do you have an idea you would =
-want implemented in this context?
 
-Yeah, I'm not really sure it would be any better, to be honest.  And I'm
-afraid I'm just bikeshedding...  My suggestion was to have something like:
+I think you are right. I am also inquiring whether individual page
+compression data is retrievable.  If so, then this actually should be a
+trivial integration.
 
-	err =3D fuse_compound_send(compound);
-	if (err)
-		goto out;
+If not then this is probably ending up on the cutting room floor and
+going straight to a full cram.c implementation.
 
-	for_each_compound_error(op_arg, compound, list) {
-		err =3D handle_error(op_arg);
-		if (err)
-			goto out;
-	}
-
-But again, this is probably unnecessary.  Or at least not while we're
-talking about having compound requests with 2 operations only.
-
->> And regarding the error handling in general: it sounds like things can
->> become really complex when some operations within a compound operation m=
-ay
->> succeed and others fail.  Because these examples are using two operations
->> only, but there's nothing preventing us from having 3 or more in the
->> future, right?  Wouldn't it be easier to have the compound operation
->> itself fail or succeed, instead of each op?  (Although that would probab=
-ly
->> simply move the complexity into user-space, that would be required to do
->> more clean-up work when there are failures.)
->
-> I think we need all the granularity we can get since different combinatio=
-ns mean different things in different contexts.
-> Imagine you have a compound as the current example. That is pretty much a=
-ll or
-> nothing and there is almost no way that one of the operations doesn't suc=
-ceed,
-> and if it goes wrong you can still fall back to separate operations.
-> There are certainly cases where the compound itself is the operation beca=
-use it
-> really has to be atomic, or for arguments sake they have to be started
-> concurrently ... or whatnot.
-
-OK, got it.  I guess that errors on atomic compound operations will then
-be handled that way (i.e. all or nothing), and it will always depend on
-the combination of operations.  Anyway, the devil is always in the details
-and I'm sure you've been putting a lot of thought into this ;-)
-
-Cheers,
---=20
-Lu=C3=ADs
+~Gregory
 
