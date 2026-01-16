@@ -1,79 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-74062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690E9D2CE34
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 08:05:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A76D2DA99
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 09:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5E41630255BB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 07:05:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 95375303D144
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 08:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D41346799;
-	Fri, 16 Jan 2026 07:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XyKpRjEH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913DD2DCC04;
+	Fri, 16 Jan 2026 08:01:01 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22812517AA;
-	Fri, 16 Jan 2026 07:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4AF10F2;
+	Fri, 16 Jan 2026 08:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768547104; cv=none; b=Tnjxfgo5JDl9hsfW65o3hWoqFeqBYwBClADNFr3p5+Dt1diH4v9eBfiUdFa1m/khmnOO/FzF6ztd/Qewetn4Gz0FDC1Z+2eVR+WRnOjKx+8LZ0iO5nb4QTqnsa2g4E1L/LRmXQ6kuyN/XFodSAnTyntvBo9PV8CY0YBmJntoA1I=
+	t=1768550461; cv=none; b=tdKmC5jzZxqeBjuw2IxV7feMncsy2c/QdkZ5etqYHWMEfS3xRccNwaM10PPm39k+Vu0EJh2GMPx7E8TVBdM0cluRG1XQ5dmVEBSSLvivPZRkekNbIME20QgnvQElWAFjc4JN8QSv9Mo62/X6ZCp3MOEMjxMRpO79b9qtzFP/PEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768547104; c=relaxed/simple;
-	bh=c0VolWpFczF5GzIa8WmoPIaO/8RTiFl+3y3367Ltbs8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rNeOdKQFgnhhhIdBU/hX1el7F+q32REezWdOyDFHTEiCOqVjsoVr2I0znzekYjN+IsOWlxDq6J4Hq9ryqZDoCV1wcR5vjwgfOWnpuFjFOlY1I9nd7eK5UwCUtYxuhhVNofrax9Uv2hFgdu8bNn0GBgqReBsxZiB18mT0CyS3FAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XyKpRjEH; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d3e04144-0a92-4074-80db-64b6d4d77e85@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1768547100;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NBUTCOHFjbFGpfKIPNZ2x/MSES1mwdUxF31wOjAIzrY=;
-	b=XyKpRjEHuKwIO6PNRzLYAWpGy5vGQP9lcppuSgOF1NyIk31hvVH+PEEWHZyLiQMXE8+UMf
-	p8OElZYRzAkMIy5hD7SXVsg5bS4sGKO0nXS1QstdZu9vexDNycLIPCHk82upj0Of3GUSMH
-	zSvx9E82pSILt0fMqUYe+AnmE8DfETc=
-Date: Fri, 16 Jan 2026 15:04:09 +0800
+	s=arc-20240116; t=1768550461; c=relaxed/simple;
+	bh=xCFo0toGihdq2mZuxm/pdFXR+zLJcPz2qz4f7pm9YT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZfMNGEAQbbbeyKtsbGadvruGpQ8J30P/Ht8JkKac5ySvXfJ96q/gAVhlXuDhvgoc9yh2dbxs3df3Ozc7NGHBu4u3y5+P53swH/QF2vE3QMxUR9r+CcfnKl8Ffhif4pv6VTmFuwDZur/ILzezPfR+0jE8wC8wTp47laT6wHD0tAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 304F1227A8E; Fri, 16 Jan 2026 09:00:47 +0100 (CET)
+Date: Fri, 16 Jan 2026 09:00:46 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
+	willy@infradead.org, jack@suse.cz, djwong@kernel.org,
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com,
+	xiang@kernel.org, dsterba@suse.com, pali@kernel.org,
+	ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com,
+	gunho.lee@lge.com
+Subject: Re: [PATCH v5 01/14] Revert "fs: Remove NTFS classic"
+Message-ID: <20260116080046.GA15119@lst.de>
+References: <20260111140345.3866-1-linkinjeon@kernel.org> <20260111140345.3866-2-linkinjeon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 00/37] cifs: Scripted header file cleanup and SMB1 split
-To: David Howells <dhowells@redhat.com>, Steve French <smfrench@gmail.com>
-Cc: Enzo Matsumiya <ematsumiya@suse.de>, Paulo Alcantara <pc@manguebit.org>,
- linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, henrique.carvalho@suse.com,
- ChenXiaoSong <chenxiaosong@kylinos.cn>
-References: <CAH2r5mtgC_s2J9g0smr5NDxSp1TO7d+dtZ7=afnuw9hMxQ4TYQ@mail.gmail.com>
- <20251222223006.1075635-1-dhowells@redhat.com>
- <sijmvmcozfmtp3rkamjbgr6xk7ola2wlxc2wvs4t4lcanjsaza@w4bcxcxkmyfc>
- <320463.1768546738@warthog.procyon.org.uk>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <320463.1768546738@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260111140345.3866-2-linkinjeon@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-I have resolved the conflicts based on cifs-2.6.git for-next. Please see 
-the other email: 
-https://lore.kernel.org/linux-cifs/e6e34879-cf33-4e94-a31c-aa1c66254184@linux.dev/
+On Sun, Jan 11, 2026 at 11:03:31PM +0900, Namjae Jeon wrote:
+> This reverts commit 7ffa8f3d30236e0ab897c30bdb01224ff1fe1c89.
+> 
+> This patch reverts the removal of the classic read-only ntfs driver to
+> serve as the base for a new read-write ntfs implementation.
+> If we stack changes on top of the revert patch, It will significantly
+> reduce the diff size, making the review easier.
+> 
+> This revert intentionally excludes the restoration of Kconfig and
+> Makefile. The Kconfig and Makefile will be added back in the final patch
+> of this series, enabling the driver only after all features and
+> improvements have been applied.
+> 
+> Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
 
-Thanks,
-ChenXiaoSong <chenxiaosong@kylinos.cn>
-
-On 1/16/26 14:58, David Howells wrote:
-> Chen's patches will conflict with mine.  Do you want be to base on top of his
-> patches, or would you like his patches on top of these?
-
+Acked-by: Christoph Hellwig <hch@lst.de>
 
