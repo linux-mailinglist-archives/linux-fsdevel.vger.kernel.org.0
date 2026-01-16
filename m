@@ -1,51 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-74051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B85D2C176
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 06:43:11 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E15D2C184
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 06:43:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 61B4B3027D84
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 05:43:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B9B783027E0F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 05:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A865347BAF;
-	Fri, 16 Jan 2026 05:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C4C347BC1;
+	Fri, 16 Jan 2026 05:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gdlftks8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sa+bLC7E"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3532F5485;
-	Fri, 16 Jan 2026 05:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7FE33F8A4;
+	Fri, 16 Jan 2026 05:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768542184; cv=none; b=cspJLGmYYL+rHwLLLq/igJ22hCKzWhqqoTAa2rxzH2KmfUQSSJk3GpODIkNqySCg7XhP+ciMnFLtzWH1z+KEO8jy4WXa1+ybHsYDU3rfkmQRVfkacxRZuLmg/W4n/Mto68CBjFcmjmYV9x5A0ydbmtNCuPBgUcDvdd8xay/tSvc=
+	t=1768542200; cv=none; b=XgQOz1CIc5liIrA30sXkpbCh6gkSNGkH5KiIqgExABWhTQoTrpjXEbg628s0bjG35oTjxBw58kY3VeITbPV3Lx0rWp46JIjeTB0Ti/l8KcP9wXKJzY+4JCVNA55kNJ4hfC39YuikdcHkkYbBjIRhruUy5uX4EZbhzdgC6p0o87Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768542184; c=relaxed/simple;
-	bh=8snCcpETQzfjuoCwP8ANhUrRMj2ky31iIZ+HAobM0t4=;
+	s=arc-20240116; t=1768542200; c=relaxed/simple;
+	bh=2xLL2XfQmWJ4sthu5CdY/2yNzcf+QAuoMU0h+gEZuQM=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qVpk3c6AQSvBjXVKpWWywdU/7x/YCj7SBd6j/UhvEIYYIrur+xv7ll9Iwdl/+cw3vGzpLPW3jtAeE7FwE46bmflYC2VNdkDo90s6gYyzJx/b+lZcCGcoST96jq4Iaa6rKczHNQKMGgCT+Y0xXvkcouEA+Nx9QDktMVY8Y9LgDFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gdlftks8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F796C116C6;
-	Fri, 16 Jan 2026 05:43:04 +0000 (UTC)
+	 MIME-Version:Content-Type; b=CKUGn0HGEBGUKlA1A59j8n13gLLNW5NZnL1wRoEDfyxkGT/4hR/1RPvzj25bp23xtgL4zxdqkglCEDsQT52FDhDDVOJK9J+CLl/bpW8bMk+7QYu0JtAsWuvdbpWY4Ht2VC1lwzXpUGyyUxE3hSZduUaAZm+t4VUi+8BJE+XWQYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sa+bLC7E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07A33C116C6;
+	Fri, 16 Jan 2026 05:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768542184;
-	bh=8snCcpETQzfjuoCwP8ANhUrRMj2ky31iIZ+HAobM0t4=;
+	s=k20201202; t=1768542200;
+	bh=2xLL2XfQmWJ4sthu5CdY/2yNzcf+QAuoMU0h+gEZuQM=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Gdlftks8aBYCjl/M9Ya9GOanVP++haPgQ9d72UA8LTw9lhUnnXTrsoM1ct4qoTwdL
-	 1nlsqF4zwwwxC72C2DH0iapD3x8CezL1bqKY7WsS6Icg8ruCvU3N/CkQDXFTFclOz6
-	 GGTzpivB63Itqu7GF+ykM4YKm7Tc1Fcwr1vzP+11nYigh9Tu1C2jALj/MZP61NeTTy
-	 D9stOeyJv32zznVms9p72TezjAyc39tpsKg13+wYxL0EQMh5zCoJSS+TqqrN1dyCIX
-	 +U0Bv3kuN9TAxd/xIxrA00S0kRMd+6I+PsQrP6QbhuHTWXwfvfPtaFTVeJ4Cdw4tE9
-	 NcwjJylk4g6bw==
-Date: Thu, 15 Jan 2026 21:43:03 -0800
-Subject: [PATCH 04/11] xfs: convey filesystem unmount events to the health
+	b=Sa+bLC7EpBexF4Lwm0u3PpCpbJJU1NBaQgK0uHjhqIwaNkNDSvx6jWBBo+IlcU19x
+	 xpeMFFgjMDzelHRwXXn6kPZndJZccRBBgQxqtyPKQKCfgpQbhlcUcN76TQyesAZTK0
+	 Ho0EHIAo4m3E6ryHh3F51ZNwfgbbiNgBHDM+cNdOYpuDYLPSqyVty9vzZssik5J84N
+	 gKK954YII/JJfgrusLVG/WN9NMhwb+MeqEsTvWp0jFLNIqj3/FZrlIVtrCCTMzNMtg
+	 qGSZ8K62GLIp6TzxUqc30REOxZoEHpR2q3q4wOiyiJPKBchgr27ucMR5MDCAZFOiSb
+	 SzNEsmTIZe1VA==
+Date: Thu, 15 Jan 2026 21:43:19 -0800
+Subject: [PATCH 05/11] xfs: convey metadata health events to the health
  monitor
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: cem@kernel.org, djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de
-Message-ID: <176852588626.2137143.5311489734226892176.stgit@frogsfrogsfrogs>
+Cc: hch@lst.de, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ hch@lst.de
+Message-ID: <176852588647.2137143.5056661669910689464.stgit@frogsfrogsfrogs>
 In-Reply-To: <176852588473.2137143.1604994842772101197.stgit@frogsfrogsfrogs>
 References: <176852588473.2137143.1604994842772101197.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -59,148 +60,852 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-In xfs_healthmon_unmount, send events to xfs_healer so that it knows
-that nothing further can be done for the filesystem.
+Connect the filesystem metadata health event collection system to the
+health monitor so that xfs can send events to xfs_healer as it collects
+information.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/xfs/libxfs/xfs_fs.h |    3 +++
- fs/xfs/xfs_healthmon.h |    4 ++++
- fs/xfs/xfs_trace.h     |    6 +++++-
- fs/xfs/xfs_healthmon.c |   32 +++++++++++++++++++++++++++++++-
- 4 files changed, 43 insertions(+), 2 deletions(-)
+ fs/xfs/libxfs/xfs_fs.h     |   35 +++++++++
+ fs/xfs/libxfs/xfs_health.h |    5 +
+ fs/xfs/xfs_healthmon.h     |   39 +++++++++
+ fs/xfs/xfs_trace.h         |  130 +++++++++++++++++++++++++++++++-
+ fs/xfs/xfs_health.c        |  123 ++++++++++++++++++++++++++++++
+ fs/xfs/xfs_healthmon.c     |  181 ++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 511 insertions(+), 2 deletions(-)
 
 
 diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
-index 22b86bc888de5a..59de6ab69fb319 100644
+index 59de6ab69fb319..04e1dcf61257d0 100644
 --- a/fs/xfs/libxfs/xfs_fs.h
 +++ b/fs/xfs/libxfs/xfs_fs.h
-@@ -1014,6 +1014,9 @@ struct xfs_rtgroup_geometry {
- #define XFS_HEALTH_MONITOR_TYPE_RUNNING		(0)
- #define XFS_HEALTH_MONITOR_TYPE_LOST		(1)
+@@ -1008,6 +1008,12 @@ struct xfs_rtgroup_geometry {
+ /* affects the whole fs */
+ #define XFS_HEALTH_MONITOR_DOMAIN_MOUNT		(0)
  
-+/* filesystem was unmounted */
-+#define XFS_HEALTH_MONITOR_TYPE_UNMOUNT		(2)
++/* metadata health events */
++#define XFS_HEALTH_MONITOR_DOMAIN_FS		(1)
++#define XFS_HEALTH_MONITOR_DOMAIN_AG		(2)
++#define XFS_HEALTH_MONITOR_DOMAIN_INODE		(3)
++#define XFS_HEALTH_MONITOR_DOMAIN_RTGROUP	(4)
++
+ /* Health monitor event types */
+ 
+ /* status of the monitor itself */
+@@ -1017,11 +1023,37 @@ struct xfs_rtgroup_geometry {
+ /* filesystem was unmounted */
+ #define XFS_HEALTH_MONITOR_TYPE_UNMOUNT		(2)
+ 
++/* metadata health events */
++#define XFS_HEALTH_MONITOR_TYPE_SICK		(3)
++#define XFS_HEALTH_MONITOR_TYPE_CORRUPT		(4)
++#define XFS_HEALTH_MONITOR_TYPE_HEALTHY		(5)
 +
  /* lost events */
  struct xfs_health_monitor_lost {
  	__u64	count;
+ };
+ 
++/* fs/rt metadata */
++struct xfs_health_monitor_fs {
++	/* XFS_FSOP_GEOM_SICK_* flags */
++	__u32	mask;
++};
++
++/* ag/rtgroup metadata */
++struct xfs_health_monitor_group {
++	/* XFS_{AG,RTGROUP}_SICK_* flags */
++	__u32	mask;
++	__u32	gno;
++};
++
++/* inode metadata */
++struct xfs_health_monitor_inode {
++	/* XFS_BS_SICK_* flags */
++	__u32	mask;
++	__u32	gen;
++	__u64	ino;
++};
++
+ struct xfs_health_monitor_event {
+ 	/* XFS_HEALTH_MONITOR_DOMAIN_* */
+ 	__u32	domain;
+@@ -1039,6 +1071,9 @@ struct xfs_health_monitor_event {
+ 	 */
+ 	union {
+ 		struct xfs_health_monitor_lost lost;
++		struct xfs_health_monitor_fs fs;
++		struct xfs_health_monitor_group group;
++		struct xfs_health_monitor_inode inode;
+ 	} e;
+ 
+ 	/* zeroes */
+diff --git a/fs/xfs/libxfs/xfs_health.h b/fs/xfs/libxfs/xfs_health.h
+index b31000f7190ce5..1d45cf5789e864 100644
+--- a/fs/xfs/libxfs/xfs_health.h
++++ b/fs/xfs/libxfs/xfs_health.h
+@@ -289,4 +289,9 @@ void xfs_bulkstat_health(struct xfs_inode *ip, struct xfs_bulkstat *bs);
+ #define xfs_metadata_is_sick(error) \
+ 	(unlikely((error) == -EFSCORRUPTED || (error) == -EFSBADCRC))
+ 
++unsigned int xfs_healthmon_inode_mask(unsigned int sick_mask);
++unsigned int xfs_healthmon_rtgroup_mask(unsigned int sick_mask);
++unsigned int xfs_healthmon_perag_mask(unsigned int sick_mask);
++unsigned int xfs_healthmon_fs_mask(unsigned int sick_mask);
++
+ #endif	/* __XFS_HEALTH_H__ */
 diff --git a/fs/xfs/xfs_healthmon.h b/fs/xfs/xfs_healthmon.h
-index 554ec62125449b..3044bb46485d7e 100644
+index 3044bb46485d7e..121e5942639524 100644
 --- a/fs/xfs/xfs_healthmon.h
 +++ b/fs/xfs/xfs_healthmon.h
-@@ -34,6 +34,9 @@ struct xfs_healthmon {
- 	struct xfs_healthmon_event	*first_event;
- 	struct xfs_healthmon_event	*last_event;
- 
-+	/* preallocated event for unmount */
-+	struct xfs_healthmon_event	*unmount_event;
-+
- 	/* number of events in the list */
- 	unsigned int			events;
- 
-@@ -67,6 +70,7 @@ void xfs_healthmon_unmount(struct xfs_mount *mp);
- enum xfs_healthmon_type {
+@@ -71,10 +71,21 @@ enum xfs_healthmon_type {
  	XFS_HEALTHMON_RUNNING,	/* monitor running */
  	XFS_HEALTHMON_LOST,	/* message lost */
-+	XFS_HEALTHMON_UNMOUNT,	/* filesystem is unmounting */
+ 	XFS_HEALTHMON_UNMOUNT,	/* filesystem is unmounting */
++
++	/* metadata health events */
++	XFS_HEALTHMON_SICK,	/* runtime corruption observed */
++	XFS_HEALTHMON_CORRUPT,	/* fsck reported corruption */
++	XFS_HEALTHMON_HEALTHY,	/* fsck reported healthy structure */
  };
  
  enum xfs_healthmon_domain {
+ 	XFS_HEALTHMON_MOUNT,	/* affects the whole fs */
++
++	/* metadata health events */
++	XFS_HEALTHMON_FS,	/* main filesystem metadata */
++	XFS_HEALTHMON_AG,	/* allocation group metadata */
++	XFS_HEALTHMON_INODE,	/* inode metadata */
++	XFS_HEALTHMON_RTGROUP,	/* realtime group metadata */
+ };
+ 
+ struct xfs_healthmon_event {
+@@ -90,9 +101,37 @@ struct xfs_healthmon_event {
+ 		struct {
+ 			uint64_t	lostcount;
+ 		};
++		/* fs/rt metadata */
++		struct {
++			/* XFS_SICK_* flags */
++			unsigned int	fsmask;
++		};
++		/* ag/rtgroup metadata */
++		struct {
++			/* XFS_SICK_(AG|RG)* flags */
++			unsigned int	grpmask;
++			unsigned int	group;
++		};
++		/* inode metadata */
++		struct {
++			/* XFS_SICK_INO_* flags */
++			unsigned int	imask;
++			uint32_t	gen;
++			xfs_ino_t	ino;
++		};
+ 	};
+ };
+ 
++void xfs_healthmon_report_fs(struct xfs_mount *mp,
++		enum xfs_healthmon_type type, unsigned int old_mask,
++		unsigned int new_mask);
++void xfs_healthmon_report_group(struct xfs_group *xg,
++		enum xfs_healthmon_type type, unsigned int old_mask,
++		unsigned int new_mask);
++void xfs_healthmon_report_inode(struct xfs_inode *ip,
++		enum xfs_healthmon_type type, unsigned int old_mask,
++		unsigned int new_mask);
++
+ long xfs_ioc_health_monitor(struct file *file,
+ 		struct xfs_health_monitor __user *arg);
+ 
 diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-index 04727470b3b410..305cae8f497b43 100644
+index 305cae8f497b43..debe9846418a04 100644
 --- a/fs/xfs/xfs_trace.h
 +++ b/fs/xfs/xfs_trace.h
-@@ -6005,14 +6005,18 @@ DEFINE_HEALTHMON_EVENT(xfs_healthmon_read_start);
- DEFINE_HEALTHMON_EVENT(xfs_healthmon_read_finish);
- DEFINE_HEALTHMON_EVENT(xfs_healthmon_release);
- DEFINE_HEALTHMON_EVENT(xfs_healthmon_detach);
-+DEFINE_HEALTHMON_EVENT(xfs_healthmon_report_unmount);
+@@ -6009,15 +6009,29 @@ DEFINE_HEALTHMON_EVENT(xfs_healthmon_report_unmount);
  
  #define XFS_HEALTHMON_TYPE_STRINGS \
--	{ XFS_HEALTHMON_LOST,		"lost" }
-+	{ XFS_HEALTHMON_LOST,		"lost" }, \
-+	{ XFS_HEALTHMON_UNMOUNT,	"unmount" }
+ 	{ XFS_HEALTHMON_LOST,		"lost" }, \
+-	{ XFS_HEALTHMON_UNMOUNT,	"unmount" }
++	{ XFS_HEALTHMON_UNMOUNT,	"unmount" }, \
++	{ XFS_HEALTHMON_SICK,		"sick" }, \
++	{ XFS_HEALTHMON_CORRUPT,	"corrupt" }, \
++	{ XFS_HEALTHMON_HEALTHY,	"healthy" }
  
  #define XFS_HEALTHMON_DOMAIN_STRINGS \
- 	{ XFS_HEALTHMON_MOUNT,		"mount" }
+-	{ XFS_HEALTHMON_MOUNT,		"mount" }
++	{ XFS_HEALTHMON_MOUNT,		"mount" }, \
++	{ XFS_HEALTHMON_FS,		"fs" }, \
++	{ XFS_HEALTHMON_AG,		"ag" }, \
++	{ XFS_HEALTHMON_INODE,		"inode" }, \
++	{ XFS_HEALTHMON_RTGROUP,	"rtgroup" }
  
  TRACE_DEFINE_ENUM(XFS_HEALTHMON_LOST);
-+TRACE_DEFINE_ENUM(XFS_HEALTHMON_UNMOUNT);
-+
+ TRACE_DEFINE_ENUM(XFS_HEALTHMON_UNMOUNT);
++TRACE_DEFINE_ENUM(XFS_HEALTHMON_SICK);
++TRACE_DEFINE_ENUM(XFS_HEALTHMON_CORRUPT);
++TRACE_DEFINE_ENUM(XFS_HEALTHMON_HEALTHY);
+ 
  TRACE_DEFINE_ENUM(XFS_HEALTHMON_MOUNT);
++TRACE_DEFINE_ENUM(XFS_HEALTHMON_FS);
++TRACE_DEFINE_ENUM(XFS_HEALTHMON_AG);
++TRACE_DEFINE_ENUM(XFS_HEALTHMON_INODE);
++TRACE_DEFINE_ENUM(XFS_HEALTHMON_RTGROUP);
  
  DECLARE_EVENT_CLASS(xfs_healthmon_event_class,
+ 	TP_PROTO(const struct xfs_healthmon *hm,
+@@ -6054,6 +6068,19 @@ DECLARE_EVENT_CLASS(xfs_healthmon_event_class,
+ 				break;
+ 			}
+ 			break;
++		case XFS_HEALTHMON_FS:
++			__entry->mask = event->fsmask;
++			break;
++		case XFS_HEALTHMON_AG:
++		case XFS_HEALTHMON_RTGROUP:
++			__entry->mask = event->grpmask;
++			__entry->group = event->group;
++			break;
++		case XFS_HEALTHMON_INODE:
++			__entry->mask = event->imask;
++			__entry->ino = event->ino;
++			__entry->gen = event->gen;
++			break;
+ 		}
+ 	),
+ 	TP_printk("dev %d:%d type %s domain %s mask 0x%x ino 0x%llx gen 0x%x offset 0x%llx len 0x%llx group 0x%x lost %llu",
+@@ -6081,6 +6108,105 @@ DEFINE_HEALTHMONEVENT_EVENT(xfs_healthmon_format_overflow);
+ DEFINE_HEALTHMONEVENT_EVENT(xfs_healthmon_drop);
+ DEFINE_HEALTHMONEVENT_EVENT(xfs_healthmon_merge);
+ 
++TRACE_EVENT(xfs_healthmon_report_fs,
++	TP_PROTO(const struct xfs_healthmon *hm,
++		 unsigned int old_mask, unsigned int new_mask,
++		 const struct xfs_healthmon_event *event),
++	TP_ARGS(hm, old_mask, new_mask, event),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(unsigned int, type)
++		__field(unsigned int, domain)
++		__field(unsigned int, old_mask)
++		__field(unsigned int, new_mask)
++		__field(unsigned int, fsmask)
++	),
++	TP_fast_assign(
++		__entry->dev = hm->dev;
++		__entry->type = event->type;
++		__entry->domain = event->domain;
++		__entry->old_mask = old_mask;
++		__entry->new_mask = new_mask;
++		__entry->fsmask = event->fsmask;
++	),
++	TP_printk("dev %d:%d type %s domain %s oldmask 0x%x newmask 0x%x fsmask 0x%x",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  __print_symbolic(__entry->type, XFS_HEALTHMON_TYPE_STRINGS),
++		  __print_symbolic(__entry->domain, XFS_HEALTHMON_DOMAIN_STRINGS),
++		  __entry->old_mask,
++		  __entry->new_mask,
++		  __entry->fsmask)
++);
++
++TRACE_EVENT(xfs_healthmon_report_group,
++	TP_PROTO(const struct xfs_healthmon *hm,
++		 unsigned int old_mask, unsigned int new_mask,
++		 const struct xfs_healthmon_event *event),
++	TP_ARGS(hm, old_mask, new_mask, event),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(unsigned int, type)
++		__field(unsigned int, domain)
++		__field(unsigned int, old_mask)
++		__field(unsigned int, new_mask)
++		__field(unsigned int, grpmask)
++		__field(unsigned int, group)
++	),
++	TP_fast_assign(
++		__entry->dev = hm->dev;
++		__entry->type = event->type;
++		__entry->domain = event->domain;
++		__entry->old_mask = old_mask;
++		__entry->new_mask = new_mask;
++		__entry->grpmask = event->grpmask;
++		__entry->group = event->group;
++	),
++	TP_printk("dev %d:%d type %s domain %s oldmask 0x%x newmask 0x%x grpmask 0x%x group 0x%x",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  __print_symbolic(__entry->type, XFS_HEALTHMON_TYPE_STRINGS),
++		  __print_symbolic(__entry->domain, XFS_HEALTHMON_DOMAIN_STRINGS),
++		  __entry->old_mask,
++		  __entry->new_mask,
++		  __entry->grpmask,
++		  __entry->group)
++);
++
++TRACE_EVENT(xfs_healthmon_report_inode,
++	TP_PROTO(const struct xfs_healthmon *hm,
++		 unsigned int old_mask, unsigned int new_mask,
++		 const struct xfs_healthmon_event *event),
++	TP_ARGS(hm, old_mask, new_mask, event),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(unsigned int, type)
++		__field(unsigned int, domain)
++		__field(unsigned int, old_mask)
++		__field(unsigned int, new_mask)
++		__field(unsigned int, imask)
++		__field(unsigned long long, ino)
++		__field(unsigned int, gen)
++	),
++	TP_fast_assign(
++		__entry->dev = hm->dev;
++		__entry->type = event->type;
++		__entry->domain = event->domain;
++		__entry->old_mask = old_mask;
++		__entry->new_mask = new_mask;
++		__entry->imask = event->imask;
++		__entry->ino = event->ino;
++		__entry->gen = event->gen;
++	),
++	TP_printk("dev %d:%d type %s domain %s oldmask 0x%x newmask 0x%x imask 0x%x ino 0x%llx gen 0x%x",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  __print_symbolic(__entry->type, XFS_HEALTHMON_TYPE_STRINGS),
++		  __print_symbolic(__entry->domain, XFS_HEALTHMON_DOMAIN_STRINGS),
++		  __entry->old_mask,
++		  __entry->new_mask,
++		  __entry->imask,
++		  __entry->ino,
++		  __entry->gen)
++);
++
+ #endif /* _TRACE_XFS_H */
+ 
+ #undef TRACE_INCLUDE_PATH
+diff --git a/fs/xfs/xfs_health.c b/fs/xfs/xfs_health.c
+index 3d50397f8f7c00..f243c06fd44762 100644
+--- a/fs/xfs/xfs_health.c
++++ b/fs/xfs/xfs_health.c
+@@ -108,14 +108,19 @@ xfs_fs_mark_sick(
+ 	struct xfs_mount	*mp,
+ 	unsigned int		mask)
+ {
++	unsigned int		old_mask;
++
+ 	ASSERT(!(mask & ~XFS_SICK_FS_ALL));
+ 	trace_xfs_fs_mark_sick(mp, mask);
+ 
+ 	spin_lock(&mp->m_sb_lock);
++	old_mask = mp->m_fs_sick;
+ 	mp->m_fs_sick |= mask;
+ 	spin_unlock(&mp->m_sb_lock);
+ 
+ 	fserror_report_metadata(mp->m_super, -EFSCORRUPTED, GFP_NOFS);
++	if (mask)
++		xfs_healthmon_report_fs(mp, XFS_HEALTHMON_SICK, old_mask, mask);
+ }
+ 
+ /* Mark per-fs metadata as having been checked and found unhealthy by fsck. */
+@@ -124,15 +129,21 @@ xfs_fs_mark_corrupt(
+ 	struct xfs_mount	*mp,
+ 	unsigned int		mask)
+ {
++	unsigned int		old_mask;
++
+ 	ASSERT(!(mask & ~XFS_SICK_FS_ALL));
+ 	trace_xfs_fs_mark_corrupt(mp, mask);
+ 
+ 	spin_lock(&mp->m_sb_lock);
++	old_mask = mp->m_fs_sick;
+ 	mp->m_fs_sick |= mask;
+ 	mp->m_fs_checked |= mask;
+ 	spin_unlock(&mp->m_sb_lock);
+ 
+ 	fserror_report_metadata(mp->m_super, -EFSCORRUPTED, GFP_NOFS);
++	if (mask)
++		xfs_healthmon_report_fs(mp, XFS_HEALTHMON_CORRUPT, old_mask,
++				mask);
+ }
+ 
+ /* Mark a per-fs metadata healed. */
+@@ -141,15 +152,22 @@ xfs_fs_mark_healthy(
+ 	struct xfs_mount	*mp,
+ 	unsigned int		mask)
+ {
++	unsigned int		old_mask;
++
+ 	ASSERT(!(mask & ~XFS_SICK_FS_ALL));
+ 	trace_xfs_fs_mark_healthy(mp, mask);
+ 
+ 	spin_lock(&mp->m_sb_lock);
++	old_mask = mp->m_fs_sick;
+ 	mp->m_fs_sick &= ~mask;
+ 	if (!(mp->m_fs_sick & XFS_SICK_FS_PRIMARY))
+ 		mp->m_fs_sick &= ~XFS_SICK_FS_SECONDARY;
+ 	mp->m_fs_checked |= mask;
+ 	spin_unlock(&mp->m_sb_lock);
++
++	if (mask)
++		xfs_healthmon_report_fs(mp, XFS_HEALTHMON_HEALTHY, old_mask,
++				mask);
+ }
+ 
+ /* Sample which per-fs metadata are unhealthy. */
+@@ -199,14 +217,20 @@ xfs_group_mark_sick(
+ 	struct xfs_group	*xg,
+ 	unsigned int		mask)
+ {
++	unsigned int		old_mask;
++
+ 	xfs_group_check_mask(xg, mask);
+ 	trace_xfs_group_mark_sick(xg, mask);
+ 
+ 	spin_lock(&xg->xg_state_lock);
++	old_mask = xg->xg_sick;
+ 	xg->xg_sick |= mask;
+ 	spin_unlock(&xg->xg_state_lock);
+ 
+ 	fserror_report_metadata(xg->xg_mount->m_super, -EFSCORRUPTED, GFP_NOFS);
++	if (mask)
++		xfs_healthmon_report_group(xg, XFS_HEALTHMON_SICK, old_mask,
++				mask);
+ }
+ 
+ /*
+@@ -217,15 +241,21 @@ xfs_group_mark_corrupt(
+ 	struct xfs_group	*xg,
+ 	unsigned int		mask)
+ {
++	unsigned int		old_mask;
++
+ 	xfs_group_check_mask(xg, mask);
+ 	trace_xfs_group_mark_corrupt(xg, mask);
+ 
+ 	spin_lock(&xg->xg_state_lock);
++	old_mask = xg->xg_sick;
+ 	xg->xg_sick |= mask;
+ 	xg->xg_checked |= mask;
+ 	spin_unlock(&xg->xg_state_lock);
+ 
+ 	fserror_report_metadata(xg->xg_mount->m_super, -EFSCORRUPTED, GFP_NOFS);
++	if (mask)
++		xfs_healthmon_report_group(xg, XFS_HEALTHMON_CORRUPT, old_mask,
++				mask);
+ }
+ 
+ /*
+@@ -236,15 +266,22 @@ xfs_group_mark_healthy(
+ 	struct xfs_group	*xg,
+ 	unsigned int		mask)
+ {
++	unsigned int		old_mask;
++
+ 	xfs_group_check_mask(xg, mask);
+ 	trace_xfs_group_mark_healthy(xg, mask);
+ 
+ 	spin_lock(&xg->xg_state_lock);
++	old_mask = xg->xg_sick;
+ 	xg->xg_sick &= ~mask;
+ 	if (!(xg->xg_sick & XFS_SICK_AG_PRIMARY))
+ 		xg->xg_sick &= ~XFS_SICK_AG_SECONDARY;
+ 	xg->xg_checked |= mask;
+ 	spin_unlock(&xg->xg_state_lock);
++
++	if (mask)
++		xfs_healthmon_report_group(xg, XFS_HEALTHMON_HEALTHY, old_mask,
++				mask);
+ }
+ 
+ /* Sample which per-ag metadata are unhealthy. */
+@@ -283,10 +320,13 @@ xfs_inode_mark_sick(
+ 	struct xfs_inode	*ip,
+ 	unsigned int		mask)
+ {
++	unsigned int		old_mask;
++
+ 	ASSERT(!(mask & ~XFS_SICK_INO_ALL));
+ 	trace_xfs_inode_mark_sick(ip, mask);
+ 
+ 	spin_lock(&ip->i_flags_lock);
++	old_mask = ip->i_sick;
+ 	ip->i_sick |= mask;
+ 	spin_unlock(&ip->i_flags_lock);
+ 
+@@ -300,6 +340,9 @@ xfs_inode_mark_sick(
+ 	spin_unlock(&VFS_I(ip)->i_lock);
+ 
+ 	fserror_report_file_metadata(VFS_I(ip), -EFSCORRUPTED, GFP_NOFS);
++	if (mask)
++		xfs_healthmon_report_inode(ip, XFS_HEALTHMON_SICK, old_mask,
++				mask);
+ }
+ 
+ /* Mark inode metadata as having been checked and found unhealthy by fsck. */
+@@ -308,10 +351,13 @@ xfs_inode_mark_corrupt(
+ 	struct xfs_inode	*ip,
+ 	unsigned int		mask)
+ {
++	unsigned int		old_mask;
++
+ 	ASSERT(!(mask & ~XFS_SICK_INO_ALL));
+ 	trace_xfs_inode_mark_corrupt(ip, mask);
+ 
+ 	spin_lock(&ip->i_flags_lock);
++	old_mask = ip->i_sick;
+ 	ip->i_sick |= mask;
+ 	ip->i_checked |= mask;
+ 	spin_unlock(&ip->i_flags_lock);
+@@ -326,6 +372,9 @@ xfs_inode_mark_corrupt(
+ 	spin_unlock(&VFS_I(ip)->i_lock);
+ 
+ 	fserror_report_file_metadata(VFS_I(ip), -EFSCORRUPTED, GFP_NOFS);
++	if (mask)
++		xfs_healthmon_report_inode(ip, XFS_HEALTHMON_CORRUPT, old_mask,
++				mask);
+ }
+ 
+ /* Mark parts of an inode healed. */
+@@ -334,15 +383,22 @@ xfs_inode_mark_healthy(
+ 	struct xfs_inode	*ip,
+ 	unsigned int		mask)
+ {
++	unsigned int		old_mask;
++
+ 	ASSERT(!(mask & ~XFS_SICK_INO_ALL));
+ 	trace_xfs_inode_mark_healthy(ip, mask);
+ 
+ 	spin_lock(&ip->i_flags_lock);
++	old_mask = ip->i_sick;
+ 	ip->i_sick &= ~mask;
+ 	if (!(ip->i_sick & XFS_SICK_INO_PRIMARY))
+ 		ip->i_sick &= ~XFS_SICK_INO_SECONDARY;
+ 	ip->i_checked |= mask;
+ 	spin_unlock(&ip->i_flags_lock);
++
++	if (mask)
++		xfs_healthmon_report_inode(ip, XFS_HEALTHMON_HEALTHY, old_mask,
++				mask);
+ }
+ 
+ /* Sample which parts of an inode are unhealthy. */
+@@ -422,6 +478,25 @@ xfs_fsop_geom_health(
+ 	}
+ }
+ 
++/*
++ * Translate XFS_SICK_FS_* into XFS_FSOP_GEOM_SICK_* except for the rt free
++ * space codes, which are sent via the rtgroup events.
++ */
++unsigned int
++xfs_healthmon_fs_mask(
++	unsigned int			sick_mask)
++{
++	const struct ioctl_sick_map	*m;
++	unsigned int			ioctl_mask = 0;
++
++	for_each_sick_map(fs_map, m) {
++		if (sick_mask & m->sick_mask)
++			ioctl_mask |= m->ioctl_mask;
++	}
++
++	return ioctl_mask;
++}
++
+ static const struct ioctl_sick_map ag_map[] = {
+ 	{ XFS_SICK_AG_SB,	XFS_AG_GEOM_SICK_SB },
+ 	{ XFS_SICK_AG_AGF,	XFS_AG_GEOM_SICK_AGF },
+@@ -458,6 +533,22 @@ xfs_ag_geom_health(
+ 	}
+ }
+ 
++/* Translate XFS_SICK_AG_* into XFS_AG_GEOM_SICK_*. */
++unsigned int
++xfs_healthmon_perag_mask(
++	unsigned int			sick_mask)
++{
++	const struct ioctl_sick_map	*m;
++	unsigned int			ioctl_mask = 0;
++
++	for_each_sick_map(ag_map, m) {
++		if (sick_mask & m->sick_mask)
++			ioctl_mask |= m->ioctl_mask;
++	}
++
++	return ioctl_mask;
++}
++
+ static const struct ioctl_sick_map rtgroup_map[] = {
+ 	{ XFS_SICK_RG_SUPER,	XFS_RTGROUP_GEOM_SICK_SUPER },
+ 	{ XFS_SICK_RG_BITMAP,	XFS_RTGROUP_GEOM_SICK_BITMAP },
+@@ -488,6 +579,22 @@ xfs_rtgroup_geom_health(
+ 	}
+ }
+ 
++/* Translate XFS_SICK_RG_* into XFS_RTGROUP_GEOM_SICK_*. */
++unsigned int
++xfs_healthmon_rtgroup_mask(
++	unsigned int			sick_mask)
++{
++	const struct ioctl_sick_map	*m;
++	unsigned int			ioctl_mask = 0;
++
++	for_each_sick_map(rtgroup_map, m) {
++		if (sick_mask & m->sick_mask)
++			ioctl_mask |= m->ioctl_mask;
++	}
++
++	return ioctl_mask;
++}
++
+ static const struct ioctl_sick_map ino_map[] = {
+ 	{ XFS_SICK_INO_CORE,	XFS_BS_SICK_INODE },
+ 	{ XFS_SICK_INO_BMBTD,	XFS_BS_SICK_BMBTD },
+@@ -526,6 +633,22 @@ xfs_bulkstat_health(
+ 	}
+ }
+ 
++/* Translate XFS_SICK_INO_* into XFS_BS_SICK_*. */
++unsigned int
++xfs_healthmon_inode_mask(
++	unsigned int			sick_mask)
++{
++	const struct ioctl_sick_map	*m;
++	unsigned int			ioctl_mask = 0;
++
++	for_each_sick_map(ino_map, m) {
++		if (sick_mask & m->sick_mask)
++			ioctl_mask |= m->ioctl_mask;
++	}
++
++	return ioctl_mask;
++}
++
+ /* Mark a block mapping sick. */
+ void
+ xfs_bmap_mark_sick(
 diff --git a/fs/xfs/xfs_healthmon.c b/fs/xfs/xfs_healthmon.c
-index f1c6782f5e3915..c218838e6e59f4 100644
+index c218838e6e59f4..0039a79822e86a 100644
 --- a/fs/xfs/xfs_healthmon.c
 +++ b/fs/xfs/xfs_healthmon.c
-@@ -90,6 +90,7 @@ xfs_healthmon_put(
- 			kfree(event);
- 		}
+@@ -18,6 +18,7 @@
+ #include "xfs_da_btree.h"
+ #include "xfs_quota_defs.h"
+ #include "xfs_rtgroup.h"
++#include "xfs_health.h"
+ #include "xfs_healthmon.h"
  
-+		kfree(hm->unmount_event);
- 		kfree(hm->buffer);
- 		mutex_destroy(&hm->lock);
- 		kfree_rcu_mightsleep(hm);
-@@ -166,6 +167,7 @@ xfs_healthmon_merge_events(
- 
- 	switch (existing->type) {
- 	case XFS_HEALTHMON_RUNNING:
-+	case XFS_HEALTHMON_UNMOUNT:
- 		/* should only ever be one of these events anyway */
- 		return false;
- 
-@@ -307,7 +309,10 @@ xfs_healthmon_push(
- 	return error;
- }
- 
--/* Detach the xfs mount from this healthmon instance. */
-+/*
-+ * Report that the filesystem is being unmounted, then detach the xfs mount
-+ * from this healthmon instance.
-+ */
- void
- xfs_healthmon_unmount(
- 	struct xfs_mount		*mp)
-@@ -317,6 +322,17 @@ xfs_healthmon_unmount(
- 	if (!hm)
- 		return;
- 
-+	trace_xfs_healthmon_report_unmount(hm);
+ #include <linux/anon_inodes.h>
+@@ -174,6 +175,33 @@ xfs_healthmon_merge_events(
+ 	case XFS_HEALTHMON_LOST:
+ 		existing->lostcount += new->lostcount;
+ 		return true;
 +
-+	/*
-+	 * Insert the unmount notification at the start of the event queue so
-+	 * that userspace knows the filesystem went away as soon as possible.
-+	 * There's nothing actionable for userspace after an unmount.  Once
-+	 * we've inserted the unmount event, hm no longer owns that event.
-+	 */
-+	__xfs_healthmon_insert(hm, hm->unmount_event);
-+	hm->unmount_event = NULL;
-+
- 	xfs_healthmon_detach(hm);
++	case XFS_HEALTHMON_SICK:
++	case XFS_HEALTHMON_CORRUPT:
++	case XFS_HEALTHMON_HEALTHY:
++		switch (existing->domain) {
++		case XFS_HEALTHMON_FS:
++			existing->fsmask |= new->fsmask;
++			return true;
++		case XFS_HEALTHMON_AG:
++		case XFS_HEALTHMON_RTGROUP:
++			if (existing->group == new->group){
++				existing->grpmask |= new->grpmask;
++				return true;
++			}
++			return false;
++		case XFS_HEALTHMON_INODE:
++			if (existing->ino == new->ino &&
++			    existing->gen == new->gen) {
++				existing->imask |= new->imask;
++				return true;
++			}
++			return false;
++		default:
++			ASSERT(0);
++			return false;
++		}
++		return false;
+ 	}
+ 
+ 	return false;
+@@ -337,6 +365,135 @@ xfs_healthmon_unmount(
  	xfs_healthmon_put(hm);
  }
-@@ -713,6 +729,20 @@ xfs_ioc_health_monitor(
- 	running_event->domain = XFS_HEALTHMON_MOUNT;
- 	__xfs_healthmon_insert(hm, running_event);
  
-+	/*
-+	 * Preallocate the unmount event so that we can't fail to notify the
-+	 * filesystem later.  This is key for triggering fast exit of the
-+	 * xfs_healer daemon.
-+	 */
-+	hm->unmount_event = kzalloc(sizeof(struct xfs_healthmon_event),
-+			GFP_NOFS);
-+	if (!hm->unmount_event) {
-+		ret = -ENOMEM;
-+		goto out_hm;
-+	}
-+	hm->unmount_event->type = XFS_HEALTHMON_UNMOUNT;
-+	hm->unmount_event->domain = XFS_HEALTHMON_MOUNT;
++/* Compute the reporting mask for non-unmount metadata health events. */
++static inline unsigned int
++metadata_event_mask(
++	struct xfs_healthmon		*hm,
++	enum xfs_healthmon_type		type,
++	unsigned int			old_mask,
++	unsigned int			new_mask)
++{
++	/* If we want all events, return all events. */
++	if (hm->verbose)
++		return new_mask;
 +
- 	/*
- 	 * Try to attach this health monitor to the xfs_mount.  The monitor is
- 	 * considered live and will receive events if this succeeds.
++	switch (type) {
++	case XFS_HEALTHMON_SICK:
++		/* Always report runtime corruptions */
++		return new_mask;
++	case XFS_HEALTHMON_CORRUPT:
++		/* Only report new fsck errors */
++		return new_mask & ~old_mask;
++	case XFS_HEALTHMON_HEALTHY:
++		/* Only report healthy metadata that got fixed */
++		return new_mask & old_mask;
++	default:
++		ASSERT(0);
++		break;
++	}
++
++	return 0;
++}
++
++/* Report XFS_FS_SICK_* events to healthmon */
++void
++xfs_healthmon_report_fs(
++	struct xfs_mount		*mp,
++	enum xfs_healthmon_type		type,
++	unsigned int			old_mask,
++	unsigned int			new_mask)
++{
++	struct xfs_healthmon_event	event = {
++		.type			= type,
++		.domain			= XFS_HEALTHMON_FS,
++	};
++	struct xfs_healthmon		*hm = xfs_healthmon_get(mp);
++
++	if (!hm)
++		return;
++
++	event.fsmask = metadata_event_mask(hm, type, old_mask, new_mask) &
++			~XFS_SICK_FS_SECONDARY;
++	trace_xfs_healthmon_report_fs(hm, old_mask, new_mask, &event);
++
++	if (event.fsmask)
++		xfs_healthmon_push(hm, &event);
++
++	xfs_healthmon_put(hm);
++}
++
++/* Report XFS_SICK_(AG|RG)* flags to healthmon */
++void
++xfs_healthmon_report_group(
++	struct xfs_group		*xg,
++	enum xfs_healthmon_type		type,
++	unsigned int			old_mask,
++	unsigned int			new_mask)
++{
++	struct xfs_healthmon_event	event = {
++		.type			= type,
++		.group			= xg->xg_gno,
++	};
++	struct xfs_healthmon		*hm = xfs_healthmon_get(xg->xg_mount);
++
++	if (!hm)
++		return;
++
++	switch (xg->xg_type) {
++	case XG_TYPE_RTG:
++		event.domain = XFS_HEALTHMON_RTGROUP;
++		event.grpmask = metadata_event_mask(hm, type, old_mask,
++						    new_mask) &
++				~XFS_SICK_RG_SECONDARY;
++		break;
++	case XG_TYPE_AG:
++		event.domain = XFS_HEALTHMON_AG;
++		event.grpmask = metadata_event_mask(hm, type, old_mask,
++						    new_mask) &
++				~XFS_SICK_AG_SECONDARY;
++		break;
++	default:
++		ASSERT(0);
++		break;
++	}
++
++	trace_xfs_healthmon_report_group(hm, old_mask, new_mask, &event);
++
++	if (event.grpmask)
++		xfs_healthmon_push(hm, &event);
++
++	xfs_healthmon_put(hm);
++}
++
++/* Report XFS_SICK_INO_* flags to healthmon */
++void
++xfs_healthmon_report_inode(
++	struct xfs_inode		*ip,
++	enum xfs_healthmon_type		type,
++	unsigned int			old_mask,
++	unsigned int			new_mask)
++{
++	struct xfs_healthmon_event	event = {
++		.type			= type,
++		.domain			= XFS_HEALTHMON_INODE,
++		.ino			= ip->i_ino,
++		.gen			= VFS_I(ip)->i_generation,
++	};
++	struct xfs_healthmon		*hm = xfs_healthmon_get(ip->i_mount);
++
++	if (!hm)
++		return;
++
++	event.imask = metadata_event_mask(hm, type, old_mask, new_mask) &
++			~XFS_SICK_INO_SECONDARY;
++	trace_xfs_healthmon_report_inode(hm, old_mask, event.imask, &event);
++
++	if (event.imask)
++		xfs_healthmon_push(hm, &event);
++
++	xfs_healthmon_put(hm);
++}
++
+ static inline void
+ xfs_healthmon_reset_outbuf(
+ 	struct xfs_healthmon		*hm)
+@@ -347,11 +504,19 @@ xfs_healthmon_reset_outbuf(
+ 
+ static const unsigned int domain_map[] = {
+ 	[XFS_HEALTHMON_MOUNT]		= XFS_HEALTH_MONITOR_DOMAIN_MOUNT,
++	[XFS_HEALTHMON_FS]		= XFS_HEALTH_MONITOR_DOMAIN_FS,
++	[XFS_HEALTHMON_AG]		= XFS_HEALTH_MONITOR_DOMAIN_AG,
++	[XFS_HEALTHMON_INODE]		= XFS_HEALTH_MONITOR_DOMAIN_INODE,
++	[XFS_HEALTHMON_RTGROUP]		= XFS_HEALTH_MONITOR_DOMAIN_RTGROUP,
+ };
+ 
+ static const unsigned int type_map[] = {
+ 	[XFS_HEALTHMON_RUNNING]		= XFS_HEALTH_MONITOR_TYPE_RUNNING,
+ 	[XFS_HEALTHMON_LOST]		= XFS_HEALTH_MONITOR_TYPE_LOST,
++	[XFS_HEALTHMON_SICK]		= XFS_HEALTH_MONITOR_TYPE_SICK,
++	[XFS_HEALTHMON_CORRUPT]		= XFS_HEALTH_MONITOR_TYPE_CORRUPT,
++	[XFS_HEALTHMON_HEALTHY]		= XFS_HEALTH_MONITOR_TYPE_HEALTHY,
++	[XFS_HEALTHMON_UNMOUNT]		= XFS_HEALTH_MONITOR_TYPE_UNMOUNT,
+ };
+ 
+ /* Render event as a V0 structure */
+@@ -384,6 +549,22 @@ xfs_healthmon_format_v0(
+ 			break;
+ 		}
+ 		break;
++	case XFS_HEALTHMON_FS:
++		hme.e.fs.mask = xfs_healthmon_fs_mask(event->fsmask);
++		break;
++	case XFS_HEALTHMON_RTGROUP:
++		hme.e.group.mask = xfs_healthmon_rtgroup_mask(event->grpmask);
++		hme.e.group.gno = event->group;
++		break;
++	case XFS_HEALTHMON_AG:
++		hme.e.group.mask = xfs_healthmon_perag_mask(event->grpmask);
++		hme.e.group.gno = event->group;
++		break;
++	case XFS_HEALTHMON_INODE:
++		hme.e.inode.mask = xfs_healthmon_inode_mask(event->imask);
++		hme.e.inode.ino = event->ino;
++		hme.e.inode.gen = event->gen;
++		break;
+ 	default:
+ 		break;
+ 	}
 
 
