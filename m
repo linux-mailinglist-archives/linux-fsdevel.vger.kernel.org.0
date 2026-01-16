@@ -1,158 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-74201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8D3D38471
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 19:36:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1731D38488
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 19:40:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5E4D6303B7E4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 18:36:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 56230305E283
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 18:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4207347FDE;
-	Fri, 16 Jan 2026 18:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2004F34D4C9;
+	Fri, 16 Jan 2026 18:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bc+am34J"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="fk3MsYN9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A392040B6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 18:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759C134D4CF;
+	Fri, 16 Jan 2026 18:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768588599; cv=none; b=G7FkQ9dlMqGI0EsTK9hDlUxIQmQMF8gf1F8W4LvHvNFec4nFxLH527sz1TcJNJSUBRLj7E1OTIWf+8+P5/fgnjwhztrIgnG7HsB5vJ5bCtFWTIZEHNfoBJF6PFNsvSHWBDSxi7OR1Hz9UyonZegaDQlkcL7xOsInDTYro1YJN8c=
+	t=1768588848; cv=none; b=ojEvwxpjGQ77imHjSHcStrD2dxlHINr69/qmLmUjkTxRQIuhs6RJSyV988cPDi+7lfG8Irti1spMCyM/qDnnq/UDHLj5DQj+lWSJbsH3rC+JDHHIuF9V4LUSWNaegSc5l2nOqxE6dGhT324MbIRGT0juvKs1Qj/g7f8jHWzqD1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768588599; c=relaxed/simple;
-	bh=gPvyYa14EC4tF4cy9CrJLGbVVxkTIRT6bu42ANYP+fY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MhW7wwd3CQVXG/qlfwEnXX9w2KXYh9fasIF1mtdR3G7jy0+pA53CHjQtJFRUSVIa3ClhEXwsTNNW4YxlVBTFSJ5g+AnSJQ/Z1z2C3rhcQCGhdGSy2eu586JULN5hOnVZXNxe+1v5Af2ztafG+9A3vbEtQaAetEqwqCR/9ASUX/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bc+am34J; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-502a789834fso6137831cf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 10:36:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768588597; x=1769193397; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cxz+FIbS2kiUPNZm17oq+0DoruflHlTPP8rpEzxMgB8=;
-        b=Bc+am34JAjpmxqdJfSo2Kriz1bkbMTTCOrt7kk1PYyEXPyidlLo4l/8/fNcOOsjBUU
-         UCs6kYuMnqKaXEgFAUm+OFLDTMSIfQSrFFnsYYcdfiAK0T7FjACqg67Cqpj8iLDHtxFe
-         G8wtbaBEqQabredP3Knz6VxKozK60OhNApRpzMKTmg9Zs+iJcwjLP7gu8wsx3c/iRyRz
-         InXW6bCHsxUS5RB5N2lSLgT/zQl2AUwpVrbdJW/7XyPuCVWCmWU0eDqDFSurBj3Tilah
-         HdGwAKse0mciFAMrMQ+DBgsZoIMg4nqyMzQ1vi6xASxVovNY42H2fLUZHgsCDbwuBCo2
-         o6TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768588597; x=1769193397;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Cxz+FIbS2kiUPNZm17oq+0DoruflHlTPP8rpEzxMgB8=;
-        b=uGeWivEIoHdnYgV6dSLc7bDBVbmrTkRmJ/PopD3186HYi+PY3PWb1TQJt3J6HBgk5A
-         jiCJgKy71aM+BCECzY9TbTpxFo0Xj4ExDov57zMGAfqmODPPTS3RdlDswiaa96JNLwts
-         JE6B+/IKNgmSfEFmo8D37PkXZxnGpYmwsuwLff3okVVpLsDA6hbUcS+CksRjvO4yGDgk
-         njbrEYdnWHGm7AWD1UwSjvr9Bv6VrQ94KpQT0BIAWHWg3dvOGBGUAThzW4FrvwRjftwS
-         1i8X+8jJUbvYzViv6EnVmzrjfeydTCtP4Jm9rIcAVTJ0eZGj6b1dXiZlWiLIG2OZyPOI
-         RijA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUxCg/qxO10MxsWjMQZzxCLAX2zeedwnX0sqaA5SaFaD8jJqf1MpT0n8fvZl8anZXByWqxMl5xDmwu4JLu@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyR9allnlwXHe9nUoXSYYm8wjQsAAqVXU1imFq5tIPI96dJQmO
-	42tEFxEOsx5h0SbGcz+IGJgU7Zy2qY6wW7hl9/bJxebdSwK69nw1J2+HgvfZbrSKJmCKEYeCoNz
-	m2+7B+dCI5P8dufh4+tl4rMRx2pawW1MdBuV9
-X-Gm-Gg: AY/fxX4eCXhCYpCTY6agw0Boyq+lxNCf+PIjIS5X+ZaW6NFqHOM65XqzpRZGxB524sO
-	POIu7SyyKI9Y+ZI1xP8kUhq/uqgiRERZTWhEZjp3GengiMbPFX0s5Vtui4TV22nQYdI268nzyUj
-	Fi0IlO6BjfxpeP9nJoKLA8gdV4oF9Sw4+w8UD6FXMmkxOgFA+kbooL/dUT2aDZkDb3VxtU1vbV6
-	g8Et7e/ETYGN17bNIWg2PW62JZ5Jh2i5PP1ApvUuWPm2hJZpbH1a+76buWrwPU42L8gQA==
-X-Received: by 2002:ac8:588f:0:b0:4f3:5816:bd8d with SMTP id
- d75a77b69052e-502a179ca4fmr59558941cf.62.1768588596702; Fri, 16 Jan 2026
- 10:36:36 -0800 (PST)
+	s=arc-20240116; t=1768588848; c=relaxed/simple;
+	bh=Dty10U6WF4QyF+KPpGS/GhjrkPRrgq9qywHEW475isw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JoYTZDWYnKxquImPW6PLmrM7mNvNRIuJz+rIv0TUDoCX3mO3MtMKBl3nuiK39zC2JbFhNQEokPWkR9N5m7Zmj0i2ZhmhtTh1cj+nd8QiAo4aO2vt7NYpfLb3vOoUc6ySv3Jf0ShzI2I9FmJN3HYPzX6RF7RayfowUG/3rZEW4Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=fk3MsYN9; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 9218F40425
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1768588846; bh=buANyMgVQg1KuzVvtstTUuXIbQBefDLuFIKdgZN8TcA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=fk3MsYN9pXWYgH2tNyFcgFN+6YZLW7LN7mr4oSOlqO7mRogAk4ToAD8PO3qLEG0FA
+	 TCHWg0gvLBTbhUAFSs+f3XLSWYCyzdsCeihAJ9j9w03naMaJZbQEaqH7KgTpqzqrqf
+	 N5NWhTPHuq8Mv4/MYYkD6jSLfT2nYncEf14NzcUbwm+jSXiS4c8NLj0eUT+7CajCW8
+	 BsdeqW3srxsFI97LdQkDvMT7YHPjBkdvRtMpw6zPB0E8ZFE6Mf8ZYcvxKKVs/TydmB
+	 l91lWiqsBQpXjyBmLzLQGIWivb4zTIESgzjdOACEOV8RrW3C3+L+6NkY9CJFQy7FQh
+	 lCtuu2EJ8KkEw==
+Received: from localhost (unknown [IPv6:2601:280:4600:27b::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 9218F40425;
+	Fri, 16 Jan 2026 18:40:46 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>, Matthew Wilcox
+ <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
+ Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] docs: filesystems: add fs/open.c to api-summary
+In-Reply-To: <20260104204530.518206-1-rdunlap@infradead.org>
+References: <20260104204530.518206-1-rdunlap@infradead.org>
+Date: Fri, 16 Jan 2026 11:40:45 -0700
+Message-ID: <871pjpo0ya.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260116015452.757719-1-joannelkoong@gmail.com>
- <20260116015452.757719-2-joannelkoong@gmail.com> <aWmn2FympQXOMst-@casper.infradead.org>
-In-Reply-To: <aWmn2FympQXOMst-@casper.infradead.org>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 16 Jan 2026 10:36:25 -0800
-X-Gm-Features: AZwV_QicbvE4GgVFyex86LT71V1DCglpcJvQBZrW6tPWcAq8-5YCEW7UnYEDJJA
-Message-ID: <CAJnrk1Zs2C-RjigzuhU-5dCqZqV1igAfAWfiv-trnydwBYOHfA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] iomap: fix readahead folio refcounting race
-To: Matthew Wilcox <willy@infradead.org>
-Cc: brauner@kernel.org, djwong@kernel.org, hch@infradead.org, 
-	bfoster@redhat.com, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Thu, Jan 15, 2026 at 6:52=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Thu, Jan 15, 2026 at 05:54:52PM -0800, Joanne Koong wrote:
-> > readahead_folio() returns the next folio from the readahead control
-> > (rac) but it also drops the refcount on the folio that had been held by
-> > the rac. As such, there is only one refcount remaining on the folio
-> > (which is held by the page cache) after this returns.
-> >
-> > This is problematic because this opens a race where if the folio does
-> > not have an iomap_folio_state struct attached to it and the folio gets
-> > read in by the filesystem's IO helper, folio_end_read() may have alread=
-y
-> > been called on the folio (which will unlock the folio) which allows the
-> > page cache to evict the folio (dropping the refcount and leading to the
-> > folio being freed), which leads to use-after-free issues when
-> > subsequent logic in iomap_readahead_iter() or iomap_read_end() accesses
-> > that folio.
->
-> This explanation is overly complex to the point of being misleading.
-> If it reflects your current thinking (as opposed to being copied over
-> from the previous version), it explains why you're having trouble.
->
-> The rule is simple.  Once you call folio_end_read(), the folio is
-> not yours any more.  You can't touch it again; you can't call
-> folio_size(), you can't call folio_end_read() again.
+Randy Dunlap <rdunlap@infradead.org> writes:
 
-Oh I see, I was under the assumption the folio can still be accessed
-afterwards so long as you hold a refcount on it. Thanks for clearing
-this up.
+> Include fs/open.c in filesystems/api-summary.rst to provide its
+> exported APIs.
+>
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: linux-fsdevel@vger.kernel.org
+>
+>  Documentation/filesystems/api-summary.rst |    3 +++
+>  1 file changed, 3 insertions(+)
+>
+> --- linux-next-20251219.orig/Documentation/filesystems/api-summary.rst
+> +++ linux-next-20251219/Documentation/filesystems/api-summary.rst
+> @@ -56,6 +56,9 @@ Other Functions
+>  .. kernel-doc:: fs/namei.c
+>     :export:
+>  
+> +.. kernel-doc:: fs/open.c
+> +   :export:
+> +
 
->
-> This discourse about refcounts and descriptions of how the page cache
-> currently behaves is unnecessary and confusing; it's something that's
-> going to change in the future and it's not relevant to filesystem authors=
-.
->
-> So let's write something simple:
->
-> If the folio does not have an iomap_folio_state struct attached to it and
-> the folio gets read in by the filesystem's IO helper, folio_end_read()
-> may have already been called on the folio
->
-> Fix this by invalidating ctx->cur_folio when a folio without
-> iomap_folio_state metadata attached to it has been handed to the
-> filesystem's IO helper.
->
-> Fixes: b2f35ac4146d ("iomap: add caller-provided callbacks for read and r=
-eadahead")
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+So I've applied this, but it does add a couple of new warnings:
 
-I'll send v3 with this commit message.
+  Documentation/filesystems/api-summary:59: ./fs/open.c:1157: WARNING: Inline emphasis start-string without end-string. [docutils]
+  Documentation/filesystems/api-summary:59: ./fs/open.c:1147: ERROR: Unknown target name: "o". [docutils]
 
->
-> > +                     if (!ifs) {
-> > +                             ctx->cur_folio =3D NULL;
-> > +                             if (unlikely(plen !=3D folio_len))
-> > +                                 return -EIO;
->
-> This should be indented with a tab, not four spaces.  Can it even
-> happen?  If we didn't attach an ifs, can we do a short read?
-
-The short read can happen if the filesystem sets the iomap length to a
-size that's less than the folio size. plen is determined by
-iomap_length() (which returns the minimum of the iter->len and the
-iomap length value the filesystem set).
+It would be nice to get those fixed up.
 
 Thanks,
-Joanne
+
+jon
 
