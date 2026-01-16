@@ -1,174 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-74182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09228D337DE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 17:28:47 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10A4BD33824
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 17:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 6C1003014D07
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 16:28:44 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 888EC3022336
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 16:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F38394480;
-	Fri, 16 Jan 2026 16:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7AF397AC5;
+	Fri, 16 Jan 2026 16:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V61IahxA"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="E0bRkO8D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404D778F26;
-	Fri, 16 Jan 2026 16:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CB1395D9B;
+	Fri, 16 Jan 2026 16:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768580918; cv=none; b=M7LhenuMIFwzFSpAv2RK2S/2FZeVv3AEF+hO2sqbYEUkxeUDlVfA1iVGdPqCMk06wLIBp7aFMdjLeA2WMBciAA9MRCHmSUb7w6mf41nkYW2YJ558erSAtL2t1mqwTF+8kN5ZMYolAJ1qPPaLqzTuY9ER1KvHOfGqgIIVPlZvtM8=
+	t=1768581015; cv=none; b=r1Qr8LsQl3AIJwU8+jL0D5sV9oix4Yhb1PICpLElqk0MP+ixxoKhk3/f3+mOa/WjadRpAPmdH2AqIqK9oIJi2SNyYcv/QQ2zWu2xcP8rqI5o6cn820tTPcNsohIvZEouU+/P5WsMVVLVVMAvHjNSEjnqgK/WQPa7UjOiHWmP9Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768580918; c=relaxed/simple;
-	bh=emssq0J6ea7jEtGqU3WDaRI3oDfJ5THOl2npfcrwHLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kx21YgYpTT1YVucueQb6JF5HPh3JnrmHpIjvtlH8mtZUJZlDqN2KqSk1y14jUdnjSzzgVH2IMpXeKYxWhYjI0D3gjt9I6/E6o1JpmvtBRX/CAKwSE9BxtjR9sP/6isCO25tsuzcef/QJ31qZytk7eID3Vye6t8oFHeafKud53wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V61IahxA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD94EC116C6;
-	Fri, 16 Jan 2026 16:28:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768580917;
-	bh=emssq0J6ea7jEtGqU3WDaRI3oDfJ5THOl2npfcrwHLM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V61IahxAxIzGQsl73bExGkWxGGN8v3fMcwf4WrZ4kvMdDpMFxwKA2TMFjfE7WrFl4
-	 gr7qUZxh/0Lfdky3D5zJpPAKLfJgXhqXCfgD4LnaytZ0+xR7ztoZGx5jIYELcmsvQt
-	 XY8Q5LQGYqg3Pthq7p8sv0rlw65W4NJD+LxMZhsyLUZ8gf1z4OmiBZTuFZRmCll8NY
-	 yOtr3ItpBA/yv7BIZRGSKEUd4oQS8SHtW0osVhvpkGc+3H6rTr1CM/TwrujmyLtJPB
-	 gS+JirYc8AHy6RfnCCAG95i66M74ntO4V6Dpuyb+yF30QwyQwbsche2NI22HuQXAOh
-	 aoHdz97LpIvAw==
-Date: Fri, 16 Jan 2026 08:28:37 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Chuck Lever <cel@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
-	sj1557.seo@samsung.com, yuezhang.mo@sony.com,
-	almaz.alexandrovich@paragon-software.com, slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de, frank.li@vivo.com, tytso@mit.edu,
-	adilger.kernel@dilger.ca, cem@kernel.org, sfrench@samba.org,
-	pc@manguebit.org, ronniesahlberg@gmail.com, sprasad@microsoft.com,
-	trondmy@kernel.org, anna@kernel.org, jaegeuk@kernel.org,
-	chao@kernel.org, hansg@kernel.org, senozhatsky@chromium.org,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: Re: [PATCH v5 01/16] fs: Add case sensitivity info to file_kattr
-Message-ID: <20260116162837.GX15551@frogsfrogsfrogs>
-References: <20260116144616.2098618-1-cel@kernel.org>
- <20260116144616.2098618-2-cel@kernel.org>
+	s=arc-20240116; t=1768581015; c=relaxed/simple;
+	bh=k/EyYJ9Vb0MNwftdscpvJYKnWctiUeCgtItI9briY4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oem2kUP4BVzk3xchK/4evdLhRnaZBmHPE0A8+ju27C6W2pIp3pjhVggyqKFOVUOs7uU7CqZRkBh1NIAqYWe6CZqBoudGj6Fy+cSmedgV6Z8YaIqrjkonbe8/keTCLmP9ba3SkIJjdwH8VVQk2Hnb0JgQ5JEGZocmBijWvzXjgeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=E0bRkO8D; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1768581009; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=RFWiI0wOR2yk+5/0dINJESRV12gsa36QcDUdOJgcoEs=;
+	b=E0bRkO8D9duVab45yVLKAIo+ThDdPzzJaxt+590M9j34SQMyS9t9urh8zFpFLgSGbtsuiEOQU5t5Heo4+GC0y46SAEvBFUWGP/kG21wBQTjgDABylRYeSOiYz8mdI7PU+GQKB4HhGMTgjdpUPoa/4xdipEnJsbKE3LB/lte1WsI=
+Received: from 30.180.182.138(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WxAgrWL_1768581008 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 17 Jan 2026 00:30:09 +0800
+Message-ID: <96353e77-6118-4272-be8f-ae1ece5b57a4@linux.alibaba.com>
+Date: Sat, 17 Jan 2026 00:30:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260116144616.2098618-2-cel@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 0/9] erofs: Introduce page cache sharing feature
+To: Christoph Hellwig <hch@lst.de>, Hongbo Li <lihongbo22@huawei.com>
+Cc: chao@kernel.org, brauner@kernel.org, djwong@kernel.org,
+ amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20260116095550.627082-1-lihongbo22@huawei.com>
+ <20260116153656.GA21174@lst.de>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20260116153656.GA21174@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 16, 2026 at 09:46:00AM -0500, Chuck Lever wrote:
-> From: Chuck Lever <chuck.lever@oracle.com>
-> 
-> Enable upper layers such as NFSD to retrieve case sensitivity
-> information from file systems by adding case_insensitive and
-> case_nonpreserving boolean fields to struct file_kattr.
-> 
-> The case_insensitive and case_nonpreserving fields in struct
-> file_kattr default to false (POSIX semantics: case-sensitive and
-> case-preserving), allowing filesystems to set them only when
-> behavior differs from the default.
-> 
-> Case sensitivity information is exported to userspace via the
-> existing fa_xflags field using the new FS_XFLAG_CASEFOLD and
-> FS_XFLAG_CASENONPRESERVING flags.
-> 
-> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-> ---
->  fs/file_attr.c           | 6 ++++++
->  include/linux/fileattr.h | 6 +++++-
->  include/uapi/linux/fs.h  | 2 ++
->  3 files changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/file_attr.c b/fs/file_attr.c
-> index 13cdb31a3e94..2f83f3c6a170 100644
-> --- a/fs/file_attr.c
-> +++ b/fs/file_attr.c
-> @@ -84,6 +84,8 @@ int vfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
->  	struct inode *inode = d_inode(dentry);
->  	int error;
->  
-> +	memset(fa, 0, sizeof(*fa));
 
-Hrm.  If you're going to memset the file_kattr here, then you might as
-well remove the memset calls from fileattr_fill_*.  It's not great
-that filesystems have to know that a "fill_xflags" function assigns to
-more than just xflags.
 
-> +
->  	if (!inode->i_op->fileattr_get)
->  		return -ENOIOCTLCMD;
->  
-> @@ -106,6 +108,10 @@ static void fileattr_to_file_attr(const struct file_kattr *fa,
->  	fattr->fa_nextents = fa->fsx_nextents;
->  	fattr->fa_projid = fa->fsx_projid;
->  	fattr->fa_cowextsize = fa->fsx_cowextsize;
-> +	if (fa->case_insensitive)
-> +		fattr->fa_xflags |= FS_XFLAG_CASEFOLD;
-> +	if (fa->case_nonpreserving)
-> +		fattr->fa_xflags |= FS_XFLAG_CASENONPRESERVING;
->  }
->  
->  /**
-> diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
-> index f89dcfad3f8f..7f2e557255ce 100644
-> --- a/include/linux/fileattr.h
-> +++ b/include/linux/fileattr.h
-> @@ -16,7 +16,8 @@
->  
->  /* Read-only inode flags */
->  #define FS_XFLAG_RDONLY_MASK \
-> -	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR)
-> +	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR | \
-> +	 FS_XFLAG_CASEFOLD | FS_XFLAG_CASENONPRESERVING)
->  
->  /* Flags to indicate valid value of fsx_ fields */
->  #define FS_XFLAG_VALUES_MASK \
-> @@ -51,6 +52,9 @@ struct file_kattr {
->  	/* selectors: */
->  	bool	flags_valid:1;
->  	bool	fsx_valid:1;
-> +	/* case sensitivity behavior: */
-> +	bool	case_insensitive:1;
-> +	bool	case_nonpreserving:1;
-
-Er... if you're encoding fs name handling qualities through FS_XFLAG_*,
-then filesystems can set them in fsx_xflags directly.  No need for
-separate bitfields here.
-
---D
-
->  };
->  
->  int copy_fsxattr_to_user(const struct file_kattr *fa, struct fsxattr __user *ufa);
-> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> index 66ca526cf786..919148beaa8c 100644
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -253,6 +253,8 @@ struct file_attr {
->  #define FS_XFLAG_FILESTREAM	0x00004000	/* use filestream allocator */
->  #define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
->  #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
-> +#define FS_XFLAG_CASEFOLD	0x00020000	/* case-insensitive lookups */
-> +#define FS_XFLAG_CASENONPRESERVING 0x00040000	/* case not preserved */
->  #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
->  
->  /* the read-only stuff doesn't really belong here, but any other place is
-> -- 
-> 2.52.0
+On 2026/1/16 23:36, Christoph Hellwig wrote:
+> Sorry, just getting to this from my overful inbox by now.
 > 
+> On Fri, Jan 16, 2026 at 09:55:41AM +0000, Hongbo Li wrote:
+>> 2.1. file open & close
+>> ----------------------
+>> When the file is opened, the ->private_data field of file A or file B is
+>> set to point to an internal deduplicated file. When the actual read
+>> occurs, the page cache of this deduplicated file will be accessed.
 > 
+> So the first opener wins and others point to it?  That would lead to
+> some really annoying life time rules.  Or you allocate a hidden backing
+> file and have everyone point to it (the backing_file related subject
+> kinda hints at that), which would be much more sensible, but then the
+> above descriptions would not be correct.
+
+Your latter thought is correct, I think the words above
+are ambiguous.
+
+> 
+>>
+>> When the file is opened, if the corresponding erofs inode is newly
+>> created, then perform the following actions:
+>> 1. add the erofs inode to the backing list of the deduplicated inode;
+>> 2. increase the reference count of the deduplicated inode.
+> 
+> This on the other hand suggests the fist opener is used approach again?
+
+Not quite sure about this part, assuming you read the
+patches, it's just similar to the backing_file approach.
+
+> 
+>> Assuming the deduplication inode's page cache is PGCache_dedup, there
+> 
+> What is PGCache_dedup?
+
+Maybe it's just an outdated expression from the older versions
+from Hongzhen.  I think just ignore this part.
+
+> 
+>> Iomap and the layers below will involve disk I/O operations. As
+>> described in 2.1, the deduplicated inode itself is not bound to a
+>> specific device. The deduplicated inode will select an erofs inode from
+>> the backing list (by default, the first one) to complete the
+>> corresponding iomap operation.
+> 
+> What happens for mmap I/O where folio->mapping is kinda important?
+
+`folio->mapping` will just get the anon inode, but
+(meta)data I/Os will submit to one of the real
+filesystem (that is why a real inode is needed to
+pass into iomap), and use the data to fill the
+anon inode page cache, and the anon inode is like
+backing_file, and vma->vm_file will point to the
+hidden backing file backed by the anon inode .
+
+Thanks,
+Gao Xiang
+
+> 
+> Also do you have a git tree for the whole feature?
+
 
