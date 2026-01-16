@@ -1,120 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-74118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id D505FD318DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 14:09:21 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04033D31DA2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 14:31:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2CA4630BFFC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 13:05:19 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CBE5930FA400
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 13:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556782505AA;
-	Fri, 16 Jan 2026 13:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121A3236435;
+	Fri, 16 Jan 2026 13:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oIw3NNgy"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="MbmX7Ac3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3024223F294;
-	Fri, 16 Jan 2026 13:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3829417BCA;
+	Fri, 16 Jan 2026 13:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768568706; cv=none; b=tl8xYpsxiEbZfW4R2AY0Q12vm+kTBXtENioq2nVaD1keXOATAtg27NeCg5oD317MPhWAGMDO98Ulafu9KQX70yss6Mjr2IYnVy4apCs5az6fvWem7q48zV+TkRqGi+3zNJlUaqmAxU2eUXMCL7Y4TRSnW0lQf+anQGbTb8NzmfA=
+	t=1768570111; cv=none; b=dzCR+KZqWrcfMw/ACgDCKohDE/3+ALIIAOa8bQ3nfMOBTYe/lTil2Xt4/9Gsor5rkHTY/RQHjhYfSxII8cPko3GNOUXpqDMUKdyJ9gICvA84Q9EzHhIUf0lZN7FMoNY+iO6RR0+5jmDzlgQ65L1jYn/mWfTES4dNnetIQblezfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768568706; c=relaxed/simple;
-	bh=CbAFMWQxaWN4gPfzGHNuSzDAtPQQxKBaf65k7R7yp5g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tqxwUOFsaQfPyCNUN+MiJN2vl2gauFOw+72xYsxFlK/TdR7k7imAufGk1i9AEOToDwdzMRH2ASfJA9Uo3TnJH3luKKAZPOcog0YBEz65EdytFe7CaHCAGoeTZFDd7xuLIRgEINxMYPPtdcV+5DznxMnigEGMpSBo9EUfjkz4hX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oIw3NNgy; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768568704; x=1800104704;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=CbAFMWQxaWN4gPfzGHNuSzDAtPQQxKBaf65k7R7yp5g=;
-  b=oIw3NNgyrYDGL/Gh/uR/PwXo5VXPxySRb7c3t/1Lx8wq2g9/wPERDNtN
-   OqXu4HHckkI/pmIQ5xkvXp+33KTmmXQZn+TgWDaunIY22E4qF0ZrPS953
-   vWXtokY0+eAJKKu0+9SYOXk+nM594hKOv573funM7FL3Tp1l8TIa4vfGU
-   5SijnhqxuAa0OsN0vgdbmDN5m6szz+gh/UZI2pqOAXOuka7ryBZJcWsDU
-   EKC1zz2bADt1VZPZN3SodcpSI/1SviuvaimvcBh3ASZV6Wzx2ni/i/N9C
-   FugtDzeBvxVh6fiGBwSbHYC1CbTzY1f1AjjQodshNeu7uUTaulXI4Phum
-   g==;
-X-CSE-ConnectionGUID: 63JjSda5R0yFI0sap0wxbw==
-X-CSE-MsgGUID: +Sil+aEkR7OwdbpG4+iEnQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11673"; a="68892453"
-X-IronPort-AV: E=Sophos;i="6.21,231,1763452800"; 
-   d="scan'208";a="68892453"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2026 05:04:56 -0800
-X-CSE-ConnectionGUID: KQRblK2aQjW0DOA9Jboafg==
-X-CSE-MsgGUID: pX6S6faKQwuORaUhAmfo+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,231,1763452800"; 
-   d="scan'208";a="209733228"
-Received: from black.igk.intel.com (HELO black) ([10.91.253.5])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2026 05:04:48 -0800
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>, Richard Weinberger
- <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes
- Berg <johannes@sipsolutions.net>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jason Wessel <jason.wessel@windriver.com>,
- Daniel Thompson <danielt@kernel.org>, Douglas Anderson
- <dianders@chromium.org>, Petr Mladek <pmladek@suse.com>, Steven Rostedt
- <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, Sergey
- Senozhatsky <senozhatsky@chromium.org>, Jiri Slaby <jirislaby@kernel.org>,
- Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook
- <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
- <gpiccoli@igalia.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael
- Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Andreas Larsson
- <andreas@gaisler.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Jacky Huang
- <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, Laurentiu
- Tudor <laurentiu.tudor@nxp.com>
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
- kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
- netdev@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- linux-hardening@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- Marcos Paulo de Souza <mpdesouza@suse.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>
-Subject: Re: [PATCH 14/19] drivers: hwtracing: stm: console.c: Migrate to
- register_console_force helper
-In-Reply-To: <20251227-printk-cleanup-part3-v1-14-21a291bcf197@suse.com>
-References: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
- <20251227-printk-cleanup-part3-v1-14-21a291bcf197@suse.com>
-Date: Fri, 16 Jan 2026 14:04:45 +0100
-Message-ID: <83zf6daetu.fsf@black.igk.intel.com>
+	s=arc-20240116; t=1768570111; c=relaxed/simple;
+	bh=Ux8TwFDYtctC5q1KKXlTaBdk2pQgKmKphL0AK9nIsF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gDH7bEPOuefgcqpz/M34kURHwL7Yijwdme6u191f0fbIf087Dke5F5jebNrzcZfIDy9SeRtmAkh+ObvkwkQ6/2flwHKPM2df8IseZy1mvg+iHXf4mCjZO1V210lp35txoj14qp4i20LcKd4aa7BC7BBo2SdTmCIBAw+Df4ukciQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=MbmX7Ac3; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9RICdBN2PbcdvOdzRq09DM408elUwHzOROfthGvVkgw=; b=MbmX7Ac3QhG+zMyO39UWCYbAJw
+	O3g6TfBAwZpybfI5jNk3PJt3vqRR0yhOWhWnLNVAbp6O2nQOX/RvwaJffznoQMhuFyLzrTtt4n336
+	aiCkI3cJDol3Lvu8IdPqIRIH0Elh2yLBbDvDaPHkmsx/TRFhAAYve7Qif+lyJdfEzeyjchkMayWVk
+	uiPl6C4S4aUo7ljbabZ7JJqpD5uWDBtSBJum0R4xuccurUaKWOPQbxatMxbc+IDffI4iwjOGFL43b
+	nWtCjwkrxS/s7eEv/OlJXifZJfsAPOynt75XUCGX7nwtqmTxfF8sYBMJI2cLqGNALORWQqiIx+1O1
+	pEC1Dsbg==;
+Received: from [177.139.22.247] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1vgjrr-006AVm-SC; Fri, 16 Jan 2026 14:28:00 +0100
+Message-ID: <33c1ccbd-abbe-4278-8ab1-d7d645c8b6e8@igalia.com>
+Date: Fri, 16 Jan 2026 10:27:52 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, Chuck Lever <chuck.lever@oracle.com>,
+ Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Tom Talpey <tom@talpey.com>, Carlos Maiolino <cem@kernel.org>,
+ Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, kernel-dev@igalia.com, vivek@collabora.com,
+ Ludovico de Nittis <ludovico.denittis@collabora.com>
+References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
+ <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com>
+ <20260114062608.GB10805@lst.de>
+ <5334ebc6-ceee-4262-b477-6b161c5ca704@igalia.com>
+ <20260115062944.GA9590@lst.de>
+ <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com>
+ <20260115072311.GA10352@lst.de>
+ <22b16e24-d10e-43f6-bc2b-eeaa94310e3a@igalia.com>
+ <CAOQ4uxhbz7=XT=C3R8XqL0K_o7KwLKsoNwgk=qJGuw2375MTJw@mail.gmail.com>
+ <0241e2c4-bf11-4372-9eda-cccaba4a6d7d@igalia.com>
+ <CAOQ4uxi988PutUi=Owm5zf6NaCm90PUCJLu7dw8firH8305w-A@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <CAOQ4uxi988PutUi=Owm5zf6NaCm90PUCJLu7dw8firH8305w-A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Marcos Paulo de Souza <mpdesouza@suse.com> writes:
+[+CC SteamOS developers]
 
-> The register_console_force function was introduced to register consoles
-> even on the presence of default consoles, replacing the CON_ENABLE flag
-> that was forcing the same behavior.
->
-> No functional changes.
->
-> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+Em 16/01/2026 06:55, Amir Goldstein escreveu:
+> On Thu, Jan 15, 2026 at 7:55 PM André Almeida <andrealmeid@igalia.com> wrote:
+>>
+>> Em 15/01/2026 13:07, Amir Goldstein escreveu:
+>>> On Thu, Jan 15, 2026 at 4:42 PM André Almeida <andrealmeid@igalia.com> wrote:
+>>>>
+>>>> Em 15/01/2026 04:23, Christoph Hellwig escreveu:
+>>>>
+>>>> [...]
+>>>>
+>>>>>
+>>>>> I still wonder what the use case is here.  Looking at André's original
+>>>>> mail it states:
+>>>>>
+>>>>> "However, btrfs mounts may have volatiles UUIDs. When mounting the exact same
+>>>>> disk image with btrfs, a random UUID is assigned for the following disks each
+>>>>> time they are mounted, stored at temp_fsid and used across the kernel as the
+>>>>> disk UUID. `btrfs filesystem show` presents that. Calling statfs() however
+>>>>> shows the original (and duplicated) UUID for all disks."
+>>>>>
+>>>>> and this doesn't even talk about multiple mounts, but looking at
+>>>>> device_list_add it seems to only set the temp_fsid flag when set
+>>>>> same_fsid_diff_dev is set by find_fsid_by_device, which isn't documented
+>>>>> well, but does indeed seem to be done transparently when two file systems
+>>>>> with the same fsid are mounted.
+>>>>>
+>>>>> So André, can you confirm this what you're worried about?  And btrfs
+>>>>> developers, I think the main problem is indeed that btrfs simply allows
+>>>>> mounting the same fsid twice.  Which is really fatal for anything using
+>>>>> the fsid/uuid, such NFS exports, mount by fs uuid or any sb->s_uuid user.
+>>>>>
+>>>>
+>>>> Yes, I'm would like to be able to mount two cloned btrfs images and to
+>>>> use overlayfs with them. This is useful for SteamOS A/B partition scheme.
+>>>>
+>>>>>> If so, I think it's time to revert the behavior before it's too late.
+>>>>>> Currently the main usage of such duplicated fsids is for Steam deck to
+>>>>>> maintain A/B partitions, I think they can accept a new compat_ro flag for
+>>>>>> that.
+>>>>>
+>>>>> What's an A/B partition?  And how are these safely used at the same time?
+>>>>>
+>>>>
+>>>> The Steam Deck have two main partitions to install SteamOS updates
+>>>> atomically. When you want to update the device, assuming that you are
+>>>> using partition A, the updater will write the new image in partition B,
+>>>> and vice versa. Then after the reboot, the system will mount the new
+>>>> image on B.
+>>>>
+>>>
+>>> And what do you expect to happen wrt overlayfs when switching from
+>>> image A to B?
+>>>
+>>> What are the origin file handles recorded in overlayfs index from image A
+>>> lower worth when the lower image is B?
+>>>
+>>> Is there any guarantee that file handles are relevant and point to the
+>>> same objects?
+>>>
+>>> The whole point of the overlayfs index feature is that overlayfs inodes
+>>> can have a unique id across copy-up.
+>>>
+>>> Please explain in more details exactly which overlayfs setup you are
+>>> trying to do with index feature.
+>>>
+>>
+>> The problem happens _before_ switching from A to B, it happens when
+>> trying to install the same image from A on B.
+>>
+>> During the image installation process, while running in A, the B image
+>> will be mounted more than once for some setup steps, and overlayfs is
+>> used for this. Because A have the same UUID, each time B is remouted
+>> will get a new UUID and then the installation scripts fails mounting the
+>> image.
+> 
+> Please describe the exact overlayfs setup and specifically,
+> is it multi lower or single lower layer setup?
+> What reason do you need the overlayfs index for?
+> Can you mount with index=off which should relax the hard
+> requirement for match with the original lower layer uuid.
+> 
 
-Acked-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+The setup has a single lower layer. This is how the mount command looks 
+like:
 
-Should I pick this up or will you send this with the rest of the series?
+mount -t overlay -o 
+"lowerdir=${DEV_DIR}/etc,upperdir=${DEV_DIR}/var/lib/overlays/etc/upper,workdir=${DEV_DIR}/var/lib/overlays/etc/work" 
+none "${DEV_DIR}/etc"
 
-Cheers,
---
-Alex
+They would rather not disable index, to avoid mounting the wrong layers 
+and to avoid corner cases with hardlinks.
 
