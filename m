@@ -1,203 +1,445 @@
-Return-Path: <linux-fsdevel+bounces-74083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248E8D2F1E4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 10:56:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED896D2F56C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 11:12:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 75B3D30402F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 09:55:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4EBA5311CF70
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 10:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CA7357A5E;
-	Fri, 16 Jan 2026 09:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2D03612EA;
+	Fri, 16 Jan 2026 10:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tu3uI3Ls"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="aiJWcaus"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15A9306482
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 09:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E9135FF59;
+	Fri, 16 Jan 2026 10:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768557335; cv=none; b=P3z+DnEd2dhfq5CI8AKjPE8mLlAMdxfLcUjZXvv7eKHehtl5AQYACAAgF9Qz7C4Z+ElwOppHa5WGsjWTvs8tdhhK9PnzsOGh0rULotQu/3UVa4WVwxechPnHmOx6MRJK3uF6MXmvhymmf6cyPul18iVtyl0qF5DDEZShTIOhAiE=
+	t=1768558132; cv=none; b=AvtaJoDTOMKHhLB5pP61qVBE4WQlLm7kTKtKg9RWRdv3VpPyLefU0JtJiWoDzEy+n3rJq4vsVDjtOCJ0C5bmIXAXdq1WftDxwQDYTX3ab70brNcq5p43bh9Few4PbjhwEQet5Bnyx4AEdSfv7APJSG5nBvXxYaQLIa6F5AUbubA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768557335; c=relaxed/simple;
-	bh=K1IVhgLVP4tMWa4rCPNyc3P/DTHNpSOZNTFwb25LilA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oA5nSXaEsdPNn7HdDWRHnn0P8HqIPnmQAvwMxcV7XQ+aLewYZv6/WIQehm+lPY19Cxpt+DvJpPnFKwvehy0Ashb/W0MYpVu7ACy8+QRV7Ax15FJCrSaC1aMBEcKe1iW4/Ry/+gysJdqLdUn8jtyFyD2dglDXHox0Iw5jLDLMsnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tu3uI3Ls; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6505d3b84bcso2830970a12.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 01:55:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768557328; x=1769162128; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J4xFyXf1g1QrEuF2V9wAvkuU4l5f69A6f1eeQe7d3g4=;
-        b=Tu3uI3LsJHfm6sNIcneQu2bYQa5YkZemeRhVLiWhyUpDatM1CaaXJ5Kqy9qakFPHU8
-         19Yz0tvzaUgaLz2XacmRn2m9dK5Wi6d4SkcGT/mAGUhc4O3CLIyWdzFyM7pZeMEVZL1c
-         zxJDSEym/iUbaM3nehfogYSXexEELdRnrBbDspaIjOQseheo0FQR1vDSOUR+aZsMv78P
-         gSniwcsF4KoxAijuRf8ykfpVSjBSgz/h5Wc45prDz7ym4N9qZp5PjkDorEu84ilphDfJ
-         AwyztpbmX22k0BqFS8dH13sn/yCuN2nYlYn7eUy2htkLJ8Lli8JGYeMoY5Gs7/rQT5Zz
-         m7Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768557328; x=1769162128;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=J4xFyXf1g1QrEuF2V9wAvkuU4l5f69A6f1eeQe7d3g4=;
-        b=ev7dX7hIRUZsb9J0oI9oWBkIBZH9Wjm9p4I7fErt77i+uaWJ/U+wv1rmHX2v7jzipV
-         K1OG5OPVjB7CP0R6SPmOz7CwoM06L8fkQkLGhLW9zV9+w9gUWx/uTThnEgSQuM6OU8ZK
-         rqE7YxC1igjSkOYi8R9yItrhRm83FmX2sIiFKKXuX4sIBDnTfHP+NLgXfjZyLWiPvgxx
-         f2218W2iA2/Zb7Doo+4kxx2Kxz7HHtbu5xp7UTabzQUY1JUIGDQvct18BxYwwesI52xw
-         OmKXyrE7czDsh1hm5T6PQfHrWtXqssVNZ3HfAbcE8AHFT/ccbVx3zHhW3PIBXI0c0pF2
-         Fc8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVE6hsNxv5M1BBKW6sRkiujGATJwgqg2zCBrIwq3nbrbnDkEsdZ5JeWpYMtyAJfvGQky4Jzgp5Lw6CpqI6n@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHjJjmwz7AD4uR+AsV1mXWz7nhZ596xxkRCCmwm3NbeElhqy9m
-	BMgz4bRHnxzI/cqlhxk7jUGI0mCTRZlbtrjtuPek6hpMtGlFS1NlxL2crt1h2OpJpZMyZEDfYzB
-	3QdmAZwProGqvjXgkVmv5n2InAMU57X0=
-X-Gm-Gg: AY/fxX65N35+pQkRNiN38Mrq9U/FuOuUhMNfU3otE3Sn0IK+UVDRakjwYl4sSsHfZ3W
-	8jpQ2KVGfcA5ZgFjU+dJOEcPngrwQEcbnM+IzbgfBFYFc5ZclnlBaI5iqXb8jD/obXnIbhbOhb2
-	jrkGsk+Vva2907AujwtRBFEpEhfzlpia3yHD3yJHQV/d4MTy0bGea1UKCrmHspsS+94CBVcKsNb
-	sDVb56BM10AlfM9NNTqaWEiq5aFh3npNObd7fbWZpIF/McvuQXFHMtNDAbBW/lkR3fxvIulGicI
-	dAphc0XXIlVpZZjLCk0JY5ZpYnL/JQ==
-X-Received: by 2002:a05:6402:399a:b0:64b:6e20:c92e with SMTP id
- 4fb4d7f45d1cf-654526c9083mr1397349a12.10.1768557327690; Fri, 16 Jan 2026
- 01:55:27 -0800 (PST)
+	s=arc-20240116; t=1768558132; c=relaxed/simple;
+	bh=u0EoMM2saWb7y5L2+GcUHWsn9ByCyaujoPPO6Bv73EA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Og8X3utMvxlpQ9VnwQBiRZpHs55MmTj6S+TEjz/vaDlePdfBGZp7KUS7rKnOjFRKPHLVfS9O8U8LVD+pSnULDQ2xkuOkENH8ph+kH0kHYJfX06KMeWSB5xixOnMqjYWBEor72iwilUNOYA0Mq+jxWqsNIv1OQ0lXe3kAsApTNBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=aiJWcaus; arc=none smtp.client-ip=113.46.200.224
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=yO/MOq9YJXh3Z61b7YbcAoRKBcxaZPAcmkuNDojnJ3U=;
+	b=aiJWcauslzJ0hzKpCru4T4++kvy1WhR5gaVAUTilYZQ3UMtdHZWWYtpVutYbMLpb/9W0FZhPp
+	MFR4kjOT2JfYqzSTZHoxjNuos5sx2e6gL9pVPFKmaXeppqzVjMdTbUDLqK83qATps2fqPwnG8Ih
+	nOMI4q79eonweoLLTyR4LgI=
+Received: from mail.maildlp.com (unknown [172.19.162.92])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4dswTC2Jwjz1cyq4;
+	Fri, 16 Jan 2026 18:05:19 +0800 (CST)
+Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9438540562;
+	Fri, 16 Jan 2026 18:08:39 +0800 (CST)
+Received: from huawei.com (10.67.174.162) by kwepemr500015.china.huawei.com
+ (7.202.195.162) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 Jan
+ 2026 18:08:38 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <hsiangkao@linux.alibaba.com>, <chao@kernel.org>, <brauner@kernel.org>
+CC: <djwong@kernel.org>, <amir73il@gmail.com>, <hch@lst.de>,
+	<linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <lihongbo22@huawei.com>
+Subject: [PATCH v15 0/9] erofs: Introduce page cache sharing feature
+Date: Fri, 16 Jan 2026 09:55:41 +0000
+Message-ID: <20260116095550.627082-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.22.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
- <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com>
- <20260114062608.GB10805@lst.de> <5334ebc6-ceee-4262-b477-6b161c5ca704@igalia.com>
- <20260115062944.GA9590@lst.de> <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com>
- <20260115072311.GA10352@lst.de> <22b16e24-d10e-43f6-bc2b-eeaa94310e3a@igalia.com>
- <CAOQ4uxhbz7=XT=C3R8XqL0K_o7KwLKsoNwgk=qJGuw2375MTJw@mail.gmail.com> <0241e2c4-bf11-4372-9eda-cccaba4a6d7d@igalia.com>
-In-Reply-To: <0241e2c4-bf11-4372-9eda-cccaba4a6d7d@igalia.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 16 Jan 2026 10:55:15 +0100
-X-Gm-Features: AZwV_Qi6NnVcLeZQhugqg4vwwjzqnBqiBj0Y0tKNZxo4ZfD1WtvuLTyqSS9dynY
-Message-ID: <CAOQ4uxi988PutUi=Owm5zf6NaCm90PUCJLu7dw8firH8305w-A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Christoph Hellwig <hch@lst.de>, Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Tom Talpey <tom@talpey.com>, Carlos Maiolino <cem@kernel.org>, Chris Mason <clm@fb.com>, 
-	David Sterba <dsterba@suse.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	kernel-dev@igalia.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemr500015.china.huawei.com (7.202.195.162)
 
-On Thu, Jan 15, 2026 at 7:55=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
-lia.com> wrote:
->
-> Em 15/01/2026 13:07, Amir Goldstein escreveu:
-> > On Thu, Jan 15, 2026 at 4:42=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid=
-@igalia.com> wrote:
-> >>
-> >> Em 15/01/2026 04:23, Christoph Hellwig escreveu:
-> >>
-> >> [...]
-> >>
-> >>>
-> >>> I still wonder what the use case is here.  Looking at Andr=C3=A9's or=
-iginal
-> >>> mail it states:
-> >>>
-> >>> "However, btrfs mounts may have volatiles UUIDs. When mounting the ex=
-act same
-> >>> disk image with btrfs, a random UUID is assigned for the following di=
-sks each
-> >>> time they are mounted, stored at temp_fsid and used across the kernel=
- as the
-> >>> disk UUID. `btrfs filesystem show` presents that. Calling statfs() ho=
-wever
-> >>> shows the original (and duplicated) UUID for all disks."
-> >>>
-> >>> and this doesn't even talk about multiple mounts, but looking at
-> >>> device_list_add it seems to only set the temp_fsid flag when set
-> >>> same_fsid_diff_dev is set by find_fsid_by_device, which isn't documen=
-ted
-> >>> well, but does indeed seem to be done transparently when two file sys=
-tems
-> >>> with the same fsid are mounted.
-> >>>
-> >>> So Andr=C3=A9, can you confirm this what you're worried about?  And b=
-trfs
-> >>> developers, I think the main problem is indeed that btrfs simply allo=
-ws
-> >>> mounting the same fsid twice.  Which is really fatal for anything usi=
-ng
-> >>> the fsid/uuid, such NFS exports, mount by fs uuid or any sb->s_uuid u=
-ser.
-> >>>
-> >>
-> >> Yes, I'm would like to be able to mount two cloned btrfs images and to
-> >> use overlayfs with them. This is useful for SteamOS A/B partition sche=
-me.
-> >>
-> >>>> If so, I think it's time to revert the behavior before it's too late=
-.
-> >>>> Currently the main usage of such duplicated fsids is for Steam deck =
-to
-> >>>> maintain A/B partitions, I think they can accept a new compat_ro fla=
-g for
-> >>>> that.
-> >>>
-> >>> What's an A/B partition?  And how are these safely used at the same t=
-ime?
-> >>>
-> >>
-> >> The Steam Deck have two main partitions to install SteamOS updates
-> >> atomically. When you want to update the device, assuming that you are
-> >> using partition A, the updater will write the new image in partition B=
-,
-> >> and vice versa. Then after the reboot, the system will mount the new
-> >> image on B.
-> >>
-> >
-> > And what do you expect to happen wrt overlayfs when switching from
-> > image A to B?
-> >
-> > What are the origin file handles recorded in overlayfs index from image=
- A
-> > lower worth when the lower image is B?
-> >
-> > Is there any guarantee that file handles are relevant and point to the
-> > same objects?
-> >
-> > The whole point of the overlayfs index feature is that overlayfs inodes
-> > can have a unique id across copy-up.
-> >
-> > Please explain in more details exactly which overlayfs setup you are
-> > trying to do with index feature.
-> >
->
-> The problem happens _before_ switching from A to B, it happens when
-> trying to install the same image from A on B.
->
-> During the image installation process, while running in A, the B image
-> will be mounted more than once for some setup steps, and overlayfs is
-> used for this. Because A have the same UUID, each time B is remouted
-> will get a new UUID and then the installation scripts fails mounting the
-> image.
+Enabling page cahe sharing in container scenarios has become increasingly
+crucial, as it can significantly reduce memory usage. In previous efforts,
+Hongzhen has done substantial work to push this feature into the EROFS
+mainline. Due to other commitments, he hasn't been able to continue his
+work recently, and I'm very pleased to build upon his work and continue
+to refine this implementation.
 
-Please describe the exact overlayfs setup and specifically,
-is it multi lower or single lower layer setup?
-What reason do you need the overlayfs index for?
-Can you mount with index=3Doff which should relax the hard
-requirement for match with the original lower layer uuid.
+This patch series is based on Hongzhen's original EROFS shared pagecache
+implementation which was posted about half a year ago:
+https://lore.kernel.org/all/20250301145002.2420830-1-hongzhen@linux.alibaba.com/T/#u
 
-Thanks,
-Amir.
+I have already made several iterations based on this patch set, resolving
+some issues in the code and some pre-requisites.
+
+It should be noted that the two iomap pre-patches from the previous versions
+have already been merged into the vfs/iomap branch, see [1][2]. Therefore,
+the remaining patches here are mainly related to EROFS module.
+
+(A recap of Hongzhen's original cover letter is below, edited slightly
+for this serise:)
+
+Background
+==============
+Currently, reading files with different paths (or names) but the same
+content can consume multiple copies of the page cache, even if the
+content of these caches is identical. For example, reading identical
+files (e.g., *.so files) from two different minor versions of container
+images can result in multiple copies of the same page cache, since
+different containers have different mount points. Therefore, sharing
+the page cache for files with the same content can save memory.
+
+Proposal
+==============
+
+1. determining file identity
+----------------------------
+First, a way needs to be found to check whether the content of two files
+is the same. Here, the xattr values associated with the file
+fingerprints are assessed for consistency. When creating the EROFS
+image, users can specify the name of the xattr for file fingerprints,
+and the corresponding name will be stored in the packfile. The on-disk
+`ishare_key_start` indicates the index of the xattr name within the
+prefix xattrs:
+
+```
+struct erofs_super_block {
+	__u8 xattr_filter_reserved; /* reserved for xattr name filter */
+-	__u8 reserved[3];
++	__u8 ishare_xattr_prefix_id;
++	__u8 reserved[2];
+};
+```
+
+For example, users can specify the first long prefix as the name for the
+file fingerprint as follows:
+
+```
+mkfs.erofs --xattr-inode-digest=trusted.erofs.fingerprint [-zlz4hc] foo.erofs foo/
+```
+
+In this way, `trusted.erofs.fingerprint` serves as the name of the xattr
+for the file fingerprint. The relevant patch has been supported in erofs-utils
+experimental branch:
+
+```
+git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git -b experimental
+```
+
+At the same time, we introduce a new mount option which is inode_share to
+enable the feature. For security reasons, we allow sharing page cache only
+within the same domain by adding "-o domain_id=xxxx" during the mounting
+process:
+
+```
+mount -t erofs -o inode_share,domain_id=your_shared_domain_id erofs.img /mnt
+```
+
+If no domain ID is specified, it will share page cache in default none domain.
+
+2. Implementation
+==================
+
+2.1. file open & close
+----------------------
+When the file is opened, the ->private_data field of file A or file B is
+set to point to an internal deduplicated file. When the actual read
+occurs, the page cache of this deduplicated file will be accessed.
+
+When the file is opened, if the corresponding erofs inode is newly
+created, then perform the following actions:
+1. add the erofs inode to the backing list of the deduplicated inode;
+2. increase the reference count of the deduplicated inode.
+
+The purpose of step 1 above is to ensure that when a real I/O operation
+occurs, the deduplicated inode can locate one of the disk devices
+(as the deduplicated inode itself is not bound to a specific device).
+Step 2 is for managing the lifecycle of the deduplicated inode.
+
+When the erofs inode is destroyed, the opposite actions mentioned above
+will be taken.
+
+2.2. file reading
+-----------------
+Assuming the deduplication inode's page cache is PGCache_dedup, there
+are two possible scenarios when reading a file:
+1) the content being read is already present in PGCache_dedup;
+2) the content being read is not present in PGCache_dedup.
+
+In the second scenario, it involves the iomap operation to read from the
+disk.
+
+2.2.1. reading existing data in PGCache_dedup
+-------------------------------------------
+In this case, the overall read flowchart is as follows (take ksys_read()
+for example):
+
+         ksys_read
+             │
+             │
+             ▼
+            ...
+             │
+             │
+             ▼
+erofs_ishare_file_read_iter (switch to backing deduplicated file)
+             │
+             │
+             ▼
+
+ read PGCache_dedup & return
+
+At this point, the content in PGCache_dedup will be read directly and
+returned.
+
+2.2.2 reading non-existent content in PGCache_dedup
+---------------------------------------------------
+In this case, disk I/O operations will be involved. Taking the reading
+of an uncompressed file as an example, here is the reading process:
+
+         ksys_read
+             │
+             │
+             ▼
+            ...
+             │
+             │
+             ▼
+erofs_ishare_file_read_iter (switch to backing deduplicated file)
+             │
+             │
+             ▼
+            ... (allocate pages)
+             │
+             │
+             ▼
+erofs_read_folio/erofs_readahead
+             │
+             │
+             ▼
+            ... (iomap)
+             │
+             │
+             ▼
+        erofs_iomap_begin
+             │
+             │
+             ▼
+            ...
+
+Iomap and the layers below will involve disk I/O operations. As
+described in 2.1, the deduplicated inode itself is not bound to a
+specific device. The deduplicated inode will select an erofs inode from
+the backing list (by default, the first one) to complete the
+corresponding iomap operation.
+
+2.3. release page cache
+-----------------------
+Similar to overlayfs, when dropping the page cache via .fadvise, erofs
+locates the deduplicated file and applies vfs_fadvise to that specific
+file.
+
+Effect
+==================
+I conducted experiments on two aspects across two different minor
+versions of container images:
+
+1. reading all files in two different minor versions of container images
+
+2. run workloads or use the default entrypoint within the containers^[1]
+
+Below is the memory usage for reading all files in two different minor
+versions of container images:
+
++-------------------+------------------+-------------+---------------+
+|       Image       | Page Cache Share | Memory (MB) |    Memory     |
+|                   |                  |             | Reduction (%) |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     241     |       -       |
+|       redis       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     163     |      33%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     872     |       -       |
+|      postgres     +------------------+-------------+---------------+
+|    16.1 & 16.2    |        Yes       |     630     |      28%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     2771    |       -       |
+|     tensorflow    +------------------+-------------+---------------+
+|  2.11.0 & 2.11.1  |        Yes       |     2340    |      16%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     926     |       -       |
+|       mysql       +------------------+-------------+---------------+
+|  8.0.11 & 8.0.12  |        Yes       |     735     |      21%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     390     |       -       |
+|       nginx       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     219     |      44%      |
++-------------------+------------------+-------------+---------------+
+|       tomcat      |        No        |     924     |       -       |
+| 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+|                   |        Yes       |     474     |      49%      |
++-------------------+------------------+-------------+---------------+
+
+Additionally, the table below shows the runtime memory usage of the
+container:
+
++-------------------+------------------+-------------+---------------+
+|       Image       | Page Cache Share | Memory (MB) |    Memory     |
+|                   |                  |             | Reduction (%) |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     34.9    |       -       |
+|       redis       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     33.6    |       4%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |    149.1    |       -       |
+|      postgres     +------------------+-------------+---------------+
+|    16.1 & 16.2    |        Yes       |      95     |      37%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |    1027.9   |       -       |
+|     tensorflow    +------------------+-------------+---------------+
+|  2.11.0 & 2.11.1  |        Yes       |    934.3    |      10%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |    155.0    |       -       |
+|       mysql       +------------------+-------------+---------------+
+|  8.0.11 & 8.0.12  |        Yes       |    139.1    |      11%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     25.4    |       -       |
+|       nginx       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     18.8    |      26%      |
++-------------------+------------------+-------------+---------------+
+|       tomcat      |        No        |     186     |       -       |
+| 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+|                   |        Yes       |      99     |      47%      |
++-------------------+------------------+-------------+---------------+
+
+It can be observed that when reading all the files in the image, the
+reduced memory usage varies from 16% to 49%, depending on the specific
+image. Additionally, the container's runtime memory usage reduction
+ranges from 4% to 47%.
+
+[1] Below are the workload for these images:
+      - redis: redis-benchmark
+      - postgres: sysbench
+      - tensorflow: app.py of tensorflow.python.platform
+      - mysql: sysbench
+      - nginx: wrk
+      - tomcat: default entrypoint
+
+Changes from v14:
+    - Patch 5: add erofs_inode_set_aops helper to simplify the code and add log
+      when INODE_SHARE is on as suggested by Xiang. Add inode_drop when
+      sharedinode is an orphan and skip fill fingerprint when xattr is not ready.
+    - Patch 6: new added one, to pass inode into tracepoint helper.
+    - Patch 7: move tracepoint related changes out and simplify the code
+      as suggested by Xiang.
+    - Patch 8: the compressed related one, add reviewed-by.
+
+Changes from v13:
+    - Patch 7: do some minor cleanup as suggested by Xiang.
+    - Patch 8,9: use open-code style as suggested by Xiang and pass the
+      realinode to trace_erofs_read_folio.
+
+Changes from v12:
+    - Patch 5: add reviewed-by.
+    - Patch 7: only allow non-direct I/O in open for sharing feature, mask
+      INODE_SHARE if sb without ishare_xattrs, simplify the code and better
+      naming as suggested by Xiang.
+    - Patch 8: remove unuse macro as suggested by Xiang.
+    - Patch 9: minor cleanup as suggested by Xiang.
+
+Changes from v11:
+    - Patch 4: apply with Xiang's patch.
+    - Patch 5: do not mask the xattr_prefix_id in disk and fix the compiling
+      error when disable XATTR config.
+    - Patch 6,10: add reviewed-by.
+    - Patch 7,8: make inode_share excluded with DAX feature, do
+      some cleanup on typo and other code-style as suggested by Xiang.
+    - Patch 9: using realinode and shareinode in compressed case to access
+      metadata and page cache seperately, and remove some useless
+      code as suggested by Xiang.
+
+Changes from v10:
+    - add reviewed-by and acked-by.
+    - do some cleanup on typo, useless code and some helpers' name.
+    - use fingerprint struct and introduce inode_share mount option as
+      suggested by Xiang.
+
+Changes from v9:
+    - make shared page cache as a compatiable feature.
+    - refine code style as suggested by Xiang.
+    - init ishare mnt during the module init as suggested by Xiang.
+    - rebase the latest mainline and fix the comments in cover letter.
+
+Changes from v8:
+    - add review-by in patch 1 and patch 10.
+    - do some clean up in patch 2 and patch 4,6,9 as suggested by Xiang.
+    - add new patch 3 to export alloc_empty_backing_file.
+    - patch 5 only use xattr prefix id to record the ishare info, changed
+      config to EROFS_FS_PAGE_CACHE_SHARE and make it compatible.
+    - patch 7 use backing file helpers to alloc file when ishare file is
+      opened as suggested by Xiang.
+    - patch 8 remove erofs_read_{begin,end} as suggested by Xiang.
+
+v14: https://lore.kernel.org/all/20260109102856.598531-1-lihongbo22@huawei.com/
+v13: https://lore.kernel.org/all/20260109030140.594936-1-lihongbo22@huawei.com/
+v12: https://lore.kernel.org/all/20251231090118.541061-1-lihongbo22@huawei.com/
+v11: https://lore.kernel.org/all/20251224040932.496478-1-lihongbo22@huawei.com/
+v10: https://lore.kernel.org/all/20251223015618.485626-1-lihongbo22@huawei.com/
+v9: https://lore.kernel.org/all/20251117132537.227116-1-lihongbo22@huawei.com/
+v8: https://lore.kernel.org/all/20251114095516.207555-1-lihongbo22@huawei.com/
+v7: https://lore.kernel.org/all/20251021104815.70662-1-lihongbo22@huawei.com/
+v6: https://lore.kernel.org/all/20250301145002.2420830-1-hongzhen@linux.alibaba.com/T/#u
+v5: https://lore.kernel.org/all/20250105151208.3797385-1-hongzhen@linux.alibaba.com/
+v4: https://lore.kernel.org/all/20240902110620.2202586-1-hongzhen@linux.alibaba.com/
+v3: https://lore.kernel.org/all/20240828111959.3677011-1-hongzhen@linux.alibaba.com/
+v2: https://lore.kernel.org/all/20240731080704.678259-1-hongzhen@linux.alibaba.com/
+v1: https://lore.kernel.org/all/20240722065355.1396365-1-hongzhen@linux.alibaba.com/
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?id=8806f279244b
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?id=8d407bb32186
+
+Gao Xiang (1):
+  erofs: decouple `struct erofs_anon_fs_type`
+
+Hongbo Li (3):
+  fs: Export alloc_empty_backing_file
+  erofs: pass inode to trace_erofs_read_folio
+  erofs: support unencoded inodes for page cache share
+
+Hongzhen Luo (5):
+  erofs: support user-defined fingerprint name
+  erofs: support domain-specific page cache share
+  erofs: introduce the page cache share feature
+  erofs: support compressed inodes for page cache share
+  erofs: implement .fadvise for page cache share
+
+ Documentation/filesystems/erofs.rst |   5 +
+ fs/erofs/Kconfig                    |   9 ++
+ fs/erofs/Makefile                   |   1 +
+ fs/erofs/data.c                     |  36 +++--
+ fs/erofs/erofs_fs.h                 |   5 +-
+ fs/erofs/fileio.c                   |  25 ++--
+ fs/erofs/fscache.c                  |  13 --
+ fs/erofs/inode.c                    |  27 +---
+ fs/erofs/internal.h                 |  67 ++++++++++
+ fs/erofs/ishare.c                   | 201 ++++++++++++++++++++++++++++
+ fs/erofs/super.c                    |  81 ++++++++++-
+ fs/erofs/xattr.c                    |  47 +++++++
+ fs/erofs/xattr.h                    |   3 +
+ fs/erofs/zdata.c                    |  38 ++++--
+ fs/file_table.c                     |   1 +
+ include/trace/events/erofs.h        |  10 +-
+ 16 files changed, 487 insertions(+), 82 deletions(-)
+ create mode 100644 fs/erofs/ishare.c
+
+-- 
+2.22.0
+
 
