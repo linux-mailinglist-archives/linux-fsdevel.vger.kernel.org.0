@@ -1,67 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-74151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622AFD33009
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 16:02:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A67D3304E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 16:04:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 67CA93027E56
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 14:56:30 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id DE9543050285
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 14:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA30B393DFE;
-	Fri, 16 Jan 2026 14:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A560C397ABF;
+	Fri, 16 Jan 2026 14:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="F0NxxFs7"
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="J7Av3Jbg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.156.205.64])
+Received: from fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.199.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530D623D2B2;
-	Fri, 16 Jan 2026 14:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.156.205.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDAE2FFDF8;
+	Fri, 16 Jan 2026 14:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.199.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768575383; cv=none; b=DAAEL/ythQC9dcNK4inEoLJdHBLeXIDYhp8B/zWP9QzKE9IvYa7r4za6VGrKDLtjbSnbrrKaAg6fmYVJwqsigEU4TOSFsU/qs2NVk/atVu1NdRRuSNdT5qFz/e+8h6TEWup4KibdcunnSVwzyCIw+2qymXLJMQWytk68tx1iDpo=
+	t=1768575436; cv=none; b=Lj5Qq0jYxTksCPjPhYK9pkR8iDQo48dYgKdz/LYQ4JVl7ztDWesyhzmOsiIrhdjbj/qeC7Eb7rkHpV7scyBrX6hCNHFJu9JhWsWv+A8bYtbMUkPnbhPbWj9Ozgn7xgMXeWNWmmlkzh1optpOZE320/UuXeiYezWVfDfVhtYFP9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768575383; c=relaxed/simple;
-	bh=BxZnyiI6YgvskaCwpGEH+hfPdJiGYdOF3yczju02EHM=;
+	s=arc-20240116; t=1768575436; c=relaxed/simple;
+	bh=HqLuYnV5tuZ3t6R3gm9zbHuzUCEolVTdsZodN2etShg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=b/JAdQvUEdGVM+Wf43S6WyAWz2pkI/+ltYRfr9jVv8atARLfFnvYYu6uZZ+ioq/OzyIRaVX5G8+98jiprqI+JZmvarV7Gm1ZE0n6SzfarpNFy+wXaglFbdaXlH2t+OeQec0rz2gGBxMV4uWt/GS0FVjUyJ4kUVyXCZMzwfsVGXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=F0NxxFs7; arc=none smtp.client-ip=18.156.205.64
+	 In-Reply-To:Content-Type; b=g23iqQKyYS7fFcpJ0d4Sv3EJm5mOBvIlslOFKuiijkpO8/XHaA49UYKWyIuikVpR8HMS8b7aECqIoX/Nz5AnIYx2j5Sb/BxAieFZHA4nrxZPHEOi/Bd/pcWJBLdmnEM5YzACsl9rN+kGGyxqfhdLTdaAr1RzvQ3VbeYHkUcKeTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=J7Av3Jbg; arc=none smtp.client-ip=18.199.210.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1768575381; x=1800111381;
+  t=1768575434; x=1800111434;
   h=message-id:date:mime-version:reply-to:subject:to:cc:
    references:from:in-reply-to:content-transfer-encoding;
-  bh=IEO4wkDrWsP8gb8dVRwVt7tfKvgBUuiF6zz/e0uDn6E=;
-  b=F0NxxFs7rBOpuPtGdmPKFR/XqYq1t+f3Brm9bFysGyZrP3gPftBLJw/i
-   Wh5P7IUKOKdVho9MP82TqY40LlX9qP84QSwMeu8tPY5QUX8wuwUybHvAH
-   ovqE+OvhOcMUrNusqjSXCf90nYcXKoL1nmKlKiRksCwwYPAcn568K2rpj
-   Zq6R4GcTOUEWuLLs1x6zuDKdmkaZFhFTLRDGI0/wt7b+qSK4UMyO/lLoP
-   u5Xx3nzWkD2eqZJq7uXPn/avRekRG18I3qBE/1WcohS0AA/SxrY5pkt18
-   Dbf/Jtx36fSUWubpBI96UeCyLTkQmvYDq2aPsxNi5NBwhpvT1cyB9L7tV
-   A==;
-X-CSE-ConnectionGUID: t80jrskTRzKiYCPAndralA==
-X-CSE-MsgGUID: hn4FZT+mTRGLqNyYAxxD5Q==
+  bh=MR+rnXxwxn/7x1Gj4j0jxSdDeJDLel3jNY29213m130=;
+  b=J7Av3JbgmOW5Zw36TtyJiyqO5DK3zoHRj4hX6c0TpAbU8JNXbS6GTNHS
+   kGZfR9zLBNaIcEf2GeqYZ5d9Xwi92eJ3cJCfR0Dn8vAsSGcdoT6Oule+v
+   bfsmIVC2kxprMJKfrBCbgn+5zKOV80f84iCVUS3BE8O1bOrEz4I72Y/q6
+   zIVN84HKjGqvxx0UOOUJfrwsSRJYf3hqh2HDScRMNUFKseCpKThrM1X9B
+   WCDBs3nEJjlgJyqX4KrzKrgsSRAnIFgpaKvLsswdwj56NZDIJ1xgS3VtX
+   sToCkkVPbFeWIay0+W1VkQjbbfPHUJa4UPxRkjw6TxoKWSPF/RU5krcZ7
+   w==;
+X-CSE-ConnectionGUID: vQMfjCS2RPe/+ynLfnaVwA==
+X-CSE-MsgGUID: CK/cr+tHSwmdmlTSKnHeWA==
 X-IronPort-AV: E=Sophos;i="6.21,231,1763424000"; 
-   d="scan'208";a="7704673"
+   d="scan'208";a="7920258"
 Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2026 14:56:02 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:3849]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.41.192:2525] with esmtp (Farcaster)
- id 260b6298-10cb-4eed-9151-e85b598fcfcc; Fri, 16 Jan 2026 14:56:02 +0000 (UTC)
-X-Farcaster-Flow-ID: 260b6298-10cb-4eed-9151-e85b598fcfcc
+  by internal-fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2026 14:56:55 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.232:20480]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.28.56:2525] with esmtp (Farcaster)
+ id fa6b071b-8258-4488-b17f-3ae252f37550; Fri, 16 Jan 2026 14:56:55 +0000 (UTC)
+X-Farcaster-Flow-ID: fa6b071b-8258-4488-b17f-3ae252f37550
 Received: from EX19D005EUB003.ant.amazon.com (10.252.51.31) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.35;
- Fri, 16 Jan 2026 14:56:01 +0000
+ Fri, 16 Jan 2026 14:56:52 +0000
 Received: from [192.168.12.13] (10.106.82.9) by EX19D005EUB003.ant.amazon.com
  (10.252.51.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.35; Fri, 16 Jan 2026
- 14:55:57 +0000
-Message-ID: <6b50a83e-acd7-4db3-ae9b-015ffad4f615@amazon.com>
-Date: Fri, 16 Jan 2026 14:55:56 +0000
+ 14:56:48 +0000
+Message-ID: <a2b79af7-e5d1-4668-bff3-606f57d32dfc@amazon.com>
+Date: Fri, 16 Jan 2026 14:56:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,8 +70,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH v9 02/13] mm/gup: drop secretmem optimization from
- gup_fast_folio_allowed
+Subject: Re: [PATCH v9 07/13] KVM: guest_memfd: Add flag to remove from direct
+ map
 To: Ackerley Tng <ackerleytng@google.com>, "Kalyazin, Nikita"
 	<kalyazin@amazon.co.uk>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
 	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
@@ -140,8 +140,8 @@ CC: "pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net"
  Takahiro" <itazur@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>,
 	"Cali, Marco" <xmarcalx@amazon.co.uk>
 References: <20260114134510.1835-1-kalyazin@amazon.com>
- <20260114134510.1835-3-kalyazin@amazon.com>
- <CAEvNRgGrpv5h04s+btubhUFHo=d6mBFbr2BVrMt=bWuWOztdJQ@mail.gmail.com>
+ <20260114134510.1835-8-kalyazin@amazon.com>
+ <CAEvNRgEzVhEzr-3GWTsE7GSBsPdvVLq7WFEeLHzcmMe=R9S51w@mail.gmail.com>
 Content-Language: en-US
 From: Nikita Kalyazin <kalyazin@amazon.com>
 Autocrypt: addr=kalyazin@amazon.com; keydata=
@@ -153,109 +153,316 @@ Autocrypt: addr=kalyazin@amazon.com; keydata=
  ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
  ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
  i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <CAEvNRgGrpv5h04s+btubhUFHo=d6mBFbr2BVrMt=bWuWOztdJQ@mail.gmail.com>
+In-Reply-To: <CAEvNRgEzVhEzr-3GWTsE7GSBsPdvVLq7WFEeLHzcmMe=R9S51w@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D012EUA003.ant.amazon.com (10.252.50.98) To
+X-ClientProxiedBy: EX19D008EUC003.ant.amazon.com (10.252.51.205) To
  EX19D005EUB003.ant.amazon.com (10.252.51.31)
 
 
 
-On 15/01/2026 21:40, Ackerley Tng wrote:
+On 15/01/2026 20:00, Ackerley Tng wrote:
 > "Kalyazin, Nikita" <kalyazin@amazon.co.uk> writes:
 > 
 >> From: Patrick Roy <patrick.roy@linux.dev>
 >>
->> This drops an optimization in gup_fast_folio_allowed() where
->> secretmem_mapping() was only called if CONFIG_SECRETMEM=y. secretmem is
->> enabled by default since commit b758fe6df50d ("mm/secretmem: make it on
->> by default"), so the secretmem check did not actually end up elided in
->> most cases anymore anyway.
+>> Add GUEST_MEMFD_FLAG_NO_DIRECT_MAP flag for KVM_CREATE_GUEST_MEMFD()
+>> ioctl. When set, guest_memfd folios will be removed from the direct map
+>> after preparation, with direct map entries only restored when the folios
+>> are freed.
 >>
->> This is in preparation of the generalization of handling mappings where
->> direct map entries of folios are set to not present.  Currently,
->> mappings that match this description are secretmem mappings
->> (memfd_secret()).  Later, some guest_memfd configurations will also fall
->> into this category.
+>> To ensure these folios do not end up in places where the kernel cannot
+>> deal with them, set AS_NO_DIRECT_MAP on the guest_memfd's struct
+>> address_space if GUEST_MEMFD_FLAG_NO_DIRECT_MAP is requested.
+>>
+>> Note that this flag causes removal of direct map entries for all
+>> guest_memfd folios independent of whether they are "shared" or "private"
+>> (although current guest_memfd only supports either all folios in the
+>> "shared" state, or all folios in the "private" state if
+>> GUEST_MEMFD_FLAG_MMAP is not set). The usecase for removing direct map
+>> entries of also the shared parts of guest_memfd are a special type of
+>> non-CoCo VM where, host userspace is trusted to have access to all of
+>> guest memory, but where Spectre-style transient execution attacks
+>> through the host kernel's direct map should still be mitigated.  In this
+>> setup, KVM retains access to guest memory via userspace mappings of
+>> guest_memfd, which are reflected back into KVM's memslots via
+>> userspace_addr. This is needed for things like MMIO emulation on x86_64
+>> to work.
+>>
+>> Direct map entries are zapped right before guest or userspace mappings
+>> of gmem folios are set up, e.g. in kvm_gmem_fault_user_mapping() or
+>> kvm_gmem_get_pfn() [called from the KVM MMU code]. The only place where
+>> a gmem folio can be allocated without being mapped anywhere is
+>> kvm_gmem_populate(), where handling potential failures of direct map
+>> removal is not possible (by the time direct map removal is attempted,
+>> the folio is already marked as prepared, meaning attempting to re-try
+>> kvm_gmem_populate() would just result in -EEXIST without fixing up the
+>> direct map state). These folios are then removed form the direct map
+>> upon kvm_gmem_get_pfn(), e.g. when they are mapped into the guest later.
 >>
 >> Signed-off-by: Patrick Roy <patrick.roy@linux.dev>
->> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 >> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
 >> ---
->>   mm/gup.c | 11 +----------
->>   1 file changed, 1 insertion(+), 10 deletions(-)
+>>   Documentation/virt/kvm/api.rst | 22 ++++++++------
+>>   include/linux/kvm_host.h       | 12 ++++++++
+>>   include/uapi/linux/kvm.h       |  1 +
+>>   virt/kvm/guest_memfd.c         | 54 ++++++++++++++++++++++++++++++++++
+>>   4 files changed, 80 insertions(+), 9 deletions(-)
 >>
->> diff --git a/mm/gup.c b/mm/gup.c
->> index 95d948c8e86c..9cad53acbc99 100644
->> --- a/mm/gup.c
->> +++ b/mm/gup.c
->> @@ -2739,7 +2739,6 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
+>> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+>> index 01a3abef8abb..c5f54f1370c8 100644
+>> --- a/Documentation/virt/kvm/api.rst
+>> +++ b/Documentation/virt/kvm/api.rst
+>> @@ -6440,15 +6440,19 @@ a single guest_memfd file, but the bound ranges must not overlap).
+>>   The capability KVM_CAP_GUEST_MEMFD_FLAGS enumerates the `flags` that can be
+>>   specified via KVM_CREATE_GUEST_MEMFD.  Currently defined flags:
+>>
+>> -  ============================ ================================================
+>> -  GUEST_MEMFD_FLAG_MMAP        Enable using mmap() on the guest_memfd file
+>> -                               descriptor.
+>> -  GUEST_MEMFD_FLAG_INIT_SHARED Make all memory in the file shared during
+>> -                               KVM_CREATE_GUEST_MEMFD (memory files created
+>> -                               without INIT_SHARED will be marked private).
+>> -                               Shared memory can be faulted into host userspace
+>> -                               page tables. Private memory cannot.
+>> -  ============================ ================================================
+>> +  ============================== ================================================
+>> +  GUEST_MEMFD_FLAG_MMAP          Enable using mmap() on the guest_memfd file
+>> +                                 descriptor.
+>> +  GUEST_MEMFD_FLAG_INIT_SHARED   Make all memory in the file shared during
+>> +                                 KVM_CREATE_GUEST_MEMFD (memory files created
+>> +                                 without INIT_SHARED will be marked private).
+>> +                                 Shared memory can be faulted into host userspace
+>> +                                 page tables. Private memory cannot.
+>> +  GUEST_MEMFD_FLAG_NO_DIRECT_MAP The guest_memfd instance will behave similarly
+>> +                                 to memfd_secret, and unmaps the memory backing
+> 
+> Perhaps the reference to memfd_secret can be dropped to avoid anyone
+> assuming further similarities between guest_memfd and memfd_secret. This
+> could just say that "The guest_memfd instance will unmap the memory
+> backing it from the kernel's address space...".
+
+Agree, it may lead to a confusion down the line, thanks.
+
+> 
+>> +                                 it from the kernel's address space before
+>> +                                 being passed off to userspace or the guest.
+>> +  ============================== ================================================
+>>
+>>   When the KVM MMU performs a PFN lookup to service a guest fault and the backing
+>>   guest_memfd has the GUEST_MEMFD_FLAG_MMAP set, then the fault will always be
+>> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+>> index 27796a09d29b..d4d5306075bf 100644
+>> --- a/include/linux/kvm_host.h
+>> +++ b/include/linux/kvm_host.h
+>> @@ -738,10 +738,22 @@ static inline u64 kvm_gmem_get_supported_flags(struct kvm *kvm)
+>>        if (!kvm || kvm_arch_supports_gmem_init_shared(kvm))
+>>                flags |= GUEST_MEMFD_FLAG_INIT_SHARED;
+>>
+>> +     if (kvm_arch_gmem_supports_no_direct_map())
+>> +             flags |= GUEST_MEMFD_FLAG_NO_DIRECT_MAP;
+>> +
+>>        return flags;
+>>   }
+>>   #endif
+>>
+>> +#ifdef CONFIG_KVM_GUEST_MEMFD
+>> +#ifndef kvm_arch_gmem_supports_no_direct_map
+>> +static inline bool kvm_arch_gmem_supports_no_direct_map(void)
+>> +{
+>> +     return false;
+>> +}
+>> +#endif
+>> +#endif /* CONFIG_KVM_GUEST_MEMFD */
+>> +
+>>   #ifndef kvm_arch_has_readonly_mem
+>>   static inline bool kvm_arch_has_readonly_mem(struct kvm *kvm)
 >>   {
->>        bool reject_file_backed = false;
->>        struct address_space *mapping;
->> -     bool check_secretmem = false;
->>        unsigned long mapping_flags;
+>> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+>> index dddb781b0507..60341e1ba1be 100644
+>> --- a/include/uapi/linux/kvm.h
+>> +++ b/include/uapi/linux/kvm.h
+>> @@ -1612,6 +1612,7 @@ struct kvm_memory_attributes {
+>>   #define KVM_CREATE_GUEST_MEMFD       _IOWR(KVMIO,  0xd4, struct kvm_create_guest_memfd)
+>>   #define GUEST_MEMFD_FLAG_MMAP                (1ULL << 0)
+>>   #define GUEST_MEMFD_FLAG_INIT_SHARED (1ULL << 1)
+>> +#define GUEST_MEMFD_FLAG_NO_DIRECT_MAP       (1ULL << 2)
 >>
->>        /*
->> @@ -2751,14 +2750,6 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
-> 
-> Copying some lines the diff didn't contain:
-> 
->          /*
->           * If we aren't pinning then no problematic write can occur. A long term
->           * pin is the most egregious case so this is the one we disallow.
->           */
->          if ((flags & (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE)) ==
->              (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE))
-> 
-> If we're pinning, can we already return true here? IIUC this function
-> is passed a folio that is file-backed, and the check if (!mapping) is
-> just there to catch the case where the mapping got truncated.
-
-I have to admit that I am not comfortable with removing this check, 
-unless someone says it's certainly alright.
-
-> 
-> Or should we wait for the check where the mapping got truncated? If so,
-> then maybe we can move this "are we pinning" check to after this check
-> and remove the reject_file_backed variable?
-
-I can indeed move the pinning check to the end to remove the variable. 
-I'd do it in a separate patch.
-
-> 
->          /*
->           * The mapping may have been truncated, in any case we cannot determine
->           * if this mapping is safe - fall back to slow path to determine how to
->           * proceed.
->           */
->          if (!mapping)
->                  return false;
-> 
-> 
->>                reject_file_backed = true;
+>>   struct kvm_create_guest_memfd {
+>>        __u64 size;
+>> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+>> index 92e7f8c1f303..43f64c11467a 100644
+>> --- a/virt/kvm/guest_memfd.c
+>> +++ b/virt/kvm/guest_memfd.c
+>> @@ -7,6 +7,9 @@
+>>   #include <linux/mempolicy.h>
+>>   #include <linux/pseudo_fs.h>
+>>   #include <linux/pagemap.h>
+>> +#include <linux/set_memory.h>
+>> +
+>> +#include <asm/tlbflush.h>
 >>
->>        /* We hold a folio reference, so we can safely access folio fields. */
->> -
->> -     /* secretmem folios are always order-0 folios. */
->> -     if (IS_ENABLED(CONFIG_SECRETMEM) && !folio_test_large(folio))
->> -             check_secretmem = true;
->> -
->> -     if (!reject_file_backed && !check_secretmem)
->> -             return true;
->> -
->>        if (WARN_ON_ONCE(folio_test_slab(folio)))
->>                return false;
+>>   #include "kvm_mm.h"
 >>
->> @@ -2800,7 +2791,7 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
->>         * At this point, we know the mapping is non-null and points to an
->>         * address_space object.
->>         */
->> -     if (check_secretmem && secretmem_mapping(mapping))
->> +     if (secretmem_mapping(mapping))
->>                return false;
->>        /* The only remaining allowed file system is shmem. */
->>        return !reject_file_backed || shmem_mapping(mapping);
+>> @@ -76,6 +79,43 @@ static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slo
+>>        return 0;
+>>   }
+>>
+>> +#define KVM_GMEM_FOLIO_NO_DIRECT_MAP BIT(0)
+>> +
+>> +static bool kvm_gmem_folio_no_direct_map(struct folio *folio)
+>> +{
+>> +     return ((u64) folio->private) & KVM_GMEM_FOLIO_NO_DIRECT_MAP;
+> 
+> Nit: I think there shouldn't be a space between (u64) and what's being casted.
+
+True, will remove.
+
+> 
+>> +}
+>> +
+>> +static int kvm_gmem_folio_zap_direct_map(struct folio *folio)
+>> +{
+>> +     u64 gmem_flags = GMEM_I(folio_inode(folio))->flags;
+>> +     int r = 0;
+>> +
+>> +     if (kvm_gmem_folio_no_direct_map(folio) || !(gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP))
+>> +             goto out;
+>> +
+>> +     folio->private = (void *)((u64)folio->private | KVM_GMEM_FOLIO_NO_DIRECT_MAP);
+>> +     r = folio_zap_direct_map(folio);
+>> +
+>> +out:
+>> +     return r;
+>> +}
+>> +
+>> +static void kvm_gmem_folio_restore_direct_map(struct folio *folio)
+>> +{
+>> +     /*
+>> +      * Direct map restoration cannot fail, as the only error condition
+>> +      * for direct map manipulation is failure to allocate page tables
+>> +      * when splitting huge pages, but this split would have already
+>> +      * happened in folio_zap_direct_map() in kvm_gmem_folio_zap_direct_map().
+>> +      * Thus folio_restore_direct_map() here only updates prot bits.
+>> +      */
+> 
+> Thanks for this comment :)
+
+Thanks to Patrick :)
+
+> 
+>> +     if (kvm_gmem_folio_no_direct_map(folio)) {
+>> +             WARN_ON_ONCE(folio_restore_direct_map(folio));
+>> +             folio->private = (void *)((u64)folio->private & ~KVM_GMEM_FOLIO_NO_DIRECT_MAP);
+>> +     }
+>> +}
+>> +
+>>   static inline void kvm_gmem_mark_prepared(struct folio *folio)
+>>   {
+>>        folio_mark_uptodate(folio);
+>> @@ -398,6 +438,7 @@ static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
+>>        struct inode *inode = file_inode(vmf->vma->vm_file);
+>>        struct folio *folio;
+>>        vm_fault_t ret = VM_FAULT_LOCKED;
+>> +     int err;
+>>
+>>        if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
+>>                return VM_FAULT_SIGBUS;
+>> @@ -423,6 +464,12 @@ static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
+>>                kvm_gmem_mark_prepared(folio);
+>>        }
+>>
+>> +     err = kvm_gmem_folio_zap_direct_map(folio);
+> 
+> Perhaps the check for gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP should
+> be done here before making the call to kvm_gmem_folio_zap_direct_map()
+> to make it more obvious that zapping is conditional.
+
+Makes sense to me.
+
+> 
+> Perhaps also add a check for kvm_arch_gmem_supports_no_direct_map() so
+> this call can be completely removed by the compiler if it wasn't
+> compiled in.
+
+But if it is compiled in, we will be paying the cost of the call on 
+every page fault?  Eg on arm64, it will call the following:
+
+bool can_set_direct_map(void)
+{
+
+...
+
+	return rodata_full || debug_pagealloc_enabled() ||
+		arm64_kfence_can_set_direct_map() || is_realm_world();
+}
+
+> 
+> The kvm_gmem_folio_no_direct_map() check should probably remain in
+> kvm_gmem_folio_zap_direct_map() since that's a "if already zapped, don't
+> zap again" check.
+> 
+>> +     if (err) {
+>> +             ret = vmf_error(err);
+>> +             goto out_folio;
+>> +     }
+>> +
+>>        vmf->page = folio_file_page(folio, vmf->pgoff);
+>>
+>>   out_folio:
+>> @@ -533,6 +580,8 @@ static void kvm_gmem_free_folio(struct folio *folio)
+>>        kvm_pfn_t pfn = page_to_pfn(page);
+>>        int order = folio_order(folio);
+>>
+>> +     kvm_gmem_folio_restore_direct_map(folio);
+>> +
+> 
+> I can't decide if the kvm_gmem_folio_no_direct_map(folio) should be in
+> the caller or within kvm_gmem_folio_restore_direct_map(), since this
+> time it's a folio-specific property being checked.
+
+I'm tempted to keep it similar to the kvm_gmem_folio_zap_direct_map() 
+case.  How does the fact it's a folio-speicific property change your 
+reasoning?
+
+> 
+> Perhaps also add a check for kvm_arch_gmem_supports_no_direct_map() so
+> this call can be completely removed by the compiler if it wasn't
+> compiled in. IIUC whether the check is added in the caller or within
+> kvm_gmem_folio_restore_direct_map() the call can still be elided.
+
+Same concern as the above about kvm_gmem_folio_zap_direct_map(), ie the 
+performance of the case where kvm_arch_gmem_supports_no_direct_map() exists.
+
+> 
+>>        kvm_arch_gmem_invalidate(pfn, pfn + (1ul << order));
+>>   }
+>>
+>> @@ -596,6 +645,9 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+>>        /* Unmovable mappings are supposed to be marked unevictable as well. */
+>>        WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+>>
+>> +     if (flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP)
+>> +             mapping_set_no_direct_map(inode->i_mapping);
+>> +
+>>        GMEM_I(inode)->flags = flags;
+>>
+>>        file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR, &kvm_gmem_fops);
+>> @@ -807,6 +859,8 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
+>>        if (!is_prepared)
+>>                r = kvm_gmem_prepare_folio(kvm, slot, gfn, folio);
+>>
+>> +     kvm_gmem_folio_zap_direct_map(folio);
+>> +
+> 
+> Is there a reason why errors are not handled when faulting private memory?
+
+No, I can't see a reason.  Will add a check, thanks.
+
+> 
+>>        folio_unlock(folio);
+>>
+>>        if (!r)
 >> --
 >> 2.50.1
 
