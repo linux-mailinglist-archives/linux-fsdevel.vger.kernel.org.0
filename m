@@ -1,103 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-74068-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74069-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7B3D2E4E4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 09:53:52 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4802FD2E4F6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 09:54:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DFAD4305F66A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 08:53:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9BD6E303BE21
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 08:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B22530FF3B;
-	Fri, 16 Jan 2026 08:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEymhmaG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797D030F552;
+	Fri, 16 Jan 2026 08:54:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F7630F7F1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 08:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE943090C1;
+	Fri, 16 Jan 2026 08:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768553609; cv=none; b=q39eHr5pIKsH15hPp7j6gVxjXgR79HfSTiVQ/eip9kzKSo1aFerRKoW8oaWGXdxvrqivixNNbFf/uiOYYurnSX9zpTNWfsV0KTCt9sgnrob0n8/ksAThkgfDNwL9xHXbijzM+o+ZId7romd59BjdB4mY4LjMub9K3+IkTURzDig=
+	t=1768553647; cv=none; b=n5h1GjPrBygD3b+v3tzKQQK/3yi7r3bJwjaOPevFM2ZDCDil0dYbHMdgQzufQa7GDJ3aHPlL0d5qEmCwNQLglyW9/O1bAPr+0w+eqy0WQAGzKhUQR1wsHFjIv/jAv6pGZ/FX+CdlrejA9wQqsdnAvdVQtG3OcgZ+5TptRFdvdA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768553609; c=relaxed/simple;
-	bh=QNbCEM/CPbisel6FUSp83Gcjx7gbMxEpasASgx5g+NQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VNY0MRagN8oq9lU9pR9w90BY2tp5yUBYCrsvJ9QMBm0KL9Zf1qSSHUYw6ODfFnSDyjyrfFteYRw83tjFXQb7vmTBoe1TA50f34CvkqfzKE3zFpTdwEk9l9p2tEWBWq4Sc7AH1JYZJhmhcdWF7WUCLLWE0uKbZviKh7U7t0CgFpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEymhmaG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59B5AC2BCB6;
-	Fri, 16 Jan 2026 08:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768553609;
-	bh=QNbCEM/CPbisel6FUSp83Gcjx7gbMxEpasASgx5g+NQ=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=NEymhmaGTEcYhdqht4sekH5v2qIhZybo3ZId8AbZS/HbU/RRMYEafgseIJs58Gpwc
-	 ArO+xQlUl7coNJf5YyMVZCrJAxdsB/m5ux3khkZU27/sbqK1Si/fO1iQRU59p2btz9
-	 any1GmcgSGx82cYbXJw3gfmP3y7Ny9YEWGJ7jXhuuVYqKNoIGP112U3edPMn5MvM6i
-	 Z4LwQKCIreIelS0Pw3afi4Qik2HW55JbQyjyam7rEew959lsp5X64TJ7SHco+7PKd8
-	 aJg5J/mXCp5WmmpjojVDpyzeG8ECFRQ3p+0EnkpXDqjimlx82Ia1ua2Zq0qMLSUaDI
-	 3k36ojOOVcdhg==
-Message-ID: <564a4389-f462-48b3-bd1a-cc4fbb0a6e88@kernel.org>
-Date: Fri, 16 Jan 2026 16:53:33 +0800
+	s=arc-20240116; t=1768553647; c=relaxed/simple;
+	bh=p/xX5cmT21gqUCpIsuFg1gcOvCjwir7AiuUywjbVk58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pxyOp3/gSb6AteIZuoRlS/ujEWApdLw63yIGiYkkl9r70x1YzyNyfrI8GFXCStvmBg6/GVI9TMQVNtNthDn4SJkFVaZnOd7Hb2+1x/m9SDAzZXwEsJwYV8/T36rZ26cx/oXieSPg7llywU0Jlpdul8Pw6c77DClsTK5GZ5wPMpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 3AF04227A8E; Fri, 16 Jan 2026 09:53:59 +0100 (CET)
+Date: Fri, 16 Jan 2026 09:53:59 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@lst.de, tytso@mit.edu,
+	willy@infradead.org, jack@suse.cz, djwong@kernel.org,
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com,
+	xiang@kernel.org, dsterba@suse.com, pali@kernel.org,
+	ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com,
+	gunho.lee@lge.com, Hyunchul Lee <hyc.lee@gmail.com>
+Subject: Re: [PATCH v5 06/14] ntfs: update file operations
+Message-ID: <20260116085359.GD15119@lst.de>
+References: <20260111140345.3866-1-linkinjeon@kernel.org> <20260111140345.3866-7-linkinjeon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, Nanzhe Zhao <nzzhao@126.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: add 'folio_in_bio' to handle
- readahead folios with no BIO submission
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20260111100941.119765-1-nzzhao@126.com>
- <20260111100941.119765-2-nzzhao@126.com>
- <0aca7d1f-b323-4e14-b33c-8e2f0b9e63ea@kernel.org>
- <13c7c3ce.71fa.19bb1687da1.Coremail.nzzhao@126.com>
- <5158ff31-bd7b-4071-b2b1-12cb75c858dd@kernel.org>
- <aWZ7X9yig5TK2yNN@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <aWZ7X9yig5TK2yNN@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260111140345.3866-7-linkinjeon@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 1/14/2026 1:05 AM, Jaegeuk Kim wrote:
-> On 01/12, Chao Yu wrote:
->> On 1/12/2026 4:52 PM, Nanzhe Zhao wrote:
->>>
->>> At 2026-01-12 09:02:48, "Chao Yu" <chao@kernel.org> wrote:
->>>>> @@ -2545,6 +2548,11 @@ static int f2fs_read_data_large_folio(struct inode *inode,
->>>>>     	}
->>>>>     	trace_f2fs_read_folio(folio, DATA);
->>>>>     	if (rac) {
->>>>> +		if (!folio_in_bio) {
->>>>> +			if (!ret)
->>>>
->>>> ret should never be true here?
->>>>
->>>> Thanks,
->>> Yes.Need I send a v3 patch to remove the redundant check?
->>
->> Yes, I think so.
-> 
-> Applied in dev-test with it.
+On Sun, Jan 11, 2026 at 11:03:36PM +0900, Namjae Jeon wrote:
+>  /**
+> + * ntfs_setattr - called from notify_change() when an attribute is being changed
+> + * @idmap:	idmap of the mount the inode was found from
+> + * @dentry:	dentry whose attributes to change
+> + * @attr:	structure describing the attributes and the changes
+>   *
+> + * We have to trap VFS attempts to truncate the file described by @dentry as
+> + * soon as possible, because we do not implement changes in i_size yet.  So we
+> + * abort all i_size changes here.
+>   *
+> + * We also abort all changes of user, group, and mode as we do not implement
+> + * the NTFS ACLs yet.
 
-For upstreamed version,
+This comment isn't actually true, is it?  Also having kerneldoc comments
+for something that implements VFS methods isn't generally very useful,
+they should have their API documentation in the VFS documentation.  You
+can comment anything special in a normal code comment if it applies.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+> +	if (ia_valid & ATTR_SIZE) {
+> +		if (NInoCompressed(ni) || NInoEncrypted(ni)) {
+> +			ntfs_warning(vi->i_sb,
+> +				     "Changes in inode size are not supported yet for %s files, ignoring.",
+> +				     NInoCompressed(ni) ? "compressed" : "encrypted");
+> +			err = -EOPNOTSUPP;
 
-Thanks,
+This is still quite a limitation.  But I also think you need a goto
+to exit early here instead allowing the other attribute changes to
+be applied?
 
-> 
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>> Nanzhe Zhao
+Also experience from other file systems suggests splitting the ATTR_SIZE
+handling into a separate helper tends to really help structuring the
+code in general.
+
+> +int ntfs_getattr(struct mnt_idmap *idmap, const struct path *path,
+> +		struct kstat *stat, unsigned int request_mask,
+> +		unsigned int query_flags)
+>  {
+
+Can you add support DIO alignment reporting here?  Especially with
+things like compressed files this would be very useful.
+
+> +static loff_t ntfs_file_llseek(struct file *file, loff_t offset, int whence)
+>  {
+> +	struct inode *vi = file->f_mapping->host;
+> +
+> +	if (whence == SEEK_DATA || whence == SEEK_HOLE) {
+
+I'd stick to the structure of the XFS and ext4 llseek implementation
+here and switch on whence and call the fitting helpers as needed.
+
+Talking about helpers, why does iomap_seek_hole/iomap_seek_data
+not work for ntfs?
+
+> +		file_accessed(iocb->ki_filp);
+> +		ret = iomap_dio_rw(iocb, to, &ntfs_read_iomap_ops, NULL, IOMAP_DIO_PARTIAL,
+
+Why do you need IOMAP_DIO_PARTIAL?  That's mostly a workaround
+for "interesting" locking in btrfs and gfs2.  If ntfs has similar
+issues, it would be helpful to add a comment here.  Also maybe fix
+the overly long line.
+
+> +	if (NInoNonResident(ni) && (iocb->ki_flags & IOCB_DIRECT) &&
+> +	    ((iocb->ki_pos | ret) & (vi->i_sb->s_blocksize - 1))) {
+> +		ret = -EINVAL;
+> +		goto out_lock;
+> +	}
+
+iomap_dio_rw now has a IOMAP_DIO_FSBLOCK_ALIGNED to do these
+checks.  Also please throw in a comment why ntrfs needs fsblock
+alignment.
+
+> +	if (iocb->ki_pos + ret > old_data_size) {
+> +		mutex_lock(&ni->mrec_lock);
+> +		if (!NInoCompressed(ni) && iocb->ki_pos + ret > ni->allocated_size &&
+> +		    iocb->ki_pos + ret < ni->allocated_size + vol->preallocated_size)
+> +			ret = ntfs_attr_expand(ni, iocb->ki_pos + ret,
+> +					ni->allocated_size + vol->preallocated_size);
+> +		else if (NInoCompressed(ni) && iocb->ki_pos + ret > ni->allocated_size)
+> +			ret = ntfs_attr_expand(ni, iocb->ki_pos + ret,
+> +				round_up(iocb->ki_pos + ret, ni->itype.compressed.block_size));
+> +		else
+> +			ret = ntfs_attr_expand(ni, iocb->ki_pos + ret, 0);
+> +		mutex_unlock(&ni->mrec_lock);
+> +		if (ret < 0)
+> +			goto out;
+> +	}
+
+What is the reason to do the expansion here instead of in the iomap_begin
+handler when we know we are committed to write to range?
+
+> +	if (NInoNonResident(ni) && iocb->ki_flags & IOCB_DIRECT) {
+
+Mayube split this direct I/O branch which is quite huge into a separate
+helper, similar to what a lof of other file systems are doing?
+
+>  	}
+> +out:
+> +	if (ret < 0 && ret != -EIOCBQUEUED) {
+> +out_err:
+> +		if (ni->initialized_size != old_init_size) {
+> +			mutex_lock(&ni->mrec_lock);
+> +			ntfs_attr_set_initialized_size(ni, old_init_size);
+> +			mutex_unlock(&ni->mrec_lock);
+> +		}
+> +		if (ni->data_size != old_data_size) {
+> +			truncate_setsize(vi, old_data_size);
+> +			ntfs_attr_truncate(ni, old_data_size);
+> +		}
+
+Don't you also need to this in dio I/O completion handler for async
+writes?  (actually I guess they aren't supported, I'll try to find the
+code for that).
+
+> +static vm_fault_t ntfs_filemap_page_mkwrite(struct vm_fault *vmf)
+>  {
+> +	vm_fault_t ret;
+> +
+> +	if (unlikely(IS_IMMUTABLE(inode)))
+> +		return VM_FAULT_SIGBUS;
+
+I don't think the VM ever allows write faults on files not opened for
+writing, which can't be done for IS_IMMUTABLE files.  If you could ever
+hit this we have a huge problem in the upper layers that needs fixing.
+
+> +static int ntfs_ioctl_fitrim(struct ntfs_volume *vol, unsigned long arg)
+> +{
+> +	struct fstrim_range __user *user_range;
+> +	struct fstrim_range range;
+> +	struct block_device *dev;
+>  	int err;
+>  
+> +static long ntfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+>  {
+> +	struct inode *vi = file_inode(file);
+> +	struct ntfs_inode *ni = NTFS_I(vi);
+> +	struct ntfs_volume *vol = ni->vol;
+> +	int err = 0;
+> +	loff_t end_offset = offset + len;
+> +	loff_t old_size, new_size;
+> +	s64 start_vcn, end_vcn;
+> +	bool map_locked = false;
+> +
+> +	if (!S_ISREG(vi->i_mode))
+> +		return -EOPNOTSUPP;
+
+ntfs_fallocate is only wired up in ntfs_file_ops, so this can't
+happen.
+
+> +	inode_dio_wait(vi);
+> +	if (mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_COLLAPSE_RANGE |
+> +		    FALLOC_FL_INSERT_RANGE)) {
+> +		filemap_invalidate_lock(vi->i_mapping);
+> +		map_locked = true;
+> +	}
+> +
+> +	if (mode & FALLOC_FL_INSERT_RANGE) {
+
+This would benefit a lot from being structured like __xfs_file_fallocate,
+that is switch on mode & FALLOC_FL_MODE_MASK for the operation, and
+then have a helper for each separate operation type.  The current
+huge function is pretty unreadable.
 
 
