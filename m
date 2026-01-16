@@ -1,178 +1,250 @@
-Return-Path: <linux-fsdevel+bounces-74178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10FCD336BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 17:15:01 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305B5D336FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 17:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 88B4E30D6820
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 16:13:41 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 0FA2D3015440
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 16:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6889828466D;
-	Fri, 16 Jan 2026 16:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE785215055;
+	Fri, 16 Jan 2026 16:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShpmQIEb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9C226ED5C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 16:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CB033D6D5
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 16:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768580020; cv=none; b=plP8fngFuqxKvvrthjITaQekeItdT41I7QPafqR/Sp1czoZIeelF9I+M+YD48X3JRv8H7i1iV1yvLXjQTgfbduHrvPTztl/b7JKZwf7pZJwtjNWXMpLsg/VcAxV9q7rAL6BE2Xpx7NGc0syioDBI5YK9+SzFnGqpuy1SRlZu9GE=
+	t=1768580272; cv=none; b=GNvonwJ3IFNTS3BH5ffLtAqmK+6HS/sXwQANDWTRaj7DjxiZkMnhBlByWllD7xcIn/BqHg0nOzdacmSqAULf3ocfjjAqJq+FY3Axnqtzoe8q60zP0qxEvySguoxZwLIdhObNJGh2tpOQXp3hAesjqyS4exO434ZQ7qlLmsdpPSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768580020; c=relaxed/simple;
-	bh=r3jjAh3mh60Ib3C96zJOKvhDAFHJMf1YaqAAQNpFF9o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=K8gDnYRa9FiqnnDinGn4vqgwr8Rb/dutOcF4p5ILeEivY7VsgnbzNfOdFvMd5zrfAPpLtPPICPenkk+HYm/XWyKGesxgv4CjZMUb7c/0V82yqxr78lDtRN5HelT2G0liu2yZ8XJmFYykmcdtqSUFi2DPPUyhXU61Am49oHbsMWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-66113da9a75so4344995eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 08:13:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768580017; x=1769184817;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GW18BJd0jSvNLSBLK+5GeIvUMjj5PFq3we5kfaKyLBY=;
-        b=E79F+eMlxTTlzE/ivo16nCdmCGdaxVsGU9V/+hlMktoR3aoDw/dKjd+e8zYmDPSToD
-         nKCPDtiIl+SDGNqtHrlT3dICGq3v3Eh6xvjI/3qt+rpGPH2bqi70v0yvBp/nBQhCSxwD
-         dToR5C1a9L0KeGBrtdpagD+MRZC0oq9+BN9dH5nbXZ/iKhQjH9mp5CTmaVL6XZROxsRC
-         hS6Pw97PKdF3tA1NlS19JDZvJCaeLHoR35jri9712iEBNSIsDcvOI5BUjpI84SP2JFf0
-         /YgKwLvddjwdx9CCZBtO+eD6Skain/JFsnql9bK8QenQh7+5n+yvB7Y+h9yK/iaeQ237
-         NvmA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBV49RYXWq73/MWra2LUZejXB35UYuhef4Vu6cMx4thG5IUDSZT8JJcwD0B1BhJ11JVTzRBv36D8H3i7Oe@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIQkmbk+ceWzxu8HAy8dxHCNMm5fxB0uKmObMkep3X2Zp6buE4
-	/lxmXDZUq5aqyftZE3yoHsktf4DOxyf5CV+xtKDGl7PIysOz1CsmrUPibYpphSv+I2oyz8HqNT3
-	BnysmC1yuaBxqg9OT2mBez7T4SJ0qaP0F2lN1PvakVKphMlMXNDn1u1/MEbQ=
+	s=arc-20240116; t=1768580272; c=relaxed/simple;
+	bh=f3hvzZ0GFg+2KzCInNRLS4gl1zjs7AkTUdV7NJs0uK8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=AV3vTsz86EW1VPfsmm19/00FXSKcJOFqRKWoRBk7MYHzD92ptKCdOQAY6rNX9NxfpNnzEjvEZ1PilgWp3l3+apX/puXSTQ8BQR4ILb0/SuVrJau1zXb8wZed8HJACbbCNrPCX+JmDriDxuSME3sj5XOgvKRJ5H/izVBa+DprUiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShpmQIEb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B831EC19425;
+	Fri, 16 Jan 2026 16:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768580271;
+	bh=f3hvzZ0GFg+2KzCInNRLS4gl1zjs7AkTUdV7NJs0uK8=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=ShpmQIEbpeJYZ4OyaR8AMmsQlrfF/r556jy64Gvc+QnqVSkQFCIEX6dFmySzrm/EO
+	 Opvm0x3y3GhRGxnG/3c7qA3EoqqOV9grObbfYsv3V2YqCsGOSFSvRIve1iXN+9oijg
+	 V8AQh8mRVGMx6h+FV6BzGF/rjUBHTm5s3NL7dlp8+gLdGrhGNyRvXoRn9jiSSEKPxh
+	 ftOXW4ZeNMBuJJ+AQvEyvu9IylvM+bIm5ygjRKTqQUPwnozwJEBdYQyDFKTk7CEPln
+	 NlW7j99tlMQlOoVGOoklX9QM6l9S2+kg+heMT6H0HS0qQbKxbu4yX0Appx1b61jR45
+	 el6g71x0BwS0A==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id C1D44F40087;
+	Fri, 16 Jan 2026 11:17:50 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-10.internal (MEProxy); Fri, 16 Jan 2026 11:17:50 -0500
+X-ME-Sender: <xms:rmRqaX0dnJoyBfBhK8zDEPdjCXGq1uVwQvZ9_bqTuV7yI9Is-ooU7A>
+    <xme:rmRqaQ6wwYdyzKBb8iw0TOhwZic4peCRS6JaumJhTpPGGSG0eCH6yodXsq26hjmgU
+    70OxkMkaRN_TuLaX7o57UIrQyEP3zGAuCLLn6fEzHRJ2-6x1KtwPlg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduvdelfeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
+    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+    hnpefhffekffeftdfgheeiveekudeuhfdvjedvfedvueduvdegleekgeetgfduhfefleen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
+    hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
+    leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
+    hilhdrtghomhdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehnvghilhessghrohifnhdrnhgrmhgvpdhrtghpthhtoheprhhitghkrdhmrg
+    gtkhhlvghmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsggtohguughinhhgsehhrghm
+    mhgvrhhsphgrtggvrdgtohhmpdhrtghpthhtoheprghnnhgrsehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopegvsghighhgvghrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    jhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhrohhnughmhieskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhesohhrrggtlhgv
+    rdgtohhmpdhrtghpthhtoheplhhinhhugidqtghrhihpthhosehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhg
+X-ME-Proxy: <xmx:rmRqae-Et1RvgivnfqlgBt1TdFkwV-OCSII-azW6cdvYr-Mzn8ix1w>
+    <xmx:rmRqaai-F39wqaxaYclp4YtCLOz1i1aXU7UvWbrvXJJWzSSIURm5Sg>
+    <xmx:rmRqafZWmK2eDfnFldT3y_kCpTJ2JyOHnJdWoD-fCwhxFMu-6ClGfA>
+    <xmx:rmRqaf9HdHlhXtvpJOuWqfOVOcEPW_QEa2zyOngtqsGSbEuOCjpMIw>
+    <xmx:rmRqaRNY0PZJSQH6k1Udx3vGS8kcWWBLsTnxcpOloR_vZ8rjwGc9chwL>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A2C79780070; Fri, 16 Jan 2026 11:17:50 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:498e:b0:65b:2935:f935 with SMTP id
- 006d021491bc7-661179c2396mr1433844eaf.44.1768580017428; Fri, 16 Jan 2026
- 08:13:37 -0800 (PST)
-Date: Fri, 16 Jan 2026 08:13:37 -0800
-In-Reply-To: <20260116100818.7576-1-kundan.kumar@samsung.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <696a63b1.050a0220.58bed.006b.GAE@google.com>
-Subject: [syzbot ci] Re: AG aware parallel writeback for XFS
-From: syzbot ci <syzbot+ci4e530c88485a9c60@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, anuj20.g@samsung.com, axboe@kernel.dk, 
-	brauner@kernel.org, cem@kernel.org, clm@meta.com, dave@stgolabs.net, 
-	david@fromorbit.com, djwong@kernel.org, gost.dev@samsung.com, hch@lst.de, 
-	jack@suse.cz, joshi.k@samsung.com, kundan.kumar@samsung.com, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
-	mcgrof@kernel.org, ritesh.list@gmail.com, viro@zeniv.linux.org.uk, 
-	vishak.g@samsung.com, wangyufei@vivo.com, willy@infradead.org
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot ci has tested the following series
-
-[v3] AG aware parallel writeback for XFS
-https://lore.kernel.org/all/20260116100818.7576-1-kundan.kumar@samsung.com
-* [PATCH v3 1/6] iomap: add write ops hook to attach metadata to folios
-* [PATCH v3 2/6] xfs: add helpers to pack AG prediction info for per-folio tracking
-* [PATCH v3 3/6] xfs: add per-inode AG prediction map and dirty-AG bitmap
-* [PATCH v3 4/6] xfs: tag folios with AG number during buffered write via iomap attach hook
-* [PATCH v3 5/6] xfs: add per-AG writeback workqueue infrastructure
-* [PATCH v3 6/6] xfs: offload writeback by AG using per-inode dirty bitmap and per-AG workers
-
-and found the following issue:
-WARNING in xfs_init_ag_writeback
-
-Full report is available here:
-https://ci.syzbot.org/series/0e34236b-3594-400f-b9cd-6f59b196014f
-
-***
-
-WARNING in xfs_init_ag_writeback
-
-tree:      mm-new
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/akpm/mm.git
-base:      eeb33083cc4749bdb61582eaeb5c200702607703
-arch:      amd64
-compiler:  Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-config:    https://ci.syzbot.org/builds/f21aae46-4d21-4410-9132-190ad8ae3994/config
-C repro:   https://ci.syzbot.org/findings/24ec6312-5e15-4750-aa2a-08d381daca26/c_repro
-syz repro: https://ci.syzbot.org/findings/24ec6312-5e15-4750-aa2a-08d381daca26/syz_repro
-
-loop2: detected capacity change from 0 to 32768
-------------[ cut here ]------------
-kmem_cache of name 'xfs_ag_wb_task' already exists
-WARNING: mm/slab_common.c:110 at kmem_cache_sanity_check mm/slab_common.c:109 [inline], CPU#1: syz.2.19/6098
-WARNING: mm/slab_common.c:110 at __kmem_cache_create_args+0x99/0x310 mm/slab_common.c:310, CPU#1: syz.2.19/6098
-Modules linked in:
-CPU: 1 UID: 0 PID: 6098 Comm: syz.2.19 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:kmem_cache_sanity_check mm/slab_common.c:109 [inline]
-RIP: 0010:__kmem_cache_create_args+0x9c/0x310 mm/slab_common.c:310
-Code: 43 8e 4d 8b 24 24 49 81 fc b8 78 43 8e 74 20 49 8b 7c 24 f8 48 89 de e8 f2 c0 67 09 85 c0 75 e2 48 8d 3d f7 ca bc 0d 48 89 de <67> 48 0f b9 3a 48 89 df be 20 00 00 00 e8 92 c2 67 09 48 85 c0 0f
-RSP: 0018:ffffc90003817a08 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffffffff8bc734a0 RCX: 0000000000000007
-RDX: 000000008bc73406 RSI: ffffffff8bc734a0 RDI: ffffffff8fc6ee40
-RBP: 0000000000080000 R08: ffffffff8fc26e77 R09: 1ffffffff1f84dce
-R10: dffffc0000000000 R11: fffffbfff1f84dcf R12: ffff88810b7a7300
-R13: ffff888115440000 R14: ffffc90003817aa0 R15: 0000000000000190
-FS:  0000555567cf7500(0000) GS:ffff8882a9a05000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f049ffff000 CR3: 00000001b9726000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- __kmem_cache_create include/linux/slab.h:384 [inline]
- xfs_init_ag_writeback+0x41b/0x570 fs/xfs/xfs_aops.c:890
- xfs_fs_fill_super+0x7e3/0x1640 fs/xfs/xfs_super.c:1759
- get_tree_bdev_flags+0x431/0x4f0 fs/super.c:1691
- vfs_get_tree+0x92/0x2a0 fs/super.c:1751
- fc_mount fs/namespace.c:1199 [inline]
- do_new_mount_fc fs/namespace.c:3636 [inline]
- do_new_mount+0x329/0xa50 fs/namespace.c:3712
- do_mount fs/namespace.c:4035 [inline]
- __do_sys_mount fs/namespace.c:4224 [inline]
- __se_sys_mount+0x31d/0x420 fs/namespace.c:4201
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f32c139bf4a
-Code: 48 c7 c2 e8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd30494b68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffd30494bf0 RCX: 00007f32c139bf4a
-RDX: 0000200000009740 RSI: 0000200000009780 RDI: 00007ffd30494bb0
-RBP: 0000200000009740 R08: 00007ffd30494bf0 R09: 0000000000004010
-R10: 0000000000004010 R11: 0000000000000246 R12: 0000200000009780
-R13: 00007ffd30494bb0 R14: 0000000000009768 R15: 0000200000000300
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	43 8e 4d 8b          	rex.XB mov -0x75(%r13),%cs
-   4:	24 24                	and    $0x24,%al
-   6:	49 81 fc b8 78 43 8e 	cmp    $0xffffffff8e4378b8,%r12
-   d:	74 20                	je     0x2f
-   f:	49 8b 7c 24 f8       	mov    -0x8(%r12),%rdi
-  14:	48 89 de             	mov    %rbx,%rsi
-  17:	e8 f2 c0 67 09       	call   0x967c10e
-  1c:	85 c0                	test   %eax,%eax
-  1e:	75 e2                	jne    0x2
-  20:	48 8d 3d f7 ca bc 0d 	lea    0xdbccaf7(%rip),%rdi        # 0xdbccb1e
-  27:	48 89 de             	mov    %rbx,%rsi
-* 2a:	67 48 0f b9 3a       	ud1    (%edx),%rdi <-- trapping instruction
-  2f:	48 89 df             	mov    %rbx,%rdi
-  32:	be 20 00 00 00       	mov    $0x20,%esi
-  37:	e8 92 c2 67 09       	call   0x967c2ce
-  3c:	48 85 c0             	test   %rax,%rax
-  3f:	0f                   	.byte 0xf
+X-ThreadId: AO3h44zqd9zZ
+Date: Fri, 16 Jan 2026 11:17:20 -0500
+From: "Chuck Lever" <cel@kernel.org>
+To: "Jeff Layton" <jlayton@kernel.org>,
+ "Benjamin Coddington" <bcodding@hammerspace.com>,
+ "Chuck Lever" <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Eric Biggers" <ebiggers@kernel.org>, "Rick Macklem" <rick.macklem@gmail.com>
+Cc: linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+Message-Id: <d2c5b2df-ddb2-49d0-9c41-422449d123ab@app.fastmail.com>
+In-Reply-To: <4227ce184b668d857fc495f61c6e3526dd8862b2.camel@kernel.org>
+References: <cover.1768573690.git.bcodding@hammerspace.com>
+ <c49d28aade36c044f0533d03b564ff65e00d9e05.1768573690.git.bcodding@hammerspace.com>
+ <3db40beb64cb3663d9e8c83f498557bf8fbc0924.camel@kernel.org>
+ <3fc1c84e-3f0b-4342-9034-93e7fb441756@app.fastmail.com>
+ <3c5af19d8793c34022bde2cb7fcca1855d1ea080.camel@kernel.org>
+ <703f29f8-a9e5-4947-9d93-a3cbde5cbdcc@app.fastmail.com>
+ <4227ce184b668d857fc495f61c6e3526dd8862b2.camel@kernel.org>
+Subject: Re: [PATCH v1 2/4] nfsd: Add a key for signing filehandles
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
 
-***
 
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
+On Fri, Jan 16, 2026, at 10:52 AM, Jeff Layton wrote:
+> On Fri, 2026-01-16 at 10:45 -0500, Chuck Lever wrote:
+>> 
+>> On Fri, Jan 16, 2026, at 10:25 AM, Jeff Layton wrote:
+>> > On Fri, 2026-01-16 at 10:09 -0500, Chuck Lever wrote:
+>> > > 
+>> > > On Fri, Jan 16, 2026, at 9:59 AM, Jeff Layton wrote:
+>> > > > On Fri, 2026-01-16 at 09:32 -0500, Benjamin Coddington wrote:
+>> > > > > Expand the nfsd_net to hold a siphash_key_t value "fh_key".
+>> > > > > 
+>> > > > > Expand the netlink server interface to allow the setting of the 128-bit
+>> > > > > fh_key value to be used as a signing key for filehandles.
+>> > > > > 
+>> > > > > Add a file to the nfsd filesystem to set and read the 128-bit key,
+>> > > > > formatted as a uuid.
+>> > > > > 
+>> > > > > Signed-off-by: Benjamin Coddington <bcodding@hammerspace.com>
+>> > > > > ---
+>> > > > >  Documentation/netlink/specs/nfsd.yaml | 12 ++++
+>> > > > >  fs/nfsd/netlink.c                     | 15 +++++
+>> > > > >  fs/nfsd/netlink.h                     |  1 +
+>> > > > >  fs/nfsd/netns.h                       |  2 +
+>> > > > >  fs/nfsd/nfsctl.c                      | 85 +++++++++++++++++++++++++++
+>> > > > >  fs/nfsd/trace.h                       | 19 ++++++
+>> > > > >  include/uapi/linux/nfsd_netlink.h     |  2 +
+>> > > > >  7 files changed, 136 insertions(+)
+>> > > > > 
+>> > > > > diff --git a/Documentation/netlink/specs/nfsd.yaml b/Documentation/netlink/specs/nfsd.yaml
+>> > > > > index badb2fe57c98..a467888cfa62 100644
+>> > > > > --- a/Documentation/netlink/specs/nfsd.yaml
+>> > > > > +++ b/Documentation/netlink/specs/nfsd.yaml
+>> > > > > @@ -81,6 +81,9 @@ attribute-sets:
+>> > > > >        -
+>> > > > >          name: min-threads
+>> > > > >          type: u32
+>> > > > > +      -
+>> > > > > +        name: fh-key
+>> > > > > +        type: binary
+>> > > > >    -
+>> > > > >      name: version
+>> > > > >      attributes:
+>> > > > > @@ -227,3 +230,12 @@ operations:
+>> > > > >            attributes:
+>> > > > >              - mode
+>> > > > >              - npools
+>> > > > > +    -
+>> > > > > +      name: fh-key-set
+>> > > > > +      doc: set encryption key for filehandles
+>> > > > > +      attribute-set: server
+>> > > > > +      flags: [admin-perm]
+>> > > > > +      do:
+>> > > > > +        request:
+>> > > > > +          attributes:
+>> > > > > +            - fh-key
+>> > > > 
+>> > > > Rather than a new netlink operation, I think we might be better served
+>> > > > with just sending the fh-key down as an optional attribute in the
+>> > > > "threads" op. It's a per-netns attribute anyway, and the threads
+>> > > > setting is handled similarly.
+>> > > 
+>> > > Setting the FH key in the threads op seems awkward to me.
+>> > > Setting a key is optional, but you always set the thread
+>> > > count to start the server.
+>> > > 
+>> > > Key setting is done once; whereas setting the thread count
+>> > > can be done many times during operation. It seems like it
+>> > > would be easy to mistakenly change the key when setting the
+>> > > thread count.
+>> > > 
+>> > > From a "UI safety" perspective, a separate op makes sense
+>> > > to me.
+>> > > 
+>> > 
+>> > I'm not convinced. We could easily vet that the key doesn't change when
+>> > changing the thread count, and either return an error or throw some
+>> > sort of warning and ignore the change.
+>> > 
+>> > My main thinking here is that you'd want to set up the key at startup
+>> > time and never change it, so if the server is already running you
+>> > probably want to reject key changes -- otherwise you may have already
+>> > given out some unencrypted handles.
+>> > 
+>> > If that's the case, then now you have to ensure you run the op to set
+>> > the key before issuing "threads".
+>> > 
+>> > Why deal with an ordering constraint like that? Optionally passing down
+>> > the key with "threads" means we handle it all in one shot.
+>> 
+>> We already configure listeners and threads in separate operations.
+>> The ordering is managed. It's reasonable for the kernel to block
+>> fh_key changes while the NFS server is in operation.
+>> 
+>> I'd much rather set a precedent of several small ops rather than
+>> one or two Swiss army knives.
+>>
+>> 
+>
+> I disagree. Having all of the server settings as discrete elements was
+> part of the problem with the old nfsdfs-based interface. We had this
+> set of discrete knobs that needed to all be twiddled in the correct
+> order.
+>
+> The fact that we can send down server parameters in a single block is a
+> strength of the netlink interface, IMO. We can easily add optional
+> parameters and I think that's what we should do here.
+>
+>
+>> > > What feels a little strange though is where to store the
+>> > > key? I was thinking in /etc/exports, but that would make
+>> > > the FH key per-export rather than per-server instance.
+>> > > 
+>> > > That gives a cryptographic benefit, as there would be
+>> > > more keying material. But maybe it doesn't make a lot of
+>> > > sense from a UX perspective.
+>> > > 
+>> > > On the other hand, some might like to manage the key by
+>> > > storing it in a trusted compute module -- systemd has
+>> > > a facility to extract keys from a TCM.
+>> > > 
+>> > 
+>> > Yeah, there are a lot of possibilities here. I like the idea of
+>> > scraping this out of the TPM, but that's not going to be possible
+>> > everywhere. We'll also need some alternate method of storing the key in
+>> > a secure way on the fs so that nfsdctl can get to it for hosts that
+>> > don't have a TPM.
+>> 
+>> My point is none of this has anything to do with thread count.
+>> Setting the fh_key needs to be a distinct UI element.
+>
+> "threads" should probably have been named "service", since it's
+> basically the method that we use to create the actual service,
+> culminating with starting threads.
 
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+OK, you rode herd on getting the netlink stuff in, so it's
+your call here.
+
+It might be nice to create a new op called "service" and leave
+the legacy "threads" op in place for now.
+
+
+-- 
+Chuck Lever
 
