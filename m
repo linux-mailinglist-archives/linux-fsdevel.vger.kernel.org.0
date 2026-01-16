@@ -1,52 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-74119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04033D31DA2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 14:31:20 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA704D31F9B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 14:40:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id CBE5930FA400
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 13:28:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C17323088DF5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 13:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121A3236435;
-	Fri, 16 Jan 2026 13:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="MbmX7Ac3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB433274B53;
+	Fri, 16 Jan 2026 13:35:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3829417BCA;
-	Fri, 16 Jan 2026 13:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04CBEACD;
+	Fri, 16 Jan 2026 13:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768570111; cv=none; b=dzCR+KZqWrcfMw/ACgDCKohDE/3+ALIIAOa8bQ3nfMOBTYe/lTil2Xt4/9Gsor5rkHTY/RQHjhYfSxII8cPko3GNOUXpqDMUKdyJ9gICvA84Q9EzHhIUf0lZN7FMoNY+iO6RR0+5jmDzlgQ65L1jYn/mWfTES4dNnetIQblezfA=
+	t=1768570511; cv=none; b=T3qQ0ycGYZvVEwJkXrN/WjWjTx1FOWVfhMFk5N4jT1qvq/LkCqcyYS1ReXzOIUL0ibuq1SzZJjJMMmW/fQqrybQzWy5hE6C55Z4zVgRzmkzSxD8cs9/DCwyPT70oTSgarBqxRHK0g2feORot3fCGQQBTmGH7FejMP6lUVJDWy6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768570111; c=relaxed/simple;
-	bh=Ux8TwFDYtctC5q1KKXlTaBdk2pQgKmKphL0AK9nIsF0=;
+	s=arc-20240116; t=1768570511; c=relaxed/simple;
+	bh=ZF1G6Hrt9fkmzoJOMhtb/HAgUD3jMAhgnMFeAg7IOUg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gDH7bEPOuefgcqpz/M34kURHwL7Yijwdme6u191f0fbIf087Dke5F5jebNrzcZfIDy9SeRtmAkh+ObvkwkQ6/2flwHKPM2df8IseZy1mvg+iHXf4mCjZO1V210lp35txoj14qp4i20LcKd4aa7BC7BBo2SdTmCIBAw+Df4ukciQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=MbmX7Ac3; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9RICdBN2PbcdvOdzRq09DM408elUwHzOROfthGvVkgw=; b=MbmX7Ac3QhG+zMyO39UWCYbAJw
-	O3g6TfBAwZpybfI5jNk3PJt3vqRR0yhOWhWnLNVAbp6O2nQOX/RvwaJffznoQMhuFyLzrTtt4n336
-	aiCkI3cJDol3Lvu8IdPqIRIH0Elh2yLBbDvDaPHkmsx/TRFhAAYve7Qif+lyJdfEzeyjchkMayWVk
-	uiPl6C4S4aUo7ljbabZ7JJqpD5uWDBtSBJum0R4xuccurUaKWOPQbxatMxbc+IDffI4iwjOGFL43b
-	nWtCjwkrxS/s7eEv/OlJXifZJfsAPOynt75XUCGX7nwtqmTxfF8sYBMJI2cLqGNALORWQqiIx+1O1
-	pEC1Dsbg==;
-Received: from [177.139.22.247] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1vgjrr-006AVm-SC; Fri, 16 Jan 2026 14:28:00 +0100
-Message-ID: <33c1ccbd-abbe-4278-8ab1-d7d645c8b6e8@igalia.com>
-Date: Fri, 16 Jan 2026 10:27:52 -0300
+	 In-Reply-To:Content-Type; b=Mvo3Axlpsw5R6QJQT0M6gbO+aZC1c8IvY6kxaMq0t9PaJmF+Eda7JmK/Kq9yE9zEFNVfnuExMERsQtoJRGgzxNB6wvF6YTKYov4H7jtxV2dMH+8ddxlWHWCnOecL06KapKrTeM8yi/OSMU9SfPmd2sBl8SyKzZelIvJASueOvxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2CDA1515;
+	Fri, 16 Jan 2026 05:35:00 -0800 (PST)
+Received: from [10.57.66.155] (unknown [10.57.66.155])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3FB0B3F59E;
+	Fri, 16 Jan 2026 05:35:03 -0800 (PST)
+Message-ID: <c720119f-0991-4112-a080-829a7b2de908@arm.com>
+Date: Fri, 16 Jan 2026 13:35:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,128 +40,776 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, Chuck Lever <chuck.lever@oracle.com>,
- Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Tom Talpey <tom@talpey.com>, Carlos Maiolino <cem@kernel.org>,
- Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
- Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, kernel-dev@igalia.com, vivek@collabora.com,
- Ludovico de Nittis <ludovico.denittis@collabora.com>
-References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com>
- <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com>
- <20260114062608.GB10805@lst.de>
- <5334ebc6-ceee-4262-b477-6b161c5ca704@igalia.com>
- <20260115062944.GA9590@lst.de>
- <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com>
- <20260115072311.GA10352@lst.de>
- <22b16e24-d10e-43f6-bc2b-eeaa94310e3a@igalia.com>
- <CAOQ4uxhbz7=XT=C3R8XqL0K_o7KwLKsoNwgk=qJGuw2375MTJw@mail.gmail.com>
- <0241e2c4-bf11-4372-9eda-cccaba4a6d7d@igalia.com>
- <CAOQ4uxi988PutUi=Owm5zf6NaCm90PUCJLu7dw8firH8305w-A@mail.gmail.com>
+Subject: Re: [PATCH v2 12/17] firmware: arm_scmi: Add Telemetry components
+ view
+To: Cristian Marussi <cristian.marussi@arm.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ arm-scmi@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: sudeep.holla@arm.com, james.quinlan@broadcom.com, f.fainelli@gmail.com,
+ vincent.guittot@linaro.org, etienne.carriere@st.com, peng.fan@oss.nxp.com,
+ michal.simek@amd.com, dan.carpenter@linaro.org, d-gole@ti.com,
+ jonathan.cameron@huawei.com, lukasz.luba@arm.com, philip.radford@arm.com,
+ souvik.chakravarty@arm.com, elif.topuz@arm.com
+References: <20260114114638.2290765-1-cristian.marussi@arm.com>
+ <20260114114638.2290765-13-cristian.marussi@arm.com>
 Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <CAOQ4uxi988PutUi=Owm5zf6NaCm90PUCJLu7dw8firH8305w-A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Elif Topuz <elif.topuz@arm.com>
+In-Reply-To: <20260114114638.2290765-13-cristian.marussi@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[+CC SteamOS developers]
 
-Em 16/01/2026 06:55, Amir Goldstein escreveu:
-> On Thu, Jan 15, 2026 at 7:55 PM André Almeida <andrealmeid@igalia.com> wrote:
->>
->> Em 15/01/2026 13:07, Amir Goldstein escreveu:
->>> On Thu, Jan 15, 2026 at 4:42 PM André Almeida <andrealmeid@igalia.com> wrote:
->>>>
->>>> Em 15/01/2026 04:23, Christoph Hellwig escreveu:
->>>>
->>>> [...]
->>>>
->>>>>
->>>>> I still wonder what the use case is here.  Looking at André's original
->>>>> mail it states:
->>>>>
->>>>> "However, btrfs mounts may have volatiles UUIDs. When mounting the exact same
->>>>> disk image with btrfs, a random UUID is assigned for the following disks each
->>>>> time they are mounted, stored at temp_fsid and used across the kernel as the
->>>>> disk UUID. `btrfs filesystem show` presents that. Calling statfs() however
->>>>> shows the original (and duplicated) UUID for all disks."
->>>>>
->>>>> and this doesn't even talk about multiple mounts, but looking at
->>>>> device_list_add it seems to only set the temp_fsid flag when set
->>>>> same_fsid_diff_dev is set by find_fsid_by_device, which isn't documented
->>>>> well, but does indeed seem to be done transparently when two file systems
->>>>> with the same fsid are mounted.
->>>>>
->>>>> So André, can you confirm this what you're worried about?  And btrfs
->>>>> developers, I think the main problem is indeed that btrfs simply allows
->>>>> mounting the same fsid twice.  Which is really fatal for anything using
->>>>> the fsid/uuid, such NFS exports, mount by fs uuid or any sb->s_uuid user.
->>>>>
->>>>
->>>> Yes, I'm would like to be able to mount two cloned btrfs images and to
->>>> use overlayfs with them. This is useful for SteamOS A/B partition scheme.
->>>>
->>>>>> If so, I think it's time to revert the behavior before it's too late.
->>>>>> Currently the main usage of such duplicated fsids is for Steam deck to
->>>>>> maintain A/B partitions, I think they can accept a new compat_ro flag for
->>>>>> that.
->>>>>
->>>>> What's an A/B partition?  And how are these safely used at the same time?
->>>>>
->>>>
->>>> The Steam Deck have two main partitions to install SteamOS updates
->>>> atomically. When you want to update the device, assuming that you are
->>>> using partition A, the updater will write the new image in partition B,
->>>> and vice versa. Then after the reboot, the system will mount the new
->>>> image on B.
->>>>
->>>
->>> And what do you expect to happen wrt overlayfs when switching from
->>> image A to B?
->>>
->>> What are the origin file handles recorded in overlayfs index from image A
->>> lower worth when the lower image is B?
->>>
->>> Is there any guarantee that file handles are relevant and point to the
->>> same objects?
->>>
->>> The whole point of the overlayfs index feature is that overlayfs inodes
->>> can have a unique id across copy-up.
->>>
->>> Please explain in more details exactly which overlayfs setup you are
->>> trying to do with index feature.
->>>
->>
->> The problem happens _before_ switching from A to B, it happens when
->> trying to install the same image from A on B.
->>
->> During the image installation process, while running in A, the B image
->> will be mounted more than once for some setup steps, and overlayfs is
->> used for this. Because A have the same UUID, each time B is remouted
->> will get a new UUID and then the installation scripts fails mounting the
->> image.
+Hi Cristian,
+
+On 14/01/2026 11:46, Cristian Marussi wrote:
+> Add an alternative filesystem view for the discovered Data Events, where
+> the tree of DEs is laid out following the discovered topological order
+> instead of the existing flat layout.
 > 
-> Please describe the exact overlayfs setup and specifically,
-> is it multi lower or single lower layer setup?
-> What reason do you need the overlayfs index for?
-> Can you mount with index=off which should relax the hard
-> requirement for match with the original lower layer uuid.
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> ---
+> v1 --> v2
+>  - Use new FS API
+>  - Introduce new stlmfs_lookup_by_name helper
+> ---
+>  .../firmware/arm_scmi/scmi_system_telemetry.c | 684 ++++++++++++++++++
+>  1 file changed, 684 insertions(+)
 > 
+> diff --git a/drivers/firmware/arm_scmi/scmi_system_telemetry.c b/drivers/firmware/arm_scmi/scmi_system_telemetry.c
+> index 721de615bec3..1221520356fd 100644
+> --- a/drivers/firmware/arm_scmi/scmi_system_telemetry.c
+> +++ b/drivers/firmware/arm_scmi/scmi_system_telemetry.c
+> @@ -174,6 +174,7 @@ struct scmi_tlm_inode {
+>   * @top_dentry: A reference to the top dentry for this instance.
+>   * @des_dentry: A reference to the DES dentry for this instance.
+>   * @grps_dentry: A reference to the groups dentry for this instance.
+> + * @compo_dentry: A reference to the components dentry for this instance.
+>   * @info: A handy reference to this instance SCMI Telemetry info data.
+>   *
+>   */
+> @@ -188,6 +189,7 @@ struct scmi_tlm_instance {
+>  	struct dentry *top_dentry;
+>  	struct dentry *des_dentry;
+>  	struct dentry *grps_dentry;
+> +	struct dentry *compo_dentry;
+>  	const struct scmi_telemetry_info *info;
+>  };
+>  
+> @@ -196,6 +198,526 @@ static int scmi_telemetry_instance_register(struct super_block *sb,
+>  
+>  static LIST_HEAD(scmi_telemetry_instances);
+>  
+> +#define TYPES_ARRAY_SZ		256
+> +
+> +static const char *compo_types[TYPES_ARRAY_SZ] = {
+> +	"unspec",
+> +	"cpu",
+> +	"cluster",
+> +	"gpu",
+> +	"npu",
+> +	"interconnnect",
+> +	"mem_cntrl",
+> +	"l1_cache",
+> +	"l2_cache",
+> +	"l3_cache",
+> +	"ll_cache",
+> +	"sys_cache",
+> +	"disp_cntrl",
+> +	"ipu",
+> +	"chiplet",
+> +	"package",
+> +	"soc",
+> +	"system",
+> +	"smcu",
+> +	"accel",
+> +	"battery",
+> +	"charger",
+> +	"pmic",
+> +	"board",
+> +	"memory",
+> +	"periph",
+> +	"periph_subc",
+> +	"lid",
+> +	"display",
+> +	"res_29",
+> +	"res_30",
+> +	"res_31",
+> +	"res_32",
+> +	"res_33",
+> +	"res_34",
+> +	"res_35",
+> +	"res_36",
+> +	"res_37",
+> +	"res_38",
+> +	"res_39",
+> +	"res_40",
+> +	"res_41",
+> +	"res_42",
+> +	"res_43",
+> +	"res_44",
+> +	"res_45",
+> +	"res_46",
+> +	"res_47",
+> +	"res_48",
+> +	"res_49",
+> +	"res_50",
+> +	"res_51",
+> +	"res_52",
+> +	"res_53",
+> +	"res_54",
+> +	"res_55",
+> +	"res_56",
+> +	"res_57",
+> +	"res_58",
+> +	"res_59",
+> +	"res_60",
+> +	"res_61",
+> +	"res_62",
+> +	"res_63",
+> +	"res_64",
+> +	"res_65",
+> +	"res_66",
+> +	"res_67",
+> +	"res_68",
+> +	"res_69",
+> +	"res_70",
+> +	"res_71",
+> +	"res_72",
+> +	"res_73",
+> +	"res_74",
+> +	"res_75",
+> +	"res_76",
+> +	"res_77",
+> +	"res_78",
+> +	"res_79",
+> +	"res_80",
+> +	"res_81",
+> +	"res_82",
+> +	"res_83",
+> +	"res_84",
+> +	"res_85",
+> +	"res_86",
+> +	"res_87",
+> +	"res_88",
+> +	"res_89",
+> +	"res_90",
+> +	"res_91",
+> +	"res_92",
+> +	"res_93",
+> +	"res_94",
+> +	"res_95",
+> +	"res_96",
+> +	"res_97",
+> +	"res_98",
+> +	"res_99",
+> +	"res_100",
+> +	"res_101",
+> +	"res_102",
+> +	"res_103",
+> +	"res_104",
+> +	"res_105",
+> +	"res_106",
+> +	"res_107",
+> +	"res_108",
+> +	"res_109",
+> +	"res_110",
+> +	"res_111",
+> +	"res_112",
+> +	"res_113",
+> +	"res_114",
+> +	"res_115",
+> +	"res_116",
+> +	"res_117",
+> +	"res_118",
+> +	"res_119",
+> +	"res_120",
+> +	"res_121",
+> +	"res_122",
+> +	"res_123",
+> +	"res_124",
+> +	"res_125",
+> +	"res_126",
+> +	"res_127",
+> +	"res_128",
+> +	"res_129",
+> +	"res_130",
+> +	"res_131",
+> +	"res_132",
+> +	"res_133",
+> +	"res_134",
+> +	"res_135",
+> +	"res_136",
+> +	"res_137",
+> +	"res_138",
+> +	"res_139",
+> +	"res_140",
+> +	"res_141",
+> +	"res_142",
+> +	"res_143",
+> +	"res_144",
+> +	"res_145",
+> +	"res_146",
+> +	"res_147",
+> +	"res_148",
+> +	"res_149",
+> +	"res_150",
+> +	"res_151",
+> +	"res_152",
+> +	"res_153",
+> +	"res_154",
+> +	"res_155",
+> +	"res_156",
+> +	"res_157",
+> +	"res_158",
+> +	"res_159",
+> +	"res_160",
+> +	"res_161",
+> +	"res_162",
+> +	"res_163",
+> +	"res_164",
+> +	"res_165",
+> +	"res_166",
+> +	"res_167",
+> +	"res_168",
+> +	"res_169",
+> +	"res_170",
+> +	"res_171",
+> +	"res_172",
+> +	"res_173",
+> +	"res_174",
+> +	"res_175",
+> +	"res_176",
+> +	"res_177",
+> +	"res_178",
+> +	"res_179",
+> +	"res_180",
+> +	"res_181",
+> +	"res_182",
+> +	"res_183",
+> +	"res_184",
+> +	"res_185",
+> +	"res_186",
+> +	"res_187",
+> +	"res_188",
+> +	"res_189",
+> +	"res_190",
+> +	"res_191",
+> +	"res_192",
+> +	"res_193",
+> +	"res_194",
+> +	"res_195",
+> +	"res_196",
+> +	"res_197",
+> +	"res_198",
+> +	"res_199",
+> +	"res_200",
+> +	"res_201",
+> +	"res_202",
+> +	"res_203",
+> +	"res_204",
+> +	"res_205",
+> +	"res_206",
+> +	"res_207",
+> +	"res_208",
+> +	"res_209",
+> +	"res_210",
+> +	"res_211",
+> +	"res_212",
+> +	"res_213",
+> +	"res_214",
+> +	"res_215",
+> +	"res_216",
+> +	"res_217",
+> +	"res_218",
+> +	"res_219",
+> +	"res_220",
+> +	"res_221",
+> +	"res_222",
+> +	"res_223",
+> +	"oem_224",
+> +	"oem_225",
+> +	"oem_226",
+> +	"oem_227",
+> +	"oem_228",
+> +	"oem_229",
+> +	"oem_230",
+> +	"oem_231",
+> +	"oem_232",
+> +	"oem_233",
+> +	"oem_234",
+> +	"oem_235",
+> +	"oem_236",
+> +	"oem_237",
+> +	"oem_238",
+> +	"oem_239",
+> +	"oem_240",
+> +	"oem_241",
+> +	"oem_242",
+> +	"oem_243",
+> +	"oem_244",
+> +	"oem_245",
+> +	"oem_246",
+> +	"oem_247",
+> +	"oem_248",
+> +	"oem_249",
+> +	"oem_250",
+> +	"oem_251",
+> +	"oem_252",
+> +	"oem_253",
+> +	"oem_254",
+> +	"oem_255",
+> +};
+> +
+> +static const char *unit_types[TYPES_ARRAY_SZ] = {
+> +	"none",
+> +	"unspec",
+> +	"celsius",
+> +	"fahrenheit",
+> +	"kelvin",
+> +	"volts",
+> +	"amps",
+> +	"watts",
+> +	"joules",
+> +	"coulombs",
+> +	"va",
+> +	"nits",
+> +	"lumens",
+> +	"lux",
+> +	"candelas",
+> +	"kpa",
+> +	"psi",
+> +	"newtons",
+> +	"cfm",
+> +	"rpm",
+> +	"hertz",
+> +	"seconds",
+> +	"minutes",
+> +	"hours",
+> +	"days",
+> +	"weeks",
+> +	"mils",
+> +	"inches",
+> +	"feet",
+> +	"cubic_inches",
+> +	"cubic_feet",
+> +	"meters",
+> +	"cubic_centimeters",
+> +	"cubic_meters",
+> +	"liters",
+> +	"fluid_ounces",
+> +	"radians",
+> +	"steradians",
+> +	"revolutions",
+> +	"cycles",
+> +	"gravities",
+> +	"ounces",
+> +	"pounds",
+> +	"foot_pounds",
+> +	"ounce_inches",
+> +	"gauss",
+> +	"gilberts",
+> +	"henries",
+> +	"farads",
+> +	"ohms",
+> +	"siemens",
+> +	"moles",
+> +	"becquerels",
+> +	"ppm",
+> +	"decibels",
+> +	"dba",
+> +	"dbc",
+> +	"grays",
+> +	"sieverts",
+> +	"color_temp_kelvin",
+> +	"bits",
+> +	"bytes",
+> +	"words",
+> +	"dwords",
+> +	"qwords",
+> +	"percentage",
+> +	"pascals",
+> +	"counts",
+> +	"grams",
+> +	"newton_meters",
+> +	"hits",
+> +	"misses",
+> +	"retries",
+> +	"overruns",
+> +	"underruns",
+> +	"collisions",
+> +	"packets",
+> +	"messages",
+> +	"chars",
+> +	"errors",
+> +	"corrected_err",
+> +	"uncorrectable_err",
+> +	"square_mils",
+> +	"square_inches",
+> +	"square_feet",
+> +	"square_centimeters",
+> +	"square_meters",
+> +	"radians_per_secs",
+> +	"beats_per_minute",
+> +	"meters_per_secs_squared",
+> +	"meters_per_secs",
+> +	"cubic_meter_per_secs",
+> +	"millimeters_mercury",
+> +	"radians_per_secs_squared",
+> +	"state",
+> +	"bps",
+> +	"res_96",
+> +	"res_97",
+> +	"res_98",
+> +	"res_99",
+> +	"res_100",
+> +	"res_101",
+> +	"res_102",
+> +	"res_103",
+> +	"res_104",
+> +	"res_105",
+> +	"res_106",
+> +	"res_107",
+> +	"res_108",
+> +	"res_109",
+> +	"res_110",
+> +	"res_111",
+> +	"res_112",
+> +	"res_113",
+> +	"res_114",
+> +	"res_115",
+> +	"res_116",
+> +	"res_117",
+> +	"res_118",
+> +	"res_119",
+> +	"res_120",
+> +	"res_121",
+> +	"res_122",
+> +	"res_123",
+> +	"res_124",
+> +	"res_125",
+> +	"res_126",
+> +	"res_127",
+> +	"res_128",
+> +	"res_129",
+> +	"res_130",
+> +	"res_131",
+> +	"res_132",
+> +	"res_133",
+> +	"res_134",
+> +	"res_135",
+> +	"res_136",
+> +	"res_137",
+> +	"res_138",
+> +	"res_139",
+> +	"res_140",
+> +	"res_141",
+> +	"res_142",
+> +	"res_143",
+> +	"res_144",
+> +	"res_145",
+> +	"res_146",
+> +	"res_147",
+> +	"res_148",
+> +	"res_149",
+> +	"res_150",
+> +	"res_151",
+> +	"res_152",
+> +	"res_153",
+> +	"res_154",
+> +	"res_155",
+> +	"res_156",
+> +	"res_157",
+> +	"res_158",
+> +	"res_159",
+> +	"res_160",
+> +	"res_161",
+> +	"res_162",
+> +	"res_163",
+> +	"res_164",
+> +	"res_165",
+> +	"res_166",
+> +	"res_167",
+> +	"res_168",
+> +	"res_169",
+> +	"res_170",
+> +	"res_171",
+> +	"res_172",
+> +	"res_173",
+> +	"res_174",
+> +	"res_175",
+> +	"res_176",
+> +	"res_177",
+> +	"res_178",
+> +	"res_179",
+> +	"res_180",
+> +	"res_181",
+> +	"res_182",
+> +	"res_183",
+> +	"res_184",
+> +	"res_185",
+> +	"res_186",
+> +	"res_187",
+> +	"res_188",
+> +	"res_189",
+> +	"res_190",
+> +	"res_191",
+> +	"res_192",
+> +	"res_193",
+> +	"res_194",
+> +	"res_195",
+> +	"res_196",
+> +	"res_197",
+> +	"res_198",
+> +	"res_199",
+> +	"res_200",
+> +	"res_201",
+> +	"res_202",
+> +	"res_203",
+> +	"res_204",
+> +	"res_205",
+> +	"res_206",
+> +	"res_207",
+> +	"res_208",
+> +	"res_209",
+> +	"res_210",
+> +	"res_211",
+> +	"res_212",
+> +	"res_213",
+> +	"res_214",
+> +	"res_215",
+> +	"res_216",
+> +	"res_217",
+> +	"res_218",
+> +	"res_219",
+> +	"res_220",
+> +	"res_221",
+> +	"res_222",
+> +	"res_223",
+> +	"res_224",
+> +	"res_225",
+> +	"res_226",
+> +	"res_227",
+> +	"res_228",
+> +	"res_229",
+> +	"res_230",
+> +	"res_231",
+> +	"res_232",
+> +	"res_233",
+> +	"res_234",
+> +	"res_235",
+> +	"res_236",
+> +	"res_237",
+> +	"res_238",
+> +	"res_239",
+> +	"res_240",
+> +	"res_241",
+> +	"res_242",
+> +	"res_243",
+> +	"res_244",
+> +	"res_245",
+> +	"res_246",
+> +	"res_247",
+> +	"res_248",
+> +	"res_249",
+> +	"res_250",
+> +	"res_251",
+> +	"res_252",
+> +	"res_253",
+> +	"res_254",
+> +	"oem_unit",
+> +};
+> +
+>  static struct inode *stlmfs_get_inode(struct super_block *sb)
+>  {
+>  	struct inode *inode = new_inode(sb);
+> @@ -815,6 +1337,18 @@ DEFINE_TLM_CLASS(persistent_tlmo, "persistent", 0,
+>  DEFINE_TLM_CLASS(value_tlmo, "value", 0,
+>  		 S_IFREG | S_IRUSR, &de_read_fops, NULL);
+>  
+> +static inline struct dentry *
+> +stlmfs_lookup_by_name(struct dentry *parent, const char *dname)
+> +{
+> +	struct qstr qstr;
+> +
+> +	qstr.name = dname;
+> +	qstr.len = strlen(dname);
+> +	qstr.hash = full_name_hash(parent, qstr.name, qstr.len);
+> +
+> +	return d_lookup(parent, &qstr);
+> +}
+> +
+>  static int scmi_telemetry_de_populate(struct super_block *sb,
+>  				      struct scmi_tlm_setup *tsp,
+>  				      struct dentry *parent,
+> @@ -1659,6 +2193,150 @@ static struct dentry *stlmfs_create_root_dentry(struct super_block *sb)
+>  	return dentry;
+>  }
+>  
+> +static int scmi_telemetry_de_subdir_symlink(struct super_block *sb,
+> +					    struct scmi_tlm_setup *tsp,
+> +					    const struct scmi_telemetry_de *de,
+> +					    struct dentry *parent)
+> +{
+> +	struct dentry *dentry;
+> +	struct inode *inode;
+> +	int ret;
+I notice that ret isn't assigned a value and the function returns ret without
+initialising.
 
-The setup has a single lower layer. This is how the mount command looks 
-like:
+> +
+> +	if (IS_ERR(parent))
+> +		return 0;
+> +
+> +	char *name __free(kfree) = kasprintf(GFP_KERNEL, "0x%08X", de->info->id);
+> +	if (!name)
+> +		return -ENOMEM;
+> +
+> +	char *link __free(kfree) =
+> +		kasprintf(GFP_KERNEL, "../../../../../des/0x%08X", de->info->id);
+> +	if (!link)
+> +		return -ENOMEM;
+> +
+> +	dentry = simple_start_creating(parent, name);
+> +	if (IS_ERR(dentry))
+> +		return PTR_ERR(dentry);
+> +
+> +	inode = stlmfs_get_inode(sb);
+> +	if (unlikely(!inode)) {
+> +		dev_err(tsp->dev,
+> +			"out of free dentries, cannot create '%s'", name);
+> +		return stlmfs_failed_creating(dentry);
+> +	}
+> +
+> +	inode->i_mode = S_IFLNK | 0777;
+> +	inode->i_op = &simple_symlink_inode_operations;
+> +	inode_init_owner(&nop_mnt_idmap, inode, NULL, inode->i_mode);
+> +	inode->i_link = no_free_ptr(link);
+> +
+> +	//d_add(dentry, inode);
+> +	d_make_persistent(dentry, inode);
+> +
+> +	simple_done_creating(dentry);
+> +
+> +	return ret;
+> +}
+> +
+> +static struct dentry *
+> +scmi_telemetry_topology_path_get(struct super_block *sb,
+> +				 struct scmi_tlm_setup *tsp,
+> +				 struct dentry *parent, const char *dname)
+> +{
+> +	struct dentry *dentry;
+> +
+> +	dentry = stlmfs_lookup_by_name(parent, dname);
+> +	if (!dentry) {
+> +		struct scmi_tlm_class *dir_tlm_cls __free(kfree) =
+> +			kzalloc(sizeof(*dir_tlm_cls), GFP_KERNEL);
+> +		if (!dir_tlm_cls)
+> +			return NULL;
+> +
+> +		dir_tlm_cls->name = kasprintf(GFP_KERNEL, "%s", dname);
+> +		if (!dir_tlm_cls->name)
+> +			return NULL;
+> +
+> +		dir_tlm_cls->mode = S_IFDIR | S_IRWXU;
+> +		dir_tlm_cls->flags = TLM_IS_DYNAMIC;
+> +
+> +		dentry = stlmfs_create_dentry(sb, tsp, parent,
+> +					      dir_tlm_cls, NULL);
+> +		if (!IS_ERR(dentry))
+> +			retain_and_null_ptr(dir_tlm_cls);
+> +	}
+> +
+> +	return dentry;
+> +}
+> +
+> +static int scmi_telemetry_topology_add_node(struct super_block *sb,
+> +					    struct scmi_tlm_instance *ti,
+> +					    const struct scmi_telemetry_de *de)
+> +{
+> +	struct dentry *ctype, *cinst, *cunit, *dinst;
+> +	struct scmi_tlm_de_info *dei = de->info;
+> +	char inst_str[32];
+> +	int ret;
+> +
+> +	/* by_compo_type/<COMPO_TYPE_STR>/ */
+> +	ctype = scmi_telemetry_topology_path_get(sb, ti->tsp, ti->compo_dentry,
+> +						 compo_types[dei->compo_type]);
+> +	if (!ctype)
+> +		return -ENOMEM;
+> +
+> +	/* by_compo_type/<COMPO_TYPE_STR>/<N>/ */
+> +	snprintf(inst_str, 32, "%u", dei->compo_instance_id);
+> +	cinst = scmi_telemetry_topology_path_get(sb, ti->tsp, ctype, inst_str);
+> +	dput(ctype);
+> +	if (!cinst)
+> +		return -ENOMEM;
+> +
+> +	/* by_compo_type/<COMPO_TYPE_STR>/<N>/<DE_UNIT_TYPE_STR>/ */
+> +	cunit = scmi_telemetry_topology_path_get(sb, ti->tsp, cinst,
+> +						 unit_types[dei->unit]);
+> +	dput(cinst);
+> +	if (!cunit)
+> +		return -ENOMEM;
+> +
+> +	/* by_compo_type/<COMPO_TYPE_STR>/<N>/<DE_UNIT_TYPE_STR>/<N> */
+> +	snprintf(inst_str, 32, "%u", dei->instance_id);
+> +	dinst = scmi_telemetry_topology_path_get(sb, ti->tsp, cunit, inst_str);
+> +	dput(cunit);
+> +	if (!dinst)
+> +		return -ENOMEM;
+> +
+> +	ret = scmi_telemetry_de_subdir_symlink(sb, ti->tsp, de, dinst);
+> +	dput(dinst);
+> +
+> +	return ret;
+> +}
+> +
+> +DEFINE_TLM_CLASS(compo_dir_cls, "components", 0, S_IFDIR | S_IRWXU, NULL, NULL);
+> +
+> +static int scmi_telemetry_topology_view_add(struct scmi_tlm_instance *ti)
+> +{
+> +	const struct scmi_telemetry_res_info *rinfo;
+> +	struct scmi_tlm_setup *tsp = ti->tsp;
+> +	struct device *dev = tsp->dev;
+> +
+> +	rinfo = scmi_telemetry_res_info_get(tsp);
+> +	if (!rinfo || !rinfo->fully_enumerated)
+> +		return -ENODEV;
+> +
+> +	ti->compo_dentry =
+> +		stlmfs_create_dentry(ti->sb, tsp, ti->top_dentry, &compo_dir_cls, NULL);
+> +
+> +	for (int i = 0; i < rinfo->num_des; i++) {
+> +		int ret;
+> +
+> +		ret = scmi_telemetry_topology_add_node(ti->sb, ti, rinfo->des[i]);
+> +		if (ret)
+> +			dev_err(dev, "Fail to add node %s to topology. Skip.\n",
+> +				rinfo->des[i]->info->name);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int scmi_tlm_root_dentries_initialize(struct scmi_tlm_instance *ti)
+>  {
+>  	struct scmi_tlm_setup *tsp = ti->tsp;
+> @@ -1712,6 +2390,12 @@ static int scmi_telemetry_instance_register(struct super_block *sb,
+>  			 ti->top_cls.name);
+>  	}
+>  
+> +	ret = scmi_telemetry_topology_view_add(ti);
+> +	if (ret)
+> +		dev_warn(ti->tsp->dev,
+> +			 "Failed to create topology view for instance %s.\n",
+> +			 ti->top_cls.name);
+> +
+>  	return 0;
+>  }
+>  
 
-mount -t overlay -o 
-"lowerdir=${DEV_DIR}/etc,upperdir=${DEV_DIR}/var/lib/overlays/etc/upper,workdir=${DEV_DIR}/var/lib/overlays/etc/work" 
-none "${DEV_DIR}/etc"
-
-They would rather not disable index, to avoid mounting the wrong layers 
-and to avoid corner cases with hardlinks.
+I will continue reviewing,
+Thanks,
+Elif
 
