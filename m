@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-74211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7304FD3853D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 20:02:52 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24089D38549
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 20:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 3A4943009691
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 19:02:51 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C2D843143F5F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 19:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFED36999D;
-	Fri, 16 Jan 2026 19:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19BE20FAAB;
+	Fri, 16 Jan 2026 19:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="ThD/c/K3";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="TYUf3V1K"
+	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="iCoFmrCo";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="XCr6I30O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from a11-127.smtp-out.amazonses.com (a11-127.smtp-out.amazonses.com [54.240.11.127])
+Received: from a11-16.smtp-out.amazonses.com (a11-16.smtp-out.amazonses.com [54.240.11.16])
 	(using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6528734EF0E;
-	Fri, 16 Jan 2026 19:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.11.127
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7274C34CFB5;
+	Fri, 16 Jan 2026 19:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.11.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768590165; cv=none; b=kzrV4fExNcW8vZzz5Ex0Sk4J6lZph/gp3sym3TtPpg+XLh46S3pVQEy8YhQmWheVHu2wfrHLEHVQuUj5cXyIccJVabzYtZ+fXZ3CC+GinLx56eauRG975Te9n8RXvdvqj06P409MTauWJeUXAPcal4QPQeE6ylInTuJfJM5eK2I=
+	t=1768590199; cv=none; b=ca7ESs2jbaK2wT0VQX8S1HcCNg7I/f8LTi/RzKKVc9B8LTnswCm5In8i/2slu5O4OcXT7hDda7vLiCbmpfqEBmN15tsuMj1p+ukI5QG5VH7NX1fz2dMh5RyC20DPuHieadzZTroHS+gnyP1HZqQREk59v8LKXxySm98REKnFzZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768590165; c=relaxed/simple;
-	bh=CGalfl5j4nm2USOa0fwpIEl11A2rC0ZDxN8QDCMj0SE=;
+	s=arc-20240116; t=1768590199; c=relaxed/simple;
+	bh=y6NAlP81GLOk95ew+ly4J44rwUvZJcbu3CaI+NQVWTQ=;
 	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:In-Reply-To:
-	 References:Message-ID; b=LNxZtKKf8/EvsLBbwsdIFLkQz/XBSw7ZjBh2q9Agx/Y58qUpDeqogOhZ3rKPlJrHw9jRaOGKvi9INg3cxAAdzG5lsCd5CriraZpSL5zrh6ryAV1bM1iizktfQqw3MgVtpeYj+r6qqJyJ6Pm9CIa32WwW8qLBpZUz7wJI8WdLPuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b=ThD/c/K3; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=TYUf3V1K; arc=none smtp.client-ip=54.240.11.127
+	 References:Message-ID; b=Ua9bY3Gd/5c0EVSYfH7cXqXxUmWxDqkRF+PDyL0T9TgjWOLICKEEvzhqEi2ocueMlwAJGiUau1YLwD5/GdvTw0z8CXaD4ODlhmLKoAsD+88gusMiT9r4hCvVVWA/xj4iJ6OdUCzPoS4JU3sgYH228ZsNemI4aHRUHgrAxjfNZ0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b=iCoFmrCo; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=XCr6I30O; arc=none smtp.client-ip=54.240.11.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=o25mqk5iffcfzgc3wo2zjhkohcyjzsoq; d=jagalactic.com; t=1768590162;
+	s=o25mqk5iffcfzgc3wo2zjhkohcyjzsoq; d=jagalactic.com; t=1768590196;
 	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id;
-	bh=CGalfl5j4nm2USOa0fwpIEl11A2rC0ZDxN8QDCMj0SE=;
-	b=ThD/c/K3WPfQuiFcTd08P1Ck1E7nKXwv19DHE1OCLoaAYlmdoGnaN84RSWI6tk3n
-	En91p6ZLoHbPUDoNZamfvHkhBliKr0kzORKqp+HhUyxWREU3LsDP9muph26WI6/mxmr
-	UsoFNL52J+g2PIhWW6dbzslikwZkcUnsFS9dINTk=
+	bh=y6NAlP81GLOk95ew+ly4J44rwUvZJcbu3CaI+NQVWTQ=;
+	b=iCoFmrCoQG+SvuXwylE6zm3xTZ2IFtkVJElxtQbtT/MIlP7lDdNWzl9R/aE3rL4O
+	k38apwQuTsEtiX4Pg6uhXLtwHV4b18HXZEwdPhxRcmNyolfDNLMfxhdcdjv90tK5pWy
+	sFn83tBGVILf8jIfyig9lfbTlWHC4jXLEduASlAY=
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1768590162;
+	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1768590196;
 	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id:Feedback-ID;
-	bh=CGalfl5j4nm2USOa0fwpIEl11A2rC0ZDxN8QDCMj0SE=;
-	b=TYUf3V1K67INYYGg6lS2gTeTGdWA0uIL148wZ21MLQXneTYJyGKUiI8AtN2aeZCb
-	5XHPCa46u9yvMoISygjOfuLU97SZ2rc7WwFAQkWqsn/ad850z2MgRNbghhKWcqnGeiF
-	lvWQdemzR6Zh06ulpi8sCF8IGuMfIE9CYK5po3Lc=
-Subject: [PATCH V5 06/19] dax: Add dax_set_ops() for setting dax_operations
- at bind time
+	bh=y6NAlP81GLOk95ew+ly4J44rwUvZJcbu3CaI+NQVWTQ=;
+	b=XCr6I30OT3gg5sR45feFhvGLuxuy1dR/q5+GwDFMOazvWajJvxUMpIBjjhAJwPBs
+	LJabK/LUDBZnCqQf9ONcNNwcm+/LlbHQ5eSCM824KetyxzS7rL8Ksb6j2MNCuNGmbue
+	GJ3vQGzYpahRlN1gFSDpCeRW8urpLKuKEc3HxaIs=
+Subject: [PATCH V5 07/19] dax: Add fs_dax_get() func to prepare dax for
+ fs-dax usage
 From: =?UTF-8?Q?John_Groves?= <john@jagalactic.com>
 To: =?UTF-8?Q?John_Groves?= <John@Groves.net>, 
 	=?UTF-8?Q?Miklos_Szeredi?= <miklos@szeredi.hu>, 
@@ -85,7 +85,7 @@ Cc: =?UTF-8?Q?John_Groves?= <jgroves@micron.com>,
 	=?UTF-8?Q?nvdimm=40lists=2Elinux=2Edev?= <nvdimm@lists.linux.dev>, 
 	=?UTF-8?Q?linux-cxl=40vger=2Ekernel=2Eorg?= <linux-cxl@vger.kernel.org>, 
 	=?UTF-8?Q?linux-fsdevel=40vger=2Ekernel=2Eorg?= <linux-fsdevel@vger.kernel.org>
-Date: Fri, 16 Jan 2026 19:02:42 +0000
+Date: Fri, 16 Jan 2026 19:03:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,88 +97,119 @@ Content-Transfer-Encoding: quoted-printable
 In-Reply-To: <20260116185911.1005-1-john@jagalactic.com>
 References: <20260116125831.953.compound@groves.net> 
  <20260116185911.1005-1-john@jagalactic.com> 
- <20260116185911.1005-7-john@jagalactic.com>
+ <20260116185911.1005-8-john@jagalactic.com>
 X-Mailer: Amazon WorkMail
-Thread-Index: AQHchxoe1VAe00deR0Sw2d725QhurgAABexrAAAkZ1I=
-Thread-Topic: [PATCH V5 06/19] dax: Add dax_set_ops() for setting
- dax_operations at bind time
-X-Wm-Sent-Timestamp: 1768590160
+Thread-Index: AQHchxoe1VAe00deR0Sw2d725QhurgAABexrAAApf8k=
+Thread-Topic: [PATCH V5 07/19] dax: Add fs_dax_get() func to prepare dax for
+ fs-dax usage
+X-Wm-Sent-Timestamp: 1768590194
 X-Original-Mailer: git-send-email 2.52.0
-Message-ID: <0100019bc8303907-f811ce62-7752-4b96-b9ee-c152330f766d-000000@email.amazonses.com>
+Message-ID: <0100019bc830bd89-fd1cdad4-6e9d-4334-8b92-46ba5e308d1a-000000@email.amazonses.com>
 Feedback-ID: ::1.us-east-1.LF00NED762KFuBsfzrtoqw+Brn/qlF9OYdxWukAhsl8=:AmazonSES
-X-SES-Outgoing: 2026.01.16-54.240.11.127
+X-SES-Outgoing: 2026.01.16-54.240.11.16
 
-From: John Groves <John@Groves.net>=0D=0A=0D=0AAdd a new dax_set_ops() fu=
-nction that allows drivers to set the=0D=0Adax_operations after the dax_d=
-evice has been allocated. This is needed=0D=0Afor fsdev_dax where the ope=
-rations need to be set during probe and=0D=0Acleared during unbind.=0D=0A=
-=0D=0AThe fsdev driver uses devm_add_action_or_reset() for cleanup consis=
-tency,=0D=0Aavoiding the complexity of mixing devm-managed resources with=
- manual=0D=0Acleanup in a remove() callback. This ensures cleanup happens=
- automatically=0D=0Ain the correct reverse order when the device is unbou=
-nd.=0D=0A=0D=0ASigned-off-by: John Groves <john@groves.net>=0D=0A---=0D=0A=
- drivers/dax/fsdev.c | 16 ++++++++++++++++=0D=0A drivers/dax/super.c | 38=
- +++++++++++++++++++++++++++++++++++++-=0D=0A include/linux/dax.h |  1 +=0D=
-=0A 3 files changed, 54 insertions(+), 1 deletion(-)=0D=0A=0D=0Adiff --gi=
-t a/drivers/dax/fsdev.c b/drivers/dax/fsdev.c=0D=0Aindex f58c88de7a4d..d6=
-58942b7143 100644=0D=0A--- a/drivers/dax/fsdev.c=0D=0A+++ b/drivers/dax/f=
-sdev.c=0D=0A@@ -114,6 +114,13 @@ static void fsdev_kill(void *dev_dax)=0D=
-=0A =09kill_dev_dax(dev_dax);=0D=0A }=0D=0A=20=0D=0A+static void fsdev_cl=
-ear_ops(void *data)=0D=0A+{=0D=0A+=09struct dev_dax *dev_dax =3D data;=0D=
-=0A+=0D=0A+=09dax_set_ops(dev_dax->dax_dev, NULL);=0D=0A+}=0D=0A+=0D=0A /=
-*=0D=0A  * Page map operations for FS-DAX mode=0D=0A  * Similar to fsdax_=
-pagemap_ops in drivers/nvdimm/pmem.c=0D=0A@@ -296,6 +303,15 @@ static int=
- fsdev_dax_probe(struct dev_dax *dev_dax)=0D=0A =09if (rc)=0D=0A =09=09re=
-turn rc;=0D=0A=20=0D=0A+=09/* Set the dax operations for fs-dax access pa=
-th */=0D=0A+=09rc =3D dax_set_ops(dax_dev, &dev_dax_ops);=0D=0A+=09if (rc=
-)=0D=0A+=09=09return rc;=0D=0A+=0D=0A+=09rc =3D devm_add_action_or_reset(=
-dev, fsdev_clear_ops, dev_dax);=0D=0A+=09if (rc)=0D=0A+=09=09return rc;=0D=
-=0A+=0D=0A =09run_dax(dax_dev);=0D=0A =09return devm_add_action_or_reset(=
-dev, fsdev_kill, dev_dax);=0D=0A }=0D=0Adiff --git a/drivers/dax/super.c =
-b/drivers/dax/super.c=0D=0Aindex c00b9dff4a06..ba0b4cd18a77 100644=0D=0A-=
--- a/drivers/dax/super.c=0D=0A+++ b/drivers/dax/super.c=0D=0A@@ -157,6 +1=
-57,9 @@ long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,=
- long nr_pages,=0D=0A =09if (!dax_alive(dax_dev))=0D=0A =09=09return -ENX=
-IO;=0D=0A=20=0D=0A+=09if (!dax_dev->ops)=0D=0A+=09=09return -EOPNOTSUPP;=0D=
-=0A+=0D=0A =09if (nr_pages < 0)=0D=0A =09=09return -EINVAL;=0D=0A=20=0D=0A=
-@@ -207,6 +210,10 @@ int dax_zero_page_range(struct dax_device *dax_dev, =
-pgoff_t pgoff,=0D=0A=20=0D=0A =09if (!dax_alive(dax_dev))=0D=0A =09=09ret=
-urn -ENXIO;=0D=0A+=0D=0A+=09if (!dax_dev->ops)=0D=0A+=09=09return -EOPNOT=
-SUPP;=0D=0A+=0D=0A =09/*=0D=0A =09 * There are no callers that want to ze=
-ro more than one page as of now.=0D=0A =09 * Once users are there, this c=
-heck can be removed after the=0D=0A@@ -223,7 +230,7 @@ EXPORT_SYMBOL_GPL(=
-dax_zero_page_range);=0D=0A size_t dax_recovery_write(struct dax_device *=
-dax_dev, pgoff_t pgoff,=0D=0A =09=09void *addr, size_t bytes, struct iov_=
-iter *iter)=0D=0A {=0D=0A-=09if (!dax_dev->ops->recovery_write)=0D=0A+=09=
-if (!dax_dev->ops || !dax_dev->ops->recovery_write)=0D=0A =09=09return 0;=
-=0D=0A =09return dax_dev->ops->recovery_write(dax_dev, pgoff, addr, bytes=
-, iter);=0D=0A }=0D=0A@@ -307,6 +314,35 @@ void set_dax_nomc(struct dax_d=
-evice *dax_dev)=0D=0A }=0D=0A EXPORT_SYMBOL_GPL(set_dax_nomc);=0D=0A=20=0D=
-=0A+/**=0D=0A+ * dax_set_ops - set the dax_operations for a dax_device=0D=
-=0A+ * @dax_dev: the dax_device to configure=0D=0A+ * @ops: the operation=
-s to set (may be NULL to clear)=0D=0A+ *=0D=0A+ * This allows drivers to =
-set the dax_operations after the dax_device=0D=0A+ * has been allocated. =
-This is needed when the device is created before=0D=0A+ * the driver that=
- needs specific ops is bound (e.g., fsdev_dax binding=0D=0A+ * to a dev_d=
-ax created by hmem).=0D=0A+ *=0D=0A+ * When setting non-NULL ops, fails i=
-f ops are already set (returns -EBUSY).=0D=0A+ * When clearing ops (NULL)=
-, always succeeds.=0D=0A+ *=0D=0A+ * Return: 0 on success, -EBUSY if ops =
-already set=0D=0A+ */=0D=0A+int dax_set_ops(struct dax_device *dax_dev, c=
-onst struct dax_operations *ops)=0D=0A+{=0D=0A+=09if (ops) {=0D=0A+=09=09=
-/* Setting ops: fail if already set */=0D=0A+=09=09if (cmpxchg(&dax_dev->=
-ops, NULL, ops) !=3D NULL)=0D=0A+=09=09=09return -EBUSY;=0D=0A+=09} else =
-{=0D=0A+=09=09/* Clearing ops: always allowed */=0D=0A+=09=09dax_dev->ops=
- =3D NULL;=0D=0A+=09}=0D=0A+=09return 0;=0D=0A+}=0D=0A+EXPORT_SYMBOL_GPL(=
-dax_set_ops);=0D=0A+=0D=0A bool dax_alive(struct dax_device *dax_dev)=0D=0A=
- {=0D=0A =09lockdep_assert_held(&dax_srcu);=0D=0Adiff --git a/include/lin=
-ux/dax.h b/include/linux/dax.h=0D=0Aindex fe1315135fdd..5aaaca135737 1006=
-44=0D=0A--- a/include/linux/dax.h=0D=0A+++ b/include/linux/dax.h=0D=0A@@ =
--247,6 +247,7 @@ static inline void dax_break_layout_final(struct inode *=
-inode)=0D=0A=20=0D=0A bool dax_alive(struct dax_device *dax_dev);=0D=0A v=
-oid *dax_get_private(struct dax_device *dax_dev);=0D=0A+int dax_set_ops(s=
-truct dax_device *dax_dev, const struct dax_operations *ops);=0D=0A long =
-dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_page=
-s,=0D=0A =09=09enum dax_access_mode mode, void **kaddr, unsigned long *pf=
-n);=0D=0A size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t p=
-goff, void *addr,=0D=0A--=20=0D=0A2.52.0=0D=0A=0D=0A
+From: John Groves <john@groves.net>=0D=0A=0D=0AThe fs_dax_get() function =
+should be called by fs-dax file systems after=0D=0Aopening a fsdev dax de=
+vice. This adds holder_operations, which provides=0D=0Aa memory failure c=
+allback path and effects exclusivity between callers=0D=0Aof fs_dax_get()=
+=2E=0D=0A=0D=0Afs_dax_get() is specific to fsdev_dax, so it checks the dr=
+iver type=0D=0A(which required touching bus.[ch]). fs_dax_get() fails if =
+fsdev_dax is=0D=0Anot bound to the memory.=0D=0A=0D=0AThis function serve=
+s the same role as fs_dax_get_by_bdev(), which dax=0D=0Afile systems call=
+ after opening the pmem block device.=0D=0A=0D=0AThis can't be located in=
+ fsdev.c because struct dax_device is opaque=0D=0Athere.=0D=0A=0D=0AThis =
+will be called by fs/fuse/famfs.c in a subsequent commit.=0D=0A=0D=0ASign=
+ed-off-by: John Groves <john@groves.net>=0D=0A---=0D=0A drivers/dax/bus.c=
+   |  2 --=0D=0A drivers/dax/bus.h   |  2 ++=0D=0A drivers/dax/super.c | =
+58 ++++++++++++++++++++++++++++++++++++++++++++-=0D=0A include/linux/dax.=
+h | 20 ++++++++++------=0D=0A 4 files changed, 72 insertions(+), 10 delet=
+ions(-)=0D=0A=0D=0Adiff --git a/drivers/dax/bus.c b/drivers/dax/bus.c=0D=0A=
+index e79daf825b52..01402d5103ef 100644=0D=0A--- a/drivers/dax/bus.c=0D=0A=
++++ b/drivers/dax/bus.c=0D=0A@@ -39,8 +39,6 @@ static int dax_bus_uevent(=
+const struct device *dev, struct kobj_uevent_env *env)=0D=0A =09return ad=
+d_uevent_var(env, "MODALIAS=3D" DAX_DEVICE_MODALIAS_FMT, 0);=0D=0A }=0D=0A=
+=20=0D=0A-#define to_dax_drv(__drv)=09container_of_const(__drv, struct da=
+x_device_driver, drv)=0D=0A-=0D=0A static struct dax_id *__dax_match_id(c=
+onst struct dax_device_driver *dax_drv,=0D=0A =09=09const char *dev_name)=
+=0D=0A {=0D=0Adiff --git a/drivers/dax/bus.h b/drivers/dax/bus.h=0D=0Aind=
+ex 880bdf7e72d7..dc6f112ac4a4 100644=0D=0A--- a/drivers/dax/bus.h=0D=0A++=
++ b/drivers/dax/bus.h=0D=0A@@ -42,6 +42,8 @@ struct dax_device_driver {=0D=
+=0A =09void (*remove)(struct dev_dax *dev);=0D=0A };=0D=0A=20=0D=0A+#defi=
+ne to_dax_drv(__drv) container_of_const(__drv, struct dax_device_driver, =
+drv)=0D=0A+=0D=0A int __dax_driver_register(struct dax_device_driver *dax=
+_drv,=0D=0A =09=09struct module *module, const char *mod_name);=0D=0A #de=
+fine dax_driver_register(driver) \=0D=0Adiff --git a/drivers/dax/super.c =
+b/drivers/dax/super.c=0D=0Aindex ba0b4cd18a77..00c330ef437c 100644=0D=0A-=
+-- a/drivers/dax/super.c=0D=0A+++ b/drivers/dax/super.c=0D=0A@@ -14,6 +14=
+,7 @@=0D=0A #include <linux/fs.h>=0D=0A #include <linux/cacheinfo.h>=0D=0A=
+ #include "dax-private.h"=0D=0A+#include "bus.h"=0D=0A=20=0D=0A /**=0D=0A=
+  * struct dax_device - anchor object for dax services=0D=0A@@ -111,6 +11=
+2,10 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev, =
+u64 *start_off,=0D=0A }=0D=0A EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);=0D=0A=
+=20=0D=0A+#endif /* CONFIG_BLOCK && CONFIG_FS_DAX */=0D=0A+=0D=0A+#if IS_=
+ENABLED(CONFIG_FS_DAX)=0D=0A+=0D=0A void fs_put_dax(struct dax_device *da=
+x_dev, void *holder)=0D=0A {=0D=0A =09if (dax_dev && holder &&=0D=0A@@ -1=
+19,7 +124,58 @@ void fs_put_dax(struct dax_device *dax_dev, void *holder)=
+=0D=0A =09put_dax(dax_dev);=0D=0A }=0D=0A EXPORT_SYMBOL_GPL(fs_put_dax);=0D=
+=0A-#endif /* CONFIG_BLOCK && CONFIG_FS_DAX */=0D=0A+=0D=0A+/**=0D=0A+ * =
+fs_dax_get() - get ownership of a devdax via holder/holder_ops=0D=0A+ *=0D=
+=0A+ * fs-dax file systems call this function to prepare to use a devdax =
+device for=0D=0A+ * fsdax. This is like fs_dax_get_by_bdev(), but the cal=
+ler already has struct=0D=0A+ * dev_dax (and there is no bdev). The holde=
+r makes this exclusive.=0D=0A+ *=0D=0A+ * @dax_dev: dev to be prepared fo=
+r fs-dax usage=0D=0A+ * @holder: filesystem or mapped device inside the d=
+ax_device=0D=0A+ * @hops: operations for the inner holder=0D=0A+ *=0D=0A+=
+ * Returns: 0 on success, <0 on failure=0D=0A+ */=0D=0A+int fs_dax_get(st=
+ruct dax_device *dax_dev, void *holder,=0D=0A+=09const struct dax_holder_=
+operations *hops)=0D=0A+{=0D=0A+=09struct dev_dax *dev_dax;=0D=0A+=09stru=
+ct dax_device_driver *dax_drv;=0D=0A+=09int id;=0D=0A+=0D=0A+=09id =3D da=
+x_read_lock();=0D=0A+=09if (!dax_dev || !dax_alive(dax_dev) || !igrab(&da=
+x_dev->inode)) {=0D=0A+=09=09dax_read_unlock(id);=0D=0A+=09=09return -ENO=
+DEV;=0D=0A+=09}=0D=0A+=09dax_read_unlock(id);=0D=0A+=0D=0A+=09/* Verify t=
+he device is bound to fsdev_dax driver */=0D=0A+=09dev_dax =3D dax_get_pr=
+ivate(dax_dev);=0D=0A+=09if (!dev_dax || !dev_dax->dev.driver) {=0D=0A+=09=
+=09iput(&dax_dev->inode);=0D=0A+=09=09return -ENODEV;=0D=0A+=09}=0D=0A+=0D=
+=0A+=09dax_drv =3D to_dax_drv(dev_dax->dev.driver);=0D=0A+=09if (dax_drv-=
+>type !=3D DAXDRV_FSDEV_TYPE) {=0D=0A+=09=09iput(&dax_dev->inode);=0D=0A+=
+=09=09return -EOPNOTSUPP;=0D=0A+=09}=0D=0A+=0D=0A+=09if (cmpxchg(&dax_dev=
+->holder_data, NULL, holder)) {=0D=0A+=09=09iput(&dax_dev->inode);=0D=0A+=
+=09=09return -EBUSY;=0D=0A+=09}=0D=0A+=0D=0A+=09dax_dev->holder_ops =3D h=
+ops;=0D=0A+=0D=0A+=09return 0;=0D=0A+}=0D=0A+EXPORT_SYMBOL_GPL(fs_dax_get=
+);=0D=0A+#endif /* CONFIG_FS_DAX */=0D=0A=20=0D=0A enum dax_device_flags =
+{=0D=0A =09/* !alive + rcu grace period =3D=3D no new operations / mappin=
+gs */=0D=0Adiff --git a/include/linux/dax.h b/include/linux/dax.h=0D=0Ain=
+dex 5aaaca135737..6897c5736543 100644=0D=0A--- a/include/linux/dax.h=0D=0A=
++++ b/include/linux/dax.h=0D=0A@@ -52,9 +52,6 @@ struct dax_holder_operat=
+ions {=0D=0A #if IS_ENABLED(CONFIG_DAX)=0D=0A struct dax_device *alloc_da=
+x(void *private, const struct dax_operations *ops);=0D=0A=20=0D=0A-#if IS=
+_ENABLED(CONFIG_DEV_DAX_FS)=0D=0A-struct dax_device *inode_dax(struct ino=
+de *inode);=0D=0A-#endif=0D=0A void *dax_holder(struct dax_device *dax_de=
+v);=0D=0A void put_dax(struct dax_device *dax_dev);=0D=0A void kill_dax(s=
+truct dax_device *dax_dev);=0D=0A@@ -134,7 +131,6 @@ int dax_add_host(str=
+uct dax_device *dax_dev, struct gendisk *disk);=0D=0A void dax_remove_hos=
+t(struct gendisk *disk);=0D=0A struct dax_device *fs_dax_get_by_bdev(stru=
+ct block_device *bdev, u64 *start_off,=0D=0A =09=09void *holder, const st=
+ruct dax_holder_operations *ops);=0D=0A-void fs_put_dax(struct dax_device=
+ *dax_dev, void *holder);=0D=0A #else=0D=0A static inline int dax_add_hos=
+t(struct dax_device *dax_dev, struct gendisk *disk)=0D=0A {=0D=0A@@ -149,=
+12 +145,13 @@ static inline struct dax_device *fs_dax_get_by_bdev(struct =
+block_device *bdev,=0D=0A {=0D=0A =09return NULL;=0D=0A }=0D=0A-static in=
+line void fs_put_dax(struct dax_device *dax_dev, void *holder)=0D=0A-{=0D=
+=0A-}=0D=0A #endif /* CONFIG_BLOCK && CONFIG_FS_DAX */=0D=0A=20=0D=0A #if=
+ IS_ENABLED(CONFIG_FS_DAX)=0D=0A+void fs_put_dax(struct dax_device *dax_d=
+ev, void *holder);=0D=0A+int fs_dax_get(struct dax_device *dax_dev, void =
+*holder,=0D=0A+=09       const struct dax_holder_operations *hops);=0D=0A=
++struct dax_device *inode_dax(struct inode *inode);=0D=0A int dax_writeba=
+ck_mapping_range(struct address_space *mapping,=0D=0A =09=09struct dax_de=
+vice *dax_dev, struct writeback_control *wbc);=0D=0A int dax_folio_reset_=
+order(struct folio *folio);=0D=0A@@ -168,6 +165,15 @@ dax_entry_t dax_loc=
+k_mapping_entry(struct address_space *mapping,=0D=0A void dax_unlock_mapp=
+ing_entry(struct address_space *mapping,=0D=0A =09=09unsigned long index,=
+ dax_entry_t cookie);=0D=0A #else=0D=0A+static inline void fs_put_dax(str=
+uct dax_device *dax_dev, void *holder)=0D=0A+{=0D=0A+}=0D=0A+=0D=0A+stati=
+c inline int fs_dax_get(struct dax_device *dax_dev, void *holder,=0D=0A+=09=
+=09=09     const struct dax_holder_operations *hops)=0D=0A+{=0D=0A+=09ret=
+urn -EOPNOTSUPP;=0D=0A+}=0D=0A static inline struct page *dax_layout_busy=
+_page(struct address_space *mapping)=0D=0A {=0D=0A =09return NULL;=0D=0A-=
+-=20=0D=0A2.52.0=0D=0A=0D=0A
 
