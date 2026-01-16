@@ -1,97 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-74074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99504D2EB3E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 10:25:30 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA7DAD2EB32
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 10:25:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C7B4930ECA65
+	by sea.lore.kernel.org (Postfix) with ESMTP id 21B3A30E8A65
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 09:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280CB34E743;
-	Fri, 16 Jan 2026 09:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CSg6xRnW"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32F434BA24;
+	Fri, 16 Jan 2026 09:21:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401BF1B4156
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 09:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D549242D62;
+	Fri, 16 Jan 2026 09:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768555305; cv=none; b=mH4Hhk6LlXzNtDO/j01QM3MLBgheka3B62rcn65nm0AWhsu18i3OS4X6jFLuTBERiAdfZWSFK6vt+QI3tFsGWQ/57X6RfGLEgkHplvLWuDgVtuhhWteCquROv+yQl3BO0J85+9ZHcUSLYPaGIlORvs/cETsgy9i4Nzfx9OxCtsA=
+	t=1768555305; cv=none; b=f3Yl6i7FPYJ7DTtZ2Rj2tfGnjW7OJt+y9M68+5heeTuYbUqvAPJqxWHIfKhMwq+41Zf2A42IDfyL0LM0tE36cRQfDO6yXJjdrPGGTUwMkqSToL+RQnpfR27mzcnVsl1oPmowiwjDS+yamRpp3qqbnREbcEbL0ggjl4cUTJ+4eVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1768555305; c=relaxed/simple;
-	bh=5cr8bJh3nZ+2uZ+AsWQpetOvAIGygSdWsyMX5tWBN4M=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=SgxUAJqDw4BAwXwFHW9E5jQtnsKdeoQceOV0e6GXlMK2qtf5e0uSQ3ShAsGXG3PiZJ0Kal1u5ZC06QA8nBkqHVS9e9hddaAwxVOuLZrgnm0XljtvNRuyoDHLIKqOC3/fyrysJgze/+L6b2RlZ/F4shP4Wfm+84+SCb7M+3dhtMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CSg6xRnW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768555303;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5cr8bJh3nZ+2uZ+AsWQpetOvAIGygSdWsyMX5tWBN4M=;
-	b=CSg6xRnWhtRSKgo9fQqrJhmQBO+dhza0stKdpR8jeqvuu2vCVnePT5fa+yy/EVgf/zlWrh
-	+iJxAnjGozbugtXg5WV30uyn7vXxtTH1SDhwCsxYl+5BgprqPlke0U6+JLA1U1Tq1Lb47P
-	DXkRDZ+PboLqTm9/ZLlsqKtOFPmQqwM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-568-Pb7NKcFsO6KAfXS0xgqx1w-1; Fri,
- 16 Jan 2026 04:21:40 -0500
-X-MC-Unique: Pb7NKcFsO6KAfXS0xgqx1w-1
-X-Mimecast-MFC-AGG-ID: Pb7NKcFsO6KAfXS0xgqx1w_1768555299
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 90B1A18005AE;
-	Fri, 16 Jan 2026 09:21:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 10CFF30002D6;
-	Fri, 16 Jan 2026 09:21:35 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <d3e04144-0a92-4074-80db-64b6d4d77e85@linux.dev>
-References: <d3e04144-0a92-4074-80db-64b6d4d77e85@linux.dev> <CAH2r5mtgC_s2J9g0smr5NDxSp1TO7d+dtZ7=afnuw9hMxQ4TYQ@mail.gmail.com> <20251222223006.1075635-1-dhowells@redhat.com> <sijmvmcozfmtp3rkamjbgr6xk7ola2wlxc2wvs4t4lcanjsaza@w4bcxcxkmyfc> <320463.1768546738@warthog.procyon.org.uk>
-To: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>,
-    Steve French <smfrench@gmail.com>
-Cc: dhowells@redhat.com, Enzo Matsumiya <ematsumiya@suse.de>,
-    Paulo Alcantara <pc@manguebit.org>, linux-cifs@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    henrique.carvalho@suse.com, ChenXiaoSong <chenxiaosong@kylinos.cn>
-Subject: Re: [PATCH 00/37] cifs: Scripted header file cleanup and SMB1 split
+	bh=QZ9EahSP6Mao9bL7DJkclB2GqRbhXKtA5LHlukP77uQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Up1sehIPsilYyyBUPznKzIMtZvzEPee++Ov9Z55Q5AB0HNbRW3M8gSkZceBLGS7qtWCdogGbVOqUAXUdn6QImNG5i0MZXfkfxzQNTMEkeedQ3hzG1+iqNVwzKm82zsE+gEFjYZSG9eGyZR9QE8kMqCQ3Ni5jRs2CJbpYrWdsXDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 28D46227A8E; Fri, 16 Jan 2026 10:21:39 +0100 (CET)
+Date: Fri, 16 Jan 2026 10:21:38 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, hch@lst.de, tytso@mit.edu,
+	willy@infradead.org, jack@suse.cz, djwong@kernel.org,
+	josef@toxicpanda.com, sandeen@sandeen.net, rgoldwyn@suse.com,
+	xiang@kernel.org, dsterba@suse.com, pali@kernel.org,
+	ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com,
+	gunho.lee@lge.com, Hyunchul Lee <hyc.lee@gmail.com>
+Subject: Re: [PATCH v5 09/14] ntfs: update runlist handling and cluster
+ allocator
+Message-ID: <20260116092138.GA21396@lst.de>
+References: <20260111140345.3866-1-linkinjeon@kernel.org> <20260111140345.3866-10-linkinjeon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <653806.1768555294.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 16 Jan 2026 09:21:34 +0000
-Message-ID: <653807.1768555294@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260111140345.3866-10-linkinjeon@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Okay, I've rebased my patchset on -rc5, fixed up the bits that changed and
-stacked Chen's patches on top:
+> +	for (index = start_index; index < end_index; index++) {
+> +		folio = filemap_lock_folio(vol->lcnbmp_ino->i_mapping, index);
+> +		if (IS_ERR(folio)) {
+> +			page_cache_sync_readahead(vol->lcnbmp_ino->i_mapping, ra, NULL,
 
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/=
-?h=3Dcifs-cleanup
+You probably only want to kick off a read for -ENOENT here, and not
+any error?
 
-Note that Chen's SMB2 error-map patches don't actually intersect with my S=
-MB1
-extraction patches.
+> +					index, end_index - index);
+> +			folio = read_mapping_folio(vol->lcnbmp_ino->i_mapping, index, NULL);
+> +			if (!IS_ERR(folio))
+> +				folio_lock(folio);
+> +		}
 
-David
+either way, this seems like a nice primitive for doing reasonably
+efficient reads from the page cache, and I could think of a few
+other places to it.  Maybe factor it into helper, even if you keep
+it in the ntfs code for now?
 
 
