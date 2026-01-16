@@ -1,167 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-74248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E05D38971
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 23:47:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFAF7D38A0B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 00:31:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C14F43042B4F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 22:47:40 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id C487A3047AC1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 23:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA0A314A7C;
-	Fri, 16 Jan 2026 22:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B6017993;
+	Fri, 16 Jan 2026 23:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z27LjIhX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4O2qSOq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6881D1C3BF7;
-	Fri, 16 Jan 2026 22:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A17019E968
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 23:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768603655; cv=none; b=YWx5tuwJ/yBJ4OIWRLYkSjL6qjUv2JFyRDE36DNGTqenfz+WJxBHyGckdcHmMuEZo5LfrCS7+DAEmafm4ljM06hKYQw18BmwnMnAaGxW9CJIWEkoDudWzrszdo6SXDTspGZSPXVR1QKOowXaF1n/jGrnE9lk3qFau6xk319PJ6o=
+	t=1768606264; cv=none; b=DOMs1mIrjnTT6HTfz6dkY8wNH6y+4TbMNLtutMXpkhfniWLE9jlgRv9/95/lJqJ4xWkedlNgcrHlC9HkKmhy0nwiS/nK3bnR5Yv4p7l/0iLlSDsAZTyXBu4q3cgQ0YW56OLukp7hYhyFYN8SXYjswImSna1s/biNLQ0sEl1WdI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768603655; c=relaxed/simple;
-	bh=ft7oBiD8rhWcMGq/GD4pRfUpcGvOzQ2H/GYUPzcJ0Og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TTa7gH/Hllws7F1APoBEeZfkRv923/69uFRB0MC6cQiyTvNCNzqSEPBuikckPQ0gq6VmM4JUT4t7wCuiLVM3C5DFQTpW+v3bfBC2oueqOoIZkobnXct9XDNxAjZSSTPhmDRRdOgDqRbTaZx3i47XqzoAosaQvU1Dj6I52HnSXXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z27LjIhX; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768603653; x=1800139653;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ft7oBiD8rhWcMGq/GD4pRfUpcGvOzQ2H/GYUPzcJ0Og=;
-  b=Z27LjIhX+o7fq1PevKhj6/TlSIXoUKzqKKZYNfO2so++hmrWVsGdCZYC
-   qhE8tjOsVYG3xjyCNRcr/prDwsq0Xxe7juFpOBfMiB3QfU037zHrCpfhb
-   mIXI9ae/Wz0Pu03rbcwF0vyBsV9Qy75C4TLf+8B/4fBzXZpO/qRSuNHw1
-   92VfkBKyXmtFQ6/vLTWmix/JIJRTBIxouD6+ywfHFDwItz8hxtNqIXOe0
-   cq5Gqv7qapaqp1h0EhRPvPaXF4V3BZiS2nBFgkEsjCe+kvYUxV0CM9hmI
-   w9ZEb5Sin7rV6pMdUNDMtN1eqMhLB9yHp6GvH63xkuBco1SWF/0fR9bOY
-   Q==;
-X-CSE-ConnectionGUID: CMwpypx6S+GJ+nUbDoPj+A==
-X-CSE-MsgGUID: A5tVUpEOS66BK+cs2QjPAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11673"; a="87496869"
-X-IronPort-AV: E=Sophos;i="6.21,232,1763452800"; 
-   d="scan'208";a="87496869"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2026 14:47:28 -0800
-X-CSE-ConnectionGUID: hB8/qJmrS4etYteS2y1Iww==
-X-CSE-MsgGUID: io6o7vAtSK+BQBlZ4hT9/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,232,1763452800"; 
-   d="scan'208";a="236625710"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 16 Jan 2026 14:47:24 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vgsbB-00000000LJc-3rVs;
-	Fri, 16 Jan 2026 22:47:21 +0000
-Date: Sat, 17 Jan 2026 06:47:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Benjamin Coddington <bcodding@hammerspace.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Rick Macklem <rick.macklem@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v1 4/4] NFSD: Sign filehandles
-Message-ID: <202601170612.qqi8Q8Xx-lkp@intel.com>
-References: <9c9cd6131574a45f2603c9248ba205a79b00fea3.1768573690.git.bcodding@hammerspace.com>
+	s=arc-20240116; t=1768606264; c=relaxed/simple;
+	bh=K1wRh3492mMGZGUAJjjSNwOi2kzUyrx4DUiil4ld6iI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cJh4qsFu7rdyYIbbth7WZDSlvH5dj/4fx5iVkv9iZp57bjsuMGy0djJKrIRDbYWlAdT8vGBOO4kM/mamN+D78Tke7ZanKic1E/AWVE4lWxm6Ikj2BJrXqdbTZJOa7TYKuMQ62gzAv5hYsN/x5EPl9VDkEcg1NuzATwMQ0cv7Hvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f4O2qSOq; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-81e8b1bdf0cso1515108b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 15:31:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768606262; x=1769211062; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rpq5WWSHKss0mptOYewsQ0k57/noiEkYB0tSl1wVDPc=;
+        b=f4O2qSOq5Af3YeluXwCh4K9L8En/SW3w7PqdSdnsGiZRRoG78V0J3Ugbyq/SjhbpQg
+         Jvmjmaw9JCl2lOljelLW4p6r1OI0piWowd+7zpNXtWoEyPDeQioKq/zM9EDcn4NnzYuL
+         l/jyLc1kZWPl2e7H9UP9gpBMLwUYI+2w9KXFvP4saFOZR7iCioh6bS92Vh2/y+Wvs1oo
+         U36wSNzFaFXGrggC3tD1xqjrtfl8duboo8MrFVKwOpyFBQBABlEm5qVOY8YY1xNbhAdG
+         SPmPCdrSy3ZiSCce3KGskruQ8x4qIwMt3qaXSNlJpMzWCN/e3PLRi7rrRuFLDLo4tAQ7
+         DQ8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768606262; x=1769211062;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rpq5WWSHKss0mptOYewsQ0k57/noiEkYB0tSl1wVDPc=;
+        b=lGm+TQX7RuU08LArIsHAzWkkVHlawDcQhLY86y7gAoPbo43aOja69R6FTZERQxWiXA
+         ri4n4nJgQhlaaA54UqsuBmGOJIUDdaIikjsW0B5G4sXYqG4DZelG5CnMU+Md+7+u11QN
+         gLGC8nkg70SGTatebwdqDHu7htOAVpS4qwNE7+s49sF7WrCSOvx2cjRzy8bS1fnGYw0v
+         a1pL1iCrWTNJUj/1/8ga4VDa0P/yuQcop3JqasC4YuWSXUJx+c8UQFCALs8uMxR6inNk
+         qsX8xapk8cvXSMXarsLkSN4CSiZRMY4zDLQq4BP1iHOet8BCCms1CZpkxx7WUoGnKhK5
+         LRcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWi1mrxnrct1nm5xG74y6FqdqgNWY8cV+fe1Wq+u1Bp7Lm9E2NgIvudK8m5N3qhMjxnlirtCuvHnyOj9IEy@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjyMcSL+ZWrKcx71b5LEp1ZSD16SX9ANgnwDAW6hixuDsvLKDk
+	HnW9x36Qn9P1x1u8EhqMUwmtCyaE3t50lWhu35QKsgkyOsYNYF1PzWve
+X-Gm-Gg: AY/fxX4X43idU8bJn6Be/IpxHYjaUBAWVXyqjMYHshlSfOcLMOvT7Jbi2d9/YK/DrHU
+	F5qUlx8DIdPvYgQ+O5/uVgOgEgKEUOoSiIzcMAPUGiFhSkhR4a18MgZ1OWjZlRsgo4hTysKJfAF
+	V8HnQtIIkYlNTIntQRid7Z7aWmFiMl1yKG2sPaxhUX2BHBq6NNKXeB5FBxNbm3DGGsvtaySFdwK
+	cgeGdnmWSSyDg3hw683t1nmabDDbFR8yica6Pw513dmp3v5nF6HvNTenqWveUp6448w7iCuXjxF
+	JgVKkGtPJQAUPh9GfZnUer+N/qdJ70/kLxhhfZVWl3XtoJpQhRFPyhcclVWO/+eoPIi6lIS9iON
+	deDZN5UQyPtzxfzc+IpP+D0e/iy6KryVq/DoN6h1111lKa4pUvta8jBenT0f/OBragwnlNSPSGM
+	Y13bCMqymAqK3hXVl1
+X-Received: by 2002:a05:6a20:728d:b0:34e:cc0a:40b2 with SMTP id adf61e73a8af0-38dfe64be4emr4502943637.30.1768606262384;
+        Fri, 16 Jan 2026 15:31:02 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:52::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a7190ce6a9sm30997025ad.34.2026.01.16.15.31.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Jan 2026 15:31:01 -0800 (PST)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: axboe@kernel.dk,
+	miklos@szeredi.hu
+Cc: bschubert@ddn.com,
+	csander@purestorage.com,
+	krisman@suse.de,
+	io-uring@vger.kernel.org,
+	asml.silence@gmail.com,
+	xiaobing.li@samsung.com,
+	safinaskar@gmail.com,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 00/25] fuse/io-uring: add kernel-managed buffer rings and zero-copy
+Date: Fri, 16 Jan 2026 15:30:19 -0800
+Message-ID: <20260116233044.1532965-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9c9cd6131574a45f2603c9248ba205a79b00fea3.1768573690.git.bcodding@hammerspace.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Benjamin,
+This series adds buffer ring and zero-copy capabilities to fuse over io-uring.
+This requires adding a new kernel-managed buf (kmbuf) ring type to io-uring
+where the buffers are provided and managed by the kernel instead of by
+userspace.
 
-kernel test robot noticed the following build warnings:
+On the io-uring side, the kmbuf interface is basically identical to pbufs.
+They differ mostly in how the memory region is set up and whether it is
+userspace or kernel that recycles back the buffer. Internally, the
+IOBL_KERNEL_MANAGED flag is used to mark the buffer ring as kernel-managed. 
 
-[auto build test WARNING on bfd453acb5637b5df881cef4b21803344aa9e7ac]
+The zero-copy work builds on top of the infrastructure added for
+kernel-managed buffer rings (the bulk of which is in patch 19: "fuse: add
+io-uring kernel-managed buffer ring") and that informs some of the design
+choices for how fuse uses the kernel-managed buffer ring without zero-copy.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Benjamin-Coddington/nfsd-Convert-export-flags-to-use-BIT-macro/20260116-223927
-base:   bfd453acb5637b5df881cef4b21803344aa9e7ac
-patch link:    https://lore.kernel.org/r/9c9cd6131574a45f2603c9248ba205a79b00fea3.1768573690.git.bcodding%40hammerspace.com
-patch subject: [PATCH v1 4/4] NFSD: Sign filehandles
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20260117/202601170612.qqi8Q8Xx-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260117/202601170612.qqi8Q8Xx-lkp@intel.com/reproduce)
+There was a previous submission for supporting registered buffers in fuse [1]
+but that was abandoned in favor of using kernel-managed buffer rings, which,
+once incremental buffer consumption is added in a later patchset, gives
+significant memory usage advantages in allowing the full buffer capacity to be
+utilized across multiple requests, as well as offers more flexibility for
+future additions. As well, it also makes the userspace side setup simpler.
+The relevant refactoring fuse patches from the previous submission are carried
+over into this one.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202601170612.qqi8Q8Xx-lkp@intel.com/
+Benchmarks for zero-copy (patch 24) show approximately the following
+differences in throughput for bs=1M:
 
-All warnings (new ones prefixed by >>):
+direct randreads: ~20% increase (~2100 MB/s -> ~2600 MB/s)
+buffered randreads: ~25% increase (~1900 MB/s -> 2400 MB/s)
+direct randwrites: no difference (~750 MB/s)
+buffered randwrites: ~10% increase (950 MB/s -> 1050 MB/s)
 
->> fs/nfsd/nfsfh.c:162:30: warning: format specifies type 'unsigned long' but the argument has type 'unsigned int' [-Wformat]
-     161 |                 pr_warn("NFSD: unable to sign filehandles, fh_size %lu would be greater"
-         |                                                                    ~~~
-         |                                                                    %u
-     162 |                         " than fh_maxsize %d.\n", fh->fh_size + sizeof(hash), fhp->fh_maxsize);
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/printk.h:565:37: note: expanded from macro 'pr_warn'
-     565 |         printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
-         |                                    ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:512:60: note: expanded from macro 'printk'
-     512 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:484:19: note: expanded from macro 'printk_index_wrap'
-     484 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   1 warning generated.
+The benchmark was run using fio on the passthrough_hp server:
+fio --name=test_run --ioengine=sync --rw=rand{read,write} --bs=1M
+--size=1G --numjobs=2 --ramp_time=30 --group_reporting=1
 
+This series is on top of commit b71e635feefc in the io-uring tree.
 
-vim +162 fs/nfsd/nfsfh.c
+The libfuse changes can be found in [2]. This has a dependency on the liburing
+changes in [3]. To test the server, you can run it with:
+sudo ~/libfuse/build/example/passthrough_hp ~/src ~/mounts/tmp
+--nopassthrough -o io_uring_zero_copy -o io_uring_q_depth=8
 
-   140	
-   141	/*
-   142	 * Intended to be called when encoding, appends an 8-byte MAC
-   143	 * to the filehandle hashed from the server's fh_key:
-   144	 */
-   145	int fh_append_mac(struct svc_fh *fhp, struct net *net)
-   146	{
-   147		struct nfsd_net *nn = net_generic(net, nfsd_net_id);
-   148		struct knfsd_fh *fh = &fhp->fh_handle;
-   149		siphash_key_t *fh_key = nn->fh_key;
-   150		u64 hash;
-   151	
-   152		if (!(fhp->fh_export->ex_flags & NFSEXP_SIGN_FH))
-   153			return 0;
-   154	
-   155		if (!fh_key) {
-   156			pr_warn("NFSD: unable to sign filehandles, fh_key not set.\n");
-   157			return -EINVAL;
-   158		}
-   159	
-   160		if (fh->fh_size + sizeof(hash) > fhp->fh_maxsize) {
-   161			pr_warn("NFSD: unable to sign filehandles, fh_size %lu would be greater"
- > 162				" than fh_maxsize %d.\n", fh->fh_size + sizeof(hash), fhp->fh_maxsize);
-   163			return -EINVAL;
-   164		}
-   165	
-   166		fh->fh_auth_type = FH_AT_MAC;
-   167		hash = siphash(&fh->fh_raw, fh->fh_size, fh_key);
-   168		memcpy(&fh->fh_raw[fh->fh_size], &hash, sizeof(hash));
-   169		fh->fh_size += sizeof(hash);
-   170	
-   171		return 0;
-   172	}
-   173	
+Thanks,
+Joanne 
+
+[1] https://lore.kernel.org/linux-fsdevel/20251027222808.2332692-1-joannelkoong@gmail.com/
+[2] https://github.com/joannekoong/libfuse/tree/zero_copy
+[3] https://github.com/joannekoong/liburing/tree/kmbuf
+
+v3: https://lore.kernel.org/linux-fsdevel/20251223003522.3055912-1-joannelkoong@gmail.com/
+v3 -> v4:
+* Get rid of likely()s and get rid of going through cmd interface layer (Gabriel)
+* Fix io_uring_cmd_fixed_index_get() to return back the node pointer (Caleb)
+* Add documentation for io_buffer_register_bvec (Caleb)
+* Remove WARN_ON_ONCE() for io_buffer_unregister() call (Caleb)
+
+v2: https://lore.kernel.org/linux-fsdevel/20251218083319.3485503-1-joannelkoong@gmail.com/
+v2 -> v3:
+* fix casting between void * and u64 for 32-bit architectures (kernel test robot)
+* add newline for documentation bullet points (kernel test robot)
+* fix unrecognized "boolean" (kernel test robot), switch it to a flag (me)
+
+v1: https://lore.kernel.org/linux-fsdevel/20251203003526.2889477-1-joannelkoong@gmail.com/
+v1 -> v2:
+* drop fuse buffer cleanup on ring death, which makes things a lot simpler (Jens)
+  - this drops a lot of things (eg needing ring_ctx tracking, needing callback
+    for ring death, etc)
+* drop fixed buffer pinning altogether and just do lookup every time (Jens)
+  (didn't significantly affect the benchmark results seen)
+* fix spelling mistake in docs (Askar)
+* use -EALREADY for pinning already pinned bufring, return PTR_ERR for
+   registration instead of err, move initializations to outside locks (Caleb)
+* drop fuse patches for zero-ed out headers (me)
+
+Joanne Koong (25):
+  io_uring/kbuf: refactor io_buf_pbuf_register() logic into generic
+    helpers
+  io_uring/kbuf: rename io_unregister_pbuf_ring() to
+    io_unregister_buf_ring()
+  io_uring/kbuf: add support for kernel-managed buffer rings
+  io_uring/kbuf: add mmap support for kernel-managed buffer rings
+  io_uring/kbuf: support kernel-managed buffer rings in buffer selection
+  io_uring/kbuf: add buffer ring pinning/unpinning
+  io_uring/kbuf: add recycling for kernel managed buffer rings
+  io_uring: add io_uring_fixed_index_get() and
+    io_uring_fixed_index_put()
+  io_uring/kbuf: add io_uring_is_kmbuf_ring()
+  io_uring/kbuf: export io_ring_buffer_select()
+  io_uring/kbuf: return buffer id in buffer selection
+  io_uring/cmd: set selected buffer index in __io_uring_cmd_done()
+  fuse: refactor io-uring logic for getting next fuse request
+  fuse: refactor io-uring header copying to ring
+  fuse: refactor io-uring header copying from ring
+  fuse: use enum types for header copying
+  fuse: refactor setting up copy state for payload copying
+  fuse: support buffer copying for kernel addresses
+  fuse: add io-uring kernel-managed buffer ring
+  io_uring/rsrc: rename
+    io_buffer_register_bvec()/io_buffer_unregister_bvec()
+  io_uring/rsrc: split io_buffer_register_request() logic
+  io_uring/rsrc: Allow buffer release callback to be optional
+  io_uring/rsrc: add io_buffer_register_bvec()
+  fuse: add zero-copy over io-uring
+  docs: fuse: add io-uring bufring and zero-copy documentation
+
+ Documentation/block/ublk.rst                  |  14 +-
+ .../filesystems/fuse/fuse-io-uring.rst        |  59 +-
+ drivers/block/ublk_drv.c                      |  18 +-
+ fs/fuse/dev.c                                 |  30 +-
+ fs/fuse/dev_uring.c                           | 692 ++++++++++++++----
+ fs/fuse/dev_uring_i.h                         |  42 +-
+ fs/fuse/fuse_dev_i.h                          |   8 +-
+ include/linux/io_uring/buf.h                  |  25 +
+ include/linux/io_uring/cmd.h                  |  97 ++-
+ include/linux/io_uring_types.h                |  10 +-
+ include/uapi/linux/fuse.h                     |  17 +-
+ include/uapi/linux/io_uring.h                 |  17 +-
+ io_uring/kbuf.c                               | 355 +++++++--
+ io_uring/kbuf.h                               |  19 +-
+ io_uring/memmap.c                             | 117 ++-
+ io_uring/memmap.h                             |   4 +
+ io_uring/register.c                           |   9 +-
+ io_uring/rsrc.c                               | 183 ++++-
+ io_uring/uring_cmd.c                          |   6 +-
+ 19 files changed, 1447 insertions(+), 275 deletions(-)
+ create mode 100644 include/linux/io_uring/buf.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.3
+
 
