@@ -1,250 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-74179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305B5D336FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 17:18:01 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F931D33782
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 17:23:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 0FA2D3015440
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 16:17:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4230330C0481
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 16:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE785215055;
-	Fri, 16 Jan 2026 16:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDBF344031;
+	Fri, 16 Jan 2026 16:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShpmQIEb"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VqwA8GIS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CB033D6D5
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 16:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3162326E165;
+	Fri, 16 Jan 2026 16:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768580272; cv=none; b=GNvonwJ3IFNTS3BH5ffLtAqmK+6HS/sXwQANDWTRaj7DjxiZkMnhBlByWllD7xcIn/BqHg0nOzdacmSqAULf3ocfjjAqJq+FY3Axnqtzoe8q60zP0qxEvySguoxZwLIdhObNJGh2tpOQXp3hAesjqyS4exO434ZQ7qlLmsdpPSM=
+	t=1768580490; cv=none; b=aDqM1UWuWKeneLkecaWwJqfQQ7+AOAupcEJi/oe1ypgEaIKeWifYpAT538XSh71CMsW6gO4/4brVQ3ivZHNZhXyNGkH8j1gld2jLwkN9En9n6eTB/2tRexKmN90zPufX1IpoQQGu3FyQh5Ys5zA+yti/V57Hc3A/5nSHkABqmC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768580272; c=relaxed/simple;
-	bh=f3hvzZ0GFg+2KzCInNRLS4gl1zjs7AkTUdV7NJs0uK8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=AV3vTsz86EW1VPfsmm19/00FXSKcJOFqRKWoRBk7MYHzD92ptKCdOQAY6rNX9NxfpNnzEjvEZ1PilgWp3l3+apX/puXSTQ8BQR4ILb0/SuVrJau1zXb8wZed8HJACbbCNrPCX+JmDriDxuSME3sj5XOgvKRJ5H/izVBa+DprUiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShpmQIEb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B831EC19425;
-	Fri, 16 Jan 2026 16:17:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768580271;
-	bh=f3hvzZ0GFg+2KzCInNRLS4gl1zjs7AkTUdV7NJs0uK8=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=ShpmQIEbpeJYZ4OyaR8AMmsQlrfF/r556jy64Gvc+QnqVSkQFCIEX6dFmySzrm/EO
-	 Opvm0x3y3GhRGxnG/3c7qA3EoqqOV9grObbfYsv3V2YqCsGOSFSvRIve1iXN+9oijg
-	 V8AQh8mRVGMx6h+FV6BzGF/rjUBHTm5s3NL7dlp8+gLdGrhGNyRvXoRn9jiSSEKPxh
-	 ftOXW4ZeNMBuJJ+AQvEyvu9IylvM+bIm5ygjRKTqQUPwnozwJEBdYQyDFKTk7CEPln
-	 NlW7j99tlMQlOoVGOoklX9QM6l9S2+kg+heMT6H0HS0qQbKxbu4yX0Appx1b61jR45
-	 el6g71x0BwS0A==
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id C1D44F40087;
-	Fri, 16 Jan 2026 11:17:50 -0500 (EST)
-Received: from phl-imap-15 ([10.202.2.104])
-  by phl-compute-10.internal (MEProxy); Fri, 16 Jan 2026 11:17:50 -0500
-X-ME-Sender: <xms:rmRqaX0dnJoyBfBhK8zDEPdjCXGq1uVwQvZ9_bqTuV7yI9Is-ooU7A>
-    <xme:rmRqaQ6wwYdyzKBb8iw0TOhwZic4peCRS6JaumJhTpPGGSG0eCH6yodXsq26hjmgU
-    70OxkMkaRN_TuLaX7o57UIrQyEP3zGAuCLLn6fEzHRJ2-6x1KtwPlg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduvdelfeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
-    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
-    hnpefhffekffeftdfgheeiveekudeuhfdvjedvfedvueduvdegleekgeetgfduhfefleen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
-    hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
-    leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
-    hilhdrtghomhdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopehnvghilhessghrohifnhdrnhgrmhgvpdhrtghpthhtoheprhhitghkrdhmrg
-    gtkhhlvghmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsggtohguughinhhgsehhrghm
-    mhgvrhhsphgrtggvrdgtohhmpdhrtghpthhtoheprghnnhgrsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopegvsghighhgvghrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    jhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhrohhnughmhieskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhesohhrrggtlhgv
-    rdgtohhmpdhrtghpthhtoheplhhinhhugidqtghrhihpthhosehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:rmRqae-Et1RvgivnfqlgBt1TdFkwV-OCSII-azW6cdvYr-Mzn8ix1w>
-    <xmx:rmRqaai-F39wqaxaYclp4YtCLOz1i1aXU7UvWbrvXJJWzSSIURm5Sg>
-    <xmx:rmRqafZWmK2eDfnFldT3y_kCpTJ2JyOHnJdWoD-fCwhxFMu-6ClGfA>
-    <xmx:rmRqaf9HdHlhXtvpJOuWqfOVOcEPW_QEa2zyOngtqsGSbEuOCjpMIw>
-    <xmx:rmRqaRNY0PZJSQH6k1Udx3vGS8kcWWBLsTnxcpOloR_vZ8rjwGc9chwL>
-Feedback-ID: ifa6e4810:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A2C79780070; Fri, 16 Jan 2026 11:17:50 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1768580490; c=relaxed/simple;
+	bh=l8DlgSza08bqGYKKlV41P2GV4BRoEqqBH119gTKsQ0w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gz5bbnmeIZOxa1v0aWz4wdJQ/wc1Bnh86FSg5/U3yOh9suXDl56a7tWms1DY9xIZO90fETWR6RUgMMDl+D1A4N1zHKldIfuB9JArOk0BbfmXHT9aZPwQWv+u74OjMc7J764FDpDBzvKFph6IQpN73qDlBejudMSB7aqVCJhH4ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VqwA8GIS; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1768580477; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ZpOJQ6ooa0mcia/fcatFm9psF59FZgaxBeQaFIs6dr4=;
+	b=VqwA8GISAkQT4xMmtXRLK0IuFjmDhvJq0YXI6VMGtMBj62xxRx26q+MO/sHCBAqDC1zzVwJPelpoVixAEZwnDdRn2+YDsUOnwdL3yf7ZC8Clvp3CI9ny1+FlmHesSGAgeV8A+wHgHw8GAKFu1TSUecbvrRnD/mC7XIJp6wsHdOM=
+Received: from 30.180.182.138(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WxAgkQR_1768580476 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 17 Jan 2026 00:21:17 +0800
+Message-ID: <af1f3ff6-a163-4515-92bf-44c9cf6c92f3@linux.alibaba.com>
+Date: Sat, 17 Jan 2026 00:21:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AO3h44zqd9zZ
-Date: Fri, 16 Jan 2026 11:17:20 -0500
-From: "Chuck Lever" <cel@kernel.org>
-To: "Jeff Layton" <jlayton@kernel.org>,
- "Benjamin Coddington" <bcodding@hammerspace.com>,
- "Chuck Lever" <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Eric Biggers" <ebiggers@kernel.org>, "Rick Macklem" <rick.macklem@gmail.com>
-Cc: linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-crypto@vger.kernel.org
-Message-Id: <d2c5b2df-ddb2-49d0-9c41-422449d123ab@app.fastmail.com>
-In-Reply-To: <4227ce184b668d857fc495f61c6e3526dd8862b2.camel@kernel.org>
-References: <cover.1768573690.git.bcodding@hammerspace.com>
- <c49d28aade36c044f0533d03b564ff65e00d9e05.1768573690.git.bcodding@hammerspace.com>
- <3db40beb64cb3663d9e8c83f498557bf8fbc0924.camel@kernel.org>
- <3fc1c84e-3f0b-4342-9034-93e7fb441756@app.fastmail.com>
- <3c5af19d8793c34022bde2cb7fcca1855d1ea080.camel@kernel.org>
- <703f29f8-a9e5-4947-9d93-a3cbde5cbdcc@app.fastmail.com>
- <4227ce184b668d857fc495f61c6e3526dd8862b2.camel@kernel.org>
-Subject: Re: [PATCH v1 2/4] nfsd: Add a key for signing filehandles
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 5/9] erofs: introduce the page cache share feature
+To: Christoph Hellwig <hch@lst.de>, Hongbo Li <lihongbo22@huawei.com>
+Cc: chao@kernel.org, brauner@kernel.org, djwong@kernel.org,
+ amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20260116095550.627082-1-lihongbo22@huawei.com>
+ <20260116095550.627082-6-lihongbo22@huawei.com>
+ <20260116154623.GC21174@lst.de>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20260116154623.GC21174@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+Hi Christoph,
 
+On 2026/1/16 23:46, Christoph Hellwig wrote:
+> I don't really understand the fingerprint idea.  Files with the
+> same content will point to the same physical disk blocks, so that
+> should be a much better indicator than a finger print?  Also how does
 
-On Fri, Jan 16, 2026, at 10:52 AM, Jeff Layton wrote:
-> On Fri, 2026-01-16 at 10:45 -0500, Chuck Lever wrote:
->> 
->> On Fri, Jan 16, 2026, at 10:25 AM, Jeff Layton wrote:
->> > On Fri, 2026-01-16 at 10:09 -0500, Chuck Lever wrote:
->> > > 
->> > > On Fri, Jan 16, 2026, at 9:59 AM, Jeff Layton wrote:
->> > > > On Fri, 2026-01-16 at 09:32 -0500, Benjamin Coddington wrote:
->> > > > > Expand the nfsd_net to hold a siphash_key_t value "fh_key".
->> > > > > 
->> > > > > Expand the netlink server interface to allow the setting of the 128-bit
->> > > > > fh_key value to be used as a signing key for filehandles.
->> > > > > 
->> > > > > Add a file to the nfsd filesystem to set and read the 128-bit key,
->> > > > > formatted as a uuid.
->> > > > > 
->> > > > > Signed-off-by: Benjamin Coddington <bcodding@hammerspace.com>
->> > > > > ---
->> > > > >  Documentation/netlink/specs/nfsd.yaml | 12 ++++
->> > > > >  fs/nfsd/netlink.c                     | 15 +++++
->> > > > >  fs/nfsd/netlink.h                     |  1 +
->> > > > >  fs/nfsd/netns.h                       |  2 +
->> > > > >  fs/nfsd/nfsctl.c                      | 85 +++++++++++++++++++++++++++
->> > > > >  fs/nfsd/trace.h                       | 19 ++++++
->> > > > >  include/uapi/linux/nfsd_netlink.h     |  2 +
->> > > > >  7 files changed, 136 insertions(+)
->> > > > > 
->> > > > > diff --git a/Documentation/netlink/specs/nfsd.yaml b/Documentation/netlink/specs/nfsd.yaml
->> > > > > index badb2fe57c98..a467888cfa62 100644
->> > > > > --- a/Documentation/netlink/specs/nfsd.yaml
->> > > > > +++ b/Documentation/netlink/specs/nfsd.yaml
->> > > > > @@ -81,6 +81,9 @@ attribute-sets:
->> > > > >        -
->> > > > >          name: min-threads
->> > > > >          type: u32
->> > > > > +      -
->> > > > > +        name: fh-key
->> > > > > +        type: binary
->> > > > >    -
->> > > > >      name: version
->> > > > >      attributes:
->> > > > > @@ -227,3 +230,12 @@ operations:
->> > > > >            attributes:
->> > > > >              - mode
->> > > > >              - npools
->> > > > > +    -
->> > > > > +      name: fh-key-set
->> > > > > +      doc: set encryption key for filehandles
->> > > > > +      attribute-set: server
->> > > > > +      flags: [admin-perm]
->> > > > > +      do:
->> > > > > +        request:
->> > > > > +          attributes:
->> > > > > +            - fh-key
->> > > > 
->> > > > Rather than a new netlink operation, I think we might be better served
->> > > > with just sending the fh-key down as an optional attribute in the
->> > > > "threads" op. It's a per-netns attribute anyway, and the threads
->> > > > setting is handled similarly.
->> > > 
->> > > Setting the FH key in the threads op seems awkward to me.
->> > > Setting a key is optional, but you always set the thread
->> > > count to start the server.
->> > > 
->> > > Key setting is done once; whereas setting the thread count
->> > > can be done many times during operation. It seems like it
->> > > would be easy to mistakenly change the key when setting the
->> > > thread count.
->> > > 
->> > > From a "UI safety" perspective, a separate op makes sense
->> > > to me.
->> > > 
->> > 
->> > I'm not convinced. We could easily vet that the key doesn't change when
->> > changing the thread count, and either return an error or throw some
->> > sort of warning and ignore the change.
->> > 
->> > My main thinking here is that you'd want to set up the key at startup
->> > time and never change it, so if the server is already running you
->> > probably want to reject key changes -- otherwise you may have already
->> > given out some unencrypted handles.
->> > 
->> > If that's the case, then now you have to ensure you run the op to set
->> > the key before issuing "threads".
->> > 
->> > Why deal with an ordering constraint like that? Optionally passing down
->> > the key with "threads" means we handle it all in one shot.
->> 
->> We already configure listeners and threads in separate operations.
->> The ordering is managed. It's reasonable for the kernel to block
->> fh_key changes while the NFS server is in operation.
->> 
->> I'd much rather set a precedent of several small ops rather than
->> one or two Swiss army knives.
->>
->> 
->
-> I disagree. Having all of the server settings as discrete elements was
-> part of the problem with the old nfsdfs-based interface. We had this
-> set of discrete knobs that needed to all be twiddled in the correct
-> order.
->
-> The fact that we can send down server parameters in a single block is a
-> strength of the netlink interface, IMO. We can easily add optional
-> parameters and I think that's what we should do here.
->
->
->> > > What feels a little strange though is where to store the
->> > > key? I was thinking in /etc/exports, but that would make
->> > > the FH key per-export rather than per-server instance.
->> > > 
->> > > That gives a cryptographic benefit, as there would be
->> > > more keying material. But maybe it doesn't make a lot of
->> > > sense from a UX perspective.
->> > > 
->> > > On the other hand, some might like to manage the key by
->> > > storing it in a trusted compute module -- systemd has
->> > > a facility to extract keys from a TCM.
->> > > 
->> > 
->> > Yeah, there are a lot of possibilities here. I like the idea of
->> > scraping this out of the TPM, but that's not going to be possible
->> > everywhere. We'll also need some alternate method of storing the key in
->> > a secure way on the fs so that nfsdctl can get to it for hosts that
->> > don't have a TPM.
->> 
->> My point is none of this has anything to do with thread count.
->> Setting the fh_key needs to be a distinct UI element.
->
-> "threads" should probably have been named "service", since it's
-> basically the method that we use to create the actual service,
-> culminating with starting threads.
+Page cache sharing should apply to different EROFS
+filesystem images on the same machine too, so the
+physical disk block number idea cannot be applied
+to this.
 
-OK, you rode herd on getting the netlink stuff in, so it's
-your call here.
+> the fingerprint guarantee uniqueness?  Is it a cryptographically
+> secure hash?  In here it just seems like an opaque blob.
 
-It might be nice to create a new op called "service" and leave
-the legacy "threads" op in place for now.
+Yes, typically it can be a secure hash like sha256,
+but it really depends on the users how to use it.
 
+This feature is enabled _only_ when a dedicated mount
+option is used, and should be enabled by the priviledged
+mounters, and it's up to the priviledged mounters to
+guarantee the fingerprint is correct (usually guaranteed
+by signatures by image builders since images will be
+signed).
 
--- 
-Chuck Lever
+Also different signatures also can be isolated by domain
+ids, so that different domain ids cannot be shared.
+
+> 
+>> +static inline int erofs_inode_set_aops(struct inode *inode,
+>> +				       struct inode *realinode, bool no_fscache)
+> 
+> Factoring this out first would be a nice little prep patch.
+> Also it would probably be much cleaner using IS_ENABLED.
+> 
+>> +static int erofs_ishare_file_open(struct inode *inode, struct file *file)
+>> +{
+>> +	struct inode *sharedinode = EROFS_I(inode)->sharedinode;
+> 
+> Ok, it looks like this allocates a separate backing file and inode.
+
+Yes.
+
+Thanks,
+Gao Xiang
 
