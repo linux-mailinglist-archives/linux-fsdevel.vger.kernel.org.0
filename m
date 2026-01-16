@@ -1,227 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-74044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5313D2B659
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 05:30:04 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F01CD2B6EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 05:33:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id D79573010051
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 04:30:01 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 37B703008193
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 04:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E92346766;
-	Fri, 16 Jan 2026 04:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5709B338593;
+	Fri, 16 Jan 2026 04:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Vaf1jmIH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ak9HsTWE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F125A3396E0;
-	Fri, 16 Jan 2026 04:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BF42C21F4
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 04:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768537797; cv=none; b=eF+iROSow4nqcYbrU6k8tKk6EiAm3sdIKa1IUqbF5JS+LDqkX/KWriELMGydBd8sVMU3gF3MaovvzsEISpgNI0fG0RS+AWC0XPsfPFGUb+hZPes283iNUGIGLMLclCUSxHGrjxY50fjdIqkcAHvjvPQI8RuiJQBBsGpkkTQMqSI=
+	t=1768538013; cv=none; b=aQy+N7vFVfBFRP8HOe8ikYa2/UwyGZn4pe9EGX/jXm05suTbCZKP/LxU8TH18NcLz+b1VrXMnbBeNGAbSEkzRPF9V8jPZ/8IIhJ2Xcl0Y2+eRaRAvcbBH5dI6pSODnyrtMWsMaNFfyfsbfHlWDr87SYYYdta3hT22FlbcAiRiso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768537797; c=relaxed/simple;
-	bh=Zf4kittjBNRDVR6tEC+WOQoDjn0D3icLHME9K0CwPzQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O2GWoCRrKz7/Fwfwd6uIuNnwUT+5dIjBnRTRPQgn4rVXCFZwvPLHY0L5jqecrlB8sl7mJftJYrfESn2GulLmLZMLjNXaXX5Fq5SDC7od/MQWM+wtPs9ywEw8mX+2LuddKojKo5b9xWQRk7LVn30EHU3D5Sz2U13P6kBf6v6mS7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Vaf1jmIH; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=eP
-	3njpltV1K3EjB4QjEgVjSquOOd4TFp8ei/1PUu6Eg=; b=Vaf1jmIHGcNwl9UAQR
-	6BkVNv8uVwonPOQf4treTG49XEm6Hi5Dffx0PpzO2pHG1XBmSRbJk5EgGIaLRtXE
-	KEizFlS+CY/8FlDMvxmuo+V3bHaRdPUjdJ2OlehSYSOkYufAmI3vBCvcnmWXIvgZ
-	yNwI0ganUUDJPeu/ZD7/ca5jg=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wBnsI5jvmlpEDHXGA--.25381S2;
-	Fri, 16 Jan 2026 12:28:21 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: akpm@linux-foundation.org,
-	david@kernel.org,
-	lorenzo.stoakes@oracle.com,
-	riel@surriel.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	harry.yoo@oracle.com,
-	jannh@google.com,
-	willy@infradead.org,
-	axelrasmussen@google.com,
-	yuanchu@google.com,
-	weixugc@google.com,
-	hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	zhengqi.arch@bytedance.com,
-	shakeel.butt@linux.dev
-Cc: kuba@kernel.org,
-	jackzxcui1989@163.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] mm: vmscan: add skipexec mode not to reclaim pages with VM_EXEC vma flag
-Date: Fri, 16 Jan 2026 12:28:17 +0800
-Message-Id: <20260116042817.3790405-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1768538013; c=relaxed/simple;
+	bh=8LRNBKrqbjTSHDGZsehazJKOM9y/E1l7Q8EziGaQHuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hKNc2ZasdpgSqOqHm/SBf8qJPTTAdd5nCF4yPeZCv9HllBiytbnD5QnLoB6wI++DZqxF7DQe5AKRgov2zIjNwVgn9L2E+3IyM7bzFF/hJS3LUufJ81jf9ixWcm/NL8A2x3EXz9/1N1AyKwobDAmefWN6q3hP5p986wmLD0MKgZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ak9HsTWE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3893DC16AAE;
+	Fri, 16 Jan 2026 04:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768538013;
+	bh=8LRNBKrqbjTSHDGZsehazJKOM9y/E1l7Q8EziGaQHuM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ak9HsTWEUniypXNLg8ldodSz5anRVkUzf9ddXo2FrI9/WP9EHX/YO0NtFwe//tz6z
+	 3S4wsRSpzOtYDjCm4QKXXUAKQUhq6m36wydkStflcYRLD83qtgTkiR6W7bMWTCqqN1
+	 0FFLR9+guqe1ryBe90ML3dQoyLdi0SvSqmbpYEJYvfFtLlHIr6D29fu7TE5RDPsPkc
+	 kPHGyu4GdjIkhFAAxqpj2MKcf9ZeZN7B7yJKaVOWVEIK3PfiZtdrSraMpIOASR36Mx
+	 HuRcIaKrfoYsZZTe7WSd0O1ATk/6GzS8luWGiNJmAXpqiX+x6rJEDL+A84ACcHEb9y
+	 Hys9tU5SL3i8w==
+Date: Fri, 16 Jan 2026 04:33:31 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Nanzhe Zhao <nzzhao@126.com>, linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: add 'folio_in_bio' to handle
+ readahead folios with no BIO submission
+Message-ID: <aWm_m0AsbUXcRB6l@google.com>
+References: <20260111100941.119765-1-nzzhao@126.com>
+ <20260111100941.119765-2-nzzhao@126.com>
+ <aWaPzQ8JXNBdzb4U@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBnsI5jvmlpEDHXGA--.25381S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3WrWUGw4UCFyDuF4UZw47Arb_yoW7ZF4UpF
-	Z7Gr18KF4rJr13Z397AF47Zw15t3yrKF47GFW2934xZwnxWFyvqF93KFyYyF1Fkrs7XFya
-	qr42yFWruw4rAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRAR6rUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/xtbCvwV9h2lpvmXzyAAA3g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aWaPzQ8JXNBdzb4U@casper.infradead.org>
 
-For some embedded systems, .text segments are often fixed. In situations
-of high memory pressure, these fixed segments may be reclaimed by the
-system, leading to iowait when these segments will be used again.
-The iowait problem becomes even more severe due to the following reasons:
+On 01/13, Matthew Wilcox wrote:
+> On Sun, Jan 11, 2026 at 06:09:40PM +0800, Nanzhe Zhao wrote:
+> > @@ -2545,6 +2548,11 @@ static int f2fs_read_data_large_folio(struct inode *inode,
+> >  	}
+> >  	trace_f2fs_read_folio(folio, DATA);
+> >  	if (rac) {
+> > +		if (!folio_in_bio) {
+> > +			if (!ret)
+> > +				folio_mark_uptodate(folio);
+> > +			folio_unlock(folio);
+> 
+> 		folio_end_read(folio, ret == 0);
 
-1. The reclaimed code segments are often those that handle exceptional
-scenarios, which are not frequently executed. When memory pressure
-increases, the entire system can become sluggish, leading to execution of
-these seldom-used exception-handling code segments. Since these segments
-are more likely to be reclaimed from memory, this exacerbates system
-sluggishness.
+Thanks.
 
-2. The reclaimed code segments used for exception handling are often
-shared by multiple tasks, causing these tasks to wait on the folio's
-PG_locked bit, further increasing I/O wait.
+https://lore.kernel.org/linux-f2fs-devel/20260116043203.2313943-1-jaegeuk@kernel.org/T/#u
 
-3. Under memory pressure, the reclamation of code segments is often
-scattered and randomly distributed, slowing down the efficiency of block
-device reads and further exacerbating I/O wait.
-
-While this issue could be addressed by preloading a library mlock all
-executable segments, it would lead to many code segments that are never
-used being locked, resulting in memory waste.
-
-In systems where code execution is relatively fixed, preventing currently
-in-use code segments from being reclaimed makes sense. This acts as a
-self-adaptive way for the system to lock the necessary portions, which
-saves memory compared to locking all code segments with mlock.
-
-Introduce /proc/sys/vm/skipexec_enabled that can be set to 1 to enable
-this feature. When this feature is enabled, during memory reclamation
-logic, a flag TTU_SKIP_EXEC will be passed to try_to_unmap, allowing
-try_to_unmap_one to check if the vma has the VM_EXEC attribute when flag
-TTU_SKIP_EXEC is present. If the VM_EXEC attribute is set, it will skip
-the unmap operation.
-
-In the same scenario of locking a large file with vmtouch -l, our tests
-showed that without enabling the skipexec_enabled feature, the number of
-occurrences where iowait exceeded 20ms was 47,457, the longest iowait is
-3 seconds. After enabling the skipexec_enabled feature, the number of
-occurrences dropped to only 34, the longest iowait is only 44ms, and none
-of these 34 instances were due to page cache file pages causing I/O wait.
-
-Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
----
- include/linux/rmap.h      |  1 +
- include/linux/writeback.h |  1 +
- mm/page-writeback.c       | 14 ++++++++++++--
- mm/rmap.c                 |  3 +++
- mm/vmscan.c               |  2 ++
- 5 files changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index daa92a585..6a919f27e 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -101,6 +101,7 @@ enum ttu_flags {
- 					 * do a final flush if necessary */
- 	TTU_RMAP_LOCKED		= 0x80,	/* do not grab rmap lock:
- 					 * caller holds it */
-+	TTU_SKIP_EXEC		= 0x100,/* skip VM_MAYEXEC when unmap */
- };
- 
- #ifdef CONFIG_MMU
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index f48e8ccff..16cf08028 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -343,6 +343,7 @@ extern struct wb_domain global_wb_domain;
- extern unsigned int dirty_writeback_interval;
- extern unsigned int dirty_expire_interval;
- extern int laptop_mode;
-+extern int skipexec_enabled;
- 
- void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty);
- unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh);
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index ccdeb0e84..e7c4a35ad 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -101,7 +101,6 @@ static unsigned long vm_dirty_bytes;
-  * The interval between `kupdate'-style writebacks
-  */
- unsigned int dirty_writeback_interval = 5 * 100; /* centiseconds */
--
- EXPORT_SYMBOL_GPL(dirty_writeback_interval);
- 
- /*
-@@ -114,9 +113,11 @@ unsigned int dirty_expire_interval = 30 * 100; /* centiseconds */
-  * a full sync is triggered after this time elapses without any disk activity.
-  */
- int laptop_mode;
--
- EXPORT_SYMBOL(laptop_mode);
- 
-+int skipexec_enabled;
-+EXPORT_SYMBOL(skipexec_enabled);
-+
- /* End of sysctl-exported parameters */
- 
- struct wb_domain global_wb_domain;
-@@ -2334,6 +2335,15 @@ static const struct ctl_table vm_page_writeback_sysctls[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_jiffies,
- 	},
-+	{
-+		.procname	= "skipexec_enabled",
-+		.data		= &skipexec_enabled,
-+		.maxlen		= sizeof(skipexec_enabled),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
- };
- #endif
- 
-diff --git a/mm/rmap.c b/mm/rmap.c
-index f955f02d5..5f528a03a 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1864,6 +1864,9 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
- 	unsigned long hsz = 0;
- 	int ptes = 0;
- 
-+	if ((flags & TTU_SKIP_EXEC) && (vma->vm_flags & VM_EXEC))
-+		return false;
-+
- 	/*
- 	 * When racing against e.g. zap_pte_range() on another cpu,
- 	 * in between its ptep_get_and_clear_full() and folio_remove_rmap_*(),
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 670fe9fae..c9ca65aa9 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1350,6 +1350,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 
- 			if (folio_test_pmd_mappable(folio))
- 				flags |= TTU_SPLIT_HUGE_PMD;
-+			if (skipexec_enabled)
-+				flags |= TTU_SKIP_EXEC;
- 			/*
- 			 * Without TTU_SYNC, try_to_unmap will only begin to
- 			 * hold PTL from the first present PTE within a large
--- 
-2.34.1
-
+> 
+> surely?
 
