@@ -1,521 +1,435 @@
-Return-Path: <linux-fsdevel+bounces-74064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8606D2DBE4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 09:11:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65128D2DF46
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 09:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BF84D301F250
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 08:10:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 82E0130393E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 08:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF202EF652;
-	Fri, 16 Jan 2026 08:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFCB2F549F;
+	Fri, 16 Jan 2026 08:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLOqPG2H"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Tv3FXpKZ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="TtG3Ps/9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257DD2ED17C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 08:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768551030; cv=none; b=Vdjc4sJfJkdIJzAh5HehA5h7i4pHtoqCOYWXvHYMpvZtaNSUd9cSv1HipAg2Thxt/7AISQpY3ZmgWBrjcysI4F9cFAXUb3jK85vXWDiWfgx/RD7cIGstmXkzXsdZ3Xm3CjPDLGUfTIpDk6uFMEY9+Vek5BZel/LFdxhGEuQsRfc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768551030; c=relaxed/simple;
-	bh=aKo59QMRyeKnvw5SJlWLghbk93QCvRX3XGOKo40RbwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FV9lQWsvl7LRUSCBUSlcuB7IRuKpxiEPk5xOIxwjKUsYrNukJ8C0bbtNjhO7cUsKvonpbe0P2IwnXYdoHeLn574xPXPKLY4drBBwxKW/4Ufz7JYzy+QR6jI2+5loyf4b0ugDrJCLf9fzyqzXpMKKnJcodugbC5i9oBpfNa+3KLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PLOqPG2H; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-81db1530173so852897b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 00:10:27 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E183282EB;
+	Fri, 16 Jan 2026 08:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768551668; cv=fail; b=D/FpX13kZZk/FzuKBXsRaMU+28YPOGkbNVmMhcINoRd5cBMgJKT2dRJ4+RUzhvd8mgw/BEiWZc+TOobHg1tnX34va78JRVGipxMdnhJTw2u3QiXQYHGqCL0QjPo1TAKBA4e8yFLY0zKwdGjlx0acWyxt17E04hCKGazCOhs4/9o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768551668; c=relaxed/simple;
+	bh=ui9oTUH0/K7Eo2+qJypy+SDkdsPRXpmg8mc5O77++TE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LTv+5deMdpp+WXH38q76t3fHed1rzmC4qehn3UNOHKBCsiZ2x5vIWObAc58z3etJsPh6suNN8T56NauFiC2TnGErHk9ma73GsRWQo9fwckQv0h81vkVZoFKtTSJ9VKQx9Xil+ftZxPFNJ7uNJC3meFj71JaRyLqnI7FPsh+hVms=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Tv3FXpKZ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=TtG3Ps/9; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60FNOHhF1432554;
+	Fri, 16 Jan 2026 08:20:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=SM0Qho/mLqz/7rpZSY
+	HCFp6RvQuiZY4/4pfHadY/TPY=; b=Tv3FXpKZMhd1Vu1r8ra4k0WJV0qnBmuOBh
+	r17lZ7+c9rFwKKs5pPrqQmDgpxipSnmCgj0TqvcvZF6Npq3R/Fg7w0f9dKU2iRwX
+	A7VgJhM/6EQQKBNnhUkYF3TrAoYQ0rVz1oGXttIQaXoESrBB/hkTFvV0LlRjfVeh
+	P3zWp5ws16giRfN4PzdBuzOsUkTOHybIlJGFcM8E7XWI2b2x6UwdnM6tVstDFJfo
+	lxWt2Oz8laznaEeTwImeO3JaTLZRsN0wZPP4RKiRGljqHSesMeVqo+aQQ++lsjiH
+	A4fb7Kp5dOOkV58wOkK/cPwrlS4POa0KqEWJZObOQ9PAO2i+v+gQ==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4bkqq59m63-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 16 Jan 2026 08:20:10 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60G8BCkR001924;
+	Fri, 16 Jan 2026 08:20:10 GMT
+Received: from ph7pr06cu001.outbound.protection.outlook.com (mail-westus3azon11010003.outbound.protection.outlook.com [52.101.201.3])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4bkd7cm5r0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 16 Jan 2026 08:20:10 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sqPibCFrn2fSCXPfV//O40Q4H9bEPNDenh/kaTMXIC5UOtqixMkfkWz/0WMXlswXRwDbIo1E7WtoNPH/VA+ad5qb9eqlO2tEH8R6prokZ9/hLgFNo/HYuWGUVElQk8fvzF5tH6A3ZIjOQysT/EVaLbKHpQy7/O93o2wpAS2uZiTN69FdsDAmgBsViwVEBfsxnzeYPG0IQnBz3KUekKCFzgn2tLn1OV5iG9Qmm3BDdj9HrgoJ5uDLZ1YWPAExT51XNnh0UVuTdeShbqg4Gi7Gb9RrZET12yGT4LIWhIbfLDjSFRF2vWte3VC0efvEvrGktRDCBla9hjyQNcecPIIp+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SM0Qho/mLqz/7rpZSYHCFp6RvQuiZY4/4pfHadY/TPY=;
+ b=HklM5Z+XrMCr7DiX8sTOWhQKuVQO0HmoDzI/YqpLg2IIxOpXPSQkMP2sJoXkuUAhfziPBPN1brtbVesaRKLRAdNZs5xnbDG5YSPaigGgaiOag7m26WNsgTiKpu0uRfwP6I4XEhWsXHv5zqiCYy4ED+9xNz96CynPyv7ldJPQIY9FWPjPdFfY4K+9reF7YGHLLhgVp4ExzM1TrFNX5sDfEZgIEHw+ERMH78Uszt/FuQWD/BiN3KgkrtGp4+C8UMd9o/0t/Oj3jRo8EEhGeKXRgBD391rOWStmCP6mn9KaXsTRdGkcN+0rDuNyIRrPFoRa9CGcA3F6jgjUSH2RFY04lA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768551027; x=1769155827; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aVD2PA0VPzWk4AcSwA45PBowoJqPxcFytHFYDGuhnQU=;
-        b=PLOqPG2HmeXht6d50VwgDMTWw7pHCOthLe3KOWWyQSo5SrD5rJqiZPSOXmF81xuvsk
-         Ojf6UJc9RMbTRiB2mpEkRkoDBI8Ui40WSJ4r6NlCPKAO6IwPjsfc5bw0r8f/M6+dHmIB
-         mFSkek2y+nQh7Mv65TnDIsRnnN3t/pPZY96z31tdKZp0srDsXBfa/jLpFbPHAI9z8A8O
-         10T6YcvfMAWjxyJLXDU8FfFnXQVZwYbmMeVI3Sa76fEGoUUcL+08QprLAMn+n4nbn15v
-         N+xSn3b4Qt8ZaGEbe3QBB4/conCCX76P3QfOeitsKMvsA3zpVGaR0QJ24xU3c1X0HUcX
-         olvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768551027; x=1769155827;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aVD2PA0VPzWk4AcSwA45PBowoJqPxcFytHFYDGuhnQU=;
-        b=hxTEd4BPwkNlZzKlBCVJhLbgC9WI61FK6/amr7fJmaJyjW+wlGM3zSAwLBktU6fBCT
-         bdVYT9dBbphzzXk8HZjw9Nm8TnqkJp81He4T8ZjMv7EhSAMpnVzaPkxyhxk4NmCxQUvs
-         os/1G7+4vv8WN/cHxsBh0rz6yfTdDdDIQVkc39v0ERjRqgPfn21qRynL8q3Q5zd1d5C+
-         xxUfhdcKv32CklRneLxwQhiw7LXI8h+PQK5l+Ln1k6kGQFEJ9sWDUuFqGSJ0mgqOLNQs
-         yezvLvy6aOqEEnbXwvP2EGk8MsPR/GrGSTZ6ZiJXlGTNcRytvo6VkoRfnfhZqTYQfYRL
-         wJYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX79hYBL/Or5bBP67M5/NphvmdxyNHcztjY7mLpuv5C0PuDMGc1zunjfuLrXCJA8Zfyp6lbwQo5ANrtiAa9@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS6sA65Kf9fD/62PVbRWDPkcQLFBMerJnowfusMc8/rPFjXu56
-	avEFYsrPM49dkl9wmkGu8f5/5Z9i4rNZAwo8VO5IcVZMco3xfk5SbXcgQdytCg==
-X-Gm-Gg: AY/fxX5HvQWnRKdiCCalWowCBcqjr/sqmeqdyLWH0FaGZloVVbXNl3qlPfb3fDoaQCY
-	JHMjCBvqJ9g+XehTV8HddOtyf4HrkbAsYGIVqd0Q1cWvpGJAqaXEg/0fS3+TrHBShl7SBvOvS3y
-	vaQl+64xBolYNDRUoM7lR50qpTop7SNU/obL+fsE5q7pSJiaoVDlJGAkqNdvm7Sjpd708LFxCfM
-	qmEz/Nd9XAzXmliMW8brjPc1MGa5a/Sj8bj3DUNojz4aSgAnEG8JjKMagmpSBq1GOjC9HtxpDxp
-	AAgOKPRBWhxfZ4T5nNt4pwHt6+drvguZnqvKp5V81v15K+ybVuC9L5p0ECAOgTe+Tgu7PRnHXak
-	VSfWlQ+2W6a35guzvvoykF/ng0N2guIefiXFVxdERiuWg0UGGR5pKYU2dr1kUUXl2htHXXoCY2M
-	+o6Y6GW8fU0vccvwH85LEUmmNqFajPvtqnNV56
-X-Received: by 2002:a05:6a00:600b:b0:81f:46ba:1806 with SMTP id d2e1a72fcca58-81fa0337ce3mr2245295b3a.59.1768551027254;
-        Fri, 16 Jan 2026 00:10:27 -0800 (PST)
-Received: from localhost ([45.142.165.150])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-81fa1094bfasm1384123b3a.1.2026.01.16.00.10.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 00:10:25 -0800 (PST)
-Date: Fri, 16 Jan 2026 16:10:21 +0800
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-	"frank.li@vivo.com" <frank.li@vivo.com>,
-	"slava@dubeyko.com" <slava@dubeyko.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"syzbot+1e3ff4b07c16ca0f6fe2@syzkaller.appspotmail.com" <syzbot+1e3ff4b07c16ca0f6fe2@syzkaller.appspotmail.com>
-Subject: Re: [RFC PATCH] fs/hfs: fix ABBA deadlock in hfs_mdb_commit
-Message-ID: <aWnybRfDcsUAtsol@ndev>
-References: <68b0240f.a00a0220.1337b0.0006.GAE@google.com>
- <20260113081952.2431735-1-wangjinchao600@gmail.com>
- <a2b8144a25206fba69e59e805d93c05444080132.camel@ibm.com>
- <aWcHhTiUrDppotRg@ndev>
- <d382b5c97a71d769598fd32bc22cae9f960fea70.camel@ibm.com>
- <aWhgNujuXujxSg3E@ndev>
- <b718505beca70f2a3c1e0e20c74e43ae558b29d5.camel@ibm.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SM0Qho/mLqz/7rpZSYHCFp6RvQuiZY4/4pfHadY/TPY=;
+ b=TtG3Ps/93wDu7mz8vKm9v+J2ZDU9vQfKreSVX3DmDZL4YKWhDAX5BaogdBHFrYfU0Kp2Vw87w9qkZKeRcp8aXKDHaKX1F+ROBU1BvM53RICXcIyKwGLUK5JPx9ZDpkju5F/OOx/9XnNPKoE24mkrjOFa+3WkzyI3Ur15l9VlVCk=
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
+ by CY8PR10MB6905.namprd10.prod.outlook.com (2603:10b6:930:84::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.6; Fri, 16 Jan
+ 2026 08:20:06 +0000
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582%6]) with mapi id 15.20.9520.005; Fri, 16 Jan 2026
+ 08:20:06 +0000
+Date: Fri, 16 Jan 2026 08:20:08 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Xin Zhao <jackzxcui1989@163.com>
+Cc: akpm@linux-foundation.org, david@kernel.org, riel@surriel.com,
+        Liam.Howlett@oracle.com, vbabka@suse.cz, harry.yoo@oracle.com,
+        jannh@google.com, willy@infradead.org, axelrasmussen@google.com,
+        yuanchu@google.com, weixugc@google.com, hannes@cmpxchg.org,
+        mhocko@kernel.org, zhengqi.arch@bytedance.com, shakeel.butt@linux.dev,
+        kuba@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm: vmscan: add skipexec mode not to reclaim pages with
+ VM_EXEC vma flag
+Message-ID: <14110b70-19e7-474d-b0dd-ba80e8bed9b0@lucifer.local>
+References: <20260116042817.3790405-1-jackzxcui1989@163.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260116042817.3790405-1-jackzxcui1989@163.com>
+X-ClientProxiedBy: LO4P123CA0694.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:37b::16) To BL4PR10MB8229.namprd10.prod.outlook.com
+ (2603:10b6:208:4e6::14)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b718505beca70f2a3c1e0e20c74e43ae558b29d5.camel@ibm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|CY8PR10MB6905:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d501caa-ce88-447b-51e4-08de54d80e4c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IPnpA6FnWG8ersCF1XbER8fTKk0JeCxuvFc1fQpEnw2+hCg8i+kmzn6/NFm6?=
+ =?us-ascii?Q?S9iUeD16ZEsD/Gn87l4k/CdTq/mKaGix2OV2n8tqtMOPf42dVDJWMfVtDazy?=
+ =?us-ascii?Q?WIPSX2jBlXw4ad/kN6QhGZFZ6y5yi6ENTPikg+pqcSCvjwrapciToyAdFduZ?=
+ =?us-ascii?Q?Kjjq6KzkHQT7TRMfyjA0/idCQ7DvAsbcrGTutjnJHD+4E7gETf8Ik6xgfwJr?=
+ =?us-ascii?Q?36aA1OdOAlgnutyIDFLH44w1ju9voTaowBuMp3aaQKIOXqA160lm73P9dZgr?=
+ =?us-ascii?Q?kqNnAFOzs7d+uSMac9EEDixLUknz8VvxZlNttVu+UibDW6mg0J+fDlRrSLT+?=
+ =?us-ascii?Q?kEYgUB4d9dL85OTK1w++29qeOWsgs9OCM6KBgJas0e1OQNBsnQ6/fXhNbzCN?=
+ =?us-ascii?Q?Tn2DiPuRdDBgP/WziYQ6SRw4IRxTGlGsONZyxhSAcnJVJXMZF9Eod90I7PCi?=
+ =?us-ascii?Q?C3it4tnySvP+NrkdicW2CD4+g7q5zub3svQjwq6sAeT0OyTyDgWu8z+TAdaW?=
+ =?us-ascii?Q?H6a5MSRxmB94cGGjd6y1C+SP3/Z+u1cprS+WNH9AgtzJIKVPTPmykk6w00bN?=
+ =?us-ascii?Q?4sI2xEXF4uDlC6Cb7SoOjfuNv7OO9wLFY+/hByTlBQzX0v3bmubelRg9RHvN?=
+ =?us-ascii?Q?P5Ad7XpiTbYJ0Tw73SfiXuc7w206AyTa5hosJ3JIMpcQF5IxyJ+1IX4M9Yku?=
+ =?us-ascii?Q?kK68rdTjlOiEzZ3soQIZX/pCCfXoAD/CUWGJjTVEQfaXi4lFM0g8OrRy75Z4?=
+ =?us-ascii?Q?tzcWzg474RkvhG/wSR/nOpYIlt2ULAOwn4Ri7QolENkEUrmuwADw50IHcDzw?=
+ =?us-ascii?Q?jS7zDeL/I0uj/rFuC5Iqz7Kg90ZPl+CR5BPrxzoe82yXbYSKwIqzEHJ6fwwH?=
+ =?us-ascii?Q?CnzIbibPiD8Vz3e35taRJyTfxuiUzMz2U1yyaGGGmWDajEEZ8yNMOXllK5kd?=
+ =?us-ascii?Q?wU27mPakuJ7W3e6/n5YpG0j2Odr506MBy/Asupzh06SKLN6liAu318NqW0E5?=
+ =?us-ascii?Q?o7CHEMSko4yyULqQNZz7Wwhpy96tqzoza1hXWllJTPhUKdVONi+g+lEF4nMl?=
+ =?us-ascii?Q?9EFo8bnn6VH33+PShlRTmyEn2ASMbyJTrQjSTNOZX13dYFZQAllxtFzoXHmM?=
+ =?us-ascii?Q?/zy1ePkTN/9YLi6Ls9Yw84XJB7OWgQwzf3rWViG5U3RbFDvj7Ks7aLXJqXij?=
+ =?us-ascii?Q?SO91C+cYuhMgs4b8TuQBsUt4mi1HDyedbiq1MighTLN7DGeVWg0lMbvX9mCs?=
+ =?us-ascii?Q?8A2m+ubCKcVPxuw5RG/caoiXymE+g92hkOE1GxvQBZbesWl82mwM7/zijQhF?=
+ =?us-ascii?Q?EpajFbuuuFQCIkbOikBDBaWNxfhSOJ9K3vZLZ4RsmC45hAPpybWauIoK+ayW?=
+ =?us-ascii?Q?MZymgAoa36Jxm+JH6G3/2BlXuOy+0vqDGAI+ilo8HSgBvo57V+fHw94XJLd+?=
+ =?us-ascii?Q?a/ew0XkpHI/QST5ChImLUNfSepsZLfwXfWCkTasmrLSShZdVVbRSXptezHvp?=
+ =?us-ascii?Q?wQbhAJCrhRUUiJ0qCAs1A3UaCP7phtGy+T3Cw6ddujUPv4/ii5+ByTEhdH6I?=
+ =?us-ascii?Q?OTp9g4mKyf7puQ1ElWE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lkAxFY0K7W7Wi61xftqS9zHoMmsLbjqBpthL6X01kQu7R/k6hEULfW1W8K4J?=
+ =?us-ascii?Q?j/OmXSxFOUimcHBSyXCKthQ0eAJNdnGylRDPOzeUfO+/r7dJtOC+kHNEuR/h?=
+ =?us-ascii?Q?WauOOtM4netvuSKRNl7+bpfQLCTBpORDS8CCN6aie66OMmdMwfGYIVPDaoyO?=
+ =?us-ascii?Q?j9IgI8TG5R3Z79aYvJf/AjSvfEGIn1/lvXMqyVWFwDCm/ZUM/drapsKohwPD?=
+ =?us-ascii?Q?sg+Bg9XxSxIOjbWIF2gS4XuLL5SikYJ9Mr1UEmyczVsqydhqmvwAYStv4sBU?=
+ =?us-ascii?Q?mVXCokueWRoYMOje1y1dxCGfISnKLvGJp5nR5yPEB7I9LpA5F8BfoNF8BnMX?=
+ =?us-ascii?Q?R5jqLmgGJGpIHBE/BHaPN/vTcPhc2gt1y+mSK9lthbi46n2N0L05Zelk2xDX?=
+ =?us-ascii?Q?2fuz81UAAu3wtL1otIl/hjbdTSH3fDun7JNtHMNVD7QG+QzIUCPFOQYJ1GWv?=
+ =?us-ascii?Q?t0rvJxri1JxCdJStMKAX025PIJpslHLB7VRomdzPAXw0QqilJ2IdNaaoLaZ5?=
+ =?us-ascii?Q?JyzdoXgkvkPHs+YeTjpY3CygzemdTVlkb3ZCl2zvwAna7SYeojKzFKPcvUMT?=
+ =?us-ascii?Q?ZEmGYSGftXux5aTjuepQT+HVtYJ32gTfFwwQwQb5C1dgoT27KVL+9U9SMKWL?=
+ =?us-ascii?Q?AV7YpZ7rExlvSQv4JYtboGKpYaZowy2tIPoLzmIGQqPAqHWmVzQw8ZQC7oT7?=
+ =?us-ascii?Q?F8fdDqenSvOlqAcKoIPkUORVj4CxlSxv8Nx8Adx0EAuCxujliq+cw3tANmSE?=
+ =?us-ascii?Q?+joNmfq/1/LPpLCv6cYBQ6YiDrRdH9zduLacwFDAwrWvA1t/JbWU13OAP/vj?=
+ =?us-ascii?Q?g1TKUT30KI3zXyzELj6XUG9vigaiCp5g6v93Ov45OusLHeopx+N/QWr85tkd?=
+ =?us-ascii?Q?SDYpDaoy4hyp50gRnB2guH8wSw5/DdvWgsRHTGI/M8Zxasj/ArEsnaU3y+fw?=
+ =?us-ascii?Q?MTh8uEZ0fTcTMxE+1Lr6YC8v451GZ+ONl6Pi3GfTu67J/Pt2LGkQgTowafxu?=
+ =?us-ascii?Q?QeLoEvM8EzmU9o+3Heh7/ByBLIMl1Z9wn+ebqlZBdGaiw4XgbvktfwIazUl1?=
+ =?us-ascii?Q?Ixl1i80LuISfz5qV8Zigzbehk1f5iVgEpqvymj43P7WKDs9R1PjZEXfAJLGH?=
+ =?us-ascii?Q?HtL4mLAxevU8LliLnN8F3TpAACTJsa44jMdm40M6NBOkMXz4fA0z0kYdJveh?=
+ =?us-ascii?Q?MUY42vrXzZHv9+u5cNGamzXmlJw5dxq+S8ZTOJUwVw7FzslFkh5KuNXZzB0Q?=
+ =?us-ascii?Q?VeTy+OJyq+TWg0IU/NHyoigHuxd9/lF6JcS2TnUqNfgXTQBZXysJgpjTn390?=
+ =?us-ascii?Q?KY/QJgB9J2OTEhGQ871voPhtPIO95RHIqjYien7508K8tFkSHZtceKP58DF9?=
+ =?us-ascii?Q?B6EARtk+v1BB8Fx4/KSHDBx8vGgSV7/FJFhlgP/HaYOUq1V6MuM+EqFGcBP3?=
+ =?us-ascii?Q?u2NKpJp/4Tdgaptm9gptQ5+0s1ccQ2SVW6FMscdK9XRlDVyeXCUludlNX/Gk?=
+ =?us-ascii?Q?SSs1zzQFei30CfFqCGmQ6yQweNOSE9vuFJB3gS1RzzcStLRXahckL7iah6oy?=
+ =?us-ascii?Q?lXNoDOy0leFIArGA+kDQxrR3bNwcv81Z/pvP+FwcvGBQS+qJV4GIH0qsUpv/?=
+ =?us-ascii?Q?D53mpVlFyqelNns+q6cQjoyBNVrATzm0M5tIt1KTVK7B3p0x6QpI/8E9t0+n?=
+ =?us-ascii?Q?cpLE/mM9hQvGo3LIaupOUjcg4+imcjwrlgFARro5mZrzmw3sCU5iOjeC7Y0E?=
+ =?us-ascii?Q?upcBNUHE3z5z9RGjORJIuWivVHr9hTY=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	2RYXMkUmRZRffnJST8qC3bIV71Jjxvqk+jGkle1wrChko9126MYJjHBMbRmEZBgcP0s7HSN6DyLgEJYu/8tHbOfSIKNWFRcB9iAXhec7lUECcSbA9RoGs+29rFCngymwizu+YfpBbHVO7VXiBz3Tp9Nuk3qacaEK8ZmnKNBEXg+jgr+GA3cZiyfPcLjSx8O2oOkEg2NjZBWTPQ1+mvEVGbmdZOTxRgFbSETc3zpOaxB4ekSeqVu2AsXKY10+VHHotIMHw9ES2qqw7vJuhwHneU53PnHpGEcYHX0UzmJcx9vJfVheh8EFQHC6Ckyz0l4tY5xH5hepzBJrHTlb89EIhTG7ZUB3woatjZBMOXP8QH9+WXYwDp0ipihffM+w2j0xg4sP8Uqs0P8g3vxgCTBVTYmI+UHlpz5K6vgqcwYAA5Vexkl0T6uq3pFhU1Rh4f2DTXOc3RbjoP6FPNbyVO5SpVk3AVUNgW8sJWyUZbDEJXpJFl+zzYXpH0/eV/zGLCEMttMgkWKbQ3K61SSUXz0t+XUVOcVnCOvcZ5uY1anejd04yekunbzjDaa8XYKt5I7A8BS4aOhH509j/ieIDX6beI27CUwj9rMoBumT/ROc/O0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d501caa-ce88-447b-51e4-08de54d80e4c
+X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2026 08:20:06.6407
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: c4B9dsXhYXA2zpizH+d65JiMsH2wbPsy0ZaO7+bmEHDYE0+WK5OuX0buMSeDQvUmV+2NcW2fiy7DfqQoVr0bJ+tQdshGadg8tiT3F2l/e0c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6905
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-16_02,2026-01-15_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 phishscore=0
+ mlxlogscore=999 adultscore=0 suspectscore=0 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2512120000
+ definitions=main-2601160060
+X-Proofpoint-ORIG-GUID: -5_bNJAmbcSX57FmGh4_MEJjPHf6qW8y
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE2MDA2MCBTYWx0ZWRfX01zHevDKqAOP
+ cWpGnoheRF/9q2dF15d2mAdQJ6+SBThQjNHExtaeVB8DM+kO9qWot1aeZ2rFtUncfq37mDnkegl
+ jfxJtc3BSJXumosCb4cEjaBtWo3t2ep2u8rPacNTG8357G7GZVLtlPrgbrA8k16X2MIwss3bioj
+ ceTJfHgV1SivSlzNFFJtNjLl5JzTgYgMiMl6no1BpimDkmUDlya3THQmaTMxjvxWW8l4o9XeiQt
+ U73GkBYzPjB3Ng3Hu6HWmoJn6bhl7qk+etYNm0r4J99ZI0C4okPsJDm5RJblorT/nJXnHYq5Z0F
+ qgLa5vDhVFQEjR0kFkJhKvcIIK/Lz1zqyh/r716Xsf9885TinfE7MaYARbZLOTRSzIh3f33FvYC
+ FJFn8W+1T2mRhm6Ky9Gg5334+dM0550RGOQs4a6h+blGleLFAR5Hw4LEJdgrgpNYGaFia5y+zst
+ dQooPoNYk5vPBX4ZYYA==
+X-Authority-Analysis: v=2.4 cv=J9KnLQnS c=1 sm=1 tr=0 ts=6969f4ba cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=vUbySO9Y5rIA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=Byx-y9mGAAAA:8 a=3MewoBcQR-eoXlM1gVMA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: -5_bNJAmbcSX57FmGh4_MEJjPHf6qW8y
 
-On Thu, Jan 15, 2026 at 09:12:49PM +0000, Viacheslav Dubeyko wrote:
-> On Thu, 2026-01-15 at 11:34 +0800, Jinchao Wang wrote:
-> > On Wed, Jan 14, 2026 at 07:29:45PM +0000, Viacheslav Dubeyko wrote:
-> > > On Wed, 2026-01-14 at 11:03 +0800, Jinchao Wang wrote:
-> > > > On Tue, Jan 13, 2026 at 08:52:45PM +0000, Viacheslav Dubeyko wrote:
-> > > > > On Tue, 2026-01-13 at 16:19 +0800, Jinchao Wang wrote:
-> > > > > > syzbot reported a hung task in hfs_mdb_commit where a deadlock occurs
-> > > > > > between the MDB buffer lock and the folio lock.
-> > > > > > 
-> > > > > > The deadlock happens because hfs_mdb_commit() holds the mdb_bh
-> > > > > > lock while calling sb_bread(), which attempts to acquire the lock
-> > > > > > on the same folio.
-> > > > > 
-> > > > > I don't quite to follow to your logic. We have only one sb_bread() [1] in
-> > > > > hfs_mdb_commit(). This read is trying to extract the volume bitmap. How is it
-> > > > > possible that superblock and volume bitmap is located at the same folio? Are you
-> > > > > sure? Which size of the folio do you imply here?
-> > > > > 
-> > > > > Also, it your logic is correct, then we never could be able to mount/unmount or
-> > > > > run any operations on HFS volumes because of likewise deadlock. However, I can
-> > > > > run xfstests on HFS volume.
-> > > > > 
-> > > > > [1] https://elixir.bootlin.com/linux/v6.19-rc5/source/fs/hfs/mdb.c#L324    
-> > > > 
-> > > > Hi Viacheslav,
-> > > > 
-> > > > After reviewing your feedback, I realized that my previous RFC was not in
-> > > > the correct format. It was not intended to be a final, merge-ready patch,
-> > > > but rather a record of the analysis and trial fixes conducted so far.
-> > > > I apologize for the confusion caused by my previous email.
-> > > > 
-> > > > The details are reorganized as follows:
-> > > > 
-> > > > - Observation
-> > > > - Analysis
-> > > > - Verification
-> > > > - Conclusion
-> > > > 
-> > > > Observation
-> > > > ============
-> > > > 
-> > > > Syzbot report: https://syzkaller.appspot.com/bug?extid=1e3ff4b07c16ca0f6fe2    
-> > > > 
-> > > > For this version:
-> > > > > time             |  kernel    | Commit       | Syzkaller |
-> > > > > 2025/12/20 17:03 | linux-next | cc3aa43b44bd | d6526ea3  |
-> > > > 
-> > > > Crash log: https://syzkaller.appspot.com/text?tag=CrashLog&x=12909b1a580000    
-> > > > 
-> > > > The report indicates hung tasks within the hfs context.
-> > > > 
-> > > > Analysis
-> > > > ========
-> > > > In the crash log, the lockdep information requires adjustment based on the call stack.
-> > > > After adjustment, a deadlock is identified:
-> > > > 
-> > > > task syz.1.1902:8009
-> > > > - held &disk->open_mutex
-> > > > - held foio lock
-> > > > - wait lock_buffer(bh)
-> > > > Partial call trace:
-> > > > ->blkdev_writepages()
-> > > >         ->writeback_iter()
-> > > >                 ->writeback_get_folio()
-> > > >                         ->folio_lock(folio)
-> > > >         ->block_write_full_folio()
-> > > >                 __block_write_full_folio()
-> > > >                         ->lock_buffer(bh)
-> > > > 
-> > > > task syz.0.1904:8010
-> > > > - held &type->s_umount_key#66 down_read
-> > > > - held lock_buffer(HFS_SB(sb)->mdb_bh);
-> > > > - wait folio
-> > > > Partial call trace:
-> > > > hfs_mdb_commit
-> > > >         ->lock_buffer(HFS_SB(sb)->mdb_bh);
-> > > >         ->bh = sb_bread(sb, block);
-> > > >                 ...->folio_lock(folio)
-> > > > 
-> > > > 
-> > > > Other hung tasks are secondary effects of this deadlock. The issue
-> > > > is reproducible in my local environment usuing the syz-reproducer.
-> > > > 
-> > > > Verification
-> > > > ==============
-> > > > 
-> > > > Two patches are verified against the syz-reproducer.
-> > > > Neither reproduce the deadlock.
-> > > > 
-> > > > Option 1: Removing `un/lock_buffer(HFS_SB(sb)->mdb_bh)`
-> > > > ------------------------------------------------------
-> > > > 
-> > > > diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
-> > > > index 53f3fae60217..c641adb94e6f 100644
-> > > > --- a/fs/hfs/mdb.c
-> > > > +++ b/fs/hfs/mdb.c
-> > > > @@ -268,7 +268,6 @@ void hfs_mdb_commit(struct super_block *sb)
-> > > >         if (sb_rdonly(sb))
-> > > >                 return;
-> > > > 
-> > > > -       lock_buffer(HFS_SB(sb)->mdb_bh);
-> > > >         if (test_and_clear_bit(HFS_FLG_MDB_DIRTY, &HFS_SB(sb)->flags)) {
-> > > >                 /* These parameters may have been modified, so write them back */
-> > > >                 mdb->drLsMod = hfs_mtime();
-> > > > @@ -340,7 +339,6 @@ void hfs_mdb_commit(struct super_block *sb)
-> > > >                         size -= len;
-> > > >                 }
-> > > >         }
-> > > > -       unlock_buffer(HFS_SB(sb)->mdb_bh);
-> > > >  }
-> > > > 
-> > > > 
-> > > > Options 2: Moving `unlock_buffer(HFS_SB(sb)->mdb_bh)`
-> > > > --------------------------------------------------------
-> > > > 
-> > > > diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
-> > > > index 53f3fae60217..ec534c630c7e 100644
-> > > > --- a/fs/hfs/mdb.c
-> > > > +++ b/fs/hfs/mdb.c
-> > > > @@ -309,6 +309,7 @@ void hfs_mdb_commit(struct super_block *sb)
-> > > >                 sync_dirty_buffer(HFS_SB(sb)->alt_mdb_bh);
-> > > >         }
-> > > >  
-> > > > +       unlock_buffer(HFS_SB(sb)->mdb_bh);
-> > > >         if (test_and_clear_bit(HFS_FLG_BITMAP_DIRTY, &HFS_SB(sb)->flags)) {
-> > > >                 struct buffer_head *bh;
-> > > >                 sector_t block;
-> > > > @@ -340,7 +341,6 @@ void hfs_mdb_commit(struct super_block *sb)
-> > > >                         size -= len;
-> > > >                 }
-> > > >         }
-> > > > -       unlock_buffer(HFS_SB(sb)->mdb_bh);
-> > > >  }
-> > > > 
-> > > > Conclusion
-> > > > ==========
-> > > > 
-> > > > The analysis and verification confirms that the hung tasks are caused by
-> > > > the deadlock between `lock_buffer(HFS_SB(sb)->mdb_bh)` and `sb_bread(sb, block)`.
-> > > 
-> > > First of all, we need to answer this question: How is it
-> > > possible that superblock and volume bitmap is located at the same folio or
-> > > logical block? In normal case, the superblock and volume bitmap should not be
-> > > located in the same logical block. It sounds to me that you have corrupted
-> > > volume and this is why this logic [1] finally overlap with superblock location:
-> > > 
-> > > block = be16_to_cpu(HFS_SB(sb)->mdb->drVBMSt) + HFS_SB(sb)->part_start;
-> > > off = (block << HFS_SECTOR_SIZE_BITS) & (sb->s_blocksize - 1);
-> > > block >>= sb->s_blocksize_bits - HFS_SECTOR_SIZE_BITS;
-> > > 
-> > > I assume that superblock is corrupted and the mdb->drVBMSt [2] has incorrect
-> > > metadata. As a result, we have this deadlock situation. The fix should be not
-> > > here but we need to add some sanity check of mdb->drVBMSt somewhere in
-> > > hfs_fill_super() workflow.
-> > > 
-> > > Could you please check my vision?
-> > > 
-> > > Thanks,
-> > > Slava.
-> > > 
-> > > [1] https://elixir.bootlin.com/linux/v6.19-rc5/source/fs/hfs/mdb.c#L318  
-> > > [2]
-> > > https://elixir.bootlin.com/linux/v6.19-rc5/source/include/linux/hfs_common.h#L196  
-> > 
-> > Hi Slava,
-> > 
-> > I have traced the values during the hang. Here are the values observed:
-> > 
-> > - MDB: blocknr=2
-> > - Volume Bitmap (drVBMSt): 3
-> > - s_blocksize: 512 bytes
-> > 
-> > This confirms a circular dependency between the folio lock and
-> > the buffer lock. The writeback thread holds the 4KB folio lock and 
-> > waits for the MDB buffer lock (block 2). Simultaneously, the HFS sync 
-> > thread holds the MDB buffer lock and waits for the same folio lock 
-> > to read the bitmap (block 3).
-> > 
-> > 
-> > Since block 2 and block 3 share the same folio, this locking 
-> > inversion occurs. I would appreciate your thoughts on whether 
-> > hfs_fill_super() should validate drVBMSt to ensure the bitmap 
-> > does not reside in the same folio as the MDB.
-> 
-> 
-> As far as I can see, I can run xfstest on HFS volume (for example, generic/001
-> has been finished successfully):
-> 
-> sudo ./check -g auto -E ./my_exclude.txt 
-> FSTYP         -- hfs
-> PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.19.0-rc1+ #56 SMP
-> PREEMPT_DYNAMIC Thu Jan 15 12:55:22 PST 2026
-> MKFS_OPTIONS  -- /dev/loop51
-> MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-> 
-> generic/001 36s ...  36s
-> 
-> 2026-01-15T13:00:07.589868-08:00 hfsplus-testing-0001 kernel: run fstests
-> generic/001 at 2026-01-15 13:00:07
-> 2026-01-15T13:00:07.661605-08:00 hfsplus-testing-0001 systemd[1]: Started
-> fstests-generic-001.scope - /usr/bin/bash -c "test -w /proc/self/oom_score_adj
-> && echo 250 > /proc/self/oom_score_adj; exec ./tests/generic/001".
-> 2026-01-15T13:00:13.355795-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():296 HFS_SB(sb)->mdb_bh buffer has been locked
-> 2026-01-15T13:00:13.355809-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():348 drVBMSt 3, part_start 0, off 0, block 3, size 8167
-> 2026-01-15T13:00:13.355810-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355810-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355811-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355812-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355812-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355812-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355813-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355813-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355813-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355814-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355814-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355815-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355815-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355815-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355816-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355816-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355816-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355816-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355817-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355818-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355818-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355818-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355819-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355819-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355819-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355819-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355820-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355820-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355821-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355821-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355821-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.355822-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.355822-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():383 HFS_SB(sb)->mdb_bh buffer has been unlocked
-> 2026-01-15T13:00:13.681527-08:00 hfsplus-testing-0001 systemd[1]: fstests-
-> generic-001.scope: Deactivated successfully.
-> 2026-01-15T13:00:13.681597-08:00 hfsplus-testing-0001 systemd[1]: fstests-
-> generic-001.scope: Consumed 5.928s CPU time.
-> 2026-01-15T13:00:13.714928-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():296 HFS_SB(sb)->mdb_bh buffer has been locked
-> 2026-01-15T13:00:13.714942-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():348 drVBMSt 3, part_start 0, off 0, block 3, size 8167
-> 2026-01-15T13:00:13.714943-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714944-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714944-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714944-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714945-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714945-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714946-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714946-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714947-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714947-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714947-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714948-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714948-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714948-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714949-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714949-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714950-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714950-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714950-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714951-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714951-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714952-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714952-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714952-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714953-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714953-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714953-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714954-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714954-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714955-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714955-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():356 start read volume bitmap block
-> 2026-01-15T13:00:13.714955-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():370 volume bitmap block has been read and copied
-> 2026-01-15T13:00:13.714956-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():383 HFS_SB(sb)->mdb_bh buffer has been unlocked
-> 2026-01-15T13:00:13.716742-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():296 HFS_SB(sb)->mdb_bh buffer has been locked
-> 2026-01-15T13:00:13.716754-08:00 hfsplus-testing-0001 kernel: hfs:
-> hfs_mdb_commit():383 HFS_SB(sb)->mdb_bh buffer has been unlocked
-> 2026-01-15T13:00:13.722184-08:00 hfsplus-testing-0001 systemd[1]: mnt-
-> test.mount: Deactivated successfully.
-> 
-> And I don't see any issues with locking into the added debug output. I don't see
-> the reproduction of reported deadlock. And the logic of hfs_mdb_commit() correct
-> enough.
-> 
-> The main question is: how blkdev_writepages() can collide with hfs_mdb_commit()?
-> I assume that blkdev_writepages() is trying to flush the user data. So, what is
-> the problem here? Is it allocation issue? Does it mean that some file was not
-> properly allocated? Or does it mean that superblock commit somehow collided with
-> user data flush? But how does it possible? Which particular workload could have
-> such issue?
-> 
-> Currently, your analysis doesn't show what problem is and how it is happened. 
-> 
-> Thanks,
-> Slava.
+On Fri, Jan 16, 2026 at 12:28:17PM +0800, Xin Zhao wrote:
+> For some embedded systems, .text segments are often fixed. In situations
+> of high memory pressure, these fixed segments may be reclaimed by the
+> system, leading to iowait when these segments will be used again.
 
-Hi Slava,
+We already absolutely deprioritise reclaim of VM_EXEC regions, so you must
+surely be under some heavy memory pressure?
 
-Thank you very much for your feedback and for taking the time to 
-review this. I apologize if my previous analysis was not clear 
-enough. As I am relatively new to this area, I truly appreciate 
-your patience.
+> The iowait problem becomes even more severe due to the following reasons:
+>
+> 1. The reclaimed code segments are often those that handle exceptional
+> scenarios, which are not frequently executed. When memory pressure
+> increases, the entire system can become sluggish, leading to execution of
+> these seldom-used exception-handling code segments. Since these segments
+> are more likely to be reclaimed from memory, this exacerbates system
+> sluggishness.
+>
+> 2. The reclaimed code segments used for exception handling are often
+> shared by multiple tasks, causing these tasks to wait on the folio's
+> PG_locked bit, further increasing I/O wait.
+>
+> 3. Under memory pressure, the reclamation of code segments is often
+> scattered and randomly distributed, slowing down the efficiency of block
+> device reads and further exacerbating I/O wait.
+>
+> While this issue could be addressed by preloading a library mlock all
+> executable segments, it would lead to many code segments that are never
+> used being locked, resulting in memory waste.
+>
+> In systems where code execution is relatively fixed, preventing currently
+> in-use code segments from being reclaimed makes sense. This acts as a
+> self-adaptive way for the system to lock the necessary portions, which
+> saves memory compared to locking all code segments with mlock.
 
-After further tracing, I would like to share more details on how the 
-collision between blkdev_writepages() and hfs_mdb_commit() occurs. 
-It appears to be a timing-specific race condition.
+This seems like you're trying to solve an issue with reclaim not working
+correctly, that is causing some kind of thrashing scenario to occur.
 
-1. Physical Overlap (The "How"):
-In my environment, the HFS block size is 512B and the MDB is located 
-at block 2 (offset 1024). Since 1024 < 4096, the MDB resides 
-within the block device's first folio (index 0). 
-Consequently, both the filesystem layer (via mdb_bh) and the block 
-layer (via bdev mapping) operate on the exact same folio at index 0.
+There's also nothing 'self-adaptive' about a user having to specify a
+sysctl like this.
 
-2. The Race Window (The "Why"):
-The collision is triggered by the global nature of ksys_sync(). In 
-a system with multiple mounted devices, there is a significant time 
-gap between Stage 1 (iterate_supers) and Stage 2 (sync_bdevs). This 
-window allows a concurrent task to dirty the MDB folio after one 
-sync task has already passed its FS-sync stage.
+The fix should be part of the reclaim code, not a sysctl.
 
-3. Proposed Reproduction Timeline:
-- Task A: Starts ksys_sync() and finishes iterate_supers() 
-  for the HFS device. It then moves on to sync other devices.
-- Task B: Creates a new file on HFS, then starts its 
-  own ksys_sync().
-- Task B: Enters hfs_mdb_commit(), calls lock_buffer(mdb_bh) and 
-  mark_buffer_dirty(mdb_bh). This makes folio 0 dirty.
-- Task A: Finally reaches sync_bdevs() for the HFS device. It sees 
-  folio 0 is dirty, calls folio_lock(folio), and then attempts 
-  to lock_buffer(mdb_bh) for I/O.
-- Task A: Blocks waiting for mdb_bh lock (held by Task B).
-- Task B: Continues hfs_mdb_commit() -> sb_bread(), which attempts 
-  to lock folio 0 (held by Task A).
+>
+> Introduce /proc/sys/vm/skipexec_enabled that can be set to 1 to enable
 
-This results in an AB-BA deadlock between the Folio Lock and the 
-Buffer Lock.
+No thinks, we emphatically do _not_ want a new sysctl.
 
-I hope this clarifies why the collision is possible even though 
-hfs_mdb_commit() seems correct in isolation. It is the concurrent 
-interleaving of FS-level and BDEV-level syncs that triggers the 
-violation of the Folio -> Buffer locking order.
+sysctl's in general should be the last resort - users very often have
+absolutely no idea how to use them, and it in effect defers decisions that
+the kernel should make to userland.
 
-I would be very grateful for your thoughts on this updated analysis.
+> this feature. When this feature is enabled, during memory reclamation
+> logic, a flag TTU_SKIP_EXEC will be passed to try_to_unmap, allowing
+> try_to_unmap_one to check if the vma has the VM_EXEC attribute when flag
+> TTU_SKIP_EXEC is present. If the VM_EXEC attribute is set, it will skip
+> the unmap operation.
 
-Best regards,
-Jinchao
+Hm I really don't like the idea that was pass around a flag to essentially
+say 'hey that thing that has been scheduled for reclaim? Just don't'.
+
+>
+> In the same scenario of locking a large file with vmtouch -l, our tests
+> showed that without enabling the skipexec_enabled feature, the number of
+> occurrences where iowait exceeded 20ms was 47,457, the longest iowait is
+> 3 seconds. After enabling the skipexec_enabled feature, the number of
+> occurrences dropped to only 34, the longest iowait is only 44ms, and none
+> of these 34 instances were due to page cache file pages causing I/O wait.
+>
+> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+
+So yeah I'm not happy with this patch at all and I think you're doing this
+entirely wrong.
+
+You really need to dig into the reclaim algorithm and figure out why it is
+not correctly protecting VM_EXEC mappings.
+
+Consider:
+
+		/*
+		 * Activate file-backed executable folios after first usage.
+		 */
+		if ((vm_flags & VM_EXEC) && folio_is_file_lru(folio))
+			return FOLIOREF_ACTIVATE;
+
+In folio_check_references() and:
+
+		/* Referenced or rmap lock contention: rotate */
+		if (folio_referenced(folio, 0, sc->target_mem_cgroup,
+				     &vm_flags) != 0) {
+			/*
+			 * Identify referenced, file-backed active folios and
+			 * give them one more trip around the active list. So
+			 * that executable code get better chances to stay in
+			 * memory under moderate memory pressure.  Anon folios
+			 * are not likely to be evicted by use-once streaming
+			 * IO, plus JVM can create lots of anon VM_EXEC folios,
+			 * so we ignore them here.
+			 */
+			if ((vm_flags & VM_EXEC) && folio_is_file_lru(folio)) {
+				nr_rotated += folio_nr_pages(folio);
+				list_add(&folio->lru, &l_active);
+				continue;
+			}
+		}
+
+In shrink_active_list().
+
+We _already_ take into account VM_EXEC regions, but for some reason your
+use case either encounters such extreme memory pressure that VM_EXEC
+regions end up being the least recently used.
+
+It may be your workloads are doing something crazy here or you would end up
+thrashing anyway, or you simply need to mlock() them?
+
+In any case this needs deeper analysis on your side and any proposed patch
+should be in the reclaim mechanism, not to provide a 'ignore reclaim'
+sysctl.
+
+> ---
+>  include/linux/rmap.h      |  1 +
+>  include/linux/writeback.h |  1 +
+>  mm/page-writeback.c       | 14 ++++++++++++--
+>  mm/rmap.c                 |  3 +++
+>  mm/vmscan.c               |  2 ++
+>  5 files changed, 19 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+> index daa92a585..6a919f27e 100644
+> --- a/include/linux/rmap.h
+> +++ b/include/linux/rmap.h
+> @@ -101,6 +101,7 @@ enum ttu_flags {
+>  					 * do a final flush if necessary */
+>  	TTU_RMAP_LOCKED		= 0x80,	/* do not grab rmap lock:
+>  					 * caller holds it */
+> +	TTU_SKIP_EXEC		= 0x100,/* skip VM_MAYEXEC when unmap */
+>  };
+>
+>  #ifdef CONFIG_MMU
+> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> index f48e8ccff..16cf08028 100644
+> --- a/include/linux/writeback.h
+> +++ b/include/linux/writeback.h
+> @@ -343,6 +343,7 @@ extern struct wb_domain global_wb_domain;
+>  extern unsigned int dirty_writeback_interval;
+>  extern unsigned int dirty_expire_interval;
+>  extern int laptop_mode;
+> +extern int skipexec_enabled;
+>
+>  void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty);
+>  unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh);
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index ccdeb0e84..e7c4a35ad 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -101,7 +101,6 @@ static unsigned long vm_dirty_bytes;
+>   * The interval between `kupdate'-style writebacks
+>   */
+>  unsigned int dirty_writeback_interval = 5 * 100; /* centiseconds */
+> -
+>  EXPORT_SYMBOL_GPL(dirty_writeback_interval);
+>
+>  /*
+> @@ -114,9 +113,11 @@ unsigned int dirty_expire_interval = 30 * 100; /* centiseconds */
+>   * a full sync is triggered after this time elapses without any disk activity.
+>   */
+>  int laptop_mode;
+> -
+>  EXPORT_SYMBOL(laptop_mode);
+>
+> +int skipexec_enabled;
+> +EXPORT_SYMBOL(skipexec_enabled);
+> +
+>  /* End of sysctl-exported parameters */
+>
+>  struct wb_domain global_wb_domain;
+> @@ -2334,6 +2335,15 @@ static const struct ctl_table vm_page_writeback_sysctls[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_dointvec_jiffies,
+>  	},
+> +	{
+> +		.procname	= "skipexec_enabled",
+> +		.data		= &skipexec_enabled,
+> +		.maxlen		= sizeof(skipexec_enabled),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_dointvec_minmax,
+> +		.extra1		= SYSCTL_ZERO,
+> +		.extra2		= SYSCTL_ONE,
+> +	},
+>  };
+>  #endif
+>
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index f955f02d5..5f528a03a 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1864,6 +1864,9 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+>  	unsigned long hsz = 0;
+>  	int ptes = 0;
+>
+> +	if ((flags & TTU_SKIP_EXEC) && (vma->vm_flags & VM_EXEC))
+> +		return false;
+> +
+>  	/*
+>  	 * When racing against e.g. zap_pte_range() on another cpu,
+>  	 * in between its ptep_get_and_clear_full() and folio_remove_rmap_*(),
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 670fe9fae..c9ca65aa9 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -1350,6 +1350,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+>
+>  			if (folio_test_pmd_mappable(folio))
+>  				flags |= TTU_SPLIT_HUGE_PMD;
+> +			if (skipexec_enabled)
+> +				flags |= TTU_SKIP_EXEC;
+>  			/*
+>  			 * Without TTU_SYNC, try_to_unmap will only begin to
+>  			 * hold PTL from the first present PTE within a large
+> --
+> 2.34.1
+>
+
+Thanks, Lorenzo
 
