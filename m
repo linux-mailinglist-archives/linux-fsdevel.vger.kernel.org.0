@@ -1,145 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-74241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03CA4D3879B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 21:34:13 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 770BDD3886E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 22:37:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C4004301D971
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 20:34:05 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6B396305CA8D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 21:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170A7296BB7;
-	Fri, 16 Jan 2026 20:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7772C3033F1;
+	Fri, 16 Jan 2026 21:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jfhrfm6I"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OZGXnxqb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A46342049
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 20:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E043298CBE;
+	Fri, 16 Jan 2026 21:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768595644; cv=none; b=lEgq5bedUcu6OW9U4X67XylKf5kyhVX+IjSQt9aaxU4EN9P0veJs+4mmlvnhzE1TBs5jXOpIHpv9LQa6ZBAvAsoOKLiN7LpBc/38/kjWDWFeoDvBYplMibmXz7FQgFuxGK1Asb3RPkr7tB69SXFlvsyyFHXJG5Ke12aqPeuuhbM=
+	t=1768599446; cv=none; b=Sck5jhCZisMvrdGQTkIQ8/wfJm3rAYL1L28HCWVNWdlJo7ebWDN1q7ZuJIl2YlboS/HfbVEbIi+EsVPOO5g0vKizSGaBfx/td3WVnyyxZPLb6EQQ34ozfVGvqhFQBWEL8aeaqrvwDfnFOldqvCsXjsXgxNHUgF0Md/hoMaZXCaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768595644; c=relaxed/simple;
-	bh=BsBQN+Ios4Y89dqC5BjR8hgch1jxby5WSXZqBcSQDJM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AIfgkWmybUMuRsKYo+6C9N/t+elP2kIGC+1L54d2gZrPHSMxixUpeLm0LoNF+BnuDEGCGJSdTZgIArnlFxgtz3TidXyk79hUhZIlf8mGl2aLrqptYTdl5fwjQ4aizfkZ0D16+620mhmX/y2sA/AChka6XS0j1rFdzwcT5CVhk/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jfhrfm6I; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-81e98a1f55eso1291564b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 12:34:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768595643; x=1769200443; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U5ZjuNMNK+XBHMn8ib3k1M/0uwZwGvAP9gMnJv4IuvA=;
-        b=Jfhrfm6I+sGQbwwzdR++N5avWua0LtGqGUU5iujrPaKMVGLr9JnnvODdp5b4bl7fst
-         cvQqkjPyMOjyOkTe6XP45ELng4skvI3O60Q/RepH2qpZBcAEBQVrjap2NPr+R7zRIgqn
-         T6OFLjjDeSI+D+5ici8ouTGMClucZZy85KhJW45AoTfdVbCufiLpyZotXNTwnyXPIppv
-         7MzLh3wV5tI2mASVLyASDTaP5IvgaVYDjmZL6bFjWDDHqkhT4T0bd3BM6h1XEYTVKebL
-         V7F6YvymOU6wO/spMvUEzU2D9DNzTrfXEcr35A+nm1GAan+pP7V73CFx2l91UHHB4j8R
-         iBHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768595643; x=1769200443;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U5ZjuNMNK+XBHMn8ib3k1M/0uwZwGvAP9gMnJv4IuvA=;
-        b=VSOsdhtNtyyixico2sw66IxWkWYRtYIbQTJ0yRHXJNoHgxl93RG/bz59S7QxxkZMUL
-         dSXgRdWL1a+nlgNPjMDu9uOzWqtSrrOgYJv/BKcPmg/vL5mb5U6bzzOWzw7A92u/0tAE
-         Q6PLjVioxD7mKTQRgYC0Hk9wykfeszAhJC0Z5eYgVr1tKzCwcQaAvgmtwZtSf/f3/rxr
-         sCCpZTip+M69j8b8SY6BUR07djHEeEFm8dBKevAFnQEpI4uWZNNdlXX7zn+qGmkglNMJ
-         aM6NEqhc8Lpjkg/2thmZdKlnIdmQlzBRNeAOqejIGLVxPMZ3ZsdimM2qyl2GRCl+zSSL
-         1RKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMpL/ukebJi682S4brcZou9GQdCzcd7wDSRNzghTpxtka9RdbrVOaPQf6vr8/oArTMU0qoEnBPbZV4ihF2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM3MDkwaCOMWyyfvJ4hKf/KVlWB2Lf3aLYmFbbzn/iOn8cpEeF
-	47W5dpMEc04ihQhPCj5qh6bDfRTkPYJw9ZBbMRH0VllV+X5zrWLdC8S5
-X-Gm-Gg: AY/fxX4uuT+ln/YiJmUSCuBlfGDJz6lUPrRMUZSaenPrJBtx8Bj7o7c13joWk3iRe75
-	1inApev9ytXoXhV6hvcjV1l4Otg7QvGGiriP7Pl/MakUVK5m1yymZHLQoigEyRpgvtF/xABcCoR
-	D4tXC1c+2EL1EAIDNEVPF1P28LauNQF1T5pMnu8z2yqaRKS8Tzb28RJBs/6VyJEoJvMtX2LJEqZ
-	xJDruH2WcBYI/CW7V3nFBRCokbVzOwGNir77wgSQrtsXI1DDgrbBShkEyJeli6aRRcvqm5YksqM
-	xvkqkiNAteqAp2hhEe9MK5IQ7qdNm5z3oiGPmAcvXF7LfZQexGkK4X/I7hQLElhUWXKKtUgxcGU
-	rpvlqjlgr45i7ALquT4xawOlV43O1mWS43OARVa0kZ0EbFO2m6QiIrvFitpHws7i3Kumb5M+2pF
-	ySTtekOg==
-X-Received: by 2002:a05:6a20:d495:b0:366:14ac:8c75 with SMTP id adf61e73a8af0-38e00da9dd1mr3691218637.75.1768595642554;
-        Fri, 16 Jan 2026 12:34:02 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:16::])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-352677c90easm5255084a91.4.2026.01.16.12.34.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 12:34:01 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: brauner@kernel.org
-Cc: willy@infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] pagemap: Remove __readahead_folio()
-Date: Fri, 16 Jan 2026 12:31:46 -0800
-Message-ID: <20260116203146.1578562-1-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1768599446; c=relaxed/simple;
+	bh=cXaYCWY+NFHrw2co2+VwRx7+jg87vo2na/i0pxgM5eM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NeR/gedjKowNp3rkmT+9+d0Zk0+2q1u9tRQMQpQCWHiVTRx9/ZwSXFNSH/0p61iavl6AwWEw467h04O3ks6mdLTaUrSvWk8qiOtdvMv0DgHaQeLdKrnbaB2gas5IdtnXg9nkh/Zwblicff8b95VvCUUY0Pz883A3JFC2QS4p6Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OZGXnxqb; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1768599445; x=1800135445;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cXaYCWY+NFHrw2co2+VwRx7+jg87vo2na/i0pxgM5eM=;
+  b=OZGXnxqbpzbBfy1H77TF0ubmBqdJ2XJWpkfXz67ShC3Kz0yVK+BfnrCF
+   9rUyLponO/MsS6xkFHUUknVuQuj5wkacmoamXF8im5S56vaA64S7fdLlW
+   8h+hTvWxKuuSKAapzsbF5Ke2Jbs0AOXODvNu2VxxBloDljU9WjFe8Mq2c
+   1Beye2ehku94ibcyw58Hno3chc240/km4+l7rSKxY5H27FlNPRNnvfPyh
+   XvVrdbgEE6cSyx5coxxuLJOtE2nkDiRxMbcC5QOj25aMFDlYXzKty0Y47
+   6gQQ3D2SfFrdv3DRhd645AnxzF37VPo9zyCe+iGWk3NmxlVsh+fDSjK9Z
+   w==;
+X-CSE-ConnectionGUID: AUbno4EAT8q3RMbnuORIPw==
+X-CSE-MsgGUID: DtJQ7/1BS+6tzmjX3UpBvw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11673"; a="92583829"
+X-IronPort-AV: E=Sophos;i="6.21,232,1763452800"; 
+   d="scan'208";a="92583829"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2026 13:37:25 -0800
+X-CSE-ConnectionGUID: GpUlGRTFQl2vYTqKJRteGw==
+X-CSE-MsgGUID: zFZj+0JbSQ27MRLUM31HiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,232,1763452800"; 
+   d="scan'208";a="205401656"
+Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 16 Jan 2026 13:37:21 -0800
+Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vgrVO-00000000LGU-33wE;
+	Fri, 16 Jan 2026 21:37:18 +0000
+Date: Sat, 17 Jan 2026 05:37:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Benjamin Coddington <bcodding@hammerspace.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Rick Macklem <rick.macklem@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] nfsd: Add a key for signing filehandles
+Message-ID: <202601170520.GITVT8Iy-lkp@intel.com>
+References: <c49d28aade36c044f0533d03b564ff65e00d9e05.1768573690.git.bcodding@hammerspace.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c49d28aade36c044f0533d03b564ff65e00d9e05.1768573690.git.bcodding@hammerspace.com>
 
-Commit 4ea907108a5c ("fuse: use iomap for readahead") removed the only
-external user of __readahead_folio().
+Hi Benjamin,
 
-__readahead_folio() can be removed, with the logic in it subsumed into
-the main readahead_folio() function.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- include/linux/pagemap.h | 25 +++++++++----------------
- 1 file changed, 9 insertions(+), 16 deletions(-)
+[auto build test WARNING on bfd453acb5637b5df881cef4b21803344aa9e7ac]
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 31a848485ad9..cde854c12642 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -1419,7 +1419,15 @@ void page_cache_async_readahead(struct address_space *mapping,
- 	page_cache_async_ra(&ractl, folio, req_count);
- }
- 
--static inline struct folio *__readahead_folio(struct readahead_control *ractl)
-+/**
-+ * readahead_folio - Get the next folio to read.
-+ * @ractl: The current readahead request.
-+ *
-+ * Context: The folio is locked.  The caller should unlock the folio once
-+ * all I/O to that folio has completed.
-+ * Return: A pointer to the next folio, or %NULL if we are done.
-+ */
-+static inline struct folio *readahead_folio(struct readahead_control *ractl)
- {
- 	struct folio *folio;
- 
-@@ -1436,21 +1444,6 @@ static inline struct folio *__readahead_folio(struct readahead_control *ractl)
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 	ractl->_batch_count = folio_nr_pages(folio);
- 
--	return folio;
--}
--
--/**
-- * readahead_folio - Get the next folio to read.
-- * @ractl: The current readahead request.
-- *
-- * Context: The folio is locked.  The caller should unlock the folio once
-- * all I/O to that folio has completed.
-- * Return: A pointer to the next folio, or %NULL if we are done.
-- */
--static inline struct folio *readahead_folio(struct readahead_control *ractl)
--{
--	struct folio *folio = __readahead_folio(ractl);
--
- 	if (folio)
- 		folio_put(folio);
- 	return folio;
+url:    https://github.com/intel-lab-lkp/linux/commits/Benjamin-Coddington/nfsd-Convert-export-flags-to-use-BIT-macro/20260116-223927
+base:   bfd453acb5637b5df881cef4b21803344aa9e7ac
+patch link:    https://lore.kernel.org/r/c49d28aade36c044f0533d03b564ff65e00d9e05.1768573690.git.bcodding%40hammerspace.com
+patch subject: [PATCH v1 2/4] nfsd: Add a key for signing filehandles
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20260117/202601170520.GITVT8Iy-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260117/202601170520.GITVT8Iy-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202601170520.GITVT8Iy-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> fs/nfsd/nfsctl.c:2282:50: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
+    2282 |         trace_nfsd_ctl_fh_key_set((const char *)fh_key, ret);
+         |                                                         ^~~
+   fs/nfsd/nfsctl.c:2260:9: note: initialize the variable 'ret' to silence this warning
+    2260 |         int ret;
+         |                ^
+         |                 = 0
+   1 warning generated.
+
+
+vim +/ret +2282 fs/nfsd/nfsctl.c
+
+  2254	
+  2255	int nfsd_nl_fh_key_set_doit(struct sk_buff *skb, struct genl_info *info)
+  2256	{
+  2257		siphash_key_t *fh_key;
+  2258		struct nfsd_net *nn;
+  2259		int fh_key_len;
+  2260		int ret;
+  2261	
+  2262		if (GENL_REQ_ATTR_CHECK(info, NFSD_A_SERVER_FH_KEY))
+  2263			return -EINVAL;
+  2264	
+  2265		fh_key_len = nla_len(info->attrs[NFSD_A_SERVER_FH_KEY]);
+  2266		if (fh_key_len != sizeof(siphash_key_t))
+  2267			return -EINVAL;
+  2268	
+  2269		/* Is the key already set? */
+  2270		nn = net_generic(genl_info_net(info), nfsd_net_id);
+  2271		if (nn->fh_key)
+  2272			return -EEXIST;
+  2273	
+  2274		fh_key = kmalloc(sizeof(siphash_key_t), GFP_KERNEL);
+  2275		if (!fh_key)
+  2276			return -ENOMEM;
+  2277	
+  2278		memcpy(fh_key, nla_data(info->attrs[NFSD_A_SERVER_FH_KEY]), sizeof(siphash_key_t));
+  2279		nn = net_generic(genl_info_net(info), nfsd_net_id);
+  2280		nn->fh_key = fh_key;
+  2281	
+> 2282		trace_nfsd_ctl_fh_key_set((const char *)fh_key, ret);
+  2283		return ret;
+  2284	}
+  2285	
+
 -- 
-2.47.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
