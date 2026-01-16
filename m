@@ -1,201 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-74149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1C6D32E91
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 15:54:15 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C66AD32E8B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 15:54:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 19C62323EAB8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 14:48:20 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 817F8302403E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 14:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D4B29B216;
-	Fri, 16 Jan 2026 14:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7AE145348;
+	Fri, 16 Jan 2026 14:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aISfwXja"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WB4HYyfx";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="mschl6yR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF5B39341D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 14:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768574826; cv=pass; b=L6iCp/+GEycJs1uGf+ByDuwOPBFb8yK0XcZ5pDVkERmG1yc7KDqKEYwICwFiYNrkfKJb1ERdi+eZAIvhU8Oxs9BRpZCltPTWemFkRu6WApbejk3hEao6v0K1rHh35+UJtT/ch6JuCJeBV4psTfIOMQRrBeMko4COVaJWh29E+SE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768574826; c=relaxed/simple;
-	bh=roiUOgMNh/uHT7xq/Ufc65Xx1gVdLlGNv2hq3QwsGUQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FxKjpcR+y/1JjChmkc4wtYwaPmAmae5Fpindq0tGFimsNiJmI7eeVRZSwles0kWcBqJRRAFjo7pDaB8sMfaVoGVk+4xsARB46bTURVV44kT8qNbxt6PUxoOKpM/JrWzx35nc7Ro2UcgLJc3TGOAoxqXaZX51MjO2Q5aAIjBTHPg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aISfwXja; arc=pass smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b874c00a3fcso342388766b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 06:47:04 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1768574823; cv=none;
-        d=google.com; s=arc-20240605;
-        b=UJSHGWZ0NriHjyj3Vr8IO/u+1OfiEJkBdw15+zZNewmRCsuxkAMTfbk8ho1lnzbmeF
-         vbQmcTRrGVnmYjnPgxbMgj1cw6ESuADvq/a92wFazYf6hScCx2V/BHqC/2nXakhK7jdN
-         pUJzhMB8Sd8P+ihgj+UaJym6i7rkLI7Tyj2Vsm+VdQimE1KR59klZgCKcGQnKCgVlQcc
-         K1Wvaq3pkclpLHqPL633Y50/+z7jKK5A6sQNu3NCteeZwkWRzQbte7+bzsFT+tiyDF4Q
-         v7CY98RSfZw1FRvWYLTi5Evj7xoiXVfArhP4ZpN+EOTsOwKWGussBrsUj7tGU75I6oR2
-         lfFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=rWCEzzwQTN3Jcqg8Pr6svjg3sqJRK7qADI0E/O11arI=;
-        fh=7cO4aum9JhnfW3T1vbFP0ZLGHoCtz+gpHCy/ZUrgi24=;
-        b=h5st7C4rhbr7aECFlPd6NA8QxcZIoaaWMeuF2tdpQvLbS5BLcCL1WerEBeSGW6Jjb7
-         4nVSH7wvwobrjayTf4EC97zc4+GXsC5zgM1/VT8Fscpp1hj5eZ4rmOYUB2qx4Hvgtdh7
-         93eWYiPczhLx1iQQOOeT9V0iKhTiEROXk8coXNlBzAxe+TWyWkz2E2qp9gCKR2rVQC6N
-         m90w+65FO12tk1n97SJfMQHoBKcPUZEtV8JDX7s05/oE0MY+TKG2Z+uE1/QmNf8XSOOK
-         +OmOqMHOcWuwyoIrdmT/m+3Vvjw2Iak/nMDUyA4QrNw/BnkzHJv1aMDW1h8qhyRJdvE4
-         BKTQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C579F23E342
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 14:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768575139; cv=none; b=QJ92yNDF6jDim4R9UlrLafxMU3tjEGelzAYPG7HrwgjHFbio4m0KW7aYzRZLbHxz3NGKezQJMeir9kdYgLqsVo+7Yw8AIxhCMgIcd/X7yr/z/g//AjGW2SSxVVbrOri27PF+cLdImSZKsGYROuVWtRQIl36O85Sv2nmS/75/j+k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768575139; c=relaxed/simple;
+	bh=7cGeMk8GyRdqCvDdT0G0vEEeDlTTsLl/4l41tbPOOLE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kLGIzcCUEellzr1gqStfyUFEggPeofixx037lqQMKIwpmLulpE3VeKiwRWdBb13CrCIjFL5QBkQa6I/dY6LEcJog/5yLeBTR6SccLd+PaCg7kmGetuBqZztqI62hwdF4PCsEZJwoBK/drSV+7ybmLTFXlUyqv2npxyc8L5ZT5uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WB4HYyfx; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=mschl6yR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768575137;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0h8VbcliXJU5w8d5JITrLYVgYncPw3n5MJT/9tJnIiY=;
+	b=WB4HYyfxYtZnufUlvKIo+8nLniIYYJbfRWAjiebLLa3Xz/lO7eDcJg9ZSrwUsKLgc4Lgbx
+	pkJQRecdfWfNDE+xANtmAdiBCvO64jorHklmI1hYh6UCIpLw0FhII5gyUS59umWkdr2Mk+
+	9UDwRou+U08eMTmm0IzCLI1oeW0zXv8=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-539-L1ObJCECPU-jx_VV1-rQuw-1; Fri, 16 Jan 2026 09:52:15 -0500
+X-MC-Unique: L1ObJCECPU-jx_VV1-rQuw-1
+X-Mimecast-MFC-AGG-ID: L1ObJCECPU-jx_VV1-rQuw_1768575135
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-43101a351c7so1827674f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 06:52:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768574823; x=1769179623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rWCEzzwQTN3Jcqg8Pr6svjg3sqJRK7qADI0E/O11arI=;
-        b=aISfwXja07pJFqC/Do7mY8gNIFuC06/Iung/cJCgn25q90SuyiOspfPUPOM2LhaQxH
-         iwzQers6OzLoIg4Kl6pDLgvW43r+pJ78+MBLopjQlSq7gmSLR62A57QIW4O0ePhqobBd
-         aw+rgc/BxWP6VKKbQ4YcnFAWsAi12quI6k0vNwu4qDgnMRDg7laAjU+oGlerzPAy8xg+
-         iZAC0LuWW28yezP2tM9VKx3GqXVMcTznKh+bWfpEp1m+1/J+OC0fSAM3kyJaA1+5pHub
-         qp+geSLjw/Ca6WDAXfapdCsJDIBcZXpglHWhAvDKlCQI9dvaELsQCw1YUCk5ohtGbApk
-         VX6A==
+        d=redhat.com; s=google; t=1768575134; x=1769179934; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0h8VbcliXJU5w8d5JITrLYVgYncPw3n5MJT/9tJnIiY=;
+        b=mschl6yRVQS+DtwWHfp3xugp7a/voGhBSSAXCed+4WaF33U8gYDW8SDwbylxMEAX+E
+         F5Ilyt9dmahvWxjOGgx5nG3XiIJrQeZIAW0yMYdfbNs5+wnOITtBHiXNbHNGy3y3UoRV
+         xmddYIp8A7Fi0MCiDLdP9pCU4WIKSlg1GZsv8JK7ZrzG//wWfdp2x9E2IFGNAurUQdG3
+         q30iTML/7CNXZ1ihkPWfipKDFf9u+9mJDR0r6uz5v+A93tbPYnAeGk2a2vM+M0C50jgX
+         koGSvCKaQBWI1RAethdlEG4cICqeKsTc4p70MnJfAYwfl8UbNq3onDo1Z7X2iynw9XGp
+         ALQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768574823; x=1769179623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rWCEzzwQTN3Jcqg8Pr6svjg3sqJRK7qADI0E/O11arI=;
-        b=hiaeZ/f1wT6JZC+GAIsK2OwE3dHAKrbaFzIgU82kvRsAKq/MQqk8fuRyxLducCbdld
-         N4TxpqgrdQSfXAVHzBy6vSO10aa5HFYQ+voGqptAARZ/RQZRKeSO9T4kaLID3dEZgBmD
-         0sDqVIaf31fIEvwFfo8lqq68fjtj4Y12kVTjdBS3mZM6Sg01mYQBG7m+5dHA7Nde+O/Q
-         b+jMKCfNtpTwex6KWOHKNBgLeGCkkps5xfJ33QvftUxbD8A/ltTsJnkY70KJ/XAHVCFL
-         othSnKRf5g+5+x7MzHuxTjBnU5FbCc4h80xDpOquylGXMRXahDdR8/P1s0GJZB5G/MtW
-         7g7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWe/tzzMncPoTnV/NJz1I8NndunDuR/yxnL3A9NtAanzizKrOaCFXBdJIeWv5p0Da+z7IkEhy33UqNPWDOz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMrSnlDFRah5qhy77UOBF7h378eqvFclTgFtGfEw/j1Njk5IgS
-	Qi7pRYL3FTr5dOKICT50JyViFr6g/pklxWbLWmucLM7q2xfgUUqEdK/h3aiV1nXP98M2hPA2i3l
-	Y8Ct93BzDx6AthjpFAqilzrB4ErXCIsI=
-X-Gm-Gg: AY/fxX7zHs8/s5dI+uiOXCEzHSuW9uOWlC98Xe6NKmn/NI0x5FoeMnnscdZ3wJhWBo6
-	N3+CzHNUPPavmomJOPr0lP6FM2EacpL453NNOIGu96s8Sfn7/r32MO/DVnlWUFKyPXx8Pzo4oIg
-	xOJzlR3N1gcvfF10hYOcsptEMXphNCAVZiMAsQw/stpi5o5QodyKgyRXoDC2k36gbToi/H5uIXB
-	4nEzfiEv+kyBfQFK4hVrERErJn/96F2ljN43Zrs84erLewiXtIBzG2Q6yeJwjpxy6DvSJHCI4Zs
-	Xr4vuRdcMYDqcfnZeFZaZtm37cVA0Q==
-X-Received: by 2002:a17:906:7305:b0:b72:a899:169f with SMTP id
- a640c23a62f3a-b8792d6cf8amr335795366b.4.1768574823087; Fri, 16 Jan 2026
- 06:47:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1768575134; x=1769179934;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0h8VbcliXJU5w8d5JITrLYVgYncPw3n5MJT/9tJnIiY=;
+        b=p3cDf4C3Z+tB8uYbSTNdb/4BFewRQRnsFd76sIPFh6URGFThSXzl73F7GW0dqEn6Of
+         4hefNVMdCk3COrnGoH6zxpUVmhG74OKgzq8EGJa9dmHVtCvaKa4H7zL7ZaEQ60jm+2Sj
+         RYBGKEMpe2l2qytElaISk1KOciYoPogXki4qofnjEEY8eNVoiRcnOqLbHwiMh6aBKv6I
+         qp/Pk3qcOR9yGeM7mBrqVP0Y/ZpXc8v9ay+2jtaX3Fhf4Osrnt08lM06uPDzO0hyf+8x
+         UhwPf+R3QHjkf3XqvVUFP8MqoS0BMqYWpC3HJ1q9tc2gNTE6IA2dWL2IATdBndaEw4EW
+         MoFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXExjJaGiue+nzK2o1UGDB8/rB+z2T/w72b5YFYV3D6ibhOOUHgNXXvugrpcF/Tgyd+J2xLstvhDLR3e2+Q@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHFUhpz2V1KXewZcswml+MtLjCpVFn6TL+Ua2mlZ/UNVCYC8mN
+	2hJPZA07y4wQQ0JcZyxMApVT18o2dbk4P9sr0CFD8MP52Uj3SQw7K+LDm5KUxpeerLOcnCukf+q
+	ySo94voq22VlWfbFQG9MSEi+ls7sKf6ZTktdIjEDfx00nReUrB2NwmM370FW/EBAvKw==
+X-Gm-Gg: AY/fxX7SPV9XRS7IaoXP6JlLI19+enJY2dtPK5VxWj46gPKAutL/aMGWepc8UlloP1v
+	HYmqqscOO0NTGY95cNwile6FvYJvc58KK7aKLL/WqqZ+vu+c/3OahcxNsUnUhvgX7SsEG2WfW6v
+	2ICm/u2SXOwHP3hZh5qlFD44BO8XFYDXnr7bO5rrvBkB1bmXFNDer7tkUXxMFrXT4OjiHacHODX
+	wJ+L2xP9npi6vYTHJcDVy1RiJ4U2fEdB1v/RZZ88I5S4y+DNKcgX1YyMePVV2jrECVXE97dbNxg
+	5mRJVlnYUPhTz2Nz46njFa88wJWBxcNvV/XVgGzRDvv/VEAw02824tfZkhyizOilpeY3wgv5ONo
+	=
+X-Received: by 2002:a05:6000:40e0:b0:431:701:4a1a with SMTP id ffacd0b85a97d-435699997a3mr4331551f8f.26.1768575134297;
+        Fri, 16 Jan 2026 06:52:14 -0800 (PST)
+X-Received: by 2002:a05:6000:40e0:b0:431:701:4a1a with SMTP id ffacd0b85a97d-435699997a3mr4331513f8f.26.1768575133696;
+        Fri, 16 Jan 2026 06:52:13 -0800 (PST)
+Received: from thinky ([217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356996d02dsm5633075f8f.23.2026.01.16.06.52.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Jan 2026 06:52:13 -0800 (PST)
+Date: Fri, 16 Jan 2026 15:52:12 +0100
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org, 
+	ebiggers@kernel.org, linux-fsdevel@vger.kernel.org, aalbersh@kernel.org, 
+	david@fromorbit.com, hch@lst.de
+Subject: Re: [PATCH v2 16/22] xfs: add fs-verity support
+Message-ID: <5s37vliyxikgz22dakooeml37yo2jnhqqinnnag5czbtz46io5@h6jikziw3qxr>
+References: <cover.1768229271.patch-series@thinky>
+ <p4vwqbgks2zr5i4f4d2t2i3gs2l4tnsmi2eijay5jba5y4kx6e@g3k4uk4ia4es>
+ <20260112230548.GR15551@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org>
- <20260115-exportfs-nfsd-v1-29-8e80160e3c0c@kernel.org> <CAOQ4uxg304=s1Uoeayy3rm1e154Nf7ScOgseJHThw4uQjKwk0A@mail.gmail.com>
- <8e4c3df4828351c677186bf018061f2b1fd1b48e.camel@kernel.org>
-In-Reply-To: <8e4c3df4828351c677186bf018061f2b1fd1b48e.camel@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 16 Jan 2026 15:46:50 +0100
-X-Gm-Features: AZwV_QiRcITYtWxbtRpeIxfeQr9ho0AGFQM_8wESdHA53c49E-5t7eaX1T9rC3o
-Message-ID: <CAOQ4uxhkZNueydP0tTCAj6tuzKWPTYB7=JR_hb4gaavSKQ8C2w@mail.gmail.com>
-Subject: Re: [PATCH 29/29] nfsd: only allow filesystems that set EXPORT_OP_STABLE_HANDLES
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, Gao Xiang <xiang@kernel.org>, 
-	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
-	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, 
-	Carlos Maiolino <cem@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>, 
-	Viacheslav Dubeyko <slava@dubeyko.com>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
-	Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
-	Phillip Lougher <phillip@squashfs.org.uk>, Steve French <sfrench@samba.org>, 
-	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Mike Marshall <hubcap@omnibond.com>, 
-	Martin Brandenburg <martin@omnibond.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
-	Joseph Qi <joseph.qi@linux.alibaba.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Dave Kleikamp <shaggy@kernel.org>, 
-	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Jan Kara <jack@suse.cz>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, Christoph Hellwig <hch@infradead.org>, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
-	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-unionfs@vger.kernel.org, 
-	devel@lists.orangefs.org, ocfs2-devel@lists.linux.dev, ntfs3@lists.linux.dev, 
-	linux-nilfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net, 
-	linux-mtd@lists.infradead.org, gfs2@lists.linux.dev, 
-	linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260112230548.GR15551@frogsfrogsfrogs>
 
-On Fri, Jan 16, 2026 at 1:36=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> On Thu, 2026-01-15 at 20:23 +0100, Amir Goldstein wrote:
-> > On Thu, Jan 15, 2026 at 6:51=E2=80=AFPM Jeff Layton <jlayton@kernel.org=
-> wrote:
-> > >
-> > > Some filesystems have grown export operations in order to provide
-> > > filehandles for local usage. Some of these filesystems are unsuitable
-> > > for use with nfsd, since their filehandles are not persistent across
-> > > reboots.
-> > >
-> > > In __fh_verify, check whether EXPORT_OP_STABLE_HANDLES is set
-> > > and return nfserr_stale if it isn't.
-> > >
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/nfsd/nfsfh.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-> > > index ed85dd43da18e6d4c4667ff14dc035f2eacff1d6..da9d5fb2e6613c2707195=
-da2e8678b3fcb3d444d 100644
-> > > --- a/fs/nfsd/nfsfh.c
-> > > +++ b/fs/nfsd/nfsfh.c
-> > > @@ -334,6 +334,10 @@ __fh_verify(struct svc_rqst *rqstp,
-> > >         dentry =3D fhp->fh_dentry;
-> > >         exp =3D fhp->fh_export;
-> > >
-> > > +       error =3D nfserr_stale;
-> > > +       if (!(dentry->d_sb->s_export_op->flags & EXPORT_OP_STABLE_HAN=
-DLES))
-> > > +               goto out;
-> > > +
-> > >         trace_nfsd_fh_verify(rqstp, fhp, type, access);
-> > >
-> >
-> > IDGI. Don't you want  to deny the export of those fs in check_export()?
-> > By the same logic that check_export() checks for can_decode_fh()
-> > not for can_encode_fh().
-> >
->
-> It certainly won't hurt to add a check for this to check_export(), and
-> I've gone ahead and done so. To be clear, doing that won't prevent the
-> filesystem from being exported, but you will get a warning like this
-> when you try:
->
->     exportfs: /sys/fs/cgroup does not support NFS export
->
-> That export will still show up in mountd though, so this is just a
-> warning. Trying to mount it though will fail.
->
+> > +	desc_pos = round_down(desc_size_pos - desc_size, blocksize);
+> > +	error = xfs_fsverity_read(inode, buf, desc_size, desc_pos);
+> > +	if (error)
+> > +		return error;
+> > +
+> > +	return desc_size;
+> > +}
+> 
+> You might want to wrap the integrity checks through XFS_IS_CORRUPT so
+> that we get some logging on corrupt fsverity data.  Also, if descriptor
+> corruption doesn't prevent iget from completing, then we ought to define
+> a new health state for the xfs_inode so that it can report those kinds
+> of failures via bulkstat.
 
-Oh, I did not know. What an odd user experience.
-Anyway, better than no warning at all.
+yeah, iget will complete as it doesn't trigger fsverity to read
+descriptor. I will add a new health state. Thanks!
 
-Thanks,
-Amir.
+-- 
+- Andrey
+
 
