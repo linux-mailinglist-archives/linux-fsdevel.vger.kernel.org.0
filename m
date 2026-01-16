@@ -1,85 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-74080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3108D2EDAF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 10:37:57 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 696D4D2F11C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 10:52:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id ED20130A3F01
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 09:36:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7F831301FF43
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 09:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC50357A39;
-	Fri, 16 Jan 2026 09:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1A022173A;
+	Fri, 16 Jan 2026 09:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3lXhKEP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA773570C1;
-	Fri, 16 Jan 2026 09:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7138B224AEF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 09:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768556211; cv=none; b=fLghZB+8ajwRH9bFy1w6vEIOPhCoVUCnIdhYbbPeUmRVGy6SXvXNJl3sYvKR3pJ/vS16h/3m7WdDmNtafTD3LyeM4FmOwwcN9wlCMln9hyLjPEQP2u9hNoI6SLij+1tVscdjByelVBKAj0HRMllL/Eig/SW0QpMx+z7pNBCHshs=
+	t=1768557067; cv=none; b=mVvngq7ahCONwAU43EMhVIPmD03OdUbwevlGlDSgJtqOj3ucWtgkTvhmUbsnb07bcanawjUoH+YqGP4oUgA2JNk1hCFe9P/P48QYJnpn3Fz9gQON7EuLSuvNx2LSred8wdspn7LQYqrL3ovYKmqju/b17tDR9RD6Lj+zefaBEzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768556211; c=relaxed/simple;
-	bh=JDWJrbRjIFrw3KLEL0PaTeoWEdHsfnETA4l/qAIRuc8=;
+	s=arc-20240116; t=1768557067; c=relaxed/simple;
+	bh=psZd7HdWPPYH98/Od+c496P/RixyuzZpPGf6Ow27TUI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pasODqnfzhM8NUfrUYPUHgvaIq7BDv2DzklXviyuaSUjqG3H9OLcs4rFDu7ZbaOUyqGnxzdddD+IOye0XLhOgqwwRwirmOKHIqjNFPqS1Ne+66jZtc4TLtOd8Tvsw/RkvftQk53GW43jXefxIXhtbBwAPs1t5WmwZGErc4dqRDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 0E16B227A8E; Fri, 16 Jan 2026 10:36:44 +0100 (CET)
-Date: Fri, 16 Jan 2026 10:36:43 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, Christoph Hellwig <hch@lst.de>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Carlos Maiolino <cem@kernel.org>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, kernel-dev@igalia.com
-Subject: Re: [PATCH 3/3] ovl: Use real disk UUID for origin file handles
-Message-ID: <20260116093643.GA23235@lst.de>
-References: <20260114-tonyk-get_disk_uuid-v1-0-e6a319e25d57@igalia.com> <20260114-tonyk-get_disk_uuid-v1-3-e6a319e25d57@igalia.com> <20260114062608.GB10805@lst.de> <5334ebc6-ceee-4262-b477-6b161c5ca704@igalia.com> <20260115062944.GA9590@lst.de> <633bb5f3-4582-416c-b8b9-fd1f3b3452ab@suse.com> <20260115072311.GA10352@lst.de> <22b16e24-d10e-43f6-bc2b-eeaa94310e3a@igalia.com> <CAOQ4uxhbz7=XT=C3R8XqL0K_o7KwLKsoNwgk=qJGuw2375MTJw@mail.gmail.com> <0241e2c4-bf11-4372-9eda-cccaba4a6d7d@igalia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IljDnb3YgxcGQVmRSUJnllqTzj2fyRo4geaa1l0HHHy3BtrZClgolOyJXt21GAJx7Ns1bnFvbiVSVMaz4Q/0c2DYyE6AggPI4yKgoBhONUHSYXxuoDx+EfA5xhFisNTsLFn7sqagHczdDoBomFByYMv7z4SNM30f9iF2JUrlxV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3lXhKEP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C107C116C6;
+	Fri, 16 Jan 2026 09:51:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768557067;
+	bh=psZd7HdWPPYH98/Od+c496P/RixyuzZpPGf6Ow27TUI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t3lXhKEPpqyyeo+W+a3xI3IqS/eNuDwTsl4GYOS8iHIWVyiz+4JRShSC/d8Y8mS93
+	 pkV8bYOnBvFsV/dVeavP9WFF7pKyEn09aMQIhyZyhpltLDT/1pS6+qUaDWqGQLbj8p
+	 GQpZeObC6ye02j2j2emg0EDzvXUGenb6P/3NcD6oMJ7xofJ+ZmBchM7xGJNsC27uLN
+	 fKDMO1aojTIsJtoOb9N9JOLIC3v9oh9Aq2S8g9AsYQZDH3Js6bNS74yBPUIAvd+wjs
+	 HXEmaxOoMkf1hQRh2p/MInDUZ0lFKUqhPLfbDiZNI0aA9+GP43oxlqPuet2/U9DN39
+	 gBV/JI+5Plp5Q==
+Date: Fri, 16 Jan 2026 10:51:03 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] posix_acl: make posix_acl_to_xattr() alloc the buffer
+Message-ID: <20260116-bankintern-delikat-4d2f21af7eef@brauner>
+References: <20260115122341.556026-1-mszeredi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0241e2c4-bf11-4372-9eda-cccaba4a6d7d@igalia.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20260115122341.556026-1-mszeredi@redhat.com>
 
-On Thu, Jan 15, 2026 at 03:55:15PM -0300, André Almeida wrote:
->> Is there any guarantee that file handles are relevant and point to the
->> same objects?
->>
->> The whole point of the overlayfs index feature is that overlayfs inodes
->> can have a unique id across copy-up.
->>
->> Please explain in more details exactly which overlayfs setup you are
->> trying to do with index feature.
->>
->
-> The problem happens _before_ switching from A to B, it happens when trying 
-> to install the same image from A on B.
->
-> During the image installation process, while running in A, the B image will 
-> be mounted more than once for some setup steps, and overlayfs is used for 
-> this. Because A have the same UUID, each time B is remouted will get a new 
-> UUID and then the installation scripts fails mounting the image.
+Nice cleanup.
 
-It sounds like the 'clones' really need different persistent uuids. Or
-do you also have a requirement that the two images have the same ID,
-which would require a noouid-like option and extremely careful handling.
+> diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
+> index 1564eacc253d..34e853fdd0a9 100644
+> --- a/fs/ceph/acl.c
+> +++ b/fs/ceph/acl.c
+> @@ -90,7 +90,8 @@ struct posix_acl *ceph_get_acl(struct inode *inode, int type, bool rcu)
+>  int ceph_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+>  		 struct posix_acl *acl, int type)
+>  {
+> -	int ret = 0, size = 0;
+> +	int ret = 0;
+> +	size_t size = 0;
+>  	const char *name = NULL;
+>  	char *value = NULL;
+>  	struct iattr newattrs;
+> @@ -126,16 +127,11 @@ int ceph_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+>  	}
+>  
+>  	if (acl) {
+> -		size = posix_acl_xattr_size(acl->a_count);
+> -		value = kmalloc(size, GFP_NOFS);
+> +		value = posix_acl_to_xattr(&init_user_ns, acl, &size, GFP_NOFS);
+>  		if (!value) {
+>  			ret = -ENOMEM;
+>  			goto out;
+>  		}
+> -
+> -		ret = posix_acl_to_xattr(&init_user_ns, acl, value, size);
+> -		if (ret < 0)
+> -			goto out_free;
+>  	}
+>  
+>  	if (new_mode != old_mode) {
+> @@ -172,7 +168,7 @@ int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
+>  	struct posix_acl *acl, *default_acl;
+>  	size_t val_size1 = 0, val_size2 = 0;
+>  	struct ceph_pagelist *pagelist = NULL;
+> -	void *tmp_buf = NULL;
+> +	void *tmp_buf1 = NULL, *tmp_buf2 = NULL;
+>  	int err;
+>  
+>  	err = posix_acl_create(dir, mode, &default_acl, &acl);
+> @@ -192,15 +188,6 @@ int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
+>  	if (!default_acl && !acl)
+>  		return 0;
+>  
+> -	if (acl)
+> -		val_size1 = posix_acl_xattr_size(acl->a_count);
+> -	if (default_acl)
+> -		val_size2 = posix_acl_xattr_size(default_acl->a_count);
+> -
+> -	err = -ENOMEM;
+> -	tmp_buf = kmalloc(max(val_size1, val_size2), GFP_KERNEL);
+> -	if (!tmp_buf)
+> -		goto out_err;
+
+The ENOMEM needs to be retained otherwise you return 0 on
+ceph_pagelist_alloc_failure afaict.
+
+I'll fix that up as well.
+
+>  	pagelist = ceph_pagelist_alloc(GFP_KERNEL);
+>  	if (!pagelist)
+>  		goto out_err;
 
