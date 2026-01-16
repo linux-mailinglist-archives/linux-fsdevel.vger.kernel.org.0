@@ -1,147 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-74036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92038D2A2A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 03:33:01 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA7B2D2A139
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 03:23:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BB3D0304ED94
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 02:32:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 2D83E3047102
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 02:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06623375DC;
-	Fri, 16 Jan 2026 02:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588EA2FBDE6;
+	Fri, 16 Jan 2026 02:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="P9kfgKNL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07462F60BC;
-	Fri, 16 Jan 2026 02:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B74833507D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 02:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768530770; cv=none; b=QCTl9sE7yQNmAsAsZeW6gKSyU0b6W/etBBwf3WQAygWm3yvjxwWIGcaJOwQFn8tesFWv07RYNEvRJtbLv0V8GgHlncjvUx+BK+dZJq+RnGFQklaq3CO0ZcyHLB52VSMrOhVeUWYu0L2KS7yUH6btI9TFKDSXv1IXxURrqWFAcyI=
+	t=1768530205; cv=none; b=DpotScfIsNKlqLhvrBUMzc/8fObxUxxyaWuFZpuNezZrvSoFVvnYBAWgPSJb+bJc+OcpCAHDInsevEuBvFvHn5vHgGAHbeJ3Bwb2E690r3Lbiq+SqX1bWvfEM8ufHdeju8lfmLTZhEKReiffOBVR7BMlYW6erjtcZFP/3TXOpRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768530770; c=relaxed/simple;
-	bh=dxlsenTUJ8WmNDS2uXDQY1S8mvHcwzR8Tv/alf7nCVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uCaRW/6uiR5+akpzoNnXy7IMQP4feFIrmyixRdw41P7gCTo8vztZKgrwWbmo8ngYGmyvHJUlh/5TaOilXJhRcLapYqW6HgdcrWCqb6KuB5N5p0Crmequ01/xz61UuKRAdfzQmiYXq/dWKvZjAw9/M9MfLqh2G6cvkoqJSoGyCMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
-Received: from [10.26.132.114] (gy-adaptive-ssl-proxy-2-entmail-virt205.gy.ntes [101.226.143.247])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 30d68114b;
-	Fri, 16 Jan 2026 09:57:13 +0800 (GMT+08:00)
-Message-ID: <fe42c7b8-5144-4aeb-9513-9f5aae751475@ustc.edu>
-Date: Fri, 16 Jan 2026 09:57:12 +0800
+	s=arc-20240116; t=1768530205; c=relaxed/simple;
+	bh=AU8ydwM+6bS6tN4tu5gRNYM3pm8mBvS0h3zIXbblp64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GhB0ldp4YgazfNpS0uwQAHiXxPy9NioggkbtZYGfp9Uc0yxq9+0HNFHGblsRpD9UP75RKe6kUOiGBjJgREJUAdARRL083WizvPZaV8gG4fPaGzfqmj/hp8jtTkgew1osaHjRQkbYnppLRt4LHGj98fAkcl/HsdPOAHRXdtRmLyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=P9kfgKNL; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org ([37.140.223.154])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 60G2MYX0013183
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Jan 2026 21:22:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1768530160; bh=e7+ZkXTf+cEt8COK7ZiBm7FpEGCZkXwmsqQ2YKKQgYQ=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=P9kfgKNLi6OJwcPg4rVMTROJzz4az9SYBcQOe0G0GFGs82DvRENFkm1YgSb39d3nH
+	 AGhnwzj1RFqcSKbZOicJ+nFpVd4Sb2TTKGetDB0RpYps8YKVTz/q1D9dChu4KGnt00
+	 F9qbPF5IkyVUAG1oSvWw5yNdKLkq55GF3d6RBCC+6h/fJgObPBIkscBAmatK8OWUeA
+	 44QkCvEUYHhWUMDLDRP0nKLUmo25Fvq3Y+rvJsSZxeeOfrEsRnGnjkeyk8CcAFTrP/
+	 uLf9PDmtpch4C3FfLs1otcMi7C+sjxkaLMhdbOGgUfTH1zuJX6iCF3ztPn6LMn2SOi
+	 LVfyZmz7mZaTA==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id A12EE54D8E5B; Thu, 15 Jan 2026 17:22:03 -0900 (AKST)
+Date: Thu, 15 Jan 2026 17:22:03 -0900
+From: "Theodore Tso" <tytso@mit.edu>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
+        Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+        Tom Talpey <tom@talpey.com>, Amir Goldstein <amir73il@gmail.com>,
+        Hugh Dickins <hughd@google.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>,
+        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+        Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Sandeep Dhavale <dhavale@google.com>,
+        Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>,
+        Carlos Maiolino <cem@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
+        Alex Markuze <amarkuze@redhat.com>,
+        Viacheslav Dubeyko <slava@dubeyko.com>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>,
+        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Bharath SM <bharathsm@microsoft.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Richard Weinberger <richard@nod.at>, Jan Kara <jack@suse.cz>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-ext4@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-xfs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-unionfs@vger.kernel.org, devel@lists.orangefs.org,
+        ocfs2-devel@lists.linux.dev, ntfs3@lists.linux.dev,
+        linux-nilfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, gfs2@lists.linux.dev,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH 03/29] ext4: add EXPORT_OP_STABLE_HANDLES flag to export
+ operations
+Message-ID: <20260116022203.GE19200@macsyma.local>
+References: <20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org>
+ <20260115-exportfs-nfsd-v1-3-8e80160e3c0c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 0/2] fuse/passthrough: simplify daemon crash recovery
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260115072032.402-1-luochunsheng@ustc.edu>
- <aWkLBXv4AO5QMmPf@amir-ThinkPad-T480>
-From: Chunsheng Luo <luochunsheng@ustc.edu>
-In-Reply-To: <aWkLBXv4AO5QMmPf@amir-ThinkPad-T480>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a9bc4855d7a03a2kunma6263bd5242da8
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZThoZVhofTh0eTEhOTxoZT1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKS0pVSUlNVUpPSFVJT0xZV1kWGg8SFR0UWUFZT0tIVUJCSU5LVUpLS1VKQk
-	tCWQY+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260115-exportfs-nfsd-v1-3-8e80160e3c0c@kernel.org>
 
-
-
-On 1/15/26 11:43 PM, Amir Goldstein wrote:
-> On Thu, Jan 15, 2026 at 03:20:29PM +0800, Chunsheng Luo wrote:
->> To simplify FUSE daemon crash recovery and reduce performance overhead,
->> passthrough backing_id information is not persisted. However, this
->> approach introduces two challenges after daemon restart:
->>
->> 1. Non-persistent backing_ids prevent proper resource cleanup, leading
->>     to resource leaks.
->> 2. New backing_ids allocated for the same FUSE file cause -EIO errors
->>     due to strict fuse_backing validation in
->>     fuse_inode_uncached_io_start(), even when accessing the same
->>     backing file. This persists until all previously opened files are
->>     closed.
->>
->> There are common scenarios where reusing the cached fuse_inode->fb is
->> safe:
->>
->> Scenario 1: The same backing file (with identical inode) is
->>              re-registered after recovery.
->> Scenario 2: In a read-only FUSE filesystem, the backing file may be
->>              cleaned up and re-downloaded (resulting in a different
->>              inode, but identical content).
+On Thu, Jan 15, 2026 at 12:47:34PM -0500, Jeff Layton wrote:
+> Add the EXPORT_OP_STABLE_HANDLES flag to ext4 export operations to indicate
+> that this filesystem can be exported via NFS.
 > 
-> That is just not acceptable by design, regardless of server restart.
-> 
-> fuse passthrough may be configured per individual file open, but
-> all fd referring to the same fuse inode need to passthrough to the
-> same backing inode.
-> 
-> If your server want to serve different fd of same fuse inode from
-> different backing files (no matter if they claim to have the same content),
-> server needs to do that with FOPEN_DIRECT_IO, it cannot do that with
-> FOPEN_PASSTHROUGH.
-> 
-> Thanks,
-> Amir.
-> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-That's correct. A reference count for the backing files is certainly 
-maintained before crash to prevent them from being garbage collected and 
-to avoid different opens of the same fuse_inode from using different 
-backing files. However, this count does not survive the crash recovery 
-process. Consequently, the disk's garbage collection mechanism could 
-subsequently delete these files.
-
-In this situation, we should consider how to prevent these files from 
-being mistakenly garbage collected after a crash recovery.
-
-Thanks.
-Chunsheng Luo
-
->>
->> Proposed Solution:
->>
->> 1. Enhance fuse_dev_ioctl_backing_close() to support closing all
->>     backing_ids at once, enabling comprehensive resource cleanup after
->>     restart.
->>
->> 2. Introduce the FOPEN_PASSTHROUGH_INODE_CACHE flag. When set during
->>     fuse_open(), the kernel prioritizes reusing the existing
->>     fuse_backing cached in fuse_inode, falling back to the
->>     backing_id-associated fb only if the cache is empty.
->>
->> I'd appreciate any feedback on whether there are better approaches or
->> potential improvements to this solution.
->>
->> Thanks.
->> ---
->> Chunsheng Luo (2):
->>    fuse: add close all in passthrough backing close for crash recovery
->>    fuse: Add new flag to reuse the backing file of fuse_inode
->>
->>   fs/fuse/backing.c         | 14 ++++++++++++++
->>   fs/fuse/dev.c             |  5 +++++
->>   fs/fuse/fuse_i.h          |  1 +
->>   fs/fuse/iomode.c          |  2 +-
->>   fs/fuse/passthrough.c     | 11 +++++++++++
->>   include/uapi/linux/fuse.h |  2 ++
->>   6 files changed, 34 insertions(+), 1 deletion(-)
->>
->> -- 
->> 2.43.0
->>
-> 
-> 
-
+Acked-by: Theodore Ts'o <tytso@mit.edu>
 
