@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-74228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98165D38592
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 20:12:07 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA25CD385A1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 20:14:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 5753A30ADD6D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 19:11:55 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9000431C410A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 19:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E514F34EF0E;
-	Fri, 16 Jan 2026 19:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6F03A0E84;
+	Fri, 16 Jan 2026 19:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="pYRdvorW";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="cbJN+/Lb"
+	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="TjujrsOu";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="DYqssEoQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from a11-79.smtp-out.amazonses.com (a11-79.smtp-out.amazonses.com [54.240.11.79])
+Received: from a11-173.smtp-out.amazonses.com (a11-173.smtp-out.amazonses.com [54.240.11.173])
 	(using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB2734D4D6;
-	Fri, 16 Jan 2026 19:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.11.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509382DFA2D;
+	Fri, 16 Jan 2026 19:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.11.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768590713; cv=none; b=ecmo7PtaMyDqwPtXfGnReIBDzVBtJoy4D+oRHq7yB6Ox0p48ViVvvy1+Ife3vO4jy348qr2Pg+z63Huj84/o3aj3TxyZRFBOayXUvN81yIy+/iypIOuvF06W7wLWStYkx43dFeMfe4Qe2cuXO8QXQ0s+oEsjMXPWApkV5MqBRAw=
+	t=1768590747; cv=none; b=XZrSPN+MHfJPuTvnxZHig0ADFimTzLY1YXpk/yp7gGL01jq9yqc+hIkJGKdK0ZmISpPncDfclOOvgLLWEktWGyWufI2wWZhADgyuquofR5JVZP6xQKqdMsgINl2ESLcmWVkDXylJXGLfJkyQYyM0yNjJwcm7ThnmkBv7G/IjIVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768590713; c=relaxed/simple;
-	bh=glz+00ijWYQQ2Oo0TY1hR6I+VY2OuM/0QdldFtPNveU=;
+	s=arc-20240116; t=1768590747; c=relaxed/simple;
+	bh=5fP7NXTPONxO5AJaCYWYjZ+g0d1Sgj1vq484yxg6Jis=;
 	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:In-Reply-To:
-	 References:Message-ID; b=XWeGgOd8QzXYjKZdiOqIcBOm1aXDETJ34YKGxCdOW0AeBpPTosr0cFCV4OI836Bgpp55N4DbTctaupSZOiKTDlbaeASSxJGfHBkQMZvZ6JO9JT4nJtzhEiAfcpyaVUWOMxIepf2+o4dxOg/5OeNxcBhT8RWONc4A68qNwQJEzWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b=pYRdvorW; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=cbJN+/Lb; arc=none smtp.client-ip=54.240.11.79
+	 References:Message-ID; b=H+oNp8N8nIFuf2nMbAUC8yJqBRRJhiQz8LJJ0C5ZqScEy4B0jaxKsO++0YiTqgYMNbnkh8ipIbtLpIPwQqGcmvNgIw40GhzJWYTTIawHMEoBMxMZDFcfDC0BV5zcEfylC1BXM3zM2qgiFBk3pnnyIUmqSu6dTNcdznPUvvDxBnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b=TjujrsOu; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=DYqssEoQ; arc=none smtp.client-ip=54.240.11.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=o25mqk5iffcfzgc3wo2zjhkohcyjzsoq; d=jagalactic.com; t=1768590711;
+	s=o25mqk5iffcfzgc3wo2zjhkohcyjzsoq; d=jagalactic.com; t=1768590745;
 	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id;
-	bh=glz+00ijWYQQ2Oo0TY1hR6I+VY2OuM/0QdldFtPNveU=;
-	b=pYRdvorWVJ26bvSAafZRqGCB5LRFrwcUlF6Q60jq8NYGh0xq0RdgVrIPOIz5zS7Q
-	lOB97EWqEjlWx6ijmk8i8orpktu9yUXwDZS2hMy+IA8wZK/BZv+3V3JyfvUCnDq6CHG
-	v3Tqsp8uti7g3xC8GVQzYmWWraYPLxS3jVJw1bZg=
+	bh=5fP7NXTPONxO5AJaCYWYjZ+g0d1Sgj1vq484yxg6Jis=;
+	b=TjujrsOumLb8HO/SVkH/RgKzclBuMbNcETjd4u/G2cgR8qH66fvVo/OgrvJxZUBA
+	sHIrZHCBZr8kdJBWGCKKftoawO1XslMbrE6sFOfcBeU8CubEXfT3xldiNUVUUexXDJ3
+	eKII5H4Wh092/LSWE1ddEZ3eK/wRUAjJFEHnOvJg=
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1768590711;
+	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1768590745;
 	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id:Feedback-ID;
-	bh=glz+00ijWYQQ2Oo0TY1hR6I+VY2OuM/0QdldFtPNveU=;
-	b=cbJN+/LbGQzrueOi19mgvuMFtWcGC9EYpi0Lkb1jnmM/HciKcXsXzIzLbNQPPVff
-	yM3vSYdiJeWG3tUdXh+dFyX46lgvw6F73xNpKJaJSdJrqsRjo+Cy+whvLtrLBxry3p+
-	yALaRQqyoAmBSuSMPwl971xYOfTj28V7n16KSZ1s=
-Subject: [PATCH V5 2/3] fuse_kernel.h: add famfs DAX fmap protocol definitions
+	bh=5fP7NXTPONxO5AJaCYWYjZ+g0d1Sgj1vq484yxg6Jis=;
+	b=DYqssEoQZ9j6FhPhYUaI3Uk+r/D19EwjZ0Zjm379e9Eog5VPBXJqp3iy5EXp70VH
+	rpPno10VCyFTXiweCYovRmkXLqJfBAEr0s7+vA9ya4YN7tscm6sjR1woulTMkbOMOvN
+	s+5wfe2R1vt2WCT7HfKCGHZnm31SfMnnJXxxq29s=
+Subject: [PATCH V5 3/3] fuse: add famfs DAX fmap support
 From: =?UTF-8?Q?John_Groves?= <john@jagalactic.com>
 To: =?UTF-8?Q?John_Groves?= <John@Groves.net>, 
 	=?UTF-8?Q?Miklos_Szeredi?= <miklos@szeredi.hu>, 
@@ -84,7 +84,7 @@ Cc: =?UTF-8?Q?John_Groves?= <jgroves@micron.com>,
 	=?UTF-8?Q?nvdimm=40lists=2Elinux=2Edev?= <nvdimm@lists.linux.dev>, 
 	=?UTF-8?Q?linux-cxl=40vger=2Ekernel=2Eorg?= <linux-cxl@vger.kernel.org>, 
 	=?UTF-8?Q?linux-fsdevel=40vger=2Ekernel=2Eorg?= <linux-fsdevel@vger.kernel.org>
-Date: Fri, 16 Jan 2026 19:11:50 +0000
+Date: Fri, 16 Jan 2026 19:12:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -96,89 +96,100 @@ Content-Transfer-Encoding: quoted-printable
 In-Reply-To: <20260116191036.1470-1-john@jagalactic.com>
 References: <20260116125831.953.compound@groves.net> 
  <20260116191036.1470-1-john@jagalactic.com> 
- <20260116191036.1470-3-john@jagalactic.com>
+ <20260116191036.1470-4-john@jagalactic.com>
 X-Mailer: Amazon WorkMail
-Thread-Index: AQHchxoe1VAe00deR0Sw2d725QhurgAAa/D4AAB2LiA=
-Thread-Topic: [PATCH V5 2/3] fuse_kernel.h: add famfs DAX fmap protocol
- definitions
-X-Wm-Sent-Timestamp: 1768590709
+Thread-Index: AQHchxoe1VAe00deR0Sw2d725QhurgAAa/D4AAB7UOQ=
+Thread-Topic: [PATCH V5 3/3] fuse: add famfs DAX fmap support
+X-Wm-Sent-Timestamp: 1768590743
 X-Original-Mailer: git-send-email 2.52.0
-Message-ID: <0100019bc838980e-2cb9b0f8-583e-41b2-861c-39858ad5650a-000000@email.amazonses.com>
+Message-ID: <0100019bc8391dc0-89a162bb-f31f-4506-bee1-f946f6e10343-000000@email.amazonses.com>
 Feedback-ID: ::1.us-east-1.LF00NED762KFuBsfzrtoqw+Brn/qlF9OYdxWukAhsl8=:AmazonSES
-X-SES-Outgoing: 2026.01.16-54.240.11.79
+X-SES-Outgoing: 2026.01.16-54.240.11.173
 
-From: John Groves <john@groves.net>=0D=0A=0D=0AAdd FUSE protocol version =
-7.46 definitions for famfs DAX file mapping:=0D=0A=0D=0ACapability flag:=0D=
-=0A  - FUSE_DAX_FMAP (bit 43): kernel supports DAX fmap operations=0D=0A=0D=
-=0ANew opcodes:=0D=0A  - FUSE_GET_FMAP (54): retrieve file extent map for=
- DAX mapping=0D=0A  - FUSE_GET_DAXDEV (55): retrieve DAX device info by i=
-ndex=0D=0A=0D=0ANew structures for GET_FMAP reply:=0D=0A  - struct fuse_f=
-amfs_fmap_header: file map header with type and extent info=0D=0A  - stru=
-ct fuse_famfs_simple_ext: simple extent (device, offset, length)=0D=0A  -=
- struct fuse_famfs_iext: interleaved extent for striped allocations=0D=0A=
-=0D=0ANew structures for GET_DAXDEV:=0D=0A  - struct fuse_get_daxdev_in: =
-request DAX device by index=0D=0A  - struct fuse_daxdev_out: DAX device n=
-ame response=0D=0A=0D=0ASupporting definitions:=0D=0A  - enum fuse_famfs_=
-file_type: regular, superblock, or log file=0D=0A  - enum famfs_ext_type:=
- simple or interleaved extent type=0D=0A=0D=0ASigned-off-by: John Groves =
-<john@groves.net>=0D=0A---=0D=0A include/fuse_kernel.h | 88 +++++++++++++=
-++++++++++++++++++++++++++++++=0D=0A 1 file changed, 88 insertions(+)=0D=0A=
-=0D=0Adiff --git a/include/fuse_kernel.h b/include/fuse_kernel.h=0D=0Aind=
-ex c13e1f9..7fdfc30 100644=0D=0A--- a/include/fuse_kernel.h=0D=0A+++ b/in=
-clude/fuse_kernel.h=0D=0A@@ -240,6 +240,19 @@=0D=0A  *  - add FUSE_COPY_F=
-ILE_RANGE_64=0D=0A  *  - add struct fuse_copy_file_range_out=0D=0A  *  - =
-add FUSE_NOTIFY_PRUNE=0D=0A+ *=0D=0A+ *  7.46=0D=0A+ *    - Add FUSE_DAX_=
-FMAP capability - ability to handle in-kernel fsdax maps=0D=0A+ *    - Ad=
-d the following structures for the GET_FMAP message reply components:=0D=0A=
-+ *      - struct fuse_famfs_simple_ext=0D=0A+ *      - struct fuse_famfs=
-_iext=0D=0A+ *      - struct fuse_famfs_fmap_header=0D=0A+ *    - Add the=
- following structs for the GET_DAXDEV message and reply=0D=0A+ *      - s=
-truct fuse_get_daxdev_in=0D=0A+ *      - struct fuse_get_daxdev_out=0D=0A=
-+ *    - Add the following enumerated types=0D=0A+ *      - enum fuse_fam=
-fs_file_type=0D=0A+ *      - enum famfs_ext_type=0D=0A  */=0D=0A=20=0D=0A=
- #ifndef _LINUX_FUSE_H=0D=0A@@ -448,6 +461,7 @@ struct fuse_file_lock {=0D=
-=0A  * FUSE_OVER_IO_URING: Indicate that client supports io-uring=0D=0A  =
-* FUSE_REQUEST_TIMEOUT: kernel supports timing out requests.=0D=0A  *=09=09=
-=09 init_out.request_timeout contains the timeout (in secs)=0D=0A+ * FUSE=
-_DAX_FMAP:        kernel supports dev_dax_iomap (aka famfs) fmaps=0D=0A  =
-*/=0D=0A #define FUSE_ASYNC_READ=09=09(1 << 0)=0D=0A #define FUSE_POSIX_L=
-OCKS=09(1 << 1)=0D=0A@@ -495,6 +509,7 @@ struct fuse_file_lock {=0D=0A #d=
-efine FUSE_ALLOW_IDMAP=09(1ULL << 40)=0D=0A #define FUSE_OVER_IO_URING=09=
-(1ULL << 41)=0D=0A #define FUSE_REQUEST_TIMEOUT=09(1ULL << 42)=0D=0A+#def=
-ine FUSE_DAX_FMAP=09=09(1ULL << 43)=0D=0A=20=0D=0A /**=0D=0A  * CUSE INIT=
- request/reply flags=0D=0A@@ -664,6 +679,10 @@ enum fuse_opcode {=0D=0A =09=
-FUSE_STATX=09=09=3D 52,=0D=0A =09FUSE_COPY_FILE_RANGE_64=09=3D 53,=0D=0A=20=
-=0D=0A+=09/* Famfs / devdax opcodes */=0D=0A+=09FUSE_GET_FMAP           =3D=
- 54,=0D=0A+=09FUSE_GET_DAXDEV         =3D 55,=0D=0A+=0D=0A =09/* CUSE spe=
-cific operations */=0D=0A =09CUSE_INIT=09=09=3D 4096,=0D=0A=20=0D=0A@@ -1=
-308,4 +1327,73 @@ struct fuse_uring_cmd_req {=0D=0A =09uint8_t padding[6]=
-;=0D=0A };=0D=0A=20=0D=0A+/* Famfs fmap message components */=0D=0A+=0D=0A=
-+#define FAMFS_FMAP_VERSION 1=0D=0A+=0D=0A+#define FAMFS_FMAP_MAX 32768 /=
-* Largest supported fmap message */=0D=0A+#define FUSE_FAMFS_MAX_EXTENTS =
-32=0D=0A+#define FUSE_FAMFS_MAX_STRIPS 32=0D=0A+=0D=0A+enum fuse_famfs_fi=
-le_type {=0D=0A+=09FUSE_FAMFS_FILE_REG,=0D=0A+=09FUSE_FAMFS_FILE_SUPERBLO=
-CK,=0D=0A+=09FUSE_FAMFS_FILE_LOG,=0D=0A+};=0D=0A+=0D=0A+enum famfs_ext_ty=
-pe {=0D=0A+=09FUSE_FAMFS_EXT_SIMPLE =3D 0,=0D=0A+=09FUSE_FAMFS_EXT_INTERL=
-EAVE =3D 1,=0D=0A+};=0D=0A+=0D=0A+struct fuse_famfs_simple_ext {=0D=0A+=09=
-uint32_t se_devindex;=0D=0A+=09uint32_t reserved;=0D=0A+=09uint64_t se_of=
-fset;=0D=0A+=09uint64_t se_len;=0D=0A+};=0D=0A+=0D=0A+struct fuse_famfs_i=
-ext { /* Interleaved extent */=0D=0A+=09uint32_t ie_nstrips;=0D=0A+=09uin=
-t32_t ie_chunk_size;=0D=0A+=09uint64_t ie_nbytes; /* Total bytes for this=
- interleaved_ext;=0D=0A+=09=09=09     * sum of strips may be more=0D=0A+=09=
-=09=09     */=0D=0A+=09uint64_t reserved;=0D=0A+};=0D=0A+=0D=0A+struct fu=
-se_famfs_fmap_header {=0D=0A+=09uint8_t file_type; /* enum famfs_file_typ=
-e */=0D=0A+=09uint8_t reserved;=0D=0A+=09uint16_t fmap_version;=0D=0A+=09=
-uint32_t ext_type; /* enum famfs_log_ext_type */=0D=0A+=09uint32_t nexten=
-ts;=0D=0A+=09uint32_t reserved0;=0D=0A+=09uint64_t file_size;=0D=0A+=09ui=
-nt64_t reserved1;=0D=0A+};=0D=0A+=0D=0A+struct fuse_get_daxdev_in {=0D=0A=
-+=09uint32_t        daxdev_num;=0D=0A+};=0D=0A+=0D=0A+#define DAXDEV_NAME=
-_MAX 256=0D=0A+=0D=0A+/* fuse_daxdev_out has enough space for a uuid if w=
-e need it */=0D=0A+struct fuse_daxdev_out {=0D=0A+=09uint16_t index;=0D=0A=
-+=09uint16_t reserved;=0D=0A+=09uint32_t reserved2;=0D=0A+=09uint64_t res=
-erved3;=0D=0A+=09uint64_t reserved4;=0D=0A+=09char name[DAXDEV_NAME_MAX];=
-=0D=0A+};=0D=0A+=0D=0A+static __inline__ int32_t fmap_msg_min_size(void)=0D=
-=0A+{=0D=0A+=09/* Smallest fmap message is a header plus one simple exten=
-t */=0D=0A+=09return (sizeof(struct fuse_famfs_fmap_header)=0D=0A+=09=09+=
- sizeof(struct fuse_famfs_simple_ext));=0D=0A+}=0D=0A+=0D=0A #endif /* _L=
-INUX_FUSE_H */=0D=0A--=20=0D=0A2.52.0=0D=0A=0D=0A
+From: John Groves <john@groves.net>=0D=0A=0D=0AAdd new FUSE operations an=
+d capability for famfs DAX file mapping:=0D=0A=0D=0A- FUSE_CAP_DAX_FMAP: =
+New capability flag at bit 32 (using want_ext/capable_ext=0D=0A  fields) =
+to indicate kernel and userspace support for DAX fmaps=0D=0A=0D=0A- GET_F=
+MAP: New operation to retrieve a file map for DAX-mapped files.=0D=0A  Re=
+turns a fuse_famfs_fmap_header followed by simple or interleaved=0D=0A  e=
+xtent descriptors. The kernel passes the file size as an argument.=0D=0A=0D=
+=0A- GET_DAXDEV: New operation to retrieve DAX device info by index.=0D=0A=
+  Called when GET_FMAP returns an fmap referencing a previously=0D=0A  un=
+known DAX device.=0D=0A=0D=0AThese operations enable FUSE filesystems to =
+provide direct access=0D=0Amappings to persistent memory, allowing the ke=
+rnel to map files=0D=0Adirectly to DAX devices without page cache interme=
+diation.=0D=0A=0D=0ASigned-off-by: John Groves <john@groves.net>=0D=0A---=
+=0D=0A include/fuse_common.h   |  5 +++++=0D=0A include/fuse_lowlevel.h |=
+ 37 +++++++++++++++++++++++++++++++++++++=0D=0A lib/fuse_lowlevel.c     |=
+ 31 ++++++++++++++++++++++++++++++-=0D=0A patch/maintainers.txt   |  0=0D=
+=0A 4 files changed, 72 insertions(+), 1 deletion(-)=0D=0A create mode 10=
+0644 patch/maintainers.txt=0D=0A=0D=0Adiff --git a/include/fuse_common.h =
+b/include/fuse_common.h=0D=0Aindex 041188e..23b24e8 100644=0D=0A--- a/inc=
+lude/fuse_common.h=0D=0A+++ b/include/fuse_common.h=0D=0A@@ -512,6 +512,1=
+1 @@ struct fuse_loop_config_v1 {=0D=0A  */=0D=0A #define FUSE_CAP_OVER_I=
+O_URING (1UL << 31)=0D=0A=20=0D=0A+/**=0D=0A+ * handle files that use fam=
+fs dax fmaps=0D=0A+ */=0D=0A+#define FUSE_CAP_DAX_FMAP (1UL << 32)=0D=0A+=
+=0D=0A /**=0D=0A  * Ioctl flags=0D=0A  *=0D=0Adiff --git a/include/fuse_l=
+owlevel.h b/include/fuse_lowlevel.h=0D=0Aindex 016f831..a94436a 100644=0D=
+=0A--- a/include/fuse_lowlevel.h=0D=0A+++ b/include/fuse_lowlevel.h=0D=0A=
+@@ -1341,6 +1341,43 @@ struct fuse_lowlevel_ops {=0D=0A =09 */=0D=0A =09v=
+oid (*statx)(fuse_req_t req, fuse_ino_t ino, int flags, int mask,=0D=0A =09=
+=09      struct fuse_file_info *fi);=0D=0A+=0D=0A+=09/**=0D=0A+=09 * Get =
+a famfs/devdax/fsdax fmap=0D=0A+=09 *=0D=0A+=09 * Retrieve a file map (ak=
+a fmap) for a previously looked-up file.=0D=0A+=09 * The fmap is serializ=
+ed into the buffer, anchored by=0D=0A+=09 * struct fuse_famfs_fmap_header=
+, followed by one or more=0D=0A+=09 * structs fuse_famfs_simple_ext, or f=
+use_famfs_iext (which itself=0D=0A+=09 * is followed by one or more fuse_=
+famfs_simple_ext...=0D=0A+=09 *=0D=0A+=09 * Valid replies:=0D=0A+=09 *   =
+ fuse_reply_buf  (TODO: variable-size reply)=0D=0A+=09 *    fuse_reply_er=
+r=0D=0A+=09 *=0D=0A+=09 * @param req request handle=0D=0A+=09 * @param in=
+o the inode number=0D=0A+=09 */=0D=0A+=09void (*get_fmap) (fuse_req_t req=
+, fuse_ino_t ino, size_t size);=0D=0A+=0D=0A+=09/**=0D=0A+=09 * Get a dax=
+dev by index=0D=0A+=09 *=0D=0A+=09 * Retrieve info on a daxdev by index. =
+This will be called any time=0D=0A+=09 * GET_FMAP has returned a file map=
+ that references a previously=0D=0A+=09 * unused daxdev. struct famfs_sim=
+ple_ext, which is used for all=0D=0A+=09 * resolutions to daxdev offsets,=
+ references daxdevs by index.=0D=0A+=09 * In user space we maintain a mas=
+ter list of all referenced daxdevs=0D=0A+=09 * by index, which is queried=
+ by get_daxdev.=0D=0A+=09 *=0D=0A+=09 * Valid replies:=0D=0A+=09 *    fus=
+e_reply_buf=0D=0A+=09 *    fuse_reply_err=0D=0A+=09 *=0D=0A+=09 * @param =
+req request handle=0D=0A+=09 * @param ino the index of the daxdev=0D=0A+=09=
+ */=0D=0A+=09void (*get_daxdev) (fuse_req_t req, int daxdev_index);=0D=0A=
+ };=0D=0A=20=0D=0A /**=0D=0Adiff --git a/lib/fuse_lowlevel.c b/lib/fuse_l=
+owlevel.c=0D=0Aindex 0cde3d4..ac78233 100644=0D=0A--- a/lib/fuse_lowlevel=
+=2Ec=0D=0A+++ b/lib/fuse_lowlevel.c=0D=0A@@ -2769,7 +2769,8 @@ _do_init(f=
+use_req_t req, const fuse_ino_t nodeid, const void *op_in,=0D=0A =09=09=09=
+se->conn.capable_ext |=3D FUSE_CAP_NO_EXPORT_SUPPORT;=0D=0A =09=09if (ina=
+rgflags & FUSE_OVER_IO_URING)=0D=0A =09=09=09se->conn.capable_ext |=3D FU=
+SE_CAP_OVER_IO_URING;=0D=0A-=0D=0A+=09=09if (inargflags & FUSE_DAX_FMAP)=0D=
+=0A+=09=09=09se->conn.capable_ext |=3D FUSE_CAP_DAX_FMAP;=0D=0A =09} else=
+ {=0D=0A =09=09se->conn.max_readahead =3D 0;=0D=0A =09}=0D=0A@@ -2932,6 +=
+2933,8 @@ _do_init(fuse_req_t req, const fuse_ino_t nodeid, const void *o=
+p_in,=0D=0A =09=09outargflags |=3D FUSE_REQUEST_TIMEOUT;=0D=0A =09=09outa=
+rg.request_timeout =3D se->conn.request_timeout;=0D=0A =09}=0D=0A+=09if (=
+se->conn.want_ext & FUSE_CAP_DAX_FMAP)=0D=0A+=09=09outargflags |=3D FUSE_=
+DAX_FMAP;=0D=0A=20=0D=0A =09outarg.max_readahead =3D se->conn.max_readahe=
+ad;=0D=0A =09outarg.max_write =3D se->conn.max_write;=0D=0A@@ -3035,6 +30=
+38,30 @@ static void do_destroy(fuse_req_t req, fuse_ino_t nodeid, const =
+void *inarg)=0D=0A =09_do_destroy(req, nodeid, inarg, NULL);=0D=0A }=0D=0A=
+=20=0D=0A+static void=0D=0A+do_get_fmap(fuse_req_t req, fuse_ino_t nodeid=
+, const void *inarg)=0D=0A+{=0D=0A+=09struct fuse_session *se =3D req->se=
+;=0D=0A+=09struct fuse_getxattr_in *arg =3D (struct fuse_getxattr_in *) i=
+narg;=0D=0A+=0D=0A+=09if (se->op.get_fmap)=0D=0A+=09=09se->op.get_fmap(re=
+q, nodeid, arg->size);=0D=0A+=09else=0D=0A+=09=09fuse_reply_err(req, -EOP=
+NOTSUPP);=0D=0A+}=0D=0A+=0D=0A+static void=0D=0A+do_get_daxdev(fuse_req_t=
+ req, fuse_ino_t nodeid, const void *inarg)=0D=0A+{=0D=0A+=09struct fuse_=
+session *se =3D req->se;=0D=0A+=09(void)inarg;=0D=0A+=0D=0A+=09if (se->op=
+=2Eget_daxdev)=0D=0A+=09=09se->op.get_daxdev(req, nodeid); /* Use nodeid =
+as daxdev_index */=0D=0A+=09else=0D=0A+=09=09fuse_reply_err(req, -EOPNOTS=
+UPP);=0D=0A+}=0D=0A+=0D=0A static void list_del_nreq(struct fuse_notify_r=
+eq *nreq)=0D=0A {=0D=0A =09struct fuse_notify_req *prev =3D nreq->prev;=0D=
+=0A@@ -3470,6 +3497,8 @@ static struct {=0D=0A =09[FUSE_LSEEK]=09   =3D {=
+ do_lseek,       "LSEEK"=09     },=0D=0A =09[FUSE_STATX]=09   =3D { do_st=
+atx,       "STATX"=09     },=0D=0A =09[CUSE_INIT]=09   =3D { cuse_lowleve=
+l_init, "CUSE_INIT"   },=0D=0A+=09[FUSE_GET_FMAP]=09   =3D { do_get_fmap,=
+ "GET_FMAP"       },=0D=0A+=09[FUSE_GET_DAXDEV]  =3D { do_get_daxdev, "GE=
+T_DAXDEV"   },=0D=0A };=0D=0A=20=0D=0A static struct {=0D=0Adiff --git a/=
+patch/maintainers.txt b/patch/maintainers.txt=0D=0Anew file mode 100644=0D=
+=0Aindex 0000000..e69de29=0D=0A--=20=0D=0A2.52.0=0D=0A=0D=0A
 
