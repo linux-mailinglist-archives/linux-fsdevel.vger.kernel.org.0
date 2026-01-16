@@ -1,104 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-74084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664EAD2F20F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 10:57:09 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B7DD2F2BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 11:00:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id EAD3630407F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 09:56:07 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 99238302D53E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 10:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C65E3587B4;
-	Fri, 16 Jan 2026 09:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C16D246782;
+	Fri, 16 Jan 2026 10:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A2l+unwm"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WCF7cVDD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1CF2DC33F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 09:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27DC3590C4
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 10:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768557364; cv=none; b=fvosFC76w/TJZCwcVZcjJuMW5o7ExiWAiaSlgl3bQSwDInpnj7Uw1RSDbpbhVimgcgk5xfvhEELf/uqc0yNXK4PySL3V8gFhlvc0h7suWKC29SWXR4LzipYT8vafh5RzSUEdDrnO4rvyCzG8HhPPBF+9570N4bQNFbBKD0BuOD8=
+	t=1768557605; cv=none; b=M0iVlJa9ACxYCJUCzykTq6sBYPEKNnxbfc7bsKp5Cm5FzRiWjTfN80WhXyW68wdEw5jLEyNhC01qVB7x0riE7sIbePMAHj10v9J11PA8ko7qtt4lZCImNsZGbS4xRxiuf5cGXoO1pC+Yxfdp5AqFSzAyFLCBy3GVBtuS4XQPnoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768557364; c=relaxed/simple;
-	bh=1/Y6D7uPZ1vIvz2rVhQ0aKwkUU8dlBZd3R4Fuh8oWx8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WAiqtml14Z+tttW9JerY8gZvvsZz5jrbAtgCD04tPJ4cpd2oq8z+UhUhRsnK/uJ+B6exsB85CgCPX9qHj9yVQic22BR1qXLV9ZbB01Pk+pfSDlrBP+bikYAzdz2Ouu4STFNR1oWTYhfVxJESFotZ1GrOhvWuH+0Pbz0hLmlOpQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A2l+unwm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FCFBC116C6;
-	Fri, 16 Jan 2026 09:56:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768557363;
-	bh=1/Y6D7uPZ1vIvz2rVhQ0aKwkUU8dlBZd3R4Fuh8oWx8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=A2l+unwmGkiFa5eVrBFSVJ3Lx4xgylH31qRXKCQ5JOcfIzlDlMfpMphjzxRiTsWMI
-	 dJ9YZDJ0ZxeNbjrrphEKZQ2NYQcLt8CjU+aoaHvOUMGJZ/mqVcjXuq4xCdZZg3TI3i
-	 s07U1kXxqL02Gh0m4GlT1f2Uz1s86bSyXYfXldSG/eRSXOketa+cCitSaWOWkn6/Bm
-	 8/k4MPSGOpBc6ksJvbuQHBxUxeX7kvr7zW5/1EO28j05vlbqlidfjG/MjzPKbYjL5v
-	 sLhD8S7JAFqglNDeE1jfKgnFE2feejXush2aMqyMriyG2Ni3AR08tIVIC6joMhhTq1
-	 s51CMnT+LTbcg==
-From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fuse: use private naming for fuse hash size
-Date: Fri, 16 Jan 2026 10:55:57 +0100
-Message-ID: <20260116-gesindel-kribbeln-e361af6c984a@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <195c9525-281c-4302-9549-f3d9259416c6@kernel.dk>
-References: <195c9525-281c-4302-9549-f3d9259416c6@kernel.dk>
+	s=arc-20240116; t=1768557605; c=relaxed/simple;
+	bh=fW48aaLNkBbdqH7KvcMJgixNgMqvTRK+gAl5/GVTNZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YMAbcBkse428wPi3yMsi9+6LmEMJjP39fe+3ggmVuRBlbM8DmwkTTkjUKlfNgJmnnHS8QjQGRf2wvuRtVomBsuTXEC7JH9UaGREdmBz/V0vzDyniPmH8boFggZTTzg7JAFQUKL15TWYxZMAUHAxJk1gl3jmFBu0CTYq3Ih56iRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WCF7cVDD; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-432d2c7dd52so1639862f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 02:00:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1768557601; x=1769162401; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ik7nBSUvqjiZji8p0UMpcxyJ9CmKYvj/STnQwZRmw6o=;
+        b=WCF7cVDDVoB7pSe59ofWaHYm6WNWzgeCXj8b+qY0A56i1sLhU7jfZqSVNd09WGg+iP
+         f4eR9gPxvQR5/pHfAGNpik4PCuv6aKvY6ouYfZtAaHwrnRuZFJw3FTz4pmkHEG86FoB7
+         TMmoYc+q95nONQi9si31m7D047LidkhP8UUnwP+UOdoThlMX5CJcYB04BF9WOnets/Tg
+         L5dlHcJONq2vPjUjHvC1mCTJQ2urla/2xjO+iH5DEdnk4eUv+OCuOjTemCPEY2alMOZa
+         fWYcpaR3qVDtomJZhGypYpkv6zIeBvXluZfpLRi9Y+0snNxTaupLZlVdQB6Xr29r1t2X
+         AIQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768557601; x=1769162401;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ik7nBSUvqjiZji8p0UMpcxyJ9CmKYvj/STnQwZRmw6o=;
+        b=m4t0KVflqd3ZGOQ4YgoycFws3Jpa3+BNgyV1WomeB3WLb2EMjOivvUOqdFh6xn/bmJ
+         UZ1wv4QU4Rd00z//lRPg1cGI1CnQz0ONTRmmKdWS+78ZanuGkwvYjjz1MKYoryB0FMNt
+         TZDNPOBK4VbaEfR4XEMCaGvSJkGo7AGQ+3yN1THVQiPI/JgkaVU1DnwudjLixChien0N
+         lKK7Frxc5JyhQv0V+h4jI8e2E9W/XE7ShP6ZoyPMe+iyGo7mWgwGFKLBcUz/VssHBcZm
+         SmzL3vcsESHpG8XO9SmoaRI2mFo5Lj74C93GpDrwU4tjcjLtKJ2yGjyXYwUtPeUoUilr
+         jROA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtH0SRNIQk4aAnpA7fy28CSztYhwWNlvEPq6KAJiG6LqlnBAx3JCsH98R3AQ3XjZvLdlFS+HHZwqlIHdgv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8IOW4ZFKrO+Z1FPljUCDCt4Vzo6X1i/NcPP5nLnWJgRBPUmPx
+	Uw0Z0MZna7OwpURHMX4ixyxz4loq3gKoB6yhLATsSNVm6zATN1w7F5oo0W9k6F8beFo=
+X-Gm-Gg: AY/fxX6Y6UqOzDf6OqL1/vngnUNrWODBPE5+IWObPRBNQBPG/38NRIc1BQ4mXz8Vj4B
+	35mjYrpS0b4m3yRvCWASnq9fnUeSSoVfYDrVX0Y3HEn4U232Z9DLCoQD3mvQV1iLrYyZWoPawRM
+	rwfjj3zgJHJTwYO3RYMcI+FoHfemWLt8UpWZzMBTR/PCoJGn1CAg9dHCgxJLIGc8oAxxlCOd/lb
+	QAMKW8URdsJR6lZPYoqNcFpLwhOkCnwjy8LHNg5pUZJ6cSWCR6RA2xXUU8joeMQhP0XEMCZUcmO
+	f57/2JGkoTYrxeYjddJU1PKCl8kadvG2B1MSSR5qdfuBCb+tLIkvGt6eX8kY5pG4FtbHaQtPQ+H
+	eGvUzo0tq6FIqkSGfMPHcBEnDcUn5F2X1Q+e+oeqmt9Ky0sEEDCOM0sWyy/gqyWRDRiF0xblXC4
+	dVq0EKsGkvlTrrpg==
+X-Received: by 2002:a05:6000:26ce:b0:432:dfea:1fa8 with SMTP id ffacd0b85a97d-43569bc5767mr3019291f8f.45.1768557601174;
+        Fri, 16 Jan 2026 02:00:01 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43569921f6esm4337797f8f.4.2026.01.16.01.59.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Jan 2026 02:00:00 -0800 (PST)
+Date: Fri, 16 Jan 2026 10:59:57 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Breno Leitao <leitao@debian.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
+	netdev@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-hardening@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 15/19] drivers: tty: serial: mux.c: Migrate to
+ register_console_force helper
+Message-ID: <aWoMHbbn-BmmbZMg@pathway.suse.cz>
+References: <20251227-printk-cleanup-part3-v1-0-21a291bcf197@suse.com>
+ <20251227-printk-cleanup-part3-v1-15-21a291bcf197@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1770; i=brauner@kernel.org; h=from:subject:message-id; bh=1/Y6D7uPZ1vIvz2rVhQ0aKwkUU8dlBZd3R4Fuh8oWx8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRmcet/3ninKPLp69KgP2si//j/e29zU6LZ6Tbfu/XGa SzT+Do0O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACay8RIjw7ObKuIMx5n+6D+7 nyW+UJor9qv165nbiy8Xx6jy8vVHnGVk+PtsefHypb8PH/51/3dXqilT/H02A5dLIk5Bn93sl/F IcgMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251227-printk-cleanup-part3-v1-15-21a291bcf197@suse.com>
 
-On Thu, 15 Jan 2026 05:25:28 -0700, Jens Axboe wrote:
-> With a mix of include dependencies, the compiler warns that:
+On Sat 2025-12-27 09:16:22, Marcos Paulo de Souza wrote:
+> The register_console_force function was introduced to register consoles
+> even on the presence of default consoles, replacing the CON_ENABLE flag
+> that was forcing the same behavior.
 > 
-> fs/fuse/dir.c:35:9: warning: ?HASH_BITS? redefined
->    35 | #define HASH_BITS       5
->       |         ^~~~~~~~~
-> In file included from ./include/linux/io_uring_types.h:5,
->                  from ./include/linux/bpf.h:34,
->                  from ./include/linux/security.h:35,
->                  from ./include/linux/fs_context.h:14,
->                  from fs/fuse/dir.c:13:
-> ./include/linux/hashtable.h:28:9: note: this is the location of the previous definition
->    28 | #define HASH_BITS(name) ilog2(HASH_SIZE(name))
->       |         ^~~~~~~~~
-> fs/fuse/dir.c:36:9: warning: ?HASH_SIZE? redefined
->    36 | #define HASH_SIZE       (1 << HASH_BITS)
->       |         ^~~~~~~~~
-> ./include/linux/hashtable.h:27:9: note: this is the location of the previous definition
->    27 | #define HASH_SIZE(name) (ARRAY_SIZE(name))
->       |         ^~~~~~~~~
-> 
-> [...]
+> --- a/drivers/tty/serial/mux.c
+> +++ b/drivers/tty/serial/mux.c
+> @@ -390,7 +390,7 @@ static struct console mux_console = {
+>  	.write =	mux_console_write,
+>  	.device =	uart_console_device,
+>  	.setup =	mux_console_setup,
+> -	.flags =	CON_ENABLED | CON_PRINTBUFFER,
+> +	.flags =	CON_PRINTBUFFER,
+>  	.index =	0,
+>  	.data =		&mux_driver,
+>  };
+> @@ -547,7 +547,7 @@ static int __init mux_init(void)
+>  		mod_timer(&mux_timer, jiffies + MUX_POLL_DELAY);
+>  
+>  #ifdef CONFIG_SERIAL_MUX_CONSOLE
+> -	        register_console(&mux_console);
+> +		register_console_force(&mux_console);
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+The situation here is the same as in 16th patch for
+ma35d1serial_console().
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Also "mux_console" is assigned to
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+static int __init mux_probe(struct parisc_device *dev)
+{
+[...]
+		mux_driver.cons = MUX_CONSOLE;
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+		status = uart_register_driver(&mux_driver);
+[...]
+		status = uart_add_one_port(&mux_driver, port);
+[...]
+}
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+So, that it can get registered also by:
 
-[1/1] fuse: use private naming for fuse hash size
-      https://git.kernel.org/vfs/vfs/c/4973d95679fb
+  + mux_probe()
+    + uart_add_one_port()
+      + serial_ctrl_register_port()
+	+ serial_core_register_port()
+	  + serial_core_add_one_port()
+	    + uart_configure_port()
+	      + register_console()
+
+And we would need to pass the "force" information via CON_FORCE flag.
+
+Best Regards,
+Petr
 
