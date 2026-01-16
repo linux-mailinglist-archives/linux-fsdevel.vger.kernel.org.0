@@ -1,128 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-74157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF04D3314A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 16:11:28 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9338D3317A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 16:12:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 54B67302084F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 15:07:43 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 665BE3029F96
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 15:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011C0338906;
-	Fri, 16 Jan 2026 15:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262BE339B39;
+	Fri, 16 Jan 2026 15:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Daxvp1VF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwjBbbAx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245AB3321D7
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 15:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3FB339870
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 15:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768576061; cv=none; b=qlV/E16v5eH/yBisMt43vKxBmYzC1IZf0SdGy22YC/UO1iiTjR800+MWaLwWr6mKX7LlzRRYXWTa+myU+5xcpXnywAkkwhVEe0QjLq87TyjRHFp9nZOfVgzdNiz1sNFemfQi6W/KFhQABFpLYKenDi02R+p0s06wPw6EQOz6b/8=
+	t=1768576206; cv=none; b=hYZyGBVlr3XNfSX6AjbQ7mzpx8gWApmsinqdJ5BaNHccxE5K/olOUtHixuqHb/bkiW6RxlUXTELA/jD8AWqLW8XZS7Fj9YXItC99WesYhpKHOkvIL5iTAKKrRvM3CNzMOKJ7QZcsaXM51UXojDvHom+muY7Iv6LZUiZ+2wJwPrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768576061; c=relaxed/simple;
-	bh=6yT1WC8wZTZZUj3tYhIVTPm8W9XDCfb90ZmlXfVRUO0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UzuCc2STxDnlGxq15yWdMOGbsx3LUpPDR5TjtFUb5kFlcgquBJXWJXgwkJWGDnFDKjIhPQIsGfkuzPZSmkUe0fVDB6c6Z/7pKuvUE+Z7pYCOjEE4tfdiBL+7HnPcfXZ8GpbKodWFKILYtuyEpM0u0ZoGgUVPuen3XBd1Lv7skPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Daxvp1VF; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b86f3e88d4dso359969966b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 07:07:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768576058; x=1769180858; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+G6bs7NVzcM44ltQfsJh9pxcBvAo4PqsVFNkRp6foyE=;
-        b=Daxvp1VFGn+jpLr6dQJ37HPI4r71yKOCNUZuBpkiTK2l86FG8XXrgca9AWeNImVRc9
-         2BhpLApFkj8NefORh/XA7G5rfKprCV40zVEDxhaaHUomAsQXF4fjS2BpEAj6qJScXW7M
-         X3vxmwKBMmPARnHZ4Z61c9OaRvCbhRGc9qiHwxTDXYy/V+I7hFsA/Gt9L2u3xaqOx7OB
-         di8V2rK8zYlcCl0Jx+go8PXSl6fgSpFdTdNlN5Xjs6OtAoG5LjU0jRLjDPMCxWSMjVKC
-         qwNYs/EIDmVVgdY2Mc46Rvbv3Few9FJEmnr0zYaaYDL4EXyLFyqgG3dOMU/arfzeb7eA
-         J1kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768576058; x=1769180858;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+G6bs7NVzcM44ltQfsJh9pxcBvAo4PqsVFNkRp6foyE=;
-        b=HTzSc1rQ84pdtkhqQ2Ttmnqxv9VkI1NBZM2WjUjv03jmpkMSz3yrMNrxpahkHwbCiU
-         6r0ljZuATRF1uKgheXIaUB1toPnvLGczSds3Gl3QOhYFvEuoij2HDeE6dvXOdT4G39jk
-         2JLhfy5XbGvnFNusI7JKJ26t+Q9Q5dDatERsmpbnE5PyuVXpzzZ/OS7h6zsB474gj6q+
-         QJSwDjnxEjcz3RQ8sP3PBMYPQLkUaf8Xn+AjMRIBZ/aRSXW6x8QoXEG94eELFZxGKDU/
-         L+BLaXfdRWn4ka3YoYTKV5n2Wu6q9h0FggWHehht8T0nO4igbin3fUvHwCLciaaDwMj0
-         oY8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVap2KQgFdmJEHRgvqL9RLBeW0QsPpmoe0SRtgIHWrXxuwgz8z0pThfQgNCYMoy+TwuSN0uGuNG+HOsFNgG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWfCH78wH1PL4zcz38KSNdzs/8IkuEcqgOudezEzT+C7v2504W
-	CXckt9gqEqYdtrqJ3CEBhUE9W5zTgAORXCJNpB9E36M/Sp/EtoHXCWZBYKKExHy1TEgCLduGFyU
-	Cwms88m7dQp3TrGWxFQjJTEYJmeAW6SMvG3b4bKm7Gg==
-X-Gm-Gg: AY/fxX5Yn49H1QT94BS69zX5RNWAnY/SCeEC185OHG7FInxVW9L9tGJlJevRNEe2MQg
-	ITwJpxUYjw/9T7eqo9sLKkMWiKDgz/PDS7YfVt2+DR31m3IHPjrtwAAKTYqh+ZmJ06SZk/lerjC
-	guq38KlpZPGbfSIQ9oXj3qKl8pVSym2ZFZZ8PZjSgMrh35aFG24ZVA9aavEZcEQA21MGPXTI76b
-	/H4X22STXBS7tC/sIcvXveJNPb8KH1NwLJqvAvdRJSo8G6y72b7APukzF6/WXmtble9thyBVC3A
-	NYDJTOWmqonb4Y+NTkTaGj9OTBjkDA==
-X-Received: by 2002:a17:907:868d:b0:b86:fa17:4cf5 with SMTP id
- a640c23a62f3a-b8792d274c0mr310244766b.13.1768576058130; Fri, 16 Jan 2026
- 07:07:38 -0800 (PST)
+	s=arc-20240116; t=1768576206; c=relaxed/simple;
+	bh=SefBEYYPE1CC9h9G+k4CAtgolZihts5t+4TEsUNX76I=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=FidJbuqDK4fJXXtjTyDgnhvvd967f9aFI3ImbseVgauZ6UHvX//GD8J+w0S7as3tWX0nS0it4IccmEoz79LBKmaU0qfrq1dNDnMk7Zl2PKM+PtPj+iT3Jnz4QYteLraF2WErjBslU7elFsStOqjvKiTxSGeaRM/A/FZLJTR7Z5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwjBbbAx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 806B2C4AF09;
+	Fri, 16 Jan 2026 15:10:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768576205;
+	bh=SefBEYYPE1CC9h9G+k4CAtgolZihts5t+4TEsUNX76I=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=jwjBbbAx27YfQxuCe7wPmDSb77ZC/T9IigcaxAZ7bWJtJTr3zb6cMh6EsFMZWW5EJ
+	 074QEXFZ7jg/SArRvIt8OBMFvOJa4keWfnXmuWR7FNValZmXbJyt+qdP8KQRE02xLz
+	 +zY5TiCe2FEPR6vi+YZMYb45gNTmmnSBaT2P8Ruq6WVEjrvxBtxuCj2NRCRBG1IAIu
+	 z2TiO4r/0otgGyoIbv7gGsB0HcUD1dR/Oa97spZRJnbwPSxbSBRMZU5zFa3DlKED7f
+	 eYkrpV088bOoZRd6nuM59sfN4X6UMcOV5+vigop04MKAwsiceAUAD9pMKqJF9bmT+Z
+	 kQ0nqI+RDXJ+g==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 6E752F4006C;
+	Fri, 16 Jan 2026 10:10:04 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-10.internal (MEProxy); Fri, 16 Jan 2026 10:10:04 -0500
+X-ME-Sender: <xms:y1RqaeaOF3vOxHQe_T2F9R-7KMYmP62umrgttbsdSy3Q2UKW9KVxIw>
+    <xme:y1RqacNPAZ9ZTHIuyJ9c5Ubfu9hRdaqFSizyiWUr6Lv0Cp3N0TTcbXdmXp_1OygbY
+    rMfGjLH2jd5gA_BR-_kz3-S1Yn7V3ApX3e7yXFOwyDnTD2kj26EVgM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduvdelvdeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
+    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+    hnpefhffekffeftdfgheeiveekudeuhfdvjedvfedvueduvdegleekgeetgfduhfefleen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
+    hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
+    leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
+    hilhdrtghomhdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehnvghilhessghrohifnhdrnhgrmhgvpdhrtghpthhtoheprhhitghkrdhmrg
+    gtkhhlvghmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsggtohguughinhhgsehhrghm
+    mhgvrhhsphgrtggvrdgtohhmpdhrtghpthhtoheprghnnhgrsehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopegvsghighhgvghrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    jhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhrohhnughmhieskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhesohhrrggtlhgv
+    rdgtohhmpdhrtghpthhtoheplhhinhhugidqtghrhihpthhosehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhg
+X-ME-Proxy: <xmx:y1RqaSCN9elmT8ib5nsW7DW8Zd1ausi7uodhbCuaBt_vYIA_HC5Uhw>
+    <xmx:y1RqaYVBCdFC-4maS_j0vA2JEDVpt2qQLPJYF0N6Py2rQU8d-MzeVg>
+    <xmx:y1RqaQ-du9Z52wYeUbLyZd3B6EPbySSkCYwweCU1c8GfeQv_d4kO_Q>
+    <xmx:y1RqaaSWf_trPqiu1iYR5VXye7q8Rw0XoFKfBAB7VIgUlM5JOXCnPg>
+    <xmx:zFRqaVQSZRQWoyx7tWIc3R_KZ-b6-aMUmYrHcH2POi1jqhJsxaMjkw56>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 255E4780070; Fri, 16 Jan 2026 10:10:03 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260116142845.422-1-luochunsheng@ustc.edu> <20260116142845.422-3-luochunsheng@ustc.edu>
-In-Reply-To: <20260116142845.422-3-luochunsheng@ustc.edu>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 16 Jan 2026 16:07:27 +0100
-X-Gm-Features: AZwV_QjaYU4oMfjizdCoDdaU_GpVYkApb84766ay9n4C2RSAJAdqfxRit_k7QeM
-Message-ID: <CAOQ4uxhB-L93cj3RbqLy=618ZsFr0B1d3DH0zV+gD-A5BngQrw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fuse: Relax backing file validation to compare
- backing inodes
-To: Chunsheng Luo <luochunsheng@ustc.edu>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: AO3h44zqd9zZ
+Date: Fri, 16 Jan 2026 10:09:32 -0500
+From: "Chuck Lever" <cel@kernel.org>
+To: "Jeff Layton" <jlayton@kernel.org>,
+ "Benjamin Coddington" <bcodding@hammerspace.com>,
+ "Chuck Lever" <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Eric Biggers" <ebiggers@kernel.org>, "Rick Macklem" <rick.macklem@gmail.com>
+Cc: linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+Message-Id: <3fc1c84e-3f0b-4342-9034-93e7fb441756@app.fastmail.com>
+In-Reply-To: <3db40beb64cb3663d9e8c83f498557bf8fbc0924.camel@kernel.org>
+References: <cover.1768573690.git.bcodding@hammerspace.com>
+ <c49d28aade36c044f0533d03b564ff65e00d9e05.1768573690.git.bcodding@hammerspace.com>
+ <3db40beb64cb3663d9e8c83f498557bf8fbc0924.camel@kernel.org>
+Subject: Re: [PATCH v1 2/4] nfsd: Add a key for signing filehandles
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 16, 2026 at 3:28=E2=80=AFPM Chunsheng Luo <luochunsheng@ustc.ed=
-u> wrote:
->
-> To simplify crash recovery and reduce performance impact, backing_ids
-> are not persisted across daemon restarts. However, when the daemon
-> restarts and another process open the same FUSE file and assigning it
-> the same backing file (with the same inode) will also cause the
-> fuse_inode_uncached_io_start() function to fail due to a mismatch in
-> the fb pointer.
->
-> So Relax the validation in fuse_inode_uncached_io_start() to compare
-> backing inodes instead of fuse_backing pointers.
->
-> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-> ---
->  fs/fuse/iomode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+
+On Fri, Jan 16, 2026, at 9:59 AM, Jeff Layton wrote:
+> On Fri, 2026-01-16 at 09:32 -0500, Benjamin Coddington wrote:
+>> Expand the nfsd_net to hold a siphash_key_t value "fh_key".
+>> 
+>> Expand the netlink server interface to allow the setting of the 128-bit
+>> fh_key value to be used as a signing key for filehandles.
+>> 
+>> Add a file to the nfsd filesystem to set and read the 128-bit key,
+>> formatted as a uuid.
+>> 
+>> Signed-off-by: Benjamin Coddington <bcodding@hammerspace.com>
+>> ---
+>>  Documentation/netlink/specs/nfsd.yaml | 12 ++++
+>>  fs/nfsd/netlink.c                     | 15 +++++
+>>  fs/nfsd/netlink.h                     |  1 +
+>>  fs/nfsd/netns.h                       |  2 +
+>>  fs/nfsd/nfsctl.c                      | 85 +++++++++++++++++++++++++++
+>>  fs/nfsd/trace.h                       | 19 ++++++
+>>  include/uapi/linux/nfsd_netlink.h     |  2 +
+>>  7 files changed, 136 insertions(+)
+>> 
+>> diff --git a/Documentation/netlink/specs/nfsd.yaml b/Documentation/netlink/specs/nfsd.yaml
+>> index badb2fe57c98..a467888cfa62 100644
+>> --- a/Documentation/netlink/specs/nfsd.yaml
+>> +++ b/Documentation/netlink/specs/nfsd.yaml
+>> @@ -81,6 +81,9 @@ attribute-sets:
+>>        -
+>>          name: min-threads
+>>          type: u32
+>> +      -
+>> +        name: fh-key
+>> +        type: binary
+>>    -
+>>      name: version
+>>      attributes:
+>> @@ -227,3 +230,12 @@ operations:
+>>            attributes:
+>>              - mode
+>>              - npools
+>> +    -
+>> +      name: fh-key-set
+>> +      doc: set encryption key for filehandles
+>> +      attribute-set: server
+>> +      flags: [admin-perm]
+>> +      do:
+>> +        request:
+>> +          attributes:
+>> +            - fh-key
 >
-> diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
-> index 3728933188f3..ca7619958b0d 100644
-> --- a/fs/fuse/iomode.c
-> +++ b/fs/fuse/iomode.c
-> @@ -90,7 +90,7 @@ int fuse_inode_uncached_io_start(struct fuse_inode *fi,=
- struct fuse_backing *fb)
->         spin_lock(&fi->lock);
->         /* deny conflicting backing files on same fuse inode */
->         oldfb =3D fuse_inode_backing(fi);
-> -       if (fb && oldfb && oldfb !=3D fb) {
-> +       if (fb && oldfb && file_inode(oldfb->file) !=3D file_inode(fb->fi=
-le)) {
->                 err =3D -EBUSY;
->                 goto unlock;
->         }
-> --
-> 2.43.0
->
+> Rather than a new netlink operation, I think we might be better served
+> with just sending the fh-key down as an optional attribute in the
+> "threads" op. It's a per-netns attribute anyway, and the threads
+> setting is handled similarly.
+
+Setting the FH key in the threads op seems awkward to me.
+Setting a key is optional, but you always set the thread
+count to start the server.
+
+Key setting is done once; whereas setting the thread count
+can be done many times during operation. It seems like it
+would be easy to mistakenly change the key when setting the
+thread count.
+
+From a "UI safety" perspective, a separate op makes sense
+to me.
+
+What feels a little strange though is where to store the
+key? I was thinking in /etc/exports, but that would make
+the FH key per-export rather than per-server instance.
+
+That gives a cryptographic benefit, as there would be
+more keying material. But maybe it doesn't make a lot of
+sense from a UX perspective.
+
+On the other hand, some might like to manage the key by
+storing it in a trusted compute module -- systemd has
+a facility to extract keys from a TCM.
+
+
+-- 
+Chuck Lever
 
