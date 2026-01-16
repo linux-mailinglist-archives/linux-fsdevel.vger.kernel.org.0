@@ -1,600 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-74116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12DFD3110E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 13:27:31 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9513BD312C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 13:36:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 620AD3007C93
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 12:27:29 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id F41993042B69
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 12:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097971A8F97;
-	Fri, 16 Jan 2026 12:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0310221F39;
+	Fri, 16 Jan 2026 12:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dzqGb3p8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QnV2WJFh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dzqGb3p8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QnV2WJFh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vITXplas"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620C71A0712
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 12:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D5A1C3BEB;
+	Fri, 16 Jan 2026 12:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768566445; cv=none; b=LbqwLXtoEizvA/+BwoJUTVugj39gs8n2cVKu1o9zd36yagZvVK61H6SLYrfCNRhmgT1r8uKh8AI3C5Qt8k4S/RP3fJtwRqu6fjhgH0GT9AeYnPG5FyTXFMiukFBf0eyqHqanXo81X2/mze1XzPQe9ByDESbc+5ecjM0fvK9HoI4=
+	t=1768566994; cv=none; b=bef7AKAaZ1/OYdnyfMt/6X9aAxmiFHL4Cf9UBJabz1CP8QXXwHv60zCISF7J7YuvMcAwSVYbPdAbj8PyqjQLsF5T3ZKa/ukBJkLABpo1MhlAzR0o2auw+ic0pB/RgCP+bTztddphRUVaFaxQ1JfeXupFrBnq2sj3kp7f6ujvRGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768566445; c=relaxed/simple;
-	bh=v0+u8/BqvIpA/+GeBo1wcMyptFHjvqsKB3xBnBZhvk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lDy9V1tknF94LEPqIZw6QYH70VEYLXPOH0kd5JfA7lmJ+c0+/6EXuQGdFaLs7aMJABNsQDGhZL90Lz+WS3pchJShzoTWV/sOq7htCjbq+H6cCP9Ga/2IBeR0g1A3CJ+s6Po+inWpfXg5xIYnmCAmMGVk/rhsjp49kmUoOAUs3OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dzqGb3p8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QnV2WJFh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dzqGb3p8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QnV2WJFh; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A22FB5BE1A;
-	Fri, 16 Jan 2026 12:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768566441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TcnmiEwHQ0NRovARdZa6lRex1EI/dyPLzh5FabZ/u4k=;
-	b=dzqGb3p8M6HkZTQsfWXmkj+pqqivEHU3hHhlbeZ7ORqaWrOEmkX35v1hWfQGSo/mwBS2Qv
-	36dSnxSzWNfaEuf7kdBv4GrYXSngRVetjSq7N0UhHeZFtNjOucTkKfe2KCwD2+vredC0fF
-	lArQqmgl2IZStNHqYsxFNLna1Npy7Ts=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768566441;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TcnmiEwHQ0NRovARdZa6lRex1EI/dyPLzh5FabZ/u4k=;
-	b=QnV2WJFhoJuu5Wa3kqtliMIFE34znfvzS1PKZN6pOu2gEYvQlshFeb83SYt6oeXpB3SjvT
-	G3LKmtB1/Y2ztyCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768566441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TcnmiEwHQ0NRovARdZa6lRex1EI/dyPLzh5FabZ/u4k=;
-	b=dzqGb3p8M6HkZTQsfWXmkj+pqqivEHU3hHhlbeZ7ORqaWrOEmkX35v1hWfQGSo/mwBS2Qv
-	36dSnxSzWNfaEuf7kdBv4GrYXSngRVetjSq7N0UhHeZFtNjOucTkKfe2KCwD2+vredC0fF
-	lArQqmgl2IZStNHqYsxFNLna1Npy7Ts=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768566441;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TcnmiEwHQ0NRovARdZa6lRex1EI/dyPLzh5FabZ/u4k=;
-	b=QnV2WJFhoJuu5Wa3kqtliMIFE34znfvzS1PKZN6pOu2gEYvQlshFeb83SYt6oeXpB3SjvT
-	G3LKmtB1/Y2ztyCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9398B3EA63;
-	Fri, 16 Jan 2026 12:27:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id n/r+I6kuamnobgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 16 Jan 2026 12:27:21 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5ABB1A091D; Fri, 16 Jan 2026 13:27:21 +0100 (CET)
-Date: Fri, 16 Jan 2026 13:27:21 +0100
-From: Jan Kara <jack@suse.cz>
-To: Chenglong Tang <chenglongtang@google.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, miklos@szeredi.hu
-Subject: Re: [Regression 6.12] NULL pointer dereference in submit_bio_noacct
- via backing_file_read_iter
-Message-ID: <kptrliv7cflmaven5mcfn3bywpwe7zrevw4qvuei6eqq3ubcaj@3n33v7w4bgfj>
-References: <CAOdxtTZ=SuV2GMPuqQJe6h-h-CDiG5yBW+07f1QYEw+kTA4-2w@mail.gmail.com>
- <CAOQ4uxggQekxqavkt+RiJd9s9cdDgXZuVfQrL_qNciBNf=4Lww@mail.gmail.com>
- <CAOdxtTaz7=TzQizrdMEhjgt7LpuuHWzTO80783RLcB_GP3nPdw@mail.gmail.com>
- <CAOdxtTZv_B_pE1d1vgaE8+ar58y7pTiw0bL-djB1rhE-5wu2zQ@mail.gmail.com>
+	s=arc-20240116; t=1768566994; c=relaxed/simple;
+	bh=V1jrhNoK5cCQTJSoALhV/3tjORnC8kLYjZ7KEvDFFVc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=puMPkoFoWeQLXtUARXNwVvB5gE+h3yiiCpCT7VUXlc81YArOPdOt5f6/taVcj04/zUGFbghB2sBjIJ8PPhwBT4kzxMknfOpvYmzprQiPMmckJ5/0iGlh2oAwiuC45kmN3V3w7FZKCsAx6P3drCJcnSNJD7KpltaBuJatvF9EdgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vITXplas; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45991C116C6;
+	Fri, 16 Jan 2026 12:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768566993;
+	bh=V1jrhNoK5cCQTJSoALhV/3tjORnC8kLYjZ7KEvDFFVc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=vITXplasW3zR6PcKilzha47uoXjvXShL598ig5Pb8VgWfcug9BDkf0WupjrNAL5Et
+	 0VoJoWqdfjuLfwPbce+AemVdrqVOau96IwktWx383Bj//MA+PbsSw7nvAdAc4S+ZX1
+	 8rOlBc7yMdVVsUE3Ofi54rmHLIFViAOk6lOCxZtdFwNsqFozBLolEGPivTlpnNQY5O
+	 rhETVuPU6xUeO0o+nobpQfQiylPvTPdRK8rBpYPkaHOd5XqBW2cUkmi0/vCGbWfwII
+	 29fFW3+5rWCirglU+pxv5fL/yxUQX4dQ/TPNhD2e8wYiigfkW4EWhFHHMpHiIWSR5i
+	 T3ILgYkV5/bGw==
+Message-ID: <8e4c3df4828351c677186bf018061f2b1fd1b48e.camel@kernel.org>
+Subject: Re: [PATCH 29/29] nfsd: only allow filesystems that set
+ EXPORT_OP_STABLE_HANDLES
+From: Jeff Layton <jlayton@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro	
+ <viro@zeniv.linux.org.uk>, Chuck Lever <chuck.lever@oracle.com>, NeilBrown	
+ <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo	
+ <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Hugh Dickins
+ <hughd@google.com>,  Baolin Wang <baolin.wang@linux.alibaba.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Theodore Ts'o	 <tytso@mit.edu>, Andreas
+ Dilger <adilger.kernel@dilger.ca>, Jan Kara	 <jack@suse.com>, Gao Xiang
+ <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu	
+ <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep
+ Dhavale	 <dhavale@google.com>, Hongbo Li <lihongbo22@huawei.com>, Chunhai
+ Guo	 <guochunhai@vivo.com>, Carlos Maiolino <cem@kernel.org>, Ilya Dryomov	
+ <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>, Viacheslav
+ Dubeyko	 <slava@dubeyko.com>, Chris Mason <clm@fb.com>, David Sterba
+ <dsterba@suse.com>,  Luis de Bethencourt	 <luisbg@kernel.org>, Salah Triki
+ <salah.triki@gmail.com>, Phillip Lougher	 <phillip@squashfs.org.uk>, Steve
+ French <sfrench@samba.org>, Paulo Alcantara	 <pc@manguebit.org>, Ronnie
+ Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N	
+ <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, Miklos
+ Szeredi	 <miklos@szeredi.hu>, Mike Marshall <hubcap@omnibond.com>, Martin
+ Brandenburg	 <martin@omnibond.com>, Mark Fasheh <mark@fasheh.com>, Joel
+ Becker	 <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Ryusuke
+ Konishi <konishi.ryusuke@gmail.com>,  Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, Dave Kleikamp <shaggy@kernel.org>, David
+ Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Jan
+ Kara <jack@suse.cz>,  Andreas Gruenbacher	 <agruenba@redhat.com>, OGAWA
+ Hirofumi <hirofumi@mail.parknet.co.jp>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Christoph Hellwig <hch@infradead.org>, 	linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-ext4@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-xfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+	linux-unionfs@vger.kernel.org, devel@lists.orangefs.org, 
+	ocfs2-devel@lists.linux.dev, ntfs3@lists.linux.dev,
+ linux-nilfs@vger.kernel.org, 	jfs-discussion@lists.sourceforge.net,
+ linux-mtd@lists.infradead.org, 	gfs2@lists.linux.dev,
+ linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 16 Jan 2026 07:36:26 -0500
+In-Reply-To: <CAOQ4uxg304=s1Uoeayy3rm1e154Nf7ScOgseJHThw4uQjKwk0A@mail.gmail.com>
+References: <20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org>
+	 <20260115-exportfs-nfsd-v1-29-8e80160e3c0c@kernel.org>
+	 <CAOQ4uxg304=s1Uoeayy3rm1e154Nf7ScOgseJHThw4uQjKwk0A@mail.gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOdxtTZv_B_pE1d1vgaE8+ar58y7pTiw0bL-djB1rhE-5wu2zQ@mail.gmail.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,vex_console.cc:url,pvpanic.cc:url,vex_dns.cc:url];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,szeredi.hu];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
 
-Hi!
+On Thu, 2026-01-15 at 20:23 +0100, Amir Goldstein wrote:
+> On Thu, Jan 15, 2026 at 6:51=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
+wrote:
+> >=20
+> > Some filesystems have grown export operations in order to provide
+> > filehandles for local usage. Some of these filesystems are unsuitable
+> > for use with nfsd, since their filehandles are not persistent across
+> > reboots.
+> >=20
+> > In __fh_verify, check whether EXPORT_OP_STABLE_HANDLES is set
+> > and return nfserr_stale if it isn't.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/nfsd/nfsfh.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >=20
+> > diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> > index ed85dd43da18e6d4c4667ff14dc035f2eacff1d6..da9d5fb2e6613c2707195da=
+2e8678b3fcb3d444d 100644
+> > --- a/fs/nfsd/nfsfh.c
+> > +++ b/fs/nfsd/nfsfh.c
+> > @@ -334,6 +334,10 @@ __fh_verify(struct svc_rqst *rqstp,
+> >         dentry =3D fhp->fh_dentry;
+> >         exp =3D fhp->fh_export;
+> >=20
+> > +       error =3D nfserr_stale;
+> > +       if (!(dentry->d_sb->s_export_op->flags & EXPORT_OP_STABLE_HANDL=
+ES))
+> > +               goto out;
+> > +
+> >         trace_nfsd_fh_verify(rqstp, fhp, type, access);
+> >=20
+>=20
+> IDGI. Don't you want  to deny the export of those fs in check_export()?
+> By the same logic that check_export() checks for can_decode_fh()
+> not for can_encode_fh().
+>=20
 
-On Thu 15-01-26 21:56:06, Chenglong Tang wrote:
-> [Follow Up] We have an important update regarding the
-> submit_bio_noacct panic we reported earlier.
-> 
-> To rule out the Integrity Measurement Architecture (IMA) as the root
-> cause, we disabled IMA verification in the workload configuration. The
-> kernel panic persisted with the exact same signature (RIP:
-> 0010:submit_bio_noacct+0x21d), but the trigger path has changed.
+It certainly won't hurt to add a check for this to check_export(), and
+I've gone ahead and done so. To be clear, doing that won't prevent the
+filesystem from being exported, but you will get a warning like this
+when you try:
 
-OK, can you please feed this through addr2line so that we know what exactly
-is wrong with the bio? Thanks!
+    exportfs: /sys/fs/cgroup does not support NFS export
 
-Also do you have a chance to try with some recent upstream kernel? The
-crash might also be specific to the set of backports in that particular
-stable branch...
+That export will still show up in mountd though, so this is just a
+warning. Trying to mount it though will fail.
 
-								Honza
-
-> 
-> New Stack Traces (Non-IMA) We are now observing the crash via two
-> standard filesystem paths.
-> 
-> Stack Trace:
-> Most failures are still similar:
-> I0115 20:30:23.535402    8496 vex_console.cc:116] (vex1): [
-> 158.519909] BUG: kernel NULL pointer dereference, address:
-> 0000000000000156
-> I0115 20:30:23.535483    8496 vex_console.cc:116] (vex1): [
-> 158.542610] #PF: supervisor read access in kernel mode
-> I0115 20:30:23.585675    8496 vex_console.cc:116] (vex1): [
-> 158.565011] #PF: error_code(0x0000) - not-present page
-> I0115 20:30:23.585702    8496 vex_console.cc:116] (vex1): [
-> 158.583855] PGD 800000007c7da067 P4D 800000007c7da067 PUD 7c7db067 PMD
-> 0
-> I0115 20:30:23.585709    8496 vex_console.cc:116] (vex1): [
-> 158.590940] Oops: Oops: 0000 [#1] SMP PTI
-> I0115 20:30:23.636063    8496 vex_console.cc:116] (vex1): [
-> 158.598950] CPU: 1 UID: 0 PID: 6717 Comm: agent_launcher Tainted: G
->        O       6.12.55+ #1
-> I0115 20:30:23.636092    8496 vex_console.cc:116] (vex1): [
-> 158.629624] Tainted: [O]=OOT_MODULE
-> I0115 20:30:23.694223    8496 vex_console.cc:116] (vex1): [
-> 158.639965] Hardware name: Google Google Compute Engine/Google Compute
-> Engine, BIOS Google 01/01/2011
-> I0115 20:30:23.694252    8496 vex_console.cc:116] (vex1): [
-> 158.684210] RIP: 0010:submit_bio_noacct+0x21d/0x470
-> I0115 20:30:23.738566    8496 vex_console.cc:116] (vex1): [
-> 158.705662] Code: 8b 73 48 4d 85 f6 74 55 4c 63 25 46 af 89 01 49 83
-> fc 06 0f 83 44 02 00 00 4f 8b a4 e6 d0 00 00 00 83 3d 99 ca 7d 01 00
-> 7e 3f <43> 80 bc 3c 56 01 00 00 00 0f 84 28 01 00 00 48 89 df e8 fc 9f
-> 02
-> I0115 20:30:23.738598    8496 vex_console.cc:116] (vex1): [
-> 158.765443] RSP: 0000:ffffa74c84d53a98 EFLAGS: 00010202
-> I0115 20:30:23.793126    8496 vex_console.cc:116] (vex1): [
-> 158.771022] RAX: ffffa319b3d6b4f0 RBX: ffffa319bdc9a3c0 RCX:
-> 00000000005e1070
-> I0115 20:30:23.793158    8496 vex_console.cc:116] (vex1): [
-> 158.778730] RDX: 0000000010300001 RSI: ffffa319b3d6b4f0 RDI:
-> ffffa319bdc9a3c0
-> I0115 20:30:23.843309    8496 vex_console.cc:116] (vex1): [
-> 158.802189] RBP: ffffa74c84d53ac8 R08: 0000000000001000 R09:
-> ffffa319bdc9a3c0
-> I0115 20:30:23.843336    8496 vex_console.cc:116] (vex1): [
-> 158.846780] R10: 0000000000000000 R11: 0000000069a1b000 R12:
-> 0000000000000000
-> I0115 20:30:23.889620    8484 vex_dns.cc:145] Returning NODATA for DNS
-> Query: type=a, name=servicecontrol.googleapis.com.
-> I0115 20:30:23.898357    8496 vex_console.cc:116] (vex1): [
-> 158.877737] R13: ffffa31941421f40 R14: ffffa31955419200 R15:
-> 0000000000000000
-> I0115 20:30:23.948602    8496 vex_console.cc:116] (vex1): [
-> 158.908715] FS:  00000000059efe28(0000) GS:ffffa319bdd00000(0000)
-> knlGS:0000000000000000
-> I0115 20:30:23.948640    8496 vex_console.cc:116] (vex1): [
-> 158.937522] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> I0115 20:30:23.948645    8496 vex_console.cc:116] (vex1): [
-> 158.958522] CR2: 0000000000000156 CR3: 000000006a20a003 CR4:
-> 00000000003726f0
-> I0115 20:30:23.948650    8496 vex_console.cc:116] (vex1): [
-> 158.968648] Call Trace:
-> I0115 20:30:23.948655    8496 vex_console.cc:116] (vex1): [  158.974419]  <TASK>
-> I0115 20:30:23.948659    8496 vex_console.cc:116] (vex1): [
-> 158.978222]  ext4_mpage_readpages+0x75c/0x790
-> I0115 20:30:24.004540    8496 vex_console.cc:116] (vex1): [
-> 158.983568]  read_pages+0x9d/0x250
-> I0115 20:30:24.004568    8496 vex_console.cc:116] (vex1): [
-> 158.987263]  page_cache_ra_unbounded+0xa2/0x1c0
-> I0115 20:30:24.004573    8496 vex_console.cc:116] (vex1): [
-> 158.992179]  filemap_fault+0x218/0x660
-> I0115 20:30:24.004576    8496 vex_console.cc:116] (vex1): [
-> 158.996311]  __do_fault+0x4b/0x140
-> I0115 20:30:24.004580    8496 vex_console.cc:116] (vex1): [
-> 159.000143]  do_pte_missing+0x14f/0x1050
-> I0115 20:30:24.054563    8496 vex_console.cc:116] (vex1): [
-> 159.018505]  handle_mm_fault+0x886/0xb40
-> I0115 20:30:24.105692    8496 vex_console.cc:116] (vex1): [
-> 159.063653]  do_user_addr_fault+0x1eb/0x730
-> I0115 20:30:24.105721    8496 vex_console.cc:116] (vex1): [
-> 159.094465]  exc_page_fault+0x80/0x100
-> I0115 20:30:24.105726    8496 vex_console.cc:116] (vex1): [
-> 159.116472]  asm_exc_page_fault+0x26/0x30
-> 
-> Though there is a different one:
-> I0115 20:31:14.891091    7372 vex_console.cc:116] (vex1): [
-> 163.902122] BUG: kernel NULL pointer dereference, address:
-> 0000000000000157
-> I0115 20:31:14.950131    7372 vex_console.cc:116] (vex1): [
-> 163.955031] #PF: supervisor read access in kernel mode
-> I0115 20:31:15.057629    7372 vex_console.cc:116] (vex1): [
-> 163.986899] #PF: error_code(0x0000) - not-present page
-> I0115 20:31:15.057665    7372 vex_console.cc:116] (vex1): [
-> 164.075132] PGD 0 P4D 0
-> I0115 20:31:15.057670    7372 vex_console.cc:116] (vex1): [
-> 164.085940] Oops: Oops: 0000 [#1] SMP PTI
-> I0115 20:31:15.108501    7372 vex_console.cc:116] (vex1): [
-> 164.090592] CPU: 0 UID: 0 PID: 399 Comm: jbd2/nvme0n1p1- Tainted: G
->        O       6.12.55+ #1
-> I0115 20:31:15.157731    7372 vex_console.cc:116] (vex1): [
-> 164.146188] Tainted: [O]=OOT_MODULE
-> I0115 20:31:15.210631    7372 vex_console.cc:116] (vex1): [
-> 164.172362] Hardware name: Google Google Compute Engine/Google Compute
-> Engine, BIOS Google 01/01/2011
-> I0115 20:31:15.266673    7372 vex_console.cc:116] (vex1): [
-> 164.243113] RIP: 0010:submit_bio_noacct+0x21d/0x470
-> I0115 20:31:15.369886    7372 vex_console.cc:116] (vex1): [
-> 164.276230] Code: 8b 73 48 4d 85 f6 74 55 4c 63 25 46 af 89 01 49 83
-> fc 06 0f 83 44 02 00 00 4f 8b a4 e6 d0 00 00 00 83 3d 99 ca 7d 01 00
-> 7e 3f <43> 80 bc 3c 56 01 00 00 00 0f 84 28 01 00 00 48 89 df e8 fc 9f
-> 02
-> I0115 20:31:15.369913    7372 vex_console.cc:116] (vex1): [
-> 164.413258] RSP: 0000:ffffa674004ebc80 EFLAGS: 00010202
-> I0115 20:31:15.422131    7372 vex_console.cc:116] (vex1): [
-> 164.420124] RAX: ffff9381c25d4790 RBX: ffff9381d0e5e540 RCX:
-> 00000000000301c8
-> I0115 20:31:15.522750    7372 vex_console.cc:116] (vex1): [
-> 164.464474] RDX: 0000000010300001 RSI: ffff9381c25d4790 RDI:
-> ffff9381d0e5e540
-> I0115 20:31:15.522784    7372 vex_console.cc:116] (vex1): [
-> 164.542751] RBP: ffffa674004ebcb0 R08: 0000000000000000 R09:
-> 0000000000000000
-> I0115 20:31:15.576921    7372 vex_console.cc:116] (vex1): [
-> 164.578174] R10: 0000000000000000 R11: ffffffff8433e7a0 R12:
-> 0000000000000000
-> I0115 20:31:15.577224    7372 vex_console.cc:116] (vex1): [
-> 164.595801] R13: ffff9381c1425780 R14: ffff9381c196d400 R15:
-> 0000000000000001
-> I0115 20:31:15.628049    7372 vex_console.cc:116] (vex1): [
-> 164.626548] FS:  0000000000000000(0000) GS:ffff93823dc00000(0000)
-> knlGS:0000000000000000
-> I0115 20:31:15.732793    7372 vex_console.cc:116] (vex1): [
-> 164.665104] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> I0115 20:31:15.785564    7372 vex_console.cc:116] (vex1): [
-> 164.757565] CR2: 0000000000000157 CR3: 000000007c678003 CR4:
-> 00000000003726f0
-> I0115 20:31:15.843034    7372 vex_console.cc:116] (vex1): [
-> 164.831021] Call Trace:
-> I0115 20:31:15.843065    7372 vex_console.cc:116] (vex1): [  164.851014]  <TASK>
-> I0115 20:31:15.900287    7372 vex_console.cc:116] (vex1): [
-> 164.872000]  jbd2_journal_commit_transaction+0x612/0x17e0
-> I0115 20:31:15.900315    7372 vex_console.cc:116] (vex1): [
-> 164.914012]  ? sched_clock+0xd/0x20
-> I0115 20:31:15.952673    7372 vex_console.cc:116] (vex1): [
-> 164.963930]  ? _raw_spin_unlock_irqrestore+0x12/0x30
-> I0115 20:31:16.004440    7372 vex_console.cc:116] (vex1): [
-> 164.989978]  ? __try_to_del_timer_sync+0x122/0x160
-> I0115 20:31:16.004471    7372 vex_console.cc:116] (vex1): [
-> 165.029451]  kjournald2+0xb1/0x220
-> I0115 20:31:16.004477    7372 vex_console.cc:116] (vex1): [
-> 165.033558]  ? __pfx_autoremove_wake_function+0x10/0x10
-> I0115 20:31:16.004481    7372 vex_console.cc:116] (vex1): [
-> 165.044022]  kthread+0x122/0x140
-> I0115 20:31:16.004486    7372 vex_console.cc:116] (vex1): [
-> 165.048012]  ? __pfx_kjournald2+0x10/0x10
-> I0115 20:31:16.004490    7372 vex_console.cc:116] (vex1): [
-> 165.052944]  ? __pfx_kthread+0x10/0x10
-> I0115 20:31:16.004494    7372 vex_console.cc:116] (vex1): [
-> 165.057597]  ret_from_fork+0x3f/0x50
-> I0115 20:31:16.057453    7372 vex_console.cc:116] (vex1): [
-> 165.062127]  ? __pfx_kthread+0x10/0x10
-> I0115 20:31:16.057484    7372 vex_console.cc:116] (vex1): [
-> 165.079674]  ret_from_fork_asm+0x1a/0x30
-> I0115 20:31:16.109674    7372 vex_console.cc:116] (vex1): [
-> 165.113023]  </TASK>
-> I0115 20:31:16.212548    7372 vex_console.cc:116] (vex1): [
-> 165.131001] Modules linked in: nft_chain_nat xt_MASQUERADE nf_nat
-> xt_addrtype nft_compat nf_tables kvm_intel kvm irqbypass crc32c_intel
-> aesni_intel crypto_simd cryptd loadpin_trigger(O) fuse
-> I0115 20:31:16.262933    7372 vex_console.cc:116] (vex1): [
-> 165.269971] CR2: 0000000000000157
-> I0115 20:31:16.316433    7372 vex_console.cc:116] (vex1): [
-> 165.306980] ---[ end trace 0000000000000000 ]---
-> I0115 20:31:16.365756    7372 vex_console.cc:116] (vex1): [
-> 165.361889] RIP: 0010:submit_bio_noacct+0x21d/0x470
-> I0115 20:31:16.518250    7372 vex_console.cc:116] (vex1): [
-> 165.406957] Code: 8b 73 48 4d 85 f6 74 55 4c 63 25 46 af 89 01 49 83
-> fc 06 0f 83 44 02 00 00 4f 8b a4 e6 d0 00 00 00 83 3d 99 ca 7d 01 00
-> 7e 3f <43> 80 bc 3c 56 01 00 00 00 0f 84 28 01 00 00 48 89 df e8 fc 9f
-> 02
-> I0115 20:31:16.518278    7372 vex_console.cc:116] (vex1): [
-> 165.558880] RSP: 0000:ffffa674004ebc80 EFLAGS: 00010202
-> I0115 20:31:16.568463    7372 vex_console.cc:116] (vex1): [
-> 165.575239] RAX: ffff9381c25d4790 RBX: ffff9381d0e5e540 RCX:
-> 00000000000301c8
-> I0115 20:31:16.568490    7372 vex_console.cc:116] (vex1): [
-> 165.590012] RDX: 0000000010300001 RSI: ffff9381c25d4790 RDI:
-> ffff9381d0e5e540
-> I0115 20:31:16.568495    7372 vex_console.cc:116] (vex1): [
-> 165.597793] RBP: ffffa674004ebcb0 R08: 0000000000000000 R09:
-> 0000000000000000
-> I0115 20:31:16.568499    7372 vex_console.cc:116] (vex1): [
-> 165.608408] R10: 0000000000000000 R11: ffffffff8433e7a0 R12:
-> 0000000000000000
-> I0115 20:31:16.568502    7372 vex_console.cc:116] (vex1): [
-> 165.616602] R13: ffff9381c1425780 R14: ffff9381c196d400 R15:
-> 0000000000000001
-> I0115 20:31:16.618734    7372 vex_console.cc:116] (vex1): [
-> 165.631823] FS:  0000000000000000(0000) GS:ffff93823dc00000(0000)
-> knlGS:0000000000000000
-> I0115 20:31:16.618770    7372 vex_console.cc:116] (vex1): [
-> 165.653088] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> W0115 20:31:16.649110    7355 pvpanic.cc:136] Guest kernel has panicked!
-> I0115 20:31:16.671568    7372 vex_console.cc:116] (vex1): [
-> 165.668488] CR2: 0000000000000157 CR3: 000000007c678003 CR4:
-> 00000000003726f0
-> I0115 20:31:16.671599    7372 vex_console.cc:116] (vex1): [
-> 165.686744] Kernel panic - not syncing: Fatal exception
-> 
-> This confirms the issue is not specific to IMA, but is a fundamental
-> race condition in the Block I/O layer or Ext4 subsystem under high
-> concurrency.
-> 
-> Since the crash occurs at the exact same instruction offset in
-> submit_bio_noacct regardless of the caller (IMA, Page Fault, or JBD2),
-> we suspect a bio or request_queue structure is being corrupted or
-> hitting a NULL pointer dereference in the underlying block device
-> driver (NVMe) or Device Mapper.
-> 
-> Best,
-> 
-> Chenglong
-> 
-> On Thu, Jan 15, 2026 at 6:56 PM Chenglong Tang <chenglongtang@google.com> wrote:
-> >
-> > Hi Amir,
-> >
-> > Thanks for the guidance. Using the specific order of the 8 commits
-> > (applying the ovl_real_fdget refactors before the fix consumers)
-> > resolved the boot-time NULL pointer panic. The system now boots
-> > successfully.
-> >
-> > However, we are still hitting the original kernel panic during runtime
-> > tests (specifically a CloudSQL workload).
-> >
-> > Current Commit Chain (Applied to 6.12):
-> >
-> > 76d83345a056 (HEAD -> main-R125-cos-6.12) ovl: convert
-> > ovl_real_fdget() callers to ovl_real_file()
-> > 740bdf920b15 ovl: convert ovl_real_fdget_path() callers to ovl_real_file_path()
-> > 100b71ecb237 fs/backing_file: fix wrong argument in callback
-> > b877bca6858d ovl: store upper real file in ovl_file struct
-> > 595aac630596 ovl: allocate a container struct ovl_file for ovl private context
-> > 218ec543008d ovl: do not open non-data lower file for fsync
-> > 6def078942e2 ovl: use wrapper ovl_revert_creds()
-> > fe73aad71936 backing-file: clean up the API
-> >
-> > So it means none of these 8 commits were able to fix the problem. Let
-> > me explain what's going on here:
-> >
-> > We are reporting a rare but persistent kernel panic (~0.02% failure
-> > rate) occurring during container initialization on Linux 6.12.55+
-> > (x86_64). The 6.6.x is good. The panic is a NULL pointer dereference
-> > in submit_bio_noacct, triggered specifically when the Integrity
-> > Measurement Architecture (IMA) calculates a file hash during a runc
-> > create operation.
-> >
-> > We have isolated the crash to a specific container (ncsa) starting up
-> > during a high-concurrency boot sequence.
-> >
-> > Environment
-> > * Kernel: Linux 6.12.55+ (x86_64) / Container-Optimized OS
-> > * Workload: Cloud SQL instance initialization (heavy concurrent runc
-> > operations managed by systemd).
-> > * Filesystem: Ext4 backed by NVMe.
-> > * Security: AppArmor enabled, IMA (Integrity Measurement Architecture) active.
-> >
-> > The Failure Pattern(In every crash instance, the sequence is identical):
-> > * systemd initiates the startup of the ncsainit container.
-> > * runc executes the create command:
-> > `Bash
-> > `runc --root /var/lib/cloudsql/runc/root create --bundle
-> > /var/lib/cloudsql/runc/bundles/ncsa ...
-> >
-> > Immediately after this command is logged, the kernel panics.
-> >
-> > Stacktrace:
-> > [  186.938290] BUG: kernel NULL pointer dereference, address: 0000000000000156
-> > [  186.952203] #PF: supervisor read access in kernel mode
-> > [  186.995248] Oops: Oops: 0000 [#1] SMP PTI
-> > [  187.035946] CPU: 1 UID: 0 PID: 6764 Comm: runc:[2:INIT] Tainted: G
-> >          O       6.12.55+ #1
-> > [  187.081681] RIP: 0010:submit_bio_noacct+0x21d/0x470
-> > [  187.412981] Call Trace:
-> > [  187.415751]  <TASK>
-> > [  187.418141]  ext4_mpage_readpages+0x75c/0x790
-> > [  187.429011]  read_pages+0x9d/0x250
-> > [  187.450963]  page_cache_ra_unbounded+0xa2/0x1c0
-> > [  187.466083]  filemap_get_pages+0x231/0x7a0
-> > [  187.474687]  filemap_read+0xf6/0x440
-> > [  187.532345]  integrity_kernel_read+0x34/0x60
-> > [  187.560740]  ima_calc_file_hash+0x1c1/0x9b0
-> > [  187.608175]  ima_collect_measurement+0x1b6/0x310
-> > [  187.613102]  process_measurement+0x4ea/0x850
-> > [  187.617788]  ima_bprm_check+0x5b/0xc0
-> > [  187.635403]  bprm_execve+0x203/0x560
-> > [  187.645058]  do_execveat_common+0x2fb/0x360
-> > [  187.649730]  __x64_sys_execve+0x3e/0x50
-> >
-> > Panic Analysis: The stack trace indicates a race condition where
-> > ima_bprm_check (triggered by executing the container binary) attempts
-> > to verify the file. This calls ima_calc_file_hash ->
-> > ext4_mpage_readpages, which submits a bio to the block layer.
-> >
-> > The crash occurs in submit_bio_noacct when it attempts to dereference
-> > a member of the bio structure (likely bio->bi_bdev or the request
-> > queue), suggesting the underlying device or queue structure is either
-> > uninitialized or has been torn down while the IMA check was still in
-> > flight.
-> >
-> > Context on Concurrency: This workload involves systemd starting
-> > multiple sidecar containers (logging, monitoring, coroner, etc.)
-> > simultaneously. We suspect this high-concurrency startup creates the
-> > IO/CPU contention required to hit this race window. However, the crash
-> > consistently happens only on the ncsa container, implying something
-> > specific about its launch configuration or timing makes it the
-> > reliable victim.
-> >
-> > Best,
-> >
-> > Chenglong
-> >
-> > On Wed, Jan 14, 2026 at 3:11 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> > >
-> > > On Wed, Jan 14, 2026 at 1:53 AM Chenglong Tang <chenglongtang@google.com> wrote:
-> > > >
-> > > > Hi OverlayFS Maintainers,
-> > > >
-> > > > This is from Container Optimized OS in Google Cloud.
-> > > >
-> > > > We are reporting a reproducible kernel panic on Kernel 6.12 involving
-> > > > a NULL pointer dereference in submit_bio_noacct.
-> > > >
-> > > > The Issue: The panic occurs intermittently (approx. 5 failures in 1000
-> > > > runs) during a specific PostgreSQL client test
-> > > > (postgres_client_test_postgres15_ctrdncsa) on Google
-> > > > Container-Optimized OS. The stack trace shows the crash happens when
-> > > > IMA (ima_calc_file_hash) attempts to read a file from OverlayFS via
-> > > > the new-in-6.12 backing_file_read_iter helper.
-> > > >
-> > > > It appears to be a race condition where the underlying block device is
-> > > > detached (becoming NULL) while the backing_file wrapper is still
-> > > > attempting to submit a read bio during container teardown.
-> > > >
-> > > > Stack Trace:
-> > > > [  OK  ] Started    75.793015] BUG: kernel NULL pointer dereference,
-> > > > address: 0000000000000156
-> > > > [   75.822539] #PF: supervisor read access in kernel mode
-> > > > [   75.849332] #PF: error_code(0x0000) - not-present page
-> > > > [   75.862775] PGD 7d012067 P4D 7d012067 PUD 7d013067 PMD 0
-> > > > [   75.884283] Oops: Oops: 0000 [#1] SMP NOPTI
-> > > > [   75.902274] CPU: 1 UID: 0 PID: 6476 Comm: helmd Tainted: G
-> > > >  O       6.12.55+ #1
-> > > > [   75.928903] Tainted: [O]=OOT_MODULE
-> > > > [   75.942484] Hardware name: Google Google Compute Engine/Google
-> > > > Compute Engine, BIOS Google 01/01/2011
-> > > > [   75.965868] RIP: 0010:submit_bio_noacct+0x21d/0x470
-> > > > [   75.978340] Code: 8b 73 48 4d 85 f6 74 55 4c 63 25 b6 ad 89 01 49
-> > > > 83 fc 06 0f 83 44 02 00 00 4f 8b a4 e6 d0 00 00 00 83 3d 09 c9 7d 01
-> > > > 00 7e 3f <43> 80 bc 3c 56 01 00 00 00 0f 84 28 01 00 00 48 89 df e8 4c
-> > > > a0 02
-> > > > [   76.035847] RSP: 0018:ffffa41183463880 EFLAGS: 00010202
-> > > > [   76.050141] RAX: ffff9d4ec1a81a78 RBX: ffff9d4f3811e6c0 RCX: 00000000009410a0
-> > > > [   76.065176] RDX: 0000000010300001 RSI: ffff9d4ec1a81a78 RDI: ffff9d4f3811e6c0
-> > > > [   76.089292] RBP: ffffa411834638b0 R08: 0000000000001000 R09: ffff9d4f3811e6c0
-> > > > [   76.110878] R10: 2000000000000000 R11: ffffffff8a33e700 R12: 0000000000000000
-> > > > [   76.139068] R13: ffff9d4ec1422bc0 R14: ffff9d4ec2507000 R15: 0000000000000000
-> > > > [   76.168391] FS:  0000000008df7f40(0000) GS:ffff9d4f3dd00000(0000)
-> > > > knlGS:0000000000000000
-> > > > [   76.179024] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > [   76.184951] CR2: 0000000000000156 CR3: 000000007d01c006 CR4: 0000000000370ef0
-> > > > [   76.192352] Call Trace:
-> > > > [   76.194981]  <TASK>
-> > > > [   76.197257]  ext4_mpage_readpages+0x75c/0x790
-> > > > [   76.201794]  read_pages+0xa0/0x250
-> > > > [   76.205373]  page_cache_ra_unbounded+0xa2/0x1c0
-> > > > [   76.232608]  filemap_get_pages+0x16b/0x7a0
-> > > > [   76.254151]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > > > [   76.260523]  filemap_read+0xf6/0x440
-> > > > [   76.264540]  do_iter_readv_writev+0x17e/0x1c0
-> > > > [   76.275427]  vfs_iter_read+0x8a/0x140
-> > > > [   76.279272]  backing_file_read_iter+0x155/0x250
-> > > > [   76.284425]  ovl_read_iter+0xd7/0x120
-> > > > [   76.288270]  ? __pfx_ovl_file_accessed+0x10/0x10
-> > > > [   76.293069]  vfs_read+0x2b1/0x300
-> > > > [   76.296835]  ksys_read+0x75/0xe0
-> > > > [   76.300246]  do_syscall_64+0x61/0x130
-> > > > [   76.304173]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > > >
-> > > > Our Findings:
-> > > >
-> > > > Not an Ext4 regression: We verified that reverting "ext4: reduce stack
-> > > > usage in ext4_mpage_readpages()" does not resolve the panic.
-> > > >
-> > > > Suspected Fix: We suspect upstream commit 18e48d0e2c7b ("ovl: store
-> > > > upper real file in ovl_file struct") is the correct fix. It seems to
-> > > > address this exact lifetime race by persistently pinning the
-> > > > underlying file.
-> > >
-> > > That sounds odd.
-> > > Using a persistent upper real file may be more efficient than opening
-> > > a temporary file for every read, but the temporary file is a legit opened file,
-> > > so it looks like you would be averting the race rather than fixing it.
-> > >
-> > > Could you try to analyse the conditions that caused the race?
-> > >
-> > > >
-> > > > The Problem: We cannot apply 18e48d0e2c7b to 6.12 stable because it
-> > > > depends on the extensive ovl_real_file refactoring series (removing
-> > > > ovl_real_fdget family functions) that landed in 6.13.
-> > > >
-> > > > Is there a recommended way to backport the "persistent real file"
-> > > > logic to 6.12 without pulling in the entire refactor chain?
-> > > >
-> > >
-> > > These are the commits in overlayfs/file.c v6.12..v6.13:
-> > >
-> > > $ git log --oneline  v6.12..v6.13 -- fs/overlayfs/file.c
-> > > d66907b51ba07 ovl: convert ovl_real_fdget() callers to ovl_real_file()
-> > > 4333e42ed4444 ovl: convert ovl_real_fdget_path() callers to ovl_real_file_path()
-> > > 18e48d0e2c7b1 ovl: store upper real file in ovl_file struct
-> > > 87a8a76c34a2a ovl: allocate a container struct ovl_file for ovl private context
-> > > c2c54b5f34f63 ovl: do not open non-data lower file for fsync
-> > > fc5a1d2287bf2 ovl: use wrapper ovl_revert_creds()
-> > > 48b50624aec45 backing-file: clean up the API
-> > >
-> > > Your claim that 18e48d0e2c7b depends on ovl_real_fdget() is incorrect.
-> > > You may safely cherry-pick the 4 commits above leading to 18e48d0e2c7b1.
-> > > They are all self contained changes that would be good to have in 6.12.y,
-> > > because they would make cherry-picking future fixes easier.
-> > >
-> > > Specifically, backing-file: clean up the API, it is better to have the same
-> > > API in upstream and stable kernels.
-> > >
-> > > Thanks,
-> > > Amir.
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+--=20
+Jeff Layton <jlayton@kernel.org>
 
