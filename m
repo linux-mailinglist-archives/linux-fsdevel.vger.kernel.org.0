@@ -1,458 +1,276 @@
-Return-Path: <linux-fsdevel+bounces-74188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BFDD36D8F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 18:18:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA68D379EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 18:22:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D9F9730577A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 17:13:02 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id DCE8530CAC04
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Jan 2026 17:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B8D34107D;
-	Fri, 16 Jan 2026 17:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7F336AB48;
+	Fri, 16 Jan 2026 17:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mB04jB/+"
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="gzRqRNJM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11022130.outbound.protection.outlook.com [40.93.195.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90443303A07
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 17:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768583577; cv=none; b=n/OZFEKpx6x6LmAdiKr1GaVUT42Db5O43MhGKOQFUFMd1L9nGwsDWh+mMTvq+h29xxsnOW7Uq3stV6o7YTG24xeT44vqbDiKsJu7B6hw/R8a9qbbZOP/S/u13EGXehCRhfFkaGc/3B7zq52NUKvy5D8dixCoRx8/DwM3A1ALFc4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768583577; c=relaxed/simple;
-	bh=kfxduXTTU5FrJGj9RoStJLFU70YfLzICwWsiq4PPVW0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=KM9lTP2tqWQGXvOiJ11WsG4uvUlRJ85BGraBHuPF694ivM8ycv9u232sK/+kUwDrk/NPpgb+6++yOZe7+WEcOPqRvXrqDa6WwKotsRU2EE+H742GrVk9POkExiSAXjYL7T+bhSN3HHI15aSBP/AYdN0S8/4aMATTiyP93GkM7hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mB04jB/+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCACDC19423;
-	Fri, 16 Jan 2026 17:12:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768583577;
-	bh=kfxduXTTU5FrJGj9RoStJLFU70YfLzICwWsiq4PPVW0=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=mB04jB/+CVaKF4Wvv/fDGrvfD6cLn3GrW1bs36j2CjOhZgIvwmvbURMZtrIR/Z8zK
-	 5Lhwx6YdwHGFNNX/+EjRmDgIDHxicU+dAZF8jH2sdpwEKtFtb41CQuQ0aUqFZbYQnb
-	 LAM5CPB18mXg/h678Lr6xvE3jc66P+jI7NQR2s13IyC60dGz9m9Oc17nxlEAMdKphv
-	 ekJQsjcXcQScuI6+dkzum7CUjBmox43AboqN1tIN9Zi0kpGUFtLrbkPoC4EBK8IL0S
-	 wKDgBYXGRZZRiv6JxDO3pIL7DtEw3Mz9QeRCple1t21Z15ZGSaYOhz21zsSXY6Olzn
-	 qiMOt4WzPhB9g==
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id E2676F40077;
-	Fri, 16 Jan 2026 12:12:55 -0500 (EST)
-Received: from phl-imap-15 ([10.202.2.104])
-  by phl-compute-10.internal (MEProxy); Fri, 16 Jan 2026 12:12:55 -0500
-X-ME-Sender: <xms:l3FqaQscZs1E6OIHoJR9nSqRoTZQS3Y2MMkqoTFnHcZgNDsy-M05hw>
-    <xme:l3FqaYSmXnEQza4jgAxdWkWrTbVANoh4G670jLBndMtTtRwIsS9hExsUyet0kSi6I
-    gO3164XuxK4ToNpKIDHscLoQ9KTUsiYn_utTXI_zk9MWbyGlBZoUe10>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduvdelhedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
-    khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
-    hnpefhffekffeftdfgheeiveekudeuhfdvjedvfedvueduvdegleekgeetgfduhfefleen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
-    hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
-    leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
-    hilhdrtghomhdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopehnvghilhessghrohifnhdrnhgrmhgvpdhrtghpthhtoheprhhitghkrdhmrg
-    gtkhhlvghmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsggtohguughinhhgsehhrghm
-    mhgvrhhsphgrtggvrdgtohhmpdhrtghpthhtoheprghnnhgrsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopegvsghighhgvghrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    jhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhrohhnughmhieskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhesohhrrggtlhgv
-    rdgtohhmpdhrtghpthhtoheplhhinhhugidqtghrhihpthhosehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:l3Fqae2w-gQMIk8X7f-KTDrVFhXvY6KbfB9U4pqH96RzlTbuGnHNaQ>
-    <xmx:l3Fqac6tX7efPggA4t3ktMvfyhbfqMo9NQg4eo90SEqKL8y3BvIw-w>
-    <xmx:l3FqaSROHbD9BwukI_jzJmVMhpkDFcGAnn4YTotl_9hZiqml5iO-YQ>
-    <xmx:l3FqaZXajMSpW4PC7vi-NEBprpqdD4zgnnCZKxLk95sUzGtti0p4Jg>
-    <xmx:l3FqafGFQTonHAz_zJgRDiYO1WADDn3M9WLF56CPpOqqkQV1cYJChzs3>
-Feedback-ID: ifa6e4810:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id BEB83780070; Fri, 16 Jan 2026 12:12:55 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8965E18E1F;
+	Fri, 16 Jan 2026 17:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.130
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768583870; cv=fail; b=rrTBHLbgmYFgADK8R69ta4ofCGiot/4jvWYu9kvwlxJd995PduijyTvJ1ve9nltLQMeFPG1GmctU5B91MWFBeG/4edkH9CTVSlllRodXnGblNOchlC8ctaYLrqYkBdZ/5ui3UCvZKtonOIkLakUWT+KmB+hPg1OlMwrf+JxIP8E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768583870; c=relaxed/simple;
+	bh=FAI2FYkc77xsJNbBk1j6Ch+TOmlIjqdlWrMT6KTWyUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VOtMRoEfa5kJgma9ZxBOQKY8o7zkr0HHfJN/I5L9kWMXBvNrpgT1nGDys4D1SLEbsTerQ75xOmKiYTzexx52BSitGMUj3YgS1SeE87DIYi1nImEmvN7fHB0KWGhe5eqm2UrvLIa0UVnu6vm2TIwXhFyv4oUMHtyCE/e6g2yEVEQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=gzRqRNJM; arc=fail smtp.client-ip=40.93.195.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hammerspace.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rKW3ydQWXAQNHYSSfGlgwaOgTaTa4OLNFkKtK67Lf7D29by07MSgbriHENb5re4LSXYhv5OIawGitiXj8+dmx9uFbygbxKC9Wmbw8RHW98OUPXxtje0jfY+RcCwr3IFO9M3nNOdtKa+0NOjuPTCjDyS7/Ad+ZjX4qrkLqZ+RkALt+tnp9reI+FIvsG8HyYppDA3pnyAij1VHmo1RoHrXuY2L6yapOsamaF39uuCpfKils9bBeDxtf3c330LbufNOR3RsaW52DezA3F22nyNLweS3KC4p8BPv3L5ZgPM1NfMuhbAPlfewugghkNvyXwN7d5vHt1d4oJRWJL+Cm3pazQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZmhR1mu7gaY6QURtJal0dFy2s8CvT6CqWe9aN8B0BG0=;
+ b=quIi6Di7SAsNGxJ9+2AYd9vnwQHas+ChvmtqD3NdAwBYCRx9A3HzoLhxFlRiNO7gskDrzmQ1yRYYVaFoVVBzUmokhsObPtIhBCS0fVBssxDsomxcsR/8s4nVWtpfinrehFewn62ZbbjP0Ih2miZY2SledWsWbXfVxauWp65fXyjQ8SYGnFKhcq64cepBohKy4Eyg4+q6gpT+Br/SgPhZ+SUuralvQkp+PhwYxms/LgReYeYMLdviqEr+v6+Yo0kGk1GX6a1NYxBgOCoTL44QecJKixvYX8WJSBSmlanKEBMWqUab1W/Gm49vqV3y2cdxdd2UCegeKJus0L/ILDC9PQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZmhR1mu7gaY6QURtJal0dFy2s8CvT6CqWe9aN8B0BG0=;
+ b=gzRqRNJMyA7wb2LTVSpF9AsBUC3GLfGMVRpCerPbRJKJAENOx8LolsWYRazKOtmglu/tYsJ58HaPf812KCk9tskfi5QZs7zxwa7zK8DhQ8EKogopoXlf6Wbw5fQU6/z11K8GD2ukUy1x7t6At1kc+aHWXYXHw4CE39P1YbOQNzQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=hammerspace.com;
+Received: from DM8PR13MB5239.namprd13.prod.outlook.com (2603:10b6:5:314::5) by
+ IA1PR13MB7278.namprd13.prod.outlook.com (2603:10b6:208:5b1::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.4; Fri, 16 Jan
+ 2026 17:17:46 +0000
+Received: from DM8PR13MB5239.namprd13.prod.outlook.com
+ ([fe80::fa6e:7b5:d1ec:92f3]) by DM8PR13MB5239.namprd13.prod.outlook.com
+ ([fe80::fa6e:7b5:d1ec:92f3%4]) with mapi id 15.20.9520.005; Fri, 16 Jan 2026
+ 17:17:46 +0000
+From: Benjamin Coddington <bcodding@hammerspace.com>
+To: Chuck Lever <cel@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+ NeilBrown <neil@brown.name>, Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
+ Rick Macklem <rick.macklem@gmail.com>, linux-nfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v1 0/4] kNFSD Signed Filehandles
+Date: Fri, 16 Jan 2026 12:17:43 -0500
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <C69B1F13-7248-4CAF-977C-5F0236B0923A@hammerspace.com>
+In-Reply-To: <f8e2d466-7280-4a21-ad71-21bf1e546300@app.fastmail.com>
+References: <cover.1768573690.git.bcodding@hammerspace.com>
+ <f8e2d466-7280-4a21-ad71-21bf1e546300@app.fastmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: MN0PR03CA0019.namprd03.prod.outlook.com
+ (2603:10b6:208:52f::29) To DM8PR13MB5239.namprd13.prod.outlook.com
+ (2603:10b6:5:314::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AJ0jPXehNcK3
-Date: Fri, 16 Jan 2026 12:12:24 -0500
-From: "Chuck Lever" <cel@kernel.org>
-To: "Benjamin Coddington" <bcodding@hammerspace.com>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- NeilBrown <neil@brown.name>, "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>, "Eric Biggers" <ebiggers@kernel.org>,
- "Rick Macklem" <rick.macklem@gmail.com>
-Cc: linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-crypto@vger.kernel.org
-Message-Id: <2b28af6e-a6da-4f10-a589-6dd20d2f2c6c@app.fastmail.com>
-In-Reply-To: 
- <9c9cd6131574a45f2603c9248ba205a79b00fea3.1768573690.git.bcodding@hammerspace.com>
-References: <cover.1768573690.git.bcodding@hammerspace.com>
- <9c9cd6131574a45f2603c9248ba205a79b00fea3.1768573690.git.bcodding@hammerspace.com>
-Subject: Re: [PATCH v1 4/4] NFSD: Sign filehandles
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR13MB5239:EE_|IA1PR13MB7278:EE_
+X-MS-Office365-Filtering-Correlation-Id: a225bd7b-104c-4205-6c5d-08de55232a75
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?YxGqTelNsJ2TZ/J4uDReBtGLddSDlXs24vGK9d7DMJfHfhszxP/L8bN9H67f?=
+ =?us-ascii?Q?Z0v4oNXzxFqfTHHvu4hSPwq/OIar+1MbReCiCxBUjG6U9bAr4LnKe6zP3uPF?=
+ =?us-ascii?Q?1L1xoEW9WFPtv+7tl0BBxz09gUKZaP+QPScRVcQaxQDCNvcDyOblgp6QZ6Tr?=
+ =?us-ascii?Q?xgj/3alXwwMxZoPmBFM0fRHvpY5w6XIiTmLQAiogwWc957hgR/dbQnX1+B0v?=
+ =?us-ascii?Q?ZOv7eWoB5JU9uqbfOEnfRMeVDSnEZJEIw0enIbL1wRHSnA5cSfp+CsI97RrW?=
+ =?us-ascii?Q?XhI40tm8Qiy/co5HMf32GMDfwzLrO1kLYVp+UmKa81GPZwEBwpGIG+7kjdB6?=
+ =?us-ascii?Q?jyQqQInU5e9tmRgV1rvyec/GHhX4EO1bwW4nKEnYDhaGFV2bWfsbistLlix6?=
+ =?us-ascii?Q?cVX0/XgD8uJXAegwydBvenflVemrA9FJ2a2qRAF7VKqblXCqVvHF1aV3Cij5?=
+ =?us-ascii?Q?o3kIlSSieckYGir42f9T2ij4JhpWirUkHTtY8iE4WIVoL0nAF6aF9jD/wle/?=
+ =?us-ascii?Q?fWjn4BbE++u2cSuhvNV/FckJqvmXwuQQq9GPgW5B+Osq5fa4UsnjOajcGsIw?=
+ =?us-ascii?Q?NlVOtENzn6YdN16v8S0oZ5WQKz8WxzHXEwW3W4LSUVo+3eSoTPC4ktH00au5?=
+ =?us-ascii?Q?UZToomxHZYsR+/BBqiTTuFjWFN/FmcwYeH40qqYfopwcsLn12JfPYMycQ0Sx?=
+ =?us-ascii?Q?akdG7lS9YfKkrXROmTJbyJ74BAWTacq/J3/S2eYhOi43SLhBOC2X+i7BiclO?=
+ =?us-ascii?Q?PVHVQNmhG/8etG7g8i57jDs0LGqukgN/+jl/FZ0SWU3jbT7CSJSv856gGUvF?=
+ =?us-ascii?Q?OEWKBzp033oKU9/Lcv+uMZVRDnwh9rfN5V/9fC6v/Lb+UjwuKKhpFW4hOyGh?=
+ =?us-ascii?Q?Pxnau32k0CGnP1ahmYDWvAWRjE8QhyYR9mVhVOkfHO2GDxNK5AITCTc/2jjW?=
+ =?us-ascii?Q?wUX/x+feZSpQ8L8Nx4rfZIptyI8BfgYrHrA1AlxdCms+IsbWaOkE+joNdjqR?=
+ =?us-ascii?Q?G9Acw/Vysdn8ir0wUwUNt6yKk4xDb30Uv/Di01xGq7SoIXb+W7eVeurTXp5l?=
+ =?us-ascii?Q?7fXUrm23g2ZrsYDq1dTuVOHkDDX3GyqO1u2D1tGrL3G4d1aAC4CtE89/OjZd?=
+ =?us-ascii?Q?lyf9u/DR1Pxj3Vw68ISQrvKo2KDlFiMvrp4brVAn2FUyQxQPAXhs5kCUTgBX?=
+ =?us-ascii?Q?akEt4pD326wlZaj0XP61yzY55sCEwmLrFduwF6EycFQLy2UIUwoUWJHD2r9n?=
+ =?us-ascii?Q?jJbDbQrjaB3sCrCW42xbCfbzd8NhwneuGyJZyoBPtsAgiG/nyY4cQpurpzrJ?=
+ =?us-ascii?Q?7WsGX/omZUCWdH2uruZpxdx5KQtUk5mtX7uEgktm8JpLjOL1CMb0Xy+ZSIWh?=
+ =?us-ascii?Q?FjOUDnBnbMCtvCGZhnS/yVTJkEZZDq6b3IHxVjHjk/+v/HQN5ei3vwdZlQ/R?=
+ =?us-ascii?Q?+dk1jerAiwocYaom5ePXJ7/9474cN1VT++X10XKHfKTH4MSKBM1+7wPRX8qo?=
+ =?us-ascii?Q?G9uddChxRtWUFfbYegkTiahI/rc4u/gpCPBpenzYz4oew4LsGsceDNQCAgNM?=
+ =?us-ascii?Q?LDJ5EicR4HsTEJzmIKQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR13MB5239.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BoWGrFv4Duj5ZYDYisViZFhKYY4YmbPQsbHmZzsD/EenUYz4Ybivki/UWi9M?=
+ =?us-ascii?Q?HCwuCISLFTCpCrMJeMMc9AmoLH2mrXF8a+Ya57Vkb2kPY5KZG1YbnROK6G9C?=
+ =?us-ascii?Q?95pK/MGG+5ENESqNi7IoEOR03wa+Q693otzrnV5Oex7H1NaRCdJjJ7avD3o3?=
+ =?us-ascii?Q?c68sMfzwqSV74PP70VHO2LjW+n84oHII4GoMbumWETnnq2keu6unEKF5vsUQ?=
+ =?us-ascii?Q?XqujpnLIO/hNRckgHorqoPbzRccm7ilNF3rqiNc49A3ks7kDnhto5H2Zx/YG?=
+ =?us-ascii?Q?tRFXepgg8z5JVkmzDeC2rJMbou0W6ghYlrnb8ReQjopWQrX8y3yY0Hqmqz7D?=
+ =?us-ascii?Q?lBAZWTET38632Lr/1XyMT5n5B7CgVZoClH38rWAjdBO4rL4EzL4019N3il2a?=
+ =?us-ascii?Q?FqaZQYSjo+kRwqjDq8jfKVCIuVe1OUrvvKJZEta0tslHKWGca0ujuhhHYD89?=
+ =?us-ascii?Q?oy7H+UZO/pMBiiYWwD0VkTlezy1lGj9sQrJYQHqwi71mtURD6aFSdW8q67iE?=
+ =?us-ascii?Q?vNJE0njbyTpoosToBMIQ2HkYs9wWkk18PXys+XTrsJ4YvCN2j7RtS8VTWZkA?=
+ =?us-ascii?Q?+/4g3by80MlAPd8KQdPqUlOOEcavJ1Vdsdua5FgITykbses3SgXRl9MDDtT/?=
+ =?us-ascii?Q?fcQ3+3z8bOf4U6VqLtXCKq7h7PJEpEzXrsv7/7DO0skKn5RxFq/5impGZZNj?=
+ =?us-ascii?Q?TIrTScmXzo52G4XYJHceT/9F6rWwiGBrdA9NR46GFCZ+d4yYHjy80cBnqq/a?=
+ =?us-ascii?Q?fGR2t4eKDABMg5DLhwcA//M3kOWYgJ2ynt49c26sfxzS2GkOj5aRYV/U8Oon?=
+ =?us-ascii?Q?3HpQKdwTkqTNkPR7i/5yqecZttFXMISvVtEQWuvtVz3Oqrp5ayUUf0oYe5y9?=
+ =?us-ascii?Q?yPbhN20lpI2pwiUi6iKbB1A2j5Sj+WuRYqeKH7DftBfZk/UMfoKOPTa0FJCt?=
+ =?us-ascii?Q?ZjY7Yc4K/Nhc3x9yzd21h3r9fNRY/Wh25E7yVE6FDM1TDVidSQjZvLvcnzh2?=
+ =?us-ascii?Q?8iVSd0GGcsUS/J3J7nOY/H8oFwOUFDKRHpR8xbXuk2srPB4/HUXt/p3jH+cu?=
+ =?us-ascii?Q?GP67wB2jmsXD/Lgkg0xPNneeIOiTSDmEAOoB/A0W3ia8jV91EtQtrh+kE33z?=
+ =?us-ascii?Q?WKzmLSjWIGkV6zWIIuX3xB/cllVwkkTqQHyRYYEgtNehJfJydGBysGUAAWP+?=
+ =?us-ascii?Q?ShsdZs2659cOh9eS6RchrehJ2ihQIXF7zCqLPt3yvespFFaxgNXV4g7LkLxY?=
+ =?us-ascii?Q?3GhTqEL/aDmNONhOUPQeHnmhm4AEl0nhCfV9gOuzEckPLYXmORN9osKhbVFA?=
+ =?us-ascii?Q?RskU0d0S+2XfyRXyGDxQj3UXZ5GVrkgryksk+fXGCOBK+XdY0tO+cfHbOJkd?=
+ =?us-ascii?Q?4+WYumrQAhW7hxys84r6reuNvWqymbwiHUwwrZl1DpEhNzIx2DFh6VZfGoka?=
+ =?us-ascii?Q?fHm8A7Jci2pM3dwTAUETQ8DOS4JkeB5THDD0ktbAamcSXZqN7qZ1fL8C6+Br?=
+ =?us-ascii?Q?qF/bQF4V7bhDxPIpb58JjGJth09Z+5Jot+6k/QcTvgY/O1vbKx775tscJfYb?=
+ =?us-ascii?Q?EtApxX07Zcu/vx3mQzvrSlP8Lcx3HAbqNxLt8i3BMMVmWwMSfRPVIN/leny9?=
+ =?us-ascii?Q?zf+xX1c9J/+2uphRgFgqm9YeO8dp1JcbwR0dyIEw99K82QFhZkpG0PBj7Xrj?=
+ =?us-ascii?Q?Bf3aNSApobS7Zra3Zu2YCveA2ytwfTXfnd1baKncFs2/Krz88NV7VZdo1Ujz?=
+ =?us-ascii?Q?aiqXrvs8YkPHA4KZC/9tXWYu1AS8emY=3D?=
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a225bd7b-104c-4205-6c5d-08de55232a75
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR13MB5239.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2026 17:17:45.9882
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wOgxju3vsUo/tEGqU81/JgXILokcHe6Mv3uIXvnS0Yzq05U0mI9rGM+ftU/dGpneqDqqG7sx6eDeevCIrDCQAhybtBQgSMYQVN1pQGNngpI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR13MB7278
 
+On 16 Jan 2026, at 11:56, Chuck Lever wrote:
 
-
-On Fri, Jan 16, 2026, at 9:32 AM, Benjamin Coddington wrote:
-> NFS clients may bypass restrictive directory permissions by using
-> open_by_handle() (or other available OS system call) to guess the
-> filehandles for files below that directory.
+> On Fri, Jan 16, 2026, at 9:32 AM, Benjamin Coddington wrote:
+>> The following series enables the linux NFS server to add a Message
+>> Authentication Code (MAC) to the filehandles it gives to clients.  This
+>> provides additional protection to the exported filesystem against filehandle
+>> guessing attacks.
+>>
+>> Filesystems generate their own filehandles through the export_operation
+>> "encode_fh" and a filehandle provides sufficient access to open a file
+>> without needing to perform a lookup.  An NFS client holding a valid
+>> filehandle can remotely open and read the contents of the file referred to
+>> by the filehandle.
 >
-> In order to harden knfsd servers against this attack, create a method to
-> sign and verify filehandles using siphash as a MAC (Message Authentication
-> Code).  Filehandles that have been signed cannot be tampered with, nor can
-> clients reasonably guess correct filehandles and hashes that may exist in
-> parts of the filesystem they cannot access due to directory permissions.
+> "open, read, or modify the contents of the file"
 >
-> Append the 8 byte siphash to encoded filehandles for exports that have set
-> the "sign_fh" export option.  The filehandle's fh_auth_type is set to
-> FH_AT_MAC(1) to indicate the filehandle is signed.  Filehandles received from
-> clients are verified by comparing the appended hash to the expected hash.
-> If the MAC does not match the server responds with NFS error _BADHANDLE.
-> If unsigned filehandles are received for an export with "sign_fh" they are
-> rejected with NFS error _BADHANDLE.
+> Btw, referring to "open" here is a little confusing, since NFSv3 does
+> not have an on-the-wire OPEN operation. I'm not sure how to clarify.
 >
-> Signed-off-by: Benjamin Coddington <bcodding@hammerspace.com>
-> ---
->  fs/nfsd/nfs3xdr.c          | 20 +++++++----
->  fs/nfsd/nfs4xdr.c          | 12 ++++---
->  fs/nfsd/nfsfh.c            | 72 ++++++++++++++++++++++++++++++++++++--
->  fs/nfsd/nfsfh.h            | 22 ++++++++++++
->  include/linux/sunrpc/svc.h |  1 +
->  5 files changed, 113 insertions(+), 14 deletions(-)
 >
-> diff --git a/fs/nfsd/nfs3xdr.c b/fs/nfsd/nfs3xdr.c
-> index ef4971d71ac4..f9d0c4892de7 100644
-> --- a/fs/nfsd/nfs3xdr.c
-> +++ b/fs/nfsd/nfs3xdr.c
-> @@ -120,11 +120,16 @@ svcxdr_encode_nfsstat3(struct xdr_stream *xdr, 
-> __be32 status)
->  }
-> 
->  static bool
-> -svcxdr_encode_nfs_fh3(struct xdr_stream *xdr, const struct svc_fh *fhp)
-> +svcxdr_encode_nfs_fh3(struct svc_rqst *rqstp, struct xdr_stream *xdr,
-> +						struct svc_fh *fhp)
->  {
-> -	u32 size = fhp->fh_handle.fh_size;
-> +	u32 size;
->  	__be32 *p;
-> 
-> +	if (fh_append_mac(fhp, SVC_NET(rqstp)))
-> +		return false;
-> +	size = fhp->fh_handle.fh_size;
-> +
+>> In order to acquire a filehandle, you must perform lookup operations on the
+>> parent directory(ies), and the permissions on those directories may
+>> prohibit you from walking into them to find the files within.  This would
+>> normally be considered sufficient protection on a local filesystem to
+>> prohibit users from accessing those files, however when the filesystem is
+>> exported via NFS those files can still be accessed by guessing the correct,
+>> valid filehandles.
+>
+> Instead: "an exported file can be accessed whenever the NFS server is
+> presented with the correct filehandle, which can be guessed or acquired
+> by means other than LOOKUP."
+>
+>
+>> Filehandles are easy to guess because they are well-formed.  The
+>> open_by_handle_at(2) man page contains an example C program
+>> (t_name_to_handle_at.c) that can display a filehandle given a path.  Here's
+>> an example filehandle from a fairly modern XFS:
+>>
+>> # ./t_name_to_handle_at /exports/foo
+>> 57
+>> 12 129    99 00 00 00 00 00 00 00 b4 10 0b 8c
+>>
+>>           ^---------  filehandle  ----------^
+>>           ^------- inode -------^ ^-- gen --^
+>>
+>> This filehandle consists of a 64-bit inode number and 32-bit generation
+>> number.  Because the handle is well-formed, its easy to fabricate
+>> filehandles that match other files within the same filesystem.  You can
+>> simply insert inode numbers and iterate on the generation number.
+>> Eventually you'll be able to access the file using open_by_handle_at(2).
+>> For a local system, open_by_handle_at(2) requires CAP_DAC_READ_SEARCH, which
+>> protects against guessing attacks by unprivileged users.
+>>
+>> In contrast to a local user using open_by_handle(2), the NFS server must
+>> permissively allow remote clients to open by filehandle without being able
+>> to check or trust the remote caller's access. Therefore additional
+>> protection against this attack is needed for NFS case.  We propose to sign
+>> filehandles by appending an 8-byte MAC which is the siphash of the
+>> filehandle from a key set from the nfs-utilities.  NFS server can then
+>> ensure that guessing a valid filehandle+MAC is practically impossible
+>> without knowledge of the MAC's key.  The NFS server performs optional
+>> signing by possessing a key set from userspace and having the "sign_fh"
+>> export option.
+>
+> OK, I guess this is where I got the idea this would be an export option.
+>
+> But I'm unconvinced that this provides any real security. There are
+> other ways of obtaining a filehandle besides guessing, and nothing
+> here suggests that guessing is the premier attack methodology.
 
-This is a layering violation. XDR encoding never alters the content
-in the local data structures, and this will be impossible to
-convert to xdrgen down the line. All of the NFS version-specific
-code should not know or care about FH signing, IMO.
+Help me understand you - you're unconvinced that having the server sign
+filehandles and verify filehandles prevents clients from fabricating valid
+ones?
 
-Why can't the new signing logic be contained in fh_compose()
-and fh_verify() ?
+> The fundamental issue is there is no authorization check done by NFS
+> READ or WRITE. And in the case of root_squash with AUTH_SYS, maybe
+> even an authorization check at I/O time isn't enough. Note this is
+> the classic NFS AUTH_SYS security model; it assumes we're all best
+> of friends.
 
+I'm not quite following, READ and WRITE will have their filehandles
+validated.. the case you might be talking about is when a file moves or its
+access changes after the client has the valid filehandle.  I'm not
+attempting to protect against those cases.
 
->  	p = xdr_reserve_space(xdr, XDR_UNIT + size);
->  	if (!p)
->  		return false;
-> @@ -137,11 +142,12 @@ svcxdr_encode_nfs_fh3(struct xdr_stream *xdr, 
-> const struct svc_fh *fhp)
->  }
-> 
->  static bool
-> -svcxdr_encode_post_op_fh3(struct xdr_stream *xdr, const struct svc_fh *fhp)
-> +svcxdr_encode_post_op_fh3(struct svc_rqst *rqstp, struct xdr_stream *xdr,
-> +							struct svc_fh *fhp)
->  {
->  	if (xdr_stream_encode_item_present(xdr) < 0)
->  		return false;
-> -	if (!svcxdr_encode_nfs_fh3(xdr, fhp))
-> +	if (!svcxdr_encode_nfs_fh3(rqstp, xdr, fhp))
->  		return false;
-> 
->  	return true;
-> @@ -772,7 +778,7 @@ nfs3svc_encode_lookupres(struct svc_rqst *rqstp, 
-> struct xdr_stream *xdr)
->  		return false;
->  	switch (resp->status) {
->  	case nfs_ok:
-> -		if (!svcxdr_encode_nfs_fh3(xdr, &resp->fh))
-> +		if (!svcxdr_encode_nfs_fh3(rqstp, xdr, &resp->fh))
->  			return false;
->  		if (!svcxdr_encode_post_op_attr(rqstp, xdr, &resp->fh))
->  			return false;
-> @@ -908,7 +914,7 @@ nfs3svc_encode_createres(struct svc_rqst *rqstp, 
-> struct xdr_stream *xdr)
->  		return false;
->  	switch (resp->status) {
->  	case nfs_ok:
-> -		if (!svcxdr_encode_post_op_fh3(xdr, &resp->fh))
-> +		if (!svcxdr_encode_post_op_fh3(rqstp, xdr, &resp->fh))
->  			return false;
->  		if (!svcxdr_encode_post_op_attr(rqstp, xdr, &resp->fh))
->  			return false;
-> @@ -1117,7 +1123,7 @@ svcxdr_encode_entry3_plus(struct nfsd3_readdirres 
-> *resp, const char *name,
-> 
->  	if (!svcxdr_encode_post_op_attr(resp->rqstp, xdr, fhp))
->  		goto out;
-> -	if (!svcxdr_encode_post_op_fh3(xdr, fhp))
-> +	if (!svcxdr_encode_post_op_fh3(resp->rqstp, xdr, fhp))
->  		goto out;
->  	result = true;
-> 
-> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> index 884b792c95a3..f12981b989d1 100644
-> --- a/fs/nfsd/nfs4xdr.c
-> +++ b/fs/nfsd/nfs4xdr.c
-> @@ -2701,9 +2701,13 @@ nfsd4_decode_compound(struct nfsd4_compoundargs *argp)
->  }
-> 
->  static __be32 nfsd4_encode_nfs_fh4(struct xdr_stream *xdr,
-> -				   struct knfsd_fh *fh_handle)
-> +					struct svc_fh *fhp)
->  {
-> -	return nfsd4_encode_opaque(xdr, fh_handle->fh_raw, fh_handle->fh_size);
-> +	if (fh_append_mac(fhp, SVC_NET(RESSTRM_RQST(xdr))))
-> +		return nfserr_resource;
-> +
-> +	return nfsd4_encode_opaque(xdr, fhp->fh_handle.fh_raw,
-> +		fhp->fh_handle.fh_size);
->  }
-> 
->  /* This is a frequently-encoded type; open-coded for speed */
-> @@ -3359,7 +3363,7 @@ static __be32 nfsd4_encode_fattr4_acl(struct 
-> xdr_stream *xdr,
->  static __be32 nfsd4_encode_fattr4_filehandle(struct xdr_stream *xdr,
->  					     const struct nfsd4_fattr_args *args)
->  {
-> -	return nfsd4_encode_nfs_fh4(xdr, &args->fhp->fh_handle);
-> +	return nfsd4_encode_nfs_fh4(xdr, args->fhp);
->  }
-> 
->  static __be32 nfsd4_encode_fattr4_fileid(struct xdr_stream *xdr,
-> @@ -4460,7 +4464,7 @@ nfsd4_encode_getfh(struct nfsd4_compoundres 
-> *resp, __be32 nfserr,
->  	struct svc_fh *fhp = u->getfh;
-> 
->  	/* object */
-> -	return nfsd4_encode_nfs_fh4(xdr, &fhp->fh_handle);
-> +	return nfsd4_encode_nfs_fh4(xdr, fhp);
->  }
-> 
->  static __be32
-> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-> index ed85dd43da18..b2fb16b7f3c9 100644
-> --- a/fs/nfsd/nfsfh.c
-> +++ b/fs/nfsd/nfsfh.c
-> @@ -11,6 +11,7 @@
->  #include <linux/exportfs.h>
-> 
->  #include <linux/sunrpc/svcauth_gss.h>
-> +#include <crypto/skcipher.h>
+>> Because filehandles are long-lived, and there's no method for expiring them,
+>> the server's key should be set once and not changed.  It also should be
+>> persisted across restarts.  The methods to set the key allow only setting it
+>> once, afterward it cannot be changed.  A separate patchset for nfs-utils
+>> contains the userspace changes required to set the server's key.
+>
+> There are some problems here.
+>
+> - The requirement is: File handles must remain stable while the inode
+>   generation number remains unchanged (Chinner).
+>
+> - There's nothing in your implementation that prevents user space
+>   from providing a different key after a system reboot or server
+>   restart. In fact, destroying the net namespace removes the ability
+>   for the server to remember (and thus check) the previously set
+>   fh_key.
 
-Is this header still needed?
+Yes - suggestions on how to solve this are welcome.
 
+> - An fh_key change is safe to do once all exported file systems are
+>   unexported and unmounted. NFS clients generally don't preserve
+>   filehandles after they unmount file systems. I say this because I
+>   think rekeying might become important as the time to break a key
+>   decreases.
 
->  #include "nfsd.h"
->  #include "vfs.h"
->  #include "auth.h"
-> @@ -137,6 +138,62 @@ static inline __be32 check_pseudo_root(struct 
-> dentry *dentry,
->  	return nfs_ok;
->  }
-> 
-> +/*
-> + * Intended to be called when encoding, appends an 8-byte MAC
-> + * to the filehandle hashed from the server's fh_key:
-> + */
-> +int fh_append_mac(struct svc_fh *fhp, struct net *net)
-> +{
-> +	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
-> +	struct knfsd_fh *fh = &fhp->fh_handle;
-> +	siphash_key_t *fh_key = nn->fh_key;
-> +	u64 hash;
-> +
-> +	if (!(fhp->fh_export->ex_flags & NFSEXP_SIGN_FH))
-> +		return 0;
-> +
-> +	if (!fh_key) {
-> +		pr_warn("NFSD: unable to sign filehandles, fh_key not set.\n");
+Absolutely.
 
-Use pr_warn_ratelimited() instead
-
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (fh->fh_size + sizeof(hash) > fhp->fh_maxsize) {
-> +		pr_warn("NFSD: unable to sign filehandles, fh_size %lu would be 
-> greater"
-> +			" than fh_maxsize %d.\n", fh->fh_size + sizeof(hash), 
-> fhp->fh_maxsize);
-> +		return -EINVAL;
-> +	}
-> +
-> +	fh->fh_auth_type = FH_AT_MAC;
-> +	hash = siphash(&fh->fh_raw, fh->fh_size, fh_key);
-> +	memcpy(&fh->fh_raw[fh->fh_size], &hash, sizeof(hash));
-> +	fh->fh_size += sizeof(hash);
-
-What prevents appending a MAC to the same FH multiple times?
-
-
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Verify that the the filehandle's MAC was hashed from this filehandle
-> + * given the server's fh_key:
-> + */
-> +static int fh_verify_mac(struct svc_fh *fhp, struct net *net)
-> +{
-> +	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
-> +	struct knfsd_fh *fh = &fhp->fh_handle;
-> +	siphash_key_t *fh_key = nn->fh_key;
-> +	u64 hash;
-> +
-> +	if (fhp->fh_handle.fh_auth_type != FH_AT_MAC)
-> +		return -EINVAL;
-> +
-> +	if (!fh_key) {
-> +		pr_warn("NFSD: unable to verify signed filehandles, fh_key not 
-> set.\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	hash = siphash(&fh->fh_raw, fh->fh_size - sizeof(hash),  fh_key);
-> +	return memcmp(&fh->fh_raw[fh->fh_size - sizeof(hash)], &hash, 
-> sizeof(hash));
-
-Let's use crypto_memneq() for this purpose, to avoid timing attacks.
-
-
-> +}
-> +
->  /*
->   * Use the given filehandle to look up the corresponding export and
->   * dentry.  On success, the results are used to set fh_export and
-> @@ -166,8 +223,11 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst 
-> *rqstp, struct net *net,
-> 
->  	if (--data_left < 0)
->  		return error;
-> -	if (fh->fh_auth_type != 0)
-> +
-> +	/* either FH_AT_NONE or FH_AT_MAC */
-> +	if (fh->fh_auth_type > 1)
->  		return error;
-> +
->  	len = key_len(fh->fh_fsid_type) / 4;
->  	if (len == 0)
->  		return error;
-> @@ -237,9 +297,15 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst 
-> *rqstp, struct net *net,
-> 
->  	fileid_type = fh->fh_fileid_type;
-> 
-> -	if (fileid_type == FILEID_ROOT)
-> +	if (fileid_type == FILEID_ROOT) {
->  		dentry = dget(exp->ex_path.dentry);
-> -	else {
-> +	} else {
-> +		/* Root filehandle always unsigned because rpc.mountd has no key */
-> +		if (exp->ex_flags & NFSEXP_SIGN_FH && fh_verify_mac(fhp, net)) {
-> +			trace_nfsd_set_fh_dentry_badhandle(rqstp, fhp, -EKEYREJECTED);
-> +			goto out;
-> +		}
-> +
->  		dentry = exportfs_decode_fh_raw(exp->ex_path.mnt, fid,
->  						data_left, fileid_type, 0,
->  						nfsd_acceptable, exp);
-> diff --git a/fs/nfsd/nfsfh.h b/fs/nfsd/nfsfh.h
-> index 5ef7191f8ad8..d1ae272117f0 100644
-> --- a/fs/nfsd/nfsfh.h
-> +++ b/fs/nfsd/nfsfh.h
-> @@ -59,6 +59,9 @@ struct knfsd_fh {
->  #define fh_fsid_type		fh_raw[2]
->  #define fh_fileid_type		fh_raw[3]
-> 
-> +#define FH_AT_NONE		0
-> +#define FH_AT_MAC		1
-> +
->  static inline u32 *fh_fsid(const struct knfsd_fh *fh)
->  {
->  	return (u32 *)&fh->fh_raw[4];
-> @@ -226,6 +229,7 @@ __be32	fh_getattr(const struct svc_fh *fhp, struct 
-> kstat *stat);
->  __be32	fh_compose(struct svc_fh *, struct svc_export *, struct dentry 
-> *, struct svc_fh *);
->  __be32	fh_update(struct svc_fh *);
->  void	fh_put(struct svc_fh *);
-> +int	fh_append_mac(struct svc_fh *, struct net *net);
-> 
->  static __inline__ struct svc_fh *
->  fh_copy(struct svc_fh *dst, const struct svc_fh *src)
-> @@ -274,6 +278,24 @@ static inline bool fh_fsid_match(const struct 
-> knfsd_fh *fh1,
->  	return true;
->  }
-> 
-> +static inline size_t fh_fileid_offset(const struct knfsd_fh *fh)
-> +{
-> +	return key_len(fh->fh_fsid_type) + 4;
-> +}
-> +
-> +static inline size_t fh_fileid_len(const struct knfsd_fh *fh)
-> +{
-> +	switch (fh->fh_auth_type) {
-> +	case FH_AT_NONE:
-> +		return fh->fh_size - fh_fileid_offset(fh);
-> +		break;
-> +	case FH_AT_MAC:
-> +		return fh->fh_size - 8 - fh_fileid_offset(fh);
-
-Let's define/use symbolic constants here (8) and just above (4).
-
-
-> +		break;
-
-The break; statements are unreachable.
-
-
-> +	}
-> +	return 0;
-> +}
-> +
->  /**
->   * fh_want_write - Get write access to an export
->   * @fhp: File handle of file to be written
-> diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
-> index 62152e4f3bcc..96dae45d70ca 100644
-> --- a/include/linux/sunrpc/svc.h
-> +++ b/include/linux/sunrpc/svc.h
-> @@ -267,6 +267,7 @@ enum {
->  };
-> 
->  #define SVC_NET(rqst) (rqst->rq_xprt ? rqst->rq_xprt->xpt_net : 
-> rqst->rq_bc_net)
-> +#define RESSTRM_RQST(xdr_stream) (container_of(xdr_stream, struct 
-> svc_rqst, rq_res_stream))
-> 
->  /*
->   * Rigorous type checking on sockaddr type conversions
-> -- 
-> 2.50.1
-
--- 
-Chuck Lever
+Ben
 
