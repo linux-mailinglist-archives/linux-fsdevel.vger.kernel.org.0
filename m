@@ -1,185 +1,304 @@
-Return-Path: <linux-fsdevel+bounces-74290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670E0D38F5B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 16:26:49 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6AED38F5E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 16:27:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E61483032709
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 15:25:35 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3ACA73020C5B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 15:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E8A233D88;
-	Sat, 17 Jan 2026 15:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w0zaPWxa"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A2622ACEB;
+	Sat, 17 Jan 2026 15:26:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8D623645D
-	for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jan 2026 15:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487259475;
+	Sat, 17 Jan 2026 15:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768663534; cv=none; b=EcX5bbj0iDKEk2iPRW0sOPcidC38jBwhoADfq7XKUXf8M/J17XplXK73C0YmGV6zbRCqJzP9qJa4/sidufw7K+ua9bOAQum1FeTF5kOU4a0UzVkbHQMDhniyva3PUF2doAukmwQSygcJMX6uiE6uzjBIMhcX4QONtwdLnrwrND4=
+	t=1768663618; cv=none; b=jt7dnfIWT5UTJVFcK7Ea/AujoTdtT9XQl7nfyzIGbChcB50PpkTmOLELX1Mb8ZauWiPtxGtA4UKsHGQREtxruyMp5EUXE6CxBmYRFEnOCLbreuOAEPQFDyJj8U2tPcm2CtZMMMIHPjld6UbTFjKMiX6neFWpK5BpFSOMjitPTZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768663534; c=relaxed/simple;
-	bh=9ipAyLskKwi1ksx9hkkM2iyTNIPdZ0fYz79QhCj4ffA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ahaULdCtHx0gi3PYOdFV9K6IK1HLQWD0Y1X6KJetrCkUL88baUn1ZpMG0MVyVbEABtRdP7bjY0GPk+BsfKWJsCcYakZzIdaBezKJyMWeM7VmGbvbDXueri+AdaznlJPxsAoVp0FeG1iVywqQUYxWQP8fBRCkUUSokG3s/Hp3WSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w0zaPWxa; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47d3ba3a49cso32092095e9.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jan 2026 07:25:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1768663530; x=1769268330; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KqqLu+rK83FYvuu43UqacZgGarS1nyPWiHaErFCcx+s=;
-        b=w0zaPWxac3n44oJeA2yYz1htROIZE7YRtAhUA3iMpqpD3spou6UQkDfZ9D1Z60Xunb
-         t701e3bTfAsypHwmmhCIiZ50wTlGC2ATfm5ZP2f1snD0NsexfT0Zt2/9EDYnEuHm+D8Q
-         0VPSoEcBalbdCSCgFojMfBWvYIhWewyjiXvzT/nDQDQx2mz1PkNgSqPdN8A0Vzd/oir6
-         ROBx/Npis/R4NvmqSwD88+qMe67DOcXz9He8mlsYQy3g45scwZ1DP2MeUNeefpc0LLID
-         34J3UsjwJ3fO0oPwhxAiwpMae3t++3rE5PnFYGxLYTmo/7n6BRq8DFcu5pp6wDu34JZn
-         90sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768663530; x=1769268330;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KqqLu+rK83FYvuu43UqacZgGarS1nyPWiHaErFCcx+s=;
-        b=STxhxq0uuU2x99zFBBz/Oue9FndTle5p7063HiyU3U9O4WF+Xx+Ai3eXIoBJXJqlY8
-         QXISv7e8hXUK9TvWNMMbr6FOUfV69NnYjJnGN9HEvjg4LgBfLPyVOR56hXkIy1+Uz3xR
-         FI4C3g2pzk3FKr/iMzsGf+ybfrgQVTA+4fv1pgYlHN24Gx0pTuFtp8k4BMlTavpdC4+d
-         Wg5XRh4KfeylBcSZDAozQmBUQKz/wCOaB4Rg6mCecNg92SwYHjFLe3gVWYZZy50MwFwx
-         senl3EBGRotH6vX6aIInzimJ5v6EayzRXbVuz5MUYa9BLpWwy0qxmVQAlwp0fHFWS5II
-         zGtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9kthIxVTsFG1GVgqLhszyqYDjt3EFwLMpNULqZMh6qtAruVCW97IbaJkx+dDfUl305aQFh6/lmlgcS/So@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlldlP1BnQiMzvT2YVl0yoZBaANIvsO5fFgzrkiQjppHh2MAny
-	spzeTXP3eifZU5PIolfqP7K2yBgNSu4a8HmFOShAIqD5qNMpSiRk/TUkAfUOExP1xoGqd5qdJAY
-	KOGz4OkH1K40GCYQLXg==
-X-Received: from wmhm8.prod.google.com ([2002:a05:600c:40c8:b0:477:7893:c737])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4e0f:b0:47e:e779:36e with SMTP id 5b1f17b1804b1-4801eb0375amr70230175e9.19.1768663529817;
- Sat, 17 Jan 2026 07:25:29 -0800 (PST)
-Date: Sat, 17 Jan 2026 15:25:20 +0000
-In-Reply-To: <20260117-upgrade-poll-v1-0-179437b7bd49@google.com>
+	s=arc-20240116; t=1768663618; c=relaxed/simple;
+	bh=RIiuuWL0UH9CsmimcgXDIH4mnusmmajqncuxdD3wBUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e3xXiOhNxeEg0594gVVphVxY9NpItkmYvmnijqcvPupWPuTE6BP91vNBNIcfXlhRu8eOFC8xIAIwTnnrfcV8bZuOlwq5kBbYyTCT9G/fqRyqO5M3BGQimvt7lOa5RHv12X/GEIJpdoIq4dBJv5+Z7KhqW5JKT5pt3ebbQASYrlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
+Received: from [10.26.132.114] (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [101.226.143.244])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 31006eb51;
+	Sat, 17 Jan 2026 23:26:42 +0800 (GMT+08:00)
+Message-ID: <1451743b-69a0-4e32-9dd7-a68c14c8f1a1@ustc.edu>
+Date: Sat, 17 Jan 2026 23:26:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260117-upgrade-poll-v1-0-179437b7bd49@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3796; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=9ipAyLskKwi1ksx9hkkM2iyTNIPdZ0fYz79QhCj4ffA=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpa6nlFxHRFC9Er4fNiBw9GYpYeu3Uu4ieGDJeI
- wo6v3Mb5H6JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaWup5QAKCRAEWL7uWMY5
- RtG8EACdXCwXlePrBnRXKgNEHXkdYMvJULH49b5iki2wcp8iujIwa+FEoFXm1Y69eN5UCCZtcQH
- zylpEINsHKVe4/to8zHNwCmm5tLMwDeEWjNTv2t2g9W5UXD4Zw/F9RrerMh4va+TshAnCJGLJXu
- 04229CYQkUTlNmMwREG+u9/+6hcT1fMQgYSijDpVy1gdhpBb1PPyCgcx7AmiYkX+V/4JihValTI
- hU8iO7IyLpKIlH6kuT2gRS9bCG4At0CSusPaMiH45agzSNWx+3HWRp9PtxcbjsQXOxXQ7Z7DsWf
- CUGEAxYfVXI6OTKm3Nz9IzdyZtkrxqjT+KyHKNCbH1VAKXqrp9kaJAYbmgMSkkEkOZGAYBiVCTu
- +K8UtmVC9olOfl/EDZNYg9PLy13SnSorCw6hO5i610hJVHp6kllzrwdbjfV25/P+hjP3K8oNRAw
- rGMIGCeT1h1wmNC5ddkhoe6q+jH+CVhkaBQDuI6R6XSg6VgtTkx+Psi8L78z5mR7h8iM5j3EY4Z
- jrhvuVEHQJKj1FaVH5+oMhINwBUn092wKAxAk4S6RPiL1yH+saaVfT05jl72QSYKxV5AfMNVvwD
- exsQTHgSAT1OQyHjhwsRtP+bE/AJHnT4On9+oN0IeJdPXLy4I4TuuYgCegpoj/IEYnvGYMHEQyb 0ULwk+2ADGWOyqw==
-X-Mailer: b4 0.14.2
-Message-ID: <20260117-upgrade-poll-v1-2-179437b7bd49@google.com>
-Subject: [PATCH RFC 2/2] rust_binder: use UpgradePollCondVar
-From: Alice Ryhl <aliceryhl@google.com>
-To: Christian Brauner <brauner@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>
-Cc: Gary Guo <gary@garyguo.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Carlos Llamas <cmllamas@google.com>, linux-fsdevel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 2/2] fuse: Add new flag to reuse the backing file of
+ fuse_inode
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, paullawrence@google.com
+References: <20260115072032.402-1-luochunsheng@ustc.edu>
+ <20260115072032.402-3-luochunsheng@ustc.edu>
+ <aWjnHvP5jsafQeag@amir-ThinkPad-T480>
+ <a0ccfa28-4107-46ed-af79-faf55c004da0@ustc.edu>
+ <CAOQ4uxhOuBXT3tgoLxjh6efAwiOLg=oDxsyivLLMXCrSamSuEA@mail.gmail.com>
+ <bff16d9e-d6e7-4d0e-9a58-6db37ec58ce7@ustc.edu>
+ <CAOQ4uxjv=EZ-W-L=o8m2V+399PcBLLedz7T4z=5XKZhkwYitWw@mail.gmail.com>
+From: Chunsheng Luo <luochunsheng@ustc.edu>
+In-Reply-To: <CAOQ4uxjv=EZ-W-L=o8m2V+399PcBLLedz7T4z=5XKZhkwYitWw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9bcc90d2d303a2kunmb6b0959d2a91bd
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZSkxMVkkZGkseSxgaTB0aHVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKS0pVSUlNVUpPSFVJT09ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSktLVU
+	pCS0tZBg++
 
-Most processes do not use Rust Binder with epoll, so avoid paying the
-synchronize_rcu() cost in drop for those that don't need it. For those
-that do, we also manage to replace synchronize_rcu() with kfree_rcu(),
-though we introduce an extra allocation.
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- drivers/android/binder/process.rs |  2 +-
- drivers/android/binder/thread.rs  | 18 +++++++++++-------
- 2 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/android/binder/process.rs b/drivers/android/binder/process.rs
-index 132055b4790f0ec69a87635b498909df2bf475e2..9374f1a86766c09321b57e565b6317cc290ea32b 100644
---- a/drivers/android/binder/process.rs
-+++ b/drivers/android/binder/process.rs
-@@ -1684,7 +1684,7 @@ pub(crate) fn poll(
-         table: PollTable<'_>,
-     ) -> Result<u32> {
-         let thread = this.get_current_thread()?;
--        let (from_proc, mut mask) = thread.poll(file, table);
-+        let (from_proc, mut mask) = thread.poll(file, table)?;
-         if mask == 0 && from_proc && !this.inner.lock().work.is_empty() {
-             mask |= bindings::POLLIN;
-         }
-diff --git a/drivers/android/binder/thread.rs b/drivers/android/binder/thread.rs
-index 82264db06507d4641b60cbed96af482a9d36e7b2..8f09cf1599ae7edcf2ee60b2cb1b08cc2d0afd3f 100644
---- a/drivers/android/binder/thread.rs
-+++ b/drivers/android/binder/thread.rs
-@@ -16,7 +16,7 @@
-     seq_file::SeqFile,
-     seq_print,
-     sync::atomic::{ordering::Relaxed, Atomic},
--    sync::poll::{PollCondVar, PollTable},
-+    sync::poll::{PollTable, UpgradePollCondVar},
-     sync::{Arc, SpinLock},
-     task::Task,
-     types::ARef,
-@@ -412,7 +412,7 @@ pub(crate) struct Thread {
-     #[pin]
-     inner: SpinLock<InnerThread>,
-     #[pin]
--    work_condvar: PollCondVar,
-+    work_condvar: UpgradePollCondVar,
-     /// Used to insert this thread into the process' `ready_threads` list.
-     ///
-     /// INVARIANT: May never be used for any other list than the `self.process.ready_threads`.
-@@ -443,7 +443,7 @@ pub(crate) fn new(id: i32, process: Arc<Process>) -> Result<Arc<Self>> {
-                 process,
-                 task: ARef::from(&**kernel::current!()),
-                 inner <- kernel::new_spinlock!(inner, "Thread::inner"),
--                work_condvar <- kernel::new_poll_condvar!("Thread::work_condvar"),
-+                work_condvar <- kernel::new_upgrade_poll_condvar!("Thread::work_condvar"),
-                 links <- ListLinks::new(),
-                 links_track <- AtomicTracker::new(),
-             }),
-@@ -1484,10 +1484,15 @@ pub(crate) fn write_read(self: &Arc<Self>, data: UserSlice, wait: bool) -> Resul
-         ret
-     }
- 
--    pub(crate) fn poll(&self, file: &File, table: PollTable<'_>) -> (bool, u32) {
--        table.register_wait(file, &self.work_condvar);
-+    pub(crate) fn poll(&self, file: &File, table: PollTable<'_>) -> Result<(bool, u32)> {
-+        let condvar = self.work_condvar.poll(
-+            &self.inner,
-+            c"Thread::work_condvar (upgraded)",
-+            kernel::static_lock_class!(),
-+        )?;
-+        table.register_wait(file, condvar);
-         let mut inner = self.inner.lock();
--        (inner.should_use_process_work_queue(), inner.poll())
-+        Ok((inner.should_use_process_work_queue(), inner.poll()))
-     }
- 
-     /// Make the call to `get_work` or `get_work_local` return immediately, if any.
-@@ -1523,7 +1528,6 @@ pub(crate) fn notify_if_poll_ready(&self, sync: bool) {
-     pub(crate) fn release(self: &Arc<Self>) {
-         self.inner.lock().is_dead = true;
- 
--        //self.work_condvar.clear();
-         self.unwind_transaction_stack();
- 
-         // Cancel all pending work items.
+On 1/17/26 3:08 AM, Amir Goldstein wrote:
+> On Fri, Jan 16, 2026 at 3:43 AM Chunsheng Luo <luochunsheng@ustc.edu> wrote:
+>>
+>>
+>>
+>> On 1/15/26 11:31 PM, Amir Goldstein wrote:
+>>> On Thu, Jan 15, 2026 at 3:35 PM Chunsheng Luo <luochunsheng@ustc.edu> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 1/15/26 9:09 PM, Amir Goldstein wrote:
+>>>>> Hi Chunsheng,
+>>>>>
+>>>>> Please CC me for future fuse passthrough patch sets.
+>>>>>
+>>>> Ok.
+>>>>
+>>>>> On Thu, Jan 15, 2026 at 03:20:31PM +0800, Chunsheng Luo wrote:
+>>>>>> To simplify crash recovery and reduce performance impact, backing_ids
+>>>>>> are not persisted across daemon restarts. However, this creates a
+>>>>>> problem: when the daemon restarts and a process opens the same FUSE
+>>>>>> file, a new backing_id may be allocated for the same backing file. If
+>>>>>> the inode already has a cached backing file from before the restart,
+>>>>>> subsequent open requests with the new backing_id will fail in
+>>>>>> fuse_inode_uncached_io_start() due to fb mismatch, even though both
+>>>>>> IDs reference the identical underlying file.
+>>>>>
+>>>>> I don't think that your proposal makes this guaranty.
+>>>>>
+>>>>
+>>>> Yes, this proposal does not apply to all situations.
+>>>>
+>>>>>>
+>>>>>> Introduce the FOPEN_PASSTHROUGH_INODE_CACHE flag to address this
+>>>>>> issue. When set, the kernel reuses the backing file already cached in
+>>>>>> the inode.
+>>>>>>
+>>>>>> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
+>>>>>> ---
+>>>>>>     fs/fuse/iomode.c          |  2 +-
+>>>>>>     fs/fuse/passthrough.c     | 11 +++++++++++
+>>>>>>     include/uapi/linux/fuse.h |  2 ++
+>>>>>>     3 files changed, 14 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
+>>>>>> index 3728933188f3..b200bb248598 100644
+>>>>>> --- a/fs/fuse/iomode.c
+>>>>>> +++ b/fs/fuse/iomode.c
+>>>>>> @@ -163,7 +163,7 @@ static void fuse_file_uncached_io_release(struct fuse_file *ff,
+>>>>>>      */
+>>>>>>     #define FOPEN_PASSTHROUGH_MASK \
+>>>>>>        (FOPEN_PASSTHROUGH | FOPEN_DIRECT_IO | FOPEN_PARALLEL_DIRECT_WRITES | \
+>>>>>> -     FOPEN_NOFLUSH)
+>>>>>> +     FOPEN_NOFLUSH | FOPEN_PASSTHROUGH_INODE_CACHE)
+>>>>>>
+>>>>>>     static int fuse_file_passthrough_open(struct inode *inode, struct file *file)
+>>>>>>     {
+>>>>>> diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+>>>>>> index 72de97c03d0e..fde4ac0c5737 100644
+>>>>>> --- a/fs/fuse/passthrough.c
+>>>>>> +++ b/fs/fuse/passthrough.c
+>>>>>> @@ -147,16 +147,26 @@ ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma)
+>>>>>>     /*
+>>>>>>      * Setup passthrough to a backing file.
+>>>>>>      *
+>>>>>> + * If fuse inode backing is provided and FOPEN_PASSTHROUGH_INODE_CACHE flag
+>>>>>> + * is set, try to reuse it first before looking up backing_id.
+>>>>>> + *
+>>>>>>      * Returns an fb object with elevated refcount to be stored in fuse inode.
+>>>>>>      */
+>>>>>>     struct fuse_backing *fuse_passthrough_open(struct file *file, int backing_id)
+>>>>>>     {
+>>>>>>        struct fuse_file *ff = file->private_data;
+>>>>>>        struct fuse_conn *fc = ff->fm->fc;
+>>>>>> +    struct fuse_inode *fi = get_fuse_inode(file->f_inode);
+>>>>>>        struct fuse_backing *fb = NULL;
+>>>>>>        struct file *backing_file;
+>>>>>>        int err;
+>>>>>>
+>>>>>> +    if (ff->open_flags & FOPEN_PASSTHROUGH_INODE_CACHE) {
+>>>>>> +            fb = fuse_backing_get(fuse_inode_backing(fi));
+>>>>>> +            if (fb)
+>>>>>> +                    goto do_open;
+>>>>>> +    }
+>>>>>> +
+>>>>>
+>>>>> Maybe an explicit FOPEN_PASSTHROUGH_INODE_CACHE flag is a good idea,
+>>>>> but just FYI, I intentionally reserved backing_id 0 for this purpose.
+>>>>> For example, for setting up the backing id on lookup [1] and then
+>>>>> open does not need to specify the backing_id.
+>>>>>
+>>>>> [1] https://lore.kernel.org/linux-fsdevel/20250804173228.1990317-1-paullawrence@google.com/
+>>>>>
+>>>>
+>>>> This is a great idea. However, we need to consider the lifecycle
+>>>> management of the backing file associated with a FUSE inode.
+>>>> Specifically, will the same backing_idbe retained for the entire
+>>>> lifetime of the FUSE inode until it is deleted?
+>>>
+>>> It's not a good fit for servers that want to change the backing file
+>>> (like re-download). For these servers we have the existing file
+>>> open-to-close life cycle.
+>>>
+>>>>
+>>>> Additionally, since each backing_idcorresponds to an open file
+>>>> descriptor (fd) for the backing file, if a fuse_inode holds onto a
+>>>> backing_id indefinitely without a suitable release mechanism, could this
+>>>> accumulation of file descriptors cause the process to exceed its open
+>>>> files limit?
+>>>>
+>>>
+>>> There is no such accumulation.
+>>> fuse_inode refers to a single fuse_backing object.
+>>> fuse_file refers to a single fuse_backing object.
+>>> It can be the same (refcounted) object.
+>>>
+>>
+>> Sorry, I wasn't referring to `fuse_backing` refs.
+>>
+>> If the lifecycle of `fuse_backing` is the same as `fuse_inode`, and
+>> there are a large number of FUSE files on the file system, then when I
+>> iterate through and open the backing files, register the `fuse_backing`,
+>> and then set it to the `fuse_inode`, the FUSE service will hold a large
+>> number of backing file file descriptors (FDs).  These backing file FDs
+>> will only be released when the FUSE files are deleted.
+>>
+> 
+> Not until files are deleted. Until fuse inodes are evicted from inode cache.
+> FWIW, fuse_inode is ~900 bytes and filp is ~256 bytes, and when memory
+> is needed, memory shrinker will evict fuse inodes and backing file, so sure
+> backing files take up memory but not a game changer.
+> 
+>> For example, if there are 1000 FUSE files on the file system, and I
+>> iterate through and set the backing file for each `fuse_inode`, then the
+>> FUSE service will hold 1000 backing file FDs for a long time.  Extending
+>> this further, if there are even more files, could the FUSE service
+>> process exceed the `ulimit` configuration for open files?
+>>
+>> ```shell
+>> [root@localhost home]# ulimit -a |grep "open files"
+>> open files                          (-n) 1024
+>> ```
+>>
+> 
+> backing files do not account for the open files limit of the FUSE server
+> that's one of the design issues, but it is by design.
+> 
 
--- 
-2.52.0.457.g6b5491de43-goog
+Thank you for the explanation.
 
+I understand.
+
+>>>>> But what you are proposing is a little bit odd API IMO:
+>>>>> "Use this backing_id with this backing file, unless you find another
+>>>>>     backing file so use that one instead" - this sounds a bit awkward to me.
+>>>>>
+>>>>> I think it would be saner and simpler to relax the check in
+>>>>> fuse_inode_uncached_io_start() to check that old and new fuse_backing
+>>>>> objects refer to the same backing inode:
+>>>>>
+>>>>> diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
+>>>>> index 3728933188f30..c6070c361d855 100644
+>>>>> --- a/fs/fuse/iomode.c
+>>>>> +++ b/fs/fuse/iomode.c
+>>>>> @@ -88,9 +88,9 @@ int fuse_inode_uncached_io_start(struct fuse_inode *fi, struct fuse_backing *fb)
+>>>>>         int err = 0;
+>>>>>
+>>>>>         spin_lock(&fi->lock);
+>>>>> -     /* deny conflicting backing files on same fuse inode */
+>>>>> +     /* deny conflicting backing inodes on same fuse inode */
+>>>>>         oldfb = fuse_inode_backing(fi);
+>>>>> -     if (fb && oldfb && oldfb != fb) {
+>>>>> +     if (fb && oldfb && file_inode(oldfb->file) != file_inode(fb->file)) {
+>>>>>                 err = -EBUSY;
+>>>>>                 goto unlock;
+>>>>>         }
+>>>>> --
+>>>>>
+>>>>> I don't think that this requires opt-in flag.
+>>>>>
+>>>>> Thanks,
+>>>>> Amir.
+>>>>
+>>>> I agree that modifying the condition to `file_inode(oldfb->file) !=
+>>>> file_inode(fb->file)` is a reasonable fix, and it does address the first
+>>>> scenario I described.
+>>>>
+>>>> However, it doesn't fully resolve the second scenario: in a read-only
+>>>> FUSE filesystem, the backing file itself might be cleaned up and
+>>>> re-downloaded (resulting in a new inode with identical content). In this
+>>>> case, reusing the cached fuse_inode's fb after a daemon restart still be
+>>>> safe, but the inode comparison would incorrectly reject it. Is there a
+>>>> more robust approach for handling this scenario?
+>>>>
+>>>
+>>> There is a reason we added the restriction against associating
+>>> fuse file to different backing inodes.
+>>>
+>>> mmap and reads from different files to the same inode need to be
+>>> cache coherent.
+>>>
+>>> IOW, we intentionally do not support this setup without server restart
+>>> there is no reason for us to allow that after server restarts because
+>>> the consequense will be the same.
+>>>
+>>> It does not sound like a good idea for the server to cleanup files
+>>> that are currently opened via fuse passthrough - is that something
+>>> that happens intentionally? after server restarts?
+>>>
+>>> You could try to take a write lease to check if the file is currently
+>>> open for read/write to avoid cleanup in this case?
+>>>
+>>> Thanks,
+>>> Amir.
+>>>
+>>>
+>>
+>> Yes, it happened after the fuse service crash recovery restart, because
+>> the refs of the backup files were cleaned up, causing them to be
+>> mistakenly garbage collected.
+>>
+>> I will consider how to prevent it from being mistakenly garbage
+>> collected by the fuse server.
+> 
+> See here https://github.com/amir73il/fsnotify-utils/wiki/Hierarchical-Storage-Management-API#evicting-file-content
+> explanation how you can use F_SETLEASE to synchronize evicting
+> file content with file content readers.
+> 
+> Thanks,
+> Amir.
+> 
+> 
+
+This is very helpful.
+
+Thanks,
+Chunsheng Luo
 
