@@ -1,135 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-74279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754EBD38AF1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 01:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52640D38AF5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 01:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 02D093071B99
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 00:55:13 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D67C030596BD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 00:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3BF19A2A3;
-	Sat, 17 Jan 2026 00:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5F019A2A3;
+	Sat, 17 Jan 2026 00:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="YnJO1Jbm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WB5kfiuH"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bteuUTAU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6AA2C86D;
-	Sat, 17 Jan 2026 00:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013582BB17
+	for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jan 2026 00:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768611311; cv=none; b=pnvc1X/r1GiLry8/5wxaxJeFS95D02PK2Gme6C16f8Nin+M9s5JX9MwCcwZONFoCZywkS6bD6+PkW3S7HJXL4L6O/JjwRxwsfnawIFwStQZ+FXhKxKysI5U6yvd84LYIOSUKJyCoFCGKoRWW0n63U6sQEMVM5NHgN7iV1Y1v590=
+	t=1768611491; cv=none; b=HIUDhB3WPfRv1t3XTzR6wMgndlD++Ucv8GLmfNXYrni22ZVElb/D/RsZk8JgULQo20nNXKHjiflQ/xH6MBHa8OmG7a19oLIvwPclDQBlV8TaiQmumB3oLA5Vg6RwT+hZlgW6BBlDg6W04tMutDKdVqp4eYRbE4BmIWMySDKighA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768611311; c=relaxed/simple;
-	bh=HLV0sGFwbqTeNex6ECZ3wCNs1IR52xB7CnkTpbC1UNE=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=s+n8LypP2JgMAgLek1W3EFo6V9B/tYYMtEcgZQAKBV8vnEWQeYPm4EZlMIW44l5jTuIcUeVFejb6WwxNPm+mFCCIig9RsjngS6vbFTU6jgyKveTGeWAjz24D4wUkGmbR/xIhrWFj5km+dw/tx2jrLRa1Q2DKBCCkmwQum+et56Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=YnJO1Jbm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WB5kfiuH; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id C55111D000E0;
-	Fri, 16 Jan 2026 19:55:07 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Fri, 16 Jan 2026 19:55:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1768611307; x=1768697707; bh=Dbt5J78fOzTv8zW+0XPEHu3xcWqXJ0lx61G
-	N7f7npDE=; b=YnJO1JbmgVOl69gDj291zcwaX+3ii9ZBvS4QHY5pDq76/Sq/ky4
-	R8Xx7yB+ZbZ4BjZ1AjeEyFPX4zPPnys27dYwQwo00Bb9H841Gmn03ebXgLLOoMOT
-	BhNFe8POuykCyFfinRuBQI8wexhlngG2E9YsGc3pVAyGLBJSbRh6EosgB1iePajx
-	B4QEHVDi7UvJD+ehWMe7v9bhIwrGFDUPtdxOAOy3lu+3OxtTD+2x128r7IjMC5Xs
-	hDnk7iLzJ8Gm1fFpRDhdgyelyJtkwXEZCxG+Xbc7NcebB/RdRr7cuEQWrQxUWEk/
-	EaEWWQmvbXkVIix1iZOmgjlL/I+lSSDJo2Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1768611307; x=
-	1768697707; bh=Dbt5J78fOzTv8zW+0XPEHu3xcWqXJ0lx61GN7f7npDE=; b=W
-	B5kfiuHXXWor21Jm25f8VssiU0tvpdLETLEGWUgGWqgUBKIrCNQg/pAeCSGDc/8E
-	zAnVmy5SRV8qgjEzfzeAdLl/gCms5I2vH0hce+7dAmqPITUwJO4rH5TogV3kyNtQ
-	89y2zjSgS0M5fJmtjA2b8DCmhngDcXo6Ftw4Bt9KuVGZJM5KD0tUV17FH3NKWaPn
-	m+MlGXnjV/g22gNTVpr2vcDgcD7nD2pUh+mUdBKMwltd/MHYAR3aseldXqNDePrr
-	bfuUOwpoEjK7jEGHI5Ht/RcXEFyBAz6YThYaPbwxg+SgyuUHA5NgCabcFZd/CA9z
-	orOnESfCwo64Bkfak+MYA==
-X-ME-Sender: <xms:691qaWz-zEwtdwOe9g75y13wh8uUR0qhs2FA6-on2aHW-XBizLyDtA>
-    <xme:691qaYTTb-xGB6Lvx85UrG0y_Wuzfs6SkPiocnXt6jjZ3nKTQDyhB4LUOYJB18NvG
-    Scn7pY_sqsIIQVAKf53PPEraetlpmOCPmC6X0oM83sISAcN>
-X-ME-Received: <xmr:691qaTIQFi2KzxcnEz6JE3r_mt9Wy0Dh_4PZi22e7oIjDA0jC-YdQWyo31sjqdd57wjzmLKt9fIALxxIRo4_7chdk1vpWZArLrVYZh48_kVu>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddufedtgeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtjeertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epudetfefhudevhedvfeeufedvffekveekgfdtfefggfekheejgefhteeihffggfelnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdgtrhihphhtohesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdp
-    rhgtphhtthhopehtrhhonhgumhihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlh
-    grhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvsghighhgvghrsheskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheprghnnhgrsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopegstghougguihhngheshhgrmhhmvghrshhprggtvgdrtghomh
-X-ME-Proxy: <xmx:691qafXhexEd0T7yD_7gQsgALBOE6azeHVHdt5sAwLuaOOo-CN5Jpw>
-    <xmx:691qaXQVGAwaxSqbqs0u_oXSDeC9KDFwAh896HfxlA7SIBMcLHq0DA>
-    <xmx:691qaXDg74oqbDUzqAXGsE7I9nqnhXdGkbOcGkSRqW_AxCVu_BuXDw>
-    <xmx:691qaWJzVaqCJMOSz8LQPjC3dHa7f9hCUspqt3OLSJi-c-TZAQwipg>
-    <xmx:691qaQHsGLQJiEAyFGIdg_a9Obw_R3xeKsE-Gv_90KeZzxP0m2iGmVVp>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 16 Jan 2026 19:55:04 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1768611491; c=relaxed/simple;
+	bh=c3U9bFEnMLpoKBsAjUxcr86pA7RNL+CpWEHvY5Jjjfk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BSV7SkMSL/HufwkRCDp1Hkh5ooaBM8l0gEJIJ/Z4RYsw+PEECnVkimT5uGUuNxR0WAF9KRNTBQHD1LNl41UqJ0qwP+yV0OLglr0cPUVx0rZf7+ytK6gJKW1gsfroGc5qCi1HsBN4bCw5re/FoU/9CcJEnJc+G6+4NWaeV6pToXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bteuUTAU; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-59b6df3d6b4so3104392e87.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Jan 2026 16:58:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1768611488; x=1769216288; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g7OCgOBLB6nmoPhAPFeCmBJR0G99F5xLfDJS00i6P1k=;
+        b=bteuUTAUEWGB95NqiEOq/YFlA34gn5towcoG/NpvrlC0E1ets/zKN7E2F3PO4ZCMhc
+         JlYDd5vOdyVTJC6+8YPgGKy8VfPzN+SoEytpgMvNGONdQGb9vqS486SmgfB9pOdbdJ0e
+         D3HfEHJS0kahYWBNh1PF7abWR8R7VPnc7Na89zifpfpialPvE3XFHt2VrnEu2Uc0z4tc
+         Scc2L7RZ7EiK7q8P67imnDUv/GLuLrMKIezwzz2YGvd6rdCxd/0KVGruvNn2S3EOSmiZ
+         5oPRbenKWZ1In6W3eNGlifk2y0AJvstU7big0eHEsq8YuUqVum2ByCiYDptGW6v7i13t
+         fv5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768611488; x=1769216288;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g7OCgOBLB6nmoPhAPFeCmBJR0G99F5xLfDJS00i6P1k=;
+        b=Zg/79yW1o/iZDeggDvrdwkRoqqqpxwcfVPRcSBg/p3OvqRNsh+XCNUvgy884Qvj9ki
+         qe/9WmvVhMLApD1gUJHrIEA7QxnaDNmULKd+JMeVnEN5MkI5nE43qP7DkpGF2h4JNfhA
+         bzKsgng14ECdkuvpQNw3wevVGDMxRJ787YbMsb+dqEG96XKizWiIwpfWuJR4fmBKD0gs
+         ZjiGkUs63U9hIMd83dDJEUsX6f9bGvkdwRclTdAbYlmjS20QhMe6Efnk7MCTqBqS2Zqb
+         pNcPQJ+Ip+ZclnbqDvJR0dRJE06NR+1Mve6SQgTXNlWnvZVuTOJwRuWYXSlc5srp7be0
+         T2LQ==
+X-Gm-Message-State: AOJu0YzxLny7QRA7+IKXh2PJu53md/YmGZU0+s2qtRPtsMVT8/Ej9iF7
+	R8btCKOOjQ1Eyi1psikwcFlQyM4w53z4m4MefViCXVSBAuc7ddLFbGnFoRHBYft0wvKBws1RKL9
+	WgYW4shwBfOxmiyCAYc3yG/3KlZ6ZO/cOKDPpAsZBxg==
+X-Gm-Gg: AY/fxX7BjCHdBflK+WUBk2c0yhaggbC+lrBzPrveWTg4YyOtNFDVrpf/8iSF8cZgzOj
+	Ciz3IKjLRM84McUB2Aw34fA/j8JgRrO8KkwBW/WdbUPOSQOc7xEFvswmHD5HLftFujtPdD3vx1z
+	YHj3SF0Vo8dtYoBPrcpQF2/ffT9JWtvtXBY4Qxxqli+ASnfIf+DVHgzfM+bt+vRHJoZCJwyhpcm
+	sFh/MfVTj/2jkwXrEap2EiE7nWaIJhc95UY1ZJbm30cA6ERjSHaM9/6ZQXJUu1/77tbihd5nyYm
+	tjkTmA==
+X-Received: by 2002:a05:6512:690:b0:59b:7291:9cc2 with SMTP id
+ 2adb3069b0e04-59baeef8967mr1320623e87.37.1768611488023; Fri, 16 Jan 2026
+ 16:58:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Benjamin Coddington" <bcodding@hammerspace.com>
-Cc: "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Benjamin Coddington" <bcodding@hammerspace.com>,
- "Eric Biggers" <ebiggers@kernel.org>, "Rick Macklem" <rick.macklem@gmail.com>,
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v1 4/4] NFSD: Sign filehandles
-In-reply-to: =?utf-8?q?=3C9c9cd6131574a45f2603c9248ba205a79b00fea3=2E1768573?=
- =?utf-8?q?690=2Egit=2Ebcodding=40hammerspace=2Ecom=3E?=
-References: <cover.1768573690.git.bcodding@hammerspace.com>, =?utf-8?q?=3C9c?=
- =?utf-8?q?9cd6131574a45f2603c9248ba205a79b00fea3=2E1768573690=2Egit=2Ebcodd?=
- =?utf-8?q?ing=40hammerspace=2Ecom=3E?=
-Date: Sat, 17 Jan 2026 11:54:59 +1100
-Message-id: <176861129903.16766.18207157056062198907@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+References: <20251119101540.106441-1-zhangfei.gao@linaro.org>
+In-Reply-To: <20251119101540.106441-1-zhangfei.gao@linaro.org>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Sat, 17 Jan 2026 08:57:56 +0800
+X-Gm-Features: AZwV_QhaATamjAzKiCbztyI4Neihn1O5wUBmT0cVKfj5IlGDxo1FujEHJPeaMQY
+Message-ID: <CABQgh9E00m5WZti1_ugw3LfMX51JKbsPGVmssybNPYiJjeHRRQ@mail.gmail.com>
+Subject: Re: [PATCH] chardev: fix consistent error handling in cdev_device_add
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Wenkai Lin <linwenkai6@hisilicon.com>, 
+	Chenghai Huang <huangchenghai2@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 17 Jan 2026, Benjamin Coddington wrote:
->  
-> -	if (fileid_type == FILEID_ROOT)
-> +	if (fileid_type == FILEID_ROOT) {
->  		dentry = dget(exp->ex_path.dentry);
-> -	else {
-> +	} else {
-> +		/* Root filehandle always unsigned because rpc.mountd has no key */
+On Wed, 19 Nov 2025 at 18:15, Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
+>
+> Currently cdev_device_add has inconsistent error handling:
+>
+> - If device_add fails, it calls cdev_del(cdev)
+> - If cdev_add fails, it only returns error without cleanup
+>
+> This creates a problem because cdev_set_parent(cdev, &dev->kobj)
+> establishes a parent-child relationship.
+> When callers use cdev_del(cdev) to clean up after cdev_add failure,
+> it also decrements the dev's refcount due to the parent relationship,
+> causing refcount mismatch.
+>
+> To unify error handling:
+> - Set cdev->kobj.parent = NULL first to break the parent relationship
+> - Then call cdev_del(cdev) for cleanup
+>
+> This ensures that in both error paths,
+> the dev's refcount remains consistent and callers don't need
+> special handling for different failure scenarios.
+>
+> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+> ---
+>  fs/char_dev.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/char_dev.c b/fs/char_dev.c
+> index c2ddb998f3c9..fef6ee1aba66 100644
+> --- a/fs/char_dev.c
+> +++ b/fs/char_dev.c
+> @@ -549,8 +549,11 @@ int cdev_device_add(struct cdev *cdev, struct device *dev)
+>                 cdev_set_parent(cdev, &dev->kobj);
+>
+>                 rc = cdev_add(cdev, dev->devt, 1);
+> -               if (rc)
+> +               if (rc) {
+> +                       cdev->kobj.parent = NULL;
+> +                       cdev_del(cdev);
+>                         return rc;
+> +               }
+>         }
+>
+>         rc = device_add(dev);
+> --
+> 2.25.1
+>
 
-I don't think this is correct.
-rpc.mountd always asks the kernel for a filehandle, so it doesn't need a
-key.
-
-However signing the root filehandle would be pointless as the client can
-"PUT_ROOTFH" without needing to provide a signature.
-So I'm happy with the root not being signed, I'm not happy with the
-justification.
-
-NeilBrown
+Any comments, Thanks
 
