@@ -1,37 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-74292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D6AED38F5E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 16:27:36 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB81D38FB7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 17:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3ACA73020C5B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 15:26:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 892A730285B5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 16:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A2622ACEB;
-	Sat, 17 Jan 2026 15:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11090218EB1;
+	Sat, 17 Jan 2026 16:19:54 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+Received: from mail-m8389.xmail.ntesmail.com (mail-m8389.xmail.ntesmail.com [156.224.83.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487259475;
-	Sat, 17 Jan 2026 15:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9D22248AF;
+	Sat, 17 Jan 2026 16:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.224.83.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768663618; cv=none; b=jt7dnfIWT5UTJVFcK7Ea/AujoTdtT9XQl7nfyzIGbChcB50PpkTmOLELX1Mb8ZauWiPtxGtA4UKsHGQREtxruyMp5EUXE6CxBmYRFEnOCLbreuOAEPQFDyJj8U2tPcm2CtZMMMIHPjld6UbTFjKMiX6neFWpK5BpFSOMjitPTZM=
+	t=1768666791; cv=none; b=rYSOJuo1amjsGB4BH3N/wR570ijbUy788/HEkOPgtA46hb3w05KGN4EOKN8B7noF1nmpveAkYDwmJDu0xL/3KccTNpR2yikOxmdYNXRu01f2z87qhtfA4juR3iZzwm9ksR4i3eqzfFX/1+BRe3XcAN9n+Cr0FGHzjRVFXCwvWRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768663618; c=relaxed/simple;
-	bh=RIiuuWL0UH9CsmimcgXDIH4mnusmmajqncuxdD3wBUA=;
+	s=arc-20240116; t=1768666791; c=relaxed/simple;
+	bh=bAYaVPvTJAEmpMkDOSs1VzCsqJeYZ8IzAvLC/aOQZI0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e3xXiOhNxeEg0594gVVphVxY9NpItkmYvmnijqcvPupWPuTE6BP91vNBNIcfXlhRu8eOFC8xIAIwTnnrfcV8bZuOlwq5kBbYyTCT9G/fqRyqO5M3BGQimvt7lOa5RHv12X/GEIJpdoIq4dBJv5+Z7KhqW5JKT5pt3ebbQASYrlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=45.254.49.198
+	 In-Reply-To:Content-Type; b=fkERYf9VDfGwN3jzHZzCUE12n5EKBRwqZ4dYrVS6bE/6QesdjSPLHBY6SlZ3xTaRWXUDslNAbBEmSZwR8gAs+3qX3/dJeucUwHB7uCrkcIxVUdR6uFQJbW82lAavDuP/Rt6rq/xQsKXFtz9CXPbdbeDOOr4yWvs1HM8Ngny58ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=156.224.83.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
-Received: from [10.26.132.114] (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [101.226.143.244])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 31006eb51;
-	Sat, 17 Jan 2026 23:26:42 +0800 (GMT+08:00)
-Message-ID: <1451743b-69a0-4e32-9dd7-a68c14c8f1a1@ustc.edu>
-Date: Sat, 17 Jan 2026 23:26:41 +0800
+Received: from [10.26.132.114] (gy-adaptive-ssl-proxy-2-entmail-virt205.gy.ntes [101.226.143.244])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 3100c22e0;
+	Sun, 18 Jan 2026 00:14:03 +0800 (GMT+08:00)
+Message-ID: <428db714-5ec8-4259-b808-b8784153d4f2@ustc.edu>
+Date: Sun, 18 Jan 2026 00:14:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -39,265 +39,180 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 2/2] fuse: Add new flag to reuse the backing file of
- fuse_inode
+Subject: Re: [PATCH 1/2] fuse: add ioctl to cleanup all backing files
 To: Amir Goldstein <amir73il@gmail.com>
 Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, paullawrence@google.com
-References: <20260115072032.402-1-luochunsheng@ustc.edu>
- <20260115072032.402-3-luochunsheng@ustc.edu>
- <aWjnHvP5jsafQeag@amir-ThinkPad-T480>
- <a0ccfa28-4107-46ed-af79-faf55c004da0@ustc.edu>
- <CAOQ4uxhOuBXT3tgoLxjh6efAwiOLg=oDxsyivLLMXCrSamSuEA@mail.gmail.com>
- <bff16d9e-d6e7-4d0e-9a58-6db37ec58ce7@ustc.edu>
- <CAOQ4uxjv=EZ-W-L=o8m2V+399PcBLLedz7T4z=5XKZhkwYitWw@mail.gmail.com>
+ linux-kernel@vger.kernel.org
+References: <20260116142845.422-1-luochunsheng@ustc.edu>
+ <20260116142845.422-2-luochunsheng@ustc.edu>
+ <CAOQ4uxg13jAJyG8b3CpjKE8FXn3ce=yUCzw+Qc=k29si=FtXaQ@mail.gmail.com>
 From: Chunsheng Luo <luochunsheng@ustc.edu>
-In-Reply-To: <CAOQ4uxjv=EZ-W-L=o8m2V+399PcBLLedz7T4z=5XKZhkwYitWw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxg13jAJyG8b3CpjKE8FXn3ce=yUCzw+Qc=k29si=FtXaQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9bcc90d2d303a2kunmb6b0959d2a91bd
+X-HM-Tid: 0a9bccbc2eb703a2kunmce2e67cc2ab024
 X-HM-MType: 10
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZSkxMVkkZGkseSxgaTB0aHVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKS0pVSUlNVUpPSFVJT09ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSktLVU
-	pCS0tZBg++
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSBgaVkofTktNGU0dS04YSFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKS0pVSUlNVUpPSFVJT09ZV1kWGg8SFR0UWUFZT0tIVUJCSU5LVUpLS1VKQk
+	tCWQY+
 
 
 
-On 1/17/26 3:08 AM, Amir Goldstein wrote:
-> On Fri, Jan 16, 2026 at 3:43 AM Chunsheng Luo <luochunsheng@ustc.edu> wrote:
+On 1/16/26 11:39 PM, Amir Goldstein wrote:
+> On Fri, Jan 16, 2026 at 3:28 PM Chunsheng Luo <luochunsheng@ustc.edu> wrote:
 >>
+>> To simplify crash recovery and reduce performance impact, backing_ids
+>> are not persisted across daemon restarts. After crash recovery, this
+>> may lead to resource leaks if backing file resources are not properly
+>> cleaned up.
 >>
+>> Add FUSE_DEV_IOC_BACKING_CLOSE_ALL ioctl to release all backing_ids
+>> and put backing files. When the FUSE daemon restarts, it can use this
+>> ioctl to cleanup all backing file resources.
 >>
->> On 1/15/26 11:31 PM, Amir Goldstein wrote:
->>> On Thu, Jan 15, 2026 at 3:35 PM Chunsheng Luo <luochunsheng@ustc.edu> wrote:
->>>>
->>>>
->>>>
->>>> On 1/15/26 9:09 PM, Amir Goldstein wrote:
->>>>> Hi Chunsheng,
->>>>>
->>>>> Please CC me for future fuse passthrough patch sets.
->>>>>
->>>> Ok.
->>>>
->>>>> On Thu, Jan 15, 2026 at 03:20:31PM +0800, Chunsheng Luo wrote:
->>>>>> To simplify crash recovery and reduce performance impact, backing_ids
->>>>>> are not persisted across daemon restarts. However, this creates a
->>>>>> problem: when the daemon restarts and a process opens the same FUSE
->>>>>> file, a new backing_id may be allocated for the same backing file. If
->>>>>> the inode already has a cached backing file from before the restart,
->>>>>> subsequent open requests with the new backing_id will fail in
->>>>>> fuse_inode_uncached_io_start() due to fb mismatch, even though both
->>>>>> IDs reference the identical underlying file.
->>>>>
->>>>> I don't think that your proposal makes this guaranty.
->>>>>
->>>>
->>>> Yes, this proposal does not apply to all situations.
->>>>
->>>>>>
->>>>>> Introduce the FOPEN_PASSTHROUGH_INODE_CACHE flag to address this
->>>>>> issue. When set, the kernel reuses the backing file already cached in
->>>>>> the inode.
->>>>>>
->>>>>> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
->>>>>> ---
->>>>>>     fs/fuse/iomode.c          |  2 +-
->>>>>>     fs/fuse/passthrough.c     | 11 +++++++++++
->>>>>>     include/uapi/linux/fuse.h |  2 ++
->>>>>>     3 files changed, 14 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
->>>>>> index 3728933188f3..b200bb248598 100644
->>>>>> --- a/fs/fuse/iomode.c
->>>>>> +++ b/fs/fuse/iomode.c
->>>>>> @@ -163,7 +163,7 @@ static void fuse_file_uncached_io_release(struct fuse_file *ff,
->>>>>>      */
->>>>>>     #define FOPEN_PASSTHROUGH_MASK \
->>>>>>        (FOPEN_PASSTHROUGH | FOPEN_DIRECT_IO | FOPEN_PARALLEL_DIRECT_WRITES | \
->>>>>> -     FOPEN_NOFLUSH)
->>>>>> +     FOPEN_NOFLUSH | FOPEN_PASSTHROUGH_INODE_CACHE)
->>>>>>
->>>>>>     static int fuse_file_passthrough_open(struct inode *inode, struct file *file)
->>>>>>     {
->>>>>> diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
->>>>>> index 72de97c03d0e..fde4ac0c5737 100644
->>>>>> --- a/fs/fuse/passthrough.c
->>>>>> +++ b/fs/fuse/passthrough.c
->>>>>> @@ -147,16 +147,26 @@ ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma)
->>>>>>     /*
->>>>>>      * Setup passthrough to a backing file.
->>>>>>      *
->>>>>> + * If fuse inode backing is provided and FOPEN_PASSTHROUGH_INODE_CACHE flag
->>>>>> + * is set, try to reuse it first before looking up backing_id.
->>>>>> + *
->>>>>>      * Returns an fb object with elevated refcount to be stored in fuse inode.
->>>>>>      */
->>>>>>     struct fuse_backing *fuse_passthrough_open(struct file *file, int backing_id)
->>>>>>     {
->>>>>>        struct fuse_file *ff = file->private_data;
->>>>>>        struct fuse_conn *fc = ff->fm->fc;
->>>>>> +    struct fuse_inode *fi = get_fuse_inode(file->f_inode);
->>>>>>        struct fuse_backing *fb = NULL;
->>>>>>        struct file *backing_file;
->>>>>>        int err;
->>>>>>
->>>>>> +    if (ff->open_flags & FOPEN_PASSTHROUGH_INODE_CACHE) {
->>>>>> +            fb = fuse_backing_get(fuse_inode_backing(fi));
->>>>>> +            if (fb)
->>>>>> +                    goto do_open;
->>>>>> +    }
->>>>>> +
->>>>>
->>>>> Maybe an explicit FOPEN_PASSTHROUGH_INODE_CACHE flag is a good idea,
->>>>> but just FYI, I intentionally reserved backing_id 0 for this purpose.
->>>>> For example, for setting up the backing id on lookup [1] and then
->>>>> open does not need to specify the backing_id.
->>>>>
->>>>> [1] https://lore.kernel.org/linux-fsdevel/20250804173228.1990317-1-paullawrence@google.com/
->>>>>
->>>>
->>>> This is a great idea. However, we need to consider the lifecycle
->>>> management of the backing file associated with a FUSE inode.
->>>> Specifically, will the same backing_idbe retained for the entire
->>>> lifetime of the FUSE inode until it is deleted?
->>>
->>> It's not a good fit for servers that want to change the backing file
->>> (like re-download). For these servers we have the existing file
->>> open-to-close life cycle.
->>>
->>>>
->>>> Additionally, since each backing_idcorresponds to an open file
->>>> descriptor (fd) for the backing file, if a fuse_inode holds onto a
->>>> backing_id indefinitely without a suitable release mechanism, could this
->>>> accumulation of file descriptors cause the process to exceed its open
->>>> files limit?
->>>>
->>>
->>> There is no such accumulation.
->>> fuse_inode refers to a single fuse_backing object.
->>> fuse_file refers to a single fuse_backing object.
->>> It can be the same (refcounted) object.
->>>
+>> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
+>> ---
+>>   fs/fuse/backing.c         | 19 +++++++++++++++++++
+>>   fs/fuse/dev.c             | 16 ++++++++++++++++
+>>   fs/fuse/fuse_i.h          |  1 +
+>>   include/uapi/linux/fuse.h |  1 +
+>>   4 files changed, 37 insertions(+)
 >>
->> Sorry, I wasn't referring to `fuse_backing` refs.
+>> diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
+>> index 4afda419dd14..e93d797a2cde 100644
+>> --- a/fs/fuse/backing.c
+>> +++ b/fs/fuse/backing.c
+>> @@ -166,6 +166,25 @@ int fuse_backing_close(struct fuse_conn *fc, int backing_id)
+>>          return err;
+>>   }
 >>
->> If the lifecycle of `fuse_backing` is the same as `fuse_inode`, and
->> there are a large number of FUSE files on the file system, then when I
->> iterate through and open the backing files, register the `fuse_backing`,
->> and then set it to the `fuse_inode`, the FUSE service will hold a large
->> number of backing file file descriptors (FDs).  These backing file FDs
->> will only be released when the FUSE files are deleted.
->>
+>> +static int fuse_backing_close_one(int id, void *p, void *data)
+>> +{
+>> +       struct fuse_conn *fc = data;
+>> +
+>> +       fuse_backing_close(fc, id);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +int fuse_backing_close_all(struct fuse_conn *fc)
+>> +{
+>> +       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
+>> +               return -EPERM;
+>> +
+>> +       idr_for_each(&fc->backing_files_map, fuse_backing_close_one, fc);
+>> +
+>> +       return 0;
+>> +}
+>> +
 > 
-> Not until files are deleted. Until fuse inodes are evicted from inode cache.
-> FWIW, fuse_inode is ~900 bytes and filp is ~256 bytes, and when memory
-> is needed, memory shrinker will evict fuse inodes and backing file, so sure
-> backing files take up memory but not a game changer.
-> 
->> For example, if there are 1000 FUSE files on the file system, and I
->> iterate through and set the backing file for each `fuse_inode`, then the
->> FUSE service will hold 1000 backing file FDs for a long time.  Extending
->> this further, if there are even more files, could the FUSE service
->> process exceed the `ulimit` configuration for open files?
->>
->> ```shell
->> [root@localhost home]# ulimit -a |grep "open files"
->> open files                          (-n) 1024
->> ```
->>
-> 
-> backing files do not account for the open files limit of the FUSE server
-> that's one of the design issues, but it is by design.
-> 
+> This is not safe and not efficient.
+> For safety from racing with _open/_close, iteration needs at least
+> rcu_read_lock(),
 
-Thank you for the explanation.
+Yes, you're absolutely right. Additionally, calling idr_remove within 
+idr_for_each maybe presents safety risks.
 
-I understand.
-
->>>>> But what you are proposing is a little bit odd API IMO:
->>>>> "Use this backing_id with this backing file, unless you find another
->>>>>     backing file so use that one instead" - this sounds a bit awkward to me.
->>>>>
->>>>> I think it would be saner and simpler to relax the check in
->>>>> fuse_inode_uncached_io_start() to check that old and new fuse_backing
->>>>> objects refer to the same backing inode:
->>>>>
->>>>> diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
->>>>> index 3728933188f30..c6070c361d855 100644
->>>>> --- a/fs/fuse/iomode.c
->>>>> +++ b/fs/fuse/iomode.c
->>>>> @@ -88,9 +88,9 @@ int fuse_inode_uncached_io_start(struct fuse_inode *fi, struct fuse_backing *fb)
->>>>>         int err = 0;
->>>>>
->>>>>         spin_lock(&fi->lock);
->>>>> -     /* deny conflicting backing files on same fuse inode */
->>>>> +     /* deny conflicting backing inodes on same fuse inode */
->>>>>         oldfb = fuse_inode_backing(fi);
->>>>> -     if (fb && oldfb && oldfb != fb) {
->>>>> +     if (fb && oldfb && file_inode(oldfb->file) != file_inode(fb->file)) {
->>>>>                 err = -EBUSY;
->>>>>                 goto unlock;
->>>>>         }
->>>>> --
->>>>>
->>>>> I don't think that this requires opt-in flag.
->>>>>
->>>>> Thanks,
->>>>> Amir.
->>>>
->>>> I agree that modifying the condition to `file_inode(oldfb->file) !=
->>>> file_inode(fb->file)` is a reasonable fix, and it does address the first
->>>> scenario I described.
->>>>
->>>> However, it doesn't fully resolve the second scenario: in a read-only
->>>> FUSE filesystem, the backing file itself might be cleaned up and
->>>> re-downloaded (resulting in a new inode with identical content). In this
->>>> case, reusing the cached fuse_inode's fb after a daemon restart still be
->>>> safe, but the inode comparison would incorrectly reject it. Is there a
->>>> more robust approach for handling this scenario?
->>>>
->>>
->>> There is a reason we added the restriction against associating
->>> fuse file to different backing inodes.
->>>
->>> mmap and reads from different files to the same inode need to be
->>> cache coherent.
->>>
->>> IOW, we intentionally do not support this setup without server restart
->>> there is no reason for us to allow that after server restarts because
->>> the consequense will be the same.
->>>
->>> It does not sound like a good idea for the server to cleanup files
->>> that are currently opened via fuse passthrough - is that something
->>> that happens intentionally? after server restarts?
->>>
->>> You could try to take a write lease to check if the file is currently
->>> open for read/write to avoid cleanup in this case?
->>>
->>> Thanks,
->>> Amir.
->>>
->>>
->>
->> Yes, it happened after the fuse service crash recovery restart, because
->> the refs of the backup files were cleaned up, causing them to be
->> mistakenly garbage collected.
->>
->> I will consider how to prevent it from being mistakenly garbage
->> collected by the fuse server.
+> but I think it will be much more efficient to zap the entire map with
+> fuse_backing_files_free()/fuse_backing_files_init().
 > 
-> See here https://github.com/amir73il/fsnotify-utils/wiki/Hierarchical-Storage-Management-API#evicting-file-content
-> explanation how you can use F_SETLEASE to synchronize evicting
-> file content with file content readers.
+> This of course needs to be synchronized with concurrent _open/_close/_lookup.
+> This could be done by making c->backing_files_map a struct idr __rcu *
+> and replace the old and new backing_files_map under spin_lock(&fc->lock);
+> 
+> Then you can call fuse_backing_files_free() on the old backing_files_map
+> without a lock.
+> 
+> As a side note, fuse_backing_files_free() iteration looks like it may need
+> cond_resched() if there are a LOT of backing ids, but I am not sure and
+> this is orthogonal to your change.
 > 
 > Thanks,
 > Amir.
 > 
 > 
 
-This is very helpful.
+Thank you for your helpful suggestions. However, it cannot use 
+fuse_backing_files_free() in the close_all implementation because it 
+directly frees backing files without respecting reference counts. This 
+function requires that no one is actively using the backing file (it 
+even has WARN_ON_ONCE(refcount_read(&fb->count) != 1)), which cannot be 
+guaranteed after a crash recovery scenario where backing files may still 
+be in use.
+
+Instead, the implementation uses fuse_backing_put() to safely decrement 
+the reference count and allow the backing file to be freed when no 
+longer in use.
+
+Additionally, the implementation addresses two race conditions:
+
+- Race between idr_for_each and lookup: Uses synchronize_rcu() to ensure 
+all concurrent RCU readers (i.e., in-flight fuse_backing_lookup() calls) 
+complete before releasing backing files, preventing use-after-free issues.
+
+- Race with open/close operations: Uses fc->lock to atomically swap the 
+old and new IDR maps, ensuring consistency with concurrent 
+fuse_backing_open() and fuse_backing_close() operations.
+
+This approach provides the same as the RCU pointer suggestion, but with 
+less code and no changes to the struct fuse_conn data structures.
+
+I've updated it and verified the implementation. Could you please review it?
+
+
+diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
+index 4afda419dd14..047d373684f9 100644
+--- a/fs/fuse/backing.c
++++ b/fs/fuse/backing.c
+@@ -166,6 +166,45 @@ int fuse_backing_close(struct fuse_conn *fc, int 
+backing_id)
+         return err;
+  }
+
++static int fuse_backing_release_one(int id, void *p, void *data)
++{
++       struct fuse_backing *fb = p;
++
++       fuse_backing_put(fb);
++
++       return 0;
++}
++
++int fuse_backing_close_all(struct fuse_conn *fc)
++{
++       struct idr old_map;
++
++       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
++               return -EPERM;
++
++       /*
++        * Swap out the old backing_files_map with a new empty one under 
+lock,
++        * then release all backing files outside the lock. This avoids long
++        * lock hold times and potential races with concurrent open/close
++        * operations.
++        */
++       idr_init(&old_map);
++       spin_lock(&fc->lock);
++       swap(fc->backing_files_map, old_map);
++       spin_unlock(&fc->lock);
++
++       /*
++        * Ensure all concurrent RCU readers complete before releasing 
+backing
++        * files, so any in-flight lookups can safely take references.
++        */
++       synchronize_rcu();
++
++       idr_for_each(&old_map, fuse_backing_release_one, NULL);
++       idr_destroy(&old_map);
++
++       return 0;
++}
++
+
+--
 
 Thanks,
 Chunsheng Luo
