@@ -1,105 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-74283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03255D38BA9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 03:30:07 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2FDBD38C6D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 06:03:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id EE9F3302E61E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 02:30:05 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 80B1E30319AE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Jan 2026 05:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9799C318EDF;
-	Sat, 17 Jan 2026 02:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4B2326D46;
+	Sat, 17 Jan 2026 05:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrxdtxnO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmEPMNNa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F89921FF26
-	for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jan 2026 02:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791C5500962
+	for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jan 2026 05:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768617003; cv=none; b=V29xf5sNqcyJZcldVO1YqOuxNr4VtAa51FfkeyvizczoJBpNkHh5ID0DXfAEYfnhLlVl0UbBbb5205m8c1UlTlSWScUnPXpmqwRn5FSHEx0p2QY4cDyb5EdNP0nlqvOaNlj54pT9HB6U+5R3AKqDDYgQ/II7PLkG1W8BZsyx7fE=
+	t=1768626191; cv=none; b=JSL7zOgM2Tjl+gx7XYctmljj7e/GGwNyTUBDuSBS0mP1w3uHLZbODuwo2XMHJnqgPsu8sSZtZ3IIDVVGIhBKsIgc70O+K/DrL8wLdVOu/KRaTr+ndY/YbGH1WMchp1Xz453tDxco3fPLoHRrxLsdgesRY2AQ/oc1sfntcAXk7Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768617003; c=relaxed/simple;
-	bh=oZKmhf04huA7jcKu9N3+5Z9u14CnAMqUWycooHENAxc=;
+	s=arc-20240116; t=1768626191; c=relaxed/simple;
+	bh=lMK1+03dygchTUvtbWLLsfGPoipsd2WzvdjuxKT3CuY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kg3ui8J9YetQo8KLCfVab5tgqsA4VgXX5Sqngqiww374qNm0jIH5No8AkJ5UyGy+ZKOrHFBr74mcq0v1d7Fh08aIgNM7cLTw3wEJ+/70P4y2k+n0+EXRxBnecmd3DmRPjKn7ta7mZEKDrP4kuGCJ4B7wpgwZGG9ewMWqlkwe1LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrxdtxnO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12AC3C116C6;
-	Sat, 17 Jan 2026 02:30:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZmQvejV8N0JcYaMy90jAUR5aqn0qVv2XiseKJtQlGQ2ux2bKnSDyOTKAfWVseTXDh5nFvSinV9QvoGXmdXluSYK1uGenSE4uya55+pBAhlh3DN4bUqWdZjlo+XWMwcMt3Qyh3M7FTqnpMAV2HsGa5H5Id+WeUtjwSFu6YPIGDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YmEPMNNa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFA6C4CEF7;
+	Sat, 17 Jan 2026 05:03:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768617003;
-	bh=oZKmhf04huA7jcKu9N3+5Z9u14CnAMqUWycooHENAxc=;
+	s=k20201202; t=1768626191;
+	bh=lMK1+03dygchTUvtbWLLsfGPoipsd2WzvdjuxKT3CuY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QrxdtxnOriLbxFwGtFok7wnoqReHJcAUiz39Lhc1pmFDAc+86UwggpcX14hNM/yhP
-	 P5tQRNwcmBufTJPV0n/DvFMOrgfx+iCSEfFG0kFljVkuCFKO0rHSwGwLzmP/hUCIkC
-	 L63SrsD6w/Edri8WX34YZbQ8vdM/e8lnZDRV5xFePhQskdqH1Xuc64h3jFpWKhoXZ/
-	 0NlaVFKKrIlYWDVo/W3PsKA/BI7/Wa0EpxRRicnZ1ABWE/cem8EAZKUCb3lPK3/nbL
-	 707e6ZyxcUy0VL4d2lfk6sIt3kbKcEuztj+8PQwfjvkdqjztBcavIHXX0KPC4F6XOf
-	 Opk4IExxObOpg==
-Date: Fri, 16 Jan 2026 18:30:02 -0800
+	b=YmEPMNNa8/+/7DmxOJ2g7kYyHP+/S8pFnIUnBeSyabQaPlMyRdSL/SmClDGNSR1d0
+	 VpbYQBZpGqLHv+mK4aRamjzCJErrJHicb74mqwzqrBY3ZnFuGnEs1hEZY+DqVio5v9
+	 sCi7HG0s1aEoLv97+nZ5RW2/lm/SvHbWRZQ6ZswjANlTRHLqOB9XW3nEhizGCxiH7Q
+	 Ac44tAibQmgrjIwDTqtY9EDkATAKLi4rIvwyEm/GDbyksItyDNtXILq3blz4G8Z33e
+	 nlUvOYRAw6pcllu7eNNwrY5JcdkyRq0EqkwMnMwyMWYKFSKqGaNK1n5AIZdynvrAcD
+	 /fH9NIXj9roTg==
+Date: Fri, 16 Jan 2026 21:03:10 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, brauner@kernel.org,
-	hch@infradead.org, bfoster@redhat.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] iomap: fix readahead folio refcounting race
-Message-ID: <20260117023002.GD15532@frogsfrogsfrogs>
-References: <20260116015452.757719-1-joannelkoong@gmail.com>
- <20260116015452.757719-2-joannelkoong@gmail.com>
- <aWmn2FympQXOMst-@casper.infradead.org>
- <CAJnrk1Zs2C-RjigzuhU-5dCqZqV1igAfAWfiv-trnydwBYOHfA@mail.gmail.com>
- <aWqxgAfDHD5mZBO1@casper.infradead.org>
- <CAJnrk1YJFV5aE2U6bK1PpTBp5tfkRzBK5o24AhidYFUfQnQjNQ@mail.gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+	jefflexu@linux.alibaba.com
+Subject: Re: [PATCH v1 0/3] fuse: clean up offset and page count calculations
+Message-ID: <20260117050310.GE15532@frogsfrogsfrogs>
+References: <20260116235606.2205801-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1YJFV5aE2U6bK1PpTBp5tfkRzBK5o24AhidYFUfQnQjNQ@mail.gmail.com>
+In-Reply-To: <20260116235606.2205801-1-joannelkoong@gmail.com>
 
-On Fri, Jan 16, 2026 at 02:02:20PM -0800, Joanne Koong wrote:
-> On Fri, Jan 16, 2026 at 1:45 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Fri, Jan 16, 2026 at 10:36:25AM -0800, Joanne Koong wrote:
-> > > On Thu, Jan 15, 2026 at 6:52 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > > >
-> > > > > +                     if (!ifs) {
-> > > > > +                             ctx->cur_folio = NULL;
-> > > > > +                             if (unlikely(plen != folio_len))
-> > > > > +                                 return -EIO;
-> > > >
-> > > > This should be indented with a tab, not four spaces.  Can it even
-> > > > happen?  If we didn't attach an ifs, can we do a short read?
-> > >
-> > > The short read can happen if the filesystem sets the iomap length to a
-> > > size that's less than the folio size. plen is determined by
-> > > iomap_length() (which returns the minimum of the iter->len and the
-> > > iomap length value the filesystem set).
-> >
-> > Understood, but if plen is less than folio_size(), don't we allocate
-> > an ifs?  So !ifs && plen < folio_size() shouldn't be possible?  Or have
-> > I misunderstood this part?
+On Fri, Jan 16, 2026 at 03:56:03PM -0800, Joanne Koong wrote:
+> This patchset aims to improve code clarity by using standard kernel helper
+> macros for common calculations:
+>  * DIV_ROUND_UP() for page count calculations
+>  * offset_in_folio() for large folio offset calculations
+>  * offset_in_page() for page offset calculations
 > 
-> Maybe I'm misunderstanding this, but I'm pretty sure the ifs is only
-> allocated if the inode's block size is less than the folio size, and
-> is not based on plen. The logic I'm looking at is the code inside
-> ifs_alloc().
+> These helpers improve readability and consistency with patterns used
+> elsewhere in the kernel. No functional changes intended.
+> 
+> This patchset is on top of Jingbo's patch in [1].
 
-Hrmm.  If there's no ifs then blocksize == foliosize, so if
-plen < foliosize then that means we're not fully reading in the folio
-contents?  That doesn't sound good, especially if the folio can be
-mmapped into someone's address space.
+As a straight conversion this looks fine to me so
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+OTOH I just learned that fuse has a backchannel for fuse servers to
+inject pagecache data for a regular file.  That might be kinda nice for
+an HSM or something?  Though that would be covered by FUSE_READ.
+
+Hrmm, I wonder how well that interacts with iomap... we don't mark the
+folios dirty or update timestamps, so I'm guessing the contents could
+disappear at any time if the page cache gets reclaimed?
+
+Weiiiird.....
 
 --D
 
+
 > Thanks,
 > Joanne
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20260115023607.77349-1-jefflexu@linux.alibaba.com/
+> 
+> Joanne Koong (3):
+>   fuse: use DIV_ROUND_UP() for page count calculations
+>   fuse: use offset_in_folio() for large folio offset calculations
+>   fuse: use offset_in_page() for page offset calculations
+> 
+>  fs/fuse/dev.c     | 14 +++++++-------
+>  fs/fuse/file.c    |  2 +-
+>  fs/fuse/readdir.c |  8 ++++----
+>  3 files changed, 12 insertions(+), 12 deletions(-)
+> 
+> -- 
+> 2.47.3
+> 
 > 
 
