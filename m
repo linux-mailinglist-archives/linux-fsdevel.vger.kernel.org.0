@@ -1,114 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-74304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91701D392E1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 06:20:09 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229D9D392E4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 06:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id CE88B3010E75
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 05:20:07 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id F04CA3015AA1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 05:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5519C2580E1;
-	Sun, 18 Jan 2026 05:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9836329BDBF;
+	Sun, 18 Jan 2026 05:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhffiqvN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQcUNGji"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85C01946C8
-	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 05:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287081946C8
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 05:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768713605; cv=none; b=oGBjQWNa26Zq2w4oZAUhh1yWseRU+xdrlXX+7IuK92YXf1obKOAPrSrepDHkhIPDewusevNCPZ21Iifl5/82s5kQPef+4MSZbZY/sidO+zHJDy4CkgrqWp5OIOAwUbYSAmGpOYJCzyN6m3q9YSFVtCpYr6f/5C/pf1guAfqI5ac=
+	t=1768713847; cv=none; b=ndCX0vNuox5oYElqX1U0MTmUTOqUBWc19zDrddhNi4m8MQYs3bGidx/oArO39Csx16Rcz1vkwqY4kdquigYvyrVzvSiQgL0gDNLou3jUBpvSyTSldC6qPm8lypl9sd3lRzVzUgKZGxvPC3sVq3NUCqKwgjZsEU6suUViGoGa0V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768713605; c=relaxed/simple;
-	bh=89AvlqLuM05wSy4slqJggmxC8KN+/ajqbIx7cT1bBWE=;
+	s=arc-20240116; t=1768713847; c=relaxed/simple;
+	bh=9fl3e2YCpxlLE25trOysHuVIKtI8wyRz96+uGmaG4CE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KbKRoVE7cfHi4W05wDp3J6wOtZKQGe7Lq8ArcZKvH04ZDg8DLk/fQOfih78+zjcUMzWl5VIPEP2AV/vAU6xRbSiFMIvN4jdiBsMJgGb3kM4Ly1xoCyF81fE/88nx9P79e4pDilKkuKrlYXHBQOv8o6Pj41mKlJPqftfEUitVxFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uhffiqvN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C12DC2BCAF
-	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 05:20:05 +0000 (UTC)
+	 To:Cc:Content-Type; b=q4DtzRnA/Ias8eKXEO1gPKZ47NmAV5TYm9kjQW+7GtnST2Zq6YcUTKzxl5Ekcab5GF57YrDpOQB+Kwtf69B7dy33LnnwlLAmwR4qajw94fidSfZPQC9EDIW7/6QvP3/FRiGn+wArGmHUcObMN2BPWPriQMy/1jOvq4LVkzpvctU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQcUNGji; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0E62C4AF09
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 05:24:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768713605;
-	bh=89AvlqLuM05wSy4slqJggmxC8KN+/ajqbIx7cT1bBWE=;
+	s=k20201202; t=1768713846;
+	bh=9fl3e2YCpxlLE25trOysHuVIKtI8wyRz96+uGmaG4CE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uhffiqvNgjTaG9857Np0oBMOH5pySEXHjodjTCVwZydoGlnjsKsSKDLLLC3V/P8ih
-	 K49HtuTVN1anDkT4o6pDxmCJYxOvJ0HxX215+YGRmqiWOFjlEv3auuaSc9PKar/qFW
-	 +SHwzXv/0YZI79Xqjc6Jj2aSV2NAxOSHvN49GEbLYYw6wJ6BYhbVj22sCnX3G1YXh5
-	 YybCo0RGNUYbIQW3ZzgM5wUvTmXWw5CyYUmT8L08hZjN4SnV7LIle//JDEXbi+uO0E
-	 Kj6MCc4fAmgPefCw1MU20TQZA/r56Uw7P1ilakaTb++phfb9EiCY++3Ad2bhiLbT33
-	 Nq6olgs+tQdVQ==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-652fdd043f9so6236666a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jan 2026 21:20:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWrL3cOVzrnCd5hPT+HDjqjGat3B5Jhj/p7PD9nnIL4KHqi6OIdSRqzGD+LsZmVUEUInaJr9XQTh6vfng+d@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdrffHbr9K8wmgRJOk46JgipEkeECh3g/vFCiVDRA5R4CKkchx
-	jrducaBStWfsUMyD/W0rMDS0364Dufx+HjWJlZS+Rm8Mi5HbOMEkwwCUlbL1cCtD72vxSWhzjdk
-	gJahSLLlwE0q/Z5tzxUHCXbto+ekIIHM=
-X-Received: by 2002:a05:6402:42d3:b0:649:a63f:bea9 with SMTP id
- 4fb4d7f45d1cf-65452ad109emr5943130a12.16.1768713603967; Sat, 17 Jan 2026
- 21:20:03 -0800 (PST)
+	b=RQcUNGjiVcVFwuhPjXYeoNRYMDIb+bHoySgwmPLztw21icOVyHQpupVJnDL2S1kry
+	 1gGPys4+/XXA/zEDfNTSvVpTqHa6sXoQ4mzobJj2AeR2q9FFH9whcZskvW3iDcEznX
+	 OV7lediiZUmsF1lXAUqN9vkG2nwJsAJAXi7d2nZNGl4Kt8r+SN2OXaEysaBzC4AQew
+	 97pkOU3xYbPt2of5+zy+b7Eck2ltEp/Q0kepePqdr2eCtYTLyBxO+AbNCiRWti+QcT
+	 wOkCSp+INvW7srQA6JGo02lOl9tX3tIDTjHXk1yOSa19O+TQJPcLRm/JnjXB5KMG+4
+	 A9mM5SD07JV/w==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b876798b97eso530531266b.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jan 2026 21:24:06 -0800 (PST)
+X-Gm-Message-State: AOJu0YwpjJOqBcQUvWcZFiKxsVbB7W52RGiae+H0j2avf6G6HW4ureB2
+	ygC89uFlU5sNbx+GzRfTvpKf1+cBs2wqgpfcH1sNxZYHUNdHraAqWc5rtJTvkiEtpkYIXvg41I2
+	LMWBj58/AUX0e0oC7A9i98+9luMZfc2w=
+X-Received: by 2002:a17:907:7b9a:b0:b87:695f:d2a8 with SMTP id
+ a640c23a62f3a-b879324b8c8mr672476466b.55.1768713845353; Sat, 17 Jan 2026
+ 21:24:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260111140345.3866-1-linkinjeon@kernel.org> <20260116093348.GA22781@lst.de>
-In-Reply-To: <20260116093348.GA22781@lst.de>
+References: <20260114121250.615064-1-chizhiling@163.com>
+In-Reply-To: <20260114121250.615064-1-chizhiling@163.com>
 From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Sun, 18 Jan 2026 14:19:51 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9CXj5hZ2zoiyEgrBWA6NB1u2VrBEcOGCwCPCSZODzp6w@mail.gmail.com>
-X-Gm-Features: AZwV_QhJalJuf0pW6rgRIvQOiEAkkiG_wdBx7vzCgXuWUuHf6hhq2F4dgLnQZEY
-Message-ID: <CAKYAXd9CXj5hZ2zoiyEgrBWA6NB1u2VrBEcOGCwCPCSZODzp6w@mail.gmail.com>
-Subject: Re: [PATCH v5 00/14] ntfs filesystem remake
-To: Christoph Hellwig <hch@lst.de>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu, 
-	willy@infradead.org, jack@suse.cz, djwong@kernel.org, josef@toxicpanda.com, 
-	sandeen@sandeen.net, rgoldwyn@suse.com, xiang@kernel.org, dsterba@suse.com, 
-	pali@kernel.org, ebiggers@kernel.org, neil@brown.name, amir73il@gmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iamjoonsoo.kim@lge.com, cheol.lee@lge.com, jay.sim@lge.com, gunho.lee@lge.com
+Date: Sun, 18 Jan 2026 14:23:52 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-ri1KJ_kmPLJWeCh5A0Sf0OLKtmbvq5EEFJ=2=e51c6g@mail.gmail.com>
+X-Gm-Features: AZwV_QjwPoDh3Pax5z2mIWYADlgJKtXzOcGrldWhc-GN1xyxg8nvi3W5zbZECUA
+Message-ID: <CAKYAXd-ri1KJ_kmPLJWeCh5A0Sf0OLKtmbvq5EEFJ=2=e51c6g@mail.gmail.com>
+Subject: Re: [PATCH v3 00/13] Enable multi-cluster fetching for exfat_get_block.
+To: Chi Zhiling <chizhiling@163.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
+	Chi Zhiling <chizhiling@kylinos.cn>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 16, 2026 at 6:34=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
-e:
+On Wed, Jan 14, 2026 at 9:13=E2=80=AFPM Chi Zhiling <chizhiling@163.com> wr=
+ote:
 >
-> On Sun, Jan 11, 2026 at 11:03:30PM +0900, Namjae Jeon wrote:
-> >    a. Pass more xfstests tests:
-> >       ntfs passed 308 tests, significantly higher than ntfs3's 235.
-> >       ntfs passed tests are a complete superset of the tests passed
-> >       by ntfs3. ntfs implement fallocate, idmapped mount and permission=
-,
-> >       etc, resulting in a significantly high number of xfstests passing
-> >       compared to ntfs3.
+> From: Chi Zhiling <chizhiling@kylinos.cn>
 >
-> I'm not sure how many tests are actually run for the ntfs variants
-> because they lack features needed for many tests, but how many still
-> fail with this, because with these numbers I suspect there's quite
-> a few left. Do you have any good grasp why they are failing, i.e.
-> assumptions in xfsteasts, or missing feature checks?
-Regarding the xfstests results, many of the 'Not Run' cases are due to
-fundamental differences in the NTFS architecture. For instance, NTFS
-does not support certain advanced features like reflink, which causes
-many tests to be skipped. Also, ntfs does not yet support journaling,
-leading to failures in tests that assume journal-based consistency.
-I am currently categorizing these failures to distinguish between
-NTFS-inherent limitations and areas for future improvement. I will
-provide a detailed breakdown and analysis of these test results in the
-cover letter on next version.
+> This patch series significantly improves exFAT read performance
+> by adding multi-cluster mapping support.
+> The changes reduce get_block calls during sequential reads,
+> particularly benefiting small cluster sizes.
 >
-> Also adding this here instead of for the various patches adding the code:
-> there's a lot of problems with kerneldoc comments that make W=3D1 warns
-> about.  I think a lot of those are because comments are formatted as
-> kerneldoc when they should not.
-Okay. I will fix it.
+> - Extends exfat_get_cluster() and exfat_map_cluster() to handle multiple =
+contiguous clusters
+> - Adds buffer head caching for FAT table reads
 >
-> Sparse also reports quite a lot of endianes/bitwise errors which need to
-> be addressed.
-Okay, I will fix it.
-
-Thank you!
+> Performance results show ~10% improvement for 512-byte clusters (454->511=
+ MB/s)
+> and reduced get_block overhead from 10.8% to 0.02% for NO_FAT_CHAIN files=
+.
+>
+> All criticism and suggestions are welcome :)
+Applied them to #dev with Yuezhang reviewed-by tag.
+Thanks!
+>
+>
+> Changes in v3:
+> - fix overflow in exfat_get_block, only patch 10 and 13 changed
+> - add review tag for all patches except patch 10 and 13
+>
+> Changes in v2:
+> - Cache the last dis-continuous cluster
+> - Continue collect clusters after cache hit
+> - Some cleanup.
+>
+> V2:
+> https://lore.kernel.org/linux-fsdevel/20260108074929.356683-1-chizhiling@=
+163.com/T/#u
+> V1:
+> https://lore.kernel.org/linux-fsdevel/20251226094440.455563-1-chizhiling@=
+163.com/T/#u
+> rfc:
+> https://lore.kernel.org/linux-fsdevel/20251118082208.1034186-1-chizhiling=
+@163.com/T/#u
+>
+> Chi Zhiling (13):
+>   exfat: add cache option for __exfat_ent_get
+>   exfat: support reuse buffer head for exfat_ent_get
+>   exfat: improve exfat_count_num_clusters
+>   exfat: improve exfat_find_last_cluster
+>   exfat: remove the check for infinite cluster chain loop
+>   exfat: remove the unreachable warning for cache miss cases
+>   exfat: reduce the number of parameters for exfat_get_cluster()
+>   exfat: reuse cache to improve exfat_get_cluster
+>   exfat: remove handling of non-file types in exfat_map_cluster
+>   exfat: support multi-cluster for exfat_map_cluster
+>   exfat: tweak cluster cache to support zero offset
+>   exfat: return the start of next cache in exfat_cache_lookup
+>   exfat: support multi-cluster for exfat_get_cluster
+>
+>  fs/exfat/cache.c    | 149 ++++++++++++++++++++++++++++----------------
+>  fs/exfat/exfat_fs.h |   7 +--
+>  fs/exfat/fatent.c   |  61 +++++++++++-------
+>  fs/exfat/inode.c    |  52 ++++++----------
+>  4 files changed, 157 insertions(+), 112 deletions(-)
+>
+> --
+> 2.43.0
 >
 
