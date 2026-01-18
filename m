@@ -1,380 +1,320 @@
-Return-Path: <linux-fsdevel+bounces-74311-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01DC6D3978D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 16:42:47 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A52D3984C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 18:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7C252300A87B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 15:42:42 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 893083008D5C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 17:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6562EBDEB;
-	Sun, 18 Jan 2026 15:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EAB23A58B;
+	Sun, 18 Jan 2026 17:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O0qyM0TW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PAJxFQFe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDDE2836E;
-	Sun, 18 Jan 2026 15:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8077260A
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 17:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768750960; cv=none; b=HvFHQs8K/paJ99nWDk1kMAgCdpi6QiSEqSPBoWK/c/4T8vzcC757Gz84GEwWw7T7rJQDk3Em+9FFb/Dht8pwCypE092mia6tq5VflrHtLf3zbL99DxFWlsz9JbjQcaClb2e3MmKijgZuV/00DzpLdee3kA7gYeLYtFVNT/uoZa0=
+	t=1768756051; cv=none; b=CAan3vCZ/5GQtsE5mbOlEMRYsznIbkioviwYZ5QyNfzeKgklyrPGn6pPQIqBZFxm49yBPQALvwNp8trMaUvOcJHE8Wr63krBOQ/SgtZBFxWpJQgD2rqbgjTwAzBiZSIoDeAG9wqyVIwVEaYzVuGUPjlEtMGebNyd14Ad50gne1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768750960; c=relaxed/simple;
-	bh=ZGN+UJM4rb3/rWVdrg86OBf/zo0gqcWknxV59oEbkgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p32O/Gv95oMpx31H95uND73K9GBJR+lCM/1XkCZ1GyQwSSOB0sNFxweptMzc1VXO7IqIiKShLflQlHanfafLQ9c11cj1Lp5WHrMHUWYlnebdTo53BoQDY9+TMsbgJjvaydRitT+cGfjXlHWCbAPyLzcT1WS3j2y8JVfc74VYjq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O0qyM0TW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AA1AC116D0;
-	Sun, 18 Jan 2026 15:42:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768750960;
-	bh=ZGN+UJM4rb3/rWVdrg86OBf/zo0gqcWknxV59oEbkgc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O0qyM0TWL5kgsmX5+FedJdj30vZycuBY+550lg3mtQqfDYVp30NfPsWA6QkPaY6CL
-	 H8zL10SUbjfRzmvCXrfC0MbkFZix7JuFzx/6qrYkv+6Y3E/CIHW8eKf2Y7EFa9eask
-	 +v1l5it2LMbEyuJCwk320UzNcGgqUmI38q6oH/CrBGNjs8KF5zU0PdZdC4fMLYg0rG
-	 lVyAQ4GeSbOCPr+ZXwIPOW81hcNpT4qa1COCF+PB2x828YVIF76SxfDBklZQdV0qrS
-	 p3sS+SJ6DPfhgiHOisYy7uV1O2mjdLC5S4A69ibG1DVGSzbZRLmNcbEuNJaYdLQ3Pw
-	 d2NbQJso2dM3g==
-Date: Sun, 18 Jan 2026 16:42:37 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-man@vger.kernel.org
-Cc: Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Alejandro Colomar <alx@kernel.org>
-Subject: [PATCH v3] man/man2const/F_[SG]ETDELEG.2const, man/man2/fcntl.2:
- Document F_SETDELEG and F_GETDELEG
-Message-ID: <5b283a25dbe2ab9ed78719c132885d9d3157f2bb.1768750908.git.alx@kernel.org>
-X-Mailer: git-send-email 2.51.0
-References: <20260114-master-v2-0-719f5b47dfe2@kernel.org>
+	s=arc-20240116; t=1768756051; c=relaxed/simple;
+	bh=47TmA8PROtBfylCfohOl428RWgpYVS3xl8hLnmRFGXM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GeARjmALXtzxs3lHDzKtAtVc+yVGF1qaKGObF6lIefG7GdVlDvl0slV4F9vPTOXOLAeQADgRbJuo+7liZ6aRifLtvpWUkW+vCpm22yl/rt/30lNy6TCzeJ91tUNDagB1PfMCNsfR5ANOfn/CmNcQ81BUk6soJPQ9wXAVm/Hqm44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PAJxFQFe; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-64d1ef53cf3so4787677a12.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 09:07:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768756048; x=1769360848; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=abg4AmxGABlEjMiE+R4w4WcuaME2c8mboVc3g6mokBI=;
+        b=PAJxFQFeuO6Jsqd8COqJZ49zgTGCIOxqteV/eDg2L/efAElaZkY6gls0eIRi6A/wMu
+         oKqS7OMEiG9c9U3JcAO7Ru9RsNbP800DXD6UFeXZzlbQdPgwRjbDyBPJqyjSm+7U4L/2
+         FhJJIm0BGE9En7joexeztrEr8qDiqCjtIk9LT3It3Hu8ufB9U68XX8mnAl9l9j+YqfEf
+         UkxYdyk7CXtqvyG0eW7BYReLjH1+ohz3cyxNKnwFlwmFMUcYOKHrhTVWuaWQNtN2l2Sf
+         mmX7l5fEDk0lsFLgvbX4W/vYg6YIxoj10Tf3tYwOs+YhKzLQ3rEdkRmNYB7EwSWeSPaH
+         sJQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768756048; x=1769360848;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=abg4AmxGABlEjMiE+R4w4WcuaME2c8mboVc3g6mokBI=;
+        b=xTdXWnO1SKl4oH7lmrL74WaiGfeVLcyk8YwOZJnmMh+n2qFuHdsccMjApnFBnvcN8K
+         GmTiu25vKxSFyt3lx6eAvJ6sz4wjBRyM7yLZpZjpsGAxCGhMORcz5OPUdkrk1d/oR3S0
+         C3Uv511RRYMqB08A6ypSVFHJ2Jug/22CFqE/8x9zYM8CQEMPDCeGWtcGG9ONZGlApAO3
+         VFsvonaijABBA9hA21Hn4TY+dgfrhDqtcYJ1qm1eXC248Xs+MAESkaZa+dOAdkVUswdQ
+         bwPbSDgOzoYuY2Xhguq0D2oga4ZGGDdpQODBI21Qu3O8pYTWqIGgGeokuHWNpXlSFz3v
+         3Qdg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1P8LqoPnhLAtgE8bX87Tag2c91o54leLxOP5I1Ej1QONt9OdUNgpTzcO82adIsgz3ObAqv0gw60ryOKmO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2janh5XxJHz/n09rdQcLUjokXBFjAPTvAhhhJDRpN2NQqYq6R
+	duOKL9Dnq+a+cPReNGAyq5dpjFsLkb8H9+TNCEkcDA1rSa+ujHBHOm1oZ+auaaGXgscLdI/zpO5
+	dTlFtPSVXPHBDv8K9FBfHtQ5tXtZMNmgHdbmPJtM=
+X-Gm-Gg: AY/fxX5DuoZ+Jdh2+8KJihu67Efg8yXktJr2NK+49qNTlTFU0sxPJs/Wo+PILI8ctT9
+	7zw+rW8Y/5IV7b03KABmucuy9qfXVHL6hSMz21KyvabqjGt2hRadVQtTgtkcMTXZV2264npt4E3
+	eyCCf/FZYasAaLJAyq0DOhfx2ObgS8gL2t9/B+ZYQlB0DlNvGb2xh7NjIR5eX1Lq4CDMu4zH1Um
+	4aDFx2rgj83XWLJAPqpZwuMwVxX8XE7JaQXu+65EQH3CiS2C+NrG2vffEU76S2tuo+0e4Ur+HYY
+	zCxLlZPHLhQjkvctJhjj8g0xhsbyRg==
+X-Received: by 2002:a05:6402:278d:b0:64d:c54a:334e with SMTP id
+ 4fb4d7f45d1cf-65452ccace0mr6413405a12.29.1768756047754; Sun, 18 Jan 2026
+ 09:07:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260114-master-v2-0-719f5b47dfe2@kernel.org>
+References: <20260116142845.422-1-luochunsheng@ustc.edu> <20260116142845.422-2-luochunsheng@ustc.edu>
+ <CAOQ4uxg13jAJyG8b3CpjKE8FXn3ce=yUCzw+Qc=k29si=FtXaQ@mail.gmail.com>
+ <428db714-5ec8-4259-b808-b8784153d4f2@ustc.edu> <CAOQ4uxhgOk2Ati81vqEkgWFODkW_gkB7Z7wj0x1A8RX38wLSRA@mail.gmail.com>
+ <2264748f-58f7-490e-be0b-257db08a761d@ustc.edu>
+In-Reply-To: <2264748f-58f7-490e-be0b-257db08a761d@ustc.edu>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 18 Jan 2026 18:07:16 +0100
+X-Gm-Features: AZwV_QjGeJ4WJpfuCdKXOGZLFXw0TPHGadgSw7l8nzDoOdBRf4bMt5m5cv08GH4
+Message-ID: <CAOQ4uxhbo8vkuNZmhpyOUnttakNmyqCdmiyQyLJakPmsReu3mg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fuse: add ioctl to cleanup all backing files
+To: Chunsheng Luo <luochunsheng@ustc.edu>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Jeff Layton <jlayton@kernel.org>
+On Sun, Jan 18, 2026 at 12:47=E2=80=AFPM Chunsheng Luo <luochunsheng@ustc.e=
+du> wrote:
+>
+>
+>
+> On 1/18/26 1:00 AM, Amir Goldstein wrote:
+> > On Sat, Jan 17, 2026 at 5:14=E2=80=AFPM Chunsheng Luo <luochunsheng@ust=
+c.edu> wrote:
+> >>
+> >>
+> >>
+> >> On 1/16/26 11:39 PM, Amir Goldstein wrote:
+> >>> On Fri, Jan 16, 2026 at 3:28=E2=80=AFPM Chunsheng Luo <luochunsheng@u=
+stc.edu> wrote:
+> >>>>
+> >>>> To simplify crash recovery and reduce performance impact, backing_id=
+s
+> >>>> are not persisted across daemon restarts. After crash recovery, this
+> >>>> may lead to resource leaks if backing file resources are not properl=
+y
+> >>>> cleaned up.
+> >>>>
+> >>>> Add FUSE_DEV_IOC_BACKING_CLOSE_ALL ioctl to release all backing_ids
+> >>>> and put backing files. When the FUSE daemon restarts, it can use thi=
+s
+> >>>> ioctl to cleanup all backing file resources.
+> >>>>
+> >>>> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
+> >>>> ---
+> >>>>    fs/fuse/backing.c         | 19 +++++++++++++++++++
+> >>>>    fs/fuse/dev.c             | 16 ++++++++++++++++
+> >>>>    fs/fuse/fuse_i.h          |  1 +
+> >>>>    include/uapi/linux/fuse.h |  1 +
+> >>>>    4 files changed, 37 insertions(+)
+> >>>>
+> >>>> diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
+> >>>> index 4afda419dd14..e93d797a2cde 100644
+> >>>> --- a/fs/fuse/backing.c
+> >>>> +++ b/fs/fuse/backing.c
+> >>>> @@ -166,6 +166,25 @@ int fuse_backing_close(struct fuse_conn *fc, in=
+t backing_id)
+> >>>>           return err;
+> >>>>    }
+> >>>>
+> >>>> +static int fuse_backing_close_one(int id, void *p, void *data)
+> >>>> +{
+> >>>> +       struct fuse_conn *fc =3D data;
+> >>>> +
+> >>>> +       fuse_backing_close(fc, id);
+> >>>> +
+> >>>> +       return 0;
+> >>>> +}
+> >>>> +
+> >>>> +int fuse_backing_close_all(struct fuse_conn *fc)
+> >>>> +{
+> >>>> +       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
+> >>>> +               return -EPERM;
+> >>>> +
+> >>>> +       idr_for_each(&fc->backing_files_map, fuse_backing_close_one,=
+ fc);
+> >>>> +
+> >>>> +       return 0;
+> >>>> +}
+> >>>> +
+> >>>
+> >>> This is not safe and not efficient.
+> >>> For safety from racing with _open/_close, iteration needs at least
+> >>> rcu_read_lock(),
+> >>
+> >> Yes, you're absolutely right. Additionally, calling idr_remove within
+> >> idr_for_each maybe presents safety risks.
+> >>
+> >>> but I think it will be much more efficient to zap the entire map with
+> >>> fuse_backing_files_free()/fuse_backing_files_init().
+> >>>
+> >>> This of course needs to be synchronized with concurrent _open/_close/=
+_lookup.
+> >>> This could be done by making c->backing_files_map a struct idr __rcu =
+*
+> >>> and replace the old and new backing_files_map under spin_lock(&fc->lo=
+ck);
+> >>>
+> >>> Then you can call fuse_backing_files_free() on the old backing_files_=
+map
+> >>> without a lock.
+> >>>
+> >>> As a side note, fuse_backing_files_free() iteration looks like it may=
+ need
+> >>> cond_resched() if there are a LOT of backing ids, but I am not sure a=
+nd
+> >>> this is orthogonal to your change.
+> >>>
+> >>> Thanks,
+> >>> Amir.
+> >>>
+> >>>
+> >>
+> >> Thank you for your helpful suggestions. However, it cannot use
+> >> fuse_backing_files_free() in the close_all implementation because it
+> >> directly frees backing files without respecting reference counts. This
+> >> function requires that no one is actively using the backing file (it
+> >> even has WARN_ON_ONCE(refcount_read(&fb->count) !=3D 1)), which cannot=
+ be
+> >> guaranteed after a crash recovery scenario where backing files may sti=
+ll
+> >> be in use.
+> >
+> > Right.
+> >
+> >>
+> >> Instead, the implementation uses fuse_backing_put() to safely decremen=
+t
+> >> the reference count and allow the backing file to be freed when no
+> >> longer in use.
+> >
+> > OK.
+> >
+> >>
+> >> Additionally, the implementation addresses two race conditions:
+> >>
+> >> - Race between idr_for_each and lookup: Uses synchronize_rcu() to ensu=
+re
+> >> all concurrent RCU readers (i.e., in-flight fuse_backing_lookup() call=
+s)
+> >> complete before releasing backing files, preventing use-after-free iss=
+ues.
+> >
+> > Almost. See below.
+> >
+> >>
+> >> - Race with open/close operations: Uses fc->lock to atomically swap th=
+e
+> >> old and new IDR maps, ensuring consistency with concurrent
+> >> fuse_backing_open() and fuse_backing_close() operations.
+> >>
+> >> This approach provides the same as the RCU pointer suggestion, but wit=
+h
+> >> less code and no changes to the struct fuse_conn data structures.
+> >>
+> >> I've updated it and verified the implementation. Could you please revi=
+ew it?
+> >>
+> >>
+> >> diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
+> >> index 4afda419dd14..047d373684f9 100644
+> >> --- a/fs/fuse/backing.c
+> >> +++ b/fs/fuse/backing.c
+> >> @@ -166,6 +166,45 @@ int fuse_backing_close(struct fuse_conn *fc, int
+> >> backing_id)
+> >>           return err;
+> >>    }
+> >>
+> >> +static int fuse_backing_release_one(int id, void *p, void *data)
+> >> +{
+> >> +       struct fuse_backing *fb =3D p;
+> >> +
+> >> +       fuse_backing_put(fb);
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +
+> >> +int fuse_backing_close_all(struct fuse_conn *fc)
+> >> +{
+> >> +       struct idr old_map;
+> >> +
+> >> +       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
+> >> +               return -EPERM;
+> >> +
+> >> +       /*
+> >> +        * Swap out the old backing_files_map with a new empty one und=
+er
+> >> lock,
+> >> +        * then release all backing files outside the lock. This avoid=
+s long
+> >> +        * lock hold times and potential races with concurrent open/cl=
+ose
+> >> +        * operations.
+> >> +        */
+> >> +       idr_init(&old_map);
+> >> +       spin_lock(&fc->lock);
+> >> +       swap(fc->backing_files_map, old_map);
+> >> +       spin_unlock(&fc->lock);
+> >> +
+> >> +       /*
+> >> +        * Ensure all concurrent RCU readers complete before releasing
+> >> backing
+> >> +        * files, so any in-flight lookups can safely take references.
+> >> +        */
+> >> +       synchronize_rcu();
+> >> +
+> >> +       idr_for_each(&old_map, fuse_backing_release_one, NULL);
+> >> +       idr_destroy(&old_map);
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +
+> >
+> > That's almost safe but not enough.
+> > This lookup code is not safe against the swap():
+> >
+> >    rcu_read_lock();
+> >    fb =3D idr_find(&fc->backing_files_map, backing_id);
+> >
+> > That is the reason you need to make fc->backing_files_map
+> > an rcu referenced ptr.
+> >
+> > Instead of swap() you use xchg() to atomically exchange the
+> > old and new struct idr pointers and for lookup:
+> >
+> >    rcu_read_lock();
+> >    fb =3D idr_find(rcu_dereference(fc->backing_files_map), backing_id);
+> >
+> > Thanks,
+> > Amir.
+> >
+> >
+>
+> Yes, swap() isn't atomic, it's just copying structs, so it's not safe
+> when racing with lookup.
+>
+> I've updated the version to make fc->backing_files_map an rcu referenced
+> ptr. Please review the attached patch.
 
-With Linux 6.19, userland will be able to request a delegation on a file
-or directory.  These new objects act a lot like file leases, but are
-based on NFSv4 file and directory delegations.
+You can also use rcu_replace_pointer() to swap old_idr <-> new_idr,
+but otherwise the patch looks fine to me.
 
-Add new F_GETDELEG and F_SETDELEG manpages to document them.
-
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-[alx: minor tweaks]
-Signed-off-by: Alejandro Colomar <alx@kernel.org>
----
- man/man2/fcntl.2                |   5 +
- man/man2const/F_GETDELEG.2const | 265 ++++++++++++++++++++++++++++++++
- man/man2const/F_SETDELEG.2const |   1 +
- 3 files changed, 271 insertions(+)
- create mode 100644 man/man2const/F_GETDELEG.2const
- create mode 100644 man/man2const/F_SETDELEG.2const
-
-diff --git a/man/man2/fcntl.2 b/man/man2/fcntl.2
-index 7f34e332e..f05d559da 100644
---- a/man/man2/fcntl.2
-+++ b/man/man2/fcntl.2
-@@ -78,6 +78,11 @@ .SS Leases
- .BR F_SETLEASE (2const)
- .TQ
- .BR F_GETLEASE (2const)
-+.SS Delegations
-+.TP
-+.BR F_SETDELEG (2const)
-+.TQ
-+.BR F_GETDELEG (2const)
- .SS File and directory change notification (dnotify)
- .TP
- .BR F_NOTIFY (2const)
-diff --git a/man/man2const/F_GETDELEG.2const b/man/man2const/F_GETDELEG.2const
-new file mode 100644
-index 000000000..e4d98feed
---- /dev/null
-+++ b/man/man2const/F_GETDELEG.2const
-@@ -0,0 +1,265 @@
-+.\" Copyright, the authors of the Linux man-pages project
-+.\"
-+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-+.\"
-+.TH F_GETDELEG 2const (date) "Linux man-pages (unreleased)"
-+.SH NAME
-+F_GETDELEG,
-+F_SETDELEG
-+\-
-+delegations
-+.SH LIBRARY
-+Standard C library
-+.RI ( libc ,\~ \-lc )
-+.SH SYNOPSIS
-+.nf
-+.B #define _GNU_SOURCE
-+.B #include <fcntl.h>
-+.P
-+.BI "int fcntl(int " fd ", F_SETDELEG, const struct delegation *" deleg );
-+.BI "int fcntl(int " fd ", F_GETDELEG, struct delegation *" deleg );
-+.fi
-+.P
-+.EX
-+struct delegation {
-+	__u32  d_flags;
-+	__u16  d_type;
-+	__u16  __pad;
-+};
-+.EE
-+.SH DESCRIPTION
-+.B F_SETDELEG
-+and
-+.B F_GETDELEG
-+are used to establish a new delegation,
-+and retrieve the current delegation,
-+on the open file description referred to by the file descriptor
-+.IR fd .
-+.P
-+A file delegation is a mechanism whereby
-+the process holding the delegation (the "delegation holder")
-+is notified (via delivery of a signal)
-+when a process (the "delegation breaker")
-+tries to
-+.BR open (2)
-+or
-+.BR truncate (2)
-+the file referred to by that file descriptor,
-+or tries to
-+.BR unlink (2)
-+or
-+.BR rename (2)
-+the dentry that was originally opened for the file.
-+.P
-+Delegations can also be set on directory file descriptors.
-+The holder of a directory delegation will be notified if there is a
-+create, delete, or rename of a dirent within the directory.
-+.TP
-+.B F_SETDELEG
-+Set or remove a file or directory delegation according to the
-+value specified in
-+.IR deleg->d_type :
-+.RS
-+.TP
-+.B F_RDLCK
-+Establish a read delegation.
-+This will cause the calling process to be notified
-+when the file is
-+opened for writing,
-+or is truncated, unlinked or renamed.
-+A read delegation can be placed
-+only on a file descriptor that is opened read-only.
-+.IP
-+If
-+.I fd
-+refers to a directory,
-+then the calling process will be notified
-+if there are changes to filenames within the directory,
-+or when the directory itself is renamed.
-+.TP
-+.B F_WRLCK
-+Establish a write delegation.
-+This will cause the caller to be notified when the file is opened for reading or writing,
-+or is truncated, renamed or unlinked.
-+A write delegation may be placed on a file only if there are no other open file descriptors for the file.
-+The file must be opened for write in order to set a write delegation on it.
-+Write delegations cannot be set on directory file descriptors.
-+.TP
-+.B F_UNLCK
-+Remove our delegation from the file.
-+.RE
-+.P
-+Like leases,
-+delegations are associated with an open file description
-+(see
-+.BR open (2)).
-+This means that duplicate file descriptors
-+(created by, for example,
-+.BR fork (2)
-+or
-+.BR dup (2))
-+refer to the same delegation,
-+and this delegation may be modified or released
-+using any of these descriptors.
-+Furthermore,
-+the delegation is released by either an explicit
-+.B F_UNLCK
-+operation on any of these duplicate file descriptors,
-+or when all such file descriptors have been closed.
-+.P
-+An unprivileged process may establish a delegation
-+only on a file whose UID (owner) matches the filesystem UID of the process.
-+A process with the
-+.B CAP_LEASE
-+capability may establish delegations on arbitrary files and directories.
-+.TP
-+.B F_GETDELEG
-+Indicates what type of delegation is associated with the file descriptor
-+.I fd
-+by setting
-+.I deleg->d_type
-+to either
-+.BR F_RDLCK ,
-+.BR F_WRLCK ,
-+or
-+.BR F_UNLCK ,
-+indicating, respectively,
-+a read delegation, a write delegation, or no delegation.
-+.P
-+When a process (the "delegation breaker")
-+performs an activity that conflicts with a delegation
-+established via
-+.BR F_SETDELEG ,
-+the system call is blocked by the kernel
-+and the kernel notifies the delegation holder by sending it a signal
-+.RB ( SIGIO
-+by default).
-+The delegation holder should respond to receipt of this signal
-+by doing whatever cleanup is required
-+in preparation for the file to be
-+accessed by another process
-+(e.g., flushing cached buffers)
-+and then either remove or downgrade its delegation.
-+A delegation is removed by performing an
-+.B F_SETDELEG
-+operation specifying
-+.I deleg->d_type
-+as
-+.BR F_UNLCK .
-+If the delegation holder currently holds
-+a write delegation on the file,
-+and the delegation breaker
-+is opening the file for reading,
-+then it is sufficient for the delegation holder to
-+downgrade the delegation to a read delegation.
-+This is done by performing an
-+.B F_SETDELEG
-+operation specifying
-+.I deleg->d_type
-+as
-+.BR F_RDLCK .
-+.P
-+If the delegation holder
-+fails to downgrade or remove the delegation
-+within the number of seconds specified in
-+.IR /proc/sys/fs/lease\-break\-time ,
-+then the kernel
-+forcibly removes or downgrades the delegation holder's delegation.
-+.P
-+Once a delegation break has been initiated,
-+.B F_GETDELEG
-+returns the target delegation type in the
-+.I deleg->d_type
-+(either
-+.B F_RDLCK
-+or
-+.BR F_UNLCK ,
-+depending on what would be compatible with the delegation breaker)
-+until the delegation holder voluntarily downgrades or removes the delegation
-+or the kernel forcibly does so after the delegation break timer expires.
-+.P
-+Once the delegation has been voluntarily or forcibly removed or downgraded,
-+and assuming the delegation breaker has not unblocked its system call,
-+the kernel permits the delegation breaker's system call to proceed.
-+.P
-+If the delegation breaker's blocked system call
-+is interrupted by a signal handler,
-+then the system call fails with the error
-+.BR EINTR ,
-+but the other steps still occur as described above.
-+If the delegation breaker is killed by a signal while blocked in
-+.BR open (2)
-+or
-+.BR truncate (2),
-+then the other steps still occur as described above.
-+If the delegation breaker specifies the
-+.B O_NONBLOCK
-+flag when calling
-+.BR open (2),
-+then the call immediately fails with the error
-+.BR EWOULDBLOCK ,
-+but the other steps still occur as described above.
-+.P
-+The default signal used to notify the delegation holder is
-+.BR SIGIO ,
-+but this can be changed using
-+.BR F_SETSIG (2const).
-+If a
-+.BR F_SETSIG (2const)
-+operation is performed
-+(even one specifying
-+.BR SIGIO ),
-+and the signal
-+handler is established using
-+.BR SA_SIGINFO ,
-+then the handler will receive a
-+.I siginfo_t
-+structure as its second argument,
-+and the
-+.I si_fd
-+field of this argument will hold
-+the file descriptor of the file with the delegation
-+that has been accessed by another process.
-+(This is useful if the caller holds delegations against multiple files.)
-+.SH NOTES
-+Delegations were designed to implement NFSv4 delegations for the Linux NFS server.
-+.SH RETURN VALUE
-+On success zero is returned.
-+On error, \-1 is returned, and
-+.I errno
-+is set to indicate the error.
-+A successful
-+.B F_GETDELEG
-+call will also update the
-+.I deleg->d_type
-+field.
-+.SH ERRORS
-+See
-+.BR fcntl (2).
-+These operations can also return the following errors:
-+.TP
-+.B EAGAIN
-+The file was held open in a way that
-+conflicts with the requested delegation.
-+.TP
-+.B EINVAL
-+The caller tried to set a
-+.B F_WRLCK
-+delegation and
-+.I fd
-+represents a directory.
-+.TP
-+.B EINVAL
-+.I fd
-+doesn't represent a file or directory.
-+.TP
-+.B EINVAL
-+The underlying filesystem doesn't support delegations.
-+.SH STANDARDS
-+Linux,
-+IETF\ RFC\ 8881.
-+.SH HISTORY
-+Linux 6.19.
-+.SH SEE ALSO
-+.BR fcntl (2) ,
-+.BR F_SETLEASE (2const)
-diff --git a/man/man2const/F_SETDELEG.2const b/man/man2const/F_SETDELEG.2const
-new file mode 100644
-index 000000000..acabdfc13
---- /dev/null
-+++ b/man/man2const/F_SETDELEG.2const
-@@ -0,0 +1 @@
-+.so man2const/F_GETDELEG.2const
-
-base-commit: f17241696722c472c5fcd06ee3b7af7afc3f1082
--- 
-2.51.0
-
+Thanks,
+Amir.
 
