@@ -1,146 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-74306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17ED2D393AB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 10:51:17 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6240D3946A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 12:04:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 3B94E3004603
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 09:51:14 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 4D0C6300CA3B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 11:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D64285CA8;
-	Sun, 18 Jan 2026 09:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFC532AAA1;
+	Sun, 18 Jan 2026 11:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCSpdxPL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FB01B142D
-	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 09:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568AD2E2EF2
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 11:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768729872; cv=none; b=Xm2lQ1Xro1gxdh9i/IBV/r+hw4/owRAKzwWK85LT+u9aGh7/eltvN5llo1T446IqLcNqIomgyZmzSoKEn6MYdx87LFV9crwXWPtDBWpTmWxcCHvPc26UHOOPGDpl66UPQaF6mFrVzxkWqGOIAgoshkcsGxt/yDlj85eUxah2mRc=
+	t=1768734289; cv=none; b=ho7tleYLEOcDOTJNoSSfWSggOo7d07mGH2DfUagfy31mUEwI38G97bHv52WyEk8+GmTR4jRnLMlnsNlyrqENmS1MrBl7/Q84tkmgCqbg6RmXtwqlzlJ5L0kkEB/9dC+wq/h7kthy+OjVyHA5zaWjEhhFJIXTgXiR1RtqrYjIxoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768729872; c=relaxed/simple;
-	bh=L/6KQihQANacl58vwtA9Y+sUswN+ka/wML027AO+aAg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=W69fr8I1V5Z9LEHrQGaLKkicIGXotG2NFOEELJQWCN+GtxaGCEaaoytwlXGfFyNQcGc9dodg2/w3rg53zec+Rm2hHCFR08+pY4gjjp0c8tBTFc7rdcx6iaKvdfCv4zCPtjjR4xEvNbDGeWKJFwQHQePGsLjXI5pBP065Xvj2aL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 60I9oShH012454;
-	Sun, 18 Jan 2026 18:50:28 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 60I9oRYx012450
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 18 Jan 2026 18:50:27 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <6d2ed161-b302-4475-b32c-2feca1f84026@I-love.SAKURA.ne.jp>
-Date: Sun, 18 Jan 2026 18:50:25 +0900
+	s=arc-20240116; t=1768734289; c=relaxed/simple;
+	bh=r4uWeHohkE289LoTNv8GpIVlnQUlC3zCtKgj8uU2v5o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YbX0dfMlCvu8PPOlahO+kZ3Ww0jCEhhkBMxxFip8tKVKsALOo7AyQRDeo0mGIL4wvBBlmscTLFp7KUIQg8F7Y/kLlDg36WAvhKduvUZZkB/pHeei5apCzC1xtDBEYoSPQoEAh1/arfFvU2N2vp5ujHFSNhDLOIunHlWeqLTBKGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCSpdxPL; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47ee301a06aso30127465e9.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 03:04:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768734287; x=1769339087; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rGOmWd4RF6L7Er27bVWEMPyI+kmYwKf7smupinnsaE4=;
+        b=UCSpdxPLYB5L+NPxo4QrWTiGZLd1TGEZwuK+ojLf6ofCC98tLrTP/PGR4jV/HSh6MW
+         +19sCQXYmdN/i8eOpQNQOmBtmU5GU/IcIKAORGHGdxXGmqb1XDnXxNoBWNniYoVzsu5c
+         E5x80JpQEXGfOytGyWmsKOyuRQvlBYpJ2b3WjIxDvpfZIaD372fd1rtF3BvNAOVKQNw5
+         tnTlEkvGyRZyYGiJCuZO1wxu3xsWoEccrezahe83IRia2e+C9e9mWEQB6Bo8K6tfvnbk
+         E2t6HyrJndDq+zb4A+RsFU7BHE8E5O0qdhnCo5T4FTUd++c/45I+J0SPKhBi1SS2lKt/
+         NHGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768734287; x=1769339087;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rGOmWd4RF6L7Er27bVWEMPyI+kmYwKf7smupinnsaE4=;
+        b=MeIo0tnXemZlMpxnp1Wplc0b97K4VZ/VqMbwRhrBwIJwb7Q1h7X9ekwxzTjgrnCoW5
+         aQ1qfFQb4E4ojTVVrCMgANEe2Ia2ictSmZZH+rX6c4GYXiHKYty0m8pcJx6gwmlT8ZXc
+         xtYc5A/joa65Tl8KkC6P9Fk4ZetgwOQoDaGcYGf3uD/QVnExIXy+HwnI7wQfgpEIjkDv
+         iWTgip+Rjbl+9gAbm+QpWKHfokLMdS99I4g30TXkzvgj6+u5c/4/L7yIjSZDGVKiQc9z
+         fFS25Jvb1BjaKd7OqsczX3X6GK61TxvRMquoCvJoybCDtU0sEeczMI0RMUbGWPv4ObWz
+         IHjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkDqltqzMKadUdBFMvJlTBkZ1JjvIrxJ9PoLXTWN/r2bqm0Eup2d8bTNiC5kPnkpGp3FghoajPX9YakG93@vger.kernel.org
+X-Gm-Message-State: AOJu0YypR3FTHGgLIx99v7kgeWJ6x+9E0PQSSLaChfOUzXAcGaLZ0sTe
+	AynZXTkreOQ9uk+x3f8qWCdl9/zriX+agfAmbEEZ0yPFLEuz4e2O3gpeRzxbLw==
+X-Gm-Gg: AY/fxX5TPe5mxFhFR7NHeHu8vOgsvTiXD5sX/AXW6aXaXXStYD1yNgtEOcq8xPB1ipu
+	w+hSoGFm6aJt9HmS6gKZigEBEAdW9U0EpHx27qVHgNbZ7sbW/rmOJtvkA+q8reT1JsFFzsBZVuY
+	k/0kOkHnCebCsK7xrOF5jRvV5qUiqHwM5TkwQ57xoPjAOeXw4Y4pm5lonG8RdT3oq8TrT5Hi7D/
+	RFDIjLnUy1lQ2Uu8/JKYk+nq11pkoggpLl0WKfba7BMnr1yzpJ3lz7KoaABTo9rSn3sJJUwsJJ3
+	39IfBeBN9xt9MCHI6dnJUZybpwnU/nEyZTYjolpflQAkPWPdn4UV2OpeR4NRSbfQy2i5vfGYVQL
+	zg8z/Q6GXj9riRghzv5sV9Gr5gNmy0JDbA5y7Lx3KPDtaciA/dCUflfrX2VIna/2z8ePHjbTV89
+	ZVSEiEbB/vEUgSgErTiTmMpqLOnLQ=
+X-Received: by 2002:a05:600c:1d28:b0:45d:5c71:769a with SMTP id 5b1f17b1804b1-4801eb0d727mr95491315e9.26.1768734286528;
+        Sun, 18 Jan 2026 03:04:46 -0800 (PST)
+Received: from practice.local ([147.235.205.132])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47f428bb0b5sm191862165e9.8.2026.01.18.03.04.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Jan 2026 03:04:46 -0800 (PST)
+From: Jay Winston <jaybenjaminwinston@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jay Winston <jaybenjaminwinston@gmail.com>
+Subject: [PATCH] fs/namei: fix kernel-doc markup for dentry_create
+Date: Sun, 18 Jan 2026 13:04:01 +0200
+Message-ID: <20260118110401.2651-1-jaybenjaminwinston@gmail.com>
+X-Mailer: git-send-email 2.46.4
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH (REPOST)] hpfs: make check=none mount option excludable
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Mikulas Patocka <mikulas@twibright.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: syzkaller <syzkaller@googlegroups.com>,
-        Viacheslav Sablin <sjava1902@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Aleksandr Nogikh <nogikh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>,
-        Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk,
-        Deepanshu Kartikey <kartikey406@gmail.com>
-References: <51bdd056-61dd-4b57-8780-324b2f8bc99f@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <51bdd056-61dd-4b57-8780-324b2f8bc99f@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav305.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Transfer-Encoding: 8bit
 
-Mikulas, are you there?
+O_ is interpreted as a broken hyperlink target. Escape _ with a backslash.
 
-A patch was posted to https://lkml.kernel.org/r/20260117054014.1252933-1-kartikey406@gmail.com
-for a bug report which Mikulas would not accept as a valid bug because of "check=none".
+The asterisk in "struct file *" is interpreted as an opening emphasis
+string that never closes. Replace double quotes with rST backticks.
 
-If Mikulas keeps silence, maybe we should out-out hpfs from fuzz testing...
+Change "a ERR_PTR" to "an ERR_PTR".
 
-On 2026/01/13 19:08, Tetsuo Handa wrote:
-> syzbot is reporting use-after-free read problem when a crafted HPFS image
-> was mounted with "check=none" option.
-> 
-> The "check=none" option is intended for only users who want maximum speed
-> and use the filesystem only on trusted input. But fuzzers are for using
-> the filesystem on untrusted input.
-> 
-> Mikulas Patocka (the HPFS maintainer) thinks that there is no need to add
-> some middle ground where "check=none" would check some structures and won't
-> check others. Therefore, to make sure that fuzzers and careful users do not
-> by error specify "check=none" at runtime, make "check=none" being
-> excludable at build time.
-> 
-> Reported-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
-> Link: https://lkml.kernel.org/r/9ca81125-1c7b-ddaf-09ea-638bc5712632@redhat.com
-> Tested-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> ---
-> Mikulas wants fuzz testing systems not to specify "check=none" option. But it is
-> too difficult to enforce that. It is possible that an unexpected input hides
-> "hpfs: You really don't want any checks? You are crazy..." message due to changing
-> loglevel, and after that the kernel may hit this problem (i.e. we will be needlessly
-> bothered by stupid inputs).
-> 
-> Honestly speaking, the code that runs in the kernel space needs to be as careful as
-> possible, for any memory access error in the kernel space can result in serious result.
-> We are fixing various input validations for all (but HPFS) filesystems. It is strange
-> that HPFS is exempted from this rule. I expect that "check=none" behavior (if someone
-> wants such behavior) should be emulated in the user space using FUSE filesystem.
-> 
->  fs/hpfs/Kconfig | 11 +++++++++++
->  fs/hpfs/super.c |  2 ++
->  2 files changed, 13 insertions(+)
-> 
-> diff --git a/fs/hpfs/Kconfig b/fs/hpfs/Kconfig
-> index ac1e9318e65a..d3dfbe76be8a 100644
-> --- a/fs/hpfs/Kconfig
-> +++ b/fs/hpfs/Kconfig
-> @@ -15,3 +15,14 @@ config HPFS_FS
->  
->  	  To compile this file system support as a module, choose M here: the
->  	  module will be called hpfs.  If unsure, say N.
-> +
-> +config HPFS_FS_ALLOW_NO_ERROR_CHECK_MODE
-> +	bool "Allow no-error-check mode for maximum speed"
-> +	depends on HPFS_FS
-> +	default n
-> +	help
-> +	  This option enables check=none mount option. If check=none is
-> +	  specified, users can expect maximum speed at the cost of minimum
-> +	  robustness. Sane users should not specify check=none option, for e.g.
-> +	  use-after-free bug will happen when the filesystem is corrupted or
-> +	  crafted.
-> diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
-> index 8ab85e7ac91e..656b1ae01812 100644
-> --- a/fs/hpfs/super.c
-> +++ b/fs/hpfs/super.c
-> @@ -285,7 +285,9 @@ static const struct constant_table hpfs_param_case[] = {
->  };
->  
->  static const struct constant_table hpfs_param_check[] = {
-> +#ifdef CONFIG_HPFS_FS_ALLOW_NO_ERROR_CHECK_MODE
->  	{"none",	0},
-> +#endif
->  	{"normal",	1},
->  	{"strict",	2},
->  	{}
+Signed-off-by: Jay Winston <jaybenjaminwinston@gmail.com>
+---
+ fs/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index b19890758646..f511288af463 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -4975,7 +4975,7 @@ EXPORT_SYMBOL(start_creating_user_path);
+ /**
+  * dentry_create - Create and open a file
+  * @path: path to create
+- * @flags: O_ flags
++ * @flags: O\_ flags
+  * @mode: mode bits for new file
+  * @cred: credentials to use
+  *
+@@ -4986,7 +4986,7 @@ EXPORT_SYMBOL(start_creating_user_path);
+  * the new file is to be created. The parent directory and the
+  * negative dentry must reside on the same filesystem instance.
+  *
+- * On success, returns a "struct file *". Otherwise a ERR_PTR
++ * On success, returns a ``struct file *``. Otherwise an ERR_PTR
+  * is returned.
+  */
+ struct file *dentry_create(struct path *path, int flags, umode_t mode,
+-- 
+2.46.4
 
 
