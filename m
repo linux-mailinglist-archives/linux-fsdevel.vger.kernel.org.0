@@ -1,117 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-74309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87981D3953B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 14:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0094D39796
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 16:43:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A66543016DF3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 13:15:20 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8C3413011A68
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 15:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFA0330B3C;
-	Sun, 18 Jan 2026 13:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WU429C2W"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4650E33C502;
+	Sun, 18 Jan 2026 15:42:54 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F35347C6
-	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 13:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58331288D6;
+	Sun, 18 Jan 2026 15:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768742118; cv=none; b=m+RWQ4nJAGE0JNjrzD4ISR3c0jtYol8byK3eOXv0H47iROA/xAUWjyEcmdEAYfkPRDVwH3v3SRZLPpAv6+bMFmPfvZlosxgmbOH+6HRLAy6Pd75RyIY3eL5BvJo3TKd21HWDY49Yfu67I3VCWDl8FkRO8u94FzqheYdXeM0lfNU=
+	t=1768750973; cv=none; b=k1z7f31q48O+MTV0oOzpLVzrCBRDQV2K6lmvWwTTVZBizTtqG80KgcEKDbuyjsgEO/idzxVOmrMgSWcyywUGiIZzqh3kzjGYx57pPkbA0SUfz2jy+x+n6LPB8pdz+KCeY5fssUO5KBlGfbVgEd4rjPDS37gY8W6pKcQCKQHhjVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768742118; c=relaxed/simple;
-	bh=4TEa7pHP2ikSWgVdHInrsbOyT2CYj/3mm8xIYJwHTR0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FOoOQ+4tV+ec4PdWmXjyICOW3o+Rf2+emxcmHqCP/9dr6uO51S8KkknJmL319nmi6cmmkpb0GL7RKa1PpBLBj+IeUGTvCXq3bP7gxLs5TUq+rX5VZZertvfc4WreyfsrHu9UF58lkAOM2+qb0ccQIqso/VElx7d5bMM9mHCJ3hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WU429C2W; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4801d1daf53so21661555e9.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 05:15:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768742116; x=1769346916; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sa8nTgcsWLvaf6pbTiRseNi/rif1T3zmlnbTbk9J3SM=;
-        b=WU429C2WgWQU1zAb5ao4guj2XpVwfdabeawgKEIjs7FPG69nD0IEXP3C9O1unbDq6+
-         qvvXxGRXRJcO2uow4nlFxESIUgDIwfhHdCjdtcKzbwLA3aQXPQWxNjkaVH+OjLzPzvr9
-         RMssMy8PWMUY6slKsGQtW5caU1C/KmwOuT/4BE+6W67IODOo0WinDxwYIwcvKGbsFEPt
-         QnNMJNDPdUHty+wsDez5bZZTrZX7rgZss+KYV3txdh370jzeyYBrM2gvqwyIfoqxx2gG
-         wmuStUedfzo307lGqYzNJ62OxxSwIsyPO1fTfV4I72hH7eJF1iThAr1dD/nNyWOoIDFy
-         ytMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768742116; x=1769346916;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sa8nTgcsWLvaf6pbTiRseNi/rif1T3zmlnbTbk9J3SM=;
-        b=TCUuZalRbIiN5WdjyBknT6R7KOcXik/TM1swdfe/yufLnb8QAXBFPUJbj6oFXo7L7G
-         RPj0XfZz//hHwUtTH30swyiTE7t4HWgmJKoMno3BeIm8zzlQENlp1WVjh6fTuivt56+y
-         vIz5y8rG3XOErsU6dvaZirYJaTvGt+XY0zTRHHnRW+NqrVbjROkEVoqQjckmvqWqJxmJ
-         mUpS+Dn/2gjGS2vF2jPFAY6YnNiAwViGzSBozZ+4H0qgi6v+wD1azVITiByXzgWMDCN4
-         85lka9fDngnKrBzCBNAKc27aIpFykJbCuE1A4+i7vbB/MGl7pOaxXxb/fn/4m11hri1J
-         NwOw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2p1nLgffCF14a7mAREsQp6b0vVxs8zJAlVrluUeJnPXMqhDn5Plp9l9OT8E4s7V+lCDQLA+3ZU+ql2QbW@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP0RylaY8NobFbjqZT2lglxLNN5fSTWA1TutaZMWlDLz39Aoxg
-	XFTebr27Ix5q0i0NZvP/iweRMvhRzQzj5k+Qw19cckAeCAVCAZ8vIK0Y
-X-Gm-Gg: AY/fxX5T2Ru4Ql/lB2gaMEFuIi5TjQoqpwM4jH/kwvuNWZ6BHCumSamxnt0N6o4PVNg
-	Ip6DCybqRREET+SBgrzVIIwtqSuFEgTKGZqH9wX7RidWY61MUHocgYJdqeU09pinhIzcgbW4zrb
-	SMtTBsVEVutm64VOS5TbINCRQc1gNDgbpHN3qsAuarzf9qMU05CKPraAnQrREKBU6UtWkaG3S6W
-	rRE/KyPH5nSAg3tIqRaxrBFe7jRWTWqyxg6tKkvRZdGugZP6SZ/WfN4LN0HQUXfLKY6cvzmuCYt
-	G8lRc0wI0b87dCrh3PaVZ7cMcwi+KiSuu47vMctSXrHQD+xfQFec6b18C4SxFcLbeZyvKhGbNfp
-	/71RdAqs6FpXUbvJ3YeMSFvgnRXFDSCge7t0T0O/WFk7bu7aM4M7oDeq4HhUVeeBUnvsghXC1G2
-	GDwSipyek8RVAO6MHlveptFWDhjXc=
-X-Received: by 2002:a05:600c:c16a:b0:47e:e20e:bbbe with SMTP id 5b1f17b1804b1-4801e33c332mr105274575e9.25.1768742115712;
-        Sun, 18 Jan 2026 05:15:15 -0800 (PST)
-Received: from practice.local ([147.235.192.208])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47f428bb0b5sm196377835e9.8.2026.01.18.05.15.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Jan 2026 05:15:15 -0800 (PST)
-From: Jay Winston <jaybenjaminwinston@gmail.com>
-To: corbet@lwn.net,
-	brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Jay Winston <jaybenjaminwinston@gmail.com>
-Subject: [PATCH] docs: filesystems: escape errant underscore in porting.rst
-Date: Sun, 18 Jan 2026 15:16:12 +0200
-Message-ID: <20260118131612.21948-1-jaybenjaminwinston@gmail.com>
-X-Mailer: git-send-email 2.46.4
+	s=arc-20240116; t=1768750973; c=relaxed/simple;
+	bh=7o8IJfB7ac3jZiXayX/iEYSCvbbdHx+mVAVSDEiNdGc=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=LDDue4+mUwzYjUswgDOBJQGC8zcsfTsIaSQZ9JzPxmv8ldM1o0jXvyxW8oXJByJuJ9WjRH/ZO4BAgXyjRAxnTfMMruuJ9D4hyAcT1IO4BkvvcDdCNC4OULFio89jbtAiE7gmTE3rkjOjqMxzAfaW56F5/yKUShaB1PaF6HtnUGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 6720229ABCA;
+	Sun, 18 Jan 2026 16:36:05 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id f1jux-Dqp4vA; Sun, 18 Jan 2026 16:36:04 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 9282529859D;
+	Sun, 18 Jan 2026 16:36:04 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id HokZmavtm8SI; Sun, 18 Jan 2026 16:36:04 +0100 (CET)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 04C202918DC;
+	Sun, 18 Jan 2026 16:36:04 +0100 (CET)
+Date: Sun, 18 Jan 2026 16:36:03 +0100 (CET)
+From: Richard Weinberger <richard@nod.at>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	chuck lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, 
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Amir Goldstein <amir73il@gmail.com>, hughd <hughd@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, tytso <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, 
+	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
+	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>, 
+	Sandeep Dhavale <dhavale@google.com>, 
+	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, 
+	Carlos Maiolino <cem@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, 
+	Alex Markuze <amarkuze@redhat.com>, 
+	Viacheslav Dubeyko <slava@dubeyko.com>, Chris Mason <clm@fb.com>, 
+	David Sterba <dsterba@suse.com>, 
+	Luis de Bethencourt <luisbg@kernel.org>, 
+	Salah Triki <salah.triki@gmail.com>, 
+	Phillip Lougher <phillip@squashfs.org.uk>, 
+	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, 
+	Mike Marshall <hubcap@omnibond.com>, 
+	Martin Brandenburg <martin@omnibond.com>, 
+	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+	Trond Myklebust <trondmy@kernel.org>, anna <anna@kernel.org>, 
+	Dave Kleikamp <shaggy@kernel.org>, 
+	David Woodhouse <dwmw2@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Andreas Gruenbacher <agruenba@redhat.com>, 
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	Jaegeuk Kim <jaegeuk@kernel.org>, 
+	Christoph Hellwig <hch@infradead.org>, 
+	linux-nfs <linux-nfs@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-mm <linux-mm@kvack.org>, 
+	linux-ext4 <linux-ext4@vger.kernel.org>, 
+	linux-erofs <linux-erofs@lists.ozlabs.org>, 
+	linux-xfs <linux-xfs@vger.kernel.org>, 
+	ceph-devel <ceph-devel@vger.kernel.org>, 
+	linux-btrfs <linux-btrfs@vger.kernel.org>, 
+	linux-cifs <linux-cifs@vger.kernel.org>, 
+	samba-technical <samba-technical@lists.samba.org>, 
+	linux-unionfs <linux-unionfs@vger.kernel.org>, 
+	devel <devel@lists.orangefs.org>, 
+	ocfs2-devel <ocfs2-devel@lists.linux.dev>, 
+	ntfs3 <ntfs3@lists.linux.dev>, 
+	linux-nilfs <linux-nilfs@vger.kernel.org>, 
+	jfs-discussion <jfs-discussion@lists.sourceforge.net>, 
+	linux-mtd <linux-mtd@lists.infradead.org>, 
+	gfs2 <gfs2@lists.linux.dev>, 
+	linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Message-ID: <2119146172.135240.1768750563673.JavaMail.zimbra@nod.at>
+In-Reply-To: <20260115-exportfs-nfsd-v1-23-8e80160e3c0c@kernel.org>
+References: <20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org> <20260115-exportfs-nfsd-v1-23-8e80160e3c0c@kernel.org>
+Subject: Re: [PATCH 23/29] jffs2: add EXPORT_OP_STABLE_HANDLES flag to
+ export operations
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF146 (Linux)/8.8.12_GA_3809)
+Thread-Topic: jffs2: add EXPORT_OP_STABLE_HANDLES flag to export operations
+Thread-Index: pUsbo+Kg1d9ytlyubsob1wi+Ql8B0A==
 
-filename_...() seems to be literal text whereas Sphinx thinks filename_ is
-a link. Wrap all with double backticks to quiet Sphinx warning and wrap
-do_{...}() as well for consistency.
+----- Urspr=C3=BCngliche Mail -----
+> Add the EXPORT_OP_STABLE_HANDLES flag to jffs2 export operations to indic=
+ate
+> that this filesystem can be exported via NFS.
+>=20
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> fs/jffs2/super.c | 1 +
+> 1 file changed, 1 insertion(+)
 
-Signed-off-by: Jay Winston <jaybenjaminwinston@gmail.com>
----
- Documentation/filesystems/porting.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Acked-by: Richard Weinberger <richard@nod.at>
 
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index 8bf09b2ea912..86d722ddd40e 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -1345,6 +1345,6 @@ implementation should set it to generic_setlease().
- 
- **mandatory**
- 
--do_{mkdir,mknod,link,symlink,renameat2,rmdir,unlink}() are gone; filename_...()
--counterparts replace those.  The difference is that the former used to consume
--filename references; the latter do not.
-+``do_{mkdir,mknod,link,symlink,renameat2,rmdir,unlink}()`` are gone;
-+``filename_...()`` counterparts replace those.  The difference is that the
-+former used to consume filename references; the latter do not.
--- 
-2.46.4
-
+Thanks,
+//richard
 
