@@ -1,51 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-74325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE803D39A93
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 23:31:56 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E46D39A8E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 23:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E2EB730184E1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 22:31:12 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 1579E3003483
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 22:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D9A30FC3F;
-	Sun, 18 Jan 2026 22:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04F530C345;
+	Sun, 18 Jan 2026 22:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="AEojnFP9";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="MveX7IOh"
+	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="QNnQm2pW";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="q1BQO26v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from a11-124.smtp-out.amazonses.com (a11-124.smtp-out.amazonses.com [54.240.11.124])
+Received: from a11-173.smtp-out.amazonses.com (a11-173.smtp-out.amazonses.com [54.240.11.173])
 	(using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443722836A6;
-	Sun, 18 Jan 2026 22:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.11.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E6630E0F0;
+	Sun, 18 Jan 2026 22:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.11.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768775470; cv=none; b=n5xNTXlwbqGq1hAh6e9N3vqvltvjk8Ls58zpey8ki6YotOvkSE2HAsR81Sm8UJApL8sUazoIxTH+3jJVNLdOnXXXvEpNMAhutdIa+18VXXhXaNgtBQDfqCYvapfRJb4Ueb/v1wC3hsakb473TAr+aKdJXxd3sByB1bZoTTYIpdo=
+	t=1768775484; cv=none; b=WF6oSRweGxQnNRCVgDjEDdhGfOWRrkxUBV7h4IPQ4zZy4W2bvULym/zva/giKt6wrHkIrtwaFnsjdVbW9qL9olrDfB3dPw1gyirEqKpvB95vXF1fe8l9GiQPqX/8zNwxPT2CUmNX9Ra/2kVcuftknrTWZvwScJ+HdE+2/JKuPIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768775470; c=relaxed/simple;
-	bh=KcyenChln9/fuCKcPBeAKf8Ht7OlJ9CjcOmXCdebCtY=;
+	s=arc-20240116; t=1768775484; c=relaxed/simple;
+	bh=BxCet11pPH89v/J5qkugNl3EtstX72uczW2ujDlPr78=;
 	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:In-Reply-To:
-	 References:Message-ID; b=Dml5KfOMzGvBZxPDV1ZpYqG1EEqAEPDsu4dHwWdD4CfSeYVOnhm+9Grfgw8cphBOgQ78oLAVog9SorwlD+CcpiBoDbsZfflzytJSs5utRjoghFaehwjd0LsoYqsSYZZednOTeHPEV7fnqzgqlsaf2dVveSc+VOJ28UCmMGJDwkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b=AEojnFP9; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=MveX7IOh; arc=none smtp.client-ip=54.240.11.124
+	 References:Message-ID; b=EvSGjzZJs0QXV2ObrLNaaiJpU587JCuD+b06wnal/qnb6Wd7R9GGamwMxOY6FHb0DdY3Gwf2WHPchv7KlImotIiMUOaAprEkz6m+zNZny6c/2/WzR82PIYOz9kPI0TRKWU7HL0PL46hfh1xGR1AVkYdNzdG1r7IcJYlhHXFQVl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b=QNnQm2pW; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=q1BQO26v; arc=none smtp.client-ip=54.240.11.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=o25mqk5iffcfzgc3wo2zjhkohcyjzsoq; d=jagalactic.com; t=1768775468;
+	s=o25mqk5iffcfzgc3wo2zjhkohcyjzsoq; d=jagalactic.com; t=1768775480;
 	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id;
-	bh=KcyenChln9/fuCKcPBeAKf8Ht7OlJ9CjcOmXCdebCtY=;
-	b=AEojnFP9JQRHBWmk7XOOl81kyFndrjvlS1Fy05tNlMLmR/a0qhnpLrc9eIKg7aW2
-	xJUldpnbYOpHBU9FHnbMENY09LhnnPOi+eCj5mcijujYsKw0QkJdatBeEdB7+bNNaEf
-	MWCRSqEx5Wm9qrNcBxEkktTnN7e8xBoiJB6P+nqg=
+	bh=BxCet11pPH89v/J5qkugNl3EtstX72uczW2ujDlPr78=;
+	b=QNnQm2pWzYQnTN0tXn6HEwI37V+S35ABoICpQo/FreZYL9OqdCeVVD5I81jjritD
+	HfSJPuuuZia2r8W1Xtrz4N7lCuul3yE2qqddEzYa/zeMWLQ/tFPmnIklT6m4dQiFmXs
+	pBeK5h4wvhRQTw0RhzjAR9B+HqOG9tjsVHutHOhQ=
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1768775468;
+	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1768775480;
 	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id:Feedback-ID;
-	bh=KcyenChln9/fuCKcPBeAKf8Ht7OlJ9CjcOmXCdebCtY=;
-	b=MveX7IOh19Vm/i0Aqc/XXDJRY34DqEjm8fvPOA2hlMT/2Gk423Xm3QII1Q+1T1ue
-	y72kkkRKz8BiHTKr2iJYI6N0gvXBHuxFsZiFGCGLs1aqcL+tuAQfLpXk97BnyyVtApv
-	utt0DhaMWWG4UdCJ6UtiYOCVFQOWNRjAbTuH6QPc=
-Subject: [PATCH V7 01/19] dax: move dax_pgoff_to_phys from [drivers/dax/]
- device.c to bus.c
+	bh=BxCet11pPH89v/J5qkugNl3EtstX72uczW2ujDlPr78=;
+	b=q1BQO26vv8/fTIHcGLHlOmjMfiVojsf5PAumYaHFfh+hzxC0MpW+uk7aHcauSjeY
+	2xgYBtlUuITAHWFAefjolDuzC6XsMTCOBMfPriZO4rUhAwZbbOBxmOb548awqBDZlgG
+	W0s0pCAZWJqgQUf544ob2N+B2ujuoJHLb5dy3yZo=
+Subject: [PATCH V7 02/19] dax: Factor out dax_folio_reset_order() helper
 From: =?UTF-8?Q?John_Groves?= <john@jagalactic.com>
 To: =?UTF-8?Q?John_Groves?= <John@Groves.net>, 
 	=?UTF-8?Q?Miklos_Szeredi?= <miklos@szeredi.hu>, 
@@ -85,8 +84,9 @@ Cc: =?UTF-8?Q?John_Groves?= <jgroves@micron.com>,
 	=?UTF-8?Q?nvdimm=40lists=2Elinux=2Edev?= <nvdimm@lists.linux.dev>, 
 	=?UTF-8?Q?linux-cxl=40vger=2Ekernel=2Eorg?= <linux-cxl@vger.kernel.org>, 
 	=?UTF-8?Q?linux-fsdevel=40vger=2Ekernel=2Eorg?= <linux-fsdevel@vger.kernel.org>, 
+	=?UTF-8?Q?Jonathan_Cameron?= <jonathan.cameron@huawei.com>, 
 	=?UTF-8?Q?John_Groves?= <john@groves.net>
-Date: Sun, 18 Jan 2026 22:31:08 +0000
+Date: Sun, 18 Jan 2026 22:31:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,59 +99,66 @@ In-Reply-To:
  <0100019bd33b1f66-b835e86a-e8ae-443f-a474-02db88f7e6db-000000@email.amazonses.com>
 References: 
  <0100019bd33b1f66-b835e86a-e8ae-443f-a474-02db88f7e6db-000000@email.amazonses.com> 
- <20260118223100.92299-1-john@jagalactic.com>
+ <20260118223110.92320-1-john@jagalactic.com>
 X-Mailer: Amazon WorkMail
-Thread-Index: AQHciMnhcFkpAz6WTSKstYDfyF/cJQAACiwlAAAQceA=
-Thread-Topic: [PATCH V7 01/19] dax: move dax_pgoff_to_phys from
- [drivers/dax/] device.c to bus.c
-X-Wm-Sent-Timestamp: 1768775466
+Thread-Index: AQHciMnhcFkpAz6WTSKstYDfyF/cJQAACiwlAAASWns=
+Thread-Topic: [PATCH V7 02/19] dax: Factor out dax_folio_reset_order() helper
+X-Wm-Sent-Timestamp: 1768775479
 X-Original-Mailer: git-send-email 2.52.0
-Message-ID: <0100019bd33bc40a-12130f8b-289d-4a38-ab4b-7dfedf614d34-000000@email.amazonses.com>
+Message-ID: <0100019bd33bf5cc-3ab17b9e-cd67-4f0b-885e-55658a1207f0-000000@email.amazonses.com>
 Feedback-ID: ::1.us-east-1.LF00NED762KFuBsfzrtoqw+Brn/qlF9OYdxWukAhsl8=:AmazonSES
-X-SES-Outgoing: 2026.01.18-54.240.11.124
+X-SES-Outgoing: 2026.01.18-54.240.11.173
 
-From: John Groves <john@groves.net>=0D=0A=0D=0AThis function will be used=
- by both device.c and fsdev.c, but both are=0D=0Aloadable modules. Moving=
- to bus.c puts it in core and makes it available=0D=0Ato both.=0D=0A=0D=0A=
-No code changes - just relocated.=0D=0A=0D=0ASigned-off-by: John Groves <=
-john@groves.net>=0D=0A---=0D=0A drivers/dax/bus.c    | 24 +++++++++++++++=
-+++++++++=0D=0A drivers/dax/device.c | 23 -----------------------=0D=0A 2=
- files changed, 24 insertions(+), 23 deletions(-)=0D=0A=0D=0Adiff --git a=
-/drivers/dax/bus.c b/drivers/dax/bus.c=0D=0Aindex fde29e0ad68b..a73f54eac=
-567 100644=0D=0A--- a/drivers/dax/bus.c=0D=0A+++ b/drivers/dax/bus.c=0D=0A=
-@@ -1417,6 +1417,30 @@ static const struct device_type dev_dax_type =3D {=
-=0D=0A =09.groups =3D dax_attribute_groups,=0D=0A };=0D=0A=20=0D=0A+/* se=
-e "strong" declaration in tools/testing/nvdimm/dax-dev.c */=0D=0A+__weak =
-phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,=0D=0A=
-+=09=09=09      unsigned long size)=0D=0A+{=0D=0A+=09int i;=0D=0A+=0D=0A+=
-=09for (i =3D 0; i < dev_dax->nr_range; i++) {=0D=0A+=09=09struct dev_dax=
-_range *dax_range =3D &dev_dax->ranges[i];=0D=0A+=09=09struct range *rang=
-e =3D &dax_range->range;=0D=0A+=09=09unsigned long long pgoff_end;=0D=0A+=
-=09=09phys_addr_t phys;=0D=0A+=0D=0A+=09=09pgoff_end =3D dax_range->pgoff=
- + PHYS_PFN(range_len(range)) - 1;=0D=0A+=09=09if (pgoff < dax_range->pgo=
-ff || pgoff > pgoff_end)=0D=0A+=09=09=09continue;=0D=0A+=09=09phys =3D PF=
-N_PHYS(pgoff - dax_range->pgoff) + range->start;=0D=0A+=09=09if (phys + s=
-ize - 1 <=3D range->end)=0D=0A+=09=09=09return phys;=0D=0A+=09=09break;=0D=
-=0A+=09}=0D=0A+=09return -1;=0D=0A+}=0D=0A+EXPORT_SYMBOL_GPL(dax_pgoff_to=
-_phys);=0D=0A+=0D=0A static struct dev_dax *__devm_create_dev_dax(struct =
-dev_dax_data *data)=0D=0A {=0D=0A =09struct dax_region *dax_region =3D da=
-ta->dax_region;=0D=0Adiff --git a/drivers/dax/device.c b/drivers/dax/devi=
-ce.c=0D=0Aindex 22999a402e02..132c1d03fd07 100644=0D=0A--- a/drivers/dax/=
-device.c=0D=0A+++ b/drivers/dax/device.c=0D=0A@@ -57,29 +57,6 @@ static i=
-nt check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,=0D=0A =09=
-=09=09   vma->vm_file, func);=0D=0A }=0D=0A=20=0D=0A-/* see "strong" decl=
-aration in tools/testing/nvdimm/dax-dev.c */=0D=0A-__weak phys_addr_t dax=
-_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,=0D=0A-=09=09unsign=
-ed long size)=0D=0A-{=0D=0A-=09int i;=0D=0A-=0D=0A-=09for (i =3D 0; i < d=
-ev_dax->nr_range; i++) {=0D=0A-=09=09struct dev_dax_range *dax_range =3D =
-&dev_dax->ranges[i];=0D=0A-=09=09struct range *range =3D &dax_range->rang=
-e;=0D=0A-=09=09unsigned long long pgoff_end;=0D=0A-=09=09phys_addr_t phys=
-;=0D=0A-=0D=0A-=09=09pgoff_end =3D dax_range->pgoff + PHYS_PFN(range_len(=
-range)) - 1;=0D=0A-=09=09if (pgoff < dax_range->pgoff || pgoff > pgoff_en=
-d)=0D=0A-=09=09=09continue;=0D=0A-=09=09phys =3D PFN_PHYS(pgoff - dax_ran=
-ge->pgoff) + range->start;=0D=0A-=09=09if (phys + size - 1 <=3D range->en=
-d)=0D=0A-=09=09=09return phys;=0D=0A-=09=09break;=0D=0A-=09}=0D=0A-=09ret=
-urn -1;=0D=0A-}=0D=0A-=0D=0A static void dax_set_mapping(struct vm_fault =
-*vmf, unsigned long pfn,=0D=0A =09=09=09      unsigned long fault_size)=0D=
-=0A {=0D=0A--=20=0D=0A2.52.0=0D=0A=0D=0A
+From: John Groves <John@Groves.net>=0D=0A=0D=0ABoth fs/dax.c:dax_folio_pu=
+t() and drivers/dax/fsdev.c:=0D=0Afsdev_clear_folio_state() (the latter c=
+oming in the next commit after this=0D=0Aone) contain nearly identical co=
+de to reset a compound DAX folio back to=0D=0Aorder-0 pages. Factor this =
+out into a shared helper function.=0D=0A=0D=0AThe new dax_folio_reset_ord=
+er() function:=0D=0A- Clears the folio's mapping and share count=0D=0A- R=
+esets compound folio state via folio_reset_order()=0D=0A- Clears PageHead=
+ and compound_head for each sub-page=0D=0A- Restores the pgmap pointer fo=
+r each resulting order-0 folio=0D=0A- Returns the original folio order (f=
+or callers that need to advance by=0D=0A  that many pages)=0D=0A=0D=0AThi=
+s simplifies fsdev_clear_folio_state() from ~50 lines to ~15 lines while=0D=
+=0Amaintaining the same functionality in both call sites.=0D=0A=0D=0ASugg=
+ested-by: Jonathan Cameron <jonathan.cameron@huawei.com>=0D=0ASigned-off-=
+by: John Groves <john@groves.net>=0D=0A---=0D=0A fs/dax.c | 60 ++++++++++=
++++++++++++++++++++++++++++++-----------------=0D=0A 1 file changed, 42 i=
+nsertions(+), 18 deletions(-)=0D=0A=0D=0Adiff --git a/fs/dax.c b/fs/dax.c=
+=0D=0Aindex 289e6254aa30..7d7bbfb32c41 100644=0D=0A--- a/fs/dax.c=0D=0A++=
++ b/fs/dax.c=0D=0A@@ -378,6 +378,45 @@ static void dax_folio_make_shared(=
+struct folio *folio)=0D=0A =09folio->share =3D 1;=0D=0A }=0D=0A=20=0D=0A+=
+/**=0D=0A+ * dax_folio_reset_order - Reset a compound DAX folio to order-=
+0 pages=0D=0A+ * @folio: The folio to reset=0D=0A+ *=0D=0A+ * Splits a co=
+mpound folio back into individual order-0 pages,=0D=0A+ * clearing compou=
+nd state and restoring pgmap pointers.=0D=0A+ *=0D=0A+ * Returns: the ori=
+ginal folio order (0 if already order-0)=0D=0A+ */=0D=0A+int dax_folio_re=
+set_order(struct folio *folio)=0D=0A+{=0D=0A+=09struct dev_pagemap *pgmap=
+ =3D page_pgmap(&folio->page);=0D=0A+=09int order =3D folio_order(folio);=
+=0D=0A+=09int i;=0D=0A+=0D=0A+=09folio->mapping =3D NULL;=0D=0A+=09folio-=
+>share =3D 0;=0D=0A+=0D=0A+=09if (!order) {=0D=0A+=09=09folio->pgmap =3D =
+pgmap;=0D=0A+=09=09return 0;=0D=0A+=09}=0D=0A+=0D=0A+=09folio_reset_order=
+(folio);=0D=0A+=0D=0A+=09for (i =3D 0; i < (1UL << order); i++) {=0D=0A+=09=
+=09struct page *page =3D folio_page(folio, i);=0D=0A+=09=09struct folio *=
+f =3D (struct folio *)page;=0D=0A+=0D=0A+=09=09ClearPageHead(page);=0D=0A=
++=09=09clear_compound_head(page);=0D=0A+=09=09f->mapping =3D NULL;=0D=0A+=
+=09=09f->share =3D 0;=0D=0A+=09=09f->pgmap =3D pgmap;=0D=0A+=09}=0D=0A+=0D=
+=0A+=09return order;=0D=0A+}=0D=0A+=0D=0A static inline unsigned long dax=
+_folio_put(struct folio *folio)=0D=0A {=0D=0A =09unsigned long ref;=0D=0A=
+@@ -391,28 +430,13 @@ static inline unsigned long dax_folio_put(struct fo=
+lio *folio)=0D=0A =09if (ref)=0D=0A =09=09return ref;=0D=0A=20=0D=0A-=09f=
+olio->mapping =3D NULL;=0D=0A-=09order =3D folio_order(folio);=0D=0A-=09i=
+f (!order)=0D=0A-=09=09return 0;=0D=0A-=09folio_reset_order(folio);=0D=0A=
++=09order =3D dax_folio_reset_order(folio);=0D=0A=20=0D=0A+=09/* Debug ch=
+eck: verify refcounts are zero for all sub-folios */=0D=0A =09for (i =3D =
+0; i < (1UL << order); i++) {=0D=0A-=09=09struct dev_pagemap *pgmap =3D p=
+age_pgmap(&folio->page);=0D=0A =09=09struct page *page =3D folio_page(fol=
+io, i);=0D=0A-=09=09struct folio *new_folio =3D (struct folio *)page;=0D=0A=
+=20=0D=0A-=09=09ClearPageHead(page);=0D=0A-=09=09clear_compound_head(page=
+);=0D=0A-=0D=0A-=09=09new_folio->mapping =3D NULL;=0D=0A-=09=09/*=0D=0A-=09=
+=09 * Reset pgmap which was over-written by=0D=0A-=09=09 * prep_compound_=
+page().=0D=0A-=09=09 */=0D=0A-=09=09new_folio->pgmap =3D pgmap;=0D=0A-=09=
+=09new_folio->share =3D 0;=0D=0A-=09=09WARN_ON_ONCE(folio_ref_count(new_f=
+olio));=0D=0A+=09=09WARN_ON_ONCE(folio_ref_count((struct folio *)page));=0D=
+=0A =09}=0D=0A=20=0D=0A =09return ref;=0D=0A--=20=0D=0A2.52.0=0D=0A=0D=0A=
 
