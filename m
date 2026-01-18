@@ -1,245 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-74322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 980AFD39A7B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 23:23:08 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B37D39A83
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 23:29:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 6220B300509E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 22:23:07 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id E662C30019EC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 22:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F2930DD1E;
-	Sun, 18 Jan 2026 22:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E7930E0F8;
+	Sun, 18 Jan 2026 22:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="halLDZNG"
+	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="qZcO2pTb";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="N51dnn1M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from a11-124.smtp-out.amazonses.com (a11-124.smtp-out.amazonses.com [54.240.11.124])
+	(using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DFB2C21F6;
-	Sun, 18 Jan 2026 22:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418CF30C345;
+	Sun, 18 Jan 2026 22:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.11.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768774985; cv=none; b=U30QywDlh3oswQmQomlHoKypLcgzyeeCDmB07EWU8w4BGEvIM3O5C9ZF0rIjotwUoYCwkMOmN54gCOEGUrVgmVwhNaXCBEsZgMSKpLkzZAwvaOv5CJDRAzwjqmgcwIIHIOZTZ/gOcudiuTmNHYnm0QWosexajgKErsYYeusaEg4=
+	t=1768775360; cv=none; b=Bo4G4EKK5yiDcrRYsG0Sqr4OuH5X0J+VT3dc0yFIm9P/kSZ6OQgvLa6H4W6iJgHr5OHD2pnhY785jF68QnCm98KJU0g/trH5X894Lk77tGCSd0Oy7sj8mePaRg671K5yNjF621g1K/BdN/gAodrVOSODJrvT15k1SjiumNEMDCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768774985; c=relaxed/simple;
-	bh=dsCQxyhrH1v6cjkYcvZB/mhb3trXAqJHMFOiDMtYaTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cMYcJ9TU9VYi6nbDj1XMS30qm65x20NaOG12vR+k2Sq2Zzagr1H5xSbaFsQMMj3TwpF2LsyLCT4KMTnKZFgilqPqLC/npoplQPJJSSit/UJuC1z9rMyFyl9TvANLfgE0zBP4yAejpHKk3bek8eanPdThdJDjZqnY4sBtVl2PEck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=halLDZNG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D870C116D0;
-	Sun, 18 Jan 2026 22:23:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768774985;
-	bh=dsCQxyhrH1v6cjkYcvZB/mhb3trXAqJHMFOiDMtYaTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=halLDZNGoxbJBOpVxMLZBA3d1Be2UZSsYj6lQjlhqCyCwueqm4HQ3o+yEhxDnrW87
-	 Ep8hICglF/48eZMOIEzvKmsqh+Mf86iD5nHL/G4YtdmlONbyH/H97/Ed2KjF1PVvHn
-	 uSO7AklqrW2FLs8CgngrL5cAmKr5SMr5RrgFHCHs61hjUhF+OFrG3lx1jnqUsUeKCx
-	 5eSCfEOgRLMqrX/lxmkorZUs1CRmMLCqTlKOoZ7PFZxhrlWfcnSB5uB6lx8hRogmI3
-	 wHzTU8r0UFNp2c2xmjQNw48u8mbkWIXMdRZLtE2Oa96xpBKK3TlkaiUGU3v0fQDL3c
-	 ZKrpqoP3qhK7g==
-Date: Sun, 18 Jan 2026 23:23:01 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: Zack Weinberg <zack@owlfolio.org>
-Cc: Rich Felker <dalias@libc.org>, Vincent Lefevre <vincent@vinc17.net>, 
-	Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	GNU libc development <libc-alpha@sourceware.org>
-Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from
- POSIX.1-2024
-Message-ID: <aW1dE9j91WAte1gf@devuan>
-References: <a5tirrssh3t66q4vpwpgmxgxaumhqukw5nyxd4x6bevh7mtuvy@wtwdsb4oloh4>
- <efaffc5a404cf104f225c26dbc96e0001cede8f9.1747399542.git.alx@kernel.org>
- <20250516130547.GV1509@brightrain.aerifal.cx>
- <20250516143957.GB5388@qaa.vinc17.org>
- <20250517133251.GY1509@brightrain.aerifal.cx>
- <5jm7pblkwkhh4frqjptrw4ll4nwncn22ep2v7sli6kz5wxg5ik@pbnj6wfv66af>
- <8c47e10a-be82-4d5b-a45e-2526f6e95123@app.fastmail.com>
+	s=arc-20240116; t=1768775360; c=relaxed/simple;
+	bh=yKHfUeZ7rs6sbyWVsDWPsIJqM94R8Uy96Q9wQ2otEC8=;
+	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:References:
+	 Message-ID; b=kkzRm3FB9zkBf+kQBSCgJ+mOfBQC4aqKrq/UVFtBJ55P7OkjIY/o04s0/v4E2JuG6Za9zI3szT6uMofPOjhb/20Nyvymq2tRdbliXSObs1JuPSPwcH7+vPDaijH6nEwrRdM4Snvw+imr8UdhaaCsmooFcfpD5HkJ6tk3bZ1TRBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b=qZcO2pTb; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=N51dnn1M; arc=none smtp.client-ip=54.240.11.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=o25mqk5iffcfzgc3wo2zjhkohcyjzsoq; d=jagalactic.com; t=1768775358;
+	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:References:Message-Id;
+	bh=yKHfUeZ7rs6sbyWVsDWPsIJqM94R8Uy96Q9wQ2otEC8=;
+	b=qZcO2pTbh4f8Hn1yFa/hBEyNCIJxfD+rueU3mXfqeg09GtALjuvRC/Nki7ntcXEi
+	Zpy92SY0gtvIJpdA/sfMYfiq8yXn598c2FD5AKE87gCH8rT+r/YJXEN1LlKQOlRTPfs
+	GNcf9UnrnrGg17i6ojcpX+A3QpdHP5y7VGmK7JDI=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1768775358;
+	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:References:Message-Id:Feedback-ID;
+	bh=yKHfUeZ7rs6sbyWVsDWPsIJqM94R8Uy96Q9wQ2otEC8=;
+	b=N51dnn1MjvuHmJPh6t5XDRX8jsBPW7oq/2qpJB4eKvqSRQLNctWCssTYzCWuKw/z
+	HAs55cTwiM25Bjw2xGoCB4n+LA83KzyWyhZ+J21D9xZ7YZY6LU5ywXP5Af7JGP6/wbR
+	ouN8FYifrvVD0lNGC165tnpQAdTLUuBxAKqMm9t0=
+Subject: [PATCH BUNDLE v7] famfs: Fabric-Attached Memory File System
+From: =?UTF-8?Q?John_Groves?= <john@jagalactic.com>
+To: =?UTF-8?Q?John_Groves?= <John@Groves.net>, 
+	=?UTF-8?Q?Miklos_Szeredi?= <miklos@szeredi.hu>, 
+	=?UTF-8?Q?Dan_Williams?= <dan.j.williams@intel.com>, 
+	=?UTF-8?Q?Bernd_Schubert?= <bschubert@ddn.com>, 
+	=?UTF-8?Q?Alison_Schofiel?= =?UTF-8?Q?d?= <alison.schofield@intel.com>
+Cc: =?UTF-8?Q?John_Groves?= <jgroves@micron.com>, 
+	=?UTF-8?Q?John_Groves?= <jgroves@fastmail.com>, 
+	=?UTF-8?Q?Jonathan_Corbet?= <corbet@lwn.net>, 
+	=?UTF-8?Q?Vishal_Verma?= <vishal.l.verma@intel.com>, 
+	=?UTF-8?Q?Dave_Jiang?= <dave.jiang@intel.com>, 
+	=?UTF-8?Q?Matthew_Wilcox?= <willy@infradead.org>, 
+	=?UTF-8?Q?Jan_Kara?= <jack@suse.cz>, 
+	=?UTF-8?Q?Alexander_Viro?= <viro@zeniv.linux.org.uk>, 
+	=?UTF-8?Q?David_Hildenbrand?= <david@kernel.org>, 
+	=?UTF-8?Q?Christian_Bra?= =?UTF-8?Q?uner?= <brauner@kernel.org>, 
+	=?UTF-8?Q?Darrick_J_=2E_Wong?= <djwong@kernel.org>, 
+	=?UTF-8?Q?Randy_Dunlap?= <rdunlap@infradead.org>, 
+	=?UTF-8?Q?Jeff_Layton?= <jlayton@kernel.org>, 
+	=?UTF-8?Q?Amir_Goldstein?= <amir73il@gmail.com>, 
+	=?UTF-8?Q?Jonathan_Cameron?= <Jonathan.Cameron@huawei.com>, 
+	=?UTF-8?Q?Stefan_Hajnoczi?= <shajnocz@redhat.com>, 
+	=?UTF-8?Q?Joanne_Koong?= <joannelkoong@gmail.com>, 
+	=?UTF-8?Q?Josef_Bacik?= <josef@toxicpanda.com>, 
+	=?UTF-8?Q?Bagas_Sanjaya?= <bagasdotme@gmail.com>, 
+	=?UTF-8?Q?James_Morse?= <james.morse@arm.com>, 
+	=?UTF-8?Q?Fuad_Tabba?= <tabba@google.com>, 
+	=?UTF-8?Q?Sean_Christopherson?= <seanjc@google.com>, 
+	=?UTF-8?Q?Shivank_Garg?= <shivankg@amd.com>, 
+	=?UTF-8?Q?Ackerley_Tng?= <ackerleytng@google.com>, 
+	=?UTF-8?Q?Gregory_Pric?= =?UTF-8?Q?e?= <gourry@gourry.net>, 
+	=?UTF-8?Q?Aravind_Ramesh?= <arramesh@micron.com>, 
+	=?UTF-8?Q?Ajay_Joshi?= <ajayjoshi@micron.com>, 
+	=?UTF-8?Q?venkataravis=40micron=2Ecom?= <venkataravis@micron.com>, 
+	=?UTF-8?Q?linux-doc=40vger=2Ekernel=2Eorg?= <linux-doc@vger.kernel.org>, 
+	=?UTF-8?Q?linux-kernel=40vger=2Ekernel=2Eorg?= <linux-kernel@vger.kernel.org>, 
+	=?UTF-8?Q?nvdimm=40lists=2Elinux=2Edev?= <nvdimm@lists.linux.dev>, 
+	=?UTF-8?Q?linux-cxl=40vger=2Ekernel=2Eorg?= <linux-cxl@vger.kernel.org>, 
+	=?UTF-8?Q?linux-fsdevel=40vger=2Ekernel=2Eorg?= <linux-fsdevel@vger.kernel.org>
+Date: Sun, 18 Jan 2026 22:29:18 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mr5k7uzoinhlwyzp"
-Content-Disposition: inline
-In-Reply-To: <8c47e10a-be82-4d5b-a45e-2526f6e95123@app.fastmail.com>
-
-
---mr5k7uzoinhlwyzp
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Zack Weinberg <zack@owlfolio.org>
-Cc: Rich Felker <dalias@libc.org>, Vincent Lefevre <vincent@vinc17.net>, 
-	Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	GNU libc development <libc-alpha@sourceware.org>
-Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from
- POSIX.1-2024
-Message-ID: <aW1dE9j91WAte1gf@devuan>
-References: <a5tirrssh3t66q4vpwpgmxgxaumhqukw5nyxd4x6bevh7mtuvy@wtwdsb4oloh4>
- <efaffc5a404cf104f225c26dbc96e0001cede8f9.1747399542.git.alx@kernel.org>
- <20250516130547.GV1509@brightrain.aerifal.cx>
- <20250516143957.GB5388@qaa.vinc17.org>
- <20250517133251.GY1509@brightrain.aerifal.cx>
- <5jm7pblkwkhh4frqjptrw4ll4nwncn22ep2v7sli6kz5wxg5ik@pbnj6wfv66af>
- <8c47e10a-be82-4d5b-a45e-2526f6e95123@app.fastmail.com>
-MIME-Version: 1.0
-In-Reply-To: <8c47e10a-be82-4d5b-a45e-2526f6e95123@app.fastmail.com>
+References: <20260118222911.92214-1-john@jagalactic.com>
+X-Mailer: Amazon WorkMail
+Thread-Index: AQHciMnhcFkpAz6WTSKstYDfyF/cJQ==
+Thread-Topic: [PATCH BUNDLE v7] famfs: Fabric-Attached Memory File System
+X-Wm-Sent-Timestamp: 1768775357
+X-Original-Mailer: git-send-email 2.52.0
+Message-ID: <0100019bd33a16b4-6da11a99-d883-4cfc-b561-97973253bc4a-000000@email.amazonses.com>
+Feedback-ID: ::1.us-east-1.LF00NED762KFuBsfzrtoqw+Brn/qlF9OYdxWukAhsl8=:AmazonSES
+X-SES-Outgoing: 2026.01.18-54.240.11.124
 
-Hi Zack and others,
-
-Just a gentle ping.  It would be nice to have an agreement for some
-patch.
-
-
-Have a lovely night!
-Alex
-
-On Fri, May 23, 2025 at 02:10:57PM -0400, Zack Weinberg wrote:
-> Taking everything said in this thread into account, I have attempted to
-> wordsmith new language for the close(2) manpage.  Please let me know
-> what you think, and please help me with the bits marked in square
-> brackets. I can make this into a proper patch for the manpages
-> when everyone is happy with it.
->=20
-> zw
->=20
-> ---
->=20
-> DESCRIPTION
->     ... existing text ...
->=20
->     close() always succeeds.  That is, after it returns, _fd_ has
->     always been disconnected from the open file it formerly referred
->     to, and its number can be recycled to refer to some other file.
->     Furthermore, if _fd_ was the last reference to the underlying
->     open file description, the resources associated with the open file
->     description will always have been scheduled to be released.
->=20
->     However, close may report _delayed errors_ from a previous I/O
->     operation.  Therefore, its return value should not be ignored.
->=20
-> RETURN VALUE
->     close() returns zero if there are no delayed errors to report,
->     or -1 if there _might_ be delayed errors.
->=20
->     When close() returns -1, check _errno_ to see what the situation
->     actually is.  Most, but not all, _errno_ codes indicate a delayed
->     I/O error that should be reported to the user.  See ERRORS and
->     NOTES for more detail.
->=20
->     [QUERY: Is it ever possible to get delayed errors on close() from
->     a file that was opened with O_RDONLY?  What about a file that was
->     opened with O_RDWR but never actually written to?  If people only
->     have to worry about delayed errors if the file was actually
->     written to, we should say so at this point.
->=20
->     It would also be good to mention whether it is possible to get a
->     delayed error on close() even if a previous call to fsync() or
->     fdatasync() succeeded and there haven=E2=80=99t been any more writes =
-to
->     that file *description* (not necessarily via the fd being closed)
->     since.]
->=20
-> ERRORS
->     EBADF  _fd_ wasn=E2=80=99t open in the first place, or is outside the
->            valid numeric range for file descriptors.
->=20
->     EINPROGRESS
->     EINTR
->            There are no delayed errors to report, but the kernel is
->            still doing some clean-up work in the background.  This
->            situation should be treated the same as if close() had
->            returned zero.  Do not retry the close(), and do not report
->            an error to the user.
->=20
->     EDQUOT
->     EFBIG
->     EIO
->     ENOSPC
->            These are the most common errno codes associated with
->            delayed I/O errors.  They should be treated as a hard
->            failure to write to the file that was formerly associated
->            with _fd_, the same as if an earlier write(2) had failed
->            with one of these codes.  The file has still been closed!
->            Do not retry the close().  But do report an error to the user.
->=20
->     Depending on the underlying file, close() may return other errno
->     codes; these should generally also be treated as delayed I/O errors.
->=20
-> NOTES
->   Dealing with error returns from close()
->=20
->     As discussed above, close() always closes the file.  Except when
->     errno is set to EBADF, EINPROGRESS, or EINTR, an error return from
->     close() reports a _delayed I/O error_ from a previous write()
->     operation.
->=20
->     It is vital to report delayed I/O errors to the user; failing to
->     check the return value of close() can cause _silent_ loss of data.
->     The most common situations where this actually happens involve
->     networked filesystems, where, in the name of throughput, write()
->     often returns success before the server has actually confirmed a
->     successful write.
->=20
->     However, it is also vital to understand that _no matter what_
->     close() returns, and _no matter what_ it sets errno to, when it
->     returns, _the file descriptor passed to close() has been closed_,
->     and its number is _immediately_ available for reuse by open(2),
->     dup(2), etc.  Therefore, one should never retry a close(), not
->     even if it set errno to a value that normally indicates the
->     operation needs to be retried (e.g. EINTR).  Retrying a close()
->     is a serious bug, particularly in a multithreaded program; if
->     the file descriptor number has already been reused, _that file_
->     will get closed out from under whatever other thread opened it.
->=20
->     [Possibly something about fsync/fdatasync here?]
->=20
-> BUGS
->     Prior to POSIX.1-2024, there was no official guarantee that
->     close() would always close the file descriptor, even on error.
->     Linux has always closed the file descriptor, even on error,
->     but other implementations might not have.
->=20
->     The only such implementation we have heard of is HP-UX; at least
->     some versions of HP-UX=E2=80=99s man page for close() said it should =
-be
->     retried if it returned -1 with errno set to EINTR.  (If you know
->     exactly which versions of HP-UX are affected, or of any other
->     Unix where close() doesn=E2=80=99t always close the file descriptor,
->     please contact us about it.)
->=20
->     Portable code should nonetheless never retry a failed close(); the
->     consequences of a file descriptor leak are far less dangerous than
->     the consequences of closing a file out from under another thread.
-
---=20
-<https://www.alejandro-colomar.es>
-
---mr5k7uzoinhlwyzp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmltXUQACgkQ64mZXMKQ
-wqnhWRAAmGubZJzYdwl5q65sObpsQN+Ok2jQM+Yy/U1E8Z2S/qejYo8lo+l7EiPN
-otVSQMNwCi6iXSfF69Dlxygee2bQRKGy4h6hGxfsOKNW8+JhSLxgqNRSbnTcsDNN
-DwaGHK+4TsWvgnLSw5NATJuAAKQb7Bg3O1u8Z6nGtUqbwmxoSYrcoFzRHO58jBNq
-dZei0w2+q4TT/6c1oqpJoaoHcs8tQdKYg5auw88MGt4u1vfOasvw7Jq6x9W1n5lZ
-DhEthGI4qPsY3bPmadryZOHmXzQxlrAsPFSYWgcUATe7o6LQe+AqqsOAivy0LThG
-9RqWc6txbj7IEJOTc79AoRtagzsV9jzzwDQwm/9rQGfSO/ykpejnhg2YI4ctWqhV
-9ZK/EoE8Wc6WIaRgqFHVgy/l9frkWBtj0GMGnxOMsGoYsIpSSaIGgIoaMbirzEuL
-oN2yMdE1cSNY7uNWdykCcV/PvdZkW66i2AVz4LMY1zDjCxiGzG/xi1Q2L5Mx/CXv
-JyW04h+t0wWzGtwkrrveyh3kMIzuuzjwV0D09REn3/y3gmUOQHEwGsZIxEuyRY2G
-w9Ult7whUbrMSgAUjCzikevQhqPzqvTGQVdToLASZ9qaHIcy5XQ7IWe/UoxVqWGO
-vgYg5vIHoz/fGU1BePWnnqJb1C6/V6wz1+hoYrqiQEwoYrzsKLM=
-=RH+w
------END PGP SIGNATURE-----
-
---mr5k7uzoinhlwyzp--
+This is a coordinated patch submission for famfs (Fabric-Attached Memory=0D=
+=0AFile System) across three repositories:=0D=0A=0D=0A  1. Linux kernel (=
+cover + 19 patches) - dax fsdev driver + fuse/famfs=20=0D=0A     integrat=
+ion=0D=0A  2. libfuse (cover + 3 patches) - famfs protocol support for fu=
+se servers=0D=0A  3. ndctl/daxctl (cover + 2 patches) - support for the n=
+ew "famfs" devdax=0D=0A     mode=0D=0A=0D=0AEach series is posted as a re=
+ply to this cover message, with individual=0D=0Apatches replying to their=
+ respective series cover.=0D=0A=0D=0AOverview=0D=0A--------=0D=0AFamfs ex=
+poses shared memory as a file system. It consumes shared memory=0D=0Afrom=
+ dax devices and provides memory-mappable files that map directly to=0D=0A=
+the memory with no page cache involvement. Famfs differs from conventiona=
+l=0D=0Afile systems in fs-dax mode in that it handles in-memory metadata =
+in a=0D=0Asharable way (which begins with never caching dirty shared meta=
+data).=0D=0A=0D=0AFamfs started as a standalone file system [1,2], but th=
+e consensus at=0D=0ALSFMM 2024 and 2025 [3,4] was that it should be porte=
+d into fuse.=0D=0A=0D=0AThe key performance requirement is that famfs mus=
+t resolve mapping faults=0D=0Awithout upcalls. This is achieved by fully =
+caching the file-to-devdax=0D=0Ametadata for all active files via two fus=
+e client/server message/response=0D=0Apairs: GET_FMAP and GET_DAXDEV.=0D=0A=
+=0D=0APatch Series Summary=0D=0A--------------------=0D=0A=0D=0ALinux Ker=
+nel (V7, 19 patches):=0D=0A  - dax: New fsdev driver (drivers/dax/fsdev.c=
+) providing a devdax mode=0D=0A    compatible with fs-dax. Devices can be=
+ switched among 'devdax', 'fsdev'=0D=0A    and 'system-ram' modes via dax=
+ctl or sysfs.=0D=0A  - fuse: Famfs integration adding GET_FMAP and GET_DA=
+XDEV messages for=0D=0A    caching file-to-dax mappings in the kernel.=0D=
+=0A=0D=0Alibfuse (V7, 3 patches):=0D=0A  - Updates fuse_kernel.h to kerne=
+l 6.19 baseline=0D=0A  - Adds famfs DAX fmap protocol definitions=0D=0A  =
+- Implements famfs DAX fmap support for fuse servers=0D=0A=0D=0Andctl/dax=
+ctl (V4, 2 patches):=0D=0A  - Adds daxctl support for the new "famfs" mod=
+e of devdax=0D=0A  - Adds test/daxctl-famfs.sh for testing mode transitio=
+ns=0D=0A=0D=0AChanges Since V2 (kernel)=0D=0A-------------------------=0D=
+=0A- Dax: Completely new fsdev driver replaces the dev_dax_iomap modifica=
+tions.=0D=0A  Uses MEMORY_DEVICE_FS_DAX type with order-0 folios for fs-d=
+ax compatibility.=0D=0A- Dax: The "poisoned page" problem is properly fix=
+ed via fsdev_clear_folio_state()=0D=0A  which clears stale mapping/compou=
+nd state when fsdev binds.=0D=0A- Dax: Added dax_set_ops() and driver unb=
+ind protection while filesystem mounted.=0D=0A- Fuse: Famfs mounts requir=
+e CAP_SYS_RAWIO (exposing raw memory devices).=0D=0A- Fuse: Added DAX add=
+ress_space_operations with noop_dirty_folio.=0D=0A- Rebased to latest ker=
+nels, compatible with recent dax refactoring.=0D=0A=0D=0ATesting=0D=0A---=
+----=0D=0AThe famfs user space [5] includes comprehensive smoke and unit =
+tests that=0D=0Aexercise all three components together. The ndctl series =
+includes a=0D=0Adedicated test for famfs mode transitions.=0D=0A=0D=0ARef=
+erences=0D=0A----------=0D=0A[1] https://lore.kernel.org/linux-cxl/cover.=
+1708709155.git.john@groves.net/=0D=0A[2] https://lore.kernel.org/linux-cx=
+l/cover.1714409084.git.john@groves.net/=0D=0A[3] https://lwn.net/Articles=
+/983105/ (LSFMM 2024)=0D=0A[4] https://lwn.net/Articles/1020170/ (LSFMM 2=
+025)=0D=0A[5] https://famfs.org (famfs user space)=0D=0A[6] https://lore.=
+kernel.org/linux-cxl/20250703185032.46568-1-john@groves.net/ (V2)=0D=0A[7=
+] https://lore.kernel.org/linux-fsdevel/20260107153244.64703-1-john@grove=
+s.net/T/#m0000d8c00290f48c086b8b176c7525e410f8508c (related ndctl series)=
+=0D=0A--=0D=0AJohn Groves=0D=0A
 
