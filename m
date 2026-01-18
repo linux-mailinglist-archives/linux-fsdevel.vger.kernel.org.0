@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-74327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA159D39A90
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 23:31:41 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F03D39A9D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 23:32:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id F10E830012D4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 22:31:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 951803029C56
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 22:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9F130F92D;
-	Sun, 18 Jan 2026 22:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7389130DEA2;
+	Sun, 18 Jan 2026 22:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="Eck0ufnb";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="MXcqUEqr"
+	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="S2W5NtxP";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="X3Gld6fw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from a11-121.smtp-out.amazonses.com (a11-121.smtp-out.amazonses.com [54.240.11.121])
+Received: from a11-132.smtp-out.amazonses.com (a11-132.smtp-out.amazonses.com [54.240.11.132])
 	(using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F11127F4E7;
-	Sun, 18 Jan 2026 22:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.11.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F07C2D8379;
+	Sun, 18 Jan 2026 22:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.11.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768775499; cv=none; b=DEExRZOCpzzcFBGfxI9AtnYiomXO9od01ydCp3saMKzPX3RbUoeZ8BVsuqZbteCpU+5K7zi7ZmPVssMW5DPEB0mlLRYlyH1D8t+vYauEIvdZ585w1hokVjO59HGTrUU8MYCfBGYzabHfTBXZNREpWgFtlr7H+GMk9qu3WT8LhJE=
+	t=1768775507; cv=none; b=uOqoABvpEnnIiadyg2r09kGHpqGFIMdgFIcX1PJmwc4BfHmV19YJRaBz1WOiTYz/uX881lZ611OsPHPHOv3lMAP94EMHs1UgPoBcaixzFtjxLJ/Lw7Nx4dY88RjgVjwrvYjlveFNnkE6BUVr094NUbIXyNn++YuLqi+cSiUFr1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768775499; c=relaxed/simple;
-	bh=lX+Z3QFgWtUHicQazGNynRU5gFAaeX4SyIhxDgmmdPM=;
+	s=arc-20240116; t=1768775507; c=relaxed/simple;
+	bh=q+QiuzZyOuhWyrhfEToxDXrpEzOykc6D+n8PUSQKYng=;
 	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:In-Reply-To:
-	 References:Message-ID; b=h3imEvSrZ/HGX74sFykJsw1gKqUvBmjj/sQKcBd5qZnn2+F/isTpvdDS9wWyRcXoltQZll6yg/J0sPVWe8nN4cPIuPIAYWTrR31MERZIiMbUrlPGR+TXZGEnXeBg8+h4q0Es/rvjsMzGUeKlQIEu7ZVHMoaJOpYwFA+75RvJjjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b=Eck0ufnb; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=MXcqUEqr; arc=none smtp.client-ip=54.240.11.121
+	 References:Message-ID; b=VqVSKEJc+w6VCgHvFUjOkVIbql6YkuFDHLuTLgw8G1bfUedEm3MKA6QaHPN6IJoyWILU7LPS0A7ogxuKEzaBLRray+7dnOwvccljQUHpVZ4QyqLAa6ZMAvwLi7tbi7es96dn4oOVFdSenyK/A0MmVYKB/8JM96W38z6PtQHaxeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b=S2W5NtxP; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=X3Gld6fw; arc=none smtp.client-ip=54.240.11.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=o25mqk5iffcfzgc3wo2zjhkohcyjzsoq; d=jagalactic.com; t=1768775496;
+	s=o25mqk5iffcfzgc3wo2zjhkohcyjzsoq; d=jagalactic.com; t=1768775505;
 	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id;
-	bh=lX+Z3QFgWtUHicQazGNynRU5gFAaeX4SyIhxDgmmdPM=;
-	b=Eck0ufnbQJtVF9PulSr1cvNcnYcYEpUFwHlv0PBuAdzoRptADzlgHGh6CGxRQHwz
-	Fl1r17bi1tdKd5VcwHLQdtAZh54UbeIxpBLsYZPuis67kfUUVs+H/shvLMDv+bOag3g
-	SYOq15+DrDHPBiS/H+ZP4/1/JAbd2aM3NYlo/R7I=
+	bh=q+QiuzZyOuhWyrhfEToxDXrpEzOykc6D+n8PUSQKYng=;
+	b=S2W5NtxP7JlIwQwnAw8GuJ0YVczQUq0kJNPlBxgWT7YN/p0rwqR8vc+pLRFbXnyG
+	W3SN4qIg2SXBAeYmpNdgjQVTj0bu3VeNX40kDB2nSCfq/0+pAWaP7hXP5Bf0Wvad4D4
+	xTu69Wx2IM2I1R1jXbDhXFJPdG6jMEd6+KyW0sPw=
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1768775496;
+	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1768775505;
 	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id:Feedback-ID;
-	bh=lX+Z3QFgWtUHicQazGNynRU5gFAaeX4SyIhxDgmmdPM=;
-	b=MXcqUEqrG/C+hs481TqYCB31hEYX4yj+6hE0rSenQeTwrwY8mWBi6F8s5zaMo/+T
-	5wX1W/DipPnNiuLpuLen9XpOKtUfbbPVTd7BgIvXXz8EzY5ykR4K4FAPkksMUv1G9v5
-	qFi9Zs6Kzk3xpZ3+rwMJPD5S4sw3nCo14rkOibT8=
-Subject: [PATCH V7 03/19] dax: add fsdev.c driver for fs-dax on character dax
+	bh=q+QiuzZyOuhWyrhfEToxDXrpEzOykc6D+n8PUSQKYng=;
+	b=X3Gld6fwfeTC7yyldMFtjqksmiLPEO1XJTpSBN/2+bw9QzwpL99/au5h5g6qt+rh
+	I1v72+95QDwgbTGR1EgqfiEaCmKZdwK4gkH+DuH0x2SJ9ZFcXgiFiIPUEQzLDfTxA1F
+	ZnNs29nBrxED5UTf9AOGOVmXwLnSPFgy+wtoiWSg=
+Subject: [PATCH V7 04/19] dax: Save the kva from memremap
 From: =?UTF-8?Q?John_Groves?= <john@jagalactic.com>
 To: =?UTF-8?Q?John_Groves?= <John@Groves.net>, 
 	=?UTF-8?Q?Miklos_Szeredi?= <miklos@szeredi.hu>, 
@@ -85,7 +85,7 @@ Cc: =?UTF-8?Q?John_Groves?= <jgroves@micron.com>,
 	=?UTF-8?Q?linux-cxl=40vger=2Ekernel=2Eorg?= <linux-cxl@vger.kernel.org>, 
 	=?UTF-8?Q?linux-fsdevel=40vger=2Ekernel=2Eorg?= <linux-fsdevel@vger.kernel.org>, 
 	=?UTF-8?Q?John_Groves?= <john@groves.net>
-Date: Sun, 18 Jan 2026 22:31:35 +0000
+Date: Sun, 18 Jan 2026 22:31:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,214 +93,67 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 In-Reply-To: 
  <0100019bd33b1f66-b835e86a-e8ae-443f-a474-02db88f7e6db-000000@email.amazonses.com>
 References: 
  <0100019bd33b1f66-b835e86a-e8ae-443f-a474-02db88f7e6db-000000@email.amazonses.com> 
- <20260118223123.92341-1-john@jagalactic.com>
+ <20260118223138.92368-1-john@jagalactic.com>
 X-Mailer: Amazon WorkMail
-Thread-Index: AQHciMnhcFkpAz6WTSKstYDfyF/cJQAACiwlAAAUmnE=
-Thread-Topic: [PATCH V7 03/19] dax: add fsdev.c driver for fs-dax on
- character dax
-X-Wm-Sent-Timestamp: 1768775494
+Thread-Index: AQHciMnhcFkpAz6WTSKstYDfyF/cJQAACiwlAAAV/A8=
+Thread-Topic: [PATCH V7 04/19] dax: Save the kva from memremap
+X-Wm-Sent-Timestamp: 1768775503
 X-Original-Mailer: git-send-email 2.52.0
-Message-ID: <0100019bd33c310f-1b4a8555-bc81-4ec3-b45f-27abc01dff05-000000@email.amazonses.com>
+Message-ID: <0100019bd33c54b5-81c8e4b0-2692-47bb-b555-2657a7f297ba-000000@email.amazonses.com>
 Feedback-ID: ::1.us-east-1.LF00NED762KFuBsfzrtoqw+Brn/qlF9OYdxWukAhsl8=:AmazonSES
-X-SES-Outgoing: 2026.01.18-54.240.11.121
+X-SES-Outgoing: 2026.01.18-54.240.11.132
 
-From: John Groves <john@groves.net>=0D=0A=0D=0AThe new fsdev driver provi=
-des pages/folios initialized compatibly with=0D=0Afsdax - normal rather t=
-han devdax-style refcounting, and starting out=0D=0Awith order-0 folios.=0D=
-=0A=0D=0AWhen fsdev binds to a daxdev, it is usually (always=3F) switchin=
-g from the=0D=0Adevdax mode (device.c), which pre-initializes compound fo=
-lios according=0D=0Ato its alignment. Fsdev uses fsdev_clear_folio_state(=
-) to switch the=0D=0Afolios into a fsdax-compatible state.=0D=0A=0D=0AA s=
-ide effect of this is that raw mmap doesn't (can't=3F) work on an fsdev=0D=
-=0Adax instance. Accordingly, The fsdev driver does not provide raw mmap =
--=0D=0Adevices must be put in 'devdax' mode (drivers/dax/device.c) to get=
- raw=0D=0Ammap capability.=0D=0A=0D=0AIn this commit is just the framewor=
-k, which remaps pages/folios compatibly=0D=0Awith fsdax.=0D=0A=0D=0AEnabl=
-ing dax changes:=0D=0A=0D=0A- bus.h: add DAXDRV_FSDEV_TYPE driver type=0D=
-=0A- bus.c: allow DAXDRV_FSDEV_TYPE drivers to bind to daxdevs=0D=0A- dax=
-=2Eh: prototype inode_dax(), which fsdev needs=0D=0A=0D=0ASuggested-by: D=
-an Williams <dan.j.williams@intel.com>=0D=0ASuggested-by: Gregory Price <=
-gourry@gourry.net>=0D=0ASigned-off-by: John Groves <john@groves.net>=0D=0A=
----=0D=0A MAINTAINERS          |   8 ++=0D=0A drivers/dax/Makefile |   6 =
-++=0D=0A drivers/dax/bus.c    |   4 +=0D=0A drivers/dax/bus.h    |   1 +=0D=
-=0A drivers/dax/fsdev.c  | 242 ++++++++++++++++++++++++++++++++++++++++++=
-+=0D=0A fs/dax.c             |   1 +=0D=0A include/linux/dax.h  |   5 +=0D=
-=0A 7 files changed, 267 insertions(+)=0D=0A create mode 100644 drivers/d=
-ax/fsdev.c=0D=0A=0D=0Adiff --git a/MAINTAINERS b/MAINTAINERS=0D=0Aindex 0=
-d044a58cbfe..10aa5120d93f 100644=0D=0A--- a/MAINTAINERS=0D=0A+++ b/MAINTA=
-INERS=0D=0A@@ -7188,6 +7188,14 @@ L:=09linux-cxl@vger.kernel.org=0D=0A S:=
-=09Supported=0D=0A F:=09drivers/dax/=0D=0A=20=0D=0A+DEVICE DIRECT ACCESS =
-(DAX) [fsdev_dax]=0D=0A+M:=09John Groves <jgroves@micron.com>=0D=0A+M:=09=
-John Groves <John@Groves.net>=0D=0A+L:=09nvdimm@lists.linux.dev=0D=0A+L:=09=
-linux-cxl@vger.kernel.org=0D=0A+S:=09Supported=0D=0A+F:=09drivers/dax/fsd=
-ev.c=0D=0A+=0D=0A DEVICE FREQUENCY (DEVFREQ)=0D=0A M:=09MyungJoo Ham <myu=
-ngjoo.ham@samsung.com>=0D=0A M:=09Kyungmin Park <kyungmin.park@samsung.co=
-m>=0D=0Adiff --git a/drivers/dax/Makefile b/drivers/dax/Makefile=0D=0Aind=
-ex 5ed5c39857c8..3bae252fd1bf 100644=0D=0A--- a/drivers/dax/Makefile=0D=0A=
-+++ b/drivers/dax/Makefile=0D=0A@@ -5,10 +5,16 @@ obj-$(CONFIG_DEV_DAX_KM=
-EM) +=3D kmem.o=0D=0A obj-$(CONFIG_DEV_DAX_PMEM) +=3D dax_pmem.o=0D=0A ob=
-j-$(CONFIG_DEV_DAX_CXL) +=3D dax_cxl.o=0D=0A=20=0D=0A+# fsdev_dax: fs-dax=
- compatible devdax driver (needs DEV_DAX and FS_DAX)=0D=0A+ifeq ($(CONFIG=
-_FS_DAX),y)=0D=0A+obj-$(CONFIG_DEV_DAX) +=3D fsdev_dax.o=0D=0A+endif=0D=0A=
-+=0D=0A dax-y :=3D super.o=0D=0A dax-y +=3D bus.o=0D=0A device_dax-y :=3D=
- device.o=0D=0A dax_pmem-y :=3D pmem.o=0D=0A dax_cxl-y :=3D cxl.o=0D=0A+f=
-sdev_dax-y :=3D fsdev.o=0D=0A=20=0D=0A obj-y +=3D hmem/=0D=0Adiff --git a=
-/drivers/dax/bus.c b/drivers/dax/bus.c=0D=0Aindex a73f54eac567..e79daf825=
-b52 100644=0D=0A--- a/drivers/dax/bus.c=0D=0A+++ b/drivers/dax/bus.c=0D=0A=
-@@ -81,6 +81,10 @@ static int dax_match_type(const struct dax_device_driv=
-er *dax_drv, struct device=0D=0A =09    !IS_ENABLED(CONFIG_DEV_DAX_KMEM))=
-=0D=0A =09=09return 1;=0D=0A=20=0D=0A+=09/* fsdev driver can also bind to=
- device-type dax devices */=0D=0A+=09if (dax_drv->type =3D=3D DAXDRV_FSDE=
-V_TYPE && type =3D=3D DAXDRV_DEVICE_TYPE)=0D=0A+=09=09return 1;=0D=0A+=0D=
-=0A =09return 0;=0D=0A }=0D=0A=20=0D=0Adiff --git a/drivers/dax/bus.h b/d=
-rivers/dax/bus.h=0D=0Aindex cbbf64443098..880bdf7e72d7 100644=0D=0A--- a/=
-drivers/dax/bus.h=0D=0A+++ b/drivers/dax/bus.h=0D=0A@@ -31,6 +31,7 @@ str=
-uct dev_dax *devm_create_dev_dax(struct dev_dax_data *data);=0D=0A enum d=
-ax_driver_type {=0D=0A =09DAXDRV_KMEM_TYPE,=0D=0A =09DAXDRV_DEVICE_TYPE,=0D=
-=0A+=09DAXDRV_FSDEV_TYPE,=0D=0A };=0D=0A=20=0D=0A struct dax_device_drive=
-r {=0D=0Adiff --git a/drivers/dax/fsdev.c b/drivers/dax/fsdev.c=0D=0Anew =
-file mode 100644=0D=0Aindex 000000000000..29b7345f65b1=0D=0A--- /dev/null=
-=0D=0A+++ b/drivers/dax/fsdev.c=0D=0A@@ -0,0 +1,242 @@=0D=0A+// SPDX-Lice=
-nse-Identifier: GPL-2.0=0D=0A+/* Copyright(c) 2026 Micron Technology, Inc=
-=2E */=0D=0A+#include <linux/memremap.h>=0D=0A+#include <linux/pagemap.h>=
-=0D=0A+#include <linux/module.h>=0D=0A+#include <linux/device.h>=0D=0A+#i=
-nclude <linux/cdev.h>=0D=0A+#include <linux/slab.h>=0D=0A+#include <linux=
-/dax.h>=0D=0A+#include <linux/uio.h>=0D=0A+#include <linux/fs.h>=0D=0A+#i=
-nclude <linux/mm.h>=0D=0A+#include "dax-private.h"=0D=0A+#include "bus.h"=
-=0D=0A+=0D=0A+/*=0D=0A+ * FS-DAX compatible devdax driver=0D=0A+ *=0D=0A+=
- * Unlike drivers/dax/device.c which pre-initializes compound folios base=
-d=0D=0A+ * on device alignment (via vmemmap_shift), this driver leaves fo=
-lios=0D=0A+ * uninitialized similar to pmem. This allows fs-dax filesyste=
-ms like famfs=0D=0A+ * to work without needing special handling for pre-i=
-nitialized folios.=0D=0A+ *=0D=0A+ * Key differences from device.c:=0D=0A=
-+ * - pgmap type is MEMORY_DEVICE_FS_DAX (not MEMORY_DEVICE_GENERIC)=0D=0A=
-+ * - vmemmap_shift is NOT set (folios remain order-0)=0D=0A+ * - fs-dax =
-can dynamically create compound folios as needed=0D=0A+ * - No mmap suppo=
-rt - all access is through fs-dax/iomap=0D=0A+ */=0D=0A+=0D=0A+=0D=0A+sta=
-tic void fsdev_cdev_del(void *cdev)=0D=0A+{=0D=0A+=09cdev_del(cdev);=0D=0A=
-+}=0D=0A+=0D=0A+static void fsdev_kill(void *dev_dax)=0D=0A+{=0D=0A+=09ki=
-ll_dev_dax(dev_dax);=0D=0A+}=0D=0A+=0D=0A+/*=0D=0A+ * Page map operations=
- for FS-DAX mode=0D=0A+ * Similar to fsdax_pagemap_ops in drivers/nvdimm/=
-pmem.c=0D=0A+ *=0D=0A+ * Note: folio_free callback is not needed for MEMO=
-RY_DEVICE_FS_DAX.=0D=0A+ * The core mm code in free_zone_device_folio() h=
-andles the wake_up_var()=0D=0A+ * directly for this memory type.=0D=0A+ *=
-/=0D=0A+static int fsdev_pagemap_memory_failure(struct dev_pagemap *pgmap=
-,=0D=0A+=09=09unsigned long pfn, unsigned long nr_pages, int mf_flags)=0D=
-=0A+{=0D=0A+=09struct dev_dax *dev_dax =3D pgmap->owner;=0D=0A+=09u64 off=
-set =3D PFN_PHYS(pfn) - dev_dax->ranges[0].range.start;=0D=0A+=09u64 len =
-=3D nr_pages << PAGE_SHIFT;=0D=0A+=0D=0A+=09return dax_holder_notify_fail=
-ure(dev_dax->dax_dev, offset,=0D=0A+=09=09=09=09=09 len, mf_flags);=0D=0A=
-+}=0D=0A+=0D=0A+static const struct dev_pagemap_ops fsdev_pagemap_ops =3D=
- {=0D=0A+=09.memory_failure=09=09=3D fsdev_pagemap_memory_failure,=0D=0A+=
-};=0D=0A+=0D=0A+/*=0D=0A+ * Clear any stale folio state from pages in the=
- given range.=0D=0A+ * This is necessary because device_dax pre-initializ=
-es compound folios=0D=0A+ * based on vmemmap_shift, and that state may pe=
-rsist after driver unbind.=0D=0A+ * Since fsdev_dax uses MEMORY_DEVICE_FS=
-_DAX without vmemmap_shift, fs-dax=0D=0A+ * expects to find clean order-0=
- folios that it can build into compound=0D=0A+ * folios on demand.=0D=0A+=
- *=0D=0A+ * At probe time, no filesystem should be mounted yet, so all ma=
-ppings=0D=0A+ * are stale and must be cleared along with compound state.=0D=
-=0A+ */=0D=0A+static void fsdev_clear_folio_state(struct dev_dax *dev_dax=
-)=0D=0A+{=0D=0A+=09for (int i =3D 0; i < dev_dax->nr_range; i++) {=0D=0A+=
-=09=09struct range *range =3D &dev_dax->ranges[i].range;=0D=0A+=09=09unsi=
-gned long pfn =3D PHYS_PFN(range->start);=0D=0A+=09=09unsigned long end_p=
-fn =3D PHYS_PFN(range->end) + 1;=0D=0A+=0D=0A+=09=09while (pfn < end_pfn)=
- {=0D=0A+=09=09=09struct folio *folio =3D pfn_folio(pfn);=0D=0A+=09=09=09=
-int order =3D dax_folio_reset_order(folio);=0D=0A+=0D=0A+=09=09=09pfn +=3D=
- 1UL << order;=0D=0A+=09=09}=0D=0A+=09}=0D=0A+}=0D=0A+=0D=0A+static int f=
-sdev_open(struct inode *inode, struct file *filp)=0D=0A+{=0D=0A+=09struct=
- dax_device *dax_dev =3D inode_dax(inode);=0D=0A+=09struct dev_dax *dev_d=
-ax =3D dax_get_private(dax_dev);=0D=0A+=0D=0A+=09filp->private_data =3D d=
-ev_dax;=0D=0A+=0D=0A+=09return 0;=0D=0A+}=0D=0A+=0D=0A+static int fsdev_r=
-elease(struct inode *inode, struct file *filp)=0D=0A+{=0D=0A+=09return 0;=
-=0D=0A+}=0D=0A+=0D=0A+static const struct file_operations fsdev_fops =3D =
-{=0D=0A+=09.llseek =3D noop_llseek,=0D=0A+=09.owner =3D THIS_MODULE,=0D=0A=
-+=09.open =3D fsdev_open,=0D=0A+=09.release =3D fsdev_release,=0D=0A+};=0D=
-=0A+=0D=0A+static int fsdev_dax_probe(struct dev_dax *dev_dax)=0D=0A+{=0D=
-=0A+=09struct dax_device *dax_dev =3D dev_dax->dax_dev;=0D=0A+=09struct d=
-evice *dev =3D &dev_dax->dev;=0D=0A+=09struct dev_pagemap *pgmap;=0D=0A+=09=
-u64 data_offset =3D 0;=0D=0A+=09struct inode *inode;=0D=0A+=09struct cdev=
- *cdev;=0D=0A+=09void *addr;=0D=0A+=09int rc, i;=0D=0A+=0D=0A+=09if (stat=
-ic_dev_dax(dev_dax))  {=0D=0A+=09=09if (dev_dax->nr_range > 1) {=0D=0A+=09=
-=09=09dev_warn(dev, "static pgmap / multi-range device conflict\n");=0D=0A=
-+=09=09=09return -EINVAL;=0D=0A+=09=09}=0D=0A+=0D=0A+=09=09pgmap =3D dev_=
-dax->pgmap;=0D=0A+=09} else {=0D=0A+=09=09size_t pgmap_size;=0D=0A+=0D=0A=
-+=09=09if (dev_dax->pgmap) {=0D=0A+=09=09=09dev_warn(dev, "dynamic-dax wi=
-th pre-populated page map\n");=0D=0A+=09=09=09return -EINVAL;=0D=0A+=09=09=
-}=0D=0A+=0D=0A+=09=09pgmap_size =3D struct_size(pgmap, ranges, dev_dax->n=
-r_range - 1);=0D=0A+=09=09pgmap =3D devm_kzalloc(dev, pgmap_size,  GFP_KE=
-RNEL);=0D=0A+=09=09if (!pgmap)=0D=0A+=09=09=09return -ENOMEM;=0D=0A+=0D=0A=
-+=09=09pgmap->nr_range =3D dev_dax->nr_range;=0D=0A+=09=09dev_dax->pgmap =
-=3D pgmap;=0D=0A+=0D=0A+=09=09for (i =3D 0; i < dev_dax->nr_range; i++) {=
-=0D=0A+=09=09=09struct range *range =3D &dev_dax->ranges[i].range;=0D=0A+=
-=0D=0A+=09=09=09pgmap->ranges[i] =3D *range;=0D=0A+=09=09}=0D=0A+=09}=0D=0A=
-+=0D=0A+=09for (i =3D 0; i < dev_dax->nr_range; i++) {=0D=0A+=09=09struct=
- range *range =3D &dev_dax->ranges[i].range;=0D=0A+=0D=0A+=09=09if (!devm=
-_request_mem_region(dev, range->start,=0D=0A+=09=09=09=09=09range_len(ran=
-ge), dev_name(dev))) {=0D=0A+=09=09=09dev_warn(dev, "mapping%d: %#llx-%#l=
-lx could not reserve range\n",=0D=0A+=09=09=09=09 i, range->start, range-=
->end);=0D=0A+=09=09=09return -EBUSY;=0D=0A+=09=09}=0D=0A+=09}=0D=0A+=0D=0A=
-+=09/*=0D=0A+=09 * FS-DAX compatible mode: Use MEMORY_DEVICE_FS_DAX type =
-and=0D=0A+=09 * do NOT set vmemmap_shift. This leaves folios at order-0,=0D=
-=0A+=09 * allowing fs-dax to dynamically create compound folios as needed=
-=0D=0A+=09 * (similar to pmem behavior).=0D=0A+=09 */=0D=0A+=09pgmap->typ=
-e =3D MEMORY_DEVICE_FS_DAX;=0D=0A+=09pgmap->ops =3D &fsdev_pagemap_ops;=0D=
-=0A+=09pgmap->owner =3D dev_dax;=0D=0A+=0D=0A+=09/*=0D=0A+=09 * CRITICAL =
-DIFFERENCE from device.c:=0D=0A+=09 * We do NOT set vmemmap_shift here, e=
-ven if align > PAGE_SIZE.=0D=0A+=09 * This ensures folios remain order-0 =
-and are compatible with=0D=0A+=09 * fs-dax's folio management.=0D=0A+=09 =
-*/=0D=0A+=0D=0A+=09addr =3D devm_memremap_pages(dev, pgmap);=0D=0A+=09if =
-(IS_ERR(addr))=0D=0A+=09=09return PTR_ERR(addr);=0D=0A+=0D=0A+=09/*=0D=0A=
-+=09 * Clear any stale compound folio state left over from a previous=0D=0A=
-+=09 * driver (e.g., device_dax with vmemmap_shift).=0D=0A+=09 */=0D=0A+=09=
-fsdev_clear_folio_state(dev_dax);=0D=0A+=0D=0A+=09/* Detect whether the d=
-ata is at a non-zero offset into the memory */=0D=0A+=09if (pgmap->range.=
-start !=3D dev_dax->ranges[0].range.start) {=0D=0A+=09=09u64 phys =3D dev=
-_dax->ranges[0].range.start;=0D=0A+=09=09u64 pgmap_phys =3D dev_dax->pgma=
-p[0].range.start;=0D=0A+=0D=0A+=09=09if (!WARN_ON(pgmap_phys > phys))=0D=0A=
-+=09=09=09data_offset =3D phys - pgmap_phys;=0D=0A+=0D=0A+=09=09pr_debug(=
-"%s: offset detected phys=3D%llx pgmap_phys=3D%llx offset=3D%llx\n",=0D=0A=
-+=09=09       __func__, phys, pgmap_phys, data_offset);=0D=0A+=09}=0D=0A+=
-=0D=0A+=09inode =3D dax_inode(dax_dev);=0D=0A+=09cdev =3D inode->i_cdev;=0D=
-=0A+=09cdev_init(cdev, &fsdev_fops);=0D=0A+=09cdev->owner =3D dev->driver=
-->owner;=0D=0A+=09cdev_set_parent(cdev, &dev->kobj);=0D=0A+=09rc =3D cdev=
-_add(cdev, dev->devt, 1);=0D=0A+=09if (rc)=0D=0A+=09=09return rc;=0D=0A+=0D=
-=0A+=09rc =3D devm_add_action_or_reset(dev, fsdev_cdev_del, cdev);=0D=0A+=
-=09if (rc)=0D=0A+=09=09return rc;=0D=0A+=0D=0A+=09run_dax(dax_dev);=0D=0A=
-+=09return devm_add_action_or_reset(dev, fsdev_kill, dev_dax);=0D=0A+}=0D=
-=0A+=0D=0A+static struct dax_device_driver fsdev_dax_driver =3D {=0D=0A+=09=
-=2Eprobe =3D fsdev_dax_probe,=0D=0A+=09.type =3D DAXDRV_FSDEV_TYPE,=0D=0A=
-+};=0D=0A+=0D=0A+static int __init dax_init(void)=0D=0A+{=0D=0A+=09return=
- dax_driver_register(&fsdev_dax_driver);=0D=0A+}=0D=0A+=0D=0A+static void=
- __exit dax_exit(void)=0D=0A+{=0D=0A+=09dax_driver_unregister(&fsdev_dax_=
-driver);=0D=0A+}=0D=0A+=0D=0A+MODULE_AUTHOR("John Groves");=0D=0A+MODULE_=
-DESCRIPTION("FS-DAX Device: fs-dax compatible devdax driver");=0D=0A+MODU=
-LE_LICENSE("GPL");=0D=0A+module_init(dax_init);=0D=0A+module_exit(dax_exi=
-t);=0D=0A+MODULE_ALIAS_DAX_DEVICE(0);=0D=0Adiff --git a/fs/dax.c b/fs/dax=
-=2Ec=0D=0Aindex 7d7bbfb32c41..85a4b428e72b 100644=0D=0A--- a/fs/dax.c=0D=0A=
-+++ b/fs/dax.c=0D=0A@@ -416,6 +416,7 @@ int dax_folio_reset_order(struct =
-folio *folio)=0D=0A=20=0D=0A =09return order;=0D=0A }=0D=0A+EXPORT_SYMBOL=
-_GPL(dax_folio_reset_order);=0D=0A=20=0D=0A static inline unsigned long d=
-ax_folio_put(struct folio *folio)=0D=0A {=0D=0Adiff --git a/include/linux=
-/dax.h b/include/linux/dax.h=0D=0Aindex 9d624f4d9df6..fe1315135fdd 100644=
-=0D=0A--- a/include/linux/dax.h=0D=0A+++ b/include/linux/dax.h=0D=0A@@ -5=
-1,6 +51,10 @@ struct dax_holder_operations {=0D=0A=20=0D=0A #if IS_ENABLE=
-D(CONFIG_DAX)=0D=0A struct dax_device *alloc_dax(void *private, const str=
-uct dax_operations *ops);=0D=0A+=0D=0A+#if IS_ENABLED(CONFIG_DEV_DAX_FS)=0D=
-=0A+struct dax_device *inode_dax(struct inode *inode);=0D=0A+#endif=0D=0A=
- void *dax_holder(struct dax_device *dax_dev);=0D=0A void put_dax(struct =
-dax_device *dax_dev);=0D=0A void kill_dax(struct dax_device *dax_dev);=0D=
-=0A@@ -153,6 +157,7 @@ static inline void fs_put_dax(struct dax_device *d=
-ax_dev, void *holder)=0D=0A #if IS_ENABLED(CONFIG_FS_DAX)=0D=0A int dax_w=
-riteback_mapping_range(struct address_space *mapping,=0D=0A =09=09struct =
-dax_device *dax_dev, struct writeback_control *wbc);=0D=0A+int dax_folio_=
-reset_order(struct folio *folio);=0D=0A=20=0D=0A struct page *dax_layout_=
-busy_page(struct address_space *mapping);=0D=0A struct page *dax_layout_b=
-usy_page_range(struct address_space *mapping, loff_t start, loff_t end);=0D=
-=0A--=20=0D=0A2.52.0=0D=0A=0D=0A
+From: John Groves <john@groves.net>
+
+Save the kva from memremap because we need it for iomap rw support.
+
+Prior to famfs, there were no iomap users of /dev/dax - so the virtual
+address from memremap was not needed.
+
+Signed-off-by: John Groves <john@groves.net>
+---
+ drivers/dax/dax-private.h | 2 ++
+ drivers/dax/fsdev.c       | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
+index 0867115aeef2..4ae4d829d3ee 100644
+--- a/drivers/dax/dax-private.h
++++ b/drivers/dax/dax-private.h
+@@ -69,6 +69,7 @@ struct dev_dax_range {
+  * data while the device is activated in the driver.
+  * @region - parent region
+  * @dax_dev - core dax functionality
++ * @virt_addr: kva from memremap; used by fsdev_dax
+  * @target_node: effective numa node if dev_dax memory range is onlined
+  * @dyn_id: is this a dynamic or statically created instance
+  * @id: ida allocated id when the dax_region is not static
+@@ -81,6 +82,7 @@ struct dev_dax_range {
+ struct dev_dax {
+ 	struct dax_region *region;
+ 	struct dax_device *dax_dev;
++	void *virt_addr;
+ 	unsigned int align;
+ 	int target_node;
+ 	bool dyn_id;
+diff --git a/drivers/dax/fsdev.c b/drivers/dax/fsdev.c
+index 29b7345f65b1..72f78f606e06 100644
+--- a/drivers/dax/fsdev.c
++++ b/drivers/dax/fsdev.c
+@@ -201,6 +201,7 @@ static int fsdev_dax_probe(struct dev_dax *dev_dax)
+ 		pr_debug("%s: offset detected phys=%llx pgmap_phys=%llx offset=%llx\n",
+ 		       __func__, phys, pgmap_phys, data_offset);
+ 	}
++	dev_dax->virt_addr = addr + data_offset;
+ 
+ 	inode = dax_inode(dax_dev);
+ 	cdev = inode->i_cdev;
+-- 
+2.52.0
+
 
