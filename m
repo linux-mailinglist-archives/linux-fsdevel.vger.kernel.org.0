@@ -1,252 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-74350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F16D39AE7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 23:38:03 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2326D39B45
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 00:23:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 5D67130428E4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 22:36:54 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 671D930021E5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 23:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B8730EF9B;
-	Sun, 18 Jan 2026 22:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4512131AAB8;
+	Sun, 18 Jan 2026 23:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="lkBa2wR0";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="rx+4lLV/"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="Dmw+pxT+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IGTmerXN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from a11-78.smtp-out.amazonses.com (a11-78.smtp-out.amazonses.com [54.240.11.78])
-	(using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E884329BD8E;
-	Sun, 18 Jan 2026 22:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.11.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0D531A065;
+	Sun, 18 Jan 2026 23:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768775811; cv=none; b=q/w1niUgXc+Ms+r/8aBTgvFJbW09xmYMffcM4J6HsDHop8CGP2TrplVp9aOPGObHpXIvbVeqVvdBfKX96aDowLSlpAPph67cB8WZRDPQcIRNxXOZt4zcqGJxAly0VyvKnhuGp/DhIlLPrNJ7KcZzr/Za3NbyNHfyYVTqUd4OB0w=
+	t=1768778620; cv=none; b=ang6xPz7J1j/n6rwW37DbJtMyTdusZHDAnHnG0zH2rhMbd+OPLsfVxknsy7BA0Mrs1VQelI4ZEex3OC0/qbr323ogqLxh7vnHsDLv3MPUp3xrQDpXF2MInf1MCZtBLLWzpSPa3CW4+7maVb4yhlotdEN4bBIAFfoIDvaXzm7BNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768775811; c=relaxed/simple;
-	bh=JllOgEM7aQKk+PtcWXrB+BYsUOTL+sv45IkCgmrJnLk=;
-	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:In-Reply-To:
-	 References:Message-ID; b=qZpNFu4ofK1yD4T/wJ1T45NzllN16yd//QMsY9tDbCAylVl+Z8ub/jYdSH43woLsP8EBSM0KVgDirIBf0f+h/m8Re6SlOM4TEAO+zfezQ8M6ZaUNgQgFjqQyZPgPl88A1NEZkusTg85ssWGa/5X7dccgDczSCdVBsYjnE+2+5XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b=lkBa2wR0; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=rx+4lLV/; arc=none smtp.client-ip=54.240.11.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jagalactic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=o25mqk5iffcfzgc3wo2zjhkohcyjzsoq; d=jagalactic.com; t=1768775809;
-	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id;
-	bh=JllOgEM7aQKk+PtcWXrB+BYsUOTL+sv45IkCgmrJnLk=;
-	b=lkBa2wR0c1KJ6tYMBmA4O7tNVXthnwHBN0IYp9/mbdT6jkOOT97okdIqgaN4i5mh
-	yBnVJl7SemZSlBerfWeLaevsIyBSUk5L0WB8FOsn5Zw9gDmGMm1CPWEQuSvpoJmvWg8
-	iHGs5dSCOY6ZcKVgxFDPwimczokf65LtqaV5QH5o=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1768775809;
-	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id:Feedback-ID;
-	bh=JllOgEM7aQKk+PtcWXrB+BYsUOTL+sv45IkCgmrJnLk=;
-	b=rx+4lLV//cYIJdtTI61sCGwwf3jnZ9eDLG2dC2cEa+gE59duLovbxQ9/NV9Ir6fb
-	+Ddqw7xfJSJCe6e0XBA8SJsBnKlD8rA1YRTWKEm0FrZL3CfJoBd+k2p/0pRjLATzgqW
-	+Yw/NBgRGIYxJh8j/RbuTlatPlbU26rH3uyV1Ufs=
-Subject: [PATCH V4 2/2] Add test/daxctl-famfs.sh to test famfs mode
- transitions:
-From: =?UTF-8?Q?John_Groves?= <john@jagalactic.com>
-To: =?UTF-8?Q?John_Groves?= <John@Groves.net>, 
-	=?UTF-8?Q?Miklos_Szeredi?= <miklos@szeredi.hu>, 
-	=?UTF-8?Q?Dan_Williams?= <dan.j.williams@intel.com>, 
-	=?UTF-8?Q?Bernd_Schubert?= <bschubert@ddn.com>, 
-	=?UTF-8?Q?Alison_Schofiel?= =?UTF-8?Q?d?= <alison.schofield@intel.com>
-Cc: =?UTF-8?Q?John_Groves?= <jgroves@micron.com>, 
-	=?UTF-8?Q?John_Groves?= <jgroves@fastmail.com>, 
-	=?UTF-8?Q?Jonathan_Corbet?= <corbet@lwn.net>, 
-	=?UTF-8?Q?Vishal_Verma?= <vishal.l.verma@intel.com>, 
-	=?UTF-8?Q?Dave_Jiang?= <dave.jiang@intel.com>, 
-	=?UTF-8?Q?Matthew_Wilcox?= <willy@infradead.org>, 
-	=?UTF-8?Q?Jan_Kara?= <jack@suse.cz>, 
-	=?UTF-8?Q?Alexander_Viro?= <viro@zeniv.linux.org.uk>, 
-	=?UTF-8?Q?David_Hildenbrand?= <david@kernel.org>, 
-	=?UTF-8?Q?Christian_Bra?= =?UTF-8?Q?uner?= <brauner@kernel.org>, 
-	=?UTF-8?Q?Darrick_J_=2E_Wong?= <djwong@kernel.org>, 
-	=?UTF-8?Q?Randy_Dunlap?= <rdunlap@infradead.org>, 
-	=?UTF-8?Q?Jeff_Layton?= <jlayton@kernel.org>, 
-	=?UTF-8?Q?Amir_Goldstein?= <amir73il@gmail.com>, 
-	=?UTF-8?Q?Jonathan_Cameron?= <Jonathan.Cameron@huawei.com>, 
-	=?UTF-8?Q?Stefan_Hajnoczi?= <shajnocz@redhat.com>, 
-	=?UTF-8?Q?Joanne_Koong?= <joannelkoong@gmail.com>, 
-	=?UTF-8?Q?Josef_Bacik?= <josef@toxicpanda.com>, 
-	=?UTF-8?Q?Bagas_Sanjaya?= <bagasdotme@gmail.com>, 
-	=?UTF-8?Q?James_Morse?= <james.morse@arm.com>, 
-	=?UTF-8?Q?Fuad_Tabba?= <tabba@google.com>, 
-	=?UTF-8?Q?Sean_Christopherson?= <seanjc@google.com>, 
-	=?UTF-8?Q?Shivank_Garg?= <shivankg@amd.com>, 
-	=?UTF-8?Q?Ackerley_Tng?= <ackerleytng@google.com>, 
-	=?UTF-8?Q?Gregory_Pric?= =?UTF-8?Q?e?= <gourry@gourry.net>, 
-	=?UTF-8?Q?Aravind_Ramesh?= <arramesh@micron.com>, 
-	=?UTF-8?Q?Ajay_Joshi?= <ajayjoshi@micron.com>, 
-	=?UTF-8?Q?venkataravis=40micron=2Ecom?= <venkataravis@micron.com>, 
-	=?UTF-8?Q?linux-doc=40vger=2Ekernel=2Eorg?= <linux-doc@vger.kernel.org>, 
-	=?UTF-8?Q?linux-kernel=40vger=2Ekernel=2Eorg?= <linux-kernel@vger.kernel.org>, 
-	=?UTF-8?Q?nvdimm=40lists=2Elinux=2Edev?= <nvdimm@lists.linux.dev>, 
-	=?UTF-8?Q?linux-cxl=40vger=2Ekernel=2Eorg?= <linux-cxl@vger.kernel.org>, 
-	=?UTF-8?Q?linux-fsdevel=40vger=2Ekernel=2Eorg?= <linux-fsdevel@vger.kernel.org>, 
-	=?UTF-8?Q?John_Groves?= <john@groves.net>
-Date: Sun, 18 Jan 2026 22:36:48 +0000
+	s=arc-20240116; t=1768778620; c=relaxed/simple;
+	bh=kQYT0dhmcYLmmCpMOddqhdpNEHl1L6rhEo00nl7FDLA=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=Q4hllinH8AVISxbeP7Qsj5mj99CkV38KbR6xqtAv4YiLZjtIOwoxVDfFNqm8d+vuiKWeWBFManBJ/5ZxSO3bCoN/kDQKAH6uKupZZ+ImC7OT3YRoKNITIIFniUWZ7VMa791fsXb4nHd+JmTyRsnGaCQddGXhgzlXXHjg4OffO6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=Dmw+pxT+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IGTmerXN; arc=none smtp.client-ip=103.168.172.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailflow.phl.internal (Postfix) with ESMTP id 044C21380091;
+	Sun, 18 Jan 2026 18:23:37 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Sun, 18 Jan 2026 18:23:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
+	1768778616; x=1768785816; bh=cLWfoPH86LevLJ5dEarcfR/PsriG4IfSU/3
+	wyLJz+qM=; b=Dmw+pxT+mC6s44HDc9ViDXhGQeEmMpmNYRhtbA86QNG09PG/Ljt
+	hV85ad3/pbmWWoao3arxAaxDpjTC5inzso+nDbFp9L/ocC8FvAlBD0K6BSqaNtKf
+	C3km6dpzlK9Qvfbi4RlAOZVQRcgXUx6BbC4NNZXExiSaEBKuKkrscbvke30TKEj0
+	X3c26YUO2IvjIKJetsMrJSw+w98guonRsqk3c5wy7tRYCBiBKWCThYgKRu77I56g
+	W/jQbAZlq9qtSmpdQFd+C0/rLGEaY2+/6NIHoLbGsxK4GkDCFlahWHWTEoSSJrS/
+	k5ZW9JDwUgtzyYMplQwMaStWlBzRHOxECQQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1768778616; x=
+	1768785816; bh=cLWfoPH86LevLJ5dEarcfR/PsriG4IfSU/3wyLJz+qM=; b=I
+	GTmerXNj37QbHVnwq2oYiiWRj3dNMRiwAfGv/vxfYmuPEFFfJjUyW8ruiPn+ZUTw
+	y96Ysjc5jkE+PfgCaUfHrNzF77vJ+CHZGj8ZZyFQniCqqNBHAWqccBt7S/bU1BV3
+	Xnstc4VvhfH6RZxhRpoHiUxWSmJT21A47932/vgOnE5bxUOTfBJmpqxFnE86OITm
+	uIg7MLSy3DGOcBFTzEd5fbzcCQYBFRkQDDO9qGFEXh5IfaJ//ctGtwtYx+/A3prw
+	KJ8U8PGheh+G3smkjCFKvnDL2ddcVu2iicAyBab5Q6myVEkn0CxZuzyjCejBBwJF
+	S/bm6s4tkRpP23BkNvcHg==
+X-ME-Sender: <xms:dGttaT6YTMF6Fa6OlzcaAnM6fKqB4-4u0PRgZNSqPeyFmRns3uNnWw>
+    <xme:dGttaZPm2B1Iaa5cFSjo7JQ9nDmVsbYtDSTRFdNHBicQ-lkECLbL66rkbZK2MZehf
+    _rCs8HRq47ygqgxsOGTs2CMA0vWt7_AzG555MqfdnDHw6XZXQ>
+X-ME-Received: <xmr:dGttaV5f0odFoTqo9Cm-3bXwUWdDQe8OS_nESoDmZC33EUUTmsf8jTlPE6SJiNhWOG4bTHrmA205RC8BAhr3cbUxrYEQhQL_108cgTPUPoLg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddufeeitddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epvdeuteelkeejkeevteetvedtkeegleduieeftdeftefgtddtleejgfelgfevffeinecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgrihhlrdhnvghtpdhnsggp
+    rhgtphhtthhopeejfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvhhirhhose
+    iivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehguhhotghhuhhnhhgr
+    ihesvhhivhhordgtohhmpdhrtghpthhtoheplhhinhhugidqgihfshesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdr
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhilhhfshesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgvgihtgeesvhhgvghrrd
+    hkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:dGttaek4FCMZRAxWF6ejfvNQASS42yuMJmNL6Qr_VSzT2alP2kiMEQ>
+    <xmx:dGttacMnrF3MIVkqtagaBM_OFbr4viUT9Quj4YPA_rDrR6FZMQe15g>
+    <xmx:dGttaRUgcJhZGcX_B2l09umj3yAF-qAbVHXccqpyubd6rn2m6D7nYA>
+    <xmx:dGttaVutjkDk_cSqIw9p5HdrWWt8-J_WTU_-yJ8LgZsJLx3q9gD8ew>
+    <xmx:eGttab3JlD-dDEAYvGFUDpoqKXPgn7EN1IPurNldS43-2K0UKJSizYjm>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 18 Jan 2026 18:23:15 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: 
- <0100019bd34040d9-0b6e9e4c-ecd4-464d-ab9d-88a251215442-000000@email.amazonses.com>
-References: 
- <0100019bd34040d9-0b6e9e4c-ecd4-464d-ab9d-88a251215442-000000@email.amazonses.com> 
- <20260118223640.92878-1-john@jagalactic.com>
-X-Mailer: Amazon WorkMail
-Thread-Index: AQHciMrtvo3ZFLchSiSa1LQKlwQxpg==
-Thread-Topic: [PATCH V4 2/2] Add test/daxctl-famfs.sh to test famfs mode
- transitions:
-X-Wm-Sent-Timestamp: 1768775807
-X-Original-Mailer: git-send-email 2.52.0
-Message-ID: <0100019bd340f73c-90b0fafb-786e-4368-85f0-149ffa1d637a-000000@email.amazonses.com>
-Feedback-ID: ::1.us-east-1.LF00NED762KFuBsfzrtoqw+Brn/qlF9OYdxWukAhsl8=:AmazonSES
-X-SES-Outgoing: 2026.01.18-54.240.11.78
+MIME-Version: 1.0
+From: NeilBrown <neilb@ownmail.net>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Amir Goldstein" <amir73il@gmail.com>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Chuck Lever" <chuck.lever@oracle.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Dai Ngo" <Dai.Ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
+ "Hugh Dickins" <hughd@google.com>,
+ "Baolin Wang" <baolin.wang@linux.alibaba.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Theodore Ts'o" <tytso@mit.edu>,
+ "Andreas Dilger" <adilger.kernel@dilger.ca>, "Jan Kara" <jack@suse.com>,
+ "Gao Xiang" <xiang@kernel.org>, "Chao Yu" <chao@kernel.org>,
+ "Yue Hu" <zbestahu@gmail.com>, "Jeffle Xu" <jefflexu@linux.alibaba.com>,
+ "Sandeep Dhavale" <dhavale@google.com>,
+ "Hongbo Li" <lihongbo22@huawei.com>, "Chunhai Guo" <guochunhai@vivo.com>,
+ "Carlos Maiolino" <cem@kernel.org>, "Ilya Dryomov" <idryomov@gmail.com>,
+ "Alex Markuze" <amarkuze@redhat.com>,
+ "Viacheslav Dubeyko" <slava@dubeyko.com>, "Chris Mason" <clm@fb.com>,
+ "David Sterba" <dsterba@suse.com>,
+ "Luis de Bethencourt" <luisbg@kernel.org>,
+ "Salah Triki" <salah.triki@gmail.com>,
+ "Phillip Lougher" <phillip@squashfs.org.uk>,
+ "Steve French" <sfrench@samba.org>, "Paulo Alcantara" <pc@manguebit.org>,
+ "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
+ "Shyam Prasad N" <sprasad@microsoft.com>,
+ "Bharath SM" <bharathsm@microsoft.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>,
+ "Mike Marshall" <hubcap@omnibond.com>,
+ "Martin Brandenburg" <martin@omnibond.com>,
+ "Mark Fasheh" <mark@fasheh.com>, "Joel Becker" <jlbec@evilplan.org>,
+ "Joseph Qi" <joseph.qi@linux.alibaba.com>,
+ "Konstantin Komarov" <almaz.alexandrovich@paragon-software.com>,
+ "Ryusuke Konishi" <konishi.ryusuke@gmail.com>,
+ "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>, "Dave Kleikamp" <shaggy@kernel.org>,
+ "David Woodhouse" <dwmw2@infradead.org>,
+ "Richard Weinberger" <richard@nod.at>, "Jan Kara" <jack@suse.cz>,
+ "Andreas Gruenbacher" <agruenba@redhat.com>,
+ "OGAWA Hirofumi" <hirofumi@mail.parknet.co.jp>,
+ "Jaegeuk Kim" <jaegeuk@kernel.org>,
+ "Christoph Hellwig" <hch@infradead.org>, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-ext4@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-xfs@vger.kernel.org,
+ ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ linux-unionfs@vger.kernel.org, devel@lists.orangefs.org,
+ ocfs2-devel@lists.linux.dev, ntfs3@lists.linux.dev,
+ linux-nilfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
+ linux-mtd@lists.infradead.org, gfs2@lists.linux.dev,
+ linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH 00/29] fs: require filesystems to explicitly opt-in to
+ nfsd export support
+In-reply-to: <9c99197dde2eafa55a1b55dce2f0d4d02c77340a.camel@kernel.org>
+References: <20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org>,
+ <CAOQ4uxjOJMwv_hRVTn3tJHDLMQHbeaCGsdLupiZYcwm7M2rm3g@mail.gmail.com>,
+ <9c99197dde2eafa55a1b55dce2f0d4d02c77340a.camel@kernel.org>
+Date: Mon, 19 Jan 2026 10:23:13 +1100
+Message-id: <176877859306.16766.15009835437490907207@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-From: John Groves <John@Groves.net>=0D=0A=0D=0A- devdax <-> famfs mode sw=
-itches=0D=0A- Verify famfs -> system-ram is rejected (must go via devdax)=
-=0D=0A- Test JSON output shows correct mode=0D=0A- Test error handling fo=
-r invalid modes=0D=0A=0D=0AThe test is added to the destructive test suit=
-e since it=0D=0Amodifies device modes.=0D=0A=0D=0ASigned-off-by: John Gro=
-ves <john@groves.net>=0D=0A---=0D=0A test/daxctl-famfs.sh | 253 +++++++++=
-++++++++++++++++++++++++++++++++++=0D=0A test/meson.build     |   2 +=0D=0A=
- 2 files changed, 255 insertions(+)=0D=0A create mode 100755 test/daxctl-=
-famfs.sh=0D=0A=0D=0Adiff --git a/test/daxctl-famfs.sh b/test/daxctl-famfs=
-=2Esh=0D=0Anew file mode 100755=0D=0Aindex 0000000..12fbfef=0D=0A--- /dev=
-/null=0D=0A+++ b/test/daxctl-famfs.sh=0D=0A@@ -0,0 +1,253 @@=0D=0A+#!/bin=
-/bash -Ex=0D=0A+# SPDX-License-Identifier: GPL-2.0=0D=0A+# Copyright (C) =
-2025 Micron Technology, Inc. All rights reserved.=0D=0A+#=0D=0A+# Test da=
-xctl famfs mode transitions and mode detection=0D=0A+=0D=0A+rc=3D77=0D=0A=
-+. $(dirname $0)/common=0D=0A+=0D=0A+trap 'cleanup $LINENO' ERR=0D=0A+=0D=
-=0A+daxdev=3D""=0D=0A+original_mode=3D""=0D=0A+=0D=0A+cleanup()=0D=0A+{=0D=
-=0A+=09printf "Error at line %d\n" "$1"=0D=0A+=09# Try to restore to orig=
-inal mode if we know it=0D=0A+=09if [[ $daxdev && $original_mode ]]; then=
-=0D=0A+=09=09"$DAXCTL" reconfigure-device -f -m "$original_mode" "$daxdev=
-" 2>/dev/null || true=0D=0A+=09fi=0D=0A+=09exit $rc=0D=0A+}=0D=0A+=0D=0A+=
-# Check if fsdev_dax module is available=0D=0A+check_fsdev_dax()=0D=0A+{=0D=
-=0A+=09if modinfo fsdev_dax &>/dev/null; then=0D=0A+=09=09return 0=0D=0A+=
-=09fi=0D=0A+=09if grep -qF "fsdev_dax" "/lib/modules/$(uname -r)/modules.=
-builtin" 2>/dev/null; then=0D=0A+=09=09return 0=0D=0A+=09fi=0D=0A+=09prin=
-tf "fsdev_dax module not available, skipping\n"=0D=0A+=09exit 77=0D=0A+}=0D=
-=0A+=0D=0A+# Check if kmem module is available (needed for system-ram mod=
-e tests)=0D=0A+check_kmem()=0D=0A+{=0D=0A+=09if modinfo kmem &>/dev/null;=
- then=0D=0A+=09=09return 0=0D=0A+=09fi=0D=0A+=09if grep -qF "kmem" "/lib/=
-modules/$(uname -r)/modules.builtin" 2>/dev/null; then=0D=0A+=09=09return=
- 0=0D=0A+=09fi=0D=0A+=09printf "kmem module not available, skipping syste=
-m-ram tests\n"=0D=0A+=09return 1=0D=0A+}=0D=0A+=0D=0A+# Find an existing =
-dax device to test with=0D=0A+find_daxdev()=0D=0A+{=0D=0A+=09# Look for a=
-ny available dax device=0D=0A+=09daxdev=3D$("$DAXCTL" list | jq -er '.[0]=
-=2Echardev // empty' 2>/dev/null) || true=0D=0A+=0D=0A+=09if [[ ! $daxdev=
- ]]; then=0D=0A+=09=09printf "No dax device found, skipping\n"=0D=0A+=09=09=
-exit 77=0D=0A+=09fi=0D=0A+=0D=0A+=09# Save the original mode so we can re=
-store it=0D=0A+=09original_mode=3D$("$DAXCTL" list -d "$daxdev" | jq -er =
-'.[].mode')=0D=0A+=0D=0A+=09printf "Found dax device: %s (current mode: %=
-s)\n" "$daxdev" "$original_mode"=0D=0A+}=0D=0A+=0D=0A+daxctl_get_mode()=0D=
-=0A+{=0D=0A+=09"$DAXCTL" list -d "$1" | jq -er '.[].mode'=0D=0A+}=0D=0A+=0D=
-=0A+# Ensure device is in devdax mode for testing=0D=0A+ensure_devdax_mod=
-e()=0D=0A+{=0D=0A+=09local mode=0D=0A+=09mode=3D$(daxctl_get_mode "$daxde=
-v")=0D=0A+=0D=0A+=09if [[ "$mode" =3D=3D "devdax" ]]; then=0D=0A+=09=09re=
-turn 0=0D=0A+=09fi=0D=0A+=0D=0A+=09if [[ "$mode" =3D=3D "system-ram" ]]; =
-then=0D=0A+=09=09printf "Device is in system-ram mode, attempting to conv=
-ert to devdax...\n"=0D=0A+=09=09"$DAXCTL" reconfigure-device -f -m devdax=
- "$daxdev"=0D=0A+=09elif [[ "$mode" =3D=3D "famfs" ]]; then=0D=0A+=09=09p=
-rintf "Device is in famfs mode, converting to devdax...\n"=0D=0A+=09=09"$=
-DAXCTL" reconfigure-device -m devdax "$daxdev"=0D=0A+=09else=0D=0A+=09=09=
-printf "Device is in unknown mode: %s\n" "$mode"=0D=0A+=09=09return 1=0D=0A=
-+=09fi=0D=0A+=0D=0A+=09[[ $(daxctl_get_mode "$daxdev") =3D=3D "devdax" ]]=
-=0D=0A+}=0D=0A+=0D=0A+#=0D=0A+# Test basic mode transitions involving fam=
-fs=0D=0A+#=0D=0A+test_famfs_mode_transitions()=0D=0A+{=0D=0A+=09printf "\=
-n=3D=3D=3D Testing famfs mode transitions =3D=3D=3D\n"=0D=0A+=0D=0A+=09# =
-Ensure starting in devdax mode=0D=0A+=09ensure_devdax_mode=0D=0A+=09[[ $(=
-daxctl_get_mode "$daxdev") =3D=3D "devdax" ]]=0D=0A+=09printf "Initial mo=
-de: devdax - OK\n"=0D=0A+=0D=0A+=09# Test: devdax -> famfs=0D=0A+=09print=
-f "Testing devdax -> famfs... "=0D=0A+=09"$DAXCTL" reconfigure-device -m =
-famfs "$daxdev"=0D=0A+=09[[ $(daxctl_get_mode "$daxdev") =3D=3D "famfs" ]=
-]=0D=0A+=09printf "OK\n"=0D=0A+=0D=0A+=09# Test: famfs -> famfs (re-enabl=
-e in same mode)=0D=0A+=09printf "Testing famfs -> famfs (re-enable)... "=0D=
-=0A+=09"$DAXCTL" reconfigure-device -m famfs "$daxdev"=0D=0A+=09[[ $(daxc=
-tl_get_mode "$daxdev") =3D=3D "famfs" ]]=0D=0A+=09printf "OK\n"=0D=0A+=0D=
-=0A+=09# Test: famfs -> devdax=0D=0A+=09printf "Testing famfs -> devdax..=
-=2E "=0D=0A+=09"$DAXCTL" reconfigure-device -m devdax "$daxdev"=0D=0A+=09=
-[[ $(daxctl_get_mode "$daxdev") =3D=3D "devdax" ]]=0D=0A+=09printf "OK\n"=
-=0D=0A+=0D=0A+=09# Test: devdax -> devdax (re-enable in same mode)=0D=0A+=
-=09printf "Testing devdax -> devdax (re-enable)... "=0D=0A+=09"$DAXCTL" r=
-econfigure-device -m devdax "$daxdev"=0D=0A+=09[[ $(daxctl_get_mode "$dax=
-dev") =3D=3D "devdax" ]]=0D=0A+=09printf "OK\n"=0D=0A+}=0D=0A+=0D=0A+#=0D=
-=0A+# Test mode transitions with system-ram (requires kmem)=0D=0A+#=0D=0A=
-+test_system_ram_transitions()=0D=0A+{=0D=0A+=09printf "\n=3D=3D=3D Testi=
-ng system-ram transitions with famfs =3D=3D=3D\n"=0D=0A+=0D=0A+=09# Ensur=
-e we start in devdax mode=0D=0A+=09ensure_devdax_mode=0D=0A+=09[[ $(daxct=
-l_get_mode "$daxdev") =3D=3D "devdax" ]]=0D=0A+=0D=0A+=09# Test: devdax -=
-> system-ram=0D=0A+=09printf "Testing devdax -> system-ram... "=0D=0A+=09=
-"$DAXCTL" reconfigure-device -N -m system-ram "$daxdev"=0D=0A+=09[[ $(dax=
-ctl_get_mode "$daxdev") =3D=3D "system-ram" ]]=0D=0A+=09printf "OK\n"=0D=0A=
-+=0D=0A+=09# Test: system-ram -> famfs should fail=0D=0A+=09printf "Testi=
-ng system-ram -> famfs (should fail)... "=0D=0A+=09if "$DAXCTL" reconfigu=
-re-device -m famfs "$daxdev" 2>/dev/null; then=0D=0A+=09=09printf "FAILED=
- - should have been rejected\n"=0D=0A+=09=09return 1=0D=0A+=09fi=0D=0A+=09=
-printf "OK (correctly rejected)\n"=0D=0A+=0D=0A+=09# Test: system-ram -> =
-devdax -> famfs (proper path)=0D=0A+=09printf "Testing system-ram -> devd=
-ax -> famfs... "=0D=0A+=09"$DAXCTL" reconfigure-device -f -m devdax "$dax=
-dev"=0D=0A+=09[[ $(daxctl_get_mode "$daxdev") =3D=3D "devdax" ]]=0D=0A+=09=
-"$DAXCTL" reconfigure-device -m famfs "$daxdev"=0D=0A+=09[[ $(daxctl_get_=
-mode "$daxdev") =3D=3D "famfs" ]]=0D=0A+=09printf "OK\n"=0D=0A+=0D=0A+=09=
-# Restore to devdax for subsequent tests=0D=0A+=09"$DAXCTL" reconfigure-d=
-evice -m devdax "$daxdev"=0D=0A+}=0D=0A+=0D=0A+#=0D=0A+# Test JSON output=
- shows correct mode=0D=0A+#=0D=0A+test_json_output()=0D=0A+{=0D=0A+=09pri=
-ntf "\n=3D=3D=3D Testing JSON output for mode field =3D=3D=3D\n"=0D=0A+=0D=
-=0A+=09# Test devdax mode in JSON=0D=0A+=09ensure_devdax_mode=0D=0A+=09pr=
-intf "Testing JSON output for devdax mode... "=0D=0A+=09mode=3D$("$DAXCTL=
-" list -d "$daxdev" | jq -er '.[].mode')=0D=0A+=09[[ "$mode" =3D=3D "devd=
-ax" ]]=0D=0A+=09printf "OK\n"=0D=0A+=0D=0A+=09# Test famfs mode in JSON=0D=
-=0A+=09"$DAXCTL" reconfigure-device -m famfs "$daxdev"=0D=0A+=09printf "T=
-esting JSON output for famfs mode... "=0D=0A+=09mode=3D$("$DAXCTL" list -=
-d "$daxdev" | jq -er '.[].mode')=0D=0A+=09[[ "$mode" =3D=3D "famfs" ]]=0D=
-=0A+=09printf "OK\n"=0D=0A+=0D=0A+=09# Restore to devdax=0D=0A+=09"$DAXCT=
-L" reconfigure-device -m devdax "$daxdev"=0D=0A+}=0D=0A+=0D=0A+#=0D=0A+# =
-Test error messages for invalid transitions=0D=0A+#=0D=0A+test_error_hand=
-ling()=0D=0A+{=0D=0A+=09printf "\n=3D=3D=3D Testing error handling =3D=3D=
-=3D\n"=0D=0A+=0D=0A+=09# Ensure we're in famfs mode=0D=0A+=09"$DAXCTL" re=
-configure-device -m famfs "$daxdev"=0D=0A+=0D=0A+=09# Test that invalid m=
-ode is rejected=0D=0A+=09printf "Testing invalid mode rejection... "=0D=0A=
-+=09if "$DAXCTL" reconfigure-device -m invalidmode "$daxdev" 2>/dev/null;=
- then=0D=0A+=09=09printf "FAILED - invalid mode should be rejected\n"=0D=0A=
-+=09=09return 1=0D=0A+=09fi=0D=0A+=09printf "OK (correctly rejected)\n"=0D=
-=0A+=0D=0A+=09# Restore to devdax=0D=0A+=09"$DAXCTL" reconfigure-device -=
-m devdax "$daxdev"=0D=0A+}=0D=0A+=0D=0A+#=0D=0A+# Main test sequence=0D=0A=
-+#=0D=0A+main()=0D=0A+{=0D=0A+=09check_fsdev_dax=0D=0A+=09find_daxdev=0D=0A=
-+=0D=0A+=09rc=3D1  # From here on, failures are real failures=0D=0A+=0D=0A=
-+=09test_famfs_mode_transitions=0D=0A+=09test_json_output=0D=0A+=09test_e=
-rror_handling=0D=0A+=0D=0A+=09# System-ram tests require kmem module=0D=0A=
-+=09if check_kmem; then=0D=0A+=09=09# Save and disable online policy for =
-system-ram tests=0D=0A+=09=09saved_policy=3D"$(cat /sys/devices/system/me=
-mory/auto_online_blocks)"=0D=0A+=09=09echo "offline" > /sys/devices/syste=
-m/memory/auto_online_blocks=0D=0A+=0D=0A+=09=09test_system_ram_transition=
-s=0D=0A+=0D=0A+=09=09# Restore online policy=0D=0A+=09=09echo "$saved_pol=
-icy" > /sys/devices/system/memory/auto_online_blocks=0D=0A+=09fi=0D=0A+=0D=
-=0A+=09# Restore original mode=0D=0A+=09printf "\nRestoring device to ori=
-ginal mode: %s\n" "$original_mode"=0D=0A+=09"$DAXCTL" reconfigure-device =
--f -m "$original_mode" "$daxdev"=0D=0A+=0D=0A+=09printf "\n=3D=3D=3D All =
-famfs tests passed =3D=3D=3D\n"=0D=0A+=0D=0A+=09exit 0=0D=0A+}=0D=0A+=0D=0A=
-+main=0D=0Adiff --git a/test/meson.build b/test/meson.build=0D=0Aindex 61=
-5376e..ad1d393 100644=0D=0A--- a/test/meson.build=0D=0A+++ b/test/meson.b=
-uild=0D=0A@@ -209,6 +209,7 @@ if get_option('destructive').enabled()=0D=0A=
-   device_dax_fio =3D find_program('device-dax-fio.sh')=0D=0A   daxctl_de=
-vices =3D find_program('daxctl-devices.sh')=0D=0A   daxctl_create =3D fin=
-d_program('daxctl-create.sh')=0D=0A+  daxctl_famfs =3D find_program('daxc=
-tl-famfs.sh')=0D=0A   dm =3D find_program('dm.sh')=0D=0A   mmap_test =3D =
-find_program('mmap.sh')=0D=0A=20=0D=0A@@ -226,6 +227,7 @@ if get_option('=
-destructive').enabled()=0D=0A     [ 'device-dax-fio.sh', device_dax_fio, =
-'dax'   ],=0D=0A     [ 'daxctl-devices.sh', daxctl_devices, 'dax'   ],=0D=
-=0A     [ 'daxctl-create.sh',  daxctl_create,  'dax'   ],=0D=0A+    [ 'da=
-xctl-famfs.sh',   daxctl_famfs,   'dax'   ],=0D=0A     [ 'dm.sh',        =
-     dm,=09=09   'dax'   ],=0D=0A     [ 'mmap.sh',           mmap_test,=09=
-   'dax'   ],=0D=0A   ]=0D=0A--=20=0D=0A2.49.0=0D=0A=0D=0A
+On Fri, 16 Jan 2026, Jeff Layton wrote:
+> On Thu, 2026-01-15 at 19:17 +0100, Amir Goldstein wrote:
+> > On Thu, Jan 15, 2026 at 6:48=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
+wrote:
+> > >=20
+> > > In recent years, a number of filesystems that can't present stable
+> > > filehandles have grown struct export_operations. They've mostly done
+> > > this for local use-cases (enabling open_by_handle_at() and the like).
+> > > Unfortunately, having export_operations is generally sufficient to make
+> > > a filesystem be considered exportable via nfsd, but that requires that
+> > > the server present stable filehandles.
+> >=20
+> > Where does the term "stable file handles" come from? and what does it mea=
+n?
+> > Why not "persistent handles", which is described in NFS and SMB specs?
+> >=20
+> > Not to mention that EXPORT_OP_PERSISTENT_HANDLES was Acked
+> > by both Christoph and Christian:
+> >=20
+> > https://lore.kernel.org/linux-fsdevel/20260115-rundgang-leihgabe-12018e93=
+c00c@brauner/
+> >=20
+> > Am I missing anything?
+> >=20
+>=20
+> This was Chuck's suggested name. His point was that STABLE means that
+> the FH's don't change during the lifetime of the file.
+>=20
+> I don't much care about the flag name, so if everyone likes PERSISTENT
+> better I'll roll with that.
+
+I don't like PERSISTENT.
+I'd rather call a spade a spade.
+
+  EXPORT_OP_SUPPORTS_NFS_EXPORT
+or
+  EXPORT_OP_NOT_NFS_COMPATIBLE
+
+The issue here is NFS export and indirection doesn't bring any benefits.
+
+NeilBrown
+
+
+>=20
+> Also, on the ovl patch: will fix...
+>=20
+> Thanks for the review!
+> --=20
+> Jeff Layton <jlayton@kernel.org>
+>=20
+
 
