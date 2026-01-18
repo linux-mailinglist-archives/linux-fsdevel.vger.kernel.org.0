@@ -1,68 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-74302-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74303-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF080D392D8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 06:01:15 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26752D392DD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 06:08:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 632BC3013C4B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 05:01:13 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 37F6A300C175
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 05:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A863126CA;
-	Sun, 18 Jan 2026 05:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58D8309EE2;
+	Sun, 18 Jan 2026 05:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEIbQJY+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D79GxkMa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DBB2EC095
-	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 05:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EB01A3179
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 05:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768712472; cv=none; b=D9lSGMiV77/nixhqEPu5PF5j+Xrb7CanT4QDwPfh9T6FsFUlMBk+zcqaILwLfS1pfEVv5wbHGlTFFzESLeq2HFVQoytwUd+Yluavf2gfopPjsVWpLsxGCJ31HcIn+mX4MrCBoX5vDUDQjNLEn5S5yqBjFk4EUQf0JOmhUlW/t5M=
+	t=1768712895; cv=none; b=rodsdtVpdB0cQefKx477uegcAJ+ihII+17xXH6zPNLC3ET6WJcUbwtETfrqbAX+nTKraJfnEfBqCGM79cQ5zXQMfn/cbO33NncZ4adWW+AZdhxaF6yqFfmBJlCj7520liiAsHpOdPxyRxsDJhTBaeSvWAWm/PB+q/5Ou/Z+a0n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768712472; c=relaxed/simple;
-	bh=Fj5bgVc/zFfWNfWOwNji7V9vGFB2kuEn4NabgB2F58A=;
+	s=arc-20240116; t=1768712895; c=relaxed/simple;
+	bh=5iVKe7Eiaa//hc1Ta/DqQI5780X23iLDV5kzAvGnMG8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nFfRRGLS5ZOhYpR8QpyaqAH3HqNdvr+5y26iLql0yMbn/Px4bPbZweXwuUdeBsy0Wx76B9gEAY4foGyRl5rXr1DUmIoJ1p0MR4Ynqh5r/f9BBQZi0J+va3A5Q/uemyCaWa6Dg8tYQ8/vgyRMsQ1G+sA2R78f8rKJFNQMGIhTNNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEIbQJY+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7C37C2BC87
-	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 05:01:11 +0000 (UTC)
+	 To:Cc:Content-Type; b=U7nFYcZoRCQE3fe3TOo5kbR2g6+GswizAHET0mLvKWt8+qzkv8JAjge8nawasFeot2vthvTVyZiEozD1RuAzZ8vkdscBeVsiummm23XzZnIcvRcNtIXnRvSx5RedlLZrPe/mlAYFMTUSFVpUcJEztGYkjuprTWQ2hkbpAsdRPZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D79GxkMa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F27AC2BCC7
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 05:08:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768712471;
-	bh=Fj5bgVc/zFfWNfWOwNji7V9vGFB2kuEn4NabgB2F58A=;
+	s=k20201202; t=1768712895;
+	bh=5iVKe7Eiaa//hc1Ta/DqQI5780X23iLDV5kzAvGnMG8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WEIbQJY+pVAyFPp4he7RaDMxgkoOJiE1kYbSvIGyTGFOToqu/rXRmJ1EGIwrWhlF9
-	 U6yzjSMTDdIIetLkYhfxnwjZow/FZy2Xy2qAE/mwgUf7QSNjzbmIJJ9019cnODmsZ5
-	 wnPOP2kylOKA8sSfRBFYhcKCV6x+zN7W4+Q/Z2UKoyDAKA8gK0KZZXmODBUDUyo1+6
-	 Q2VK7GmAXHNbQ7NuBN2ZMijFkZXOGfDqIu7iH2bX7gYK01lUf/k9bjMiD8QtbCt4bN
-	 mQ/K0LpJY3AO4I+fVuijkYsw1jmcmkpyshEPy+2VtrZ81mhhhC/G8ZcNiFKjioQEEK
-	 L7pnfNH7LL9PA==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64d30dc4ed7so6228291a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jan 2026 21:01:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUMsSBFaXkqRkthFnnv+slF6pL1BJK7z+vu0MRxzqngI/G+pv2dIjtjQwpe0qm75M6iM5TaW+Hgs3NmIRpn@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD6KegWm5YrQ2PRUziYmFa8Ldn4ja8AuU6LCBK8itIAa3Acj6m
-	mKfMXqUFihPjkTDMlLtXVDPYOeh8arBWWDltb7hH9enTZwGy0apgkGoWuK56T3+iqzdq0ZRac81
-	dtVCaKsaci5WJFsq2rt8NqGydHjpHtQM=
-X-Received: by 2002:a05:6402:40d1:b0:64d:540e:c68e with SMTP id
- 4fb4d7f45d1cf-65452bcc2bdmr5765061a12.26.1768712469866; Sat, 17 Jan 2026
- 21:01:09 -0800 (PST)
+	b=D79GxkMaw2BPRYGyXilGY0EI8Uqan+kEmXi6mBzfOd0DJgpBu+HFNWOujt0IifP5m
+	 Bf5TTx1V25iSHfyJkBuR6d8B4Y1+Y0/87LTaoMxCDh+rBb+0ove655CRSqp0+8/4Tx
+	 vAgN9XznhIarZ4EDcXN7hrmWc6DPM53uHwf8lFMIU0sdFIkGKD6WHMOgsP/NV18EUg
+	 MhuQ8DO1NFBvKJ6DrWN07x+kN9mSn0YgdtnXvTUEmxBrxNnZhZhnxRVnGswfDtOQgc
+	 BHepmn30a6PPC9LdsNod0GFwAeZB/6rd+VZJd69EOu/Nr3sKp6BMlFFwFIRPrXSz0v
+	 CN6xpdEoGrFSg==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64bea6c5819so5527830a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jan 2026 21:08:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWtunDZQ9VCV0o3QVfyCW9i+dNypHgx6RIIRUZyckV2FER+sL563Y+OCrDEPHbQ8J6PayUQRHZg/E3aIyvA@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEpsjW2ypRsRU+JQ6nOeJ1AQ9eByPqWbQzks2NlUnj6fgx7ULx
+	EW4rRxRnQ3ThQrJLo+HFFbkqZOT2EeX/u2/b4LH5I6LQSK5giozhZY2MGu9CVcZyM0zYYthZPAm
+	co3L3pGnpofz/5ljR4Er1Us90Y6c+BsE=
+X-Received: by 2002:a05:6402:3491:b0:64b:5562:c8f4 with SMTP id
+ 4fb4d7f45d1cf-654524cf27fmr5995270a12.7.1768712893417; Sat, 17 Jan 2026
+ 21:08:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260111140345.3866-1-linkinjeon@kernel.org> <20260111140345.3866-12-linkinjeon@kernel.org>
- <20260116092833.GB21396@lst.de>
-In-Reply-To: <20260116092833.GB21396@lst.de>
+References: <20260111140345.3866-1-linkinjeon@kernel.org> <20260111140345.3866-14-linkinjeon@kernel.org>
+ <20260116093025.GD21396@lst.de>
+In-Reply-To: <20260116093025.GD21396@lst.de>
 From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Sun, 18 Jan 2026 14:00:57 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9zzgaWzdi6uz+NtkdUSeKWzgbZxqnkLGoF4vDWHXtmog@mail.gmail.com>
-X-Gm-Features: AZwV_QjoK2kARk85rW1iBU9vVFXtTLNHbRhfMxsiHmg9jM4QYigq-bjygwcgegQ
-Message-ID: <CAKYAXd9zzgaWzdi6uz+NtkdUSeKWzgbZxqnkLGoF4vDWHXtmog@mail.gmail.com>
-Subject: Re: [PATCH v5 11/14] ntfs: update misc operations
+Date: Sun, 18 Jan 2026 14:08:01 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9dz_OBkMWcS5OtfU0BhEA1r4hMqtWJ_u+qWYK4Nwk+7Q@mail.gmail.com>
+X-Gm-Features: AZwV_QhR0Dh5XftH4dvyYGRoMNovBiXS539HuYjzoTW9RoKODynVu7zRm4qtNsM
+Message-ID: <CAKYAXd9dz_OBkMWcS5OtfU0BhEA1r4hMqtWJ_u+qWYK4Nwk+7Q@mail.gmail.com>
+Subject: Re: [PATCH v5 13/14] ntfs: add Kconfig and Makefile
 To: Christoph Hellwig <hch@lst.de>
 Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu, 
 	willy@infradead.org, jack@suse.cz, djwong@kernel.org, josef@toxicpanda.com, 
@@ -73,124 +73,40 @@ Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 16, 2026 at 6:28=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
+On Fri, Jan 16, 2026 at 6:30=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
 e:
 >
-> On Sun, Jan 11, 2026 at 11:03:41PM +0900, Namjae Jeon wrote:
-> > +     if ((data1_len !=3D data2_len) || (data1_len <=3D 0) || (data1_le=
-n & 3)) {
->
-> Nit: all the inner braces are superfluous.
->
-> Also why allow passing negative values at all and not pass unsigned
-> length values?
-Right, I will fix it.
->
-> > +             ntfs_error(vol->sb, "data1_len or data2_len not valid\n")=
-;
-> > +             return -1;
-> > +     }
+> > +config NTFS_FS_POSIX_ACL
+> > +     bool "NTFS POSIX Access Control Lists"
+> > +     depends on NTFS_FS
+> > +     select FS_POSIX_ACL
+> > +     help
+> > +       POSIX Access Control Lists (ACLs) support additional access rig=
+hts
+> > +       for users and groups beyond the standard owner/group/world sche=
+me,
+> > +       and this option selects support for ACLs specifically for ntfs
+> > +       filesystems.
+> > +       NOTE: this is linux only feature. Windows will ignore these ACL=
+s.
 > > +
-> > +     p1 =3D (const __le32 *)data1;
-> > +     p2 =3D (const __le32 *)data2;
-> > +     len =3D data1_len;
+> > +       If you don't know what Access Control Lists are, say N.
 >
-> I don't think any of these casts is needed.  Also the variables could
-> easily be initialized at declaration time.
-agreed. I will fix it.
+> This looks like a new feature over the old driver.  What is the
+> use case for it?
+The POSIX ACLs support is intended to ensure functional parity and ABI
+compatibility with the existing ntfs3 driver, which already supports
+this feature. Since this ntfs aims to be a replacement for ntfs3,
+providing the same mount options and permission model is essential for
+a seamless user transition. Furthermore, By enabling this feature, we
+can pass more xfstests test cases.
 >
-> > +     do {
-> > +             d1 =3D le32_to_cpup(p1);
-> > +             p1++;
-> > +             d2 =3D le32_to_cpup(p2);
-> > +             p2++;
-> > +     } while ((d1 =3D=3D d2) && ((len -=3D 4) > 0));
+> > @@ -0,0 +1,13 @@
+> > +# Makefile for the ntfs filesystem support.
+> > +#
 >
-> More superfluous races.
-Okay.
->
-> > +     if (d1 < d2)
-> > +             rc =3D -1;
-> >
-> > +     else {
-> > +             if (d1 =3D=3D d2)
-> > +                     rc =3D 0;
-> > +             else
-> > +                     rc =3D 1;
-> > +     }
-> > +     ntfs_debug("Done, returning %i.", rc);
-> > +     return rc;
->
-> Just return directly using cmp_int() and skip the very verbose debugging?
-Okay.
->
->         return cmp_int(d1, d2);
->
-> > +/**
-> > + * ntfs_collate_file_name - Which of two filenames should be listed fi=
-rst
-> > + */
-> > +static int ntfs_collate_file_name(struct ntfs_volume *vol,
-> > +             const void *data1, const int __always_unused data1_len,
-> > +             const void *data2, const int __always_unused data2_len)
->
-> Do we need these annotations for indirectly called callbacks now?
-Okay, I will remove them.
->
-> > +     if (cr !=3D COLLATION_BINARY && cr !=3D COLLATION_NTOFS_ULONG &&
-> > +         cr !=3D COLLATION_FILE_NAME && cr !=3D COLLATION_NTOFS_ULONGS=
-)
-> > +             return -EINVAL;
->
-> Turn this into a switch to make it more obvious?
-Okay.
->
-> > +
-> >       i =3D le32_to_cpu(cr);
-> > -     BUG_ON(i < 0);
-> > +     if (i < 0)
-> > +             return -1;
-> >       if (i <=3D 0x02)
-> >               return ntfs_do_collate0x0[i](vol, data1, data1_len,
-> >                               data2, data2_len);
-> > -     BUG_ON(i < 0x10);
-> > +     if (i < 0x10)
-> > +             return -1;
-> >       i -=3D 0x10;
-> >       if (likely(i <=3D 3))
-> >               return ntfs_do_collate0x1[i](vol, data1, data1_len,
-> >                               data2, data2_len);
-> > -     BUG();
->
-> .. and then maybe use the switch to untangle this as well, which
-> smells like just a bit too much deep magic..
-Okay, I will do that.
->
-> > -void __ntfs_error(const char *function, const struct super_block *sb,
-> > +void __ntfs_error(const char *function, struct super_block *sb,
->
-> Why does this drop the const?
-The const was dropped because __ntfs_error() calls
-ntfs_handle_error(), which can modify sb->s_flags.
->
-> > +#ifndef DEBUG
-> > +     if (sb)
-> > +             pr_err_ratelimited("(device %s): %s(): %pV\n",
-> > +                    sb->s_id, flen ? function : "", &vaf);
-> > +     else
-> > +             pr_err_ratelimited("%s(): %pV\n", flen ? function : "", &=
-vaf);
-> > +#else
-> >       if (sb)
-> >               pr_err("(device %s): %s(): %pV\n",
-> >                      sb->s_id, flen ? function : "", &vaf);
-> >       else
-> >               pr_err("%s(): %pV\n", flen ? function : "", &vaf);
-> > +#endif
->
-> Usually if you have cpp conditions with an else, I'd use ifdef instead
-> of the negated version.
-Okay, I will fix it.
-Thanks for the review!
+> I'd drop this, it's pretty obvious :)
+Okay, I will drop it.
+Thanks!
 >
 
