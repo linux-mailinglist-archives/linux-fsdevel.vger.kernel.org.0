@@ -1,138 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-74305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229D9D392E4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 06:24:16 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17ED2D393AB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 10:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id F04CA3015AA1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 05:24:08 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 3B94E3004603
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Jan 2026 09:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9836329BDBF;
-	Sun, 18 Jan 2026 05:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQcUNGji"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D64285CA8;
+	Sun, 18 Jan 2026 09:51:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287081946C8
-	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 05:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FB01B142D
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 09:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768713847; cv=none; b=ndCX0vNuox5oYElqX1U0MTmUTOqUBWc19zDrddhNi4m8MQYs3bGidx/oArO39Csx16Rcz1vkwqY4kdquigYvyrVzvSiQgL0gDNLou3jUBpvSyTSldC6qPm8lypl9sd3lRzVzUgKZGxvPC3sVq3NUCqKwgjZsEU6suUViGoGa0V0=
+	t=1768729872; cv=none; b=Xm2lQ1Xro1gxdh9i/IBV/r+hw4/owRAKzwWK85LT+u9aGh7/eltvN5llo1T446IqLcNqIomgyZmzSoKEn6MYdx87LFV9crwXWPtDBWpTmWxcCHvPc26UHOOPGDpl66UPQaF6mFrVzxkWqGOIAgoshkcsGxt/yDlj85eUxah2mRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768713847; c=relaxed/simple;
-	bh=9fl3e2YCpxlLE25trOysHuVIKtI8wyRz96+uGmaG4CE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q4DtzRnA/Ias8eKXEO1gPKZ47NmAV5TYm9kjQW+7GtnST2Zq6YcUTKzxl5Ekcab5GF57YrDpOQB+Kwtf69B7dy33LnnwlLAmwR4qajw94fidSfZPQC9EDIW7/6QvP3/FRiGn+wArGmHUcObMN2BPWPriQMy/1jOvq4LVkzpvctU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQcUNGji; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0E62C4AF09
-	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Jan 2026 05:24:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768713846;
-	bh=9fl3e2YCpxlLE25trOysHuVIKtI8wyRz96+uGmaG4CE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RQcUNGjiVcVFwuhPjXYeoNRYMDIb+bHoySgwmPLztw21icOVyHQpupVJnDL2S1kry
-	 1gGPys4+/XXA/zEDfNTSvVpTqHa6sXoQ4mzobJj2AeR2q9FFH9whcZskvW3iDcEznX
-	 OV7lediiZUmsF1lXAUqN9vkG2nwJsAJAXi7d2nZNGl4Kt8r+SN2OXaEysaBzC4AQew
-	 97pkOU3xYbPt2of5+zy+b7Eck2ltEp/Q0kepePqdr2eCtYTLyBxO+AbNCiRWti+QcT
-	 wOkCSp+INvW7srQA6JGo02lOl9tX3tIDTjHXk1yOSa19O+TQJPcLRm/JnjXB5KMG+4
-	 A9mM5SD07JV/w==
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b876798b97eso530531266b.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Jan 2026 21:24:06 -0800 (PST)
-X-Gm-Message-State: AOJu0YwpjJOqBcQUvWcZFiKxsVbB7W52RGiae+H0j2avf6G6HW4ureB2
-	ygC89uFlU5sNbx+GzRfTvpKf1+cBs2wqgpfcH1sNxZYHUNdHraAqWc5rtJTvkiEtpkYIXvg41I2
-	LMWBj58/AUX0e0oC7A9i98+9luMZfc2w=
-X-Received: by 2002:a17:907:7b9a:b0:b87:695f:d2a8 with SMTP id
- a640c23a62f3a-b879324b8c8mr672476466b.55.1768713845353; Sat, 17 Jan 2026
- 21:24:05 -0800 (PST)
+	s=arc-20240116; t=1768729872; c=relaxed/simple;
+	bh=L/6KQihQANacl58vwtA9Y+sUswN+ka/wML027AO+aAg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=W69fr8I1V5Z9LEHrQGaLKkicIGXotG2NFOEELJQWCN+GtxaGCEaaoytwlXGfFyNQcGc9dodg2/w3rg53zec+Rm2hHCFR08+pY4gjjp0c8tBTFc7rdcx6iaKvdfCv4zCPtjjR4xEvNbDGeWKJFwQHQePGsLjXI5pBP065Xvj2aL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 60I9oShH012454;
+	Sun, 18 Jan 2026 18:50:28 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 60I9oRYx012450
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 18 Jan 2026 18:50:27 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <6d2ed161-b302-4475-b32c-2feca1f84026@I-love.SAKURA.ne.jp>
+Date: Sun, 18 Jan 2026 18:50:25 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260114121250.615064-1-chizhiling@163.com>
-In-Reply-To: <20260114121250.615064-1-chizhiling@163.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Sun, 18 Jan 2026 14:23:52 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-ri1KJ_kmPLJWeCh5A0Sf0OLKtmbvq5EEFJ=2=e51c6g@mail.gmail.com>
-X-Gm-Features: AZwV_QjwPoDh3Pax5z2mIWYADlgJKtXzOcGrldWhc-GN1xyxg8nvi3W5zbZECUA
-Message-ID: <CAKYAXd-ri1KJ_kmPLJWeCh5A0Sf0OLKtmbvq5EEFJ=2=e51c6g@mail.gmail.com>
-Subject: Re: [PATCH v3 00/13] Enable multi-cluster fetching for exfat_get_block.
-To: Chi Zhiling <chizhiling@163.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
-	Chi Zhiling <chizhiling@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH (REPOST)] hpfs: make check=none mount option excludable
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Mikulas Patocka <mikulas@twibright.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: syzkaller <syzkaller@googlegroups.com>,
+        Viacheslav Sablin <sjava1902@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Aleksandr Nogikh <nogikh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>,
+        Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk,
+        Deepanshu Kartikey <kartikey406@gmail.com>
+References: <51bdd056-61dd-4b57-8780-324b2f8bc99f@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <51bdd056-61dd-4b57-8780-324b2f8bc99f@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav305.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Wed, Jan 14, 2026 at 9:13=E2=80=AFPM Chi Zhiling <chizhiling@163.com> wr=
-ote:
->
-> From: Chi Zhiling <chizhiling@kylinos.cn>
->
-> This patch series significantly improves exFAT read performance
-> by adding multi-cluster mapping support.
-> The changes reduce get_block calls during sequential reads,
-> particularly benefiting small cluster sizes.
->
-> - Extends exfat_get_cluster() and exfat_map_cluster() to handle multiple =
-contiguous clusters
-> - Adds buffer head caching for FAT table reads
->
-> Performance results show ~10% improvement for 512-byte clusters (454->511=
- MB/s)
-> and reduced get_block overhead from 10.8% to 0.02% for NO_FAT_CHAIN files=
-.
->
-> All criticism and suggestions are welcome :)
-Applied them to #dev with Yuezhang reviewed-by tag.
-Thanks!
->
->
-> Changes in v3:
-> - fix overflow in exfat_get_block, only patch 10 and 13 changed
-> - add review tag for all patches except patch 10 and 13
->
-> Changes in v2:
-> - Cache the last dis-continuous cluster
-> - Continue collect clusters after cache hit
-> - Some cleanup.
->
-> V2:
-> https://lore.kernel.org/linux-fsdevel/20260108074929.356683-1-chizhiling@=
-163.com/T/#u
-> V1:
-> https://lore.kernel.org/linux-fsdevel/20251226094440.455563-1-chizhiling@=
-163.com/T/#u
-> rfc:
-> https://lore.kernel.org/linux-fsdevel/20251118082208.1034186-1-chizhiling=
-@163.com/T/#u
->
-> Chi Zhiling (13):
->   exfat: add cache option for __exfat_ent_get
->   exfat: support reuse buffer head for exfat_ent_get
->   exfat: improve exfat_count_num_clusters
->   exfat: improve exfat_find_last_cluster
->   exfat: remove the check for infinite cluster chain loop
->   exfat: remove the unreachable warning for cache miss cases
->   exfat: reduce the number of parameters for exfat_get_cluster()
->   exfat: reuse cache to improve exfat_get_cluster
->   exfat: remove handling of non-file types in exfat_map_cluster
->   exfat: support multi-cluster for exfat_map_cluster
->   exfat: tweak cluster cache to support zero offset
->   exfat: return the start of next cache in exfat_cache_lookup
->   exfat: support multi-cluster for exfat_get_cluster
->
->  fs/exfat/cache.c    | 149 ++++++++++++++++++++++++++++----------------
->  fs/exfat/exfat_fs.h |   7 +--
->  fs/exfat/fatent.c   |  61 +++++++++++-------
->  fs/exfat/inode.c    |  52 ++++++----------
->  4 files changed, 157 insertions(+), 112 deletions(-)
->
-> --
-> 2.43.0
->
+Mikulas, are you there?
+
+A patch was posted to https://lkml.kernel.org/r/20260117054014.1252933-1-kartikey406@gmail.com
+for a bug report which Mikulas would not accept as a valid bug because of "check=none".
+
+If Mikulas keeps silence, maybe we should out-out hpfs from fuzz testing...
+
+On 2026/01/13 19:08, Tetsuo Handa wrote:
+> syzbot is reporting use-after-free read problem when a crafted HPFS image
+> was mounted with "check=none" option.
+> 
+> The "check=none" option is intended for only users who want maximum speed
+> and use the filesystem only on trusted input. But fuzzers are for using
+> the filesystem on untrusted input.
+> 
+> Mikulas Patocka (the HPFS maintainer) thinks that there is no need to add
+> some middle ground where "check=none" would check some structures and won't
+> check others. Therefore, to make sure that fuzzers and careful users do not
+> by error specify "check=none" at runtime, make "check=none" being
+> excludable at build time.
+> 
+> Reported-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
+> Link: https://lkml.kernel.org/r/9ca81125-1c7b-ddaf-09ea-638bc5712632@redhat.com
+> Tested-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> ---
+> Mikulas wants fuzz testing systems not to specify "check=none" option. But it is
+> too difficult to enforce that. It is possible that an unexpected input hides
+> "hpfs: You really don't want any checks? You are crazy..." message due to changing
+> loglevel, and after that the kernel may hit this problem (i.e. we will be needlessly
+> bothered by stupid inputs).
+> 
+> Honestly speaking, the code that runs in the kernel space needs to be as careful as
+> possible, for any memory access error in the kernel space can result in serious result.
+> We are fixing various input validations for all (but HPFS) filesystems. It is strange
+> that HPFS is exempted from this rule. I expect that "check=none" behavior (if someone
+> wants such behavior) should be emulated in the user space using FUSE filesystem.
+> 
+>  fs/hpfs/Kconfig | 11 +++++++++++
+>  fs/hpfs/super.c |  2 ++
+>  2 files changed, 13 insertions(+)
+> 
+> diff --git a/fs/hpfs/Kconfig b/fs/hpfs/Kconfig
+> index ac1e9318e65a..d3dfbe76be8a 100644
+> --- a/fs/hpfs/Kconfig
+> +++ b/fs/hpfs/Kconfig
+> @@ -15,3 +15,14 @@ config HPFS_FS
+>  
+>  	  To compile this file system support as a module, choose M here: the
+>  	  module will be called hpfs.  If unsure, say N.
+> +
+> +config HPFS_FS_ALLOW_NO_ERROR_CHECK_MODE
+> +	bool "Allow no-error-check mode for maximum speed"
+> +	depends on HPFS_FS
+> +	default n
+> +	help
+> +	  This option enables check=none mount option. If check=none is
+> +	  specified, users can expect maximum speed at the cost of minimum
+> +	  robustness. Sane users should not specify check=none option, for e.g.
+> +	  use-after-free bug will happen when the filesystem is corrupted or
+> +	  crafted.
+> diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
+> index 8ab85e7ac91e..656b1ae01812 100644
+> --- a/fs/hpfs/super.c
+> +++ b/fs/hpfs/super.c
+> @@ -285,7 +285,9 @@ static const struct constant_table hpfs_param_case[] = {
+>  };
+>  
+>  static const struct constant_table hpfs_param_check[] = {
+> +#ifdef CONFIG_HPFS_FS_ALLOW_NO_ERROR_CHECK_MODE
+>  	{"none",	0},
+> +#endif
+>  	{"normal",	1},
+>  	{"strict",	2},
+>  	{}
+
 
