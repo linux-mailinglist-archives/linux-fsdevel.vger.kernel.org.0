@@ -1,396 +1,682 @@
-Return-Path: <linux-fsdevel+bounces-74455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9C5D3AE47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 16:06:04 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A388D3AF5B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 16:42:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id AF7183014109
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 15:06:03 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D665B30069B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 15:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF8C37F75B;
-	Mon, 19 Jan 2026 15:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uogEW8WC"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6CC38B9A9;
+	Mon, 19 Jan 2026 15:42:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E9933ADA9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 15:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E243387592;
+	Mon, 19 Jan 2026 15:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768835162; cv=none; b=UOdcf7CqaTZN1K/lcY4oNWeVX3rPZT9Ht7NPcVy3UROzz8/Il2F3AHy70dF5Wd+zt1Q1k9tf5yFuGG30U7B1RfeR6Lw+afz1iFKbOZ0TYerVC1eprtPfBDfC6aG8DHJe3biriaNfxOVyBtaXSLRfHYWFKPzx39OSHD2ykVMf0R4=
+	t=1768837335; cv=none; b=LCwDipF3plSTOfvjI3S8Q044HYcobRtF20v2NxziUUahgjeGhQJc95zkQeo5W2ZUbbnKWuZKWIui74RXyKgbwWSN4zHykJ1rPJseAvJ6soX2oFAvG5cchgEkvloyMCxrYMuHvI3mLAizGhceQjicai1KqB44vtj2/LZxy9n1WVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768835162; c=relaxed/simple;
-	bh=9NQk9lAnoRHOBBSAFGnCRhmPDghxSbXrhpJ1lfM6z+4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gnzao0nKn2IDMIDV64dazCpn/TVCUvfnkPj/a37IYNnO+0+okPdndWQAAm0e7cpV5X6SvXtLj8rOqMet3IdmF37GlvWev/pdFC7G1L6OdXi6SZPhp6u4uUd6SSP9i8HxG2piSQSvF/x1X5CXuY4KgZGH0eZSW9CHvadObiG+M2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uogEW8WC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DE87C116C6;
-	Mon, 19 Jan 2026 15:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768835161;
-	bh=9NQk9lAnoRHOBBSAFGnCRhmPDghxSbXrhpJ1lfM6z+4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=uogEW8WCrRuY2Tuywemy1wY/TxFNs7ZVf51vTKUvibAwfCDe+JjJ9V4gGlQdyzi4Y
-	 RFWYfHgu6aH5W11bNSjfFlL+uVNr6gSEmLbpzJ3zBYFUilMBlj2cX9C177pM+ran03
-	 hlYZ0plVlCPyL9mxjfvieCSe8kx4SJgC0hvXUEEUhVtBZgBfmPAJ1BzdJywZ2I4Prb
-	 3MQx7ALJQ84lAIdscNgZGvisJC+mK+YwtYjlgDkn7/1wHGbN+8hvxFtqVrAtqrN3Co
-	 STP9nlWEBf8wZyFjI/uEioKHC9VzihkshI5+urvMIu9jY+HnyKGn2gii9+oHzWCL9o
-	 uaJMR3Gp3s7Tw==
-From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 19 Jan 2026 16:05:54 +0100
-Subject: [PATCH RFC] pidfs: convert rb-tree to rhashtable
+	s=arc-20240116; t=1768837335; c=relaxed/simple;
+	bh=rHUwju3EVVuTrbdwnOZcGrYbt0EwYz4eqDAPlcqEke0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cH9HR2knbQrBabrMAgemG2TjKwOv24TiyT3l96ii2LLxoyGbbiqg37D/Uj6ohOpZByjADxC009AONNS8bs6jr+uy8pn77POSd7P229xMD+DlDZJmFQcXM6bnXVaArL96mb1SuNZQYtYKPWXHET4/GcDIwv9uJskST/3ag21q81I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBD81497;
+	Mon, 19 Jan 2026 07:42:05 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 583533F694;
+	Mon, 19 Jan 2026 07:42:10 -0800 (PST)
+Date: Mon, 19 Jan 2026 15:42:03 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Elif Topuz <elif.topuz@arm.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	sudeep.holla@arm.com, james.quinlan@broadcom.com,
+	f.fainelli@gmail.com, vincent.guittot@linaro.org,
+	etienne.carriere@st.com, peng.fan@oss.nxp.com, michal.simek@amd.com,
+	dan.carpenter@linaro.org, d-gole@ti.com,
+	jonathan.cameron@huawei.com, lukasz.luba@arm.com,
+	philip.radford@arm.com, souvik.chakravarty@arm.com
+Subject: Re: [PATCH v2 12/17] firmware: arm_scmi: Add Telemetry components
+ view
+Message-ID: <aW5Qy22usmoxVfBE@pluto>
+References: <20260114114638.2290765-1-cristian.marussi@arm.com>
+ <20260114114638.2290765-13-cristian.marussi@arm.com>
+ <c720119f-0991-4112-a080-829a7b2de908@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260119-work-pidfs-rhashtable-v1-1-159c7700300a@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAFFIbmkC/x2MywrCMBAAf6Xs2S1JEUO9Cn6AV/GQx9YsrWnZF
- RVK/93ocQZmVlASJoVjs4LQi5XnUsHuGojZlzshp8rQme5grO3xPcuIC6dBUbLX/PRhIuyT3Rt
- nQ3LOQ20XoYE//+8VLucT3KoMXgmD+BLzbzmSFJrQtaZ9sEbYti8hoVGvjgAAAA==
-X-Change-ID: 20260119-work-pidfs-rhashtable-9d14071bd77a
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10017; i=brauner@kernel.org;
- h=from:subject:message-id; bh=9NQk9lAnoRHOBBSAFGnCRhmPDghxSbXrhpJ1lfM6z+4=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTmeYQr5Rne4jFmiy4+uOhRkevN8kUvt3aYum1/8Mfj7
- WHlzaVeHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPxPcPwz/7w28v70rWXffHi
- bkzdsWLv6dgbETlaLNNWK2fPdnnSn83wP3Wibdvuz88U7WVD9n53X+LFbcm6oPTHC6+tS4SY9PY
- 0sAEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c720119f-0991-4112-a080-829a7b2de908@arm.com>
 
-Convert the pidfs inode-to-pid mapping from an rb-tree with seqcount
-protection to an rhashtable. This removes the global pidmap_lock
-contention from pidfs_ino_get_pid() lookups and allows the hashtable
-insert to happen outside the pidmap_lock.
+On Fri, Jan 16, 2026 at 01:35:00PM +0000, Elif Topuz wrote:
+> 
+> Hi Cristian,
 
-pidfs_add_pid() is split. pidfs_prepare_pid() allocates inode number and
-initializes pid fields and is called inside pidmap_lock. pidfs_add_pid()
-inserts pid into rhashtable and is called outside pidmap_lock. Insertion
-into the rhashtable can fail and memory allocation may happen so we need
-to drop the spinlock.
+H Elif,
 
-The hashtable removal is deferred to the RCU callback to ensure safe
-concurrent lookups. To guard against accidently opening an already
-reaped task pidfs_ino_get_pid() uses additional checks beyond pid_vnr().
-If pid->attr is PIDFS_PID_DEAD or NULL the pid either never had a pidfd
-or it already went through pidfs_exit() aka the process as already
-reaped. If pid->attr is valid check PIDFS_ATTR_BIT_EXIT to figure out
-whether the task has exited. Switch to refcount_inc_not_zero() to ensure
-that the pid isn't about to be freed.
+> 
+> On 14/01/2026 11:46, Cristian Marussi wrote:
+> > Add an alternative filesystem view for the discovered Data Events, where
+> > the tree of DEs is laid out following the discovered topological order
+> > instead of the existing flat layout.
+> > 
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > ---
+> > v1 --> v2
+> >  - Use new FS API
+> >  - Introduce new stlmfs_lookup_by_name helper
+> > ---
+> >  .../firmware/arm_scmi/scmi_system_telemetry.c | 684 ++++++++++++++++++
+> >  1 file changed, 684 insertions(+)
+> > 
+> > diff --git a/drivers/firmware/arm_scmi/scmi_system_telemetry.c b/drivers/firmware/arm_scmi/scmi_system_telemetry.c
+> > index 721de615bec3..1221520356fd 100644
+> > --- a/drivers/firmware/arm_scmi/scmi_system_telemetry.c
+> > +++ b/drivers/firmware/arm_scmi/scmi_system_telemetry.c
+> > @@ -174,6 +174,7 @@ struct scmi_tlm_inode {
+> >   * @top_dentry: A reference to the top dentry for this instance.
+> >   * @des_dentry: A reference to the DES dentry for this instance.
+> >   * @grps_dentry: A reference to the groups dentry for this instance.
+> > + * @compo_dentry: A reference to the components dentry for this instance.
+> >   * @info: A handy reference to this instance SCMI Telemetry info data.
+> >   *
+> >   */
+> > @@ -188,6 +189,7 @@ struct scmi_tlm_instance {
+> >  	struct dentry *top_dentry;
+> >  	struct dentry *des_dentry;
+> >  	struct dentry *grps_dentry;
+> > +	struct dentry *compo_dentry;
+> >  	const struct scmi_telemetry_info *info;
+> >  };
+> >  
+> > @@ -196,6 +198,526 @@ static int scmi_telemetry_instance_register(struct super_block *sb,
+> >  
+> >  static LIST_HEAD(scmi_telemetry_instances);
+> >  
+> > +#define TYPES_ARRAY_SZ		256
+> > +
+> > +static const char *compo_types[TYPES_ARRAY_SZ] = {
+> > +	"unspec",
+> > +	"cpu",
+> > +	"cluster",
+> > +	"gpu",
+> > +	"npu",
+> > +	"interconnnect",
+> > +	"mem_cntrl",
+> > +	"l1_cache",
+> > +	"l2_cache",
+> > +	"l3_cache",
+> > +	"ll_cache",
+> > +	"sys_cache",
+> > +	"disp_cntrl",
+> > +	"ipu",
+> > +	"chiplet",
+> > +	"package",
+> > +	"soc",
+> > +	"system",
+> > +	"smcu",
+> > +	"accel",
+> > +	"battery",
+> > +	"charger",
+> > +	"pmic",
+> > +	"board",
+> > +	"memory",
+> > +	"periph",
+> > +	"periph_subc",
+> > +	"lid",
+> > +	"display",
+> > +	"res_29",
+> > +	"res_30",
+> > +	"res_31",
+> > +	"res_32",
+> > +	"res_33",
+> > +	"res_34",
+> > +	"res_35",
+> > +	"res_36",
+> > +	"res_37",
+> > +	"res_38",
+> > +	"res_39",
+> > +	"res_40",
+> > +	"res_41",
+> > +	"res_42",
+> > +	"res_43",
+> > +	"res_44",
+> > +	"res_45",
+> > +	"res_46",
+> > +	"res_47",
+> > +	"res_48",
+> > +	"res_49",
+> > +	"res_50",
+> > +	"res_51",
+> > +	"res_52",
+> > +	"res_53",
+> > +	"res_54",
+> > +	"res_55",
+> > +	"res_56",
+> > +	"res_57",
+> > +	"res_58",
+> > +	"res_59",
+> > +	"res_60",
+> > +	"res_61",
+> > +	"res_62",
+> > +	"res_63",
+> > +	"res_64",
+> > +	"res_65",
+> > +	"res_66",
+> > +	"res_67",
+> > +	"res_68",
+> > +	"res_69",
+> > +	"res_70",
+> > +	"res_71",
+> > +	"res_72",
+> > +	"res_73",
+> > +	"res_74",
+> > +	"res_75",
+> > +	"res_76",
+> > +	"res_77",
+> > +	"res_78",
+> > +	"res_79",
+> > +	"res_80",
+> > +	"res_81",
+> > +	"res_82",
+> > +	"res_83",
+> > +	"res_84",
+> > +	"res_85",
+> > +	"res_86",
+> > +	"res_87",
+> > +	"res_88",
+> > +	"res_89",
+> > +	"res_90",
+> > +	"res_91",
+> > +	"res_92",
+> > +	"res_93",
+> > +	"res_94",
+> > +	"res_95",
+> > +	"res_96",
+> > +	"res_97",
+> > +	"res_98",
+> > +	"res_99",
+> > +	"res_100",
+> > +	"res_101",
+> > +	"res_102",
+> > +	"res_103",
+> > +	"res_104",
+> > +	"res_105",
+> > +	"res_106",
+> > +	"res_107",
+> > +	"res_108",
+> > +	"res_109",
+> > +	"res_110",
+> > +	"res_111",
+> > +	"res_112",
+> > +	"res_113",
+> > +	"res_114",
+> > +	"res_115",
+> > +	"res_116",
+> > +	"res_117",
+> > +	"res_118",
+> > +	"res_119",
+> > +	"res_120",
+> > +	"res_121",
+> > +	"res_122",
+> > +	"res_123",
+> > +	"res_124",
+> > +	"res_125",
+> > +	"res_126",
+> > +	"res_127",
+> > +	"res_128",
+> > +	"res_129",
+> > +	"res_130",
+> > +	"res_131",
+> > +	"res_132",
+> > +	"res_133",
+> > +	"res_134",
+> > +	"res_135",
+> > +	"res_136",
+> > +	"res_137",
+> > +	"res_138",
+> > +	"res_139",
+> > +	"res_140",
+> > +	"res_141",
+> > +	"res_142",
+> > +	"res_143",
+> > +	"res_144",
+> > +	"res_145",
+> > +	"res_146",
+> > +	"res_147",
+> > +	"res_148",
+> > +	"res_149",
+> > +	"res_150",
+> > +	"res_151",
+> > +	"res_152",
+> > +	"res_153",
+> > +	"res_154",
+> > +	"res_155",
+> > +	"res_156",
+> > +	"res_157",
+> > +	"res_158",
+> > +	"res_159",
+> > +	"res_160",
+> > +	"res_161",
+> > +	"res_162",
+> > +	"res_163",
+> > +	"res_164",
+> > +	"res_165",
+> > +	"res_166",
+> > +	"res_167",
+> > +	"res_168",
+> > +	"res_169",
+> > +	"res_170",
+> > +	"res_171",
+> > +	"res_172",
+> > +	"res_173",
+> > +	"res_174",
+> > +	"res_175",
+> > +	"res_176",
+> > +	"res_177",
+> > +	"res_178",
+> > +	"res_179",
+> > +	"res_180",
+> > +	"res_181",
+> > +	"res_182",
+> > +	"res_183",
+> > +	"res_184",
+> > +	"res_185",
+> > +	"res_186",
+> > +	"res_187",
+> > +	"res_188",
+> > +	"res_189",
+> > +	"res_190",
+> > +	"res_191",
+> > +	"res_192",
+> > +	"res_193",
+> > +	"res_194",
+> > +	"res_195",
+> > +	"res_196",
+> > +	"res_197",
+> > +	"res_198",
+> > +	"res_199",
+> > +	"res_200",
+> > +	"res_201",
+> > +	"res_202",
+> > +	"res_203",
+> > +	"res_204",
+> > +	"res_205",
+> > +	"res_206",
+> > +	"res_207",
+> > +	"res_208",
+> > +	"res_209",
+> > +	"res_210",
+> > +	"res_211",
+> > +	"res_212",
+> > +	"res_213",
+> > +	"res_214",
+> > +	"res_215",
+> > +	"res_216",
+> > +	"res_217",
+> > +	"res_218",
+> > +	"res_219",
+> > +	"res_220",
+> > +	"res_221",
+> > +	"res_222",
+> > +	"res_223",
+> > +	"oem_224",
+> > +	"oem_225",
+> > +	"oem_226",
+> > +	"oem_227",
+> > +	"oem_228",
+> > +	"oem_229",
+> > +	"oem_230",
+> > +	"oem_231",
+> > +	"oem_232",
+> > +	"oem_233",
+> > +	"oem_234",
+> > +	"oem_235",
+> > +	"oem_236",
+> > +	"oem_237",
+> > +	"oem_238",
+> > +	"oem_239",
+> > +	"oem_240",
+> > +	"oem_241",
+> > +	"oem_242",
+> > +	"oem_243",
+> > +	"oem_244",
+> > +	"oem_245",
+> > +	"oem_246",
+> > +	"oem_247",
+> > +	"oem_248",
+> > +	"oem_249",
+> > +	"oem_250",
+> > +	"oem_251",
+> > +	"oem_252",
+> > +	"oem_253",
+> > +	"oem_254",
+> > +	"oem_255",
+> > +};
+> > +
+> > +static const char *unit_types[TYPES_ARRAY_SZ] = {
+> > +	"none",
+> > +	"unspec",
+> > +	"celsius",
+> > +	"fahrenheit",
+> > +	"kelvin",
+> > +	"volts",
+> > +	"amps",
+> > +	"watts",
+> > +	"joules",
+> > +	"coulombs",
+> > +	"va",
+> > +	"nits",
+> > +	"lumens",
+> > +	"lux",
+> > +	"candelas",
+> > +	"kpa",
+> > +	"psi",
+> > +	"newtons",
+> > +	"cfm",
+> > +	"rpm",
+> > +	"hertz",
+> > +	"seconds",
+> > +	"minutes",
+> > +	"hours",
+> > +	"days",
+> > +	"weeks",
+> > +	"mils",
+> > +	"inches",
+> > +	"feet",
+> > +	"cubic_inches",
+> > +	"cubic_feet",
+> > +	"meters",
+> > +	"cubic_centimeters",
+> > +	"cubic_meters",
+> > +	"liters",
+> > +	"fluid_ounces",
+> > +	"radians",
+> > +	"steradians",
+> > +	"revolutions",
+> > +	"cycles",
+> > +	"gravities",
+> > +	"ounces",
+> > +	"pounds",
+> > +	"foot_pounds",
+> > +	"ounce_inches",
+> > +	"gauss",
+> > +	"gilberts",
+> > +	"henries",
+> > +	"farads",
+> > +	"ohms",
+> > +	"siemens",
+> > +	"moles",
+> > +	"becquerels",
+> > +	"ppm",
+> > +	"decibels",
+> > +	"dba",
+> > +	"dbc",
+> > +	"grays",
+> > +	"sieverts",
+> > +	"color_temp_kelvin",
+> > +	"bits",
+> > +	"bytes",
+> > +	"words",
+> > +	"dwords",
+> > +	"qwords",
+> > +	"percentage",
+> > +	"pascals",
+> > +	"counts",
+> > +	"grams",
+> > +	"newton_meters",
+> > +	"hits",
+> > +	"misses",
+> > +	"retries",
+> > +	"overruns",
+> > +	"underruns",
+> > +	"collisions",
+> > +	"packets",
+> > +	"messages",
+> > +	"chars",
+> > +	"errors",
+> > +	"corrected_err",
+> > +	"uncorrectable_err",
+> > +	"square_mils",
+> > +	"square_inches",
+> > +	"square_feet",
+> > +	"square_centimeters",
+> > +	"square_meters",
+> > +	"radians_per_secs",
+> > +	"beats_per_minute",
+> > +	"meters_per_secs_squared",
+> > +	"meters_per_secs",
+> > +	"cubic_meter_per_secs",
+> > +	"millimeters_mercury",
+> > +	"radians_per_secs_squared",
+> > +	"state",
+> > +	"bps",
+> > +	"res_96",
+> > +	"res_97",
+> > +	"res_98",
+> > +	"res_99",
+> > +	"res_100",
+> > +	"res_101",
+> > +	"res_102",
+> > +	"res_103",
+> > +	"res_104",
+> > +	"res_105",
+> > +	"res_106",
+> > +	"res_107",
+> > +	"res_108",
+> > +	"res_109",
+> > +	"res_110",
+> > +	"res_111",
+> > +	"res_112",
+> > +	"res_113",
+> > +	"res_114",
+> > +	"res_115",
+> > +	"res_116",
+> > +	"res_117",
+> > +	"res_118",
+> > +	"res_119",
+> > +	"res_120",
+> > +	"res_121",
+> > +	"res_122",
+> > +	"res_123",
+> > +	"res_124",
+> > +	"res_125",
+> > +	"res_126",
+> > +	"res_127",
+> > +	"res_128",
+> > +	"res_129",
+> > +	"res_130",
+> > +	"res_131",
+> > +	"res_132",
+> > +	"res_133",
+> > +	"res_134",
+> > +	"res_135",
+> > +	"res_136",
+> > +	"res_137",
+> > +	"res_138",
+> > +	"res_139",
+> > +	"res_140",
+> > +	"res_141",
+> > +	"res_142",
+> > +	"res_143",
+> > +	"res_144",
+> > +	"res_145",
+> > +	"res_146",
+> > +	"res_147",
+> > +	"res_148",
+> > +	"res_149",
+> > +	"res_150",
+> > +	"res_151",
+> > +	"res_152",
+> > +	"res_153",
+> > +	"res_154",
+> > +	"res_155",
+> > +	"res_156",
+> > +	"res_157",
+> > +	"res_158",
+> > +	"res_159",
+> > +	"res_160",
+> > +	"res_161",
+> > +	"res_162",
+> > +	"res_163",
+> > +	"res_164",
+> > +	"res_165",
+> > +	"res_166",
+> > +	"res_167",
+> > +	"res_168",
+> > +	"res_169",
+> > +	"res_170",
+> > +	"res_171",
+> > +	"res_172",
+> > +	"res_173",
+> > +	"res_174",
+> > +	"res_175",
+> > +	"res_176",
+> > +	"res_177",
+> > +	"res_178",
+> > +	"res_179",
+> > +	"res_180",
+> > +	"res_181",
+> > +	"res_182",
+> > +	"res_183",
+> > +	"res_184",
+> > +	"res_185",
+> > +	"res_186",
+> > +	"res_187",
+> > +	"res_188",
+> > +	"res_189",
+> > +	"res_190",
+> > +	"res_191",
+> > +	"res_192",
+> > +	"res_193",
+> > +	"res_194",
+> > +	"res_195",
+> > +	"res_196",
+> > +	"res_197",
+> > +	"res_198",
+> > +	"res_199",
+> > +	"res_200",
+> > +	"res_201",
+> > +	"res_202",
+> > +	"res_203",
+> > +	"res_204",
+> > +	"res_205",
+> > +	"res_206",
+> > +	"res_207",
+> > +	"res_208",
+> > +	"res_209",
+> > +	"res_210",
+> > +	"res_211",
+> > +	"res_212",
+> > +	"res_213",
+> > +	"res_214",
+> > +	"res_215",
+> > +	"res_216",
+> > +	"res_217",
+> > +	"res_218",
+> > +	"res_219",
+> > +	"res_220",
+> > +	"res_221",
+> > +	"res_222",
+> > +	"res_223",
+> > +	"res_224",
+> > +	"res_225",
+> > +	"res_226",
+> > +	"res_227",
+> > +	"res_228",
+> > +	"res_229",
+> > +	"res_230",
+> > +	"res_231",
+> > +	"res_232",
+> > +	"res_233",
+> > +	"res_234",
+> > +	"res_235",
+> > +	"res_236",
+> > +	"res_237",
+> > +	"res_238",
+> > +	"res_239",
+> > +	"res_240",
+> > +	"res_241",
+> > +	"res_242",
+> > +	"res_243",
+> > +	"res_244",
+> > +	"res_245",
+> > +	"res_246",
+> > +	"res_247",
+> > +	"res_248",
+> > +	"res_249",
+> > +	"res_250",
+> > +	"res_251",
+> > +	"res_252",
+> > +	"res_253",
+> > +	"res_254",
+> > +	"oem_unit",
+> > +};
+> > +
+> >  static struct inode *stlmfs_get_inode(struct super_block *sb)
+> >  {
+> >  	struct inode *inode = new_inode(sb);
+> > @@ -815,6 +1337,18 @@ DEFINE_TLM_CLASS(persistent_tlmo, "persistent", 0,
+> >  DEFINE_TLM_CLASS(value_tlmo, "value", 0,
+> >  		 S_IFREG | S_IRUSR, &de_read_fops, NULL);
+> >  
+> > +static inline struct dentry *
+> > +stlmfs_lookup_by_name(struct dentry *parent, const char *dname)
+> > +{
+> > +	struct qstr qstr;
+> > +
+> > +	qstr.name = dname;
+> > +	qstr.len = strlen(dname);
+> > +	qstr.hash = full_name_hash(parent, qstr.name, qstr.len);
+> > +
+> > +	return d_lookup(parent, &qstr);
+> > +}
+> > +
+> >  static int scmi_telemetry_de_populate(struct super_block *sb,
+> >  				      struct scmi_tlm_setup *tsp,
+> >  				      struct dentry *parent,
+> > @@ -1659,6 +2193,150 @@ static struct dentry *stlmfs_create_root_dentry(struct super_block *sb)
+> >  	return dentry;
+> >  }
+> >  
+> > +static int scmi_telemetry_de_subdir_symlink(struct super_block *sb,
+> > +					    struct scmi_tlm_setup *tsp,
+> > +					    const struct scmi_telemetry_de *de,
+> > +					    struct dentry *parent)
+> > +{
+> > +	struct dentry *dentry;
+> > +	struct inode *inode;
+> > +	int ret;
+> I notice that ret isn't assigned a value and the function returns ret without
+> initialising.
+>
 
-This slightly changes visibility semantics: pidfd creation is denied
-after pidfs_exit() runs, which is just before the pid number is removed
-from the via free_pid(). That should not be an issue though.
+Yep, my bad: I think it is just a leftover from some last minute cleanup
+I have done...it seems to cause only harmless (but noisy) error
+messages...thanks for testing...I will fix !
 
-I haven't perfed this and I would like to make this Mateusz problem...
+> > +
+> > +	if (IS_ERR(parent))
+> >  
 
-Link: https://lore.kernel.org/20251206131955.780557-1-mjguzik@gmail.com
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/pidfs.c            | 107 ++++++++++++++++++++++++++++----------------------
- include/linux/pid.h   |   4 +-
- include/linux/pidfs.h |   3 +-
- kernel/pid.c          |  19 ++++++---
- 4 files changed, 79 insertions(+), 54 deletions(-)
+[snip]
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index dba703d4ce4a..e97931249ba2 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -21,6 +21,7 @@
- #include <linux/utsname.h>
- #include <net/net_namespace.h>
- #include <linux/coredump.h>
-+#include <linux/rhashtable.h>
- #include <linux/xattr.h>
- 
- #include "internal.h"
-@@ -55,7 +56,23 @@ struct pidfs_attr {
- 	__u32 coredump_signal;
- };
- 
--static struct rb_root pidfs_ino_tree = RB_ROOT;
-+static struct rhashtable pidfs_ino_ht;
-+
-+static int pidfs_ino_ht_cmp(struct rhashtable_compare_arg *arg, const void *pidp)
-+{
-+	const u64 *ino = arg->key;
-+	const struct pid *pid = pidp;
-+
-+	return pid->ino != *ino;
-+}
-+
-+static const struct rhashtable_params pidfs_ino_ht_params = {
-+	.key_offset		= offsetof(struct pid, ino),
-+	.key_len		= sizeof(u64),
-+	.head_offset		= offsetof(struct pid, pidfs_hash),
-+	.obj_cmpfn		= pidfs_ino_ht_cmp,
-+	.automatic_shrinking	= true,
-+};
- 
- #if BITS_PER_LONG == 32
- static inline unsigned long pidfs_ino(u64 ino)
-@@ -84,21 +101,11 @@ static inline u32 pidfs_gen(u64 ino)
- }
- #endif
- 
--static int pidfs_ino_cmp(struct rb_node *a, const struct rb_node *b)
--{
--	struct pid *pid_a = rb_entry(a, struct pid, pidfs_node);
--	struct pid *pid_b = rb_entry(b, struct pid, pidfs_node);
--	u64 pid_ino_a = pid_a->ino;
--	u64 pid_ino_b = pid_b->ino;
--
--	if (pid_ino_a < pid_ino_b)
--		return -1;
--	if (pid_ino_a > pid_ino_b)
--		return 1;
--	return 0;
--}
--
--void pidfs_add_pid(struct pid *pid)
-+/*
-+ * Allocate inode number and initialize pidfs fields.
-+ * Called with pidmap_lock held.
-+ */
-+void pidfs_prepare_pid(struct pid *pid)
- {
- 	static u64 pidfs_ino_nr = 2;
- 
-@@ -134,17 +141,23 @@ void pidfs_add_pid(struct pid *pid)
- 	pid->stashed = NULL;
- 	pid->attr = NULL;
- 	pidfs_ino_nr++;
-+}
- 
--	write_seqcount_begin(&pidmap_lock_seq);
--	rb_find_add_rcu(&pid->pidfs_node, &pidfs_ino_tree, pidfs_ino_cmp);
--	write_seqcount_end(&pidmap_lock_seq);
-+/*
-+ * Insert pid into the pidfs hashtable.
-+ * Must be called without holding pidmap_lock (can allocate memory).
-+ * Returns 0 on success, negative error on failure.
-+ */
-+int pidfs_add_pid(struct pid *pid)
-+{
-+	return rhashtable_insert_fast(&pidfs_ino_ht, &pid->pidfs_hash,
-+				      pidfs_ino_ht_params);
- }
- 
- void pidfs_remove_pid(struct pid *pid)
- {
--	write_seqcount_begin(&pidmap_lock_seq);
--	rb_erase(&pid->pidfs_node, &pidfs_ino_tree);
--	write_seqcount_end(&pidmap_lock_seq);
-+	rhashtable_remove_fast(&pidfs_ino_ht, &pid->pidfs_hash,
-+			       pidfs_ino_ht_params);
- }
- 
- void pidfs_free_pid(struct pid *pid)
-@@ -773,43 +786,42 @@ static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
- 	return FILEID_KERNFS;
- }
- 
--static int pidfs_ino_find(const void *key, const struct rb_node *node)
--{
--	const u64 pid_ino = *(u64 *)key;
--	const struct pid *pid = rb_entry(node, struct pid, pidfs_node);
--
--	if (pid_ino < pid->ino)
--		return -1;
--	if (pid_ino > pid->ino)
--		return 1;
--	return 0;
--}
--
- /* Find a struct pid based on the inode number. */
- static struct pid *pidfs_ino_get_pid(u64 ino)
- {
- 	struct pid *pid;
--	struct rb_node *node;
--	unsigned int seq;
-+	struct pidfs_attr *attr;
- 
- 	guard(rcu)();
--	do {
--		seq = read_seqcount_begin(&pidmap_lock_seq);
--		node = rb_find_rcu(&ino, &pidfs_ino_tree, pidfs_ino_find);
--		if (node)
--			break;
--	} while (read_seqcount_retry(&pidmap_lock_seq, seq));
- 
--	if (!node)
-+	pid = rhashtable_lookup(&pidfs_ino_ht, &ino, pidfs_ino_ht_params);
-+	if (!pid)
- 		return NULL;
- 
--	pid = rb_entry(node, struct pid, pidfs_node);
--
- 	/* Within our pid namespace hierarchy? */
- 	if (pid_vnr(pid) == 0)
- 		return NULL;
- 
--	return get_pid(pid);
-+	/*
-+	 * If attr is NULL the pid is still in the IDR but never had
-+	 * a pidfd. If attr is an error the pid went through pidfs_exit()
-+	 * and is about to be removed. Either way, deny access.
-+	 */
-+	attr = READ_ONCE(pid->attr);
-+	if (IS_ERR_OR_NULL(attr))
-+		return NULL;
-+
-+	/*
-+	 * If PIDFS_ATTR_BIT_EXIT is set the task has exited and we
-+	 * should not allow new file handle lookups.
-+	 */
-+	if (test_bit(PIDFS_ATTR_BIT_EXIT, &attr->attr_mask))
-+		return NULL;
-+
-+	if (!refcount_inc_not_zero(&pid->count))
-+		return NULL;
-+
-+	return pid;
- }
- 
- static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
-@@ -1086,6 +1098,9 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
- 
- void __init pidfs_init(void)
- {
-+	if (rhashtable_init(&pidfs_ino_ht, &pidfs_ino_ht_params))
-+		panic("Failed to initialize pidfs hashtable");
-+
- 	pidfs_attr_cachep = kmem_cache_create("pidfs_attr_cache", sizeof(struct pidfs_attr), 0,
- 					 (SLAB_HWCACHE_ALIGN | SLAB_RECLAIM_ACCOUNT |
- 					  SLAB_ACCOUNT | SLAB_PANIC), NULL);
-diff --git a/include/linux/pid.h b/include/linux/pid.h
-index 003a1027d219..ce9b5cb7560b 100644
---- a/include/linux/pid.h
-+++ b/include/linux/pid.h
-@@ -6,6 +6,7 @@
- #include <linux/rculist.h>
- #include <linux/rcupdate.h>
- #include <linux/refcount.h>
-+#include <linux/rhashtable-types.h>
- #include <linux/sched.h>
- #include <linux/wait.h>
- 
-@@ -60,7 +61,7 @@ struct pid {
- 	spinlock_t lock;
- 	struct {
- 		u64 ino;
--		struct rb_node pidfs_node;
-+		struct rhash_head pidfs_hash;
- 		struct dentry *stashed;
- 		struct pidfs_attr *attr;
- 	};
-@@ -73,7 +74,6 @@ struct pid {
- 	struct upid numbers[];
- };
- 
--extern seqcount_spinlock_t pidmap_lock_seq;
- extern struct pid init_struct_pid;
- 
- struct file;
-diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
-index 3e08c33da2df..416bdff4d6ce 100644
---- a/include/linux/pidfs.h
-+++ b/include/linux/pidfs.h
-@@ -6,7 +6,8 @@ struct coredump_params;
- 
- struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
- void __init pidfs_init(void);
--void pidfs_add_pid(struct pid *pid);
-+void pidfs_prepare_pid(struct pid *pid);
-+int pidfs_add_pid(struct pid *pid);
- void pidfs_remove_pid(struct pid *pid);
- void pidfs_exit(struct task_struct *tsk);
- #ifdef CONFIG_COREDUMP
-diff --git a/kernel/pid.c b/kernel/pid.c
-index ad4400a9f15f..7da2c3e8f79c 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -43,7 +43,6 @@
- #include <linux/sched/task.h>
- #include <linux/idr.h>
- #include <linux/pidfs.h>
--#include <linux/seqlock.h>
- #include <net/sock.h>
- #include <uapi/linux/pidfd.h>
- 
-@@ -85,7 +84,6 @@ struct pid_namespace init_pid_ns = {
- EXPORT_SYMBOL_GPL(init_pid_ns);
- 
- static  __cacheline_aligned_in_smp DEFINE_SPINLOCK(pidmap_lock);
--seqcount_spinlock_t pidmap_lock_seq = SEQCNT_SPINLOCK_ZERO(pidmap_lock_seq, &pidmap_lock);
- 
- void put_pid(struct pid *pid)
- {
-@@ -106,6 +104,7 @@ EXPORT_SYMBOL_GPL(put_pid);
- static void delayed_put_pid(struct rcu_head *rhp)
- {
- 	struct pid *pid = container_of(rhp, struct pid, rcu);
-+	pidfs_remove_pid(pid);
- 	put_pid(pid);
- }
- 
-@@ -141,7 +140,6 @@ void free_pid(struct pid *pid)
- 
- 		idr_remove(&ns->idr, upid->nr);
- 	}
--	pidfs_remove_pid(pid);
- 	spin_unlock(&pidmap_lock);
- 
- 	call_rcu(&pid->rcu, delayed_put_pid);
-@@ -315,7 +313,14 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *arg_set_tid,
- 	retval = -ENOMEM;
- 	if (unlikely(!(ns->pid_allocated & PIDNS_ADDING)))
- 		goto out_free;
--	pidfs_add_pid(pid);
-+	pidfs_prepare_pid(pid);
-+	spin_unlock(&pidmap_lock);
-+
-+	retval = pidfs_add_pid(pid);
-+	if (retval)
-+		goto out_free_idr;
-+
-+	spin_lock(&pidmap_lock);
- 	for (upid = pid->numbers + ns->level; upid >= pid->numbers; --upid) {
- 		/* Make the PID visible to find_pid_ns. */
- 		idr_replace(&upid->ns->idr, pid, upid->nr);
-@@ -328,6 +333,11 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *arg_set_tid,
- 	return pid;
- 
- out_free:
-+	spin_unlock(&pidmap_lock);
-+out_free_idr:
-+	idr_preload_end();
-+
-+	spin_lock(&pidmap_lock);
- 	while (++i <= ns->level) {
- 		upid = pid->numbers + i;
- 		idr_remove(&upid->ns->idr, upid->nr);
-@@ -338,7 +348,6 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *arg_set_tid,
- 		idr_set_cursor(&ns->idr, 0);
- 
- 	spin_unlock(&pidmap_lock);
--	idr_preload_end();
- 
- out_abort:
- 	put_pid_ns(ns);
+> 
+> I will continue reviewing,
 
----
-base-commit: f54c7e54d2de2d7b58aa54604218a6fc00bb2e77
-change-id: 20260119-work-pidfs-rhashtable-9d14071bd77a
+Yes please, thanks for having a look.
 
+Thanks,
+Cristian
 
