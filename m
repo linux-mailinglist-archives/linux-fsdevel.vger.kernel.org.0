@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-74398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C54D3A067
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 08:47:12 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1BCD3A06A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 08:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D2E4F301B660
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 07:45:40 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id ECCC5303D374
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 07:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AAC271450;
-	Mon, 19 Jan 2026 07:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAADB33858A;
+	Mon, 19 Jan 2026 07:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IIvxS30a"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HmigF/rI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B23B3382DF;
-	Mon, 19 Jan 2026 07:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63213382CD;
+	Mon, 19 Jan 2026 07:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768808738; cv=none; b=TxFm7lAlwzDn2WWsaVHLbB76v0HlKd9wMRJC3HvNCwl6Pj3mScaWxXuBAyIpeitpkebCrmIGIThkhLpGEDEPKE0FNVHb3QQ20weYIGXjrR34n1qEYpT3ajsH5cLs3TzGp9hc5TRyPe3mCzlCTmp0Pzni0OevQGDcI2yczFW9PlI=
+	t=1768808745; cv=none; b=eOwjA/RIS97E2aveGqegR7h/KChHdQXbeC0DQ8gtxz6IcFpMrVfqqYelRwmemIZqLiJ8V7ScT5ovbxccxxQiAIKprFI7zYlpKWxToRNXXBuulK4AJwjH8l/aZLWsOkMPLhnC2nl83LoXMW1QPjM1ftCf/YNyzAhi28zb9/LFK+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768808738; c=relaxed/simple;
-	bh=Ust0SjjhLimkbL2DQ9rNRPfhKvMQsEYPlNXiFQ2BC58=;
+	s=arc-20240116; t=1768808745; c=relaxed/simple;
+	bh=fstN+ttGR1Tkx/SMD4pdGVMR3RICmjyBVfAOdypRaVs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=updkAJ9E69UaqLae7ILYzXQIOirFtBQdLSOVaUMsoZ73QPUWVyfClbFp86GGLk4jEnAl8syE8Nd3s8GwsFfdu9/3D32LuFbZ9xD7ynDskiQqgOyVRTOekgbXhr1lcFRGN91fD7JtYGorkvp1HIlSizfZ+jfWL2WI3edMdHSpTKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IIvxS30a; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=uVVBejqckJdVfh2gYHKDjXDjBwOx4FtHYQJqtWu0ed2A8eTNvqRxwViexluzSNsZGZfjJg90TrKIRIpqtwzZlhdmTh5Nwok2NjtvIOa4ZYV06PlWSMPbZJZ6x5IFG2M9qXIslPfEnXQvmScE3CMCoEIu0YccGhr0Mzq2gB651Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HmigF/rI; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=+yB+VlpGXumhR0iGK480HTRNjW6Ju+LqR+vU9uBFQik=; b=IIvxS30aHopvpVVPVU2Y6Tq/O9
-	1I7PMhrUpB34OEWacEGANy8nJ48oOhChaH8M/5rKh3PhCUSOr3QLTiGz3LIaWxNwfNEjP09kHsBQ1
-	w4DdNSAanuXwjnlO6X/Ja99KMlvenOpUZ/6kZP/T74ql95+L3S4ncnQO9hJ7hoVf4InH7ojr3Q4Bc
-	w+25XMpHR4pfva4uhD8BfepG7RHcvUfjTa+kdInCVV/KZIRKpbX5qSOLf+QZlGufNfIq+DwOr+Jbt
-	FtFCYDc4SpDc1/OzmuAXQeX95qyHhMKE4FfAexPRoiqI0OYiPUkC0O0xGcJtnILVdsmxlDeXfibIz
-	GIQa6Dxg==;
+	bh=Vs0qF2w8oC2H8MjhYecenftcyABjbWpdGAO4a8GAGaY=; b=HmigF/rIdev4qHiRIXdX1qGD7h
+	15u0t5OKZRJu2u29qXknxBf/H7MMB6QgyzVoBz14Qm0POs4b0OLBe6WDOXeqHaW+/I+7htf3Cz3bT
+	4GXOFox7cRwuKvQLPfbjnf5ZtZVvzvMiaEdYQhUPr+BoerXcYYwgidfiQkU5OC5QPkvrYLkrLEN5s
+	mYOoeC/FeVBABN0xmO3+waF3wxYeGL9KPfX7Vwn7ZA8RevylEOf2uOdj/E5zYHS4AM0iUa0Wh8sS/
+	3JnKH/MNzyxFH9K+BTMN16AbGwKl7xKiLupNxrAq6/HOlNY5VxTzvFUUUZ2pPJpwfxK+CPrEIHrOi
+	d6Y9anxA==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vhjx4-00000001WGp-3KEq;
-	Mon, 19 Jan 2026 07:45:33 +0000
+	id 1vhjxD-00000001WHG-44F0;
+	Mon, 19 Jan 2026 07:45:43 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>,
 	Christian Brauner <brauner@kernel.org>
@@ -53,9 +53,9 @@ Cc: "Darrick J. Wong" <djwong@kernel.org>,
 	linux-block@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 13/14] iomap: add a flag to bounce buffer direct I/O
-Date: Mon, 19 Jan 2026 08:44:20 +0100
-Message-ID: <20260119074425.4005867-14-hch@lst.de>
+Subject: [PATCH 14/14] xfs: use bounce buffering direct I/O when the device requires stable pages
+Date: Mon, 19 Jan 2026 08:44:21 +0100
+Message-ID: <20260119074425.4005867-15-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260119074425.4005867-1-hch@lst.de>
 References: <20260119074425.4005867-1-hch@lst.de>
@@ -68,120 +68,139 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Add a new flag that request bounce buffering for direct I/O.  This is
-needed to provide the stable pages requirement requested by devices
-that need to calculate checksums or parity over the data and allows
-file systems to properly work with things like T10 protection
-information.  The implementation just calls out to the new bio bounce
-buffering helpers to allocate a bounce buffer, which is used for
-I/O and to copy to/from it.
+Fix direct I/O on devices that require stable pages by asking iomap
+to bounce buffer.  To support this, ioends are used for direct reads
+in this case to provide a user context for copying data back from the
+bounce buffer.
+
+This fixes qemu when used on devices using T10 protection information
+and probably other cases like iSCSI using data digests.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/iomap/direct-io.c  | 30 ++++++++++++++++++++----------
- include/linux/iomap.h |  9 +++++++++
- 2 files changed, 29 insertions(+), 10 deletions(-)
+ fs/xfs/xfs_aops.c |  8 ++++++--
+ fs/xfs/xfs_file.c | 41 ++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 44 insertions(+), 5 deletions(-)
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index eca7adda595a..9c572de0d596 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -215,7 +215,11 @@ static void __iomap_dio_bio_end_io(struct bio *bio, bool inline_completion)
- {
- 	struct iomap_dio *dio = bio->bi_private;
- 
--	if (dio->flags & IOMAP_DIO_USER_BACKED) {
-+	if (dio->flags & IOMAP_DIO_BOUNCE) {
-+		bio_iov_iter_unbounce(bio, !!dio->error,
-+				dio->flags & IOMAP_DIO_USER_BACKED);
-+		bio_put(bio);
-+	} else if (dio->flags & IOMAP_DIO_USER_BACKED) {
- 		bio_check_pages_dirty(bio);
- 	} else {
- 		bio_release_pages(bio, false);
-@@ -303,12 +307,16 @@ static ssize_t iomap_dio_bio_iter_one(struct iomap_iter *iter,
- 		struct iomap_dio *dio, loff_t pos, unsigned int alignment,
- 		blk_opf_t op)
- {
-+	unsigned int nr_vecs;
- 	struct bio *bio;
- 	ssize_t ret;
- 
--	bio = iomap_dio_alloc_bio(iter, dio,
--			bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS),
--			op);
-+	if (dio->flags & IOMAP_DIO_BOUNCE)
-+		nr_vecs = bio_iov_bounce_nr_vecs(dio->submit.iter, op);
-+	else
-+		nr_vecs = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
-+
-+	bio = iomap_dio_alloc_bio(iter, dio, nr_vecs, op);
- 	fscrypt_set_bio_crypt_ctx(bio, iter->inode,
- 			pos >> iter->inode->i_blkbits, GFP_KERNEL);
- 	bio->bi_iter.bi_sector = iomap_sector(&iter->iomap, pos);
-@@ -317,7 +325,11 @@ static ssize_t iomap_dio_bio_iter_one(struct iomap_iter *iter,
- 	bio->bi_private = dio;
- 	bio->bi_end_io = iomap_dio_bio_end_io;
- 
--	ret = bio_iov_iter_get_pages(bio, dio->submit.iter, alignment - 1);
-+	if (dio->flags & IOMAP_DIO_BOUNCE)
-+		ret = bio_iov_iter_bounce(bio, dio->submit.iter);
-+	else
-+		ret = bio_iov_iter_get_pages(bio, dio->submit.iter,
-+					     alignment - 1);
- 	if (unlikely(ret))
- 		goto out_put_bio;
- 	ret = bio->bi_iter.bi_size;
-@@ -333,7 +345,8 @@ static ssize_t iomap_dio_bio_iter_one(struct iomap_iter *iter,
- 
- 	if (dio->flags & IOMAP_DIO_WRITE)
- 		task_io_account_write(ret);
--	else if (dio->flags & IOMAP_DIO_USER_BACKED)
-+	else if ((dio->flags & IOMAP_DIO_USER_BACKED) &&
-+		 !(dio->flags & IOMAP_DIO_BOUNCE))
- 		bio_set_pages_dirty(bio);
- 
- 	/*
-@@ -662,7 +675,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	dio->i_size = i_size_read(inode);
- 	dio->dops = dops;
- 	dio->error = 0;
--	dio->flags = 0;
-+	dio->flags = dio_flags & (IOMAP_DIO_FSBLOCK_ALIGNED | IOMAP_DIO_BOUNCE);
- 	dio->done_before = done_before;
- 
- 	dio->submit.iter = iter;
-@@ -671,9 +684,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	if (iocb->ki_flags & IOCB_NOWAIT)
- 		iomi.flags |= IOMAP_NOWAIT;
- 
--	if (dio_flags & IOMAP_DIO_FSBLOCK_ALIGNED)
--		dio->flags |= IOMAP_DIO_FSBLOCK_ALIGNED;
--
- 	if (iov_iter_rw(iter) == READ) {
- 		if (iomi.pos >= dio->i_size)
- 			goto out_free_dio;
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 520e967cb501..cf152f638665 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -562,6 +562,15 @@ struct iomap_dio_ops {
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 56a544638491..c3c1e149fff4 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -103,7 +103,7 @@ xfs_ioend_put_open_zones(
+  * IO write completion.
   */
- #define IOMAP_DIO_FSBLOCK_ALIGNED	(1 << 3)
+ STATIC void
+-xfs_end_ioend(
++xfs_end_ioend_write(
+ 	struct iomap_ioend	*ioend)
+ {
+ 	struct xfs_inode	*ip = XFS_I(ioend->io_inode);
+@@ -202,7 +202,11 @@ xfs_end_io(
+ 			io_list))) {
+ 		list_del_init(&ioend->io_list);
+ 		iomap_ioend_try_merge(ioend, &tmp);
+-		xfs_end_ioend(ioend);
++		if (bio_op(&ioend->io_bio) == REQ_OP_READ)
++			iomap_finish_ioends(ioend,
++				blk_status_to_errno(ioend->io_bio.bi_status));
++		else
++			xfs_end_ioend_write(ioend);
+ 		cond_resched();
+ 	}
+ }
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 7874cf745af3..f6cc63dcf961 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -224,12 +224,34 @@ xfs_ilock_iocb_for_write(
+ 	return 0;
+ }
  
 +/*
-+ * Bounce buffer instead of using zero copy access.
-+ *
-+ * This is needed if the device needs stable data to checksum or generate
-+ * parity.  The file system must hook into the I/O submission and offload
-+ * completions to user context for reads when this is set.
++ * Bounce buffering dio reads need a user context to copy back the data.
++ * Use an ioend to provide that.
 + */
-+#define IOMAP_DIO_BOUNCE		(1 << 4)
++static void
++xfs_dio_read_bounce_submit_io(
++	const struct iomap_iter	*iter,
++	struct bio		*bio,
++	loff_t			file_offset)
++{
++	iomap_init_ioend(iter->inode, bio, file_offset, IOMAP_IOEND_DIRECT);
++	bio->bi_end_io = xfs_end_bio;
++	submit_bio(bio);
++}
 +
- ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
- 		unsigned int dio_flags, void *private, size_t done_before);
++static const struct iomap_dio_ops xfs_dio_read_bounce_ops = {
++	.submit_io	= xfs_dio_read_bounce_submit_io,
++	.bio_set	= &iomap_ioend_bioset,
++};
++
+ STATIC ssize_t
+ xfs_file_dio_read(
+ 	struct kiocb		*iocb,
+ 	struct iov_iter		*to)
+ {
+ 	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
++	unsigned int		dio_flags = 0;
++	const struct iomap_dio_ops *dio_ops = NULL;
+ 	ssize_t			ret;
+ 
+ 	trace_xfs_file_direct_read(iocb, to);
+@@ -242,7 +264,12 @@ xfs_file_dio_read(
+ 	ret = xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
+ 	if (ret)
+ 		return ret;
+-	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL, 0, NULL, 0);
++	if (mapping_stable_writes(iocb->ki_filp->f_mapping)) {
++		dio_ops = &xfs_dio_read_bounce_ops;
++		dio_flags |= IOMAP_DIO_BOUNCE;
++	}
++	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, dio_ops, dio_flags,
++			NULL, 0);
+ 	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
+ 
+ 	return ret;
+@@ -703,6 +730,8 @@ xfs_file_dio_write_aligned(
+ 		xfs_ilock_demote(ip, XFS_IOLOCK_EXCL);
+ 		iolock = XFS_IOLOCK_SHARED;
+ 	}
++	if (mapping_stable_writes(iocb->ki_filp->f_mapping))
++		dio_flags |= IOMAP_DIO_BOUNCE;
+ 	trace_xfs_file_direct_write(iocb, from);
+ 	ret = iomap_dio_rw(iocb, from, ops, dops, dio_flags, ac, 0);
+ out_unlock:
+@@ -750,6 +779,7 @@ xfs_file_dio_write_atomic(
+ {
+ 	unsigned int		iolock = XFS_IOLOCK_SHARED;
+ 	ssize_t			ret, ocount = iov_iter_count(from);
++	unsigned int		dio_flags = 0;
+ 	const struct iomap_ops	*dops;
+ 
+ 	/*
+@@ -777,8 +807,10 @@ xfs_file_dio_write_atomic(
+ 	}
+ 
+ 	trace_xfs_file_direct_write(iocb, from);
+-	ret = iomap_dio_rw(iocb, from, dops, &xfs_dio_write_ops,
+-			0, NULL, 0);
++	if (mapping_stable_writes(iocb->ki_filp->f_mapping))
++		dio_flags |= IOMAP_DIO_BOUNCE;
++	ret = iomap_dio_rw(iocb, from, dops, &xfs_dio_write_ops, dio_flags,
++			NULL, 0);
+ 
+ 	/*
+ 	 * The retry mechanism is based on the ->iomap_begin method returning
+@@ -867,6 +899,9 @@ xfs_file_dio_write_unaligned(
+ 	if (flags & IOMAP_DIO_FORCE_WAIT)
+ 		inode_dio_wait(VFS_I(ip));
+ 
++	if (mapping_stable_writes(iocb->ki_filp->f_mapping))
++		flags |= IOMAP_DIO_BOUNCE;
++
+ 	trace_xfs_file_direct_write(iocb, from);
+ 	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
+ 			   &xfs_dio_write_ops, flags, NULL, 0);
 -- 
 2.47.3
 
