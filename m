@@ -1,43 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-74459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F1FD3AF6C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 16:45:59 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF6AD3AF71
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 16:46:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D06813047900
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 15:44:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id C32B73060260
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 15:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CC638BF76;
-	Mon, 19 Jan 2026 15:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8853090DD;
+	Mon, 19 Jan 2026 15:45:19 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185C622A7E4;
-	Mon, 19 Jan 2026 15:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7727C278E47;
+	Mon, 19 Jan 2026 15:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768837470; cv=none; b=Emnv61BH0W2V1qf4rXU8Lj/SrkjDM7XQdBvMCM7DH+aJqYjeMv7RyEV35Q2GU/ESTDQTnD5wbpfua8ShbsVbgr2/6uuHkfro/eXabgx4Dk0scj5tE/NEsh/JDMqxBdDn8CtgvMGeP0u19X+TQqVdwya5t1N5nyYG1FZs3p1ApnY=
+	t=1768837519; cv=none; b=J7IKtzbXsE8aoOhUfy8KVZ+FGWar7bHhwMt1ev7CKbfjoH0OL5rf7AgC96oXAfoxkQh4S0SMNrORw/6oR//gCtcKQA/KstcBgp1Pvkd6ch5HWGta2FFny72VoW1mOHhW+bqvT17sMrHOC2Ali+gLPyEwH3gHK7tA9cObwNcvsqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768837470; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
+	s=arc-20240116; t=1768837519; c=relaxed/simple;
+	bh=4g1/FrueJxkVwUmLw0512e3qtr6xVgwg7YVMH5uX3Xk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ma1SUXwry07vjaXK7rC3MEWaMODPIajoxct3CFrTv/Lzdzl3iUfrnF/5jL6rxoTSiYng0OkXdshrlQJ42Jthd+s7ZgEww5pelzVJJkc+qM9biWzpQ5OkUUhojLc4Nsp6jfEL6SWFK3Asfl+2AgQieXeRcicmoC35sG3s7vF7ejA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 42D21227AA8; Mon, 19 Jan 2026 16:44:25 +0100 (CET)
-Date: Mon, 19 Jan 2026 16:44:24 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: cem@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, hch@lst.de
-Subject: Re: [PATCH 06/11] xfs: convey filesystem shutdown events to the
- health monitor
-Message-ID: <20260119154424.GB10152@lst.de>
-References: <176852588473.2137143.1604994842772101197.stgit@frogsfrogsfrogs> <176852588670.2137143.7251435441992863871.stgit@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LMSl9rAlbz8LEuhMzHD3/9Ck/7aOkXGMcScG0kUHqf+JgDwVq2KZnNJvu6rc1QP/MLGdHJ313stqlFJNhAiCbODYyVXL3wru7AE9+kJ0HNCUn3qEgTCelcm7ApZRfQDhZydE6sS7pmsYxMam2YgB/gE/R05gNVBx7rVUtcq9i/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34EB2497;
+	Mon, 19 Jan 2026 07:45:10 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 936F23F694;
+	Mon, 19 Jan 2026 07:45:14 -0800 (PST)
+Date: Mon, 19 Jan 2026 15:45:12 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	sudeep.holla@arm.com, james.quinlan@broadcom.com,
+	f.fainelli@gmail.com, vincent.guittot@linaro.org,
+	etienne.carriere@st.com, peng.fan@oss.nxp.com, michal.simek@amd.com,
+	dan.carpenter@linaro.org, d-gole@ti.com, elif.topuz@arm.com,
+	lukasz.luba@arm.com, philip.radford@arm.com,
+	souvik.chakravarty@arm.com
+Subject: Re: [PATCH v2 02/17] firmware: arm_scmi: Reduce the scope of
+ protocols mutex
+Message-ID: <aW5RiHlkX0HGkAzT@pluto>
+References: <20260114114638.2290765-1-cristian.marussi@arm.com>
+ <20260114114638.2290765-3-cristian.marussi@arm.com>
+ <20260119112154.0000029d@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -46,10 +57,34 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <176852588670.2137143.7251435441992863871.stgit@frogsfrogsfrogs>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20260119112154.0000029d@huawei.com>
 
-Looks good:
+On Mon, Jan 19, 2026 at 11:21:54AM +0000, Jonathan Cameron wrote:
+> On Wed, 14 Jan 2026 11:46:06 +0000
+> Cristian Marussi <cristian.marussi@arm.com> wrote:
+> 
+> > Currently the mutex dedicated to the protection of the list of registered
+> > protocols is held during all the protocol initialization phase.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Hi Jonathan,
+
+> > 
+> > Such a wide locking region is not needed and causes problem when trying to
+> > initialize notifications from within a protocol initialization routine.
+> > 
+> > Reduce the scope of the protocol mutex.
+> > 
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> I haven't checked carefully that the new scope is appropriate but
+> as a change in of itself, the code is correct and clean.
+> With that in mind.
+
+I will double check after more testing.
+
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> 
+
+Thanks for having a look.
+
+Cristian
 
