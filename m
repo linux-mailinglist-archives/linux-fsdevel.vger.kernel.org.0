@@ -1,279 +1,479 @@
-Return-Path: <linux-fsdevel+bounces-74537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C62D3B8E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 21:56:17 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5B0D3B87A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 21:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 200663020817
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 20:56:15 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 758EC300A91A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 20:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1802F747A;
-	Mon, 19 Jan 2026 20:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194B12EC54C;
+	Mon, 19 Jan 2026 20:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I9siDhMN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fglh3VOU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BEE2F4A14;
-	Mon, 19 Jan 2026 20:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768856174; cv=fail; b=llbBv9WLResQm/ETCdSjjW+peTVen0XNRmqxpqaRlpZsrjr1mkCfcU84zvaV3djLNkdQayK/pbDhM6xt9OlCVqN6FH4Q/FEaiy6eGNwX129RFVMGSmRaokjSJ8cLr3q8lSt/PNVH14GIQt9FPejp4BLwmC1yQCz8mYPnXZbT2k4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768856174; c=relaxed/simple;
-	bh=nv5m7WgrJWP2UHnjNKYgzOxUM1JWmBwVt+xcNRHePf0=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=fcFH550acfOrwToczgSO4BZ0Z68IaIm1InK1fUw16KvneqgL23UtJ40wuBih7/5nrW7fgvWETDW2n+P6MfGI5zufDKNahm4AETAoQNq+BrIA2GGmTgvWQ7UDWzPjMl/uuVkgsZqRHVSLWSsY+2D3Pn37CzQ0DdgsuxLhGGDsfdI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I9siDhMN; arc=fail smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60JDdeRu024682;
-	Mon, 19 Jan 2026 20:55:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=nv5m7WgrJWP2UHnjNKYgzOxUM1JWmBwVt+xcNRHePf0=; b=I9siDhMN
-	3sdLhscM7RYaclbdFNw2Lf/bKKNjpxzTUqAbs6YJL3v60mW3iRw0FUiP0/DOLWs0
-	cuCtULXNjjce6pbveqgqWOetDFRVdoogEJGazoGFVX+pqMj+WirDb808mnlfcxrX
-	rhiqO/yElOtf+BVzOe57dFrI2vO29nZ4nf1hEuXZyFcABWJ4MKoM6gSJ3Z6EBLnI
-	FdWFazVECPmm1tE3qD/nU20AU2zLD/ZxDjxP94kpOIUnt7tP3laRUBLeervxezNm
-	ch2Vr5Or+q1jgiqy/lWB1magFpgHKfJUWrpu8XOvY/z0SMpCrjynKSZDatNZjBmU
-	99XkmnQOYYGZvg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bqyuk1ynp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Jan 2026 20:55:58 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 60JKpPaj026397;
-	Mon, 19 Jan 2026 20:55:58 GMT
-Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011004.outbound.protection.outlook.com [40.107.208.4])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bqyuk1ynk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Jan 2026 20:55:58 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WwcLblx0jgIWm0a0CyukRX2fxrwjxcfDtz4bJWqt2TuNXpo3irDbqowY7Cd0FmO2bkpQtX2qa0GFsMNqpoHjrw2CNe3tE6Uw/NkC+9hCQ+FA0+epSFgcZRS6fwte99DXkv55Pa1tQsNbxTeuK2fzOxMOCXbduRO+5UzCVX5JIATJK+2AlgsBt1wsBdj17UmoP6ojzjnyBqW1PpqqiHfCoIUlm3TKzd5dxBBIpNP44nsc/2qJNHFyRh5XB+G7M7o8+1qCBDenXhPSF1Nt9dqRTKnseQ/iOLL4U1nmt0Z9nUqR0vrYczcLazX95t1+6O6K5GxAlhvNTgR71dmnFItmTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nv5m7WgrJWP2UHnjNKYgzOxUM1JWmBwVt+xcNRHePf0=;
- b=ebOnTh/ONNqOklhARjpW2Qafc03K+dDEH7XRkREeYrgjKhPP+3Jh1zQZZT0NFy7IENTV8iKWDQT7mTf1eM4oLA7B2WfE7BMdB5Y9bESht6wp/rpu2ucwnV/EkzkFrra9HaCQReqaMqZlBv7YFmMZDzScgug3gJJUczXMMFaZnvQltBOh+D64HU/ZiM0bofXKfDl2u1lWriaYCi2PIvJ1lJfDmE3iifsMzdHkz4N71G/n7RYRGR2z1X4UQeS4drIQPqSePuLhoDyqpjZ7UwbSgXNQ9AYz4MxzxDojq7V65y6B+62sXPbaNsNp+QPIYBNH5LDdq81KapaKfWaiVioElQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by DS0PR15MB5627.namprd15.prod.outlook.com (2603:10b6:8:14d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.12; Mon, 19 Jan
- 2026 20:55:51 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::920c:d2ba:5432:b539%4]) with mapi id 15.20.9520.010; Mon, 19 Jan 2026
- 20:55:51 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: "brauner@kernel.org" <brauner@kernel.org>,
-        "mehdi.benhadjkhelifa@gmail.com" <mehdi.benhadjkhelifa@gmail.com>
-CC: "jack@suse.cz" <jack@suse.cz>, "khalid@kernel.org" <khalid@kernel.org>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "david.hunter.linux@gmail.com" <david.hunter.linux@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-kernel-mentees@lists.linuxfoundation.org"
-	<linux-kernel-mentees@lists.linuxfoundation.org>,
-        "viro@zeniv.linux.org.uk"
-	<viro@zeniv.linux.org.uk>,
-        "skhan@linuxfoundation.org"
-	<skhan@linuxfoundation.org>,
-        "syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com"
-	<syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>
-Thread-Topic: [EXTERNAL] Re: [PATCH v2] fs/hfs: fix s_fs_info leak on
- setup_bdev_super() failure
-Thread-Index:
- AQHcXtteFGhLPrTb/UieBFUI+djHs7UFH4+AgABrQ4CAAK/KgIAAvdEAgAKmrwCAA5NDgIBJ1JuAgAMS84CAABTXgP//9iiAgAA0OID///UigA==
-Date: Mon, 19 Jan 2026 20:55:51 +0000
-Message-ID: <1bfac55095419b8c5d9dd73dbf9b8b94c74b264a.camel@ibm.com>
-References: <20251119073845.18578-1-mehdi.benhadjkhelifa@gmail.com>
-	 <c19c6ebedf52f0362648a32c0eabdc823746438f.camel@ibm.com>
-	 <20251126-gebaggert-anpacken-d0d9fb10b9bc@brauner>
-	 <04d3810e-3d1b-4af2-a39b-0459cb466838@gmail.com>
-	 <56521c02f410d15a11076ebba1ce00e081951c3f.camel@ibm.com>
-	 <20251127-semmel-lastkraftwagen-9f2c7f6e16dd@brauner>
-	 <4bb136bae5c04bc07e75ddf108ada7e7480afacc.camel@ibm.com>
-	 <59b833d7-4a97-4703-86ef-c163d70b3836@gmail.com>
-	 <9061911554697106be2703189f02e5765f3df229.camel@ibm.com>
-	 <7d38a29d-9d81-42e0-99c1-b6a09afe61fd@gmail.com>
-	 <8a96ddbefd84ed0917afc13f91ee0f33ea2e0c10.camel@ibm.com>
-	 <4e65ea7b-79aa-4c36-a8ea-0ca84966d089@gmail.com>
-	 <d714e0652f920cecebf5fdcf0023a440cbd1df4e.camel@ibm.com>
-	 <4d545c3f-50cf-4ad4-8427-35f87398838e@gmail.com>
-In-Reply-To: <4d545c3f-50cf-4ad4-8427-35f87398838e@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|DS0PR15MB5627:EE_
-x-ms-office365-filtering-correlation-id: 09a0f126-7238-47db-2f34-08de579d219f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|10070799003|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?YVlxNmdIbVVOelFhWGN3Z3NSMkFFRVBJeW1FR1I3OWxuVDFqV2FEaVJ4RGVl?=
- =?utf-8?B?R2xHdXJOeWhETkl3cE9udk9UejVyK2FsY1JRTS9TZGF4bDQ0VjBoaWh6bVpL?=
- =?utf-8?B?c1p5SGZ4b1RMb3k3anlmR1JOQlVhSjVnK1Nwb2VsQmNSaWtzS0VmemVIajBx?=
- =?utf-8?B?OE9aVlFSMVRJMTFLRDJxbU51WDF1Q3U1cFV6MURLcWFTQUZMeUhMN25LNTlq?=
- =?utf-8?B?UkdhdGtNaHlZdmdnS295aUdPZHV6cmZGWlBhVWNIaEVLZ2l4eGp4elNGMVRB?=
- =?utf-8?B?b3dMK0wwYkYyUDRwNkJzUWlJVzZDbUZBbmZNR0Q4bmp6enNNc0JKMG1NQ3Vz?=
- =?utf-8?B?QzhQNGF6dTVyd2o2QU40SzBCaVVRbG5rU1FWL2JSRGYwdVRnMEVwUGV6b0ZC?=
- =?utf-8?B?RFIyN2lVNmk0bDNoNzlBMVdaK0lDcm5zcXpRSzViankwV2lHN3R6bnBVWlNQ?=
- =?utf-8?B?NUI1elJmNTV0VFp0NzBiTW5HWURDOERERExQWTl2c0owUm5rZ29zZjBwcm5Z?=
- =?utf-8?B?aE9NeXpqWHA1NmlNOXpkU0JQMjh0c0hVby9EOTRpVThVYmI2WU9LTWNSRmUv?=
- =?utf-8?B?bS9Wb2g1K3VKRmwwZzlrRVphWFU1ZHlVY0JqOWxwWGJTQUZjcDMzNWFpMThD?=
- =?utf-8?B?OGJoQzNnajIxa1ZXOEtDbk1ybTllSUVNUndsZUxPL0JYcWdsTDJXc3BxZnRi?=
- =?utf-8?B?NU53T2pJZWw4TkF3WWZadEVBYnExdkRJM3VGL1Q3dUVCMEhJMEhiVTlzU1U0?=
- =?utf-8?B?M0tlT2NXS3ZCYWRWVmZvSXh2STltdHE3R0FxUTRVTCtLVWxYa3pPc3R6QVgr?=
- =?utf-8?B?QTl1YndyRzNzL2ZlczdvUlNkSWZidWxqNjZyS0pJcVA4WFppUTVBQWZaMkN2?=
- =?utf-8?B?Tkl5blFldEVnSUJYOGsrSlMxeUhENW80SmkyTlNUck51V0ZJUFBMdURCbUdn?=
- =?utf-8?B?aTJiTjRoTWl4eGRZc1lDM1RNd1dONjZJMThhejExOEJkNFlmc0RwczIwdVZZ?=
- =?utf-8?B?dE43NDFLL2xnRXIvQWt1V0tUb3RTQXlrQUsyOHFBWEVjbWU4VkNxWUNRZjJZ?=
- =?utf-8?B?OWxCaWsvYzVLaTBFNjlTb0M4Q0VzUitoUy94SlZuYXFLaUFITmVvYmhLMVZp?=
- =?utf-8?B?VGFvcXh4bDZrUm5HQkprR0pJQTJUQ1c4Zi9XMWNrTlZ0QTFJU0VzMDRUMnVD?=
- =?utf-8?B?NnBJbE0zNjJ4ek9ZNlR3dG5FWExXN09BTGpWNWtHcU9Td1JneGZWOWY3U0xY?=
- =?utf-8?B?Mk12K092VGc0cXFEeHNZbjFaQ1ZuY2h2VWpjNFVVdjNaeFRTN21NYXBYN29U?=
- =?utf-8?B?aDZPeExsL1BEMWcyd01yc3o0Y3NDWjRKcm5lbnh1NVpONGlxbE1GWlJpd0FG?=
- =?utf-8?B?QWNBbjdjZ2I0dWVNTHdrcFZKbHR0SDBOeGkxV2lUZ1k0enVYZ1NhMTBsQitP?=
- =?utf-8?B?UUpFb0R5dS9abXh2elFYZnFETW5vRjBNdGRoZmVWMFlJREw1SkdiVU9BcG5r?=
- =?utf-8?B?ZW1PZnRMZWVuTm5VM3BDM216Sjk2SkNDSDlvVkF3UmtKbUlObzAyQ3lwSlBa?=
- =?utf-8?B?bFIybTNBQlNCNzhNQ0NZTEdML1ZETkVDRDF4VHFNcFo3V1d3MmVOTXliU1R0?=
- =?utf-8?B?cmdoQ3RCUU5veDQ3aExLUHVmdm4vQUd0UzNYQ1BNYlVqWXkzb0RrZXVvMk5Y?=
- =?utf-8?B?NEx4WXRBdEJqSnE5WXBoUTg3c3U3WWdVRE9NZVFYVUFqTDNyZDJWQlQ0T1ZT?=
- =?utf-8?B?bmMzYWk4djlHdEtCeCtDVlUwK3FmVXRjak5xejF1aEprSlZuV05iWE1yeVlC?=
- =?utf-8?B?bzUxU3pTMG1Fb0JBTXdGcmE2TW9HcVZmdy9RSWlqNmFUQjlBN3I0bzBaSVRi?=
- =?utf-8?B?ZFZwQ2hPNm4yR2Z5TjlHWVU1Z01VRGJPTUhaRUJLbUh6UVErYlZFQVcvbXpE?=
- =?utf-8?B?QVF0UGJPS1JpMlZldSt0WWYyVWZZZDhReHFxMk9GK0FlazBOMHpRQWFXTmVR?=
- =?utf-8?B?S0RGTUNzZnlMdXY1MWY0ZVF2aXFYcHg4RTRJenB5UFQycksrWmNSUkpsM1kz?=
- =?utf-8?B?SGxsTGQ4RTBlM25VUjlZSUNMNjF2UDdIVEo5aXBHeGJ4Sm1nKzA1Z0pKZDFJ?=
- =?utf-8?B?U3VLdlhtUnVVSXlZQU5rR0pjZUNDVHBGdm5aN0FMMTFSR09ubHUrWll5QWhS?=
- =?utf-8?Q?Z13C8eKtPIiTKAV1XgvzTEU=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(10070799003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?dkdVcWltQXhxQ1pCSFdWTUNXVzI1OGwzb2N0eHZ1VXNwT2h5VlVSVVl5ZkRJ?=
- =?utf-8?B?VjdMU2dZSGthdWpXbFcrMjRJT1FsRU9TOXNHVXBiNU1ONVViNlZLQyt5Z3J1?=
- =?utf-8?B?VUQ3dzI2NHJ6UUJkdjh4YzY2b0E5TW4wdGllLytuNktzWWZHL1FEOStvQW1H?=
- =?utf-8?B?bGZ1Zmk4YXdNMmhPRERxcjh6NWhOb1RuS1BGWSsvY0tkM1MzMGZTeldVTXdl?=
- =?utf-8?B?YVJ6cHArRVQ0Q1dXMzZKRGZDbnVySENBM2ZyczhSN1QyTVBTSVg1RWRSRHo0?=
- =?utf-8?B?NlNxS05XV0NNcXFxdG9hOTFhdWYrQWFDeC93eTc3cG8ycEMvTHRPeWhIc2hI?=
- =?utf-8?B?MnBBREg4U1FOejRKS0ZjdVFLYnVQaW9hR09wSmhRVWZjMEZEVUtVVXBzT1Zm?=
- =?utf-8?B?c0g1bTJEcjUrVXczNDVRMllaaDY5VE1XMlNYckRibzc4S09oWE9KM3R4OGsx?=
- =?utf-8?B?TDBZSzlreU5Cc29JMk9LSjRIQXBQNUVsVTlHSHVCbDJESnJQQUNYVXNpOUpU?=
- =?utf-8?B?UHNjYXZybHZETHVVSUFBMUY1NWRXNE10Ulp1WmFZVUdPc25KVFk5SnU4Qlo4?=
- =?utf-8?B?MVcvckl2Zm5FVU44OHF5R3VBNjI1Y3hhNHllTDBzL3o3dndFRVBNTHBpSGI4?=
- =?utf-8?B?MENvVy9sdGpNbTFsbmJoNTZNdjlES3RGWkRCT2syTENMVUVWUWhaSk9UZ3lN?=
- =?utf-8?B?enVmbHVrN2RvUmtuYk4xYUx6bHV2TzExcEozTDBHcGx2MHhDWVlWU281VWdJ?=
- =?utf-8?B?SVlUaURKdTNtTExvbk44aEtkS01MQlg0RG5WNTNqckNPaUNwbHNTMURqZFR5?=
- =?utf-8?B?TzNXc0NHUXluM055VVdQSkRFa1BCUFl6ZmM0cThYOEw2VHkycjM5ZEtBZnhy?=
- =?utf-8?B?OXdoMHVBUnRCZittZkVlalgvRlUwNkNVR3lOMDVCRGl1aHZ1NENWNXZ4Vytr?=
- =?utf-8?B?ZVV1L3lzUkpicVYvMkxhYmNRTTJDN0VjaDdlWkFlMWhoaWNydGxqQmtPL1VT?=
- =?utf-8?B?OVhqTVhuRldtOVp0YjJsM0pYclVscnowTlJRRTFjK0tSbkFrNzlHV2hKUGlU?=
- =?utf-8?B?bHMyWnpwSlg3VTFUQ0RBREhNZ1djM3RKRHBMeDZLT1ZDUjBoRTh0eE92NHUv?=
- =?utf-8?B?VEVTMERkZXBxU2NFV2EzMFlZVktMVkx3aVR0Vks1VnA2Yms0VHl3L0U2SG14?=
- =?utf-8?B?TjVMNW9JY0FoOU1aWW9BcXd6bzJpbWE0SUdMNGMvK0FSbFF4MjEwVmZFK2FI?=
- =?utf-8?B?cUxSTXEyVi9lcFJXak1JTGppdlYvVzB0L3lsWWljSVNLU1BGdHhpWk5NTHc3?=
- =?utf-8?B?dmZzbnJIbmhZbnpUUmYyaEVhYXRhZ21hV3BYYkpEais5ZXRXc0xFdkZzZ1dm?=
- =?utf-8?B?RTVjNERFV3lCZ0ZheUlsZnIxRWlHYjdXaVZpY3V0NUFLM2FNRlliRWU4UThB?=
- =?utf-8?B?Yi9wcElHQitwaWZHK043YWhVenl3N21ZYVcyMXJRK0dLTng5Ui9Pb2tCdzhS?=
- =?utf-8?B?cXgyV1BaOG91VUhEb1BjNEc0cnd3SWZZUE5HcFBvbTFYTUxNcUdkdmphcEZB?=
- =?utf-8?B?d2xJSDhzOThYWTNxVkt4bzNkQ1BOdHROTzZ6NmhsY0ltSHV2c2F0andqOXhD?=
- =?utf-8?B?Ky9UV2VPMnRKbjhtRlVhdzJybDIrcUE3L043RkdWVTlVUGo4UDJNL3dad3pE?=
- =?utf-8?B?TWxvTzJaWFJ5dW42VzdTNTVMQ051UGdSM2hQZTgveld0amNtWU1BSVM0OFJp?=
- =?utf-8?B?NllFK0hZUDR0Y0dSMlZaSDRSUVZRcEVMdHFkYU5lZnBXMUw2bmlKNjdaeDFa?=
- =?utf-8?B?czhGQzhCSzkxdTRHTldxVG9iUU84UW41SEUrbDJwM1hqUUxFcGhNQkFzREhh?=
- =?utf-8?B?bzEwSkNvYzNHRDF3M1JSVitqektXWTNNZ1lCS04wbUFDRXA1RmU2Y0NQT1NI?=
- =?utf-8?B?dEMweFYzMnVHQzVocFpoaml1OVF3MEF6Vi9Fd1ZCbFRRS1FmVDc2TEFEd1Uz?=
- =?utf-8?B?cUxUMWdaY0RNa2ppakl2SS9rU1IwR2h5TWY0TThZR3BpUURoRlc4Q1pEV1Vz?=
- =?utf-8?B?RERHZUp6Zm1NcDMyZ0ZWVytRZVJmMXJyMm80dDJRZW5lQWF0a3cxSFJXNUFn?=
- =?utf-8?B?d2tBdStObXZ3QTB3OTVqVkNTVmR4RHhTOG1ySkNlakJCNng5YkQvZVBnUHBj?=
- =?utf-8?B?RGZaYkJpNWRTRExTVThiVFgxS0RIVWVyKzdwcWF2QjdqVEl0dUFMSng5cG1z?=
- =?utf-8?B?ckVxVDl4bUs3a0VDS0Iwd1NkUnVVbjU3VVJ3alVFL2xkRERuQ3lVcWpHRUF3?=
- =?utf-8?B?WDRiUUlKaVlrWGhLVlhMWXFaVjlla1htRGM3UUtEV2dZd1BqMWl6MFllTGI5?=
- =?utf-8?Q?wOIAGD8lvQ2MRFG0yWMJAomkR9qmff2I8DUs3?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <344A5170F27347458B35ED4F4739A5A5@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C0726C3A2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 20:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768854898; cv=none; b=PB3fY2rPhd/JG4DXcdXbTyHvRC1btgxvGwbp8kwTQR0tfjThFh36WU6QIHyFnMXwo8aR1AJvrlMeECy7kyvAE5k2xtkANEAodq4DvklOEMxhyUToR2cQqq5C2UPi8K92DUtUwdEtKFFX4eUfC76WA5SYKxp46ArH+L6N0CfnTBk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768854898; c=relaxed/simple;
+	bh=UMnYiBALmrnm5/t57xS7ixMqUFI+6Fuq0lAYTyKP3OM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cDCvLzdi6mlG/CKRZZqLq1Lkjt3Lt4gCkQvqNECzfz1PnadSlMjtlXbFJf9VbbVSS20mBBkPeYfU+zuZFkfFDgXLpc0tEMshdYhoFJlfatwlihftIdgbd36l93nsDkwTnPOUs1hBf2Rs485pq7NwgG1FPnIpg3e8y55s5S2AT4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fglh3VOU; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47edbae8307so4261025e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 12:34:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768854895; x=1769459695; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YHXXul298Uqmwz6sEETCmfScPBPBKzYMQJK29qorL1A=;
+        b=fglh3VOUJ/mWU6evMY+g4Fqr4EbryivZjqdNBkGgrBpxtDScknR0OYjFBiPoJaqgAr
+         B6N3FcSo60ehAnTev2+ulR/ABP+tQQoNheUyymSXwSoc81wOAQzQrthIqXubfYIejLN5
+         y9fKxq5xBwJCFdLvB6K33DGB6pr3MSbJKRsIlD3/dWsYt+tfcGjsEU7FpLj0gLZeDVGf
+         Vy7AkgNsOJDGn77E/5zeLHWaJyQ+mTQcwLMFXLI9uGl5w/yhYLRcbow8rbNm1kvQU8EW
+         lBSCjgnEGnu48mXhztatFEGbJV9RcVDmCTfB+zQ6Nl6uoCcfXOI8hzyo4lGAUPKadm5b
+         ltqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768854895; x=1769459695;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YHXXul298Uqmwz6sEETCmfScPBPBKzYMQJK29qorL1A=;
+        b=nsoZmoOX+d64gsc/tqIEz19MxfDh2y7Im/aCahgwHecOG+PY0cnUFPd0eP0OgZnK3K
+         puSSaGz5+trRpS4R0Bwbbh1pHzNM3+SfctFVzPk/56OLTQPxiT8phPPYUO2LBRvEKp2b
+         VMBVhVRxpe69EOg/wbH8zg8emXDygRAeDIYsHkhxJPCJJvEdYDDjHmP0aq/crzrEmHH8
+         GolaEmI/4BGvyAJqjCYiI72svPAD/m3oFLWPPgfxDOOBKdIDllslsTGlh5uJQo0aTerw
+         hV+A/UmX1NpxI/X0uzj0SmDn8hvEcLaaKcepFOzaUmMA+epnhousF+FJ8mEckWrmZSbi
+         vENw==
+X-Forwarded-Encrypted: i=1; AJvYcCVm6aNbFkoQTBYkiRzVwA57Fk3Ncgdt/mBJJv5jiIGJVX3Evg+w2qqvWW0OaJyHSZU9EZ4FwXQ2Ln7P9szb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0IN7k4v4Nu+wTGz7sUr9QHH39SIJuBMzyFsU7XR7oicnRaS1f
+	nXlO17l2AaNrT2Miy2srOG6MZT8ZcJ/z9mZiN0as1TANGccpqDw/kc0B
+X-Gm-Gg: AZuq6aKwfvoechUy+HpExpaSNKkubl/x4CB+CVucQMZcx+pfeWHIEJXPm63sK4Mm+mH
+	RGkO/Oh0/OGvYFDhX3kSiXwTjdJKIbJPgO6sOaGroJyDVy+LO2kVvcNxjbDDHpdJtnj32WRTKRh
+	ETfgiW3jJKgxBgnFJVdI3UfNtNJpzGDA2aKRNQ8QTKKzy8zAQKu+kwaRx+0aQ721GEuDdZ2Wwyf
+	U6wYLWLCogKEy6Qe8tmqsS/zaxRkxQXXjvlqAKA+WiZ6wcKXZi6hRpGuQi1JPa8OVVY490OtcE3
+	e5JOHQ6OUehRsx1ly10ihXRDSRAP/etSiY64B67ll5EI7GjhG1srZeYpfZ70A77KBHT+m98WYvE
+	vGJjDPK7cMRMAggx/Bcw1zdvW924BTf3CSksTjU97X/vy2Umu2i1lE9dN0eFGrWFgFR99mBSXU6
+	kpVfZ4sa2z50q7BzisutxoayOn/q2YKontkedda9LYvIg=
+X-Received: by 2002:a05:6000:22c3:b0:42b:3e20:f1b1 with SMTP id ffacd0b85a97d-4358b9549demr610095f8f.2.1768854894791;
+        Mon, 19 Jan 2026 12:34:54 -0800 (PST)
+Received: from [192.168.1.105] ([196.238.155.133])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43569927163sm23930761f8f.12.2026.01.19.12.34.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Jan 2026 12:34:54 -0800 (PST)
+Message-ID: <4d545c3f-50cf-4ad4-8427-35f87398838e@gmail.com>
+Date: Mon, 19 Jan 2026 22:34:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09a0f126-7238-47db-2f34-08de579d219f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2026 20:55:51.8389
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: moAQw9tj52lfGdGrSPV0foth23HlqKX0O9kIfHw+j2N5Uaj9hdBPWMjaStCdSw9TYvXg1is0zCOvbEgm/x/R0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR15MB5627
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE5MDE3NCBTYWx0ZWRfX5hIQntHXUPlI
- 9hY1S7hVwZ6PnzEDCm6kUzeyfGIld2vz7qkhfzO98gPjh3/9hGKKiA4KPWbLYmaEU1Orp7xoooE
- HxmLqpik8atxAcnrVVNlLyO9FHR35AcYmHC/zSv8p8BUecJePd2CVviOGvOoSdsyrpRMVeLXYiv
- 3KHmKk7JeInlzvhuACMpIPN/1v44955G1YUNOq2X6zDn1MvNxHA4rGy9/R6fKq72y+me6s965KT
- u4ezQJGiUVKgwcTKPp+qE0K82gjD2h0CS+xM+AVIdyCuhFtb96Vmb0g3ymiQxITWWVC5RfkNFyY
- Z96/MGGgOt7N4tO3fWEbm8dsSXTS+lZWT/kU0ugSY0UW0Dblgw9Kw3truLuodHuy/xjxuautaiJ
- ZXZjl+cRPI3VehHIP5sYV7OiXQ8z9mfMDQeMcMg0NUA9iEAwI6GXsMxVYTDoIDLDbdjDaPXZSoJ
- gFunCJDLMQBozS11i4w==
-X-Authority-Analysis: v=2.4 cv=bsBBxUai c=1 sm=1 tr=0 ts=696e9a5f cx=c_pps
- a=4d7Nl6fXTlayLABBLko2Iw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8
- a=ObUGpDGwhYDOwRBkJTgA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: 2mZ1bmaz7wY5KEZnyCtok5NVB4YrE_Lw
-X-Proofpoint-GUID: hXwYFhygrPfq3VNIEIHKlRn2yHXVEK7D
-Subject: RE: [PATCH v2] fs/hfs: fix s_fs_info leak on setup_bdev_super()
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fs/hfs: fix s_fs_info leak on setup_bdev_super()
  failure
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-19_05,2026-01-19_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
- impostorscore=0 malwarescore=0 clxscore=1015 adultscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2601150000 definitions=main-2601190174
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+ "brauner@kernel.org" <brauner@kernel.org>
+Cc: "jack@suse.cz" <jack@suse.cz>, "khalid@kernel.org" <khalid@kernel.org>,
+ "frank.li@vivo.com" <frank.li@vivo.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "slava@dubeyko.com" <slava@dubeyko.com>,
+ "david.hunter.linux@gmail.com" <david.hunter.linux@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-kernel-mentees@lists.linuxfoundation.org"
+ <linux-kernel-mentees@lists.linuxfoundation.org>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+ "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+ "syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com"
+ <syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com>
+References: <20251119073845.18578-1-mehdi.benhadjkhelifa@gmail.com>
+ <c19c6ebedf52f0362648a32c0eabdc823746438f.camel@ibm.com>
+ <20251126-gebaggert-anpacken-d0d9fb10b9bc@brauner>
+ <04d3810e-3d1b-4af2-a39b-0459cb466838@gmail.com>
+ <56521c02f410d15a11076ebba1ce00e081951c3f.camel@ibm.com>
+ <20251127-semmel-lastkraftwagen-9f2c7f6e16dd@brauner>
+ <4bb136bae5c04bc07e75ddf108ada7e7480afacc.camel@ibm.com>
+ <59b833d7-4a97-4703-86ef-c163d70b3836@gmail.com>
+ <9061911554697106be2703189f02e5765f3df229.camel@ibm.com>
+ <7d38a29d-9d81-42e0-99c1-b6a09afe61fd@gmail.com>
+ <8a96ddbefd84ed0917afc13f91ee0f33ea2e0c10.camel@ibm.com>
+ <4e65ea7b-79aa-4c36-a8ea-0ca84966d089@gmail.com>
+ <d714e0652f920cecebf5fdcf0023a440cbd1df4e.camel@ibm.com>
+Content-Language: en-US
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <d714e0652f920cecebf5fdcf0023a440cbd1df4e.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-T24gTW9uLCAyMDI2LTAxLTE5IGF0IDIyOjM0ICswMTAwLCBNZWhkaSBCZW4gSGFkaiBLaGVsaWZh
-IHdyb3RlOg0KPiBPbiAxLzE5LzI2IDc6MjcgUE0sIFZpYWNoZXNsYXYgRHViZXlrbyB3cm90ZToN
-Cj4gPiANCg0KPHNraXBwZWQ+DQoNCj4gPiANCj4gSSBoYXZlIHJhbiB4ZnN0ZXN0cyBvbiBib3Ro
-IG15IGRlc2t0b3AgYW5kIGxhcHRvcCBvbiB0aGUgZm9yLW5leHQgYnJhbmNoIA0KPiBmb3IgdGhl
-IHJlcG9zaXRvcnkgdGhhdCB5b3UgaGF2ZSBtZW50aW9ubmVkIGFuZCBJIGRpZG4ndCBoYXZlIGFu
-eSBjcmFzaCANCj4gb3IgaXNzdWUuIEhlcmUgaXMgdGhlIHRlc3QgcmVzdWx0cyhpZGVudGljYWwg
-Zm9yIGJvdGggZGVza3RvcCBhbmQgbGFwdG9wKToNCj4gRlNUWVAgICAgICAgICAtLSBoZnNwbHVz
-DQo+IFBMQVRGT1JNICAgICAgLS0gTGludXgveDg2XzY0IGJoayA2LjE5LjAtcmMxLTAwMDA4LWdl
-ZDg4ODljYTIxYjYgIzEgU01QIA0KPiBQUkVFTVBUX0RZTkFNSUMgTW9uIEphbiAxOSAyMDo1Mzo1
-OCBDRVQgMjAyNg0KPiBNS0ZTX09QVElPTlMgIC0tIC9kZXYvbG9vcDENCj4gTU9VTlRfT1BUSU9O
-UyAtLSAvZGV2L2xvb3AxIC9tbnQvc2NyYXRjaA0KPiANCj4gZ2VuZXJpYy8wMDEgIDJzIC4uLiAg
-MnMNCj4gZ2VuZXJpYy8wMDIgIDFzIC4uLiAgMXMNCj4gPHNraXA+DQo+IEZhaWxlZCA1MSBvZiA3
-NzIgdGVzdHMNCj4gDQoNClRoZSA1MSBmYWlsZWQgeGZzdGVzdHMgaXMgZXhwZWN0ZWQgc2l0dWF0
-aW9uLiBIb3dldmVyLCBpZiB5b3UgYXBwbHkgWzEsMl0gb24NCnhmc3Rlc3RzIGNvZGUgYmFzZSwg
-dGhlbiB5b3UgY291bGQgaGF2ZSBhcm91bmQgMzEgZmFpbGVkIHhmZXN0c3RzIGZvciBIRlMrLg0K
-DQpUaGFua3MsDQpTbGF2YS4NCg0KPiBNYW55IHRlc3RzIHdlcmUgc2tpcHBlZCBvZiBjb3Vyc2Uu
-IElmIHlvdSB3YW50IGZ1bGwgb3V0cHV0IEkgY2FuIHNlbmQgDQo+IHlvdSB0aGF0LkJ1dCBmb3Ig
-bm93IHRoZSBpc3N1ZSBzZWVtIHRvIGJlIHJlc29sdmVkIChmb3IgaGZzcGx1cyBhdCBsZWFzdCAN
-Cj4gSSdtIG5vdCBzdXJlIGFib3V0IGhmcyBzaW5jZSBJIHN0aWxsIGNhbid0IHRlc3QgaXQgb24g
-bXkgc3lzdGVtKS4NCj4gVGhhbmtzIGZvciB5b3VyIGVmZm9ydHMgc2xhdmEuDQo+IA0KPiANCg0K
-WzFdDQpodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1mc2RldmVsLzIwMjYwMTE4MTgwNTE5
-LnhkZGR3b2tlMnRleTZvZ3RAZGVsbC1wZXI3NTAtMDYtdm0tMDgucmh0cy5lbmcucGVrMi5yZWRo
-YXQuY29tLw0KWzJdDQpodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1mc2RldmVsLzIwMjUx
-MjMxMjI0OTM3LnV1NjdsNzZjeXRjZDM2bnNAZGVsbC1wZXI3NTAtMDYtdm0tMDgucmh0cy5lbmcu
-cGVrMi5yZWRoYXQuY29tLw0K
+On 1/19/26 7:27 PM, Viacheslav Dubeyko wrote:
+> On Mon, 2026-01-19 at 20:03 +0100, Mehdi Ben Hadj Khelifa wrote:
+>> On 1/19/26 6:48 PM, Viacheslav Dubeyko wrote:
+>>> On Sat, 2026-01-17 at 19:51 +0100, Mehdi Ben Hadj Khelifa wrote:
+>>>> On 12/1/25 8:24 PM, Viacheslav Dubeyko wrote:
+>>>>> On Sat, 2025-11-29 at 13:48 +0100, Mehdi Ben Hadj Khelifa wrote:
+>>>>>> On 11/27/25 9:19 PM, Viacheslav Dubeyko wrote:
+>>>>>>>
+>>>>>
+>>>>> <skipped>
+>>>>>
+>>>>>>>
+>>>>>>> As far as I can see, the situation is improving with the patches. I can say that
+>>>>>>> patches have been tested and I am ready to pick up the patches into HFS/HFS+
+>>>>>>> tree.
+>>>>>>>
+>>>>>>> Mehdi, should I expect the formal patches from you? Or should I take the patches
+>>>>>>> as it is?
+>>>>>>>
+>>>>>>
+>>>>>> I can send them from my part. Should I add signed-off-by tag at the end
+>>>>>> appended to them?
+>>>>>>
+>>>>>
+>>>>> If you are OK with the current commit message, then I can simply add your
+>>>>> signed-off-by tag on my side. If you would like to polish the commit message
+>>>>> somehow, then I can wait the patches from you. So, what is your decision?
+>>>>>
+>>>>>>
+>>>>>> Also, I want to give an apologies for the delayed/none reply about the
+>>>>>> crash of xfstests on my part. I went back testing them 3 days earlier
+>>>>>> and they started showing different results again and then I have broken
+>>>>>> my finger....Which caused me to have much slower progress.I'm still
+>>>>>> working on getting the same crashes as I did before where I get them
+>>>>>> when running any test.Because I ran quick tests and they didn't crash.
+>>>>>> only with auto around the 631 test for desktop and around 642 on my
+>>>>>> laptop for both not patched and patched kernels.I'm going to update you
+>>>>>> on that matter when I can have predictable behavior and cause of the
+>>>>>> crash/call stack.But expect slow progress from my part here for the
+>>>>>> reason I mentionned before.
+>>>>>>
+>>>>>
+>>>>> No problem. Take your time.
+>>>>>
+>>>> Continuing on this. I have run xfstests today on the base 6.18-rc7
+>>>> unmodified kernel ( I will do it again for latest release) and captured
+>>>> the crash.
+>>>> The following is the decoded crash report:
+>>>> [ 1572.093549] [T1127273] Oops: general protection fault, maybe for
+>>>> address 0xffffcaa2c1da364c: 0000 [#1] SMP NOPTI
+>>>> [ 1572.093555] [T1127273] Tainted: [S]=CPU_OUT_OF_SPEC, [O]=OOT_MODULE,
+>>>> [E]=UNSIGNED_MODULE
+>>>> [ 1572.093556] [T1127273] Hardware name: Gigabyte Technology Co., Ltd.
+>>>> B760 DS3H/B760 DS3H, BIOS F12 02/25/2025
+>>>> [ 1572.093557] [T1127273] RIP: 0010:memcpy (arch/x86/lib/memcpy_64.S:38)
+>>>> [ 1572.093560] [T1127273] Code: 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00
+>>>> 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 48
+>>>> 89 f8 48 89 d1 <f3> a4 c3 cc cc cc cc 66 90 66 66 2e 0f 1f 84 00 00 00
+>>>> 00 00 90 90
+>>>> All code
+>>>> ========
+>>>>       0:	2e 0f 1f 84 00 00 00 	cs nopl 0x0(%rax,%rax,1)
+>>>>       7:	00 00
+>>>>       9:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+>>>>       e:	90                   	nop
+>>>>       f:	90                   	nop
+>>>>      10:	90                   	nop
+>>>>      11:	90                   	nop
+>>>>      12:	90                   	nop
+>>>>      13:	90                   	nop
+>>>>      14:	90                   	nop
+>>>>      15:	90                   	nop
+>>>>      16:	90                   	nop
+>>>>      17:	90                   	nop
+>>>>      18:	90                   	nop
+>>>>      19:	90                   	nop
+>>>>      1a:	90                   	nop
+>>>>      1b:	90                   	nop
+>>>>      1c:	90                   	nop
+>>>>      1d:	90                   	nop
+>>>>      1e:	f3 0f 1e fa          	endbr64
+>>>>      22:	66 90                	xchg   %ax,%ax
+>>>>      24:	48 89 f8             	mov    %rdi,%rax
+>>>>      27:	48 89 d1             	mov    %rdx,%rcx
+>>>>      2a:*	f3 a4                	rep movsb (%rsi),(%rdi)		<-- trapping
+>>>> instruction
+>>>>      2c:	c3                   	ret
+>>>>      2d:	cc                   	int3
+>>>>      2e:	cc                   	int3
+>>>>      2f:	cc                   	int3
+>>>>      30:	cc                   	int3
+>>>>      31:	66 90                	xchg   %ax,%ax
+>>>>      33:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+>>>>      3a:	00 00 00 00
+>>>>      3e:	90                   	nop
+>>>>      3f:	90                   	nop
+>>>>
+>>>> Code starting with the faulting instruction
+>>>> ===========================================
+>>>>       0:	f3 a4                	rep movsb (%rsi),(%rdi)
+>>>>       2:	c3                   	ret
+>>>>       3:	cc                   	int3
+>>>>       4:	cc                   	int3
+>>>>       5:	cc                   	int3
+>>>>       6:	cc                   	int3
+>>>>       7:	66 90                	xchg   %ax,%ax
+>>>>       9:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+>>>>      10:	00 00 00 00
+>>>>      14:	90                   	nop
+>>>>      15:	90                   	nop
+>>>> [ 1572.093561] [T1127273] RSP: 0018:ffffcaa2c1da3610 EFLAGS: 00010206
+>>>> [ 1572.093563] [T1127273] RAX: ffffcaa2c1da364c RBX: 0000000000000004
+>>>> RCX: 0000000000000004
+>>>> [ 1572.093564] [T1127273] RDX: 0000000000000004 RSI: 0ddc8fa7cb9c9ff6
+>>>> RDI: ffffcaa2c1da364c
+>>>> [ 1572.093565] [T1127273] RBP: 0000000000000004 R08: 0000000000002000
+>>>> R09: ffff89e0966c8118
+>>>> [ 1572.093566] [T1127273] R10: 0000000000000009 R11: 000000000000000a
+>>>> R12: ffffcaa2c1da364c
+>>>> [ 1572.093566] [T1127273] R13: ffff89e085beee98 R14: 0000000000000004
+>>>> R15: ffff89e085beee40
+>>>> [ 1572.093567] [T1127273] FS:  00007f9b755ddc40(0000)
+>>>> GS:ffff89e8af90e000(0000) knlGS:0000000000000000
+>>>> [ 1572.093568] [T1127273] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> [ 1572.093569] [T1127273] CR2: 00007f0cc5b95a10 CR3: 00000003448b9001
+>>>> CR4: 0000000000f72ef0
+>>>> [ 1572.093570] [T1127273] PKRU: 55555554
+>>>> [ 1572.093570] [T1127273] Call Trace:
+>>>> [ 1572.093572] [T1127273]  <TASK>
+>>>> Server query failed: No such file or directory
+>>>> [ 1572.093574] [T1127273] hfsplus_bnode_read (fs/hfsplus/bnode.c:49
+>>>> fs/hfsplus/bnode.c:23) hfsplus
+> 
+> Probably, we are still trying to read out of allocated memory for b-tree node
+> despite the check_and_correct_requested_length() efforts to protect against
+> this:
+> 
+> void hfs_bnode_read(struct hfs_bnode *node, void *buf, u32 off, u32 len)
+> {
+> 	struct page **pagep;
+> 	u32 l;
+> 
+> 	if (!is_bnode_offset_valid(node, off))
+> 		return;
+> 
+> 	if (len == 0) {
+> 		pr_err("requested zero length: "
+> 		       "NODE: id %u, type %#x, height %u, "
+> 		       "node_size %u, offset %u, len %u\n",
+> 		       node->this, node->type, node->height,
+> 		       node->tree->node_size, off, len);
+> 		return;
+> 	}
+> 
+> 	len = check_and_correct_requested_length(node, off, len);
+> 
+> 	off += node->page_offset;
+> 	pagep = node->page + (off >> PAGE_SHIFT);
+> 	off &= ~PAGE_MASK;
+> 
+> 	l = min_t(u32, len, PAGE_SIZE - off);
+> 	memcpy_from_page(buf, *pagep, off, l);
+> 
+> 	while ((len -= l) != 0) {
+> 		buf += l;
+> 		l = min_t(u32, len, PAGE_SIZE);
+> 		memcpy_from_page(buf, *++pagep, 0, l);
+> 	}
+> }
+> 
+> Potentially, node_size and real allocated memory is not consistent with each
+> other:
+> 
+> static inline
+> u32 check_and_correct_requested_length(struct hfs_bnode *node, u32 off, u32 len)
+> {
+> 	unsigned int node_size;
+> 
+> 	if (!is_bnode_offset_valid(node, off))
+> 		return 0;
+> 
+> 	node_size = node->tree->node_size;
+> 
+> 	if ((off + len) > node_size) {
+> 		u32 new_len = node_size - off;
+> 
+> 		pr_err("requested length has been corrected: "
+> 		       "NODE: id %u, type %#x, height %u, "
+> 		       "node_size %u, offset %u, "
+> 		       "requested_len %u, corrected_len %u\n",
+> 		       node->this, node->type, node->height,
+> 		       node->tree->node_size, off, len, new_len);
+> 
+> 		return new_len;
+> 	}
+> 
+> 	return len;
+> }
+> 
+> So, I assume that it makes sense to check the correctness of node_size value.
+> But, maybe, the reason is somewhere else. However, I remember this report [1]
+> for HFS. The issue could be the same for HFS+ too.
+> 
+I have ran xfstests on both my desktop and laptop on the for-next branch 
+for the repository that you have mentionned and I didn't have any crash 
+or issue. Here is the test results(identical for both desktop and laptop):
+FSTYP         -- hfsplus
+PLATFORM      -- Linux/x86_64 bhk 6.19.0-rc1-00008-ged8889ca21b6 #1 SMP 
+PREEMPT_DYNAMIC Mon Jan 19 20:53:58 CET 2026
+MKFS_OPTIONS  -- /dev/loop1
+MOUNT_OPTIONS -- /dev/loop1 /mnt/scratch
+
+generic/001  2s ...  2s
+generic/002  1s ...  1s
+<skip>
+Failed 51 of 772 tests
+
+Many tests were skipped of course. If you want full output I can send 
+you that.But for now the issue seem to be resolved (for hfsplus at least 
+I'm not sure about hfs since I still can't test it on my system).
+Thanks for your efforts slava.
+
+> Thanks,
+> Slava.
+> 
+Best regards,
+Mehdi Ben Hadj Khelifa
+> [1] https://github.com/hfs-linux-kernel/hfs-linux-kernel/issues/241
+> 
+>>>> [ 1572.093580] [T1127273]  ? __pfx_hfs_find_rec_by_key
+>>>> (fs/hfsplus/bfind.c:86) hfsplus
+>>>> [ 1572.093584] [T1127273] hfsplus_brec_lenoff (fs/hfsplus/brec.c:27) hfsplus
+>>>> [ 1572.093588] [T1127273] __hfsplus_brec_find (fs/hfsplus/bfind.c:118)
+>>>> hfsplus
+>>>> [ 1572.093592] [T1127273] hfsplus_brec_find (fs/hfsplus/bfind.c:191) hfsplus
+>>>> [ 1572.093596] [T1127273]  ? __pfx_hfs_find_rec_by_key
+>>>> (fs/hfsplus/bfind.c:86) hfsplus
+>>>> [ 1572.093599] [T1127273] hfsplus_attr_exists
+>>>> (fs/hfsplus/attributes.c:190) hfsplus
+>>>> [ 1572.093603] [T1127273] __hfsplus_setxattr (fs/hfsplus/xattr.c:340
+>>>> (discriminator 1)) hfsplus
+>>>> [ 1572.093610] [T1127273] hfsplus_setxattr (fs/hfsplus/xattr.c:437) hfsplus
+>>>> [ 1572.093613] [T1127273]  __vfs_setxattr (fs/xattr.c:200)
+>>>> [ 1572.093616] [T1127273]  __vfs_setxattr_noperm (fs/xattr.c:236)
+>>>> [ 1572.093619] [T1127273]  vfs_setxattr (./include/linux/fs.h:990
+>>>> fs/xattr.c:323)
+>>>> [ 1572.093621] [T1127273]  filename_setxattr (fs/xattr.c:666)
+>>>> [ 1572.093623] [T1127273]  path_setxattrat (fs/xattr.c:715)
+>>>> [ 1572.093626] [T1127273]  __x64_sys_lsetxattr (fs/xattr.c:750
+>>>> (discriminator 2))
+>>>> [ 1572.093628] [T1127273]  do_syscall_64 (arch/x86/entry/syscall_64.c:63
+>>>> (discriminator 1) arch/x86/entry/syscall_64.c:94 (discriminator 1))
+>>>> [ 1572.093630] [T1127273]  ? do_syscall_64
+>>>> (arch/x86/entry/syscall_64.c:63 (discriminator 1)
+>>>> arch/x86/entry/syscall_64.c:94 (discriminator 1))
+>>>> [ 1572.093631] [T1127273]  ? __x64_sys_lsetxattr (fs/xattr.c:750
+>>>> (discriminator 2))
+>>>> [ 1572.093633] [T1127273]  ? do_syscall_64
+>>>> (arch/x86/entry/syscall_64.c:63 (discriminator 1)
+>>>> arch/x86/entry/syscall_64.c:94 (discriminator 1))
+>>>> [ 1572.093633] [T1127273]  ? __irq_exit_rcu (kernel/softirq.c:688
+>>>> (discriminator 1) kernel/softirq.c:729 (discriminator 1))
+>>>> [ 1572.093636] [T1127273]  entry_SYSCALL_64_after_hwframe
+>>>> (arch/x86/entry/entry_64.S:130)
+>>>> [ 1572.093637] [T1127273] RIP: 0033:0x7f9b7531697e
+>>>> [ 1572.093654] [T1127273] Code: 83 c4 18 48 89 d8 5b 41 5c 41 5d 41 5e
+>>>> 41 5f 5d c3 0f 1f 00 31 db eb e7 0f 1f 40 00 f3 0f 1e fa 49 89 ca b8 bd
+>>>> 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 62 13 0f 00 f7 d8
+>>>> 64 89 01 48
+>>>> All code
+>>>> ========
+>>>>       0:	83 c4 18             	add    $0x18,%esp
+>>>>       3:	48 89 d8             	mov    %rbx,%rax
+>>>>       6:	5b                   	pop    %rbx
+>>>>       7:	41 5c                	pop    %r12
+>>>>       9:	41 5d                	pop    %r13
+>>>>       b:	41 5e                	pop    %r14
+>>>>       d:	41 5f                	pop    %r15
+>>>>       f:	5d                   	pop    %rbp
+>>>>      10:	c3                   	ret
+>>>>      11:	0f 1f 00             	nopl   (%rax)
+>>>>      14:	31 db                	xor    %ebx,%ebx
+>>>>      16:	eb e7                	jmp    0xffffffffffffffff
+>>>>      18:	0f 1f 40 00          	nopl   0x0(%rax)
+>>>>      1c:	f3 0f 1e fa          	endbr64
+>>>>      20:	49 89 ca             	mov    %rcx,%r10
+>>>>      23:	b8 bd 00 00 00       	mov    $0xbd,%eax
+>>>>      28:	0f 05                	syscall
+>>>>      2a:*	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax		<--
+>>>> trapping instruction
+>>>>      30:	73 01                	jae    0x33
+>>>>      32:	c3                   	ret
+>>>>      33:	48 8b 0d 62 13 0f 00 	mov    0xf1362(%rip),%rcx        # 0xf139c
+>>>>      3a:	f7 d8                	neg    %eax
+>>>>      3c:	64 89 01             	mov    %eax,%fs:(%rcx)
+>>>>      3f:	48                   	rex.W
+>>>>
+>>>> Code starting with the faulting instruction
+>>>> ===========================================
+>>>>       0:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax
+>>>>       6:	73 01                	jae    0x9
+>>>>       8:	c3                   	ret
+>>>>       9:	48 8b 0d 62 13 0f 00 	mov    0xf1362(%rip),%rcx        # 0xf1372
+>>>>      10:	f7 d8                	neg    %eax
+>>>>      12:	64 89 01             	mov    %eax,%fs:(%rcx)
+>>>>      15:	48                   	rex.W
+>>>> [ 1572.093655] [T1127273] RSP: 002b:00007ffc251dfbd8 EFLAGS: 00000246
+>>>> ORIG_RAX: 00000000000000bd
+>>>> [ 1572.093656] [T1127273] RAX: ffffffffffffffda RBX: 0000000000000000
+>>>> RCX: 00007f9b7531697e
+>>>> [ 1572.093657] [T1127273] RDX: 00005617e5af5990 RSI: 00007ffc251dfd70
+>>>> RDI: 00005617e5af9190
+>>>> [ 1572.093657] [T1127273] RBP: 00007ffc251dfd60 R08: 0000000000000000
+>>>> R09: 0000000000000000
+>>>> [ 1572.093658] [T1127273] R10: 00000000000002a1 R11: 0000000000000246
+>>>> R12: 00007ffc251dfd70
+>>>> [ 1572.093658] [T1127273] R13: 00005617e5af5990 R14: 00000000000002a1
+>>>> R15: 0000000000001ae7
+>>>> [ 1572.093660] [T1127273]  </TASK>
+>>>>
+>>>>
+>>>> Should be noted that before the crash, dmesg shows that the generic test
+>>>> 642 is stuck repeatedly trying to "replace xattr" which is triggered in
+>>>> the __hfsplus_setxattr() function under fs/hfsplus/xattr line 354.
+>>>> relevant dmesg output:
+>>>> [ 1571.407168] [   T4294] run fstests generic/642 at 2026-01-17 14:49:36
+>>>> [ 1571.892677] [T1127270] hfsplus: cannot replace xattr
+>>>> .
+>>>> .
+>>>> .
+>>>> [ 1572.092869] [T1127271] hfsplus: cannot replace xattr
+>>>> [ 1572.093234] [T1127270] hfsplus: cannot replace xattr
+>>>>
+>>>>
+>>>> If more information relevant to the crash or more testing is needed I
+>>>> would do my best to help.I will also provide more crash info for the
+>>>> 6.18-rc7 patched kernel and 6.19-rc4 base and patched kernel soon.
+>>>
+>>> Could you please test/check the issue reproduction on current state of
+>>> origin/for-next branch of HFS/HFS+ tree [1]?
+>>>
+>> Yes, I will do it now and get back to you later tonight.
+>>>>>
+>>>>>
+>>>> Also I wanted to check on the v3 patches current status. Do they need
+>>>> more revision or they were missed to be merged in?
+>>>>>>
+>>>
+>>> I've already applied your patchset on HFS/HFS+ tree [1]. You can see it in
+>>> origin/for-next branch.
+>>>
+>> Ah, I missed that. Thanks for the heads up!
+>>> Thanks,
+>>> Slava.
+>>>
+>>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/vdubeyko/hfs.git
+>> Best Regards,
+>> Mehdi Ben Hadj Khelifa
+
 
