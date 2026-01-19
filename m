@@ -1,178 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-74414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 847E8D3A202
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 09:47:24 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3079CD3A21D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 09:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 73AC4300699F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 08:47:23 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2539C303B19E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 08:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4B13002A9;
-	Mon, 19 Jan 2026 08:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B4A33E346;
+	Mon, 19 Jan 2026 08:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VmamIK6h";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bfxdZwqe";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xORcQbxZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="X01pzAEu"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="g94FOZmT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2C134EF11
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 08:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7249D531;
+	Mon, 19 Jan 2026 08:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768812439; cv=none; b=JDvHqIlTO8chBvGlHxk+hk+6hUp+aujqON4jZdSwzoFaybXHFQ8NTbEartgsWNpwXmRCKvZWO93al10RnS0hP+X1ngBvNdPpcqXw7dSrIMyluQ4GHd13DJWlkjOHSCuCnuBzVqLkke3Ic2mfhSnv4SEWq+wq6aW8ym5jBGlRkyQ=
+	t=1768812785; cv=none; b=X0WNrMqEd2oTOQUxiP97KddsyH044BVgPLTvETBxuDYpk/RlAqmAOfXATGkvmmfDXS3x6Q70e11M2ByLim+rqIv/sCjenEGMNVQkhKa3iLAi18Av+OVPeCIIZpMF/D13D6TwkQxE7BIVYY2FZkoxn25prJtVhpMTrzJlgI/E/V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768812439; c=relaxed/simple;
-	bh=sbPq4r5GK96zlF1/Btr8N39b/3wBxyNQDP77CupZtN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rcxUz6M7so/iJq9ast8ZXQcZSaSY87ZzBDVSlLByCM1tdb1SqMte1anbZplyDCA0HbcJIaKmRdHSXnmcVvjn1tG73ZsWKOh7whT4qTHOOhiY7yh7RJQZhpz/U/QefJG9mlIxyhB9RUdkKGXqYqgNZTPletVoAbJkFmZQWuTtHyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VmamIK6h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bfxdZwqe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xORcQbxZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=X01pzAEu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 40390336A9;
-	Mon, 19 Jan 2026 08:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768812433; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/XRdlH7phwJwoniHK9lXXKlJYloNBPp2k3Zwk0QvRMo=;
-	b=VmamIK6hxMJznUAjFuYTIAPOYZkgJahgJSbyrA0Yu/I6hXNWhupRaFOk5xF7E5/yf49zAq
-	DzpYQsrl5RIPEvTf8NMM+2514Es0ewtsmziRngourb+nH+DGNEoLK0xktO1FDGTvS3yDcr
-	KgmEgRhBevfYAcD+A5fPENJo1wbRIwI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768812433;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/XRdlH7phwJwoniHK9lXXKlJYloNBPp2k3Zwk0QvRMo=;
-	b=bfxdZwqeOD7X4yPPk1grkjjTY9mB95vfIqWsltyr+LWKRjWiW97b7criICW87L79o9KWJj
-	WIwZsrjbYccTVvBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768812431; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/XRdlH7phwJwoniHK9lXXKlJYloNBPp2k3Zwk0QvRMo=;
-	b=xORcQbxZM+eJ8BoA+K++IN+gyJD8xGEAQ9vDp+Qr2s86QPN+5lL1dvN6VjzEWt+YDuNRnJ
-	DOhdwhPE1kYdTrTUj8Kr+G3j5y5dpzpPGvqsPft1MOa97J9wqT1nTkZ2KkM4Y0Wh99Jsv9
-	MDh/6EINTajjk8kyeFZ00cq23GjjZLw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768812431;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/XRdlH7phwJwoniHK9lXXKlJYloNBPp2k3Zwk0QvRMo=;
-	b=X01pzAEufDwLz6qAN+WmqK3PZuvEVQdy8Shez47V+VXLN51nkCCeSRc6GfILpV+BmdC+xQ
-	lz+HDeYKaWYykoBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36C063EA63;
-	Mon, 19 Jan 2026 08:47:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lIFYDY/vbWniKAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 19 Jan 2026 08:47:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0063DA0A29; Mon, 19 Jan 2026 09:47:10 +0100 (CET)
-Date: Mon, 19 Jan 2026 09:47:10 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jay Winston <jaybenjaminwinston@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/namei: fix kernel-doc markup for dentry_create
-Message-ID: <xan43ktoyfvjb62aaodarup5d5rlk2suyggwsoftd3maxi4wcb@rtnlr3wswquc>
-References: <20260118110401.2651-1-jaybenjaminwinston@gmail.com>
+	s=arc-20240116; t=1768812785; c=relaxed/simple;
+	bh=ArdSKLYGKKvopKikSdu6IRCj5novUtWQhW2Bszgsk50=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BeZB38WK29Juyrz4g4xSTfk6bjpykvRNZTIWZgCoFSFpBQSNs9Zfy3N7Er9Kx6+p55ItRg9f+LI0hXySGPilPAGWEFj5ECTv/7J/1+wZcodt9Pt6bXEmBR+al+PCzB7L4+YjaNzGxO+yv4kqhJAk2+yqW4PwUH/EjEPRbbHy6rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=g94FOZmT; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1768812775; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=pKXxPr9jjXttpRGeXJnXU+dWjjc24WVGOWOJDuRlICA=;
+	b=g94FOZmT23y/NHuO6f3A0SGuzOff2kwaw5L22lORQ69zoJ7D4PT4Xgqu4hdBp/gTIgjptNzCtl+1B1LxI/Cv68+jmrQUoRuL1Vplt1ItwAF8QRAFoZ8N3/UpCSzO7ZuTugsLQHRwFqvkZMnVQYoT50J1lR6//b0HJDGs6han/mM=
+Received: from 30.221.131.184(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WxKR-IT_1768812774 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 19 Jan 2026 16:52:55 +0800
+Message-ID: <b29b112e-5fe1-414b-9912-06dcd7d7d204@linux.alibaba.com>
+Date: Mon, 19 Jan 2026 16:52:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260118110401.2651-1-jaybenjaminwinston@gmail.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 5/9] erofs: introduce the page cache share feature
+To: Christoph Hellwig <hch@lst.de>
+Cc: Hongbo Li <lihongbo22@huawei.com>, chao@kernel.org, brauner@kernel.org,
+ djwong@kernel.org, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20260116095550.627082-1-lihongbo22@huawei.com>
+ <20260116095550.627082-6-lihongbo22@huawei.com>
+ <20260116154623.GC21174@lst.de>
+ <af1f3ff6-a163-4515-92bf-44c9cf6c92f3@linux.alibaba.com>
+ <20260119072932.GB2562@lst.de>
+ <8e30bc4b-c97f-4ab2-a7ce-27f399ae7462@linux.alibaba.com>
+ <20260119083251.GA5257@lst.de>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20260119083251.GA5257@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun 18-01-26 13:04:01, Jay Winston wrote:
-> O_ is interpreted as a broken hyperlink target. Escape _ with a backslash.
-> 
-> The asterisk in "struct file *" is interpreted as an opening emphasis
-> string that never closes. Replace double quotes with rST backticks.
-> 
-> Change "a ERR_PTR" to "an ERR_PTR".
-> 
-> Signed-off-by: Jay Winston <jaybenjaminwinston@gmail.com>
 
-Looks good. Feel free to add:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-	
-								Honza
+On 2026/1/19 16:32, Christoph Hellwig wrote:
+> On Mon, Jan 19, 2026 at 03:53:21PM +0800, Gao Xiang wrote:
+>> I just tried to say EROFS doesn't limit what's
+>> the real meaning of `fingerprint` (they can be serialized
+>> integer numbers for example defined by a specific image
+>> publisher, or a specific secure hash.  Currently,
+>> "mkfs.erofs" will generate sha256 for each files), but
+>> left them to the image builders:
+> 
+> To me this sounds pretty scary, as we have code in the kernel's trust
+> domain that heavily depends on arbitrary userspace policy decisions.
 
-> ---
->  fs/namei.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+For example, overlayfs metacopy can also points to
+arbitary files, what's the difference between them?
+https://docs.kernel.org/filesystems/overlayfs.html#metadata-only-copy-up
+
+By using metacopy, overlayfs can access arbitary files
+as long as the metacopy has the pointer, so it should
+be a priviledged stuff, which is similar to this feature.
+
 > 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index b19890758646..f511288af463 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -4975,7 +4975,7 @@ EXPORT_SYMBOL(start_creating_user_path);
->  /**
->   * dentry_create - Create and open a file
->   * @path: path to create
-> - * @flags: O_ flags
-> + * @flags: O\_ flags
->   * @mode: mode bits for new file
->   * @cred: credentials to use
->   *
-> @@ -4986,7 +4986,7 @@ EXPORT_SYMBOL(start_creating_user_path);
->   * the new file is to be created. The parent directory and the
->   * negative dentry must reside on the same filesystem instance.
->   *
-> - * On success, returns a "struct file *". Otherwise a ERR_PTR
-> + * On success, returns a ``struct file *``. Otherwise an ERR_PTR
->   * is returned.
->   */
->  struct file *dentry_create(struct path *path, int flags, umode_t mode,
-> -- 
-> 2.46.4
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Similarly the sharing of blocks between different file system
+> instances opens a lot of questions about trust boundaries and life
+> time rules.  I don't really have good answers, but writing up the
+
+Could you give more details about the these? Since you
+raised the questions but I have no idea what the threats
+really come from.
+
+As for the lifetime: The blob itself are immutable files,
+what the lifetime rules means?
+
+And how do you define trust boundaries?  You mean users
+have no right to access the data?
+
+I think it's similar: for blockdevice-based filesystems,
+you mount the filesystem with a given source, and it
+should have permission to the mounter.
+
+For multiple-blob EROFS filesystems, you mount the
+filesystem with multiple data sources, and the blockdevices
+and/or backed files should have permission to the
+mounters too.
+
+I don't quite get the point.
+
+Thanks,
+Gao Xiang
+
+> lifetime and threat models would really help.
+
 
