@@ -1,46 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-74426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08934D3A386
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 10:44:20 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32171D3A3E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 10:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 187D6300163A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 09:44:19 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0E63C3079AF2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 09:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4BD34D4FA;
-	Mon, 19 Jan 2026 09:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814F33382FA;
+	Mon, 19 Jan 2026 09:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c42FYPnO"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DKIExsoJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC1C3559E8;
-	Mon, 19 Jan 2026 09:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA06C305057;
+	Mon, 19 Jan 2026 09:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768815854; cv=none; b=W8uxARbrdd/1yFhRtgBOeeqAObryombUWSW7sPX8xRNcZcH28kJuUTkg3PtQZ3l6xVDdsi9tMo0E8/TRPyWNFPVXfokdshn3BosNherbVLV8iMlSLZRww08xDFiwXVI4nQbehIZP1Ir11yICVoID06i8xk1tE21iPrJ+XpsHWEI=
+	t=1768816420; cv=none; b=QdlsAqipSxPWNbanjsjB2ryEi/FKsLWeiXnfTzp3WTPCTkXnsxvSviubAnLRr3PG5eGV3t885IoVudSayElwx4FmPDKJCsagUhtBE0vEgBHQFDX+a64S4w29Z5vKG10mzFpj+wPyArVFRV7zeraSZfMcsFKTdYx7hUBTXKWROE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768815854; c=relaxed/simple;
-	bh=bY2K7YbaDGhdDEwxbSPSrK9Bho/NX+G/IaXsX/yc9gI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F6SY7mFBV7nz+0X2YnC3j1qMF1UiQEQEen5sqml5+4cj9i9T/pKbl+cyqAAvub/p1E9uFL8K/1riuMljqMCgWjA4ZZSMAdvWpdJkykdru+J1qqjcSIPQbGuCHxKamtEJJBkufoPmDYbGxoIXI6THx2MoB3BSwbI+DgLi6jnkMt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c42FYPnO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 614B4C116C6;
-	Mon, 19 Jan 2026 09:44:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768815853;
-	bh=bY2K7YbaDGhdDEwxbSPSrK9Bho/NX+G/IaXsX/yc9gI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=c42FYPnOn66T+MvVDZwzUa2uGFNSY3ixID2WNxvELuDe0qV7V34R3EvM7W5bMGkx+
-	 F1KmCeVW+XFTlx5vWimNanbMg4ytF0kykZLrFCzceTykdIR7iV3I8PNyZCeEdX8kyx
-	 HTdb5TmS3NP+Jkgi309jWE88kL2kmptAhOdtZdurNGE38b5S+aM86/d6/KjksfZIH9
-	 wTMZ59EQ/VMbjvZq6+Ktx5pvax3rITnTIk95qAQ+f9cIl9apuBwYgw6z97iOlLninf
-	 BZEE1NJqlspZX0l8P3kvMck3LPk+VXmCsVwJjjWwemXwr/AkxJyQcol9ylfHgN6hw/
-	 qoFABtElBleKA==
-Message-ID: <7b21ef98-e9f3-4e09-97ab-cf1ee9def41f@kernel.org>
-Date: Mon, 19 Jan 2026 10:44:08 +0100
+	s=arc-20240116; t=1768816420; c=relaxed/simple;
+	bh=DRaYzP9m7YLoBNmjoiVGSo/Qk1cxoFKlI5nWDutxq3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EfqBDaWiMROFJmDjmjKSJA8aiHeOwrWfeQAZeqQxDiMBVHfJBk6A8GZDAljW0ZdMkPcrvSIc9+sxqFw9I0NVHUfh4RD8eSsgpWxme3y7JUSVkNvFgv2e3+yq3IHo9X682XIon4Twy0+xvY4e4sWLgfCS/LKKT/0vB0+QTGJS1eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DKIExsoJ; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1768816414; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=hPPrNXHoXR8mRzEfeDQGV5JB64ifiuGfpPhzFKE3cxU=;
+	b=DKIExsoJ5v1/gmxgvItZfE10IZVL49yPodZ+XmkXPyuD+4nYeAvPQul02OCw3oEuw7tj0G6Bx2wCUftxpdxN/PgJhpT8sC97t0iQKnj3I62QPqtBSevNpZdnRtG6lNFRxkhAZQEhE3oVgWElVUIbWwkw+DvnmABFjsb+q9zGpSA=
+Received: from 30.221.131.184(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WxLJyuZ_1768816384 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 19 Jan 2026 17:53:33 +0800
+Message-ID: <033806bc-c91a-4ff4-8df3-f414bd0bf264@linux.alibaba.com>
+Date: Mon, 19 Jan 2026 17:53:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -48,101 +46,104 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] fs/writeback: skip AS_NO_DATA_INTEGRITY mappings
- in wait_sb_inodes()
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
- Joanne Koong <joannelkoong@gmail.com>, linux-mm@kvack.org,
- athul.krishna.kr@protonmail.com, j.neuschaefer@gmx.net, carnil@debian.org,
- linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-References: <20251215030043.1431306-1-joannelkoong@gmail.com>
- <20251215030043.1431306-2-joannelkoong@gmail.com>
- <ypyumqgv5p7dnxmq34q33keb6kzqnp66r33gtbm4pglgdmhma6@3oleltql2qgp>
- <616c2e51-ff69-4ef9-9637-41f3ff8691dd@kernel.org>
- <CAJfpeguBuHBGUq45bOFvypsyd8XXekLKycRBGO1eeqLxz3L0eA@mail.gmail.com>
- <238ef4ab-7ea3-442a-a344-a683dd64f818@kernel.org>
- <CAJfpegvUP5MK-xB2=djmGo4iYzmsn9LLWV3ZJXFbyyft_LsA_Q@mail.gmail.com>
- <c39232ea-8cf0-45e6-9a5a-e2abae60134c@kernel.org>
- <CAJfpegt0Bp5qNFPS0KsAZeU62vw4CqHv+1d53CmEOV45r-Rj0Q@mail.gmail.com>
- <01ebe0c6-6135-4937-a758-93a5fc78d7fe@kernel.org>
- <20260118164051.521de8ad2758376c3e1d2d81@linux-foundation.org>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=david@kernel.org; keydata=
- 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
-In-Reply-To: <20260118164051.521de8ad2758376c3e1d2d81@linux-foundation.org>
+Subject: Re: [PATCH v15 5/9] erofs: introduce the page cache share feature
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Hongbo Li <lihongbo22@huawei.com>, chao@kernel.org, brauner@kernel.org,
+ djwong@kernel.org, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20260116095550.627082-1-lihongbo22@huawei.com>
+ <20260116095550.627082-6-lihongbo22@huawei.com>
+ <20260116154623.GC21174@lst.de>
+ <af1f3ff6-a163-4515-92bf-44c9cf6c92f3@linux.alibaba.com>
+ <20260119072932.GB2562@lst.de>
+ <8e30bc4b-c97f-4ab2-a7ce-27f399ae7462@linux.alibaba.com>
+ <20260119083251.GA5257@lst.de>
+ <b29b112e-5fe1-414b-9912-06dcd7d7d204@linux.alibaba.com>
+ <20260119092220.GA9140@lst.de>
+ <73f2c243-e029-4f95-aa8e-285c7affacac@linux.alibaba.com>
+In-Reply-To: <73f2c243-e029-4f95-aa8e-285c7affacac@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 1/19/26 01:40, Andrew Morton wrote:
-> On Tue, 6 Jan 2026 18:54:47 +0100 "David Hildenbrand (Red Hat)" <david@kernel.org> wrote:
+
+
+On 2026/1/19 17:38, Gao Xiang wrote:
 > 
->> On 1/6/26 17:05, Miklos Szeredi wrote:
->>> On Tue, 6 Jan 2026 at 16:41, David Hildenbrand (Red Hat)
->>> <david@kernel.org> wrote:
+> 
+> On 2026/1/19 17:22, Christoph Hellwig wrote:
+>> On Mon, Jan 19, 2026 at 04:52:54PM +0800, Gao Xiang wrote:
+>>>> To me this sounds pretty scary, as we have code in the kernel's trust
+>>>> domain that heavily depends on arbitrary userspace policy decisions.
 >>>
->>>> I assume the usual suspects, including mm/memory-failure.c.
->>>>
->>>> memory_failure() not only contains a folio_wait_writeback() but also a
->>>> folio_lock(), so twice the fun :)
+>>> For example, overlayfs metacopy can also points to
+>>> arbitary files, what's the difference between them?
+>>> https://docs.kernel.org/filesystems/overlayfs.html#metadata-only-copy-up
 >>>
->>> As long as it's run from a workqueue it shouldn't affect the rest of
->>> the system, right?  The wq thread will consume a nontrivial amount of
->>> resources, I suppose, so it would be better to implement those waits
->>> asynchronously.
+>>> By using metacopy, overlayfs can access arbitary files
+>>> as long as the metacopy has the pointer, so it should
+>>> be a priviledged stuff, which is similar to this feature.
 >>
->> Good question. I know that memory_failure() can be triggered out of
->> various context, but I never traced it back to its origin.
+>> Sounds scary too.  But overlayfs' job is to combine underlying files, so
+>> it is expected.  I think it's the mix of erofs being a disk based file
 > 
-> I'm seeing unhappy okays from David and Jan, so I'll upstream this
-> patch later in the week, unless someone stops me.
+> But you still could point to an arbitary page cache
+> if metacopy is used.
+> 
+>> system, and reaching out beyond the device(s) assigned to the file system
+>> instance that makes me feel rather uneasy.
+> 
+> You mean the page cache can be shared from other
+> filesystems even not backed by these devices/files?
+> 
+> I admitted yes, there could be different: but that
+> is why new mount options "inode_share" and the
+> "domain_id" mount option are used.
+> 
+> I think they should be regarded as a single super
+> filesystem if "domain_id" is the same: From the
+> security perspective much like subvolumes of
+> a single super filesystem.
+> 
+> And mounting a new filesystem within a "domain_id"
+> can be regard as importing data into the super
+> "domain_id" filesystem, and I think only trusted
+> data within the single domain can be mounted/shared.
+> 
+>>
+>>>>
+>>>> Similarly the sharing of blocks between different file system
+>>>> instances opens a lot of questions about trust boundaries and life
+>>>> time rules.  I don't really have good answers, but writing up the
+>>>
+>>> Could you give more details about the these? Since you
+>>> raised the questions but I have no idea what the threats
+>>> really come from.
+>>
+>> Right now by default we don't allow any unprivileged mounts.  Now
+>> if people thing that say erofs is safe enough and opt into that,
+>> it needs to be clear what the boundaries of that are.  For a file
+>> system limited to a single block device that boundaries are
+>> pretty clear.  For file systems reaching out to the entire system
+>> (or some kind of domain), the scope is much wider.
 
-Just to clarify, I'm happy with this patch as is. The semantics make 
-perfect sense.
+btw, I think it's indeed to be helpful to get the boundaries (even
+from on-disk formats and runtime features).
 
--- 
-Cheers
+But I have to clarify that a single EROFS filesystem instance won'
+have access to random block device or files.
 
-David
+The backing device or files are specified by users explicitly when
+mounting, like:
+
+  mount -odevice=blob1,device=blob2,...,device=blobn-1 blob0 mnt
+
+And these devices / files will be opened when mounting at once,
+no more than that.
+
+May I ask the difference between one device/file and a group of
+given devices/files? Especially for immutable usage.
+
+Thanks,
+Gao Xiang
 
