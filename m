@@ -1,57 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-74527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487EDD3B7D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 20:59:08 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D5CD3B7E0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 21:01:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9E1B3308A573
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 19:58:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6A3053063820
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 20:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BBC2EBB99;
-	Mon, 19 Jan 2026 19:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F8D2E764D;
+	Mon, 19 Jan 2026 20:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="opDvoJ/B"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PkKWgeLG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEA62DB78A;
-	Mon, 19 Jan 2026 19:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3886D16A395;
+	Mon, 19 Jan 2026 20:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768852697; cv=none; b=FJh4Xj7w+B0xsHvbEdEqDZu2ug1DgrN5PFzLDi6nCF7gwg9F5Nd3C+VmMFObprG3P6v85GDLjZKNZX/RBsq2K5X7XX2K2kJdNRlHIq7s4Ea0lOdBGa+9+TqF62tSeAPmOTEVlcuKHJ9fAM/KYZ8Wb9qciGGKQITrxuhpFAhpJwY=
+	t=1768852854; cv=none; b=diMgkMDsGgLvdUxlJbW2aobrfxoIftptaijkXnN9TBPZBEKPb7CYcWXvAas0L2fDSpkl9ij0PzubPXepOgrBAgV1jY9agv6xkcbMjMCKcIuzD2ZC1MjU67xcXA8ni/C8M2eQFOgnqaGB8TyCnl/yrFgky0amIEm5PDecsDn+kdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768852697; c=relaxed/simple;
-	bh=ekOFZ1V/tiINPTPwNqibbQ8QbrvjFe8w7udiVRxxOpI=;
+	s=arc-20240116; t=1768852854; c=relaxed/simple;
+	bh=BqkcSD9fWqlhrwz3aObG4sEFqK5z8A2c8MZ1+Xcp/uU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HkR06XAZxU12Rp4BfDEflW/RqUm6gw+C4RGKJTUOEsBitBMHNl5/UzEmZLMsQvAVOSR2RPZm8Pxu0M1Cl5eGHzhQZ/WfGTPrOZAOyF9rPO1mc2pENjT6WU81LN2Wg4YXs5csssoIFjScyYWI3f/kJuyOuMuPj6fkr/5G1ozu19M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=opDvoJ/B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C41C116C6;
-	Mon, 19 Jan 2026 19:58:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768852696;
-	bh=ekOFZ1V/tiINPTPwNqibbQ8QbrvjFe8w7udiVRxxOpI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=opDvoJ/BL/3HrZfozw1vZeKcO2AfiVX13r49Js/xnBacs6lr4J69698T5qbJFoPhF
-	 Hyquvzbftvy/unT3a0r1kjS6KNIgKv7cQKog+t4/oKmvO88Qmns5MDAyoVhCx/nt7G
-	 SGljfyFAEKsRfUkMW4C+U9oVuWWD8KTo1ibgj11x2nzHPjE3W7Wsum+qqMKkewExvi
-	 ckt9ZWbVueWQ9DxcFk2y+iL4TuQlVTaNsaf7z7mI5iDn4tofUa5zVp3Krc10rnpvFR
-	 wuUpIG34bLSpOJmi2Me11FYjEDGSlLfA7WN2BXNAMtELS/MunAAvCPK/Xvngs3kgiW
-	 bdFwpeWLWxW/g==
-Date: Mon, 19 Jan 2026 11:58:16 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jaEcDdqfNJxXjXIqSA65C4cYSJzCmX3NjdpJLelFjXk+CQc2ZTsrk+RNdOJUNIiplWWBs52JqzbhoO7lg7rcCeLRoPEf1UXattevrOZ8ax0z0ZkpY1a48y9rjHeW0aMRk2rdSDlEEj53xeyUl0HcPSYa7dqFJrfCypvncRewk84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PkKWgeLG; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FRKiCSA7rKWJel5+3BbX0cg/N3+Hr+jXkHWboVk9B18=; b=PkKWgeLGDbX9229PwsBfHnNC6a
+	ZROjbZ37Pu5RNnsaags+fn2KGYNRtGURT3Yq5twxJPoK5wMdWmchHOvhQlfZt1P20IV8EgAP/hx3G
+	ti6u8FqNn8o9ukls4Okp+XGa60zPjLmljUjTpdwweu1/af3IsRxrczqc9kSR0s3pld+FYJUEbtt3o
+	s+/pHjiU1na8EvCU77e7YSAW8VvnquMWFGWuaXgCYu6G8Cm5VG0gGhl9/e6xYDgjG4Arb3qs5HhnT
+	dmD6zT7a0lOMeAfQjo+drREd0Aen4TUdsje40EyK1i4GHDjZTw9J0iiccD208K6+AltBGN0+JJr9A
+	SN6zcziQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vhvQe-0000000DlZy-0U4y;
+	Mon, 19 Jan 2026 20:00:48 +0000
+Date: Mon, 19 Jan 2026 20:00:47 +0000
+From: Matthew Wilcox <willy@infradead.org>
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: Christoph Hellwig <hch@lst.de>,
 	Andrey Albershteyn <aalbersh@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>, fsverity@lists.linux.dev,
+	"Darrick J. Wong" <djwong@kernel.org>, fsverity@lists.linux.dev,
 	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	aalbersh@kernel.org, david@fromorbit.com, tytso@mit.edu,
 	linux-ext4@vger.kernel.org, jaegeuk@kernel.org, chao@kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net
 Subject: Re: fsverity metadata offset, was: Re: [PATCH v2 0/23] fs-verity
  support for XFS with post EOF merkle tree
-Message-ID: <20260119195816.GA15583@frogsfrogsfrogs>
+Message-ID: <aW6NbyQgCMnjkFZ8@casper.infradead.org>
 References: <cover.1768229271.patch-series@thinky>
  <aWZ0nJNVTnyuFTmM@casper.infradead.org>
  <op5poqkjoachiv2qfwizunoeg7h6w5x2rxdvbs4vhryr3aywbt@cul2yevayijl>
@@ -87,11 +90,6 @@ On Mon, Jan 19, 2026 at 11:32:42AM -0800, Eric Biggers wrote:
 > >     hexagon seems to support page size up to 1MiB.  While I don't know
 > >     if they exist in real life, powerpc supports up to 256kiB pages,
 > >     and I know they are used for real in various embedded settings
-
-They *did* way back in the day, I worked with some seekrit PPC440s early
-in my career.  I don't know that any of them still exist, but the code
-is still there...
-
 > >  b) with large folio support in the page cache, the folios used to
 > >     map files can be much larger than the base page size, with all
 > >     the same issues as a larger page size
@@ -110,7 +108,10 @@ is still there...
 > Yes, if I recall correctly it was intended to be the "largest reasonable
 > page size".  It looks like PAGE_SIZE > 65536 can't work as-is, so indeed
 > we should disable fsverity support in that configuration.
-> 
+
+I don't think anybody will weep for lack of fsverity support in these
+weirdo large PAGE_SIZE configurations.
+
 > I don't think large folios are quite as problematic.
 > ext4_read_merkle_tree_page() and f2fs_read_merkle_tree_page() read a
 > folio and return the appropriate page in it, and fs/verity/verify.c
@@ -118,35 +119,18 @@ is still there...
 > think everything will actually still work, except userspace will be able
 > to see Merkle tree data after a 64K boundary past EOF if the file is
 > mmapped using huge pages.
-
-We don't allow mmapping file data beyond the EOF basepage, even if the
-underlying folio is a large folio.  See generic/749, though recently
-Kiryl Shutsemau tried to remove that restriction[1], until dchinner and
-willy told him no.
-
+> 
 > The mmap issue isn't great, but I'm not sure how much it matters,
 > especially when the zeroes do still go up to a 64K boundary.
 
-I'm concerned that post-eof zeroing of a 256k folio could accidentally
-obliterate merkle tree content that was somehow previously loaded.
-Though afaict from the existing codebases, none of them actually make
-that mistake.
+We actually refuse to map pages after EOF.  See filemap_map_pages()
 
-> If we do need to fix this, there are a couple things we could consider
-> doing without changing the on-disk format in ext4 or f2fs: putting the
-> data in the page cache at a different offset than it exists on-disk, or
-> using "small" pages for EOF specifically.
+        if ((file_end >= folio_next_index(folio) || shmem_mapping(mapping)) &&
+            filemap_map_pmd(vmf, folio, start_pgoff)) {
+                ret = VM_FAULT_NOPAGE;
+                goto out;
+        }
 
-I'd leave the ondisk offset as-is, but change the pagecache offset to
-roundup(i_size_read(), mapping_max_folio_size_supported()) just to keep
-file data and fsverity metadata completely separate.
+along with the other treatment of end_pgoff.
 
-> But yes, XFS should choose a larger alignment than 64K.
-
-The roundup() formula above is what I'd choose for the pagecache offset
-for xfs.  The ondisk offset of 1<<53 is ok with me.
-
---D
-
-[1] https://lore.kernel.org/linux-fsdevel/20251014175214.GW6188@frogsfrogsfrogs/
 
