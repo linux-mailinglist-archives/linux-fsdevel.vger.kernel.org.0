@@ -1,226 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-74464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCB7D3B036
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 17:16:05 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8C55D3B156
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 17:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id A044D30051AE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 16:16:04 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 263F6304A51F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 16:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680402DF719;
-	Mon, 19 Jan 2026 16:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6A831197E;
+	Mon, 19 Jan 2026 16:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="aF1UkJMg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f237MPyH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11021108.outbound.protection.outlook.com [40.93.194.108])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653BF285060;
-	Mon, 19 Jan 2026 16:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.108
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768839359; cv=fail; b=rAjc9vCX9+Mo4sh7CcAPuBWsDI2xaONrRp7uNPRvvxSS1d7OWycBjw4Kq6+0iyFRfwzaRYBeszZuOVOcpXZqJBqdVQ4A+uCqJcDtXJw3QOspMbaGNNsYvIRXkftAmPAV5HMppNTbtD1speOVJfNtU3/qUl48rn1ZpuP7YEZboTA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768839359; c=relaxed/simple;
-	bh=oehecxQvLpl3f/KdGBcbRtNpYLhmlyGsWD0jsF+XZz8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YuqQYt58mf6Nqn6kDpvcrBnp+ZFmHf+vG1snDwmC73q+B9ZEpsWJlbhlTj7objLO0IneZnf66/it/hQU+z5hq6bgDP4/f+wcacqkxIaZTzyrWJTrkIlzUfpB/yr7KowXUrNn9ij6ERRfW3sLpW8hvjucpl1dyOtwMywX2SfBPhc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=aF1UkJMg; arc=fail smtp.client-ip=40.93.194.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hammerspace.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iSvaDQ3xnRI9PheWxH1eMBJOuA3gZ1nfZ/c/cxuo7LZcLNvvpRDLIGQKxxcqa4mS9lRAAdQK/eIVo2vVnm/NnNsUjwBv3A4lveD5cxrInwOYUZuO2s2taxA3GGwSuRoau21ls3Eb2H+6vvhI2UlYpYItoULR+YTQwLJ7Wisyc6NC8UMCcBp5Ovu3j79FvBOq6ngl93LpmWeFbDi9MC0LEggnKFjLZQk+xVfi+4q2nhE+jxsOK4OPosQ2Hh3kWN2X96nP4uVXsIogCJDZaxZbb699cCiMWs2ZoTQ+6xejCsTmIUbQd4sHT6SvHNCg/0NF6miWBjAgNPyaZTvnUtECNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8QSlCX6kX0+Wi2IyA4CdSlQRDsbjLjBbUW+Aj3QwIow=;
- b=M7IzkMUGJBEpjFJ9q272WsCOolxwvdBXmsaabwKbxGO1g7TyZQk/NWBIrzPI9l98fIszVTFad6uy9kSFWt0KcwB5Yv4a1dfkncTbxL2BGw8hAUCtvDZhxPjXTdKJkuP24vmM/hvrLx6uPNDEmfadXkowY8XBcjk6wWRWmI73JtmIf0JTA6/WFCqeyzVz/jxAXRKW1gj59asZC3CkKIA+uwbcN7LB9gsNmN8RDjHHUVfExJelxX7nuYkUSEjyxGpBVHhZXqlk9UFJME8kPngn7tu8bSJw+FLiEd03bluvLEMgDH9UfKDUwTjUXwruM5E9bDCWgxi7ctQcuLMT+WwRjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hammerspace.com; dmarc=pass action=none
- header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8QSlCX6kX0+Wi2IyA4CdSlQRDsbjLjBbUW+Aj3QwIow=;
- b=aF1UkJMge8AS8pzqbu9vzsthJWGLqbj6N1IJifs/ivq6PziIrRfT8vZhEaAPJG3mZunpTQTVq148hN+l7d6swTIg92U+K80S5EnRsQVcC10NBeO5KDeqRfO3/NDZ9bzy4Nxf9+UzaJuwksPfcToTuD2IFTz+SA/TkgvsAsPKDfY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=hammerspace.com;
-Received: from DM8PR13MB5239.namprd13.prod.outlook.com (2603:10b6:5:314::5) by
- PH7PR13MB6220.namprd13.prod.outlook.com (2603:10b6:510:24b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.11; Mon, 19 Jan
- 2026 16:15:55 +0000
-Received: from DM8PR13MB5239.namprd13.prod.outlook.com
- ([fe80::fa6e:7b5:d1ec:92f3]) by DM8PR13MB5239.namprd13.prod.outlook.com
- ([fe80::fa6e:7b5:d1ec:92f3%4]) with mapi id 15.20.9520.011; Mon, 19 Jan 2026
- 16:15:55 +0000
-From: Benjamin Coddington <bcodding@hammerspace.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- Eric Biggers <ebiggers@kernel.org>, Rick Macklem <rick.macklem@gmail.com>,
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] nfsd: Add a key for signing filehandles
-Date: Mon, 19 Jan 2026 11:15:52 -0500
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <5E2A23BF-83A8-4991-9014-99389BFCE237@hammerspace.com>
-In-Reply-To: <3db40beb64cb3663d9e8c83f498557bf8fbc0924.camel@kernel.org>
-References: <cover.1768573690.git.bcodding@hammerspace.com>
- <c49d28aade36c044f0533d03b564ff65e00d9e05.1768573690.git.bcodding@hammerspace.com>
- <3db40beb64cb3663d9e8c83f498557bf8fbc0924.camel@kernel.org>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BL1PR13CA0347.namprd13.prod.outlook.com
- (2603:10b6:208:2c6::22) To DM8PR13MB5239.namprd13.prod.outlook.com
- (2603:10b6:5:314::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A5E2E2840;
+	Mon, 19 Jan 2026 16:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768840040; cv=none; b=dYfi+9s5Ccw6TCWHBNAnCG1A4ovGsNSVAQqM/D9M2ydPwUUtFxnG3/VjGh8tvlX1kugczm6seXyEPhGuvKOZcmm76ALU5Sg0WOmN4KPWdLD7dDIqC7urzfCk3s5HieVr7etZQgYSG4BHc4buvVekaiemM1oiT42NwadtZ4iH1/g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768840040; c=relaxed/simple;
+	bh=yX5wj9VHSThOjafnyKvHMJdYbGSk/5OP4p9PS/zazFw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TJAh5CTpPQmhAkpB8JOeS5jCD/qT0kXbo13BTe64YTdO1MhAAT1JcGocv01NbZEJ6T5H2PW8V3hz4fG17oPHFA/R7dGEfkgeTCZgUBUyxo00vrc9fORDEg9VG9HqoSghgk1B9wTbQDWFYlzaXxXfVikY532cpej8TJRghcSa/Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f237MPyH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31BF7C116C6;
+	Mon, 19 Jan 2026 16:27:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768840040;
+	bh=yX5wj9VHSThOjafnyKvHMJdYbGSk/5OP4p9PS/zazFw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=f237MPyHkZbdY+WPcsLBi0kuGtUgJbV4HoKceS3Jz1Lmrv4gP0tgEIWx9faQo//X+
+	 +UUjREu/69qFBMgdHch+q9bk9Ep8RKPHs/QzSabx4v5reJiL9v0kEdJGMeWqOPK39A
+	 0jSEKULtL05hYKWy8N1WS+HOt5YyvBcESAtJ0ZmYc6dhEbBinazAzj9QJSGklzZ9p9
+	 LbTYD833qVCL0hCJmQS+SihR6ziWecIunpgB2VxOhgkmSC9roap7mrwb5zOJntllqQ
+	 se8GRkweMjAwYRoYx2aL3RsVvvEMBUqvD1Pqmz58J3HWTOMdRGmvio/OwXlAFPl4n+
+	 HkGliBF8cqqKg==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v2 00/31] fs: require filesystems to explicitly opt-in to
+ nfsd export support
+Date: Mon, 19 Jan 2026 11:26:17 -0500
+Message-Id: <20260119-exportfs-nfsd-v2-0-d93368f903bd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR13MB5239:EE_|PH7PR13MB6220:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e1e2a21-1c18-482b-79e2-08de577605d7
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1UrOUXxgXIiF/R1YKKTSPJMB+05pOXV15Bojz4N8BmDV5JeK17KmAFLZ2QGL?=
- =?us-ascii?Q?KqyCMeTwR75VfocCO70dkxhJgK+NRwgm+ynLXH3cFXaxXXwdQTg2u7tk3Eru?=
- =?us-ascii?Q?7wcrD26Nhr9/LIlncdoLu4ZJcaAhR3ATYS4RD3G9xuD8klZhF1IhKAnRpK4I?=
- =?us-ascii?Q?GMT/SOE+5sUVFvym8F0fEySAOWNAKK0Pl0SqYtsA7huzsbbOwFyH59Zp0J8t?=
- =?us-ascii?Q?RilwBvjtNwUPpSF9/ET6N1yGwii3A7/rQiFY6pmcDXtMZRND6RmELLJsbzU/?=
- =?us-ascii?Q?JP0G3dVf7pzV+0dXu6y+ZTjYKaf9J3MCCYxTIZcKZB7AU36FoEWe05GcJzP7?=
- =?us-ascii?Q?Y+rUu+Cftvub0aWDZv1NbdZkSdtpNkyTiW9R3VSeXh+btPC2+7xsIH9/mjfF?=
- =?us-ascii?Q?QvGTB4jfWG39/j3HMGOVpXaAgUKztaMzvxSfDCQBKS1Gb/4kpguk7T1Wwbf4?=
- =?us-ascii?Q?yeex9E3BRK1Z+OtQRUV6np3uNIBmCLWD2fX8K1b1BaUsZgBqlQbdEMZHTYiZ?=
- =?us-ascii?Q?hRUW4KpwDoj/pyAVeGpICAzMyQ8GRkR2D+Ewr6Z+E8v5BKKARiD/Z8Cg5BHt?=
- =?us-ascii?Q?c5xPdmz6usEfCOuqlsVvipXBWtJFwvrT63M7Srsbn77kzC7jw1zBN+v5hoD0?=
- =?us-ascii?Q?c1KVZOZ2UcIkPiDKwlpuKJwC+oYDN8HQV5t5P4qy6nJFVw9ZkJOk3UypFFmt?=
- =?us-ascii?Q?mB9WX6SyWxyObxZo3gIXhb6gEfTNqM+oUkefwRncB3AriBkJ2yiTyyWtIRoJ?=
- =?us-ascii?Q?6wY41lVh7Rdc7gMKPqRcQr38q6QAXFPYgmVlAHIMm7S24EY8VuGPUKzIJZUn?=
- =?us-ascii?Q?2yt85JzXRnwEr2TpdyUO32xCWKnmSR2+t33AInHyqkSwfeEKBoc3gdbTwfgH?=
- =?us-ascii?Q?oocwJ24PnQvsxqEm160AjaBx3L4/T3Z2ORF1a7LlrPfPmnp+tUrkjirarUfA?=
- =?us-ascii?Q?Qafxfp24NVYE0rr4DW8w6bQ6GlgYuBzNCerDdIhPN6yMD04YEuCtnW3UOobB?=
- =?us-ascii?Q?k11SBILD9bdLw4iz48g3Vmy8uicnmhDLkpFvmXOgyf2CpQIysfQHPAyhvZy4?=
- =?us-ascii?Q?GNDXPz8IbVPP/r6NfLp1HB9BpPoDpU1uXciGM9ZzZ3kq2Ju6DlGbExh3HRsM?=
- =?us-ascii?Q?dNxT8Qa3Z6MAlh3uQse+TiYnXZQNEfEoYLgAV/fuLf8WKYc1f+PARHKOnpH8?=
- =?us-ascii?Q?giTA2tsNu0BqhonNCAS01AtVYtiuvDygosnE+4HisBqhsmUQj5QxSWXDBRZl?=
- =?us-ascii?Q?bRTem7FiqjsKZk5AMYHBuOzsGHiiDxbVJxYIhfLslqM43JBw4b8S0rcDaUgf?=
- =?us-ascii?Q?YEqCtbRELPRD1K/iMj49vnf8ahCllcWKdwmLNnDIgzHWa75CW1kHag1KUmch?=
- =?us-ascii?Q?KU5Jx0vfLh2xZZ17Hhei+UCC/rxQXav3HvI56f2bcswGf/u3m6WUsHxq3ixL?=
- =?us-ascii?Q?u2K/gQq5G18qZV8BwSDH3oSjT7dg8fL+YPfdDgQWwcv8FolrwZUE9Rszn7K9?=
- =?us-ascii?Q?fCucVgx2KD9Xwr2Bg0uYX9hKDFRcnuKz7hb3mI2VHC5jHU3UkgCsyjrLSpgN?=
- =?us-ascii?Q?4bWEW1clIHXYG7gJRwU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR13MB5239.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?PnYztAnZz0fMCpFb+9QjAqTx+Gn+DoYEj4aM5+CioWxRqwaUSK6wunrdzAGj?=
- =?us-ascii?Q?suY2w0hEyjn7jYNW60aPPxt2MLdp2JuVuhQotbzqiWPzBh13CgxZF0mKjrh1?=
- =?us-ascii?Q?EEDi5EAVHSmPdneNPoFVCds8IE7SNzSU3C2QeHVvm7BPk5QL/rV+yRTgg/GR?=
- =?us-ascii?Q?qXB4zDWIsEJt6XhLGnokXrQ+2bL/MOtwL9RRPtrEBO/WvFgnJf42iFpUT/n3?=
- =?us-ascii?Q?i0lOigOYElh0YI4zN4up6ai8IHyotWmkFLCflNTQko3q3eUR3XN5PSF9rtPN?=
- =?us-ascii?Q?BzEesOnXmrztS1kyts0wmLVefmPXFCQgnxy3+uRMAbzCqOnysUPCtVxbFq+S?=
- =?us-ascii?Q?V8xVFwiH3pKWYVPCCAProisvX0WsraCq/Nm4PpJM1iyzZzospY1fsOpZ17Wm?=
- =?us-ascii?Q?ljryObdtjGFfRo/rX0LZ0gTtEOQZugIrPJ4gQs8oW2cmTdJg/bEyFF+2xcFM?=
- =?us-ascii?Q?tp+BSsEzM6famunvpjVoxCByemUev+HcoYqzTeNN/EOxey25ZipZcIv4LFlB?=
- =?us-ascii?Q?UYyD/1R0w9G5RRkQHhali+/mEKS4fhjMRBOGJEL0EnwGGvctko4C7nzgVIbS?=
- =?us-ascii?Q?kHRIGHfs0byUoAmrNyy59Nmz+q3qc3ms+/t0JZdfGT3q+n68/vBz73vgpTA/?=
- =?us-ascii?Q?MAsdD5WWJ+3x7VOi7DZhVJViZ7AAr9j9DOEtMglYrDbBhYoWc6upT6Gf899R?=
- =?us-ascii?Q?SorMb/zTxzADGLrPDbE76MEwiRUvZFseY0Pcw4eGybQNtc4KbxwDsQHxH4uZ?=
- =?us-ascii?Q?ulHqeeKzz2JP7Q3htjbpFfjK01fJ+v+mATUMiFyBbDgJnPmeH5CZ4XigHh2v?=
- =?us-ascii?Q?7ZO1HM5FakWxMvx2kfuhuKFnZl9EuyNXk4V41OrwSbVMkcpoSV54TtBm6iNf?=
- =?us-ascii?Q?o7xXD7XIgpQKy94o2YjjQjyEAa7SF4BMaOx4SYYBIa9LhfQIl2UtVUSB2RAu?=
- =?us-ascii?Q?7CGwlyI29FVoto/itIMw6ic5Hbu5uIcURTWWJssnsIbhYeXHfBK/bhruQuEB?=
- =?us-ascii?Q?10PBOffxKK5LugDvXrRu9RpStGPxEeLDUzSSbax3TWVvo3feWq0FMSQklhJU?=
- =?us-ascii?Q?1Sa5UUT9sawrnj6AtOFe1vW0bReCbHNUdsdhqAwj3h7Tq9fSqBqUSX84/hMh?=
- =?us-ascii?Q?iPzYklZNHbT+WCxnGBiIn6ioqWmvP5aqf6rpLsHGFT9eSvDwM6e36aQBMerb?=
- =?us-ascii?Q?JXqAACnNcL43habrVVDYisywEBhN6/H3wok6fVOI9VEw9eRNgvqdEpyKy/TZ?=
- =?us-ascii?Q?r2zWqEo0inTsvOtzmJA71yt2jXwx7tbtm8L/Qq1dVFIa8SdYAm31q88Eiv10?=
- =?us-ascii?Q?haSAP/LUlTEImLTURTRaWH31147YKVnD7R5P+YJLH7hOKu1/puL58AcxcqFY?=
- =?us-ascii?Q?UuEyyAxkKRo25UP+7Npj4ZiM+n8Cq3+B3PoHHju6FDQFXXdmH7BKrCRIQhq9?=
- =?us-ascii?Q?j0aPDhqd0hkZyclS1ulcHHDSrcIXiyFYU8aBDSaI2RYImq4Vn8TEvsFlVInS?=
- =?us-ascii?Q?hPr7zI6mAWd55PguCX27sx3W8j0xkEjkaNciPiW7ccBpU9xfEmJzBxtArsAP?=
- =?us-ascii?Q?EmoCTxPB1lAxGtGIDhIp5eWsHbGSGYzfEA2QjSf+JS1nn4cpXrH53zFR+kfn?=
- =?us-ascii?Q?4bpuVKHcw8prwY3nEKVMsKS8+q+8kTf6bmMB1Mu76YTa17V7fFF8w20f1fpp?=
- =?us-ascii?Q?C5B/feUq93CZsujwiS1KSst1m2/JQd3vEmrLaTsXhyHnEke1RuGEnL20tz0m?=
- =?us-ascii?Q?eaYRFydfWdyCksqDtMG0z2mvz929uSk=3D?=
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e1e2a21-1c18-482b-79e2-08de577605d7
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR13MB5239.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jan 2026 16:15:55.0526
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VUedTLZEpH0hQG5gh+OlfoVO5ctp4AtV5EJzhgbYBOIES0e1NX3TpHZgE5gr7yCYaKfiPUPG3dDBBkyKi5Uh3AJSpj+Toxw1kBQehfJM88g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR13MB6220
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/13MQQqDMBCF4avIrJsykzZWXfUexYXEUUNLIhMJF
+ vHuTYVuuvwfvG+DyOI4QlNsIJxcdMHn0KcC7NT5kZXrc4NGXSLRVfE6B1mGqPwQe0XakMGb5rq
+ rIX9m4cGth/doc08uLkHeB5/ou/4k8yclUqgqrpBK5ItFe3+yeH6dg4zQ7vv+ATyiSsWrAAAA
+X-Change-ID: 20260114-exportfs-nfsd-12515072e9a9
+To: Christian Brauner <brauner@kernel.org>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Amir Goldstein <amir73il@gmail.com>, 
+ Hugh Dickins <hughd@google.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>, 
+ Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, 
+ Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
+ Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>, 
+ Sandeep Dhavale <dhavale@google.com>, Hongbo Li <lihongbo22@huawei.com>, 
+ Chunhai Guo <guochunhai@vivo.com>, Carlos Maiolino <cem@kernel.org>, 
+ Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>, 
+ Viacheslav Dubeyko <slava@dubeyko.com>, Chris Mason <clm@fb.com>, 
+ David Sterba <dsterba@suse.com>, Luis de Bethencourt <luisbg@kernel.org>, 
+ Salah Triki <salah.triki@gmail.com>, 
+ Phillip Lougher <phillip@squashfs.org.uk>, Steve French <sfrench@samba.org>, 
+ Paulo Alcantara <pc@manguebit.org>, 
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+ Shyam Prasad N <sprasad@microsoft.com>, 
+ Bharath SM <bharathsm@microsoft.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+ Mike Marshall <hubcap@omnibond.com>, 
+ Martin Brandenburg <martin@omnibond.com>, Mark Fasheh <mark@fasheh.com>, 
+ Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Dave Kleikamp <shaggy@kernel.org>, David Woodhouse <dwmw2@infradead.org>, 
+ Richard Weinberger <richard@nod.at>, Jan Kara <jack@suse.cz>, 
+ Andreas Gruenbacher <agruenba@redhat.com>, 
+ OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+ Jaegeuk Kim <jaegeuk@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: David Laight <david.laight.linux@gmail.com>, 
+ Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, 
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+ linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
+ linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+ linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+ samba-technical@lists.samba.org, linux-unionfs@vger.kernel.org, 
+ devel@lists.orangefs.org, ocfs2-devel@lists.linux.dev, 
+ ntfs3@lists.linux.dev, linux-nilfs@vger.kernel.org, 
+ jfs-discussion@lists.sourceforge.net, linux-mtd@lists.infradead.org, 
+ gfs2@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net, 
+ linux-doc@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+ Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, 
+ Dave Kleikamp <dave.kleikamp@oracle.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5453; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=yX5wj9VHSThOjafnyKvHMJdYbGSk/5OP4p9PS/zazFw=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpbltSzbGzajTJvmhlV7jB47UePrPRdt3Wu5GHL
+ L1B0sA8PKeJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaW5bUgAKCRAADmhBGVaC
+ FXY4D/42rFsMWqLxlGJh5AWMBxSb1l17atmfl6mxPzMfAPokDVOiTK0fNOZalTR4OcT31QZxTed
+ nkOmw7Qd+RTSm3dThDf1+et1RhMguer4Bj1ll4VmaZ/poVmu4fIUqbDcyU54UE4F3/M+fsmJXJF
+ 3s1+tqIyC+7WzF6/x/HWQY9RkQLGkUqkteSCoXdzEDc+WnhRgXntOXZFP/HpDfxG/pkaHnd+RBz
+ 4lFdhCAZ/xSuv67OWqva7ifRVDMiF1E1jM7uLNP2SeE/hd0wYNuORHvkzf0PBL9T0k2Xtf89p3W
+ re4QkZpVZiycpFTZTWt04k1pqWuWK0n8tjfz/V3hdvnGOrpI230p/dDpXhnTN9sdFWylM4U9ya4
+ qshCtu+DBJBGHEinp1+ZpE1k5xl1aig3/uN9f7VhUaZWww3qx9qr4g5LvGXfxxoxzZ9wBjiF9KO
+ N6VxYj2loIjuU0+56wmYIb9mvXWeQ3O5IJtU9xTAV91iUxWYiRU9dcBVDvwk0wF6sm/fKmizn3g
+ YPMFjbuTpkp5VsApqvODwDyEo97gF8luB/qvkGPpxV0AKc1MyfjvFpPOyECG1xpqAW1/f4Iph0F
+ ju2zuNnVWaPFBf5KCowY4rq8s1kCTJxt/dnIpOlxVJ6FNlp9OpxryB048OYYuKuRfAwjC8gjHz+
+ qu3QGNImWfKzpxQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On 16 Jan 2026, at 9:59, Jeff Layton wrote:
+This patchset adds a flag that indicates whether the filesystem supports
+stable filehandles (i.e. that they don't change over the life of the
+file). It then makes any filesystem that doesn't set that flag
+ineligible for nfsd export.
 
-> On Fri, 2026-01-16 at 09:32 -0500, Benjamin Coddington wrote:
->> Expand the nfsd_net to hold a siphash_key_t value "fh_key".
->>
->> Expand the netlink server interface to allow the setting of the 128-bi=
-t
->> fh_key value to be used as a signing key for filehandles.
->>
->> Add a file to the nfsd filesystem to set and read the 128-bit key,
->> formatted as a uuid.
->>
->> Signed-off-by: Benjamin Coddington <bcodding@hammerspace.com>
->> ---
->>  Documentation/netlink/specs/nfsd.yaml | 12 ++++
->>  fs/nfsd/netlink.c                     | 15 +++++
->>  fs/nfsd/netlink.h                     |  1 +
->>  fs/nfsd/netns.h                       |  2 +
->>  fs/nfsd/nfsctl.c                      | 85 ++++++++++++++++++++++++++=
-+
->>  fs/nfsd/trace.h                       | 19 ++++++
->>  include/uapi/linux/nfsd_netlink.h     |  2 +
->>  7 files changed, 136 insertions(+)
->>
->> diff --git a/Documentation/netlink/specs/nfsd.yaml b/Documentation/net=
-link/specs/nfsd.yaml
->> index badb2fe57c98..a467888cfa62 100644
->> --- a/Documentation/netlink/specs/nfsd.yaml
->> +++ b/Documentation/netlink/specs/nfsd.yaml
->> @@ -81,6 +81,9 @@ attribute-sets:
->>        -
->>          name: min-threads
->>          type: u32
->> +      -
->> +        name: fh-key
->> +        type: binary
->>    -
->>      name: version
->>      attributes:
->> @@ -227,3 +230,12 @@ operations:
->>            attributes:
->>              - mode
->>              - npools
->> +    -
->> +      name: fh-key-set
->> +      doc: set encryption key for filehandles
->> +      attribute-set: server
->> +      flags: [admin-perm]
->> +      do:
->> +        request:
->> +          attributes:
->> +            - fh-key
->
-> Rather than a new netlink operation, I think we might be better served
-> with just sending the fh-key down as an optional attribute in the
-> "threads" op. It's a per-netns attribute anyway, and the threads
-> setting is handled similarly.
+The main only place I found where this was an issue today is cgroupfs,
+which sane people don't export anyway. So, I don't see this as
+addressing a major problem that we have today. Rather, this patchset
+ensures that new filesystems that are added in the future make export
+eligibility via nfsd a deliberate step, rather than something they've
+inadvertently enabled just by adding filehandle support.
 
-Ok - will do on v2.
+After some lively bikeshedding on v1, I think the consensus is to stick
+with EXPORT_OP_STABLE_HANDLES as the flag name. Amir is correct that
+checking this in check_export() is the better place to do this, since
+the filehandle can't be decoded without resolving the export first.
 
-Ben
+There are a few other fixes and cleanups, and some doc updates too.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v2:
+- don't set flag in ovl_export_fid_operations or fuse_export_fid_operations
+- check for flag in check_export() instead of __fh_verify()
+- document missing flags in exporting.rst
+- convert dprintk() messages in check_export() to static tracepoints
+- Link to v1: https://lore.kernel.org/r/20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org
+
+---
+Jeff Layton (31):
+      Documentation: document EXPORT_OP_NOLOCKS
+      exportfs: add new EXPORT_OP_STABLE_HANDLES flag
+      tmpfs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      ext4: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      ext2: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      erofs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      efs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      xfs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      ceph: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      btrfs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      befs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      ufs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      udf: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      affs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      squashfs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      smb/client: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      ovl: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      orangefs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      ocfs2: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      ntfs3: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      nilfs2: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      nfs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      jfs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      jffs2: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      isofs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      gfs2: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      fuse: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      fat: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      f2fs: add EXPORT_OP_STABLE_HANDLES flag to export operations
+      nfsd: only allow filesystems that set EXPORT_OP_STABLE_HANDLES
+      nfsd: convert dprintks in check_export() to tracepoints
+
+ Documentation/filesystems/nfs/exporting.rst | 13 ++++++++
+ fs/affs/namei.c                             |  1 +
+ fs/befs/linuxvfs.c                          |  1 +
+ fs/btrfs/export.c                           |  1 +
+ fs/ceph/export.c                            |  1 +
+ fs/efs/super.c                              |  1 +
+ fs/erofs/super.c                            |  1 +
+ fs/ext2/super.c                             |  1 +
+ fs/ext4/super.c                             |  1 +
+ fs/f2fs/super.c                             |  1 +
+ fs/fat/nfs.c                                |  2 ++
+ fs/fuse/inode.c                             |  1 +
+ fs/gfs2/export.c                            |  1 +
+ fs/isofs/export.c                           |  1 +
+ fs/jffs2/super.c                            |  1 +
+ fs/jfs/super.c                              |  1 +
+ fs/nfs/export.c                             |  3 +-
+ fs/nfsd/export.c                            | 24 ++++++++-----
+ fs/nfsd/trace.h                             | 52 +++++++++++++++++++++++++++++
+ fs/nilfs2/namei.c                           |  1 +
+ fs/ntfs3/super.c                            |  1 +
+ fs/ocfs2/export.c                           |  1 +
+ fs/orangefs/super.c                         |  1 +
+ fs/overlayfs/export.c                       |  1 +
+ fs/smb/client/export.c                      |  1 +
+ fs/squashfs/export.c                        |  3 +-
+ fs/udf/namei.c                              |  1 +
+ fs/ufs/super.c                              |  1 +
+ fs/xfs/xfs_export.c                         |  1 +
+ include/linux/exportfs.h                    | 16 +++++----
+ mm/shmem.c                                  |  1 +
+ 31 files changed, 120 insertions(+), 17 deletions(-)
+---
+base-commit: c537e12daeecaecdcd322c56a5f70659d2de7bde
+change-id: 20260114-exportfs-nfsd-12515072e9a9
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
