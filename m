@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-74443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4552CD3ACFE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 15:52:53 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CD4D3AE2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 16:04:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 56EE3300533B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 14:52:45 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7FAE53075B76
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 14:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8E537C117;
-	Mon, 19 Jan 2026 14:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF28920E03F;
+	Mon, 19 Jan 2026 14:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kSibtHms";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="oS6r4VD8"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pwawHgwY";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ZsDFlXHz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D781C36C5AD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733A84C92;
 	Mon, 19 Jan 2026 14:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768834354; cv=fail; b=nCeaGHM+3Mqb5nvFkureeLmEGf9C6P/AJZJ1Nn3gadSoPwwmh62w37+0vZXnxjqKWR8bAYhHEmavLXoM1EyTW1whIVPa++bsDxQA3FOjXHDjt7IJcXjjbEGpzZfUrMmtVC1vQE2HyLMUIeE9UdIdHS1X53RkGuJEGaJEwHO5iAY=
+	t=1768834354; cv=fail; b=o4HDyhRH9jHg3l8hh0aEhF8apKWvda0cls4h2KY725PHmunxzhzqnHjmw9HfyFDAT8NCxlc6Gw5Oi7a7lB++zcoYJ7OeIWV+wx6ZFt/D+8b+ObLeE4wZedRLGoHXSHYi+xvWGbmgkiseDMcsWT90LJON8rmtPMOszvgXqlzGVJ0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1768834354; c=relaxed/simple;
-	bh=fPQEQ5z1/EROfh9krGc6Tzkgp1LBL6DEqtDkZf22W4k=;
+	bh=LbZzpM0Y1OhR3q3e7sDcdKT6nLGOnWI2QvyODOkI2Kk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jVwg3A+tkYCrwggwasy7hXsX7ppUEVSIOZ611p6x0EuJjYWOrNMbA2bZaGQP5juqciFMJKdF+8qVWH/RVlKvCuXU7P+BwK7eCGAwsl5nHHuVFbxxN1NNA9fx9Lv0iH9IUvFOR6PU/4rBwFG+IzLsC6d5eIfE4j0v8poMpBsfcdo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kSibtHms; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=oS6r4VD8; arc=fail smtp.client-ip=205.220.177.32
+	 Content-Type:MIME-Version; b=J3QwX0jf/el9eiD1zBzMoGojdJ5xPris3DBcmp6qgFYj/heLWM53mXydPlAAxqP6cJDmQqiJmuWsyxkVfPpfccrWd2lzIxBSIpffc17FdUtTMz43NGJVKRuOfqD4z6eaV79YMMdbidfBpLRLsluVC7kwsqcpt61W7fcsaxVm+o8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=pwawHgwY; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ZsDFlXHz; arc=fail smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60JBDNPl1512384;
-	Mon, 19 Jan 2026 14:51:35 GMT
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60JBEMIr2085070;
+	Mon, 19 Jan 2026 14:51:37 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=q2K016m38mdEV/RNOqirq0/F1aHvQZr1QbSBTNZ2dIE=; b=
-	kSibtHmsRHP3Sw+RqAxkuIZ29lJQTlsEsNcGwMlSO8LdYHCoFULcvTuQwB+l3nlA
-	PS8TS7MJWBdJkOVNEuxUmxFPrJJ3qniIjsjMr3fz6lwR4GJP4r6PYP3NADlEeIQK
-	f5R2z8pvk/kj/gBq3QdN3TqPR2fQi8m2kWcxZrYMI9X3JU75cDt96IZP6ZZh9Yrq
-	ZJs/BNXwrfZ6xUEK6lMh7eRldG6+S9WjcW2cOHXvQDI11BtXhbt2u7oYwgD/lVsa
-	mIuFldoMVsPRePpfjsTMbkt9+9QNRS6y4NbvqLWr1yeJsuk1btL1UcI5Iwzv4BsU
-	+9opBvOsGX+VChHFRu/hKQ==
+	corp-2025-04-25; bh=9NB/xNpGGorG6uLTe47zCLELvNAMhUaEudNabs9pE4A=; b=
+	pwawHgwYSu0rsOHRXylk6TGnlUXwgPsRey5kyR4PiAXWa1lE380x8zsS8KS3NDLO
+	F42k/oBSvJvkk2fxn05s9RWDTo63QXcvNF0Z1NWTymuq6lLpJmptJIVSubE9pCSR
+	Wu4EM6grYu8ahm9yK7pyXjPHBWfxzn0K6CMCR0S42vqZ2pGbLR/J6moXTHOUa8Dw
+	F6zvOTfgkmXdG3EDHuDEUnK6Gd73TmLMiXsff1ht5T+qUS0iVXbsZX1iL3VuI5x1
+	5fjzdo/yrsz0xjh7Ktm00WcOhaemcHY6CiuDUd7G6SPz5XcPFLx5+LXBPhKwF1fZ
+	kDnnBieJ+hl6Ujd478Ergw==
 Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4br21qachg-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4br2fa2d58-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Jan 2026 14:51:35 +0000 (GMT)
+	Mon, 19 Jan 2026 14:51:36 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60JE1tPQ000505;
-	Mon, 19 Jan 2026 14:51:34 GMT
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60JE1tPS000505;
+	Mon, 19 Jan 2026 14:51:36 GMT
 Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010062.outbound.protection.outlook.com [52.101.56.62])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4br0vc84x5-1
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4br0vc84x5-2
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Jan 2026 14:51:34 +0000
+	Mon, 19 Jan 2026 14:51:36 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Idwws75RdeU5JLV+b6ydBka+I/hGjIKjNG9HlhiSFzHMa3e3h7IduGMwPg+eDiKM2qFj61c+dMea+VbOhojkWgHN6uSEkVwp9hvSwX9w9TsuZ4zjyj5t33mUiSBSKHArkpJTCFULpkOHESuLJNmc0ltLLoxLsdt7e8EOf664objCfy9FKPCyEOMOcvSD7Fg6ftGxOsko9Pj8UQrYeB5Ql/qyBlCxASZq6ai4A9a3SHyCX0zpUAbes6HTngQObP+/Em3978ZiJRLQQNnCAJkEMq/mYByFwRVbENyeASLgGU+7uBTZGCbHEcCN/6tr8L4Fq9qk8UIzjza+40+XfGLa1Q==
+ b=luPQT3W0fFC+OpYv8u+F0LQT6+uGVs4l2XY+/E5gdDA2UnecjKKcWocg9ahDUtYmU4BVYdMa8JPugIcj6egJvvezJRtdZkIADWExtr+4gJw62rlLMeYtOZPbG1h7JzibJeLRaMtV0Hjx2PxJKUWX/U5K6DK77XGeH6isT05CvZFHTE2ANj62lI8iAeK2vAnuGYjar4ZevqZQo6BAhviEDTcA5ponNqZTMrKY2UguKoL2P7hjeNxA0iY13izKhK1NZa7DvQm8evgnaylHU1bDbwz0aH8bdbkmhUxDqXO37MqVMe8r+yj8do+z7qgoWy6xpNULBo8HJAb14ZMiBQ7q5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q2K016m38mdEV/RNOqirq0/F1aHvQZr1QbSBTNZ2dIE=;
- b=oJRefa+gTx607r+zzJXMNWZvEO4XvyX7W6nEVKWVwqoIX9Xk0U4wkHxYBwYHb2Ko3lv2Hwlq3J4XU+tCiOLo1UaWATtPOGUxnZx/HzAqOFmXrwbqr5iAab4xld76a3f1zP8hYwYJoLFqgZAOttDXjJfsz3EfPFRMO8KPDS37hi59LpHCjCPXhkgrFZ2SVbo5VuI4ov9SOCzCZBfui+Qr/u/1NOBOKRy1sRSvxjZpAG6SyJg+PoX3RbU+VmK5sh0yWG2QfMPbNFkvNWplq/DdvTioyH2ElfBD6RfcVmr690b8qAKuB+zOkajoxLbYIcQ55YvQUCCsi9rhN2v3mXIuaQ==
+ bh=9NB/xNpGGorG6uLTe47zCLELvNAMhUaEudNabs9pE4A=;
+ b=sQNer/4a2jnbgfiCV/muIYQxBhTcfw6S2bs6JnRzwg+wrs4mwsfGu4MH/CHeRNhCK+i5s3NT/jXRRylRHYlozhFqOAXcLYDKEx5KD0fV1+UbhWNVMJp3cvvBT+8vytFd3CLe48keCCIQ0hAfpWtrgBelpb6muxDm/HEhx+Jnu7RMtPT49aB1SkZOGsFjNv6bkG6l0rY3DiEAmjMagYb+3k8tjaDmMZ3Eybj0ks/PezYPZ2wmw+JvcL8uRUF7nmwSCWgf8FhcOv97S9qkeyZd/BxiilzC4HlJVXq6uHRI/SROs/5oZ3rEw6dWhE0wd4t3QqrVCZ9g9vcYSccMoGOYDw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q2K016m38mdEV/RNOqirq0/F1aHvQZr1QbSBTNZ2dIE=;
- b=oS6r4VD8AIxc62mXT7dB4ZJ8AysVXLO5EwxoiGtQn5n4M/OUuvTBphLEitI8OgcAt2aLBUed2EYcR2dTmsOADb1IxRXIhEJCMice7OwaIyw5vXySV/prSEJrecUWy1TVLQfdg2ONAPJMsk2NPWglmsk2wOyAfnlMDfU+rK7r3ds=
+ bh=9NB/xNpGGorG6uLTe47zCLELvNAMhUaEudNabs9pE4A=;
+ b=ZsDFlXHzeHf+nL87xtU/FCGwdSaFSkTHUH5AeFnjnXXtsUN6AyAj1v+HCuN4+Bf/O64J9df6HnNQ451Q5bJQriB/4KcnEfW6M1L88ZdtrUMI/+xmguxGLF15LhEbC2RmRASMeXOt4fJsnvCBcmGg8HLF0O4UMkoiO5ynJi/xI90=
 Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
  by DS7PR10MB7300.namprd10.prod.outlook.com (2603:10b6:8:e3::5) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9520.12; Mon, 19 Jan 2026 14:51:29 +0000
+ 15.20.9520.12; Mon, 19 Jan 2026 14:51:31 +0000
 Received: from BL4PR10MB8229.namprd10.prod.outlook.com
  ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
  ([fe80::552b:16d2:af:c582%6]) with mapi id 15.20.9520.005; Mon, 19 Jan 2026
- 14:51:29 +0000
+ 14:51:31 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Jarkko Sakkinen <jarkko@kernel.org>,
@@ -143,16 +143,16 @@ Cc: Jarkko Sakkinen <jarkko@kernel.org>,
         devel@lists.orangefs.org, linux-xfs@vger.kernel.org,
         keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
         Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH 02/12] mm: add mk_vma_flags() bitmap flag macro helper
-Date: Mon, 19 Jan 2026 14:48:53 +0000
-Message-ID: <2eb7bd931e63111207d434a50b355dd19dc8a814.1768834061.git.lorenzo.stoakes@oracle.com>
+Subject: [PATCH 03/12] tools: bitmap: add missing bitmap_[subset(), andnot()]
+Date: Mon, 19 Jan 2026 14:48:54 +0000
+Message-ID: <179ad7e5f62e87a8887807ecc7217899429ad24d.1768834061.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1768834061.git.lorenzo.stoakes@oracle.com>
 References: <cover.1768834061.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO2P265CA0463.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a2::19) To BL4PR10MB8229.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO4P123CA0488.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1ab::7) To BL4PR10MB8229.namprd10.prod.outlook.com
  (2603:10b6:208:4e6::14)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -162,85 +162,85 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|DS7PR10MB7300:EE_
-X-MS-Office365-Filtering-Correlation-Id: e67445d3-c721-4b03-4f2e-08de576a3a00
+X-MS-Office365-Filtering-Correlation-Id: b1d4ae65-3221-4dc1-54e1-08de576a3bd4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VE4bngsuZWMCrnrgSziLpkqC/8R+GlzZph145F0tKlUsuvq8NK98Uw+HkfrZ?=
- =?us-ascii?Q?qqwoy0Hp8hfZIi6Tiv1RLj/JxOnwvsMt49vSY/T5Ss6bta7GO8Lv4N2nUJ5u?=
- =?us-ascii?Q?XRn5NFJmkl79PAKSgrkzmZePnGDCKY5nvVExuwmNW2t7/eok87g1sYMtBHZy?=
- =?us-ascii?Q?GWKZ9cBzpy+Yr2xt5Kmf9z9HohPpskaYUt/jDog3eTu1w2acz0b9nuM+7u3Z?=
- =?us-ascii?Q?QlCOXoOW4P2RuybR2P1ekLpUapyz3lnLZQuSzhEIxgLOvZvVpE44Q65IoTBq?=
- =?us-ascii?Q?VCeFoZkwJsHHednFjxapWpidrFGPFPwPse4yB8wtPZGy3g/l06ltVqoiRYfg?=
- =?us-ascii?Q?ZKPCEw67oBb2oBmngQ/RGy2j2zBQ2o2Yk6Bo/LuLSloGwqK1ierrfcpQP0UH?=
- =?us-ascii?Q?VSgFrhckHdQnUBdjt6GJTLUYpdRfOfJb3Zh0So+kua4YNGP8l9lXflwpaphn?=
- =?us-ascii?Q?qFBxTHwYZJqZSSAH8Jgd5VSkJ/k+D6tIpqnrapfAneGJHbqmj5uPzK5YtWFT?=
- =?us-ascii?Q?XX/W5K7Pe/TAMJtdMv/9KGvbJQOzxHhKLBiVsVeXn2abn1/nvjlhgsVEr9v8?=
- =?us-ascii?Q?FeHVveLmzwHcZkg++tk8OUjbVT15r5d8ZwAb9OmIk9D64wxhj82l7O06qCyi?=
- =?us-ascii?Q?QphJY1bEY0OzAX25vJhleHBRb4JtIremJDDxPU/8bsO1rXx3EGO1RaEhBN9Q?=
- =?us-ascii?Q?Ub62OB3705VU+yDOaJwRxLWWW54ittrTbH7mdi82FQsXfj3zhLyEJqji7BrJ?=
- =?us-ascii?Q?pC5KuT2qu7id4viSlBlVHmtrzydNnJB72QfeWR0SP+Ph9Gh/inaUYwOVW4TS?=
- =?us-ascii?Q?QM0OZsKbpjZjyCQ3YUwRxfrhObwvM0zPXHoQehVXFhANcw8dgt3lpc8qSiBt?=
- =?us-ascii?Q?MR8lsIB/jRw0aooCSYUQklCAcMYbzzg7QtEnDuk1GEg518qju1FdiKY5Ix8R?=
- =?us-ascii?Q?IHzWC9ufG44JInQ5iOQZ/hNzeHmz2UYSIhNdM7iNq5GvesKR0x9ZC9RVEYjI?=
- =?us-ascii?Q?hcDLO02OYk9R8MCT7GKGU4MoR0B6tbRkRvg3O0SSZotH7RVGUwfY61m2lTTu?=
- =?us-ascii?Q?29qUi6rs2cObgXKCRyFU9Fc03Kdh6RMkQrsMVUk0NB/bGvMVfSYrjr2TBPPA?=
- =?us-ascii?Q?uVMnF1GCBJ0HyYvYJzLMeRUb/daQc6Vlo0HgSLDTlIINIpkPTeKqAhSIJhC7?=
- =?us-ascii?Q?2GmrHvyx/72oschS7/gwP9Y1bbjDOWtbpIRSatg9jjMjGLcPwX0dsSzWxJP0?=
- =?us-ascii?Q?7JmZMi3Np+bVV+ypQ8rUfKz441Hnu7pRPw7PUiF8Pv8UMVmfKNP57ZYSr/ad?=
- =?us-ascii?Q?qsUC57QmLY7qFB/ZbRIuhgJ2DHJ1HkkdGq/PF9AYy1FCKRSVRkhKu/VQTdHJ?=
- =?us-ascii?Q?qlM/t935REo06vWTOZDhxBkruBCU3aIbWBGP1KDz7j08LnhgmFsk7rY0H8wR?=
- =?us-ascii?Q?x5E5d7hkfo7uegHDaiwi85N1Jhb0GR9nbRRXGIDF+G/yig5AxDUeEiPlEfS+?=
- =?us-ascii?Q?N5qOLvxUGS1HjqOdeEVNmjrIZX3qs0QIPwvllKSAORccpKhTE95KTFHf+WX3?=
- =?us-ascii?Q?3TqOVrI7w5TyOi+wFe8=3D?=
+	=?us-ascii?Q?EkkzWNA1inb07EENEOe5fiJSPJ2YN/hVP8S5UPTSOwZj7xGVIKf2BCv7Nm4G?=
+ =?us-ascii?Q?L2odMW2q6Av86dwf5xyTVjnfJEIXxmFql3HgJ7qIdqA/tqvZf1/nGQhpVBXO?=
+ =?us-ascii?Q?z/I+u4vaR0EXs/cLklaApjPu8MYnZ19OKrbyZ/P6jIjR3x5l4+qrfXmS0er+?=
+ =?us-ascii?Q?f89RvR1FzgfqrvawNSsoAHnVTlKNYzO/GNB7JaGOnDoqKJKJYOtDols0HOca?=
+ =?us-ascii?Q?qP24YxVqky2Uf1Ks+hoRvxom68e8izpjvEnWYuGvzRdbsHil5npC/02LEu59?=
+ =?us-ascii?Q?t/tgv5bVcHfmDOqaH31wImUfHextGAsaMsBUre3sKsSlctWxTTyTX264z7HD?=
+ =?us-ascii?Q?fJTepcY4AM+FqNdydYFzE6CHG3yXd8nftmHF05evC99OnYuuhJnvP6zu6U0E?=
+ =?us-ascii?Q?PYUGwMpAqm2TvApbBwxOTroz9mYtIek7GIGLRcJvz4Hiyld8iINEx0ihw87E?=
+ =?us-ascii?Q?1jvNE1biWmUHvDZtvfuJtsOaP5x7x6Y//XpZPy4bj/p24MHeU1/TwGPz5DM7?=
+ =?us-ascii?Q?XzqPLZZPXl54FF+ltDjuubt5YwmB03l4lvxOICPcACveHNrKk1dUhjqCBL0z?=
+ =?us-ascii?Q?WdigaW/ItmycSTP7978X7JKTG7oFxf0iiCkOEmFa8vWvGiXxZd8EkTrb2esH?=
+ =?us-ascii?Q?nLcBetljr3sRmAmgkp2nWkp9mb6tseWFkzeWuScVtQ+BM8EJibRXa93fnm/R?=
+ =?us-ascii?Q?nL2PaqCN2XiFOtAQLxMX8izdilfhvuI15yxQNeIN/c0qI0ZhMGDl4ZWlOMO6?=
+ =?us-ascii?Q?sP58eMJHmAO96irLxIXsBnddQDdKBqKs7Na3ezn3gZv/z+TM3hpuy5akNE1n?=
+ =?us-ascii?Q?yKZwfpFyjjm/rZXarmWwJ7aG0V69+dse63MFCnj/deturr6EDVZI1s0SAUaQ?=
+ =?us-ascii?Q?BC/p66yHa057PsFBeduNE2tBW1B52jnSYeRbr/JbUHGMcM3Ui/ZPoofT6CxC?=
+ =?us-ascii?Q?ye/OPpvznQSNobqIZzH9tuQdYE8U+mBxAtlTIAx4TRp6bk8cldlWq0TrGcGU?=
+ =?us-ascii?Q?Ef4kOWHrTfek1vQWDqLoemtw6/eFIuHtwCZHsExvAqi+tozgst06tjN705+p?=
+ =?us-ascii?Q?ToRPEJyBD6CZL/M/EFBlHQlbYyU66SCwIKwg2w/Y/3YpEZEIm7cndW4+A5x1?=
+ =?us-ascii?Q?7tX+549d3XSBiiAftcbVSB8CEv3sSLJPWshjPZgVTlxynJ6QJIgMlLh753IV?=
+ =?us-ascii?Q?8bnqXXaU0Zfzd4k+BQK6IyOunJF1fs0uwM0xThby9y+10SUxOaRhDk+D3U8f?=
+ =?us-ascii?Q?rIOdFioxHCkFDHEh3RLGaY6d7Cao/6e8mU2EELqAIiIbt7ilDfU38WfZ+ItT?=
+ =?us-ascii?Q?emEYVZugosVnhGIe+PE2SW/6a32KhttdWPWTEKpyVADhxjRaiTTGe6feD/ku?=
+ =?us-ascii?Q?j4oDdGimwGeFEtbusNoUkUOW6hnEErDcogKiMv6OQ6wGjkIwRo9mXoIEORME?=
+ =?us-ascii?Q?fD4jgY0jPiCk+hUuGTDzFZt5yo6PkKdfF71j/ST8i6s/6LWS6L7JTqcRemGB?=
+ =?us-ascii?Q?dr/MNQIavHapOMLbfs7A1SICOUuNI3tApXF+aml7WCrBsN6oC3vwdRLWnX57?=
+ =?us-ascii?Q?5cCo8KJvCB/D9Ig3Yqw=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?wBrVMwx7O7RzbpafHkOl4kzoNOlvDbL15Roq5c/2VNjs1NuAQ1x5bJOK1RKK?=
- =?us-ascii?Q?0tZlTnSVYztbJzb70W8f3p/WIn7Bd1PsYLy5yZyjHk00q0dVJgrFiDA3dvhu?=
- =?us-ascii?Q?u9nPI15EXwcrfVmsRdggDlvjXOAUc5eWCDu0SPZihOMpR4iB6Bx9WqEJrLIc?=
- =?us-ascii?Q?oAp8tVMfPlD5MSoodeosYPL9zKZvee6i7Bhcg1uFPko/TbvJ4Hcb1C8nbWP2?=
- =?us-ascii?Q?XoDAsyj5bvxK747LPbyL/EFv7lrlgFatLoAVrz+RHPQ1S+BFPFiqkZDVk+0s?=
- =?us-ascii?Q?20MQ6LtdCw4pwJITvE/ISoVo4/Tq5Uz7vjwDptUfBIXzVJdPmQYVoa6ZJKCY?=
- =?us-ascii?Q?hcWUA4yoIGx9JMBQCUcOcgtCruh0R51njFj/8CBR/nI3cUE3CKJlSXqAYbaJ?=
- =?us-ascii?Q?2lAozSy37C3DNVHwDwW9dhK/uK5nD3LuBxvhB3nK4YzdYi5aYP+4iOK0xyw3?=
- =?us-ascii?Q?3JOZPBDnWR2D3XbPHX3LmNX3dwuXvwDEhTkzjp43Q8xsyq/lAXw639bHCSQC?=
- =?us-ascii?Q?SmgVqmCrt5vV42Tw6ESbWtyJdtyK/3IxQQP6tLxkpE4rYItDek1eJ6GPAdSL?=
- =?us-ascii?Q?ZZlV8m0+vdAsJ+pUxTruv1ZT5xyXgxwYksqHuXeGUmCgjneLzcobIUJqQvnN?=
- =?us-ascii?Q?uX4JGlOPpmxPoyq2XA1xC7QT3bkFnDSS0eqUun2uO36Mu5u3Zxg0Vx614TwF?=
- =?us-ascii?Q?qHGRBGUW/NUxVcL+tKdXbZafE7lQNxRINVm37jwRICaaeycYdUroupNvuziY?=
- =?us-ascii?Q?s8ug641M/aIfA0N9jC7R9RYDukIYuAJzWStc1+MR/e3x+LAUlXISbHdAfNMr?=
- =?us-ascii?Q?3x3GnvU8wzw8eweEBD+ggnAc2Lo9OR7M8pBhCZCRwkrD6rwgABEi/z3ooBNo?=
- =?us-ascii?Q?GqXBd+RT/xA+rHuPhoxgyIDeweHQU7ycJEmYbodf3bQPGpJDtUTXeD6QqVrI?=
- =?us-ascii?Q?kmfOmGXSDLGqwVcASOn0BaP1YfeyTsIqr9jb/qMqqLm6k0DGLycnkMsAGtHy?=
- =?us-ascii?Q?ttHVlvo00ztzx77r5RsPs85mzvOLGEL+IwT5cizYT6andRsf/VL8bH0xQKS9?=
- =?us-ascii?Q?aJaE2xxhDrvN0j+jlrcrdNSWOk+Spvhcz4odXLYkjDE16S3URv8TXoyDyOXj?=
- =?us-ascii?Q?KC0sWCs4yaCa7fxK7ejd8w2QVO9VEyYFP7u3mJMo9FQLiuiE8Q3zBrLf/wrl?=
- =?us-ascii?Q?1NL46U9htxiByWRhWunHK/91Pqvt2MNusFSCZm79pRZVtaMHneuq4LzxyUO2?=
- =?us-ascii?Q?RUy1NpaDd1j2k47fzI8/BAm/nR+HQHvHwWa8H7nRjYkN+UJ1UhM+ZgH8SlFQ?=
- =?us-ascii?Q?7FUhxFpSzQIOAo8MwB4+FX24xdVuDGE7/iaDclw2hdbhVpqb9pdJWuoLlGAA?=
- =?us-ascii?Q?/bqn8VZlU+xvGKet9l2ks/ddVYTI8C9OICr5M/bLkj8DX0o+mOZh3xuHn4ss?=
- =?us-ascii?Q?uV7HfPqdcSImwl+g6EYmalsFjRCas81fWLKhcDqCRr+Uy1D6tXctk7fAVQ2V?=
- =?us-ascii?Q?XLcbwCbSDsEdPZt/ZBRoPLyhnwcmwZXa73YNsyITKYJ9C0fLmGSH4BZUzQyQ?=
- =?us-ascii?Q?6QdWJ6udqS9WhjNel8+XuVv9sRDZRGPQvFTdSutxTRx+JP8I4OJVz4UBiC06?=
- =?us-ascii?Q?tKC8ptv6dZ0G34nprs/aM0IWzcVJRdDJhQbQxAzahLAvlfhvEkXW97wTt2ax?=
- =?us-ascii?Q?u/rV7qOB4Ddol43neOqJWQ4X9QOW441e5FmZFHEVPD+3pna1cIAge8a9nXnH?=
- =?us-ascii?Q?F6oeHSZiyXSvbBbTdwUSWqT0ZrCF9yc=3D?=
+	=?us-ascii?Q?3iiIh5n9hwyEQDo9n2eVrwIxcGg68NRceabbFYwEDJGgaIk1Tn8EifoHCk+G?=
+ =?us-ascii?Q?o4d+HGLyZcjKQEm7znhFCc97gjIG9CQ+RhhA4quRn1leSS7aeT71Z1aOCP7R?=
+ =?us-ascii?Q?MCnHw2W8Hm70+ywlo3+J8ip9IQs6kWTG3Z130fA1RkSd/5ov5EkvBlrnQH2t?=
+ =?us-ascii?Q?DqocAfXstkMDtoRuBGPhzD2WE26jymdqUgBFEOZp/DPPrZt8Oa+IjKcgEnk6?=
+ =?us-ascii?Q?bqZBsTLKv3dUZTzRNvIJmVmTCkmyR3gYzCO6wA0A4VLfE79Nre23+6ywUjAK?=
+ =?us-ascii?Q?LYs7pHKyYIVRuFo3wOLOSGdsL5ak9PL0VO/ekglj2eTz2a8JG7PJqbRhUyTN?=
+ =?us-ascii?Q?SACRkdayWlTTWhYEmyduBvdMf/4OIElnmvYowPlFullfuvJQjXXNtSkFHnpC?=
+ =?us-ascii?Q?htYvfqgv0RgJCgMXkQq82aqkeKg6pZvBdmuOAzl0d/u6O7Gf9LAyBC+J9f+v?=
+ =?us-ascii?Q?k0AQRPj/DAEPzhtQj99XJyVUhNOoPAZC626cDaBu8wcd89hb9z5/Fw+ASSo6?=
+ =?us-ascii?Q?kdjte27SMs/RuoLM/Hq4Y/LO041kgFKaU5VSwc+Pgt7TToNNdgbqHehto7If?=
+ =?us-ascii?Q?BkENxR+C6QTj5GWiVsx12nKRclPLbdT0P3zKZbRwp5YB86HRRjMCabVQGFCD?=
+ =?us-ascii?Q?Zi1OHbJ+8AGpyu9ZKFPG0vQgF0RL4EnPxoIArz+pByHlS9uf230TaP9hbkgH?=
+ =?us-ascii?Q?OAwzZqUsBDqg0C2kkISqArkIZR3MvJbyHkFR+irpLhyxTew/kRBKDrwocBr7?=
+ =?us-ascii?Q?1fVxJWMKbTEburHE2TYsBMQe75Qp6mW2cDMf0mt9+jleXVGvQTopiyjRt86o?=
+ =?us-ascii?Q?cqBs78fmNfDNVGBrKasC4wohAegA2JCqEOBFQH/FibxFEF1HUtXvLRR7qQzS?=
+ =?us-ascii?Q?WMpR3pn/5KDtfkKC4cpsyreUI+wmHMf7dDrVK8qz3+B/aY4ev9wji3hYypng?=
+ =?us-ascii?Q?qzT6GM5ZBLT94hhDqKSAlOjLgIfZEVxzVxuDK5IedqgbQ/oey6bGyV3EO7XX?=
+ =?us-ascii?Q?6KK/0CReCPtKOh5MzvXG2eVyjXJA5enlU5V6GdIMse5M91BhheTJv2xBWcl1?=
+ =?us-ascii?Q?VQpJbGuH9rKRNO3aDxzJQgoybwsQ00oRaKaabQUDrrkyc5PsQN0PCxHbg/Z1?=
+ =?us-ascii?Q?GcZoashNGdhFg5EEFA518puNoL6X56I+b35Zy83eszd0+4mkCqVc8AucTSvA?=
+ =?us-ascii?Q?A3we04nfAlVmJbP7MdNJPAVNuBZNoB+cwkcbpfVBOdrWNw+ZJKHfUX3Y54aP?=
+ =?us-ascii?Q?xei5tekMD6wrmqd7Iyi10BVaEUWYWIeR+kNukKceqHKbTm/m9K/zFIUJKcA0?=
+ =?us-ascii?Q?b3sSDwVAXfzpGUBjrjJOc9hHIwcDZ4oOjN7Zl8KlHWYrAArVsuqP5AiZwibA?=
+ =?us-ascii?Q?ZBeIDA1bL2HC4RvMrD6LO5GMEG8AKn3Ucr6pxnBJFAV8NZc+k6BGyQPpUabN?=
+ =?us-ascii?Q?qYBsmLKBgPw7AZ6jPPIfnE+CWthR6wKcaYgSMQmlIWOgGY3O2fCjStHYREQV?=
+ =?us-ascii?Q?UbVp+AYvusCR4kUiqz4Cy0NK3HFQ50kgA7uYIfWbuXIPtaAFKO80+t86iHeC?=
+ =?us-ascii?Q?Df8gCxiXl9pzhi5N9a4nHX3Cya8nRWLDz8PXfGQdVh20tsidlMjluQEKm41l?=
+ =?us-ascii?Q?6aK7itYVNATMeTbMJberyCYP0J6A47Hs65tvPQOsg5bqjhovkzb+3wSEtkzo?=
+ =?us-ascii?Q?3e2aJ1PXCEke1CJkeotFRKtcHmu8xlJnm4yJU2umsgraCWwACNLoQDiQFLWZ?=
+ =?us-ascii?Q?3ootOfSm+ihP8jVmQDKxLnpGqkGw6EA=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	T2yXdYQNIWQfMvtK+99AnWwN/MOopTOGoZ/l/gwOjxPVjPsYfQ7H4ApZJBPbnRHsB6x1Pn7/i+qeG8vbZ6erJHlGzyoc5h57UfSCIOXeE6EBukRTs9unimQ0t8yrkGwnEbK3MW/XIxtdfQ22Uj80301K6+2Wjz0fLoqvJJdsXYN5x8u2skH2m9IXVCUqJxL2aaxM0V3jaJLSo6I+hiuMj0rR62SrxaR4LsNKCLwhEIPiFD4NOVkcEh1wa52avCjq3zO2VwUEmtC7ZdU3ax3qMwV/mKdRBSo/JCjaCjfRAMa8N6QmOFAUH5aH29lMo32Sl3AlB8Emr2KrsflxiRs70cleZiqr1HgqJzKDU5aOYKDTpskwKz8oKvrVmOfJypdGutLrbFxBVZj+zmBhoM8IXZpjJ07k14BAqZB4hxjzc8G/fHVo0WgkuXhSzIDltL0k+3HN/vvQPpPmzsp3MlsD9t+99fHAphSRHXg+eF6AdMiNzkXNynuCWpe2k2p8HLnlFgikHYp0qYcJCMzEkeK5cDrLZNDqzf0N4w68BE+rHOYBzey/bU3fMFwKo6KDrJdavwwwVIRddnd5fzVnM11McjOu437b0ElPlZ+aBpG0yWM=
+	AJtMkyYlmZDwkKd8ryzsJQbjQcuET+V+DlqchslSEx+zVrU1fIopev7tIqBITXTnRiGomClSA6eZuWJcXzRSHPDWF859BLvQg/03l9UAwtw3dCvTXgve6ZqPXIWYBTG+34o2eDlliiDsSDn967zRNb6J6oNcEE1DyK2RM439ZJTuqDfHMX68WNqtF8bjDygyd8s+ZfTHGZhhQCe2bZiyNvnMmWP4ZvXaoaDyP62adosjXwa3g97QVvSnDZmT/byyYoTmhZI8p/i0H+zgUdH/QChcvjl5/WkQv41XwWnmyvkFK43xDihUXvcfdJw0oiUM7CSr797x1QeSOMzTI8O//LgynhJY9Eu0FLkNk4BBe6xagsI4WhZLUzVyjh+uTBzsbEbFWcfkpk6GfHqGfjMzySRDVpn7odtvCyF3/CUlr5Y0ubz8TpG6o4ZMb1VHQxXuE//jJ2aIv4lXFX0ra7slJ2KW3/3QPAyQTsZ7VxlmSASEQG1Dk5sflLnB0xnn4rgcfqrg2IlLAvIJEeYnn0yfIhY3OpgDz9eFh5vEzz6YyCFksLBvAbjijDwBVYK1ZrbjzGuBXPEKuhpqvnOuUDsfqcTI5ALVJrmSYCzD7dvIzwI=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e67445d3-c721-4b03-4f2e-08de576a3a00
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1d4ae65-3221-4dc1-54e1-08de576a3bd4
 X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jan 2026 14:51:28.9399
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jan 2026 14:51:31.8479
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Wm7Jr1EAD7vU8UUENHvwK1E1A5ahxlxg/WNYp2/pqwvMKPj/0hMTpBOVMaEGbXdvyLf+HCxGIUkH/mO7EA4N/8UOHWPTz5h13MibKlEATc0=
+X-MS-Exchange-CrossTenant-UserPrincipalName: sen/q2hF12IBBXtVZ6iKhOjaElASn1m2hv4shqrTZTLFFkoITO7W0UWeZkJdkh/M5onx4GRL8IqhbV+p+kWyQha31coauQ408kKQG490jbY=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7300
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
@@ -249,141 +249,119 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspe
  mlxscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 spamscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2601150000
  definitions=main-2601190124
-X-Proofpoint-GUID: 33t-8mvCdz5SmXWHmCAaoVXSh1PSGMRs
-X-Proofpoint-ORIG-GUID: 33t-8mvCdz5SmXWHmCAaoVXSh1PSGMRs
-X-Authority-Analysis: v=2.4 cv=QdJrf8bv c=1 sm=1 tr=0 ts=696e44f7 b=1 cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE5MDEyNCBTYWx0ZWRfX/lYNAjm8RiIK
+ BgdGo7+A6HmNDsAjTXlF2/y5ZwM4tbficwFbVjz4q7ICsAtitDfOmL0YmeREoxw1PhoVc9UexD6
+ iKf4aPuFHbN4h27nB30nrQFDwQ9vaMsmLM7OH+glDj0f/KwCSG5zORaQ48d43d4OCQ4muIaDcv+
+ 9w3oixc5iDvWE07MzpSvJIUO4PBntovW6iwrIppMw1XUo1eXAt3ecTDDJIY1uU0KD/rxFYf7EsB
+ +O4Qi86T4ZqbY8rkRmj6GawacGU/68afZ0ZFg+ae5VDEj3hVyFKgrn1pg1fV42ua2vgtYqd7BRt
+ OkfycAbVDU8RGM0LGyh6jZsj+7lgF0moC8D8erq84ZEYdw1prY7rLCU0pZDZ4ADhMu8w9TrjIF1
+ 77tnj1cqbQbJWAUQlJziqODxOQfqkFknQLWyK9ZzBaXIfi6XAYZEBnGP+SIjna127CoySpUrGFl
+ y+LDMRGApoP9yhyGvEiy7ToZinlcnf9f61A0gS4I=
+X-Authority-Analysis: v=2.4 cv=HvB72kTS c=1 sm=1 tr=0 ts=696e44f9 b=1 cx=c_pps
  a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=vUbySO9Y5rIA:10
- a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=Ikd4Dj_1AAAA:8 a=yPCof4ZbAAAA:8
- a=X9FSn9lvzeJUOF9phsgA:9 cc=ntf awl=host:12110
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE5MDEyNCBTYWx0ZWRfX0nGxTril//aN
- DJ82Q0V38K0T6IuYm+yd7uqaj5XaqKSvjUttFlUq6WsZDpsOQJST9hvHGCwxG9qM88euXgJc+9M
- EEdkslrHIImMpgbl3Yko1bE3/b33w+OCVNlj3eJEBnEvZyJ0w9AQNTV6D8oWO9hm4ntsnho2/jS
- IlI2mjyyqlWhCG17hEqJHrMi41HZtqfbx4vF9RWWUaRlKZpu2jhQdYSexKc0luKnWkWvWwssKES
- dqHisgqAumrH6rRB8JjdHjhVcZhD6A7SiI2EFizyy/FaPd0KSDUoO4GPfORY6BQ7yye/2jQL0E9
- tMuURe4oIwwk6tfotw2Aa4p+P3/zfGDz0DUiLcb3JPEZ1WFxEAJ+VVRhF2pPHkZAlYRb6AH6Qna
- 8WwYOrf6n15zkbmivtWW/GJdVcKK6HO5OiS6GWN5rAN5Faj1ztf2EKczgHjjQQsFP1CyBuX100A
- 10gjY2/kTno4MuMUXWCRnZu/T+v7Hcmi7z4ElBB4=
+ a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
+ a=a5eeGpJJMrXOYBdyZXoA:9 cc=ntf awl=host:12110
+X-Proofpoint-ORIG-GUID: zbbtgE9MC5Fc7L0uksmJ3GOkpD2zMQ-Z
+X-Proofpoint-GUID: zbbtgE9MC5Fc7L0uksmJ3GOkpD2zMQ-Z
 
-This patch introduces the mk_vma_flags() macro helper to allow easy
-manipulation of VMA flags utilising the new bitmap representation
-implemented of VMA flags defined by the vma_flags_t type.
+The bitmap_subset() and bitmap_andnot() functions are not present in the
+tools version of include/linux/bitmap.h, so add them as subsequent patches
+implement test code that requires them.
 
-It is a variadic macro which provides a bitwise-or'd representation of all
-of each individual VMA flag specified.
+We also add the missing __bitmap_subset() to tools/lib/bitmap.c.
 
-Note that, while we maintain VM_xxx flags for backwards compatibility until
-the conversion is complete, we define VMA flags of type vma_flag_t using
-VMA_xxx_BIT to avoid confusing the two.
-
-This helper macro therefore can be used thusly:
-
-vma_flags_t flags = mk_vma_flags(VMA_READ_BIT, VMA_WRITE_BIT);
-
-We allow for up to 5 flags to specified at a time which should accommodate
-all current kernel uses of combined VMA flags.
-
-Testing has demonstrated that the compiler optimises this code such that it
-generates the same assembly utilising this macro as it does if the flags
-were specified manually, for instance:
-
-vma_flags_t get_flags(void)
-{
-	return mk_vma_flags(VMA_READ_BIT, VMA_WRITE_BIT, VMA_EXEC_BIT);
-}
-
-Generates the same code as:
-
-vma_flags_t get_flags(void)
-{
-	vma_flags_t flags;
-
-	vma_flags_clear_all(&flags);
-	vma_flag_set(&flags, VMA_READ_BIT);
-	vma_flag_set(&flags, VMA_WRITE_BIT);
-	vma_flag_set(&flags, VMA_EXEC_BIT);
-
-	return flags;
-}
-
-And:
-
-vma_flags_t get_flags(void)
-{
-	vma_flags_t flags;
-	unsigned long *bitmap = ACCESS_PRIVATE(&flags, __vma_flags);
-
-	*bitmap = 1UL << (__force int)VMA_READ_BIT;
-	*bitmap |= 1UL << (__force int)VMA_WRITE_BIT;
-	*bitmap |= 1UL << (__force int)VMA_EXEC_BIT;
-
-	return flags;
-}
-
-That is:
-
-get_flags:
-        movl    $7, %eax
-        ret
-
-Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
 Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 ---
- include/linux/mm.h | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ tools/include/linux/bitmap.h | 22 ++++++++++++++++++++++
+ tools/lib/bitmap.c           | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 25f7679df55c..36c3a31a4e0e 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2,6 +2,7 @@
- #ifndef _LINUX_MM_H
- #define _LINUX_MM_H
+diff --git a/tools/include/linux/bitmap.h b/tools/include/linux/bitmap.h
+index 0d992245c600..250883090a5d 100644
+--- a/tools/include/linux/bitmap.h
++++ b/tools/include/linux/bitmap.h
+@@ -24,6 +24,10 @@ void __bitmap_set(unsigned long *map, unsigned int start, int len);
+ void __bitmap_clear(unsigned long *map, unsigned int start, int len);
+ bool __bitmap_intersects(const unsigned long *bitmap1,
+ 			 const unsigned long *bitmap2, unsigned int bits);
++bool __bitmap_subset(const unsigned long *bitmap1,
++		     const unsigned long *bitmap2, unsigned int nbits);
++bool __bitmap_andnot(unsigned long *dst, const unsigned long *bitmap1,
++		    const unsigned long *bitmap2, unsigned int nbits);
  
-+#include <linux/args.h>
- #include <linux/errno.h>
- #include <linux/mmdebug.h>
- #include <linux/gfp.h>
-@@ -1029,6 +1030,38 @@ static inline bool vma_test_atomic_flag(struct vm_area_struct *vma, vma_flag_t b
- 	return false;
+ #define BITMAP_FIRST_WORD_MASK(start) (~0UL << ((start) & (BITS_PER_LONG - 1)))
+ #define BITMAP_LAST_WORD_MASK(nbits) (~0UL >> (-(nbits) & (BITS_PER_LONG - 1)))
+@@ -81,6 +85,15 @@ static inline void bitmap_or(unsigned long *dst, const unsigned long *src1,
+ 		__bitmap_or(dst, src1, src2, nbits);
  }
  
-+/* Set an individual VMA flag in flags, non-atomically. */
-+static inline void vma_flag_set(vma_flags_t *flags, vma_flag_t bit)
++static __always_inline
++bool bitmap_andnot(unsigned long *dst, const unsigned long *src1,
++		   const unsigned long *src2, unsigned int nbits)
 +{
-+	unsigned long *bitmap = ACCESS_PRIVATE(flags, __vma_flags);
-+
-+	__set_bit((__force int)bit, bitmap);
++	if (small_const_nbits(nbits))
++		return (*dst = *src1 & ~(*src2) & BITMAP_LAST_WORD_MASK(nbits)) != 0;
++	return __bitmap_andnot(dst, src1, src2, nbits);
 +}
 +
-+static inline vma_flags_t __mk_vma_flags(size_t count, const vma_flag_t *bits)
-+{
-+	vma_flags_t flags;
-+	int i;
-+
-+	vma_flags_clear_all(&flags);
-+	for (i = 0; i < count; i++)
-+		vma_flag_set(&flags, bits[i]);
-+	return flags;
-+}
-+
-+/*
-+ * Helper macro which bitwise-or combines the specified input flags into a
-+ * vma_flags_t bitmap value. E.g.:
-+ *
-+ * vma_flags_t flags = mk_vma_flags(VMA_IO_BIT, VMA_PFNMAP_BIT,
-+ * 		VMA_DONTEXPAND_BIT, VMA_DONTDUMP_BIT);
-+ *
-+ * The compiler cleverly optimises away all of the work and this ends up being
-+ * equivalent to aggregating the values manually.
-+ */
-+#define mk_vma_flags(...) __mk_vma_flags(COUNT_ARGS(__VA_ARGS__), \
-+					 (const vma_flag_t []){__VA_ARGS__})
-+
- static inline void vma_set_anonymous(struct vm_area_struct *vma)
+ static inline unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags __maybe_unused)
  {
- 	vma->vm_ops = NULL;
+ 	return malloc(bitmap_size(nbits));
+@@ -157,6 +170,15 @@ static inline bool bitmap_intersects(const unsigned long *src1,
+ 		return __bitmap_intersects(src1, src2, nbits);
+ }
+ 
++static __always_inline
++bool bitmap_subset(const unsigned long *src1, const unsigned long *src2, unsigned int nbits)
++{
++	if (small_const_nbits(nbits))
++		return ! ((*src1 & ~(*src2)) & BITMAP_LAST_WORD_MASK(nbits));
++	else
++		return __bitmap_subset(src1, src2, nbits);
++}
++
+ static inline void bitmap_set(unsigned long *map, unsigned int start, unsigned int nbits)
+ {
+ 	if (__builtin_constant_p(nbits) && nbits == 1)
+diff --git a/tools/lib/bitmap.c b/tools/lib/bitmap.c
+index 51255c69754d..aa83d22c45e3 100644
+--- a/tools/lib/bitmap.c
++++ b/tools/lib/bitmap.c
+@@ -140,3 +140,32 @@ void __bitmap_clear(unsigned long *map, unsigned int start, int len)
+ 		*p &= ~mask_to_clear;
+ 	}
+ }
++
++bool __bitmap_andnot(unsigned long *dst, const unsigned long *bitmap1,
++				const unsigned long *bitmap2, unsigned int bits)
++{
++	unsigned int k;
++	unsigned int lim = bits/BITS_PER_LONG;
++	unsigned long result = 0;
++
++	for (k = 0; k < lim; k++)
++		result |= (dst[k] = bitmap1[k] & ~bitmap2[k]);
++	if (bits % BITS_PER_LONG)
++		result |= (dst[k] = bitmap1[k] & ~bitmap2[k] &
++			   BITMAP_LAST_WORD_MASK(bits));
++	return result != 0;
++}
++
++bool __bitmap_subset(const unsigned long *bitmap1,
++		     const unsigned long *bitmap2, unsigned int bits)
++{
++	unsigned int k, lim = bits/BITS_PER_LONG;
++	for (k = 0; k < lim; ++k)
++		if (bitmap1[k] & ~bitmap2[k])
++			return false;
++
++	if (bits % BITS_PER_LONG)
++		if ((bitmap1[k] & ~bitmap2[k]) & BITMAP_LAST_WORD_MASK(bits))
++			return false;
++	return true;
++}
 -- 
 2.52.0
 
