@@ -1,173 +1,218 @@
-Return-Path: <linux-fsdevel+bounces-74554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7341D3BA11
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 22:34:46 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A62DD3BAC8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 23:21:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 1CAE4302DB20
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 21:34:39 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 08DF33007502
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 22:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2092FB630;
-	Mon, 19 Jan 2026 21:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB283016E1;
+	Mon, 19 Jan 2026 22:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCtiQ0SO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f208.google.com (mail-oi1-f208.google.com [209.85.167.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EF4270ED2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 21:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031EA2638BA;
+	Mon, 19 Jan 2026 22:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768858474; cv=none; b=H/HzPL8kTYH+aioY9g4BP6B1KpIs86NGwE7+rEUG8fcwMMSunszFJu/G4KBI/Pz8q9VoNI1Vx85OcimEtqQmHnTNIMeCs4QJKq7rUWaRh3wy3K1/hULRsj53Z5CfYDW/G+yb5s8HVbdWTMCm97JzbbVYcpYzn5ymMlH6S6ROY58=
+	t=1768861294; cv=none; b=ZhFZ/vU9u5IlgtnbP1bBcNe5luOaBT+dNv0IGcyYP+I228HGYTfbRraldfEWVXcRA2qfG+PAaOYhW+Jbgs8aaBEMFo8IJRL0jFtx4v0unPnKjjaRQl/8qvsepddyB+Cm83UK8dadNsJox9BlgbgtJXjeoHaHZO3gkQMp5vvHi/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768858474; c=relaxed/simple;
-	bh=mt2lAZM/yu19sb8v0KRLEnHyOH5eQqUsDlnw+RZRGaA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RKok7W/1/Keg8jGzbwN+6GDqNNIUZnCJDqO+5lxgcPsgRi7Flm96pSDtftluI2iAo3yhbG4Q/6iIDx5ZBqgtet1KdCWg8OcteTiAtdTOkpbDbx33NqS9hSM4R3gBOlYUy2tEQYw2VziUuMKuajxcQBZc0Kx3qP0FB30uZLw/KRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi1-f208.google.com with SMTP id 5614622812f47-45c8d5caf62so4763974b6e.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 13:34:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768858472; x=1769463272;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Er3hXqbv6+T3+tQYj29F1jwAO08ziVFNqrkr+zDbkIU=;
-        b=rNCZGjPx+ZOM/wdgwCKYBHL+noq6SnYTmOWBmX4o6vqbb1J/0hkQhfCIdLGTEFios4
-         nWilY2d4jVEItsC0bMmEisCR4Z4PEq3oKtMhWRScEWTICX+g7KbloHcdHv8fyqjjsJGr
-         hoc6r/424DakD8jzoFW2ymhs8LSgOxcvKg6PDj4KfXJ5MxIfauKc3h0eo9vB5IxPp+Dd
-         UnxQTtzMnDkkUr6z9jVaAKBPRNxiIzOAbn94vCeK/dCgkWEPD0X3FW3TYEUU4RbXaX3x
-         8ui3fIkeOU0KcW2rZTlBWrwkepPz0A0/w1wj+uJ6ELuNN/jYee1GSTZpLHOmIbKonEdb
-         T1jA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbaCFQnpf18VuOVidXb6oLvx3RZuV8Tj5voaOti4q4w+JU9cKHMee0CqSPbf0sB02xM7UhLB1h9/2Q8fzI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcZZI8FvymBOh7t464KKCfz0rYMoYWT+i42to5HnotBLnJdP3Z
-	LMWRCBzYRuiLrDPCM5TVJ6QrR4fyMZmFScP2liecVaxYrkW/qWXxWRA8BoWlkSFX15cRJfQbGcC
-	8C4MsBxOaX+v7IuLTOPIDAR22Vb8wNac3Rj5+KuV5CmWe1hpWneV5Hd7jyR4=
+	s=arc-20240116; t=1768861294; c=relaxed/simple;
+	bh=v0zoQJ9VTDdjgWvqt467kSWjX13CHw9aV9sv+B4D3bU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kwKXvoypoVArODXoiG7mJERZAuq92gAPFtyldsMdJoXxmJ7u57ckMxUCPFHFAu8vWL9DVljiqmGCw2YwwCq5c8qa7qxx/tRG9NVmlBep3unPpYYTBg3/kq5uW9m9jkEMZK/m5M8qHn4/5XNsp38lX8z/mlP+daHtgP7W2FveCWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCtiQ0SO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49405C116C6;
+	Mon, 19 Jan 2026 22:21:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768861293;
+	bh=v0zoQJ9VTDdjgWvqt467kSWjX13CHw9aV9sv+B4D3bU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=jCtiQ0SObaka+k8So8DIS7FWE83ocgRcxvuaE9osVhAK995qX+cN7txShRYE1Zpoo
+	 Zzob+wLm+pPiLr3u113HVtmlKdvUtvEUA/dayLG+HXmpE6rfzlEz4Taii6NLj7PpAy
+	 guvG/q6rHcoTdWWuAa+cL+f7LcRgIOFGziJ0cGUHap/CFfMCMa75sifGIgIEXB0EVE
+	 Ovodgdln7wlsHxaudGibF993rq9DPjyFJb1gFJk8j1ppx5cokmT8egss+Ec/Uol65G
+	 yBX5ot3lQKQvvv87uMBew3mLFPU6KBgted8lQH9vUBr0No5y74iF1JGc6aIH1UT5dN
+	 Bpq7PkiZt+S0g==
+Message-ID: <acb859e1684122e1a73f30115f2389d2c9897251.camel@kernel.org>
+Subject: Re: [PATCH 0/2] mount: add OPEN_TREE_NAMESPACE
+From: Jeff Layton <jlayton@kernel.org>
+To: Andy Lutomirski <luto@amacapital.net>, Askar Safin <safinaskar@gmail.com>
+Cc: brauner@kernel.org, amir73il@gmail.com, cyphar@cyphar.com, jack@suse.cz,
+ 	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
+ viro@zeniv.linux.org.uk,  Lennart Poettering <mzxreary@0pointer.de>, David
+ Howells <dhowells@redhat.com>, Zhang Yunkai <zhang.yunkai@zte.com.cn>, 
+	cgel.zte@gmail.com, Menglong Dong <menglong8.dong@gmail.com>, 
+	linux-kernel@vger.kernel.org, initramfs@vger.kernel.org, 
+	containers@lists.linux.dev, linux-api@vger.kernel.org, news@phoronix.com, 
+	lwn@lwn.net, Jonathan Corbet <corbet@lwn.net>, Rob Landley
+ <rob@landley.net>, 	emily@redcoat.dev, Christoph Hellwig <hch@lst.de>
+Date: Mon, 19 Jan 2026 17:21:30 -0500
+In-Reply-To: <CALCETrWs59ss3ZMdTH54p3=E_jiYXq2SWV1fmm+HSvZ1pnBiJw@mail.gmail.com>
+References: <20251229-work-empty-namespace-v1-0-bfb24c7b061f@kernel.org>
+	 <20260119171101.3215697-1-safinaskar@gmail.com>
+	 <CALCETrWs59ss3ZMdTH54p3=E_jiYXq2SWV1fmm+HSvZ1pnBiJw@mail.gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.2 (3.58.2-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:1985:b0:65b:8574:2e86 with SMTP id
- 006d021491bc7-6611796c1d3mr4842232eaf.31.1768858472137; Mon, 19 Jan 2026
- 13:34:32 -0800 (PST)
-Date: Mon, 19 Jan 2026 13:34:32 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <696ea368.a70a0220.34546f.04b7.GAE@google.com>
-Subject: [syzbot] [hfs?] KMSAN: uninit-value in hfsplus_strcasecmp (2)
-From: syzbot <syzbot+d80abb5b890d39261e72@syzkaller.appspotmail.com>
-To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	slava@dubeyko.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Mon, 2026-01-19 at 11:05 -0800, Andy Lutomirski wrote:
+> On Mon, Jan 19, 2026 at 10:56=E2=80=AFAM Askar Safin <safinaskar@gmail.co=
+m> wrote:
+> >=20
+> > Christian Brauner <brauner@kernel.org>:
+> > > Extend open_tree() with a new OPEN_TREE_NAMESPACE flag. Similar to
+> > > OPEN_TREE_CLONE only the indicated mount tree is copied. Instead of
+> > > returning a file descriptor referring to that mount tree
+> > > OPEN_TREE_NAMESPACE will cause open_tree() to return a file descripto=
+r
+> > > to a new mount namespace. In that new mount namespace the copied moun=
+t
+> > > tree has been mounted on top of a copy of the real rootfs.
+> >=20
+> > I want to point at security benefits of this.
+> >=20
+> > [[ TL;DR: [1] and [2] are very big changes to how mount namespaces work=
+.
+> > I like them, and I think they should get wider exposure. ]]
+> >=20
+> > If this patchset ([1]) and [2] both land (they are both in "next" now a=
+nd
+> > likely will be submitted to mainline soon) and "nullfs_rootfs" is passe=
+d on
+> > command line, then mount namespace created by open_tree(OPEN_TREE_NAMES=
+PACE) will
+> > usually contain exactly 2 mounts: nullfs and whatever was passed to
+> > open_tree(OPEN_TREE_NAMESPACE).
+> >=20
+> > This means that even if attacker somehow is able to unmount its root an=
+d
+> > get access to underlying mounts, then the only underlying thing they wi=
+ll
+> > get is nullfs.
+> >=20
+> > Also this means that other mounts are not only hidden in new namespace,=
+ they
+> > are fully absent. This prevents attacks discussed here: [3], [4].
+> >=20
+> > Also this means that (assuming we have both [1] and [2] and "nullfs_roo=
+tfs"
+> > is passed), there is no anymore hidden writable mount shared by all con=
+tainers,
+> > potentially available to attackers. This is concern raised in [5]:
+> >=20
+> > > You want rootfs to be a NULLFS instead of ramfs. You don't seem to wa=
+nt it to
+> > > actually _be_ a filesystem. Even with your "fix", containers could co=
+mmunicate
+> > > with each _other_ through it if it becomes accessible. If a container=
+ can get
+> > > access to an empty initramfs and write into it, it can ask/answer the=
+ question
+> > > "Are there any other containers on this machine running stux24" and t=
+hen coordinate.
+>=20
+> I think this new OPEN_TREE_NAMESPACE is nifty, but I don't think the
+> path that gives it sensible behavior should be conditional like this.
+> Either make it *always* mount on top of nullfs (regardless of boot
+> options) or find some way to have it actually be the root.  I assume
+> the latter is challenging for some reason.
+>=20
 
-syzbot found the following issue on:
+I think that's the plan. I suggested the same to Christian last week,
+and he was amenable to removing the option and just always doing a
+nullfs_rootfs mount.
 
-HEAD commit:    603c05a1639f Merge tag 'nfs-for-6.19-2' of git://git.linux..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=178b339a580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=46b5f80a6e7aaa5c
-dashboard link: https://syzkaller.appspot.com/bug?extid=d80abb5b890d39261e72
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=157be39a580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12625a3a580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f5064e5f9c76/disk-603c05a1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c466bcf334e3/vmlinux-603c05a1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4e1318b36fb1/bzImage-603c05a1.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a0364f040b52/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d80abb5b890d39261e72@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 1024
-=====================================================
-BUG: KMSAN: uninit-value in case_fold fs/hfsplus/unicode.c:26 [inline]
-BUG: KMSAN: uninit-value in hfsplus_strcasecmp+0x63a/0x980 fs/hfsplus/unicode.c:67
- case_fold fs/hfsplus/unicode.c:26 [inline]
- hfsplus_strcasecmp+0x63a/0x980 fs/hfsplus/unicode.c:67
- hfsplus_cat_case_cmp_key+0xb9/0x190 fs/hfsplus/catalog.c:26
- hfs_find_rec_by_key+0xae/0x240 fs/hfsplus/bfind.c:89
- __hfsplus_brec_find+0x274/0x840 fs/hfsplus/bfind.c:124
- hfsplus_brec_find+0x4ec/0xa10 fs/hfsplus/bfind.c:190
- hfsplus_find_cat+0x3b0/0x4f0 fs/hfsplus/catalog.c:220
- hfsplus_iget+0x815/0xc30 fs/hfsplus/super.c:96
- hfsplus_fill_super+0x1550/0x2580 fs/hfsplus/super.c:548
- get_tree_bdev_flags+0x6e6/0x920 fs/super.c:1691
- get_tree_bdev+0x38/0x50 fs/super.c:1714
- hfsplus_get_tree+0x35/0x40 fs/hfsplus/super.c:680
- vfs_get_tree+0xb3/0x5c0 fs/super.c:1751
- fc_mount fs/namespace.c:1199 [inline]
- do_new_mount_fc fs/namespace.c:3636 [inline]
- do_new_mount+0x879/0x1700 fs/namespace.c:3712
- path_mount+0x749/0x1fb0 fs/namespace.c:4022
- do_mount fs/namespace.c:4035 [inline]
- __do_sys_mount fs/namespace.c:4224 [inline]
- __se_sys_mount+0x6f7/0x7e0 fs/namespace.c:4201
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4201
- x64_sys_call+0x38cb/0x3e70 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd3/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- hfsplus_cat_build_key_uni fs/hfsplus/catalog.c:77 [inline]
- hfsplus_find_cat+0x356/0x4f0 fs/hfsplus/catalog.c:217
- hfsplus_iget+0x815/0xc30 fs/hfsplus/super.c:96
- hfsplus_fill_super+0x1550/0x2580 fs/hfsplus/super.c:548
- get_tree_bdev_flags+0x6e6/0x920 fs/super.c:1691
- get_tree_bdev+0x38/0x50 fs/super.c:1714
- hfsplus_get_tree+0x35/0x40 fs/hfsplus/super.c:680
- vfs_get_tree+0xb3/0x5c0 fs/super.c:1751
- fc_mount fs/namespace.c:1199 [inline]
- do_new_mount_fc fs/namespace.c:3636 [inline]
- do_new_mount+0x879/0x1700 fs/namespace.c:3712
- path_mount+0x749/0x1fb0 fs/namespace.c:4022
- do_mount fs/namespace.c:4035 [inline]
- __do_sys_mount fs/namespace.c:4224 [inline]
- __se_sys_mount+0x6f7/0x7e0 fs/namespace.c:4201
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4201
- x64_sys_call+0x38cb/0x3e70 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd3/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Local variable tmp created at:
- hfsplus_find_cat+0x43/0x4f0 fs/hfsplus/catalog.c:197
- hfsplus_iget+0x815/0xc30 fs/hfsplus/super.c:96
-
-CPU: 1 UID: 0 PID: 6037 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(none) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+We think that older runtimes should still "just work" with this scheme.
+Out of an abundance of caution, we _might_ want a command-line option
+to make it go back to old way, in case we find some userland stuff that
+doesn't like this for some reason, but hopefully we won't even need
+that.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
