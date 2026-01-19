@@ -1,83 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-74545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154CDD3B99A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 22:22:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3C0D3B9B2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 22:23:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 451823034417
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 21:20:51 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 7ADD4303FCFF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 21:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039222FC86C;
-	Mon, 19 Jan 2026 21:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEBF2FCBFC;
+	Mon, 19 Jan 2026 21:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mC3fNOVH";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="uohUluwq"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="r4Msj6AR";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="AD+Xngb8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089132FB616;
-	Mon, 19 Jan 2026 21:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3012FF170;
+	Mon, 19 Jan 2026 21:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768857649; cv=fail; b=o4gXnz9p2pQ1oepNZzjyKFa6dwhXlTIzKm8Kh44gk3NlfYeF2ILNq5uiIQdOHDyK3H1I6HvePh5YSP+KF1h99D4CjP/HCKTqQl2K/ImN8qrFUMUc3QRy/Q+hzrCGQ2YWEQrwkrUJUXs4PIFQWrah6bz1SuEvkZNU3laAQgAx4ig=
+	t=1768857676; cv=fail; b=JBFo9K+9XqBvN0/tSQVcPUM2uGMoBudcUVUvejSROq1DoSq1jGPHQN24mSN7uPuiEkAPFamamxHpblwZJPK8qfK55nMdmk+dCgVlmVvb5xywTldOiU6KV3Vaat1BhJkyNKHL50BcZ39ni8B5nv/qs1EScRnc2Mp3lfDSvbt1OzE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768857649; c=relaxed/simple;
-	bh=lzOnnnX8jSNvYBaLIGYGbO+iPq02NGfQodH8OGryD1w=;
+	s=arc-20240116; t=1768857676; c=relaxed/simple;
+	bh=zjXIakHROFDamDX9ccqnYv7e4Xmgu4tLWNtqyz4pXIk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sAOCRItT8DbHc1IfQTkdD4z+sJXelgjy5/qo2jfc1BXmG9Zt6T4iV6vYwlevgXNv/wnbZfDl+WcFtqKIYqQTjCC2lZHcMlyMV3kRkqa43CqqpC2Eu9iRK7YGC3RPLo/cabDU9FY3/UNABPJfC5mEGPrn7RaBDS9YOdOfqokCJjI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=mC3fNOVH; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=uohUluwq; arc=fail smtp.client-ip=205.220.165.32
+	 Content-Type:MIME-Version; b=Oi7CFj7vrWqeGuqPjaDyQX12N/Udo16IgnLsosjsZHUgyaDvoe9LzRkm89vYvRKR4tysVPZuN7wa9SGWt97b+Loye1P+oxGZcHsrVO5A41Qb8Pj2WEmQQBRxlUV6YG//8EK+525zCAKVrCnNFqUNdtl2EcEwAngp7V3SJqtqusg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=r4Msj6AR; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=AD+Xngb8; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60JBDYwn1429552;
-	Mon, 19 Jan 2026 21:19:50 GMT
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60JBDOrS1034535;
+	Mon, 19 Jan 2026 21:19:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=CJDahWgAH3ZJVy1u8VHOx6kBL7yG5bo6NeQbqR1js2k=; b=
-	mC3fNOVHrLKRvbHW53vYab6xEhOJKqF6hvSkQsaGoKz2VCjaXBEp1+5BBu3Am2Nj
-	5f7VILi38zVrWgeG7WF2NUnaYf2zVafzvfxPiu22s6xOuXe4V5jEvbTLsZTxGJYF
-	+e/N59LGQfvK1R6X6m20piC2m2A+jLjSsjw/rXKs23hd9jA2v0NlpLTEEWBq8qoN
-	guWPRimvUwGJDsKhwPng81pxqd+2GDHWE5gJX9uYG+4sML9lTljSeVewNFx6QS47
-	oJwzzwhwFmV5h3nT9YavOMoI4eHM7bNjoWo7qGRmsmhIWuZIr+Nycg6oHVANH65O
-	IG4m2yRi678RvcEijLRy9A==
+	corp-2025-04-25; bh=UDjo2nNsWLEHjXs1PGZed1/rQkkEvTUzM5Pi4fekjns=; b=
+	r4Msj6ARJ82T26+sQzm5e0yW3A/Q0yPL829YnL9m2zn2O09zDvobX+VWUdjZoKKt
+	k1fhNnYISWPisyZe6BcW+bku9EXjbjbQCHNgg9FvPGXM4xPeaOevRE+TqGCElJMg
+	inKtZUBdKGza6CH2XF8zpHYOciVK/2dJp1iYptRzUESr1lq35Mm8JudKiub4rB/b
+	ohBa4DP85OumDncNnSrFeKVv0aomVm2dNn8NXRtrofe+M7q+Noi2Co3ZrurS/rG1
+	D8ZQgF7WeMA+EmaIkTPQkENPLXu2MPXVOrR1raitJx2JMIIN8VS3A3ZflkmjDEBb
+	N83LxsK2roiexvssdTvx6w==
 Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4br2a5jpg9-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4br10vtrk8-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Jan 2026 21:19:50 +0000 (GMT)
+	Mon, 19 Jan 2026 21:19:53 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60JIQNgS017988;
-	Mon, 19 Jan 2026 21:19:49 GMT
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60JIQNgU017988;
+	Mon, 19 Jan 2026 21:19:52 GMT
 Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazon11010005.outbound.protection.outlook.com [40.93.198.5])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4br0v8sb8j-2
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4br0v8sb8j-3
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Jan 2026 21:19:49 +0000
+	Mon, 19 Jan 2026 21:19:52 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jE4NfZhPZrv5h9PpEI57A6jTcJF8nR9dXOfHM1JbcIdYA3OknkJXKpp3dCX+qtZCJtQ/xPuNWwTIPZN7bmpjwtFqVoO3SbIfPlxaDwpQsUTCoNcx77/PldDyNrY9ZLyJSokjtX6LoMzFnJNOrS4MjURblbFenqm3RPAJFdl+UUor3rLTWNdLi2EiDPSRWbUqLLxqKHq5e10GEOZk+ey6gxykVdCVkNl6lwUgbt0YI+PEMUH6MpLvjusxGOPi72UngfNCvkted/MUUo+l7290cjt2dPDV2GtFkIkWaujOMNizrDfl3KN0vuVl+Tt2oOPNfv+HwLfqIOjWXfRHY7XnxA==
+ b=m0R+hrQLg0Qn78iTrLzc7Fj79q2TFSfKMEkrQe8bO4ox+vLu4UJxnYvsY9DBUSCL1aDhpCaRLSeUglm/4TQlRIUvpGj97UeE56wdgZL/tH5dNo5AY0yM8URNTwSYt/f5qJ9QhRdzPT1vQJa62UnoFc27MGdgdwff2S4Lu1NTsnZRK+ytIdkWf2sCEMXzwHcugUM5XzKb2l5Ty+lTnb7pRXMZgxpA5tNYwJq1hbbRtAs4IthZ+2qOsNoyNQpU5XxxZAlhFv31nU7GsHwflaK0OAeMTgQcfF3Hn/N/zYOi5I2nWtxpb60dV9uJzS6QvAPzFlWLodFeCOElnFbbdA2tBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CJDahWgAH3ZJVy1u8VHOx6kBL7yG5bo6NeQbqR1js2k=;
- b=weKDyhTBqeLYQM8+pKbd/MfBSpDkuEdHcLkPiKHh1DMAanm58yDQ4b6KA94ksMK3DrD4967Fz4rY6bbSfdiPoJBIWow5U9KnRs+SnQlIOyFF5zkR6dEQDKnJIf1YLo4CCq67VTHzllmJYomsQCNJXJTLftl4INCUCqf+TUSymT0jf9Vc0kDPbptK5zfo++A+L2c6K4SpiX9zElfLihGyQiLM77q9fExlm8XppZU2BL1HtJPUwD/k2smRrzAs8fTGYVSxmYUFdB+DAsjugx6g9SCGxKJ7hsu5UuCttCctTLExtKKnIZUykmAmGgej9PzjS1Be/oc9xgIZxqXY0c7ApA==
+ bh=UDjo2nNsWLEHjXs1PGZed1/rQkkEvTUzM5Pi4fekjns=;
+ b=szd3jUmgNuCydZFStr5Gkzrp/BISnJqNlUAxlwVrW3hXeue5abCFJs3JK91qTuFsqZU8LRequZCFNLMuXPGaBdKRuJlhqMSN9vSBsoMMeS9Mty1nQOgegKtT9BHti/TGAaklPxPY6RtEe5IgR0qT7VmUyM43N8ztiz+OevC7yvQZNYd/w6wQtuHBnBEN0OYqDfzeVi+0OHwOX7KEEpaG7N2DDgSOnHLZ2Gh74RDRaqKkEfaGTKVqdNnFuiwNCaIjo3LySRUxRR72W9411+CuZRewJ7seOkKle06HHxkDRgt8Tj78GakX4whFCGdfJ8kCfSNzYi60VSyvORpDZUTWrw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CJDahWgAH3ZJVy1u8VHOx6kBL7yG5bo6NeQbqR1js2k=;
- b=uohUluwq2HEuoWxraWKcj4HS2ThqzrvJPspsiTLe/iilDYISlu3/xJZR+OoBGhYWhjEAzT470NELbcgGMjZrfjAspZuYQUbJzh5qWkySGgAbQkML8kAngm0Z+I8FLafst+3dzKsRvx4s3CoQr/tE3uIe3/iqk5AHvg3rvhGJAKk=
+ bh=UDjo2nNsWLEHjXs1PGZed1/rQkkEvTUzM5Pi4fekjns=;
+ b=AD+Xngb8tetrpHXDf6eiQRUCDKemYPtOFZNxqyz8ccmmiqIeVUAoBc+aYVdKbIa3N3+Viiv+T7dQYFEiOzvJjOeTNDhFHxZjF/T505ymABuNZ9n7nbDFTsLnrj9EdIXmTJZuciEcJtKtyUSa4a5bxZwf5PpLV6tMwfaHibFmmj4=
 Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
  by PH5PR10MB997758.namprd10.prod.outlook.com (2603:10b6:510:39e::24) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.12; Mon, 19 Jan
- 2026 21:19:42 +0000
+ 2026 21:19:44 +0000
 Received: from BL4PR10MB8229.namprd10.prod.outlook.com
  ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
  ([fe80::552b:16d2:af:c582%6]) with mapi id 15.20.9520.005; Mon, 19 Jan 2026
- 21:19:42 +0000
+ 21:19:44 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Jarkko Sakkinen <jarkko@kernel.org>,
@@ -144,16 +144,16 @@ Cc: Jarkko Sakkinen <jarkko@kernel.org>,
         devel@lists.orangefs.org, linux-xfs@vger.kernel.org,
         keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
         Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH RESEND 09/12] mm: make vm_area_desc utilise vma_flags_t only
-Date: Mon, 19 Jan 2026 21:19:11 +0000
-Message-ID: <baac396f309264c6b3ff30465dba0fbd63f8479c.1768857200.git.lorenzo.stoakes@oracle.com>
+Subject: [PATCH RESEND 10/12] tools/testing/vma: separate VMA userland tests into separate files
+Date: Mon, 19 Jan 2026 21:19:12 +0000
+Message-ID: <85b10911ce3528223d45c6cefbea2499863cb3a4.1768857200.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1768857200.git.lorenzo.stoakes@oracle.com>
 References: <cover.1768857200.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO3P123CA0021.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:388::9) To BL4PR10MB8229.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO4P123CA0618.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:314::20) To BL4PR10MB8229.namprd10.prod.outlook.com
  (2603:10b6:208:4e6::14)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -163,85 +163,85 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|PH5PR10MB997758:EE_
-X-MS-Office365-Filtering-Correlation-Id: e334312c-1f86-49a7-f3c9-08de57a07619
+X-MS-Office365-Filtering-Correlation-Id: 973de10b-e6f9-4e3a-6c51-08de57a07750
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8j2WdDI8hEkGnVW2Jrz3IyinvC5+KFmmC9sfJVLpcAowohNFOsRwAuo2Hwad?=
- =?us-ascii?Q?0dnZWvLaX1ahEi0AjGNV6XNREpd+za/QvPa6eeMCCCcb3b1fgTaY75TF28IR?=
- =?us-ascii?Q?fmtl0k98wulpNYCeOvELIxNZ7aNL0ExHVxF6nOK0VXDkzRkcKWun3TtbCDBV?=
- =?us-ascii?Q?9oXdnJVTwj5kTZcqs7xxfFDgHR7peHdQ6nLik52yrxtywSy2yYWff41DiDqf?=
- =?us-ascii?Q?xlmHucTHoNhOOOGoVprUZTRiN0efrAGCOEBt5cYzoPd4aY93R37YQw/cv2mA?=
- =?us-ascii?Q?6XqFSJEEKduQEvmTMNCcuBTtZgtHAM0epMgM/xvh8bcBUTmUauklVs8S32Ez?=
- =?us-ascii?Q?N+9mu70TBnrCTcS6a0V6NaXBERIC8VNcWj3VuL3/xALquFmIsPIJZ5KWZbi0?=
- =?us-ascii?Q?4ko0CbvydqjhTLLg7XTijGAvNlCnU1SF0Cgkf4CTH2fS3e8rUb9L+tAaQ0bF?=
- =?us-ascii?Q?Y8G6+A4svtAI1sufdcD6RP0C6+wwL+YQNOrLYI0ro2ybeesxviSVj6Blh/WN?=
- =?us-ascii?Q?1HLb8xa4EH6sMGpwMPcFoBX1iIcUw5801ogrfvX3HZHCbURsK08MWCLoAPyh?=
- =?us-ascii?Q?Fh7vIZoxWDsUbdP702PL5LC1gu2Z4q+5EEI2+bH51E/C0+strAbyovsQdr6w?=
- =?us-ascii?Q?7+XAK2Ico050I4MXScmSbYp1tMNy0cIFoPlB+CkvchrTbP1GZZApy7TLlZyJ?=
- =?us-ascii?Q?VGhAbtX4Ve4fc+h5rKJI8j1NXRY66EKylFoREhDoL1Wq1uGVAaNl3o9FeE1m?=
- =?us-ascii?Q?V9lL+YUR/XG4LKkJvFz7Nz1p1D8IL3NZaOrv6LegP4aEoY8E/v1D7c6y67aQ?=
- =?us-ascii?Q?Lb9b9jL5IH0cK1FFrQphtlbudHe6rX2vg+oGJXGRkC+x+PTrKiRNNJ0SJ+Os?=
- =?us-ascii?Q?PYKChZG0yHwNM2XIfFTeRijqwLbjWxTFO0H5eC6T/QAWPFo/t4SWL7E+R2Cw?=
- =?us-ascii?Q?f9hp/IZvi3ycWpWjNuPyWzvCrMcEheiE72drYIyuosPRv+ALByHt8fM0U/6m?=
- =?us-ascii?Q?AZC5mQMx0SkMHE8qD4mNOrumSBAuXMydhC0yyRbUXf8OxDmXQL/6B5tdsqPt?=
- =?us-ascii?Q?Y6iQPIel4dgY2pnvrmHiiKiYxU50XiXKM1Z70v8YUePeSHDNvCgW96oTAfRv?=
- =?us-ascii?Q?eioBFC/EV1bY42+ofJ9zXQoNw4uHhYEVWviX2dMOMmcfjyvyguthLPCCuhVt?=
- =?us-ascii?Q?PSzsabzVSNZ4gH/hZc3sb6PhLf1g1LsZL1pZDJapc0ah2o+gRc4MF1Dv0BQz?=
- =?us-ascii?Q?xNBGzw+p4LGgb8Kg/yvWl4XiBEbLV3nl8yHxIWNqHz8PPrWmMyW//NOgCZsa?=
- =?us-ascii?Q?0OnIXdVsINqkje3hHEB7OjteBQH7C0QnywoVQNZu8b67g5QTVXAHI79U1ii4?=
- =?us-ascii?Q?lBZfKibIOEe86+NxmflOt13gwS4R8PiFrH6Ki7qtNy+/YGzKdDxcwl+vH9qw?=
- =?us-ascii?Q?qQKcE6uhKYGUStJpciiqX3bFfMB49lv88D/2Htf7dXNwoPLsPhKUSPhzRqIF?=
- =?us-ascii?Q?IuolCE5JxeqqGpA0N9omyEhOZDgC8IAbp9Rk+eDoO9aanFxV2om2kbWG5HmL?=
- =?us-ascii?Q?RPKlpxBwFMyuFUBtojU=3D?=
+	=?us-ascii?Q?YxnWWu+7g0klO7nuErNZ+cF8R4gUxMVzSTQKpmjopvCcYrzm7frTEsRotnBa?=
+ =?us-ascii?Q?Pm/duh3oZbvQj/ExcFFOI7wBu6c5kOkfK8k8fv9noe0oiVTOnCyrb8HJ0BYn?=
+ =?us-ascii?Q?BVMH6Fjezfm1juJvafz5Wl++LByq2ww5AWkvhqvb1ImmaUiouRuHuDXtSlBj?=
+ =?us-ascii?Q?M4sxqOmmmRCbJxMKcAk76ED9Na4jkF5EHOQpCT5v3RAZdDWsQndnk6Ytd7Lv?=
+ =?us-ascii?Q?De9v8HO+lzuMTWGvCV2+drBis233vHq6u5fEXDoe7v0f6YPk0g/eV4FGcSFY?=
+ =?us-ascii?Q?ZUKNSIh0j87JFN2vNZ+Ma7bbM8OYgKMhaNUCBu19EJ8tTSBUjd5G7urpZiNA?=
+ =?us-ascii?Q?SGcugtp8EXNyGB1MVnCLa7YyN9IRyXJ0V/c18pi/COXPYg5NfztDyykIgvXv?=
+ =?us-ascii?Q?KPQcoRyXHYtZVxNk460beSCZo16T2JgY+Kzyn6QDbzOrD5AgEMenSd5sX7S1?=
+ =?us-ascii?Q?PqZxbtB0Mklw6xArYDx9h6uwk2sliqGvU69NnV9d9FnGqs1muXys8T2LSA3X?=
+ =?us-ascii?Q?lAHWmchZIGnbr1zg0hTKdAZUa8T4d0Yqaa+QjOlqcePnsHLApkn3AHnNuRJA?=
+ =?us-ascii?Q?q47R+wn7O+ezikLqNsZS2MYMzQ/Q+X0OoOBOMg9Gy03i3VYQFQMO2USsw3g4?=
+ =?us-ascii?Q?xYiCQhBs0JwvEgN3PVPf3nfTcf1bHWf8MPzQBC2N5LUHGHF3xEBg4jQGAxfp?=
+ =?us-ascii?Q?PVBq3f1nm+eNRWmwLBfqF5Xrtzig2NlPRw2FolFu0VO+UGOQ8ch4knp8H2RY?=
+ =?us-ascii?Q?C6ie0wMuZVsPPNSGQIRTn1dzWVHCttvMuINmkz4oE/XdK2JNqdc3DMBZ371j?=
+ =?us-ascii?Q?u87ceFh1P46Zm5h16aHwRhV9MbvUdZUA3LELovRJ1DA4N9TW6S7dVQuFEoDO?=
+ =?us-ascii?Q?3IR1mnrUa77+iotiEaxFMXM6rRJXv907LqwAw64e1uwVDHWzpq5BxEjqXPhO?=
+ =?us-ascii?Q?U49Q8s+4G7gFzhKb8ZZ9K3F15pklinu3pglRZ1ViKNvl4UVbD1wugev3+Mj0?=
+ =?us-ascii?Q?zYLUvyNEs7ICekm5nzMntWuaJcZ5LEFpX6UGyHJ0A9VgSdDaZdX6xbF6w4XI?=
+ =?us-ascii?Q?9XGHVcOwlPLee/xsGwMsJZv2U3x86FiqgdUU3CU6XR1gte60fSDSOvK3LDZd?=
+ =?us-ascii?Q?5Y6q+zqSwE3OjP+FFwdUhSMcP6FBwox8UJfbPd9pVqXKt2+V29aWVufEy04t?=
+ =?us-ascii?Q?QNUjNEdjFuD4g0I7Vbk6hC/sehZvE4SdvgqbtWSlQYfuYrWQq/MDSYVKxJ5u?=
+ =?us-ascii?Q?yVyeb+egQYBkazDm+F6q01BHYD6sMUhzsrEELK6h/Qr/5P21IjBNOIMTgCbr?=
+ =?us-ascii?Q?njCeNZ8rlzG9SEH2qhalNd048C0WocpDXAGNREt3LRhX5Hrh655bIYRKA8EP?=
+ =?us-ascii?Q?4dJQ45I75BEHUP/b9Qt57ZMmCSGqyJTvRh6+/ZEE+78Cmli2heyLs5jba4Ra?=
+ =?us-ascii?Q?cSIily0Xy2dSQ1piSCDhRyqJeCOFNiET9ODBehuECsnrrjulK/5y67tHBViz?=
+ =?us-ascii?Q?qNPud5K1DOiL/mdKdL2Zm1y+RB1aKcxLPEA+D3fwwE+TV2OywK3HyFJHHdfE?=
+ =?us-ascii?Q?yfrbdquHFDOCGtBil4o=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+OekqCdEcKvbEZRu+5vrLy9pAwrmrM/zh3NCGOsDEWxtcHswfb2BiInVdFYe?=
- =?us-ascii?Q?hdmaTF5c6IFEPfcC+c9uWCVT5ZzRGgbm847rN6JRDu0VNkyzChznIVBP55IT?=
- =?us-ascii?Q?AqxVGSi/sjtP8D8TeudhkqbYlE29DZ1wcApSQ5KoYI/IKRHd4YVieymW/R83?=
- =?us-ascii?Q?kHUrPaUePPtIsKMmDDmkmQozCdkZxCyKhHtV1HsTSRy9dFGTLsgLzyU1v5iV?=
- =?us-ascii?Q?zzo3wZfV4hPuPY3UmZ0xy6rDc8O+NtxERrUW7YI1R/FV0HKzaE3XdHrRZ+6t?=
- =?us-ascii?Q?bPhy19EfTd59CTgWhuqxY8hb8fNxQYSADmB3Ny4NeB0PVpJBgUOXR4actPrf?=
- =?us-ascii?Q?dKSUoo4od/zgSDZB/3TONVN8/WADZPNH3UCRSBeL+HayFwWoTDRo680J5Ob/?=
- =?us-ascii?Q?z5Rx4xssDYJeumCQUwsz33PN0TvPDXb5TIznj2j81RxkkOA8X510rTPvQ6iQ?=
- =?us-ascii?Q?FXy/Ixw7w9V0F05X3d3Uq0DTGkYRN4osxIlkPazyGc7kK+sJWzpA6jxcFn8U?=
- =?us-ascii?Q?F4ueD59okxKL73asGb5RzSPR63xPr9lm7rHVs0xNd1hsnuc5pPAdanAu7kh8?=
- =?us-ascii?Q?gRATu3mMO8EPKaLcxcBdgNLGE2MEvUphS7QGJqVVqMDIskSnJ/h+Uid2dpUJ?=
- =?us-ascii?Q?pwU7+RH/ZrKLArqDztQC/6csXBzz1JcAr30NNXb0Xv/UBzgsGguSGdycPSqW?=
- =?us-ascii?Q?JbKTB1CLGr2RqAVVyRKlmi3z/7fLr5DgzWVIHphj3tZOVLo+xDMQNuKWR1zD?=
- =?us-ascii?Q?TW0wMxzWJAvCMVbxkNUZjiJ2pXcZC6XmrEVETQo85GWaoRdl9tku6HQCM0y6?=
- =?us-ascii?Q?9VrXJeDaQIJX6qNf52erw4z17zlvvFLAwRLKrkKFWtQeHJ8ZGKN0lDy2UaHW?=
- =?us-ascii?Q?av9RzkwtbYJyPlP/qX6IeXIMpHkyzjwlkHZkZaAU9EiamxYkBNAQ8CVh0yFN?=
- =?us-ascii?Q?V9oIM7P+M7a7HQngUkQK/bBaKjkJ1H0eavEqCMR5YRX/FgRf/z/kwx0u56cB?=
- =?us-ascii?Q?bm9/4dpYH7hQLtqHVtpN/f9+ES7r9GIw9KRUybXiONB4Yox2uuKsI2ypCMpM?=
- =?us-ascii?Q?ynuvJiwJZGl206XQoRN5JK7Gtol1vg76bBIKyCtEq9T+OETTObIro9RP994q?=
- =?us-ascii?Q?sM6ziFM62WgkMnZ3FHtUqCl0PvRfzuAkJjbQb5UbiGf7VMx+AF9kuWprjmuC?=
- =?us-ascii?Q?1/H2gjceM8BbKxtcxN2eyUikVA8yCF+uku992JOxdXp18TSzkq1gouYKq666?=
- =?us-ascii?Q?nYhIP5H+CF8p8ne73reOSfxo8Xqy0YzSQaxJuoIe+qD4cWgrJS/vF04MiMzV?=
- =?us-ascii?Q?arhZHcs4h/svPe6uLkb9/Or9sw7cfFgdjAWU/S8NUh2kTCG8eE+3TKnylgA2?=
- =?us-ascii?Q?HMym+FaBkMq4Qq5qcGEv6Xg8hu9xGY+oBw2gcfEJlbgW69tv37Iu5KucJZPc?=
- =?us-ascii?Q?K9n2dLsZJX15OcRR1xhAOiF4xHi+fqVWqvkqsf6oXGSPezG4lhPMyRzTKcBg?=
- =?us-ascii?Q?lnEOe6C0qynuxLNmAD/fHqttL+mo0MAntd44Ue+nYBXIZh9lQMqAES3BE01w?=
- =?us-ascii?Q?Wm33jizD+pHe1gkba6TE3GYBUnoG7xn/nvgelofS5N+o3AJXcS2b/Lg6UWeh?=
- =?us-ascii?Q?0rxBlqLXqHFroqXODhUdZjuIMkNrN6QWbxhNjqexX2fjXR8YKzvqr0MaYBj3?=
- =?us-ascii?Q?SII1v6vXzxaxs4gMocC/8R3oxvJatXvD5x2HcMDTwa9DjAZQRq//lkS4hGII?=
- =?us-ascii?Q?MVjRPe0vOKPAi7kYcQDPbyiysip2zDg=3D?=
+	=?us-ascii?Q?m6N4GP6prGhKpCFOiHTVTxSB56Y2p7lUjn1UwU9752Zw8MlAYJqB4qHudsRR?=
+ =?us-ascii?Q?kSXVKd/H7nEIFzomJtRwlJEVXImFjc+jKIWBZcY7tHGJ4EDmCMV9N0VmAuC7?=
+ =?us-ascii?Q?VUjs43N2kLyUtHRGAqrSNHaHWtccUWDBisF3CEC1uDY2w4AqkmuZ8MUTAp+G?=
+ =?us-ascii?Q?8BqIfNaDbjlEz8HDgZIYBNHi1lSxJCTrSRP1JHb9CKD2DhnY5OkY8sw2scjI?=
+ =?us-ascii?Q?uvu+8aaC05k16fhTUeXDaw610XpJak8uLyQZuKOAOj2hCXgiQm+tafWWvLB9?=
+ =?us-ascii?Q?CB+OEdvAV4irGYWGTuxcuLEVMKoKGhsWUjjK/Tvq+EiEuJNXuLJw6wOSGa+h?=
+ =?us-ascii?Q?0zv6LuZ9vx1HD13dxZfclvkAHQ08m47AquaVAMN9w0nWLEm8qyCHQyWOwrLH?=
+ =?us-ascii?Q?fuIk36jx2TC9VQM1s7u/oh+3af2hCQKLUoJtOiLGwJoyeacvTIaVKX9T9PRO?=
+ =?us-ascii?Q?9SYjP+EOYWeyyGTvM6Ng69KtC9SjA1LxQiTcWJqK+gPdMQ84OolbtkUXqk53?=
+ =?us-ascii?Q?QyQnVX3wA2uRb6E4vGgAsF7zX3F3T/2E2tgHc53Nmvc5sQFbfVo9XkPtAOX2?=
+ =?us-ascii?Q?G/G3INbKO9j7j0w7HVP2xbqzAT3BTxPodbS/0sF6x+sLmbCV0ggv+BJTA3Cb?=
+ =?us-ascii?Q?N7TykJFjewGj2ZXocsb2xnMhzy2CL93XXk6YHhKBe8O9zFx6PN24v7R6qRWD?=
+ =?us-ascii?Q?PuP1dNsaS90SVR91D+dvnwqtVg9mooDRVv30gVADK6TacaeC8P+Fz6Tg8UcV?=
+ =?us-ascii?Q?Ru4enOXu+LiQneIhAu6HBXKT5mHFppwZ9NbufnIObUbxDCl9GNST+ShBQelj?=
+ =?us-ascii?Q?ZfewDe4Tk9BK9InDAqXuurhfkrt2IBPz7KgC7mqcA8DKjY2QFfvPVAYHumOT?=
+ =?us-ascii?Q?n44tFrNzwtvDwhLlHw4+PBOMx2krUjEZyF+T3sXPgcuYZRYOBTxkxr5m7bNp?=
+ =?us-ascii?Q?fHc/vO8EmNH0tvY2mg/dISWzwkZsDihBGEeBCxQ6AUlOBq2+7/sqFeg7AdGB?=
+ =?us-ascii?Q?CZp6wKhUunRy82ppIPryfVYqA/vb92ClcdP1IyPXqcyDR3youO9C0FWlvh8a?=
+ =?us-ascii?Q?V1XSgetyaj+bwTyGWS5kwYRO8g3SJ8LZtUhikQf0EtJlhn7bdazurEHsFXAb?=
+ =?us-ascii?Q?DRTEAVB7QQOafzFF9kvrKFgJB/od1Krsn+nCXVWSKj168jaDj9Sj5aNBtZZ/?=
+ =?us-ascii?Q?G6qLhXFvDbH/9WjNoOfUkyRazXgd4i/4L/p80ifLzlbCkRshy5+0qkP53fl1?=
+ =?us-ascii?Q?/WJOa+rEGgqu+oBBCtKecFiFfugQfHNowBONMQkzYIp9aXqySgSXWVaCk2ln?=
+ =?us-ascii?Q?NMU1AvNDNwn2K48Ss03qwNOFfE3TbGeII/EnDSTGH+ngDByGjJ1+e/1IjnKy?=
+ =?us-ascii?Q?KeHD2zjNgUHOthFTdP3zBwG9k3A0C6bqTuIfULLEcO+dQuA4T1RIP5SfxlUE?=
+ =?us-ascii?Q?zIkGRVvsMFlaCtsjXYnA4SgmHUgEJcmylo1kcgpIqR7cdd+taSelfID7iqLd?=
+ =?us-ascii?Q?LbidsijGvcCH2NrpMVN9JeugjGveq4BFXXG1QnPKh3e8Bk1qbQgvjEyXOb0u?=
+ =?us-ascii?Q?3OwkM0xZAfTOYxwckCl5IsqCSWfz4yRs1hm0F/3HY+fFZ4o13KGJpuEzBHCP?=
+ =?us-ascii?Q?N1bipV2kodqMwe4QEnqnXL5xR3czo7iHPrG1IMOT4hqGq1du349Y1HW7G79d?=
+ =?us-ascii?Q?GvvEUZyl7O1veLchG86pM2sF/vMBRiqbUeku7X/k86cIcuORHx64H10pzVKn?=
+ =?us-ascii?Q?Op9o/is1L8goHeiwDz49FFcAWKtv4QI=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	qrpd65py129XBsNqNfgunr7rkt3emDnp4NIKo1Q6ug9l0rlDOnRbwVqn1Q+jnjszDQFhm5mcFlXalblb/2Z50A9y9BW47OoKSQqS2/C6YldhpKjxia/aAV1qVYYSSXq5znzzNns+YsY/39My1L3r78ZP5p1qjObSg1VhFMX1vLXIFwydYef4yV8iWU8pD37OHy1252+iSlapQtxWT13LPWM221RvHmH6VcWpLpkdbCEg3YjAEq3tMSNHOtErLQ+DOuMtdH1jt+DyrY9T2gYyuSzaXrU3bHUwFWuzozFimHJhyYm7Cd0Ofa54Xx8ISEoELiEXJPbCIo28J9bvsK2ncrIUHKHj21fWJvhwAn0n8OYxrStXVn9UmNsvI5TR/JzKzJmSYWDZPzvQGPHtUpCwb4qsYcjGdIgSm/thnF6+c5B4JC3TIVOCzaazGXTdnTW2N3K2dq28tRFQaldq3YIIGG0HLQfbZ8UclRqobqvOODYhhhHh14Ec6Chfvv1fJAwuMZXiM4az93ekZOda0wIhV1YS9rqGrWtMGgY9x+qNG5iBY5kqDtBEzk2mO4fODlaawyaA/P6Oo1+8eBezrVGTW74J8+fWzTA4ofT3Hb5UIVg=
+	3+dQ0J1T9yqZq1CEFkhSk6YSGk/YAJ+LfXuuC9OH2yXVJbmi/bm0AYH7JA2ahOYVIpPufvjiPWhA7FPtgP6EjBWJcytTPwvu65KGx2CuGgMApayyG+lVUvNXHYxmiXFR/zjqXlFVgitGJuMdTqnsV0RAiXsB8faHL7iAqOPzdFpnQNUfnllCuWCiGc0linurp+WI1N0Pm1GhHBIRG2inBA9Cx6a5Xq3ICrlA+HOu4KkuKkP4Apj9K5m5cDOLIVa3Nfo7dcu/CWhztqTCp9uC873htV36TgLpSZJKVwwNSC0nYPzvIn2VaYI1Wu3hlvjr90FETMByMUmlY3O0qA4u8a/kxbzqeuRRCQfNVsbQFQP8LC8Ih35AMy3xUXLoc4776tUDX5OZMOzo1ylgXVTF/Je/8YCo9qbYf4jlPI0yC3E4JI4kNl0ywGDcqjHyH5a0gIQU+ywyXL7j0bROLFl6IGWAnB5L3YKmjh6imdZOh46zaSGDq93zaNerEpmp5BWpYoSfxgOtHoQiQcf7mcU6rR03x/nJNDHJ60UU1c1omT1RHi/PXw7XCgzv6ywjhnelfdt7DQxOoAn8vRzOMtJI7d640qk0xt0n/dJQit+Rv6c=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e334312c-1f86-49a7-f3c9-08de57a07619
+X-MS-Exchange-CrossTenant-Network-Message-Id: 973de10b-e6f9-4e3a-6c51-08de57a07750
 X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jan 2026 21:19:42.4253
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jan 2026 21:19:44.4944
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EuofYPZo60LMNu/pB5gm2RhrsQvGiTJUxv5PV/OFjqxdnYtMStVvPdRmFEK6wXWyroS/1eVEx+iBzpbuimM8gVdSanWcSBjSWbUMzHRIBE0=
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZInzatZGbrR/ZBbxiE5pot3dtQpAUrEJTNeOYwV6xPNm25hDPMUZkeHP9wkIPJEnY+Rn0AKqQKi4i118xNYN5ibo3trl8RGdMx4JeP8FWEk=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH5PR10MB997758
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
@@ -250,201 +250,922 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 ml
  phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2601150000
  definitions=main-2601190178
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE5MDE3OCBTYWx0ZWRfXyx5rFF6JVL2s
- 7REJ6aejOQzeyi7vdTAF7tpbywIL1BxSUXN/TwVZ0EpYVW+iUIWifaQAaKk4nYC/cMyEmlAyfDc
- vAroWPVYCqs/np8JmmL9WC3YuQ+yRJbWqcyxsQzaFHbKHpybD+7Ag/n7q2zSd9ZyW7G6icVT9ST
- q6Vpdh9qFbXP5fvH4I3dvL2if4JFF8ecMdrredR48egF+WLsbnZPIteeTtW5cL6o2sJA2waeGJV
- 5nWfU5Co18UcAlvIultEFm2LaoXldMD2uuopMCo9rPVJgIR7XHDpPSm/KZJl2FxFG27K8oaz+se
- 7VC0i1VGZ2xkRp1N0ZflHU/oFoR4RqVM354XeQD/A207Ez7BpE1s2rENvdXW0uXm0k6L/iGAbx6
- /bbE8p0OjBOepwRANJJCJDX8AXK+6JmCGmAY18HYpD1HBz2G5yIFx7qio6ndjWFsypHOpKEn7o4
- E2KBwcp1RO4t8FklnEg==
-X-Proofpoint-GUID: Ihr90QjHjBlP-Tkg2Adn85AVc5auN-c1
-X-Authority-Analysis: v=2.4 cv=XK49iAhE c=1 sm=1 tr=0 ts=696e9ff6 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=H4nWAuYi c=1 sm=1 tr=0 ts=696e9ff9 cx=c_pps
  a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=vUbySO9Y5rIA:10
  a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=GHGLKwWzlU46qEklTYsA:9
-X-Proofpoint-ORIG-GUID: Ihr90QjHjBlP-Tkg2Adn85AVc5auN-c1
+ a=5uttRRLgS_GaOMRt2q4A:9
+X-Proofpoint-GUID: 2alLrJLLiCxaUaPFkSBU7zbEPJDVeNWz
+X-Proofpoint-ORIG-GUID: 2alLrJLLiCxaUaPFkSBU7zbEPJDVeNWz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE5MDE3OCBTYWx0ZWRfX7C4xDgJI86m4
+ OLj/DN3KNEt9zhsStct6/+WXfm09qt280WU23u8YhDbm3wg7ODKptOPmr1NBo75NIMHUabaKb7V
+ +uW2JJm+yEOiPDJ3ExLrUWRiHO80Pbb+DvBFY5Wr7ad70/D0aLnI4Vzhq1DhR3JJkI+3YEDKg/H
+ Z/q7gDEJ/uvpQGp4FyH/xhFjCAAPHH31Mxj8Ia37/J9evZxNCNwYg7gwCZYyzvco9NTUKzzLz9c
+ UyLNnuWxCzfe1H92BSQQrtt+KbLOy5X34R8lLd7G75SppEzAkXeJeAK814cF/BAKO/QzNtd3lBd
+ gMrFWBx/5KcuUuPR5HqT1mELFlvUd9wtLGdNXWEsWYEgyUvxifv5LNyFEEjQ8V6LqXZsGnG0JRE
+ TaBvEOnFIZhc2DXkSzUtfUz2tyfHieo2JJJ03BC1oy1O5AqT4RPU8zU0htISMiOd9SUsA/jkSaD
+ J4qT2itotsYfGLPNvHg==
 
-Now we have eliminated all uses of vm_area_desc->vm_flags, eliminate this
-field, and have mmap_prepare users utilise the vma_flags_t
-vm_area_desc->vma_flags field only.
+So far the userland VMA tests have been established as a rough expression
+of what's been possible.
 
-As part of this change we alter is_shared_maywrite() to accept a
-vma_flags_t parameter, and introduce is_shared_maywrite_vm_flags() for use
-with legacy vm_flags_t flags.
+qAdapt it into a more usable form by separating out tests and shared helper
+functions.
 
-We also update struct mmap_state to add a union between vma_flags and
-vm_flags temporarily until the mmap logic is also converted to using
-vma_flags_t.
+Since we test functions that are declared statically in mm/vma.c, we make
+use of the trick of #include'ing kernel C files directly.
 
-Also update the VMA userland tests to reflect this change.
+In order for the tests to continue to function, we must therefore also
+this way into the tests/ directory.
+
+We try to keep as much shared logic actually modularised into a separate
+compilation unit in shared.c, however the merge_existing() and attach_vma()
+helpers rely on statically declared mm/vma.c functions so these must be
+declared in main.c.
 
 Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 ---
- include/linux/mm.h               |  9 +++++++--
- include/linux/mm_types.h         |  5 +----
- mm/filemap.c                     |  2 +-
- mm/util.c                        |  2 +-
- mm/vma.c                         | 11 +++++++----
- mm/vma.h                         |  3 +--
- tools/testing/vma/vma_internal.h |  9 +++++++--
- 7 files changed, 25 insertions(+), 16 deletions(-)
+ tools/testing/vma/Makefile                 |   4 +-
+ tools/testing/vma/main.c                   |  55 ++++
+ tools/testing/vma/shared.c                 | 131 ++++++++
+ tools/testing/vma/shared.h                 | 114 +++++++
+ tools/testing/vma/{vma.c => tests/merge.c} | 332 +--------------------
+ tools/testing/vma/tests/mmap.c             |  57 ++++
+ tools/testing/vma/tests/vma.c              |  39 +++
+ tools/testing/vma/vma_internal.h           |   9 -
+ 8 files changed, 406 insertions(+), 335 deletions(-)
+ create mode 100644 tools/testing/vma/main.c
+ create mode 100644 tools/testing/vma/shared.c
+ create mode 100644 tools/testing/vma/shared.h
+ rename tools/testing/vma/{vma.c => tests/merge.c} (82%)
+ create mode 100644 tools/testing/vma/tests/mmap.c
+ create mode 100644 tools/testing/vma/tests/vma.c
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 32f48d5a28ce..407fcdc4831d 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1293,15 +1293,20 @@ static inline bool vma_is_accessible(const struct vm_area_struct *vma)
- 	return vma->vm_flags & VM_ACCESS_FLAGS;
- }
+diff --git a/tools/testing/vma/Makefile b/tools/testing/vma/Makefile
+index 66f3831a668f..94133d9d3955 100644
+--- a/tools/testing/vma/Makefile
++++ b/tools/testing/vma/Makefile
+@@ -6,10 +6,10 @@ default: vma
 
--static inline bool is_shared_maywrite(vm_flags_t vm_flags)
-+static inline bool is_shared_maywrite_vm_flags(vm_flags_t vm_flags)
- {
- 	return (vm_flags & (VM_SHARED | VM_MAYWRITE)) ==
- 		(VM_SHARED | VM_MAYWRITE);
- }
+ include ../shared/shared.mk
 
-+static inline bool is_shared_maywrite(vma_flags_t flags)
+-OFILES = $(SHARED_OFILES) vma.o maple-shim.o
++OFILES = $(SHARED_OFILES) main.o shared.o maple-shim.o
+ TARGETS = vma
+
+-vma.o: vma.c vma_internal.h ../../../mm/vma.c ../../../mm/vma_init.c ../../../mm/vma_exec.c ../../../mm/vma.h
++main.o: main.c shared.c shared.h vma_internal.h tests/merge.c tests/mmap.c tests/vma.c ../../../mm/vma.c ../../../mm/vma_init.c ../../../mm/vma_exec.c ../../../mm/vma.h
+
+ vma:	$(OFILES)
+ 	$(CC) $(CFLAGS) -o $@ $(OFILES) $(LDLIBS)
+diff --git a/tools/testing/vma/main.c b/tools/testing/vma/main.c
+new file mode 100644
+index 000000000000..49b09e97a51f
+--- /dev/null
++++ b/tools/testing/vma/main.c
+@@ -0,0 +1,55 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++#include "shared.h"
++/*
++ * Directly import the VMA implementation here. Our vma_internal.h wrapper
++ * provides userland-equivalent functionality for everything vma.c uses.
++ */
++#include "../../../mm/vma_init.c"
++#include "../../../mm/vma_exec.c"
++#include "../../../mm/vma.c"
++
++/* Tests are included directly so they can test static functions in mm/vma.c. */
++#include "tests/merge.c"
++#include "tests/mmap.c"
++#include "tests/vma.c"
++
++/* Helper functions which utilise static kernel functions. */
++
++struct vm_area_struct *merge_existing(struct vma_merge_struct *vmg)
 +{
-+	return vma_flags_test_all(flags, VMA_SHARED_BIT, VMA_MAYWRITE_BIT);
++	struct vm_area_struct *vma;
++
++	vma = vma_merge_existing_range(vmg);
++	if (vma)
++		vma_assert_attached(vma);
++	return vma;
 +}
 +
- static inline bool vma_is_shared_maywrite(const struct vm_area_struct *vma)
++int attach_vma(struct mm_struct *mm, struct vm_area_struct *vma)
++{
++	int res;
++
++	res = vma_link(mm, vma);
++	if (!res)
++		vma_assert_attached(vma);
++	return res;
++}
++
++/* Main test running which invokes tests/ *.c runners. */
++int main(void)
++{
++	int num_tests = 0, num_fail = 0;
++
++	maple_tree_init();
++	vma_state_init();
++
++	run_merge_tests(&num_tests, &num_fail);
++	run_mmap_tests(&num_tests, &num_fail);
++	run_vma_tests(&num_tests, &num_fail);
++
++	printf("%d tests run, %d passed, %d failed.\n",
++	       num_tests, num_tests - num_fail, num_fail);
++
++	return num_fail == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
++}
+diff --git a/tools/testing/vma/shared.c b/tools/testing/vma/shared.c
+new file mode 100644
+index 000000000000..bda578cc3304
+--- /dev/null
++++ b/tools/testing/vma/shared.c
+@@ -0,0 +1,131 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++#include "shared.h"
++
++
++bool fail_prealloc;
++unsigned long mmap_min_addr = CONFIG_DEFAULT_MMAP_MIN_ADDR;
++unsigned long dac_mmap_min_addr = CONFIG_DEFAULT_MMAP_MIN_ADDR;
++unsigned long stack_guard_gap = 256UL<<PAGE_SHIFT;
++
++const struct vm_operations_struct vma_dummy_vm_ops;
++struct anon_vma dummy_anon_vma;
++struct task_struct __current;
++
++struct vm_area_struct *alloc_vma(struct mm_struct *mm,
++		unsigned long start, unsigned long end,
++		pgoff_t pgoff, vm_flags_t vm_flags)
++{
++	struct vm_area_struct *vma = vm_area_alloc(mm);
++
++	if (vma == NULL)
++		return NULL;
++
++	vma->vm_start = start;
++	vma->vm_end = end;
++	vma->vm_pgoff = pgoff;
++	vm_flags_reset(vma, vm_flags);
++	vma_assert_detached(vma);
++
++	return vma;
++}
++
++void detach_free_vma(struct vm_area_struct *vma)
++{
++	vma_mark_detached(vma);
++	vm_area_free(vma);
++}
++
++struct vm_area_struct *alloc_and_link_vma(struct mm_struct *mm,
++		unsigned long start, unsigned long end,
++		pgoff_t pgoff, vm_flags_t vm_flags)
++{
++	struct vm_area_struct *vma = alloc_vma(mm, start, end, pgoff, vm_flags);
++
++	if (vma == NULL)
++		return NULL;
++
++	if (attach_vma(mm, vma)) {
++		detach_free_vma(vma);
++		return NULL;
++	}
++
++	/*
++	 * Reset this counter which we use to track whether writes have
++	 * begun. Linking to the tree will have caused this to be incremented,
++	 * which means we will get a false positive otherwise.
++	 */
++	vma->vm_lock_seq = UINT_MAX;
++
++	return vma;
++}
++
++void reset_dummy_anon_vma(void)
++{
++	dummy_anon_vma.was_cloned = false;
++	dummy_anon_vma.was_unlinked = false;
++}
++
++int cleanup_mm(struct mm_struct *mm, struct vma_iterator *vmi)
++{
++	struct vm_area_struct *vma;
++	int count = 0;
++
++	fail_prealloc = false;
++	reset_dummy_anon_vma();
++
++	vma_iter_set(vmi, 0);
++	for_each_vma(*vmi, vma) {
++		detach_free_vma(vma);
++		count++;
++	}
++
++	mtree_destroy(&mm->mm_mt);
++	mm->map_count = 0;
++	return count;
++}
++
++bool vma_write_started(struct vm_area_struct *vma)
++{
++	int seq = vma->vm_lock_seq;
++
++	/* We reset after each check. */
++	vma->vm_lock_seq = UINT_MAX;
++
++	/* The vma_start_write() stub simply increments this value. */
++	return seq > -1;
++}
++
++void __vma_set_dummy_anon_vma(struct vm_area_struct *vma,
++		struct anon_vma_chain *avc, struct anon_vma *anon_vma)
++{
++	vma->anon_vma = anon_vma;
++	INIT_LIST_HEAD(&vma->anon_vma_chain);
++	list_add(&avc->same_vma, &vma->anon_vma_chain);
++	avc->anon_vma = vma->anon_vma;
++}
++
++void vma_set_dummy_anon_vma(struct vm_area_struct *vma,
++		struct anon_vma_chain *avc)
++{
++	__vma_set_dummy_anon_vma(vma, avc, &dummy_anon_vma);
++}
++
++struct task_struct *get_current(void)
++{
++	return &__current;
++}
++
++unsigned long rlimit(unsigned int limit)
++{
++	return (unsigned long)-1;
++}
++
++void vma_set_range(struct vm_area_struct *vma,
++		   unsigned long start, unsigned long end,
++		   pgoff_t pgoff)
++{
++	vma->vm_start = start;
++	vma->vm_end = end;
++	vma->vm_pgoff = pgoff;
++}
+diff --git a/tools/testing/vma/shared.h b/tools/testing/vma/shared.h
+new file mode 100644
+index 000000000000..6c64211cfa22
+--- /dev/null
++++ b/tools/testing/vma/shared.h
+@@ -0,0 +1,114 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++#pragma once
++
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++
++#include "generated/bit-length.h"
++#include "maple-shared.h"
++#include "vma_internal.h"
++#include "../../../mm/vma.h"
++
++/* Simple test runner. Assumes local num_[fail, tests] counters. */
++#define TEST(name)							\
++	do {								\
++		(*num_tests)++;						\
++		if (!test_##name()) {					\
++			(*num_fail)++;					\
++			fprintf(stderr, "Test " #name " FAILED\n");	\
++		}							\
++	} while (0)
++
++#define ASSERT_TRUE(_expr)						\
++	do {								\
++		if (!(_expr)) {						\
++			fprintf(stderr,					\
++				"Assert FAILED at %s:%d:%s(): %s is FALSE.\n", \
++				__FILE__, __LINE__, __FUNCTION__, #_expr); \
++			return false;					\
++		}							\
++	} while (0)
++
++#define ASSERT_FALSE(_expr) ASSERT_TRUE(!(_expr))
++#define ASSERT_EQ(_val1, _val2) ASSERT_TRUE((_val1) == (_val2))
++#define ASSERT_NE(_val1, _val2) ASSERT_TRUE((_val1) != (_val2))
++
++#define IS_SET(_val, _flags) ((_val & _flags) == _flags)
++
++extern bool fail_prealloc;
++
++/* Override vma_iter_prealloc() so we can choose to fail it. */
++#define vma_iter_prealloc(vmi, vma)					\
++	(fail_prealloc ? -ENOMEM : mas_preallocate(&(vmi)->mas, (vma), GFP_KERNEL))
++
++#define CONFIG_DEFAULT_MMAP_MIN_ADDR 65536
++
++extern unsigned long mmap_min_addr;
++extern unsigned long dac_mmap_min_addr;
++extern unsigned long stack_guard_gap;
++
++extern const struct vm_operations_struct vma_dummy_vm_ops;
++extern struct anon_vma dummy_anon_vma;
++extern struct task_struct __current;
++
++/*
++ * Helper function which provides a wrapper around a merge existing VMA
++ * operation.
++ *
++ * Declared in main.c as uses static VMA function.
++ */
++struct vm_area_struct *merge_existing(struct vma_merge_struct *vmg);
++
++/*
++ * Helper function to allocate a VMA and link it to the tree.
++ *
++ * Declared in main.c as uses static VMA function.
++ */
++int attach_vma(struct mm_struct *mm, struct vm_area_struct *vma);
++
++/* Helper function providing a dummy vm_ops->close() method.*/
++static inline void dummy_close(struct vm_area_struct *)
++{
++}
++
++/* Helper function to simply allocate a VMA. */
++struct vm_area_struct *alloc_vma(struct mm_struct *mm,
++		unsigned long start, unsigned long end,
++		pgoff_t pgoff, vm_flags_t vm_flags);
++
++/* Helper function to detach and free a VMA. */
++void detach_free_vma(struct vm_area_struct *vma);
++
++/* Helper function to allocate a VMA and link it to the tree. */
++struct vm_area_struct *alloc_and_link_vma(struct mm_struct *mm,
++		unsigned long start, unsigned long end,
++		pgoff_t pgoff, vm_flags_t vm_flags);
++
++/*
++ * Helper function to reset the dummy anon_vma to indicate it has not been
++ * duplicated.
++ */
++void reset_dummy_anon_vma(void);
++
++/*
++ * Helper function to remove all VMAs and destroy the maple tree associated with
++ * a virtual address space. Returns a count of VMAs in the tree.
++ */
++int cleanup_mm(struct mm_struct *mm, struct vma_iterator *vmi);
++
++/* Helper function to determine if VMA has had vma_start_write() performed. */
++bool vma_write_started(struct vm_area_struct *vma);
++
++void __vma_set_dummy_anon_vma(struct vm_area_struct *vma,
++		struct anon_vma_chain *avc, struct anon_vma *anon_vma);
++
++/* Provide a simple dummy VMA/anon_vma dummy setup for testing. */
++void vma_set_dummy_anon_vma(struct vm_area_struct *vma,
++			    struct anon_vma_chain *avc);
++
++/* Helper function to specify a VMA's range. */
++void vma_set_range(struct vm_area_struct *vma,
++		   unsigned long start, unsigned long end,
++		   pgoff_t pgoff);
+diff --git a/tools/testing/vma/vma.c b/tools/testing/vma/tests/merge.c
+similarity index 82%
+rename from tools/testing/vma/vma.c
+rename to tools/testing/vma/tests/merge.c
+index 93d21bc7e112..3708dc6945b0 100644
+--- a/tools/testing/vma/vma.c
++++ b/tools/testing/vma/tests/merge.c
+@@ -1,132 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+
+-#include <stdbool.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+-
+-#include "generated/bit-length.h"
+-
+-#include "maple-shared.h"
+-#include "vma_internal.h"
+-
+-/* Include so header guard set. */
+-#include "../../../mm/vma.h"
+-
+-static bool fail_prealloc;
+-
+-/* Then override vma_iter_prealloc() so we can choose to fail it. */
+-#define vma_iter_prealloc(vmi, vma)					\
+-	(fail_prealloc ? -ENOMEM : mas_preallocate(&(vmi)->mas, (vma), GFP_KERNEL))
+-
+-#define CONFIG_DEFAULT_MMAP_MIN_ADDR 65536
+-
+-unsigned long mmap_min_addr = CONFIG_DEFAULT_MMAP_MIN_ADDR;
+-unsigned long dac_mmap_min_addr = CONFIG_DEFAULT_MMAP_MIN_ADDR;
+-unsigned long stack_guard_gap = 256UL<<PAGE_SHIFT;
+-
+-/*
+- * Directly import the VMA implementation here. Our vma_internal.h wrapper
+- * provides userland-equivalent functionality for everything vma.c uses.
+- */
+-#include "../../../mm/vma_init.c"
+-#include "../../../mm/vma_exec.c"
+-#include "../../../mm/vma.c"
+-
+-const struct vm_operations_struct vma_dummy_vm_ops;
+-static struct anon_vma dummy_anon_vma;
+-
+-#define ASSERT_TRUE(_expr)						\
+-	do {								\
+-		if (!(_expr)) {						\
+-			fprintf(stderr,					\
+-				"Assert FAILED at %s:%d:%s(): %s is FALSE.\n", \
+-				__FILE__, __LINE__, __FUNCTION__, #_expr); \
+-			return false;					\
+-		}							\
+-	} while (0)
+-#define ASSERT_FALSE(_expr) ASSERT_TRUE(!(_expr))
+-#define ASSERT_EQ(_val1, _val2) ASSERT_TRUE((_val1) == (_val2))
+-#define ASSERT_NE(_val1, _val2) ASSERT_TRUE((_val1) != (_val2))
+-
+-#define IS_SET(_val, _flags) ((_val & _flags) == _flags)
+-
+-static struct task_struct __current;
+-
+-struct task_struct *get_current(void)
+-{
+-	return &__current;
+-}
+-
+-unsigned long rlimit(unsigned int limit)
+-{
+-	return (unsigned long)-1;
+-}
+-
+-/* Helper function to simply allocate a VMA. */
+-static struct vm_area_struct *alloc_vma(struct mm_struct *mm,
+-					unsigned long start,
+-					unsigned long end,
+-					pgoff_t pgoff,
+-					vm_flags_t vm_flags)
+-{
+-	struct vm_area_struct *vma = vm_area_alloc(mm);
+-
+-	if (vma == NULL)
+-		return NULL;
+-
+-	vma->vm_start = start;
+-	vma->vm_end = end;
+-	vma->vm_pgoff = pgoff;
+-	vm_flags_reset(vma, vm_flags);
+-	vma_assert_detached(vma);
+-
+-	return vma;
+-}
+-
+-/* Helper function to allocate a VMA and link it to the tree. */
+-static int attach_vma(struct mm_struct *mm, struct vm_area_struct *vma)
+-{
+-	int res;
+-
+-	res = vma_link(mm, vma);
+-	if (!res)
+-		vma_assert_attached(vma);
+-	return res;
+-}
+-
+-static void detach_free_vma(struct vm_area_struct *vma)
+-{
+-	vma_mark_detached(vma);
+-	vm_area_free(vma);
+-}
+-
+-/* Helper function to allocate a VMA and link it to the tree. */
+-static struct vm_area_struct *alloc_and_link_vma(struct mm_struct *mm,
+-						 unsigned long start,
+-						 unsigned long end,
+-						 pgoff_t pgoff,
+-						 vm_flags_t vm_flags)
+-{
+-	struct vm_area_struct *vma = alloc_vma(mm, start, end, pgoff, vm_flags);
+-
+-	if (vma == NULL)
+-		return NULL;
+-
+-	if (attach_vma(mm, vma)) {
+-		detach_free_vma(vma);
+-		return NULL;
+-	}
+-
+-	/*
+-	 * Reset this counter which we use to track whether writes have
+-	 * begun. Linking to the tree will have caused this to be incremented,
+-	 * which means we will get a false positive otherwise.
+-	 */
+-	vma->vm_lock_seq = UINT_MAX;
+-
+-	return vma;
+-}
+-
+ /* Helper function which provides a wrapper around a merge new VMA operation. */
+ static struct vm_area_struct *merge_new(struct vma_merge_struct *vmg)
  {
--	return is_shared_maywrite(vma->vm_flags);
-+	return is_shared_maywrite(vma->flags);
+@@ -146,20 +19,6 @@ static struct vm_area_struct *merge_new(struct vma_merge_struct *vmg)
+ 	return vma;
  }
 
- static inline
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index c3589bc3780e..5042374d854b 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -877,10 +877,7 @@ struct vm_area_desc {
- 	/* Mutable fields. Populated with initial state. */
- 	pgoff_t pgoff;
- 	struct file *vm_file;
--	union {
--		vm_flags_t vm_flags;
--		vma_flags_t vma_flags;
--	};
-+	vma_flags_t vma_flags;
- 	pgprot_t page_prot;
-
- 	/* Write-only fields. */
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ebd75684cb0a..109a4bf07366 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -4012,7 +4012,7 @@ int generic_file_readonly_mmap(struct file *file, struct vm_area_struct *vma)
-
- int generic_file_readonly_mmap_prepare(struct vm_area_desc *desc)
+-/*
+- * Helper function which provides a wrapper around a merge existing VMA
+- * operation.
+- */
+-static struct vm_area_struct *merge_existing(struct vma_merge_struct *vmg)
+-{
+-	struct vm_area_struct *vma;
+-
+-	vma = vma_merge_existing_range(vmg);
+-	if (vma)
+-		vma_assert_attached(vma);
+-	return vma;
+-}
+-
+ /*
+  * Helper function which provides a wrapper around the expansion of an existing
+  * VMA.
+@@ -173,8 +32,8 @@ static int expand_existing(struct vma_merge_struct *vmg)
+  * Helper function to reset merge state the associated VMA iterator to a
+  * specified new range.
+  */
+-static void vmg_set_range(struct vma_merge_struct *vmg, unsigned long start,
+-			  unsigned long end, pgoff_t pgoff, vm_flags_t vm_flags)
++void vmg_set_range(struct vma_merge_struct *vmg, unsigned long start,
++		   unsigned long end, pgoff_t pgoff, vm_flags_t vm_flags)
  {
--	if (is_shared_maywrite(desc->vm_flags))
-+	if (is_shared_maywrite(desc->vma_flags))
- 		return -EINVAL;
- 	return generic_file_mmap_prepare(desc);
- }
-diff --git a/mm/util.c b/mm/util.c
-index 97cae40c0209..b05ab6f97e11 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -1154,7 +1154,7 @@ int __compat_vma_mmap(const struct file_operations *f_op,
+ 	vma_iter_set(vmg->vmi, start);
 
- 		.pgoff = vma->vm_pgoff,
- 		.vm_file = vma->vm_file,
--		.vm_flags = vma->vm_flags,
-+		.vma_flags = vma->flags,
- 		.page_prot = vma->vm_page_prot,
+@@ -197,8 +56,8 @@ static void vmg_set_range(struct vma_merge_struct *vmg, unsigned long start,
 
- 		.action.type = MMAP_NOTHING, /* Default */
-diff --git a/mm/vma.c b/mm/vma.c
-index 39dcd9ddd4ba..be64f781a3aa 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -15,7 +15,10 @@ struct mmap_state {
- 	unsigned long end;
- 	pgoff_t pgoff;
- 	unsigned long pglen;
--	vm_flags_t vm_flags;
-+	union {
-+		vm_flags_t vm_flags;
-+		vma_flags_t vma_flags;
-+	};
- 	struct file *file;
- 	pgprot_t page_prot;
+ /* Helper function to set both the VMG range and its anon_vma. */
+ static void vmg_set_range_anon_vma(struct vma_merge_struct *vmg, unsigned long start,
+-				   unsigned long end, pgoff_t pgoff, vm_flags_t vm_flags,
+-				   struct anon_vma *anon_vma)
++		unsigned long end, pgoff_t pgoff, vm_flags_t vm_flags,
++		struct anon_vma *anon_vma)
+ {
+ 	vmg_set_range(vmg, start, end, pgoff, vm_flags);
+ 	vmg->anon_vma = anon_vma;
+@@ -211,10 +70,9 @@ static void vmg_set_range_anon_vma(struct vma_merge_struct *vmg, unsigned long s
+  * VMA, link it to the maple tree and return it.
+  */
+ static struct vm_area_struct *try_merge_new_vma(struct mm_struct *mm,
+-						struct vma_merge_struct *vmg,
+-						unsigned long start, unsigned long end,
+-						pgoff_t pgoff, vm_flags_t vm_flags,
+-						bool *was_merged)
++		struct vma_merge_struct *vmg, unsigned long start,
++		unsigned long end, pgoff_t pgoff, vm_flags_t vm_flags,
++		bool *was_merged)
+ {
+ 	struct vm_area_struct *merged;
 
-@@ -2369,7 +2372,7 @@ static void set_desc_from_map(struct vm_area_desc *desc,
-
- 	desc->pgoff = map->pgoff;
- 	desc->vm_file = map->file;
--	desc->vm_flags = map->vm_flags;
-+	desc->vma_flags = map->vma_flags;
- 	desc->page_prot = map->page_prot;
+@@ -234,72 +92,6 @@ static struct vm_area_struct *try_merge_new_vma(struct mm_struct *mm,
+ 	return alloc_and_link_vma(mm, start, end, pgoff, vm_flags);
  }
 
-@@ -2650,7 +2653,7 @@ static int call_mmap_prepare(struct mmap_state *map,
- 		map->file_doesnt_need_get = true;
- 		map->file = desc->vm_file;
- 	}
--	map->vm_flags = desc->vm_flags;
-+	map->vma_flags = desc->vma_flags;
- 	map->page_prot = desc->page_prot;
- 	/* User-defined fields. */
- 	map->vm_ops = desc->vm_ops;
-@@ -2823,7 +2826,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 		return -EINVAL;
+-/*
+- * Helper function to reset the dummy anon_vma to indicate it has not been
+- * duplicated.
+- */
+-static void reset_dummy_anon_vma(void)
+-{
+-	dummy_anon_vma.was_cloned = false;
+-	dummy_anon_vma.was_unlinked = false;
+-}
+-
+-/*
+- * Helper function to remove all VMAs and destroy the maple tree associated with
+- * a virtual address space. Returns a count of VMAs in the tree.
+- */
+-static int cleanup_mm(struct mm_struct *mm, struct vma_iterator *vmi)
+-{
+-	struct vm_area_struct *vma;
+-	int count = 0;
+-
+-	fail_prealloc = false;
+-	reset_dummy_anon_vma();
+-
+-	vma_iter_set(vmi, 0);
+-	for_each_vma(*vmi, vma) {
+-		detach_free_vma(vma);
+-		count++;
+-	}
+-
+-	mtree_destroy(&mm->mm_mt);
+-	mm->map_count = 0;
+-	return count;
+-}
+-
+-/* Helper function to determine if VMA has had vma_start_write() performed. */
+-static bool vma_write_started(struct vm_area_struct *vma)
+-{
+-	int seq = vma->vm_lock_seq;
+-
+-	/* We reset after each check. */
+-	vma->vm_lock_seq = UINT_MAX;
+-
+-	/* The vma_start_write() stub simply increments this value. */
+-	return seq > -1;
+-}
+-
+-/* Helper function providing a dummy vm_ops->close() method.*/
+-static void dummy_close(struct vm_area_struct *)
+-{
+-}
+-
+-static void __vma_set_dummy_anon_vma(struct vm_area_struct *vma,
+-				     struct anon_vma_chain *avc,
+-				     struct anon_vma *anon_vma)
+-{
+-	vma->anon_vma = anon_vma;
+-	INIT_LIST_HEAD(&vma->anon_vma_chain);
+-	list_add(&avc->same_vma, &vma->anon_vma_chain);
+-	avc->anon_vma = vma->anon_vma;
+-}
+-
+-static void vma_set_dummy_anon_vma(struct vm_area_struct *vma,
+-				   struct anon_vma_chain *avc)
+-{
+-	__vma_set_dummy_anon_vma(vma, avc, &dummy_anon_vma);
+-}
+-
+ static bool test_simple_merge(void)
+ {
+ 	struct vm_area_struct *vma;
+@@ -1616,39 +1408,6 @@ static bool test_merge_extend(void)
+ 	return true;
+ }
 
- 	/* Map writable and ensure this isn't a sealed memfd. */
--	if (file && is_shared_maywrite(vm_flags)) {
-+	if (file && is_shared_maywrite_vm_flags(vm_flags)) {
- 		int error = mapping_map_writable(file->f_mapping);
+-static bool test_copy_vma(void)
+-{
+-	vm_flags_t vm_flags = VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE;
+-	struct mm_struct mm = {};
+-	bool need_locks = false;
+-	VMA_ITERATOR(vmi, &mm, 0);
+-	struct vm_area_struct *vma, *vma_new, *vma_next;
+-
+-	/* Move backwards and do not merge. */
+-
+-	vma = alloc_and_link_vma(&mm, 0x3000, 0x5000, 3, vm_flags);
+-	vma_new = copy_vma(&vma, 0, 0x2000, 0, &need_locks);
+-	ASSERT_NE(vma_new, vma);
+-	ASSERT_EQ(vma_new->vm_start, 0);
+-	ASSERT_EQ(vma_new->vm_end, 0x2000);
+-	ASSERT_EQ(vma_new->vm_pgoff, 0);
+-	vma_assert_attached(vma_new);
+-
+-	cleanup_mm(&mm, &vmi);
+-
+-	/* Move a VMA into position next to another and merge the two. */
+-
+-	vma = alloc_and_link_vma(&mm, 0, 0x2000, 0, vm_flags);
+-	vma_next = alloc_and_link_vma(&mm, 0x6000, 0x8000, 6, vm_flags);
+-	vma_new = copy_vma(&vma, 0x4000, 0x2000, 4, &need_locks);
+-	vma_assert_attached(vma_new);
+-
+-	ASSERT_EQ(vma_new, vma_next);
+-
+-	cleanup_mm(&mm, &vmi);
+-	return true;
+-}
+-
+ static bool test_expand_only_mode(void)
+ {
+ 	vm_flags_t vm_flags = VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE;
+@@ -1689,73 +1448,8 @@ static bool test_expand_only_mode(void)
+ 	return true;
+ }
 
- 		if (error)
-diff --git a/mm/vma.h b/mm/vma.h
-index bb7fa5d2bde2..062672df8a65 100644
---- a/mm/vma.h
-+++ b/mm/vma.h
-@@ -286,8 +286,7 @@ static inline void set_vma_from_desc(struct vm_area_struct *vma,
- 	vma->vm_pgoff = desc->pgoff;
- 	if (desc->vm_file != vma->vm_file)
- 		vma_set_file(vma, desc->vm_file);
--	if (desc->vm_flags != vma->vm_flags)
--		vm_flags_set(vma, desc->vm_flags);
-+	vma->flags = desc->vma_flags;
- 	vma->vm_page_prot = desc->page_prot;
-
- 	/* User-defined fields. */
+-static bool test_mmap_region_basic(void)
+-{
+-	struct mm_struct mm = {};
+-	unsigned long addr;
+-	struct vm_area_struct *vma;
+-	VMA_ITERATOR(vmi, &mm, 0);
+-
+-	current->mm = &mm;
+-
+-	/* Map at 0x300000, length 0x3000. */
+-	addr = __mmap_region(NULL, 0x300000, 0x3000,
+-			     VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE,
+-			     0x300, NULL);
+-	ASSERT_EQ(addr, 0x300000);
+-
+-	/* Map at 0x250000, length 0x3000. */
+-	addr = __mmap_region(NULL, 0x250000, 0x3000,
+-			     VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE,
+-			     0x250, NULL);
+-	ASSERT_EQ(addr, 0x250000);
+-
+-	/* Map at 0x303000, merging to 0x300000 of length 0x6000. */
+-	addr = __mmap_region(NULL, 0x303000, 0x3000,
+-			     VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE,
+-			     0x303, NULL);
+-	ASSERT_EQ(addr, 0x303000);
+-
+-	/* Map at 0x24d000, merging to 0x250000 of length 0x6000. */
+-	addr = __mmap_region(NULL, 0x24d000, 0x3000,
+-			     VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE,
+-			     0x24d, NULL);
+-	ASSERT_EQ(addr, 0x24d000);
+-
+-	ASSERT_EQ(mm.map_count, 2);
+-
+-	for_each_vma(vmi, vma) {
+-		if (vma->vm_start == 0x300000) {
+-			ASSERT_EQ(vma->vm_end, 0x306000);
+-			ASSERT_EQ(vma->vm_pgoff, 0x300);
+-		} else if (vma->vm_start == 0x24d000) {
+-			ASSERT_EQ(vma->vm_end, 0x253000);
+-			ASSERT_EQ(vma->vm_pgoff, 0x24d);
+-		} else {
+-			ASSERT_FALSE(true);
+-		}
+-	}
+-
+-	cleanup_mm(&mm, &vmi);
+-	return true;
+-}
+-
+-int main(void)
++static void run_merge_tests(int *num_tests, int *num_fail)
+ {
+-	int num_tests = 0, num_fail = 0;
+-
+-	maple_tree_init();
+-	vma_state_init();
+-
+-#define TEST(name)							\
+-	do {								\
+-		num_tests++;						\
+-		if (!test_##name()) {					\
+-			num_fail++;					\
+-			fprintf(stderr, "Test " #name " FAILED\n");	\
+-		}							\
+-	} while (0)
+-
+ 	/* Very simple tests to kick the tyres. */
+ 	TEST(simple_merge);
+ 	TEST(simple_modify);
+@@ -1771,15 +1465,5 @@ int main(void)
+ 	TEST(dup_anon_vma);
+ 	TEST(vmi_prealloc_fail);
+ 	TEST(merge_extend);
+-	TEST(copy_vma);
+ 	TEST(expand_only_mode);
+-
+-	TEST(mmap_region_basic);
+-
+-#undef TEST
+-
+-	printf("%d tests run, %d passed, %d failed.\n",
+-	       num_tests, num_tests - num_fail, num_fail);
+-
+-	return num_fail == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+ }
+diff --git a/tools/testing/vma/tests/mmap.c b/tools/testing/vma/tests/mmap.c
+new file mode 100644
+index 000000000000..bded4ecbe5db
+--- /dev/null
++++ b/tools/testing/vma/tests/mmap.c
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++static bool test_mmap_region_basic(void)
++{
++	struct mm_struct mm = {};
++	unsigned long addr;
++	struct vm_area_struct *vma;
++	VMA_ITERATOR(vmi, &mm, 0);
++
++	current->mm = &mm;
++
++	/* Map at 0x300000, length 0x3000. */
++	addr = __mmap_region(NULL, 0x300000, 0x3000,
++			     VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE,
++			     0x300, NULL);
++	ASSERT_EQ(addr, 0x300000);
++
++	/* Map at 0x250000, length 0x3000. */
++	addr = __mmap_region(NULL, 0x250000, 0x3000,
++			     VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE,
++			     0x250, NULL);
++	ASSERT_EQ(addr, 0x250000);
++
++	/* Map at 0x303000, merging to 0x300000 of length 0x6000. */
++	addr = __mmap_region(NULL, 0x303000, 0x3000,
++			     VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE,
++			     0x303, NULL);
++	ASSERT_EQ(addr, 0x303000);
++
++	/* Map at 0x24d000, merging to 0x250000 of length 0x6000. */
++	addr = __mmap_region(NULL, 0x24d000, 0x3000,
++			     VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE,
++			     0x24d, NULL);
++	ASSERT_EQ(addr, 0x24d000);
++
++	ASSERT_EQ(mm.map_count, 2);
++
++	for_each_vma(vmi, vma) {
++		if (vma->vm_start == 0x300000) {
++			ASSERT_EQ(vma->vm_end, 0x306000);
++			ASSERT_EQ(vma->vm_pgoff, 0x300);
++		} else if (vma->vm_start == 0x24d000) {
++			ASSERT_EQ(vma->vm_end, 0x253000);
++			ASSERT_EQ(vma->vm_pgoff, 0x24d);
++		} else {
++			ASSERT_FALSE(true);
++		}
++	}
++
++	cleanup_mm(&mm, &vmi);
++	return true;
++}
++
++static void run_mmap_tests(int *num_tests, int *num_fail)
++{
++	TEST(mmap_region_basic);
++}
+diff --git a/tools/testing/vma/tests/vma.c b/tools/testing/vma/tests/vma.c
+new file mode 100644
+index 000000000000..6d9775aee243
+--- /dev/null
++++ b/tools/testing/vma/tests/vma.c
+@@ -0,0 +1,39 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++static bool test_copy_vma(void)
++{
++	vm_flags_t vm_flags = VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE;
++	struct mm_struct mm = {};
++	bool need_locks = false;
++	VMA_ITERATOR(vmi, &mm, 0);
++	struct vm_area_struct *vma, *vma_new, *vma_next;
++
++	/* Move backwards and do not merge. */
++
++	vma = alloc_and_link_vma(&mm, 0x3000, 0x5000, 3, vm_flags);
++	vma_new = copy_vma(&vma, 0, 0x2000, 0, &need_locks);
++	ASSERT_NE(vma_new, vma);
++	ASSERT_EQ(vma_new->vm_start, 0);
++	ASSERT_EQ(vma_new->vm_end, 0x2000);
++	ASSERT_EQ(vma_new->vm_pgoff, 0);
++	vma_assert_attached(vma_new);
++
++	cleanup_mm(&mm, &vmi);
++
++	/* Move a VMA into position next to another and merge the two. */
++
++	vma = alloc_and_link_vma(&mm, 0, 0x2000, 0, vm_flags);
++	vma_next = alloc_and_link_vma(&mm, 0x6000, 0x8000, 6, vm_flags);
++	vma_new = copy_vma(&vma, 0x4000, 0x2000, 4, &need_locks);
++	vma_assert_attached(vma_new);
++
++	ASSERT_EQ(vma_new, vma_next);
++
++	cleanup_mm(&mm, &vmi);
++	return true;
++}
++
++static void run_vma_tests(int *num_tests, int *num_fail)
++{
++	TEST(copy_vma);
++}
 diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-index 1ac81a09feb8..8143b95dc50e 100644
+index 8143b95dc50e..cb20382f86b9 100644
 --- a/tools/testing/vma/vma_internal.h
 +++ b/tools/testing/vma/vma_internal.h
-@@ -1009,15 +1009,20 @@ static inline void vma_desc_clear_flags_mask(struct vm_area_desc *desc,
- #define vma_desc_clear_flags(desc, ...) \
- 	vma_desc_clear_flags_mask(desc, mk_vma_flags(__VA_ARGS__))
-
--static inline bool is_shared_maywrite(vm_flags_t vm_flags)
-+static inline bool is_shared_maywrite_vm_flags(vm_flags_t vm_flags)
- {
- 	return (vm_flags & (VM_SHARED | VM_MAYWRITE)) ==
- 		(VM_SHARED | VM_MAYWRITE);
+@@ -1127,15 +1127,6 @@ static inline void mapping_allow_writable(struct address_space *mapping)
+ 	atomic_inc(&mapping->i_mmap_writable);
  }
 
-+static inline bool is_shared_maywrite(vma_flags_t flags)
-+{
-+	return vma_flags_test_all(flags, VMA_SHARED_BIT, VMA_MAYWRITE_BIT);
-+}
-+
- static inline bool vma_is_shared_maywrite(struct vm_area_struct *vma)
+-static inline void vma_set_range(struct vm_area_struct *vma,
+-				 unsigned long start, unsigned long end,
+-				 pgoff_t pgoff)
+-{
+-	vma->vm_start = start;
+-	vma->vm_end = end;
+-	vma->vm_pgoff = pgoff;
+-}
+-
+ static inline
+ struct vm_area_struct *vma_find(struct vma_iterator *vmi, unsigned long max)
  {
--	return is_shared_maywrite(vma->vm_flags);
-+	return is_shared_maywrite(vma->flags);
- }
-
- static inline struct vm_area_struct *vma_next(struct vma_iterator *vmi)
 --
 2.52.0
 
