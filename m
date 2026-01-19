@@ -1,443 +1,279 @@
-Return-Path: <linux-fsdevel+bounces-74536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1877CD3B8E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 21:51:51 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36C62D3B8E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 21:56:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C610E3025A57
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 20:51:47 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 200663020817
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 20:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DCF2DB784;
-	Mon, 19 Jan 2026 20:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1802F747A;
+	Mon, 19 Jan 2026 20:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RqMLCyH2"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I9siDhMN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEE4248867
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 20:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BEE2F4A14;
+	Mon, 19 Jan 2026 20:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768855906; cv=pass; b=dQXqd1ucFIYyqhT5G1Y9pIzhN/FF/0OL6+Jxjj48tw52Q0gibqKN29uEAs9p4sJQ9HUrqtUOTZv7YxI5KpKBcUL++Be3p9V3gIT8Vqmu7+JiWc/WOjBmAV62rWJBMeEgfDYSOc+v38mZ1vwkYqGnA9+jb7q+V+fqV8fj8D8hUWE=
+	t=1768856174; cv=fail; b=llbBv9WLResQm/ETCdSjjW+peTVen0XNRmqxpqaRlpZsrjr1mkCfcU84zvaV3djLNkdQayK/pbDhM6xt9OlCVqN6FH4Q/FEaiy6eGNwX129RFVMGSmRaokjSJ8cLr3q8lSt/PNVH14GIQt9FPejp4BLwmC1yQCz8mYPnXZbT2k4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768855906; c=relaxed/simple;
-	bh=wqn79PuPJxP9q+cPhB1QH7vQG9zLAThA0Jc3FuOJ4+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RuqOpDnLMcg/zzoAgoe14zeSvC7QC0QlXGWN11aDEYb2Z10LVC0OVUaps+l6v2TVpgvQap9YlfJplNLkvIotHBu6DvZiBFzA3EYIsUthA1ybPoo+O58xiCN7+nA1SCyMo7XlfsBHcVOKj27wkqDRMOTt96ZDQ/XpWbiexR57b1g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RqMLCyH2; arc=pass smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6505cac9879so7900468a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 12:51:44 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1768855903; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ga7dFZRRUo7n040aweFBR+YZKaEVmnVzxabhhjtBllOvzYghwJOqzvfrfjoLmTo1ws
-         jBj4p2Z18Ll5yZ5ztQQNoiUQJh0LdrXHfGl62NOfl6FBogPIhfw/Hx6i2gQ0x7tnIJs0
-         VlbaLFJPRACiCZEY7JJRporuTJARQRzUdik8ZUCCF7qTvHPGpS20gdU5ewA46CvRjcCT
-         whKYPJciXN0LxE1a/hISXj7bYGT6zAXRuSbJeBxZlHQNj6S/IIrYHZVAfLdshkKkmPb6
-         3R7AP6D9ajdD9oAJJCZvsin8S4WGJrWc3ZcAqtHjnbeVqOztIBymEkEjc7NlQ2Uig85a
-         D7nA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=fPKXgrdsislNDnizVkaAwVkjcIIakNuhLIL/lYUceqs=;
-        fh=mzE1U9B0lv6MbwufWrD2FeImXiRILlw/5SJPP/bHO+c=;
-        b=IY/exVAKhW9EvtlDKCzTe6Hlgbwir0nwlluWO0dCqh5+/GD9eld+hBMONwIMNjVZOs
-         bC5re5R8pTL5XchzwRUVUxkT0AoRusUiuw4A72FzhnGyxYuU1pi4eIyZl2hpMsUyJcCD
-         cWW5n50bKaQSMFUZvL36ZKZCTSWHC0IuL/NVNJtgzd9QJo6JMsS417uRK4A9ePeUKmi+
-         vFbUsqyaRaM2GsP94XTI7SCG8PLz5Cs16AeqII2kv1CMgVbc1RCAJnfrJ8VxunLua1T/
-         Uzg9L6HJcKJfnpG7bDSF7p+nm0fuE/tJ6HTEQhbDW12EnHfShhEZv2wz9R3AvZ1mJgyH
-         mhpA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768855903; x=1769460703; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fPKXgrdsislNDnizVkaAwVkjcIIakNuhLIL/lYUceqs=;
-        b=RqMLCyH2mTTLgHqL8gWGTC+JXUplEC5brdWBAeW8jZWdKBobRlAsPRnHmuqpDUupAe
-         cESvlpuOrOnHvH7siIQDawQpK4R706BQidlSzJrVDr0JmsjgEIy39Qe/aiEX3TXUOzjZ
-         7aK2hyFmKOo/FNwZQs6DKiGM6LZKYjEwmYoYcofxOs1Q3o7tT5MiEC5yBckOSCgxGsp2
-         /UorwVj15TV+MVi2qsLZHsLBim2Z68GND2kYlXZFJKqn4oWACEkHBAv4Pa5Gist6Ywp7
-         kjjBYipfuUudpPlEqlq3MSlF9kkJhqlmyvDhupeiB6Xwj9ChYy5uJ4FRBbt6CU7T/pB8
-         sHww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768855903; x=1769460703;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=fPKXgrdsislNDnizVkaAwVkjcIIakNuhLIL/lYUceqs=;
-        b=QtIybpR6JVVmXJXvS1oVznTTKTCg7+cqSqDHAaayiRkiZmXkNqR04qnpvsbgW5ZJKl
-         ueE/t31xRkZhIrLRoG1ZOLikh/QSSjMMssPpJE1Uz01wuVnwLHqYhBXhbV6yp/7QkqN1
-         497Y11CmCFA/vz835Fix+4wzJg/CGHh8BGsRiVyHG3XHvUCJZOofIEqq0NSsL0ELpLy/
-         4QB8v/eQmMvDCiW52s3My9xVbhlcxAszcFQovHC3q2WTimG9jxCahYloztqd35JVHarJ
-         rQDkTVkBtnm15Nb4JE+cUo92qqO3/Ait5PH2ogSuEot7qLdBaMXhP4eyW36r4sfTTe0F
-         +pZw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7anmjFFLNI8i4lLyefytnNbJ+IbEQb6AkC5jaDX/bYbd8jEWgRHEROCeOj67UovCqVThjWyg4xmicQe6k@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd1dfW+zlbEpmVpOQSA9/leAgER+bs5sXII67tgC88vO/r9Biv
-	ldFPn2GpbRI8YpTgwFRui0y6H7pcNARQagYuxHN/pPg3ZibD6QWm92e64QmgSu/nFP7xS2oNzkS
-	2qD7VSNYCoxg5ShVJUA38RM59Q9CjIRo=
-X-Gm-Gg: AY/fxX5HaNFXeFoCKcfUrDZKXfCoDcjYFdIfV/usFzhfvrnT9nwWxH4q+PfQdVGVLqo
-	r3CblgTptW2Yu3e9GM6xKATQHZFF2ywWgEzrEB5YA9x2qwi2caKuYpm6YOZU+o0t3ipBzIaDB6F
-	7ZiExP/XDEN65nrgnD6tR6aw06wpDbOTVTHCqGfRSXf4qWKkW7vagqVbroJ9HMJCB/UiPg3jVPz
-	X//UORWzbLHNbhIz/j5hWQ8xeBE06nBnRfFLC6oXk/c7ueSLFwepp0OhSK9u/aQ4xTV/Bhnug2u
-	7n06bhm9KQnnFa173z0HPsy9/kY=
-X-Received: by 2002:a17:907:930a:b0:b80:3846:d46 with SMTP id
- a640c23a62f3a-b8792d5a7a8mr1231456966b.20.1768855902482; Mon, 19 Jan 2026
- 12:51:42 -0800 (PST)
+	s=arc-20240116; t=1768856174; c=relaxed/simple;
+	bh=nv5m7WgrJWP2UHnjNKYgzOxUM1JWmBwVt+xcNRHePf0=;
+	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
+	 MIME-Version:Subject; b=fcFH550acfOrwToczgSO4BZ0Z68IaIm1InK1fUw16KvneqgL23UtJ40wuBih7/5nrW7fgvWETDW2n+P6MfGI5zufDKNahm4AETAoQNq+BrIA2GGmTgvWQ7UDWzPjMl/uuVkgsZqRHVSLWSsY+2D3Pn37CzQ0DdgsuxLhGGDsfdI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I9siDhMN; arc=fail smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60JDdeRu024682;
+	Mon, 19 Jan 2026 20:55:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	pp1; bh=nv5m7WgrJWP2UHnjNKYgzOxUM1JWmBwVt+xcNRHePf0=; b=I9siDhMN
+	3sdLhscM7RYaclbdFNw2Lf/bKKNjpxzTUqAbs6YJL3v60mW3iRw0FUiP0/DOLWs0
+	cuCtULXNjjce6pbveqgqWOetDFRVdoogEJGazoGFVX+pqMj+WirDb808mnlfcxrX
+	rhiqO/yElOtf+BVzOe57dFrI2vO29nZ4nf1hEuXZyFcABWJ4MKoM6gSJ3Z6EBLnI
+	FdWFazVECPmm1tE3qD/nU20AU2zLD/ZxDjxP94kpOIUnt7tP3laRUBLeervxezNm
+	ch2Vr5Or+q1jgiqy/lWB1magFpgHKfJUWrpu8XOvY/z0SMpCrjynKSZDatNZjBmU
+	99XkmnQOYYGZvg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bqyuk1ynp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Jan 2026 20:55:58 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 60JKpPaj026397;
+	Mon, 19 Jan 2026 20:55:58 GMT
+Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011004.outbound.protection.outlook.com [40.107.208.4])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bqyuk1ynk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Jan 2026 20:55:58 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WwcLblx0jgIWm0a0CyukRX2fxrwjxcfDtz4bJWqt2TuNXpo3irDbqowY7Cd0FmO2bkpQtX2qa0GFsMNqpoHjrw2CNe3tE6Uw/NkC+9hCQ+FA0+epSFgcZRS6fwte99DXkv55Pa1tQsNbxTeuK2fzOxMOCXbduRO+5UzCVX5JIATJK+2AlgsBt1wsBdj17UmoP6ojzjnyBqW1PpqqiHfCoIUlm3TKzd5dxBBIpNP44nsc/2qJNHFyRh5XB+G7M7o8+1qCBDenXhPSF1Nt9dqRTKnseQ/iOLL4U1nmt0Z9nUqR0vrYczcLazX95t1+6O6K5GxAlhvNTgR71dmnFItmTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nv5m7WgrJWP2UHnjNKYgzOxUM1JWmBwVt+xcNRHePf0=;
+ b=ebOnTh/ONNqOklhARjpW2Qafc03K+dDEH7XRkREeYrgjKhPP+3Jh1zQZZT0NFy7IENTV8iKWDQT7mTf1eM4oLA7B2WfE7BMdB5Y9bESht6wp/rpu2ucwnV/EkzkFrra9HaCQReqaMqZlBv7YFmMZDzScgug3gJJUczXMMFaZnvQltBOh+D64HU/ZiM0bofXKfDl2u1lWriaYCi2PIvJ1lJfDmE3iifsMzdHkz4N71G/n7RYRGR2z1X4UQeS4drIQPqSePuLhoDyqpjZ7UwbSgXNQ9AYz4MxzxDojq7V65y6B+62sXPbaNsNp+QPIYBNH5LDdq81KapaKfWaiVioElQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
+ header.d=ibm.com; arc=none
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
+ by DS0PR15MB5627.namprd15.prod.outlook.com (2603:10b6:8:14d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.12; Mon, 19 Jan
+ 2026 20:55:51 +0000
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::920c:d2ba:5432:b539%4]) with mapi id 15.20.9520.010; Mon, 19 Jan 2026
+ 20:55:51 +0000
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+To: "brauner@kernel.org" <brauner@kernel.org>,
+        "mehdi.benhadjkhelifa@gmail.com" <mehdi.benhadjkhelifa@gmail.com>
+CC: "jack@suse.cz" <jack@suse.cz>, "khalid@kernel.org" <khalid@kernel.org>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "david.hunter.linux@gmail.com" <david.hunter.linux@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-kernel-mentees@lists.linuxfoundation.org"
+	<linux-kernel-mentees@lists.linuxfoundation.org>,
+        "viro@zeniv.linux.org.uk"
+	<viro@zeniv.linux.org.uk>,
+        "skhan@linuxfoundation.org"
+	<skhan@linuxfoundation.org>,
+        "syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com"
+	<syzbot+ad45f827c88778ff7df6@syzkaller.appspotmail.com>,
+        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>
+Thread-Topic: [EXTERNAL] Re: [PATCH v2] fs/hfs: fix s_fs_info leak on
+ setup_bdev_super() failure
+Thread-Index:
+ AQHcXtteFGhLPrTb/UieBFUI+djHs7UFH4+AgABrQ4CAAK/KgIAAvdEAgAKmrwCAA5NDgIBJ1JuAgAMS84CAABTXgP//9iiAgAA0OID///UigA==
+Date: Mon, 19 Jan 2026 20:55:51 +0000
+Message-ID: <1bfac55095419b8c5d9dd73dbf9b8b94c74b264a.camel@ibm.com>
+References: <20251119073845.18578-1-mehdi.benhadjkhelifa@gmail.com>
+	 <c19c6ebedf52f0362648a32c0eabdc823746438f.camel@ibm.com>
+	 <20251126-gebaggert-anpacken-d0d9fb10b9bc@brauner>
+	 <04d3810e-3d1b-4af2-a39b-0459cb466838@gmail.com>
+	 <56521c02f410d15a11076ebba1ce00e081951c3f.camel@ibm.com>
+	 <20251127-semmel-lastkraftwagen-9f2c7f6e16dd@brauner>
+	 <4bb136bae5c04bc07e75ddf108ada7e7480afacc.camel@ibm.com>
+	 <59b833d7-4a97-4703-86ef-c163d70b3836@gmail.com>
+	 <9061911554697106be2703189f02e5765f3df229.camel@ibm.com>
+	 <7d38a29d-9d81-42e0-99c1-b6a09afe61fd@gmail.com>
+	 <8a96ddbefd84ed0917afc13f91ee0f33ea2e0c10.camel@ibm.com>
+	 <4e65ea7b-79aa-4c36-a8ea-0ca84966d089@gmail.com>
+	 <d714e0652f920cecebf5fdcf0023a440cbd1df4e.camel@ibm.com>
+	 <4d545c3f-50cf-4ad4-8427-35f87398838e@gmail.com>
+In-Reply-To: <4d545c3f-50cf-4ad4-8427-35f87398838e@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|DS0PR15MB5627:EE_
+x-ms-office365-filtering-correlation-id: 09a0f126-7238-47db-2f34-08de579d219f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|7416014|1800799024|10070799003|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?YVlxNmdIbVVOelFhWGN3Z3NSMkFFRVBJeW1FR1I3OWxuVDFqV2FEaVJ4RGVl?=
+ =?utf-8?B?R2xHdXJOeWhETkl3cE9udk9UejVyK2FsY1JRTS9TZGF4bDQ0VjBoaWh6bVpL?=
+ =?utf-8?B?c1p5SGZ4b1RMb3k3anlmR1JOQlVhSjVnK1Nwb2VsQmNSaWtzS0VmemVIajBx?=
+ =?utf-8?B?OE9aVlFSMVRJMTFLRDJxbU51WDF1Q3U1cFV6MURLcWFTQUZMeUhMN25LNTlq?=
+ =?utf-8?B?UkdhdGtNaHlZdmdnS295aUdPZHV6cmZGWlBhVWNIaEVLZ2l4eGp4elNGMVRB?=
+ =?utf-8?B?b3dMK0wwYkYyUDRwNkJzUWlJVzZDbUZBbmZNR0Q4bmp6enNNc0JKMG1NQ3Vz?=
+ =?utf-8?B?QzhQNGF6dTVyd2o2QU40SzBCaVVRbG5rU1FWL2JSRGYwdVRnMEVwUGV6b0ZC?=
+ =?utf-8?B?RFIyN2lVNmk0bDNoNzlBMVdaK0lDcm5zcXpRSzViankwV2lHN3R6bnBVWlNQ?=
+ =?utf-8?B?NUI1elJmNTV0VFp0NzBiTW5HWURDOERERExQWTl2c0owUm5rZ29zZjBwcm5Z?=
+ =?utf-8?B?aE9NeXpqWHA1NmlNOXpkU0JQMjh0c0hVby9EOTRpVThVYmI2WU9LTWNSRmUv?=
+ =?utf-8?B?bS9Wb2g1K3VKRmwwZzlrRVphWFU1ZHlVY0JqOWxwWGJTQUZjcDMzNWFpMThD?=
+ =?utf-8?B?OGJoQzNnajIxa1ZXOEtDbk1ybTllSUVNUndsZUxPL0JYcWdsTDJXc3BxZnRi?=
+ =?utf-8?B?NU53T2pJZWw4TkF3WWZadEVBYnExdkRJM3VGL1Q3dUVCMEhJMEhiVTlzU1U0?=
+ =?utf-8?B?M0tlT2NXS3ZCYWRWVmZvSXh2STltdHE3R0FxUTRVTCtLVWxYa3pPc3R6QVgr?=
+ =?utf-8?B?QTl1YndyRzNzL2ZlczdvUlNkSWZidWxqNjZyS0pJcVA4WFppUTVBQWZaMkN2?=
+ =?utf-8?B?Tkl5blFldEVnSUJYOGsrSlMxeUhENW80SmkyTlNUck51V0ZJUFBMdURCbUdn?=
+ =?utf-8?B?aTJiTjRoTWl4eGRZc1lDM1RNd1dONjZJMThhejExOEJkNFlmc0RwczIwdVZZ?=
+ =?utf-8?B?dE43NDFLL2xnRXIvQWt1V0tUb3RTQXlrQUsyOHFBWEVjbWU4VkNxWUNRZjJZ?=
+ =?utf-8?B?OWxCaWsvYzVLaTBFNjlTb0M4Q0VzUitoUy94SlZuYXFLaUFITmVvYmhLMVZp?=
+ =?utf-8?B?VGFvcXh4bDZrUm5HQkprR0pJQTJUQ1c4Zi9XMWNrTlZ0QTFJU0VzMDRUMnVD?=
+ =?utf-8?B?NnBJbE0zNjJ4ek9ZNlR3dG5FWExXN09BTGpWNWtHcU9Td1JneGZWOWY3U0xY?=
+ =?utf-8?B?Mk12K092VGc0cXFEeHNZbjFaQ1ZuY2h2VWpjNFVVdjNaeFRTN21NYXBYN29U?=
+ =?utf-8?B?aDZPeExsL1BEMWcyd01yc3o0Y3NDWjRKcm5lbnh1NVpONGlxbE1GWlJpd0FG?=
+ =?utf-8?B?QWNBbjdjZ2I0dWVNTHdrcFZKbHR0SDBOeGkxV2lUZ1k0enVYZ1NhMTBsQitP?=
+ =?utf-8?B?UUpFb0R5dS9abXh2elFYZnFETW5vRjBNdGRoZmVWMFlJREw1SkdiVU9BcG5r?=
+ =?utf-8?B?ZW1PZnRMZWVuTm5VM3BDM216Sjk2SkNDSDlvVkF3UmtKbUlObzAyQ3lwSlBa?=
+ =?utf-8?B?bFIybTNBQlNCNzhNQ0NZTEdML1ZETkVDRDF4VHFNcFo3V1d3MmVOTXliU1R0?=
+ =?utf-8?B?cmdoQ3RCUU5veDQ3aExLUHVmdm4vQUd0UzNYQ1BNYlVqWXkzb0RrZXVvMk5Y?=
+ =?utf-8?B?NEx4WXRBdEJqSnE5WXBoUTg3c3U3WWdVRE9NZVFYVUFqTDNyZDJWQlQ0T1ZT?=
+ =?utf-8?B?bmMzYWk4djlHdEtCeCtDVlUwK3FmVXRjak5xejF1aEprSlZuV05iWE1yeVlC?=
+ =?utf-8?B?bzUxU3pTMG1Fb0JBTXdGcmE2TW9HcVZmdy9RSWlqNmFUQjlBN3I0bzBaSVRi?=
+ =?utf-8?B?ZFZwQ2hPNm4yR2Z5TjlHWVU1Z01VRGJPTUhaRUJLbUh6UVErYlZFQVcvbXpE?=
+ =?utf-8?B?QVF0UGJPS1JpMlZldSt0WWYyVWZZZDhReHFxMk9GK0FlazBOMHpRQWFXTmVR?=
+ =?utf-8?B?S0RGTUNzZnlMdXY1MWY0ZVF2aXFYcHg4RTRJenB5UFQycksrWmNSUkpsM1kz?=
+ =?utf-8?B?SGxsTGQ4RTBlM25VUjlZSUNMNjF2UDdIVEo5aXBHeGJ4Sm1nKzA1Z0pKZDFJ?=
+ =?utf-8?B?U3VLdlhtUnVVSXlZQU5rR0pjZUNDVHBGdm5aN0FMMTFSR09ubHUrWll5QWhS?=
+ =?utf-8?Q?Z13C8eKtPIiTKAV1XgvzTEU=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(10070799003)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?dkdVcWltQXhxQ1pCSFdWTUNXVzI1OGwzb2N0eHZ1VXNwT2h5VlVSVVl5ZkRJ?=
+ =?utf-8?B?VjdMU2dZSGthdWpXbFcrMjRJT1FsRU9TOXNHVXBiNU1ONVViNlZLQyt5Z3J1?=
+ =?utf-8?B?VUQ3dzI2NHJ6UUJkdjh4YzY2b0E5TW4wdGllLytuNktzWWZHL1FEOStvQW1H?=
+ =?utf-8?B?bGZ1Zmk4YXdNMmhPRERxcjh6NWhOb1RuS1BGWSsvY0tkM1MzMGZTeldVTXdl?=
+ =?utf-8?B?YVJ6cHArRVQ0Q1dXMzZKRGZDbnVySENBM2ZyczhSN1QyTVBTSVg1RWRSRHo0?=
+ =?utf-8?B?NlNxS05XV0NNcXFxdG9hOTFhdWYrQWFDeC93eTc3cG8ycEMvTHRPeWhIc2hI?=
+ =?utf-8?B?MnBBREg4U1FOejRKS0ZjdVFLYnVQaW9hR09wSmhRVWZjMEZEVUtVVXBzT1Zm?=
+ =?utf-8?B?c0g1bTJEcjUrVXczNDVRMllaaDY5VE1XMlNYckRibzc4S09oWE9KM3R4OGsx?=
+ =?utf-8?B?TDBZSzlreU5Cc29JMk9LSjRIQXBQNUVsVTlHSHVCbDJESnJQQUNYVXNpOUpU?=
+ =?utf-8?B?UHNjYXZybHZETHVVSUFBMUY1NWRXNE10Ulp1WmFZVUdPc25KVFk5SnU4Qlo4?=
+ =?utf-8?B?MVcvckl2Zm5FVU44OHF5R3VBNjI1Y3hhNHllTDBzL3o3dndFRVBNTHBpSGI4?=
+ =?utf-8?B?MENvVy9sdGpNbTFsbmJoNTZNdjlES3RGWkRCT2syTENMVUVWUWhaSk9UZ3lN?=
+ =?utf-8?B?enVmbHVrN2RvUmtuYk4xYUx6bHV2TzExcEozTDBHcGx2MHhDWVlWU281VWdJ?=
+ =?utf-8?B?SVlUaURKdTNtTExvbk44aEtkS01MQlg0RG5WNTNqckNPaUNwbHNTMURqZFR5?=
+ =?utf-8?B?TzNXc0NHUXluM055VVdQSkRFa1BCUFl6ZmM0cThYOEw2VHkycjM5ZEtBZnhy?=
+ =?utf-8?B?OXdoMHVBUnRCZittZkVlalgvRlUwNkNVR3lOMDVCRGl1aHZ1NENWNXZ4Vytr?=
+ =?utf-8?B?ZVV1L3lzUkpicVYvMkxhYmNRTTJDN0VjaDdlWkFlMWhoaWNydGxqQmtPL1VT?=
+ =?utf-8?B?OVhqTVhuRldtOVp0YjJsM0pYclVscnowTlJRRTFjK0tSbkFrNzlHV2hKUGlU?=
+ =?utf-8?B?bHMyWnpwSlg3VTFUQ0RBREhNZ1djM3RKRHBMeDZLT1ZDUjBoRTh0eE92NHUv?=
+ =?utf-8?B?VEVTMERkZXBxU2NFV2EzMFlZVktMVkx3aVR0Vks1VnA2Yms0VHl3L0U2SG14?=
+ =?utf-8?B?TjVMNW9JY0FoOU1aWW9BcXd6bzJpbWE0SUdMNGMvK0FSbFF4MjEwVmZFK2FI?=
+ =?utf-8?B?cUxSTXEyVi9lcFJXak1JTGppdlYvVzB0L3lsWWljSVNLU1BGdHhpWk5NTHc3?=
+ =?utf-8?B?dmZzbnJIbmhZbnpUUmYyaEVhYXRhZ21hV3BYYkpEais5ZXRXc0xFdkZzZ1dm?=
+ =?utf-8?B?RTVjNERFV3lCZ0ZheUlsZnIxRWlHYjdXaVZpY3V0NUFLM2FNRlliRWU4UThB?=
+ =?utf-8?B?Yi9wcElHQitwaWZHK043YWhVenl3N21ZYVcyMXJRK0dLTng5Ui9Pb2tCdzhS?=
+ =?utf-8?B?cXgyV1BaOG91VUhEb1BjNEc0cnd3SWZZUE5HcFBvbTFYTUxNcUdkdmphcEZB?=
+ =?utf-8?B?d2xJSDhzOThYWTNxVkt4bzNkQ1BOdHROTzZ6NmhsY0ltSHV2c2F0andqOXhD?=
+ =?utf-8?B?Ky9UV2VPMnRKbjhtRlVhdzJybDIrcUE3L043RkdWVTlVUGo4UDJNL3dad3pE?=
+ =?utf-8?B?TWxvTzJaWFJ5dW42VzdTNTVMQ051UGdSM2hQZTgveld0amNtWU1BSVM0OFJp?=
+ =?utf-8?B?NllFK0hZUDR0Y0dSMlZaSDRSUVZRcEVMdHFkYU5lZnBXMUw2bmlKNjdaeDFa?=
+ =?utf-8?B?czhGQzhCSzkxdTRHTldxVG9iUU84UW41SEUrbDJwM1hqUUxFcGhNQkFzREhh?=
+ =?utf-8?B?bzEwSkNvYzNHRDF3M1JSVitqektXWTNNZ1lCS04wbUFDRXA1RmU2Y0NQT1NI?=
+ =?utf-8?B?dEMweFYzMnVHQzVocFpoaml1OVF3MEF6Vi9Fd1ZCbFRRS1FmVDc2TEFEd1Uz?=
+ =?utf-8?B?cUxUMWdaY0RNa2ppakl2SS9rU1IwR2h5TWY0TThZR3BpUURoRlc4Q1pEV1Vz?=
+ =?utf-8?B?RERHZUp6Zm1NcDMyZ0ZWVytRZVJmMXJyMm80dDJRZW5lQWF0a3cxSFJXNUFn?=
+ =?utf-8?B?d2tBdStObXZ3QTB3OTVqVkNTVmR4RHhTOG1ySkNlakJCNng5YkQvZVBnUHBj?=
+ =?utf-8?B?RGZaYkJpNWRTRExTVThiVFgxS0RIVWVyKzdwcWF2QjdqVEl0dUFMSng5cG1z?=
+ =?utf-8?B?ckVxVDl4bUs3a0VDS0Iwd1NkUnVVbjU3VVJ3alVFL2xkRERuQ3lVcWpHRUF3?=
+ =?utf-8?B?WDRiUUlKaVlrWGhLVlhMWXFaVjlla1htRGM3UUtEV2dZd1BqMWl6MFllTGI5?=
+ =?utf-8?Q?wOIAGD8lvQ2MRFG0yWMJAomkR9qmff2I8DUs3?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <344A5170F27347458B35ED4F4739A5A5@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260119-work-pidfs-rhashtable-v1-1-159c7700300a@kernel.org>
-In-Reply-To: <20260119-work-pidfs-rhashtable-v1-1-159c7700300a@kernel.org>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 19 Jan 2026 21:51:30 +0100
-X-Gm-Features: AZwV_QhrqtH2aLnpzXy8S-ieYs9zc___esrR5cMpB0gFaoQSGb_4hhqNZUgTOSQ
-Message-ID: <CAGudoHEej7_Q-nkJqBU8Md15ESVtyxZ9Wbq9zwyUEcfT034=xg@mail.gmail.com>
-Subject: Re: [PATCH RFC] pidfs: convert rb-tree to rhashtable
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: ibm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09a0f126-7238-47db-2f34-08de579d219f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2026 20:55:51.8389
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: moAQw9tj52lfGdGrSPV0foth23HlqKX0O9kIfHw+j2N5Uaj9hdBPWMjaStCdSw9TYvXg1is0zCOvbEgm/x/R0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR15MB5627
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE5MDE3NCBTYWx0ZWRfX5hIQntHXUPlI
+ 9hY1S7hVwZ6PnzEDCm6kUzeyfGIld2vz7qkhfzO98gPjh3/9hGKKiA4KPWbLYmaEU1Orp7xoooE
+ HxmLqpik8atxAcnrVVNlLyO9FHR35AcYmHC/zSv8p8BUecJePd2CVviOGvOoSdsyrpRMVeLXYiv
+ 3KHmKk7JeInlzvhuACMpIPN/1v44955G1YUNOq2X6zDn1MvNxHA4rGy9/R6fKq72y+me6s965KT
+ u4ezQJGiUVKgwcTKPp+qE0K82gjD2h0CS+xM+AVIdyCuhFtb96Vmb0g3ymiQxITWWVC5RfkNFyY
+ Z96/MGGgOt7N4tO3fWEbm8dsSXTS+lZWT/kU0ugSY0UW0Dblgw9Kw3truLuodHuy/xjxuautaiJ
+ ZXZjl+cRPI3VehHIP5sYV7OiXQ8z9mfMDQeMcMg0NUA9iEAwI6GXsMxVYTDoIDLDbdjDaPXZSoJ
+ gFunCJDLMQBozS11i4w==
+X-Authority-Analysis: v=2.4 cv=bsBBxUai c=1 sm=1 tr=0 ts=696e9a5f cx=c_pps
+ a=4d7Nl6fXTlayLABBLko2Iw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8
+ a=ObUGpDGwhYDOwRBkJTgA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: 2mZ1bmaz7wY5KEZnyCtok5NVB4YrE_Lw
+X-Proofpoint-GUID: hXwYFhygrPfq3VNIEIHKlRn2yHXVEK7D
+Subject: RE: [PATCH v2] fs/hfs: fix s_fs_info leak on setup_bdev_super()
+ failure
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-19_05,2026-01-19_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 malwarescore=0 clxscore=1015 adultscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2601150000 definitions=main-2601190174
 
-On Mon, Jan 19, 2026 at 4:06=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> Convert the pidfs inode-to-pid mapping from an rb-tree with seqcount
-> protection to an rhashtable. This removes the global pidmap_lock
-> contention from pidfs_ino_get_pid() lookups and allows the hashtable
-> insert to happen outside the pidmap_lock.
->
-> pidfs_add_pid() is split. pidfs_prepare_pid() allocates inode number and
-> initializes pid fields and is called inside pidmap_lock. pidfs_add_pid()
-> inserts pid into rhashtable and is called outside pidmap_lock. Insertion
-> into the rhashtable can fail and memory allocation may happen so we need
-> to drop the spinlock.
->
-> The hashtable removal is deferred to the RCU callback to ensure safe
-> concurrent lookups. To guard against accidently opening an already
-> reaped task pidfs_ino_get_pid() uses additional checks beyond pid_vnr().
-> If pid->attr is PIDFS_PID_DEAD or NULL the pid either never had a pidfd
-> or it already went through pidfs_exit() aka the process as already
-> reaped. If pid->attr is valid check PIDFS_ATTR_BIT_EXIT to figure out
-> whether the task has exited. Switch to refcount_inc_not_zero() to ensure
-> that the pid isn't about to be freed.
->
-> This slightly changes visibility semantics: pidfd creation is denied
-> after pidfs_exit() runs, which is just before the pid number is removed
-> from the via free_pid(). That should not be an issue though.
->
-> I haven't perfed this and I would like to make this Mateusz problem...
->
-> Link: https://lore.kernel.org/20251206131955.780557-1-mjguzik@gmail.com
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/pidfs.c            | 107 ++++++++++++++++++++++++++++----------------=
-------
->  include/linux/pid.h   |   4 +-
->  include/linux/pidfs.h |   3 +-
->  kernel/pid.c          |  19 ++++++---
->  4 files changed, 79 insertions(+), 54 deletions(-)
->
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index dba703d4ce4a..e97931249ba2 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -21,6 +21,7 @@
->  #include <linux/utsname.h>
->  #include <net/net_namespace.h>
->  #include <linux/coredump.h>
-> +#include <linux/rhashtable.h>
->  #include <linux/xattr.h>
->
->  #include "internal.h"
-> @@ -55,7 +56,23 @@ struct pidfs_attr {
->         __u32 coredump_signal;
->  };
->
-> -static struct rb_root pidfs_ino_tree =3D RB_ROOT;
-> +static struct rhashtable pidfs_ino_ht;
-> +
-> +static int pidfs_ino_ht_cmp(struct rhashtable_compare_arg *arg, const vo=
-id *pidp)
-> +{
-> +       const u64 *ino =3D arg->key;
-> +       const struct pid *pid =3D pidp;
-> +
-> +       return pid->ino !=3D *ino;
-> +}
-> +
-> +static const struct rhashtable_params pidfs_ino_ht_params =3D {
-> +       .key_offset             =3D offsetof(struct pid, ino),
-> +       .key_len                =3D sizeof(u64),
-> +       .head_offset            =3D offsetof(struct pid, pidfs_hash),
-> +       .obj_cmpfn              =3D pidfs_ino_ht_cmp,
-> +       .automatic_shrinking    =3D true,
-> +};
->
->  #if BITS_PER_LONG =3D=3D 32
->  static inline unsigned long pidfs_ino(u64 ino)
-> @@ -84,21 +101,11 @@ static inline u32 pidfs_gen(u64 ino)
->  }
->  #endif
->
-> -static int pidfs_ino_cmp(struct rb_node *a, const struct rb_node *b)
-> -{
-> -       struct pid *pid_a =3D rb_entry(a, struct pid, pidfs_node);
-> -       struct pid *pid_b =3D rb_entry(b, struct pid, pidfs_node);
-> -       u64 pid_ino_a =3D pid_a->ino;
-> -       u64 pid_ino_b =3D pid_b->ino;
-> -
-> -       if (pid_ino_a < pid_ino_b)
-> -               return -1;
-> -       if (pid_ino_a > pid_ino_b)
-> -               return 1;
-> -       return 0;
-> -}
-> -
-> -void pidfs_add_pid(struct pid *pid)
-> +/*
-> + * Allocate inode number and initialize pidfs fields.
-> + * Called with pidmap_lock held.
-> + */
-> +void pidfs_prepare_pid(struct pid *pid)
->  {
->         static u64 pidfs_ino_nr =3D 2;
->
-> @@ -134,17 +141,23 @@ void pidfs_add_pid(struct pid *pid)
->         pid->stashed =3D NULL;
->         pid->attr =3D NULL;
->         pidfs_ino_nr++;
-> +}
->
-> -       write_seqcount_begin(&pidmap_lock_seq);
-> -       rb_find_add_rcu(&pid->pidfs_node, &pidfs_ino_tree, pidfs_ino_cmp)=
-;
-> -       write_seqcount_end(&pidmap_lock_seq);
-> +/*
-> + * Insert pid into the pidfs hashtable.
-> + * Must be called without holding pidmap_lock (can allocate memory).
-> + * Returns 0 on success, negative error on failure.
-> + */
-> +int pidfs_add_pid(struct pid *pid)
-> +{
-> +       return rhashtable_insert_fast(&pidfs_ino_ht, &pid->pidfs_hash,
-> +                                     pidfs_ino_ht_params);
->  }
->
->  void pidfs_remove_pid(struct pid *pid)
->  {
-> -       write_seqcount_begin(&pidmap_lock_seq);
-> -       rb_erase(&pid->pidfs_node, &pidfs_ino_tree);
-> -       write_seqcount_end(&pidmap_lock_seq);
-> +       rhashtable_remove_fast(&pidfs_ino_ht, &pid->pidfs_hash,
-> +                              pidfs_ino_ht_params);
->  }
->
->  void pidfs_free_pid(struct pid *pid)
-> @@ -773,43 +786,42 @@ static int pidfs_encode_fh(struct inode *inode, u32=
- *fh, int *max_len,
->         return FILEID_KERNFS;
->  }
->
-> -static int pidfs_ino_find(const void *key, const struct rb_node *node)
-> -{
-> -       const u64 pid_ino =3D *(u64 *)key;
-> -       const struct pid *pid =3D rb_entry(node, struct pid, pidfs_node);
-> -
-> -       if (pid_ino < pid->ino)
-> -               return -1;
-> -       if (pid_ino > pid->ino)
-> -               return 1;
-> -       return 0;
-> -}
-> -
->  /* Find a struct pid based on the inode number. */
->  static struct pid *pidfs_ino_get_pid(u64 ino)
->  {
->         struct pid *pid;
-> -       struct rb_node *node;
-> -       unsigned int seq;
-> +       struct pidfs_attr *attr;
->
->         guard(rcu)();
-> -       do {
-> -               seq =3D read_seqcount_begin(&pidmap_lock_seq);
-> -               node =3D rb_find_rcu(&ino, &pidfs_ino_tree, pidfs_ino_fin=
-d);
-> -               if (node)
-> -                       break;
-> -       } while (read_seqcount_retry(&pidmap_lock_seq, seq));
->
-> -       if (!node)
-> +       pid =3D rhashtable_lookup(&pidfs_ino_ht, &ino, pidfs_ino_ht_param=
-s);
-> +       if (!pid)
->                 return NULL;
->
-> -       pid =3D rb_entry(node, struct pid, pidfs_node);
-> -
->         /* Within our pid namespace hierarchy? */
->         if (pid_vnr(pid) =3D=3D 0)
->                 return NULL;
->
-> -       return get_pid(pid);
-> +       /*
-> +        * If attr is NULL the pid is still in the IDR but never had
-> +        * a pidfd. If attr is an error the pid went through pidfs_exit()
-> +        * and is about to be removed. Either way, deny access.
-> +        */
-> +       attr =3D READ_ONCE(pid->attr);
-> +       if (IS_ERR_OR_NULL(attr))
-> +               return NULL;
-> +
-> +       /*
-> +        * If PIDFS_ATTR_BIT_EXIT is set the task has exited and we
-> +        * should not allow new file handle lookups.
-> +        */
-> +       if (test_bit(PIDFS_ATTR_BIT_EXIT, &attr->attr_mask))
-> +               return NULL;
-> +
-> +       if (!refcount_inc_not_zero(&pid->count))
-> +               return NULL;
-> +
-> +       return pid;
->  }
->
->  static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
-> @@ -1086,6 +1098,9 @@ struct file *pidfs_alloc_file(struct pid *pid, unsi=
-gned int flags)
->
->  void __init pidfs_init(void)
->  {
-> +       if (rhashtable_init(&pidfs_ino_ht, &pidfs_ino_ht_params))
-> +               panic("Failed to initialize pidfs hashtable");
-> +
->         pidfs_attr_cachep =3D kmem_cache_create("pidfs_attr_cache", sizeo=
-f(struct pidfs_attr), 0,
->                                          (SLAB_HWCACHE_ALIGN | SLAB_RECLA=
-IM_ACCOUNT |
->                                           SLAB_ACCOUNT | SLAB_PANIC), NUL=
-L);
-> diff --git a/include/linux/pid.h b/include/linux/pid.h
-> index 003a1027d219..ce9b5cb7560b 100644
-> --- a/include/linux/pid.h
-> +++ b/include/linux/pid.h
-> @@ -6,6 +6,7 @@
->  #include <linux/rculist.h>
->  #include <linux/rcupdate.h>
->  #include <linux/refcount.h>
-> +#include <linux/rhashtable-types.h>
->  #include <linux/sched.h>
->  #include <linux/wait.h>
->
-> @@ -60,7 +61,7 @@ struct pid {
->         spinlock_t lock;
->         struct {
->                 u64 ino;
-> -               struct rb_node pidfs_node;
-> +               struct rhash_head pidfs_hash;
->                 struct dentry *stashed;
->                 struct pidfs_attr *attr;
->         };
-> @@ -73,7 +74,6 @@ struct pid {
->         struct upid numbers[];
->  };
->
-> -extern seqcount_spinlock_t pidmap_lock_seq;
->  extern struct pid init_struct_pid;
->
->  struct file;
-> diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
-> index 3e08c33da2df..416bdff4d6ce 100644
-> --- a/include/linux/pidfs.h
-> +++ b/include/linux/pidfs.h
-> @@ -6,7 +6,8 @@ struct coredump_params;
->
->  struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
->  void __init pidfs_init(void);
-> -void pidfs_add_pid(struct pid *pid);
-> +void pidfs_prepare_pid(struct pid *pid);
-> +int pidfs_add_pid(struct pid *pid);
->  void pidfs_remove_pid(struct pid *pid);
->  void pidfs_exit(struct task_struct *tsk);
->  #ifdef CONFIG_COREDUMP
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index ad4400a9f15f..7da2c3e8f79c 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -43,7 +43,6 @@
->  #include <linux/sched/task.h>
->  #include <linux/idr.h>
->  #include <linux/pidfs.h>
-> -#include <linux/seqlock.h>
->  #include <net/sock.h>
->  #include <uapi/linux/pidfd.h>
->
-> @@ -85,7 +84,6 @@ struct pid_namespace init_pid_ns =3D {
->  EXPORT_SYMBOL_GPL(init_pid_ns);
->
->  static  __cacheline_aligned_in_smp DEFINE_SPINLOCK(pidmap_lock);
-> -seqcount_spinlock_t pidmap_lock_seq =3D SEQCNT_SPINLOCK_ZERO(pidmap_lock=
-_seq, &pidmap_lock);
->
->  void put_pid(struct pid *pid)
->  {
-> @@ -106,6 +104,7 @@ EXPORT_SYMBOL_GPL(put_pid);
->  static void delayed_put_pid(struct rcu_head *rhp)
->  {
->         struct pid *pid =3D container_of(rhp, struct pid, rcu);
-> +       pidfs_remove_pid(pid);
->         put_pid(pid);
->  }
->
-> @@ -141,7 +140,6 @@ void free_pid(struct pid *pid)
->
->                 idr_remove(&ns->idr, upid->nr);
->         }
-> -       pidfs_remove_pid(pid);
->         spin_unlock(&pidmap_lock);
->
->         call_rcu(&pid->rcu, delayed_put_pid);
-> @@ -315,7 +313,14 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_=
-t *arg_set_tid,
->         retval =3D -ENOMEM;
->         if (unlikely(!(ns->pid_allocated & PIDNS_ADDING)))
->                 goto out_free;
-> -       pidfs_add_pid(pid);
-> +       pidfs_prepare_pid(pid);
-> +       spin_unlock(&pidmap_lock);
-> +
-> +       retval =3D pidfs_add_pid(pid);
-> +       if (retval)
-> +               goto out_free_idr;
-> +
-> +       spin_lock(&pidmap_lock);
-
-This brings back the relock trip, reducing eficacy of the patch.
-
-Longer term someone(tm) will need to implement lockless alloc_pid (in
-the fast path anyway).
-
-In order to facilitate that the pidfs thing needs to get its own
-synchronisation. To my understanding rhashtable covers its own locking
-just fine, so the thing left to handle is ino allocation.
-
-I was unable to find a ready to use mechanism, but conceptually it can
-be implemented the same way get_next_ino is sorted out, except on 64
-bit values and ignoring wraparound (as in, the code can assume this
-will never wrap).
-
-With these in place there is no pidfs-specific work happening under pidmap_=
-lock.
-
-I have not looked much into pidfs itself, I'm sure there is some
-complexity there to sort out, but scalability-wise the above will do
-it.
+T24gTW9uLCAyMDI2LTAxLTE5IGF0IDIyOjM0ICswMTAwLCBNZWhkaSBCZW4gSGFkaiBLaGVsaWZh
+IHdyb3RlOg0KPiBPbiAxLzE5LzI2IDc6MjcgUE0sIFZpYWNoZXNsYXYgRHViZXlrbyB3cm90ZToN
+Cj4gPiANCg0KPHNraXBwZWQ+DQoNCj4gPiANCj4gSSBoYXZlIHJhbiB4ZnN0ZXN0cyBvbiBib3Ro
+IG15IGRlc2t0b3AgYW5kIGxhcHRvcCBvbiB0aGUgZm9yLW5leHQgYnJhbmNoIA0KPiBmb3IgdGhl
+IHJlcG9zaXRvcnkgdGhhdCB5b3UgaGF2ZSBtZW50aW9ubmVkIGFuZCBJIGRpZG4ndCBoYXZlIGFu
+eSBjcmFzaCANCj4gb3IgaXNzdWUuIEhlcmUgaXMgdGhlIHRlc3QgcmVzdWx0cyhpZGVudGljYWwg
+Zm9yIGJvdGggZGVza3RvcCBhbmQgbGFwdG9wKToNCj4gRlNUWVAgICAgICAgICAtLSBoZnNwbHVz
+DQo+IFBMQVRGT1JNICAgICAgLS0gTGludXgveDg2XzY0IGJoayA2LjE5LjAtcmMxLTAwMDA4LWdl
+ZDg4ODljYTIxYjYgIzEgU01QIA0KPiBQUkVFTVBUX0RZTkFNSUMgTW9uIEphbiAxOSAyMDo1Mzo1
+OCBDRVQgMjAyNg0KPiBNS0ZTX09QVElPTlMgIC0tIC9kZXYvbG9vcDENCj4gTU9VTlRfT1BUSU9O
+UyAtLSAvZGV2L2xvb3AxIC9tbnQvc2NyYXRjaA0KPiANCj4gZ2VuZXJpYy8wMDEgIDJzIC4uLiAg
+MnMNCj4gZ2VuZXJpYy8wMDIgIDFzIC4uLiAgMXMNCj4gPHNraXA+DQo+IEZhaWxlZCA1MSBvZiA3
+NzIgdGVzdHMNCj4gDQoNClRoZSA1MSBmYWlsZWQgeGZzdGVzdHMgaXMgZXhwZWN0ZWQgc2l0dWF0
+aW9uLiBIb3dldmVyLCBpZiB5b3UgYXBwbHkgWzEsMl0gb24NCnhmc3Rlc3RzIGNvZGUgYmFzZSwg
+dGhlbiB5b3UgY291bGQgaGF2ZSBhcm91bmQgMzEgZmFpbGVkIHhmZXN0c3RzIGZvciBIRlMrLg0K
+DQpUaGFua3MsDQpTbGF2YS4NCg0KPiBNYW55IHRlc3RzIHdlcmUgc2tpcHBlZCBvZiBjb3Vyc2Uu
+IElmIHlvdSB3YW50IGZ1bGwgb3V0cHV0IEkgY2FuIHNlbmQgDQo+IHlvdSB0aGF0LkJ1dCBmb3Ig
+bm93IHRoZSBpc3N1ZSBzZWVtIHRvIGJlIHJlc29sdmVkIChmb3IgaGZzcGx1cyBhdCBsZWFzdCAN
+Cj4gSSdtIG5vdCBzdXJlIGFib3V0IGhmcyBzaW5jZSBJIHN0aWxsIGNhbid0IHRlc3QgaXQgb24g
+bXkgc3lzdGVtKS4NCj4gVGhhbmtzIGZvciB5b3VyIGVmZm9ydHMgc2xhdmEuDQo+IA0KPiANCg0K
+WzFdDQpodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1mc2RldmVsLzIwMjYwMTE4MTgwNTE5
+LnhkZGR3b2tlMnRleTZvZ3RAZGVsbC1wZXI3NTAtMDYtdm0tMDgucmh0cy5lbmcucGVrMi5yZWRo
+YXQuY29tLw0KWzJdDQpodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1mc2RldmVsLzIwMjUx
+MjMxMjI0OTM3LnV1NjdsNzZjeXRjZDM2bnNAZGVsbC1wZXI3NTAtMDYtdm0tMDgucmh0cy5lbmcu
+cGVrMi5yZWRoYXQuY29tLw0K
 
