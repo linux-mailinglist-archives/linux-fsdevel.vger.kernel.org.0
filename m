@@ -1,148 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-74374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CA2D39EC5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 07:41:40 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E86E2D39EA4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 07:37:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 536FA30042AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 06:41:36 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D33D1304392A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 06:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5882E283C89;
-	Mon, 19 Jan 2026 06:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66023266B72;
+	Mon, 19 Jan 2026 06:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QwGA4hgL"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a6JfePMo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E93826B764;
-	Mon, 19 Jan 2026 06:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0409A26F29C;
+	Mon, 19 Jan 2026 06:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768804891; cv=none; b=ZbQbbjrHl+b0N0X8u+MliRHtY8xk8eKrh5GDyUXBVTDwQnPxV9ngYQKJSyQfAec6jVFHy+ogLMk44oJ0ykE8CYzUDlHIPHDySaIpyIpcU49bD1wEO/X/zg+S8GW43v94caEFDPqyNDQHUUV0CUvv5AqFrjzU6pzlaY+DmBet4Kg=
+	t=1768804502; cv=none; b=secB3o9VBKKWASfFWt/S6SzggDvRzv3F+rEWMBAZ7N1lf1qyxkmaORlDQ2J4+e6y/LiBZrSFxXODYvtgCAln4pJ1bJ9dpcGdTZ/Y2PzPIK7xpb4zehSDkx93tj/GBNifAi1LXf/iAA+cl7GIRalgPDpiRsYHMQkMvP/9qOzd1dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768804891; c=relaxed/simple;
-	bh=pkwNomX83OjJa/gtViFneNGlwPqjG+thuV10N9WQaEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YW8vDPGb1dYdV8fSp72h3bQ5z3GYSGEd0yeW1pS5qhiYfR+9cD7Z8WJTGNoHpJq7P3D1KZByjoGEwDBvtX1dpQ5AbA33QkHGX0K7qWfaOuEsRtMbcryoC7fraD/vWFMMcrUeuBzkWHYMd8EH2jO6scrluwI9MAC668vKDiDN+AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QwGA4hgL; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=SwbeRkUkK9OO/mqWtmzTHxyd7fbhxxJhakqf4s0kNIg=; b=QwGA4hgL9aMV6sQTixPK1n3SnR
-	Zri8G531dV5x98A84aReqp2G6UaHJpN4nTXf/6+Wnxr1XHLmqM3RDH1HwtqEKXYEuQzraEqef4ifS
-	Rfg7JDYGeHeFp5XweYvklrNR0opJLe/tNClTdos3Mg+TXmulpYbbch6WDkxiaD+n25edx4Evpx16K
-	chywKYqiRDwlqzijGrTxiZtG1P3yiRHDEqNuPQfZFCJ+hNE2459H6pBY6SMwsK15gU7luCRmdJNqI
-	wOQgeUtkH/rzLOhP3JaZKrgna/cZqGj1BqYMwYctab45DTy467HukeFKRPuJN1wnShp9GMgFQxNTY
-	QpZdjvWg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vhiwi-00000001PpP-1B5K;
-	Mon, 19 Jan 2026 06:41:04 +0000
-Date: Sun, 18 Jan 2026 22:41:04 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: NeilBrown <neil@brown.name>
-Cc: Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>,
-	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Chunhai Guo <guochunhai@vivo.com>, Carlos Maiolino <cem@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Alex Markuze <amarkuze@redhat.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>,
-	Luis de Bethencourt <luisbg@kernel.org>,
-	Salah Triki <salah.triki@gmail.com>,
-	Phillip Lougher <phillip@squashfs.org.uk>,
-	Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>, Dave Kleikamp <shaggy@kernel.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>, Jan Kara <jack@suse.cz>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>, linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-xfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-	linux-unionfs@vger.kernel.org, devel@lists.orangefs.org,
-	ocfs2-devel@lists.linux.dev, ntfs3@lists.linux.dev,
-	linux-nilfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
-	linux-mtd@lists.infradead.org, gfs2@lists.linux.dev,
-	linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH 00/29] fs: require filesystems to explicitly opt-in to
- nfsd export support
-Message-ID: <aW3SAKIr_QsnEE5Q@infradead.org>
-References: <20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org>
- <CAOQ4uxjOJMwv_hRVTn3tJHDLMQHbeaCGsdLupiZYcwm7M2rm3g@mail.gmail.com>
- <9c99197dde2eafa55a1b55dce2f0d4d02c77340a.camel@kernel.org>
- <176877859306.16766.15009835437490907207@noble.neil.brown.name>
+	s=arc-20240116; t=1768804502; c=relaxed/simple;
+	bh=QbCHdqfLV2tvIBj/6ow9t/3s/bZUZIKilVJAAbBiIbI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=schag5NSaldbC3J6B5FlK5hZb3uTdStxfgRlEiDc3JsD27PbVaA2KyRe2p0P7DSiwC5eIk9RehEOKZKbBFGAs3lPytjTVKfhDPhfK6zLgWZ32k9xNWoDfoPFeP1FrMQG/dxQDXYwkBrRNsEV3dJVBlbmhF9Z9zNb0iXi+hqXEeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a6JfePMo; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1768804500; x=1800340500;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=QbCHdqfLV2tvIBj/6ow9t/3s/bZUZIKilVJAAbBiIbI=;
+  b=a6JfePMojcJRmp4u1/tlMqsjnyXPjIrWDKe754gYSjX1GM+WIzj0Vgwt
+   dda/4CY3tcpPh7ETwuE0usndbiMqNnPFGe7D7SZPyPQ0E/APATzTVq5lS
+   7x+pyLpH7rHVgW3Kmps16yEf/TQSwMgvfdtJUzKiykdj9UnJrA8MHjq8H
+   LBWcLgitiIdVQhYv5M85N35pwR5XbEqAixTTL71TyeuWf3nro1POVDfwb
+   8t8jlQaeVOroz7Me+jYcs1o2icVd/an1SsylcikfGWQbVnNsn40FYpCFP
+   SZjZsOVp0ZNtiayArplTqIRPIewT9PgZ4MkcOWcx+nHNTpu0oc2f663Zd
+   g==;
+X-CSE-ConnectionGUID: PRvrYk43R26nimdRydiW9g==
+X-CSE-MsgGUID: Jrs9mHc7RTye6MhRIJa48A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11675"; a="57565268"
+X-IronPort-AV: E=Sophos;i="6.21,237,1763452800"; 
+   d="scan'208";a="57565268"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2026 22:34:59 -0800
+X-CSE-ConnectionGUID: 0bVwmciUSAmUnZHQAnEeKA==
+X-CSE-MsgGUID: 3fhQ+SwdTeuNErHLrsRYEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,237,1763452800"; 
+   d="scan'208";a="205824245"
+Received: from linux-pnp-server-15.sh.intel.com ([10.239.177.153])
+  by orviesa007.jf.intel.com with ESMTP; 18 Jan 2026 22:34:54 -0800
+From: Zhiguo Zhou <zhiguo.zhou@intel.com>
+To: linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Cc: willy@infradead.org,
+	akpm@linux-foundation.org,
+	david@kernel.org,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	muchun.song@linux.dev,
+	osalvador@suse.de,
+	linux-kernel@vger.kernel.org,
+	tianyou.li@intel.com,
+	tim.c.chen@linux.intel.com,
+	gang.deng@intel.com,
+	Zhiguo Zhou <zhiguo.zhou@intel.com>
+Subject: [PATCH 0/2] mm/readahead: batch folio insertion to improve performance
+Date: Mon, 19 Jan 2026 14:50:23 +0800
+Message-ID: <20260119065027.918085-1-zhiguo.zhou@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <176877859306.16766.15009835437490907207@noble.neil.brown.name>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 19, 2026 at 10:23:13AM +1100, NeilBrown wrote:
-> > This was Chuck's suggested name. His point was that STABLE means that
-> > the FH's don't change during the lifetime of the file.
-> > 
-> > I don't much care about the flag name, so if everyone likes PERSISTENT
-> > better I'll roll with that.
-> 
-> I don't like PERSISTENT.
-> I'd rather call a spade a spade.
-> 
->   EXPORT_OP_SUPPORTS_NFS_EXPORT
-> or
->   EXPORT_OP_NOT_NFS_COMPATIBLE
-> 
-> The issue here is NFS export and indirection doesn't bring any benefits.
+This patch series improves readahead performance by batching folio
+insertions into the page cache's xarray, reducing the cacheline transfers,
+and optimizing the execution efficiency in the critical section.
 
-No, it absolutely is not.  And the whole concept of calling something
-after the initial or main use is a recipe for a mess.
+PROBLEM
+=======
+When the `readahead` syscall is invoked, `page_cache_ra_unbounded`
+currently inserts folios into the page cache individually. Each insertion
+requires acquiring and releasing the `xa_lock`, which can lead to:
+1. Significant lock contention when running on multi-core systems
+2. Cross-core cacheline transfers for the lock and associated data
+3. Increased execution time due to frequent lock operations
 
-Pick a name that conveys what the flag is about, and document those
-semantics well.  This flag is about the fact that for a given file,
-as long as that file exists in the file system the handle is stable.
-Both stable and persistent are suitable for that, nfs is everything
-but.
+These overheads become particularly noticeable in high-throughput storage
+workloads where readahead is frequently used.
 
-Remember nfs also support volatile file handles, and other applications
-might rely on this (I know of quite a few user space applications that
-do, but they are kinda hardwired to xfs anyway).
+SOLUTION
+========
+This series introduces batched folio insertion for contiguous ranges in
+the page cache. The key changes are:
+
+Patch 1/2: Refactor __filemap_add_folio to separate critical section
+- Extract the core xarray insertion logic into
+  __filemap_add_folio_xa_locked()
+- Allow callers to control locking granularity via a 'xa_locked' parameter
+- Maintain existing functionality while preparing for batch insertion
+
+Patch 2/2: Batch folio insertion in page_cache_ra_unbounded
+- Introduce filemap_add_folio_range() for batch insertion of folios
+- Pre-allocate folios before entering the critical section
+- Insert multiple folios while holding the xa_lock only once
+- Update page_cache_ra_unbounded to use the new batching interface
+- Insert folios individually when memory is under pressure
+
+PERFORMANCE RESULTS
+===================
+Testing was performed using RocksDB's `db_bench` (readseq workload) on a
+32-vCPU Intel Ice Lake server with 256GB memory:
+
+1. Throughput improved by 1.51x (ops/sec)
+2. Latency:
+   - P50: 63.9% reduction (6.15 usec → 2.22 usec)
+   - P75: 42.1% reduction (13.38 usec → 7.75 usec)
+   - P99: 31.4% reduction (507.95 usec → 348.54 usec)
+3. IPC of page_cache_ra_unbounded (excluding lock overhead) improved by
+   2.18x
+
+TESTING DETAILS
+===============
+- Kernel: v6.19-rc5 (0f61b1, tip of mm.git:mm-stable on Jan 14, 2026)
+- Hardware: Intel Ice Lake server, 32 vCPUs, 256GB RAM
+- Workload: RocksDB db_bench readseq
+- Command: ./db_bench --benchmarks=readseq,stats --use_existing_db=1
+           --num_multi_db=32 --threads=32 --num=1600000 --value_size=8192
+           --cache_size=16GB
+
+IMPLEMENTATION NOTES
+====================
+- The existing single-folio insertion API remains unchanged for
+  compatibility
+- Hugetlb folio handling is preserved through the refactoring
+- Error injection (BPF) support is maintained for __filemap_add_folio
+
+Zhiguo Zhou (2):
+  mm/filemap: refactor __filemap_add_folio to separate critical section
+  mm/readahead: batch folio insertion to improve performance
+
+ include/linux/pagemap.h |   4 +-
+ mm/filemap.c            | 238 ++++++++++++++++++++++++++++------------
+ mm/hugetlb.c            |   3 +-
+ mm/readahead.c          | 196 ++++++++++++++++++++++++++-------
+ 4 files changed, 325 insertions(+), 116 deletions(-)
+
+-- 
+2.43.0
 
 
