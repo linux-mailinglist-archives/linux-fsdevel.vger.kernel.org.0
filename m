@@ -1,284 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-74359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF04D39C8F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 03:45:37 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4515D39D4A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 04:59:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 5618E300AB32
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 02:44:55 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 822F53007682
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 03:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD13B25C704;
-	Mon, 19 Jan 2026 02:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C240732F74B;
+	Mon, 19 Jan 2026 03:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="ygf55RJU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D05258CE7;
-	Mon, 19 Jan 2026 02:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258A81E32CF
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 03:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768790691; cv=none; b=l0ytFfMYKaZxrKsJNoEpOCBqOoac85opC5nChdGjPMV+H65HLv3UGpT5xEC81ql327jU7xiaBMLLObF5Hyt9T4yROY1XP0IviRR92NGOU1belAOPslTRIFSAKM39/Vzcp49d8EaR883dzaOK/Dho1w573rYaXdIj+2oIicohpQY=
+	t=1768795179; cv=none; b=rd5vGS9wkAJpM6YUYcY0TT2i4ph3zNhD5iu7yhBgJyiCoOGFLwiOOk353hYDYTMRpbU/tzZG4WmAlLypkAP9mTLypTSppqWM6Bp4+Rap6lICmoGGGOMKJG4p0B3exXEqMo+5wjg2LPlT7KOt/AsdGCHT9z3TWfEyEXey3sd9O5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768790691; c=relaxed/simple;
-	bh=1pq5B8iZt7iPsn0QPduZZVv/i6wmpnh8rbCKZpSbTRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BeSPWwKqQ2Vh9Jd99NB5HuoKier3n3DOs3YWpTLpSOw9Zw9lrwbKo98sLildti8WzOr9sjQ4Qx3wlzeL07Du/Em1ZkuI7HAgM3MTZ17zQjyS53Sjt4vKNVaEX8q+c8ADSWxGTcWPU381FWclbnJ/AvI00VlOxH+7sYGSFyYKdPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
-Received: from [10.26.132.114] (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [101.226.143.244])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 311583252;
-	Mon, 19 Jan 2026 10:44:36 +0800 (GMT+08:00)
-Message-ID: <7a7912f3-9362-4aad-99a8-625c920813c5@ustc.edu>
-Date: Mon, 19 Jan 2026 10:44:35 +0800
+	s=arc-20240116; t=1768795179; c=relaxed/simple;
+	bh=HcNGovgyktgJhkSDCcx0eLnGY2OnyrtiezZGa/JF7Jg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I7x7jNwi887MdT6d0buBGBBQXYmBiiZwzC+8Xw850WNUIO4k01EsBct4PlMvVnQC1puBw08v2a1KT0dqkluUJ2DGxmF48dPwvkYt+71GjstSGO7y+BRTg9l51LeUJ6iIaVqvPDLvpJYB/Gnu1i/23LomsJ6LeKAgI+c6YlWTCuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=ygf55RJU; arc=none smtp.client-ip=113.46.200.224
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=PqY0lKXi78VY6Sc0v5OHbx57G72lxRJHYsOW+bxvSGY=;
+	b=ygf55RJUif4IVzfj+YcHAb9h1H7BRxnojC/byNkImC1pTT/7xW6tkIfVoZkv6prx/erNL2ccS
+	YzklTefQO/xZINFQj1XpSIJsY2C/tmAJjoswTgDvqvECJ6Wan1ILLVaNpqtTHohj+YZW23dbvQB
+	PqidTVWMy1JZfT6n+BUISC0=
+Received: from mail.maildlp.com (unknown [172.19.163.15])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4dvc7v5YThz1cyTx
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 11:56:11 +0800 (CST)
+Received: from kwepemj200012.china.huawei.com (unknown [7.202.194.24])
+	by mail.maildlp.com (Postfix) with ESMTPS id B61BC40539
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 11:59:33 +0800 (CST)
+Received: from huawei.com (10.113.189.238) by kwepemj200012.china.huawei.com
+ (7.202.194.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 19 Jan
+ 2026 11:59:33 +0800
+From: x00511854 <xuqi27@huawei.com>
+To: <miklos@szeredi.hu>, <linux-fsdevel@vger.kernel.org>
+CC: <zhangzhikang1@huawei.com>, <liujie1@huawei.com>,
+	<chenmaotang@huawei.com>, x00511854 <xuqi27@huawei.com>
+Subject: [PATCH] fuse: Verify real bytes of readahead in fuse_readpages_end
+Date: Mon, 19 Jan 2026 12:04:17 +0800
+Message-ID: <20260119040417.2768067-1-xuqi27@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] fuse: add ioctl to cleanup all backing files
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260116142845.422-1-luochunsheng@ustc.edu>
- <20260116142845.422-2-luochunsheng@ustc.edu>
- <CAOQ4uxg13jAJyG8b3CpjKE8FXn3ce=yUCzw+Qc=k29si=FtXaQ@mail.gmail.com>
- <428db714-5ec8-4259-b808-b8784153d4f2@ustc.edu>
- <CAOQ4uxhgOk2Ati81vqEkgWFODkW_gkB7Z7wj0x1A8RX38wLSRA@mail.gmail.com>
- <2264748f-58f7-490e-be0b-257db08a761d@ustc.edu>
- <CAOQ4uxhbo8vkuNZmhpyOUnttakNmyqCdmiyQyLJakPmsReu3mg@mail.gmail.com>
- <CAOQ4uxhcj0Bu0WjkeHoi6Y3CL=gBKJRcsbSEb7DrteAfiZbBnw@mail.gmail.com>
-From: Chunsheng Luo <luochunsheng@ustc.edu>
-In-Reply-To: <CAOQ4uxhcj0Bu0WjkeHoi6Y3CL=gBKJRcsbSEb7DrteAfiZbBnw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9bd423d1da03a2kunm06194ea7302cb5
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZSUgeVklCT01JHkxKSRgZGFYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKS0pVSUlNVUpPSFVJT09ZV1kWGg8SFR0UWUFZT0tIVUJCSU5LVUpLS1VKQk
-	tCWQY+
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemj200012.china.huawei.com (7.202.194.24)
 
+The fuse server cannot guarantee every read request is done with target data length.
 
+For example:
+1.In fuse server, an IO error has occurred which makes only part of data being read,
+and the number of read bytes is returned.
+2.fuse_readpages_end() in kernel get 'err == 0', and set the folio uptodate without whole data.
+3.The folio is uptodate, so unwritten data is copied to user.
+4.The file with broken data failed to be parsed.
 
-On 1/19/26 1:08 AM, Amir Goldstein wrote:
-> On Sun, Jan 18, 2026 at 6:07 PM Amir Goldstein <amir73il@gmail.com> wrote:
->>
->> On Sun, Jan 18, 2026 at 12:47 PM Chunsheng Luo <luochunsheng@ustc.edu> wrote:
->>>
->>>
->>>
->>> On 1/18/26 1:00 AM, Amir Goldstein wrote:
->>>> On Sat, Jan 17, 2026 at 5:14 PM Chunsheng Luo <luochunsheng@ustc.edu> wrote:
->>>>>
->>>>>
->>>>>
->>>>> On 1/16/26 11:39 PM, Amir Goldstein wrote:
->>>>>> On Fri, Jan 16, 2026 at 3:28 PM Chunsheng Luo <luochunsheng@ustc.edu> wrote:
->>>>>>>
->>>>>>> To simplify crash recovery and reduce performance impact, backing_ids
->>>>>>> are not persisted across daemon restarts. After crash recovery, this
->>>>>>> may lead to resource leaks if backing file resources are not properly
->>>>>>> cleaned up.
->>>>>>>
->>>>>>> Add FUSE_DEV_IOC_BACKING_CLOSE_ALL ioctl to release all backing_ids
->>>>>>> and put backing files. When the FUSE daemon restarts, it can use this
->>>>>>> ioctl to cleanup all backing file resources.
->>>>>>>
->>>>>>> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
->>>>>>> ---
->>>>>>>     fs/fuse/backing.c         | 19 +++++++++++++++++++
->>>>>>>     fs/fuse/dev.c             | 16 ++++++++++++++++
->>>>>>>     fs/fuse/fuse_i.h          |  1 +
->>>>>>>     include/uapi/linux/fuse.h |  1 +
->>>>>>>     4 files changed, 37 insertions(+)
->>>>>>>
->>>>>>> diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
->>>>>>> index 4afda419dd14..e93d797a2cde 100644
->>>>>>> --- a/fs/fuse/backing.c
->>>>>>> +++ b/fs/fuse/backing.c
->>>>>>> @@ -166,6 +166,25 @@ int fuse_backing_close(struct fuse_conn *fc, int backing_id)
->>>>>>>            return err;
->>>>>>>     }
->>>>>>>
->>>>>>> +static int fuse_backing_close_one(int id, void *p, void *data)
->>>>>>> +{
->>>>>>> +       struct fuse_conn *fc = data;
->>>>>>> +
->>>>>>> +       fuse_backing_close(fc, id);
->>>>>>> +
->>>>>>> +       return 0;
->>>>>>> +}
->>>>>>> +
->>>>>>> +int fuse_backing_close_all(struct fuse_conn *fc)
->>>>>>> +{
->>>>>>> +       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
->>>>>>> +               return -EPERM;
->>>>>>> +
->>>>>>> +       idr_for_each(&fc->backing_files_map, fuse_backing_close_one, fc);
->>>>>>> +
->>>>>>> +       return 0;
->>>>>>> +}
->>>>>>> +
->>>>>>
->>>>>> This is not safe and not efficient.
->>>>>> For safety from racing with _open/_close, iteration needs at least
->>>>>> rcu_read_lock(),
->>>>>
->>>>> Yes, you're absolutely right. Additionally, calling idr_remove within
->>>>> idr_for_each maybe presents safety risks.
->>>>>
->>>>>> but I think it will be much more efficient to zap the entire map with
->>>>>> fuse_backing_files_free()/fuse_backing_files_init().
->>>>>>
->>>>>> This of course needs to be synchronized with concurrent _open/_close/_lookup.
->>>>>> This could be done by making c->backing_files_map a struct idr __rcu *
->>>>>> and replace the old and new backing_files_map under spin_lock(&fc->lock);
->>>>>>
->>>>>> Then you can call fuse_backing_files_free() on the old backing_files_map
->>>>>> without a lock.
->>>>>>
->>>>>> As a side note, fuse_backing_files_free() iteration looks like it may need
->>>>>> cond_resched() if there are a LOT of backing ids, but I am not sure and
->>>>>> this is orthogonal to your change.
->>>>>>
->>>>>> Thanks,
->>>>>> Amir.
->>>>>>
->>>>>>
->>>>>
->>>>> Thank you for your helpful suggestions. However, it cannot use
->>>>> fuse_backing_files_free() in the close_all implementation because it
->>>>> directly frees backing files without respecting reference counts. This
->>>>> function requires that no one is actively using the backing file (it
->>>>> even has WARN_ON_ONCE(refcount_read(&fb->count) != 1)), which cannot be
->>>>> guaranteed after a crash recovery scenario where backing files may still
->>>>> be in use.
->>>>
->>>> Right.
->>>>
->>>>>
->>>>> Instead, the implementation uses fuse_backing_put() to safely decrement
->>>>> the reference count and allow the backing file to be freed when no
->>>>> longer in use.
->>>>
->>>> OK.
->>>>
->>>>>
->>>>> Additionally, the implementation addresses two race conditions:
->>>>>
->>>>> - Race between idr_for_each and lookup: Uses synchronize_rcu() to ensure
->>>>> all concurrent RCU readers (i.e., in-flight fuse_backing_lookup() calls)
->>>>> complete before releasing backing files, preventing use-after-free issues.
->>>>
->>>> Almost. See below.
->>>>
->>>>>
->>>>> - Race with open/close operations: Uses fc->lock to atomically swap the
->>>>> old and new IDR maps, ensuring consistency with concurrent
->>>>> fuse_backing_open() and fuse_backing_close() operations.
->>>>>
->>>>> This approach provides the same as the RCU pointer suggestion, but with
->>>>> less code and no changes to the struct fuse_conn data structures.
->>>>>
->>>>> I've updated it and verified the implementation. Could you please review it?
->>>>>
->>>>>
->>>>> diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
->>>>> index 4afda419dd14..047d373684f9 100644
->>>>> --- a/fs/fuse/backing.c
->>>>> +++ b/fs/fuse/backing.c
->>>>> @@ -166,6 +166,45 @@ int fuse_backing_close(struct fuse_conn *fc, int
->>>>> backing_id)
->>>>>            return err;
->>>>>     }
->>>>>
->>>>> +static int fuse_backing_release_one(int id, void *p, void *data)
->>>>> +{
->>>>> +       struct fuse_backing *fb = p;
->>>>> +
->>>>> +       fuse_backing_put(fb);
->>>>> +
->>>>> +       return 0;
->>>>> +}
->>>>> +
->>>>> +int fuse_backing_close_all(struct fuse_conn *fc)
->>>>> +{
->>>>> +       struct idr old_map;
->>>>> +
->>>>> +       if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
->>>>> +               return -EPERM;
->>>>> +
->>>>> +       /*
->>>>> +        * Swap out the old backing_files_map with a new empty one under
->>>>> lock,
->>>>> +        * then release all backing files outside the lock. This avoids long
->>>>> +        * lock hold times and potential races with concurrent open/close
->>>>> +        * operations.
->>>>> +        */
->>>>> +       idr_init(&old_map);
->>>>> +       spin_lock(&fc->lock);
->>>>> +       swap(fc->backing_files_map, old_map);
->>>>> +       spin_unlock(&fc->lock);
->>>>> +
->>>>> +       /*
->>>>> +        * Ensure all concurrent RCU readers complete before releasing
->>>>> backing
->>>>> +        * files, so any in-flight lookups can safely take references.
->>>>> +        */
->>>>> +       synchronize_rcu();
->>>>> +
->>>>> +       idr_for_each(&old_map, fuse_backing_release_one, NULL);
->>>>> +       idr_destroy(&old_map);
->>>>> +
->>>>> +       return 0;
->>>>> +}
->>>>> +
->>>>
->>>> That's almost safe but not enough.
->>>> This lookup code is not safe against the swap():
->>>>
->>>>     rcu_read_lock();
->>>>     fb = idr_find(&fc->backing_files_map, backing_id);
->>>>
->>>> That is the reason you need to make fc->backing_files_map
->>>> an rcu referenced ptr.
->>>>
->>>> Instead of swap() you use xchg() to atomically exchange the
->>>> old and new struct idr pointers and for lookup:
->>>>
->>>>     rcu_read_lock();
->>>>     fb = idr_find(rcu_dereference(fc->backing_files_map), backing_id);
->>>>
->>>> Thanks,
->>>> Amir.
->>>>
->>>>
->>>
->>> Yes, swap() isn't atomic, it's just copying structs, so it's not safe
->>> when racing with lookup.
->>>
->>> I've updated the version to make fc->backing_files_map an rcu referenced
->>> ptr. Please review the attached patch.
->>
->> You can also use rcu_replace_pointer() to swap old_idr <-> new_idr,
->> but otherwise the patch looks fine to me.
->>
-> 
-> Feel free to add
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> 
-> Thanks,
-> Amir.
-> 
-> 
+So to fix the problem, it should verify real bytes read from fuse server, before set folio uptodate.
 
-Ok, agree. Using rcu_replace_pointer is more concise.
+Signed-off-by: Xu Qi <xuqi27@huawei.com>
+---
+ fs/fuse/file.c | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
-Thanks,
-Chunsheng Luo
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 01bc894e9c2b..bed36bf7d523 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -994,6 +994,26 @@ static int fuse_iomap_read_folio_range(const struct iomap_iter *iter,
+ 	return fuse_do_readfolio(file, folio, off, len);
+ }
+ 
++static bool hit_folio_end(size_t num_read, struct folio *folio, struct inode *inode)
++{
++	if ((folio->index << PAGE_SHIFT) + num_read == i_size_read(inode)) {
++		return true;
++	}
++
++	return false;
++}
++
++static bool folio_read_done(int index, size_t num_read, struct folio *folio,
++			    struct inode *inode)
++{
++	if (index < (num_read >> PAGE_SHIFT) || (index == (num_read >> PAGE_SHIFT) &&
++	    hit_folio_end(num_read, folio, inode))) {
++		return true;
++	}
++
++	return false;
++}
++
+ static void fuse_readpages_end(struct fuse_mount *fm, struct fuse_args *args,
+ 			       int err)
+ {
+@@ -1018,8 +1038,10 @@ static void fuse_readpages_end(struct fuse_mount *fm, struct fuse_args *args,
+ 	fuse_invalidate_atime(inode);
+ 
+ 	for (i = 0; i < ap->num_folios; i++) {
+-		iomap_finish_folio_read(ap->folios[i], ap->descs[i].offset,
+-					ap->descs[i].length, err);
++		if (!err && folio_read_done(i, num_read, ap->folios[0], inode)) {
++			iomap_finish_folio_read(ap->folios[i], ap->descs[i].offset,
++						ap->descs[i].length, 0);
++		}
+ 		folio_put(ap->folios[i]);
+ 	}
+ 	if (ia->ff)
+-- 
+2.34.1
 
 
