@@ -1,720 +1,897 @@
-Return-Path: <linux-fsdevel+bounces-74517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74518-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB9AD3B538
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 19:09:40 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C55CD3B5C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 19:27:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 39666301EA38
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 18:09:27 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 611C73008C7F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 18:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7362932D7FB;
-	Mon, 19 Jan 2026 18:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Zc/NBfGu"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2709E32BF55;
+	Mon, 19 Jan 2026 18:26:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8471EE00A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 18:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768846164; cv=fail; b=dZiMrXylppZqcB0hW5jSs2USOpX5KUCwnBDUE+SSXWPAI3dC2Ft0QP/yrIfpKQBD+plvYKID1C/JRJx9mlM2Uv1dut6Qa0gKa08SWs8c3DINehPelDaWyycpiBQFIOyB+CfWuNx7YhcpPcf04rSEbtBTvhXN90xgbkjAchTvnBk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768846164; c=relaxed/simple;
-	bh=bj1fG3YicjoHw07wVt5PlTu95a1vuTHjXQNaL1SC5Is=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=flUVODZCH4JtVfJwmG82LFXfvK5F0UK8kKNuCkUB/iS9jgmjbucV4IJ6ysJyqtRaz8OYh34K8D4cVQltnZAR31sDP7FmmpfcJDGX/lx8UC3IHMytRjC0+8m2SZfIp1vxSQZLkiYpDbx/aE0mObbImsJb1YpAh7dH1Cgz9FAZBtU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Zc/NBfGu; arc=fail smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60JDbeet027362
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 18:09:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=jVEapGOEX/Ux5jOvznqbQmKqU0Pl9REgaoYBpeqVfec=; b=Zc/NBfGu
-	/iLkRgv+DA53ED3FwmyY24FO2tRctsEgQJPbATfEA2WhKiVCgQ4l4K1w18CgzxT3
-	ucEfZKdzjkcLYQiMvAktrkHbUUVbByUtCZPq7JhGiDm7WPDSNfn3t/M7vcGkvzZP
-	7Pw7MKjM2oWTNg8bbCuCO/17Q6LFK2+52RhVntdxvGrwvzbRswJbXmsfbjWaAtN9
-	WkgYvoN+e95GMwRMajkZ5tTW5m9KUZqSN61bG0A3PZ7rk7wbnIsPZZi4qww9ggr8
-	bYwnkOPaSNG+OXD88Y8D6mLdldvEkdpj23/1XmFs6KV+LBe53e+yKZDa4J8IRkpf
-	RsIeTYkKxdKU9g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4br0uf97kx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Jan 2026 18:09:20 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 60JI7jFc001614;
-	Mon, 19 Jan 2026 18:09:19 GMT
-Received: from mw6pr02cu001.outbound.protection.outlook.com (mail-westus2azon11012052.outbound.protection.outlook.com [52.101.48.52])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4br0uf97kw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Jan 2026 18:09:19 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uilK2ynD9tEf9IZLDJFRjBV0ST17uT/sLJrrBOSr5oGYt3Y4WbxiqZgHsvhzKqECQe+i8/sELtlonmlSfaoCPkB68CoHH0ubk+LSnsg53U5gk8IjAOMI45stvE0pN0LtKVLe30R++T6CQkukqJhctxCi3b9lDEbUqse5bNYmevSQE9tM+5jhDWFe51unRl60opDG0vYyBudWuFKBo5j68ABmuug2lbn1FiQV8BAg5tQ9XGBuQ4Q2I7YIJW8EYFbtiDeIqmbKzvky3p+55zpVRQ+vpMXS9esht5ebRvEZC2OXxK4q5CTl4/8yRKVVUp+O3Drs8vuhObx6FXuURaDBIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S2YZ9QD/7OWll9DgyWBXrhaCuz8iQdOiV4TPxlhshtk=;
- b=QFtuRO6m+3ndbi5d8Yzo34cTKP5/5jKlq5RvQf9CO+fl9Ai0Fkk9U7P50MSh+ex9jKCU/3Sx6woNU6s1OIXSOgtbMMjKA3F4WnS3Xzrp0p/ypOWpYttGLjMh6m6US7opncOBmcDIT5ZtV9FLdWFV1Y4qIFPwVCTz5HWSsswhgP2G14s+oddHpdqWJU2QAUCq8LydC8QQODX6h90wKzZxdtON2ccm0Ay4mr+tzo9fs3WsOMlkO6ImRrP/VJLnWThlMewgBo2tkH1ztDv4c9gM7SSWUwkJh4Y1gnDnc3bmUaIReNI1cz4MXPJ3ZZbbz+Vwg3msEf3st6W9NutsV9Q3+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by SJ2PR15MB6370.namprd15.prod.outlook.com (2603:10b6:a03:56d::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.12; Mon, 19 Jan
- 2026 18:09:16 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::920c:d2ba:5432:b539]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::920c:d2ba:5432:b539%4]) with mapi id 15.20.9520.010; Mon, 19 Jan 2026
- 18:09:16 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: "wangjinchao600@gmail.com" <wangjinchao600@gmail.com>
-CC: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com"
-	<slava@dubeyko.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "syzbot+1e3ff4b07c16ca0f6fe2@syzkaller.appspotmail.com"
-	<syzbot+1e3ff4b07c16ca0f6fe2@syzkaller.appspotmail.com>
-Thread-Topic: [EXTERNAL] Re: [RFC PATCH] fs/hfs: fix ABBA deadlock in
- hfs_mdb_commit
-Thread-Index: AQHchQJlsj80quEwJ0uCe1jfsMW4jLVSDkAAgACHcICAASexAIAAt7iAgAVeTwA=
-Date: Mon, 19 Jan 2026 18:09:16 +0000
-Message-ID: <0349430786e4553845c30490e19b08451c8b999f.camel@ibm.com>
-References: <68b0240f.a00a0220.1337b0.0006.GAE@google.com>
-	 <20260113081952.2431735-1-wangjinchao600@gmail.com>
-	 <a2b8144a25206fba69e59e805d93c05444080132.camel@ibm.com>
-	 <aWcHhTiUrDppotRg@ndev>
-	 <d382b5c97a71d769598fd32bc22cae9f960fea70.camel@ibm.com>
-	 <aWhgNujuXujxSg3E@ndev>
-	 <b718505beca70f2a3c1e0e20c74e43ae558b29d5.camel@ibm.com>
-	 <aWnybRfDcsUAtsol@ndev>
-In-Reply-To: <aWnybRfDcsUAtsol@ndev>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|SJ2PR15MB6370:EE_
-x-ms-office365-filtering-correlation-id: 6d3aeaa8-73cf-4210-6a83-08de5785dbd6
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|1800799024|10070799003|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?V1Q2TjF3NEpSOUdjVEEzRGhPb3NqYTJCSDIzdlBjSVNVZTZqMWthMGp6WWdp?=
- =?utf-8?B?ZzlnSmhqUzJXamkvVW1xK2N3bXQzcEo5aDNmdGowZDkwczNIZENhRmdaTnZ5?=
- =?utf-8?B?UUtyZzJaYVdrWU1adlpCTzlvKzkyS25XYnJtcFh0ZkZlRXJUVHpPbjJ0RC9H?=
- =?utf-8?B?aW5EYSt2UWhSTUwwRjVsU3JoRSt3ZjJGYmw1QWRLS0tqZzJjZGxLa3VhTDJ1?=
- =?utf-8?B?Nk5DWm1PTFhsVjdyK1A2VW9pUnp3REF1L1FlOHE5bW1qMVpYb3NyS1kyNFU2?=
- =?utf-8?B?QUpabFpyNDlmbEltck5wZXY5S01CYTFCeXVQYTVFUnk4SlRZV0IxRmo4cUQ1?=
- =?utf-8?B?U3M2WTRUZXFVRkVQNHdFRThGdU5GMis1bHhEZTdhd3pZTUE4aGlKdkh2cld2?=
- =?utf-8?B?VjliY3BKNmpHYzN4eTc4VzdybVNQa3c0V1Y4MmhadDBHOGNXTFRiUnlYZTJD?=
- =?utf-8?B?Ny9iOFRVMzAzenphWU9IblVHcEZuYUEvWlZVVytyYmJ4dnNlRzZTTytKaFRp?=
- =?utf-8?B?cWZaQlBiQVhYSTMxVnFLbnNjdlhHYTFOQWRrWXBKZkxNMFErUXBCVk94T0lI?=
- =?utf-8?B?ck1WVUd0SS9ialMxMGtCcnhXbmhhOUdyc1JEWHZEQW5wc3J4UzdLYVVpUXNv?=
- =?utf-8?B?YThRSmxJMHFMYW54OGNQaE9NQ0VFRTNETzBKTmRsa0FkQUlrSHhUejllQUZS?=
- =?utf-8?B?Q2k5cExZQ2xFenVwZjlSdVJKbHhvU2l4NWhaZVg4MkFUdmh5Z1o4ZUFDR0Iz?=
- =?utf-8?B?L2cyUVc0bHhKK25TZUdBWWovMnIzUHNhL256TXdLRUxtcXdQbWVWVjg0aVhq?=
- =?utf-8?B?S3AwTmFvNFNrSnRkL2pYZTdXK29xR0U5WUlwdnBJbk55UngySmxpcjlrNkFy?=
- =?utf-8?B?MGRoSXdtb1BTRzJHVmZxTmlxaGdQallNcVFFWkppV2JzZHRod0FHQWlHbFRq?=
- =?utf-8?B?cGhuZEZzbGdiSWwwU3JtQzVQbUdoN2gwZXZTVnZCU1BrVEM4NC9tOWxLbFFn?=
- =?utf-8?B?N1doZTVsRklScVUzQXNRQ3lvb3NhQXRnSjlwQ0RwOWRtTTRzVlZEbDA0WXZN?=
- =?utf-8?B?M3krM1I4UitDcE9Cb3JPMFRLRzQraWozNXpFUGJYUFZuZDlmdXE4N2YzWTN2?=
- =?utf-8?B?dlVGQkVkMEhKSmFPZ0V1ZHMzT3JnMDR3a0t0RXBob3BVakZ5b2tlbmVKcTNj?=
- =?utf-8?B?bTNnUnN0ZW1Td281OXk5TUpPaHZ3MFUwSllKRTRIWGFxTUhILzlWejRkODlC?=
- =?utf-8?B?N00vNUZFQk9MSGpoRVRYWUt1VUxLUjY3UDBXQmVqQWNTWTVzNFNyQ2NIZTNB?=
- =?utf-8?B?UUd1YmNrbGRaRG4rMS9BQloybzk1S29vWVRqYUxtcTVOWCs3SUFSTU1XQjUv?=
- =?utf-8?B?cWtCMll4UmliT0QxcThSbnJ6dVh3YWJtejBkSVNmTFNad0ROS2lXVm1sNWxk?=
- =?utf-8?B?a212R0Jra2xoUDRoYjZnZkJKSXpmSzFadW4rUmFmUGxRTWxodVVKNG9QcExW?=
- =?utf-8?B?QVdvbjRjd2RJT0lTdHo4Zlp2VWRwdTRBZDVjVjJtbUdYZHpyVnBiQlU5NmND?=
- =?utf-8?B?RWVIT2tBRzZWUHM5MEZaOVVqYiszcWdQVFh6YUp5Z2VqelR4STgwMVVzL1Ax?=
- =?utf-8?B?NlVQc0Jvd1hJUjdNY0ZSMXBlMTgyWWVNYXYzaFo0K2VSS1orNTRKbEw5ekRB?=
- =?utf-8?B?TXk4QmdZRkh6V1hCdWhsTFN4dkZHZ0pCVHV1cTBYMjk1aFZzb2NtUUpKQTg3?=
- =?utf-8?B?dzM3dU53Y09pbDE2VE9kVFlGNDZ6NHRwZDM5L2k4NjRsNDcxaHJmbFlYWHlZ?=
- =?utf-8?B?WDRFc0YzeGdLdkJTc09hWWNneWhaSEdZQThnUjZ2NDMveTRFRE5iOUNoT08y?=
- =?utf-8?B?VVExS05QWG9CWTdQY2U2eU9QOHd1RWM4Nmxsb3crZUZrb2ltenpVbm85SGFi?=
- =?utf-8?B?OUVkMFJKUEk3dmRIcVNkNGw0VHhqcXNFWmxZWVFSYW55akgrcHRMYzFvVmwx?=
- =?utf-8?B?ZUY3M29WTlQ1bnpXeVVVMW1GUWlrSGsvenFROFBRWG9HR0hoYmx4UGJadUhs?=
- =?utf-8?B?cFJLRUJsQlg4aFl6dUxsd3RaQk55RGtoZWx3MitoUkRpUG9LcEVZNmZBWjE0?=
- =?utf-8?Q?BxSyw0l3UnND8SMFNJMf0tMWX?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(10070799003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WExIbDVJNG05WnRyazZxSXVYeVVENXRiSlNtZzVQVVhEWGJMUUpHeHVMblVI?=
- =?utf-8?B?WE5yNVJERjVhVFlvSGpLYmJnNWxmK0QyUVJ2NkQrdG41RzEvUlBOTWV3aDlQ?=
- =?utf-8?B?NFRPSGsvekhJSjU3L2tOTUVQMW9YSUxobkVVTlhmU3ZuSkhUdFhKeThpSU9y?=
- =?utf-8?B?N3c1NEFFUmNmRlRIZzZKZ3pzLy9ONWdweFlxclV4K3o2QVIrZmlaSWxxRVhU?=
- =?utf-8?B?N1JKeE5ZV3dPWGJwRWc2bDE2WmI5d2NsQVJ5ak5JeWZFcFpnVHQrVjRaeE55?=
- =?utf-8?B?ay9VWVZyMU5oUWJQUUJ6ZFZyVHNucmxtS0lKNUcyczdHYVZGSFlwblBWSmNk?=
- =?utf-8?B?SlFwclRPZDdGY0FyQ2MxTFYycG5VY1dSV04yc05NUEtVa3FiSlRqWWJabS9T?=
- =?utf-8?B?aVdRQ1NOVUhBZlNkMENnckgvSWpSMlpYcEFhbFJ0clhGZUpSWDNHYy9RYTht?=
- =?utf-8?B?VHI2Y29ObGtwWDBobjZReE5QOGUwVm93MXZ5eWxiK1JQSGNwZThGOFhRWEpT?=
- =?utf-8?B?Uit0Smp1L3NvdmhTa1VEUU1Ec3kzYmFFKzlUbEpRV1lwOVQ1OUxjZ3UwOCtL?=
- =?utf-8?B?VHdGYjVudWR2US9JOXdiWm1mYjNnQjFTRERjUUEwUEpZSHNjUlZuTm1uOWtG?=
- =?utf-8?B?Z2h2dTZFUXNmQ3ZmQjJoWm5NdFhQd0VSSXBsUjZhdkNicno5QXk5ZEZyUkts?=
- =?utf-8?B?eS9BdDFSQ2xBU0s0a3dVem1iS1YybHUzWm5IM01MTkJKcG10KzhvNnFTMFA3?=
- =?utf-8?B?eng4SWdCTGhJemFVKzU1M2lHSDdXVzkwcjh0Y2Z2bTVVQUNiZXZHWGdtQSt2?=
- =?utf-8?B?U0FsYjgxd3ZNaTBRQzVlTkFjMkQvK3VGSkdlUXBOVmQzR1RBbFhBQnlvY2FW?=
- =?utf-8?B?WjdmaU5zdC80bEduNTFmRVdwelptNm1UV1VSMWY0ZngwMlpVaFpWR3dmZDFx?=
- =?utf-8?B?aTg4UzA3WjBmd2lDaDIrUGVDN1c3RFlMa2VHaldXYk5aWW1lV2JWaTlOSlZZ?=
- =?utf-8?B?TGdlV3J4aWhXMUswL3FLWUpkWjdqVmFVYm1XdGJGeVV5VzRCbFNRMXBrOW1W?=
- =?utf-8?B?ZGE4UzgzNnFiRWxOZ0w0K1NwS0Vad2xxbXFkTlk1Mi9NbVJuaWlJMG1RL1Z2?=
- =?utf-8?B?RUZjS2JRWm5YWURoTDlJTGZNdnBaakZrZXpZSjZiUkUrLzQxY3RJanF0S1Q2?=
- =?utf-8?B?WjQ1bVF0ZE5EUTBTR2FLL2dBVStLNy9oS25nVnBDK0I5Z3EyK3dESkp3TFJw?=
- =?utf-8?B?QnBFcTJPWVk2cGNSTXl2RDdVdkNnVkFPc2t4WXQraFVYMVBKOVY4bHd1T0JQ?=
- =?utf-8?B?STNtY3pHbHV1UVhYSFBaaFE5bEpoYjhBTkRaa01uV0JkSldlcjNFTlREOTNE?=
- =?utf-8?B?YXAvNWhxY0VvVUpCbXc1bElNWklodk1BWURBa1VmZEpvNzRLSEd0dk5pN2Zu?=
- =?utf-8?B?TTFqeWlnaWx6RFZwZG91dFVCOEJQLzJJZSt0dVFTRTk5ajl3N3orVHV3Y3li?=
- =?utf-8?B?NUNxZEVMbVFEOUFlVGlxWHN2TSt5UGdQUGxOQVZHWTZ0UzYyRkx0cXpmaXNF?=
- =?utf-8?B?Um1GOE8veHVUQjErUzd2QWRlbVZWQnNpeEpYWkZBSFlwY0kvVG8ya1AvUkpM?=
- =?utf-8?B?ZExJb0d0WEZCeGM1aHdZbUpvdG1LT2JSOTlMUFM0V0pKbkl4OGM2MjRUaU5w?=
- =?utf-8?B?VnRrY3RKZTVtQUVXaWZsRWEzcUhvVnZzeGVobW1iTHMxa2x1WE1ZeEtLMENh?=
- =?utf-8?B?RXU1KzZET3kzK0daUFhqSVJFM09lM0RxQURwaytkbDgrZGtCdkxrT3lJaWs4?=
- =?utf-8?B?T0hRZG03ZUE3NTVveXUvMzVrZE1ORmlqa1BUcTY0VUxVWmtlSmRtZjkxT283?=
- =?utf-8?B?cEcyRUVCZEZ4YURCZ2RqdXErR084WUpJUkN4VmpuT01UT3NPSUdFb2lRclVM?=
- =?utf-8?B?YUdBL1N6bnBkVkdPWGg5c3U0ZGc0S3NkQ1o3NmpvdEZ2QWZ6dm9IV3dzODYx?=
- =?utf-8?B?V09PTHFNSlJDa0t6QlpzeVArcUx4WlFSSnZ6MlZzM2ZNWVI5RklsSFJXRXhP?=
- =?utf-8?B?M3Zoc283RVd6NlNndlFZcUUxUlFHek9WeXFSRU9BOVlUVms5Ym42VHZLaGpV?=
- =?utf-8?B?STN6Mm9HNmtkb3BnWUwyVDBiYklZZ1MwZWdweUJZbTVmTGt3eSsvWitLS2Mx?=
- =?utf-8?B?QVA3NDFRU2NyTmUrU29WSkJlSnlBU3lxL2c3Q0FjYkhwUk15S0lHMkhHQ3E0?=
- =?utf-8?B?eE5hSmcyS0J4MW5SVk9GRjdCUHdrMWMrUVdDWGw2akZwdVMzVGhyKzZLV20z?=
- =?utf-8?B?U1pqZUI3bzB1cjMvU254SHlXcEFYOVlhdFpkWlo0QVA1dFQ3bTQyOGgwTVZs?=
- =?utf-8?Q?XsBxdTSVGAMtE+HHc8mKN4IC0KyedGHXIyKpl?=
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d3aeaa8-73cf-4210-6a83-08de5785dbd6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2026 18:09:16.3308
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MIcFEveObIU/N6NoeXRs3SDnBfGPr6A243CThcyD74M/jooWR3AG9m2IKUhAavl2qM1O1BeyRkswQWLfqFC22w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR15MB6370
-X-Proofpoint-GUID: uhPYoN6oNMUWK9pPKbJgwnrf1WS8EcXJ
-X-Proofpoint-ORIG-GUID: 177GbcumZAU6pCaqZLFx_MNV29qdZZpk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE5MDE0OCBTYWx0ZWRfXz3wBoxfIO7IQ
- lUfBijpe+I2JfyPOBCWjrPzMV589UkuiG9kVyxzc/KnTd2CUfUsHWN7Q7lueQkbynjkbrwY3r5g
- Pw3m9Xy285efLSiAOzcBnM6TOE1BwyroGMhYA6BLldFsbu2LDKDtj1wQjhXLKXjytFCsAly3s1J
- szG+bhJRK51j3fRnyC7B9vRd75c6WgZog7t4i8SR1ShB3RZmjuSnu9sYEIl2Kl0sGpn/MzTaVYG
- 84gJqoxrVfUyTxdPEyHBKpMg3aXY6XZ8cZWkRVUpE01HkGtmRDbB2gn9IkHx2dXRoVjlYUNkxiQ
- d+8VSL/3rMiYucXaxY92RSC3RN2Lu02lqfV7NmML+08B5WKypeeucRIc3mnO8RGEiOnLAAG5SE5
- HzXcbl32fDPx3jZGZbFOnfEiH5WfKQ0Ye8bwnZDL7AYZSCOBCYX0p8zHTcrcU49Bjnsk2TyQFvc
- RUDZxCI6VE8Sj7vEmDQ==
-X-Authority-Analysis: v=2.4 cv=bopBxUai c=1 sm=1 tr=0 ts=696e7350 cx=c_pps
- a=NkapyFR+xBWi1egQVwNhyQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=P-IC7800AAAA:8 a=edf1wS77AAAA:8
- a=nFi4t2O3ZH87ViCd92gA:9 a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22
- a=DcSpbTIhAlouE1Uv7lRv:22
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9AF86061F753D149831F2411E62CFD0B@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBDA274B5C;
+	Mon, 19 Jan 2026 18:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768847164; cv=none; b=Mt54s3c0/+ebLagpwn7X13BtNOChPzhOaoQV7nSIn+2YAAf0ZGiU/Wwv1Uurj5lfdT5B91isDs57YZqeE5E3qcbCGPSprVihL129EVbgLlJet+85V6wCiVQ7VKT9cXdZww73GUtKsQj0lITXwsGLtpN5h2NvVvCEyG2lj0vTN/A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768847164; c=relaxed/simple;
+	bh=LYuCM7//SMRFX+/88l1dlOq7IXJoQBrwiO/q8CCzAUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d0YBwgKsZiXI1e9F+k1aCOF+IFKczIAh0/iC3ShVWsxt1PdCE3I+LyfZBiNgkZYDlcZa5F5QN+Xl38nnfXewVwTxWGRLZLv9oFiM6WI814a4GS8kM+mHqhBmUDr/MLnmsWDWr70haGLyMfUOVR1XEp1iohnfocHfDNnHpgdSc8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53288497;
+	Mon, 19 Jan 2026 10:25:54 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 289433F694;
+	Mon, 19 Jan 2026 10:25:58 -0800 (PST)
+Date: Mon, 19 Jan 2026 18:25:55 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	sudeep.holla@arm.com, james.quinlan@broadcom.com,
+	f.fainelli@gmail.com, vincent.guittot@linaro.org,
+	etienne.carriere@st.com, peng.fan@oss.nxp.com, michal.simek@amd.com,
+	dan.carpenter@linaro.org, d-gole@ti.com, elif.topuz@arm.com,
+	lukasz.luba@arm.com, philip.radford@arm.com,
+	souvik.chakravarty@arm.com
+Subject: Re: [PATCH v2 05/17] firmware: arm_scmi: Add Telemetry protocol
+ support
+Message-ID: <aW53M5EsXDGvYzfp@pluto>
+References: <20260114114638.2290765-1-cristian.marussi@arm.com>
+ <20260114114638.2290765-6-cristian.marussi@arm.com>
+ <20260119162932.00006e6c@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: RE: [RFC PATCH] fs/hfs: fix ABBA deadlock in hfs_mdb_commit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-19_04,2026-01-19_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 adultscore=0 suspectscore=0 impostorscore=0
- phishscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2601150000
- definitions=main-2601190148
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260119162932.00006e6c@huawei.com>
 
-On Fri, 2026-01-16 at 16:10 +0800, Jinchao Wang wrote:
-> On Thu, Jan 15, 2026 at 09:12:49PM +0000, Viacheslav Dubeyko wrote:
-> > On Thu, 2026-01-15 at 11:34 +0800, Jinchao Wang wrote:
-> > > On Wed, Jan 14, 2026 at 07:29:45PM +0000, Viacheslav Dubeyko wrote:
-> > > > On Wed, 2026-01-14 at 11:03 +0800, Jinchao Wang wrote:
-> > > > > On Tue, Jan 13, 2026 at 08:52:45PM +0000, Viacheslav Dubeyko wrot=
-e:
-> > > > > > On Tue, 2026-01-13 at 16:19 +0800, Jinchao Wang wrote:
-> > > > > > > syzbot reported a hung task in hfs_mdb_commit where a deadloc=
-k occurs
-> > > > > > > between the MDB buffer lock and the folio lock.
-> > > > > > >=20
-> > > > > > > The deadlock happens because hfs_mdb_commit() holds the mdb_bh
-> > > > > > > lock while calling sb_bread(), which attempts to acquire the =
-lock
-> > > > > > > on the same folio.
-> > > > > >=20
-> > > > > > I don't quite to follow to your logic. We have only one sb_brea=
-d() [1] in
-> > > > > > hfs_mdb_commit(). This read is trying to extract the volume bit=
-map. How is it
-> > > > > > possible that superblock and volume bitmap is located at the sa=
-me folio? Are you
-> > > > > > sure? Which size of the folio do you imply here?
-> > > > > >=20
-> > > > > > Also, it your logic is correct, then we never could be able to =
-mount/unmount or
-> > > > > > run any operations on HFS volumes because of likewise deadlock.=
- However, I can
-> > > > > > run xfstests on HFS volume.
-> > > > > >=20
-> > > > > > [1] https://elixir.bootlin.com/linux/v6.19-rc5/source/fs/hfs/md=
-b.c#L324     =20
-> > > > >=20
-> > > > > Hi Viacheslav,
-> > > > >=20
-> > > > > After reviewing your feedback, I realized that my previous RFC wa=
-s not in
-> > > > > the correct format. It was not intended to be a final, merge-read=
-y patch,
-> > > > > but rather a record of the analysis and trial fixes conducted so =
-far.
-> > > > > I apologize for the confusion caused by my previous email.
-> > > > >=20
-> > > > > The details are reorganized as follows:
-> > > > >=20
-> > > > > - Observation
-> > > > > - Analysis
-> > > > > - Verification
-> > > > > - Conclusion
-> > > > >=20
-> > > > > Observation
-> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > >=20
-> > > > > Syzbot report: https://syzkaller.appspot.com/bug?extid=3D1e3ff4b0=
-7c16ca0f6fe2     =20
-> > > > >=20
-> > > > > For this version:
-> > > > > > time             |  kernel    | Commit       | Syzkaller |
-> > > > > > 2025/12/20 17:03 | linux-next | cc3aa43b44bd | d6526ea3  |
-> > > > >=20
-> > > > > Crash log: https://syzkaller.appspot.com/text?tag=3DCrashLog&x=3D=
-12909b1a580000     =20
-> > > > >=20
-> > > > > The report indicates hung tasks within the hfs context.
-> > > > >=20
-> > > > > Analysis
-> > > > > =3D=3D=3D=3D=3D=3D=3D=3D
-> > > > > In the crash log, the lockdep information requires adjustment bas=
-ed on the call stack.
-> > > > > After adjustment, a deadlock is identified:
-> > > > >=20
-> > > > > task syz.1.1902:8009
-> > > > > - held &disk->open_mutex
-> > > > > - held foio lock
-> > > > > - wait lock_buffer(bh)
-> > > > > Partial call trace:
-> > > > > ->blkdev_writepages()
-> > > > >         ->writeback_iter()
-> > > > >                 ->writeback_get_folio()
-> > > > >                         ->folio_lock(folio)
-> > > > >         ->block_write_full_folio()
-> > > > >                 __block_write_full_folio()
-> > > > >                         ->lock_buffer(bh)
-> > > > >=20
-> > > > > task syz.0.1904:8010
-> > > > > - held &type->s_umount_key#66 down_read
-> > > > > - held lock_buffer(HFS_SB(sb)->mdb_bh);
-> > > > > - wait folio
-> > > > > Partial call trace:
-> > > > > hfs_mdb_commit
-> > > > >         ->lock_buffer(HFS_SB(sb)->mdb_bh);
-> > > > >         ->bh =3D sb_bread(sb, block);
-> > > > >                 ...->folio_lock(folio)
-> > > > >=20
-> > > > >=20
-> > > > > Other hung tasks are secondary effects of this deadlock. The issue
-> > > > > is reproducible in my local environment usuing the syz-reproducer.
-> > > > >=20
-> > > > > Verification
-> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > >=20
-> > > > > Two patches are verified against the syz-reproducer.
-> > > > > Neither reproduce the deadlock.
-> > > > >=20
-> > > > > Option 1: Removing `un/lock_buffer(HFS_SB(sb)->mdb_bh)`
-> > > > > ------------------------------------------------------
-> > > > >=20
-> > > > > diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
-> > > > > index 53f3fae60217..c641adb94e6f 100644
-> > > > > --- a/fs/hfs/mdb.c
-> > > > > +++ b/fs/hfs/mdb.c
-> > > > > @@ -268,7 +268,6 @@ void hfs_mdb_commit(struct super_block *sb)
-> > > > >         if (sb_rdonly(sb))
-> > > > >                 return;
-> > > > >=20
-> > > > > -       lock_buffer(HFS_SB(sb)->mdb_bh);
-> > > > >         if (test_and_clear_bit(HFS_FLG_MDB_DIRTY, &HFS_SB(sb)->fl=
-ags)) {
-> > > > >                 /* These parameters may have been modified, so wr=
-ite them back */
-> > > > >                 mdb->drLsMod =3D hfs_mtime();
-> > > > > @@ -340,7 +339,6 @@ void hfs_mdb_commit(struct super_block *sb)
-> > > > >                         size -=3D len;
-> > > > >                 }
-> > > > >         }
-> > > > > -       unlock_buffer(HFS_SB(sb)->mdb_bh);
-> > > > >  }
-> > > > >=20
-> > > > >=20
-> > > > > Options 2: Moving `unlock_buffer(HFS_SB(sb)->mdb_bh)`
-> > > > > --------------------------------------------------------
-> > > > >=20
-> > > > > diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
-> > > > > index 53f3fae60217..ec534c630c7e 100644
-> > > > > --- a/fs/hfs/mdb.c
-> > > > > +++ b/fs/hfs/mdb.c
-> > > > > @@ -309,6 +309,7 @@ void hfs_mdb_commit(struct super_block *sb)
-> > > > >                 sync_dirty_buffer(HFS_SB(sb)->alt_mdb_bh);
-> > > > >         }
-> > > > > =20
-> > > > > +       unlock_buffer(HFS_SB(sb)->mdb_bh);
-> > > > >         if (test_and_clear_bit(HFS_FLG_BITMAP_DIRTY, &HFS_SB(sb)-=
->flags)) {
-> > > > >                 struct buffer_head *bh;
-> > > > >                 sector_t block;
-> > > > > @@ -340,7 +341,6 @@ void hfs_mdb_commit(struct super_block *sb)
-> > > > >                         size -=3D len;
-> > > > >                 }
-> > > > >         }
-> > > > > -       unlock_buffer(HFS_SB(sb)->mdb_bh);
-> > > > >  }
-> > > > >=20
-> > > > > Conclusion
-> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > >=20
-> > > > > The analysis and verification confirms that the hung tasks are ca=
-used by
-> > > > > the deadlock between `lock_buffer(HFS_SB(sb)->mdb_bh)` and `sb_br=
-ead(sb, block)`.
-> > > >=20
-> > > > First of all, we need to answer this question: How is it
-> > > > possible that superblock and volume bitmap is located at the same f=
-olio or
-> > > > logical block? In normal case, the superblock and volume bitmap sho=
-uld not be
-> > > > located in the same logical block. It sounds to me that you have co=
-rrupted
-> > > > volume and this is why this logic [1] finally overlap with superblo=
-ck location:
-> > > >=20
-> > > > block =3D be16_to_cpu(HFS_SB(sb)->mdb->drVBMSt) + HFS_SB(sb)->part_=
-start;
-> > > > off =3D (block << HFS_SECTOR_SIZE_BITS) & (sb->s_blocksize - 1);
-> > > > block >>=3D sb->s_blocksize_bits - HFS_SECTOR_SIZE_BITS;
-> > > >=20
-> > > > I assume that superblock is corrupted and the mdb->drVBMSt [2] has =
-incorrect
-> > > > metadata. As a result, we have this deadlock situation. The fix sho=
-uld be not
-> > > > here but we need to add some sanity check of mdb->drVBMSt somewhere=
- in
-> > > > hfs_fill_super() workflow.
-> > > >=20
-> > > > Could you please check my vision?
-> > > >=20
-> > > > Thanks,
-> > > > Slava.
-> > > >=20
-> > > > [1] https://elixir.bootlin.com/linux/v6.19-rc5/source/fs/hfs/mdb.c#=
-L318   =20
-> > > > [2]
-> > > > https://elixir.bootlin.com/linux/v6.19-rc5/source/include/linux/hfs=
-_common.h#L196   =20
-> > >=20
-> > > Hi Slava,
-> > >=20
-> > > I have traced the values during the hang. Here are the values observe=
-d:
-> > >=20
-> > > - MDB: blocknr=3D2
-> > > - Volume Bitmap (drVBMSt): 3
-> > > - s_blocksize: 512 bytes
-> > >=20
-> > > This confirms a circular dependency between the folio lock and
-> > > the buffer lock. The writeback thread holds the 4KB folio lock and=20
-> > > waits for the MDB buffer lock (block 2). Simultaneously, the HFS sync=
-=20
-> > > thread holds the MDB buffer lock and waits for the same folio lock=20
-> > > to read the bitmap (block 3).
-> > >=20
-> > >=20
-> > > Since block 2 and block 3 share the same folio, this locking=20
-> > > inversion occurs. I would appreciate your thoughts on whether=20
-> > > hfs_fill_super() should validate drVBMSt to ensure the bitmap=20
-> > > does not reside in the same folio as the MDB.
-> >=20
-> >=20
-> > As far as I can see, I can run xfstest on HFS volume (for example, gene=
-ric/001
-> > has been finished successfully):
-> >=20
-> > sudo ./check -g auto -E ./my_exclude.txt=20
-> > FSTYP         -- hfs
-> > PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.19.0-rc1+ #56 SMP
-> > PREEMPT_DYNAMIC Thu Jan 15 12:55:22 PST 2026
-> > MKFS_OPTIONS  -- /dev/loop51
-> > MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
-> >=20
-> > generic/001 36s ...  36s
-> >=20
-> > 2026-01-15T13:00:07.589868-08:00 hfsplus-testing-0001 kernel: run fstes=
-ts
-> > generic/001 at 2026-01-15 13:00:07
-> > 2026-01-15T13:00:07.661605-08:00 hfsplus-testing-0001 systemd[1]: Start=
-ed
-> > fstests-generic-001.scope - /usr/bin/bash -c "test -w /proc/self/oom_sc=
-ore_adj
-> > && echo 250 > /proc/self/oom_score_adj; exec ./tests/generic/001".
-> > 2026-01-15T13:00:13.355795-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():296 HFS_SB(sb)->mdb_bh buffer has been locked
-> > 2026-01-15T13:00:13.355809-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():348 drVBMSt 3, part_start 0, off 0, block 3, size 8167
-> > 2026-01-15T13:00:13.355810-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355810-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355811-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355812-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355812-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355812-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355813-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355813-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355813-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355814-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355814-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355815-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355815-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355815-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355816-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355816-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355816-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355816-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355817-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355818-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355818-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355818-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355819-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355819-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355819-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355819-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355820-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355820-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355821-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355821-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355821-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.355822-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.355822-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():383 HFS_SB(sb)->mdb_bh buffer has been unlocked
-> > 2026-01-15T13:00:13.681527-08:00 hfsplus-testing-0001 systemd[1]: fstes=
-ts-
-> > generic-001.scope: Deactivated successfully.
-> > 2026-01-15T13:00:13.681597-08:00 hfsplus-testing-0001 systemd[1]: fstes=
-ts-
-> > generic-001.scope: Consumed 5.928s CPU time.
-> > 2026-01-15T13:00:13.714928-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():296 HFS_SB(sb)->mdb_bh buffer has been locked
-> > 2026-01-15T13:00:13.714942-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():348 drVBMSt 3, part_start 0, off 0, block 3, size 8167
-> > 2026-01-15T13:00:13.714943-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714944-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714944-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714944-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714945-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714945-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714946-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714946-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714947-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714947-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714947-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714948-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714948-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714948-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714949-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714949-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714950-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714950-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714950-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714951-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714951-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714952-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714952-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714952-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714953-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714953-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714953-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714954-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714954-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714955-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714955-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():356 start read volume bitmap block
-> > 2026-01-15T13:00:13.714955-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():370 volume bitmap block has been read and copied
-> > 2026-01-15T13:00:13.714956-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():383 HFS_SB(sb)->mdb_bh buffer has been unlocked
-> > 2026-01-15T13:00:13.716742-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():296 HFS_SB(sb)->mdb_bh buffer has been locked
-> > 2026-01-15T13:00:13.716754-08:00 hfsplus-testing-0001 kernel: hfs:
-> > hfs_mdb_commit():383 HFS_SB(sb)->mdb_bh buffer has been unlocked
-> > 2026-01-15T13:00:13.722184-08:00 hfsplus-testing-0001 systemd[1]: mnt-
-> > test.mount: Deactivated successfully.
-> >=20
-> > And I don't see any issues with locking into the added debug output. I =
-don't see
-> > the reproduction of reported deadlock. And the logic of hfs_mdb_commit(=
-) correct
-> > enough.
-> >=20
-> > The main question is: how blkdev_writepages() can collide with hfs_mdb_=
-commit()?
-> > I assume that blkdev_writepages() is trying to flush the user data. So,=
- what is
-> > the problem here? Is it allocation issue? Does it mean that some file w=
-as not
-> > properly allocated? Or does it mean that superblock commit somehow coll=
-ided with
-> > user data flush? But how does it possible? Which particular workload co=
-uld have
-> > such issue?
-> >=20
-> > Currently, your analysis doesn't show what problem is and how it is hap=
-pened.=20
-> >=20
-> > Thanks,
-> > Slava.
->=20
-> Hi Slava,
->=20
-> Thank you very much for your feedback and for taking the time to=20
-> review this. I apologize if my previous analysis was not clear=20
-> enough. As I am relatively new to this area, I truly appreciate=20
-> your patience.
->=20
-> After further tracing, I would like to share more details on how the=20
-> collision between blkdev_writepages() and hfs_mdb_commit() occurs.=20
-> It appears to be a timing-specific race condition.
->=20
-> 1. Physical Overlap (The "How"):
-> In my environment, the HFS block size is 512B and the MDB is located=20
-> at block 2 (offset 1024). Since 1024 < 4096, the MDB resides=20
-> within the block device's first folio (index 0).=20
-> Consequently, both the filesystem layer (via mdb_bh) and the block=20
-> layer (via bdev mapping) operate on the exact same folio at index 0.
->=20
-> 2. The Race Window (The "Why"):
-> The collision is triggered by the global nature of ksys_sync(). In=20
-> a system with multiple mounted devices, there is a significant time=20
-> gap between Stage 1 (iterate_supers) and Stage 2 (sync_bdevs). This=20
-> window allows a concurrent task to dirty the MDB folio after one=20
-> sync task has already passed its FS-sync stage.
->=20
-> 3. Proposed Reproduction Timeline:
-> - Task A: Starts ksys_sync() and finishes iterate_supers()=20
->   for the HFS device. It then moves on to sync other devices.
-> - Task B: Creates a new file on HFS, then starts its=20
->   own ksys_sync().
-> - Task B: Enters hfs_mdb_commit(), calls lock_buffer(mdb_bh) and=20
->   mark_buffer_dirty(mdb_bh). This makes folio 0 dirty.
-> - Task A: Finally reaches sync_bdevs() for the HFS device. It sees=20
->   folio 0 is dirty, calls folio_lock(folio), and then attempts=20
->   to lock_buffer(mdb_bh) for I/O.
-> - Task A: Blocks waiting for mdb_bh lock (held by Task B).
-> - Task B: Continues hfs_mdb_commit() -> sb_bread(), which attempts=20
->   to lock folio 0 (held by Task A).
->=20
-> This results in an AB-BA deadlock between the Folio Lock and the=20
-> Buffer Lock.
->=20
-> I hope this clarifies why the collision is possible even though=20
-> hfs_mdb_commit() seems correct in isolation. It is the concurrent=20
-> interleaving of FS-level and BDEV-level syncs that triggers the=20
-> violation of the Folio -> Buffer locking order.
->=20
-> I would be very grateful for your thoughts on this updated analysis.
->=20
->=20
+On Mon, Jan 19, 2026 at 04:29:32PM +0000, Jonathan Cameron wrote:
+> On Wed, 14 Jan 2026 11:46:09 +0000
+> Cristian Marussi <cristian.marussi@arm.com> wrote:
+> 
+> > Add basic support for SCMI V4.0 Telemetry protocol including SHMTI,
+> > FastChannels, Notifications and Single Sample Reads collection methods.
+> > 
 
-Firs of all, I've tried to check the syzbot report that you are mentioning =
-in
-the patch. And I was confused because it was report for FAT. So, I don't se=
-e the
-way how I can reproduce the issue on my side.
+Hi Jonathan,
 
-Secondly, I need to see the real call trace of the issue. This discussion
-doesn't make sense without the reproduction path and the call trace(s) of t=
-he
-issue.
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > ---
+> > v1 --> v2
+> >  - Add proper ioread accessors for TDCF areas
+> >  - Rework resource allocation logic and lifecycle
+> >  - Introduce new resources accessors and res_get() operation to
+> >    implement lazy enumeration
+> >  - Support boot-on telemetry:
+> >    + Add DE_ENABLED_LIST cmd support
+> >    + Add CONFIG_GET cmd support
+> >    + Add TDCF_SCAN for best effort enumeration
+> >    + Harden driver against out-of-spec FW with out of spec cmds
+> >  - Use FCs list
+> >  - Rework de_info_lookup to a moer general de_lookup
+> >  - Fixed reset to use CONFIG_GET and DE_ENABLED_LIST to gather initial
+> >    state
+> >  - Using sign_extend32 helper
+> >  - Added counted_by marker where appropriate
+> > ---
+> >  drivers/firmware/arm_scmi/Makefile    |    2 +-
+> >  drivers/firmware/arm_scmi/driver.c    |    2 +
+> >  drivers/firmware/arm_scmi/protocols.h |    1 +
+> >  drivers/firmware/arm_scmi/telemetry.c | 2671 +++++++++++++++++++++++++
+> 
+> Ouch. Might be worth splitting this up into more bite sized pieces.
+> 
+> It's a bit of a take a deep breath before diving in patch at the moment.
+> So the following is rather superficial.
+
+Yes, indeed this has to be split..usually I post the protocol unit in
+one patch...but telemetry is rather big...I will split this on V3 once I
+had some mofre feedback especially on the FS part and its supposed
+location in the siource tree (now lives all in drivers and I suppose/guess
+is frowned upon...also FS is a bit more split..but it can be further
+split)
+
+> 
+> >  include/linux/scmi_protocol.h         |  188 +-
+> >  5 files changed, 2862 insertions(+), 2 deletions(-)
+> >  create mode 100644 drivers/firmware/arm_scmi/telemetry.c
+> > 
+> 
+> 
+> 
+> > diff --git a/drivers/firmware/arm_scmi/telemetry.c b/drivers/firmware/arm_scmi/telemetry.c
+> > new file mode 100644
+> > index 000000000000..16bcdcdc1dc3
+> > --- /dev/null
+> > +++ b/drivers/firmware/arm_scmi/telemetry.c
+> > @@ -0,0 +1,2671 @@
+> 
+> > +static void scmi_telemetry_free_tde_put(struct telemetry_info *ti,
+> > +					struct telemetry_de *tde)
+> > +{
+> > +	guard(mutex)(&ti->free_mtx);
+> > +
+> > +	list_add_tail(&tde->item, &ti->free_des);
+> > +}
+> 
+> > +static int iter_de_descr_update_state(struct scmi_iterator_state *st,
+> > +				      const void *response, void *priv)
+> > +{
+> > +	const struct scmi_msg_resp_telemetry_de_description *r = response;
+> > +	struct scmi_tlm_de_priv *p = priv;
+> > +
+> > +	st->num_returned = le32_get_bits(r->num_desc, GENMASK(15, 0));
+> > +	st->num_remaining = le32_get_bits(r->num_desc, GENMASK(31, 16));
+> > +
+> > +	/* Initialized to first descriptor */
+> > +	p->next = (void *)r->desc;
+> 
+> No need to cast to a void *
+> C always lets you do this implicitly if the target type is a void *.
+
+Indeed...I think I recall that (as usual) is because I have to drop the
+const part from r without upsetting the compiler...and next is just a
+reference to iterate the payload so it is fine to be non const
+
+> 
+> > +
+> > +	return 0;
+> > +}
+> > +
+> 
+> 
+> > +static int scmi_telemetry_initial_state_lookup(struct telemetry_info *ti)
+> > +{
+> > +	struct device *dev = ti->ph->dev;
+> > +	int ret;
+> > +
+> > +	ret = scmi_telemetry_config_lookup(ti, SCMI_TLM_GRP_INVALID,
+> > +					   &ti->info.enabled,
+> > +					   &ti->info.active_update_interval);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (ti->info.enabled) {
+> 
+> I'd flip logic to reduce indent
+> 	if (!ti->info.enabled)
+> 		return 0;
+
+Yep, I will do.
+
+> 
+> 	/*
+> 	 *...
+> 
+> > +		/*
+> > +		 * When Telemetry is found already enabled on the platform,
+> > +		 * proceed with passive discovery using DE_ENABLED_LIST and
+> > +		 * TCDF scanning: note that this CAN only discover DEs exposed
+> > +		 * via SHMTIs.
+> > +		 * FastChannel DEs need a proper DE_DESCRIPTION enumeration,
+> > +		 * while, even though incoming Notifications could be used for
+> > +		 * passive discovery too, it would carry a considerable risk
+> > +		 * of assimilating trash as DEs.
+> > +		 */
+> > +		dev_info(dev,
+> > +			 "Telemetry found enabled with update interval %ux10^%d\n",
+> > +			 SCMI_TLM_GET_UPDATE_INTERVAL_SECS(ti->info.active_update_interval),
+> > +			 SCMI_TLM_GET_UPDATE_INTERVAL_EXP(ti->info.active_update_interval));
+> > +		/*
+> > +		 * Query enabled DEs list: collect states.
+> > +		 * It will include DEs from any interface.
+> > +		 * Enabled groups still NOT enumerated.
+> > +		 */
+> > +		ret = scmi_telemetry_enumerate_des_enabled_list(ti);
+> > +		if (ret)
+> > +			dev_warn(dev, FW_BUG "Cannot query enabled DE list. Carry-on.\n");
+> > +
+> > +		/* Discover DEs on SHMTis: collect states/offsets/values */
+> > +		for (int id = 0; id < ti->num_shmti; id++) {
+> > +			ret = scmi_telemetry_shmti_scan(ti, id, 0, SCAN_DISCOVERY);
+> > +			if (ret)
+> > +				dev_warn(dev, "Failed discovery-scan of SHMTI ID:%d\n", id);
+> > +		}
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> }
+> 
+> > +static int iter_intervals_update_state(struct scmi_iterator_state *st,
+> > +				       const void *response, void *priv)
+> > +{
+> > +	const struct scmi_msg_resp_telemetry_update_intervals *r = response;
+> > +
+> > +	st->num_returned = le32_get_bits(r->flags, GENMASK(11, 0));
+> > +	st->num_remaining = le32_get_bits(r->flags, GENMASK(31, 16));
+> > +
+> > +	/*
+> > +	 * total intervals is not declared previously anywhere so we
+> > +	 * assume it's returned+remaining on first call.
+> > +	 */
+> > +	if (!st->max_resources) {
+> > +		struct scmi_tlm_ivl_priv *p = priv;
+> > +		bool discrete;
+> > +		int inum;
+> > +
+> > +		discrete = INTERVALS_DISCRETE(r->flags);
+> > +		/* Check consistency on first call */
+> > +		if (!discrete && (st->num_returned != 3 || st->num_remaining != 0))
+> > +			return -EINVAL;
+> > +
+> > +		inum = st->num_returned + st->num_remaining;
+> > +		struct scmi_tlm_intervals *intrvs __free(kfree) =
+> > +			kzalloc(sizeof(*intrvs) + inum * sizeof(__u32), GFP_KERNEL);
+> 
+> Unless this is going to get more complex, the __free() isn't doing anything useful
+> as there are no other error paths before the no_free_ptr().
+
+Yes indeed...I was trying to be consistent...but here makes no sense.
+
+> 
+> > +		if (!intrvs)
+> > +			return -ENOMEM;
+> > +
+> > +		intrvs->num = inum;
+> > +		intrvs->discrete = discrete;
+> > +		st->max_resources = intrvs->num;
+> > +
+> > +		*p->intrvs = no_free_ptr(intrvs);
+> > +	}
+> > +
+> > +	return 0;
+> 
+> > +static int
+> > +scmi_tlm_enumerate_update_intervals(struct telemetry_info *ti,
+> > +				    struct scmi_tlm_intervals **intervals,
+> > +				    int grp_id, unsigned int flags)
+> > +{
+> > +	struct scmi_iterator_ops ops = {
+> > +		.prepare_message = iter_intervals_prepare_message,
+> > +		.update_state = iter_intervals_update_state,
+> > +		.process_response = iter_intervals_process_response,
+> > +	};
+> > +	const struct scmi_protocol_handle *ph = ti->ph;
+> > +	struct scmi_tlm_ivl_priv ipriv = {
+> > +		.dev = ph->dev,
+> > +		.grp_id = grp_id,
+> > +		.intrvs = intervals,
+> > +		.flags = flags,
+> > +	};
+> > +	void *iter;
+> > +
+> > +	iter = ph->hops->iter_response_init(ph, &ops, 0,
+> > +					    TELEMETRY_LIST_UPDATE_INTERVALS,
+> > +			     sizeof(struct scmi_msg_telemetry_update_intervals),
+> This alignment is unusual.  Given the length of that type name I'd do this as:
+> 
+> 	iter = ph->hops->iter_response_init(ph, &ops, 0,
+> 		TELEMETRY_LIST_UPDATE_INTERVALS,
+> 		sizeof(struct scmi_msg_telemetry_update_intervals),
+> 		&ipriv);
+> 
+
+Ok.
+
+> > +					    &ipriv);
+> > +	if (IS_ERR(iter))
+> > +		return PTR_ERR(iter);
+> > +
+> > +	return ph->hops->iter_response_run(iter);
+> > +}
+> 
+> > +static const struct scmi_telemetry_de *
+> > +scmi_telemetry_de_lookup(const struct scmi_protocol_handle *ph, u32 id)
+> > +{
+> > +	struct telemetry_info *ti = ph->get_priv(ph);
+> > +	struct scmi_telemetry_de *de;
+> > +
+> > +	ti->res_get(ti);
+> > +	de = xa_load(&ti->xa_des, id);
+> > +	if (!de)
+> > +		return NULL;
+> > +
+> > +	return de;
+> 
+> 	return xa_load(&ti->xa_des, id);
+
+Agreed.
+
+> 
+> > +}
+> 
+> 
+> > +static struct payload *
+> > +scmi_telemetry_nearest_blk_ts(struct telemetry_shmti *shmti,
+> > +			      struct payload *last_payld)
+> > +{
+> > +	struct payload *payld, *bts_payld = NULL;
+> > +	struct tdcf __iomem *tdcf = shmti->base;
+> > +	u32 *next;
+> > +
+> > +	/* Scan from start of TDCF payloads up to last_payld */
+> > +	payld = (struct payload *)tdcf->payld;
+> 
+> casting away the __iomem is usualy a bad idea.
+> Shouldn't a readl or similar be used to get next below.
+
+Yes I still have to properly rework a bit of these __iomem access paths
+in a more consistent way (sparse/smatch still screams a lot)...
+
+..all the below accessors macros are defined to use transparently an
+ioread32() or similar...next is just a reference to track the payld
+is only payload that is effectly accessed and needs proper iomem
+accessors...
+
+> 
+> 
+> > +	next = (u32 *)payld;
+> > +	while (payld < last_payld) {
+> > +		if (IS_BLK_TS(payld))
+> > +			bts_payld = payld;
+> > +
+> > +		next += USE_LINE_TS(payld) ?
+> > +			TS_LINE_DATA_PAYLD_WORDS : LINE_DATA_PAYLD_WORDS;
+> > +		payld = (struct payload *)next;
+> > +	}
+> > +
+> > +	return bts_payld;
+> > +}
+> > +
+> > +static struct telemetry_block_ts *
+> > +scmi_telemetry_blkts_lookup(struct device *dev, struct xarray *xa_bts,
+> > +			    struct payload *payld)
+> > +{
+> > +	struct telemetry_block_ts *bts;
+> > +
+> > +	bts = xa_load(xa_bts, (unsigned long)payld);
+> > +	if (!bts) {
+> > +		int ret;
+> > +
+> > +		bts = devm_kzalloc(dev, sizeof(*bts), GFP_KERNEL);
+> 
+> I'd not normally expect to see xa_insert using devm allocated memory
+> because you sort of hand ownership to the xa with that call so I'd expect
+> on exist we'd see a walk of the xa clearing out everything it is tracking.
+
+Good point...I have to say, though, to my excuse, that this part of the protocol
+code related to Block Timestamp (_blt_ts_) is knowingly very poorly curated and
+reworked since V1 given that it has been deeply changed at the spec level in the
+latest BETA spec (a few weks ago) so it will be changed substantially in the
+next V3 when BETA will be supported...
+
+...anyway...my bad I should have warned about this in the inline comments...now it
+is only generically mentioned in the cover letter that the series is still implementing
+ALPA_0 spec.
+
+> 
+> > +		if (!bts)
+> > +			return NULL;
+> > +
+> > +		refcount_set(&bts->users, 1);
+> > +		bts->payld = payld;
+> > +		bts->xa_bts = xa_bts;
+> > +		mutex_init(&bts->mtx);
+> > +		ret = xa_insert(xa_bts, (unsigned long)payld, bts, GFP_KERNEL);
+> > +		if (ret) {
+> > +			devm_kfree(dev, bts);
+> > +			return NULL;
+> > +		}
+> > +	}
+> > +
+> > +	return bts;
+> > +}
+> 
+> > +
+> > +static void scmi_telemetry_tdcf_data_parse(struct telemetry_info *ti,
+> > +					   struct payload __iomem *payld,
+> > +					   struct telemetry_shmti *shmti,
+> > +					   enum scan_mode mode)
+> > +{
+> > +	bool ts_valid = TS_VALID(payld);
+> > +	struct telemetry_de *tde;
+> > +	bool discovered = false;
+> > +	u64 val, tstamp = 0;
+> > +	u32 de_id;
+> > +
+> > +	de_id = PAYLD_ID(payld);
+> > +	/* Is thi DE ID know ? */
+> 
+> That comment needs a rewrite.
+> 
+
+Yes.
+
+> > +	tde = scmi_telemetry_tde_lookup(ti, de_id);
+> > +	if (!tde) {
+> > +		if (mode != SCAN_DISCOVERY)
+> > +			return;
+> > +
+> > +		/* In SCAN_DISCOVERY mode we allocate new DEs for unknown IDs */
+> > +		tde = scmi_telemetry_tde_get(ti, de_id);
+> > +		if (IS_ERR(tde))
+> > +			return;
+> > +
+> > +		tde->de.info->id = de_id;
+> > +		tde->de.enabled = true;
+> > +		tde->de.tstamp_enabled = ts_valid;
+> > +		discovered = true;
+> > +	}
+> > +
+> > +	/* Update DE location refs if requested: normally done only on enable */
+> > +	if (mode >= SCAN_UPDATE) {
+> > +		tde->base = shmti->base;
+> > +		tde->eplg = SHMTI_EPLG(shmti);
+> > +		tde->offset = (void *)payld - (void *)shmti->base;
+> > +
+> > +		dev_dbg(ti->ph->dev,
+> > +			"TDCF-updated DE_ID:0x%08X - shmti:%pX  offset:%u\n",
+> > +			tde->de.info->id, tde->base, tde->offset);
+> > +	}
+> > +
+> > +	if (discovered) {
+> > +		if (scmi_telemetry_tde_register(ti, tde)) {
+> > +			scmi_telemetry_free_tde_put(ti, tde);
+> > +			return;
+> > +		}
+> > +	}
+> > +
+> > +	scoped_guard(mutex, &tde->mtx) {
+> > +		if (tde->last_magic == shmti->last_magic)
+> > +			return;
+> > +	}
+> > +
+> > +	/* Data is always valid since we are NOT handling BLK TS lines here */
+> > +	val = LINE_DATA_GET(&payld->l);
+> > +	/* Collect the right TS */
+> > +	if (ts_valid) {
+> > +		if (USE_LINE_TS(payld)) {
+> > +			tstamp = LINE_TSTAMP_GET(&payld->tsl);
+> > +		} else if (USE_BLK_TS(payld)) {
+> > +			if (!tde->bts) {
+> > +				/*
+> > +				 * Scanning a TDCF looking for the nearest
+> > +				 * previous valid BLK_TS, after having found a
+> > +				 * USE_BLK_TS() payload, MUST succeed.
+> > +				 */
+> > +				tde->bts = scmi_telemetry_blkts_bind(ti->ph->dev,
+> > +								     shmti, payld,
+> > +								     &ti->xa_bts);
+> > +				if (WARN_ON(!tde->bts))
+> > +					return;
+> > +			}
+> > +
+> > +			tstamp = scmi_telemetry_blkts_read(tde->last_magic,
+> > +							   tde->bts);
+> > +		}
+> > +	}
+> > +
+> > +	guard(mutex)(&tde->mtx);
+> > +	tde->last_magic = shmti->last_magic;
+> > +	tde->last_val = val;
+> > +	if (tde->de.tstamp_enabled)
+> 
+> ternary perhaps
+> 	tde->last_ts = tde->de.tstamp_enabled ? tstamp : 0;
+> 
+
+Yes much better.
+
+> 
+> > +		tde->last_ts = tstamp;
+> > +	else
+> > +		tde->last_ts = 0;
+> > +}
+> 
+> 
+> 
+> 
+> > +static inline void scmi_telemetry_de_data_fc_read(struct telemetry_de *tde,
+> > +						  u64 *tstamp, u64 *val)
+> > +{
+> > +	struct fc_tsline __iomem *fc = tde->base + tde->offset;
+> > +
+> > +	*val = LINE_DATA_GET(fc);
+> > +	if (tstamp) {
+> > +		if (tde->de.tstamp_support)
+> > +			*tstamp = LINE_TSTAMP_GET(fc);
+> > +		else
+> > +			*tstamp = 0;
+> 
+> 		*tstamp = tde->de.tstam_support ? LINE_TIMESTAMP_GET(fc) : 0;
+
+Indeed.
+
+> 
+> > +	}
+> > +}
+> > +
+> > +static void scmi_telemetry_scan_update(struct telemetry_info *ti, u64 ts)
+> > +{
+> > +	struct telemetry_de *tde;
+> > +
+> > +	/* Scan all SHMTIs ... */
+> > +	for (int id = 0; id < ti->num_shmti; id++) {
+> > +		int ret;
+> > +
+> > +		ret = scmi_telemetry_shmti_scan(ti, id, ts, SCAN_LOOKUP);
+> > +		if (ret)
+> 
+> Might as well simplify given value of ret only used here.
+> 
+> 		if (scmi_telemetry_shmti_scan(ti, id, ts, SCAN_LOOKUP)) {
+> 			dev_warn();
+
+I'll do.
+
+> 
+> > +			dev_warn(ti->ph->dev,
+> > +				 "Failed update-scan of SHMTI ID:%d\n", id);
+> > +	}
+> > +
+> > +	if (!ti->info.fc_support)
+> > +		return;
+> > +
+> > +	/* Need to enumerate resources to access fastchannels */
+> > +	ti->res_get(ti);
+> > +	list_for_each_entry(tde, &ti->fcs_des, item) {
+> > +		u64 val, tstamp;
+> > +
+> > +		if (!tde->de.enabled)
+> > +			continue;
+> > +
+> > +		scmi_telemetry_de_data_fc_read(tde, &tstamp, &val);
+> > +
+> > +		guard(mutex)(&tde->mtx);
+> > +		tde->last_val = val;
+> > +		if (tde->de.tstamp_enabled)
+> > +			tde->last_ts = tstamp;
+> > +		else
+> > +			tde->last_ts = 0;
+> > +	}
+> > +}
+> > +
+> > +/*
+> > + * TDCF and TS Line Management Notes
+> > + * ---------------------------------
+> > + *  (from a chat with ATG)
+> 
+> That's probably not a detail we want in the long term record, nice
+> and helpful as they are :)
+
+Mmmm....it was to keep track of somehow of these discussions, the
+reasons and the origin of the (supposed) truth...but yes I can strip
+down the details :P ... especially because some of these clarifications
+indeed have now been merged into the BETA spec so the wording around
+this should be less ammbiguos in BETA...
+
+> 
+> 
+> > + *
+> > + * TCDF Payload Metadata notable bits:
+> > + *  - Bit[3]: USE BLK Tstamp
+> > + *  - Bit[2]: USE LINE Tstamp
+> > + *  - Bit[1]: Tstamp VALID
+> > + *
+> > + * CASE_1:
+> ...
+> 
+> 
+> > +static int
+> > +scmi_telemetry_samples_collect(struct telemetry_info *ti, int grp_id,
+> > +			       int *num_samples,
+> > +			       struct scmi_telemetry_de_sample *samples)
+> > +{
+> > +	struct scmi_telemetry_res_info *rinfo;
+> > +	int max_samples;
+> > +
+> > +	max_samples = *num_samples;
+> > +	*num_samples = 0;
+> > +
+> > +	rinfo = ti->res_get(ti);
+> > +	for (int i = 0; i < rinfo->num_des; i++) {
+> > +		struct scmi_telemetry_de *de;
+> > +		u64 val, tstamp;
+> > +		int ret;
+> > +
+> > +		de = rinfo->des[i];
+> > +		if (grp_id != SCMI_TLM_GRP_INVALID &&
+> > +		    (!de->grp || de->grp->info->id != grp_id))
+> > +			continue;
+> > +
+> > +		ret = scmi_telemetry_de_cached_read(ti, de, &tstamp, &val);
+> > +		if (ret)
+> > +			continue;
+> > +
+> > +		if (*num_samples == max_samples)
+> > +			return -ENOSPC;
+> > +
+> > +		samples[*num_samples].tstamp = tstamp;
+> > +		samples[*num_samples].val = val;
+> > +		samples[*num_samples].id = de->info->id;
+> Maybe worth doing
+> 		samples[(*num_samples)++] = (struct scmi_telemetry_de_sample) {
+> 			.tstamp = tstamp,
+> 			.val = val,
+> 			.id = de->info->id,
+> 		};
+> so that it is immediately obvious you are filling whole record in (or zeroing
+> any other fields though not relevant here)
+
+wow...that is defintely a construct I would not have come up with :P
+..thanks for the hint..
+
+> 
+> > +
+> > +		(*num_samples)++;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> 
+> > +
+> > +static int scmi_telemetry_des_sample_get(const struct scmi_protocol_handle *ph,
+> > +					 int grp_id, int *num_samples,
+> > +					 struct scmi_telemetry_de_sample *samples)
+> > +{
+> > +	struct telemetry_info *ti = ph->get_priv(ph);
+> > +	struct scmi_msg_telemetry_config_set *msg;
+> > +	struct scmi_xfer *t;
+> > +	bool grp_ignore;
+> > +	int ret;
+> > +
+> > +	if (!ti->info.enabled || !num_samples || !samples)
+> > +		return -EINVAL;
+> > +
+> > +	grp_ignore = grp_id == SCMI_TLM_GRP_INVALID ? true : false;
+> > +	if (!grp_ignore && grp_id >= ti->info.base.num_groups)
+> > +		return -EINVAL;
+> > +
+> > +	ret = ph->xops->xfer_get_init(ph, TELEMETRY_CONFIG_SET,
+> > +				      sizeof(*msg), 0, &t);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	msg = t->tx.buf;
+> > +	msg->grp_id = grp_id;
+> > +	msg->control = TELEMETRY_ENABLE;
+> > +	msg->control |= grp_ignore ? TELEMETRY_SET_SELECTOR_ALL :
+> > +		TELEMETRY_SET_SELECTOR_GROUP;
+> > +	msg->control |= TELEMETRY_MODE_SINGLE;
+> > +	msg->sampling_rate = 0;
+> > +
+> > +	ret = ph->xops->do_xfer_with_response(ph, t);
+> > +	if (!ret) {
+> > +		struct scmi_msg_resp_telemetry_reading_complete *r = t->rx.buf;
+> 
+> Feels like that type might benefit form a shorter name
+> 		struct scmi_msg_resp_telemetry_rd_comp
+> maybe?
+
+Yes...we try to stick to some standard msg/reply struct naming across protocols
+definition ... but this leads to awfully long names...
+
+> 
+> > +
+> > +		/* Update cached DEs values from payload */
+> > +		if (r->num_dwords)
+> > +			scmi_telemetry_msg_payld_process(ti, r->num_dwords,
+> > +							 r->dwords, 0);
+> > +		/* Scan and update SMHTIs and FCs */
+> > +		scmi_telemetry_scan_update(ti, 0);
+> > +
+> > +		/* Collect all last cached values */
+> > +		ret = scmi_telemetry_samples_collect(ti, grp_id, num_samples,
+> > +						     samples);
+> > +	}
+> > +
+> > +	ph->xops->xfer_put(ph, t);
+> > +
+> > +	return ret;
+> > +}
+> 
+> > +
+> > +static int scmi_telemetry_reset(const struct scmi_protocol_handle *ph)
+> > +{
+> > +	struct scmi_xfer *t;
+> > +	int ret;
+> > +
+> > +	ret = ph->xops->xfer_get_init(ph, TELEMETRY_RESET, sizeof(u32), 0, &t);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	put_unaligned_le32(0, t->tx.buf);
+> > +	ret = ph->xops->do_xfer(ph, t);
+> > +	if (!ret) {
+> > +		struct telemetry_info *ti = ph->get_priv(ph);
+> > +
+> > +		scmi_telemetry_local_resources_reset(ti);
+> > +		/* Fetch agaon states state from platform.*/
+> 
+> Not sure what that comment means.
+
+That there was a problem between the screen and the keyboard :D ...
+..I will fix...the meaning was simply...
+
+	Fetch again the states from the platform.
+
+... but seemed more gaelic from my mis-spelling :P 
+
+> 
+> > +		ret = scmi_telemetry_initial_state_lookup(ti);
+> > +		if (ret)
+> > +			dev_warn(ph->dev,
+> > +				 FW_BUG "Cannot retrieve initial state after reset.\n");
+> > +	}
+> > +
+> > +	ph->xops->xfer_put(ph, t);
+> > +
+> > +	return ret;
+> > +}
+> 
+> > +static void *
+> > +scmi_telemetry_fill_custom_report(const struct scmi_protocol_handle *ph,
+> > +				  u8 evt_id, ktime_t timestamp,
+> > +				  const void *payld, size_t payld_sz,
+> > +				  void *report, u32 *src_id)
+> > +{
+> > +	const struct scmi_telemetry_update_notify_payld *p = payld;
+> > +	struct scmi_telemetry_update_report *r = report;
+> > +
+> > +	/* At least sized as an empty notification */
+> > +	if (payld_sz < sizeof(*p))
+> > +		return NULL;
+> > +
+> > +	r->timestamp = timestamp;
+> > +	r->agent_id = le32_to_cpu(p->agent_id);
+> > +	r->status = le32_to_cpu(p->status);
+> > +	r->num_dwords = le32_to_cpu(p->num_dwords);
+> > +	/*
+> > +	 * Allocated dwords and report are sized as max_msg_size, so as
+> > +	 * to allow for the maximum payload permitted by the configured
+> > +	 * transport. Overflow is not possible since out-of-size messages
+> > +	 * are dropped at the transport layer.
+> > +	 */
+> > +	if (r->num_dwords)
+> > +		memcpy(r->dwords, p->array, r->num_dwords * sizeof(u32));
+> 
+> This needs le32 magic as you are copying from an array of those to an array
+> of unsigned int (if you do this as a memcpy that should be u32 to make the
+> size explicit).
+> 
+> memcpy_from_le32() should do what you need here.
+
+So...this is the usual per-protocol events handler that is used to parse
+the notification payload and build a notification report for the users
+interested in this notification to use...
+
+...in this series this report is really used by this protocol itself in
+scmi_telemetry_msg_payld_process() to cache the received DE data...and
+in this last routine all teh LE32 handling happens ...
+...this is the only protocol indeed that makes use and process notifcation
+reports from within...
+
+...so it works properly at the end ...BUT is wrong as you pointed out since
+any other user interested in these generic notification support will not
+enjoy these post-processing conversion and also the report itself uses
+u32 fields already so....no excuses..
+
+I will fix...and sparse/smatch will scream a little less..
+
+> 
+> 
+> > +
+> > +	*src_id = 0;
+> > +
+> > +	return r;
+> > +}
+> 
+> 
+> > diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
+> > index c6efe4f371ac..d58b81ffd81e 100644
+> > --- a/include/linux/scmi_protocol.h
+> > +++ b/include/linux/scmi_protocol.h
+> 
+> > +
+> > +/**
+> > + * struct scmi_telemetry_proto_ops - represents the various operations provided
+> > + *	by SCMI Telemetry Protocol
+> > + *
+> > + * @info_get: get the general Telemetry information.
+> > + * @de_lookup: get a specific DE descriptor from the DE id.
+> > + * @res_get: get a reference to the Telemetry resources descriptor.
+> > + * @state_get: retrieve the specific DE or GROUP state.
+> > + * @state_set: enable/disable the specific DE or GROUP with or without timestamps.
+> > + * @all_disable: disable ALL DEs or GROUPs.
+> > + * @collection_configure: choose a sampling rate and enable SHMTI/FC sampling
+> > + *			  for on demand collection via @de_data_read or async
+> > + *			  notificatioins for all the enabled DEs.
+> > + * @de_data_read: on-demand read of a single DE and related optional timestamp:
+> > + *		  the value will be retrieved at the proper SHMTI offset OR
+> > + *		  from the dedicated FC area (if supported by that DE).
+> > + * @des_bulk_read: on-demand read of all the currently enabled DEs, or just
+> > + *		   the ones belonging to a specific group when provided.
+> > + * @des_sample_get: on-demand read of all the currently enabled DEs, or just
+> > + *		    the ones belonging to a specific group when provided.
+> > + *		    This causes an immediate update platform-side of all the
+> > + *		    enabled DEs.
+> > + * @config_get: retrieve current telemetry configuration.
+> > + * @reset: reset configuration and telemetry data.
+> > + */
+> > +struct scmi_telemetry_proto_ops {
+> > +	const struct scmi_telemetry_info __must_check *(*info_get)
+> > +		(const struct scmi_protocol_handle *ph);
+> > +	const struct scmi_telemetry_de __must_check *(*de_lookup)
+> > +		(const struct scmi_protocol_handle *ph, u32 id);
+> > +	const struct scmi_telemetry_res_info __must_check *(*res_get)
+> > +		(const struct scmi_protocol_handle *ph);
+> > +	int (*state_get)(const struct scmi_protocol_handle *ph,
+> > +			 u32 id, bool *enabled, bool *tstamp_enabled);
+> > +	int (*state_set)(const struct scmi_protocol_handle *ph,
+> > +			 bool is_group, u32 id, bool *enable, bool *tstamp);
+> > +	int (*all_disable)(const struct scmi_protocol_handle *ph, bool group);
+> > +	int (*collection_configure)(const struct scmi_protocol_handle *ph,
+> > +				    unsigned int res_id, bool grp_ignore,
+> > +				    bool *enable,
+> > +				    unsigned int *update_interval_ms,
+> > +				    enum scmi_telemetry_collection *mode);
+> > +	int (*de_data_read)(const struct scmi_protocol_handle *ph,
+> > +			    struct scmi_telemetry_de_sample *sample);
+> > +	int __must_check (*des_bulk_read)(const struct scmi_protocol_handle *ph,
+> 
+> I'm curious. What about this one makes it suitable for a __must_check?
+> Seems a bit random.
+
+So some of these read functions will return -EINVAL when called with an
+invalid setup while in some other cases could return simply an empty buffer
+
+e.g.:
+
+	de_data_read () -> a single DE read...-EINVAL if the DE is NOT
+			   enabled
+
+	des_bulk_read() - > returns only the enabled DEs and so it can
+			    return an empty buffer when NO DEs are enabled
+			    BUT it returns -EINVAL if called when Telemetry
+			    is disabled as a whole
+
+	des_sample_get() -> same logic as des_bulk_read() BUT with async
+			    messages
+
+..so I would say..it is NOT random...but needs to be reviewed when the
+__must_check is applied...since as an example is probably missing in
+de_data_read()
+
+> 
+> > +					  int grp_id, int *num_samples,
+> > +					  struct scmi_telemetry_de_sample *samples);
+> > +	int __must_check (*des_sample_get)(const struct scmi_protocol_handle *ph,
+> > +					   int grp_id, int *num_samples,
+> > +					   struct scmi_telemetry_de_sample *samples);
+> > +	int (*config_get)(const struct scmi_protocol_handle *ph, bool *enabled,
+> > +			  int *mode, u32 *update_interval);
+> > +	int (*reset)(const struct scmi_protocol_handle *ph);
+> > +};
+> 
+
+Thanks a lot Jonathan for having a look at this series.
+It still needs some work to cleanup and split as you could see.
 
 Thanks,
-Slava.
+Cristian
 
