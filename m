@@ -1,56 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-74509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A953ED3B4A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 18:41:25 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C625D3B4E7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 18:53:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1BA1D3075B74
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 17:41:02 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 9FD703020999
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 17:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C1C32E686;
-	Mon, 19 Jan 2026 17:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECBE32D0E6;
+	Mon, 19 Jan 2026 17:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJ9MEf6E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MGwF65TA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846F932C937;
-	Mon, 19 Jan 2026 17:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860F82EAD0D;
+	Mon, 19 Jan 2026 17:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768844459; cv=none; b=ET0yCPCdzfJ0HH/Spmja3N+jtGn+Jo4N8kcxLz9KZJHJ9SsB+eco2gowvnbaiBHeGisBnJiXRmOcjK1A8MdDSN2GPaw4P5di2OiwgXtTu6+/8ANzhvU0kir2NRzWegCANIk52tu6XlFiavZT57JGpMdNRsxkHjFAHJkFXkaknxE=
+	t=1768844601; cv=none; b=B9aGVXUyRNM0CJk7vX/3KqJ31imXJPmyGLP+mDz8vhLonzPwA39nTRdNMQj7nX/E7uASTrOlp3vklsO/dIZQyVxDoWNPIoSBUF/HL1zNjIdys7ZP8CjPpEFEA9Av8n/JfgpnKD8IX++EEsxvz/9+IWrjHwzGNtMxxQtn96J+oNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768844459; c=relaxed/simple;
-	bh=BS+NKcICrRrnj0S+OS2EH3so28h66QIWlb5Nmti/+88=;
+	s=arc-20240116; t=1768844601; c=relaxed/simple;
+	bh=cdGIOFFRvnJlxGn9hpb0uGv6wfMUu6FzeqR6WDnLUp4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FVxfjhz9KKEwxhI/bsMCh1fNBVXiu9vrqWqb2brmdJvQ3D/TY/bZXb0dEpu2ndhOvwjNTqY1CSLGfjGnD0dS1ob5bwtwUhMNU1Rbf8dXHX2r6e2FSfvhjozhnK49Xmxmsi5+Y3j4FokVQZdG3KRLMNmUOCiwWqBha17Jv3i9RLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJ9MEf6E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E37EC116C6;
-	Mon, 19 Jan 2026 17:40:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DgLvf72hEvDIOjNoUImYwPgtUFrj7FGunpYy4fjNabD5CbnAAKGZQMizlwEPRAo3hX0H8xG14oNrLYEmnSF3kvJlyv1msJJA21zTnzIQPxPSWxka2aSHltWiswJUWl6KnCgxwKTVfennZvSVziz4UvCrfeHeNUx7wQHrjEIHUbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MGwF65TA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3AB4C116C6;
+	Mon, 19 Jan 2026 17:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768844459;
-	bh=BS+NKcICrRrnj0S+OS2EH3so28h66QIWlb5Nmti/+88=;
+	s=k20201202; t=1768844601;
+	bh=cdGIOFFRvnJlxGn9hpb0uGv6wfMUu6FzeqR6WDnLUp4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WJ9MEf6EC7SdoQr3VcPmfkO0Z6hRk1nusvyU3v2cz215vVaeS9Bpqli5ccYJKTfeB
-	 XDoZcAYcuJHGTC3sv4CV2d2AHtTIVAOuO70WXVq7LyXhnsd4/1QL0hDisnq2OLAEed
-	 emE573K87qRiSuoEEmlM0k2PzqqkRXvE1WYzXhK7mfdM1QBPNbgOuCHL8ivWc4hHe1
-	 1Z49+AN09VGKNSNxUlx1sfHj+Vvp75Dvzvbbp4wLAQEuLI7eWDdpZ1DSCob0YkBZCp
-	 qXnMXNZ3EL50xfSrij85HStN7mmtiMkqjdbq6crHL3+cPDyGlUBmfVg+DDOTUAl2Xe
-	 mJq38OFTCQHgw==
-Date: Mon, 19 Jan 2026 09:40:58 -0800
+	b=MGwF65TA3gitDjhoZnbKDkEA2sh1RCYXQ5D791luNBaSbqKWcxX/jv1dNla0PpTXI
+	 nylKKrYDr9hB6F6pCbC0GaSTcDNkZZchpXRO4sDb148KMZB/u6TshbUmF1wj5qJGqM
+	 VcKMcyAGXXkRFupsV5Di4KEHUCHjXxR/QH5BqiMBkDkRPNeDmhLYryD3x5bAPJU+qk
+	 IJfGfEpKBU+uQdxu2deEEOmM0nK+IzhrV4DEJLYPS5Jos0sQReuiYPHIJAXPpQYGmV
+	 LrsqY2ubZyuYrFE0NHP5FCsRaOzUyOL2egpFrW6CH/1B4XdMi8Pnz+QY2M39xWvEMZ
+	 pBXWgocItyD5Q==
+Date: Mon, 19 Jan 2026 09:43:20 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: Christoph Hellwig <hch@lst.de>
 Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
 	Carlos Maiolino <cem@kernel.org>, Qu Wenruo <wqu@suse.com>,
 	Al Viro <viro@zeniv.linux.org.uk>, linux-block@vger.kernel.org,
 	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 06/14] iomap: fix submission side handling of completion
- side errors
-Message-ID: <20260119174058.GA15551@frogsfrogsfrogs>
+Subject: Re: [PATCH 07/14] iomap: simplify iomap_dio_bio_iter
+Message-ID: <20260119174320.GB15551@frogsfrogsfrogs>
 References: <20260119074425.4005867-1-hch@lst.de>
- <20260119074425.4005867-7-hch@lst.de>
+ <20260119074425.4005867-8-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,48 +58,77 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260119074425.4005867-7-hch@lst.de>
+In-Reply-To: <20260119074425.4005867-8-hch@lst.de>
 
-On Mon, Jan 19, 2026 at 08:44:13AM +0100, Christoph Hellwig wrote:
-> The "if (dio->error)" in iomap_dio_bio_iter exists to stop submitting
-> more bios when a completion already return an error.  Commit cfe057f7db1f
-> ("iomap_dio_actor(): fix iov_iter bugs") made it revert the iov by
-> "copied", which is very wrong given that we've already consumed that
-> range and submitted a bio for it.
+On Mon, Jan 19, 2026 at 08:44:14AM +0100, Christoph Hellwig wrote:
+> Use iov_iter_count to check if we need to continue as that just reads
+> a field in the iov_iter, and only use bio_iov_vecs_to_alloc to calculate
+> the actual number of vectors to allocate for the bio.
 > 
-> Fixes: cfe057f7db1f ("iomap_dio_actor(): fix iov_iter bugs")
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Thanks for answering my question last time around,
+/me is satisfied that bio_iov_vecs_to_alloc -> iov_iter_count is a
+reasonable enough substitution.
+
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
 > ---
->  fs/iomap/direct-io.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
+>  fs/iomap/direct-io.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
 > 
 > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 4000c8596d9b..867c0ac6df8f 100644
+> index 867c0ac6df8f..de03bc7cf4ed 100644
 > --- a/fs/iomap/direct-io.c
 > +++ b/fs/iomap/direct-io.c
-> @@ -443,9 +443,13 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
->  	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
+> @@ -312,7 +312,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  	blk_opf_t bio_opf = REQ_SYNC | REQ_IDLE;
+>  	struct bio *bio;
+>  	bool need_zeroout = false;
+> -	int nr_pages, ret = 0;
+> +	int ret = 0;
+>  	u64 copied = 0;
+>  	size_t orig_count;
+>  	unsigned int alignment;
+> @@ -440,7 +440,6 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  			goto out;
+>  	}
+>  
+> -	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
 >  	do {
 >  		size_t n;
-> -		if (dio->error) {
-> -			iov_iter_revert(dio->submit.iter, copied);
-> -			copied = ret = 0;
-> +
-> +		/*
-> +		 * If completions already occurred and reported errors, give up now and
-> +		 * don't bother submitting more bios.
-> +		 */
-> +		if (unlikely(data_race(dio->error))) {
-> +			ret = 0;
+>  
+> @@ -453,7 +452,9 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
 >  			goto out;
 >  		}
 >  
+> -		bio = iomap_dio_alloc_bio(iter, dio, nr_pages, bio_opf);
+> +		bio = iomap_dio_alloc_bio(iter, dio,
+> +				bio_iov_vecs_to_alloc(dio->submit.iter,
+> +						BIO_MAX_VECS), bio_opf);
+>  		fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
+>  					  GFP_KERNEL);
+>  		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
+> @@ -495,16 +496,14 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  		dio->size += n;
+>  		copied += n;
+>  
+> -		nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter,
+> -						 BIO_MAX_VECS);
+>  		/*
+>  		 * We can only poll for single bio I/Os.
+>  		 */
+> -		if (nr_pages)
+> +		if (iov_iter_count(dio->submit.iter))
+>  			dio->iocb->ki_flags &= ~IOCB_HIPRI;
+>  		iomap_dio_submit_bio(iter, dio, bio, pos);
+>  		pos += n;
+> -	} while (nr_pages);
+> +	} while (iov_iter_count(dio->submit.iter));
+>  
+>  	/*
+>  	 * We need to zeroout the tail of a sub-block write if the extent type
 > -- 
 > 2.47.3
 > 
