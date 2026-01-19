@@ -1,53 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-74462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B907ED3AFA7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 16:53:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CBD3D3AFD7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 17:00:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8889B3047914
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 15:51:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 86A7E309CAEB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 15:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4B238B7AF;
-	Mon, 19 Jan 2026 15:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC9338E101;
+	Mon, 19 Jan 2026 15:56:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC2A21FF2A;
-	Mon, 19 Jan 2026 15:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060D538BF97;
+	Mon, 19 Jan 2026 15:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768837890; cv=none; b=a0hRpHNkwjtQ5okcKKWG3HubwRXrTsi8utsQ8JOgPAdas1eEZtVJnt/QwmOFv5qNflxqPHIK9GisEFr1JCRrnmIeZShx0GAQA4PWi5dHBZbDSSL7Bs6lUSPwVkfq6J98iVdoqnDvh1WWySNzxOUacqQavPPxEJP7BiYgEVZhRFc=
+	t=1768838204; cv=none; b=CGVLuijAqwFgsu+TxphUZ/qYkmNNSbYrafY5j+pvfkAkE2b+9xSOAghz6y2GXCwrMcI7RxKRZMuKlnB2njoOg7eeK1j1ZYZSJgdSQI/7begF6LLeVrlUIU/lEObjVG9MadduETIxIYzvA0DN+A7t1eKtBE8vlPV+wtqyWRirUrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768837890; c=relaxed/simple;
-	bh=E6FaM+VC0Z+UCsnZ4NecshJrgz3zT/xfvy9B0lYu6TI=;
+	s=arc-20240116; t=1768838204; c=relaxed/simple;
+	bh=D+/mNA7x3bPUPssXz3x5ZzNDARVbZcReUJg4A05wgZg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b8b5CCbl4CcJ6pEQ7FNbHYgEbXS4IIc35/4qU4QPCmHgMJJganXPxzcB+f9RZVd4LK6GL7zcaLZSL2AW02kzdK0K3XKNA9Ur9m4cO6UgG+naECURRty3W+2yLayWCDJVUQWhyhgZBE+KVfOosxjEhDVg2f0+yPqohxwT6rHnDdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B96EDFEC;
-	Mon, 19 Jan 2026 07:51:21 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 202AB3F694;
-	Mon, 19 Jan 2026 07:51:26 -0800 (PST)
-Date: Mon, 19 Jan 2026 15:51:23 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	sudeep.holla@arm.com, james.quinlan@broadcom.com,
-	f.fainelli@gmail.com, vincent.guittot@linaro.org,
-	etienne.carriere@st.com, peng.fan@oss.nxp.com, michal.simek@amd.com,
-	dan.carpenter@linaro.org, d-gole@ti.com, elif.topuz@arm.com,
-	lukasz.luba@arm.com, philip.radford@arm.com,
-	souvik.chakravarty@arm.com
-Subject: Re: [PATCH v2 04/17] uapi: Add ARM SCMI definitions
-Message-ID: <aW5S--P1EoV3y9kU@pluto>
-References: <20260114114638.2290765-1-cristian.marussi@arm.com>
- <20260114114638.2290765-5-cristian.marussi@arm.com>
- <20260119114343.00003f07@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qIA+YEAQw9TGBiyz6P54slR+ZKx2z555STiSUzj0RnGINyNb6BPlspVW4ZSS72YWeWn6BD2ZXIyq3igL7JsPMJxhRNrfh17IhjLq84Ges4tggfelD+BGwUuKckqvnJ4oKghFi0ShU65sCjFpgvQOIYGpoyHeDxE5BgFI3Ry3KXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id C9DE4227AA8; Mon, 19 Jan 2026 16:56:39 +0100 (CET)
+Date: Mon, 19 Jan 2026 16:56:39 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hch@lst.de
+Subject: Re: [PATCH 11/11] xfs: add media verification ioctl
+Message-ID: <20260119155639.GA10822@lst.de>
+References: <176852588473.2137143.1604994842772101197.stgit@frogsfrogsfrogs> <176852588776.2137143.7103003682733018282.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,123 +45,224 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260119114343.00003f07@huawei.com>
+In-Reply-To: <176852588776.2137143.7103003682733018282.stgit@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Jan 19, 2026 at 11:43:43AM +0000, Jonathan Cameron wrote:
-> On Wed, 14 Jan 2026 11:46:08 +0000
-> Cristian Marussi <cristian.marussi@arm.com> wrote:
+On Thu, Jan 15, 2026 at 09:44:53PM -0800, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
 > 
-> > Add a number of structures and ioctls definitions used by the ARM
-> > SCMI Telemetry protocol.
-> > 
-> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> 
-> A few drive by comments.
+> Add a new privileged ioctl so that xfs_scrub can ask the kernel to
+> verify the media of the devices backing an xfs filesystem, and have any
+> resulting media errors reported to fsnotify and xfs_healer.
 
-Hi,
+I really wish this would explain the approach (reading data into a
+kernel buffer, and the choices of the buffer size and I/O pattern)
+and their rationale a bit better here.
 
-> 
-> > diff --git a/include/uapi/linux/scmi.h b/include/uapi/linux/scmi.h
-> > new file mode 100644
-> > index 000000000000..e4e9939a1bf8
-> > --- /dev/null
-> > +++ b/include/uapi/linux/scmi.h
-> > @@ -0,0 +1,287 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> > +/*
-> > + * Copyright (C) 2026 ARM Ltd.
-> > + */
-> > +#ifndef _UAPI_LINUX_SCMI_H
-> > +#define _UAPI_LINUX_SCMI_H
-> > +
-> > +/*
-> > + * Userspace interface SCMI Telemetry
-> > + */
-> > +
-> > +#include <linux/ioctl.h>
-> > +#include <linux/types.h>
-> 
-> 
-> > +/**
-> > + * scmi_tlm_intervals  - Update intervals descriptor
-> > + *
-> > + * @discrete: Flag to indicate the nature of the intervals described in
-> > + *	      @update_intervals.
-> > + *	      When 'false' @update_intervals is a triplet: min/max/step
-> > + * @pad: Padding fields to enforce alignment.
-> > + * @num: Number of entries of @update_intervals
-> > + * @update_intervals: A variably-sized array containing the update intervals
-> > + *
-> > + * Used by:
-> > + *	RW - SCMI_TLM_GET_INTRVS
-> > + *
-> > + * Supported by:
-> > + *	control/
-> > + *	groups/<N>/control
-> > + */
-> > +struct scmi_tlm_intervals {
-> > +	__u8 discrete;
-> > +	__u8 pad[3];
-> > +	__u32 num;
-> 
-> Trivial but this seems a little inconsistent. In other
-> 'num' entries (e.g. num_des) below a more specific name
-> is used.
+> +
+> +struct xfs_group_data_lost {
+> +	xfs_agblock_t		startblock;
+> +	xfs_extlen_t		blockcount;
+> +};
+> +
+> +/* Report lost file data from rmap records */
+> +STATIC int
+> +xfs_verify_report_data_lost(
+> +	struct xfs_btree_cur		*cur,
+> +	const struct xfs_rmap_irec	*rec,
+> +	void				*data)
+> +{
+> +	struct xfs_mount		*mp = cur->bc_mp;
+> +	struct xfs_inode		*ip;
+> +	struct xfs_group_data_lost	*lost = data;
+> +	xfs_fileoff_t			fileoff = rec->rm_offset;
+> +	xfs_extlen_t			blocks = rec->rm_blockcount;
+> +	const bool			is_attr =
+> +			(rec->rm_flags & XFS_RMAP_ATTR_FORK);
+> +	const xfs_agblock_t		lost_end =
+> +			lost->startblock + lost->blockcount;
+> +	const xfs_agblock_t		rmap_end =
+> +			rec->rm_startblock + rec->rm_blockcount;
+> +	int				error = 0;
+> +
+> +	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner))
+> +	       return 0;
+> +
+> +	error = xfs_iget(mp, cur->bc_tp, rec->rm_owner, 0, 0, &ip);
+> +	if (error)
+> +		return 0;
+> +
+> +	if (rec->rm_flags & XFS_RMAP_BMBT_BLOCK) {
+> +		xfs_bmap_mark_sick(ip, is_attr ? XFS_ATTR_FORK : XFS_DATA_FORK);
+> +		goto out_rele;
+> +	}
+> +
+> +	if (is_attr) {
+> +		xfs_inode_mark_sick(ip, XFS_SICK_INO_XATTR);
+> +		goto out_rele;
+> +	}
+> +
+> +	if (lost->startblock > rec->rm_startblock) {
+> +		fileoff += lost->startblock - rec->rm_startblock;
+> +		blocks -= lost->startblock - rec->rm_startblock;
+> +	}
+> +	if (rmap_end > lost_end)
+> +		blocks -= rmap_end - lost_end;
+> +
+> +	fserror_report_data_lost(VFS_I(ip), XFS_FSB_TO_B(mp, fileoff),
+> +			XFS_FSB_TO_B(mp, blocks), GFP_NOFS);
+> +
+> +out_rele:
+> +	xfs_irele(ip);
+> +	return 0;
+> +}
+> +
+> +/* Walk reverse mappings to look for all file data loss */
+> +STATIC int
+> +xfs_verify_report_losses(
+> +	struct xfs_mount	*mp,
+> +	enum xfs_group_type	type,
+> +	xfs_daddr_t		daddr,
+> +	u64			bblen)
+> +{
+> +	struct xfs_group	*xg = NULL;
+> +	struct xfs_trans	*tp;
+> +	xfs_fsblock_t		start_bno, end_bno;
+> +	uint32_t		start_gno, end_gno;
+> +	int			error;
+> +
+> +	if (type == XG_TYPE_RTG) {
+> +		start_bno = xfs_daddr_to_rtb(mp, daddr);
+> +		end_bno = xfs_daddr_to_rtb(mp, daddr + bblen - 1);
+> +	} else {
+> +		start_bno = XFS_DADDR_TO_FSB(mp, daddr);
+> +		end_bno = XFS_DADDR_TO_FSB(mp, daddr + bblen - 1);
+> +	}
+> +
+> +	tp = xfs_trans_alloc_empty(mp);
+> +	start_gno = xfs_fsb_to_gno(mp, start_bno, type);
+> +	end_gno = xfs_fsb_to_gno(mp, end_bno, type);
+> +	while ((xg = xfs_group_next_range(mp, xg, start_gno, end_gno, type))) {
+> +		struct xfs_buf		*agf_bp = NULL;
+> +		struct xfs_rtgroup	*rtg = NULL;
+> +		struct xfs_btree_cur	*cur;
+> +		struct xfs_rmap_irec	ri_low = { };
+> +		struct xfs_rmap_irec	ri_high;
+> +		struct xfs_group_data_lost lost;
+> +
+> +		if (type == XG_TYPE_AG) {
+> +			struct xfs_perag	*pag = to_perag(xg);
+> +
+> +			error = xfs_alloc_read_agf(pag, tp, 0, &agf_bp);
+> +			if (error) {
+> +				xfs_perag_put(pag);
+> +				break;
+> +			}
+> +
+> +			cur = xfs_rmapbt_init_cursor(mp, tp, agf_bp, pag);
+> +		} else {
+> +			rtg = to_rtg(xg);
+> +			xfs_rtgroup_lock(rtg, XFS_RTGLOCK_RMAP);
+> +			cur = xfs_rtrmapbt_init_cursor(tp, rtg);
+> +		}
+> +
+> +		/*
+> +		 * Set the rmap range from ri_low to ri_high, which represents
+> +		 * a [start, end] where we looking for the files or metadata.
+> +		 */
+> +		memset(&ri_high, 0xFF, sizeof(ri_high));
+> +		if (xg->xg_gno == start_gno)
+> +			ri_low.rm_startblock =
+> +				xfs_fsb_to_gbno(mp, start_bno, type);
+> +		if (xg->xg_gno == end_gno)
+> +			ri_high.rm_startblock =
+> +				xfs_fsb_to_gbno(mp, end_bno, type);
+> +
+> +		lost.startblock = ri_low.rm_startblock;
+> +		lost.blockcount = min(xg->xg_block_count,
+> +				      ri_high.rm_startblock + 1) -
+> +							ri_low.rm_startblock;
+> +
+> +		error = xfs_rmap_query_range(cur, &ri_low, &ri_high,
+> +				xfs_verify_report_data_lost, &lost);
+> +		xfs_btree_del_cursor(cur, error);
+> +		if (agf_bp)
+> +			xfs_trans_brelse(tp, agf_bp);
+> +		if (rtg)
+> +			xfs_rtgroup_unlock(rtg, XFS_RTGLOCK_RMAP);
+> +		if (error) {
+> +			xfs_group_put(xg);
+> +			break;
+> +		}
+> +	}
+> +
+> +	xfs_trans_cancel(tp);
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Compute the desired verify IO size.
+> + *
+> + * To minimize command overhead, we'd like to create bios that are 1MB, though
+> + * we allow the user to ask for a smaller size.
+> + */
+> +STATIC unsigned int
+> +xfs_verify_iosize(
+> +	const struct xfs_verify_media	*me,
+> +	struct xfs_buftarg		*btp,
+> +	uint64_t			bbcount)
+> +{
+> +	unsigned int			iosize =
+> +			min_not_zero(SZ_1M, me->me_max_io_size);
+> +
+> +	BUILD_BUG_ON(BBSHIFT != SECTOR_SHIFT);
+> +	ASSERT(BBTOB(bbcount) >= bdev_logical_block_size(btp->bt_bdev));
+> +
+> +	return clamp(iosize, bdev_logical_block_size(btp->bt_bdev),
+> +			BBTOB(bbcount));
+> +}
 
-Yes, agreed. I will fix.
+> +/* Allocate as much memory as we can get for verification buffer. */
+> +STATIC struct folio *
 
-> 
-> > +#define SCMI_TLM_UPDATE_INTVL_SEGMENT_LOW	0
-> > +#define SCMI_TLM_UPDATE_INTVL_SEGMENT_HIGH	1
-> > +#define SCMI_TLM_UPDATE_INTVL_SEGMENT_STEP	2
-> > +	__u32 update_intervals[] __counted_by(num);
-> > +};
-> 
-> > +
-> > +/**
-> > + * scmi_tlm_des_list  - List of all defined DEs
-> > + *
-> > + * @num_des: Number of entries in @des
-> > + * @des: An array containing descriptors for all defined DEs
-> > + *
-> > + * Used by:
-> > + *	RW - SCMI_TLM_GET_DE_LIST
-> > + *
-> > + * Supported by:
-> > + *	control/
-> > + */
-> > +struct scmi_tlm_des_list {
-> > +	__u32 num_des;
-> > +	struct scmi_tlm_de_info des[] __counted_by(num_des);
-> > +};
-> > +
-> > +/**
-> > + * scmi_tlm_de_sample - A DE reading
-> > + *
-> > + * @id: DE identifier
-> > + * @tstamp: DE reading timestamp (equal 0 is NOT supported)
-> > + * @val: Reading of the DE data value
-> > + *
-> > + * Used by:
-> > + *	RW - SCMI_TLM_GET_DE_VALUE
-> > + *
-> > + * Supported by:
-> > + *	control/
-> > + */
-> > +struct scmi_tlm_de_sample {
-> > +	__u32 id;
-> 
-> Packing issues maybe if this ever ends up on 32 bit machines.
-> Even more so once it's in an array below.
->
+Can we please retired STATIC already?
 
-Oh yes, I missed this...
- 
-> > +	__u64 tstamp;
-> > +	__u64 val;
-> > +};
-> > +
+> +STATIC void
+> +xfs_verify_media_error(
+> +	struct xfs_mount	*mp,
+> +	struct xfs_verify_media	*me,
+> +	struct xfs_buftarg	*btp,
+> +	xfs_daddr_t		daddr,
+> +	unsigned int		bio_bbcount,
+> +	blk_status_t		bio_status)
+> +{
+> +	trace_xfs_verify_media_error(mp, me, btp->bt_bdev->bd_dev, daddr,
+> +			bio_bbcount, bio_status);
+> +
+> +	/*
+> +	 * Pass any I/O error up to the caller if we didn't successfully verify
+> +	 * any bytes at all.
+> +	 */
+> +	if (me->me_start_daddr == daddr)
+> +		me->me_ioerror = -blk_status_to_errno(bio_status);
+> +
+> +	/*
+> +	 * PI validation failures, medium errors, or general IO errors are
+> +	 * treated as indicators of data loss.  Everything else are (hopefully)
+> +	 * transient errors and are not reported.
+> +	 */
 
-Thanks,
-Cristian
+But still left in me->me_ioerror.  Is that intentional?
+
+> +	switch (me->me_dev) {
+> +	case XFS_DEV_DATA:
+> +		xfs_verify_report_losses(mp, XG_TYPE_AG, daddr, bio_bbcount);
+> +		break;
+> +	case XFS_DEV_RT:
+> +		xfs_verify_report_losses(mp, XG_TYPE_RTG, daddr, bio_bbcount);
+> +		break;
+> +	}
+
+At some point we really need dev_to_group_type and vice versa helpers.
+
 
