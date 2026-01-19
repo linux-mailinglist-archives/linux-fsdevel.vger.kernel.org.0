@@ -1,93 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-74369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3803DD39E7E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 07:30:01 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EDFD39E94
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 07:34:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 3537830133FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 06:29:46 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id DDCAB303D882
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 06:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C34026E708;
-	Mon, 19 Jan 2026 06:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BA126FA60;
+	Mon, 19 Jan 2026 06:34:02 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BD026E175
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 06:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A4A26C3A2;
+	Mon, 19 Jan 2026 06:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768804183; cv=none; b=oQVENLR6odhx/RKxOO196nSgz5dohb9hTUW3zqNmUgDYftS4Od8eva/ftxBDWPZXcdR0pvvkhSZ5BqLWxXG+uaukNLP93IlXJVxgDhiA4Z9zbXK2migzrBog0SahvZUSh7ZZhlousdP4h0QON7W54SGbi7LtZtWRFXr0ln4+nWQ=
+	t=1768804441; cv=none; b=rcQLr/Rrg5Ne3IhXFsMUykuriXbryP+XxDMqjPBYjtAwW02zXwTZwCG67cBlmj4zKSbnT8kpaVGw30bMPFJ/zc0M1wBQGG4wfrUm7PkE8NjhmqeBoXvRO8HvtjqsdqI1LDFBMhMUYT/f4G1rXmqNzVUGQQ1X99C+sx06o/rRdvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768804183; c=relaxed/simple;
-	bh=sR8yNeP/IfT6cVqzsF+1DkSDqZUaSUQEyTdW13m0r0A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kgyECsvsn9uwS5UX6D2a5Ick8t9qdt1QCiYC3Gf+RW6TWl/XTTF8Ld320w9b410uZ54IgF4lkKaLWZKzGVYmy39esIZmwXAO3+ALTAZG0GCMpOjH8XkoTgYVtI9HCJY6UeRuTLGHFjMjOQwW0o1bx15p+CzITd0zleGTW/dEumg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
-Received: from localhost (unknown [14.22.11.161])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 311cfcc20;
-	Mon, 19 Jan 2026 14:24:26 +0800 (GMT+08:00)
-From: Chunsheng Luo <luochunsheng@ustc.edu>
-To: joannelkoong@gmail.com
-Cc: jefflexu@linux.alibaba.com,
-	linux-fsdevel@vger.kernel.org,
-	miklos@szeredi.hu
-Subject: Re: [PATCH v1 2/3] fuse: use offset_in_folio() for large folio offset calculations
-Date: Mon, 19 Jan 2026 14:24:25 +0800
-Message-ID: <20260119062425.1820-1-luochunsheng@ustc.edu>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260116235606.2205801-3-joannelkoong@gmail.com>
-References: <20260116235606.2205801-3-joannelkoong@gmail.com>
+	s=arc-20240116; t=1768804441; c=relaxed/simple;
+	bh=tiasUID9V3LyXmNQ/3VFu+opuMBWShf55UGKactveAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tKVqv/UbVYJpRKJC/XELu68MmQ4FAzk2xCmqzQl8FG1FeqgMP16yJedJ8TLCAWhLLYJo81+eyo5ULsxuuBP2K3YTmVCznfVHSSyxTRSoZrw+wahf52I1DbbcUCJuviTNYagjaHwoZRNsrPkjyv/sauW5WdNFI4ZE7eTGaBGgcbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id B8DD9227A88; Mon, 19 Jan 2026 07:33:49 +0100 (CET)
+Date: Mon, 19 Jan 2026 07:33:49 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>, fsverity@lists.linux.dev,
+	linux-xfs@vger.kernel.org, ebiggers@kernel.org,
+	linux-fsdevel@vger.kernel.org, aalbersh@kernel.org,
+	david@fromorbit.com, hch@lst.de, tytso@mit.edu,
+	linux-ext4@vger.kernel.org, jaegeuk@kernel.org, chao@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Subject: fsverity metadata offset, was: Re: [PATCH v2 0/23] fs-verity
+ support for XFS with post EOF merkle tree
+Message-ID: <20260119063349.GA643@lst.de>
+References: <cover.1768229271.patch-series@thinky> <aWZ0nJNVTnyuFTmM@casper.infradead.org> <op5poqkjoachiv2qfwizunoeg7h6w5x2rxdvbs4vhryr3aywbt@cul2yevayijl> <aWci_1Uu5XndYNkG@casper.infradead.org> <20260114061536.GG15551@frogsfrogsfrogs> <5z5r6jizgxqz5axvzwbdmtkadehgdf7semqy2oxsfytmzzu6ik@zfvhexcp3fz2> <6r24wj3o3gctl3vz4n3tdrfjx5ftkybdjmmye2hejdcdl6qseh@c2yvpd5d4ocf>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9bd4ed166503a2kunm3afe885d30e560
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDQxkdVk5JTxpKGBhNTE5JTlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKT1VJSVVKSlVKTUpZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6r24wj3o3gctl3vz4n3tdrfjx5ftkybdjmmye2hejdcdl6qseh@c2yvpd5d4ocf>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 1/17/26 7:56 AM, Joanne Koong wrote:
-> Use offset_in_folio() instead of manually calculating the folio offset.
->
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->   fs/fuse/dev.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 698289b5539e..4dda4e24cc90 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -1812,7 +1812,7 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
->           if (IS_ERR(folio))
->               goto out_iput;
->   -        folio_offset = ((index - folio->index) << PAGE_SHIFT) + offset;
-> +        folio_offset = offset_in_folio(folio, outarg.offset);
+While looking at fsverity I'd like to understand the choise of offset
+in ext4 and f2fs, and wonder about an issue.
 
-offset is a loop variable, and later offset maybe set to 0. Replacing it
-with outarg.offset here would change the behavior. The same below.
-Will this cause any problems?
+Both ext4 and f2fs round up the inode size to the next 64k boundary
+and place the metadata there.  Both use the 65536 magic number for that
+instead of a well documented constant unfortunately.
 
-Thanks,
-Chunsheng Luo
+I assume this was picked to align up to the largest reasonable page
+size?  Unfortunately for that:
 
->           nr_bytes = min_t(unsigned, num, folio_size(folio) - folio_offset);
->           nr_pages = DIV_ROUND_UP(offset + nr_bytes, PAGE_SIZE);
->   @@ -1916,7 +1916,7 @@ static int fuse_retrieve(struct fuse_mount *fm, struct inode *inode,
->           if (IS_ERR(folio))
->               break;
->   -        folio_offset = ((index - folio->index) << PAGE_SHIFT) + offset;
-> +        folio_offset = offset_in_folio(folio, outarg->offset);
->           nr_bytes = min(folio_size(folio) - folio_offset, num);
->           nr_pages = DIV_ROUND_UP(offset + nr_bytes, PAGE_SIZE);
->   
+ a) not all architectures are reasonable.  As Darrick pointed out
+    hexagon seems to support page size up to 1MiB.  While I don't know
+    if they exist in real life, powerpc supports up to 256kiB pages,
+    and I know they are used for real in various embedded settings
+ b) with large folio support in the page cache, the folios used to
+    map files can be much larger than the base page size, with all
+    the same issues as a larger page size
 
+So assuming that fsverity is trying to avoid the issue of a page/folio
+that covers both data and fsverity metadata, how does it copy with that?
+Do we need to disable fsverity on > 64k page size and disable large
+folios on fsverity files?  The latter would mean writing back all cached
+data first as well.
+
+And going forward, should we have a v2 format that fixes this?  For that
+we'd still need a maximum folio size of course.   And of course I'd like
+to get all these things right from the start in XFS, while still being as
+similar as possible to ext4/f2fs.
+
+On Wed, Jan 14, 2026 at 10:53:00AM +0100, Andrey Albershteyn wrote:
+> On 2026-01-14 09:20:34, Andrey Albershteyn wrote:
+> > On 2026-01-13 22:15:36, Darrick J. Wong wrote:
+> > > On Wed, Jan 14, 2026 at 05:00:47AM +0000, Matthew Wilcox wrote:
+> > > > On Tue, Jan 13, 2026 at 07:45:47PM +0100, Andrey Albershteyn wrote:
+> > > > > On 2026-01-13 16:36:44, Matthew Wilcox wrote:
+> > > > > > On Mon, Jan 12, 2026 at 03:49:44PM +0100, Andrey Albershteyn wrote:
+> > > > > > > The tree is read by iomap into page cache at offset 1 << 53. This is far
+> > > > > > > enough to handle any supported file size.
+> > > > > > 
+> > > > > > What happens on 32-bit systems?  (I presume you mean "offset" as
+> > > > > > "index", so this is 1 << 65 bytes on machines with a 4KiB page size)
+> > > > > > 
+> > > > > it's in bytes, yeah I missed 32-bit systems, I think I will try to
+> > > > > convert this offset to something lower on 32-bit in iomap, as
+> > > > > Darrick suggested.
+> > > > 
+> > > > Hm, we use all 32 bits of folio->index on 32-bit plaftorms.  That's
+> > > > MAX_LFS_FILESIZE.  Are you proposing reducing that?
+> > > > 
+> > > > There are some other (performance) penalties to using 1<<53 as the lowest
+> > > > index for metadata on 64-bit.  The radix tree is going to go quite high;
+> > > > we use 6 bits at each level, so if you have a folio at 0 and a folio at
+> > > > 1<<53, you'll have a tree of height 9 and use 17 nodes.
+> > > > 
+> > > > That's going to be a lot of extra cache misses when walking the XArray
+> > > > to find any given folio.  Allowing the filesystem to decide where the
+> > > > metadata starts for any given file really is an important optimisation.
+> > > > Even if it starts at index 1<<29, you'll almost halve the number of
+> > > > nodes needed.
+> > 
+> > Thanks for this overview!
+> > 
+> > > 
+> > > 1<<53 is only the location of the fsverity metadata in the ondisk
+> > > mapping.  For the incore mapping, in theory we could load the fsverity
+> > > anywhere in the post-EOF part of the pagecache to save some bits.
+> > > 
+> > > roundup(i_size_read(), 1<<folio_max_order)) would work, right?
+> > 
+> > Then, there's probably no benefits to have ondisk mapping differ,
+> > no?
+> 
+> oh, the fixed ondisk offset will help to not break if filesystem
+> would be mounted by machine with different page size.
+> 
+> -- 
+> - Andrey
+---end quoted text---
 
