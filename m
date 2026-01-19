@@ -1,130 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-74360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4515D39D4A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 04:59:44 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B32D39D79
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 05:25:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 822F53007682
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 03:59:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 08FC0300A855
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 04:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C240732F74B;
-	Mon, 19 Jan 2026 03:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC76285C8D;
+	Mon, 19 Jan 2026 04:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="ygf55RJU"
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="Sbh6Edqy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="0ZVnr76k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258A81E32CF
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 03:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46FD197A7D;
+	Mon, 19 Jan 2026 04:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768795179; cv=none; b=rd5vGS9wkAJpM6YUYcY0TT2i4ph3zNhD5iu7yhBgJyiCoOGFLwiOOk353hYDYTMRpbU/tzZG4WmAlLypkAP9mTLypTSppqWM6Bp4+Rap6lICmoGGGOMKJG4p0B3exXEqMo+5wjg2LPlT7KOt/AsdGCHT9z3TWfEyEXey3sd9O5c=
+	t=1768796700; cv=none; b=dzwuEEmA3m6wIrAtUsxFUXfEF/qTQDfoytz9wG+Ee9IC/liNEMEe61U6E40u/UIwIZbCStOtWDeLrkDhiQFdVDbi6bi4xFaPOy7fEwt+AWL6cjyaIF/AnnFL/ekbI72OvqDgJKNvzYO+4MJGDON2VMxgQTvgmFGTGfXECyJjDCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768795179; c=relaxed/simple;
-	bh=HcNGovgyktgJhkSDCcx0eLnGY2OnyrtiezZGa/JF7Jg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I7x7jNwi887MdT6d0buBGBBQXYmBiiZwzC+8Xw850WNUIO4k01EsBct4PlMvVnQC1puBw08v2a1KT0dqkluUJ2DGxmF48dPwvkYt+71GjstSGO7y+BRTg9l51LeUJ6iIaVqvPDLvpJYB/Gnu1i/23LomsJ6LeKAgI+c6YlWTCuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=ygf55RJU; arc=none smtp.client-ip=113.46.200.224
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=PqY0lKXi78VY6Sc0v5OHbx57G72lxRJHYsOW+bxvSGY=;
-	b=ygf55RJUif4IVzfj+YcHAb9h1H7BRxnojC/byNkImC1pTT/7xW6tkIfVoZkv6prx/erNL2ccS
-	YzklTefQO/xZINFQj1XpSIJsY2C/tmAJjoswTgDvqvECJ6Wan1ILLVaNpqtTHohj+YZW23dbvQB
-	PqidTVWMy1JZfT6n+BUISC0=
-Received: from mail.maildlp.com (unknown [172.19.163.15])
-	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4dvc7v5YThz1cyTx
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 11:56:11 +0800 (CST)
-Received: from kwepemj200012.china.huawei.com (unknown [7.202.194.24])
-	by mail.maildlp.com (Postfix) with ESMTPS id B61BC40539
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 11:59:33 +0800 (CST)
-Received: from huawei.com (10.113.189.238) by kwepemj200012.china.huawei.com
- (7.202.194.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 19 Jan
- 2026 11:59:33 +0800
-From: x00511854 <xuqi27@huawei.com>
-To: <miklos@szeredi.hu>, <linux-fsdevel@vger.kernel.org>
-CC: <zhangzhikang1@huawei.com>, <liujie1@huawei.com>,
-	<chenmaotang@huawei.com>, x00511854 <xuqi27@huawei.com>
-Subject: [PATCH] fuse: Verify real bytes of readahead in fuse_readpages_end
-Date: Mon, 19 Jan 2026 12:04:17 +0800
-Message-ID: <20260119040417.2768067-1-xuqi27@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1768796700; c=relaxed/simple;
+	bh=HdSZCarGGS3RuGsKep6hC7LR7qDsWU4SWvZnwDUELpk=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=TkzxGicH5e1G8IAkxj2cS1MnFn0imo2PmiHGCo9G3tcASd/GX9dosQrYC/U0R0zyjdA+D+Vs+XUl0mBJ8rQhVG4HKSJOpk23OrZ6D2l7ysEe21fHUQYRGjPzwBlQjgVc52Ja2fLbN2y1VaSaRcy03uFz5neCpR3lyCgRwZ5jQL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=Sbh6Edqy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=0ZVnr76k; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id BC74EEC0684;
+	Sun, 18 Jan 2026 23:24:56 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Sun, 18 Jan 2026 23:24:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
+	1768796696; x=1768883096; bh=w4J1Lzoj001fG0Dd8Z4gKIcNfCsBwsKpnYS
+	5sVzQybM=; b=Sbh6Edqy5uN86z9VVPbrNkciPQkfvtZP6HjypI+HJn9mO/S94oT
+	xxtkP5iFoDKPRowxx3PmUke9K9f0UgDHwfHqj/wuYnFZRdCJhTuNF5sreetzyXUa
+	z9FReR5bNF2emNOftvXsBz+HcXJfIpLoqUT5dJyqHIT/tA1xlGc93gF/dFlFDqNW
+	5cP3MkBqrEWU3MWo/oR9KlGuCvlzTHDPQynQp647+2lh3ClHmDZBFSqjVMCn8ZYo
+	KK7WGXoacFN7m0s7DHKxz3Cz1HiaprvvbroGSl4Xj9+8MFejY7BY02CgQx42jUHX
+	Ll7GRYJAzFokeJS9IHRMZQb3h/7P1lADJYA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1768796696; x=
+	1768883096; bh=w4J1Lzoj001fG0Dd8Z4gKIcNfCsBwsKpnYS5sVzQybM=; b=0
+	ZVnr76k17K31SGYBRrq05Vbhv7ngIWaWSRA+S9zWwevbvLlA0dR2Lt3idN0l/GQF
+	n0oPnOsXavaEqpwTMNNPj79D3DGaz8jwXn3IYiDfMtN99pgZT6PIZu6NEuabM2Vx
+	CK2hgwkD2lHPeJkND92ILUrDruL8gNeFvCgcLeke+BcReia/o+eWlVsjvMPpM7Ow
+	S1Ae93f4zvv1v42yqSlchLhtNmDw4TkgzWE+6538wPOCLakc44goB5P9hClKZMjg
+	CyZ51n0jssnCOQSr1xMIjAW9dGOyYIm/PGUU8jh4FI6e8PGj9tsCN7wJwF5ECOIN
+	Avg5In7Q+vnikD9quTzpw==
+X-ME-Sender: <xms:GLJtaRKyEdXzmPqgktMiaigYQypMNuRivdcsJ7ivQlWWgVM9MqioaQ>
+    <xme:GLJtaTJ1HzzH6m-2sMPnHidUaDImJi4CGoR2OPlb9uRxH4H7F1wb43xRGETaTRlmF
+    JMVR_c0zoleXhWfP1Kqqz8BA_SxfVxRimI0NiBMIeZnF17Gcws>
+X-ME-Received: <xmr:GLJtaUg7iNYcfsO2L1KKQUt-OeC5pQizt692kvDVfyPSf89kGooAkjmD9ZReHXJ8fYq1rBewsKkK8bCuSdMhkLVVL6A6ZRvcCQmIShQHZXrE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddufeeiiedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehlihhnuhigqdgtrhihphhtohesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdp
+    rhgtphhtthhopehtrhhonhgumhihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlh
+    grhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvsghighhgvghrsheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheprghnnhgrsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopegstghougguihhngheshhgrmhhmvghrshhprggtvgdrtghomh
+X-ME-Proxy: <xmx:GLJtaVP-FZaumHFuXl5HiPb_M95k9xVB-eMcFNrlS7YDuiZsfrFMXQ>
+    <xmx:GLJtaXqd2qGXKA8WADVZpPKvpB3YYjRC_OfV39wa_LerJnOb0cCF8Q>
+    <xmx:GLJtaf4uga64WAdrLRpuVIG4MD6kOsxAinRoCZi384IDqRtuiX_Dgw>
+    <xmx:GLJtadh5r-rLEcCz6cczkcqxccA4dqA-3pzd8QLXNrzAOtjkLTk3iA>
+    <xmx:GLJtaefUZ4e9Innv7uARva7GUZu9hGJV_8NXw7GTPOL21a9lgCipmVFU>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 18 Jan 2026 23:24:53 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemj200012.china.huawei.com (7.202.194.24)
+From: NeilBrown <neilb@ownmail.net>
+To: "Benjamin Coddington" <bcodding@hammerspace.com>
+Cc: "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Eric Biggers" <ebiggers@kernel.org>, "Rick Macklem" <rick.macklem@gmail.com>,
+ linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v1 0/4] kNFSD Signed Filehandles
+In-reply-to: <8C67F451-980D-4739-B044-F8562B2A8B74@hammerspace.com>
+References: <cover.1768573690.git.bcodding@hammerspace.com>,
+ <176861309837.16766.10645274004289940807@noble.neil.brown.name>,
+ <8C67F451-980D-4739-B044-F8562B2A8B74@hammerspace.com>
+Date: Mon, 19 Jan 2026 15:24:49 +1100
+Message-id: <176879668905.16766.5840486885381698639@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-The fuse server cannot guarantee every read request is done with target data length.
+On Sat, 17 Jan 2026, Benjamin Coddington wrote:
+> On 16 Jan 2026, at 20:24, NeilBrown wrote:
+>=20
+> > On Sat, 17 Jan 2026, Benjamin Coddington wrote:
+> >> The following series enables the linux NFS server to add a Message
+> >> Authentication Code (MAC) to the filehandles it gives to clients.  This
+> >> provides additional protection to the exported filesystem against fileha=
+ndle
+> >> guessing attacks.
+> >>
+> >> Filesystems generate their own filehandles through the export_operation
+> >> "encode_fh" and a filehandle provides sufficient access to open a file
+> >> without needing to perform a lookup.  An NFS client holding a valid
+> >> filehandle can remotely open and read the contents of the file referred =
+to
+> >> by the filehandle.
+> >
+> > A *trusted* NFS client holding a valid filehandle can remotely access
+> > the corresponding file without reference to access-path restrictions
+> > that might be imposed by the ancestor directories or the server exports.
+>=20
+> Mind if I use your words next time?  I'm thinking that most of this
+> cover-letter should end up in the docs.
 
-For example:
-1.In fuse server, an IO error has occurred which makes only part of data being read,
-and the number of read bytes is returned.
-2.fuse_readpages_end() in kernel get 'err == 0', and set the folio uptodate without whole data.
-3.The folio is uptodate, so unwritten data is copied to user.
-4.The file with broken data failed to be parsed.
+Please do!
 
-So to fix the problem, it should verify real bytes read from fuse server, before set folio uptodate.
+> >
+> > Iterating a 32 bit generation number would be expected to take a long
+> > time to succeed - except that they tend to cluster early.  Though in
+> > your example the msb is 1!
+>=20
+> Trond posited that with a 1ms round-trip and 50 parallel GETATTRs it only
+> takes one day.
+>=20
+> > Do you have exploit code which demonstrates unauthorised access to a
+> > given inode number?  What runtime?  Could attack-detection in the server
+> > be a simple effective counter-measure?  Should we do that anyway?
+>=20
+> Yes, its a modification of t_open_by_handle_at.c example program in the
+> open_by_handle_at(2) man page.  On my single system NFS client and server
+> with a local mount, I averaged 16usec per open, and discovered my target
+> filehandle in less than an hour.  I didn't have any network latency to worry
+> about, but I think it still shows its possible and a determined attacker can
+> do it.
 
-Signed-off-by: Xu Qi <xuqi27@huawei.com>
----
- fs/fuse/file.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+This information would be useful to include in the cover letter/documentation.
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 01bc894e9c2b..bed36bf7d523 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -994,6 +994,26 @@ static int fuse_iomap_read_folio_range(const struct iomap_iter *iter,
- 	return fuse_do_readfolio(file, folio, off, len);
- }
- 
-+static bool hit_folio_end(size_t num_read, struct folio *folio, struct inode *inode)
-+{
-+	if ((folio->index << PAGE_SHIFT) + num_read == i_size_read(inode)) {
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+static bool folio_read_done(int index, size_t num_read, struct folio *folio,
-+			    struct inode *inode)
-+{
-+	if (index < (num_read >> PAGE_SHIFT) || (index == (num_read >> PAGE_SHIFT) &&
-+	    hit_folio_end(num_read, folio, inode))) {
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static void fuse_readpages_end(struct fuse_mount *fm, struct fuse_args *args,
- 			       int err)
- {
-@@ -1018,8 +1038,10 @@ static void fuse_readpages_end(struct fuse_mount *fm, struct fuse_args *args,
- 	fuse_invalidate_atime(inode);
- 
- 	for (i = 0; i < ap->num_folios; i++) {
--		iomap_finish_folio_read(ap->folios[i], ap->descs[i].offset,
--					ap->descs[i].length, err);
-+		if (!err && folio_read_done(i, num_read, ap->folios[0], inode)) {
-+			iomap_finish_folio_read(ap->folios[i], ap->descs[i].offset,
-+						ap->descs[i].length, 0);
-+		}
- 		folio_put(ap->folios[i]);
- 	}
- 	if (ia->ff)
--- 
-2.34.1
+>=20
+> The server could be modified to notice elevated counts of error returns for
+> a client and then try to notify about it.   But, I don't think it will be
+> simple - I imagine it would need a lot of tunable (how many failed fh, at
+> what rate..  etc) because you need to tune the system to make a signal from
+> the noise of regular operations and returns.  That tuning can be worked
+> around by a very determined attacker.  You end up in a behavior
+> detection/modification feedback loop and the server's not guaranteed to
+> catch everything.  Still it would be another layer of defense-in-depth that
+> would have value.
 
+I would like to explore this, at least for the defense-in-depth
+rationale.  Maybe it would also supply some protection wehn sign_fh
+isn't enabled.
+
+We would need to monitor the result of exportfs_decode_fh_raw() for
+stale vs non-stale, and if the proportion of stale filehandles (on a
+given export) exceeds some low threshold (1%?) over a modest time period
+(5 minutes?) then .... what?
+
+I don't think a hard fail would be a good idea, but maybe serialise
+future requests from that auth_domain and impose a delay on any stale
+filehandles until the proportion drops below some lower threshold??
+
+Does anyone else thinks this would be worth pursuing?
+
+Thanks,
+NeilBrown
 
