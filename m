@@ -1,59 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-74523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5ECED3B6BB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 20:06:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3BFED3B75A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 20:33:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 3C19C3023D38
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 19:06:08 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 3B47E3026F3B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Jan 2026 19:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FC23921D0;
-	Mon, 19 Jan 2026 19:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323F72C15A0;
+	Mon, 19 Jan 2026 19:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PtfZTXUq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jw7k18TD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2C436B075;
-	Mon, 19 Jan 2026 19:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20DC2475E3;
+	Mon, 19 Jan 2026 19:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768849566; cv=none; b=QJurA7WVFo6OFeajiexaQ9v8Wq+SvgFdHgwAbpHqYznAo+9oDvaNYOkN8z4yz7F3xOl+wuxd8e6AeqO9f2Csz8lrG0FxfQQW8agNrZ+4LqwnSNhAOIpdqq8KOPs6x86tvmRMZ+acy+0wIZIzvpFJO10pL6lRv4XaQ5AKT7Zs9uw=
+	t=1768851192; cv=none; b=W5f69SQ7qV8sI7+G1CfvmQG9KID1UPVH0R6pFadM+qWOAHgttap2EAsfpBhLh3bbZch0XF2UBivV+2o6vZHBL0TiMkqQ1JbipC1j5uJsnbqajLqGMPWdrkG3KJX6SuFy41P0MygSGnl8CGNwE2UgA3SoExl0IYbnJqJHF3P52wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768849566; c=relaxed/simple;
-	bh=qwc08ec1OrctlmlBAKmKSTt74F2eGcEv59WaOb2w5eQ=;
+	s=arc-20240116; t=1768851192; c=relaxed/simple;
+	bh=DRwpJER0zNtSisDlkiJN+FTgXeZjOjDYzJNLIcn5ABk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pAA2iqzU5KiOiyPVEanAVPJt+aueuDD9rIEU0i3X+l7d+wAvrklWx6Az6/Q+S3WtQTTTlFIt95xv6jIALgdec8gYK3+3M7OpAlPEqzupNOeMFSmxkWP50/LnrY9ag0eHgYLJhIBLuQMyl+11DY90MvidgTo7FS+z2N1FJBfGTj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PtfZTXUq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7B61C116C6;
-	Mon, 19 Jan 2026 19:06:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XF9AkStbdQj6PLkwN9kyFJTmZQbyTiTqHhDU2+OcmyssKKBJ16Anea8AKidwBqMV2hyg8qA3W9KJbVuVQ8CMSibbym9I3eNdt+FBm7SKrH9nmCh+9Xu1gzhxyqgDXyZvBZVhN0j+bn2WfCP+uIpo+3MCLjZm7a9KNn9mLi+zvlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jw7k18TD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D422AC116C6;
+	Mon, 19 Jan 2026 19:33:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768849566;
-	bh=qwc08ec1OrctlmlBAKmKSTt74F2eGcEv59WaOb2w5eQ=;
+	s=k20201202; t=1768851192;
+	bh=DRwpJER0zNtSisDlkiJN+FTgXeZjOjDYzJNLIcn5ABk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PtfZTXUqDM7feQgU5ZToqJgQZfAEbmvBY6pgybD43xWXMt5+0d1F/AgDFH0jYr3hN
-	 Pv34MqMPrKVWxKgQxA0z0xO8T97+YdKXpxYk6pduxC2A9PoYfLeL6fDgupt3wQfjzS
-	 r1XxlTijMiBjFLZMphMJtVvD+qfHuUItPnUWutZS57l6KjV+OeTtq3cuHYs3J+GH/h
-	 PorU2xUi0AWmM8VF9IoYarXTtpg9RSEs166be/N2rOnQ4gsZCfXJIKV93gkLJV5LZW
-	 2GcKQ1fLhawecTS6hTvIBY1iNsWS8OyaUpNnpTJsrGgkBruC/e4kIZLMpDLhm0gNgL
-	 VDhQpjkvpFydw==
-Date: Mon, 19 Jan 2026 11:05:36 -0800
+	b=jw7k18TD+nCinzSLCmqVLxQkjg5CgI7PnZdMEwclGtPNqjYkv75T9CBDSzRqmhX0u
+	 kx17q8IjvxsNPC+l9alIryTVAy5smNgyar40kJYHj17+XBJA+540VQmnIvT5fikUGj
+	 TsymiyMNwaQKQjtj6lMmNnzfuN4Vwn/H1Xlg13ieA/3Ebeg/UCX39/oaXxSO/kYyhR
+	 Kd3MTq69spYuw5hRebVSN3a+l3dIYI2tWzXgG2q1Jd/m6XmmC97c7Io92EOut/d+fY
+	 HnW7c2NcOm/rzAgYDYnG6IDd1YYJtUJ5C9nZXxZ0+jY75m4jTfPi+/BhiJvngOMa72
+	 iUuaEbQfF+Aag==
+Date: Mon, 19 Jan 2026 11:32:42 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	fsverity@lists.linux.dev
-Subject: Re: [PATCH 4/6] fsverity: use a hashtable to find the fsverity_info
-Message-ID: <20260119190536.GA13800@sol>
-References: <20260119062250.3998674-1-hch@lst.de>
- <20260119062250.3998674-5-hch@lst.de>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>, fsverity@lists.linux.dev,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	aalbersh@kernel.org, david@fromorbit.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org, jaegeuk@kernel.org, chao@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: fsverity metadata offset, was: Re: [PATCH v2 0/23] fs-verity
+ support for XFS with post EOF merkle tree
+Message-ID: <20260119193242.GB13800@sol>
+References: <cover.1768229271.patch-series@thinky>
+ <aWZ0nJNVTnyuFTmM@casper.infradead.org>
+ <op5poqkjoachiv2qfwizunoeg7h6w5x2rxdvbs4vhryr3aywbt@cul2yevayijl>
+ <aWci_1Uu5XndYNkG@casper.infradead.org>
+ <20260114061536.GG15551@frogsfrogsfrogs>
+ <5z5r6jizgxqz5axvzwbdmtkadehgdf7semqy2oxsfytmzzu6ik@zfvhexcp3fz2>
+ <6r24wj3o3gctl3vz4n3tdrfjx5ftkybdjmmye2hejdcdl6qseh@c2yvpd5d4ocf>
+ <20260119063349.GA643@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,25 +68,59 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260119062250.3998674-5-hch@lst.de>
+In-Reply-To: <20260119063349.GA643@lst.de>
 
-On Mon, Jan 19, 2026 at 07:22:45AM +0100, Christoph Hellwig wrote:
-> Use the kernel's resizable hash table to find the fsverity_info.  This
-> way file systems that want to support fsverity don't have to bloat
-> every inode in the system with an extra pointer.  The tradeoff is that
-> looking up the fsverity_info is a bit more expensive now, but the main
-> operations are still dominated by I/O and hashing overhead.
+On Mon, Jan 19, 2026 at 07:33:49AM +0100, Christoph Hellwig wrote:
+> While looking at fsverity I'd like to understand the choise of offset
+> in ext4 and f2fs, and wonder about an issue.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Both ext4 and f2fs round up the inode size to the next 64k boundary
+> and place the metadata there.  Both use the 65536 magic number for that
+> instead of a well documented constant unfortunately.
+> 
+> I assume this was picked to align up to the largest reasonable page
+> size?  Unfortunately for that:
+> 
+>  a) not all architectures are reasonable.  As Darrick pointed out
+>     hexagon seems to support page size up to 1MiB.  While I don't know
+>     if they exist in real life, powerpc supports up to 256kiB pages,
+>     and I know they are used for real in various embedded settings
+>  b) with large folio support in the page cache, the folios used to
+>     map files can be much larger than the base page size, with all
+>     the same issues as a larger page size
+> 
+> So assuming that fsverity is trying to avoid the issue of a page/folio
+> that covers both data and fsverity metadata, how does it copy with that?
+> Do we need to disable fsverity on > 64k page size and disable large
+> folios on fsverity files?  The latter would mean writing back all cached
+> data first as well.
+> 
+> And going forward, should we have a v2 format that fixes this?  For that
+> we'd still need a maximum folio size of course.   And of course I'd like
+> to get all these things right from the start in XFS, while still being as
+> similar as possible to ext4/f2fs.
 
-Has anything changed from my last feedback at
-https://lore.kernel.org/linux-fsdevel/20250810170311.GA16624@sol/ ?
+Yes, if I recall correctly it was intended to be the "largest reasonable
+page size".  It looks like PAGE_SIZE > 65536 can't work as-is, so indeed
+we should disable fsverity support in that configuration.
 
-Any additional data on the cycles and icache footprint added to data
-verification?  The preliminary results didn't look all that good to me.
+I don't think large folios are quite as problematic.
+ext4_read_merkle_tree_page() and f2fs_read_merkle_tree_page() read a
+folio and return the appropriate page in it, and fs/verity/verify.c
+operates on the page.  If it's a page in the folio that spans EOF, I
+think everything will actually still work, except userspace will be able
+to see Merkle tree data after a 64K boundary past EOF if the file is
+mmapped using huge pages.
 
-It also seems odd to put this in an "fsverity optimzations and speedups"
-patchset, given that it's the opposite.
+The mmap issue isn't great, but I'm not sure how much it matters,
+especially when the zeroes do still go up to a 64K boundary.
+
+If we do need to fix this, there are a couple things we could consider
+doing without changing the on-disk format in ext4 or f2fs: putting the
+data in the page cache at a different offset than it exists on-disk, or
+using "small" pages for EOF specifically.
+
+But yes, XFS should choose a larger alignment than 64K.
 
 - Eric
 
