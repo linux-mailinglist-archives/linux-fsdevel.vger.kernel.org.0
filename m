@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-74619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WOm5EzKFcGktYAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 08:50:10 +0100
+	id sGOhGKlFcWn2fgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 22:31:21 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E181F530BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 08:50:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC0195E144
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 22:31:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5D297E4330
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 11:52:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45E457EB7A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 11:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB73425CD4;
-	Tue, 20 Jan 2026 11:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D816426689;
+	Tue, 20 Jan 2026 11:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gzCa3A/l"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZLQHPZa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84843BF307
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 11:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BE5423165
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 11:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768909944; cv=none; b=mnNZj/2yMzo453zkNJKdGQubSn7Rqv2K7b8KWyEWjf/IVsnWyfgMyZTKpcNMAT/HCh+C/1oNHpVjmPwhpjuogJJ9b13XC82PXuIjaP1kjHWEe2uvq44yF18/7jrIUFHzVk9XrYXlkhC8wtAd0w9UZ9vGUIwrsCg7pojoFvsE24g=
+	t=1768909949; cv=none; b=VuDNIffx/3kd3AT3L0JgLy4w5GMCQFW+erEKR46oYwe7WtKcfw8fZ1laV8Aw2kTui3iTl68GNzdqAJ1My1vP/UJKkpfyyV9GGP07HX5ZyB1aiZ80MIkFkSBFK7PlbHR7RHz5bkMlNLDX8yv5f+m6FBgBhve4WgCzL67pMeQFdTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768909944; c=relaxed/simple;
-	bh=IgWAuNJ6h3E/R0Fu5awjtkTf/OgcqvY3PFwI4AxvJf8=;
+	s=arc-20240116; t=1768909949; c=relaxed/simple;
+	bh=bvuVfpg7fANpqrGpBEK9Ta/Hkb+dwC9XZqzfpSHeTjg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kxHzR9WPE7JbYdKzJ8AfGC+sbye1t+SchGfyKIjvFNO7ZSAtjP15oOZq6MEmj2Am+vWa6JbTZSWNDeon54Ve9SE3AByD74SA/VRV5NM8IfAXzKiOUsGOnn0gSnOx9y1Fzxp9eDTGx8WckjDVB7pufao9sS0IYZG7PtY3WUMw5j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gzCa3A/l; arc=none smtp.client-ip=209.85.219.50
+	 MIME-Version; b=VK64txZgYi0CO4jrVTVtJbTizU0mh8u4wbic+5YBsw/ZF1+3wCAk8HlfbJ/eQHKX1wtsrPaiADGwxz1uVmVWiCbD54tCVNE07RBoQ3PSZDcUVEc2tIB/7B8wrYi2HtimQJ7WT0vVdMFa5ot3RuXVodkReNuKDWsx/f1HiWPxKA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZLQHPZa; arc=none smtp.client-ip=209.85.219.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-88ffcb14e11so70078616d6.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 03:52:20 -0800 (PST)
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-88a2e3bd3cdso53231516d6.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 03:52:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768909939; x=1769514739; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768909942; x=1769514742; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=noKL7zQXHKYfYinQlJHUIYY5IKQR6tHuuXlN5E414EI=;
-        b=gzCa3A/lBb272Jq1hJmmpYkHojOD7e6a9++PdVPlcn53UAEzy6vZFxAU8i/M91CL2O
-         ALLAJI9gy+fgUoUx2Poj1q5kYGJl3ckcTqlEHiQa0fyl9w5lXG41WQKui9exAujhGr7X
-         Po3Brufq+Bjfi6sQxIJuZkyLSVM3AQ06oxfyjfj6iHo9HlKDigGaQkEKsSfMrXDzDli7
-         z9tX4AFkAGBXMFLloUfgow/OWYawQqsB/zQgec5X7hIPX9W4Sqa9CIwgDQu9duCqXxWk
-         xVbVm13wGI9GeouH49YzzBIqwaliZL0da/59A7d6p8pzNpLJJ0VizVNWzCEXjdFtkA5W
-         r8VA==
+        bh=1M3E4UxKfMJ+dI/l+/VVbPQmnjuaMV2kWf95M7jFT9o=;
+        b=lZLQHPZayZfdeaVhh8SLENMbqPIm+/SU6AdOOfukMavEYQtV4FMd04lvrhjCSYNVKn
+         csbAZyhLzEuyTrHwMWgD2jkOc4ZgveGyR/u9jSAs+51B7Y6PccPucDk7sEILt8hhgpC+
+         3QqSDNpnUygvigHDV8l3qm2cizUolEN9lCHIcQpR5vrMTjpSI6OgYRK2NTtEdpMb3NRZ
+         KsSaKWgaxpsiSCn7WX677/reAjv4EXT9Q4RkizfEBSpNGkcM5T5nDERltYG/0xnS3rKh
+         h1irv8vrr6RQ6kgYDSxXNjxnouaFAC2vndfrzosWr41VqJowz5uMaA+c+Y4yypFB0Q7j
+         0EHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768909939; x=1769514739;
+        d=1e100.net; s=20230601; t=1768909942; x=1769514742;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=noKL7zQXHKYfYinQlJHUIYY5IKQR6tHuuXlN5E414EI=;
-        b=sRx4CdH2Uku8iwpM3fKiJtcVkAS6cdynYBjzQ4Mz1+uVxIQCRPYN7JIgQH2F5AW6F8
-         BuCx8gIwALDrxSSHNXVwTuqty2znC9emTjhu+z4I5W4e/FAaenbnwO9p+Hr8ZOVXn5q/
-         hjL6CZfjQS/yA1iE9w9hqvJf0uQeZIVUy+g3McaSH7RghotyfjlOm9T8Tq5h+iDreDnd
-         ua0C/+hmNfCPfOVIhbZ2Mn4cbumGSW6qjCg2T6YMt+F3ceJr/bQsujrG0sstADaxUGL4
-         1NGRIrz4yK1a6j3QwK447WK8D1B5AXOG3iWInAKq1Y5oHkKAG6lmg60TCcAH2sceh2Zh
-         6vHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWl/JrEHlUZYN7/zQ1fT3Aq1AIVMbnf79cNMYdlDGMQXdyt8s2d9pF/ML9JzJwlVXmfq2ScuxHy/iF5zuRa@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm8qYC4TxNxRFGBqmQNwqvt49h1Unu1HfwW8S8rAtpi8B6JEgu
-	HNcLP2yXNg27793xKr7nmh+jILT48lqN7hn2LKmy76WIPLVnfp8BH0pj
-X-Gm-Gg: AZuq6aLq6T4r9B7EIfRozOQ2lplLLBi0ztp4vnHi8ceNQjge53Z+v9K8ptwLiT27+Vs
-	8ffYTnGMxBES6h26EOx/he9ggJ3RWS7I72Q1diDYH+zL4U3JyPcL35TzP4WZjAyTUhWX+BVSNr0
-	KOk5yfHDum66e3LnMWp+QLHbGytcXdorOgstaA+fE1FM8phCzAUXbH5VS02ymytidpsHzrkk3eD
-	3ed20Dzu0UiP+ZLenlf4NmmirfgRUKmVkxlwwKjr8c8IVmV0sAVtGIYHGfGt7JoF6X1lVdnKwE4
-	riPM+s3XT7owvEGlCWKFSl3apQdc5NE9XFEgsxsd/MdcTRi/opnjhSVow/NEjIWzqVzHopRFcqV
-	TkmEPN8uLETYbFVby5Vnk57WhXKIiaP8FDc0s+cqyy5vU4kid+rUUeUBeE/RYtDOIkVJoFDF4fe
-	XoAJpxtwliplQIy+ubbRj8rfhtItD21Ky5dzKG8ahaAMGAjujbjYwP+zcOgXk9PDLg29DcXPgb3
-	oENRIo/KzSop+YMFjR8eIu+EQ==
-X-Received: by 2002:a0c:f6d0:0:b0:894:4793:efb5 with SMTP id 6a1803df08f44-89463837a6cmr13834676d6.4.1768909938912;
-        Tue, 20 Jan 2026 03:52:18 -0800 (PST)
+        bh=1M3E4UxKfMJ+dI/l+/VVbPQmnjuaMV2kWf95M7jFT9o=;
+        b=kBrfItr8MvYT4418gTCVbO3DCvl3R8XjncqjXjBiGByNkGFSL4MNm3MH63zkCiivTH
+         5teepE3Rdzj/SAeKlt45Yj4Xw01CWXaYBlqIit6HHcyo1xfI338HHkCUUndTG8+NgSk6
+         RyNf90UEtiLAWjD1DEy+0ffeHGTd3TRA9cFbl48VqAwkfH6aPWp7qBQB9KuPo1njP5gA
+         CTFR+o+sXXKnEU4xpOIn6+rswvGJz9FXqnOt/BVmJQZiyKG8nt/G2rKoSy1bNz23ahwh
+         k1WD2ikMXa6Ow6HdfsOANxkNFfFORGwINC7QD0C6LrRLPhfY4qr613cF1fIJhrrdA27n
+         PUYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmr7wyPIYiP45z/DoRqYBb003hFuVJc6znNcbBPJ44Z04geTwau9cwatxH94lfdv3QtGNEY3D1Ey5vmORk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQrTD1jY78z7JMZxKXmFS5GTKUYV7x3Ao09VbZzpo4+Gp2aQ34
+	7icNYKOVt2n5W+OloqWc8M9CoUzV8/shhqzeuQuL3a99AmdSdPDs2bKL
+X-Gm-Gg: AZuq6aK6roD2WWFlE4U3tyDCZFSM9w04yax15JlNzDiP2vnZ+lWV9blzfqRSBnNJibl
+	Uc80OoWRZWSXwmUJNaADZ1DELTEfhRBGtLwZoxdfB6cyjw2pfKFHlqb5FIoTV0S1A+ehUQKG5SN
+	6LKfMrIgtlaSrbbWQlklML7K5qhgrMgADksL5eJiVUgvdK9Lq4ZEcRJAQswoOSNfG6fstt0TZD3
+	GVz0mmkLbYC6s/siFeVnUUC5q4KotQuMEjdNREQpDOOAvZNaA4Cow2MHXWgQLl7E1ifBQ6uMVp5
+	eZSQLizWe1qgyR5hP/I1Z9cahSxE7BFoOvDgdfBt7fjcssIPd5dkrutKV5QAX08Gk3ERAuagF9m
+	pMgnbG+imz1EYthwGKrNrJXnvh5ih7/sJIZCpZDAEteAbhj2kk04IrQ47cP3gk65lL0qfC7AkOR
+	N4FyxgCm8rhjxf/CR8RZqHwYHGSg6yAzkKBtIGmVMmDy8WneYn6UeWONYiIaSx7//7f8amIi8+l
+	7TBs/l81v1xtds=
+X-Received: by 2002:a05:6214:da6:b0:88a:375b:ed7c with SMTP id 6a1803df08f44-89398273c7cmr206650326d6.35.1768909941648;
+        Tue, 20 Jan 2026 03:52:21 -0800 (PST)
 Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8942e6c9a9dsm107071836d6.43.2026.01.20.03.52.17
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8942e6214c5sm100416876d6.25.2026.01.20.03.52.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Jan 2026 03:52:18 -0800 (PST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 8EB16F40068;
-	Tue, 20 Jan 2026 06:52:17 -0500 (EST)
+        Tue, 20 Jan 2026 03:52:21 -0800 (PST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 45E7EF40068;
+	Tue, 20 Jan 2026 06:52:20 -0500 (EST)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Tue, 20 Jan 2026 06:52:17 -0500
-X-ME-Sender: <xms:cWxvae6kc1TFcI9TJPWN-r0Pi54xEVHRlnTp-vtGY1_5kR1y9bNnsw>
-    <xme:cWxvaczkpMf4NjmQMHZz9DaKkERaCs-ewKaWwY6SKRG7FlYpzDD6ttDVLp4-B8Ptq
-    9TGgF5MDOIAZaMxRxBpNVj8MMU1t4okSniNUn08IIj-wX5gr_DJig>
-X-ME-Received: <xmr:cWxvaWD7IC7dfygFMVaTHzAYsQAUPgjYrvLCDOAmhrvV765T-eUhM4XQ>
+  by phl-compute-04.internal (MEProxy); Tue, 20 Jan 2026 06:52:20 -0500
+X-ME-Sender: <xms:dGxvaeqkIaxe-HgSJlZ-XdYMXejqbWoVC6UThHAb-Rvic93GdQubJA>
+    <xme:dGxvaSa8gav2xX32Oy285vSFg7ByFOIkpt2RK0DzHdiMZ8fTzzLqNBx5e_FUfMpdi
+    q34jZJ9pgSsoNGFH4kULx4XuYenM8xrxCzOzpnI7_mYQrejR5fx8w>
+X-ME-Received: <xmr:dGxvaRSPUthtjWaovyWv9pjjrE3aB0mWKVLe1ItVXOUhdQ5PqESJVUhy>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddugedtfeegucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -106,14 +106,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddugedtfeegucetufdote
     htvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegsohhquhhnrdhfvghn
     ghesghhmrghilhdrtghomhdprhgtphhtthhopehmrghrkhdrrhhuthhlrghnugesrghrmh
     drtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvth
-X-ME-Proxy: <xmx:cWxvacaWZh4sjTdNnxvo-RY08pCAGMHU6oz3GtYY83TahsLzo3zhPA>
-    <xmx:cWxvaVH9v9jIsSv3xBvewOIYhqwrvpqIM-4f5SBsPuYuerGbhySryA>
-    <xmx:cWxvaYuLdN-3g2qZTwjnkdP5nvAjWgUAp8FbfGHHKKMntdAi0DlrmQ>
-    <xmx:cWxvaTIFjoNqnVJsZBRniY4Unvx_7-2ldrTR_nrHxhWNyETxhfMZ7Q>
-    <xmx:cWxvaeO4loKUB_fs2fsM5G6nADvOiAYKujq3cBHqFJYbyNu4pFPDyWDl>
+X-ME-Proxy: <xmx:dGxvaYfKNo8QDwLYM9CXeiISh2_oldLP9KNgBPMv_C14CM-1i-LTMw>
+    <xmx:dGxvaYlvME6F5NCUZJYEaj9oEaPojavelmjuY8g2-7LJ489XKk0xQA>
+    <xmx:dGxvaVhMjOriFRdNi62qvTsp8VlSSPfzz_4B3_23vklb-14ShEa8zg>
+    <xmx:dGxvaREoz1sQ_A-5H57v0CBmy4qsl47VgFTj2JbsxHXyWG7Ei8Jxwg>
+    <xmx:dGxvacx2qewmct1PBt13iNre5_XJTp0BvOBLUs-Wl3WS5g1zXfe541fl>
 Feedback-ID: iad51458e:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 20 Jan 2026 06:52:16 -0500 (EST)
+ 20 Jan 2026 06:52:19 -0500 (EST)
 From: Boqun Feng <boqun.feng@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
@@ -135,9 +135,9 @@ Cc: Will Deacon <will@kernel.org>,
 	"Paul E. McKenney" <paulmck@kernel.org>,
 	Marco Elver <elver@google.com>,
 	FUJITA Tomonori <fujita.tomonori@gmail.com>
-Subject: [PATCH 1/2] rust: sync: atomic: Remove bound `T: Sync` for `Atomci::from_ptr()`
-Date: Tue, 20 Jan 2026 19:52:06 +0800
-Message-ID: <20260120115207.55318-2-boqun.feng@gmail.com>
+Subject: [PATCH 2/2] rust: sync: atomic: Add atomic operation helpers over raw pointers
+Date: Tue, 20 Jan 2026 19:52:07 +0800
+Message-ID: <20260120115207.55318-3-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260120115207.55318-1-boqun.feng@gmail.com>
 References: <20260120115207.55318-1-boqun.feng@gmail.com>
@@ -148,8 +148,9 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [0.04 / 15.00];
+X-Spamd-Result: default: False [1.04 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
+	DATE_IN_PAST(1.00)[33];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
@@ -157,62 +158,239 @@ X-Spamd-Result: default: False [0.04 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74619-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-74620-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[kernel.org,infradead.org,gmail.com,arm.com,garyguo.net,protonmail.com,google.com,umich.edu,weathered-steel.dev];
+	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FREEMAIL_FROM(0.00)[gmail.com];
 	RCPT_COUNT_TWELVE(0.00)[20];
-	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
+	FREEMAIL_CC(0.00)[kernel.org,infradead.org,gmail.com,arm.com,garyguo.net,protonmail.com,google.com,umich.edu,weathered-steel.dev];
+	FROM_NEQ_ENVFROM(0.00)[boqunfeng@gmail.com,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
-	FROM_NEQ_ENVFROM(0.00)[boqunfeng@gmail.com,linux-fsdevel@vger.kernel.org];
 	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_COUNT_SEVEN(0.00)[8]
-X-Rspamd-Queue-Id: E181F530BD
+X-Rspamd-Queue-Id: CC0195E144
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Originally, `Atomic::from_ptr()` requires `T` being a `Sync` because I
-thought having the ability to do `from_ptr()` meant multiplle
-`&Atomic<T>`s shared by different threads, which was identical (or
-similar) to multiple `&T`s shared by different threads. Hence `T` was
-required to be `Sync`. However this is not true, since `&Atomic<T>` is
-not the same at `&T`. Moreover, having this bound makes `Atomic::<*mut
-T>::from_ptr()` impossible, which is definitely not intended. Therefore
-remove the `T: Sync` bound.
+In order to synchronize with C or external, atomic operations over raw
+pointers, althought previously there is always an `Atomic::from_ptr()`
+to provide a `&Atomic<T>`. However it's more convenient to have helpers
+that directly perform atomic operations on raw pointers. Hence a few are
+added, which are basically a `Atomic::from_ptr().op()` wrapper.
 
-Fixes: 29c32c405e53 ("rust: sync: atomic: Add generic atomics")
+Note: for naming, since `atomic_xchg()` and `atomic_cmpxchg()` has a
+conflict naming to 32bit C atomic xchg/cmpxchg, hence they are just
+named as `xchg()` and `cmpxchg()`. For `atomic_load()` and
+`atomic_store()`, their 32bit C counterparts are `atomic_read()` and
+`atomic_set()`, so keep the `atomic_` prefix.
+
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- rust/kernel/sync/atomic.rs | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ rust/kernel/sync/atomic.rs           | 104 +++++++++++++++++++++++++++
+ rust/kernel/sync/atomic/predefine.rs |  46 ++++++++++++
+ 2 files changed, 150 insertions(+)
 
 diff --git a/rust/kernel/sync/atomic.rs b/rust/kernel/sync/atomic.rs
-index 224bd57da1ab..d49ee45c6eb7 100644
+index d49ee45c6eb7..6c46335bdb8c 100644
 --- a/rust/kernel/sync/atomic.rs
 +++ b/rust/kernel/sync/atomic.rs
-@@ -215,10 +215,7 @@ pub const fn new(v: T) -> Self {
-     /// // no data race.
-     /// unsafe { Atomic::from_ptr(foo_a_ptr) }.store(2, Release);
-     /// ```
--    pub unsafe fn from_ptr<'a>(ptr: *mut T) -> &'a Self
--    where
--        T: Sync,
--    {
-+    pub unsafe fn from_ptr<'a>(ptr: *mut T) -> &'a Self {
-         // CAST: `T` and `Atomic<T>` have the same size, alignment and bit validity.
-         // SAFETY: Per function safety requirement, `ptr` is a valid pointer and the object will
-         // live long enough. It's safe to return a `&Atomic<T>` because function safety requirement
+@@ -611,3 +611,107 @@ pub fn cmpxchg<Ordering: ordering::Ordering>(
+         }
+     }
+ }
++
++/// Atomic load over raw pointers.
++///
++/// This function provides a short-cut of `Atomic::from_ptr().load(..)`, and can be used to work
++/// with C side on synchronizations:
++///
++/// - `atomic_load(.., Relaxed)` maps to `READ_ONCE()` when using for inter-thread communication.
++/// - `atomic_load(.., Acquire)` maps to `smp_load_acquire()`.
++///
++/// # Safety
++///
++/// - `ptr` is a valid pointer to `T` and aligned to `align_of::<T>()`.
++/// - If there is a concurrent store from kernel (C or Rust), it has to be atomic.
++#[doc(alias("READ_ONCE", "smp_load_acquire"))]
++#[inline(always)]
++pub unsafe fn atomic_load<T: AtomicType, Ordering: ordering::AcquireOrRelaxed>(
++    ptr: *mut T,
++    o: Ordering,
++) -> T
++where
++    T::Repr: AtomicBasicOps,
++{
++    // SAFETY: Per the function safety requirement, `ptr` is valid and aligned to
++    // `align_of::<T>()`, and all concurrent stores from kernel are atomic, hence no data race per
++    // LKMM.
++    unsafe { Atomic::from_ptr(ptr) }.load(o)
++}
++
++/// Atomic store over raw pointers.
++///
++/// This function provides a short-cut of `Atomic::from_ptr().load(..)`, and can be used to work
++/// with C side on synchronizations:
++///
++/// - `atomic_store(.., Relaxed)` maps to `WRITE_ONCE()` when using for inter-thread communication.
++/// - `atomic_load(.., Release)` maps to `smp_store_release()`.
++///
++/// # Safety
++///
++/// - `ptr` is a valid pointer to `T` and aligned to `align_of::<T>()`.
++/// - If there is a concurrent access from kernel (C or Rust), it has to be atomic.
++#[doc(alias("WRITE_ONCE", "smp_store_release"))]
++#[inline(always)]
++pub unsafe fn atomic_store<T: AtomicType, Ordering: ordering::ReleaseOrRelaxed>(
++    ptr: *mut T,
++    v: T,
++    o: Ordering,
++) where
++    T::Repr: AtomicBasicOps,
++{
++    // SAFETY: Per the function safety requirement, `ptr` is valid and aligned to
++    // `align_of::<T>()`, and all concurrent accesses from kernel are atomic, hence no data race
++    // per LKMM.
++    unsafe { Atomic::from_ptr(ptr) }.store(v, o);
++}
++
++/// Atomic exchange over raw pointers.
++///
++/// This function provides a short-cut of `Atomic::from_ptr().xchg(..)`, and can be used to work
++/// with C side on synchronizations.
++///
++/// # Safety
++///
++/// - `ptr` is a valid pointer to `T` and aligned to `align_of::<T>()`.
++/// - If there is a concurrent access from kernel (C or Rust), it has to be atomic.
++#[inline(always)]
++pub unsafe fn xchg<T: AtomicType, Ordering: ordering::Ordering>(
++    ptr: *mut T,
++    new: T,
++    o: Ordering,
++) -> T
++where
++    T::Repr: AtomicExchangeOps,
++{
++    // SAFETY: Per the function safety requirement, `ptr` is valid and aligned to
++    // `align_of::<T>()`, and all concurrent accesses from kernel are atomic, hence no data race
++    // per LKMM.
++    unsafe { Atomic::from_ptr(ptr) }.xchg(new, o)
++}
++
++/// Atomic compare and exchange over raw pointers.
++///
++/// This function provides a short-cut of `Atomic::from_ptr().cmpxchg(..)`, and can be used to work
++/// with C side on synchronizations.
++///
++/// # Safety
++///
++/// - `ptr` is a valid pointer to `T` and aligned to `align_of::<T>()`.
++/// - If there is a concurrent access from kernel (C or Rust), it has to be atomic.
++#[doc(alias("try_cmpxchg"))]
++#[inline(always)]
++pub unsafe fn cmpxchg<T: AtomicType, Ordering: ordering::Ordering>(
++    ptr: *mut T,
++    old: T,
++    new: T,
++    o: Ordering,
++) -> Result<T, T>
++where
++    T::Repr: AtomicExchangeOps,
++{
++    // SAFETY: Per the function safety requirement, `ptr` is valid and aligned to
++    // `align_of::<T>()`, and all concurrent accesses from kernel are atomic, hence no data race
++    // per LKMM.
++    unsafe { Atomic::from_ptr(ptr) }.cmpxchg(old, new, o)
++}
+diff --git a/rust/kernel/sync/atomic/predefine.rs b/rust/kernel/sync/atomic/predefine.rs
+index 5faa2fe2f4b6..11bc67ab70a3 100644
+--- a/rust/kernel/sync/atomic/predefine.rs
++++ b/rust/kernel/sync/atomic/predefine.rs
+@@ -235,6 +235,14 @@ fn atomic_basic_tests() {
+ 
+             assert_eq!(v, x.load(Relaxed));
+         });
++
++        for_each_type!(42 in [i8, i16, i32, i64, u32, u64, isize, usize] |v| {
++            let x = Atomic::new(v);
++            let ptr = x.as_ptr();
++
++            // SAFETY: `ptr` is a valid pointer and no concurrent access.
++            assert_eq!(v, unsafe { atomic_load(ptr, Relaxed) });
++        });
+     }
+ 
+     #[test]
+@@ -245,6 +253,17 @@ fn atomic_acquire_release_tests() {
+             x.store(v, Release);
+             assert_eq!(v, x.load(Acquire));
+         });
++
++        for_each_type!(42 in [i8, i16, i32, i64, u32, u64, isize, usize] |v| {
++            let x = Atomic::new(0);
++            let ptr = x.as_ptr();
++
++            // SAFETY: `ptr` is a valid pointer and no concurrent access.
++            unsafe { atomic_store(ptr, v, Release) };
++
++            // SAFETY: `ptr` is a valid pointer and no concurrent access.
++            assert_eq!(v, unsafe { atomic_load(ptr, Acquire) });
++        });
+     }
+ 
+     #[test]
+@@ -258,6 +277,18 @@ fn atomic_xchg_tests() {
+             assert_eq!(old, x.xchg(new, Full));
+             assert_eq!(new, x.load(Relaxed));
+         });
++
++        for_each_type!(42 in [i8, i16, i32, i64, u32, u64, isize, usize] |v| {
++            let x = Atomic::new(v);
++            let ptr = x.as_ptr();
++
++            let old = v;
++            let new = v + 1;
++
++            // SAFETY: `ptr` is a valid pointer and no concurrent access.
++            assert_eq!(old, unsafe { xchg(ptr, new, Full) });
++            assert_eq!(new, x.load(Relaxed));
++        });
+     }
+ 
+     #[test]
+@@ -273,6 +304,21 @@ fn atomic_cmpxchg_tests() {
+             assert_eq!(Ok(old), x.cmpxchg(old, new, Relaxed));
+             assert_eq!(new, x.load(Relaxed));
+         });
++
++        for_each_type!(42 in [i8, i16, i32, i64, u32, u64, isize, usize] |v| {
++            let x = Atomic::new(v);
++            let ptr = x.as_ptr();
++
++            let old = v;
++            let new = v + 1;
++
++            // SAFETY: `ptr` is a valid pointer and no concurrent access.
++            assert_eq!(Err(old), unsafe { cmpxchg(ptr, new, new, Full) });
++            assert_eq!(old, x.load(Relaxed));
++            // SAFETY: `ptr` is a valid pointer and no concurrent access.
++            assert_eq!(Ok(old), unsafe { cmpxchg(ptr, old, new, Relaxed) });
++            assert_eq!(new, x.load(Relaxed));
++        });
+     }
+ 
+     #[test]
 -- 
 2.51.0
 
