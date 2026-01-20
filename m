@@ -1,336 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-74702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oEUwNeDZb2n8RwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 20:39:12 +0100
+	id CGxrJYDbb2n8RwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 20:46:08 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E41C4A9B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 20:39:12 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A0C44AAEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 20:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D8B4F782296
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 17:12:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3E0D662D207
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 17:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBAD313291;
-	Tue, 20 Jan 2026 17:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="uJW9RQNu"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CC443CED1;
+	Tue, 20 Jan 2026 17:47:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020100.outbound.protection.outlook.com [52.101.195.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from brightrain.aerifal.cx (brightrain.aerifal.cx [104.156.224.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC8A350A1C;
-	Tue, 20 Jan 2026 17:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.100
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768929161; cv=fail; b=fhRrfY/Q8ONIdzG1cPavL8zo69lu/JZd4R1LMzQwMfdeaI1ey3qztjX3A4bR43tW81cwx6bu23wIlPhE1KgUwDcFMKel0NkXvhpL578LY29Tf1Jc3IPukmSdGgkh38HxuowyzXuSUc/KKHbVUDzyv+diRThSTP8NRiNZi+EhGiw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768929161; c=relaxed/simple;
-	bh=0puPIKtM1sycLbJ9ftG1Z5wJCCFwun23vxQyH924ZDY=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=YO/6SSmKMOtWKBet38bNvgp74W0MXKVo50XEi4Pk5JqhqRb+KvIQUbKrwVmKdX+b2m0tBZAgVqK950RjJ9M3Nm9ki7NPeqJs/zzajdRkkcGVH9vZx0qF0vN1QKXIb4wTmGi3FlMr6GF9/2S7OGqhwutkCnUYlIPwvU/n6d8ZhVs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=uJW9RQNu; arc=fail smtp.client-ip=52.101.195.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kvNe/XqfxKhgEoOe5BOr6sBcP1Xy5PMdl4LFOBWLVCFirfoILCNwTPDC/ZUV5dWBzOurSpssiZxGSn+GnFPYvOZ7xRlS3W9JSdw9NC1cjPQR5zoENFwbh+kJBdP2yQ4GDcxV1f1HKGF211ghLG5g2TdHnAaApQBa3Y4io3ePa+4ufGNopnzH3PmM8sT24t1DGLvPjO7tMUmBD6dtEpExIwKdnEf4aHprJTrlTFTZ3PiEIiLx8kHZ38uFVbMK1jVM3P7sX7nOQZQcPWgN7nl/nWbpKFhPt4mCIJYsB2V+L2srriwIlthkJS/RtJAOIw15lCOrFGk36nh1MBDnEdNqUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2NNRqb23Utmc/V0dkcVb0HjsJhxSUJb5OXrhCNNH1AE=;
- b=jWZNnQvZk2+Ez4N4pxVmOjBOj1IuepcJd2LcOtBjCTLj5TydBJQkfsGbwr07hKA3VEk7nw48cUe9ef/mgbD5RqJIV3B4AmSsEfIfxEH4xXhxqDYRNnT4wPh/UwmGIUTWR4PoetHGCcaeAaWWvxNMyu+2JFurzAQAA5QNhyPEQhqqnjRP2CN4M5dQcdXXsLN1E6tnniGk+dl8TX0juWCBLfPQI4Qc1TJLnCpaHVDrzP6GrHCD+v+PWfAgnjBfVIiGnAf8fhhqSHvStbjz+JDoLSXd282f+RrRyVsS4BXHjmyiQhO+iGeBH+YC+K1gUt3C3303goQ2ixOwSTWjc8fKOQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2NNRqb23Utmc/V0dkcVb0HjsJhxSUJb5OXrhCNNH1AE=;
- b=uJW9RQNu63TGTVmLpmVER4JenMyBYPY8cdIR04tn6EsV6knigocecSbQGBCoajIXRosQQgWnc63Iau4G5369SLq3PEdrrUBnRL8rqxdMVBLgw7DvxMMPbrm8rVrkgHErr4DKbnm1O8dt2wEzEOQMyNvawQv5iGx/M4dyjfJJHbM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:488::16)
- by LO0P265MB3274.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:168::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.12; Tue, 20 Jan
- 2026 17:12:36 +0000
-Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1c3:ceba:21b4:9986]) by LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1c3:ceba:21b4:9986%5]) with mapi id 15.20.9520.012; Tue, 20 Jan 2026
- 17:12:35 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 20 Jan 2026 17:12:35 +0000
-Message-Id: <DFTL1VEGDRZH.3SRFEE9L1XGEE@garyguo.net>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <kasan-dev@googlegroups.com>, "Will
- Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>, "Mark
- Rutland" <mark.rutland@arm.com>, "Gary Guo" <gary@garyguo.net>, "Miguel
- Ojeda" <ojeda@kernel.org>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Elle Rhumsaa" <elle@weathered-steel.dev>, "Paul E. McKenney"
- <paulmck@kernel.org>, "FUJITA Tomonori" <fujita.tomonori@gmail.com>
-Subject: Re: [PATCH 2/2] rust: sync: atomic: Add atomic operation helpers
- over raw pointers
-From: "Gary Guo" <gary@garyguo.net>
-To: "Marco Elver" <elver@google.com>, "Boqun Feng" <boqun.feng@gmail.com>
-X-Mailer: aerc 0.21.0
-References: <20260120115207.55318-1-boqun.feng@gmail.com>
- <20260120115207.55318-3-boqun.feng@gmail.com>
- <aW-sGiEQg1mP6hHF@elver.google.com>
-In-Reply-To: <aW-sGiEQg1mP6hHF@elver.google.com>
-X-ClientProxiedBy: LO4P265CA0089.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2bc::6) To LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:488::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B513043636A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 17:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.156.224.86
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768931224; cv=none; b=e7aXxVstZpZSKKEsFDN+iVtiy18gwuPlB+xNHgYIrbqswNa0GWSpbltRhO1XmH/zUzwHUg9wzbLVaGYGNuuW/gRa4MVo8eBs31Cmst+etA2yJShNTW5FfT5CbBzK+oSAHdWfvpqV3jGT+ISCt4TwueTkdUO87sexo/bo5VRAHdM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768931224; c=relaxed/simple;
+	bh=j7r7bBh+TNMwmcYRtzec30Sn1pdEm08wClZ+gl3HPDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=heTKDyDxpjFaCW1U+OSd4hUZUrWNZ7eYnDc3+hvY8Nbm2cOIfk9YbunrCTgguh0XpET8L4ZS3LCy3YEd9gTqzELlCKnCMthw5RqZ36ltU6mGlxTFGwcNZgktDvDH3AIKWMDZryvj49/CQUbRR0j7Bs6BVCCUSsLlGqM75jIRerU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org; spf=pass smtp.mailfrom=aerifal.cx; arc=none smtp.client-ip=104.156.224.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aerifal.cx
+Date: Tue, 20 Jan 2026 12:46:59 -0500
+From: Rich Felker <dalias@libc.org>
+To: Zack Weinberg <zack@owlfolio.org>
+Cc: Alejandro Colomar <alx@kernel.org>,
+	Vincent Lefevre <vincent@vinc17.net>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+	GNU libc development <libc-alpha@sourceware.org>
+Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from
+ POSIX.1-2024
+Message-ID: <20260120174659.GE6263@brightrain.aerifal.cx>
+References: <a5tirrssh3t66q4vpwpgmxgxaumhqukw5nyxd4x6bevh7mtuvy@wtwdsb4oloh4>
+ <efaffc5a404cf104f225c26dbc96e0001cede8f9.1747399542.git.alx@kernel.org>
+ <20250516130547.GV1509@brightrain.aerifal.cx>
+ <20250516143957.GB5388@qaa.vinc17.org>
+ <20250517133251.GY1509@brightrain.aerifal.cx>
+ <5jm7pblkwkhh4frqjptrw4ll4nwncn22ep2v7sli6kz5wxg5ik@pbnj6wfv66af>
+ <8c47e10a-be82-4d5b-a45e-2526f6e95123@app.fastmail.com>
+ <20250524022416.GB6263@brightrain.aerifal.cx>
+ <1571b14d-1077-4e81-ab97-36e39099761e@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LOVP265MB8871:EE_|LO0P265MB3274:EE_
-X-MS-Office365-Filtering-Correlation-Id: e515a239-a584-42dc-c9eb-08de58471b5f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|10070799003|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NDBSWHNqVlRvTnpmb0lxNlZRdXRZUi94UDZpUGhwRzNKZXU2ckdCSUgwdE45?=
- =?utf-8?B?a0lYYXJJQnFVVWVhT3IwODg0cGtLNTJnWE1RSk1JUVl3aVY4NHkyYm9ySmJL?=
- =?utf-8?B?Q3UvZEdaeUV2L0VXak5KV3pobyt0SEZoZStYUDIvdjBWWnVkaVgyMnFDYmxF?=
- =?utf-8?B?dWlKZ1lIOUp6MXZGT2hHTVFJWEZvdndheHRIS2lZRmdaTGtHb3VEdjF4UXA3?=
- =?utf-8?B?MUJ6bFlBMjM0d0hlSlBCRVhQZFhyaXdoY2JIa2R2TlFOODlGeTBra0hoa1E3?=
- =?utf-8?B?aStDNDM2cGJLenBad1c5WE00dWVrZDc2bmFFS3FTNENkUTlqeHB4UjR0cVBy?=
- =?utf-8?B?RjNiWDJWa0Rzemx0ZlZpV0JxbU9SOUdBYi9HRVpFVm1CZ29JQ3diYm5wVnJn?=
- =?utf-8?B?TG1YNytpYUM5Tkk2OHlMeDVKejMwZEkvRFhTK3UzeU4wZk9xTUp2b005MDFM?=
- =?utf-8?B?YnRRU1pmTi94MDZhUWpodlpkaWNJN0UwQkVxWWdrOUhWYWExbmJTd0VGV1kz?=
- =?utf-8?B?WFlYT3RsZU44OHk2aHNxbWZtcjNrYWF0eGN4ZU00ZDhOTXdxbHh2TWVzRVZR?=
- =?utf-8?B?elVZakwzS0p6dmJaWmhTbzZEYUR0azZnSXpkaXJJci9MUEVGQ2pSb3NhNWgw?=
- =?utf-8?B?UVdOTEYvUVo3TzNXeXN5L3hmS3h6U0tXZUl0aE8wSXVsdUU3ZWZsUDNPQ3U2?=
- =?utf-8?B?U2g1bkhLaHVqODFndmtDdzdBajRoREdhNFJsc2lqK0xlZEdLME85UjhlV1V1?=
- =?utf-8?B?MHNBVGY3TkpxbmQ1SHdoOXBQUlRZL0RGc3B2LzRJNzRCTnF5N0NIWG5CekQy?=
- =?utf-8?B?T2xER3k0RFErS3dqYkV6ZkFXbDg3bkZ6SkZPZEQxN1dGcU5GWkNmSTk4bGxl?=
- =?utf-8?B?MUFQSnZMNVJUNXlQL3JmbWI3ZkhvcTFjNmwxTWl6S1c1MldJLy9Ba2JQbU0y?=
- =?utf-8?B?UFliblpoT3pOeitpUmxXdWl3RDZKSDlmdTZZdlVOSUJCRXhOWEVrZjgrOXZu?=
- =?utf-8?B?Rks1THErd2I4QzNOYXVISWwxNHFOVk0vdnZjOHlyK2c3NDZJUXR6YXdTN3VC?=
- =?utf-8?B?RWFHbm41ODBBUExCNVY5aWV6TDZ2eEtDVzJ1YnBtYXROSW1ZcjJ1WEFpczUr?=
- =?utf-8?B?aG84eVR1SGZCN21xV3k3R1pTQmlSRktURGNhd2dsZUlHUndVek5ERERJaCs3?=
- =?utf-8?B?bG9UVEw1d2pLMVErWWN3Zk9lZEY5dzlRKzIxMXp3UDFtYkhVTmo5dGZJN0J0?=
- =?utf-8?B?bDZQTk9ZclVzaDNZSUloTXZUSFUwbnJabEc5MTEvNGo3UEVmcktyNjk3Smc3?=
- =?utf-8?B?QXorYzRCM3hsYy93VTYwNFU0UlJXNnpYMHRLbzdMTXFHd3NIYzZPdUZ1MFhG?=
- =?utf-8?B?b1RLR05xZ3ZhTU9XSGZQTkhDNjJsR1Fwa1NnUCtBK3pBVHRWRklRMmk3UDdK?=
- =?utf-8?B?SjdKelloTkhxMnIwWTJ0ZVJmcm9PclZKN09Qd0hrRllIU3gvT0ZXYi9jN1Iw?=
- =?utf-8?B?b0hNcU9NTkI3SEpGTm1QWFNRaUtrbVRybkV6b2lTTy9pK0p0bW1UQk5yZExz?=
- =?utf-8?B?Q1cwTVBJZUhuTzFsMnc3M3lENFpsK2ZHRzFHVVp2dVlhQjFraFZvV1hJRll3?=
- =?utf-8?B?YXEwSnY4TmZsMkpkOVVzTDZIWWpLNVZWN0gyM2s4SlJ0ZTRhSGdKSEF3dkxK?=
- =?utf-8?B?SU1sR09IWE0rdURsT1ZSQUx0S05BcmIwTDk3bzlCZjZiVmJsc2dtU3ozc3pM?=
- =?utf-8?B?SWJValNNaDVCNGlkSTJTeFVxUzR4UzQveFZmVUUwMDExakRjaVBNb1FxK1U3?=
- =?utf-8?B?QUNFVmpjcU9SUlcrbGNwMmJvNG5qYXJjd3NwS0JzMnM3MDNZL1VxcFFCTW9K?=
- =?utf-8?B?anJnUHlDVXVkMkpsVEM4NUJIOXVpcytFQ1J5MitKdUhwSWZqQnp0aXcrOWV6?=
- =?utf-8?B?NUFXYkJzcDFJdVJPVHY5eURSNThzdE5rS1kvZGdwYXlEQkF3amZ4RFhveFlr?=
- =?utf-8?B?MmZ4VUxOQUU1S0ZrRTF2VmYwakp1RUxUV0o5aFdDZWRLUVRrVGJTWlFWdG9P?=
- =?utf-8?Q?X3HzH8?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(10070799003)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?anhIbXp1ZDVudGdGWEQraUd5eXo1QUluSTA2dEFTNnlLNUw5eHo0cVBrcUEx?=
- =?utf-8?B?dnd3c3cyMExwMDNjdHRVckpKM2pRYkRBU2QrTlJkdVFPU2grVHprd251eTBI?=
- =?utf-8?B?SSs1Yy9JSEZuU3FHRk83dUVtbUs5Mkl6VTRqZm5qNERrY205RmNVeVVrc21h?=
- =?utf-8?B?T0lRK2crTW5Nem9icktROE9pMGppVFdoS2U3K1QvcGQweGZaNUtrRUNyeDFY?=
- =?utf-8?B?blBVTmdqOFpTeVhMV0pLNFNJTDE1N01iUk84WkplOHN4WnNIbzh3ejJmamxa?=
- =?utf-8?B?YWpmNzFKYS9ybHNBSHRkcWc2b0p1ZGZnNDhoRkYvNGJKdWlYQ0s2Q29BUGhB?=
- =?utf-8?B?Q0VlY1lUdWNLRlBJRG9Fd0hZREpkaWllSUFKVFZGUkYzK0I5QnNpT28rNGpv?=
- =?utf-8?B?MzF2ZGRCNEc1NWhLazF4L0pOWVh3VEJRanMzbnV1RmpaS1lsU2M4TjZiOHNQ?=
- =?utf-8?B?M1YzQnVEbkx4VVRZT013SkJDaWRxMVk4N0ZVT0ZIb2gzNnU0S3o3SXNsUVho?=
- =?utf-8?B?Y1JwUmM3NUxRZjVBRFVjMXFoeGUybENDVk1ucFVNQVVTWjJQVXpZMDVEV0hV?=
- =?utf-8?B?blZ2cFpEWk5pUDF4Z2NLK1VsOHc5ZFQ0R3dHS21OQzAvRzdWVm5HaGZRWjJj?=
- =?utf-8?B?bEZidGdrYzdkTWRZZ0d4VjlwcXJYb01RTE9uUmhKUVd6cGNDTDZvKy9zRHZU?=
- =?utf-8?B?NUJZNkhQQnUrQ2RBanBXalFkOGpudXhIejBieEowUU1RZzh6eWsrR2VmbkRV?=
- =?utf-8?B?M005bEtYQU1KN0xDb21QMjBWS1d0YlpleHFEejN2VmJvdFZaTEEwaytheGV2?=
- =?utf-8?B?Z0M3MnZ1dmwzTWpwK0ZMNHE3ZkNtOXp2Y0FqaCtDMHB4QisxTkJnQTAxQkg2?=
- =?utf-8?B?TDVGU3VVdU1QOHVkVkxRMWgyQ0N5WkZqU1M0QndLS1Bvd3YrLzhUMloyaXdP?=
- =?utf-8?B?a3JnWmZZcjZORFlCU0VDNm9vdEtDb3RSMWkyY0FCUnVyNHRDZkhBTHBBbklO?=
- =?utf-8?B?dUFqWXBWSDNVMkpGdm52UkszTURnc3pDbGFsQktyK3dtYTBUVkVaUHZ6c3c3?=
- =?utf-8?B?WEJId2F0dzJ0ZHhYTzY1eHZSbFJxWUVRNW9lT0NpU01xc1ZQTVRsYUlBTmdM?=
- =?utf-8?B?VXZneFlNeVZWWmI1L3pDQ2VEbDlQdjg0djRDa09UWXVhdjdZbDEyMm0yNVky?=
- =?utf-8?B?eWFWaG82NlJRY01zSThjc2ZoNCtBdnJZMUJzYndvVnBpWEZqQW5kV1JtZFVM?=
- =?utf-8?B?NUpCNWp4WkZLYjZyUjhwdHRidWdYd3ViT05nMk1DWUdzSjBGd00yYTIwV1ov?=
- =?utf-8?B?c2ZkRHFyMGR6aXF5K1Z0eC9pSjgrQWdpdlcwMVZMcGRxdDhzeGlFRFhhRTg1?=
- =?utf-8?B?RGZFbmJPL2xaUkpZNVdrQTRYcTlRcmVtZXJUTFR1YzFEYVJJdnhJdGtjUC9h?=
- =?utf-8?B?NWtyMnZVK0c4d0FDTlhKRE8xU1RSQ1M0T3BCRGVtQ0JTMEVBWUtib0wzWDVo?=
- =?utf-8?B?Nll6SzExemlxTk9DN0djUkw0alVLaGMvTSt2b0VNQmVDMmpQTkZIaVZlbWtP?=
- =?utf-8?B?Z0dIc1pDS2xTMHVoMGJzcWl1Q3BjTzVaM0o4TzRNbTJpUVdTM2Y1bmsvcHg2?=
- =?utf-8?B?bnVvSDdSWFhqYVVTWVcyd0ZWaVpzeDFHQUNuaHJuV2xWclhyOXNFWDZxa0p1?=
- =?utf-8?B?UVg0V2sxemRuYkJleEt0QjIya2lnZ292QVJjU01hTnlCZDF5d1NpR29oUnNF?=
- =?utf-8?B?QU41QmRZK3VFQVU2K0sxU2tRM0ZLWVJ1MEhnTUZUeXFlelZJMFpLSmMySnhJ?=
- =?utf-8?B?WGlQWEdHdDVRbk9USjUrNVBGN2p3QjEwaEtGQ1BGTkFoUTR1UkJDeVpQcCs1?=
- =?utf-8?B?OWRhZFQ2UVdUaUU0bEx4TXhYUmFxM0lLRlRibzBra291cE9oZ3pyNGlJb0VE?=
- =?utf-8?B?aGg2aDh0NExpYWlaZUI5bzdMUUlSdlYrQktTWURYU1RCMHA0TzN1dEpZMnRv?=
- =?utf-8?B?VHNrT3c3QnB3Y1pxWHdlOHJLOGVGNTF3bEpsdG5RU3JqOHRzYnUrQk5wclY4?=
- =?utf-8?B?V3VSV25Edm8xczFLUkRNS09zKzM5dVJXWDdrTndMR2ZMZXRFSWNESVQ3WVQ3?=
- =?utf-8?B?SWxJQXora2o0MCtkLzFTeEVHYWtxTE9saXdOUGdmbkxZUEZXL0lza29PWUdM?=
- =?utf-8?B?UmxrcXdUb0NXUVkxUVk3VnlPV3RHanpnTStKcVRxQVlUZzR5eVZvR2pFTHoy?=
- =?utf-8?B?Sm03djg2aXpIb2NRVFR6QmtHTG1uWjFwRGdkTkpMeEU4SGxlS3JiSkxieEVZ?=
- =?utf-8?B?TURDaDB0dkdJS2h3eFJmb2xKUGpFOHlSbG5ZaWdLNDFOWS9HNzhZZz09?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: e515a239-a584-42dc-c9eb-08de58471b5f
-X-MS-Exchange-CrossTenant-AuthSource: LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2026 17:12:35.9217
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HyPtZNe/Nj3QSUgQPSu3YMyJEPreH8IG0MuqXRh9LevQ0aTeYH+bwSZjsIsAKFOehwaqVXBllVwHXwuh+KXBkw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P265MB3274
-X-Spamd-Result: default: False [1.54 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[garyguo.net:s=selector1];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1571b14d-1077-4e81-ab97-36e39099761e@app.fastmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Spamd-Result: default: False [-1.26 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-74702-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[google.com,gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[vger.kernel.org,googlegroups.com,kernel.org,infradead.org,arm.com,garyguo.net,protonmail.com,google.com,umich.edu,weathered-steel.dev,gmail.com];
-	DKIM_TRACE(0.00)[garyguo.net:+];
-	TO_DN_SOME(0.00)[];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[gary@garyguo.net,linux-fsdevel@vger.kernel.org];
-	DMARC_POLICY_ALLOW(0.00)[garyguo.net,none];
-	RCVD_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_THREE(0.00)[3];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	R_DKIM_NA(0.00)[];
+	DMARC_NA(0.00)[libc.org];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[dalias@libc.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[lpc.events:url,garyguo.net:mid,garyguo.net:dkim,ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 7E41C4A9B8
+	PRECEDENCE_BULK(0.00)[];
+	TAGGED_FROM(0.00)[bounces-74706-lists,linux-fsdevel=lfdr.de];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,brightrain.aerifal.cx:mid]
+X-Rspamd-Queue-Id: 5A0C44AAEA
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue Jan 20, 2026 at 4:23 PM GMT, Marco Elver wrote:
-> On Tue, Jan 20, 2026 at 07:52PM +0800, Boqun Feng wrote:
->> In order to synchronize with C or external, atomic operations over raw
->> pointers, althought previously there is always an `Atomic::from_ptr()`
->> to provide a `&Atomic<T>`. However it's more convenient to have helpers
->> that directly perform atomic operations on raw pointers. Hence a few are
->> added, which are basically a `Atomic::from_ptr().op()` wrapper.
->>=20
->> Note: for naming, since `atomic_xchg()` and `atomic_cmpxchg()` has a
->> conflict naming to 32bit C atomic xchg/cmpxchg, hence they are just
->> named as `xchg()` and `cmpxchg()`. For `atomic_load()` and
->> `atomic_store()`, their 32bit C counterparts are `atomic_read()` and
->> `atomic_set()`, so keep the `atomic_` prefix.
->>=20
->> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
->> ---
->>  rust/kernel/sync/atomic.rs           | 104 +++++++++++++++++++++++++++
->>  rust/kernel/sync/atomic/predefine.rs |  46 ++++++++++++
->>  2 files changed, 150 insertions(+)
->>=20
->> diff --git a/rust/kernel/sync/atomic.rs b/rust/kernel/sync/atomic.rs
->> index d49ee45c6eb7..6c46335bdb8c 100644
->> --- a/rust/kernel/sync/atomic.rs
->> +++ b/rust/kernel/sync/atomic.rs
->> @@ -611,3 +611,107 @@ pub fn cmpxchg<Ordering: ordering::Ordering>(
->>          }
->>      }
->>  }
->> +
->> +/// Atomic load over raw pointers.
->> +///
->> +/// This function provides a short-cut of `Atomic::from_ptr().load(..)`=
-, and can be used to work
->> +/// with C side on synchronizations:
->> +///
->> +/// - `atomic_load(.., Relaxed)` maps to `READ_ONCE()` when using for i=
-nter-thread communication.
->> +/// - `atomic_load(.., Acquire)` maps to `smp_load_acquire()`.
->
-> I'm late to the party and may have missed some discussion, but it might
-> want restating in the documentation and/or commit log:
->
-> READ_ONCE is meant to be a dependency-ordering primitive, i.e. be more
-> like memory_order_consume than it is memory_order_relaxed. This has, to
-> the best of my knowledge, not changed; otherwise lots of kernel code
-> would be broken. It is known to be brittle [1]. So the recommendation
-> above is unsound; well, it's as unsound as implementing READ_ONCE with a
-> volatile load.
->
-> While Alice's series tried to expose READ_ONCE as-is to the Rust side
-> (via volatile), so that Rust inherits the exact same semantics (including
-> its implementation flaw), the recommendation above is doubling down on
-> the unsoundness by proposing Relaxed to map to READ_ONCE.
->
-> [1] https://lpc.events/event/16/contributions/1174/attachments/1108/2121/=
-Status%20Report%20-%20Broken%20Dependency%20Orderings%20in%20the%20Linux%20=
-Kernel.pdf
->
-> Furthermore, LTO arm64 promotes READ_ONCE to an acquire (see
-> arch/arm64/include/asm/rwonce.h):
->
->         /*
->          * When building with LTO, there is an increased risk of the comp=
-iler
->          * converting an address dependency headed by a READ_ONCE() invoc=
-ation
->          * into a control dependency and consequently allowing for harmfu=
-l
->          * reordering by the CPU.
->          *
->          * Ensure that such transformations are harmless by overriding th=
-e generic
->          * READ_ONCE() definition with one that provides RCpc acquire sem=
-antics
->          * when building with LTO.
->          */
+On Tue, Jan 20, 2026 at 12:05:52PM -0500, Zack Weinberg wrote:
+> > On Fri, May 23, 2025 at 02:10:57PM -0400, Zack Weinberg wrote:
+> >>     close() always succeeds.  That is, after it returns, _fd_ has
+> >>     always been disconnected from the open file it formerly referred
+> >>     to, and its number can be recycled to refer to some other file.
+> >>     Furthermore, if _fd_ was the last reference to the underlying
+> >>     open file description, the resources associated with the open file
+> >>     description will always have been scheduled to be released.
+> ...
+> >>     EINPROGRESS
+> >>     EINTR
+> >>            There are no delayed errors to report, but the kernel is
+> >>            still doing some clean-up work in the background.  This
+> >>            situation should be treated the same as if close() had
+> >>            returned zero.  Do not retry the close(), and do not report
+> >>            an error to the user.
+> >
+> > Since this behavior for EINTR is non-conforming (and even prior to the
+> > POSIX 2024 update, it was contrary to the general semantics for EINTR,
+> > that no non-ignoreable side-effects have taken place), it should be
+> > noted that it's Linux/glibc-specific.
+> 
+> I am prepared to take your word for it that POSIX says this is
+> non-conforming, but in that case, POSIX is wrong, and I will not be
+> convinced otherwise by any argument.  Operations that release a
+> resource must always succeed.
 
-Just to add on this part:
+There are two conflicting requirements here:
 
-If the idea is to add an explicit `Consume` ordering on the Rust side to
-document the intent clearly, then I am actually somewhat in favour.
+1. Operations that release a resource must always succeed.
+2. Failure with EINTR must not not have side effects.
 
-This way, we can for example, map it to a `READ_ONCE` in most cases, but we=
- can
-also provide an option to upgrade such calls to `smp_load_acquire` in certa=
-in
-cases when needed, e.g. LTO arm64.
+The right conclusion is that operations that release resources must
+not be able to fail with EINTR. And that's how POSIX should have
+resolved the situation -- by getting rid of support for the silly
+legacy synchronous-tape-drive-rewinding behavior of close on some
+systems, and requiring close to succeed immediately with no waiting
+for anything. But abandoning requirement 2 is not an option,
+especially in light of the relationship between EINTR and thread
+cancellation in regards to contract about side effects.
 
-However this will mean that Rust code will have one more ordering than the =
-C
-API, so I am keen on knowing how Boqun, Paul, Peter and others think about =
-this.
+It's perfectly reasonable for implementations (as musl does, and as I
+think glibc either does or intends to do) to just go all the way and
+satisfy both 1 and 2 by having close translate the kernel EINTR into
+0.
 
-> So for all intents and purposes, the only sound mapping when pairing
-> READ_ONCE() with an atomic load on the Rust side is to use Acquire
-> ordering.
+> Now, the abstract correct behavior is secondary to the fact that we
+> know there are both systems where close should not be retried after
+> EINTR (Linux) and systems where the fd is still open after EINTR
+> (HP-UX).  But it is my position that *portable code* should assume the
+> Linux behavior, because that is the safest option.  If you assume the
+> HP-UX behavior on a machine that implements the Linux behavior, you
+> might close some unrelated file out from under yourself (probably but
+> not necessarily a different thread).  If you assume the Linux behavior
+> on a machine that implements the HP-UX behavior, you have leaked a
+> file descriptor; the worst things that can do are much less severe.
 
-Forget to reply to this part in my other email, but this is definitely not =
-true.
-There're use cases for a fully relaxed load on pointer too (in hazard point=
-er
-impl, a few READ_ONCE need depedendency ordering, a few doesn't), not to me=
-ntion
-that this API that Boqun is introducing works for just integers, too.
+Unfortunately, regardless of what happens, code portable to old
+systems needs to avoid getting in the situation to begin with. By
+either not installing interrupting signal handlers or blocking EINTR
+around close.
 
-Best,
-Gary
+> The only way to get it right all the time is to have a big long list
+> of #ifdefs for every Unix under the sun, and we don't even have the
+> data we would need to write that list.
+> 
+> > While I agree with all of this, I think the tone is way too
+> > proscriptive. The man pages are to document the behaviors, not tell
+> > people how to program.
+> 
+> I could be persuaded to tone it down a little but in this case I think
+> the man page's job *is* to tell people how to program.  We know lots of
+> existing code has gotten the fine details of close() wrong and we are
+> trying to document how to do it right.
 
+No, the job of the man pages absolutely is not "to tell people how to
+program". It's to document behaviors. They are not a programming
+tutorial. They are not polemic diatribes. They are unbiased statements
+of facts. Facts of what the standards say and what implementations do,
+that equip programmers with the knowledge they need to make their own
+informed decisions, rather than blindly following what someone who
+thinks they know better told them to do.
 
+> > Aside: the reason EINTR *has to* be specified this way is that pthread
+> > cancellation is aligned with EINTR. If EINTR were defined to have
+> > closed the fd, then acting on cancellation during close would also
+> > have closed the fd, but the cancellation handler would have no way to
+> > distinguish this, leading to a situation where you're forced to either
+> > leak fds or introduce a double-close vuln.
+> 
+> The correct way to address this would be to make close() not be a
+> cancellation point.
 
+This would also be a desirable change, one I would support if other
+implementors are on-board with pushing for it.
+
+> > An outline of what I'd like to see instead:
+> >
+> > - Clear explanation of why double-close is a serious bug that must
+> >   always be avoided. (I think we all agree on this.)
+> >
+> > - Statement that the historical Linux/glibc behavior and current POSIX
+> >   requirement differ, without language that tries to paint the POSIX
+> >   behavior as a HP-UX bug/quirk. Possibly citing real sources/history
+> >   of the issue (Austin Group tracker items 529, 614; maybe others).
+> >
+> > - Consequence of just assuming the Linux behavior (fd leaks on
+> >   conforming systems).
+> >
+> > - Consequences of assuming the POSIX behavior (double-close vulns on
+> >   GNU/Linux, maybe others).
+> >
+> > - Survey of methods for avoiding the problem (ways to preclude EINTR,
+> >   possibly ways to infer behavior, etc).
+> 
+> This outline seems more or less reasonable to me but, if it's me
+> writing the text, I _will_ characterize what POSIX currently says
+> about EINTR returns from close() as a bug in POSIX.  As far as I'm
+> concerned, that is a fact, not polemic.
+> 
+> I have found that arguing with you in particular, Rich, is generally
+> not worth the effort.  Therefore, unless you reply and _accept_ that
+> the final version of the close manpage will say that POSIX is buggy,
+> I am not going to write another version of this text, nor will I be
+> drawn into further debate.
+
+I will not accept that because it's a gross violation of the
+responsibility of document writing.
+
+Rich
 
