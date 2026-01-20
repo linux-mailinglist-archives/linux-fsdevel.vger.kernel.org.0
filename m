@@ -1,262 +1,384 @@
-Return-Path: <linux-fsdevel+bounces-74703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YF6NHaHGb2mgMQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 19:17:05 +0100
+	id yNkyNT7Gb2mgMQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 19:15:26 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32684947F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 19:17:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8D4493F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 19:15:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EB0A9866DDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 17:27:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D338396869A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 17:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212AB41323D;
-	Tue, 20 Jan 2026 17:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B4230FC35;
+	Tue, 20 Jan 2026 17:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQAOvnfH"
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="qNDpBUIt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020109.outbound.protection.outlook.com [52.101.195.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F0B2C326A;
-	Tue, 20 Jan 2026 17:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768929969; cv=none; b=ehw1rCVbftTCxZWEtbQ3zlZgajHxUOLuQIPbSo3/zL8H6/IdP98Y+4B/xLO4VcgctUHmThzASD2OILzQbDKY1icn+mMCh2tU1pL6r/w1NFZZ8gFnthMKYrYEgCZBRUyilwa9YHmf5BcUcqPxIkzb6zDMTigeiP3ZguTFEVkaOiw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768929969; c=relaxed/simple;
-	bh=FIUbtAnKi1f9Ixtwf6Hj98EMVx/0loFgVG2T3r6WF14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uuqKHIxlQgongijrSMsYLa9qqvlCvGf6CbZMUhabkAdHuBoBpnGXI2z6nSm9aqvT3wLwPGALnVVz/ZFCy3tfmyBsv+i2rz+XO8s8gPxhjGNiLjYiTFI4jSX2dDwCPDlftpd1pvHPGlHP4Ssz49ywwylX+UvvlRusc9D9gmIOpkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQAOvnfH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B773DC16AAE;
-	Tue, 20 Jan 2026 17:26:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768929968;
-	bh=FIUbtAnKi1f9Ixtwf6Hj98EMVx/0loFgVG2T3r6WF14=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oQAOvnfHwE78eIgKAIRtjx3D0fJsMFdeUHLCzYJaYSbsVMAoIf8DavjI4p9Ig8W+r
-	 orNBrgopcnEGNUsPOjBzAw3CY8JmSYEyPwonLuWljP12QZDK9k3MWDBh53R+AWXwZ6
-	 zhJoY9tYkeJqyfT9hbLB93MtK5Q0MgWiSkMhTjBy0ekfYujLfB+lI9+/dM3OQagJx3
-	 KpaO7nNxt5kXF7WpJGeywfLb2Ddy67/JvMP7PRrIPh6x0xVzraeG5oEBBV3YCDNXaG
-	 xu0rFDdtGxZHncy0o74bYgvxpzKcenLojcGLkF/BiK1TaFC4mzmUTGPYzxyaBxt7im
-	 NwSokwvhiUT7A==
-Date: Tue, 20 Jan 2026 09:26:08 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Chuck Lever <cel@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
-	sj1557.seo@samsung.com, yuezhang.mo@sony.com,
-	almaz.alexandrovich@paragon-software.com, slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de, frank.li@vivo.com, tytso@mit.edu,
-	adilger.kernel@dilger.ca, cem@kernel.org, sfrench@samba.org,
-	pc@manguebit.org, ronniesahlberg@gmail.com, sprasad@microsoft.com,
-	trondmy@kernel.org, anna@kernel.org, jaegeuk@kernel.org,
-	chao@kernel.org, hansg@kernel.org, senozhatsky@chromium.org,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: Re: [PATCH v6 01/16] fs: Add case sensitivity flags to file_kattr
-Message-ID: <20260120172608.GQ15551@frogsfrogsfrogs>
-References: <20260120142439.1821554-1-cel@kernel.org>
- <20260120142439.1821554-2-cel@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E698F3D3491;
+	Tue, 20 Jan 2026 17:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.109
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768930374; cv=fail; b=oUs30c5Ys2kkzlDNW06z1ZI0zQwmY/krrRGzZhiuUW1CQOcJTt0rBFk25oYmKDEkuAzMlK7ZJ643DVCEbwFxsHL+KvhDgddkJAvZ3FWRJpj4eN4qkTXJQ+Pzwtsr0mHJhdNdvPh5UjMfNiLE2pA7hnAQytNA3Na+qKUz/5ZBdNE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768930374; c=relaxed/simple;
+	bh=MPnssQbLsHC7Nam0V8E1070QGM8arpumzeFpNATC7f8=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=fUXd0ykkOF3xSftezq3SJao6BND8pkKixykGJW6gni1EwsGtYcT5gF77UBl4/5K7hZ+fZMcnbcYwqBSEzdFNGVNjVDtkf8knBkyuOhgdxKNsdNyHlH8ILjjFR7+295BFN6JSDk69TwxY1qNHvz+2FyZyKwRcT9Vjvqw2c9kVAeQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=qNDpBUIt; arc=fail smtp.client-ip=52.101.195.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OFfh5SDmrNeXmuwpoctfTir27HV3fyFgrQvzpFtlK1NzCcjoykRCxp6CcmYweSZZ7zCJklN8DgEObuY52hOhTkibWmBsvvVpHBfarPZA6y8LXBG0ac91F5iUxgQVicMLW2jFtz0proNQGQLlTFkSLa3wKr0XGG4LSFfkNQfUktD3wXchBn9SV4PqjYq0iZEFcOlD91+tByZSlFnaEyD+GIwUdPU1T/PEqRWO4kJRuGuM0iB3YyF5Hv1J3FctZ7z5y3B8Uhj/L4YItErQznyE1jxiJT9VVgIxc23i3EEdr0Qjg2QEQ7dBWEhSKsKT0kARSQjUPJOuEMClVntHX9Fhcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U0yLaB0JaizwBpWq4+GDYEd45+XXiQPzUgSVMgeIzno=;
+ b=kWApWPIKldD2fFO42EJZML6g10zV+HyDc1WbeEZLIaBZ6GfEcODWu0+HAtPdlmfo0dIxvTF7CiuFJwbGfR7OvQGj59OGzFr1f19ZqfcxrTecJFQNlIILH/9YF1ZLDluMQljCnQRdYp1DOSvXx0te14v6pY2U3LlLfbW97DLioiwLwzmZWg2suIhlnOWnhgMgex9mqXCemBMrhJ85xDpM9jmjXUB1aet2/2JUoBXlXkofV2Ys/tPATk5Wv5f6wLfFD6DOeZGF3hIoqU74wjzLTYpI8biRQsVOaU4c+OjRvS4pWx04ybFvyId6lPAC7GaXIAFVIUhUbhUUTurX0/Zq0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U0yLaB0JaizwBpWq4+GDYEd45+XXiQPzUgSVMgeIzno=;
+ b=qNDpBUIt/8C9qoo+NjU4b0PxjO32LEGRx55YjwPWVsXBEqKXh8R2ogE0SElLVA6TujP1P7qXySnXe4HF5hLhdXEm5zjgW06/x1MyKmK6QelJMJ/hzfCkrzQmQMhbVWv/oyQxc3iLagBwtsJOoaD2cXX/GySZxY8QtXNqgW5Raf0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:488::16)
+ by LO0P265MB5455.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:245::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.13; Tue, 20 Jan
+ 2026 17:32:48 +0000
+Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1c3:ceba:21b4:9986]) by LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1c3:ceba:21b4:9986%5]) with mapi id 15.20.9520.012; Tue, 20 Jan 2026
+ 17:32:48 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 20 Jan 2026 17:32:48 +0000
+Message-Id: <DFTLHCJKPBRM.2G76Y35NCHNZM@garyguo.net>
+From: "Gary Guo" <gary@garyguo.net>
+To: "Marco Elver" <elver@google.com>, "Gary Guo" <gary@garyguo.net>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <kasan-dev@googlegroups.com>, "Will Deacon" <will@kernel.org>, "Peter
+ Zijlstra" <peterz@infradead.org>, "Mark Rutland" <mark.rutland@arm.com>,
+ "Miguel Ojeda" <ojeda@kernel.org>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Elle Rhumsaa" <elle@weathered-steel.dev>, "Paul E. McKenney"
+ <paulmck@kernel.org>, "FUJITA Tomonori" <fujita.tomonori@gmail.com>
+Subject: Re: [PATCH 2/2] rust: sync: atomic: Add atomic operation helpers
+ over raw pointers
+X-Mailer: aerc 0.21.0
+References: <20260120115207.55318-1-boqun.feng@gmail.com>
+ <20260120115207.55318-3-boqun.feng@gmail.com>
+ <aW-sGiEQg1mP6hHF@elver.google.com>
+ <DFTKIA3DYRAV.18HDP8UCNC8NM@garyguo.net>
+ <CANpmjNN=ug+TqKdeJu1qY-_-PUEeEGKW28VEMNSpChVLi8o--A@mail.gmail.com>
+In-Reply-To: <CANpmjNN=ug+TqKdeJu1qY-_-PUEeEGKW28VEMNSpChVLi8o--A@mail.gmail.com>
+X-ClientProxiedBy: LO4P123CA0133.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:193::12) To LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:488::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260120142439.1821554-2-cel@kernel.org>
-X-Spamd-Result: default: False [-1.46 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LOVP265MB8871:EE_|LO0P265MB5455:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8d8212fc-b26d-4465-10bb-08de5849ee48
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z2VJcENGSmNnSWNkS2M1NkthSFVmaUlVbzkraE9oMUdqT1M4R1ZBb3ZEVUJa?=
+ =?utf-8?B?d2c4VGpQMXlYbm9ja3VrSHhiN0tGQjBwaDVFbkNoVGlIMklOYStWcGJZKzRt?=
+ =?utf-8?B?bjZ6bkFoclFMczlJRm5LMWc4OGZSbFZOa0pJemFBa1pmTkVOMC84NTNNWDY5?=
+ =?utf-8?B?NHpuTG4vbHYzY2VJM0Q1NUJ4NjZNT0gxaXBBOFRjTVVHaGpwalNwTjdLbDg0?=
+ =?utf-8?B?TlVVMVlzSW16QUJ0c3NuaWZvV2dtZDRmcFVqVTErMnJDeUdlY2pJS2w0K2FI?=
+ =?utf-8?B?RzNKODFqWWt2VWtaelVlV3FNc1R4U2FmeStzZjIrWkNJQTZLcVptVlhKREtF?=
+ =?utf-8?B?YUM1R3QvNjBzdzk3V3JDU3VyY2V3aXk1a2ZMZ1daUytMUngvN0N4R1RWWGp4?=
+ =?utf-8?B?UDQyQ0c3T09SbXJsWW5NWmgvMHpMV0RaQnFOR2pMZTRiY1dOdHNaVzN6dm9j?=
+ =?utf-8?B?ZTdqMmdabVNNd2ErdG9nVHZBSTV5bURRdGFOeW12Y1JZVVVVMnh5QkFRTTZ0?=
+ =?utf-8?B?b1M1WXNsTEFvRE1oQ1VIRmhCdkFVV1R2ZWkxcWV2ODI4TXhNYzR5NFZaNDRG?=
+ =?utf-8?B?SERvRUxvWjNzMEZYYitOUnl0T21CVjdEYU5oNkZnSFAyR3liSXR4T29pSGZw?=
+ =?utf-8?B?QS94NDMwZlRtcjAvL0tjbjNpYnVXOXVxY1JRaFNMaSsyQ2VVVm5ZbzlUTWRW?=
+ =?utf-8?B?NDR4NVZWSklPc0ZVMkJuN3hTbjR0ZitEakxwYW16Uy84Qzlna0lyN0hBTTNW?=
+ =?utf-8?B?dWpjUzJDMWZBdFhWOHFVL1ppMHdQaWFQeTNxWjVVR0FualhYc3RObzF1YUJY?=
+ =?utf-8?B?c3k2RmsyV2gyckQvVkJUSjNGWldNNjRiVkZyK2RMcmdYZnB5d2JRRVRXSnlu?=
+ =?utf-8?B?M0o0Tml2NVB4TUdOVFlCaDhpVUFuU0JFdGNQUEZHN1NnL0FWVXdrTTVqWWZH?=
+ =?utf-8?B?L0drd3J1ckZUVWJlWENVd3hOZVlBVDVQUituc0EyUExvV2NWV2x3V25oZTdw?=
+ =?utf-8?B?T09ab3lDQTNldUIrYkxSOGdMd2hDTk13cmRtb0xyZVh0UUZJRXppVWhJS1Ix?=
+ =?utf-8?B?Qkh1aVBiWGtNVTRtUlBkNytQTWxHRkZBSmE1eHJwOXk4YVJldTAydytNTkxZ?=
+ =?utf-8?B?cUFGMitRQ2lpQlBHd1hzTmRKUnN4NHQrZmFiclMzcnJKNjVRV0UxOGdEOFlP?=
+ =?utf-8?B?UW5zSWFkWFVaek1qMENScmNYaFE2dkxwZWxMMUg4K0tNRnpUQzRhN28xZ3lm?=
+ =?utf-8?B?cGxSS1gzeU9uOW9PeDg2NXo2elBuYW9VQ1IrMlgyTDlzb0R5QUphSFQ2NEJv?=
+ =?utf-8?B?YkJsdkJmZWJZRG8yR1BtNnVQTFpVZUhZQzdGcnlKK1Jtd2lGQ0tMMHRLTmpp?=
+ =?utf-8?B?YU1TTldCSTJqNXJwTHRmbzU5eWRaUUhPN2VNOVpzTlJYV0diYnQ2dEh3QlpJ?=
+ =?utf-8?B?K1NaSFdSNi9IcWFwK3BFQnIrc2hKcG53SDNoZXhvQkdvOE41U2hFaTlUWEtw?=
+ =?utf-8?B?U2hndSs1M0wvTEtCTnpPM0ZJdEFLN3hvMUNYaUFDWTNmSDMyZjN1TFJvK3dW?=
+ =?utf-8?B?YWlHSWZQckp4N043bzhRUk5Fdm1DcEdWQmY0RnI3S0xTQVdyc3M5MDdmVlp6?=
+ =?utf-8?B?TDcyeHNYZXptd2Z4OEhmQzhQdXZLUmkydmRUcjJFbUJVbldPZTRKbmRaR3hD?=
+ =?utf-8?B?NjNncGVDZytGSDUwbXJvdVNmMmNGNGREK21aSnc0K2dpT213M3NUcWJnNk5C?=
+ =?utf-8?B?RW5PeDROVC9CZFV4OTdTNnU0Z3FRMnl2bXlaZlZpR2RTZk9Qa21UM3lpRkI5?=
+ =?utf-8?B?RzVtRHpJRStmVjFiVTVSMFE0TTZNRFFzd01HVk5iMHFCZU5Td2ZQY1JaRXY3?=
+ =?utf-8?B?U004MjdLRGFGNjg1NjYxbitCdjZtSWhCakFWeGV0MmxScGVFby8wOUtkUFJR?=
+ =?utf-8?B?eWVIbmRUb3dSNElZb1ZqZW1yMVdCR2k0bnBsVVJ5b3VSV2t3OGFtWng4VENO?=
+ =?utf-8?B?ay91THhob1Q4Wi8reFNxbWdCNm90TVZvVmdURkoxOTFkSjcyeVVvSDJWbFNo?=
+ =?utf-8?Q?c2j6km?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eEEwQzRQU3NHMXUyNU1QRDhhV1l1RnlTYUZtMXlaK0g5OEVxV1FNbklSU3Bw?=
+ =?utf-8?B?L2xJeitPSlJxQ2trV2p2bGRPUGpGQmVQbmYyWXVQaXdnWHVLaXFRWjJjbHpN?=
+ =?utf-8?B?empmSmhWV0lKMU03ZjNBbDNiZ1NpVmgwcGdHbnJFL2FjbEJXREQ3OEdkdGRJ?=
+ =?utf-8?B?UXBybnMzTUR4bVFVVHVpOUd3Rk4zYUY5ejRZZXIwUFZRSjd5aGFMVHVrMGVs?=
+ =?utf-8?B?b1lzeDZqYXBiaFdCVTFocnNSWkhlY2NjTmJYcHFvS2RWYzJFS1BCVW0yRHdD?=
+ =?utf-8?B?Mm1qQ0pCMlVmK201OWZuWWNXakVDTUZyN05aZXJLWkpMUUJaYi9KVWdwbmQ1?=
+ =?utf-8?B?UnJ3dnlCcEZORWp3dXowb1dYSkxybmo0aGIwNU1GZk5VRzE4cXk2N3FrUFhm?=
+ =?utf-8?B?bEREb0ZsWm1Yd01GNVhZdlhERzYwZXRqM2Z6bmpmRWJramRSQTBBY08rOVJQ?=
+ =?utf-8?B?MFpMYzl0d1FYWUttdkxVZVhFQnZzQzY3U2dTT2N3SllZVjBiL3BBRDhqT2h4?=
+ =?utf-8?B?L0VMcXBkMWREdkN3MzNUc3M2UmxBcVlFWmRVZ1RtcktqYkdXSE45Nnp5WkFt?=
+ =?utf-8?B?NkhYODdLSVV1S0I3MVphQWlCYkttK3NuL3gwTTFtN3BRL25vNmNndVFtUnpX?=
+ =?utf-8?B?eCt2b1lod2hrZURwQ3BSQWRQV1gzQkFEUVRsbFNOUE9ZNVFTUmFLVnFBUmJy?=
+ =?utf-8?B?WDFhVldrRURxbDA5Q1B6aVlLOU1UYlhOZWx5L3lKSlFCNkV0d0ttVmVYMkVM?=
+ =?utf-8?B?a2l3U2Y4NEttV3M5aExZaDlUWDIxaGxOL2VCRXBkenRlY3IrTG5zWjhYSHdM?=
+ =?utf-8?B?ZDJIWTBydWtnbVlDaVloYk5mclk2TlhOV1BxYlRNVnhFRjZkQ01FZDNLcXZp?=
+ =?utf-8?B?c3NMOXRJaGxVTWN2RzFSQWcvODUxaHlYWDdaMWVielM4aTZkM2owMXlhc2to?=
+ =?utf-8?B?bzZOL1hXR2x4NlpLRm9DdmdzMThaUVY2LzVHVXlKd2xtMTFjaXB5aFYvYzd3?=
+ =?utf-8?B?aG1UM01SRStKZklnTXFUbWptOWJleUlZWTZjdXp2NDB6TVhBZzkyVlYrSGR1?=
+ =?utf-8?B?S0NBV3BpUm5ZM1ozY3pwS2xVdW5wMDNWdzQvdUxiWW1tZ1VhWUh3OWduQXoz?=
+ =?utf-8?B?VFpMZ0RPRnJtYWVVZnF0WHhOdlVwQnloam1aSkw2YUdLRUNJUjRFU1l4cXJU?=
+ =?utf-8?B?eVlqM0hVUVcxZ3FTNmRvcFJSYTM1MzkreGU3anYzb0lWVkgwYS9CT1I4NjhN?=
+ =?utf-8?B?NEdUTHBmVEpzNEQyOG9pZUFVaXdFang5ZnRJbzhuTUdiUXowOXg4alZUazlj?=
+ =?utf-8?B?Vmtrb0JFNEpVVi9kQ0FtR01IMmxNR0ZwR0xMOFQyUUZvOFEvSEk0aVhsQTlX?=
+ =?utf-8?B?VjI5c2E4NGdQdVBDSzRLcjdUaCtQTGVwcklUS2tzaWhPaWdOUG9TemdmL1hT?=
+ =?utf-8?B?Q0crVzA0K2dIYkovUStqbUpORldWYzVtN2taeDN3eDJwVlJWMkRzUE5mR0R2?=
+ =?utf-8?B?YWw4bWtsREhmbUJuZjZzK2FYdm5TQVAxdTdYWmE1ME44ZFk4cUM3c05JL2w3?=
+ =?utf-8?B?K0lzMnJCRExCREV3NmZibDRHV0xLN1BBWGZ6RlRiRkxJdSs0VlhvYVZ6L1Nu?=
+ =?utf-8?B?T2xmSndlaXdybnFOazdjc2pWZjJaMnN4L2VNSmhjZHdEYlNoUTJYd3doalBx?=
+ =?utf-8?B?TWUrbWxPckxnNk9SV3BpcU9aNGkxY0NoYVpQUGxvKy9LbXVnK0JjWVF2MTla?=
+ =?utf-8?B?eU91N2RSZ3FxR1JmUXpTaVVqbkVaVENVbWd4c3Q4dnJSY0tFTWlWZkdqbjVa?=
+ =?utf-8?B?QTlZNVkyVmxXL3dLaGwwaEtjR3BLZzFpbzdKY2VlOU02TFUvV3V5TlY2V2xu?=
+ =?utf-8?B?cEI3endETWMwN1lSTjRDdjNRcEV0NUY0NFZBL0dzTG1LcFZtUHlkcy93MUcw?=
+ =?utf-8?B?bkZEa2ZNbTBlRzhhdm01LzBHY3IyWndmYklWYW8xcXl6MXpUUm9tOXV1aGI4?=
+ =?utf-8?B?ZTFmMU9OOEFnY0grMXo4UmdNYTI1ZXhMZFFUNndYYVFQbTRJQ25kOTJpNVRa?=
+ =?utf-8?B?SmlxRTNnQlBVZFRWUDlVekJCTnRPWTBqakh4S2tzUDZGSUJZeXlqWTZjM1dm?=
+ =?utf-8?B?M1drNnRibk81ZE83QlJWckpQL0g3VmZ3Q2hIWjJsWWw3Q2s5U2dNQk1pbjhU?=
+ =?utf-8?B?bDBtZjhhbm9Cd3hERGdMSzJHTU1sc1A3VStVYWJ0Q2xaOEZGR0N6dmdwcGg5?=
+ =?utf-8?B?R3gxTkxHc05CSnR6cnh5R0JpamFKejJnMlRxSU5MbXRVRVA5WHJ6aWl2N3Jp?=
+ =?utf-8?B?b05XZHVXZkYvRW01NUZUM0JiZXlXK0JKam5TOHN4aWdUMmpRUURTUT09?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d8212fc-b26d-4465-10bb-08de5849ee48
+X-MS-Exchange-CrossTenant-AuthSource: LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2026 17:32:48.7448
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4b3nXy8P4x+v5T0PfFwx6oVUg9vZ2xpgBLh76ARh9sX4Hg8+qXZYYOIPG6DiQka85GgnhfuNyfijUEpG20zatg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P265MB5455
+X-Spamd-Result: default: False [1.54 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_REJECT(1.00)[cv is fail on i=2];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_DKIM_ALLOW(-0.20)[garyguo.net:s=selector1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-74703-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-74704-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,lists.sourceforge.net,mail.parknet.co.jp,samsung.com,sony.com,paragon-software.com,dubeyko.com,physik.fu-berlin.de,vivo.com,mit.edu,dilger.ca,samba.org,manguebit.org,gmail.com,microsoft.com,chromium.org,oracle.com];
-	RCPT_COUNT_TWELVE(0.00)[32];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,googlegroups.com,kernel.org,infradead.org,arm.com,protonmail.com,google.com,umich.edu,weathered-steel.dev];
+	RCPT_COUNT_TWELVE(0.00)[20];
 	MIME_TRACE(0.00)[0:+];
-	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
+	DMARC_POLICY_ALLOW(0.00)[garyguo.net,none];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	FROM_NEQ_ENVFROM(0.00)[gary@garyguo.net,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[garyguo.net:+];
+	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,oracle.com:email]
-X-Rspamd-Queue-Id: A32684947F
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,garyguo.net:email,garyguo.net:dkim,garyguo.net:mid]
+X-Rspamd-Queue-Id: 4B8D4493F3
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue, Jan 20, 2026 at 09:24:24AM -0500, Chuck Lever wrote:
-> From: Chuck Lever <chuck.lever@oracle.com>
-> 
-> Enable upper layers such as NFSD to retrieve case sensitivity
-> information from file systems by adding FS_XFLAG_CASEFOLD and
-> FS_XFLAG_CASENONPRESERVING flags.
-> 
-> Filesystems report case-insensitive or case-nonpreserving behavior
-> by setting these flags directly in fa->fsx_xflags. The default
-> (flags unset) indicates POSIX semantics: case-sensitive and
-> case-preserving. These flags are read-only; userspace cannot set
-> them via ioctl.
-> 
-> Relocate struct file_kattr initialization from fileattr_fill_xflags()
-> and fileattr_fill_flags() to vfs_fileattr_get() and the ioctl/syscall
-> call sites. This allows filesystem ->fileattr_get() callbacks to set
-> flags directly in fa->fsx_xflags before invoking the fill functions,
-> which previously would have zeroed those values. Callers that bypass
-> vfs_fileattr_get() must now zero-initialize the struct themselves.
-> 
-> Case sensitivity information is exported to userspace via the
-> fa_xflags field in the FS_IOC_FSGETXATTR ioctl and file_getattr()
-> system call.
-> 
-> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-> ---
->  fs/file_attr.c           | 14 ++++++--------
->  fs/xfs/xfs_ioctl.c       |  2 +-
->  include/linux/fileattr.h |  3 ++-
->  include/uapi/linux/fs.h  |  2 ++
+On Tue Jan 20, 2026 at 5:10 PM GMT, Marco Elver wrote:
+> On Tue, 20 Jan 2026 at 17:47, Gary Guo <gary@garyguo.net> wrote:
+>>
+>> > I'm late to the party and may have missed some discussion, but it migh=
+t
+>> > want restating in the documentation and/or commit log:
+>> >
+>> > READ_ONCE is meant to be a dependency-ordering primitive, i.e. be more
+>> > like memory_order_consume than it is memory_order_relaxed. This has, t=
+o
+>> > the best of my knowledge, not changed; otherwise lots of kernel code
+>> > would be broken.
+>>
+>> On the Rust-side documentation we mentioned that `Relaxed` always preser=
+ve
+>> dependency ordering, so yes, it is closer to `consume` in the C11 model.
+>
+> Alright, I missed this.
+> Is this actually enforced, or like the C side's use of "volatile",
+> relies on luck?
+>
+>> > It is known to be brittle [1]. So the recommendation
+>> > above is unsound; well, it's as unsound as implementing READ_ONCE with=
+ a
+>> > volatile load.
+>>
+>> Sorry, which part of this is unsound? You mean that the dependency order=
+ing is
+>> actually lost when it's not supposed to be? Even so, it'll be only a pro=
+blem on
+>> specific users that uses `Relaxed` to carry ordering?
+>
+> Correct.
+>
+>> Users that use `Relaxed` for things that don't require any ordering woul=
+d still
+>> be fine?
+>
+> Yes.
+>
+>> > While Alice's series tried to expose READ_ONCE as-is to the Rust side
+>> > (via volatile), so that Rust inherits the exact same semantics (includ=
+ing
+>> > its implementation flaw), the recommendation above is doubling down on
+>> > the unsoundness by proposing Relaxed to map to READ_ONCE.
+>> >
+>> > [1] https://lpc.events/event/16/contributions/1174/attachments/1108/21=
+21/Status%20Report%20-%20Broken%20Dependency%20Orderings%20in%20the%20Linux=
+%20Kernel.pdf
+>> >
+>>
+>> I think this is a longstanding debate on whether we should actually depe=
+nd on
+>> dependency ordering or just upgrade everything needs it to acquire. But =
+this
+>> isn't really specific to Rust, and whatever is decided is global to the =
+full
+>> LKMM.
+>
+> Indeed, but the implementation on the C vs. Rust side differ
+> substantially, so assuming it'll work on the Rust side just because
+> "volatile" works more or less on the C side is a leap I wouldn't want
+> to take in my codebase.
 
-This ought to go to linux-api because you're changing the userspace api.
-Granted it's only adding a flag definition to an existing ioctl, but
-FS_XFLAG_CASEFOLD /does/ collide with Andrey's fsverity xflag patch...
+Ultimately it's down to same LLVM IR as ClangBuiltLinux, so if it works for=
+ C,
+it'll work for Rust.
 
-(The rest of the changes looks ok to me.)
+>
+>> > Furthermore, LTO arm64 promotes READ_ONCE to an acquire (see
+>> > arch/arm64/include/asm/rwonce.h):
+>> >
+>> >         /*
+>> >          * When building with LTO, there is an increased risk of the c=
+ompiler
+>> >          * converting an address dependency headed by a READ_ONCE() in=
+vocation
+>> >          * into a control dependency and consequently allowing for har=
+mful
+>> >          * reordering by the CPU.
+>> >          *
+>> >          * Ensure that such transformations are harmless by overriding=
+ the generic
+>> >          * READ_ONCE() definition with one that provides RCpc acquire =
+semantics
+>> >          * when building with LTO.
+>> >          */
+>> >
+>> > So for all intents and purposes, the only sound mapping when pairing
+>> > READ_ONCE() with an atomic load on the Rust side is to use Acquire
+>> > ordering.
+>>
+>> LLVM handles address dependency much saner than GCC does. It for example=
+ won't
+>> turn address comparing equal into meaning that the pointer can be interc=
+hanged
+>> (as provenance won't match). Currently only address comparision to NULL =
+or
+>> static can have effect on pointer provenance.
+>>
+>> Although, last time I asked if we can rely on this for address dependenc=
+y, I
+>> didn't get an affirmitive answer -- but I think in practice it won't be =
+lost (as
+>> currently implemented).
+>
+> There is no guarantee here, and this can change with every new
+> release. In most cases where it matters it works today, but the
+> compiler (specifically LLVM) does break dependencies even if rarely
+> [1].
 
---D
+This is a 2022 slide, how much of it is still true today? Nikita has improv=
+ed
+how LLVM handles pointers quite significant in the past few years, so this =
+might
+not even apply anymore?
 
->  4 files changed, 11 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/file_attr.c b/fs/file_attr.c
-> index 13cdb31a3e94..2700200c5b9c 100644
-> --- a/fs/file_attr.c
-> +++ b/fs/file_attr.c
-> @@ -15,12 +15,10 @@
->   * @fa:		fileattr pointer
->   * @xflags:	FS_XFLAG_* flags
->   *
-> - * Set ->fsx_xflags, ->fsx_valid and ->flags (translated xflags).  All
-> - * other fields are zeroed.
-> + * Set ->fsx_xflags, ->fsx_valid and ->flags (translated xflags).
->   */
->  void fileattr_fill_xflags(struct file_kattr *fa, u32 xflags)
->  {
-> -	memset(fa, 0, sizeof(*fa));
->  	fa->fsx_valid = true;
->  	fa->fsx_xflags = xflags;
->  	if (fa->fsx_xflags & FS_XFLAG_IMMUTABLE)
-> @@ -46,11 +44,9 @@ EXPORT_SYMBOL(fileattr_fill_xflags);
->   * @flags:	FS_*_FL flags
->   *
->   * Set ->flags, ->flags_valid and ->fsx_xflags (translated flags).
-> - * All other fields are zeroed.
->   */
->  void fileattr_fill_flags(struct file_kattr *fa, u32 flags)
->  {
-> -	memset(fa, 0, sizeof(*fa));
->  	fa->flags_valid = true;
->  	fa->flags = flags;
->  	if (fa->flags & FS_SYNC_FL)
-> @@ -84,6 +80,8 @@ int vfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
->  	struct inode *inode = d_inode(dentry);
->  	int error;
->  
-> +	memset(fa, 0, sizeof(*fa));
-> +
->  	if (!inode->i_op->fileattr_get)
->  		return -ENOIOCTLCMD;
->  
-> @@ -323,7 +321,7 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
->  {
->  	struct mnt_idmap *idmap = file_mnt_idmap(file);
->  	struct dentry *dentry = file->f_path.dentry;
-> -	struct file_kattr fa;
-> +	struct file_kattr fa = {};
->  	unsigned int flags;
->  	int err;
->  
-> @@ -355,7 +353,7 @@ int ioctl_fssetxattr(struct file *file, void __user *argp)
->  {
->  	struct mnt_idmap *idmap = file_mnt_idmap(file);
->  	struct dentry *dentry = file->f_path.dentry;
-> -	struct file_kattr fa;
-> +	struct file_kattr fa = {};
->  	int err;
->  
->  	err = copy_fsxattr_from_user(&fa, argp);
-> @@ -434,7 +432,7 @@ SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
->  	struct filename *name __free(putname) = NULL;
->  	unsigned int lookup_flags = 0;
->  	struct file_attr fattr;
-> -	struct file_kattr fa;
-> +	struct file_kattr fa = {};
->  	int error;
->  
->  	BUILD_BUG_ON(sizeof(struct file_attr) < FILE_ATTR_SIZE_VER0);
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index 59eaad774371..f0417c4d1fca 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -496,7 +496,7 @@ xfs_ioc_fsgetxattra(
->  	xfs_inode_t		*ip,
->  	void			__user *arg)
->  {
-> -	struct file_kattr	fa;
-> +	struct file_kattr	fa = {};
->  
->  	xfs_ilock(ip, XFS_ILOCK_SHARED);
->  	xfs_fill_fsxattr(ip, XFS_ATTR_FORK, &fa);
-> diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
-> index f89dcfad3f8f..709de829659f 100644
-> --- a/include/linux/fileattr.h
-> +++ b/include/linux/fileattr.h
-> @@ -16,7 +16,8 @@
->  
->  /* Read-only inode flags */
->  #define FS_XFLAG_RDONLY_MASK \
-> -	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR)
-> +	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR | \
-> +	 FS_XFLAG_CASEFOLD | FS_XFLAG_CASENONPRESERVING)
->  
->  /* Flags to indicate valid value of fsx_ fields */
->  #define FS_XFLAG_VALUES_MASK \
-> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> index 66ca526cf786..919148beaa8c 100644
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -253,6 +253,8 @@ struct file_attr {
->  #define FS_XFLAG_FILESTREAM	0x00004000	/* use filestream allocator */
->  #define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
->  #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
-> +#define FS_XFLAG_CASEFOLD	0x00020000	/* case-insensitive lookups */
-> +#define FS_XFLAG_CASENONPRESERVING 0x00040000	/* case not preserved */
->  #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
->  
->  /* the read-only stuff doesn't really belong here, but any other place is
-> -- 
-> 2.52.0
-> 
-> 
+I'd like to see examples of LLVM still breaking address dependencies today,=
+ so
+at least I'm aware when writing code that depends on them.
+
+>
+>> Furthermore, Rust code currently does not participate in LTO.
+>
+> LTO is not the problem, aggressive compiler optimizations (as
+> discussed in [1]) are. And Rust, by virtue of its strong type system,
+> appears to give the compiler a lot more leeway how it optimizes code.
+> So I think the Rust side is in greater danger here than the C with LTO
+> side. But I'm speculating (pun intended) ...
+
+That's actually not the case. Rust people have long recognize that provenan=
+ce is
+a thing and it actually matters. The pointers have a full set of
+provenance-aware APIs, and pointer-integer casts are discouraged.
+
+Pointer comparison, for example, is explicitly defined as comparing address=
+ and
+ignore the provenance, so it's invalid for compiler to do GVN on pointers.
+
+Implementation side, Rust is extremely conservative in optimizing anything =
+that
+relates to the memory model currently and when pointers are involved, curre=
+ntly
+it's up to LLVM to do most of work. This is mostly due to the lack of full
+specification on the memory model, so may change in the future, but I am
+optimisitc overall.
+
+Best,
+Gary
+
+> However, given "Relaxed" for the Rust side is already defined to
+> "carry dependencies" then in isolation my original comment is moot and
+> does not apply to this particular patch. At face value the promised
+> semantics are ok, but the implementation (just like "volatile" for C)
+> probably are not. But that appears to be beyond this patch, so feel
+> free to ignore.
+
 
