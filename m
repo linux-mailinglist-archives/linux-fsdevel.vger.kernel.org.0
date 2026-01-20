@@ -1,189 +1,240 @@
-Return-Path: <linux-fsdevel+bounces-74652-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ANF6E9uAcGktYAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74652-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 08:31:39 +0100
+	id uDZ9Jd1fcGkVXwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 06:10:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48B952D4F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 08:31:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B36515C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 06:10:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B088254C846
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 14:26:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2170280CF13
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 14:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EA843CEF8;
-	Tue, 20 Jan 2026 14:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110A243E9DF;
+	Tue, 20 Jan 2026 14:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XlrA2Uwd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+0m2vWM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBA83E9F73;
-	Tue, 20 Jan 2026 14:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7502543E4B6;
+	Tue, 20 Jan 2026 14:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768918782; cv=none; b=AkCut6r2KSGiUd0DCxyC6oq0hjyjvTd7puuGJDJbGkYtWjh4Jx4JlOetEYwu4RGLDej4h6XXPc6HbGTxir0jSIkQpfuKNjFZwPS08k6MtjudR4eYZ/KrYad+VLwfFfDS1UqcKW60hsuFSRBUQZANRlulieAselglTxSxX2Bc3cI=
+	t=1768919088; cv=none; b=QRmCaFlQR7lHdECONB8P44btQXLjMmQuoqttVgwHhSn0d8PNqUasJKbXUpcht8jy9Sy4S9Usr02XInKsy8vfL/oFXtti+1VNXuoEcoV33O91Etvp1enEHwHTzCg791GQ5Gp7MEWxnoaBkCI0CkYefrOMtTKAzF3rQlQBZENPT1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768918782; c=relaxed/simple;
-	bh=CkoN3pJyVayyY7vGsoVsedSA34+68B/nNH30simPsgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gzpaokmF7JoGQQHnBWKPesankt1K8ueCyD8XZEiQkRJSmz+jwnTr0NwpTr5gncapzASLO24lpJJaqFfLjBuzBGe02NuBciaug379saO3m3NjBicK+CBOOfAWSR3Y22LwXm1fkUM3i9gfRBjtvIgj2Rj7NTPLj4i2m8r5Tn97Cgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XlrA2Uwd; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1768918770; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=t9XjF+Fp4ZzFE08s04Xje48JD6vfHmVMwLgm8p8DZjA=;
-	b=XlrA2UwdVp5nkF/pVjGqVqzl5F6VpZ7zaH5c4EiWQnvOMM9rxqxubNiQ4pSx1ejiJ/3whrkDQrvhImA3AoHFay121K4UFHl+J39Yv1weVL5P9TOCVTfXjmgHd/x0WuFd+HqnlNHs9i0Yd/wVHZ5RXjZqVhgS945Qo/mfqh/zj0s=
-Received: from 30.180.182.138(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WxUjUbr_1768918768 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 20 Jan 2026 22:19:29 +0800
-Message-ID: <3ae9078a-ba5c-460d-89ea-8fdbdf190a10@linux.alibaba.com>
-Date: Tue, 20 Jan 2026 22:19:28 +0800
+	s=arc-20240116; t=1768919088; c=relaxed/simple;
+	bh=cxtJNAeSQKGXjqyOc09KIaYvIy6k5g4qI83f/hE6lRw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IlXjmHwI/aQWU5r9icd1iQ+3MZQVAlsCQNN8hHQfR+UZsnjlh38cUevKOtDYiExyLS015pQ8WNmpsRTJRTXUBkL7u6aLHi+G4bCG45dX7gkrhCD+c6UeAuCU0KRmt1WdGmeWRNm26im9flW1iMNYYKep5fR2iuqb2/Wab/tMrvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+0m2vWM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B70C19422;
+	Tue, 20 Jan 2026 14:24:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768919088;
+	bh=cxtJNAeSQKGXjqyOc09KIaYvIy6k5g4qI83f/hE6lRw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=I+0m2vWM1R27jigbGDPbjHJ3KnbnP+0E/AnXAs0+J5zMicIG2ZNnl4VHfs8ArEie/
+	 rxsi2VOHzHEpYJFQ3twZ2uUW1NL6eQB50rycQu7cCbfXYd0550a7w5gA7wsqYr6NKr
+	 nZvBkt2lg3yJECD9464+3gYorSp4vXnnvZ9i+JTG+cW3dSUGZ0huZ1LD8Sc3GIkmpO
+	 24sky9epjtSCLmbeL4keLc1NoD1P99vB8ve2xeYAT9+Q9WM0B/oiErWFle1btx7A6g
+	 VpDtskJJT/RBRnQfjLyCd4rjrQM+jolksopxcpW3JGp+B612rRzyuFdJZjkyey2SHk
+	 kx+r2SFNavwDQ==
+From: Chuck Lever <cel@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: <linux-fsdevel@vger.kernel.org>,
+	linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org,
+	<linux-nfs@vger.kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net,
+	hirofumi@mail.parknet.co.jp,
+	linkinjeon@kernel.org,
+	sj1557.seo@samsung.com,
+	yuezhang.mo@sony.com,
+	almaz.alexandrovich@paragon-software.com,
+	slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de,
+	frank.li@vivo.com,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	cem@kernel.org,
+	sfrench@samba.org,
+	pc@manguebit.org,
+	ronniesahlberg@gmail.com,
+	sprasad@microsoft.com,
+	trondmy@kernel.org,
+	anna@kernel.org,
+	jaegeuk@kernel.org,
+	chao@kernel.org,
+	hansg@kernel.org,
+	senozhatsky@chromium.org,
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: [PATCH v6 02/16] fat: Implement fileattr_get for case sensitivity
+Date: Tue, 20 Jan 2026 09:24:25 -0500
+Message-ID: <20260120142439.1821554-3-cel@kernel.org>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260120142439.1821554-1-cel@kernel.org>
+References: <20260120142439.1821554-1-cel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 5/9] erofs: introduce the page cache share feature
-To: Hongbo Li <lihongbo22@huawei.com>, chao@kernel.org, brauner@kernel.org
-Cc: djwong@kernel.org, amir73il@gmail.com, hch@lst.de,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20260116095550.627082-1-lihongbo22@huawei.com>
- <20260116095550.627082-6-lihongbo22@huawei.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20260116095550.627082-6-lihongbo22@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-8.96 / 15.00];
-	WHITELIST_DMARC(-7.00)[alibaba.com:D:+];
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-0.46 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[linux.alibaba.com:s=default];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,lst.de,vger.kernel.org,lists.ozlabs.org];
-	TAGGED_FROM(0.00)[bounces-74652-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[linux.alibaba.com,none];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-74655-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[31];
 	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.sourceforge.net,mail.parknet.co.jp,kernel.org,samsung.com,sony.com,paragon-software.com,dubeyko.com,physik.fu-berlin.de,vivo.com,mit.edu,dilger.ca,samba.org,manguebit.org,gmail.com,microsoft.com,chromium.org,oracle.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	DKIM_TRACE(0.00)[linux.alibaba.com:+];
-	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hsiangkao@linux.alibaba.com,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
+	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,alibaba.com:email,huawei.com:email,linux.alibaba.com:mid,linux.alibaba.com:dkim]
-X-Rspamd-Queue-Id: B48B952D4F
+	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[]
+X-Rspamd-Queue-Id: 04B36515C1
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
+From: Chuck Lever <chuck.lever@oracle.com>
 
+Report FAT's case sensitivity behavior via the FS_XFLAG_CASEFOLD
+and FS_XFLAG_CASENONPRESERVING flags. FAT filesystems are
+case-insensitive by default.
 
-On 2026/1/16 17:55, Hongbo Li wrote:
-> From: Hongzhen Luo <hongzhen@linux.alibaba.com>
-> 
-> Currently, reading files with different paths (or names) but the same
-> content will consume multiple copies of the page cache, even if the
-> content of these page caches is the same. For example, reading
-> identical files (e.g., *.so files) from two different minor versions of
-> container images will cost multiple copies of the same page cache,
-> since different containers have different mount points. Therefore,
-> sharing the page cache for files with the same content can save memory.
-> 
-> This introduces the page cache share feature in erofs. It allocate a
-> deduplicated inode and use its page cache as shared. Reads for files
-> with identical content will ultimately be routed to the page cache of
-> the deduplicated inode. In this way, a single page cache satisfies
-> multiple read requests for different files with the same contents.
-> 
-> We introduce inode_share mount option to enable the page sharing mode
-> during mounting.
-> 
-> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> ---
->   Documentation/filesystems/erofs.rst |   5 +
->   fs/erofs/Makefile                   |   1 +
->   fs/erofs/inode.c                    |  24 +----
->   fs/erofs/internal.h                 |  57 ++++++++++
->   fs/erofs/ishare.c                   | 161 ++++++++++++++++++++++++++++
->   fs/erofs/super.c                    |  56 +++++++++-
->   fs/erofs/xattr.c                    |  34 ++++++
->   fs/erofs/xattr.h                    |   3 +
->   8 files changed, 316 insertions(+), 25 deletions(-)
->   create mode 100644 fs/erofs/ishare.c
-> 
-> diff --git a/Documentation/filesystems/erofs.rst b/Documentation/filesystems/erofs.rst
-> index 08194f194b94..27d3caa3c73c 100644
-> --- a/Documentation/filesystems/erofs.rst
-> +++ b/Documentation/filesystems/erofs.rst
-> @@ -128,7 +128,12 @@ device=%s              Specify a path to an extra device to be used together.
->   fsid=%s                Specify a filesystem image ID for Fscache back-end.
->   domain_id=%s           Specify a domain ID in fscache mode so that different images
->                          with the same blobs under a given domain ID can share storage.
-> +                       Also used for inode page sharing mode which defines a sharing
-> +                       domain.
+MSDOS supports a 'nocase' mount option that enables case-sensitive
+behavior; check this option when reporting case sensitivity.
 
-I think either the existing or the page cache sharing
-here, `domain_id` should be protected as sensitive
-information, so it'd be helpful to protect it as a
-separate patch.
+VFAT long filename entries preserve case; without VFAT, only
+uppercased 8.3 short names are stored. MSDOS with 'nocase' also
+preserves case since the name-formatting code skips upcasing when
+'nocase' is set. Check both options when reporting case preservation.
 
-And change the description as below:
-                            Specify a trusted domain ID for fscache mode so that
-                            different images with the same blobs, identified by blob IDs,
-                            can share storage within the same trusted domain.
-                            Also used for different filesystems with inode page sharing
-                            enabled to share page cache within the trusted domain.
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+---
+ fs/fat/fat.h         |  3 +++
+ fs/fat/file.c        | 21 +++++++++++++++++++++
+ fs/fat/namei_msdos.c |  1 +
+ fs/fat/namei_vfat.c  |  1 +
+ 4 files changed, 26 insertions(+)
 
+diff --git a/fs/fat/fat.h b/fs/fat/fat.h
+index d3e426de5f01..9e208eeb46c4 100644
+--- a/fs/fat/fat.h
++++ b/fs/fat/fat.h
+@@ -10,6 +10,8 @@
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
+ 
++struct file_kattr;
++
+ /*
+  * vfat shortname flags
+  */
+@@ -407,6 +409,7 @@ extern void fat_truncate_blocks(struct inode *inode, loff_t offset);
+ extern int fat_getattr(struct mnt_idmap *idmap,
+ 		       const struct path *path, struct kstat *stat,
+ 		       u32 request_mask, unsigned int flags);
++int fat_fileattr_get(struct dentry *dentry, struct file_kattr *fa);
+ extern int fat_file_fsync(struct file *file, loff_t start, loff_t end,
+ 			  int datasync);
+ 
+diff --git a/fs/fat/file.c b/fs/fat/file.c
+index 4fc49a614fb8..f7f613cb763b 100644
+--- a/fs/fat/file.c
++++ b/fs/fat/file.c
+@@ -16,6 +16,7 @@
+ #include <linux/fsnotify.h>
+ #include <linux/security.h>
+ #include <linux/falloc.h>
++#include <linux/fileattr.h>
+ #include "fat.h"
+ 
+ static long fat_fallocate(struct file *file, int mode,
+@@ -395,6 +396,25 @@ void fat_truncate_blocks(struct inode *inode, loff_t offset)
+ 	fat_flush_inodes(inode->i_sb, inode, NULL);
+ }
+ 
++int fat_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
++{
++	struct msdos_sb_info *sbi = MSDOS_SB(dentry->d_sb);
++
++	/*
++	 * FAT filesystems are case-insensitive by default. MSDOS
++	 * supports a 'nocase' mount option for case-sensitive behavior.
++	 *
++	 * VFAT long filename entries preserve case. Without VFAT, only
++	 * uppercased 8.3 short names are stored. MSDOS with 'nocase'
++	 * also preserves case.
++	 */
++	if (!sbi->options.nocase)
++		fa->fsx_xflags |= FS_XFLAG_CASEFOLD;
++	if (!sbi->options.isvfat && !sbi->options.nocase)
++		fa->fsx_xflags |= FS_XFLAG_CASENONPRESERVING;
++	return 0;
++}
++
+ int fat_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 		struct kstat *stat, u32 request_mask, unsigned int flags)
+ {
+@@ -574,5 +594,6 @@ EXPORT_SYMBOL_GPL(fat_setattr);
+ const struct inode_operations fat_file_inode_operations = {
+ 	.setattr	= fat_setattr,
+ 	.getattr	= fat_getattr,
++	.fileattr_get	= fat_fileattr_get,
+ 	.update_time	= fat_update_time,
+ };
+diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
+index 0b920ee40a7f..380add5c6c66 100644
+--- a/fs/fat/namei_msdos.c
++++ b/fs/fat/namei_msdos.c
+@@ -640,6 +640,7 @@ static const struct inode_operations msdos_dir_inode_operations = {
+ 	.rename		= msdos_rename,
+ 	.setattr	= fat_setattr,
+ 	.getattr	= fat_getattr,
++	.fileattr_get	= fat_fileattr_get,
+ 	.update_time	= fat_update_time,
+ };
+ 
+diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+index 5dbc4cbb8fce..6cf513f97afa 100644
+--- a/fs/fat/namei_vfat.c
++++ b/fs/fat/namei_vfat.c
+@@ -1180,6 +1180,7 @@ static const struct inode_operations vfat_dir_inode_operations = {
+ 	.rename		= vfat_rename2,
+ 	.setattr	= fat_setattr,
+ 	.getattr	= fat_getattr,
++	.fileattr_get	= fat_fileattr_get,
+ 	.update_time	= fat_update_time,
+ };
+ 
+-- 
+2.52.0
 
->   fsoffset=%llu          Specify block-aligned filesystem offset for the primary device.
-> +inode_share            Enable inode page sharing for this filesystem.  Inodes with
-> +                       identical content within the same domain ID can share the
-> +                       page cache.
->   ===================    =========================================================
-
-...
-
-
->   	erofs_exit_shrinker();
-> @@ -1062,6 +1111,8 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
->   		seq_printf(seq, ",domain_id=%s", sbi->domain_id);
-
-I think we shouldn't show `domain_id` to the userspace
-entirely.
-
-Also, let's use kfree_sentitive() and no_free_ptr() to
-replace the following snippet:
-
-          case Opt_domain_id:
-                 kfree(sbi->domain_id); -> kfree_sentitive
-                 sbi->domain_id = kstrdup(param->string, GFP_KERNEL);
-                      -> sbi->domain_id = no_free_ptr(param->string);
-                 if (!sbi->domain_id)
-                         return -ENOMEM;
-                 break;
-
-And replace with kfree_sentitive() for domain_id everywhere.
-
-Thanks,
-Gao Xiang
 
