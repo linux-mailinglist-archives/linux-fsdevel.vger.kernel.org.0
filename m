@@ -1,152 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-74711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EBxvFMrmb2lhUQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 21:34:18 +0100
+	id IDfPLr7hb2n8RwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 21:12:46 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171884B5E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 21:34:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC594B173
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 21:12:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 92ED17EC956
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 19:00:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E42FAA17CF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 19:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988BC466B63;
-	Tue, 20 Jan 2026 19:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B99346AEEA;
+	Tue, 20 Jan 2026 19:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XxJR+jvA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from brightrain.aerifal.cx (brightrain.aerifal.cx [104.156.224.86])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3601E466B50
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 19:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.156.224.86
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768935614; cv=none; b=bLdotbH859euaUdF3kn5AKa3tpXSq9e6szMTBnnr6VRm6EP850piq+3UFYJM4wJ/2MhFDcYoC7dCot6XlW+ckYrh44273G0z7cR0ms2J0auh4/6sULMvYGE9iG1v0rnQaVQeqkal7bJQ2mvK0JOdYIN7/A3GGnf8HwqBayqHZQ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768935614; c=relaxed/simple;
-	bh=mtMJsCsaL8BH0KEkcMmk82BnDFTAYGH/g1xlTfzG9QE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQpzocWOzzXGOxMH9SmQTDep0rPSj24c5eB+7V2YfTg9J6zo/7FkWvRY8gJLWCgwClqaPXst7QaaqLRM45HUyZZXoeMW3nGBWpSXnOgOsugUZ3R1tbFco1FNXC+5rdrRdqbHyY/BpvFS0ajn829sWAs0DigXLYS8tdDY8TTvBOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org; spf=pass smtp.mailfrom=aerifal.cx; arc=none smtp.client-ip=104.156.224.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aerifal.cx
-Date: Tue, 20 Jan 2026 14:00:10 -0500
-From: Rich Felker <dalias@libc.org>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Zack Weinberg <zack@owlfolio.org>, Alejandro Colomar <alx@kernel.org>,
-	Vincent Lefevre <vincent@vinc17.net>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-	GNU libc development <libc-alpha@sourceware.org>
-Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from
- POSIX.1-2024
-Message-ID: <20260120190010.GF6263@brightrain.aerifal.cx>
-References: <efaffc5a404cf104f225c26dbc96e0001cede8f9.1747399542.git.alx@kernel.org>
- <20250516130547.GV1509@brightrain.aerifal.cx>
- <20250516143957.GB5388@qaa.vinc17.org>
- <20250517133251.GY1509@brightrain.aerifal.cx>
- <5jm7pblkwkhh4frqjptrw4ll4nwncn22ep2v7sli6kz5wxg5ik@pbnj6wfv66af>
- <8c47e10a-be82-4d5b-a45e-2526f6e95123@app.fastmail.com>
- <20250524022416.GB6263@brightrain.aerifal.cx>
- <1571b14d-1077-4e81-ab97-36e39099761e@app.fastmail.com>
- <20260120174659.GE6263@brightrain.aerifal.cx>
- <lhubjio5dsb.fsf@oldenburg.str.redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515AF45BD44
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 19:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768935971; cv=pass; b=HZiGeMqEHP3MT2+4zwkamTLuJot+gY02/NnushQpUd9TB1m+xH+jORR39o6PIdEdp+JmK9Fv5bBv8icjydJwWshX5Pt2qNPEWSx75KejQ0RO15ONm+NQceblE9avs7bGjA4TWSV4Q1qxW2LEaYxQyGCRhYs2mazseJK1a2F66Gc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768935971; c=relaxed/simple;
+	bh=PAlrU0YPhRTqQL5vbXglJKRcOFvIvwP1+msIyCpDKjw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jn8JM2UnEPhWKvse8PXn+yvZKr7YuJgoPBHAYBY7c7QM1f1wOlEoqOtpbLwQvqhTqZl0uuAbiBU/2NORiQizcRK89WXqRWOxlQ9BFnTR4qT79syC5X+zNcRaj+fo5F8I7amem/k0cUIqAIy0J6roYqC/64y1OdrsQn/J+2TCCrw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XxJR+jvA; arc=pass smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-59b6df3d6b4so7130232e87.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 11:06:08 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1768935967; cv=none;
+        d=google.com; s=arc-20240605;
+        b=WMDA8YKfmXmHXxTCBzddfzNoRNn/FHnT5PRLqPIQMNvImhrE3awT+wAolq4oKHlmpp
+         Pnnn9xkYnPQ4tE9Ls3O0X7zhHYHuQo7BztqJIIVP2UCg3yflAWi+fJCDo7lPZX/EI+VH
+         LoFQMNI3m78367RoTRqCGlDGQqFVQO6FTBJRrkgIqgEWmKb9mOMKMCX2n0SDhfxweBxJ
+         krY7mvyf1FDGqiQ5lx4R3dgXBdrgo2NKKiYMl+aKwwlYGJsIMdnz5hDC+k3PDYPjgQUD
+         St1bVaifjZZs00OK9mz5hBiNGfsqQUtfqccu4BdDDj8KF+QnoWo+C57oQDVpWda7BlRu
+         Dttw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=58sG2490Nc8wtxrd3CZ8OOBiRjzn8OCfpleiYB8BHNY=;
+        fh=5T6iEt5F2CsP030ESXN5K6wk/YS1fN+HqZcIX5zHt60=;
+        b=CoqsJvIEbSFnlrWyr+qMNuzxbttxFoV2mQTgydjdj/a5y2WtqxxsKUALwDFm8/X40w
+         pDTncW4pUpK8w59L6kYGJxPUR4fFmrc6lhKFAO9IZXDc2HsczEuzOFJQFgqA/pA0/IEa
+         CrnWV2KCWuvNRQmKh/Mgc36VoNsEeRrZ3nfiYvDNyurG2SIzNOIyIvIpITefOmlX7/38
+         majg1Hs5X9FYle3CWe97z2ZwNeS4vEEujLo5EwbgfS5z+bzBZlCMKOpMrEmw8SnOzqdD
+         YtEwIkEB/Mwvr+8wPhQOPiJ0wM2HWig8EqYXg/6H0wflq6l0HgSjiv7PXRb9TNummJW6
+         1LWw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768935967; x=1769540767; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=58sG2490Nc8wtxrd3CZ8OOBiRjzn8OCfpleiYB8BHNY=;
+        b=XxJR+jvAyKgeGrnRUfY7gsA88JzBZHeOTdR9luZtAHZrTlpBefG31I1i6E7rlhXV0R
+         1MECxT+7sJSNMwrrcKiSiTtKM3iBSrarO9OnpNGYlvBD1LySKiZIN4dlVKNz5Q4ggMWT
+         D9EvOvQca6//devYc9ItQHnvl94qUOYwBZlbVCPgMO5XHhJFZnJoC6AA8CMBDPDTBVDS
+         lR7mM5fM9tEh/twKLSIeougbYQYuI6AvetLo9bXJb5lFn43b/7jTJ4V2C8gvXFPzxd25
+         h4me2wkogKnUXLEo5KjxhrUrpb8c2xtPFo7jfbxuNSPLVXTXwlmdKNpwxWQ5Iae2w6Ri
+         EWFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768935967; x=1769540767;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=58sG2490Nc8wtxrd3CZ8OOBiRjzn8OCfpleiYB8BHNY=;
+        b=doUvNmSzV2uXF1MeIe2Dbp5HLGICuxY/eNk2pGuRPgHM8otomVMKtAk41kD0oiObvZ
+         VSfy1mPVARCeuBjddfw5QRxf/r+CQweEOMnzgM/ENyhCRwcY+e8AtWwy+/2Abe05NMCr
+         kXJxZTRWD5t5mhoyrcVqMzYYX0/JiwBk5RbuMg0fgdDTyUwaey7xrgyqRJdzGvNcyuG0
+         DfukF3ydizVDFJP0gwk1JtI5z5VkwbaQx+TXdFnm+ptvyW94UnTt/8cwuZ+GKzwTShqm
+         OVhAZ/t4SPc13uctlcI15xmze/JNs5xC/PKZBe4/gtHy1gm7sE2la4+rVWqoI2ZBPon+
+         FsIA==
+X-Forwarded-Encrypted: i=1; AJvYcCU24e6OkWVDjmo9MaYzNjDfQxupor1bYXYM7G92EQHdx1gSQY6dvMxPH5ZddKmKBE8T/xUZXQaHGteydQru@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH40L3S5mvzTDBkpQfJW8MMRbqp7iGJklOhHdzPlhVrgB6Td/n
+	/tR3ZktLfk5NEgUUVvOMwC7shdq4vLQC44euiICn/ZSfRZ0IdfjkquFMyK8YAyNx9pgeBICTo6c
+	Qr4lmAl42hbJ1ZXLvLTgTp7RvkgOJXvA=
+X-Gm-Gg: AZuq6aIA/QOquVceo+AplzDQjLm0xIZy0sP78eFvfL60cRxp7aWh3b/E6fl3VP9i+SG
+	3WWoQMQ3q3ofbv4GHAP+jpO8H8q8HuKLi7sDmtbYRZXwPxiiF7V+scHclkv5wneXhMrnVpGh4b1
+	4+k943KYOca+df2Q86UcSR7JocMLCWzkJe5Uv0kV+uvjW7QBnEe46S4EXb84A/kvf2PcMCWTVAE
+	ScwI6qPVlBFA8OigL9QIIWf5uulKEiI/2ycMYkbKc9Z2tV6aAGyZuB2BQR/KSh2bAUqZw==
+X-Received: by 2002:a05:6512:3d0f:b0:59b:b32f:2df3 with SMTP id
+ 2adb3069b0e04-59bb32f30e0mr5515760e87.3.1768935966989; Tue, 20 Jan 2026
+ 11:06:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lhubjio5dsb.fsf@oldenburg.str.redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Spamd-Result: default: False [-1.26 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+References: <20260116235606.2205801-1-joannelkoong@gmail.com> <20260117050310.GE15532@frogsfrogsfrogs>
+In-Reply-To: <20260117050310.GE15532@frogsfrogsfrogs>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 20 Jan 2026 11:05:52 -0800
+X-Gm-Features: AZwV_Qg0I74emV4HUKlaTOi3RMx9PnGAY_DJi2mME-9Pn2MdGMQpUVcxluBgt2I
+Message-ID: <CAJnrk1Yf5OJv0a0zgZQ6BV15UPJ4d+FTFVY-Fc+PwNGknh34jw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] fuse: clean up offset and page count calculations
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	jefflexu@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spamd-Result: default: False [-1.96 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-74713-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
-	RCPT_COUNT_SEVEN(0.00)[10];
+	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	R_DKIM_NA(0.00)[];
-	DMARC_NA(0.00)[libc.org];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dalias@libc.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74711-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,brightrain.aerifal.cx:mid]
-X-Rspamd-Queue-Id: 171884B5E6
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo]
+X-Rspamd-Queue-Id: 2DC594B173
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue, Jan 20, 2026 at 07:39:48PM +0100, Florian Weimer wrote:
-> * Rich Felker:
-> 
-> > On Tue, Jan 20, 2026 at 12:05:52PM -0500, Zack Weinberg wrote:
-> >> > On Fri, May 23, 2025 at 02:10:57PM -0400, Zack Weinberg wrote:
-> >> >>     close() always succeeds.  That is, after it returns, _fd_ has
-> >> >>     always been disconnected from the open file it formerly referred
-> >> >>     to, and its number can be recycled to refer to some other file.
-> >> >>     Furthermore, if _fd_ was the last reference to the underlying
-> >> >>     open file description, the resources associated with the open file
-> >> >>     description will always have been scheduled to be released.
-> >> ...
-> >> >>     EINPROGRESS
-> >> >>     EINTR
-> >> >>            There are no delayed errors to report, but the kernel is
-> >> >>            still doing some clean-up work in the background.  This
-> >> >>            situation should be treated the same as if close() had
-> >> >>            returned zero.  Do not retry the close(), and do not report
-> >> >>            an error to the user.
-> >> >
-> >> > Since this behavior for EINTR is non-conforming (and even prior to the
-> >> > POSIX 2024 update, it was contrary to the general semantics for EINTR,
-> >> > that no non-ignoreable side-effects have taken place), it should be
-> >> > noted that it's Linux/glibc-specific.
-> >> 
-> >> I am prepared to take your word for it that POSIX says this is
-> >> non-conforming, but in that case, POSIX is wrong, and I will not be
-> >> convinced otherwise by any argument.  Operations that release a
-> >> resource must always succeed.
+On Fri, Jan 16, 2026 at 9:03=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Fri, Jan 16, 2026 at 03:56:03PM -0800, Joanne Koong wrote:
+> > This patchset aims to improve code clarity by using standard kernel hel=
+per
+> > macros for common calculations:
+> >  * DIV_ROUND_UP() for page count calculations
+> >  * offset_in_folio() for large folio offset calculations
+> >  * offset_in_page() for page offset calculations
 > >
-> > There are two conflicting requirements here:
+> > These helpers improve readability and consistency with patterns used
+> > elsewhere in the kernel. No functional changes intended.
 > >
-> > 1. Operations that release a resource must always succeed.
-> > 2. Failure with EINTR must not not have side effects.
+> > This patchset is on top of Jingbo's patch in [1].
+>
+> As a straight conversion this looks fine to me so
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+>
+> OTOH I just learned that fuse has a backchannel for fuse servers to
+> inject pagecache data for a regular file.  That might be kinda nice for
+> an HSM or something?  Though that would be covered by FUSE_READ.
+>
+> Hrmm, I wonder how well that interacts with iomap... we don't mark the
+> folios dirty or update timestamps, so I'm guessing the contents could
+> disappear at any time if the page cache gets reclaimed?
+
+My interpretation of it is that it doesn't need to be marked dirty
+because the server is the one injecting this data into the folio so
+theoretically it should already have all of this data already
+committed on its backend.
+
+Thanks,
+Joanne
+
+>
+> Weiiiird.....
+>
+> --D
+>
+>
+> > Thanks,
+> > Joanne
 > >
-> > The right conclusion is that operations that release resources must
-> > not be able to fail with EINTR. And that's how POSIX should have
-> > resolved the situation -- by getting rid of support for the silly
-> > legacy synchronous-tape-drive-rewinding behavior of close on some
-> > systems, and requiring close to succeed immediately with no waiting
-> > for anything.
-> 
-> What about SO_LINGER?  Isn't this relevant in context?
-
-shutdown should be used for this, not close. So that the acts of
-waiting for the operation to finish, and releasing the resource handle
-needed to observe if it's finished, are separate.
-
-> As far as I know, there is no other way besides SO_LINGER to get
-> notification if the packet buffers are actually gone.  If you don't use
-> it, memory can pile up in the kernel without the application's
-> knowledge.
-
-The way Linux's EINTR behaves, using close can't ensure this memory
-doesn't pile up, because on EINTR you lose the ability to wait for it.
-
-Rich
+> > [1] https://lore.kernel.org/linux-fsdevel/20260115023607.77349-1-jeffle=
+xu@linux.alibaba.com/
+> >
+> > Joanne Koong (3):
+> >   fuse: use DIV_ROUND_UP() for page count calculations
+> >   fuse: use offset_in_folio() for large folio offset calculations
+> >   fuse: use offset_in_page() for page offset calculations
+> >
+> >  fs/fuse/dev.c     | 14 +++++++-------
+> >  fs/fuse/file.c    |  2 +-
+> >  fs/fuse/readdir.c |  8 ++++----
+> >  3 files changed, 12 insertions(+), 12 deletions(-)
+> >
+> > --
+> > 2.47.3
+> >
+> >
 
