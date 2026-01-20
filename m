@@ -1,332 +1,380 @@
-Return-Path: <linux-fsdevel+bounces-74587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5847FD3C20E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 09:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A36D3C23D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 09:39:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 62BDC3A8F7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 08:22:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A2D744A1DE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 08:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2873C0083;
-	Tue, 20 Jan 2026 08:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3963B8BB5;
+	Tue, 20 Jan 2026 08:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cXJrhzii"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvG9FUsD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABCF3B961E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 08:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768896490; cv=fail; b=HveazNuHURXjv5X0BGrcq89lI+AmAobsLzzaW1tC24/U+1JKkAgFUvBJ9vIlP5ZHskEGxy3H12TgvrMDismOMuIys0EMkroMqu0wRxWwrgJGxv15OidvQpDzdjs7qW7N0lEUMdlIqufpOnBrNAhmLQKJEgPcRjeHRX/0uBo245s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768896490; c=relaxed/simple;
-	bh=SvInW1cQioXLNUPWbJK8NSmcDfZOM3RGmb35XYA/mVM=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=Uvk7Oe+y5L/LueYuNf3JfRFPrc/xwuzismXjqnwt/CBfpo2iMzuuZLWgjHFxLkW5/vt7QrpuoiB+dk9HPhTpqK9Yrq2sRMFRvmSl5Lfp5lf/Lk4VCRjsGuokrISjHE8MyUCEFf1L+S3GTzbb6gjaUXWI+F0JoapiGWwJOpqHAyg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cXJrhzii; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768896489; x=1800432489;
-  h=date:from:to:cc:subject:message-id:
-   content-transfer-encoding:mime-version;
-  bh=SvInW1cQioXLNUPWbJK8NSmcDfZOM3RGmb35XYA/mVM=;
-  b=cXJrhziiDSoYU4/troaptlwDz6dzQshj+8N9s/wgm1kkwm4mvUJasNYe
-   ubu+U/xYsnlhFNbu7ps/EdTTe7g0sKQjOr8uFd4GOEaznRa0LPv6u2k1z
-   O2BbBmhRil56cpaw/OxVykKrnXft9qKWktrfvjY+won2aAsfN3eeYiI2p
-   ANK8nY+kA/oNi+dAi2M5alcRbDP2fGr3W9YLx1YSRtJBwsADrUhjncCrY
-   ykDwLIFlHj5/HFYg+PnCysoJvGd88KkIt/NK9Lhti8LFlV+jsCuu3Huen
-   RKbcROrpwEWXoNHyIzmsq4YcFbbYKngA6JpLM4Z2Qrz4a/s7mwKtGCilZ
-   g==;
-X-CSE-ConnectionGUID: bnJ8r71oSimb2KhWXnNQ7Q==
-X-CSE-MsgGUID: Bp2vudOXQ36bRJlIHLDSuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11676"; a="92762338"
-X-IronPort-AV: E=Sophos;i="6.21,240,1763452800"; 
-   d="scan'208";a="92762338"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2026 00:08:08 -0800
-X-CSE-ConnectionGUID: x2Cj/xMERrWvl0mXONwS7g==
-X-CSE-MsgGUID: 4jtdHwLFQ9K+E2eIoa/Ftg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,240,1763452800"; 
-   d="scan'208";a="210901263"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2026 00:08:08 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Tue, 20 Jan 2026 00:08:07 -0800
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35 via Frontend Transport; Tue, 20 Jan 2026 00:08:07 -0800
-Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.62) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Tue, 20 Jan 2026 00:08:06 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U4Ylr2bmyD2POfj76GfJUv/3yosL5Oqj6b8cSreXsaCJqO460q4CYlNwJJ6DNy2bAe6pZhMURyRr+ph9q68YZ0yNkIAjGdALvfDkVQVCznwVNGKzq0GKAsb2I2zF7c2OhJpX1YbH8IP0bDFGerXiB0Kn9qE37vyyZN/e7rb7GXwv0SpIsaPhTSdeH3PTmAnLvThwg+cURZ8mKy7fMK3ItTjLOuR0UUWWOzTlPVa7te3FqOiAXZMhP7xwG1orCVK30bVT8yvGCeWtIJru67Fyb8KTQEOIAnyxxW9S9ONxzURviDy9YBaMlFgVwx9yRxSazVFfADjgKQcol73o/EZ1iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Siosk47MJPu6oIICWvT16gPqiSJLH+eX51ZoJK5zKyc=;
- b=cfhn/6MX9q76tpdpGL6nyN95G+ZcYb54VjjBau5jYXTNp2vWztY3bB8mSaz8KL9PpB63KUB8kWZA6Muzxshsd1t0xLjjP84M0HjuF/Z93brhYltGeeprWmS6CoZpACzwdfKCvlWZ1aUQba9eiMWiXzBDSas4lDygMQ6Sryxl+ysfrpBlbu37EIgMlRHpmj0s3E4EjbHSNdbXkvJo4HFgINRqkXfYu401aGUQJCx3/H40Ywg4DPkhgDH20pirFD0CN7g5C/YMiCTHkexr9wHdrWaXzYKwEYx/sERcF15Ysyepu7C7cfiaiYkM+XtDuhjG+rGxPIbRGsG+u5rWMN+QZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by SA1PR11MB6663.namprd11.prod.outlook.com (2603:10b6:806:257::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.12; Tue, 20 Jan
- 2026 08:07:58 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.9520.010; Tue, 20 Jan 2026
- 08:07:58 +0000
-Date: Tue, 20 Jan 2026 16:07:50 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
-	<linux-fsdevel@vger.kernel.org>, <oliver.sang@intel.com>
-Subject: [viro-vfs:v4.filename] [struct filename]  2a0db5f765:
- xfstests.ext4.019.fail
-Message-ID: <202601201519.c7003e60-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-User-Agent: s-nail v14.9.25
-X-ClientProxiedBy: SI1PR02CA0033.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::14) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73343B5304
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 08:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768897045; cv=none; b=eqvFcr3vB2WPXeLE7m99ebvJ9Nhf8k7wtPJkE7lXfPFSyDvIz7plONZ/ua9LJiXAr9Q22eE3B9u4MHvLuvWKcfabXQoFEY+mfPj6ZOTg0c6iv4cI7ltAOXuEHsCi1KWE+Ozea9FMvIe+cIFlhxeTgZUYniiucUp3m8Kcb6Vh1IY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768897045; c=relaxed/simple;
+	bh=tzAjqv8TMTK5CHL19DO3W/Oh8quUn5KWK3ip/lvfyG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyF7W/XMLcHoOl/4lOlPMr7NwYQQvaIBP+52ouch7F3AhkQuoqvOulz0zvRp6C+zygy85IhwFPSXpTdWIIu4U6utgbe8aPV0ABwyolnd7rIKTkJ9Plc+pofraIyWxAAy3RldNUGfUd4Z59GUCiMOI10DYIi+X4cIbGroe2ToDQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvG9FUsD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FA64C16AAE;
+	Tue, 20 Jan 2026 08:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768897045;
+	bh=tzAjqv8TMTK5CHL19DO3W/Oh8quUn5KWK3ip/lvfyG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nvG9FUsDfJsWjKf91h/Zje9fYUGl+rN7YSTjzfAJuWLcBNUkqXGngfBQfQiAEpuxR
+	 I9JCu+B7KWwVmaBMhOHMUSWt99m8ZNR6vvWXv7dpzEvMo9MLZmqIV78oNvXjIdj63Z
+	 ELjJdUQTQkKvIUb0Z9r1TWVE10qQN4n7ueBIen/ZRPGuAd7twVM3tqZgCrQAA6yrPi
+	 6v704iTptR5oNOj6F+PTPii30nniaXtK+dRFuwpvPv5vDljEQEGcZR1g5fQARn9RVN
+	 p5tEzEUKggFeo+tnvXdtZB3zDumKOpkWeeHBTNHn3OfqwIU1jqyvESEZzkrTKONnX3
+	 iXPjQvS0QVGRw==
+Date: Tue, 20 Jan 2026 09:17:21 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC] pidfs: convert rb-tree to rhashtable
+Message-ID: <20260120-teilhaben-kruste-b947256ed6ab@brauner>
+References: <20260119-work-pidfs-rhashtable-v1-1-159c7700300a@kernel.org>
+ <CAGudoHEej7_Q-nkJqBU8Md15ESVtyxZ9Wbq9zwyUEcfT034=xg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SA1PR11MB6663:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5833ae46-c5b5-4c25-7277-08de57fb060b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?FrYmpleWWNdwYxviah18ZJbtKSsp5UcUhkHswNO7rtrcEIIEgYi46jHBjpp0?=
- =?us-ascii?Q?VU59av8dr66pJMurPNGj0aPflThYQve/CGE8Sa+VsDA6UnWW2Op/2xBuOukK?=
- =?us-ascii?Q?LvMnTpULrXJuIHPnKoAvuZ5YqUubupkURzXac8XZcFyKlM/wlka8wyzyJOgs?=
- =?us-ascii?Q?40rJUVUZ7gg+s2YGzrXV9pqhNvxzJC+mKbVYCCs1rLYIYxTkX00PhvUy013h?=
- =?us-ascii?Q?exLdKrSpXKd7azxiCQaSDiU9+JtZ+eb8gpwv8NKtUD3j5G0MTHfRtiA0pIjT?=
- =?us-ascii?Q?QmruBTE07cQ5SrO9G9hkObyVvkLvrKCkqSwZZd2JNl3/Lomx3rTlwrUq3eg/?=
- =?us-ascii?Q?vmR6Wp+xC25xRWXuby0gzy5Kr0lFePBDdXjxLxS+pMZ6ozMLFObG7RIr+1Rr?=
- =?us-ascii?Q?8Ak6v97i1jC7V5wVKGcd+80rhp0B94DIcLGdioU4SChe7H5D7fzMlfuHbt0m?=
- =?us-ascii?Q?rNskhI+ZAAQ3hcL/Do4j58ZjWtzXN3fbjqqwJgdlYIO7zD8W5N0r3quvD/w3?=
- =?us-ascii?Q?LrFGxqKu9TgSCY5DiHG7Q/O3hJ0rlxocS8OG/jULEhd5+GShpqZvAM3hIOFv?=
- =?us-ascii?Q?H/Ys6nI2Y4C2nM4tJvf5LPlPO9yT2+BIm1a4wovN9BYH9Jp4UL4V/1lx7UnE?=
- =?us-ascii?Q?rWtrMNmRk+aBCugVfn/3W0wcnj0lPjxHHs9d7E9PDzfgsVERDU+ToNaAyBAb?=
- =?us-ascii?Q?0XgmIHcuADtRmCCoK0xtlouljWYkczXp03oyPp02cxJrzZt1CeZCYqdZkCox?=
- =?us-ascii?Q?i8LcbecsGo4h4lVpIAWDqMiSJcRxensSUgHE61u5OBSrMq/Sp04Q7o78nkmJ?=
- =?us-ascii?Q?ibRjjxD5oDTe65ipXiPCQZJGMFDdsIGDf2ZBzqa/dNwKwxNEatsgR6biIOxf?=
- =?us-ascii?Q?Mn9lJNNvIYg+2qCtt/gf4UDFMpn3iY7VDf8SFqnzUVk8R8zSI1/EVm0xo0Vw?=
- =?us-ascii?Q?7LuoWWznIvgA27tICbrE/LAA96c0jyAzWzuHBsZZGQxkMceJQJozX5SskmUM?=
- =?us-ascii?Q?h2dveBaTH9JntLIUfc7XI4uUlzSNV+vIpiRXBNHU43lz6HxyZhzKgB0L4vZL?=
- =?us-ascii?Q?jC6HWog4gN4mKDyLtWSGMgrwhCzSD5BEbcFK/J640V75yJLxDi7V97K0Y5UN?=
- =?us-ascii?Q?YwxtblwF0oYiKTb7EhxzcdZ+x/poRcTpwR3S1/zoJrnaOmhI2fNm9nsWVUO9?=
- =?us-ascii?Q?1izqCD81IKuxvvapDalKcvgLv0prn/HyDRdRUqp9fQlPo4e8/E4qxYAzPQfc?=
- =?us-ascii?Q?fFS/vq9xx3uTIuIniBudpiEiAHxGrcmmzf58DhLzcmn/31mKfsSc96RxDmLC?=
- =?us-ascii?Q?9PLRMRebiA2yN6koYJgCdOs8lbZ5GMhb/5fXEBPvqYf27TBSMKI/OBzOp3SL?=
- =?us-ascii?Q?2TeBX9cDhqHkYEmaJvv5uCXRLmvrMyv5J3xRmm8qKFrCSbmK/DbQrldgXCp+?=
- =?us-ascii?Q?OkLqlhWOWwOhp4pGtiDAuRJw+cY7UVI8QblkZ1+t4hQSr34vyHcr0pa0B7UP?=
- =?us-ascii?Q?Rx+rUkfBVF93Jpt3LJ+wZuMMJOoO8xpvbCUcjWlNIFbi17yC6IQCB1kSHStP?=
- =?us-ascii?Q?5Gif3HwmmZQ6qblMb+GUoMGH+HS4h8Q7BMt6whuQ?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?4HMvBXzvZl0U3So773S6VxvtGfj064cU1G5+o7S309L9R4KMcbQywH/NuuLd?=
- =?us-ascii?Q?d9D8wRuqtZ+VGCbYJd/B+TLgVHMbqZKoTeaAcZPJAmbE7az4Ryqhh/zvS23T?=
- =?us-ascii?Q?zryp/ipRZHS2kUyfs0o04u6bOM1Apmz8zQ1v2X4KQ7/Qi19vwApXwNjYHYgZ?=
- =?us-ascii?Q?XpzAio32c1/rwok/fyRjO7GgNvuTcA+Q9Ilgx+Dhjvohc2wFkDzlNKjQ2vh2?=
- =?us-ascii?Q?6/w3xv4Kf7Ey0TqESbI+EuRPfqjSlecnV6/yzcjYdrLYjNXoeJ/81P5etTlo?=
- =?us-ascii?Q?oG1g90C53ahVvoygYZfx8zsr+85kUse3EcVZqwelgvpZb2/RGtVLE7Adx60G?=
- =?us-ascii?Q?0DxmOWGo8goRgZqsUK0v4Z8kPUbBGftbhP8OEkHVOQgByxJNsrWkzBGxUUTA?=
- =?us-ascii?Q?4jyNrPXspqqasw5qin0zJVBVY11gqeYnA9GDeRM9sKTFX3nzf3ktrfEHzkjs?=
- =?us-ascii?Q?I3b6OFnGqf0cLjLFNi+mZV8l9z+obp75QP9TQaIbQ7UfgRR1UFtrtUpQRB08?=
- =?us-ascii?Q?13JX1NFrNrBf/emhRiGqiSk9p4KvlIRgpWMP+p/SYKRm6aIz+HyLHSLe6m/N?=
- =?us-ascii?Q?e9l+ZxhAWDotS4PmDpRXP6SpUR0ugJ0YYZ6+aBDME+Gx1AQ/A2t1bFuT50GU?=
- =?us-ascii?Q?UmkirH8q64F1J3h4sVvgOgsha83A2qRfzf0bR83mTab8uKikFFHyQj4K9BK0?=
- =?us-ascii?Q?Vr3cx7KvcKG65wITC9mPndyVNz4DE4ALxbxI8KERYYk2Bi1GSKlmhT4LXG9T?=
- =?us-ascii?Q?00G63zFuXvoMDKnHThMA8zUi4ynpVyNJQSSUZGm2zGONSOxaW5l6WokM0R56?=
- =?us-ascii?Q?9Y75pZMjBnXAEeRxffpkcDgYxPT6xcwjdcs0NMErU6LReYUqtDG0KR59Ry/g?=
- =?us-ascii?Q?0IzvJ80Xf4rwh67Khn7xz61M+7Y40UA9/3ZaFJADq+TQaydJNBf7iz0sw7cD?=
- =?us-ascii?Q?x6Kxvt1nVW/XNksPvzQl3sojTnepCzlOuYG9ESJtkaeulBeeAlEGrMQs/S/N?=
- =?us-ascii?Q?7H9wpV6WOgCZFTOZvjuYeE18BVt4Vfe35ca2ecVMnVvMfMqJhZYqCZ4HGJiX?=
- =?us-ascii?Q?8uHcf5k2UqkSLdK9PYl9BxEIg0Ss8Os1PSsra8K0qYmdJY/ILshlBaTZEbaR?=
- =?us-ascii?Q?5a7bZ2GsU4ZEN2d97tkPWvqh1gKyvgICJj7UshM3krIZxGxmqen+hqui+GwN?=
- =?us-ascii?Q?/PQ+M4OvnE1M5i8Fg/vfXGCH50jgG8ZOkgog4LzXo3R6yNXWjc4ei/5kiIck?=
- =?us-ascii?Q?lLODdJnxtFUMn00Y5IGVxRAxbOCTG1hqkW8MApg+ES/9gIlhkKXK0w8ClXa8?=
- =?us-ascii?Q?B4UTIhqYrDoDtnPQStrDlmNXZmaDaEeLWiO/H+UJiwo1zniZEf8oa79FST+1?=
- =?us-ascii?Q?yJLTxmRAQUb4CCKOk4jbil+ZLiwNfnp7qvx3iHMoNmnXRrDFX0o0lVgGzOtc?=
- =?us-ascii?Q?H4hVUYYJkW2ltGVF+gBeFwA0DC8uEh+VqDdUu/a9FbN7rQFgqgnfpF5E8e9s?=
- =?us-ascii?Q?ukG2gh+TvVbo57oadLy7Ph9F4HMC3je19vmkTpA7re/ErE6CadRR16gIQfe/?=
- =?us-ascii?Q?k5pb9j/3je6BGQgAl7HZLOxIxiOYGBceFAadoWk3HZONgHZSkZ+bXGuY01o7?=
- =?us-ascii?Q?mkyan0vY6M8+go8B4R4+LYzoSnjNNjCul4qJh/hYh/PtNjz4Nv8pnvCnEXet?=
- =?us-ascii?Q?nMGGlTIk61VMF/wDBm6GAN0FNvK6jXzW6of6XTs91ksRuoSoPiUoE61Jvqeq?=
- =?us-ascii?Q?lQmRUdzwIw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5833ae46-c5b5-4c25-7277-08de57fb060b
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2026 08:07:58.4149
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aCCgNVmsEbW8LCcpJ7IcOM3LSOCybvvAo7ec2/V021dz2YuTp8S3sokQQ5DgV0GhUJbW36InlNhgtvvo6f1s+w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6663
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHEej7_Q-nkJqBU8Md15ESVtyxZ9Wbq9zwyUEcfT034=xg@mail.gmail.com>
 
+On Mon, Jan 19, 2026 at 09:51:30PM +0100, Mateusz Guzik wrote:
+> On Mon, Jan 19, 2026 at 4:06 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > Convert the pidfs inode-to-pid mapping from an rb-tree with seqcount
+> > protection to an rhashtable. This removes the global pidmap_lock
+> > contention from pidfs_ino_get_pid() lookups and allows the hashtable
+> > insert to happen outside the pidmap_lock.
+> >
+> > pidfs_add_pid() is split. pidfs_prepare_pid() allocates inode number and
+> > initializes pid fields and is called inside pidmap_lock. pidfs_add_pid()
+> > inserts pid into rhashtable and is called outside pidmap_lock. Insertion
+> > into the rhashtable can fail and memory allocation may happen so we need
+> > to drop the spinlock.
+> >
+> > The hashtable removal is deferred to the RCU callback to ensure safe
+> > concurrent lookups. To guard against accidently opening an already
+> > reaped task pidfs_ino_get_pid() uses additional checks beyond pid_vnr().
+> > If pid->attr is PIDFS_PID_DEAD or NULL the pid either never had a pidfd
+> > or it already went through pidfs_exit() aka the process as already
+> > reaped. If pid->attr is valid check PIDFS_ATTR_BIT_EXIT to figure out
+> > whether the task has exited. Switch to refcount_inc_not_zero() to ensure
+> > that the pid isn't about to be freed.
+> >
+> > This slightly changes visibility semantics: pidfd creation is denied
+> > after pidfs_exit() runs, which is just before the pid number is removed
+> > from the via free_pid(). That should not be an issue though.
+> >
+> > I haven't perfed this and I would like to make this Mateusz problem...
+> >
+> > Link: https://lore.kernel.org/20251206131955.780557-1-mjguzik@gmail.com
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  fs/pidfs.c            | 107 ++++++++++++++++++++++++++++----------------------
+> >  include/linux/pid.h   |   4 +-
+> >  include/linux/pidfs.h |   3 +-
+> >  kernel/pid.c          |  19 ++++++---
+> >  4 files changed, 79 insertions(+), 54 deletions(-)
+> >
+> > diff --git a/fs/pidfs.c b/fs/pidfs.c
+> > index dba703d4ce4a..e97931249ba2 100644
+> > --- a/fs/pidfs.c
+> > +++ b/fs/pidfs.c
+> > @@ -21,6 +21,7 @@
+> >  #include <linux/utsname.h>
+> >  #include <net/net_namespace.h>
+> >  #include <linux/coredump.h>
+> > +#include <linux/rhashtable.h>
+> >  #include <linux/xattr.h>
+> >
+> >  #include "internal.h"
+> > @@ -55,7 +56,23 @@ struct pidfs_attr {
+> >         __u32 coredump_signal;
+> >  };
+> >
+> > -static struct rb_root pidfs_ino_tree = RB_ROOT;
+> > +static struct rhashtable pidfs_ino_ht;
+> > +
+> > +static int pidfs_ino_ht_cmp(struct rhashtable_compare_arg *arg, const void *pidp)
+> > +{
+> > +       const u64 *ino = arg->key;
+> > +       const struct pid *pid = pidp;
+> > +
+> > +       return pid->ino != *ino;
+> > +}
+> > +
+> > +static const struct rhashtable_params pidfs_ino_ht_params = {
+> > +       .key_offset             = offsetof(struct pid, ino),
+> > +       .key_len                = sizeof(u64),
+> > +       .head_offset            = offsetof(struct pid, pidfs_hash),
+> > +       .obj_cmpfn              = pidfs_ino_ht_cmp,
+> > +       .automatic_shrinking    = true,
+> > +};
+> >
+> >  #if BITS_PER_LONG == 32
+> >  static inline unsigned long pidfs_ino(u64 ino)
+> > @@ -84,21 +101,11 @@ static inline u32 pidfs_gen(u64 ino)
+> >  }
+> >  #endif
+> >
+> > -static int pidfs_ino_cmp(struct rb_node *a, const struct rb_node *b)
+> > -{
+> > -       struct pid *pid_a = rb_entry(a, struct pid, pidfs_node);
+> > -       struct pid *pid_b = rb_entry(b, struct pid, pidfs_node);
+> > -       u64 pid_ino_a = pid_a->ino;
+> > -       u64 pid_ino_b = pid_b->ino;
+> > -
+> > -       if (pid_ino_a < pid_ino_b)
+> > -               return -1;
+> > -       if (pid_ino_a > pid_ino_b)
+> > -               return 1;
+> > -       return 0;
+> > -}
+> > -
+> > -void pidfs_add_pid(struct pid *pid)
+> > +/*
+> > + * Allocate inode number and initialize pidfs fields.
+> > + * Called with pidmap_lock held.
+> > + */
+> > +void pidfs_prepare_pid(struct pid *pid)
+> >  {
+> >         static u64 pidfs_ino_nr = 2;
+> >
+> > @@ -134,17 +141,23 @@ void pidfs_add_pid(struct pid *pid)
+> >         pid->stashed = NULL;
+> >         pid->attr = NULL;
+> >         pidfs_ino_nr++;
+> > +}
+> >
+> > -       write_seqcount_begin(&pidmap_lock_seq);
+> > -       rb_find_add_rcu(&pid->pidfs_node, &pidfs_ino_tree, pidfs_ino_cmp);
+> > -       write_seqcount_end(&pidmap_lock_seq);
+> > +/*
+> > + * Insert pid into the pidfs hashtable.
+> > + * Must be called without holding pidmap_lock (can allocate memory).
+> > + * Returns 0 on success, negative error on failure.
+> > + */
+> > +int pidfs_add_pid(struct pid *pid)
+> > +{
+> > +       return rhashtable_insert_fast(&pidfs_ino_ht, &pid->pidfs_hash,
+> > +                                     pidfs_ino_ht_params);
+> >  }
+> >
+> >  void pidfs_remove_pid(struct pid *pid)
+> >  {
+> > -       write_seqcount_begin(&pidmap_lock_seq);
+> > -       rb_erase(&pid->pidfs_node, &pidfs_ino_tree);
+> > -       write_seqcount_end(&pidmap_lock_seq);
+> > +       rhashtable_remove_fast(&pidfs_ino_ht, &pid->pidfs_hash,
+> > +                              pidfs_ino_ht_params);
+> >  }
+> >
+> >  void pidfs_free_pid(struct pid *pid)
+> > @@ -773,43 +786,42 @@ static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+> >         return FILEID_KERNFS;
+> >  }
+> >
+> > -static int pidfs_ino_find(const void *key, const struct rb_node *node)
+> > -{
+> > -       const u64 pid_ino = *(u64 *)key;
+> > -       const struct pid *pid = rb_entry(node, struct pid, pidfs_node);
+> > -
+> > -       if (pid_ino < pid->ino)
+> > -               return -1;
+> > -       if (pid_ino > pid->ino)
+> > -               return 1;
+> > -       return 0;
+> > -}
+> > -
+> >  /* Find a struct pid based on the inode number. */
+> >  static struct pid *pidfs_ino_get_pid(u64 ino)
+> >  {
+> >         struct pid *pid;
+> > -       struct rb_node *node;
+> > -       unsigned int seq;
+> > +       struct pidfs_attr *attr;
+> >
+> >         guard(rcu)();
+> > -       do {
+> > -               seq = read_seqcount_begin(&pidmap_lock_seq);
+> > -               node = rb_find_rcu(&ino, &pidfs_ino_tree, pidfs_ino_find);
+> > -               if (node)
+> > -                       break;
+> > -       } while (read_seqcount_retry(&pidmap_lock_seq, seq));
+> >
+> > -       if (!node)
+> > +       pid = rhashtable_lookup(&pidfs_ino_ht, &ino, pidfs_ino_ht_params);
+> > +       if (!pid)
+> >                 return NULL;
+> >
+> > -       pid = rb_entry(node, struct pid, pidfs_node);
+> > -
+> >         /* Within our pid namespace hierarchy? */
+> >         if (pid_vnr(pid) == 0)
+> >                 return NULL;
+> >
+> > -       return get_pid(pid);
+> > +       /*
+> > +        * If attr is NULL the pid is still in the IDR but never had
+> > +        * a pidfd. If attr is an error the pid went through pidfs_exit()
+> > +        * and is about to be removed. Either way, deny access.
+> > +        */
+> > +       attr = READ_ONCE(pid->attr);
+> > +       if (IS_ERR_OR_NULL(attr))
+> > +               return NULL;
+> > +
+> > +       /*
+> > +        * If PIDFS_ATTR_BIT_EXIT is set the task has exited and we
+> > +        * should not allow new file handle lookups.
+> > +        */
+> > +       if (test_bit(PIDFS_ATTR_BIT_EXIT, &attr->attr_mask))
+> > +               return NULL;
+> > +
+> > +       if (!refcount_inc_not_zero(&pid->count))
+> > +               return NULL;
+> > +
+> > +       return pid;
+> >  }
+> >
+> >  static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
+> > @@ -1086,6 +1098,9 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
+> >
+> >  void __init pidfs_init(void)
+> >  {
+> > +       if (rhashtable_init(&pidfs_ino_ht, &pidfs_ino_ht_params))
+> > +               panic("Failed to initialize pidfs hashtable");
+> > +
+> >         pidfs_attr_cachep = kmem_cache_create("pidfs_attr_cache", sizeof(struct pidfs_attr), 0,
+> >                                          (SLAB_HWCACHE_ALIGN | SLAB_RECLAIM_ACCOUNT |
+> >                                           SLAB_ACCOUNT | SLAB_PANIC), NULL);
+> > diff --git a/include/linux/pid.h b/include/linux/pid.h
+> > index 003a1027d219..ce9b5cb7560b 100644
+> > --- a/include/linux/pid.h
+> > +++ b/include/linux/pid.h
+> > @@ -6,6 +6,7 @@
+> >  #include <linux/rculist.h>
+> >  #include <linux/rcupdate.h>
+> >  #include <linux/refcount.h>
+> > +#include <linux/rhashtable-types.h>
+> >  #include <linux/sched.h>
+> >  #include <linux/wait.h>
+> >
+> > @@ -60,7 +61,7 @@ struct pid {
+> >         spinlock_t lock;
+> >         struct {
+> >                 u64 ino;
+> > -               struct rb_node pidfs_node;
+> > +               struct rhash_head pidfs_hash;
+> >                 struct dentry *stashed;
+> >                 struct pidfs_attr *attr;
+> >         };
+> > @@ -73,7 +74,6 @@ struct pid {
+> >         struct upid numbers[];
+> >  };
+> >
+> > -extern seqcount_spinlock_t pidmap_lock_seq;
+> >  extern struct pid init_struct_pid;
+> >
+> >  struct file;
+> > diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
+> > index 3e08c33da2df..416bdff4d6ce 100644
+> > --- a/include/linux/pidfs.h
+> > +++ b/include/linux/pidfs.h
+> > @@ -6,7 +6,8 @@ struct coredump_params;
+> >
+> >  struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
+> >  void __init pidfs_init(void);
+> > -void pidfs_add_pid(struct pid *pid);
+> > +void pidfs_prepare_pid(struct pid *pid);
+> > +int pidfs_add_pid(struct pid *pid);
+> >  void pidfs_remove_pid(struct pid *pid);
+> >  void pidfs_exit(struct task_struct *tsk);
+> >  #ifdef CONFIG_COREDUMP
+> > diff --git a/kernel/pid.c b/kernel/pid.c
+> > index ad4400a9f15f..7da2c3e8f79c 100644
+> > --- a/kernel/pid.c
+> > +++ b/kernel/pid.c
+> > @@ -43,7 +43,6 @@
+> >  #include <linux/sched/task.h>
+> >  #include <linux/idr.h>
+> >  #include <linux/pidfs.h>
+> > -#include <linux/seqlock.h>
+> >  #include <net/sock.h>
+> >  #include <uapi/linux/pidfd.h>
+> >
+> > @@ -85,7 +84,6 @@ struct pid_namespace init_pid_ns = {
+> >  EXPORT_SYMBOL_GPL(init_pid_ns);
+> >
+> >  static  __cacheline_aligned_in_smp DEFINE_SPINLOCK(pidmap_lock);
+> > -seqcount_spinlock_t pidmap_lock_seq = SEQCNT_SPINLOCK_ZERO(pidmap_lock_seq, &pidmap_lock);
+> >
+> >  void put_pid(struct pid *pid)
+> >  {
+> > @@ -106,6 +104,7 @@ EXPORT_SYMBOL_GPL(put_pid);
+> >  static void delayed_put_pid(struct rcu_head *rhp)
+> >  {
+> >         struct pid *pid = container_of(rhp, struct pid, rcu);
+> > +       pidfs_remove_pid(pid);
+> >         put_pid(pid);
+> >  }
+> >
+> > @@ -141,7 +140,6 @@ void free_pid(struct pid *pid)
+> >
+> >                 idr_remove(&ns->idr, upid->nr);
+> >         }
+> > -       pidfs_remove_pid(pid);
+> >         spin_unlock(&pidmap_lock);
+> >
+> >         call_rcu(&pid->rcu, delayed_put_pid);
+> > @@ -315,7 +313,14 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *arg_set_tid,
+> >         retval = -ENOMEM;
+> >         if (unlikely(!(ns->pid_allocated & PIDNS_ADDING)))
+> >                 goto out_free;
+> > -       pidfs_add_pid(pid);
+> > +       pidfs_prepare_pid(pid);
+> > +       spin_unlock(&pidmap_lock);
+> > +
+> > +       retval = pidfs_add_pid(pid);
+> > +       if (retval)
+> > +               goto out_free_idr;
+> > +
+> > +       spin_lock(&pidmap_lock);
+> 
+> This brings back the relock trip, reducing eficacy of the patch.
+> 
+> Longer term someone(tm) will need to implement lockless alloc_pid (in
+> the fast path anyway).
+> 
+> In order to facilitate that the pidfs thing needs to get its own
+> synchronisation. To my understanding rhashtable covers its own locking
+> just fine, so the thing left to handle is ino allocation.
 
-
-Hello,
-
-kernel test robot noticed "xfstests.ext4.019.fail" on:
-
-commit: 2a0db5f7653b3576c430f8821654f365aaa7f178 ("struct filename: saner h=
-andling of long names")
-https://git.kernel.org/cgit/linux/kernel/git/viro/vfs.git v4.filename
-
-in testcase: xfstests
-version: xfstests-x86_64-df16c93a-1_20260105
-with following parameters:
-
-	disk: 4HDD
-	fs: ext4
-	test: ext4-019
-
-
-
-config: x86_64-rhel-9.4-func
-compiler: gcc-14
-test machine: 4 threads Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz (Skylake) w=
-ith 32G memory
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new versio=
-n of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202601201519.c7003e60-lkp@intel.co=
-m
-
-
-2026-01-17 00:52:42 cd /lkp/benchmarks/xfstests
-2026-01-17 00:52:42 export TEST_DIR=3D/fs/sda1
-2026-01-17 00:52:42 export TEST_DEV=3D/dev/sda1
-2026-01-17 00:52:42 export FSTYP=3Dext4
-2026-01-17 00:52:42 export SCRATCH_MNT=3D/fs/scratch
-2026-01-17 00:52:42 mkdir /fs/scratch -p
-2026-01-17 00:52:42 export SCRATCH_DEV=3D/dev/sda4
-2026-01-17 00:52:42 echo ext4/019
-2026-01-17 00:52:42 ./check -E tests/exclude/ext4 ext4/019
-FSTYP         -- ext4
-PLATFORM      -- Linux/x86_64 lkp-skl-d05 6.19.0-rc4-00015-g2a0db5f7653b #1=
- SMP PREEMPT_DYNAMIC Sat Jan 17 08:37:34 CST 2026
-MKFS_OPTIONS  -- -F /dev/sda4
-MOUNT_OPTIONS -- -o acl,user_xattr /dev/sda4 /fs/scratch
-
-ext4/019           - output mismatch (see /lkp/benchmarks/xfstests/results/=
-/ext4/019.out.bad)
-    --- tests/ext4/019.out	2026-01-05 16:31:52.000000000 +0000
-    +++ /lkp/benchmarks/xfstests/results//ext4/019.out.bad	2026-01-17 00:53=
-:25.653451038 +0000
-    @@ -2,7 +2,8 @@
-     + create scratch fs
-     + mount fs image
-     + make some files
-    -file contents: moo
-    +ln: failed to create symbolic link 'long_symlink' -> '././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/./././././././././././././././././././././././././././././././././././././=
-./././././././././././././././././././././././././././././././././././././.=
-/././././././././././././././././././././././././././././././././././././x'=
-: File name too long
-    +cat: /fs/scratch/long_symlink: No such file or directory
-     + check fs
-    ...
-    (Run 'diff -u /lkp/benchmarks/xfstests/tests/ext4/019.out /lkp/benchmar=
-ks/xfstests/results//ext4/019.out.bad'  to see the entire diff)
-Ran: ext4/019
-Failures: ext4/019
-Failed 1 of 1 tests
-
-
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20260120/202601201519.c7003e60-lkp@=
-intel.com
-
-
-
---=20
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+I'm very confused why inode allocation would matter. Inode allocation
+for pidfs is literally just a plain increment. IOW, it's not using any
+atomic at all. So that can happen under pidmap_lock without any issue
+and I don't see the need to change to any complex per-cpu allocation
+mechanism for this.
 
