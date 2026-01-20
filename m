@@ -1,174 +1,266 @@
-Return-Path: <linux-fsdevel+bounces-74650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0PTaHv+3b2kBMQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:14:39 +0100
+	id 0NYsJ1e4b2kBMQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:16:07 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04B3485DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:14:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C63848646
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E73749465BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 14:22:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C571880CB26
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 14:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728BE43636E;
-	Tue, 20 Jan 2026 14:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AABA43E9C5;
+	Tue, 20 Jan 2026 14:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="L4iMTokk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2+4dh8w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B75A42DFEB;
-	Tue, 20 Jan 2026 14:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04B043E4B7;
+	Tue, 20 Jan 2026 14:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768918285; cv=none; b=gteH6D8WtHNEI/6sc4+9w5IC3O2ksYBxftt78C/zhS0c14w0PcZLFFbJedyyHz/GaHsIOcl4GpnAnwGiYTFiqK/nTAH3Thwal/33MsA0y0Infl/rGfaYn7eE6uD6s7OplXbd314HPKj3Y3hcHSoy2AUD8JgnMgIQIa6EuTJVxS4=
+	t=1768919086; cv=none; b=qnZvrHMymjGnouHwmju5Fg4x+PtO8BWD1sStX/qHqy2Dp/Yx+AtQS84+jfW6UUCcMIxSWD8NW5YRe8eMRrpk2AAGOZFwH7+U5u2LJSpdKDd0PM71JmkvWsuHKohvf44IV3FTEwQot56/Z7b8cl+0tYFysZj2XqEb/BHZieTGV8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768918285; c=relaxed/simple;
-	bh=A3mcmkq1kiF93N1w5Wj6kWoL+UE6WOy8SceE10C2Z/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hETjbk941E+XN6p3bJFmnGK+Xl/cV9at08pfWel/zLXaMePt2MchhQGTcwAst5DPin9L0sOwdPlGqX7hKmBACNK7U2cskJ0TQSxV+f2VypyTZ8AIjDGhOqqKuKETENkfhlP8+ZUoELvbDCHflsboIP/p0Oy9NEIyM7JDvYjsZ8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=L4iMTokk; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1768918272; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=23an09Q0biO5z22AKKKB/TBPcY7M6X9cJ2eW+LaU65A=;
-	b=L4iMTokkPJvXYERROr6TJndXGqiGUghSIfo7QAZPDhll40aEzS9wSKocgBFYVRhsbKv06XwZIiwIvnKl6CAlx6CdMVfDJ8Lo0xeVhh316EfY0/qJMdcOXUbs8QoAbtHnzEnBBNGz6qFJ5D1Tpt1u5ID8FYcLAo4TxAv86OpUwas=
-Received: from 30.180.182.138(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WxUigVY_1768918271 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 20 Jan 2026 22:11:12 +0800
-Message-ID: <1e9134c2-d984-41a3-b294-166b7e3e6bcf@linux.alibaba.com>
-Date: Tue, 20 Jan 2026 22:11:11 +0800
+	s=arc-20240116; t=1768919086; c=relaxed/simple;
+	bh=ntUVauUq1CEu65BJSXqCVXw6d4vwbeub1u3OOcICDe4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Oh9i/jxe30y5m7Zvq2QFHHZhiKjBM2QA1QfFXlLrsgKu3xci9giu8diCfQHr1MR7Bh8WuYKqog0INcELAvOit5uQET5INv7Kj3cC6xLvgT6EdPf72sMMBpVfzzDV5gqn7mgs9epRxmRucguSSSpnM2yTqaTfcwsmxKRDzO6vCYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2+4dh8w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D139C16AAE;
+	Tue, 20 Jan 2026 14:24:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768919085;
+	bh=ntUVauUq1CEu65BJSXqCVXw6d4vwbeub1u3OOcICDe4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=e2+4dh8worVobrZ6btUOFFOM/nZoPt5/ZF33qWp6qB6QRBWdT6apKl66yJZgSG2bd
+	 n7t8q25N8Eodw6yGtGGz+sORSAqdkbl9Y5rD9BQl384j0K8ftrhhDSEVA76b99aQAB
+	 uVt8taPJStt0X7WvrgcLp/6zn8ji5CORswwsiFjcOPXoyQeq6ZbMy8IkzGi9yUx67Q
+	 TLGu0YsSOcorqrkoCpPfgSGfW+cbg5cqO3SdwXjL49f1Xg2ygXg2rDZ9B+SOg1iOGM
+	 xVI/zjvh4sO63A5HFBJqJBLEUTlhlseSoHPk+pMh7RgnuvWq4jgAIyzd9d7REYmhIa
+	 O1Su22JSEKmhg==
+From: Chuck Lever <cel@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: <linux-fsdevel@vger.kernel.org>,
+	linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org,
+	<linux-nfs@vger.kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net,
+	hirofumi@mail.parknet.co.jp,
+	linkinjeon@kernel.org,
+	sj1557.seo@samsung.com,
+	yuezhang.mo@sony.com,
+	almaz.alexandrovich@paragon-software.com,
+	slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de,
+	frank.li@vivo.com,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	cem@kernel.org,
+	sfrench@samba.org,
+	pc@manguebit.org,
+	ronniesahlberg@gmail.com,
+	sprasad@microsoft.com,
+	trondmy@kernel.org,
+	anna@kernel.org,
+	jaegeuk@kernel.org,
+	chao@kernel.org,
+	hansg@kernel.org,
+	senozhatsky@chromium.org,
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: [PATCH v6 01/16] fs: Add case sensitivity flags to file_kattr
+Date: Tue, 20 Jan 2026 09:24:24 -0500
+Message-ID: <20260120142439.1821554-2-cel@kernel.org>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260120142439.1821554-1-cel@kernel.org>
+References: <20260120142439.1821554-1-cel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 5/9] erofs: introduce the page cache share feature
-To: Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc: Hongbo Li <lihongbo22@huawei.com>, chao@kernel.org, djwong@kernel.org,
- amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>, oliver.yang@linux.alibaba.com
-References: <20260116154623.GC21174@lst.de>
- <af1f3ff6-a163-4515-92bf-44c9cf6c92f3@linux.alibaba.com>
- <20260119072932.GB2562@lst.de>
- <8e30bc4b-c97f-4ab2-a7ce-27f399ae7462@linux.alibaba.com>
- <20260119083251.GA5257@lst.de>
- <b29b112e-5fe1-414b-9912-06dcd7d7d204@linux.alibaba.com>
- <20260119092220.GA9140@lst.de>
- <73f2c243-e029-4f95-aa8e-285c7affacac@linux.alibaba.com>
- <50db56b8-4cf9-4d62-b242-c982a260a330@linux.alibaba.com>
- <20260120065242.GA3436@lst.de>
- <20260120-neuland-rastplatz-31cc7d61a196@brauner>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20260120-neuland-rastplatz-31cc7d61a196@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-8.96 / 15.00];
-	WHITELIST_DMARC(-7.00)[alibaba.com:D:+];
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-0.46 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[linux.alibaba.com:s=default];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[huawei.com,kernel.org,gmail.com,vger.kernel.org,lists.ozlabs.org,linux-foundation.org,linux.alibaba.com];
-	TAGGED_FROM(0.00)[bounces-74650-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[linux.alibaba.com,none];
+	TAGGED_FROM(0.00)[bounces-74654-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.sourceforge.net,mail.parknet.co.jp,kernel.org,samsung.com,sony.com,paragon-software.com,dubeyko.com,physik.fu-berlin.de,vivo.com,mit.edu,dilger.ca,samba.org,manguebit.org,gmail.com,microsoft.com,chromium.org,oracle.com];
+	RCPT_COUNT_TWELVE(0.00)[31];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	DKIM_TRACE(0.00)[linux.alibaba.com:+];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hsiangkao@linux.alibaba.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[cel@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,linux.alibaba.com:mid,linux.alibaba.com:dkim]
-X-Rspamd-Queue-Id: E04B3485DE
+	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,oracle.com:email]
+X-Rspamd-Queue-Id: 4C63848646
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Hi Christian,
+From: Chuck Lever <chuck.lever@oracle.com>
 
-On 2026/1/20 21:40, Christian Brauner wrote:
-> On Tue, Jan 20, 2026 at 07:52:42AM +0100, Christoph Hellwig wrote:
->> On Tue, Jan 20, 2026 at 11:07:48AM +0800, Gao Xiang wrote:
->>>
->>> Hi Christoph,
->>>
->>> Sorry I didn't phrase things clearly earlier, but I'd still
->>> like to explain the whole idea, as this feature is clearly
->>> useful for containerization. I hope we can reach agreement
->>> on the page cache sharing feature: Christian agreed on this
->>> feature (and I hope still):
->>>
->>> https://lore.kernel.org/linux-fsdevel/20260112-begreifbar-hasten-da396ac2759b@brauner
->>
->> He has to ultimatively decide.  I do have an uneasy feeling about this.
->> It's not super informed as I can keep up, and I'm not the one in charge,
->> but I hope it is helpful to share my perspective.
-> 
-> It always is helpful, Christoph! I appreciate your input.
+Enable upper layers such as NFSD to retrieve case sensitivity
+information from file systems by adding FS_XFLAG_CASEFOLD and
+FS_XFLAG_CASENONPRESERVING flags.
 
-Thanks, I will raise some extra comments for Hongbo
-to change to make this feature more safer.
+Filesystems report case-insensitive or case-nonpreserving behavior
+by setting these flags directly in fa->fsx_xflags. The default
+(flags unset) indicates POSIX semantics: case-sensitive and
+case-preserving. These flags are read-only; userspace cannot set
+them via ioctl.
 
-> 
-> I'm fine with this feature. But as I've said in person: I still oppose
-> making any block-based filesystem mountable in unprivileged containers
-> without any sort of trust mechanism.
+Relocate struct file_kattr initialization from fileattr_fill_xflags()
+and fileattr_fill_flags() to vfs_fileattr_get() and the ioctl/syscall
+call sites. This allows filesystem ->fileattr_get() callbacks to set
+flags directly in fa->fsx_xflags before invoking the fill functions,
+which previously would have zeroed those values. Callers that bypass
+vfs_fileattr_get() must now zero-initialize the struct themselves.
 
-Nevertheless, since Christoph put this topic on the
-community list, I had to repeat my own latest
-thoughts of this on the list for reference.
+Case sensitivity information is exported to userspace via the
+fa_xflags field in the FS_IOC_FSGETXATTR ioctl and file_getattr()
+system call.
 
-Anyway, some people would just be nitpicky to the words
-above as a policy: they will re-invent new
-non-block-based trick filesystems (but with much odd
-kernel-parsed metadata design) for the kernel community.
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+---
+ fs/file_attr.c           | 14 ++++++--------
+ fs/xfs/xfs_ioctl.c       |  2 +-
+ include/linux/fileattr.h |  3 ++-
+ include/uapi/linux/fs.h  |  2 ++
+ 4 files changed, 11 insertions(+), 10 deletions(-)
 
-Honestly, my own idea is that we should find real
-threats instead of arbitary assumptions against different
-types of filesystems.  The original question is still
-that what provents _kernel filesystems with kernel-parsed
-metadata_ from mountable in unprivileged containers.
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index 13cdb31a3e94..2700200c5b9c 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -15,12 +15,10 @@
+  * @fa:		fileattr pointer
+  * @xflags:	FS_XFLAG_* flags
+  *
+- * Set ->fsx_xflags, ->fsx_valid and ->flags (translated xflags).  All
+- * other fields are zeroed.
++ * Set ->fsx_xflags, ->fsx_valid and ->flags (translated xflags).
+  */
+ void fileattr_fill_xflags(struct file_kattr *fa, u32 xflags)
+ {
+-	memset(fa, 0, sizeof(*fa));
+ 	fa->fsx_valid = true;
+ 	fa->fsx_xflags = xflags;
+ 	if (fa->fsx_xflags & FS_XFLAG_IMMUTABLE)
+@@ -46,11 +44,9 @@ EXPORT_SYMBOL(fileattr_fill_xflags);
+  * @flags:	FS_*_FL flags
+  *
+  * Set ->flags, ->flags_valid and ->fsx_xflags (translated flags).
+- * All other fields are zeroed.
+  */
+ void fileattr_fill_flags(struct file_kattr *fa, u32 flags)
+ {
+-	memset(fa, 0, sizeof(*fa));
+ 	fa->flags_valid = true;
+ 	fa->flags = flags;
+ 	if (fa->flags & FS_SYNC_FL)
+@@ -84,6 +80,8 @@ int vfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
+ 	struct inode *inode = d_inode(dentry);
+ 	int error;
+ 
++	memset(fa, 0, sizeof(*fa));
++
+ 	if (!inode->i_op->fileattr_get)
+ 		return -ENOIOCTLCMD;
+ 
+@@ -323,7 +321,7 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
+ {
+ 	struct mnt_idmap *idmap = file_mnt_idmap(file);
+ 	struct dentry *dentry = file->f_path.dentry;
+-	struct file_kattr fa;
++	struct file_kattr fa = {};
+ 	unsigned int flags;
+ 	int err;
+ 
+@@ -355,7 +353,7 @@ int ioctl_fssetxattr(struct file *file, void __user *argp)
+ {
+ 	struct mnt_idmap *idmap = file_mnt_idmap(file);
+ 	struct dentry *dentry = file->f_path.dentry;
+-	struct file_kattr fa;
++	struct file_kattr fa = {};
+ 	int err;
+ 
+ 	err = copy_fsxattr_from_user(&fa, argp);
+@@ -434,7 +432,7 @@ SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
+ 	struct filename *name __free(putname) = NULL;
+ 	unsigned int lookup_flags = 0;
+ 	struct file_attr fattr;
+-	struct file_kattr fa;
++	struct file_kattr fa = {};
+ 	int error;
+ 
+ 	BUILD_BUG_ON(sizeof(struct file_attr) < FILE_ATTR_SIZE_VER0);
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 59eaad774371..f0417c4d1fca 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -496,7 +496,7 @@ xfs_ioc_fsgetxattra(
+ 	xfs_inode_t		*ip,
+ 	void			__user *arg)
+ {
+-	struct file_kattr	fa;
++	struct file_kattr	fa = {};
+ 
+ 	xfs_ilock(ip, XFS_ILOCK_SHARED);
+ 	xfs_fill_fsxattr(ip, XFS_ATTR_FORK, &fa);
+diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
+index f89dcfad3f8f..709de829659f 100644
+--- a/include/linux/fileattr.h
++++ b/include/linux/fileattr.h
+@@ -16,7 +16,8 @@
+ 
+ /* Read-only inode flags */
+ #define FS_XFLAG_RDONLY_MASK \
+-	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR)
++	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR | \
++	 FS_XFLAG_CASEFOLD | FS_XFLAG_CASENONPRESERVING)
+ 
+ /* Flags to indicate valid value of fsx_ fields */
+ #define FS_XFLAG_VALUES_MASK \
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 66ca526cf786..919148beaa8c 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -253,6 +253,8 @@ struct file_attr {
+ #define FS_XFLAG_FILESTREAM	0x00004000	/* use filestream allocator */
+ #define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
+ #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
++#define FS_XFLAG_CASEFOLD	0x00020000	/* case-insensitive lookups */
++#define FS_XFLAG_CASENONPRESERVING 0x00040000	/* case not preserved */
+ #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
+ 
+ /* the read-only stuff doesn't really belong here, but any other place is
+-- 
+2.52.0
 
-On my own perspective (in public, without any policy
-involved), I think it would be better to get some fair
-technical points & concerns, so that either we either fully
-get in agreement as the real dead end or really overcome
-some barriers since this feature is indeed useful.
-
-I will not repeat my thoughts again to annoy folks even
-further for this topic, but document here for reference.
-
-> 
-> I am however open in the future for block devices protected by dm-verity
-> with the root hash signed by a sufficiently trusted key to be mountable
-> in unprivileged containers.
-
-Signed images will be a good start, I fully agree.
-
-No one really argues that, and I believe I've told the
-signed image ideas in person to Christoph and Darrick too.
-
-Thanks,
-Gao Xiang
 
