@@ -1,759 +1,273 @@
-Return-Path: <linux-fsdevel+bounces-74565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9FE9D3BE25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 05:12:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9B9D3BE55
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 05:23:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 14A5A350F64
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 04:12:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 92E1C354A7A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 04:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38A933A9CC;
-	Tue, 20 Jan 2026 04:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A0033C1B7;
+	Tue, 20 Jan 2026 04:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fz/ngKqF"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="obEGGJ+l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353F933A712;
-	Tue, 20 Jan 2026 04:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DE533B6F1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 04:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768882347; cv=none; b=hBQewxO5NXsspZUVcc3+PCNH4dOOY9GY2V06Ywsn1GK7PcEL+4CKRrizV8nySvBVUyDS006vxESvzkkM/16Tw9cX3SiHQ/NQuRe7owh35rtxfINygYfz4n3z10GrEVdFJzMkleXiM0rwCYFa91+vNP36z614goDePqZE5l5/ksg=
+	t=1768882810; cv=none; b=Yk05MIc45i+7DsJLuPan+/DMfVvAvNZnoBnyw9InhLNU9ELbyC5X8zIC4twNLhDymxm7Z8w9zl8P1wVKJ1gGt5DJBM+Ut9gdanI2qgRLC+YQUAfHxmps5JcEEGcFkGJbW1J7mCOGTxVPkSyZrAVORuZwEc2dmtUf02MoJfYqO3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768882347; c=relaxed/simple;
-	bh=Ll5FDFEB4My3Bnv1o96nWYyl7yWsT8Grtl+MK42594o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uIaWydkyWRyU6C830KsJ46nss43lPSy9u/qEdYh5On4O0xzUgzkncHIZixksT7HUJYS3rn55Ht1O3+WwZaTaSwswAhS6SzdtI0nABJ7oTLGIlQK5kwAPLBDq/mQ8LkMUjaVm3e9fo87YYoH8E7/eYYYdhGCLB5W/fK9ZV94s3YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fz/ngKqF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACD9FC16AAE;
-	Tue, 20 Jan 2026 04:12:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768882346;
-	bh=Ll5FDFEB4My3Bnv1o96nWYyl7yWsT8Grtl+MK42594o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fz/ngKqFz3hKV2xlT8Dwld7xIAMOGYck0jRF5CnUcbKEdFlEo2vj6WQaHGLPKYRtM
-	 7bxw4TpzFkTCCxJ5RSORvPMk895MCDijsevptFrTEfKgKm717f5dsd8dvyj8A98Am6
-	 G/JKn8EyjERt6jTK1/s8I3zGmcBi/G9tUHLqUGs4BtqOqrsLfRkpm/PaWuVh16gBT8
-	 ofuViLkk1W5uELSA+bdWL4KeUj+0bV3P6n2ggkk1QVJneeQcwBgtOcjLjUW/+73rRQ
-	 pr29o9Hk9BkdeTqiYan9y9DBG18EvnBt7tt2ke2PtPrd9aSAKMTgtRoIPOfB1xsdEs
-	 +J5PikcUvDsXQ==
-Date: Mon, 19 Jan 2026 20:12:26 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: cem@kernel.org, hch@lst.de
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v6.1 11/11] xfs: add media verification ioctl
-Message-ID: <20260120041226.GJ15551@frogsfrogsfrogs>
-References: <176852588473.2137143.1604994842772101197.stgit@frogsfrogsfrogs>
- <176852588776.2137143.7103003682733018282.stgit@frogsfrogsfrogs>
+	s=arc-20240116; t=1768882810; c=relaxed/simple;
+	bh=DlXgw2xybDKncbIwL7HxVkjEVsLQnZIQdS531aY8JUo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AArykweHnhqn9Y+r8wbTg3HzXgfFI1Tzm8Hf3ds4XqrobB5VZVva9Xso08rKi2pmJJ9WQ8I5LFWv2Hebnazo3kGfM17lF32U74REZiyotKU8d3Ya74Rg4Vmla9c3AOnWrU3dZheD+fn9wO/U4Nu68tHibq1TxmwEJU/tT4r4zqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=obEGGJ+l; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-7926b269f03so42248397b3.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Jan 2026 20:20:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1768882805; x=1769487605; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9jRfA1Hde7rJpNzHrIbFX351VYVHvA+SREvN9uZgC2c=;
+        b=obEGGJ+lp16vG5AYD5reJEw2qWtuqkumV0grroFIedzfi61lu5bU5CWIZJJigJ4znB
+         OR3Ucxg1W5Bgn8qnCJaUeMZUk7a9PuFNLrzxDNKAz/L6OKW/cH5H22LupVg/6sZHAqXK
+         631baate2UfB6njT8hwPhLExhQgqrx1+JlhrgW+P2G6iKXbPuJWEpKOTuhmuQK4X9QFY
+         fFFRgdvfMTBAPCep1sHdLPrSs9ptEQv/s6+FGIfy6Pzv38pRh5YNAw/5EFDqEolU2CBl
+         FIYjaW4mf3+JXIlXL1rNMo4wSu6Cr3sX/F7oaLIPdZt6sBrx02s4oiVFSb5i+wVfax1M
+         RgEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768882805; x=1769487605;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9jRfA1Hde7rJpNzHrIbFX351VYVHvA+SREvN9uZgC2c=;
+        b=f7dkJNZ0O6QBXXbk5XglnXhfTS/EDH50TnX2y4zXCsConyzMrjeXrSPtwc+Do8Lbci
+         EXfiju23O4NpJqdAK96M8tMxhrhfzM94Oq6Pa8yE8fLf6LMdN6DetmqOQPloX7nl1XQz
+         AXFOBMfkEKjGh4gVL6ZIHtmhNP3reRgl6h9ClD83DkavKEykWsh6tFzNwzac+bulwq4i
+         rlQ1S69W4Io0qqan+YFH6KarMIznwZPFpH/LZbKxEIuxG2SmtWQtJuCM0O++krAli9KR
+         9HayGgPEivvNDuBj7UJroQy8SJcVstue9ipjf1WDn/KpwE6xatwrbTHXCNQifRTyrNM6
+         Ybng==
+X-Forwarded-Encrypted: i=1; AJvYcCWc8EargEY8eDngw8e0NI4yqvyOuDFpdKwf28SZRzvc75kIVi/2HimTgUMNolby2NM4KF7+ZlaoBmMh9SZH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXvC0yIGLia3+b2A6fEsbO9vycSrJjBlW2WQHyvBMh1fIJt3T9
+	6p58M0xmRiba5nuP/quF9GHmrw0SmpYXbyVESBLrIIFvmd+szLJphb7AxinQzcXAVSY=
+X-Gm-Gg: AZuq6aJtI8xd0XAZlzOAUOF6DYfBoN141ug2mpmY1pyLiRvNovgBRmNTI9lHHnh0mxD
+	7X9oJXkjX9KWw28mjhIKTef6Xwit0nGf54fL3/g1/2KHBfEmbU78Z5c0VQH/v0j6D/e9z5fmE9c
+	jaWNg2eS+SCJdQpjdgTi1IrFyv2sCxpGEh7dqyltkKRbp05kTfNG3oo+73JkSoxIPwzjz1PgNuE
+	Azh3HvA80j9pUbEQRIUK/XM9RqUhQiZojdT0l8yRit2Dd1kNcLFxtRmVtraE+YYAD++/qiPTEqu
+	z8cepXp6t4c0CenA0CHCPhyWfoCIl5Bxz3wU3+vrtIoTEFm+iyWl7nT+rtNHq9y/t1iduA1+bH8
+	2rdFnnBjf72aRil/DcEZPUmB6Cp/sn+aA2etnwbrKjVgRMIQwrLEbTlgTO1Ksfg8KxJN+m6FWok
+	nkO+wfDXzs1u2j59trnnF8ekUNiheDTX+d/TDzP4d6UFBPetP2UKGJafSoz6TGfyJEF5vg8JTBZ
+	YJ1fPP+YWN2e6aOONlYRQE=
+X-Received: by 2002:a05:690c:c50c:b0:78f:984b:4bef with SMTP id 00721157ae682-7940a470576mr11400417b3.68.1768882805114;
+        Mon, 19 Jan 2026 20:20:05 -0800 (PST)
+Received: from pop-os.attlocal.net ([2600:1700:6476:1430:ead3:ebfb:3b92:a0e5])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-793c686db17sm47946407b3.38.2026.01.19.20.20.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jan 2026 20:20:04 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org,
+	frank.li@vivo.com,
+	fstests@vger.kernel.org
+Cc: Slava.Dubeyko@ibm.com,
+	Viacheslav Dubeyko <slava@dubeyko.com>
+Subject: [PATCH] hfsplus: fix generic/062 xfstests failure
+Date: Mon, 19 Jan 2026 20:19:38 -0800
+Message-Id: <20260120041937.3450928-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <176852588776.2137143.7103003682733018282.stgit@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
 
-From: Darrick J. Wong <djwong@kernel.org>
+The xfstests' test-case generic/062 fails to execute
+correctly:
 
-Add a new privileged ioctl so that xfs_scrub can ask the kernel to
-verify the media of the devices backing an xfs filesystem, and have any
-resulting media errors reported to fsnotify and xfs_healer.
+FSTYP -- hfsplus
+PLATFORM -- Linux/x86_64 hfsplus-testing-0001 6.15.0-rc4+ #8 SMP PREEMPT_DYNAMIC Thu May 1 16:43:22 PDT 2025
+MKFS_OPTIONS -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
 
-To accomplish this, the kernel allocates a folio between the base page
-size and 1MB, and issues read IOs to a gradually incrementing range of
-one of the storage devices underlying an xfs filesystem.  If any error
-occurs, that raw error is reported to the calling process.  If the error
-happens to be one of the ones that the kernel considers indicative of
-data loss, then it will also be reported to xfs_healthmon and fsnotify.
+generic/062 - output mismatch (see xfstests-dev/results//generic/062.out.bad)
 
-Driving the verification from the kernel enables xfs (and by extension
-xfs_scrub) to have precise control over the size and error handling of
-IOs that are issued to the underlying block device, and to emit
-notifications about problems to other relevant kernel subsystems
-immediately.
+The generic/062 test tries to set and get xattrs for various types
+of objects (regular file, folder, block device, character
+device, pipe, etc) with the goal to check that xattr operations
+works correctly for all possible types of file system objects.
+But current HFS+ implementation somehow hasn't support of
+xattr operatioons for the case of block device, character
+device, and pipe objects. Also, it has not completely correct
+set of operations for the case symlinks.
 
-Note that the caller is also allowed to reduce the size of the IO and
-to ask for a relaxation period after each IO.
+This patch implements proper declaration of xattrs operations
+hfsplus_special_inode_operations and hfsplus_symlink_inode_operations.
+Also, it slightly corrects the logic of hfsplus_listxattr()
+method.
 
-Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+sudo ./check generic/062
+FSTYP         -- hfsplus
+PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.19.0-rc1+ #59 SMP PREEMPT_DYNAMIC Mon Jan 19 16:26:21 PST 2026
+MKFS_OPTIONS  -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+
+generic/062 20s ...  20s
+Ran: generic/062
+Passed all 1 tests
+
+[1] https://github.com/hfs-linux-kernel/hfs-linux-kernel/issues/93
+
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+cc: Yangtao Li <frank.li@vivo.com>
+cc: linux-fsdevel@vger.kernel.org
 ---
-v6.1: improve commit message, clarify comments about error handling,
-      and reuse the bio instead of repeatedly allocating new ones
----
- fs/xfs/libxfs/xfs_fs.h    |   30 +++
- fs/xfs/xfs_trace.h        |   98 ++++++++++
- fs/xfs/xfs_verify_media.h |   13 +
- fs/xfs/Makefile           |    1 
- fs/xfs/xfs_ioctl.c        |    3 
- fs/xfs/xfs_verify_media.c |  445 +++++++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 590 insertions(+)
- create mode 100644 fs/xfs/xfs_verify_media.h
- create mode 100644 fs/xfs/xfs_verify_media.c
+ fs/hfsplus/inode.c | 23 +++++++++++++++++++++--
+ fs/hfsplus/xattr.c | 29 ++++++++++++++++++-----------
+ 2 files changed, 39 insertions(+), 13 deletions(-)
 
-diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
-index a01303c5de6ce6..d165de607d179e 100644
---- a/fs/xfs/libxfs/xfs_fs.h
-+++ b/fs/xfs/libxfs/xfs_fs.h
-@@ -1160,6 +1160,34 @@ struct xfs_health_file_on_monitored_fs {
- 	__u32		flags;	/* zero for now */
+diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+index 6153e5cc6eb6..533c43cc3768 100644
+--- a/fs/hfsplus/inode.c
++++ b/fs/hfsplus/inode.c
+@@ -396,6 +396,19 @@ static const struct inode_operations hfsplus_file_inode_operations = {
+ 	.fileattr_set	= hfsplus_fileattr_set,
  };
  
-+/* Verify the media of the underlying devices */
-+struct xfs_verify_media {
-+	__u32	me_dev;		/* I: XFS_DEV_{DATA,LOG,RT} */
-+	__u32	me_flags;	/* I: XFS_VERIFY_MEDIA_* */
-+
-+	/*
-+	 * IO: inclusive start of disk range to verify, in 512b blocks.
-+	 * Will be adjusted upwards as media verification succeeds.
-+	 */
-+	__u64	me_start_daddr;
-+
-+	/*
-+	 * IO: exclusive end of the disk range to verify, in 512b blocks.
-+	 * Can be adjusted downwards to match device size.
-+	 */
-+	__u64	me_end_daddr;
-+
-+	__u32	me_ioerror;	/* O: I/O error (positive) */
-+	__u32	me_max_io_size;	/* I: maximum IO size in bytes */
-+
-+	__u32	me_rest_us;	/* I: rest time between IOs, usecs */
-+	__u32	me_pad;		/* zero */
++const struct inode_operations hfsplus_symlink_inode_operations = {
++	.get_link	= page_get_link,
++	.setattr	= hfsplus_setattr,
++	.getattr	= hfsplus_getattr,
++	.listxattr	= hfsplus_listxattr,
 +};
 +
-+#define XFS_VERIFY_MEDIA_REPORT	(1 << 0)	/* report to fsnotify */
-+
-+#define XFS_VERIFY_MEDIA_FLAGS	(XFS_VERIFY_MEDIA_REPORT)
-+
- /*
-  * ioctl commands that are used by Linux filesystems
-  */
-@@ -1202,6 +1230,8 @@ struct xfs_health_file_on_monitored_fs {
- #define XFS_IOC_HEALTH_MONITOR	_IOW ('X', 68, struct xfs_health_monitor)
- #define XFS_IOC_HEALTH_FD_ON_MONITORED_FS \
- 				_IOW ('X', 69, struct xfs_health_file_on_monitored_fs)
-+#define XFS_IOC_VERIFY_MEDIA	_IOWR('X', 70, struct xfs_verify_media)
-+
- /*
-  * ioctl commands that replace IRIX syssgi()'s
-  */
-diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-index 0cf4877753584f..3483461cf46255 100644
---- a/fs/xfs/xfs_trace.h
-+++ b/fs/xfs/xfs_trace.h
-@@ -6320,6 +6320,104 @@ TRACE_EVENT(xfs_healthmon_report_file_ioerror,
- 		  __entry->error)
- );
- 
-+TRACE_EVENT(xfs_verify_media,
-+	TP_PROTO(const struct xfs_mount *mp, const struct xfs_verify_media *me,
-+		 dev_t fdev, xfs_daddr_t daddr, uint64_t bbcount,
-+		 const struct folio *folio),
-+	TP_ARGS(mp, me, fdev, daddr, bbcount, folio),
-+	TP_STRUCT__entry(
-+		__field(dev_t, dev)
-+		__field(dev_t, fdev)
-+		__field(xfs_daddr_t, start_daddr)
-+		__field(xfs_daddr_t, end_daddr)
-+		__field(unsigned int, flags)
-+		__field(xfs_daddr_t, daddr)
-+		__field(uint64_t, bbcount)
-+		__field(unsigned int, bufsize)
-+	),
-+	TP_fast_assign(
-+		__entry->dev = mp->m_ddev_targp->bt_dev;
-+		__entry->fdev = fdev;
-+		__entry->start_daddr = me->me_start_daddr;
-+		__entry->end_daddr = me->me_end_daddr;
-+		__entry->flags = me->me_flags;
-+		__entry->daddr = daddr;
-+		__entry->bbcount = bbcount;
-+		__entry->bufsize = folio_size(folio);
-+	),
-+	TP_printk("dev %d:%d fdev %d:%d start_daddr 0x%llx end_daddr 0x%llx flags 0x%x daddr 0x%llx bbcount 0x%llx bufsize 0x%x",
-+		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  MAJOR(__entry->fdev), MINOR(__entry->fdev),
-+		  __entry->start_daddr,
-+		  __entry->end_daddr,
-+		  __entry->flags,
-+		  __entry->daddr,
-+		  __entry->bbcount,
-+		  __entry->bufsize)
-+);
-+
-+TRACE_EVENT(xfs_verify_media_end,
-+	TP_PROTO(const struct xfs_mount *mp, const struct xfs_verify_media *me,
-+		 dev_t fdev),
-+	TP_ARGS(mp, me, fdev),
-+	TP_STRUCT__entry(
-+		__field(dev_t, dev)
-+		__field(dev_t, fdev)
-+		__field(xfs_daddr_t, start_daddr)
-+		__field(xfs_daddr_t, end_daddr)
-+		__field(int, ioerror)
-+	),
-+	TP_fast_assign(
-+		__entry->dev = mp->m_ddev_targp->bt_dev;
-+		__entry->fdev = fdev;
-+		__entry->start_daddr = me->me_start_daddr;
-+		__entry->end_daddr = me->me_end_daddr;
-+		__entry->ioerror = me->me_ioerror;
-+	),
-+	TP_printk("dev %d:%d fdev %d:%d start_daddr 0x%llx end_daddr 0x%llx ioerror %d",
-+		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  MAJOR(__entry->fdev), MINOR(__entry->fdev),
-+		  __entry->start_daddr,
-+		  __entry->end_daddr,
-+		  __entry->ioerror)
-+);
-+
-+TRACE_EVENT(xfs_verify_media_error,
-+	TP_PROTO(const struct xfs_mount *mp, const struct xfs_verify_media *me,
-+		 dev_t fdev, xfs_daddr_t daddr, uint64_t bbcount,
-+		 blk_status_t status),
-+	TP_ARGS(mp, me, fdev, daddr, bbcount, status),
-+	TP_STRUCT__entry(
-+		__field(dev_t, dev)
-+		__field(dev_t, fdev)
-+		__field(xfs_daddr_t, start_daddr)
-+		__field(xfs_daddr_t, end_daddr)
-+		__field(unsigned int, flags)
-+		__field(xfs_daddr_t, daddr)
-+		__field(uint64_t, bbcount)
-+		__field(int, error)
-+	),
-+	TP_fast_assign(
-+		__entry->dev = mp->m_ddev_targp->bt_dev;
-+		__entry->fdev = fdev;
-+		__entry->start_daddr = me->me_start_daddr;
-+		__entry->end_daddr = me->me_end_daddr;
-+		__entry->flags = me->me_flags;
-+		__entry->daddr = daddr;
-+		__entry->bbcount = bbcount;
-+		__entry->error = blk_status_to_errno(status);
-+	),
-+	TP_printk("dev %d:%d fdev %d:%d start_daddr 0x%llx end_daddr 0x%llx flags 0x%x daddr 0x%llx bbcount 0x%llx error %d",
-+		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  MAJOR(__entry->fdev), MINOR(__entry->fdev),
-+		  __entry->start_daddr,
-+		  __entry->end_daddr,
-+		  __entry->flags,
-+		  __entry->daddr,
-+		  __entry->bbcount,
-+		  __entry->error)
-+);
-+
- #endif /* _TRACE_XFS_H */
- 
- #undef TRACE_INCLUDE_PATH
-diff --git a/fs/xfs/xfs_verify_media.h b/fs/xfs/xfs_verify_media.h
-new file mode 100644
-index 00000000000000..dc6eee9c88636b
---- /dev/null
-+++ b/fs/xfs/xfs_verify_media.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright (c) 2026 Oracle.  All Rights Reserved.
-+ * Author: Darrick J. Wong <djwong@kernel.org>
-+ */
-+#ifndef __XFS_VERIFY_MEDIA_H__
-+#define __XFS_VERIFY_MEDIA_H__
-+
-+struct xfs_verify_media;
-+int xfs_ioc_verify_media(struct file *file,
-+		struct xfs_verify_media __user *arg);
-+
-+#endif /* __XFS_VERIFY_MEDIA_H__ */
-diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
-index d14f5ae2b980fe..7eadc263f728a2 100644
---- a/fs/xfs/Makefile
-+++ b/fs/xfs/Makefile
-@@ -197,6 +197,7 @@ xfs-y				+= xfs_aops.o \
- 				   xfs_symlink.o \
- 				   xfs_sysfs.o \
- 				   xfs_trans.o \
-+				   xfs_verify_media.o \
- 				   xfs_xattr.o
- 
- # low-level transaction/log code
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index c04c41ca924e37..80a005999d2df3 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -42,6 +42,7 @@
- #include "xfs_handle.h"
- #include "xfs_rtgroup.h"
- #include "xfs_healthmon.h"
-+#include "xfs_verify_media.h"
- 
- #include <linux/mount.h>
- #include <linux/fileattr.h>
-@@ -1422,6 +1423,8 @@ xfs_file_ioctl(
- 
- 	case XFS_IOC_HEALTH_MONITOR:
- 		return xfs_ioc_health_monitor(filp, arg);
-+	case XFS_IOC_VERIFY_MEDIA:
-+		return xfs_ioc_verify_media(filp, arg);
- 
- 	default:
- 		return -ENOTTY;
-diff --git a/fs/xfs/xfs_verify_media.c b/fs/xfs/xfs_verify_media.c
-new file mode 100644
-index 00000000000000..f4f620c98d92ca
---- /dev/null
-+++ b/fs/xfs/xfs_verify_media.c
-@@ -0,0 +1,445 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (c) 2026 Oracle.  All Rights Reserved.
-+ * Author: Darrick J. Wong <djwong@kernel.org>
-+ */
-+#include "xfs.h"
-+#include "xfs_shared.h"
-+#include "xfs_format.h"
-+#include "xfs_log_format.h"
-+#include "xfs_trans_resv.h"
-+#include "xfs_mount.h"
-+#include "xfs_bit.h"
-+#include "xfs_btree.h"
-+#include "xfs_inode.h"
-+#include "xfs_icache.h"
-+#include "xfs_trans.h"
-+#include "xfs_alloc.h"
-+#include "xfs_ag.h"
-+#include "xfs_rmap.h"
-+#include "xfs_rmap_btree.h"
-+#include "xfs_rtgroup.h"
-+#include "xfs_rtrmap_btree.h"
-+#include "xfs_health.h"
-+#include "xfs_healthmon.h"
-+#include "xfs_trace.h"
-+#include "xfs_verify_media.h"
-+
-+#include <linux/fserror.h>
-+
-+struct xfs_group_data_lost {
-+	xfs_agblock_t		startblock;
-+	xfs_extlen_t		blockcount;
++const struct inode_operations hfsplus_special_inode_operations = {
++	.setattr	= hfsplus_setattr,
++	.getattr	= hfsplus_getattr,
++	.listxattr	= hfsplus_listxattr,
 +};
 +
-+/* Report lost file data from rmap records */
-+static int
-+xfs_verify_report_data_lost(
-+	struct xfs_btree_cur		*cur,
-+	const struct xfs_rmap_irec	*rec,
-+	void				*data)
+ static const struct file_operations hfsplus_file_operations = {
+ 	.llseek		= generic_file_llseek,
+ 	.read_iter	= generic_file_read_iter,
+@@ -455,12 +468,17 @@ struct inode *hfsplus_new_inode(struct super_block *sb, struct inode *dir,
+ 		hip->clump_blocks = sbi->data_clump_blocks;
+ 	} else if (S_ISLNK(inode->i_mode)) {
+ 		sbi->file_count++;
+-		inode->i_op = &page_symlink_inode_operations;
++		inode->i_op = &hfsplus_symlink_inode_operations;
+ 		inode_nohighmem(inode);
+ 		inode->i_mapping->a_ops = &hfsplus_aops;
+ 		hip->clump_blocks = 1;
++	} else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
++		   S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
++		sbi->file_count++;
++		inode->i_op = &hfsplus_special_inode_operations;
+ 	} else
+ 		sbi->file_count++;
++
+ 	insert_inode_hash(inode);
+ 	mark_inode_dirty(inode);
+ 	hfsplus_mark_mdb_dirty(sb);
+@@ -591,10 +609,11 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
+ 			inode->i_fop = &hfsplus_file_operations;
+ 			inode->i_mapping->a_ops = &hfsplus_aops;
+ 		} else if (S_ISLNK(inode->i_mode)) {
+-			inode->i_op = &page_symlink_inode_operations;
++			inode->i_op = &hfsplus_symlink_inode_operations;
+ 			inode_nohighmem(inode);
+ 			inode->i_mapping->a_ops = &hfsplus_aops;
+ 		} else {
++			inode->i_op = &hfsplus_special_inode_operations;
+ 			init_special_inode(inode, inode->i_mode,
+ 					   be32_to_cpu(file->permissions.dev));
+ 		}
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index c3dcbe30f16a..9904944cbd54 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -258,6 +258,15 @@ static int hfsplus_create_attributes_file(struct super_block *sb)
+ 	return err;
+ }
+ 
++static inline
++bool is_xattr_operation_supported(struct inode *inode)
 +{
-+	struct xfs_mount		*mp = cur->bc_mp;
-+	struct xfs_inode		*ip;
-+	struct xfs_group_data_lost	*lost = data;
-+	xfs_fileoff_t			fileoff = rec->rm_offset;
-+	xfs_extlen_t			blocks = rec->rm_blockcount;
-+	const bool			is_attr =
-+			(rec->rm_flags & XFS_RMAP_ATTR_FORK);
-+	const xfs_agblock_t		lost_end =
-+			lost->startblock + lost->blockcount;
-+	const xfs_agblock_t		rmap_end =
-+			rec->rm_startblock + rec->rm_blockcount;
-+	int				error = 0;
++	if (HFSPLUS_IS_RSRC(inode))
++		return false;
 +
-+	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner))
-+	       return 0;
-+
-+	error = xfs_iget(mp, cur->bc_tp, rec->rm_owner, 0, 0, &ip);
-+	if (error)
-+		return 0;
-+
-+	if (rec->rm_flags & XFS_RMAP_BMBT_BLOCK) {
-+		xfs_bmap_mark_sick(ip, is_attr ? XFS_ATTR_FORK : XFS_DATA_FORK);
-+		goto out_rele;
-+	}
-+
-+	if (is_attr) {
-+		xfs_inode_mark_sick(ip, XFS_SICK_INO_XATTR);
-+		goto out_rele;
-+	}
-+
-+	if (lost->startblock > rec->rm_startblock) {
-+		fileoff += lost->startblock - rec->rm_startblock;
-+		blocks -= lost->startblock - rec->rm_startblock;
-+	}
-+	if (rmap_end > lost_end)
-+		blocks -= rmap_end - lost_end;
-+
-+	fserror_report_data_lost(VFS_I(ip), XFS_FSB_TO_B(mp, fileoff),
-+			XFS_FSB_TO_B(mp, blocks), GFP_NOFS);
-+
-+out_rele:
-+	xfs_irele(ip);
-+	return 0;
++	return true;
 +}
 +
-+/* Walk reverse mappings to look for all file data loss */
-+static int
-+xfs_verify_report_losses(
-+	struct xfs_mount	*mp,
-+	enum xfs_group_type	type,
-+	xfs_daddr_t		daddr,
-+	u64			bblen)
-+{
-+	struct xfs_group	*xg = NULL;
-+	struct xfs_trans	*tp;
-+	xfs_fsblock_t		start_bno, end_bno;
-+	uint32_t		start_gno, end_gno;
-+	int			error;
+ int __hfsplus_setxattr(struct inode *inode, const char *name,
+ 			const void *value, size_t size, int flags)
+ {
+@@ -268,9 +277,11 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+ 	u16 folder_finderinfo_len = sizeof(DInfo) + sizeof(DXInfo);
+ 	u16 file_finderinfo_len = sizeof(FInfo) + sizeof(FXInfo);
+ 
+-	if ((!S_ISREG(inode->i_mode) &&
+-			!S_ISDIR(inode->i_mode)) ||
+-				HFSPLUS_IS_RSRC(inode))
++	hfs_dbg("ino %lu, name %s, value %p, size %zu\n",
++		inode->i_ino, name ? name : NULL,
++		value, size);
 +
-+	if (type == XG_TYPE_RTG) {
-+		start_bno = xfs_daddr_to_rtb(mp, daddr);
-+		end_bno = xfs_daddr_to_rtb(mp, daddr + bblen - 1);
-+	} else {
-+		start_bno = XFS_DADDR_TO_FSB(mp, daddr);
-+		end_bno = XFS_DADDR_TO_FSB(mp, daddr + bblen - 1);
-+	}
-+
-+	tp = xfs_trans_alloc_empty(mp);
-+	start_gno = xfs_fsb_to_gno(mp, start_bno, type);
-+	end_gno = xfs_fsb_to_gno(mp, end_bno, type);
-+	while ((xg = xfs_group_next_range(mp, xg, start_gno, end_gno, type))) {
-+		struct xfs_buf		*agf_bp = NULL;
-+		struct xfs_rtgroup	*rtg = NULL;
-+		struct xfs_btree_cur	*cur;
-+		struct xfs_rmap_irec	ri_low = { };
-+		struct xfs_rmap_irec	ri_high;
-+		struct xfs_group_data_lost lost;
-+
-+		if (type == XG_TYPE_AG) {
-+			struct xfs_perag	*pag = to_perag(xg);
-+
-+			error = xfs_alloc_read_agf(pag, tp, 0, &agf_bp);
-+			if (error) {
-+				xfs_perag_put(pag);
-+				break;
-+			}
-+
-+			cur = xfs_rmapbt_init_cursor(mp, tp, agf_bp, pag);
-+		} else {
-+			rtg = to_rtg(xg);
-+			xfs_rtgroup_lock(rtg, XFS_RTGLOCK_RMAP);
-+			cur = xfs_rtrmapbt_init_cursor(tp, rtg);
-+		}
-+
-+		/*
-+		 * Set the rmap range from ri_low to ri_high, which represents
-+		 * a [start, end] where we looking for the files or metadata.
-+		 */
-+		memset(&ri_high, 0xFF, sizeof(ri_high));
-+		if (xg->xg_gno == start_gno)
-+			ri_low.rm_startblock =
-+				xfs_fsb_to_gbno(mp, start_bno, type);
-+		if (xg->xg_gno == end_gno)
-+			ri_high.rm_startblock =
-+				xfs_fsb_to_gbno(mp, end_bno, type);
-+
-+		lost.startblock = ri_low.rm_startblock;
-+		lost.blockcount = min(xg->xg_block_count,
-+				      ri_high.rm_startblock + 1) -
-+							ri_low.rm_startblock;
-+
-+		error = xfs_rmap_query_range(cur, &ri_low, &ri_high,
-+				xfs_verify_report_data_lost, &lost);
-+		xfs_btree_del_cursor(cur, error);
-+		if (agf_bp)
-+			xfs_trans_brelse(tp, agf_bp);
-+		if (rtg)
-+			xfs_rtgroup_unlock(rtg, XFS_RTGLOCK_RMAP);
-+		if (error) {
-+			xfs_group_put(xg);
-+			break;
-+		}
-+	}
-+
-+	xfs_trans_cancel(tp);
-+	return 0;
-+}
-+
-+/*
-+ * Compute the desired verify IO size.
-+ *
-+ * To minimize command overhead, we'd like to create bios that are 1MB, though
-+ * we allow the user to ask for a smaller size.
-+ */
-+static unsigned int
-+xfs_verify_iosize(
-+	const struct xfs_verify_media	*me,
-+	struct xfs_buftarg		*btp,
-+	uint64_t			bbcount)
-+{
-+	unsigned int			iosize =
-+			min_not_zero(SZ_1M, me->me_max_io_size);
-+
-+	BUILD_BUG_ON(BBSHIFT != SECTOR_SHIFT);
-+	ASSERT(BBTOB(bbcount) >= bdev_logical_block_size(btp->bt_bdev));
-+
-+	return clamp(iosize, bdev_logical_block_size(btp->bt_bdev),
-+			BBTOB(bbcount));
-+}
-+
-+/* Allocate as much memory as we can get for verification buffer. */
-+static struct folio *
-+xfs_verify_alloc_folio(
-+	const unsigned int	iosize)
-+{
-+	unsigned int		order = get_order(iosize);
-+
-+	while (order > 0) {
-+		struct folio	*folio =
-+			folio_alloc(GFP_KERNEL | __GFP_NORETRY, order);
-+
-+		if (folio)
-+			return folio;
-+		order--;
-+	}
-+
-+	return folio_alloc(GFP_KERNEL, 0);
-+}
-+
-+/* Report any kind of problem verifying media */
-+static void
-+xfs_verify_media_error(
-+	struct xfs_mount	*mp,
-+	struct xfs_verify_media	*me,
-+	struct xfs_buftarg	*btp,
-+	xfs_daddr_t		daddr,
-+	unsigned int		bio_bbcount,
-+	blk_status_t		bio_status)
-+{
-+	trace_xfs_verify_media_error(mp, me, btp->bt_bdev->bd_dev, daddr,
-+			bio_bbcount, bio_status);
-+
-+	/*
-+	 * Pass any error, I/O or otherwise, up to the caller if we didn't
-+	 * successfully verify any bytes at all.
-+	 */
-+	if (me->me_start_daddr == daddr)
-+		me->me_ioerror = -blk_status_to_errno(bio_status);
-+
-+	/*
-+	 * PI validation failures, medium errors, or general IO errors are
-+	 * treated as indicators of data loss.  Everything else are (hopefully)
-+	 * transient errors and are not reported to healthmon or fsnotify.
-+	 */
-+	switch (bio_status) {
-+	case BLK_STS_PROTECTION:
-+	case BLK_STS_IOERR:
-+	case BLK_STS_MEDIUM:
-+		break;
-+	default:
-+		return;
-+	}
-+
-+	if (!(me->me_flags & XFS_VERIFY_MEDIA_REPORT))
-+		return;
-+
-+	xfs_healthmon_report_media(mp, me->me_dev, daddr, bio_bbcount);
-+
-+	if (!xfs_has_rmapbt(mp))
-+		return;
-+
-+	switch (me->me_dev) {
-+	case XFS_DEV_DATA:
-+		xfs_verify_report_losses(mp, XG_TYPE_AG, daddr, bio_bbcount);
-+		break;
-+	case XFS_DEV_RT:
-+		xfs_verify_report_losses(mp, XG_TYPE_RTG, daddr, bio_bbcount);
-+		break;
-+	}
-+}
-+
-+/* Verify the media of an xfs device by submitting read requests to the disk. */
-+static int
-+xfs_verify_media(
-+	struct xfs_mount	*mp,
-+	struct xfs_verify_media	*me)
-+{
-+	struct xfs_buftarg	*btp = NULL;
-+	struct bio		*bio;
-+	struct folio		*folio;
-+	xfs_daddr_t		daddr;
-+	uint64_t		bbcount;
-+	int			error = 0;
-+
-+	me->me_ioerror = 0;
-+
-+	switch (me->me_dev) {
-+	case XFS_DEV_DATA:
-+		btp = mp->m_ddev_targp;
-+		break;
-+	case XFS_DEV_LOG:
-+		if (mp->m_logdev_targp->bt_bdev != mp->m_ddev_targp->bt_bdev)
-+			btp = mp->m_logdev_targp;
-+		break;
-+	case XFS_DEV_RT:
-+		btp = mp->m_rtdev_targp;
-+		break;
-+	}
-+	if (!btp)
-+		return -ENODEV;
-+
-+	/*
-+	 * If the caller told us to verify beyond the end of the disk, tell the
-+	 * user exactly where that was.
-+	 */
-+	if (me->me_end_daddr > btp->bt_nr_sectors)
-+		me->me_end_daddr = btp->bt_nr_sectors;
-+
-+	/* start and end have to be aligned to the lba size */
-+	if (!IS_ALIGNED(BBTOB(me->me_start_daddr | me->me_end_daddr),
-+			bdev_logical_block_size(btp->bt_bdev)))
-+		return -EINVAL;
-+
-+	/*
-+	 * end_daddr is the exclusive end of the range, so if start_daddr
-+	 * reaches there (or beyond), there's no work to be done.
-+	 */
-+	if (me->me_start_daddr >= me->me_end_daddr)
-+		return 0;
-+
-+	/*
-+	 * There are three ranges involved here:
-+	 *
-+	 *  - [me->me_start_daddr, me->me_end_daddr) is the range that the
-+	 *    user wants to verify.  end_daddr can be beyond the end of the
-+	 *    disk; we'll constrain it to the end if necessary.
-+	 *
-+	 *  - [daddr, me->me_end_daddr) is the range that we have not yet
-+	 *    verified.  We update daddr after each successful read.
-+	 *    me->me_start_daddr is set to daddr before returning.
-+	 *
-+	 *  - [daddr, daddr + bio_bbcount) is the range that we're currently
-+	 *    verifying.
-+	 */
-+	daddr = me->me_start_daddr;
-+	bbcount = min_t(sector_t, me->me_end_daddr, btp->bt_nr_sectors) -
-+			  me->me_start_daddr;
-+
-+	folio = xfs_verify_alloc_folio(xfs_verify_iosize(me, btp, bbcount));
-+	if (!folio)
-+		return -ENOMEM;
-+
-+	trace_xfs_verify_media(mp, me, btp->bt_bdev->bd_dev, daddr, bbcount,
-+			folio);
-+
-+	bio = bio_alloc(btp->bt_bdev, 1, REQ_OP_READ, GFP_KERNEL);
-+	if (!bio) {
-+		error = -ENOMEM;
-+		goto out_folio;
-+	}
-+
-+	while (bbcount > 0) {
-+		unsigned int	bio_bbcount;
-+		blk_status_t	bio_status;
-+
-+		bio_reset(bio, btp->bt_bdev, REQ_OP_READ);
-+		bio->bi_iter.bi_sector = daddr;
-+		bio_add_folio_nofail(bio, folio,
-+				min(bbcount << SECTOR_SHIFT, folio_size(folio)),
-+				0);
-+
-+		/*
-+		 * Save the length of the bio before we submit it, because we
-+		 * need the original daddr and length for reporting IO errors
-+		 * if the bio fails.
-+		 */
-+		bio_bbcount = bio->bi_iter.bi_size >> SECTOR_SHIFT;
-+		submit_bio_wait(bio);
-+		bio_status = bio->bi_status;
-+		if (bio_status != BLK_STS_OK) {
-+			xfs_verify_media_error(mp, me, btp, daddr, bio_bbcount,
-+					bio_status);
-+			error = 0;
-+			break;
-+		}
-+
-+		daddr += bio_bbcount;
-+		bbcount -= bio_bbcount;
-+
-+		if (bbcount == 0)
-+			break;
-+
-+		if (me->me_rest_us) {
-+			ktime_t	expires;
-+
-+			expires = ktime_add_ns(ktime_get(),
-+					me->me_rest_us * 1000);
-+			set_current_state(TASK_KILLABLE);
-+			schedule_hrtimeout(&expires, HRTIMER_MODE_ABS);
-+		}
-+
-+		if (fatal_signal_pending(current)) {
-+			error = -EINTR;
-+			break;
-+		}
-+
-+		cond_resched();
-+	}
-+
-+	bio_put(bio);
-+out_folio:
-+	folio_put(folio);
-+
-+	if (error)
-+		return error;
-+
-+	/*
-+	 * Advance start_daddr to the end of what we verified if there wasn't
-+	 * an operational error.
-+	 */
-+	me->me_start_daddr = daddr;
-+	trace_xfs_verify_media_end(mp, me, btp->bt_bdev->bd_dev);
-+	return 0;
-+}
-+
-+int
-+xfs_ioc_verify_media(
-+	struct file			*file,
-+	struct xfs_verify_media __user	*arg)
-+{
-+	struct xfs_verify_media		me;
-+	struct xfs_inode		*ip = XFS_I(file_inode(file));
-+	struct xfs_mount		*mp = ip->i_mount;
-+	int				error;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (copy_from_user(&me, arg, sizeof(me)))
-+		return -EFAULT;
-+
-+	if (me.me_pad)
-+		return -EINVAL;
-+	if (me.me_flags & ~XFS_VERIFY_MEDIA_FLAGS)
-+		return -EINVAL;
-+
-+	switch (me.me_dev) {
-+	case XFS_DEV_DATA:
-+	case XFS_DEV_LOG:
-+	case XFS_DEV_RT:
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	error = xfs_verify_media(mp, &me);
-+	if (error)
-+		return error;
-+
-+	if (copy_to_user(arg, &me, sizeof(me)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
++	if (!is_xattr_operation_supported(inode))
+ 		return -EOPNOTSUPP;
+ 
+ 	if (value == NULL)
+@@ -390,6 +401,7 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+ 
+ end_setxattr:
+ 	hfs_find_exit(&cat_fd);
++	hfs_dbg("finished: res %d\n", err);
+ 	return err;
+ }
+ 
+@@ -514,9 +526,7 @@ ssize_t __hfsplus_getxattr(struct inode *inode, const char *name,
+ 	u16 record_length = 0;
+ 	ssize_t res;
+ 
+-	if ((!S_ISREG(inode->i_mode) &&
+-			!S_ISDIR(inode->i_mode)) ||
+-				HFSPLUS_IS_RSRC(inode))
++	if (!is_xattr_operation_supported(inode))
+ 		return -EOPNOTSUPP;
+ 
+ 	if (!strcmp_xattr_finder_info(name))
+@@ -709,9 +719,7 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
+ 
+ 	hfs_dbg("ino %lu\n", inode->i_ino);
+ 
+-	if ((!S_ISREG(inode->i_mode) &&
+-			!S_ISDIR(inode->i_mode)) ||
+-				HFSPLUS_IS_RSRC(inode))
++	if (!is_xattr_operation_supported(inode))
+ 		return -EOPNOTSUPP;
+ 
+ 	res = hfsplus_listxattr_finder_info(dentry, buffer, size);
+@@ -737,8 +745,7 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
+ 	err = hfsplus_find_attr(inode->i_sb, inode->i_ino, NULL, &fd);
+ 	if (err) {
+ 		if (err == -ENOENT) {
+-			if (res == 0)
+-				res = -ENODATA;
++			res = 0;
+ 			goto end_listxattr;
+ 		} else {
+ 			res = err;
+-- 
+2.43.0
+
 
