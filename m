@@ -1,380 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-74588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A36D3C23D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 09:39:00 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BF0D3C282
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 09:48:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A2D744A1DE2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 08:24:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6B09E4AA601
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 08:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3963B8BB5;
-	Tue, 20 Jan 2026 08:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A1A3B8D69;
+	Tue, 20 Jan 2026 08:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvG9FUsD"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lXbl/VQV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LDOUWFgZ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lXbl/VQV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LDOUWFgZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73343B5304
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 08:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C46D3B8BD1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 08:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768897045; cv=none; b=eqvFcr3vB2WPXeLE7m99ebvJ9Nhf8k7wtPJkE7lXfPFSyDvIz7plONZ/ua9LJiXAr9Q22eE3B9u4MHvLuvWKcfabXQoFEY+mfPj6ZOTg0c6iv4cI7ltAOXuEHsCi1KWE+Ozea9FMvIe+cIFlhxeTgZUYniiucUp3m8Kcb6Vh1IY=
+	t=1768898412; cv=none; b=IHmkSb3XWPXW74Hi31TzPhc1rTno1WvL3NlZicxRleZqKYtGTf2NL2krdN8eA62GuqMZzSE8dH8MClFXCbvgvcBMyLr0dhCu113LBgQ93xdgafyasfA7CPlN3ShvwhXAmEqwml4eH173k3MyFFLmbfOtpar9zuOiQ2FbLzjG2GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768897045; c=relaxed/simple;
-	bh=tzAjqv8TMTK5CHL19DO3W/Oh8quUn5KWK3ip/lvfyG4=;
+	s=arc-20240116; t=1768898412; c=relaxed/simple;
+	bh=8BR8FshNwnTtZve8kPjGIanAYuvxkiLgYA0voF5sQxA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WyF7W/XMLcHoOl/4lOlPMr7NwYQQvaIBP+52ouch7F3AhkQuoqvOulz0zvRp6C+zygy85IhwFPSXpTdWIIu4U6utgbe8aPV0ABwyolnd7rIKTkJ9Plc+pofraIyWxAAy3RldNUGfUd4Z59GUCiMOI10DYIi+X4cIbGroe2ToDQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvG9FUsD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FA64C16AAE;
-	Tue, 20 Jan 2026 08:17:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768897045;
-	bh=tzAjqv8TMTK5CHL19DO3W/Oh8quUn5KWK3ip/lvfyG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nvG9FUsDfJsWjKf91h/Zje9fYUGl+rN7YSTjzfAJuWLcBNUkqXGngfBQfQiAEpuxR
-	 I9JCu+B7KWwVmaBMhOHMUSWt99m8ZNR6vvWXv7dpzEvMo9MLZmqIV78oNvXjIdj63Z
-	 ELjJdUQTQkKvIUb0Z9r1TWVE10qQN4n7ueBIen/ZRPGuAd7twVM3tqZgCrQAA6yrPi
-	 6v704iTptR5oNOj6F+PTPii30nniaXtK+dRFuwpvPv5vDljEQEGcZR1g5fQARn9RVN
-	 p5tEzEUKggFeo+tnvXdtZB3zDumKOpkWeeHBTNHn3OfqwIU1jqyvESEZzkrTKONnX3
-	 iXPjQvS0QVGRw==
-Date: Tue, 20 Jan 2026 09:17:21 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC] pidfs: convert rb-tree to rhashtable
-Message-ID: <20260120-teilhaben-kruste-b947256ed6ab@brauner>
-References: <20260119-work-pidfs-rhashtable-v1-1-159c7700300a@kernel.org>
- <CAGudoHEej7_Q-nkJqBU8Md15ESVtyxZ9Wbq9zwyUEcfT034=xg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D9r8ShTrCksjQFSR1XJkYf98P3LBmZTMAtv0X/8uK1jqUjHXjBCJZGrX1X33HNKygIZ73d53Wak0fsiElb9cNy1Sp8ALg7cO8tTK4BjrBbVVpOgcx3SQ6N2m902sS7bG/4taLpozg/hzw03A95Iy3y7crxqL8rw6QxrSxgTbR/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lXbl/VQV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LDOUWFgZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lXbl/VQV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LDOUWFgZ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A132E337CA;
+	Tue, 20 Jan 2026 08:40:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1768898407; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=241NHzkrAsafry/49JFnJwfuSaj964PJNO6i4H5lhSI=;
+	b=lXbl/VQVuVPBPaq9av5smG5OFa/NhiwefeYAnKTxiTxM2QX9a0Jsbdpis0tVJFy+unWMtD
+	bNh/ywftBTm5m2O2e7f0QmCLthEIxPwfSwEbrsfum9UBevwRj24bv8DnE2XCtOBZOykvGt
+	AUYIB66up1nxz+RBb/9UrZZim7/aN7w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1768898407;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=241NHzkrAsafry/49JFnJwfuSaj964PJNO6i4H5lhSI=;
+	b=LDOUWFgZ9L1jfR2KXNRaliX4q7afY0RWN0QEnpzcnPdpU998Wx8+N3DLW81My4a1pFp2EE
+	dwI54JIvYwP/B5AA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="lXbl/VQV";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=LDOUWFgZ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1768898407; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=241NHzkrAsafry/49JFnJwfuSaj964PJNO6i4H5lhSI=;
+	b=lXbl/VQVuVPBPaq9av5smG5OFa/NhiwefeYAnKTxiTxM2QX9a0Jsbdpis0tVJFy+unWMtD
+	bNh/ywftBTm5m2O2e7f0QmCLthEIxPwfSwEbrsfum9UBevwRj24bv8DnE2XCtOBZOykvGt
+	AUYIB66up1nxz+RBb/9UrZZim7/aN7w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1768898407;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=241NHzkrAsafry/49JFnJwfuSaj964PJNO6i4H5lhSI=;
+	b=LDOUWFgZ9L1jfR2KXNRaliX4q7afY0RWN0QEnpzcnPdpU998Wx8+N3DLW81My4a1pFp2EE
+	dwI54JIvYwP/B5AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 96D993EA63;
+	Tue, 20 Jan 2026 08:40:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RJLPJGc/b2l6AwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 20 Jan 2026 08:40:07 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 47975A09DA; Tue, 20 Jan 2026 09:40:07 +0100 (CET)
+Date: Tue, 20 Jan 2026 09:40:07 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jeff Layton <jlayton@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Hugh Dickins <hughd@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	Jan Kara <jack@suse.com>, Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
+	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>, 
+	Sandeep Dhavale <dhavale@google.com>, Hongbo Li <lihongbo22@huawei.com>, 
+	Chunhai Guo <guochunhai@vivo.com>, Carlos Maiolino <cem@kernel.org>, 
+	Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>, 
+	Viacheslav Dubeyko <slava@dubeyko.com>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, 
+	Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
+	Phillip Lougher <phillip@squashfs.org.uk>, Steve French <sfrench@samba.org>, 
+	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Mike Marshall <hubcap@omnibond.com>, 
+	Martin Brandenburg <martin@omnibond.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Dave Kleikamp <shaggy@kernel.org>, 
+	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Jan Kara <jack@suse.cz>, 
+	Andreas Gruenbacher <agruenba@redhat.com>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	Jaegeuk Kim <jaegeuk@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	David Laight <david.laight.linux@gmail.com>, Dave Chinner <david@fromorbit.com>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org, linux-xfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-unionfs@vger.kernel.org, devel@lists.orangefs.org, 
+	ocfs2-devel@lists.linux.dev, ntfs3@lists.linux.dev, linux-nilfs@vger.kernel.org, 
+	jfs-discussion@lists.sourceforge.net, linux-mtd@lists.infradead.org, gfs2@lists.linux.dev, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 02/31] exportfs: add new EXPORT_OP_STABLE_HANDLES flag
+Message-ID: <56fr33ju43h6zzp6jrzrkyfag6r3jz6wpnk45oe5byy6fqyvti@d43hgikfuk7t>
+References: <20260119-exportfs-nfsd-v2-0-d93368f903bd@kernel.org>
+ <20260119-exportfs-nfsd-v2-2-d93368f903bd@kernel.org>
+ <aW8ztQ-RbhxwzMk7@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHEej7_Q-nkJqBU8Md15ESVtyxZ9Wbq9zwyUEcfT034=xg@mail.gmail.com>
+In-Reply-To: <aW8ztQ-RbhxwzMk7@infradead.org>
+X-Spam-Score: -2.51
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,oracle.com,brown.name,redhat.com,talpey.com,gmail.com,google.com,linux.alibaba.com,linux-foundation.org,mit.edu,dilger.ca,suse.com,huawei.com,vivo.com,dubeyko.com,fb.com,squashfs.org.uk,samba.org,manguebit.org,microsoft.com,szeredi.hu,omnibond.com,fasheh.com,evilplan.org,paragon-software.com,infradead.org,nod.at,suse.cz,mail.parknet.co.jp,lwn.net,fromorbit.com,vger.kernel.org,kvack.org,lists.ozlabs.org,lists.samba.org,lists.orangefs.org,lists.linux.dev,lists.sourceforge.net,lists.infradead.org];
+	RCPT_COUNT_GT_50(0.00)[78];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	R_RATELIMIT(0.00)[to_ip_from(RLn1fby4ztoa71w9ewejbxf7et)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: A132E337CA
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
 
-On Mon, Jan 19, 2026 at 09:51:30PM +0100, Mateusz Guzik wrote:
-> On Mon, Jan 19, 2026 at 4:06 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > Convert the pidfs inode-to-pid mapping from an rb-tree with seqcount
-> > protection to an rhashtable. This removes the global pidmap_lock
-> > contention from pidfs_ino_get_pid() lookups and allows the hashtable
-> > insert to happen outside the pidmap_lock.
-> >
-> > pidfs_add_pid() is split. pidfs_prepare_pid() allocates inode number and
-> > initializes pid fields and is called inside pidmap_lock. pidfs_add_pid()
-> > inserts pid into rhashtable and is called outside pidmap_lock. Insertion
-> > into the rhashtable can fail and memory allocation may happen so we need
-> > to drop the spinlock.
-> >
-> > The hashtable removal is deferred to the RCU callback to ensure safe
-> > concurrent lookups. To guard against accidently opening an already
-> > reaped task pidfs_ino_get_pid() uses additional checks beyond pid_vnr().
-> > If pid->attr is PIDFS_PID_DEAD or NULL the pid either never had a pidfd
-> > or it already went through pidfs_exit() aka the process as already
-> > reaped. If pid->attr is valid check PIDFS_ATTR_BIT_EXIT to figure out
-> > whether the task has exited. Switch to refcount_inc_not_zero() to ensure
-> > that the pid isn't about to be freed.
-> >
-> > This slightly changes visibility semantics: pidfd creation is denied
-> > after pidfs_exit() runs, which is just before the pid number is removed
-> > from the via free_pid(). That should not be an issue though.
-> >
-> > I haven't perfed this and I would like to make this Mateusz problem...
-> >
-> > Link: https://lore.kernel.org/20251206131955.780557-1-mjguzik@gmail.com
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/pidfs.c            | 107 ++++++++++++++++++++++++++++----------------------
-> >  include/linux/pid.h   |   4 +-
-> >  include/linux/pidfs.h |   3 +-
-> >  kernel/pid.c          |  19 ++++++---
-> >  4 files changed, 79 insertions(+), 54 deletions(-)
-> >
-> > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> > index dba703d4ce4a..e97931249ba2 100644
-> > --- a/fs/pidfs.c
-> > +++ b/fs/pidfs.c
-> > @@ -21,6 +21,7 @@
-> >  #include <linux/utsname.h>
-> >  #include <net/net_namespace.h>
-> >  #include <linux/coredump.h>
-> > +#include <linux/rhashtable.h>
-> >  #include <linux/xattr.h>
-> >
-> >  #include "internal.h"
-> > @@ -55,7 +56,23 @@ struct pidfs_attr {
-> >         __u32 coredump_signal;
-> >  };
-> >
-> > -static struct rb_root pidfs_ino_tree = RB_ROOT;
-> > +static struct rhashtable pidfs_ino_ht;
-> > +
-> > +static int pidfs_ino_ht_cmp(struct rhashtable_compare_arg *arg, const void *pidp)
-> > +{
-> > +       const u64 *ino = arg->key;
-> > +       const struct pid *pid = pidp;
-> > +
-> > +       return pid->ino != *ino;
-> > +}
-> > +
-> > +static const struct rhashtable_params pidfs_ino_ht_params = {
-> > +       .key_offset             = offsetof(struct pid, ino),
-> > +       .key_len                = sizeof(u64),
-> > +       .head_offset            = offsetof(struct pid, pidfs_hash),
-> > +       .obj_cmpfn              = pidfs_ino_ht_cmp,
-> > +       .automatic_shrinking    = true,
-> > +};
-> >
-> >  #if BITS_PER_LONG == 32
-> >  static inline unsigned long pidfs_ino(u64 ino)
-> > @@ -84,21 +101,11 @@ static inline u32 pidfs_gen(u64 ino)
-> >  }
-> >  #endif
-> >
-> > -static int pidfs_ino_cmp(struct rb_node *a, const struct rb_node *b)
-> > -{
-> > -       struct pid *pid_a = rb_entry(a, struct pid, pidfs_node);
-> > -       struct pid *pid_b = rb_entry(b, struct pid, pidfs_node);
-> > -       u64 pid_ino_a = pid_a->ino;
-> > -       u64 pid_ino_b = pid_b->ino;
-> > -
-> > -       if (pid_ino_a < pid_ino_b)
-> > -               return -1;
-> > -       if (pid_ino_a > pid_ino_b)
-> > -               return 1;
-> > -       return 0;
-> > -}
-> > -
-> > -void pidfs_add_pid(struct pid *pid)
-> > +/*
-> > + * Allocate inode number and initialize pidfs fields.
-> > + * Called with pidmap_lock held.
-> > + */
-> > +void pidfs_prepare_pid(struct pid *pid)
-> >  {
-> >         static u64 pidfs_ino_nr = 2;
-> >
-> > @@ -134,17 +141,23 @@ void pidfs_add_pid(struct pid *pid)
-> >         pid->stashed = NULL;
-> >         pid->attr = NULL;
-> >         pidfs_ino_nr++;
-> > +}
-> >
-> > -       write_seqcount_begin(&pidmap_lock_seq);
-> > -       rb_find_add_rcu(&pid->pidfs_node, &pidfs_ino_tree, pidfs_ino_cmp);
-> > -       write_seqcount_end(&pidmap_lock_seq);
-> > +/*
-> > + * Insert pid into the pidfs hashtable.
-> > + * Must be called without holding pidmap_lock (can allocate memory).
-> > + * Returns 0 on success, negative error on failure.
-> > + */
-> > +int pidfs_add_pid(struct pid *pid)
-> > +{
-> > +       return rhashtable_insert_fast(&pidfs_ino_ht, &pid->pidfs_hash,
-> > +                                     pidfs_ino_ht_params);
-> >  }
-> >
-> >  void pidfs_remove_pid(struct pid *pid)
-> >  {
-> > -       write_seqcount_begin(&pidmap_lock_seq);
-> > -       rb_erase(&pid->pidfs_node, &pidfs_ino_tree);
-> > -       write_seqcount_end(&pidmap_lock_seq);
-> > +       rhashtable_remove_fast(&pidfs_ino_ht, &pid->pidfs_hash,
-> > +                              pidfs_ino_ht_params);
-> >  }
-> >
-> >  void pidfs_free_pid(struct pid *pid)
-> > @@ -773,43 +786,42 @@ static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
-> >         return FILEID_KERNFS;
-> >  }
-> >
-> > -static int pidfs_ino_find(const void *key, const struct rb_node *node)
-> > -{
-> > -       const u64 pid_ino = *(u64 *)key;
-> > -       const struct pid *pid = rb_entry(node, struct pid, pidfs_node);
-> > -
-> > -       if (pid_ino < pid->ino)
-> > -               return -1;
-> > -       if (pid_ino > pid->ino)
-> > -               return 1;
-> > -       return 0;
-> > -}
-> > -
-> >  /* Find a struct pid based on the inode number. */
-> >  static struct pid *pidfs_ino_get_pid(u64 ino)
-> >  {
-> >         struct pid *pid;
-> > -       struct rb_node *node;
-> > -       unsigned int seq;
-> > +       struct pidfs_attr *attr;
-> >
-> >         guard(rcu)();
-> > -       do {
-> > -               seq = read_seqcount_begin(&pidmap_lock_seq);
-> > -               node = rb_find_rcu(&ino, &pidfs_ino_tree, pidfs_ino_find);
-> > -               if (node)
-> > -                       break;
-> > -       } while (read_seqcount_retry(&pidmap_lock_seq, seq));
-> >
-> > -       if (!node)
-> > +       pid = rhashtable_lookup(&pidfs_ino_ht, &ino, pidfs_ino_ht_params);
-> > +       if (!pid)
-> >                 return NULL;
-> >
-> > -       pid = rb_entry(node, struct pid, pidfs_node);
-> > -
-> >         /* Within our pid namespace hierarchy? */
-> >         if (pid_vnr(pid) == 0)
-> >                 return NULL;
-> >
-> > -       return get_pid(pid);
-> > +       /*
-> > +        * If attr is NULL the pid is still in the IDR but never had
-> > +        * a pidfd. If attr is an error the pid went through pidfs_exit()
-> > +        * and is about to be removed. Either way, deny access.
-> > +        */
-> > +       attr = READ_ONCE(pid->attr);
-> > +       if (IS_ERR_OR_NULL(attr))
-> > +               return NULL;
-> > +
-> > +       /*
-> > +        * If PIDFS_ATTR_BIT_EXIT is set the task has exited and we
-> > +        * should not allow new file handle lookups.
-> > +        */
-> > +       if (test_bit(PIDFS_ATTR_BIT_EXIT, &attr->attr_mask))
-> > +               return NULL;
-> > +
-> > +       if (!refcount_inc_not_zero(&pid->count))
-> > +               return NULL;
-> > +
-> > +       return pid;
-> >  }
-> >
-> >  static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
-> > @@ -1086,6 +1098,9 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
-> >
-> >  void __init pidfs_init(void)
-> >  {
-> > +       if (rhashtable_init(&pidfs_ino_ht, &pidfs_ino_ht_params))
-> > +               panic("Failed to initialize pidfs hashtable");
-> > +
-> >         pidfs_attr_cachep = kmem_cache_create("pidfs_attr_cache", sizeof(struct pidfs_attr), 0,
-> >                                          (SLAB_HWCACHE_ALIGN | SLAB_RECLAIM_ACCOUNT |
-> >                                           SLAB_ACCOUNT | SLAB_PANIC), NULL);
-> > diff --git a/include/linux/pid.h b/include/linux/pid.h
-> > index 003a1027d219..ce9b5cb7560b 100644
-> > --- a/include/linux/pid.h
-> > +++ b/include/linux/pid.h
-> > @@ -6,6 +6,7 @@
-> >  #include <linux/rculist.h>
-> >  #include <linux/rcupdate.h>
-> >  #include <linux/refcount.h>
-> > +#include <linux/rhashtable-types.h>
-> >  #include <linux/sched.h>
-> >  #include <linux/wait.h>
-> >
-> > @@ -60,7 +61,7 @@ struct pid {
-> >         spinlock_t lock;
-> >         struct {
-> >                 u64 ino;
-> > -               struct rb_node pidfs_node;
-> > +               struct rhash_head pidfs_hash;
-> >                 struct dentry *stashed;
-> >                 struct pidfs_attr *attr;
-> >         };
-> > @@ -73,7 +74,6 @@ struct pid {
-> >         struct upid numbers[];
-> >  };
-> >
-> > -extern seqcount_spinlock_t pidmap_lock_seq;
-> >  extern struct pid init_struct_pid;
-> >
-> >  struct file;
-> > diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
-> > index 3e08c33da2df..416bdff4d6ce 100644
-> > --- a/include/linux/pidfs.h
-> > +++ b/include/linux/pidfs.h
-> > @@ -6,7 +6,8 @@ struct coredump_params;
-> >
-> >  struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
-> >  void __init pidfs_init(void);
-> > -void pidfs_add_pid(struct pid *pid);
-> > +void pidfs_prepare_pid(struct pid *pid);
-> > +int pidfs_add_pid(struct pid *pid);
-> >  void pidfs_remove_pid(struct pid *pid);
-> >  void pidfs_exit(struct task_struct *tsk);
-> >  #ifdef CONFIG_COREDUMP
-> > diff --git a/kernel/pid.c b/kernel/pid.c
-> > index ad4400a9f15f..7da2c3e8f79c 100644
-> > --- a/kernel/pid.c
-> > +++ b/kernel/pid.c
-> > @@ -43,7 +43,6 @@
-> >  #include <linux/sched/task.h>
-> >  #include <linux/idr.h>
-> >  #include <linux/pidfs.h>
-> > -#include <linux/seqlock.h>
-> >  #include <net/sock.h>
-> >  #include <uapi/linux/pidfd.h>
-> >
-> > @@ -85,7 +84,6 @@ struct pid_namespace init_pid_ns = {
-> >  EXPORT_SYMBOL_GPL(init_pid_ns);
-> >
-> >  static  __cacheline_aligned_in_smp DEFINE_SPINLOCK(pidmap_lock);
-> > -seqcount_spinlock_t pidmap_lock_seq = SEQCNT_SPINLOCK_ZERO(pidmap_lock_seq, &pidmap_lock);
-> >
-> >  void put_pid(struct pid *pid)
-> >  {
-> > @@ -106,6 +104,7 @@ EXPORT_SYMBOL_GPL(put_pid);
-> >  static void delayed_put_pid(struct rcu_head *rhp)
-> >  {
-> >         struct pid *pid = container_of(rhp, struct pid, rcu);
-> > +       pidfs_remove_pid(pid);
-> >         put_pid(pid);
-> >  }
-> >
-> > @@ -141,7 +140,6 @@ void free_pid(struct pid *pid)
-> >
-> >                 idr_remove(&ns->idr, upid->nr);
-> >         }
-> > -       pidfs_remove_pid(pid);
-> >         spin_unlock(&pidmap_lock);
-> >
-> >         call_rcu(&pid->rcu, delayed_put_pid);
-> > @@ -315,7 +313,14 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *arg_set_tid,
-> >         retval = -ENOMEM;
-> >         if (unlikely(!(ns->pid_allocated & PIDNS_ADDING)))
-> >                 goto out_free;
-> > -       pidfs_add_pid(pid);
-> > +       pidfs_prepare_pid(pid);
-> > +       spin_unlock(&pidmap_lock);
-> > +
-> > +       retval = pidfs_add_pid(pid);
-> > +       if (retval)
-> > +               goto out_free_idr;
-> > +
-> > +       spin_lock(&pidmap_lock);
+On Mon 19-01-26 23:50:13, Christoph Hellwig wrote:
+> On Mon, Jan 19, 2026 at 11:26:19AM -0500, Jeff Layton wrote:
+> > +  EXPORT_OP_STABLE_HANDLES - This filesystem provides filehandles that are
+> > +    stable across the lifetime of a file. This is a hard requirement for export
+> > +    via nfsd. Any filesystem that is eligible to be exported via nfsd must
+> > +    indicate this guarantee by setting this flag. Most disk-based filesystems
+> > +    can do this naturally. Pseudofilesystems that are for local reporting and
+> > +    control (e.g. kernfs, pidfs, nsfs) usually can't support this.
 > 
-> This brings back the relock trip, reducing eficacy of the patch.
+> Suggested rewording, taking some of the ideas from Dave Chinners earlier
+> comments into account:
 > 
-> Longer term someone(tm) will need to implement lockless alloc_pid (in
-> the fast path anyway).
+>   EXPORT_OP_STABLE_HANDLES - This filesystem provides filehandles that are
+>     stable across the lifetime of a file.  A file in this context is an
+>     instantiated inode reachable by one or more file names, or still open after
+>     the last name has been unlinked.  Reuses of the same on-disk inode structure
+>     are considered new files and must provide different file handles from the
+>     previous incarnation.  Most file systems designed to store user data
+>     naturally provide this capability.  Pseudofilesystems that are for local
+>     reporting and control (e.g. kernfs, pidfs, nsfs) usually can't support this.
 > 
-> In order to facilitate that the pidfs thing needs to get its own
-> synchronisation. To my understanding rhashtable covers its own locking
-> just fine, so the thing left to handle is ino allocation.
+>     This flags is a hard requirement for export via nfsd. Any filesystem that
+>     is eligible to be exported via nfsd must indicate this guarantee by
+>     setting this flag.
 
-I'm very confused why inode allocation would matter. Inode allocation
-for pidfs is literally just a plain increment. IOW, it's not using any
-atomic at all. So that can happen under pidmap_lock without any issue
-and I don't see the need to change to any complex per-cpu allocation
-mechanism for this.
+I like this. It certainly makes the requirement of stability clearer to me
+(with explanations before I couldn't quite see the difference between shmem
+and kernfs). I'd note that fat or shmem (which are both exportable)
+satisfy this only with reasonably high probability as they use
+get_random_u32() for initializing their i_generation but I guess it's as
+good as it gets for them.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
