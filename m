@@ -1,216 +1,759 @@
-Return-Path: <linux-fsdevel+bounces-74564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AEDAD3BDD0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 04:08:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9FE9D3BE25
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 05:12:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C6674340D94
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 03:08:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 14A5A350F64
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 04:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D3E314B83;
-	Tue, 20 Jan 2026 03:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38A933A9CC;
+	Tue, 20 Jan 2026 04:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vlFNnZ2i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fz/ngKqF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B7D314B62;
-	Tue, 20 Jan 2026 03:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353F933A712;
+	Tue, 20 Jan 2026 04:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768878475; cv=none; b=E/iTuSNBGgZS0nhHtsMrFNjG4x6YdZNFkRLlhBq0WtilJdOgxp6TrdukgJpWdrLbgTidQl3zPPKTcnW5eZTkJEfYt++4SimpKrhKB/Xvznl1CIdcMSXbv3VAX5fqpUNCH4x+4q07MS/Wg9+ZPuIdlginDnoABHmBsnsg1w44W4I=
+	t=1768882347; cv=none; b=hBQewxO5NXsspZUVcc3+PCNH4dOOY9GY2V06Ywsn1GK7PcEL+4CKRrizV8nySvBVUyDS006vxESvzkkM/16Tw9cX3SiHQ/NQuRe7owh35rtxfINygYfz4n3z10GrEVdFJzMkleXiM0rwCYFa91+vNP36z614goDePqZE5l5/ksg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768878475; c=relaxed/simple;
-	bh=zhr5f0TcEfzh4OmxNMTboNZtg4+pOssRY//ARHCKqOw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hTeSWnQ6WCDVXqfQ4xYc32DFViFbXpuX+Dmz5Gahy8Vv5o8tcYen6ij4Ubaz3mJstbJoxukQS9kREZ9+HxiQvy5ZSeEuV+XiJXCSeCYBN+PvD6MIXNERFv6Fd2E1duRcBZ2/RQYjG85pVw52/jqEmj9jo+aCmLS+23ccsp7wTfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vlFNnZ2i; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1768878469; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=Cix8RfjAm/j7o5j7yv9VEqavN9i3fefTuACkIfVQRNA=;
-	b=vlFNnZ2irVpl+R8rmS3u4xG1iZEd8QPW5zT/9sVkJBnX8Pjb52315+hnqReXZxOoyDTKfVJOUSD5CjL7jAdswzrwtmxLiGYtp0v64Qo6C+VBOYOO81IrCn1Y2ssmnyDEWqwoYJpC4FJMQKNqaLu7jstHfocqaonJtllQw/B75pY=
-Received: from 30.221.131.31(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WxSfb8._1768878468 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 20 Jan 2026 11:07:49 +0800
-Message-ID: <50db56b8-4cf9-4d62-b242-c982a260a330@linux.alibaba.com>
-Date: Tue, 20 Jan 2026 11:07:48 +0800
+	s=arc-20240116; t=1768882347; c=relaxed/simple;
+	bh=Ll5FDFEB4My3Bnv1o96nWYyl7yWsT8Grtl+MK42594o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uIaWydkyWRyU6C830KsJ46nss43lPSy9u/qEdYh5On4O0xzUgzkncHIZixksT7HUJYS3rn55Ht1O3+WwZaTaSwswAhS6SzdtI0nABJ7oTLGIlQK5kwAPLBDq/mQ8LkMUjaVm3e9fo87YYoH8E7/eYYYdhGCLB5W/fK9ZV94s3YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fz/ngKqF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACD9FC16AAE;
+	Tue, 20 Jan 2026 04:12:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768882346;
+	bh=Ll5FDFEB4My3Bnv1o96nWYyl7yWsT8Grtl+MK42594o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fz/ngKqFz3hKV2xlT8Dwld7xIAMOGYck0jRF5CnUcbKEdFlEo2vj6WQaHGLPKYRtM
+	 7bxw4TpzFkTCCxJ5RSORvPMk895MCDijsevptFrTEfKgKm717f5dsd8dvyj8A98Am6
+	 G/JKn8EyjERt6jTK1/s8I3zGmcBi/G9tUHLqUGs4BtqOqrsLfRkpm/PaWuVh16gBT8
+	 ofuViLkk1W5uELSA+bdWL4KeUj+0bV3P6n2ggkk1QVJneeQcwBgtOcjLjUW/+73rRQ
+	 pr29o9Hk9BkdeTqiYan9y9DBG18EvnBt7tt2ke2PtPrd9aSAKMTgtRoIPOfB1xsdEs
+	 +J5PikcUvDsXQ==
+Date: Mon, 19 Jan 2026 20:12:26 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: cem@kernel.org, hch@lst.de
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v6.1 11/11] xfs: add media verification ioctl
+Message-ID: <20260120041226.GJ15551@frogsfrogsfrogs>
+References: <176852588473.2137143.1604994842772101197.stgit@frogsfrogsfrogs>
+ <176852588776.2137143.7103003682733018282.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 5/9] erofs: introduce the page cache share feature
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Hongbo Li <lihongbo22@huawei.com>, chao@kernel.org, djwong@kernel.org,
- amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>, oliver.yang@linux.alibaba.com
-References: <20260116095550.627082-1-lihongbo22@huawei.com>
- <20260116095550.627082-6-lihongbo22@huawei.com>
- <20260116154623.GC21174@lst.de>
- <af1f3ff6-a163-4515-92bf-44c9cf6c92f3@linux.alibaba.com>
- <20260119072932.GB2562@lst.de>
- <8e30bc4b-c97f-4ab2-a7ce-27f399ae7462@linux.alibaba.com>
- <20260119083251.GA5257@lst.de>
- <b29b112e-5fe1-414b-9912-06dcd7d7d204@linux.alibaba.com>
- <20260119092220.GA9140@lst.de>
- <73f2c243-e029-4f95-aa8e-285c7affacac@linux.alibaba.com>
-In-Reply-To: <73f2c243-e029-4f95-aa8e-285c7affacac@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <176852588776.2137143.7103003682733018282.stgit@frogsfrogsfrogs>
 
+From: Darrick J. Wong <djwong@kernel.org>
 
-Hi Christoph,
+Add a new privileged ioctl so that xfs_scrub can ask the kernel to
+verify the media of the devices backing an xfs filesystem, and have any
+resulting media errors reported to fsnotify and xfs_healer.
 
-Sorry I didn't phrase things clearly earlier, but I'd still
-like to explain the whole idea, as this feature is clearly
-useful for containerization. I hope we can reach agreement
-on the page cache sharing feature: Christian agreed on this
-feature (and I hope still):
+To accomplish this, the kernel allocates a folio between the base page
+size and 1MB, and issues read IOs to a gradually incrementing range of
+one of the storage devices underlying an xfs filesystem.  If any error
+occurs, that raw error is reported to the calling process.  If the error
+happens to be one of the ones that the kernel considers indicative of
+data loss, then it will also be reported to xfs_healthmon and fsnotify.
 
-https://lore.kernel.org/linux-fsdevel/20260112-begreifbar-hasten-da396ac2759b@brauner
+Driving the verification from the kernel enables xfs (and by extension
+xfs_scrub) to have precise control over the size and error handling of
+IOs that are issued to the underlying block device, and to emit
+notifications about problems to other relevant kernel subsystems
+immediately.
 
-First, let's separate this feature from mounting in user
-namespaces (i.e., unprivileged mounts), because this feature
-is designed specifically for privileged mounts.
+Note that the caller is also allowed to reduce the size of the IO and
+to ask for a relaxation period after each IO.
 
-The EROFS page cache sharing feature stems from a current
-limitation in the page cache: a file-based folio cannot be
-shared across different inode mappings (or the different
-page index within the same mapping; If this limitation
-were resolved, we could implement a finer-grained page
-cache sharing mechanism at the folio level). As you may
-know, this patchset dates back to 2023, and as of 2026; I
-still see no indication that the page cache infra will
-change.
+Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+---
+v6.1: improve commit message, clarify comments about error handling,
+      and reuse the bio instead of repeatedly allocating new ones
+---
+ fs/xfs/libxfs/xfs_fs.h    |   30 +++
+ fs/xfs/xfs_trace.h        |   98 ++++++++++
+ fs/xfs/xfs_verify_media.h |   13 +
+ fs/xfs/Makefile           |    1 
+ fs/xfs/xfs_ioctl.c        |    3 
+ fs/xfs/xfs_verify_media.c |  445 +++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 590 insertions(+)
+ create mode 100644 fs/xfs/xfs_verify_media.h
+ create mode 100644 fs/xfs/xfs_verify_media.c
 
-So that let's face the reality: this feature introduces
-on-disk xattrs called "fingerprints." --- Since they're
-just xattrs, the EROFS on-disk format remains unchanged.
-
-A new compat feature bit in the superblock indicates
-whether an EROFS image contains such xattrs.
-
-=====
-In short: no on-disk format changes are required for
-page cache sharing -- only xattrs attached to inodes
-in the EROFS image.
-
-Even if finer-grained page cache sharing is implemented
-many many years later, existing images will remain
-compatible, as we can simply ignore those xattrs.
-=====
-
-At runtime, the feature is explicitly enabled via a new
-mount option: `inode_share`, which is intended only for
-privileged mounters. A `domain_id` must also be specified
-to define a trusted domain. This means:
-
-  - For regular EROFS mounts (without `inode_share`;
-    default), no page cache sharing happens for those
-    images;
-
-  - For mounts with `inode_share`, page cache sharing is
-    allowed only among mounts with the same `domain_id`.
-
-The `domain_id` can be thought of as defining a federated
-super-filesystem: data of the unique "fingerprints" (e.g.,
-secure hashes or UUIDs) may come from any of the
-participating filesystems, but page cache is the only one.
-
-
-
-EROFS is an immutable, image-based golden filesystem: its
-(meta)data is generated entirely in userspace. I consider
-it as a special class of disk filesystem, so traditional
-assumptions about generic read-write filesystems don't
-always apply; and the image filesystem (especially for
-containers) can also have unique features according to
-image use cases against typical local filesystems.
-
-As for unpriviledged mounts, that is another story (clearly
-there are different features at least at runtime), first
-I think no one argues whether mounting in the user space
-is useful for containers: I do agree it should have a formal
-written threat model in advance. While I'm not a security
-expert per se, I'll draft one later separately.
-
-My rough thoughts are:
-
-  - Let's not focusing entirely on the random human bugs,
-    because I think every practical subsystem should have bugs,
-    the whole threat model focuses on the system design, and
-    less code doesn't mean anything (buggy or even has system
-    design flaw)
-
-  - EROFS only accesses the (meta)data from the source blobs
-    specified at mount time, even with multi-device support:
-
-     mount -t erofs -odevice=[blob],device=[blob],... [source]
-
-    An EROFS mount instance never accesses data beyond those
-    blobs.  Moreover, EROFS holds reference counts on these
-    blobs for the entire lifetime of the mounted filesystem
-    (so even if a blob is deleted, blobs remain accessible as
-    orphan/deleted inodes).
-
-  - As a strictly immutable filesystem, EROFS never writes to
-    underlying blobs/devices and thus avoids complicated space
-    allocation, deallocation, reverse mapping or journaling
-    writeback consistency issues from its design in writable
-    filesystems like ext4, XFS, or BTRFS.  However, it doesn't
-    mean EROFS cannot bear random (meta)data change from
-    modifing blobs directly from external users.
-
-  - External users can modify underlay blobs/devices only when
-    they have permission to the blobs/devices, so there is no
-    privilege escalation risk; so I think "Sneaking in
-    unexpected data" isn't meaningful here -- you need proper
-    permissions to alter the source blobs;
-
-    So then the only question is whether EROFS's on-disk design
-    can safely handle arbitrary (even fuzzed) external
-    modifications. I believe it can: because EROFS don't
-    have any redundant metadata especially for space allocation
-    , reverse mapping and journalling like EXT4, XFS, BTRFS.
-
-    Thus, it avoids the kinds of severe inconsistency bugs
-    seen in generic readwrite filesystems; if you say corruption
-    or inconsientcy, you should define the corruption.  Almost
-    all severe inconsientcy issue cannot be seen as inconsientcy
-    from EROFS on-disk design itself, also see:
-    https://erofs.docs.kernel.org/en/latest/imagefs.html
-
-  - Of course, unprivileged kernel EROFS mounts should start
-    from a minimal core on-disk format, typically the following:
-    https://erofs.docs.kernel.org/en/latest/core_ondisk.html
-
-    I'll clarify this together with the full security model
-    later if this feature really gets developped;
-
-  - In the end, I don't think various wild non-technical
-    assumptions makes any sense to form out the correct design
-    of unprivileged mounts, if a real security threat exists, it
-    should first have a potential attack path written in words
-    (even in theory), but I can't identify any practical one
-    based on the design in my mind.
-
-All in all, I'm open to hear and discuss any potential
-threat or valid argument and find the final answers, but I do
-think we should keep discussion in the technical way rather
-than purely in policy as in the previous related threads.
-
-Thanks,
-Gao Xiang
+diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+index a01303c5de6ce6..d165de607d179e 100644
+--- a/fs/xfs/libxfs/xfs_fs.h
++++ b/fs/xfs/libxfs/xfs_fs.h
+@@ -1160,6 +1160,34 @@ struct xfs_health_file_on_monitored_fs {
+ 	__u32		flags;	/* zero for now */
+ };
+ 
++/* Verify the media of the underlying devices */
++struct xfs_verify_media {
++	__u32	me_dev;		/* I: XFS_DEV_{DATA,LOG,RT} */
++	__u32	me_flags;	/* I: XFS_VERIFY_MEDIA_* */
++
++	/*
++	 * IO: inclusive start of disk range to verify, in 512b blocks.
++	 * Will be adjusted upwards as media verification succeeds.
++	 */
++	__u64	me_start_daddr;
++
++	/*
++	 * IO: exclusive end of the disk range to verify, in 512b blocks.
++	 * Can be adjusted downwards to match device size.
++	 */
++	__u64	me_end_daddr;
++
++	__u32	me_ioerror;	/* O: I/O error (positive) */
++	__u32	me_max_io_size;	/* I: maximum IO size in bytes */
++
++	__u32	me_rest_us;	/* I: rest time between IOs, usecs */
++	__u32	me_pad;		/* zero */
++};
++
++#define XFS_VERIFY_MEDIA_REPORT	(1 << 0)	/* report to fsnotify */
++
++#define XFS_VERIFY_MEDIA_FLAGS	(XFS_VERIFY_MEDIA_REPORT)
++
+ /*
+  * ioctl commands that are used by Linux filesystems
+  */
+@@ -1202,6 +1230,8 @@ struct xfs_health_file_on_monitored_fs {
+ #define XFS_IOC_HEALTH_MONITOR	_IOW ('X', 68, struct xfs_health_monitor)
+ #define XFS_IOC_HEALTH_FD_ON_MONITORED_FS \
+ 				_IOW ('X', 69, struct xfs_health_file_on_monitored_fs)
++#define XFS_IOC_VERIFY_MEDIA	_IOWR('X', 70, struct xfs_verify_media)
++
+ /*
+  * ioctl commands that replace IRIX syssgi()'s
+  */
+diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+index 0cf4877753584f..3483461cf46255 100644
+--- a/fs/xfs/xfs_trace.h
++++ b/fs/xfs/xfs_trace.h
+@@ -6320,6 +6320,104 @@ TRACE_EVENT(xfs_healthmon_report_file_ioerror,
+ 		  __entry->error)
+ );
+ 
++TRACE_EVENT(xfs_verify_media,
++	TP_PROTO(const struct xfs_mount *mp, const struct xfs_verify_media *me,
++		 dev_t fdev, xfs_daddr_t daddr, uint64_t bbcount,
++		 const struct folio *folio),
++	TP_ARGS(mp, me, fdev, daddr, bbcount, folio),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(dev_t, fdev)
++		__field(xfs_daddr_t, start_daddr)
++		__field(xfs_daddr_t, end_daddr)
++		__field(unsigned int, flags)
++		__field(xfs_daddr_t, daddr)
++		__field(uint64_t, bbcount)
++		__field(unsigned int, bufsize)
++	),
++	TP_fast_assign(
++		__entry->dev = mp->m_ddev_targp->bt_dev;
++		__entry->fdev = fdev;
++		__entry->start_daddr = me->me_start_daddr;
++		__entry->end_daddr = me->me_end_daddr;
++		__entry->flags = me->me_flags;
++		__entry->daddr = daddr;
++		__entry->bbcount = bbcount;
++		__entry->bufsize = folio_size(folio);
++	),
++	TP_printk("dev %d:%d fdev %d:%d start_daddr 0x%llx end_daddr 0x%llx flags 0x%x daddr 0x%llx bbcount 0x%llx bufsize 0x%x",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  MAJOR(__entry->fdev), MINOR(__entry->fdev),
++		  __entry->start_daddr,
++		  __entry->end_daddr,
++		  __entry->flags,
++		  __entry->daddr,
++		  __entry->bbcount,
++		  __entry->bufsize)
++);
++
++TRACE_EVENT(xfs_verify_media_end,
++	TP_PROTO(const struct xfs_mount *mp, const struct xfs_verify_media *me,
++		 dev_t fdev),
++	TP_ARGS(mp, me, fdev),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(dev_t, fdev)
++		__field(xfs_daddr_t, start_daddr)
++		__field(xfs_daddr_t, end_daddr)
++		__field(int, ioerror)
++	),
++	TP_fast_assign(
++		__entry->dev = mp->m_ddev_targp->bt_dev;
++		__entry->fdev = fdev;
++		__entry->start_daddr = me->me_start_daddr;
++		__entry->end_daddr = me->me_end_daddr;
++		__entry->ioerror = me->me_ioerror;
++	),
++	TP_printk("dev %d:%d fdev %d:%d start_daddr 0x%llx end_daddr 0x%llx ioerror %d",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  MAJOR(__entry->fdev), MINOR(__entry->fdev),
++		  __entry->start_daddr,
++		  __entry->end_daddr,
++		  __entry->ioerror)
++);
++
++TRACE_EVENT(xfs_verify_media_error,
++	TP_PROTO(const struct xfs_mount *mp, const struct xfs_verify_media *me,
++		 dev_t fdev, xfs_daddr_t daddr, uint64_t bbcount,
++		 blk_status_t status),
++	TP_ARGS(mp, me, fdev, daddr, bbcount, status),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(dev_t, fdev)
++		__field(xfs_daddr_t, start_daddr)
++		__field(xfs_daddr_t, end_daddr)
++		__field(unsigned int, flags)
++		__field(xfs_daddr_t, daddr)
++		__field(uint64_t, bbcount)
++		__field(int, error)
++	),
++	TP_fast_assign(
++		__entry->dev = mp->m_ddev_targp->bt_dev;
++		__entry->fdev = fdev;
++		__entry->start_daddr = me->me_start_daddr;
++		__entry->end_daddr = me->me_end_daddr;
++		__entry->flags = me->me_flags;
++		__entry->daddr = daddr;
++		__entry->bbcount = bbcount;
++		__entry->error = blk_status_to_errno(status);
++	),
++	TP_printk("dev %d:%d fdev %d:%d start_daddr 0x%llx end_daddr 0x%llx flags 0x%x daddr 0x%llx bbcount 0x%llx error %d",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  MAJOR(__entry->fdev), MINOR(__entry->fdev),
++		  __entry->start_daddr,
++		  __entry->end_daddr,
++		  __entry->flags,
++		  __entry->daddr,
++		  __entry->bbcount,
++		  __entry->error)
++);
++
+ #endif /* _TRACE_XFS_H */
+ 
+ #undef TRACE_INCLUDE_PATH
+diff --git a/fs/xfs/xfs_verify_media.h b/fs/xfs/xfs_verify_media.h
+new file mode 100644
+index 00000000000000..dc6eee9c88636b
+--- /dev/null
++++ b/fs/xfs/xfs_verify_media.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (c) 2026 Oracle.  All Rights Reserved.
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#ifndef __XFS_VERIFY_MEDIA_H__
++#define __XFS_VERIFY_MEDIA_H__
++
++struct xfs_verify_media;
++int xfs_ioc_verify_media(struct file *file,
++		struct xfs_verify_media __user *arg);
++
++#endif /* __XFS_VERIFY_MEDIA_H__ */
+diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
+index d14f5ae2b980fe..7eadc263f728a2 100644
+--- a/fs/xfs/Makefile
++++ b/fs/xfs/Makefile
+@@ -197,6 +197,7 @@ xfs-y				+= xfs_aops.o \
+ 				   xfs_symlink.o \
+ 				   xfs_sysfs.o \
+ 				   xfs_trans.o \
++				   xfs_verify_media.o \
+ 				   xfs_xattr.o
+ 
+ # low-level transaction/log code
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index c04c41ca924e37..80a005999d2df3 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -42,6 +42,7 @@
+ #include "xfs_handle.h"
+ #include "xfs_rtgroup.h"
+ #include "xfs_healthmon.h"
++#include "xfs_verify_media.h"
+ 
+ #include <linux/mount.h>
+ #include <linux/fileattr.h>
+@@ -1422,6 +1423,8 @@ xfs_file_ioctl(
+ 
+ 	case XFS_IOC_HEALTH_MONITOR:
+ 		return xfs_ioc_health_monitor(filp, arg);
++	case XFS_IOC_VERIFY_MEDIA:
++		return xfs_ioc_verify_media(filp, arg);
+ 
+ 	default:
+ 		return -ENOTTY;
+diff --git a/fs/xfs/xfs_verify_media.c b/fs/xfs/xfs_verify_media.c
+new file mode 100644
+index 00000000000000..f4f620c98d92ca
+--- /dev/null
++++ b/fs/xfs/xfs_verify_media.c
+@@ -0,0 +1,445 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (c) 2026 Oracle.  All Rights Reserved.
++ * Author: Darrick J. Wong <djwong@kernel.org>
++ */
++#include "xfs.h"
++#include "xfs_shared.h"
++#include "xfs_format.h"
++#include "xfs_log_format.h"
++#include "xfs_trans_resv.h"
++#include "xfs_mount.h"
++#include "xfs_bit.h"
++#include "xfs_btree.h"
++#include "xfs_inode.h"
++#include "xfs_icache.h"
++#include "xfs_trans.h"
++#include "xfs_alloc.h"
++#include "xfs_ag.h"
++#include "xfs_rmap.h"
++#include "xfs_rmap_btree.h"
++#include "xfs_rtgroup.h"
++#include "xfs_rtrmap_btree.h"
++#include "xfs_health.h"
++#include "xfs_healthmon.h"
++#include "xfs_trace.h"
++#include "xfs_verify_media.h"
++
++#include <linux/fserror.h>
++
++struct xfs_group_data_lost {
++	xfs_agblock_t		startblock;
++	xfs_extlen_t		blockcount;
++};
++
++/* Report lost file data from rmap records */
++static int
++xfs_verify_report_data_lost(
++	struct xfs_btree_cur		*cur,
++	const struct xfs_rmap_irec	*rec,
++	void				*data)
++{
++	struct xfs_mount		*mp = cur->bc_mp;
++	struct xfs_inode		*ip;
++	struct xfs_group_data_lost	*lost = data;
++	xfs_fileoff_t			fileoff = rec->rm_offset;
++	xfs_extlen_t			blocks = rec->rm_blockcount;
++	const bool			is_attr =
++			(rec->rm_flags & XFS_RMAP_ATTR_FORK);
++	const xfs_agblock_t		lost_end =
++			lost->startblock + lost->blockcount;
++	const xfs_agblock_t		rmap_end =
++			rec->rm_startblock + rec->rm_blockcount;
++	int				error = 0;
++
++	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner))
++	       return 0;
++
++	error = xfs_iget(mp, cur->bc_tp, rec->rm_owner, 0, 0, &ip);
++	if (error)
++		return 0;
++
++	if (rec->rm_flags & XFS_RMAP_BMBT_BLOCK) {
++		xfs_bmap_mark_sick(ip, is_attr ? XFS_ATTR_FORK : XFS_DATA_FORK);
++		goto out_rele;
++	}
++
++	if (is_attr) {
++		xfs_inode_mark_sick(ip, XFS_SICK_INO_XATTR);
++		goto out_rele;
++	}
++
++	if (lost->startblock > rec->rm_startblock) {
++		fileoff += lost->startblock - rec->rm_startblock;
++		blocks -= lost->startblock - rec->rm_startblock;
++	}
++	if (rmap_end > lost_end)
++		blocks -= rmap_end - lost_end;
++
++	fserror_report_data_lost(VFS_I(ip), XFS_FSB_TO_B(mp, fileoff),
++			XFS_FSB_TO_B(mp, blocks), GFP_NOFS);
++
++out_rele:
++	xfs_irele(ip);
++	return 0;
++}
++
++/* Walk reverse mappings to look for all file data loss */
++static int
++xfs_verify_report_losses(
++	struct xfs_mount	*mp,
++	enum xfs_group_type	type,
++	xfs_daddr_t		daddr,
++	u64			bblen)
++{
++	struct xfs_group	*xg = NULL;
++	struct xfs_trans	*tp;
++	xfs_fsblock_t		start_bno, end_bno;
++	uint32_t		start_gno, end_gno;
++	int			error;
++
++	if (type == XG_TYPE_RTG) {
++		start_bno = xfs_daddr_to_rtb(mp, daddr);
++		end_bno = xfs_daddr_to_rtb(mp, daddr + bblen - 1);
++	} else {
++		start_bno = XFS_DADDR_TO_FSB(mp, daddr);
++		end_bno = XFS_DADDR_TO_FSB(mp, daddr + bblen - 1);
++	}
++
++	tp = xfs_trans_alloc_empty(mp);
++	start_gno = xfs_fsb_to_gno(mp, start_bno, type);
++	end_gno = xfs_fsb_to_gno(mp, end_bno, type);
++	while ((xg = xfs_group_next_range(mp, xg, start_gno, end_gno, type))) {
++		struct xfs_buf		*agf_bp = NULL;
++		struct xfs_rtgroup	*rtg = NULL;
++		struct xfs_btree_cur	*cur;
++		struct xfs_rmap_irec	ri_low = { };
++		struct xfs_rmap_irec	ri_high;
++		struct xfs_group_data_lost lost;
++
++		if (type == XG_TYPE_AG) {
++			struct xfs_perag	*pag = to_perag(xg);
++
++			error = xfs_alloc_read_agf(pag, tp, 0, &agf_bp);
++			if (error) {
++				xfs_perag_put(pag);
++				break;
++			}
++
++			cur = xfs_rmapbt_init_cursor(mp, tp, agf_bp, pag);
++		} else {
++			rtg = to_rtg(xg);
++			xfs_rtgroup_lock(rtg, XFS_RTGLOCK_RMAP);
++			cur = xfs_rtrmapbt_init_cursor(tp, rtg);
++		}
++
++		/*
++		 * Set the rmap range from ri_low to ri_high, which represents
++		 * a [start, end] where we looking for the files or metadata.
++		 */
++		memset(&ri_high, 0xFF, sizeof(ri_high));
++		if (xg->xg_gno == start_gno)
++			ri_low.rm_startblock =
++				xfs_fsb_to_gbno(mp, start_bno, type);
++		if (xg->xg_gno == end_gno)
++			ri_high.rm_startblock =
++				xfs_fsb_to_gbno(mp, end_bno, type);
++
++		lost.startblock = ri_low.rm_startblock;
++		lost.blockcount = min(xg->xg_block_count,
++				      ri_high.rm_startblock + 1) -
++							ri_low.rm_startblock;
++
++		error = xfs_rmap_query_range(cur, &ri_low, &ri_high,
++				xfs_verify_report_data_lost, &lost);
++		xfs_btree_del_cursor(cur, error);
++		if (agf_bp)
++			xfs_trans_brelse(tp, agf_bp);
++		if (rtg)
++			xfs_rtgroup_unlock(rtg, XFS_RTGLOCK_RMAP);
++		if (error) {
++			xfs_group_put(xg);
++			break;
++		}
++	}
++
++	xfs_trans_cancel(tp);
++	return 0;
++}
++
++/*
++ * Compute the desired verify IO size.
++ *
++ * To minimize command overhead, we'd like to create bios that are 1MB, though
++ * we allow the user to ask for a smaller size.
++ */
++static unsigned int
++xfs_verify_iosize(
++	const struct xfs_verify_media	*me,
++	struct xfs_buftarg		*btp,
++	uint64_t			bbcount)
++{
++	unsigned int			iosize =
++			min_not_zero(SZ_1M, me->me_max_io_size);
++
++	BUILD_BUG_ON(BBSHIFT != SECTOR_SHIFT);
++	ASSERT(BBTOB(bbcount) >= bdev_logical_block_size(btp->bt_bdev));
++
++	return clamp(iosize, bdev_logical_block_size(btp->bt_bdev),
++			BBTOB(bbcount));
++}
++
++/* Allocate as much memory as we can get for verification buffer. */
++static struct folio *
++xfs_verify_alloc_folio(
++	const unsigned int	iosize)
++{
++	unsigned int		order = get_order(iosize);
++
++	while (order > 0) {
++		struct folio	*folio =
++			folio_alloc(GFP_KERNEL | __GFP_NORETRY, order);
++
++		if (folio)
++			return folio;
++		order--;
++	}
++
++	return folio_alloc(GFP_KERNEL, 0);
++}
++
++/* Report any kind of problem verifying media */
++static void
++xfs_verify_media_error(
++	struct xfs_mount	*mp,
++	struct xfs_verify_media	*me,
++	struct xfs_buftarg	*btp,
++	xfs_daddr_t		daddr,
++	unsigned int		bio_bbcount,
++	blk_status_t		bio_status)
++{
++	trace_xfs_verify_media_error(mp, me, btp->bt_bdev->bd_dev, daddr,
++			bio_bbcount, bio_status);
++
++	/*
++	 * Pass any error, I/O or otherwise, up to the caller if we didn't
++	 * successfully verify any bytes at all.
++	 */
++	if (me->me_start_daddr == daddr)
++		me->me_ioerror = -blk_status_to_errno(bio_status);
++
++	/*
++	 * PI validation failures, medium errors, or general IO errors are
++	 * treated as indicators of data loss.  Everything else are (hopefully)
++	 * transient errors and are not reported to healthmon or fsnotify.
++	 */
++	switch (bio_status) {
++	case BLK_STS_PROTECTION:
++	case BLK_STS_IOERR:
++	case BLK_STS_MEDIUM:
++		break;
++	default:
++		return;
++	}
++
++	if (!(me->me_flags & XFS_VERIFY_MEDIA_REPORT))
++		return;
++
++	xfs_healthmon_report_media(mp, me->me_dev, daddr, bio_bbcount);
++
++	if (!xfs_has_rmapbt(mp))
++		return;
++
++	switch (me->me_dev) {
++	case XFS_DEV_DATA:
++		xfs_verify_report_losses(mp, XG_TYPE_AG, daddr, bio_bbcount);
++		break;
++	case XFS_DEV_RT:
++		xfs_verify_report_losses(mp, XG_TYPE_RTG, daddr, bio_bbcount);
++		break;
++	}
++}
++
++/* Verify the media of an xfs device by submitting read requests to the disk. */
++static int
++xfs_verify_media(
++	struct xfs_mount	*mp,
++	struct xfs_verify_media	*me)
++{
++	struct xfs_buftarg	*btp = NULL;
++	struct bio		*bio;
++	struct folio		*folio;
++	xfs_daddr_t		daddr;
++	uint64_t		bbcount;
++	int			error = 0;
++
++	me->me_ioerror = 0;
++
++	switch (me->me_dev) {
++	case XFS_DEV_DATA:
++		btp = mp->m_ddev_targp;
++		break;
++	case XFS_DEV_LOG:
++		if (mp->m_logdev_targp->bt_bdev != mp->m_ddev_targp->bt_bdev)
++			btp = mp->m_logdev_targp;
++		break;
++	case XFS_DEV_RT:
++		btp = mp->m_rtdev_targp;
++		break;
++	}
++	if (!btp)
++		return -ENODEV;
++
++	/*
++	 * If the caller told us to verify beyond the end of the disk, tell the
++	 * user exactly where that was.
++	 */
++	if (me->me_end_daddr > btp->bt_nr_sectors)
++		me->me_end_daddr = btp->bt_nr_sectors;
++
++	/* start and end have to be aligned to the lba size */
++	if (!IS_ALIGNED(BBTOB(me->me_start_daddr | me->me_end_daddr),
++			bdev_logical_block_size(btp->bt_bdev)))
++		return -EINVAL;
++
++	/*
++	 * end_daddr is the exclusive end of the range, so if start_daddr
++	 * reaches there (or beyond), there's no work to be done.
++	 */
++	if (me->me_start_daddr >= me->me_end_daddr)
++		return 0;
++
++	/*
++	 * There are three ranges involved here:
++	 *
++	 *  - [me->me_start_daddr, me->me_end_daddr) is the range that the
++	 *    user wants to verify.  end_daddr can be beyond the end of the
++	 *    disk; we'll constrain it to the end if necessary.
++	 *
++	 *  - [daddr, me->me_end_daddr) is the range that we have not yet
++	 *    verified.  We update daddr after each successful read.
++	 *    me->me_start_daddr is set to daddr before returning.
++	 *
++	 *  - [daddr, daddr + bio_bbcount) is the range that we're currently
++	 *    verifying.
++	 */
++	daddr = me->me_start_daddr;
++	bbcount = min_t(sector_t, me->me_end_daddr, btp->bt_nr_sectors) -
++			  me->me_start_daddr;
++
++	folio = xfs_verify_alloc_folio(xfs_verify_iosize(me, btp, bbcount));
++	if (!folio)
++		return -ENOMEM;
++
++	trace_xfs_verify_media(mp, me, btp->bt_bdev->bd_dev, daddr, bbcount,
++			folio);
++
++	bio = bio_alloc(btp->bt_bdev, 1, REQ_OP_READ, GFP_KERNEL);
++	if (!bio) {
++		error = -ENOMEM;
++		goto out_folio;
++	}
++
++	while (bbcount > 0) {
++		unsigned int	bio_bbcount;
++		blk_status_t	bio_status;
++
++		bio_reset(bio, btp->bt_bdev, REQ_OP_READ);
++		bio->bi_iter.bi_sector = daddr;
++		bio_add_folio_nofail(bio, folio,
++				min(bbcount << SECTOR_SHIFT, folio_size(folio)),
++				0);
++
++		/*
++		 * Save the length of the bio before we submit it, because we
++		 * need the original daddr and length for reporting IO errors
++		 * if the bio fails.
++		 */
++		bio_bbcount = bio->bi_iter.bi_size >> SECTOR_SHIFT;
++		submit_bio_wait(bio);
++		bio_status = bio->bi_status;
++		if (bio_status != BLK_STS_OK) {
++			xfs_verify_media_error(mp, me, btp, daddr, bio_bbcount,
++					bio_status);
++			error = 0;
++			break;
++		}
++
++		daddr += bio_bbcount;
++		bbcount -= bio_bbcount;
++
++		if (bbcount == 0)
++			break;
++
++		if (me->me_rest_us) {
++			ktime_t	expires;
++
++			expires = ktime_add_ns(ktime_get(),
++					me->me_rest_us * 1000);
++			set_current_state(TASK_KILLABLE);
++			schedule_hrtimeout(&expires, HRTIMER_MODE_ABS);
++		}
++
++		if (fatal_signal_pending(current)) {
++			error = -EINTR;
++			break;
++		}
++
++		cond_resched();
++	}
++
++	bio_put(bio);
++out_folio:
++	folio_put(folio);
++
++	if (error)
++		return error;
++
++	/*
++	 * Advance start_daddr to the end of what we verified if there wasn't
++	 * an operational error.
++	 */
++	me->me_start_daddr = daddr;
++	trace_xfs_verify_media_end(mp, me, btp->bt_bdev->bd_dev);
++	return 0;
++}
++
++int
++xfs_ioc_verify_media(
++	struct file			*file,
++	struct xfs_verify_media __user	*arg)
++{
++	struct xfs_verify_media		me;
++	struct xfs_inode		*ip = XFS_I(file_inode(file));
++	struct xfs_mount		*mp = ip->i_mount;
++	int				error;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	if (copy_from_user(&me, arg, sizeof(me)))
++		return -EFAULT;
++
++	if (me.me_pad)
++		return -EINVAL;
++	if (me.me_flags & ~XFS_VERIFY_MEDIA_FLAGS)
++		return -EINVAL;
++
++	switch (me.me_dev) {
++	case XFS_DEV_DATA:
++	case XFS_DEV_LOG:
++	case XFS_DEV_RT:
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	error = xfs_verify_media(mp, &me);
++	if (error)
++		return error;
++
++	if (copy_to_user(arg, &me, sizeof(me)))
++		return -EFAULT;
++
++	return 0;
++}
 
