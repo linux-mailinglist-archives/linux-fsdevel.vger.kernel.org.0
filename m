@@ -1,236 +1,396 @@
-Return-Path: <linux-fsdevel+bounces-74671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4INwJgymb2lDEgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 16:58:04 +0100
+	id eCXrNXSkb2n0DgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 16:51:16 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFE046E44
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 16:58:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478DD46BD9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 16:51:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B3FB8783E56
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 14:45:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 227D690476E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 15:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7036942EEC9;
-	Tue, 20 Jan 2026 14:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F6243637D;
+	Tue, 20 Jan 2026 14:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fzTmFh6U";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0uyNt8Te";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fzTmFh6U";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0uyNt8Te"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nj7pUq6+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB55359F9F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 14:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23209449ECB
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 14:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768919742; cv=none; b=dZ0PFxoofeJayocpCgKXOD2WmQlCqdr3L7nNpVjbiMh43Eem1rW1RDNTdRj12PZz5XML9hQ6zYLtk5lOV/lGYr40IAku0Gl73IbsnUSkotZFHrswZifRaLP9IifuWFj2GEt05z8vK6NJvzMcirTpdv5BtUHczEt7eY/d5WvffAM=
+	t=1768920770; cv=none; b=MEPV0Bt5WD4qHFzY2xa63sFuBQLLxBzi0k0pWnAr7AUIT0cbrBZLTI8Uc1OMJglbnVwlTSSe+UIPqBIfiO8jFVr5aPeF9pDSIk34LN4fKdD/4gEMQfbgSiz4ryvymPIgMBp48t1RMXhNRW6q9RfSliCLlp2IlvHnLMgaBWK4gPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768919742; c=relaxed/simple;
-	bh=vPSCa9zKkDF4Ki+sDaiGCzizc0zVUYasXylacrHHjHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J9ViBDzu90Pj1+5R5Vjre8juaVgKWeFFCargCm8qQGkoVG+hHCrsmo4ZZXGbAptYeuAytQULqDUQZeBGN4GJwLixi70PtSSRr+zzI+sx/8QECra3CPEHj9SR2yRcxROR53EGcORNjU7qUxGR7DUbcTL2C8JPpgztGBcWEBg6e1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fzTmFh6U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0uyNt8Te; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fzTmFh6U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0uyNt8Te; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6708A5BCCD;
-	Tue, 20 Jan 2026 14:35:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768919738; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dr07aLXDVCjM7i/UybL6ay/mRo+PckVKNWM0IK2ZlRk=;
-	b=fzTmFh6UPmm1R2MPTU/2h5WoDP5GcRIbztOJ37Wf0G2Ho7SS5T6lRdqZkFyQmcxULesV4C
-	dytHCyddQBpjDhgRwUhhD4N0WRbT2zJlEhSN5tgbUbt/wVfejG1RjB1bvc0duo7t/o8JBO
-	pJwPb8f1ZVR9gajrVhGnvBk46JEwxlk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768919738;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dr07aLXDVCjM7i/UybL6ay/mRo+PckVKNWM0IK2ZlRk=;
-	b=0uyNt8Tewmtk1dT9/EczhE/wUA5iTwOeidApiLlYykzMTfAVxyEXD2CR4kG8tH62pZ5353
-	iL/Jig2ZSyQATfAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1768919738; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dr07aLXDVCjM7i/UybL6ay/mRo+PckVKNWM0IK2ZlRk=;
-	b=fzTmFh6UPmm1R2MPTU/2h5WoDP5GcRIbztOJ37Wf0G2Ho7SS5T6lRdqZkFyQmcxULesV4C
-	dytHCyddQBpjDhgRwUhhD4N0WRbT2zJlEhSN5tgbUbt/wVfejG1RjB1bvc0duo7t/o8JBO
-	pJwPb8f1ZVR9gajrVhGnvBk46JEwxlk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1768919738;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dr07aLXDVCjM7i/UybL6ay/mRo+PckVKNWM0IK2ZlRk=;
-	b=0uyNt8Tewmtk1dT9/EczhE/wUA5iTwOeidApiLlYykzMTfAVxyEXD2CR4kG8tH62pZ5353
-	iL/Jig2ZSyQATfAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BEEF13EA63;
-	Tue, 20 Jan 2026 14:35:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 79qaLrmSb2mcZgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 20 Jan 2026 14:35:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 68DD6A09DA; Tue, 20 Jan 2026 15:35:33 +0100 (CET)
-Date: Tue, 20 Jan 2026 15:35:33 +0100
-From: Jan Kara <jack@suse.cz>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Bernd Schubert <bernd@bsbernd.com>, Jan Kara <jack@suse.cz>, 
-	Joanne Koong <joannelkoong@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Horst Birthelmer <hbirthelmer@ddn.com>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"David Hildenbrand (Red Hat)" <david@kernel.org>
-Subject: Re: __folio_end_writeback() lockdep issue
-Message-ID: <4sn6k56c7g3jwvzze4imc4pilmomekvcelo7zo2awjqxsifaqe@djs5p2l55q64>
-References: <9b845a47-9aee-43dd-99bc-1a82bea00442@bsbernd.com>
- <b7b72183-f9e1-4e58-b40f-45a267cc6831@bsbernd.com>
- <aWJ-pHIY8Y8sjLeC@casper.infradead.org>
- <wu7mu22kgr7pmzrneq6rkivhwvpbximyrkouciktl7wf5w7wur@rsyqyczopba2>
+	s=arc-20240116; t=1768920770; c=relaxed/simple;
+	bh=zKF9/JEeSGnquHIMuxhKf0A2xCHrC46js/V2rPc2EE8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RfREjTQtmFHP6lzKIv285eUh6szDuVLsDtVEDP/INyrcJc7dntVOgPRQtbfRo4sreZKLacJfAOvB2lm067yhVCHK1ySHuKsyLdvaKbmxJRBsyTdRdIXeHAK1R/zXX0PxtdCRlvjK4BCyxeyQc3qssHbbufp+BHwQ06n1j7sW7fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nj7pUq6+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86067C16AAE;
+	Tue, 20 Jan 2026 14:52:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768920768;
+	bh=zKF9/JEeSGnquHIMuxhKf0A2xCHrC46js/V2rPc2EE8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Nj7pUq6+WbiRyycBxuIWfB2dx8moqeJxDcbmUTY5wpjhzvwG53bxNEvoah6yfsqXb
+	 4gjDAlIz31mYUo1yoglq60Q4YaozTuiM0OOe5g8UlmIEnIMl1B4RSiY7dfUPVSPiC4
+	 QMcYnbv7GxhbnbgQLG1fREWR+BTJhg8OebBf5J4Yq4JARhoUGbmGbcaUELDjty8q/Q
+	 pgb99qM8vygrZAbzYfYbVs2z0bW7GZlkYHRPsxGrRk2qQswMfyXhxw/eJo08M92bLf
+	 3FJjDmChIuJi5QTUkD1RvNlwcBfmlW2Otypt3wNB32otN+0EJ0uBp78uMIVTKwyjuX
+	 7B3jQpihyJXtA==
+From: Christian Brauner <brauner@kernel.org>
+Date: Tue, 20 Jan 2026 15:52:35 +0100
+Subject: [PATCH RFC v2] pidfs: convert rb-tree to rhashtable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <wu7mu22kgr7pmzrneq6rkivhwvpbximyrkouciktl7wf5w7wur@rsyqyczopba2>
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-0.96 / 15.00];
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260120-work-pidfs-rhashtable-v2-1-d593c4d0f576@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALKWb2kC/4WOTQqDMBCFryKzbiSxP8GuCoUeoNviIjGjCdpEJ
+ mJbxLs32gOUWb0H3/dmhojkMMI5m4FwctEFn0Kxy6C2yrfInEkZCl6cuBAlewXq2OBMExlZFe2
+ odI+sNOLApdBGSgWJHQgb9968D7jfrlClUquITJPytV2VHZLHnsmc508X6xWzLo6BPts3k9jgP
+ 8OTYOmOZS0l53vO1eWnzQO1UC3L8gW2Emjn4gAAAA==
+X-Change-ID: 20260119-work-pidfs-rhashtable-9d14071bd77a
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-a6db3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8910; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=zKF9/JEeSGnquHIMuxhKf0A2xCHrC46js/V2rPc2EE8=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTmT9uf161iGLFkafmTG2/5X/euFf+/o+rZwQkqWhEvW
+ N72JGlUdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExE9yojw2Utr54nf20ct5T1
+ 8uXlJ95dmijK76DbfKY+/Ij4Q7mQV4wMn9yPJPAU7Tjwede1ijl/f7yN8OpgeTHroFnLl/NcW4W
+ YuAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Spamd-Result: default: False [-1.96 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-74671-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-74676-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,suse.com:email,suse.cz:dkim];
-	DMARC_NA(0.00)[suse.cz];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_CC(0.00)[bsbernd.com,suse.cz,gmail.com,szeredi.hu,ddn.com,vger.kernel.org,linux-foundation.org,kvack.org,kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 3FFE046E44
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,msgid.link:url]
+X-Rspamd-Queue-Id: 478DD46BD9
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Mon 12-01-26 14:06:26, Jan Kara wrote:
-> On Sat 10-01-26 16:30:28, Matthew Wilcox wrote:
-> > On Sat, Jan 10, 2026 at 04:31:28PM +0100, Bernd Schubert wrote:
-> > > [  872.499480]  Possible interrupt unsafe locking scenario:
-> > > [  872.499480] 
-> > > [  872.500326]        CPU0                    CPU1
-> > > [  872.500906]        ----                    ----
-> > > [  872.501464]   lock(&p->sequence);
-> > > [  872.501923]                                local_irq_disable();
-> > > [  872.502615]                                lock(&xa->xa_lock#4);
-> > > [  872.503327]                                lock(&p->sequence);
-> > > [  872.504116]   <Interrupt>
-> > > [  872.504513]     lock(&xa->xa_lock#4);
-> > > 
-> > > 
-> > > Which is introduced by commit 2841808f35ee for all file systems. 
-> > > The should be rather generic - I shouldn't be the only one seeing
-> > > it?
-> > 
-> > Oh wow, 2841808f35ee has a very confusing commit message.  It implies
-> > that _no_ filesystem uses BDI_CAP_WRITEBACK_ACCT, but what it really
-> > means is that no filesystem now _clears_ BDI_CAP_WRITEBACK_ACCT, so
-> > all filesystems do use this code path and therefore the flag can be
-> > removed.  And that matches the code change.
-> > 
-> > So you should be able to reproduce this problem with commit 494d2f508883
-> > as well?
-> > 
-> > That tells me that this is something fuse-specific.  Other filesystems
-> > aren't seeing this.  Wonder why ...
-> > 
-> > __wb_writeout_add() or its predecessor __wb_writeout_inc() have been in
-> > that spot since 2015 or earlier.  
-> > 
-> > The sequence lock itself is taken inside fprop_new_period() called from
-> > writeout_period() which has been there since 2012, so that's not it.
-> > 
-> > Looking at fprop_new_period() is more interesting.  Commit a91befde3503
-> > removed an earlier call to local_irq_save().  It was then replaced with
-> > preempt_disable() in 9458e0a78c45 but maybe removing it was just
-> > erroneous?
-> > 
-> > Anyway, that was 2022, so it doesn't answer "why is this only showing up
-> > now and only for fuse?"  But maybe replacing the preempt-disable with
-> > irq-disable in fprop_new_period() is the right solution, regardless.
-> 
-> So I don't have a great explanation why it is showing up only now and only
-> for FUSE. It seems the fprop code is unsafe wrt interrupts because
-> fprop_new_period() grabs
-> 
->         write_seqcount_begin(&p->sequence);
-> 
-> and if IO completion interrupt on this CPU comes while p->sequence is odd,
-> the call to
-> 
-> 	read_seqcount_begin(&p->sequence);
-> 
-> in __folio_end_writeback() -> __wb_writeout_add() -> wb_domain_writeout_add()
-> -> __fprop_add_percpu_max() -> fprop_fraction_percpu() will loop
-> indefinitely. *However* this isn't in fact possible because
-> fprop_new_period() is only called from a timer code and thus in softirq
-> context and thus IO completion softirq cannot really preempt it.
-> 
-> But for the same reason I don't think what lockdep complains about is
-> really possible because xa_lock gets only used from IO completion softirq as
-> well. Or can we really acquire it from some hard irq context? Based on
-> lockdep report at least lockdep things IO completion runs in hardirq
-> context but then I don't see why we're not seeing complaints like this all
-> the time and even deadlocks I've described above. I guess I'll have to do
-> some experimentation to refresh how these things behave these days...
+Mateusz reported performance penalties [1] during task creation because
+pidfs uses pidmap_lock to add elements into the rbtree. Switch to an
+rhashtable to have separate fine-grained locking and to decouple from
+pidmap_lock moving all heavy manipulations outside of it.
 
-So I've got to experiment with this some more. It appears that my
-recollection of block layer IO completion code is about decade old and
-these days bio completion routines (and thus __folio_end_writeback()) are
-getting called in hardirq context in most cases (verified this with ftrace).
-Hence the flexible proportions code is indeed prone to deadlocks with
-hardirqs. I'm just wondering why aren't we seeing much more lockdep reports
-about this and possibly also real deadlocks... Anyway, I'll send a patch to
-make fprop_new_period() irq safe.
+Convert the pidfs inode-to-pid mapping from an rb-tree with seqcount
+protection to an rhashtable. This removes the global pidmap_lock
+contention from pidfs_ino_get_pid() lookups and allows the hashtable
+insert to happen outside the pidmap_lock.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+pidfs_add_pid() is split. pidfs_prepare_pid() allocates inode number and
+initializes pid fields and is called inside pidmap_lock. pidfs_add_pid()
+inserts pid into rhashtable and is called outside pidmap_lock. Insertion
+into the rhashtable can fail and memory allocation may happen so we need
+to drop the spinlock.
+
+To guard against accidently opening an already reaped task
+pidfs_ino_get_pid() uses additional checks beyond pid_vnr(). If
+pid->attr is PIDFS_PID_DEAD or NULL the pid either never had a pidfd or
+it already went through pidfs_exit() aka the process as already reaped.
+If pid->attr is valid check PIDFS_ATTR_BIT_EXIT to figure out whether
+the task has exited.
+
+This slightly changes visibility semantics: pidfd creation is denied
+after pidfs_exit() runs, which is just before the pid number is removed
+from the via free_pid(). That should not be an issue though.
+
+Link: https://lore.kernel.org/20251206131955.780557-1-mjguzik@gmail.com [1]
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v2:
+- Ensure that pid is removed before call_rcu() from pidfs.
+- Don't drop and reacquire spinlock.
+- Link to v1: https://patch.msgid.link/20260119-work-pidfs-rhashtable-v1-1-159c7700300a@kernel.org
+---
+ fs/pidfs.c            | 81 +++++++++++++++++++++------------------------------
+ include/linux/pid.h   |  4 +--
+ include/linux/pidfs.h |  3 +-
+ kernel/pid.c          | 13 ++++++---
+ 4 files changed, 46 insertions(+), 55 deletions(-)
+
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index dba703d4ce4a..ee0e36dd29d2 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -21,6 +21,7 @@
+ #include <linux/utsname.h>
+ #include <net/net_namespace.h>
+ #include <linux/coredump.h>
++#include <linux/rhashtable.h>
+ #include <linux/xattr.h>
+ 
+ #include "internal.h"
+@@ -55,7 +56,14 @@ struct pidfs_attr {
+ 	__u32 coredump_signal;
+ };
+ 
+-static struct rb_root pidfs_ino_tree = RB_ROOT;
++static struct rhashtable pidfs_ino_ht;
++
++static const struct rhashtable_params pidfs_ino_ht_params = {
++	.key_offset		= offsetof(struct pid, ino),
++	.key_len		= sizeof(u64),
++	.head_offset		= offsetof(struct pid, pidfs_hash),
++	.automatic_shrinking	= true,
++};
+ 
+ #if BITS_PER_LONG == 32
+ static inline unsigned long pidfs_ino(u64 ino)
+@@ -84,21 +92,11 @@ static inline u32 pidfs_gen(u64 ino)
+ }
+ #endif
+ 
+-static int pidfs_ino_cmp(struct rb_node *a, const struct rb_node *b)
+-{
+-	struct pid *pid_a = rb_entry(a, struct pid, pidfs_node);
+-	struct pid *pid_b = rb_entry(b, struct pid, pidfs_node);
+-	u64 pid_ino_a = pid_a->ino;
+-	u64 pid_ino_b = pid_b->ino;
+-
+-	if (pid_ino_a < pid_ino_b)
+-		return -1;
+-	if (pid_ino_a > pid_ino_b)
+-		return 1;
+-	return 0;
+-}
+-
+-void pidfs_add_pid(struct pid *pid)
++/*
++ * Allocate inode number and initialize pidfs fields.
++ * Called with pidmap_lock held.
++ */
++void pidfs_prepare_pid(struct pid *pid)
+ {
+ 	static u64 pidfs_ino_nr = 2;
+ 
+@@ -131,20 +129,22 @@ void pidfs_add_pid(struct pid *pid)
+ 		pidfs_ino_nr += 2;
+ 
+ 	pid->ino = pidfs_ino_nr;
++	pid->pidfs_hash.next = NULL;
+ 	pid->stashed = NULL;
+ 	pid->attr = NULL;
+ 	pidfs_ino_nr++;
++}
+ 
+-	write_seqcount_begin(&pidmap_lock_seq);
+-	rb_find_add_rcu(&pid->pidfs_node, &pidfs_ino_tree, pidfs_ino_cmp);
+-	write_seqcount_end(&pidmap_lock_seq);
++int pidfs_add_pid(struct pid *pid)
++{
++	return rhashtable_insert_fast(&pidfs_ino_ht, &pid->pidfs_hash,
++				      pidfs_ino_ht_params);
+ }
+ 
+ void pidfs_remove_pid(struct pid *pid)
+ {
+-	write_seqcount_begin(&pidmap_lock_seq);
+-	rb_erase(&pid->pidfs_node, &pidfs_ino_tree);
+-	write_seqcount_end(&pidmap_lock_seq);
++	rhashtable_remove_fast(&pidfs_ino_ht, &pid->pidfs_hash,
++			       pidfs_ino_ht_params);
+ }
+ 
+ void pidfs_free_pid(struct pid *pid)
+@@ -773,42 +773,24 @@ static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+ 	return FILEID_KERNFS;
+ }
+ 
+-static int pidfs_ino_find(const void *key, const struct rb_node *node)
+-{
+-	const u64 pid_ino = *(u64 *)key;
+-	const struct pid *pid = rb_entry(node, struct pid, pidfs_node);
+-
+-	if (pid_ino < pid->ino)
+-		return -1;
+-	if (pid_ino > pid->ino)
+-		return 1;
+-	return 0;
+-}
+-
+ /* Find a struct pid based on the inode number. */
+ static struct pid *pidfs_ino_get_pid(u64 ino)
+ {
+ 	struct pid *pid;
+-	struct rb_node *node;
+-	unsigned int seq;
++	struct pidfs_attr *attr;
+ 
+ 	guard(rcu)();
+-	do {
+-		seq = read_seqcount_begin(&pidmap_lock_seq);
+-		node = rb_find_rcu(&ino, &pidfs_ino_tree, pidfs_ino_find);
+-		if (node)
+-			break;
+-	} while (read_seqcount_retry(&pidmap_lock_seq, seq));
+-
+-	if (!node)
++	pid = rhashtable_lookup(&pidfs_ino_ht, &ino, pidfs_ino_ht_params);
++	if (!pid)
++		return NULL;
++	attr = READ_ONCE(pid->attr);
++	if (IS_ERR_OR_NULL(attr))
++		return NULL;
++	if (test_bit(PIDFS_ATTR_BIT_EXIT, &attr->attr_mask))
+ 		return NULL;
+-
+-	pid = rb_entry(node, struct pid, pidfs_node);
+-
+ 	/* Within our pid namespace hierarchy? */
+ 	if (pid_vnr(pid) == 0)
+ 		return NULL;
+-
+ 	return get_pid(pid);
+ }
+ 
+@@ -1086,6 +1068,9 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
+ 
+ void __init pidfs_init(void)
+ {
++	if (rhashtable_init(&pidfs_ino_ht, &pidfs_ino_ht_params))
++		panic("Failed to initialize pidfs hashtable");
++
+ 	pidfs_attr_cachep = kmem_cache_create("pidfs_attr_cache", sizeof(struct pidfs_attr), 0,
+ 					 (SLAB_HWCACHE_ALIGN | SLAB_RECLAIM_ACCOUNT |
+ 					  SLAB_ACCOUNT | SLAB_PANIC), NULL);
+diff --git a/include/linux/pid.h b/include/linux/pid.h
+index 003a1027d219..ce9b5cb7560b 100644
+--- a/include/linux/pid.h
++++ b/include/linux/pid.h
+@@ -6,6 +6,7 @@
+ #include <linux/rculist.h>
+ #include <linux/rcupdate.h>
+ #include <linux/refcount.h>
++#include <linux/rhashtable-types.h>
+ #include <linux/sched.h>
+ #include <linux/wait.h>
+ 
+@@ -60,7 +61,7 @@ struct pid {
+ 	spinlock_t lock;
+ 	struct {
+ 		u64 ino;
+-		struct rb_node pidfs_node;
++		struct rhash_head pidfs_hash;
+ 		struct dentry *stashed;
+ 		struct pidfs_attr *attr;
+ 	};
+@@ -73,7 +74,6 @@ struct pid {
+ 	struct upid numbers[];
+ };
+ 
+-extern seqcount_spinlock_t pidmap_lock_seq;
+ extern struct pid init_struct_pid;
+ 
+ struct file;
+diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
+index 3e08c33da2df..416bdff4d6ce 100644
+--- a/include/linux/pidfs.h
++++ b/include/linux/pidfs.h
+@@ -6,7 +6,8 @@ struct coredump_params;
+ 
+ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
+ void __init pidfs_init(void);
+-void pidfs_add_pid(struct pid *pid);
++void pidfs_prepare_pid(struct pid *pid);
++int pidfs_add_pid(struct pid *pid);
+ void pidfs_remove_pid(struct pid *pid);
+ void pidfs_exit(struct task_struct *tsk);
+ #ifdef CONFIG_COREDUMP
+diff --git a/kernel/pid.c b/kernel/pid.c
+index ad4400a9f15f..6077da774652 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -43,7 +43,6 @@
+ #include <linux/sched/task.h>
+ #include <linux/idr.h>
+ #include <linux/pidfs.h>
+-#include <linux/seqlock.h>
+ #include <net/sock.h>
+ #include <uapi/linux/pidfd.h>
+ 
+@@ -85,7 +84,6 @@ struct pid_namespace init_pid_ns = {
+ EXPORT_SYMBOL_GPL(init_pid_ns);
+ 
+ static  __cacheline_aligned_in_smp DEFINE_SPINLOCK(pidmap_lock);
+-seqcount_spinlock_t pidmap_lock_seq = SEQCNT_SPINLOCK_ZERO(pidmap_lock_seq, &pidmap_lock);
+ 
+ void put_pid(struct pid *pid)
+ {
+@@ -141,9 +139,9 @@ void free_pid(struct pid *pid)
+ 
+ 		idr_remove(&ns->idr, upid->nr);
+ 	}
+-	pidfs_remove_pid(pid);
+ 	spin_unlock(&pidmap_lock);
+ 
++	pidfs_remove_pid(pid);
+ 	call_rcu(&pid->rcu, delayed_put_pid);
+ }
+ 
+@@ -315,7 +313,8 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *arg_set_tid,
+ 	retval = -ENOMEM;
+ 	if (unlikely(!(ns->pid_allocated & PIDNS_ADDING)))
+ 		goto out_free;
+-	pidfs_add_pid(pid);
++	pidfs_prepare_pid(pid);
++
+ 	for (upid = pid->numbers + ns->level; upid >= pid->numbers; --upid) {
+ 		/* Make the PID visible to find_pid_ns. */
+ 		idr_replace(&upid->ns->idr, pid, upid->nr);
+@@ -325,6 +324,12 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *arg_set_tid,
+ 	idr_preload_end();
+ 	ns_ref_active_get(ns);
+ 
++	retval = pidfs_add_pid(pid);
++	if (unlikely(retval)) {
++		free_pid(pid);
++		pid = ERR_PTR(-ENOMEM);
++	}
++
+ 	return pid;
+ 
+ out_free:
+
+---
+base-commit: f54c7e54d2de2d7b58aa54604218a6fc00bb2e77
+change-id: 20260119-work-pidfs-rhashtable-9d14071bd77a
+
 
