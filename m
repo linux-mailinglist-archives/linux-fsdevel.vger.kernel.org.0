@@ -1,161 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-74687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uMScDiqvb2lBGgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 17:36:58 +0100
+	id 2IA3FX3Hb2mgMQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 19:20:45 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D112B47B65
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 17:36:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD34F49572
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 19:20:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 06F28804E8D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 16:03:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D1EE156D84B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 16:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8EFD43C05E;
-	Tue, 20 Jan 2026 15:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1113318EE1;
+	Tue, 20 Jan 2026 15:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7OV7Cq0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPlXKkYF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C193E436374
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 15:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768923819; cv=pass; b=XxfDzIhxoJdK585WD4cL1r4YR/OHdp7nh+fiUrpE/ig0u/d7ZdBHkf+6ElX154VkOmT8WaupddqHH+9AKB04iGEa5RAuhdqwqpGAiLvsur/JRZOuwcXK1+aPc1CU45SNC7b1gbzHzaRAUmuc2WFNG6b37v8OcAVEGkyvbq46JeQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768923819; c=relaxed/simple;
-	bh=TNuwznjYBwdyNdNPVK+an91iow43835amtDXjy/8naY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WffFbJ0iPlQgVglsOGWu4FsKuc7YDQUbk28O3aeCGPBdK+8hW1/blK7Iizf+2motKLkK05WI3rQcm6gppPc2/dAPeHG9ldVxG8wqQUsAvf+MzW0ugbop57XKjK3kyVg9RCwdFFBK/+t1OJQJSR3NrX6YEXQDmCAJbLl4a/5otjM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L7OV7Cq0; arc=pass smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b87124c6295so762790966b.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 07:43:37 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1768923816; cv=none;
-        d=google.com; s=arc-20240605;
-        b=dwxySkdNWmauUWVSuBlpjwYNi7JA6ruGmxP36a89M73JyrsfoZwP2WomO1ezKTTFTk
-         TgMYxgsoxfqZhmfe+58sF2mBh6L22Vy5oCJEbIEm1rNE5JnkBbEBrqq6L7Tl7TyFbqLt
-         X8//ZgVX83cJZutPxLI4BQaslmdN2Os7FmJCf7tsmJENmCpkGuKHFW44PkazdWC+eSWY
-         anrcCvypMH5+vJwOLq0allTo7l7daBFHqPF7B+CKKqvwhwoYHe5eHNRwK/nc8mCPtloW
-         mFoQryr41cG7A5lwXJybfN3AwDp6y0gpG7YwqdgV/blkR0t8oZ8WG8KdJ7RpjTE1ZPTl
-         Y5pA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=TNuwznjYBwdyNdNPVK+an91iow43835amtDXjy/8naY=;
-        fh=0U0878Fl8/fFdIont3iCxsjY3tfSQBQQNoyEcwyuxAk=;
-        b=Z6EKqxv5IEaD9XFrBlv1fPeWJjfR0sdqOIj+sNmqXh4l0zVCIRlLjFgXXwK+SzNFZZ
-         LWSs8hr8Z65XSNKR3gP5fcnR9C+pVMkBdFDfP2+JhxiSQ+Guy5EHv7slpiR0kR5PFK9W
-         fRbYSatPXwtnqjz/GKV/sdqHHiLuAVwfRb88q4NLbS66LeVHevROgXoLjCmHb7J/6IN0
-         pIwixf+/pT05w6WnXahsnMVR8vxVM4dxncrp+lTGYvoHEOTECwVgdzVCSvXm+UcL2x2g
-         Htx9fKNPMf3jlIwOf3dr954wrAE2uAhvfAYfWnqiqlWCMNDrTaqZCigtOUBcYb9WDhmB
-         AqSA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768923816; x=1769528616; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TNuwznjYBwdyNdNPVK+an91iow43835amtDXjy/8naY=;
-        b=L7OV7Cq0EZIOseMkmGQUhAUUoQSk+tIKaxPHM4n0xUB29Xxeru+gazGaVon8BJaht2
-         hC2i9bv5us3x5xDE7sxsUOW3t+hZ9OvrRW0Wp1gum6ywkaDtpCEjqcJv1JexetvxCn0d
-         jJPStoDmYQeIqpql2rSg/9f/LXPuVyV96AMKWxXFt01pjBA1lnu4zIsa64LXhBBPInW0
-         xTJgGvC7vblSuvtxzQXIADleu7Ma2GzE5VGVPA2kYOa0iv4Baj/nwjlkCVLvDhyKi5H9
-         wbK9WcQxN3eCPOP5GAxMpUd6uwXQT1GrYBfC02wmwAF4R8tEgDAmfg9X8K0cWhuWzPbB
-         b8AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768923816; x=1769528616;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TNuwznjYBwdyNdNPVK+an91iow43835amtDXjy/8naY=;
-        b=byAayMuVElc8qcpDdjBXSihrnDM0YvfSo3Ze/nQHZUG/JNfDy5DAb0HSwlPYmFmZ+Z
-         h8NYuottL1BmzG00fAcOBCW+EA7jZDok09eJ7khs/8N+tnvjVdf72BDpudBvEzkDihke
-         9YE5AK09tcEXlBtGGo/PWtUYDKLJ3mxzR72SbdKFTC+eqiZiuACUjfikXkxpedirtNvi
-         zhf4CndO6L5LQNq6IcLQTT4xqx2htnYNe+A75E6Y8cFTDE1h5UI8jcIh19HAWAOosXpt
-         WKWuIYDMD30QuqcQIWw8qeW/8WpMcPBZuBjb0JxcCv+OMnnZxd0qSpTTyc0nyndowG8m
-         bgvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDe2EMXcok9SjQvxRloZMLr+QY9hT93XQO+s9sQ9HO0lxFnX+bCAciSOsJtT754GIgh9heXozKKsZoGoio@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRrdRQWXG38Au1bp9+ySPn5jzpIJS2L+K5BeWVN/XQ6UOwuQ0l
-	FhXSQRVWgj2hpzmkVNGa3nbhHwiOWTGXuEIs23ETaF1PeP14d7QuqU3jCSDW0S5xfe5qkaFqqpj
-	7oAodZSAFXdTmvTi3Y8Jou+f0KnQMM/Q=
-X-Gm-Gg: AZuq6aKukjZDIZ6nI6aC1aJSiw87dY5au/7mYQah5RT6GGPxCAFgHckuekZKGuMpAfq
-	ylMrR5wIfWz0arPbtjTUPcEq0tWSVFxA+m4NWyhkfEXBoAYyddddot1FwOXo4Yp9iZVZERRvwDk
-	GBOOdLrK6vhLTxELVbjB6+dvuw1RSdPtrRp/eVjLDXW1OlOlIc3kd9Yqhb1djpr2zFsrNc1h/sr
-	bfRdhNKPxtWYce61eLRyQOaooCtWPV/MdUPbFPVoHWkqTqq4F2msI1lb7bkM8XAjkupFjxbJjSC
-	g/SurhgksS+H331dSFBaY1vgGHs=
-X-Received: by 2002:a17:907:7b9a:b0:b87:115:a724 with SMTP id
- a640c23a62f3a-b879324398bmr1338776566b.34.1768923815697; Tue, 20 Jan 2026
- 07:43:35 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4627D318EC2;
+	Tue, 20 Jan 2026 15:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768924689; cv=none; b=ZCx+m8qI9LTFyEN/DHWjqJ0sZ742aWTtwYOb+JaJAoNe7+WLtZZy/iQUV9LAX77tYr5fhu/QxK6q6zyUN0qAYGoRcoZ4MwYeEbq03WA5sJ/kLikz61V41OXlRfT/nUJ0O7gfHZxUgU19iJiY9xISY6Rt0gZk4xQrccLW2G275nw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768924689; c=relaxed/simple;
+	bh=AhstODG38bdyDyLiCc8mj/cuBgvBpuc6n6lZANC27Sw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pStXJ/XFf3vUkNsOkhDb8xvO67t22KWfH9xOEZXe6DYXy/u6EHgdWblpnHHVAB2uLYopVnkppGhntYkrOXDgfMXCFucJjsTs6/1McTBVMLN26LHymnr8hOGPQIjs0327Mbv6ge2GwpKY0X6fm2nyibyo5u4fIsOTRCZaqRclVZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPlXKkYF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F13DC16AAE;
+	Tue, 20 Jan 2026 15:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768924689;
+	bh=AhstODG38bdyDyLiCc8mj/cuBgvBpuc6n6lZANC27Sw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mPlXKkYF4Emk7naxVuwIZ7j/DKi2pRUrP0dFkD3gf/WIoKGcLHfFO/mS+fx5wD/P1
+	 8KzeyYzjMbHtU7yG5du3wlVZBlydtD2vOSCkfsuPacOB3sm2zDhNZ0ehP3uQawXH/4
+	 KLCyQ9j6VHJQJ4B/BvjB+QMnhgKLpH4I9g5LTolB5+iQRBJBGemcGEmsCAjVCQcW4l
+	 INx/2o9fW2XDz5QmFDOWAiHZ1kI80Zq0Pm4MLkH2TI1BU7p/SdlKANfjPpFbEilmtj
+	 8mEX+PjZ9VvaFNKOEDY1DZ6peNuhCzrgpuWMHGP1BMm1hLJeuU3T06N3JJ90GX+DQn
+	 EDM4uX4gqLU3g==
+Date: Tue, 20 Jan 2026 16:58:06 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] man/man2const/F_[SG]ETDELEG.2const, man/man2/fcntl.2:
+ Document F_SETDELEG and F_GETDELEG
+Message-ID: <aW-k3ml5kwHnLkM7@devuan>
+References: <20260114-master-v2-0-719f5b47dfe2@kernel.org>
+ <5b283a25dbe2ab9ed78719c132885d9d3157f2bb.1768750908.git.alx@kernel.org>
+ <a0916b361406fa52771cf3dd507521fa1cc31d7c.camel@kernel.org>
+ <aW-awBnQ6RU8o19b@devuan>
+ <1fa92006626f975663c53d903d363e260c0c7ae1.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260120-work-pidfs-rhashtable-v2-1-d593c4d0f576@kernel.org>
-In-Reply-To: <20260120-work-pidfs-rhashtable-v2-1-d593c4d0f576@kernel.org>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 20 Jan 2026 16:43:23 +0100
-X-Gm-Features: AZwV_QhuW3Imd9gW4DvPyCgMoHO_4lsh_rTPkooqGBlVpaWOz0bA6GKNfxlNkS4
-Message-ID: <CAGudoHFuhbkJ+8iA92LYPmphBboJB7sxxC2L7A8OtBXA22UXzA@mail.gmail.com>
-Subject: Re: [PATCH RFC v2] pidfs: convert rb-tree to rhashtable
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spamd-Result: default: False [-1.96 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xry7a2t2pjbffvny"
+Content-Disposition: inline
+In-Reply-To: <1fa92006626f975663c53d903d363e260c0c7ae1.camel@kernel.org>
+X-Spamd-Result: default: False [-3.56 / 15.00];
+	SIGNED_PGP(-2.00)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
-	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-74688-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74687-lists,linux-fsdevel=lfdr.de];
+	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	RCVD_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[mjguzik@gmail.com,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[4];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
+	FROM_NEQ_ENVFROM(0.00)[alx@kernel.org,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,mail.gmail.com:mid]
-X-Rspamd-Queue-Id: D112B47B65
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,alejandro-colomar.es:url]
+X-Rspamd-Queue-Id: AD34F49572
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue, Jan 20, 2026 at 3:52=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> Mateusz reported performance penalties [1] during task creation because
-> pidfs uses pidmap_lock to add elements into the rbtree. Switch to an
-> rhashtable to have separate fine-grained locking and to decouple from
-> pidmap_lock moving all heavy manipulations outside of it.
->
 
-FYI I have a WIP patch to address the cgroup problem. With that thing
-in place the pidmap lock is back at the top of the profile, finally
-followed by tasklist_lock.
+--xry7a2t2pjbffvny
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] man/man2const/F_[SG]ETDELEG.2const, man/man2/fcntl.2:
+ Document F_SETDELEG and F_GETDELEG
+Message-ID: <aW-k3ml5kwHnLkM7@devuan>
+References: <20260114-master-v2-0-719f5b47dfe2@kernel.org>
+ <5b283a25dbe2ab9ed78719c132885d9d3157f2bb.1768750908.git.alx@kernel.org>
+ <a0916b361406fa52771cf3dd507521fa1cc31d7c.camel@kernel.org>
+ <aW-awBnQ6RU8o19b@devuan>
+ <1fa92006626f975663c53d903d363e260c0c7ae1.camel@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1fa92006626f975663c53d903d363e260c0c7ae1.camel@kernel.org>
 
-After I sort that out, with pidmap lock back on top I'll implement the
-lockless allocation scheme.
+Hi Jeff,
+
+On Tue, Jan 20, 2026 at 10:30:00AM -0500, Jeff Layton wrote:
+> > > > +.SH NOTES
+> > > > +Delegations were designed to implement NFSv4 delegations for the L=
+inux NFS server.
+> >=20
+> > Do we have a link to the NFSv4 specification of delegations?  It could
+> > be useful, I think.  What do you think?
+> >=20
+> > [...]
+> >=20
+>=20
+> RFC8881 is the NFSv4.1 spec, and that's what defines them. The
+> description is spread out all over the document however. Section 10.2
+> probably has the best basic description. It's not exactly succinct
+> though.
+
+Ahh, ok.  Then I guess I'll say
+
+	... to implement NFSv4 (RFC 8881) delegations ...
+
+That should be enough for the reader to know where to find the spec if
+needed.
+
+
+I'll tweak that and push this evening.  Thank you!
+
+
+Cheers,
+Alex
+
+--=20
+<https://www.alejandro-colomar.es>
+
+--xry7a2t2pjbffvny
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmlvpggACgkQ64mZXMKQ
+wqnPrQ/9EOnzvGm6dHjOnyISGp5igEK3khcvn+WbxaeuRT7xwEfWRm9eahgMzspz
+l45UZ55Jm89exrpetnGLfDpXIk5eHtT4OupuHbH/d24YX26M56KHlrPNO2vjK6i4
+YUnTIhxFBL7cp3/ZrM7I8LSZXLpIlf1Fd4SKds4aGT6GVFSkcpA9CTgp44/pPod3
+q6Z/xKYbYUPboRiIfvhhKthTDynW9QapHJ34n0QBq9Pqwjpk4rmvw6NHkbkj0x2m
+But80kObHcm3vHjEPSqZWZX1Qi1Rm9NubpT5wNxUzMWsq9srAWPxpKfrzbw2yEYk
+z//TtraSGWeAnAncUNKfJAoBCbAkTy/etxGKUWUTd0+nyCHjx5fstM4THdVGEVRY
+ZiMwtHPqaivnDjSnbYL9naft61zLP1CIaRy3QiVAkZTmlyv681SNJBaEeuJvFnVa
+G3klmVVqjVyQq4VAhGC7qI8CvI5LsyZv+MSQ5BW96RsjkdkTyVXQa4PjlPaFU3/Y
+IHks4FvX3041giqK9PAhSJ10xuKEQUGKp/t/iJUjFWp5x7320CEadLpaKI3cDh8a
+bjZbSpxCB1KJRnZhuQ25nrS+G4IbbbBJrqjxiAUKk202ac6IE/UYEQQtH452d2UT
+HpUdAke5npw5V5IoHsMw8poxdhDKiOx7sK36o5AhEaRkmblu3Gk=
+=pTpc
+-----END PGP SIGNATURE-----
+
+--xry7a2t2pjbffvny--
 
