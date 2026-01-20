@@ -1,100 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-74689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kA27BqK8b2kOMQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:34:26 +0100
+	id kF0wFFC7b2kOMQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:28:48 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72BF048A46
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:34:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1C4848918
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:28:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 919335AD845
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 16:18:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F04E264C349
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 16:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B138947A0DE;
-	Tue, 20 Jan 2026 16:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DAC3358B7;
+	Tue, 20 Jan 2026 16:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kR9gOAj5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hcwcLU9t"
+	dkim=pass (2048-bit key) header.d=owlfolio.org header.i=@owlfolio.org header.b="dWMSNTMu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UIqcMaTq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A391A311967;
-	Tue, 20 Jan 2026 16:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2363358B5;
+	Tue, 20 Jan 2026 16:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768924863; cv=none; b=Q+RZoKlKpLAyLu1OCCPzY9wIebDUfBNoU2xBQkxunQjlJ5OlrgMPOP9bAzd5lfGbXvusOqfq9454kzeOcid+tAGC4KevDG+yuvz1ireb7Fw1Ht9/RmbEu1XEU8bSiK/iuDbsjGua4787xrpvnE3GjQ44IsQuVshFHDskFTCUeU4=
+	t=1768925740; cv=none; b=rQxk+Lq5gdTPhbQJnIpvYtgihPVgJBS3Oz7gzs0RnwyQanSqBTjBIsyf9U8Bi3OdbrgFQU0ZfBJFPx0ULBKll5fDBScb0VSH+bdDrBswlMgD7bTP6Yp5j0jJcwEFsby/t+TBbVUR2t/E+TJJzdzyBcZPJhmUliPV84RKgBIUHzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768924863; c=relaxed/simple;
-	bh=XntaNhMOb3ljN0OUod4vqOUNi4wPltdCRFCEO3POz5k=;
+	s=arc-20240116; t=1768925740; c=relaxed/simple;
+	bh=0qTFGHTWPQ23b0mBSiFZ940V3ZP2w0PXN6e0fjrDBZQ=;
 	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=hTrzCie9REUOI6UPUmBxZfotDQie3fsip/O4uWuch5OxX6GI+kx86BL2A21d3VSeYtrpApkEGKTSz4mQ2HMixFStK9mEu/hvCVJzqTEcGdnpNmHtUxnhAIQKIwYLv2h9cTaOehuht6pIH8dEqcPr/L9ShjPgGwaReaTMR+Pl6gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=kR9gOAj5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hcwcLU9t; arc=none smtp.client-ip=202.12.124.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id A7CFA13012B5;
-	Tue, 20 Jan 2026 11:00:57 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Tue, 20 Jan 2026 11:00:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
+	 Subject:Content-Type; b=o61ymgzn1BSwmBJwmcthhgPlqAE4r5rkk3rSpSn4CNsBvEd5Ppy96qjqvySCSD5HzmwWughd+VUZWf4RTGDpiIgzAUkKTKUyWZS7UT9bX4hSspI/RY6fKy9L3TSWHtTJc6J/D0M954zBRGPzLhaPzmsXrrmXnu8pmxBFRaORRYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=owlfolio.org; spf=pass smtp.mailfrom=owlfolio.org; dkim=pass (2048-bit key) header.d=owlfolio.org header.i=@owlfolio.org header.b=dWMSNTMu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UIqcMaTq; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=owlfolio.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=owlfolio.org
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id AE0981400082;
+	Tue, 20 Jan 2026 11:15:36 -0500 (EST)
+Received: from phl-imap-14 ([10.202.2.87])
+  by phl-compute-01.internal (MEProxy); Tue, 20 Jan 2026 11:15:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=owlfolio.org; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1768924857;
-	 x=1768932057; bh=KfkVnVcFie+8lJSMwr+BM1cQg1+WZ1F7itYYKxiYDxA=; b=
-	kR9gOAj5pXn1HlvyIPf1Dn2UnaJAS+jRzIAsaR2XzWmwVU3duRgbE0mh5JHntjXj
-	cuWYepTHKUWzhsOhC73++QR5yvZK4X1S2AwaIcjIrwElOhOnB7qBma9Rt3sk4wEp
-	WApUxciyhayGX/RZcK8fKFz6xIdI+xP0DrR1lTAATkjc8XoS7YDkMHYuYZCNVtBX
-	4oGFoRnhTrXR+Av/H+nXr31W99ztPY8wV3R2x29p9i/J68icSSg69RfuDb4y8YAC
-	s4LhKb2VHYYXAgITpUrU4ktCyPGwkOI9lIgNBoXcky3A3mVVfmLH/JHxew6hI9Hi
-	veL08yMhuZP0sXK/DL5Ezw==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1768925736;
+	 x=1769012136; bh=GU1drl9GZahcBOIBWcTf4xeUqRMoqHT4H9pPPAY3MqU=; b=
+	dWMSNTMuwE0WMBjsh8PYgzdEciRp8tbPUb4o1pM1HcsRJK4yeI7cK8giygoFb8bf
+	vyeL8CM4uRcY7rxtuR/jyJJr46aS5oLjRPOqcYiiKRmUroNE5IJQMvHY34liiMV1
+	Z9ESB14fyK6U/USFITQI6CjfsVG5YteSWSKR7F5/scRXANvLHuKHSdLNdkTeP8SO
+	H2Il7CpczUBxzZPdZSzBjuJFobwCfM8NygPOeHBcNUQP/nELNjXPuXUc83ozrPKu
+	5M9NgVx21OLo1CR7w0ucwzMO1T4aphond4T2gyANcLYkPWkW8nGTZeKo/Krz9ngH
+	QkDFUQ72OscZPDFtszemFg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1768924857; x=
-	1768932057; bh=KfkVnVcFie+8lJSMwr+BM1cQg1+WZ1F7itYYKxiYDxA=; b=h
-	cwcLU9t2Na5NvYNY+HqrNgOlIOAEx2zdTmluSgjajfn4eJ5F+JIB4BRW8ErmbMJb
-	5ljggxqqdQPdg2SZtb56c1NTdnpBu5weRDSXaiQR+Mg0Ub9iThiAQ79EUDX9yysa
-	If4/Knasx1iPLLZBRyvYpz8FhOYnlESn3fgeQPRrN8KMwKv6jSRpu0DLxO2sSNsb
-	R4TQnDC+MhnR+ow7ZS/sYxRoTgI4V6asIPb1zuVNFs2Fc8BB9RtG2146jooAzX5l
-	vcbjXpebeDkjFdxXkF3/V9TJ8Omw44E5cSge6Qts1idwHBYUlshPhSE1PbPF8M3M
-	EM/yfREYAwG76Llyugm5Q==
-X-ME-Sender: <xms:tqZvabeGsRgVUmYbJYubbEJsMblBOKkMPVUcZJSAcArtFN7R0_JmeQ>
-    <xme:tqZvacCZ4cB2mdxuaWLwjQTUSZDxD3Bf1wqfkWuap9G_bNa-8cI9R9Kjk_UIAoevp
-    8e2nWPX3vkW-eL_zNn3-aozty1UyyBCIwgt3SJui6DtRU08gGv2zDs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddugedtkeefucetufdoteggodetrf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1768925736; x=
+	1769012136; bh=GU1drl9GZahcBOIBWcTf4xeUqRMoqHT4H9pPPAY3MqU=; b=U
+	IqcMaTq/hG8YFVYFlU+GgkrZTiJw3/AvMzF22fKvwNJuDHFiCx9m/KteYSq1w1S8
+	Yj6p4s44BoTGiZi4haekQvdsLef9Ljnk/npTFn+YleIGgykXyNwdwu0qcjJBKqq/
+	z6MqYgREud3oZ6z4qFcf+LWs8tErDjekSnPcAzT1Guuw6Crv4W/YB/UTkkcLaRP6
+	96sYoyIj9DaLCUrnD7vwUbIqUudD8AIwrlfhovW4u/MDT1Suzo0k5krCbIdOLIyj
+	7Lr/iuNzhUSat3zjpbvaYJ5l9dI77S+zI6EqLumdMFiLEAstRHp4f0t7qpzVl4ky
+	MO2zCJ5fEpHmOgAu+J6qw==
+X-ME-Sender: <xms:J6pvaUi8iI6FkdtW8_53fE4jpXW6V4EfE2Pj2EeY7Jqxa5x-SnyN4w>
+    <xme:J6pvaX2uT2ceM7qMKXGz3zihge653gdENXiVXSX6ZI8q6bh5O9Y3S47uHjo-BJ4iC
+    dr1XlDUd0d2gXhZk4UdSOhKrm8r1XgtVOCx7lDNX-jb8LGigm44Xxc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddugedtkeeiucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepgeefpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehjrghnihdrnhhikhhulhgrsehlihhnuhigrdhinhhtvghlrdgtoh
-    hmpdhrtghpthhtohepjhhoohhnrghsrdhlrghhthhinhgvnheslhhinhhugidrihhnthgv
-    lhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuh
-    igrdhinhhtvghlrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhn
-    uggrthhiohhnrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfh
-    hrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhs
-    thhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepnhhtfhhsfeeslhhish
-    htshdrlhhinhhugidruggvvhdprhgtphhtthhopehnvhguihhmmheslhhishhtshdrlhhi
-    nhhugidruggvvhdprhgtphhtthhopeguvghvvghlsehlihhsthhsrdhorhgrnhhgvghfsh
-    drohhrgh
-X-ME-Proxy: <xmx:tqZvaWR4-8YE2KZu1y5jvyNQljKoCBlYcV9QkUPtn5Ni7W-NSZMsUw>
-    <xmx:tqZvaRktxaBWwwSZcFROAg2TG6_nap3Qro5Wk-tlRgwqau7F5lM2lA>
-    <xmx:tqZvaZLjBCOSgCLQJimLJKR8KCf21qGLd9xPnpeFgrHRnOQFa7r4YA>
-    <xmx:tqZvacVW_XYjP20S7nkpndFaafpNrDdhIyeeUuIH4hGwRfJO4DQR5A>
-    <xmx:uaZvadqcdmsUnvEM9LNX4jzRraMdQCDjpzpx0jFAVDSf99K8t-JGJM_0>
-Feedback-ID: i56a14606:Fastmail
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedfkggrtghk
+    ucghvghinhgsvghrghdfuceoiigrtghksehofihlfhholhhiohdrohhrgheqnecuggftrf
+    grthhtvghrnhepueeugfefleeuteejveejffelteehudegffetveevteeihefgueelveek
+    tdegiefgnecuffhomhgrihhnpegrlhgvjhgrnhgurhhoqdgtohhlohhmrghrrdgvshenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpeiirggtkhes
+    ohiflhhfohhlihhordhorhhgpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopegrlhigsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgr
+    uhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghlihgrsheslhhisggtrd
+    horhhgpdhrtghpthhtoheplhhisggtqdgrlhhphhgrsehsohhurhgtvgifrghrvgdrohhr
+    ghdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehlihhnuhigqd
+    grphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhs
+    uggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhntggvnh
+    htsehvihhntgdujedrnhgvthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhu
+    gidrohhrghdruhhk
+X-ME-Proxy: <xmx:J6pvaQBomNTSWkT63mVXjVisUuNSnxtiHw6wsqwopswD_hqxmXOXqA>
+    <xmx:J6pvaVlJyYLUGx9eOQ1hswSTPJtyzTdUcLUL9rhaeTS0Nxwror-qZw>
+    <xmx:J6pvaeMIxK-JdtVtgM-SmZiNl8WFrqFh0PEPWvfgKW36ZN6PtkPvDw>
+    <xmx:J6pvaS8yutroK14YT86M2PG1AkqonHqotkPuGVdF5lFSKDne4Jy3Hg>
+    <xmx:KKpvaV8zxeJ8L9rn87X-tpEZsoB9VFpuAY8S9Qgbu_gjHWKrTqIWtuFD>
+Feedback-ID: i876146a2:Fastmail
 Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A67DD70006A; Tue, 20 Jan 2026 11:00:54 -0500 (EST)
+	id 9E3A8C4006F; Tue, 20 Jan 2026 11:15:35 -0500 (EST)
 X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -102,146 +101,197 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AWSx1lsrOtaB
-Date: Tue, 20 Jan 2026 17:00:28 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Jason Gunthorpe" <jgg@nvidia.com>
-Cc: "Andrew Morton" <akpm@linux-foundation.org>,
- "Jarkko Sakkinen" <jarkko@kernel.org>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "Thomas Gleixner" <tglx@kernel.org>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Dan Williams" <dan.j.williams@intel.com>,
- "Vishal Verma" <vishal.l.verma@intel.com>,
- "Dave Jiang" <dave.jiang@intel.com>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Dave Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Jani Nikula" <jani.nikula@linux.intel.com>,
- "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
- "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
- "Tvrtko Ursulin" <tursulin@ursulin.net>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "Huang Rui" <ray.huang@amd.com>, "Matthew Auld" <matthew.auld@intel.com>,
- "Matthew Brost" <matthew.brost@intel.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Benjamin LaHaise" <bcrl@kvack.org>, "Gao Xiang" <xiang@kernel.org>,
- "Chao Yu" <chao@kernel.org>, "Yue Hu" <zbestahu@gmail.com>,
- "Jeffle Xu" <jefflexu@linux.alibaba.com>,
- "Sandeep Dhavale" <dhavale@google.com>,
- "Hongbo Li" <lihongbo22@huawei.com>, "Chunhai Guo" <guochunhai@vivo.com>,
- "Theodore Ts'o" <tytso@mit.edu>,
- "Andreas Dilger" <adilger.kernel@dilger.ca>,
- "Muchun Song" <muchun.song@linux.dev>,
- "Oscar Salvador" <osalvador@suse.de>,
- "David Hildenbrand (Red Hat)" <david@kernel.org>,
- "Konstantin Komarov" <almaz.alexandrovich@paragon-software.com>,
- "Mike Marshall" <hubcap@omnibond.com>,
- "Martin Brandenburg" <martin@omnibond.com>,
- "Tony Luck" <tony.luck@intel.com>,
- "Reinette Chatre" <reinette.chatre@intel.com>,
- "Dave Martin" <Dave.Martin@arm.com>, "James Morse" <james.morse@arm.com>,
- "Babu Moger" <babu.moger@amd.com>, "Carlos Maiolino" <cem@kernel.org>,
- "Damien Le Moal" <dlemoal@kernel.org>,
- "Naohiro Aota" <naohiro.aota@wdc.com>,
- "Johannes Thumshirn" <jth@kernel.org>,
- "Matthew Wilcox" <willy@infradead.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, "Mike Rapoport" <rppt@kernel.org>,
- "Suren Baghdasaryan" <surenb@google.com>,
- "Michal Hocko" <mhocko@suse.com>, "Hugh Dickins" <hughd@google.com>,
- "Baolin Wang" <baolin.wang@linux.alibaba.com>, "Zi Yan" <ziy@nvidia.com>,
- "Nico Pache" <npache@redhat.com>, "Ryan Roberts" <ryan.roberts@arm.com>,
- "Dev Jain" <dev.jain@arm.com>, "Barry Song" <baohua@kernel.org>,
- "Lance Yang" <lance.yang@linux.dev>, "Jann Horn" <jannh@google.com>,
- "Pedro Falcato" <pfalcato@suse.de>,
- "David Howells" <dhowells@redhat.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Yury Norov" <yury.norov@gmail.com>,
- "Rasmus Villemoes" <linux@rasmusvillemoes.dk>, linux-sgx@vger.kernel.org,
- linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
- linux-aio@kvack.org, linux-erofs@lists.ozlabs.org,
- linux-ext4@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
- devel@lists.orangefs.org, linux-xfs@vger.kernel.org,
- keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Message-Id: <1617ac60-6261-483d-aeb5-13aba5f477af@app.fastmail.com>
-In-Reply-To: <488a0fd8-5d64-4907-873b-60cefee96979@lucifer.local>
-References: <cover.1768857200.git.lorenzo.stoakes@oracle.com>
- <baac396f309264c6b3ff30465dba0fbd63f8479c.1768857200.git.lorenzo.stoakes@oracle.com>
- <20260119231403.GS1134360@nvidia.com>
- <36abc616-471b-4c7b-82f5-db87f324d708@lucifer.local>
- <20260120133619.GZ1134360@nvidia.com>
- <488a0fd8-5d64-4907-873b-60cefee96979@lucifer.local>
-Subject: Re: [PATCH RESEND 09/12] mm: make vm_area_desc utilise vma_flags_t only
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-0.45 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-ThreadId: ANFeMez8yEXZ
+Date: Tue, 20 Jan 2026 11:15:15 -0500
+From: "Zack Weinberg" <zack@owlfolio.org>
+To: "Alejandro Colomar" <alx@kernel.org>
+Cc: "Rich Felker" <dalias@libc.org>, "Vincent Lefevre" <vincent@vinc17.net>,
+ "Jan Kara" <jack@suse.cz>, "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, "GNU libc development" <libc-alpha@sourceware.org>
+Message-Id: <60c77e5c-dbab-4cca-8d0d-9857875c73fb@app.fastmail.com>
+In-Reply-To: <aW1dE9j91WAte1gf@devuan>
+References: <a5tirrssh3t66q4vpwpgmxgxaumhqukw5nyxd4x6bevh7mtuvy@wtwdsb4oloh4>
+ <efaffc5a404cf104f225c26dbc96e0001cede8f9.1747399542.git.alx@kernel.org>
+ <20250516130547.GV1509@brightrain.aerifal.cx>
+ <20250516143957.GB5388@qaa.vinc17.org>
+ <20250517133251.GY1509@brightrain.aerifal.cx>
+ <5jm7pblkwkhh4frqjptrw4ll4nwncn22ep2v7sli6kz5wxg5ik@pbnj6wfv66af>
+ <8c47e10a-be82-4d5b-a45e-2526f6e95123@app.fastmail.com>
+ <aW1dE9j91WAte1gf@devuan>
+Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from POSIX.1-2024
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spamd-Result: default: False [-1.95 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[arndb.de:s=fm2,messagingengine.com:s=fm2];
+	R_DKIM_ALLOW(-0.20)[owlfolio.org:s=fm1,messagingengine.com:s=fm2];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	XM_UA_NO_VERSION(0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[linux-foundation.org,kernel.org,linux.intel.com,redhat.com,alien8.de,zytor.com,linuxfoundation.org,intel.com,suse.de,gmail.com,ffwll.ch,ursulin.net,amd.com,zeniv.linux.org.uk,suse.cz,kvack.org,linux.alibaba.com,google.com,huawei.com,vivo.com,mit.edu,dilger.ca,linux.dev,paragon-software.com,omnibond.com,arm.com,wdc.com,infradead.org,oracle.com,suse.com,nvidia.com,paul-moore.com,namei.org,hallyn.com,rasmusvillemoes.dk,vger.kernel.org,lists.linux.dev,lists.freedesktop.org,lists.ozlabs.org,lists.orangefs.org];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[arndb.de,none];
-	TAGGED_FROM(0.00)[bounces-74689-lists,linux-fsdevel=lfdr.de];
-	DKIM_TRACE(0.00)[arndb.de:+,messagingengine.com:+];
+	DMARC_POLICY_ALLOW(0.00)[owlfolio.org,quarantine];
+	TAGGED_FROM(0.00)[bounces-74690-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[owlfolio.org:+,messagingengine.com:+];
+	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
 	TO_DN_SOME(0.00)[];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[arnd@arndb.de,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[zack@owlfolio.org,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_COUNT_FIVE(0.00)[6];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_GT_50(0.00)[93];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,arndb.de:dkim,app.fastmail.com:mid,messagingengine.com:dkim]
-X-Rspamd-Queue-Id: 72BF048A46
+	DBL_BLOCKED_OPENRESOLVER(0.00)[alejandro-colomar.es:url,messagingengine.com:dkim,dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,app.fastmail.com:mid,owlfolio.org:dkim]
+X-Rspamd-Queue-Id: B1C4848918
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue, Jan 20, 2026, at 16:10, Lorenzo Stoakes wrote:
-> On Tue, Jan 20, 2026 at 09:36:19AM -0400, Jason Gunthorpe wrote:
+Rich and I have an irreconciliable disagreement on what the semantics of=
+ close
+_should_ be.  I'm not going to do any more work on this until/unless he
+changes his mind.
+
+On Sun, Jan 18, 2026, at 5:23 PM, Alejandro Colomar wrote:
+> Hi Zack and others,
 >
-> I am not sure about this 'idiomatic kernel style' thing either, it feels rather
-> conjured. Yes you wouldn't ordinarily pass something larger than a register size
-> by-value, but here the intent is for it to be inlined anyway right?
+> Just a gentle ping.  It would be nice to have an agreement for some
+> patch.
 >
-> It strikes me that the key optimisation here is the inlining, now if the issue
-> is that ye olde compiler might choose not to inline very small functions (seems
-> unlikely) we could always throw in an __always_inline?
-
-I can think of three specific things going wrong with structures passed
-by value:
-
-- functions that cannot be inlined are bound by the ELF ABI, and
-  several of them require structs to be passed on the stack regardless
-  of the size. Most of the popular architectures seem fine here, but
-  mips and powerpc look like they are affected.
-
-- The larger the struct is, the more architectures are affected.
-  Parts of the amdgpu driver and the bcachefs file system ran into this
-  with 64-bit structures passed by value on 32-bit architectures
-  causing horrible codegen even with inlining. I think it's
-  usually fine up to a single register size.
-
-- clang's inlining algorithm works the other way round from gcc's:
-  inlining into the root caller first and sometimes leaving tiny
-  leaf function out of line unless you add __always_inline.
-
-      Arnd
+>
+> Have a lovely night!
+> Alex
+>
+> On Fri, May 23, 2025 at 02:10:57PM -0400, Zack Weinberg wrote:
+>> Taking everything said in this thread into account, I have attempted =
+to
+>> wordsmith new language for the close(2) manpage.  Please let me know
+>> what you think, and please help me with the bits marked in square
+>> brackets. I can make this into a proper patch for the manpages
+>> when everyone is happy with it.
+>>=20
+>> zw
+>>=20
+>> ---
+>>=20
+>> DESCRIPTION
+>>     ... existing text ...
+>>=20
+>>     close() always succeeds.  That is, after it returns, _fd_ has
+>>     always been disconnected from the open file it formerly referred
+>>     to, and its number can be recycled to refer to some other file.
+>>     Furthermore, if _fd_ was the last reference to the underlying
+>>     open file description, the resources associated with the open file
+>>     description will always have been scheduled to be released.
+>>=20
+>>     However, close may report _delayed errors_ from a previous I/O
+>>     operation.  Therefore, its return value should not be ignored.
+>>=20
+>> RETURN VALUE
+>>     close() returns zero if there are no delayed errors to report,
+>>     or -1 if there _might_ be delayed errors.
+>>=20
+>>     When close() returns -1, check _errno_ to see what the situation
+>>     actually is.  Most, but not all, _errno_ codes indicate a delayed
+>>     I/O error that should be reported to the user.  See ERRORS and
+>>     NOTES for more detail.
+>>=20
+>>     [QUERY: Is it ever possible to get delayed errors on close() from
+>>     a file that was opened with O_RDONLY?  What about a file that was
+>>     opened with O_RDWR but never actually written to?  If people only
+>>     have to worry about delayed errors if the file was actually
+>>     written to, we should say so at this point.
+>>=20
+>>     It would also be good to mention whether it is possible to get a
+>>     delayed error on close() even if a previous call to fsync() or
+>>     fdatasync() succeeded and there haven=E2=80=99t been any more wri=
+tes to
+>>     that file *description* (not necessarily via the fd being closed)
+>>     since.]
+>>=20
+>> ERRORS
+>>     EBADF  _fd_ wasn=E2=80=99t open in the first place, or is outside=
+ the
+>>            valid numeric range for file descriptors.
+>>=20
+>>     EINPROGRESS
+>>     EINTR
+>>            There are no delayed errors to report, but the kernel is
+>>            still doing some clean-up work in the background.  This
+>>            situation should be treated the same as if close() had
+>>            returned zero.  Do not retry the close(), and do not report
+>>            an error to the user.
+>>=20
+>>     EDQUOT
+>>     EFBIG
+>>     EIO
+>>     ENOSPC
+>>            These are the most common errno codes associated with
+>>            delayed I/O errors.  They should be treated as a hard
+>>            failure to write to the file that was formerly associated
+>>            with _fd_, the same as if an earlier write(2) had failed
+>>            with one of these codes.  The file has still been closed!
+>>            Do not retry the close().  But do report an error to the u=
+ser.
+>>=20
+>>     Depending on the underlying file, close() may return other errno
+>>     codes; these should generally also be treated as delayed I/O erro=
+rs.
+>>=20
+>> NOTES
+>>   Dealing with error returns from close()
+>>=20
+>>     As discussed above, close() always closes the file.  Except when
+>>     errno is set to EBADF, EINPROGRESS, or EINTR, an error return from
+>>     close() reports a _delayed I/O error_ from a previous write()
+>>     operation.
+>>=20
+>>     It is vital to report delayed I/O errors to the user; failing to
+>>     check the return value of close() can cause _silent_ loss of data.
+>>     The most common situations where this actually happens involve
+>>     networked filesystems, where, in the name of throughput, write()
+>>     often returns success before the server has actually confirmed a
+>>     successful write.
+>>=20
+>>     However, it is also vital to understand that _no matter what_
+>>     close() returns, and _no matter what_ it sets errno to, when it
+>>     returns, _the file descriptor passed to close() has been closed_,
+>>     and its number is _immediately_ available for reuse by open(2),
+>>     dup(2), etc.  Therefore, one should never retry a close(), not
+>>     even if it set errno to a value that normally indicates the
+>>     operation needs to be retried (e.g. EINTR).  Retrying a close()
+>>     is a serious bug, particularly in a multithreaded program; if
+>>     the file descriptor number has already been reused, _that file_
+>>     will get closed out from under whatever other thread opened it.
+>>=20
+>>     [Possibly something about fsync/fdatasync here?]
+>>=20
+>> BUGS
+>>     Prior to POSIX.1-2024, there was no official guarantee that
+>>     close() would always close the file descriptor, even on error.
+>>     Linux has always closed the file descriptor, even on error,
+>>     but other implementations might not have.
+>>=20
+>>     The only such implementation we have heard of is HP-UX; at least
+>>     some versions of HP-UX=E2=80=99s man page for close() said it sho=
+uld be
+>>     retried if it returned -1 with errno set to EINTR.  (If you know
+>>     exactly which versions of HP-UX are affected, or of any other
+>>     Unix where close() doesn=E2=80=99t always close the file descript=
+or,
+>>     please contact us about it.)
+>>=20
+>>     Portable code should nonetheless never retry a failed close(); the
+>>     consequences of a file descriptor leak are far less dangerous than
+>>     the consequences of closing a file out from under another thread.
+>
+> --=20
+> <https://www.alejandro-colomar.es>
+>
+> Attachments:
+> * signature.asc
 
