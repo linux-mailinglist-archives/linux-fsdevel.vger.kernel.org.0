@@ -1,232 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-74677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iE8ROrHAb2lsMQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:51:45 +0100
+	id aBC5KIW5b2kOMQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74678-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:21:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9572148E00
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:51:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C3224875B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 18:21:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 07E409AB1C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 15:16:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 696F19819FB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 15:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC6143E48B;
-	Tue, 20 Jan 2026 14:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF78828853A;
+	Tue, 20 Jan 2026 15:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+XqgduK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5NDBiUX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5463943DA5F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 14:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768921157; cv=none; b=gcQOj4KVVAKQ/rf4TMl10hVvYW4Whd+d2ftc8jOeMMu87pzdwM3qLDc6cvDI+Mtmn62pz4/oJizH2dF0376Yra7YGGq8tNm/I7dxfFbakWbiMDPaHJY929vRIsLTl9tZHQokAO+VyS8Dr+4S+1P+s54563yJQud89Q/Ka8qJUeg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768921157; c=relaxed/simple;
-	bh=iolTe2Nv6CXObYVORHv7J+SxOaQNUXJvbYUG0yhxQwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SqIG1pvzQAYg/gFKYriXF9eieM6xlg/0lB5Nl9Dvrbu05c3bEcYFnqjmafuQaJxuyTg+kZ+/lbc9mCTv7nNlm2N+a586mzQppIozz7vvvpktQFTMr1O3qf5V0OgIgCm3b8ZCG4C7yiCEMGqfn/wZ2mxdR7fTkaFDVvVkZgrObfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+XqgduK; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AA021D3F5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 15:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768921226; cv=pass; b=X7SlNViOCdb4ZlijJhjsz5iiUg6xmZLdxRohVFBjaRERH7mgScJJd98COxpX054buzTjoUnQ719HaR12tCOsN5/6M9zWJnVqM9VOGIbpO2fT98KN3Or9Oa6ElK8WUM6ER55uJm+qL3uMbJmX2X2wGAVfJD+pe33bC88fZe9Bbvc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768921226; c=relaxed/simple;
+	bh=eCRx2JPQZx3ZvKTps6ymy9n1zPP8OVOc8iEEBj86Fzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m+VR1RkqXQbEWJek1brgF40RuxQ04uVUKe1vij74L0cTWzniqhAjqa2It9sdMPSMrAIHl+25Bn7s9wY62tG3LP0Fmp0rh/mMVoFTTZmzGxUMML9hX2T8UeTmrykUICS+IT0l4biU7g5C520GAIbGfvEbMR/XPeGO/RxErcEVHmc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5NDBiUX; arc=pass smtp.client-ip=209.85.215.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-81f478e5283so4803816b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 06:59:16 -0800 (PST)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-c2dc870e194so2413251a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 07:00:24 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1768921224; cv=none;
+        d=google.com; s=arc-20240605;
+        b=iJt7VS9iIgAeYjSr6zZUOjng8hVcjzvgmtJZ2+ea7iCH68fff0e4xVKopsvfevz2IF
+         TdU7drbaoRCLcSomeynrsJ7zn1V7ajGOGnNPinTa7uOSq8Cars9w4VG1OgMZC9HLr7aP
+         ike3vcnNJE53piqHx+u7JrRWzL+Htb8T0kZe78t51CbMxi7gLok8IQGYcKKSOkz88nnl
+         D3KRouPIDp6hPEygdTTERi4IxkirLqbGIptt7+5OD1O69/N8NKs+Z59PxIs5apglEnAD
+         dM8rTM3WCgb+KnCQfJpTrmzbUO5T8KFwov3Cn2sKQsWlH9uGM4BGDmHSWPSH2+Tacg3z
+         3GBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=ntN0FZOXCuO4g6oSeU/oj/orWdbf+RbpRvRGbr360pw=;
+        fh=JYYWW3g8whfORb/1EuUSHCwp7G/D+Vz+wd6hjLkMK9U=;
+        b=eE6mlqH59qPhxzh3lul360bDuGbK405YnnzVLGqc3hqqAciQiZaka906GczBml/I+U
+         3ROizDV84Ial7eeIiI+fBMWBgarIg03exjhlSDMsKwuL7Z+2c5gYETvhMSuACowiYspM
+         BssN5w7IIHDbUR4h0h8Up8OAuNUxuE03rygp3jlb7wlQdDnnBOum+Ls+zWsNnnlj+HUj
+         Rsg2/WuF2XsIF96Oa2LDbY8r660BgWgwuELRflmQKzIE2K3CmrrBDBDyW9lSp0XEUGOV
+         m4TYjHZy+CqR/hqoTAZuauk/JHUytCqaPsbFYtvkeuv30m/DsjEJt8VFd90TrQnAJqcs
+         xFuA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768921155; x=1769525955; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1768921224; x=1769526024; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eSjlYt7iWy0dHDjMoGOdBEcpp+zSyHhPWpL6L/bevUw=;
-        b=f+XqgduKHxlnwiDk+dX72xMItu+7DmPTjYlluGUWCvvYVOar24hE9536pRxkPGjD94
-         K3Jh1P91PFKxAqAbgDzjSCmO3Raxi7Q0pjle/B5LO0Q/oS3Bc5MFpO+xA7SpBGHS2tGN
-         uU3LDYvPXdsBU5+8dI1BSNnW9jbNEbK56WC1o/RHfOWd6ieaTjAQffKzGb7+nlt4Yc+Z
-         E29YF8mCcArvWQDMqvUri7fFKXd2ffhsP6w0qbycosnM75bj7aS295Xz+h18C0EOk49n
-         jVmUe/00wYdKLaPQbxtMkuSBePXNMODbOGO/rAfIVIDcmZlkBQH5D0gd+4nkZ5mUsJdY
-         ZLTA==
+        bh=ntN0FZOXCuO4g6oSeU/oj/orWdbf+RbpRvRGbr360pw=;
+        b=a5NDBiUX5vtJT8lC3C9aqlC/zrbHGf49Llqi87uGCrJO1f7rdfJmPQJrZ9SsjEiU7E
+         n31NAkFJ/ly2IDC4ESYdia7emawlZRYfltLg40qSNku/wwaVTtPfdXmC57uU8rUQKsHn
+         byiB6FekTYZ4/DnyPq6M3hmLQnmD9pafnryDs3FTg1CSu2RJGw9S0LoVFI26xOPx7qVH
+         qYIFMk3Wj3lfjZkyCQ4rPM8QnyeoSgZs7tloM9cKWhIcqGkP51+m3wL6LkuyOaADJ9mg
+         RzKzKwOq4pciAL8fGDKqTDpkMtFlNbehMi3ObcUGZ2bR0bkuUU8dEEVI/EJ0I68w79cf
+         mlmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768921155; x=1769525955;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1768921224; x=1769526024;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=eSjlYt7iWy0dHDjMoGOdBEcpp+zSyHhPWpL6L/bevUw=;
-        b=suaH4E/G0t2HV/0Izyd21no7OwG5mYaFD+xUbMjIKdjYsf+PRyJWwMuqBvXhFS0WUA
-         WdgVf8Qe/Px8co+c4ofeU+Nz9VCT+GNA19MxaTq5L6fqADxIAFEkRUiPjNG89iN4ygtT
-         4X+iKdpTNNxSehCg/8SBeZWM9skBRFb42o8cCv4+Fw4wGQV652bm5Rq17Wc92r7BX/9l
-         sPDtyzZ3Qn1r7BMR84y0E0LG4TY8LHEmV5kXn4e8dnTEvW8Uc7rGSb+vQyZLy71kCR7r
-         eB+gZT81kLYjRrLfoUWQw66TiKz1gL8I813NinvitF4CJCD/ilpRCfBPWfAfiSAt+6Hq
-         f3LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOAuJn4Qya3kWYrUQ5aU6mgJWkCIlYYLJnDnbeofFT0QZemnecLEUZnwVFHT7doANMAsm8xpjLdFOiUltU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+wHG2AGbLgQmz2mglE0BXm2j3K9ljCyjWCXER39INVTySquSh
-	vObIiu+6Surr5WF+lfOs75Z8IOprzLajWqlVN+j2cRG3Phbm2H+lEDzn
-X-Gm-Gg: AY/fxX7x604+p3z9B3xNg47YOadaLVGjc9tbiEA0OY3KtQI0okGsy/It672YO2JhTIc
-	Lq07dV5HBFkWnDpufjHkWPJCl2RwxOJSeJgcjcDjbAVEwtBXgxJNRurqbhR7rQ4r1FxLbdmQcmB
-	BsFeYBWPLGJ+V1y+MwyZM9SubIn8xzcSGR2Cg6nVwmeE7jwl1G2m+Vej92tSAyxo95t+2a02Rr3
-	onR7lgYbKhVZ1/pftjt71Zb1VWda0AN16DU2s98Uqq3WzgMIDgaUAsknYkLBJ9zfV5wPJ4+EJPL
-	Hjv5QxOOGmpOQRVjj44fZokXnXtWlNjTq5sJBUPNT4j7m/d2sf89Oc3itqcgKcLFHXkYJypW0AX
-	4zzhYzZx0m9WMWfmev2TFBiJ6VGSMUpmKhjTza+eU7/DImSfIZWMI+GoqUO5K53mTitcUUY+mLN
-	8bHrB+3m7g9mA56qKbVA03bPQyv8PZxoAQLeP+tHYiWNYjzoBUSbRq
-X-Received: by 2002:a05:6a20:918d:b0:38d:eeff:7b1e with SMTP id adf61e73a8af0-38dfe6c1947mr12933114637.34.1768921155419;
-        Tue, 20 Jan 2026 06:59:15 -0800 (PST)
-Received: from kailas.hsd1.or.comcast.net ([2601:1c2:1803:3ab0::2e2b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c5edf354b3bsm5478104a12.24.2026.01.20.06.59.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Jan 2026 06:59:14 -0800 (PST)
-From: Ryan Foster <foster.ryan.r@gmail.com>
-To: gary@garyguo.net
-Cc: a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	dakr@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lossin@kernel.org,
-	ojeda@kernel.org,
-	rafael@kernel.org,
-	rust-for-linux@vger.kernel.org,
-	tmgross@umich.edu,
-	Ryan Foster <foster.ryan.r@gmail.com>
-Subject: [PATCH] rust: replace `kernel::c_str!` with C-Strings in seq_file and device
-Date: Tue, 20 Jan 2026 06:59:12 -0800
-Message-ID: <20260120145912.281977-1-foster.ryan.r@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <DFTI0P4F3UR9.14CA9H3I19GCB@garyguo.net>
-References: <DFTI0P4F3UR9.14CA9H3I19GCB@garyguo.net>
+        bh=ntN0FZOXCuO4g6oSeU/oj/orWdbf+RbpRvRGbr360pw=;
+        b=R8bc+fAguFuO27da17Nj5ct72ps9KJLAr3R2izhQkwgPFEKmcLlBL07oMXdcyqL4i/
+         SzCIA+thyZmfMYSG4ks+Lt9ZQR+6gh4Sdifa88D/d2gpWGf066EcII2K4pRVjUy9VYal
+         Ef0E6nTT7WqdIxEGDq6T7ZdIsGhbpgd9DXif8VSzKn4qFgUX5r3i2esfqX7I3G0o4wd7
+         Eny02XDtCiDpi8gAyk/iHpspTPEJJoMk92A0z6UdLHnmfej0czsKNp5vik17koH9bzca
+         /C5eoFEFJHwcchdv8QWlaoFG4YVSUDL46b2cSKiUXJoy4A9mq9q1pDjn/BixWt/Zrv0s
+         wBVw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2F+hTCKZDqClWuZJgHbRRu7/KiNqLgGEmHcbywbaJFrBDz68aPX3h4rU20xgBzfvd7Lw1OlC0F2DxaDhf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAnO8lexT5nNu3tSCh8NsjPQ/tKCqVTBi5BBWEMe7Kp0Sa63o6
+	H3JVUZv8u/xCicnSD3j26SErJOOq/PP/X8JxEB8r4UXSRYsQMEVFKhm4oG4GxE6NTRTRQKZYQ8M
+	0Tsm0ycXVHfuY1SMixNehejNx3XXPrkA=
+X-Gm-Gg: AZuq6aJH2I3A3gBrnZ2s/hiDv5YANjv0ePJlJCDfBSNRKOPoYoH+lTI5sz2PkmF1udf
+	qiLe47ikElio10xLXoFCqgFMVmqEIxdbF8AsFsTb6qvYt81PCLWx9i1VLpunnUdLMeS+81oyaCG
+	ZL0hVkbk2674pgaolaphao7a0ZRP5YC1DQWyxfvppl2+EiP8SKgMKUfX2sE/7LkxX5knCVH6LiJ
+	ypbuoD8+XuW0rWZaXXN8RhaEUultFZt1sU8XNKWXQzH62PejLiusMMyoRduVvInZf69XWPUCfjG
+	/199+a08fxpKfNCFX4RyNRL8fWAPxlIFyBNspZLgOQ==
+X-Received: by 2002:a17:90b:248f:b0:34c:fe7e:84fe with SMTP id
+ 98e67ed59e1d1-352c4078ce9mr1038446a91.28.1768921223677; Tue, 20 Jan 2026
+ 07:00:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [0.04 / 15.00];
+References: <20260120140235.126919-1-foster.ryan.r@gmail.com> <DFTI0P4F3UR9.14CA9H3I19GCB@garyguo.net>
+In-Reply-To: <DFTI0P4F3UR9.14CA9H3I19GCB@garyguo.net>
+From: ryan foster <foster.ryan.r@gmail.com>
+Date: Tue, 20 Jan 2026 07:00:11 -0800
+X-Gm-Features: AZwV_QjeGRbyhZcETrF_TlxFkw6vcha9H78rOCj2rh-0zrtc3n41bt0LtnhvBhY
+Message-ID: <CAHtS32__f9=ndqaueWUB1SuuppR2L+ye8b2XeNP4qOindTSoSA@mail.gmail.com>
+Subject: Re: [PATCH] rust: replace `kernel::c_str!` with C-Strings in seq_file
+ and device
+To: Gary Guo <gary@garyguo.net>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ojeda@kernel.org, boqun.feng@gmail.com, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com, 
+	tmgross@umich.edu, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	dakr@kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spamd-Result: default: False [-0.46 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-74678-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
-	TAGGED_FROM(0.00)[bounces-74677-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
 	SUBJECT_HAS_EXCLAIM(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FREEMAIL_FROM(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	FREEMAIL_CC(0.00)[kernel.org,google.com,protonmail.com,gmail.com,linuxfoundation.org,vger.kernel.org,umich.edu];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,gmail.com,protonmail.com,google.com,umich.edu,linuxfoundation.org];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	PRECEDENCE_BULK(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
-	FROM_NEQ_ENVFROM(0.00)[fosterryanr@gmail.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 9572148E00
+	R_SPF_SOFTFAIL(0.00)[~all:c];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[fosterryanr@gmail.com,linux-fsdevel@vger.kernel.org];
+	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,mail.gmail.com:mid,garyguo.net:email]
+X-Rspamd-Queue-Id: 1C3224875B
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-C-String literals were added in Rust 1.77. Replace instances of
-`kernel::c_str!` with C-String literals where possible.
+Hi Gary,
+Thi is now fixed, great catch thanks.
 
-This patch updates seq_file and device modules to use the native
-C-string literal syntax (c"...") instead of the kernel::c_str! macro.
+Best ,Ryan
 
-While at it, convert imports to the kernel vertical import style.
-
-Signed-off-by: Ryan Foster <foster.ryan.r@gmail.com>
----
- rust/kernel/device.rs   | 19 ++++++++++++-------
- rust/kernel/seq_file.rs | 12 ++++++++++--
- 2 files changed, 22 insertions(+), 9 deletions(-)
-
-diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-index 71b200df0f40..a87350c1a67d 100644
---- a/rust/kernel/device.rs
-+++ b/rust/kernel/device.rs
-@@ -5,15 +5,20 @@
- //! C header: [`include/linux/device.h`](srctree/include/linux/device.h)
- 
- use crate::{
--    bindings, fmt,
-+    bindings,
-+    fmt,
-     prelude::*,
-     sync::aref::ARef,
--    types::{ForeignOwnable, Opaque},
-+    types::{
-+        ForeignOwnable,
-+        Opaque, //
-+    }, //
-+};
-+use core::{
-+    any::TypeId,
-+    marker::PhantomData,
-+    ptr, //
- };
--use core::{any::TypeId, marker::PhantomData, ptr};
--
--#[cfg(CONFIG_PRINTK)]
--use crate::c_str;
- 
- pub mod property;
- 
-@@ -462,7 +467,7 @@ unsafe fn printk(&self, klevel: &[u8], msg: fmt::Arguments<'_>) {
-             bindings::_dev_printk(
-                 klevel.as_ptr().cast::<crate::ffi::c_char>(),
-                 self.as_raw(),
--                c_str!("%pA").as_char_ptr(),
-+                c"%pA".as_char_ptr(),
-                 core::ptr::from_ref(&msg).cast::<crate::ffi::c_void>(),
-             )
-         };
-diff --git a/rust/kernel/seq_file.rs b/rust/kernel/seq_file.rs
-index 855e533813a6..109ad6670907 100644
---- a/rust/kernel/seq_file.rs
-+++ b/rust/kernel/seq_file.rs
-@@ -4,7 +4,15 @@
- //!
- //! C header: [`include/linux/seq_file.h`](srctree/include/linux/seq_file.h)
- 
--use crate::{bindings, c_str, fmt, str::CStrExt as _, types::NotThreadSafe, types::Opaque};
-+use crate::{
-+    bindings,
-+    fmt,
-+    str::CStrExt as _,
-+    types::{
-+        NotThreadSafe,
-+        Opaque, //
-+    }, //
-+};
- 
- /// A utility for generating the contents of a seq file.
- #[repr(transparent)]
-@@ -36,7 +44,7 @@ pub fn call_printf(&self, args: fmt::Arguments<'_>) {
-         unsafe {
-             bindings::seq_printf(
-                 self.inner.get(),
--                c_str!("%pA").as_char_ptr(),
-+                c"%pA".as_char_ptr(),
-                 core::ptr::from_ref(&args).cast::<crate::ffi::c_void>(),
-             );
-         }
--- 
-2.52.0
-
+On Tue, Jan 20, 2026 at 6:50=E2=80=AFAM Gary Guo <gary@garyguo.net> wrote:
+>
+> On Tue Jan 20, 2026 at 2:02 PM GMT, Ryan Foster wrote:
+> > C-String literals were added in Rust 1.77. Replace instances of
+> > `kernel::c_str!` with C-String literals where possible.
+> >
+> > This patch updates seq_file and device modules to use the native
+> > C-string literal syntax (c"...") instead of the kernel::c_str! macro.
+> >
+> > Signed-off-by: Ryan Foster <foster.ryan.r@gmail.com>
+> > ---
+> >  rust/kernel/device.rs   | 5 +----
+> >  rust/kernel/seq_file.rs | 4 ++--
+> >  2 files changed, 3 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> > index 71b200df0f40..1c3d1d962d15 100644
+> > --- a/rust/kernel/device.rs
+> > +++ b/rust/kernel/device.rs
+> > @@ -12,9 +12,6 @@
+> >  };
+> >  use core::{any::TypeId, marker::PhantomData, ptr};
+> >
+> > -#[cfg(CONFIG_PRINTK)]
+> > -use crate::c_str;
+> > -
+> >  pub mod property;
+> >
+> >  // Assert that we can `read()` / `write()` a `TypeId` instance from / =
+into `struct driver_type`.
+> > @@ -462,7 +459,7 @@ unsafe fn printk(&self, klevel: &[u8], msg: fmt::Ar=
+guments<'_>) {
+> >              bindings::_dev_printk(
+> >                  klevel.as_ptr().cast::<crate::ffi::c_char>(),
+> >                  self.as_raw(),
+> > -                c_str!("%pA").as_char_ptr(),
+> > +                c"%pA".as_char_ptr(),
+> >                  core::ptr::from_ref(&msg).cast::<crate::ffi::c_void>()=
+,
+> >              )
+> >          };
+> > diff --git a/rust/kernel/seq_file.rs b/rust/kernel/seq_file.rs
+> > index 855e533813a6..518265558d66 100644
+> > --- a/rust/kernel/seq_file.rs
+> > +++ b/rust/kernel/seq_file.rs
+> > @@ -4,7 +4,7 @@
+> >  //!
+> >  //! C header: [`include/linux/seq_file.h`](srctree/include/linux/seq_f=
+ile.h)
+> >
+> > -use crate::{bindings, c_str, fmt, str::CStrExt as _, types::NotThreadS=
+afe, types::Opaque};
+> > +use crate::{bindings, fmt, str::CStrExt as _, types::NotThreadSafe, ty=
+pes::Opaque};
+>
+> As you're changing the import list, can you also convert it to the new ke=
+rnel
+> import style?
+>
+> Best,
+> Gary
+>
+> >
+> >  /// A utility for generating the contents of a seq file.
+> >  #[repr(transparent)]
+> > @@ -36,7 +36,7 @@ pub fn call_printf(&self, args: fmt::Arguments<'_>) {
+> >          unsafe {
+> >              bindings::seq_printf(
+> >                  self.inner.get(),
+> > -                c_str!("%pA").as_char_ptr(),
+> > +                c"%pA".as_char_ptr(),
+> >                  core::ptr::from_ref(&args).cast::<crate::ffi::c_void>(=
+),
+> >              );
+> >          }
+>
 
