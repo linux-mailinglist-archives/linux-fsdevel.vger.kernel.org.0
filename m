@@ -1,185 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-74592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4629CD3C366
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 10:27:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE6AD3C33E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 10:18:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 497EA688FB7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 09:04:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B566C504799
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 09:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2940E3BFE55;
-	Tue, 20 Jan 2026 09:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fGDb6CKy"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472F93BF300;
+	Tue, 20 Jan 2026 09:12:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4594A3BF2EF;
-	Tue, 20 Jan 2026 09:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558663BC4FB;
+	Tue, 20 Jan 2026 09:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768899860; cv=none; b=Rex7K93/vlhbTrb9soBqNm35S2CXseLMP4rtpwnxgLisKenIpIHgMnenloIyZ/MF4OJvizjYmoAjeEE3P/Nnz1unyQD8bvtqNouU2u1RxGGqiz2VryXNmzsUS5bslzhbmfh4WelX6nQM9r+meEl3lNxy7X/5JvugzF1BR6QIZrI=
+	t=1768900350; cv=none; b=ncRvLpd5ckhN3NN6mWjfbqPG+S1x2IbDDTSR5SSA4SzgTP/t35hBfbMbiS/kAEM7neW50qdAKzhA/PsIgv8gkAz3UftMIZMwk62KLC1egYR+qYL8RjLG4Cq54QlHGeRxXj+/J9AboDn7NJoS1rB3vg/UHk17Cv7dn70T/ltW9/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768899860; c=relaxed/simple;
-	bh=JhDsyPDpvGvdyDqhxS7TmcgEIlTc18FPxLf75vE9wzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjSiJ5JTbijWqxEauPsvXDN8eIV0R7VxFhNW0vuS5rAFu+B71cHpmLKhNKtiYFPMP82561CRm7jElGYDE36SVChf+sU9a24YxqYen2DKaM6sYEEAgwjWyQsE+OSQH+8VOdYAb0xcnF6m5ebLgA32I6En6BfCJNoukEwLAN6tWDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fGDb6CKy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E27E6C16AAE;
-	Tue, 20 Jan 2026 09:04:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768899859;
-	bh=JhDsyPDpvGvdyDqhxS7TmcgEIlTc18FPxLf75vE9wzQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fGDb6CKy+f5LfPcob1huzIh9QAzk76QrguP0qOMXMNMmAKfWnMvffuvnLOaaLC7ew
-	 wiubvCikcdnsEOdPZbW0H4zHWxmUCevg43yAEJPXPT7hXH00W12HfQMEdyIDGD9O0j
-	 nz71osv3r1RJtNqoyCLf3dZK5Tzfa3wtmYACMeGkq0oSzzypljd57xjg95SjtXty51
-	 UWd/sW/tdqfH5YKWLFRsczUlBeW+ZFhuEDFDscE+KtGNfb9dtk0DPBFCrkx1ut54Lk
-	 X+2fXMq+FuO5POPWMylL14pwRJfTUXJAHUYehRsOz+2S0efemBjlbHErutvPMV85s8
-	 rd90Iu7ZfyW+Q==
-Date: Tue, 20 Jan 2026 10:04:02 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Christoph Hellwig <hch@infradead.org>, 
-	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Chuck Lever <chuck.lever@oracle.com>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, Gao Xiang <xiang@kernel.org>, 
-	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
-	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, 
-	Carlos Maiolino <cem@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, 
-	Alex Markuze <amarkuze@redhat.com>, Viacheslav Dubeyko <slava@dubeyko.com>, Chris Mason <clm@fb.com>, 
-	David Sterba <dsterba@suse.com>, Luis de Bethencourt <luisbg@kernel.org>, 
-	Salah Triki <salah.triki@gmail.com>, Phillip Lougher <phillip@squashfs.org.uk>, 
-	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Bharath SM <bharathsm@microsoft.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, 
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
-	Joseph Qi <joseph.qi@linux.alibaba.com>, Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Dave Kleikamp <shaggy@kernel.org>, 
-	David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>, Jan Kara <jack@suse.cz>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-ext4@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	devel@lists.orangefs.org, ocfs2-devel@lists.linux.dev, ntfs3@lists.linux.dev, 
-	linux-nilfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net, 
-	linux-mtd@lists.infradead.org, gfs2@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH 00/29] fs: require filesystems to explicitly opt-in to
- nfsd export support
-Message-ID: <20260120-entmilitarisieren-wanken-afd04b910897@brauner>
-References: <20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org>
- <CAOQ4uxjOJMwv_hRVTn3tJHDLMQHbeaCGsdLupiZYcwm7M2rm3g@mail.gmail.com>
- <9c99197dde2eafa55a1b55dce2f0d4d02c77340a.camel@kernel.org>
- <176877859306.16766.15009835437490907207@noble.neil.brown.name>
- <aW3SAKIr_QsnEE5Q@infradead.org>
- <176880736225.16766.4203157325432990313@noble.neil.brown.name>
- <20260119-kanufahren-meerjungfrau-775048806544@brauner>
- <176885553525.16766.291581709413217562@noble.neil.brown.name>
+	s=arc-20240116; t=1768900350; c=relaxed/simple;
+	bh=B05gVguD6HO3xQvzt2rGs+vO4e4DANFflmUfKhWSQPw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hsV8UjvU7eZoV4gGPN1QsjJJUzVdQPFELTRzmEnOJ+Y2p3Tx87Bpvz1l0FBRoSW1+lB7dY6f9gZ/4eU3XVgnndEFSSTomoOre4rKrDavOtbZDbcbkccFNs+HNe5dcwFNX4ohja/TrX4LokkAaHoT3aTazURrYOM3DuV1Q6Wvx9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dwM5j0FVBzHnH4v;
+	Tue, 20 Jan 2026 17:11:53 +0800 (CST)
+Received: from dubpeml500005.china.huawei.com (unknown [7.214.145.207])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7874640571;
+	Tue, 20 Jan 2026 17:12:24 +0800 (CST)
+Received: from localhost (10.203.177.99) by dubpeml500005.china.huawei.com
+ (7.214.145.207) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 Jan
+ 2026 09:12:22 +0000
+Date: Tue, 20 Jan 2026 09:12:17 +0000
+From: Alireza Sanaee <alireza.sanaee@huawei.com>
+To: John Groves <john@jagalactic.com>
+CC: John Groves <John@Groves.net>, Miklos Szeredi <miklos@szeredi.hu>, "Dan
+ Williams" <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>,
+	Alison Schofield <alison.schofield@intel.com>, John Groves
+	<jgroves@micron.com>, John Groves <jgroves@fastmail.com>, Jonathan Corbet
+	<corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang
+	<dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara
+	<jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, David Hildenbrand
+	<david@kernel.org>, Christian Brauner <brauner@kernel.org>, "Darrick J .
+ Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "Jeff
+ Layton" <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, "Jonathan
+ Cameron" <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi
+	<shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef Bacik
+	<josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, James Morse
+	<james.morse@arm.com>, Fuad Tabba <tabba@google.com>, Sean Christopherson
+	<seanjc@google.com>, Shivank Garg <shivankg@amd.com>, Ackerley Tng
+	<ackerleytng@google.com>, Gregory Price <gourry@gourry.net>, Aravind Ramesh
+	<arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>,
+	"venkataravis@micron.com" <venkataravis@micron.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH BUNDLE v7] famfs: Fabric-Attached Memory File System
+Message-ID: <20260120091217.00007537.alireza.sanaee@huawei.com>
+In-Reply-To: <0100019bd33a16b4-6da11a99-d883-4cfc-b561-97973253bc4a-000000@email.amazonses.com>
+References: <20260118222911.92214-1-john@jagalactic.com>
+	<0100019bd33a16b4-6da11a99-d883-4cfc-b561-97973253bc4a-000000@email.amazonses.com>
+Organization: Huawei
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <176885553525.16766.291581709413217562@noble.neil.brown.name>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ dubpeml500005.china.huawei.com (7.214.145.207)
 
-On Tue, Jan 20, 2026 at 07:45:35AM +1100, NeilBrown wrote:
-> On Mon, 19 Jan 2026, Christian Brauner wrote:
-> > On Mon, Jan 19, 2026 at 06:22:42PM +1100, NeilBrown wrote:
-> > > On Mon, 19 Jan 2026, Christoph Hellwig wrote:
-> > > > On Mon, Jan 19, 2026 at 10:23:13AM +1100, NeilBrown wrote:
-> > > > > > This was Chuck's suggested name. His point was that STABLE means that
-> > > > > > the FH's don't change during the lifetime of the file.
-> > > > > > 
-> > > > > > I don't much care about the flag name, so if everyone likes PERSISTENT
-> > > > > > better I'll roll with that.
-> > > > > 
-> > > > > I don't like PERSISTENT.
-> > > > > I'd rather call a spade a spade.
-> > > > > 
-> > > > >   EXPORT_OP_SUPPORTS_NFS_EXPORT
-> > > > > or
-> > > > >   EXPORT_OP_NOT_NFS_COMPATIBLE
-> > > > > 
-> > > > > The issue here is NFS export and indirection doesn't bring any benefits.
-> > > > 
-> > > > No, it absolutely is not.  And the whole concept of calling something
-> > > > after the initial or main use is a recipe for a mess.
-> > > 
-> > > We are calling it for it's only use.  If there was ever another use, we
-> > > could change the name if that made sense.  It is not a public name, it
-> > > is easy to change.
-> > > 
-> > > > 
-> > > > Pick a name that conveys what the flag is about, and document those
-> > > > semantics well.  This flag is about the fact that for a given file,
-> > > > as long as that file exists in the file system the handle is stable.
-> > > > Both stable and persistent are suitable for that, nfs is everything
-> > > > but.
-> > > 
-> > > My understanding is that kernfs would not get the flag.
-> > > kernfs filehandles do not change as long as the file exist.
-> > > But this is not sufficient for the files to be usefully exported.
-> > > 
-> > > I suspect kernfs does re-use filehandles relatively soon after the
-> > > file/object has been destroyed.  Maybe that is the real problem here:
-> > > filehandle reuse, not filehandle stability.
-> > > 
-> > > Jeff: could you please give details (and preserve them in future cover
-> > > letters) of which filesystems are known to have problems and what
-> > > exactly those problems are?
-> > > 
-> > > > 
-> > > > Remember nfs also support volatile file handles, and other applications
-> > > > might rely on this (I know of quite a few user space applications that
-> > > > do, but they are kinda hardwired to xfs anyway).
-> > > 
-> > > The NFS protocol supports volatile file handles.  knfsd does not.
-> > > So maybe
-> > >   EXPORT_OP_NOT_NFSD_COMPATIBLE
-> > > might be better.  or EXPORT_OP_NOT_LINUX_NFSD_COMPATIBLE.
-> > > (I prefer opt-out rather than opt-in because nfsd export was the
-> > > original purpose of export_operations, but it isn't something
-> > > I would fight for)
-> > 
-> > I prefer one of the variants you proposed here but I don't particularly
-> > care. It's not a hill worth dying on. So if Christoph insists on the
-> > other name then I say let's just go with it.
-> > 
+On Sun, 18 Jan 2026 22:29:18 +0000
+John Groves <john@jagalactic.com> wrote:
+
+Hi John,
+
+I wonder if these new patches sent recently have been reflected on the github repo readme files. It seems it is not, is it?
+
+> This is a coordinated patch submission for famfs (Fabric-Attached Memory
+> File System) across three repositories:
 > 
-> This sounds like you are recommending that we give in to bullying.
-> I would rather the decision be made based on the facts of the case, not
-> the opinions that are stated most bluntly.
+>   1. Linux kernel (cover + 19 patches) - dax fsdev driver + fuse/famfs 
+>      integration
+>   2. libfuse (cover + 3 patches) - famfs protocol support for fuse servers
+>   3. ndctl/daxctl (cover + 2 patches) - support for the new "famfs" devdax
+>      mode
 > 
-> I actually think that what Christoph wants is actually quite different
-> from what Jeff wants, and maybe two flags are needed.  But I don't yet
-> have a clear understanding of what Christoph wants, so I cannot be sure.
+> Each series is posted as a reply to this cover message, with individual
+> patches replying to their respective series cover.
+> 
+> Overview
+> --------
+> Famfs exposes shared memory as a file system. It consumes shared memory
+> from dax devices and provides memory-mappable files that map directly to
+> the memory with no page cache involvement. Famfs differs from conventional
+> file systems in fs-dax mode in that it handles in-memory metadata in a
+> sharable way (which begins with never caching dirty shared metadata).
+> 
+> Famfs started as a standalone file system [1,2], but the consensus at
+> LSFMM 2024 and 2025 [3,4] was that it should be ported into fuse.
+> 
+> The key performance requirement is that famfs must resolve mapping faults
+> without upcalls. This is achieved by fully caching the file-to-devdax
+> metadata for all active files via two fuse client/server message/response
+> pairs: GET_FMAP and GET_DAXDEV.
+> 
+> Patch Series Summary
+> --------------------
+> 
+> Linux Kernel (V7, 19 patches):
+>   - dax: New fsdev driver (drivers/dax/fsdev.c) providing a devdax mode
+>     compatible with fs-dax. Devices can be switched among 'devdax', 'fsdev'
+>     and 'system-ram' modes via daxctl or sysfs.
+>   - fuse: Famfs integration adding GET_FMAP and GET_DAXDEV messages for
+>     caching file-to-dax mappings in the kernel.
+> 
+> libfuse (V7, 3 patches):
+>   - Updates fuse_kernel.h to kernel 6.19 baseline
+>   - Adds famfs DAX fmap protocol definitions
+>   - Implements famfs DAX fmap support for fuse servers
+> 
+> ndctl/daxctl (V4, 2 patches):
+>   - Adds daxctl support for the new "famfs" mode of devdax
+>   - Adds test/daxctl-famfs.sh for testing mode transitions
+> 
+> Changes Since V2 (kernel)
+> -------------------------
+> - Dax: Completely new fsdev driver replaces the dev_dax_iomap modifications.
+>   Uses MEMORY_DEVICE_FS_DAX type with order-0 folios for fs-dax compatibility.
+> - Dax: The "poisoned page" problem is properly fixed via fsdev_clear_folio_state()
+>   which clears stale mapping/compound state when fsdev binds.
+> - Dax: Added dax_set_ops() and driver unbind protection while filesystem mounted.
+> - Fuse: Famfs mounts require CAP_SYS_RAWIO (exposing raw memory devices).
+> - Fuse: Added DAX address_space_operations with noop_dirty_folio.
+> - Rebased to latest kernels, compatible with recent dax refactoring.
+> 
+> Testing
+> -------
+> The famfs user space [5] includes comprehensive smoke and unit tests that
+> exercise all three components together. The ndctl series includes a
+> dedicated test for famfs mode transitions.
+> 
+> References
+> ----------
+> [1] https://lore.kernel.org/linux-cxl/cover.1708709155.git.john@groves.net/
+> [2] https://lore.kernel.org/linux-cxl/cover.1714409084.git.john@groves.net/
+> [3] https://lwn.net/Articles/983105/ (LSFMM 2024)
+> [4] https://lwn.net/Articles/1020170/ (LSFMM 2025)
+> [5] https://famfs.org (famfs user space)
+> [6] https://lore.kernel.org/linux-cxl/20250703185032.46568-1-john@groves.net/ (V2)
+> [7] https://lore.kernel.org/linux-fsdevel/20260107153244.64703-1-john@groves.net/T/#m0000d8c00290f48c086b8b176c7525e410f8508c (related ndctl series)
+> --
+> John Groves
+> 
+> 
+> 
 
-I've tried to indirectly ask whether you would be willing to compromise
-here or whether you want to insist on your alternative name. Apparently
-that didn't come through.
-
-I'm unclear what your goal is in suggesting that I recommend "we" give
-into bullying. All it achieved was to further derail this thread.
-
-I also think it's not very helpful at v6 of the discussion to start
-figuring out what the actual key rift between Jeff's and Christoph's
-position is. If you've figured it out and gotten an agreement and this
-is already in, send a follow-up series.
-
-If I don't like it I can always just rename it to EXPORT_OP_DONKEY_KONG
-when applying.
 
