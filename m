@@ -1,195 +1,273 @@
-Return-Path: <linux-fsdevel+bounces-74719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uJDxJPLub2m+UQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 22:09:06 +0100
+	id iMp9L9X7b2mUUgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 23:04:05 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3973B4BFDA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 22:09:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 316EE4CAF9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 23:04:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 762F38E98BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 20:05:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F3A978CDA0C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 20:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEAD2E7F25;
-	Tue, 20 Jan 2026 20:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D8131AA80;
+	Tue, 20 Jan 2026 20:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P3BWrpuF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CiIR0XVk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A443333A02D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 20:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768939551; cv=none; b=r0hJkMQ0NYDIN0Ml3Bl0DYJNcKIr6anF/k8D8V0lgMdgKvMrvd9Sh+adJ3cG665SvwmVCrrXaKqRtHIl6sD+2uj7BH9FHqju4mr8mXz0GUim2cENKK2LLH/WtjyuICZkW3j0xcp3vQLivKNXcVdWxzyJUiDlJBoP/TY6/N+ESaM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768939551; c=relaxed/simple;
-	bh=SUNvMYtW/TcwIuaDqMMdwgFCTrPc414Jk7rxkcfOo40=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YFS6IlMkEZpWj1ZE+2jV9QtCrRhVW+lgHcT+UmZmwn77qNoan99fL32gLAmDdS8A0FB2vInTYC28BzYdJOUQM1WQMUcersorNjsSbX3t3Dh00w83kvn9uWLwDSTaOLjAFXbwE5BnJnTSUc4FMku4b2pOAidtMJcGQbrviTKSOps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P3BWrpuF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768939548;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qVpU95EqnKCxe7aajIcL8940khkgc0B65R3zB78nGo8=;
-	b=P3BWrpuFebVjH6G0j6OvD2jl31NLKBWNr5b4mKCbq9a/mIUwW4M4CSlwjkjHEMoNJWuA9W
-	bq272UW06ZEHFDQvFx5KvIPlm/p0BeLgeKIIwgwq7IaPQvNyPqf2+hncNzxU1BM5sVyI/h
-	yczQ4O/YmN7lWV6Cm6IbnY+6djA9fqE=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-155-0dIEiXlNMjytkPPPjwJU3w-1; Tue,
- 20 Jan 2026 15:05:45 -0500
-X-MC-Unique: 0dIEiXlNMjytkPPPjwJU3w-1
-X-Mimecast-MFC-AGG-ID: 0dIEiXlNMjytkPPPjwJU3w_1768939543
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 83DD118005B2;
-	Tue, 20 Jan 2026 20:05:42 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.41])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1206E1800240;
-	Tue, 20 Jan 2026 20:05:38 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Rich Felker <dalias@libc.org>
-Cc: Zack Weinberg <zack@owlfolio.org>,  Alejandro Colomar <alx@kernel.org>,
-  Vincent Lefevre <vincent@vinc17.net>,  Jan Kara <jack@suse.cz>,
-  Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  linux-fsdevel@vger.kernel.org,
-  linux-api@vger.kernel.org,  GNU libc development
- <libc-alpha@sourceware.org>
-Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from
- POSIX.1-2024
-In-Reply-To: <20260120190010.GF6263@brightrain.aerifal.cx> (Rich Felker's
-	message of "Tue, 20 Jan 2026 14:00:10 -0500")
-References: <efaffc5a404cf104f225c26dbc96e0001cede8f9.1747399542.git.alx@kernel.org>
-	<20250516130547.GV1509@brightrain.aerifal.cx>
-	<20250516143957.GB5388@qaa.vinc17.org>
-	<20250517133251.GY1509@brightrain.aerifal.cx>
-	<5jm7pblkwkhh4frqjptrw4ll4nwncn22ep2v7sli6kz5wxg5ik@pbnj6wfv66af>
-	<8c47e10a-be82-4d5b-a45e-2526f6e95123@app.fastmail.com>
-	<20250524022416.GB6263@brightrain.aerifal.cx>
-	<1571b14d-1077-4e81-ab97-36e39099761e@app.fastmail.com>
-	<20260120174659.GE6263@brightrain.aerifal.cx>
-	<lhubjio5dsb.fsf@oldenburg.str.redhat.com>
-	<20260120190010.GF6263@brightrain.aerifal.cx>
-Date: Tue, 20 Jan 2026 21:05:36 +0100
-Message-ID: <lhu7btc59tb.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAEA3A4AB6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 20:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.180
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768939575; cv=pass; b=H4smTxQzKsS0KdAqvb6umsHp6bUXst934WSIOA3Bg1nR1cIVbHqxaIemFpQV/egzsqMo9gQz7jKGymK1vX2ZM7UzDFViIt8c/2ekP4b9QEsgY729ViZuq//rtOc8vLSNfjYAqAgsjp0ffjGl39NF9AbNrcnW70tUFoITupCYwJs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768939575; c=relaxed/simple;
+	bh=HInNVGmzTf64k56n2s/jQ4dMr6uvCvfQvPVKtwkgAbc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xr8hkoZpyhmjC2MpnQmpFfwlJpe+zExlXJRc6cAfr2T6WBnu3cE9emc0DRbOSvOagMaYDJ4YPLZcmFEdb/N7MZT2ojx4ZK+84iEjb/+fWp/JRkwrBqNyy9ArBjVhKL1YMxVaGG4Jow+Qhzs3jNKqJYZXPwRqwxp/SgG9+qvh7tw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CiIR0XVk; arc=pass smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-5014d4ddb54so61691841cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 12:06:13 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1768939572; cv=none;
+        d=google.com; s=arc-20240605;
+        b=UVv9XBeN5O41hN3Pvbi+miICVat+qGteiNvbfKUjGLpFl+ebVkC9NhgivJFw5kFJDy
+         0t7RUgl25IxoS45iwET5cejvhLoVmTgMKygN8F+INsUmSeJQO5g//8+NOcGnJrs8NPMW
+         csfz+ghgeu4kyCvhWg5WMctEQ/05Xve1y3i1dMPcE1W2fY56zHqkzNyBevjcmegXeM97
+         P0DIbpnM8HdLKmqrsBA/3xwFTOZWgnkr3ZlTMoTKgDQvoQ1W2Oc0/mXfyqLSIf1ztvs4
+         GaW4EA8wkhaL+se7fmilQ70Y2bgY8EKJeyJJmv6RnHMvehkg3Cljoo/rUaWgKaGaNYTg
+         vX+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=HMxS9a3nR6P4ef6rYsFRs7BSEtWZeGELtFwdoWQtCCU=;
+        fh=/aHkVhd92VbJ/y7jZ+rcqiFMjhPgQ22P+rwd5NuIMec=;
+        b=V4ugkXQWkq6vJ1RsQoH8wNXn4eHGLK3r5+ylib5Jk60OJcZCFP65sRT3A2otoPIbSg
+         ApeQFQGvLYiKEJ53QdTgaWekvQJaasAL7f3TpQ0z/BI53Ebk5DMbNafaajhIv1xfR/GZ
+         4KnuZuwTB1xjy4vXGozcIFo9ccy5yXJ3xA7k84jGnLbl8uyH19tzcwMPYe/HkA/jXpDV
+         jt641TQ0Ce87dNavh6LfxhZSyrXXZDa32msSuaad9VY78IObuUVQo8rYOKojE4fbyKlm
+         X/fx24anhYrRigY2PLZid6kjRjNRZa030gPg+rFG6b3/368aRHIS0e2qvqRzyrZC6dq5
+         NsIw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768939572; x=1769544372; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HMxS9a3nR6P4ef6rYsFRs7BSEtWZeGELtFwdoWQtCCU=;
+        b=CiIR0XVkFfGCnE4ceWgDogUbpQoipY2o2APPUX6/xm7m3J7Pf4BBgqTqfnpUGF3u0f
+         5dvMdJa75B/2utYyTxbDrqM8X1h9KkyPQpgsROo6MYxJPMnaWSs+YRxgPmGvblHGyoM/
+         5oe9X5K6uvmukIk64OR/jlxLTEZgo+uuBKlA3c0Wx0a0zxR8cBeaheK/ZB7Idg5Yqyi/
+         HQLXl7LQKikKhwVku4ng53f+NltUNepnBrB1oeEddCfAghC/kfpIoaM75Whape/3jisF
+         JBgJK+nHbw7eUtuh3jkcANFOsUs44ZHjwT1V2VWYSCR+1FClsVNT1/gLxOx/iUsOXWgr
+         X/Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768939572; x=1769544372;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=HMxS9a3nR6P4ef6rYsFRs7BSEtWZeGELtFwdoWQtCCU=;
+        b=OKBhlOLgjkvWTiCKGE5HeFsC5w+WmBS2JLcGhJ0H62hVbfL+WYIf8etodmaoHVk8zD
+         RSa+P/lESMP5xCHxJXP4bBnehcKtb8o1UTvr1CYa0ws6THJxS1B3L/71epWntiRJcGhT
+         IeULxXodnTR6Edex+z98tBH6ITZNlNz5hMkllv1EgLfU38phCJl8XAZnUpz0ZNftgdix
+         5slE5gs3Q+/+QwglihaKlGEpQ2bPUse+pL06bNgS/A2vNHGdlKQPxbAdAXE7XD3XcUQL
+         g21y5EAgxUkJb2O5GmxREkjyiS+k3CMgHGZe5evbpdtOKVCjNHdFRyB3ThNQnuRDiYGc
+         fYvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKAhOh33KHLs1xv+CqDNvxMgEHWpQpur7kMdq0CYi4z7EEiEo3VnPcgmE1Kgc7a8rbhv3+JBYQbH6IO00A@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9xdYNNnZefjJSC+VfqpvneGOEROC6k77SDCIuX9tdn2EgGwkh
+	8ApBdf/cXe+Tsj5Etg/Ona/gynEaq7gdRVadXytSo6moTwG7VEUFzn8YLaqbzUOdC/mvuQSfLmG
+	z+jsF+I0BDW5Ks0h5ItZCkZHQf5dazYxzsbHF9oI=
+X-Gm-Gg: AY/fxX57oMGa7CsD1A4Zf8xCasLoBVt7hSmf3fuBO+WB8mkP6xfLhmI2mIC6ZeNmq0v
+	l+gZFrb+UzI5DQx7GxvPtjmLWnG0VHzq/NkOdoHf129aEZpnyV2jUbMDm857kZQ5AFxp6j4vaWA
+	xr7e0ALIHsM9tmpN1VUSrOxP2yDpuwM6BnvVTVG5AJISP2+KGZlxhxsLgwQtWE/AAtJxbU4e3yb
+	brOw4ViKi+CoiJlSzm740CYKJ11W19QRzlSoA/yW/z9uzKkOQydX//5hA1QDsNZVh3u4Q==
+X-Received: by 2002:a05:622a:1ba9:b0:4ee:42e5:f5ae with SMTP id
+ d75a77b69052e-502a16893acmr220127291cf.25.1768939572368; Tue, 20 Jan 2026
+ 12:06:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Spamd-Result: default: False [-1.46 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+References: <20260116235606.2205801-1-joannelkoong@gmail.com>
+ <20260116235606.2205801-2-joannelkoong@gmail.com> <2295ba7e-b830-4177-bccb-250fca11b142@linux.alibaba.com>
+ <CAJnrk1Y1SkEgEjsJx9Ya4N2Nso08ic+J1PUzYySiyj=MR1ofKA@mail.gmail.com>
+In-Reply-To: <CAJnrk1Y1SkEgEjsJx9Ya4N2Nso08ic+J1PUzYySiyj=MR1ofKA@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 20 Jan 2026 12:06:01 -0800
+X-Gm-Features: AZwV_QhX98XRoXxsti0aQa1pipc1gOxpsshAAMDmsRFcP1V3djdVCuW1jdf1oEM
+Message-ID: <CAJnrk1YNmN1rcZ8sa8SHzBt-M1AcO9bsQv1090W=po+vFVMr5g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] fuse: use DIV_ROUND_UP() for page count calculations
+To: Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spamd-Result: default: False [-1.96 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DMARC_POLICY_ALLOW(0.00)[redhat.com,quarantine];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74719-lists,linux-fsdevel=lfdr.de];
-	PRECEDENCE_BULK(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
-	FROM_NEQ_ENVFROM(0.00)[fweimer@redhat.com,linux-fsdevel@vger.kernel.org];
-	RCVD_COUNT_FIVE(0.00)[6];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
+	TAGGED_FROM(0.00)[bounces-74720-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,oldenburg.str.redhat.com:mid]
-X-Rspamd-Queue-Id: 3973B4BFDA
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,mail.gmail.com:mid]
+X-Rspamd-Queue-Id: 316EE4CAF9
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-* Rich Felker:
-
-> On Tue, Jan 20, 2026 at 07:39:48PM +0100, Florian Weimer wrote:
->> * Rich Felker:
->> 
->> > On Tue, Jan 20, 2026 at 12:05:52PM -0500, Zack Weinberg wrote:
->> >> > On Fri, May 23, 2025 at 02:10:57PM -0400, Zack Weinberg wrote:
->> >> >>     close() always succeeds.  That is, after it returns, _fd_ has
->> >> >>     always been disconnected from the open file it formerly referred
->> >> >>     to, and its number can be recycled to refer to some other file.
->> >> >>     Furthermore, if _fd_ was the last reference to the underlying
->> >> >>     open file description, the resources associated with the open file
->> >> >>     description will always have been scheduled to be released.
->> >> ...
->> >> >>     EINPROGRESS
->> >> >>     EINTR
->> >> >>            There are no delayed errors to report, but the kernel is
->> >> >>            still doing some clean-up work in the background.  This
->> >> >>            situation should be treated the same as if close() had
->> >> >>            returned zero.  Do not retry the close(), and do not report
->> >> >>            an error to the user.
->> >> >
->> >> > Since this behavior for EINTR is non-conforming (and even prior to the
->> >> > POSIX 2024 update, it was contrary to the general semantics for EINTR,
->> >> > that no non-ignoreable side-effects have taken place), it should be
->> >> > noted that it's Linux/glibc-specific.
->> >> 
->> >> I am prepared to take your word for it that POSIX says this is
->> >> non-conforming, but in that case, POSIX is wrong, and I will not be
->> >> convinced otherwise by any argument.  Operations that release a
->> >> resource must always succeed.
->> >
->> > There are two conflicting requirements here:
->> >
->> > 1. Operations that release a resource must always succeed.
->> > 2. Failure with EINTR must not not have side effects.
->> >
->> > The right conclusion is that operations that release resources must
->> > not be able to fail with EINTR. And that's how POSIX should have
->> > resolved the situation -- by getting rid of support for the silly
->> > legacy synchronous-tape-drive-rewinding behavior of close on some
->> > systems, and requiring close to succeed immediately with no waiting
->> > for anything.
->> 
->> What about SO_LINGER?  Isn't this relevant in context?
+On Tue, Jan 20, 2026 at 11:10=E2=80=AFAM Joanne Koong <joannelkoong@gmail.c=
+om> wrote:
 >
-> shutdown should be used for this, not close. So that the acts of
-> waiting for the operation to finish, and releasing the resource handle
-> needed to observe if it's finished, are separate.
-
-I think shutdown on TCP sockets is non-blocking under Linux.  It doesn't
-wait until the peer has acknowledged the FIN segment, as far as I
-understand it.  Other systems may behave differently.
-
->> As far as I know, there is no other way besides SO_LINGER to get
->> notification if the packet buffers are actually gone.  If you don't use
->> it, memory can pile up in the kernel without the application's
->> knowledge.
+> On Sun, Jan 18, 2026 at 6:12=E2=80=AFPM Jingbo Xu <jefflexu@linux.alibaba=
+.com> wrote:
+> >
+> > On 1/17/26 7:56 AM, Joanne Koong wrote:
+> > > Use DIV_ROUND_UP() instead of manually computing round-up division
+> > > calculations.
+> > >
+> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > ---
+> > >  fs/fuse/dev.c  | 6 +++---
+> > >  fs/fuse/file.c | 2 +-
+> > >  2 files changed, 4 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > > index 6d59cbc877c6..698289b5539e 100644
+> > > --- a/fs/fuse/dev.c
+> > > +++ b/fs/fuse/dev.c
+> > > @@ -1814,7 +1814,7 @@ static int fuse_notify_store(struct fuse_conn *=
+fc, unsigned int size,
+> > >
+> > >               folio_offset =3D ((index - folio->index) << PAGE_SHIFT)=
+ + offset;
+> > >               nr_bytes =3D min_t(unsigned, num, folio_size(folio) - f=
+olio_offset);
+> > > -             nr_pages =3D (offset + nr_bytes + PAGE_SIZE - 1) >> PAG=
+E_SHIFT;
+> > > +             nr_pages =3D DIV_ROUND_UP(offset + nr_bytes, PAGE_SIZE)=
+;
+> > >
+> > >               err =3D fuse_copy_folio(cs, &folio, folio_offset, nr_by=
+tes, 0);
+> > >               if (!folio_test_uptodate(folio) && !err && offset =3D=
+=3D 0 &&
+> >
+> > IMHO, could we drop page offset, instead just update the file offset an=
+d
+> > re-calculate folio index and folio offset for each loop, i.e. something
+> > like what [1] did?
+> >
+> > This could make the code simpler and cleaner.
 >
-> The way Linux's EINTR behaves, using close can't ensure this memory
-> doesn't pile up, because on EINTR you lose the ability to wait for it.
+> Hi Jingbo,
+>
+> I'll break this change out into a separate patch. I agree your
+> proposed restructuring of the logic makes it simpler to parse.
+>
+> Thanks,
+> Joanne
+>
+> >
+> > BTW, it seems that if the grabbed folio is newly created on hand and th=
+e
+> > range described by the store notify doesn't cover the folio completely,
+> > the folio won't be set as Uptodate and thus the written data may be
+> > missed?  I'm not sure if this is in design.
 
-Can't the application reliably avoid EINTR by blocking signals?
+(sorry, forgot to respond to this part of your email)
+
+I think this is intentional. By "thus the written data may be missed",
+I think you're talking about the writeback path? My understanding is
+it's the dirty bit, not uptodate, that determines whether the written
+data gets written back. I think Darrick had the same question about
+this. AFAICT, it's by design to not have writeback triggered for this
+path since the server is the one providing the data so they already
+know the state-of-truth for the folio contents and that should already
+be reflected on their backend.
+
 
 Thanks,
-Florian
+Joanne
 
+> >
+> > [1]
+> > https://lore.kernel.org/linux-fsdevel/20260115023607.77349-1-jefflexu@l=
+inux.alibaba.com/
+> >
+> >
+> > > @@ -1883,7 +1883,7 @@ static int fuse_retrieve(struct fuse_mount *fm,=
+ struct inode *inode,
+> > >       else if (outarg->offset + num > file_size)
+> > >               num =3D file_size - outarg->offset;
+> > >
+> > > -     num_pages =3D (num + offset + PAGE_SIZE - 1) >> PAGE_SHIFT;
+> > > +     num_pages =3D DIV_ROUND_UP(num + offset, PAGE_SIZE);
+> > >       num_pages =3D min(num_pages, fc->max_pages);
+> > >       num =3D min(num, num_pages << PAGE_SHIFT);
+> > >
+> > > @@ -1918,7 +1918,7 @@ static int fuse_retrieve(struct fuse_mount *fm,=
+ struct inode *inode,
+> > >
+> > >               folio_offset =3D ((index - folio->index) << PAGE_SHIFT)=
+ + offset;
+> > >               nr_bytes =3D min(folio_size(folio) - folio_offset, num)=
+;
+> > > -             nr_pages =3D (offset + nr_bytes + PAGE_SIZE - 1) >> PAG=
+E_SHIFT;
+> > > +             nr_pages =3D DIV_ROUND_UP(offset + nr_bytes, PAGE_SIZE)=
+;
+> > >
+> > >               ap->folios[ap->num_folios] =3D folio;
+> > >               ap->descs[ap->num_folios].offset =3D folio_offset;
+> >
+> > Ditto.
+> >
+> > > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > > index eba70ebf6e77..a4342b269cb9 100644
+> > > --- a/fs/fuse/file.c
+> > > +++ b/fs/fuse/file.c
+> > > @@ -2170,7 +2170,7 @@ static bool fuse_folios_need_send(struct fuse_c=
+onn *fc, loff_t pos,
+> > >       WARN_ON(!ap->num_folios);
+> > >
+> > >       /* Reached max pages */
+> > > -     if ((bytes + PAGE_SIZE - 1) >> PAGE_SHIFT > fc->max_pages)
+> > > +     if (DIV_ROUND_UP(bytes, PAGE_SIZE) > fc->max_pages)
+> > >               return true;
+> > >
+> > >       if (bytes > max_bytes)
+> >
+> > --
+> > Thanks,
+> > Jingbo
+> >
 
