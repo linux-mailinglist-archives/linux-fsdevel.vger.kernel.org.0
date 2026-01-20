@@ -1,144 +1,332 @@
-Return-Path: <linux-fsdevel+bounces-74586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF0D8D3C134
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 08:57:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5847FD3C20E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 09:29:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B94A3567B19
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 07:50:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 62BDC3A8F7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 08:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827323AE713;
-	Tue, 20 Jan 2026 07:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2873C0083;
+	Tue, 20 Jan 2026 08:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N18Lfx2l"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cXJrhzii"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70933258EE0;
-	Tue, 20 Jan 2026 07:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768895436; cv=none; b=JN9fi4Z9dRo86XGXqKcR0pVCu3HFI1MgtxZUFZ/oubUAFLIt5X1eVeKyEenlfEwBMtZIJxozmcm38US6p+GFnDna1namsbUshSvkF1bNTzXVI3t32oTT5HG5kX6CtU74DTn+XTUFAfNkNmuYXiS19Rd9433R3dKnNUUCdcv9cLg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768895436; c=relaxed/simple;
-	bh=bWq6qnIFRw5rJinRpotPeIzOeZbQKqCHjbmSaH0uDbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jPKU7Ec+ahxKUtMSqEAf4LcwSdrOWlJfy45mJ4xSTUgycZV5tjbRZb3LlaBSWJnu5J6VJtuaqK394TAsndJxb/JEl5L4s5ftugQMaDP+HfkjA6KMaMJG3O5Bp30IvcMMt0UuFZZSqfxl5brL/B0phincG0yrO96fPGKRKgB4CV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N18Lfx2l; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=haSfZvoEvPhBBZDnUW3y3BhJEQ36mgFSvpNiOqhvJvI=; b=N18Lfx2l0cTzfa3HEHbSStwRPv
-	iyXHar7+IL8UusFL6sjIudxhuirPKAhJMeBNA+7JTaSgRPwHzsN72C9/ED13gd4R3bzZoK6cN15el
-	2OOL3ox9rvwKCy+jqAl20MM1KOQeI06m0Nqc7qZlyinWokSDH6OADy7uwk70GRUXw1dKPRbjqr1Mx
-	G0x+S1U8gEmAS0uHHMxQqMK+KDGwlJXyI4/nRqaD3y/MPBEQbIe1RJKnMGnpCsJCrYQkezP6l13YD
-	Bk/y5So46wc2umpZT0PCIQ7tT9Ms4VQ/Y3zVPPZ8bLDLhE9SURfv9f85/RpFqttM9TA+n04nUeD09
-	UJSC4XRw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vi6VB-00000003NIK-3jXc;
-	Tue, 20 Jan 2026 07:50:15 +0000
-Date: Mon, 19 Jan 2026 23:50:13 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>,
-	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Chunhai Guo <guochunhai@vivo.com>, Carlos Maiolino <cem@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Alex Markuze <amarkuze@redhat.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>,
-	Luis de Bethencourt <luisbg@kernel.org>,
-	Salah Triki <salah.triki@gmail.com>,
-	Phillip Lougher <phillip@squashfs.org.uk>,
-	Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>, Dave Kleikamp <shaggy@kernel.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>, Jan Kara <jack@suse.cz>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	David Laight <david.laight.linux@gmail.com>,
-	Dave Chinner <david@fromorbit.com>,
-	Christoph Hellwig <hch@infradead.org>, linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-xfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-	linux-unionfs@vger.kernel.org, devel@lists.orangefs.org,
-	ocfs2-devel@lists.linux.dev, ntfs3@lists.linux.dev,
-	linux-nilfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
-	linux-mtd@lists.infradead.org, gfs2@lists.linux.dev,
-	linux-f2fs-devel@lists.sourceforge.net, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 02/31] exportfs: add new EXPORT_OP_STABLE_HANDLES flag
-Message-ID: <aW8ztQ-RbhxwzMk7@infradead.org>
-References: <20260119-exportfs-nfsd-v2-0-d93368f903bd@kernel.org>
- <20260119-exportfs-nfsd-v2-2-d93368f903bd@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABCF3B961E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 08:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768896490; cv=fail; b=HveazNuHURXjv5X0BGrcq89lI+AmAobsLzzaW1tC24/U+1JKkAgFUvBJ9vIlP5ZHskEGxy3H12TgvrMDismOMuIys0EMkroMqu0wRxWwrgJGxv15OidvQpDzdjs7qW7N0lEUMdlIqufpOnBrNAhmLQKJEgPcRjeHRX/0uBo245s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768896490; c=relaxed/simple;
+	bh=SvInW1cQioXLNUPWbJK8NSmcDfZOM3RGmb35XYA/mVM=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=Uvk7Oe+y5L/LueYuNf3JfRFPrc/xwuzismXjqnwt/CBfpo2iMzuuZLWgjHFxLkW5/vt7QrpuoiB+dk9HPhTpqK9Yrq2sRMFRvmSl5Lfp5lf/Lk4VCRjsGuokrISjHE8MyUCEFf1L+S3GTzbb6gjaUXWI+F0JoapiGWwJOpqHAyg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cXJrhzii; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1768896489; x=1800432489;
+  h=date:from:to:cc:subject:message-id:
+   content-transfer-encoding:mime-version;
+  bh=SvInW1cQioXLNUPWbJK8NSmcDfZOM3RGmb35XYA/mVM=;
+  b=cXJrhziiDSoYU4/troaptlwDz6dzQshj+8N9s/wgm1kkwm4mvUJasNYe
+   ubu+U/xYsnlhFNbu7ps/EdTTe7g0sKQjOr8uFd4GOEaznRa0LPv6u2k1z
+   O2BbBmhRil56cpaw/OxVykKrnXft9qKWktrfvjY+won2aAsfN3eeYiI2p
+   ANK8nY+kA/oNi+dAi2M5alcRbDP2fGr3W9YLx1YSRtJBwsADrUhjncCrY
+   ykDwLIFlHj5/HFYg+PnCysoJvGd88KkIt/NK9Lhti8LFlV+jsCuu3Huen
+   RKbcROrpwEWXoNHyIzmsq4YcFbbYKngA6JpLM4Z2Qrz4a/s7mwKtGCilZ
+   g==;
+X-CSE-ConnectionGUID: bnJ8r71oSimb2KhWXnNQ7Q==
+X-CSE-MsgGUID: Bp2vudOXQ36bRJlIHLDSuQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11676"; a="92762338"
+X-IronPort-AV: E=Sophos;i="6.21,240,1763452800"; 
+   d="scan'208";a="92762338"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2026 00:08:08 -0800
+X-CSE-ConnectionGUID: x2Cj/xMERrWvl0mXONwS7g==
+X-CSE-MsgGUID: 4jtdHwLFQ9K+E2eIoa/Ftg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,240,1763452800"; 
+   d="scan'208";a="210901263"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2026 00:08:08 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Tue, 20 Jan 2026 00:08:07 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Tue, 20 Jan 2026 00:08:07 -0800
+Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.62) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Tue, 20 Jan 2026 00:08:06 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U4Ylr2bmyD2POfj76GfJUv/3yosL5Oqj6b8cSreXsaCJqO460q4CYlNwJJ6DNy2bAe6pZhMURyRr+ph9q68YZ0yNkIAjGdALvfDkVQVCznwVNGKzq0GKAsb2I2zF7c2OhJpX1YbH8IP0bDFGerXiB0Kn9qE37vyyZN/e7rb7GXwv0SpIsaPhTSdeH3PTmAnLvThwg+cURZ8mKy7fMK3ItTjLOuR0UUWWOzTlPVa7te3FqOiAXZMhP7xwG1orCVK30bVT8yvGCeWtIJru67Fyb8KTQEOIAnyxxW9S9ONxzURviDy9YBaMlFgVwx9yRxSazVFfADjgKQcol73o/EZ1iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Siosk47MJPu6oIICWvT16gPqiSJLH+eX51ZoJK5zKyc=;
+ b=cfhn/6MX9q76tpdpGL6nyN95G+ZcYb54VjjBau5jYXTNp2vWztY3bB8mSaz8KL9PpB63KUB8kWZA6Muzxshsd1t0xLjjP84M0HjuF/Z93brhYltGeeprWmS6CoZpACzwdfKCvlWZ1aUQba9eiMWiXzBDSas4lDygMQ6Sryxl+ysfrpBlbu37EIgMlRHpmj0s3E4EjbHSNdbXkvJo4HFgINRqkXfYu401aGUQJCx3/H40Ywg4DPkhgDH20pirFD0CN7g5C/YMiCTHkexr9wHdrWaXzYKwEYx/sERcF15Ysyepu7C7cfiaiYkM+XtDuhjG+rGxPIbRGsG+u5rWMN+QZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by SA1PR11MB6663.namprd11.prod.outlook.com (2603:10b6:806:257::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.12; Tue, 20 Jan
+ 2026 08:07:58 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.9520.010; Tue, 20 Jan 2026
+ 08:07:58 +0000
+Date: Tue, 20 Jan 2026 16:07:50 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
+	<linux-fsdevel@vger.kernel.org>, <oliver.sang@intel.com>
+Subject: [viro-vfs:v4.filename] [struct filename]  2a0db5f765:
+ xfstests.ext4.019.fail
+Message-ID: <202601201519.c7003e60-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+User-Agent: s-nail v14.9.25
+X-ClientProxiedBy: SI1PR02CA0033.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::14) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260119-exportfs-nfsd-v2-2-d93368f903bd@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SA1PR11MB6663:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5833ae46-c5b5-4c25-7277-08de57fb060b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?FrYmpleWWNdwYxviah18ZJbtKSsp5UcUhkHswNO7rtrcEIIEgYi46jHBjpp0?=
+ =?us-ascii?Q?VU59av8dr66pJMurPNGj0aPflThYQve/CGE8Sa+VsDA6UnWW2Op/2xBuOukK?=
+ =?us-ascii?Q?LvMnTpULrXJuIHPnKoAvuZ5YqUubupkURzXac8XZcFyKlM/wlka8wyzyJOgs?=
+ =?us-ascii?Q?40rJUVUZ7gg+s2YGzrXV9pqhNvxzJC+mKbVYCCs1rLYIYxTkX00PhvUy013h?=
+ =?us-ascii?Q?exLdKrSpXKd7azxiCQaSDiU9+JtZ+eb8gpwv8NKtUD3j5G0MTHfRtiA0pIjT?=
+ =?us-ascii?Q?QmruBTE07cQ5SrO9G9hkObyVvkLvrKCkqSwZZd2JNl3/Lomx3rTlwrUq3eg/?=
+ =?us-ascii?Q?vmR6Wp+xC25xRWXuby0gzy5Kr0lFePBDdXjxLxS+pMZ6ozMLFObG7RIr+1Rr?=
+ =?us-ascii?Q?8Ak6v97i1jC7V5wVKGcd+80rhp0B94DIcLGdioU4SChe7H5D7fzMlfuHbt0m?=
+ =?us-ascii?Q?rNskhI+ZAAQ3hcL/Do4j58ZjWtzXN3fbjqqwJgdlYIO7zD8W5N0r3quvD/w3?=
+ =?us-ascii?Q?LrFGxqKu9TgSCY5DiHG7Q/O3hJ0rlxocS8OG/jULEhd5+GShpqZvAM3hIOFv?=
+ =?us-ascii?Q?H/Ys6nI2Y4C2nM4tJvf5LPlPO9yT2+BIm1a4wovN9BYH9Jp4UL4V/1lx7UnE?=
+ =?us-ascii?Q?rWtrMNmRk+aBCugVfn/3W0wcnj0lPjxHHs9d7E9PDzfgsVERDU+ToNaAyBAb?=
+ =?us-ascii?Q?0XgmIHcuADtRmCCoK0xtlouljWYkczXp03oyPp02cxJrzZt1CeZCYqdZkCox?=
+ =?us-ascii?Q?i8LcbecsGo4h4lVpIAWDqMiSJcRxensSUgHE61u5OBSrMq/Sp04Q7o78nkmJ?=
+ =?us-ascii?Q?ibRjjxD5oDTe65ipXiPCQZJGMFDdsIGDf2ZBzqa/dNwKwxNEatsgR6biIOxf?=
+ =?us-ascii?Q?Mn9lJNNvIYg+2qCtt/gf4UDFMpn3iY7VDf8SFqnzUVk8R8zSI1/EVm0xo0Vw?=
+ =?us-ascii?Q?7LuoWWznIvgA27tICbrE/LAA96c0jyAzWzuHBsZZGQxkMceJQJozX5SskmUM?=
+ =?us-ascii?Q?h2dveBaTH9JntLIUfc7XI4uUlzSNV+vIpiRXBNHU43lz6HxyZhzKgB0L4vZL?=
+ =?us-ascii?Q?jC6HWog4gN4mKDyLtWSGMgrwhCzSD5BEbcFK/J640V75yJLxDi7V97K0Y5UN?=
+ =?us-ascii?Q?YwxtblwF0oYiKTb7EhxzcdZ+x/poRcTpwR3S1/zoJrnaOmhI2fNm9nsWVUO9?=
+ =?us-ascii?Q?1izqCD81IKuxvvapDalKcvgLv0prn/HyDRdRUqp9fQlPo4e8/E4qxYAzPQfc?=
+ =?us-ascii?Q?fFS/vq9xx3uTIuIniBudpiEiAHxGrcmmzf58DhLzcmn/31mKfsSc96RxDmLC?=
+ =?us-ascii?Q?9PLRMRebiA2yN6koYJgCdOs8lbZ5GMhb/5fXEBPvqYf27TBSMKI/OBzOp3SL?=
+ =?us-ascii?Q?2TeBX9cDhqHkYEmaJvv5uCXRLmvrMyv5J3xRmm8qKFrCSbmK/DbQrldgXCp+?=
+ =?us-ascii?Q?OkLqlhWOWwOhp4pGtiDAuRJw+cY7UVI8QblkZ1+t4hQSr34vyHcr0pa0B7UP?=
+ =?us-ascii?Q?Rx+rUkfBVF93Jpt3LJ+wZuMMJOoO8xpvbCUcjWlNIFbi17yC6IQCB1kSHStP?=
+ =?us-ascii?Q?5Gif3HwmmZQ6qblMb+GUoMGH+HS4h8Q7BMt6whuQ?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?4HMvBXzvZl0U3So773S6VxvtGfj064cU1G5+o7S309L9R4KMcbQywH/NuuLd?=
+ =?us-ascii?Q?d9D8wRuqtZ+VGCbYJd/B+TLgVHMbqZKoTeaAcZPJAmbE7az4Ryqhh/zvS23T?=
+ =?us-ascii?Q?zryp/ipRZHS2kUyfs0o04u6bOM1Apmz8zQ1v2X4KQ7/Qi19vwApXwNjYHYgZ?=
+ =?us-ascii?Q?XpzAio32c1/rwok/fyRjO7GgNvuTcA+Q9Ilgx+Dhjvohc2wFkDzlNKjQ2vh2?=
+ =?us-ascii?Q?6/w3xv4Kf7Ey0TqESbI+EuRPfqjSlecnV6/yzcjYdrLYjNXoeJ/81P5etTlo?=
+ =?us-ascii?Q?oG1g90C53ahVvoygYZfx8zsr+85kUse3EcVZqwelgvpZb2/RGtVLE7Adx60G?=
+ =?us-ascii?Q?0DxmOWGo8goRgZqsUK0v4Z8kPUbBGftbhP8OEkHVOQgByxJNsrWkzBGxUUTA?=
+ =?us-ascii?Q?4jyNrPXspqqasw5qin0zJVBVY11gqeYnA9GDeRM9sKTFX3nzf3ktrfEHzkjs?=
+ =?us-ascii?Q?I3b6OFnGqf0cLjLFNi+mZV8l9z+obp75QP9TQaIbQ7UfgRR1UFtrtUpQRB08?=
+ =?us-ascii?Q?13JX1NFrNrBf/emhRiGqiSk9p4KvlIRgpWMP+p/SYKRm6aIz+HyLHSLe6m/N?=
+ =?us-ascii?Q?e9l+ZxhAWDotS4PmDpRXP6SpUR0ugJ0YYZ6+aBDME+Gx1AQ/A2t1bFuT50GU?=
+ =?us-ascii?Q?UmkirH8q64F1J3h4sVvgOgsha83A2qRfzf0bR83mTab8uKikFFHyQj4K9BK0?=
+ =?us-ascii?Q?Vr3cx7KvcKG65wITC9mPndyVNz4DE4ALxbxI8KERYYk2Bi1GSKlmhT4LXG9T?=
+ =?us-ascii?Q?00G63zFuXvoMDKnHThMA8zUi4ynpVyNJQSSUZGm2zGONSOxaW5l6WokM0R56?=
+ =?us-ascii?Q?9Y75pZMjBnXAEeRxffpkcDgYxPT6xcwjdcs0NMErU6LReYUqtDG0KR59Ry/g?=
+ =?us-ascii?Q?0IzvJ80Xf4rwh67Khn7xz61M+7Y40UA9/3ZaFJADq+TQaydJNBf7iz0sw7cD?=
+ =?us-ascii?Q?x6Kxvt1nVW/XNksPvzQl3sojTnepCzlOuYG9ESJtkaeulBeeAlEGrMQs/S/N?=
+ =?us-ascii?Q?7H9wpV6WOgCZFTOZvjuYeE18BVt4Vfe35ca2ecVMnVvMfMqJhZYqCZ4HGJiX?=
+ =?us-ascii?Q?8uHcf5k2UqkSLdK9PYl9BxEIg0Ss8Os1PSsra8K0qYmdJY/ILshlBaTZEbaR?=
+ =?us-ascii?Q?5a7bZ2GsU4ZEN2d97tkPWvqh1gKyvgICJj7UshM3krIZxGxmqen+hqui+GwN?=
+ =?us-ascii?Q?/PQ+M4OvnE1M5i8Fg/vfXGCH50jgG8ZOkgog4LzXo3R6yNXWjc4ei/5kiIck?=
+ =?us-ascii?Q?lLODdJnxtFUMn00Y5IGVxRAxbOCTG1hqkW8MApg+ES/9gIlhkKXK0w8ClXa8?=
+ =?us-ascii?Q?B4UTIhqYrDoDtnPQStrDlmNXZmaDaEeLWiO/H+UJiwo1zniZEf8oa79FST+1?=
+ =?us-ascii?Q?yJLTxmRAQUb4CCKOk4jbil+ZLiwNfnp7qvx3iHMoNmnXRrDFX0o0lVgGzOtc?=
+ =?us-ascii?Q?H4hVUYYJkW2ltGVF+gBeFwA0DC8uEh+VqDdUu/a9FbN7rQFgqgnfpF5E8e9s?=
+ =?us-ascii?Q?ukG2gh+TvVbo57oadLy7Ph9F4HMC3je19vmkTpA7re/ErE6CadRR16gIQfe/?=
+ =?us-ascii?Q?k5pb9j/3je6BGQgAl7HZLOxIxiOYGBceFAadoWk3HZONgHZSkZ+bXGuY01o7?=
+ =?us-ascii?Q?mkyan0vY6M8+go8B4R4+LYzoSnjNNjCul4qJh/hYh/PtNjz4Nv8pnvCnEXet?=
+ =?us-ascii?Q?nMGGlTIk61VMF/wDBm6GAN0FNvK6jXzW6of6XTs91ksRuoSoPiUoE61Jvqeq?=
+ =?us-ascii?Q?lQmRUdzwIw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5833ae46-c5b5-4c25-7277-08de57fb060b
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2026 08:07:58.4149
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aCCgNVmsEbW8LCcpJ7IcOM3LSOCybvvAo7ec2/V021dz2YuTp8S3sokQQ5DgV0GhUJbW36InlNhgtvvo6f1s+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6663
+X-OriginatorOrg: intel.com
 
-On Mon, Jan 19, 2026 at 11:26:19AM -0500, Jeff Layton wrote:
-> +  EXPORT_OP_STABLE_HANDLES - This filesystem provides filehandles that are
-> +    stable across the lifetime of a file. This is a hard requirement for export
-> +    via nfsd. Any filesystem that is eligible to be exported via nfsd must
-> +    indicate this guarantee by setting this flag. Most disk-based filesystems
-> +    can do this naturally. Pseudofilesystems that are for local reporting and
-> +    control (e.g. kernfs, pidfs, nsfs) usually can't support this.
 
-Suggested rewording, taking some of the ideas from Dave Chinners earlier
-comments into account:
 
-  EXPORT_OP_STABLE_HANDLES - This filesystem provides filehandles that are
-    stable across the lifetime of a file.  A file in this context is an
-    instantiated inode reachable by one or more file names, or still open after
-    the last name has been unlinked.  Reuses of the same on-disk inode structure
-    are considered new files and must provide different file handles from the
-    previous incarnation.  Most file systems designed to store user data
-    naturally provide this capability.  Pseudofilesystems that are for local
-    reporting and control (e.g. kernfs, pidfs, nsfs) usually can't support this.
+Hello,
 
-    This flags is a hard requirement for export via nfsd. Any filesystem that
-    is eligible to be exported via nfsd must indicate this guarantee by
-    setting this flag.
+kernel test robot noticed "xfstests.ext4.019.fail" on:
+
+commit: 2a0db5f7653b3576c430f8821654f365aaa7f178 ("struct filename: saner h=
+andling of long names")
+https://git.kernel.org/cgit/linux/kernel/git/viro/vfs.git v4.filename
+
+in testcase: xfstests
+version: xfstests-x86_64-df16c93a-1_20260105
+with following parameters:
+
+	disk: 4HDD
+	fs: ext4
+	test: ext4-019
+
+
+
+config: x86_64-rhel-9.4-func
+compiler: gcc-14
+test machine: 4 threads Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz (Skylake) w=
+ith 32G memory
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new versio=
+n of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202601201519.c7003e60-lkp@intel.co=
+m
+
+
+2026-01-17 00:52:42 cd /lkp/benchmarks/xfstests
+2026-01-17 00:52:42 export TEST_DIR=3D/fs/sda1
+2026-01-17 00:52:42 export TEST_DEV=3D/dev/sda1
+2026-01-17 00:52:42 export FSTYP=3Dext4
+2026-01-17 00:52:42 export SCRATCH_MNT=3D/fs/scratch
+2026-01-17 00:52:42 mkdir /fs/scratch -p
+2026-01-17 00:52:42 export SCRATCH_DEV=3D/dev/sda4
+2026-01-17 00:52:42 echo ext4/019
+2026-01-17 00:52:42 ./check -E tests/exclude/ext4 ext4/019
+FSTYP         -- ext4
+PLATFORM      -- Linux/x86_64 lkp-skl-d05 6.19.0-rc4-00015-g2a0db5f7653b #1=
+ SMP PREEMPT_DYNAMIC Sat Jan 17 08:37:34 CST 2026
+MKFS_OPTIONS  -- -F /dev/sda4
+MOUNT_OPTIONS -- -o acl,user_xattr /dev/sda4 /fs/scratch
+
+ext4/019           - output mismatch (see /lkp/benchmarks/xfstests/results/=
+/ext4/019.out.bad)
+    --- tests/ext4/019.out	2026-01-05 16:31:52.000000000 +0000
+    +++ /lkp/benchmarks/xfstests/results//ext4/019.out.bad	2026-01-17 00:53=
+:25.653451038 +0000
+    @@ -2,7 +2,8 @@
+     + create scratch fs
+     + mount fs image
+     + make some files
+    -file contents: moo
+    +ln: failed to create symbolic link 'long_symlink' -> '././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/./././././././././././././././././././././././././././././././././././././=
+./././././././././././././././././././././././././././././././././././././.=
+/././././././././././././././././././././././././././././././././././././x'=
+: File name too long
+    +cat: /fs/scratch/long_symlink: No such file or directory
+     + check fs
+    ...
+    (Run 'diff -u /lkp/benchmarks/xfstests/tests/ext4/019.out /lkp/benchmar=
+ks/xfstests/results//ext4/019.out.bad'  to see the entire diff)
+Ran: ext4/019
+Failures: ext4/019
+Failed 1 of 1 tests
+
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20260120/202601201519.c7003e60-lkp@=
+intel.com
+
+
+
+--=20
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
