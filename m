@@ -1,62 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-74602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UJYmL4d4cGktYAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:56:07 +0100
+	id aDthMhcNcWmPcQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 18:29:59 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E66152701
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 07:56:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6195A8BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 18:29:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3D9072A927
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 10:14:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B05B744F45
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 10:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1020E3DA7FD;
-	Tue, 20 Jan 2026 10:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED263E9F6F;
+	Tue, 20 Jan 2026 10:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFx2ktvy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1VJUoDT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E253A641C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 10:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3488833A9D4;
+	Tue, 20 Jan 2026 10:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768904054; cv=none; b=VYaaHttsWhVlPvf6iFM06ZKoSCwpVvKOBy2RtqHmrsgSMWAS0wYQEbcPUodYPNzXtjHmR50F6nwFIj0bvoQwuUqe4b3sBSE5lF1d46rdvLRLLK2nyfOempEA7T5vjJFt5GsjyUhh/BEJsvmINxG2kjdgB7aoJfwwiZbgr5sQJwU=
+	t=1768904465; cv=none; b=YILI6cILRslMpNVqGsGXjZksoV01icoAjEbVJRsMoVj9JmxwlNxjy4gMqwO1ZQkB+rsLCDPrpP5iVZr+A8LeimAJmkfon8GKnpwvtUSkRhIP51oSkyOngj3EWiFB5ovRnI1RPKXO79nDOAbxSxLurYVziF4ZWA5RcuaJnBZyYpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768904054; c=relaxed/simple;
-	bh=qWZ7S/LqqzQrILRSGe7jvYeRnlVWzQ1TQGZpVtDsKi4=;
+	s=arc-20240116; t=1768904465; c=relaxed/simple;
+	bh=E5xOvww2YbwFgWAJy3KVLziGMsctGa0Tjs9kastx5yU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XeRK6fbRTeSlmBSQBkSt1itWNJyGCVZ8VARwzj++E8lKHv5NCrJLuWsbCe/Ok1GskrD/uZPzQgWGbh2zBMb7cX06hF8XQ4wLC+yp+ouxAqdKou+kMcjC6FJxSRocoON4DvuOZgW4ff36ol5hw9QQtCLgv6/xyLCXmhAWNoG+VKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFx2ktvy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17338C19423;
-	Tue, 20 Jan 2026 10:14:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NPYTkZAEE15rlojP3qQW8gZ4L1rSlc6Zy7QO9g4O+Kcf7CiXWnRFFxrTkqtiXJJ3qnlna3t99Z4Yyz762W+NCygnQo9nJgercOwbPAi13AnvRdwQCRejnEfBkJGDDLAz8PfOIp7VaC4wyajCG94MzHvo3zTn/QRT4xWQaZKpjAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1VJUoDT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24D04C16AAE;
+	Tue, 20 Jan 2026 10:21:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768904054;
-	bh=qWZ7S/LqqzQrILRSGe7jvYeRnlVWzQ1TQGZpVtDsKi4=;
+	s=k20201202; t=1768904463;
+	bh=E5xOvww2YbwFgWAJy3KVLziGMsctGa0Tjs9kastx5yU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qFx2ktvy47fvTNZH9EFc1t0kzsHdEP5trsC1ah4YpZrc8XmsmIORraP386Aw2oFFn
-	 64uB7DcjLNJL7CaNS7J49QOzXGBqoov1Yz7Bjo80QdzUk57mJ5O2nC+7JRuBlcignV
-	 T6lE8LEtaYWTalpccs6gdmTIF/UmIqWFCiLrne45oUIv9SmS3LTLa2PHP/WqX9iyha
-	 PMCAjCW8UZ//YeWIIRQgCaTDTLCtox0HxqfU6NUf+crBY+Ey94SEI5+Q8rl1rTrQNQ
-	 9iV1Sr4UNi6Lz4G0eWA42vefPgOMODf/T1SBK5uotQ21Xq6TSPbeRUdPUxxyfg688V
-	 gGvoitbLCiyTg==
-Date: Tue, 20 Jan 2026 11:14:09 +0100
+	b=n1VJUoDTE1bE4Axag2MVvCjZi3r3nQzWpAiQ9pDGyo0sT1kLEez8SxjJA0+W7GZR2
+	 V5YDMRac/SRcvQhLgXtiSpTTy+Y+6KwKcUePNdU3l3VIPeWkRflL0On5H7JgnSBCVi
+	 bhHLMKxmmoOVWNLHR9NDC0PK0yECWuTxNH+IAbgD+56K4WQuXEevgg2GAOQJ9vLlCH
+	 c8SFVqfXZ5SelWF7ZE5iPDwIx9mKUHaxV2alJCPRxY7wAxpvIejQC3q3yqF0yNObbG
+	 WJpV9jEBSZ0iheGUF1G6ZpjKzos9QxsQvxnThJ/w5cDFBqlHkoIwXn0DtH1kUhI1PV
+	 h8y6DL4dovYpw==
+Date: Tue, 20 Jan 2026 11:20:58 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC] pidfs: convert rb-tree to rhashtable
-Message-ID: <20260120-abladen-batterie-40fe1a4652be@brauner>
-References: <20260119-work-pidfs-rhashtable-v1-1-159c7700300a@kernel.org>
- <CAGudoHEej7_Q-nkJqBU8Md15ESVtyxZ9Wbq9zwyUEcfT034=xg@mail.gmail.com>
- <20260120-teilhaben-kruste-b947256ed6ab@brauner>
- <CAGudoHEGUDaToxwhsFHT1vB7Q66-H2UMNpX8KTj-dcEZy4Hz3g@mail.gmail.com>
+To: NeilBrown <neil@brown.name>
+Cc: Benjamin Coddington <bcodding@hammerspace.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Eric Biggers <ebiggers@kernel.org>, Rick Macklem <rick.macklem@gmail.com>, linux-nfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	Lennart Poettering <lennart@poettering.net>
+Subject: Re: [PATCH v1 0/4] kNFSD Signed Filehandles
+Message-ID: <20260120-irrelevant-zeilen-b3c40a8e6c30@brauner>
+References: <cover.1768573690.git.bcodding@hammerspace.com>
+ <20260119-reingehen-gelitten-a5e364f704fa@brauner>
+ <176885678653.16766.8436118850581649792@noble.neil.brown.name>
+ <20260120-tratsch-luftfahrt-d447fdd12c10@brauner>
+ <176890236169.16766.7338555258291967939@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,154 +70,77 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHEGUDaToxwhsFHT1vB7Q66-H2UMNpX8KTj-dcEZy4Hz3g@mail.gmail.com>
-X-Spamd-Result: default: False [2.54 / 15.00];
+In-Reply-To: <176890236169.16766.7338555258291967939@noble.neil.brown.name>
+X-Spamd-Result: default: False [5.04 / 15.00];
 	MID_END_EQ_FROM_USER_PART(4.00)[];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DATE_IN_PAST(1.00)[31];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-74602-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
+	TAGGED_FROM(0.00)[bounces-74603-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	GREYLIST(0.00)[pass,meta];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	DMARC_POLICY_ALLOW(0.00)[kernel.org,quarantine];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	TO_DN_SOME(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	FREEMAIL_CC(0.00)[hammerspace.com,oracle.com,kernel.org,gmail.com,vger.kernel.org,poettering.net];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
+	ASN(0.00)[asn:7979, ipnet:2605:f480::/32, country:US];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MISSING_XM_UA(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo]
-X-Rspamd-Queue-Id: 5E66152701
+X-Rspamd-Queue-Id: 7A6195A8BD
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Tue, Jan 20, 2026 at 10:56:40AM +0100, Mateusz Guzik wrote:
-> On Tue, Jan 20, 2026 at 9:17 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Mon, Jan 19, 2026 at 09:51:30PM +0100, Mateusz Guzik wrote:
-> > > Longer term someone(tm) will need to implement lockless alloc_pid (in
-> > > the fast path anyway).
-> > >
-> > > In order to facilitate that the pidfs thing needs to get its own
-> > > synchronisation. To my understanding rhashtable covers its own locking
-> > > just fine, so the thing left to handle is ino allocation.
-> >
-> > I'm very confused why inode allocation would matter. Inode allocation
-> > for pidfs is literally just a plain increment. IOW, it's not using any
-> > atomic at all. So that can happen under pidmap_lock without any issue
-> > and I don't see the need to change to any complex per-cpu allocation
-> > mechanism for this.
+On Tue, Jan 20, 2026 at 08:46:01PM +1100, NeilBrown wrote:
+> On Tue, 20 Jan 2026, Christian Brauner wrote:
+> > > You don't need signing to ensure a filehandle doesn't persist across
+> > > reboot.  For that you just need a generation number.  Storing a random
+> > > number generated at boot time in the filehandle would be a good solution.
+> > 
+> > For pidfs I went with the 64-bit inode number. But I dislike the
+> > generation number thing. If I would have to freedom to completely redo
+> > it I would probably assign a uuid to the pidfs sb and then use that in
+> > the file handles alongside the inode number. That would be enough for
+> > sure as the uuid would change on each boot.
 > 
-> I am not saying this bit poses a problem as is. I am saying down the
-> road pid allocation will need to be reworked to operate locklessly (or
-> worst case with fine-grained locking) in which case the the pid ino
-> thing wont be able to rely on the pidmap lock.
+> What you are calling a "uuid" in "the pidfs sb" is exactly what I am
+> calling a "generation number" - for pidfs it would be a "generation
+
+"generation number" just evokes the 32-bit identifier in struct inode
+that's overall somewhat useless. And a UUID has much stronger
+guarantees.
+
+> number" for the whole filesystem, while for ext4 etc it is a generation
+> number of the inode number.
 > 
-> It is easy to sort out as is, so I think it should be sorted out while
-> pidfs support is being patched.
+> So we are substantially in agreement.
 
-I don't have time for that but I will move pidfs out of pidmap_lock
-completely.
-
-> The nice practical thing about unique 64 bit ids is that you can
-> afford to not free them when no longer used as it is considered
-> unrealistic for the counter to overflow in the lifetime of the box.
-
-I'm still confused what this has to do with pidfd inodes.
+Great!
 
 > 
-> Making it scalable is a well known problem with simple approaches and
-> the kernel is already doing something of the sort for 32-bit inos in
-> get_next_ino(). If anything I'm surprised the kernel does not provide
+> Why do you not have freedom to add a uuid to the pidfs sb and to the
+> filehandles now?
 
-include/linux/cookie.h
+Userspace relies on the current format to get the inode number from the
+file handle:
+https://github.com/systemd/systemd/blob/main/src/basic/pidfd-util.c#L233-L281
 
-is what you want.
-
-> a generic mechanism for 64 bits (at least I failed to find out and
-> when I asked around people could not point me at one either). Getting
-> this done for 64 bit is a matter of implementing a nearly identical
-> routine, except with 64-bit types and with overflow check removed.
-> 
-> However, the real compliant about this patch is the re-introduced
-> double acquire of pidmap_lock.
-
-That's easy to sort out:
-
- fs/pidfs.c   |  4 +++-
- kernel/pid.c | 13 ++++++-------
- 2 files changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index e97931249ba2..ccfab23451b1 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -138,6 +138,7 @@ void pidfs_prepare_pid(struct pid *pid)
- 		pidfs_ino_nr += 2;
- 
- 	pid->ino = pidfs_ino_nr;
-+	pid->pidfs_hash.next = NULL;
- 	pid->stashed = NULL;
- 	pid->attr = NULL;
- 	pidfs_ino_nr++;
-@@ -145,7 +146,8 @@ void pidfs_prepare_pid(struct pid *pid)
- 
- /*
-  * Insert pid into the pidfs hashtable.
-+ * @pid: pid to add
-+ *
-  * Returns 0 on success, negative error on failure.
-  */
- int pidfs_add_pid(struct pid *pid)
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 7da2c3e8f79c..e68700de3339 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -313,14 +313,9 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *arg_set_tid,
- 	retval = -ENOMEM;
- 	if (unlikely(!(ns->pid_allocated & PIDNS_ADDING)))
- 		goto out_free;
--	pidfs_prepare_pid(pid);
--	spin_unlock(&pidmap_lock);
- 
--	retval = pidfs_add_pid(pid);
--	if (retval)
--		goto out_free_idr;
-+	pidfs_prepare_pid(pid);
- 
--	spin_lock(&pidmap_lock);
- 	for (upid = pid->numbers + ns->level; upid >= pid->numbers; --upid) {
- 		/* Make the PID visible to find_pid_ns. */
- 		idr_replace(&upid->ns->idr, pid, upid->nr);
-@@ -330,11 +325,15 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *arg_set_tid,
- 	idr_preload_end();
- 	ns_ref_active_get(ns);
- 
-+	if (pidfs_add_pid(pid)) {
-+		free_pid(pid);
-+		pid = ERR_PTR(-ENOMEM);
-+	}
-+
- 	return pid;
- 
- out_free:
- 	spin_unlock(&pidmap_lock);
--out_free_idr:
- 	idr_preload_end();
- 
- 	spin_lock(&pidmap_lock);
+And they often also construct them in userspace. That needs to continue
+to work. I also don't think it's that critical.
 
