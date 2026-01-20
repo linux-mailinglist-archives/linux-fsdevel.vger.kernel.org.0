@@ -1,269 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-74616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CCD8CFk2cGl9XAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 03:13:45 +0100
+	id OKnCHxZgcGkVXwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 06:11:50 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8D874F939
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 03:13:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C446515DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Jan 2026 06:11:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A724C62AFF6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 11:44:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7B42C48B8F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 11:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC4D421F14;
-	Tue, 20 Jan 2026 11:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17944266A1;
+	Tue, 20 Jan 2026 11:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bnV7t5AK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bON6rQPc";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jlhb9xlL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070293B8BA9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 11:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768909421; cv=pass; b=PiSkljIxzLd6o+ASWK1eb7hs62FJ3yrJsw3nGV5gcxRc8g7jE1yrNMkiJ+yp1Hb78iI+XPFujyvcmLFhg+isZ4PtDQFEiUCAow30dHGr+OiO0RbAZX+O2n0HTAqiE5MjHx/9vVpkm1rr7ReXBcfhfKmOgL9TT9ZJLUfX1TjUF4s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768909421; c=relaxed/simple;
-	bh=1VwsQmLa+K3rhCWbqAjBNdGMMTSK6tG7vq2ITYIvDyM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cT/9x/4RyV6TK8iPvolh2wWsYuwzgolY9qhuimlZKX/a7XPTJZ1KbAhRjXdXXJXTGaqxgRGF90ZejGH5cLdOA7yR7t/RuzX8c/rnxhbOiwgaZsSm6T1vwfn2JyZue4A+P+uEfh34HDhYN4yyk5PmDzxxdALiNGW4ns2lU2QzQmM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bnV7t5AK; arc=pass smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64d1ef53cf3so7229511a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 03:43:39 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1768909418; cv=none;
-        d=google.com; s=arc-20240605;
-        b=jOZCI+NcN9ykp3URt1SOMcuEUP09y3dTLZVkCj+kk65oWEFNBx1SpxfWWl4kwgg7zJ
-         lRMKUe7IhwPPFBiVHBn13NOOHuSlLujT5h/ZvVjedMdEaJFksCv7L73GPgInJfsnGUYU
-         0qkfaelFzMwIUyxAlu3YPl3m8mtQOb4yCyD7gRIwRbNwdkjopdszirShsa6TqCJPVjH4
-         mPlM450H/ET3nQIEIIm+gIW5rxFOLVU32yjsQwVSO55vvG4BpqBvGrFH4aLgfFCblar/
-         sTXj6yvnHVxhccdpWXDonPPcPjthio1MdkQIIbGHr8quzw6ISePC27OxPZBLEwL+0yM7
-         +piQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=n8tOVxPutWESVDYdOGLQDV2ZFUoU+hPfX08YHeOFUTM=;
-        fh=Je4uwNyJTBnWekdzHnrRVNrBE/QEW0fOwM0ldTowuDM=;
-        b=kpXfVEJRRR+mNr9Qul9ZURAXKsWcKIFQBIMjr3fT4PfW2mUn4uYIXah+KefCZjUybO
-         ka6qn1wZd0hK8wiweyhrco3D80wvYM5p53Q6O4tFSq+K5Waa4599RANE+5Accrwm/dAC
-         thvPEcdpJKcwgGRDCmQzjGLLRrzIXdztpYCqGSrTVUXlapcdAHHzII5EQatYc4/qc48W
-         rkAPqFVTCLT6CIfHtxYuRO+XYfhEkYK/sZWdCVPHQeuzgMqXjxh5sRi8GpBFzbhyB2ch
-         zdqRBABpNWhrVieY/46lOwMM1QvHlcTx8v3GGe8sgGmeR4f0ifuKpV4GXI9/glW5+1l+
-         DIBg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBA13B8BB2
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 11:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768909469; cv=none; b=nOymqyM/YO9l++77nwrxyQ3V/rQZTLwbZdybCPbaJoMtzcO7ksOJBvglqbDM61D/2914JObD+Cha6HxniL/YJHQvzv2dL/YTUnwWsWsFpiCiI/liI5QM3LhyJjyWihdEHkodR3ZdB5WHHEQ9JBv6YMagGaULQj93pnu3biJ4fJY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768909469; c=relaxed/simple;
+	bh=TiiXYzQUqQAZpwrQs2Qyyc4v41VwLgKHuTM7jdyKi+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gWUJRFfmhQF5y69qwENFf+JKul7r0i8IHH5mYWCCIrsowRYJ8Fgn/OuiyOzm8wmzpw1RIUzBUguF7o8pY9r1ZAoJCW+It+FV3Og7/NlyfZQPdxo24Do78CqLVDQyoa9tZWL4NJ/VBxM/9Xp/vwbiivlzYqmaex2pE/dNtz+xsC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bON6rQPc; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jlhb9xlL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768909466;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VXQVvpxNNsGjingzXc9wZFJEzzxIAdMJuzmc45mqLJ4=;
+	b=bON6rQPcdkmtNBKGes7yohoraayrW9gl18+npf6DsWfktAVlgh8pdWgmVzNP+8QGDik6W6
+	Zg1Z5/BF7v6c8b+RzJ2vpuJJHVufjixaJykjw4t4pzoYY1e8pnJeqbU5o/4da0GUkaN7IE
+	kpEnnGZp8jcg2QyDaReLVHTdNk+6xMk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-88-y_Uw6BjJPNu841RpDt8OQA-1; Tue, 20 Jan 2026 06:44:23 -0500
+X-MC-Unique: y_Uw6BjJPNu841RpDt8OQA-1
+X-Mimecast-MFC-AGG-ID: y_Uw6BjJPNu841RpDt8OQA_1768909462
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-47ee71f0244so48349595e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 03:44:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768909418; x=1769514218; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n8tOVxPutWESVDYdOGLQDV2ZFUoU+hPfX08YHeOFUTM=;
-        b=bnV7t5AKM83/9Zq+2cGwj0ULOKmiKVibGEu5ktIAfZ5HZdiTT07QKvOgRUMrlCrcFy
-         unzDm9afkwp66GCFUAPxFIWBFOsTJTdzaH/wmPwj8LLOK5+9/fWNKpMA6/eMkvJw3mGP
-         rhiP1EL/+CWaYIySbR8Nf8LE5MwcJ4lQdK3TXPGtPo+/i5+CcLfKCfNbm0PqG1X80CNh
-         mp1ijVqq96rzyTPZImBhLUcWzfOFBjlMuB+2Pfl2B8XxKKN3HvHChL3RGzbXTSavmiqf
-         Pc7xCZhFcob0tUV+dANq0N+8+jai8EOQCnXvGHVPrl1wINYN9C3SkB6nUJ5ZrDKqVG1I
-         G6GA==
+        d=redhat.com; s=google; t=1768909462; x=1769514262; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VXQVvpxNNsGjingzXc9wZFJEzzxIAdMJuzmc45mqLJ4=;
+        b=Jlhb9xlLSsTj8aJQQ7cCewi2PV+zlb+TPM6H/HSJO9rSv3SNJ9zeUMEJhwLSsf17Oo
+         hVavBbjxarROty7oHmlmdahE6Vpf+IgFmoKqD43GFNBqZBWZEt3jzrtYBQVyr/i0+oRF
+         YD56el9nyAb8+5nukkqpRXaw+t1VgiEytE7kKVnpgZjwr3PPRb/IBejOX4xXNILTISVP
+         AM/mMtF/J9MP9Bx4fwFhe7idzyX3Sg67l+5DTQfDzI8XsaQ0q9LOITgZanoU7MR0CiQ2
+         t4cmfmAvg9PTXZsSKM4H0yQ02CeiFYmxY9GUbvY+C4RBuoXgwMX0H008aKaSVhyW51Ez
+         5NHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768909418; x=1769514218;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=n8tOVxPutWESVDYdOGLQDV2ZFUoU+hPfX08YHeOFUTM=;
-        b=qVa//BvwrZraE5nPjEIPJs6YYnIZpPzh8mQGJpOaYNyV0TKlcJpZ6BC85rOcPBGOPY
-         fKzmKE4cH/Q5ewQZHLP6DFQUIKVZ9DmB0vb0JqzsgtKmeW7JPVAvRWg/XAVUok4EtbqZ
-         WEiUJdLiKda4MP8B4PtdlG7EnKPYjG2QuwOBAA6sdkE/ahuqvsmt6OvjUJcR3yu3/dNn
-         XZlTLFP4e8FLOpsAvdJft7VslO7S+6pzH7Yvjv5Ga2iUib7k/zWIfnS9YWizbXKWF7ER
-         bJSpPCDo6P920CJFv4Qi7uITVpiMscNGA6mWDtnDEfKJE5MCeP6/eWekQY9eSAYIbH8+
-         qK1A==
-X-Gm-Message-State: AOJu0YxQ4Ti2HGcbfxSlRqKZHUvc4MEpEpKs+LoLZ4QdJ4719g9GSz7k
-	Umz0vo9IRNz3Ud45YUGvpNpPZv+4tOeTiS+rpnWL5orMuWqv97wc5e9wJWoHmcVmXZudfL8epAM
-	bNilGfTotFKSjC/5Ze8q+Tc39flnYo0oBdBCVJcdDKA==
-X-Gm-Gg: AZuq6aLI2UlD2y6eSYWvE8+ihxnSxjKJtZavt4XxdelKhnu0r62p/oMXX2OvCjh3e/O
-	kisJqEcDMfnhcotj1pMssxFrKZz7ceLUD/RYYMHenQXLoSaYttoV/DWc0w+j8m0h65dSaF349Su
-	c48IPI7JZFHdv0RVVLR5tyRBIrMt9IhwEbrTIkud42TSrt/rYD7WfVElWzLmdmvSaDKdHpUTFu4
-	S/a7p5NIaO4dATh80NfFttdwwnUYe7fmOnXR4nHE2fcqH1vwG1YDldDHDsY8cOgRQG05juuq3L4
-	iTjclx18uuY72Atuu3gNwToGc3KEqA==
-X-Received: by 2002:a05:6402:1e93:b0:64c:fee2:1dc9 with SMTP id
- 4fb4d7f45d1cf-65452ad113dmr10273408a12.21.1768909418183; Tue, 20 Jan 2026
- 03:43:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1768909462; x=1769514262;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VXQVvpxNNsGjingzXc9wZFJEzzxIAdMJuzmc45mqLJ4=;
+        b=VSZq2AtpvSrfrp2tWkMJ19kwMo2G73+vg09lSkyrCi1XONPd8/8/AoQ7shINgnsTf8
+         Y4WNXFD/+oJe76efusGFjjRW3ifOLQjT6K3HZPcMFsPrRIjPkgvZy+OY7KEaz6KIReij
+         09A3uU2HtBxIr8EfPVTTROWQAuiXVkdDgLFIaGvvQlkwyzWy5Fl44Us02r6LRm/fwJQh
+         4dfZkrfEv3/VuM0BlW9M46R10UmK5SWZdHxEBwmf+WXZubhW46Le6vourhbAFWnE3Bh6
+         RBlYSR17TzYj7IVVgORYqbL+p6D7w5EscPykBXXzNNaFUQTHdFpUpSgg7APtpL4VPJzM
+         KBkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWF8PAahvffV+/fnX1Iv/jKEpYs4N5wwuQ4mUNHE+g8Wta6nlfP2UKgF4WGMHDrWGnuXpRI1mw8Vdf5hDX+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfu2d43y/Ularolm9tqwnPdAVwNCxmii54qK4vnkMgMzLFkjYg
+	FHj5v+iMLYzR5xpcxRQgAmlLXeu+RRVDzhFGJXvrspwi9FvtkMoFtluQrA86CuIQcYpZHPvej5/
+	6aIvbhXs6aMxlGfwnsVRU9pN1qzcpziXQkS84tUfvawD/9hW4IO4wUXUbj6MMFHYClA==
+X-Gm-Gg: AY/fxX7nQ7DRJ7UtVo0qV2SqpdRwmSIets6VS/BD57LYMEHFpjUSh3n5Y64gduIC1Bm
+	0APdO1VFue0juaAs4EufSiparUsvIKYxgTUuxNpxsTgBI0dDnI5rEiaxmGBtsBooMQ5Jh88zYKF
+	rKKMyiMh8gXRzPy3N1BMMhQ4CJa/sJcvGNJyGIxLUoJzMQxaWLPfZ6Q7pEXGOU2aglUP0i0VtFR
+	Odegbh40DLm74B7mG+ltBgBhDfCcwIiTn/VljETG8stZIVC2eAP6Zhfu+21mJqfgkP3mHKkqlM5
+	Ge8i/m9/M2POugYlja2fIAGogwW99577qZzTVI5VNAKsLL6aYZ9g2Oalrw59aGq8GIUKTCgtr1Q
+	=
+X-Received: by 2002:a05:600c:4448:b0:47e:e20e:bbb4 with SMTP id 5b1f17b1804b1-4801e345c8amr179356735e9.26.1768909461642;
+        Tue, 20 Jan 2026 03:44:21 -0800 (PST)
+X-Received: by 2002:a05:600c:4448:b0:47e:e20e:bbb4 with SMTP id 5b1f17b1804b1-4801e345c8amr179356335e9.26.1768909461124;
+        Tue, 20 Jan 2026 03:44:21 -0800 (PST)
+Received: from thinky ([217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47f42907141sm300491595e9.9.2026.01.20.03.44.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jan 2026 03:44:20 -0800 (PST)
+Date: Tue, 20 Jan 2026 12:44:19 +0100
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, 
+	Eric Biggers <ebiggers@kernel.org>, Matthew Wilcox <willy@infradead.org>, fsverity@lists.linux.dev, 
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, aalbersh@kernel.org, 
+	david@fromorbit.com, tytso@mit.edu, linux-ext4@vger.kernel.org, jaegeuk@kernel.org, 
+	chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: fsverity metadata offset, was: Re: [PATCH v2 0/23] fs-verity
+ support for XFS with post EOF merkle tree
+Message-ID: <5tse47xskuaofuworccgwhyftyymx5xj3mc6opwz7nfxa225u6@uvbk4gc2rktd>
+References: <aWZ0nJNVTnyuFTmM@casper.infradead.org>
+ <op5poqkjoachiv2qfwizunoeg7h6w5x2rxdvbs4vhryr3aywbt@cul2yevayijl>
+ <aWci_1Uu5XndYNkG@casper.infradead.org>
+ <20260114061536.GG15551@frogsfrogsfrogs>
+ <5z5r6jizgxqz5axvzwbdmtkadehgdf7semqy2oxsfytmzzu6ik@zfvhexcp3fz2>
+ <6r24wj3o3gctl3vz4n3tdrfjx5ftkybdjmmye2hejdcdl6qseh@c2yvpd5d4ocf>
+ <20260119063349.GA643@lst.de>
+ <20260119193242.GB13800@sol>
+ <20260119195816.GA15583@frogsfrogsfrogs>
+ <20260120073218.GA6757@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260119161505.26187-1-jack@suse.cz> <20260119171400.12006-5-jack@suse.cz>
-In-Reply-To: <20260119171400.12006-5-jack@suse.cz>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 20 Jan 2026 12:43:26 +0100
-X-Gm-Features: AZwV_QjkKAdNeEGy5HwuM0QpdjznZdr65iO7Yu4QIDxP_xASRwzwyNi_HzKjHZ0
-Message-ID: <CAOQ4uxje6rMQGNHKYjjO9_Bw3nZuOTyephS=wcOBJSv+Kh27yQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] fsnotify: Use connector hash for destroying inode marks
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spamd-Result: default: False [-1.96 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260120073218.GA6757@lst.de>
+X-Spamd-Result: default: False [-1.46 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-74616-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWO(0.00)[2];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	DMARC_POLICY_ALLOW(0.00)[redhat.com,quarantine];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	TAGGED_FROM(0.00)[bounces-74617-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	R_SPF_SOFTFAIL(0.00)[~all:c];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,suse.cz:email]
-X-Rspamd-Queue-Id: A8D874F939
+	ASN(0.00)[asn:7979, ipnet:213.196.21.0/24, country:US];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[aalbersh@redhat.com,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	R_SPF_SOFTFAIL(0.00)[~all:c];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCVD_COUNT_FIVE(0.00)[6];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: 2C446515DE
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Mon, Jan 19, 2026 at 6:14=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> Instead of iterating all inodes belonging to a superblock to find inode
-> marks and remove them on umount, iterate all inode connectors for the
-> superblock. This may be substantially faster since there are generally
-> much less inodes with fsnotify marks than all inodes. It also removes
-> one use of sb->s_inodes list which we strive to ultimately remove.
->
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/notify/fsnotify.c | 74 +++++++++++++++-----------------------------
->  1 file changed, 25 insertions(+), 49 deletions(-)
->
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index 706484fb3bf3..16a4a537d8c3 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -34,62 +34,38 @@ void __fsnotify_mntns_delete(struct mnt_namespace *mn=
-tns)
->  }
->
->  /**
-> - * fsnotify_unmount_inodes - an sb is unmounting.  handle any watched in=
-odes.
-> - * @sb: superblock being unmounted.
-> + * fsnotify_unmount_inodes - an sb is unmounting. Handle any watched ino=
-des.
-> + * @sbinfo: fsnotify info for superblock being unmounted.
->   *
-> - * Called during unmount with no locks held, so needs to be safe against
-> - * concurrent modifiers. We temporarily drop sb->s_inode_list_lock and C=
-AN block.
-> + * Walk all inode connectors for the superblock and free all associated =
-marks.
->   */
-> -static void fsnotify_unmount_inodes(struct super_block *sb)
-> +static void fsnotify_unmount_inodes(struct fsnotify_sb_info *sbinfo)
->  {
-> -       struct inode *inode, *iput_inode =3D NULL;
-> -
-> -       spin_lock(&sb->s_inode_list_lock);
-> -       list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-> -               /*
-> -                * We cannot __iget() an inode in state I_FREEING,
-> -                * I_WILL_FREE, or I_NEW which is fine because by that po=
-int
-> -                * the inode cannot have any associated watches.
-> -                */
-> -               spin_lock(&inode->i_lock);
-> -               if (inode_state_read(inode) & (I_FREEING | I_WILL_FREE | =
-I_NEW)) {
-> -                       spin_unlock(&inode->i_lock);
-> -                       continue;
-> -               }
-> -
-> -               /*
-> -                * If i_count is zero, the inode cannot have any watches =
-and
-> -                * doing an __iget/iput with SB_ACTIVE clear would actual=
-ly
-> -                * evict all inodes with zero i_count from icache which i=
-s
-> -                * unnecessarily violent and may in fact be illegal to do=
-.
-> -                * However, we should have been called /after/ evict_inod=
-es
-> -                * removed all zero refcount inodes, in any case.  Test t=
-o
-> -                * be sure.
-> -                */
-> -               if (!icount_read(inode)) {
-> -                       spin_unlock(&inode->i_lock);
-> -                       continue;
-> -               }
-> +       int idx;
-> +       struct fsnotify_mark_connector *conn;
-> +       struct inode *inode;
->
-> +       /*
-> +        * We hold srcu over the iteration so that returned connectors st=
-ay
-> +        * allocated until we can grab them in fsnotify_destroy_conn_mark=
-s()
+On 2026-01-20 08:32:18, Christoph Hellwig wrote:
+> On Mon, Jan 19, 2026 at 11:58:16AM -0800, Darrick J. Wong wrote:
+> > > >  a) not all architectures are reasonable.  As Darrick pointed out
+> > > >     hexagon seems to support page size up to 1MiB.  While I don't know
+> > > >     if they exist in real life, powerpc supports up to 256kiB pages,
+> > > >     and I know they are used for real in various embedded settings
+> > 
+> > They *did* way back in the day, I worked with some seekrit PPC440s early
+> > in my career.  I don't know that any of them still exist, but the code
+> > is still there...
+> 
+> Sorry, I meant I don't really know how real the hexagon large page
+> sizes are.  I know about the ppcs one personally, too.
+> 
+> > > If we do need to fix this, there are a couple things we could consider
+> > > doing without changing the on-disk format in ext4 or f2fs: putting the
+> > > data in the page cache at a different offset than it exists on-disk, or
+> > > using "small" pages for EOF specifically.
+> > 
+> > I'd leave the ondisk offset as-is, but change the pagecache offset to
+> > roundup(i_size_read(), mapping_max_folio_size_supported()) just to keep
+> > file data and fsverity metadata completely separate.
+> 
+> Can we find a way to do that in common code and make ext4 and f2fs do
+> the same?
 
-fsnotify_destroy_marks()
+hmm I don't see what else we could do except providing common offset
+and then use it to map blocks
 
-> +        */
-> +       idx =3D srcu_read_lock(&fsnotify_mark_srcu);
-> +       spin_lock(&sbinfo->list_lock);
-> +       while (!list_empty(&sbinfo->inode_conn_list)) {
-> +               conn =3D fsnotify_inode_connector_from_list(
-> +                                               sbinfo->inode_conn_list.n=
-ext);
-> +               /* All connectors on the list are still attached to an in=
-ode */
-> +               inode =3D conn->obj;
->                 __iget(inode);
-> -               spin_unlock(&inode->i_lock);
-> -               spin_unlock(&sb->s_inode_list_lock);
-> -
-> -               iput(iput_inode);
-> -
-> -               /* for each watch, send FS_UNMOUNT and then remove it */
-> +               spin_unlock(&sbinfo->list_lock);
->                 fsnotify_inode(inode, FS_UNMOUNT);
-> -
-> -               fsnotify_inode_delete(inode);
-> -
-> -               iput_inode =3D inode;
-> -
-> +               fsnotify_destroy_marks(&inode->i_fsnotify_marks);
-> +               iput(inode);
->                 cond_resched();
-> -               spin_lock(&sb->s_inode_list_lock);
-> +               spin_lock(&sbinfo->list_lock);
+loff_t fsverity_metadata_offset(struct inode *inode)
+{
+	return roundup(i_size_read(), mapping_max_folio_size_supported());
+}
 
-The list could be long.
-Do we maybe want to avoid holding srcu read for the entire list walk?
+-- 
+- Andrey
 
-Anyway, with or without, feel free to add:
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-Thanks,
-Amir.
 
