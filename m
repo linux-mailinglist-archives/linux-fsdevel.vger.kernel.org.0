@@ -1,248 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-74714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0A5lKvbub2m+UQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 22:09:10 +0100
+	id SJhhDt7zb2m+UQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 22:30:06 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284274BFE3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 22:09:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9514C447
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 22:30:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB951A2920A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 19:10:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6675AA5F30
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 19:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC1344CAFE;
-	Tue, 20 Jan 2026 19:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BA047885E;
+	Tue, 20 Jan 2026 19:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gXVVO1J5"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="PfDYkCH1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E471F42188D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 19:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768936239; cv=pass; b=iJeKKMYnFtvoq9bYOPPzKmxTiMwQBa9LM6vruYa10J4fy9hgS+fObQCSzdAB+atTY55zLKIeNZ1if0ALR7Fltheo9rwKg4TF/68aoKURCLFnN/3wsv6YtQR+4/bfXgrhsZoiAquja5EsbPJvTQFbLZWr5LBd6QDUE1d1ynhSpxc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768936239; c=relaxed/simple;
-	bh=EX82y+L+Fx6C8tG5ENzqvocl0zLvmjlhkPjry7h9vjo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rYlY4Ybr8S1YQSfeXWNspibQ2inEfmecyzTtgL3mB0N1Ee32cjnkBsvpR+XHPyY8oOaZCnOKcOPNAYSlIsZM9CxTKjfsmJdixuhLjcQk5HGHo8PPdq+nm1S/2BMikjuRirKVCNfkcE0d4BJx4Tl7OfUPKL/2i7wVoIu86vq3aqo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gXVVO1J5; arc=pass smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-59b72a1e2f0so6672811e87.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 11:10:36 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1768936235; cv=none;
-        d=google.com; s=arc-20240605;
-        b=BcDXEtamj5KzMRHhSc7In2zxsbz1ykqGcWOTfPa+7bvDYHG1uzefDYakulhMNrAreF
-         1P92N31a8ayl4V9IeetPZ9vDCXoZxXHgeIGHJ6XmgajMjFXFUdu426dr7qwTcut32Sj5
-         DdeoRMVd+Kvi+MIxQwLwoB+lSm94YgdAb43DqHqYYkQyGJDOt07FeIMom+jOJ6ec2JTz
-         IRjldUakmOXgD/DCkAAE11dGzcljPza3UDVedHWEMrbSOS8O5YR+8ugoP86UYmLK066n
-         SAeaU+HYsJ59/FX5366lIjgLquSogDHbckKWYDMqLqGKee9Pt2wZOw0ARgbc/qVpSSWS
-         n/nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=WrTuJnKKE8W4GQWlDJXtErrmVMH9CcETXLF2qSAZx8w=;
-        fh=dsuexeOuk9w71fDVbTyaDZcditWLB642jqfwVM4VXcI=;
-        b=egT6TxlziPTLr/shGEfrWL1BebKIRJ7JMMPi/lTo/k4hWp0586IycGC7ppuqGu83lL
-         8Ya6FjLcoJQbzx+hCLSuD+CAOuFqBR9LRbZlV0phsBUiTF0cGgEYtVJirgFxuQ2vETTV
-         Ma8n6jQuzKD9Ve9RJcolfiuxDH0AmtQ1p03qg42CPo7bv0aBFE6fL1zRmTFP40hhUkBB
-         Vj4rKLRVAHF4fm0pPAoKWfehc9WCjFy8vXpuzs6YmU87st4ZtgPAmPyE7M6HDkWSixxV
-         n8mRdrXf+80eO4xJznLtaSH3Tbl6OeV6Ghs+463aPttwxo3DnRUWTb/U4IsQ2gXLxw7S
-         G2jw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768936235; x=1769541035; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WrTuJnKKE8W4GQWlDJXtErrmVMH9CcETXLF2qSAZx8w=;
-        b=gXVVO1J5xniK0/dLO0uu/J1MxzEQizrtzWm6Gdj0QlPHmrzb9gCacmZODsmra2Dt84
-         uplgft5/2IkSR6KhaYHBF0JFpSzQMOiLp7FgSyl1bZB921efegJREuQWwAlU1LrRBn2t
-         P+ots+ZoUdwNV6DhqavzOo/N2Q69KxDn7mBCRC85FR+A3qfSGOtv85F8OWNpFo62bSmv
-         mW27iUSIYC11qx9F8BgzY6wGh+6P5z2sX8T9RaR8hLkeC0QySF7m2KezPx2SzLmiAKAZ
-         b00jKYX3dVPcEiFXyisXDX23XmO50IosRU6lUZdLDIY86+LH0flenNJNT/5xZwZzLOre
-         WJ1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768936235; x=1769541035;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WrTuJnKKE8W4GQWlDJXtErrmVMH9CcETXLF2qSAZx8w=;
-        b=lZNZoZ0MDExZI3R8E4CmHWNpWLpMWWf6+IOZ1W4UFuNDgmgFG+3BI16f5zPPanqVJs
-         DESJhJR1tvYlBmlkULdlrcMlR+BqEUwxtfvApuLZ3qnJKQP5ILTN+vbGGs0+0B+KkO/s
-         WGgaugWgXBpyMkFZJK82wl16qb4G4lANExxWPIYJ2YaXxcztsMVoPATmSiQxYB+YU3Ox
-         ko09tKTh9Cp7/Dptc75YTjLDQjVX1ORioSxG7cq6xCq0ebyw+oxnXJLMSf9wfStknWlc
-         Of5ALmKwwSRE5j2JU51i8wrgRmkbGNH4DGxn+gUt/A/KzWjxKdZijE+YQPhvkALDZyhQ
-         K7Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVQ9hbADBbWmc0AmnIjgg7EKYosd5ZjbG8bujjDYRcFGRD+sVt7jLex2FZOjPcFhuW/NHwLCCSQQfjz75x@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXZ74RsvOvQMn3R9k6dqSctFK2dd+oT3WoAKPgSg7/uszXzhdu
-	U4kgFwz8WXGVtZeboLms1s44y3n/5+Xob8NTPYQg5jwXc/j+Qnc9SBe5wawFB+znDxxJIm1esFY
-	LNxDJMVeZgonlm6wtfx8qunfLKKvsYKI=
-X-Gm-Gg: AZuq6aLqbw9TTY/lMLibwOce0xnlBbUxkXE6SMhCFbR3EaZqvKNvv8kysgbKTog+DVl
-	0ELsMT88fejLs5Ky5VFNxyX906O4DcxPAwtDYSQV/7Lj10wsbBMc6MO4tpF2eWdrKflkIT9gwHr
-	K48uPw5yceIiU/zmlbMVwlHrFohnfnApX9tWe493QJFcp5S3T4jlHVi110YW9vmWIWljbe9StU9
-	vSVBcjk2t6uV5TUQy6aDwVGdD3FK5YndE0RS5jl2gNdT1TbbNozRaLse8VewP6x16aUuQ==
-X-Received: by 2002:ac2:5690:0:b0:59b:b3e8:fd2b with SMTP id
- 2adb3069b0e04-59dc8f256a3mr1142720e87.19.1768936234489; Tue, 20 Jan 2026
- 11:10:34 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF1C47884B;
+	Tue, 20 Jan 2026 19:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768936554; cv=none; b=EHybUfItC/shOT5SZRGIkbXX+R5siXuqVV4xS61rj9xfK30uRxw6HUlyDl1x0VYFCU18z5JROBDxnnR/ZvTtWjD0W0rpbJAFnjUnno0eItnGZ3OeGBoetlfY9qifVic+vDoVwlAM7Ows8d/DK4FV6KyMaeH2OCFwA83u5NXmBUc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768936554; c=relaxed/simple;
+	bh=t8z3Rwu7qOd+nhn4EsS5Aj8jJGv7Rw2YMqx/E2B1zZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V0ijfCNi2z45DFxb0Ab8rZI2A65LfoDU8lUzVRatZlJqMHiXkkK1x2scoVysnfRlZ9BWd59Bw3yWEmlEMjGXXP0R+AR0apMjtIUnUDwJ7og/tl/42dfxF7eKqR91vtvrk+Mr+COHu9G347ElheCtSjXiDp0hUGta6omqZYAB/Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=PfDYkCH1; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DjMUgMTbUmtrrp7aKjAsaMnjZcwTC03kGRkrVlxFZoY=; b=PfDYkCH1fMpw3iQS78xl3lkl1X
+	+UKJO0a1+Zw6GZWasBeoJ66ZHOb/1juI+qpE0DMbQodRCgR4vYJ1MoT9wNaIhxQTK8hN3SYuJEp7t
+	6n274mf1jgWeUAp4lI3LMtZTeNuEsdv8WtjMiKvm92kkKxCAMzJHh/UynAMnHyqSDDfjExly6X6yD
+	0OqYepr9gvvmTLq7v8mVfgXrEmkDKWBLOf2h6D9dalMtAOReXZcAOyvy5n08AVaio/xjOMQC7o7yu
+	4KNmUvQ/48XnKHVw1jIeyvvTsSmSCbGJj4lF0ssx4iXQrEq5xoySsQFD2lDtgwj24BZoj7LZr6vsW
+	Bt/LYm4Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.99 #2 (Red Hat Linux))
+	id 1viHEB-0000000DMsh-0cwj;
+	Tue, 20 Jan 2026 19:17:23 +0000
+Date: Tue, 20 Jan 2026 19:17:23 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Rich Felker <dalias@libc.org>
+Cc: Zack Weinberg <zack@owlfolio.org>, Alejandro Colomar <alx@kernel.org>,
+	Vincent Lefevre <vincent@vinc17.net>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+	GNU libc development <libc-alpha@sourceware.org>
+Subject: Re: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from
+ POSIX.1-2024
+Message-ID: <20260120191723.GA3183987@ZenIV>
+References: <a5tirrssh3t66q4vpwpgmxgxaumhqukw5nyxd4x6bevh7mtuvy@wtwdsb4oloh4>
+ <efaffc5a404cf104f225c26dbc96e0001cede8f9.1747399542.git.alx@kernel.org>
+ <20250516130547.GV1509@brightrain.aerifal.cx>
+ <20250516143957.GB5388@qaa.vinc17.org>
+ <20250517133251.GY1509@brightrain.aerifal.cx>
+ <5jm7pblkwkhh4frqjptrw4ll4nwncn22ep2v7sli6kz5wxg5ik@pbnj6wfv66af>
+ <8c47e10a-be82-4d5b-a45e-2526f6e95123@app.fastmail.com>
+ <aW1dE9j91WAte1gf@devuan>
+ <60c77e5c-dbab-4cca-8d0d-9857875c73fb@app.fastmail.com>
+ <20260120163634.GD6263@brightrain.aerifal.cx>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260116235606.2205801-1-joannelkoong@gmail.com>
- <20260116235606.2205801-2-joannelkoong@gmail.com> <2295ba7e-b830-4177-bccb-250fca11b142@linux.alibaba.com>
-In-Reply-To: <2295ba7e-b830-4177-bccb-250fca11b142@linux.alibaba.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 20 Jan 2026 11:10:20 -0800
-X-Gm-Features: AZwV_Qjf1KvYbhrZ0uCWiwQPyGilVSa9JbxJYxVyZq1cXIqtEwjfWPrCkQXFrPM
-Message-ID: <CAJnrk1Y1SkEgEjsJx9Ya4N2Nso08ic+J1PUzYySiyj=MR1ofKA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] fuse: use DIV_ROUND_UP() for page count calculations
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spamd-Result: default: False [-1.96 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260120163634.GD6263@brightrain.aerifal.cx>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spamd-Result: default: False [-1.46 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_DKIM_ALLOW(-0.20)[linux.org.uk:s=zeniv-20220401];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-74714-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-74715-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	DMARC_POLICY_ALLOW(0.00)[zeniv.linux.org.uk,none];
+	DKIM_TRACE(0.00)[linux.org.uk:+];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[3];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[viro@zeniv.linux.org.uk,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,alibaba.com:email]
-X-Rspamd-Queue-Id: 284274BFE3
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,linux.org.uk:dkim]
+X-Rspamd-Queue-Id: 9E9514C447
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Sun, Jan 18, 2026 at 6:12=E2=80=AFPM Jingbo Xu <jefflexu@linux.alibaba.c=
-om> wrote:
->
-> On 1/17/26 7:56 AM, Joanne Koong wrote:
-> > Use DIV_ROUND_UP() instead of manually computing round-up division
-> > calculations.
-> >
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > ---
-> >  fs/fuse/dev.c  | 6 +++---
-> >  fs/fuse/file.c | 2 +-
-> >  2 files changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> > index 6d59cbc877c6..698289b5539e 100644
-> > --- a/fs/fuse/dev.c
-> > +++ b/fs/fuse/dev.c
-> > @@ -1814,7 +1814,7 @@ static int fuse_notify_store(struct fuse_conn *fc=
-, unsigned int size,
-> >
-> >               folio_offset =3D ((index - folio->index) << PAGE_SHIFT) +=
- offset;
-> >               nr_bytes =3D min_t(unsigned, num, folio_size(folio) - fol=
-io_offset);
-> > -             nr_pages =3D (offset + nr_bytes + PAGE_SIZE - 1) >> PAGE_=
-SHIFT;
-> > +             nr_pages =3D DIV_ROUND_UP(offset + nr_bytes, PAGE_SIZE);
-> >
-> >               err =3D fuse_copy_folio(cs, &folio, folio_offset, nr_byte=
-s, 0);
-> >               if (!folio_test_uptodate(folio) && !err && offset =3D=3D =
-0 &&
->
-> IMHO, could we drop page offset, instead just update the file offset and
-> re-calculate folio index and folio offset for each loop, i.e. something
-> like what [1] did?
->
-> This could make the code simpler and cleaner.
+On Tue, Jan 20, 2026 at 11:36:34AM -0500, Rich Felker wrote:
+> On Tue, Jan 20, 2026 at 11:15:15AM -0500, Zack Weinberg wrote:
+> > Rich and I have an irreconciliable disagreement on what the semantics of close
+> > _should_ be.  I'm not going to do any more work on this until/unless he
+> > changes his mind.
+> 
+> It's been way too long since I read this thread to recall what our
+> point of disagreement is or what point glibc might be at in
+> reconciling the Linux kernel disagreement with POSIX.
 
-Hi Jingbo,
+It's not so much disagreement as breakage of internal POSIX decision
+process that has lead to POSIX irrelevance in this particular area.
 
-I'll break this change out into a separate patch. I agree your
-proposed restructuring of the logic makes it simpler to parse.
+POSIX authority derives from the agreement of actual behaviour of
+Unices.  Always had been, witness the amount of underspecified
+areas where various vendor implementation had different semantics,
+due to exact that reason.
 
-Thanks,
-Joanne
-
->
-> BTW, it seems that if the grabbed folio is newly created on hand and the
-> range described by the store notify doesn't cover the folio completely,
-> the folio won't be set as Uptodate and thus the written data may be
-> missed?  I'm not sure if this is in design.
->
-> [1]
-> https://lore.kernel.org/linux-fsdevel/20260115023607.77349-1-jefflexu@lin=
-ux.alibaba.com/
->
->
-> > @@ -1883,7 +1883,7 @@ static int fuse_retrieve(struct fuse_mount *fm, s=
-truct inode *inode,
-> >       else if (outarg->offset + num > file_size)
-> >               num =3D file_size - outarg->offset;
-> >
-> > -     num_pages =3D (num + offset + PAGE_SIZE - 1) >> PAGE_SHIFT;
-> > +     num_pages =3D DIV_ROUND_UP(num + offset, PAGE_SIZE);
-> >       num_pages =3D min(num_pages, fc->max_pages);
-> >       num =3D min(num, num_pages << PAGE_SHIFT);
-> >
-> > @@ -1918,7 +1918,7 @@ static int fuse_retrieve(struct fuse_mount *fm, s=
-truct inode *inode,
-> >
-> >               folio_offset =3D ((index - folio->index) << PAGE_SHIFT) +=
- offset;
-> >               nr_bytes =3D min(folio_size(folio) - folio_offset, num);
-> > -             nr_pages =3D (offset + nr_bytes + PAGE_SIZE - 1) >> PAGE_=
-SHIFT;
-> > +             nr_pages =3D DIV_ROUND_UP(offset + nr_bytes, PAGE_SIZE);
-> >
-> >               ap->folios[ap->num_folios] =3D folio;
-> >               ap->descs[ap->num_folios].offset =3D folio_offset;
->
-> Ditto.
->
-> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > index eba70ebf6e77..a4342b269cb9 100644
-> > --- a/fs/fuse/file.c
-> > +++ b/fs/fuse/file.c
-> > @@ -2170,7 +2170,7 @@ static bool fuse_folios_need_send(struct fuse_con=
-n *fc, loff_t pos,
-> >       WARN_ON(!ap->num_folios);
-> >
-> >       /* Reached max pages */
-> > -     if ((bytes + PAGE_SIZE - 1) >> PAGE_SHIFT > fc->max_pages)
-> > +     if (DIV_ROUND_UP(bytes, PAGE_SIZE) > fc->max_pages)
-> >               return true;
-> >
-> >       if (bytes > max_bytes)
->
-> --
-> Thanks,
-> Jingbo
->
+They (or anybody else, really) can argue that such-and-such behaviour
+ought to change.  In quite a few cases that has succeeded.  What they
+can't do is to force such change by fiat.  Especially not when Linux
+and *BSD happen to agree on behaviour that differs from what they
+wish it to be.
 
