@@ -1,577 +1,742 @@
-Return-Path: <linux-fsdevel+bounces-74739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-74740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id MIv1HCX4b2m+UQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-74739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 22:48:21 +0100
+	id 2Ni4BOwBcGmUUgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-74740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 23:30:04 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 162D64C82F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 22:48:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE0B4CFC2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 23:30:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D098960EFC5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 21:42:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 253A7B0E4F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Jan 2026 21:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D12A44A725;
-	Tue, 20 Jan 2026 21:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3454A31B81C;
+	Tue, 20 Jan 2026 21:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZuzZnZkV";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="s5+EMWiG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TRnsrQv3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58A643E9CD;
-	Tue, 20 Jan 2026 21:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C5D3396F1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 21:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.179
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768945346; cv=fail; b=WmNadoVYUcEZMJWjoE2woXx09we6wR+1wQuqhatq80TPp790ssLpl5A5tAZpFJ1sjQBuLGNTnjs1Bn5wVw5I5caVfiJqGhztFrhFFZdSxYCBVZ3nXAuzsU0sshO3jVhqbpuC14IofM7ce5yiLp37AH3TLDIeZUujefQSmjRa3Nc=
+	t=1768945720; cv=pass; b=m2RxrRZHIJBmr/oXRewNE09l6/VYYrbUqSfsn7CsJoCCQr/BveM2JWj9rSPBPhUGbOaXZLSiQCehQeKb3B4WB74dPZlYj9IkGgPYI9hyWCtoResNV62n8LHrI2JhKoww/SxiinWW4OA3bzV2gRs3uycZ99c8J/s+20H8aXzcUnA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768945346; c=relaxed/simple;
-	bh=1xzOhMqnP344kxqlVAOgwNAo+EtrKu9WQLWg6PHCDog=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fIb5iudmzdx9K60T9uXQcG3cd2EDakvJy/yyjWCVav8owiiJqkHJaQX3OSuhRZ6Tjm9B/nm7Ml5uiRSNeUBd3tg/Y3DV4Vz/W+XKHzfFGnNRbrBwEQjySidgYl9rNcH0F8bGUoVZ9IB7RSLqsqw8tTi1Xc3WTH2FlpJDhIe7yj4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ZuzZnZkV; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=s5+EMWiG; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60KKqU7e420947;
-	Tue, 20 Jan 2026 21:42:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=96bXjUTf1L2M+fA/h3bNpq9ZygwO9lP5vSI4MFQIAJ8=; b=
-	ZuzZnZkVncJ4P/q5yntAxAMBeYT6ne3XSDySbgrIdqvkRG1H2RgUlkjMPJX8xMZ9
-	5g/Q/SywlZ0SzxGQ7kV7Wr46O8ktaPAtswuhj29ImsQt1MHKlwZVOlsQu1kFdbxI
-	16cDpWyoYC39S3QYNedw/55dhdJmvLcMZCwbyha1rKsi5bfVcraBc+Gxw2yBIyv8
-	FFYUW0JJMffcrnuukDeNtrUofcV4DWQ6kS5LO/Pxay/bm3+pAH500W5ZugNCOvR0
-	dUmTYzcV/jlbHurANKex/llcJTe8rExuG4ihk7ijrltqX4gpu13m8lrvImcC8m9/
-	imtRkcd3ges+FOXAKUzPOw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4btagcs03j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 Jan 2026 21:42:10 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 60KKldwA022480;
-	Tue, 20 Jan 2026 21:42:09 GMT
-Received: from co1pr03cu002.outbound.protection.outlook.com (mail-westus2azon11010055.outbound.protection.outlook.com [52.101.46.55])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4br0ve2446-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 Jan 2026 21:42:09 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uHgQ1thuMlzdiqWG3szjB0vgmLFH55J3TWdGhbUkJkv8Y2XZcm1ILMj0wj1KyN+LcEXFrBgtBf7QFKhoYo5fgKZb6y5lLCvrGVFjRwLIrZZps4WIU14gZugHAWJdqzUTL3XBcT+TKd8CXrcLjJsOL2K8tDupcFI5ezebnwaltJT6Rw46ddP8BrF8ymDvzrJx53GYrKfgsacnjffN/QQUjaeh67lDhZuf0u/siCadTRwP/QZR8+p5ocrBOG5Tpo+i63FtZB2Y9yHGeFFr0LScCbaDhy2mqNzK2kPtfCO7bJsdC1SFY+GLOTl1IKauGLQkIMpJ1cgS8W48pc2A5LE2Vg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=96bXjUTf1L2M+fA/h3bNpq9ZygwO9lP5vSI4MFQIAJ8=;
- b=lPFVBRX8M1MxG7FsPWb6JE/wFJKouwmfJTIeJyVmu/zvp+I0bnHsJZhMbDyfYkhPM8cWzk6VhRnh3w0zYekd7k2NAo5Gx10BWcVkRgEewtRPWoPtgXJ+d7xeoWpqvuFJ6qMI4IrhV3zHJzYCEHKn3+Ak8eB44eKfy4Mwe8m+tTG2tOXVS3jS1mco3W4pVDNSzYtqqmJa9UFJQv6qResvbBnIss/MRRDZw0UwiWSDg1ZBgs7pBQj+fgQMZfk381FrEBYxJiPBnWO9yxK8F+cMfmQ98YR0m1DKvu2U2WT9cAgcn6KmEhUGezl0f/6GMQBsL7yYTvFEwECxrJE3qwIWBw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	s=arc-20240116; t=1768945720; c=relaxed/simple;
+	bh=orHvlvKtAn5So5jLtcyiUBuxeNvZ3c+8w2XYC0O0Q8Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r06VJzoY58yuKRernVLaCGgKkUGhmx1LGm6S54i8DtwhutRBIh4dbfAMqwSW3Tlb+c/+broBz3FWXblNeusYcRGBZJ7Om9FfLFRiVWS1Aw00vagJZj1uyU6ykYzvgmAf0cDswOCXNHDqdtfQ4K4kZT3W/B8eG5H0o39g1AoXpkg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TRnsrQv3; arc=pass smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-5014acad6f2so51011cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Jan 2026 13:48:36 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1768945714; cv=none;
+        d=google.com; s=arc-20240605;
+        b=g9+oKLaPB7FP9gaLsQQSnZZUntdVuWFkE7ea3bdSoAmtiKVtpVgqePcyCzOSG6vXWs
+         75dnLBeR/TiYZKKNSe3hRVP5Yf9CG6TIoWl9rKrTxIGBw8W3MPb5bWt+f5GW3HQxDCPN
+         JPA881ZStAKGgALwJ45CyfUQpusSA5u2rlfPswPqj59mLXk+FPpLQitfwSCZx/EpG/MJ
+         k5KBcGJv1T5+7CjB72MIOWMHCEbbvrfknbm7RBpJiikY4qe38pSe0SJIW7Pe84Y9+Int
+         DYB0XP4xGyZvXajPhLYhYZHk5PKHj1tqgEEglODwkKQcTxGym/7qXJCK6bp5DiKkXzXB
+         bskw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=3rXVk/GCGVLURz9pkgbbBSm9A8B5jqwi9HtmjYO7Lv8=;
+        fh=YIeiqi8ssi2aBWgR8tEHvP3MOZ6vNFGQZYr/IHgQpJU=;
+        b=AqQrTYlKyTnimcDypydvUf1B8WwWA/cwbTjUowv69kpq2vByWI4P5j85Erc2SdL6ma
+         OnoiyCEE2vI6Tej72AJ+rG1xmSWkvgTLfP/T9Ode6l/babZcWwW1mfRxxdK8TNWcyVrN
+         eYlmnhr1Vp0j35XhbNI6TVvxIJwd+6aWsl1zbRWdNV798ZaKDnIXBor+Rc0NZdoIWT2H
+         LLBxn4MCzkJEbAdxTP+bpCUBL4thlI2g3rEIVW8UwgyJ75c1ufBa+igcj5OUS/OtfRiP
+         pPReE2W3qiMSI2SE2uoHEEbPW8ClTMyF0fb9/uzQXef4E6GcBgzCMK/HB0ZqT9k+kbvF
+         iSDw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=96bXjUTf1L2M+fA/h3bNpq9ZygwO9lP5vSI4MFQIAJ8=;
- b=s5+EMWiGOEdJPhGB8f/ST9xP2CtzRu6eNKc9GJyd0fTX896nCS4Kxm1jGgG4arwqrYAKu0E84DVZOxv8oBUrlcUFP8udxYChNwq0xZ0VzZOXy/pbB2lVLehbyAQWws4vmkDzufqkvb8+6AyahTjjQW11fdnNAlE2WnJNIs2kmsw=
-Received: from MW6PR10MB7639.namprd10.prod.outlook.com (2603:10b6:303:244::14)
- by DM6PR10MB4393.namprd10.prod.outlook.com (2603:10b6:5:223::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.9; Tue, 20 Jan
- 2026 21:42:05 +0000
-Received: from MW6PR10MB7639.namprd10.prod.outlook.com
- ([fe80::69ee:3509:9565:9cd6]) by MW6PR10MB7639.namprd10.prod.outlook.com
- ([fe80::69ee:3509:9565:9cd6%5]) with mapi id 15.20.9542.008; Tue, 20 Jan 2026
- 21:42:04 +0000
-Message-ID: <59921524-57d4-4880-9374-b9b420104266@oracle.com>
-Date: Tue, 20 Jan 2026 13:42:00 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] NFSD: Enforce recall timeout for layout conflict
-To: Jeff Layton <jlayton@kernel.org>, chuck.lever@oracle.com, neil@brown.name,
-        okorniev@redhat.com, tom@talpey.com, hch@lst.de, alex.aring@gmail.com
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-References: <20260119174737.3619599-1-dai.ngo@oracle.com>
- <f02d32dc80e1a51f4a91c5e3ce2a5fe10680e4ea.camel@kernel.org>
- <a1dc8306-6422-45c8-a5b0-8d10a4d89279@oracle.com>
- <f2203e755aca4da45b099b18aac03b0a9d299343.camel@kernel.org>
-Content-Language: en-US
-From: Dai Ngo <dai.ngo@oracle.com>
-In-Reply-To: <f2203e755aca4da45b099b18aac03b0a9d299343.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL0PR02CA0061.namprd02.prod.outlook.com
- (2603:10b6:207:3d::38) To MW6PR10MB7639.namprd10.prod.outlook.com
- (2603:10b6:303:244::14)
+        d=google.com; s=20230601; t=1768945714; x=1769550514; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3rXVk/GCGVLURz9pkgbbBSm9A8B5jqwi9HtmjYO7Lv8=;
+        b=TRnsrQv3YHfCiAUgYOAR3HB0YbNvus47bGsoio5uKcM3Hd9gtlpnf+orTo7V6ZalY9
+         fESuBhLIJqrPXj+v0NmO2zFFlYRtQQiiZAQNlpUk9AVojx/HaAeAk/Z36YAnKu3x01u3
+         Ufp1uBk0UumbnmR/qDZWGb4SGhV0Sz5xW+McGXO0crDFLdzELAH2ELbWY7rqP1RoOanF
+         5zKluteRzUQOd1JCGJ223RLpZHGcYwcZ4UKnV7YXKGwZsYKdjACzOjyViHM1Hv9C/okl
+         t0Adv5Yurp4+ghVC1daV8tSnWJW86+e2a+Y0AhQecQ2iue6opYP3pNlZ3JRZIhOYc2Yx
+         gzBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768945714; x=1769550514;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=3rXVk/GCGVLURz9pkgbbBSm9A8B5jqwi9HtmjYO7Lv8=;
+        b=OD0WI5ggBs6Uk7bixIPZXfomKDVEom7yoQE7meb3EiLl7++29J5VhxpuFIeisBGT+s
+         T5d/ehUM/bbur2IH4xY3DjOlNHA+a/TMb+8gU+bFCxbhEEH10Iq5tIqXNK8teYnX8gxg
+         DRZmyqJ/j/oI65wDVAqFaudT1BBYYXUT3xTz7xZ7EcPvN8IXDxDz/k4foXz9uOAj7p0q
+         NUhLzFn+aSexUbtDDEF6jrHhuVovyRvoK09Yg3pcCaL8wngEewq/rqAoDZ0zid6Pe1rg
+         DRtGnVd5BBLZQvWkvDX1nJaBiKK5PsGxyUgVRGjuKvPSJi1YBBpa8DhlqOdpWbcpATRe
+         hptQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLCI8ruAp7WFbBQGdwYWNoFoqSuH7lWxU6+7rKJPnrqdUrcx5LxaKL34p46BeA2z9sO8XFN62D4RgLr8zY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+KKDx+oxxZfcSoJhwQqFvM8E4cwSE418/6ZlFK/wsejbnwmeZ
+	QPr9VLE+9USuKdlNkyMeozSuSqB+5fYIdiI0E6NApk9Shy0ykvfwF1fBcKr754VcWRVqE3LRPmg
+	YHpsZj4VQ0cRkV1G+uJ4IRxKkfvBSPE/0t2JsIQ8H
+X-Gm-Gg: AY/fxX5OthEudSY9uJJQeG0qH03YFNBBGiC21jXy43s9Rd5YpgdHvZ0xdMUsAo65ap2
+	yVW8h+WC0De9vIswua9rhpXScc11a0Cj2/qhN1B+5JCgHyZEleT8bJobyHZ+dyv4MfQMrdl86Ix
+	tdC0sbQ7/NA6PTUV2fcTCn7KZcpsZek/1ubLPlGsV7t/51PU6WsKQ7ptFZwEn9v1fjlvhO9QOFI
+	9wHj1E5iefd1rFkSs+gqJQc8s4wv7LJkgNb4Zr0WmUgZCbEIvOZQSRnPsUkXkOY5Z5my1mbpXZ3
+	V8gE6Og4xkZDdgUuwmY5BdRGoA==
+X-Received: by 2002:a05:622a:2c7:b0:501:19ce:5bdd with SMTP id
+ d75a77b69052e-502e0bfde98mr3570141cf.6.1768945713802; Tue, 20 Jan 2026
+ 13:48:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW6PR10MB7639:EE_|DM6PR10MB4393:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd13bcd3-ee8b-4abc-27a6-08de586cc0a9
-X-LD-Processed: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?OVFOQi9sb216Y1RrMjJJeVZ0RnBKM2NxN1NyRWRiWDNncGkzNnQ3NVY4ZHVh?=
- =?utf-8?B?by9iZ1hTbzFGMTFkVjZablgvT1IvbHM4bXZaY2RLbjY4dndnR0tQcCtXSEtj?=
- =?utf-8?B?ZzRFSW9tNmdVWm55MU5DV3ZFMzRiYlovcEgvTEFGc1ZRR2RORGRibXRKVUJO?=
- =?utf-8?B?Sk4zQk5XYmdGcEhhL0Mzc0FoYlRMc29jWldVTkVydHdacnkwTEhtVGV2ZU1a?=
- =?utf-8?B?MlNaaWQ0cEhzQ0JMdUMrVDE4WGREaS9KMmVLeWRBZUQ5VnNaWWhTVHd4TjRm?=
- =?utf-8?B?dVJsUmZZM0pIZXVXTmhHVjNnZVVGN2szbWhOanVDM3Z4OW41Q2lDeHpiajBU?=
- =?utf-8?B?R1VWV3JERlUzRWtmWEJxcmNMaEZRVXRTaFVTRjlMQTJmSjdhQTgxSnozUlQr?=
- =?utf-8?B?MkZueUJHazJ5aklTNzRobU91RUEvM1J1VWo5K3l2c3Y1eDJYdFpzaTNoeVJi?=
- =?utf-8?B?UkMvVVNmR01ONTZRVFZUOTI2TTNNOHBRMXp2SnpPbEdiMStKTEdyc01ObzBs?=
- =?utf-8?B?NXFWaHdlZTBjRTNYcnFUQkVMWEdnZHA5cEF3RlAzRFFXRUd4L29OUFBPQlVN?=
- =?utf-8?B?b2M1dDR0REE5MmVxTFJnc0hKWlVLMmxRZ01oL2p2U0Q5REdJcndXVU5uUTl2?=
- =?utf-8?B?eDBEU1I5aWd1ZTBvNUcrQ3VZZkJ1dXZtRjVmdEpOcWZvdU1pL256QmxCRzlW?=
- =?utf-8?B?c3c1TlR3bVM2TVcxTkFnVUlOU2h5MkFnaldzYUpvR0VXNm1aZytyeXJLL0hx?=
- =?utf-8?B?eGExVEl6T2JyZ0FZWUhYZ1A2V0lIOVp6aWdvQWdaaStSbjNiNS8rdHhUcWtl?=
- =?utf-8?B?d0Y2UVkxU001R2dHWjVPekR5eENVaHlPVnBQN2U3UWw0TWhLYkppTkJoR0Z4?=
- =?utf-8?B?aWhwRnFaYU1Ea3BMNHUxR2ZMb1F0UEZXU3AvbU9oK3lGUDc3N0FxV25Qc3dF?=
- =?utf-8?B?QVNxNkFwYzQ5ZE9nK3EybWlJR1dXamJBeFNYclBYakFLcmdiSXpZRkJQbXNO?=
- =?utf-8?B?bUtNc0h1NW5qamhOK3lWc3E3b2lyMi9GUTFPTEsyVUJJQ0NScExpQ2JFOHJR?=
- =?utf-8?B?NzYwR0pyc1R5OVAxeENtMHFiUW1GSVFTc1ZZdk1aNHJiMU45MWN6Rjlic1B4?=
- =?utf-8?B?RTVtMHRzelBEd2xVSm1PWm1tZU14WHJHY0kzSkVNcU9Ua2hUeG9XaHNYeWpY?=
- =?utf-8?B?OFdlNEJEbkE2UDZOQ21Tc1U1cmlnNVFpSDZmYVhQUXF1MmZBTWZoQTVkbXVG?=
- =?utf-8?B?akQ3UmY1Mm82T3VJVVlTL1RvYnhJU1pqQXZBKzk0V1l2MVZlblROVTVTcDhT?=
- =?utf-8?B?blFXSGMrMVVEWjMrWWtzSVg1VUdYbEJXSXRNYnA2ZHdocHh0OER3SW1paU9L?=
- =?utf-8?B?OHg0M3llb2ROb2lrdkRZVFBjYnZUNytxTzFzeE90SFdYSjkvMDlSTy9scGNp?=
- =?utf-8?B?WVBRWThUVXROcDBOUllja0NwZlVqbk1DZDl1R0E0ZVRodkh1cENxWk5XeDR6?=
- =?utf-8?B?TWNUUjFBaEV2VG5vaE90RTVGZWZrTDRtbnl5VXdGY3BWSS9FNVpoSjAzUHpF?=
- =?utf-8?B?OWw1Y0E0TUxOWjBmdVUzN2VjNy9rTUdkSG5ldXRWZ05OUGxaRUVQRkFaQkU4?=
- =?utf-8?B?REtxMkxQcWdCOVRCOXpGMmJ3SUpKTEF5b2Y4Vis0akpELzRmc09uQlIzVTJH?=
- =?utf-8?B?Rno0ZS9rOStMTGgyenJsNm5LczE5dlNDTUNTbG5vMzBvUHhRWWROb0hnYVp5?=
- =?utf-8?B?VW1RdkdQNjVsUjNFOW1JbnNhd3hBTlBmd05rWS9ZRVBnU2hMTVp6WXRTT2JF?=
- =?utf-8?B?azNRYWlSYVFmcXFsYmhMOWdvckhHZUE4dmpRYm05aThYck9ONDJtY1haS1FZ?=
- =?utf-8?B?WThhYmZqUHhpOVI0ZmZhcFFFbktPUEpkZ1RKR1VJcURzdlB6ZktOeEhpTmJR?=
- =?utf-8?B?cE5pS0U4MXFhYzFzN1RxRDdKaUpYeW9vWlVMWTg4eW5NNmkwZGNVMWs5TWpC?=
- =?utf-8?B?ZzRia3ROVWM3NUl4QThNM2VCMGhxTTZqRzQ4UmZaOFVZTVN2Y3dUYnA0aUoz?=
- =?utf-8?B?bmtYOENiR24vaVltUDdkalRUUGNxeHpTL0xoTW9RSzYyZUtaajNiY0wrV1Nn?=
- =?utf-8?Q?a+dI=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR10MB7639.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?U0FPYjFwUFlVMWlmTkRxMFlLT01XRVhLVVlNcnFoamJFSExJQ1pyU2tNcXZn?=
- =?utf-8?B?NDArREV4SGtqOElrOXFmUUdVcWR1dVFhY3FVSldncEYrWVBUYmI0dk1uUUZi?=
- =?utf-8?B?bWZMWVhpNWIrNmtWL3NaSG9NSGRTWkt6VnZNdXRBSWhDVVdCM0d3TDIxZ01X?=
- =?utf-8?B?U1FNc2ZLeXlydVV5bXJSdzJxTkpmcWR0bGRIcm14RXd5aWtxVG1ibDBOYVhW?=
- =?utf-8?B?RXdOTGxVSUxpRGw3TmVBYzc5RTN5NUR4dGdXUVlOd21DT2ZERCtXdjhqL0xk?=
- =?utf-8?B?V1JsdWZ5WUIyYWtwVW9kdFZRbFpIUzAxQkZWc3BlWThncFU4ei9LME03eGFB?=
- =?utf-8?B?RG1Eb2JPUnpKS2NIVm05enhvYm9Jd3EzaGp2MHRHQXpZMTd2VTJ2bVpOMHJs?=
- =?utf-8?B?REJhcmI5N2FHMjN2bzMvMGhNdGxUdHpzaFRXQ0FCL1hWQVlBQWpqdlBwblNQ?=
- =?utf-8?B?dHN6Yk1jaFMxckRPSWF2Yi9UTDlGSXlkRGJIMUxHb0NLeUEwYkNxWE1tU2Ez?=
- =?utf-8?B?T1BPN2xVc0tlcElMcXdOVkwvVmpiY1JuRjRRcW82Zng0MTM0Y0NxUTg2Z2xz?=
- =?utf-8?B?QUp6aUpaZ0N6ZXhFcG1ZNTIvRXZnZTBSbUROYWVFQWZZZHV2aWJCeFNkRTNL?=
- =?utf-8?B?bWFzSWtMYVVNS0hQVmtVN1pZNy9OWEVqc0hyV2RzTDJTV3c2VXJxMnV0VDJs?=
- =?utf-8?B?Rm9YWEgxSUtJaEE0T2Z2R2FOaVVFUlVtRS94aDJlMWxwUmhGU3hiQTJBOWlP?=
- =?utf-8?B?ZW11djZlckZjOVRERmR0NlJBR3JpRWhTbEtkYkcyNWtFMk5vaWZ2R0VGK050?=
- =?utf-8?B?TzZHd2hXUjdHRzUrbUdRZ2U5bWxIUXRyV2ZPV3ZzUTdjNjcrU2pHVUVLVHJ5?=
- =?utf-8?B?TTlOMDdSVjdkSGFFVHV6OC94TkpSNmNYcklZNERlVG9lcHdlUnZpWFpOZFNi?=
- =?utf-8?B?YVFHbFZKOE1VTVdsalFjQTdBK2gvYXczcVpVamtadHVrNE5QUEtoaGFjTmUz?=
- =?utf-8?B?OFQzWkJXeVNDWjVYR3FhWURoUEJOelE5bG55NmdLVk05ajBoR0VoeGJ4SFJN?=
- =?utf-8?B?d2daK2tCQVhGaTdjQ3RuS3F5L2M0VExuWDNBcmtKNDI0ZS9GTitadlJ1THdW?=
- =?utf-8?B?MFd3S0l5Nlhpc0JXWEt4MXlFL2ViZ2x3YURlNmJTc0FiY3NuS3FpVFdlTVUy?=
- =?utf-8?B?S013SktnR2QvZlRhSStaSk8yeVVTMmRPUno4OEp6ekdRcHQvcVpFRlBQQXRo?=
- =?utf-8?B?YXMzR2R6WlRaNFZoR28xRXJRVkZNaTc5SXliekhqWkpRd0VNam1xZWVBVnB4?=
- =?utf-8?B?cUlObmVud1F3V0ZDQWc5UitJTjA4OHN3ME1YMU5QcndmTFRQU1pjSHdRTDZK?=
- =?utf-8?B?dW10WkpVTGE2aEFnaGkyZEh1bmp5MS9ndnc3MkdnZDZHeWhwVDBBTzFLVlNX?=
- =?utf-8?B?RUhLRW9rNVhxK1ZHRGZiQldZSkVBYmhOMFprdTRoZmx5a1FSQUI4cWtIdm1a?=
- =?utf-8?B?SlhwTGZYenV2RHZPaDBiNEh3cktkalM1N3JIN3RuRmxUV1oyNTg0RlJZMDdx?=
- =?utf-8?B?SmVGNy9VYi9FMDlONFJnOEVPY3BBRklvUWZ4bnA5V2F0cUpVakZudGNvRzZ5?=
- =?utf-8?B?MGV2SUp1cEhCaGx5bC9sZmxaWVQzUnNWNmFVemcvQUdmWTd0bnNUVXFYVHRI?=
- =?utf-8?B?TGNMbU43TkhYS2RKOUNaeFUrQVpvYjNQYTcwcnAyOTlsOVRGZ1dhWjhHMlI4?=
- =?utf-8?B?OGhOL3p4Y0FVb1d3Uko3R1A3RUJPQ0tJWHhzanhiN0FWY2gwbnA4T2dreS9y?=
- =?utf-8?B?eTM1M0NxM3Q3THUrRlZlK3cvU3VGcVR2SEtUYUhFTW9STDliVnU2c0YraFZa?=
- =?utf-8?B?UWdOOHY3L1FWU2ZWNkJ2cHVrWjhWZVZYeGlCZWlOK3QxMXRiaGYwVjVXZ3RL?=
- =?utf-8?B?Z3FrcVM5aHREUnBBYWZHZXZENlhuUTVGcVZndzlWUnVmMlNLeldkM0xWaWU3?=
- =?utf-8?B?U3JtSmo0UHZtV29RUEZGMVA4c0JZcDRkcHJOZU5HckFrYlBTMlE1aG9jV3lO?=
- =?utf-8?B?Zks3YTZuZUpLMHJhVjRyWTRCU3FLOStFazIvdkVFTWpwTS8wNzlSQWFkbi82?=
- =?utf-8?B?LzYyNEErbzlTVDI2MEphSkxHdVV0K2RHampjcFRyTXZWblNocW1DdVRKQjlB?=
- =?utf-8?B?YVkzUzVPSStxdm5QUTZqYVI0M0s3bXhDTGxXRzhPWS9Uc0NDTkR5Mks1WFlZ?=
- =?utf-8?B?dE95Ykx4dDVRNUErQnNPL09PT0NmeU9OWlE0NmdWT1M2YnhYdkNJWkNQM0FU?=
- =?utf-8?B?VmxXUXQxVitZWS9ZZklWTTduekNrSWFlQ2RqdXVXdHRZUUtwUEIxdz09?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	QOl9I9c1HLIn6483Caqs+8KJuk/rpTF05Nqm6j5cHsFwZ2vvANW3IvTK07UK49dk+69HPAJ2oktZ/6+34LsqK7QG5qRaP/nNkK1sblNshmLG/bBOVbTsYEjppSZZnsfLiQrpHlXgGrphDoYY0dh0V1VK2xGolC2bsAs3icqxa95vesndGUuk9a+sSmgLkpV1F7w5GKUgmvF188Z74AptA6NtsnKc1RQgxgDfX50OBBPeExOIAPJ1FhVq+3pvdMUNYwS5sHt08gjoRrYwCm8X0TpZ+Lc9D8LJzuvWCx6/ACnv3HSs6aBSPjlOLd9/NVCbvlC311zuusn57kW0FI639wc0ZR6RjIR0GANqn6wbk6khLgidfDdhiDknUpgZep6sSH+avR4l5ZraWboiyEg3XubRg1MvHf9SkEvPh8wXjd5HL2lSB4XQ6yStxbZV17M3wa9IBzQgpLVJNjaZkV9GpvFMtJWAdDpeshTVLNFGmBdrb/3yV8J9RBUBjGqiDPv11kn7XAIRdysE0vG6WeJJU4mPwe0c5E4AFfAEOfclRPVld9CvVSwRbYDpKatQRxIO/s7iPiZ6qJolqcSQULeu1Fgi9bqURG/z+NTsZZTiPD8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd13bcd3-ee8b-4abc-27a6-08de586cc0a9
-X-MS-Exchange-CrossTenant-AuthSource: MW6PR10MB7639.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2026 21:42:04.7083
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7LA62kyymqJtTV6tkpZccYehXCCT5S7VzGrfMv1t1TyIh26gmQ6Jph37yfZjS7GuR6e7rFhpP1wpBRQTH1PHvQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4393
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.20,FMLib:17.12.100.49
- definitions=2026-01-20_06,2026-01-20_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 bulkscore=0
- phishscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2601150000
- definitions=main-2601200181
-X-Proofpoint-ORIG-GUID: 2ZSQfGigr3XG3LLMNxyT0vLdtG7CVoW1
-X-Authority-Analysis: v=2.4 cv=IsYTsb/g c=1 sm=1 tr=0 ts=696ff6b2 b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=vUbySO9Y5rIA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yPCof4ZbAAAA:8 a=XVlZSN03RrDhwIXDFo0A:9 a=QEXdDO2ut3YA:10 cc=ntf
- awl=host:12103
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTIwMDE4MSBTYWx0ZWRfX5bJDQfw5fXun
- 77gU/rn5jJ08nlghTJptR0P9Xxjo6Szj9aYoueRI6+gndrjK0xcKw3T5dzvZu7jsbM70Tj7nGuY
- b1u52hsmPD0ykfuIP1vzMCiSygDnV+52X9qo0pkj/r/c/G5J+cOBCjuhnmJebNH9h343FnNZdZ+
- sFHS96kTg3AdmLb7y8/SY9QdkMOeH2NDeJKghrM9LfaWuTLZQO7+EsqD0zJ52Mgh4qvwrtiwxTt
- Ah65nmXTtZ5w6HkIhzIQPWYpauO9987OA9ezWi7RTVyIDZLhlak8yYY4B6WLLAIoyU9BrW4mr5G
- /NtgiYysHBFOLQnnDAnXLMNMdzAnaCCmzACH1YxQB23UllWyFIOdX6eGujy2UsDYOyH1mJCnAgE
- iKUdnP+ebBnB1aPjzlAfinzK1U7z3SfwVhtJYSuXBVssRR+jtCWiA0Hq7UtHDfop+y3928LhjpX
- vmIZIcv56c1UxLL7uDuY/Wm7Af89YgrUyMYQLYGY=
-X-Proofpoint-GUID: 2ZSQfGigr3XG3LLMNxyT0vLdtG7CVoW1
-X-Spamd-Result: default: False [1.54 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_REJECT(1.00)[cv is fail on i=2];
+References: <CAOdxtTZ=SuV2GMPuqQJe6h-h-CDiG5yBW+07f1QYEw+kTA4-2w@mail.gmail.com>
+ <CAOQ4uxggQekxqavkt+RiJd9s9cdDgXZuVfQrL_qNciBNf=4Lww@mail.gmail.com>
+ <CAOdxtTaz7=TzQizrdMEhjgt7LpuuHWzTO80783RLcB_GP3nPdw@mail.gmail.com>
+ <CAOdxtTZv_B_pE1d1vgaE8+ar58y7pTiw0bL-djB1rhE-5wu2zQ@mail.gmail.com> <kptrliv7cflmaven5mcfn3bywpwe7zrevw4qvuei6eqq3ubcaj@3n33v7w4bgfj>
+In-Reply-To: <kptrliv7cflmaven5mcfn3bywpwe7zrevw4qvuei6eqq3ubcaj@3n33v7w4bgfj>
+From: Chenglong Tang <chenglongtang@google.com>
+Date: Tue, 20 Jan 2026 13:48:22 -0800
+X-Gm-Features: AZwV_Qjj16mEcP0YIBOxbBr5tHikgmDeYiT-DIl5CIj9udVrrWxn_iPAMU3sAOo
+Message-ID: <CAOdxtTaTXZw9FxwpVnVKonytwerKGQLQb=CcyOdLipd1gJG0tw@mail.gmail.com>
+Subject: Re: [Regression 6.12] NULL pointer dereference in submit_bio_noacct
+ via backing_file_read_iter
+To: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spamd-Result: default: False [-1.96 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	R_DKIM_ALLOW(-0.20)[oracle.com:s=corp-2025-04-25,oracle.onmicrosoft.com:s=selector2-oracle-onmicrosoft-com];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-74740-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[gmail.com,zeniv.linux.org.uk,kernel.org,vger.kernel.org,szeredi.hu];
 	MIME_TRACE(0.00)[0:+];
-	DMARC_POLICY_ALLOW(0.00)[oracle.com,reject];
-	TAGGED_FROM(0.00)[bounces-74739-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_TO(0.00)[kernel.org,oracle.com,brown.name,redhat.com,talpey.com,lst.de,gmail.com];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[oracle.com:+,oracle.onmicrosoft.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ams.mirrors.kernel.org:rdns,ams.mirrors.kernel.org:helo,oracle.com:email,oracle.com:dkim,oracle.com:mid,oracle.onmicrosoft.com:dkim];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dai.ngo@oracle.com,linux-fsdevel@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	DMARC_POLICY_ALLOW(0.00)[google.com,reject];
+	DKIM_TRACE(0.00)[google.com:+];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	R_SPF_SOFTFAIL(0.00)[~all:c];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:7979, ipnet:2a01:60a::/32, country:US];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[chenglongtang@google.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	ASN(0.00)[asn:7979, ipnet:142.0.200.0/24, country:US];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCVD_COUNT_SEVEN(0.00)[9]
-X-Rspamd-Queue-Id: 162D64C82F
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[dfw.mirrors.kernel.org:rdns,dfw.mirrors.kernel.org:helo,suse.cz:email,mail.gmail.com:mid,vex_console.cc:url,vex_dns.cc:url,pvpanic.cc:url]
+X-Rspamd-Queue-Id: 3CE0B4CFC2
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
+Hi, Amir and Jan,
 
-On 1/20/26 1:28 PM, Jeff Layton wrote:
-> On Tue, 2026-01-20 at 13:22 -0800, Dai Ngo wrote:
->> On 1/20/26 12:41 PM, Jeff Layton wrote:
->>> On Mon, 2026-01-19 at 09:47 -0800, Dai Ngo wrote:
->>>> When a layout conflict triggers a recall, enforcing a timeout
->>>> is necessary to prevent excessive nfsd threads from being tied
->>>> up in __break_lease and ensure the server can continue servicing
->>>> incoming requests efficiently.
->>>>
->>>> This patch introduces two new functions in lease_manager_operations:
->>>>
->>>> 1. lm_breaker_timedout: Invoked when a lease recall times out,
->>>>      allowing the lease manager to take appropriate action.
->>>>
->>>>      The NFSD lease manager uses this to handle layout recall
->>>>      timeouts. If the layout type supports fencing, a fence
->>>>      operation is issued to prevent the client from accessing
->>>>      the block device.
->>>>
->>>> 2. lm_need_to_retry: Invoked when there is a lease conflict.
->>>>      This allows the lease manager to instruct __break_lease
->>>>      to return an error to the caller, prompting a retry of
->>>>      the conflicting operation.
->>>>
->>>>      The NFSD lease manager uses this to avoid excessive nfsd
->>>>      from being blocked in __break_lease, which could hinder
->>>>      the server's ability to service incoming requests.
->>>>
->>>> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
->>>> ---
->>>>    Documentation/filesystems/locking.rst |  4 ++
->>>>    fs/locks.c                            | 29 +++++++++++-
->>>>    fs/nfsd/nfs4layouts.c                 | 65 +++++++++++++++++++++++++--
->>>>    include/linux/filelock.h              |  7 +++
->>>>    4 files changed, 100 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
->>>> index 04c7691e50e0..ae9a1b207b95 100644
->>>> --- a/Documentation/filesystems/locking.rst
->>>> +++ b/Documentation/filesystems/locking.rst
->>>> @@ -403,6 +403,8 @@ prototypes::
->>>>    	bool (*lm_breaker_owns_lease)(struct file_lock *);
->>>>            bool (*lm_lock_expirable)(struct file_lock *);
->>>>            void (*lm_expire_lock)(void);
->>>> +        void (*lm_breaker_timedout)(struct file_lease *);
->>>> +        bool (*lm_need_to_retry)(struct file_lease *, struct file_lock_context *);
->>>>    
->>>>    locking rules:
->>>>    
->>>> @@ -417,6 +419,8 @@ lm_breaker_owns_lease:	yes     	no			no
->>>>    lm_lock_expirable	yes		no			no
->>>>    lm_expire_lock		no		no			yes
->>>>    lm_open_conflict	yes		no			no
->>>> +lm_breaker_timedout     no              no                      yes
->>>> +lm_need_to_retry        yes             no                      no
->>>>    ======================	=============	=================	=========
->>>>    
->>>>    buffer_head
->>>> diff --git a/fs/locks.c b/fs/locks.c
->>>> index 46f229f740c8..cd08642ab8bb 100644
->>>> --- a/fs/locks.c
->>>> +++ b/fs/locks.c
->>>> @@ -381,6 +381,14 @@ lease_dispose_list(struct list_head *dispose)
->>>>    	while (!list_empty(dispose)) {
->>>>    		flc = list_first_entry(dispose, struct file_lock_core, flc_list);
->>>>    		list_del_init(&flc->flc_list);
->>>> +		if (flc->flc_flags & FL_BREAKER_TIMEDOUT) {
->>>> +			struct file_lease *fl;
->>>> +
->>>> +			fl = file_lease(flc);
->>>> +			if (fl->fl_lmops &&
->>>> +					fl->fl_lmops->lm_breaker_timedout)
->>>> +				fl->fl_lmops->lm_breaker_timedout(fl);
->>>> +		}
->>>>    		locks_free_lease(file_lease(flc));
->>>>    	}
->>>>    }
->>>> @@ -1531,8 +1539,10 @@ static void time_out_leases(struct inode *inode, struct list_head *dispose)
->>>>    		trace_time_out_leases(inode, fl);
->>>>    		if (past_time(fl->fl_downgrade_time))
->>>>    			lease_modify(fl, F_RDLCK, dispose);
->>>> -		if (past_time(fl->fl_break_time))
->>>> +		if (past_time(fl->fl_break_time)) {
->>>>    			lease_modify(fl, F_UNLCK, dispose);
->>>> +			fl->c.flc_flags |= FL_BREAKER_TIMEDOUT;
->>>> +		}
->>> When the lease times out, you go ahead and remove it but then mark it
->>> with FL_BREAKER_TIMEDOUT. Then later, you call ->lm_breaker_timedout if
->>> that's set.
->>>
->>> That means that when this happens, there is a window of time where
->>> there is no lease, but the rogue client isn't yet fenced. That sounds
->>> like a problem as you could allow competing access.
->> I have to think more about the implication of competing access. Since
->> the thread that detects the conflict is in the process of fencing the
->> other client and has not accessed the file data yet, I don't see the
->> problem of allowing the other client to continue access the file until
->> fence operation completed.
->>
-> Isn't the whole point of write layout leases to grant exclusive access
-> to an external client? At the point where you lose the lease, any
-> competing access can then proceed. Maybe a local file writer starts
-> writing to the file at that point. But...what if the client is still
-> writing stuff to the backing store? Won't that corrupt data (and maybe
-> metadata)?
+Thanks for the reply.
 
-The lease is removed but in_conflict is set. Doesn't that prevent other
-client to access the file until in_conflict is cleared?
+addr2line -e vmlinux -f -i submit_bio_noacct+0x21d
+blk_should_throtl
+/build/lakitu/tmp/portage/sys-kernel/lakitu-kernel-6_12-6.12.55-r86/work/la=
+kitu-kernel-6_12-6.12.55/block/blk-throttle.h:184
+(discriminator 4)
+blk_throtl_bio
+/build/lakitu/tmp/portage/sys-kernel/lakitu-kernel-6_12-6.12.55-r86/work/la=
+kitu-kernel-6_12-6.12.55/block/blk-throttle.h:196
+(discriminator 4)
+submit_bio_noacct
+/build/lakitu/tmp/portage/sys-kernel/lakitu-kernel-6_12-6.12.55-r86/work/la=
+kitu-kernel-6_12-6.12.55/block/blk-core.c:866
+(discriminator 4)
 
+Changelog:
+
+git log --oneline cos/release-R117-cos-6.6..cos/release-R125-cos-6.12
+block/blk-throttle.h
+3bf73e6283ef blk-throttle: remove last_low_overflow_time
+0a751df4566c blk-throttle: Fix incorrect display of io.max
+a3166c51702b blk-throttle: delay initialization until configuration
+bf20ab538c81 blk-throttle: remove CONFIG_BLK_DEV_THROTTLING_LOW
+
+git log --oneline cos/release-R117-cos-6.6..cos/release-R125-cos-6.12
+block/blk-core.c
+[TRUE NEW]      2ad0f19a4e99 block: add a rq_list type...
+[TRUE NEW]      d313ff5308fd block: don't update BLK_FEAT_POLL in
+__blk_mq_update_nr_hw_queues...
+[TRUE NEW]      e278c7ff7574 block: check BLK_FEAT_POLL under q_usage_count=
+...
+[TRUE NEW]      b12cfcae8a83 block: always verify unfreeze lock on the
+owner task...
+[TRUE NEW]      a6fc2ba1c7e5 block: model freeze & enter queue as lock
+for supporting lockdep...
+[TRUE NEW]      ea6787c695ab scsi: block: Don't check REQ_ATOMIC for reads.=
+..
+[TRUE NEW]      73e59d3eeca4 block: avoid polling configuration errors...
+[TRUE NEW]      f2a7bea23710 block: Remove REQ_OP_ZONE_RESET_ALL emulation.=
+..
+[TRUE NEW]      63db4a1f795a block: Delete blk_queue_flag_test_and_set()...
+[TRUE NEW]      9da3d1e912f3 block: Add core atomic write support...
+[TRUE NEW]      8023e144f9d6 block: move the poll flag to queue_limits...
+[TRUE NEW]      1122c0c1cc71 block: move cache control settings out of
+queue->flags...
+[TRUE NEW]      9a42891c35d5 block: fix lost bio for plug enabled bio
+based device...
+[TRUE NEW]      060406c61c7c block: add plug while submitting IO...
+[TRUE NEW]      811ba89a8838 bdev: move ->bd_make_it_fail to ->__bd_flags..=
+.
+[TRUE NEW]      49a43dae93c8 bdev: move ->bd_ro_warned to ->__bd_flags...
+[TRUE NEW]      ac2b6f9dee8f bdev: move ->bd_has_subit_bio to ->__bd_flags.=
+..
+[TRUE NEW]      3f9b8fb46e5d Use bdev_is_paritition() instead of
+open-coding it...
+[TRUE NEW]      99a9476b27e8 block: Do not special-case plugging of
+zone write operations...
+[TRUE NEW]      bca150f0d4ed block: Do not check zone type in
+blk_check_zone_append()...
+[TRUE NEW]      ccdbf0aad252 block: Allow zero value of
+max_zone_append_sectors queue limit...
+[TRUE NEW]      3ec4848913d6 block: fix that blk_time_get_ns() doesn't
+update time after schedule...
+[TRUE NEW]      ad751ba1f8d5 block: pass a queue_limits argument to
+blk_alloc_queue...
+[TRUE NEW]      d690cb8ae14b block: add an API to atomically update
+queue limits...
+[TRUE NEW]      48ff13a618b5 block: Simplify the allocation of slab caches.=
+..
+[TRUE NEW]      06b23f92af87 block: update cached timestamp post
+schedule/preemption...
+[TRUE NEW]      da4c8c3d0975 block: cache current nsec time in struct
+blk_plug...
+
+As for the suggestion to try newer kernel versions, yes I'll do that
+as well. It takes some time to figure out the best way to compile the
+new kernel and run the test.
+
+Best,
+
+Chenglong
+
+On Fri, Jan 16, 2026 at 4:27=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
 >
->>> I think you'll have to do this in reverse order: fence the client and
->>> then remove the lease.
->>>
->>>>    	}
->>>>    }
->>>>    
->>>> @@ -1633,6 +1643,8 @@ int __break_lease(struct inode *inode, unsigned int flags)
->>>>    	list_for_each_entry_safe(fl, tmp, &ctx->flc_lease, c.flc_list) {
->>>>    		if (!leases_conflict(&fl->c, &new_fl->c))
->>>>    			continue;
->>>> +		if (new_fl->fl_lmops != fl->fl_lmops)
->>>> +			new_fl->fl_lmops = fl->fl_lmops;
->>>>    		if (want_write) {
->>>>    			if (fl->c.flc_flags & FL_UNLOCK_PENDING)
->>>>    				continue;
->>>> @@ -1657,6 +1669,18 @@ int __break_lease(struct inode *inode, unsigned int flags)
->>>>    		goto out;
->>>>    	}
->>>>    
->>>> +	/*
->>>> +	 * Check whether the lease manager wants the operation
->>>> +	 * causing the conflict to be retried.
->>>> +	 */
->>>> +	if (new_fl->fl_lmops && new_fl->fl_lmops->lm_need_to_retry &&
->>>> +			new_fl->fl_lmops->lm_need_to_retry(new_fl, ctx)) {
->>>> +		trace_break_lease_noblock(inode, new_fl);
->>>> +		error = -ERESTARTSYS;
->>>> +		goto out;
->>>> +	}
->>>> +	ctx->flc_in_conflict = true;
->>>> +
->>> I guess flc_in_conflict is supposed to indicate "hey, we're already
->>> doing a layout break on this inode". That seems reasonable, if a little
->>> klunky.
->>>
->>> It would be nice if you could track this flag inside of nfsd's data
->>> structures instead (since only it cares about the flag), but I don't
->>> think it has any convenient per-inode structures to set this in.
->> Can we move this flag in to nfsd_file? set the flag there and clear
->> the flag when fencing completed.
->>
-> No, there can be several nfsd_file objects per inode. I think that'd be
-> hard to do.
-
-ok I see. Can we leave in_conflict flag there for now until we can come
-up with better solution?
-
--Dai
-
+> Hi!
 >
->>>>    restart:
->>>>    	fl = list_first_entry(&ctx->flc_lease, struct file_lease, c.flc_list);
->>>>    	break_time = fl->fl_break_time;
->>>> @@ -1693,6 +1717,9 @@ int __break_lease(struct inode *inode, unsigned int flags)
->>>>    	spin_unlock(&ctx->flc_lock);
->>>>    	percpu_up_read(&file_rwsem);
->>>>    	lease_dispose_list(&dispose);
->>>> +	spin_lock(&ctx->flc_lock);
->>>> +	ctx->flc_in_conflict = false;
->>>> +	spin_unlock(&ctx->flc_lock);
->>>>    free_lock:
->>>>    	locks_free_lease(new_fl);
->>>>    	return error;
->>>> diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
->>>> index ad7af8cfcf1f..e7777d6ee8d0 100644
->>>> --- a/fs/nfsd/nfs4layouts.c
->>>> +++ b/fs/nfsd/nfs4layouts.c
->>>> @@ -747,11 +747,9 @@ static bool
->>>>    nfsd4_layout_lm_break(struct file_lease *fl)
->>>>    {
->>>>    	/*
->>>> -	 * We don't want the locks code to timeout the lease for us;
->>>> -	 * we'll remove it ourself if a layout isn't returned
->>>> -	 * in time:
->>>> +	 * Enforce break lease timeout to prevent NFSD
->>>> +	 * thread from hanging in __break_lease.
->>>>    	 */
->>>> -	fl->fl_break_time = 0;
->>>>    	nfsd4_recall_file_layout(fl->c.flc_owner);
->>>>    	return false;
->>>>    }
->>>> @@ -782,10 +780,69 @@ nfsd4_layout_lm_open_conflict(struct file *filp, int arg)
->>>>    	return 0;
->>>>    }
->>>>    
->>>> +/**
->>>> + * nfsd_layout_breaker_timedout - The layout recall has timed out.
->>> Please fix this kdoc header.
->> I noticed this too, will fix in v2.
->>
->>>> + * If the layout type supports fence operation then do it to stop
->>>> + * the client from accessing the block device.
->>>> + *
->>>> + * @fl: file to check
->>>> + *
->>>> + * Return value: None.
->>>> + */
->>>> +static void
->>>> +nfsd4_layout_lm_breaker_timedout(struct file_lease *fl)
->>>> +{
->>>> +	struct nfs4_layout_stateid *ls = fl->c.flc_owner;
->>>> +	struct nfsd_file *nf;
->>>> +	u32 type;
->>>> +
->>>> +	rcu_read_lock();
->>>> +	nf = nfsd_file_get(ls->ls_file);
->>>> +	rcu_read_unlock();
->>>> +	if (!nf)
->>>> +		return;
->>>> +	type = ls->ls_layout_type;
->>>> +	if (nfsd4_layout_ops[type]->fence_client)
->>>> +		nfsd4_layout_ops[type]->fence_client(ls, nf);
->>>> +	nfsd_file_put(nf);
->>>> +}
->>>> +
->>>> +/**
->>>> + * nfsd4_layout_lm_conflict - Handle multiple conflicts in the same file.
->>> kdoc header is wrong here. This should be for nfsd4_layout_lm_retry().
->> I noticed this too, will fix in v2. Kernel test robot also
->> complains about this.
->>
->>>> + *
->>>> + * This function is called from __break_lease when a conflict occurs.
->>>> + * For layout conflicts on the same file, each conflict triggers a
->>>> + * layout  recall. Only the thread handling the first conflict needs
->>>> + * to remain in __break_lease to manage the timeout for these recalls;
->>>> + * subsequent threads should not wait in __break_lease.
->>>> + *
->>>> + * This is done to prevent excessive nfsd threads from becoming tied up
->>>> + * in __break_lease, which could hinder the server's ability to service
->>>> + * incoming requests.
->>>> + *
->>>> + * Return true if thread should not wait in __break_lease else return
->>>> + * false.
->>>> + */
->>>> +static bool
->>>> +nfsd4_layout_lm_retry(struct file_lease *fl,
->>>> +				struct file_lock_context *ctx)
->>>> +{
->>>> +	struct svc_rqst *rqstp;
->>>> +
->>>> +	rqstp = nfsd_current_rqst();
->>>> +	if (!rqstp)
->>>> +		return false;
->>>> +	if ((fl->c.flc_flags & FL_LAYOUT) && ctx->flc_in_conflict)
->>> This should never be called for anything but a FL_LAYOUT lease, since
->>> you're only setting this in nfsd4_layouts_lm_ops.
->> I will remove the check for FL_LAYOUT in v2.
->>
->> Thanks,
->> -Dai
->>
->>>> +		return true;
->>>> +	return false;
->>>> +}
->>>> +
->>>>    static const struct lease_manager_operations nfsd4_layouts_lm_ops = {
->>>>    	.lm_break		= nfsd4_layout_lm_break,
->>>>    	.lm_change		= nfsd4_layout_lm_change,
->>>>    	.lm_open_conflict	= nfsd4_layout_lm_open_conflict,
->>>> +	.lm_breaker_timedout	= nfsd4_layout_lm_breaker_timedout,
->>>> +	.lm_need_to_retry	= nfsd4_layout_lm_retry,
->>>>    };
->>>>    
->>>>    int
->>>> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
->>>> index 2f5e5588ee07..6967af8b7fd2 100644
->>>> --- a/include/linux/filelock.h
->>>> +++ b/include/linux/filelock.h
->>>> @@ -17,6 +17,7 @@
->>>>    #define FL_OFDLCK	1024	/* lock is "owned" by struct file */
->>>>    #define FL_LAYOUT	2048	/* outstanding pNFS layout */
->>>>    #define FL_RECLAIM	4096	/* reclaiming from a reboot server */
->>>> +#define	FL_BREAKER_TIMEDOUT	8192	/* lease breaker timed out */
->>>>    
->>>>    #define FL_CLOSE_POSIX (FL_POSIX | FL_CLOSE)
->>>>    
->>>> @@ -50,6 +51,9 @@ struct lease_manager_operations {
->>>>    	void (*lm_setup)(struct file_lease *, void **);
->>>>    	bool (*lm_breaker_owns_lease)(struct file_lease *);
->>>>    	int (*lm_open_conflict)(struct file *, int);
->>>> +	void (*lm_breaker_timedout)(struct file_lease *fl);
->>>> +	bool (*lm_need_to_retry)(struct file_lease *fl,
->>>> +			struct file_lock_context *ctx);
->>>>    };
->>>>    
->>>>    struct lock_manager {
->>>> @@ -145,6 +149,9 @@ struct file_lock_context {
->>>>    	struct list_head	flc_flock;
->>>>    	struct list_head	flc_posix;
->>>>    	struct list_head	flc_lease;
->>>> +
->>>> +	/* for FL_LAYOUT */
->>>> +	bool			flc_in_conflict;
->>>>    };
->>>>    
->>>>    #ifdef CONFIG_FILE_LOCKING
+> On Thu 15-01-26 21:56:06, Chenglong Tang wrote:
+> > [Follow Up] We have an important update regarding the
+> > submit_bio_noacct panic we reported earlier.
+> >
+> > To rule out the Integrity Measurement Architecture (IMA) as the root
+> > cause, we disabled IMA verification in the workload configuration. The
+> > kernel panic persisted with the exact same signature (RIP:
+> > 0010:submit_bio_noacct+0x21d), but the trigger path has changed.
+>
+> OK, can you please feed this through addr2line so that we know what exact=
+ly
+> is wrong with the bio? Thanks!
+>
+> Also do you have a chance to try with some recent upstream kernel? The
+> crash might also be specific to the set of backports in that particular
+> stable branch...
+>
+>                                                                 Honza
+>
+> >
+> > New Stack Traces (Non-IMA) We are now observing the crash via two
+> > standard filesystem paths.
+> >
+> > Stack Trace:
+> > Most failures are still similar:
+> > I0115 20:30:23.535402    8496 vex_console.cc:116] (vex1): [
+> > 158.519909] BUG: kernel NULL pointer dereference, address:
+> > 0000000000000156
+> > I0115 20:30:23.535483    8496 vex_console.cc:116] (vex1): [
+> > 158.542610] #PF: supervisor read access in kernel mode
+> > I0115 20:30:23.585675    8496 vex_console.cc:116] (vex1): [
+> > 158.565011] #PF: error_code(0x0000) - not-present page
+> > I0115 20:30:23.585702    8496 vex_console.cc:116] (vex1): [
+> > 158.583855] PGD 800000007c7da067 P4D 800000007c7da067 PUD 7c7db067 PMD
+> > 0
+> > I0115 20:30:23.585709    8496 vex_console.cc:116] (vex1): [
+> > 158.590940] Oops: Oops: 0000 [#1] SMP PTI
+> > I0115 20:30:23.636063    8496 vex_console.cc:116] (vex1): [
+> > 158.598950] CPU: 1 UID: 0 PID: 6717 Comm: agent_launcher Tainted: G
+> >        O       6.12.55+ #1
+> > I0115 20:30:23.636092    8496 vex_console.cc:116] (vex1): [
+> > 158.629624] Tainted: [O]=3DOOT_MODULE
+> > I0115 20:30:23.694223    8496 vex_console.cc:116] (vex1): [
+> > 158.639965] Hardware name: Google Google Compute Engine/Google Compute
+> > Engine, BIOS Google 01/01/2011
+> > I0115 20:30:23.694252    8496 vex_console.cc:116] (vex1): [
+> > 158.684210] RIP: 0010:submit_bio_noacct+0x21d/0x470
+> > I0115 20:30:23.738566    8496 vex_console.cc:116] (vex1): [
+> > 158.705662] Code: 8b 73 48 4d 85 f6 74 55 4c 63 25 46 af 89 01 49 83
+> > fc 06 0f 83 44 02 00 00 4f 8b a4 e6 d0 00 00 00 83 3d 99 ca 7d 01 00
+> > 7e 3f <43> 80 bc 3c 56 01 00 00 00 0f 84 28 01 00 00 48 89 df e8 fc 9f
+> > 02
+> > I0115 20:30:23.738598    8496 vex_console.cc:116] (vex1): [
+> > 158.765443] RSP: 0000:ffffa74c84d53a98 EFLAGS: 00010202
+> > I0115 20:30:23.793126    8496 vex_console.cc:116] (vex1): [
+> > 158.771022] RAX: ffffa319b3d6b4f0 RBX: ffffa319bdc9a3c0 RCX:
+> > 00000000005e1070
+> > I0115 20:30:23.793158    8496 vex_console.cc:116] (vex1): [
+> > 158.778730] RDX: 0000000010300001 RSI: ffffa319b3d6b4f0 RDI:
+> > ffffa319bdc9a3c0
+> > I0115 20:30:23.843309    8496 vex_console.cc:116] (vex1): [
+> > 158.802189] RBP: ffffa74c84d53ac8 R08: 0000000000001000 R09:
+> > ffffa319bdc9a3c0
+> > I0115 20:30:23.843336    8496 vex_console.cc:116] (vex1): [
+> > 158.846780] R10: 0000000000000000 R11: 0000000069a1b000 R12:
+> > 0000000000000000
+> > I0115 20:30:23.889620    8484 vex_dns.cc:145] Returning NODATA for DNS
+> > Query: type=3Da, name=3Dservicecontrol.googleapis.com.
+> > I0115 20:30:23.898357    8496 vex_console.cc:116] (vex1): [
+> > 158.877737] R13: ffffa31941421f40 R14: ffffa31955419200 R15:
+> > 0000000000000000
+> > I0115 20:30:23.948602    8496 vex_console.cc:116] (vex1): [
+> > 158.908715] FS:  00000000059efe28(0000) GS:ffffa319bdd00000(0000)
+> > knlGS:0000000000000000
+> > I0115 20:30:23.948640    8496 vex_console.cc:116] (vex1): [
+> > 158.937522] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > I0115 20:30:23.948645    8496 vex_console.cc:116] (vex1): [
+> > 158.958522] CR2: 0000000000000156 CR3: 000000006a20a003 CR4:
+> > 00000000003726f0
+> > I0115 20:30:23.948650    8496 vex_console.cc:116] (vex1): [
+> > 158.968648] Call Trace:
+> > I0115 20:30:23.948655    8496 vex_console.cc:116] (vex1): [  158.974419=
+]  <TASK>
+> > I0115 20:30:23.948659    8496 vex_console.cc:116] (vex1): [
+> > 158.978222]  ext4_mpage_readpages+0x75c/0x790
+> > I0115 20:30:24.004540    8496 vex_console.cc:116] (vex1): [
+> > 158.983568]  read_pages+0x9d/0x250
+> > I0115 20:30:24.004568    8496 vex_console.cc:116] (vex1): [
+> > 158.987263]  page_cache_ra_unbounded+0xa2/0x1c0
+> > I0115 20:30:24.004573    8496 vex_console.cc:116] (vex1): [
+> > 158.992179]  filemap_fault+0x218/0x660
+> > I0115 20:30:24.004576    8496 vex_console.cc:116] (vex1): [
+> > 158.996311]  __do_fault+0x4b/0x140
+> > I0115 20:30:24.004580    8496 vex_console.cc:116] (vex1): [
+> > 159.000143]  do_pte_missing+0x14f/0x1050
+> > I0115 20:30:24.054563    8496 vex_console.cc:116] (vex1): [
+> > 159.018505]  handle_mm_fault+0x886/0xb40
+> > I0115 20:30:24.105692    8496 vex_console.cc:116] (vex1): [
+> > 159.063653]  do_user_addr_fault+0x1eb/0x730
+> > I0115 20:30:24.105721    8496 vex_console.cc:116] (vex1): [
+> > 159.094465]  exc_page_fault+0x80/0x100
+> > I0115 20:30:24.105726    8496 vex_console.cc:116] (vex1): [
+> > 159.116472]  asm_exc_page_fault+0x26/0x30
+> >
+> > Though there is a different one:
+> > I0115 20:31:14.891091    7372 vex_console.cc:116] (vex1): [
+> > 163.902122] BUG: kernel NULL pointer dereference, address:
+> > 0000000000000157
+> > I0115 20:31:14.950131    7372 vex_console.cc:116] (vex1): [
+> > 163.955031] #PF: supervisor read access in kernel mode
+> > I0115 20:31:15.057629    7372 vex_console.cc:116] (vex1): [
+> > 163.986899] #PF: error_code(0x0000) - not-present page
+> > I0115 20:31:15.057665    7372 vex_console.cc:116] (vex1): [
+> > 164.075132] PGD 0 P4D 0
+> > I0115 20:31:15.057670    7372 vex_console.cc:116] (vex1): [
+> > 164.085940] Oops: Oops: 0000 [#1] SMP PTI
+> > I0115 20:31:15.108501    7372 vex_console.cc:116] (vex1): [
+> > 164.090592] CPU: 0 UID: 0 PID: 399 Comm: jbd2/nvme0n1p1- Tainted: G
+> >        O       6.12.55+ #1
+> > I0115 20:31:15.157731    7372 vex_console.cc:116] (vex1): [
+> > 164.146188] Tainted: [O]=3DOOT_MODULE
+> > I0115 20:31:15.210631    7372 vex_console.cc:116] (vex1): [
+> > 164.172362] Hardware name: Google Google Compute Engine/Google Compute
+> > Engine, BIOS Google 01/01/2011
+> > I0115 20:31:15.266673    7372 vex_console.cc:116] (vex1): [
+> > 164.243113] RIP: 0010:submit_bio_noacct+0x21d/0x470
+> > I0115 20:31:15.369886    7372 vex_console.cc:116] (vex1): [
+> > 164.276230] Code: 8b 73 48 4d 85 f6 74 55 4c 63 25 46 af 89 01 49 83
+> > fc 06 0f 83 44 02 00 00 4f 8b a4 e6 d0 00 00 00 83 3d 99 ca 7d 01 00
+> > 7e 3f <43> 80 bc 3c 56 01 00 00 00 0f 84 28 01 00 00 48 89 df e8 fc 9f
+> > 02
+> > I0115 20:31:15.369913    7372 vex_console.cc:116] (vex1): [
+> > 164.413258] RSP: 0000:ffffa674004ebc80 EFLAGS: 00010202
+> > I0115 20:31:15.422131    7372 vex_console.cc:116] (vex1): [
+> > 164.420124] RAX: ffff9381c25d4790 RBX: ffff9381d0e5e540 RCX:
+> > 00000000000301c8
+> > I0115 20:31:15.522750    7372 vex_console.cc:116] (vex1): [
+> > 164.464474] RDX: 0000000010300001 RSI: ffff9381c25d4790 RDI:
+> > ffff9381d0e5e540
+> > I0115 20:31:15.522784    7372 vex_console.cc:116] (vex1): [
+> > 164.542751] RBP: ffffa674004ebcb0 R08: 0000000000000000 R09:
+> > 0000000000000000
+> > I0115 20:31:15.576921    7372 vex_console.cc:116] (vex1): [
+> > 164.578174] R10: 0000000000000000 R11: ffffffff8433e7a0 R12:
+> > 0000000000000000
+> > I0115 20:31:15.577224    7372 vex_console.cc:116] (vex1): [
+> > 164.595801] R13: ffff9381c1425780 R14: ffff9381c196d400 R15:
+> > 0000000000000001
+> > I0115 20:31:15.628049    7372 vex_console.cc:116] (vex1): [
+> > 164.626548] FS:  0000000000000000(0000) GS:ffff93823dc00000(0000)
+> > knlGS:0000000000000000
+> > I0115 20:31:15.732793    7372 vex_console.cc:116] (vex1): [
+> > 164.665104] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > I0115 20:31:15.785564    7372 vex_console.cc:116] (vex1): [
+> > 164.757565] CR2: 0000000000000157 CR3: 000000007c678003 CR4:
+> > 00000000003726f0
+> > I0115 20:31:15.843034    7372 vex_console.cc:116] (vex1): [
+> > 164.831021] Call Trace:
+> > I0115 20:31:15.843065    7372 vex_console.cc:116] (vex1): [  164.851014=
+]  <TASK>
+> > I0115 20:31:15.900287    7372 vex_console.cc:116] (vex1): [
+> > 164.872000]  jbd2_journal_commit_transaction+0x612/0x17e0
+> > I0115 20:31:15.900315    7372 vex_console.cc:116] (vex1): [
+> > 164.914012]  ? sched_clock+0xd/0x20
+> > I0115 20:31:15.952673    7372 vex_console.cc:116] (vex1): [
+> > 164.963930]  ? _raw_spin_unlock_irqrestore+0x12/0x30
+> > I0115 20:31:16.004440    7372 vex_console.cc:116] (vex1): [
+> > 164.989978]  ? __try_to_del_timer_sync+0x122/0x160
+> > I0115 20:31:16.004471    7372 vex_console.cc:116] (vex1): [
+> > 165.029451]  kjournald2+0xb1/0x220
+> > I0115 20:31:16.004477    7372 vex_console.cc:116] (vex1): [
+> > 165.033558]  ? __pfx_autoremove_wake_function+0x10/0x10
+> > I0115 20:31:16.004481    7372 vex_console.cc:116] (vex1): [
+> > 165.044022]  kthread+0x122/0x140
+> > I0115 20:31:16.004486    7372 vex_console.cc:116] (vex1): [
+> > 165.048012]  ? __pfx_kjournald2+0x10/0x10
+> > I0115 20:31:16.004490    7372 vex_console.cc:116] (vex1): [
+> > 165.052944]  ? __pfx_kthread+0x10/0x10
+> > I0115 20:31:16.004494    7372 vex_console.cc:116] (vex1): [
+> > 165.057597]  ret_from_fork+0x3f/0x50
+> > I0115 20:31:16.057453    7372 vex_console.cc:116] (vex1): [
+> > 165.062127]  ? __pfx_kthread+0x10/0x10
+> > I0115 20:31:16.057484    7372 vex_console.cc:116] (vex1): [
+> > 165.079674]  ret_from_fork_asm+0x1a/0x30
+> > I0115 20:31:16.109674    7372 vex_console.cc:116] (vex1): [
+> > 165.113023]  </TASK>
+> > I0115 20:31:16.212548    7372 vex_console.cc:116] (vex1): [
+> > 165.131001] Modules linked in: nft_chain_nat xt_MASQUERADE nf_nat
+> > xt_addrtype nft_compat nf_tables kvm_intel kvm irqbypass crc32c_intel
+> > aesni_intel crypto_simd cryptd loadpin_trigger(O) fuse
+> > I0115 20:31:16.262933    7372 vex_console.cc:116] (vex1): [
+> > 165.269971] CR2: 0000000000000157
+> > I0115 20:31:16.316433    7372 vex_console.cc:116] (vex1): [
+> > 165.306980] ---[ end trace 0000000000000000 ]---
+> > I0115 20:31:16.365756    7372 vex_console.cc:116] (vex1): [
+> > 165.361889] RIP: 0010:submit_bio_noacct+0x21d/0x470
+> > I0115 20:31:16.518250    7372 vex_console.cc:116] (vex1): [
+> > 165.406957] Code: 8b 73 48 4d 85 f6 74 55 4c 63 25 46 af 89 01 49 83
+> > fc 06 0f 83 44 02 00 00 4f 8b a4 e6 d0 00 00 00 83 3d 99 ca 7d 01 00
+> > 7e 3f <43> 80 bc 3c 56 01 00 00 00 0f 84 28 01 00 00 48 89 df e8 fc 9f
+> > 02
+> > I0115 20:31:16.518278    7372 vex_console.cc:116] (vex1): [
+> > 165.558880] RSP: 0000:ffffa674004ebc80 EFLAGS: 00010202
+> > I0115 20:31:16.568463    7372 vex_console.cc:116] (vex1): [
+> > 165.575239] RAX: ffff9381c25d4790 RBX: ffff9381d0e5e540 RCX:
+> > 00000000000301c8
+> > I0115 20:31:16.568490    7372 vex_console.cc:116] (vex1): [
+> > 165.590012] RDX: 0000000010300001 RSI: ffff9381c25d4790 RDI:
+> > ffff9381d0e5e540
+> > I0115 20:31:16.568495    7372 vex_console.cc:116] (vex1): [
+> > 165.597793] RBP: ffffa674004ebcb0 R08: 0000000000000000 R09:
+> > 0000000000000000
+> > I0115 20:31:16.568499    7372 vex_console.cc:116] (vex1): [
+> > 165.608408] R10: 0000000000000000 R11: ffffffff8433e7a0 R12:
+> > 0000000000000000
+> > I0115 20:31:16.568502    7372 vex_console.cc:116] (vex1): [
+> > 165.616602] R13: ffff9381c1425780 R14: ffff9381c196d400 R15:
+> > 0000000000000001
+> > I0115 20:31:16.618734    7372 vex_console.cc:116] (vex1): [
+> > 165.631823] FS:  0000000000000000(0000) GS:ffff93823dc00000(0000)
+> > knlGS:0000000000000000
+> > I0115 20:31:16.618770    7372 vex_console.cc:116] (vex1): [
+> > 165.653088] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > W0115 20:31:16.649110    7355 pvpanic.cc:136] Guest kernel has panicked=
+!
+> > I0115 20:31:16.671568    7372 vex_console.cc:116] (vex1): [
+> > 165.668488] CR2: 0000000000000157 CR3: 000000007c678003 CR4:
+> > 00000000003726f0
+> > I0115 20:31:16.671599    7372 vex_console.cc:116] (vex1): [
+> > 165.686744] Kernel panic - not syncing: Fatal exception
+> >
+> > This confirms the issue is not specific to IMA, but is a fundamental
+> > race condition in the Block I/O layer or Ext4 subsystem under high
+> > concurrency.
+> >
+> > Since the crash occurs at the exact same instruction offset in
+> > submit_bio_noacct regardless of the caller (IMA, Page Fault, or JBD2),
+> > we suspect a bio or request_queue structure is being corrupted or
+> > hitting a NULL pointer dereference in the underlying block device
+> > driver (NVMe) or Device Mapper.
+> >
+> > Best,
+> >
+> > Chenglong
+> >
+> > On Thu, Jan 15, 2026 at 6:56=E2=80=AFPM Chenglong Tang <chenglongtang@g=
+oogle.com> wrote:
+> > >
+> > > Hi Amir,
+> > >
+> > > Thanks for the guidance. Using the specific order of the 8 commits
+> > > (applying the ovl_real_fdget refactors before the fix consumers)
+> > > resolved the boot-time NULL pointer panic. The system now boots
+> > > successfully.
+> > >
+> > > However, we are still hitting the original kernel panic during runtim=
+e
+> > > tests (specifically a CloudSQL workload).
+> > >
+> > > Current Commit Chain (Applied to 6.12):
+> > >
+> > > 76d83345a056 (HEAD -> main-R125-cos-6.12) ovl: convert
+> > > ovl_real_fdget() callers to ovl_real_file()
+> > > 740bdf920b15 ovl: convert ovl_real_fdget_path() callers to ovl_real_f=
+ile_path()
+> > > 100b71ecb237 fs/backing_file: fix wrong argument in callback
+> > > b877bca6858d ovl: store upper real file in ovl_file struct
+> > > 595aac630596 ovl: allocate a container struct ovl_file for ovl privat=
+e context
+> > > 218ec543008d ovl: do not open non-data lower file for fsync
+> > > 6def078942e2 ovl: use wrapper ovl_revert_creds()
+> > > fe73aad71936 backing-file: clean up the API
+> > >
+> > > So it means none of these 8 commits were able to fix the problem. Let
+> > > me explain what's going on here:
+> > >
+> > > We are reporting a rare but persistent kernel panic (~0.02% failure
+> > > rate) occurring during container initialization on Linux 6.12.55+
+> > > (x86_64). The 6.6.x is good. The panic is a NULL pointer dereference
+> > > in submit_bio_noacct, triggered specifically when the Integrity
+> > > Measurement Architecture (IMA) calculates a file hash during a runc
+> > > create operation.
+> > >
+> > > We have isolated the crash to a specific container (ncsa) starting up
+> > > during a high-concurrency boot sequence.
+> > >
+> > > Environment
+> > > * Kernel: Linux 6.12.55+ (x86_64) / Container-Optimized OS
+> > > * Workload: Cloud SQL instance initialization (heavy concurrent runc
+> > > operations managed by systemd).
+> > > * Filesystem: Ext4 backed by NVMe.
+> > > * Security: AppArmor enabled, IMA (Integrity Measurement Architecture=
+) active.
+> > >
+> > > The Failure Pattern(In every crash instance, the sequence is identica=
+l):
+> > > * systemd initiates the startup of the ncsainit container.
+> > > * runc executes the create command:
+> > > `Bash
+> > > `runc --root /var/lib/cloudsql/runc/root create --bundle
+> > > /var/lib/cloudsql/runc/bundles/ncsa ...
+> > >
+> > > Immediately after this command is logged, the kernel panics.
+> > >
+> > > Stacktrace:
+> > > [  186.938290] BUG: kernel NULL pointer dereference, address: 0000000=
+000000156
+> > > [  186.952203] #PF: supervisor read access in kernel mode
+> > > [  186.995248] Oops: Oops: 0000 [#1] SMP PTI
+> > > [  187.035946] CPU: 1 UID: 0 PID: 6764 Comm: runc:[2:INIT] Tainted: G
+> > >          O       6.12.55+ #1
+> > > [  187.081681] RIP: 0010:submit_bio_noacct+0x21d/0x470
+> > > [  187.412981] Call Trace:
+> > > [  187.415751]  <TASK>
+> > > [  187.418141]  ext4_mpage_readpages+0x75c/0x790
+> > > [  187.429011]  read_pages+0x9d/0x250
+> > > [  187.450963]  page_cache_ra_unbounded+0xa2/0x1c0
+> > > [  187.466083]  filemap_get_pages+0x231/0x7a0
+> > > [  187.474687]  filemap_read+0xf6/0x440
+> > > [  187.532345]  integrity_kernel_read+0x34/0x60
+> > > [  187.560740]  ima_calc_file_hash+0x1c1/0x9b0
+> > > [  187.608175]  ima_collect_measurement+0x1b6/0x310
+> > > [  187.613102]  process_measurement+0x4ea/0x850
+> > > [  187.617788]  ima_bprm_check+0x5b/0xc0
+> > > [  187.635403]  bprm_execve+0x203/0x560
+> > > [  187.645058]  do_execveat_common+0x2fb/0x360
+> > > [  187.649730]  __x64_sys_execve+0x3e/0x50
+> > >
+> > > Panic Analysis: The stack trace indicates a race condition where
+> > > ima_bprm_check (triggered by executing the container binary) attempts
+> > > to verify the file. This calls ima_calc_file_hash ->
+> > > ext4_mpage_readpages, which submits a bio to the block layer.
+> > >
+> > > The crash occurs in submit_bio_noacct when it attempts to dereference
+> > > a member of the bio structure (likely bio->bi_bdev or the request
+> > > queue), suggesting the underlying device or queue structure is either
+> > > uninitialized or has been torn down while the IMA check was still in
+> > > flight.
+> > >
+> > > Context on Concurrency: This workload involves systemd starting
+> > > multiple sidecar containers (logging, monitoring, coroner, etc.)
+> > > simultaneously. We suspect this high-concurrency startup creates the
+> > > IO/CPU contention required to hit this race window. However, the cras=
+h
+> > > consistently happens only on the ncsa container, implying something
+> > > specific about its launch configuration or timing makes it the
+> > > reliable victim.
+> > >
+> > > Best,
+> > >
+> > > Chenglong
+> > >
+> > > On Wed, Jan 14, 2026 at 3:11=E2=80=AFAM Amir Goldstein <amir73il@gmai=
+l.com> wrote:
+> > > >
+> > > > On Wed, Jan 14, 2026 at 1:53=E2=80=AFAM Chenglong Tang <chenglongta=
+ng@google.com> wrote:
+> > > > >
+> > > > > Hi OverlayFS Maintainers,
+> > > > >
+> > > > > This is from Container Optimized OS in Google Cloud.
+> > > > >
+> > > > > We are reporting a reproducible kernel panic on Kernel 6.12 invol=
+ving
+> > > > > a NULL pointer dereference in submit_bio_noacct.
+> > > > >
+> > > > > The Issue: The panic occurs intermittently (approx. 5 failures in=
+ 1000
+> > > > > runs) during a specific PostgreSQL client test
+> > > > > (postgres_client_test_postgres15_ctrdncsa) on Google
+> > > > > Container-Optimized OS. The stack trace shows the crash happens w=
+hen
+> > > > > IMA (ima_calc_file_hash) attempts to read a file from OverlayFS v=
+ia
+> > > > > the new-in-6.12 backing_file_read_iter helper.
+> > > > >
+> > > > > It appears to be a race condition where the underlying block devi=
+ce is
+> > > > > detached (becoming NULL) while the backing_file wrapper is still
+> > > > > attempting to submit a read bio during container teardown.
+> > > > >
+> > > > > Stack Trace:
+> > > > > [  OK  ] Started    75.793015] BUG: kernel NULL pointer dereferen=
+ce,
+> > > > > address: 0000000000000156
+> > > > > [   75.822539] #PF: supervisor read access in kernel mode
+> > > > > [   75.849332] #PF: error_code(0x0000) - not-present page
+> > > > > [   75.862775] PGD 7d012067 P4D 7d012067 PUD 7d013067 PMD 0
+> > > > > [   75.884283] Oops: Oops: 0000 [#1] SMP NOPTI
+> > > > > [   75.902274] CPU: 1 UID: 0 PID: 6476 Comm: helmd Tainted: G
+> > > > >  O       6.12.55+ #1
+> > > > > [   75.928903] Tainted: [O]=3DOOT_MODULE
+> > > > > [   75.942484] Hardware name: Google Google Compute Engine/Google
+> > > > > Compute Engine, BIOS Google 01/01/2011
+> > > > > [   75.965868] RIP: 0010:submit_bio_noacct+0x21d/0x470
+> > > > > [   75.978340] Code: 8b 73 48 4d 85 f6 74 55 4c 63 25 b6 ad 89 01=
+ 49
+> > > > > 83 fc 06 0f 83 44 02 00 00 4f 8b a4 e6 d0 00 00 00 83 3d 09 c9 7d=
+ 01
+> > > > > 00 7e 3f <43> 80 bc 3c 56 01 00 00 00 0f 84 28 01 00 00 48 89 df =
+e8 4c
+> > > > > a0 02
+> > > > > [   76.035847] RSP: 0018:ffffa41183463880 EFLAGS: 00010202
+> > > > > [   76.050141] RAX: ffff9d4ec1a81a78 RBX: ffff9d4f3811e6c0 RCX: 0=
+0000000009410a0
+> > > > > [   76.065176] RDX: 0000000010300001 RSI: ffff9d4ec1a81a78 RDI: f=
+fff9d4f3811e6c0
+> > > > > [   76.089292] RBP: ffffa411834638b0 R08: 0000000000001000 R09: f=
+fff9d4f3811e6c0
+> > > > > [   76.110878] R10: 2000000000000000 R11: ffffffff8a33e700 R12: 0=
+000000000000000
+> > > > > [   76.139068] R13: ffff9d4ec1422bc0 R14: ffff9d4ec2507000 R15: 0=
+000000000000000
+> > > > > [   76.168391] FS:  0000000008df7f40(0000) GS:ffff9d4f3dd00000(00=
+00)
+> > > > > knlGS:0000000000000000
+> > > > > [   76.179024] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > [   76.184951] CR2: 0000000000000156 CR3: 000000007d01c006 CR4: 0=
+000000000370ef0
+> > > > > [   76.192352] Call Trace:
+> > > > > [   76.194981]  <TASK>
+> > > > > [   76.197257]  ext4_mpage_readpages+0x75c/0x790
+> > > > > [   76.201794]  read_pages+0xa0/0x250
+> > > > > [   76.205373]  page_cache_ra_unbounded+0xa2/0x1c0
+> > > > > [   76.232608]  filemap_get_pages+0x16b/0x7a0
+> > > > > [   76.254151]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > > > > [   76.260523]  filemap_read+0xf6/0x440
+> > > > > [   76.264540]  do_iter_readv_writev+0x17e/0x1c0
+> > > > > [   76.275427]  vfs_iter_read+0x8a/0x140
+> > > > > [   76.279272]  backing_file_read_iter+0x155/0x250
+> > > > > [   76.284425]  ovl_read_iter+0xd7/0x120
+> > > > > [   76.288270]  ? __pfx_ovl_file_accessed+0x10/0x10
+> > > > > [   76.293069]  vfs_read+0x2b1/0x300
+> > > > > [   76.296835]  ksys_read+0x75/0xe0
+> > > > > [   76.300246]  do_syscall_64+0x61/0x130
+> > > > > [   76.304173]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > > >
+> > > > > Our Findings:
+> > > > >
+> > > > > Not an Ext4 regression: We verified that reverting "ext4: reduce =
+stack
+> > > > > usage in ext4_mpage_readpages()" does not resolve the panic.
+> > > > >
+> > > > > Suspected Fix: We suspect upstream commit 18e48d0e2c7b ("ovl: sto=
+re
+> > > > > upper real file in ovl_file struct") is the correct fix. It seems=
+ to
+> > > > > address this exact lifetime race by persistently pinning the
+> > > > > underlying file.
+> > > >
+> > > > That sounds odd.
+> > > > Using a persistent upper real file may be more efficient than openi=
+ng
+> > > > a temporary file for every read, but the temporary file is a legit =
+opened file,
+> > > > so it looks like you would be averting the race rather than fixing =
+it.
+> > > >
+> > > > Could you try to analyse the conditions that caused the race?
+> > > >
+> > > > >
+> > > > > The Problem: We cannot apply 18e48d0e2c7b to 6.12 stable because =
+it
+> > > > > depends on the extensive ovl_real_file refactoring series (removi=
+ng
+> > > > > ovl_real_fdget family functions) that landed in 6.13.
+> > > > >
+> > > > > Is there a recommended way to backport the "persistent real file"
+> > > > > logic to 6.12 without pulling in the entire refactor chain?
+> > > > >
+> > > >
+> > > > These are the commits in overlayfs/file.c v6.12..v6.13:
+> > > >
+> > > > $ git log --oneline  v6.12..v6.13 -- fs/overlayfs/file.c
+> > > > d66907b51ba07 ovl: convert ovl_real_fdget() callers to ovl_real_fil=
+e()
+> > > > 4333e42ed4444 ovl: convert ovl_real_fdget_path() callers to ovl_rea=
+l_file_path()
+> > > > 18e48d0e2c7b1 ovl: store upper real file in ovl_file struct
+> > > > 87a8a76c34a2a ovl: allocate a container struct ovl_file for ovl pri=
+vate context
+> > > > c2c54b5f34f63 ovl: do not open non-data lower file for fsync
+> > > > fc5a1d2287bf2 ovl: use wrapper ovl_revert_creds()
+> > > > 48b50624aec45 backing-file: clean up the API
+> > > >
+> > > > Your claim that 18e48d0e2c7b depends on ovl_real_fdget() is incorre=
+ct.
+> > > > You may safely cherry-pick the 4 commits above leading to 18e48d0e2=
+c7b1.
+> > > > They are all self contained changes that would be good to have in 6=
+.12.y,
+> > > > because they would make cherry-picking future fixes easier.
+> > > >
+> > > > Specifically, backing-file: clean up the API, it is better to have =
+the same
+> > > > API in upstream and stable kernels.
+> > > >
+> > > > Thanks,
+> > > > Amir.
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
